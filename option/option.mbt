@@ -1,4 +1,4 @@
-pub fn Option::when[T](condition : Bool, value : () -> T) -> Option[T] {
+pub fn when[T](condition : Bool, value : () -> T) -> Option[T] {
   if condition {
     Some(value())
   } else {
@@ -6,15 +6,15 @@ pub fn Option::when[T](condition : Bool, value : () -> T) -> Option[T] {
   }
 }
 
-pub fn Option::unless[T](condition : Bool, value : () -> T) -> Option[T] {
+pub fn unless[T](condition : Bool, value : () -> T) -> Option[T] {
   Option::when(condition.not(), value)
 }
 
-pub fn Option::empty[T]() -> Option[T] {
+pub fn empty[T]() -> Option[T] {
   None
 }
 
-pub fn Option::make[T](value : T) -> Option[T] {
+pub fn some[T](value : T) -> Option[T] {
   Some(value)
 }
 
