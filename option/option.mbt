@@ -7,7 +7,7 @@ pub fn when[T](condition : Bool, value : () -> T) -> Option[T] {
 }
 
 pub fn unless[T](condition : Bool, value : () -> T) -> Option[T] {
-  Option::when(condition.not(), value)
+  when(condition.not(), value)
 }
 
 pub fn empty[T]() -> Option[T] {
