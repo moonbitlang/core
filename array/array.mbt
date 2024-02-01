@@ -97,3 +97,28 @@ pub fn op_equal[T : Eq](self : Array[T], that : Array[T]) -> Bool {
   true
 }
 
+pub fn new[T](length : Int, value : () -> T) -> Array[T] {
+  if length <= 0 {
+    Array::default()
+  } else {
+    let array = Array::make(length, value())
+    let mut i = 1
+    while i < length, i = i + 1 {
+      array[i] = value()
+    }
+    array
+  }
+}
+
+pub fn newi[T](length: Int, value : (Int) -> T) -> Array[T] {
+  if length <= 0 {
+    Array::default()
+  } else {
+    let array = Array::make(length, value(0))
+    let mut i = 1
+    while i < length, i = i + 1 {
+      array[i] = value(i)
+    }
+    array
+  }
+}

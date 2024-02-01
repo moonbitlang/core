@@ -567,3 +567,11 @@ test "contain" {
   @assertion.assert_false(ls.contain(0))
   @assertion.assert_false(ls.contain(4))
 }
+
+/// Produces a collection iteratively.
+pub fn unfold[T, State](init: State, f: (State) -> Option[(T, State)]) -> List[T] {
+  match f(init) {
+    Some(element, new_state) => Cons(element, unfold(new_state, f))
+    None => Nil
+  }
+}

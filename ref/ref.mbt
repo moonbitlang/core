@@ -94,3 +94,7 @@ pub fn debug_write[T : Debug](self : Ref[T], buf : Buffer) {
   self.val.debug_write(buf)
   buf.write_string(")")
 }
+
+pub fn update[T](self : Ref[T], f : (T) -> T) {
+  self.val = f(self.val)
+}
