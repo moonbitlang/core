@@ -83,6 +83,23 @@ test "map" {
   @assertion.assert_eq(doubled, [2, 4, 6, 8, 10])
 }
 
+pub fn map_with_index[T, U](self : Array[T], f : (T, Int) -> U) -> Array[U] {
+  let res = Array::make(self.length(), f(self[0], 0))
+  loop 1 {
+    i => if i < self.length() {
+      res[i] = f(self[i], i)
+      continue i + 1
+    }
+  }
+  res
+}
+
+test "map with index" {
+  let arr = [1, 2, 3, 4, 5]
+  let doubled = arr.map_with_index(fn(x, i) { x * 2 + i })
+  @assertion.assert_eq(doubled, [2, 5, 8, 11, 14])
+}
+
 pub fn op_equal[T : Eq](self : Array[T], that : Array[T]) -> Bool {
   if self.length() != that.length() {
     return false
@@ -103,9 +120,11 @@ pub fn new[T](length : Int, value : () -> T) -> Array[T] {
     Array::default()
   } else {
     let array = Array::make(length, value())
-    let mut i = 1
-    while i < length, i = i + 1 {
-      array[i] = value()
+    loop 1 {
+      i => if i < length {
+        array[i] = value()
+        continue i + 1
+      }
     }
     array
   }
@@ -122,9 +141,11 @@ pub fn new_with_index[T](length : Int, value : (Int) -> T) -> Array[T] {
     Array::default()
   } else {
     let array = Array::make(length, value(0))
-    let mut i = 1
-    while i < length, i = i + 1 {
-      array[i] = value(i)
+    loop 1 {
+      i => if i < length {
+        array[i] = value(i)
+        continue i + 1
+      }
     }
     array
   }
