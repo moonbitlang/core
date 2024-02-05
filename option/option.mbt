@@ -152,3 +152,33 @@ test "filter" {
   @assertion.assert_eq(x.filter(fn(x){ x > 5 }),None)
   @assertion.assert_eq(x.filter(fn(x){ x < 5 }),Some(3))
 }
+
+/// Return the contained `Some` value or the provided default.
+pub fn or[T](self : Option[T], default : T) -> T {
+  match self {
+    None => default
+    Some(t) => t
+  }
+}
+
+test "or" {
+  let x = Option::Some(3)
+  @assertion.assert_eq(x.or(5), 3)
+  @assertion.assert_eq((None : Option[Int]).or(5), 5)
+}
+
+/// Return the contained `Some` value or the provided default.
+///
+/// Default is lazily evaluated
+pub fn or_else[T](self : Option[T], default : () -> T) -> T {
+  match self {
+    None => default()
+    Some(t) => t
+  }
+}
+
+test "or else" {
+  let x = Option::Some(3)
+  @assertion.assert_eq(x.or_else(fn () { 5 }), 3)
+  @assertion.assert_eq((None : Option[Int]).or_else(fn () { 5 }), 5)
+}
