@@ -1,4 +1,3 @@
-
 /// Iterates over each element.
 ///
 /// # Arguments
@@ -21,10 +20,9 @@ pub fn iter[T](self : Array[T], f : (T) -> Unit) {
 
 test "iteri" {
   let mut i = 0
-  [1, 2, 3, 4, 5].iter(fn(elem){
-    @assertion.assert_eq(elem,i+1)
-    i = i + 1
-  })
+  [1, 2, 3, 4, 5].iter(
+    fn(elem) { @assertion.assert_eq(elem, i + 1); i = i + 1 },
+  )
 }
 
 /// Iterates over the array with index. 
@@ -41,21 +39,23 @@ test "iteri" {
 ///   print("(\(index),\(elem)) ")
 /// }) //output: (0,1) (1,2) (2,3) (3,4) (4,5)
 /// ```
-pub fn iteri[T](self : Array[T], f : (Int,T) -> Unit) {
+pub fn iteri[T](self : Array[T], f : (Int, T) -> Unit) {
   let mut i = 0
   while i < self.length() {
-    f(i,self[i])
+    f(i, self[i])
     i = i + 1
   }
 }
 
 test "iteri" {
   let mut i = 0
-  [1, 2, 3, 4, 5].iteri(fn(index, elem){
-    @assertion.assert_eq(index,i)
-    @assertion.assert_eq(elem,i+1)
-    i = i + 1
-  })
+  [1, 2, 3, 4, 5].iteri(
+    fn(index, elem) {
+      @assertion.assert_eq(index, i)
+      @assertion.assert_eq(elem, i + 1)
+      i = i + 1
+    },
+  )
 }
 
 /// Applies a function to each element of the array and returns a new array with the results.
@@ -67,7 +67,7 @@ test "iteri" {
 /// let doubled = arr.map(fn(x){ x * 2 })
 /// debug(doubled) //output: [2, 4, 6, 8, 10]
 /// ```
-pub fn map[T,U](self : Array[T], f : (T) -> U) -> Array[U] {
+pub fn map[T, U](self : Array[T], f : (T) -> U) -> Array[U] {
   let res = Array::make(self.length(), f(self[0]))
   let mut i = 0
   while i < self.length() {
@@ -79,8 +79,8 @@ pub fn map[T,U](self : Array[T], f : (T) -> U) -> Array[U] {
 
 test "map" {
   let arr = [1, 2, 3, 4, 5]
-  let doubled = arr.map(fn(x){ x * 2 })
-  @assertion.assert_eq(doubled,[2, 4, 6, 8, 10])
+  let doubled = arr.map(fn(x) { x * 2 })
+  @assertion.assert_eq(doubled, [2, 4, 6, 8, 10])
 }
 
 pub fn op_equal[T : Eq](self : Array[T], that : Array[T]) -> Bool {
@@ -97,6 +97,7 @@ pub fn op_equal[T : Eq](self : Array[T], that : Array[T]) -> Bool {
   true
 }
 
+/// Create a new array. Values are lazily built.
 pub fn new[T](length : Int, value : () -> T) -> Array[T] {
   if length <= 0 {
     Array::default()
@@ -110,7 +111,13 @@ pub fn new[T](length : Int, value : () -> T) -> Array[T] {
   }
 }
 
-pub fn newi[T](length: Int, value : (Int) -> T) -> Array[T] {
+test "new" {
+  let arr = new(2, fn() { { val: 1 } })
+  @assertion.assert_false(arr[0] === arr[1])
+}
+
+/// Create a new array. Values are built from indexes.
+pub fn newi[T](length : Int, value : (Int) -> T) -> Array[T] {
   if length <= 0 {
     Array::default()
   } else {
@@ -121,4 +128,10 @@ pub fn newi[T](length: Int, value : (Int) -> T) -> Array[T] {
     }
     array
   }
+}
+
+test "new index" {
+  let arr = newi(2, fn { i => i })
+  @assertion.assert_eq(arr[0], 0)
+  @assertion.assert_eq(arr[1], 1)
 }
