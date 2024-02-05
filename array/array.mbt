@@ -117,7 +117,7 @@ test "new" {
 }
 
 /// Create a new array. Values are built from indexes.
-pub fn newi[T](length : Int, value : (Int) -> T) -> Array[T] {
+pub fn new_with_index[T](length : Int, value : (Int) -> T) -> Array[T] {
   if length <= 0 {
     Array::default()
   } else {
@@ -131,7 +131,7 @@ pub fn newi[T](length : Int, value : (Int) -> T) -> Array[T] {
 }
 
 test "new index" {
-  let arr = newi(2, fn { i => i })
+  let arr = new_with_index(2, fn { i => i })
   @assertion.assert_eq(arr[0], 0)
   @assertion.assert_eq(arr[1], 1)
 }
