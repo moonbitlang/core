@@ -176,6 +176,30 @@ test "head" {
   @assertion.assert_eq(ls.head(), 1)
 }
 
+/// Get first element of the list.
+/// 
+/// # Example
+/// 
+/// ```
+/// debug(of_array([1, 2, 3, 4, 5]).head())
+/// // output: Some(1)
+/// debug(of_array([]).head())
+/// // output: None
+/// ```
+pub fn head_option[T](self : List[T]) -> Option[T] {
+  match self {
+    Nil => None
+    Cons(head, _) => Some(head)
+  }
+}
+
+test "head option" {
+  let ls = of_array([1, 2, 3, 4, 5])
+  @assertion.assert_eq(ls.head_option(), Some(1))
+  let ls2 = of_array([])
+  @assertion.assert_eq(ls2, Nil)
+}
+
 /// Last element of the list.
 /// 
 /// # Example
