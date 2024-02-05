@@ -570,6 +570,13 @@ test "contain" {
 }
 
 /// Produces a collection iteratively.
+///
+/// # Example
+///
+/// ```
+/// // of_array([0, 1, 2])
+/// unfold(0, fn { i => if i == 3 { None } else { Some(i, i + 1) } }) |> debug 
+/// ```
 pub fn unfold[T, State](init : State, f : (State) -> Option[(T, State)]) ->
      List[T] {
   match f(init) {
