@@ -17,9 +17,9 @@ pub fn of_array[T](arr : Array[T]) -> List[T] {
 
 test "of_array" {
   let ls = of_array([1, 2, 3, 4, 5])
-  @assertion.assert_eq(ls,Cons(1,Cons(2,Cons(3,Cons(4,Cons(5,Nil))))))
+  @assertion.assert_eq(ls, Cons(1, Cons(2, Cons(3, Cons(4, Cons(5, Nil))))))
 }
- 
+
 /// Get the length of the list.
 pub fn length[T](self : List[T]) -> Int {
   match self {
@@ -32,7 +32,7 @@ test "length" {
   let ls = of_array([1, 2, 3, 4, 5])
   @assertion.assert_eq(ls.length(), 5)
 }
- 
+
 /// Iterates over the list.
 /// 
 /// # Example
@@ -55,7 +55,7 @@ test "iter" {
   let mut i = 0
   ls.iter(fn(x) { @assertion.assert_eq(x, i + 1); i = i + 1 })
 }
- 
+
 /// Iterates over the list with index.
 /// 
 /// # Example
@@ -72,13 +72,15 @@ pub fn iteri[T](self : List[T], f : (Int, T) -> Unit) {
 test "iteri" {
   let mut v = 0
   let ls = of_array([1, 2, 3, 4, 5])
-  ls.iteri(fn(i, x) { 
-    @assertion.assert_eq(x, v + 1)
-    @assertion.assert_eq(i, v)
-    v = v + 1 
-  })
+  ls.iteri(
+    fn(i, x) {
+      @assertion.assert_eq(x, v + 1)
+      @assertion.assert_eq(i, v)
+      v = v + 1
+    },
+  )
 }
- 
+
 /// Maps the list.
 /// 
 /// # Example
@@ -99,14 +101,14 @@ test "map" {
   let rs = of_array([2, 4, 6, 8, 10])
   @assertion.assert_eq(ls.map(fn(x) { x * 2 }), rs)
 }
- 
+
 /// Convert list to array.
 pub fn to_array[T : Default](self : List[T]) -> Array[T] {
   let arr = Array::make(self.length(), T::default())
   self.iteri(fn(i, x) { arr[i] = x })
   return arr
 }
- 
+
 /// Filter the list.
 /// 
 /// # Example
@@ -118,14 +120,15 @@ pub fn to_array[T : Default](self : List[T]) -> Array[T] {
 pub fn filter[T](self : List[T], f : (T) -> Bool) -> List[T] {
   match self {
     Nil => Nil
-    Cons(head, tail) => if f(head) {
-      Cons(head, filter(tail, f))
-    } else {
-      filter(tail, f)
-    }
+    Cons(head, tail) =>
+      if f(head) {
+        Cons(head, filter(tail, f))
+      } else {
+        filter(tail, f)
+      }
   }
 }
- 
+
 test "filter" {
   let ls = of_array([1, 2, 3, 4, 5])
   let rs = of_array([2, 4])
@@ -152,7 +155,7 @@ test "tail" {
   let rs = of_array([2, 3, 4, 5])
   @assertion.assert_eq(ls.tail(), rs)
 }
- 
+
 /// Get first element of the list.
 /// 
 /// # Example
@@ -172,7 +175,7 @@ test "head" {
   let ls = of_array([1, 2, 3, 4, 5])
   @assertion.assert_eq(ls.head(), 1)
 }
- 
+
 /// Last element of the list.
 /// 
 /// # Example
@@ -193,7 +196,7 @@ test "last" {
   let ls = of_array([1, 2, 3, 4, 5])
   @assertion.assert_eq(ls.last(), 5)
 }
- 
+
 /// Init of the list.
 /// 
 /// # Example
@@ -215,7 +218,7 @@ test "init_" {
   let rs = of_array([1, 2, 3, 4])
   @assertion.assert_eq(ls.init_(), rs)
 }
- 
+
 /// Concatenate two lists.
 ///
 /// # Example
@@ -237,7 +240,7 @@ test "concat" {
   let ts = of_array([1, 2, 3, 4, 5, 6, 7, 8, 9, 10])
   @assertion.assert_eq(ls.concat(rs), ts)
 }
- 
+
 /// Reverse the list.
 /// 
 /// # Example
@@ -257,7 +260,7 @@ test "reverse" {
   let ls = of_array([1, 2, 3, 4, 5])
   @assertion.assert_eq(ls, ls.reverse().reverse())
 }
- 
+
 /// Fold the list.
 ///
 /// # Example
@@ -277,7 +280,7 @@ test "fold" {
   let ls = of_array([1, 2, 3, 4, 5])
   @assertion.assert_eq(ls.fold(0, fn(acc, x) { acc + x }), 15)
 }
- 
+
 /// Zip two lists.
 ///
 /// # Example
@@ -298,7 +301,7 @@ pub fn zip[T, U](self : List[T], other : List[U]) -> List[(T, U)] {
     _ => abort("zip: lists have different lengths")
   }
 }
- 
+
 /// map over the list and concat all results.
 ///
 /// `concat_map(f, ls)` equal to `ls.map(f).fold(Nil, fn(acc, x) { acc.concat(x) })))`
@@ -322,16 +325,12 @@ test "concat_map" {
   let rs = of_array([1, 2, 2, 4, 3, 6])
   @assertion.assert_eq(ls.concat_map(fn(x) { of_array([x, x * 2]) }), rs)
 }
- 
+
 /// Get nth element of the list
 pub fn nth[T](self : List[T], n : Int) -> T {
   match self {
     Nil => abort("nth: index out of bounds")
-    Cons(head, tail) => if n == 0 {
-      head
-    } else {
-      nth(tail, n - 1)
-    }
+    Cons(head, tail) => if n == 0 { head } else { nth(tail, n - 1) }
   }
 }
 
@@ -343,7 +342,7 @@ test "nth" {
   @assertion.assert_eq(ls.nth(3), 4)
   @assertion.assert_eq(ls.nth(4), 5)
 }
- 
+
 /// Create a list of length n with the given value
 ///
 /// # Example
@@ -363,7 +362,7 @@ test "repeat" {
   let ls = of_array([1, 1, 1, 1, 1])
   @assertion.assert_eq(repeat(5, 1), ls)
 }
- 
+
 /// Insert separator to the list.
 /// 
 /// # Example
@@ -376,7 +375,8 @@ pub fn separate_by[T](self : List[T], seperator : T) -> List[T] {
   match self {
     Nil => Nil
     Cons(head, Nil) => Cons(head, Nil)
-    Cons(head, tail) => Cons(head, Cons(seperator, separate_by(tail, seperator)))
+    Cons(head, tail) =>
+      Cons(head, Cons(seperator, separate_by(tail, seperator)))
   }
 }
 
@@ -384,7 +384,7 @@ test "separate_by" {
   let ls = of_array(["1", "|", "2", "|", "3", "|", "4", "|", "5"])
   @assertion.assert_eq(of_array(["1", "2", "3", "4", "5"]).separate_by("|"), ls)
 }
- 
+
 /// Check if the list is empty.
 pub fn is_empty[T](self : List[T]) -> Bool {
   match self {
@@ -398,7 +398,7 @@ test "is_empty" {
   @assertion.assert_false(ls.is_empty())
   @assertion.assert_true(List::Nil.is_empty())
 }
- 
+
 /// Unzip two lists.
 ///
 /// # Example
@@ -413,18 +413,18 @@ pub fn unzip[T, U](list : List[(T, U)]) -> (List[T], List[U]) {
     Nil => (Nil, Nil)
     Cons((x, y), xs) => {
       let (xs, ys) = unzip(xs)
-      (Cons(x, xs), Cons(y, ys))  
+      (Cons(x, xs), Cons(y, ys))
     }
   }
 }
 
 test "unzip" {
-  let ls = of_array([(1,2),(3,4),(5,6)])
+  let ls = of_array([(1, 2), (3, 4), (5, 6)])
   let (a, b) = unzip(ls)
   @assertion.assert_eq(a, of_array([1, 3, 5]))
   @assertion.assert_eq(b, of_array([2, 4, 6]))
 }
- 
+
 /// flatten a list of lists.
 /// 
 /// # Example
@@ -441,46 +441,43 @@ pub fn flatten[T](list : List[List[T]]) -> List[T] {
 }
 
 test "flatten" {
-  let ls = of_array([
-    of_array([1,2,3]), 
-    of_array([4,5,6]), 
-    of_array([7,8,9]),
-  ])
+  let ls = of_array(
+    [of_array([1, 2, 3]), of_array([4, 5, 6]), of_array([7, 8, 9])],
+  )
   let rs = of_array([1, 2, 3, 4, 5, 6, 7, 8, 9])
   @assertion.assert_eq(flatten(ls), rs)
 }
- 
+
 pub fn debug_write[T : Debug](self : List[T], buf : Buffer) {
-  fn aux(xs : List[T]){
+  fn aux(xs : List[T]) {
     match xs {
       Nil => ()
       Cons(x, Nil) => x.debug_write(buf)
-      Cons(x,xs) => {
+      Cons(x, xs) => {
         x.debug_write(buf)
         buf.write_string(", ")
         aux(xs)
       }
     }
   }
+
   buf.write_string("of_array([")
   aux(self)
   buf.write_string("])")
 }
- 
+
 pub fn to_string[T : Show](self : List[T]) -> String {
-  fn aux(xs : List[T]) -> String{
+  fn aux(xs : List[T]) -> String {
     match xs {
       Nil => ""
       Cons(x, Nil) => x.to_string()
-      Cons(x,xs) => 
-        x.to_string() +
-        ", " +
-        aux(xs)
+      Cons(x, xs) => x.to_string() + ", " + aux(xs)
     }
   }
+
   "of_array([" + aux(self) + "])"
 }
- 
+
 /// Get maximum element of the list.
 pub fn maximum[T : Compare](self : List[T]) -> T {
   match self {
@@ -488,16 +485,20 @@ pub fn maximum[T : Compare](self : List[T]) -> T {
     Cons(x, Nil) => x
     Cons(x, xs) => {
       let y = maximum(xs)
-      if x > y { x } else { y }
+      if x > y {
+        x
+      } else {
+        y
+      }
     }
   }
 }
 
 test "maximum" {
-  let ls = of_array([1,123,52,3,6,0,-6,-76])
+  let ls = of_array([1, 123, 52, 3, 6, 0, -6, -76])
   @assertion.assert_eq(ls.maximum(), 123)
 }
- 
+
 /// Get minimum element of the list.
 pub fn minimum[T : Compare](self : List[T]) -> T {
   match self {
@@ -505,16 +506,20 @@ pub fn minimum[T : Compare](self : List[T]) -> T {
     Cons(x, Nil) => x
     Cons(x, xs) => {
       let y = minimum(xs)
-      if x < y { x } else { y }
+      if x < y {
+        x
+      } else {
+        y
+      }
     }
   }
 }
 
 test "minimum" {
-  let ls = of_array([1,123,52,3,6,0,-6,-76])
+  let ls = of_array([1, 123, 52, 3, 6, 0, -6, -76])
   @assertion.assert_eq(ls.minimum(), -76)
 }
- 
+
 /// Sort the list in ascending order.
 ///
 /// # Example
@@ -535,27 +540,23 @@ pub fn sort[T : Compare](self : List[T]) -> List[T] {
 }
 
 test "sort" {
-  let ls = of_array([1,123,52,3,6,0,-6,-76])
+  let ls = of_array([1, 123, 52, 3, 6, 0, -6, -76])
   let rs = of_array([-76, -6, 0, 1, 3, 6, 52, 123])
   @assertion.assert_eq(ls.sort(), rs)
 }
- 
+
 /// Concatenate two lists.
 ///
 /// `a + b` equal to `a.concat(b)`
 pub fn op_add[T](self : List[T], other : List[T]) -> List[T] {
   self.concat(other)
 }
- 
+
 /// Check if the list contains the value.
 pub fn contain[T : Eq](self : List[T], value : T) -> Bool {
   match self {
     Nil => false
-    Cons(x, xs) => if x == value {
-      true
-    } else {
-      contain(xs, value)
-    }
+    Cons(x, xs) => if x == value { true } else { contain(xs, value) }
   }
 }
 
@@ -569,9 +570,15 @@ test "contain" {
 }
 
 /// Produces a collection iteratively.
-pub fn unfold[T, State](init: State, f: (State) -> Option[(T, State)]) -> List[T] {
+pub fn unfold[T, State](init : State, f : (State) -> Option[(T, State)]) ->
+     List[T] {
   match f(init) {
     Some(element, new_state) => Cons(element, unfold(new_state, f))
     None => Nil
   }
+}
+
+test "unfold" {
+  let ls = unfold(0, fn { i => if i == 3 { None } else { Some(i, i + 1) } })
+  @assertion.assert_eq(ls, Cons(0, Cons(1, Cons(2, Nil))))
 }
