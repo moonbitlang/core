@@ -471,24 +471,6 @@ test "flatten" {
   @assertion.assert_eq(flatten(ls), rs)
 }
 
-pub fn debug_write[T : Debug](self : List[T], buf : Buffer) {
-  fn aux(xs : List[T]) {
-    match xs {
-      Nil => ()
-      Cons(x, Nil) => x.debug_write(buf)
-      Cons(x, xs) => {
-        x.debug_write(buf)
-        buf.write_string(", ")
-        aux(xs)
-      }
-    }
-  }
-
-  buf.write_string("of_array([")
-  aux(self)
-  buf.write_string("])")
-}
-
 pub fn to_string[T : Show](self : List[T]) -> String {
   fn aux(xs : List[T]) -> String {
     match xs {
