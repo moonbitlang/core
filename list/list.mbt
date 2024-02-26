@@ -8,8 +8,7 @@
 /// ```
 pub fn of_array[T](arr : Array[T]) -> List[T] {
   let mut list = List::Nil
-  let mut i = arr.length() - 1
-  while i >= 0, i = i - 1 {
+  for i = arr.length() - 1; i >= 0; i = i - 1 {
     list = List::Cons(arr[i], list)
   }
   return list
