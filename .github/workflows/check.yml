@@ -1,0 +1,22 @@
+name: check
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+jobs:
+  build:
+    runs-on: ubuntu-22.04
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: install
+      run: |
+        /bin/bash -c "$(curl -fsSL https://cli.moonbitlang.com/ubuntu_x86_64_moon_setup.sh)"
+        echo "/home/runner/.moon/bin" >> $GITHUB_PATH
+
+    - name: check
+      run: moon check
