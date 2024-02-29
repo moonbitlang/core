@@ -195,7 +195,7 @@ pub fn head_option[T](self : List[T]) -> Option[T] {
 test "head option" {
   let ls = of_array([1, 2, 3, 4, 5])
   @assertion.assert_eq(ls.head_option(), Some(1))
-  let ls2 = of_array([])
+  let ls2 : List[Unit] = of_array([])
   @assertion.assert_eq(ls2, Nil)
 }
 
@@ -419,7 +419,7 @@ pub fn is_empty[T](self : List[T]) -> Bool {
 test "is_empty" {
   let ls = of_array([1, 2, 3, 4, 5])
   @assertion.assert_false(ls.is_empty())
-  @assertion.assert_true(List::Nil.is_empty())
+  @assertion.assert_true((List::Nil : List[Unit]).is_empty())
 }
 
 /// Unzip two lists.
