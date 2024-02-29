@@ -86,8 +86,8 @@ pub fn bind[T, U](self : Option[T], f : (T) -> Option[U]) -> Option[U] {
 test "bind" {
   let a = Option::Some(5)
   let b : Option[Int] = None
-  @assertion.assert_eq(a.bind(fn(x){ Some(x * 2) }), Some(10))
-  @assertion.assert_eq(b.bind(fn(x){ Some(x * 2) }), None)
+  @assertion.assert_eq(a.bind(fn(x){ Some(x * 2) }), Some(10))?
+  @assertion.assert_eq(b.bind(fn(x){ Some(x * 2) }), None)?
 }
 
 /// Flattens an `Option` of `Option` into a single `Option`.
@@ -108,9 +108,9 @@ pub fn flatten[T](self : Option[Option[T]]) -> Option[T] {
 
 test "flatten" {
   let a : Option[Option[Int]] = Some(Some(42));
-  @assertion.assert_eq(flatten(a),Some(42))
+  @assertion.assert_eq(flatten(a),Some(42))?
   let b : Option[Option[Int]] = Some(None)
-  @assertion.assert_eq(flatten(b),None)
+  @assertion.assert_eq(flatten(b),None)?
 }
 
 /// Checks if the option is empty.
@@ -124,8 +124,8 @@ pub fn is_empty[T](self : Option[T]) -> Bool {
 test "is_empty" {
   let x = Option::Some(3)
   let y: Option[Int] = None
-  @assertion.assert_false(x.is_empty())
-  @assertion.assert_true(y.is_empty())
+  @assertion.assert_false(x.is_empty())?
+  @assertion.assert_true(y.is_empty())?
 }
 
 /// Filters the option by applying the given predicate function `f`.
@@ -149,8 +149,8 @@ pub fn filter[T](self : Option[T], f : (T) -> Bool) -> Option[T] {
 
 test "filter" {
   let x = Option::Some(3)
-  @assertion.assert_eq(x.filter(fn(x){ x > 5 }),None)
-  @assertion.assert_eq(x.filter(fn(x){ x < 5 }),Some(3))
+  @assertion.assert_eq(x.filter(fn(x){ x > 5 }),None)?
+  @assertion.assert_eq(x.filter(fn(x){ x < 5 }),Some(3))?
 }
 
 /// Return the contained `Some` value or the provided default.
@@ -163,8 +163,8 @@ pub fn or[T](self : Option[T], default : T) -> T {
 
 test "or" {
   let x = Option::Some(3)
-  @assertion.assert_eq(x.or(5), 3)
-  @assertion.assert_eq((None : Option[Int]).or(5), 5)
+  @assertion.assert_eq(x.or(5), 3)?
+  @assertion.assert_eq((None : Option[Int]).or(5), 5)?
 }
 
 /// Return the contained `Some` value or the provided default.
@@ -179,6 +179,6 @@ pub fn or_else[T](self : Option[T], default : () -> T) -> T {
 
 test "or else" {
   let x = Option::Some(3)
-  @assertion.assert_eq(x.or_else(fn () { 5 }), 3)
-  @assertion.assert_eq((None : Option[Int]).or_else(fn () { 5 }), 5)
+  @assertion.assert_eq(x.or_else(fn () { 5 }), 3)?
+  @assertion.assert_eq((None : Option[Int]).or_else(fn () { 5 }), 5)?
 }
