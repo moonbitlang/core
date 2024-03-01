@@ -107,7 +107,7 @@ pub fn flatten[T](self : Option[Option[T]]) -> Option[T] {
 }
 
 test "flatten" {
-  let a : Option[Option[Int]] = Some(Some(42));
+  let a : Option[Option[Int]] = Some(Some(42))
   @assertion.assert_eq(flatten(a),Some(42))?
   let b : Option[Option[Int]] = Some(None)
   @assertion.assert_eq(flatten(b),None)?
