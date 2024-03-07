@@ -474,18 +474,6 @@ test "flatten" {
   @assertion.assert_eq(flatten(ls), rs)?
 }
 
-pub fn to_string[T : Show](self : List[T]) -> String {
-  fn aux(xs : List[T]) -> String {
-    match xs {
-      Nil => ""
-      Cons(x, Nil) => x.to_string()
-      Cons(x, xs) => x.to_string() + ", " + aux(xs)
-    }
-  }
-
-  "from_array([" + aux(self) + "])"
-}
-
 /// Get maximum element of the list.
 pub fn maximum[T : Compare](self : List[T]) -> T {
   match self {
