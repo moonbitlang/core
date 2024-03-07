@@ -1,0 +1,59 @@
+name: check
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+jobs:
+  cla-check:
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+    outputs:
+      cla-signed: ${{ steps.cla-check-step.outputs.cla-signed }}
+    steps:
+      - name: CLA check
+        id: cla-check-step
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          PR_AUTHOR=$(curl -s -H "Authorization: token $GITHUB_TOKEN" \
+            https://api.github.com/repos/${{ github.repository }}/pulls/${{ github.event.number }} \
+            | jq -r '.user.login')
+          echo "The PR author is $PR_AUTHOR"
+          CLA_RESPONSE=$(curl -s "https://mooncakes.io/api/v0/cla/check?gh_username=$PR_AUTHOR")
+          echo "CLA check response: $CLA_RESPONSE"
+          SIGNED=$(echo $CLA_RESPONSE | jq -r '.signed')
+          echo "cla-signed=$SIGNED" >> $GITHUB_ENV
+          echo "If you have any questions about the CLA result, please contact us."
+          if [ "$SIGNED" != "true" ]; then
+            echo "CLA is not signed."
+            exit 1
+          else
+            echo "CLA is signed."
+          fi
+
+  build:
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: install
+        run: |
+          /bin/bash -c "$(curl -fsSL https://cli.moonbitlang.com/ubuntu_x86_64_moon_setup.sh)"
+          echo "/home/runner/.moon/bin" >> $GITHUB_PATH
+
+      - name: moon check
+        run: moon check
+
+      - name: moon test
+        run: moon test
+      
+      - name: moon bundle
+        run: moon bundle
+
+      - name: format diff
+        run: |
+          moon fmt
+          git diff
