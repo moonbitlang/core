@@ -10,13 +10,36 @@ Before sending your first change to the moonbitlang/core project you must have c
 
 ## Step 1: Clone the repository
 
-To start working on the project, you need to have a local copy of the repository. You can obtain one by cloning the repository using the following Git command:
+To start working on the project, you need to have a local copy of the repository. Currently, `moon` will look up `moonbitlang/core` at `~/.moon/lib/core`, remove it if it exists
 
 ```bash
-git clone https://github.com/moonbitlang/core
+rm -rf ~/.moon/lib/core
 ```
 
-This command will create a copy of the repository on your local machine, allowing you to make changes.
+Then, you can use the following command to get latest version of the `moonbitlang/core`:
+
+```bash
+git clone https://github.com/moonbitlang/core ~/.moon/lib/core
+```
+
+Run the following command to bundle `moonbitlang/core`
+
+```bash
+moon bundle --source-dir ~/.moon/lib/core
+```
+
+If everything goes well, it will generate a bundled core file `~/.moon/lib/core/target/bundle/core.core`.
+
+Now you can create a new moon project and run it to check if everything is working as expected:
+
+```bash
+moon new hello
+cd hello
+echo """fn main {
+  println(@list.reverse(@list.from_array([1, 2, 3])))
+}""" > main/main.mbt
+moon run main
+```
 
 
 ## Step 2: Make your change
