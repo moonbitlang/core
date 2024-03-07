@@ -39,7 +39,7 @@ test "map" {
 }
 
 
-/// This function allows you to temporarily replace the value of a reference with a new value, 
+/// This function allows you to temporarily replace the value of a reference with a new value,
 /// execute a given function, and then restore the original value of the reference.
 ///
 /// # Arguments
@@ -51,15 +51,15 @@ test "map" {
 /// # Returns
 ///
 /// The result of executing the provided function `f`.
-/// 
+///
 /// # Example
-/// 
+///
 /// ```
 /// let x = ref(1)
-/// x.protext(2, fn(){
+/// x.protect(2, fn(){
 ///  debug(x) //output: ref(2)
 ///  x.val = 3
-///  debug(x) //output: ref(3)  
+///  debug(x) //output: ref(3)
 /// })
 /// debug(x) //output: ref(1)
 /// ```

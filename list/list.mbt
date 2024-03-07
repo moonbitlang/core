@@ -16,7 +16,7 @@
 // under the License.
 
 /// Convert array to list.
-/// 
+///
 /// # Example
 ///
 /// ```
@@ -50,9 +50,9 @@ test "length" {
 }
 
 /// Iterates over the list.
-/// 
+///
 /// # Example
-/// 
+///
 /// ```
 /// from_array([1, 2, 3, 4, 5]).iter(print) // output: 12345
 /// ```
@@ -75,11 +75,11 @@ test "iter" {
 }
 
 /// Iterates over the list with index.
-/// 
+///
 /// # Example
-/// 
+///
 /// ```
-/// from_array([1, 2, 3, 4, 5]).iteri(fn(i, x) { print("(\(i),\(x)) ") }) 
+/// from_array([1, 2, 3, 4, 5]).iteri(fn(i, x) { print("(\(i),\(x)) ") })
 /// // output: (0,1) (1,2) (2,3) (3,4) (4,5)
 /// ```
 pub fn iteri[T](self : List[T], f : (Int, T) -> Unit) {
@@ -101,9 +101,9 @@ test "iteri" {
 }
 
 /// Maps the list.
-/// 
+///
 /// # Example
-/// 
+///
 /// ```
 /// debug(from_array([1, 2, 3, 4, 5]).map(fn(x){ x * 2}))
 /// // output: from_array([2, 4, 6, 8, 10])
@@ -129,9 +129,9 @@ pub fn to_array[T : Default](self : List[T]) -> Array[T] {
 }
 
 /// Filter the list.
-/// 
+///
 /// # Example
-/// 
+///
 /// ```
 /// debug(from_array([1, 2, 3, 4, 5]).filter(fn(x){ x % 2 == 0}))
 /// // output: from_array([2, 4])
@@ -155,9 +155,9 @@ test "filter" {
 }
 
 /// Tail of the list.
-/// 
+///
 /// # Example
-/// 
+///
 /// ```
 /// debug(from_array([1, 2, 3, 4, 5]).tail())
 /// // output: from_array([2, 3, 4, 5])
@@ -176,9 +176,9 @@ test "tail" {
 }
 
 /// Get first element of the list.
-/// 
+///
 /// # Example
-/// 
+///
 /// ```
 /// debug(from_array([1, 2, 3, 4, 5]).head())
 /// // output: 1
@@ -196,9 +196,9 @@ test "head" {
 }
 
 /// Get first element of the list.
-/// 
+///
 /// # Example
-/// 
+///
 /// ```
 /// debug(from_array([1, 2, 3, 4, 5]).head())
 /// // output: Some(1)
@@ -220,9 +220,9 @@ test "head option" {
 }
 
 /// Last element of the list.
-/// 
+///
 /// # Example
-/// 
+///
 /// ```
 /// debug(from_array([1, 2, 3, 4, 5]).last())
 /// // output: 5
@@ -241,9 +241,9 @@ test "last" {
 }
 
 /// Init of the list.
-/// 
+///
 /// # Example
-/// 
+///
 /// ```
 /// debug(from_array([1, 2, 3, 4, 5]).init_())
 /// // output: from_array([1, 2, 3, 4])
@@ -265,7 +265,7 @@ test "init_" {
 /// Concatenate two lists.
 ///
 /// # Example
-///  
+///
 /// ```
 /// let ls = from_array([1, 2, 3, 4, 5]).concat(from_array([6, 7, 8, 9, 10]))
 /// debug(ls) // output: from_array([1, 2, 3, 4, 5, 6, 7, 8, 9, 10])
@@ -285,9 +285,9 @@ test "concat" {
 }
 
 /// Reverse the list.
-/// 
+///
 /// # Example
-/// 
+///
 /// ```
 /// debug(from_array([1, 2, 3, 4, 5]).reverse())
 /// // output: from_array([5, 4, 3, 2, 1])
@@ -307,7 +307,7 @@ test "reverse" {
 /// Fold the list.
 ///
 /// # Example
-/// 
+///
 /// ```
 /// let r = from_array([1, 2, 3, 4, 5]).fold(0, fn(acc, x) { acc + x })
 /// debug(r) // output: 15
@@ -327,12 +327,12 @@ test "fold" {
 /// Zip two lists.
 ///
 /// # Example
-/// 
+///
 /// ```
 /// let r = zip(from_array([1, 2, 3, 4, 5]), from_array([6, 7, 8, 9, 10]))
 /// debug(r) // output: from_array([(1, 6), (2, 7), (3, 8), (4, 9), (5, 10)]
 /// ```
-/// 
+///
 /// # Panics
 ///
 /// If the two lists have different lengths, the function will panic.
@@ -350,7 +350,7 @@ pub fn zip[T, U](self : List[T], other : List[U]) -> List[(T, U)] {
 /// `concat_map(f, ls)` equal to `ls.map(f).fold(Nil, fn(acc, x) { acc.concat(x) })))`
 ///
 /// # Example
-/// 
+///
 /// ```
 /// let ls = from_array([1, 2, 3])
 /// let r = ls.concat_map(fn(x) { [x, x * 2] })
@@ -389,7 +389,7 @@ test "nth" {
 /// Create a list of length n with the given value
 ///
 /// # Example
-/// 
+///
 /// ```
 /// debug(repeat(5, 1)) // output: from_array([1, 1, 1, 1, 1])
 /// ```
@@ -407,19 +407,19 @@ test "repeat" {
 }
 
 /// Insert separator to the list.
-/// 
+///
 /// # Example
-/// 
+///
 /// ```
 /// let ls = from_array(["1", "2", "3", "4", "5"]).separate_by("|")
 /// debug(ls) // output: from_array(["1", "|", "2", "|", "3", "|", "4", "|", "5"])
 /// ```
-pub fn separate_by[T](self : List[T], seperator : T) -> List[T] {
+pub fn separate_by[T](self : List[T], separator : T) -> List[T] {
   match self {
     Nil => Nil
     Cons(head, Nil) => Cons(head, Nil)
     Cons(head, tail) =>
-      Cons(head, Cons(seperator, separate_by(tail, seperator)))
+      Cons(head, Cons(separator, separate_by(tail, separator)))
   }
 }
 
@@ -469,9 +469,9 @@ test "unzip" {
 }
 
 /// flatten a list of lists.
-/// 
+///
 /// # Example
-/// 
+///
 /// ```
 /// let ls = flatten(from_array([from_array([1,2,3]), from_array([4,5,6]), from_array([7,8,9])]))
 /// debug(ls) // output: from_array([1, 2, 3, 4, 5, 6, 7, 8, 9])
@@ -536,7 +536,7 @@ test "minimum" {
 /// Sort the list in ascending order.
 ///
 /// # Example
-/// 
+///
 /// ```
 /// let ls = sort(from_array([1,123,52,3,6,0,-6,-76]))
 /// debug(ls) // output: from_array([-76, -6, 0, 1, 3, 6, 52, 123])
@@ -588,7 +588,7 @@ test "contain" {
 ///
 /// ```
 /// // from_array([0, 1, 2])
-/// unfold(0, fn { i => if i == 3 { None } else { Some(i, i + 1) } }) |> debug 
+/// unfold(0, fn { i => if i == 3 { None } else { Some(i, i + 1) } }) |> debug
 /// ```
 pub fn unfold[T, State](init : State, f : (State) -> Option[(T, State)]) ->
      List[T] {
