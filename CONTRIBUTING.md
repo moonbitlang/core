@@ -3,8 +3,8 @@
 ## Step 0: Contributor License Agreement
 
 - Before sending your first change to the moonbitlang/core project, you must have completed one of the following two CLAs, depending on who owns the copyright to your work:
-  - Individual contributor license agreement.
-  - Corporate contributor license agreement.
+  - For the Individual Contributor License Agreement, you can sign it online by visiting <https://moonbitlang.com/cla>.
+  - For the Corporate Contributor License Agreement, please contact us.
 
 ## Step 1: Clone the repository
 
