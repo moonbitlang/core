@@ -56,7 +56,7 @@ test "map" {
 /// 
 /// ```
 /// let x = ref(1)
-/// x.protext(2, fn(){
+/// x.protect(2, fn(){
 ///  debug(x) //output: ref(2)
 ///  x.val = 3
 ///  debug(x) //output: ref(3)  
