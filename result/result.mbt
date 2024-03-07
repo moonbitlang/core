@@ -85,7 +85,7 @@ pub fn to_string[T : Show, E : Show](self : Result[T,E]) -> String {
 test "to_string" {
   let a : Result[Int,Unit] = Ok(8)
   let b : Result[Int,Int] = Err(5)
-  a.unwrap()
+  ignore(a.unwrap())
   @assertion.assert_eq(a.to_string(), "Ok(8)")?
   @assertion.assert_eq(b.to_string(), "Err(5)")?
 }
