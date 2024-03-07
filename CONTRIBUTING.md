@@ -39,6 +39,7 @@ echo """fn main {
   println(@list.reverse(@list.from_array([1, 2, 3])))
 }""" > main/main.mbt
 moon run main
+# Output: List::Cons(3,List::Cons(2,List::Cons(1,Nil)))
 ```
 
 
