@@ -414,12 +414,12 @@ test "repeat" {
 /// let ls = from_array(["1", "2", "3", "4", "5"]).separate_by("|")
 /// debug(ls) // output: from_array(["1", "|", "2", "|", "3", "|", "4", "|", "5"])
 /// ```
-pub fn separate_by[T](self : List[T], seperator : T) -> List[T] {
+pub fn separate_by[T](self : List[T], separator : T) -> List[T] {
   match self {
     Nil => Nil
     Cons(head, Nil) => Cons(head, Nil)
     Cons(head, tail) =>
-      Cons(head, Cons(seperator, separate_by(tail, seperator)))
+      Cons(head, Cons(separator, separate_by(tail, separator)))
   }
 }
 
