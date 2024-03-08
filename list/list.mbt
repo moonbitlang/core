@@ -23,7 +23,7 @@
 /// let ls = from_array([1, 2, 3, 4, 5])
 /// println(ls) // output: from_array([1, 2, 3, 4, 5])
 /// ```
-pub fn from_array[T](arr : Array[T]) -> List[T] {
+pub fn List::from_array[T](arr : Array[T]) -> List[T] {
   let mut list = List::Nil
   for i = arr.length() - 1; i >= 0; i = i - 1 {
     list = List::Cons(arr[i], list)
@@ -32,7 +32,7 @@ pub fn from_array[T](arr : Array[T]) -> List[T] {
 }
 
 test "from_array" {
-  let ls = from_array([1, 2, 3, 4, 5])
+  let ls = List::[1, 2, 3, 4, 5]
   @assertion.assert_eq(ls, Cons(1, Cons(2, Cons(3, Cons(4, Cons(5, Nil))))))?
 }
 

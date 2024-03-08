@@ -179,3 +179,13 @@ test "new index" {
   @assertion.assert_eq(arr[0], 0)?
   @assertion.assert_eq(arr[1], 1)?
 }
+
+/// Create a new array with given values.
+pub fn Array::from_array[T](array: Array[T]) -> Array[T] {
+  array
+}
+
+test "from_array" {
+  let array = Array::[1, 2, 3, 4, 5]
+  @assertion.assert_eq(array, [1, 2, 3, 4, 5])?
+}
