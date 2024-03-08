@@ -710,7 +710,7 @@ test "take" {
 /// # Example
 ///
 /// ```
-/// drop(from_array([1, 2, 3, 4, 5]), 3)
+/// from_array([1, 2, 3, 4, 5]).drop(3)
 /// ```
 pub fn drop[T](self : List[T], n : Int) -> List[T] {
   if n <= 0 {
@@ -758,7 +758,7 @@ test "take_while" {
 /// # Example
 ///
 /// ```
-/// from_array([1, 2, 3, 4].drop_while(fn(x) { x < 3 })
+/// from_array([1, 2, 3, 4]).drop_while(fn(x) { x < 3 })
 /// ```
 pub fn drop_while[T](self : List[T], p : (T) -> Bool) -> List[T] {
   match self {
@@ -777,7 +777,7 @@ test "drop_while" {
 /// # Example
 ///
 /// ```
-/// let ls = from_array([1, 2, 3, 4, 5]).scan(fn(acc, x) { acc + x }, 0)
+/// let ls = from_array([1, 2, 3, 4, 5])
 /// ls.scan(fn(acc, x) { acc + x }, 0) 
 /// ```
 pub fn scan[T, E](self : List[T], f : (E, T) -> E, init : E) -> List[E] {
