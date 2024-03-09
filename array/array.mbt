@@ -183,3 +183,41 @@ test "from_array" {
   let array = Array::[1, 2, 3, 4, 5]
   @assertion.assert_eq(array, [1, 2, 3, 4, 5])?
 }
+
+/// Calculates the sum of the array.
+///
+/// Only available if the elements implements the `Default` trait and have the
+/// `op_add()` function. The result is simply adding all elements sequentially
+/// to the default value of the element type, which means the `sum()` of an
+/// empty array is the default value itself.
+///
+/// # Examples
+///
+/// ```
+/// let arr = [1, 2, 3, 4, 5]
+/// print(arr.sum())  // output: 15
+///
+/// let empty_arr: Array[Int] = []
+/// print(empty_arr.sum())  // output: 0
+/// ```
+pub fn sum[T: @math.Add + Default](self : Array[T]) -> T {
+  loop 0, T::default() {
+    i, acc =>
+      if i < self.length() {
+        continue i + 1, acc + self[i]
+      } else {
+        acc
+      }
+  }
+}
+
+test "sum" {
+  let mut arr = [1, 2, 3, 4, 5]
+  @assertion.assert_eq(arr.sum(), 15)?
+
+  arr = []
+  @assertion.assert_eq(arr.sum(), 0)?
+
+  arr = [1024]
+  @assertion.assert_eq(arr.sum(), 1024)?
+}

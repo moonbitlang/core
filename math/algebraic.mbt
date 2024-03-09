@@ -15,6 +15,11 @@
 // specific language governing permissions and limitations
 // under the License.
 
+/// Trait for types that override the `+` add operator.
+pub trait Add {
+  op_add(Self, Self) -> Self
+}
+
 /// Compares and returns the maximum of two values.
 ///
 /// Returns the second argument if the comparison determines them to be equal.
