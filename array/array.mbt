@@ -44,7 +44,7 @@ test "iter" {
       i = i + 1
     }
   )
-  if failed { return Err("iter test failed") }
+  @assertion.assert_false(failed)?
 }
 
 /// Iterates over the array with index. 
@@ -78,7 +78,7 @@ test "iteri" {
       i = i + 1
     },
   )
-  if failed { return Err("iteri test failed") }
+  @assertion.assert_false(failed)?
 }
 
 /// Applies a function to each element of the array and returns a new array with the results.

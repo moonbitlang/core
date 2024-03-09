@@ -71,7 +71,7 @@ test "iter" {
   let mut i = 0
   let mut failed = false
   ls.iter(fn(x) { i = i + 1; if x != i { failed = true }})
-  if failed { return Err("iter test failed") }
+  @assertion.assert_false(failed)?
 }
 
 /// Iterates over the list with index.
@@ -97,7 +97,7 @@ test "iteri" {
       v = v + 1
     }
   )
-  if failed { return Err("iteri test failed") }
+  @assertion.assert_false(failed)?
 }
 
 /// Maps the list.
