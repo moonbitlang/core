@@ -1116,3 +1116,29 @@ test "intercalate" {
     List::[1, 2, 3, 0, 4, 5, 6, 0, 7, 8, 9],
   )?
 }
+
+/// Calculates the sum of the list.
+///
+/// Only available if the elements implements the `Default` trait and have the
+/// `op_add()` function. The result is simply adding all elements sequentially
+/// to the default value of the element type, which means the `sum()` of an
+/// empty list is the default value itself.
+///
+/// # Examples
+///
+/// ```
+/// let ls = List::[1, 2, 3, 4, 5]
+/// print(ls.sum())  // output: 15
+///
+/// let empty_list: List[Int] = Nil
+/// print(empty_list.sum())  // output: 0
+/// ```
+pub fn sum[T : @num.Num + Default](self : List[T]) -> T {
+  self.fold(T::default(), fn { acc, x => acc + x })
+}
+
+test "sum" {
+  @assertion.assert_eq(List::Nil.sum(), 0)?
+  @assertion.assert_eq(List::Cons(1024, Nil).sum(), 1024)?
+  @assertion.assert_eq(List::[1, 2, 3, 4, 5].sum(), 15)?
+}
