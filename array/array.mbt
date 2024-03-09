@@ -84,7 +84,7 @@ test "iteri" {
   }
 }
 
-pub fn iterr[T](self : Array[T], f : (T) -> Unit) {
+pub fn iter_rev[T](self : Array[T], f : (T) -> Unit) {
   let mut i = self.length() - 1
   while i >= 0 {
     f(self[i])
@@ -92,16 +92,16 @@ pub fn iterr[T](self : Array[T], f : (T) -> Unit) {
   }
 }
 
-test "iterr" {
+test "iter rev" {
   let mut i = 6
   let mut failed = false
-  [1, 2, 3, 4, 5].iterr(
+  [1, 2, 3, 4, 5].iter_rev(
     fn(elem) { if elem != i - 1 { failed = true }; i = i - 1 },
   )
   @assertion.assert_false(failed)?
 }
 
-pub fn iterir[T](self : Array[T], f : (Int, T) -> Unit) {
+pub fn iteri_rev[T](self : Array[T], f : (Int, T) -> Unit) {
   let mut i = self.length() - 1
   while i >= 0 {
     f(i, self[i])
@@ -109,10 +109,10 @@ pub fn iterir[T](self : Array[T], f : (Int, T) -> Unit) {
   }
 }
 
-test "iterir" {
+test "iteri_rev" {
   let mut i = 6
   let mut failed = false
-  [1, 2, 3, 4, 5].iterir(
+  [1, 2, 3, 4, 5].iteri_rev(
     fn(index, elem) {
       if index != i - 2 || elem != i - 1 {
         failed = true

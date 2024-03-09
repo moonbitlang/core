@@ -54,7 +54,7 @@ test "iteri" {
   @assertion.assert_false(failed)?
 }
 
-pub fn iterr(self : String, f : (Char) -> Unit) {
+pub fn iter_rev(self : String, f : (Char) -> Unit) {
   let mut i = self.length() - 1
   while i >= 0 {
     f(self[i])
@@ -62,16 +62,16 @@ pub fn iterr(self : String, f : (Char) -> Unit) {
   }
 }
 
-test "iterr" {
+test "iter rev" {
   let mut i = 6
   let mut failed = false
-  "12345".iterr(
+  "12345".iter_rev(
     fn(elem) { if elem != (i - 1).to_string()[0] { failed = true }; i = i - 1 },
   )
   @assertion.assert_false(failed)?
 }
 
-pub fn iterir(self : String, f : (Int, Char) -> Unit) {
+pub fn iteri_rev(self : String, f : (Int, Char) -> Unit) {
   let mut i = self.length() - 1
   while i >= 0 {
     f(i, self[i])
@@ -79,10 +79,10 @@ pub fn iterir(self : String, f : (Int, Char) -> Unit) {
   }
 }
 
-test "iterir" {
+test "iteri rev" {
   let mut i = 6
   let mut failed = false
-  "12345".iterir(
+  "12345".iteri_rev(
     fn(index, elem) {
       if index != i - 2 || elem != (i - 1).to_string()[0] {
         failed = true
@@ -131,7 +131,7 @@ test "push" {
 /// Reserve a string
 pub fn reserve(self : String) -> String {
   let mut str = ""
-  self.iterr(fn(elem) { str = str.push(elem) })
+  self.iter_rev(fn(elem) { str = str.push(elem) })
   str
 }
 
@@ -155,7 +155,7 @@ test "concat" {
 /// Convert string to list.
 pub fn to_list(self : String) -> List[Char] {
   let mut list : List[Char] = Nil
-  self.iterr(fn(elem) { list = Cons(elem, list) })
+  self.iter_rev(fn(elem) { list = Cons(elem, list) })
   list
 }
 
