@@ -39,12 +39,11 @@ test "iter" {
   let mut i = 0
   let mut failed = false
   [1, 2, 3, 4, 5].iter(
-    fn(elem) { 
-      if elem != i + 1 { failed = true }
-      i = i + 1
-    }
+    fn(elem) { if elem != i + 1 { failed = true }; i = i + 1 },
   )
-  if failed { return Err("iter test failed") }
+  if failed {
+    return Err("iter test failed")
+  }
 }
 
 /// Iterates over the array with index. 
@@ -74,11 +73,15 @@ test "iteri" {
   let mut failed = false
   [1, 2, 3, 4, 5].iteri(
     fn(index, elem) {
-      if index != i || elem != i + 1 { failed = true } 
+      if index != i || elem != i + 1 {
+        failed = true
+      }
       i = i + 1
     },
   )
-  if failed { return Err("iteri test failed") }
+  if failed {
+    return Err("iteri test failed")
+  }
 }
 
 /// Applies a function to each element of the array and returns a new array with the results.
@@ -109,10 +112,7 @@ test "map" {
 pub fn map_with_index[T, U](self : Array[T], f : (T, Int) -> U) -> Array[U] {
   let res = Array::make(self.length(), f(self[0], 0))
   loop 1 {
-    i => if i < self.length() {
-      res[i] = f(self[i], i)
-      continue i + 1
-    }
+    i => if i < self.length() { res[i] = f(self[i], i); continue i + 1 }
   }
   res
 }
@@ -144,10 +144,7 @@ pub fn new[T](length : Int, value : () -> T) -> Array[T] {
   } else {
     let array = Array::make(length, value())
     loop 1 {
-      i => if i < length {
-        array[i] = value()
-        continue i + 1
-      }
+      i => if i < length { array[i] = value(); continue i + 1 }
     }
     array
   }
@@ -165,10 +162,7 @@ pub fn new_with_index[T](length : Int, value : (Int) -> T) -> Array[T] {
   } else {
     let array = Array::make(length, value(0))
     loop 1 {
-      i => if i < length {
-        array[i] = value(i)
-        continue i + 1
-      }
+      i => if i < length { array[i] = value(i); continue i + 1 }
     }
     array
   }
@@ -181,7 +175,7 @@ test "new index" {
 }
 
 /// Create a new array with given values.
-pub fn Array::from_array[T](array: Array[T]) -> Array[T] {
+pub fn Array::from_array[T](array : Array[T]) -> Array[T] {
   array
 }
 
