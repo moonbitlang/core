@@ -70,8 +70,10 @@ test "iter" {
   let ls = from_array([1, 2, 3, 4, 5])
   let mut i = 0
   let mut failed = false
-  ls.iter(fn(x) { i = i + 1; if x != i { failed = true }})
-  if failed { return Err("iter test failed") }
+  ls.iter(fn(x) { i = i + 1; if x != i { failed = true } })
+  if failed {
+    return Err("iter test failed")
+  }
 }
 
 /// Iterates over the list with index.
@@ -91,13 +93,10 @@ test "iteri" {
   let mut v = 0
   let mut failed = false
   let ls = from_array([1, 2, 3, 4, 5])
-  ls.iteri(
-    fn(i, x) {
-      if (x != v + 1 || i != v) { failed = true }
-      v = v + 1
-    }
-  )
-  if failed { return Err("iteri test failed") }
+  ls.iteri(fn(i, x) { if x != v + 1 || i != v { failed = true }; v = v + 1 })
+  if failed {
+    return Err("iteri test failed")
+  }
 }
 
 /// Maps the list.
@@ -425,7 +424,10 @@ pub fn separate_by[T](self : List[T], separator : T) -> List[T] {
 
 test "separate_by" {
   let ls = from_array(["1", "|", "2", "|", "3", "|", "4", "|", "5"])
-  @assertion.assert_eq(from_array(["1", "2", "3", "4", "5"]).separate_by("|"), ls)?
+  @assertion.assert_eq(
+    from_array(["1", "2", "3", "4", "5"]).separate_by("|"),
+    ls,
+  )?
 }
 
 /// Check if the list is empty.
@@ -590,8 +592,10 @@ test "contain" {
 /// // from_array([0, 1, 2])
 /// unfold(0, fn { i => if i == 3 { None } else { Some(i, i + 1) } }) |> debug 
 /// ```
-pub fn unfold[T, State](init : State, f : (State) -> Option[(T, State)]) ->
-     List[T] {
+pub fn unfold[T, State](
+  init : State,
+  f : (State) -> Option[(T, State)]
+) -> List[T] {
   match f(init) {
     Some(element, new_state) => Cons(element, unfold(new_state, f))
     None => Nil
