@@ -1,1 +1,7 @@
-{}
+{
+    "import": [
+        { "path": "moonbitlang/core/assertion", "alias": "assertion" },
+        { "path": "moonbitlang/core/array", "alias": "array" },
+        { "path": "moonbitlang/core/list", "alias": "list" }
+    ]
+}

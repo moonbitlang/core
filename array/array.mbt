@@ -84,6 +84,45 @@ test "iteri" {
   }
 }
 
+pub fn iterr[T](self : Array[T], f : (T) -> Unit) {
+  let mut i = self.length() - 1
+  while i >= 0 {
+    f(self[i])
+    i = i - 1
+  }
+}
+
+test "iterr" {
+  let mut i = 6
+  let mut failed = false
+  [1, 2, 3, 4, 5].iterr(
+    fn(elem) { if elem != i - 1 { failed = true }; i = i - 1 },
+  )
+  @assertion.assert_false(failed)?
+}
+
+pub fn iterir[T](self : Array[T], f : (Int, T) -> Unit) {
+  let mut i = self.length() - 1
+  while i >= 0 {
+    f(i, self[i])
+    i = i - 1
+  }
+}
+
+test "iterir" {
+  let mut i = 6
+  let mut failed = false
+  [1, 2, 3, 4, 5].iterir(
+    fn(index, elem) {
+      if index != i - 2 || elem != i - 1 {
+        failed = true
+      }
+      i = i - 1
+    },
+  )
+  @assertion.assert_false(failed)?
+}
+
 /// Applies a function to each element of the array and returns a new array with the results.
 ///
 /// # Example
