@@ -21,7 +21,7 @@ fn debug_string[T : Debug](t : T) -> String {
   buf.to_string()
 }
 
-pub fn assert_eq[T : Debug + Eq](a : T, b : T) -> Result[Unit,String] {
+pub fn assert_eq[T : Debug + Eq](a : T, b : T) -> Result[Unit, String] {
   if a == b {
     Ok(())
   } else {
@@ -31,7 +31,7 @@ pub fn assert_eq[T : Debug + Eq](a : T, b : T) -> Result[Unit,String] {
   }
 }
 
-pub fn assert_ne[T : Debug + Eq](a : T, b : T) -> Result[Unit,String] {
+pub fn assert_ne[T : Debug + Eq](a : T, b : T) -> Result[Unit, String] {
   if a != b {
     Ok(())
   } else {
@@ -41,7 +41,7 @@ pub fn assert_ne[T : Debug + Eq](a : T, b : T) -> Result[Unit,String] {
   }
 }
 
-pub fn assert_false(x : Bool) -> Result[Unit,String] {
+pub fn assert_false(x : Bool) -> Result[Unit, String] {
   if x == false {
     Ok(())
   } else {
@@ -49,7 +49,7 @@ pub fn assert_false(x : Bool) -> Result[Unit,String] {
   }
 }
 
-pub fn assert_true(x : Bool) -> Result[Unit,String] {
+pub fn assert_true(x : Bool) -> Result[Unit, String] {
   if x {
     Ok(())
   } else {
@@ -67,5 +67,5 @@ test "assert_false.false" {
 
 test "assert_eq.eq" {
   assert_eq(1, 1)?
-  assert_eq("123","123")?
+  assert_eq("123", "123")?
 }
