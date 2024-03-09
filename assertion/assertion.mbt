@@ -66,3 +66,51 @@ test "assert_eq.eq" {
   assert_eq(1, 1)?
   assert_eq("123","123")?
 }
+
+pub fn assert_is[T : Debug](a : T, b : T) -> Result[Unit, String] {
+  if a === b {
+    Ok(())
+  } else {
+    let a = debug_string(a)
+    let b = debug_string(b)
+    Err("assertion failed for `\(a) === \(b)`")
+  }
+}
+
+test "assert_is.is" {
+  let x = 1
+  let s = "x:\(x)"
+  assert_eq(assert_is(s, s), Ok(()))?
+}
+
+test "assert_is.is.not" {
+  let x = 1
+  let s1 = "x:\(x)"
+  let s2 = "x:\(x)"
+  assert_eq(assert_eq(s1, s2), Ok(()))?
+  assert_ne(assert_is(s1, s2), Ok(()))?
+}
+
+pub fn assert_is_not[T : Debug](a : T, b : T) -> Result[Unit, String] {
+  if not(a === b) {
+    Ok(())
+  } else {
+    let a = debug_string(a)
+    let b = debug_string(b)
+    Err("assertion failed for `not(\(a) === \(b))`")
+  }
+}
+
+test "assert_is_not.is" {
+  let x = 1
+  let s = "x:\(x)"
+  assert_ne(assert_is_not(s, s), Ok(()))?
+}
+
+test "assert_is_not.is.not" {
+  let x = 1
+  let s1 = "x:\(x)"
+  let s2 = "x:\(x)"
+  assert_eq(assert_eq(s1, s2), Ok(()))?
+  assert_eq(assert_is_not(s1, s2), Ok(()))?
+}
