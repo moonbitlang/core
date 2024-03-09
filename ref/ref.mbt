@@ -20,7 +20,6 @@ pub fn ref[T](x : T) -> Ref[T] {
   { val: x }
 }
 
-
 /// Maps the value of a `Ref` using a given function.
 ///
 /// # Example
@@ -28,16 +27,15 @@ pub fn ref[T](x : T) -> Ref[T] {
 /// ```
 /// debug(ref(1).map(fn(a){ a + 1 })) //output: ref(2)
 /// ```
-pub fn map[T,R](self : Ref[T], f : (T) -> R) -> Ref[R] {
+pub fn map[T, R](self : Ref[T], f : (T) -> R) -> Ref[R] {
   { val: f(self.val) }
 }
 
 test "map" {
   let x = ref(1)
-  let y = map(x, fn(a){ a + 1 })
+  let y = map(x, fn(a) { a + 1 })
   @assertion.assert_eq(y.val, 2)?
 }
-
 
 /// This function allows you to temporarily replace the value of a reference with a new value, 
 /// execute a given function, and then restore the original value of the reference.
@@ -63,7 +61,7 @@ test "map" {
 /// })
 /// debug(x) //output: ref(1)
 /// ```
-pub fn protect[T,R](self : Ref[T], a : T, f : () -> R) -> R {
+pub fn protect[T, R](self : Ref[T], a : T, f : () -> R) -> R {
   let old = self.val
   self.val = a
   let r = f()
@@ -74,9 +72,7 @@ pub fn protect[T,R](self : Ref[T], a : T, f : () -> R) -> R {
 test "protect" {
   let x = ref(1)
   @assertion.assert_eq(x.val, 1)?
-  protect(x, 2, fn(){
-     @assertion.assert_eq(x.val, 2)
-  })?
+  protect(x, 2, fn() { @assertion.assert_eq(x.val, 2) })?
   @assertion.assert_eq(x.val, 1)?
 }
 
