@@ -37,7 +37,7 @@ pub fn assert_ne[T : Debug + Eq](a : T, b : T) -> Result[Unit, String] {
   } else {
     let a = debug_string(a)
     let b = debug_string(b)
-    Err("assertion failed for `\(a) == \(b)`")
+    Err("assertion failed for `\(a) != \(b)`")
   }
 }
 
