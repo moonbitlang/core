@@ -402,7 +402,6 @@ test "top" {
   @assertion.assert_eq(s.len, 3)?
 }
 
-
 /// If stack is empty, return true, otherwise return false.
 ///
 /// # Example
@@ -425,25 +424,6 @@ test "is_empty" {
 pub fn length[T](self : Stack[T]) -> Int {
   self.len
 }
-
-// Compares whether the elements in two lists are the same
-// pub fn equal[T](self: Stack[T], other: Stack[T]) -> Bool {
-//   if (self.len == other.len) {
-//     self.elements == other.elements
-//   } else {
-//     false
-//   }
-// }
-// 
-// pub fn op_equal[T](self: Stack[T], other: Stack[T]) -> Bool {
-//   self.equal(other)
-// }
-// 
-// test "equal" {
-//   let s1 : Stack[Int] = Stack::from_array([1, 2, 3])
-//   let s2 : Stack[Int] = Stack::from_array([1, 2, 3])
-//   @assertion.assert_eq(s1, s2)?
-// }
 
 /// Iterates over the stack.
 /// 
@@ -512,4 +492,136 @@ pub fn to_array[T : Default](self : Stack[T]) -> Array[T] {
 
 test "to_array" {
   @assertion.assert_eq(Stack::[3, 2, 1].to_array(), [1, 2, 3])?
+}
+
+/// Fold the stack.
+///
+/// # Example
+/// 
+/// ```
+/// let s = Stack::from_array([1, 2, 3, 4, 5]).fold(0, fn(acc, x) { acc + x })
+/// println(s) // output: 15
+/// ```
+pub fn fold[T, U](self : Stack[T], initial : U, f : (U, T) -> U) -> U {
+  self.elements.fold(initial, f)
+}
+
+test "fold" {
+  @assertion.assert_eq(
+    Stack::[1, 2, 3, 4, 5].fold(0, fn(acc, x) { acc + x }),
+    15,
+  )?
+}
+
+/// Filter the stack.
+/// 
+/// # Example
+/// 
+/// ```
+/// println(Stack::from_array([1, 2, 3, 4, 5]).filter(fn(x){ x % 2 == 0}))
+/// // output: Cons(4, Cons(2, Nil))
+/// ```
+pub fn filter[T](self : Stack[T], f : (T) -> Bool) -> Stack[T] {
+  let elements = self.elements.filter(f)
+  { elements, len: elements.length() }
+}
+
+test "filter" {
+  let s = Stack::[1, 2, 3, 4, 5]
+  let s2 = s.filter(fn(x) { x % 2 == 0 })
+  @assertion.assert_eq(s2.elements, Cons(4, Cons(2, Nil)))?
+  @assertion.assert_eq(s2.len, 2)?
+}
+
+/// Maps the stack.
+/// 
+/// # Example
+/// 
+/// ```
+/// println(Stack::from_array([1, 2, 3]).map(fn(x){ x * 2})))
+/// // output: { elements: Cons(6, Cons(4, Cons(2, Nil))), len: 3 }
+/// ```
+pub fn map[T, U](self : Stack[T], f : (T) -> U) -> Stack[U] {
+  { elements: self.elements.map(f), len: self.len }
+}
+
+test "map" {
+  let s = Stack::[1, 2, 3]
+  @assertion.assert_eq(
+    s.map(fn(x) { x * 2 }).elements,
+    Cons(6, Cons(4, Cons(2, Nil))),
+  )?
+}
+
+/// Checks if all elements of the list satisfy the predicate f.
+/// If the list is empty, return true.
+///
+/// NOTE: Since the current standard library List lacks the forall function, 
+/// this function internally implements the forall function of List.
+///
+/// # Example
+///
+/// ```
+/// println(Stack::[2, 4, 6].forall(fn(element) -> Bool { element % 2 == 0 }))
+/// // output: true
+/// ```
+pub fn forall[T](self : Stack[T], f : (T) -> Bool) -> Bool {
+  fn list_forall(list : List[T]) -> Bool {
+    match list {
+      Nil => true
+      Cons(h, t) => if f(h) { list_forall(t) } else { false }
+    }
+  }
+
+  list_forall(self.elements)
+}
+
+test "forall" {
+  @assertion.assert_true(
+    Stack::[2, 4, 6].forall(fn(element) -> Bool { element % 2 == 0 }),
+  )?
+  @assertion.assert_false(
+    Stack::[1, 3, 5].forall(fn(element) -> Bool { element % 2 == 0 }),
+  )?
+}
+
+/// Compare two stacks.
+///
+/// NOTE: Since the current standard library List lacks the equal or op_equal function, 
+/// this function internally implements the equal function of List.
+///
+/// # Example
+///
+/// ```
+/// println(Stack::[2, 4, 6].equal(Stack::[2, 4, 6]))
+/// // output: true
+/// ```
+pub fn equal[T : Eq](self : Stack[T], other : Stack[T]) -> Bool {
+  fn list_eq(list1 : List[T], list2 : List[T]) -> Bool {
+    match (list1, list2) {
+      (Nil, Nil) => true
+      (Cons(h1, t1), Cons(h2, t2)) =>
+        if h1 == h2 {
+          list_eq(t1, t2)
+        } else {
+          false
+        }
+      _ => false
+    }
+  }
+
+  if self.len == other.len {
+    list_eq(self.elements, other.elements)
+  } else {
+    false
+  }
+}
+
+pub fn op_equal[T : Eq](self : Stack[T], other : Stack[T]) -> Bool {
+  self.equal(other)
+}
+
+test "equal" {
+  @assertion.assert_true(Stack::[2, 4, 6].equal(Stack::[2, 4, 6]))?
+  @assertion.assert_false(Stack::[2, 4, 6].equal(Stack::[2, 4, 7]))?
 }
