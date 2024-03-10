@@ -239,11 +239,11 @@ test "push_array" {
 /// ```
 /// let s: Stack[Int] = Stack::from_array([1,2,3])
 /// let s1: Stack[Int] = Stack::new()
-/// println(s.pop()) // output: Some(1)
+/// println(s.pop_option()) // output: Some(1)
 /// println(s) // output: { elements: Cons(2, Cons(1, Nil)), len: 2 }
 /// println(s1.pop()) // output: None
 /// ```
-pub fn pop[T](self : Stack[T]) -> Option[T] {
+pub fn pop_option[T](self : Stack[T]) -> Option[T] {
   match self.elements {
     Cons(hd, tl) => {
       self.elements = tl
@@ -254,15 +254,45 @@ pub fn pop[T](self : Stack[T]) -> Option[T] {
   }
 }
 
-test "pop" {
+test "pop_option" {
   let s : Stack[Int] = Stack::[1, 2, 3]
   let s1 : Stack[Int] = Stack::new()
-  @assertion.assert_eq(s.pop(), Some(3))?
+  @assertion.assert_eq(s.pop_option(), Some(3))?
   @assertion.assert_eq(s.elements, Cons(2, Cons(1, Nil)))?
   @assertion.assert_eq(s.len, 2)?
-  @assertion.assert_eq(s1.pop(), None)?
+  @assertion.assert_eq(s1.pop_option(), None)?
   @assertion.assert_eq(s1.elements, Nil)?
   @assertion.assert_eq(s1.len, 0)?
+}
+
+/// Pop an element from the top of the stack.
+/// If there are elements in the stack, return the top element of the stack, otherwise abort.
+///
+/// # Example
+///
+/// ```
+/// let s: Stack[Int] = Stack::from_array([1,2,3])
+/// let s1: Stack[Int] = Stack::new()
+/// println(s.pop()) // output: 1
+/// println(s) // output: { elements: Cons(2, Cons(1, Nil)), len: 2 }
+/// println(s1.pop()) // abort.
+/// ```
+pub fn pop[T](self : Stack[T]) -> T {
+  match self.elements {
+    Cons(hd, tl) => {
+      self.elements = tl
+      self.len = self.len - 1
+      hd
+    }
+    Nil => abort("pop of empty stack")
+  }
+}
+
+test "pop" {
+  let s : Stack[Int] = Stack::[1, 2, 3]
+  @assertion.assert_eq(s.pop(), 3)?
+  @assertion.assert_eq(s.elements, Cons(2, Cons(1, Nil)))?
+  @assertion.assert_eq(s.len, 2)?
 }
 
 /// Drop the element at the top of the stack.
@@ -292,6 +322,36 @@ test "drop" {
   @assertion.assert_eq(s.len, 2)?
 }
 
+/// Drop the element at the top of the stack.
+/// Like drop, but when the drop is successful, it returns `Ok(())`, and when it fails, it returns `Err(())`
+///
+/// # Example
+///
+/// ```
+/// let s: Stack[Int] = Stack::from_array([1,2,3])
+/// s.drop()
+/// println(s) // output: { elements: Cons(2, Cons(3, Nil)), len: 2 }
+/// ```
+pub fn drop_result[T](self : Stack[T]) -> Result[Unit, Unit] {
+  match self.elements {
+    Cons(_hd, tl) => {
+      self.elements = tl
+      self.len = self.len - 1
+      Ok(())
+    }
+    Nil => Err(())
+  }
+}
+
+test "drop_result" {
+  let s : Stack[Int] = Stack::[1, 2, 3]
+  let s1 : Stack[Int] = Stack::new()
+  @assertion.assert_eq(s1.drop_result(), Err(()))?
+  @assertion.assert_eq(s.drop_result(), Ok(()))?
+  @assertion.assert_eq(s.elements, Cons(2, Cons(1, Nil)))?
+  @assertion.assert_eq(s.len, 2)?
+}
+
 /// Only the top element of the stack is returned and will not be pop or drop.
 /// If there are elements in the stack, return `Some (the top element of the stack)`, otherwise return `None`.
 ///
@@ -299,22 +359,49 @@ test "drop" {
 ///
 /// ```
 /// let s: Stack[Int] = Stack::from_array([1,2,3])
-/// println(s.top()) // output: Some(3)
+/// println(s.top_option()) // output: Some(3)
 /// println(s) // output: { elements: Cons(3, Cons(2, Cons(1, Nil))), len: 3 }
 /// ```
-pub fn top[T](self : Stack[T]) -> Option[T] {
+pub fn top_option[T](self : Stack[T]) -> Option[T] {
   match self.elements {
     Cons(hd, _) => Some(hd)
     Nil => None
   }
 }
 
-test "top" {
+test "top_option" {
   let s : Stack[Int] = Stack::[1, 2, 3]
-  @assertion.assert_eq(s.top(), Some(3))?
+  @assertion.assert_eq(s.top_option(), Some(3))?
   @assertion.assert_eq(s.elements, Cons(3, Cons(2, Cons(1, Nil))))?
   @assertion.assert_eq(s.len, 3)?
 }
+
+/// Only the top element of the stack is returned and will not be pop or drop.
+/// If there are elements in the stack, return the top element of the stack, otherwise abort.
+///
+/// # Example
+///
+/// ```
+/// let s: Stack[Int] = Stack::from_array([1,2,3])
+/// let s1: Stack[Int] = Stack::new()
+/// println(s1.top()) // abort
+/// println(s.top()) // output: 3
+/// println(s) // output: { elements: Cons(3, Cons(2, Cons(1, Nil))), len: 3 }
+/// ```
+pub fn top[T](self : Stack[T]) -> T {
+  match self.elements {
+    Cons(hd, _) => hd
+    Nil => abort("top of the empty stack")
+  }
+}
+
+test "top" {
+  let s : Stack[Int] = Stack::[1, 2, 3]
+  @assertion.assert_eq(s.top(), 3)?
+  @assertion.assert_eq(s.elements, Cons(3, Cons(2, Cons(1, Nil))))?
+  @assertion.assert_eq(s.len, 3)?
+}
+
 
 /// If stack is empty, return true, otherwise return false.
 ///
