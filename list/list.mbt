@@ -623,17 +623,12 @@ test "unfold" {
 /// let empty_list: List[Int] = Nil
 /// print(empty_list.sum())  // output: 0
 /// ```
-pub fn sum[T: @math.Add + Default](self : List[T]) -> T {
+pub fn sum[T : @math.Add + Default](self : List[T]) -> T {
   self.fold(T::default(), fn { acc, x => acc + x })
 }
 
 test "sum" {
-  let mut ls = List::[1, 2, 3, 4, 5]
-  @assertion.assert_eq(ls.sum(), 15)?
-
-  ls = Nil
-  @assertion.assert_eq(ls.sum(), 0)?
-
-  ls = Cons(1024, Nil)
-  @assertion.assert_eq(ls.sum(), 1024)?
+  @assertion.assert_eq(List::Nil.sum(), 0)?
+  @assertion.assert_eq(List::Cons(1024, Nil).sum(), 1024)?
+  @assertion.assert_eq(List::[1, 2, 3, 4, 5].sum(), 15)?
 }

@@ -200,7 +200,7 @@ test "from_array" {
 /// let empty_arr: Array[Int] = []
 /// print(empty_arr.sum())  // output: 0
 /// ```
-pub fn sum[T: @math.Add + Default](self : Array[T]) -> T {
+pub fn sum[T : @math.Add + Default](self : Array[T]) -> T {
   loop 0, T::default() {
     i, acc =>
       if i < self.length() {
@@ -212,12 +212,7 @@ pub fn sum[T: @math.Add + Default](self : Array[T]) -> T {
 }
 
 test "sum" {
-  let mut arr = [1, 2, 3, 4, 5]
-  @assertion.assert_eq(arr.sum(), 15)?
-
-  arr = []
-  @assertion.assert_eq(arr.sum(), 0)?
-
-  arr = [1024]
-  @assertion.assert_eq(arr.sum(), 1024)?
+  @assertion.assert_eq([].sum(), 0)?
+  @assertion.assert_eq([1024].sum(), 1024)?
+  @assertion.assert_eq([1, 2, 3, 4, 5].sum(), 15)?
 }
