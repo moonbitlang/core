@@ -95,6 +95,21 @@ test "assert_true.false" {
   assert_ne(assert_true(false), Ok(()))?
 }
 
+/// Assert referential equality of two values.
+///
+/// Returns Ok if the two arguments are the same object by reference, using the
+/// `===` operator; raises an Error otherwise. Certain objects may be equal by
+/// value, but they are different objects in the memory. This function checks
+/// the latter.
+///
+/// # Examples
+///
+/// ```
+/// let a = "4" + "2"
+/// let b = "4" + "2"
+/// assert_is(a, a)?  // this is okay
+/// assert_is(a, b)?  // yields an error
+/// ```
 pub fn assert_is[T : Debug](a : T, b : T) -> Result[Unit, String] {
   if a === b {
     Ok(())
@@ -119,6 +134,21 @@ test "assert_is.is.not" {
   assert_ne(assert_is(s1, s2), Ok(()))?
 }
 
+/// Assert referential inequality of two values.
+///
+/// Returns Ok if the two arguments are NOT the same object by reference, using
+/// the `===` operator; raises an Error otherwise. Certain objects may be equal
+/// by value, but they are different objects in the memory. This function
+/// checks the latter.
+///
+/// # Examples
+///
+/// ```
+/// let a = "4" + "2"
+/// let b = "4" + "2"
+/// assert_is_not(a, b)?  // this is okay
+/// assert_is_not(a, a)?  // yields an error
+/// ```
 pub fn assert_is_not[T : Debug](a : T, b : T) -> Result[Unit, String] {
   if not(a === b) {
     Ok(())
