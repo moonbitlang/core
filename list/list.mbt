@@ -690,15 +690,15 @@ pub fn take[T](self : List[T], n : Int) -> List[T] {
   if n <= 0 {
     Nil
   } else {
-    unsafeTake(n, self)
+    unsafe_take(n, self)
   }
 }
 
-fn unsafeTake[T](n : Int, xs : List[T]) -> List[T] {
+fn unsafe_take[T](n : Int, xs : List[T]) -> List[T] {
   match (n, xs) {
     (0, _) => Nil
     (1, Cons(x, _)) => Cons(x, Nil)
-    (_, Cons(x, xs)) => Cons(x, unsafeTake(n - 1, xs))
+    (_, Cons(x, xs)) => Cons(x, unsafe_take(n - 1, xs))
     _ => abort("take: index out of bounds")
   }
 }
@@ -719,15 +719,15 @@ pub fn drop[T](self : List[T], n : Int) -> List[T] {
   if n <= 0 {
     self
   } else {
-    unsafeDrop(n, self)
+    unsafe_drop(n, self)
   }
 }
 
-fn unsafeDrop[T](n : Int, xs : List[T]) -> List[T] {
+fn unsafe_drop[T](n : Int, xs : List[T]) -> List[T] {
   match (n, xs) {
     (0, _) => xs
     (1, Cons(_, xs)) => xs
-    (_, Cons(_, xs)) => unsafeDrop(n - 1, xs)
+    (_, Cons(_, xs)) => unsafe_drop(n - 1, xs)
     _ => abort("drop: index out of bounds")
   }
 }
