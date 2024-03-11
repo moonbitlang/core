@@ -182,9 +182,11 @@ test "from_array" {
 }
 
 pub fn fold[T, U](self : Array[T], f : (T, U) -> U, init : U) -> U {
-  let mut result = init
-  self.iter(fn(elem : T) { result = f(elem, result) })
-  result
+  for i = 0, acc = init ; i < self.length() ;  {
+     continue i + 1, f(self[i], acc)
+  } else {
+     acc
+  }
 }
 
 test "fold" {
