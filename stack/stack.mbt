@@ -189,7 +189,7 @@ test "push_list" {
   @assertion.assert_eq(s.len, 3)?
 }
 
-/// Push other stack into the current stack`
+/// Push other stack into the current stack
 /// 
 /// # Example
 ///
@@ -200,7 +200,7 @@ test "push_list" {
 /// println(s1) // output: {elements: Cons(1, Cons(2, Cons(3, Nil))), len: 3}
 /// ```
 pub fn push_stack[T](self : Stack[T], stack : Stack[T]) -> Unit {
-  stack.iter(fn(i) -> Unit { self.push(i) })
+  stack.elements.iter(fn(i) -> Unit { self.push(i) })
 }
 
 test "push_stack" {
@@ -425,42 +425,6 @@ pub fn length[T](self : Stack[T]) -> Int {
   self.len
 }
 
-/// Iterates over the stack.
-/// 
-/// # Example
-/// 
-/// ```
-/// Stack::from_array([1, 2, 3, 4, 5]).iter(print) // output: 54321
-/// ```
-pub fn iter[T](self : Stack[T], f : (T) -> Unit) -> Unit {
-  self.elements.iter(f)
-}
-
-test "iter" {
-  let s : Stack[Int] = Stack::[5, 4, 3, 2, 1]
-  let mut i = 0
-  let mut failed = false
-  s.iter(fn(x) { i = i + 1; if x != i { failed = true } })
-  if failed {
-    return Err("iter test failed")
-  }
-}
-
-/// Iterates over the stack with index.
-pub fn iteri[T](self : Stack[T], f : (Int, T) -> Unit) {
-  self.elements.iteri(f)
-}
-
-test "iteri" {
-  let mut v = 0
-  let mut failed = false
-  let s = Stack::[5, 4, 3, 2, 1]
-  s.iteri(fn(i, x) { if x != v + 1 || i != v { failed = true }; v = v + 1 })
-  if failed {
-    return Err("iteri test failed")
-  }
-}
-
 /// Convert stack to list
 ///
 /// # Example
@@ -494,116 +458,6 @@ test "to_array" {
   @assertion.assert_eq(Stack::[3, 2, 1].to_array(), [1, 2, 3])?
 }
 
-/// Fold the stack.
-///
-/// # Example
-/// 
-/// ```
-/// let s = Stack::from_array([1, 2, 3, 4, 5]).fold(0, fn(acc, x) { acc + x })
-/// println(s) // output: 15
-/// ```
-pub fn fold[T, U](self : Stack[T], initial : U, f : (U, T) -> U) -> U {
-  self.elements.fold(initial, f)
-}
-
-test "fold" {
-  @assertion.assert_eq(
-    Stack::[1, 2, 3, 4, 5].fold(0, fn(acc, x) { acc + x }),
-    15,
-  )?
-}
-
-/// Filter the stack.
-/// 
-/// # Example
-/// 
-/// ```
-/// println(Stack::from_array([1, 2, 3, 4, 5]).filter(fn(x){ x % 2 == 0}))
-/// // output: Cons(4, Cons(2, Nil))
-/// ```
-pub fn filter[T](self : Stack[T], f : (T) -> Bool) -> Stack[T] {
-  let elements = self.elements.filter(f)
-  { elements, len: elements.length() }
-}
-
-test "filter" {
-  let s = Stack::[1, 2, 3, 4, 5]
-  let s2 = s.filter(fn(x) { x % 2 == 0 })
-  @assertion.assert_eq(s2.elements, Cons(4, Cons(2, Nil)))?
-  @assertion.assert_eq(s2.len, 2)?
-}
-
-/// Maps the stack.
-/// 
-/// # Example
-/// 
-/// ```
-/// println(Stack::from_array([1, 2, 3]).map(fn(x){ x * 2})))
-/// // output: { elements: Cons(6, Cons(4, Cons(2, Nil))), len: 3 }
-/// ```
-pub fn map[T, U](self : Stack[T], f : (T) -> U) -> Stack[U] {
-  { elements: self.elements.map(f), len: self.len }
-}
-
-test "map" {
-  let s = Stack::[1, 2, 3]
-  @assertion.assert_eq(
-    s.map(fn(x) { x * 2 }).elements,
-    Cons(6, Cons(4, Cons(2, Nil))),
-  )?
-}
-
-/// Checks if all elements of the stack satisfy the predicate f.
-/// If the stack is empty, return true.
-///
-/// NOTE: Since the current standard library List lacks the forall function, 
-/// this function internally implements the forall function of List.
-///
-/// # Example
-///
-/// ```
-/// println(Stack::[2, 4, 6].forall(fn(element) -> Bool { element % 2 == 0 }))
-/// // output: true
-/// ```
-pub fn forall[T](self : Stack[T], f : (T) -> Bool) -> Bool {
-  fn list_forall(list : List[T]) -> Bool {
-    match list {
-      Nil => true
-      Cons(h, t) => if f(h) { list_forall(t) } else { false }
-    }
-  }
-
-  list_forall(self.elements)
-}
-
-test "forall" {
-  @assertion.assert_true(
-    Stack::[2, 4, 6].forall(fn(element) -> Bool { element % 2 == 0 }),
-  )?
-  @assertion.assert_false(
-    Stack::[1, 3, 5].forall(fn(element) -> Bool { element % 2 == 0 }),
-  )?
-}
-
-/// Reverse stack
-///
-/// # Example
-///
-/// ```
-/// println(Stack::[2, 4, 6].reverse())
-/// // output: Cons(2, Cons(4, Cons(6, Nil)))
-/// ```
-pub fn reverse[T](self : Stack[T]) -> Stack[T] {
-  { elements: self.elements.reverse(), len: self.len }
-}
-
-test "reverse" {
-  @assertion.assert_eq(
-    Stack::[2, 4, 6].reverse().elements,
-    Cons(2, Cons(4, Cons(6, Nil))),
-  )?
-}
-
 /// Compare two stacks.
 ///
 /// NOTE: Since the current standard library List lacks the equal or op_equal function, 
@@ -616,21 +470,8 @@ test "reverse" {
 /// // output: true
 /// ```
 pub fn equal[T : Eq](self : Stack[T], other : Stack[T]) -> Bool {
-  fn list_eq(list1 : List[T], list2 : List[T]) -> Bool {
-    match (list1, list2) {
-      (Nil, Nil) => true
-      (Cons(h1, t1), Cons(h2, t2)) =>
-        if h1 == h2 {
-          list_eq(t1, t2)
-        } else {
-          false
-        }
-      _ => false
-    }
-  }
-
   if self.len == other.len {
-    list_eq(self.elements, other.elements)
+    self.elements.equal(other.elements)
   } else {
     false
   }

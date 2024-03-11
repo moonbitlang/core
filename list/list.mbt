@@ -818,3 +818,193 @@ test "lookup" {
   @assertion.assert_eq(ls.lookup(3), Some("c"))?
   @assertion.assert_eq(ls.lookup(4), None)?
 }
+
+/// Returns the first element of list that satisfies f.
+///
+/// # Example
+///
+/// ```
+/// println(List::[1, 3, 5, 8].find(fn(element) -> Bool { element % 2 == 0}))
+/// // output: 8
+/// ```
+pub fn find[T](self : List[T], f : (T) -> Bool) -> T {
+  match self {
+    Nil => abort("find: no matching element")
+    Cons(element, list) => if f(element) { element } else { list.find(f) }
+  }
+}
+
+test "find" {
+  @assertion.assert_eq(
+    List::[1, 3, 5, 8].find(fn(element) -> Bool { element % 2 == 0 }),
+    8,
+  )?
+}
+
+/// Find the first element in the list that satisfies f.
+///
+/// # Example
+///
+/// ```
+/// println(List::[1, 3, 5, 8].find(fn(element) -> Bool { element % 2 == 0}))
+/// // output: Some(8)
+/// ```
+pub fn find_option[T](self : List[T], f : (T) -> Bool) -> Option[T] {
+  match self {
+    Nil => None
+    Cons(element, list) =>
+      if f(element) {
+        Some(element)
+      } else {
+        list.find_option(f)
+      }
+  }
+}
+
+test "find_option" {
+  @assertion.assert_eq(
+    List::[1, 3, 5, 8].find_option(fn(element) -> Bool { element % 2 == 0 }),
+    Some(8),
+  )?
+  @assertion.assert_eq(
+    List::[1, 3, 5, 7].find_option(fn(element) -> Bool { element % 2 == 0 }),
+    None,
+  )?
+}
+
+/// Find the first element in the list that satisfies f and passes the index as an argument.
+///
+/// # Example
+///
+/// ```
+/// println(List::[1, 3, 5, 8].findi(fn(element, i) -> Bool { (element % 2 == 0) && (i == 3) }))
+/// // output: 8
+/// ```
+pub fn findi[T](self : List[T], f : (T, Int) -> Bool) -> T {
+  fn find(list : List[T], index : Int) -> T {
+    match list {
+      Nil => abort("findi: no matching element")
+      Cons(element, list) =>
+        if f(element, index) {
+          element
+        } else {
+          find(list, index + 1)
+        }
+    }
+  }
+
+  find(self, 0)
+}
+
+test "findi" {
+  @assertion.assert_eq(
+    List::[1, 3, 5, 8].findi(
+      fn(element, i) -> Bool { element % 2 == 0 && i == 3 },
+    ),
+    8,
+  )?
+}
+
+/// Find the first element in the list that satisfies f and passes the index as an argument.
+///
+/// # Example
+///
+/// ```
+/// println(List::[1, 3, 5, 8].findi_option(fn(element) -> Bool { (element % 2 == 0) && (i == 3) }))
+/// // output: Some(8)
+///
+/// println(List::[1, 3, 8, 5].findi_option(fn(element) -> Bool { (element % 2 == 0) && (i == 3) }))
+/// // output: None
+/// ```
+pub fn findi_option[T](self : List[T], f : (T, Int) -> Bool) -> Option[T] {
+  fn find_option(list : List[T], index : Int) -> Option[T] {
+    match list {
+      Nil => None
+      Cons(element, list) =>
+        if f(element, index) {
+          Some(element)
+        } else {
+          find_option(list, index + 1)
+        }
+    }
+  }
+
+  find_option(self, 0)
+}
+
+test "findi_option" {
+  @assertion.assert_eq(
+    List::[1, 3, 5, 8].findi_option(
+      fn(element, i) -> Bool { element % 2 == 0 && i == 3 },
+    ),
+    Some(8),
+  )?
+  @assertion.assert_eq(
+    List::[1, 3, 8, 5].findi_option(
+      fn(element, i) -> Bool { element % 2 == 0 && i == 3 },
+    ),
+    None,
+  )?
+}
+
+/// Returns true if list starts with prefix.
+///
+/// # Example
+/// 
+/// ```
+/// println(List::[1, 2, 3, 4, 5].is_prefix(List::[1, 2, 3]))
+/// // output: true
+/// ```
+pub fn is_prefix[T : Eq](self : List[T], prefix : List[T]) -> Bool {
+  match prefix {
+    Nil => true
+    Cons(h, t) =>
+      match self {
+        Nil => false
+        Cons(h1, t1) => h == h1 && t1.is_prefix(t)
+      }
+  }
+}
+
+test "is_prefix" {
+  @assertion.assert_true(List::[1, 2, 3, 4, 5].is_prefix(List::[1, 2, 3]))?
+  @assertion.assert_false(List::[1, 2, 3, 4, 5].is_prefix(List::[3, 2, 3]))?
+}
+
+/// Compares two lists for equality.
+///
+/// # Example
+///
+/// ```
+/// println(List::[1, 2, 3].equal(List::[1, 2, 3]))
+/// // output: true
+/// ```
+pub fn equal[T : Eq](self : List[T], other : List[T]) -> Bool {
+  match (self, other) {
+    (Nil, Nil) => true
+    (Cons(h, t), Cons(h1, t1)) => if h == h1 { t.equal(t1) } else { false }
+    _ => false
+  }
+}
+
+test "equal" {
+  @assertion.assert_true(List::[1, 2, 3].equal(List::[1, 2, 3]))?
+  @assertion.assert_false(List::[1, 2, 3].equal(List::[1, 3, 3]))?
+}
+
+/// Returns true if list ends with suffix.
+///
+/// # Example
+///
+/// ```
+/// println(List::[1, 2, 3, 4, 5].is_suffix(List::[3, 4, 5]))
+/// // output: true
+/// ```
+pub fn is_suffix[T : Eq](self : List[T], suffix : List[T]) -> Bool {
+  self.reverse().is_prefix(suffix.reverse())
+}
+
+test "is_suffix" {
+  @assertion.assert_true(List::[1, 2, 3, 4, 5].is_suffix(List::[3, 4, 5]))?
+  @assertion.assert_false(List::[1, 2, 3, 4, 5].is_suffix(List::[3, 4, 6]))?
+}
