@@ -25,10 +25,8 @@
 /// [1, 2, 3, 4, 5].iter(fn(x){ print("\(x) ") }) //output: 1 2 3 4 5
 /// ```
 pub fn iter[T](self : Array[T], f : (T) -> Unit) {
-  let mut i = 0
-  while i < self.length() {
-    f(self[i])
-    i = i + 1
+  loop 0 {
+    i => if i < self.length() { f(self[i]); continue i + 1 }
   }
 }
 
@@ -58,10 +56,8 @@ test "iter" {
 /// }) //output: (0,1) (1,2) (2,3) (3,4) (4,5)
 /// ```
 pub fn iteri[T](self : Array[T], f : (Int, T) -> Unit) {
-  let mut i = 0
-  while i < self.length() {
-    f(i, self[i])
-    i = i + 1
+  loop 0 {
+    i => if i < self.length() { f(i, self[i]); continue i + 1 }
   }
 }
 
@@ -82,10 +78,8 @@ test "iteri" {
 }
 
 pub fn iter_rev[T](self : Array[T], f : (T) -> Unit) {
-  let mut i = self.length() - 1
-  while i >= 0 {
-    f(self[i])
-    i = i - 1
+  loop self.length() - 1 {
+    i => if i > 0 { f(self[i]); continue i - 1 }
   }
 }
 
@@ -99,10 +93,8 @@ test "iter rev" {
 }
 
 pub fn iteri_rev[T](self : Array[T], f : (Int, T) -> Unit) {
-  let mut i = self.length() - 1
-  while i >= 0 {
-    f(i, self[i])
-    i = i - 1
+  loop self.length() - 1 {
+    i => if i > 0 { f(i, self[i]); continue i - 1 }
   }
 }
 
@@ -131,10 +123,8 @@ test "iteri_rev" {
 /// ```
 pub fn map[T, U](self : Array[T], f : (T) -> U) -> Array[U] {
   let res = Array::make(self.length(), f(self[0]))
-  let mut i = 0
-  while i < self.length() {
-    res[i] = f(self[i])
-    i = i + 1
+  loop 0 {
+    i => if i < self.length() { res[i] = f(self[i]); continue i + 1 }
   }
   res
 }
@@ -163,12 +153,10 @@ pub fn op_equal[T : Eq](self : Array[T], that : Array[T]) -> Bool {
   if self.length() != that.length() {
     return false
   }
-  let mut i = 0
-  while i < self.length() {
+  for i = 0; i < self.length(); i = i + 1 {
     if self[i] != that[i] {
       return false
     }
-    i = i + 1
   }
   true
 }

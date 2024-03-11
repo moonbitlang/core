@@ -13,10 +13,8 @@
 // limitations under the License.
 
 pub fn iter(self : String, f : (Char) -> Unit) {
-  let mut i = 0
-  while i < self.length() {
-    f(self[i])
-    i = i + 1
+  loop 0 {
+    i => if i < self.length() { f(self[i]); continue i + 1 }
   }
 }
 
@@ -30,10 +28,8 @@ test "iter" {
 }
 
 pub fn iteri(self : String, f : (Int, Char) -> Unit) {
-  let mut i = 0
-  while i < self.length() {
-    f(i, self[i])
-    i = i + 1
+  loop 0 {
+    i => if i < self.length() { f(i, self[i]); continue i + 1 }
   }
 }
 
@@ -52,10 +48,8 @@ test "iteri" {
 }
 
 pub fn iter_rev(self : String, f : (Char) -> Unit) {
-  let mut i = self.length() - 1
-  while i >= 0 {
-    f(self[i])
-    i = i - 1
+  loop self.length() - 1 {
+    i => if i >= 0 { f(self[i]); continue i - 1 }
   }
 }
 
@@ -69,10 +63,8 @@ test "iter rev" {
 }
 
 pub fn iteri_rev(self : String, f : (Int, Char) -> Unit) {
-  let mut i = self.length() - 1
-  while i >= 0 {
-    f(i, self[i])
-    i = i - 1
+  loop self.length() - 1 {
+    i => if i >= 0 { f(i, self[i]); continue i - 1 }
   }
 }
 
@@ -91,21 +83,29 @@ test "iteri rev" {
 }
 
 pub fn map(self : String, f : (Char) -> Char) -> String {
-  let mut str = ""
-  self.iter(fn(elem) { str = str.push(f(elem)) })
-  str
+  loop "", 0 {
+    str, i =>
+      if i < self.length() {
+        continue str.push(f(self[i])),
+          i + 1
+      } else {
+        str
+      }
+  }
 }
 
 test "map" {
   let str = "12345"
-  let strm = str.map(fn(elem) { '1' })
+  let strm = str.map(fn(_elem) { '1' })
   @assertion.assert_eq(strm, "11111")?
 }
 
 /// Convert string to array.
 pub fn to_array(self : String) -> Array[Char] {
   let arr = Array::make(self.length(), self[0])
-  self.iteri(fn(i, elem) { arr[i] = elem })
+  loop 1 {
+    i => if i < self.length() { arr[i] = self[i]; continue i + 1 }
+  }
   return arr
 }
 
@@ -127,9 +127,9 @@ test "push" {
 
 /// Reserve a string
 pub fn reserve(self : String) -> String {
-  let mut str = ""
-  self.iter_rev(fn(elem) { str = str.push(elem) })
-  str
+  loop "", self.length() - 1 {
+    str, i => if i >= 0 { continue str.push(self[i]), i - 1 } else { str }
+  }
 }
 
 test "reserve" {
@@ -151,9 +151,10 @@ test "concat" {
 
 /// Convert string to list.
 pub fn to_list(self : String) -> List[Char] {
-  let mut list : List[Char] = Nil
-  self.iter_rev(fn(elem) { list = Cons(elem, list) })
-  list
+  let emptyList : List[Char] = Nil
+  loop emptyList, self.length() - 1 {
+    list, i => if i >= 0 { continue Cons(self[i], list), i - 1 } else { list }
+  }
 }
 
 test "to list" {
@@ -164,9 +165,15 @@ test "to list" {
 
 /// Get string form array
 pub fn String::from_array(arr : Array[Char]) -> String {
-  let mut str = ""
-  arr.iter(fn(elem) { str = str.push(elem) })
-  str
+  loop "", 0 {
+    str, i =>
+      if i < arr.length() {
+        continue str.push(arr[i]),
+          i + 1
+      } else {
+        str
+      }
+  }
 }
 
 test "from_array" {
@@ -176,9 +183,10 @@ test "from_array" {
 
 /// Get string from list
 pub fn String::from_list(list : List[Char]) -> String {
-  let mut str = ""
-  list.iter(fn(elem) { str = str.push(elem) })
-  str
+  loop list, "" {
+    Nil, str => str
+    Cons(x, rest), str => continue rest, str.push(x)
+  }
 }
 
 test "from_list" {
