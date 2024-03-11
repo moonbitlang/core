@@ -169,7 +169,7 @@ test "push" {
   @assertion.assert_eq(s.len, 1)?
 }
 
-/// Push a list into the stack`
+/// Push a list into the stack
 /// 
 /// # Example
 ///
@@ -446,7 +446,7 @@ test "iter" {
   }
 }
 
-/// Iterates over the list with index.
+/// Iterates over the stack with index.
 pub fn iteri[T](self : Stack[T], f : (Int, T) -> Unit) {
   self.elements.iteri(f)
 }
@@ -553,8 +553,8 @@ test "map" {
   )?
 }
 
-/// Checks if all elements of the list satisfy the predicate f.
-/// If the list is empty, return true.
+/// Checks if all elements of the stack satisfy the predicate f.
+/// If the stack is empty, return true.
 ///
 /// NOTE: Since the current standard library List lacks the forall function, 
 /// this function internally implements the forall function of List.
@@ -585,11 +585,7 @@ test "forall" {
   )?
 }
 
-/// Checks if all elements of the list satisfy the predicate f.
-/// If the list is empty, return true.
-///
-/// NOTE: Since the current standard library List lacks the forall function, 
-/// this function internally implements the forall function of List.
+/// Reverse stack
 ///
 /// # Example
 ///
