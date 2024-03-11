@@ -117,11 +117,35 @@ test "map" {
   @assertion.assert_eq(ls.map(fn(x) { x * 2 }), rs)?
 }
 
+/// Maps the list with index.
+pub fn mapi[T, U](self : List[T], f : (Int, T) -> U) -> List[U] {
+  fn go(xs : List[T], i : Int, f : (Int, T) -> U) -> List[U] {
+    match xs {
+      Nil => Nil
+      Cons(x, xs) => Cons(f(i, x), go(xs, i + 1, f))
+    }
+  }
+
+  go(self, 0, f)
+}
+
+test "mapi" {
+  let ls = from_array([1, 2, 3, 4, 5])
+  let rs = from_array([1, 3, 5, 7, 9])
+  @assertion.assert_eq(ls.mapi(fn(i, x) { i + x }), rs)?
+}
+
 /// Convert list to array.
 pub fn to_array[T : Default](self : List[T]) -> Array[T] {
   let arr = Array::make(self.length(), T::default())
   self.iteri(fn(i, x) { arr[i] = x })
   return arr
+}
+
+test "to array" {
+  let list = List::[1, 2, 3, 4, 5]
+  let array = to_array(list)
+  @assertion.assert_eq(array, [1, 2, 3, 4, 5])?
 }
 
 /// Filter the list.
@@ -148,6 +172,34 @@ test "filter" {
   let ls = from_array([1, 2, 3, 4, 5])
   let rs = from_array([2, 4])
   @assertion.assert_eq(ls.filter(fn(x) { x % 2 == 0 }), rs)?
+}
+
+/// Test if all elements of the list satisfy the predicate.
+pub fn all[T](self : List[T], f : (T) -> Bool) -> Bool {
+  match self {
+    Nil => true
+    Cons(head, tail) => f(head) && all(tail, f)
+  }
+}
+
+test "all" {
+  let ls = from_array([1, 2, 3, 4, 5])
+  @assertion.assert_true(ls.all(fn(x) { x > 0 }))?
+  @assertion.assert_false(ls.all(fn(x) { x > 1 }))?
+}
+
+/// Test if any element of the list satisfies the predicate.
+pub fn any[T](self : List[T], f : (T) -> Bool) -> Bool {
+  match self {
+    Nil => false
+    Cons(head, tail) => f(head) || any(tail, f)
+  }
+}
+
+test "any" {
+  let ls = from_array([1, 2, 3, 4, 5])
+  @assertion.assert_true(ls.any(fn(x) { x > 4 }))?
+  @assertion.assert_false(ls.any(fn(x) { x > 5 }))?
 }
 
 /// Tail of the list.
@@ -382,6 +434,29 @@ test "nth" {
   @assertion.assert_eq(ls.nth(4), 5)?
 }
 
+/// Get nth element of the list or None if the index is out of bounds
+pub fn nth_option[T](self : List[T], n : Int) -> Option[T] {
+  match self {
+    Nil => None
+    Cons(head, tail) =>
+      if n == 0 {
+        Some(head)
+      } else {
+        nth_option(tail, n - 1)
+      }
+  }
+}
+
+test "nth_option" {
+  let ls = from_array([1, 2, 3, 4, 5])
+  @assertion.assert_eq(ls.nth_option(0), Some(1))?
+  @assertion.assert_eq(ls.nth_option(1), Some(2))?
+  @assertion.assert_eq(ls.nth_option(2), Some(3))?
+  @assertion.assert_eq(ls.nth_option(3), Some(4))?
+  @assertion.assert_eq(ls.nth_option(4), Some(5))?
+  @assertion.assert_eq(ls.nth_option(5), None)?
+}
+
 /// Create a list of length n with the given value
 ///
 /// # Example
@@ -594,12 +669,156 @@ pub fn unfold[T, State](
   f : (State) -> Option[(T, State)]
 ) -> List[T] {
   match f(init) {
-    Some(element, new_state) => Cons(element, unfold(new_state, f))
+    Some((element, new_state)) => Cons(element, unfold(new_state, f))
     None => Nil
   }
 }
 
 test "unfold" {
-  let ls = unfold(0, fn { i => if i == 3 { None } else { Some(i, i + 1) } })
+  let ls = unfold(0, fn { i => if i == 3 { None } else { Some((i, i + 1)) } })
   @assertion.assert_eq(ls, Cons(0, Cons(1, Cons(2, Nil))))?
+}
+
+/// Take first n elements of the list.
+///
+/// # Example
+///
+/// ```
+/// from_array([1, 2, 3, 4, 5]).take(3)
+/// ```
+pub fn take[T](self : List[T], n : Int) -> List[T] {
+  if n <= 0 {
+    Nil
+  } else {
+    unsafe_take(n, self)
+  }
+}
+
+fn unsafe_take[T](n : Int, xs : List[T]) -> List[T] {
+  match (n, xs) {
+    (0, _) => Nil
+    (1, Cons(x, _)) => Cons(x, Nil)
+    (_, Cons(x, xs)) => Cons(x, unsafe_take(n - 1, xs))
+    _ => abort("take: index out of bounds")
+  }
+}
+
+test "take" {
+  let ls = from_array([1, 2, 3, 4, 5]).take(3)
+  @assertion.assert_eq(ls, Cons(1, Cons(2, Cons(3, Nil))))?
+}
+
+/// Drop first n elements of the list.
+///
+/// # Example
+///
+/// ```
+/// from_array([1, 2, 3, 4, 5]).drop(3)
+/// ```
+pub fn drop[T](self : List[T], n : Int) -> List[T] {
+  if n <= 0 {
+    self
+  } else {
+    unsafe_drop(n, self)
+  }
+}
+
+fn unsafe_drop[T](n : Int, xs : List[T]) -> List[T] {
+  match (n, xs) {
+    (0, _) => xs
+    (1, Cons(_, xs)) => xs
+    (_, Cons(_, xs)) => unsafe_drop(n - 1, xs)
+    _ => abort("drop: index out of bounds")
+  }
+}
+
+test "drop" {
+  let ls = from_array([1, 2, 3, 4, 5]).drop(3)
+  @assertion.assert_eq(ls, Cons(4, Cons(5, Nil)))?
+}
+
+/// Take the longest prefix of a list of elements that satisfies a given predicate.
+///
+/// # Example
+///
+/// ```
+/// from_array([1, 2, 3, 4]).take_while(fn(x) { x < 3 })
+/// ```
+pub fn take_while[T](self : List[T], p : (T) -> Bool) -> List[T] {
+  match self {
+    Nil => Nil
+    Cons(x, xs) => if p(x) { Cons(x, xs.take_while(p)) } else { Nil }
+  }
+}
+
+test "take_while" {
+  let ls = take_while(from_array([0, 1, 2, 3, 4]), fn(x) { x < 3 })
+  @assertion.assert_eq(ls, Cons(0, Cons(1, Cons(2, Nil))))?
+}
+
+/// Drop the longest prefix of a list of elements that satisfies a given predicate.
+///
+/// # Example
+///
+/// ```
+/// from_array([1, 2, 3, 4]).drop_while(fn(x) { x < 3 })
+/// ```
+pub fn drop_while[T](self : List[T], p : (T) -> Bool) -> List[T] {
+  match self {
+    Nil => Nil
+    Cons(x, xs) => if p(x) { xs.drop_while(p) } else { Cons(x, xs) }
+  }
+}
+
+test "drop_while" {
+  let ls = drop_while(from_array([0, 1, 2, 3, 4]), fn(x) { x < 3 })
+  @assertion.assert_eq(ls, Cons(3, Cons(4, Nil)))?
+}
+
+/// Fold a list and return a list of successive reduced values from the left
+///
+/// # Example
+///
+/// ```
+/// let ls = from_array([1, 2, 3, 4, 5])
+/// ls.scan(fn(acc, x) { acc + x }, 0) 
+/// ```
+pub fn scan[T, E](self : List[T], f : (E, T) -> E, init : E) -> List[E] {
+  fn go(f, q : E, ls : List[T]) -> List[E] {
+    Cons(
+      q,
+      match ls {
+        Nil => Nil
+        Cons(x, xs) => go(f, f(q, x), xs)
+      },
+    )
+  }
+
+  go(f, init, self)
+}
+
+test "scan" {
+  let ls = from_array([1, 2, 3, 4, 5]).scan(fn(acc, x) { acc + x }, 0)
+  @assertion.assert_eq(ls, from_array([0, 1, 3, 6, 10, 15]))?
+}
+
+/// Looks up a key in an association list.
+///
+/// # Example
+///
+/// ```
+/// let ls = from_array([(1, "a"), (2, "b"), (3, "c")])
+/// ls.lookup(3) // output: Some("c")
+/// ```
+pub fn lookup[T : Eq, E](self : List[(T, E)], v : T) -> Option[E] {
+  match self {
+    Nil => None
+    Cons((x, y), xs) => if x == v { Some(y) } else { lookup(xs, v) }
+  }
+}
+
+test "lookup" {
+  let ls = from_array([(1, "a"), (2, "b"), (3, "c")])
+  @assertion.assert_eq(ls.lookup(3), Some("c"))?
+  @assertion.assert_eq(ls.lookup(4), None)?
 }
