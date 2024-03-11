@@ -142,6 +142,12 @@ pub fn to_array[T : Default](self : List[T]) -> Array[T] {
   return arr
 }
 
+test "to array" {
+  let list = List::[1, 2, 3, 4, 5]
+  let array = to_array(list)
+  @assertion.assert_eq(array, [1, 2, 3, 4, 5])?
+}
+
 /// Filter the list.
 /// 
 /// # Example

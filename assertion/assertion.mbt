@@ -28,13 +28,38 @@ pub fn assert_eq[T : Debug + Eq](a : T, b : T) -> Result[Unit, String] {
   }
 }
 
+test "assert_eq.eq" {
+  match assert_eq(1, 1) {
+    Ok(_) => ()
+    Err(msg) => return Err("unexpected failure: \(msg)")
+  }
+}
+
+test "assert_eq.ne" {
+  match assert_eq(1, 2) {
+    Ok(_) => return Err("unexpected success")
+    Err(_) => ()
+  }
+}
+
 pub fn assert_ne[T : Debug + Eq](a : T, b : T) -> Result[Unit, String] {
   if a != b {
     Ok(())
   } else {
     let a = debug_string(a)
     let b = debug_string(b)
-    Err("assertion failed for `\(a) == \(b)`")
+    Err("assertion failed for `\(a) != \(b)`")
+  }
+}
+
+test "assert_ne.ne" {
+  assert_eq(assert_ne(1, 2), Ok(()))?
+}
+
+test "assert_ne.eq" {
+  match assert_ne(1, 1) {
+    Ok(_) => return Err("unexpected success")
+    Err(_) => ()
   }
 }
 
@@ -46,6 +71,14 @@ pub fn assert_false(x : Bool) -> Result[Unit, String] {
   }
 }
 
+test "assert_false.false" {
+  assert_eq(assert_false(false), Ok(()))?
+}
+
+test "assert_false.true" {
+  assert_ne(assert_false(true), Ok(()))?
+}
+
 pub fn assert_true(x : Bool) -> Result[Unit, String] {
   if x {
     Ok(())
@@ -55,14 +88,9 @@ pub fn assert_true(x : Bool) -> Result[Unit, String] {
 }
 
 test "assert_true.true" {
-  assert_true(true)?
+  assert_eq(assert_true(true), Ok(()))?
 }
 
-test "assert_false.false" {
-  assert_false(false)?
-}
-
-test "assert_eq.eq" {
-  assert_eq(1, 1)?
-  assert_eq("123", "123")?
+test "assert_true.false" {
+  assert_ne(assert_true(false), Ok(()))?
 }
