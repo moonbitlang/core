@@ -585,6 +585,29 @@ test "forall" {
   )?
 }
 
+/// Checks if all elements of the list satisfy the predicate f.
+/// If the list is empty, return true.
+///
+/// NOTE: Since the current standard library List lacks the forall function, 
+/// this function internally implements the forall function of List.
+///
+/// # Example
+///
+/// ```
+/// println(Stack::[2, 4, 6].reverse())
+/// // output: Cons(2, Cons(4, Cons(6, Nil)))
+/// ```
+pub fn reverse[T](self : Stack[T]) -> Stack[T] {
+  { elements: self.elements.reverse(), len: self.len }
+}
+
+test "reverse" {
+  @assertion.assert_eq(
+    Stack::[2, 4, 6].reverse().elements,
+    Cons(2, Cons(4, Cons(6, Nil))),
+  )?
+}
+
 /// Compare two stacks.
 ///
 /// NOTE: Since the current standard library List lacks the equal or op_equal function, 
