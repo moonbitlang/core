@@ -665,13 +665,13 @@ pub fn unfold[T, State](
   f : (State) -> Option[(T, State)]
 ) -> List[T] {
   match f(init) {
-    Some(element, new_state) => Cons(element, unfold(new_state, f))
+    Some((element, new_state)) => Cons(element, unfold(new_state, f))
     None => Nil
   }
 }
 
 test "unfold" {
-  let ls = unfold(0, fn { i => if i == 3 { None } else { Some(i, i + 1) } })
+  let ls = unfold(0, fn { i => if i == 3 { None } else { Some((i, i + 1)) } })
   @assertion.assert_eq(ls, Cons(0, Cons(1, Cons(2, Nil))))?
 }
 
