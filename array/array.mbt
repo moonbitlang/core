@@ -182,10 +182,14 @@ test "from_array" {
 }
 
 pub fn fold[T, U](self : Array[T], f : (T, U) -> U, init : U) -> U {
-  for i = 0, acc = init ; i < self.length() ;  {
-     continue i + 1, f(self[i], acc)
-  } else {
-     acc
+  loop 0, init {
+    i, acc =>
+      if i < self.length() {
+        continue i + 1,
+          f(self[i], acc)
+      } else {
+        acc
+      }
   }
 }
 
