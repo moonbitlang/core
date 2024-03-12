@@ -176,3 +176,20 @@ test "from_array" {
   let array = Array::[1, 2, 3, 4, 5]
   @assertion.assert_eq(array, [1, 2, 3, 4, 5])?
 }
+
+pub fn fold[T, U](self : Array[T], f : (T, U) -> U, init : U) -> U {
+  loop 0, init {
+    i, acc =>
+      if i < self.length() {
+        continue i + 1,
+          f(self[i], acc)
+      } else {
+        acc
+      }
+  }
+}
+
+test "fold" {
+  let sum = [1, 2, 3, 4, 5].fold(fn(elem, sum : Int) { sum + elem }, 0)
+  @assertion.assert_eq(sum, 15)?
+}
