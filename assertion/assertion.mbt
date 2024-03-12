@@ -28,7 +28,7 @@ pub fn assert_eq[T : Debug + Eq](
   } else {
     let a = debug_string(a)
     let b = debug_string(b)
-    Err("FAILD:\(loc) `\(a) == \(b)`")
+    Err("FAILED:\(loc) `\(a) == \(b)`")
   }
 }
 
