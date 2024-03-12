@@ -59,12 +59,24 @@ pub fn push[T](self : Vec[T], value : T) {
 }
 
 /// Retrieves the element at the specified index from the vector.
+/// 
+/// If you try to access an index which isn’t in the Vec, it will panic.
 pub fn op_get[T](self : Vec[T], index : Int) -> T {
+  if index >= self.len {
+    let len = self.len
+    abort("index out of bounds: the len is \(len) but the index is \(index)")
+  }
   self.buf[index]
 }
 
 /// Sets the value of the element at the specified index.
+/// 
+/// If you try to access an index which isn’t in the Vec, it will panic.
 pub fn op_set[T](self : Vec[T], index : Int, value : T) {
+  if index >= self.len {
+    let len = self.len
+    abort("index out of bounds: the len is \(len) but the index is \(index)")
+  }
   self.buf[index] = value
 }
 
