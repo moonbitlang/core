@@ -36,9 +36,7 @@ test "iter" {
   [1, 2, 3, 4, 5].iter(
     fn(elem) { if elem != i + 1 { failed = true }; i = i + 1 },
   )
-  if failed {
-    return Err("iter test failed")
-  }
+  @assertion.assert_false(failed)?
 }
 
 /// Iterates over the array with index. 
@@ -72,9 +70,7 @@ test "iteri" {
       i = i + 1
     },
   )
-  if failed {
-    return Err("iteri test failed")
-  }
+  @assertion.assert_false(failed)?
 }
 
 pub fn iter_rev[T](self : Array[T], f : (T) -> Unit) {
