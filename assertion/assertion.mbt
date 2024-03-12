@@ -18,13 +18,17 @@ fn debug_string[T : Debug](t : T) -> String {
   buf.to_string()
 }
 
-pub fn assert_eq[T : Debug + Eq](a : T, b : T) -> Result[Unit, String] {
+pub fn assert_eq[T : Debug + Eq](
+  a : T,
+  b : T,
+  ~loc : SourceLoc = _
+) -> Result[Unit, String] {
   if a == b {
     Ok(())
   } else {
     let a = debug_string(a)
     let b = debug_string(b)
-    Err("assertion failed for `\(a) == \(b)`")
+    Err("FAILED:\(loc) `\(a) == \(b)`")
   }
 }
 
@@ -42,13 +46,17 @@ test "assert_eq.ne" {
   }
 }
 
-pub fn assert_ne[T : Debug + Eq](a : T, b : T) -> Result[Unit, String] {
+pub fn assert_ne[T : Debug + Eq](
+  a : T,
+  b : T,
+  ~loc : SourceLoc = _
+) -> Result[Unit, String] {
   if a != b {
     Ok(())
   } else {
     let a = debug_string(a)
     let b = debug_string(b)
-    Err("assertion failed for `\(a) != \(b)`")
+    Err("FAILED:\(loc) `\(a) != \(b)`")
   }
 }
 
