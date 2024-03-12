@@ -151,8 +151,7 @@ test "concat" {
 
 /// Convert string to list.
 pub fn to_list(self : String) -> List[Char] {
-  let emptyList : List[Char] = Nil
-  loop emptyList, self.length() - 1 {
+  loop (Nil : List[Char]), self.length() - 1 {
     list, i => if i >= 0 { continue Cons(self[i], list), i - 1 } else { list }
   }
 }
