@@ -27,7 +27,10 @@ pub fn map[T, E, U](self : Result[T, E], f : (T) -> U) -> Result[U, E] {
 test "map" {
   let x : Result[Int, Unit] = Ok(6)
   let y = x.map(fn(v : Int) { v * 7 })
+  let z : Result[Int, Int] = Err(3)
+  let w = z.map(fn(v : Int) { v * 7 })
   @assertion.assert_eq(y, Ok(42))?
+  @assertion.assert_eq(w, Err(3))?
 }
 
 /// Maps the value of a Result if it is `Err` into another, otherwise returns the `Ok` value unchanged.
@@ -48,7 +51,10 @@ pub fn map_err[T, E, F](self : Result[T, E], f : (E) -> F) -> Result[T, F] {
 test "map_err" {
   let x : Result[Int, String] = Err("error")
   let y = x.map_err(fn(v : String) { v + "!" })
+  let z : Result[Int, Int] = Ok(6)
+  let w = z.map_err(fn(v : Int) { v + 6 })
   @assertion.assert_eq(y, Err("error!"))?
+  @assertion.assert_eq(w, Ok(6))?
 }
 
 /// Create an `Err` of type `E`.
