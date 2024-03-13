@@ -13,8 +13,8 @@
 // limitations under the License.
 
 pub fn iter(self : String, f : (Char) -> Unit) {
-  loop 0 {
-    i => if i < self.length() { f(self[i]); continue i + 1 }
+  for i = 0; i < self.length(); i = i + 1 {
+    f(self[i])
   }
 }
 
@@ -28,8 +28,8 @@ test "iter" {
 }
 
 pub fn iteri(self : String, f : (Int, Char) -> Unit) {
-  loop 0 {
-    i => if i < self.length() { f(i, self[i]); continue i + 1 }
+  for i = 0; i < self.length(); i = i + 1 {
+    f(i, self[i])
   }
 }
 
@@ -48,8 +48,8 @@ test "iteri" {
 }
 
 pub fn iter_rev(self : String, f : (Char) -> Unit) {
-  loop self.length() - 1 {
-    i => if i >= 0 { f(self[i]); continue i - 1 }
+  for i = self.length() - 1; i >= 0; i = i - 1 {
+    f(self[i])
   }
 }
 
@@ -63,8 +63,8 @@ test "iter rev" {
 }
 
 pub fn iteri_rev(self : String, f : (Int, Char) -> Unit) {
-  loop self.length() - 1 {
-    i => if i >= 0 { f(i, self[i]); continue i - 1 }
+  for i = self.length() - 1; i >= 0; i = i - 1 {
+    f(i, self[i])
   }
 }
 
@@ -83,14 +83,14 @@ test "iteri rev" {
 }
 
 pub fn map(self : String, f : (Char) -> Char) -> String {
-  loop "", 0 {
-    str, i =>
-      if i < self.length() {
-        continue str.push(f(self[i])),
-          i + 1
-      } else {
-        str
-      }
+  if self.length() == 0 {
+    return ""
+  }
+  for i = 0, str = ""; i < self.length(); {
+    continue i + 1,
+      str.push(f(self[i]))
+  } else {
+    str
   }
 }
 
@@ -102,14 +102,17 @@ test "map" {
 
 /// Convert string to array.
 pub fn to_array(self : String) -> Array[Char] {
-  let arr = Array::make(self.length(), self[0])
-  loop 1 {
-    i => if i < self.length() { arr[i] = self[i]; continue i + 1 }
+  if self.length() == 0 {
+    return Array::default()
   }
-  return arr
+  let arr = Array::make(self.length(), self[0])
+  for i = 1; i < self.length(); i = i + 1 {
+    arr[i] = self[i]
+  }
+  arr
 }
 
-test "to array" {
+test "to_array" {
   let str = "12345"
   let array = str.to_array()
   @assertion.assert_eq(array, ['1', '2', '3', '4', '5'])?
@@ -127,8 +130,11 @@ test "push" {
 
 /// Reserve a string
 pub fn reserve(self : String) -> String {
-  loop "", self.length() - 1 {
-    str, i => if i >= 0 { continue str.push(self[i]), i - 1 } else { str }
+  for i = self.length() - 1, str = ""; i >= 0; {
+    continue i - 1,
+      str.push(self[i])
+  } else {
+    str
   }
 }
 
@@ -151,12 +157,15 @@ test "concat" {
 
 /// Convert string to list.
 pub fn to_list(self : String) -> List[Char] {
-  loop (Nil : List[Char]), self.length() - 1 {
-    list, i => if i >= 0 { continue Cons(self[i], list), i - 1 } else { list }
+  for i = self.length() - 1, acc = (Nil : List[Char]); i >= 0; {
+    continue i - 1,
+      Cons(self[i], acc)
+  } else {
+    acc
   }
 }
 
-test "to list" {
+test "to_list" {
   let str = "12345"
   let list = str.to_list()
   @assertion.assert_eq(list, @list.from_array(['1', '2', '3', '4', '5']))?
@@ -164,14 +173,11 @@ test "to list" {
 
 /// Get string form array
 pub fn String::from_array(arr : Array[Char]) -> String {
-  loop "", 0 {
-    str, i =>
-      if i < arr.length() {
-        continue str.push(arr[i]),
-          i + 1
-      } else {
-        str
-      }
+  for i = 0, str = ""; i < arr.length(); {
+    continue i + 1,
+      str.push(arr[i])
+  } else {
+    str
   }
 }
 
