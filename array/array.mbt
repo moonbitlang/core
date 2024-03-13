@@ -25,10 +25,8 @@
 /// [1, 2, 3, 4, 5].iter(fn(x){ print("\(x) ") }) //output: 1 2 3 4 5
 /// ```
 pub fn iter[T](self : Array[T], f : (T) -> Unit) {
-  let mut i = 0
-  while i < self.length() {
+  for i = 0; i < self.length(); i = i + 1 {
     f(self[i])
-    i = i + 1
   }
 }
 
@@ -38,9 +36,7 @@ test "iter" {
   [1, 2, 3, 4, 5].iter(
     fn(elem) { if elem != i + 1 { failed = true }; i = i + 1 },
   )
-  if failed {
-    return Err("iter test failed")
-  }
+  @assertion.assert_false(failed)?
 }
 
 /// Iterates over the array with index. 
@@ -58,10 +54,8 @@ test "iter" {
 /// }) //output: (0,1) (1,2) (2,3) (3,4) (4,5)
 /// ```
 pub fn iteri[T](self : Array[T], f : (Int, T) -> Unit) {
-  let mut i = 0
-  while i < self.length() {
+  for i = 0; i < self.length(); i = i + 1 {
     f(i, self[i])
-    i = i + 1
   }
 }
 
@@ -76,9 +70,42 @@ test "iteri" {
       i = i + 1
     },
   )
-  if failed {
-    return Err("iteri test failed")
+  @assertion.assert_false(failed)?
+}
+
+pub fn iter_rev[T](self : Array[T], f : (T) -> Unit) {
+  for i = self.length() - 1; i >= 0; i = i - 1 {
+    f(self[i])
   }
+}
+
+test "iter rev" {
+  let mut i = 6
+  let mut failed = false
+  [1, 2, 3, 4, 5].iter_rev(
+    fn(elem) { if elem != i - 1 { failed = true }; i = i - 1 },
+  )
+  @assertion.assert_false(failed)?
+}
+
+pub fn iteri_rev[T](self : Array[T], f : (Int, T) -> Unit) {
+  for i = self.length() - 1; i >= 0; i = i - 1 {
+    f(i, self[i])
+  }
+}
+
+test "iteri_rev" {
+  let mut i = 6
+  let mut failed = false
+  [1, 2, 3, 4, 5].iteri_rev(
+    fn(index, elem) {
+      if index != i - 2 || elem != i - 1 {
+        failed = true
+      }
+      i = i - 1
+    },
+  )
+  @assertion.assert_false(failed)?
 }
 
 /// Applies a function to each element of the array and returns a new array with the results.
@@ -91,11 +118,12 @@ test "iteri" {
 /// debug(doubled) //output: [2, 4, 6, 8, 10]
 /// ```
 pub fn map[T, U](self : Array[T], f : (T) -> U) -> Array[U] {
+  if self.length() == 0 {
+    return Array::default()
+  }
   let res = Array::make(self.length(), f(self[0]))
-  let mut i = 0
-  while i < self.length() {
+  for i = 1; i < self.length(); i = i + 1 {
     res[i] = f(self[i])
-    i = i + 1
   }
   res
 }
@@ -103,13 +131,18 @@ pub fn map[T, U](self : Array[T], f : (T) -> U) -> Array[U] {
 test "map" {
   let arr = [1, 2, 3, 4, 5]
   let doubled = arr.map(fn(x) { x * 2 })
+  let empty : Array[Unit] = Array::default().map(fn(x) { x })
+  @assertion.assert_eq(empty, [])?
   @assertion.assert_eq(doubled, [2, 4, 6, 8, 10])?
 }
 
 pub fn map_with_index[T, U](self : Array[T], f : (T, Int) -> U) -> Array[U] {
+  if self.length() == 0 {
+    return Array::default()
+  }
   let res = Array::make(self.length(), f(self[0], 0))
-  loop 1 {
-    i => if i < self.length() { res[i] = f(self[i], i); continue i + 1 }
+  for i = 1; i < self.length(); i = i + 1 {
+    res[i] = f(self[i], i)
   }
   res
 }
@@ -117,6 +150,8 @@ pub fn map_with_index[T, U](self : Array[T], f : (T, Int) -> U) -> Array[U] {
 test "map with index" {
   let arr = [1, 2, 3, 4, 5]
   let doubled = arr.map_with_index(fn(x, i) { x * 2 + i })
+  let empty : Array[Int] = Array::default().map_with_index(fn(x, i) { x + i })
+  @assertion.assert_eq(empty, [])?
   @assertion.assert_eq(doubled, [2, 5, 8, 11, 14])?
 }
 
@@ -124,12 +159,10 @@ pub fn op_equal[T : Eq](self : Array[T], that : Array[T]) -> Bool {
   if self.length() != that.length() {
     return false
   }
-  let mut i = 0
-  while i < self.length() {
+  for i = 0; i < self.length(); i = i + 1 {
     if self[i] != that[i] {
       return false
     }
-    i = i + 1
   }
   true
 }
@@ -140,8 +173,8 @@ pub fn new[T](length : Int, value : () -> T) -> Array[T] {
     Array::default()
   } else {
     let array = Array::make(length, value())
-    loop 1 {
-      i => if i < length { array[i] = value(); continue i + 1 }
+    for i = 1; i < length; i = i + 1 {
+      array[i] = value()
     }
     array
   }
@@ -158,8 +191,8 @@ pub fn new_with_index[T](length : Int, value : (Int) -> T) -> Array[T] {
     Array::default()
   } else {
     let array = Array::make(length, value(0))
-    loop 1 {
-      i => if i < length { array[i] = value(i); continue i + 1 }
+    for i = 1; i < length; i = i + 1 {
+      array[i] = value(i)
     }
     array
   }
