@@ -11,3 +11,53 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
+
+pub fn Double::from_int(i : Int) -> Double {
+  i.to_double()
+}
+
+pub fn abs(self : Double) -> Double {
+  if self < 0.0 {
+    -self
+  } else {
+    self
+  }
+}
+
+/// Returns the sign of the double.
+/// - If the double is positive, returns 1.0.
+/// - If the double is negative, returns -1.0.
+/// - Otherwise, returns the double itself (0.0, -0.0 and NaN).
+pub fn signum(self : Double) -> Double {
+  if self < 0.0 {
+    -1.0
+  } else if self > 0.0 {
+    1.0
+  } else {
+    self // handles 0.0, -0.0, NaN
+  }
+}
+
+fn test_num[T : @num.Num + Debug + Default + Eq](
+  x : T,
+  y : T,
+  x_plus_y : T,
+  x_mul_y : T,
+  x_minus_y : T,
+  x_div_y : T,
+  x_signum : T
+) -> Result[Unit, String] {
+  @assertion.assert_eq(x + y, x_plus_y)?
+  @assertion.assert_eq(x * y, x_mul_y)?
+  @assertion.assert_eq(x - y, x_minus_y)?
+  @assertion.assert_eq(x / y, x_div_y)?
+  @assertion.assert_eq(x.abs(), T::default() - x)?
+  @assertion.assert_eq(x.signum(), x_signum)?
+  Ok(())
+}
+
+test "double.num" {
+  let x = -500.0
+  let y = 792.0
+  test_num(x, y, x + y, x * y, x - y, x / y, -1.0)?
+}
