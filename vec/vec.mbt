@@ -61,7 +61,7 @@ pub fn capacity[T](self : Vec[T]) -> Int {
 }
 
 /// Reallocate the vector with a new capacity.
-pub fn realloc[T](self : Vec[T]) {
+fn realloc[T](self : Vec[T]) {
   let old_cap = self.len
   let new_cap = if old_cap == 0 { 8 } else { old_cap * 2 }
   let new_buf = UninitializedArray::make(new_cap)
