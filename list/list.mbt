@@ -21,16 +21,18 @@
 /// println(ls) // output: from_array([1, 2, 3, 4, 5])
 /// ```
 pub fn List::from_array[T](arr : Array[T]) -> List[T] {
-  let mut list = List::Nil
-  for i = arr.length() - 1; i >= 0; i = i - 1 {
-    list = List::Cons(arr[i], list)
+  for i = arr.length() - 1, list = List::Nil; i >= 0; {
+    continue i - 1,
+      List::Cons(arr[i], list)
+  } else {
+    list
   }
-  return list
 }
 
 test "from_array" {
   let ls = List::[1, 2, 3, 4, 5]
   @assertion.assert_eq(ls, Cons(1, Cons(2, Cons(3, Cons(4, Cons(5, Nil))))))?
+  @assertion.assert_eq(List::[1, 2], Cons(1, Cons(2, Nil)))?
 }
 
 /// Get the length of the list.
@@ -80,8 +82,14 @@ test "iter" {
 /// // output: (0,1) (1,2) (2,3) (3,4) (4,5)
 /// ```
 pub fn iteri[T](self : List[T], f : (Int, T) -> Unit) {
-  let mut i = 0
-  self.iter(fn(x) { f(i, x); i = i + 1 })
+  loop self, 0 {
+    Nil, _ => ()
+    Cons(x, xs), i => {
+      f(i, x)
+      continue xs,
+        i + 1
+    }
+  }
 }
 
 test "iteri" {
