@@ -25,8 +25,8 @@
 /// [1, 2, 3, 4, 5].iter(fn(x){ print("\(x) ") }) //output: 1 2 3 4 5
 /// ```
 pub fn iter[T](self : Array[T], f : (T) -> Unit) {
-  loop 0 {
-    i => if i < self.length() { f(self[i]); continue i + 1 }
+  for i = 0; i < self.length(); i = i + 1 {
+    f(self[i])
   }
 }
 
@@ -54,8 +54,8 @@ test "iter" {
 /// }) //output: (0,1) (1,2) (2,3) (3,4) (4,5)
 /// ```
 pub fn iteri[T](self : Array[T], f : (Int, T) -> Unit) {
-  loop 0 {
-    i => if i < self.length() { f(i, self[i]); continue i + 1 }
+  for i = 0; i < self.length(); i = i + 1 {
+    f(i, self[i])
   }
 }
 
@@ -74,8 +74,8 @@ test "iteri" {
 }
 
 pub fn iter_rev[T](self : Array[T], f : (T) -> Unit) {
-  loop self.length() - 1 {
-    i => if i > 0 { f(self[i]); continue i - 1 }
+  for i = self.length() - 1; i >= 0; i = i - 1 {
+    f(self[i])
   }
 }
 
@@ -89,8 +89,8 @@ test "iter rev" {
 }
 
 pub fn iteri_rev[T](self : Array[T], f : (Int, T) -> Unit) {
-  loop self.length() - 1 {
-    i => if i > 0 { f(i, self[i]); continue i - 1 }
+  for i = self.length() - 1; i >= 0; i = i - 1 {
+    f(i, self[i])
   }
 }
 
@@ -118,9 +118,12 @@ test "iteri_rev" {
 /// debug(doubled) //output: [2, 4, 6, 8, 10]
 /// ```
 pub fn map[T, U](self : Array[T], f : (T) -> U) -> Array[U] {
+  if self.length() == 0 {
+    return Array::default()
+  }
   let res = Array::make(self.length(), f(self[0]))
-  loop 0 {
-    i => if i < self.length() { res[i] = f(self[i]); continue i + 1 }
+  for i = 1; i < self.length(); i = i + 1 {
+    res[i] = f(self[i])
   }
   res
 }
@@ -128,13 +131,18 @@ pub fn map[T, U](self : Array[T], f : (T) -> U) -> Array[U] {
 test "map" {
   let arr = [1, 2, 3, 4, 5]
   let doubled = arr.map(fn(x) { x * 2 })
+  let empty : Array[Unit] = Array::default().map(fn(x) { x })
+  @assertion.assert_eq(empty, [])?
   @assertion.assert_eq(doubled, [2, 4, 6, 8, 10])?
 }
 
 pub fn map_with_index[T, U](self : Array[T], f : (T, Int) -> U) -> Array[U] {
+  if self.length() == 0 {
+    return Array::default()
+  }
   let res = Array::make(self.length(), f(self[0], 0))
-  loop 1 {
-    i => if i < self.length() { res[i] = f(self[i], i); continue i + 1 }
+  for i = 1; i < self.length(); i = i + 1 {
+    res[i] = f(self[i], i)
   }
   res
 }
@@ -142,6 +150,8 @@ pub fn map_with_index[T, U](self : Array[T], f : (T, Int) -> U) -> Array[U] {
 test "map with index" {
   let arr = [1, 2, 3, 4, 5]
   let doubled = arr.map_with_index(fn(x, i) { x * 2 + i })
+  let empty : Array[Int] = Array::default().map_with_index(fn(x, i) { x + i })
+  @assertion.assert_eq(empty, [])?
   @assertion.assert_eq(doubled, [2, 5, 8, 11, 14])?
 }
 
@@ -163,8 +173,8 @@ pub fn new[T](length : Int, value : () -> T) -> Array[T] {
     Array::default()
   } else {
     let array = Array::make(length, value())
-    loop 1 {
-      i => if i < length { array[i] = value(); continue i + 1 }
+    for i = 1; i < length; i = i + 1 {
+      array[i] = value()
     }
     array
   }
@@ -181,8 +191,8 @@ pub fn new_with_index[T](length : Int, value : (Int) -> T) -> Array[T] {
     Array::default()
   } else {
     let array = Array::make(length, value(0))
-    loop 1 {
-      i => if i < length { array[i] = value(i); continue i + 1 }
+    for i = 1; i < length; i = i + 1 {
+      array[i] = value(i)
     }
     array
   }
