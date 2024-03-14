@@ -1,0 +1,6 @@
+{
+    "import": [
+        "moonbitlang/core/assertion",
+        "moonbitlang/core/list"
+    ]
+}
