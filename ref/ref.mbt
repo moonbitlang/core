@@ -101,3 +101,35 @@ test "swap" {
 pub fn update[T](self : Ref[T], f : (T) -> T) {
   self.val = f(self.val)
 }
+
+/// Increments the value of a reference by 1. The default value is 1.
+pub fn incr[T : @num.Num](
+  self : Ref[T],
+  ~value : T = @num.Num::from_int(1)
+) -> Unit {
+  self.val = self.val + value
+}
+
+/// Decrements the value of a reference by value. The default value is 1.
+pub fn decr[T : @num.Num](
+  self : Ref[T],
+  ~value : T = @num.Num::from_int(1)
+) -> Unit {
+  self.val = self.val - value
+}
+
+test "decr" {
+  let a = ref(1)
+  a.decr()
+  @assertion.assert_eq(a.val, 0)?
+  a.decr(~value=5)
+  @assertion.assert_eq(a.val, -5)?
+}
+
+test "incr" {
+  let a = ref(1)
+  a.incr()
+  @assertion.assert_eq(a.val, 2)?
+  a.incr(~value=5)
+  @assertion.assert_eq(a.val, 7)?
+}
