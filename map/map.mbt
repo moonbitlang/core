@@ -16,7 +16,7 @@
 // An efficient implementation of Map. 
 // Based on size balanced binary trees, described by:
 // Stephen Adams, "Efficient sets: a balancing act" Journal of Functional Programming 3(4):553-562, October 1993
-//  
+//
 
 /// Immuatable map, consists of key-value pairs.
 /// 
@@ -50,7 +50,7 @@ pub fn singleton[K, V](key : K, value : V) -> Map[K, V] {
 pub fn member[K : Compare + Show, V : Show](self : Map[K, V], key : K) -> Bool {
   match self {
     Empty => false
-    Tree(k, _, _, l, r) => 
+    Tree(k, _, _, l, r) =>
       match key.compare(k) {
         -1 => l.member(key)
         1 => r.member(key)
@@ -143,27 +143,26 @@ pub fn remove[K : Compare, V](self : Map[K, V], key : K) -> Map[K, V] {
 
 /// Get the value associated with a key. 
 /// O(log n). 
-pub fn lookup[K : Compare, V](self : Map[K,V], key : K) -> Option[V] {
+pub fn lookup[K : Compare, V](self : Map[K, V], key : K) -> Option[V] {
   match self {
     Empty => None
-    Tree(k, v, _, l, r) => {
+    Tree(k, v, _, l, r) =>
       match key.compare(k) {
         -1 => l.lookup(key)
         1 => r.lookup(key)
         _ => Some(v)
       }
-    }
   }
 }
 
 /// Iterate over the key-value pairs in the map.
-pub fn iter[K : Compare, V](self : Map[K,V], f : (K,V) -> Unit) {
+pub fn iter[K : Compare, V](self : Map[K, V], f : (K, V) -> Unit) {
   match self {
     Empty => ()
     Tree(k, v, _, l, r) => {
-      iter(l,f)
-      f(k,v)
-      iter(r,f)
+      iter(l, f)
+      f(k, v)
+      iter(r, f)
     }
   }
 }
@@ -171,21 +170,24 @@ pub fn iter[K : Compare, V](self : Map[K,V], f : (K,V) -> Unit) {
 /// The ratio between the sizes of the left and right subtrees.
 let ratio = 5
 
-fn balance[K : Compare, V](key : K, value : V, l : Map[K, V], r : Map[K, V]) -> Map[K, V] {
+fn balance[K : Compare, V](
+  key : K,
+  value : V,
+  l : Map[K, V],
+  r : Map[K, V]
+) -> Map[K, V] {
   //       1                   2
   //      / \                 / \
   //     x   2       --->    1   z
   //        / \             / \
   //       y   z           x   y
   fn single_l {
-    k1, v1, x, Map::Tree(k2, v2, _, y, z) =>
-      new(k2, v2, new(k1, v1, x, y), z)
+    k1, v1, x, Map::Tree(k2, v2, _, y, z) => new(k2, v2, new(k1, v1, x, y), z)
     _, _, _, _ => abort("single_l error")
   }
 
   fn single_r {
-    k2, v2, Map::Tree(k1, v1, _, x, y), z =>
-      new(k1, v1, x, new(k2, v2, y, z))
+    k2, v2, Map::Tree(k1, v1, _, x, y), z => new(k1, v1, x, new(k2, v2, y, z))
     _, _, _, _ => abort("single_r error")
   }
 
@@ -221,20 +223,20 @@ fn balance[K : Compare, V](key : K, value : V, l : Map[K, V], r : Map[K, V]) -> 
     new(key, value, l, r)
   } else if rn > ratio * ln {
     // right is too big
-    let (rl,rr) = match r {
+    let (rl, rr) = match r {
       Tree(_, _, _, rl, rr) => (rl, rr)
       Empty => abort("unreachable")
     }
     let rln = size(rl)
     let rrn = size(rr)
     if rln < rrn {
-      single_l(key, value, l ,r)
+      single_l(key, value, l, r)
     } else {
-      double_l(key, value, l ,r)
+      double_l(key, value, l, r)
     }
   } else if ln > ratio * rn {
     // left is too big
-    let (ll,lr) = match l {
+    let (ll, lr) = match l {
       Tree(_, _, _, ll, lr) => (ll, lr)
       Empty => abort("unreachable")
     }
@@ -253,7 +255,7 @@ fn balance[K : Compare, V](key : K, value : V, l : Map[K, V], r : Map[K, V]) -> 
 fn debug_tree[K : Show, V : Show](self : Map[K, V]) -> String {
   match self {
     Empty => "_"
-    Tree(k,v,_,l,r) => {
+    Tree(k, v, _, l, r) => {
       let l = debug_tree(l)
       let r = debug_tree(r)
       "(\(k),\(v),\(l),\(r))"
@@ -265,10 +267,11 @@ fn debug_tree[K : Show, V : Show](self : Map[K, V]) -> String {
 /// O(n*log n).
 pub fn Map::from_array[K : Compare, V](array : Array[(K, V)]) -> Map[K, V] {
   loop 0, Map::Empty {
-    i, mp => 
+    i, mp =>
       if i < array.length() {
         let (k, v) = array[i]
-        continue i + 1, mp.insert(k, v)
+        continue i + 1,
+          mp.insert(k, v)
       } else {
         mp
       }
@@ -276,56 +279,64 @@ pub fn Map::from_array[K : Compare, V](array : Array[(K, V)]) -> Map[K, V] {
 }
 
 test "from_array" {
-  let m = Map::from_array([(3, "three"), (8, "eight"), (1, "one"), (2, "two"), (0, "zero")])
-  @assertion.assert_eq(m.debug_tree(),"(3,three,(1,one,(0,zero,_,_),(2,two,_,_)),(8,eight,_,_))")?
+  let m = Map::[(3, "three"), (8, "eight"), (1, "one"), (2, "two"), (0, "zero")]
+  @assertion.assert_eq(
+    m.debug_tree(),
+    "(3,three,(1,one,(0,zero,_,_),(2,two,_,_)),(8,eight,_,_))",
+  )?
 }
 
 test "insert" {
-  let m = Map::from_array([(3, "three"), (8, "eight"), (1, "one")])
+  let m = Map::[(3, "three"), (8, "eight"), (1, "one")]
+  @assertion.assert_eq(m.debug_tree(), "(3,three,(1,one,_,_),(8,eight,_,_))")?
+  let m = m.insert(5, "five").insert(2, "two").insert(0, "zero").insert(
+    1, "one_updated",
+  )
   @assertion.assert_eq(
     m.debug_tree(),
-    "(3,three,(1,one,_,_),(8,eight,_,_))"
-  )?
-  let m = m.insert(5, "five").insert(2, "two").insert(0, "zero").insert(1, "one_updated")
-  @assertion.assert_eq(
-    m.debug_tree(),
-    "(3,three,(1,one_updated,(0,zero,_,_),(2,two,_,_)),(8,eight,(5,five,_,_),_))"
+    "(3,three,(1,one_updated,(0,zero,_,_),(2,two,_,_)),(8,eight,(5,five,_,_),_))",
   )?
 }
 
 test "remove" {
-  let m = Map::from_array([(3, "three"), (8, "eight"), (1, "one"), (2, "two"), (0, "zero")])
-  @assertion.assert_eq(m.debug_tree(),"(3,three,(1,one,(0,zero,_,_),(2,two,_,_)),(8,eight,_,_))")?
+  let m = Map::[(3, "three"), (8, "eight"), (1, "one"), (2, "two"), (0, "zero")]
+  @assertion.assert_eq(
+    m.debug_tree(),
+    "(3,three,(1,one,(0,zero,_,_),(2,two,_,_)),(8,eight,_,_))",
+  )?
   let m = m.remove(1).remove(3)
-  @assertion.assert_eq(m.debug_tree(),"(2,two,(0,zero,_,_),(8,eight,_,_))")?
+  @assertion.assert_eq(m.debug_tree(), "(2,two,(0,zero,_,_),(8,eight,_,_))")?
 }
 
 test "lookup" {
-  let m = Map::from_array([(3, "three"), (8, "eight"), (1, "one"), (2, "two"), (0, "zero")])
-  @assertion.assert_eq(m.lookup(8),Some("eight"))?
-  @assertion.assert_eq(m.lookup(2),Some("two"))?
-  @assertion.assert_eq(m.lookup(4),None)?
+  let m = Map::[(3, "three"), (8, "eight"), (1, "one"), (2, "two"), (0, "zero")]
+  @assertion.assert_eq(m.lookup(8), Some("eight"))?
+  @assertion.assert_eq(m.lookup(2), Some("two"))?
+  @assertion.assert_eq(m.lookup(4), None)?
 }
 
 test "member" {
-  let m = Map::from_array([(3, "three"), (8, "eight"), (1, "one"), (2, "two"), (0, "zero")])
-  @assertion.assert_eq(m.debug_tree(), "(3,three,(1,one,(0,zero,_,_),(2,two,_,_)),(8,eight,_,_))")?
-  @assertion.assert_eq(m.member(8),true)?
-  @assertion.assert_eq(m.member(2),true)?
-  @assertion.assert_eq(m.member(4),false)?
+  let m = Map::[(3, "three"), (8, "eight"), (1, "one"), (2, "two"), (0, "zero")]
+  @assertion.assert_eq(
+    m.debug_tree(),
+    "(3,three,(1,one,(0,zero,_,_),(2,two,_,_)),(8,eight,_,_))",
+  )?
+  @assertion.assert_eq(m.member(8), true)?
+  @assertion.assert_eq(m.member(2), true)?
+  @assertion.assert_eq(m.member(4), false)?
 }
 
 test "size" {
-  let m = Map::from_array([(3, "three"), (8, "eight"), (1, "one"), (2, "two"), (0, "zero")])
-  @assertion.assert_eq(m.size(),5)?
+  let m = Map::[(3, "three"), (8, "eight"), (1, "one"), (2, "two"), (0, "zero")]
+  @assertion.assert_eq(m.size(), 5)?
   let m = m.remove(1).remove(3)
-  @assertion.assert_eq(m.size(),3)?
+  @assertion.assert_eq(m.size(), 3)?
 }
 
 test "iter" {
-  let m = Map::from_array([(3, "three"), (8, "eight"), (1, "one"), (2, "two"), (0, "zero")])
+  let m = Map::[(3, "three"), (8, "eight"), (1, "one"), (2, "two"), (0, "zero")]
   let mut s = ""
-  m.iter(fn(k,v){ s = s + "(\(k),\(v))" });
+  m.iter(fn(k, v) { s = s + "(\(k),\(v))" })
   @assertion.assert_eq(s, "(0,zero)(1,one)(2,two)(3,three)(8,eight)")?
 }
 
@@ -335,35 +346,53 @@ test "singleton" {
 }
 
 test "empty" {
-  let m : Map[Int,Int] = empty()
+  let m : Map[Int, Int] = empty()
   @assertion.assert_eq(m.debug_tree(), "_")?
 }
 
 test "split_max" {
-  let m = Map::from_array([(3, "three"), (8, "eight"), (1, "one"), (2, "two"), (0, "zero")])
-  @assertion.assert_eq(m.debug_tree(), "(3,three,(1,one,(0,zero,_,_),(2,two,_,_)),(8,eight,_,_))")?
+  let m = Map::[(3, "three"), (8, "eight"), (1, "one"), (2, "two"), (0, "zero")]
+  @assertion.assert_eq(
+    m.debug_tree(),
+    "(3,three,(1,one,(0,zero,_,_),(2,two,_,_)),(8,eight,_,_))",
+  )?
   let (k, v, r) = m.split_max()
   @assertion.assert_eq(k, 8)?
   @assertion.assert_eq(v, "eight")?
-  @assertion.assert_eq(r.debug_tree(), "(2,two,(1,one,(0,zero,_,_),_),(3,three,_,_))")?
+  @assertion.assert_eq(
+    r.debug_tree(),
+    "(2,two,(1,one,(0,zero,_,_),_),(3,three,_,_))",
+  )?
 }
 
 test "split_min" {
-  let m = Map::from_array([(3, "three"), (8, "eight"), (2, "two"), (1, "one"), (0, "zero")])
-  @assertion.assert_eq(m.debug_tree(), "(3,three,(1,one,(0,zero,_,_),(2,two,_,_)),(8,eight,_,_))")?
+  let m = Map::[(3, "three"), (8, "eight"), (2, "two"), (1, "one"), (0, "zero")]
+  @assertion.assert_eq(
+    m.debug_tree(),
+    "(3,three,(1,one,(0,zero,_,_),(2,two,_,_)),(8,eight,_,_))",
+  )?
   let (k, v, r) = m.split_min()
   @assertion.assert_eq(k, 0)?
   @assertion.assert_eq(v, "zero")?
-  @assertion.assert_eq(r.debug_tree(), "(3,three,(1,one,_,(2,two,_,_)),(8,eight,_,_))")?
+  @assertion.assert_eq(
+    r.debug_tree(),
+    "(3,three,(1,one,_,(2,two,_,_)),(8,eight,_,_))",
+  )?
 }
 
 test "glue" {
-  let m = Map::from_array([(3, "three"), (8, "eight"), (1, "one"), (2, "two"), (0, "zero")])
-  @assertion.assert_eq(m.debug_tree(), "(3,three,(1,one,(0,zero,_,_),(2,two,_,_)),(8,eight,_,_))")?
-  let (l,r) = match m {
+  let m = Map::[(3, "three"), (8, "eight"), (1, "one"), (2, "two"), (0, "zero")]
+  @assertion.assert_eq(
+    m.debug_tree(),
+    "(3,three,(1,one,(0,zero,_,_),(2,two,_,_)),(8,eight,_,_))",
+  )?
+  let (l, r) = match m {
     Tree(_, _, _, l, r) => (l, r)
     _ => abort("unreachable")
   }
   let m = l.glue(r)
-  @assertion.assert_eq(m.debug_tree(), "(2,two,(1,one,(0,zero,_,_),_),(8,eight,_,_))")?
+  @assertion.assert_eq(
+    m.debug_tree(),
+    "(2,two,(1,one,(0,zero,_,_),_),(8,eight,_,_))",
+  )?
 }
