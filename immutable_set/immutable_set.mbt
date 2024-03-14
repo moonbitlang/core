@@ -56,8 +56,8 @@ pub fn to_list[T](self : ImmutableSet[T]) -> List[T] {
   fn values_aux(set : ImmutableSet[T], list : List[T]) {
     match set {
       Empty => list
-      Node(node) =>
-        values_aux(node.left, Cons(node.value, values_aux(node.right, list)))
+      Node({ left, right, value, height: _ }) =>
+        values_aux(left, Cons(value, values_aux(right, list)))
     }
   }
 
@@ -68,10 +68,10 @@ pub fn to_list[T](self : ImmutableSet[T]) -> List[T] {
 pub fn remove_min[T](self : ImmutableSet[T]) -> ImmutableSet[T] {
   match self {
     Empty => abort("remove_min: empty ImmutableSet")
-    Node(node) =>
-      match node.left {
-        Empty => node.right
-        _ => balance(node.left.remove_min(), node.value, node.right)
+    Node({ left, right, value, height: _ }) =>
+      match left {
+        Empty => right
+        _ => balance(left.remove_min(), value, right)
       }
   }
 }
@@ -80,23 +80,23 @@ pub fn remove_min[T](self : ImmutableSet[T]) -> ImmutableSet[T] {
 pub fn add[T : Compare](self : ImmutableSet[T], value : T) -> ImmutableSet[T] {
   match self {
     Empty => Node({ left: Empty, value, right: Empty, height: 1 })
-    Node(node) => {
-      let compare_result = value.compare(node.value)
+    Node({ left, right, value: node_value, height: _ }) as node => {
+      let compare_result = value.compare(node_value)
       if compare_result == 0 {
-        Node(node)
+        node
       } else if compare_result < 0 {
-        let left = node.left.add(value)
-        if physical_equal(node.left, left) {
-          Node(node)
+        let ll = left.add(value)
+        if physical_equal(left, ll) {
+          node
         } else {
-          balance(left, node.value, node.right)
+          balance(ll, node_value, right)
         }
       } else {
-        let right = node.right.add(value)
-        if physical_equal(right, node.right) {
-          Node(node)
+        let rr = right.add(value)
+        if physical_equal(right, rr) {
+          node
         } else {
-          balance(node.left, node.value, right)
+          balance(left, node_value, rr)
         }
       }
     }
@@ -229,19 +229,22 @@ pub fn union[T : Compare](
   match (self, other) {
     (Empty, other) => other
     (self, Empty) => self
-    (Node(node), Node(node1)) =>
-      if node.height >= node1.height {
-        if node1.height == 1 {
-          self.add(node1.value)
+    (
+      Node({ left: l1, value: v1, right: r1, height: h1 }),
+      Node({ left: l2, value: v2, right: r2, height: h2 }),
+    ) =>
+      if h1 >= h2 {
+        if h2 == 1 {
+          self.add(v2)
         } else {
-          let (left, _, right) = other.split(node.value)
-          join(node.left.union(left), node.value, node.right.union(right))
+          let (l2, _, r2) = other.split(v1)
+          join(l1.union(l2), v1, r1.union(r2))
         }
-      } else if node.height == 1 {
-        other.add(node.value)
+      } else if h1 == 1 {
+        other.add(v1)
       } else {
-        let (left, _, right) = self.split(node1.value)
-        join(left.union(node1.left), node1.value, right.union(node1.right))
+        let (l1, _, r1) = self.split(v2)
+        join(l1.union(l2), v2, r1.union(r2))
       }
   }
 }
@@ -302,36 +305,28 @@ fn balance[T](
   if left_height > right_height + 2 {
     match left {
       Empty => abort("balance: left is empty.")
-      Node(node) =>
-        if node.left.height() >= node.right.height() {
-          create(node.left, node.value, create(node.right, value, right))
+      Node({ left: ll, value: lv, right: lr, height: _ }) =>
+        if ll.height() >= lr.height() {
+          create(ll, lv, create(lr, value, right))
         } else {
-          match node.right {
+          match lr {
             Empty => abort("balance: right left.right is empty.")
-            Node(right_node) =>
-              create(
-                create(node.left, node.value, right_node.left),
-                right_node.value,
-                create(right_node.right, value, right),
-              )
+            Node({ left: lrl, value: lrv, right: lrr, height: _ }) =>
+              create(create(ll, lv, lrl), lrv, create(lrr, value, right))
           }
         }
     }
   } else if right_height > left_height + 2 {
     match right {
       Empty => abort("balance: right is empty")
-      Node(node) =>
-        if node.right.height() >= node.left.height() {
-          create(create(left, value, node.left), node.value, node.right)
+      Node({ left: rl, value: rv, right: rr, height: _ }) =>
+        if rr.height() >= rl.height() {
+          create(create(left, value, rl), rv, rr)
         } else {
-          match node.left {
+          match rl {
             Empty => abort("balance: right.left is empty")
-            Node(left_node) =>
-              create(
-                create(left, value, left_node.left),
-                left_node.value,
-                create(left_node.right, node.value, node.right),
-              )
+            Node({ left: rll, value: rlv, right: rlr, height: _ }) =>
+              create(create(left, value, rll), rlv, create(rlr, rv, rr))
           }
         }
     }
@@ -354,14 +349,16 @@ fn balance[T](
 fn add_min_value[T](self : ImmutableSet[T], value : T) -> ImmutableSet[T] {
   match self {
     Empty => new(value)
-    Node(node) => balance(node.left.add_min_value(value), value, node.right)
+    Node({ left, value: node_value, right, height: _ }) =>
+      balance(left.add_min_value(value), node_value, right)
   }
 }
 
 fn add_max_value[T](self : ImmutableSet[T], value : T) -> ImmutableSet[T] {
   match self {
     Empty => new(value)
-    Node(node) => balance(node.left, value, node.right.add_max_value(value))
+    Node({ left, value: node_value, right, height: _ }) =>
+      balance(left, node_value, right.add_max_value(value))
   }
 }
 
@@ -374,19 +371,14 @@ fn join[T](
   match (left, right) {
     (Empty, _) => right.add_min_value(value)
     (_, Empty) => left.add_max_value(value)
-    (Node(left_node), Node(right_node)) =>
-      if left_node.height > right_node.height + 2 {
-        balance(
-          left_node.left,
-          left_node.value,
-          join(left_node.right, value, right),
-        )
-      } else if right_node.height > left_node.height + 2 {
-        balance(
-          join(left, value, right_node.left),
-          right_node.value,
-          right_node.right,
-        )
+    (
+      Node({ left: ll, value: lv, right: lr, height: lh }),
+      Node({ left: rl, value: rv, right: rr, height: rh }),
+    ) =>
+      if lh > rh + 2 {
+        balance(ll, lv, join(lr, value, right))
+      } else if rh > lh + 2 {
+        balance(join(left, value, rl), rv, rr)
       } else {
         create(left, value, right)
       }
