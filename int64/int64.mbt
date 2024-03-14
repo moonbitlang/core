@@ -11,3 +11,49 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
+
+pub fn Int64::from_int(i : Int) -> Int64 {
+  i.to_int64()
+}
+
+pub fn abs(self : Int64) -> Int64 {
+  if self < 0L {
+    -self
+  } else {
+    self
+  }
+}
+
+pub fn signum(self : Int64) -> Int64 {
+  if self < 0L {
+    -1L
+  } else if self > 0L {
+    1L
+  } else {
+    0L
+  }
+}
+
+fn test_num[T : @num.Num + Debug + Default + Eq](
+  x : T,
+  y : T,
+  x_plus_y : T,
+  x_mul_y : T,
+  x_minus_y : T,
+  x_div_y : T,
+  x_signum : T
+) -> Result[Unit, String] {
+  @assertion.assert_eq(x + y, x_plus_y)?
+  @assertion.assert_eq(x * y, x_mul_y)?
+  @assertion.assert_eq(x - y, x_minus_y)?
+  @assertion.assert_eq(x / y, x_div_y)?
+  @assertion.assert_eq(x.abs(), T::default() - x)?
+  @assertion.assert_eq(x.signum(), x_signum)?
+  Ok(())
+}
+
+test "int64.num" {
+  let x = -500L
+  let y = 792L
+  test_num(x, y, x + y, x * y, x - y, x / y, -1L)?
+}
