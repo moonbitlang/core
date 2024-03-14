@@ -264,12 +264,15 @@ fn debug_tree[K : Show, V : Show](self : Map[K, V]) -> String {
 /// Build a map from an array of key-value pairs.
 /// O(n*log n).
 pub fn Map::from_array[K : Compare, V](array : Array[(K, V)]) -> Map[K, V] {
-  let mut r = Map::Empty
-  for i = 0; i < array.length(); i = i + 1 {
-    let (k, v) = array[i]
-    r = r.insert(k, v)
+  loop 0, Map::Empty {
+    i, mp => 
+      if i < array.length() {
+        let (k, v) = array[i]
+        continue i + 1, mp.insert(k, v)
+      } else {
+        mp
+      }
   }
-  r
 }
 
 test "from_array" {
