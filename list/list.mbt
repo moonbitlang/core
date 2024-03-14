@@ -955,6 +955,58 @@ test "findi_option" {
   )?
 }
 
+/// Removes the element at the specified index in the list.
+/// 
+/// # Example
+/// 
+/// ```
+/// println(List::[1, 2, 3, 4, 5].remove_at(2))
+/// // output: from_array([1, 2, 4, 5])
+/// ```
+pub fn remove_at[T](self : List[T], index : Int) -> List[T] {
+  match (index, self) {
+    (0, Cons(_, tail)) => tail
+    (_, Cons(head, tail)) => Cons(head, remove_at(tail, index - 1))
+    (_, Nil) => {
+      Nil
+      // abort("remove_at: index out of bounds")
+    }
+  }
+}
+
+test "remove_at" {
+  let ls = from_array([1, 2, 3, 4, 5])
+  let rs = from_array([1, 2, 4, 5])
+  @assertion.assert_eq(ls.remove_at(2), rs)?
+  @assertion.assert_eq(ls.remove_at(0), from_array([2, 3, 4, 5]))?
+  @assertion.assert_eq(List::["a", "b", "c", "d", "e"].remove_at(2), List::["a", "b", "d", "e"])?
+  @assertion.assert_eq(List::["a", "b", "c", "d", "e"].remove_at(5), List::["a", "b", "c", "d", "e"])?
+}
+
+/// Removes the first occurrence of the specified element from the list, if it is present.
+/// 
+/// # Example
+/// 
+/// ```
+/// println(List::[1, 2, 3, 4, 5].remove(3))
+/// // output: from_array([1, 2, 4, 5])
+/// ```
+pub fn remove[T : Eq](self: List[T], elem: T) -> List[T] {
+  match self {
+    Nil => {
+      Nil
+      // abort("remove: element not found")
+    }
+    Cons(head, tail) => if head == elem { tail } else { Cons(head, remove(tail, elem)) }
+  }
+}
+
+test "remove" {
+  @assertion.assert_eq(List::[1, 2, 3, 4, 5].remove(3), List::[1, 2, 4, 5])?
+  @assertion.assert_eq(List::["a", "b", "c", "d", "e"].remove("c"), List::["a", "b", "d", "e"])?
+  @assertion.assert_eq(List::["a", "b", "c", "d", "e"].remove("f"), List::["a", "b", "c", "d", "e"])?
+}
+
 /// Returns true if list starts with prefix.
 ///
 /// # Example
