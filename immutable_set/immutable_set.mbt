@@ -34,7 +34,7 @@ pub fn ImmutableSet::from_value[T : Compare](value : T) -> ImmutableSet[T] {
   Node({ left: Empty, value, right: Empty, height: 1 })
 }
 
-/// Initialize an ImmutableSet[T] from a List[T], T : Compare
+/// Initialize an ImmutableSet[T] from a List[T]
 pub fn ImmutableSet::from_list[T : Compare](list : List[T]) -> ImmutableSet[T] {
   match list {
     Nil => Empty
@@ -51,6 +51,18 @@ pub fn ImmutableSet::from_list[T : Compare](list : List[T]) -> ImmutableSet[T] {
         value4,
       )
     _ => of_sorted_list(list.sort())
+  }
+}
+
+/// Initialize an ImmutableSet[T] from a Array[T]
+pub fn ImmutableSet::from_array[T : Compare](
+  array : Array[T]
+) -> ImmutableSet[T] {
+  for i = array.length() - 1, set = ImmutableSet::Empty; i >= 0; {
+    continue i - 1,
+      set.add(array[i])
+  } else {
+    set
   }
 }
 
@@ -387,9 +399,13 @@ pub fn subset[T : Compare](
       if compare_result == 0 {
         l1.subset(l2) && r1.subset(r2)
       } else if compare_result < 0 {
-        Node::new(l1, v1, Empty, 0).subset(l2) && r1.subset(node)
+        ImmutableSet::Node({ left: l1, value: v1, right: Empty, height: 0 }).subset(
+          l2,
+        ) && r1.subset(node)
       } else {
-        Node::new(Empty, v1, r1, 0).subset(r2) && l1.subset(node)
+        ImmutableSet::Node({ left: Empty, value: v1, right: r1, height: 0 }).subset(
+          r2,
+        ) && l1.subset(node)
       }
     }
   }
@@ -643,15 +659,6 @@ fn create[T : Compare](
       },
     },
   )
-}
-
-fn Node::new[T : Compare](
-  left : ImmutableSet[T],
-  value : T,
-  right : ImmutableSet[T],
-  height : Int
-) -> ImmutableSet[T] {
-  Node({ left, value, right, height })
 }
 
 /// Same as create, but performs one step of rebalancing if necessary.
@@ -1023,6 +1030,13 @@ test "from_list" {
 test "to_list" {
   @assertion.assert_eq(
     ImmutableSet::from_list(List::[7, 2, 9, 4, 5, 6, 3, 8, 1]).to_list(),
+    List::[1, 2, 3, 4, 5, 6, 7, 8, 9],
+  )?
+}
+
+test "from_array" {
+  @assertion.assert_eq(
+    ImmutableSet::[7, 2, 9, 4, 5, 6, 3, 8, 1].to_list(),
     List::[1, 2, 3, 4, 5, 6, 7, 8, 9],
   )?
 }
