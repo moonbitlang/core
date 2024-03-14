@@ -222,6 +222,45 @@ pub fn exists[T : Compare](self : ImmutableSet[T], value : T) -> Bool {
   }
 }
 
+pub fn union[T : Compare](
+  self : ImmutableSet[T],
+  other : ImmutableSet[T]
+) -> ImmutableSet[T] {
+  match (self, other) {
+    (Empty, other) => other
+    (self, Empty) => self
+    (Node(node), Node(node1)) =>
+      if node.height >= node1.height {
+        if node1.height == 1 {
+          self.add(node1.value)
+        } else {
+          let (left, _, right) = other.split(node.value)
+          join(node.left.union(left), node.value, node.right.union(right))
+        }
+      } else if node.height == 1 {
+        other.add(node.value)
+      } else {
+        let (left, _, right) = self.split(node1.value)
+        join(left.union(node1.left), node1.value, right.union(node1.right))
+      }
+  }
+}
+
+// pub fn diff[T](
+//   self : ImmutableSet[T],
+//   other : ImmutableSet[T]
+// ) -> ImmutableSet[T] {
+// 
+// }
+// 
+// pub fn disjoint[T](self : ImmutableSet[T], other : ImmutableSet[T]) -> Bool {
+// 
+// }
+// 
+// pub fn elements[T](self : ImmutableSet[T]) -> Int {
+// 
+// }
+
 /// Get the height of set.
 fn height[T](self : ImmutableSet[T]) -> Int {
   match self {
@@ -262,13 +301,13 @@ fn balance[T](
   let right_height = right.height()
   if left_height > right_height + 2 {
     match left {
-      Empty => abort("balance: left subtree is empty.")
+      Empty => abort("balance: left is empty.")
       Node(node) =>
         if node.left.height() >= node.right.height() {
-          create(node.left, node.value, create(node.right, node.value, right))
+          create(node.left, node.value, create(node.right, value, right))
         } else {
           match node.right {
-            Empty => abort("balance: right subtree is empty.")
+            Empty => abort("balance: right left.right is empty.")
             Node(right_node) =>
               create(
                 create(node.left, node.value, right_node.left),
@@ -280,13 +319,13 @@ fn balance[T](
     }
   } else if right_height > left_height + 2 {
     match right {
-      Empty => abort("balance: right subtree is empty")
+      Empty => abort("balance: right is empty")
       Node(node) =>
-        if node.right.height() > node.left.height() {
+        if node.right.height() >= node.left.height() {
           create(create(left, value, node.left), node.value, node.right)
         } else {
           match node.left {
-            Empty => abort("balance: right subtree is empty")
+            Empty => abort("balance: right.left is empty")
             Node(left_node) =>
               create(
                 create(left, value, left_node.left),
@@ -418,7 +457,7 @@ fn of_sorted_list[T : Compare](list : List[T]) -> ImmutableSet[T] {
         let left_length = n / 2
         let (left, list) = sub(left_length, list)
         match list {
-          Nil => abort("of_sorted_list: cannot constructs the left subtree")
+          Nil => abort("of_sorted_list: cannot constructs the left")
           Cons(mid, list) => {
             let (right, list) = sub(n - left_length - 1, list)
             (create(left, mid, right), list)
@@ -430,6 +469,15 @@ fn of_sorted_list[T : Compare](list : List[T]) -> ImmutableSet[T] {
 
   let (set, _) = sub(list.length(), list)
   set
+}
+
+test "union" {
+  @assertion.assert_eq(
+    ImmutableSet::from_list(List::[3, 4, 5]).union(
+      ImmutableSet::from_list(List::[4, 5, 6]),
+    ).to_list(),
+    List::[3, 4, 5, 6],
+  )?
 }
 
 test "max" {
@@ -446,11 +494,17 @@ test "split" {
   @assertion.assert_true(present)?
   @assertion.assert_eq(left.to_list(), List::[1, 2, 3, 4])?
   @assertion.assert_eq(right.to_list(), List::[6, 7, 8, 9])?
+  let (left, present, right) = ImmutableSet::from_list(
+    List::[7, 2, 9, 4, 5, 6, 3, 8, 1],
+  ).split(0)
+  @assertion.assert_false(present)?
+  @assertion.assert_eq(left.to_list(), Nil)?
+  @assertion.assert_eq(right.to_list(), List::[1, 2, 3, 4, 5, 6, 7, 8, 9])?
 }
 
 test "exists" {
   @assertion.assert_true(
-    ImmutableSet::from_list(List::[7, 2, 9, 4, 5, 6, 3, 8, 1]).exists(5),
+    ImmutableSet::from_list(List::[7, 2, 9, 4, 6, 3, 8, 1]).add(5).exists(5),
   )?
 }
 
