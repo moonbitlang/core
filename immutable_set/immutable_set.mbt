@@ -262,8 +262,8 @@ pub fn is_empty[T : Compare](self : ImmutableSet[T]) -> Bool {
   }
 }
 
-/// Return true if value exists in ImmutableSet
-pub fn exists[T : Compare](self : ImmutableSet[T], value : T) -> Bool {
+/// Return true if value contain in ImmutableSet
+pub fn contain[T : Compare](self : ImmutableSet[T], value : T) -> Bool {
   match self {
     Empty => false
     Node(node) => {
@@ -272,7 +272,7 @@ pub fn exists[T : Compare](self : ImmutableSet[T], value : T) -> Bool {
         node.left
       } else {
         node.right
-      }).exists(value)
+      }).contain(value)
     }
   }
 }
@@ -419,6 +419,164 @@ pub fn disjoint[T : Compare](
           Found => false
         }
       }
+  }
+}
+
+/// Iterates over the ImmutableSet.
+/// 
+/// # Example
+/// 
+/// ```
+/// ImmutableSet::from_list(List::[7, 2, 9, 4, 5, 6, 3, 8, 1]).iter(print)
+/// // output: 123456789
+/// ```
+pub fn iter[T : Compare](self : ImmutableSet[T], f : (T) -> Unit) -> Unit {
+  match self {
+    Empty => ()
+    Node({ left, value, right, height: _ }) => {
+      left.iter(f)
+      f(value)
+      right.iter(f)
+    }
+  }
+}
+
+/// Fold the ImmutableSet.
+/// 
+/// # Example
+/// 
+/// ```
+/// println(ImmutableSet::from_list(List::[1, 2, 3, 4, 5]).fold(0, fn(acc, x) { acc + x }))
+/// // output: 15
+/// ```
+pub fn fold[T : Compare, U : Compare](
+  self : ImmutableSet[T],
+  initial : U,
+  f : (U, T) -> U
+) -> U {
+  match self {
+    Empty => initial
+    Node({ left, value, right, height: _ }) =>
+      right.fold(f(left.fold(initial, f), value), f)
+  }
+}
+
+/// Maps the ImmutableSet.
+/// 
+/// # Example
+/// 
+/// ```
+/// println(ImmutableSet::from_list(List::[1, 2, 3]).map(fn(x){ x * 2}).to_list())
+/// // output: Cons(2, Cons(4, Cons(6, Nil)))
+/// ```
+pub fn map[T : Compare, U : Compare](
+  self : ImmutableSet[T],
+  f : (T) -> U
+) -> ImmutableSet[U] {
+  match self {
+    Empty => Empty
+    Node({ left, value, right, height: _ }) =>
+      try_join(left.map(f), f(value), right.map(f))
+  }
+}
+
+/// Test if all values of the ImmutableSet satisfy the predicate.
+/// 
+/// # Example
+/// 
+/// ```
+/// println(ImmutableSet::from_list(List::[2, 4, 6]).forall(fn(v) { v % 2 == 0}))
+/// // output: true
+/// ```
+pub fn forall[T : Compare](self : ImmutableSet[T], f : (T) -> Bool) -> Bool {
+  match self {
+    Empty => true
+    Node({ left, value, right, height: _ }) =>
+      f(value) && left.forall(f) && right.forall(f)
+  }
+}
+
+/// Checks if at least one element of the set satisfies the predicate.
+/// 
+/// # Example
+/// 
+/// ```
+/// println(ImmutableSet::from_list(List::[1, 4, 3]).exists(fn(v) { v % 2 == 0}))
+/// // output: true
+/// ```
+pub fn exists[T : Compare](self : ImmutableSet[T], f : (T) -> Bool) -> Bool {
+  match self {
+    Empty => false
+    Node({ left, value, right, height: _ }) =>
+      f(value) || left.exists(f) || right.exists(f)
+  }
+}
+
+/// Filter the ImmutableSet.
+/// 
+/// # Example
+/// 
+/// ```
+/// println(ImmutableSet::from_list(List::[1, 2, 3, 4, 5, 6]).filter(fn(v) { v % 2 == 0}).to_list())
+/// // output: Cons(2, Cons(4, Cons(6, Nil)))
+/// ```
+pub fn filter[T : Compare](
+  self : ImmutableSet[T],
+  f : (T) -> Bool
+) -> ImmutableSet[T] {
+  match self {
+    Empty => Empty
+    Node({ left, value, right, height: _ }) as node => {
+      let l = left.filter(f)
+      let v = f(value)
+      let r = right.filter(f)
+      if v {
+        if physical_equal(l, left) && physical_equal(r, right) {
+          node
+        } else {
+          join(l, value, r)
+        }
+      } else {
+        l.concat(r)
+      }
+    }
+  }
+}
+
+/// Find value in self and return value if present, otherwise abort.
+/// 
+/// # Example
+/// 
+/// ```
+/// println(ImmutableSet::from_list(List::[1, 2, 3, 4, 5, 6]).find(6))
+/// // output: 6
+/// ```
+pub fn find[T : Compare](self : ImmutableSet[T], value : T) -> T {
+  match self {
+    Empty => abort("find: not found")
+    Node({ left, value: node_value, right, height: _ }) => {
+      let compare_result = value.compare(node_value)
+      if compare_result == 0 {
+        node_value
+      } else {
+        (if compare_result < 0 { left } else { right }).find(value)
+      }
+    }
+  }
+}
+
+/// Same as find, but returns None if value is not found.
+pub fn find_option[T : Compare](self : ImmutableSet[T], value : T) -> Option[T] {
+  match self {
+    Empty => None
+    Node({ left, value: node_value, right, height: _ }) => {
+      let compare_result = value.compare(node_value)
+      if compare_result == 0 {
+        Some(node_value)
+      } else {
+        Some((if compare_result < 0 { left } else { right }).find(value))
+      }
+    }
   }
 }
 
@@ -593,6 +751,20 @@ fn join[T : Compare](
   }
 }
 
+fn try_join[T : Compare](
+  left : ImmutableSet[T],
+  value : T,
+  right : ImmutableSet[T]
+) -> ImmutableSet[T] {
+  if (left == Empty || left.max().compare(value) < 0) && (right == Empty || value.compare(
+    right.min(),
+  ) < 0) {
+    join(left, value, right)
+  } else {
+    left.union(right.add(value))
+  }
+}
+
 /// Merge two ImmutableSet[T] into one. 
 /// All values of left must precede the values of r.
 fn merge[T : Compare](
@@ -727,6 +899,57 @@ test "union" {
   )?
 }
 
+test "map" {
+  @assertion.assert_eq(
+    ImmutableSet::from_list(List::[1, 2, 3, 4, 5]).map(fn(x) { x * 2 }).to_list(),
+    List::[2, 4, 6, 8, 10],
+  )?
+}
+
+test "forall" {
+  @assertion.assert_true(
+    ImmutableSet::from_list(List::[2, 4, 6]).forall(fn(v) { v % 2 == 0 }),
+  )?
+  @assertion.assert_false(
+    ImmutableSet::from_list(List::[1, 3, 5]).forall(fn(v) { v % 2 == 0 }),
+  )?
+}
+
+test "exists" {
+  @assertion.assert_true(
+    ImmutableSet::from_list(List::[1, 4, 3]).exists(fn(v) { v % 2 == 0 }),
+  )?
+  @assertion.assert_false(
+    ImmutableSet::from_list(List::[1, 5, 3]).exists(fn(v) { v % 2 == 0 }),
+  )?
+}
+
+test "fold" {
+  @assertion.assert_eq(
+    ImmutableSet::from_list(List::[1, 2, 3, 4, 5]).fold(
+      0,
+      fn(acc, x) { acc + x },
+    ),
+    15,
+  )?
+}
+
+test "filter" {
+  @assertion.assert_eq(
+    ImmutableSet::from_list(List::[1, 2, 3, 4, 5, 6]).filter(
+      fn(v) { v % 2 == 0 },
+    ).to_list(),
+    List::[2, 4, 6],
+  )?
+}
+
+test "find" {
+  @assertion.assert_eq(
+    6,
+    ImmutableSet::from_list(List::[1, 2, 3, 4, 5, 6]).find(6),
+  )?
+}
+
 test "max" {
   @assertion.assert_eq(
     9,
@@ -749,9 +972,9 @@ test "split" {
   @assertion.assert_eq(right.to_list(), List::[1, 2, 3, 4, 5, 6, 7, 8, 9])?
 }
 
-test "exists" {
+test "contain" {
   @assertion.assert_true(
-    ImmutableSet::from_list(List::[7, 2, 9, 4, 6, 3, 8, 1]).add(5).exists(5),
+    ImmutableSet::from_list(List::[7, 2, 9, 4, 6, 3, 8, 1]).add(5).contain(5),
   )?
 }
 
