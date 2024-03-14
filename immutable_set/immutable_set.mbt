@@ -34,62 +34,6 @@ pub fn ImmutableSet::new[T](value : T) -> ImmutableSet[T] {
   Node({ left: Empty, value, right: Empty, height: 1 })
 }
 
-// Convert a sorted list into a balanced binary search tree to facilitate subsequent search, insertion, and deletion operations.
-fn of_sorted_list[T : Compare](list : List[T]) -> ImmutableSet[T] {
-
-  // Recursively process the input list and build a balanced binary search tree based on the length n of the list.
-  fn sub(n : Int, list : List[T]) -> (ImmutableSet[T], List[T]) {
-    match (n, list) {
-      (0, list) => (Empty, list)
-      (1, Cons(value, list)) =>
-        (Node({ left: Empty, value, right: Empty, height: 1 }), list)
-      (2, Cons(value, Cons(value1, list))) =>
-        (
-          Node(
-            {
-              left: Node({ left: Empty, value, right: Empty, height: 1 }),
-              value: value1,
-              right: Empty,
-              height: 2,
-            },
-          ),
-          list,
-        )
-      (3, Cons(value, Cons(value1, Cons(value2, list)))) =>
-        (
-          Node(
-            {
-              left: Node({ left: Empty, value, right: Empty, height: 1 }),
-              value: value1,
-              right: Node(
-                { left: Empty, value: value2, right: Empty, height: 1 },
-              ),
-              height: 2,
-            },
-          ),
-          list,
-        )
-
-      // For n > 3, the function first calculates the size of the left subtree,
-      // and then recursively constructs the left subtree.
-      _ => {
-        let left_length = n / 2
-        let (left, list) = sub(left_length, list)
-        match list {
-          Nil => abort("of_sorted_list: cannot constructs the left subtree")
-          Cons(mid, list) => {
-            let (right, list) = sub(n - left_length - 1, list)
-            (create(left, mid, right), list)
-          }
-        }
-      }
-    }
-  }
-
-  let (set, _) = sub(list.length(), list)
-  set
-}
-
 /// Initialize an ImmutableSet[T] from a List[T], T : Compare
 pub fn ImmutableSet::from_list[T : Compare](list : List[T]) -> ImmutableSet[T] {
   match list {
@@ -107,48 +51,6 @@ pub fn ImmutableSet::from_list[T : Compare](list : List[T]) -> ImmutableSet[T] {
   }
 }
 
-test "from_list" {
-  @assertion.assert_eq(
-    ImmutableSet::from_list(List::[7, 2, 9, 4, 5, 6, 3, 8, 1]),
-    Node(
-      {
-        left: Node(
-          {
-            left: Node(
-              {
-                left: Node({ left: Empty, right: Empty, height: 1, value: 1 }),
-                right: Empty,
-                height: 2,
-                value: 2,
-              },
-            ),
-            right: Node({ left: Empty, right: Empty, height: 1, value: 4 }),
-            height: 3,
-            value: 3,
-          },
-        ),
-        right: Node(
-          {
-            left: Node(
-              {
-                left: Node({ left: Empty, right: Empty, height: 1, value: 6 }),
-                right: Empty,
-                height: 2,
-                value: 7,
-              },
-            ),
-            right: Node({ left: Empty, right: Empty, height: 1, value: 9 }),
-            height: 3,
-            value: 8,
-          },
-        ),
-        height: 4,
-        value: 5,
-      },
-    ),
-  )?
-}
-
 /// Convert ImmutableSet[T] to List[T], the result must be ordered.
 pub fn to_list[T](self : ImmutableSet[T]) -> List[T] {
   fn values_aux(set : ImmutableSet[T], list : List[T]) {
@@ -162,11 +64,162 @@ pub fn to_list[T](self : ImmutableSet[T]) -> List[T] {
   values_aux(self, Nil)
 }
 
-test "to_list" {
-  @assertion.assert_eq(
-    ImmutableSet::from_list(List::[7, 2, 9, 4, 5, 6, 3, 8, 1]).to_list(),
-    List::[1, 2, 3, 4, 5, 6, 7, 8, 9],
-  )?
+/// Remove the smallest value,
+pub fn remove_min[T](self : ImmutableSet[T]) -> ImmutableSet[T] {
+  match self {
+    Empty => abort("remove_min: empty ImmutableSet")
+    Node(node) =>
+      match node.left {
+        Empty => node.right
+        _ => balance(node.left.remove_min(), node.value, node.right)
+      }
+  }
+}
+
+/// Insert a value into the ImmutableSet.
+pub fn add[T : Compare](self : ImmutableSet[T], value : T) -> ImmutableSet[T] {
+  match self {
+    Empty => Node({ left: Empty, value, right: Empty, height: 1 })
+    Node(node) => {
+      let compare_result = value.compare(node.value)
+      if compare_result == 0 {
+        Node(node)
+      } else if compare_result < 0 {
+        let left = node.left.add(value)
+        if physical_equal(node.left, left) {
+          Node(node)
+        } else {
+          balance(left, node.value, node.right)
+        }
+      } else {
+        let right = node.right.add(value)
+        if physical_equal(right, node.right) {
+          Node(node)
+        } else {
+          balance(node.left, node.value, right)
+        }
+      }
+    }
+  }
+}
+
+pub fn remove[T : Compare](
+  self : ImmutableSet[T],
+  value : T
+) -> ImmutableSet[T] {
+  match self {
+    Empty => Empty
+    Node(node) => {
+      let compare_result = value.compare(node.value)
+      if compare_result == 0 {
+        node.left.merge(node.right)
+      } else if compare_result < 0 {
+        let left = node.left.remove(value)
+        if physical_equal(node.left, left) {
+          Node(node)
+        } else {
+          balance(left, node.value, node.right)
+        }
+      } else {
+        let right = node.right.remove(value)
+        if physical_equal(node.right, right) {
+          Node(node)
+        } else {
+          balance(node.left, node.value, right)
+        }
+      }
+    }
+  }
+}
+
+pub fn min[T](self : ImmutableSet[T]) -> T {
+  match self {
+    Empty => abort("min: there are no values in ImmutableSet.")
+    Node(node) =>
+      match node.left {
+        Empty => node.value
+        _ => node.left.min()
+      }
+  }
+}
+
+pub fn min_option[T](self : ImmutableSet[T]) -> Option[T] {
+  match self {
+    Empty => None
+    Node(node) =>
+      match node.left {
+        Empty => Some(node.value)
+        _ => node.left.min_option()
+      }
+  }
+}
+
+pub fn max[T](self : ImmutableSet[T]) -> T {
+  match self {
+    Empty => abort("max: there are no values in ImmutableSet.")
+    Node(node) =>
+      match node.right {
+        Empty => node.value
+        _ => node.right.max()
+      }
+  }
+}
+
+pub fn max_option[T](self : ImmutableSet[T]) -> Option[T] {
+  match self {
+    Empty => None
+    Node(node) =>
+      match node.right {
+        Empty => Some(node.value)
+        _ => node.right.max_option()
+      }
+  }
+}
+
+/// Returns a triple (left, present, right), left < divide < right
+/// present is false if self contains no element equal to divide, 
+/// or true if self contains an element equal to divide.
+pub fn split[T : Compare](
+  self : ImmutableSet[T],
+  divide : T
+) -> (ImmutableSet[T], Bool, ImmutableSet[T]) {
+  match self {
+    Empty => (Empty, false, Empty)
+    Node(node) => {
+      let compare_result = divide.compare(node.value)
+      if compare_result == 0 {
+        (node.left, true, node.right)
+      } else if compare_result < 0 {
+        let (left_left, present, right_left) = node.left.split(divide)
+        (left_left, present, join(right_left, node.value, node.right))
+      } else {
+        let (left_right, present, right_right) = node.right.split(divide)
+        (join(node.left, node.value, left_right), present, right_right)
+      }
+    }
+  }
+}
+
+pub fn is_empty[T](self : ImmutableSet[T]) -> Bool {
+  match self {
+    Empty => true
+    _ => false
+  }
+}
+
+/// Whether value exists in ImmutableSet
+pub fn exists[T : Compare](self : ImmutableSet[T], value : T) -> Bool {
+  match self {
+    Empty => false
+    Node(node) => {
+      let compare_result = value.compare(node.value)
+      compare_result == 0 || (if compare_result < 0 {
+        node.left
+      } else {
+        node.right
+      }).exists(value)
+    }
+  }
 }
 
 /// Get the height of set.
@@ -175,13 +228,6 @@ fn height[T](self : ImmutableSet[T]) -> Int {
     Empty => 0
     Node(node) => node.height
   }
-}
-
-test "height" {
-  @assertion.assert_eq(
-    ImmutableSet::from_list(List::[7, 2, 9, 4, 5, 6, 3, 8, 1]).height(),
-    4,
-  )?
 }
 
 /// Creates a new node.
@@ -330,16 +376,131 @@ fn concat[T](
   }
 }
 
-/// Remove the smallest value,
-pub fn remove_min[T](self : ImmutableSet[T]) -> ImmutableSet[T] {
-  match self {
-    Empty => abort("remove_min: empty ImmutableSet")
-    Node(node) =>
-      match node.left {
-        Empty => node.right
-        _ => balance(node.left.remove_min(), node.value, node.right)
+// Convert a sorted list into a balanced binary search tree to facilitate subsequent search, insertion, and deletion operations.
+fn of_sorted_list[T : Compare](list : List[T]) -> ImmutableSet[T] {
+
+  // Recursively process the input list and build a balanced binary search tree based on the length n of the list.
+  fn sub(n : Int, list : List[T]) -> (ImmutableSet[T], List[T]) {
+    match (n, list) {
+      (0, list) => (Empty, list)
+      (1, Cons(value, list)) =>
+        (Node({ left: Empty, value, right: Empty, height: 1 }), list)
+      (2, Cons(value, Cons(value1, list))) =>
+        (
+          Node(
+            {
+              left: Node({ left: Empty, value, right: Empty, height: 1 }),
+              value: value1,
+              right: Empty,
+              height: 2,
+            },
+          ),
+          list,
+        )
+      (3, Cons(value, Cons(value1, Cons(value2, list)))) =>
+        (
+          Node(
+            {
+              left: Node({ left: Empty, value, right: Empty, height: 1 }),
+              value: value1,
+              right: Node(
+                { left: Empty, value: value2, right: Empty, height: 1 },
+              ),
+              height: 2,
+            },
+          ),
+          list,
+        )
+
+      // For n > 3, the function first calculates the size of the left subtree,
+      // and then recursively constructs the left subtree.
+      _ => {
+        let left_length = n / 2
+        let (left, list) = sub(left_length, list)
+        match list {
+          Nil => abort("of_sorted_list: cannot constructs the left subtree")
+          Cons(mid, list) => {
+            let (right, list) = sub(n - left_length - 1, list)
+            (create(left, mid, right), list)
+          }
+        }
       }
+    }
   }
+
+  let (set, _) = sub(list.length(), list)
+  set
+}
+
+test "max" {
+  @assertion.assert_eq(
+    9,
+    ImmutableSet::from_list(List::[7, 2, 9, 4, 5, 6, 3, 8, 1]).max(),
+  )?
+}
+
+test "split" {
+  let (left, present, right) = ImmutableSet::from_list(
+    List::[7, 2, 9, 4, 5, 6, 3, 8, 1],
+  ).split(5)
+  @assertion.assert_true(present)?
+  @assertion.assert_eq(left.to_list(), List::[1, 2, 3, 4])?
+  @assertion.assert_eq(right.to_list(), List::[6, 7, 8, 9])?
+}
+
+test "exists" {
+  @assertion.assert_true(
+    ImmutableSet::from_list(List::[7, 2, 9, 4, 5, 6, 3, 8, 1]).exists(5),
+  )?
+}
+
+test "from_list" {
+  @assertion.assert_eq(
+    ImmutableSet::from_list(List::[7, 2, 9, 4, 5, 6, 3, 8, 1]),
+    Node(
+      {
+        left: Node(
+          {
+            left: Node(
+              {
+                left: Node({ left: Empty, right: Empty, height: 1, value: 1 }),
+                right: Empty,
+                height: 2,
+                value: 2,
+              },
+            ),
+            right: Node({ left: Empty, right: Empty, height: 1, value: 4 }),
+            height: 3,
+            value: 3,
+          },
+        ),
+        right: Node(
+          {
+            left: Node(
+              {
+                left: Node({ left: Empty, right: Empty, height: 1, value: 6 }),
+                right: Empty,
+                height: 2,
+                value: 7,
+              },
+            ),
+            right: Node({ left: Empty, right: Empty, height: 1, value: 9 }),
+            height: 3,
+            value: 8,
+          },
+        ),
+        height: 4,
+        value: 5,
+      },
+    ),
+  )?
+}
+
+test "to_list" {
+  @assertion.assert_eq(
+    ImmutableSet::from_list(List::[7, 2, 9, 4, 5, 6, 3, 8, 1]).to_list(),
+    List::[1, 2, 3, 4, 5, 6, 7, 8, 9],
+  )?
 }
 
 test "remove_min" {
@@ -357,67 +518,11 @@ test "remove_min" {
   )?
 }
 
-/// Insert a value into the ImmutableSet.
-pub fn add[T : Compare](self : ImmutableSet[T], value : T) -> ImmutableSet[T] {
-  match self {
-    Empty => Node({ left: Empty, value, right: Empty, height: 1 })
-    Node(node) => {
-      let compare_result = value.compare(node.value)
-      if compare_result == 0 {
-        Node(node)
-      } else if compare_result < 0 {
-        let left = node.left.add(value)
-        if physical_equal(node.left, left) {
-          Node(node)
-        } else {
-          balance(left, node.value, node.right)
-        }
-      } else {
-        let right = node.right.add(value)
-        if physical_equal(right, node.right) {
-          Node(node)
-        } else {
-          balance(node.left, node.value, right)
-        }
-      }
-    }
-  }
-}
-
 test "add" {
   @assertion.assert_eq(
     ImmutableSet::from_list(List::[7, 2, 9, 4, 6, 3, 8, 1]).add(5).to_list(),
     List::[1, 2, 3, 4, 5, 6, 7, 8, 9],
   )?
-}
-
-pub fn remove[T : Compare](
-  self : ImmutableSet[T],
-  value : T
-) -> ImmutableSet[T] {
-  match self {
-    Empty => Empty
-    Node(node) => {
-      let compare_result = value.compare(node.value)
-      if compare_result == 0 {
-        node.left.merge(node.right)
-      } else if compare_result < 0 {
-        let left = node.left.remove(value)
-        if physical_equal(node.left, left) {
-          Node(node)
-        } else {
-          balance(left, node.value, node.right)
-        }
-      } else {
-        let right = node.right.remove(value)
-        if physical_equal(node.right, right) {
-          Node(node)
-        } else {
-          balance(node.left, node.value, right)
-        }
-      }
-    }
-  }
 }
 
 test "remove" {
@@ -427,125 +532,9 @@ test "remove" {
   )?
 }
 
-pub fn min[T](self : ImmutableSet[T]) -> T {
-  match self {
-    Empty => abort("min: there are no values in ImmutableSet.")
-    Node(node) =>
-      match node.left {
-        Empty => node.value
-        _ => node.left.min()
-      }
-  }
-}
-
 test "min" {
   @assertion.assert_eq(
     1,
     ImmutableSet::from_list(List::[7, 2, 9, 4, 5, 6, 3, 8, 1]).min(),
   )?
-}
-
-pub fn min_option[T](self : ImmutableSet[T]) -> Option[T] {
-  match self {
-    Empty => None
-    Node(node) =>
-      match node.left {
-        Empty => Some(node.value)
-        _ => node.left.min_option()
-      }
-  }
-}
-
-pub fn max[T](self : ImmutableSet[T]) -> T {
-  match self {
-    Empty => abort("max: there are no values in ImmutableSet.")
-    Node(node) =>
-      match node.right {
-        Empty => node.value
-        _ => node.right.max()
-      }
-  }
-}
-
-test "max" {
-  @assertion.assert_eq(
-    9,
-    ImmutableSet::from_list(List::[7, 2, 9, 4, 5, 6, 3, 8, 1]).max(),
-  )?
-}
-
-pub fn max_option[T](self : ImmutableSet[T]) -> Option[T] {
-  match self {
-    Empty => None
-    Node(node) =>
-      match node.right {
-        Empty => Some(node.value)
-        _ => node.right.max_option()
-      }
-  }
-}
-
-/// Returns a triple (left, present, right), left < divide < right
-/// present is false if self contains no element equal to divide, 
-/// or true if self contains an element equal to divide.
-pub fn split[T : Compare](
-  self : ImmutableSet[T],
-  divide : T
-) -> (ImmutableSet[T], Bool, ImmutableSet[T]) {
-  match self {
-    Empty => (Empty, false, Empty)
-    Node(node) => {
-      let compare_result = divide.compare(node.value)
-      if compare_result == 0 {
-        (node.left, true, node.right)
-      } else if compare_result < 0 {
-        let (left_left, present, right_left) = node.left.split(divide)
-        (left_left, present, join(right_left, node.value, node.right))
-      } else {
-        let (left_right, present, right_right) = node.right.split(divide)
-        (join(node.left, node.value, left_right), present, right_right)
-      }
-    }
-  }
-}
-
-test "split" {
-  let (left, present, right) = ImmutableSet::from_list(
-    List::[7, 2, 9, 4, 5, 6, 3, 8, 1],
-  ).split(5)
-  @assertion.assert_true(present)?
-  @assertion.assert_eq(left.to_list(), List::[1, 2, 3, 4])?
-  @assertion.assert_eq(right.to_list(), List::[6, 7, 8, 9])?
-}
-
-pub fn is_empty[T](self : ImmutableSet[T]) -> Bool {
-  match self {
-    Empty => true
-    _ => false
-  }
-}
-
-/// Whether value exists in ImmutableSet
-pub fn exists[T : Compare](self : ImmutableSet[T], value : T) -> Bool {
-  match self {
-    Empty => false
-    Node(node) => {
-      let compare_result = value.compare(node.value)
-      compare_result == 0 || (if compare_result < 0 {
-        node.left
-      } else {
-        node.right
-      }).exists(value)
-    }
-  }
-}
-
-test "exists" {
-  @assertion.assert_true(
-    ImmutableSet::from_list(List::[7, 2, 9, 4, 5, 6, 3, 8, 1]).exists(5),
-  )?
-}
-
-test "Mass data testing" {
-  
 }
