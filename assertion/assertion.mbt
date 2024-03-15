@@ -71,11 +71,11 @@ test "assert_ne.eq" {
   }
 }
 
-pub fn assert_false(x : Bool) -> Result[Unit, String] {
+pub fn assert_false(x : Bool, ~loc : SourceLoc = _) -> Result[Unit, String] {
   if x == false {
     Ok(())
   } else {
-    Err("assert_false failed")
+    Err("FAILED:\(loc)")      
   }
 }
 
@@ -87,11 +87,11 @@ test "assert_false.true" {
   assert_ne(assert_false(true), Ok(()))?
 }
 
-pub fn assert_true(x : Bool) -> Result[Unit, String] {
+pub fn assert_true(x : Bool, ~loc : SourceLoc = _) -> Result[Unit, String] {
   if x {
     Ok(())
   } else {
-    Err("assert_true failed")
+    Err("FAILED:\(loc)")
   }
 }
 
@@ -118,13 +118,17 @@ test "assert_true.false" {
 /// assert_is(a, a)?  // this is okay
 /// assert_is(a, b)?  // yields an error
 /// ```
-pub fn assert_is[T : Debug](a : T, b : T) -> Result[Unit, String] {
+pub fn assert_is[T : Debug](
+  a : T,
+  b : T,
+  ~loc : SourceLoc = _
+) -> Result[Unit, String] {
   if physical_equal(a, b) {
     Ok(())
   } else {
     let a = debug_string(a)
     let b = debug_string(b)
-    Err("assertion failed for `\(a) is \(b)`")
+    Err("FAILED:\(loc) `\(a) is \(b)`")
   }
 }
 
@@ -157,13 +161,17 @@ test "assert_is.is.not" {
 /// assert_is_not(a, b)?  // this is okay
 /// assert_is_not(a, a)?  // yields an error
 /// ```
-pub fn assert_is_not[T : Debug](a : T, b : T) -> Result[Unit, String] {
+pub fn assert_is_not[T : Debug](
+  a : T,
+  b : T,
+  ~loc : SourceLoc = _
+) -> Result[Unit, String] {
   if not(physical_equal(a, b)) {
     Ok(())
   } else {
     let a = debug_string(a)
     let b = debug_string(b)
-    Err("assertion failed for `not(\(a) is \(b))`")
+    Err("FAILED:\(loc) `not(\(a) is \(b))`")
   }
 }
 
