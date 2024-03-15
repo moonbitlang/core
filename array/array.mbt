@@ -24,7 +24,7 @@
 /// ```
 /// [1, 2, 3, 4, 5].iter(fn(x){ print("\(x) ") }) //output: 1 2 3 4 5
 /// ```
-pub fn iter[T](self : Array[T], f : (T) -> Unit) {
+pub fn iter[T](self : Array[T], f : (T) -> Unit) -> Unit {
   for i = 0; i < self.length(); i = i + 1 {
     f(self[i])
   }
@@ -53,7 +53,7 @@ test "iter" {
 ///   print("(\(index),\(elem)) ")
 /// }) //output: (0,1) (1,2) (2,3) (3,4) (4,5)
 /// ```
-pub fn iteri[T](self : Array[T], f : (Int, T) -> Unit) {
+pub fn iteri[T](self : Array[T], f : (Int, T) -> Unit) -> Unit {
   for i = 0; i < self.length(); i = i + 1 {
     f(i, self[i])
   }
@@ -73,7 +73,7 @@ test "iteri" {
   @assertion.assert_false(failed)?
 }
 
-pub fn iter_rev[T](self : Array[T], f : (T) -> Unit) {
+pub fn iter_rev[T](self : Array[T], f : (T) -> Unit) -> Unit {
   for i = self.length() - 1; i >= 0; i = i - 1 {
     f(self[i])
   }
@@ -88,7 +88,7 @@ test "iter rev" {
   @assertion.assert_false(failed)?
 }
 
-pub fn iteri_rev[T](self : Array[T], f : (Int, T) -> Unit) {
+pub fn iteri_rev[T](self : Array[T], f : (Int, T) -> Unit) -> Unit {
   for i = self.length() - 1; i >= 0; i = i - 1 {
     f(i, self[i])
   }

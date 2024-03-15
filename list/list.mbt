@@ -55,7 +55,7 @@ test "length" {
 /// ```
 /// from_array([1, 2, 3, 4, 5]).iter(print) // output: 12345
 /// ```
-pub fn iter[T](self : List[T], f : (T) -> Unit) {
+pub fn iter[T](self : List[T], f : (T) -> Unit) -> Unit {
   match self {
     Nil => ()
     Cons(head, tail) => {
@@ -81,7 +81,7 @@ test "iter" {
 /// from_array([1, 2, 3, 4, 5]).iteri(fn(i, x) { print("(\(i),\(x)) ") }) 
 /// // output: (0,1) (1,2) (2,3) (3,4) (4,5)
 /// ```
-pub fn iteri[T](self : List[T], f : (Int, T) -> Unit) {
+pub fn iteri[T](self : List[T], f : (Int, T) -> Unit) -> Unit {
   loop self, 0 {
     Nil, _ => ()
     Cons(x, xs), i => {
@@ -486,22 +486,22 @@ test "repeat" {
 /// # Example
 /// 
 /// ```
-/// let ls = from_array(["1", "2", "3", "4", "5"]).separate_by("|")
+/// let ls = from_array(["1", "2", "3", "4", "5"]).intersperse("|")
 /// debug(ls) // output: from_array(["1", "|", "2", "|", "3", "|", "4", "|", "5"])
 /// ```
-pub fn separate_by[T](self : List[T], separator : T) -> List[T] {
+pub fn intersperse[T](self : List[T], separator : T) -> List[T] {
   match self {
     Nil => Nil
     Cons(head, Nil) => Cons(head, Nil)
     Cons(head, tail) =>
-      Cons(head, Cons(separator, separate_by(tail, separator)))
+      Cons(head, Cons(separator, intersperse(tail, separator)))
   }
 }
 
-test "separate_by" {
+test "intersperse" {
   let ls = from_array(["1", "|", "2", "|", "3", "|", "4", "|", "5"])
   @assertion.assert_eq(
-    from_array(["1", "2", "3", "4", "5"]).separate_by("|"),
+    from_array(["1", "2", "3", "4", "5"]).intersperse("|"),
     ls,
   )?
 }
@@ -554,8 +554,8 @@ test "unzip" {
 /// let ls = flatten(from_array([from_array([1,2,3]), from_array([4,5,6]), from_array([7,8,9])]))
 /// debug(ls) // output: from_array([1, 2, 3, 4, 5, 6, 7, 8, 9])
 /// ```
-pub fn flatten[T](list : List[List[T]]) -> List[T] {
-  match list {
+pub fn flatten[T](self : List[List[T]]) -> List[T] {
+  match self {
     Nil => Nil
     Cons(head, tail) => concat(head, flatten(tail))
   }
@@ -967,10 +967,8 @@ pub fn remove_at[T](self : List[T], index : Int) -> List[T] {
   match (index, self) {
     (0, Cons(_, tail)) => tail
     (_, Cons(head, tail)) => Cons(head, remove_at(tail, index - 1))
-    (_, Nil) => {
-      Nil
-      // abort("remove_at: index out of bounds")
-    }
+    (_, Nil) => Nil
+    // abort("remove_at: index out of bounds")
   }
 }
 
@@ -979,8 +977,14 @@ test "remove_at" {
   let rs = from_array([1, 2, 4, 5])
   @assertion.assert_eq(ls.remove_at(2), rs)?
   @assertion.assert_eq(ls.remove_at(0), from_array([2, 3, 4, 5]))?
-  @assertion.assert_eq(List::["a", "b", "c", "d", "e"].remove_at(2), List::["a", "b", "d", "e"])?
-  @assertion.assert_eq(List::["a", "b", "c", "d", "e"].remove_at(5), List::["a", "b", "c", "d", "e"])?
+  @assertion.assert_eq(
+    List::["a", "b", "c", "d", "e"].remove_at(2),
+    List::["a", "b", "d", "e"],
+  )?
+  @assertion.assert_eq(
+    List::["a", "b", "c", "d", "e"].remove_at(5),
+    List::["a", "b", "c", "d", "e"],
+  )?
 }
 
 /// Removes the first occurrence of the specified element from the list, if it is present.
@@ -991,20 +995,29 @@ test "remove_at" {
 /// println(List::[1, 2, 3, 4, 5].remove(3))
 /// // output: from_array([1, 2, 4, 5])
 /// ```
-pub fn remove[T : Eq](self: List[T], elem: T) -> List[T] {
+pub fn remove[T : Eq](self : List[T], elem : T) -> List[T] {
   match self {
-    Nil => {
-      Nil
-      // abort("remove: element not found")
-    }
-    Cons(head, tail) => if head == elem { tail } else { Cons(head, remove(tail, elem)) }
+    Nil => Nil
+    // abort("remove: element not found")
+    Cons(head, tail) =>
+      if head == elem {
+        tail
+      } else {
+        Cons(head, remove(tail, elem))
+      }
   }
 }
 
 test "remove" {
   @assertion.assert_eq(List::[1, 2, 3, 4, 5].remove(3), List::[1, 2, 4, 5])?
-  @assertion.assert_eq(List::["a", "b", "c", "d", "e"].remove("c"), List::["a", "b", "d", "e"])?
-  @assertion.assert_eq(List::["a", "b", "c", "d", "e"].remove("f"), List::["a", "b", "c", "d", "e"])?
+  @assertion.assert_eq(
+    List::["a", "b", "c", "d", "e"].remove("c"),
+    List::["a", "b", "d", "e"],
+  )?
+  @assertion.assert_eq(
+    List::["a", "b", "c", "d", "e"].remove("f"),
+    List::["a", "b", "c", "d", "e"],
+  )?
 }
 
 /// Returns true if list starts with prefix.
@@ -1068,3 +1081,27 @@ test "is_suffix" {
   @assertion.assert_true(List::[1, 2, 3, 4, 5].is_suffix(List::[3, 4, 5]))?
   @assertion.assert_false(List::[1, 2, 3, 4, 5].is_suffix(List::[3, 4, 6]))?
 }
+
+/// Similar to intersperse but with a list of values.
+/// 
+/// # Example 
+/// ```
+/// let ls = List::[
+///    List::[1, 2, 3],
+///    List::[4, 5, 6],
+///    List::[7, 8, 9],
+/// ]
+/// ls.intercalate(List::[0])
+/// ```
+pub fn intercalate[T](self : List[List[T]], sep : List[T]) -> List[T] {
+  self.intersperse(sep).flatten()
+}
+
+test "intercalate" {
+  let ls = List::[List::[1, 2, 3], List::[4, 5, 6], List::[7, 8, 9]]
+  @assertion.assert_eq(
+    ls.intercalate(List::[0]),
+    List::[1, 2, 3, 0, 4, 5, 6, 0, 7, 8, 9],
+  )?
+}
+

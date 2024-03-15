@@ -156,7 +156,7 @@ pub fn lookup[K : Compare, V](self : Map[K, V], key : K) -> Option[V] {
 }
 
 /// Iterate over the key-value pairs in the map.
-pub fn iter[K : Compare, V](self : Map[K, V], f : (K, V) -> Unit) {
+pub fn iter[K : Compare, V](self : Map[K, V], f : (K, V) -> Unit) -> Unit {
   match self {
     Empty => ()
     Tree(k, v, _, l, r) => {

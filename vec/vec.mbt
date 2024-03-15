@@ -61,7 +61,7 @@ pub fn capacity[T](self : Vec[T]) -> Int {
 }
 
 /// Reallocate the vector with a new capacity.
-fn realloc[T](self : Vec[T]) {
+fn realloc[T](self : Vec[T]) -> Unit {
   let old_cap = self.len
   let new_cap = if old_cap == 0 { 8 } else { old_cap * 2 }
   let new_buf = UninitializedArray::make(new_cap)
@@ -110,7 +110,7 @@ pub fn op_get[T](self : Vec[T], index : Int) -> T {
 /// v.push(3)
 /// println(v[0]) // 3
 /// ```
-pub fn op_set[T](self : Vec[T], index : Int, value : T) {
+pub fn op_set[T](self : Vec[T], index : Int, value : T) -> Unit {
   if index >= self.len {
     let len = self.len
     abort("index out of bounds: the len is \(len) but the index is \(index)")
@@ -175,7 +175,7 @@ test "pop" {
 /// let v = Vec::new()
 /// v.push(3)
 /// ```
-pub fn push[T](self : Vec[T], value : T) {
+pub fn push[T](self : Vec[T], value : T) -> Unit {
   if self.len == self.buf.length() {
     self.realloc()
   }
@@ -200,7 +200,7 @@ test "push" {
 /// let v2 = Vec::[6, 7, 8]
 /// v1.append(v2)
 /// ```
-pub fn append[T](self : Vec[T], other : Vec[T]) {
+pub fn append[T](self : Vec[T], other : Vec[T]) -> Unit {
   for i = 0; i < other.len; i = i + 1 {
     self.push(other[i])
   }
@@ -230,7 +230,7 @@ test "append" {
 /// let mut sum = 0
 /// v.iter(fn (x) {sum = sum + x})
 /// ```
-pub fn iter[T](self : Vec[T], f : (T) -> Unit) {
+pub fn iter[T](self : Vec[T], f : (T) -> Unit) -> Unit {
   for i = 0; i < self.len; i = i + 1 {
     f(self[i])
   }
@@ -257,7 +257,7 @@ test "iter" {
 /// let mut sum = 0
 /// v.iteri(fn (i, x) {sum = sum + x + i})
 /// ```
-pub fn iteri[T](self : Vec[T], f : (Int, T) -> Unit) {
+pub fn iteri[T](self : Vec[T], f : (Int, T) -> Unit) -> Unit {
   for i = 0; i < self.len; i = i + 1 {
     f(i, self[i])
   }
@@ -279,7 +279,7 @@ test "iteri" {
 /// let v = Vec::from_array([3, 4, 5])
 /// v.clear()
 /// ```
-pub fn clear[T](self : Vec[T]) {
+pub fn clear[T](self : Vec[T]) -> Unit {
   self.len = 0
 }
 
@@ -297,7 +297,7 @@ test "clear" {
 /// let v = Vec::from_array([3, 4, 5])
 /// v.map(fn (x) {x + 1})
 /// ```
-pub fn map[T](self : Vec[T], f : (T) -> T) {
+pub fn map[T](self : Vec[T], f : (T) -> T) -> Unit {
   for i = 0; i < self.len; i = i + 1 {
     self.buf[i] = f(self.buf[i])
   }
@@ -318,7 +318,7 @@ test "map" {
 /// let v = Vec::from_array([3, 4, 5])
 /// v.mapi(fn (i, x) {x + i})
 /// ```
-pub fn mapi[T](self : Vec[T], f : (Int, T) -> T) {
+pub fn mapi[T](self : Vec[T], f : (Int, T) -> T) -> Unit {
   for i = 0; i < self.len; i = i + 1 {
     self.buf[i] = f(i, self.buf[i])
   }
@@ -357,7 +357,7 @@ test "is_empty" {
 /// let v = Vec::[3, 4, 5]
 /// v.reverse()
 /// ```
-pub fn reverse[T](self : Vec[T]) {
+pub fn reverse[T](self : Vec[T]) -> Unit {
   for i = 0; i < self.len / 2; i = i + 1 {
     let temp = self.buf[i]
     self.buf[i] = self.buf[self.len - i - 1]
@@ -518,7 +518,7 @@ test "search" {
 /// let v = Vec::[3, 4, 5]
 /// v.swap(1, 2)
 /// ```
-pub fn swap[T](self : Vec[T], i : Int, j : Int) {
+pub fn swap[T](self : Vec[T], i : Int, j : Int) -> Unit {
   if i >= self.len || j >= self.len {
     abort("index out of bounds")
   }
@@ -554,7 +554,7 @@ fn partition[T : Compare](self : Vec[T], left : Int, right : Int) -> Int {
 }
 
 /// Quicksort helper
-fn quicksort[T : Compare](self : Vec[T], left : Int, right : Int) {
+fn quicksort[T : Compare](self : Vec[T], left : Int, right : Int) -> Unit {
   if left <= right {
     let idx = self.partition(0, right)
     self.quicksort(left, idx - 1)
@@ -571,7 +571,7 @@ fn quicksort[T : Compare](self : Vec[T], left : Int, right : Int) {
 /// let v = Vec::[3, 4, 5, 1, 2]
 /// v.sort()
 /// ```
-pub fn sort[T : Compare](self : Vec[T]) {
+pub fn sort[T : Compare](self : Vec[T]) -> Unit {
   self.quicksort(0, self.len - 1)
 }
 
@@ -621,7 +621,7 @@ test "remove" {
 /// let v = Vec::[3, 4, 5]
 /// v.retain(fn(x) { x > 3 })
 /// ```
-pub fn retain[T](self : Vec[T], f : (T) -> Bool) {
+pub fn retain[T](self : Vec[T], f : (T) -> Bool) -> Unit {
   let mut i = 0
   while i < self.len {
     if f(self.buf[i]).not() {
@@ -646,7 +646,7 @@ test "retain" {
 /// ```
 /// Vec::[3, 4, 5].resize(1)
 /// ```
-pub fn resize[T](self : Vec[T], new_len : Int, f : T) {
+pub fn resize[T](self : Vec[T], new_len : Int, f : T) -> Unit {
   if new_len < 0 {
     abort("negative new length")
   }
@@ -683,7 +683,7 @@ test "resize" {
 /// ```
 /// Vec::[3, 4, 5].insert(1, 6)
 /// ```
-pub fn insert[T](self : Vec[T], index : Int, value : T) {
+pub fn insert[T](self : Vec[T], index : Int, value : T) -> Unit {
   if index > self.len {
     abort("index out of bounds")
   }
@@ -714,7 +714,7 @@ test "insert" {
 /// ```
 /// Vec::with_capacity(3).fill(3)
 /// ```
-pub fn fill[T](self : Vec[T], value : T) {
+pub fn fill[T](self : Vec[T], value : T) -> Unit {
   for i = 0; i < self.capacity(); i = i + 1 {
     self.buf[i] = value
   }
