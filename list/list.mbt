@@ -1068,3 +1068,36 @@ test "is_suffix" {
   @assertion.assert_true(List::[1, 2, 3, 4, 5].is_suffix(List::[3, 4, 5]))?
   @assertion.assert_false(List::[1, 2, 3, 4, 5].is_suffix(List::[3, 4, 6]))?
 }
+
+/// Join an element between elements of the list.
+///
+/// # Example
+///
+/// ```
+/// println(List::[1, 2, 3, 4, 5].join(0))
+/// // output: List::[1, 0, 2, 0, 3, 0, 4, 0, 5]
+/// ```
+pub fn join[T](self : List[T], elem : T) -> List[T] {
+  fn prepend(xs : List[T], elem : T) -> List[T] {
+    match xs {
+      Nil => Nil
+      Cons(x, xs) => Cons(elem, Cons(x, prepend(xs, elem)))
+    }
+  }
+
+  match self {
+    Nil => Nil
+    Cons(x, xs) => Cons(x, prepend(xs, elem))
+  }
+}
+
+test "join" {
+  @assertion.assert_eq(
+    List::[1, 2, 3, 4, 5].join(0),
+    List::[1, 0, 2, 0, 3, 0, 4, 0, 5],
+  )?
+  @assertion.assert_eq(
+    List::["a", "b", "c"].join(" "),
+    List::["a", " ", "b", " ", "c"],
+  )?
+}
