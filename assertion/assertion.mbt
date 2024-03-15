@@ -105,8 +105,8 @@ test "assert_true.false" {
 
 /// Assert referential equality of two values.
 ///
-/// Returns Ok if the two arguments are the same object by reference, using the
-/// `===` operator; raises an Error otherwise. Certain objects may be equal by
+/// Returns Ok if the two arguments are the same object by reference, using
+/// `physical_equal`; raises an Error otherwise. Certain objects may be equal by
 /// value, but they are different objects in the memory. This function checks
 /// the latter.
 ///
@@ -119,12 +119,12 @@ test "assert_true.false" {
 /// assert_is(a, b)?  // yields an error
 /// ```
 pub fn assert_is[T : Debug](a : T, b : T) -> Result[Unit, String] {
-  if a === b {
+  if physical_equal(a, b) {
     Ok(())
   } else {
     let a = debug_string(a)
     let b = debug_string(b)
-    Err("assertion failed for `\(a) === \(b)`")
+    Err("assertion failed for `\(a) is \(b)`")
   }
 }
 
@@ -145,7 +145,7 @@ test "assert_is.is.not" {
 /// Assert referential inequality of two values.
 ///
 /// Returns Ok if the two arguments are NOT the same object by reference, using
-/// the `===` operator; raises an Error otherwise. Certain objects may be equal
+/// `physical_equal`; raises an Error otherwise. Certain objects may be equal
 /// by value, but they are different objects in the memory. This function
 /// checks the latter.
 ///
@@ -158,12 +158,12 @@ test "assert_is.is.not" {
 /// assert_is_not(a, a)?  // yields an error
 /// ```
 pub fn assert_is_not[T : Debug](a : T, b : T) -> Result[Unit, String] {
-  if not(a === b) {
+  if not(physical_equal(a, b)) {
     Ok(())
   } else {
     let a = debug_string(a)
     let b = debug_string(b)
-    Err("assertion failed for `not(\(a) === \(b))`")
+    Err("assertion failed for `not(\(a) is \(b))`")
   }
 }
 
