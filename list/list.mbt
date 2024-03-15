@@ -1082,7 +1082,7 @@ test "is_suffix" {
   @assertion.assert_false(List::[1, 2, 3, 4, 5].is_suffix(List::[3, 4, 6]))?
 }
 
-/// Separted helper function for intersperse
+/// Separated helper function for intersperse
 fn prepend_to_all[T](self : List[T], sep : T) -> List[T] {
   match self {
     Nil => Nil
