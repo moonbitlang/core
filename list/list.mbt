@@ -486,22 +486,22 @@ test "repeat" {
 /// # Example
 /// 
 /// ```
-/// let ls = from_array(["1", "2", "3", "4", "5"]).separate_by("|")
+/// let ls = from_array(["1", "2", "3", "4", "5"]).intersperse("|")
 /// debug(ls) // output: from_array(["1", "|", "2", "|", "3", "|", "4", "|", "5"])
 /// ```
-pub fn separate_by[T](self : List[T], separator : T) -> List[T] {
+pub fn intersperse[T](self : List[T], separator : T) -> List[T] {
   match self {
     Nil => Nil
     Cons(head, Nil) => Cons(head, Nil)
     Cons(head, tail) =>
-      Cons(head, Cons(separator, separate_by(tail, separator)))
+      Cons(head, Cons(separator, intersperse(tail, separator)))
   }
 }
 
-test "separate_by" {
+test "intersperse" {
   let ls = from_array(["1", "|", "2", "|", "3", "|", "4", "|", "5"])
   @assertion.assert_eq(
-    from_array(["1", "2", "3", "4", "5"]).separate_by("|"),
+    from_array(["1", "2", "3", "4", "5"]).intersperse("|"),
     ls,
   )?
 }
@@ -1088,30 +1088,6 @@ fn prepend_to_all[T](self : List[T], sep : T) -> List[T] {
     Nil => Nil
     Cons(head, tail) => Cons(sep, Cons(head, prepend_to_all(tail, sep)))
   }
-}
-
-/// Intersperse a value between each element of the list.
-/// 
-/// # Example
-/// ```
-/// let ls = List::[1, 2, 3, 4, 5]
-/// ls.intersperse(2)
-/// ```
-pub fn intersperse[T](self : List[T], sep : T) -> List[T] {
-  match self {
-    Nil => Nil
-    Cons(head, tail) => Cons(head, prepend_to_all(tail, sep))
-  }
-}
-
-test "intersperse" {
-  let ls = List::[1, 2, 3, 4, 5]
-  let ls1 = List::["a", "b", "c", "d", "e"]
-  @assertion.assert_eq(ls.intersperse(2), List::[1, 2, 2, 2, 3, 2, 4, 2, 5])?
-  @assertion.assert_eq(
-    ls1.intersperse("x"),
-    List::["a", "x", "b", "x", "c", "x", "d", "x", "e"],
-  )?
 }
 
 /// Similar to intersperse but with a list of values.
