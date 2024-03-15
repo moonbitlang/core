@@ -13,14 +13,6 @@ fn CoverageCounter::incr(self : CoverageCounter, idx : Int) -> Unit {
   }
 }
 
-pub fn new(size : Int) -> CoverageCounter {
-  CoverageCounter::new(size)
-}
-
-pub fn incr(c : CoverageCounter, idx : Int) -> Unit {
-  c.incr(idx)
-}
-
 fn CoverageCounter::to_string(self : CoverageCounter) -> String {
   let mut s = "["
   let mut i = 0
