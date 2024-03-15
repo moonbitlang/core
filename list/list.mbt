@@ -73,6 +73,27 @@ test "iter" {
   @assertion.assert_false(failed)?
 }
 
+/// Appends the specified element to the end of this list.
+/// 
+/// # Example
+/// 
+/// ```
+/// debug(from_array([1, 2, 3, 4, 5]).append(6))
+/// // output: from_array([1, 2, 3, 4, 5, 6])
+/// ```
+pub fn append[T](self : List[T], x : T) -> List[T] {
+  match self {
+    Nil => Cons(x, Nil)
+    Cons(head, tail) => Cons(head, append(tail, x))
+  }
+}
+
+test "append" {
+  @assertion.assert_eq(from_array([1, 2, 3, 4, 5]).append(6), from_array([1, 2, 3, 4, 5, 6]))?
+  @assertion.assert_eq(from_array(["a", "b", "c"]).append("d"), from_array(["a", "b", "c", "d"]))?
+  @assertion.assert_eq(from_array([]).append(1), from_array([1]))?
+}
+
 /// Iterates over the list with index.
 /// 
 /// # Example
