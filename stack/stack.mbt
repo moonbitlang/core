@@ -100,7 +100,7 @@ test "from_stack" {
 /// s.clear()
 /// println(s) //output: {elements: Nil, len: 0}
 /// ```
-pub fn clear[T](self : Stack[T]) {
+pub fn clear[T](self : Stack[T]) -> Unit {
   self.elements = Nil
   self.len = 0
 }
