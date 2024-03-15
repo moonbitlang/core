@@ -84,7 +84,7 @@ test "protect" {
 /// debug(x) //output: ref(2)
 /// debug(y) //output: ref(1)
 /// ```
-pub fn swap[T](self : Ref[T], that : Ref[T]) {
+pub fn swap[T](self : Ref[T], that : Ref[T]) -> Unit {
   let tmp = self.val
   self.val = that.val
   that.val = tmp
@@ -98,7 +98,7 @@ test "swap" {
   @assertion.assert_eq(y.val, 1)?
 }
 
-pub fn update[T](self : Ref[T], f : (T) -> T) {
+pub fn update[T](self : Ref[T], f : (T) -> T) -> Unit {
   self.val = f(self.val)
 }
 

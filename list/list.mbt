@@ -55,7 +55,7 @@ test "length" {
 /// ```
 /// from_array([1, 2, 3, 4, 5]).iter(print) // output: 12345
 /// ```
-pub fn iter[T](self : List[T], f : (T) -> Unit) {
+pub fn iter[T](self : List[T], f : (T) -> Unit) -> Unit {
   match self {
     Nil => ()
     Cons(head, tail) => {
@@ -81,7 +81,7 @@ test "iter" {
 /// from_array([1, 2, 3, 4, 5]).iteri(fn(i, x) { print("(\(i),\(x)) ") }) 
 /// // output: (0,1) (1,2) (2,3) (3,4) (4,5)
 /// ```
-pub fn iteri[T](self : List[T], f : (Int, T) -> Unit) {
+pub fn iteri[T](self : List[T], f : (Int, T) -> Unit) -> Unit {
   loop self, 0 {
     Nil, _ => ()
     Cons(x, xs), i => {
