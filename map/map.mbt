@@ -47,15 +47,19 @@ pub fn singleton[K, V](key : K, value : V) -> Map[K, V] {
 
 /// Check if the map contains a key.
 /// O(log n).
-pub fn member[K : Compare, V](self : Map[K, V], key : K) -> Bool {
-  match self {
+pub fn member[K : Compare + Show, V : Show](self : Map[K, V], key : K) -> Bool {
+  loop self {
     Empty => false
-    Tree(k, _, _, l, r) =>
-      match key.compare(k) {
-        -1 => l.member(key)
-        1 => r.member(key)
-        _ => true
+    Tree(k, _, _, l, r) => {
+      let c = key.compare(k)
+      if c == 0 {
+        true
+      } else if c < 0 {
+        continue l
+      } else {
+        continue r
       }
+    }
   }
 }
 
@@ -132,26 +136,34 @@ fn glue[K : Compare, V](self : Map[K, V], other : Map[K, V]) -> Map[K, V] {
 pub fn remove[K : Compare, V](self : Map[K, V], key : K) -> Map[K, V] {
   match self {
     Empty => Empty
-    Tree(k, v, _, l, r) =>
-      match key.compare(k) {
-        -1 => balance(k, v, remove(l, key), r)
-        1 => balance(k, v, l, remove(r, key))
-        _ => glue(l, r)
+    Tree(k, v, _, l, r) => {
+      let c = key.compare(k)
+      if c == 0 {
+        glue(l, r)
+      } else if c < 0 {
+        balance(k, v, remove(l, key), r)
+      } else {
+        balance(k, v, l, remove(r, key))
       }
+    }
   }
 }
 
 /// Get the value associated with a key. 
 /// O(log n). 
 pub fn lookup[K : Compare, V](self : Map[K, V], key : K) -> Option[V] {
-  match self {
+  loop self {
     Empty => None
-    Tree(k, v, _, l, r) =>
-      match key.compare(k) {
-        -1 => l.lookup(key)
-        1 => r.lookup(key)
-        _ => Some(v)
+    Tree(k, v, _, l, r) => {
+      let c = key.compare(k)
+      if c == 0 {
+        Some(v)
+      } else if c < 0 {
+        continue l
+      } else {
+        continue r
       }
+    }
   }
 }
 
@@ -225,28 +237,30 @@ fn balance[K : Compare, V](
   fn single_r {
     k2, v2, Map::Tree(k1, v1, _, x, y), z => new(k1, v1, x, new(k2, v2, y, z))
     _, _, _, _ => abort("single_r error")
+
+    //      1                 2
+    //     / \              /   \
+    //    x   3            1     3
+    //       / \    -->   / \   / \
+    //      2   z        x  y1 y2  z
+    //     / \
+    //    y1 y2
   }
 
-  //      1                 2
-  //     / \              /   \
-  //    x   3            1     3
-  //       / \    -->   / \   / \
-  //      2   z        x  y1 y2  z
-  //     / \
-  //    y1 y2
   fn double_l {
     k1, v1, x, Map::Tree(k3, v3, _, Tree(k2, v2, _, y1, y2), z) =>
       new(k2, v2, new(k1, v1, x, y1), new(k3, v3, y2, z))
     _, _, _, _ => abort("double_l error")
+
+    //      3                 2
+    //     / \              /   \
+    //    1   z            1     3
+    //   / \        -->   / \   / \
+    //  x  2             x  y1 y2  z
+    //    / \
+    //   y1 y2
   }
 
-  //      3                 2
-  //     / \              /   \
-  //    1   z            1     3
-  //   / \        -->   / \   / \
-  //  x  2             x  y1 y2  z
-  //    / \
-  //   y1 y2
   fn double_r {
     k3, v3, Map::Tree(k1, v1, _, x, Tree(k2, v2, _, y1, y2)), z =>
       new(k2, v2, new(k1, v1, x, y1), new(k3, v3, y2, z))
