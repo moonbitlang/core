@@ -1082,14 +1082,6 @@ test "is_suffix" {
   @assertion.assert_false(List::[1, 2, 3, 4, 5].is_suffix(List::[3, 4, 6]))?
 }
 
-/// Separated helper function for intersperse
-fn prepend_to_all[T](self : List[T], sep : T) -> List[T] {
-  match self {
-    Nil => Nil
-    Cons(head, tail) => Cons(sep, Cons(head, prepend_to_all(tail, sep)))
-  }
-}
-
 /// Similar to intersperse but with a list of values.
 /// 
 /// # Example 
