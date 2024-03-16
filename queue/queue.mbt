@@ -12,6 +12,12 @@ pub struct Queue[T] {
   mut tail : Option[Cell[T]]
 }
 
+/// Creates a new empty queue.
+/// 
+/// # Example
+/// ```
+/// let queue : Queue[Int] = Queue::create()
+/// ```
 pub fn Queue::create[T]() -> Queue[T] {
   { length: 0, tail: None }
 }
@@ -22,6 +28,12 @@ test "create" {
   @assertion.assert_true(queue.tail == None)?
 }
 
+/// Creates a new queue from an array.
+/// 
+/// # Example
+/// ```
+/// let queue : Queue[Int] = Queue::[1, 2, 3, 4]
+/// ```
 pub fn Queue::from_array[T](array : Array[T]) -> Queue[T] {
   let queue : Queue[T] = create()
   for i = 0; i < array.length(); i = i + 1 {
@@ -40,6 +52,12 @@ test "from_array" {
   @assertion.assert_eq(queue.length, 0)?
 }
 
+/// Creates a new queue from a list.
+/// 
+/// # Example
+/// ```
+/// let queue : Queue[Int] = Queue::from_list(Cons(1, Cons(2, Cons(3, Cons(4, Nil))))
+/// ```
 pub fn Queue::from_list[T](list : List[T]) -> Queue[T] {
   let queue : Queue[T] = create()
   loop list {
@@ -67,6 +85,13 @@ test "from_list" {
   @assertion.assert_eq(queue.length, 0)?
 }
 
+/// Clears the queue.
+/// 
+/// # Example
+/// ```
+/// let queue : Queue[Int] = Queue::[1, 2, 3, 4]
+/// queue.clear()
+/// ```
 pub fn clear[T](self : Queue[T]) {
   self.length = 0
   self.tail = None
@@ -79,6 +104,13 @@ test "clear" {
   @assertion.assert_true(queue.tail == None)?
 }
 
+/// Adds a value to the queue.
+/// 
+/// # Example
+/// ```
+/// let queue : Queue[Int] = Queue::create()
+/// queue.add(1)
+/// ```
 pub fn add[T](self : Queue[T], value : T) {
   if self.length == 0 {
     let cell : Cell[T] = { content: value, next: None }
@@ -109,6 +141,13 @@ test "add" {
   @assertion.assert_eq(queue.length, 0)?
 }
 
+/// Peeks at the first value in the queue.
+/// 
+/// # Example
+/// ```
+/// let queue : Queue[Int] = Queue::[1, 2, 3, 4]
+/// let first = queue.peek()
+/// ```
 pub fn peek[T](self : Queue[T]) -> Option[T] {
   let tail = self.tail
   match tail {
@@ -141,6 +180,13 @@ test "peek" {
   @assertion.assert_eq(queue.peek(), None)?
 }
 
+/// Returns the length of the queue.
+/// 
+/// # Example
+/// ```
+/// let queue : Queue[Int] = Queue::[1, 2, 3, 4]
+/// let length = queue.length()
+/// ```
 pub fn length[T](self : Queue[T]) -> Int {
   self.length
 }
@@ -155,6 +201,13 @@ test "length" {
   @assertion.assert_eq(queue.length(), 4)?
 }
 
+/// Checks if the queue is empty.
+/// 
+/// # Example
+/// ```
+/// let queue : Queue[Int] = Queue::create()
+/// let is_empty = queue.is_empty()
+/// ```
 pub fn is_empty[T](self : Queue[T]) -> Bool {
   self.length == 0
 }
@@ -169,6 +222,13 @@ test "is_empty" {
   @assertion.assert_false(queue.is_empty())?
 }
 
+/// Takes the first value from the queue.
+/// 
+/// # Example
+/// ```
+/// let queue : Queue[Int] = Queue::[1, 2, 3, 4]
+/// let first = queue.take()
+/// ```
 pub fn take[T : Eq](self : Queue[T]) -> T {
   if self.length == 0 {
     abort("Queue is empty")
@@ -193,6 +253,13 @@ test "take" {
   @assertion.assert_eq(queue.length(), 0)?
 }
 
+/// Takes the first value from the queue, or returns `None` if the queue is empty.
+/// 
+/// # Example
+/// ```
+/// let queue : Queue[Int] = Queue::[1, 2, 3, 4]
+/// let first = queue.take_option()
+/// ```
 pub fn take_option[T : Eq](self : Queue[T]) -> Option[T] {
   if self.length == 0 {
     None
@@ -210,6 +277,13 @@ test "take_option" {
   @assertion.assert_eq(queue.take_option(), None)?
 }
 
+/// Iterates over the queue.
+/// 
+/// # Example
+/// ```
+/// let queue : Queue[Int] = Queue::[1, 2, 3, 4]
+/// queue.iter(fn(x) { print(x) })
+/// ```
 pub fn iter[T : Eq](self : Queue[T], f : (T) -> Unit) {
   if self.length > 0 {
     let tail = self.tail.unwrap()
@@ -238,6 +312,13 @@ test "iter" {
   @assertion.assert_eq(sum, 10)?
 }
 
+/// Folds over the queue.
+/// 
+/// # Example
+/// ```
+/// let queue : Queue[Int] = Queue::[1, 2, 3, 4]
+/// let sum = queue.fold(0, fn(acc, x) { acc + x })
+/// ```
 pub fn fold[T : Eq](self : Queue[T], init : T, f : (T, T) -> T) -> T {
   if self.length == 0 {
     init
