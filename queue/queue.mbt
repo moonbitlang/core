@@ -21,7 +21,7 @@ pub fn op_equal[T : Eq](self : Cell[T], other : Cell[T]) -> Bool {
   self.content == other.content
 }
 
-pub struct Queue[T] {
+struct Queue[T] {
   mut length : Int
   mut tail : Option[Cell[T]]
 }
@@ -32,12 +32,12 @@ pub struct Queue[T] {
 /// ```
 /// let queue : Queue[Int] = Queue::create()
 /// ```
-pub fn Queue::create[T]() -> Queue[T] {
+pub fn Queue::new[T]() -> Queue[T] {
   { length: 0, tail: None }
 }
 
-test "create" {
-  let queue : Queue[Int] = create()
+test "new" {
+  let queue : Queue[Int] = new()
   @assertion.assert_eq(queue.length, 0)?
   @assertion.assert_true(queue.tail == None)?
 }
@@ -49,7 +49,7 @@ test "create" {
 /// let queue : Queue[Int] = Queue::[1, 2, 3, 4]
 /// ```
 pub fn Queue::from_array[T](array : Array[T]) -> Queue[T] {
-  let queue : Queue[T] = create()
+  let queue : Queue[T] = new()
   for i = 0; i < array.length(); i = i + 1 {
     queue.add(array[i])
   }
@@ -73,7 +73,7 @@ test "from_array" {
 /// let queue : Queue[Int] = Queue::from_list(Cons(1, Cons(2, Cons(3, Cons(4, Nil))))
 /// ```
 pub fn Queue::from_list[T](list : List[T]) -> Queue[T] {
-  let queue : Queue[T] = create()
+  let queue : Queue[T] = new()
   loop list {
     l =>
       match l {
@@ -142,7 +142,7 @@ pub fn add[T](self : Queue[T], value : T) {
 }
 
 test "add" {
-  let queue : Queue[Int] = create()
+  let queue : Queue[Int] = new()
   queue.add(1)
   queue.add(2)
   queue.add(3)
@@ -177,7 +177,7 @@ pub fn peek[T](self : Queue[T]) -> Option[T] {
 }
 
 test "peek" {
-  let queue : Queue[Int] = create()
+  let queue : Queue[Int] = new()
   @assertion.assert_eq(queue.peek(), None)?
   queue.add(1)
   queue.add(2)
@@ -206,7 +206,7 @@ pub fn length[T](self : Queue[T]) -> Int {
 }
 
 test "length" {
-  let queue : Queue[Int] = create()
+  let queue : Queue[Int] = new()
   @assertion.assert_eq(queue.length(), 0)?
   queue.add(1)
   queue.add(2)
@@ -227,7 +227,7 @@ pub fn is_empty[T](self : Queue[T]) -> Bool {
 }
 
 test "is_empty" {
-  let queue : Queue[Int] = create()
+  let queue : Queue[Int] = new()
   @assertion.assert_true(queue.is_empty())?
   queue.add(1)
   queue.add(2)
@@ -313,7 +313,7 @@ pub fn iter[T : Eq](self : Queue[T], f : (T) -> Unit) {
 }
 
 test "iter" {
-  let queue : Queue[Int] = create()
+  let queue : Queue[Int] = new()
   let mut sum = 0
   queue.iter(fn(x) { sum = sum + x })
   @assertion.assert_eq(sum, 0)?
@@ -353,7 +353,7 @@ pub fn fold[T : Eq](self : Queue[T], init : T, f : (T, T) -> T) -> T {
 }
 
 test "fold" {
-  let queue : Queue[Int] = create()
+  let queue : Queue[Int] = new()
   let sum = queue.fold(0, fn(acc, x) { acc + x })
   @assertion.assert_eq(sum, 0)?
   queue.add(1)
