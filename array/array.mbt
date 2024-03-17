@@ -249,3 +249,43 @@ test "fold_rev" {
   let sum = [1, 2, 3, 4, 5].fold_rev(~init=0, fn { sum, elem => sum + elem })
   @assertion.assert_eq(sum, 15)?
 }
+
+/// Reverse the array in place.
+pub fn reverse[T](self : Array[T]) {
+  let mid_len = self.length() / 2
+  for i = 0; i < mid_len; i = i + 1 {
+    let j = self.length() - i - 1
+    self.swap(i, j)
+  }
+}
+
+test "reverse" {
+  {
+    let arr = [1, 2]
+    arr.reverse()
+    @assertion.assert_eq(arr, [2, 1])?
+  }
+  {
+    let arr = [1, 2, 3, 4, 5]
+    arr.reverse()
+    @assertion.assert_eq(arr, [5, 4, 3, 2, 1])?
+  }
+  let arr = [1]
+  arr.reverse()
+  @assertion.assert_eq(arr, [1])?
+}
+
+/// Swap two elements in the array.
+/// 
+/// # Example 
+/// 
+/// ```
+/// let arr = [1, 2, 3, 4, 5]
+/// arr.swap(0, 1)
+/// debug(arr) //output: [2, 1, 3, 4, 5]
+/// ```
+pub fn swap[T](self : Array[T], i : Int, j : Int) {
+  let temp = self[i]
+  self[i] = self[j]
+  self[j] = temp
+}
