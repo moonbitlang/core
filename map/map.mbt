@@ -47,7 +47,7 @@ pub fn singleton[K, V](key : K, value : V) -> Map[K, V] {
 
 /// Check if the map contains a key.
 /// O(log n).
-pub fn member[K : Compare + Show, V : Show](self : Map[K, V], key : K) -> Bool {
+pub fn member[K : Compare, V](self : Map[K, V], key : K) -> Bool {
   match self {
     Empty => false
     Tree(k, _, _, l, r) =>
