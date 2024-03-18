@@ -22,8 +22,7 @@
 /// ```
 pub fn List::from_array[T](arr : Array[T]) -> List[T] {
   for i = arr.length() - 1, list = List::Nil; i >= 0; {
-    continue i - 1,
-      List::Cons(arr[i], list)
+    continue i - 1, List::Cons(arr[i], list)
   } else {
     list
   }
@@ -69,7 +68,14 @@ test "iter" {
   let ls = from_array([1, 2, 3, 4, 5])
   let mut i = 0
   let mut failed = false
-  ls.iter(fn(x) { i = i + 1; if x != i { failed = true } })
+  ls.iter(
+    fn(x) {
+      i = i + 1
+      if x != i {
+        failed = true
+      }
+    },
+  )
   @assertion.assert_false(failed)?
 }
 
@@ -86,8 +92,7 @@ pub fn iteri[T](self : List[T], f : (Int, T) -> Unit) -> Unit {
     Nil, _ => ()
     Cons(x, xs), i => {
       f(i, x)
-      continue xs,
-        i + 1
+      continue xs, i + 1
     }
   }
 }
@@ -96,7 +101,14 @@ test "iteri" {
   let mut v = 0
   let mut failed = false
   let ls = from_array([1, 2, 3, 4, 5])
-  ls.iteri(fn(i, x) { if x != v + 1 || i != v { failed = true }; v = v + 1 })
+  ls.iteri(
+    fn(i, x) {
+      if x != v + 1 || i != v {
+        failed = true
+      }
+      v = v + 1
+    },
+  )
   @assertion.assert_false(failed)?
 }
 
@@ -1104,4 +1116,3 @@ test "intercalate" {
     List::[1, 2, 3, 0, 4, 5, 6, 0, 7, 8, 9],
   )?
 }
-

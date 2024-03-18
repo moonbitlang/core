@@ -47,7 +47,7 @@ pub fn singleton[K, V](key : K, value : V) -> Map[K, V] {
 
 /// Check if the map contains a key.
 /// O(log n).
-pub fn member[K : Compare + Show, V : Show](self : Map[K, V], key : K) -> Bool {
+pub fn member[K : Compare, V](self : Map[K, V], key : K) -> Bool {
   match self {
     Empty => false
     Tree(k, _, _, l, r) =>
@@ -270,8 +270,7 @@ pub fn Map::from_array[K : Compare, V](array : Array[(K, V)]) -> Map[K, V] {
     i, mp =>
       if i < array.length() {
         let (k, v) = array[i]
-        continue i + 1,
-          mp.insert(k, v)
+        continue i + 1, mp.insert(k, v)
       } else {
         mp
       }

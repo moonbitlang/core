@@ -75,7 +75,7 @@ pub fn assert_false(x : Bool, ~loc : SourceLoc = _) -> Result[Unit, String] {
   if x == false {
     Ok(())
   } else {
-    Err("FAILED:\(loc)")      
+    Err("FAILED:\(loc)")
   }
 }
 
