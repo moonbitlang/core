@@ -46,9 +46,9 @@ fn slice[T](self : ArraySlice[T], start : Int, end : Int) -> ArraySlice[T] {
   { array: self.array, start: self.start + start, end: self.start + end }
 }
 
-/// Sorts the array in place.
+/// Sorts the array
 /// 
-/// It's an unstable sort. 
+/// It's an in-place, unstable sort(it will reorder equal elements). The time complexity is O(n log n) in the worst case.
 /// 
 /// # Example
 /// 
@@ -68,7 +68,7 @@ pub fn sort[T : Compare](self : Array[T]) {
 
 /// Sorts the array with a key extraction function.
 /// 
-/// It's an unstable sort. 
+/// It's an in-place, unstable sort(it will reorder equal elements). The time complexity is O(n log n) in the worst case.
 /// 
 /// # Example
 /// 
@@ -88,7 +88,7 @@ pub fn sort_by_key[T, K : Compare](self : Array[T], map : (T) -> K) {
 
 /// Sorts the array with a custom comparison function.
 /// 
-/// It's an unstable sort.
+/// It's an in-place, unstable sort(it will reorder equal elements). The time complexity is O(n log n) in the worst case.
 /// 
 /// # Example
 /// 
