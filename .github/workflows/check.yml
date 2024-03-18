@@ -49,7 +49,31 @@ jobs:
 
       - name: moon test
         run: moon test
-      
+
+      - name: moon bundle
+        run: moon bundle
+
+      - name: format diff
+        run: |
+          moon fmt
+          git diff
+
+  build-on-mac:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: install
+        run: |
+          /bin/bash -c "$(curl -fsSL https://cli.moonbitlang.com/mac_intel_moon_setup.sh)"
+          echo "$HOME/.moon/bin" >> $GITHUB_PATH
+
+      - name: moon check
+        run: moon check
+
+      - name: moon test
+        run: moon test
+
       - name: moon bundle
         run: moon bundle
 
