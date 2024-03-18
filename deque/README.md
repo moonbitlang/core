@@ -2,7 +2,7 @@
 
 ## Overview
 
-deque is a double-ended queue implemented as a round-robin queue, supporting O(1) head or tail insertion and querying, just like double-ended queues in other languages(C++ std::deque/Rust VecDeque), here deque also supports random access.
+Deque is a double-ended queue implemented as a round-robin queue, supporting O(1) head or tail insertion and querying, just like double-ended queues in other languages(C++ std::deque / Rust VecDeque), here deque also supports random access.
 
 ## Usage
 
@@ -81,7 +81,7 @@ dq[0] // 5
 
 You can use `pop_front()` and `pop_back()` to pop the element at the head or tail of the queue, respectively, and like [Front & Back](#Front & Back & Get), their return values are `Option`, loaded with the value of the element being popped.
 
-```moonbir
+```moonbit
 let dq = Deque::[1, 2, 3, 4, 5]
 let back = dq.pop_back() // Some(5)
 dq.back() // Some(4)
