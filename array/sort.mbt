@@ -26,15 +26,15 @@ fn op_get[T](self : ArraySlice[T], index : Int) -> T {
   self.array[self.start + index]
 }
 
-fn op_set[T](self : ArraySlice[T], index : Int, value : T) {
+fn op_set[T](self : ArraySlice[T], index : Int, value : T) -> Unit {
   self.array[self.start + index] = value
 }
 
-fn swap[T](self : ArraySlice[T], a : Int, b : Int) {
+fn swap[T](self : ArraySlice[T], a : Int, b : Int) -> Unit {
   self.array.swap(self.start + a, self.start + b)
 }
 
-fn reverse[T](self : ArraySlice[T]) {
+fn reverse[T](self : ArraySlice[T]) -> Unit {
   let mid_len = self.length() / 2
   for i = 0; i < mid_len; i = i + 1 {
     let j = self.length() - i - 1
@@ -57,7 +57,7 @@ fn slice[T](self : ArraySlice[T], start : Int, end : Int) -> ArraySlice[T] {
 /// arr.sort()
 /// debug(arr) //output: [1, 2, 3, 4, 5]
 /// ```
-pub fn sort[T : Compare](self : Array[T]) {
+pub fn sort[T : Compare](self : Array[T]) -> Unit {
   quick_sort(
     { array: self, start: 0, end: self.length() },
     T::compare,
@@ -77,7 +77,7 @@ pub fn sort[T : Compare](self : Array[T]) {
 /// arr.sort_by_key(fn (x) {-x})
 /// debug(arr) //output: [5, 4, 3, 2, 1]
 /// ```
-pub fn sort_by_key[T, K : Compare](self : Array[T], map : (T) -> K) {
+pub fn sort_by_key[T, K : Compare](self : Array[T], map : (T) -> K) -> Unit {
   quick_sort(
     { array: self, start: 0, end: self.length() },
     fn(a, b) { map(a).compare(map(b)) },
@@ -97,7 +97,7 @@ pub fn sort_by_key[T, K : Compare](self : Array[T], map : (T) -> K) {
 /// arr.sort_by(fn (a, b) { a - b })
 /// debug(arr) //output: [1, 2, 3, 4, 5]
 /// ```
-pub fn sort_by[T](self : Array[T], cmp : (T, T) -> Int) {
+pub fn sort_by[T](self : Array[T], cmp : (T, T) -> Int) -> Unit {
   quick_sort(
     { array: self, start: 0, end: self.length() },
     cmp,
@@ -111,7 +111,7 @@ fn quick_sort[T](
   cmp : (T, T) -> Int,
   pred : Option[T],
   limit : Int
-) {
+) -> Unit {
   let mut limit = limit
   let mut arr = arr
   let mut pred = pred
@@ -222,7 +222,7 @@ fn try_bubble_sort[T](arr : ArraySlice[T], cmp : (T, T) -> Int) -> Bool {
 /// It will only tolerate at most 8 unsorted elements. The time complexity is O(n).
 /// 
 /// Returns whether the array is sorted.
-fn bubble_sort[T](arr : ArraySlice[T], cmp : (T, T) -> Int) {
+fn bubble_sort[T](arr : ArraySlice[T], cmp : (T, T) -> Int) -> Unit {
   for i = 1; i < arr.length(); i = i + 1 {
     let mut j = i
     let mut sorted = true
@@ -308,7 +308,7 @@ fn choose_pivot[T](arr : ArraySlice[T], cmp : (T, T) -> Int) -> (Int, Bool) {
   }
 }
 
-fn heap_sort[T](arr : ArraySlice[T], cmp : (T, T) -> Int) {
+fn heap_sort[T](arr : ArraySlice[T], cmp : (T, T) -> Int) -> Unit {
   let len = arr.length()
   for i = len / 2 - 1; i >= 0; i = i - 1 {
     sift_down(arr, i, cmp)
@@ -319,7 +319,7 @@ fn heap_sort[T](arr : ArraySlice[T], cmp : (T, T) -> Int) {
   }
 }
 
-fn sift_down[T](arr : ArraySlice[T], index : Int, cmp : (T, T) -> Int) {
+fn sift_down[T](arr : ArraySlice[T], index : Int, cmp : (T, T) -> Int) -> Unit {
   let mut index = index
   let len = arr.length()
   let mut child = index * 2 + 1

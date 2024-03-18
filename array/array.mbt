@@ -251,7 +251,7 @@ test "fold_rev" {
 }
 
 /// Reverse the array in place.
-pub fn reverse[T](self : Array[T]) {
+pub fn reverse[T](self : Array[T]) -> Unit {
   let mid_len = self.length() / 2
   for i = 0; i < mid_len; i = i + 1 {
     let j = self.length() - i - 1
@@ -284,7 +284,7 @@ test "reverse" {
 /// arr.swap(0, 1)
 /// debug(arr) //output: [2, 1, 3, 4, 5]
 /// ```
-pub fn swap[T](self : Array[T], i : Int, j : Int) {
+pub fn swap[T](self : Array[T], i : Int, j : Int) -> Unit {
   let temp = self[i]
   self[i] = self[j]
   self[j] = temp
