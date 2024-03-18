@@ -65,7 +65,7 @@ jobs:
 
       - name: install
         run: |
-          /bin/bash -c "$(curl -fsSL https://cli.moonbitlang.com/mac_m1_moon_setup.sh)"
+          /bin/bash -c "$(curl -fsSL https://cli.moonbitlang.com/mac_intel_moon_setup.sh)"
           echo "$HOME/.moon/bin" >> $GITHUB_PATH
 
       - name: moon check
