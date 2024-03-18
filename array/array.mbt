@@ -84,7 +84,7 @@ pub fn iter_rev[T](self : Array[T], f : (T) -> Unit) -> Unit {
   }
 }
 
-test "iter rev" {
+test "iter_rev" {
   let mut i = 6
   let mut failed = false
   [1, 2, 3, 4, 5].iter_rev(
@@ -157,7 +157,7 @@ pub fn map_with_index[T, U](self : Array[T], f : (T, Int) -> U) -> Array[U] {
   res
 }
 
-test "map with index" {
+test "map_with_index" {
   let arr = [1, 2, 3, 4, 5]
   let doubled = arr.map_with_index(fn(x, i) { x * 2 + i })
   let empty : Array[Int] = Array::default().map_with_index(fn(x, i) { x + i })

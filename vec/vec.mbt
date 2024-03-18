@@ -246,7 +246,7 @@ test "iter" {
   @assertion.assert_eq(sum, 12)?
 }
 
-/// Iterates over the elements of the vector with index
+/// Iterates over the elements of the vector with index.
 /// 
 /// # Example
 /// ```
@@ -485,7 +485,7 @@ test "ends_with" {
   @assertion.assert_false(v.ends_with(Vec::[2, 3, 4, 5]))?
 }
 
-/// Search the vector index for a given element
+/// Search the vector index for a given element.
 /// 
 /// # Example
 /// ```
