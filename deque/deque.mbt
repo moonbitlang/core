@@ -310,6 +310,16 @@ test "iter" {
   @assertion.assert_false(failed)?
 }
 
+test "iter2" {
+  let v = Deque::[1,2,3,4,5]
+  v.pop_front() |> ignore
+  v.pop_back()|> ignore
+  let mut sum = 0
+  v.iter(fn {x => sum += x})
+  @assertion.assert_eq(sum,9)?
+
+}
+
 /// Iterates over the elements of the deque with index.
 /// 
 /// # Example
