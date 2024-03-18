@@ -59,10 +59,10 @@ pub fn Queue::from_array[T](array : Array[T]) -> Queue[T] {
 test "from_array" {
   let queue : Queue[Int] = Queue::[1, 2, 3, 4]
   @assertion.assert_eq(queue.length, 4)?
-  @assertion.assert_eq(queue.take(), 1)?
-  @assertion.assert_eq(queue.take(), 2)?
-  @assertion.assert_eq(queue.take(), 3)?
-  @assertion.assert_eq(queue.take(), 4)?
+  @assertion.assert_eq(queue.pop(), 1)?
+  @assertion.assert_eq(queue.pop(), 2)?
+  @assertion.assert_eq(queue.pop(), 3)?
+  @assertion.assert_eq(queue.pop(), 4)?
   @assertion.assert_eq(queue.length, 0)?
 }
 
@@ -92,10 +92,10 @@ test "from_list" {
     Cons(1, Cons(2, Cons(3, Cons(4, Nil)))),
   )
   @assertion.assert_eq(queue.length, 4)?
-  @assertion.assert_eq(queue.take(), 1)?
-  @assertion.assert_eq(queue.take(), 2)?
-  @assertion.assert_eq(queue.take(), 3)?
-  @assertion.assert_eq(queue.take(), 4)?
+  @assertion.assert_eq(queue.pop(), 1)?
+  @assertion.assert_eq(queue.pop(), 2)?
+  @assertion.assert_eq(queue.pop(), 3)?
+  @assertion.assert_eq(queue.pop(), 4)?
   @assertion.assert_eq(queue.length, 0)?
 }
 
@@ -148,10 +148,10 @@ test "add" {
   queue.add(3)
   queue.add(4)
   @assertion.assert_eq(queue.length, 4)?
-  @assertion.assert_eq(queue.take(), 1)?
-  @assertion.assert_eq(queue.take(), 2)?
-  @assertion.assert_eq(queue.take(), 3)?
-  @assertion.assert_eq(queue.take(), 4)?
+  @assertion.assert_eq(queue.pop(), 1)?
+  @assertion.assert_eq(queue.pop(), 2)?
+  @assertion.assert_eq(queue.pop(), 3)?
+  @assertion.assert_eq(queue.pop(), 4)?
   @assertion.assert_eq(queue.length, 0)?
 }
 
@@ -184,13 +184,13 @@ test "peek" {
   queue.add(3)
   queue.add(4)
   @assertion.assert_eq(queue.peek(), Some(1))?
-  @assertion.assert_eq(queue.take(), 1)?
+  @assertion.assert_eq(queue.pop(), 1)?
   @assertion.assert_eq(queue.peek(), Some(2))?
-  @assertion.assert_eq(queue.take(), 2)?
+  @assertion.assert_eq(queue.pop(), 2)?
   @assertion.assert_eq(queue.peek(), Some(3))?
-  @assertion.assert_eq(queue.take(), 3)?
+  @assertion.assert_eq(queue.pop(), 3)?
   @assertion.assert_eq(queue.peek(), Some(4))?
-  @assertion.assert_eq(queue.take(), 4)?
+  @assertion.assert_eq(queue.pop(), 4)?
   @assertion.assert_eq(queue.peek(), None)?
 }
 
@@ -236,14 +236,14 @@ test "is_empty" {
   @assertion.assert_false(queue.is_empty())?
 }
 
-/// Takes the first value from the queue.
+/// Pops the first value from the queue.
 /// 
 /// # Example
 /// ```
 /// let queue : Queue[Int] = Queue::[1, 2, 3, 4]
-/// let first = queue.take()
+/// let first = queue.pop()
 /// ```
-pub fn take[T : Eq](self : Queue[T]) -> T {
+pub fn pop[T : Eq](self : Queue[T]) -> T {
   if self.length == 0 {
     abort("Queue is empty")
   }
@@ -258,37 +258,37 @@ pub fn take[T : Eq](self : Queue[T]) -> T {
   head.content
 }
 
-test "take" {
+test "pop" {
   let queue : Queue[Int] = Queue::[1, 2, 3, 4]
-  @assertion.assert_eq(queue.take(), 1)?
-  @assertion.assert_eq(queue.take(), 2)?
-  @assertion.assert_eq(queue.take(), 3)?
-  @assertion.assert_eq(queue.take(), 4)?
+  @assertion.assert_eq(queue.pop(), 1)?
+  @assertion.assert_eq(queue.pop(), 2)?
+  @assertion.assert_eq(queue.pop(), 3)?
+  @assertion.assert_eq(queue.pop(), 4)?
   @assertion.assert_eq(queue.length(), 0)?
 }
 
-/// Takes the first value from the queue, or returns `None` if the queue is empty.
+/// Pops the first value from the queue, or returns `None` if the queue is empty.
 /// 
 /// # Example
 /// ```
 /// let queue : Queue[Int] = Queue::[1, 2, 3, 4]
-/// let first = queue.take_option()
+/// let first = queue.pop_option()
 /// ```
-pub fn take_option[T : Eq](self : Queue[T]) -> Option[T] {
+pub fn pop_option[T : Eq](self : Queue[T]) -> Option[T] {
   if self.length == 0 {
     None
   } else {
-    Some(self.take())
+    Some(self.pop())
   }
 }
 
-test "take_option" {
+test "pop_option" {
   let queue : Queue[Int] = Queue::[1, 2, 3, 4]
-  @assertion.assert_eq(queue.take_option(), Some(1))?
-  @assertion.assert_eq(queue.take_option(), Some(2))?
-  @assertion.assert_eq(queue.take_option(), Some(3))?
-  @assertion.assert_eq(queue.take_option(), Some(4))?
-  @assertion.assert_eq(queue.take_option(), None)?
+  @assertion.assert_eq(queue.pop_option(), Some(1))?
+  @assertion.assert_eq(queue.pop_option(), Some(2))?
+  @assertion.assert_eq(queue.pop_option(), Some(3))?
+  @assertion.assert_eq(queue.pop_option(), Some(4))?
+  @assertion.assert_eq(queue.pop_option(), None)?
 }
 
 /// Iterates over the queue.
