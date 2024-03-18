@@ -21,6 +21,7 @@ pub fn op_equal[T : Eq](self : Cell[T], other : Cell[T]) -> Bool {
   self.content == other.content
 }
 
+
 struct Queue[T] {
   mut length : Int
   mut tail : Option[Cell[T]]
@@ -81,7 +82,7 @@ pub fn Queue::from_list[T](list : List[T]) -> Queue[T] {
           queue.add(head)
           continue tail
         }
-        Nil => break
+        Nil => ()
       }
   }
   queue
@@ -163,16 +164,10 @@ test "add" {
 /// let first = queue.peek()
 /// ```
 pub fn peek[T](self : Queue[T]) -> Option[T] {
-  let tail = self.tail
-  match tail {
-    Some(tail) => {
-      let head = tail.next
-      match head {
-        Some(head) => Some(head.content)
-        None => None
-      }
-    }
-    None => None
+  if self.length == 0 {
+    return None
+  } else {
+    Some(self.tail.unwrap().next.unwrap().content)
   }
 }
 
