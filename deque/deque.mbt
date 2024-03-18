@@ -164,6 +164,36 @@ pub fn push_back[T](self : Deque[T], value : T) -> Unit {
   self.len += 1
 }
 
+/// Removes a fornt element from a deque.
+/// 
+/// # Example
+/// ```
+/// let dq = Deque::[1, 2, 3, 4, 5]
+/// dq.pop_front_ignore()
+/// ```
+pub fn pop_front_ignore[T](self : Deque[T]) -> Unit {
+  if self.len == 0 {
+    abort("The deque is empty!")
+  }
+  self.head = if self.head < self.buf.length() - 1 { self.head + 1 } else { 0 }
+  self.len -= 1
+}
+
+/// Removes a back element from a deque.
+/// 
+/// # Example
+/// ```
+/// let dq = Deque::[1, 2, 3, 4, 5]
+/// dq.pop_back_ignore()
+/// ```
+pub fn pop_back_ignore[T](self : Deque[T]) -> Unit {
+  if self.len == 0 {
+    abort("The deque is empty!")
+  }
+  self.tail = if self.tail > 0 { self.tail - 1 } else { self.buf.length() - 1 }
+  self.len -= 1
+}
+
 /// Removes a fornt element from a deque and returns it, or `None` if it is empty.
 /// 
 /// # Example
@@ -317,8 +347,8 @@ test "iter" {
 
 test "iter2" {
   let v = Deque::[1, 2, 3, 4, 5]
-  v.pop_front() |> ignore
-  v.pop_back() |> ignore
+  v.pop_front_ignore()
+  v.pop_back_ignore()
   let mut sum = 0
   v.iter(fn { x => sum += x })
   @assertion.assert_eq(sum, 9)?
@@ -488,4 +518,52 @@ test "is_empty" {
   @assertion.assert_true(dq.is_empty())?
   dq.push_back(3)
   @assertion.assert_false(dq.is_empty())?
+}
+
+/// Search the deque index for a given element.
+/// 
+/// # Example
+/// ```
+/// let dq = Deque::[3, 4, 5]
+/// dq.search(3) // Some(0)
+/// ```
+pub fn search[T : Eq](self : Deque[T], value : T) -> Option[Int] {
+  for i = 0; i < self.len; i = i + 1 {
+    if self.buf[i] == value {
+      return Some(i)
+    }
+  }
+  None
+}
+
+test "search" {
+  let dq = Deque::[3, 4, 5]
+  @assertion.assert_eq(dq.search(3), Some(0))?
+  @assertion.assert_eq(dq.search(4), Some(1))?
+  @assertion.assert_eq(dq.search(5), Some(2))?
+  @assertion.assert_eq(dq.search(6), None)?
+}
+
+/// Checks if the vector contains an element.
+/// 
+/// # Example
+/// ```
+/// let dq = Deque::[3, 4, 5]
+/// dq.contains(3) // true
+/// ```
+pub fn contains[T : Eq](self : Deque[T], value : T) -> Bool {
+  for i = 0; i < self.len; i = i + 1 {
+    if self.buf[i] == value {
+      return true
+    }
+  }
+  false
+}
+
+test "contains" {
+  let dq = Deque::[3, 4, 5]
+  @assertion.assert_true(dq.contains(3))?
+  @assertion.assert_true(dq.contains(4))?
+  @assertion.assert_true(dq.contains(5))?
+  @assertion.assert_false(dq.contains(6))?
 }
