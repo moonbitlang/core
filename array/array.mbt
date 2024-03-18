@@ -236,3 +236,16 @@ test "fold" {
   let sum = [1, 2, 3, 4, 5].fold(fn(elem, sum : Int) { sum + elem }, 0)
   @assertion.assert_eq(sum, 15)?
 }
+
+pub fn fold_rev[T, U](self : Array[T], f : (T, U) -> U, init : U) -> U {
+  for i = self.length() - 1, acc = init; i >= 0; {
+    continue i - 1, f(self[i], acc)
+  } else {
+    acc
+  }
+}
+
+test "fold_rev" {
+  let sum = [1, 2, 3, 4, 5].fold_rev(fn(elem, sum : Int) { sum + elem }, 0)
+  @assertion.assert_eq(sum, 15)?
+}

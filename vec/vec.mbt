@@ -246,6 +246,22 @@ test "iter" {
   @assertion.assert_eq(sum, 12)?
 }
 
+pub fn iter_rev[T](self : Vec[T], f : (T) -> Unit) -> Unit {
+  for i = self.length() - 1; i >= 0; i = i - 1 {
+    f(self[i])
+  }
+}
+
+test "iter_rev" {
+  let v = Vec::with_capacity(3)
+  v.push(3)
+  v.push(4)
+  v.push(5)
+  let mut sum = 0
+  v.iter_rev(fn(x) { sum = sum + x })
+  @assertion.assert_eq(sum, 12)?
+}
+
 /// Iterates over the elements of the vector with index.
 /// 
 /// # Example
@@ -267,6 +283,19 @@ test "iteri" {
   let v = Vec::[3, 4, 5]
   let mut sum = 0
   v.iteri(fn(i, x) { sum = sum + x + i })
+  @assertion.assert_eq(sum, 15)?
+}
+
+pub fn iteri_rev[T](self : Vec[T], f : (Int, T) -> Unit) -> Unit {
+  for i = self.length() - 1; i >= 0; i = i - 1 {
+    f(i, self[i])
+  }
+}
+
+test "iteri_rev" {
+  let v = Vec::[3, 4, 5]
+  let mut sum = 0
+  v.iteri_rev(fn(i, x) { sum = sum + x + i })
   @assertion.assert_eq(sum, 15)?
 }
 
@@ -804,4 +833,30 @@ test "join" {
   @assertion.assert_eq(vv[3], 5)?
   @assertion.assert_eq(vv[4], 6)?
   @assertion.assert_eq(vv.length(), 5)?
+}
+
+pub fn fold[T, U](self : Vec[T], f : (T, U) -> U, init : U) -> U {
+  for i = 0, acc = init; i < self.length(); {
+    continue i + 1, f(self[i], acc)
+  } else {
+    acc
+  }
+}
+
+test "fold" {
+  let sum = Vec::[1, 2, 3, 4, 5].fold(fn(elem, sum : Int) { sum + elem }, 0)
+  @assertion.assert_eq(sum, 15)?
+}
+
+pub fn fold_rev[T, U](self : Vec[T], f : (T, U) -> U, init : U) -> U {
+  for i = self.length() - 1, acc = init; i >= 0; {
+    continue i - 1, f(self[i], acc)
+  } else {
+    acc
+  }
+}
+
+test "fold_rev" {
+  let sum = Vec::[1, 2, 3, 4, 5].fold_rev(fn(elem, sum : Int) { sum + elem }, 0)
+  @assertion.assert_eq(sum, 15)?
 }
