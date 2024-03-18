@@ -90,6 +90,16 @@ dq.front() // Some(2)
 dq.length() // 3
 ```
 
+If you only want to pop an element without getting the return value, you can use `pop_front_ignore()` with `pop_back_ignore()`.
+
+```moonbit
+let dq = Deque::[1, 2, 3, 4, 5]
+dq.pop_front_ignore()
+dq.front() // Some(2)
+dq.pop_back_ignore()
+dq.back() // Some(3)
+```
+
 ### Clear
 
 You can use `clear` to clear a deque. But note that the memory it already occupies does not change.
@@ -122,12 +132,15 @@ deque supports vector-like `iter/iteri/map/mapi` functions and their inverse for
  dq.mapi(fn(i, elem) { elem + i })
 ```
 
-### TODO List
+### Search & Contains
 
-- [ ] fold/foldr
-- [ ] reverse
-- [ ] contains
-- [ ] search
-- [ ] swap
-- [ ] resize
-- [ ] fill
+You can use `contains()` to find out if a value is in the deque, or `search()` to find its index in the deque.
+
+```moonbit
+let dq = Deque::[1, 2, 3, 4, 5]
+dq.contains(1) // true
+dq.contains(6) // false
+dq.search(1) // Some(0)
+dq.search(6) // None
+```
+
