@@ -106,7 +106,7 @@ test "from_list" {
 /// let queue : Queue[Int] = Queue::[1, 2, 3, 4]
 /// queue.clear()
 /// ```
-pub fn clear[T](self : Queue[T]) {
+pub fn clear[T](self : Queue[T]) -> Unit {
   self.length = 0
   self.tail = None
 }
@@ -125,7 +125,7 @@ test "clear" {
 /// let queue : Queue[Int] = Queue::create()
 /// queue.add(1)
 /// ```
-pub fn add[T](self : Queue[T], value : T) {
+pub fn add[T](self : Queue[T], value : T) -> Unit {
   if self.length == 0 {
     let cell : Cell[T] = { content: value, next: None }
     cell.next = Some(cell)
@@ -298,7 +298,7 @@ test "pop_option" {
 /// let queue : Queue[Int] = Queue::[1, 2, 3, 4]
 /// queue.iter(fn(x) { print(x) })
 /// ```
-pub fn iter[T : Eq](self : Queue[T], f : (T) -> Unit) {
+pub fn iter[T : Eq](self : Queue[T], f : (T) -> Unit) -> Unit {
   if self.length > 0 {
     let tail = self.tail.unwrap()
     loop tail.next.unwrap() {
@@ -344,8 +344,7 @@ pub fn fold[T : Eq](self : Queue[T], init : T, f : (T, T) -> T) -> T {
         if cell == tail {
           new_acc
         } else {
-          continue cell.next.unwrap(),
-            new_acc
+          continue cell.next.unwrap(), new_acc
         }
       }
     }
