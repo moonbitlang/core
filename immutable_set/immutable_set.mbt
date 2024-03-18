@@ -59,8 +59,7 @@ pub fn ImmutableSet::from_array[T : Compare](
   array : Array[T]
 ) -> ImmutableSet[T] {
   for i = array.length() - 1, set = ImmutableSet::Empty; i >= 0; {
-    continue i - 1,
-      set.add(array[i])
+    continue i - 1, set.add(array[i])
   } else {
     set
   }

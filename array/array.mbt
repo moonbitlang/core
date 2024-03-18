@@ -34,7 +34,12 @@ test "iter" {
   let mut i = 0
   let mut failed = false
   [1, 2, 3, 4, 5].iter(
-    fn(elem) { if elem != i + 1 { failed = true }; i = i + 1 },
+    fn(elem) {
+      if elem != i + 1 {
+        failed = true
+      }
+      i = i + 1
+    },
   )
   @assertion.assert_false(failed)?
 }
@@ -83,7 +88,12 @@ test "iter rev" {
   let mut i = 6
   let mut failed = false
   [1, 2, 3, 4, 5].iter_rev(
-    fn(elem) { if elem != i - 1 { failed = true }; i = i - 1 },
+    fn(elem) {
+      if elem != i - 1 {
+        failed = true
+      }
+      i = i - 1
+    },
   )
   @assertion.assert_false(failed)?
 }
@@ -216,8 +226,7 @@ test "from_array" {
 
 pub fn fold[T, U](self : Array[T], f : (T, U) -> U, init : U) -> U {
   for i = 0, acc = init; i < self.length(); {
-    continue i + 1,
-      f(self[i], acc)
+    continue i + 1, f(self[i], acc)
   } else {
     acc
   }

@@ -305,19 +305,23 @@ test "iter" {
   let mut i = 0
   let mut failed = false
   Deque::[1, 2, 3, 4, 5].iter(
-    fn(elem) { if elem != i + 1 { failed = true }; i = i + 1 },
+    fn(elem) {
+      if elem != i + 1 {
+        failed = true
+      }
+      i = i + 1
+    },
   )
   @assertion.assert_false(failed)?
 }
 
 test "iter2" {
-  let v = Deque::[1,2,3,4,5]
+  let v = Deque::[1, 2, 3, 4, 5]
   v.pop_front() |> ignore
-  v.pop_back()|> ignore
+  v.pop_back() |> ignore
   let mut sum = 0
-  v.iter(fn {x => sum += x})
-  @assertion.assert_eq(sum,9)?
-
+  v.iter(fn { x => sum += x })
+  @assertion.assert_eq(sum, 9)?
 }
 
 /// Iterates over the elements of the deque with index.
@@ -366,7 +370,12 @@ test "iter_rev" {
   let mut i = 6
   let mut failed = false
   Deque::[1, 2, 3, 4, 5].iter_rev(
-    fn(elem) { if elem != i - 1 { failed = true }; i = i - 1 },
+    fn(elem) {
+      if elem != i - 1 {
+        failed = true
+      }
+      i = i - 1
+    },
   )
   @assertion.assert_false(failed)?
 }

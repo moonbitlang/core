@@ -270,8 +270,7 @@ pub fn Map::from_array[K : Compare, V](array : Array[(K, V)]) -> Map[K, V] {
     i, mp =>
       if i < array.length() {
         let (k, v) = array[i]
-        continue i + 1,
-          mp.insert(k, v)
+        continue i + 1, mp.insert(k, v)
       } else {
         mp
       }
