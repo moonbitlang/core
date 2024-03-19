@@ -45,7 +45,6 @@ test "maximum.ref" {
   // We need another value that equals to x2 by value but not reference
   let x2t = "v\(v2)"
   @assertion.assert_is_not(x2, x2t).unwrap()
-
   @assertion.assert_is(maximum(x1, x2), x2)?
   @assertion.assert_is(maximum(x2, x1), x2)?
   @assertion.assert_is(maximum(x2, x2t), x2t)?
@@ -85,7 +84,6 @@ test "minimum.ref" {
   // We need another value that equals to x2 by value but not reference
   let x2t = "v\(v2)"
   @assertion.assert_is_not(x2, x2t).unwrap()
-
   @assertion.assert_is(minimum(x1, x2), x1)?
   @assertion.assert_is(minimum(x2, x1), x1)?
   @assertion.assert_is(minimum(x2, x2t), x2)?

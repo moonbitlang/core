@@ -30,6 +30,30 @@ struct Vec[T] {
   mut len : Int
 }
 
+pub fn to_string[T : Show](self : Vec[T]) -> String {
+  if self.len == 0 {
+    return "Vec::[]"
+  }
+  let first = self.buf[0]
+  for i = 1, init = "Vec::[\(first)"; i < self.len; {
+    let cur = self.buf[i]
+    continue i + 1, "\(init),\(cur)"
+  } else {
+    "\(init)]"
+  }
+}
+
+test "to_string" {
+  let empty : Vec[Int] = Vec::[]
+  @assertion.assert_eq(empty.to_string(), "Vec::[]")?
+  let a0 = Vec::[0]
+  @assertion.assert_eq(a0.to_string(), "Vec::[0]")?
+  a0.push(1)
+  @assertion.assert_eq(a0.to_string(), "Vec::[0,1]")?
+  a0.push(2)
+  @assertion.assert_eq(a0.to_string(), "Vec::[0,1,2]")?
+}
+
 /// Creates a new, empty vector.
 pub fn Vec::new[T]() -> Vec[T] {
   Vec::{ buf: UninitializedArray::make(0), len: 0 }
