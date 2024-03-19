@@ -65,3 +65,15 @@ pub fn escape(self : String) -> String {
   self.escape_to(buf)
   buf.to_string()
 }
+
+test "backslash escape" {
+  let s = "\n\r\t\b\"\'\\"
+  let expected = "\\n\\r\\t\\b\\\"\\\'\\\\"
+  @assertion.assert_eq(s.escape(), expected)?
+}
+
+test "hex escape"{
+  let s = "\x11\x12\x01\x02"
+  let expected = "\\x11\\x12\\x01\\x02" 
+  @assertion.assert_eq(s.escape(), expected)?
+}
