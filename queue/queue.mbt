@@ -326,4 +326,6 @@ test "fold" {
   queue.push(4)
   let sum = queue.fold(0, fn(acc, x) { acc + x })
   @assertion.assert_eq(sum, 10)?
+  let sum2 = Queue::[1,2,3,4].fold(0, fn(acc, x) { acc + x })
+  @assertion.assert_eq(sum2, 10)?
 }
