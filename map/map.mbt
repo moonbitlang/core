@@ -168,8 +168,8 @@ pub fn iter[K : Compare, V](self : Map[K, V], f : (K, V) -> Unit) -> Unit {
 }
 
 /// Iterate over the key-value pairs with index.
-pub fn iteri[K : Compare, V](self : Map[K, V], f : (Int, K, V) -> Unit) -> Unit {
-  fn do_iteri(m : Map[K, V], f : (Int, K, V) -> Unit, i : Int) {
+pub fn iteri[K, V](self : Map[K, V], f : (Int, K, V) -> Unit) -> Unit {
+  fn do_iteri(m : Map[K, V], f, i) {
     match m {
       Empty => ()
       Tree(k, v, _, l, r) => {
@@ -184,7 +184,7 @@ pub fn iteri[K : Compare, V](self : Map[K, V], f : (Int, K, V) -> Unit) -> Unit 
 }
 
 /// Maps over the values in the map.
-pub fn map[K : Compare, X, Y](self : Map[K, X], f : (X) -> Y) -> Map[K, Y] {
+pub fn map[K , X, Y](self : Map[K, X], f : (X) -> Y) -> Map[K, Y] {
   match self {
     Empty => Empty
     Tree(k, v, s, l, r) => Tree(k, f(v), s, map(l, f), map(r, f))
@@ -192,7 +192,7 @@ pub fn map[K : Compare, X, Y](self : Map[K, X], f : (X) -> Y) -> Map[K, Y] {
 }
 
 /// Maps over the key-value pairs in the map.
-pub fn map_with_key[K : Compare, X, Y](
+pub fn map_with_key[K , X, Y](
   self : Map[K, X],
   f : (K, X) -> Y
 ) -> Map[K, Y] {
