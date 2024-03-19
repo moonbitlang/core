@@ -35,7 +35,7 @@ struct Queue[T] {
 /// let queue : Queue[Int] = Queue::new()
 /// ```
 pub fn Queue::new[T]() -> Queue[T] {
-  { length: 0, first: Cell::Nil, last: Cell::Nil }
+  { length: 0, first: Nil, last: Nil }
 }
 
 test "new" {
@@ -65,17 +65,21 @@ pub fn Queue::from_array[T](arr : Array[T]) -> Queue[T] {
 
 /// Tests if two queue cells are equal.
 pub fn op_equal[T : Eq](self : Cell[T], other : Cell[T]) -> Bool {
-  match (self, other) {
-    (Nil, Nil) => true
-    (Cons({ content: x, next: xs }), Cons({ content: y, next: ys })) =>
-      x == y && xs == ys
-    (_, _) => false
+  loop self, other {
+    Nil, Nil => true
+    Cons({ content: x, next: xs }), Cons({ content: y, next: ys }) => {
+      if x != y {
+        return false
+      }
+      continue xs, ys
+    }
+    _, _ => false
   }
 }
 
 test "from_array" {
   let queue : Queue[Int] = Queue::[1, 2, 3, 4]
-  let queue2 : Queue[Int] = Queue::from_array([1])
+  let queue2 : Queue[Int] = Queue::[1]
   @assertion.assert_eq(queue.length, 4)?
   @assertion.assert_eq(queue.pop(), 1)?
   @assertion.assert_eq(queue.pop(), 2)?
@@ -94,8 +98,8 @@ test "from_array" {
 /// ```
 pub fn clear[T](self : Queue[T]) -> Unit {
   self.length = 0
-  self.first = Cell::Nil
-  self.last = Cell::Nil
+  self.first = Nil
+  self.last = Nil
 }
 
 test "clear" {
@@ -168,24 +172,25 @@ test "push" {
 
 /// Peeks at the first value in the queue.
 /// 
+/// Panics if the queue is empty.
 /// # Example
 /// ```
 /// let queue : Queue[Int] = Queue::[1, 2, 3, 4]
-/// let first = queue.peek()
+/// let first = queue.peek_exn()
 /// ```
-pub fn peek[T](self : Queue[T]) -> T {
+pub fn peek_exn[T](self : Queue[T]) -> T {
   match self.first {
     Nil => abort("Queue is empty")
     Cons(first) => first.content
   }
 }
 
-test "peek" {
+test "peek_exn" {
   let queue : Queue[Int] = Queue::[1, 2, 3, 4]
-  @assertion.assert_eq(queue.peek(), 1)?
+  @assertion.assert_eq(queue.peek_exn(), 1)?
   @assertion.assert_eq(queue.length, 4)?
   @assertion.assert_eq(queue.pop(), 1)?
-  @assertion.assert_eq(queue.peek(), 2)?
+  @assertion.assert_eq(queue.peek_exn(), 2)?
   @assertion.assert_eq(queue.length, 3)?
 }
 
@@ -194,20 +199,20 @@ test "peek" {
 /// # Example
 /// ```
 /// let queue : Queue[Int] = Queue::[1, 2, 3, 4]
-/// let first = queue.peek_option()
+/// let first = queue.peek()
 /// ```
-pub fn peek_option[T](self : Queue[T]) -> Option[T] {
+pub fn peek[T](self : Queue[T]) -> Option[T] {
   match self.first {
     Nil => None
     Cons(first) => Some(first.content)
   }
 }
 
-test "peek_option" {
+test "peek" {
   let queue : Queue[Int] = Queue::[1, 2, 3, 4]
-  @assertion.assert_eq(queue.peek_option(), Some(1))?
+  @assertion.assert_eq(queue.peek(), Some(1))?
   queue.clear()
-  @assertion.assert_eq(queue.peek_option(), None)?
+  @assertion.assert_eq(queue.peek(), None)?
 }
 
 /// Pops the first value from the queue.
@@ -274,14 +279,11 @@ test "pop_option" {
 /// ```
 pub fn iter[T](self : Queue[T], f : (T) -> Unit) -> Unit {
   loop self.first {
-    cell =>
-      match cell {
-        Nil => ()
-        Cons({ content, next }) => {
-          f(content)
-          continue next
-        }
-      }
+    Cons({ content, next }) => {
+      f(content)
+      continue next
+    }
+    Nil => return
   }
 }
 
@@ -306,7 +308,7 @@ test "iter" {
 /// let queue : Queue[Int] = Queue::[1, 2, 3, 4]
 /// let sum = queue.fold(0, fn(acc, x) { acc + x })
 /// ```
-pub fn fold[T](self : Queue[T], init : T, f : (T, T) -> T) -> T {
+pub fn fold[T](self : Queue[T], ~init : T, f : (T, T) -> T) -> T {
   loop self.first, init {
     cell, acc =>
       match cell {
@@ -318,14 +320,14 @@ pub fn fold[T](self : Queue[T], init : T, f : (T, T) -> T) -> T {
 
 test "fold" {
   let queue : Queue[Int] = new()
-  let sum = queue.fold(0, fn(acc, x) { acc + x })
+  let sum = queue.fold(~init=0, fn(acc, x) { acc + x })
   @assertion.assert_eq(sum, 0)?
   queue.push(1)
   queue.push(2)
   queue.push(3)
   queue.push(4)
-  let sum = queue.fold(0, fn(acc, x) { acc + x })
+  let sum = queue.fold(~init=0, fn(acc, x) { acc + x })
   @assertion.assert_eq(sum, 10)?
-  let sum2 = Queue::[1,2,3,4].fold(0, fn(acc, x) { acc + x })
+  let sum2 = Queue::[1, 2, 3, 4].fold(~init=0, fn(acc, x) { acc + x })
   @assertion.assert_eq(sum2, 10)?
 }
