@@ -1,8 +1,8 @@
 /// The `CoverageCounter` structure is used for keeping track of the number of
 /// times each chunk of code is executed. It's not very useful outside of 
 /// generated code.
-pub struct CoverageCounter {
-  priv counter : Array[Int]
+struct CoverageCounter {
+  counter : Array[Int]
 } derive(Show)
 
 /// Create a new coverage counter with the given size.
