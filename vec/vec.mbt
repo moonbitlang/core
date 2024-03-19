@@ -447,7 +447,7 @@ pub fn split_at[T](self : Vec[T], index : Int) -> (Vec[T], Vec[T]) {
   if index < 0 || index >= self.len {
     let len = self.len
     abort(
-      "index out of bounds: the len is 0 to \(len) but the index is \(index)",
+      "index out of bounds: the len is from 0 to \(len) but the index is \(index)",
     )
   }
   let v1 = Vec::with_capacity(index)
@@ -582,7 +582,7 @@ pub fn swap[T](self : Vec[T], i : Int, j : Int) -> Unit {
   if i >= self.len || j >= self.len || i < 0 || j < 0 {
     let len = self.len
     abort(
-      "index out of bounds: the len is 0 to \(len) but the index is (\(i), \(j))",
+      "index out of bounds: the len is from 0 to \(len) but the index is (\(i), \(j))",
     )
   }
   let temp = self.buf[i]
@@ -661,7 +661,7 @@ pub fn remove[T](self : Vec[T], index : Int) -> T {
   if index < 0 || index >= self.len {
     let len = self.len
     abort(
-      "index out of bounds: the len is 0 to \(len) but the index is \(index)",
+      "index out of bounds: the len is from 0 to \(len) but the index is \(index)",
     )
   }
   let value = self.buf[index]
@@ -753,7 +753,7 @@ pub fn insert[T](self : Vec[T], index : Int, value : T) -> Unit {
   if index < 0 || index > self.len {
     let len = self.len
     abort(
-      "index out of bounds: the len is 0 to \(len) but the index is \(index)",
+      "index out of bounds: the len is from 0 to \(len) but the index is \(index)",
     )
   }
   if self.len == self.buf.length() {
