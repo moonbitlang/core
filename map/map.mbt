@@ -35,6 +35,37 @@ enum Map[K, V] {
   Tree(K, V, Int, Map[K, V], Map[K, V])
 }
 
+type Pair[K, V] (K, V) derive(Debug, Show)
+
+pub fn to_string[K : Debug + Show, V : Debug + Show](
+  self : Map[K, V]
+) -> String {
+  self.to_vec_map(fn { k, v => Pair::Pair((k, v)) }).to_string()
+}
+
+
+test "to_string" {
+  let buf = Buffer::make(100)
+  fn write_buf(x : Show){
+    buf.write_string(x.to_string())
+    buf.
+  }
+  
+  Map::[(1, "hell")]|> write_buf
+  buf.expect(
+    ~content=
+    #|Vec::[Pair(1, "hell")]
+    ,
+  )?
+  (Map::[]:Map[Int,Int])|> write_buf
+  buf.expect(
+  ~content=
+  #|Vec::[Pair(1, "hell")]  
+  )?
+  (Map::[(1,"x"),(2,"y")])|> write_buf
+  buf.expect()?
+}
+
 /// Create an empty map.
 pub fn empty[K, V]() -> Map[K, V] {
   Empty
@@ -165,6 +196,40 @@ pub fn lookup[K : Compare, V](self : Map[K, V], key : K) -> Option[V] {
       }
     }
   }
+}
+
+pub fn to_vec[K, V](self : Map[K, V]) -> @vec.Vec[(K, V)] {
+  fn aux(vec : @vec.Vec[(K, V)], m : Map[K, V]) {
+    match m {
+      Empty => ()
+      Tree(k, v, _, l, r) => {
+        aux(vec, l)
+        vec.push((k, v))
+        aux(vec, r)
+      }
+    }
+  }
+
+  let v = @vec.Vec::new()
+  aux(v, self)
+  v
+}
+
+pub fn to_vec_map[K, V, U](self : Map[K, V], f : (K, V) -> U) -> @vec.Vec[U] {
+  fn aux(vec : @vec.Vec[_], m : Map[K, V]) {
+    match m {
+      Empty => ()
+      Tree(k, v, _, l, r) => {
+        aux(vec, l)
+        vec.push(f(k, v))
+        aux(vec, r)
+      }
+    }
+  }
+
+  let v = @vec.Vec::new()
+  aux(v, self)
+  v
 }
 
 /// Iterate over the key-value pairs in the map.
