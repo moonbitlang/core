@@ -168,7 +168,7 @@ pub fn lookup[K : Compare, V](self : Map[K, V], key : K) -> Option[V] {
 }
 
 /// Iterate over the key-value pairs in the map.
-pub fn iter[K : Compare, V](self : Map[K, V], f : (K, V) -> Unit) -> Unit {
+pub fn iter[K, V](self : Map[K, V], f : (K, V) -> Unit) -> Unit {
   match self {
     Empty => ()
     Tree(k, v, _, l, r) => {
@@ -196,7 +196,7 @@ pub fn iteri[K, V](self : Map[K, V], f : (Int, K, V) -> Unit) -> Unit {
 }
 
 /// Maps over the values in the map.
-pub fn map[K , X, Y](self : Map[K, X], f : (X) -> Y) -> Map[K, Y] {
+pub fn map[K, X, Y](self : Map[K, X], f : (X) -> Y) -> Map[K, Y] {
   match self {
     Empty => Empty
     Tree(k, v, s, l, r) => Tree(k, f(v), s, map(l, f), map(r, f))
@@ -204,10 +204,7 @@ pub fn map[K , X, Y](self : Map[K, X], f : (X) -> Y) -> Map[K, Y] {
 }
 
 /// Maps over the key-value pairs in the map.
-pub fn map_with_key[K , X, Y](
-  self : Map[K, X],
-  f : (K, X) -> Y
-) -> Map[K, Y] {
+pub fn map_with_key[K, X, Y](self : Map[K, X], f : (K, X) -> Y) -> Map[K, Y] {
   match self {
     Empty => Empty
     Tree(k, v, s, l, r) =>
