@@ -252,6 +252,30 @@ pub fn foldl_with_key[K, V, T](
   go(self, init)
 }
 
+/// Filter values that satisfy the predicate
+pub fn filter[K : Compare, V](
+  self : Map[K, V],
+  pred : (V) -> Bool
+) -> Map[K, V] {
+  filter_with_key(self, fn(_k, v) { pred(v) })
+}
+
+/// Filter key-value pairs that satisfy the predicate
+pub fn filter_with_key[K : Compare, V](
+  self : Map[K, V],
+  pred : (K, V) -> Bool
+) -> Map[K, V] {
+  match self {
+    Empty => Empty
+    Tree(k, v, _, l, r) =>
+      if pred(k, v) {
+        balance(k, v, filter_with_key(l, pred), filter_with_key(r, pred))
+      } else {
+        glue(filter_with_key(l, pred), filter_with_key(r, pred))
+      }
+  }
+}
+
 /// The ratio between the sizes of the left and right subtrees.
 let ratio = 5
 
@@ -468,6 +492,18 @@ test "foldr_with_key" {
     m.foldr_with_key(fn(acc, k, v) { acc + k + v.to_string() }, ~init=""),
     "e5d4c3b2a1",
   )?
+}
+
+test "filter" {
+  let m = Map::[(3, "three"), (8, "eight"), (1, "one"), (2, "two"), (0, "zero")]
+  let fm = m.filter(fn(v) { v.length() > 3 })
+  @assertion.assert_eq(fm.debug_tree(), "(3,three,(0,zero,_,_),(8,eight,_,_))")?
+}
+
+test "filter_with_key" {
+  let m = Map::[(3, "three"), (8, "eight"), (1, "one"), (2, "two"), (0, "zero")]
+  let fm = m.filter_with_key(fn(k, v) { k > 3 && v.length() > 3 })
+  @assertion.assert_eq(fm.debug_tree(), "(8,eight,_,_)")?
 }
 
 test "singleton" {
