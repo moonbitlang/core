@@ -117,9 +117,11 @@ test "realloc" {
 /// println(v[0]) // 3
 /// ```
 pub fn op_get[T](self : Vec[T], index : Int) -> T {
-  if index >= self.len {
+  if index < 0 || index >= self.len {
     let len = self.len
-    abort("index out of bounds: the len is \(len) but the index is \(index)")
+    abort(
+      "index out of bounds: the len is from 0 to \(len) but the index is \(index)",
+    )
   }
   self.buf[index]
 }
@@ -135,9 +137,11 @@ pub fn op_get[T](self : Vec[T], index : Int) -> T {
 /// println(v[0]) // 3
 /// ```
 pub fn op_set[T](self : Vec[T], index : Int, value : T) -> Unit {
-  if index >= self.len {
+  if index < 0 || index >= self.len {
     let len = self.len
-    abort("index out of bounds: the len is \(len) but the index is \(index)")
+    abort(
+      "index out of bounds: the len is from 0 to \(len) but the index is \(index)",
+    )
   }
   self.buf[index] = value
 }
@@ -440,8 +444,11 @@ test "reverse" {
 /// let (v1, v2) = v.split_at(1)
 /// ```
 pub fn split_at[T](self : Vec[T], index : Int) -> (Vec[T], Vec[T]) {
-  if index > self.len {
-    abort("index out of bounds")
+  if index < 0 || index >= self.len {
+    let len = self.len
+    abort(
+      "index out of bounds: the len is 0 to \(len) but the index is \(index)",
+    )
   }
   let v1 = Vec::with_capacity(index)
   let v2 = Vec::with_capacity(self.len - index)
@@ -572,8 +579,11 @@ test "search" {
 /// v.swap(1, 2)
 /// ```
 pub fn swap[T](self : Vec[T], i : Int, j : Int) -> Unit {
-  if i >= self.len || j >= self.len {
-    abort("index out of bounds")
+  if i >= self.len || j >= self.len || i < 0 || j < 0 {
+    let len = self.len
+    abort(
+      "index out of bounds: the len is 0 to \(len) but the index is (\(i), \(j))",
+    )
   }
   let temp = self.buf[i]
   self.buf[i] = self.buf[j]
@@ -648,8 +658,11 @@ test "sort" {
 /// v.remove(1)
 /// ```
 pub fn remove[T](self : Vec[T], index : Int) -> T {
-  if index >= self.len {
-    abort("index out of bounds")
+  if index < 0 || index >= self.len {
+    let len = self.len
+    abort(
+      "index out of bounds: the len is 0 to \(len) but the index is \(index)",
+    )
   }
   let value = self.buf[index]
   for i = index; i < self.len - 1; i = i + 1 {
@@ -737,8 +750,11 @@ test "resize" {
 /// Vec::[3, 4, 5].insert(1, 6)
 /// ```
 pub fn insert[T](self : Vec[T], index : Int, value : T) -> Unit {
-  if index > self.len {
-    abort("index out of bounds")
+  if index < 0 || index > self.len {
+    let len = self.len
+    abort(
+      "index out of bounds: the len is 0 to \(len) but the index is \(index)",
+    )
   }
   if self.len == self.buf.length() {
     self.realloc()
