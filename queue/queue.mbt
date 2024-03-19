@@ -32,7 +32,7 @@ struct Queue[T] {
 /// 
 /// # Example
 /// ```
-/// let queue : Queue[Int] = Queue::create()
+/// let queue : Queue[Int] = Queue::new()
 /// ```
 pub fn Queue::new[T]() -> Queue[T] {
   { length: 0, first: Cell::Nil, last: Cell::Nil }
@@ -43,12 +43,46 @@ test "new" {
   @assertion.assert_eq(queue.length, 0)?
 }
 
+/// Creates a new queue from an array.
+/// 
+/// # Example
+/// ```
+/// let queue : Queue[Int] = Queue::from_array([1, 2, 3, 4])
+/// ```
 pub fn Queue::from_array[T](arr : Array[T]) -> Queue[T] {
-  let queue : Queue[T] = Queue::new()
-  for i = 0; i < arr.length() ; i = i + 1 {
-    queue.push(arr[i])
+  if arr.length() == 0 {
+    return new()
   }
+  let queue : Queue[T] = Queue::new()
+  queue.length = arr.length()
+  for i = arr.length(); i > 0; i = i - 1 {
+    let cell : Cell[T] = Cons({ content: arr[i - 1], next: queue.first })
+    queue.first = cell
+  }
+  queue.last = queue.first
   queue
+}
+
+/// Tests if two queue cells are equal.
+pub fn op_equal[T : Eq](self : Cell[T], other : Cell[T]) -> Bool {
+  match (self, other) {
+    (Nil, Nil) => true
+    (Cons({ content: x, next: xs }), Cons({ content: y, next: ys })) =>
+      x == y && xs == ys
+    (_, _) => false
+  }
+}
+
+test "from_array" {
+  let queue : Queue[Int] = Queue::[1, 2, 3, 4]
+  let queue2 : Queue[Int] = Queue::from_array([1])
+  @assertion.assert_eq(queue.length, 4)?
+  @assertion.assert_eq(queue.pop(), 1)?
+  @assertion.assert_eq(queue.pop(), 2)?
+  @assertion.assert_eq(queue.pop(), 3)?
+  @assertion.assert_eq(queue.pop(), 4)?
+  @assertion.assert_eq(queue2.pop(), 1)?
+  @assertion.assert_eq(queue2.length, 0)?
 }
 
 /// Clears the queue.
@@ -79,7 +113,7 @@ pub fn length[T](self : Queue[T]) -> Int {
 /// 
 /// # Example
 /// ```
-/// let queue : Queue[Int] = Queue::create()
+/// let queue : Queue[Int] = Queue::new()
 /// let is_empty = queue.is_empty()
 /// ```
 pub fn is_empty[T](self : Queue[T]) -> Bool {
@@ -100,7 +134,7 @@ test "is_empty" {
 /// 
 /// # Example
 /// ```
-/// let queue : Queue[Int] = Queue::create()
+/// let queue : Queue[Int] = Queue::new()
 /// queue.add(1)
 /// ```
 pub fn push[T](self : Queue[T], x : T) -> Unit {
@@ -205,7 +239,6 @@ test "pop" {
   @assertion.assert_eq(queue.pop(), 3)?
   @assertion.assert_eq(queue.pop(), 4)?
   @assertion.assert_eq(queue.length, 0)?
-
 }
 
 /// Pops the first value from the queue, which returns None if the queue is empty.
@@ -282,7 +315,6 @@ pub fn fold[T](self : Queue[T], init : T, f : (T, T) -> T) -> T {
       }
   }
 }
-
 
 test "fold" {
   let queue : Queue[Int] = new()
