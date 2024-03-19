@@ -835,7 +835,7 @@ test "join" {
   @assertion.assert_eq(vv.length(), 5)?
 }
 
-pub fn fold[T, U](self : Vec[T], f : (T, U) -> U, init : U) -> U {
+pub fn fold[T, U](self : Vec[T], f : (T, U) -> U, ~init : U) -> U {
   for i = 0, acc = init; i < self.length(); {
     continue i + 1, f(self[i], acc)
   } else {
@@ -844,11 +844,11 @@ pub fn fold[T, U](self : Vec[T], f : (T, U) -> U, init : U) -> U {
 }
 
 test "fold" {
-  let sum = Vec::[1, 2, 3, 4, 5].fold(fn(elem, sum : Int) { sum + elem }, 0)
+  let sum = Vec::[1, 2, 3, 4, 5].fold(~init=0, fn(elem, sum) { sum + elem })
   @assertion.assert_eq(sum, 15)?
 }
 
-pub fn fold_rev[T, U](self : Vec[T], f : (T, U) -> U, init : U) -> U {
+pub fn fold_rev[T, U](self : Vec[T], f : (T, U) -> U, ~init : U) -> U {
   for i = self.length() - 1, acc = init; i >= 0; {
     continue i - 1, f(self[i], acc)
   } else {
@@ -857,6 +857,6 @@ pub fn fold_rev[T, U](self : Vec[T], f : (T, U) -> U, init : U) -> U {
 }
 
 test "fold_rev" {
-  let sum = Vec::[1, 2, 3, 4, 5].fold_rev(fn(elem, sum : Int) { sum + elem }, 0)
+  let sum = Vec::[1, 2, 3, 4, 5].fold_rev(~init=0, fn(elem, sum) { sum + elem })
   @assertion.assert_eq(sum, 15)?
 }

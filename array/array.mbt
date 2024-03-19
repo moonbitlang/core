@@ -224,7 +224,7 @@ test "from_array" {
   @assertion.assert_eq(array, [1, 2, 3, 4, 5])?
 }
 
-pub fn fold[T, U](self : Array[T], f : (T, U) -> U, init : U) -> U {
+pub fn fold[T, U](self : Array[T], f : (T, U) -> U, ~init : U) -> U {
   for i = 0, acc = init; i < self.length(); {
     continue i + 1, f(self[i], acc)
   } else {
@@ -233,11 +233,11 @@ pub fn fold[T, U](self : Array[T], f : (T, U) -> U, init : U) -> U {
 }
 
 test "fold" {
-  let sum = [1, 2, 3, 4, 5].fold(fn(elem, sum : Int) { sum + elem }, 0)
+  let sum = [1, 2, 3, 4, 5].fold(~init=0, fn { sum, elem => sum + elem })
   @assertion.assert_eq(sum, 15)?
 }
 
-pub fn fold_rev[T, U](self : Array[T], f : (T, U) -> U, init : U) -> U {
+pub fn fold_rev[T, U](self : Array[T], f : (T, U) -> U, ~init : U) -> U {
   for i = self.length() - 1, acc = init; i >= 0; {
     continue i - 1, f(self[i], acc)
   } else {
@@ -246,6 +246,6 @@ pub fn fold_rev[T, U](self : Array[T], f : (T, U) -> U, init : U) -> U {
 }
 
 test "fold_rev" {
-  let sum = [1, 2, 3, 4, 5].fold_rev(fn(elem, sum : Int) { sum + elem }, 0)
+  let sum = [1, 2, 3, 4, 5].fold_rev(~init=0, fn { sum, elem => sum + elem })
   @assertion.assert_eq(sum, 15)?
 }
