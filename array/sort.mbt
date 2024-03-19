@@ -1,0 +1,394 @@
+// Copyright 2024 International Digital Economy Academy
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+struct ArraySlice[T] {
+  array : Array[T]
+  start : Int
+  end : Int
+}
+
+fn length[T](self : ArraySlice[T]) -> Int {
+  self.end - self.start
+}
+
+fn op_get[T](self : ArraySlice[T], index : Int) -> T {
+  self.array[self.start + index]
+}
+
+fn op_set[T](self : ArraySlice[T], index : Int, value : T) -> Unit {
+  self.array[self.start + index] = value
+}
+
+fn swap[T](self : ArraySlice[T], a : Int, b : Int) -> Unit {
+  self.array.swap(self.start + a, self.start + b)
+}
+
+fn reverse[T](self : ArraySlice[T]) -> Unit {
+  let mid_len = self.length() / 2
+  for i = 0; i < mid_len; i = i + 1 {
+    let j = self.length() - i - 1
+    self.swap(i, j)
+  }
+}
+
+fn slice[T](self : ArraySlice[T], start : Int, end : Int) -> ArraySlice[T] {
+  { array: self.array, start: self.start + start, end: self.start + end }
+}
+
+/// Sorts the array
+/// 
+/// It's an in-place, unstable sort(it will reorder equal elements). The time complexity is O(n log n) in the worst case.
+/// 
+/// # Example
+/// 
+/// ```
+/// let arr = [5, 4, 3, 2, 1]
+/// arr.sort()
+/// debug(arr) //output: [1, 2, 3, 4, 5]
+/// ```
+pub fn sort[T : Compare](self : Array[T]) -> Unit {
+  quick_sort(
+    { array: self, start: 0, end: self.length() },
+    T::compare,
+    None,
+    get_limit(self.length()),
+  )
+}
+
+/// Sorts the array with a key extraction function.
+/// 
+/// It's an in-place, unstable sort(it will reorder equal elements). The time complexity is O(n log n) in the worst case.
+/// 
+/// # Example
+/// 
+/// ```
+/// let arr = [5, 3, 2, 4, 1]
+/// arr.sort_by_key(fn (x) {-x})
+/// debug(arr) //output: [5, 4, 3, 2, 1]
+/// ```
+pub fn sort_by_key[T, K : Compare](self : Array[T], map : (T) -> K) -> Unit {
+  quick_sort(
+    { array: self, start: 0, end: self.length() },
+    fn(a, b) { map(a).compare(map(b)) },
+    None,
+    get_limit(self.length()),
+  )
+}
+
+/// Sorts the array with a custom comparison function.
+/// 
+/// It's an in-place, unstable sort(it will reorder equal elements). The time complexity is O(n log n) in the worst case.
+/// 
+/// # Example
+/// 
+/// ```
+/// let arr = [5, 3, 2, 4, 1]
+/// arr.sort_by(fn (a, b) { a - b })
+/// debug(arr) //output: [1, 2, 3, 4, 5]
+/// ```
+pub fn sort_by[T](self : Array[T], cmp : (T, T) -> Int) -> Unit {
+  quick_sort(
+    { array: self, start: 0, end: self.length() },
+    cmp,
+    None,
+    get_limit(self.length()),
+  )
+}
+
+fn quick_sort[T](
+  arr : ArraySlice[T],
+  cmp : (T, T) -> Int,
+  pred : Option[T],
+  limit : Int
+) -> Unit {
+  let mut limit = limit
+  let mut arr = arr
+  let mut pred = pred
+  let mut was_partitioned = true
+  let mut balanced = true
+  let bubble_sort_len = 16
+  while true {
+    let len = arr.length()
+    if len <= bubble_sort_len {
+      if len >= 2 {
+        bubble_sort(arr, cmp)
+      }
+      return
+    }
+    // Too many imbalanced partitions may lead to O(n^2) performance in quick sort.
+    // If the limit is reached, use heap sort to ensure O(n log n) performance.
+    if limit == 0 {
+      heap_sort(arr, cmp)
+      return
+    }
+    let (pivot_index, likely_sorted) = choose_pivot(arr, cmp)
+    // Try bubble sort if the array is likely already sorted.
+    if was_partitioned && balanced && likely_sorted {
+      if try_bubble_sort(arr, cmp) {
+        return
+      }
+    }
+    let (pivot, partitioned) = partition(arr, cmp, pivot_index)
+    was_partitioned = partitioned
+    balanced = min(pivot, len - pivot) >= len / 8
+    if not(balanced) {
+      limit -= 1
+    }
+    match pred {
+      Some(pred) =>
+        // pred is less than all elements in arr
+        // If pivot euqals to pred, then we can skip all elements that are equal to pred.
+        if cmp(pred, arr[pivot]) == 0 {
+          let mut i = pivot
+          while i < len && cmp(pred, arr[i]) == 0 {
+            i = i + 1
+          }
+          arr = arr.slice(i, len)
+          continue
+        }
+      _ => ()
+    }
+    let left = arr.slice(0, pivot)
+    let right = arr.slice(pivot + 1, len)
+    // Reduce the stack depth by only call quick_sort on the smaller partition.
+    if left.length() < right.length() {
+      quick_sort(left, cmp, pred, limit)
+      arr = right
+      pred = Some(arr[pivot])
+    } else {
+      quick_sort(right, cmp, Some(arr[pivot]), limit)
+      arr = left
+    }
+  }
+}
+
+fn get_limit(len : Int) -> Int {
+  let mut len = len
+  let mut limit = 0
+  while len > 0 {
+    len = len / 2
+    limit += 1
+  }
+  limit
+}
+
+fn min[T : Compare](a : T, b : T) -> T {
+  if a < b {
+    a
+  } else {
+    b
+  }
+}
+
+/// Try to sort the array with bubble sort.
+/// 
+/// It will only tolerate at most 8 unsorted elements. The time complexity is O(n).
+/// 
+/// Returns whether the array is sorted.
+fn try_bubble_sort[T](arr : ArraySlice[T], cmp : (T, T) -> Int) -> Bool {
+  let max_tries = 8
+  let mut tries = 0
+  for i = 1; i < arr.length(); i = i + 1 {
+    let mut j = i
+    let mut sorted = true
+    while j > 0 && cmp(arr[j - 1], arr[j]) > 0 {
+      sorted = false
+      arr.swap(j, j - 1)
+      j = j - 1
+    }
+    if not(sorted) {
+      tries += 1
+      if tries > max_tries {
+        return false
+      }
+    }
+  }
+  true
+}
+
+/// Try to sort the array with bubble sort.
+/// 
+/// It will only tolerate at most 8 unsorted elements. The time complexity is O(n).
+/// 
+/// Returns whether the array is sorted.
+fn bubble_sort[T](arr : ArraySlice[T], cmp : (T, T) -> Int) -> Unit {
+  for i = 1; i < arr.length(); i = i + 1 {
+    let mut j = i
+    let mut sorted = true
+    while j > 0 && cmp(arr[j - 1], arr[j]) > 0 {
+      sorted = false
+      arr.swap(j, j - 1)
+      j = j - 1
+    }
+  }
+}
+
+test "try_bubble_sort" {
+  let arr = [8, 7, 6, 5, 4, 3, 2, 1]
+  let sorted = try_bubble_sort(
+    { array: arr, start: 0, end: 8 },
+    fn(a, b) { a - b },
+  )
+  @assertion.assert_eq(sorted, true)?
+  @assertion.assert_eq(arr, [1, 2, 3, 4, 5, 6, 7, 8])?
+}
+
+fn partition[T](
+  arr : ArraySlice[T],
+  cmp : (T, T) -> Int,
+  pivot_index : Int
+) -> (Int, Bool) {
+  arr.swap(pivot_index, arr.length() - 1)
+  let pivot = arr[arr.length() - 1]
+  let mut i = 0
+  let mut partitioned = true
+  for j = 0; j < arr.length() - 1; j = j + 1 {
+    if cmp(arr[j], pivot) < 0 {
+      if i != j {
+        arr.swap(i, j)
+        partitioned = false
+      }
+      i = i + 1
+    }
+  }
+  arr.swap(i, arr.length() - 1)
+  (i, partitioned)
+}
+
+/// Choose a pivot index for quick sort.
+/// 
+/// It avoids worst case performance by choosing a pivot that is likely to be close to the median.
+/// 
+/// Returns the pivot index and whether the array is likely sorted.
+fn choose_pivot[T](arr : ArraySlice[T], cmp : (T, T) -> Int) -> (Int, Bool) {
+  let len = arr.length()
+  let use_median_of_medians = 50
+  let max_swaps = 4 * 3
+  let mut swaps = 0
+  let b = len / 4 * 2
+  if len >= 8 {
+    let a = len / 4 * 1
+    let c = len / 4 * 3
+    fn sort_2(a : Int, b : Int) {
+      if cmp(arr[a], arr[b]) > 0 {
+        arr.swap(a, b)
+        swaps += 1
+      }
+    }
+
+    fn sort_3(a : Int, b : Int, c : Int) {
+      sort_2(a, b)
+      sort_2(b, c)
+      sort_2(a, b)
+    }
+
+    if len > use_median_of_medians {
+      sort_3(a - 1, a, a + 1)
+      sort_3(b - 1, b, b + 1)
+      sort_3(c - 1, c, c + 1)
+    }
+    sort_3(a, b, c)
+  }
+  if swaps == max_swaps {
+    arr.reverse()
+    (len - b - 1, true)
+  } else {
+    (b, swaps == 0)
+  }
+}
+
+fn heap_sort[T](arr : ArraySlice[T], cmp : (T, T) -> Int) -> Unit {
+  let len = arr.length()
+  for i = len / 2 - 1; i >= 0; i = i - 1 {
+    sift_down(arr, i, cmp)
+  }
+  for i = len - 1; i > 0; i = i - 1 {
+    arr.swap(0, i)
+    sift_down(arr.slice(0, i), 0, cmp)
+  }
+}
+
+fn sift_down[T](arr : ArraySlice[T], index : Int, cmp : (T, T) -> Int) -> Unit {
+  let mut index = index
+  let len = arr.length()
+  let mut child = index * 2 + 1
+  while child < len {
+    if child + 1 < len && cmp(arr[child], arr[child + 1]) < 0 {
+      child = child + 1
+    }
+    if cmp(arr[index], arr[child]) >= 0 {
+      return
+    }
+    arr.swap(index, child)
+    index = child
+    child = index * 2 + 1
+  }
+}
+
+fn test_sort(f : (Array[Int]) -> Unit) -> Result[Unit, String] {
+  let arr = [5, 4, 3, 2, 1]
+  f(arr)
+  @assertion.assert_eq(arr, [1, 2, 3, 4, 5])?
+  let arr = [5, 5, 5, 5, 1]
+  f(arr)
+  @assertion.assert_eq(arr, [1, 5, 5, 5, 5])?
+  let arr = [1, 2, 3, 4, 5]
+  f(arr)
+  @assertion.assert_eq(arr, [1, 2, 3, 4, 5])?
+  {
+    let arr = Array::make(1000, 0)
+    for i = 0; i < 1000; i = i + 1 {
+      arr[i] = 1000 - i - 1
+    }
+    for i = 10; i < 1000; i = i + 10 {
+      arr.swap(i, i - 1)
+    }
+    f(arr)
+    let expected = Array::make(1000, 0)
+    for i = 0; i < 1000; i = i + 1 {
+      expected[i] = i
+    }
+    @assertion.assert_eq(arr, expected)?
+  }
+  Ok(())
+}
+
+test "heap_sort" {
+  test_sort(
+    fn(arr) {
+      heap_sort({ array: arr, start: 0, end: arr.length() }, fn(a, b) { a - b })
+    },
+  )?
+}
+
+test "bubble_sort" {
+  test_sort(
+    fn(arr) {
+      bubble_sort(
+        { array: arr, start: 0, end: arr.length() },
+        fn(a, b) { a - b },
+      )
+    },
+  )?
+}
+
+test "sort" {
+  test_sort(fn(arr) { arr.sort() })?
+}
+
+test "sort_by" {
+  let arr = [5, 1, 3, 4, 2]
+  arr.sort_by_key(fn(x) { -x })
+  @assertion.assert_eq(arr, [5, 4, 3, 2, 1])?
+}

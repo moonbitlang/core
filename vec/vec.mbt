@@ -30,6 +30,30 @@ struct Vec[T] {
   mut len : Int
 }
 
+pub fn to_string[T : Show](self : Vec[T]) -> String {
+  if self.len == 0 {
+    return "Vec::[]"
+  }
+  let first = self.buf[0]
+  for i = 1, init = "Vec::[\(first)"; i < self.len; {
+    let cur = self.buf[i]
+    continue i + 1, "\(init),\(cur)"
+  } else {
+    "\(init)]"
+  }
+}
+
+test "to_string" {
+  let empty : Vec[Int] = Vec::[]
+  @assertion.assert_eq(empty.to_string(), "Vec::[]")?
+  let a0 = Vec::[0]
+  @assertion.assert_eq(a0.to_string(), "Vec::[0]")?
+  a0.push(1)
+  @assertion.assert_eq(a0.to_string(), "Vec::[0,1]")?
+  a0.push(2)
+  @assertion.assert_eq(a0.to_string(), "Vec::[0,1,2]")?
+}
+
 /// Creates a new, empty vector.
 pub fn Vec::new[T]() -> Vec[T] {
   Vec::{ buf: UninitializedArray::make(0), len: 0 }
@@ -246,7 +270,23 @@ test "iter" {
   @assertion.assert_eq(sum, 12)?
 }
 
-/// Iterates over the elements of the vector with index
+pub fn iter_rev[T](self : Vec[T], f : (T) -> Unit) -> Unit {
+  for i = self.length() - 1; i >= 0; i = i - 1 {
+    f(self[i])
+  }
+}
+
+test "iter_rev" {
+  let v = Vec::with_capacity(3)
+  v.push(3)
+  v.push(4)
+  v.push(5)
+  let mut sum = 0
+  v.iter_rev(fn(x) { sum = sum + x })
+  @assertion.assert_eq(sum, 12)?
+}
+
+/// Iterates over the elements of the vector with index.
 /// 
 /// # Example
 /// ```
@@ -267,6 +307,19 @@ test "iteri" {
   let v = Vec::[3, 4, 5]
   let mut sum = 0
   v.iteri(fn(i, x) { sum = sum + x + i })
+  @assertion.assert_eq(sum, 15)?
+}
+
+pub fn iteri_rev[T](self : Vec[T], f : (Int, T) -> Unit) -> Unit {
+  for i = self.length() - 1; i >= 0; i = i - 1 {
+    f(i, self[i])
+  }
+}
+
+test "iteri_rev" {
+  let v = Vec::[3, 4, 5]
+  let mut sum = 0
+  v.iteri_rev(fn(i, x) { sum = sum + x + i })
   @assertion.assert_eq(sum, 15)?
 }
 
@@ -485,7 +538,7 @@ test "ends_with" {
   @assertion.assert_false(v.ends_with(Vec::[2, 3, 4, 5]))?
 }
 
-/// Search the vector index for a given element
+/// Search the vector index for a given element.
 /// 
 /// # Example
 /// ```
@@ -804,4 +857,30 @@ test "join" {
   @assertion.assert_eq(vv[3], 5)?
   @assertion.assert_eq(vv[4], 6)?
   @assertion.assert_eq(vv.length(), 5)?
+}
+
+pub fn fold[T, U](self : Vec[T], f : (T, U) -> U, ~init : U) -> U {
+  for i = 0, acc = init; i < self.length(); {
+    continue i + 1, f(self[i], acc)
+  } else {
+    acc
+  }
+}
+
+test "fold" {
+  let sum = Vec::[1, 2, 3, 4, 5].fold(~init=0, fn(elem, sum) { sum + elem })
+  @assertion.assert_eq(sum, 15)?
+}
+
+pub fn fold_rev[T, U](self : Vec[T], f : (T, U) -> U, ~init : U) -> U {
+  for i = self.length() - 1, acc = init; i >= 0; {
+    continue i - 1, f(self[i], acc)
+  } else {
+    acc
+  }
+}
+
+test "fold_rev" {
+  let sum = Vec::[1, 2, 3, 4, 5].fold_rev(~init=0, fn(elem, sum) { sum + elem })
+  @assertion.assert_eq(sum, 15)?
 }

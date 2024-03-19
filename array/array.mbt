@@ -84,7 +84,7 @@ pub fn iter_rev[T](self : Array[T], f : (T) -> Unit) -> Unit {
   }
 }
 
-test "iter rev" {
+test "iter_rev" {
   let mut i = 6
   let mut failed = false
   [1, 2, 3, 4, 5].iter_rev(
@@ -157,7 +157,7 @@ pub fn map_with_index[T, U](self : Array[T], f : (T, Int) -> U) -> Array[U] {
   res
 }
 
-test "map with index" {
+test "map_with_index" {
   let arr = [1, 2, 3, 4, 5]
   let doubled = arr.map_with_index(fn(x, i) { x * 2 + i })
   let empty : Array[Int] = Array::default().map_with_index(fn(x, i) { x + i })
@@ -224,7 +224,7 @@ test "from_array" {
   @assertion.assert_eq(array, [1, 2, 3, 4, 5])?
 }
 
-pub fn fold[T, U](self : Array[T], f : (T, U) -> U, init : U) -> U {
+pub fn fold[T, U](self : Array[T], f : (T, U) -> U, ~init : U) -> U {
   for i = 0, acc = init; i < self.length(); {
     continue i + 1, f(self[i], acc)
   } else {
@@ -233,6 +233,59 @@ pub fn fold[T, U](self : Array[T], f : (T, U) -> U, init : U) -> U {
 }
 
 test "fold" {
-  let sum = [1, 2, 3, 4, 5].fold(fn(elem, sum : Int) { sum + elem }, 0)
+  let sum = [1, 2, 3, 4, 5].fold(~init=0, fn { sum, elem => sum + elem })
   @assertion.assert_eq(sum, 15)?
+}
+
+pub fn fold_rev[T, U](self : Array[T], f : (T, U) -> U, ~init : U) -> U {
+  for i = self.length() - 1, acc = init; i >= 0; {
+    continue i - 1, f(self[i], acc)
+  } else {
+    acc
+  }
+}
+
+test "fold_rev" {
+  let sum = [1, 2, 3, 4, 5].fold_rev(~init=0, fn { sum, elem => sum + elem })
+  @assertion.assert_eq(sum, 15)?
+}
+
+/// Reverse the array in place.
+pub fn reverse[T](self : Array[T]) -> Unit {
+  let mid_len = self.length() / 2
+  for i = 0; i < mid_len; i = i + 1 {
+    let j = self.length() - i - 1
+    self.swap(i, j)
+  }
+}
+
+test "reverse" {
+  {
+    let arr = [1, 2]
+    arr.reverse()
+    @assertion.assert_eq(arr, [2, 1])?
+  }
+  {
+    let arr = [1, 2, 3, 4, 5]
+    arr.reverse()
+    @assertion.assert_eq(arr, [5, 4, 3, 2, 1])?
+  }
+  let arr = [1]
+  arr.reverse()
+  @assertion.assert_eq(arr, [1])?
+}
+
+/// Swap two elements in the array.
+/// 
+/// # Example 
+/// 
+/// ```
+/// let arr = [1, 2, 3, 4, 5]
+/// arr.swap(0, 1)
+/// debug(arr) //output: [2, 1, 3, 4, 5]
+/// ```
+pub fn swap[T](self : Array[T], i : Int, j : Int) -> Unit {
+  let temp = self[i]
+  self[i] = self[j]
+  self[j] = temp
 }
