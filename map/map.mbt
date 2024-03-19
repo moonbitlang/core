@@ -234,30 +234,28 @@ fn balance[K : Compare, V](
   fn single_r {
     k2, v2, Map::Tree(k1, v1, _, x, y), z => new(k1, v1, x, new(k2, v2, y, z))
     _, _, _, _ => abort("single_r error")
-
-    //      1                 2
-    //     / \              /   \
-    //    x   3            1     3
-    //       / \    -->   / \   / \
-    //      2   z        x  y1 y2  z
-    //     / \
-    //    y1 y2
   }
 
+  //      1                 2
+  //     / \              /   \
+  //    x   3            1     3
+  //       / \    -->   / \   / \
+  //      2   z        x  y1 y2  z
+  //     / \
+  //    y1 y2
   fn double_l {
     k1, v1, x, Map::Tree(k3, v3, _, Tree(k2, v2, _, y1, y2), z) =>
       new(k2, v2, new(k1, v1, x, y1), new(k3, v3, y2, z))
     _, _, _, _ => abort("double_l error")
-
-    //      3                 2
-    //     / \              /   \
-    //    1   z            1     3
-    //   / \        -->   / \   / \
-    //  x  2             x  y1 y2  z
-    //    / \
-    //   y1 y2
   }
 
+  //      3                 2
+  //     / \              /   \
+  //    1   z            1     3
+  //   / \        -->   / \   / \
+  //  x  2             x  y1 y2  z
+  //    / \
+  //   y1 y2
   fn double_r {
     k3, v3, Map::Tree(k1, v1, _, x, Tree(k2, v2, _, y1, y2)), z =>
       new(k2, v2, new(k1, v1, x, y1), new(k3, v3, y2, z))
