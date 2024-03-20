@@ -110,7 +110,7 @@ test "iter_rev" {
   @assertion.assert_false(failed)?
 }
 
-/// Iterates over the array with index in reversed trun. 
+/// Iterates over the array with index in reversed turn. 
 ///
 /// # Arguments
 ///
