@@ -69,7 +69,7 @@ pub fn op_equal[T : Eq](self : Cell[T], other : Cell[T]) -> Bool {
     Nil, Nil => true
     Cons({ content: x, next: xs }), Cons({ content: y, next: ys }) => {
       if x != y {
-        return false
+        break false
       }
       continue xs, ys
     }
@@ -284,7 +284,7 @@ pub fn iter[T](self : Queue[T], f : (T) -> Unit) -> Unit {
       f(content)
       continue next
     }
-    Nil => return
+    Nil => ()
   }
 }
 
