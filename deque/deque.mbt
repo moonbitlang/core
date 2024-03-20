@@ -166,12 +166,13 @@ pub fn push_back[T](self : Deque[T], value : T) -> Unit {
 
 /// Removes a fornt element from a deque.
 /// 
+/// Panics if the deque is empty.
 /// # Example
 /// ```
 /// let dq = Deque::[1, 2, 3, 4, 5]
-/// dq.pop_front_ignore()
+/// dq.pop_front_exn()
 /// ```
-pub fn pop_front_ignore[T](self : Deque[T]) -> Unit {
+pub fn pop_front_exn[T](self : Deque[T]) -> Unit {
   if self.len == 0 {
     abort("The deque is empty!")
   }
@@ -181,12 +182,13 @@ pub fn pop_front_ignore[T](self : Deque[T]) -> Unit {
 
 /// Removes a back element from a deque.
 /// 
+/// Panics if the deque is empty.
 /// # Example
 /// ```
 /// let dq = Deque::[1, 2, 3, 4, 5]
-/// dq.pop_back_ignore()
+/// dq.pop_back_exn()
 /// ```
-pub fn pop_back_ignore[T](self : Deque[T]) -> Unit {
+pub fn pop_back_exn[T](self : Deque[T]) -> Unit {
   if self.len == 0 {
     abort("The deque is empty!")
   }
@@ -347,8 +349,8 @@ test "iter" {
 
 test "iter2" {
   let v = Deque::[1, 2, 3, 4, 5]
-  v.pop_front_ignore()
-  v.pop_back_ignore()
+  v.pop_front_exn()
+  v.pop_back_exn()
   let mut sum = 0
   v.iter(fn { x => sum += x })
   @assertion.assert_eq(sum, 9)?
