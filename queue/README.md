@@ -27,15 +27,15 @@ queue.is_empty() // false
 
 ### Pop and Push
 You can add elements to the queue using the `push` method and remove them using the `pop` method.
-Remind that the `pop` method will panic if the queue is empty, you can use the `pop_option` method to avoid this.
+The unsafe version of `pop` is `pop_exn`, which will panic if the queue is empty.
 ```moonbit
 let queue = Queue::new()
 queue.push(1)
 queue.push(2)
 queue.push(3)
-queue.pop() // 1
-queue.pop() // 2
-queue.pop() // 3
+queue.pop_exn() // 1
+queue.pop() // Some(2)
+queue.pop() // Some(3)
 ```
 
 ### Peek
