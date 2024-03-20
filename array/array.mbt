@@ -78,6 +78,18 @@ test "iteri" {
   @assertion.assert_false(failed)?
 }
 
+/// Iterates over each element in reversed turn.
+///
+/// # Arguments
+///
+/// - `self`: The array to iterate over.
+/// - `f`: The function to apply to each element.
+///
+/// # Example
+///
+/// ```
+/// [1, 2, 3, 4, 5].iter(fn(x){ print("\(x) ") }) //output: 5 4 3 2 1
+/// ```
 pub fn iter_rev[T](self : Array[T], f : (T) -> Unit) -> Unit {
   for i = self.length() - 1; i >= 0; i = i - 1 {
     f(self[i])
@@ -98,6 +110,20 @@ test "iter_rev" {
   @assertion.assert_false(failed)?
 }
 
+/// Iterates over the array with index in reversed trun. 
+///
+/// # Arguments
+///
+/// - `self`: The array to iterate over.
+/// - `f`: A function that takes an `Int` representing the index and a `T` representing the element of the array, and returns `Unit`.
+///
+/// # Example
+///
+/// ```
+/// [1, 2, 3, 4, 5].iteri(fn(index, elem){
+///   print("(\(index),\(elem)) ")
+/// }) //output: (4,5) (3,4) (2,3) (1,2) (0,1) 
+/// ```
 pub fn iteri_rev[T](self : Array[T], f : (Int, T) -> Unit) -> Unit {
   for i = self.length() - 1; i >= 0; i = i - 1 {
     f(i, self[i])
@@ -146,7 +172,14 @@ test "map" {
   @assertion.assert_eq(doubled, [2, 4, 6, 8, 10])?
 }
 
-pub fn map_with_index[T, U](self : Array[T], f : (T, Int) -> U) -> Array[U] {
+/// Maps a function over the elements of the arr with index.
+/// 
+/// # Example
+/// ```
+/// let v = [3, 4, 5]
+/// v.mapi(fn (i, x) {x + i}) // [3, 5, 6]
+/// ```
+pub fn mapi[T, U](self : Array[T], f : (T, Int) -> U) -> Array[U] {
   if self.length() == 0 {
     return Array::default()
   }
@@ -159,8 +192,8 @@ pub fn map_with_index[T, U](self : Array[T], f : (T, Int) -> U) -> Array[U] {
 
 test "map_with_index" {
   let arr = [1, 2, 3, 4, 5]
-  let doubled = arr.map_with_index(fn(x, i) { x * 2 + i })
-  let empty : Array[Int] = Array::default().map_with_index(fn(x, i) { x + i })
+  let doubled = arr.mapi(fn(x, i) { x * 2 + i })
+  let empty : Array[Int] = Array::default().mapi(fn(x, i) { x + i })
   @assertion.assert_eq(empty, [])?
   @assertion.assert_eq(doubled, [2, 5, 8, 11, 14])?
 }
@@ -208,7 +241,7 @@ pub fn new_with_index[T](length : Int, value : (Int) -> T) -> Array[T] {
   }
 }
 
-test "new index" {
+test "new_index" {
   let arr = new_with_index(2, fn { i => i })
   @assertion.assert_eq(arr[0], 0)?
   @assertion.assert_eq(arr[1], 1)?
@@ -224,6 +257,13 @@ test "from_array" {
   @assertion.assert_eq(array, [1, 2, 3, 4, 5])?
 }
 
+/// Fold out values from an array according to certain rules.
+/// 
+/// # Example
+/// ```
+/// let sum = [1, 2, 3, 4, 5].fold(~init=0, fn { sum, elem => sum + elem })
+/// sum // 15
+/// ```
 pub fn fold[T, U](self : Array[T], f : (T, U) -> U, ~init : U) -> U {
   for i = 0, acc = init; i < self.length(); {
     continue i + 1, f(self[i], acc)
@@ -237,6 +277,13 @@ test "fold" {
   @assertion.assert_eq(sum, 15)?
 }
 
+/// Fold out values from an array according to certain rules in reversed turn.
+/// 
+/// # Example
+/// ```
+/// let sum = [1, 2, 3, 4, 5].fold_rev(~init=0, fn { sum, elem => sum + elem })
+/// sum // 15
+/// ```
 pub fn fold_rev[T, U](self : Array[T], f : (T, U) -> U, ~init : U) -> U {
   for i = self.length() - 1, acc = init; i >= 0; {
     continue i - 1, f(self[i], acc)
@@ -250,7 +297,13 @@ test "fold_rev" {
   @assertion.assert_eq(sum, 15)?
 }
 
-/// Reverse the array in place.
+/// Fold out values from an array according to certain rules in reversed turn.
+/// 
+/// # Example
+/// ```
+/// let arr = [1, 2, 3, 4, 5]
+/// arr // [5, 4, 3, 2, 1]
+/// ```
 pub fn reverse[T](self : Array[T]) -> Unit {
   let mid_len = self.length() / 2
   for i = 0; i < mid_len; i = i + 1 {
@@ -288,4 +341,176 @@ pub fn swap[T](self : Array[T], i : Int, j : Int) -> Unit {
   let temp = self[i]
   self[i] = self[j]
   self[j] = temp
+}
+
+test "swap" {
+  let arr = [1, 2, 3, 4, 5]
+  arr.swap(0, 1)
+  @assertion.assert_eq(arr, [2, 1, 3, 4, 5])?
+}
+
+/// Check if all the elements in the array match the condition.
+/// 
+/// # Example 
+/// 
+/// ```
+/// let arr = [1, 2, 3, 4, 5]
+/// arr.all(fn(ele) { ele < 6 }) // true
+/// arr.all(fn(ele) { ele < 5 }) // false
+/// ```
+pub fn all[T](self : Array[T], f : (T) -> Bool) -> Bool {
+  for i = 0; i < self.length(); i = i + 1 {
+    if f(self[i]) == false {
+      return false
+    }
+  }
+  true
+}
+
+test "all" {
+  let arr = [1, 2, 3, 4, 5]
+  @assertion.assert_eq(arr.all(fn(ele) { ele < 6 }), true)?
+  @assertion.assert_eq(arr.all(fn(ele) { ele < 5 }), false)?
+}
+
+/// Check if any of the elements in the array match the condition.
+/// 
+/// # Example 
+/// 
+/// ```
+/// let arr = [1, 2, 3, 4, 5]
+/// arr.any(fn(ele) { ele < 6 }) // true
+/// arr.any(fn(ele) { ele < 5 }) // true
+/// ```
+pub fn any[T](self : Array[T], f : (T) -> Bool) -> Bool {
+  for i = 0; i < self.length(); i = i + 1 {
+    if f(self[i]) == true {
+      return true
+    }
+  }
+  false
+}
+
+test "any" {
+  let arr = [1, 2, 3, 4, 5]
+  @assertion.assert_eq(arr.any(fn(ele) { ele < 6 }), true)?
+  @assertion.assert_eq(arr.any(fn(ele) { ele < 5 }), true)?
+}
+
+/// Fill the array with a given value.
+/// 
+/// # Example
+/// ```
+/// [0, 0, 0, 0, 0].fill(3) // [3, 3, 3, 3, 3]
+/// ```
+pub fn fill[T](self : Array[T], value : T) -> Unit {
+  for i = 0; i < self.length(); i = i + 1 {
+    self[i] = value
+  }
+}
+
+test "fill" {
+  let arr = [0, 0, 0, 0, 0]
+  arr.fill(3)
+  @assertion.assert_eq(arr, [3, 3, 3, 3, 3])?
+}
+
+/// Search the array index for a given element.
+/// 
+/// # Example
+/// ```
+/// let arr = [3, 4, 5]
+/// arr.search(3) // 0
+/// ```
+pub fn search[T : Eq](self : Array[T], value : T) -> Option[Int] {
+  for i = 0; i < self.length(); i = i + 1 {
+    if self[i] == value {
+      return Some(i)
+    }
+  }
+  None
+}
+
+test "search" {
+  let arr = [1, 2, 3]
+  @assertion.assert_eq(arr.search(3), Some(2))?
+  @assertion.assert_eq(arr.search(-1), None)?
+}
+
+/// Checks if the array contains an element.
+/// 
+/// # Example
+/// ```
+/// let arr = [3, 4, 5]
+/// arr.contains(3)
+/// ```
+pub fn contains[T : Eq](self : Array[T], value : T) -> Bool {
+  for i = 0; i < self.length(); i = i + 1 {
+    if self[i] == value {
+      return true
+    }
+  }
+  false
+}
+
+test "contains" {
+  let arr = [3, 4, 5]
+  @assertion.assert_true(arr.contains(3))?
+  @assertion.assert_true(arr.contains(4))?
+  @assertion.assert_true(arr.contains(5))?
+  @assertion.assert_false(arr.contains(6))?
+}
+
+/// Check if the array starts with a given prefix.
+/// 
+/// # Example
+/// ```
+/// let arr = [3, 4, 5]
+/// arr.starts_with([3, 4]) // true
+/// ```
+pub fn starts_with[T : Eq](self : Array[T], prefix : Array[T]) -> Bool {
+  if prefix.length() > self.length() {
+    return false
+  }
+  for i = 0; i < prefix.length(); i = i + 1 {
+    if self[i] != prefix[i] {
+      return false
+    }
+  }
+  true
+}
+
+test "starts_with" {
+  let arr = [3, 4, 5]
+  @assertion.assert_true(arr.starts_with([3, 4]))?
+  @assertion.assert_true(arr.starts_with([3, 4, 5]))?
+  @assertion.assert_false(arr.starts_with([3, 4, 5, 6]))?
+}
+
+/// Check if the array ends with a given suffix.
+/// 
+/// # Example
+/// ```
+/// let v = [3, 4, 5]
+/// v.ends_with([5]) // true
+/// ```
+pub fn ends_with[T : Eq](self : Array[T], suffix : Array[T]) -> Bool {
+  let self_len = self.length()
+  let suf_len = suffix.length()
+  if suf_len > self_len {
+    return false
+  }
+  for i = 0; i < suf_len; i = i + 1 {
+    if self[self_len - suf_len + i] != suffix[i] {
+      return false
+    }
+  }
+  true
+}
+
+test "ends_with" {
+  let arr = [3, 4, 5]
+  @assertion.assert_true(arr.ends_with([4, 5]))?
+  @assertion.assert_true(arr.ends_with([3, 4, 5]))?
+  @assertion.assert_false(arr.ends_with([2, 3, 4, 5]))?
 }
