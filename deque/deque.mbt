@@ -260,9 +260,11 @@ test "push_and_pop" {
 /// println(dq[2]) // 3
 /// ```
 pub fn op_get[T](self : Deque[T], index : Int) -> T {
-  if index >= self.len {
+  if index < 0 || index >= self.len {
     let len = self.len
-    abort("index out of bounds: the len is \(len) but the index is \(index)")
+    abort(
+      "index out of bounds: the len is from 0 to \(len) but the index is \(index)",
+    )
   }
   if self.head + index < self.buf.length() {
     self.buf[self.head + index]
@@ -295,9 +297,11 @@ test "op_get" {
 /// println(dq[2]) // 1
 /// ```
 pub fn op_set[T](self : Deque[T], index : Int, value : T) -> Unit {
-  if index >= self.len {
+  if index < 0 || index >= self.len {
     let len = self.len
-    abort("index out of bounds: the len is \(len) but the index is \(index)")
+    abort(
+      "index out of bounds: the len is from 0 to \(len) but the index is \(index)",
+    )
   }
   if self.head + index < self.buf.length() {
     self.buf[self.head + index] = value
