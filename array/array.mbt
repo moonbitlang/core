@@ -302,7 +302,7 @@ test "fold_rev" {
 /// # Example
 /// ```
 /// let arr = [1, 2, 3, 4, 5]
-/// arr // [5, 4, 3, 2, 1]
+/// reverse(arr) // [5, 4, 3, 2, 1]
 /// ```
 pub fn reverse[T](self : Array[T]) -> Unit {
   let mid_len = self.length() / 2
@@ -360,7 +360,7 @@ test "swap" {
 /// ```
 pub fn all[T](self : Array[T], f : (T) -> Bool) -> Bool {
   for i = 0; i < self.length(); i = i + 1 {
-    if f(self[i]) == false {
+    if f(self[i]).not() {
       return false
     }
   }
@@ -384,7 +384,7 @@ test "all" {
 /// ```
 pub fn any[T](self : Array[T], f : (T) -> Bool) -> Bool {
   for i = 0; i < self.length(); i = i + 1 {
-    if f(self[i]) == true {
+    if f(self[i]) {
       return true
     }
   }
