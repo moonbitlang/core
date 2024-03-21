@@ -307,6 +307,23 @@ test "get" {
   @assertion.assert_eq(m.get("d"), None)?
 }
 
+test "op_set" {
+  let m : HashMap[String, Int] = HashMap::new()
+  m["a"] = 1
+  m["b"] = 2
+  @assertion.assert_eq(m.get("a"), Some(1))?
+  @assertion.assert_eq(m.get("b"), Some(2))?
+}
+
+test "op_get" {
+  let m : HashMap[String, Int] = HashMap::new()
+  m.set("a", 1)
+  m.set("b", 2)
+  @assertion.assert_eq(m["a"], Some(1))?
+  @assertion.assert_eq(m["b"], Some(2))?
+  @assertion.assert_eq(m["c"], None)?
+}
+
 test "set_update" {
   let m : HashMap[String, Int] = HashMap::new()
   m.set("a", 1)
