@@ -171,9 +171,33 @@ pub fn size[K, V](self : HashMap[K, V]) -> Int {
   self.size
 }
 
+/// Get the capacity of the map.
+pub fn capacity[K, V](self : HashMap[K, V]) -> Int {
+  self.capacity
+}
+
 /// Check if the hash map is empty.
 pub fn is_empty[K, V](self : HashMap[K, V]) -> Bool {
   self.size == 0
+}
+
+// Iterate over all key-value pairs of the map.
+pub fn iter[K, V](self : HashMap[K, V], f : (K, V) -> Unit) -> Unit {
+  self.iteri(fn(_i, k, v) { f(k, v) })
+}
+
+// Iterate over all key-value pairs of the map, with index.
+pub fn iteri[K, V](self : HashMap[K, V], f : (Int, K, V) -> Unit) -> Unit {
+  let mut idx = 0
+  for i = 0; i < self.capacity; i = i + 1 {
+    match self.entries[i] {
+      Valid((_, k, v)) => {
+        f(idx, k, v)
+        idx += 1
+      }
+      _ => ()
+    }
+  }
 }
 
 fn shift_back[K : Hash, V](self : HashMap[K, V], start_index : Int) -> Unit {
@@ -332,6 +356,18 @@ test "remove_unexist_key" {
   )?
 }
 
+test "size" {
+  let m : HashMap[String, Int] = HashMap::new()
+  @assertion.assert_eq(m.size(), 0)?
+  m.set("a", 1)
+  @assertion.assert_eq(m.size(), 1)?
+}
+
+test "capacity" {
+  let m : HashMap[String, Int] = HashMap::new(~capacity=128)
+  @assertion.assert_eq(m.capacity(), 128)?
+}
+
 test "is_empty" {
   let m : HashMap[String, Int] = HashMap::new()
   @assertion.assert_eq(m.is_empty(), true)?
@@ -339,6 +375,22 @@ test "is_empty" {
   @assertion.assert_eq(m.is_empty(), false)?
   m.remove("a")
   @assertion.assert_eq(m.is_empty(), true)?
+}
+
+test "iter" {
+  let m : HashMap[String, Int] = HashMap::[("a", 1), ("b", 2), ("c", 3)]
+  let mut sum = 0
+  m.iter(fn(_k, v) { sum += v })
+  @assertion.assert_eq(sum, 6)?
+}
+
+test "iteri" {
+  let m : HashMap[String, Int] = HashMap::[("a", 1), ("b", 2), ("c", 3)]
+  let mut sum = 0
+  let mut s = ""
+  m.iteri(fn(i, _k, v) { s += i.to_string(); sum += v })
+  @assertion.assert_eq(s, "012")?
+  @assertion.assert_eq(sum, 6)?
 }
 
 test "grow" {
