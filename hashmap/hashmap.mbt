@@ -21,7 +21,7 @@ let default_load_factor = 0.9
 enum Entry[K, V] {
   Empty
   Valid((Int, K, V))
-}
+} derive(Debug)
 
 /// A mutable hash map implements with Robin Hood hashing.
 /// 
@@ -198,6 +198,14 @@ pub fn iteri[K, V](self : HashMap[K, V], f : (Int, K, V) -> Unit) -> Unit {
       _ => ()
     }
   }
+}
+
+// Clears the map, removing all key-value pairs. Keeps the allocated space.
+pub fn clear[K, V](self : HashMap[K, V]) -> Unit {
+  for i = 0; i < self.capacity; i = i + 1 {
+    self.entries[i] = Empty
+  }
+  self.size = 0
 }
 
 fn shift_back[K : Hash, V](self : HashMap[K, V], start_index : Int) -> Unit {
@@ -388,9 +396,24 @@ test "iteri" {
   let m : HashMap[String, Int] = HashMap::[("a", 1), ("b", 2), ("c", 3)]
   let mut sum = 0
   let mut s = ""
-  m.iteri(fn(i, _k, v) { s += i.to_string(); sum += v })
+  m.iteri(
+    fn(i, _k, v) {
+      s += i.to_string()
+      sum += v
+    },
+  )
   @assertion.assert_eq(s, "012")?
   @assertion.assert_eq(sum, 6)?
+}
+
+test "clear" {
+  let m : HashMap[String, Int] = HashMap::[("a", 1), ("b", 2), ("c", 3)]
+  m.clear()
+  @assertion.assert_eq(m.size, 0)?
+  @assertion.assert_eq(m.capacity, 8)?
+  for i = 0; i < m.capacity; i = i + 1 {
+    @assertion.assert_is(m.entries[i], Empty)?
+  }
 }
 
 test "grow" {
