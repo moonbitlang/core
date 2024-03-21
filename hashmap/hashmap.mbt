@@ -171,6 +171,11 @@ pub fn size[K, V](self : HashMap[K, V]) -> Int {
   self.size
 }
 
+/// Check if the hash map is empty.
+pub fn is_empty[K, V](self : HashMap[K, V]) -> Bool {
+  self.size == 0
+}
+
 fn shift_back[K : Hash, V](self : HashMap[K, V], start_index : Int) -> Unit {
   let mut prev = start_index
   let mut curr = self.next_index(prev)
@@ -327,30 +332,29 @@ test "remove_unexist_key" {
   )?
 }
 
+test "is_empty" {
+  let m : HashMap[String, Int] = HashMap::new()
+  @assertion.assert_eq(m.is_empty(), true)?
+  m.set("a", 1)
+  @assertion.assert_eq(m.is_empty(), false)?
+  m.remove("a")
+  @assertion.assert_eq(m.is_empty(), true)?
+}
+
 test "grow" {
   let m : HashMap[String, Int] = HashMap::new(
     ~hasher=Some(fn(k) { k.length() }),
   )
   m.set("C", 1)
-  println(m.debug_entries())
   m.set("Go", 2)
-  println(m.debug_entries())
   m.set("C++", 3)
-  println(m.debug_entries())
   m.set("Java", 4)
-  println(m.debug_entries())
   m.set("Scala", 5)
-  println(m.debug_entries())
   m.set("Julia", 5)
-  println(m.debug_entries())
   m.set("Cobol", 5)
-  println(m.debug_entries())
   m.set("Python", 6)
-  println(m.debug_entries())
   m.set("Haskell", 7)
-  println(m.debug_entries())
   m.set("Rescript", 8)
-  println(m.debug_entries())
   @assertion.assert_eq(m.size, 10)?
   @assertion.assert_eq(m.capacity, 16)?
   @assertion.assert_eq(
