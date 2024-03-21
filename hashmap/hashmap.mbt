@@ -270,6 +270,15 @@ test "get" {
   @assertion.assert_eq(m.get("d"), None)?
 }
 
+test "set_update" {
+  let m : HashMap[String, Int] = HashMap::new()
+  m.set("a", 1)
+  m.set("b", 2)
+  @assertion.assert_eq(m.get("a"), Some(1))?
+  m.set("a", 2)
+  @assertion.assert_eq(m.get("a"), Some(2))?
+}
+
 test "contains" {
   let m : HashMap[String, Int] = HashMap::new()
   m.set("a", 1)
