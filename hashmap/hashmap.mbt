@@ -16,7 +16,7 @@
 let default_init_capacity = 8
 
 // Default load factor
-let default_load_factor = 0.85
+let default_load_factor = 0.9
 
 enum Entry[K, V] {
   Empty
@@ -332,15 +332,25 @@ test "grow" {
     ~hasher=Some(fn(k) { k.length() }),
   )
   m.set("C", 1)
+  println(m.debug_entries())
   m.set("Go", 2)
+  println(m.debug_entries())
   m.set("C++", 3)
+  println(m.debug_entries())
   m.set("Java", 4)
+  println(m.debug_entries())
   m.set("Scala", 5)
+  println(m.debug_entries())
   m.set("Julia", 5)
+  println(m.debug_entries())
   m.set("Cobol", 5)
+  println(m.debug_entries())
   m.set("Python", 6)
+  println(m.debug_entries())
   m.set("Haskell", 7)
+  println(m.debug_entries())
   m.set("Rescript", 8)
+  println(m.debug_entries())
   @assertion.assert_eq(m.size, 10)?
   @assertion.assert_eq(m.capacity, 16)?
   @assertion.assert_eq(
