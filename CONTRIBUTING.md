@@ -46,6 +46,13 @@
 
 Now it's time to make your changes to the codebase. Whether it's fixing a bug, adding a new feature, or improving documentation, your contributions are welcome. Ensure that your changes are clear and understandable to others who will review your code.
 
+Currently there are some simple restrictions for naming convention and code formatting:
+
+- All function names, method names, and variables should use `snake_case`, while all type names should use `PascalCase`.
+- The code formatting should align with the result of moonfmt as much as possible.
+- For public functions and types, tests and documentation should be provided. 
+
+
 ## Step 3: Test your change
 
 After making your changes, it's important to test them to ensure they work as expected and do not introduce new issues. Run the following commands to test your changes:
