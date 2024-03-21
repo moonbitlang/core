@@ -14,21 +14,21 @@
 
 /// A sparse array with at most 32 elements, where elements are not required to have contiguous index.
 /// Empty elements don't waste any space, without losing constant-time access
-priv struct Sparse_Array[X] {
+priv struct SparseArray[X] {
   // record which elements are present
   elem_info : Bitset
   data : Array[X]
 }
 
-fn Sparse_Array::make[X](idx : Int, value : X) -> Sparse_Array[X] {
+fn SparseArray::make[X](idx : Int, value : X) -> SparseArray[X] {
   { elem_info: empty_bitset.add(idx), data: [value] }
 }
 
-fn has[X](self : Sparse_Array[X], idx : Int) -> Bool {
+fn has[X](self : SparseArray[X], idx : Int) -> Bool {
   self.elem_info.has(idx)
 }
 
-fn op_get[X](self : Sparse_Array[X], idx : Int) -> Option[X] {
+fn op_get[X](self : SparseArray[X], idx : Int) -> Option[X] {
   if self.elem_info.has(idx) {
     Some(self.data[self.elem_info.index_of(idx)])
   } else {
@@ -36,11 +36,11 @@ fn op_get[X](self : Sparse_Array[X], idx : Int) -> Option[X] {
   }
 }
 
-/// `add(self: Sparse_Array[X], idx: Int, value: X)`
+/// `add(self: SparseArray[X], idx: Int, value: X)`
 ///
 /// Add a new element into the sparse array.
 /// [idx] must be absent from [self]
-fn add[X](self : Sparse_Array[X], idx : Int, value : X) -> Sparse_Array[X] {
+fn add[X](self : SparseArray[X], idx : Int, value : X) -> SparseArray[X] {
   let new_len = self.data.length() + 1
   let pos_of_new_item = self.elem_info.index_of(idx)
   let new_data = Array::make(new_len, value)
@@ -58,10 +58,10 @@ fn add[X](self : Sparse_Array[X], idx : Int, value : X) -> Sparse_Array[X] {
   { elem_info: self.elem_info.add(idx), data: new_data }
 }
 
-/// `replace(self: Sparse_Array[X], idx: Int, value: X)`
+/// `replace(self: SparseArray[X], idx: Int, value: X)`
 ///
 // replace an existing element in the sparse array.
-fn replace[X](self : Sparse_Array[X], idx : Int, value : X) -> Sparse_Array[X] {
+fn replace[X](self : SparseArray[X], idx : Int, value : X) -> SparseArray[X] {
   let len = self.data.length()
   let pos_of_new_item = self.elem_info.index_of(idx)
   let new_data = Array::make(len, value)
@@ -71,8 +71,8 @@ fn replace[X](self : Sparse_Array[X], idx : Int, value : X) -> Sparse_Array[X] {
   { elem_info: self.elem_info, data: new_data }
 }
 
-test "Sparse_Array" {
-  let arr = Sparse_Array::make(1, 1)
+test "SparseArray" {
+  let arr = SparseArray::make(1, 1)
   @assertion.assert_false(arr.has(0))?
   @assertion.assert_eq(arr[0], None)?
   @assertion.assert_true(arr.has(1))?
@@ -102,17 +102,17 @@ test "Sparse_Array" {
   @assertion.assert_eq(arr[2], Some(2))?
 }
 
-/// `iter(self: Sparse_Array[X], f: (X) -> Unit) -> Unit`
+/// `iter(self: SparseArray[X], f: (X) -> Unit) -> Unit`
 ///
 /// Iterate through elements in a sparse array
-fn iter[X](self : Sparse_Array[X], f : (X) -> Unit) -> Unit {
+fn iter[X](self : SparseArray[X], f : (X) -> Unit) -> Unit {
   for i = 0; i < self.elem_info.size(); i = i + 1 {
     f(self.data[i])
   }
 }
 
-test "Sparse_Array::iter" {
-  let arr = Sparse_Array::make(0, 0).add(1, 1).add(3, 3).add(31, 31)
+test "SparseArray::iter" {
+  let arr = SparseArray::make(0, 0).add(1, 1).add(3, 3).add(31, 31)
   let buf = Buffer::make(0)
   let mut is_first = true
   arr.iter(
