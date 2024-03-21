@@ -32,7 +32,7 @@ enum Map[K, V] {
   Empty
   Leaf(K, V) // optimize for the case of no collision
   Collision(Bucket[K, V]) // use a list of buckets to resolve collision
-  Branch(Sparse_Array[Map[K, V]])
+  Branch(SparseArray[Map[K, V]])
 }
 
 // The number of bits consumed at every [Branch] node
@@ -80,7 +80,7 @@ fn add_with_hash[K : Eq, V](
         hash.lsr(segment_length),
         value,
       )
-      Map::Branch(Sparse_Array::make(idx, child))
+      Map::Branch(SparseArray::make(idx, child))
     }
   }
 
