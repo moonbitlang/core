@@ -3,7 +3,7 @@
 ## Overview
 
 List is implemented as a **linked list**, supporting O(1) head access.
-- Moonbit list is **homogenous** list, which means all elements in the list must be of the same type.
+- Moonbit list is **homogeneous** list, which means all elements in the list must be of the same type.
 - Moonbit list does not support random access well, you can only access elements by iterating through the list. If you need randomly access the nth element, you should use `Vec` instead.
 
 ## Usage
@@ -26,7 +26,7 @@ Build a repeated list by using the `repeat()` method:
 let list = repeat(3, 1) // List::[1, 1, 1]
 ```
 
-### Patten matching
+### Pattern matching
 You can use pattern matching to destructure a list:
 ```moonbit
 let list = List::[1, 2, 3, 4, 5]
