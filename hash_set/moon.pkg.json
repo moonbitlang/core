@@ -1,0 +1,28 @@
+{
+    "import": [
+        {
+            "path": "moonbitlang/core/assertion",
+            "alias": "assertion"
+        },
+        {
+            "path": "moonbitlang/core/list",
+            "alias": "list"
+        },
+        {
+            "path": "moonbitlang/core/array",
+            "alias": "array"
+        },
+        {
+            "path": "moonbitlang/core/math",
+            "alias": "math"
+        },
+        {
+            "path": "moonbitlang/core/vec",
+            "alias": "vec"
+        },
+        {
+            "path": "moonbitlang/core/option",
+            "alias": "option"
+        }
+    ]
+}
