@@ -76,7 +76,7 @@ fn Output::output(self : Buffer, content : String) -> Unit {
 ///  
 /// This method only escapes characters below 0x20 and the following characters:
 /// `"`, `'`, `\`.
-pub fn escape_to(s : String, buf : Buffer) -> Unit {
+fn escape_to(s : String, buf : Buffer) -> Unit {
   fn write_escaped_ch(ch : Char) -> Unit {
     buf.write_char('\\')
     buf.write_char(ch)
