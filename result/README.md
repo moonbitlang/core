@@ -32,7 +32,7 @@ fn may_fail() -> Result[Int, String] {
     Ok(42)
 }
 
-fn main() -> Result[Unit, String] {
+fn print_ok() -> Result[Unit, String] {
     let result = may_fail()
     match result {
         Ok(value) => {
@@ -43,7 +43,7 @@ fn main() -> Result[Unit, String] {
     }
 }
 // The above code can be written as:
-fn main() -> Result[Unit, String] {
+fn print_ok() -> Result[Unit, String] {
     let value = may_fail()?
     print(value)
     Ok(())
