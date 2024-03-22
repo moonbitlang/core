@@ -65,6 +65,10 @@ fn output(self : IO, content : String) -> Unit {
   print(content)
 }
 
+fn Output::output(self : Buffer, content : String) -> Unit {
+  self.write_string(content)
+}
+
 // TODO: This escape function should belong to the String package, but is 
 // not mature enough, so it's left here temporarily.
 /// Escape a string using standard C escape sequences to the given buffer,
@@ -117,21 +121,22 @@ pub fn escape_to(s : String, buf : Buffer) -> Unit {
 /// `"`, `'`, `\`.
 pub fn escape(s : String) -> String {
   let buf = Buffer::make(s.length())
-  s.escape_to(buf)
+  escape_to(s, buf)
   buf.to_string()
 }
 
 test "backslash escape" {
   let s = "\n\r\t\b\"'\\"
   let expected = "\\n\\r\\t\\b\\\"\\'\\\\"
-  @assertion.assert_eq(s.escape(), expected)?
+  @assertion.assert_eq(escape(s), expected)?
 }
 
-test "hex escape" {
-  let s = ""
-  let expected = "\\x11\\x12\\x01\\x02"
-  @assertion.assert_eq(s.escape(), expected)?
-}
+// FIXME: formatting string does not work, this test will be destroyed by formatting
+// test "hex escape" {
+//   let s = "\x11\x12\x01\x02"
+//   let expected = "\\x11\\x12\\x01\\x02"
+//   @assertion.assert_eq(s.escape(), expected)?
+// }
 
 fn log(counters : List[(String, CoverageCounter)], io : Output) -> Unit {
   let print = fn { x => io.output(x) }
@@ -141,7 +146,7 @@ fn log(counters : List[(String, CoverageCounter)], io : Output) -> Unit {
       io.output("\n")
     }
   }
-  print("{")
+  print("{ ")
   loop counters, 0 {
     Cons((name, counter), xs), ix => {
       if ix != 0 {
@@ -160,7 +165,24 @@ fn log(counters : List[(String, CoverageCounter)], io : Output) -> Unit {
 }
 
 test "log" {
-  // TODO: ziye log to buffer & add test
+  let test_counter_a = CoverageCounter::new(2)
+  let test_counter_b = CoverageCounter::new(2)
+  test_counter_a.incr(0)
+  test_counter_b.incr(1)
+  let counters : List[(String, CoverageCounter)] = Cons(
+    ("foo/foo", test_counter_a),
+    Cons(("foo/bar", test_counter_b), Nil),
+  )
+  let buf = Buffer::make(1024)
+  log(counters, buf)
+  let result = buf.to_string()
+  let expected =
+    #|{ "foo/foo": [1, 0]
+    #|, "foo/bar": [0, 1]
+    #|}
+    #|
+
+  @assertion.assert_eq(result, expected)?
 }
 
 /// Output the counters to stdout for coverage report usages. The counter data
