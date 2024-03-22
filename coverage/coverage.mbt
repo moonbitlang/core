@@ -6,12 +6,12 @@ struct CoverageCounter {
 } derive(Show)
 
 /// Create a new coverage counter with the given size.
-fn CoverageCounter::new(size : Int) -> CoverageCounter {
+pub fn CoverageCounter::new(size : Int) -> CoverageCounter {
   { counter: Array::make(size, 0) }
 }
 
 /// Increment the specified tracking index.
-fn CoverageCounter::incr(self : CoverageCounter, idx : Int) -> Unit {
+pub fn CoverageCounter::incr(self : CoverageCounter, idx : Int) -> Unit {
   let counter = self.counter[idx]
   if counter < 0x7fffffff { // prevent overflow
     self.counter[idx] = counter + 1
