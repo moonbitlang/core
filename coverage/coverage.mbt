@@ -71,9 +71,8 @@ pub fn track(name : String, counter : CoverageCounter) -> Unit {
 pub fn end() -> Unit {
   println("----- BEGIN MOONBIT COVERAGE -----")
   println("{")
-  let mut ix = 0
-  loop counters.val {
-    Cons((name, counter), xs) => {
+  loop counters.val, 0 {
+    Cons((name, counter), xs), ix => {
       if ix != 0 {
         print(", ")
       }
@@ -82,10 +81,9 @@ pub fn end() -> Unit {
       print("\": ")
       let counter_dump = counter.to_string()
       println(counter_dump)
-      ix += 1
-      continue xs
+      continue xs, ix + 1
     }
-    Nil => break
+    Nil, _ => ()
   }
   println("}")
   println("----- END MOONBIT COVERAGE -----")
