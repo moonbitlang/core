@@ -54,6 +54,47 @@ pub fn track(name : String, counter : CoverageCounter) -> Unit {
   counters.val = Cons((name, counter), counters.val)
 }
 
+trait Output {
+  output(Self, String) -> Unit
+}
+
+type IO Int
+
+fn output(self : IO, content : String) -> Unit {
+  ignore(self)
+  print(content)
+}
+
+fn log(counters : List[(String, CoverageCounter)], io : Output) -> Unit {
+  let print = fn { x => io.output(x) }
+  let println = fn {
+    x => {
+      io.output(x)
+      io.output("\n")
+    }
+  }
+  print("{")
+  loop counters, 0 {
+    Cons((name, counter), xs), ix => {
+      if ix != 0 {
+        print(", ")
+      }
+      print("\"")
+      print(name.escape())
+      print("\": ")
+      let counter_dump = counter.to_string()
+      println(counter_dump)
+      continue xs, ix + 1
+    }
+    Nil, _ => ()
+  }
+  println("}")
+}
+
+test "log" {
+  // TODO: ziye log to buffer & add test
+}
+
 /// Output the counters to stdout for coverage report usages. The counter data
 /// is printed as a map of `{ counter_id: counter_contents }`, enclosed between
 /// a pair of delimiters.
@@ -70,21 +111,6 @@ pub fn track(name : String, counter : CoverageCounter) -> Unit {
 /// ```
 pub fn end() -> Unit {
   println("----- BEGIN MOONBIT COVERAGE -----")
-  println("{")
-  loop counters.val, 0 {
-    Cons((name, counter), xs), ix => {
-      if ix != 0 {
-        print(", ")
-      }
-      print('"')
-      print(name.escape())
-      print("\": ")
-      let counter_dump = counter.to_string()
-      println(counter_dump)
-      continue xs, ix + 1
-    }
-    Nil, _ => ()
-  }
-  println("}")
+  log(counters.val, IO::IO(0))
   println("----- END MOONBIT COVERAGE -----")
 }
