@@ -254,7 +254,7 @@ fn next_index[K : Hash, V](self : HashMap[K, V], index : Int) -> Int {
   (index + 1) % self.capacity
 }
 
-fn debug_entries[K : Debug + Show, V : Debug + Show](
+fn debug_entries[K : Show, V : Show](
   self : HashMap[K, V]
 ) -> String {
   let mut s = ""
