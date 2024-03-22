@@ -107,15 +107,14 @@ pub fn pop_exn[T : Compare](self : PriorityQueue[T]) -> Unit {
 }
 
 pub fn pop[T : Compare](self : PriorityQueue[T]) -> Option[T] {
-  if self.len == 0 {
-    abort("The PriorityQueue is empty!")
-  }
   let result = self.top()
   self.top = match self.top {
     Nil => Nil
-    Cons(top) => merges(top.child, self.min)
+    Cons(top) => {
+      self.len -= 1
+      merges(top.child, self.min)
+    }
   }
-  self.len -= 1
   result
 }
 
