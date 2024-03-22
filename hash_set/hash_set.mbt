@@ -24,26 +24,22 @@ pub struct MutableSet[T] {
 priv struct Item[T] {
   mut key : T
   mut probe_length : Int
-} derive(Default, Debug, Show)
+} derive(Debug, Show)
 
 /// Initialize MutableSet by specifying initial capacity.
-pub fn MutableSet::with_capacity[T : Default](
-  initial_capacity : Int
-) -> MutableSet[T] {
+pub fn MutableSet::with_capacity[T](initial_capacity : Int) -> MutableSet[T] {
   let directory : @vec.Vec[Option[Item[T]]] = @vec.Vec::new()
   directory.resize(@math.maximum(1, initial_capacity), None)
   { directory, real_size: 0, effective_size: 0 }
 }
 
 /// Initialize MutableSet with default capacity 3.
-pub fn MutableSet::new[T : Default]() -> MutableSet[T] {
+pub fn MutableSet::new[T]() -> MutableSet[T] {
   MutableSet::with_capacity(3)
 }
 
 /// Initialize a MutableSet from array.
-pub fn MutableSet::from_array[T : Hash + Eq + Default](
-  array : Array[T]
-) -> MutableSet[T] {
+pub fn MutableSet::from_array[T : Hash + Eq](array : Array[T]) -> MutableSet[T] {
   let set = MutableSet::with_capacity(array.length())
   array.iter(fn(key : T) -> Unit { set.insert(key) })
   set
@@ -72,9 +68,7 @@ pub fn to_array[T : Default](self : MutableSet[T]) -> Array[T] {
 }
 
 /// Initialize a MutableSet from list.
-pub fn MutableSet::from_list[T : Hash + Eq + Default](
-  list : List[T]
-) -> MutableSet[T] {
+pub fn MutableSet::from_list[T : Hash + Eq](list : List[T]) -> MutableSet[T] {
   let set = MutableSet::with_capacity(list.length())
   list.iter(fn(key : T) -> Unit { set.insert(key) })
   set
@@ -88,7 +82,7 @@ pub fn MutableSet::from_list[T : Hash + Eq + Default](
 /// println(MutableSet::[1, 1, 2, 2, 3, 3].to_list())
 /// // output: Cons(3, Cons(2, Cons(1, Nil)))
 /// ```
-pub fn to_list[T : Default](self : MutableSet[T]) -> List[T] {
+pub fn to_list[T](self : MutableSet[T]) -> List[T] {
   self.fold(
     fn(key : T, list : List[T]) -> List[T] { Cons(key, list) },
     ~init=Nil,
@@ -132,11 +126,9 @@ pub fn copy[T](self : MutableSet[T]) -> MutableSet[T] {
 /// ```
 pub fn iter[T](self : MutableSet[T], f : (T) -> Unit) -> Unit {
   self.directory.iter(
-    fn(item : Option[Item[T]]) -> Unit {
-      match item {
-        Some({ key, probe_length: _ }) => f(key)
-        None => ()
-      }
+    fn {
+      Some({ key, probe_length: _ }) => f(key)
+      None => ()
     },
   )
 }
@@ -176,7 +168,7 @@ pub fn fold[T, U](self : MutableSet[T], f : (T, U) -> U, ~init : U) -> U {
 /// println(set.to_array())
 /// // output: [1, 2, 3, 4]
 /// ```
-pub fn insert[T : Hash + Eq + Default](self : MutableSet[T], key : T) -> Unit {
+pub fn insert[T : Hash + Eq](self : MutableSet[T], key : T) -> Unit {
   let _ = self.insert_item(key)
 
 }
@@ -285,7 +277,7 @@ pub fn size[T](self : MutableSet[T]) -> Int {
 /// println(MutableSet::[3, 4, 5].inter(MutableSet::[4, 5, 6]).to_array())
 /// // output: [4, 5]
 /// ```
-pub fn inter[T : Hash + Eq + Default](
+pub fn intersection[T : Hash + Eq](
   self : MutableSet[T],
   other : MutableSet[T]
 ) -> MutableSet[T] {
@@ -303,7 +295,7 @@ pub fn inter[T : Hash + Eq + Default](
 /// MutableSet::[3, 4, 5].inter_into(MutableSet::[4, 5, 6], res)
 /// println(res.to_array()) // output: [5, 4]
 /// ```
-pub fn inter_into[T : Hash + Eq + Default](
+pub fn intersection_into[T : Hash + Eq](
   self : MutableSet[T],
   other : MutableSet[T],
   into : MutableSet[T]
@@ -320,7 +312,7 @@ pub fn inter_into[T : Hash + Eq + Default](
 /// res.sort()
 /// println(res) // output: [3, 4, 5, 6]
 /// ```
-pub fn union[T : Hash + Eq + Default](
+pub fn union[T : Hash + Eq](
   self : MutableSet[T],
   other : MutableSet[T]
 ) -> MutableSet[T] {
@@ -340,7 +332,7 @@ pub fn union[T : Hash + Eq + Default](
 /// into.sort()
 /// println(res) //output: [3, 4, 5, 6]
 /// ```
-pub fn union_into[T : Hash + Eq + Default](
+pub fn union_into[T : Hash + Eq](
   self : MutableSet[T],
   other : MutableSet[T],
   into : MutableSet[T]
@@ -356,7 +348,7 @@ pub fn union_into[T : Hash + Eq + Default](
 /// println(MutableSet::[1, 2, 3].diff(MutableSet::[4, 5, 1]).to_array())
 /// // output: [3, 2]
 /// ```
-pub fn diff[T : Hash + Eq + Default](
+pub fn diff[T : Hash + Eq](
   self : MutableSet[T],
   other : MutableSet[T]
 ) -> MutableSet[T] {
@@ -374,7 +366,7 @@ pub fn diff[T : Hash + Eq + Default](
 /// MutableSet::[1, 2, 3].diff_into(MutableSet::[4, 5, 1], into)
 /// println(into.to_array()) // output: [2, 3]
 /// ```
-pub fn diff_into[T : Hash + Eq + Default](
+pub fn diff_into[T : Hash + Eq](
   self : MutableSet[T],
   other : MutableSet[T],
   into : MutableSet[T]
@@ -388,7 +380,7 @@ fn Item::new[T](key : T) -> Item[T] {
   { key, probe_length: 0 }
 }
 
-fn insert_item[T : Hash + Eq + Default](self : MutableSet[T], key : T) -> Int {
+fn insert_item[T : Hash + Eq](self : MutableSet[T], key : T) -> Int {
   match self.index_of(key) {
     Some(index) => {
       self.directory[index].unwrap().key = key
@@ -517,16 +509,16 @@ test "iter" {
   @assertion.assert_eq(n, 6)?
 }
 
-test "inter" {
+test "intersection" {
   @assertion.assert_eq(
-    MutableSet::[3, 4, 5].inter(MutableSet::[4, 5, 6]).to_array(),
+    MutableSet::[3, 4, 5].intersection(MutableSet::[4, 5, 6]).to_array(),
     [5, 4],
   )?
 }
 
-test "inter_into" {
+test "intersection_into" {
   let res = MutableSet::[1, 2, 3]
-  MutableSet::[3, 4, 5].inter_into(MutableSet::[4, 5, 6], res)
+  MutableSet::[3, 4, 5].intersection_into(MutableSet::[4, 5, 6], res)
   let res = res.to_array()
   res.sort()
   @assertion.assert_eq(res, [1, 2, 3, 4, 5])?
