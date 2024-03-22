@@ -65,6 +65,74 @@ fn output(self : IO, content : String) -> Unit {
   print(content)
 }
 
+// TODO: This escape function should belong to the String package, but is 
+// not mature enough, so it's left here temporarily.
+/// Escape a string using standard C escape sequences to the given buffer,
+/// usually for quoting uses.
+///  
+/// This method only escapes characters below 0x20 and the following characters:
+/// `"`, `'`, `\`.
+pub fn escape_to(s : String, buf : Buffer) -> Unit {
+  fn write_escaped_ch(ch : Char) -> Unit {
+    buf.write_char('\\')
+    buf.write_char(ch)
+  }
+
+  fn to_hex_digit(i : Int) -> Char {
+    if i < 10 {
+      Char::from_int('0'.to_int() + i)
+    } else {
+      Char::from_int('a'.to_int() + (i - 10))
+    }
+  }
+
+  let mut ix = 0
+  while ix < s.length() {
+    let ch = s[ix]
+    match ch {
+      '"' | '\'' | '\\' => write_escaped_ch(ch)
+      '\n' => write_escaped_ch('n')
+      '\r' => write_escaped_ch('r')
+      '\b' => write_escaped_ch('b')
+      '\t' => write_escaped_ch('t')
+      _ =>
+        if ch.to_int() < 0x20 {
+          buf.write_char('\\')
+          buf.write_char('x')
+          let ich = ch.to_int()
+          buf.write_char(to_hex_digit(ich / 16))
+          buf.write_char(to_hex_digit(ich % 16))
+        } else {
+          buf.write_char(ch)
+        }
+    }
+    ix += 1
+  }
+}
+
+/// Escape a string using standard C escape sequences and return the escaped string,
+/// usually for quoting uses.
+///  
+/// This method only escapes characters below 0x20 and the following characters:
+/// `"`, `'`, `\`.
+pub fn escape(s : String) -> String {
+  let buf = Buffer::make(s.length())
+  s.escape_to(buf)
+  buf.to_string()
+}
+
+test "backslash escape" {
+  let s = "\n\r\t\b\"'\\"
+  let expected = "\\n\\r\\t\\b\\\"\\'\\\\"
+  @assertion.assert_eq(s.escape(), expected)?
+}
+
+test "hex escape" {
+  let s = ""
+  let expected = "\\x11\\x12\\x01\\x02"
+  @assertion.assert_eq(s.escape(), expected)?
+}
+
 fn log(counters : List[(String, CoverageCounter)], io : Output) -> Unit {
   let print = fn { x => io.output(x) }
   let println = fn {
@@ -80,7 +148,7 @@ fn log(counters : List[(String, CoverageCounter)], io : Output) -> Unit {
         print(", ")
       }
       print("\"")
-      print(name.escape())
+      print(escape(name))
       print("\": ")
       let counter_dump = counter.to_string()
       println(counter_dump)
