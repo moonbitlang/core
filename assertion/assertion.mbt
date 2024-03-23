@@ -188,3 +188,23 @@ test "assert_is_not.is.not" {
   assert_eq(assert_eq(s1, s2), Ok(()))?
   assert_eq(assert_is_not(s1, s2), Ok(()))?
 }
+
+/// Asserts whether two String are equal.
+///
+//Using this function to compare strings gives detailed diff information
+//
+/// # Examples
+///
+/// ```
+/// assert_string("1234", "123")
+/// ```
+pub fn assert_string(
+  a : String,
+  b : String,
+  ~loc : SourceLoc = _,
+  ~buffer_length : Int = 50
+) -> Result[Unit, String] {
+  let buf = Buffer::make(buffer_length)
+  buf.write_string(a)
+  buf.expect(~content=b, ~loc)
+}

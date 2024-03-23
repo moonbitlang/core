@@ -46,23 +46,15 @@ pub fn to_string[T : Show](self : Vec[T]) -> String {
 }
 
 test "to_string" {
-  // run moon test -u to auto update  
-  let buf = Buffer::make(20)  
-  fn write (obj:Show){
-    buf.write_string(obj.to_string())
-  }
+  // run moon test -u to auto update
   let empty : Vec[Int] = Vec::[]
-  write(empty)
-  buf.expect(~content="Vec::[]")?
+  @assertion.assert_string(empty.to_string(), "Vec::[]")?
   let a0 = Vec::[0]
-  write(a0)
-  buf.expect(~content="Vec::[0]")?
+  @assertion.assert_string(a0.to_string(), "Vec::[0]")?
   a0.push(1)
-  write(a0)
-  buf.expect(~content="Vec::[0,1]")?
+  @assertion.assert_string(a0.to_string(), "Vec::[0,1]")?
   a0.push(2)
-  write(a0)
-  buf.expect(~content="Vec::[0,1,2]")?
+  @assertion.assert_string(a0.to_string(), "Vec::[0,1,2]")?
 }
 
 /// Creates a new, empty vector.
