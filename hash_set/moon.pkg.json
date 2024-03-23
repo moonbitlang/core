@@ -17,10 +17,6 @@
             "alias": "math"
         },
         {
-            "path": "moonbitlang/core/vec",
-            "alias": "vec"
-        },
-        {
             "path": "moonbitlang/core/option",
             "alias": "option"
         }

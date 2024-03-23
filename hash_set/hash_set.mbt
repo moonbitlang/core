@@ -16,7 +16,7 @@
 
 /// MutableSet is an open-addressing hashset based on robin hood hash.
 pub struct MutableSet[T] {
-  priv mut directory : @vec.Vec[Option[Item[T]]]
+  priv mut directory : Array[Option[Item[T]]]
   priv mut real_size : Int
   priv mut effective_size : Int
 }
@@ -28,14 +28,19 @@ priv struct Item[T] {
 
 /// Initialize MutableSet by specifying initial capacity.
 pub fn MutableSet::with_capacity[T](initial_capacity : Int) -> MutableSet[T] {
-  let directory : @vec.Vec[Option[Item[T]]] = @vec.Vec::new()
-  directory.resize(@math.maximum(1, initial_capacity), None)
-  { directory, real_size: 0, effective_size: 0 }
+  {
+    directory: @array.new(
+      @math.maximum(1, initial_capacity),
+      fn() -> Option[Item[T]] { None },
+    ),
+    real_size: 0,
+    effective_size: 0,
+  }
 }
 
 /// Initialize MutableSet with default capacity 3.
 pub fn MutableSet::new[T]() -> MutableSet[T] {
-  MutableSet::with_capacity(3)
+  MutableSet::with_capacity(8)
 }
 
 /// Initialize a MutableSet from array.
