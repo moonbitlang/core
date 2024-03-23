@@ -10,10 +10,10 @@ A priority queue is a data structure capable of maintaining maximum/minimum valu
 
 You can use `new()` or `from_array()` to create a priority queue.
 
-   ```moonbit
-   let queue : PriorityQueue[Int] = new()
-   let queue = PriorityQueue::[1, 2, 3]
-   ```
+```moonbit
+let queue : PriorityQueue[Int] = new()
+let queue = PriorityQueue::[1, 2, 3]
+```
 
 Note, however, that the default priority queue created is greater-first; if you need to create a less-first queue, you can specify it using `~min`.
 
@@ -78,11 +78,10 @@ pq.length() // 4
 
 ### Clear
 
-You can use `clear` to clear a priority queue. 
+You can use `clear` to clear a priority queue.
 
 ```moonbit
 let pq = Priority_Queue::[1, 2, 3, 4, 5]
 pq.clear()
 pq.is_empty() // true
 ```
-
