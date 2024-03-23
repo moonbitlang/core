@@ -12,8 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-/// This module implements mutable set as hashtable.
-
 /// MutableSet is an open-addressing hashset based on robin hood hash.
 pub struct MutableSet[T] {
   priv mut directory : Array[Option[Item[T]]]
