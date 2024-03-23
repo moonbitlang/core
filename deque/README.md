@@ -10,10 +10,10 @@ Deque is a double-ended queue implemented as a round-robin queue, supporting O(1
 
 You can create a deque manually via the `new()` or construct it using the `from_array()`.
 
-   ```moonbit
-   let dq = Deque::new()
-   let dq = Deque::[1, 2, 3, 4, 5]
-   ```
+```moonbit
+let dq : Deque[Int] = Deque::new()
+let dq = Deque::[1, 2, 3, 4, 5]
+```
 
 If you want to set the length at creation time to minimize expansion consumption, you can use `with_capacity()`.
 
@@ -34,7 +34,7 @@ dq.capacity() // 5
 Similarly, you can use the `is_empty` to determine whether the queue is empty.
 
 ```moonbit
-let dq = Deque::new()
+let dq : Deque[Int] = Deque::new()
 dq.is_empty() // true
 ```
 
@@ -108,7 +108,7 @@ You can use `clear` to clear a deque. But note that the memory it already occupi
 ```moonbit
 let dq = Deque::[1, 2, 3, 4, 5]
 dq.clear()
-dq.empty() // true
+dq.is_empty() // true
 ```
 
 ### Equal
@@ -144,4 +144,3 @@ dq.contains(6) // false
 dq.search(1) // Some(0)
 dq.search(6) // None
 ```
-
