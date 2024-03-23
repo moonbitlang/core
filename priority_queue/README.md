@@ -81,7 +81,7 @@ pq.length() // 4
 You can use `clear` to clear a priority queue.
 
 ```moonbit
-let pq = Priority_Queue::[1, 2, 3, 4, 5]
+let pq = PriorityQueue::[1, 2, 3, 4, 5]
 pq.clear()
 pq.is_empty() // true
 ```
