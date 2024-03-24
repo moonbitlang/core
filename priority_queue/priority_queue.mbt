@@ -12,22 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-struct Cont[T] {
-  content : T
-  mut sibling : Node[T]
-  mut child : Node[T]
-}
 
-enum Node[T] {
-  Nil
-  Cons(Cont[T])
-}
-
-struct PriorityQueue[T] {
-  min : Bool
-  mut len : Int
-  mut top : Node[T]
-}
 
 /// Creates a new empty priority queue.
 /// 
