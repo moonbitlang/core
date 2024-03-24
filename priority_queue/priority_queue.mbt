@@ -51,12 +51,14 @@ pub fn PriorityQueue::from_array[T : Compare](
   arr : Array[T],
   ~min : Bool = false
 ) -> PriorityQueue[T] {
+  // CR: bad formatting  
+  let len = arr.length()
   for i = 0, acc = Node::Nil {
-    if i < arr.length() {
+    if i < len {
       continue i + 1,
         meld(acc, Cons({ content: arr[i], sibling: Nil, child: Nil }), min)
     } else {
-      break { min, len: arr.length(), top: acc }
+      break { min, len, top: acc }
     }
   }
 }
@@ -71,11 +73,12 @@ fn meld[T : Compare](x : Node[T], y : Node[T], min : Bool) -> Node[T] {
     (Nil, _) => y
     (_, Nil) => x
     (Cons(x_top), Cons(y_top)) =>
-      if if min {
+      // CR: bad formatting
+      if (if min {
         x_top.content < y_top.content
       } else {
         x_top.content > y_top.content
-      } {
+      }) {
         y_top.sibling = x_top.child
         x_top.child = y
         x
@@ -264,10 +267,7 @@ test "clear" {
 /// let is_empty = queue.is_empty() // true
 /// ```
 pub fn is_empty[T](self : PriorityQueue[T]) -> Bool {
-  match self.top {
-    Nil => true
-    _ => false
-  }
+  self.len == 0    
 }
 
 test "is_empty" {
