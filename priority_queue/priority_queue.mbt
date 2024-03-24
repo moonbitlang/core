@@ -66,11 +66,13 @@ pub fn PriorityQueue::from_array[T : Compare](
   arr : Array[T],
   ~min : Bool = false
 ) -> PriorityQueue[T] {
-  for i = 0, acc = (Nil : Node[T]); i < arr.length(); {
-    continue i + 1,
-      meld(acc, Cons({ content: arr[i], sibling: Nil, child: Nil }), min)
-  } else {
-    { min, len: arr.length(), top: acc }
+  for i = 0, acc = Node::Nil {
+    if i < arr.length() {
+      continue i + 1,
+        meld(acc, Cons({ content: arr[i], sibling: Nil, child: Nil }), min)
+    } else {
+      break { min, len: arr.length(), top: acc }
+    }
   }
 }
 
