@@ -11,16 +11,11 @@ A priority queue is a data structure capable of maintaining maximum/minimum valu
 You can use `new()` or `from_array()` to create a priority queue.
 
 ```moonbit
-let queue : PriorityQueue[Int] = new()
-let queue = PriorityQueue::[1, 2, 3]
+let queue1 : PriorityQueue[Int] = new()
+let queue2 = PriorityQueue::[1, 2, 3]
 ```
 
-Note, however, that the default priority queue created is greater-first; if you need to create a less-first queue, you can specify it using `~min`.
-
-```moonbit
-let queue : PriorityQueue[Int] = new(~min=true)
-let queue = PriorityQueue::from_array([1, 2, 3], ~min=true)
-```
+Note, however, that the default priority queue created is greater-first; if you need to create a less-first queue, you can write a struct belongs to Compare trait to implement it.
 
 ### Length
 
