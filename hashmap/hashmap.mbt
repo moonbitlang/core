@@ -15,9 +15,6 @@
 // Default initial capacity
 let default_init_capacity = 8
 
-// Default load factor
-let default_load_factor = 0.9
-
 enum Entry[K, V] {
   Empty
   Valid((Int, K, V))
@@ -44,20 +41,19 @@ struct HashMap[K, V] {
   mut entries : Array[Entry[K, V]]
   mut size : Int // active key-value pairs count
   mut capacity : Int // current capacity 
-  load_factor : Double // load factor threshold that triggers grow
+  mut growAt : Int // threshold that triggers grow
   hasher : Option[(K) -> Int] // custom hasher
 }
 
 /// Create new hash map.
 pub fn HashMap::new[K, V](
   ~capacity : Int = default_init_capacity,
-  ~load_factor : Double = default_load_factor,
   ~hasher : Option[(K) -> Int] = None
 ) -> HashMap[K, V] {
   {
     size: 0,
     capacity,
-    load_factor,
+    growAt: calc_grow_threshold(capacity),
     hasher,
     entries: @array.new(capacity, fn() { Empty }),
   }
@@ -74,6 +70,9 @@ pub fn HashMap::from_array[K : Hash + Eq, V](
 
 /// Set a key-value pair into hash map.
 pub fn set[K : Hash + Eq, V](self : HashMap[K, V], key : K, value : V) -> Unit {
+  if self.capacity == 0 || self.size >= self.growAt {
+    self.grow()
+  }
   let mut idx = self.hash(key)
   let mut entry = (0, key, value) // (distance, key, value)
   let mut i = 0
@@ -103,7 +102,6 @@ pub fn set[K : Hash + Eq, V](self : HashMap[K, V], key : K, value : V) -> Unit {
   if i == self.capacity {
     abort("HashMap is full")
   }
-  self.grow()
 }
 
 pub fn op_set[K : Hash + Eq, V](
@@ -228,12 +226,10 @@ fn shift_back[K : Hash, V](self : HashMap[K, V], start_index : Int) -> Unit {
 }
 
 fn grow[K : Hash + Eq, V](self : HashMap[K, V]) -> Unit {
-  if self.size.to_double() / self.capacity.to_double() < self.load_factor {
-    return
-  }
   let old_entries = self.entries
   self.entries = @array.new(self.capacity * 2, fn() { Empty })
   self.capacity = self.capacity * 2
+  self.growAt = calc_grow_threshold(self.capacity)
   self.size = 0
   for i = 0; i < old_entries.length(); i = i + 1 {
     match old_entries[i] {
@@ -245,18 +241,20 @@ fn grow[K : Hash + Eq, V](self : HashMap[K, V]) -> Unit {
 
 fn hash[K : Hash, V](self : HashMap[K, V], key : K) -> Int {
   match self.hasher {
-    Some(hasher) => hasher(key).abs() % self.capacity
-    None => key.hash().abs() % self.capacity
+    Some(hasher) => hasher(key).abs().land(self.capacity - 1)
+    None => key.hash().abs().land(self.capacity - 1)
   }
 }
 
 fn next_index[K : Hash, V](self : HashMap[K, V], index : Int) -> Int {
-  (index + 1) % self.capacity
+  (index + 1).land(self.capacity - 1)
 }
 
-fn debug_entries[K : Show, V : Show](
-  self : HashMap[K, V]
-) -> String {
+fn calc_grow_threshold(capacity : Int) -> Int {
+  capacity * 13 / 16
+}
+
+fn debug_entries[K : Show, V : Show](self : HashMap[K, V]) -> String {
   let mut s = ""
   for i = 0; i < self.entries.length(); i = i + 1 {
     if i > 0 {
@@ -274,7 +272,6 @@ test "new" {
   let m : HashMap[Int, Int] = HashMap::new()
   @assertion.assert_eq(m.capacity, default_init_capacity)?
   @assertion.assert_eq(m.size, 0)?
-  @assertion.assert_eq(m.load_factor, default_load_factor)?
 }
 
 test "set" {
@@ -443,7 +440,11 @@ test "grow" {
   m.set("Java", 4)
   m.set("Scala", 5)
   m.set("Julia", 5)
+  @assertion.assert_eq(m.size, 6)?
+  @assertion.assert_eq(m.capacity, 8)?
   m.set("Cobol", 5)
+  @assertion.assert_eq(m.size, 7)?
+  @assertion.assert_eq(m.capacity, 16)?
   m.set("Python", 6)
   m.set("Haskell", 7)
   m.set("Rescript", 8)
