@@ -143,7 +143,7 @@ fn get_limit(len : Int) -> Int {
   let mut len = len
   let mut limit = 0
   while len > 0 {
-    len = len.land(len - 1)
+    len = len / 2
     limit += 1
   }
   limit
