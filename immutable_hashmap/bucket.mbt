@@ -51,6 +51,22 @@ fn add[K : Eq, V](self : Bucket[K, V], key : K, value : V) -> Bucket[K, V] {
   }
 }
 
+/// Remove a key from a bucket
+fn remove[K : Eq, V](self : Bucket[K, V], key : K) -> Option[Bucket[K, V]] {
+  match self {
+    Just_One(old_key, _) => if key == old_key { None } else { Some(self) }
+    More(old_key, old_value, rest) =>
+      if key == old_key {
+        Some(rest)
+      } else {
+        match rest.remove(key) {
+          None => Some(Just_One(old_key, old_value))
+          Some(rest) => Some(More(old_key, old_value, rest))
+        }
+      }
+  }
+}
+
 /// Get the size of a bucket
 fn size[K, V](self : Bucket[K, V]) -> Int {
   match self {
@@ -72,6 +88,20 @@ test "Bucket" {
   @assertion.assert_eq(b.find(0), Some(2))?
   @assertion.assert_eq(b.find(1), Some(1))?
   @assertion.assert_eq(b.size(), 2)?
+  match b.remove(0) {
+    None => @assertion.assert_true(false)?
+    Some(b1) => {
+      @assertion.assert_eq(b1.find(0), None)?
+      @assertion.assert_eq(b1.find(1), Some(1))?
+    }
+  }
+  match b.remove(1) {
+    None => @assertion.assert_true(false)?
+    Some(b1) => {
+      @assertion.assert_eq(b1.find(0), Some(2))?
+      @assertion.assert_eq(b1.find(1), None)?
+    }
+  }
 }
 
 /// Iterate through elements of a bucket

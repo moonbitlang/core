@@ -148,6 +148,68 @@ test "HAMT" {
   }
 }
 
+/// Remove an element from a map
+pub fn remove[K : Eq + Hash, V](self : Map[K, V], key : K) -> Map[K, V] {
+  self.remove_with_hash(key, 0, key.hash())
+}
+
+fn remove_with_hash[K : Eq, V](
+  self : Map[K, V],
+  key : K,
+  depth : Int,
+  hash : Int
+) -> Map[K, V] {
+  match self {
+    Empty => self
+    Leaf(old_key, _) => if key == old_key { Empty } else { self }
+    Collision(bucket) =>
+      match bucket.remove(key) {
+        None => Empty
+        Some(Just_One(k, v)) => Leaf(k, v)
+        Some(new_bucket) => Collision(new_bucket)
+      }
+    Branch(children) => {
+      let idx = hash.land((1).lsl(segment_length) - 1)
+      match children[idx] {
+        None => self
+        Some(child) => {
+          let new_child = child.remove_with_hash(
+            key,
+            depth + segment_length,
+            hash.lsr(segment_length),
+          )
+          if children.size() == 1 {
+            match new_child {
+              Empty => Empty
+              _ => Branch(children.replace(idx, new_child))
+            }
+          } else {
+            Branch(children.replace(idx, new_child))
+          }
+        }
+      }
+    }
+  }
+}
+
+test "HAMT::remove" {
+  let map = loop 0, Map::make() {
+    100, map => map
+    i, map => continue i + 1, map.add(i, i)
+  }
+  for i = 0; i < 100; i = i + 1 {
+    @assertion.assert_eq((i, map.find(i)), (i, Some(i)))?
+  }
+  let map = loop 0, map {
+    100, map => map.remove(100) // test for removing non-existing element
+    i, map => continue i + 2, map.remove(i)
+  }
+  for i = 0; i < 100; i = i + 2 {
+    @assertion.assert_eq(map.find(i), None)?
+    @assertion.assert_eq(map.find(i + 1), Some(i + 1))?
+  }
+}
+
 /// Calculate the size of a map.
 ///
 /// WARNING: this operation is `O(N)` in map size

@@ -102,6 +102,13 @@ test "SparseArray" {
   @assertion.assert_eq(arr[2], Some(2))?
 }
 
+/// `size(self: SparseArray[X]) -> Int`
+///
+/// Return the size of a sparse array
+fn size[X](self : SparseArray[X]) -> Int {
+  self.data.length()
+}
+
 /// `iter(self: SparseArray[X], f: (X) -> Unit) -> Unit`
 ///
 /// Iterate through elements in a sparse array
