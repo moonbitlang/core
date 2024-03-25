@@ -24,7 +24,6 @@ priv enum Node[T] {
 }
 
 struct PriorityQueue[T] {
-  min : Bool
   mut len : Int
   mut top : Node[T]
 }
