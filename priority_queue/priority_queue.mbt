@@ -267,7 +267,7 @@ test "clear" {
 /// let is_empty = queue.is_empty() // true
 /// ```
 pub fn is_empty[T](self : PriorityQueue[T]) -> Bool {
-  self.len == 0    
+  self.len == 0
 }
 
 test "is_empty" {
