@@ -1,12 +1,3 @@
 {
-    "import": [
-        {
-            "path": "moonbitlang/core/assertion",
-            "alias": "assertion"
-        },
-        {
-            "path": "moonbitlang/core/string",
-            "alias": "string"
-        }
-    ]
+  "import": ["moonbitlang/core/assertion", "moonbitlang/core/string"]
 }
