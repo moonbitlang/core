@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-let reduceThreshold : Double = (1).lsl(29).to_double()
+let reduce_threshold : Double = (1).lsl(29).to_double()
 
 let pi4a : Double = 7.85398125648498535156e-1
 
@@ -22,24 +22,25 @@ let pi4c : Double = 2.69515142907905952645e-15
 
 let pi : Double = 3.141592653589793
 
-let _sin : Array[Double] = [
+let sin_ : Array[Double] = [
   1.58962301576546568060e-10, -2.50507477628578072866e-8, 2.75573136213857245213e-6,
   -1.98412698295895385996e-4, 8.33333333332211858878e-3, -1.66666666666666307295e-1,
 ]
 
-let _cos : Array[Double] = [
+let cos_ : Array[Double] = [
   -1.13585365213876817300e-11, 2.08757008419747316778e-9, -2.75573141792967388112e-7,
   2.48015872888517045348e-5, -1.38888888888730564116e-3, 4.16666666666665929218e-2,
 ]
 
-fn trigReduce(x : Double) -> (Int64, Double) {
+fn trig_reduce(x : Double) -> (Int64, Double) {
   let pi4 : Double = pi / 4.0
   if x < pi4 {
-    return (0L, x)
+    (0L, x)
+  } else {
+    let j = x.reinterpret_as_i64() % 8L
+    let z = x - j.reinterpret_as_double()
+    (j, z)
   }
-  let j = x.reinterpret_as_i64() % 8L
-  let z = x - j.reinterpret_as_double()
-  (j, z)
 }
 
 pub fn sin(x : Double) -> Double {
@@ -49,80 +50,76 @@ pub fn sin(x : Double) -> Double {
     x_ = -x_
     sign = true
   }
-  let mut j : Int64 = 0L
-  let mut y : Double = 0.0
-  let mut z : Double = 0.0
-  if x_ >= reduceThreshold {
-    let (j_, z_) = trigReduce(x_)
-    j = j_
-    z = z_
+  let (j, z) : (Int64, Double) = if x_ >= reduce_threshold {
+    let (j_, z_) = trig_reduce(x_)
+    if j_ > 3L {
+      sign = sign.not()
+      (j_ - 4L, z_)
+    } else {
+      (j_, z_)
+    }
   } else {
-    j = (x_ * (4.0 / pi)).to_int64()
-    y = j.to_double()
+    let mut j = (x_ * (4.0 / pi)).to_int64()
+    let mut y = j.to_double()
     if j.land(1L) == 1L {
       j += 1L
       y += 1.0
     }
     j = j.land(7L)
-    z = x_ - y * pi4a - y * pi4b - y * pi4c
-  }
-  if j > 3L {
-    sign = not(sign)
-    j = j - 4L
+    if j > 3L {
+      sign = sign.not()
+      (j - 4L, x_ - y * pi4a - y * pi4b - y * pi4c)
+    } else {
+      (j, x_ - y * pi4a - y * pi4b - y * pi4c)
+    }
   }
   let zz : Double = z * z
   if j == 1L || j == 2L {
-    y = 1.0 - 0.5 * zz + zz * zz * (((((_cos[0] * zz + _cos[1]) * zz + _cos[2]) *
-      zz + _cos[3]) * zz + _cos[4]) * zz + _cos[5])
+    1.0 - 0.5 * zz + zz * zz * (((((cos_[0] * zz + cos_[1]) * zz + cos_[2]) * zz +
+    cos_[3]) * zz + cos_[4]) * zz + cos_[5])
   } else {
-    y = z + z * zz * (((((_sin[0] * zz + _sin[1]) * zz + _sin[2]) * zz + _sin[3]) *
-      zz + _sin[4]) * zz + _sin[5])
-  }
-  if sign {
-    y = -y
-  }
-  y
+    z + z * zz * (((((sin_[0] * zz + sin_[1]) * zz + sin_[2]) * zz + sin_[3]) * zz +
+    sin_[4]) * zz + sin_[5])
+  } * if sign { -1.0 } else { 1.0 }
 }
 
 pub fn cos(x : Double) -> Double {
   let mut sign : Bool = false
   let x_ = x.abs()
-  let mut j : Int64 = 0L
-  let mut y : Double = 0.0
-  let mut z : Double = 0.0
-  if x_ >= reduceThreshold {
-    let (j_, z_) = trigReduce(x_)
-    j = j_
-    z = z_
+  let (j, z) = if x_ >= reduce_threshold {
+    let (j_, z_) = trig_reduce(x_)
+    if j_ > 3L {
+      sign = sign.not()
+      (j_ - 4L, z_)
+    } else {
+      (j_, z_)
+    }
   } else {
-    j = (x_ * (4.0 / pi)).to_int64()
-    y = j.to_double()
+    let mut j = (x_ * (4.0 / pi)).to_int64()
+    let mut y = j.to_double()
     if j.land(1L) == 1L {
       j += 1L
       y += 1.0
     }
     j = j.land(7L)
-    z = x_ - y * pi4a - y * pi4b - y * pi4c
-  }
-  if j > 3L {
-    sign = not(sign)
-    j = j - 4L
+    if j > 3L {
+      sign = sign.not()
+      (j - 4L, x_ - y * pi4a - y * pi4b - y * pi4c)
+    } else {
+      (j, x_ - y * pi4a - y * pi4b - y * pi4c)
+    }
   }
   if j > 1L {
-    sign = not(sign)
+    sign = sign.not()
   }
   let zz : Double = z * z
   if j == 1L || j == 2L {
-    y = z + z * zz * (((((_sin[0] * zz + _sin[1]) * zz + _sin[2]) * zz + _sin[3]) *
-      zz + _sin[4]) * zz + _sin[5])
+    z + z * zz * (((((sin_[0] * zz + sin_[1]) * zz + sin_[2]) * zz + sin_[3]) * zz +
+    sin_[4]) * zz + sin_[5])
   } else {
-    y = 1.0 - 0.5 * zz + zz * zz * (((((_cos[0] * zz + _cos[1]) * zz + _cos[2]) *
-      zz + _cos[3]) * zz + _cos[4]) * zz + _cos[5])
-  }
-  if sign {
-    y = -y
-  }
-  y
+    1.0 - 0.5 * zz + zz * zz * (((((cos_[0] * zz + cos_[1]) * zz + cos_[2]) * zz +
+    cos_[3]) * zz + cos_[4]) * zz + cos_[5])
+  } * if sign { -1.0 } else { 1.0 }
 }
 
 //Compare two Double values for equality within the allowed error range of 1e-12.
