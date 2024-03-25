@@ -60,11 +60,10 @@ pub fn sin(x : Double) -> Double {
     }
   } else {
     let mut j = (x_ * (4.0 / pi)).to_int64()
-    let mut y = j.to_double()
     if j.land(1L) == 1L {
       j += 1L
-      y += 1.0
     }
+    let y = j.to_double()
     j = j.land(7L)
     if j > 3L {
       sign = sign.not()
@@ -96,11 +95,10 @@ pub fn cos(x : Double) -> Double {
     }
   } else {
     let mut j = (x_ * (4.0 / pi)).to_int64()
-    let mut y = j.to_double()
     if j.land(1L) == 1L {
       j += 1L
-      y += 1.0
     }
+    let y = j.to_double()
     j = j.land(7L)
     if j > 3L {
       sign = sign.not()
