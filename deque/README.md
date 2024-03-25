@@ -10,10 +10,10 @@ Deque is a double-ended queue implemented as a round-robin queue, supporting O(1
 
 You can create a deque manually via the `new()` or construct it using the `from_array()`.
 
-   ```moonbit
-   let dq = Deque::new()
-   let dq = Deque::[1, 2, 3, 4, 5]
-   ```
+```moonbit
+let dq : Deque[Int] = Deque::new()
+let dq = Deque::[1, 2, 3, 4, 5]
+```
 
 If you want to set the length at creation time to minimize expansion consumption, you can use `with_capacity()`.
 
@@ -34,7 +34,7 @@ dq.capacity() // 5
 Similarly, you can use the `is_empty` to determine whether the queue is empty.
 
 ```moonbit
-let dq = Deque::new()
+let dq : Deque[Int] = Deque::new()
 dq.is_empty() // true
 ```
 
@@ -90,6 +90,17 @@ dq.front() // Some(2)
 dq.length() // 3
 ```
 
+If you only want to pop an element without getting the return value, you can use `pop_front_exn()` with `pop_back_exn()`.
+These two functions will panic if the queue is empty.
+
+```moonbit
+let dq = Deque::[1, 2, 3, 4, 5]
+dq.pop_front_exn()
+dq.front() // Some(2)
+dq.pop_back_exn()
+dq.back() // Some(3)
+```
+
 ### Clear
 
 You can use `clear` to clear a deque. But note that the memory it already occupies does not change.
@@ -97,7 +108,7 @@ You can use `clear` to clear a deque. But note that the memory it already occupi
 ```moonbit
 let dq = Deque::[1, 2, 3, 4, 5]
 dq.clear()
-dq.empty() // true
+dq.is_empty() // true
 ```
 
 ### Equal
@@ -122,12 +133,14 @@ deque supports vector-like `iter/iteri/map/mapi` functions and their inverse for
  dq.mapi(fn(i, elem) { elem + i })
 ```
 
-### TODO List
+### Search & Contains
 
-- [ ] fold/foldr
-- [ ] reverse
-- [ ] contains
-- [ ] search
-- [ ] swap
-- [ ] resize
-- [ ] fill
+You can use `contains()` to find out if a value is in the deque, or `search()` to find its index in the deque.
+
+```moonbit
+let dq = Deque::[1, 2, 3, 4, 5]
+dq.contains(1) // true
+dq.contains(6) // false
+dq.search(1) // Some(0)
+dq.search(6) // None
+```

@@ -3,6 +3,10 @@
         {
             "path": "moonbitlang/core/assertion",
             "alias": "assertion"
+        },
+        {
+            "path": "moonbitlang/core/string",
+            "alias": "string"
         }
     ]
 }

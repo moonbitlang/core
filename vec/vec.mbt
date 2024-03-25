@@ -35,23 +35,34 @@ pub fn to_string[T : Show](self : Vec[T]) -> String {
     return "Vec::[]"
   }
   let first = self.buf[0]
-  for i = 1, init = "Vec::[\(first)"; i < self.len; {
-    let cur = self.buf[i]
-    continue i + 1, "\(init),\(cur)"
-  } else {
-    "\(init)]"
+  for i = 1, init = "Vec::[\(first)"; ; {
+    if i < self.len {
+      let cur = self.buf[i]
+      continue i + 1, "\(init),\(cur)"
+    } else {
+      break "\(init)]"
+    }
   }
 }
 
 test "to_string" {
+  // run moon test -u to auto update  
+  let buf = Buffer::make(20)  
+  fn write (obj:Show){
+    buf.write_string(obj.to_string())
+  }
   let empty : Vec[Int] = Vec::[]
-  @assertion.assert_eq(empty.to_string(), "Vec::[]")?
+  write(empty)
+  buf.expect(~content="Vec::[]")?
   let a0 = Vec::[0]
-  @assertion.assert_eq(a0.to_string(), "Vec::[0]")?
+  write(a0)
+  buf.expect(~content="Vec::[0]")?
   a0.push(1)
-  @assertion.assert_eq(a0.to_string(), "Vec::[0,1]")?
+  write(a0)
+  buf.expect(~content="Vec::[0,1]")?
   a0.push(2)
-  @assertion.assert_eq(a0.to_string(), "Vec::[0,1,2]")?
+  write(a0)
+  buf.expect(~content="Vec::[0,1,2]")?
 }
 
 /// Creates a new, empty vector.
@@ -875,6 +886,13 @@ test "join" {
   @assertion.assert_eq(vv.length(), 5)?
 }
 
+/// Fold out values from an vector according to certain rules.
+/// 
+/// # Example
+/// ```
+/// let sum = Vec::[1, 2, 3, 4, 5].fold(~init=0, fn(elem, sum) { sum + elem })
+/// sum // 15
+/// ```
 pub fn fold[T, U](self : Vec[T], f : (T, U) -> U, ~init : U) -> U {
   for i = 0, acc = init; i < self.length(); {
     continue i + 1, f(self[i], acc)
@@ -888,6 +906,13 @@ test "fold" {
   @assertion.assert_eq(sum, 15)?
 }
 
+/// Fold out values from an vector according to certain rules in reversed turn.
+/// 
+/// # Example
+/// ```
+/// let sum = Vec::[1, 2, 3, 4, 5].fold_rev(~init=0, fn(elem, sum) { sum + elem })
+/// sum // 15
+/// ```
 pub fn fold_rev[T, U](self : Vec[T], f : (T, U) -> U, ~init : U) -> U {
   for i = self.length() - 1, acc = init; i >= 0; {
     continue i - 1, f(self[i], acc)

@@ -47,7 +47,7 @@ pub fn singleton[K, V](key : K, value : V) -> Map[K, V] {
 
 /// Check if the map contains a key.
 /// O(log n).
-pub fn member[K : Compare, V : Show](self : Map[K, V], key : K) -> Bool {
+pub fn member[K : Compare, V](self : Map[K, V], key : K) -> Bool {
   loop self {
     Empty => false
     Tree(k, _, _, l, r) => {
@@ -209,6 +209,70 @@ pub fn map_with_key[K, X, Y](self : Map[K, X], f : (K, X) -> Y) -> Map[K, Y] {
     Empty => Empty
     Tree(k, v, s, l, r) =>
       Tree(k, f(k, v), s, map_with_key(l, f), map_with_key(r, f))
+  }
+}
+
+/// Fold the values in the map.
+/// O(n).
+pub fn fold[K, V, T](self : Map[K, V], f : (T, V) -> T, ~init : T) -> T {
+  foldl_with_key(self, fn(acc, _k, v) { f(acc, v) }, ~init)
+}
+
+/// Post-order fold.
+/// O(n).
+pub fn foldr_with_key[K, V, T](
+  self : Map[K, V],
+  f : (T, K, V) -> T,
+  ~init : T
+) -> T {
+  fn go(m : Map[K, V], acc) {
+    match m {
+      Empty => acc
+      Tree(k, v, _, l, r) => go(l, f(go(r, acc), k, v))
+    }
+  }
+
+  go(self, init)
+}
+
+/// Pre-order fold.
+/// O(n).
+pub fn foldl_with_key[K, V, T](
+  self : Map[K, V],
+  f : (T, K, V) -> T,
+  ~init : T
+) -> T {
+  fn go(m : Map[K, V], acc) {
+    match m {
+      Empty => acc
+      Tree(k, v, _, l, r) => go(r, f(go(l, acc), k, v))
+    }
+  }
+
+  go(self, init)
+}
+
+/// Filter values that satisfy the predicate
+pub fn filter[K : Compare, V](
+  self : Map[K, V],
+  pred : (V) -> Bool
+) -> Map[K, V] {
+  filter_with_key(self, fn(_k, v) { pred(v) })
+}
+
+/// Filter key-value pairs that satisfy the predicate
+pub fn filter_with_key[K : Compare, V](
+  self : Map[K, V],
+  pred : (K, V) -> Bool
+) -> Map[K, V] {
+  match self {
+    Empty => Empty
+    Tree(k, v, _, l, r) =>
+      if pred(k, v) {
+        balance(k, v, filter_with_key(l, pred), filter_with_key(r, pred))
+      } else {
+        glue(filter_with_key(l, pred), filter_with_key(r, pred))
+      }
   }
 }
 
@@ -407,6 +471,39 @@ test "map_with_key" {
     n.debug_tree(),
     "(3,3-three,(1,1-one,(0,0-zero,_,_),(2,2-two,_,_)),(8,8-eight,_,_))",
   )?
+}
+
+test "fold" {
+  let m = Map::[("a", 1), ("b", 2), ("c", 3), ("d", 4), ("e", 5)]
+  @assertion.assert_eq(m.fold(fn(acc, v) { acc + v }, ~init=0), 15)?
+}
+
+test "foldl_with_key" {
+  let m = Map::[("a", 1), ("b", 2), ("c", 3), ("d", 4), ("e", 5)]
+  @assertion.assert_eq(
+    m.foldl_with_key(fn(acc, k, v) { acc + k + v.to_string() }, ~init=""),
+    "a1b2c3d4e5",
+  )?
+}
+
+test "foldr_with_key" {
+  let m = Map::[("a", 1), ("b", 2), ("c", 3), ("d", 4), ("e", 5)]
+  @assertion.assert_eq(
+    m.foldr_with_key(fn(acc, k, v) { acc + k + v.to_string() }, ~init=""),
+    "e5d4c3b2a1",
+  )?
+}
+
+test "filter" {
+  let m = Map::[(3, "three"), (8, "eight"), (1, "one"), (2, "two"), (0, "zero")]
+  let fm = m.filter(fn(v) { v.length() > 3 })
+  @assertion.assert_eq(fm.debug_tree(), "(3,three,(0,zero,_,_),(8,eight,_,_))")?
+}
+
+test "filter_with_key" {
+  let m = Map::[(3, "three"), (8, "eight"), (1, "one"), (2, "two"), (0, "zero")]
+  let fm = m.filter_with_key(fn(k, v) { k > 3 && v.length() > 3 })
+  @assertion.assert_eq(fm.debug_tree(), "(8,eight,_,_)")?
 }
 
 test "singleton" {

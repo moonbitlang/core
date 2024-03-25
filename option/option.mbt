@@ -37,6 +37,13 @@ pub fn when[T](condition : Bool, value : () -> T) -> Option[T] {
   }
 }
 
+test "when" {
+  let result = when(true, fn() { "Hello, World!" })
+  let result2 = when(false, fn() { "Hello, World!" })
+  @assertion.assert_eq(result, Some("Hello, World!"))?
+  @assertion.assert_eq(result2, None)?
+}
+
 /// The `unless` function returns an `Option` value based on a condition.
 ///
 /// `unless(condition, value)` is equivalent to `when(not(condition), value)`.
@@ -54,14 +61,33 @@ pub fn unless[T](condition : Bool, value : () -> T) -> Option[T] {
   when(condition.not(), value)
 }
 
+test "unless" {
+  let result = unless(true, fn() { "Hello, World!" })
+  let result2 = unless(false, fn() { "Hello, World!" })
+  @assertion.assert_eq(result, None)?
+  @assertion.assert_eq(result2, Some("Hello, World!"))?
+}
+
 /// Creates an empty `Option` of type `T`.
 pub fn empty[T]() -> Option[T] {
   None
 }
 
+test "empty" {
+  let x : Option[Int] = None
+  let y : Option[Int] = empty()
+  @assertion.assert_eq(x, y)?
+}
+
 /// Creates an `Option` that contains a value.
 pub fn some[T](value : T) -> Option[T] {
   Some(value)
+}
+
+test "some" {
+  let x : Option[Int] = Some(5)
+  let y : Option[Int] = some(5)
+  @assertion.assert_eq(x, y)?
 }
 
 /// Maps the value of an `Option` using a provided function.
@@ -77,6 +103,13 @@ pub fn some[T](value : T) -> Option[T] {
 /// ```
 pub fn map[T, U](self : Option[T], f : (T) -> U) -> Option[U] {
   Some(f(self?))
+}
+
+test "map" {
+  let a = Option::Some(5)
+  let b : Option[Int] = None
+  @assertion.assert_eq(a.map(fn(x) { x * 2 }), Some(10))?
+  @assertion.assert_eq(b.map(fn(x) { x * 2 }), None)?
 }
 
 /// Binds an option to a function that returns another option.
