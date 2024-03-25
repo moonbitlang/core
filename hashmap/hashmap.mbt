@@ -17,7 +17,8 @@ let default_init_capacity = 8
 
 enum Entry[K, V] {
   Empty
-  Valid((Int, K, V))
+  // (Probe Sequence Length, Hash, Key, Value)
+  Valid((Int, Int, K, V))
 } derive(Debug)
 
 /// A mutable hash map implements with Robin Hood hashing.
@@ -73,8 +74,9 @@ pub fn set[K : Hash + Eq, V](self : HashMap[K, V], key : K, value : V) -> Unit {
   if self.capacity == 0 || self.size >= self.growAt {
     self.grow()
   }
-  let mut idx = self.hash(key)
-  let mut entry = (0, key, value) // (distance, key, value)
+  let hash = self.make_hash(key)
+  let mut idx = self.index(hash)
+  let mut entry = (0, hash, key, value)
   let mut i = 0
   while i < self.capacity {
     match self.entries[idx] {
@@ -83,20 +85,20 @@ pub fn set[K : Hash + Eq, V](self : HashMap[K, V], key : K, value : V) -> Unit {
         self.size += 1
         break
       }
-      Valid((d, k, v)) => {
-        if k == entry.1 {
-          self.entries[idx] = Valid((d, k, value))
+      Valid((d, h, k, v)) => {
+        if h == entry.1 && k == entry.2 {
+          self.entries[idx] = Valid((d, h, k, value))
           break
         }
         if entry.0 > d {
-          let tmp = (d, k, v)
+          let tmp = (d, h, k, v)
           self.entries[idx] = Valid(entry)
           entry = tmp
         }
       }
     }
     idx = self.next_index(idx)
-    entry = (entry.0 + 1, entry.1, entry.2)
+    entry = (entry.0 + 1, entry.1, entry.2, entry.3)
     i += 1
   }
   if i == self.capacity {
@@ -114,12 +116,12 @@ pub fn op_set[K : Hash + Eq, V](
 
 /// Get the value associated with a key.
 pub fn get[K : Hash + Eq, V](self : HashMap[K, V], key : K) -> Option[V] {
-  let mut idx = self.hash(key)
-  let mut distance = 0
-  for i = 0; i < self.capacity; i = i + 1 {
+  let hash = self.make_hash(key)
+  let mut idx = self.index(hash)
+  for distance = 0; distance < self.capacity; distance = distance + 1 {
     match self.entries[idx] {
-      Valid((d, k, v)) => {
-        if k == key {
+      Valid((d, h, k, v)) => {
+        if h == hash && k == key {
           return Some(v)
         }
         if distance > d {
@@ -128,7 +130,6 @@ pub fn get[K : Hash + Eq, V](self : HashMap[K, V], key : K) -> Option[V] {
       }
       Empty => return None
     }
-    distance += 1
     idx = self.next_index(idx)
   }
   None
@@ -148,16 +149,21 @@ pub fn contains[K : Hash + Eq, V](self : HashMap[K, V], key : K) -> Bool {
 
 /// Remove a key-value pair from hash map.
 pub fn remove[K : Hash + Eq, V](self : HashMap[K, V], key : K) -> Unit {
-  let mut idx = self.hash(key)
-  for i = 0; i < self.capacity; i = i + 1 {
+  let hash = self.make_hash(key)
+  let mut idx = self.index(hash)
+  for distance = 0; distance < self.capacity; distance = distance + 1 {
     match self.entries[idx] {
-      Valid((_, k, _)) =>
-        if k == key {
+      Valid((d, h, k, _)) => {
+        if h == hash && k == key {
           self.entries[idx] = Empty
           self.shift_back(idx)
           self.size -= 1
           break
         }
+        if distance > d {
+          return
+        }
+      }
       Empty => ()
     }
     idx = self.next_index(idx)
@@ -189,7 +195,7 @@ pub fn iteri[K, V](self : HashMap[K, V], f : (Int, K, V) -> Unit) -> Unit {
   let mut idx = 0
   for i = 0; i < self.capacity; i = i + 1 {
     match self.entries[i] {
-      Valid((_, k, v)) => {
+      Valid((_, _, k, v)) => {
         f(idx, k, v)
         idx += 1
       }
@@ -211,11 +217,11 @@ fn shift_back[K : Hash, V](self : HashMap[K, V], start_index : Int) -> Unit {
   let mut curr = self.next_index(prev)
   for i = 0; i < self.entries.length(); i = i + 1 {
     match self.entries[curr] {
-      Valid((d, k, v)) => {
+      Valid((d, h, k, v)) => {
         if d == 0 {
           break
         }
-        self.entries[prev] = Valid((d - 1, k, v))
+        self.entries[prev] = Valid((d - 1, h, k, v))
         self.entries[curr] = Empty
       }
       Empty => break
@@ -241,17 +247,21 @@ fn grow[K : Hash + Eq, V](self : HashMap[K, V]) -> Unit {
   self.size = 0
   for i = 0; i < old_entries.length(); i = i + 1 {
     match old_entries[i] {
-      Valid((_, k, v)) => self.set(k, v)
+      Valid((_, _, k, v)) => self.set(k, v)
       _ => ()
     }
   }
 }
 
-fn hash[K : Hash, V](self : HashMap[K, V], key : K) -> Int {
+fn make_hash[K : Hash, V](self : HashMap[K, V], key : K) -> Int {
   match self.hasher {
-    Some(hasher) => hasher(key).abs().land(self.capacity - 1)
-    None => key.hash().abs().land(self.capacity - 1)
+    Some(hasher) => hasher(key)
+    None => key.hash()
   }
+}
+
+fn index[K : Hash, V](self : HashMap[K, V], hash : Int) -> Int {
+  hash.abs().land(self.capacity - 1)
 }
 
 fn next_index[K : Hash, V](self : HashMap[K, V], index : Int) -> Int {
@@ -270,7 +280,7 @@ fn debug_entries[K : Show, V : Show](self : HashMap[K, V]) -> String {
     }
     match self.entries[i] {
       Empty => s += "_"
-      Valid((d, k, v)) => s += "(\(d),\(k),\(v))"
+      Valid((d, _h, k, v)) => s += "(\(d),\(k),\(v))"
     }
   }
   s
