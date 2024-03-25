@@ -19,6 +19,10 @@
         {
             "path": "moonbitlang/core/option",
             "alias": "option"
+        },
+        {
+            "path": "moonbitlang/core/int",
+            "alias": "int"
         }
     ]
 }

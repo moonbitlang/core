@@ -27,10 +27,11 @@ priv struct Item[T] {
 /// Initialize MutableSet by specifying initial capacity.
 pub fn MutableSet::with_capacity[T](initial_capacity : Int) -> MutableSet[T] {
   {
-    directory: @array.new(
-      @math.maximum(1, initial_capacity),
-      fn() -> Option[Item[T]] { None },
-    ),
+    directory: if initial_capacity <= 0 || initial_capacity > 2147483647 {
+      @array.new(8, fn() -> Option[Item[T]] { None })
+    } else {
+      @array.new(initial_capacity, fn() -> Option[Item[T]] { None })
+    },
     real_size: 0,
     effective_size: 0,
   }
@@ -186,7 +187,7 @@ pub fn insert[T : Hash + Eq](self : MutableSet[T], key : T) -> Unit {
 /// ```
 pub fn get[T : Hash + Eq](self : MutableSet[T], key : T) -> Option[T] {
   let num_slots = self.directory.length()
-  let slot = key.hash() % num_slots
+  let slot = key.hash().abs() % num_slots
   let mut index = slot
   while not(self.directory[index].is_empty()) {
     match self.directory[index] {
@@ -335,7 +336,7 @@ pub fn union[T : Hash + Eq](
 /// into.sort()
 /// println(res) //output: [3, 4, 5, 6]
 /// ```
-pub fn union_into[T : Hash + Eq](
+pub fn union_into[T : Hash + Eq + Show](
   self : MutableSet[T],
   other : MutableSet[T],
   into : MutableSet[T]
@@ -391,14 +392,18 @@ fn insert_item[T : Hash + Eq](self : MutableSet[T], key : T) -> Int {
     }
     None => {
       if self.effective_size == self.directory.length() {
-        let set = MutableSet::with_capacity(self.real_size * 2)
-        self.iter(fn(key : T) -> Unit { set.insert(key) })
-        self.directory = set.directory
-        self.effective_size = set.effective_size
-        self.real_size = set.real_size
+        let old = self.copy()
+        let directory = @array.new(
+          self.real_size + self.real_size * 13 / 16,
+          fn() -> Option[Item[T]] { None },
+        )
+        self.effective_size = 0
+        self.real_size = 0
+        self.directory = directory
+        old.iter(fn(key : T) -> Unit { self.insert(key) })
       }
       let num_slots = self.directory.length()
-      let slot = key.hash() % num_slots
+      let slot = key.hash().abs() % num_slots
       let mut current_probe_length = 0
       let mut current_item = Item::new(key)
       let mut index = slot
@@ -412,6 +417,9 @@ fn insert_item[T : Hash + Eq](self : MutableSet[T], key : T) -> Int {
           current_probe_length = current_item.probe_length
         }
         index = (index + 1) % num_slots
+        if index == slot {
+          break
+        }
         current_probe_length = current_probe_length + 1
       }
       current_item.probe_length = current_probe_length
@@ -424,7 +432,7 @@ fn insert_item[T : Hash + Eq](self : MutableSet[T], key : T) -> Int {
 }
 
 fn index_of[T : Hash + Eq](self : MutableSet[T], key : T) -> Option[Int] {
-  let hash = key.hash()
+  let hash = key.hash().abs()
   let num_slots = self.directory.length()
   let slot = hash % num_slots
   let mut index = slot
