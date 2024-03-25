@@ -130,16 +130,16 @@ fn imprecise_equal(x : Double, y : Double) -> Bool {
   (x - y).abs() < 1.0e-12
 }
 
-test "sin"{
-  @assertion.assert_true(imprecise_equal(sin(0.0),0.0))?
-  @assertion.assert_true(imprecise_equal(sin(1.0),0.841470984807896))?
-  @assertion.assert_true(imprecise_equal(sin(pi/2.0),1.0))?
-  @assertion.assert_true(imprecise_equal(sin(pi),0.0))?
+test "sin" {
+  @assertion.assert_true(imprecise_equal(sin(0.0), 0.0))?
+  @assertion.assert_true(imprecise_equal(sin(1.0), 0.841470984807896))?
+  @assertion.assert_true(imprecise_equal(sin(pi / 2.0), 1.0))?
+  @assertion.assert_true(imprecise_equal(sin(pi), 0.0))?
 }
 
-test "cos"{
-  @assertion.assert_true(imprecise_equal(cos(0.0),1.0))?
-  @assertion.assert_true(imprecise_equal(cos(1.0),0.540302305868140))?
-  @assertion.assert_true(imprecise_equal(cos(pi/2.0),0.0))?
-  @assertion.assert_true(imprecise_equal(cos(pi),-1.0))?
+test "cos" {
+  @assertion.assert_true(imprecise_equal(cos(0.0), 1.0))?
+  @assertion.assert_true(imprecise_equal(cos(1.0), 0.540302305868140))?
+  @assertion.assert_true(imprecise_equal(cos(pi / 2.0), 0.0))?
+  @assertion.assert_true(imprecise_equal(cos(pi), -1.0))?
 }
