@@ -18,9 +18,36 @@ let default_init_capacity = 8
 enum Entry[K, V] {
   Empty
   // (Probe Sequence Length, Hash, Key, Value)
-  Valid((Int, Int, K, V))
+  Valid(Int, Int, K, V)
 } derive(Debug)
 
+fn psl[K, V](self : Entry[K, V]) -> Option[Int] {
+  match self {
+    Valid(psl, _, _, _) => Some(psl)
+    Empty => None
+  }
+}
+
+fn hash[K, V](self : Entry[K, V]) -> Option[Int] {
+  match self {
+    Valid(_, hash, _, _) => Some(hash)
+    Empty => None
+  }
+}
+
+fn key[K, V](self : Entry[K, V]) -> Option[K] {
+  match self {
+    Valid(_, _, k, _) => Some(k)
+    Empty => None
+  }
+}
+
+fn value[K, V](self : Entry[K, V]) -> Option[V] {
+  match self {
+    Valid(_, _, _, v) => Some(v)
+    Empty => None
+  }
+}
 /// A mutable hash map implements with Robin Hood hashing.
 /// 
 /// reference:
@@ -76,29 +103,34 @@ pub fn set[K : Hash + Eq, V](self : HashMap[K, V], key : K, value : V) -> Unit {
   }
   let hash = self.make_hash(key)
   let mut idx = self.index(hash)
-  let mut entry = (0, hash, key, value)
+  let mut entry : Entry[K, V] = Valid(0, hash, key, value)
   let mut i = 0
   while i < self.capacity {
     match self.entries[idx] {
       Empty => {
-        self.entries[idx] = Valid(entry)
+        self.entries[idx] = entry
         self.size += 1
         break
       }
-      Valid((d, h, k, v)) => {
-        if h == entry.1 && k == entry.2 {
-          self.entries[idx] = Valid((d, h, k, value))
+      Valid(d, h, k, v) => {
+        if h == entry.hash().unwrap() && k == entry.key().unwrap() {
+          self.entries[idx] = Valid(d, h, k, value)
           break
         }
-        if entry.0 > d {
-          let tmp = (d, h, k, v)
-          self.entries[idx] = Valid(entry)
+        if entry.psl().unwrap() > d {
+          let tmp : Entry[K, V] = Valid(d, h, k, v)
+          self.entries[idx] = entry
           entry = tmp
         }
       }
     }
     idx = self.next_index(idx)
-    entry = (entry.0 + 1, entry.1, entry.2, entry.3)
+    entry = Valid(
+      entry.psl().unwrap() + 1,
+      entry.hash().unwrap(),
+      entry.key().unwrap(),
+      entry.value().unwrap(),
+    )
     i += 1
   }
   if i == self.capacity {
@@ -120,7 +152,7 @@ pub fn get[K : Hash + Eq, V](self : HashMap[K, V], key : K) -> Option[V] {
   let mut idx = self.index(hash)
   for distance = 0; distance < self.capacity; distance = distance + 1 {
     match self.entries[idx] {
-      Valid((d, h, k, v)) => {
+      Valid(d, h, k, v) => {
         if h == hash && k == key {
           return Some(v)
         }
@@ -153,7 +185,7 @@ pub fn remove[K : Hash + Eq, V](self : HashMap[K, V], key : K) -> Unit {
   let mut idx = self.index(hash)
   for distance = 0; distance < self.capacity; distance = distance + 1 {
     match self.entries[idx] {
-      Valid((d, h, k, _)) => {
+      Valid(d, h, k, _) => {
         if h == hash && k == key {
           self.entries[idx] = Empty
           self.shift_back(idx)
@@ -195,7 +227,7 @@ pub fn iteri[K, V](self : HashMap[K, V], f : (Int, K, V) -> Unit) -> Unit {
   let mut idx = 0
   for i = 0; i < self.capacity; i = i + 1 {
     match self.entries[i] {
-      Valid((_, _, k, v)) => {
+      Valid(_, _, k, v) => {
         f(idx, k, v)
         idx += 1
       }
@@ -217,11 +249,11 @@ fn shift_back[K : Hash, V](self : HashMap[K, V], start_index : Int) -> Unit {
   let mut curr = self.next_index(prev)
   for i = 0; i < self.entries.length(); i = i + 1 {
     match self.entries[curr] {
-      Valid((d, h, k, v)) => {
+      Valid(d, h, k, v) => {
         if d == 0 {
           break
         }
-        self.entries[prev] = Valid((d - 1, h, k, v))
+        self.entries[prev] = Valid(d - 1, h, k, v)
         self.entries[curr] = Empty
       }
       Empty => break
@@ -247,19 +279,19 @@ fn grow[K : Hash + Eq, V](self : HashMap[K, V]) -> Unit {
   self.size = 0
   for i = 0; i < old_entries.length(); i = i + 1 {
     match old_entries[i] {
-      Valid((_, _, k, v)) => self.set(k, v)
+      Valid(_, _, k, v) => self.set(k, v)
       _ => ()
     }
   }
 }
 
 fn make_hash[K : Hash, V](self : HashMap[K, V], key : K) -> Int {
-  let hash: Int = match self.hasher {
+  let hash : Int = match self.hasher {
     Some(hasher) => hasher(key)
     None => key.hash()
   }
   // Let higher 16 bits of the hash value participate in the calculation
-  hash.lxor((hash.lsr(16)))
+  hash.lxor(hash.lsr(16))
 }
 
 fn index[K : Hash, V](self : HashMap[K, V], hash : Int) -> Int {
@@ -282,7 +314,7 @@ fn debug_entries[K : Show, V : Show](self : HashMap[K, V]) -> String {
     }
     match self.entries[i] {
       Empty => s += "_"
-      Valid((d, _h, k, v)) => s += "(\(d),\(k),\(v))"
+      Valid(d, _h, k, v) => s += "(\(d),\(k),\(v))"
     }
   }
   s
