@@ -1,0 +1,47 @@
+// Copyright 2024 International Digital Economy Academy
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+struct ArraySlice[T] {
+  array : Array[T]
+  start : Int
+  end : Int
+}
+
+pub fn length[T](self : ArraySlice[T]) -> Int {
+  self.end - self.start
+}
+
+pub fn op_get[T](self : ArraySlice[T], index : Int) -> T {
+  self.array[self.start + index]
+}
+
+pub fn op_set[T](self : ArraySlice[T], index : Int, value : T) -> Unit {
+  self.array[self.start + index] = value
+}
+
+pub fn swap[T](self : ArraySlice[T], a : Int, b : Int) -> Unit {
+  self.array.swap(self.start + a, self.start + b)
+}
+
+pub fn reverse[T](self : ArraySlice[T]) -> Unit {
+  let mid_len = self.length() / 2
+  for i = 0; i < mid_len; i = i + 1 {
+    let j = self.length() - i - 1
+    self.swap(i, j)
+  }
+}
+
+pub fn slice[T](self : ArraySlice[T], start : Int, end : Int) -> ArraySlice[T] {
+  { array: self.array, start: self.start + start, end: self.start + end }
+}
