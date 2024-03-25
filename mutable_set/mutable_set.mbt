@@ -27,7 +27,7 @@ priv struct Item[T] {
 /// Initialize MutableSet by specifying initial capacity.
 pub fn MutableSet::with_capacity[T](initial_capacity : Int) -> MutableSet[T] {
   {
-    directory: if initial_capacity <= 0 || initial_capacity > 2147483647 {
+    directory: if initial_capacity <= 0 {
       @array.new(8, fn() -> Option[Item[T]] { None })
     } else {
       @array.new(initial_capacity, fn() -> Option[Item[T]] { None })
@@ -115,11 +115,14 @@ pub fn clear[T](self : MutableSet[T]) -> Unit {
 
 /// Returns a copy of MutableSet.
 pub fn copy[T](self : MutableSet[T]) -> MutableSet[T] {
-  {
-    directory: self.directory,
-    effective_size: self.effective_size,
-    real_size: self.real_size,
+  let directory = @array.new(
+    self.directory.length(),
+    fn() -> Option[Item[T]] { None },
+  )
+  for i = 0; i < self.directory.length(); i = i + 1 {
+    directory[i] = self.directory[i]
   }
+  { directory, effective_size: self.effective_size, real_size: self.real_size }
 }
 
 /// Iterates over the MutableSet.
@@ -565,4 +568,13 @@ test "difference_into" {
   let res = MutableSet::[]
   MutableSet::[1, 2, 3].difference_into(MutableSet::[4, 5, 1], res)
   @assertion.assert_eq(res.to_list().sort(), List::[2, 3])?
+}
+
+test "copy" {
+  let a = MutableSet::[3, 4, 5]
+  let b = MutableSet::[3, 4, 5]
+  let c = b
+  a.clear()
+  @assertion.assert_true(b.exist(3))?
+  @assertion.assert_true(c.exist(3))?
 }
