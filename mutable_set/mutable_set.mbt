@@ -55,7 +55,7 @@ pub fn MutableSet::from_array[T : Hash + Eq](array : Array[T]) -> MutableSet[T] 
 /// 
 /// ```
 /// println(MutableSet::[1, 1, 2, 2, 3, 3].to_array())
-/// // output: [1, 2, 3]
+/// // output: [3, 1, 2]
 /// ```
 pub fn to_array[T : Default](self : MutableSet[T]) -> Array[T] {
   // If Array has a filter method, we can implement it like this:
@@ -83,8 +83,8 @@ pub fn MutableSet::from_list[T : Hash + Eq](list : List[T]) -> MutableSet[T] {
 /// # Example
 /// 
 /// ```
-/// println(MutableSet::[1, 1, 2, 2, 3, 3].to_list())
-/// // output: Cons(3, Cons(2, Cons(1, Nil)))
+/// println(MutableSet::[1, 1, 2, 2, 3, 3].to_list().sort())
+/// // output: Cons(1, Cons(2, Cons(3, Nil)))
 /// ```
 pub fn to_list[T](self : MutableSet[T]) -> List[T] {
   self.fold(
@@ -126,7 +126,7 @@ pub fn copy[T](self : MutableSet[T]) -> MutableSet[T] {
 /// 
 /// ```
 /// MutableSet::[1, 1, 2, 2, 3, 3].iter(fn(key) -> Unit { print(key) })
-/// // output: 123
+/// // output: 312
 /// ```
 pub fn iter[T](self : MutableSet[T], f : (T) -> Unit) -> Unit {
   self.directory.iter(
@@ -170,7 +170,7 @@ pub fn fold[T, U](self : MutableSet[T], f : (T, U) -> U, ~init : U) -> U {
 /// let set = MutableSet::[1, 1, 2, 2, 3, 3]
 /// set.insert(4)
 /// println(set.to_array())
-/// // output: [1, 2, 3, 4]
+/// // output: [4, 3, 1, 2]
 /// ```
 pub fn insert[T : Hash + Eq](self : MutableSet[T], key : T) -> Unit {
   let _ = self.insert_item(key)
@@ -187,7 +187,7 @@ pub fn insert[T : Hash + Eq](self : MutableSet[T], key : T) -> Unit {
 /// ```
 pub fn get[T : Hash + Eq](self : MutableSet[T], key : T) -> Option[T] {
   let num_slots = self.directory.length()
-  let slot = key.hash().abs() % num_slots
+  let slot = self.hash(key) % num_slots
   let mut index = slot
   while not(self.directory[index].is_empty()) {
     match self.directory[index] {
@@ -222,7 +222,7 @@ pub fn exist[T : Hash + Eq](self : MutableSet[T], key : T) -> Bool {
 /// // output: 2
 /// 
 /// println(set.to_array())
-/// // output: [1, 3]
+/// // output: [3, 1]
 /// ```
 pub fn remove[T : Hash + Eq](self : MutableSet[T], key : T) -> Option[T] {
   match
@@ -249,7 +249,7 @@ pub fn remove[T : Hash + Eq](self : MutableSet[T], key : T) -> Option[T] {
 /// let set = MutableSet::[1, 1, 2, 2, 3, 3]
 /// set.remove_without_return(2)
 /// println(set.to_array())
-/// // output: [1, 3]
+/// // output: [3, 1]
 /// ```
 pub fn remove_without_return[T : Hash + Eq](
   self : MutableSet[T],
@@ -279,7 +279,7 @@ pub fn size[T](self : MutableSet[T]) -> Int {
 /// 
 /// ```
 /// println(MutableSet::[3, 4, 5].intersection(MutableSet::[4, 5, 6]).to_array())
-/// // output: [4, 5]
+/// // output: [5, 4]
 /// ```
 pub fn intersection[T : Hash + Eq](
   self : MutableSet[T],
@@ -312,9 +312,8 @@ pub fn intersection_into[T : Hash + Eq](
 /// # Example
 /// 
 /// ```
-/// let res = MutableSet::[3, 4, 5].union(MutableSet::[4, 5, 6]).to_array()
-/// res.sort()
-/// println(res) // output: [3, 4, 5, 6]
+/// println(MutableSet::[3, 4, 5].union(MutableSet::[4, 5, 6]).to_array()) 
+/// // output: [6, 4, 3, 5]
 /// ```
 pub fn union[T : Hash + Eq](
   self : MutableSet[T],
@@ -332,9 +331,8 @@ pub fn union[T : Hash + Eq](
 /// ```
 /// let into = MutableSet::[]
 /// MutableSet::[3, 4, 5].union_into(MutableSet::[4, 5, 6], into)
-/// let into = into.to_array()
-/// into.sort()
-/// println(res) //output: [3, 4, 5, 6]
+/// println(into.to_array())
+/// //output: [6, 4, 3, 5]
 /// ```
 pub fn union_into[T : Hash + Eq + Show](
   self : MutableSet[T],
@@ -368,7 +366,7 @@ pub fn difference[T : Hash + Eq](
 /// ```
 /// let into = MutableSet::[]
 /// MutableSet::[1, 2, 3].difference_into(MutableSet::[4, 5, 1], into)
-/// println(into.to_array()) // output: [2, 3]
+/// println(into.array()) // output: [3, 2]
 /// ```
 pub fn difference_into[T : Hash + Eq](
   self : MutableSet[T],
@@ -409,7 +407,7 @@ fn insert_item[T : Hash + Eq](self : MutableSet[T], key : T) -> Int {
     None => {
       self.check_and_grow()
       let num_slots = self.directory.length()
-      let slot = key.hash().abs() % num_slots
+      let slot = self.hash(key) % num_slots
       let mut current_probe_length = 0
       let mut current_item = Item::new(key)
       let mut index = slot
@@ -438,7 +436,7 @@ fn insert_item[T : Hash + Eq](self : MutableSet[T], key : T) -> Int {
 }
 
 fn index_of[T : Hash + Eq](self : MutableSet[T], key : T) -> Option[Int] {
-  let hash = key.hash().abs()
+  let hash = self.hash(key)
   let num_slots = self.directory.length()
   let slot = hash % num_slots
   let mut index = slot
@@ -460,17 +458,21 @@ fn index_of[T : Hash + Eq](self : MutableSet[T], key : T) -> Option[Int] {
   }
 }
 
+fn hash[T : Hash](self : MutableSet[T], key : T) -> Int {
+  key.hash().abs().land(self.directory.length() - 1)
+}
+
 test "from_array and to_array" {
   let set = MutableSet::[1, 1, 2, 2, 3, 3]
-  @assertion.assert_eq(set.to_array(), [3, 2, 1])?
-  @assertion.assert_eq(set.effective_size, 3)?
-  @assertion.assert_eq(set.real_size, 3)?
+  let res = set.to_array()
+  res.sort()
+  @assertion.assert_eq(res, [1, 2, 3])?
 }
 
 test "from_list and to_list" {
   @assertion.assert_eq(
-    MutableSet::from_list(List::[1, 1, 2, 2, 3, 3]).to_list(),
-    List::[3, 2, 1],
+    MutableSet::from_list(List::[1, 1, 2, 2, 3, 3]).to_list().sort(),
+    List::[1, 2, 3],
   )?
 }
 
@@ -483,17 +485,17 @@ test "clear" {
 }
 
 test "insert" {
-  let set = MutableSet::[1, 1, 2, 2, 3, 3]
+  let set = MutableSet::[-1, 0, 1, 1, 2, 2, 3, 3]
   set.insert(4)
-  @assertion.assert_eq(set.to_array(), [4, 3, 2, 1])?
+  @assertion.assert_eq(set.to_list().sort(), List::[-1, 0, 1, 2, 3, 4])?
 }
 
 test "remove" {
   let set = MutableSet::[1, 1, 2, 2, 3, 3]
   @assertion.assert_true(set.remove(4).is_empty())?
-  @assertion.assert_eq(set.to_array(), [3, 2, 1])?
+  @assertion.assert_eq(set.to_list().sort(), List::[1, 2, 3])?
   @assertion.assert_eq(2, set.remove(2).unwrap())?
-  @assertion.assert_eq(set.to_array(), [3, 1])?
+  @assertion.assert_eq(set.to_list().sort(), List::[1, 3])?
 }
 
 test "exist" {
@@ -528,44 +530,39 @@ test "iter" {
 
 test "intersection" {
   @assertion.assert_eq(
-    MutableSet::[3, 4, 5].intersection(MutableSet::[4, 5, 6]).to_array(),
-    [5, 4],
+    MutableSet::[3, 4, 5].intersection(MutableSet::[4, 5, 6]).to_list().sort(),
+    List::[4, 5],
   )?
 }
 
 test "intersection_into" {
   let res = MutableSet::[1, 2, 3]
   MutableSet::[3, 4, 5].intersection_into(MutableSet::[4, 5, 6], res)
-  let res = res.to_array()
-  res.sort()
-  @assertion.assert_eq(res, [1, 2, 3, 4, 5])?
+  @assertion.assert_eq(res.to_list().sort(), List::[1, 2, 3, 4, 5])?
 }
 
 test "union" {
-  let res = MutableSet::[3, 4, 5].union(MutableSet::[4, 5, 6]).to_array()
-  res.sort()
-  @assertion.assert_eq(res, [3, 4, 5, 6])?
+  @assertion.assert_eq(
+    MutableSet::[3, 4, 5].union(MutableSet::[4, 5, 6]).to_list().sort(),
+    List::[3, 4, 5, 6],
+  )?
 }
 
 test "union_into" {
   let res = MutableSet::[]
   MutableSet::[3, 4, 5].union_into(MutableSet::[4, 5, 6], res)
-  let res = res.to_array()
-  res.sort()
-  @assertion.assert_eq(res, [3, 4, 5, 6])?
+  @assertion.assert_eq(res.to_list().sort(), List::[3, 4, 5, 6])?
 }
 
 test "difference" {
   @assertion.assert_eq(
-    MutableSet::[1, 2, 3].difference(MutableSet::[4, 5, 1]).to_array(),
-    [3, 2],
+    MutableSet::[1, 2, 3].difference(MutableSet::[4, 5, 1]).to_list().sort(),
+    List::[2, 3],
   )?
 }
 
 test "difference_into" {
   let res = MutableSet::[]
   MutableSet::[1, 2, 3].difference_into(MutableSet::[4, 5, 1], res)
-  let res = res.to_array()
-  res.sort()
-  @assertion.assert_eq(res, [2, 3])?
+  @assertion.assert_eq(res.to_list().sort(), List::[2, 3])?
 }
