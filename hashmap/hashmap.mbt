@@ -226,6 +226,14 @@ fn shift_back[K : Hash, V](self : HashMap[K, V], start_index : Int) -> Unit {
 }
 
 fn grow[K : Hash + Eq, V](self : HashMap[K, V]) -> Unit {
+  // handle zero capacity
+  if self.capacity == 0 {
+    self.capacity = default_init_capacity
+    self.growAt = calc_grow_threshold(self.capacity)
+    self.size = 0
+    self.entries = @array.new(self.capacity, fn() { Empty })
+    return
+  }
   let old_entries = self.entries
   self.entries = @array.new(self.capacity * 2, fn() { Empty })
   self.capacity = self.capacity * 2
@@ -454,4 +462,12 @@ test "grow" {
     m.debug_entries(),
     "_,(0,C,1),(0,Go,2),(0,C++,3),(0,Java,4),(0,Scala,5),(1,Julia,5),(2,Cobol,5),(2,Python,6),(2,Haskell,7),(2,Rescript,8),_,_,_,_,_",
   )?
+}
+
+test "zero_capacity_grow" {
+  let m : HashMap[String, Int] = HashMap::new(~capacity=0)
+  @assertion.assert_eq(m.capacity(), 0)?
+  m.set("a", 1)
+  @assertion.assert_eq(m.size(), 1)?
+  @assertion.assert_eq(m.capacity(), 8)?
 }
