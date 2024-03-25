@@ -254,10 +254,12 @@ fn grow[K : Hash + Eq, V](self : HashMap[K, V]) -> Unit {
 }
 
 fn make_hash[K : Hash, V](self : HashMap[K, V], key : K) -> Int {
-  match self.hasher {
+  let hash: Int = match self.hasher {
     Some(hasher) => hasher(key)
     None => key.hash()
   }
+  // Let higher 16 bits of the hash value participate in the calculation
+  hash.lxor((hash.lsr(16)))
 }
 
 fn index[K : Hash, V](self : HashMap[K, V], hash : Int) -> Int {
