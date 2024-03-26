@@ -21,33 +21,6 @@ enum Entry[K, V] {
   Valid(Int, Int, K, V)
 } derive(Debug)
 
-fn psl[K, V](self : Entry[K, V]) -> Option[Int] {
-  match self {
-    Valid(psl, _, _, _) => Some(psl)
-    Empty => None
-  }
-}
-
-fn hash[K, V](self : Entry[K, V]) -> Option[Int] {
-  match self {
-    Valid(_, hash, _, _) => Some(hash)
-    Empty => None
-  }
-}
-
-fn key[K, V](self : Entry[K, V]) -> Option[K] {
-  match self {
-    Valid(_, _, k, _) => Some(k)
-    Empty => None
-  }
-}
-
-fn value[K, V](self : Entry[K, V]) -> Option[V] {
-  match self {
-    Valid(_, _, _, v) => Some(v)
-    Empty => None
-  }
-}
 /// A mutable hash map implements with Robin Hood hashing.
 /// 
 /// reference:
@@ -102,39 +75,30 @@ pub fn set[K : Hash + Eq, V](self : HashMap[K, V], key : K, value : V) -> Unit {
     self.grow()
   }
   let hash = self.make_hash(key)
-  let mut idx = self.index(hash)
-  let mut entry : Entry[K, V] = Valid(0, hash, key, value)
-  let mut i = 0
-  while i < self.capacity {
-    match self.entries[idx] {
-      Empty => {
-        self.entries[idx] = entry
-        self.size += 1
-        break
+  loop 0, self.index(hash), 0, hash, key, value {
+    i, idx, psl, hash, key, value => {
+      if i == self.capacity {
+        abort("HashMap is full")
       }
-      Valid(d, h, k, v) => {
-        if h == entry.hash().unwrap() && k == entry.key().unwrap() {
-          self.entries[idx] = Valid(d, h, k, value)
+      match self.entries[idx] {
+        Empty => {
+          self.entries[idx] = Entry::Valid(psl, hash, key, value)
+          self.size += 1
           break
         }
-        if entry.psl().unwrap() > d {
-          let tmp : Entry[K, V] = Valid(d, h, k, v)
-          self.entries[idx] = entry
-          entry = tmp
+        Valid(d, h, k, v) => {
+          if h == hash && k == key {
+            self.entries[idx] = Valid(d, h, k, value)
+            break
+          }
+          if psl > d {
+            self.entries[idx] = Entry::Valid(psl, hash, key, value)
+            continue i + 1, self.next_index(idx), d + 1, h, k, v
+          }
+          continue i + 1, self.next_index(idx), psl + 1, hash, key, value
         }
       }
     }
-    idx = self.next_index(idx)
-    entry = Valid(
-      entry.psl().unwrap() + 1,
-      entry.hash().unwrap(),
-      entry.key().unwrap(),
-      entry.value().unwrap(),
-    )
-    i += 1
-  }
-  if i == self.capacity {
-    abort("HashMap is full")
   }
 }
 
@@ -149,8 +113,9 @@ pub fn op_set[K : Hash + Eq, V](
 /// Get the value associated with a key.
 pub fn get[K : Hash + Eq, V](self : HashMap[K, V], key : K) -> Option[V] {
   let hash = self.make_hash(key)
-  let mut idx = self.index(hash)
-  for distance = 0; distance < self.capacity; distance = distance + 1 {
+  for distance = 0, idx = self.index(hash);
+      distance < self.capacity;
+      distance = distance + 1, idx = self.next_index(idx) {
     match self.entries[idx] {
       Valid(d, h, k, v) => {
         if h == hash && k == key {
@@ -162,7 +127,6 @@ pub fn get[K : Hash + Eq, V](self : HashMap[K, V], key : K) -> Option[V] {
       }
       Empty => return None
     }
-    idx = self.next_index(idx)
   }
   None
 }
@@ -182,8 +146,9 @@ pub fn contains[K : Hash + Eq, V](self : HashMap[K, V], key : K) -> Bool {
 /// Remove a key-value pair from hash map.
 pub fn remove[K : Hash + Eq, V](self : HashMap[K, V], key : K) -> Unit {
   let hash = self.make_hash(key)
-  let mut idx = self.index(hash)
-  for distance = 0; distance < self.capacity; distance = distance + 1 {
+  for distance = 0, idx = self.index(hash);
+      distance < self.capacity;
+      distance = distance + 1, idx = self.next_index(idx) {
     match self.entries[idx] {
       Valid(d, h, k, _) => {
         if h == hash && k == key {
@@ -198,7 +163,6 @@ pub fn remove[K : Hash + Eq, V](self : HashMap[K, V], key : K) -> Unit {
       }
       Empty => ()
     }
-    idx = self.next_index(idx)
   }
 }
 
@@ -245,9 +209,9 @@ pub fn clear[K, V](self : HashMap[K, V]) -> Unit {
 }
 
 fn shift_back[K : Hash, V](self : HashMap[K, V], start_index : Int) -> Unit {
-  let mut prev = start_index
-  let mut curr = self.next_index(prev)
-  for i = 0; i < self.entries.length(); i = i + 1 {
+  for i = 0, prev = start_index, curr = self.next_index(start_index);
+      i < self.entries.length();
+      i = i + 1, prev = curr, curr = self.next_index(curr) {
     match self.entries[curr] {
       Valid(d, h, k, v) => {
         if d == 0 {
@@ -258,8 +222,6 @@ fn shift_back[K : Hash, V](self : HashMap[K, V], start_index : Int) -> Unit {
       }
       Empty => break
     }
-    prev = curr
-    curr = self.next_index(curr)
   }
 }
 
