@@ -12,7 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-
 /// Creates a new empty queue.
 /// 
 /// # Example
@@ -52,12 +51,12 @@ pub fn Queue::from_array[T](arr : Array[T]) -> Queue[T] {
 fn op_equal[T : Eq](self : Cell[T], other : Cell[T]) -> Bool {
   loop self, other {
     Nil, Nil => true
-    Cons({ content: x, next: xs }), Cons({ content: y, next: ys }) => {
-      if x != y {
-        break false
+    Cons({ content: x, next: xs }), Cons({ content: y, next: ys }) =>
+      if x == y {
+        continue xs, ys
+      } else {
+        false
       }
-      continue xs, ys
-    }
     _, _ => false
   }
 }
