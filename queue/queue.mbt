@@ -12,21 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-struct Cont[T] {
-  content : T
-  mut next : Cell[T]
-}
-
-enum Cell[T] {
-  Nil
-  Cons(Cont[T])
-}
-
-struct Queue[T] {
-  mut length : Int
-  mut first : Cell[T]
-  mut last : Cell[T]
-}
 
 /// Creates a new empty queue.
 /// 
@@ -64,7 +49,7 @@ pub fn Queue::from_array[T](arr : Array[T]) -> Queue[T] {
 }
 
 /// Tests if two queue cells are equal.
-pub fn op_equal[T : Eq](self : Cell[T], other : Cell[T]) -> Bool {
+fn op_equal[T : Eq](self : Cell[T], other : Cell[T]) -> Bool {
   loop self, other {
     Nil, Nil => true
     Cons({ content: x, next: xs }), Cons({ content: y, next: ys }) => {
