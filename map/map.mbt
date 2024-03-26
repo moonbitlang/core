@@ -71,6 +71,10 @@ pub fn size[K, V](self : Map[K, V]) -> Int {
   }
 }
 
+pub fn is_empty[K, V](self : Map[K, V]) -> Bool {
+  self.size() == 0
+}
+
 fn new[K, V](key : K, value : V, l : Map[K, V], r : Map[K, V]) -> Map[K, V] {
   let size = size(l) + size(r) + 1
   Tree(key, value, size, l, r)
@@ -276,6 +280,45 @@ pub fn filter_with_key[K : Compare, V](
   }
 }
 
+/// Convert to a list of key-value pairs.
+pub fn to_list[K, V](self : Map[K, V]) -> List[(K, V)] {
+  self.to_asc_list()
+}
+
+/// Convert to an ascending list.
+pub fn to_asc_list[K, V](self : Map[K, V]) -> List[(K, V)] {
+  self.foldr_with_key(fn(xs, k, v) { Cons((k, v), xs) }, ~init=List::[])
+}
+
+/// Convert to an descending list.
+pub fn to_desc_list[K, V](self : Map[K, V]) -> List[(K, V)] {
+  self.foldl_with_key(fn(xs, k, v) { Cons((k, v), xs) }, ~init=List::[])
+}
+
+/// Convert to a vector of key-value pairs.
+pub fn to_vec[K, V](self : Map[K, V]) -> @vec.Vec[(K, V)] {
+  let vec = @vec.new()
+  self.iter(fn(k, v) { vec.push((k, v)) })
+  vec
+}
+
+/// Return all keys of the map in ascending order.
+pub fn keys[K, V](self : Map[K, V]) -> List[K] {
+  self.foldr_with_key(fn(xs, k, _v) { Cons(k, xs) }, ~init=List::[])
+}
+
+/// Return an immutable set of all keys of the map.
+pub fn keys_set[K : Compare + Eq, V](
+  self : Map[K, V]
+) -> @immutable_set.ImmutableSet[K] {
+  @immutable_set.from_list(self.keys())
+}
+
+/// Return all elements of the map in the ascending order of their keys.
+pub fn elems[K, V](self : Map[K, V]) -> List[V] {
+  self.foldr_with_key(fn(xs, _k, v) { Cons(v, xs) }, ~init=List::[])
+}
+
 /// The ratio between the sizes of the left and right subtrees.
 let ratio = 5
 
@@ -441,6 +484,13 @@ test "size" {
   @assertion.assert_eq(m.size(), 3)?
 }
 
+test "is_empty" {
+  let m: Map[Int, Int] = empty()
+  @assertion.assert_eq(m.is_empty(), true)?
+  let m = m.insert(1, 1)
+  @assertion.assert_eq(m.is_empty(), false)?
+}
+
 test "iter" {
   let m = Map::[(3, "three"), (8, "eight"), (1, "one"), (2, "two"), (0, "zero")]
   let mut s = ""
@@ -504,6 +554,47 @@ test "filter_with_key" {
   let m = Map::[(3, "three"), (8, "eight"), (1, "one"), (2, "two"), (0, "zero")]
   let fm = m.filter_with_key(fn(k, v) { k > 3 && v.length() > 3 })
   @assertion.assert_eq(fm.debug_tree(), "(8,eight,_,_)")?
+}
+
+test "to_list" {
+  let m = Map::[(1, "one"), (2, "two"), (3, "three")]
+  @assertion.assert_eq(m.to_list(), List::[(1, "one"), (2, "two"), (3, "three")])?
+}
+
+test "to_asc_list" {
+  let m = Map::[(1, "one"), (2, "two"), (3, "three")]
+  @assertion.assert_eq(m.to_asc_list(), List::[(1, "one"), (2, "two"), (3, "three")])?
+}
+
+test "to_desc_list" {
+  let m = Map::[(1, "one"), (2, "two"), (3, "three")]
+  @assertion.assert_eq(m.to_desc_list(), List::[(3, "three"), (2, "two"), (1, "one")])?
+}
+
+test "to_vec" {
+  let m = Map::[(1, "one"), (2, "two"), (3, "three")]
+  let v = m.to_vec()
+  @assertion.assert_eq(v[0], (1, "one"))?
+  @assertion.assert_eq(v[1], (2, "two"))?
+  @assertion.assert_eq(v[2], (3, "three"))?
+}
+
+test "keys" {
+  let m = Map::[(1, "one"), (2, "two"), (3, "three")]
+  @assertion.assert_eq(m.keys(), List::[1, 2, 3])?
+}
+
+test "keys_set" {
+  let m = Map::[(1, "one"), (2, "two"), (3, "three")]
+  let ks = m.keys_set()
+  @assertion.assert_eq(ks.contain(1), true)?
+  @assertion.assert_eq(ks.contain(2), true)?
+  @assertion.assert_eq(ks.contain(3), true)?
+}
+
+test "elems" {
+  let m = Map::[(1, "one"), (2, "two"), (3, "three")]
+  @assertion.assert_eq(m.elems(), List::["one", "two", "three"])?
 }
 
 test "singleton" {
