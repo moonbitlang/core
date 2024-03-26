@@ -52,7 +52,7 @@ jobs:
 
       - name: moon bundle
         run: moon bundle
-      
+
       - name: check core size
         run: ls -alh `find ./target/bundle -name *.core`
 
@@ -105,3 +105,11 @@ jobs:
 
       - name: check typos
         run: typos
+
+  license-header-check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check License Header
+        uses: korandoru/hawkeye@v5

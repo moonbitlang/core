@@ -35,13 +35,12 @@ pub fn to_string[T : Show](self : Vec[T]) -> String {
     return "Vec::[]"
   }
   let first = self.buf[0]
-  for i = 1, init = "Vec::[\(first)"; ; {
-    if i < self.len {
-      let cur = self.buf[i]
-      continue i + 1, "\(init),\(cur)"
-    } else {
+  for i = 1, init = "Vec::[\(first)" {
+    if i >= self.len {
       break "\(init)]"
     }
+    let cur = self.buf[i]
+    continue i + 1, "\(init),\(cur)"
   }
 }
 

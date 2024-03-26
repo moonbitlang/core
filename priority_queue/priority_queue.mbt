@@ -12,37 +12,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-struct Cont[T] {
-  content : T
-  mut sibling : Node[T]
-  mut child : Node[T]
-}
-
-enum Node[T] {
-  Nil
-  Cons(Cont[T])
-}
-
-struct PriorityQueue[T] {
-  min : Bool
-  mut len : Int
-  mut top : Node[T]
-}
-
 /// Creates a new empty priority queue.
-/// 
-/// # Arguments
-///
-/// - `min?`: Whether to use a min heap
 /// 
 /// # Example
 /// ```
-/// let queue1 : PriorityQueue[Int] = PriorityQueue::new()
-/// let queue2 : PriorityQueue[Int] = PriorityQueue::new(~min=false)
-/// let queue2 : PriorityQueue[Int] = PriorityQueue::new(~min=true)
+/// let queue : PriorityQueue[Int] = PriorityQueue::new()
 /// ```
-pub fn PriorityQueue::new[T : Compare](~min : Bool = false) -> PriorityQueue[T] {
-  { min, len: 0, top: Nil }
+pub fn PriorityQueue::new[T : Compare]() -> PriorityQueue[T] {
+  { len: 0, top: Nil }
 }
 
 test "new" {
@@ -52,25 +29,22 @@ test "new" {
 
 /// Creates a new empty priority queue from an array.
 /// 
-/// # Arguments
-///
-/// - `min?`: Whether to use a min heap
-/// 
 /// # Example
 /// ```
-/// let queue1 = PriorityQueue::[1, 2, 3, 4, 5]
-/// let queue3 = PriorityQueue::from_array([1, 2, 3, 4, 5], ~min=false)
-/// let queue2 = PriorityQueue::from_array([1, 2, 3, 4, 5], ~min=true)
+/// let queue = PriorityQueue::[1, 2, 3, 4, 5]
 /// ```
 pub fn PriorityQueue::from_array[T : Compare](
-  arr : Array[T],
-  ~min : Bool = false
+  arr : Array[T]
 ) -> PriorityQueue[T] {
-  for i = 0, acc = (Nil : Node[T]); i < arr.length(); {
-    continue i + 1,
-      meld(acc, Cons({ content: arr[i], sibling: Nil, child: Nil }), min)
-  } else {
-    { min, len: arr.length(), top: acc }
+  // CR: bad formatting  
+  let len = arr.length()
+  for i = 0, acc = Node::Nil {
+    if i < len {
+      continue i + 1,
+        meld(acc, Cons({ content: arr[i], sibling: Nil, child: Nil }))
+    } else {
+      break { len, top: acc }
+    }
   }
 }
 
@@ -79,16 +53,12 @@ test "from_array" {
   @assertion.assert_eq(pq.peek(), Some(5))?
 }
 
-fn meld[T : Compare](x : Node[T], y : Node[T], min : Bool) -> Node[T] {
+fn meld[T : Compare](x : Node[T], y : Node[T]) -> Node[T] {
   match (x, y) {
     (Nil, _) => y
     (_, Nil) => x
     (Cons(x_top), Cons(y_top)) =>
-      if if min {
-        x_top.content < y_top.content
-      } else {
-        x_top.content > y_top.content
-      } {
+      if x_top.content > y_top.content {
         y_top.sibling = x_top.child
         x_top.child = y
         x
@@ -100,7 +70,7 @@ fn meld[T : Compare](x : Node[T], y : Node[T], min : Bool) -> Node[T] {
   }
 }
 
-fn merges[T : Compare](x : Node[T], min : Bool) -> Node[T] {
+fn merges[T : Compare](x : Node[T]) -> Node[T] {
   match x {
     Nil => Nil
     Cons(top) =>
@@ -108,13 +78,8 @@ fn merges[T : Compare](x : Node[T], min : Bool) -> Node[T] {
         Nil => x
         Cons(next_top) =>
           match next_top.sibling {
-            Nil => meld(x, top.sibling, min)
-            Cons(_) =>
-              meld(
-                merges(next_top.sibling, min),
-                meld(x, top.sibling, min),
-                min,
-              )
+            Nil => meld(x, top.sibling)
+            Cons(_) => meld(merges(next_top.sibling), meld(x, top.sibling))
           }
       }
   }
@@ -149,27 +114,18 @@ pub fn pop_exn[T : Compare](self : PriorityQueue[T]) -> Unit {
   }
   self.top = match self.top {
     Nil => Nil
-    Cons(top) => merges(top.child, self.min)
+    Cons(top) => merges(top.child)
   }
   self.len -= 1
 }
 
-test "pop_exn_max" {
+test "pop_exn" {
   let pq = PriorityQueue::[5, 5, 4, 3, 2, 1]
   @assertion.assert_eq(pq.peek(), Some(5))?
   pq.pop_exn()
   @assertion.assert_eq(pq.peek(), Some(5))?
   pq.pop_exn()
   @assertion.assert_eq(pq.peek(), Some(4))?
-}
-
-test "pop_exn_min" {
-  let pq = PriorityQueue::from_array([5, 4, 3, 2, 1, 1], ~min=true)
-  @assertion.assert_eq(pq.peek(), Some(1))?
-  pq.pop_exn()
-  @assertion.assert_eq(pq.peek(), Some(1))?
-  pq.pop_exn()
-  @assertion.assert_eq(pq.peek(), Some(2))?
 }
 
 /// Pops the first value from the priority queue, which returns None if the queue is empty.
@@ -186,24 +142,17 @@ pub fn pop[T : Compare](self : PriorityQueue[T]) -> Option[T] {
     Nil => Nil
     Cons(top) => {
       self.len -= 1
-      merges(top.child, self.min)
+      merges(top.child)
     }
   }
   result
 }
 
-test "pop_max" {
+test "pop" {
   let pq = PriorityQueue::[1, 2, 3, 4, 5, 5]
   @assertion.assert_eq(pq.pop(), Some(5))?
   @assertion.assert_eq(pq.pop(), Some(5))?
   @assertion.assert_eq(pq.pop(), Some(4))?
-}
-
-test "pop_min" {
-  let pq = PriorityQueue::from_array([5, 4, 3, 2, 1, 1], ~min=true)
-  @assertion.assert_eq(pq.pop(), Some(1))?
-  @assertion.assert_eq(pq.pop(), Some(1))?
-  @assertion.assert_eq(pq.pop(), Some(2))?
 }
 
 /// Adds a value to the priority queue.
@@ -214,11 +163,7 @@ test "pop_min" {
 /// queue.add(1)
 /// ```
 pub fn push[T : Compare](self : PriorityQueue[T], value : T) -> Unit {
-  self.top = meld(
-    self.top,
-    Cons({ content: value, sibling: Nil, child: Nil }),
-    self.min,
-  )
+  self.top = meld(self.top, Cons({ content: value, sibling: Nil, child: Nil }))
   self.len += 1
 }
 
@@ -277,10 +222,7 @@ test "clear" {
 /// let is_empty = queue.is_empty() // true
 /// ```
 pub fn is_empty[T](self : PriorityQueue[T]) -> Bool {
-  match self.top {
-    Nil => true
-    _ => false
-  }
+  self.len == 0
 }
 
 test "is_empty" {

@@ -12,40 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-struct ArraySlice[T] {
-  array : Array[T]
-  start : Int
-  end : Int
-}
-
-fn length[T](self : ArraySlice[T]) -> Int {
-  self.end - self.start
-}
-
-fn op_get[T](self : ArraySlice[T], index : Int) -> T {
-  self.array[self.start + index]
-}
-
-fn op_set[T](self : ArraySlice[T], index : Int, value : T) -> Unit {
-  self.array[self.start + index] = value
-}
-
-fn swap[T](self : ArraySlice[T], a : Int, b : Int) -> Unit {
-  self.array.swap(self.start + a, self.start + b)
-}
-
-fn reverse[T](self : ArraySlice[T]) -> Unit {
-  let mid_len = self.length() / 2
-  for i = 0; i < mid_len; i = i + 1 {
-    let j = self.length() - i - 1
-    self.swap(i, j)
-  }
-}
-
-fn slice[T](self : ArraySlice[T], start : Int, end : Int) -> ArraySlice[T] {
-  { array: self.array, start: self.start + start, end: self.start + end }
-}
-
 /// Sorts the array
 /// 
 /// It's an in-place, unstable sort(it will reorder equal elements). The time complexity is O(n log n) in the worst case.
@@ -141,7 +107,7 @@ fn quick_sort[T](
     }
     let (pivot, partitioned) = partition(arr, cmp, pivot_index)
     was_partitioned = partitioned
-    balanced = min(pivot, len - pivot) >= len / 8
+    balanced = @math.minimum(pivot, len - pivot) >= len / 8
     if not(balanced) {
       limit -= 1
     }
@@ -183,29 +149,22 @@ fn get_limit(len : Int) -> Int {
   limit
 }
 
-fn min[T : Compare](a : T, b : T) -> T {
-  if a < b {
-    a
-  } else {
-    b
-  }
-}
-
 /// Try to sort the array with bubble sort.
 /// 
 /// It will only tolerate at most 8 unsorted elements. The time complexity is O(n).
 /// 
 /// Returns whether the array is sorted.
-fn try_bubble_sort[T](arr : ArraySlice[T], cmp : (T, T) -> Int) -> Bool {
-  let max_tries = 8
+fn try_bubble_sort[T](
+  arr : ArraySlice[T],
+  cmp : (T, T) -> Int,
+  ~max_tries : Int = 8
+) -> Bool {
   let mut tries = 0
   for i = 1; i < arr.length(); i = i + 1 {
-    let mut j = i
     let mut sorted = true
-    while j > 0 && cmp(arr[j - 1], arr[j]) > 0 {
+    for j = i; j > 0 && cmp(arr[j - 1], arr[j]) > 0; j = j - 1 {
       sorted = false
       arr.swap(j, j - 1)
-      j = j - 1
     }
     if not(sorted) {
       tries += 1
@@ -224,12 +183,8 @@ fn try_bubble_sort[T](arr : ArraySlice[T], cmp : (T, T) -> Int) -> Bool {
 /// Returns whether the array is sorted.
 fn bubble_sort[T](arr : ArraySlice[T], cmp : (T, T) -> Int) -> Unit {
   for i = 1; i < arr.length(); i = i + 1 {
-    let mut j = i
-    let mut sorted = true
-    while j > 0 && cmp(arr[j - 1], arr[j]) > 0 {
-      sorted = false
+    for j = i; j > 0 && cmp(arr[j - 1], arr[j]) > 0; j = j - 1 {
       arr.swap(j, j - 1)
-      j = j - 1
     }
   }
 }
