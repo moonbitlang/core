@@ -12,6 +12,3 @@ test {
   @assert.assert_eq(h2.find(3), Some(3))
 }
 ```
-
-## TODO
-More API, in particular removal.
