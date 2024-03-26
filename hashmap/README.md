@@ -15,11 +15,11 @@ let map1 : HashMap[String, Int] = HashMap::new()
 let map2 = HashMap::[1, 2, 3, 4, 5]
 ```
 
-When creating via `new()`, you can set initial capacity and custom hasher by providing labeled argument `~capacity` and `~hasher`. Note that the capacity must be a zero or a power of 2.
+When creating via `new()`, you can set a custom hasher by providing a labeled argument `~hasher`. 
 
 ```moonbit
-// Create with custom hasher and capacity.
-let map = HashMap::new(~capacity=32, ~hasher=Some(fn(k) { k.length() }))
+// Create with custom hasher.
+let map = HashMap::new(~hasher=Some(fn(k) { k.length() }))
 ```
 
 ### Set & Get

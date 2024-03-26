@@ -48,23 +48,15 @@ struct HashMap[K, V] {
 
 /// Create new hash map.
 pub fn HashMap::new[K, V](
-  ~capacity : Int = default_init_capacity,
   ~hasher : Option[(K) -> Int] = None
 ) -> HashMap[K, V] {
-  if capacity != 0 && not(is_power_of_two(capacity)) {
-    abort("The capacity is not a zero or a power of 2.")
-  }
   {
     size: 0,
-    capacity,
-    growAt: calc_grow_threshold(capacity),
+    capacity: default_init_capacity,
+    growAt: calc_grow_threshold(default_init_capacity),
     hasher,
-    entries: @array.new(capacity, fn() { Empty }),
+    entries: @array.new(default_init_capacity, fn() { Empty }),
   }
-}
-
-fn is_power_of_two(n : Int) -> Bool {
-  n > 0 && n.land(n - 1) == 0
 }
 
 /// Create new hash map from array.
@@ -297,8 +289,7 @@ test "new" {
 
 test "set" {
   let m : HashMap[String, Int] = HashMap::new(
-    ~hasher=Some(fn(k) { k.length() }),
-    ~capacity=16,
+    ~hasher=Some(fn(k) { k.length() })
   )
   m.set("a", 1)
   m.set("b", 1)
@@ -367,8 +358,7 @@ test "from_array" {
 
 test "remove" {
   let m : HashMap[String, Int] = HashMap::new(
-    ~hasher=Some(fn(k) { k.length() }),
-    ~capacity=16,
+    ~hasher=Some(fn(k) { k.length() })
   )
   m.set("a", 1)
   m.set("ab", 2)
@@ -380,7 +370,7 @@ test "remove" {
   @assertion.assert_eq(m.size(), 5)?
   @assertion.assert_eq(
     m.debug_entries(),
-    "_,(0,a,1),(0,bc,2),(1,cd,2),(1,abc,3),_,(0,abcdef,6),_,_,_,_,_,_,_,_,_",
+    "_,(0,a,1),(0,bc,2),(1,cd,2),(1,abc,3),_,(0,abcdef,6),_",
   )?
 }
 
@@ -404,11 +394,6 @@ test "size" {
   @assertion.assert_eq(m.size(), 0)?
   m.set("a", 1)
   @assertion.assert_eq(m.size(), 1)?
-}
-
-test "capacity" {
-  let m : HashMap[String, Int] = HashMap::new(~capacity=128)
-  @assertion.assert_eq(m.capacity(), 128)?
 }
 
 test "is_empty" {
@@ -475,12 +460,4 @@ test "grow" {
     m.debug_entries(),
     "_,(0,C,1),(0,Go,2),(0,C++,3),(0,Java,4),(0,Scala,5),(1,Julia,5),(2,Cobol,5),(2,Python,6),(2,Haskell,7),(2,Rescript,8),_,_,_,_,_",
   )?
-}
-
-test "zero_capacity_grow" {
-  let m : HashMap[String, Int] = HashMap::new(~capacity=0)
-  @assertion.assert_eq(m.capacity(), 0)?
-  m.set("a", 1)
-  @assertion.assert_eq(m.size(), 1)?
-  @assertion.assert_eq(m.capacity(), 8)?
 }
