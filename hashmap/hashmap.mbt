@@ -51,6 +51,9 @@ pub fn HashMap::new[K, V](
   ~capacity : Int = default_init_capacity,
   ~hasher : Option[(K) -> Int] = None
 ) -> HashMap[K, V] {
+  if capacity != 0 && not(is_power_of_two(capacity)) {
+    abort("The capacity is not a zero or a power of 2.")
+  }
   {
     size: 0,
     capacity,
@@ -58,6 +61,10 @@ pub fn HashMap::new[K, V](
     hasher,
     entries: @array.new(capacity, fn() { Empty }),
   }
+}
+
+fn is_power_of_two(n : Int) -> Bool {
+  n > 0 && n.land(n - 1) == 0
 }
 
 /// Create new hash map from array.
