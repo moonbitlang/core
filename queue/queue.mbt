@@ -39,12 +39,31 @@ pub fn Queue::from_array[T](arr : Array[T]) -> Queue[T] {
   }
   let queue : Queue[T] = Queue::new()
   queue.length = arr.length()
-  for i = arr.length(); i > 0; i = i - 1 {
-    let cell : Cell[T] = Cons({ content: arr[i - 1], next: queue.first })
-    queue.first = cell
+  queue.last = Cons({ content: arr[queue.length - 1], next: Nil })
+  queue.first = queue.last
+  for i = arr.length() - 2; i >= 0; i = i - 1 {
+    queue.first = Cons({ content: arr[i], next: queue.first })
   }
-  queue.last = queue.first
   queue
+}
+
+test "from_array_1" {
+  let queue : Queue[Int] = Queue::[1, 2, 3, 4]
+  let queue2 : Queue[Int] = Queue::[1]
+  @assertion.assert_eq(queue.length, 4)?
+  @assertion.assert_eq(queue.pop_exn(), 1)?
+  @assertion.assert_eq(queue.pop_exn(), 2)?
+  @assertion.assert_eq(queue.pop_exn(), 3)?
+  @assertion.assert_eq(queue.pop_exn(), 4)?
+  @assertion.assert_eq(queue2.pop_exn(), 1)?
+  @assertion.assert_eq(queue2.length, 0)?
+}
+
+test "from_array_2" {
+  let q = Queue::[1, 2, 3, 4]
+  q.push(11)
+  @assertion.assert_eq(q.pop_exn(), 1)?
+  @assertion.assert_eq(q.pop_exn(), 2)?
 }
 
 /// Tests if two queue cells are equal.
@@ -59,18 +78,6 @@ fn op_equal[T : Eq](self : Cell[T], other : Cell[T]) -> Bool {
       }
     _, _ => false
   }
-}
-
-test "from_array" {
-  let queue : Queue[Int] = Queue::[1, 2, 3, 4]
-  let queue2 : Queue[Int] = Queue::[1]
-  @assertion.assert_eq(queue.length, 4)?
-  @assertion.assert_eq(queue.pop_exn(), 1)?
-  @assertion.assert_eq(queue.pop_exn(), 2)?
-  @assertion.assert_eq(queue.pop_exn(), 3)?
-  @assertion.assert_eq(queue.pop_exn(), 4)?
-  @assertion.assert_eq(queue2.pop_exn(), 1)?
-  @assertion.assert_eq(queue2.length, 0)?
 }
 
 /// Clears the queue.
