@@ -12,23 +12,15 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-priv type UninitializedArray[T] Array[UnsafeMaybeUninit[T]]
-
 fn UninitializedArray::make[T](size : Int) -> UninitializedArray[T] = "%make_array_maybe_uninit"
 
 fn op_get[T](self : UninitializedArray[T], index : Int) -> T = "%array_get"
 
 fn op_set[T](self : UninitializedArray[T], index : Int, value : T) = "%array_set"
 
-fn length[T](self : UninitializedArray[T]) -> Int {
-  self.0.length()
-}
-
-/// A `Vec` is a generic vector (dynamic array) that can grow in size.
-struct Vec[T] {
-  mut buf : UninitializedArray[T]
-  mut len : Int
-}
+// fn length[T](self : UninitializedArray[T]) -> Int {
+//   self.0.length()
+// }
 
 /// Converts the vector to a string.
 pub fn to_string[T : Show](self : Vec[T]) -> String {
@@ -36,7 +28,7 @@ pub fn to_string[T : Show](self : Vec[T]) -> String {
     return "Vec::[]"
   }
   let first = self.buf[0]
-  for i = 1, init = "Vec::[\(first)" {
+  for i = 1, init = "Vec::[\(first)"; ; {
     if i >= self.len {
       break "\(init)]"
     }
@@ -97,7 +89,7 @@ pub fn length[T](self : Vec[T]) -> Int {
 
 /// Returns the total number of elements the vector can hold without reallocating.
 pub fn capacity[T](self : Vec[T]) -> Int {
-  self.buf.length()
+  self.buf.0.length()
 }
 
 /// Reallocate the vector with a new capacity.
@@ -247,7 +239,7 @@ test "pop_exn" {
 /// v.push(3)
 /// ```
 pub fn push[T](self : Vec[T], value : T) -> Unit {
-  if self.len == self.buf.length() {
+  if self.len == self.buf.0.length() {
     self.realloc()
   }
   self.buf[self.len] = value
@@ -256,9 +248,9 @@ pub fn push[T](self : Vec[T], value : T) -> Unit {
 
 test "push" {
   let v = Vec::[3, 4, 5]
-  @assertion.assert_eq(v, Vec::[3,4,5])?
+  @assertion.assert_eq(v, Vec::[3, 4, 5])?
   v[0] = 6
-  @assertion.assert_eq(v, Vec::[6,4,5])?
+  @assertion.assert_eq(v, Vec::[6, 4, 5])?
 }
 
 /// Removes the specified range from the vector and returns it.
@@ -885,7 +877,7 @@ pub fn insert[T](self : Vec[T], index : Int, value : T) -> Unit {
       "index out of bounds: the len is from 0 to \(len) but the index is \(index)",
     )
   }
-  if self.len == self.buf.length() {
+  if self.len == self.buf.0.length() {
     self.realloc()
   }
   for i = self.len; i > index; i = i - 1 {
