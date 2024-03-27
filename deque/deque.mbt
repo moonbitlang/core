@@ -12,8 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-priv type UninitializedArray[T] Array[UnsafeMaybeUninit[T]]
-
 fn UninitializedArray::make[T](size : Int) -> UninitializedArray[T] = "%make_array_maybe_uninit"
 
 fn op_get[T](self : UninitializedArray[T], index : Int) -> T = "%array_get"
@@ -22,13 +20,6 @@ fn op_set[T](self : UninitializedArray[T], index : Int, value : T) = "%array_set
 
 fn length[T](self : UninitializedArray[T]) -> Int {
   self.0.length()
-}
-
-struct Deque[T] {
-  mut buf : UninitializedArray[T]
-  mut len : Int
-  mut head : Int
-  mut tail : Int
 }
 
 /// Creates a new, empty deque.
