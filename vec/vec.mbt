@@ -169,7 +169,6 @@ pub fn op_equal[T : Eq](self : Vec[T], other : Vec[T]) -> Bool {
     }
     continue i + 1
   }
-
 }
 
 test "op_equal" {
@@ -261,7 +260,7 @@ test "push" {
 
 /// Removes the specified range from the vector and returns it.
 /// 
-/// This functions returns a vector range from `begin` to `end` (exclusive).
+/// This functions returns a vector range from `begin` to `end` `[begin, end)`
 /// If you try to access an index which isn’t in the Vec, it will panic.
 /// 
 /// # Example
@@ -276,15 +275,16 @@ pub fn drain[T](self : Vec[T], begin : Int, end : Int) -> Vec[T] {
       "index out of bounds: the len is \(len) but the index is (\(begin), \(end))",
     )
   }
-  let v = Vec::with_capacity(end - begin)
+  let num = end - begin
+  let v = Vec::with_capacity(num)
   for i = begin; i < end; i = i + 1 {
     v.buf[i - begin] = self[i]
   }
-  v.len = end - begin
+  v.len = num
   for i = end; i < self.len; i = i + 1 {
-    self.buf[i - (end - begin)] = self.buf[i]
+    self.buf[i - num] = self.buf[i]
   }
-  self.len = self.len - (end - begin)
+  self.len -= num
   v
 }
 
@@ -307,6 +307,7 @@ test "drain" {
 /// let v2 = Vec::[6, 7, 8]
 /// v1.append(v2)
 /// ```
+/// TODO: could be made more efficient
 pub fn append[T](self : Vec[T], other : Vec[T]) -> Unit {
   for i = 0; i < other.len; i = i + 1 {
     self.push(other[i])
