@@ -69,7 +69,7 @@ pub fn Vec::new[T]() -> Vec[T] {
 
 /// Creates a new, empty vector with a specified initial capacity.
 pub fn Vec::with_capacity[T](cap : Int) -> Vec[T] {
-  Vec::{ buf: UninitializedArray::make(cap), len: 0 }
+  { buf: UninitializedArray::make(cap), len: 0 }
 }
 
 /// Creates a new vector from an array.
@@ -79,7 +79,7 @@ pub fn Vec::from_array[T](arr : Array[T]) -> Vec[T] {
   for i = 0; i < len; i = i + 1 {
     buf[i] = arr[i]
   }
-  Vec::{ buf, len }
+  { buf, len }
 }
 
 /// Returns the number of elements in the vector.
@@ -159,12 +159,17 @@ pub fn op_equal[T : Eq](self : Vec[T], other : Vec[T]) -> Bool {
   if self.len != other.len {
     return false
   }
-  for i = 0; i < self.len; i = i + 1 {
-    if self[i] != other[i] {
-      return false
+  for i = 0 {
+    // CR: format issue  
+    if i >= self.len {
+      break true
     }
+    if self[i] != other[i] {
+      break false
+    }
+    continue i + 1
   }
-  true
+
 }
 
 test "op_equal" {
@@ -186,7 +191,8 @@ pub fn pop[T](self : Vec[T]) -> Option[T] {
   if self.len == 0 {
     None
   } else {
-    self.len = self.len - 1
+    self.len -= 1
+    // TODO: should fill the element with a dummy slot to avoid memory leak?
     Some(self.buf[self.len])
   }
 }
