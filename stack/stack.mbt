@@ -425,6 +425,35 @@ pub fn length[T](self : Stack[T]) -> Int {
   self.len
 }
 
+/// Iterates over the elements of the stack from top to bottom.
+/// 
+/// # Example
+/// ```
+/// let s: Stack[Int] = Stack::from_array([1, 2, 3])
+/// s.iter(fn(i) { println(i) })'
+/// ```
+pub fn iter[T](self : Stack[T], f : (T) -> Unit) -> Unit {
+  self.elements.iter(f)
+}
+
+test "iter" {
+  let s : Stack[Int] = new()
+  let mut sum = 0
+  let mut sub = 0
+  s.iter(fn(i) { sum = sum + i })
+  @assertion.assert_eq(sum, 0)?
+  s.push(1)
+  s.push(2)
+  s.push(3)
+  @assertion.assert_eq(s.peek_exn(), 3)?
+  sum = 0
+  sub = s.peek_exn()
+  s.iter(fn(i) { sum = sum + i })
+  s.iter(fn(i) { sub = sub - i }) // 3 - 3 - 2 - 1
+  @assertion.assert_eq(sum, 6)?
+  @assertion.assert_eq(sub, -3)?
+}
+
 /// Convert stack to list
 ///
 /// # Example
