@@ -28,6 +28,7 @@ pub fn to_string[T : Show](self : Vec[T]) -> String {
     return "Vec::[]"
   }
   let first = self.buf[0]
+  // CR: format issues
   for i = 1, init = "Vec::[\(first)"; ; {
     if i >= self.len {
       break "\(init)]"
@@ -483,15 +484,20 @@ test "is_empty" {
 /// v.is_sorted() // true
 /// ```
 pub fn is_sorted[T : Compare](self : Vec[T]) -> Bool {
-  for i = 1; i < self.len; i = i + 1 {
-    if self[i - 1] > self[i] {
-      return false
+  for i = 1 {
+    if i >= self.len {
+      break true
     }
-  }
-  true
+    if self[i - 1] > self [i] {
+      break false
+    }
+    continue i + 1
+  }  
 }
 
 test "is_sorted" {
+  let v : Vec[Int]= Vec::[]  
+  @assertion.assert_true(v.is_sorted())?
   let v = Vec::[3, 4, 5]
   @assertion.assert_true(v.is_sorted())?
   let v2 = Vec::[3, 5, 4]
