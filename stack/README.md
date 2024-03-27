@@ -55,7 +55,7 @@ let stack = Stack::[1,2,3]
 stack.drop() // returns Unit type
 stack.peek() // Some(2)
 ```
-Another version of the `drop` method is `drop_resut`, which will return `Ok(())` when successful, and when it fails, it returns `Err(())`.
+Another version of the `drop` method is `drop_result`, which will return `Ok(())` when successful, and when it fails, it returns `Err(())`.
 
 ### Traverse
 You can traverse the stack using the `iter` method. The `iter` method returns an iterator that allows you to traverse the stack from the top to the bottom.
