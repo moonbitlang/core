@@ -21,7 +21,7 @@ Stack.clear()
 ### Length
 You can get the length of the stack by using the `length` method. The `is_empty` method can be used to check if the stack is empty.
 ```moonbit
-let stack = stack::[1,2,3]
+let stack = Stack::[1,2,3]
 stack.length() // 3
 stack.is_empty() // false
 ```
@@ -33,26 +33,39 @@ let stack = stack::new()
 stack.push(1)
 stack.push(2)
 stack.push(3)
-stack.pop() // 3
-stack.pop() // 2
-stack.pop_option() // Some(1)
-stack.pop_option() // None
-stack.pop() // abort
+stack.pop_exn() // 3
+stack.pop_exn() // 2
+stack.pop() // Some(1)
+stack.pop() // None
+stack.pop_exn() // abort
 ```
 
-### Top
-You can get the first element of the stack without removing it using the `top` method.
+### Peek
+You can get the first element of the stack without removing it using the `peek` method.
 ```moonbit
-let stack = stack::[1,2,3]
-stack.top() // 3
+let stack = Stack::[1,2,3]
+stack.peek() // Some(3)
 ```
-The safe version of the `top` method is the `top_option`, which will return `None` if the stack is empty.
+The unsafe version of `peek` is `peek_exn`, which will panic if the stack is empty.
 
 ### Drop
 You can remove the top element of the stack using the `drop` method. If the stack is empty, calling `drop` does nothing.
 ```moonbit
-let stack = stack::[1,2,3]
+let stack = Stack::[1,2,3]
 stack.drop() // returns Unit type
-stack.top() // 2
+stack.peek() // Some(2)
 ```
-The safe version of the `drop` method is the `drop_option`, which will return `Ok(())` when successful, and when it fails, it returns `Err(())`.
+Another version of the `drop` method is `drop_result`, which will return `Ok(())` when successful, and when it fails, it returns `Err(())`.
+
+### Traverse
+You can traverse the stack using the `iter` method. The `iter` method returns an iterator that allows you to traverse the stack from the top to the bottom.
+```moonbit
+let stack = Stack::[1,2,3]
+let mut sum = 0
+stack.iter(fn(x) { sum += x }) // sum = 6
+```
+You can fold the queue using the `fold` method.
+```moonbit
+let stack = Stack::[1,2,3]
+let sum = stack.fold(0, fn(acc, x) { acc + x }) // sum = 6
+```
