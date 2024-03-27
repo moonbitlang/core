@@ -36,10 +36,13 @@ test "from_array" {
 
 /// Get the length of the list.
 pub fn length[T](self : List[T]) -> Int {
-  match self {
-    Nil => 0
-    Cons(_, tail) => 1 + length(tail)
+  fn handle (self: List[T], len: Int) -> Int {
+    match self {
+      Nil => len
+      Cons(_, tail) => handle(tail, len + 1)
+    }
   }
+  handle(self, 0)
 }
 
 test "length" {
