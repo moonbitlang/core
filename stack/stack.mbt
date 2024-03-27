@@ -454,6 +454,24 @@ test "iter" {
   @assertion.assert_eq(sub, -3)?
 }
 
+/// Folds over the elements of the stack from top to bottom.
+/// 
+/// # Example
+/// ```
+/// let s: Stack[Int] = Stack::from_array([1, 2, 3])
+/// let sum = s.fold(0, fn(acc, i) { acc + i })
+/// println(sum) // output: 6
+/// ```
+pub fn fold[T, U](self : Stack[T], init : U, f : (U, T) -> U) -> U {
+  self.elements.fold(init, f)
+}
+
+test "fold" {
+  let s : Stack[Int] = Stack::from_array([1, 2, 3])
+  let sum = s.fold(0, fn(acc, i) { acc + i })
+  @assertion.assert_eq(sum, 6)?
+}
+
 /// Convert stack to list
 ///
 /// # Example
