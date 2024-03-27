@@ -239,11 +239,11 @@ test "push_array" {
 /// ```
 /// let s: Stack[Int] = Stack::from_array([1,2,3])
 /// let s1: Stack[Int] = Stack::new()
-/// println(s.pop_option()) // output: Some(1)
+/// println(s.pop()) // output: Some(1)
 /// println(s) // output: { elements: Cons(2, Cons(1, Nil)), len: 2 }
 /// println(s1.pop()) // output: None
 /// ```
-pub fn pop_option[T](self : Stack[T]) -> Option[T] {
+pub fn pop[T](self : Stack[T]) -> Option[T] {
   match self.elements {
     Cons(hd, tl) => {
       self.elements = tl
@@ -254,13 +254,13 @@ pub fn pop_option[T](self : Stack[T]) -> Option[T] {
   }
 }
 
-test "pop_option" {
+test "pop" {
   let s : Stack[Int] = Stack::[1, 2, 3]
   let s1 : Stack[Int] = Stack::new()
-  @assertion.assert_eq(s.pop_option(), Some(3))?
+  @assertion.assert_eq(s.pop(), Some(3))?
   @assertion.assert_eq(s.elements, Cons(2, Cons(1, Nil)))?
   @assertion.assert_eq(s.len, 2)?
-  @assertion.assert_eq(s1.pop_option(), None)?
+  @assertion.assert_eq(s1.pop(), None)?
   @assertion.assert_eq(s1.elements, Nil)?
   @assertion.assert_eq(s1.len, 0)?
 }
@@ -273,11 +273,11 @@ test "pop_option" {
 /// ```
 /// let s: Stack[Int] = Stack::from_array([1,2,3])
 /// let s1: Stack[Int] = Stack::new()
-/// println(s.pop()) // output: 1
+/// println(s.pop_exn()) // output: 1
 /// println(s) // output: { elements: Cons(2, Cons(1, Nil)), len: 2 }
-/// println(s1.pop()) // abort.
+/// println(s1.pop_exn()) // abort.
 /// ```
-pub fn pop[T](self : Stack[T]) -> T {
+pub fn pop_exn[T](self : Stack[T]) -> T {
   match self.elements {
     Cons(hd, tl) => {
       self.elements = tl
@@ -288,9 +288,9 @@ pub fn pop[T](self : Stack[T]) -> T {
   }
 }
 
-test "pop" {
+test "pop_exn" {
   let s : Stack[Int] = Stack::[1, 2, 3]
-  @assertion.assert_eq(s.pop(), 3)?
+  @assertion.assert_eq(s.pop_exn(), 3)?
   @assertion.assert_eq(s.elements, Cons(2, Cons(1, Nil)))?
   @assertion.assert_eq(s.len, 2)?
 }
@@ -359,19 +359,19 @@ test "drop_result" {
 ///
 /// ```
 /// let s: Stack[Int] = Stack::from_array([1,2,3])
-/// println(s.top_option()) // output: Some(3)
+/// println(s.peek()) // output: Some(3)
 /// println(s) // output: { elements: Cons(3, Cons(2, Cons(1, Nil))), len: 3 }
 /// ```
-pub fn top_option[T](self : Stack[T]) -> Option[T] {
+pub fn peek[T](self : Stack[T]) -> Option[T] {
   match self.elements {
     Cons(hd, _) => Some(hd)
     Nil => None
   }
 }
 
-test "top_option" {
+test "peek" {
   let s : Stack[Int] = Stack::[1, 2, 3]
-  @assertion.assert_eq(s.top_option(), Some(3))?
+  @assertion.assert_eq(s.peek(), Some(3))?
   @assertion.assert_eq(s.elements, Cons(3, Cons(2, Cons(1, Nil))))?
   @assertion.assert_eq(s.len, 3)?
 }
@@ -384,20 +384,20 @@ test "top_option" {
 /// ```
 /// let s: Stack[Int] = Stack::from_array([1,2,3])
 /// let s1: Stack[Int] = Stack::new()
-/// println(s1.top()) // abort
-/// println(s.top()) // output: 3
+/// println(s1.peek_exn()) // abort
+/// println(s.peek_exn()) // output: 3
 /// println(s) // output: { elements: Cons(3, Cons(2, Cons(1, Nil))), len: 3 }
 /// ```
-pub fn top[T](self : Stack[T]) -> T {
+pub fn peek_exn[T](self : Stack[T]) -> T {
   match self.elements {
     Cons(hd, _) => hd
     Nil => abort("top of the empty stack")
   }
 }
 
-test "top" {
+test "peek_exn" {
   let s : Stack[Int] = Stack::[1, 2, 3]
-  @assertion.assert_eq(s.top(), 3)?
+  @assertion.assert_eq(s.peek_exn(), 3)?
   @assertion.assert_eq(s.elements, Cons(3, Cons(2, Cons(1, Nil))))?
   @assertion.assert_eq(s.len, 3)?
 }
