@@ -12,24 +12,24 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-let pi4a = 7.85398125648498535156e-1
+let pi4a = 0x0.C90FDA000000000011B5
 
-let pi4b = 3.77489470793079817668e-8
+let pi4b = 0x0.000000A2216800000988
 
-let pi4c = 2.69515142907905952645e-15
+let pi4c = 0x0.000000000000C234BE07
 
-let pi4 = 1.2732395447351628
+let pi = 0x3.243F6A8885A308CA8A54
 
-let pi = 3.14159265358979323
+let pi4 : Double = 4.0 / pi
 
 let sin_ = [
-  1.58962301576546568060e-10, -2.50507477628578072866e-8, 2.75573136213857245213e-6,
-  -1.98412698295895385996e-4, 8.33333333332211858878e-3, -1.66666666666666307295e-1,
+  0x0.00000000AEC7E8FE9D35, -0x0.0000006B9796A4A487D, 0x0.00002E3BC6ACFA913766, -1.98412698295895385996e-4,
+  0x0.02222222221EFA06A21A, -0x0.2AAAAAAAAAAA90C58591,
 ]
 
 let cos_ = [
-  -1.13585365213876817300e-11, 2.08757008419747316778e-9, -2.75573141792967388112e-7,
-  2.48015872888517045348e-5, -1.38888888888730564116e-3, 4.16666666666665929218e-2,
+  -0x0.000000000C7D24D03C8, 0x0.00000008F74EBDA72B71, -0x0.0000049F93DFAB12FDC6,
+  0x0.0001A01A019C844F3E07, -0x0.005B05B05B053E453C34, 0x0.0AAAAAAAAAAAA55A47E1,
 ]
 
 pub fn sin(x : Double) -> Double {
@@ -87,7 +87,7 @@ pub fn cos(x : Double) -> Double {
   } * if sign { -1.0 } else { 1.0 }
 }
 
-//Compare two Double values for equality within the allowed error range of 1e-12.
+//Compare two Double values for equality within the allowed error range of 1e-11.
 fn imprecise_equal(x : Double, y : Double) -> Bool {
   (x - y).abs() < 1.0e-10
 }
@@ -110,9 +110,6 @@ test "sin" {
     -8.694568970959221300497e-01, 4.01956668098863248917e-01, 9.67786335404528727927e-01,
     -6.7344058693131973066e-01,
   ]
-  print(sin(100000.0 * pi + vf[0]))
-  print(" ")
-  println(sin_res_large[0])
   for i = 0; i < vf.length(); i = i + 1 {
     @assertion.assert_true(imprecise_equal(sin(vf[i]), sin_res[i]))?
     @assertion.assert_true(
