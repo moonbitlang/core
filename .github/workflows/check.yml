@@ -35,14 +35,15 @@ jobs:
           fi
 
   build:
-    runs-on: ubuntu-22.04
+    strategy:
+      matrix:
+        os: [ubuntu-22.04, macos-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    name: Build on ${{matrix.os}}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v4.1.1
 
-      - name: install
-        run: |
-          /bin/bash -c "$(curl -fsSL https://cli.moonbitlang.com/ubuntu_x86_64_moon_setup.sh)"
-          echo "/home/runner/.moon/bin" >> $GITHUB_PATH
+      - uses: hustcer/setup-moonbit@v1.3
 
       - name: moon check
         run: moon check
