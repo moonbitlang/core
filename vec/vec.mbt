@@ -522,6 +522,13 @@ test "reverse" {
   @assertion.assert_eq(v, Vec::[5, 4, 3])?
   v.reverse()
   @assertion.assert_eq(v, Vec::[3, 4, 5])?
+  let v = Vec::[3,4]
+  v.reverse()
+  @assertion.assert_eq(v,Vec::[4,3])?
+  v.reverse()
+  @assertion.assert_eq(v,Vec::[3,4])?
+  let empty : Vec[Int] = Vec::[]
+  @assertion.assert_eq(empty,empty)?
 }
 
 /// Split the vector into two at the given index.
@@ -595,10 +602,11 @@ pub fn starts_with[T : Eq](self : Vec[T], prefix : Vec[T]) -> Bool {
   }
   for i = 0; i < prefix.len; i = i + 1 {
     if self.buf[i] != prefix.buf[i] {
-      return false
+      break false
     }
+  } else {
+    true
   }
-  true
 }
 
 test "starts_with" {
@@ -621,10 +629,11 @@ pub fn ends_with[T : Eq](self : Vec[T], suffix : Vec[T]) -> Bool {
   }
   for i = 0; i < suffix.len; i = i + 1 {
     if self.buf[self.len - suffix.len + i] != suffix.buf[i] {
-      return false
+      break false
     }
+  } else {
+    true
   }
-  true
 }
 
 test "ends_with" {
@@ -702,10 +711,11 @@ test "strip_suffix" {
 pub fn search[T : Eq](self : Vec[T], value : T) -> Option[Int] {
   for i = 0; i < self.len; i = i + 1 {
     if self.buf[i] == value {
-      return Some(i)
+      break Some(i)
     }
+  } else {
+    None
   }
-  None
 }
 
 test "search" {
