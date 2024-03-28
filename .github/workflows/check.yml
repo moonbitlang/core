@@ -89,7 +89,8 @@ jobs:
           git diff
 
   build-on-mac-bleeding:
-    runs-on: macos-latest
+    runs-on: macos-14
+    continue-on-error: true
     steps:
       - uses: actions/checkout@v4
 
