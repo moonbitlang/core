@@ -1,3 +1,9 @@
+/// Create a tuple with two elements.
+/// 
+/// # Example
+/// ```
+/// let tulpe = pair(1, 2)
+/// ```
 pub fn pair[T, U](x : T, y : U) -> (T, U) {
   (x, y)
 }
@@ -7,6 +13,13 @@ test "pair" {
   @assertion.assert_eq(tulpe, (1, 2))?
 }
 
+/// Get the first element of a tuple.
+/// 
+/// # Example
+/// ```
+/// let tulpe = (1, 2)
+/// let x = fst(tulpe)
+/// ```
 pub fn fst[T, U](tulpe : (T, U)) -> T {
   tulpe.0
 }
@@ -16,6 +29,13 @@ test "fst" {
   @assertion.assert_eq(fst(tulpe), 1)?
 }
 
+/// Get the second element of a tuple.
+/// 
+/// # Example
+/// ```
+/// let tulpe = (1, 2)
+/// let y = snd(tulpe)
+/// ```
 pub fn snd[T, U](tulpe : (T, U)) -> U {
   tulpe.1
 }
@@ -25,6 +45,13 @@ test "snd" {
   @assertion.assert_eq(snd(tulpe), 2)?
 }
 
+/// Map a function over the first element of a tuple.
+/// 
+/// # Example
+/// ```
+/// let tulpe = (1, 2)
+/// let mapped = map_fst(fn(x : Int) -> Int { x + 1 }, tulpe)
+/// ```
 pub fn map_fst[T, U, V](f : (T) -> U, tulpe : (T, V)) -> (U, V) {
   (f(tulpe.0), tulpe.1)
 }
@@ -35,6 +62,13 @@ test "map_fst" {
   @assertion.assert_eq(mapped, (2, 2))?
 }
 
+/// Map a function over the second element of a tuple.
+/// 
+/// # Example
+/// ```
+/// let tulpe = (1, 2)
+/// let mapped = map_snd(fn(x : Int) -> Int { x + 1 }, tulpe)
+/// ```
 pub fn map_snd[T, U, V](f : (T) -> U, tulpe : (V, T)) -> (V, U) {
   (tulpe.0, f(tulpe.1))
 }
@@ -45,6 +79,13 @@ test "map_snd" {
   @assertion.assert_eq(mapped, (1, 3))?
 }
 
+/// Map a function over both elements of a tuple.
+/// 
+/// # Example
+/// ```
+/// let tulpe = (1, 2)
+/// let mapped = map_both(fn(x : Int) -> Int { x + 1 }, fn(x : Int) -> Int { x - 1 }, tulpe)
+/// ```
 pub fn map_both[T, U, V, W](
   f : (T) -> U,
   g : (V) -> W,
@@ -58,11 +99,18 @@ test "map_both" {
   let mapped = map_both(
     fn(x : Int) -> Int { x + 1 },
     fn(x : Int) -> Int { x - 1 },
-    tulpe
+    tulpe,
   )
   @assertion.assert_eq(mapped, (2, 1))?
 }
 
+/// Swap the elements of a tuple.
+/// 
+/// # Example
+/// ```
+/// let tulpe = (1, 2)
+/// let swapped = swap(tulpe)
+/// ```
 pub fn swap[T, U](tulpe : (T, U)) -> (U, T) {
   (tulpe.1, tulpe.0)
 }
@@ -75,6 +123,14 @@ test "swap" {
   @assertion.assert_eq(swapped_2, tulpe)?
 }
 
+/// Curry a function.
+/// 
+/// # Example
+/// ```
+/// let add = fn(x : Int, y : Int) -> Int { x + y }
+/// let curried_add = curry(add)
+/// curried_add(1)(2)
+/// ```
 pub fn curry[T, U, V](f : (T, U) -> V) -> (T) -> (U) -> V {
   fn(x : T) { fn(y : U) -> V { f(x, y) } }
 }
@@ -85,6 +141,14 @@ test "curry" {
   @assertion.assert_eq(curried_add(1)(2), add(1, 2))?
 }
 
+/// Uncurry a function.
+/// 
+/// # Example
+/// ```
+/// let add = fn(x : Int) -> (Int) -> Int { fn(y : Int) -> Int { x + y } }
+/// let uncurried_add = uncurry(add)
+/// uncurried_add(1, 2)
+/// ```
 pub fn uncurry[T, U, V](f : (T) -> (U) -> V) -> (T, U) -> V {
   fn(x : T, y : U) { f(x)(y) }
 }
