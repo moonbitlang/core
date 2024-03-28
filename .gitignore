@@ -1,2 +1,7 @@
 target/
 .mooncakes/
+
+# Coverage-related files
+moonbit-coverage-*.txt
+_coverage
+bisect.coverage
