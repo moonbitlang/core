@@ -18,9 +18,6 @@ fn op_get[T](self : UninitializedArray[T], index : Int) -> T = "%array_get"
 
 fn op_set[T](self : UninitializedArray[T], index : Int, value : T) = "%array_set"
 
-// fn length[T](self : UninitializedArray[T]) -> Int {
-//   self.0.length()
-// }
 
 /// Converts the vector to a string.
 pub fn to_string[T : Show](self : Vec[T]) -> String {
@@ -65,7 +62,7 @@ pub fn debug_write[T : Show](self : Vec[T], buf : Buffer) -> Unit {
 
 /// Creates a new, empty vector.
 pub fn Vec::new[T]() -> Vec[T] {
-  Vec::{ buf: UninitializedArray::make(0), len: 0 }
+  { buf: UninitializedArray::make(0), len: 0 }
 }
 
 /// Creates a new, empty vector with a specified initial capacity.
@@ -221,7 +218,7 @@ pub fn pop_exn[T](self : Vec[T]) -> T {
   if self.len == 0 {
     abort("pop from an empty Vec")
   }
-  self.len = self.len - 1
+  self.len -= 1
   self.buf[self.len]
 }
 
