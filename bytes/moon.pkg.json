@@ -1,5 +1,6 @@
 {
     "import": [
+        "moonbitlang/core/prelude",
         { "path": "moonbitlang/core/assertion", "alias": "assertion" }
     ]
 }

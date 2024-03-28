@@ -1,5 +1,6 @@
 {
   "import": [
+    "moonbitlang/core/prelude",
     "moonbitlang/core/assertion",
     "moonbitlang/core/list",
     "moonbitlang/core/array"
