@@ -2,6 +2,7 @@
   "import": [
     "moonbitlang/core/assertion",
     "moonbitlang/core/list",
-    "moonbitlang/core/array"
+    "moonbitlang/core/array",
+    "moonbitlang/core/coverage"
   ]
 }

@@ -1,3 +1,7 @@
 {
-  "import": ["moonbitlang/core/assertion", "moonbitlang/core/math"]
+  "import": [
+    "moonbitlang/core/assertion",
+    "moonbitlang/core/math",
+    "moonbitlang/core/coverage"
+  ]
 }

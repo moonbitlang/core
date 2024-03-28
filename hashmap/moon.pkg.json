@@ -3,6 +3,7 @@
     "moonbitlang/core/int",
     "moonbitlang/core/list",
     "moonbitlang/core/array",
-    "moonbitlang/core/assertion"
+    "moonbitlang/core/assertion",
+    "moonbitlang/core/coverage"
   ]
 }

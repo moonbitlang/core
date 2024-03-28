@@ -3,6 +3,7 @@
     "moonbitlang/core/assertion",
     "moonbitlang/core/list",
     "moonbitlang/core/vec",
-    "moonbitlang/core/immutable_set"
+    "moonbitlang/core/immutable_set",
+    "moonbitlang/core/coverage"
   ]
 }
