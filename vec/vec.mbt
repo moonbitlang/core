@@ -576,10 +576,11 @@ test "split_at" {
 pub fn contains[T : Eq](self : Vec[T], value : T) -> Bool {
   for i = 0; i < self.len; i = i + 1 {
     if self.buf[i] == value {
-      return true
+      break true
     }
+  } else {
+    false
   }
-  false
 }
 
 test "contains" {
