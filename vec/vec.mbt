@@ -18,9 +18,6 @@ fn op_get[T](self : UninitializedArray[T], index : Int) -> T = "%array_get"
 
 fn op_set[T](self : UninitializedArray[T], index : Int, value : T) = "%array_set"
 
-// fn length[T](self : UninitializedArray[T]) -> Int {
-//   self.0.length()
-// }
 
 /// Converts the vector to a string.
 pub fn to_string[T : Show](self : Vec[T]) -> String {
@@ -65,7 +62,7 @@ pub fn debug_write[T : Show](self : Vec[T], buf : Buffer) -> Unit {
 
 /// Creates a new, empty vector.
 pub fn Vec::new[T]() -> Vec[T] {
-  Vec::{ buf: UninitializedArray::make(0), len: 0 }
+  { buf: UninitializedArray::make(0), len: 0 }
 }
 
 /// Creates a new, empty vector with a specified initial capacity.
@@ -221,7 +218,7 @@ pub fn pop_exn[T](self : Vec[T]) -> T {
   if self.len == 0 {
     abort("pop from an empty Vec")
   }
-  self.len = self.len - 1
+  self.len -= 1
   self.buf[self.len]
 }
 
@@ -525,6 +522,13 @@ test "reverse" {
   @assertion.assert_eq(v, Vec::[5, 4, 3])?
   v.reverse()
   @assertion.assert_eq(v, Vec::[3, 4, 5])?
+  let v = Vec::[3,4]
+  v.reverse()
+  @assertion.assert_eq(v,Vec::[4,3])?
+  v.reverse()
+  @assertion.assert_eq(v,Vec::[3,4])?
+  let empty : Vec[Int] = Vec::[]
+  @assertion.assert_eq(empty,empty)?
 }
 
 /// Split the vector into two at the given index.
@@ -536,6 +540,7 @@ test "reverse" {
 /// let v = Vec::[3, 4, 5]
 /// let (v1, v2) = v.split_at(1)
 /// ```
+/// TODO: perf could be optimized
 pub fn split_at[T](self : Vec[T], index : Int) -> (Vec[T], Vec[T]) {
   if index < 0 || index >= self.len {
     let len = self.len
@@ -571,10 +576,11 @@ test "split_at" {
 pub fn contains[T : Eq](self : Vec[T], value : T) -> Bool {
   for i = 0; i < self.len; i = i + 1 {
     if self.buf[i] == value {
-      return true
+      break true
     }
+  } else {
+    false
   }
-  false
 }
 
 test "contains" {
@@ -598,10 +604,11 @@ pub fn starts_with[T : Eq](self : Vec[T], prefix : Vec[T]) -> Bool {
   }
   for i = 0; i < prefix.len; i = i + 1 {
     if self.buf[i] != prefix.buf[i] {
-      return false
+      break false
     }
+  } else {
+    true
   }
-  true
 }
 
 test "starts_with" {
@@ -624,10 +631,11 @@ pub fn ends_with[T : Eq](self : Vec[T], suffix : Vec[T]) -> Bool {
   }
   for i = 0; i < suffix.len; i = i + 1 {
     if self.buf[self.len - suffix.len + i] != suffix.buf[i] {
-      return false
+      break false
     }
+  } else {
+    true
   }
-  true
 }
 
 test "ends_with" {
@@ -705,10 +713,11 @@ test "strip_suffix" {
 pub fn search[T : Eq](self : Vec[T], value : T) -> Option[Int] {
   for i = 0; i < self.len; i = i + 1 {
     if self.buf[i] == value {
-      return Some(i)
+      break Some(i)
     }
+  } else {
+    None
   }
-  None
 }
 
 test "search" {
@@ -828,6 +837,7 @@ test "remove" {
 /// let v = Vec::[3, 4, 5]
 /// v.retain(fn(x) { x > 3 })
 /// ```
+/// TODO: perf could be improved
 pub fn retain[T](self : Vec[T], f : (T) -> Bool) -> Unit {
   let mut i = 0
   while i < self.len {
