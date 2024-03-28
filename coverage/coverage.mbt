@@ -49,7 +49,10 @@ fn CoverageCounter::debug_write(self : CoverageCounter, buf : Buffer) -> Unit {
 test "new_counter" {
   let counter = CoverageCounter::new(2)
   let result = counter.to_string()
-  @assertion.assert_eq(result, "[0, 0]")?
+  // @assertion.assert_eq(result, "[0, 0]")?
+  if result != "[0, 0]" {
+    return Err("Expected: [0, 0], got: " + result)
+  }
 }
 
 test "incr_counter" {
@@ -57,7 +60,10 @@ test "incr_counter" {
   counter.incr(0)
   counter.incr(9)
   let result = counter.to_string()
-  @assertion.assert_eq(result, "[1, 0, 0, 0, 0, 0, 0, 0, 0, 1]")?
+  // @assertion.assert_eq(result, "[1, 0, 0, 0, 0, 0, 0, 0, 0, 1]")?
+  if result != "[1, 0, 0, 0, 0, 0, 0, 0, 0, 1]" {
+    return Err("Expected: [1, 0, 0, 0, 0, 0, 0, 0, 0, 1], got: " + result)
+  }
 }
 
 /// The global list of counters currently tracking.
@@ -142,7 +148,10 @@ pub fn escape(s : String) -> String {
 test "backslash escape" {
   let s = "\n\r\t\b\"'\\"
   let expected = "\\n\\r\\t\\b\\\"\\'\\\\"
-  @assertion.assert_eq(escape(s), expected)?
+  // @assertion.assert_eq(escape(s), expected)?
+  if s != expected {
+    return Err("Expected: " + expected + ", got: " + s)
+  }
 }
 
 // FIXME: formatting string does not work, this test will be destroyed by formatting
@@ -196,7 +205,10 @@ test "log" {
     #|}
     #|
 
-  @assertion.assert_eq(result, expected)?
+  // @assertion.assert_eq(result, expected)?
+  if result != expected {
+    return Err("Expected: " + expected + ", got: " + result)
+  }
 }
 
 /// Output the counters to stdout for coverage report usages. The counter data
