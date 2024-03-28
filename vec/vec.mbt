@@ -540,6 +540,7 @@ test "reverse" {
 /// let v = Vec::[3, 4, 5]
 /// let (v1, v2) = v.split_at(1)
 /// ```
+/// TODO: perf could be optimized
 pub fn split_at[T](self : Vec[T], index : Int) -> (Vec[T], Vec[T]) {
   if index < 0 || index >= self.len {
     let len = self.len
@@ -835,6 +836,7 @@ test "remove" {
 /// let v = Vec::[3, 4, 5]
 /// v.retain(fn(x) { x > 3 })
 /// ```
+/// TODO: perf could be improved
 pub fn retain[T](self : Vec[T], f : (T) -> Bool) -> Unit {
   let mut i = 0
   while i < self.len {
