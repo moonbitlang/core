@@ -15,36 +15,7 @@
 // Default initial capacity
 let default_init_capacity = 8
 
-enum Entry[K, V] {
-  Empty
-  // (Probe Sequence Length, Hash, Key, Value)
-  Valid(Int, Int, K, V)
-} derive(Debug)
 
-/// A mutable hash map implements with Robin Hood hashing.
-/// 
-/// reference:
-/// - <https://programming.guide/robin-hood-hashing.html>
-/// - <https://cs.uwaterloo.ca/research/tr/1986/CS-86-14.pdf>
-
-/// Mutable hash map, not thread safe. 
-///  
-/// # Example
-/// 
-/// ```
-/// let map = HashMap::[(3, "three"), (8, "eight"), (1, "one")]
-/// println(map.get(2)) // output: None
-/// println(map.get(3)) // output: Some("three")
-/// map.set(3, "updated")
-/// println(map.get(3)) // output: Some("updated")
-/// ```
-struct HashMap[K, V] {
-  mut entries : Array[Entry[K, V]]
-  mut size : Int // active key-value pairs count
-  mut capacity : Int // current capacity 
-  mut growAt : Int // threshold that triggers grow
-  hasher : Option[(K) -> Int] // custom hasher
-}
 
 /// Create new hash map.
 pub fn HashMap::new[K, V](
