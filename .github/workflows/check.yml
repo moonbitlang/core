@@ -88,6 +88,33 @@ jobs:
           moon fmt
           git diff
 
+  build-on-mac-bleeding:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: install
+        run: |
+          /bin/bash -c "$(curl -fsSL https://cli.moonbitlang.com/bleeding/mac_m1_moon_setup.sh)"
+          echo "$HOME/.moon/bin" >> $GITHUB_PATH
+
+      - name: moon check
+        run: moon check
+
+      - name: moon test
+        run: moon test
+
+      - name: moon bundle
+        run: moon bundle
+
+      - name: check core size
+        run: ls -alh `find ./target/bundle -name *.core`
+
+      - name: format diff
+        run: |
+          moon fmt
+          git diff
+
   typo-check:
     runs-on: ubuntu-latest
     timeout-minutes: 10
