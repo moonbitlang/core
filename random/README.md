@@ -2,7 +2,7 @@
 
 ## Overview
 
-This is an efficient random number generation function based on the MT19937 algorithm, which supports generating pseudo-random numbers of type Int, Int64 and Double.
+This is an efficient random number generation function based on the (MT19937 algorithm)[https://en.wikipedia.org/wiki/Mersenne_Twister], which supports generating pseudo-random numbers of type Int, Int64 and Double.
 
 ## Usage
 
