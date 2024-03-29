@@ -173,7 +173,7 @@ test "op_equal" {
   let v2 = Vec::[3, 4, 5]
   let v3 = Vec::[3, 4, 6]
   @test.assert_true(v1 == v2)?
-  @test.assert_false(v1 == v3)?
+  @test.is_false(v1 == v3)?
 }
 
 /// Removes the last element from a vector and returns it, or `None` if it is empty.
@@ -470,7 +470,7 @@ test "is_empty" {
   let v = Vec::new()
   @test.assert_true(v.is_empty())?
   v.push(3)
-  @test.assert_false(v.is_empty())?
+  @test.is_false(v.is_empty())?
 }
 
 /// Test if the vector is sorted.
@@ -498,7 +498,7 @@ test "is_sorted" {
   let v = Vec::[3, 4, 5]
   @test.assert_true(v.is_sorted())?
   let v2 = Vec::[3, 5, 4]
-  @test.assert_false(v2.is_sorted())?
+  @test.is_false(v2.is_sorted())?
 }
 
 /// Reverses the order of elements in the slice, in place.
@@ -588,7 +588,7 @@ test "contains" {
   @test.assert_true(v.contains(3))?
   @test.assert_true(v.contains(4))?
   @test.assert_true(v.contains(5))?
-  @test.assert_false(v.contains(6))?
+  @test.is_false(v.contains(6))?
 }
 
 /// Check if the vector starts with a given prefix.
@@ -615,7 +615,7 @@ test "starts_with" {
   let v = Vec::[3, 4, 5]
   @test.assert_true(v.starts_with(Vec::[3, 4]))?
   @test.assert_true(v.starts_with(Vec::[3, 4, 5]))?
-  @test.assert_false(v.starts_with(Vec::[3, 4, 5, 6]))?
+  @test.is_false(v.starts_with(Vec::[3, 4, 5, 6]))?
 }
 
 /// Check if the vector ends with a given suffix.
@@ -642,7 +642,7 @@ test "ends_with" {
   let v = Vec::[3, 4, 5]
   @test.assert_true(v.ends_with(Vec::[4, 5]))?
   @test.assert_true(v.ends_with(Vec::[3, 4, 5]))?
-  @test.assert_false(v.ends_with(Vec::[2, 3, 4, 5]))?
+  @test.is_false(v.ends_with(Vec::[2, 3, 4, 5]))?
 }
 
 /// Strip a prefix from the vector.

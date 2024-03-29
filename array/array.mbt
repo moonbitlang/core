@@ -41,7 +41,7 @@ test "iter" {
       i = i + 1
     },
   )
-  @test.assert_false(failed)?
+  @test.is_false(failed)?
 }
 
 /// Iterates over the array with index. 
@@ -75,7 +75,7 @@ test "iteri" {
       i = i + 1
     },
   )
-  @test.assert_false(failed)?
+  @test.is_false(failed)?
 }
 
 /// Iterates over each element in reversed turn.
@@ -107,7 +107,7 @@ test "iter_rev" {
       i = i - 1
     },
   )
-  @test.assert_false(failed)?
+  @test.is_false(failed)?
 }
 
 /// Iterates over the array with index in reversed turn. 
@@ -144,7 +144,7 @@ test "iter_revi" {
       j = j + 1
     },
   )
-  @test.assert_false(failed)?
+  @test.is_false(failed)?
 }
 
 /// Applies a function to each element of the array and returns a new array with the results.
@@ -512,7 +512,7 @@ test "contains" {
   @test.assert_true(arr.contains(3))?
   @test.assert_true(arr.contains(4))?
   @test.assert_true(arr.contains(5))?
-  @test.assert_false(arr.contains(6))?
+  @test.is_false(arr.contains(6))?
 }
 
 /// Check if the array starts with a given prefix.
@@ -538,7 +538,7 @@ test "starts_with" {
   let arr = [3, 4, 5]
   @test.assert_true(arr.starts_with([3, 4]))?
   @test.assert_true(arr.starts_with([3, 4, 5]))?
-  @test.assert_false(arr.starts_with([3, 4, 5, 6]))?
+  @test.is_false(arr.starts_with([3, 4, 5, 6]))?
 }
 
 /// Check if the array ends with a given suffix.
@@ -566,5 +566,5 @@ test "ends_with" {
   let arr = [3, 4, 5]
   @test.assert_true(arr.ends_with([4, 5]))?
   @test.assert_true(arr.ends_with([3, 4, 5]))?
-  @test.assert_false(arr.ends_with([2, 3, 4, 5]))?
+  @test.is_false(arr.ends_with([2, 3, 4, 5]))?
 }

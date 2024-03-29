@@ -76,7 +76,7 @@ test "iter" {
       }
     },
   )
-  @test.assert_false(failed)?
+  @test.is_false(failed)?
 }
 
 /// Iterates over the list with index.
@@ -109,7 +109,7 @@ test "iteri" {
       v = v + 1
     },
   )
-  @test.assert_false(failed)?
+  @test.is_false(failed)?
 }
 
 /// Maps the list.
@@ -201,7 +201,7 @@ pub fn all[T](self : List[T], f : (T) -> Bool) -> Bool {
 test "all" {
   let ls = from_array([1, 2, 3, 4, 5])
   @test.assert_true(ls.all(fn(x) { x > 0 }))?
-  @test.assert_false(ls.all(fn(x) { x > 1 }))?
+  @test.is_false(ls.all(fn(x) { x > 1 }))?
 }
 
 /// Test if any element of the list satisfies the predicate.
@@ -215,7 +215,7 @@ pub fn any[T](self : List[T], f : (T) -> Bool) -> Bool {
 test "any" {
   let ls = from_array([1, 2, 3, 4, 5])
   @test.assert_true(ls.any(fn(x) { x > 4 }))?
-  @test.assert_false(ls.any(fn(x) { x > 5 }))?
+  @test.is_false(ls.any(fn(x) { x > 5 }))?
 }
 
 /// Tail of the list.
@@ -528,7 +528,7 @@ pub fn is_empty[T](self : List[T]) -> Bool {
 
 test "is_empty" {
   let ls = from_array([1, 2, 3, 4, 5])
-  @test.assert_false(ls.is_empty())?
+  @test.is_false(ls.is_empty())?
   @test.assert_true((List::Nil : List[Unit]).is_empty())?
 }
 
@@ -668,8 +668,8 @@ test "contain" {
   @test.assert_true(ls.contain(1))?
   @test.assert_true(ls.contain(2))?
   @test.assert_true(ls.contain(3))?
-  @test.assert_false(ls.contain(0))?
-  @test.assert_false(ls.contain(4))?
+  @test.is_false(ls.contain(0))?
+  @test.is_false(ls.contain(4))?
 }
 
 /// Produces a collection iteratively.
@@ -1053,7 +1053,7 @@ pub fn is_prefix[T : Eq](self : List[T], prefix : List[T]) -> Bool {
 
 test "is_prefix" {
   @test.assert_true(List::[1, 2, 3, 4, 5].is_prefix(List::[1, 2, 3]))?
-  @test.assert_false(List::[1, 2, 3, 4, 5].is_prefix(List::[3, 2, 3]))?
+  @test.is_false(List::[1, 2, 3, 4, 5].is_prefix(List::[3, 2, 3]))?
 }
 
 /// Compares two lists for equality.
@@ -1074,7 +1074,7 @@ pub fn equal[T : Eq](self : List[T], other : List[T]) -> Bool {
 
 test "equal" {
   @test.assert_true(List::[1, 2, 3].equal(List::[1, 2, 3]))?
-  @test.assert_false(List::[1, 2, 3].equal(List::[1, 3, 3]))?
+  @test.is_false(List::[1, 2, 3].equal(List::[1, 3, 3]))?
 }
 
 /// Returns true if list ends with suffix.
@@ -1091,7 +1091,7 @@ pub fn is_suffix[T : Eq](self : List[T], suffix : List[T]) -> Bool {
 
 test "is_suffix" {
   @test.assert_true(List::[1, 2, 3, 4, 5].is_suffix(List::[3, 4, 5]))?
-  @test.assert_false(List::[1, 2, 3, 4, 5].is_suffix(List::[3, 4, 6]))?
+  @test.is_false(List::[1, 2, 3, 4, 5].is_suffix(List::[3, 4, 6]))?
 }
 
 /// Similar to intersperse but with a list of values.

@@ -122,7 +122,7 @@ test "is_empty" {
   queue.push(2)
   queue.push(3)
   queue.push(4)
-  @test.assert_false(queue.is_empty())?
+  @test.is_false(queue.is_empty())?
 }
 
 /// Adds a value to the queue.

@@ -858,7 +858,7 @@ test "disjoint" {
       ImmutableSet::from_list(List::[4, 5, 6]),
     ),
   )?
-  @test.assert_false(
+  @test.is_false(
     ImmutableSet::from_list(List::[1, 2, 3]).subset(
       ImmutableSet::from_list(List::[3, 4, 5]),
     ),
@@ -871,7 +871,7 @@ test "subset" {
       ImmutableSet::from_list(List::[7, 2, 9, 4, 5, 6, 3, 8, 1]),
     ),
   )?
-  @test.assert_false(
+  @test.is_false(
     ImmutableSet::from_list(List::[1, 2, 3]).subset(
       ImmutableSet::from_list(List::[10, 11, 12, 13, 14]),
     ),
@@ -916,7 +916,7 @@ test "forall" {
   @test.assert_true(
     ImmutableSet::from_list(List::[2, 4, 6]).forall(fn(v) { v % 2 == 0 }),
   )?
-  @test.assert_false(
+  @test.is_false(
     ImmutableSet::from_list(List::[1, 3, 5]).forall(fn(v) { v % 2 == 0 }),
   )?
 }
@@ -925,7 +925,7 @@ test "exists" {
   @test.assert_true(
     ImmutableSet::from_list(List::[1, 4, 3]).exists(fn(v) { v % 2 == 0 }),
   )?
-  @test.assert_false(
+  @test.is_false(
     ImmutableSet::from_list(List::[1, 5, 3]).exists(fn(v) { v % 2 == 0 }),
   )?
 }
@@ -973,7 +973,7 @@ test "split" {
   let (left, present, right) = ImmutableSet::from_list(
     List::[7, 2, 9, 4, 5, 6, 3, 8, 1],
   ).split(0)
-  @test.assert_false(present)?
+  @test.is_false(present)?
   @test.eq(left.to_list(), Nil)?
   @test.eq(right.to_list(), List::[1, 2, 3, 4, 5, 6, 7, 8, 9])?
 }

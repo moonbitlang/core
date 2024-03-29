@@ -416,7 +416,7 @@ pub fn is_empty[T](self : Stack[T]) -> Bool {
 
 test "is_empty" {
   let empty : Stack[Unit] = Stack::new()
-  @test.assert_false(Stack::[1, 2, 3].is_empty())?
+  @test.is_false(Stack::[1, 2, 3].is_empty())?
   @test.assert_true(empty.is_empty())?
 }
 
@@ -530,5 +530,5 @@ pub fn op_equal[T : Eq](self : Stack[T], other : Stack[T]) -> Bool {
 
 test "equal" {
   @test.assert_true(Stack::[2, 4, 6].equal(Stack::[2, 4, 6]))?
-  @test.assert_false(Stack::[2, 4, 6].equal(Stack::[2, 4, 7]))?
+  @test.is_false(Stack::[2, 4, 6].equal(Stack::[2, 4, 7]))?
 }

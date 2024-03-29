@@ -339,7 +339,7 @@ test "iter" {
       i = i + 1
     },
   )
-  @test.assert_false(failed)?
+  @test.is_false(failed)?
 }
 
 test "iter2" {
@@ -376,7 +376,7 @@ test "iteri" {
       i = i + 1
     },
   )
-  @test.assert_false(failed)?
+  @test.is_false(failed)?
 }
 
 /// Iterates over the elements of the deque in reversed turn.
@@ -404,7 +404,7 @@ test "iter_rev" {
       i = i - 1
     },
   )
-  @test.assert_false(failed)?
+  @test.is_false(failed)?
 }
 
 /// Iterates over the elements of the deque in reversed turn with index.
@@ -434,7 +434,7 @@ test "iter_revi" {
       j = j + 1
     },
   )
-  @test.assert_false(failed)?
+  @test.is_false(failed)?
 }
 
 /// Clears the deque, removing all values.
@@ -516,7 +516,7 @@ test "is_empty" {
   let dq = Deque::new()
   @test.assert_true(dq.is_empty())?
   dq.push_back(3)
-  @test.assert_false(dq.is_empty())?
+  @test.is_false(dq.is_empty())?
 }
 
 /// Search the deque index for a given element.
@@ -564,5 +564,5 @@ test "contains" {
   @test.assert_true(dq.contains(3))?
   @test.assert_true(dq.contains(4))?
   @test.assert_true(dq.contains(5))?
-  @test.assert_false(dq.contains(6))?
+  @test.is_false(dq.contains(6))?
 }

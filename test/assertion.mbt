@@ -71,7 +71,7 @@ test "not_eq.eq" {
   }
 }
 
-pub fn assert_false(x : Bool, ~loc : SourceLoc = _) -> Result[Unit, String] {
+pub fn is_false(x : Bool, ~loc : SourceLoc = _) -> Result[Unit, String] {
   if x == false {
     Ok(())
   } else {
@@ -79,12 +79,12 @@ pub fn assert_false(x : Bool, ~loc : SourceLoc = _) -> Result[Unit, String] {
   }
 }
 
-test "assert_false.false" {
-  eq(assert_false(false), Ok(()))?
+test "is_false.false" {
+  eq(is_false(false), Ok(()))?
 }
 
-test "assert_false.true" {
-  not_eq(assert_false(true), Ok(()))?
+test "is_false.true" {
+  not_eq(is_false(true), Ok(()))?
 }
 
 pub fn assert_true(x : Bool, ~loc : SourceLoc = _) -> Result[Unit, String] {
