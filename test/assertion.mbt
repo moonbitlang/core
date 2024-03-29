@@ -115,10 +115,10 @@ test "is_true.false" {
 /// ```
 /// let a = "4" + "2"
 /// let b = "4" + "2"
-/// assert_is(a, a)?  // this is okay
-/// assert_is(a, b)?  // yields an error
+/// is(a, a)?  // this is okay
+/// is(a, b)?  // yields an error
 /// ```
-pub fn assert_is[T : Debug](
+pub fn is[T : Debug](
   a : T,
   b : T,
   ~loc : SourceLoc = _
@@ -132,18 +132,18 @@ pub fn assert_is[T : Debug](
   }
 }
 
-test "assert_is.is" {
+test "is.is" {
   let x = 1
   let s = "x:\(x)"
-  eq(assert_is(s, s), Ok(()))?
+  eq(is(s, s), Ok(()))?
 }
 
-test "assert_is.is.not" {
+test "is.is.not" {
   let x = 1
   let s1 = "x:\(x)"
   let s2 = "x:\(x)"
   eq(eq(s1, s2), Ok(()))?
-  not_eq(assert_is(s1, s2), Ok(()))?
+  not_eq(is(s1, s2), Ok(()))?
 }
 
 /// Assert referential inequality of two values.

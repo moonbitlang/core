@@ -403,7 +403,7 @@ test "clear" {
   @test.eq(m.size, 0)?
   @test.eq(m.capacity, 8)?
   for i = 0; i < m.capacity; i = i + 1 {
-    @test.assert_is(m.entries[i], Empty)?
+    @test.is(m.entries[i], Empty)?
   }
 }
 
