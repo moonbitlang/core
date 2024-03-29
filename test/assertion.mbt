@@ -46,7 +46,7 @@ test "eq.ne" {
   }
 }
 
-pub fn assert_ne[T : Debug + Eq](
+pub fn not_eq[T : Debug + Eq](
   a : T,
   b : T,
   ~loc : SourceLoc = _
@@ -60,12 +60,12 @@ pub fn assert_ne[T : Debug + Eq](
   }
 }
 
-test "assert_ne.ne" {
-  eq(assert_ne(1, 2), Ok(()))?
+test "not_eq.ne" {
+  eq(not_eq(1, 2), Ok(()))?
 }
 
-test "assert_ne.eq" {
-  match assert_ne(1, 1) {
+test "not_eq.eq" {
+  match not_eq(1, 1) {
     Ok(_) => return Err("unexpected success")
     Err(_) => ()
   }
@@ -84,7 +84,7 @@ test "assert_false.false" {
 }
 
 test "assert_false.true" {
-  assert_ne(assert_false(true), Ok(()))?
+  not_eq(assert_false(true), Ok(()))?
 }
 
 pub fn assert_true(x : Bool, ~loc : SourceLoc = _) -> Result[Unit, String] {
@@ -100,7 +100,7 @@ test "assert_true.true" {
 }
 
 test "assert_true.false" {
-  assert_ne(assert_true(false), Ok(()))?
+  not_eq(assert_true(false), Ok(()))?
 }
 
 /// Assert referential equality of two values.
@@ -143,7 +143,7 @@ test "assert_is.is.not" {
   let s1 = "x:\(x)"
   let s2 = "x:\(x)"
   eq(eq(s1, s2), Ok(()))?
-  assert_ne(assert_is(s1, s2), Ok(()))?
+  not_eq(assert_is(s1, s2), Ok(()))?
 }
 
 /// Assert referential inequality of two values.
@@ -178,7 +178,7 @@ pub fn assert_is_not[T : Debug](
 test "assert_is_not.is" {
   let x = 1
   let s = "x:\(x)"
-  assert_ne(assert_is_not(s, s), Ok(()))?
+  not_eq(assert_is_not(s, s), Ok(()))?
 }
 
 test "assert_is_not.is.not" {
