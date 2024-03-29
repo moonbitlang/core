@@ -1228,3 +1228,23 @@ test "split" {
   @assertion.assert_eq(chunks, Vec::[Vec::[1], Vec::[2], Vec::[3], Vec::[4]])?
   @assertion.assert_eq(chunks.length(), 4)?
 }
+
+/// Convert vec to list.
+/// 
+/// # Example
+///
+/// ```
+/// Vec::[1, 2, 3, 4, 5].to_list()
+/// ```
+pub fn to_list[T](self : Vec[T]) -> List[T] {
+  for i = self.len - 1, list = List::Nil; i >= 0; {
+    continue i - 1, List::Cons(self[i], list)
+  } else {
+    list
+  }
+}
+
+test "to_list" {
+  let ls = Vec::[1, 2, 3, 4, 5].to_list()
+  @assertion.assert_eq(ls, Cons(1, Cons(2, Cons(3, Cons(4, Cons(5, Nil))))))?
+}

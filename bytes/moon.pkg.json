@@ -1,9 +1,3 @@
 {
-    "import": [
-        {
-            "path": "moonbitlang/core/assertion",
-            "alias": "assertion"
-        },
-        "moonbitlang/core/coverage"
-    ]
+  "import": ["moonbitlang/core/assertion", "moonbitlang/core/coverage"]
 }
