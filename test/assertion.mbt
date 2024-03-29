@@ -158,10 +158,10 @@ test "is.is.not" {
 /// ```
 /// let a = "4" + "2"
 /// let b = "4" + "2"
-/// assert_is_not(a, b)?  // this is okay
-/// assert_is_not(a, a)?  // yields an error
+/// is_not(a, b)?  // this is okay
+/// is_not(a, a)?  // yields an error
 /// ```
-pub fn assert_is_not[T : Debug](
+pub fn is_not[T : Debug](
   a : T,
   b : T,
   ~loc : SourceLoc = _
@@ -175,16 +175,16 @@ pub fn assert_is_not[T : Debug](
   }
 }
 
-test "assert_is_not.is" {
+test "is_not.is" {
   let x = 1
   let s = "x:\(x)"
-  not_eq(assert_is_not(s, s), Ok(()))?
+  not_eq(is_not(s, s), Ok(()))?
 }
 
-test "assert_is_not.is.not" {
+test "is_not.is.not" {
   let x = 1
   let s1 = "x:\(x)"
   let s2 = "x:\(x)"
   eq(eq(s1, s2), Ok(()))?
-  eq(assert_is_not(s1, s2), Ok(()))?
+  eq(is_not(s1, s2), Ok(()))?
 }

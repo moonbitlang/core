@@ -228,7 +228,7 @@ pub fn new[T](length : Int, value : () -> T) -> Array[T] {
 
 test "new" {
   let arr = new(2, fn() { { val: 1 } })
-  @test.assert_is_not(arr[0], arr[1])?
+  @test.is_not(arr[0], arr[1])?
 }
 
 /// Create a new array. Values are built from indexes.
