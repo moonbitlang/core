@@ -18,6 +18,34 @@ fn T::debug_write(T, Buffer) -> Unit
 fn T::op_equal(T, T) -> Bool
 
 // Traits
+pub trait Add {
+  op_add(Self, Self) -> Self
+}
+
+pub trait Divide {
+  op_div(Self, Self) -> Self
+}
+
+pub trait FromInt {
+  from_int(Int) -> Self
+}
+
+pub trait Multiply {
+  op_mul(Self, Self) -> Self
+}
+
+pub trait Negate {
+  op_neg(Self) -> Self
+}
+
+pub trait Num : FromInt + Add + Subtract + Multiply + Divide + Negate {
+  abs(Self) -> Self
+  signum(Self) -> Self
+}
+
+pub trait Subtract {
+  op_sub(Self, Self) -> Self
+}
 
 // Extension Methods
 
