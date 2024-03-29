@@ -90,6 +90,35 @@ test "minimum.ref" {
   @assertion.assert_is(minimum(x2t, x2), x2t)?
 }
 
+pub trait Add {
+  op_add(Self, Self) -> Self
+}
+
+pub trait Subtract {
+  op_sub(Self, Self) -> Self
+}
+
+pub trait Multiply {
+  op_mul(Self, Self) -> Self
+}
+
+pub trait Divide {
+  op_div(Self, Self) -> Self
+}
+
+pub trait Negate {
+  op_neg(Self) -> Self
+}
+
+pub trait FromInt {
+  from_int(Int) -> Self
+}
+
+pub trait Num: FromInt + Add + Subtract + Multiply + Divide + Negate {
+  abs(Self) -> Self
+  signum(Self) -> Self
+}
+
 // For testing purposes
 struct T {
   mut x : Int

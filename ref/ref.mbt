@@ -112,17 +112,17 @@ pub fn update[T](self : Ref[T], f : (T) -> T) -> Unit {
 }
 
 /// Increments the value of a reference by 1. The default value is 1.
-pub fn incr[T : @num.Num](
+pub fn incr[T : @math.FromInt + @math.Add](
   self : Ref[T],
-  ~value : T = @num.Num::from_int(1)
+  ~value : T = @math.FromInt::from_int(1)
 ) -> Unit {
   self.val = self.val + value
 }
 
 /// Decrements the value of a reference by value. The default value is 1.
-pub fn decr[T : @num.Num](
+pub fn decr[T : @math.FromInt + @math.Subtract](
   self : Ref[T],
-  ~value : T = @num.Num::from_int(1)
+  ~value : T = @math.FromInt::from_int(1)
 ) -> Unit {
   self.val = self.val - value
 }
