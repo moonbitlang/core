@@ -853,12 +853,12 @@ fn of_sorted_list[T : Compare](list : List[T]) -> ImmutableSet[T] {
 }
 
 test "disjoint" {
-  @assertion.assert_true(
+  @test.is_true(
     ImmutableSet::from_list(List::[1, 2, 3]).disjoint(
       ImmutableSet::from_list(List::[4, 5, 6]),
     ),
   )?
-  @assertion.assert_false(
+  @test.is_false(
     ImmutableSet::from_list(List::[1, 2, 3]).subset(
       ImmutableSet::from_list(List::[3, 4, 5]),
     ),
@@ -866,12 +866,12 @@ test "disjoint" {
 }
 
 test "subset" {
-  @assertion.assert_true(
+  @test.is_true(
     ImmutableSet::from_list(List::[1, 2, 3]).subset(
       ImmutableSet::from_list(List::[7, 2, 9, 4, 5, 6, 3, 8, 1]),
     ),
   )?
-  @assertion.assert_false(
+  @test.is_false(
     ImmutableSet::from_list(List::[1, 2, 3]).subset(
       ImmutableSet::from_list(List::[10, 11, 12, 13, 14]),
     ),
@@ -879,7 +879,7 @@ test "subset" {
 }
 
 test "diff" {
-  @assertion.assert_eq(
+  @test.eq(
     ImmutableSet::from_list(List::[1, 2, 3]).diff(
       ImmutableSet::from_list(List::[4, 5, 1]),
     ).to_list(),
@@ -888,7 +888,7 @@ test "diff" {
 }
 
 test "inter" {
-  @assertion.assert_eq(
+  @test.eq(
     ImmutableSet::from_list(List::[3, 4, 5]).inter(
       ImmutableSet::from_list(List::[4, 5, 6]),
     ).to_list(),
@@ -897,7 +897,7 @@ test "inter" {
 }
 
 test "union" {
-  @assertion.assert_eq(
+  @test.eq(
     ImmutableSet::from_list(List::[3, 4, 5]).union(
       ImmutableSet::from_list(List::[4, 5, 6]),
     ).to_list(),
@@ -906,32 +906,32 @@ test "union" {
 }
 
 test "map" {
-  @assertion.assert_eq(
+  @test.eq(
     ImmutableSet::from_list(List::[1, 2, 3, 4, 5]).map(fn(x) { x * 2 }).to_list(),
     List::[2, 4, 6, 8, 10],
   )?
 }
 
 test "forall" {
-  @assertion.assert_true(
+  @test.is_true(
     ImmutableSet::from_list(List::[2, 4, 6]).forall(fn(v) { v % 2 == 0 }),
   )?
-  @assertion.assert_false(
+  @test.is_false(
     ImmutableSet::from_list(List::[1, 3, 5]).forall(fn(v) { v % 2 == 0 }),
   )?
 }
 
 test "exists" {
-  @assertion.assert_true(
+  @test.is_true(
     ImmutableSet::from_list(List::[1, 4, 3]).exists(fn(v) { v % 2 == 0 }),
   )?
-  @assertion.assert_false(
+  @test.is_false(
     ImmutableSet::from_list(List::[1, 5, 3]).exists(fn(v) { v % 2 == 0 }),
   )?
 }
 
 test "fold" {
-  @assertion.assert_eq(
+  @test.eq(
     ImmutableSet::from_list(List::[1, 2, 3, 4, 5]).fold(
       0,
       fn(acc, x) { acc + x },
@@ -941,7 +941,7 @@ test "fold" {
 }
 
 test "filter" {
-  @assertion.assert_eq(
+  @test.eq(
     ImmutableSet::from_list(List::[1, 2, 3, 4, 5, 6]).filter(
       fn(v) { v % 2 == 0 },
     ).to_list(),
@@ -950,42 +950,36 @@ test "filter" {
 }
 
 test "find" {
-  @assertion.assert_eq(
-    6,
-    ImmutableSet::from_list(List::[1, 2, 3, 4, 5, 6]).find(6),
-  )?
+  @test.eq(6, ImmutableSet::from_list(List::[1, 2, 3, 4, 5, 6]).find(6))?
 }
 
 test "max" {
-  @assertion.assert_eq(
-    9,
-    ImmutableSet::from_list(List::[7, 2, 9, 4, 5, 6, 3, 8, 1]).max(),
-  )?
+  @test.eq(9, ImmutableSet::from_list(List::[7, 2, 9, 4, 5, 6, 3, 8, 1]).max())?
 }
 
 test "split" {
   let (left, present, right) = ImmutableSet::from_list(
     List::[7, 2, 9, 4, 5, 6, 3, 8, 1],
   ).split(5)
-  @assertion.assert_true(present)?
-  @assertion.assert_eq(left.to_list(), List::[1, 2, 3, 4])?
-  @assertion.assert_eq(right.to_list(), List::[6, 7, 8, 9])?
+  @test.is_true(present)?
+  @test.eq(left.to_list(), List::[1, 2, 3, 4])?
+  @test.eq(right.to_list(), List::[6, 7, 8, 9])?
   let (left, present, right) = ImmutableSet::from_list(
     List::[7, 2, 9, 4, 5, 6, 3, 8, 1],
   ).split(0)
-  @assertion.assert_false(present)?
-  @assertion.assert_eq(left.to_list(), Nil)?
-  @assertion.assert_eq(right.to_list(), List::[1, 2, 3, 4, 5, 6, 7, 8, 9])?
+  @test.is_false(present)?
+  @test.eq(left.to_list(), Nil)?
+  @test.eq(right.to_list(), List::[1, 2, 3, 4, 5, 6, 7, 8, 9])?
 }
 
 test "contain" {
-  @assertion.assert_true(
+  @test.is_true(
     ImmutableSet::from_list(List::[7, 2, 9, 4, 6, 3, 8, 1]).add(5).contain(5),
   )?
 }
 
 test "from_list" {
-  @assertion.assert_eq(
+  @test.eq(
     ImmutableSet::from_list(List::[7, 2, 9, 4, 5, 6, 3, 8, 1]),
     Node(
       {
@@ -1027,14 +1021,14 @@ test "from_list" {
 }
 
 test "to_list" {
-  @assertion.assert_eq(
+  @test.eq(
     ImmutableSet::from_list(List::[7, 2, 9, 4, 5, 6, 3, 8, 1]).to_list(),
     List::[1, 2, 3, 4, 5, 6, 7, 8, 9],
   )?
 }
 
 test "from_array" {
-  @assertion.assert_eq(
+  @test.eq(
     ImmutableSet::[7, 2, 9, 4, 5, 6, 3, 8, 1].to_list(),
     List::[1, 2, 3, 4, 5, 6, 7, 8, 9],
   )?
@@ -1042,26 +1036,23 @@ test "from_array" {
 
 test "remove_min" {
   let set = ImmutableSet::from_list(List::[3, 4, 5]).remove_min()
-  @assertion.assert_eq(set.to_list(), List::[4, 5])?
+  @test.eq(set.to_list(), List::[4, 5])?
 }
 
 test "add" {
-  @assertion.assert_eq(
+  @test.eq(
     ImmutableSet::from_list(List::[7, 2, 9, 4, 6, 3, 8, 1]).add(5).to_list(),
     List::[1, 2, 3, 4, 5, 6, 7, 8, 9],
   )?
 }
 
 test "remove" {
-  @assertion.assert_eq(
+  @test.eq(
     ImmutableSet::from_list(List::[7, 2, 9, 4, 5, 6, 3, 8, 1]).remove(8).to_list(),
     List::[1, 2, 3, 4, 5, 6, 7, 9],
   )?
 }
 
 test "min" {
-  @assertion.assert_eq(
-    1,
-    ImmutableSet::from_list(List::[7, 2, 9, 4, 5, 6, 3, 8, 1]).min(),
-  )?
+  @test.eq(1, ImmutableSet::from_list(List::[7, 2, 9, 4, 5, 6, 3, 8, 1]).min())?
 }

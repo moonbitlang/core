@@ -115,8 +115,8 @@ pub fn back[T](self : Deque[T]) -> Option[T] {
 
 test "front_and_back" {
   let dq = Deque::[1, 2, 3, 4, 5]
-  @assertion.assert_eq(dq.back(), Some(5))?
-  @assertion.assert_eq(dq.front(), Some(1))?
+  @test.eq(dq.back(), Some(5))?
+  @test.eq(dq.front(), Some(1))?
 }
 
 /// Adds an element to the front of the deque.
@@ -223,22 +223,22 @@ pub fn pop_back[T](self : Deque[T]) -> Option[T] {
 
 test "push_and_pop" {
   let dq = Deque::[1, 2, 3, 4, 5]
-  @assertion.assert_eq(dq.pop_back(), Some(5))?
-  @assertion.assert_eq(dq.length(), 4)?
-  @assertion.assert_eq(dq.back(), Some(4))?
-  @assertion.assert_eq(dq.pop_front(), Some(1))?
-  @assertion.assert_eq(dq.length(), 3)?
-  @assertion.assert_eq(dq.front(), Some(2))?
+  @test.eq(dq.pop_back(), Some(5))?
+  @test.eq(dq.length(), 4)?
+  @test.eq(dq.back(), Some(4))?
+  @test.eq(dq.pop_front(), Some(1))?
+  @test.eq(dq.length(), 3)?
+  @test.eq(dq.front(), Some(2))?
   dq.push_front(5)
   dq.push_front(6)
   dq.push_back(7)
   dq.push_back(8)
-  @assertion.assert_eq(dq.length(), 7)?
-  @assertion.assert_eq(dq.pop_front(), Some(6))?
-  @assertion.assert_eq(dq.front(), Some(5))?
-  @assertion.assert_eq(dq.length(), 6)?
-  @assertion.assert_eq(dq.pop_back(), Some(8))?
-  @assertion.assert_eq(dq.back(), Some(7))?
+  @test.eq(dq.length(), 7)?
+  @test.eq(dq.pop_front(), Some(6))?
+  @test.eq(dq.front(), Some(5))?
+  @test.eq(dq.length(), 6)?
+  @test.eq(dq.pop_back(), Some(8))?
+  @test.eq(dq.back(), Some(7))?
 }
 
 /// Retrieves the element at the specified index from the deque.
@@ -266,15 +266,15 @@ pub fn op_get[T](self : Deque[T], index : Int) -> T {
 
 test "op_get" {
   let dq = Deque::[1, 2, 3, 4, 5]
-  @assertion.assert_eq(dq[0], 1)?
-  @assertion.assert_eq(dq[1], 2)?
-  @assertion.assert_eq(dq[2], 3)?
-  @assertion.assert_eq(dq[3], 4)?
-  @assertion.assert_eq(dq[4], 5)?
+  @test.eq(dq[0], 1)?
+  @test.eq(dq[1], 2)?
+  @test.eq(dq[2], 3)?
+  @test.eq(dq[3], 4)?
+  @test.eq(dq[4], 5)?
   dq.push_back(1)
-  @assertion.assert_eq(dq[5], 1)?
+  @test.eq(dq[5], 1)?
   dq.push_front(2)
-  @assertion.assert_eq(dq[0], 2)?
+  @test.eq(dq[0], 2)?
 }
 
 /// Sets the value of the element at the specified index.
@@ -339,7 +339,7 @@ test "iter" {
       i = i + 1
     },
   )
-  @assertion.assert_false(failed)?
+  @test.is_false(failed)?
 }
 
 test "iter2" {
@@ -348,7 +348,7 @@ test "iter2" {
   v.pop_back_exn()
   let mut sum = 0
   v.iter(fn { x => sum += x })
-  @assertion.assert_eq(sum, 9)?
+  @test.eq(sum, 9)?
 }
 
 /// Iterates over the elements of the deque with index.
@@ -376,7 +376,7 @@ test "iteri" {
       i = i + 1
     },
   )
-  @assertion.assert_false(failed)?
+  @test.is_false(failed)?
 }
 
 /// Iterates over the elements of the deque in reversed turn.
@@ -404,7 +404,7 @@ test "iter_rev" {
       i = i - 1
     },
   )
-  @assertion.assert_false(failed)?
+  @test.is_false(failed)?
 }
 
 /// Iterates over the elements of the deque in reversed turn with index.
@@ -434,7 +434,7 @@ test "iter_revi" {
       j = j + 1
     },
   )
-  @assertion.assert_false(failed)?
+  @test.is_false(failed)?
 }
 
 /// Clears the deque, removing all values.
@@ -455,8 +455,8 @@ pub fn clear[T](self : Deque[T]) -> Unit {
 test "clear" {
   let dq = Deque::[3, 4, 5]
   dq.clear()
-  @assertion.assert_eq(dq.length(), 0)?
-  @assertion.assert_eq(dq.capacity(), 3)?
+  @test.eq(dq.length(), 0)?
+  @test.eq(dq.capacity(), 3)?
 }
 
 /// Maps a function over the elements of the deque.
@@ -475,9 +475,9 @@ pub fn map[T](self : Deque[T], f : (T) -> T) -> Unit {
 test "map" {
   let dq = Deque::[3, 4, 5]
   dq.map(fn(x) { x + 1 })
-  @assertion.assert_eq(dq[0], 4)?
-  @assertion.assert_eq(dq[1], 5)?
-  @assertion.assert_eq(dq[2], 6)?
+  @test.eq(dq[0], 4)?
+  @test.eq(dq[1], 5)?
+  @test.eq(dq[2], 6)?
 }
 
 /// Maps a function over the elements of the deque with index.
@@ -496,9 +496,9 @@ pub fn mapi[T](self : Deque[T], f : (Int, T) -> T) -> Unit {
 test "mapi" {
   let dq = Deque::[3, 4, 5]
   dq.mapi(fn(i, x) { x + i })
-  @assertion.assert_eq(dq[0], 3)?
-  @assertion.assert_eq(dq[1], 5)?
-  @assertion.assert_eq(dq[2], 7)?
+  @test.eq(dq[0], 3)?
+  @test.eq(dq[1], 5)?
+  @test.eq(dq[2], 7)?
 }
 
 /// Test if the deque is empty.
@@ -514,9 +514,9 @@ pub fn is_empty[T](self : Deque[T]) -> Bool {
 
 test "is_empty" {
   let dq = Deque::new()
-  @assertion.assert_true(dq.is_empty())?
+  @test.is_true(dq.is_empty())?
   dq.push_back(3)
-  @assertion.assert_false(dq.is_empty())?
+  @test.is_false(dq.is_empty())?
 }
 
 /// Search the deque index for a given element.
@@ -537,10 +537,10 @@ pub fn search[T : Eq](self : Deque[T], value : T) -> Option[Int] {
 
 test "search" {
   let dq = Deque::[3, 4, 5]
-  @assertion.assert_eq(dq.search(3), Some(0))?
-  @assertion.assert_eq(dq.search(4), Some(1))?
-  @assertion.assert_eq(dq.search(5), Some(2))?
-  @assertion.assert_eq(dq.search(6), None)?
+  @test.eq(dq.search(3), Some(0))?
+  @test.eq(dq.search(4), Some(1))?
+  @test.eq(dq.search(5), Some(2))?
+  @test.eq(dq.search(6), None)?
 }
 
 /// Checks if the vector contains an element.
@@ -561,8 +561,8 @@ pub fn contains[T : Eq](self : Deque[T], value : T) -> Bool {
 
 test "contains" {
   let dq = Deque::[3, 4, 5]
-  @assertion.assert_true(dq.contains(3))?
-  @assertion.assert_true(dq.contains(4))?
-  @assertion.assert_true(dq.contains(5))?
-  @assertion.assert_false(dq.contains(6))?
+  @test.is_true(dq.contains(3))?
+  @test.is_true(dq.contains(4))?
+  @test.is_true(dq.contains(5))?
+  @test.is_false(dq.contains(6))?
 }

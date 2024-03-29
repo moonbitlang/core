@@ -31,9 +31,9 @@ pub fn maximum[T : Compare](x : T, y : T) -> T {
 }
 
 test "maximum.value" {
-  @assertion.assert_eq(maximum(1, 2), 2)?
-  @assertion.assert_eq(maximum(2, 1), 2)?
-  @assertion.assert_eq(maximum(2, 2), 2)?
+  @test.eq(maximum(1, 2), 2)?
+  @test.eq(maximum(2, 1), 2)?
+  @test.eq(maximum(2, 2), 2)?
 }
 
 test "maximum.ref" {
@@ -44,11 +44,11 @@ test "maximum.ref" {
 
   // We need another value that equals to x2 by value but not reference
   let x2t = "v\(v2)"
-  @assertion.assert_is_not(x2, x2t).unwrap()
-  @assertion.assert_is(maximum(x1, x2), x2)?
-  @assertion.assert_is(maximum(x2, x1), x2)?
-  @assertion.assert_is(maximum(x2, x2t), x2t)?
-  @assertion.assert_is(maximum(x2t, x2), x2)?
+  @test.is_not(x2, x2t).unwrap()
+  @test.is(maximum(x1, x2), x2)?
+  @test.is(maximum(x2, x1), x2)?
+  @test.is(maximum(x2, x2t), x2t)?
+  @test.is(maximum(x2t, x2), x2)?
 }
 
 /// Compares and returns the minimum of two values.
@@ -70,9 +70,9 @@ pub fn minimum[T : Compare](x : T, y : T) -> T {
 }
 
 test "minimum.value" {
-  @assertion.assert_eq(minimum(1, 2), 1)?
-  @assertion.assert_eq(minimum(2, 1), 1)?
-  @assertion.assert_eq(minimum(2, 2), 2)?
+  @test.eq(minimum(1, 2), 1)?
+  @test.eq(minimum(2, 1), 1)?
+  @test.eq(minimum(2, 2), 2)?
 }
 
 test "minimum.ref" {
@@ -83,9 +83,9 @@ test "minimum.ref" {
 
   // We need another value that equals to x2 by value but not reference
   let x2t = "v\(v2)"
-  @assertion.assert_is_not(x2, x2t).unwrap()
-  @assertion.assert_is(minimum(x1, x2), x1)?
-  @assertion.assert_is(minimum(x2, x1), x1)?
-  @assertion.assert_is(minimum(x2, x2t), x2)?
-  @assertion.assert_is(minimum(x2t, x2), x2t)?
+  @test.is_not(x2, x2t).unwrap()
+  @test.is(minimum(x1, x2), x1)?
+  @test.is(minimum(x2, x1), x1)?
+  @test.is(minimum(x2, x2t), x2)?
+  @test.is(minimum(x2t, x2), x2t)?
 }

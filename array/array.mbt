@@ -41,7 +41,7 @@ test "iter" {
       i = i + 1
     },
   )
-  @assertion.assert_false(failed)?
+  @test.is_false(failed)?
 }
 
 /// Iterates over the array with index. 
@@ -75,7 +75,7 @@ test "iteri" {
       i = i + 1
     },
   )
-  @assertion.assert_false(failed)?
+  @test.is_false(failed)?
 }
 
 /// Iterates over each element in reversed turn.
@@ -107,7 +107,7 @@ test "iter_rev" {
       i = i - 1
     },
   )
-  @assertion.assert_false(failed)?
+  @test.is_false(failed)?
 }
 
 /// Iterates over the array with index in reversed turn. 
@@ -144,7 +144,7 @@ test "iter_revi" {
       j = j + 1
     },
   )
-  @assertion.assert_false(failed)?
+  @test.is_false(failed)?
 }
 
 /// Applies a function to each element of the array and returns a new array with the results.
@@ -171,8 +171,8 @@ test "map" {
   let arr = [1, 2, 3, 4, 5]
   let doubled = arr.map(fn(x) { x * 2 })
   let empty : Array[Unit] = Array::default().map(fn(x) { x })
-  @assertion.assert_eq(empty, [])?
-  @assertion.assert_eq(doubled, [2, 4, 6, 8, 10])?
+  @test.eq(empty, [])?
+  @test.eq(doubled, [2, 4, 6, 8, 10])?
 }
 
 /// Maps a function over the elements of the arr with index.
@@ -197,8 +197,8 @@ test "mapi" {
   let arr = [1, 2, 3, 4, 5]
   let doubled = arr.mapi(fn(x, i) { x * 2 + i })
   let empty : Array[Int] = Array::default().mapi(fn(x, i) { x + i })
-  @assertion.assert_eq(empty, [])?
-  @assertion.assert_eq(doubled, [2, 5, 8, 11, 14])?
+  @test.eq(empty, [])?
+  @test.eq(doubled, [2, 5, 8, 11, 14])?
 }
 
 pub fn op_equal[T : Eq](self : Array[T], that : Array[T]) -> Bool {
@@ -228,7 +228,7 @@ pub fn new[T](length : Int, value : () -> T) -> Array[T] {
 
 test "new" {
   let arr = new(2, fn() { { val: 1 } })
-  @assertion.assert_is_not(arr[0], arr[1])?
+  @test.is_not(arr[0], arr[1])?
 }
 
 /// Create a new array. Values are built from indexes.
@@ -246,8 +246,8 @@ pub fn new_with_index[T](length : Int, value : (Int) -> T) -> Array[T] {
 
 test "new_index" {
   let arr = new_with_index(2, fn { i => i })
-  @assertion.assert_eq(arr[0], 0)?
-  @assertion.assert_eq(arr[1], 1)?
+  @test.eq(arr[0], 0)?
+  @test.eq(arr[1], 1)?
 }
 
 /// Create a new array with given values.
@@ -257,7 +257,7 @@ pub fn Array::from_array[T](array : Array[T]) -> Array[T] {
 
 test "from_array" {
   let array = Array::[1, 2, 3, 4, 5]
-  @assertion.assert_eq(array, [1, 2, 3, 4, 5])?
+  @test.eq(array, [1, 2, 3, 4, 5])?
 }
 
 /// Fold out values from an array according to certain rules.
@@ -277,7 +277,7 @@ pub fn fold_left[T, U](self : Array[T], f : (U, T) -> U, ~init : U) -> U {
 
 test "fold_left" {
   let sum = [1, 2, 3, 4, 5].fold_left(~init=0, fn { sum, elem => sum + elem })
-  @assertion.assert_eq(sum, 15)?
+  @test.eq(sum, 15)?
 }
 
 /// Fold out values from an array according to certain rules in reversed turn.
@@ -297,7 +297,7 @@ pub fn fold_right[T, U](self : Array[T], f : (U, T) -> U, ~init : U) -> U {
 
 test "fold_right" {
   let sum = [1, 2, 3, 4, 5].fold_right(~init=0, fn { sum, elem => sum + elem })
-  @assertion.assert_eq(sum, 15)?
+  @test.eq(sum, 15)?
 }
 
 /// Fold out values from an array according to certain rules with index.
@@ -318,13 +318,9 @@ pub fn fold_lefti[T, U](self : Array[T], f : (Int, U, T) -> U, ~init : U) -> U {
 test "fold_lefti" {
   let sum = [1, 2, 3, 4, 5].fold_lefti(
     ~init=0,
-    fn {
-      index, sum, _elem => {
-        sum + index
-      }
-    },
+    fn { index, sum, _elem => sum + index },
   )
-  @assertion.assert_eq(sum, 10)?
+  @test.eq(sum, 10)?
 }
 
 /// Fold out values from an array according to certain rules in reversed turn with index.
@@ -348,7 +344,7 @@ test "fold_righti" {
     ~init=0,
     fn { index, sum, _elem => sum + index },
   )
-  @assertion.assert_eq(sum, 10)?
+  @test.eq(sum, 10)?
 }
 
 /// Reverses the order of elements in the slice, in place.
@@ -370,16 +366,16 @@ test "reverse" {
   {
     let arr = [1, 2]
     arr.reverse()
-    @assertion.assert_eq(arr, [2, 1])?
+    @test.eq(arr, [2, 1])?
   }
   {
     let arr = [1, 2, 3, 4, 5]
     arr.reverse()
-    @assertion.assert_eq(arr, [5, 4, 3, 2, 1])?
+    @test.eq(arr, [5, 4, 3, 2, 1])?
   }
   let arr = [1]
   arr.reverse()
-  @assertion.assert_eq(arr, [1])?
+  @test.eq(arr, [1])?
 }
 
 /// Swap two elements in the array.
@@ -400,7 +396,7 @@ pub fn swap[T](self : Array[T], i : Int, j : Int) -> Unit {
 test "swap" {
   let arr = [1, 2, 3, 4, 5]
   arr.swap(0, 1)
-  @assertion.assert_eq(arr, [2, 1, 3, 4, 5])?
+  @test.eq(arr, [2, 1, 3, 4, 5])?
 }
 
 /// Check if all the elements in the array match the condition.
@@ -423,8 +419,8 @@ pub fn all[T](self : Array[T], f : (T) -> Bool) -> Bool {
 
 test "all" {
   let arr = [1, 2, 3, 4, 5]
-  @assertion.assert_eq(arr.all(fn(ele) { ele < 6 }), true)?
-  @assertion.assert_eq(arr.all(fn(ele) { ele < 5 }), false)?
+  @test.eq(arr.all(fn(ele) { ele < 6 }), true)?
+  @test.eq(arr.all(fn(ele) { ele < 5 }), false)?
 }
 
 /// Check if any of the elements in the array match the condition.
@@ -447,8 +443,8 @@ pub fn any[T](self : Array[T], f : (T) -> Bool) -> Bool {
 
 test "any" {
   let arr = [1, 2, 3, 4, 5]
-  @assertion.assert_eq(arr.any(fn(ele) { ele < 6 }), true)?
-  @assertion.assert_eq(arr.any(fn(ele) { ele < 5 }), true)?
+  @test.eq(arr.any(fn(ele) { ele < 6 }), true)?
+  @test.eq(arr.any(fn(ele) { ele < 5 }), true)?
 }
 
 /// Fill the array with a given value.
@@ -466,7 +462,7 @@ pub fn fill[T](self : Array[T], value : T) -> Unit {
 test "fill" {
   let arr = [0, 0, 0, 0, 0]
   arr.fill(3)
-  @assertion.assert_eq(arr, [3, 3, 3, 3, 3])?
+  @test.eq(arr, [3, 3, 3, 3, 3])?
 }
 
 /// Search the array index for a given element.
@@ -487,8 +483,8 @@ pub fn search[T : Eq](self : Array[T], value : T) -> Option[Int] {
 
 test "search" {
   let arr = [1, 2, 3]
-  @assertion.assert_eq(arr.search(3), Some(2))?
-  @assertion.assert_eq(arr.search(-1), None)?
+  @test.eq(arr.search(3), Some(2))?
+  @test.eq(arr.search(-1), None)?
 }
 
 /// Checks if the array contains an element.
@@ -509,10 +505,10 @@ pub fn contains[T : Eq](self : Array[T], value : T) -> Bool {
 
 test "contains" {
   let arr = [3, 4, 5]
-  @assertion.assert_true(arr.contains(3))?
-  @assertion.assert_true(arr.contains(4))?
-  @assertion.assert_true(arr.contains(5))?
-  @assertion.assert_false(arr.contains(6))?
+  @test.is_true(arr.contains(3))?
+  @test.is_true(arr.contains(4))?
+  @test.is_true(arr.contains(5))?
+  @test.is_false(arr.contains(6))?
 }
 
 /// Check if the array starts with a given prefix.
@@ -536,9 +532,9 @@ pub fn starts_with[T : Eq](self : Array[T], prefix : Array[T]) -> Bool {
 
 test "starts_with" {
   let arr = [3, 4, 5]
-  @assertion.assert_true(arr.starts_with([3, 4]))?
-  @assertion.assert_true(arr.starts_with([3, 4, 5]))?
-  @assertion.assert_false(arr.starts_with([3, 4, 5, 6]))?
+  @test.is_true(arr.starts_with([3, 4]))?
+  @test.is_true(arr.starts_with([3, 4, 5]))?
+  @test.is_false(arr.starts_with([3, 4, 5, 6]))?
 }
 
 /// Check if the array ends with a given suffix.
@@ -564,7 +560,7 @@ pub fn ends_with[T : Eq](self : Array[T], suffix : Array[T]) -> Bool {
 
 test "ends_with" {
   let arr = [3, 4, 5]
-  @assertion.assert_true(arr.ends_with([4, 5]))?
-  @assertion.assert_true(arr.ends_with([3, 4, 5]))?
-  @assertion.assert_false(arr.ends_with([2, 3, 4, 5]))?
+  @test.is_true(arr.ends_with([4, 5]))?
+  @test.is_true(arr.ends_with([3, 4, 5]))?
+  @test.is_false(arr.ends_with([2, 3, 4, 5]))?
 }

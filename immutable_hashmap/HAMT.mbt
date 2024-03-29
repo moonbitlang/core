@@ -132,19 +132,19 @@ test "HAMT" {
     i, map => continue i + 1, map.add(i, i)
   }
   for i = 0; i < 100; i = i + 1 {
-    @assertion.assert_eq((i, map.find(i)), (i, Some(i)))?
+    @test.eq((i, map.find(i)), (i, Some(i)))?
   }
-  @assertion.assert_eq((100, map.find(100)), (100, None))?
+  @test.eq((100, map.find(100)), (100, None))?
   let map = map.add(100, 100)
-  @assertion.assert_eq((100, map.find(100)), (100, Some(100)))?
+  @test.eq((100, map.find(100)), (100, Some(100)))?
   // test for replacement
   let map = loop 0, map {
     100, map => map
     i, map => continue i + 2, map.add(i, i + 1)
   }
   for i = 0; i < 100; i = i + 2 {
-    @assertion.assert_eq((i, map.find(i)), (i, Some(i + 1)))?
-    @assertion.assert_eq((i + 1, map.find(i + 1)), (i + 1, Some(i + 1)))?
+    @test.eq((i, map.find(i)), (i, Some(i + 1)))?
+    @test.eq((i + 1, map.find(i + 1)), (i + 1, Some(i + 1)))?
   }
 }
 
@@ -198,15 +198,15 @@ test "HAMT::remove" {
     i, map => continue i + 1, map.add(i, i)
   }
   for i = 0; i < 100; i = i + 1 {
-    @assertion.assert_eq((i, map.find(i)), (i, Some(i)))?
+    @test.eq((i, map.find(i)), (i, Some(i)))?
   }
   let map = loop 0, map {
     100, map => map.remove(100) // test for removing non-existing element
     i, map => continue i + 2, map.remove(i)
   }
   for i = 0; i < 100; i = i + 2 {
-    @assertion.assert_eq(map.find(i), None)?
-    @assertion.assert_eq(map.find(i + 1), Some(i + 1))?
+    @test.eq(map.find(i), None)?
+    @test.eq(map.find(i + 1), Some(i + 1))?
   }
 }
 
@@ -230,9 +230,9 @@ pub fn size[K, V](self : Map[K, V]) -> Int {
 
 test "HAMT::size" {
   for i = 0, map = Map::make(); i < 20; i = i + 1, map = map.add(i, i) {
-    @assertion.assert_eq(map.size(), i)?
+    @test.eq(map.size(), i)?
   } else {
-    @assertion.assert_eq(map.add(0, 0).size(), 20)?
+    @test.eq(map.add(0, 0).size(), 20)?
   }
 }
 
@@ -279,7 +279,7 @@ test "HAMT::to_string" {
   let map = Map::make().add(1, 1).add(3, 3).add(0x0f_ff_ff_ff, 0x0f_ff_ff_ff).add(
     42, 42,
   )
-  @assertion.assert_eq(
+  @test.eq(
     map.to_string(),
     "@immutable_hashmap.Map::[(1, 1), (3, 3), (42, 42), (268435455, 268435455)]",
   )?
@@ -297,8 +297,8 @@ pub fn Map::from_array[K : Eq + Hash, V](arr : Array[(K, V)]) -> Map[K, V] {
 
 test "HAMT::from_array" {
   let map = Map::[(1, "1"), (2, "2"), (42, "42")]
-  @assertion.assert_eq((1, map.find(1)), (1, Some("1")))?
-  @assertion.assert_eq((2, map.find(2)), (2, Some("2")))?
-  @assertion.assert_eq((42, map.find(42)), (42, Some("42")))?
-  @assertion.assert_eq((43, map.find(43)), (43, None))?
+  @test.eq((1, map.find(1)), (1, Some("1")))?
+  @test.eq((2, map.find(2)), (2, Some("2")))?
+  @test.eq((42, map.find(42)), (42, Some("42")))?
+  @test.eq((43, map.find(43)), (43, None))?
 }

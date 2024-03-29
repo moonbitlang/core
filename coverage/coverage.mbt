@@ -13,7 +13,7 @@
 // limitations under the License.
 
 /// The `CoverageCounter` structure is used for keeping track of the number of
-/// times each chunk of code is executed. It's not very useful outside of 
+/// times each chunk of code is executed. It's not very useful outside of
 /// generated code.
 struct CoverageCounter {
   counter : Array[Int]
@@ -49,7 +49,7 @@ fn CoverageCounter::debug_write(self : CoverageCounter, buf : Buffer) -> Unit {
 test "new_counter" {
   let counter = CoverageCounter::new(2)
   let result = counter.to_string()
-  // @assertion.assert_eq(result, "[0, 0]")?
+  // @test.eq(result, "[0, 0]")?
   if result != "[0, 0]" {
     return Err("Expected: [0, 0], got: " + result)
   }
@@ -60,7 +60,7 @@ test "incr_counter" {
   counter.incr(0)
   counter.incr(9)
   let result = counter.to_string()
-  // @assertion.assert_eq(result, "[1, 0, 0, 0, 0, 0, 0, 0, 0, 1]")?
+  // @test.eq(result, "[1, 0, 0, 0, 0, 0, 0, 0, 0, 1]")?
   if result != "[1, 0, 0, 0, 0, 0, 0, 0, 0, 1]" {
     return Err("Expected: [1, 0, 0, 0, 0, 0, 0, 0, 0, 1], got: " + result)
   }
@@ -89,11 +89,11 @@ fn Output::output(self : Buffer, content : String) -> Unit {
   self.write_string(content)
 }
 
-// TODO: This escape function should belong to the String package, but is 
+// TODO: This escape function should belong to the String package, but is
 // not mature enough, so it's left here temporarily.
 /// Escape a string using standard JSON escape sequences to the given buffer,
 /// usually for quoting uses.
-///  
+///
 /// This method only escapes characters below 0x20 and the following characters:
 /// `"`, `'`, `\`.
 fn escape_to(s : String, buf : Buffer) -> Unit {
@@ -135,7 +135,7 @@ fn escape_to(s : String, buf : Buffer) -> Unit {
 
 /// Escape a string using standard C escape sequences and return the escaped string,
 /// usually for quoting uses.
-///  
+///
 /// This method only escapes characters below 0x20 and the following characters:
 /// `"`, `'`, `\`.
 pub fn escape(s : String) -> String {
@@ -147,7 +147,7 @@ pub fn escape(s : String) -> String {
 test "backslash escape" {
   let s = "\n\r\t\b\"'\\"
   let expected = "\\n\\r\\t\\b\\\"'\\\\"
-  // @assertion.assert_eq(escape(s), expected)?
+  // @test.eq(escape(s), expected)?
   let escape_s = escape(s)
   if escape_s != expected {
     return Err("Expected: " + expected + ", got: " + escape_s)
@@ -158,7 +158,7 @@ test "backslash escape" {
 // test "hex escape" {
 //   let s = "\x11\x12\x01\x02"
 //   let expected = "\\x11\\x12\\x01\\x02"
-//   @assertion.assert_eq(s.escape(), expected)?
+//   @test.eq(s.escape(), expected)?
 // }
 
 fn log(counters : List[(String, CoverageCounter)], io : Output) -> Unit {
@@ -205,7 +205,7 @@ test "log" {
     #|}
     #|
 
-  // @assertion.assert_eq(result, expected)?
+  // @test.eq(result, expected)?
   if result != expected {
     return Err("Expected: " + expected + ", got: " + result)
   }
@@ -214,9 +214,9 @@ test "log" {
 /// Output the counters to stdout for coverage report usages. The counter data
 /// is printed as a map of `{ counter_id: counter_contents }`, enclosed between
 /// a pair of delimiters.
-/// 
+///
 /// An example output of this function is like the following:
-/// 
+///
 /// ```plaintext
 /// ----- BEGIN MOONBIT COVERAGE -----
 /// {

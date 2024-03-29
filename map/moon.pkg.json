@@ -1,6 +1,6 @@
 {
   "import": [
-    "moonbitlang/core/assertion",
+    "moonbitlang/core/test",
     "moonbitlang/core/list",
     "moonbitlang/core/vec",
     "moonbitlang/core/immutable_set",

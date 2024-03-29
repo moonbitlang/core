@@ -40,8 +40,8 @@ pub fn when[T](condition : Bool, value : () -> T) -> Option[T] {
 test "when" {
   let result = when(true, fn() { "Hello, World!" })
   let result2 = when(false, fn() { "Hello, World!" })
-  @assertion.assert_eq(result, Some("Hello, World!"))?
-  @assertion.assert_eq(result2, None)?
+  @test.eq(result, Some("Hello, World!"))?
+  @test.eq(result2, None)?
 }
 
 /// The `unless` function returns an `Option` value based on a condition.
@@ -64,8 +64,8 @@ pub fn unless[T](condition : Bool, value : () -> T) -> Option[T] {
 test "unless" {
   let result = unless(true, fn() { "Hello, World!" })
   let result2 = unless(false, fn() { "Hello, World!" })
-  @assertion.assert_eq(result, None)?
-  @assertion.assert_eq(result2, Some("Hello, World!"))?
+  @test.eq(result, None)?
+  @test.eq(result2, Some("Hello, World!"))?
 }
 
 /// Creates an empty `Option` of type `T`.
@@ -76,7 +76,7 @@ pub fn empty[T]() -> Option[T] {
 test "empty" {
   let x : Option[Int] = None
   let y : Option[Int] = empty()
-  @assertion.assert_eq(x, y)?
+  @test.eq(x, y)?
 }
 
 /// Creates an `Option` that contains a value.
@@ -87,7 +87,7 @@ pub fn some[T](value : T) -> Option[T] {
 test "some" {
   let x : Option[Int] = Some(5)
   let y : Option[Int] = some(5)
-  @assertion.assert_eq(x, y)?
+  @test.eq(x, y)?
 }
 
 /// Maps the value of an `Option` using a provided function.
@@ -108,8 +108,8 @@ pub fn map[T, U](self : Option[T], f : (T) -> U) -> Option[U] {
 test "map" {
   let a = Option::Some(5)
   let b : Option[Int] = None
-  @assertion.assert_eq(a.map(fn(x) { x * 2 }), Some(10))?
-  @assertion.assert_eq(b.map(fn(x) { x * 2 }), None)?
+  @test.eq(a.map(fn(x) { x * 2 }), Some(10))?
+  @test.eq(b.map(fn(x) { x * 2 }), None)?
 }
 
 /// Binds an option to a function that returns another option.
@@ -132,8 +132,8 @@ pub fn bind[T, U](self : Option[T], f : (T) -> Option[U]) -> Option[U] {
 test "bind" {
   let a = Option::Some(5)
   let b : Option[Int] = None
-  @assertion.assert_eq(a.bind(fn(x) { Some(x * 2) }), Some(10))?
-  @assertion.assert_eq(b.bind(fn(x) { Some(x * 2) }), None)?
+  @test.eq(a.bind(fn(x) { Some(x * 2) }), Some(10))?
+  @test.eq(b.bind(fn(x) { Some(x * 2) }), None)?
 }
 
 /// Flattens an `Option` of `Option` into a single `Option`.
@@ -154,9 +154,9 @@ pub fn flatten[T](self : Option[Option[T]]) -> Option[T] {
 
 test "flatten" {
   let a : Option[Option[Int]] = Some(Some(42))
-  @assertion.assert_eq(flatten(a), Some(42))?
+  @test.eq(flatten(a), Some(42))?
   let b : Option[Option[Int]] = Some(None)
-  @assertion.assert_eq(flatten(b), None)?
+  @test.eq(flatten(b), None)?
 }
 
 /// Checks if the option is empty.
@@ -170,8 +170,8 @@ pub fn is_empty[T](self : Option[T]) -> Bool {
 test "is_empty" {
   let x = Option::Some(3)
   let y : Option[Int] = None
-  @assertion.assert_false(x.is_empty())?
-  @assertion.assert_true(y.is_empty())?
+  @test.is_false(x.is_empty())?
+  @test.is_true(y.is_empty())?
 }
 
 /// Filters the option by applying the given predicate function `f`.
@@ -195,8 +195,8 @@ pub fn filter[T](self : Option[T], f : (T) -> Bool) -> Option[T] {
 
 test "filter" {
   let x = Option::Some(3)
-  @assertion.assert_eq(x.filter(fn(x) { x > 5 }), None)?
-  @assertion.assert_eq(x.filter(fn(x) { x < 5 }), Some(3))?
+  @test.eq(x.filter(fn(x) { x > 5 }), None)?
+  @test.eq(x.filter(fn(x) { x < 5 }), Some(3))?
 }
 
 /// Return the contained `Some` value or the provided default.
@@ -209,8 +209,8 @@ pub fn or[T](self : Option[T], default : T) -> T {
 
 test "or" {
   let x = Option::Some(3)
-  @assertion.assert_eq(x.or(5), 3)?
-  @assertion.assert_eq((None : Option[Int]).or(5), 5)?
+  @test.eq(x.or(5), 3)?
+  @test.eq((None : Option[Int]).or(5), 5)?
 }
 
 /// Return the contained `Some` value or the provided default.
@@ -225,6 +225,6 @@ pub fn or_else[T](self : Option[T], default : () -> T) -> T {
 
 test "or else" {
   let x = Option::Some(3)
-  @assertion.assert_eq(x.or_else(fn() { 5 }), 3)?
-  @assertion.assert_eq((None : Option[Int]).or_else(fn() { 5 }), 5)?
+  @test.eq(x.or_else(fn() { 5 }), 3)?
+  @test.eq((None : Option[Int]).or_else(fn() { 5 }), 5)?
 }

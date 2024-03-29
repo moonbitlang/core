@@ -24,7 +24,7 @@ pub fn PriorityQueue::new[T : Compare]() -> PriorityQueue[T] {
 
 test "new" {
   let queue : PriorityQueue[Int] = new()
-  @assertion.assert_eq(queue.len, 0)?
+  @test.eq(queue.len, 0)?
 }
 
 /// Creates a new empty priority queue from an array.
@@ -50,7 +50,7 @@ pub fn PriorityQueue::from_array[T : Compare](
 
 test "from_array" {
   let pq = PriorityQueue::[1, 2, 3, 4, 5]
-  @assertion.assert_eq(pq.peek(), Some(5))?
+  @test.eq(pq.peek(), Some(5))?
 }
 
 fn meld[T : Compare](x : Node[T], y : Node[T]) -> Node[T] {
@@ -91,13 +91,13 @@ pub fn length[T](self : PriorityQueue[T]) -> Int {
 
 test "length" {
   let pq : PriorityQueue[Int] = PriorityQueue::new()
-  @assertion.assert_eq(pq.length(), 0)?
+  @test.eq(pq.length(), 0)?
   pq.push(1)
-  @assertion.assert_eq(pq.length(), 1)?
+  @test.eq(pq.length(), 1)?
   pq.push(2)
-  @assertion.assert_eq(pq.length(), 2)?
+  @test.eq(pq.length(), 2)?
   pq.pop_exn()
-  @assertion.assert_eq(pq.length(), 1)?
+  @test.eq(pq.length(), 1)?
 }
 
 /// Pops the first value from the priority queue.
@@ -121,11 +121,11 @@ pub fn pop_exn[T : Compare](self : PriorityQueue[T]) -> Unit {
 
 test "pop_exn" {
   let pq = PriorityQueue::[5, 5, 4, 3, 2, 1]
-  @assertion.assert_eq(pq.peek(), Some(5))?
+  @test.eq(pq.peek(), Some(5))?
   pq.pop_exn()
-  @assertion.assert_eq(pq.peek(), Some(5))?
+  @test.eq(pq.peek(), Some(5))?
   pq.pop_exn()
-  @assertion.assert_eq(pq.peek(), Some(4))?
+  @test.eq(pq.peek(), Some(4))?
 }
 
 /// Pops the first value from the priority queue, which returns None if the queue is empty.
@@ -150,9 +150,9 @@ pub fn pop[T : Compare](self : PriorityQueue[T]) -> Option[T] {
 
 test "pop" {
   let pq = PriorityQueue::[1, 2, 3, 4, 5, 5]
-  @assertion.assert_eq(pq.pop(), Some(5))?
-  @assertion.assert_eq(pq.pop(), Some(5))?
-  @assertion.assert_eq(pq.pop(), Some(4))?
+  @test.eq(pq.pop(), Some(5))?
+  @test.eq(pq.pop(), Some(5))?
+  @test.eq(pq.pop(), Some(4))?
 }
 
 /// Adds a value to the priority queue.
@@ -171,8 +171,8 @@ test "push" {
   let pq = PriorityQueue::[5, 4, 3, 2, 1]
   pq.push(-1)
   pq.push(6)
-  @assertion.assert_eq(pq.length(), 7)?
-  @assertion.assert_eq(pq.peek(), Some(6))?
+  @test.eq(pq.length(), 7)?
+  @test.eq(pq.peek(), Some(6))?
 }
 
 /// Peeks at the first value in the priority queue, which returns None if the priority queue is empty.
@@ -191,9 +191,9 @@ pub fn peek[T](self : PriorityQueue[T]) -> Option[T] {
 
 test "peek" {
   let pq = PriorityQueue::[1, 2, 3, 4, 5]
-  @assertion.assert_eq(pq.peek(), Some(5))?
+  @test.eq(pq.peek(), Some(5))?
   pq.clear()
-  @assertion.assert_eq(pq.peek(), None)?
+  @test.eq(pq.peek(), None)?
 }
 
 /// Clears the queue.
@@ -211,7 +211,7 @@ pub fn clear[T](self : PriorityQueue[T]) -> Unit {
 test "clear" {
   let pq = PriorityQueue::[5, 4, 3, 2, 1]
   pq.clear()
-  @assertion.assert_eq(pq.length(), 0)?
+  @test.eq(pq.length(), 0)?
 }
 
 /// Checks if the priority queue is empty.
@@ -227,7 +227,7 @@ pub fn is_empty[T](self : PriorityQueue[T]) -> Bool {
 
 test "is_empty" {
   let pq = PriorityQueue::[5, 4, 3, 2, 1]
-  @assertion.assert_eq(pq.is_empty(), false)?
+  @test.eq(pq.is_empty(), false)?
   pq.clear()
-  @assertion.assert_eq(pq.is_empty(), true)?
+  @test.eq(pq.is_empty(), true)?
 }

@@ -18,7 +18,7 @@ fn debug_string[T : Debug](t : T) -> String {
   buf.to_string()
 }
 
-pub fn assert_eq[T : Debug + Eq](
+pub fn eq[T : Debug + Eq](
   a : T,
   b : T,
   ~loc : SourceLoc = _
@@ -32,21 +32,21 @@ pub fn assert_eq[T : Debug + Eq](
   }
 }
 
-test "assert_eq.eq" {
-  match assert_eq(1, 1) {
+test "eq.eq" {
+  match eq(1, 1) {
     Ok(_) => ()
     Err(msg) => return Err("unexpected failure: \(msg)")
   }
 }
 
-test "assert_eq.ne" {
-  match assert_eq(1, 2) {
+test "eq.ne" {
+  match eq(1, 2) {
     Ok(_) => return Err("unexpected success")
     Err(_) => ()
   }
 }
 
-pub fn assert_ne[T : Debug + Eq](
+pub fn not_eq[T : Debug + Eq](
   a : T,
   b : T,
   ~loc : SourceLoc = _
@@ -60,18 +60,18 @@ pub fn assert_ne[T : Debug + Eq](
   }
 }
 
-test "assert_ne.ne" {
-  assert_eq(assert_ne(1, 2), Ok(()))?
+test "not_eq.ne" {
+  eq(not_eq(1, 2), Ok(()))?
 }
 
-test "assert_ne.eq" {
-  match assert_ne(1, 1) {
+test "not_eq.eq" {
+  match not_eq(1, 1) {
     Ok(_) => return Err("unexpected success")
     Err(_) => ()
   }
 }
 
-pub fn assert_false(x : Bool, ~loc : SourceLoc = _) -> Result[Unit, String] {
+pub fn is_false(x : Bool, ~loc : SourceLoc = _) -> Result[Unit, String] {
   if x == false {
     Ok(())
   } else {
@@ -79,15 +79,15 @@ pub fn assert_false(x : Bool, ~loc : SourceLoc = _) -> Result[Unit, String] {
   }
 }
 
-test "assert_false.false" {
-  assert_eq(assert_false(false), Ok(()))?
+test "is_false.false" {
+  eq(is_false(false), Ok(()))?
 }
 
-test "assert_false.true" {
-  assert_ne(assert_false(true), Ok(()))?
+test "is_false.true" {
+  not_eq(is_false(true), Ok(()))?
 }
 
-pub fn assert_true(x : Bool, ~loc : SourceLoc = _) -> Result[Unit, String] {
+pub fn is_true(x : Bool, ~loc : SourceLoc = _) -> Result[Unit, String] {
   if x {
     Ok(())
   } else {
@@ -95,12 +95,12 @@ pub fn assert_true(x : Bool, ~loc : SourceLoc = _) -> Result[Unit, String] {
   }
 }
 
-test "assert_true.true" {
-  assert_eq(assert_true(true), Ok(()))?
+test "is_true.true" {
+  eq(is_true(true), Ok(()))?
 }
 
-test "assert_true.false" {
-  assert_ne(assert_true(false), Ok(()))?
+test "is_true.false" {
+  not_eq(is_true(false), Ok(()))?
 }
 
 /// Assert referential equality of two values.
@@ -115,10 +115,10 @@ test "assert_true.false" {
 /// ```
 /// let a = "4" + "2"
 /// let b = "4" + "2"
-/// assert_is(a, a)?  // this is okay
-/// assert_is(a, b)?  // yields an error
+/// is(a, a)?  // this is okay
+/// is(a, b)?  // yields an error
 /// ```
-pub fn assert_is[T : Debug](
+pub fn is[T : Debug](
   a : T,
   b : T,
   ~loc : SourceLoc = _
@@ -132,18 +132,18 @@ pub fn assert_is[T : Debug](
   }
 }
 
-test "assert_is.is" {
+test "is.is" {
   let x = 1
   let s = "x:\(x)"
-  assert_eq(assert_is(s, s), Ok(()))?
+  eq(is(s, s), Ok(()))?
 }
 
-test "assert_is.is.not" {
+test "is.is.not" {
   let x = 1
   let s1 = "x:\(x)"
   let s2 = "x:\(x)"
-  assert_eq(assert_eq(s1, s2), Ok(()))?
-  assert_ne(assert_is(s1, s2), Ok(()))?
+  eq(eq(s1, s2), Ok(()))?
+  not_eq(is(s1, s2), Ok(()))?
 }
 
 /// Assert referential inequality of two values.
@@ -158,10 +158,10 @@ test "assert_is.is.not" {
 /// ```
 /// let a = "4" + "2"
 /// let b = "4" + "2"
-/// assert_is_not(a, b)?  // this is okay
-/// assert_is_not(a, a)?  // yields an error
+/// is_not(a, b)?  // this is okay
+/// is_not(a, a)?  // yields an error
 /// ```
-pub fn assert_is_not[T : Debug](
+pub fn is_not[T : Debug](
   a : T,
   b : T,
   ~loc : SourceLoc = _
@@ -175,16 +175,16 @@ pub fn assert_is_not[T : Debug](
   }
 }
 
-test "assert_is_not.is" {
+test "is_not.is" {
   let x = 1
   let s = "x:\(x)"
-  assert_ne(assert_is_not(s, s), Ok(()))?
+  not_eq(is_not(s, s), Ok(()))?
 }
 
-test "assert_is_not.is.not" {
+test "is_not.is.not" {
   let x = 1
   let s1 = "x:\(x)"
   let s2 = "x:\(x)"
-  assert_eq(assert_eq(s1, s2), Ok(()))?
-  assert_eq(assert_is_not(s1, s2), Ok(()))?
+  eq(eq(s1, s2), Ok(()))?
+  eq(is_not(s1, s2), Ok(()))?
 }

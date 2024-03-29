@@ -24,7 +24,7 @@ pub fn Queue::new[T]() -> Queue[T] {
 
 test "new" {
   let queue : Queue[Int] = new()
-  @assertion.assert_eq(queue.length, 0)?
+  @test.eq(queue.length, 0)?
 }
 
 /// Creates a new queue from an array.
@@ -50,20 +50,20 @@ pub fn Queue::from_array[T](arr : Array[T]) -> Queue[T] {
 test "from_array_1" {
   let queue : Queue[Int] = Queue::[1, 2, 3, 4]
   let queue2 : Queue[Int] = Queue::[1]
-  @assertion.assert_eq(queue.length, 4)?
-  @assertion.assert_eq(queue.pop_exn(), 1)?
-  @assertion.assert_eq(queue.pop_exn(), 2)?
-  @assertion.assert_eq(queue.pop_exn(), 3)?
-  @assertion.assert_eq(queue.pop_exn(), 4)?
-  @assertion.assert_eq(queue2.pop_exn(), 1)?
-  @assertion.assert_eq(queue2.length, 0)?
+  @test.eq(queue.length, 4)?
+  @test.eq(queue.pop_exn(), 1)?
+  @test.eq(queue.pop_exn(), 2)?
+  @test.eq(queue.pop_exn(), 3)?
+  @test.eq(queue.pop_exn(), 4)?
+  @test.eq(queue2.pop_exn(), 1)?
+  @test.eq(queue2.length, 0)?
 }
 
 test "from_array_2" {
   let q = Queue::[1, 2, 3, 4]
   q.push(11)
-  @assertion.assert_eq(q.pop_exn(), 1)?
-  @assertion.assert_eq(q.pop_exn(), 2)?
+  @test.eq(q.pop_exn(), 1)?
+  @test.eq(q.pop_exn(), 2)?
 }
 
 /// Tests if two queue cells are equal.
@@ -95,9 +95,9 @@ pub fn clear[T](self : Queue[T]) -> Unit {
 
 test "clear" {
   let queue : Queue[Int] = Queue::[1, 2, 3, 4]
-  @assertion.assert_eq(queue.length, 4)?
+  @test.eq(queue.length, 4)?
   queue.clear()
-  @assertion.assert_eq(queue.length, 0)?
+  @test.eq(queue.length, 0)?
 }
 
 pub fn length[T](self : Queue[T]) -> Int {
@@ -117,12 +117,12 @@ pub fn is_empty[T](self : Queue[T]) -> Bool {
 
 test "is_empty" {
   let queue : Queue[Int] = new()
-  @assertion.assert_true(queue.is_empty())?
+  @test.is_true(queue.is_empty())?
   queue.push(1)
   queue.push(2)
   queue.push(3)
   queue.push(4)
-  @assertion.assert_false(queue.is_empty())?
+  @test.is_false(queue.is_empty())?
 }
 
 /// Adds a value to the queue.
@@ -154,11 +154,11 @@ test "push" {
   queue.push(2)
   queue.push(3)
   queue.push(1)
-  @assertion.assert_eq(queue.length, 4)?
-  @assertion.assert_eq(queue.pop_exn(), 1)?
-  @assertion.assert_eq(queue.pop_exn(), 2)?
-  @assertion.assert_eq(queue.pop_exn(), 3)?
-  @assertion.assert_eq(queue.pop_exn(), 1)?
+  @test.eq(queue.length, 4)?
+  @test.eq(queue.pop_exn(), 1)?
+  @test.eq(queue.pop_exn(), 2)?
+  @test.eq(queue.pop_exn(), 3)?
+  @test.eq(queue.pop_exn(), 1)?
 }
 
 /// Peeks at the first value in the queue.
@@ -178,11 +178,11 @@ pub fn peek_exn[T](self : Queue[T]) -> T {
 
 test "peek_exn" {
   let queue : Queue[Int] = Queue::[1, 2, 3, 4]
-  @assertion.assert_eq(queue.peek_exn(), 1)?
-  @assertion.assert_eq(queue.length, 4)?
-  @assertion.assert_eq(queue.pop_exn(), 1)?
-  @assertion.assert_eq(queue.peek_exn(), 2)?
-  @assertion.assert_eq(queue.length, 3)?
+  @test.eq(queue.peek_exn(), 1)?
+  @test.eq(queue.length, 4)?
+  @test.eq(queue.pop_exn(), 1)?
+  @test.eq(queue.peek_exn(), 2)?
+  @test.eq(queue.length, 3)?
 }
 
 /// Peeks at the first value in the queue, which returns None if the queue is empty.
@@ -201,9 +201,9 @@ pub fn peek[T](self : Queue[T]) -> Option[T] {
 
 test "peek" {
   let queue : Queue[Int] = Queue::[1, 2, 3, 4]
-  @assertion.assert_eq(queue.peek(), Some(1))?
+  @test.eq(queue.peek(), Some(1))?
   queue.clear()
-  @assertion.assert_eq(queue.peek(), None)?
+  @test.eq(queue.peek(), None)?
 }
 
 /// Pops the first value from the queue.
@@ -231,11 +231,11 @@ pub fn pop_exn[T](self : Queue[T]) -> T {
 
 test "pop_exn" {
   let queue : Queue[Int] = Queue::[1, 2, 3, 4]
-  @assertion.assert_eq(queue.pop_exn(), 1)?
-  @assertion.assert_eq(queue.pop_exn(), 2)?
-  @assertion.assert_eq(queue.pop_exn(), 3)?
-  @assertion.assert_eq(queue.pop_exn(), 4)?
-  @assertion.assert_eq(queue.length, 0)?
+  @test.eq(queue.pop_exn(), 1)?
+  @test.eq(queue.pop_exn(), 2)?
+  @test.eq(queue.pop_exn(), 3)?
+  @test.eq(queue.pop_exn(), 4)?
+  @test.eq(queue.length, 0)?
 }
 
 /// Pops the first value from the queue, which returns None if the queue is empty.
@@ -255,11 +255,11 @@ pub fn pop[T](self : Queue[T]) -> Option[T] {
 
 test "pop" {
   let queue : Queue[Int] = Queue::[1, 2, 3, 4]
-  @assertion.assert_eq(queue.pop(), Some(1))?
-  @assertion.assert_eq(queue.pop(), Some(2))?
-  @assertion.assert_eq(queue.pop(), Some(3))?
-  @assertion.assert_eq(queue.pop(), Some(4))?
-  @assertion.assert_eq(queue.pop(), None)?
+  @test.eq(queue.pop(), Some(1))?
+  @test.eq(queue.pop(), Some(2))?
+  @test.eq(queue.pop(), Some(3))?
+  @test.eq(queue.pop(), Some(4))?
+  @test.eq(queue.pop(), None)?
 }
 
 /// Iterates over the queue.
@@ -283,14 +283,14 @@ test "iter" {
   let queue : Queue[Int] = new()
   let mut sum = 0
   queue.iter(fn(x) { sum = sum + x })
-  @assertion.assert_eq(sum, 0)?
+  @test.eq(sum, 0)?
   queue.push(1)
   queue.push(2)
   queue.push(3)
   queue.push(4)
   sum = 0
   queue.iter(fn(x) { sum = sum + x })
-  @assertion.assert_eq(sum, 10)?
+  @test.eq(sum, 10)?
 }
 
 /// Folds over the queue.
@@ -313,13 +313,13 @@ pub fn fold[T](self : Queue[T], ~init : T, f : (T, T) -> T) -> T {
 test "fold" {
   let queue : Queue[Int] = new()
   let sum = queue.fold(~init=0, fn(acc, x) { acc + x })
-  @assertion.assert_eq(sum, 0)?
+  @test.eq(sum, 0)?
   queue.push(1)
   queue.push(2)
   queue.push(3)
   queue.push(4)
   let sum = queue.fold(~init=0, fn(acc, x) { acc + x })
-  @assertion.assert_eq(sum, 10)?
+  @test.eq(sum, 10)?
   let sum2 = Queue::[1, 2, 3, 4].fold(~init=0, fn(acc, x) { acc + x })
-  @assertion.assert_eq(sum2, 10)?
+  @test.eq(sum2, 10)?
 }

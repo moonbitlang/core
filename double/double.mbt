@@ -102,12 +102,12 @@ fn test_num[T : @num.Num + Debug + Default + Eq](
   x_div_y : T,
   x_signum : T
 ) -> Result[Unit, String] {
-  @assertion.assert_eq(x + y, x_plus_y)?
-  @assertion.assert_eq(x * y, x_mul_y)?
-  @assertion.assert_eq(x - y, x_minus_y)?
-  @assertion.assert_eq(x / y, x_div_y)?
-  @assertion.assert_eq(x.abs(), T::default() - x)?
-  @assertion.assert_eq(x.signum(), x_signum)?
+  @test.eq(x + y, x_plus_y)?
+  @test.eq(x * y, x_mul_y)?
+  @test.eq(x - y, x_minus_y)?
+  @test.eq(x / y, x_div_y)?
+  @test.eq(x.abs(), T::default() - x)?
+  @test.eq(x.signum(), x_signum)?
   Ok(())
 }
 
@@ -118,20 +118,20 @@ test "double.num" {
 }
 
 test "is_nan" {
-  @assertion.assert_true(is_nan(not_a_number))?
-  @assertion.assert_false(is_nan(0.0))?
-  @assertion.assert_false(is_nan(12345.678))?
-  @assertion.assert_false(is_nan(positive_infinity))?
-  @assertion.assert_false(is_nan(negative_infinity))?
+  @test.is_true(is_nan(not_a_number))?
+  @test.is_false(is_nan(0.0))?
+  @test.is_false(is_nan(12345.678))?
+  @test.is_false(is_nan(positive_infinity))?
+  @test.is_false(is_nan(negative_infinity))?
 }
 
 test "is_inf" {
-  @assertion.assert_true(is_inf(positive_infinity, 1))?
-  @assertion.assert_false(is_inf(negative_infinity, 1))?
-  @assertion.assert_true(is_inf(negative_infinity, -1))?
-  @assertion.assert_false(is_inf(positive_infinity, -1))?
-  @assertion.assert_true(is_inf(positive_infinity, 0))?
-  @assertion.assert_true(is_inf(negative_infinity, 0))?
-  @assertion.assert_false(is_inf(0.0, 1))?
-  @assertion.assert_false(is_inf(12345.678, 1))?
+  @test.is_true(is_inf(positive_infinity, 1))?
+  @test.is_false(is_inf(negative_infinity, 1))?
+  @test.is_true(is_inf(negative_infinity, -1))?
+  @test.is_false(is_inf(positive_infinity, -1))?
+  @test.is_true(is_inf(positive_infinity, 0))?
+  @test.is_true(is_inf(negative_infinity, 0))?
+  @test.is_false(is_inf(0.0, 1))?
+  @test.is_false(is_inf(12345.678, 1))?
 }

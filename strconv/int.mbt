@@ -204,27 +204,27 @@ fn substring(s : String, start : Int, len : Int) -> String {
 }
 
 test "check_underscore" {
-  @assertion.assert_true(check_underscore("123"))?
-  @assertion.assert_true(check_underscore("0x123"))?
-  @assertion.assert_true(check_underscore("0o123"))?
-  @assertion.assert_true(check_underscore("0b101"))?
-  @assertion.assert_true(check_underscore("1_2_3"))?
-  @assertion.assert_true(check_underscore("0x_1_2_3_A_F"))?
-  @assertion.assert_true(check_underscore("0o_1_2_3"))?
-  @assertion.assert_true(check_underscore("0b_1_0_1"))?
-  @assertion.assert_false(check_underscore("1__2_3"))?
-  @assertion.assert_false(check_underscore("_123"))?
-  @assertion.assert_false(check_underscore("123_"))?
+  @test.is_true(check_underscore("123"))?
+  @test.is_true(check_underscore("0x123"))?
+  @test.is_true(check_underscore("0o123"))?
+  @test.is_true(check_underscore("0b101"))?
+  @test.is_true(check_underscore("1_2_3"))?
+  @test.is_true(check_underscore("0x_1_2_3_A_F"))?
+  @test.is_true(check_underscore("0o_1_2_3"))?
+  @test.is_true(check_underscore("0b_1_0_1"))?
+  @test.is_false(check_underscore("1__2_3"))?
+  @test.is_false(check_underscore("_123"))?
+  @test.is_false(check_underscore("123_"))?
 }
 
 test "determine_base" {
-  @assertion.assert_eq(determine_base("1234"), 10)?
-  @assertion.assert_eq(determine_base("0x1234"), 16)?
-  @assertion.assert_eq(determine_base("0X1234"), 16)?
-  @assertion.assert_eq(determine_base("0o1234"), 8)?
-  @assertion.assert_eq(determine_base("0O1234"), 8)?
-  @assertion.assert_eq(determine_base("0b1010"), 2)?
-  @assertion.assert_eq(determine_base("0B1010"), 2)?
+  @test.eq(determine_base("1234"), 10)?
+  @test.eq(determine_base("0x1234"), 16)?
+  @test.eq(determine_base("0X1234"), 16)?
+  @test.eq(determine_base("0o1234"), 8)?
+  @test.eq(determine_base("0O1234"), 8)?
+  @test.eq(determine_base("0b1010"), 2)?
+  @test.eq(determine_base("0B1010"), 2)?
 }
 
 test "parse_int64" {
@@ -257,7 +257,7 @@ test "parse_int64" {
   ]
   for i = 0; i < tests.length(); i = i + 1 {
     let t = tests[i]
-    @assertion.assert_eq(parse_int64(t.0), t.1)?
+    @test.eq(parse_int64(t.0), t.1)?
   }
 }
 
@@ -339,13 +339,7 @@ test "parse_int64_base" {
     // underscores
     ("-0x_1_2_3_4_5", 0, Ok(-0x12345L)),
     ("0x_1_2_3_4_5", 0, Ok(0x12345L)),
-    (
-      "-_0x12345",
-      0,
-      Err(
-        syntax_err,
-      ),
-    ),
+    ("-_0x12345", 0, Err(syntax_err)),
     ("_-0x12345", 0, Err(syntax_err)),
     ("_0x12345", 0, Err(syntax_err)),
     ("0x__12345", 0, Err(syntax_err)),
@@ -367,7 +361,7 @@ test "parse_int64_base" {
   ]
   for i = 0; i < tests.length(); i = i + 1 {
     let t = tests[i]
-    @assertion.assert_eq(parse_int64(t.0, ~base=t.1), t.2)?
+    @test.eq(parse_int64(t.0, ~base=t.1), t.2)?
   }
 }
 
@@ -393,12 +387,7 @@ test "parse_int" {
     ("2147483649", Err(range_err)),
     ("-2147483649", Err(range_err)),
     ("-1_2_3_4_5", Ok(-12345)),
-    (
-      "-_12345",
-      Err(
-        syntax_err,
-      ),
-    ),
+    ("-_12345", Err(syntax_err)),
     ("_12345", Err(syntax_err)),
     ("1__2345", Err(syntax_err)),
     ("12345_", Err(syntax_err)),
@@ -406,6 +395,6 @@ test "parse_int" {
   ]
   for i = 0; i < tests.length(); i = i + 1 {
     let t = tests[i]
-    @assertion.assert_eq(parse_int(t.0), t.1)?
+    @test.eq(parse_int(t.0), t.1)?
   }
 }
