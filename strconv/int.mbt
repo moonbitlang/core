@@ -218,13 +218,13 @@ test "check_underscore" {
 }
 
 test "determine_base" {
-  @test.assert_eq(determine_base("1234"), 10)?
-  @test.assert_eq(determine_base("0x1234"), 16)?
-  @test.assert_eq(determine_base("0X1234"), 16)?
-  @test.assert_eq(determine_base("0o1234"), 8)?
-  @test.assert_eq(determine_base("0O1234"), 8)?
-  @test.assert_eq(determine_base("0b1010"), 2)?
-  @test.assert_eq(determine_base("0B1010"), 2)?
+  @test.eq(determine_base("1234"), 10)?
+  @test.eq(determine_base("0x1234"), 16)?
+  @test.eq(determine_base("0X1234"), 16)?
+  @test.eq(determine_base("0o1234"), 8)?
+  @test.eq(determine_base("0O1234"), 8)?
+  @test.eq(determine_base("0b1010"), 2)?
+  @test.eq(determine_base("0B1010"), 2)?
 }
 
 test "parse_int64" {
@@ -257,7 +257,7 @@ test "parse_int64" {
   ]
   for i = 0; i < tests.length(); i = i + 1 {
     let t = tests[i]
-    @test.assert_eq(parse_int64(t.0), t.1)?
+    @test.eq(parse_int64(t.0), t.1)?
   }
 }
 
@@ -367,7 +367,7 @@ test "parse_int64_base" {
   ]
   for i = 0; i < tests.length(); i = i + 1 {
     let t = tests[i]
-    @test.assert_eq(parse_int64(t.0, ~base=t.1), t.2)?
+    @test.eq(parse_int64(t.0, ~base=t.1), t.2)?
   }
 }
 
@@ -406,6 +406,6 @@ test "parse_int" {
   ]
   for i = 0; i < tests.length(); i = i + 1 {
     let t = tests[i]
-    @test.assert_eq(parse_int(t.0), t.1)?
+    @test.eq(parse_int(t.0), t.1)?
   }
 }

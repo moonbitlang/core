@@ -18,7 +18,7 @@ fn debug_string[T : Debug](t : T) -> String {
   buf.to_string()
 }
 
-pub fn assert_eq[T : Debug + Eq](
+pub fn eq[T : Debug + Eq](
   a : T,
   b : T,
   ~loc : SourceLoc = _
@@ -32,15 +32,15 @@ pub fn assert_eq[T : Debug + Eq](
   }
 }
 
-test "assert_eq.eq" {
-  match assert_eq(1, 1) {
+test "eq.eq" {
+  match eq(1, 1) {
     Ok(_) => ()
     Err(msg) => return Err("unexpected failure: \(msg)")
   }
 }
 
-test "assert_eq.ne" {
-  match assert_eq(1, 2) {
+test "eq.ne" {
+  match eq(1, 2) {
     Ok(_) => return Err("unexpected success")
     Err(_) => ()
   }
@@ -61,7 +61,7 @@ pub fn assert_ne[T : Debug + Eq](
 }
 
 test "assert_ne.ne" {
-  assert_eq(assert_ne(1, 2), Ok(()))?
+  eq(assert_ne(1, 2), Ok(()))?
 }
 
 test "assert_ne.eq" {
@@ -80,7 +80,7 @@ pub fn assert_false(x : Bool, ~loc : SourceLoc = _) -> Result[Unit, String] {
 }
 
 test "assert_false.false" {
-  assert_eq(assert_false(false), Ok(()))?
+  eq(assert_false(false), Ok(()))?
 }
 
 test "assert_false.true" {
@@ -96,7 +96,7 @@ pub fn assert_true(x : Bool, ~loc : SourceLoc = _) -> Result[Unit, String] {
 }
 
 test "assert_true.true" {
-  assert_eq(assert_true(true), Ok(()))?
+  eq(assert_true(true), Ok(()))?
 }
 
 test "assert_true.false" {
@@ -135,14 +135,14 @@ pub fn assert_is[T : Debug](
 test "assert_is.is" {
   let x = 1
   let s = "x:\(x)"
-  assert_eq(assert_is(s, s), Ok(()))?
+  eq(assert_is(s, s), Ok(()))?
 }
 
 test "assert_is.is.not" {
   let x = 1
   let s1 = "x:\(x)"
   let s2 = "x:\(x)"
-  assert_eq(assert_eq(s1, s2), Ok(()))?
+  eq(eq(s1, s2), Ok(()))?
   assert_ne(assert_is(s1, s2), Ok(()))?
 }
 
@@ -185,6 +185,6 @@ test "assert_is_not.is.not" {
   let x = 1
   let s1 = "x:\(x)"
   let s2 = "x:\(x)"
-  assert_eq(assert_eq(s1, s2), Ok(()))?
-  assert_eq(assert_is_not(s1, s2), Ok(()))?
+  eq(eq(s1, s2), Ok(()))?
+  eq(assert_is_not(s1, s2), Ok(()))?
 }

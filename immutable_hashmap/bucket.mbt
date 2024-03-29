@@ -77,29 +77,29 @@ fn size[K, V](self : Bucket[K, V]) -> Int {
 
 test "Bucket" {
   let b : Bucket[_] = Just_One(0, 0)
-  @test.assert_eq(b.find(0), Some(0))?
-  @test.assert_eq(b.find(1), None)?
-  @test.assert_eq(b.size(), 1)?
+  @test.eq(b.find(0), Some(0))?
+  @test.eq(b.find(1), None)?
+  @test.eq(b.size(), 1)?
   let b = b.add(1, 1)
-  @test.assert_eq(b.find(0), Some(0))?
-  @test.assert_eq(b.find(1), Some(1))?
-  @test.assert_eq(b.size(), 2)?
+  @test.eq(b.find(0), Some(0))?
+  @test.eq(b.find(1), Some(1))?
+  @test.eq(b.size(), 2)?
   let b = b.add(0, 2)
-  @test.assert_eq(b.find(0), Some(2))?
-  @test.assert_eq(b.find(1), Some(1))?
-  @test.assert_eq(b.size(), 2)?
+  @test.eq(b.find(0), Some(2))?
+  @test.eq(b.find(1), Some(1))?
+  @test.eq(b.size(), 2)?
   match b.remove(0) {
     None => @test.assert_true(false)?
     Some(b1) => {
-      @test.assert_eq(b1.find(0), None)?
-      @test.assert_eq(b1.find(1), Some(1))?
+      @test.eq(b1.find(0), None)?
+      @test.eq(b1.find(1), Some(1))?
     }
   }
   match b.remove(1) {
     None => @test.assert_true(false)?
     Some(b1) => {
-      @test.assert_eq(b1.find(0), Some(2))?
-      @test.assert_eq(b1.find(1), None)?
+      @test.eq(b1.find(0), Some(2))?
+      @test.eq(b1.find(1), None)?
     }
   }
 }
@@ -129,5 +129,5 @@ test "Bucket::iter" {
       buf.write_string("\(k) => \(v)")
     },
   )
-  @test.assert_eq(buf.to_string(), "0 => 0, 1 => 1, 31 => 31")?
+  @test.eq(buf.to_string(), "0 => 0, 1 => 1, 31 => 31")?
 }

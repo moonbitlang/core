@@ -31,9 +31,9 @@ pub fn maximum[T : Compare](x : T, y : T) -> T {
 }
 
 test "maximum.value" {
-  @test.assert_eq(maximum(1, 2), 2)?
-  @test.assert_eq(maximum(2, 1), 2)?
-  @test.assert_eq(maximum(2, 2), 2)?
+  @test.eq(maximum(1, 2), 2)?
+  @test.eq(maximum(2, 1), 2)?
+  @test.eq(maximum(2, 2), 2)?
 }
 
 test "maximum.ref" {
@@ -70,9 +70,9 @@ pub fn minimum[T : Compare](x : T, y : T) -> T {
 }
 
 test "minimum.value" {
-  @test.assert_eq(minimum(1, 2), 1)?
-  @test.assert_eq(minimum(2, 1), 1)?
-  @test.assert_eq(minimum(2, 2), 2)?
+  @test.eq(minimum(1, 2), 1)?
+  @test.eq(minimum(2, 1), 1)?
+  @test.eq(minimum(2, 2), 2)?
 }
 
 test "minimum.ref" {

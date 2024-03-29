@@ -254,8 +254,8 @@ fn debug_entries[K : Show, V : Show](self : HashMap[K, V]) -> String {
 
 test "new" {
   let m : HashMap[Int, Int] = HashMap::new()
-  @test.assert_eq(m.capacity, default_init_capacity)?
-  @test.assert_eq(m.size, 0)?
+  @test.eq(m.capacity, default_init_capacity)?
+  @test.eq(m.size, 0)?
 }
 
 test "set" {
@@ -269,8 +269,8 @@ test "set" {
   m.set("cd", 2)
   m.set("c", 1)
   m.set("d", 1)
-  @test.assert_eq(m.size, 7)?
-  @test.assert_eq(
+  @test.eq(m.size, 7)?
+  @test.eq(
     m.debug_entries(),
     "_,(0,a,1),(1,b,1),(2,c,1),(3,d,1),(3,bc,2),(4,cd,2),(4,abc,3),_,_,_,_,_,_,_,_",
   )?
@@ -281,50 +281,50 @@ test "get" {
   m.set("a", 1)
   m.set("b", 2)
   m.set("c", 3)
-  @test.assert_eq(m.get("a"), Some(1))?
-  @test.assert_eq(m.get("b"), Some(2))?
-  @test.assert_eq(m.get("c"), Some(3))?
-  @test.assert_eq(m.get("d"), None)?
+  @test.eq(m.get("a"), Some(1))?
+  @test.eq(m.get("b"), Some(2))?
+  @test.eq(m.get("c"), Some(3))?
+  @test.eq(m.get("d"), None)?
 }
 
 test "op_set" {
   let m : HashMap[String, Int] = HashMap::new()
   m["a"] = 1
   m["b"] = 2
-  @test.assert_eq(m.get("a"), Some(1))?
-  @test.assert_eq(m.get("b"), Some(2))?
+  @test.eq(m.get("a"), Some(1))?
+  @test.eq(m.get("b"), Some(2))?
 }
 
 test "op_get" {
   let m : HashMap[String, Int] = HashMap::new()
   m.set("a", 1)
   m.set("b", 2)
-  @test.assert_eq(m["a"], Some(1))?
-  @test.assert_eq(m["b"], Some(2))?
-  @test.assert_eq(m["c"], None)?
+  @test.eq(m["a"], Some(1))?
+  @test.eq(m["b"], Some(2))?
+  @test.eq(m["c"], None)?
 }
 
 test "set_update" {
   let m : HashMap[String, Int] = HashMap::new()
   m.set("a", 1)
   m.set("b", 2)
-  @test.assert_eq(m.get("a"), Some(1))?
+  @test.eq(m.get("a"), Some(1))?
   m.set("a", 2)
-  @test.assert_eq(m.get("a"), Some(2))?
+  @test.eq(m.get("a"), Some(2))?
 }
 
 test "contains" {
   let m : HashMap[String, Int] = HashMap::new()
   m.set("a", 1)
-  @test.assert_eq(m.contains("a"), true)?
-  @test.assert_eq(m.contains("b"), false)?
+  @test.eq(m.contains("a"), true)?
+  @test.eq(m.contains("b"), false)?
 }
 
 test "from_array" {
   let m = HashMap::[("a", 1), ("b", 2), ("c", 3)]
-  @test.assert_eq(m.get("a"), Some(1))?
-  @test.assert_eq(m.get("b"), Some(2))?
-  @test.assert_eq(m.get("c"), Some(3))?
+  @test.eq(m.get("a"), Some(1))?
+  @test.eq(m.get("b"), Some(2))?
+  @test.eq(m.get("c"), Some(3))?
 }
 
 test "remove" {
@@ -338,8 +338,8 @@ test "remove" {
   m.set("abc", 3)
   m.set("abcdef", 6)
   m.remove("ab")
-  @test.assert_eq(m.size(), 5)?
-  @test.assert_eq(
+  @test.eq(m.size(), 5)?
+  @test.eq(
     m.debug_entries(),
     "_,(0,a,1),(0,bc,2),(1,cd,2),(1,abc,3),_,(0,abcdef,6),_",
   )?
@@ -353,8 +353,8 @@ test "remove_unexist_key" {
   m.set("ab", 2)
   m.set("abc", 3)
   m.remove("d")
-  @test.assert_eq(m.size(), 3)?
-  @test.assert_eq(
+  @test.eq(m.size(), 3)?
+  @test.eq(
     m.debug_entries(),
     "_,(0,a,1),(0,ab,2),(0,abc,3),_,_,_,_",
   )?
@@ -362,25 +362,25 @@ test "remove_unexist_key" {
 
 test "size" {
   let m : HashMap[String, Int] = HashMap::new()
-  @test.assert_eq(m.size(), 0)?
+  @test.eq(m.size(), 0)?
   m.set("a", 1)
-  @test.assert_eq(m.size(), 1)?
+  @test.eq(m.size(), 1)?
 }
 
 test "is_empty" {
   let m : HashMap[String, Int] = HashMap::new()
-  @test.assert_eq(m.is_empty(), true)?
+  @test.eq(m.is_empty(), true)?
   m.set("a", 1)
-  @test.assert_eq(m.is_empty(), false)?
+  @test.eq(m.is_empty(), false)?
   m.remove("a")
-  @test.assert_eq(m.is_empty(), true)?
+  @test.eq(m.is_empty(), true)?
 }
 
 test "iter" {
   let m : HashMap[String, Int] = HashMap::[("a", 1), ("b", 2), ("c", 3)]
   let mut sum = 0
   m.iter(fn(_k, v) { sum += v })
-  @test.assert_eq(sum, 6)?
+  @test.eq(sum, 6)?
 }
 
 test "iteri" {
@@ -393,15 +393,15 @@ test "iteri" {
       sum += v
     },
   )
-  @test.assert_eq(s, "012")?
-  @test.assert_eq(sum, 6)?
+  @test.eq(s, "012")?
+  @test.eq(sum, 6)?
 }
 
 test "clear" {
   let m : HashMap[String, Int] = HashMap::[("a", 1), ("b", 2), ("c", 3)]
   m.clear()
-  @test.assert_eq(m.size, 0)?
-  @test.assert_eq(m.capacity, 8)?
+  @test.eq(m.size, 0)?
+  @test.eq(m.capacity, 8)?
   for i = 0; i < m.capacity; i = i + 1 {
     @test.assert_is(m.entries[i], Empty)?
   }
@@ -417,17 +417,17 @@ test "grow" {
   m.set("Java", 4)
   m.set("Scala", 5)
   m.set("Julia", 5)
-  @test.assert_eq(m.size, 6)?
-  @test.assert_eq(m.capacity, 8)?
+  @test.eq(m.size, 6)?
+  @test.eq(m.capacity, 8)?
   m.set("Cobol", 5)
-  @test.assert_eq(m.size, 7)?
-  @test.assert_eq(m.capacity, 16)?
+  @test.eq(m.size, 7)?
+  @test.eq(m.capacity, 16)?
   m.set("Python", 6)
   m.set("Haskell", 7)
   m.set("Rescript", 8)
-  @test.assert_eq(m.size, 10)?
-  @test.assert_eq(m.capacity, 16)?
-  @test.assert_eq(
+  @test.eq(m.size, 10)?
+  @test.eq(m.capacity, 16)?
+  @test.eq(
     m.debug_entries(),
     "_,(0,C,1),(0,Go,2),(0,C++,3),(0,Java,4),(0,Scala,5),(1,Julia,5),(2,Cobol,5),(2,Python,6),(2,Haskell,7),(2,Rescript,8),_,_,_,_,_",
   )?

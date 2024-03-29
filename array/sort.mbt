@@ -195,8 +195,8 @@ test "try_bubble_sort" {
     { array: arr, start: 0, end: 8 },
     fn(a, b) { a - b },
   )
-  @test.assert_eq(sorted, true)?
-  @test.assert_eq(arr, [1, 2, 3, 4, 5, 6, 7, 8])?
+  @test.eq(sorted, true)?
+  @test.eq(arr, [1, 2, 3, 4, 5, 6, 7, 8])?
 }
 
 fn partition[T](
@@ -294,13 +294,13 @@ fn sift_down[T](arr : ArraySlice[T], index : Int, cmp : (T, T) -> Int) -> Unit {
 fn test_sort(f : (Array[Int]) -> Unit) -> Result[Unit, String] {
   let arr = [5, 4, 3, 2, 1]
   f(arr)
-  @test.assert_eq(arr, [1, 2, 3, 4, 5])?
+  @test.eq(arr, [1, 2, 3, 4, 5])?
   let arr = [5, 5, 5, 5, 1]
   f(arr)
-  @test.assert_eq(arr, [1, 5, 5, 5, 5])?
+  @test.eq(arr, [1, 5, 5, 5, 5])?
   let arr = [1, 2, 3, 4, 5]
   f(arr)
-  @test.assert_eq(arr, [1, 2, 3, 4, 5])?
+  @test.eq(arr, [1, 2, 3, 4, 5])?
   {
     let arr = Array::make(1000, 0)
     for i = 0; i < 1000; i = i + 1 {
@@ -314,7 +314,7 @@ fn test_sort(f : (Array[Int]) -> Unit) -> Result[Unit, String] {
     for i = 0; i < 1000; i = i + 1 {
       expected[i] = i
     }
-    @test.assert_eq(arr, expected)?
+    @test.eq(arr, expected)?
   }
   Ok(())
 }
@@ -345,5 +345,5 @@ test "sort" {
 test "sort_by" {
   let arr = [5, 1, 3, 4, 2]
   arr.sort_by_key(fn(x) { -x })
-  @test.assert_eq(arr, [5, 4, 3, 2, 1])?
+  @test.eq(arr, [5, 4, 3, 2, 1])?
 }

@@ -40,6 +40,6 @@ test "parse_bool" {
   ]
   for i = 0; i < tests.length(); i = i + 1 {
     let t = tests[i]
-    @test.assert_eq(parse_bool(t.0), t.1)?
+    @test.eq(parse_bool(t.0), t.1)?
   }
 }

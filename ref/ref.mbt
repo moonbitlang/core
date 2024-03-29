@@ -31,7 +31,7 @@ pub fn map[T, R](self : Ref[T], f : (T) -> R) -> Ref[R] {
 test "map" {
   let x = ref(1)
   let y = map(x, fn(a) { a + 1 })
-  @test.assert_eq(y.val, 2)?
+  @test.eq(y.val, 2)?
 }
 
 /// This function allows you to temporarily replace the value of a reference with a new value, 
@@ -68,9 +68,9 @@ pub fn protect[T, R](self : Ref[T], a : T, f : () -> R) -> R {
 
 test "protect" {
   let x = ref(1)
-  @test.assert_eq(x.val, 1)?
-  protect(x, 2, fn() { @test.assert_eq(x.val, 2) })?
-  @test.assert_eq(x.val, 1)?
+  @test.eq(x.val, 1)?
+  protect(x, 2, fn() { @test.eq(x.val, 2) })?
+  @test.eq(x.val, 1)?
 }
 
 /// Swaps the values of two references.
@@ -94,8 +94,8 @@ test "swap" {
   let x = ref(1)
   let y = ref(2)
   swap(x, y)
-  @test.assert_eq(x.val, 2)?
-  @test.assert_eq(y.val, 1)?
+  @test.eq(x.val, 2)?
+  @test.eq(y.val, 1)?
 }
 
 pub fn update[T](self : Ref[T], f : (T) -> T) -> Unit {
@@ -121,15 +121,15 @@ pub fn decr[T : @num.Num](
 test "decr" {
   let a = ref(1)
   a.decr()
-  @test.assert_eq(a.val, 0)?
+  @test.eq(a.val, 0)?
   a.decr(~value=5)
-  @test.assert_eq(a.val, -5)?
+  @test.eq(a.val, -5)?
 }
 
 test "incr" {
   let a = ref(1)
   a.incr()
-  @test.assert_eq(a.val, 2)?
+  @test.eq(a.val, 2)?
   a.incr(~value=5)
-  @test.assert_eq(a.val, 7)?
+  @test.eq(a.val, 7)?
 }
