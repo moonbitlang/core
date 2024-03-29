@@ -87,7 +87,7 @@ test "is_false.true" {
   not_eq(is_false(true), Ok(()))?
 }
 
-pub fn assert_true(x : Bool, ~loc : SourceLoc = _) -> Result[Unit, String] {
+pub fn is_true(x : Bool, ~loc : SourceLoc = _) -> Result[Unit, String] {
   if x {
     Ok(())
   } else {
@@ -95,12 +95,12 @@ pub fn assert_true(x : Bool, ~loc : SourceLoc = _) -> Result[Unit, String] {
   }
 }
 
-test "assert_true.true" {
-  eq(assert_true(true), Ok(()))?
+test "is_true.true" {
+  eq(is_true(true), Ok(()))?
 }
 
-test "assert_true.false" {
-  not_eq(assert_true(false), Ok(()))?
+test "is_true.false" {
+  not_eq(is_true(false), Ok(()))?
 }
 
 /// Assert referential equality of two values.

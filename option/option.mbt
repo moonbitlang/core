@@ -171,7 +171,7 @@ test "is_empty" {
   let x = Option::Some(3)
   let y : Option[Int] = None
   @test.is_false(x.is_empty())?
-  @test.assert_true(y.is_empty())?
+  @test.is_true(y.is_empty())?
 }
 
 /// Filters the option by applying the given predicate function `f`.

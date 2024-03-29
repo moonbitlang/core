@@ -514,7 +514,7 @@ pub fn is_empty[T](self : Deque[T]) -> Bool {
 
 test "is_empty" {
   let dq = Deque::new()
-  @test.assert_true(dq.is_empty())?
+  @test.is_true(dq.is_empty())?
   dq.push_back(3)
   @test.is_false(dq.is_empty())?
 }
@@ -561,8 +561,8 @@ pub fn contains[T : Eq](self : Deque[T], value : T) -> Bool {
 
 test "contains" {
   let dq = Deque::[3, 4, 5]
-  @test.assert_true(dq.contains(3))?
-  @test.assert_true(dq.contains(4))?
-  @test.assert_true(dq.contains(5))?
+  @test.is_true(dq.contains(3))?
+  @test.is_true(dq.contains(4))?
+  @test.is_true(dq.contains(5))?
   @test.is_false(dq.contains(6))?
 }

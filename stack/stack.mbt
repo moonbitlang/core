@@ -417,7 +417,7 @@ pub fn is_empty[T](self : Stack[T]) -> Bool {
 test "is_empty" {
   let empty : Stack[Unit] = Stack::new()
   @test.is_false(Stack::[1, 2, 3].is_empty())?
-  @test.assert_true(empty.is_empty())?
+  @test.is_true(empty.is_empty())?
 }
 
 /// Returns the number of elements of the Stack
@@ -529,6 +529,6 @@ pub fn op_equal[T : Eq](self : Stack[T], other : Stack[T]) -> Bool {
 }
 
 test "equal" {
-  @test.assert_true(Stack::[2, 4, 6].equal(Stack::[2, 4, 6]))?
+  @test.is_true(Stack::[2, 4, 6].equal(Stack::[2, 4, 6]))?
   @test.is_false(Stack::[2, 4, 6].equal(Stack::[2, 4, 7]))?
 }

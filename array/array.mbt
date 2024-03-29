@@ -509,9 +509,9 @@ pub fn contains[T : Eq](self : Array[T], value : T) -> Bool {
 
 test "contains" {
   let arr = [3, 4, 5]
-  @test.assert_true(arr.contains(3))?
-  @test.assert_true(arr.contains(4))?
-  @test.assert_true(arr.contains(5))?
+  @test.is_true(arr.contains(3))?
+  @test.is_true(arr.contains(4))?
+  @test.is_true(arr.contains(5))?
   @test.is_false(arr.contains(6))?
 }
 
@@ -536,8 +536,8 @@ pub fn starts_with[T : Eq](self : Array[T], prefix : Array[T]) -> Bool {
 
 test "starts_with" {
   let arr = [3, 4, 5]
-  @test.assert_true(arr.starts_with([3, 4]))?
-  @test.assert_true(arr.starts_with([3, 4, 5]))?
+  @test.is_true(arr.starts_with([3, 4]))?
+  @test.is_true(arr.starts_with([3, 4, 5]))?
   @test.is_false(arr.starts_with([3, 4, 5, 6]))?
 }
 
@@ -564,7 +564,7 @@ pub fn ends_with[T : Eq](self : Array[T], suffix : Array[T]) -> Bool {
 
 test "ends_with" {
   let arr = [3, 4, 5]
-  @test.assert_true(arr.ends_with([4, 5]))?
-  @test.assert_true(arr.ends_with([3, 4, 5]))?
+  @test.is_true(arr.ends_with([4, 5]))?
+  @test.is_true(arr.ends_with([3, 4, 5]))?
   @test.is_false(arr.ends_with([2, 3, 4, 5]))?
 }

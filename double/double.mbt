@@ -118,7 +118,7 @@ test "double.num" {
 }
 
 test "is_nan" {
-  @test.assert_true(is_nan(not_a_number))?
+  @test.is_true(is_nan(not_a_number))?
   @test.is_false(is_nan(0.0))?
   @test.is_false(is_nan(12345.678))?
   @test.is_false(is_nan(positive_infinity))?
@@ -126,12 +126,12 @@ test "is_nan" {
 }
 
 test "is_inf" {
-  @test.assert_true(is_inf(positive_infinity, 1))?
+  @test.is_true(is_inf(positive_infinity, 1))?
   @test.is_false(is_inf(negative_infinity, 1))?
-  @test.assert_true(is_inf(negative_infinity, -1))?
+  @test.is_true(is_inf(negative_infinity, -1))?
   @test.is_false(is_inf(positive_infinity, -1))?
-  @test.assert_true(is_inf(positive_infinity, 0))?
-  @test.assert_true(is_inf(negative_infinity, 0))?
+  @test.is_true(is_inf(positive_infinity, 0))?
+  @test.is_true(is_inf(negative_infinity, 0))?
   @test.is_false(is_inf(0.0, 1))?
   @test.is_false(is_inf(12345.678, 1))?
 }

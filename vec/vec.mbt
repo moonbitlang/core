@@ -172,7 +172,7 @@ test "op_equal" {
   let v1 = Vec::[3, 4, 5]
   let v2 = Vec::[3, 4, 5]
   let v3 = Vec::[3, 4, 6]
-  @test.assert_true(v1 == v2)?
+  @test.is_true(v1 == v2)?
   @test.is_false(v1 == v3)?
 }
 
@@ -468,7 +468,7 @@ pub fn is_empty[T](self : Vec[T]) -> Bool {
 
 test "is_empty" {
   let v = Vec::new()
-  @test.assert_true(v.is_empty())?
+  @test.is_true(v.is_empty())?
   v.push(3)
   @test.is_false(v.is_empty())?
 }
@@ -494,9 +494,9 @@ pub fn is_sorted[T : Compare](self : Vec[T]) -> Bool {
 
 test "is_sorted" {
   let v : Vec[Int] = Vec::[]
-  @test.assert_true(v.is_sorted())?
+  @test.is_true(v.is_sorted())?
   let v = Vec::[3, 4, 5]
-  @test.assert_true(v.is_sorted())?
+  @test.is_true(v.is_sorted())?
   let v2 = Vec::[3, 5, 4]
   @test.is_false(v2.is_sorted())?
 }
@@ -585,9 +585,9 @@ pub fn contains[T : Eq](self : Vec[T], value : T) -> Bool {
 
 test "contains" {
   let v = Vec::[3, 4, 5]
-  @test.assert_true(v.contains(3))?
-  @test.assert_true(v.contains(4))?
-  @test.assert_true(v.contains(5))?
+  @test.is_true(v.contains(3))?
+  @test.is_true(v.contains(4))?
+  @test.is_true(v.contains(5))?
   @test.is_false(v.contains(6))?
 }
 
@@ -613,8 +613,8 @@ pub fn starts_with[T : Eq](self : Vec[T], prefix : Vec[T]) -> Bool {
 
 test "starts_with" {
   let v = Vec::[3, 4, 5]
-  @test.assert_true(v.starts_with(Vec::[3, 4]))?
-  @test.assert_true(v.starts_with(Vec::[3, 4, 5]))?
+  @test.is_true(v.starts_with(Vec::[3, 4]))?
+  @test.is_true(v.starts_with(Vec::[3, 4, 5]))?
   @test.is_false(v.starts_with(Vec::[3, 4, 5, 6]))?
 }
 
@@ -640,8 +640,8 @@ pub fn ends_with[T : Eq](self : Vec[T], suffix : Vec[T]) -> Bool {
 
 test "ends_with" {
   let v = Vec::[3, 4, 5]
-  @test.assert_true(v.ends_with(Vec::[4, 5]))?
-  @test.assert_true(v.ends_with(Vec::[3, 4, 5]))?
+  @test.is_true(v.ends_with(Vec::[4, 5]))?
+  @test.is_true(v.ends_with(Vec::[3, 4, 5]))?
   @test.is_false(v.ends_with(Vec::[2, 3, 4, 5]))?
 }
 
@@ -797,7 +797,7 @@ test "sort" {
   let v = Vec::[3, 4, 5, 1, 2]
   v.sort()
   @test.eq(v, Vec::[1, 2, 3, 4, 5])?
-  @test.assert_true(v.is_sorted())?
+  @test.is_true(v.is_sorted())?
 }
 
 /// Remove an element from the vector at a given index.

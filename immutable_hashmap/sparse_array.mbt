@@ -75,30 +75,30 @@ test "SparseArray" {
   let arr = SparseArray::make(1, 1)
   @test.is_false(arr.has(0))?
   @test.eq(arr[0], None)?
-  @test.assert_true(arr.has(1))?
+  @test.is_true(arr.has(1))?
   @test.eq(arr[1], Some(1))?
   @test.is_false(arr.has(2))?
   @test.eq(arr[2], None)?
   let arr = arr.add(2, 2)
   @test.is_false(arr.has(0))?
   @test.eq(arr[0], None)?
-  @test.assert_true(arr.has(1))?
+  @test.is_true(arr.has(1))?
   @test.eq(arr[1], Some(1))?
-  @test.assert_true(arr.has(2))?
+  @test.is_true(arr.has(2))?
   @test.eq(arr[2], Some(2))?
   let arr = arr.add(0, 0)
-  @test.assert_true(arr.has(0))?
+  @test.is_true(arr.has(0))?
   @test.eq(arr[0], Some(0))?
-  @test.assert_true(arr.has(1))?
+  @test.is_true(arr.has(1))?
   @test.eq(arr[1], Some(1))?
-  @test.assert_true(arr.has(2))?
+  @test.is_true(arr.has(2))?
   @test.eq(arr[2], Some(2))?
   let arr = arr.replace(1, 42)
-  @test.assert_true(arr.has(0))?
+  @test.is_true(arr.has(0))?
   @test.eq(arr[0], Some(0))?
-  @test.assert_true(arr.has(1))?
+  @test.is_true(arr.has(1))?
   @test.eq(arr[1], Some(42))?
-  @test.assert_true(arr.has(2))?
+  @test.is_true(arr.has(2))?
   @test.eq(arr[2], Some(2))?
 }
 

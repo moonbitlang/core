@@ -27,10 +27,10 @@ fn has(self : Bitset, idx : Int) -> Bool {
 test "Bitset::has" {
   let b = empty_bitset.add(2)
   @test.is_false(b.has(0))?
-  @test.assert_true(b.has(2))?
+  @test.is_true(b.has(2))?
   let b = b.add(0)
-  @test.assert_true(b.has(0))?
-  @test.assert_true(b.has(2))?
+  @test.is_true(b.has(0))?
+  @test.is_true(b.has(2))?
 }
 
 /// `index_of(self: Bitset, idx: Int)`
@@ -66,13 +66,13 @@ fn remove(self : Bitset, idx : Int) -> Bitset {
 
 test "Bitset::remove" {
   let b = empty_bitset.add(2).add(3)
-  @test.assert_true(b.has(2))?
-  @test.assert_true(b.has(3))?
+  @test.is_true(b.has(2))?
+  @test.is_true(b.has(3))?
   @test.eq(b.index_of(2), 0)?
   @test.eq(b.index_of(3), 1)?
   let b = b.remove(2)
   @test.is_false(b.has(2))?
-  @test.assert_true(b.has(3))?
+  @test.is_true(b.has(3))?
   @test.eq(b.index_of(3), 0)?
 }
 

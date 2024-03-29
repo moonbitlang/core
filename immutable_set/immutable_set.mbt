@@ -853,7 +853,7 @@ fn of_sorted_list[T : Compare](list : List[T]) -> ImmutableSet[T] {
 }
 
 test "disjoint" {
-  @test.assert_true(
+  @test.is_true(
     ImmutableSet::from_list(List::[1, 2, 3]).disjoint(
       ImmutableSet::from_list(List::[4, 5, 6]),
     ),
@@ -866,7 +866,7 @@ test "disjoint" {
 }
 
 test "subset" {
-  @test.assert_true(
+  @test.is_true(
     ImmutableSet::from_list(List::[1, 2, 3]).subset(
       ImmutableSet::from_list(List::[7, 2, 9, 4, 5, 6, 3, 8, 1]),
     ),
@@ -913,7 +913,7 @@ test "map" {
 }
 
 test "forall" {
-  @test.assert_true(
+  @test.is_true(
     ImmutableSet::from_list(List::[2, 4, 6]).forall(fn(v) { v % 2 == 0 }),
   )?
   @test.is_false(
@@ -922,7 +922,7 @@ test "forall" {
 }
 
 test "exists" {
-  @test.assert_true(
+  @test.is_true(
     ImmutableSet::from_list(List::[1, 4, 3]).exists(fn(v) { v % 2 == 0 }),
   )?
   @test.is_false(
@@ -967,7 +967,7 @@ test "split" {
   let (left, present, right) = ImmutableSet::from_list(
     List::[7, 2, 9, 4, 5, 6, 3, 8, 1],
   ).split(5)
-  @test.assert_true(present)?
+  @test.is_true(present)?
   @test.eq(left.to_list(), List::[1, 2, 3, 4])?
   @test.eq(right.to_list(), List::[6, 7, 8, 9])?
   let (left, present, right) = ImmutableSet::from_list(
@@ -979,7 +979,7 @@ test "split" {
 }
 
 test "contain" {
-  @test.assert_true(
+  @test.is_true(
     ImmutableSet::from_list(List::[7, 2, 9, 4, 6, 3, 8, 1]).add(5).contain(5),
   )?
 }

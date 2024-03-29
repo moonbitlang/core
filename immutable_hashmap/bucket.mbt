@@ -89,14 +89,14 @@ test "Bucket" {
   @test.eq(b.find(1), Some(1))?
   @test.eq(b.size(), 2)?
   match b.remove(0) {
-    None => @test.assert_true(false)?
+    None => @test.is_true(false)?
     Some(b1) => {
       @test.eq(b1.find(0), None)?
       @test.eq(b1.find(1), Some(1))?
     }
   }
   match b.remove(1) {
-    None => @test.assert_true(false)?
+    None => @test.is_true(false)?
     Some(b1) => {
       @test.eq(b1.find(0), Some(2))?
       @test.eq(b1.find(1), None)?

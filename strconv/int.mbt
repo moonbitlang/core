@@ -204,14 +204,14 @@ fn substring(s : String, start : Int, len : Int) -> String {
 }
 
 test "check_underscore" {
-  @test.assert_true(check_underscore("123"))?
-  @test.assert_true(check_underscore("0x123"))?
-  @test.assert_true(check_underscore("0o123"))?
-  @test.assert_true(check_underscore("0b101"))?
-  @test.assert_true(check_underscore("1_2_3"))?
-  @test.assert_true(check_underscore("0x_1_2_3_A_F"))?
-  @test.assert_true(check_underscore("0o_1_2_3"))?
-  @test.assert_true(check_underscore("0b_1_0_1"))?
+  @test.is_true(check_underscore("123"))?
+  @test.is_true(check_underscore("0x123"))?
+  @test.is_true(check_underscore("0o123"))?
+  @test.is_true(check_underscore("0b101"))?
+  @test.is_true(check_underscore("1_2_3"))?
+  @test.is_true(check_underscore("0x_1_2_3_A_F"))?
+  @test.is_true(check_underscore("0o_1_2_3"))?
+  @test.is_true(check_underscore("0b_1_0_1"))?
   @test.is_false(check_underscore("1__2_3"))?
   @test.is_false(check_underscore("_123"))?
   @test.is_false(check_underscore("123_"))?

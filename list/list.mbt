@@ -200,7 +200,7 @@ pub fn all[T](self : List[T], f : (T) -> Bool) -> Bool {
 
 test "all" {
   let ls = from_array([1, 2, 3, 4, 5])
-  @test.assert_true(ls.all(fn(x) { x > 0 }))?
+  @test.is_true(ls.all(fn(x) { x > 0 }))?
   @test.is_false(ls.all(fn(x) { x > 1 }))?
 }
 
@@ -214,7 +214,7 @@ pub fn any[T](self : List[T], f : (T) -> Bool) -> Bool {
 
 test "any" {
   let ls = from_array([1, 2, 3, 4, 5])
-  @test.assert_true(ls.any(fn(x) { x > 4 }))?
+  @test.is_true(ls.any(fn(x) { x > 4 }))?
   @test.is_false(ls.any(fn(x) { x > 5 }))?
 }
 
@@ -529,7 +529,7 @@ pub fn is_empty[T](self : List[T]) -> Bool {
 test "is_empty" {
   let ls = from_array([1, 2, 3, 4, 5])
   @test.is_false(ls.is_empty())?
-  @test.assert_true((List::Nil : List[Unit]).is_empty())?
+  @test.is_true((List::Nil : List[Unit]).is_empty())?
 }
 
 /// Unzip two lists.
@@ -665,9 +665,9 @@ pub fn contain[T : Eq](self : List[T], value : T) -> Bool {
 
 test "contain" {
   let ls = from_array([1, 2, 3])
-  @test.assert_true(ls.contain(1))?
-  @test.assert_true(ls.contain(2))?
-  @test.assert_true(ls.contain(3))?
+  @test.is_true(ls.contain(1))?
+  @test.is_true(ls.contain(2))?
+  @test.is_true(ls.contain(3))?
   @test.is_false(ls.contain(0))?
   @test.is_false(ls.contain(4))?
 }
@@ -1052,7 +1052,7 @@ pub fn is_prefix[T : Eq](self : List[T], prefix : List[T]) -> Bool {
 }
 
 test "is_prefix" {
-  @test.assert_true(List::[1, 2, 3, 4, 5].is_prefix(List::[1, 2, 3]))?
+  @test.is_true(List::[1, 2, 3, 4, 5].is_prefix(List::[1, 2, 3]))?
   @test.is_false(List::[1, 2, 3, 4, 5].is_prefix(List::[3, 2, 3]))?
 }
 
@@ -1073,7 +1073,7 @@ pub fn equal[T : Eq](self : List[T], other : List[T]) -> Bool {
 }
 
 test "equal" {
-  @test.assert_true(List::[1, 2, 3].equal(List::[1, 2, 3]))?
+  @test.is_true(List::[1, 2, 3].equal(List::[1, 2, 3]))?
   @test.is_false(List::[1, 2, 3].equal(List::[1, 3, 3]))?
 }
 
@@ -1090,7 +1090,7 @@ pub fn is_suffix[T : Eq](self : List[T], suffix : List[T]) -> Bool {
 }
 
 test "is_suffix" {
-  @test.assert_true(List::[1, 2, 3, 4, 5].is_suffix(List::[3, 4, 5]))?
+  @test.is_true(List::[1, 2, 3, 4, 5].is_suffix(List::[3, 4, 5]))?
   @test.is_false(List::[1, 2, 3, 4, 5].is_suffix(List::[3, 4, 6]))?
 }
 

@@ -117,7 +117,7 @@ pub fn is_empty[T](self : Queue[T]) -> Bool {
 
 test "is_empty" {
   let queue : Queue[Int] = new()
-  @test.assert_true(queue.is_empty())?
+  @test.is_true(queue.is_empty())?
   queue.push(1)
   queue.push(2)
   queue.push(3)
