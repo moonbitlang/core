@@ -12,6 +12,18 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+let not_a_number : Double = 0x7FF8000000000001L.reinterpret_as_double()
+
+let positive_infinity : Double = 0x7FF0000000000000L.reinterpret_as_double()
+
+let negative_infinity : Double = 0xFFF0000000000000L.reinterpret_as_double()
+
+let max_val : Double = 0x7FEFFFFFFFFFFFFFL.reinterpret_as_double()
+
+let min_val : Double = 0x1L.reinterpret_as_double()
+
+let min_norm : Double = 0x0010000000000000L.reinterpret_as_double()
+
 pub fn Double::from_int(i : Int) -> Double {
   i.to_double()
 }
@@ -38,6 +50,49 @@ pub fn signum(self : Double) -> Double {
   }
 }
 
+// Returns a "not-a-number" value
+pub fn Double::nan() -> Double {
+  not_a_number
+}
+
+// Returns positive infinity if sign >= 0, negative infinity if sign < 0.
+pub fn Double::inf(sign : Int) -> Double {
+  if sign >= 0 {
+    positive_infinity
+  } else {
+    negative_infinity
+  }
+}
+
+// Returns the largest positive finite value of double
+pub fn Double::max_value() -> Double {
+  max_val
+}
+
+// Returns the smallest positive nonzero value of double
+pub fn Double::min_value() -> Double {
+  min_val
+}
+
+// Returns the smallest positive normal value of double
+pub fn Double::min_normal() -> Double {
+  min_norm
+}
+
+// Check whether the double is a "not-a-number" value
+pub fn is_nan(self : Double) -> Bool {
+  // only NaNs satisfy f != f.
+  self != self
+}
+
+// Check whether the double is infinity
+// if sign > 0, returns true when f is positive infinity.
+// if sign < 0, returns true when f is negative infinity.
+// if sign = 0, returns true when f is either.
+pub fn is_inf(self : Double, sign : Int) -> Bool {
+  sign >= 0 && self > max_val || sign <= 0 && self < -max_val
+}
+
 fn test_num[T : @num.Num + Debug + Default + Eq](
   x : T,
   y : T,
@@ -60,4 +115,23 @@ test "double.num" {
   let x = -500.0
   let y = 792.0
   test_num(x, y, x + y, x * y, x - y, x / y, -1.0)?
+}
+
+test "is_nan" {
+  @assertion.assert_true(is_nan(not_a_number))?
+  @assertion.assert_false(is_nan(0.0))?
+  @assertion.assert_false(is_nan(12345.678))?
+  @assertion.assert_false(is_nan(positive_infinity))?
+  @assertion.assert_false(is_nan(negative_infinity))?
+}
+
+test "is_inf" {
+  @assertion.assert_true(is_inf(positive_infinity, 1))?
+  @assertion.assert_false(is_inf(negative_infinity, 1))?
+  @assertion.assert_true(is_inf(negative_infinity, -1))?
+  @assertion.assert_false(is_inf(positive_infinity, -1))?
+  @assertion.assert_true(is_inf(positive_infinity, 0))?
+  @assertion.assert_true(is_inf(negative_infinity, 0))?
+  @assertion.assert_false(is_inf(0.0, 1))?
+  @assertion.assert_false(is_inf(12345.678, 1))?
 }
