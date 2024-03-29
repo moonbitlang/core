@@ -568,3 +568,23 @@ test "ends_with" {
   @assertion.assert_true(arr.ends_with([3, 4, 5]))?
   @assertion.assert_false(arr.ends_with([2, 3, 4, 5]))?
 }
+
+/// Convert array to list.
+/// 
+/// # Example
+///
+/// ```
+/// [1, 2, 3, 4, 5].to_list()
+/// ```
+pub fn to_list[T](self : Array[T]) -> List[T] {
+  for i = self.length() - 1, list = List::Nil; i >= 0; {
+    continue i - 1, List::Cons(self[i], list)
+  } else {
+    list
+  }
+}
+
+test "to_list"{
+  let ls = [1,2,3,4,5].to_list()
+  @assertion.assert_eq(ls, Cons(1, Cons(2, Cons(3, Cons(4, Cons(5, Nil))))))?
+}
