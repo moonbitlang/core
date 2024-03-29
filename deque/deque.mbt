@@ -413,23 +413,25 @@ test "iter_rev" {
 /// ```
 /// let dq = Deque::[1, 2, 3, 4, 5]
 /// let mut idx_sum = 0
-/// dq.iteri_rev(fn (i, x) {idx_sum = idx_sum + i})
+/// dq.iter_revi(fn (i, x) {idx_sum = idx_sum + i})
 /// ```
-pub fn iteri_rev[T](self : Deque[T], f : (Int, T) -> Unit) -> Unit {
-  for i = self.length() - 1; i >= 0; i = i - 1 {
-    f(i, self[i])
+pub fn iter_revi[T](self : Deque[T], f : (Int, T) -> Unit) -> Unit {
+  for i = 0; i < self.len; i = i + 1 {
+    f(i, self[self.len - i - 1])
   }
 }
 
-test "iteri_rev" {
+test "iter_revi" {
   let mut i = 6
+  let mut j = 0
   let mut failed = false
-  Deque::[1, 2, 3, 4, 5].iteri_rev(
+  Deque::[1, 2, 3, 4, 5].iter_revi(
     fn(index, elem) {
-      if index != i - 2 || elem != i - 1 {
+      if index != j || elem != i - 1 {
         failed = true
       }
       i = i - 1
+      j = j + 1
     },
   )
   @assertion.assert_false(failed)?

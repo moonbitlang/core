@@ -18,7 +18,6 @@ fn op_get[T](self : UninitializedArray[T], index : Int) -> T = "%array_get"
 
 fn op_set[T](self : UninitializedArray[T], index : Int, value : T) = "%array_set"
 
-
 /// Converts the vector to a string.
 pub fn to_string[T : Show](self : Vec[T]) -> String {
   if self.len == 0 {
@@ -26,7 +25,7 @@ pub fn to_string[T : Show](self : Vec[T]) -> String {
   }
   let first = self.buf[0]
   // CR: format issues
-  for i = 1, init = "Vec::[\(first)"; ; {
+  for i = 1, init = "Vec::[\(first)" {
     if i >= self.len {
       break "\(init)]"
     }
@@ -384,16 +383,17 @@ test "iteri" {
   @assertion.assert_eq(sum, 15)?
 }
 
-pub fn iteri_rev[T](self : Vec[T], f : (Int, T) -> Unit) -> Unit {
-  for i = self.length() - 1; i >= 0; i = i - 1 {
-    f(i, self[i])
+pub fn iter_revi[T](self : Vec[T], f : (Int, T) -> Unit) -> Unit {
+  let len = self.length()
+  for i = 0; i < len; i = i + 1 {
+    f(i, self[len - i - 1])
   }
 }
 
-test "iteri_rev" {
+test "iter_revi" {
   let v = Vec::[3, 4, 5]
   let mut sum = 0
-  v.iteri_rev(fn(i, x) { sum = sum + x + i })
+  v.iter_revi(fn(i, x) { sum = sum + x + i })
   @assertion.assert_eq(sum, 15)?
 }
 
@@ -485,15 +485,15 @@ pub fn is_sorted[T : Compare](self : Vec[T]) -> Bool {
     if i >= self.len {
       break true
     }
-    if self[i - 1] > self [i] {
+    if self[i - 1] > self[i] {
       break false
     }
     continue i + 1
-  }  
+  }
 }
 
 test "is_sorted" {
-  let v : Vec[Int]= Vec::[]  
+  let v : Vec[Int] = Vec::[]
   @assertion.assert_true(v.is_sorted())?
   let v = Vec::[3, 4, 5]
   @assertion.assert_true(v.is_sorted())?
@@ -522,13 +522,13 @@ test "reverse" {
   @assertion.assert_eq(v, Vec::[5, 4, 3])?
   v.reverse()
   @assertion.assert_eq(v, Vec::[3, 4, 5])?
-  let v = Vec::[3,4]
+  let v = Vec::[3, 4]
   v.reverse()
-  @assertion.assert_eq(v,Vec::[4,3])?
+  @assertion.assert_eq(v, Vec::[4, 3])?
   v.reverse()
-  @assertion.assert_eq(v,Vec::[3,4])?
+  @assertion.assert_eq(v, Vec::[3, 4])?
   let empty : Vec[Int] = Vec::[]
-  @assertion.assert_eq(empty,empty)?
+  @assertion.assert_eq(empty, empty)?
 }
 
 /// Split the vector into two at the given index.
@@ -1024,44 +1024,96 @@ test "join" {
   @assertion.assert_eq(vv.length(), 5)?
 }
 
-/// Fold out values from an vector according to certain rules.
+/// Fold out values from an array according to certain rules.
 /// 
 /// # Example
 /// ```
-/// let sum = Vec::[1, 2, 3, 4, 5].fold(~init=0, fn(elem, sum) { sum + elem })
+/// let sum = [1, 2, 3, 4, 5].fold_left(~init=0, fn { sum, elem => sum + elem })
 /// sum // 15
 /// ```
-pub fn fold[T, U](self : Vec[T], f : (T, U) -> U, ~init : U) -> U {
+pub fn fold_left[T, U](self : Vec[T], f : (U, T) -> U, ~init : U) -> U {
   for i = 0, acc = init; i < self.length(); {
-    continue i + 1, f(self[i], acc)
+    continue i + 1, f(acc, self[i])
   } else {
     acc
   }
 }
 
-test "fold" {
-  let sum = Vec::[1, 2, 3, 4, 5].fold(~init=0, fn(elem, sum) { sum + elem })
+test "fold_left" {
+  let sum = Vec::[1, 2, 3, 4, 5].fold_left(
+    ~init=0,
+    fn { sum, elem => sum + elem },
+  )
   @assertion.assert_eq(sum, 15)?
 }
 
-/// Fold out values from an vector according to certain rules in reversed turn.
+/// Fold out values from an array according to certain rules in reversed turn.
 /// 
 /// # Example
 /// ```
-/// let sum = Vec::[1, 2, 3, 4, 5].fold_rev(~init=0, fn(elem, sum) { sum + elem })
+/// let sum = [1, 2, 3, 4, 5].fold_right(~init=0, fn { sum, elem => sum + elem })
 /// sum // 15
 /// ```
-pub fn fold_rev[T, U](self : Vec[T], f : (T, U) -> U, ~init : U) -> U {
+pub fn fold_right[T, U](self : Vec[T], f : (U, T) -> U, ~init : U) -> U {
   for i = self.length() - 1, acc = init; i >= 0; {
-    continue i - 1, f(self[i], acc)
+    continue i - 1, f(acc, self[i])
   } else {
     acc
   }
 }
 
-test "fold_rev" {
-  let sum = Vec::[1, 2, 3, 4, 5].fold_rev(~init=0, fn(elem, sum) { sum + elem })
+test "fold_right" {
+  let sum = Vec::[1, 2, 3, 4, 5].fold_right(
+    ~init=0,
+    fn { sum, elem => sum + elem },
+  )
   @assertion.assert_eq(sum, 15)?
+}
+
+/// Fold out values from an array according to certain rules with index.
+/// 
+/// # Example
+/// ```
+/// let sum = [1, 2, 3, 4, 5].fold_lefti(~init=0, fn { index, sum, elem => sum + index })
+/// sum // 10
+/// ```
+pub fn fold_lefti[T, U](self : Vec[T], f : (Int, U, T) -> U, ~init : U) -> U {
+  for i = 0, acc = init; i < self.length(); {
+    continue i + 1, f(i, acc, self[i])
+  } else {
+    acc
+  }
+}
+
+test "fold_lefti" {
+  let sum = Vec::[1, 2, 3, 4, 5].fold_lefti(
+    ~init=0,
+    fn { index, sum, _elem => sum + index },
+  )
+  @assertion.assert_eq(sum, 10)?
+}
+
+/// Fold out values from an array according to certain rules in reversed turn with index.
+/// 
+/// # Example
+/// ```
+/// let sum = [1, 2, 3, 4, 5].fold_righti(~init=0, fn { index, sum, elem => sum + index })
+/// sum // 10
+/// ```
+pub fn fold_righti[T, U](self : Vec[T], f : (Int, U, T) -> U, ~init : U) -> U {
+  for i = self.len - 1, acc = init; i >= 0; {
+    continue i - 1, f(self.len - i - 1, acc, self[i])
+  } else {
+    acc
+  }
+}
+
+test "fold_righti" {
+  let sum = Vec::[1, 2, 3, 4, 5].fold_righti(
+    ~init=0,
+    fn { index, sum, _elem => sum + index },
+  )
+  @assertion.assert_eq(sum, 10)?
 }
 
 /// Removes consecutive repeated elements in the vector according to the Eq trait.
