@@ -116,6 +116,26 @@ jobs:
           moon fmt
           git diff
 
+  coverage-check-bleeding:
+    runs-on: macos-14
+    continue-on-error: true
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: install
+        run: |
+          /bin/bash -c "$(curl -fsSL https://cli.moonbitlang.com/bleeding/mac_m1_moon_setup.sh)"
+          echo "$HOME/.moon/bin" >> $GITHUB_PATH
+
+      - name: moon test
+        run: moon test --enable-coverage
+
+      - name: moon_cove_report
+        run: moon_cove_report
+
+      - name: bisect_ppx report
+        run: bisect-ppx-report summary
+
   typo-check:
     runs-on: ubuntu-latest
     timeout-minutes: 10
