@@ -91,7 +91,7 @@ fn Output::output(self : Buffer, content : String) -> Unit {
 
 // TODO: This escape function should belong to the String package, but is 
 // not mature enough, so it's left here temporarily.
-/// Escape a string using standard C escape sequences to the given buffer,
+/// Escape a string using standard JSON escape sequences to the given buffer,
 /// usually for quoting uses.
 ///  
 /// This method only escapes characters below 0x20 and the following characters:
@@ -114,15 +114,14 @@ fn escape_to(s : String, buf : Buffer) -> Unit {
   while ix < s.length() {
     let ch = s[ix]
     match ch {
-      '"' | '\'' | '\\' => write_escaped_ch(ch)
+      '"' | '\\' => write_escaped_ch(ch)
       '\n' => write_escaped_ch('n')
       '\r' => write_escaped_ch('r')
       '\b' => write_escaped_ch('b')
       '\t' => write_escaped_ch('t')
       _ =>
         if ch.to_int() < 0x20 {
-          buf.write_char('\\')
-          buf.write_char('x')
+          buf.write_string("\\u00")
           let ich = ch.to_int()
           buf.write_char(to_hex_digit(ich / 16))
           buf.write_char(to_hex_digit(ich % 16))
@@ -147,10 +146,11 @@ pub fn escape(s : String) -> String {
 
 test "backslash escape" {
   let s = "\n\r\t\b\"'\\"
-  let expected = "\\n\\r\\t\\b\\\"\\'\\\\"
+  let expected = "\\n\\r\\t\\b\\\"'\\\\"
   // @assertion.assert_eq(escape(s), expected)?
-  if s != expected {
-    return Err("Expected: " + expected + ", got: " + s)
+  let escape_s = escape(s)
+  if escape_s != expected {
+    return Err("Expected: " + expected + ", got: " + escape_s)
   }
 }
 
