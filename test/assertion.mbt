@@ -71,11 +71,15 @@ test "not_eq.eq" {
   }
 }
 
-pub fn is_false(x : Bool, ~loc : SourceLoc = _) -> Result[Unit, String] {
-  if x == false {
-    Ok(())
+pub fn is_false[T : Debug + @bool.Boolean](
+  x : T,
+  ~loc : SourceLoc = _
+) -> Result[Unit, String] {
+  if x.to_bool() {
+    let x = debug_string(x)
+    Err("FAILED:\(loc) `\(x)` is not false")
   } else {
-    Err("FAILED:\(loc)")
+    Ok(())
   }
 }
 
@@ -87,11 +91,15 @@ test "is_false.true" {
   not_eq(is_false(true), Ok(()))?
 }
 
-pub fn is_true(x : Bool, ~loc : SourceLoc = _) -> Result[Unit, String] {
-  if x {
+pub fn is_true[T : Debug + @bool.Boolean](
+  x : T,
+  ~loc : SourceLoc = _
+) -> Result[Unit, String] {
+  if x.to_bool() {
     Ok(())
   } else {
-    Err("FAILED:\(loc)")
+    let x = debug_string(x)
+    Err("FAILED:\(loc): `\(x)` is not true")
   }
 }
 

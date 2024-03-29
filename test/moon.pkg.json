@@ -1,5 +1,6 @@
 {
     "import": [
+        "moonbitlang/core/bool",
         "moonbitlang/core/coverage"
     ]
 }
