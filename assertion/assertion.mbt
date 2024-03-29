@@ -71,11 +71,15 @@ test "assert_ne.eq" {
   }
 }
 
-pub fn assert_false(x : Bool, ~loc : SourceLoc = _) -> Result[Unit, String] {
-  if x == false {
-    Ok(())
+pub fn assert_false[T : Debug + @bool.Boolean](
+  x : T,
+  ~loc : SourceLoc = _
+) -> Result[Unit, String] {
+  if x.to_bool() {
+    let x = debug_string(x)
+    Err("FAILED:\(loc) `\(x)` is not false")
   } else {
-    Err("FAILED:\(loc)")
+    Ok(())
   }
 }
 
@@ -87,11 +91,15 @@ test "assert_false.true" {
   assert_ne(assert_false(true), Ok(()))?
 }
 
-pub fn assert_true(x : Bool, ~loc : SourceLoc = _) -> Result[Unit, String] {
-  if x {
+pub fn assert_true[T : Debug + @bool.Boolean](
+  x : T,
+  ~loc : SourceLoc = _
+) -> Result[Unit, String] {
+  if x.to_bool() {
     Ok(())
   } else {
-    Err("FAILED:\(loc)")
+    let x = debug_string(x)
+    Err("FAILED:\(loc): `\(x)` is not true")
   }
 }
 
