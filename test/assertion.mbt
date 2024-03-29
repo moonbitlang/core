@@ -18,6 +18,20 @@ fn debug_string[T : Debug](t : T) -> String {
   buf.to_string()
 }
 
+/// Test that the two values are equal.
+///
+/// Returns Ok if the two arguments are equal by value, using `==`; raises an
+/// Error otherwise.
+///
+/// # Examples
+///
+/// ```moonbit
+/// let a = "4" + "2"
+/// let b = "4" + "2"
+/// @test.eq(a, a)?  // this is okay
+/// @test.eq(a, b)?  // this is also okay
+/// @test.eq(a, "88")?  // but this is not
+/// ```
 pub fn eq[T : Debug + Eq](
   a : T,
   b : T,
@@ -46,6 +60,20 @@ test "eq.ne" {
   }
 }
 
+/// Test that the two values are not equal.
+///
+/// Returns Ok if the two arguments are NOT equal by value, using `!=`; raises
+/// an Error otherwise.
+///
+/// # Examples
+///
+/// ```moonbit
+/// let a = "4" + "2"
+/// let b = "4" + "2"
+/// @test.not_eq(a, "88")?  // this is okay
+/// @test.not_eq(a, a)?  // yields an error
+/// @test.not_eq(a, b)?  // also error
+/// ```
 pub fn not_eq[T : Debug + Eq](
   a : T,
   b : T,
@@ -71,6 +99,17 @@ test "not_eq.eq" {
   }
 }
 
+/// Test if the provided value evaluates to false.
+///
+/// Returns Ok if `to_bool()` of the provided value is `false`; raises an Error
+/// otherwise.
+///
+/// # Examples
+///
+/// ```moonbit
+/// @test.is_false(1 + 1 < 2)?  # this is okay
+/// @test.is_false(1 + 1 == 2)?  # yields an error
+/// ```
 pub fn is_false[T : Debug + @bool.Boolean](
   x : T,
   ~loc : SourceLoc = _
@@ -91,6 +130,17 @@ test "is_false.true" {
   not_eq(is_false(true), Ok(()))?
 }
 
+/// Test if the provided value evaluates to true.
+///
+/// Returns Ok if `to_bool()` of the provided value is `true`; raises an Error
+/// otherwise.
+///
+/// # Examples
+///
+/// ```moonbit
+/// @test.is_true(1 + 1 == 2)?  # this is okay
+/// @test.is_true(1 + 1 < 2)?  # yields an error
+/// ```
 pub fn is_true[T : Debug + @bool.Boolean](
   x : T,
   ~loc : SourceLoc = _
@@ -111,20 +161,20 @@ test "is_true.false" {
   not_eq(is_true(false), Ok(()))?
 }
 
-/// Assert referential equality of two values.
+/// Test that the two values are the same object.
 ///
 /// Returns Ok if the two arguments are the same object by reference, using
-/// `physical_equal`; raises an Error otherwise. Certain objects may be equal by
-/// value, but they are different objects in the memory. This function checks
-/// the latter.
+/// `physical_equal`; raises an Error otherwise. Certain objects may be equal
+/// by value, but they are different objects in the memory. This function
+/// checks the latter.
 ///
 /// # Examples
 ///
-/// ```
+/// ```moonbit
 /// let a = "4" + "2"
 /// let b = "4" + "2"
-/// is(a, a)?  // this is okay
-/// is(a, b)?  // yields an error
+/// @test.is(a, a)?  // this is okay
+/// @test.is(a, b)?  // yields an error
 /// ```
 pub fn is[T : Debug](
   a : T,
@@ -136,7 +186,7 @@ pub fn is[T : Debug](
   } else {
     let a = debug_string(a)
     let b = debug_string(b)
-    Err("FAILED:\(loc) `\(a) is \(b)`")
+    Err("FAILED:\(loc) `\(a)` is `\(b)`")
   }
 }
 
@@ -154,7 +204,7 @@ test "is.is.not" {
   not_eq(is(s1, s2), Ok(()))?
 }
 
-/// Assert referential inequality of two values.
+/// Test that the two values are NOT the same object.
 ///
 /// Returns Ok if the two arguments are NOT the same object by reference, using
 /// `physical_equal`; raises an Error otherwise. Certain objects may be equal
@@ -163,11 +213,11 @@ test "is.is.not" {
 ///
 /// # Examples
 ///
-/// ```
+/// ```moonbit
 /// let a = "4" + "2"
 /// let b = "4" + "2"
-/// is_not(a, b)?  // this is okay
-/// is_not(a, a)?  // yields an error
+/// @test.is_not(a, b)?  // this is okay
+/// @test.is_not(a, a)?  // yields an error
 /// ```
 pub fn is_not[T : Debug](
   a : T,
@@ -179,7 +229,7 @@ pub fn is_not[T : Debug](
   } else {
     let a = debug_string(a)
     let b = debug_string(b)
-    Err("FAILED:\(loc) `not(\(a) is \(b))`")
+    Err("FAILED:\(loc) `\(a)` is not `\(b)`")
   }
 }
 
