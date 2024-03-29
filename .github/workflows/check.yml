@@ -134,7 +134,13 @@ jobs:
         run: moon_cove_report
 
       - name: bisect_ppx report
-        run: bisect-ppx-report summary
+        run: bisect-ppx-report html
+
+      - name: upload coverage artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: code-coverage-report
+          path: _coverage
 
   typo-check:
     runs-on: ubuntu-latest
