@@ -120,25 +120,28 @@ test "iter_rev" {
 /// # Example
 ///
 /// ```
-/// [1, 2, 3, 4, 5].iteri(fn(index, elem){
+/// [1, 2, 3, 4, 5].iter_revi(fn(index, elem){
 ///   print("(\(index),\(elem)) ")
 /// }) //output: (4,5) (3,4) (2,3) (1,2) (0,1) 
 /// ```
-pub fn iteri_rev[T](self : Array[T], f : (Int, T) -> Unit) -> Unit {
-  for i = self.length() - 1; i >= 0; i = i - 1 {
-    f(i, self[i])
+pub fn iter_revi[T](self : Array[T], f : (Int, T) -> Unit) -> Unit {
+  let len = self.length()
+  for i = 0; i < len; i = i + 1 {
+    f(i, self[len - i - 1])
   }
 }
 
-test "iteri_rev" {
+test "iter_revi" {
   let mut i = 6
+  let mut j = 0
   let mut failed = false
-  [1, 2, 3, 4, 5].iteri_rev(
+  [1, 2, 3, 4, 5].iter_revi(
     fn(index, elem) {
-      if index != i - 2 || elem != i - 1 {
+      if index != j || elem != i - 1 {
         failed = true
       }
       i = i - 1
+      j = j + 1
     },
   )
   @assertion.assert_false(failed)?
@@ -190,7 +193,7 @@ pub fn mapi[T, U](self : Array[T], f : (T, Int) -> U) -> Array[U] {
   res
 }
 
-test "map_with_index" {
+test "mapi" {
   let arr = [1, 2, 3, 4, 5]
   let doubled = arr.mapi(fn(x, i) { x * 2 + i })
   let empty : Array[Int] = Array::default().mapi(fn(x, i) { x + i })
@@ -261,19 +264,19 @@ test "from_array" {
 /// 
 /// # Example
 /// ```
-/// let sum = [1, 2, 3, 4, 5].fold(~init=0, fn { sum, elem => sum + elem })
+/// let sum = [1, 2, 3, 4, 5].fold_left(~init=0, fn { sum, elem => sum + elem })
 /// sum // 15
 /// ```
-pub fn fold[T, U](self : Array[T], f : (T, U) -> U, ~init : U) -> U {
+pub fn fold_left[T, U](self : Array[T], f : (U, T) -> U, ~init : U) -> U {
   for i = 0, acc = init; i < self.length(); {
-    continue i + 1, f(self[i], acc)
+    continue i + 1, f(acc, self[i])
   } else {
     acc
   }
 }
 
-test "fold" {
-  let sum = [1, 2, 3, 4, 5].fold(~init=0, fn { sum, elem => sum + elem })
+test "fold_left" {
+  let sum = [1, 2, 3, 4, 5].fold_left(~init=0, fn { sum, elem => sum + elem })
   @assertion.assert_eq(sum, 15)?
 }
 
@@ -281,23 +284,74 @@ test "fold" {
 /// 
 /// # Example
 /// ```
-/// let sum = [1, 2, 3, 4, 5].fold_rev(~init=0, fn { sum, elem => sum + elem })
+/// let sum = [1, 2, 3, 4, 5].fold_right(~init=0, fn { sum, elem => sum + elem })
 /// sum // 15
 /// ```
-pub fn fold_rev[T, U](self : Array[T], f : (T, U) -> U, ~init : U) -> U {
+pub fn fold_right[T, U](self : Array[T], f : (U, T) -> U, ~init : U) -> U {
   for i = self.length() - 1, acc = init; i >= 0; {
-    continue i - 1, f(self[i], acc)
+    continue i - 1, f(acc, self[i])
   } else {
     acc
   }
 }
 
-test "fold_rev" {
-  let sum = [1, 2, 3, 4, 5].fold_rev(~init=0, fn { sum, elem => sum + elem })
+test "fold_right" {
+  let sum = [1, 2, 3, 4, 5].fold_right(~init=0, fn { sum, elem => sum + elem })
   @assertion.assert_eq(sum, 15)?
 }
 
-/// Fold out values from an array according to certain rules in reversed turn.
+/// Fold out values from an array according to certain rules with index.
+/// 
+/// # Example
+/// ```
+/// let sum = [1, 2, 3, 4, 5].fold_lefti(~init=0, fn { index, sum, elem => sum + index })
+/// sum // 10
+/// ```
+pub fn fold_lefti[T, U](self : Array[T], f : (Int, U, T) -> U, ~init : U) -> U {
+  for i = 0, acc = init; i < self.length(); {
+    continue i + 1, f(i, acc, self[i])
+  } else {
+    acc
+  }
+}
+
+test "fold_lefti" {
+  let sum = [1, 2, 3, 4, 5].fold_lefti(
+    ~init=0,
+    fn {
+      index, sum, _elem => {
+        sum + index
+      }
+    },
+  )
+  @assertion.assert_eq(sum, 10)?
+}
+
+/// Fold out values from an array according to certain rules in reversed turn with index.
+/// 
+/// # Example
+/// ```
+/// let sum = [1, 2, 3, 4, 5].fold_righti(~init=0, fn { index, sum, elem => sum + index })
+/// sum // 10
+/// ```
+pub fn fold_righti[T, U](self : Array[T], f : (Int, U, T) -> U, ~init : U) -> U {
+  let len = self.length()
+  for i = len - 1, acc = init; i >= 0; {
+    continue i - 1, f(len - i - 1, acc, self[i])
+  } else {
+    acc
+  }
+}
+
+test "fold_righti" {
+  let sum = [1, 2, 3, 4, 5].fold_righti(
+    ~init=0,
+    fn { index, sum, _elem => sum + index },
+  )
+  @assertion.assert_eq(sum, 10)?
+}
+
+/// Reverses the order of elements in the slice, in place.
 /// 
 /// # Example
 /// ```
