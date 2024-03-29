@@ -33,7 +33,7 @@ pub fn Stack::new[T]() -> Stack[T] {
 
 test "new" {
   let s : Stack[Unit] = Stack::new()
-  @assertion.assert_eq(s.elements, Nil)?
+  @test.assert_eq(s.elements, Nil)?
 }
 
 /// Create a stack based on all elements in list
@@ -50,8 +50,8 @@ pub fn Stack::from_list[T](list : List[T]) -> Stack[T] {
 
 test "from_list" {
   let s : Stack[Int] = Stack::from_list(Cons(1, Cons(2, Cons(3, Nil))))
-  @assertion.assert_eq(s.elements, Cons(3, Cons(2, Cons(1, Nil))))?
-  @assertion.assert_eq(s.len, 3)?
+  @test.assert_eq(s.elements, Cons(3, Cons(2, Cons(1, Nil))))?
+  @test.assert_eq(s.len, 3)?
 }
 
 /// Create a stack based on all elements in array
@@ -68,8 +68,8 @@ pub fn Stack::from_array[T](array : Array[T]) -> Stack[T] {
 
 test "from_array" {
   let s : Stack[Int] = Stack::[1, 2, 3]
-  @assertion.assert_eq(s.elements, Cons(3, Cons(2, Cons(1, Nil))))?
-  @assertion.assert_eq(s.len, 3)?
+  @test.assert_eq(s.elements, Cons(3, Cons(2, Cons(1, Nil))))?
+  @test.assert_eq(s.len, 3)?
 }
 
 /// Create a stack based on another stack
@@ -88,7 +88,7 @@ pub fn Stack::from_stack[T](other : Stack[T]) -> Stack[T] {
 test "from_stack" {
   let s : Stack[Int] = Stack::from_list(Cons(3, Cons(2, Cons(1, Nil))))
   let s1 : Stack[Int] = Stack::from_stack(s)
-  @assertion.assert_eq(s1.elements, s.elements)?
+  @test.assert_eq(s1.elements, s.elements)?
 }
 
 /// Clear all elements in Stack
@@ -108,7 +108,7 @@ pub fn clear[T](self : Stack[T]) -> Unit {
 test "clear" {
   let s : Stack[Int] = Stack::from_list(Cons(1, Cons(2, Cons(3, Nil))))
   s.clear()
-  @assertion.assert_eq(s.elements, Nil)?
+  @test.assert_eq(s.elements, Nil)?
 }
 
 /// Same as the `clear()`, but returns an cleared stack
@@ -126,7 +126,7 @@ pub fn return_with_clear[T](self : Stack[T]) -> Stack[T] {
 
 test "return_with_clear" {
   let s : Stack[Int] = Stack::from_list(Cons(1, Cons(2, Cons(3, Nil)))).return_with_clear()
-  @assertion.assert_eq(s.elements, Nil)?
+  @test.assert_eq(s.elements, Nil)?
 }
 
 /// Returns a copy of the current Stack
@@ -145,7 +145,7 @@ pub fn copy[T](self : Stack[T]) -> Stack[T] {
 test "copy" {
   let s : Stack[Int] = Stack::from_list(Cons(1, Cons(2, Cons(3, Nil))))
   let s1 : Stack[Int] = s.copy()
-  @assertion.assert_eq(s1.elements, s.elements)?
+  @test.assert_eq(s1.elements, s.elements)?
 }
 
 /// Push an element into the stack
@@ -165,8 +165,8 @@ pub fn push[T](self : Stack[T], x : T) -> Unit {
 test "push" {
   let s : Stack[Int] = Stack::new()
   s.push(1)
-  @assertion.assert_eq(s.elements, Cons(1, Nil))?
-  @assertion.assert_eq(s.len, 1)?
+  @test.assert_eq(s.elements, Cons(1, Nil))?
+  @test.assert_eq(s.len, 1)?
 }
 
 /// Push a list into the stack
@@ -185,8 +185,8 @@ pub fn push_list[T](self : Stack[T], list : List[T]) -> Unit {
 test "push_list" {
   let s : Stack[Int] = Stack::new()
   s.push_list(Cons(1, Cons(2, Cons(3, Nil))))
-  @assertion.assert_eq(s.elements, Cons(3, Cons(2, Cons(1, Nil))))?
-  @assertion.assert_eq(s.len, 3)?
+  @test.assert_eq(s.elements, Cons(3, Cons(2, Cons(1, Nil))))?
+  @test.assert_eq(s.len, 3)?
 }
 
 /// Push other stack into the current stack
@@ -207,8 +207,8 @@ test "push_stack" {
   let s : Stack[Int] = Stack::from_list(Cons(1, Cons(2, Cons(3, Nil))))
   let s1 : Stack[Int] = Stack::new()
   s1.push_stack(s)
-  @assertion.assert_eq(s1.elements, Cons(1, Cons(2, Cons(3, Nil))))?
-  @assertion.assert_eq(s.len, s1.len)?
+  @test.assert_eq(s1.elements, Cons(1, Cons(2, Cons(3, Nil))))?
+  @test.assert_eq(s.len, s1.len)?
 }
 
 /// Push an array into the stack.
@@ -227,8 +227,8 @@ pub fn push_array[T](self : Stack[T], array : Array[T]) -> Unit {
 test "push_array" {
   let s : Stack[Int] = Stack::new()
   s.push_array([1, 2, 3])
-  @assertion.assert_eq(s.elements, Cons(3, Cons(2, Cons(1, Nil))))?
-  @assertion.assert_eq(s.len, 3)?
+  @test.assert_eq(s.elements, Cons(3, Cons(2, Cons(1, Nil))))?
+  @test.assert_eq(s.len, 3)?
 }
 
 /// Pop an element from the top of the stack.
@@ -257,12 +257,12 @@ pub fn pop[T](self : Stack[T]) -> Option[T] {
 test "pop" {
   let s : Stack[Int] = Stack::[1, 2, 3]
   let s1 : Stack[Int] = Stack::new()
-  @assertion.assert_eq(s.pop(), Some(3))?
-  @assertion.assert_eq(s.elements, Cons(2, Cons(1, Nil)))?
-  @assertion.assert_eq(s.len, 2)?
-  @assertion.assert_eq(s1.pop(), None)?
-  @assertion.assert_eq(s1.elements, Nil)?
-  @assertion.assert_eq(s1.len, 0)?
+  @test.assert_eq(s.pop(), Some(3))?
+  @test.assert_eq(s.elements, Cons(2, Cons(1, Nil)))?
+  @test.assert_eq(s.len, 2)?
+  @test.assert_eq(s1.pop(), None)?
+  @test.assert_eq(s1.elements, Nil)?
+  @test.assert_eq(s1.len, 0)?
 }
 
 /// Pop an element from the top of the stack.
@@ -290,9 +290,9 @@ pub fn pop_exn[T](self : Stack[T]) -> T {
 
 test "pop_exn" {
   let s : Stack[Int] = Stack::[1, 2, 3]
-  @assertion.assert_eq(s.pop_exn(), 3)?
-  @assertion.assert_eq(s.elements, Cons(2, Cons(1, Nil)))?
-  @assertion.assert_eq(s.len, 2)?
+  @test.assert_eq(s.pop_exn(), 3)?
+  @test.assert_eq(s.elements, Cons(2, Cons(1, Nil)))?
+  @test.assert_eq(s.len, 2)?
 }
 
 /// Drop the element at the top of the stack.
@@ -318,8 +318,8 @@ pub fn drop[T](self : Stack[T]) -> Unit {
 test "drop" {
   let s : Stack[Int] = Stack::[1, 2, 3]
   s.drop()
-  @assertion.assert_eq(s.elements, Cons(2, Cons(1, Nil)))?
-  @assertion.assert_eq(s.len, 2)?
+  @test.assert_eq(s.elements, Cons(2, Cons(1, Nil)))?
+  @test.assert_eq(s.len, 2)?
 }
 
 /// Drop the element at the top of the stack.
@@ -346,10 +346,10 @@ pub fn drop_result[T](self : Stack[T]) -> Result[Unit, Unit] {
 test "drop_result" {
   let s : Stack[Int] = Stack::[1, 2, 3]
   let s1 : Stack[Int] = Stack::new()
-  @assertion.assert_eq(s1.drop_result(), Err(()))?
-  @assertion.assert_eq(s.drop_result(), Ok(()))?
-  @assertion.assert_eq(s.elements, Cons(2, Cons(1, Nil)))?
-  @assertion.assert_eq(s.len, 2)?
+  @test.assert_eq(s1.drop_result(), Err(()))?
+  @test.assert_eq(s.drop_result(), Ok(()))?
+  @test.assert_eq(s.elements, Cons(2, Cons(1, Nil)))?
+  @test.assert_eq(s.len, 2)?
 }
 
 /// Only the top element of the stack is returned and will not be pop or drop.
@@ -371,9 +371,9 @@ pub fn peek[T](self : Stack[T]) -> Option[T] {
 
 test "peek" {
   let s : Stack[Int] = Stack::[1, 2, 3]
-  @assertion.assert_eq(s.peek(), Some(3))?
-  @assertion.assert_eq(s.elements, Cons(3, Cons(2, Cons(1, Nil))))?
-  @assertion.assert_eq(s.len, 3)?
+  @test.assert_eq(s.peek(), Some(3))?
+  @test.assert_eq(s.elements, Cons(3, Cons(2, Cons(1, Nil))))?
+  @test.assert_eq(s.len, 3)?
 }
 
 /// Only the top element of the stack is returned and will not be pop or drop.
@@ -397,9 +397,9 @@ pub fn peek_exn[T](self : Stack[T]) -> T {
 
 test "peek_exn" {
   let s : Stack[Int] = Stack::[1, 2, 3]
-  @assertion.assert_eq(s.peek_exn(), 3)?
-  @assertion.assert_eq(s.elements, Cons(3, Cons(2, Cons(1, Nil))))?
-  @assertion.assert_eq(s.len, 3)?
+  @test.assert_eq(s.peek_exn(), 3)?
+  @test.assert_eq(s.elements, Cons(3, Cons(2, Cons(1, Nil))))?
+  @test.assert_eq(s.len, 3)?
 }
 
 /// If stack is empty, return true, otherwise return false.
@@ -416,8 +416,8 @@ pub fn is_empty[T](self : Stack[T]) -> Bool {
 
 test "is_empty" {
   let empty : Stack[Unit] = Stack::new()
-  @assertion.assert_false(Stack::[1, 2, 3].is_empty())?
-  @assertion.assert_true(empty.is_empty())?
+  @test.assert_false(Stack::[1, 2, 3].is_empty())?
+  @test.assert_true(empty.is_empty())?
 }
 
 /// Returns the number of elements of the Stack
@@ -441,17 +441,17 @@ test "iter" {
   let mut sum = 0
   let mut sub = 0
   s.iter(fn(i) { sum = sum + i })
-  @assertion.assert_eq(sum, 0)?
+  @test.assert_eq(sum, 0)?
   s.push(1)
   s.push(2)
   s.push(3)
-  @assertion.assert_eq(s.peek_exn(), 3)?
+  @test.assert_eq(s.peek_exn(), 3)?
   sum = 0
   sub = s.peek_exn()
   s.iter(fn(i) { sum = sum + i })
   s.iter(fn(i) { sub = sub - i }) // 3 - 3 - 2 - 1
-  @assertion.assert_eq(sum, 6)?
-  @assertion.assert_eq(sub, -3)?
+  @test.assert_eq(sum, 6)?
+  @test.assert_eq(sub, -3)?
 }
 
 /// Folds over the elements of the stack from top to bottom.
@@ -469,7 +469,7 @@ pub fn fold[T, U](self : Stack[T], ~init : U, f : (U, T) -> U) -> U {
 test "fold" {
   let s : Stack[Int] = Stack::from_array([1, 2, 3])
   let sum = s.fold(~init=0, fn(acc, i) { acc + i })
-  @assertion.assert_eq(sum, 6)?
+  @test.assert_eq(sum, 6)?
 }
 
 /// Convert stack to list
@@ -484,7 +484,7 @@ pub fn to_list[T](self : Stack[T]) -> List[T] {
 }
 
 test "to_list" {
-  @assertion.assert_eq(
+  @test.assert_eq(
     Stack::[3, 2, 1].to_list(),
     Cons(1, Cons(2, Cons(3, Nil))),
   )?
@@ -502,7 +502,7 @@ pub fn to_array[T : Default](self : Stack[T]) -> Array[T] {
 }
 
 test "to_array" {
-  @assertion.assert_eq(Stack::[3, 2, 1].to_array(), [1, 2, 3])?
+  @test.assert_eq(Stack::[3, 2, 1].to_array(), [1, 2, 3])?
 }
 
 /// Compare two stacks.
@@ -529,6 +529,6 @@ pub fn op_equal[T : Eq](self : Stack[T], other : Stack[T]) -> Bool {
 }
 
 test "equal" {
-  @assertion.assert_true(Stack::[2, 4, 6].equal(Stack::[2, 4, 6]))?
-  @assertion.assert_false(Stack::[2, 4, 6].equal(Stack::[2, 4, 7]))?
+  @test.assert_true(Stack::[2, 4, 6].equal(Stack::[2, 4, 6]))?
+  @test.assert_false(Stack::[2, 4, 6].equal(Stack::[2, 4, 7]))?
 }

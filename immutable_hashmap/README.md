@@ -8,7 +8,7 @@ test {
     .add(1, 1)
     .add(2, 2)
   let h2 = h.add(3, 3)
-  @assert.assert_eq(h.find(3), None)
-  @assert.assert_eq(h2.find(3), Some(3))
+  @test.assert_eq(h.find(3), None)
+  @test.assert_eq(h2.find(3), Some(3))
 }
 ```

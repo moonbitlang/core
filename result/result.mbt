@@ -29,8 +29,8 @@ test "map" {
   let y = x.map(fn(v : Int) { v * 7 })
   let z : Result[Int, Int] = Err(3)
   let w = z.map(fn(v : Int) { v * 7 })
-  @assertion.assert_eq(y, Ok(42))?
-  @assertion.assert_eq(w, Err(3))?
+  @test.assert_eq(y, Ok(42))?
+  @test.assert_eq(w, Err(3))?
 }
 
 /// Maps the value of a Result if it is `Err` into another, otherwise returns the `Ok` value unchanged.
@@ -53,8 +53,8 @@ test "map_err" {
   let y = x.map_err(fn(v : String) { v + "!" })
   let z : Result[Int, Int] = Ok(6)
   let w = z.map_err(fn(v : Int) { v + 6 })
-  @assertion.assert_eq(y, Err("error!"))?
-  @assertion.assert_eq(w, Ok(6))?
+  @test.assert_eq(y, Err("error!"))?
+  @test.assert_eq(w, Ok(6))?
 }
 
 /// Create an `Err` of type `E`.
@@ -70,7 +70,7 @@ pub fn err[T, E](value : E) -> Result[T, E] {
 
 test "err" {
   let x : Result[Int, String] = err("error")
-  @assertion.assert_eq(x, Err("error"))?
+  @test.assert_eq(x, Err("error"))?
 }
 
 /// Create an `Ok` of type `T`.
@@ -86,7 +86,7 @@ pub fn ok[T, E](value : T) -> Result[T, E] {
 
 test "ok" {
   let x : Result[String, Unit] = ok("yes")
-  @assertion.assert_eq(x, Ok("yes"))?
+  @test.assert_eq(x, Ok("yes"))?
 }
 
 /// Check if a `Result` is an `Ok`.
@@ -100,8 +100,8 @@ pub fn is_ok[T, E](self : Result[T, E]) -> Bool {
 test "is_ok" {
   let x : Result[Int, String] = Ok(6)
   let y : Result[Int, String] = Err("error")
-  @assertion.assert_eq(is_ok(x), true)?
-  @assertion.assert_eq(is_ok(y), false)?
+  @test.assert_eq(is_ok(x), true)?
+  @test.assert_eq(is_ok(y), false)?
 }
 
 /// Check if a `Result` is an `Err`.
@@ -115,8 +115,8 @@ pub fn is_err[T, E](self : Result[T, E]) -> Bool {
 test "is_err" {
   let x : Result[Int, String] = Ok(6)
   let y : Result[Int, String] = Err("error")
-  @assertion.assert_eq(is_err(x), false)?
-  @assertion.assert_eq(is_err(y), true)?
+  @test.assert_eq(is_err(x), false)?
+  @test.assert_eq(is_err(y), true)?
 }
 
 /// Return the inner `Ok` value, if it exists, otherwise return the provided default.
@@ -139,8 +139,8 @@ test "or" {
   let y : Result[Int, String] = Err("error")
   let z = x.or(0)
   let w = y.or(0)
-  @assertion.assert_eq(z, 6)?
-  @assertion.assert_eq(w, 0)?
+  @test.assert_eq(z, 6)?
+  @test.assert_eq(w, 0)?
 }
 
 /// Return the inner `Ok` value, if it exists, otherwise return the provided default.
@@ -164,8 +164,8 @@ test "or_else" {
   let y : Result[Int, String] = Err("error")
   let z = or_else(x, fn() { 0 })
   let w = or_else(y, fn() { 0 })
-  @assertion.assert_eq(z, 6)?
-  @assertion.assert_eq(w, 0)?
+  @test.assert_eq(z, 6)?
+  @test.assert_eq(w, 0)?
 }
 
 /// Flatten a `Result` of `Result` into a single `Result`.
@@ -187,8 +187,8 @@ test "flatten" {
   let y = x.flatten()
   let z : Result[Result[Int, String], String] = Err("error")
   let w = z.flatten()
-  @assertion.assert_eq(y, Ok(6))?
-  @assertion.assert_eq(w, Err("error"))?
+  @test.assert_eq(y, Ok(6))?
+  @test.assert_eq(w, Err("error"))?
 }
 
 /// Binds a result to a function that returns another result.
@@ -209,7 +209,7 @@ pub fn bind[T, E, U](
 test "bind" {
   let x : Result[Int, String] = Ok(6)
   let y = bind(x, fn(v : Int) { Ok(v * 7) })
-  @assertion.assert_eq(y, Ok(42))?
+  @test.assert_eq(y, Ok(42))?
 }
 
 /// Folds a `Result` into a single value.
@@ -233,8 +233,8 @@ test "fold" {
   let y = fold(x, fn(v : Int) -> Int { v * 7 }, fn(_e : String) -> Int { 0 })
   let z : Result[Int, String] = Err("error")
   let w = fold(z, fn(v : Int) -> Int { v * 7 }, fn(_e : String) -> Int { 0 })
-  @assertion.assert_eq(y, 42)?
-  @assertion.assert_eq(w, 0)?
+  @test.assert_eq(y, 42)?
+  @test.assert_eq(w, 0)?
 }
 
 /// Converts a `Result` to an `Option`.
@@ -259,6 +259,6 @@ test "to_option" {
   let y : Result[Int, String] = Err("error")
   let z = to_option(x)
   let w = to_option(y)
-  @assertion.assert_eq(z, Some(6))?
-  @assertion.assert_eq(w, None)?
+  @test.assert_eq(z, Some(6))?
+  @test.assert_eq(w, None)?
 }

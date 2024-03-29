@@ -26,11 +26,11 @@ fn has(self : Bitset, idx : Int) -> Bool {
 
 test "Bitset::has" {
   let b = empty_bitset.add(2)
-  @assertion.assert_false(b.has(0))?
-  @assertion.assert_true(b.has(2))?
+  @test.assert_false(b.has(0))?
+  @test.assert_true(b.has(2))?
   let b = b.add(0)
-  @assertion.assert_true(b.has(0))?
-  @assertion.assert_true(b.has(2))?
+  @test.assert_true(b.has(0))?
+  @test.assert_true(b.has(2))?
 }
 
 /// `index_of(self: Bitset, idx: Int)`
@@ -43,11 +43,11 @@ fn index_of(self : Bitset, idx : Int) -> Int {
 
 test "Bitset::index_of" {
   let b = empty_bitset.add(2)
-  @assertion.assert_eq(b.index_of(2), 0)?
+  @test.assert_eq(b.index_of(2), 0)?
   let b = b.add(0)
-  @assertion.assert_eq(b.index_of(2), 1)?
+  @test.assert_eq(b.index_of(2), 1)?
   let b = b.add(5)
-  @assertion.assert_eq(b.index_of(2), 1)?
+  @test.assert_eq(b.index_of(2), 1)?
 }
 
 /// `add(self: Bitset, idx: Int)`
@@ -66,14 +66,14 @@ fn remove(self : Bitset, idx : Int) -> Bitset {
 
 test "Bitset::remove" {
   let b = empty_bitset.add(2).add(3)
-  @assertion.assert_true(b.has(2))?
-  @assertion.assert_true(b.has(3))?
-  @assertion.assert_eq(b.index_of(2), 0)?
-  @assertion.assert_eq(b.index_of(3), 1)?
+  @test.assert_true(b.has(2))?
+  @test.assert_true(b.has(3))?
+  @test.assert_eq(b.index_of(2), 0)?
+  @test.assert_eq(b.index_of(3), 1)?
   let b = b.remove(2)
-  @assertion.assert_false(b.has(2))?
-  @assertion.assert_true(b.has(3))?
-  @assertion.assert_eq(b.index_of(3), 0)?
+  @test.assert_false(b.has(2))?
+  @test.assert_true(b.has(3))?
+  @test.assert_eq(b.index_of(3), 0)?
 }
 
 /// `size(self: Bitset) -> Int`
@@ -85,13 +85,13 @@ fn size(self : Bitset) -> Int {
 
 test "Bitset::size" {
   let b = empty_bitset
-  @assertion.assert_eq(b.size(), 0)?
+  @test.assert_eq(b.size(), 0)?
   let b = b.add(0)
-  @assertion.assert_eq(b.size(), 1)?
+  @test.assert_eq(b.size(), 1)?
   let b = b.add(1)
-  @assertion.assert_eq(b.size(), 2)?
+  @test.assert_eq(b.size(), 2)?
   let b = b.add(1)
-  @assertion.assert_eq(b.size(), 2)?
+  @test.assert_eq(b.size(), 2)?
 }
 
 /// `ctpop(n: Int)`
@@ -121,7 +121,7 @@ fn ctpop(n : Int) -> Int {
 }
 
 test "Bitset::ctpop" {
-  @assertion.assert_eq(ctpop(0), 0)?
-  @assertion.assert_eq(ctpop(0xf0f0f0f0), 16)?
-  @assertion.assert_eq(ctpop(0x3c3c0ff0), 16)?
+  @test.assert_eq(ctpop(0), 0)?
+  @test.assert_eq(ctpop(0xf0f0f0f0), 16)?
+  @test.assert_eq(ctpop(0x3c3c0ff0), 16)?
 }

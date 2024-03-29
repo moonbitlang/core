@@ -104,11 +104,11 @@ test "realloc" {
   let v : Vec[Int] = Vec::new()
   v.realloc()
   v.realloc()
-  @assertion.assert_eq(v.capacity(), 8)?
+  @test.assert_eq(v.capacity(), 8)?
   for i = 0; i < 9; i = i + 1 {
     v.push(i)
   }
-  @assertion.assert_eq(v.capacity(), 16)?
+  @test.assert_eq(v.capacity(), 16)?
 }
 
 /// Retrieves the element at the specified index from the vector.
@@ -172,8 +172,8 @@ test "op_equal" {
   let v1 = Vec::[3, 4, 5]
   let v2 = Vec::[3, 4, 5]
   let v3 = Vec::[3, 4, 6]
-  @assertion.assert_true(v1 == v2)?
-  @assertion.assert_false(v1 == v3)?
+  @test.assert_true(v1 == v2)?
+  @test.assert_false(v1 == v3)?
 }
 
 /// Removes the last element from a vector and returns it, or `None` if it is empty.
@@ -197,11 +197,11 @@ test "pop" {
   let v = Vec::new()
   v.push(3)
   v.push(4)
-  @assertion.assert_eq(v.length(), 2)?
-  @assertion.assert_eq(v.pop(), Some(4))?
-  @assertion.assert_eq(v.pop(), Some(3))?
-  @assertion.assert_eq(v.length(), 0)?
-  @assertion.assert_eq(v.pop(), None)?
+  @test.assert_eq(v.length(), 2)?
+  @test.assert_eq(v.pop(), Some(4))?
+  @test.assert_eq(v.pop(), Some(3))?
+  @test.assert_eq(v.length(), 0)?
+  @test.assert_eq(v.pop(), None)?
 }
 
 /// Removes the last element from a vector and returns it.
@@ -225,10 +225,10 @@ test "pop_exn" {
   let v = Vec::new()
   v.push(3)
   v.push(4)
-  @assertion.assert_eq(v.length(), 2)?
-  @assertion.assert_eq(v.pop_exn(), 4)?
-  @assertion.assert_eq(v.pop_exn(), 3)?
-  @assertion.assert_eq(v.length(), 0)?
+  @test.assert_eq(v.length(), 2)?
+  @test.assert_eq(v.pop_exn(), 4)?
+  @test.assert_eq(v.pop_exn(), 3)?
+  @test.assert_eq(v.length(), 0)?
 }
 
 /// Adds an element to the end of the vector.
@@ -250,9 +250,9 @@ pub fn push[T](self : Vec[T], value : T) -> Unit {
 
 test "push" {
   let v = Vec::[3, 4, 5]
-  @assertion.assert_eq(v, Vec::[3, 4, 5])?
+  @test.assert_eq(v, Vec::[3, 4, 5])?
   v[0] = 6
-  @assertion.assert_eq(v, Vec::[6, 4, 5])?
+  @test.assert_eq(v, Vec::[6, 4, 5])?
 }
 
 /// Removes the specified range from the vector and returns it.
@@ -290,10 +290,10 @@ test "drain" {
   let v2 = Vec::[1, 2, 3, 4, 5]
   let vv = v.drain(1, 2)
   let v2v = v2.drain(2, 5)
-  @assertion.assert_eq(v, Vec::[3, 5])?
-  @assertion.assert_eq(vv, Vec::[4])?
-  @assertion.assert_eq(v2, Vec::[1, 2])?
-  @assertion.assert_eq(v2v, Vec::[3, 4, 5])?
+  @test.assert_eq(v, Vec::[3, 5])?
+  @test.assert_eq(vv, Vec::[4])?
+  @test.assert_eq(v2, Vec::[1, 2])?
+  @test.assert_eq(v2v, Vec::[3, 4, 5])?
 }
 
 /// Appends all the elements of other vector into self
@@ -315,8 +315,8 @@ test "append" {
   let v1 = Vec::[3, 4, 5]
   let v2 = Vec::[6, 7, 8]
   v1.append(v2)
-  @assertion.assert_eq(v1, Vec::[3, 4, 5, 6, 7, 8])?
-  @assertion.assert_eq(v1.length(), 6)?
+  @test.assert_eq(v1, Vec::[3, 4, 5, 6, 7, 8])?
+  @test.assert_eq(v1.length(), 6)?
 }
 
 /// Iterates over the elements of the vector.
@@ -340,7 +340,7 @@ test "iter" {
   let v = Vec::[3, 4, 5]
   let mut sum = 0
   v.iter(fn(x) { sum = sum + x })
-  @assertion.assert_eq(sum, 12)?
+  @test.assert_eq(sum, 12)?
 }
 
 pub fn iter_rev[T](self : Vec[T], f : (T) -> Unit) -> Unit {
@@ -356,7 +356,7 @@ test "iter_rev" {
   v.push(5)
   let mut sum = 0
   v.iter_rev(fn(x) { sum = sum + x })
-  @assertion.assert_eq(sum, 12)?
+  @test.assert_eq(sum, 12)?
 }
 
 /// Iterates over the elements of the vector with index.
@@ -380,7 +380,7 @@ test "iteri" {
   let v = Vec::[3, 4, 5]
   let mut sum = 0
   v.iteri(fn(i, x) { sum = sum + x + i })
-  @assertion.assert_eq(sum, 15)?
+  @test.assert_eq(sum, 15)?
 }
 
 pub fn iter_revi[T](self : Vec[T], f : (Int, T) -> Unit) -> Unit {
@@ -394,7 +394,7 @@ test "iter_revi" {
   let v = Vec::[3, 4, 5]
   let mut sum = 0
   v.iter_revi(fn(i, x) { sum = sum + x + i })
-  @assertion.assert_eq(sum, 15)?
+  @test.assert_eq(sum, 15)?
 }
 
 /// Clears the vector, removing all values.
@@ -413,8 +413,8 @@ pub fn clear[T](self : Vec[T]) -> Unit {
 test "clear" {
   let v = Vec::[3, 4, 5]
   v.clear()
-  @assertion.assert_eq(v.length(), 0)?
-  @assertion.assert_eq(v.capacity(), 3)?
+  @test.assert_eq(v.length(), 0)?
+  @test.assert_eq(v.capacity(), 3)?
 }
 
 /// Maps a function over the elements of the vector.
@@ -433,7 +433,7 @@ pub fn map[T](self : Vec[T], f : (T) -> T) -> Unit {
 test "map" {
   let v = Vec::[3, 4, 5]
   v.map(fn(x) { x + 1 })
-  @assertion.assert_eq(v, Vec::[4, 5, 6])?
+  @test.assert_eq(v, Vec::[4, 5, 6])?
 }
 
 /// Maps a function over the elements of the vector with index.
@@ -452,7 +452,7 @@ pub fn mapi[T](self : Vec[T], f : (Int, T) -> T) -> Unit {
 test "mapi" {
   let v = Vec::[3, 4, 5]
   v.mapi(fn(i, x) { x + i })
-  @assertion.assert_eq(v, Vec::[3, 5, 7])?
+  @test.assert_eq(v, Vec::[3, 5, 7])?
 }
 
 /// Test if the vector is empty.
@@ -468,9 +468,9 @@ pub fn is_empty[T](self : Vec[T]) -> Bool {
 
 test "is_empty" {
   let v = Vec::new()
-  @assertion.assert_true(v.is_empty())?
+  @test.assert_true(v.is_empty())?
   v.push(3)
-  @assertion.assert_false(v.is_empty())?
+  @test.assert_false(v.is_empty())?
 }
 
 /// Test if the vector is sorted.
@@ -494,11 +494,11 @@ pub fn is_sorted[T : Compare](self : Vec[T]) -> Bool {
 
 test "is_sorted" {
   let v : Vec[Int] = Vec::[]
-  @assertion.assert_true(v.is_sorted())?
+  @test.assert_true(v.is_sorted())?
   let v = Vec::[3, 4, 5]
-  @assertion.assert_true(v.is_sorted())?
+  @test.assert_true(v.is_sorted())?
   let v2 = Vec::[3, 5, 4]
-  @assertion.assert_false(v2.is_sorted())?
+  @test.assert_false(v2.is_sorted())?
 }
 
 /// Reverses the order of elements in the slice, in place.
@@ -519,16 +519,16 @@ pub fn reverse[T](self : Vec[T]) -> Unit {
 test "reverse" {
   let v = Vec::[3, 4, 5]
   v.reverse()
-  @assertion.assert_eq(v, Vec::[5, 4, 3])?
+  @test.assert_eq(v, Vec::[5, 4, 3])?
   v.reverse()
-  @assertion.assert_eq(v, Vec::[3, 4, 5])?
+  @test.assert_eq(v, Vec::[3, 4, 5])?
   let v = Vec::[3, 4]
   v.reverse()
-  @assertion.assert_eq(v, Vec::[4, 3])?
+  @test.assert_eq(v, Vec::[4, 3])?
   v.reverse()
-  @assertion.assert_eq(v, Vec::[3, 4])?
+  @test.assert_eq(v, Vec::[3, 4])?
   let empty : Vec[Int] = Vec::[]
-  @assertion.assert_eq(empty, empty)?
+  @test.assert_eq(empty, empty)?
 }
 
 /// Split the vector into two at the given index.
@@ -562,8 +562,8 @@ pub fn split_at[T](self : Vec[T], index : Int) -> (Vec[T], Vec[T]) {
 test "split_at" {
   let v = Vec::[3, 4, 5]
   let (v1, v2) = v.split_at(1)
-  @assertion.assert_eq(v1, Vec::[3])?
-  @assertion.assert_eq(v2, Vec::[4, 5])?
+  @test.assert_eq(v1, Vec::[3])?
+  @test.assert_eq(v2, Vec::[4, 5])?
 }
 
 /// Checks if the vector contains an element.
@@ -585,10 +585,10 @@ pub fn contains[T : Eq](self : Vec[T], value : T) -> Bool {
 
 test "contains" {
   let v = Vec::[3, 4, 5]
-  @assertion.assert_true(v.contains(3))?
-  @assertion.assert_true(v.contains(4))?
-  @assertion.assert_true(v.contains(5))?
-  @assertion.assert_false(v.contains(6))?
+  @test.assert_true(v.contains(3))?
+  @test.assert_true(v.contains(4))?
+  @test.assert_true(v.contains(5))?
+  @test.assert_false(v.contains(6))?
 }
 
 /// Check if the vector starts with a given prefix.
@@ -613,9 +613,9 @@ pub fn starts_with[T : Eq](self : Vec[T], prefix : Vec[T]) -> Bool {
 
 test "starts_with" {
   let v = Vec::[3, 4, 5]
-  @assertion.assert_true(v.starts_with(Vec::[3, 4]))?
-  @assertion.assert_true(v.starts_with(Vec::[3, 4, 5]))?
-  @assertion.assert_false(v.starts_with(Vec::[3, 4, 5, 6]))?
+  @test.assert_true(v.starts_with(Vec::[3, 4]))?
+  @test.assert_true(v.starts_with(Vec::[3, 4, 5]))?
+  @test.assert_false(v.starts_with(Vec::[3, 4, 5, 6]))?
 }
 
 /// Check if the vector ends with a given suffix.
@@ -640,9 +640,9 @@ pub fn ends_with[T : Eq](self : Vec[T], suffix : Vec[T]) -> Bool {
 
 test "ends_with" {
   let v = Vec::[3, 4, 5]
-  @assertion.assert_true(v.ends_with(Vec::[4, 5]))?
-  @assertion.assert_true(v.ends_with(Vec::[3, 4, 5]))?
-  @assertion.assert_false(v.ends_with(Vec::[2, 3, 4, 5]))?
+  @test.assert_true(v.ends_with(Vec::[4, 5]))?
+  @test.assert_true(v.ends_with(Vec::[3, 4, 5]))?
+  @test.assert_false(v.ends_with(Vec::[2, 3, 4, 5]))?
 }
 
 /// Strip a prefix from the vector.
@@ -670,8 +670,8 @@ pub fn strip_prefix[T : Eq](self : Vec[T], prefix : Vec[T]) -> Option[Vec[T]] {
 test "strip_prefix" {
   let v = Vec::[3, 4, 5]
   let sv = v.strip_prefix(Vec::[3])
-  @assertion.assert_eq(v, Vec::[3, 4, 5])?
-  @assertion.assert_eq(sv, Some(Vec::[4, 5]))?
+  @test.assert_eq(v, Vec::[3, 4, 5])?
+  @test.assert_eq(sv, Some(Vec::[4, 5]))?
 }
 
 /// Strip a suffix from the vector.
@@ -699,8 +699,8 @@ pub fn strip_suffix[T : Eq](self : Vec[T], suffix : Vec[T]) -> Option[Vec[T]] {
 test "strip_suffix" {
   let v = Vec::[3, 4, 5]
   let sv = v.strip_suffix(Vec::[5])
-  @assertion.assert_eq(v, Vec::[3, 4, 5])?
-  @assertion.assert_eq(sv, Some(Vec::[3, 4]))?
+  @test.assert_eq(v, Vec::[3, 4, 5])?
+  @test.assert_eq(sv, Some(Vec::[3, 4]))?
 }
 
 /// Search the vector index for a given element.
@@ -722,10 +722,10 @@ pub fn search[T : Eq](self : Vec[T], value : T) -> Option[Int] {
 
 test "search" {
   let v = Vec::[3, 4, 5]
-  @assertion.assert_eq(v.search(3), Some(0))?
-  @assertion.assert_eq(v.search(4), Some(1))?
-  @assertion.assert_eq(v.search(5), Some(2))?
-  @assertion.assert_eq(v.search(6), None)?
+  @test.assert_eq(v.search(3), Some(0))?
+  @test.assert_eq(v.search(4), Some(1))?
+  @test.assert_eq(v.search(5), Some(2))?
+  @test.assert_eq(v.search(6), None)?
 }
 
 /// Swap two elements in the vector.
@@ -752,9 +752,9 @@ pub fn swap[T](self : Vec[T], i : Int, j : Int) -> Unit {
 test "swap" {
   let v = Vec::[3, 4, 5]
   v.swap(0, 2)
-  @assertion.assert_eq(v, Vec::[5, 4, 3])?
+  @test.assert_eq(v, Vec::[5, 4, 3])?
   v.swap(0, 2)
-  @assertion.assert_eq(v, Vec::[3, 4, 5])?
+  @test.assert_eq(v, Vec::[3, 4, 5])?
 }
 
 /// Partition function for quicksort.
@@ -796,8 +796,8 @@ pub fn sort[T : Compare](self : Vec[T]) -> Unit {
 test "sort" {
   let v = Vec::[3, 4, 5, 1, 2]
   v.sort()
-  @assertion.assert_eq(v, Vec::[1, 2, 3, 4, 5])?
-  @assertion.assert_true(v.is_sorted())?
+  @test.assert_eq(v, Vec::[1, 2, 3, 4, 5])?
+  @test.assert_true(v.is_sorted())?
 }
 
 /// Remove an element from the vector at a given index.
@@ -826,8 +826,8 @@ pub fn remove[T](self : Vec[T], index : Int) -> T {
 
 test "remove" {
   let v = Vec::[3, 4, 5]
-  @assertion.assert_eq(v.remove(1), 4)?
-  @assertion.assert_eq(v, Vec::[3, 5])?
+  @test.assert_eq(v.remove(1), 4)?
+  @test.assert_eq(v, Vec::[3, 5])?
 }
 
 /// Retains only the elements specified by the predicate.
@@ -852,7 +852,7 @@ pub fn retain[T](self : Vec[T], f : (T) -> Bool) -> Unit {
 test "retain" {
   let v = Vec::[3, 4, 5]
   v.retain(fn(x) { x > 3 })
-  @assertion.assert_eq(v, Vec::[4, 5])?
+  @test.assert_eq(v, Vec::[4, 5])?
 }
 
 /// Resize the vector to a new length with a default value.
@@ -877,12 +877,12 @@ pub fn resize[T](self : Vec[T], new_len : Int, f : T) -> Unit {
 test "resize" {
   let v = Vec::[3, 4, 5]
   v.resize(5, 0)
-  @assertion.assert_eq(v, Vec::[3, 4, 5, 0, 0])?
-  @assertion.assert_eq(v.length(), 5)?
+  @test.assert_eq(v, Vec::[3, 4, 5, 0, 0])?
+  @test.assert_eq(v.length(), 5)?
   let vv = Vec::[3, 4, 5]
   vv.resize(2, 0)
-  @assertion.assert_eq(vv, Vec::[3, 4])?
-  @assertion.assert_eq(vv.length(), 2)?
+  @test.assert_eq(vv, Vec::[3, 4])?
+  @test.assert_eq(vv.length(), 2)?
 }
 
 /// Inserts an element at a given index within the vector.
@@ -913,9 +913,9 @@ pub fn insert[T](self : Vec[T], index : Int, value : T) -> Unit {
 test "insert" {
   let v = Vec::[3, 4, 5]
   v.insert(1, 6)
-  @assertion.assert_eq(v, Vec::[3, 6, 4, 5])?
-  @assertion.assert_eq(v.length(), 4)?
-  @assertion.assert_eq(v.capacity(), 6)?
+  @test.assert_eq(v, Vec::[3, 6, 4, 5])?
+  @test.assert_eq(v.length(), 4)?
+  @test.assert_eq(v.capacity(), 6)?
 }
 
 /// Fill the vector (by capacity) with a given value.
@@ -934,8 +934,8 @@ pub fn fill[T](self : Vec[T], value : T) -> Unit {
 test "fill" {
   let v = Vec::with_capacity(3)
   v.fill(3)
-  @assertion.assert_eq(v, Vec::[3, 3, 3])?
-  @assertion.assert_eq(v.length(), 3)?
+  @test.assert_eq(v, Vec::[3, 3, 3])?
+  @test.assert_eq(v.length(), 3)?
 }
 
 /// Fill the vector by calling a function (By capacity).
@@ -954,8 +954,8 @@ pub fn fill_with[T](self : Vec[T], f : () -> T) -> Unit {
 test "fill_with" {
   let v = Vec::with_capacity(3)
   v.fill_with(fn() { 3 })
-  @assertion.assert_eq(v, Vec::[3, 3, 3])?
-  @assertion.assert_eq(v.length(), 3)?
+  @test.assert_eq(v, Vec::[3, 3, 3])?
+  @test.assert_eq(v.length(), 3)?
 }
 
 /// Flattens a vector of vectors into a vector.
@@ -975,8 +975,8 @@ pub fn flatten[T](self : Vec[Vec[T]]) -> Vec[T] {
 test "flatten" {
   let v = Vec::[Vec::[3, 4], Vec::[5, 6]]
   let vv = v.flatten()
-  @assertion.assert_eq(vv, Vec::[3, 4, 5, 6])?
-  @assertion.assert_eq(vv.length(), 4)?
+  @test.assert_eq(vv, Vec::[3, 4, 5, 6])?
+  @test.assert_eq(vv.length(), 4)?
 }
 
 /// Create a vector by repeat a given vector for a given times.
@@ -996,8 +996,8 @@ pub fn repeat[T](self : Vec[T], times : Int) -> Vec[T] {
 test "repeat" {
   let v = Vec::[3, 4]
   let vv = v.repeat(2)
-  @assertion.assert_eq(vv, Vec::[3, 4, 3, 4])?
-  @assertion.assert_eq(vv.length(), 4)?
+  @test.assert_eq(vv, Vec::[3, 4, 3, 4])?
+  @test.assert_eq(vv.length(), 4)?
 }
 
 /// Flattens a vector of vectors with a given separator.
@@ -1020,8 +1020,8 @@ pub fn join[T](self : Vec[Vec[T]], sep : T) -> Vec[T] {
 test "join" {
   let v = Vec::[Vec::[3, 4], Vec::[5, 6]]
   let vv = v.join(0)
-  @assertion.assert_eq(vv, Vec::[3, 4, 0, 5, 6])?
-  @assertion.assert_eq(vv.length(), 5)?
+  @test.assert_eq(vv, Vec::[3, 4, 0, 5, 6])?
+  @test.assert_eq(vv.length(), 5)?
 }
 
 /// Fold out values from an array according to certain rules.
@@ -1044,7 +1044,7 @@ test "fold_left" {
     ~init=0,
     fn { sum, elem => sum + elem },
   )
-  @assertion.assert_eq(sum, 15)?
+  @test.assert_eq(sum, 15)?
 }
 
 /// Fold out values from an array according to certain rules in reversed turn.
@@ -1067,7 +1067,7 @@ test "fold_right" {
     ~init=0,
     fn { sum, elem => sum + elem },
   )
-  @assertion.assert_eq(sum, 15)?
+  @test.assert_eq(sum, 15)?
 }
 
 /// Fold out values from an array according to certain rules with index.
@@ -1090,7 +1090,7 @@ test "fold_lefti" {
     ~init=0,
     fn { index, sum, _elem => sum + index },
   )
-  @assertion.assert_eq(sum, 10)?
+  @test.assert_eq(sum, 10)?
 }
 
 /// Fold out values from an array according to certain rules in reversed turn with index.
@@ -1113,7 +1113,7 @@ test "fold_righti" {
     ~init=0,
     fn { index, sum, _elem => sum + index },
   )
-  @assertion.assert_eq(sum, 10)?
+  @test.assert_eq(sum, 10)?
 }
 
 /// Removes consecutive repeated elements in the vector according to the Eq trait.
@@ -1139,8 +1139,8 @@ pub fn dedup[T : Eq](self : Vec[T]) -> Unit {
 test "dedup" {
   let v = Vec::[3, 4, 4, 5, 5, 5]
   v.dedup()
-  @assertion.assert_eq(v, Vec::[3, 4, 5])?
-  @assertion.assert_eq(v.length(), 3)?
+  @test.assert_eq(v, Vec::[3, 4, 5])?
+  @test.assert_eq(v.length(), 3)?
 }
 
 /// Extract elements from the vector according to the given function.
@@ -1169,9 +1169,9 @@ pub fn extract_if[T](self : Vec[T], f : (T) -> Bool) -> Vec[T] {
 test "extract_if" {
   let v = Vec::[3, 4, 5]
   let vv = v.extract_if(fn(x) { x > 3 })
-  @assertion.assert_eq(v, Vec::[3])?
-  @assertion.assert_eq(v.length(), 1)?
-  @assertion.assert_eq(vv, Vec::[4, 5])?
+  @test.assert_eq(v, Vec::[3])?
+  @test.assert_eq(v.length(), 1)?
+  @test.assert_eq(vv, Vec::[4, 5])?
 }
 
 /// Group the elements of the vector into sized chunks.
@@ -1201,11 +1201,11 @@ test "chunks" {
   let v = Vec::[1, 2, 3, 4, 5, 6, 7, 8, 9]
   let chunks = v.chunks(3)
   let chunks2 = v.chunks(2)
-  @assertion.assert_eq(
+  @test.assert_eq(
     chunks,
     Vec::[Vec::[1, 2, 3], Vec::[4, 5, 6], Vec::[7, 8, 9]],
   )?
-  @assertion.assert_eq(
+  @test.assert_eq(
     chunks2,
     Vec::[Vec::[1, 2], Vec::[3, 4], Vec::[5, 6], Vec::[7, 8], Vec::[9]],
   )?
@@ -1238,9 +1238,9 @@ pub fn chunk_by[T](self : Vec[T], pred : (T, T) -> Bool) -> Vec[Vec[T]] {
 test "chunk_by" {
   let v = Vec::[1, 1, 2, 3, 2, 3, 2, 3, 4]
   let chunks = v.chunk_by(fn(x, y) { x <= y })
-  @assertion.assert_eq(chunks[0], Vec::[1, 1, 2, 3])?
-  @assertion.assert_eq(chunks[1], Vec::[2, 3])?
-  @assertion.assert_eq(chunks[2], Vec::[2, 3, 4])?
+  @test.assert_eq(chunks[0], Vec::[1, 1, 2, 3])?
+  @test.assert_eq(chunks[1], Vec::[2, 3])?
+  @test.assert_eq(chunks[2], Vec::[2, 3, 4])?
 }
 
 /// Split the vector into chunks based on a predicate.
@@ -1268,6 +1268,6 @@ pub fn split[T](self : Vec[T], pred : (T) -> Bool) -> Vec[Vec[T]] {
 test "split" {
   let v = Vec::[1, 0, 2, 0, 3, 0, 4]
   let chunks = v.split(fn(x) { x == 0 })
-  @assertion.assert_eq(chunks, Vec::[Vec::[1], Vec::[2], Vec::[3], Vec::[4]])?
-  @assertion.assert_eq(chunks.length(), 4)?
+  @test.assert_eq(chunks, Vec::[Vec::[1], Vec::[2], Vec::[3], Vec::[4]])?
+  @test.assert_eq(chunks.length(), 4)?
 }

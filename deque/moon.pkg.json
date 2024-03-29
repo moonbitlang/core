@@ -1,6 +1,6 @@
 {
   "import": [
-    "moonbitlang/core/assertion",
+    "moonbitlang/core/test",
     "moonbitlang/core/coverage"
   ]
 }

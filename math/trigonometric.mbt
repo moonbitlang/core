@@ -111,8 +111,8 @@ test "sin" {
     -6.7344058693131973066e-01,
   ]
   for i = 0; i < vf.length(); i = i + 1 {
-    @assertion.assert_true(imprecise_equal(sin(vf[i]), sin_res[i]))?
-    @assertion.assert_true(
+    @test.assert_true(imprecise_equal(sin(vf[i]), sin_res[i]))?
+    @test.assert_true(
       imprecise_equal(sin(100000.0 * pi + vf[i]), sin_res_large[i]),
     )?
   }
@@ -137,8 +137,8 @@ test "cos" {
     -7.3924135157173099849e-01,
   ]
   for i = 0; i < vf.length(); i = i + 1 {
-    @assertion.assert_true(imprecise_equal(cos(vf[i]), cos_res[i]))?
-    @assertion.assert_true(
+    @test.assert_true(imprecise_equal(cos(vf[i]), cos_res[i]))?
+    @test.assert_true(
       imprecise_equal(cos(100000.0 * pi + vf[i]), cos_res_large[i]),
     )?
   }
