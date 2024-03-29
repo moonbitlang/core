@@ -112,9 +112,7 @@ test "sin" {
   ]
   for i = 0; i < vf.length(); i = i + 1 {
     @test.is_true(imprecise_equal(sin(vf[i]), sin_res[i]))?
-    @test.is_true(
-      imprecise_equal(sin(100000.0 * pi + vf[i]), sin_res_large[i]),
-    )?
+    @test.is_true(imprecise_equal(sin(100000.0 * pi + vf[i]), sin_res_large[i]))?
   }
 }
 
@@ -138,8 +136,6 @@ test "cos" {
   ]
   for i = 0; i < vf.length(); i = i + 1 {
     @test.is_true(imprecise_equal(cos(vf[i]), cos_res[i]))?
-    @test.is_true(
-      imprecise_equal(cos(100000.0 * pi + vf[i]), cos_res_large[i]),
-    )?
+    @test.is_true(imprecise_equal(cos(100000.0 * pi + vf[i]), cos_res_large[i]))?
   }
 }

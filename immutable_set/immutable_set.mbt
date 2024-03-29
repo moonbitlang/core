@@ -950,17 +950,11 @@ test "filter" {
 }
 
 test "find" {
-  @test.eq(
-    6,
-    ImmutableSet::from_list(List::[1, 2, 3, 4, 5, 6]).find(6),
-  )?
+  @test.eq(6, ImmutableSet::from_list(List::[1, 2, 3, 4, 5, 6]).find(6))?
 }
 
 test "max" {
-  @test.eq(
-    9,
-    ImmutableSet::from_list(List::[7, 2, 9, 4, 5, 6, 3, 8, 1]).max(),
-  )?
+  @test.eq(9, ImmutableSet::from_list(List::[7, 2, 9, 4, 5, 6, 3, 8, 1]).max())?
 }
 
 test "split" {
@@ -1060,8 +1054,5 @@ test "remove" {
 }
 
 test "min" {
-  @test.eq(
-    1,
-    ImmutableSet::from_list(List::[7, 2, 9, 4, 5, 6, 3, 8, 1]).min(),
-  )?
+  @test.eq(1, ImmutableSet::from_list(List::[7, 2, 9, 4, 5, 6, 3, 8, 1]).min())?
 }

@@ -1201,10 +1201,7 @@ test "chunks" {
   let v = Vec::[1, 2, 3, 4, 5, 6, 7, 8, 9]
   let chunks = v.chunks(3)
   let chunks2 = v.chunks(2)
-  @test.eq(
-    chunks,
-    Vec::[Vec::[1, 2, 3], Vec::[4, 5, 6], Vec::[7, 8, 9]],
-  )?
+  @test.eq(chunks, Vec::[Vec::[1, 2, 3], Vec::[4, 5, 6], Vec::[7, 8, 9]])?
   @test.eq(
     chunks2,
     Vec::[Vec::[1, 2], Vec::[3, 4], Vec::[5, 6], Vec::[7, 8], Vec::[9]],

@@ -512,10 +512,7 @@ pub fn intersperse[T](self : List[T], separator : T) -> List[T] {
 
 test "intersperse" {
   let ls = from_array(["1", "|", "2", "|", "3", "|", "4", "|", "5"])
-  @test.eq(
-    from_array(["1", "2", "3", "4", "5"]).intersperse("|"),
-    ls,
-  )?
+  @test.eq(from_array(["1", "2", "3", "4", "5"]).intersperse("|"), ls)?
 }
 
 /// Check if the list is empty.
@@ -855,10 +852,7 @@ pub fn find[T](self : List[T], f : (T) -> Bool) -> T {
 }
 
 test "find" {
-  @test.eq(
-    List::[1, 3, 5, 8].find(fn(element) -> Bool { element % 2 == 0 }),
-    8,
-  )?
+  @test.eq(List::[1, 3, 5, 8].find(fn(element) -> Bool { element % 2 == 0 }), 8)?
 }
 
 /// Find the first element in the list that satisfies f.
@@ -1111,8 +1105,5 @@ pub fn intercalate[T](self : List[List[T]], sep : List[T]) -> List[T] {
 
 test "intercalate" {
   let ls = List::[List::[1, 2, 3], List::[4, 5, 6], List::[7, 8, 9]]
-  @test.eq(
-    ls.intercalate(List::[0]),
-    List::[1, 2, 3, 0, 4, 5, 6, 0, 7, 8, 9],
-  )?
+  @test.eq(ls.intercalate(List::[0]), List::[1, 2, 3, 0, 4, 5, 6, 0, 7, 8, 9])?
 }

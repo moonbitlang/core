@@ -467,7 +467,7 @@ pub fn fold[T, U](self : Stack[T], ~init : U, f : (U, T) -> U) -> U {
 }
 
 test "fold" {
-  let s : Stack[Int] = Stack::from_array([1, 2, 3])
+  let s : Stack[Int] = Stack::[1, 2, 3]
   let sum = s.fold(~init=0, fn(acc, i) { acc + i })
   @test.eq(sum, 6)?
 }
@@ -484,10 +484,7 @@ pub fn to_list[T](self : Stack[T]) -> List[T] {
 }
 
 test "to_list" {
-  @test.eq(
-    Stack::[3, 2, 1].to_list(),
-    Cons(1, Cons(2, Cons(3, Nil))),
-  )?
+  @test.eq(Stack::[3, 2, 1].to_list(), Cons(1, Cons(2, Cons(3, Nil))))?
 }
 
 /// Convert stack to array

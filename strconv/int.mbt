@@ -339,13 +339,7 @@ test "parse_int64_base" {
     // underscores
     ("-0x_1_2_3_4_5", 0, Ok(-0x12345L)),
     ("0x_1_2_3_4_5", 0, Ok(0x12345L)),
-    (
-      "-_0x12345",
-      0,
-      Err(
-        syntax_err,
-      ),
-    ),
+    ("-_0x12345", 0, Err(syntax_err)),
     ("_-0x12345", 0, Err(syntax_err)),
     ("_0x12345", 0, Err(syntax_err)),
     ("0x__12345", 0, Err(syntax_err)),
@@ -393,12 +387,7 @@ test "parse_int" {
     ("2147483649", Err(range_err)),
     ("-2147483649", Err(range_err)),
     ("-1_2_3_4_5", Ok(-12345)),
-    (
-      "-_12345",
-      Err(
-        syntax_err,
-      ),
-    ),
+    ("-_12345", Err(syntax_err)),
     ("_12345", Err(syntax_err)),
     ("1__2345", Err(syntax_err)),
     ("12345_", Err(syntax_err)),

@@ -13,7 +13,7 @@
 // limitations under the License.
 
 /// The `CoverageCounter` structure is used for keeping track of the number of
-/// times each chunk of code is executed. It's not very useful outside of 
+/// times each chunk of code is executed. It's not very useful outside of
 /// generated code.
 struct CoverageCounter {
   counter : Array[Int]
@@ -89,11 +89,11 @@ fn Output::output(self : Buffer, content : String) -> Unit {
   self.write_string(content)
 }
 
-// TODO: This escape function should belong to the String package, but is 
+// TODO: This escape function should belong to the String package, but is
 // not mature enough, so it's left here temporarily.
 /// Escape a string using standard JSON escape sequences to the given buffer,
 /// usually for quoting uses.
-///  
+///
 /// This method only escapes characters below 0x20 and the following characters:
 /// `"`, `'`, `\`.
 fn escape_to(s : String, buf : Buffer) -> Unit {
@@ -135,7 +135,7 @@ fn escape_to(s : String, buf : Buffer) -> Unit {
 
 /// Escape a string using standard C escape sequences and return the escaped string,
 /// usually for quoting uses.
-///  
+///
 /// This method only escapes characters below 0x20 and the following characters:
 /// `"`, `'`, `\`.
 pub fn escape(s : String) -> String {
@@ -214,9 +214,9 @@ test "log" {
 /// Output the counters to stdout for coverage report usages. The counter data
 /// is printed as a map of `{ counter_id: counter_contents }`, enclosed between
 /// a pair of delimiters.
-/// 
+///
 /// An example output of this function is like the following:
-/// 
+///
 /// ```plaintext
 /// ----- BEGIN MOONBIT COVERAGE -----
 /// {
