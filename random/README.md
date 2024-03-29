@@ -2,7 +2,7 @@
 
 ## Overview
 
-This is an efficient random number generation function based on the MT19947 algorithm, which supports generating random numbers of type Int, Int32, and Int64.
+This is an efficient random number generation function based on the MT19937 algorithm, which supports generating pseudo-random numbers of type Int, Int64 and Double.
 
 ## Usage
 
