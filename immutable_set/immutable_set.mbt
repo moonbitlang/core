@@ -464,7 +464,7 @@ pub fn iter[T : Compare](self : ImmutableSet[T], f : (T) -> Unit) -> Unit {
 /// println(ImmutableSet::from_list(List::[1, 2, 3, 4, 5]).fold(0, fn(acc, x) { acc + x }))
 /// // output: 15
 /// ```
-pub fn [T : Compare, U : Compare](
+pub fn fold[T : Compare, U : Compare](
   self : ImmutableSet[T],
   initial : U,
   f : (U, T) -> U
