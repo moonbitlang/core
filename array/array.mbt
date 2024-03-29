@@ -318,11 +318,7 @@ pub fn fold_lefti[T, U](self : Array[T], f : (Int, U, T) -> U, ~init : U) -> U {
 test "fold_lefti" {
   let sum = [1, 2, 3, 4, 5].fold_lefti(
     ~init=0,
-    fn {
-      index, sum, _elem => {
-        sum + index
-      }
-    },
+    fn { index, sum, _elem => sum + index },
   )
   @assertion.assert_eq(sum, 10)?
 }
@@ -584,7 +580,7 @@ pub fn to_list[T](self : Array[T]) -> List[T] {
   }
 }
 
-test "to_list"{
-  let ls = [1,2,3,4,5].to_list()
+test "to_list" {
+  let ls = [1, 2, 3, 4, 5].to_list()
   @assertion.assert_eq(ls, Cons(1, Cons(2, Cons(3, Cons(4, Cons(5, Nil))))))?
 }
