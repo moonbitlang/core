@@ -83,6 +83,27 @@ fn realloc[T](self : Deque[T]) -> Unit {
   self.buf = new_buf
 }
 
+test "realloc" {
+  let dq = Deque::[1, 2, 3, 4, 5]
+  @assertion.assert_eq(dq.pop_front(), Some(1))?
+  @assertion.assert_eq(dq.pop_front(), Some(2))?
+  @assertion.assert_eq(dq.pop_front(), Some(3))?
+  dq.push_back(6)
+  dq.push_back(7)
+  dq.push_back(8)
+  dq.push_back(9)
+  dq.push_back(10)
+  let result = Array::make(7, 0)
+  let mut i = 0
+  dq.iter(
+    fn(x) {
+      result[i] = x
+      i += 1
+    },
+  )
+  @assertion.assert_eq(result, [4, 5, 6, 7, 8, 9, 10])?
+}
+
 /// Return the fornt element from a deque, or `None` if it is empty.
 /// 
 /// # Example
@@ -260,7 +281,7 @@ pub fn op_get[T](self : Deque[T], index : Int) -> T {
   if self.head + index < self.buf.length() {
     self.buf[self.head + index]
   } else {
-    self.buf[self.buf.length() - self.head - 1]
+    self.buf[index- self.head+1]
   }
 }
 
