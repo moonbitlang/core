@@ -12,18 +12,18 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-/// Sorts the array
+/// Sorts the vector in place.
 /// 
 /// It's an in-place, unstable sort(it will reorder equal elements). The time complexity is O(n log n) in the worst case.
 /// 
 /// # Example
 /// 
 /// ```
-/// let arr = [5, 4, 3, 2, 1]
+/// let arr = Vec::[5, 4, 3, 2, 1]
 /// arr.sort()
-/// debug(arr) //output: [1, 2, 3, 4, 5]
+/// debug(arr) //output: Vec::[1, 2, 3, 4, 5]
 /// ```
-pub fn sort[T : Compare](self : Array[T]) -> Unit {
+pub fn sort[T : Compare](self : Vec[T]) -> Unit {
   quick_sort(
     { array: self, start: 0, end: self.length() },
     None,
@@ -32,7 +32,7 @@ pub fn sort[T : Compare](self : Array[T]) -> Unit {
 }
 
 fn quick_sort[T : Compare](
-  arr : ArraySlice[T],
+  arr : VecSlice[T],
   pred : Option[T],
   limit : Int
 ) -> Unit {
@@ -113,7 +113,7 @@ fn get_limit(len : Int) -> Int {
 /// 
 /// Returns whether the array is sorted.
 fn try_bubble_sort[T : Compare](
-  arr : ArraySlice[T],
+  arr : VecSlice[T],
   ~max_tries : Int = 8
 ) -> Bool {
   let mut tries = 0
@@ -138,7 +138,7 @@ fn try_bubble_sort[T : Compare](
 /// It will only tolerate at most 8 unsorted elements. The time complexity is O(n).
 /// 
 /// Returns whether the array is sorted.
-fn bubble_sort[T : Compare](arr : ArraySlice[T]) -> Unit {
+fn bubble_sort[T : Compare](arr : VecSlice[T]) -> Unit {
   for i = 1; i < arr.length(); i = i + 1 {
     for j = i; j > 0 && arr[j - 1] > arr[j]; j = j - 1 {
       arr.swap(j, j - 1)
@@ -147,16 +147,13 @@ fn bubble_sort[T : Compare](arr : ArraySlice[T]) -> Unit {
 }
 
 test "try_bubble_sort" {
-  let arr = [8, 7, 6, 5, 4, 3, 2, 1]
+  let arr = Vec::[8, 7, 6, 5, 4, 3, 2, 1]
   let sorted = try_bubble_sort({ array: arr, start: 0, end: 8 })
   @assertion.assert_eq(sorted, true)?
-  @assertion.assert_eq(arr, [1, 2, 3, 4, 5, 6, 7, 8])?
+  @assertion.assert_eq(arr, Vec::[1, 2, 3, 4, 5, 6, 7, 8])?
 }
 
-fn partition[T : Compare](
-  arr : ArraySlice[T],
-  pivot_index : Int
-) -> (Int, Bool) {
+fn partition[T : Compare](arr : VecSlice[T], pivot_index : Int) -> (Int, Bool) {
   arr.swap(pivot_index, arr.length() - 1)
   let pivot = arr[arr.length() - 1]
   let mut i = 0
@@ -179,7 +176,7 @@ fn partition[T : Compare](
 /// It avoids worst case performance by choosing a pivot that is likely to be close to the median.
 /// 
 /// Returns the pivot index and whether the array is likely sorted.
-fn choose_pivot[T : Compare](arr : ArraySlice[T]) -> (Int, Bool) {
+fn choose_pivot[T : Compare](arr : VecSlice[T]) -> (Int, Bool) {
   let len = arr.length()
   let use_median_of_medians = 50
   let max_swaps = 4 * 3
@@ -216,7 +213,7 @@ fn choose_pivot[T : Compare](arr : ArraySlice[T]) -> (Int, Bool) {
   }
 }
 
-fn heap_sort[T : Compare](arr : ArraySlice[T]) -> Unit {
+fn heap_sort[T : Compare](arr : VecSlice[T]) -> Unit {
   let len = arr.length()
   for i = len / 2 - 1; i >= 0; i = i - 1 {
     sift_down(arr, i)
@@ -227,7 +224,7 @@ fn heap_sort[T : Compare](arr : ArraySlice[T]) -> Unit {
   }
 }
 
-fn sift_down[T : Compare](arr : ArraySlice[T], index : Int) -> Unit {
+fn sift_down[T : Compare](arr : VecSlice[T], index : Int) -> Unit {
   let mut index = index
   let len = arr.length()
   let mut child = index * 2 + 1
@@ -244,28 +241,28 @@ fn sift_down[T : Compare](arr : ArraySlice[T], index : Int) -> Unit {
   }
 }
 
-fn test_sort(f : (Array[Int]) -> Unit) -> Result[Unit, String] {
-  let arr = [5, 4, 3, 2, 1]
+fn test_sort(f : (Vec[Int]) -> Unit) -> Result[Unit, String] {
+  let arr = Vec::[5, 4, 3, 2, 1]
   f(arr)
-  @assertion.assert_eq(arr, [1, 2, 3, 4, 5])?
-  let arr = [5, 5, 5, 5, 1]
+  @assertion.assert_eq(arr, Vec::[1, 2, 3, 4, 5])?
+  let arr = Vec::[5, 5, 5, 5, 1]
   f(arr)
-  @assertion.assert_eq(arr, [1, 5, 5, 5, 5])?
-  let arr = [1, 2, 3, 4, 5]
+  @assertion.assert_eq(arr, Vec::[1, 5, 5, 5, 5])?
+  let arr = Vec::[1, 2, 3, 4, 5]
   f(arr)
-  @assertion.assert_eq(arr, [1, 2, 3, 4, 5])?
+  @assertion.assert_eq(arr, Vec::[1, 2, 3, 4, 5])?
   {
-    let arr = Array::make(1000, 0)
+    let arr = Vec::with_capacity(1000)
     for i = 0; i < 1000; i = i + 1 {
-      arr[i] = 1000 - i - 1
+      arr.push(1000 - i - 1)
     }
     for i = 10; i < 1000; i = i + 10 {
       arr.swap(i, i - 1)
     }
     f(arr)
-    let expected = Array::make(1000, 0)
+    let expected = Vec::with_capacity(1000)
     for i = 0; i < 1000; i = i + 1 {
-      expected[i] = i
+      expected.push(i)
     }
     @assertion.assert_eq(arr, expected)?
   }
