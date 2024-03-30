@@ -12,29 +12,29 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-priv struct ArraySlice[T] {
+priv struct VecSlice[T] {
   array : Vec[T]
   start : Int
   end : Int
 }
 
-fn length[T](self : ArraySlice[T]) -> Int {
+fn length[T](self : VecSlice[T]) -> Int {
   self.end - self.start
 }
 
-fn op_get[T](self : ArraySlice[T], index : Int) -> T {
+fn op_get[T](self : VecSlice[T], index : Int) -> T {
   self.array[self.start + index]
 }
 
-fn op_set[T](self : ArraySlice[T], index : Int, value : T) -> Unit {
+fn op_set[T](self : VecSlice[T], index : Int, value : T) -> Unit {
   self.array[self.start + index] = value
 }
 
-fn swap[T](self : ArraySlice[T], a : Int, b : Int) -> Unit {
+fn swap[T](self : VecSlice[T], a : Int, b : Int) -> Unit {
   self.array.swap(self.start + a, self.start + b)
 }
 
-fn reverse[T](self : ArraySlice[T]) -> Unit {
+fn reverse[T](self : VecSlice[T]) -> Unit {
   let mid_len = self.length() / 2
   for i = 0; i < mid_len; i = i + 1 {
     let j = self.length() - i - 1
@@ -42,6 +42,6 @@ fn reverse[T](self : ArraySlice[T]) -> Unit {
   }
 }
 
-fn slice[T](self : ArraySlice[T], start : Int, end : Int) -> ArraySlice[T] {
+fn slice[T](self : VecSlice[T], start : Int, end : Int) -> VecSlice[T] {
   { array: self.array, start: self.start + start, end: self.start + end }
 }
