@@ -1116,3 +1116,28 @@ test "intercalate" {
     List::[1, 2, 3, 0, 4, 5, 6, 0, 7, 8, 9],
   )?
 }
+
+pub fn dyn_iter[T](self : List[T]) -> @iter.Iterator[T] {
+  let mut head = self
+  {
+    next: fn() {
+      match head {
+        Cons(value, next) => {
+          head = next
+          Some(value)
+        }
+        Nil => None
+      }
+    },
+    size_hint: fn() {
+      match head {
+        Cons(_) => (1, None)
+        Nil => (0, Some(0))
+      }
+    },
+  }
+}
+
+test "sum" {
+  @assertion.assert_eq(List::[1, 2, 3].dyn_iter().sum(), 6)?
+}

@@ -178,6 +178,31 @@ pub fn clear[K, V](self : HashMap[K, V]) -> Unit {
   self.size = 0
 }
 
+pub fn dyn_iter[K, V](self : HashMap[K, V]) -> @iter.Iterator[(K, V)] {
+  let mut idx = 0
+  let mut i = 0
+  {
+    next: fn() {
+      for ;i < self.capacity; {
+        match self.entries[i] {
+          Valid(_, _, k, v) => {
+            let rv = (k, v)
+            idx += 1
+            break Some(rv)
+          }
+          _ => i = i + 1
+        }
+      } else {
+        None
+      }
+    },
+    size_hint: fn() {
+      let hint = self.size - idx
+      (hint, Some(hint))
+    }
+  }
+}
+
 fn shift_back[K : Hash, V](self : HashMap[K, V], start_index : Int) -> Unit {
   for i = 0, prev = start_index, curr = self.next_index(start_index);
       i < self.entries.length();

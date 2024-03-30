@@ -568,3 +568,7 @@ test "ends_with" {
   @assertion.assert_true(arr.ends_with([3, 4, 5]))?
   @assertion.assert_false(arr.ends_with([2, 3, 4, 5]))?
 }
+
+pub fn dyn_iter[T](self : Array[T]) -> @iter.Iterator[T] {
+  @iter.Iterator::from_array(self)
+}

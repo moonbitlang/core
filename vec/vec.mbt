@@ -1271,3 +1271,27 @@ test "split" {
   @assertion.assert_eq(chunks, Vec::[Vec::[1], Vec::[2], Vec::[3], Vec::[4]])?
   @assertion.assert_eq(chunks.length(), 4)?
 }
+
+pub fn dyn_iter[T](self : Vec[T]) -> @iter.Iterator[T] {
+  let mut i = 0
+  {
+    next: fn() {
+      @option.when(
+        i < self.len,
+        fn() {
+          let rv = self.buf[i]
+          i += 1
+          rv
+        }
+      )
+    },
+    size_hint: fn() {
+      let hint = self.len - i
+      (hint, Some(hint))
+    },
+  }
+}
+
+test "sum" {
+  @assertion.assert_eq(Vec::[1, 2, 3].dyn_iter().sum(), 6)?
+}
