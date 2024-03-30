@@ -53,7 +53,7 @@ pub fn sort_by[T](self : Vec[T], cmp : (T, T) -> Int) -> Unit {
 }
 
 fn quick_sort_by[T](
-  arr : ArraySlice[T],
+  arr : VecSlice[T],
   cmp : (T, T) -> Int,
   pred : Option[T],
   limit : Int
@@ -125,7 +125,7 @@ fn quick_sort_by[T](
 /// 
 /// Returns whether the array is sorted.
 fn try_bubble_sort_by[T](
-  arr : ArraySlice[T],
+  arr : VecSlice[T],
   cmp : (T, T) -> Int,
   ~max_tries : Int = 8
 ) -> Bool {
@@ -151,7 +151,7 @@ fn try_bubble_sort_by[T](
 /// It will only tolerate at most 8 unsorted elements. The time complexity is O(n).
 /// 
 /// Returns whether the array is sorted.
-fn bubble_sort_by[T](arr : ArraySlice[T], cmp : (T, T) -> Int) -> Unit {
+fn bubble_sort_by[T](arr : VecSlice[T], cmp : (T, T) -> Int) -> Unit {
   for i = 1; i < arr.length(); i = i + 1 {
     for j = i; j > 0 && cmp(arr[j - 1], arr[j]) > 0; j = j - 1 {
       arr.swap(j, j - 1)
@@ -170,7 +170,7 @@ test "try_bubble_sort" {
 }
 
 fn partition_by[T](
-  arr : ArraySlice[T],
+  arr : VecSlice[T],
   cmp : (T, T) -> Int,
   pivot_index : Int
 ) -> (Int, Bool) {
@@ -196,7 +196,7 @@ fn partition_by[T](
 /// It avoids worst case performance by choosing a pivot that is likely to be close to the median.
 /// 
 /// Returns the pivot index and whether the array is likely sorted.
-fn choose_pivot_by[T](arr : ArraySlice[T], cmp : (T, T) -> Int) -> (Int, Bool) {
+fn choose_pivot_by[T](arr : VecSlice[T], cmp : (T, T) -> Int) -> (Int, Bool) {
   let len = arr.length()
   let use_median_of_medians = 50
   let max_swaps = 4 * 3
@@ -233,7 +233,7 @@ fn choose_pivot_by[T](arr : ArraySlice[T], cmp : (T, T) -> Int) -> (Int, Bool) {
   }
 }
 
-fn heap_sort_by[T](arr : ArraySlice[T], cmp : (T, T) -> Int) -> Unit {
+fn heap_sort_by[T](arr : VecSlice[T], cmp : (T, T) -> Int) -> Unit {
   let len = arr.length()
   for i = len / 2 - 1; i >= 0; i = i - 1 {
     sift_down_by(arr, i, cmp)
@@ -244,11 +244,7 @@ fn heap_sort_by[T](arr : ArraySlice[T], cmp : (T, T) -> Int) -> Unit {
   }
 }
 
-fn sift_down_by[T](
-  arr : ArraySlice[T],
-  index : Int,
-  cmp : (T, T) -> Int
-) -> Unit {
+fn sift_down_by[T](arr : VecSlice[T], index : Int, cmp : (T, T) -> Int) -> Unit {
   let mut index = index
   let len = arr.length()
   let mut child = index * 2 + 1
