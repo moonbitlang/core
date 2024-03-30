@@ -20,12 +20,6 @@ let int64_min = -9_223_372_036_854_775_808L
 
 let int64_max = 9_223_372_036_854_775_807L
 
-let range_err = "value out of range"
-
-let syntax_err = "invalid syntax"
-
-let base_err = "invalid base"
-
 /// Parse a string in the given base (0, 2 to 36), return a Int64 number or an error.
 /// If the `~base` argument is 0, the base will be inferred by the prefix.
 pub fn parse_int64(str : String, ~base : Int = 0) -> Result[Int64, String] {

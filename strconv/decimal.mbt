@@ -13,10 +13,11 @@
 // limitations under the License.
 
 /// High Precision Decimal structure for "Simple Decimal Conversion" algorithm.
-/// The data structure and algorithm were developed by Nigel Tao and Ken. Thompson.
+/// Developed by Ken. Thompson, Russ Cox, Robert Griesemer, Nigel Tao.
 /// 
 /// reference:
 /// - <https://nigeltao.github.io/blog/2020/parse-number-f64-simple.html>
+/// - <https://nigeltao.github.io/blog/2020/eisel-lemire.html>
 struct Decimal {
   digits : Bytes
   mut digits_num : Int
@@ -25,21 +26,281 @@ struct Decimal {
   mut truncated : Bool
 }
 
-// Maximum shift that we can do in one pass without overflow.
-// We have to be able to accommodate 9 << max_shift.
+/// Maximum shift that we can do in one pass without overflow.
+/// We have to be able to accommodate 9 << max_shift.
 let max_shift = 59
 
-/// Create a high precision decimal with a Int64 value.
-pub fn Decimal::new(v : Int64) -> Decimal {
-  let d = {
+/// Decimal power of ten to binary power of two.
+/// The Ith entry (starting at I = 0) is the largest power of 2 less than (10 ** I)
+let powtab = [
+  1, 3, 6, 9, 13, 16, 19, 23, 26, 29, 33, 36, 39, 43, 46, 49, 53, 56, 59,
+]
+
+/// Create a zero decimal.
+pub fn Decimal::new() -> Decimal {
+  {
     digits: Bytes::make(800, 0),
     digits_num: 0,
     decimal_point: 0,
     negative: false,
     truncated: false,
   }
+}
+
+/// Create a decimal with an Int64 value.
+pub fn Decimal::from_int64(v : Int64) -> Decimal {
+  let d = Decimal::new()
   d.assign(v)
   d
+}
+
+/// Create a decimal from number string.
+pub fn Decimal::from_string(str : String) -> Result[Decimal, String] {
+  let d = Decimal::new()
+  if str.length() <= 0 {
+    return Err(syntax_err)
+  }
+  let mut i = 0
+  // read digits part
+  let mut neg = false
+  let mut has_dp = false
+  let mut has_digits = false
+  while i < str.length() {
+    match str[i] {
+      '-' => if i != 0 { return Err(syntax_err) } else { neg = true }
+      '+' => if i != 0 { return Err(syntax_err) }
+      '_' => () // skip underscores
+      '.' => {
+        // decimal point
+        if has_dp {
+          return Err(syntax_err)
+        }
+        has_dp = true
+        d.decimal_point = d.digits_num
+      }
+      '0' | '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9' => {
+        // digits
+        has_digits = true
+        if str[i] == '0' && d.digits_num == 0 {
+          // ignore leading zeros
+          d.decimal_point -= 1
+          i += 1
+          continue
+        }
+        if d.digits_num < d.digits.length() {
+          d.digits[d.digits_num] = str[i].to_int() - '0'.to_int()
+          d.digits_num += 1
+        } else if str[i] != '0' {
+          d.truncated = true
+        }
+      }
+      _ => break
+    }
+    i += 1
+  }
+  if not(has_digits) {
+    return Err(syntax_err)
+  }
+  if not(has_dp) {
+    d.decimal_point = d.digits_num
+  }
+  // read exponent part
+  if i < str.length() && str[i] == 'e' || str[i] == 'E' {
+    i += 1
+    if i >= str.length() {
+      return Err(syntax_err)
+    }
+    let mut exp_sign = 1
+    if str[i] == '+' {
+      i += 1
+    } else if str[i] == '-' {
+      i += 1
+      exp_sign = -1
+    }
+    if i >= str.length() || str[i] < '0' || str[i] > '9' {
+      return Err(syntax_err)
+    }
+    let mut exp = 0
+    while i < str.length() && ('0' <= str[i] && str[i] <= '9' || str[i] == '_') {
+      if str[i] == '_' {
+        i += 1
+        continue
+      }
+      exp = exp * 10 + (str[i].to_int() - '0'.to_int())
+      i += 1
+    }
+    d.decimal_point += exp_sign * exp
+  }
+  // finish
+  d.trim()
+  if i != str.length() {
+    Err(syntax_err)
+  } else {
+    Ok(d)
+  }
+}
+
+/// Convert the decimal to Double.
+pub fn to_double(self : Decimal) -> Result[Double, String] {
+  let mut exponent = 0
+  let mut mantissa = 0L
+  // check the underflow and overflow
+  // Double: 1.79769e+308 (10^308) - 2.22507e-308 (10^-308)
+  if self.digits_num == 0 || self.decimal_point < -330 {
+    // zero
+    mantissa = 0L
+    exponent = double_info.bias
+    let bits = assemble_bits(mantissa, exponent, self.negative)
+    return Ok(bits.reinterpret_as_double())
+  }
+  if self.decimal_point > 310 {
+    // overflow
+    return Err(range_err)
+  }
+
+  // scale by powers of 2 until in range [0.5 .. 1]
+  // right shift
+  while self.decimal_point > 0 {
+    let mut n = 0
+    if self.decimal_point >= powtab.length() {
+      n = 60
+    } else {
+      n = powtab[self.decimal_point]
+    }
+    self.shift(-n)
+    exponent += n
+  }
+  // left shift
+  while self.decimal_point < 0 || self.decimal_point == 0 && self.digits[0] < 5 {
+    let mut n = 0
+    if -self.decimal_point >= powtab.length() {
+      n = 60
+    } else {
+      n = powtab[-self.decimal_point]
+    }
+    self.shift(n)
+    exponent -= n
+  }
+
+  // normalized floating point range is [1, 2), current [0.5, 1)
+  // should decrease the exponent by 1
+  exponent -= 1
+
+  // minimum representable exponent is bias + 1
+  // if the exponent is smaller, move it up and shift decimal accordingly
+  if exponent < double_info.bias + 1 {
+    let n = double_info.bias + 1 - exponent
+    self.shift(-n)
+    exponent += n
+  }
+  if exponent - double_info.bias >= (1).lsl(double_info.exponent_bits) - 1 {
+    // overflow
+    return Err(range_err)
+  }
+
+  // multiply by (2 ** precision) and round to get mantissa
+  // extract mantissa_bits + 1 bits
+  self.shift(double_info.mantissa_bits + 1)
+  mantissa = self.rounded_integer()
+
+  // rounding might have added a bit, shift down.
+  if mantissa == 2L.lsl(double_info.mantissa_bits) {
+    mantissa = mantissa.lsr(1)
+    exponent += 1
+    if exponent - double_info.bias >= (1).lsl(double_info.exponent_bits) - 1 {
+      // overflow
+      return Err(range_err)
+    }
+  }
+
+  // denormalized
+  if mantissa.land(1L.lsl(double_info.mantissa_bits)) == 0L {
+    exponent = double_info.bias
+  }
+
+  // combining the 52 mantissa bits with the 11 exponent bits and 1 sign bit
+  let bits = assemble_bits(mantissa, exponent, self.negative)
+  Ok(bits.reinterpret_as_double())
+}
+
+/// Binary shift left (s > 0) or right (s < 0).
+/// The shift count must not larger than the max_shift to avoid overflow.
+pub fn shift(self : Decimal, s : Int) -> Unit {
+  if self.digits_num == 0 {
+    return
+  }
+  let mut s = s
+  if s > 0 {
+    while s > max_shift {
+      self.left_shift(max_shift)
+      s -= max_shift
+    }
+    self.left_shift(s)
+  }
+  if s < 0 {
+    while s < -max_shift {
+      self.right_shift(max_shift)
+      s += max_shift
+    }
+    self.right_shift(-s)
+  }
+}
+
+fn assemble_bits(mantissa : Int64, exponent : Int, negative : Bool) -> Int64 {
+  let biased_exp = exponent - double_info.bias
+  // set the mantissa bits
+  let mut bits = mantissa.land(1L.lsl(double_info.mantissa_bits) - 1L)
+  // set the exponent bits
+  let exp_bits = biased_exp.land((1).lsl(double_info.exponent_bits) - 1).to_int64()
+  bits = bits.lor(exp_bits.lsl(double_info.mantissa_bits))
+  // set the sign bit
+  if negative {
+    bits = bits.lor(
+      1L.lsl(double_info.mantissa_bits).lsl(double_info.exponent_bits),
+    )
+  }
+  bits
+}
+
+/// Extract a rounded 64bit integer
+fn rounded_integer(self : Decimal) -> Int64 {
+  if self.decimal_point > 20 {
+    return 0xFFFFFFFFFFFFFFFFL
+  }
+  let mut n = 0L
+  let mut i = 0
+  while i < self.decimal_point && i < self.digits_num {
+    n = n * 10L + self.digits[i].to_int64()
+    i += 1
+  }
+  while i < self.decimal_point {
+    n *= 10L
+    i += 1
+  }
+  if self.should_round_up(self.decimal_point) {
+    n += 1L
+  }
+  n
+}
+
+/// Check if truncate at d digits should round up.
+/// Typically, when rounding a decimal fraction to an integer, 7.3 rounds down to 7 and 7.6 rounds up to 8. 
+/// Rounding numbers like 7.5, half-way between two integers, will round to even.
+fn should_round_up(self : Decimal, d : Int) -> Bool {
+  if d < 0 || d >= self.digits_num {
+    return false
+  }
+  if self.digits[d] == 5 && d + 1 == self.digits_num {
+    // half-way between two integers
+    // if truncated, the real value is higher than stored value, round up.
+    if self.truncated {
+      return true
+    }
+    // round to even
+    return d > 0 && self.digits[d - 1] % 2 != 0
+  }
+  // normal case
+  self.digits[d] >= 5
 }
 
 /// Assign a Int64 value to decimal.
@@ -66,30 +327,7 @@ fn assign(self : Decimal, v : Int64) -> Unit {
   self.trim()
 }
 
-/// Binary shift left (s > 0) or right (s < 0).
-/// The shift count must not larger than the max_shift to avoid overflow.
-pub fn shift(self : Decimal, s : Int) -> Unit {
-  if self.digits_num == 0 {
-    return
-  }
-  let mut s = s
-  if s > 0 {
-    while s > max_shift {
-      self.left_shift(max_shift)
-      s -= max_shift
-    }
-    self.left_shift(s)
-  }
-  if s < 0 {
-    while s < -max_shift {
-      self.right_shift(max_shift)
-      s += max_shift
-    }
-    self.right_shift(-s)
-  }
-}
-
-// Binary shift right by s bits.
+/// Binary shift right by s bits.
 fn right_shift(self : Decimal, s : Int) -> Unit {
   let mut read_index = 0
   let mut write_index = 0
@@ -143,9 +381,9 @@ fn right_shift(self : Decimal, s : Int) -> Unit {
   self.trim()
 }
 
-// Cheat sheet for left shift: table indexed by shift count giving
-// number of new digits that will be introduced by that shift.
-// left_shift_cheats[s] = (new digits num, (5 ** s))
+/// Cheat sheet for left shift: table indexed by shift count giving
+/// number of new digits that will be introduced by that shift.
+/// left_shift_cheats[s] = (new digits num, (5 ** s))
 let left_shift_cheats = [
   (0, ""),
   (1, "5"), // * 2
@@ -210,6 +448,7 @@ let left_shift_cheats = [
   (19, "867361737988403547205962240695953369140625"), // * 1152921504606846976
 ]
 
+/// Lookup the cheat sheet to find the new digits num.
 fn new_digits(self : Decimal, s : Int) -> Int {
   let new_digits = left_shift_cheats[s].0
   let cheat_num = left_shift_cheats[s].1
@@ -233,7 +472,7 @@ fn new_digits(self : Decimal, s : Int) -> Int {
   }
 }
 
-// Binary shift left by s bits.
+/// Binary shift left by s bits.
 fn left_shift(self : Decimal, s : Int) -> Unit {
   let new_digits = self.new_digits(s)
   // from right to left
@@ -332,7 +571,7 @@ fn to_string(self : Decimal) -> String {
 }
 
 test "new" {
-  let hpd = Decimal::new(1L)
+  let hpd = Decimal::from_int64(1L)
   @assertion.assert_eq(hpd.digits.length(), 800)?
   @assertion.assert_eq(hpd.digits_num, 1)?
   @assertion.assert_eq(hpd.decimal_point, 1)?
@@ -340,8 +579,21 @@ test "new" {
   @assertion.assert_eq(hpd.truncated, false)?
 }
 
+test "from_int64" {
+  let hpd = Decimal::from_int64(123456789L)
+  @assertion.assert_eq(hpd.to_string(), "123456789")?
+}
+
+test "from_string" {
+  let s = "0.0000000000000000000000000000007888609052210118054117285652827862296732064351090230047702789306640625"
+  let hpd = Decimal::from_string(s)?
+  @assertion.assert_eq(hpd.to_string(), s)?
+  let hpd = Decimal::from_string("1.0e-10")?
+  @assertion.assert_eq(hpd.to_string(), "0.0000000001")?
+}
+
 test "to_string" {
-  let hpd = Decimal::new(123456789L)
+  let hpd = Decimal::from_int64(123456789L)
   hpd.decimal_point = 1
   @assertion.assert_eq(hpd.to_string(), "1.23456789")?
   hpd.decimal_point = 0
@@ -367,7 +619,7 @@ test "shift" {
   ]
   for i = 0; i < tests.length(); i = i + 1 {
     let t = tests[i]
-    let d = Decimal::new(t.0)
+    let d = Decimal::from_int64(t.0)
     d.shift(t.1)
     @assertion.assert_eq(d.to_string(), t.2)?
   }
