@@ -757,49 +757,6 @@ test "swap" {
   @assertion.assert_eq(v, Vec::[3, 4, 5])?
 }
 
-/// Partition function for quicksort.
-fn partition[T : Compare](self : Vec[T], left : Int, right : Int) -> Int {
-  let pivot = right
-  let mut i = left - 1
-  for j = left; j < right; j = j + 1 {
-    if self[j] < self[pivot] {
-      i = i + 1
-      self.swap(i, j)
-    }
-  }
-  self.swap(i + 1, pivot)
-  i + 1
-}
-
-/// Quicksort helper
-fn quicksort[T : Compare](self : Vec[T], left : Int, right : Int) -> Unit {
-  if left <= right {
-    let idx = self.partition(0, right)
-    self.quicksort(left, idx - 1)
-    self.quicksort(idx + 1, right)
-  }
-}
-
-/// Sort the vector in place.
-/// 
-/// This implementation uses the quicksort algorithm.
-/// 
-/// # Example
-/// ```
-/// let v = Vec::[3, 4, 5, 1, 2]
-/// v.sort()
-/// ```
-pub fn sort[T : Compare](self : Vec[T]) -> Unit {
-  self.quicksort(0, self.len - 1)
-}
-
-test "sort" {
-  let v = Vec::[3, 4, 5, 1, 2]
-  v.sort()
-  @assertion.assert_eq(v, Vec::[1, 2, 3, 4, 5])?
-  @assertion.assert_true(v.is_sorted())?
-}
-
 /// Remove an element from the vector at a given index.
 /// 
 /// Removes and returns the element at position index within the vector, shifting all elements after it to the left.
