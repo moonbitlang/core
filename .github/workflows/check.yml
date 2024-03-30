@@ -119,10 +119,10 @@ jobs:
   coverage-check-bleeding:
     runs-on: macos-14
     continue-on-error: true
-    permissions:
-      contents: read
-      issues: write
-      pull-requests: write
+    permissions: write-all
+      # contents: read
+      # issues: write
+      # pull-requests: write
     steps:
       - uses: actions/checkout@v4
 
