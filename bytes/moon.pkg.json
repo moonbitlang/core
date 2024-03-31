@@ -1,6 +1,3 @@
 {
-    "import": [
-        "moonbitlang/core/test",
-        "moonbitlang/core/coverage"
-    ]
+  "import": ["moonbitlang/core/test", "moonbitlang/core/coverage"]
 }

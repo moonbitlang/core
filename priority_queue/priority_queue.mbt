@@ -27,7 +27,7 @@ test "new" {
   @test.eq(queue.len, 0)?
 }
 
-/// Creates a new empty priority queue from an array.
+/// Creates a new priority queue from an array.
 /// 
 /// # Example
 /// ```

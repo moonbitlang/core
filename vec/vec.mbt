@@ -757,49 +757,6 @@ test "swap" {
   @test.eq(v, Vec::[3, 4, 5])?
 }
 
-/// Partition function for quicksort.
-fn partition[T : Compare](self : Vec[T], left : Int, right : Int) -> Int {
-  let pivot = right
-  let mut i = left - 1
-  for j = left; j < right; j = j + 1 {
-    if self[j] < self[pivot] {
-      i = i + 1
-      self.swap(i, j)
-    }
-  }
-  self.swap(i + 1, pivot)
-  i + 1
-}
-
-/// Quicksort helper
-fn quicksort[T : Compare](self : Vec[T], left : Int, right : Int) -> Unit {
-  if left <= right {
-    let idx = self.partition(0, right)
-    self.quicksort(left, idx - 1)
-    self.quicksort(idx + 1, right)
-  }
-}
-
-/// Sort the vector in place.
-/// 
-/// This implementation uses the quicksort algorithm.
-/// 
-/// # Example
-/// ```
-/// let v = Vec::[3, 4, 5, 1, 2]
-/// v.sort()
-/// ```
-pub fn sort[T : Compare](self : Vec[T]) -> Unit {
-  self.quicksort(0, self.len - 1)
-}
-
-test "sort" {
-  let v = Vec::[3, 4, 5, 1, 2]
-  v.sort()
-  @test.eq(v, Vec::[1, 2, 3, 4, 5])?
-  @test.is_true(v.is_sorted())?
-}
-
 /// Remove an element from the vector at a given index.
 /// 
 /// Removes and returns the element at position index within the vector, shifting all elements after it to the left.
@@ -1267,4 +1224,24 @@ test "split" {
   let chunks = v.split(fn(x) { x == 0 })
   @test.eq(chunks, Vec::[Vec::[1], Vec::[2], Vec::[3], Vec::[4]])?
   @test.eq(chunks.length(), 4)?
+}
+
+/// Convert vec to list.
+/// 
+/// # Example
+///
+/// ```
+/// Vec::[1, 2, 3, 4, 5].to_list()
+/// ```
+pub fn to_list[T](self : Vec[T]) -> List[T] {
+  for i = self.len - 1, list = List::Nil; i >= 0; {
+    continue i - 1, List::Cons(self[i], list)
+  } else {
+    list
+  }
+}
+
+test "to_list" {
+  let ls = Vec::[1, 2, 3, 4, 5].to_list()
+  @test.eq(ls, Cons(1, Cons(2, Cons(3, Cons(4, Cons(5, Nil))))))?
 }
