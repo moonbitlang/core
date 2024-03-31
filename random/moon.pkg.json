@@ -1,5 +1,6 @@
 {
   "import": [
+    "moonbitlang/core/int64",
     "moonbitlang/core/assertion",
     "moonbitlang/core/coverage"
   ]
