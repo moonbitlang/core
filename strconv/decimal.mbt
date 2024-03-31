@@ -62,12 +62,11 @@ pub fn Decimal::from_string(str : String) -> Result[Decimal, String] {
   }
   let mut i = 0
   // read digits part
-  let mut neg = false
   let mut has_dp = false
   let mut has_digits = false
   while i < str.length() {
     match str[i] {
-      '-' => if i != 0 { return Err(syntax_err) } else { neg = true }
+      '-' => if i != 0 { return Err(syntax_err) } else { d.negative = true }
       '+' => if i != 0 { return Err(syntax_err) }
       '_' => () // skip underscores
       '.' => {
