@@ -86,11 +86,18 @@ pub fn is_nan(self : Double) -> Bool {
 }
 
 // Check whether the double is infinity
-// if sign > 0, returns true when f is positive infinity.
-// if sign < 0, returns true when f is negative infinity.
-// if sign = 0, returns true when f is either.
-pub fn is_inf(self : Double, sign : Int) -> Bool {
-  sign >= 0 && self > max_val || sign <= 0 && self < -max_val
+pub fn is_inf(self : Double) -> Bool {
+  self > max_val || self < -max_val
+}
+
+// Check whether the double is positive infinity
+pub fn is_pos_inf(self: Double) -> Bool {
+  self > max_val
+}
+
+// Check whether the double is negative infinity
+pub fn is_neg_inf(self: Double) -> Bool {
+  self < -max_val
 }
 
 fn test_num[T : @num.Num + Debug + Default + Eq](
@@ -126,12 +133,22 @@ test "is_nan" {
 }
 
 test "is_inf" {
-  @assertion.assert_true(is_inf(positive_infinity, 1))?
-  @assertion.assert_false(is_inf(negative_infinity, 1))?
-  @assertion.assert_true(is_inf(negative_infinity, -1))?
-  @assertion.assert_false(is_inf(positive_infinity, -1))?
-  @assertion.assert_true(is_inf(positive_infinity, 0))?
-  @assertion.assert_true(is_inf(negative_infinity, 0))?
-  @assertion.assert_false(is_inf(0.0, 1))?
-  @assertion.assert_false(is_inf(12345.678, 1))?
+  @assertion.assert_true(is_inf(positive_infinity))?
+  @assertion.assert_true(is_inf(negative_infinity))?
+  @assertion.assert_false(is_inf(0.0))?
+  @assertion.assert_false(is_inf(12345.678))?
+}
+
+test "is_pos_inf" {
+  @assertion.assert_true(is_pos_inf(positive_infinity))?
+  @assertion.assert_false(is_pos_inf(negative_infinity))?
+  @assertion.assert_false(is_pos_inf(0.0))?
+  @assertion.assert_false(is_pos_inf(12345.678))?
+}
+
+test "is_neg_inf" {
+  @assertion.assert_false(is_neg_inf(positive_infinity))?
+  @assertion.assert_true(is_neg_inf(negative_infinity))?
+  @assertion.assert_false(is_neg_inf(0.0))?
+  @assertion.assert_false(is_neg_inf(12345.678))?
 }
