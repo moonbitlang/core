@@ -42,7 +42,7 @@ let tan_q = [
 ]
 
 pub fn sin(x : Double) -> Double {
-  if Double::is_inf(x, 0) || Double::is_nan(x) {
+  if Double::is_inf(x) || Double::is_nan(x) {
     x
   } else {
     let mut sign = false
@@ -74,7 +74,7 @@ pub fn sin(x : Double) -> Double {
 }
 
 pub fn cos(x : Double) -> Double {
-  if Double::is_inf(x, 0) || Double::is_nan(x) {
+  if Double::is_inf(x) || Double::is_nan(x) {
     x
   } else {
     let mut sign = false
