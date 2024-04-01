@@ -190,7 +190,7 @@ pub fn Char::op_equal(self : Char, other : Char) -> Bool = "%char_eq"
 
 pub fn Char::compare(self : Char, other : Char) -> Int = "%char_compare"
 
-pub fn Char::defualt() -> Char = "%char_default"
+pub fn Char::default() -> Char = "%char_default"
 
 // Bytes primitive ops
 
