@@ -1,0 +1,43 @@
+// Copyright 2024 International Digital Economy Academy
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+pub fn op_equal[T : Eq, E : Eq](
+  self : Result[T, E],
+  other : Result[T, E]
+) -> Bool {
+  match (self, other) {
+    (Ok(x), Ok(y)) => x == y
+    (Err(x), Err(y)) => x == y
+    _ => false
+  }
+}
+
+pub fn compare[T : Compare, E : Compare](
+  self : Result[T, E],
+  other : Result[T, E]
+) -> Int {
+  match (self, other) {
+    (Ok(x), Ok(y)) => x.compare(y)
+    (Ok(_), Err(_)) => -1
+    (Err(_), Ok(_)) => 1
+    (Err(x), Err(y)) => x.compare(y)
+  }
+}
+
+pub fn unwrap[T, E](self : Result[T, E]) -> T {
+  match self {
+    Ok(x) => x
+    Err(_) => abort("called `Result::unwrap()` on an `Err` value")
+  }
+}
