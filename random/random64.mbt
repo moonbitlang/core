@@ -78,7 +78,7 @@ fn twist(self : RandomInt64) -> Unit {
 /// summoner.summon()
 /// ```
 pub fn summon(self : RandomDouble) -> Double {
-  self.i64.summon().to_double() / (9223372036854775807L).to_double()
+  self.i64.summon().to_double() / Int64::max_value().to_double()
 }
 
 /// summon a random integer number in the Int64 range

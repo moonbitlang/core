@@ -64,17 +64,17 @@ pub fn Double::inf(sign : Int) -> Double {
   }
 }
 
-// Returns the largest positive finite value of double
+// Returns the largest positive finite value of Double
 pub fn Double::max_value() -> Double {
   max_val
 }
 
-// Returns the smallest positive nonzero value of double
+// Returns the smallest positive nonzero value of Double
 pub fn Double::min_value() -> Double {
   min_val
 }
 
-// Returns the smallest positive normal value of double
+// Returns the smallest positive normal value of Double
 pub fn Double::min_normal() -> Double {
   min_norm
 }

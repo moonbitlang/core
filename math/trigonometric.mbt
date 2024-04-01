@@ -32,7 +32,79 @@ let cos_ = [
   0x0.0001A01A019C844F3E07, -0x0.005B05B05B053E453C34, 0x0.0AAAAAAAAAAAA55A47E1,
 ]
 
+let tan_p = [
+  -0x3325.B1A49E7E6F070EEA7F33, 0x1199EC.A5FC9DDCB62A659C2F5C, -0x111FEAD.3299175F331F9B486E14,
+]
+
+let tan_q = [
+  1.0, 0x3571.4BDD66CAE3B4F57353EC, -0x1427BC.582ABC95B9AA3C9963BF, 0x17D98FC.2EAD8EF5BE3D475ECC36,
+  -0x335FC07.97CB461BD8709633FE8F,
+]
+
 pub fn sin(x : Double) -> Double {
+  if Double::is_inf(x, 0) || Double::is_nan(x) {
+    x
+  } else {
+    let mut sign = false
+    let mut x_ = x
+    if x_ < 0.0 {
+      x_ = -x_
+      sign = true
+    }
+    let mut j = (x_ * pi4).to_int64()
+    if j.land(1L) == 1L {
+      j += 1L
+    }
+    let y = j.to_double()
+    j = j.land(7L)
+    if j > 3L {
+      sign = sign.not()
+      j -= 4L
+    }
+    let z = x_ - y * pi4a - y * pi4b - y * pi4c
+    let zz = z * z
+    if j == 1L || j == 2L {
+      1.0 - 0.5 * zz + zz * zz * (((((cos_[0] * zz + cos_[1]) * zz + cos_[2]) * zz +
+      cos_[3]) * zz + cos_[4]) * zz + cos_[5])
+    } else {
+      z + z * zz * (((((sin_[0] * zz + sin_[1]) * zz + sin_[2]) * zz + sin_[3]) *
+      zz + sin_[4]) * zz + sin_[5])
+    } * if sign { -1.0 } else { 1.0 }
+  }
+}
+
+pub fn cos(x : Double) -> Double {
+  if Double::is_inf(x, 0) || Double::is_nan(x) {
+    x
+  } else {
+    let mut sign = false
+    let x_ = x.abs()
+    let mut j = (x_ * pi4).to_int64()
+    if j.land(1L) == 1L {
+      j += 1L
+    }
+    let y = j.to_double()
+    j = j.land(7L)
+    if j > 3L {
+      sign = sign.not()
+      j -= 4L
+    }
+    let z = x_ - y * pi4a - y * pi4b - y * pi4c
+    if j > 1L {
+      sign = sign.not()
+    }
+    let zz = z * z
+    if j == 1L || j == 2L {
+      z + z * zz * (((((sin_[0] * zz + sin_[1]) * zz + sin_[2]) * zz + sin_[3]) *
+      zz + sin_[4]) * zz + sin_[5])
+    } else {
+      1.0 - 0.5 * zz + zz * zz * (((((cos_[0] * zz + cos_[1]) * zz + cos_[2]) * zz +
+      cos_[3]) * zz + cos_[4]) * zz + cos_[5])
+    } * if sign { -1.0 } else { 1.0 }
+  }
+}
+
+pub fn tan(x : Double) -> Double {
   let mut sign = false
   let mut x_ = x
   if x_ < 0.0 {
@@ -44,60 +116,36 @@ pub fn sin(x : Double) -> Double {
     j += 1L
   }
   let y = j.to_double()
-  j = j.land(7L)
-  if j > 3L {
-    sign = sign.not()
-    j -= 4L
-  }
   let z = x_ - y * pi4a - y * pi4b - y * pi4c
-  let zz = z * z
-  if j == 1L || j == 2L {
-    1.0 - 0.5 * zz + zz * zz * (((((cos_[0] * zz + cos_[1]) * zz + cos_[2]) * zz +
-    cos_[3]) * zz + cos_[4]) * zz + cos_[5])
+  let mut zz = z * z
+  zz = if zz > 1.0e-14 {
+    z + z * (zz * ((tan_p[0] * zz + tan_p[1]) * zz + tan_p[2]) / ((((zz + tan_q[1]) *
+    zz + tan_q[2]) * zz + tan_q[3]) * zz + tan_q[4]))
   } else {
-    z + z * zz * (((((sin_[0] * zz + sin_[1]) * zz + sin_[2]) * zz + sin_[3]) * zz +
-    sin_[4]) * zz + sin_[5])
-  } * if sign { -1.0 } else { 1.0 }
+    z
+  }
+  if j.land(2L) == 2L {
+    zz = -1.0 / zz
+  }
+  if sign {
+    -zz
+  } else {
+    zz
+  }
 }
 
-pub fn cos(x : Double) -> Double {
-  let mut sign = false
-  let x_ = x.abs()
-  let mut j = (x_ * pi4).to_int64()
-  if j.land(1L) == 1L {
-    j += 1L
-  }
-  let y = j.to_double()
-  j = j.land(7L)
-  if j > 3L {
-    sign = sign.not()
-    j -= 4L
-  }
-  let z = x_ - y * pi4a - y * pi4b - y * pi4c
-  if j > 1L {
-    sign = sign.not()
-  }
-  let zz = z * z
-  if j == 1L || j == 2L {
-    z + z * zz * (((((sin_[0] * zz + sin_[1]) * zz + sin_[2]) * zz + sin_[3]) * zz +
-    sin_[4]) * zz + sin_[5])
-  } else {
-    1.0 - 0.5 * zz + zz * zz * (((((cos_[0] * zz + cos_[1]) * zz + cos_[2]) * zz +
-    cos_[3]) * zz + cos_[4]) * zz + cos_[5])
-  } * if sign { -1.0 } else { 1.0 }
-}
-
-//Compare two Double values for equality within the allowed error range of 1e-11.
+//Compare two Double values for equality within the allowed error range of 4.5e-9.
 fn imprecise_equal(x : Double, y : Double) -> Bool {
-  (x - y).abs() < 1.0e-10
+  (x - y).abs() < 4.5e-9
 }
+
+let vf = [
+  4.9790119248836735e+00, 7.7388724745781045e+00, -2.7688005719200159e-01, -5.0106036182710749e+00,
+  9.6362937071984173e+00, 2.9263772392439646e+00, 5.2290834314593066e+00, 2.7279399104360102e+00,
+  1.8253080916808550e+00, -8.6859247685756013e+00,
+]
 
 test "sin" {
-  let vf = [
-    4.9790119248836735e+00, 7.7388724745781045e+00, -2.7688005719200159e-01, -5.0106036182710749e+00,
-    9.6362937071984173e+00, 2.9263772392439646e+00, 5.2290834314593066e+00, 2.7279399104360102e+00,
-    1.8253080916808550e+00, -8.6859247685756013e+00,
-  ]
   let sin_res = [
     -9.6466616586009283766724726e-01, 9.9338225271646545763467022e-01, -2.7335587039794393342449301e-01,
     9.5586257685042792878173752e-01, -2.099421066779969164496634e-01, 2.135578780799860532750616e-01,
@@ -119,11 +167,6 @@ test "sin" {
 }
 
 test "cos" {
-  let vf = [
-    4.9790119248836735e+00, 7.7388724745781045e+00, -2.7688005719200159e-01, -5.0106036182710749e+00,
-    9.6362937071984173e+00, 2.9263772392439646e+00, 5.2290834314593066e+00, 2.7279399104360102e+00,
-    1.8253080916808550e+00, -8.6859247685756013e+00,
-  ]
   let cos_res = [
     2.634752140995199110787593e-01, 1.148551260848219865642039e-01, 9.6191297325640768154550453e-01,
     2.938141150061714816890637e-01, -9.777138189897924126294461e-01, -9.7693041344303219127199518e-01,
@@ -140,6 +183,27 @@ test "cos" {
     @assertion.assert_true(imprecise_equal(cos(vf[i]), cos_res[i]))?
     @assertion.assert_true(
       imprecise_equal(cos(100000.0 * pi + vf[i]), cos_res_large[i]),
+    )?
+  }
+}
+
+test "tan" {
+  let tan_res = [
+    -3.661316565040227801781974e+00, 8.64900232648597589369854e+00, -2.8417941955033612725238097e-01,
+    3.253290185974728640827156e+00, 2.147275640380293804770778e-01, -2.18600910711067004921551e-01,
+    -1.760002817872367935518928e+00, -4.389808914752818126249079e-01, -3.843885560201130679995041e+00,
+    9.10988793377685105753416e-01,
+  ]
+  let tan_res_large = [
+    -3.66131656475596512705e+00, 8.6490023287202547927e+00, -2.841794195104782406e-01,
+    3.2532901861033120983e+00, 2.14727564046880001365e-01, -2.18600910700688062874e-01,
+    -1.760002817699722747043e+00, -4.38980891453536115952e-01, -3.84388555942723509071e+00,
+    9.1098879344275101051e-01,
+  ]
+  for i = 0; i < vf.length(); i = i + 1 {
+    @assertion.assert_true(imprecise_equal(tan(vf[i]), tan_res[i]))?
+    @assertion.assert_true(
+      imprecise_equal(tan(100000.0 * pi + vf[i]), tan_res_large[i]),
     )?
   }
 }

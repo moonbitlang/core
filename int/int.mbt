@@ -12,6 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+let max_val = 2147483647
+
+let min_val = -2147483648
+
 pub fn Int::from_int(i : Int) -> Int {
   i
 }
@@ -32,6 +36,16 @@ pub fn signum(self : Int) -> Int {
   } else {
     0
   }
+}
+
+// Returns the largest positive finite value of Int
+pub fn Int::max_value() -> Int {
+  max_val
+}
+
+// Returns the smallest positive nonzero value of Int
+pub fn Int::min_value() -> Int {
+  min_val
 }
 
 fn test_num[T : @num.Num + Debug + Default + Eq](
