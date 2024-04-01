@@ -144,6 +144,14 @@ jobs:
           echo "coverage_summary=$(cat coverage_summary.txt)" >> $GITHUB_ENV
           # Put the coverage report in the pipline output
           cat coverage_summary.txt >> "$GITHUB_STEP_SUMMARY"
+          bisect-ppx-report coveralls coverage.json --service-name github --service-job-id $GITHUB_RUN_NUMBER
+
+      - name: upload to codecov
+        uses: codecov/codecov-action@v2
+        with:
+          file: coverage.json
+          flags: bisect-ppx
+          verbose: true
 
   typo-check:
     runs-on: ubuntu-latest
