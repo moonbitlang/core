@@ -418,14 +418,11 @@ fn debug_tree[K : Show, V : Show](self : Map[K, V]) -> String {
 /// Build a map from an array of key-value pairs.
 /// O(n*log n).
 pub fn Map::from_array[K : Compare, V](array : Array[(K, V)]) -> Map[K, V] {
-  loop 0, Map::Empty {
-    i, mp =>
-      if i < array.length() {
-        let (k, v) = array[i]
-        continue i + 1, mp.insert(k, v)
-      } else {
-        mp
-      }
+  for i = 0, mp = Map::Empty; i < array.length(); {
+    let (k, v) = array[i]
+    continue i + 1, mp.insert(k, v)
+  } else {
+    mp
   }
 }
 
@@ -485,7 +482,7 @@ test "size" {
 }
 
 test "is_empty" {
-  let m: Map[Int, Int] = empty()
+  let m : Map[Int, Int] = empty()
   @assertion.assert_eq(m.is_empty(), true)?
   let m = m.insert(1, 1)
   @assertion.assert_eq(m.is_empty(), false)?
@@ -558,17 +555,26 @@ test "filter_with_key" {
 
 test "to_list" {
   let m = Map::[(1, "one"), (2, "two"), (3, "three")]
-  @assertion.assert_eq(m.to_list(), List::[(1, "one"), (2, "two"), (3, "three")])?
+  @assertion.assert_eq(
+    m.to_list(),
+    List::[(1, "one"), (2, "two"), (3, "three")],
+  )?
 }
 
 test "to_asc_list" {
   let m = Map::[(1, "one"), (2, "two"), (3, "three")]
-  @assertion.assert_eq(m.to_asc_list(), List::[(1, "one"), (2, "two"), (3, "three")])?
+  @assertion.assert_eq(
+    m.to_asc_list(),
+    List::[(1, "one"), (2, "two"), (3, "three")],
+  )?
 }
 
 test "to_desc_list" {
   let m = Map::[(1, "one"), (2, "two"), (3, "three")]
-  @assertion.assert_eq(m.to_desc_list(), List::[(3, "three"), (2, "two"), (1, "one")])?
+  @assertion.assert_eq(
+    m.to_desc_list(),
+    List::[(3, "three"), (2, "two"), (1, "one")],
+  )?
 }
 
 test "to_vec" {

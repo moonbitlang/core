@@ -35,13 +35,11 @@ pub fn CoverageCounter::incr(self : CoverageCounter, idx : Int) -> Unit {
 /// Output the contents of this counter in JSON format.
 fn CoverageCounter::debug_write(self : CoverageCounter, buf : Buffer) -> Unit {
   buf.write_char('[')
-  let mut i = 0
-  while i < self.counter.length() {
+  for i = 0; i < self.counter.length(); i = i + 1 {
     if i != 0 {
       buf.write_string(", ")
     }
     self.counter[i].debug_write(buf)
-    i += 1
   }
   buf.write_char(']')
 }
@@ -110,8 +108,7 @@ fn escape_to(s : String, buf : Buffer) -> Unit {
     }
   }
 
-  let mut ix = 0
-  while ix < s.length() {
+  for ix = 0; ix < s.length(); ix = ix + 1 {
     let ch = s[ix]
     match ch {
       '"' | '\\' => write_escaped_ch(ch)
@@ -129,7 +126,6 @@ fn escape_to(s : String, buf : Buffer) -> Unit {
           buf.write_char(ch)
         }
     }
-    ix += 1
   }
 }
 
