@@ -17,6 +17,15 @@ pub fn ref[T](x : T) -> Ref[T] {
   { val: x }
 }
 
+pub fn to_string[X : Show](self : Ref[X]) -> String {
+  let v = self.val  
+  "{val: \(v)}"
+}
+
+test "to_string" {
+  inspect(ref(3), ~content="{val: 3}")?
+}
+
 /// Maps the value of a `Ref` using a given function.
 ///
 /// # Example
