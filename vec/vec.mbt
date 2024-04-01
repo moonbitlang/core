@@ -35,24 +35,14 @@ pub fn to_string[T : Show](self : Vec[T]) -> String {
 }
 
 test "to_string" {
-  // run moon test -u to auto update  
-  let buf = Buffer::make(20)
-  fn write(obj : Show) {
-    buf.write_string(obj.to_string())
-  }
-
   let empty : Vec[Int] = Vec::[]
-  write(empty)
-  buf.expect(~content="Vec::[]")?
+  inspect(empty, ~content="Vec::[]")?
   let a0 = Vec::[0]
-  write(a0)
-  buf.expect(~content="Vec::[0]")?
+  inspect(a0, ~content="Vec::[0]")?
   a0.push(1)
-  write(a0)
-  buf.expect(~content="Vec::[0,1]")?
+  inspect(a0, ~content="Vec::[0,1]")?
   a0.push(2)
-  write(a0)
-  buf.expect(~content="Vec::[0,1,2]")?
+  inspect(a0, ~content="Vec::[0,1,2]")?
 }
 
 pub fn debug_write[T : Show](self : Vec[T], buf : Buffer) -> Unit {
