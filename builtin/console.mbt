@@ -1,9 +1,23 @@
+// Copyright 2024 International Digital Economy Academy
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
 pub fn println[T : Show](input : T) -> Unit {
   print_string(input.to_string())
   print_string("\n")
 }
 
-pub fn print[T : Show](input : T) -> Unit{
+pub fn print[T : Show](input : T) -> Unit {
   print_string(input.to_string())
 }
 
@@ -26,22 +40,20 @@ pub fn to_string(self : Int64) -> String {
 
   // The min and max value of i64 are -9223372036854775808 and 9223372036854775807,
   // so max=20 is enough.
-  let buf = Buffer::make(20)
 
+  let buf = Buffer::make(20)
   if self < 0L {
     buf.write_char('-')
   }
-
   fn write_digits(num) {
     let num2 = num / 10L
     if num2 != 0L {
       write_digits(num2)
     }
-    buf.write_char(Char::from_int((abs(num % 10L).to_int() + 48)))
+    buf.write_char(Char::from_int(abs(num % 10L).to_int() + 48))
   }
 
   write_digits(self)
-
   buf.to_string()
 }
 
@@ -56,22 +68,20 @@ pub fn to_string(self : Int) -> String {
 
   // The min and max value of i32 are -2147483648 and 2147483647,
   // so max=11 is enough.
-  let buf = Buffer::make(11)
 
+  let buf = Buffer::make(11)
   if self < 0 {
     buf.write_char('-')
   }
-
   fn write_digits(num) {
     let num2 = num / 10
     if num2 != 0 {
       write_digits(num2)
     }
-    buf.write_char(Char::from_int((abs(num % 10) + 48)))
+    buf.write_char(Char::from_int(abs(num % 10) + 48))
   }
 
   write_digits(self)
-
   buf.to_string()
 }
 
@@ -107,29 +117,28 @@ fn to_bool(self : Int64) -> Bool {
   }
 }
 
-
 /// @intrinsic %f64.to_string
 pub fn to_string(self : Double) -> String {
   double_to_string(self)
 }
 
-pub fn op_lt[T: Compare](self_: T, other: T) -> Bool {
+pub fn op_lt[T : Compare](self_ : T, other : T) -> Bool {
   self_.compare(other).is_neg()
 }
 
-pub fn op_gt[T: Compare](self_: T, other: T) -> Bool {
+pub fn op_gt[T : Compare](self_ : T, other : T) -> Bool {
   self_.compare(other).is_pos()
 }
 
-pub fn op_le[T: Compare](self_: T, other: T) -> Bool {
+pub fn op_le[T : Compare](self_ : T, other : T) -> Bool {
   self_.compare(other).is_non_pos()
 }
 
-pub fn op_ge[T: Compare](self_: T, other: T) -> Bool {
+pub fn op_ge[T : Compare](self_ : T, other : T) -> Bool {
   self_.compare(other).is_non_neg()
 }
 
-pub fn op_notequal[T: Eq](x: T, y: T) -> Bool {
+pub fn op_notequal[T : Eq](x : T, y : T) -> Bool {
   not(x == y)
 }
 
@@ -137,16 +146,15 @@ pub fn op_notequal[T: Eq](x: T, y: T) -> Bool {
 pub type Js_string
 
 /// Create a JS string from a string in Moonbit by calling intrinsic primitive
-pub fn Js_string::new(x: String) -> Js_string {
+pub fn Js_string::new(x : String) -> Js_string {
   x.to_js_string()
 }
 
 /// Call FFI to log the JS string
-pub fn log(self: Js_string) -> Unit = "js_string" "log"
+pub fn log(self : Js_string) -> Unit = "js_string" "log"
 
 /// Call FFI to append two JS strings
-pub fn op_add(self: Js_string, other: Js_string) -> Js_string = "js_string" "append"
-
+pub fn op_add(self : Js_string, other : Js_string) -> Js_string = "js_string" "append"
 
 fn unsafe_make_string(length : Int, value : Char) -> String = "$moonbit.unsafe_make_string"
 
@@ -170,7 +178,6 @@ pub fn to_string(self : Char) -> String {
   bytes.sub_string(0, len)
 }
 
-
 pub fn inspect(
   obj : Show,
   ~content : String = "",
@@ -179,7 +186,7 @@ pub fn inspect(
 ) -> Result[Unit, String] {
   let actual = obj.to_string()
   if actual != content {
-    fn repr(s: String) -> String {
+    fn repr(s : String) -> String {
       let buf = Buffer::make(10)
       s.debug_write(buf)
       buf.to_string()
@@ -189,7 +196,6 @@ pub fn inspect(
     let args_loc = repr(args_loc.to_json())
     let expect = repr(content)
     let actual = repr(obj.to_string())
-
     return Err(
       "@EXPECT_FAILED {\"loc\": \(loc), \"args_loc\": \(args_loc), \"expect\": \(expect), \"actual\": \(actual)}",
     )

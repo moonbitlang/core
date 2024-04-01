@@ -1,3 +1,17 @@
+// Copyright 2024 International Digital Economy Academy
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
 /// Extensible buffer.
 ///
 /// It provides accumulative concatenation of strings in linear time.
@@ -22,14 +36,15 @@ pub fn expect(
   ~loc : SourceLoc = _,
   ~args_loc : ArgsLoc = _
 ) -> Result[Unit, String] {
-  let current =  self.to_string()
+  let current = self.to_string()
   self.reset()
-  if  current != content {
-    fn repr(s: String) -> String {
+  if current != content {
+    fn repr(s : String) -> String {
       let buf = Buffer::make(10)
       s.debug_write(buf)
       buf.to_string()
     }
+
     let loc = repr(loc.to_string())
     let args_loc = repr(args_loc.to_json())
     let expect = repr(content)
@@ -75,7 +90,12 @@ pub fn write_string(self : Buffer, value : String) -> Unit {
 }
 
 /// Write a sub-string into buffer.
-pub fn write_sub_string(self : Buffer, value : String, start : Int, len : Int) -> Unit {
+pub fn write_sub_string(
+  self : Buffer,
+  value : String,
+  start : Int,
+  len : Int
+) -> Unit {
   if start < 0 || len < 0 || start + len > value.length() {
     abort("Buffer::write_sub_string")
   }
@@ -96,6 +116,6 @@ pub fn length(self : Buffer) -> Int {
   self.len / 2
 }
 
-pub fn reset(self: Buffer) -> Unit {
+pub fn reset(self : Buffer) -> Unit {
   self.len = 0
 }
