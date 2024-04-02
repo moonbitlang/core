@@ -86,6 +86,7 @@ pub fn to_list[T : Compare](self : ImmutableSet[T]) -> List[T] {
 /// println(ImmutableSet::from_list(List::[3, 4, 5]).remove_min().to_list())
 /// // output: Cons(4, Cons(5, Nil))
 /// ```
+/// @alert unsafe "Panic if the ImmutableSet is empty."
 pub fn remove_min[T : Compare](self : ImmutableSet[T]) -> ImmutableSet[T] {
   match self {
     Empty => abort("remove_min: empty ImmutableSet")
@@ -176,6 +177,7 @@ pub fn remove[T : Compare](
 /// println(ImmutableSet::from_list(List::[7, 2, 9, 4, 5, 6, 3, 8, 1]).min())
 /// // output: 1
 /// ```
+/// @alert unsafe "Panic if the ImmutableSet is empty."
 pub fn min[T : Compare](self : ImmutableSet[T]) -> T {
   match self {
     Empty => abort("min: there are no values in ImmutableSet.")
@@ -208,6 +210,7 @@ pub fn min_option[T : Compare](self : ImmutableSet[T]) -> Option[T] {
 /// println(ImmutableSet::from_list(List::[7, 2, 9, 4, 5, 6, 3, 8, 1]).max())
 /// // output: 9
 /// ```
+/// @alert unsafe "Panic if the ImmutableSet is empty."
 pub fn max[T : Compare](self : ImmutableSet[T]) -> T {
   match self {
     Empty => abort("max: there are no values in ImmutableSet.")
@@ -566,6 +569,7 @@ pub fn filter[T : Compare](
 /// println(ImmutableSet::from_list(List::[1, 2, 3, 4, 5, 6]).find(6))
 /// // output: 6
 /// ```
+/// @alert unsafe "Panic if the value not found."
 pub fn find[T : Compare](self : ImmutableSet[T], value : T) -> T {
   match self {
     Empty => abort("find: not found")

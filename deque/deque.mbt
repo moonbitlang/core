@@ -178,12 +178,12 @@ pub fn push_back[T](self : Deque[T], value : T) -> Unit {
 
 /// Removes a fornt element from a deque.
 /// 
-/// Panics if the deque is empty.
 /// # Example
 /// ```
 /// let dq = Deque::[1, 2, 3, 4, 5]
 /// dq.pop_front_exn()
 /// ```
+/// @alert unsafe "Panic if the deque is empty."
 pub fn pop_front_exn[T](self : Deque[T]) -> Unit {
   if self.len == 0 {
     abort("The deque is empty!")
@@ -194,12 +194,12 @@ pub fn pop_front_exn[T](self : Deque[T]) -> Unit {
 
 /// Removes a back element from a deque.
 /// 
-/// Panics if the deque is empty.
 /// # Example
 /// ```
 /// let dq = Deque::[1, 2, 3, 4, 5]
 /// dq.pop_back_exn()
 /// ```
+/// @alert unsafe "Panic if the deque is empty."
 pub fn pop_back_exn[T](self : Deque[T]) -> Unit {
   if self.len == 0 {
     abort("The deque is empty!")
@@ -271,6 +271,7 @@ test "push_and_pop" {
 /// let dq = Deque::[1, 2, 3, 4, 5]
 /// println(dq[2]) // 3
 /// ```
+/// @alert unsafe "Panic if the index is out of bounds."
 pub fn op_get[T](self : Deque[T], index : Int) -> T {
   if index < 0 || index >= self.len {
     let len = self.len
@@ -308,6 +309,7 @@ test "op_get" {
 /// dq[2] = 1
 /// println(dq[2]) // 1
 /// ```
+/// @alert unsafe "Panic if the index is out of bounds."
 pub fn op_set[T](self : Deque[T], index : Int, value : T) -> Unit {
   if index < 0 || index >= self.len {
     let len = self.len

@@ -102,12 +102,12 @@ test "length" {
 
 /// Pops the first value from the priority queue.
 /// 
-/// Panics if the queue is empty.
 /// # Example
 /// ```
 /// let queue = PriorityQueue::[1, 2, 3, 4]
 /// let first = queue.pop_exn() // 4
 /// ```
+/// @alert unsafe "Panic if the queue is empty."
 pub fn pop_exn[T : Compare](self : PriorityQueue[T]) -> Unit {
   if self.len == 0 {
     abort("The PriorityQueue is empty!")
