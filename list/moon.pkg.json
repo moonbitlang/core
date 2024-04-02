@@ -3,6 +3,7 @@
     "moonbitlang/core/builtin",
     "moonbitlang/core/assertion",
     "moonbitlang/core/array",
-    "moonbitlang/core/coverage"
+    "moonbitlang/core/coverage",
+    "moonbitlang/core/vec"
   ]
 }
