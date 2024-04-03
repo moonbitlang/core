@@ -85,43 +85,6 @@ pub fn to_string(self : Int) -> String {
   buf.to_string()
 }
 
-pub fn to_int(self : Bool) -> Int {
-  if self {
-    1
-  } else {
-    0
-  }
-}
-
-pub fn to_int64(self : Bool) -> Int64 {
-  if self {
-    1L
-  } else {
-    0L
-  }
-}
-
-fn to_bool(self : Int) -> Bool {
-  if self == 0 {
-    false
-  } else {
-    true
-  }
-}
-
-fn to_bool(self : Int64) -> Bool {
-  if self == 0L {
-    false
-  } else {
-    true
-  }
-}
-
-/// @intrinsic %f64.to_string
-pub fn to_string(self : Double) -> String {
-  double_to_string(self)
-}
-
 pub fn op_lt[T : Compare](self_ : T, other : T) -> Bool {
   self_.compare(other).is_neg()
 }
@@ -169,13 +132,6 @@ pub fn String::make(length : Int, value : Char) -> String {
   } else {
     unsafe_make_string(length, value)
   }
-}
-
-/// Convert Char to String
-pub fn to_string(self : Char) -> String {
-  let bytes = Bytes::make(4, 0)
-  let len = bytes.set_utf16_char(0, self)
-  bytes.sub_string(0, len)
 }
 
 pub fn inspect(

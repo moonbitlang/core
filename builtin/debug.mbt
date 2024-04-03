@@ -41,10 +41,6 @@ pub fn debug_write(self : Int64, buf : Buffer) -> Unit {
   buf.write_string(self.to_string())
 }
 
-pub fn debug_write(self : Double, buf : Buffer) -> Unit {
-  buf.write_string(self.to_string())
-}
-
 fn should_escape(ch : Char) -> Bool {
   match ch {
     '"' | '\'' | '\\' | '\n' | '\r' | '\b' | '\t' => true
@@ -83,12 +79,6 @@ fn escape_write_char(ch : Char, buf : Buffer) -> Unit {
         buf.write_char(ch)
       }
   }
-}
-
-pub fn debug_write(self : Char, buf : Buffer) -> Unit {
-  buf.write_char('\'')
-  escape_write_char(self, buf)
-  buf.write_char('\'')
 }
 
 pub fn debug_write[X : Debug](self : Option[X], buf : Buffer) -> Unit {
@@ -156,57 +146,4 @@ pub fn debug_write(self : String, buf : Buffer) -> Unit {
   }
   flush_segment(self.length())
   buf.write_char('"')
-}
-
-pub fn debug_write[X : Debug, Y : Debug](self : (X, Y), buf : Buffer) -> Unit {
-  buf.write_char('(')
-  self.0.debug_write(buf)
-  buf.write_string(", ")
-  self.1.debug_write(buf)
-  buf.write_char(')')
-}
-
-pub fn debug_write[X : Debug, Y : Debug, Z : Debug](
-  self : (X, Y, Z),
-  buf : Buffer
-) -> Unit {
-  buf.write_char('(')
-  self.0.debug_write(buf)
-  buf.write_string(", ")
-  self.1.debug_write(buf)
-  buf.write_string(", ")
-  self.2.debug_write(buf)
-  buf.write_char(')')
-}
-
-pub fn debug_write[X : Debug, Y : Debug, Z : Debug, W : Debug](
-  self : (X, Y, Z, W),
-  buf : Buffer
-) -> Unit {
-  buf.write_char('(')
-  self.0.debug_write(buf)
-  buf.write_string(", ")
-  self.1.debug_write(buf)
-  buf.write_string(", ")
-  self.2.debug_write(buf)
-  buf.write_string(", ")
-  self.3.debug_write(buf)
-  buf.write_char(')')
-}
-
-pub fn debug_write[X1 : Debug, X2 : Debug, X3 : Debug, X4 : Debug, X5 : Debug](
-  self : (X1, X2, X3, X4, X5),
-  buf : Buffer
-) -> Unit {
-  buf.write_char('(')
-  self.0.debug_write(buf)
-  buf.write_string(", ")
-  self.1.debug_write(buf)
-  buf.write_string(", ")
-  self.2.debug_write(buf)
-  buf.write_string(", ")
-  self.3.debug_write(buf)
-  buf.write_string(", ")
-  self.4.debug_write(buf)
-  buf.write_char(')')
 }

@@ -3,6 +3,8 @@
         "moonbitlang/core/builtin",
         "moonbitlang/core/num",
         "moonbitlang/core/assertion",
+        "moonbitlang/core/bool",
+        "moonbitlang/core/int64",
         "moonbitlang/core/coverage"
     ]
 }
