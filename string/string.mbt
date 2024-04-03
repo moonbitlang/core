@@ -57,6 +57,7 @@ test "to_bytes" {
   @assertion.assert_eq("中文".to_bytes().to_string(), "中文")?
   @assertion.assert_eq("asdf".to_bytes().to_string(), "asdf")?
   @assertion.assert_eq("🤣🤣".to_bytes().to_string(), "🤣🤣")?
+  @assertion.assert_eq("🤔".to_bytes().to_string(), "🤔")?
 }
 
 pub fn hash(self : String) -> Int {
