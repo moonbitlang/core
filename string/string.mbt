@@ -48,13 +48,38 @@ pub fn String::default() -> String {
 
 pub fn to_bytes(self : String) -> Bytes {
   let len = self.length()
-  let buf = Bytes::make(len, 0)
-  for i = 0; i < len; i = i + 1 {
-    buf[i] = self[i].to_int()
-  }
-  buf
+  let bytes = Bytes::make(len * 2, 0)
+  bytes.blit_from_string(0, self, 0, len)
+  bytes
+}
+
+test "to_bytes" {
+  @assertion.assert_eq("中文".to_bytes().to_string(), "中文")?
+  @assertion.assert_eq("asdf".to_bytes().to_string(), "asdf")?
+  @assertion.assert_eq("🤣🤣".to_bytes().to_string(), "🤣🤣")?
+  @assertion.assert_eq("🤔".to_bytes().to_string(), "🤔")?
 }
 
 pub fn hash(self : String) -> Int {
   self.to_bytes().hash()
+}
+
+// [debug_write] is in [builtin].
+// due to cyclic dependency issue we can only test it here
+test "debug_write" {
+  fn repr(s : String) {
+    let buf = Buffer::make(0)
+    s.debug_write(buf)
+    buf.to_string()
+  }
+  @assertion.assert_eq(repr("a"), "\"a\"")?
+  @assertion.assert_eq(repr("'"), "\"'\"")?
+  @assertion.assert_eq(repr("\""), "\"\\\"\"")?
+  @assertion.assert_eq(repr("\\"), "\"\\\\\"")?
+  @assertion.assert_eq(repr("\n"), "\"\\n\"")?
+  @assertion.assert_eq(repr("\r"), "\"\\r\"")?
+  @assertion.assert_eq(repr("\b"), "\"\\b\"")?
+  @assertion.assert_eq(repr("\t"), "\"\\t\"")?
+  @assertion.assert_eq(repr("\x00"), "\"\\x00\"")?
+  @assertion.assert_eq(repr("abc'\"def\\"), "\"abc'\\\"def\\\\\"")?
 }

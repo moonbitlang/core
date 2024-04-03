@@ -41,46 +41,6 @@ pub fn debug_write(self : Int64, buf : Buffer) -> Unit {
   buf.write_string(self.to_string())
 }
 
-fn should_escape(ch : Char) -> Bool {
-  match ch {
-    '"' | '\'' | '\\' | '\n' | '\r' | '\b' | '\t' => true
-    _ => ch.to_int() < 0x20
-  }
-}
-
-fn escape_write_char(ch : Char, buf : Buffer) -> Unit {
-  fn write_escaped_ch(ch : Char) -> Unit {
-    buf.write_char('\\')
-    buf.write_char(ch)
-  }
-
-  fn to_hex_digit(i : Int) -> Char {
-    if i < 10 {
-      Char::from_int('0'.to_int() + i)
-    } else {
-      Char::from_int('a'.to_int() + (i - 10))
-    }
-  }
-
-  match ch {
-    '"' | '\'' | '\\' => write_escaped_ch(ch)
-    '\n' => write_escaped_ch('n')
-    '\r' => write_escaped_ch('r')
-    '\b' => write_escaped_ch('b')
-    '\t' => write_escaped_ch('t')
-    _ =>
-      if ch.to_int() < 0x20 {
-        buf.write_char('\\')
-        buf.write_char('x')
-        let ich = ch.to_int()
-        buf.write_char(to_hex_digit(ich / 16))
-        buf.write_char(to_hex_digit(ich % 16))
-      } else {
-        buf.write_char(ch)
-      }
-  }
-}
-
 pub fn debug_write[X : Debug](self : Option[X], buf : Buffer) -> Unit {
   match self {
     None => buf.write_string("None")
@@ -137,11 +97,48 @@ pub fn debug_write(self : String, buf : Buffer) -> Unit {
     segment_start = i + 1
   }
 
+  fn to_hex_digit(i : Int) -> Char {
+    if i < 10 {
+      Char::from_int('0'.to_int() + i)
+    } else {
+      Char::from_int('a'.to_int() + (i - 10))
+    }
+  }
+
   for i = 0; i < self.length(); i = i + 1 {
     let c = self[i]
-    if should_escape(c) {
-      flush_segment(i)
-      escape_write_char(c, buf)
+    match c {
+      '"' | '\\' => {
+        flush_segment(i)
+        buf.write_char('\\')
+        buf.write_char(c)
+      }
+      '\n' => {
+        flush_segment(i)
+        buf.write_string("\\n")
+      }
+      '\r' => {
+        flush_segment(i)
+        buf.write_string("\\r")
+      }
+      '\b' => {
+        flush_segment(i)
+        buf.write_string("\\b")
+      }
+      '\t' => {
+        flush_segment(i)
+        buf.write_string("\\t")
+      }
+      _ => {
+        let code = c.to_int()
+        if code < 0x20 {
+          flush_segment(i)
+          buf.write_char('\\')
+          buf.write_char('x')
+          buf.write_char(to_hex_digit(code / 16))
+          buf.write_char(to_hex_digit(code % 16))
+        }
+      }
     }
   }
   flush_segment(self.length())
