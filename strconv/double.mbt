@@ -33,7 +33,7 @@ pub fn parse_double(str : String) -> Result[Double, String] {
   if not(check_underscore(str)) {
     return Err(syntax_err)
   }
-  let hpd = Decimal::from_string(str)?
+  let hpd = parse_decimal(str)?
   hpd.to_double()
 }
 
@@ -110,7 +110,6 @@ test "parse_double" {
     ("6.62607015e-34", Ok(6.62607015e-34)),
     ("2.2250738585072012e-308", Ok(2.2250738585072014e-308)),
     ("2.2250738585072011e-308", Ok(2.225073858507201e-308)),
-    // zeros
     ("0", Ok(0.0)),
     ("0e0", Ok(0.0)),
     ("-0e0", Ok(-0.0)),
@@ -132,13 +131,19 @@ test "parse_double" {
     ("-0e292", Ok(-0.0)),
     ("-0e347", Ok(-0.0)),
     ("-0e348", Ok(-0.0)),
-    // large double
     ("1.7976931348623157e308", Ok(1.7976931348623157e308)),
     ("-1.7976931348623157e308", Ok(-1.7976931348623157e308)),
     ("1.7976931348623158e308", Ok(1.7976931348623157e308)),
     ("-1.7976931348623158e308", Ok(-1.7976931348623157e308)),
     ("1e308", Ok(1.0e308)),
-    ("1.7976931348623159e308", Err(range_err)),
+    (
+      "1.7976931348623159e308",
+      Err(
+        // zeros
+        // large double
+        range_err,
+      ),
+    ),
     // overflow
     ("-1.7976931348623159e308", Err(range_err)),
     ("2e308", Err(range_err)),
