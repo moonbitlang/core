@@ -71,3 +71,7 @@ test "int.num" {
   let y = 7
   test_num(x, y, x + y, x * y, x - y, x / y, -1)?
 }
+
+pub fn hash(self : Int) -> Int {
+  self
+}

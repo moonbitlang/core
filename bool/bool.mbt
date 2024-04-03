@@ -19,3 +19,23 @@ pub trait Boolean {
 pub fn Bool::to_bool(self : Bool) -> Bool {
   self
 }
+
+pub fn to_int(self : Bool) -> Int {
+  if self {
+    1
+  } else {
+    0
+  }
+}
+
+pub fn to_int64(self : Bool) -> Int64 {
+  if self {
+    1L
+  } else {
+    0L
+  }
+}
+
+pub fn hash(self : Bool) -> Int {
+  self.to_int()
+}

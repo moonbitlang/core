@@ -85,22 +85,6 @@ pub fn to_string(self : Int) -> String {
   buf.to_string()
 }
 
-pub fn to_int(self : Bool) -> Int {
-  if self {
-    1
-  } else {
-    0
-  }
-}
-
-pub fn to_int64(self : Bool) -> Int64 {
-  if self {
-    1L
-  } else {
-    0L
-  }
-}
-
 pub fn op_lt[T : Compare](self_ : T, other : T) -> Bool {
   self_.compare(other).is_neg()
 }
