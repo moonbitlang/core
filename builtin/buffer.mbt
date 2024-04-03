@@ -119,3 +119,7 @@ pub fn length(self : Buffer) -> Int {
 pub fn reset(self : Buffer) -> Unit {
   self.len = 0
 }
+
+pub fn to_bytes(self : Buffer) -> Bytes {
+  self.bytes.copy()
+}
