@@ -37,6 +37,11 @@ test "with_capacity" {
   @assertion.assert_eq(d.buf.length(), 0)?
 }
 
+test "with_capacity_non_zero" {
+  let d : Deque[Int] = Deque::with_capacity(10)
+  @assertion.assert_eq(d.buf.length(), 10)?
+}
+
 /// Creates a new deque from an array.
 pub fn Deque::from_array[T](arr : Array[T]) -> Deque[T] {
   let deq = Deque::{
