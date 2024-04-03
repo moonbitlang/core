@@ -310,7 +310,7 @@ pub fn op_get[T](self : Deque[T], index : Int) -> T {
   if self.head + index < self.buf.length() {
     self.buf[self.head + index]
   } else {
-    self.buf[index - self.head + 1]
+    self.buf[(self.head + index) % self.buf.length()]
   }
 }
 
@@ -321,8 +321,9 @@ test "op_get" {
   @assertion.assert_eq(dq[2], 3)?
   @assertion.assert_eq(dq[3], 4)?
   @assertion.assert_eq(dq[4], 5)?
+  let _ = dq.pop_front()
   dq.push_back(1)
-  @assertion.assert_eq(dq[5], 1)?
+  @assertion.assert_eq(dq[4], 1)?
   dq.push_front(2)
   @assertion.assert_eq(dq[0], 2)?
 }
