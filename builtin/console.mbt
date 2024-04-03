@@ -101,27 +101,6 @@ pub fn to_int64(self : Bool) -> Int64 {
   }
 }
 
-fn to_bool(self : Int) -> Bool {
-  if self == 0 {
-    false
-  } else {
-    true
-  }
-}
-
-fn to_bool(self : Int64) -> Bool {
-  if self == 0L {
-    false
-  } else {
-    true
-  }
-}
-
-/// @intrinsic %f64.to_string
-pub fn to_string(self : Double) -> String {
-  double_to_string(self)
-}
-
 pub fn op_lt[T : Compare](self_ : T, other : T) -> Bool {
   self_.compare(other).is_neg()
 }
