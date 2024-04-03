@@ -41,10 +41,6 @@ pub fn debug_write(self : Int64, buf : Buffer) -> Unit {
   buf.write_string(self.to_string())
 }
 
-pub fn debug_write(self : Double, buf : Buffer) -> Unit {
-  buf.write_string(self.to_string())
-}
-
 fn should_escape(ch : Char) -> Bool {
   match ch {
     '"' | '\'' | '\\' | '\n' | '\r' | '\b' | '\t' => true
