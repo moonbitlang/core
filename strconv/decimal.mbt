@@ -55,7 +55,7 @@ pub fn Decimal::from_int64(v : Int64) -> Decimal {
 }
 
 /// Create a decimal from number string.
-pub fn Decimal::from_string(str : String) -> Result[Decimal, String] {
+pub fn Decimal::parse_decimal(str : String) -> Result[Decimal, String] {
   let d = Decimal::new()
   if str.length() <= 0 {
     return Err(syntax_err)
@@ -585,9 +585,9 @@ test "from_int64" {
 
 test "from_string" {
   let s = "0.0000000000000000000000000000007888609052210118054117285652827862296732064351090230047702789306640625"
-  let hpd = Decimal::from_string(s)?
+  let hpd = parse_decimal(s)?
   @assertion.assert_eq(hpd.to_string(), s)?
-  let hpd = Decimal::from_string("1.0e-10")?
+  let hpd = parse_decimal("1.0e-10")?
   @assertion.assert_eq(hpd.to_string(), "0.0000000001")?
 }
 
