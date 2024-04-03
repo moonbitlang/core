@@ -152,3 +152,7 @@ test "is_neg_inf" {
   @assertion.assert_false(is_neg_inf(0.0))?
   @assertion.assert_false(is_neg_inf(12345.678))?
 }
+
+pub fn hash(self : Double) -> Int {
+  self.reinterpret_as_i64().hash()
+}

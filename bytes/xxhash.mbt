@@ -29,41 +29,6 @@ fn xxhash32(input : Bytes, seed : Int) -> Int {
   finalize(h, input, len.land(-16), len.land(0xF))
 }
 
-pub fn to_bytes(self : String) -> Bytes {
-  let len = self.length()
-  let buf = Bytes::make(len, 0)
-  for i = 0; i < len; i = i + 1 {
-    buf[i] = self[i].to_int()
-  }
-  buf
-}
-
-pub fn hash(self : Bool) -> Int {
-  self.to_int()
-}
-
-pub fn hash(self : Char) -> Int {
-  self.to_int()
-}
-
-pub fn hash(self : Int) -> Int {
-  self
-}
-
-pub fn hash(self : Int64) -> Int {
-  let lo = self.to_int()
-  let hi = self.lsr(32).to_int()
-  lo.lxor(hi)
-}
-
-pub fn hash(self : Double) -> Int {
-  self.reinterpret_as_i64().hash()
-}
-
-pub fn hash(self : String) -> Int {
-  xxhash32(self.to_bytes(), 0)
-}
-
 pub fn hash(self : Bytes) -> Int {
   xxhash32(self, 0)
 }
