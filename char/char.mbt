@@ -74,3 +74,7 @@ test "debug_write" {
   @assertion.assert_eq(repr('\t'), "'\\t'")?
   @assertion.assert_eq(repr(Char::from_int(0)), "'\\x00'")?
 }
+
+pub fn hash(self : Char) -> Int {
+  self.to_int()
+}

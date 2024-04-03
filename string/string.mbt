@@ -45,3 +45,16 @@ test "compare" {
 pub fn String::default() -> String {
   ""
 }
+
+pub fn to_bytes(self : String) -> Bytes {
+  let len = self.length()
+  let buf = Bytes::make(len, 0)
+  for i = 0; i < len; i = i + 1 {
+    buf[i] = self[i].to_int()
+  }
+  buf
+}
+
+pub fn hash(self : String) -> Int {
+  self.to_bytes().hash()
+}

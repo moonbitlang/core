@@ -72,3 +72,9 @@ test "int64.num" {
   let y = 792L
   test_num(x, y, x + y, x * y, x - y, x / y, -1L)?
 }
+
+pub fn hash(self : Int64) -> Int {
+  let lo = self.to_int()
+  let hi = self.lsr(32).to_int()
+  lo.lxor(hi)
+}
