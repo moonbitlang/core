@@ -32,6 +32,11 @@ pub fn Deque::with_capacity[T](cap : Int) -> Deque[T] {
   Deque::{ buf: UninitializedArray::make(cap), len: 0, head: 0, tail: 0 }
 }
 
+test "with_capacity" {
+  let d : Deque[Int] = Deque::with_capacity(0)
+  @assertion.assert_eq(d.buf.length(), 0)?
+}
+
 /// Creates a new deque from an array.
 pub fn Deque::from_array[T](arr : Array[T]) -> Deque[T] {
   let deq = Deque::{
@@ -138,6 +143,9 @@ test "front_and_back" {
   let dq = Deque::[1, 2, 3, 4, 5]
   @assertion.assert_eq(dq.back(), Some(5))?
   @assertion.assert_eq(dq.front(), Some(1))?
+  let dq: Deque[Int] = Deque::[]
+  @assertion.assert_eq(dq.back(), None)?
+  @assertion.assert_eq(dq.front(), None)?
 }
 
 /// Adds an element to the front of the deque.
@@ -260,6 +268,20 @@ test "push_and_pop" {
   @assertion.assert_eq(dq.length(), 6)?
   @assertion.assert_eq(dq.pop_back(), Some(8))?
   @assertion.assert_eq(dq.back(), Some(7))?
+
+  let dq = Deque::[1]
+  @assertion.assert_eq(dq.pop_front(), Some(1))?
+  @assertion.assert_eq(dq.pop_front(), None)?
+  @assertion.assert_eq(dq.pop_back(), None)?
+}
+
+test "push_realloc" {
+  let dq: Deque[Int] = Deque::with_capacity(0)
+  dq.push_front(1)
+  @assertion.assert_eq(dq.pop_front(), Some(1))?
+  let dq: Deque[Int] = Deque::with_capacity(0)
+  dq.push_back(1)
+  @assertion.assert_eq(dq.pop_back(), Some(1))?
 }
 
 /// Retrieves the element at the specified index from the deque.
@@ -281,7 +303,7 @@ pub fn op_get[T](self : Deque[T], index : Int) -> T {
   if self.head + index < self.buf.length() {
     self.buf[self.head + index]
   } else {
-    self.buf[index- self.head+1]
+    self.buf[index - self.head + 1]
   }
 }
 
@@ -322,6 +344,12 @@ pub fn op_set[T](self : Deque[T], index : Int, value : T) -> Unit {
   }
 }
 
+test "op_set" {
+  let dq = Deque::[1,2,3,4,5]
+  dq[1] = 3
+  @assertion.assert_eq(dq[1], 3)?
+}
+
 /// Compares two deques for equality.
 pub fn op_equal[T : Eq](self : Deque[T], other : Deque[T]) -> Bool {
   if self.len != other.len {
@@ -333,6 +361,20 @@ pub fn op_equal[T : Eq](self : Deque[T], other : Deque[T]) -> Bool {
     }
   }
   true
+}
+
+test "op_equal" {
+  let dq1 = Deque::[1, 2, 3]
+  let dq2 = Deque::[1, 2, 3]
+  @assertion.assert_true(dq1 == dq2)?
+  let dq1 = Deque::[1, 2, 3]
+  let dq2 = Deque::[1, 2, 3]
+  dq2[0] = 2
+  @assertion.assert_false(dq1 == dq2)?
+  let dq1 = Deque::[1, 2, 3]
+  let dq2 = Deque::[1, 2, 3]
+  dq2.push_front(1)
+  @assertion.assert_false(dq1 == dq2)?
 }
 
 /// Iterates over the elements of the deque.
