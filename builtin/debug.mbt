@@ -81,12 +81,6 @@ fn escape_write_char(ch : Char, buf : Buffer) -> Unit {
   }
 }
 
-pub fn debug_write(self : Char, buf : Buffer) -> Unit {
-  buf.write_char('\'')
-  escape_write_char(self, buf)
-  buf.write_char('\'')
-}
-
 pub fn debug_write[X : Debug](self : Option[X], buf : Buffer) -> Unit {
   match self {
     None => buf.write_string("None")

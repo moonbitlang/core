@@ -150,13 +150,6 @@ pub fn String::make(length : Int, value : Char) -> String {
   }
 }
 
-/// Convert Char to String
-pub fn to_string(self : Char) -> String {
-  let bytes = Bytes::make(4, 0)
-  let len = bytes.set_utf16_char(0, self)
-  bytes.sub_string(0, len)
-}
-
 pub fn inspect(
   obj : Show,
   ~content : String = "",

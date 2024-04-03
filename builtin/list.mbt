@@ -12,10 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-pub fn List::default[X]() -> List[X] {
-  Nil
-}
-
 pub fn List::op_equal[X : Eq](xs : List[X], ys : List[X]) -> Bool {
   match (xs, ys) {
     (Nil, Nil) => true

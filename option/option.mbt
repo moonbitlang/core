@@ -228,3 +228,44 @@ test "or else" {
   @assertion.assert_eq(x.or_else(fn() { 5 }), 3)?
   @assertion.assert_eq((None : Option[Int]).or_else(fn() { 5 }), 5)?
 }
+
+pub fn compare[X : Compare](self : Option[X], other : Option[X]) -> Int {
+  match self {
+    None =>
+      match other {
+        None => 0
+        Some(_) => -1
+      }
+    Some(x) =>
+      match other {
+        None => 1
+        Some(y) => x.compare(y)
+      }
+  }
+}
+
+test "compare" {
+  let some1 = Option::Some(1)
+  let some2 = Option::Some(2)
+  let none = Option::None
+  @assertion.assert_eq(0, some1.compare(Option::Some(1)))?
+  @assertion.assert_eq(-1, some1.compare(some2))?
+  @assertion.assert_eq(1, some2.compare(some1))?
+  @assertion.assert_eq(0, none.compare(none))?
+  @assertion.assert_eq(-1, none.compare(some1))?
+  @assertion.assert_eq(1, some2.compare(none))?
+}
+
+/// Extract the value in `Some`.
+/// Panic if input is `None`.
+pub fn unwrap[X](self : Option[X]) -> X {
+  match self {
+    None => abort("called `Option::unwrap()` on a `None` value")
+    Some(x) => x
+  }
+}
+
+/// `None`
+pub fn Option::default[X]() -> Option[X] {
+  None
+}
