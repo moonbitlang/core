@@ -48,11 +48,9 @@ pub fn String::default() -> String {
 
 pub fn to_bytes(self : String) -> Bytes {
   let len = self.length()
-  let buf = Bytes::make(len, 0)
-  for i = 0; i < len; i = i + 1 {
-    buf[i] = self[i].to_int()
-  }
-  buf
+  let bytes = Bytes::make(len * 2, 0)
+  bytes.blit_from_string(0, self, 0, len)
+  bytes
 }
 
 test "to_bytes" {
