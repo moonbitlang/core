@@ -79,7 +79,7 @@ pub fn sub_string(self : Bytes, byte_offset : Int, byte_length : Int) -> String 
   }
 }
 
-/// Copy `length` bytes from string `str`, starting at `str_offset`,
+/// Copy `length` chars from string `str`, starting at `str_offset`,
 /// into byte sequence `self`, starting at `bytes_offset`.
 pub fn blit_from_string(
   self : Bytes,
