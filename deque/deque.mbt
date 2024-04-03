@@ -284,9 +284,11 @@ test "push_realloc" {
   let dq: Deque[Int] = Deque::with_capacity(0)
   dq.push_front(1)
   @assertion.assert_eq(dq.pop_front(), Some(1))?
+  @assertion.assert_true(dq.capacity() > 0)?
   let dq: Deque[Int] = Deque::with_capacity(0)
   dq.push_back(1)
   @assertion.assert_eq(dq.pop_back(), Some(1))?
+  @assertion.assert_true(dq.capacity() > 0)?
 }
 
 /// Retrieves the element at the specified index from the deque.
