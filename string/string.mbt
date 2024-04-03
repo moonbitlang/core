@@ -58,3 +58,23 @@ pub fn to_bytes(self : String) -> Bytes {
 pub fn hash(self : String) -> Int {
   self.to_bytes().hash()
 }
+
+// [debug_write] is in [builtin].
+// due to cyclic dependency issue we can only test it here
+test "debug_write" {
+  fn repr(s : String) {
+    let buf = Buffer::make(0)
+    s.debug_write(buf)
+    buf.to_string()
+  }
+  @assertion.assert_eq(repr("a"), "\"a\"")?
+  @assertion.assert_eq(repr("'"), "\"'\"")?
+  @assertion.assert_eq(repr("\""), "\"\\\"\"")?
+  @assertion.assert_eq(repr("\\"), "\"\\\\\"")?
+  @assertion.assert_eq(repr("\n"), "\"\\n\"")?
+  @assertion.assert_eq(repr("\r"), "\"\\r\"")?
+  @assertion.assert_eq(repr("\b"), "\"\\b\"")?
+  @assertion.assert_eq(repr("\t"), "\"\\t\"")?
+  @assertion.assert_eq(repr("\x00"), "\"\\x00\"")?
+  @assertion.assert_eq(repr("abc'\"def\\"), "\"abc'\\\"def\\\\\"")?
+}
