@@ -262,3 +262,37 @@ test "to_option" {
   @assertion.assert_eq(z, Some(6))?
   @assertion.assert_eq(w, None)?
 }
+
+pub fn compare[T : Compare, E : Compare](
+  self : Result[T, E],
+  other : Result[T, E]
+) -> Int {
+  match (self, other) {
+    (Ok(x), Ok(y)) => x.compare(y)
+    (Ok(_), Err(_)) => -1
+    (Err(_), Ok(_)) => 1
+    (Err(x), Err(y)) => x.compare(y)
+  }
+}
+
+test "compare" {
+  let ok1 = Result::Ok(1)
+  let ok2 = Result::Ok(2)
+  let err1 = Result::Err(1)
+  let err2 = Result::Err(2)
+  @assertion.assert_eq(0, ok1.compare(ok1))?
+  @assertion.assert_eq(0, err2.compare(Result::Err(2)))?
+  @assertion.assert_eq(-1, ok1.compare(ok2))?
+  @assertion.assert_eq(1, ok2.compare(ok1))?
+  @assertion.assert_eq(-1, err1.compare(err2))?
+  @assertion.assert_eq(1, err2.compare(err1))?
+  @assertion.assert_eq(-1, ok2.compare(err1))?
+  @assertion.assert_eq(1, err1.compare(ok2))?
+}
+
+pub fn unwrap[T, E](self : Result[T, E]) -> T {
+  match self {
+    Ok(x) => x
+    Err(_) => abort("called `Result::unwrap()` on an `Err` value")
+  }
+}
