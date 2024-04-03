@@ -116,53 +116,42 @@ jobs:
           moon fmt
           git diff
 
-  # coverage-check-bleeding:
-  #   runs-on: macos-14
-  #   continue-on-error: true
-  #   permissions: write-all
-  #     # contents: read
-  #     # issues: write
-  #     # pull-requests: write
-  #   steps:
-  #     - uses: actions/checkout@v4
+  coverage-check-bleeding:
+    runs-on: macos-14
+    continue-on-error: true
+    permissions:
+      contents: read
+      issues: write
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@v4
 
-  #     - name: install
-  #       run: |
-  #         /bin/bash -c "$(curl -fsSL https://cli.moonbitlang.com/bleeding/mac_m1_moon_setup.sh)"
-  #         echo "$HOME/.moon/bin" >> $GITHUB_PATH
+      - name: install
+        run: |
+          /bin/bash -c "$(curl -fsSL https://cli.moonbitlang.com/bleeding/mac_m1_moon_setup.sh)"
+          echo "$HOME/.moon/bin" >> $GITHUB_PATH
 
-  #     - name: moon test
-  #       run: moon test --enable-coverage
+      - name: moon test
+        run: moon test --enable-coverage
 
-  #     - name: moon_cove_report
-  #       run: moon_cove_report
+      - name: moon_cove_report
+        run: moon_cove_report
 
-  #     - name: bisect_ppx report
-  #       run: |
-  #         bisect-ppx-report html
-  #         bisect-ppx-report summary > coverage_summary.txt
-  #         echo "coverage_summary=$(cat coverage_summary.txt)" >> $GITHUB_ENV
+      - name: bisect_ppx report
+        run: |
+          bisect-ppx-report html
+          bisect-ppx-report summary > coverage_summary.txt
+          echo "coverage_summary=$(cat coverage_summary.txt)" >> $GITHUB_ENV
+          # Put the coverage report in the pipline output
+          cat coverage_summary.txt >> "$GITHUB_STEP_SUMMARY"
+          bisect-ppx-report coveralls coverage.json --service-name github --service-job-id $GITHUB_RUN_NUMBER
 
-  #     - name: upload coverage artifact
-  #       uses: actions/upload-artifact@v4
-  #       with:
-  #         name: code-coverage-report
-  #         path: _coverage
-
-  #     - name: Add coverage comment to PR
-  #       if: github.event_name == 'pull_request'
-  #       uses: actions/github-script@v7
-  #       with:
-  #         script: |
-  #           const coverageReportLink = `https://github.com/${process.env.GITHUB_REPOSITORY}/actions/runs/${process.env.GITHUB_RUN_ID}`;
-  #           const prNumber = context.payload.pull_request.number;
-  #           const summary = process.env.coverage_summary;
-  #           await github.rest.issues.createComment({
-  #             owner: context.repo.owner,
-  #             repo: context.repo.repo,
-  #             issue_number: prNumber,
-  #             body: `${summary}\nCoverage report: ${coverageReportLink}`
-  #           });
+      - name: upload to codecov
+        uses: codecov/codecov-action@v2
+        with:
+          file: coverage.json
+          flags: bisect-ppx
+          verbose: true
 
   typo-check:
     runs-on: ubuntu-latest
