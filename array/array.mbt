@@ -24,6 +24,7 @@
 /// ```
 /// [1, 2, 3, 4, 5].iter(fn(x){ print("\(x) ") }) //output: 1 2 3 4 5
 /// ```
+/// @intrinsic %array.iter
 pub fn iter[T](self : Array[T], f : (T) -> Unit) -> Unit {
   for i = 0; i < self.length(); i = i + 1 {
     f(self[i])
@@ -58,6 +59,7 @@ test "iter" {
 ///   print("(\(index),\(elem)) ")
 /// }) //output: (0,1) (1,2) (2,3) (3,4) (4,5)
 /// ```
+/// @intrinsic %array.iteri
 pub fn iteri[T](self : Array[T], f : (Int, T) -> Unit) -> Unit {
   for i = 0; i < self.length(); i = i + 1 {
     f(i, self[i])
@@ -156,6 +158,7 @@ test "iter_revi" {
 /// let doubled = arr.map(fn(x){ x * 2 })
 /// debug(doubled) //output: [2, 4, 6, 8, 10]
 /// ```
+/// @intrinsic %array.map
 pub fn map[T, U](self : Array[T], f : (T) -> U) -> Array[U] {
   if self.length() == 0 {
     return []
@@ -267,6 +270,7 @@ test "from_array" {
 /// let sum = [1, 2, 3, 4, 5].fold_left(~init=0, fn { sum, elem => sum + elem })
 /// sum // 15
 /// ```
+/// @intrinsic %array.fold_left
 pub fn fold_left[T, U](self : Array[T], f : (U, T) -> U, ~init : U) -> U {
   for i = 0, acc = init; i < self.length(); {
     continue i + 1, f(acc, self[i])
