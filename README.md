@@ -8,7 +8,12 @@ moonbitlang/core is the standard library of the [MoonBit language](https://www.m
 
 It is experimental and under active development. At this early stage, our primary focus is on enhancing the functionality of `moonbitlang/core`.
 
-⚠️**The API is subject to change.** In future, we plan to reorganize the API to ensure a consistent style.
+⚠️**The API is subject to change.** 
+
+### Timeline
+
+Prior to 05/01/2024, we mainly foucs on adding new libs. We will go through a consistency review in May and expect basic API 
+stability before 07/01/2024
 
 ## Contributing
 
