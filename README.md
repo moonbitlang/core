@@ -12,7 +12,7 @@ It is experimental and under active development. At this early stage, our primar
 
 ### Timeline
 
-Prior to 05/01/2024, we mainly foucs on adding new libs. We will go through a consistency review in May and expect basic API 
+Prior to 05/01/2024, we mainly focus on adding new libs. We will go through a consistency review in May and expect basic API 
 stability before 07/01/2024
 
 ## Contributing
