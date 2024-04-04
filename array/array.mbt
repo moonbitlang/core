@@ -158,7 +158,7 @@ test "iter_revi" {
 /// ```
 pub fn map[T, U](self : Array[T], f : (T) -> U) -> Array[U] {
   if self.length() == 0 {
-    return Array::default()
+    return []
   }
   let res = Array::make(self.length(), f(self[0]))
   for i = 1; i < self.length(); i = i + 1 {
@@ -184,7 +184,7 @@ test "map" {
 /// ```
 pub fn mapi[T, U](self : Array[T], f : (T, Int) -> U) -> Array[U] {
   if self.length() == 0 {
-    return Array::default()
+    return []
   }
   let res = Array::make(self.length(), f(self[0], 0))
   for i = 1; i < self.length(); i = i + 1 {
@@ -216,7 +216,7 @@ pub fn op_equal[T : Eq](self : Array[T], that : Array[T]) -> Bool {
 /// Create a new array. Values are lazily built.
 pub fn new[T](length : Int, value : () -> T) -> Array[T] {
   if length <= 0 {
-    Array::default()
+    []
   } else {
     let array = Array::make(length, value())
     for i = 1; i < length; i = i + 1 {
@@ -234,7 +234,7 @@ test "new" {
 /// Create a new array. Values are built from indexes.
 pub fn new_with_index[T](length : Int, value : (Int) -> T) -> Array[T] {
   if length <= 0 {
-    Array::default()
+    []
   } else {
     let array = Array::make(length, value(0))
     for i = 1; i < length; i = i + 1 {
