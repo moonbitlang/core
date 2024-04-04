@@ -113,10 +113,11 @@ pub fn write_char(self : Buffer, value : Char) -> Unit {
 
 /// Length of containing data.
 pub fn length(self : Buffer) -> Int {
-  self.len / 2
+  self.len
 }
 
 pub fn reset(self : Buffer) -> Unit {
+  self.bytes = Bytes::make(1, 0)
   self.len = 0
 }
 
