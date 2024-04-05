@@ -16,18 +16,10 @@
 // The types stored in set need to implement the Compare trait.
 // All operations over sets are purely applicative (no side-effects).
 
-/// ImmutableSets are represented by balanced binary trees (the heights of the children differ by at most 2).
-enum ImmutableSet[T] {
+// Construct a empty ImmutableSet.
+pub fn ImmutableSet::new[T]() -> ImmutableSet[T] {
   Empty
-  Node(Node[T])
-} derive(Default, Show, Debug, Eq)
-
-priv struct Node[T] {
-  left : ImmutableSet[T]
-  right : ImmutableSet[T]
-  height : Int
-  value : T
-} derive(Default, Show, Debug, Eq)
+}
 
 /// Returns the one-value ImmutableSet containing only `value`.
 pub fn ImmutableSet::from_value[T : Compare](value : T) -> ImmutableSet[T] {
@@ -108,21 +100,21 @@ pub fn remove_min[T : Compare](self : ImmutableSet[T]) -> ImmutableSet[T] {
 pub fn add[T : Compare](self : ImmutableSet[T], value : T) -> ImmutableSet[T] {
   match self {
     Empty => Node({ left: Empty, value, right: Empty, height: 1 })
-    Node({ left, right, value: node_value, height: _ }) as node => {
+    Node({ left, right, value: node_value, height: _ })=> {
       let compare_result = value.compare(node_value)
       if compare_result == 0 {
-        node
+        self
       } else if compare_result < 0 {
         let ll = left.add(value)
         if physical_equal(left, ll) {
-          node
+          self
         } else {
           balance(ll, node_value, right)
         }
       } else {
         let rr = right.add(value)
         if physical_equal(right, rr) {
-          node
+          self
         } else {
           balance(left, node_value, rr)
         }
@@ -392,7 +384,7 @@ pub fn subset[T : Compare](
     (_, Empty) => false
     (
       Node({ left: l1, value: v1, right: r1, height: _ }),
-      Node({ left: l2, value: v2, right: r2, height: _ }) as node,
+      Node({ left: l2, value: v2, right: r2, height: _ }),
     ) => {
       let compare_result = v1.compare(v2)
       if compare_result == 0 {
@@ -400,11 +392,11 @@ pub fn subset[T : Compare](
       } else if compare_result < 0 {
         ImmutableSet::Node({ left: l1, value: v1, right: Empty, height: 0 }).subset(
           l2,
-        ) && r1.subset(node)
+        ) && r1.subset(self)
       } else {
         ImmutableSet::Node({ left: Empty, value: v1, right: r1, height: 0 }).subset(
           r2,
-        ) && l1.subset(node)
+        ) && l1.subset(self)
       }
     }
   }
@@ -466,13 +458,13 @@ pub fn iter[T : Compare](self : ImmutableSet[T], f : (T) -> Unit) -> Unit {
 /// ```
 pub fn fold[T : Compare, U : Compare](
   self : ImmutableSet[T],
-  initial : U,
-  f : (U, T) -> U
+  f : (U, T) -> U,
+  ~initial : U
 ) -> U {
   match self {
     Empty => initial
     Node({ left, value, right, height: _ }) =>
-      right.fold(f(left.fold(initial, f), value), f)
+      right.fold(~initial=f(left.fold(~initial, f), value), f)
   }
 }
 
@@ -541,13 +533,13 @@ pub fn filter[T : Compare](
 ) -> ImmutableSet[T] {
   match self {
     Empty => Empty
-    Node({ left, value, right, height: _ }) as node => {
+    Node({ left, value, right, height: _ }) => {
       let l = left.filter(f)
       let v = f(value)
       let r = right.filter(f)
       if v {
         if physical_equal(l, left) && physical_equal(r, right) {
-          node
+          self
         } else {
           join(l, value, r)
         }
@@ -573,8 +565,10 @@ pub fn find[T : Compare](self : ImmutableSet[T], value : T) -> T {
       let compare_result = value.compare(node_value)
       if compare_result == 0 {
         node_value
+      } else if compare_result < 0 {
+        left.find(value)
       } else {
-        (if compare_result < 0 { left } else { right }).find(value)
+        right.find(value)
       }
     }
   }
@@ -586,11 +580,15 @@ pub fn find_option[T : Compare](self : ImmutableSet[T], value : T) -> Option[T] 
     Empty => None
     Node({ left, value: node_value, right, height: _ }) => {
       let compare_result = value.compare(node_value)
-      if compare_result == 0 {
-        Some(node_value)
-      } else {
-        Some((if compare_result < 0 { left } else { right }).find(value))
-      }
+      Some(
+        if compare_result == 0 {
+          node_value
+        } else if compare_result < 0 {
+          left.find(value)
+        } else {
+          right.find(value)
+        },
+      )
     }
   }
 }
@@ -798,7 +796,6 @@ fn concat[T : Compare](
 
 // Convert a sorted list into a balanced binary search tree to facilitate subsequent search, insertion, and deletion operations.
 fn of_sorted_list[T : Compare](list : List[T]) -> ImmutableSet[T] {
-
   // Recursively process the input list and build a balanced binary search tree based on the length n of the list.
   fn sub(n : Int, list : List[T]) -> (ImmutableSet[T], List[T]) {
     match (n, list) {
@@ -848,8 +845,7 @@ fn of_sorted_list[T : Compare](list : List[T]) -> ImmutableSet[T] {
     }
   }
 
-  let (set, _) = sub(list.length(), list)
-  set
+  sub(list.length(), list).0
 }
 
 test "disjoint" {
@@ -933,7 +929,7 @@ test "exists" {
 test "fold" {
   @assertion.assert_eq(
     ImmutableSet::from_list(List::[1, 2, 3, 4, 5]).fold(
-      0,
+      ~initial=0,
       fn(acc, x) { acc + x },
     ),
     15,
