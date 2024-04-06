@@ -30,7 +30,7 @@ pub fn to_string[T : Show](self : Vec[T]) -> String {
       break "\(init)]"
     }
     let cur = self.buf[i]
-    continue i + 1, "\(init),\(cur)"
+    continue i + 1, "\(init), \(cur)"
   }
 }
 
@@ -40,9 +40,9 @@ test "to_string" {
   let a0 = Vec::[0]
   inspect(a0, ~content="Vec::[0]")?
   a0.push(1)
-  inspect(a0, ~content="Vec::[0,1]")?
+  inspect(a0, ~content="Vec::[0, 1]")?
   a0.push(2)
-  inspect(a0, ~content="Vec::[0,1,2]")?
+  inspect(a0, ~content="Vec::[0, 1, 2]")?
 }
 
 pub fn debug_write[T : Show](self : Vec[T], buf : Buffer) -> Unit {
@@ -187,9 +187,9 @@ pub fn op_add[T](self : Vec[T], other : Vec[T]) -> Vec[T] {
 }
 
 test "op_add" {
-  inspect(Vec::[] + Vec::[1, 2, 3, 4, 5], ~content="Vec::[1,2,3,4,5]")?
-  inspect(Vec::[1, 2, 3, 4, 5] + Vec::[], ~content="Vec::[1,2,3,4,5]")?
-  inspect(Vec::[1, 2, 3, 4, 5] + Vec::[6, 7, 8, 9, 10], ~content="Vec::[1,2,3,4,5,6,7,8,9,10]")?
+  inspect(Vec::[] + Vec::[1, 2, 3, 4, 5], ~content="Vec::[1, 2, 3, 4, 5]")?
+  inspect(Vec::[1, 2, 3, 4, 5] + Vec::[], ~content="Vec::[1, 2, 3, 4, 5]")?
+  inspect(Vec::[1, 2, 3, 4, 5] + Vec::[6, 7, 8, 9, 10], ~content="Vec::[1, 2, 3, 4, 5, 6, 7, 8, 9, 10]")?
 }
 
 test "op_equal" {
