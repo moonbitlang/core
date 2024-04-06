@@ -158,6 +158,40 @@ pub fn op_equal[T : Eq](self : Vec[T], other : Vec[T]) -> Bool {
   }
 }
 
+fn deep_clone[T](vec : Vec[T]) -> Vec[T] {
+  let result = Vec::{ buf: UninitializedArray::make(vec.len), len: vec.len }
+  for i = 0; i < vec.len; i = i + 1 {
+    result[i] = vec[i]
+  }
+  result
+}
+
+pub fn op_add[T](self : Vec[T], other : Vec[T]) -> Vec[T] {
+  if self.len == 0 {
+    deep_clone(other)
+  } else if other.len == 0 {
+    deep_clone(self)
+  } else {
+    let result = Vec::{
+      buf: UninitializedArray::make(self.len + other.len),
+      len: self.len + other.len,
+    }
+    for i = 0; i < self.len; i = i + 1 {
+      result[i] = self[i]
+    }
+    for i = 0; i < other.len; i = i + 1 {
+      result[i + self.len] = other[i]
+    }
+    result
+  }
+}
+
+test "op_add" {
+  inspect(Vec::[] + Vec::[1, 2, 3, 4, 5], ~content="Vec::[1,2,3,4,5]")?
+  inspect(Vec::[1, 2, 3, 4, 5] + Vec::[], ~content="Vec::[1,2,3,4,5]")?
+  inspect(Vec::[1, 2, 3, 4, 5] + Vec::[6, 7, 8, 9, 10], ~content="Vec::[1,2,3,4,5,6,7,8,9,10]")?
+}
+
 test "op_equal" {
   let v1 = Vec::[3, 4, 5]
   let v2 = Vec::[3, 4, 5]

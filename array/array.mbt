@@ -580,6 +580,38 @@ pub fn to_list[T](self : Array[T]) -> List[T] {
   }
 }
 
+fn deep_clone[T](arr : Array[T]) -> Array[T] {
+  let len = arr.length()
+  if len == 0 {
+    []
+  } else {
+    let result = Array::make(len, arr[0])
+    for i = 0; i < len; i = i + 1 {
+      result[i] = arr[i]
+    }
+    result
+  }
+}
+
+pub fn op_add[T](self : Array[T], other : Array[T]) -> Array[T] {
+  let slen = self.length()
+  let nlen = other.length()
+  if slen == 0 {
+    deep_clone(other)
+  } else if nlen == 0 {
+    deep_clone(self)
+  } else {
+    let result = Array::make(slen + nlen, self[0])
+    for i = 1; i < slen; i = i + 1 {
+      result[i] = self[i]
+    }
+    for i = 0; i < nlen; i = i + 1 {
+      result[i + slen] = other[i]
+    }
+    result
+  }
+}
+
 test "to_list" {
   let ls = [1, 2, 3, 4, 5].to_list()
   @assertion.assert_eq(ls, Cons(1, Cons(2, Cons(3, Cons(4, Cons(5, Nil))))))?
@@ -588,4 +620,13 @@ test "to_list" {
 test "op_equal" {
   inspect([1, 2] == [1], ~content="false")?
   inspect(starts_with([1, 2, 3], [1, 3]), ~content="false")?
+}
+
+test "op_add" {
+  inspect([] + [1, 2, 3, 4, 5], ~content="[1, 2, 3, 4, 5]")?
+  inspect([1, 2, 3, 4, 5] + [], ~content="[1, 2, 3, 4, 5]")?
+  inspect(
+    [1, 2, 3, 4, 5] + [6, 7, 8, 9, 10],
+    ~content="[1, 2, 3, 4, 5, 6, 7, 8, 9, 10]",
+  )?
 }
