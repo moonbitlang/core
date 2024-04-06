@@ -623,6 +623,7 @@ test "op_equal" {
 }
 
 test "op_add" {
+  inspect([]+[], ~content="[]")?
   inspect([] + [1, 2, 3, 4, 5], ~content="[1, 2, 3, 4, 5]")?
   inspect([1, 2, 3, 4, 5] + [], ~content="[1, 2, 3, 4, 5]")?
   inspect(
