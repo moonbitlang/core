@@ -12,13 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-pub fn List::op_equal[X : Eq](xs : List[X], ys : List[X]) -> Bool {
-  match (xs, ys) {
-    (Nil, Nil) => true
-    (Cons(h1, t1), Cons(h2, t2)) => h1 == h2 && t1 == t2
-    (Nil, Cons(_, _)) | (Cons(_, _), Nil) => false
-  }
-}
+
 
 pub fn debug_write[X : Debug](self : List[X], buf : Buffer) -> Unit {
   buf.write_string("List::[")

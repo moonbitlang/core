@@ -28,6 +28,17 @@ pub fn List::from_array[T](arr : Array[T]) -> List[T] {
   }
 }
 
+
+pub fn List::op_equal[X : Eq](xs : List[X], ys : List[X]) -> Bool {
+  loop xs, ys {
+    Nil, Nil => true
+    Cons(h1, t1), Cons(h2, t2) => if h1 == h2 { continue t1, t2 } else { false }
+    // TODO: relax syntax to allow or pattern here
+    Nil, Cons(_, _) => false
+    Cons(_, _), Nil => false
+  }
+}
+
 test "from_array" {
   let ls = List::[1, 2, 3, 4, 5]
   @assertion.assert_eq(ls, Cons(1, Cons(2, Cons(3, Cons(4, Cons(5, Nil))))))?
