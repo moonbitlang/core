@@ -987,7 +987,7 @@ test "min" {
   @assertion.assert_eq(1, ImmutableSet::[7, 2, 9, 4, 5, 6, 3, 8, 1].min())?
 }
 
-test "is_emtpy" {
+test "is_empty" {
   @assertion.assert_true(ImmutableSet::[].is_empty())?
   @assertion.assert_false(ImmutableSet::[1].is_empty())?
 }
