@@ -62,7 +62,7 @@ pub fn to_list[T : Compare](self : ImmutableSet[T]) -> List[T] {
   fn values_aux(set : ImmutableSet[T], list : List[T]) {
     match set {
       Empty => list
-      Node({ left, right, value,.. }) =>
+      Node({ left, right, value, .. }) =>
         values_aux(left, Cons(value, values_aux(right, list)))
     }
   }
@@ -534,7 +534,7 @@ pub fn filter[T : Compare](
 ) -> ImmutableSet[T] {
   match self {
     Empty => Empty
-    Node({ left, value, right,.. }) => {
+    Node({ left, value, right, .. }) => {
       let l = left.filter(f)
       let v = f(value)
       let r = right.filter(f)
