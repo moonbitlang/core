@@ -974,6 +974,9 @@ test "add" {
     ImmutableSet::[7, 2, 9, 4, 6, 3, 8, 1].add(5).to_array(),
     [1, 2, 3, 4, 5, 6, 7, 8, 9],
   )?
+  @assertion.assert_eq(ImmutableSet::[2].add(1).to_array(), [1, 2])?
+  @assertion.assert_eq(ImmutableSet::[2].add(3).to_array(), [2, 3])?
+  @assertion.assert_eq(ImmutableSet::[2].add(1).add(3).to_array(), [1, 2, 3])?
 }
 
 test "remove" {

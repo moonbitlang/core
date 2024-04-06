@@ -614,6 +614,7 @@ test "concat" {
   )?
   @assertion.assert_eq([].concat([6, 7, 8, 9, 10]), [6, 7, 8, 9, 10])?
   @assertion.assert_eq([1, 2, 3, 4, 5].concat([]), [1, 2, 3, 4, 5])?
+  @assertion.assert_eq([1].concat([2]), [1, 2])?
 }
 
 test "to_list" {

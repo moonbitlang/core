@@ -17,7 +17,7 @@ let set1 : ImmutableSet[Int] = ImmutableSet::new()
 let set2 = ImmutableSet::from_value(1)
 let set3 = ImmutableSet.from_list(Cons(1, Nil))
 let set4 = ImmutableSet.from_array([1])
-let set45= ImmutableSet::[1]
+let set5= ImmutableSet::[1]
 ```
 
 ### Convert
