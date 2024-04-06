@@ -62,7 +62,7 @@ pub fn to_list[T : Compare](self : ImmutableSet[T]) -> List[T] {
   fn values_aux(set : ImmutableSet[T], list : List[T]) {
     match set {
       Empty => list
-      Node({ left, right, value, height: _ }) =>
+      Node({ left, right, value,.. }) =>
         values_aux(left, Cons(value, values_aux(right, list)))
     }
   }
@@ -74,7 +74,7 @@ pub fn to_list[T : Compare](self : ImmutableSet[T]) -> List[T] {
 pub fn to_array[T : Compare](self : ImmutableSet[T]) -> Array[T] {
   match self {
     Empty => []
-    Node({ left, value, right, height: _ }) =>
+    Node({ left, value, right, .. }) =>
       to_array(left).concat([value]).concat(to_array(right))
   }
 }
@@ -90,7 +90,7 @@ pub fn to_array[T : Compare](self : ImmutableSet[T]) -> Array[T] {
 pub fn remove_min[T : Compare](self : ImmutableSet[T]) -> ImmutableSet[T] {
   match self {
     Empty => abort("remove_min: empty ImmutableSet")
-    Node({ left, right, value, height: _ }) =>
+    Node({ left, right, value, .. }) =>
       match left {
         Empty => right
         _ => balance(left.remove_min(), value, right)
@@ -109,7 +109,7 @@ pub fn remove_min[T : Compare](self : ImmutableSet[T]) -> ImmutableSet[T] {
 pub fn add[T : Compare](self : ImmutableSet[T], value : T) -> ImmutableSet[T] {
   match self {
     Empty => Node({ left: Empty, value, right: Empty, height: 1 })
-    Node({ left, right, value: node_value, height: _ }) => {
+    Node({ left, right, value: node_value, .. }) => {
       let compare_result = value.compare(node_value)
       if compare_result == 0 {
         self
@@ -338,7 +338,7 @@ pub fn inter[T : Compare](
 ) -> ImmutableSet[T] {
   match (self, other) {
     (Empty, _) | (_, Empty) => Empty
-    (Node({ left: l1, value: v1, right: r1, height: _ }), _) =>
+    (Node({ left: l1, value: v1, right: r1, .. }), _) =>
       match other.split(v1) {
         (l2, false, r2) => l1.inter(l2).concat(r1.inter(r2))
         (l2, true, r2) => join(l1.inter(l2), v1, r1.inter(r2))
@@ -361,7 +361,7 @@ pub fn diff[T : Compare](
   match (self, other) {
     (Empty, _) => Empty
     (_, Empty) => self
-    (Node({ left: l1, value: v1, right: r1, height: _ }), _) =>
+    (Node({ left: l1, value: v1, right: r1, .. }), _) =>
       match other.split(v1) {
         (l2, false, r2) => join(l1.diff(l2), v1, r1.diff(r2))
         (l2, true, r2) => l1.diff(l2).concat(r1.diff(r2))
@@ -385,8 +385,8 @@ pub fn subset[T : Compare](
     (Empty, _) => true
     (_, Empty) => false
     (
-      Node({ left: l1, value: v1, right: r1, height: _ }),
-      Node({ left: l2, value: v2, right: r2, height: _ }),
+      Node({ left: l1, value: v1, right: r1, .. }),
+      Node({ left: l2, value: v2, right: r2, .. }),
     ) => {
       let compare_result = v1.compare(v2)
       if compare_result == 0 {
@@ -418,7 +418,7 @@ pub fn disjoint[T : Compare](
 ) -> Bool {
   match (self, other) {
     (Empty, _) | (_, Empty) => true
-    (Node({ left: l1, value: v1, right: r1, height: _ }), _) =>
+    (Node({ left: l1, value: v1, right: r1, .. }), _) =>
       if physical_equal(self, other) {
         false
       } else {
@@ -441,7 +441,7 @@ pub fn disjoint[T : Compare](
 pub fn iter[T : Compare](self : ImmutableSet[T], f : (T) -> Unit) -> Unit {
   match self {
     Empty => ()
-    Node({ left, value, right, height: _ }) => {
+    Node({ left, value, right, .. }) => {
       left.iter(f)
       f(value)
       right.iter(f)
@@ -460,12 +460,12 @@ pub fn iter[T : Compare](self : ImmutableSet[T], f : (T) -> Unit) -> Unit {
 pub fn fold[T : Compare, U](
   self : ImmutableSet[T],
   f : (U, T) -> U,
-  ~initial : U
+  ~init : U
 ) -> U {
   match self {
-    Empty => initial
-    Node({ left, value, right, height: _ }) =>
-      right.fold(~initial=f(left.fold(~initial, f), value), f)
+    Empty => init
+    Node({ left, value, right, .. }) =>
+      right.fold(~init=f(left.fold(~init, f), value), f)
   }
 }
 
@@ -483,7 +483,7 @@ pub fn map[T : Compare, U : Compare](
 ) -> ImmutableSet[U] {
   match self {
     Empty => Empty
-    Node({ left, value, right, height: _ }) =>
+    Node({ left, value, right, .. }) =>
       try_join(left.map(f), f(value), right.map(f))
   }
 }
@@ -499,7 +499,7 @@ pub fn map[T : Compare, U : Compare](
 pub fn forall[T : Compare](self : ImmutableSet[T], f : (T) -> Bool) -> Bool {
   match self {
     Empty => true
-    Node({ left, value, right, height: _ }) =>
+    Node({ left, value, right, .. }) =>
       f(value) && left.forall(f) && right.forall(f)
   }
 }
@@ -515,7 +515,7 @@ pub fn forall[T : Compare](self : ImmutableSet[T], f : (T) -> Bool) -> Bool {
 pub fn exists[T : Compare](self : ImmutableSet[T], f : (T) -> Bool) -> Bool {
   match self {
     Empty => false
-    Node({ left, value, right, height: _ }) =>
+    Node({ left, value, right, .. }) =>
       f(value) || left.exists(f) || right.exists(f)
   }
 }
@@ -534,7 +534,7 @@ pub fn filter[T : Compare](
 ) -> ImmutableSet[T] {
   match self {
     Empty => Empty
-    Node({ left, value, right, height: _ }) => {
+    Node({ left, value, right,.. }) => {
       let l = left.filter(f)
       let v = f(value)
       let r = right.filter(f)
@@ -593,7 +593,7 @@ priv enum SplitBis[T] {
 fn split_bis[T : Compare](self : ImmutableSet[T], value : T) -> SplitBis[T] {
   match self {
     Empty => NotFound(Empty, fn() -> ImmutableSet[T] { Empty })
-    Node({ left, value: node_value, right, height: _ }) => {
+    Node({ left, value: node_value, right, .. }) => {
       let compare_result = value.compare(node_value)
       if compare_result == 0 {
         Found
@@ -657,13 +657,13 @@ fn balance[T : Compare](
   if left_height > right_height + 2 {
     match left {
       Empty => abort("balance: left is empty.")
-      Node({ left: ll, value: lv, right: lr, height: _ }) =>
+      Node({ left: ll, value: lv, right: lr, .. }) =>
         if ll.height() >= lr.height() {
           create(ll, lv, create(lr, value, right))
         } else {
           match lr {
             Empty => abort("balance: right left.right is empty.")
-            Node({ left: lrl, value: lrv, right: lrr, height: _ }) =>
+            Node({ left: lrl, value: lrv, right: lrr, .. }) =>
               create(create(ll, lv, lrl), lrv, create(lrr, value, right))
           }
         }
@@ -671,13 +671,13 @@ fn balance[T : Compare](
   } else if right_height > left_height + 2 {
     match right {
       Empty => abort("balance: right is empty")
-      Node({ left: rl, value: rv, right: rr, height: _ }) =>
+      Node({ left: rl, value: rv, right: rr, .. }) =>
         if rr.height() >= rl.height() {
           create(create(left, value, rl), rv, rr)
         } else {
           match rl {
             Empty => abort("balance: right.left is empty")
-            Node({ left: rll, value: rlv, right: rlr, height: _ }) =>
+            Node({ left: rll, value: rlv, right: rlr, .. }) =>
               create(create(left, value, rll), rlv, create(rlr, rv, rr))
           }
         }
@@ -704,7 +704,7 @@ fn add_min_value[T : Compare](
 ) -> ImmutableSet[T] {
   match self {
     Empty => ImmutableSet::from_value(value)
-    Node({ left, value: node_value, right, height: _ }) =>
+    Node({ left, value: node_value, right, .. }) =>
       balance(left.add_min_value(value), node_value, right)
   }
 }
@@ -715,7 +715,7 @@ fn add_max_value[T : Compare](
 ) -> ImmutableSet[T] {
   match self {
     Empty => ImmutableSet::from_value(value)
-    Node({ left, value: node_value, right, height: _ }) =>
+    Node({ left, value: node_value, right, .. }) =>
       balance(left, node_value, right.add_max_value(value))
   }
 }
@@ -894,7 +894,7 @@ test "exists" {
 
 test "fold" {
   @assertion.assert_eq(
-    ImmutableSet::[1, 2, 3, 4, 5].fold(~initial=0, fn(acc, x) { acc + x }),
+    ImmutableSet::[1, 2, 3, 4, 5].fold(~init=0, fn(acc, x) { acc + x }),
     15,
   )?
 }
