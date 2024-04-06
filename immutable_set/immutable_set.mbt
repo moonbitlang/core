@@ -85,7 +85,7 @@ pub fn to_array[T : Compare](self : ImmutableSet[T]) -> Array[T] {
 /// 
 /// ```
 /// println(ImmutableSet::[3, 4, 5].remove_min())
-/// // output: ImmutableSet::(4, 5)
+/// // output: ImmutableSet::[4, 5]
 /// ```
 pub fn remove_min[T : Compare](self : ImmutableSet[T]) -> ImmutableSet[T] {
   match self {
@@ -104,7 +104,7 @@ pub fn remove_min[T : Compare](self : ImmutableSet[T]) -> ImmutableSet[T] {
 /// 
 /// ```
 /// println(ImmutableSet::[6, 3, 8, 1].add(5))
-/// // output: ImmutableSet::(1, 3, 5, 6, 8)
+/// // output: ImmutableSet::[1, 3, 5, 6, 8]
 /// ```
 pub fn add[T : Compare](self : ImmutableSet[T], value : T) -> ImmutableSet[T] {
   match self {
@@ -138,7 +138,7 @@ pub fn add[T : Compare](self : ImmutableSet[T], value : T) -> ImmutableSet[T] {
 /// 
 /// ```
 /// println(ImmutableSet::[3, 8, 1].remove(8))
-/// // output: ImmutableSet::(1, 3)
+/// // output: ImmutableSet::[1, 3]
 /// ```
 pub fn remove[T : Compare](
   self : ImmutableSet[T],
@@ -242,8 +242,8 @@ pub fn max_option[T : Compare](self : ImmutableSet[T]) -> Option[T] {
 /// ```
 /// let (left, present, right) = ImmutableSet::[7, 2, 9, 4, 5, 6, 3, 8, 1].split(5)
 /// println(present) // output: true
-/// println(left) // output: ImmutableSet::(1, 2, 3, 4)
-/// println(right) // output:ImmutableSet::(6, 7, 8, 9)
+/// println(left) // output: ImmutableSet::[1, 2, 3, 4]
+/// println(right) // output:ImmutableSet::[6, 7, 8, 9]
 /// ```
 pub fn split[T : Compare](
   self : ImmutableSet[T],
@@ -295,7 +295,7 @@ pub fn contain[T : Compare](self : ImmutableSet[T], value : T) -> Bool {
 /// 
 /// ```
 /// println(ImmutableSet::[3, 4, 5].union(ImmutableSet::[4, 5, 6]))
-/// // output: ImmutableSet::(3, 4, 5, 6)
+/// // output: ImmutableSet::[3, 4, 5, 6]
 /// ```
 pub fn union[T : Compare](
   self : ImmutableSet[T],
@@ -330,7 +330,7 @@ pub fn union[T : Compare](
 /// 
 /// ```
 /// println(ImmutableSet::[3, 4, 5].inter(ImmutableSet::[4, 5, 6]))
-/// // output: ImmutableSet::(4, 5)
+/// // output: ImmutableSet::[4, 5]
 /// ```
 pub fn inter[T : Compare](
   self : ImmutableSet[T],
@@ -352,7 +352,7 @@ pub fn inter[T : Compare](
 /// 
 /// ```
 /// println(ImmutableSet::[1, 2, 3].diff(ImmutableSet::[4, 5, 1]))
-/// // output: ImmutableSet::(2, 3)
+/// // output: ImmutableSet::[2, 3]
 /// ```
 pub fn diff[T : Compare](
   self : ImmutableSet[T],
@@ -475,7 +475,7 @@ pub fn fold[T : Compare, U](
 /// 
 /// ```
 /// println(ImmutableSet::[1, 2, 3].map(fn(x){ x * 2}))
-/// // output: ImmutableSet::(2, 4, 6)
+/// // output: ImmutableSet::[2, 4, 6]
 /// ```
 pub fn map[T : Compare, U : Compare](
   self : ImmutableSet[T],
@@ -526,7 +526,7 @@ pub fn exists[T : Compare](self : ImmutableSet[T], f : (T) -> Bool) -> Bool {
 /// 
 /// ```
 /// println(ImmutableSet::[1, 2, 3, 4, 5, 6].filter(fn(v) { v % 2 == 0}))
-/// // output: ImmutableSet::(2, 4, 6)
+/// // output: ImmutableSet::[2, 4, 6]
 /// ```
 pub fn filter[T : Compare](
   self : ImmutableSet[T],
@@ -568,14 +568,14 @@ pub fn find[T : Compare](self : ImmutableSet[T], value : T) -> Option[T] {
 
 pub fn to_string[T : Show + Compare](self : ImmutableSet[T]) -> String {
   match self {
-    Empty => "ImmutableSet::()"
+    Empty => "ImmutableSet::[]"
     _ => {
       let linear = self.to_array()
       let len = linear.length()
-      for i = 0, str = "ImmutableSet::("; i < len - 1; {
+      for i = 0, str = "ImmutableSet::["; i < len - 1; {
         continue i + 1, str + linear[i].to_string() + ", "
       } else {
-        str + linear[len - 1].to_string() + ")"
+        str + linear[len - 1].to_string() + "]"
       }
     }
   }
@@ -998,7 +998,7 @@ test "is_empty" {
 test "to_string" {
   inspect(
     ImmutableSet::[1, 2, 3, 4, 5],
-    ~content="ImmutableSet::(1, 2, 3, 4, 5)",
+    ~content="ImmutableSet::[1, 2, 3, 4, 5]",
   )?
-  inspect(ImmutableSet::[], ~content="ImmutableSet::()")?
+  inspect(ImmutableSet::[], ~content="ImmutableSet::[]")?
 }
