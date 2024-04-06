@@ -30,7 +30,7 @@ pub fn to_string[T : Show](self : Vec[T]) -> String {
       break "\(init)]"
     }
     let cur = self.buf[i]
-    continue i + 1, "\(init),\(cur)"
+    continue i + 1, "\(init), \(cur)"
   }
 }
 
@@ -40,9 +40,9 @@ test "to_string" {
   let a0 = Vec::[0]
   inspect(a0, ~content="Vec::[0]")?
   a0.push(1)
-  inspect(a0, ~content="Vec::[0,1]")?
+  inspect(a0, ~content="Vec::[0, 1]")?
   a0.push(2)
-  inspect(a0, ~content="Vec::[0,1,2]")?
+  inspect(a0, ~content="Vec::[0, 1, 2]")?
 }
 
 pub fn debug_write[T : Show](self : Vec[T], buf : Buffer) -> Unit {
