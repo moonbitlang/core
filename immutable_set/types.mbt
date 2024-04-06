@@ -20,11 +20,11 @@
 enum ImmutableSet[T] {
   Empty
   Node(Node[T])
-} derive(Default, Show, Debug, Eq)
+} derive(Default, Debug, Eq)
 
 priv struct Node[T] {
   left : ImmutableSet[T]
   right : ImmutableSet[T]
   height : Int
   value : T
-} derive(Default, Show, Debug, Eq)
+} derive(Default, Debug, Eq)

@@ -580,6 +580,42 @@ pub fn to_list[T](self : Array[T]) -> List[T] {
   }
 }
 
+/// Concat two arrays.
+/// 
+/// # Example
+///
+/// ```
+/// [1, 2, 3, 4, 5].concat([6, 7, 8, 9, 10]) //[1, 2, 3, 4, 5, 6, 7, 9, 10]
+/// ```
+pub fn concat[T](self : Array[T], last : Array[T]) -> Array[T] {
+  if self.length() == 0 {
+    last
+  } else if last.length() == 0 {
+    self
+  } else {
+    let mut j = 1
+    let arr = Array::make(self.length() + last.length(), self[0])
+    for i = 1; i < self.length(); i = i + 1 {
+      arr[j] = self[i]
+      j += 1
+    }
+    for i = 0; i < last.length(); i = i + 1 {
+      arr[j] = last[i]
+      j += 1
+    }
+    arr
+  }
+}
+
+test "concat" {
+  @assertion.assert_eq(
+    [1, 2, 3, 4, 5].concat([6, 7, 8, 9, 10]),
+    [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+  )?
+  @assertion.assert_eq([].concat([6, 7, 8, 9, 10]), [6, 7, 8, 9, 10])?
+  @assertion.assert_eq([1, 2, 3, 4, 5].concat([]), [1, 2, 3, 4, 5])?
+}
+
 test "to_list" {
   let ls = [1, 2, 3, 4, 5].to_list()
   @assertion.assert_eq(ls, Cons(1, Cons(2, Cons(3, Cons(4, Cons(5, Nil))))))?
