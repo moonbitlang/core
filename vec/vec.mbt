@@ -187,10 +187,16 @@ pub fn op_add[T](self : Vec[T], other : Vec[T]) -> Vec[T] {
 }
 
 test "op_add" {
-  inspect(Vec::[]+Vec::[], ~content="Vec::[]")?
-  inspect(Vec::[] + Vec::[1, 2, 3, 4, 5], ~content="Vec::[1, 2, 3, 4, 5]")?
+  inspect((Vec::[] : Vec[Int]) + Vec::[], ~content="Vec::[]")?
+  inspect(
+    (Vec::[] : Vec[Int]) + Vec::[1, 2, 3, 4, 5],
+    ~content="Vec::[1, 2, 3, 4, 5]",
+  )?
   inspect(Vec::[1, 2, 3, 4, 5] + Vec::[], ~content="Vec::[1, 2, 3, 4, 5]")?
-  inspect(Vec::[1, 2, 3, 4, 5] + Vec::[6, 7, 8, 9, 10], ~content="Vec::[1, 2, 3, 4, 5, 6, 7, 8, 9, 10]")?
+  inspect(
+    Vec::[1, 2, 3, 4, 5] + Vec::[6, 7, 8, 9, 10],
+    ~content="Vec::[1, 2, 3, 4, 5, 6, 7, 8, 9, 10]",
+  )?
 }
 
 test "op_equal" {
