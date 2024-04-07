@@ -933,10 +933,19 @@ test "contain" {
 }
 
 test "from_list" {
-  inspect(List::[1], ~content="List::[1]")?
-  inspect(List::[1, 2], ~content="List::[1, 2]")?
-  inspect(List::[1, 2, 3], ~content="List::[1, 2, 3]")?
-  inspect(List::[1, 2, 3, 4], ~content="List::[1, 2, 3, 4]")?
+  inspect(ImmutableSet::from_list(List::[1]), ~content="ImmutableSet::[1]")?
+  inspect(
+    ImmutableSet::from_list(List::[1, 2]),
+    ~content="ImmutableSet::[1, 2]",
+  )?
+  inspect(
+    ImmutableSet::from_list(List::[1, 2, 3]),
+    ~content="ImmutableSet::[1, 2, 3]",
+  )?
+  inspect(
+    ImmutableSet::from_list(List::[1, 2, 3, 4]),
+    ~content="ImmutableSet::[1, 2, 3, 4]",
+  )?
   inspect(
     ImmutableSet::from_list(List::[7, 2, 9, 4, 5, 6, 3, 8, 1]),
     ~content="ImmutableSet::[1, 2, 3, 4, 5, 6, 7, 8, 9]",
@@ -983,6 +992,11 @@ test "add" {
   inspect(ImmutableSet::[2].add(1), ~content="ImmutableSet::[1, 2]")?
   inspect(ImmutableSet::[2].add(3), ~content="ImmutableSet::[2, 3]")?
   inspect(ImmutableSet::[2].add(1).add(3), ~content="ImmutableSet::[1, 2, 3]")?
+  inspect(ImmutableSet::[1, 2].add(1), ~content="ImmutableSet::[1, 2]")?
+  inspect(ImmutableSet::[2, 3].add(3), ~content="ImmutableSet::[2, 3]")?
+  inspect(ImmutableSet::[1, 2, 3].add(1), ~content="ImmutableSet::[1, 2, 3]")?
+  inspect(ImmutableSet::[1, 2, 3].add(3), ~content="ImmutableSet::[1, 2, 3]")?
+  inspect(ImmutableSet::[1].add(2).add(2), ~content="ImmutableSet::[1, 2]")?
 }
 
 test "remove" {
