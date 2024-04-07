@@ -665,6 +665,7 @@ test "to_string" {
   inspect(d.to_string(), ~content="-0.0")?
   inspect(100.0.to_string(), ~content="100.0")?
   inspect(10000000000.1.to_string(), ~content="1.00000000001e10")?
+  inspect(12345678.910.to_string(), ~content="1.234567891e7")?
   inspect(Double::nan().to_string(), ~content="NaN")?
   inspect(Double::inf(1).to_string(), ~content="Infinity")?
   inspect(Double::inf(-1).to_string(), ~content="-Infinity")?
