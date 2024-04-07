@@ -1275,3 +1275,62 @@ test "to_list" {
   let ls = Vec::[1, 2, 3, 4, 5].to_list()
   @assertion.assert_eq(ls, Cons(1, Cons(2, Cons(3, Cons(4, Cons(5, Nil))))))?
 }
+
+/// Reserves capacity for at least `additional` more elements to be inserted.
+/// 
+/// # Example
+/// 
+/// ```
+/// let v = Vec::[1]
+/// v.reserve_capacity(10)
+/// println(v.capacity()) // >= 11
+/// ```
+pub fn reserve_capacity[T](self : Vec[T], additional : Int) -> Unit {
+  let new_buf : UninitializedArray[T] = UninitializedArray::make(
+    self.length() + additional,
+  )
+  for i = 0; i < self.length(); i = i + 1 {
+    new_buf[i] = self.buf[i]
+  }
+  self.buf = new_buf
+}
+
+test "reserve_capacity" {
+  let v = Vec::[1]
+  v.reserve_capacity(10)
+  @assertion.assert_true(v.capacity() >= 11)?
+}
+
+/// Shrinks the capacity of the vector as much as possible.
+/// 
+/// # Example
+/// 
+/// ```
+/// let v = Vec::with_capacity(10)
+/// v.push(1)
+/// v.push(2)
+/// v.push(3)
+/// println(v.capacity()) // >= 10
+/// v.shrink_to_fit()
+/// println(v.capacity()) // >= 3
+/// ```
+pub fn shrink_to_fit[T](self : Vec[T]) -> Unit {
+  if self.capacity() <= self.length() {
+    return
+  }
+  let new_buf : UninitializedArray[T] = UninitializedArray::make(self.length())
+  for i = 0; i < self.length(); i = i + 1 {
+    new_buf[i] = self.buf[i]
+  }
+  self.buf = new_buf
+}
+
+test "shrink_to_fit" {
+  let v = Vec::with_capacity(10)
+  v.push(1)
+  v.push(2)
+  v.push(3)
+  @assertion.assert_true(v.capacity() >= 10)?
+  v.shrink_to_fit()
+  @assertion.assert_true(v.capacity() >= 3)?
+}
