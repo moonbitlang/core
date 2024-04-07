@@ -22,7 +22,7 @@ pub fn ImmutableSet::new[T]() -> ImmutableSet[T] {
 }
 
 /// Returns the one-value ImmutableSet containing only `value`.
-pub fn ImmutableSet::from_value[T : Compare](value : T) -> ImmutableSet[T] {
+pub fn ImmutableSet::singleton[T : Compare](value : T) -> ImmutableSet[T] {
   Node({ left: Empty, value, right: Empty, height: 1 })
 }
 
@@ -31,17 +31,14 @@ pub fn ImmutableSet::from_list[T : Compare](list : List[T]) -> ImmutableSet[T] {
   match list {
     Nil => Empty
     // For very small lists, adding values to the set directly using the add function is much faster than sorting and de-important the entire list.
-    Cons(value, Nil) => ImmutableSet::from_value(value)
-    Cons(value, Cons(value1, Nil)) =>
-      ImmutableSet::from_value(value).add(value1)
+    Cons(value, Nil) => singleton(value)
+    Cons(value, Cons(value1, Nil)) => singleton(value).add(value1)
     Cons(value, Cons(value1, Cons(value2, Nil))) =>
-      ImmutableSet::from_value(value).add(value1).add(value2)
+      singleton(value).add(value1).add(value2)
     Cons(value, Cons(value1, Cons(value2, Cons(value3, Nil)))) =>
-      ImmutableSet::from_value(value).add(value1).add(value2).add(value3)
+      singleton(value).add(value1).add(value2).add(value3)
     Cons(value, Cons(value1, Cons(value2, Cons(value3, Cons(value4, Nil))))) =>
-      ImmutableSet::from_value(value).add(value1).add(value2).add(value3).add(
-        value4,
-      )
+      singleton(value).add(value1).add(value2).add(value3).add(value4)
     _ => of_sorted_list(list.sort())
   }
 }
@@ -75,8 +72,15 @@ pub fn to_array[T : Compare](self : ImmutableSet[T]) -> Array[T] {
   match self {
     Empty => []
     Node({ left, value, right, .. }) =>
-      to_array(left).concat([value]).concat(to_array(right))
+      to_array(left) + [value] + to_array(right)
   }
+}
+
+/// Convert ImmutableSet[T] to Vec[T], the result must be ordered.
+pub fn to_vec[T : Compare](self : ImmutableSet[T]) -> @vec.Vec[T] {
+  // This approach is better than using vec splicing implementation 
+  // due to the existence of scaling costs for Vec
+  @vec.from_array(self.to_array())
 }
 
 /// Remove the smallest value,
@@ -551,21 +555,6 @@ pub fn filter[T : Compare](
   }
 }
 
-/// Find value in self and return value if present with Option, otherwise None.
-/// 
-/// # Example
-/// 
-/// ```
-/// println(ImmutableSet::[1, 2, 3, 4, 5, 6].find(6))
-/// // output: Some(6)
-/// ```
-pub fn find[T : Compare](self : ImmutableSet[T], value : T) -> Option[T] {
-  match self.contain(value) {
-    true => Some(value)
-    false => None
-  }
-}
-
 pub fn to_string[T : Show + Compare](self : ImmutableSet[T]) -> String {
   match self {
     Empty => "ImmutableSet::[]"
@@ -703,7 +692,7 @@ fn add_min_value[T : Compare](
   value : T
 ) -> ImmutableSet[T] {
   match self {
-    Empty => ImmutableSet::from_value(value)
+    Empty => singleton(value)
     Node({ left, value: node_value, right, .. }) =>
       balance(left.add_min_value(value), node_value, right)
   }
@@ -714,7 +703,7 @@ fn add_max_value[T : Compare](
   value : T
 ) -> ImmutableSet[T] {
   match self {
-    Empty => ImmutableSet::from_value(value)
+    Empty => singleton(value)
     Node({ left, value: node_value, right, .. }) =>
       balance(left, node_value, right.add_max_value(value))
   }
@@ -837,162 +826,146 @@ fn of_sorted_list[T : Compare](list : List[T]) -> ImmutableSet[T] {
 }
 
 test "disjoint" {
-  @assertion.assert_true(
+  inspect(
     ImmutableSet::[1, 2, 3].disjoint(ImmutableSet::[4, 5, 6]),
+    ~content="true",
   )?
-  @assertion.assert_false(
+  inspect(
     ImmutableSet::[1, 2, 3].subset(ImmutableSet::[3, 4, 5]),
+    ~content="false",
   )?
 }
 
 test "subset" {
-  @assertion.assert_true(
+  inspect(
     ImmutableSet::[1, 2, 3].subset(ImmutableSet::[7, 2, 9, 4, 5, 6, 3, 8, 1]),
+    ~content="true",
   )?
-  @assertion.assert_false(
+  inspect(
     ImmutableSet::[1, 2, 3].subset(ImmutableSet::[10, 11, 12, 13, 14]),
+    ~content="false",
   )?
 }
 
 test "diff" {
-  @assertion.assert_eq(
-    ImmutableSet::[1, 2, 3].diff(ImmutableSet::[4, 5, 1]).to_array(),
-    [2, 3],
+  inspect(
+    ImmutableSet::[1, 2, 3].diff(ImmutableSet::[4, 5, 1]),
+    ~content="ImmutableSet::[2, 3]",
   )?
 }
 
 test "inter" {
-  @assertion.assert_eq(
-    ImmutableSet::[3, 4, 5].inter(ImmutableSet::[4, 5, 6]).to_array(),
-    [4, 5],
-  )?
+  inspect(ImmutableSet::[3, 4, 5].inter(ImmutableSet::[4, 5, 6]), ~content="ImmutableSet::[4, 5]")?
 }
 
 test "union" {
-  @assertion.assert_eq(
-    ImmutableSet::[3, 4, 5].union(ImmutableSet::[4, 5, 6]).to_array(),
-    [3, 4, 5, 6],
-  )?
+  inspect(ImmutableSet::[3, 4, 5].union(ImmutableSet::[4, 5, 6]), ~content="ImmutableSet::[3, 4, 5, 6]")?
 }
 
 test "map" {
-  @assertion.assert_eq(
-    ImmutableSet::[1, 2, 3, 4, 5].map(fn(x) { x * 2 }).to_array(),
-    [2, 4, 6, 8, 10],
-  )?
+  inspect(ImmutableSet::[1, 2, 3, 4, 5].map(fn(x) { x * 2 }), ~content="ImmutableSet::[2, 4, 6, 8, 10]")?
 }
 
 test "forall" {
-  @assertion.assert_true(ImmutableSet::[2, 4, 6].forall(fn(v) { v % 2 == 0 }))?
-  @assertion.assert_false(ImmutableSet::[1, 3, 5].forall(fn(v) { v % 2 == 0 }))?
+  inspect(ImmutableSet::[2, 4, 6].forall(fn(v) { v % 2 == 0 }), ~content="true")?
+  inspect(ImmutableSet::[1, 3, 5].forall(fn(v) { v % 2 == 0 }), ~content="false")?
 }
 
 test "exists" {
-  @assertion.assert_true(ImmutableSet::[1, 4, 3].exists(fn(v) { v % 2 == 0 }))?
-  @assertion.assert_false(ImmutableSet::[1, 5, 3].exists(fn(v) { v % 2 == 0 }))?
+  inspect(ImmutableSet::[1, 4, 3].exists(fn(v) { v % 2 == 0 }), ~content="true")?
+  inspect(ImmutableSet::[1, 5, 3].exists(fn(v) { v % 2 == 0 }), ~content="false")?
 }
 
 test "fold" {
-  @assertion.assert_eq(
-    ImmutableSet::[1, 2, 3, 4, 5].fold(~init=0, fn(acc, x) { acc + x }),
-    15,
-  )?
+  inspect(ImmutableSet::[1, 2, 3, 4, 5].fold(~init=0, fn(acc, x) { acc + x }), ~content="15")?
 }
 
 test "filter" {
-  @assertion.assert_eq(
-    ImmutableSet::[1, 2, 3, 4, 5, 6].filter(fn(v) { v % 2 == 0 }).to_array(),
-    [2, 4, 6],
-  )?
-}
-
-test "find" {
-  @assertion.assert_eq(ImmutableSet::[1, 2, 3, 4, 5, 6].find(6), Some(6))?
-  @assertion.assert_eq(ImmutableSet::[1, 2, 3, 4, 5, 6].find(7), None)?
+  inspect(ImmutableSet::[1, 2, 3, 4, 5, 6].filter(fn(v) { v % 2 == 0 }), ~content="ImmutableSet::[2, 4, 6]")?
 }
 
 test "max" {
-  @assertion.assert_eq(9, ImmutableSet::[7, 2, 9, 4, 5, 6, 3, 8, 1].max())?
+  inspect(ImmutableSet::[7, 2, 9, 4, 5, 6, 3, 8, 1].max(), ~content="9")?
 }
 
 test "split" {
   let (left, present, right) = ImmutableSet::[7, 2, 9, 4, 5, 6, 3, 8, 1].split(
     5,
   )
-  @assertion.assert_true(present)?
-  @assertion.assert_eq(left.to_array(), [1, 2, 3, 4])?
-  @assertion.assert_eq(right.to_array(), [6, 7, 8, 9])?
+  inspect(present, ~content="true")?
+  inspect(left, ~content="ImmutableSet::[1, 2, 3, 4]")?
+  inspect(right, ~content="ImmutableSet::[6, 7, 8, 9]")?
   let (left, present, right) = ImmutableSet::[7, 2, 9, 4, 5, 6, 3, 8, 1].split(
     0,
   )
-  @assertion.assert_false(present)?
-  @assertion.assert_eq(left.to_array(), [])?
-  @assertion.assert_eq(right.to_array(), [1, 2, 3, 4, 5, 6, 7, 8, 9])?
+  inspect(present, ~content="false")?
+  inspect(left, ~content="ImmutableSet::[]")?
+  inspect(right, ~content="ImmutableSet::[1, 2, 3, 4, 5, 6, 7, 8, 9]")?
 }
 
 test "contain" {
-  @assertion.assert_true(
+  inspect(
     ImmutableSet::[7, 2, 9, 4, 6, 3, 8, 1].add(5).contain(5),
-  )?
-  @assertion.assert_false(ImmutableSet::[7, 2, 9, 4, 6, 3, 8, 1].contain(5))?
+  ~content="true")?
+  inspect(ImmutableSet::[7, 2, 9, 4, 6, 3, 8, 1].contain(5), ~content="false")?
 }
 
 test "from_list" {
-  @assertion.assert_eq(
-    ImmutableSet::from_list(List::[7, 2, 9, 4, 5, 6, 3, 8, 1]).to_array(),
-    ImmutableSet::[7, 2, 9, 4, 5, 6, 3, 8, 1].to_array(),
-  )?
+  inspect(
+    ImmutableSet::from_list(List::[7, 2, 9, 4, 5, 6, 3, 8, 1]),
+  ~content="ImmutableSet::[1, 2, 3, 4, 5, 6, 7, 8, 9]")?
 }
 
 test "to_list" {
-  @assertion.assert_eq(
-    ImmutableSet::[7, 2, 9, 4, 5, 6, 3, 8, 1].to_array(),
-    [1, 2, 3, 4, 5, 6, 7, 8, 9],
-  )?
+  inspect(
+    ImmutableSet::[7, 2, 9, 4, 5, 6, 3, 8, 1],
+  ~content="ImmutableSet::[1, 2, 3, 4, 5, 6, 7, 8, 9]")?
 }
 
 test "to_array" {
-  @assertion.assert_eq(
-    ImmutableSet::[7, 2, 9, 4, 5, 6, 3, 8, 1].to_array(),
-    [1, 2, 3, 4, 5, 6, 7, 8, 9],
-  )?
+  inspect(
+    ImmutableSet::[7, 2, 9, 4, 5, 6, 3, 8, 1].to_array()
+  , ~content="[1, 2, 3, 4, 5, 6, 7, 8, 9]")?
+}
+
+test "to_vec" {
+  inspect(
+    ImmutableSet::[7, 2, 9, 4, 5, 6, 3, 8, 1].to_vec(),
+  ~content="Vec::[1, 2, 3, 4, 5, 6, 7, 8, 9]")?
 }
 
 test "from_array" {
-  @assertion.assert_eq(
-    ImmutableSet::[7, 2, 9, 4, 5, 6, 3, 8, 1].to_array(),
-    [1, 2, 3, 4, 5, 6, 7, 8, 9],
-  )?
+  inspect(
+    ImmutableSet::[7, 2, 9, 4, 5, 6, 3, 8, 1]
+  , ~content="ImmutableSet::[1, 2, 3, 4, 5, 6, 7, 8, 9]")?
 }
 
 test "remove_min" {
-  @assertion.assert_eq(ImmutableSet::[3, 4, 5].remove_min().to_array(), [4, 5])?
+  inspect(ImmutableSet::[3, 4, 5].remove_min(), ~content="ImmutableSet::[4, 5]")?
 }
 
 test "add" {
-  @assertion.assert_eq(
-    ImmutableSet::[7, 2, 9, 4, 6, 3, 8, 1].add(5).to_array(),
-    [1, 2, 3, 4, 5, 6, 7, 8, 9],
-  )?
-  @assertion.assert_eq(ImmutableSet::[2].add(1).to_array(), [1, 2])?
-  @assertion.assert_eq(ImmutableSet::[2].add(3).to_array(), [2, 3])?
-  @assertion.assert_eq(ImmutableSet::[2].add(1).add(3).to_array(), [1, 2, 3])?
+  inspect(
+    ImmutableSet::[7, 2, 9, 4, 6, 3, 8, 1].add(5)
+  , ~content="ImmutableSet::[1, 2, 3, 4, 5, 6, 7, 8, 9]")?
+  inspect(ImmutableSet::[2].add(1), ~content="ImmutableSet::[1, 2]")?
+  inspect(ImmutableSet::[2].add(3), ~content="ImmutableSet::[2, 3]")?
+  inspect(ImmutableSet::[2].add(1).add(3), ~content="ImmutableSet::[1, 2, 3]")?
 }
 
 test "remove" {
-  @assertion.assert_eq(
-    ImmutableSet::[7, 2, 9, 4, 5, 6, 3, 8, 1].remove(8).to_array(),
-    [1, 2, 3, 4, 5, 6, 7, 9],
-  )?
+  inspect(
+    ImmutableSet::[7, 2, 9, 4, 5, 6, 3, 8, 1].remove(8)
+  , ~content="ImmutableSet::[1, 2, 3, 4, 5, 6, 7, 9]")?
 }
 
 test "min" {
-  @assertion.assert_eq(1, ImmutableSet::[7, 2, 9, 4, 5, 6, 3, 8, 1].min())?
+  inspect(ImmutableSet::[7, 2, 9, 4, 5, 6, 3, 8, 1].min(), ~content="1")?
 }
 
 test "is_empty" {
-  @assertion.assert_true(ImmutableSet::[].is_empty())?
-  @assertion.assert_false(ImmutableSet::[1].is_empty())?
+  inspect(ImmutableSet::[].is_empty(), ~content="true")?
+  inspect(ImmutableSet::[1].is_empty(), ~content="false")?
 }
 
 test "to_string" {

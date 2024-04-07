@@ -14,7 +14,7 @@ You can create an empty ImmutableSet with a value separately through the followi
 
 ```moonbit
 let set1 : ImmutableSet[Int] = ImmutableSet::new()
-let set2 = ImmutableSet::from_value(1)
+let set2 = ImmutableSet::singleton(1)
 let set3 = ImmutableSet::from_list(Cons(1, Nil))
 let set4 = ImmutableSet::from_array([1])
 let set5= ImmutableSet::[1]
@@ -22,11 +22,13 @@ let set5= ImmutableSet::[1]
 
 ### Convert
 
-Instead, you can convert an ImmutableSet to a List, which will be sorted.
+Instead, you can convert an ImmutableSet to a List/Array/Vec, which will be sorted.
 
 ```moonbit
 let set = ImmutableSet::[3, 2, 1]
-set // ImuutableSet::[1, 2, 3]
+set.to_array() // [1, 2, 3]
+set.to_list() // List::[1, 2, 3]
+set.to_vec() // Vec::[1, 2, 3]
 ```
 
 ### Add & Remove
@@ -45,7 +47,7 @@ You can use `remove` to remove a specific value or use `remove_min` to remove th
 (ImmutableSet::[3, 4, 5]).remove_min() // ImmutableSet::[4, 5]
 ```
 
-### Max & Min & Contain & Find
+### Max & Min & Contain
 
 You can use `contain` to query whether an element is in the set.
 
@@ -53,13 +55,6 @@ You can use `contain` to query whether an element is in the set.
 let set = ImmutableSet::from_array([1, 2, 3, 4])
 set.contain(1) // true
 set.contain(5) // false
-```
-
-Similarly, the `find` can achieve a similar effect, but it will directly return the value when it exists in the set.
-
-```moonbit
-ImmutableSet::[1, 2, 3, 4, 5, 6].find(6) // 6
-ImmutableSet::[1, 2, 3, 4, 5, 6].find_option(6) // Some(6)
 ```
 
 You can also use `min` and `max` to obtain the minimum or maximum value in the set. When the set is empty, an error will be reported, and they have corresponding Option versions to handle this.
