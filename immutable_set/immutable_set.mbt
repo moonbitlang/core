@@ -855,33 +855,54 @@ test "diff" {
 }
 
 test "inter" {
-  inspect(ImmutableSet::[3, 4, 5].inter(ImmutableSet::[4, 5, 6]), ~content="ImmutableSet::[4, 5]")?
+  inspect(
+    ImmutableSet::[3, 4, 5].inter(ImmutableSet::[4, 5, 6]),
+    ~content="ImmutableSet::[4, 5]",
+  )?
 }
 
 test "union" {
-  inspect(ImmutableSet::[3, 4, 5].union(ImmutableSet::[4, 5, 6]), ~content="ImmutableSet::[3, 4, 5, 6]")?
+  inspect(
+    ImmutableSet::[3, 4, 5].union(ImmutableSet::[4, 5, 6]),
+    ~content="ImmutableSet::[3, 4, 5, 6]",
+  )?
 }
 
 test "map" {
-  inspect(ImmutableSet::[1, 2, 3, 4, 5].map(fn(x) { x * 2 }), ~content="ImmutableSet::[2, 4, 6, 8, 10]")?
+  inspect(
+    ImmutableSet::[1, 2, 3, 4, 5].map(fn(x) { x * 2 }),
+    ~content="ImmutableSet::[2, 4, 6, 8, 10]",
+  )?
 }
 
 test "forall" {
   inspect(ImmutableSet::[2, 4, 6].forall(fn(v) { v % 2 == 0 }), ~content="true")?
-  inspect(ImmutableSet::[1, 3, 5].forall(fn(v) { v % 2 == 0 }), ~content="false")?
+  inspect(
+    ImmutableSet::[1, 3, 5].forall(fn(v) { v % 2 == 0 }),
+    ~content="false",
+  )?
 }
 
 test "exists" {
   inspect(ImmutableSet::[1, 4, 3].exists(fn(v) { v % 2 == 0 }), ~content="true")?
-  inspect(ImmutableSet::[1, 5, 3].exists(fn(v) { v % 2 == 0 }), ~content="false")?
+  inspect(
+    ImmutableSet::[1, 5, 3].exists(fn(v) { v % 2 == 0 }),
+    ~content="false",
+  )?
 }
 
 test "fold" {
-  inspect(ImmutableSet::[1, 2, 3, 4, 5].fold(~init=0, fn(acc, x) { acc + x }), ~content="15")?
+  inspect(
+    ImmutableSet::[1, 2, 3, 4, 5].fold(~init=0, fn(acc, x) { acc + x }),
+    ~content="15",
+  )?
 }
 
 test "filter" {
-  inspect(ImmutableSet::[1, 2, 3, 4, 5, 6].filter(fn(v) { v % 2 == 0 }), ~content="ImmutableSet::[2, 4, 6]")?
+  inspect(
+    ImmutableSet::[1, 2, 3, 4, 5, 6].filter(fn(v) { v % 2 == 0 }),
+    ~content="ImmutableSet::[2, 4, 6]",
+  )?
 }
 
 test "max" {
@@ -906,38 +927,48 @@ test "split" {
 test "contain" {
   inspect(
     ImmutableSet::[7, 2, 9, 4, 6, 3, 8, 1].add(5).contain(5),
-  ~content="true")?
+    ~content="true",
+  )?
   inspect(ImmutableSet::[7, 2, 9, 4, 6, 3, 8, 1].contain(5), ~content="false")?
 }
 
 test "from_list" {
+  inspect(List::[1], ~content="List::[1]")?
+  inspect(List::[1, 2], ~content="List::[1, 2]")?
+  inspect(List::[1, 2, 3], ~content="List::[1, 2, 3]")?
+  inspect(List::[1, 2, 3, 4], ~content="List::[1, 2, 3, 4]")?
   inspect(
     ImmutableSet::from_list(List::[7, 2, 9, 4, 5, 6, 3, 8, 1]),
-  ~content="ImmutableSet::[1, 2, 3, 4, 5, 6, 7, 8, 9]")?
+    ~content="ImmutableSet::[1, 2, 3, 4, 5, 6, 7, 8, 9]",
+  )?
 }
 
 test "to_list" {
   inspect(
     ImmutableSet::[7, 2, 9, 4, 5, 6, 3, 8, 1],
-  ~content="ImmutableSet::[1, 2, 3, 4, 5, 6, 7, 8, 9]")?
+    ~content="ImmutableSet::[1, 2, 3, 4, 5, 6, 7, 8, 9]",
+  )?
 }
 
 test "to_array" {
   inspect(
-    ImmutableSet::[7, 2, 9, 4, 5, 6, 3, 8, 1].to_array()
-  , ~content="[1, 2, 3, 4, 5, 6, 7, 8, 9]")?
+    ImmutableSet::[7, 2, 9, 4, 5, 6, 3, 8, 1].to_array(),
+    ~content="[1, 2, 3, 4, 5, 6, 7, 8, 9]",
+  )?
 }
 
 test "to_vec" {
   inspect(
     ImmutableSet::[7, 2, 9, 4, 5, 6, 3, 8, 1].to_vec(),
-  ~content="Vec::[1, 2, 3, 4, 5, 6, 7, 8, 9]")?
+    ~content="Vec::[1, 2, 3, 4, 5, 6, 7, 8, 9]",
+  )?
 }
 
 test "from_array" {
   inspect(
-    ImmutableSet::[7, 2, 9, 4, 5, 6, 3, 8, 1]
-  , ~content="ImmutableSet::[1, 2, 3, 4, 5, 6, 7, 8, 9]")?
+    ImmutableSet::[7, 2, 9, 4, 5, 6, 3, 8, 1],
+    ~content="ImmutableSet::[1, 2, 3, 4, 5, 6, 7, 8, 9]",
+  )?
 }
 
 test "remove_min" {
@@ -946,8 +977,9 @@ test "remove_min" {
 
 test "add" {
   inspect(
-    ImmutableSet::[7, 2, 9, 4, 6, 3, 8, 1].add(5)
-  , ~content="ImmutableSet::[1, 2, 3, 4, 5, 6, 7, 8, 9]")?
+    ImmutableSet::[7, 2, 9, 4, 6, 3, 8, 1].add(5),
+    ~content="ImmutableSet::[1, 2, 3, 4, 5, 6, 7, 8, 9]",
+  )?
   inspect(ImmutableSet::[2].add(1), ~content="ImmutableSet::[1, 2]")?
   inspect(ImmutableSet::[2].add(3), ~content="ImmutableSet::[2, 3]")?
   inspect(ImmutableSet::[2].add(1).add(3), ~content="ImmutableSet::[1, 2, 3]")?
@@ -955,8 +987,9 @@ test "add" {
 
 test "remove" {
   inspect(
-    ImmutableSet::[7, 2, 9, 4, 5, 6, 3, 8, 1].remove(8)
-  , ~content="ImmutableSet::[1, 2, 3, 4, 5, 6, 7, 9]")?
+    ImmutableSet::[7, 2, 9, 4, 5, 6, 3, 8, 1].remove(8),
+    ~content="ImmutableSet::[1, 2, 3, 4, 5, 6, 7, 9]",
+  )?
 }
 
 test "min" {
