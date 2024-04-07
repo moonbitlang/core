@@ -668,7 +668,7 @@ test "reserve_capacity" {
   dq.pop_front() |> ignore() // 3, 4, 5, 1
   dq.pop_front() |> ignore() // 4, 5, 1
   dq.reserve_capacity(10)
-  @assertion.assert_true(dq.capacity() >= 13)?
+  @assertion.assert_true(dq.capacity() == 13)?
   @assertion.assert_eq(dq[0], 4)?
   @assertion.assert_eq(dq[1], 5)?
   @assertion.assert_eq(dq[2], 1)?
@@ -707,10 +707,17 @@ test "shrink_to_fit" {
   dq.push_back(1)
   dq.pop_front() |> ignore()
   dq.pop_front() |> ignore()
-  @assertion.assert_true(dq.capacity() >= 5)?
+  @assertion.assert_true(dq.capacity() == 5)?
   dq.shrink_to_fit()
-  @assertion.assert_true(dq.capacity() >= 3)?
+  @assertion.assert_true(dq.capacity() == 3)?
   @assertion.assert_eq(dq[0], 4)?
   @assertion.assert_eq(dq[1], 5)?
   @assertion.assert_eq(dq[2], 1)?
+}
+
+test "shrink_to_fit_2" {
+  let dq : Deque[Int] = Deque::[1, 2, 3]
+  @assertion.assert_true(dq.capacity() == 3)?
+  dq.shrink_to_fit()
+  @assertion.assert_true(dq.capacity() == 3)?
 }
