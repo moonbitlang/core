@@ -91,12 +91,12 @@ pub fn is_inf(self : Double) -> Bool {
 }
 
 // Check whether the double is positive infinity
-pub fn is_pos_inf(self: Double) -> Bool {
+pub fn is_pos_inf(self : Double) -> Bool {
   self > max_val
 }
 
 // Check whether the double is negative infinity
-pub fn is_neg_inf(self: Double) -> Bool {
+pub fn is_neg_inf(self : Double) -> Bool {
   self < -max_val
 }
 
@@ -122,6 +122,26 @@ test "double.num" {
   let x = -500.0
   let y = 792.0
   test_num(x, y, x + y, x * y, x - y, x / y, -1.0)?
+}
+
+test "from_int" {
+  @assertion.assert_eq(Double::from_int(1), 1.0)?
+  @assertion.assert_eq(Double::from_int(0), 0.0)?
+  @assertion.assert_eq(Double::from_int(100000), 1.0e5)?
+}
+
+test "abs" {
+  let d = -1.0
+  @assertion.assert_eq(d.abs(), 1.0)?
+  @assertion.assert_eq(1.0.abs(), 1.0)?
+}
+
+test "signum" {
+  let d = -2.0
+  @assertion.assert_eq(d.signum(), -1.0)?
+  @assertion.assert_eq(1.0.signum(), 1.0)?
+  @assertion.assert_eq(0.0.signum(), 0.0)?
+  @assertion.assert_true(not_a_number.signum().is_nan())?
 }
 
 test "is_nan" {
@@ -151,6 +171,28 @@ test "is_neg_inf" {
   @assertion.assert_true(is_neg_inf(negative_infinity))?
   @assertion.assert_false(is_neg_inf(0.0))?
   @assertion.assert_false(is_neg_inf(12345.678))?
+}
+
+test "nan" {
+  @assertion.assert_true(Double::nan().is_nan())?
+}
+
+test "inf" {
+  @assertion.assert_eq(Double::inf(1), positive_infinity)?
+  @assertion.assert_eq(Double::inf(0), positive_infinity)?
+  @assertion.assert_eq(Double::inf(-1), negative_infinity)?
+}
+
+test "max_value" {
+  @assertion.assert_eq(Double::max_value(), max_val)?
+}
+
+test "min_value" {
+  @assertion.assert_eq(Double::min_value(), min_val)?
+}
+
+test "min_normal" {
+  @assertion.assert_eq(Double::min_normal(), min_norm)?
 }
 
 pub fn hash(self : Double) -> Int {
