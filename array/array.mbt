@@ -24,6 +24,7 @@
 /// ```
 /// [1, 2, 3, 4, 5].iter(fn(x){ print("\(x) ") }) //output: 1 2 3 4 5
 /// ```
+/// @intrinsic %array.iter
 pub fn iter[T](self : Array[T], f : (T) -> Unit) -> Unit {
   for i = 0; i < self.length(); i = i + 1 {
     f(self[i])
@@ -580,41 +581,36 @@ pub fn to_list[T](self : Array[T]) -> List[T] {
   }
 }
 
-/// Concat two arrays.
-/// 
-/// # Example
-///
-/// ```
-/// [1, 2, 3, 4, 5].concat([6, 7, 8, 9, 10]) //[1, 2, 3, 4, 5, 6, 7, 9, 10]
-/// ```
-pub fn concat[T](self : Array[T], last : Array[T]) -> Array[T] {
-  if self.length() == 0 {
-    last
-  } else if last.length() == 0 {
-    self
+fn deep_clone[T](arr : Array[T]) -> Array[T] {
+  let len = arr.length()
+  if len == 0 {
+    []
   } else {
-    let mut j = 1
-    let arr = Array::make(self.length() + last.length(), self[0])
-    for i = 1; i < self.length(); i = i + 1 {
-      arr[j] = self[i]
-      j += 1
+    let result = Array::make(len, arr[0])
+    for i = 0; i < len; i = i + 1 {
+      result[i] = arr[i]
     }
-    for i = 0; i < last.length(); i = i + 1 {
-      arr[j] = last[i]
-      j += 1
-    }
-    arr
+    result
   }
 }
 
-test "concat" {
-  @assertion.assert_eq(
-    [1, 2, 3, 4, 5].concat([6, 7, 8, 9, 10]),
-    [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
-  )?
-  @assertion.assert_eq([].concat([6, 7, 8, 9, 10]), [6, 7, 8, 9, 10])?
-  @assertion.assert_eq([1, 2, 3, 4, 5].concat([]), [1, 2, 3, 4, 5])?
-  @assertion.assert_eq([1].concat([2]), [1, 2])?
+pub fn op_add[T](self : Array[T], other : Array[T]) -> Array[T] {
+  let slen = self.length()
+  let nlen = other.length()
+  if slen == 0 {
+    deep_clone(other)
+  } else if nlen == 0 {
+    deep_clone(self)
+  } else {
+    let result = Array::make(slen + nlen, self[0])
+    for i = 1; i < slen; i = i + 1 {
+      result[i] = self[i]
+    }
+    for i = 0; i < nlen; i = i + 1 {
+      result[i + slen] = other[i]
+    }
+    result
+  }
 }
 
 test "to_list" {
@@ -625,4 +621,14 @@ test "to_list" {
 test "op_equal" {
   inspect([1, 2] == [1], ~content="false")?
   inspect(starts_with([1, 2, 3], [1, 3]), ~content="false")?
+}
+
+test "op_add" {
+  inspect(([] : Array[Int])+[], ~content="[]")?
+  inspect([] + [1, 2, 3, 4, 5], ~content="[1, 2, 3, 4, 5]")?
+  inspect([1, 2, 3, 4, 5] + [], ~content="[1, 2, 3, 4, 5]")?
+  inspect(
+    [1, 2, 3, 4, 5] + [6, 7, 8, 9, 10],
+    ~content="[1, 2, 3, 4, 5, 6, 7, 8, 9, 10]",
+  )?
 }
