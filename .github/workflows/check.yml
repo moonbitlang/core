@@ -13,6 +13,7 @@ jobs:
     outputs:
       cla-signed: ${{ steps.cla-check-step.outputs.cla-signed }}
     steps:
+      - uses: actions/checkout@v4
       - name: CLA check
         id: cla-check-step
         env:
@@ -22,7 +23,9 @@ jobs:
             https://api.github.com/repos/${{ github.repository }}/pulls/${{ github.event.number }} \
             | jq -r '.user.login')
           echo "The PR author is $PR_AUTHOR"
-          CLA_RESPONSE=$(curl -s "https://mooncakes.io/api/v0/cla/check?gh_username=$PR_AUTHOR")
+          EMAIL=$(git log -1 --pretty=format:'%ae')
+          echo "Commit author email: $EMAIL"
+          CLA_RESPONSE=$(curl -s "https://mooncakes.io/api/v0/cla/check?gh_username=$PR_AUTHOR&email=$EMAIL")
           echo "CLA check response: $CLA_RESPONSE"
           SIGNED=$(echo $CLA_RESPONSE | jq -r '.signed')
           echo "cla-signed=$SIGNED" >> $GITHUB_ENV
