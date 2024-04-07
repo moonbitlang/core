@@ -1330,7 +1330,14 @@ test "shrink_to_fit" {
   v.push(1)
   v.push(2)
   v.push(3)
-  @assertion.assert_true(v.capacity() >= 10)?
+  @assertion.assert_true(v.capacity() == 10)?
   v.shrink_to_fit()
-  @assertion.assert_true(v.capacity() >= 3)?
+  @assertion.assert_true(v.capacity() == 3)?
+}
+
+test "shrink_to_fit_2" {
+  let v = Vec::[1, 2, 3]
+  @assertion.assert_true(v.capacity() == 3)?
+  v.shrink_to_fit()
+  @assertion.assert_true(v.capacity() == 3)?
 }
