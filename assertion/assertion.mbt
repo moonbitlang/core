@@ -142,16 +142,16 @@ pub fn assert_is[T : Debug](
 
 test "assert_is.is" {
   let x = 1
-  let s = "x:\(x)"
-  assert_eq(assert_is(s, s), Ok(()))?
+  let t = T::{ x, }
+  assert_eq(assert_is(t, t), Ok(()))?
 }
 
 test "assert_is.is.not" {
   let x = 1
-  let s1 = "x:\(x)"
-  let s2 = "x:\(x)"
-  assert_eq(assert_eq(s1, s2), Ok(()))?
-  assert_ne(assert_is(s1, s2), Ok(()))?
+  let t1 = T::{ x, }
+  let t2 = T::{ x, }
+  assert_eq(assert_eq(t1, t2), Ok(()))?
+  assert_ne(assert_is(t1, t2), Ok(()))?
 }
 
 /// Assert referential inequality of two values.
@@ -185,14 +185,19 @@ pub fn assert_is_not[T : Debug](
 
 test "assert_is_not.is" {
   let x = 1
-  let s = "x:\(x)"
-  assert_ne(assert_is_not(s, s), Ok(()))?
+  let t = T::{ x, }
+  assert_ne(assert_is_not(t, t), Ok(()))?
 }
 
 test "assert_is_not.is.not" {
   let x = 1
-  let s1 = "x:\(x)"
-  let s2 = "x:\(x)"
-  assert_eq(assert_eq(s1, s2), Ok(()))?
-  assert_eq(assert_is_not(s1, s2), Ok(()))?
+  let t1 = T::{ x, }
+  let t2 = T::{ x, }
+  assert_eq(assert_eq(t1, t2), Ok(()))?
+  assert_eq(assert_is_not(t1, t2), Ok(()))?
 }
+
+// For testing purposes
+struct T {
+  mut x : Int
+} derive(Eq, Debug)
