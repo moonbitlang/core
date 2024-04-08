@@ -680,9 +680,9 @@ test "reserve_capacity" {
 /// 
 /// ```
 /// let dq = Deque::with_capacity(10)
-/// dq.push(1)
-/// dq.push(2)
-/// dq.push(3)
+/// dq.push_back(1)
+/// dq.push_back(2)
+/// dq.push_back(3)
 /// println(dq.capacity()) // >= 10
 /// dq.shrink_to_fit()
 /// println(dq.capacity()) // >= 3
