@@ -59,3 +59,16 @@ You can fold the queue using the `fold` method.
 let queue = Queue::[1,2,3]
 let sum = queue.fold(~init = 0, fn(acc, x) { acc + x }) // sum = 6
 ```
+
+### Copy and Transfer
+You can copy a queue using the `copy` method.
+```moonbit
+let queue = Queue::[1,2,3]
+let queue2 = queue.copy()
+```
+
+Transfer the elements from one queue to another using the `transfer` method.
+```moonbit
+let queue = Queue::[1,2,3]
+let queue2 = Queue::new()
+```
