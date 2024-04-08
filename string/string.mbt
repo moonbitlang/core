@@ -83,3 +83,10 @@ test "debug_write" {
   @assertion.assert_eq(repr("\x00"), "\"\\x00\"")?
   @assertion.assert_eq(repr("abc'\"def\\"), "\"abc'\\\"def\\\\\"")?
 }
+
+// test here to avlid cyclic dependency between assertion and builtin
+test "Buffer::to_bytes" {
+  let buffer = Buffer::make(16)
+  buffer.write_string("中文")
+  @assertion.assert_eq(buffer.to_bytes().to_string(), "中文")?
+}

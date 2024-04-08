@@ -24,6 +24,7 @@
 /// ```
 /// [1, 2, 3, 4, 5].iter(fn(x){ print("\(x) ") }) //output: 1 2 3 4 5
 /// ```
+/// @intrinsic %array.iter
 pub fn iter[T](self : Array[T], f : (T) -> Unit) -> Unit {
   for i = 0; i < self.length(); i = i + 1 {
     f(self[i])
@@ -158,7 +159,7 @@ test "iter_revi" {
 /// ```
 pub fn map[T, U](self : Array[T], f : (T) -> U) -> Array[U] {
   if self.length() == 0 {
-    return Array::default()
+    return []
   }
   let res = Array::make(self.length(), f(self[0]))
   for i = 1; i < self.length(); i = i + 1 {
@@ -184,7 +185,7 @@ test "map" {
 /// ```
 pub fn mapi[T, U](self : Array[T], f : (T, Int) -> U) -> Array[U] {
   if self.length() == 0 {
-    return Array::default()
+    return []
   }
   let res = Array::make(self.length(), f(self[0], 0))
   for i = 1; i < self.length(); i = i + 1 {
@@ -216,7 +217,7 @@ pub fn op_equal[T : Eq](self : Array[T], that : Array[T]) -> Bool {
 /// Create a new array. Values are lazily built.
 pub fn new[T](length : Int, value : () -> T) -> Array[T] {
   if length <= 0 {
-    Array::default()
+    []
   } else {
     let array = Array::make(length, value())
     for i = 1; i < length; i = i + 1 {
@@ -234,7 +235,7 @@ test "new" {
 /// Create a new array. Values are built from indexes.
 pub fn new_with_index[T](length : Int, value : (Int) -> T) -> Array[T] {
   if length <= 0 {
-    Array::default()
+    []
   } else {
     let array = Array::make(length, value(0))
     for i = 1; i < length; i = i + 1 {
@@ -580,6 +581,38 @@ pub fn to_list[T](self : Array[T]) -> List[T] {
   }
 }
 
+fn deep_clone[T](arr : Array[T]) -> Array[T] {
+  let len = arr.length()
+  if len == 0 {
+    []
+  } else {
+    let result = Array::make(len, arr[0])
+    for i = 0; i < len; i = i + 1 {
+      result[i] = arr[i]
+    }
+    result
+  }
+}
+
+pub fn op_add[T](self : Array[T], other : Array[T]) -> Array[T] {
+  let slen = self.length()
+  let nlen = other.length()
+  if slen == 0 {
+    deep_clone(other)
+  } else if nlen == 0 {
+    deep_clone(self)
+  } else {
+    let result = Array::make(slen + nlen, self[0])
+    for i = 1; i < slen; i = i + 1 {
+      result[i] = self[i]
+    }
+    for i = 0; i < nlen; i = i + 1 {
+      result[i + slen] = other[i]
+    }
+    result
+  }
+}
+
 test "to_list" {
   let ls = [1, 2, 3, 4, 5].to_list()
   @assertion.assert_eq(ls, Cons(1, Cons(2, Cons(3, Cons(4, Cons(5, Nil))))))?
@@ -588,4 +621,14 @@ test "to_list" {
 test "op_equal" {
   inspect([1, 2] == [1], ~content="false")?
   inspect(starts_with([1, 2, 3], [1, 3]), ~content="false")?
+}
+
+test "op_add" {
+  inspect(([] : Array[Int])+[], ~content="[]")?
+  inspect([] + [1, 2, 3, 4, 5], ~content="[1, 2, 3, 4, 5]")?
+  inspect([1, 2, 3, 4, 5] + [], ~content="[1, 2, 3, 4, 5]")?
+  inspect(
+    [1, 2, 3, 4, 5] + [6, 7, 8, 9, 10],
+    ~content="[1, 2, 3, 4, 5, 6, 7, 8, 9, 10]",
+  )?
 }

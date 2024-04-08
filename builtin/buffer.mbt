@@ -111,15 +111,12 @@ pub fn write_char(self : Buffer, value : Char) -> Unit {
   self.len = self.len + inc
 }
 
-/// Length of containing data.
-pub fn length(self : Buffer) -> Int {
-  self.len / 2
-}
-
 pub fn reset(self : Buffer) -> Unit {
   self.len = 0
 }
 
 pub fn to_bytes(self : Buffer) -> Bytes {
-  self.bytes.copy()
+  let bytes = Bytes::make(self.len, 0)
+  bytes.blit(0, self.bytes, 0, self.len)
+  bytes
 }

@@ -658,3 +658,18 @@ pub fn to_string(self : Double) -> String {
 pub fn debug_write(self : Double, buf : Buffer) -> Unit {
   buf.write_string(self.to_string())
 }
+
+test "to_string" {
+  inspect(0.0.to_string(), ~content="0.0")?
+  let d = -0.0
+  inspect(d.to_string(), ~content="-0.0")?
+  inspect(100.0.to_string(), ~content="100.0")?
+  inspect(10000000000.1.to_string(), ~content="1.00000000001e10")?
+  inspect(12345678.910.to_string(), ~content="1.234567891e7")?
+  inspect(Double::nan().to_string(), ~content="NaN")?
+  inspect(Double::inf(1).to_string(), ~content="Infinity")?
+  inspect(Double::inf(-1).to_string(), ~content="-Infinity")?
+  inspect(Double::max_value().to_string(), ~content="1.7976931348623157e308")?
+  inspect(Double::min_value().to_string(), ~content="5.0e-324")?
+  inspect(Double::min_normal().to_string(), ~content="2.2250738585072014e-308")?
+}

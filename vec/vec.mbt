@@ -30,7 +30,7 @@ pub fn to_string[T : Show](self : Vec[T]) -> String {
       break "\(init)]"
     }
     let cur = self.buf[i]
-    continue i + 1, "\(init),\(cur)"
+    continue i + 1, "\(init), \(cur)"
   }
 }
 
@@ -40,9 +40,9 @@ test "to_string" {
   let a0 = Vec::[0]
   inspect(a0, ~content="Vec::[0]")?
   a0.push(1)
-  inspect(a0, ~content="Vec::[0,1]")?
+  inspect(a0, ~content="Vec::[0, 1]")?
   a0.push(2)
-  inspect(a0, ~content="Vec::[0,1,2]")?
+  inspect(a0, ~content="Vec::[0, 1, 2]")?
 }
 
 pub fn debug_write[T : Show](self : Vec[T], buf : Buffer) -> Unit {
@@ -154,6 +154,47 @@ pub fn op_equal[T : Eq](self : Vec[T], other : Vec[T]) -> Bool {
     }
     continue i + 1
   }
+}
+
+fn deep_clone[T](vec : Vec[T]) -> Vec[T] {
+  let result = Vec::{ buf: UninitializedArray::make(vec.len), len: vec.len }
+  for i = 0; i < vec.len; i = i + 1 {
+    result[i] = vec[i]
+  }
+  result
+}
+
+pub fn op_add[T](self : Vec[T], other : Vec[T]) -> Vec[T] {
+  if self.len == 0 {
+    deep_clone(other)
+  } else if other.len == 0 {
+    deep_clone(self)
+  } else {
+    let result = Vec::{
+      buf: UninitializedArray::make(self.len + other.len),
+      len: self.len + other.len,
+    }
+    for i = 0; i < self.len; i = i + 1 {
+      result[i] = self[i]
+    }
+    for i = 0; i < other.len; i = i + 1 {
+      result[i + self.len] = other[i]
+    }
+    result
+  }
+}
+
+test "op_add" {
+  inspect((Vec::[] : Vec[Int]) + Vec::[], ~content="Vec::[]")?
+  inspect(
+    (Vec::[] : Vec[Int]) + Vec::[1, 2, 3, 4, 5],
+    ~content="Vec::[1, 2, 3, 4, 5]",
+  )?
+  inspect(Vec::[1, 2, 3, 4, 5] + Vec::[], ~content="Vec::[1, 2, 3, 4, 5]")?
+  inspect(
+    Vec::[1, 2, 3, 4, 5] + Vec::[6, 7, 8, 9, 10],
+    ~content="Vec::[1, 2, 3, 4, 5, 6, 7, 8, 9, 10]",
+  )?
 }
 
 test "op_equal" {
