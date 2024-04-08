@@ -39,11 +39,11 @@ test "maximum.value" {
 test "maximum.ref" {
   let v1 = 1
   let v2 = 2
-  let x1 = "v\(v1)"
-  let x2 = "v\(v2)"
+  let x1 = T::{ x: v1 }
+  let x2 = T::{ x: v2 }
 
   // We need another value that equals to x2 by value but not reference
-  let x2t = "v\(v2)"
+  let x2t = T::{ x: v2 }
   @assertion.assert_is_not(x2, x2t).unwrap()
   @assertion.assert_is(maximum(x1, x2), x2)?
   @assertion.assert_is(maximum(x2, x1), x2)?
@@ -78,14 +78,19 @@ test "minimum.value" {
 test "minimum.ref" {
   let v1 = 1
   let v2 = 2
-  let x1 = "v\(v1)"
-  let x2 = "v\(v2)"
+  let x1 = T::{ x: v1 }
+  let x2 = T::{ x: v2 }
 
   // We need another value that equals to x2 by value but not reference
-  let x2t = "v\(v2)"
+  let x2t = T::{ x: v2 }
   @assertion.assert_is_not(x2, x2t).unwrap()
   @assertion.assert_is(minimum(x1, x2), x1)?
   @assertion.assert_is(minimum(x2, x1), x1)?
   @assertion.assert_is(minimum(x2, x2t), x2)?
   @assertion.assert_is(minimum(x2t, x2), x2t)?
 }
+
+// For testing purposes
+struct T {
+  mut x : Int
+} derive(Debug, Eq, Compare)
