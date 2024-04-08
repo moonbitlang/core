@@ -111,6 +111,20 @@ test "assert_true.false" {
   assert_ne(assert_true(false), Ok(()))?
 }
 
+pub fn assert_is[T : Debug + Eq](
+  a : T,
+  b : T,
+  ~loc : SourceLoc = _
+) -> Result[Unit, String] {
+  if a == b {
+    Ok(())
+  } else {
+    let a = debug_string(a)
+    let b = debug_string(b)
+    Err("FAILED:\(loc) `\(a) is \(b)`")
+  }
+}
+
 /// Assert referential equality of two values.
 ///
 /// Returns Ok if the two arguments are the same object by reference, using
@@ -126,7 +140,7 @@ test "assert_true.false" {
 /// assert_is(a, a)?  // this is okay
 /// assert_is(a, b)?  // yields an error
 /// ```
-pub fn assert_is[T : Debug](
+pub fn assert_physical_equal[T : Debug](
   a : T,
   b : T,
   ~loc : SourceLoc = _
@@ -151,7 +165,7 @@ test "assert_is.is.not" {
   let t1 = T::{ x, }
   let t2 = T::{ x, }
   assert_eq(assert_eq(t1, t2), Ok(()))?
-  assert_ne(assert_is(t1, t2), Ok(()))?
+  assert_ne(assert_physical_equal(t1, t2), Ok(()))?
 }
 
 /// Assert referential inequality of two values.
