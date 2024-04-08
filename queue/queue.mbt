@@ -110,10 +110,11 @@ fn op_equal[T : Eq](self : Cell[T], other : Cell[T]) -> Bool {
 
 /// Tests if two queues are equal.
 fn op_equal[T : Eq](self : Queue[T], other : Queue[T]) -> Bool {
-  if self.length != other.length || self.first != other.first || self.last != other.last {
-    return false
+  if self.length != other.length || self.first != other.first {
+    false
+  } else {
+    true
   }
-  return true
 }
 
 test "op_equal" {
