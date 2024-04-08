@@ -38,12 +38,13 @@ let dq : Deque[Int] = Deque::new()
 dq.is_empty() // true
 ```
 
-You can use `reserve_capacity` to reserve capacity for more elements to be inserted, prevents frequent capacity expansion.
+You can use `reserve_capacity` to reserve capacity, ensures that it can hold at least the number of elements
+specified by the `capacity` argument.
 
 ```moonbit
 let dq = Deque::[1]
 dq.reserve_capacity(10)
-println(dq.capacity()) // 11
+println(dq.capacity()) // 10
 ```
 
 Also, you can use `shrink_to_fit` to shrink the capacity of the deque.

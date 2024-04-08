@@ -637,19 +637,21 @@ test "contains" {
   @assertion.assert_false(dq.contains(6))?
 }
 
-/// Reserves capacity for at least `additional` more elements to be inserted.
+/// Reserves capacity to ensure that it can hold at least the number of elements
+/// specified by the `capacity` argument.
 /// 
 /// # Example
 /// 
 /// ```
 /// let dq = Deque::[1]
 /// dq.reserve_capacity(10)
-/// println(dq.capacity()) // >= 11
+/// println(dq.capacity()) // 10
 /// ```
-pub fn reserve_capacity[T](self : Deque[T], additional : Int) -> Unit {
-  let new_buf : UninitializedArray[T] = UninitializedArray::make(
-    self.len + additional,
-  )
+pub fn reserve_capacity[T](self : Deque[T], capacity : Int) -> Unit {
+  if self.capacity() >= capacity {
+    return
+  }
+  let new_buf : UninitializedArray[T] = UninitializedArray::make(capacity)
   let { buf, len, head, .. } = self
   self.buf = new_buf
   self.head = 0
@@ -668,10 +670,16 @@ test "reserve_capacity" {
   dq.pop_front() |> ignore() // 3, 4, 5, 1
   dq.pop_front() |> ignore() // 4, 5, 1
   dq.reserve_capacity(10)
-  @assertion.assert_true(dq.capacity() == 13)?
+  @assertion.assert_true(dq.capacity() == 10)?
   @assertion.assert_eq(dq[0], 4)?
   @assertion.assert_eq(dq[1], 5)?
   @assertion.assert_eq(dq[2], 1)?
+}
+
+test "reserve_capacity_2" {
+  let dq = Deque::[1, 2, 3, 4, 5]
+  dq.reserve_capacity(3)
+  @assertion.assert_true(dq.capacity() == 5)?
 }
 
 /// Shrinks the capacity of the deque as much as possible.
