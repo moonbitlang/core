@@ -20,3 +20,8 @@ stability before 07/01/2024
 We are actively developing moonbitlang/core and appreciate your help!
 
 To contribute, please read the contribution guidelines at [CONTRIBUTING.md](./CONTRIBUTING.md).
+
+### Being a collaborator
+
+Note we regularly evaluate external contributions and invite activate contributors to join us as collaborators, thank you!
+To keep the contributors manangebable, we will revoke commit rights if external collaborators are not active for over 6 months.
