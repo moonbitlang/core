@@ -183,7 +183,21 @@ test "assert_is.is.not" {
 /// assert_is_not(a, b)?  // this is okay
 /// assert_is_not(a, a)?  // yields an error
 /// ```
-pub fn assert_is_not[T : Debug](
+pub fn assert_not_physical_equal[T : Debug](
+  a : T,
+  b : T,
+  ~loc : SourceLoc = _
+) -> Result[Unit, String] {
+  if not(physical_equal(a, b)) {
+    Ok(())
+  } else {
+    let a = debug_string(a)
+    let b = debug_string(b)
+    Err("FAILED:\(loc) `not(\(a) is \(b))`")
+  }
+}
+
+pub fn assert_is_not[T : Debug+Eq](
   a : T,
   b : T,
   ~loc : SourceLoc = _

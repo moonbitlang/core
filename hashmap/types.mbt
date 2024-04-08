@@ -17,7 +17,7 @@ priv enum Entry[K, V] {
   Empty
   // (Probe Sequence Length, Hash, Key, Value)
   Valid(Int, Int, K, V)
-} derive(Debug)
+} derive(Debug, Eq)
 
 /// A mutable hash map implements with Robin Hood hashing.
 /// 

@@ -229,7 +229,7 @@ pub fn new[T](length : Int, value : () -> T) -> Array[T] {
 
 test "new" {
   let arr = new(2, fn() { { val: 1 } })
-  @assertion.assert_is_not(arr[0], arr[1])?
+  @assertion.assert_not_physical_equal(arr[0], arr[1])?
 }
 
 /// Create a new array. Values are built from indexes.
