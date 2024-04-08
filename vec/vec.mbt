@@ -1276,18 +1276,22 @@ test "to_list" {
   @assertion.assert_eq(ls, Cons(1, Cons(2, Cons(3, Cons(4, Cons(5, Nil))))))?
 }
 
-/// Reserves capacity for at least `additional` more elements to be inserted.
+/// Reserves capacity to ensure that it can hold at least the number of elements
+/// specified by the `capacity` argument.
 /// 
 /// # Example
 /// 
 /// ```
 /// let v = Vec::[1]
 /// v.reserve_capacity(10)
-/// println(v.capacity()) // >= 11
+/// println(v.capacity()) // 10
 /// ```
-pub fn reserve_capacity[T](self : Vec[T], additional : Int) -> Unit {
+pub fn reserve_capacity[T](self : Vec[T], capacity : Int) -> Unit {
+  if self.capacity() >= capacity {
+    return
+  }
   let new_buf : UninitializedArray[T] = UninitializedArray::make(
-    self.length() + additional,
+    capacity
   )
   for i = 0; i < self.length(); i = i + 1 {
     new_buf[i] = self.buf[i]
@@ -1298,7 +1302,13 @@ pub fn reserve_capacity[T](self : Vec[T], additional : Int) -> Unit {
 test "reserve_capacity" {
   let v = Vec::[1]
   v.reserve_capacity(10)
-  @assertion.assert_true(v.capacity() >= 11)?
+  @assertion.assert_true(v.capacity() == 10)?
+}
+
+test "reserve_capacity_2" {
+  let v = Vec::[1, 2, 3, 4, 5]
+  v.reserve_capacity(3)
+  @assertion.assert_true(v.capacity() == 5)?
 }
 
 /// Shrinks the capacity of the vector as much as possible.
