@@ -116,5 +116,7 @@ pub fn reset(self : Buffer) -> Unit {
 }
 
 pub fn to_bytes(self : Buffer) -> Bytes {
-  self.bytes.copy()
+  let bytes = Bytes::make(self.len, 0)
+  bytes.blit(0, self.bytes, 0, self.len)
+  bytes
 }
