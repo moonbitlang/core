@@ -383,6 +383,13 @@ test "fold" {
   @assertion.assert_eq(sum2, 10)?
 }
 
+/// Return a copy of the queue.
+/// 
+/// # Example
+/// ```
+/// let queue : Queue[Int] = Queue::[1, 2, 3, 4]
+/// let queue2 : Queue[Int] = queue.copy()
+/// ```
 pub fn copy[T](self : Queue[T]) -> Queue[T] {
   loop
     { length: self.length, first: Nil, last: Nil },
@@ -416,6 +423,15 @@ test "copy" {
 }
 
 /// Transfer all elements from one queue to another.
+/// 
+/// Adds all of the elements of source to the end of destination, then clears source.
+/// 
+/// # Example
+/// ```
+/// let queue : Queue[Int] = Queue::[1, 2, 3, 4]
+/// let queue2 : Queue[Int] = Queue::[5, 6, 7, 8]
+/// queue.transfer(queue2)
+/// ```
 pub fn transfer[T](self : Queue[T], dst : Queue[T]) -> Unit {
   if self.length > 0 {
     match dst.last {
