@@ -1014,7 +1014,7 @@ test "min" {
 }
 
 test "is_empty" {
-  inspect(ImmutableSet::[].is_empty(), ~content="true")?
+  inspect((ImmutableSet::[]:ImmutableSet[Int]).is_empty(), ~content="true")?
   inspect(ImmutableSet::[1].is_empty(), ~content="false")?
 }
 
@@ -1023,5 +1023,5 @@ test "to_string" {
     ImmutableSet::[1, 2, 3, 4, 5],
     ~content="ImmutableSet::[1, 2, 3, 4, 5]",
   )?
-  inspect(ImmutableSet::[], ~content="ImmutableSet::[]")?
+  inspect((ImmutableSet::[] : ImmutableSet[Int]), ~content="ImmutableSet::[]")?
 }
