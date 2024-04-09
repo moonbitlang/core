@@ -148,7 +148,7 @@ test "front_and_back" {
   let dq = Deque::[1, 2, 3, 4, 5]
   @assertion.assert_eq(dq.back(), Some(5))?
   @assertion.assert_eq(dq.front(), Some(1))?
-  let dq: Deque[Int] = Deque::[]
+  let dq : Deque[Int] = Deque::[]
   @assertion.assert_eq(dq.back(), None)?
   @assertion.assert_eq(dq.front(), None)?
 }
@@ -273,7 +273,6 @@ test "push_and_pop" {
   @assertion.assert_eq(dq.length(), 6)?
   @assertion.assert_eq(dq.pop_back(), Some(8))?
   @assertion.assert_eq(dq.back(), Some(7))?
-
   let dq = Deque::[1]
   @assertion.assert_eq(dq.pop_front(), Some(1))?
   @assertion.assert_eq(dq.pop_front(), None)?
@@ -281,11 +280,11 @@ test "push_and_pop" {
 }
 
 test "push_realloc" {
-  let dq: Deque[Int] = Deque::with_capacity(0)
+  let dq : Deque[Int] = Deque::with_capacity(0)
   dq.push_front(1)
   @assertion.assert_eq(dq.pop_front(), Some(1))?
   @assertion.assert_true(dq.capacity() > 0)?
-  let dq: Deque[Int] = Deque::with_capacity(0)
+  let dq : Deque[Int] = Deque::with_capacity(0)
   dq.push_back(1)
   @assertion.assert_eq(dq.pop_back(), Some(1))?
   @assertion.assert_true(dq.capacity() > 0)?
@@ -355,7 +354,7 @@ pub fn op_set[T](self : Deque[T], index : Int, value : T) -> Unit {
 }
 
 test "op_set" {
-  let dq = Deque::[1,2,3,4,5]
+  let dq = Deque::[1, 2, 3, 4, 5]
   dq[1] = 3
   @assertion.assert_eq(dq[1], 3)?
 }
@@ -638,4 +637,97 @@ test "contains" {
   @assertion.assert_true(dq.contains(4))?
   @assertion.assert_true(dq.contains(5))?
   @assertion.assert_false(dq.contains(6))?
+}
+
+/// Reserves capacity to ensure that it can hold at least the number of elements
+/// specified by the `capacity` argument.
+/// 
+/// # Example
+/// 
+/// ```
+/// let dq = Deque::[1]
+/// dq.reserve_capacity(10)
+/// println(dq.capacity()) // 10
+/// ```
+pub fn reserve_capacity[T](self : Deque[T], capacity : Int) -> Unit {
+  if self.capacity() >= capacity {
+    return
+  }
+  let new_buf : UninitializedArray[T] = UninitializedArray::make(capacity)
+  let { buf, len, head, .. } = self
+  self.buf = new_buf
+  self.head = 0
+  self.tail = 0
+  for i = 0; i < len; i = i + 1 {
+    let idx = (head + i) % buf.0.length()
+    self.buf[i] = buf[idx]
+    self.tail += 1
+  }
+}
+
+test "reserve_capacity" {
+  let dq = Deque::[1, 2, 3, 4, 5]
+  dq.pop_front() |> ignore() // 2, 3, 4, 5
+  dq.push_back(1) // 2, 3, 4, 5, 1
+  dq.pop_front() |> ignore() // 3, 4, 5, 1
+  dq.pop_front() |> ignore() // 4, 5, 1
+  dq.reserve_capacity(10)
+  @assertion.assert_true(dq.capacity() == 10)?
+  @assertion.assert_eq(dq[0], 4)?
+  @assertion.assert_eq(dq[1], 5)?
+  @assertion.assert_eq(dq[2], 1)?
+}
+
+test "reserve_capacity_2" {
+  let dq = Deque::[1, 2, 3, 4, 5]
+  dq.reserve_capacity(3)
+  @assertion.assert_true(dq.capacity() == 5)?
+}
+
+/// Shrinks the capacity of the deque as much as possible.
+/// 
+/// # Example
+/// 
+/// ```
+/// let dq = Deque::with_capacity(10)
+/// dq.push_back(1)
+/// dq.push_back(2)
+/// dq.push_back(3)
+/// println(dq.capacity()) // >= 10
+/// dq.shrink_to_fit()
+/// println(dq.capacity()) // >= 3
+/// ```
+pub fn shrink_to_fit[T](self : Deque[T]) -> Unit {
+  if self.capacity() <= self.length() {
+    return
+  }
+  let { buf, len, head, .. } = self
+  self.buf = UninitializedArray::make(len)
+  self.head = 0
+  self.tail = 0
+  for i = 0; i < len; i = i + 1 {
+    let idx = (head + i) % buf.0.length()
+    self.buf[i] = buf[idx]
+  }
+}
+
+test "shrink_to_fit" {
+  let dq : Deque[Int] = Deque::[1, 2, 3, 4, 5]
+  dq.pop_front() |> ignore()
+  dq.push_back(1)
+  dq.pop_front() |> ignore()
+  dq.pop_front() |> ignore()
+  @assertion.assert_true(dq.capacity() == 5)?
+  dq.shrink_to_fit()
+  @assertion.assert_true(dq.capacity() == 3)?
+  @assertion.assert_eq(dq[0], 4)?
+  @assertion.assert_eq(dq[1], 5)?
+  @assertion.assert_eq(dq[2], 1)?
+}
+
+test "shrink_to_fit_2" {
+  let dq : Deque[Int] = Deque::[1, 2, 3]
+  @assertion.assert_true(dq.capacity() == 3)?
+  dq.shrink_to_fit()
+  @assertion.assert_true(dq.capacity() == 3)?
 }

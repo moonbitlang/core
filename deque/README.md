@@ -38,6 +38,27 @@ let dq : Deque[Int] = Deque::new()
 dq.is_empty() // true
 ```
 
+You can use `reserve_capacity` to reserve capacity, ensures that it can hold at least the number of elements
+specified by the `capacity` argument.
+
+```moonbit
+let dq = Deque::[1]
+dq.reserve_capacity(10)
+println(dq.capacity()) // 10
+```
+
+Also, you can use `shrink_to_fit` to shrink the capacity of the deque.
+
+```moonbit
+let dq = Deque::with_capacity(10)
+dq.push_back(1)
+dq.push_back(2)
+dq.push_back(3)
+println(dq.capacity()) // 10
+dq.shrink_to_fit()
+println(dq.capacity()) // 3
+```
+
 ### Front & Back & Get
 
 You can use `front()` and `back()` to get the head and tail elements of the queue, respectively. Since the queue may be empty, their return values are both `Option`, or `None` if the queue is empty.
