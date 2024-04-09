@@ -247,6 +247,7 @@ test "tail" {
 /// debug(from_array([1, 2, 3, 4, 5]).head())
 /// // output: 1
 /// ```
+/// @alert unsafe "Panic if the list is empty"
 pub fn head[T](self : List[T]) -> T {
   match self {
     Nil => abort("head of empty list")
@@ -291,6 +292,7 @@ test "head option" {
 /// debug(from_array([1, 2, 3, 4, 5]).last())
 /// // output: 5
 /// ```
+/// @alert unsafe "Panic if the list is empty"
 pub fn last[T](self : List[T]) -> T {
   match self {
     Nil => abort("last of empty list")
@@ -397,10 +399,7 @@ test "fold" {
 /// debug(r) // output: from_array([(1, 6), (2, 7), (3, 8), (4, 9), (5, 10)]
 /// ```
 /// 
-/// # Panics
-///
-/// If the two lists have different lengths, the function will panic.
-///
+/// @alert unsafe "Panic if the two lists have different lengths."
 pub fn zip[T, U](self : List[T], other : List[U]) -> List[(T, U)] {
   match (self, other) {
     (Nil, Nil) => Nil
@@ -434,6 +433,7 @@ test "concat_map" {
 }
 
 /// Get nth element of the list
+/// @alert unsafe "Panic if the index is out of bounds"
 pub fn nth[T](self : List[T], n : Int) -> T {
   match self {
     Nil => abort("nth: index out of bounds")
@@ -582,6 +582,7 @@ test "flatten" {
 }
 
 /// Get maximum element of the list.
+/// @alert unsafe "Panic if the list is empty"
 pub fn maximum[T : Compare](self : List[T]) -> T {
   match self {
     Nil => abort("maximum: empty list")
@@ -603,6 +604,7 @@ test "maximum" {
 }
 
 /// Get minimum element of the list.
+/// @alert unsafe "Panic if the list is empty"
 pub fn minimum[T : Compare](self : List[T]) -> T {
   match self {
     Nil => abort("minimum: empty list")
@@ -847,6 +849,7 @@ test "lookup" {
 /// println(List::[1, 3, 5, 8].find(fn(element) -> Bool { element % 2 == 0}))
 /// // output: 8
 /// ```
+/// @alert unsafe "Panic if no element satisfies f."
 pub fn find[T](self : List[T], f : (T) -> Bool) -> T {
   match self {
     Nil => abort("find: no matching element")
@@ -900,6 +903,7 @@ test "find_option" {
 /// println(List::[1, 3, 5, 8].findi(fn(element, i) -> Bool { (element % 2 == 0) && (i == 3) }))
 /// // output: 8
 /// ```
+/// @alert unsafe "Panic if no element satisfies f."
 pub fn findi[T](self : List[T], f : (T, Int) -> Bool) -> T {
   fn find(list : List[T], index : Int) -> T {
     match list {

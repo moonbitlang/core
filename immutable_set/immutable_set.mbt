@@ -91,6 +91,7 @@ pub fn to_vec[T : Compare](self : ImmutableSet[T]) -> @vec.Vec[T] {
 /// println(ImmutableSet::[3, 4, 5].remove_min())
 /// // output: ImmutableSet::[4, 5]
 /// ```
+/// @alert unsafe "Panic if the ImmutableSet is empty."
 pub fn remove_min[T : Compare](self : ImmutableSet[T]) -> ImmutableSet[T] {
   match self {
     Empty => abort("remove_min: empty ImmutableSet")
@@ -181,6 +182,7 @@ pub fn remove[T : Compare](
 /// println(ImmutableSet::[7, 2, 9, 4, 5, 6, 3, 8, 1].min())
 /// // output: 1
 /// ```
+/// @alert unsafe "Panic if the ImmutableSet is empty."
 pub fn min[T : Compare](self : ImmutableSet[T]) -> T {
   match self {
     Empty => abort("min: there are no values in ImmutableSet.")
@@ -213,6 +215,7 @@ pub fn min_option[T : Compare](self : ImmutableSet[T]) -> Option[T] {
 /// println(ImmutableSet::[7, 2, 9, 4, 5, 6, 3, 8, 1].max())
 /// // output: 9
 /// ```
+/// @alert unsafe "Panic if the ImmutableSet is empty."
 pub fn max[T : Compare](self : ImmutableSet[T]) -> T {
   match self {
     Empty => abort("max: there are no values in ImmutableSet.")

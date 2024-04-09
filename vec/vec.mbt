@@ -103,14 +103,13 @@ test "realloc" {
 
 /// Retrieves the element at the specified index from the vector.
 /// 
-/// If you try to access an index which isn’t in the Vec, it will panic.
-/// 
 /// # Example
 /// ```
 /// let v = Vec::new()
 /// v.push(3)
 /// println(v[0]) // 3
 /// ```
+/// @alert unsafe "Panic if index is out of bounds"
 pub fn op_get[T](self : Vec[T], index : Int) -> T {
   if index < 0 || index >= self.len {
     let len = self.len
@@ -123,14 +122,13 @@ pub fn op_get[T](self : Vec[T], index : Int) -> T {
 
 /// Sets the value of the element at the specified index.
 /// 
-/// If you try to access an index which isn’t in the Vec, it will panic.
-/// 
 /// # Example
 /// ```
 /// let v = Vec::new()
 /// v.push(3)
 /// println(v[0]) // 3
 /// ```
+/// @alert unsafe "Panic if index is out of bounds."
 pub fn op_set[T](self : Vec[T], index : Int, value : T) -> Unit {
   if index < 0 || index >= self.len {
     let len = self.len
@@ -237,13 +235,12 @@ test "pop" {
 
 /// Removes the last element from a vector and returns it.
 /// 
-/// Panics if the vector is empty.
-/// 
 /// # Example
 /// ```
 /// let v = Vec::[1, 2, 3]
 /// v.pop_exn() // 3
 /// ```
+/// @alert unsafe "Panic if the vector is empty."
 pub fn pop_exn[T](self : Vec[T]) -> T {
   if self.len == 0 {
     abort("pop from an empty Vec")
@@ -289,13 +286,13 @@ test "push" {
 /// Removes the specified range from the vector and returns it.
 /// 
 /// This functions returns a vector range from `begin` to `end` `[begin, end)`
-/// If you try to access an index which isn’t in the Vec, it will panic.
 /// 
 /// # Example
 /// ```
 /// let v = Vec::[3, 4, 5]
 /// let vv = v.drain(1, 2) // vv = Vec::[4], v = Vec::[3, 5]
 /// ```
+/// @alert unsafe "Panic if index is out of bounds."
 pub fn drain[T](self : Vec[T], begin : Int, end : Int) -> Vec[T] {
   if begin < 0 || begin >= self.len || end < 0 || end > self.len || begin > end {
     let len = self.len
@@ -564,14 +561,13 @@ test "reverse" {
 
 /// Split the vector into two at the given index.
 /// 
-/// If you try to access an index which isn’t in the Vec, it will panic.
-/// 
 /// # Example
 /// ```
 /// let v = Vec::[3, 4, 5]
 /// let (v1, v2) = v.split_at(1)
 /// ```
 /// TODO: perf could be optimized
+/// @alert unsafe "Panic if index is out of bounds."
 pub fn split_at[T](self : Vec[T], index : Int) -> (Vec[T], Vec[T]) {
   if index < 0 || index >= self.len {
     let len = self.len
@@ -761,13 +757,12 @@ test "search" {
 
 /// Swap two elements in the vector.
 /// 
-/// If you try to access an index which isn’t in the Vec, it will panic.
-/// 
 /// # Example
 /// ```
 /// let v = Vec::[3, 4, 5]
 /// v.swap(1, 2)
 /// ```
+/// @alert unsafe "Panic if index is out of bounds."
 pub fn swap[T](self : Vec[T], i : Int, j : Int) -> Unit {
   if i >= self.len || j >= self.len || i < 0 || j < 0 {
     let len = self.len
@@ -797,6 +792,7 @@ test "swap" {
 /// let v = Vec::[3, 4, 5]
 /// v.remove(1)
 /// ```
+/// @alert unsafe "Panic if index is out of bounds."
 pub fn remove[T](self : Vec[T], index : Int) -> T {
   if index < 0 || index >= self.len {
     let len = self.len
@@ -849,6 +845,7 @@ test "retain" {
 /// ```
 /// Vec::[3, 4, 5].resize(1)
 /// ```
+/// @alert unsafe "Panic if new length is negative."
 pub fn resize[T](self : Vec[T], new_len : Int, f : T) -> Unit {
   if new_len < 0 {
     abort("negative new length")
@@ -875,12 +872,11 @@ test "resize" {
 
 /// Inserts an element at a given index within the vector.
 /// 
-/// If you try to access an index which isn’t in the Vec, it will panic.
-/// 
 /// # Example
 /// ```
 /// Vec::[3, 4, 5].insert(1, 6)
 /// ```
+/// @alert unsafe "Panic if index is out of bounds."
 pub fn insert[T](self : Vec[T], index : Int, value : T) -> Unit {
   if index < 0 || index > self.len {
     let len = self.len

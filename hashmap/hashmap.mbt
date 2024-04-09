@@ -40,6 +40,7 @@ pub fn HashMap::from_array[K : Hash + Eq, V](
 }
 
 /// Set a key-value pair into hash map.
+/// @alert unsafe "Panic if the hash map is full."
 pub fn set[K : Hash + Eq, V](self : HashMap[K, V], key : K, value : V) -> Unit {
   if self.capacity == 0 || self.size >= self.growAt {
     self.grow()

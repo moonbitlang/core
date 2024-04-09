@@ -277,6 +277,7 @@ test "pop" {
 /// println(s) // output: { elements: Cons(2, Cons(1, Nil)), len: 2 }
 /// println(s1.pop_exn()) // abort.
 /// ```
+/// @alert unsafe "Panic if the stack is empty."
 pub fn pop_exn[T](self : Stack[T]) -> T {
   match self.elements {
     Cons(hd, tl) => {
@@ -388,6 +389,7 @@ test "peek" {
 /// println(s.peek_exn()) // output: 3
 /// println(s) // output: { elements: Cons(3, Cons(2, Cons(1, Nil))), len: 3 }
 /// ```
+/// @alert unsafe "Panic if the stack is empty."
 pub fn peek_exn[T](self : Stack[T]) -> T {
   match self.elements {
     Cons(hd, _) => hd

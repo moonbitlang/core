@@ -163,12 +163,12 @@ test "push" {
 
 /// Peeks at the first value in the queue.
 /// 
-/// Panics if the queue is empty.
 /// # Example
 /// ```
 /// let queue : Queue[Int] = Queue::[1, 2, 3, 4]
 /// let first = queue.peek_exn()
 /// ```
+/// @alert unsafe "Panics if the queue is empty."
 pub fn peek_exn[T](self : Queue[T]) -> T {
   match self.first {
     Nil => abort("Queue is empty")
@@ -208,12 +208,12 @@ test "peek" {
 
 /// Pops the first value from the queue.
 /// 
-/// Panics if the queue is empty.
 /// # Example
 /// ```
 /// let queue : Queue[Int] = Queue::[1, 2, 3, 4]
 /// let first = queue.pop_exn()
 /// ```
+/// @alert unsafe "Panics if the queue is empty."
 pub fn pop_exn[T](self : Queue[T]) -> T {
   match self.first {
     Nil => abort("Queue is empty")
