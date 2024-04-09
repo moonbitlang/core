@@ -1290,9 +1290,7 @@ pub fn reserve_capacity[T](self : Vec[T], capacity : Int) -> Unit {
   if self.capacity() >= capacity {
     return
   }
-  let new_buf : UninitializedArray[T] = UninitializedArray::make(
-    capacity
-  )
+  let new_buf : UninitializedArray[T] = UninitializedArray::make(capacity)
   for i = 0; i < self.length(); i = i + 1 {
     new_buf[i] = self.buf[i]
   }

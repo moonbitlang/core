@@ -15,12 +15,8 @@
 // Default initial capacity
 let default_init_capacity = 8
 
-
-
 /// Create new hash map.
-pub fn HashMap::new[K, V](
-  ~hasher : Option[(K) -> Int] = None
-) -> HashMap[K, V] {
+pub fn HashMap::new[K, V](~hasher : Option[(K) -> Int] = None) -> HashMap[K, V] {
   {
     size: 0,
     capacity: default_init_capacity,
@@ -84,8 +80,8 @@ pub fn op_set[K : Hash + Eq, V](
 /// Get the value associated with a key.
 pub fn get[K : Hash + Eq, V](self : HashMap[K, V], key : K) -> Option[V] {
   let hash = self.make_hash(key)
-  for distance = 0, idx = self.index(hash);
-      distance < self.capacity;
+  for distance = 0, idx = self.index(hash)
+      distance < self.capacity
       distance = distance + 1, idx = self.next_index(idx) {
     match self.entries[idx] {
       Valid(d, h, k, v) => {
@@ -117,8 +113,8 @@ pub fn contains[K : Hash + Eq, V](self : HashMap[K, V], key : K) -> Bool {
 /// Remove a key-value pair from hash map.
 pub fn remove[K : Hash + Eq, V](self : HashMap[K, V], key : K) -> Unit {
   let hash = self.make_hash(key)
-  for distance = 0, idx = self.index(hash);
-      distance < self.capacity;
+  for distance = 0, idx = self.index(hash)
+      distance < self.capacity
       distance = distance + 1, idx = self.next_index(idx) {
     match self.entries[idx] {
       Valid(d, h, k, _) => {
@@ -180,8 +176,8 @@ pub fn clear[K, V](self : HashMap[K, V]) -> Unit {
 }
 
 fn shift_back[K : Hash, V](self : HashMap[K, V], start_index : Int) -> Unit {
-  for i = 0, prev = start_index, curr = self.next_index(start_index);
-      i < self.entries.length();
+  for i = 0, prev = start_index, curr = self.next_index(start_index)
+      i < self.entries.length()
       i = i + 1, prev = curr, curr = self.next_index(curr) {
     match self.entries[curr] {
       Valid(d, h, k, v) => {
@@ -261,7 +257,7 @@ test "new" {
 
 test "set" {
   let m : HashMap[String, Int] = HashMap::new(
-    ~hasher=Some(fn(k) { k.length() })
+    ~hasher=Some(fn(k) { k.length() }),
   )
   m.set("a", 1)
   m.set("b", 1)
@@ -330,7 +326,7 @@ test "from_array" {
 
 test "remove" {
   let m : HashMap[String, Int] = HashMap::new(
-    ~hasher=Some(fn(k) { k.length() })
+    ~hasher=Some(fn(k) { k.length() }),
   )
   m.set("a", 1)
   m.set("ab", 2)

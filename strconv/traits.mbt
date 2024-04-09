@@ -16,23 +16,23 @@ pub trait FromStr {
   from_string(String) -> Result[Self, String]
 }
 
-pub fn FromStr::from_string(str: String) -> Result[Bool, String] {
+pub fn FromStr::from_string(str : String) -> Result[Bool, String] {
   parse_bool(str)
 }
 
-pub fn FromStr::from_string(str: String) -> Result[Int, String] {
+pub fn FromStr::from_string(str : String) -> Result[Int, String] {
   parse_int(str)
 }
 
-pub fn FromStr::from_string(str: String) -> Result[Int64, String] {
+pub fn FromStr::from_string(str : String) -> Result[Int64, String] {
   parse_int64(str)
 }
 
-pub fn FromStr::from_string(str: String) -> Result[Double, String] {
+pub fn FromStr::from_string(str : String) -> Result[Double, String] {
   parse_double(str)
 }
 
-pub fn parse[A : FromStr](str: String) -> Result[A, String] {
+pub fn parse[A : FromStr](str : String) -> Result[A, String] {
   A::from_string(str)
 }
 
