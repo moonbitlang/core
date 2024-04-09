@@ -71,7 +71,7 @@ test "from_array_2" {
 pub fn to_string[T : Show](self : Queue[T]) -> String {
   let mut res = "Queue::["
   self.iteri(
-    fn(t, i) {
+    fn(i, t) {
       if i > 0 {
         res += ", "
       }
@@ -331,10 +331,10 @@ test "iter" {
   @assertion.assert_eq(sum, 10)?
 }
 
-pub fn iteri[T](self : Queue[T], f : (T, Int) -> Unit) -> Unit {
+pub fn iteri[T](self : Queue[T], f : (Int, T) -> Unit) -> Unit {
   loop self.first, 0 {
     Cons({ content, next }), index => {
-      f(content, index)
+      f(index, content)
       continue next, index + 1
     }
     Nil, _ => ()
