@@ -24,61 +24,118 @@ let double_info : FloatInfo = {
   bias: -1023,
 }
 
-/// Convert a string to a 64 bit floating point number.
+/// TODO: For `f32` it is 23, but we don't have `f32` yet. 
+let mantissa_explicit_bits = 52
+
+/// TODO: For `f32` it is -10, but we don't have `f32` yet.
+let min_exponent_fast_path : Int64 = -22L
+
+/// TODO: For `f32` it is 10, but we don't have `f32` yet.
+let max_exponent_fast_path : Int64 = 22L
+
+/// TODO: For `f32` it is 17, but we don't have `f32` yet.
+let max_exponent_disguised_fast_path : Int64 = 37L
+
+let max_mantissa_fast_path : UInt64 = new_UInt64_Int(2).lsl(
+  mantissa_explicit_bits,
+)
+
 pub fn parse_double(str : String) -> Result[Double, String] {
-  match special_value(str) {
-    Some(v) => return Ok(v)
-    _ => ()
+  if str.length() == 0 {
+    return Err(syntax_err)
   }
   if not(check_underscore(str)) {
     return Err(syntax_err)
   }
-  let hpd = parse_decimal(str)?
-  hpd.to_double()
+  // validate its a number
+  let (num, consumed) = match parse_number(str) {
+    Some(r) => r
+    None =>
+      match parse_inf_nan(str) {
+        Some((num, consumed)) =>
+          if str.length() != consumed {
+            return Err(syntax_err)
+          } else {
+            return Ok(num)
+          }
+        None => return Err(syntax_err)
+      }
+  }
+  if str.length() != consumed {
+    return Err(syntax_err)
+  }
+  // Clinger's fast path (How to read floating point numbers accurately)[https://doi.org/10.1145/989393.989430]
+  match try_fast_path(num) {
+    Some(value) => Ok(value)
+    None => {
+      // fallback to slow path
+      let ret = parse_decimal(str)?
+      ret.to_double()
+    }
+  }
 }
 
-/// Parse the special floating point value.
-fn special_value(str : String) -> Option[Double] {
-  if str.length() == 0 {
-    return None
-  }
-  let mut s = str
-  // check sign
-  let mut sign = 1
-  if s[0] == '+' || s[0] == '-' {
-    if s[0] == '-' {
-      sign = -1
+fn is_fast_path(self : Number) -> Bool {
+  min_exponent_fast_path <= self.exponent && self.exponent <= max_exponent_disguised_fast_path &&
+  self.mantissa <= max_mantissa_fast_path && not(self.many_digits)
+}
+
+let table = [
+  1.0, 10.0, 100.0, 1000.0, 10000.0, 100000.0, 1000000.0, 10000000.0, 100000000.0,
+  1000000000.0, 10000000000.0, 100000000000.0, 1000000000000.0, 10000000000000.0,
+  100000000000000.0, 1000000000000000.0, 10000000000000000.0, 100000000000000000.0,
+  1000000000000000000.0, 10000000000000000000.0, 100000000000000000000.0, 1000000000000000000000.0,
+  10000000000000000000000.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+]
+
+fn pow10_fast_path(exponent : Int) -> Double {
+  table[exponent.land(31)]
+}
+
+let int_pow10 : Array[UInt64] = [
+  new_UInt64_Int64(1L),
+  new_UInt64_Int64(10L),
+  new_UInt64_Int64(100L),
+  new_UInt64_Int64(1000L),
+  new_UInt64_Int64(10000L),
+  new_UInt64_Int64(100000L),
+  new_UInt64_Int64(1000000L),
+  new_UInt64_Int64(10000000L),
+  new_UInt64_Int64(100000000L),
+  new_UInt64_Int64(1000000000L),
+  new_UInt64_Int64(10000000000L),
+  new_UInt64_Int64(100000000000L),
+  new_UInt64_Int64(1000000000000L),
+  new_UInt64_Int64(10000000000000L),
+  new_UInt64_Int64(100000000000000L),
+  new_UInt64_Int64(1000000000000000L),
+]
+
+fn try_fast_path(self : Number) -> Option[Double] {
+  if self.is_fast_path() {
+    let mut value = if self.exponent <= max_exponent_fast_path {
+      // normal fast path
+      let value = self.mantissa.to_double()
+      if self.exponent < 0L {
+        value / pow10_fast_path(-self.exponent.to_int())
+      } else {
+        value * pow10_fast_path(self.exponent.to_int())
+      }
+    } else {
+      // disguised fast path
+      let shift = self.exponent - max_exponent_fast_path
+      let mantissa = self.mantissa.checked_mul(int_pow10[shift.to_int()])?
+      if mantissa > max_mantissa_fast_path {
+        return None
+      }
+      mantissa.to_double() * pow10_fast_path(max_exponent_fast_path.to_int())
     }
-    s = substring(s, 1, s.length() - 1)
-  }
-  if eq_ignore_case(s, "inf") || eq_ignore_case(s, "infinity") {
-    Some(Double::inf(sign))
-  } else if eq_ignore_case(s, "nan") {
-    Some(Double::nan())
+    if self.negative {
+      value = -value
+    }
+    Some(value)
   } else {
     None
-  }
-}
-
-fn eq_ignore_case(s1 : String, s2 : String) -> Bool {
-  if s1.length() != s2.length() {
-    return false
-  }
-  for i = 0; i < s1.length(); i = i + 1 {
-    let c1 = s1[i]
-    let c2 = s2[i]
-    if lower(c1) != lower(c2) {
-      return false
-    }
-  }
-  true
-}
-
-fn lower(c : Char) -> Char {
-  if 'A' <= c && c <= 'Z' {
-    Char::from_int(c.to_int() + 'a'.to_int() - 'A'.to_int())
-  } else {
-    c
   }
 }
 
@@ -209,17 +266,4 @@ test "parse_double_nan" {
   @assertion.assert_true(parse_double("nan")?.is_nan())?
   @assertion.assert_true(parse_double("NaN")?.is_nan())?
   @assertion.assert_true(parse_double("NAN")?.is_nan())?
-}
-
-test "lower" {
-  @assertion.assert_eq(lower('Z'), 'z')?
-  @assertion.assert_eq(lower('A'), 'a')?
-  @assertion.assert_eq(lower('a'), 'a')?
-  @assertion.assert_eq(lower('z'), 'z')?
-}
-
-test "eq_ignore_case" {
-  @assertion.assert_true(eq_ignore_case("nan", "NaN"))?
-  @assertion.assert_true(eq_ignore_case("inf", "inf"))?
-  @assertion.assert_true(eq_ignore_case("inf", "Inf"))?
 }
