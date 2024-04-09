@@ -144,8 +144,13 @@ test "parse_double" {
         range_err,
       ),
     ),
-    // overflow
-    ("-1.7976931348623159e308", Err(range_err)),
+    (
+      "-1.7976931348623159e308",
+      Err(
+        // overflow
+        range_err,
+      ),
+    ),
     ("2e308", Err(range_err)),
     ("1e309", Err(range_err)),
     ("1e310", Err(range_err)),
