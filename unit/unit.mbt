@@ -11,3 +11,22 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
+
+pub fn to_string(self : Unit) -> String {
+  let _ = self
+  "()"
+}
+
+pub fn hash(self : Unit) -> Int {
+  let _ = self
+  0
+}
+
+pub fn Unit::default() -> Unit {
+  ()
+}
+
+pub fn compare(self : Unit, _other : Unit) -> Int {
+  let _ = self
+  0
+}
