@@ -469,7 +469,7 @@ pub fn fold[T, U](self : Stack[T], ~init : U, f : (U, T) -> U) -> U {
 }
 
 test "fold" {
-  let s : Stack[Int] = Stack::from_array([1, 2, 3])
+  let s : Stack[Int] = Stack::[1, 2, 3]
   let sum = s.fold(~init=0, fn(acc, i) { acc + i })
   @assertion.assert_eq(sum, 6)?
 }

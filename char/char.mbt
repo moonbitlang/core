@@ -33,6 +33,7 @@ pub fn debug_write(self : Char, buf : Buffer) -> Unit {
       Char::from_int('a'.to_int() + (i - 10))
     }
   }
+
   buf.write_char('\'')
   match self {
     '\'' | '\\' => {
@@ -64,6 +65,7 @@ test "debug_write" {
     debug_write(chr, buf)
     buf.to_string()
   }
+
   @assertion.assert_eq(repr('a'), "'a'")?
   @assertion.assert_eq(repr('\''), "'\\''")?
   @assertion.assert_eq(repr('"'), "'\"'")?

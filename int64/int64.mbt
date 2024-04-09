@@ -48,7 +48,6 @@ pub fn Int64::min_value() -> Int64 {
   min_val
 }
 
-
 fn test_num[T : @num.Num + Debug + Default + Eq](
   x : T,
   y : T,
