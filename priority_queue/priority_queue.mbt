@@ -130,7 +130,6 @@ test "pop_exn" {
 
 /// Pops the first value from the priority queue, which returns None if the queue is empty.
 /// 
-/// Panics if the queue is empty.
 /// # Example
 /// ```
 /// let queue = PriorityQueue::[1, 2, 3, 4]
