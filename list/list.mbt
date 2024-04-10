@@ -364,14 +364,19 @@ test "concat" {
 /// // output: from_array([5, 4, 3, 2, 1])
 /// ```
 pub fn reverse[T](self : List[T]) -> List[T] {
-  match self {
-    Nil => Nil
-    Cons(head, tail) => concat(reverse(tail), Cons(head, Nil))
+  loop self, (Nil : List[T]) {
+    xs, ys =>
+      match (xs, ys) {
+        (Nil, acc) => acc
+        (Cons(x, xs), acc) => continue xs, Cons(x, acc)
+      }
   }
 }
 
 test "reverse" {
   let ls = from_array([1, 2, 3, 4, 5])
+  let rs = from_array([5, 4, 3, 2, 1])
+  @assertion.assert_eq(rs.reverse(), ls)?
   @assertion.assert_eq(ls, ls.reverse().reverse())?
 }
 
