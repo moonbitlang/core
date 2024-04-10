@@ -465,7 +465,7 @@ test "iter" {
 /// println(sum) // output: 6
 /// ```
 pub fn fold[T, U](self : Stack[T], ~init : U, f : (U, T) -> U) -> U {
-  self.elements.fold(init, f)
+  self.elements.fold_left(~init, f)
 }
 
 test "fold" {
