@@ -48,9 +48,7 @@ fn timsort[T : Compare](arr : ArraySlice[T]) -> Unit {
   // Short arrays get sorted in-place via insertion sort to avoid allocations.
   let len = arr.length()
   if len <= max_insertion {
-    if len > 20 {
       insertion_sort(arr)
-    }
   }
   let mut end = 0
   let mut start = 0
@@ -157,16 +155,16 @@ fn provide_sorted_batch[T : Compare](
   let mut end = end
   // This value is a balance between least comparisons and best performance, as
   // influenced by for example cache locality.
-  let min_instertion_run = 10
+  let min_insertion_run = 10
   // Insert some more elements into the run if it's too short. Insertion sort is faster than
   // merge sort on short sequences, so this significantly improves performance.
   let start_end_diff = end - start
-  if start_end_diff < min_instertion_run && end < len {
+  if start_end_diff < min_insertion_run && end < len {
     // v[start_found..end] are elements that are already sorted in the input. We want to extend
     // the sorted region to the left, so we push up MIN_INSERTION_RUN - 1 to the right. Which is
     // more efficient that trying to push those already sorted elements to the left.
-    end = if start + min_instertion_run < len {
-      start + min_instertion_run
+    end = if start + min_insertion_run < len {
+      start + min_insertion_run
     } else {
       len
     }
