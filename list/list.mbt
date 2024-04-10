@@ -400,6 +400,12 @@ test "fold_left" {
   @assertion.assert_eq(ls.fold_left(fn(acc, x) { acc + x }, ~init=0), 15)?
 }
 
+/// Fold the list from right.
+/// 
+/// # Example
+/// ```
+/// let r = from_array([1, 2, 3, 4, 5]).fold_right(fn(x, acc) { x + acc }, ~init=0)
+/// ```
 pub fn fold_right[T, U](self : List[T], f : (T, U) -> U, ~init : U) -> U {
   match self {
     Nil => init
@@ -705,17 +711,17 @@ test "contain" {
 /// unfold(0, fn { i => if i == 3 { None } else { Some(i, i + 1) } }) |> debug 
 /// ```
 pub fn unfold[T, State](
-  init : State,
-  f : (State) -> Option[(T, State)]
+  f : (State) -> Option[(T, State)],
+  ~init : State
 ) -> List[T] {
   match f(init) {
-    Some((element, new_state)) => Cons(element, unfold(new_state, f))
+    Some((element, new_state)) => Cons(element, unfold(~init=new_state, f))
     None => Nil
   }
 }
 
 test "unfold" {
-  let ls = unfold(0, fn { i => if i == 3 { None } else { Some((i, i + 1)) } })
+  let ls = unfold(~init=0, fn { i => if i == 3 { None } else { Some((i, i + 1)) } })
   @assertion.assert_eq(ls, Cons(0, Cons(1, Cons(2, Nil))))?
 }
 
@@ -823,7 +829,7 @@ test "drop_while" {
 /// let ls = from_array([1, 2, 3, 4, 5])
 /// ls.scan(fn(acc, x) { acc + x }, 0) 
 /// ```
-pub fn scan[T, E](self : List[T], f : (E, T) -> E, init : E) -> List[E] {
+pub fn scan[T, E](self : List[T], f : (E, T) -> E, ~init : E) -> List[E] {
   fn go(f, q : E, ls : List[T]) -> List[E] {
     Cons(
       q,
@@ -838,7 +844,7 @@ pub fn scan[T, E](self : List[T], f : (E, T) -> E, init : E) -> List[E] {
 }
 
 test "scan" {
-  let ls = from_array([1, 2, 3, 4, 5]).scan(fn(acc, x) { acc + x }, 0)
+  let ls = from_array([1, 2, 3, 4, 5]).scan(fn(acc, x) { acc + x }, ~init=0)
   @assertion.assert_eq(ls, from_array([0, 1, 3, 6, 10, 15]))?
 }
 
@@ -927,19 +933,18 @@ test "find_option" {
 /// ```
 /// @alert unsafe "Panic if no element satisfies f."
 pub fn findi[T](self : List[T], f : (T, Int) -> Bool) -> T {
-  fn find(list : List[T], index : Int) -> T {
-    match list {
-      Nil => abort("findi: no matching element")
-      Cons(element, list) =>
-        if f(element, index) {
-          element
-        } else {
-          find(list, index + 1)
-        }
-    }
+  loop self, 0 {
+    list, index =>
+      match list {
+        Nil => abort("findi: no matching element")
+        Cons(element, list) =>
+          if f(element, index) {
+            element
+          } else {
+            continue list, index + 1
+          }
+      }
   }
-
-  find(self, 0)
 }
 
 test "findi" {
@@ -963,19 +968,18 @@ test "findi" {
 /// // output: None
 /// ```
 pub fn findi_option[T](self : List[T], f : (T, Int) -> Bool) -> Option[T] {
-  fn find_option(list : List[T], index : Int) -> Option[T] {
-    match list {
-      Nil => None
-      Cons(element, list) =>
-        if f(element, index) {
-          Some(element)
-        } else {
-          find_option(list, index + 1)
-        }
-    }
+  loop self, 0 {
+    list, index =>
+      match list {
+        Nil => None
+        Cons(element, list) =>
+          if f(element, index) {
+            Some(element)
+          } else {
+            continue list, index + 1
+          }
+      }
   }
-
-  find_option(self, 0)
 }
 
 test "findi_option" {
@@ -1067,13 +1071,10 @@ test "remove" {
 /// // output: true
 /// ```
 pub fn is_prefix[T : Eq](self : List[T], prefix : List[T]) -> Bool {
-  match prefix {
-    Nil => true
-    Cons(h, t) =>
-      match self {
-        Nil => false
-        Cons(h1, t1) => h == h1 && t1.is_prefix(t)
-      }
+  match (self, prefix) {
+    (_, Nil) => true
+    (Nil, Cons(_)) => false
+    (Cons(h1, t1), Cons(h2, t2)) => h1 == h2 && t1.is_prefix(t2)
   }
 }
 
