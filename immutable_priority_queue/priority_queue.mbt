@@ -82,12 +82,14 @@ fn merges[T : Compare](
   }
 }
 
-test "merges"{
-  inspect(match merges((Nil:List[ImmutablePriorityQueue[Int]])){
-    Empty=>true
-    _=>false
-  }, ~content="true")?
-
+test "merges" {
+  inspect(
+    match merges((Nil : List[ImmutablePriorityQueue[Int]])) {
+      Empty => true
+      _ => false
+    },
+    ~content="true",
+  )?
 }
 
 /// Pops the first value from the immutable priority queue, which returns None if the queue is empty.
@@ -147,6 +149,9 @@ test "pop_exn" {
   let queue = ImmutablePriorityQueue::[1, 2, 3, 4]
   let first = queue.pop_exn()
   inspect(first.peek(), ~content="Some(3)")?
+  inspect(
+    queue.pop_exn().push(-1).push(10).push(11).pop_exn().pop_exn().push(50).peek(),
+  ~content="Some(50)")?
 }
 
 /// Adds a value to the immutable priority queue.
