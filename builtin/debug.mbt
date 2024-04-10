@@ -29,6 +29,12 @@ pub fn trace[X : Debug](x : X) -> Unit {
   trace_string(buf.to_string())
 }
 
+/// print a value to the console using [Debug], with a tailing newline
+/// @alert deprecated "Use trace instead"
+pub fn debug[X : Debug](x : X) -> Unit {
+  trace(x)
+}
+
 pub fn debug_write(self : Unit, buf : Buffer) -> Unit {
   let _ = self
   buf.write_string("()")
