@@ -418,6 +418,40 @@ test "fold_right" {
   @assertion.assert_eq(ls.fold_right(fn(x, acc) { x + acc }, ~init=""), "12345")?
 }
 
+/// Fold the list from left with index.
+pub fn fold_lefti[T, U](self: List[T], f : (Int, U, T) -> U, ~init : U) -> U {
+  fn go(xs : List[T], i : Int, f : (Int, U, T) -> U, acc : U) -> U {
+    match xs {
+      Nil => acc
+      Cons(x, xs) => go(xs, i + 1, f, f(i, acc, x))
+    }
+  }
+
+  go(self, 0, f, init)
+}
+
+test "fold_lefti" {
+  let ls = List::[1, 2, 3, 4, 5]
+  @assertion.assert_eq(ls.fold_lefti(fn(i, acc, x) { acc + i * x }, ~init=0), 40)?
+}
+
+/// Fold the list from right with index.
+pub fn fold_righti[T, U](self: List[T], f : (Int, T, U) -> U, ~init : U) -> U {
+  fn go(xs : List[T], i : Int, f : (Int, T, U) -> U, acc : U) -> U {
+    match xs {
+      Nil => acc
+      Cons(x, xs) => f(i, x, go(xs, i + 1, f, acc))
+    }
+  }
+
+  go(self, 0, f, init)
+}
+
+test "fold_righti" {
+  let ls = List::[1, 2, 3, 4, 5]
+  @assertion.assert_eq(ls.fold_righti(fn(i, x, acc) { x * i + acc }, ~init=0), 40)?
+}
+
 /// Zip two lists.
 ///
 /// # Example
@@ -827,25 +861,48 @@ test "drop_while" {
 ///
 /// ```
 /// let ls = from_array([1, 2, 3, 4, 5])
-/// ls.scan(fn(acc, x) { acc + x }, 0) 
+/// ls.scan_left(fn(acc, x) { acc + x }, ~init=0) 
 /// ```
-pub fn scan[T, E](self : List[T], f : (E, T) -> E, ~init : E) -> List[E] {
-  fn go(f, q : E, ls : List[T]) -> List[E] {
-    Cons(
-      q,
-      match ls {
-        Nil => Nil
-        Cons(x, xs) => go(f, f(q, x), xs)
-      },
-    )
-  }
-
-  go(f, init, self)
+pub fn scan_left[T, E](self : List[T], f : (E, T) -> E, ~init : E) -> List[E] {
+  Cons(
+    init, match self {
+      Nil => Nil
+      Cons(x, xs) => xs.scan_left(f, ~init=f(init, x))
+    }
+  )
 }
 
-test "scan" {
-  let ls = from_array([1, 2, 3, 4, 5]).scan(fn(acc, x) { acc + x }, ~init=0)
+test "scan_left" {
+  let ls = List::[1, 2, 3, 4, 5].scan_left(fn(acc, x) { acc + x }, ~init=0)
+  let ls2 = List::[1,2,3,4].scan_left(fn (acc, x) {acc - x}, ~init=100)
   @assertion.assert_eq(ls, from_array([0, 1, 3, 6, 10, 15]))?
+  @assertion.assert_eq(ls2, from_array([100, 99, 97, 94, 90]))?
+}
+
+/// Fold a list and return a list of successive reduced values from the right
+/// 
+/// Note that the order of parameters on the accumulating function are reversed.
+/// 
+/// # Example
+/// ```
+/// let ls = from_array([1, 2, 3, 4, 5])
+/// ls.scan_right(fn(x, acc) { acc + x }, ~init=0)
+/// ```
+pub fn scan_right[T, E](self : List[T], f : (T, E) -> E, ~init : E) -> List[E] {
+  match self {
+    Nil => Cons(init, Nil)
+    Cons(x, xs) => {
+      let qs = xs.scan_right(f, ~init)
+      Cons(f(x, qs.head()), qs)
+    }
+  }
+}
+
+test "scan_right" {
+  let ls = List::[1, 2, 3, 4].scan_right(fn(x, acc) { x + acc }, ~init=0)
+  let ls2 = List::[1, 2, 3, 4].scan_right(fn(x, acc) { x - acc }, ~init=100)
+  @assertion.assert_eq(ls, from_array([10, 9, 7, 4, 0]))?
+  @assertion.assert_eq(ls2, from_array([98, -97, 99, -96, 100]))?
 }
 
 /// Looks up a key in an association list.
