@@ -51,7 +51,9 @@ jobs:
         run: moon check
 
       - name: moon test
-        run: moon test
+        run: |
+          moon test
+          moon test --target js
 
       - name: moon bundle
         run: moon bundle
@@ -78,7 +80,9 @@ jobs:
         run: moon check
 
       - name: moon test
-        run: moon test
+        run: |
+          moon test
+          moon test --target js
 
       - name: moon bundle
         run: moon bundle
@@ -106,7 +110,9 @@ jobs:
         run: moon check
 
       - name: moon test
-        run: moon test
+        run: |
+          moon test
+          moon test --target js
 
       - name: moon bundle
         run: moon bundle
