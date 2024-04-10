@@ -17,11 +17,16 @@ pub trait Debug {
   debug_write(Self, Buffer) -> Unit
 }
 
+/// @intrinsic %trace
+fn trace_string(s : String) -> Unit {
+  println(s)
+}
+
 /// print a value to the console using [Debug], with a tailing newline
-pub fn debug[X : Debug](x : X) -> Unit {
+pub fn trace[X : Debug](x : X) -> Unit {
   let buf = Buffer::make(10)
   x.debug_write(buf)
-  println(buf.to_string())
+  trace_string(buf.to_string())
 }
 
 pub fn debug_write(self : Unit, buf : Buffer) -> Unit {
