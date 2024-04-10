@@ -1,8 +1,8 @@
-# Moonbit/Core ImuutablePriorityQueue
+Moonbit/Core ImmutablePriorityQueue
 
 ## Overview
 
-A priority queue is a data structure capable of maintaining maximum/minimum values at front of the queue, which may have other names in other programming languages (C++ std::priority_queue / Rust BinaryHeap ). The priority queue here is implemented as a pairing heap and has excellent performance.
+A priority queue is a data structure capable of maintaining maximum/minimum values at the front of the queue, which may have other names in other programming languages (C++ std::priority_queue / Rust BinaryHeap). The priority queue here is implemented as a pairing heap and has excellent performance.
 
 This library implements an Immutable version of PriorityQueue that has no side effects for each operation.
 
@@ -10,7 +10,7 @@ This library implements an Immutable version of PriorityQueue that has no side e
 
 ### Create
 
-You can use `new()` or `from_array()` to create a immutable priority queue.
+You can use `new()` or `from_array()` to create an immutable priority queue.
 
 ```moonbit
 let queue1 : ImmutablePriorityQueue[Int] = new()
@@ -39,7 +39,7 @@ pq.peek() // Some(5)
 
 ### Push
 
-You can use `push()` to add elements to the immtuable priority queue and get a new queue.
+You can use `push()` to add elements to the immutable priority queue and get a new queue.
 
 ```moonbit
 let pq : PriorityQueue[Int] = ImmtuablePriorityQueue::new()

@@ -16,7 +16,7 @@
 /// 
 /// # Example
 /// ```
-/// let queue : ImmutablePriorityQueue[Int] = PriorityQueue::new()
+/// let queue : ImmutablePriorityQueue[Int] = ImmutablePriorityQueue::new()
 /// ```
 pub fn ImmutablePriorityQueue::new[T : Compare]() -> ImmutablePriorityQueue[T] {
   Empty
@@ -63,6 +63,15 @@ fn meld[T : Compare](
   }
 }
 
+test "meld" {
+  inspect(meld(Empty, ImmutablePriorityQueue::[1]).peek(), ~content="Some(1)")?
+  inspect(meld(ImmutablePriorityQueue::[1], Empty).peek(), ~content="Some(1)")?
+  inspect(
+    meld(ImmutablePriorityQueue::[1], ImmutablePriorityQueue::[2]).peek(),
+    ~content="Some(2)",
+  )?
+}
+
 fn merges[T : Compare](
   x : List[ImmutablePriorityQueue[T]]
 ) -> ImmutablePriorityQueue[T] {
@@ -71,6 +80,14 @@ fn merges[T : Compare](
     Cons(t, Nil) => t
     Cons(t1, Cons(t2, ts)) => meld(meld(t1, t2), merges(ts))
   }
+}
+
+test "merges"{
+  inspect(match merges((Nil:List[ImmutablePriorityQueue[Int]])){
+    Empty=>true
+    _=>false
+  }, ~content="true")?
+
 }
 
 /// Pops the first value from the immutable priority queue, which returns None if the queue is empty.
