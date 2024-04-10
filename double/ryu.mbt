@@ -663,17 +663,219 @@ pub fn debug_write(self : Double, buf : Buffer) -> Unit {
   buf.write_string(self.to_string())
 }
 
-test "to_string" {
+test "Basic" {
   inspect(ryu_to_string(0.0), ~content="0.0")?
-  let d = -0.0
-  inspect(ryu_to_string(d), ~content="-0.0")?
-  inspect(ryu_to_string(100.0), ~content="100.0")?
-  inspect(ryu_to_string(10000000000.1), ~content="1.00000000001e10")?
-  inspect(ryu_to_string(12345678.910), ~content="1.234567891e7")?
-  inspect(ryu_to_string(Double::nan()), ~content="NaN")?
-  inspect(ryu_to_string(Double::inf(1)), ~content="Infinity")?
-  inspect(ryu_to_string(Double::inf(-1)), ~content="-Infinity")?
-  inspect(ryu_to_string(Double::max_value()), ~content="1.7976931348623157e308")?
-  inspect(ryu_to_string(Double::min_value()), ~content="5.0e-324")?
-  inspect(ryu_to_string(Double::min_normal()), ~content="2.2250738585072014e-308")?
+  inspect(ryu_to_string(-0.0), ~content="-0.0")?
+  inspect(ryu_to_string(1.e0), ~content="1.0")?
+  inspect(ryu_to_string(-1.e0), ~content="-1.0")?
+  inspect(ryu_to_string(0.0 / 0.0), ~content="NaN")?
+  inspect(ryu_to_string(1.0 / 0.0), ~content="Infinity")?
+  inspect(ryu_to_string(-1.0 / 0.0), ~content="-Infinity")?
+  inspect(ryu_to_string(3.1415926), ~content="3.1415926")?
+}
+
+test "Switch to Subnormal" {
+  inspect(ryu_to_string(2.2250738585072014e-308), ~content="2.2250738585072014e-308")?
+  inspect(ryu_to_string(0x0010000000000000L.reinterpret_as_double()), ~content="2.2250738585072014e-308")?
+}
+
+test "Min and Max" {
+  inspect(ryu_to_string(0x7FEF_FFFF_FFFF_FFFFL.reinterpret_as_double()), ~content="1.7976931348623157e308")?
+  inspect(ryu_to_string(1L.reinterpret_as_double()), ~content="5.0e-324")?
+}
+
+test "Lots of Trailing Zeros" {
+  inspect(ryu_to_string(2.98023223876953125e-8), ~content="2.9802322387695312e-8")?
+}
+
+test "Regression" {
+  inspect(ryu_to_string(-2.109808898695963e16), ~content="-2.109808898695963e16")?
+  inspect(ryu_to_string(4.940656e-318), ~content="4.940656e-318")?
+  inspect(ryu_to_string(1.18575755e-316), ~content="1.18575755e-316")?
+  inspect(ryu_to_string(2.989102097996e-312), ~content="2.989102097996e-312")?
+  inspect(ryu_to_string(9.0608011534336e15), ~content="9.0608011534336e15")?
+  inspect(ryu_to_string(4.708356024711512e18), ~content="4.708356024711512e18")?
+  inspect(ryu_to_string(9.409340012568248e18), ~content="9.409340012568248e18")?
+  inspect(ryu_to_string(1.2345678), ~content="1.2345678")?
+  inspect(ryu_to_string(1.8531501765868567e21), ~content="1.8531501765868567e21")?
+  inspect(ryu_to_string(-3.347727380279489e33), ~content="-3.347727380279489e33")?
+  inspect(ryu_to_string(1.9430376160308388e16), ~content="1.9430376160308388e16")?
+  inspect(ryu_to_string(-6.9741824662760956e19), ~content="-6.9741824662760956e19")?
+  inspect(ryu_to_string(4.3816050601147837e18), ~content="4.3816050601147837e18")?
+}
+
+test "Looks Like Pow5" {
+  inspect(ryu_to_string(0x4830F0CF064DD592L.reinterpret_as_double()), ~content="5.764607523034235e39")?
+  inspect(ryu_to_string(0x4840F0CF064DD592L.reinterpret_as_double()), ~content="1.152921504606847e40")?
+  inspect(ryu_to_string(0x4850F0CF064DD592L.reinterpret_as_double()), ~content="2.305843009213694e40")?
+}
+
+test "Output Length" {
+  inspect(ryu_to_string(1.0), ~content="1.0")?
+  inspect(ryu_to_string(1.2), ~content="1.2")?
+  inspect(ryu_to_string(1.23), ~content="1.23")?
+  inspect(ryu_to_string(1.234), ~content="1.234")?
+  inspect(ryu_to_string(1.2345), ~content="1.2345")?
+  inspect(ryu_to_string(1.23456), ~content="1.23456")?
+  inspect(ryu_to_string(1.234567), ~content="1.234567")?
+  inspect(ryu_to_string(1.2345678), ~content="1.2345678")?
+  inspect(ryu_to_string(1.23456789), ~content="1.23456789")?
+  inspect(ryu_to_string(1.234567895), ~content="1.234567895")?
+  inspect(ryu_to_string(1.2345678901), ~content="1.2345678901")?
+  inspect(ryu_to_string(1.23456789012), ~content="1.23456789012")?
+  inspect(ryu_to_string(1.234567890123), ~content="1.234567890123")?
+  inspect(ryu_to_string(1.2345678901234), ~content="1.2345678901234")?
+  inspect(ryu_to_string(1.23456789012345), ~content="1.23456789012345")?
+  inspect(ryu_to_string(1.234567890123456), ~content="1.234567890123456")?
+  inspect(ryu_to_string(1.2345678901234567), ~content="1.2345678901234567")?
+}
+
+test "32-bit chunking" {
+  inspect(ryu_to_string(4.294967294), ~content="4.294967294")?
+  inspect(ryu_to_string(4.294967295), ~content="4.294967295")?
+  inspect(ryu_to_string(4.294967296), ~content="4.294967296")?
+  inspect(ryu_to_string(4.294967297), ~content="4.294967297")?
+  inspect(ryu_to_string(4.294967298), ~content="4.294967298")?
+}
+
+test "Min Max Shift" {
+  inspect(ryu_to_string(ieee_parts_to_double(false, 4, 0L)), ~content="1.7800590868057611e-307")?
+  inspect(ryu_to_string(ieee_parts_to_double(false, 6, 0x0010000000000000L)), ~content="1.424047269444609e-306")?
+  inspect(ryu_to_string(ieee_parts_to_double(false, 41, 0L)), ~content="2.446494580089078e-296")?
+  inspect(ryu_to_string(ieee_parts_to_double(false, 40, 0x0010000000000000L)), ~content="2.446494580089078e-296")?
+  inspect(ryu_to_string(ieee_parts_to_double(false, 1077, 0L)), ~content="1.8014398509481984e16")?
+  inspect(ryu_to_string(ieee_parts_to_double(false, 1076, 0x0010000000000000L)), ~content="1.8014398509481984e16")?
+  inspect(ryu_to_string(ieee_parts_to_double(false, 307, 0L)), ~content="2.900835519859558e-216")?
+  inspect(ryu_to_string(ieee_parts_to_double(false, 306, 0x0010000000000000L)), ~content="2.900835519859558e-216")?
+  inspect(ryu_to_string(ieee_parts_to_double(false, 934, 0x000FA7161A4D6E0CL)), ~content="3.196104012172126e-27")?
+}
+
+test "Small Integers" {
+  // 2^53-1
+  inspect(ryu_to_string(9007199254740991.0), ~content="9.007199254740991e15")?
+  // 2^53
+  inspect(ryu_to_string(9007199254740992.0), ~content="9.007199254740992e15")?
+  inspect(ryu_to_string(1.0e+0), ~content="1.0")?
+  inspect(ryu_to_string(1.2e+1), ~content="12.0")?
+  inspect(ryu_to_string(1.23e+2), ~content="123.0")?
+  inspect(ryu_to_string(1.234e+3), ~content="1234.0")?
+  inspect(ryu_to_string(1.2345e+4), ~content="12345.0")?
+  inspect(ryu_to_string(1.23456e+5), ~content="123456.0")?
+  inspect(ryu_to_string(1.234567e+6), ~content="1234567.0")?
+  inspect(ryu_to_string(1.2345678e+7), ~content="1.2345678e7")?
+  inspect(ryu_to_string(1.23456789e+8), ~content="1.23456789e8")?
+  inspect(ryu_to_string(1.23456789e+9), ~content="1.23456789e9")?
+  inspect(ryu_to_string(1.234567895e+9), ~content="1.234567895e9")?
+  inspect(ryu_to_string(1.2345678901e+10), ~content="1.2345678901e10")?
+  inspect(ryu_to_string(1.23456789012e+11), ~content="1.23456789012e11")?
+  inspect(ryu_to_string(1.234567890123e+12), ~content="1.234567890123e12")?
+  inspect(ryu_to_string(1.2345678901234e+13), ~content="1.2345678901234e13")?
+  inspect(ryu_to_string(1.23456789012345e+14), ~content="1.23456789012345e14")?
+  inspect(ryu_to_string(1.234567890123456e+15), ~content="1.234567890123456e15")?
+}
+
+test "10^i" {
+  inspect(ryu_to_string(1.0e-15), ~content="1.0e-15")?
+  inspect(ryu_to_string(1.0e-14), ~content="1.0e-14")?
+  inspect(ryu_to_string(1.0e-13), ~content="1.0e-13")?
+  inspect(ryu_to_string(1.0e-12), ~content="1.0e-12")?
+  inspect(ryu_to_string(1.0e-11), ~content="1.0e-11")?
+  inspect(ryu_to_string(1.0e-10), ~content="1.0e-10")?
+  inspect(ryu_to_string(1.0e-9), ~content="1.0e-9")?
+  inspect(ryu_to_string(1.0e-8), ~content="1.0e-8")?
+  inspect(ryu_to_string(1.0e-7), ~content="1.0e-7")?
+  inspect(ryu_to_string(1.0e-6), ~content="1.0e-6")?
+  inspect(ryu_to_string(1.0e-5), ~content="1.0e-5")?
+  inspect(ryu_to_string(1.0e-4), ~content="1.0e-4")?
+  inspect(ryu_to_string(1.0e-3), ~content="0.001")?
+  inspect(ryu_to_string(1.0e-2), ~content="0.01")?
+  inspect(ryu_to_string(1.0e-1), ~content="0.1")?
+  inspect(ryu_to_string(1.0e+0), ~content="1.0")?
+  inspect(ryu_to_string(1.0e+1), ~content="10.0")?
+  inspect(ryu_to_string(1.0e+2), ~content="100.0")?
+  inspect(ryu_to_string(1.0e+3), ~content="1000.0")?
+  inspect(ryu_to_string(1.0e+4), ~content="10000.0")?
+  inspect(ryu_to_string(1.0e+5), ~content="100000.0")?
+  inspect(ryu_to_string(1.0e+6), ~content="1000000.0")?
+  inspect(ryu_to_string(1.0e+7), ~content="1.0e7")?
+  inspect(ryu_to_string(1.0e+8), ~content="1.0e8")?
+  inspect(ryu_to_string(1.0e+9), ~content="1.0e9")?
+  inspect(ryu_to_string(1.0e+10), ~content="1.0e10")?
+  inspect(ryu_to_string(1.0e+11), ~content="1.0e11")?
+  inspect(ryu_to_string(1.0e+12), ~content="1.0e12")?
+  inspect(ryu_to_string(1.0e+13), ~content="1.0e13")?
+  inspect(ryu_to_string(1.0e+14), ~content="1.0e14")?
+  inspect(ryu_to_string(1.0e+15), ~content="1.0e15")?
+}
+
+test "10^15 + 10^i" {
+  inspect(ryu_to_string(1.0e+15 + 1.0e+0), ~content="1.000000000000001e15")?
+  inspect(ryu_to_string(1.0e+15 + 1.0e+1), ~content="1.00000000000001e15")?
+  inspect(ryu_to_string(1.0e+15 + 1.0e+2), ~content="1.0000000000001e15")?
+  inspect(ryu_to_string(1.0e+15 + 1.0e+3), ~content="1.000000000001e15")?
+  inspect(ryu_to_string(1.0e+15 + 1.0e+4), ~content="1.00000000001e15")?
+  inspect(ryu_to_string(1.0e+15 + 1.0e+5), ~content="1.0000000001e15")?
+  inspect(ryu_to_string(1.0e+15 + 1.0e+6), ~content="1.000000001e15")?
+  inspect(ryu_to_string(1.0e+15 + 1.0e+7), ~content="1.00000001e15")?
+  inspect(ryu_to_string(1.0e+15 + 1.0e+8), ~content="1.0000001e15")?
+  inspect(ryu_to_string(1.0e+15 + 1.0e+9), ~content="1.000001e15")?
+  inspect(ryu_to_string(1.0e+15 + 1.0e+10), ~content="1.00001e15")?
+  inspect(ryu_to_string(1.0e+15 + 1.0e+11), ~content="1.0001e15")?
+  inspect(ryu_to_string(1.0e+15 + 1.0e+12), ~content="1.001e15")?
+  inspect(ryu_to_string(1.0e+15 + 1.0e+13), ~content="1.01e15")?
+  inspect(ryu_to_string(1.0e+15 + 1.0e+14), ~content="1.1e15")?
+}
+
+test "Largest power of 2 <= 10^(i+1)" {
+  inspect(ryu_to_string(8.0), ~content="8.0")?
+  inspect(ryu_to_string(64.0), ~content="64.0")?
+  inspect(ryu_to_string(512.0), ~content="512.0")?
+  inspect(ryu_to_string(8192.0), ~content="8192.0")?
+  inspect(ryu_to_string(65536.0), ~content="65536.0")?
+  inspect(ryu_to_string(524288.0), ~content="524288.0")?
+  inspect(ryu_to_string(8388608.0), ~content="8388608.0")?
+  inspect(ryu_to_string(67108864.0), ~content="6.7108864e7")?
+  inspect(ryu_to_string(536870912.0), ~content="5.36870912e8")?
+  inspect(ryu_to_string(8589934592.0), ~content="8.589934592e9")?
+  inspect(ryu_to_string(68719476736.0), ~content="6.8719476736e10")?
+  inspect(ryu_to_string(549755813888.0), ~content="5.49755813888e11")?
+  inspect(ryu_to_string(8796093022208.0), ~content="8.796093022208e12")?
+  inspect(ryu_to_string(70368744177664.0), ~content="7.0368744177664e13")?
+  inspect(ryu_to_string(562949953421312.0), ~content="5.62949953421312e14")?
+  inspect(ryu_to_string(9007199254740992.0), ~content="9.007199254740992e15")?
+}
+
+test "1000 * (Largest power of 2 <= 10^(i+1))" {
+  inspect(ryu_to_string(8.0e+3), ~content="8000.0")?
+  inspect(ryu_to_string(64.0e+3), ~content="64000.0")?
+  inspect(ryu_to_string(512.0e+3), ~content="512000.0")?
+  inspect(ryu_to_string(8192.0e+3), ~content="8192000.0")?
+  inspect(ryu_to_string(65536.0e+3), ~content="6.5536e7")?
+  inspect(ryu_to_string(524288.0e+3), ~content="5.24288e8")?
+  inspect(ryu_to_string(8388608.0e+3), ~content="8.388608e9")?
+  inspect(ryu_to_string(67108864.0e+3), ~content="6.7108864e10")?
+  inspect(ryu_to_string(536870912.0e+3), ~content="5.36870912e11")?
+  inspect(ryu_to_string(8589934592.0e+3), ~content="8.589934592e12")?
+  inspect(ryu_to_string(68719476736.0e+3), ~content="6.8719476736e13")?
+  inspect(ryu_to_string(549755813888.0e+3), ~content="5.49755813888e14")?
+  inspect(ryu_to_string(8796093022208.0e+3), ~content="8.796093022208e15")?
+}
+
+test "boundary conditions" {
+    // x = 1.0e7
+  inspect(ryu_to_string(1.0e7), ~content="1.0e7")?
+  // x < 1.0e7
+  inspect(ryu_to_string(9999999.999999998), ~content="9999999.999999998")?
+  // x = 1.0e-3
+  inspect(ryu_to_string(0.001), ~content="0.001")?
+  // x < 1.0e-3
+  inspect(ryu_to_string(0.0009999999999999998), ~content="9.999999999999998e-4")?
+}
+
+// For testing purposes
+fn ieee_parts_to_double(sign : Bool, ieeeExponent : Int, ieeeMantissa : Int64) ->
+     Double {
+  sign.to_int64().lsl(63).lor(ieeeExponent.to_int64().lsl(52)).lor(
+    ieeeMantissa,
+  ).reinterpret_as_double()
 }
