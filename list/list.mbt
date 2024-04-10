@@ -152,13 +152,18 @@ test "mapi" {
 }
 
 /// Convert list to array.
-pub fn to_array[T : Default](self : List[T]) -> Array[T] {
-  let arr = Array::make(self.length(), T::default())
-  self.iteri(fn(i, x) { arr[i] = x })
-  return arr
+pub fn to_array[T](self : List[T]) -> Array[T] {
+  match self {
+    Nil => []
+    Cons(head, _) => {
+      let arr = Array::make(self.length(), head)
+      self.iteri(fn(i, x) { arr[i] = x })
+      arr
+    }
+  }
 }
 
-test "to array" {
+test "to_array" {
   let list = List::[1, 2, 3, 4, 5]
   let array = to_array(list)
   @assertion.assert_eq(array, [1, 2, 3, 4, 5])?
@@ -370,24 +375,36 @@ test "reverse" {
   @assertion.assert_eq(ls, ls.reverse().reverse())?
 }
 
-/// Fold the list.
+/// Fold the list from left.
 ///
 /// # Example
 /// 
 /// ```
-/// let r = from_array([1, 2, 3, 4, 5]).fold(0, fn(acc, x) { acc + x })
+/// let r = from_array([1, 2, 3, 4, 5]).fold_left(~init=0, fn(acc, x) { acc + x })
 /// debug(r) // output: 15
 /// ```
-pub fn fold[T, U](self : List[T], initial : U, f : (U, T) -> U) -> U {
+pub fn fold_left[T, U](self : List[T], f : (U, T) -> U, ~init : U) -> U {
   match self {
-    Nil => initial
-    Cons(head, tail) => fold(tail, f(initial, head), f)
+    Nil => init
+    Cons(head, tail) => tail.fold_left(f, ~init=f(init, head))
   }
 }
 
-test "fold" {
+test "fold_left" {
   let ls = from_array([1, 2, 3, 4, 5])
-  @assertion.assert_eq(ls.fold(0, fn(acc, x) { acc + x }), 15)?
+  @assertion.assert_eq(ls.fold_left(fn(acc, x) { acc + x }, ~init=0), 15)?
+}
+
+pub fn fold_right[T, U](self : List[T], f : (T, U) -> U, ~init : U) -> U {
+  match self {
+    Nil => init
+    Cons(head, tail) => f(head, tail.fold_right(f, ~init))
+  }
+}
+
+test "fold_right" {
+  let ls = List::["1", "2", "3", "4", "5"]
+  @assertion.assert_eq(ls.fold_right(fn(x, acc) { x + acc }, ~init=""), "12345")?
 }
 
 /// Zip two lists.
