@@ -618,8 +618,7 @@ fn d2d_small_int(
   Some({ mantissa: m2.lsr(-e2), exponent: 0 })
 }
 
-/// @intrinsic %f64.to_string
-pub fn to_string(self : Double) -> String {
+fn ryu_to_string(self : Double) -> String {
   // Step 1: Decode the floating-point number, and unify normalized and subnormal cases.
   let bits : Int64 = self.reinterpret_as_i64()
 
@@ -655,21 +654,26 @@ pub fn to_string(self : Double) -> String {
   to_chars(v, ieeeSign)
 }
 
+/// @intrinsic %f64.to_string
+pub fn to_string(self : Double) -> String {
+  ryu_to_string(self)
+}
+
 pub fn debug_write(self : Double, buf : Buffer) -> Unit {
   buf.write_string(self.to_string())
 }
 
 test "to_string" {
-  inspect(0.0.to_string(), ~content="0.0")?
+  inspect(ryu_to_string(0.0), ~content="0.0")?
   let d = -0.0
-  inspect(d.to_string(), ~content="-0.0")?
-  inspect(100.0.to_string(), ~content="100.0")?
-  inspect(10000000000.1.to_string(), ~content="1.00000000001e10")?
-  inspect(12345678.910.to_string(), ~content="1.234567891e7")?
-  inspect(Double::nan().to_string(), ~content="NaN")?
-  inspect(Double::inf(1).to_string(), ~content="Infinity")?
-  inspect(Double::inf(-1).to_string(), ~content="-Infinity")?
-  inspect(Double::max_value().to_string(), ~content="1.7976931348623157e308")?
-  inspect(Double::min_value().to_string(), ~content="5.0e-324")?
-  inspect(Double::min_normal().to_string(), ~content="2.2250738585072014e-308")?
+  inspect(ryu_to_string(d), ~content="-0.0")?
+  inspect(ryu_to_string(100.0), ~content="100.0")?
+  inspect(ryu_to_string(10000000000.1), ~content="1.00000000001e10")?
+  inspect(ryu_to_string(12345678.910), ~content="1.234567891e7")?
+  inspect(ryu_to_string(Double::nan()), ~content="NaN")?
+  inspect(ryu_to_string(Double::inf(1)), ~content="Infinity")?
+  inspect(ryu_to_string(Double::inf(-1)), ~content="-Infinity")?
+  inspect(ryu_to_string(Double::max_value()), ~content="1.7976931348623157e308")?
+  inspect(ryu_to_string(Double::min_value()), ~content="5.0e-324")?
+  inspect(ryu_to_string(Double::min_normal()), ~content="2.2250738585072014e-308")?
 }
