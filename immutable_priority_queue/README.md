@@ -17,11 +17,11 @@ let queue1 : ImmutablePriorityQueue[Int] = new()
 let queue2 = ImmutablePriorityQueue::[1, 2, 3]
 ```
 
-Note, however, that the default immtuable priority queue created is greater-first; if you need to create a less-first queue, you can write a struct belongs to Compare trait to implement it.
+Note, however, that the default immutable priority queue created is greater-first; if you need to create a less-first queue, you can write a struct belongs to Compare trait to implement it.
 
 ### Empty
 
-You can use the `is_empty` to determine whether the immtuable priority queue is empty.
+You can use the `is_empty` to determine whether the immutable priority queue is empty.
 
 ```moonbit
 let pq : ImmutablePrioriryQueue[Int] = ImmutablePrioriryQueue::new()
@@ -42,13 +42,13 @@ pq.peek() // Some(5)
 You can use `push()` to add elements to the immutable priority queue and get a new queue.
 
 ```moonbit
-let pq : PriorityQueue[Int] = ImmtuablePriorityQueue::new()
+let pq : PriorityQueue[Int] = Immutable::new()
 pq.push(1).peek() // Some(!)
 ```
 
 ### Pop
 
-You can use `pop()` to pop the element at the front of the priority queue and get a new immutable priority queue wrapped with Option. If the immutable priority queue is empty, then it will return None.
+You can use `pop()` to remove the element at the front of the priority queue and get a new immutable priority queue wrapped with Option. If the immutable priority queue is empty, then it will return None.
 
 ```moonbit
 let pq = PriorityQueue::[5, 4, 3, 2, 1]
