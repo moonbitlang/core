@@ -254,20 +254,20 @@ test "tail" {
 /// # Example
 /// 
 /// ```
-/// debug(List::[1, 2, 3, 4, 5].head())
+/// debug(List::[1, 2, 3, 4, 5].head_exn())
 /// // output: 1
 /// ```
 /// @alert unsafe "Panic if the list is empty"
-pub fn head[T](self : List[T]) -> T {
+pub fn head_exn[T](self : List[T]) -> T {
   match self {
     Nil => abort("head of empty list")
     Cons(head, _) => head
   }
 }
 
-test "head" {
+test "head_exn" {
   let ls = List::[1, 2, 3, 4, 5]
-  @assertion.assert_eq(ls.head(), 1)?
+  @assertion.assert_eq(ls.head_exn(), 1)?
 }
 
 /// Get first element of the list.
@@ -280,18 +280,18 @@ test "head" {
 /// debug(from_array([]).head())
 /// // output: None
 /// ```
-pub fn head_option[T](self : List[T]) -> Option[T] {
+pub fn head[T](self : List[T]) -> Option[T] {
   match self {
     Nil => None
     Cons(head, _) => Some(head)
   }
 }
 
-test "head option" {
+test "head" {
   let ls = List::[1, 2, 3, 4, 5]
   let el : List[Unit] = List::[]
-  @assertion.assert_eq(ls.head_option(), Some(1))?
-  @assertion.assert_eq(el.head_option(), None)?
+  @assertion.assert_eq(ls.head(), Some(1))?
+  @assertion.assert_eq(el.head(), None)?
 }
 
 /// Last element of the list.
@@ -509,7 +509,7 @@ test "concat_map" {
 
 /// Get nth element of the list
 /// @alert unsafe "Panic if the index is out of bounds"
-pub fn nth[T](self : List[T], n : Int) -> T {
+pub fn nth_exn[T](self : List[T], n : Int) -> T {
   loop self, n {
     Nil, _ => abort("nth: index out of bounds")
     Cons(head, _), 0 => head
@@ -517,17 +517,17 @@ pub fn nth[T](self : List[T], n : Int) -> T {
   }
 }
 
-test "nth" {
+test "nth_exn" {
   let ls = List::[1, 2, 3, 4, 5]
-  @assertion.assert_eq(ls.nth(0), 1)?
-  @assertion.assert_eq(ls.nth(1), 2)?
-  @assertion.assert_eq(ls.nth(2), 3)?
-  @assertion.assert_eq(ls.nth(3), 4)?
-  @assertion.assert_eq(ls.nth(4), 5)?
+  @assertion.assert_eq(ls.nth_exn(0), 1)?
+  @assertion.assert_eq(ls.nth_exn(1), 2)?
+  @assertion.assert_eq(ls.nth_exn(2), 3)?
+  @assertion.assert_eq(ls.nth_exn(3), 4)?
+  @assertion.assert_eq(ls.nth_exn(4), 5)?
 }
 
 /// Get nth element of the list or None if the index is out of bounds
-pub fn nth_option[T](self : List[T], n : Int) -> Option[T] {
+pub fn nth[T](self : List[T], n : Int) -> Option[T] {
   loop self, n {
     Nil, _ => None
     Cons(head, _), 0 => Some(head)
@@ -535,14 +535,14 @@ pub fn nth_option[T](self : List[T], n : Int) -> Option[T] {
   }
 }
 
-test "nth_option" {
+test "nth" {
   let ls = List::[1, 2, 3, 4, 5]
-  @assertion.assert_eq(ls.nth_option(0), Some(1))?
-  @assertion.assert_eq(ls.nth_option(1), Some(2))?
-  @assertion.assert_eq(ls.nth_option(2), Some(3))?
-  @assertion.assert_eq(ls.nth_option(3), Some(4))?
-  @assertion.assert_eq(ls.nth_option(4), Some(5))?
-  @assertion.assert_eq(ls.nth_option(5), None)?
+  @assertion.assert_eq(ls.nth(0), Some(1))?
+  @assertion.assert_eq(ls.nth(1), Some(2))?
+  @assertion.assert_eq(ls.nth(2), Some(3))?
+  @assertion.assert_eq(ls.nth(3), Some(4))?
+  @assertion.assert_eq(ls.nth(4), Some(5))?
+  @assertion.assert_eq(ls.nth(5), None)?
 }
 
 /// Create a list of length n with the given value
@@ -910,7 +910,7 @@ pub fn scan_right[T, E](self : List[T], f : (T, E) -> E, ~init : E) -> List[E] {
     Nil => Cons(init, Nil)
     Cons(x, xs) => {
       let qs = xs.scan_right(f, ~init)
-      Cons(f(x, qs.head()), qs)
+      Cons(f(x, qs.head_exn()), qs)
     }
   }
 }
