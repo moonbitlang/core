@@ -19,7 +19,7 @@ struct Number {
   mantissa : UInt64
   negative : Bool
   many_digits : Bool
-} derive(Debug)
+} 
 
 fn is_digit(c : Char) -> Bool {
   c >= '0' && c <= '9'

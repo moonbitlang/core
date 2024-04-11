@@ -59,14 +59,6 @@ fn op_neg(self : UInt64) -> UInt64 {
   new_UInt64_Int64(-self.inner)
 }
 
-fn to_string(self : UInt64) -> String {
-  self.inner.to_string() // FIXME: take care of the case when the number is negative
-}
-
-fn debug_write(self : UInt64, buf : Buffer) -> Unit {
-  self.inner.debug_write(buf) // FIXME: don't use the Int64 debug_write
-}
-
 fn lnot(self : UInt64) -> UInt64 {
   new_UInt64_Int64(self.inner.lnot())
 }
@@ -93,15 +85,6 @@ fn lsl(self : UInt64, b : Int) -> UInt64 {
 
 fn to_int64(self : UInt64) -> Int64 {
   self.inner
-}
-
-/// use it at your own risk
-fn unsafe_to_int(self : UInt64) -> Int {
-  self.inner.to_int()
-}
-
-fn reinterpret_as_double(self : UInt64) -> Double {
-  self.inner.reinterpret_as_double()
 }
 
 fn to_double(self : UInt64) -> Double {

@@ -32,18 +32,6 @@ fn subfix_unchecked(self : StringSlice, start : Int) -> StringSlice {
   { string: self.string, start: self.start + start, end: self.end }
 }
 
-fn prefix_unchecked(self : StringSlice, end : Int) -> StringSlice {
-  { string: self.string, start: self.start, end: self.start + end }
-}
-
-fn subslice_unchecked(
-  self : StringSlice,
-  start : Int,
-  end : Int
-) -> StringSlice {
-  { string: self.string, start: self.start + start, end: self.start + end }
-}
-
 fn first_is(self : StringSlice, c : Char) -> Bool {
   self.length() > 0 && self[0] == c
 }
@@ -99,21 +87,6 @@ fn to_string(self : StringSlice) -> String {
     buf.write_char(self[i])
   }
   buf.to_string()
-}
-
-fn skip_chars(self : StringSlice, char : Char) -> StringSlice {
-  let mut i = 0
-  while i < self.length() {
-    if self[i] == char {
-      i = i + 1
-    } else {
-      break
-    }
-  }
-  match self.step(i) {
-    Some(s) => s
-    None => self.subfix_unchecked(self.length()) // Impossible to reach
-  }
 }
 
 fn prefix_eq_ignore_case(self : StringSlice, s2 : String) -> Bool {
