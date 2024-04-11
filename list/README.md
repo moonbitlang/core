@@ -82,20 +82,21 @@ ls.drop_while(fn (ele) { ele < 3 }) // List::[3, 4, 5]
 ```
 
 ### Accessing elements / sub-lists
-You can access the head of the list using the `head()` (O(1)) method, and the last element in list using the `last()` (O(n)) method.
-These two functions will panic if the list is empty.
+You can access the head of the list using the `head()` (O(1)) method. It returns `Some(head)` or `None` if the list is empty.
+And access the last element using the `last()` method (O(n)). The unsafe version of `head()` is `head_exn()`, which panics if the list is empty.
 ```moonbit
 let list = List::[1, 2, 3, 4, 5]
-list.head() // 1
+list.head() // Some(1)
+list.head_exn() // 1
 list.last() // 5
 ```
 
-For randomly accessing, you can use the `nth()` method, which returns the nth element in the list (O(n)). 
-This method will panic if the index is out of bounds. For a safe alternative, use `nth_option()` method.
+For randomly accessing, you can use the `nth_exn()` method, which returns the nth element in the list (O(n)). 
+This method will panic if the index is out of bounds. For a safe alternative, use `nth()` method.
 ```moonbit
 let list = List::[1, 2, 3, 4, 5]
-list.nth(2) // 3
-list.nth_option(2) // Some(3)
+list.nth_exn(2) // 3
+list.nth(2) // Some(3)
 ```
 
 To get a sub-list from the list, you can use the `init_()` method for getting all elements except the last one, and `tail()` for getting all elements except the first one.
