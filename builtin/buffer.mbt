@@ -28,6 +28,7 @@
 struct Buffer {
   mut bytes : Bytes
   mut len : Int
+  initial_bytes : Bytes
 }
 
 pub fn expect(
@@ -60,6 +61,9 @@ pub fn expect(
 fn grow_if_necessary(self : Buffer, required : Int) -> Unit {
   // TODO: get rid of mut
   let mut enough_space = self.bytes.length()
+  if enough_space <= 0 {
+    enough_space = 1
+  }
   // double the enough_space until it larger than required
   while enough_space < required {
     enough_space = enough_space * 2
@@ -79,7 +83,8 @@ pub fn to_string(self : Buffer) -> String {
 /// Create a buffer with initial capacity.
 pub fn Buffer::make(initial_capacity : Int) -> Buffer {
   let initial = if initial_capacity < 1 { 1 } else { initial_capacity }
-  { bytes: Bytes::make(initial, 0), len: 0 }
+  let bytes = Bytes::make(initial, 0)
+  { bytes, len: 0, initial_bytes: bytes }
 }
 
 /// Write a string into buffer.
@@ -112,6 +117,7 @@ pub fn write_char(self : Buffer, value : Char) -> Unit {
 }
 
 pub fn reset(self : Buffer) -> Unit {
+  self.bytes = self.initial_bytes
   self.len = 0
 }
 
