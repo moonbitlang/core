@@ -14,11 +14,12 @@
 
 /// High Precision Decimal structure for "Simple Decimal Conversion" algorithm.
 /// Developed by Ken. Thompson, Russ Cox, Robert Griesemer, Nigel Tao.
-/// 
+///
 /// reference:
 /// - <https://nigeltao.github.io/blog/2020/parse-number-f64-simple.html>
 /// - <https://nigeltao.github.io/blog/2020/eisel-lemire.html>
-struct Decimal {
+
+pub struct Decimal {
   digits : Bytes
   mut digits_num : Int
   mut decimal_point : Int
@@ -283,7 +284,7 @@ fn rounded_integer(self : Decimal) -> Int64 {
 }
 
 /// Check if truncate at d digits should round up.
-/// Typically, when rounding a decimal fraction to an integer, 7.3 rounds down to 7 and 7.6 rounds up to 8. 
+/// Typically, when rounding a decimal fraction to an integer, 7.3 rounds down to 7 and 7.6 rounds up to 8.
 /// Rounding numbers like 7.5, half-way between two integers, will round to even.
 fn should_round_up(self : Decimal, d : Int) -> Bool {
   if d < 0 || d >= self.digits_num {
