@@ -55,11 +55,11 @@ test "length" {
 /// from_array([1, 2, 3, 4, 5]).iter(print) // output: 12345
 /// ```
 pub fn iter[T](self : List[T], f : (T) -> Unit) -> Unit {
-  match self {
+  loop self {
     Nil => ()
     Cons(head, tail) => {
       f(head)
-      iter(tail, f)
+      continue tail
     }
   }
 }
@@ -299,10 +299,10 @@ test "head option" {
 /// ```
 /// @alert unsafe "Panic if the list is empty"
 pub fn last[T](self : List[T]) -> T {
-  match self {
+  loop self {
     Nil => abort("last of empty list")
     Cons(head, Nil) => head
-    Cons(_, tail) => last(tail)
+    Cons(_, tail) => continue tail
   }
 }
 
@@ -419,7 +419,7 @@ test "fold_right" {
 }
 
 /// Fold the list from left with index.
-pub fn fold_lefti[T, U](self: List[T], f : (Int, U, T) -> U, ~init : U) -> U {
+pub fn fold_lefti[T, U](self : List[T], f : (Int, U, T) -> U, ~init : U) -> U {
   fn go(xs : List[T], i : Int, f : (Int, U, T) -> U, acc : U) -> U {
     match xs {
       Nil => acc
@@ -432,11 +432,14 @@ pub fn fold_lefti[T, U](self: List[T], f : (Int, U, T) -> U, ~init : U) -> U {
 
 test "fold_lefti" {
   let ls = List::[1, 2, 3, 4, 5]
-  @assertion.assert_eq(ls.fold_lefti(fn(i, acc, x) { acc + i * x }, ~init=0), 40)?
+  @assertion.assert_eq(
+    ls.fold_lefti(fn(i, acc, x) { acc + i * x }, ~init=0),
+    40,
+  )?
 }
 
 /// Fold the list from right with index.
-pub fn fold_righti[T, U](self: List[T], f : (Int, T, U) -> U, ~init : U) -> U {
+pub fn fold_righti[T, U](self : List[T], f : (Int, T, U) -> U, ~init : U) -> U {
   fn go(xs : List[T], i : Int, f : (Int, T, U) -> U, acc : U) -> U {
     match xs {
       Nil => acc
@@ -449,7 +452,10 @@ pub fn fold_righti[T, U](self: List[T], f : (Int, T, U) -> U, ~init : U) -> U {
 
 test "fold_righti" {
   let ls = List::[1, 2, 3, 4, 5]
-  @assertion.assert_eq(ls.fold_righti(fn(i, x, acc) { x * i + acc }, ~init=0), 40)?
+  @assertion.assert_eq(
+    ls.fold_righti(fn(i, x, acc) { x * i + acc }, ~init=0),
+    40,
+  )?
 }
 
 /// Zip two lists.
@@ -497,9 +503,10 @@ test "concat_map" {
 /// Get nth element of the list
 /// @alert unsafe "Panic if the index is out of bounds"
 pub fn nth[T](self : List[T], n : Int) -> T {
-  match self {
-    Nil => abort("nth: index out of bounds")
-    Cons(head, tail) => if n == 0 { head } else { nth(tail, n - 1) }
+  loop self, n {
+    Nil, _ => abort("nth: index out of bounds")
+    Cons(head, _), 0 => head
+    Cons(_, tail), n => continue tail, n - 1
   }
 }
 
@@ -514,14 +521,10 @@ test "nth" {
 
 /// Get nth element of the list or None if the index is out of bounds
 pub fn nth_option[T](self : List[T], n : Int) -> Option[T] {
-  match self {
-    Nil => None
-    Cons(head, tail) =>
-      if n == 0 {
-        Some(head)
-      } else {
-        nth_option(tail, n - 1)
-      }
+  loop self, n {
+    Nil, _ => None
+    Cons(head, _), 0 => Some(head)
+    Cons(_, tail), n => continue tail, n - 1
   }
 }
 
@@ -721,9 +724,9 @@ pub fn op_add[T](self : List[T], other : List[T]) -> List[T] {
 
 /// Check if the list contains the value.
 pub fn contain[T : Eq](self : List[T], value : T) -> Bool {
-  match self {
+  loop self {
     Nil => false
-    Cons(x, xs) => if x == value { true } else { contain(xs, value) }
+    Cons(x, xs) => if x == value { true } else { continue xs }
   }
 }
 
@@ -755,7 +758,10 @@ pub fn unfold[T, State](
 }
 
 test "unfold" {
-  let ls = unfold(~init=0, fn { i => if i == 3 { None } else { Some((i, i + 1)) } })
+  let ls = unfold(
+    ~init=0,
+    fn { i => if i == 3 { None } else { Some((i, i + 1)) } },
+  )
   @assertion.assert_eq(ls, Cons(0, Cons(1, Cons(2, Nil))))?
 }
 
@@ -808,7 +814,7 @@ fn unsafe_drop[T](n : Int, xs : List[T]) -> List[T] {
     (0, _) => xs
     (1, Cons(_, xs)) => xs
     (_, Cons(_, xs)) => unsafe_drop(n - 1, xs)
-    _ => abort("drop: index out of bounds")
+    (x, _) => abort("drop: index out of bounds" + x.to_string())
   }
 }
 
@@ -844,9 +850,9 @@ test "take_while" {
 /// from_array([1, 2, 3, 4]).drop_while(fn(x) { x < 3 })
 /// ```
 pub fn drop_while[T](self : List[T], p : (T) -> Bool) -> List[T] {
-  match self {
+  loop self {
     Nil => Nil
-    Cons(x, xs) => if p(x) { xs.drop_while(p) } else { Cons(x, xs) }
+    Cons(x, xs) => if p(x) { continue xs } else { Cons(x, xs) }
   }
 }
 
@@ -865,16 +871,17 @@ test "drop_while" {
 /// ```
 pub fn scan_left[T, E](self : List[T], f : (E, T) -> E, ~init : E) -> List[E] {
   Cons(
-    init, match self {
+    init,
+    match self {
       Nil => Nil
       Cons(x, xs) => xs.scan_left(f, ~init=f(init, x))
-    }
+    },
   )
 }
 
 test "scan_left" {
   let ls = List::[1, 2, 3, 4, 5].scan_left(fn(acc, x) { acc + x }, ~init=0)
-  let ls2 = List::[1,2,3,4].scan_left(fn (acc, x) {acc - x}, ~init=100)
+  let ls2 = List::[1, 2, 3, 4].scan_left(fn(acc, x) { acc - x }, ~init=100)
   @assertion.assert_eq(ls, from_array([0, 1, 3, 6, 10, 15]))?
   @assertion.assert_eq(ls2, from_array([100, 99, 97, 94, 90]))?
 }
@@ -914,9 +921,9 @@ test "scan_right" {
 /// ls.lookup(3) // output: Some("c")
 /// ```
 pub fn lookup[T : Eq, E](self : List[(T, E)], v : T) -> Option[E] {
-  match self {
+  loop self {
     Nil => None
-    Cons((x, y), xs) => if x == v { Some(y) } else { lookup(xs, v) }
+    Cons((x, y), xs) => if x == v { Some(y) } else { continue xs }
   }
 }
 
@@ -924,29 +931,6 @@ test "lookup" {
   let ls = from_array([(1, "a"), (2, "b"), (3, "c")])
   @assertion.assert_eq(ls.lookup(3), Some("c"))?
   @assertion.assert_eq(ls.lookup(4), None)?
-}
-
-/// Returns the first element of list that satisfies f.
-///
-/// # Example
-///
-/// ```
-/// println(List::[1, 3, 5, 8].find(fn(element) -> Bool { element % 2 == 0}))
-/// // output: 8
-/// ```
-/// @alert unsafe "Panic if no element satisfies f."
-pub fn find[T](self : List[T], f : (T) -> Bool) -> T {
-  match self {
-    Nil => abort("find: no matching element")
-    Cons(element, list) => if f(element) { element } else { list.find(f) }
-  }
-}
-
-test "find" {
-  @assertion.assert_eq(
-    List::[1, 3, 5, 8].find(fn(element) -> Bool { element % 2 == 0 }),
-    8,
-  )?
 }
 
 /// Find the first element in the list that satisfies f.
@@ -957,25 +941,25 @@ test "find" {
 /// println(List::[1, 3, 5, 8].find(fn(element) -> Bool { element % 2 == 0}))
 /// // output: Some(8)
 /// ```
-pub fn find_option[T](self : List[T], f : (T) -> Bool) -> Option[T] {
-  match self {
+pub fn find[T](self : List[T], f : (T) -> Bool) -> Option[T] {
+  loop self {
     Nil => None
     Cons(element, list) =>
       if f(element) {
         Some(element)
       } else {
-        list.find_option(f)
+        continue list
       }
   }
 }
 
-test "find_option" {
+test "find" {
   @assertion.assert_eq(
-    List::[1, 3, 5, 8].find_option(fn(element) -> Bool { element % 2 == 0 }),
+    List::[1, 3, 5, 8].find(fn(element) -> Bool { element % 2 == 0 }),
     Some(8),
   )?
   @assertion.assert_eq(
-    List::[1, 3, 5, 7].find_option(fn(element) -> Bool { element % 2 == 0 }),
+    List::[1, 3, 5, 7].find(fn(element) -> Bool { element % 2 == 0 }),
     None,
   )?
 }
@@ -985,46 +969,13 @@ test "find_option" {
 /// # Example
 ///
 /// ```
-/// println(List::[1, 3, 5, 8].findi(fn(element, i) -> Bool { (element % 2 == 0) && (i == 3) }))
-/// // output: 8
-/// ```
-/// @alert unsafe "Panic if no element satisfies f."
-pub fn findi[T](self : List[T], f : (T, Int) -> Bool) -> T {
-  loop self, 0 {
-    list, index =>
-      match list {
-        Nil => abort("findi: no matching element")
-        Cons(element, list) =>
-          if f(element, index) {
-            element
-          } else {
-            continue list, index + 1
-          }
-      }
-  }
-}
-
-test "findi" {
-  @assertion.assert_eq(
-    List::[1, 3, 5, 8].findi(
-      fn(element, i) -> Bool { element % 2 == 0 && i == 3 },
-    ),
-    8,
-  )?
-}
-
-/// Find the first element in the list that satisfies f and passes the index as an argument.
-///
-/// # Example
-///
-/// ```
-/// println(List::[1, 3, 5, 8].findi_option(fn(element) -> Bool { (element % 2 == 0) && (i == 3) }))
+/// println(List::[1, 3, 5, 8].findi(fn(element) -> Bool { (element % 2 == 0) && (i == 3) }))
 /// // output: Some(8)
 ///
-/// println(List::[1, 3, 8, 5].findi_option(fn(element) -> Bool { (element % 2 == 0) && (i == 3) }))
+/// println(List::[1, 3, 8, 5].findi(fn(element) -> Bool { (element % 2 == 0) && (i == 3) }))
 /// // output: None
 /// ```
-pub fn findi_option[T](self : List[T], f : (T, Int) -> Bool) -> Option[T] {
+pub fn findi[T](self : List[T], f : (T, Int) -> Bool) -> Option[T] {
   loop self, 0 {
     list, index =>
       match list {
@@ -1039,15 +990,15 @@ pub fn findi_option[T](self : List[T], f : (T, Int) -> Bool) -> Option[T] {
   }
 }
 
-test "findi_option" {
+test "findi" {
   @assertion.assert_eq(
-    List::[1, 3, 5, 8].findi_option(
+    List::[1, 3, 5, 8].findi(
       fn(element, i) -> Bool { element % 2 == 0 && i == 3 },
     ),
     Some(8),
   )?
   @assertion.assert_eq(
-    List::[1, 3, 8, 5].findi_option(
+    List::[1, 3, 8, 5].findi(
       fn(element, i) -> Bool { element % 2 == 0 && i == 3 },
     ),
     None,
@@ -1097,7 +1048,6 @@ test "remove_at" {
 pub fn remove[T : Eq](self : List[T], elem : T) -> List[T] {
   match self {
     Nil => Nil
-    // abort("remove: element not found")
     Cons(head, tail) =>
       if head == elem {
         tail
