@@ -139,17 +139,14 @@ jobs:
       - name: moon test
         run: moon test --enable-coverage
 
-      - name: moon_cove_report
-        run: moon_cove_report
-
-      - name: bisect_ppx report
+      - name: coverage report
         run: |
-          bisect-ppx-report html
-          bisect-ppx-report summary > coverage_summary.txt
+          moon coverage report -f html
+          moon coverage report -f summary summary > coverage_summary.txt
           echo "coverage_summary=$(cat coverage_summary.txt)" >> $GITHUB_ENV
           # Put the coverage report in the pipline output
           cat coverage_summary.txt >> "$GITHUB_STEP_SUMMARY"
-          bisect-ppx-report coveralls codecov_report.json --service-name github --service-job-id $GITHUB_RUN_NUMBER
+          moon coverage report -f coveralls -o codecov_report.json --service-name github --service-job-id $GITHUB_RUN_NUMBER
 
       # The following is workaround for https://github.com/codecov/feedback/issues/126
       # See `coverage-report-upload.yml` for more info.
