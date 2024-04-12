@@ -48,20 +48,17 @@ fn timsort[T : Compare](arr : ArraySlice[T]) -> Unit {
   // Short arrays get sorted in-place via insertion sort to avoid allocations.
   let len = arr.length()
   if len <= max_insertion {
-      insertion_sort(arr)
+    insertion_sort(arr)
   }
   let mut end = 0
   let mut start = 0
   let runs : @vec.Vec[TimSortRun] = @vec.Vec::new()
   while end < len {
-    let (streak_end, was_reversed) = find_streak(
-      arr.slice(start, arr.end - start),
-    )
+    let (streak_end, was_reversed) = find_streak(arr.slice(start, arr.end))
     end += streak_end
     if was_reversed {
       arr.slice(start, end).reverse()
     }
-
     // Insert some more elements into the run if it's too short. Insertion sort is faster than
     // merge sort on short sequences, so this significantly improves performance.
     end = provide_sorted_batch(arr, start, end)
@@ -84,11 +81,9 @@ fn timsort[T : Compare](arr : ArraySlice[T]) -> Unit {
 }
 
 fn insertion_sort[T : Compare](arr : ArraySlice[T]) -> Unit {
-  for i = 1; i < arr.length(); i = i + 1 {
-    let mut j = i
-    while j > 0 && arr[j] < arr[j - 1] {
+  for i = 1, len = arr.length(); i < len; i = i + 1 {
+    for j = i; j > 0 && arr[j] < arr[j - 1]; j = j - 1 {
       arr.swap(j, j - 1)
-      j -= 1
     }
   }
 }
@@ -96,30 +91,27 @@ fn insertion_sort[T : Compare](arr : ArraySlice[T]) -> Unit {
 /// Merges non-decreasing runs `arr[..mid]` and `arr[mid..]`. Copy `arr[mid..]` to buf and merge 
 /// `buf` and `arr[..mid]` to `arr[..]`
 fn merge[T : Compare](arr : ArraySlice[T], mid : Int) -> Unit {
-  let buf : Array[T] = Array::make(arr.length() - mid, arr[mid])
+  let buf_len = arr.length() - mid
+  let buf : Array[T] = Array::make(buf_len, arr[mid])
   for i = 0; i < buf.length(); i = i + 1 {
     buf[i] = arr[mid + i]
   }
-  let buf = { array: buf, start: 0, end: buf.length() }
-  let mut p1 = mid - 1
-  let mut p2 = buf.length() - 1
-  let mut p = p1 + p2 + 1
-  while p1 >= 0 && p2 >= 0 {
-    let e = if arr[p1] > buf[p2] {
-      let e = arr[p1]
-      p1 = p1 - 1
-      e
-    } else {
-      let e = buf[p2]
-      p2 = p2 - 1
-      e
-    }
-    arr[p] = e
-    p = p - 1
+  let buf = { array: buf, start: 0, end: buf_len }
+  let buf_remaining = 
+    for p1 = mid - 1, p2 = buf_len - 1, p = mid + buf_len - 1
+        p1 >= 0 && p2 >= 0; {
+      if arr[p1] > buf[p2] {
+        arr[p] = arr[p1]
+        continue p1 - 1, p2, p - 1
+      } else {
+        arr[p] = buf[p2]
+        continue p1, p2 - 1, p - 1
+      }
+  } else {
+    p2
   }
-  while p2 >= 0 {
-    arr[p2] = buf[p2]
-    p2 = p2 - 1
+  for i = buf_remaining; i >= 0; i = i - 1 {
+    arr[i] = buf[i]
   }
 }
 
@@ -131,18 +123,23 @@ fn find_streak[T : Compare](arr : ArraySlice[T]) -> (Int, Bool) {
   if len < 2 {
     return (len, false)
   }
-  let mut end = 2
   let assume_reverse = arr[1] < arr[0]
   if assume_reverse {
-    while end < len && arr[end] < arr[end - 1] {
-      end += 1
+    for end = 2 {
+      if end < len && arr[end] < arr[end - 1] {
+        continue end + 1
+      } else {
+        break (end, true)
+      }
     }
-    (end, true)
   } else {
-    while end < len && arr[end] >= arr[end - 1] {
-      end += 1
+    for end = 2 {
+      if end < len && arr[end] >= arr[end - 1] {
+        continue end + 1
+      } else {
+        break (end, false)
+      }
     }
-    (end, false)
   }
 }
 
@@ -152,7 +149,6 @@ fn provide_sorted_batch[T : Compare](
   end : Int
 ) -> Int {
   let len = arr.length()
-  let mut end = end
   // This value is a balance between least comparisons and best performance, as
   // influenced by for example cache locality.
   let min_insertion_run = 10
@@ -163,14 +159,12 @@ fn provide_sorted_batch[T : Compare](
     // v[start_found..end] are elements that are already sorted in the input. We want to extend
     // the sorted region to the left, so we push up MIN_INSERTION_RUN - 1 to the right. Which is
     // more efficient that trying to push those already sorted elements to the left.
-    end = if start + min_insertion_run < len {
-      start + min_insertion_run
-    } else {
-      len
-    }
-    insertion_sort(arr.slice(start, end))
+    let sort_end = @math.minimum(len, start + min_insertion_run)
+    insertion_sort(arr.slice(start, sort_end))
+    sort_end
+  } else {
+    end
   }
-  end
 }
 
 // TimSort is infamous for its buggy implementations, as described here:
@@ -485,4 +479,29 @@ test "stable_sort" {
     expected[i] = i
   }
   @assertion.assert_eq(arr, expected)?
+}
+
+test "stable_sort_complex" {
+  fn is_sorted(arr : Array[Int]) -> Bool {
+    for i = 1; i < arr.length(); i = i + 1 {
+      if arr[i] < arr[i - 1] {
+        return false
+      }
+    }
+    true
+  }
+
+  let run_lens = [86, 64, 21, 20, 22]
+  let total_len = run_lens.fold_left(~init=0, fn { acc, x => acc + x })
+  let arr = Array::make(total_len, 0)
+  let mut index = 0
+  for i = 0, len = run_lens.length(); i < len; i = i + 1 {
+    for j = 0; j < run_lens[i]; j = j + 1 {
+      arr[index] = j
+      index += 1
+    }
+  }
+  @assertion.assert_false(is_sorted(arr))?
+  arr.stable_sort()
+  @assertion.assert_true(is_sorted(arr))?
 }
