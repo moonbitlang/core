@@ -35,15 +35,15 @@ test "new" {
 ///
 /// ```
 /// let s: Stack[Int] = Stack::from_list(List::[1, 2, 3])
-/// println(s) // Stack::[3, 2, 1]
+/// println(s) // Stack::[1, 2, 3]
 /// ```
 pub fn Stack::from_list[T](list : List[T]) -> Stack[T] {
-  { elements: list.reverse(), len: list.length() }
+  { elements: list, len: list.length() }
 }
 
 test "from_list" {
   let s : Stack[Int] = Stack::from_list(List::[1, 2, 3])
-  inspect(s, ~content="Stack::[3, 2, 1]")?
+  inspect(s, ~content="Stack::[1, 2, 3]")?
   inspect(s.len, ~content="3")?
 }
 
@@ -139,25 +139,6 @@ pub fn return_with_clear[T](self : Stack[T]) -> Stack[T] {
 test "return_with_clear" {
   let s : Stack[Int] = Stack::[1, 2, 3].return_with_clear()
   inspect(s, ~content="Stack::[]")?
-}
-
-/// Returns a copy of the current Stack
-/// 
-/// # Example
-///
-/// ```
-/// let s: Stack[Int] = Stack::[1, 2, 3]
-/// let s1: Stack[Int] = s.copy()
-/// println(s) // Stack::[3, 2, 1]
-/// ```
-pub fn copy[T](self : Stack[T]) -> Stack[T] {
-  { ..self,  }
-}
-
-test "copy" {
-  let s : Stack[Int] = Stack::[1, 2, 3]
-  let s1 : Stack[Int] = s.copy()
-  inspect(s1.elements == s.elements, ~content="true")?
 }
 
 /// Push an element into the stack.
