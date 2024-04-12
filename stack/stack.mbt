@@ -249,7 +249,7 @@ test "push_array" {
 /// # Example
 ///
 /// ```
-/// let s: Stack[Int] = Stack::[1,2,3]
+/// let s: Stack[Int] = Stack::[1, 2, 3]
 /// let s1: Stack[Int] = Stack::new()
 /// println(s.pop()) // Some(1)
 /// println(s) // Stack::[2, 1]
@@ -314,9 +314,9 @@ test "pop_exn" {
 /// # Example
 ///
 /// ```
-/// let s: Stack[Int] = Stack::[1,2,3]
+/// let s: Stack[Int] = Stack::[1, 2, 3]
 /// s.drop()
-/// println(s) // Stack::[2, 3]
+/// println(s) // Stack::[2, 1]
 /// ```
 pub fn drop[T](self : Stack[T]) -> Unit {
   match self.elements {
@@ -342,8 +342,7 @@ test "drop" {
 ///
 /// ```
 /// let s: Stack[Int] = Stack::[1, 2, 3]
-/// s.drop()
-/// println(s) // Stack::[2, 3]
+/// let r = s.drop_result() // Ok(())
 /// ```
 pub fn drop_result[T](self : Stack[T]) -> Result[Unit, Unit] {
   match self.elements {
