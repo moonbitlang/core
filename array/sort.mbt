@@ -72,7 +72,6 @@ fn timsort[T : Compare](arr : ArraySlice[T]) -> Unit {
           merge(arr.slice(left.start, right.start + right.len), left.len)
           runs[r + 1] = { start: left.start, len: left.len + right.len }
           let _ = runs.remove(r)
-
         }
         None => break
       }
