@@ -24,7 +24,7 @@ Note, however, that the default immutable priority queue created is greater-firs
 You can use the `is_empty` to determine whether the immutable priority queue is empty.
 
 ```moonbit
-let pq : ImmutablePrioriryQueue[Int] = ImmutablePrioriryQueue::new()
+let pq : ImmutablePriorityQueue[Int] = ImmutablePriorityQueue::new()
 pq.is_empty() // true
 ```
 
@@ -42,8 +42,8 @@ pq.peek() // Some(5)
 You can use `push()` to add elements to the immutable priority queue and get a new queue.
 
 ```moonbit
-let pq : PriorityQueue[Int] = Immutable::new()
-pq.push(1).peek() // Some(!)
+let pq : ImmutablePriorityQueue[Int] = ImmutablePriorityQueue::new()
+pq.push(1).peek() // Some(1)
 ```
 
 ### Pop
@@ -51,10 +51,10 @@ pq.push(1).peek() // Some(!)
 You can use `pop()` to remove the element at the front of the priority queue and get a new immutable priority queue wrapped with Option. If the immutable priority queue is empty, then it will return None.
 
 ```moonbit
-let pq = PriorityQueue::[5, 4, 3, 2, 1]
+let pq = ImmutablePriorityQueue::[5, 4, 3, 2, 1]
 match pq.pop(){
-    None=>(None:Option[Int])
-    Some(q)=>q.peek()
+    Some(q) => q.peek()
+    None => None
 }// Some(5)
 ```
 
@@ -62,6 +62,6 @@ If you only want to pop an element without Option, you can use `pop_exn()`.
 This function will panic if the priority queue is empty.
 
 ```moonbit
-let pq = PriorityQueue::[5, 4, 3, 2, 1]
+let pq = ImmutablePriorityQueue::[5, 4, 3, 2, 1]
 pq.pop_exn().peek() // Some(5)
 ```

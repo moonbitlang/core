@@ -113,16 +113,16 @@ test "pop" {
   let first = queue.pop()
   inspect(
     match first {
-      None => (None : Option[Int])
       Some(q) => q.peek()
+      None => None
     },
     ~content="Some(3)",
   )?
   let empty : ImmutablePriorityQueue[Int] = ImmutablePriorityQueue::[]
   inspect(
     match empty.pop() {
-      None => (None : Option[Int])
       Some(q) => q.peek()
+      None => None
     },
     ~content="None",
   )?
