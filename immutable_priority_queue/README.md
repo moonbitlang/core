@@ -24,7 +24,7 @@ Note, however, that the default immutable priority queue created is greater-firs
 You can use the `is_empty` to determine whether the immutable priority queue is empty.
 
 ```moonbit
-let pq : ImmutablePrioriryQueue[Int] = ImmutablePrioriryQueue::new()
+let pq : ImmutablePriorityQueue[Int] = ImmutablePriorityQueue::new()
 pq.is_empty() // true
 ```
 
