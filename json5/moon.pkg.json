@@ -1,0 +1,12 @@
+{
+    "import": [
+        "moonbitlang/core/builtin",
+        "moonbitlang/core/double",
+        "moonbitlang/core/char",
+        "moonbitlang/core/result",
+        "moonbitlang/core/string",
+        "moonbitlang/core/map",
+        "moonbitlang/core/vec",
+        "moonbitlang/core/json"
+    ]
+}
