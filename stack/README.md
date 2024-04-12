@@ -9,7 +9,7 @@ Stack is a last in first out (LIFO) data structure, allowing to process their el
 ### Create and Clear
 
 The stack can be created with the `new` function, or by using the function with prefix `from` to create a stack from an existing collection.
-For instance `from_array` creates a stack from an array.
+For instance, `from_array` creates a stack from an array.
 
 ```moonbit
 let st = Stack::new()
@@ -61,7 +61,7 @@ st.peek() // Some(1)
 st.peek_exn() // 1
 ```
 
-If the result of `pop` is not important, you can use the `drop` method.
+If the result of `pop` is not needed, you can use the `drop` method.
 
 ```moonbit
 let st = Stack::[1, 2, 3]
