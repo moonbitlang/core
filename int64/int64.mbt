@@ -48,6 +48,75 @@ pub fn Int64::min_value() -> Int64 {
   min_val
 }
 
+/// Returns the mathematical absolute value of the Int64,
+/// None if the result overflows. 
+pub fn checked_abs(self : Int64) -> Option[Int64] {
+  if self == min_val {
+    None
+  } else {
+    Some(self.abs())
+  }
+}
+
+/// Returns the negation of the Int64,
+/// None if the result overflows. 
+pub fn checked_neg(self: Int64) -> Option[Int64] {
+  if self == min_val {
+    None
+  } else {
+    Some(-self)
+  }
+}
+
+/// Returns the sum of the arguments,
+/// None if the result overflows. 
+pub fn checked_add(self: Int64, other: Int64) -> Option[Int64] {
+  let r = self + other
+  // Overflow iff both arguments have the opposite sign of the result
+  if self.lxor(r).land(other.lxor(r)) < 0L {
+    None
+  } else {
+    Some(r)
+  }
+}
+
+/// Returns the difference of the arguments,
+/// None if the result overflows. 
+pub fn checked_sub(self: Int64, other: Int64) -> Option[Int64] {
+  let r = self - other
+  // Overflow iff the arguments have different signs and the sign
+  // of the result is different from the sign of x
+  if self.lxor(other).land(self.lxor(r)) < 0L {
+    None
+  } else {
+    Some(r)
+  }
+}
+
+/// Returns the product of the arguments,
+/// None if the result overflows. 
+pub fn checked_mul(self: Int64, other: Int64) -> Option[Int64] {
+  let r = self * other
+  let abs_self = self.abs()
+  let abs_other = other.abs()
+  if abs_self.lor(abs_other).lsr(31) != 0L {
+    // bits that greater than 2^31 might cause overflow
+    if ((other != 0L) && (r / other != self)) || (self == min_val && other == -1L) {
+      return None
+    }
+  }
+  Some(r)
+}
+
+/// Returns the quotient of the arguments,
+/// None if the result overflows. 
+pub fn checked_div(self: Int64, other: Int64) -> Option[Int64] {
+  if other == 0L || (self == min_val && other == -1L) {
+    None
+  } else {
+    Some(self / other)
+  }
+}
 fn test_num[T : @num.Num + Debug + Default + Eq](
   x : T,
   y : T,
@@ -76,4 +145,49 @@ pub fn hash(self : Int64) -> Int {
   let lo = self.to_int()
   let hi = self.lsr(32).to_int()
   lo.lxor(hi)
+}
+
+test "checked_abs" {
+  @assertion.assert_eq((1L).checked_abs(), Some(1L))?
+  @assertion.assert_eq((-1L).checked_abs(), Some(1L))?
+  @assertion.assert_eq(min_val.checked_abs(), None)?
+  @assertion.assert_eq(max_val.checked_abs(), Some(max_val))?
+}
+
+test "checked_neg" {
+  @assertion.assert_eq((1L).checked_neg(), Some(-1L))?
+  @assertion.assert_eq((-1L).checked_neg(), Some(1L))?
+  @assertion.assert_eq(min_val.checked_neg(), None)?
+  @assertion.assert_eq(max_val.checked_neg(), Some(-max_val))?
+}
+
+test "checked_add" {
+  @assertion.assert_eq((1L).checked_add(1L), Some(2L))?
+  @assertion.assert_eq((-1L).checked_add(1L), Some(0L))?
+  @assertion.assert_eq((-1L).checked_add(-1L), Some(-2L))?
+  @assertion.assert_eq(max_val.checked_add(1L), None)?
+  @assertion.assert_eq(min_val.checked_add(-1L), None)?
+}
+
+test "checked_sub" {
+  @assertion.assert_eq((1L).checked_sub(1L), Some(0L))?
+  @assertion.assert_eq((-1L).checked_sub(1L), Some(-2L))?
+  @assertion.assert_eq((-1L).checked_sub(-1L), Some(0L))?
+  @assertion.assert_eq(min_val.checked_sub(1L), None)?
+  @assertion.assert_eq(max_val.checked_sub(-1L), None)?
+}
+
+test "checked_mul" {
+  @assertion.assert_eq((2L).checked_mul(3L), Some(6L))?
+  @assertion.assert_eq((-2L).checked_mul(3L), Some(-6L))?
+  @assertion.assert_eq((-2L).checked_mul(-3L), Some(6L))?
+  @assertion.assert_eq(min_val.checked_mul(2L), None)?
+  @assertion.assert_eq(max_val.checked_mul(2L), None)?
+}
+
+test "checked_div" {
+  @assertion.assert_eq((4L).checked_div(2L), Some(2L))?
+  @assertion.assert_eq((-4L).checked_div(2L), Some(-2L))?
+  @assertion.assert_eq((4L).checked_div(0L), None)?
+  @assertion.assert_eq(min_val.checked_div(-1L), None)?
 }

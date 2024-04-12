@@ -38,14 +38,80 @@ pub fn signum(self : Int) -> Int {
   }
 }
 
-// Returns the largest positive finite value of Int
+/// Returns the largest positive finite value of Int
 pub fn Int::max_value() -> Int {
   max_val
 }
 
-// Returns the smallest positive nonzero value of Int
+/// Returns the smallest positive nonzero value of Int
 pub fn Int::min_value() -> Int {
   min_val
+}
+
+/// Returns the mathematical absolute value of the Int,
+/// None if the result overflows. 
+pub fn checked_abs(self : Int) -> Option[Int] {
+  if self == min_val {
+    None
+  } else {
+    Some(self.abs())
+  }
+}
+
+/// Returns the negation of the Int,
+/// None if the result overflows. 
+pub fn checked_neg(self: Int) -> Option[Int] {
+  if self == min_val {
+    None
+  } else {
+    Some(-self)
+  }
+}
+
+/// Returns the sum of the arguments,
+/// None if the result overflows. 
+pub fn checked_add(self: Int, other: Int) -> Option[Int] {
+  let r = self + other
+  // Overflow iff both arguments have the opposite sign of the result
+  if self.lxor(r).land(other.lxor(r)) < 0 {
+    None
+  } else {
+    Some(r)
+  }
+}
+
+/// Returns the difference of the arguments,
+/// None if the result overflows. 
+pub fn checked_sub(self: Int, other: Int) -> Option[Int] {
+  let r = self - other
+  // Overflow iff the arguments have different signs and the sign
+  // of the result is different from the sign of x
+  if self.lxor(other).land(self.lxor(r)) < 0 {
+    None
+  } else {
+    Some(r)
+  }
+}
+
+/// Returns the product of the arguments,
+/// None if the result overflows. 
+pub fn checked_mul(self: Int, other: Int) -> Option[Int] {
+  let r = self.to_int64() * other.to_int64()
+  if r > max_val.to_int64() || r < min_val.to_int64() {
+    None
+  } else {
+    Some(r.to_int())
+  }
+}
+
+/// Returns the quotient of the arguments,
+/// None if the result overflows. 
+pub fn checked_div(self: Int, other: Int) -> Option[Int] {
+  if other == 0 || (self == min_val && other == -1) {
+    None
+  } else {
+    Some(self / other)
+  }
 }
 
 fn test_num[T : @num.Num + Debug + Default + Eq](
@@ -74,4 +140,49 @@ test "int.num" {
 
 pub fn hash(self : Int) -> Int {
   self
+}
+
+test "checked_abs" {
+  @assertion.assert_eq((1).checked_abs(), Some(1))?
+  @assertion.assert_eq((-1).checked_abs(), Some(1))?
+  @assertion.assert_eq(min_val.checked_abs(), None)?
+  @assertion.assert_eq(max_val.checked_abs(), Some(max_val))?
+}
+
+test "checked_neg" {
+  @assertion.assert_eq((1).checked_neg(), Some(-1))?
+  @assertion.assert_eq((-1).checked_neg(), Some(1))?
+  @assertion.assert_eq(min_val.checked_neg(), None)?
+  @assertion.assert_eq(max_val.checked_neg(), Some(-max_val))?
+}
+
+test "checked_add" {
+  @assertion.assert_eq((1).checked_add(1), Some(2))?
+  @assertion.assert_eq((-1).checked_add(1), Some(0))?
+  @assertion.assert_eq((-1).checked_add(-1), Some(-2))?
+  @assertion.assert_eq(max_val.checked_add(1), None)?
+  @assertion.assert_eq(min_val.checked_add(-1), None)?
+}
+
+test "checked_sub" {
+  @assertion.assert_eq((1).checked_sub(1), Some(0))?
+  @assertion.assert_eq((-1).checked_sub(1), Some(-2))?
+  @assertion.assert_eq((-1).checked_sub(-1), Some(0))?
+  @assertion.assert_eq(min_val.checked_sub(1), None)?
+  @assertion.assert_eq(max_val.checked_sub(-1), None)?
+}
+
+test "checked_mul" {
+  @assertion.assert_eq((2).checked_mul(3), Some(6))?
+  @assertion.assert_eq((-2).checked_mul(3), Some(-6))?
+  @assertion.assert_eq((-2).checked_mul(-3), Some(6))?
+  @assertion.assert_eq(min_val.checked_mul(2), None)?
+  @assertion.assert_eq(max_val.checked_mul(2), None)?
+}
+
+test "checked_div" {
+  @assertion.assert_eq((4).checked_div(2), Some(2))?
+  @assertion.assert_eq((-4).checked_div(2), Some(-2))?
+  @assertion.assert_eq((4).checked_div(0), None)?
+  @assertion.assert_eq(min_val.checked_div(-1), None)?
 }
