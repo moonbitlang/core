@@ -13,7 +13,8 @@ For instance `from_array` creates a stack from an array.
 
 ```moonbit
 let st = Stack::new()
-let st2 = Stack::from_array([1, 2, 3]) // [3, 2, 1]
+let st2 = Stack::from_array([1, 2, 3]) // Stack::[1, 2, 3]
+let st3 = Stack::[1, 2, 3] // Stack::[1, 2, 3]
 ```
 
 To clear the elements of the stack, use the `clear` method.
@@ -56,8 +57,8 @@ If you don't want to remove the element, you can use the `peek` method and the u
 
 ```moonbit
 let st = Stack::[1, 2, 3]
-st.peek() // Some(3)
-st.peek_exn() // 3
+st.peek() // Some(1)
+st.peek_exn() // 1
 ```
 
 If the result of `pop` is not important, you can use the `drop` method.
@@ -65,7 +66,7 @@ If the result of `pop` is not important, you can use the `drop` method.
 ```moonbit
 let st = Stack::[1, 2, 3]
 st.drop()
-// st = [2, 1]
+// st = [2, 3]
 ```
 
 ### Traverse
@@ -84,5 +85,5 @@ You can convert the stack to an array using the `to_array` method.
 
 ```moonbit
 let st = Stack::[1, 2, 3]
-st.to_array() // [3, 2, 1]
+st.to_array() // [1, 2, 3]
 ```
