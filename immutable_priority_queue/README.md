@@ -43,7 +43,7 @@ You can use `push()` to add elements to the immutable priority queue and get a n
 
 ```moonbit
 let pq : ImmutablePriorityQueue[Int] = ImmutablePriorityQueue::new()
-pq.push(1).peek() // Some(!)
+pq.push(1).peek() // Some(1)
 ```
 
 ### Pop
