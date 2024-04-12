@@ -198,3 +198,12 @@ test "min_normal" {
 pub fn hash(self : Double) -> Int {
   self.reinterpret_as_i64().hash()
 }
+
+/// @intrinsic %f64.to_string
+pub fn to_string(self : Double) -> String {
+  @ryu.double_to_string(self)
+}
+
+pub fn debug_write(self : Double, buf : Buffer) -> Unit {
+  buf.write_string(self.to_string())
+}
