@@ -30,6 +30,8 @@ You can use `set()` to add a key-value pair to the map, and use `get()` to get a
 let map : HashMap[String, Int] = HashMap::new()
 map.set("a", 1)
 map.get("a") // 1
+map.get_or_default("a", 0) // 1
+map.get_or_default("b", 0) // 0
 ```
 
 ### Remove

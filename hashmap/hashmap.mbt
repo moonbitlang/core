@@ -102,6 +102,15 @@ pub fn op_get[K : Hash + Eq, V](self : HashMap[K, V], key : K) -> Option[V] {
   self.get(key)
 }
 
+/// Get the value associated with a key, 
+/// returns the provided default value if the key does not exist.
+pub fn get_or_default[K: Hash + Eq, V](self: HashMap[K, V], key: K, default: V) -> V {
+  match self.get(key) {
+    Some(v) => v
+    None => default
+  }
+}
+
 /// Check if the hash map contains a key.
 pub fn contains[K : Hash + Eq, V](self : HashMap[K, V], key : K) -> Bool {
   match self.get(key) {
@@ -282,6 +291,17 @@ test "get" {
   @assertion.assert_eq(m.get("b"), Some(2))?
   @assertion.assert_eq(m.get("c"), Some(3))?
   @assertion.assert_eq(m.get("d"), None)?
+}
+
+test "get_or_default" {
+  let m : HashMap[String, Int] = HashMap::new()
+  m.set("a", 1)
+  m.set("b", 2)
+  m.set("c", 3)
+  @assertion.assert_eq(m.get_or_default("a", 42), 1)?
+  @assertion.assert_eq(m.get_or_default("b", 42), 2)?
+  @assertion.assert_eq(m.get_or_default("c", 42), 3)?
+  @assertion.assert_eq(m.get_or_default("d", 42), 42)?
 }
 
 test "op_set" {
