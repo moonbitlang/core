@@ -47,9 +47,9 @@ fn op_mul(self : UInt64, b : UInt64) -> UInt64 {
   new_UInt64_Int64(self.0 * b.0)
 }
 
-fn op_div(self : UInt64, b : UInt64) -> UInt64 {
-  new_UInt64_Int64(self.0 / b.0)
-}
+// fn op_div(self : UInt64, b : UInt64) -> UInt64 {
+//   new_UInt64_Int64(self.0 / b.0)
+// }
 
 fn op_neg(self : UInt64) -> UInt64 {
   new_UInt64_Int64(-self.0)
