@@ -296,3 +296,17 @@ pub fn unwrap[T, E](self : Result[T, E]) -> T {
     Err(_) => abort("called `Result::unwrap()` on an `Err` value")
   }
 }
+
+pub fn to_string[T : Show, E : Show](self : Result[T, E]) -> String {
+  match self {
+    Ok(x) => "Ok(\(x))"
+    Err(e) => "Err(\(e))"
+  }
+}
+
+test "show" {
+  let ok : Result[_, String] = Ok("hello")
+  inspect(ok, ~content="Ok(hello)")?
+  let err : Result[String, _] = Err("world")
+  inspect(err, ~content="Err(world)")?
+}
