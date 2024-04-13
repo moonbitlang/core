@@ -13,85 +13,81 @@
 // limitations under the License.
 
 /// Pretend we have UInt64
-priv struct UInt64 {
-  inner : Int64
-}
+priv type UInt64  Int64 derive(Eq)
+
 
 fn new_UInt64_Int64(value : Int64) -> UInt64 {
-  { inner: value }
+  UInt64 (value)
 }
 
 fn new_UInt64_Int(value : Int) -> UInt64 {
-  { inner: value.to_int64() }
+  UInt64 (value.to_int64())
 }
 
-fn UInt64::op_equal(self : UInt64, b : UInt64) -> Bool {
-  self.inner == b.inner
-}
 
 fn UInt64::compare(self : UInt64, b : UInt64) -> Int {
-  if self.inner >= 0L && b.inner >= 0L || self.inner < 0L && b.inner < 0L {
-    return self.inner.compare(b.inner)
-  } else if self.inner < 0L { // b.inner >= 0
-    return 1
-  } else { // self.inner >= 0 && b.inner < 0
-    return -1
+  if self.0 >= 0L && b.0 >= 0L || self.0 < 0L && b.0 < 0L {
+     self.0.compare(b.0)
+  } else if self.0 < 0L { // b.0 >= 0
+     1
+  } else { // self.0 >= 0 && b.0 < 0
+     -1
   }
 }
 
 fn op_add(self : UInt64, b : UInt64) -> UInt64 {
-  new_UInt64_Int64(self.inner + b.inner)
+  new_UInt64_Int64(self.0 + b.0)
 }
 
 fn op_sub(self : UInt64, b : UInt64) -> UInt64 {
-  new_UInt64_Int64(self.inner - b.inner)
+  new_UInt64_Int64(self.0 - b.0)
 }
 
 fn op_mul(self : UInt64, b : UInt64) -> UInt64 {
-  new_UInt64_Int64(self.inner * b.inner)
+  new_UInt64_Int64(self.0 * b.0)
 }
 
 fn op_div(self : UInt64, b : UInt64) -> UInt64 {
-  new_UInt64_Int64(self.inner / b.inner)
+  new_UInt64_Int64(self.0 / b.0)
 }
 
 fn op_neg(self : UInt64) -> UInt64 {
-  new_UInt64_Int64(-self.inner)
+  new_UInt64_Int64(-self.0)
 }
 
 fn lnot(self : UInt64) -> UInt64 {
-  new_UInt64_Int64(self.inner.lnot())
+  new_UInt64_Int64(self.0.lnot())
 }
 
 fn land(self : UInt64, b : UInt64) -> UInt64 {
-  new_UInt64_Int64(self.inner.land(b.inner))
+  new_UInt64_Int64(self.0.land(b.0))
 }
 
 fn lor(self : UInt64, b : UInt64) -> UInt64 {
-  new_UInt64_Int64(self.inner.lor(b.inner))
+  new_UInt64_Int64(self.0.lor(b.0))
 }
 
 fn lxor(self : UInt64, b : UInt64) -> UInt64 {
-  new_UInt64_Int64(self.inner.lxor(b.inner))
+  new_UInt64_Int64(self.0.lxor(b.0))
 }
 
 fn lsr(self : UInt64, b : Int) -> UInt64 {
-  new_UInt64_Int64(self.inner.lsr(b))
+  new_UInt64_Int64(self.0.lsr(b))
 }
 
 fn lsl(self : UInt64, b : Int) -> UInt64 {
-  new_UInt64_Int64(self.inner.lsl(b))
+  new_UInt64_Int64(self.0.lsl(b))
 }
 
 fn to_int64(self : UInt64) -> Int64 {
-  self.inner
+  self.0
 }
 
 fn to_double(self : UInt64) -> Double {
-  if self.inner >= 0L {
-    self.inner.to_double()
+  if self.0 >= 0L {
+    self.0.to_double()
   } else {
-    Int64::max_value().to_double() + (self.inner - Int64::min_value()).to_double() +
+    Int64::max_value().to_double() + (self.0 - Int64::min_value()).to_double() +
     1.0
   }
 }
@@ -99,20 +95,20 @@ fn to_double(self : UInt64) -> Double {
 /// Returns None if the multiplication might overflow (there are some false-negative corner cases).
 /// Otherwise, returns Some(m), where m = self * b.
 fn checked_mul(self : UInt64, b : UInt64) -> Option[UInt64] {
-  if self.inner == 0L || b.inner == 0L {
+  if self.0 == 0L || b.0 == 0L {
     return Some(new_UInt64_Int64(0L))
   }
-  if self.inner == 1L {
+  if self.0 == 1L {
     return Some(b)
   }
-  if b.inner == 1L {
+  if b.0 == 1L {
     return Some(self)
   }
-  if b.inner < 0L || self.inner < 0L {
+  if b.0 < 0L || self.0 < 0L {
     return None
   }
-  let r = new_UInt64_Int64(Int64::max_value() / b.inner)
-  let q = new_UInt64_Int64(1L / b.inner)
+  let r = new_UInt64_Int64(Int64::max_value() / b.0)
+  let q = new_UInt64_Int64(1L / b.0)
   if r + r + q < self {
     return None
   }
