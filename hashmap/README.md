@@ -84,6 +84,6 @@ You can use `iter()` or `iteri()` to iterate through all key-value pairs.
 
 ```moonbit
 let map = HashMap::[("a", 1), ("b", 2), ("c", 3)]
-map.iter(fn(k, v) { println(\(k)-\(v)) })
-map.iteri(fn(i, k, v) { println(\(i)-\(k)-\(v)) })
+map.iter(fn(k, v) { println("\(k)-\(v)") })
+map.iteri(fn(i, k, v) { println("\(i)-\(k)-\(v)") })
 ```
