@@ -141,9 +141,7 @@ jobs:
 
       - name: coverage report
         run: |
-          moon coverage report -f html
           moon coverage report -f summary summary > coverage_summary.txt
-          echo "coverage_summary=$(cat coverage_summary.txt)" >> $GITHUB_ENV
           # Put the coverage report in the pipline output
           cat coverage_summary.txt >> "$GITHUB_STEP_SUMMARY"
           moon coverage report -f coveralls -o codecov_report.json --service-name github --service-job-id $GITHUB_RUN_NUMBER
