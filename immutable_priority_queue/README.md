@@ -19,7 +19,15 @@ let queue2 = ImmutablePriorityQueue::[1, 2, 3]
 
 Note, however, that the default immutable priority queue created is greater-first; if you need to create a less-first queue, you can write a struct belongs to Compare trait to implement it.
 
-### Empty
+### Length & Empty
+
+You can use the `length` to get the length of the immutable priority queue.
+
+```moonbit
+let pq : ImmutablePriorityQueue[Int] = ImmutablePriorityQueue::new()
+pq.length() // 0
+pq.push(1).length() // 1
+```
 
 You can use the `is_empty` to determine whether the immutable priority queue is empty.
 
