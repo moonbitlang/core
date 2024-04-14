@@ -12,12 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-pub enum Cont[T] {
+enum Cont[T] {
   Empty
   Node(T, List[Cont[T]])
 } derive(Show, Debug)
 
 struct ImmutablePriorityQueue[T] {
-  mut len : Int
-  mut body : Cont[T]
+  len : Int
+  body : Cont[T]
 }
