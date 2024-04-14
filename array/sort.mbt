@@ -480,15 +480,19 @@ test "stable_sort" {
   @assertion.assert_eq(arr, expected)?
 }
 
-test "stable_sort_complex" {
-  fn is_sorted(arr : Array[Int]) -> Bool {
+pub fn is_sorted[T:Compare](arr : Array[T]) -> Bool {
     for i = 1; i < arr.length(); i = i + 1 {
       if arr[i] < arr[i - 1] {
-        return false
+        break false
       }
-    }
+    } else {
     true
-  }
+    }
+}
+
+
+test "stable_sort_complex" {
+  
 
   let run_lens = [86, 64, 21, 20, 22]
   let total_len = run_lens.fold_left(~init=0, fn { acc, x => acc + x })
