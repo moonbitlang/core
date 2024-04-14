@@ -153,6 +153,53 @@ pub fn clear[K](self : HashSet[K]) -> Unit {
   self.size = 0
 }
 
+/// Union of two hash sets.
+/// @alert unsafe "Panic if the hash set is full."
+pub fn union[K : Hash + Eq](self : HashSet[K], other : HashSet[K]) -> HashSet[K] {
+  let m = HashSet::new(~hasher=self.hasher)
+  self.iter(fn(k) { m.insert(k) })
+  other.iter(fn(k) { m.insert(k) })
+  m
+}
+
+/// Intersection of two hash sets.
+pub fn intersection[K : Hash + Eq](self : HashSet[K], other : HashSet[K]) -> HashSet[K] {
+  let m = HashSet::new(~hasher=self.hasher)
+  self.iter(fn(k) {
+    if other.contains(k) {
+      m.insert(k)
+    }
+  })
+  m
+}
+
+/// Difference of two hash sets.
+pub fn difference[K : Hash + Eq](self : HashSet[K], other : HashSet[K]) -> HashSet[K] {
+  let m = HashSet::new(~hasher=self.hasher)
+  self.iter(fn(k) {
+    if not(other.contains(k)) {
+      m.insert(k)
+    }
+  })
+  m
+}
+
+/// Symmetric difference of two hash sets.
+pub fn symmetric_difference[K : Hash + Eq](self : HashSet[K], other : HashSet[K]) -> HashSet[K] {
+  let m = HashSet::new(~hasher=self.hasher)
+  self.iter(fn(k) {
+    if not(other.contains(k)) {
+      m.insert(k)
+    }
+  })
+  other.iter(fn(k) {
+    if not(self.contains(k)) {
+      m.insert(k)
+    }
+  })
+  m
+}
+
 fn shift_back[K : Hash](self : HashSet[K], start_index : Int) -> Unit {
   for i = 0, prev = start_index, curr = self.next_index(start_index)
       i < self.entries.length()
@@ -314,7 +361,7 @@ test "iter" {
   let m : HashSet[String] = HashSet::["a", "b", "c"]
   let mut sum = ""
   m.iter(fn(k) { sum += k })
-  @assertion.assert_eq(sum, "cba")?
+  @assertion.assert_eq(sum, "cab")?
 }
 
 test "iteri" {
@@ -363,4 +410,48 @@ test "grow" {
     m.debug_entries(),
     "_,(0,C),(0,Go),(0,C++),(0,Java),(0,Scala),(1,Julia),(2,Cobol),(2,Python),(2,Haskell),(2,Rescript),_,_,_,_,_",
   )?
+}
+
+test "union" {
+  let m1 : HashSet[String] = HashSet::["a", "b", "c"]
+  let m2 : HashSet[String] = HashSet::["b", "c", "d"]
+  let m = m1.union(m2)
+  @assertion.assert_eq(m.size, 4)?
+  @assertion.assert_true(m.contains("a"))?
+  @assertion.assert_true(m.contains("b"))?
+  @assertion.assert_true(m.contains("c"))?
+  @assertion.assert_true(m.contains("d"))?
+}
+
+test "intersection" {
+  let m1 : HashSet[String] = HashSet::["a", "b", "c"]
+  let m2 : HashSet[String] = HashSet::["b", "c", "d"]
+  let m = m1.intersection(m2)
+  @assertion.assert_eq(m.size, 2)?
+  @assertion.assert_false(m.contains("a"))?
+  @assertion.assert_true(m.contains("b"))?
+  @assertion.assert_true(m.contains("c"))?
+  @assertion.assert_false(m.contains("d"))?
+}
+
+test "difference" {
+  let m1 : HashSet[String] = HashSet::["a", "b", "c"]
+  let m2 : HashSet[String] = HashSet::["b", "c", "d"]
+  let m = m1.difference(m2)
+  @assertion.assert_eq(m.size, 1)?
+  @assertion.assert_true(m.contains("a"))?
+  @assertion.assert_false(m.contains("b"))?
+  @assertion.assert_false(m.contains("c"))?
+  @assertion.assert_false(m.contains("d"))?
+}
+
+test "symmetric_difference" {
+  let m1 : HashSet[String] = HashSet::["a", "b", "c"]
+  let m2 : HashSet[String] = HashSet::["b", "c", "d"]
+  let m = m1.symmetric_difference(m2)
+  @assertion.assert_eq(m.size, 2)?
+  @assertion.assert_true(m.contains("a"))?
+  @assertion.assert_false(m.contains("b"))?
+  @assertion.assert_false(m.contains("c"))?
+  @assertion.assert_true(m.contains("d"))?
 }

@@ -78,3 +78,17 @@ let set = HashSet::[("a"), ("b"), ("c")]
 set.iter(fn(k) { println("\(k)") })
 set.iteri(fn(i, k) { println("\(i)-\(k)") })
 ```
+
+### Set Operations
+
+You can use `union()`, `intersection()`, `difference()` and `symmetric_difference()` to perform set operations.
+
+```moonbit
+let m1 : HashSet[String] = HashSet::["a", "b", "c"]
+let m2 : HashSet[String] = HashSet::["b", "c", "d"]
+let u = m1.union(m2) // HashSet::["a", "b", "c", "d"]
+let i = m1.intersection(m2) // HashSet::["b", "c"]
+let d = m1.difference(m2) // HashSet::["a"]
+let s = m1.symmetric_difference(m2) // HashSet::["a", "d"]
+```
+
