@@ -56,12 +56,12 @@ test "from_list" {
 /// println(s) // Stack::[3, 2, 1]
 /// ```
 pub fn Stack::from_array[T](array : Array[T]) -> Stack[T] {
-  { elements: List::from_array(array).reverse(), len: array.length() }
+  { elements: List::from_array(array), len: array.length() }
 }
 
 test "from_array" {
   let s : Stack[Int] = Stack::[1, 2, 3]
-  inspect(s, ~content="Stack::[3, 2, 1]")?
+  inspect(s, ~content="Stack::[1, 2, 3]")?
   inspect(s.len, ~content="3")?
 }
 
@@ -81,7 +81,7 @@ pub fn to_string[T : Show](self : Stack[T]) -> String {
 test "to_string" {
   let empty : Stack[Int] = new()
   inspect(empty, ~content="Stack::[]")?
-  inspect(Stack::[1, 2, 3, 4, 5], ~content="Stack::[5, 4, 3, 2, 1]")?
+  inspect(Stack::[1, 2, 3, 4, 5], ~content="Stack::[1, 2, 3, 4, 5]")?
 }
 
 /// Create a stack based on another stack.
@@ -200,7 +200,7 @@ test "push_stack" {
   let s : Stack[Int] = Stack::[1, 2, 3]
   let s1 : Stack[Int] = Stack::new()
   s1.push_stack(s)
-  inspect(s1, ~content="Stack::[1, 2, 3]")?
+  inspect(s1, ~content="Stack::[3, 2, 1]")?
   inspect(s.len == s1.len, ~content="true")?
 }
 
@@ -250,8 +250,8 @@ pub fn pop[T](self : Stack[T]) -> Option[T] {
 test "pop" {
   let s : Stack[Int] = Stack::[1, 2, 3]
   let s1 : Stack[Int] = Stack::new()
-  inspect(s.pop(), ~content="Some(3)")?
-  inspect(s, ~content="Stack::[2, 1]")?
+  inspect(s.pop(), ~content="Some(1)")?
+  inspect(s, ~content="Stack::[2, 3]")?
   inspect(s.len, ~content="2")?
   inspect(s1.pop(), ~content="None")?
   inspect(s1, ~content="Stack::[]")?
@@ -284,8 +284,8 @@ pub fn pop_exn[T](self : Stack[T]) -> T {
 
 test "pop_exn" {
   let s : Stack[Int] = Stack::[1, 2, 3]
-  inspect(s.pop_exn(), ~content="3")?
-  inspect(s, ~content="Stack::[2, 1]")?
+  inspect(s.pop_exn(), ~content="1")?
+  inspect(s, ~content="Stack::[2, 3]")?
   inspect(s.len, ~content="2")?
 }
 
@@ -312,7 +312,7 @@ pub fn drop[T](self : Stack[T]) -> Unit {
 test "drop" {
   let s : Stack[Int] = Stack::[1, 2, 3]
   s.drop()
-  inspect(s, ~content="Stack::[2, 1]")?
+  inspect(s, ~content="Stack::[2, 3]")?
   inspect(s.len, ~content="2")?
 }
 
@@ -341,7 +341,7 @@ test "drop_result" {
   let s1 : Stack[Int] = Stack::new()
   inspect(s1.drop_result() == Err(()), ~content="true")?
   inspect(s.drop_result() == Ok(()), ~content="true")?
-  inspect(s, ~content="Stack::[2, 1]")?
+  inspect(s, ~content="Stack::[2, 3]")?
   inspect(s.len, ~content="2")?
 }
 
@@ -364,8 +364,8 @@ pub fn peek[T](self : Stack[T]) -> Option[T] {
 
 test "peek" {
   let s : Stack[Int] = Stack::[1, 2, 3]
-  inspect(s.peek(), ~content="Some(3)")?
-  inspect(s, ~content="Stack::[3, 2, 1]")?
+  inspect(s.peek(), ~content="Some(1)")?
+  inspect(s, ~content="Stack::[1, 2, 3]")?
   inspect(s.len, ~content="3")?
 }
 
@@ -391,8 +391,8 @@ pub fn peek_exn[T](self : Stack[T]) -> T {
 
 test "peek_exn" {
   let s : Stack[Int] = Stack::[1, 2, 3]
-  inspect(s.peek_exn(), ~content="3")?
-  inspect(s, ~content="Stack::[3, 2, 1]")?
+  inspect(s.peek_exn(), ~content="1")?
+  inspect(s, ~content="Stack::[1, 2, 3]")?
   inspect(s.len, ~content="3")?
 }
 
@@ -478,7 +478,7 @@ pub fn to_list[T](self : Stack[T]) -> List[T] {
 }
 
 test "to_list" {
-  inspect(Stack::[3, 2, 1].to_list(), ~content="List::[1, 2, 3]")?
+  inspect(Stack::[3, 2, 1].to_list(), ~content="List::[3, 2, 1]")?
 }
 
 /// Convert stack to array
@@ -493,7 +493,7 @@ pub fn to_array[T : Default](self : Stack[T]) -> Array[T] {
 }
 
 test "to_array" {
-  inspect(Stack::[3, 2, 1].to_array(), ~content="[1, 2, 3]")?
+  inspect(Stack::[3, 2, 1].to_array(), ~content="[3, 2, 1]")?
 }
 
 /// Compare two stacks.
