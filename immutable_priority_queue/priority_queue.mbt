@@ -68,10 +68,9 @@ test "meld" {
 }
 
 fn merges[T : Compare](x : List[Cont[T]]) -> Cont[T] {
-  match x {
-    Nil => Empty
-    Cons(t, Nil) => t
-    Cons(t1, Cons(t2, ts)) => meld(meld(t1, t2), merges(ts))
+  loop x , Cont::Empty {
+    Nil, acc => acc
+    Cons(t, rest), acc => continue rest , meld(t,acc)    
   }
 }
 
