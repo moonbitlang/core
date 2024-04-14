@@ -53,16 +53,16 @@ test "from_list" {
 ///
 /// ```
 /// let s: Stack[Int] = Stack::[1, 2, 3]
-/// println(s) // Stack::[3, 2, 1]
+/// println(s) // Stack::[1, 2, 3]
 /// ```
 pub fn Stack::from_array[T](array : Array[T]) -> Stack[T] {
-  { elements: List::from_array(array).reverse(), len: array.length() }
+  { elements: List::from_array(array), len: array.length() }
 }
 
 test "from_array" {
   let s : Stack[Int] = Stack::[1, 2, 3]
-  inspect(s, ~content="Stack::[3, 2, 1]")?
-  inspect(s.len, ~content="3")?
+  inspect(s, ~content="Stack::[1, 2, 3]")?
+  inspect(s.len, ~content="1")?
 }
 
 pub fn to_string[T : Show](self : Stack[T]) -> String {
