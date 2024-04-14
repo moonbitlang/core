@@ -181,6 +181,7 @@ pub fn peek[T](self : ImmutableStack[T]) -> Option[T] {
 
 test "peek" {
   let s = ImmutableStack::[1, 2, 3]
+  inspect(s.pop_exn().pop_exn().pop_exn().peek(), ~content="None")?
   inspect(s.peek(), ~content="Some(1)")?
   inspect(s, ~content="ImmutableStack::[1, 2, 3]")?
   inspect(s.len, ~content="3")?
@@ -235,6 +236,10 @@ test "is_empty" {
 /// Returns the number of elements of the Stack.
 pub fn length[T](self : ImmutableStack[T]) -> Int {
   self.len
+}
+
+test "length" {
+  inspect(ImmutableStack::[1, 2, 3].length(), ~content="3")?
 }
 
 /// Iterates over the elements of the stack from top to bottom.
@@ -321,7 +326,10 @@ test "to_array" {
 /// ```
 /// println(ImmutableStack::[2, 4, 6].equal(ImmutableStack::[2, 4, 6])) // true
 /// ```
-pub fn equal[T : Eq](self : ImmutableStack[T], other : ImmutableStack[T]) -> Bool {
+pub fn equal[T : Eq](
+  self : ImmutableStack[T],
+  other : ImmutableStack[T]
+) -> Bool {
   if self.len == other.len {
     self.elements.equal(other.elements)
   } else {
@@ -329,11 +337,28 @@ pub fn equal[T : Eq](self : ImmutableStack[T], other : ImmutableStack[T]) -> Boo
   }
 }
 
-pub fn op_equal[T : Eq](self : ImmutableStack[T], other : ImmutableStack[T]) -> Bool {
+pub fn op_equal[T : Eq](
+  self : ImmutableStack[T],
+  other : ImmutableStack[T]
+) -> Bool {
   self.equal(other)
 }
 
 test "equal" {
-  inspect(ImmutableStack::[2, 4, 6].equal(ImmutableStack::[2, 4, 6]), ~content="true")?
-  inspect(ImmutableStack::[2, 4, 6].equal(ImmutableStack::[2, 4, 7]), ~content="false")?
+  inspect(
+    ImmutableStack::[2, 4, 6].equal(ImmutableStack::[2, 4, 6]),
+    ~content="true",
+  )?
+  inspect(
+    ImmutableStack::[2, 4, 6].equal(ImmutableStack::[2, 4, 7]),
+    ~content="false",
+  )?
+  inspect(
+    ImmutableStack::[2, 4, 6] == ImmutableStack::[2, 4, 6],
+    ~content="true",
+  )?
+  inspect(
+    ImmutableStack::[2, 4, 6] == ImmutableStack::[2, 4, 7],
+    ~content="false",
+  )?
 }
