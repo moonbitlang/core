@@ -160,7 +160,7 @@ pub fn push[T : Compare](
   self : ImmutablePriorityQueue[T],
   value : T
 ) -> ImmutablePriorityQueue[T] {
-  ImmutablePriorityQueue::{
+  {
     body: meld(self.body, Node(value, Nil)),
     len: self.len + 1,
   }
