@@ -19,7 +19,7 @@
 /// let queue : ImmutablePriorityQueue[Int] = ImmutablePriorityQueue::new()
 /// ```
 pub fn ImmutablePriorityQueue::new[T : Compare]() -> ImmutablePriorityQueue[T] {
-  ImmutablePriorityQueue::{ body: Empty, len: 0 }
+  { body: Empty, len: 0 }
 }
 
 /// Creates a new immutable priority queue from an array.
@@ -36,7 +36,7 @@ pub fn ImmutablePriorityQueue::from_array[T : Compare](
     if i < len {
       continue i + 1, meld(acc, Node(arr[i], Nil))
     } else {
-      break ImmutablePriorityQueue::{ body: acc, len: arr.length() }
+      break { body: acc, len: arr.length() }
     }
   }
 }
@@ -135,7 +135,7 @@ pub fn pop_exn[T : Compare](
   match self.body {
     Empty => abort("The ImmutablePriorityQueue is empty!")
     Node(_, ts) =>
-      ImmutablePriorityQueue::{ body: merges(ts), len: self.len - 1 }
+      { body: merges(ts), len: self.len - 1 }
   }
 }
 
