@@ -46,15 +46,15 @@ test "from_array" {
   inspect(queue.peek(), ~content="Some(5)")?
 }
 
-fn meld[T : Compare](x : Cont[T], y : Cont[T]) -> Cont[T] {
-  match (x, y) {
-    (Empty, _) => y
-    (_, Empty) => x
+fn meld[T : Compare](l : Cont[T], r : Cont[T]) -> Cont[T] {
+  match (l, r) {
+    (Empty, _) => r
+    (_, Empty) => l
     (Node(x, left), Node(y, right)) =>
       if x > y {
-        Node(x, Cons(Node(y, right), left))
+        Node(x, Cons(r, left))
       } else {
-        Node(y, Cons(Node(x, left), right))
+        Node(y, Cons(l, right))
       }
   }
 }
@@ -97,7 +97,7 @@ pub fn pop[T : Compare](
   match self.body {
     Empty => None
     Node(_, ts) =>
-      Some(ImmutablePriorityQueue::{ body: merges(ts), len: self.len - 1 })
+      Some({ body: merges(ts), len: self.len - 1 })
   }
 }
 
