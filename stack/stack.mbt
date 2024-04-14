@@ -17,7 +17,7 @@
 /// # Example
 ///
 /// ```
-/// let s: Stack[Int] = Stack::new()
+/// let s : Stack[Int] = Stack::new()
 /// println(s) // Stack::[]
 /// ```
 pub fn Stack::new[T]() -> Stack[T] {
@@ -34,7 +34,7 @@ test "new" {
 /// # Example
 ///
 /// ```
-/// let s: Stack[Int] = Stack::from_list(List::[1, 2, 3])
+/// let s = Stack::from_list(List::[1, 2, 3])
 /// println(s) // Stack::[1, 2, 3]
 /// ```
 pub fn Stack::from_list[T](list : List[T]) -> Stack[T] {
@@ -42,7 +42,7 @@ pub fn Stack::from_list[T](list : List[T]) -> Stack[T] {
 }
 
 test "from_list" {
-  let s : Stack[Int] = Stack::from_list(List::[1, 2, 3])
+  let s = Stack::from_list(List::[1, 2, 3])
   inspect(s, ~content="Stack::[1, 2, 3]")?
   inspect(s.len, ~content="3")?
 }
@@ -52,7 +52,7 @@ test "from_list" {
 /// # Example
 ///
 /// ```
-/// let s: Stack[Int] = Stack::[1, 2, 3]
+/// let s = Stack::[1, 2, 3]
 /// println(s) // Stack::[3, 2, 1]
 /// ```
 pub fn Stack::from_array[T](array : Array[T]) -> Stack[T] {
@@ -60,7 +60,7 @@ pub fn Stack::from_array[T](array : Array[T]) -> Stack[T] {
 }
 
 test "from_array" {
-  let s : Stack[Int] = Stack::[1, 2, 3]
+  let s = Stack::[1, 2, 3]
   inspect(s, ~content="Stack::[1, 2, 3]")?
   inspect(s.len, ~content="3")?
 }
@@ -89,8 +89,8 @@ test "to_string" {
 /// # Example
 ///
 /// ```
-/// let s: Stack[Int] = Stack::[1, 2, 3]
-/// let s1: Stack[Int] = Stack::from_stack(s)
+/// let s = Stack::[1, 2, 3]
+/// let s1 = Stack::from_stack(s)
 /// println(s1) // output: Stack::[3, 2, 1]
 /// ```
 pub fn Stack::from_stack[T](other : Stack[T]) -> Stack[T] {
@@ -98,8 +98,8 @@ pub fn Stack::from_stack[T](other : Stack[T]) -> Stack[T] {
 }
 
 test "from_stack" {
-  let s : Stack[Int] = Stack::[1, 2, 3]
-  let s1 : Stack[Int] = Stack::from_stack(s)
+  let s = Stack::[1, 2, 3]
+  let s1 = Stack::from_stack(s)
   inspect(s1.elements == s.elements, ~content="true")?
 }
 
@@ -108,7 +108,7 @@ test "from_stack" {
 /// # Example
 ///
 /// ```
-/// let s: Stack[Int] = Stack::[1, 2, 3]
+/// let s = Stack::[1, 2, 3]
 /// s.clear()
 /// println(s) // Stack::[]
 /// ```
@@ -118,7 +118,7 @@ pub fn clear[T](self : Stack[T]) -> Unit {
 }
 
 test "clear" {
-  let s : Stack[Int] = Stack::[1, 2, 3]
+  let s = Stack::[1, 2, 3]
   s.clear()
   inspect(s, ~content="Stack::[]")?
 }
@@ -128,7 +128,7 @@ test "clear" {
 /// # Example
 ///
 /// ```
-/// let s: Stack[Int] = Stack::[1, 2, 3].return_with_clear()
+/// let s = Stack::[1, 2, 3].return_with_clear()
 /// println(s) // Stack::[]
 /// ```
 pub fn return_with_clear[T](self : Stack[T]) -> Stack[T] {
@@ -137,7 +137,7 @@ pub fn return_with_clear[T](self : Stack[T]) -> Stack[T] {
 }
 
 test "return_with_clear" {
-  let s : Stack[Int] = Stack::[1, 2, 3].return_with_clear()
+  let s = Stack::[1, 2, 3].return_with_clear()
   inspect(s, ~content="Stack::[]")?
 }
 
@@ -146,7 +146,7 @@ test "return_with_clear" {
 /// # Example
 ///
 /// ```
-/// let s: Stack[Int] = Stack::new()
+/// let s = Stack::new()
 /// s.push(1)
 /// println(s) // Stack::[1]
 /// ```
@@ -156,7 +156,7 @@ pub fn push[T](self : Stack[T], x : T) -> Unit {
 }
 
 test "push" {
-  let s : Stack[Int] = Stack::new()
+  let s = Stack::new()
   s.push(1)
   inspect(s, ~content="Stack::[1]")?
   inspect(s.len, ~content="1")?
@@ -167,7 +167,7 @@ test "push" {
 /// # Example
 ///
 /// ```
-/// let s: Stack[Int] = Stack::new()
+/// let s = Stack::new()
 /// s.push_list(List::[1, 2, 3])
 /// println(s) // Stack::[3, 2, 1]
 /// ```
@@ -176,7 +176,7 @@ pub fn push_list[T](self : Stack[T], list : List[T]) -> Unit {
 }
 
 test "push_list" {
-  let s : Stack[Int] = Stack::new()
+  let s = Stack::new()
   s.push_list(List::[1, 2, 3])
   inspect(s, ~content="Stack::[3, 2, 1]")?
   inspect(s.len, ~content="3")?
@@ -187,8 +187,8 @@ test "push_list" {
 /// # Example
 ///
 /// ```
-/// let s: Stack[Int] = Stack::[1, 2, 3]
-/// let s1: Stack[Int] = Stack::new()
+/// let s = Stack::[1, 2, 3]
+/// let s1 : Stack[Int] = Stack::new()
 /// s1.push_stack(s)
 /// println(s1) // Stack::[1, 2, 3]
 /// ```
@@ -197,7 +197,7 @@ pub fn push_stack[T](self : Stack[T], stack : Stack[T]) -> Unit {
 }
 
 test "push_stack" {
-  let s : Stack[Int] = Stack::[1, 2, 3]
+  let s = Stack::[1, 2, 3]
   let s1 : Stack[Int] = Stack::new()
   s1.push_stack(s)
   inspect(s1, ~content="Stack::[3, 2, 1]")?
@@ -209,7 +209,7 @@ test "push_stack" {
 /// # Example
 ///
 /// ```
-/// let s: Stack[Int] = Stack::new()
+/// let s : Stack[Int] = Stack::new()
 /// s.push_array([1, 2, 3])
 /// println(s) // Stack::[3, 2, 1]
 /// ```
@@ -230,10 +230,10 @@ test "push_array" {
 /// # Example
 ///
 /// ```
-/// let s: Stack[Int] = Stack::[1, 2, 3]
-/// let s1: Stack[Int] = Stack::new()
+/// let s = Stack::[1, 2, 3]
+/// let s1 : Stack[Int] = Stack::new()
 /// println(s.pop()) // Some(1)
-/// println(s) // Stack::[2, 1]
+/// println(s) // Stack::[2, 3]
 /// println(s1.pop()) // None
 /// ```
 pub fn pop[T](self : Stack[T]) -> Option[T] {
@@ -248,7 +248,7 @@ pub fn pop[T](self : Stack[T]) -> Option[T] {
 }
 
 test "pop" {
-  let s : Stack[Int] = Stack::[1, 2, 3]
+  let s = Stack::[1, 2, 3]
   let s1 : Stack[Int] = Stack::new()
   inspect(s.pop(), ~content="Some(1)")?
   inspect(s, ~content="Stack::[2, 3]")?
@@ -264,10 +264,10 @@ test "pop" {
 /// # Example
 ///
 /// ```
-/// let s: Stack[Int] = Stack::[1, 2, 3]
-/// let s1: Stack[Int] = Stack::new()
+/// let s = Stack::[1, 2, 3]
+/// let s1 : Stack[Int] = Stack::new()
 /// println(s.pop_exn()) // 1
-/// println(s) // Stack::[2, 1]
+/// println(s) // Stack::[2, 3]
 /// println(s1.pop_exn()) // abort.
 /// ```
 /// @alert unsafe "Panic if the stack is empty."
@@ -283,7 +283,7 @@ pub fn pop_exn[T](self : Stack[T]) -> T {
 }
 
 test "pop_exn" {
-  let s : Stack[Int] = Stack::[1, 2, 3]
+  let s = Stack::[1, 2, 3]
   inspect(s.pop_exn(), ~content="1")?
   inspect(s, ~content="Stack::[2, 3]")?
   inspect(s.len, ~content="2")?
@@ -295,9 +295,9 @@ test "pop_exn" {
 /// # Example
 ///
 /// ```
-/// let s: Stack[Int] = Stack::[1, 2, 3]
+/// let s = Stack::[1, 2, 3]
 /// s.drop()
-/// println(s) // Stack::[2, 1]
+/// println(s) // Stack::[2, 3]
 /// ```
 pub fn drop[T](self : Stack[T]) -> Unit {
   match self.elements {
@@ -310,7 +310,7 @@ pub fn drop[T](self : Stack[T]) -> Unit {
 }
 
 test "drop" {
-  let s : Stack[Int] = Stack::[1, 2, 3]
+  let s = Stack::[1, 2, 3]
   s.drop()
   inspect(s, ~content="Stack::[2, 3]")?
   inspect(s.len, ~content="2")?
@@ -322,7 +322,7 @@ test "drop" {
 /// # Example
 ///
 /// ```
-/// let s: Stack[Int] = Stack::[1, 2, 3]
+/// let s = Stack::[1, 2, 3]
 /// let r = s.drop_result() // Ok(())
 /// ```
 pub fn drop_result[T](self : Stack[T]) -> Result[Unit, Unit] {
@@ -337,7 +337,7 @@ pub fn drop_result[T](self : Stack[T]) -> Result[Unit, Unit] {
 }
 
 test "drop_result" {
-  let s : Stack[Int] = Stack::[1, 2, 3]
+  let s = Stack::[1, 2, 3]
   let s1 : Stack[Int] = Stack::new()
   inspect(s1.drop_result() == Err(()), ~content="true")?
   inspect(s.drop_result() == Ok(()), ~content="true")?
@@ -351,9 +351,9 @@ test "drop_result" {
 /// # Example
 ///
 /// ```
-/// let s: Stack[Int] = Stack::from_array([1, 2, 3])
-/// println(s.peek()) // Some(3)
-/// println(s) // Stack::[3, 2, 1]
+/// let s = Stack::from_array([1, 2, 3])
+/// println(s.peek()) // Some(1)
+/// println(s) // Stack::[1, 2, 3]
 /// ```
 pub fn peek[T](self : Stack[T]) -> Option[T] {
   match self.elements {
@@ -363,7 +363,7 @@ pub fn peek[T](self : Stack[T]) -> Option[T] {
 }
 
 test "peek" {
-  let s : Stack[Int] = Stack::[1, 2, 3]
+  let s = Stack::[1, 2, 3]
   inspect(s.peek(), ~content="Some(1)")?
   inspect(s, ~content="Stack::[1, 2, 3]")?
   inspect(s.len, ~content="3")?
@@ -375,11 +375,11 @@ test "peek" {
 /// # Example
 ///
 /// ```
-/// let s: Stack[Int] = Stack::from_array([1,2,3])
-/// let s1: Stack[Int] = Stack::new()
+/// let s = Stack::from_array([1, 2, 3])
+/// let s1 : Stack[Int] = Stack::new()
 /// println(s1.peek_exn()) // abort
-/// println(s.peek_exn()) // 3
-/// println(s) // Stack::[3, 2, 1]
+/// println(s.peek_exn()) // 1
+/// println(s) // Stack::[1, 2, 3]
 /// ```
 /// @alert unsafe "Panic if the stack is empty."
 pub fn peek_exn[T](self : Stack[T]) -> T {
@@ -423,7 +423,7 @@ pub fn length[T](self : Stack[T]) -> Int {
 /// 
 /// # Example
 /// ```
-/// let s: Stack[Int] = Stack::[1, 2, 3]
+/// let s = Stack::[1, 2, 3]
 /// s.iter(fn(i) { println(i) })'
 /// ```
 pub fn iter[T](self : Stack[T], f : (T) -> Unit) -> Unit {
@@ -452,7 +452,7 @@ test "iter" {
 /// 
 /// # Example
 /// ```
-/// let s: Stack[Int] = Stack::[1, 2, 3]
+/// let s = Stack::[1, 2, 3]
 /// let sum = s.fold(~init=0, fn(acc, i) { acc + i })
 /// println(sum) // 6
 /// ```
@@ -461,17 +461,17 @@ pub fn fold[T, U](self : Stack[T], ~init : U, f : (U, T) -> U) -> U {
 }
 
 test "fold" {
-  let s : Stack[Int] = Stack::[1, 2, 3]
+  let s = Stack::[1, 2, 3]
   let sum = s.fold(~init=0, fn(acc, i) { acc + i })
   inspect(sum, ~content="6")?
 }
 
-/// Convert stack to list
+/// Convert stack to list.
 ///
 /// # Example
 ///
 /// ```
-/// println(Stack::[3, 2, 1].to_list()) // List::[1, 2, 3]
+/// println(Stack::[1, 2, 3].to_list()) // List::[1, 2, 3]
 /// ```
 pub fn to_list[T](self : Stack[T]) -> List[T] {
   self.elements
@@ -481,12 +481,12 @@ test "to_list" {
   inspect(Stack::[3, 2, 1].to_list(), ~content="List::[3, 2, 1]")?
 }
 
-/// Convert stack to array
+/// Convert stack to array.
 ///
 /// # Example
 ///
 /// ```
-/// println(Stack::[3, 2, 1].to_array()) // [1, 2, 3]
+/// println(Stack::[1, 2, 3].to_array()) // [1, 2, 3]
 /// ```
 pub fn to_array[T : Default](self : Stack[T]) -> Array[T] {
   self.elements.to_array()
