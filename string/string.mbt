@@ -91,3 +91,23 @@ test "Buffer::to_bytes" {
   buffer.write_string("中文")
   @assertion.assert_eq(buffer.to_bytes().to_string(), "中文")?
 }
+
+/// Converts the String into an array of Chars.
+pub fn to_array(self : String) -> Array[Char] {
+  let len = self.length()
+  let rv = Array::make(len, '\x00')
+  for i = 0; i < len; i = i + 1 {
+    rv[i] = self[i]
+  }
+  rv
+}
+
+test "to_array" {
+  let a = "你好！mbt".to_array()
+  inspect(a[0], ~content="你")?
+  inspect(a[1], ~content="好")?
+  inspect(a[2], ~content="！")?
+  inspect(a[3], ~content="m")?
+  inspect(a[4], ~content="b")?
+  inspect(a[5], ~content="t")?
+}

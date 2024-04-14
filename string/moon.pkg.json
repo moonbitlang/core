@@ -3,6 +3,7 @@
         "moonbitlang/core/builtin",
         "moonbitlang/core/assertion",
         "moonbitlang/core/coverage",
-        "moonbitlang/core/bytes"
+        "moonbitlang/core/bytes",
+        "moonbitlang/core/char"
     ]
 }
