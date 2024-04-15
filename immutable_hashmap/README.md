@@ -1,7 +1,7 @@
 This package provides an immutable hash map data structure.
 
 ## Basic usage
-```
+```mbt
 test {
   let h =
     @immutable_hashmap.empty()
