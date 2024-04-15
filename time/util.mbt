@@ -1,0 +1,74 @@
+// Copyright 2024 International Digital Economy Academy
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+fn add_prefix_zero(s : String, len : Int) -> String {
+  let buf = Buffer::make(len)
+  for i = s.length(); i < len; i = i + 1 {
+    buf.write_char('0')
+  }
+  buf.write_string(s)
+  buf.to_string()
+}
+
+fn remove_prefix_zero(s : String) -> String {
+  let mut i = 0
+  while s[i] == '0' && i < s.length() {
+    i += 1  
+  }
+  if i < s.length() {
+    substring(s, i, s.length() - i)
+  } else {
+    substring(s, s.length() - 1, 1)
+  }
+}
+
+/// FIXME: use substring method of String
+fn substring(s : String, start : Int, len : Int) -> String {
+  let buf = Buffer::make(len)
+  buf.write_sub_string(s, start, len)
+  buf.to_string()
+}
+
+/// FIXME: use split method of String
+fn split(s : String, delimiter: Char) -> @vec.Vec[String] {
+  let spl: @vec.Vec[String] = @vec.Vec::new()
+  let buf = Buffer::make(0)
+  for i = 0; i < s.length(); i = i + 1 {
+    if s[i] == delimiter {
+      spl.push(buf.to_string())
+      buf.reset()
+    } else {
+      buf.write_char(s[i])
+    }
+  }
+  spl.push(buf.to_string())
+  spl
+}
+
+test "add_prefix_zero" {
+  inspect(add_prefix_zero("1", 0), ~content="1")?
+  inspect(add_prefix_zero("1", 1), ~content="1")?
+  inspect(add_prefix_zero("1", 2), ~content="01")?
+  inspect(add_prefix_zero("1", 3), ~content="001")?
+}
+
+test "remove_prefix_zero" {
+  inspect(remove_prefix_zero("01"), ~content="1")?
+  inspect(remove_prefix_zero("09"), ~content="9")?
+  inspect(remove_prefix_zero("000"), ~content="0")?
+}
+
+test "split" {
+  inspect(split("2000-01-01", '-'), ~content="Vec::[2000, 01, 01]")?
+}
