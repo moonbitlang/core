@@ -102,7 +102,97 @@ pub fn push[T](self : ImmutableStack[T], x : T) -> ImmutableStack[T] {
 test "push" {
   let s = ImmutableStack::new()
   inspect(s.push(1), ~content="ImmutableStack::[1]")?
+  inspect(s.push(0).push(1), ~content="ImmutableStack::[1, 0]")?
   inspect(s, ~content="ImmutableStack::[]")?
+}
+
+/// Push a list into the stack.
+/// 
+/// # Example
+///
+/// ```
+/// let s = ImmutableStack::new()
+/// s.push_list(List::[1, 2, 3]) // ImmutableStack::[1, 2, 3]
+/// ```
+pub fn push_list[T](
+  self : ImmutableStack[T],
+  values : List[T]
+) -> ImmutableStack[T] {
+  { elements: values + self.elements, len: self.len + values.length() }
+}
+
+test "push_list" {
+  let s = ImmutableStack::new()
+  inspect(s.push_list(List::[1, 2, 3]), ~content="ImmutableStack::[1, 2, 3]")?
+  inspect(
+    s.push(0).push_list(List::[3, 2, 1]),
+    ~content="ImmutableStack::[3, 2, 1, 0]",
+  )?
+  inspect(s, ~content="ImmutableStack::[]")?
+}
+
+/// Push an array into the stack.
+/// 
+/// # Example
+///
+/// ```
+/// let s : ImmutableStack[Int] = ImmutableStack::new()
+/// s.push_array([1, 2, 3]) // Stack::[3, 2, 1]
+/// ```
+pub fn push_array[T](
+  self : ImmutableStack[T],
+  values : Array[T]
+) -> ImmutableStack[T] {
+  {
+    elements: loop values.length(), self.elements {
+      index, ls =>
+        if index == 0 {
+          ls
+        } else {
+          continue index - 1, Cons(values[index - 1], ls)
+        }
+    },
+    len: self.len + values.length(),
+  }
+}
+
+test "push_array" {
+  let s = ImmutableStack::new()
+  inspect(s.push_array([1, 2, 3]), ~content="ImmutableStack::[1, 2, 3]")?
+  inspect(
+    s.push(0).push_array([3, 2, 1]),
+    ~content="ImmutableStack::[3, 2, 1, 0]",
+  )?
+  inspect(s, ~content="ImmutableStack::[]")?
+}
+
+/// Push other stack into the current stack.
+/// 
+/// # Example
+///
+/// ```
+/// let s = ImmutableStack::new()
+/// let s1 = ImmutableStack::[1, 2, 3]
+/// s.push_stack(s1) // ImmutableStack::[1, 2, 3]
+/// ```
+pub fn push_stack[T](
+  self : ImmutableStack[T],
+  other : ImmutableStack[T]
+) -> ImmutableStack[T] {
+  { elements: other.elements + self.elements, len: self.len + other.len }
+}
+
+test "push_stack" {
+  let s = ImmutableStack::new()
+  let s1 = ImmutableStack::[1, 2, 3]
+  let s2 = ImmutableStack::[4, 5, 6]
+  inspect(s.push_stack(s1), ~content="ImmutableStack::[1, 2, 3]")?
+  inspect(
+    s.push_stack(s1).push_stack(s2),
+    ~content="ImmutableStack::[4, 5, 6, 1, 2, 3]",
+  )?
+  inspect(s, ~content="ImmutableStack::[]")?
+  inspect(s1, ~content="ImmutableStack::[1, 2, 3]")?
 }
 
 /// Pop an element from the top of the immutable stack.
@@ -330,11 +420,7 @@ pub fn equal[T : Eq](
   self : ImmutableStack[T],
   other : ImmutableStack[T]
 ) -> Bool {
-  if self.len == other.len {
-    self.elements.equal(other.elements)
-  } else {
-    false
-  }
+  self.len == other.len && self.elements.equal(other.elements)
 }
 
 pub fn op_equal[T : Eq](
