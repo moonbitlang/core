@@ -56,7 +56,7 @@ fn Rational::new_unchecked(
   numerator : Int64,
   denominator : Int64
 ) -> Rational {
-  let gcd = gcd(numerator, denominator).abs()
+  let gcd = gcd(numerator.abs(), denominator).abs()
   { numerator: numerator / gcd, denominator: denominator / gcd }
 }
 
@@ -116,16 +116,6 @@ pub fn abs(self : Rational) -> Rational {
   new_unchecked(self.numerator.abs(), self.denominator.abs())
 }
 
-/// Less than operator for rational numbers.
-pub fn op_lt(self : Rational, other : Rational) -> Bool {
-  self.numerator * other.denominator < other.numerator * self.denominator
-}
-
-/// Greater than operator for rational numbers.
-pub fn op_gt(self : Rational, other : Rational) -> Bool {
-  self.numerator * other.denominator > other.numerator * self.denominator
-}
-
 /// Equal to operator for rational numbers.
 pub fn op_equal(self : Rational, other : Rational) -> Bool {
   self.numerator * other.denominator == other.numerator * self.denominator
@@ -142,21 +132,6 @@ pub fn compare(self : Rational, other : Rational) -> Int {
   } else {
     0
   }
-}
-
-/// Greater than or equal to operator for rational numbers.
-pub fn op_ge(self : Rational, other : Rational) -> Bool {
-  self > other || self == other
-}
-
-/// Less than or equal to operator for rational numbers.
-pub fn op_le(self : Rational, other : Rational) -> Bool {
-  self < other || self == other
-}
-
-/// Not equal to operator for rational numbers.
-pub fn op_ne(self : Rational, other : Rational) -> Bool {
-  not(self == other)
 }
 
 /// Returns the approximate double value of a rational number.
@@ -185,6 +160,8 @@ pub fn from_double(value : Double) -> Result[Rational, String] {
   let mut d1 = 0L
   let t_max = Int64::max_value()
   let t_max_f = t_max.to_double()
+  let t_min = Int64::min_value()
+  let t_min_f = t_min.to_double()
   let epsilon = 1.0 / t_max_f
   let max_iteration = 30
   let max_error = 10.0e-20
@@ -193,7 +170,11 @@ pub fn from_double(value : Double) -> Result[Rational, String] {
   if q > t_max_f {
     return Err(overflow_error)
   }
+
   for i = 0; i < max_iteration; i = i + 1 {
+    if q >= t_max_f || q <= t_min_f  {
+      break
+    }
     let a = q.to_int64()
     let a_f = a.to_double()
     let f = q - a_f
@@ -227,7 +208,6 @@ pub fn from_double(value : Double) -> Result[Rational, String] {
     }
     q = 1.0 / f
   }
-
   // Overflow
   if d1 == 0L {
     return Err(overflow_error)
@@ -241,9 +221,9 @@ pub fn from_double(value : Double) -> Result[Rational, String] {
 /// Ceils a rational number towards positive infinity.
 pub fn ceil(self : Rational) -> Int64 {
   let sign = if self.numerator < 0L { -1L } else { 1L }
-  let quotient = -sign * self.numerator / self.denominator
+  let quotient = self.numerator / self.denominator
   if self.numerator % self.denominator == 0L {
-    sign * quotient
+    quotient
   } else {
     quotient + (1L + sign) / 2L
   }
@@ -252,9 +232,9 @@ pub fn ceil(self : Rational) -> Int64 {
 /// Floors a rational number towards negative infinity.
 pub fn floor(self : Rational) -> Int64 {
   let sign = if self.numerator < 0L { -1L } else { 1L }
-  let quotient = -sign * self.numerator / self.denominator
+  let quotient = self.numerator / self.denominator
   if self.numerator % self.denominator == 0L {
-    sign * quotient
+    quotient
   } else {
     quotient + (-1L + sign) / 2L
   }
@@ -390,9 +370,9 @@ test "op_div" {
   @assertion.assert_eq(c.numerator, 3L)?
   @assertion.assert_eq(c.denominator, 4L)?
 
-  // -3/2 / 3/2 = -1
-  let a = Rational::new_unchecked(-1L, 2L)
-  let b = Rational::new_unchecked(2L, 3L)
+  // 1/2 / -2/3 = -3/4
+  let a = Rational::new_unchecked(1L, 2L)
+  let b = Rational::new_unchecked(-2L, 3L)
   let c = a / b
   @assertion.assert_eq(c.numerator, -3L)?
   @assertion.assert_eq(c.denominator, 4L)?
@@ -469,6 +449,16 @@ test "ceil" {
   let a = Rational::new_unchecked(-1L, 2L)
   let b = ceil(a)
   @assertion.assert_eq(b, 0L)?
+
+  // -2/2 -> -1
+  let a = Rational::new_unchecked(-2L, 2L)
+  let b = ceil(a)
+  @assertion.assert_eq(b, -1L)?
+
+  // 2/2 -> 1
+  let a = Rational::new_unchecked(2L, 2L)
+  let b = ceil(a)
+  @assertion.assert_eq(b, 1L)?
 }
 
 test "floor" {
@@ -481,6 +471,16 @@ test "floor" {
   let a = Rational::new_unchecked(-1L, 2L)
   let b = floor(a)
   @assertion.assert_eq(b, -1L)?
+
+  // -2/2 -> -1
+  let a = Rational::new_unchecked(-2L, 2L)
+  let b = floor(a)
+  @assertion.assert_eq(b, -1L)?
+
+  // 2/2 -> 1
+  let a = Rational::new_unchecked(2L, 2L)
+  let b = floor(a)
+  @assertion.assert_eq(b, 1L)?
 }
 
 test "trunc" {
@@ -631,4 +631,6 @@ test "from_double" {
   )?
   @assertion.assert_eq(from_double(0.0), Ok(Rational::new_unchecked(0L, 1L)))?
   @assertion.assert_eq(from_double(-0.0), Ok(Rational::new_unchecked(0L, 1L)))?
+  // @assertion.assert_eq(from_double(9_223_372_036_854_775_806.0),Ok)??
+  // @assertion.assert_eq(from_double(9_223_372_036_854_775_807.1), Err(overflow_error))?
 }
