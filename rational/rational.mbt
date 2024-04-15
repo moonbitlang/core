@@ -1,6 +1,6 @@
 // Copyright 2024 International Digital Economy Academy
 //
-// Licensed under the Apache License, Version 2.0 (the "License");
+// Licensed under the Apache License, Version 2.0 (the "License")?
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
@@ -20,7 +20,7 @@
 struct Rational {
   numerator : Int64
   denominator : Int64
-}
+} derive(Debug)
 
 fn gcd(a : Int64, b : Int64) -> Int64 {
   if b == 0L {
@@ -56,9 +56,12 @@ pub fn Rational::new_unchecked(
   numerator : Int64,
   denominator : Int64
 ) -> Rational {
-  { numerator, denominator }
+  let gcd = gcd(numerator, denominator).abs()
+  { numerator: numerator / gcd, denominator: denominator / gcd }
 }
 
+/// NOTE: we don't check overflow here, to align with the `op_add` of `Int64`.
+/// TODO: add a `checked_add` method.
 pub fn op_add(self : Rational, other : Rational) -> Rational {
   new_unchecked(
     self.numerator * other.denominator + other.numerator * self.denominator,
@@ -126,9 +129,11 @@ pub fn op_equal(self : Rational, other : Rational) -> Bool {
 
 /// Compares two rational numbers.
 pub fn compare(self : Rational, other : Rational) -> Int {
-  if self.numerator * other.denominator < other.numerator * self.denominator {
+  let left = self.numerator * other.denominator
+  let right = other.numerator * self.denominator
+  if left < right {
     -1
-  } else if self.numerator * other.denominator > other.numerator * self.denominator {
+  } else if left > right {
     1
   } else {
     0
@@ -156,32 +161,73 @@ pub fn approximate_double(self : Rational) -> Double {
   self.numerator.to_double() / self.denominator.to_double()
 }
 
+let nan_error = "Rational::from_double: cannot convert NaN"
+
+let overflow_error = "Rational::from_double: overflow"
+
 /// Returns the approximate rational value of a double.
-pub fn from_double(value : Double) -> Rational {
+pub fn from_double(value : Double) -> Option[Rational] {
   // continued fraction algorithm
-  // TODO: add test
-  let mut x = value
-  let mut a = x.to_int64()
-  let mut h1 = 0L
-  let mut h2 = 1L
-  let mut k1 = 1L
-  let mut k2 = 0L
-  let mut n = 1L
-  while x - a.to_double() != 0.0 {
-    x = 1.0 / (x - a.to_double())
-    a = x.to_int64()
-    let h = a * h1 + h2
-    let k = a * k1 + k2
-    h2 = h1
-    h1 = h
-    k2 = k1
-    k1 = k
-    n += 1L
+  if value.is_nan(){
+    return None
   }
-  match new(h1, k1) {
-    Some(r) => r
-    None => abort("Rational::from_double: invalid value")
+  let sign = if value < 0.0 { -1L } else { 1L }
+  let value = value.abs()
+  let mut q = value
+  let mut n0 = 0L
+  let mut d0 = 1L
+  let mut n1 = 1L
+  let mut d1 = 0L
+  let t_max = Int64::max_value()
+  let t_max_f = t_max.to_double()
+  let epsilon = 1.0 / t_max_f
+  let max_iteration = 30
+  let max_error = 10.0e-20
+
+  // Overflow
+  if q > t_max_f {
+    return None
   }
+  for i = 0; i < max_iteration; i = i + 1 {
+    let a = q.to_int64()
+    let a_f = a.to_double()
+    let f = q - a_f
+
+    // Prevent overflow
+    if not(a == 0L) && (n1 > t_max / a || d1 > t_max / a || a * n1 > t_max - n0 ||
+    a * d1 > t_max - d0) {
+      break
+    }
+    let n = a * n1 + n0
+    let d = a * d1 + d0
+    n0 = n1
+    d0 = d1
+    n1 = n
+    d1 = d
+    let g = gcd(n1, d1)
+    if not(g == 0L) {
+      n1 = n1 / g
+      d1 = d1 / g
+    }
+
+    // Close enough?
+    let (n_f, d_f) = (n.to_double(), d.to_double())
+    if (n_f / d_f - value).abs() < max_error {
+      break
+    }
+
+    // Prevent division by ~0
+    if f < epsilon {
+      break
+    }
+    q = 1.0 / f
+  }
+
+  // Overflow
+  if d1 == 0L {
+    return None
+  }
+  Rational::new(sign * n1, d1)
 }
 
 /// Ceils a rational number towards positive infinity.
@@ -238,9 +284,6 @@ test "op_add" {
   let a = Rational::new_unchecked(1L, 2L)
   let b = Rational::new_unchecked(1L, 2L)
   let c = a + b
-  println(c.numerator)
-  println(c.denominator)
-
   @assertion.assert_eq(c.numerator, 1L)?
   @assertion.assert_eq(c.denominator, 1L)?
 
@@ -355,11 +398,6 @@ test "compare" {
   // -1/2 > -2/3
   let a = Rational::new_unchecked(-1L, 2L)
   let b = Rational::new_unchecked(-2L, 3L)
-  // println(a.compare(b))
-  // println(a.numerator)
-  // println(a.denominator)
-  // println(b.numerator)
-  // println(b.denominator)
   @assertion.assert_eq(a.compare(b), 1)?
   @assertion.assert_true(a > b)?
 
@@ -368,4 +406,30 @@ test "compare" {
   let b = Rational::new_unchecked(1L, 2L)
   @assertion.assert_eq(a.compare(b), 0)?
   @assertion.assert_true(a == b)?
+}
+
+test "approximate_float" {
+  @assertion.assert_eq(from_double(0.5), Rational::new(1L, 2L))?
+  @assertion.assert_eq(from_double(5.0), Rational::new(5L, 1L))?
+  @assertion.assert_eq(from_double(29.97), Rational::new(2997L, 100L))?
+  @assertion.assert_eq(from_double(-29.97), Rational::new(-2997L, 100L))?
+  @assertion.assert_eq(from_double(63.5), Rational::new(127L, 2L))?
+  @assertion.assert_eq(from_double(126.5), Rational::new(253L, 2L))?
+  @assertion.assert_eq(from_double(127.0), Rational::new(127L, 1L))?
+  @assertion.assert_eq(from_double(127.5), Rational::new(255L, 2L))?
+  @assertion.assert_eq(from_double(-63.5), Rational::new(-127L, 2L))?
+  @assertion.assert_eq(from_double(-126.5), Rational::new(-253L, 2L))?
+  @assertion.assert_eq(from_double(-127.0), Rational::new(-127L, 1L))?
+  @assertion.assert_eq(from_double(-127.5), Rational::new(-255L, 2L))?
+  @assertion.assert_eq(from_double(-10.0e200), None)?
+  @assertion.assert_eq(from_double(10.0e200), None)?
+  @assertion.assert_eq(from_double(Double::inf(1)), None)?
+  @assertion.assert_eq(from_double(Double::inf(-1)), None)?
+  @assertion.assert_eq(from_double(Double::nan ()), None)?
+  @assertion.assert_eq(
+    from_double(2.2204460492503131e-16),
+    Rational::new(1L, 4503599627370496L),
+  )?
+  @assertion.assert_eq(from_double(0.0), Rational::new(0L, 1L))?
+  @assertion.assert_eq(from_double(-0.0), Rational::new(0L, 1L))?
 }
