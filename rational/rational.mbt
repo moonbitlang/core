@@ -84,22 +84,26 @@ pub fn op_mul(self : Rational, other : Rational) -> Rational {
 }
 
 pub fn op_div(self : Rational, other : Rational) -> Rational {
-  new_unchecked(
-    self.numerator * other.denominator,
-    self.denominator * other.numerator,
-  )
-}
-
-pub fn op_mod(self : Rational, other : Rational) -> Rational {
-  new_unchecked(
-    self.numerator * other.denominator % (self.denominator * other.numerator),
-    self.denominator * other.denominator,
-  )
+  if other.numerator < 0L {
+    new_unchecked(
+      self.numerator * -other.denominator,
+      self.denominator * -other.numerator,
+    )
+  } else {
+    new_unchecked(
+      self.numerator * other.denominator,
+      self.denominator * other.numerator,
+    )
+  }
 }
 
 /// Returns the reciprocal of a rational number.
 pub fn reciprocal(self : Rational) -> Rational {
-  new_unchecked(self.denominator, self.numerator)
+  if self.numerator < 0L {
+    new_unchecked(-self.denominator, -self.numerator)
+  } else {
+    new_unchecked(self.denominator, self.numerator)
+  }
 }
 
 /// Returns the negation of a rational number.
@@ -107,10 +111,10 @@ pub fn neg(self : Rational) -> Rational {
   new_unchecked(-self.numerator, self.denominator)
 }
 
-// /// Returns the absolute value of a rational number.
-// pub fn abs(self : Rational) -> Rational {
-//   new_unchecked(self.numerator.abs(), self.denominator.abs())
-// }
+/// Returns the absolute value of a rational number.
+pub fn abs(self : Rational) -> Rational {
+  new_unchecked(self.numerator.abs(), self.denominator.abs())
+}
 
 /// Less than operator for rational numbers.
 pub fn op_lt(self : Rational, other : Rational) -> Bool {
@@ -156,7 +160,7 @@ pub fn op_ne(self : Rational, other : Rational) -> Bool {
 }
 
 /// Returns the approximate double value of a rational number.
-pub fn approximate_double(self : Rational) -> Double {
+pub fn to_double(self : Rational) -> Double {
   // TODO: complete algorithm
   self.numerator.to_double() / self.denominator.to_double()
 }
@@ -166,10 +170,11 @@ let nan_error = "Rational::from_double: cannot convert NaN"
 let overflow_error = "Rational::from_double: overflow"
 
 /// Returns the approximate rational value of a double.
-pub fn from_double(value : Double) -> Option[Rational] {
+pub fn from_double(value : Double) -> Result[Rational, String] {
   // continued fraction algorithm
-  if value.is_nan(){
-    return None
+  // Ported from https://github.com/rust-num/num
+  if value.is_nan() {
+    return Err(nan_error)
   }
   let sign = if value < 0.0 { -1L } else { 1L }
   let value = value.abs()
@@ -186,7 +191,7 @@ pub fn from_double(value : Double) -> Option[Rational] {
 
   // Overflow
   if q > t_max_f {
-    return None
+    return Err(overflow_error)
   }
   for i = 0; i < max_iteration; i = i + 1 {
     let a = q.to_int64()
@@ -225,24 +230,34 @@ pub fn from_double(value : Double) -> Option[Rational] {
 
   // Overflow
   if d1 == 0L {
-    return None
+    return Err(overflow_error)
   }
-  Rational::new(sign * n1, d1)
+  match Rational::new(sign * n1, d1) {
+    Some(r) => Ok(r)
+    None => abort("Impossible to reach")
+  }
 }
 
 /// Ceils a rational number towards positive infinity.
 pub fn ceil(self : Rational) -> Int64 {
-  let quotient = self.numerator / self.denominator
+  let sign = if self.numerator < 0L { -1L } else { 1L }
+  let quotient = -sign * self.numerator / self.denominator
   if self.numerator % self.denominator == 0L {
-    quotient
+    sign * quotient
   } else {
-    quotient + 1L
+    quotient + (1L + sign) / 2L
   }
 }
 
 /// Floors a rational number towards negative infinity.
 pub fn floor(self : Rational) -> Int64 {
-  self.numerator / self.denominator
+  let sign = if self.numerator < 0L { -1L } else { 1L }
+  let quotient = -sign * self.numerator / self.denominator
+  if self.numerator % self.denominator == 0L {
+    sign * quotient
+  } else {
+    quotient + (-1L + sign) / 2L
+  }
 }
 
 /// Rounds a rational number towards zero.
@@ -261,7 +276,9 @@ pub fn fract(self : Rational) -> Rational {
 }
 
 pub fn to_string(self : Rational) -> String {
-  if self.denominator == 1L {
+  if self.numerator == 0L {
+    "0".to_string()
+  } else if self.denominator == 1L {
     self.numerator.to_string()
   } else {
     self.numerator.to_string() + "/" + self.denominator.to_string()
@@ -388,18 +405,173 @@ test "op_div" {
   @assertion.assert_eq(c.denominator, 1L)?
 }
 
+test "reciprocal" {
+  // 1/2 -> 2/1
+  let a = Rational::new_unchecked(1L, 2L)
+  let b = reciprocal(a)
+  @assertion.assert_eq(b.numerator, 2L)?
+  @assertion.assert_eq(b.denominator, 1L)?
+
+  // -1/2 -> -2/1
+  let a = Rational::new_unchecked(-1L, 2L)
+  let b = reciprocal(a)
+  @assertion.assert_eq(b.numerator, -2L)?
+  @assertion.assert_eq(b.denominator, 1L)?
+}
+
+test "neg" {
+  // 1/2 -> -1/2
+  let a = Rational::new_unchecked(1L, 2L)
+  let b = neg(a)
+  @assertion.assert_eq(b.numerator, -1L)?
+  @assertion.assert_eq(b.denominator, 2L)?
+
+  // -1/2 -> 1/2
+  let a = Rational::new_unchecked(-1L, 2L)
+  let b = neg(a)
+  @assertion.assert_eq(b.numerator, 1L)?
+  @assertion.assert_eq(b.denominator, 2L)?
+}
+
+test "abs" {
+  // 1/2 -> 1/2
+  let a = Rational::new_unchecked(1L, 2L)
+  let b = abs(a)
+  @assertion.assert_eq(b.numerator, 1L)?
+  @assertion.assert_eq(b.denominator, 2L)?
+
+  // -1/2 -> 1/2
+  let a = Rational::new_unchecked(-1L, 2L)
+  let b = abs(a)
+  @assertion.assert_eq(b.numerator, 1L)?
+  @assertion.assert_eq(b.denominator, 2L)?
+}
+
+test "to_double" {
+  // 1/2 -> 0.5
+  let a = Rational::new_unchecked(1L, 2L)
+  let b = a.to_double()
+  @assertion.assert_eq(b, 0.5)?
+
+  // -1/2 -> -0.5
+  let a = Rational::new_unchecked(-1L, 2L)
+  let b = a.to_double()
+  @assertion.assert_eq(b, -0.5)?
+}
+
+test "ceil" {
+  // 1/2 -> 1
+  let a = Rational::new_unchecked(1L, 2L)
+  let b = ceil(a)
+  @assertion.assert_eq(b, 1L)?
+
+  // -1/2 -> 0
+  let a = Rational::new_unchecked(-1L, 2L)
+  let b = ceil(a)
+  @assertion.assert_eq(b, 0L)?
+}
+
+test "floor" {
+  // 1/2 -> 0
+  let a = Rational::new_unchecked(1L, 2L)
+  let b = floor(a)
+  @assertion.assert_eq(b, 0L)?
+
+  // -1/2 -> -1
+  let a = Rational::new_unchecked(-1L, 2L)
+  let b = floor(a)
+  @assertion.assert_eq(b, -1L)?
+}
+
+test "trunc" {
+  // 1/2 -> 0
+  let a = Rational::new_unchecked(1L, 2L)
+  let b = trunc(a)
+  @assertion.assert_eq(b, 0L)?
+
+  // -1/2 -> 0
+  let a = Rational::new_unchecked(-1L, 2L)
+  let b = trunc(a)
+  @assertion.assert_eq(b, 0L)?
+}
+
+test "fract" {
+  // 1/2 -> 1/2
+  let a = Rational::new_unchecked(1L, 2L)
+  let b = fract(a)
+  @assertion.assert_eq(b.numerator, 1L)?
+  @assertion.assert_eq(b.denominator, 2L)?
+
+  // -1/2 -> -1/2
+  let a = Rational::new_unchecked(-1L, 2L)
+  let b = fract(a)
+  @assertion.assert_eq(b.numerator, -1L)?
+  @assertion.assert_eq(b.denominator, 2L)?
+
+  // 3/2 -> 1/2
+  let a = Rational::new_unchecked(3L, 2L)
+  let b = fract(a)
+  @assertion.assert_eq(b.numerator, 1L)?
+  @assertion.assert_eq(b.denominator, 2L)?
+
+  // -3/2 -> -1/2
+  let a = Rational::new_unchecked(-3L, 2L)
+  let b = fract(a)
+  @assertion.assert_eq(b.numerator, -1L)?
+  @assertion.assert_eq(b.denominator, 2L)?
+}
+
+test "to_string" {
+  // 1/2 -> "1/2"
+  let a = Rational::new_unchecked(1L, 2L)
+  let b = to_string(a)
+  @assertion.assert_eq(b, "1/2")?
+
+  // 4/4 -> "1"
+  let a = Rational::new_unchecked(4L, 4L)
+  let b = to_string(a)
+  @assertion.assert_eq(b, "1")?
+
+  // 0/1 -> "0"
+  let a = Rational::new_unchecked(0L, 1L)
+  let b = to_string(a)
+  @assertion.assert_eq(b, "0")?
+}
+
+test "is_integer" {
+  // 1/2 is not an integer
+  let a = Rational::new_unchecked(1L, 2L)
+  @assertion.assert_false(a.is_integer())?
+
+  // 1 is an integer
+  let a = Rational::new_unchecked(1L, 1L)
+  @assertion.assert_true(a.is_integer())?
+
+  // 0 is an integer
+  let a = Rational::new_unchecked(0L, 1L)
+  @assertion.assert_true(a.is_integer())?
+
+  // -1 is an integer
+  let a = Rational::new_unchecked(-1L, 1L)
+  @assertion.assert_true(a.is_integer())?
+}
+
 test "compare" {
   // 1/2 < 2/3
   let a = Rational::new_unchecked(1L, 2L)
   let b = Rational::new_unchecked(2L, 3L)
   @assertion.assert_eq(a.compare(b), -1)?
   @assertion.assert_true(a < b)?
+  @assertion.assert_true(a <= b)?
+  @assertion.assert_true(a != b)?
 
   // -1/2 > -2/3
   let a = Rational::new_unchecked(-1L, 2L)
   let b = Rational::new_unchecked(-2L, 3L)
   @assertion.assert_eq(a.compare(b), 1)?
   @assertion.assert_true(a > b)?
+  @assertion.assert_true(a >= b)?
+  @assertion.assert_true(a != b)?
 
   // 1/2 == 1/2
   let a = Rational::new_unchecked(1L, 2L)
@@ -408,28 +580,55 @@ test "compare" {
   @assertion.assert_true(a == b)?
 }
 
-test "approximate_float" {
-  @assertion.assert_eq(from_double(0.5), Rational::new(1L, 2L))?
-  @assertion.assert_eq(from_double(5.0), Rational::new(5L, 1L))?
-  @assertion.assert_eq(from_double(29.97), Rational::new(2997L, 100L))?
-  @assertion.assert_eq(from_double(-29.97), Rational::new(-2997L, 100L))?
-  @assertion.assert_eq(from_double(63.5), Rational::new(127L, 2L))?
-  @assertion.assert_eq(from_double(126.5), Rational::new(253L, 2L))?
-  @assertion.assert_eq(from_double(127.0), Rational::new(127L, 1L))?
-  @assertion.assert_eq(from_double(127.5), Rational::new(255L, 2L))?
-  @assertion.assert_eq(from_double(-63.5), Rational::new(-127L, 2L))?
-  @assertion.assert_eq(from_double(-126.5), Rational::new(-253L, 2L))?
-  @assertion.assert_eq(from_double(-127.0), Rational::new(-127L, 1L))?
-  @assertion.assert_eq(from_double(-127.5), Rational::new(-255L, 2L))?
-  @assertion.assert_eq(from_double(-10.0e200), None)?
-  @assertion.assert_eq(from_double(10.0e200), None)?
-  @assertion.assert_eq(from_double(Double::inf(1)), None)?
-  @assertion.assert_eq(from_double(Double::inf(-1)), None)?
-  @assertion.assert_eq(from_double(Double::nan ()), None)?
+test "from_double" {
+  @assertion.assert_eq(from_double(0.5), Ok(Rational::new_unchecked(1L, 2L)))?
+  @assertion.assert_eq(from_double(5.0), Ok(Rational::new_unchecked(5L, 1L)))?
+  @assertion.assert_eq(
+    from_double(29.97),
+    Ok(Rational::new_unchecked(2997L, 100L)),
+  )?
+  @assertion.assert_eq(
+    from_double(-29.97),
+    Ok(Rational::new_unchecked(-2997L, 100L)),
+  )?
+  @assertion.assert_eq(from_double(63.5), Ok(Rational::new_unchecked(127L, 2L)))?
+  @assertion.assert_eq(
+    from_double(126.5),
+    Ok(Rational::new_unchecked(253L, 2L)),
+  )?
+  @assertion.assert_eq(
+    from_double(127.0),
+    Ok(Rational::new_unchecked(127L, 1L)),
+  )?
+  @assertion.assert_eq(
+    from_double(127.5),
+    Ok(Rational::new_unchecked(255L, 2L)),
+  )?
+  @assertion.assert_eq(
+    from_double(-63.5),
+    Ok(Rational::new_unchecked(-127L, 2L)),
+  )?
+  @assertion.assert_eq(
+    from_double(-126.5),
+    Ok(Rational::new_unchecked(-253L, 2L)),
+  )?
+  @assertion.assert_eq(
+    from_double(-127.0),
+    Ok(Rational::new_unchecked(-127L, 1L)),
+  )?
+  @assertion.assert_eq(
+    from_double(-127.5),
+    Ok(Rational::new_unchecked(-255L, 2L)),
+  )?
+  @assertion.assert_eq(from_double(-10.0e200), Err(overflow_error))?
+  @assertion.assert_eq(from_double(10.0e200), Err(overflow_error))?
+  @assertion.assert_eq(from_double(Double::inf(1)), Err(overflow_error))?
+  @assertion.assert_eq(from_double(Double::inf(-1)), Err(overflow_error))?
+  @assertion.assert_eq(from_double(Double::nan()), Err(nan_error))?
   @assertion.assert_eq(
     from_double(2.2204460492503131e-16),
-    Rational::new(1L, 4503599627370496L),
+    Ok(Rational::new_unchecked(1L, 4503599627370496L)),
   )?
-  @assertion.assert_eq(from_double(0.0), Rational::new(0L, 1L))?
-  @assertion.assert_eq(from_double(-0.0), Rational::new(0L, 1L))?
+  @assertion.assert_eq(from_double(0.0), Ok(Rational::new_unchecked(0L, 1L)))?
+  @assertion.assert_eq(from_double(-0.0), Ok(Rational::new_unchecked(0L, 1L)))?
 }
