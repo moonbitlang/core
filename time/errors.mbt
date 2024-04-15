@@ -13,6 +13,17 @@
 // limitations under the License.
 
 let year_out_of_range_err = "year out of range"
+
 let month_out_of_range_err = "month out of range"
-let dom_out_of_range_err = "date of month out of range"
+
+let dom_out_of_range_err = "day of month out of range"
+
+let doy_out_of_range_err = "day of year out of range"
+
+let dow_out_of_range_err = "day of week out of range"
+
+let unix_days_out_of_range_err = "unix days out of range"
+
 let invalid_date_err = "invalid date"
+
+let days_overflow_err = "days overflow"

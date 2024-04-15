@@ -24,7 +24,7 @@ fn add_prefix_zero(s : String, len : Int) -> String {
 fn remove_prefix_zero(s : String) -> String {
   let mut i = 0
   while s[i] == '0' && i < s.length() {
-    i += 1  
+    i += 1
   }
   if i < s.length() {
     substring(s, i, s.length() - i)
@@ -41,8 +41,8 @@ fn substring(s : String, start : Int, len : Int) -> String {
 }
 
 /// FIXME: use split method of String
-fn split(s : String, delimiter: Char) -> @vec.Vec[String] {
-  let spl: @vec.Vec[String] = @vec.Vec::new()
+fn split(s : String, delimiter : Char) -> @vec.Vec[String] {
+  let spl : @vec.Vec[String] = @vec.Vec::new()
   let buf = Buffer::make(0)
   for i = 0; i < s.length(); i = i + 1 {
     if s[i] == delimiter {
@@ -56,19 +56,56 @@ fn split(s : String, delimiter: Char) -> @vec.Vec[String] {
   spl
 }
 
+/// FIXME: use checked_add method of Int64
+fn checked_add(x : Int64, y : Int64) -> Option[Int64] {
+  let r = x + y
+  // Overflow iff both arguments have the opposite sign of the result
+  if x.lxor(r).land(y.lxor(r)) < 0L {
+    None
+  } else {
+    Some(r)
+  }
+}
+
+/// FIXME: use checked_mul method of Int
+fn checked_mul(x : Int, y : Int) -> Option[Int] {
+  let r = x.to_int64() * y.to_int64()
+  if r > (2147483647).to_int64() || r < (-2147483648).to_int64() {
+    None
+  } else {
+    Some(r.to_int())
+  }
+}
+
 test "add_prefix_zero" {
-  inspect(add_prefix_zero("1", 0), ~content="1")?
-  inspect(add_prefix_zero("1", 1), ~content="1")?
-  inspect(add_prefix_zero("1", 2), ~content="01")?
-  inspect(add_prefix_zero("1", 3), ~content="001")?
+  inspect(add_prefix_zero("1", 0), content="1")?
+  inspect(add_prefix_zero("1", 1), content="1")?
+  inspect(add_prefix_zero("1", 2), content="01")?
+  inspect(add_prefix_zero("1", 3), content="001")?
 }
 
 test "remove_prefix_zero" {
-  inspect(remove_prefix_zero("01"), ~content="1")?
-  inspect(remove_prefix_zero("09"), ~content="9")?
-  inspect(remove_prefix_zero("000"), ~content="0")?
+  inspect(remove_prefix_zero("01"), content="1")?
+  inspect(remove_prefix_zero("09"), content="9")?
+  inspect(remove_prefix_zero("000"), content="0")?
 }
 
 test "split" {
-  inspect(split("2000-01-01", '-'), ~content="Vec::[2000, 01, 01]")?
+  inspect(split("2000-01-01", '-'), content="Vec::[2000, 01, 01]")?
+}
+
+test "checked_add" {
+  @assertion.assert_eq(checked_add(1L, 1L), Some(2L))?
+  @assertion.assert_eq(checked_add(1L, -1L), Some(0L))?
+  @assertion.assert_eq(checked_add(-1L, -1L), Some(-2L))?
+  @assertion.assert_eq(checked_add(1L, 9223372036854775807L), None)?
+  @assertion.assert_eq(checked_add(-1L, -9223372036854775808L), None)?
+}
+
+test "checked_mul" {
+  @assertion.assert_eq(checked_mul(2, 3), Some(6))?
+  @assertion.assert_eq(checked_mul(-2, 3), Some(-6))?
+  @assertion.assert_eq(checked_mul(-2, -3), Some(6))?
+  @assertion.assert_eq(checked_mul(2, 2147483647), None)?
+  @assertion.assert_eq(checked_mul(2, -2147483648), None)?
 }

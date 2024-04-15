@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-type Year Int derive(Debug, Eq, Compare)
+type Year Int derive(Debug, Eq, Show, Compare)
 
 let min_year : Int = -999999999
 

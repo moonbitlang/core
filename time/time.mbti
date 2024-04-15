@@ -1,0 +1,83 @@
+package moonbitlang/core/time
+
+// Values
+
+// Types and methods
+type Date
+fn Date::add_days(Date, Int) -> Result[Date, String]
+fn Date::add_months(Date, Int) -> Result[Date, String]
+fn Date::add_weeks(Date, Int) -> Result[Date, String]
+fn Date::add_years(Date, Int) -> Result[Date, String]
+fn Date::compare(Date, Date) -> Int
+fn Date::day_of_month(Date) -> DayOfMonth
+fn Date::day_of_week(Date) -> DayOfWeek
+fn Date::day_of_year(Date) -> Int
+fn Date::debug_write(Date, @moonbitlang/core/builtin.Buffer) -> Unit
+fn Date::from_unix_days(Int64) -> Result[Date, String]
+fn Date::from_yd(Int, Int) -> Result[Date, String]
+fn Date::from_ymd(Int, Int, Int) -> Result[Date, String]
+fn Date::hash(Date) -> Int
+fn Date::is_leap_year(Date) -> Bool
+fn Date::length_of_month(Date) -> Int
+fn Date::length_of_year(Date) -> Int
+fn Date::month(Date) -> Month
+fn Date::op_equal(Date, Date) -> Bool
+fn Date::parse(String) -> Result[Date, String]
+fn Date::to_string(Date) -> String
+fn Date::to_unix_days(Date) -> Int64
+fn Date::with_day_of_month(Date, Int) -> Result[Date, String]
+fn Date::with_day_of_year(Date, Int) -> Result[Date, String]
+fn Date::with_month(Date, Int) -> Result[Date, String]
+fn Date::with_year(Date, Int) -> Result[Date, String]
+fn Date::year(Date) -> Year
+
+type DayOfMonth
+fn DayOfMonth::compare(DayOfMonth, DayOfMonth) -> Int
+fn DayOfMonth::debug_write(DayOfMonth, @moonbitlang/core/builtin.Buffer) -> Unit
+fn DayOfMonth::new(Int) -> Result[DayOfMonth, String]
+fn DayOfMonth::op_equal(DayOfMonth, DayOfMonth) -> Bool
+fn DayOfMonth::to_string(DayOfMonth) -> String
+fn DayOfMonth::value(DayOfMonth) -> Int
+
+type DayOfWeek
+fn DayOfWeek::debug_write(DayOfWeek, @moonbitlang/core/builtin.Buffer) -> Unit
+fn DayOfWeek::new(Int) -> Result[DayOfWeek, String]
+fn DayOfWeek::new_exact(Int) -> DayOfWeek
+fn DayOfWeek::op_equal(DayOfWeek, DayOfWeek) -> Bool
+fn DayOfWeek::to_string(DayOfWeek) -> String
+fn DayOfWeek::valid(Int) -> Bool
+
+type DayOfYear
+fn DayOfYear::compare(DayOfYear, DayOfYear) -> Int
+fn DayOfYear::debug_write(DayOfYear, @moonbitlang/core/builtin.Buffer) -> Unit
+fn DayOfYear::new(Int) -> Result[DayOfYear, String]
+fn DayOfYear::op_equal(DayOfYear, DayOfYear) -> Bool
+fn DayOfYear::to_string(DayOfYear) -> String
+fn DayOfYear::valid(Int) -> Bool
+
+type Month
+fn Month::add(Month, Int) -> Result[Month, String]
+fn Month::compare(Month, Month) -> Int
+fn Month::debug_write(Month, @moonbitlang/core/builtin.Buffer) -> Unit
+fn Month::first_day_of_year(Month, Bool) -> Int
+fn Month::length(Month, Bool) -> Int
+fn Month::new(Int) -> Result[Month, String]
+fn Month::op_equal(Month, Month) -> Bool
+fn Month::to_string(Month) -> String
+fn Month::value(Month) -> Int
+
+type Year
+fn Year::add(Year, Int) -> Result[Year, String]
+fn Year::compare(Year, Year) -> Int
+fn Year::debug_write(Year, @moonbitlang/core/builtin.Buffer) -> Unit
+fn Year::is_leap_year(Year) -> Bool
+fn Year::length(Year) -> Int
+fn Year::new(Int) -> Result[Year, String]
+fn Year::op_equal(Year, Year) -> Bool
+fn Year::to_string(Year) -> String
+fn Year::value(Year) -> Int
+
+// Traits
+
+// Extension Methods
+

@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-type DayOfMonth Int derive(Debug, Eq, Compare)
+type DayOfMonth Int derive(Debug, Eq, Show, Compare)
 
 let min_day_of_month = 1
 
@@ -25,7 +25,7 @@ pub fn DayOfMonth::new(day : Int) -> Result[DayOfMonth, String] {
   Ok(DayOfMonth(day))
 }
 
-pub fn value(self: DayOfMonth) -> Int {
+pub fn value(self : DayOfMonth) -> Int {
   self.0
 }
 

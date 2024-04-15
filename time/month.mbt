@@ -25,7 +25,7 @@ enum Month {
   October
   November
   December
-} derive (Debug, Eq, Compare)
+} derive(Debug, Eq, Show, Compare)
 
 let min_month : Int = 1
 
@@ -52,7 +52,7 @@ pub fn Month::new(month : Int) -> Result[Month, String] {
   }
 }
 
-pub fn value(self: Month) -> Int {
+pub fn value(self : Month) -> Int {
   match self {
     January => 1
     February => 2
@@ -74,6 +74,28 @@ pub fn length(self : Month, ~leap_year : Bool = false) -> Int {
     February => if leap_year { 29 } else { 28 }
     April | June | September | November => 30
     _ => 31
+  }
+}
+
+pub fn add(self : Month, months : Int) -> Result[Month, String] {
+  Month::new((self.value() + months) % 12)
+}
+
+pub fn first_day_of_year(self : Month, ~leap_year : Bool = false) -> Int {
+  let leap_day = if leap_year { 1 } else { 0 }
+  match self {
+    January => 1
+    February => 32
+    March => 60 + leap_day
+    April => 91 + leap_day
+    May => 121 + leap_day
+    June => 152 + leap_day
+    July => 182 + leap_day
+    August => 213 + leap_day
+    September => 244 + leap_day
+    October => 274 + leap_day
+    November => 305 + leap_day
+    December => 335 + leap_day
   }
 }
 
@@ -101,7 +123,22 @@ test "value" {
 
 test "length" {
   @assertion.assert_eq(Month::February.length(), 28)?
-  @assertion.assert_eq(Month::February.length(~leap_year=true), 29)?
+  @assertion.assert_eq(Month::February.length(leap_year=true), 29)?
   @assertion.assert_eq(Month::April.length(), 30)?
   @assertion.assert_eq(Month::May.length(), 31)?
+}
+
+test "first_day_of_year" {
+  @assertion.assert_eq(Month::January.first_day_of_year(), 1)?
+  @assertion.assert_eq(Month::February.first_day_of_year(), 32)?
+  @assertion.assert_eq(Month::March.first_day_of_year(), 60)?
+  @assertion.assert_eq(Month::April.first_day_of_year(), 91)?
+  @assertion.assert_eq(Month::May.first_day_of_year(), 121)?
+  @assertion.assert_eq(Month::June.first_day_of_year(), 152)?
+  @assertion.assert_eq(Month::July.first_day_of_year(), 182)?
+  @assertion.assert_eq(Month::August.first_day_of_year(), 213)?
+  @assertion.assert_eq(Month::September.first_day_of_year(), 244)?
+  @assertion.assert_eq(Month::October.first_day_of_year(), 274)?
+  @assertion.assert_eq(Month::November.first_day_of_year(), 305)?
+  @assertion.assert_eq(Month::December.first_day_of_year(), 335)?
 }
