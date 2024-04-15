@@ -12,22 +12,36 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-pub fn to_string[X : Show](self : Array[X]) -> String {
-  let mut acc = "["
-  for i = 0; i < self.length(); i = i + 1 {
-    if i > 0 {
-      acc = acc + ", "
-    }
-    acc = acc + self[i].to_string()
+priv type UninitializedArray[T] Array[UnsafeMaybeUninit[T]]
+fn op_get[T](self : UninitializedArray[T], index : Int) -> T = "%array_get"
+
+priv enum SliceData[T] {
+  Arr(Array[T])
+  UninitArr(UninitializedArray[T])
+}
+
+fn op_get[T](self: SliceData[T], index: Int) -> T {
+  match self {
+    SliceData :: Arr(arr) => arr[index]
+    SliceData :: UninitArr(arr) => arr[index]
   }
-  acc + "]"
 }
 
-pub fn Array::default[X]() -> Array[X] {
-  []
+struct Slice[T] {
+  start: Int
+  len: Int
+  data: SliceData[T]
 }
 
-pub fn op_as_slice[T](self: Array[T], ~start: Int, ~end: Int) -> Slice[T] {
+pub fn length[T](self: Slice[T]) -> Int {
+  self.len
+}
+
+pub fn op_get[T](self: Slice[T], index: Int) -> T {
+  self.data[self.start + index]
+}
+
+pub fn op_as_slice[T](self: Slice[T], ~start: Int, ~end: Int) -> Slice[T] {
   if start < 0 {
     abort("Slice start index out of bounds")
   } else if end > self.length() {
@@ -35,5 +49,9 @@ pub fn op_as_slice[T](self: Array[T], ~start: Int, ~end: Int) -> Slice[T] {
   } else if start > end {
     abort("Slice start index greater than end index")
   }
-  Slice :: { start, len: end - start, data: Arr(self) }
+  Slice :: {
+    start: start + self.start,
+    len: end - start,
+    data: self.data,
+  }
 }
