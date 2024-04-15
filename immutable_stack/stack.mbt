@@ -195,7 +195,7 @@ test "push_stack" {
   inspect(s1, ~content="ImmutableStack::[1, 2, 3]")?
 }
 
-/// Pop an element from the top of the immutable stack.
+/// Drop an element from the top of the immutable stack.
 /// If there are elements in the stack, return `Some(stack)`, otherwise return `None`.
 ///
 /// # Example
@@ -203,29 +203,29 @@ test "push_stack" {
 /// ```
 /// let s = ImmutableStack::[1, 2, 3]
 /// let s1 : ImmutableStack[Int] = ImmutableStack::new()
-/// println(s.pop()) // Some(ImmutableStack::[2, 3])
+/// println(s.drop()) // Some(ImmutableStack::[2, 3])
 /// println(s) // ImmutableStack::[1, 2, 3]
-/// println(s1.pop()) // None
+/// println(s1.drop()) // None
 /// ```
-pub fn pop[T](self : ImmutableStack[T]) -> Option[ImmutableStack[T]] {
+pub fn drop[T](self : ImmutableStack[T]) -> Option[ImmutableStack[T]] {
   match self.elements {
     Cons(_, tl) => Some({ elements: tl, len: self.len - 1 })
     Nil => None
   }
 }
 
-test "pop" {
+test "drop" {
   let s = ImmutableStack::[1, 2, 3]
   let s1 : ImmutableStack[Int] = ImmutableStack::new()
-  inspect(s.pop(), ~content="Some(ImmutableStack::[2, 3])")?
+  inspect(s.drop(), ~content="Some(ImmutableStack::[2, 3])")?
   inspect(s, ~content="ImmutableStack::[1, 2, 3]")?
   inspect(s.len, ~content="3")?
-  inspect(s1.pop(), ~content="None")?
+  inspect(s1.drop(), ~content="None")?
   inspect(s1, ~content="ImmutableStack::[]")?
   inspect(s1.len, ~content="0")?
 }
 
-/// Pop an element from the top of the immutable stack.
+/// Drop an element from the top of the immutable stack.
 /// If there are elements in the stack, return the stack, otherwise abort.
 ///
 /// # Example
@@ -233,23 +233,74 @@ test "pop" {
 /// ```
 /// let s = ImmutableStack::[1, 2, 3]
 /// let s1 : ImmutableStack[Int] = ImmutableStack::new()
-/// println(s.pop_exn()) // ImmutableStack::[2, 3]
+/// println(s.drop_exn()) // ImmutableStack::[2, 3]
 /// println(s) // ImmutableStack::[1, 2, 3]
-/// println(s1.pop_exn()) // abort.
+/// println(s1.drop_exn()) // abort.
 /// ```
 /// @alert unsafe "Panic if the stack is empty."
-pub fn pop_exn[T](self : ImmutableStack[T]) -> ImmutableStack[T] {
+pub fn drop_exn[T](self : ImmutableStack[T]) -> ImmutableStack[T] {
   match self.elements {
     Cons(_, tl) => { elements: tl, len: self.len - 1 }
+    Nil => abort("drop of empty stack")
+  }
+}
+
+test "drop_exn" {
+  let s = ImmutableStack::[1, 2, 3]
+  inspect(s.drop_exn(), ~content="ImmutableStack::[2, 3]")?
+  inspect(s, ~content="ImmutableStack::[1, 2, 3]")?
+  inspect(s.len, ~content="3")?
+}
+
+/// Pop an element from the top of the immutable stack.
+/// 
+/// If there are elements in the stack, return `Some(the top element of the stack, stack)`, otherwise return `(None, stack)`.
+/// 
+/// # Example
+/// ```
+/// let s = ImmutableStack::[1, 2, 3]
+/// println(s.pop().0) // Some(1)
+/// ```
+pub fn pop[T](self: ImmutableStack[T]) -> (Option[T], ImmutableStack[T]) {
+  match self.elements {
+    Cons(hd, tl) => (Some(hd), { elements: tl, len: self.len - 1 })
+    Nil => (None, self)
+  }
+}
+
+test "pop" {
+  let s = ImmutableStack::[1, 2, 3]
+  let s1 : ImmutableStack[Int] = ImmutableStack::new()
+  inspect(s.pop().1, ~content="ImmutableStack::[2, 3]")?
+  inspect(s.pop().0, ~content="Some(1)")?
+  inspect(s, ~content="ImmutableStack::[1, 2, 3]")?
+  inspect(s1.pop().0, ~content="None")?
+  inspect(s1.pop().1, ~content="ImmutableStack::[]")?
+}
+
+/// Pop an element from the top of the immutable stack.
+/// 
+/// If there are elements in the stack, return the top element of the stack and the stack, otherwise abort.
+/// 
+/// # Example
+/// ```
+/// let s = ImmutableStack::[1, 2, 3]
+/// println(s.pop_exn().0) // 1
+/// ```
+/// 
+/// @alert unsafe "Panic if the stack is empty."
+pub fn pop_exn[T](self : ImmutableStack[T]) -> (T, ImmutableStack[T]) {
+  match self.elements {
+    Cons(hd, tl) => (hd, { elements: tl, len: self.len - 1 })
     Nil => abort("pop of empty stack")
   }
 }
 
 test "pop_exn" {
   let s = ImmutableStack::[1, 2, 3]
-  inspect(s.pop_exn(), ~content="ImmutableStack::[2, 3]")?
+  inspect(s.pop_exn().1, ~content="ImmutableStack::[2, 3]")?
+  inspect(s.pop_exn().0, ~content="1")?
   inspect(s, ~content="ImmutableStack::[1, 2, 3]")?
-  inspect(s.len, ~content="3")?
 }
 
 /// Only the top element of the immutable stack is returned and will not be pop or drop.
@@ -271,7 +322,7 @@ pub fn peek[T](self : ImmutableStack[T]) -> Option[T] {
 
 test "peek" {
   let s = ImmutableStack::[1, 2, 3]
-  inspect(s.pop_exn().pop_exn().pop_exn().peek(), ~content="None")?
+  inspect(s.drop_exn().drop_exn().drop_exn().peek(), ~content="None")?
   inspect(s.peek(), ~content="Some(1)")?
   inspect(s, ~content="ImmutableStack::[1, 2, 3]")?
   inspect(s.len, ~content="3")?
@@ -318,7 +369,7 @@ pub fn is_empty[T](self : ImmutableStack[T]) -> Bool {
 
 test "is_empty" {
   let empty : ImmutableStack[Unit] = ImmutableStack::new()
-  inspect(ImmutableStack::[1].pop_exn().is_empty(), ~content="true")?
+  inspect(ImmutableStack::[1].drop_exn().is_empty(), ~content="true")?
   inspect(ImmutableStack::[1, 2, 3].is_empty(), ~content="false")?
   inspect(empty.is_empty(), ~content="true")?
 }
