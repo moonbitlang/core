@@ -44,18 +44,15 @@ pub fn Rational::new(
     } else {
       -1L
     }
-    let numerator = if numerator < 0L { -numerator } else { numerator }
-    let denominator = if denominator < 0L { -denominator } else { denominator }
+    let numerator = numerator.abs()
+    let denominator = denominator.abs()
     let gcd = gcd(numerator, denominator)
     Some({ numerator: sign * numerator / gcd, denominator: denominator / gcd })
   }
 }
 
 /// Creates a rational number without enforcing invariants.
-fn Rational::new_unchecked(
-  numerator : Int64,
-  denominator : Int64
-) -> Rational {
+fn Rational::new_unchecked(numerator : Int64, denominator : Int64) -> Rational {
   let gcd = gcd(numerator.abs(), denominator).abs()
   { numerator: numerator / gcd, denominator: denominator / gcd }
 }
@@ -160,8 +157,6 @@ pub fn from_double(value : Double) -> Result[Rational, String] {
   let mut d1 = 0L
   let t_max = Int64::max_value()
   let t_max_f = t_max.to_double()
-  let t_min = Int64::min_value()
-  let t_min_f = t_min.to_double()
   let epsilon = 1.0 / t_max_f
   let max_iteration = 30
   let max_error = 10.0e-20
@@ -172,8 +167,8 @@ pub fn from_double(value : Double) -> Result[Rational, String] {
   }
 
   for i = 0; i < max_iteration; i = i + 1 {
-    if q >= t_max_f || q <= t_min_f  {
-      break
+    if not(q >= -9223372036854775808.0 && q < 9223372036854775808.0) {
+      break // overflow
     }
     let a = q.to_int64()
     let a_f = a.to_double()
@@ -631,6 +626,18 @@ test "from_double" {
   )?
   @assertion.assert_eq(from_double(0.0), Ok(Rational::new_unchecked(0L, 1L)))?
   @assertion.assert_eq(from_double(-0.0), Ok(Rational::new_unchecked(0L, 1L)))?
-  // @assertion.assert_eq(from_double(9_223_372_036_854_775_806.0),Ok)??
-  // @assertion.assert_eq(from_double(9_223_372_036_854_775_807.1), Err(overflow_error))?
+  @assertion.assert_eq(
+    from_double(9_223_372_036_800_000_000.0),
+    Ok(Rational::new_unchecked(9_223_372_036_800_000_000L, 1L)),
+  )?
+  @assertion.assert_eq(
+    from_double(9_223_372_036_854_775_807.1),
+    Err(overflow_error),
+  )?
+  // Unfortunately, the following test case is an overflow error because of the loss of precision in the double value,
+  // while mathematically its result should be `Ok(Rational::new_unchecked(9_223_372_036_854_775_807L, 1L))`.
+  @assertion.assert_eq(
+    from_double(9_223_372_036_854_775_807.0),
+    Err(overflow_error),
+  )?
 }
