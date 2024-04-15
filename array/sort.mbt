@@ -71,7 +71,7 @@ fn timsort[T : Compare](arr : ArraySlice[T]) -> Unit {
           let right = runs[r + 1]
           merge(arr.slice(left.start, right.start + right.len), left.len)
           runs[r + 1] = { start: left.start, len: left.len + right.len }
-          let _ = runs.remove(r)
+          runs.remove(r) |> ignore
         }
         None => break
       }
@@ -96,16 +96,15 @@ fn merge[T : Compare](arr : ArraySlice[T], mid : Int) -> Unit {
     buf[i] = arr[mid + i]
   }
   let buf = { array: buf, start: 0, end: buf_len }
-  let buf_remaining = 
-    for p1 = mid - 1, p2 = buf_len - 1, p = mid + buf_len - 1
-        p1 >= 0 && p2 >= 0; {
-      if arr[p1] > buf[p2] {
-        arr[p] = arr[p1]
-        continue p1 - 1, p2, p - 1
-      } else {
-        arr[p] = buf[p2]
-        continue p1, p2 - 1, p - 1
-      }
+  let buf_remaining = for p1 = mid - 1, p2 = buf_len - 1, p = mid + buf_len - 1; p1 >=
+                         0 && p2 >= 0; {
+    if arr[p1] > buf[p2] {
+      arr[p] = arr[p1]
+      continue p1 - 1, p2, p - 1
+    } else {
+      arr[p] = buf[p2]
+      continue p1, p2 - 1, p - 1
+    }
   } else {
     p2
   }
@@ -120,24 +119,18 @@ fn merge[T : Compare](arr : ArraySlice[T], mid : Int) -> Unit {
 fn find_streak[T : Compare](arr : ArraySlice[T]) -> (Int, Bool) {
   let len = arr.length()
   if len < 2 {
-    return (len, false)
-  }
-  let assume_reverse = arr[1] < arr[0]
-  if assume_reverse {
-    for end = 2 {
-      if end < len && arr[end] < arr[end - 1] {
-        continue end + 1
-      } else {
-        break (end, true)
-      }
+    (len, false)
+  } else if arr[1] < arr[0] {
+    for end = 2; end < len && arr[end] < arr[end - 1]; {
+      continue end + 1
+    } else {
+      (end, true)
     }
   } else {
-    for end = 2 {
-      if end < len && arr[end] >= arr[end - 1] {
-        continue end + 1
-      } else {
-        break (end, false)
-      }
+    for end = 2; end < len && arr[end] >= arr[end - 1]; {
+      continue end + 1
+    } else {
+      (end, false)
     }
   }
 }
@@ -220,23 +213,17 @@ fn quick_sort[T : Compare](
   while true {
     let len = arr.length()
     if len <= bubble_sort_len {
-      if len >= 2 {
-        bubble_sort(arr)
-      }
-      return
+      return if len >= 2 { bubble_sort(arr) }
     }
     // Too many imbalanced partitions may lead to O(n^2) performance in quick sort.
     // If the limit is reached, use heap sort to ensure O(n log n) performance.
     if limit == 0 {
-      heap_sort(arr)
-      return
+      return heap_sort(arr)
     }
     let (pivot_index, likely_sorted) = choose_pivot(arr)
     // Try bubble sort if the array is likely already sorted.
-    if was_partitioned && balanced && likely_sorted {
-      if try_bubble_sort(arr) {
-        return
-      }
+    if was_partitioned && balanced && likely_sorted && try_bubble_sort(arr) {
+      return
     }
     let (pivot, partitioned) = partition(arr, pivot_index)
     was_partitioned = partitioned
@@ -249,12 +236,11 @@ fn quick_sort[T : Compare](
         // pred is less than all elements in arr
         // If pivot euqals to pred, then we can skip all elements that are equal to pred.
         if pred == arr[pivot] {
-          let mut i = pivot
-          while i < len && pred == arr[i] {
-            i = i + 1
+          arr = for i = pivot; i < len && pred == arr[i]; {
+            continue i + 1
+          } else {
+            arr.slice(i, len)
           }
-          arr = arr.slice(i, len)
-          continue
         }
       _ => ()
     }
@@ -276,7 +262,7 @@ fn get_limit(len : Int) -> Int {
   let mut len = len
   let mut limit = 0
   while len > 0 {
-    len = len / 2
+    len /= 2
     limit += 1
   }
   limit
@@ -291,21 +277,18 @@ fn try_bubble_sort[T : Compare](
   arr : ArraySlice[T],
   ~max_tries : Int = 8
 ) -> Bool {
-  let mut tries = 0
-  for i = 1; i < arr.length(); i = i + 1 {
-    let mut sorted = true
-    for j = i; j > 0 && arr[j - 1] > arr[j]; j = j - 1 {
-      sorted = false
-      arr.swap(j, j - 1)
-    }
-    if not(sorted) {
-      tries += 1
-      if tries > max_tries {
-        return false
+  let mut sorted = false
+  for t = 1; t < max_tries && not(sorted); t = t + 1 {
+    for i = 1; i < arr.length(); i = i + 1 {
+      sorted = true
+      for j = i; j > 0 && arr[j - 1] > arr[j]; j = j - 1 {
+        sorted = false
+        arr.swap(j, j - 1)
       }
     }
+  } else {
+    sorted
   }
-  true
 }
 
 /// Try to sort the array with bubble sort.
@@ -332,11 +315,12 @@ fn partition[T : Compare](
   arr : ArraySlice[T],
   pivot_index : Int
 ) -> (Int, Bool) {
-  arr.swap(pivot_index, arr.length() - 1)
-  let pivot = arr[arr.length() - 1]
+  let len = arr.length()
+  arr.swap(pivot_index, len - 1)
+  let pivot = arr[len - 1]
   let mut i = 0
   let mut partitioned = true
-  for j = 0; j < arr.length() - 1; j = j + 1 {
+  for j = 0; j < len - 1; j = j + 1 {
     if arr[j] < pivot {
       if i != j {
         arr.swap(i, j)
@@ -345,7 +329,7 @@ fn partition[T : Compare](
       i = i + 1
     }
   }
-  arr.swap(i, arr.length() - 1)
+  arr.swap(i, len - 1)
   (i, partitioned)
 }
 
@@ -480,22 +464,19 @@ test "stable_sort" {
   @assertion.assert_eq(arr, expected)?
 }
 
-pub fn is_sorted[T:Compare](arr : Array[T]) -> Bool {
-    for i = 1; i < arr.length(); i = i + 1 {
-      if arr[i] < arr[i - 1] {
-        break false
-      }
-    } else {
-    true
+pub fn is_sorted[T : Compare](arr : Array[T]) -> Bool {
+  for i = 1; i < arr.length(); i = i + 1 {
+    if arr[i] < arr[i - 1] {
+      break false
     }
+  } else {
+    true
+  }
 }
 
-
 test "stable_sort_complex" {
-  
-
   let run_lens = [86, 64, 21, 20, 22]
-  let total_len = run_lens.fold_left(~init=0, fn { acc, x => acc + x })
+  let total_len = run_lens.fold_left(init=0, fn { acc, x => acc + x })
   let arr = Array::make(total_len, 0)
   let mut index = 0
   for i = 0, len = run_lens.length(); i < len; i = i + 1 {

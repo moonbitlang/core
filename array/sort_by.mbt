@@ -67,23 +67,19 @@ fn quick_sort_by[T](
   while true {
     let len = arr.length()
     if len <= bubble_sort_len {
-      if len >= 2 {
-        bubble_sort_by(arr, cmp)
-      }
-      return
+      return if len >= 2 { bubble_sort_by(arr, cmp) }
     }
     // Too many imbalanced partitions may lead to O(n^2) performance in quick sort.
     // If the limit is reached, use heap sort to ensure O(n log n) performance.
     if limit == 0 {
-      heap_sort_by(arr, cmp)
-      return
+      return heap_sort_by(arr, cmp)
     }
     let (pivot_index, likely_sorted) = choose_pivot_by(arr, cmp)
     // Try bubble sort if the array is likely already sorted.
-    if was_partitioned && balanced && likely_sorted {
-      if try_bubble_sort_by(arr, cmp) {
-        return
-      }
+    if was_partitioned && balanced && likely_sorted && try_bubble_sort_by(
+      arr, cmp,
+    ) {
+      return
     }
     let (pivot, partitioned) = partition_by(arr, cmp, pivot_index)
     was_partitioned = partitioned
@@ -96,12 +92,11 @@ fn quick_sort_by[T](
         // pred is less than all elements in arr
         // If pivot euqals to pred, then we can skip all elements that are equal to pred.
         if cmp(pred, arr[pivot]) == 0 {
-          let mut i = pivot
-          while i < len && cmp(pred, arr[i]) == 0 {
-            i = i + 1
+          arr = for i = pivot; i < len && cmp(pred, arr[i]) == 0; {
+            continue i + 1
+          } else {
+            arr.slice(i, len)
           }
-          arr = arr.slice(i, len)
-          continue
         }
       _ => ()
     }
@@ -129,21 +124,18 @@ fn try_bubble_sort_by[T](
   cmp : (T, T) -> Int,
   ~max_tries : Int = 8
 ) -> Bool {
-  let mut tries = 0
-  for i = 1; i < arr.length(); i = i + 1 {
-    let mut sorted = true
-    for j = i; j > 0 && cmp(arr[j - 1], arr[j]) > 0; j = j - 1 {
-      sorted = false
-      arr.swap(j, j - 1)
-    }
-    if not(sorted) {
-      tries += 1
-      if tries > max_tries {
-        return false
+  let mut sorted = false
+  for t = 1; t < max_tries && not(sorted); t = t + 1 {
+    for i = 1; i < arr.length(); i = i + 1 {
+      sorted = true
+      for j = i; j > 0 && cmp(arr[j - 1], arr[j]) > 0; j = j - 1 {
+        sorted = false
+        arr.swap(j, j - 1)
       }
     }
+  } else {
+    sorted
   }
-  true
 }
 
 /// Try to sort the array with bubble sort.
@@ -174,11 +166,12 @@ fn partition_by[T](
   cmp : (T, T) -> Int,
   pivot_index : Int
 ) -> (Int, Bool) {
-  arr.swap(pivot_index, arr.length() - 1)
-  let pivot = arr[arr.length() - 1]
+  let len = arr.length()
+  arr.swap(pivot_index, len - 1)
+  let pivot = arr[len - 1]
   let mut i = 0
   let mut partitioned = true
-  for j = 0; j < arr.length() - 1; j = j + 1 {
+  for j = 0; j < len - 1; j = j + 1 {
     if cmp(arr[j], pivot) < 0 {
       if i != j {
         arr.swap(i, j)
@@ -187,7 +180,7 @@ fn partition_by[T](
       i = i + 1
     }
   }
-  arr.swap(i, arr.length() - 1)
+  arr.swap(i, len - 1)
   (i, partitioned)
 }
 
