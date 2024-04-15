@@ -1,6 +1,6 @@
 // Copyright 2024 International Digital Economy Academy
 //
-// Licensed under the Apache License, Version 2.0 (the "License")?
+// Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
@@ -52,7 +52,7 @@ pub fn Rational::new(
 }
 
 /// Creates a rational number without enforcing invariants.
-pub fn Rational::new_unchecked(
+fn Rational::new_unchecked(
   numerator : Int64,
   denominator : Int64
 ) -> Rational {
