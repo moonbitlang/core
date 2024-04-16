@@ -50,6 +50,11 @@ jobs:
       - name: moon check
         run: moon check
 
+      - name: moon info
+        run: |
+          moon info
+          git diff --exit-code
+
       - name: moon test
         run: |
           moon test
@@ -78,6 +83,11 @@ jobs:
 
       - name: moon check
         run: moon check
+
+      - name: moon info
+        run: |
+          moon info
+          git diff --exit-code
 
       - name: moon test
         run: |
@@ -108,6 +118,11 @@ jobs:
 
       - name: moon check
         run: moon check
+
+      - name: moon info
+        run: |
+          moon info
+          git diff --exit-code
 
       - name: moon test
         run: |
