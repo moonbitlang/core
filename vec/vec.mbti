@@ -63,6 +63,8 @@ fn Vec::to_list[T](Vec[T]) -> List[T]
 fn Vec::to_string[T : @moonbitlang/core/builtin.Show](Vec[T]) -> String
 fn Vec::with_capacity[T](Int) -> Vec[T]
 
+type VecView
+
 // Traits
 
 // Extension Methods

@@ -47,11 +47,6 @@ fn Js_string::log(Js_string) -> Unit
 fn Js_string::new(String) -> Js_string
 fn Js_string::op_add(Js_string, Js_string) -> Js_string
 
-type Slice
-fn Slice::length[T](Slice[T]) -> Int
-fn Slice::op_as_slice[T](Slice[T], Int, Int) -> Slice[T]
-fn Slice::op_get[T](Slice[T], Int) -> T
-
 pub type SourceLoc
 fn SourceLoc::debug_write(SourceLoc, Buffer) -> Unit
 fn SourceLoc::to_string(SourceLoc) -> String
@@ -173,7 +168,6 @@ fn Array::default[X]() -> Array[X]
 fn Array::get[T](Array[T], Int) -> T
 fn Array::length[T](Array[T]) -> Int
 fn Array::make[T](Int, T) -> Array[T]
-fn Array::op_as_slice[T](Array[T], Int, Int) -> Slice[T]
 fn Array::op_get[T](Array[T], Int) -> T
 fn Array::op_set[T](Array[T], Int, T) -> Unit
 fn Array::set[T](Array[T], Int, T) -> Unit
