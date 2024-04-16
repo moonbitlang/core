@@ -25,7 +25,7 @@
 /// ```
 pub fn sort[T : Compare](self : Vec[T]) -> Unit {
   quick_sort(
-    { array: self, start: 0, end: self.length() },
+    self[..],
     None,
     get_limit(self.length()),
   )
@@ -78,13 +78,13 @@ fn quick_sort[T : Compare](
           while i < len && pred == arr[i] {
             i = i + 1
           }
-          arr = arr.slice(i, len)
+          arr = arr[i..len]
           continue
         }
       _ => ()
     }
-    let left = arr.slice(0, pivot)
-    let right = arr.slice(pivot + 1, len)
+    let left = arr[0..pivot]
+    let right = arr[pivot + 1..len]
     // Reduce the stack depth by only call quick_sort on the smaller partition.
     if left.length() < right.length() {
       quick_sort(left, pred, limit)
@@ -148,7 +148,7 @@ fn bubble_sort[T : Compare](arr : VecSlice[T]) -> Unit {
 
 test "try_bubble_sort" {
   let arr = Vec::[8, 7, 6, 5, 4, 3, 2, 1]
-  let sorted = try_bubble_sort({ array: arr, start: 0, end: 8 })
+  let sorted = try_bubble_sort(arr[0..8])
   @assertion.assert_eq(sorted, true)?
   @assertion.assert_eq(arr, Vec::[1, 2, 3, 4, 5, 6, 7, 8])?
 }
@@ -220,7 +220,7 @@ fn heap_sort[T : Compare](arr : VecSlice[T]) -> Unit {
   }
   for i = len - 1; i > 0; i = i - 1 {
     arr.swap(0, i)
-    sift_down(arr.slice(0, i), 0)
+    sift_down(arr[0..i], 0)
   }
 }
 
@@ -270,12 +270,12 @@ fn test_sort(f : (Vec[Int]) -> Unit) -> Result[Unit, String] {
 }
 
 test "heap_sort" {
-  test_sort(fn(arr) { heap_sort({ array: arr, start: 0, end: arr.length() }) })?
+  test_sort(fn(arr) { heap_sort(arr[..]) })?
 }
 
 test "bubble_sort" {
   test_sort(
-    fn(arr) { bubble_sort({ array: arr, start: 0, end: arr.length() }) },
+    fn(arr) { bubble_sort(arr[..]) },
   )?
 }
 

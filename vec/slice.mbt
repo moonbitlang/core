@@ -12,26 +12,40 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-priv struct VecSlice[T] {
-  array : Vec[T]
-  start : Int
-  end : Int
-}
-
 fn length[T](self : VecSlice[T]) -> Int {
-  self.end - self.start
+  self.len
 }
 
 fn op_get[T](self : VecSlice[T], index : Int) -> T {
-  self.array[self.start + index]
+  if index < 0 || index >= self.len {
+    let len = self.len
+    abort(
+      "index out of bounds: the len is from 0 to \(len) but the index is \(index)",
+    )
+  }
+  self.buf[self.start + index]
 }
 
 fn op_set[T](self : VecSlice[T], index : Int, value : T) -> Unit {
-  self.array[self.start + index] = value
+  if index < 0 || index >= self.len {
+    let len = self.len
+    abort(
+      "index out of bounds: the len is from 0 to \(len) but the index is \(index)",
+    )
+  }
+  self.buf[self.start + index] = value
 }
 
-fn swap[T](self : VecSlice[T], a : Int, b : Int) -> Unit {
-  self.array.swap(self.start + a, self.start + b)
+fn swap[T](self : VecSlice[T], i : Int, j : Int) -> Unit {
+    if i >= self.len || j >= self.len || i < 0 || j < 0 {
+    let len = self.len
+    abort(
+      "index out of bounds: the len is from 0 to \(len) but the index is (\(i), \(j))",
+    )
+  }
+  let temp = self.buf[self.start + i]
+  self.buf[self.start + i] = self.buf[self.start + j]
+  self.buf[self.start + j] = temp
 }
 
 fn reverse[T](self : VecSlice[T]) -> Unit {
@@ -42,6 +56,33 @@ fn reverse[T](self : VecSlice[T]) -> Unit {
   }
 }
 
-fn slice[T](self : VecSlice[T], start : Int, end : Int) -> VecSlice[T] {
-  { array: self.array, start: self.start + start, end: self.start + end }
+fn op_as_slice[T](self: Vec[T], ~start: Int, ~end: Int) -> VecSlice[T] {
+  if start < 0 {
+    abort("Slice start index out of bounds")
+  } else if end > self.length() {
+    abort("Slice end index out of bounds")
+  } else if start > end {
+    abort("Slice start index greater than end index")
+  }
+  VecSlice :: { buf: self.buf, start, len: end - start }
+}
+
+fn op_as_slice[T](self : VecSlice[T], ~start : Int, ~end : Int) -> VecSlice[T] {
+  if start < 0 {
+    abort("Slice start index out of bounds")
+  } else if end > self.length() {
+    abort("Slice end index out of bounds")
+  } else if start > end {
+    abort("Slice start index greater than end index")
+  }
+  VecSlice :: { buf: self.buf, start: self.start + start, len: end - start }
+}
+
+test "slice" {
+  let s = Vec::[1, 2, 3, 4, 5]
+  let x = match s[..] {
+    [st, .., ed] => st + ed
+    _ => 0
+  }
+  @assertion.assert_eq(x, 6)?
 }

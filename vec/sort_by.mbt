@@ -25,7 +25,7 @@
 /// ```
 pub fn sort_by_key[T, K : Compare](self : Vec[T], map : (T) -> K) -> Unit {
   quick_sort_by(
-    { array: self, start: 0, end: self.length() },
+    self[..],
     fn(a, b) { map(a).compare(map(b)) },
     None,
     get_limit(self.length()),
@@ -45,7 +45,7 @@ pub fn sort_by_key[T, K : Compare](self : Vec[T], map : (T) -> K) -> Unit {
 /// ```
 pub fn sort_by[T](self : Vec[T], cmp : (T, T) -> Int) -> Unit {
   quick_sort_by(
-    { array: self, start: 0, end: self.length() },
+    self[..],
     cmp,
     None,
     get_limit(self.length()),
@@ -100,13 +100,13 @@ fn quick_sort_by[T](
           while i < len && cmp(pred, arr[i]) == 0 {
             i = i + 1
           }
-          arr = arr.slice(i, len)
+          arr = arr[i..len]
           continue
         }
       _ => ()
     }
-    let left = arr.slice(0, pivot)
-    let right = arr.slice(pivot + 1, len)
+    let left = arr[0..pivot]
+    let right = arr[pivot + 1..len]
     // Reduce the stack depth by only call quick_sort on the smaller partition.
     if left.length() < right.length() {
       quick_sort_by(left, cmp, pred, limit)
@@ -162,7 +162,7 @@ fn bubble_sort_by[T](arr : VecSlice[T], cmp : (T, T) -> Int) -> Unit {
 test "try_bubble_sort" {
   let arr = Vec::[8, 7, 6, 5, 4, 3, 2, 1]
   let sorted = try_bubble_sort_by(
-    { array: arr, start: 0, end: 8 },
+    arr[0..8],
     fn(a, b) { a - b },
   )
   @assertion.assert_eq(sorted, true)?
@@ -240,7 +240,7 @@ fn heap_sort_by[T](arr : VecSlice[T], cmp : (T, T) -> Int) -> Unit {
   }
   for i = len - 1; i > 0; i = i - 1 {
     arr.swap(0, i)
-    sift_down_by(arr.slice(0, i), 0, cmp)
+    sift_down_by(arr[0..i], 0, cmp)
   }
 }
 
@@ -265,7 +265,7 @@ test "heap_sort" {
   test_sort(
     fn(arr) {
       heap_sort_by(
-        { array: arr, start: 0, end: arr.length() },
+        arr[..],
         fn(a, b) { a - b },
       )
     },
@@ -276,7 +276,7 @@ test "bubble_sort" {
   test_sort(
     fn(arr) {
       bubble_sort_by(
-        { array: arr, start: 0, end: arr.length() },
+        arr[..],
         fn(a, b) { a - b },
       )
     },
