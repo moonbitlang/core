@@ -142,7 +142,7 @@ let nan_error = "Rational::from_double: cannot convert NaN"
 let overflow_error = "Rational::from_double: overflow"
 
 /// Returns the approximate rational value of a double.
-pub fn from_double(value : Double) -> Result[Rational, String] {
+pub fn Rational::from_double(value : Double) -> Result[Rational, String] {
   // continued fraction algorithm
   // Ported from https://github.com/rust-num/num
   if value.is_nan() {

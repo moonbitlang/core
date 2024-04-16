@@ -1,0 +1,30 @@
+package moonbitlang/core/rational
+
+// Values
+
+// Types and methods
+type Rational
+fn Rational::abs(Rational) -> Rational
+fn Rational::ceil(Rational) -> Int64
+fn Rational::compare(Rational, Rational) -> Int
+fn Rational::debug_write(Rational, @moonbitlang/core/builtin.Buffer) -> Unit
+fn Rational::floor(Rational) -> Int64
+fn Rational::fract(Rational) -> Rational
+fn Rational::from_double(Double) -> Result[Rational, String]
+fn Rational::is_integer(Rational) -> Bool
+fn Rational::neg(Rational) -> Rational
+fn Rational::new(Int64, Int64) -> Option[Rational]
+fn Rational::op_add(Rational, Rational) -> Rational
+fn Rational::op_div(Rational, Rational) -> Rational
+fn Rational::op_equal(Rational, Rational) -> Bool
+fn Rational::op_mul(Rational, Rational) -> Rational
+fn Rational::op_sub(Rational, Rational) -> Rational
+fn Rational::reciprocal(Rational) -> Rational
+fn Rational::to_double(Rational) -> Double
+fn Rational::to_string(Rational) -> String
+fn Rational::trunc(Rational) -> Int64
+
+// Traits
+
+// Extension Methods
+
