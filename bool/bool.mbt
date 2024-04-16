@@ -12,6 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+pub fn expect_to_failed() -> Unit {}
+
 pub trait Boolean {
   to_bool(Self) -> Bool
 }
