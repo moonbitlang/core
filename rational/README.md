@@ -1,6 +1,5 @@
 # Moonbit/Core Rational
 
-
 ## Overview
 
 The `Rational` type represents a rational number, which is a number that can be expressed as a fraction `a/b` where `a` and `b` are integers and `b` is not zero.
@@ -8,6 +7,7 @@ The `Rational` type represents a rational number, which is a number that can be 
 ## Arithmetic Operations
 
 The `Rational` type supports the following arithmetic operations:
+
 ```moonbit
 let a = Rational::new(1L, 2L)
 let b = Rational::new(1L, 3L)
@@ -23,6 +23,7 @@ let i = g.abs() // 1/2
 ## Comparison Operations
 
 The `Rational` type supports the following comparison operations:
+
 ```moonbit
 let a = Rational::new(1L, 2L)
 let b = Rational::new(1L, 3L)
@@ -38,6 +39,7 @@ let i = a.compare(b) // -1
 ## Integer Operations
 
 The `Rational` type supports the following integer operations:
+
 ```moonbit
 let a = Rational::new(1L, 2L)
 let c = a.floor() // 0
@@ -50,6 +52,7 @@ let h = a.is_integer() // false
 ## Double Operations
 
 The `Rational` type supports the following double operations:
+
 ```moonbit
 let a = Rational::new(1L, 2L)
 let b = a.to_double() // 0.5
@@ -59,6 +62,7 @@ let c = Rational::from_double(0.5) // 1/2
 ## String Operations
 
 The `Rational` type supports the following string operations:
+
 ```moonbit
 let a = Rational::new(1L, 2L)
 let b = a.to_string() // "1/2"
