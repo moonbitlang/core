@@ -1,0 +1,21 @@
+package moonbitlang/core/json
+
+// Values
+
+// Types and methods
+pub enum JsonValue {
+  Null
+  Boolean(Bool)
+  Number(Double)
+  String(String)
+  Array(@moonbitlang/core/vec.Vec[JsonValue])
+  Object(@moonbitlang/core/map.Map[String, JsonValue])
+}
+fn JsonValue::debug_write(JsonValue, @moonbitlang/core/builtin.Buffer) -> Unit
+fn JsonValue::op_equal(JsonValue, JsonValue) -> Bool
+fn JsonValue::to_string(JsonValue) -> String
+
+// Traits
+
+// Extension Methods
+
