@@ -13,15 +13,15 @@
 // limitations under the License.
 
 //
-// An efficient implementation of Map. 
+// An efficient implementation of Map.
 // Based on size balanced binary trees, described by:
 // Stephen Adams, "Efficient sets: a balancing act" Journal of Functional Programming 3(4):553-562, October 1993
 //
 
 /// Immuatable map, consists of key-value pairs.
-/// 
+///
 /// # Example
-/// 
+///
 /// ```
 /// let map1 = Map::[(3, "three"), (8, "eight"), (1, "one")]
 /// let map2 = map1.insert(2, "two").remove(3)
@@ -40,7 +40,7 @@ pub fn empty[K, V]() -> Map[K, V] {
   Empty
 }
 
-/// Create a map with a single key-value pair. 
+/// Create a map with a single key-value pair.
 pub fn singleton[K, V](key : K, value : V) -> Map[K, V] {
   Tree(key, value, 1, Empty, Empty)
 }
@@ -80,7 +80,7 @@ fn new[K, V](key : K, value : V, l : Map[K, V], r : Map[K, V]) -> Map[K, V] {
   Tree(key, value, size, l, r)
 }
 
-/// Create a new map with a key-value pair inserted. 
+/// Create a new map with a key-value pair inserted.
 /// O(log n).
 pub fn insert[K : Compare, V](
   self : Map[K, V],
@@ -135,7 +135,7 @@ fn glue[K : Compare, V](self : Map[K, V], other : Map[K, V]) -> Map[K, V] {
   }
 }
 
-/// Create a new map with a key-value pair removed. O(log n). 
+/// Create a new map with a key-value pair removed. O(log n).
 /// If the key is not a member or map, the original map is returned.
 pub fn remove[K : Compare, V](self : Map[K, V], key : K) -> Map[K, V] {
   match self {
@@ -153,8 +153,8 @@ pub fn remove[K : Compare, V](self : Map[K, V], key : K) -> Map[K, V] {
   }
 }
 
-/// Get the value associated with a key. 
-/// O(log n). 
+/// Get the value associated with a key.
+/// O(log n).
 pub fn lookup[K : Compare, V](self : Map[K, V], key : K) -> Option[V] {
   loop self {
     Empty => None
@@ -317,6 +317,27 @@ pub fn keys_set[K : Compare + Eq, V](
 /// Return all elements of the map in the ascending order of their keys.
 pub fn elems[K, V](self : Map[K, V]) -> List[V] {
   self.foldr_with_key(fn(xs, _k, v) { Cons(v, xs) }, ~init=List::[])
+}
+
+pub fn op_equal[K : Eq, V : Eq](self : Map[K, V], other : Map[K, V]) -> Bool {
+  self.to_list() == other.to_list()
+}
+
+pub fn debug_write[K : Debug, V : Debug](self : Map[K, V], buffer : Buffer) -> Unit {
+  buffer.write_string("Map::[")
+  let mut first = true
+  self.iter(fn(k, v) {
+    if not(first) {
+      buffer.write_string(", ")
+    }
+    first = false
+    buffer.write_string("(")
+    k.debug_write(buffer)
+    buffer.write_string(", ")
+    v.debug_write(buffer)
+    buffer.write_string(")")
+  })
+  buffer.write_string("]")
 }
 
 /// The ratio between the sizes of the left and right subtrees.
@@ -658,4 +679,19 @@ test "glue" {
     m.debug_tree(),
     "(2,two,(1,one,(0,zero,_,_),_),(8,eight,_,_))",
   )?
+}
+
+test "op_equal" {
+  let m1 = Map::[(3, "three"), (8, "eight"), (1, "one"), (2, "two"), (0, "zero")]
+  let m2 = Map::[(3, "three"), (8, "eight"), (1, "one"), (2, "two"), (0, "zero")]
+  let m3 = Map::[(3, "three"), (8, "eight"), (1, "one"), (2, "two")]
+  @assertion.assert_eq(m1 == m2, true)?
+  @assertion.assert_eq(m1 == m3, false)?
+}
+
+test "debug_write" {
+  let m = Map::[(3, "three"), (8, "eight"), (1, "one"), (2, "two"), (0, "zero")]
+  let buffer = Buffer::make(0)
+  m.debug_write(buffer)
+  @assertion.assert_eq(buffer.to_string(), "Map::[(0, \"zero\"), (1, \"one\"), (2, \"two\"), (3, \"three\"), (8, \"eight\")]")?
 }
