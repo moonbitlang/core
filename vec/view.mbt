@@ -12,11 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-fn length[T](self : VecView[T]) -> Int {
+pub fn length[T](self : VecView[T]) -> Int {
   self.len
 }
 
-fn op_get[T](self : VecView[T], index : Int) -> T {
+pub fn op_get[T](self : VecView[T], index : Int) -> T {
   if index < 0 || index >= self.len {
     let len = self.len
     abort(
@@ -26,7 +26,7 @@ fn op_get[T](self : VecView[T], index : Int) -> T {
   self.buf[self.start + index]
 }
 
-fn op_set[T](self : VecView[T], index : Int, value : T) -> Unit {
+pub fn op_set[T](self : VecView[T], index : Int, value : T) -> Unit {
   if index < 0 || index >= self.len {
     let len = self.len
     abort(
@@ -36,7 +36,7 @@ fn op_set[T](self : VecView[T], index : Int, value : T) -> Unit {
   self.buf[self.start + index] = value
 }
 
-fn swap[T](self : VecView[T], i : Int, j : Int) -> Unit {
+pub fn swap[T](self : VecView[T], i : Int, j : Int) -> Unit {
     if i >= self.len || j >= self.len || i < 0 || j < 0 {
     let len = self.len
     abort(
@@ -48,7 +48,7 @@ fn swap[T](self : VecView[T], i : Int, j : Int) -> Unit {
   self.buf[self.start + j] = temp
 }
 
-fn reverse[T](self : VecView[T]) -> Unit {
+pub fn reverse[T](self : VecView[T]) -> Unit {
   let mid_len = self.length() / 2
   for i = 0; i < mid_len; i = i + 1 {
     let j = self.length() - i - 1
