@@ -1,0 +1,39 @@
+package moonbitlang/core/deque
+
+// Values
+
+// Types and methods
+type Deque
+fn Deque::back[T](Deque[T]) -> Option[T]
+fn Deque::capacity[T](Deque[T]) -> Int
+fn Deque::clear[T](Deque[T]) -> Unit
+fn Deque::contains[T : @moonbitlang/core/builtin.Eq](Deque[T], T) -> Bool
+fn Deque::from_array[T](Array[T]) -> Deque[T]
+fn Deque::front[T](Deque[T]) -> Option[T]
+fn Deque::is_empty[T](Deque[T]) -> Bool
+fn Deque::iter[T](Deque[T], (T) -> Unit) -> Unit
+fn Deque::iter_rev[T](Deque[T], (T) -> Unit) -> Unit
+fn Deque::iter_revi[T](Deque[T], (Int, T) -> Unit) -> Unit
+fn Deque::iteri[T](Deque[T], (Int, T) -> Unit) -> Unit
+fn Deque::length[T](Deque[T]) -> Int
+fn Deque::map[T](Deque[T], (T) -> T) -> Unit
+fn Deque::mapi[T](Deque[T], (Int, T) -> T) -> Unit
+fn Deque::new[T]() -> Deque[T]
+fn Deque::op_equal[T : @moonbitlang/core/builtin.Eq](Deque[T], Deque[T]) -> Bool
+fn Deque::op_get[T](Deque[T], Int) -> T
+fn Deque::op_set[T](Deque[T], Int, T) -> Unit
+fn Deque::pop_back[T](Deque[T]) -> Option[T]
+fn Deque::pop_back_exn[T](Deque[T]) -> Unit
+fn Deque::pop_front[T](Deque[T]) -> Option[T]
+fn Deque::pop_front_exn[T](Deque[T]) -> Unit
+fn Deque::push_back[T](Deque[T], T) -> Unit
+fn Deque::push_front[T](Deque[T], T) -> Unit
+fn Deque::reserve_capacity[T](Deque[T], Int) -> Unit
+fn Deque::search[T : @moonbitlang/core/builtin.Eq](Deque[T], T) -> Option[Int]
+fn Deque::shrink_to_fit[T](Deque[T]) -> Unit
+fn Deque::with_capacity[T](Int) -> Deque[T]
+
+// Traits
+
+// Extension Methods
+

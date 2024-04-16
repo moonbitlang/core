@@ -1,0 +1,18 @@
+package moonbitlang/core/ref
+
+// Values
+fn ref[T](T) -> Ref[T]
+
+// Types and methods
+fn Ref::decr[T : @moonbitlang/core/num.Num](Ref[T], T) -> Unit
+fn Ref::incr[T : @moonbitlang/core/num.Num](Ref[T], T) -> Unit
+fn Ref::map[T, R](Ref[T], (T) -> R) -> Ref[R]
+fn Ref::protect[T, R](Ref[T], T, () -> R) -> R
+fn Ref::swap[T](Ref[T], Ref[T]) -> Unit
+fn Ref::to_string[X : @moonbitlang/core/builtin.Show](Ref[X]) -> String
+fn Ref::update[T](Ref[T], (T) -> T) -> Unit
+
+// Traits
+
+// Extension Methods
+

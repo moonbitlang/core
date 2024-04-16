@@ -1,0 +1,21 @@
+package moonbitlang/core/random
+
+// Values
+
+// Types and methods
+type RandomDouble
+fn RandomDouble::new(Int) -> RandomDouble
+fn RandomDouble::summon(RandomDouble) -> Double
+
+type RandomInt
+fn RandomInt::new(Int) -> RandomInt
+fn RandomInt::summon(RandomInt) -> Int
+
+type RandomInt64
+fn RandomInt64::new(Int) -> RandomInt64
+fn RandomInt64::summon(RandomInt64) -> Int64
+
+// Traits
+
+// Extension Methods
+

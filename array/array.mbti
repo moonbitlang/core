@@ -1,0 +1,43 @@
+package moonbitlang/core/array
+
+// Values
+fn is_sorted[T : @moonbitlang/core/builtin.Compare + @moonbitlang/core/builtin.Eq](Array[T]) -> Bool
+
+fn new[T](Int, () -> T) -> Array[T]
+
+fn new_with_index[T](Int, (Int) -> T) -> Array[T]
+
+// Types and methods
+type TimSortRun
+fn Array::all[T](Array[T], (T) -> Bool) -> Bool
+fn Array::any[T](Array[T], (T) -> Bool) -> Bool
+fn Array::contains[T : @moonbitlang/core/builtin.Eq](Array[T], T) -> Bool
+fn Array::ends_with[T : @moonbitlang/core/builtin.Eq](Array[T], Array[T]) -> Bool
+fn Array::fill[T](Array[T], T) -> Unit
+fn Array::fold_left[T, U](Array[T], (U, T) -> U, U) -> U
+fn Array::fold_lefti[T, U](Array[T], (Int, U, T) -> U, U) -> U
+fn Array::fold_right[T, U](Array[T], (U, T) -> U, U) -> U
+fn Array::fold_righti[T, U](Array[T], (Int, U, T) -> U, U) -> U
+fn Array::from_array[T](Array[T]) -> Array[T]
+fn Array::iter[T](Array[T], (T) -> Unit) -> Unit
+fn Array::iter_rev[T](Array[T], (T) -> Unit) -> Unit
+fn Array::iter_revi[T](Array[T], (Int, T) -> Unit) -> Unit
+fn Array::iteri[T](Array[T], (Int, T) -> Unit) -> Unit
+fn Array::map[T, U](Array[T], (T) -> U) -> Array[U]
+fn Array::mapi[T, U](Array[T], (T, Int) -> U) -> Array[U]
+fn Array::op_add[T](Array[T], Array[T]) -> Array[T]
+fn Array::op_equal[T : @moonbitlang/core/builtin.Eq](Array[T], Array[T]) -> Bool
+fn Array::reverse[T](Array[T]) -> Unit
+fn Array::search[T : @moonbitlang/core/builtin.Eq](Array[T], T) -> Option[Int]
+fn Array::sort[T : @moonbitlang/core/builtin.Compare + @moonbitlang/core/builtin.Eq](Array[T]) -> Unit
+fn Array::sort_by[T](Array[T], (T, T) -> Int) -> Unit
+fn Array::sort_by_key[T, K : @moonbitlang/core/builtin.Compare + @moonbitlang/core/builtin.Eq](Array[T], (T) -> K) -> Unit
+fn Array::stable_sort[T : @moonbitlang/core/builtin.Compare + @moonbitlang/core/builtin.Eq](Array[T]) -> Unit
+fn Array::starts_with[T : @moonbitlang/core/builtin.Eq](Array[T], Array[T]) -> Bool
+fn Array::swap[T](Array[T], Int, Int) -> Unit
+fn Array::to_list[T](Array[T]) -> List[T]
+
+// Traits
+
+// Extension Methods
+

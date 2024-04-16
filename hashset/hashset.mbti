@@ -1,0 +1,26 @@
+package moonbitlang/core/hashset
+
+// Values
+
+// Types and methods
+type HashSet
+fn HashSet::capacity[K](HashSet[K]) -> Int
+fn HashSet::clear[K](HashSet[K]) -> Unit
+fn HashSet::contains[K : @moonbitlang/core/builtin.Hash + @moonbitlang/core/builtin.Eq](HashSet[K], K) -> Bool
+fn HashSet::difference[K : @moonbitlang/core/builtin.Hash + @moonbitlang/core/builtin.Eq](HashSet[K], HashSet[K]) -> HashSet[K]
+fn HashSet::from_array[K : @moonbitlang/core/builtin.Hash + @moonbitlang/core/builtin.Eq](Array[K]) -> HashSet[K]
+fn HashSet::insert[K : @moonbitlang/core/builtin.Hash + @moonbitlang/core/builtin.Eq](HashSet[K], K) -> Unit
+fn HashSet::intersection[K : @moonbitlang/core/builtin.Hash + @moonbitlang/core/builtin.Eq](HashSet[K], HashSet[K]) -> HashSet[K]
+fn HashSet::is_empty[K](HashSet[K]) -> Bool
+fn HashSet::iter[K](HashSet[K], (K) -> Unit) -> Unit
+fn HashSet::iteri[K](HashSet[K], (Int, K) -> Unit) -> Unit
+fn HashSet::new[K](Option[(K) -> Int]) -> HashSet[K]
+fn HashSet::remove[K : @moonbitlang/core/builtin.Hash + @moonbitlang/core/builtin.Eq](HashSet[K], K) -> Unit
+fn HashSet::size[K](HashSet[K]) -> Int
+fn HashSet::symmetric_difference[K : @moonbitlang/core/builtin.Hash + @moonbitlang/core/builtin.Eq](HashSet[K], HashSet[K]) -> HashSet[K]
+fn HashSet::union[K : @moonbitlang/core/builtin.Hash + @moonbitlang/core/builtin.Eq](HashSet[K], HashSet[K]) -> HashSet[K]
+
+// Traits
+
+// Extension Methods
+

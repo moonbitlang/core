@@ -1,0 +1,38 @@
+package moonbitlang/core/stack
+
+// Values
+
+// Types and methods
+type Stack
+fn Stack::clear[T](Stack[T]) -> Unit
+fn Stack::debug_write[T : @moonbitlang/core/builtin.Debug](Stack[T], @moonbitlang/core/builtin.Buffer) -> Unit
+fn Stack::default[T : @moonbitlang/core/builtin.Default]() -> Stack[T]
+fn Stack::drop[T](Stack[T]) -> Unit
+fn Stack::drop_result[T](Stack[T]) -> Result[Unit, Unit]
+fn Stack::equal[T : @moonbitlang/core/builtin.Eq](Stack[T], Stack[T]) -> Bool
+fn Stack::fold[T, U](Stack[T], U, (U, T) -> U) -> U
+fn Stack::from_array[T](Array[T]) -> Stack[T]
+fn Stack::from_list[T](List[T]) -> Stack[T]
+fn Stack::from_stack[T](Stack[T]) -> Stack[T]
+fn Stack::is_empty[T](Stack[T]) -> Bool
+fn Stack::iter[T](Stack[T], (T) -> Unit) -> Unit
+fn Stack::length[T](Stack[T]) -> Int
+fn Stack::new[T]() -> Stack[T]
+fn Stack::op_equal[T : @moonbitlang/core/builtin.Eq](Stack[T], Stack[T]) -> Bool
+fn Stack::peek[T](Stack[T]) -> Option[T]
+fn Stack::peek_exn[T](Stack[T]) -> T
+fn Stack::pop[T](Stack[T]) -> Option[T]
+fn Stack::pop_exn[T](Stack[T]) -> T
+fn Stack::push[T](Stack[T], T) -> Unit
+fn Stack::push_array[T](Stack[T], Array[T]) -> Unit
+fn Stack::push_list[T](Stack[T], List[T]) -> Unit
+fn Stack::push_stack[T](Stack[T], Stack[T]) -> Unit
+fn Stack::return_with_clear[T](Stack[T]) -> Stack[T]
+fn Stack::to_array[T : @moonbitlang/core/builtin.Default](Stack[T]) -> Array[T]
+fn Stack::to_list[T](Stack[T]) -> List[T]
+fn Stack::to_string[T : @moonbitlang/core/builtin.Show](Stack[T]) -> String
+
+// Traits
+
+// Extension Methods
+

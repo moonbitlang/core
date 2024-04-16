@@ -1,0 +1,16 @@
+package moonbitlang/core/int
+
+// Values
+
+// Types and methods
+fn Int::abs(Int) -> Int
+fn Int::from_int(Int) -> Int
+fn Int::hash(Int) -> Int
+fn Int::max_value() -> Int
+fn Int::min_value() -> Int
+fn Int::signum(Int) -> Int
+
+// Traits
+
+// Extension Methods
+

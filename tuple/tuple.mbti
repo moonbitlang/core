@@ -1,0 +1,50 @@
+package moonbitlang/core/tuple
+
+// Values
+fn curry[T, U, V]((T, U) -> V) -> (T) -> (U) -> V
+
+fn fst[T, U](Tuple[T, U]) -> T
+
+fn map_both[T, U, V, W]((T) -> U, (V) -> W, Tuple[T, V]) -> Tuple[U, W]
+
+fn map_fst[T, U, V]((T) -> U, Tuple[T, V]) -> Tuple[U, V]
+
+fn map_snd[T, U, V]((T) -> U, Tuple[V, T]) -> Tuple[V, U]
+
+fn pair[T, U](T, U) -> Tuple[T, U]
+
+fn snd[T, U](Tuple[T, U]) -> U
+
+fn swap[T, U](Tuple[T, U]) -> Tuple[U, T]
+
+fn uncurry[T, U, V]((T) -> (U) -> V) -> (T, U) -> V
+
+// Types and methods
+fn Tuple::debug_write[X : @moonbitlang/core/builtin.Debug, Y : @moonbitlang/core/builtin.Debug](Tuple[X, Y], @moonbitlang/core/builtin.Buffer) -> Unit
+fn Tuple::op_equal[T0 : @moonbitlang/core/builtin.Eq, T1 : @moonbitlang/core/builtin.Eq](Tuple[T0, T1], Tuple[T0, T1]) -> Bool
+fn Tuple::to_string[A : @moonbitlang/core/builtin.Debug, B : @moonbitlang/core/builtin.Debug](Tuple[A, B]) -> String
+fn Tuple::debug_write[X : @moonbitlang/core/builtin.Debug, Y : @moonbitlang/core/builtin.Debug, Z : @moonbitlang/core/builtin.Debug](Tuple[X, Y, Z], @moonbitlang/core/builtin.Buffer) -> Unit
+fn Tuple::op_equal[T0 : @moonbitlang/core/builtin.Eq, T1 : @moonbitlang/core/builtin.Eq, T2 : @moonbitlang/core/builtin.Eq](Tuple[T0, T1, T2], Tuple[T0, T1, T2]) -> Bool
+fn Tuple::to_string[A : @moonbitlang/core/builtin.Debug, B : @moonbitlang/core/builtin.Debug, C : @moonbitlang/core/builtin.Debug](Tuple[A, B, C]) -> String
+fn Tuple::debug_write[X : @moonbitlang/core/builtin.Debug, Y : @moonbitlang/core/builtin.Debug, Z : @moonbitlang/core/builtin.Debug, W : @moonbitlang/core/builtin.Debug](Tuple[X, Y, Z, W], @moonbitlang/core/builtin.Buffer) -> Unit
+fn Tuple::op_equal[T0 : @moonbitlang/core/builtin.Eq, T1 : @moonbitlang/core/builtin.Eq, T2 : @moonbitlang/core/builtin.Eq, T3 : @moonbitlang/core/builtin.Eq](Tuple[T0, T1, T2, T3], Tuple[T0, T1, T2, T3]) -> Bool
+fn Tuple::to_string[A : @moonbitlang/core/builtin.Debug, B : @moonbitlang/core/builtin.Debug, C : @moonbitlang/core/builtin.Debug, D : @moonbitlang/core/builtin.Debug](Tuple[A, B, C, D]) -> String
+fn Tuple::debug_write[X1 : @moonbitlang/core/builtin.Debug, X2 : @moonbitlang/core/builtin.Debug, X3 : @moonbitlang/core/builtin.Debug, X4 : @moonbitlang/core/builtin.Debug, X5 : @moonbitlang/core/builtin.Debug](Tuple[X1, X2, X3, X4, X5], @moonbitlang/core/builtin.Buffer) -> Unit
+fn Tuple::op_equal[T0 : @moonbitlang/core/builtin.Eq, T1 : @moonbitlang/core/builtin.Eq, T2 : @moonbitlang/core/builtin.Eq, T3 : @moonbitlang/core/builtin.Eq, T4 : @moonbitlang/core/builtin.Eq](Tuple[T0, T1, T2, T3, T4], Tuple[T0, T1, T2, T3, T4]) -> Bool
+fn Tuple::to_string[A : @moonbitlang/core/builtin.Debug, B : @moonbitlang/core/builtin.Debug, C : @moonbitlang/core/builtin.Debug, D : @moonbitlang/core/builtin.Debug, E : @moonbitlang/core/builtin.Debug](Tuple[A, B, C, D, E]) -> String
+fn Tuple::op_equal[T0 : @moonbitlang/core/builtin.Eq, T1 : @moonbitlang/core/builtin.Eq, T2 : @moonbitlang/core/builtin.Eq, T3 : @moonbitlang/core/builtin.Eq, T4 : @moonbitlang/core/builtin.Eq, T5 : @moonbitlang/core/builtin.Eq](Tuple[T0, T1, T2, T3, T4, T5], Tuple[T0, T1, T2, T3, T4, T5]) -> Bool
+fn Tuple::op_equal[T0 : @moonbitlang/core/builtin.Eq, T1 : @moonbitlang/core/builtin.Eq, T2 : @moonbitlang/core/builtin.Eq, T3 : @moonbitlang/core/builtin.Eq, T4 : @moonbitlang/core/builtin.Eq, T5 : @moonbitlang/core/builtin.Eq, T6 : @moonbitlang/core/builtin.Eq](Tuple[T0, T1, T2, T3, T4, T5, T6], Tuple[T0, T1, T2, T3, T4, T5, T6]) -> Bool
+fn Tuple::op_equal[T0 : @moonbitlang/core/builtin.Eq, T1 : @moonbitlang/core/builtin.Eq, T2 : @moonbitlang/core/builtin.Eq, T3 : @moonbitlang/core/builtin.Eq, T4 : @moonbitlang/core/builtin.Eq, T5 : @moonbitlang/core/builtin.Eq, T6 : @moonbitlang/core/builtin.Eq, T7 : @moonbitlang/core/builtin.Eq](Tuple[T0, T1, T2, T3, T4, T5, T6, T7], Tuple[T0, T1, T2, T3, T4, T5, T6, T7]) -> Bool
+fn Tuple::op_equal[T0 : @moonbitlang/core/builtin.Eq, T1 : @moonbitlang/core/builtin.Eq, T2 : @moonbitlang/core/builtin.Eq, T3 : @moonbitlang/core/builtin.Eq, T4 : @moonbitlang/core/builtin.Eq, T5 : @moonbitlang/core/builtin.Eq, T6 : @moonbitlang/core/builtin.Eq, T7 : @moonbitlang/core/builtin.Eq, T8 : @moonbitlang/core/builtin.Eq](Tuple[T0, T1, T2, T3, T4, T5, T6, T7, T8], Tuple[T0, T1, T2, T3, T4, T5, T6, T7, T8]) -> Bool
+fn Tuple::op_equal[T0 : @moonbitlang/core/builtin.Eq, T1 : @moonbitlang/core/builtin.Eq, T2 : @moonbitlang/core/builtin.Eq, T3 : @moonbitlang/core/builtin.Eq, T4 : @moonbitlang/core/builtin.Eq, T5 : @moonbitlang/core/builtin.Eq, T6 : @moonbitlang/core/builtin.Eq, T7 : @moonbitlang/core/builtin.Eq, T8 : @moonbitlang/core/builtin.Eq, T9 : @moonbitlang/core/builtin.Eq](Tuple[T0, T1, T2, T3, T4, T5, T6, T7, T8, T9], Tuple[T0, T1, T2, T3, T4, T5, T6, T7, T8, T9]) -> Bool
+fn Tuple::op_equal[T0 : @moonbitlang/core/builtin.Eq, T1 : @moonbitlang/core/builtin.Eq, T2 : @moonbitlang/core/builtin.Eq, T3 : @moonbitlang/core/builtin.Eq, T4 : @moonbitlang/core/builtin.Eq, T5 : @moonbitlang/core/builtin.Eq, T6 : @moonbitlang/core/builtin.Eq, T7 : @moonbitlang/core/builtin.Eq, T8 : @moonbitlang/core/builtin.Eq, T9 : @moonbitlang/core/builtin.Eq, T10 : @moonbitlang/core/builtin.Eq](Tuple[T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10], Tuple[T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10]) -> Bool
+fn Tuple::op_equal[T0 : @moonbitlang/core/builtin.Eq, T1 : @moonbitlang/core/builtin.Eq, T2 : @moonbitlang/core/builtin.Eq, T3 : @moonbitlang/core/builtin.Eq, T4 : @moonbitlang/core/builtin.Eq, T5 : @moonbitlang/core/builtin.Eq, T6 : @moonbitlang/core/builtin.Eq, T7 : @moonbitlang/core/builtin.Eq, T8 : @moonbitlang/core/builtin.Eq, T9 : @moonbitlang/core/builtin.Eq, T10 : @moonbitlang/core/builtin.Eq, T11 : @moonbitlang/core/builtin.Eq](Tuple[T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11], Tuple[T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11]) -> Bool
+fn Tuple::op_equal[T0 : @moonbitlang/core/builtin.Eq, T1 : @moonbitlang/core/builtin.Eq, T2 : @moonbitlang/core/builtin.Eq, T3 : @moonbitlang/core/builtin.Eq, T4 : @moonbitlang/core/builtin.Eq, T5 : @moonbitlang/core/builtin.Eq, T6 : @moonbitlang/core/builtin.Eq, T7 : @moonbitlang/core/builtin.Eq, T8 : @moonbitlang/core/builtin.Eq, T9 : @moonbitlang/core/builtin.Eq, T10 : @moonbitlang/core/builtin.Eq, T11 : @moonbitlang/core/builtin.Eq, T12 : @moonbitlang/core/builtin.Eq](Tuple[T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12], Tuple[T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12]) -> Bool
+fn Tuple::op_equal[T0 : @moonbitlang/core/builtin.Eq, T1 : @moonbitlang/core/builtin.Eq, T2 : @moonbitlang/core/builtin.Eq, T3 : @moonbitlang/core/builtin.Eq, T4 : @moonbitlang/core/builtin.Eq, T5 : @moonbitlang/core/builtin.Eq, T6 : @moonbitlang/core/builtin.Eq, T7 : @moonbitlang/core/builtin.Eq, T8 : @moonbitlang/core/builtin.Eq, T9 : @moonbitlang/core/builtin.Eq, T10 : @moonbitlang/core/builtin.Eq, T11 : @moonbitlang/core/builtin.Eq, T12 : @moonbitlang/core/builtin.Eq, T13 : @moonbitlang/core/builtin.Eq](Tuple[T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13], Tuple[T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13]) -> Bool
+fn Tuple::op_equal[T0 : @moonbitlang/core/builtin.Eq, T1 : @moonbitlang/core/builtin.Eq, T2 : @moonbitlang/core/builtin.Eq, T3 : @moonbitlang/core/builtin.Eq, T4 : @moonbitlang/core/builtin.Eq, T5 : @moonbitlang/core/builtin.Eq, T6 : @moonbitlang/core/builtin.Eq, T7 : @moonbitlang/core/builtin.Eq, T8 : @moonbitlang/core/builtin.Eq, T9 : @moonbitlang/core/builtin.Eq, T10 : @moonbitlang/core/builtin.Eq, T11 : @moonbitlang/core/builtin.Eq, T12 : @moonbitlang/core/builtin.Eq, T13 : @moonbitlang/core/builtin.Eq, T14 : @moonbitlang/core/builtin.Eq](Tuple[T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14], Tuple[T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14]) -> Bool
+fn Tuple::op_equal[T0 : @moonbitlang/core/builtin.Eq, T1 : @moonbitlang/core/builtin.Eq, T2 : @moonbitlang/core/builtin.Eq, T3 : @moonbitlang/core/builtin.Eq, T4 : @moonbitlang/core/builtin.Eq, T5 : @moonbitlang/core/builtin.Eq, T6 : @moonbitlang/core/builtin.Eq, T7 : @moonbitlang/core/builtin.Eq, T8 : @moonbitlang/core/builtin.Eq, T9 : @moonbitlang/core/builtin.Eq, T10 : @moonbitlang/core/builtin.Eq, T11 : @moonbitlang/core/builtin.Eq, T12 : @moonbitlang/core/builtin.Eq, T13 : @moonbitlang/core/builtin.Eq, T14 : @moonbitlang/core/builtin.Eq, T15 : @moonbitlang/core/builtin.Eq](Tuple[T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15], Tuple[T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15]) -> Bool
+
+// Traits
+
+// Extension Methods
+
