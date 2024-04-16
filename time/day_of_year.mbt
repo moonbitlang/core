@@ -38,8 +38,8 @@ test "new" {
 }
 
 test "valid" {
-  @assertion.assert_true(DayOfYear::valid(1))?
-  @assertion.assert_true(DayOfYear::valid(366))?
-  @assertion.assert_false(DayOfYear::valid(0))?
-  @assertion.assert_false(DayOfYear::valid(367))?
+  inspect(DayOfYear::valid(1), content="true")?
+  inspect(DayOfYear::valid(366), content="true")?
+  inspect(DayOfYear::valid(0), content="false")?
+  inspect(DayOfYear::valid(367), content="false")?
 }

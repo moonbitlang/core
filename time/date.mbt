@@ -94,7 +94,7 @@ pub fn Date::from_yd(year : Int, day_of_year : Int) -> Result[Date, String] {
       leap_year=leap,
     ) - 1
   if day_of_year > month_end {
-    month = month.add(1)?
+    month = month.add(1)
   }
   let day_of_month = DayOfMonth::new(
     day_of_year - month.first_day_of_year(leap_year=leap) + 1,
@@ -238,31 +238,31 @@ pub fn add_years(self : Date, years_to_add : Int) -> Result[Date, String] {
   }
 }
 
-pub fn add_months(self : Date, months_to_add : Int) -> Result[Date, String] {
-  if months_to_add == 0 {
+pub fn add_months(self : Date, months_to_add : Int64) -> Result[Date, String] {
+  if months_to_add == 0L {
     return Ok(self)
   }
   let month_count = self.year.value().to_int64() * 12L + (self.month.value().to_int64() -
     1L)
-  let new_month_count = month_count + months_to_add.to_int64()
+  let new_month_count = month_count + months_to_add
   let new_year = (new_month_count / 12L).to_int()
   let new_month = (new_month_count % 12L).to_int() + 1
   create_from_valid_date(Year::new(new_year)?, Month::new(new_month)?, self.day)
 }
 
-pub fn add_days(self : Date, days_to_add : Int) -> Result[Date, String] {
-  if days_to_add == 0 {
+pub fn add_days(self : Date, days_to_add : Int64) -> Result[Date, String] {
+  if days_to_add == 0L {
     return Ok(self)
   }
   // TODO: some short path
-  match checked_add(self.to_unix_days(), days_to_add.to_int64()) {
+  match checked_add(self.to_unix_days(), days_to_add) {
     Some(n) => n |> from_unix_days()
     None => Err(days_overflow_err)
   }
 }
 
-pub fn add_weeks(self : Date, weeks_to_add : Int) -> Result[Date, String] {
-  match checked_mul(weeks_to_add, 7) {
+pub fn add_weeks(self : Date, weeks_to_add : Int64) -> Result[Date, String] {
+  match checked_mul(weeks_to_add, 7L) {
     Some(d) => self.add_days(d)
     None => Err(days_overflow_err)
   }
@@ -293,6 +293,9 @@ pub fn with_day_of_month(
 }
 
 pub fn with_day_of_year(self : Date, day_of_year : Int) -> Result[Date, String] {
+  if self.day_of_year() == day_of_year {
+    return Ok(self)
+  }
   Date::from_yd(self.year.value(), day_of_year)
 }
 
@@ -421,10 +424,10 @@ test "to_string" {
 
 test "getters" {
   let date = { year: Year(2000), month: February, day: DayOfMonth(1) }
-  @assertion.assert_eq(date.year(), Year(2000))?
-  @assertion.assert_eq(date.month(), February)?
-  @assertion.assert_eq(date.day_of_month(), DayOfMonth(1))?
-  @assertion.assert_eq(date.day_of_year(), 32)?
+  inspect(date.year(), content="Year(2000)")?
+  inspect(date.month(), content="February")?
+  inspect(date.day_of_month(), content="DayOfMonth(1)")?
+  inspect(date.day_of_year(), content="32")?
 }
 
 test "day_of_week" {
@@ -438,20 +441,20 @@ test "day_of_week" {
 }
 
 test "length_of_year" {
-  @assertion.assert_eq(Date::from_ymd(2000, 2, 1)?.length_of_year(), 366)?
-  @assertion.assert_eq(Date::from_ymd(2001, 2, 1)?.length_of_year(), 365)?
+  inspect(Date::from_ymd(2000, 2, 1)?.length_of_year(), content="366")?
+  inspect(Date::from_ymd(2001, 2, 1)?.length_of_year(), content="365")?
 }
 
 test "length_of_month" {
-  @assertion.assert_eq(Date::from_ymd(2000, 2, 1)?.length_of_month(), 29)?
-  @assertion.assert_eq(Date::from_ymd(2001, 2, 1)?.length_of_month(), 28)?
-  @assertion.assert_eq(Date::from_ymd(2000, 3, 1)?.length_of_month(), 31)?
-  @assertion.assert_eq(Date::from_ymd(2000, 4, 1)?.length_of_month(), 30)?
+  inspect(Date::from_ymd(2000, 2, 1)?.length_of_month(), content="29")?
+  inspect(Date::from_ymd(2001, 2, 1)?.length_of_month(), content="28")?
+  inspect(Date::from_ymd(2000, 3, 1)?.length_of_month(), content="31")?
+  inspect(Date::from_ymd(2000, 4, 1)?.length_of_month(), content="30")?
 }
 
 test "is_leap_year" {
-  @assertion.assert_true(Date::from_ymd(2000, 1, 1)?.is_leap_year())?
-  @assertion.assert_false(Date::from_ymd(2001, 1, 1)?.is_leap_year())?
+  inspect(Date::from_ymd(2000, 1, 1)?.is_leap_year(), content="true")?
+  inspect(Date::from_ymd(2001, 1, 1)?.is_leap_year(), content="false")?
 }
 
 test "compare_eq" {
@@ -459,77 +462,47 @@ test "compare_eq" {
   let d2 = Date::from_ymd(2000, 2, 1)?
   let d3 = Date::from_ymd(1999, 12, 31)?
   let d4 = Date::from_ymd(2000, 2, 1)?
-  @assertion.assert_true(d1 < d2)?
-  @assertion.assert_true(d1 > d3)?
-  @assertion.assert_true(d2 == d4)?
+  inspect(d1 < d2, content="true")?
+  inspect(d1 > d3, content="true")?
+  inspect(d2 == d4, content="true")?
 }
 
 test "add_years" {
-  @assertion.assert_eq(
-    Date::from_ymd(2000, 1, 1)?.add_years(0)?,
-    Date::from_ymd(2000, 1, 1)?,
-  )?
-  @assertion.assert_eq(
-    Date::from_ymd(2000, 1, 1)?.add_years(10)?,
-    Date::from_ymd(2010, 1, 1)?,
-  )?
-  @assertion.assert_eq(
-    Date::from_ymd(2000, 1, 1)?.add_years(-10)?,
-    Date::from_ymd(1990, 1, 1)?,
-  )?
-  @assertion.assert_eq(
-    Date::from_ymd(2000, 2, 29)?.add_years(1)?,
-    Date::from_ymd(2001, 2, 28)?,
-  )?
+  inspect(Date::from_ymd(2000, 1, 1)?.add_years(0)?, content="2000-01-01")?
+  inspect(Date::from_ymd(2000, 1, 1)?.add_years(10)?, content="2010-01-01")?
+  inspect(Date::from_ymd(2000, 1, 1)?.add_years(-10)?, content="1990-01-01")?
+  inspect(Date::from_ymd(2000, 2, 29)?.add_years(1)?, content="2001-02-28")?
 }
 
 test "add_months" {
-  @assertion.assert_eq(
-    Date::from_ymd(2000, 1, 1)?.add_months(0)?,
-    Date::from_ymd(2000, 1, 1)?,
-  )?
-  @assertion.assert_eq(
-    Date::from_ymd(2000, 1, 1)?.add_months(1)?,
-    Date::from_ymd(2000, 2, 1)?,
-  )?
-  @assertion.assert_eq(
-    Date::from_ymd(2000, 2, 1)?.add_months(-1)?,
-    Date::from_ymd(2000, 1, 1)?,
-  )?
-  @assertion.assert_eq(
-    Date::from_ymd(2000, 12, 1)?.add_months(1)?,
-    Date::from_ymd(2001, 1, 1)?,
-  )?
-  @assertion.assert_eq(
-    Date::from_ymd(2000, 2, 29)?.add_months(12)?,
-    Date::from_ymd(2001, 2, 28)?,
-  )?
+  inspect(Date::from_ymd(2000, 1, 1)?.add_months(0L)?, content="2000-01-01")?
+  inspect(Date::from_ymd(2000, 1, 1)?.add_months(1L)?, content="2000-02-01")?
+  inspect(Date::from_ymd(2000, 2, 1)?.add_months(-1L)?, content="2000-01-01")?
+  inspect(Date::from_ymd(2000, 12, 1)?.add_months(1L)?, content="2001-01-01")?
+  inspect(Date::from_ymd(2000, 2, 29)?.add_months(12L)?, content="2001-02-28")?
 }
 
 test "add_days" {
+  inspect(Date::from_ymd(2000, 1, 1)?.add_days(0L)?, content="2000-01-01")?
+  inspect(Date::from_ymd(2000, 1, 1)?.add_days(1L)?, content="2000-01-02")?
+  inspect(Date::from_ymd(2000, 2, 29)?.add_days(365L)?, content="2001-02-28")?
   @assertion.assert_eq(
-    Date::from_ymd(2000, 1, 1)?.add_days(1)?,
-    Date::from_ymd(2000, 1, 2)?,
-  )?
-  @assertion.assert_eq(
-    Date::from_ymd(2000, 2, 29)?.add_days(365)?,
-    Date::from_ymd(2001, 2, 28)?,
+    Date::from_ymd(2000, 2, 29)?.add_days(Int64::max_value()),
+    Err(days_overflow_err),
   )?
 }
 
 test "add_weeks" {
+  inspect(Date::from_ymd(2000, 1, 1)?.add_weeks(1L)?, content="2000-01-08")?
   @assertion.assert_eq(
-    Date::from_ymd(2000, 1, 1)?.add_weeks(1)?,
-    Date::from_ymd(2000, 1, 8)?,
-  )?
-  @assertion.assert_eq(
-    Date::from_ymd(2000, 1, 1)?.add_weeks(1000000000),
+    Date::from_ymd(2000, 1, 1)?.add_weeks(Int64::max_value()),
     Err(days_overflow_err),
   )?
 }
 
 test "with_year" {
   let d = unix_epoch_date
+  @assertion.assert_eq(d.with_year(d.year().value()), Ok(d))?
   @assertion.assert_eq(
     d.with_year(2000),
     Ok({ year: Year(2000), month: Month::January, day: DayOfMonth(1) }),
@@ -548,6 +521,7 @@ test "with_year" {
 
 test "with_month" {
   let d = unix_epoch_date
+  @assertion.assert_eq(d.with_month(d.month().value()), Ok(d))?
   @assertion.assert_eq(
     d.with_month(2),
     Ok({ year: Year(1970), month: Month::February, day: DayOfMonth(1) }),
@@ -576,6 +550,7 @@ test "with_month" {
 
 test "with_day_of_month" {
   let d = unix_epoch_date
+  @assertion.assert_eq(d.with_day_of_month(d.day_of_month().value()), Ok(d))?
   @assertion.assert_eq(
     d.with_day_of_month(31),
     Ok({ year: Year(1970), month: Month::January, day: DayOfMonth(31) }),
@@ -596,6 +571,7 @@ test "with_day_of_month" {
 
 test "with_day_of_year" {
   let d = unix_epoch_date
+  @assertion.assert_eq(d.with_day_of_year(d.day_of_year()), Ok(d))?
   @assertion.assert_eq(
     d.with_day_of_year(365),
     Ok({ year: Year(1970), month: Month::December, day: DayOfMonth(31) }),
@@ -611,9 +587,9 @@ test "with_day_of_year" {
 }
 
 test "hash" {
-  @assertion.assert_ne(min_date.hash(), max_date.hash())?
-  @assertion.assert_ne(
-    unix_epoch_date.add_days(1)?.hash(),
-    unix_epoch_date.hash(),
+  inspect(min_date.hash() != max_date.hash(), content="true")?
+  inspect(
+    unix_epoch_date.add_days(1L)?.hash() != unix_epoch_date.hash(),
+    content="true",
   )?
 }

@@ -74,8 +74,11 @@ pub fn length(self : Month, ~leap_year : Bool = false) -> Int {
   }
 }
 
-pub fn add(self : Month, months : Int) -> Result[Month, String] {
-  Month::new((self.value() + months) % 12)
+pub fn add(self : Month, months : Int) -> Month {
+  match Month::new((self.value() + months - 1) % 12 + 1) {
+    Ok(m) => m
+    _ => abort("add months error")
+  }
 }
 
 pub fn first_day_of_year(self : Month, ~leap_year : Bool = false) -> Int {
@@ -100,42 +103,68 @@ test "new" {
   @assertion.assert_eq(Month::new(0), Err(month_out_of_range_err))?
   @assertion.assert_eq(Month::new(13), Err(month_out_of_range_err))?
   @assertion.assert_eq(Month::new(1), Ok(January))?
+  @assertion.assert_eq(Month::new(2), Ok(February))?
+  @assertion.assert_eq(Month::new(3), Ok(March))?
+  @assertion.assert_eq(Month::new(4), Ok(April))?
+  @assertion.assert_eq(Month::new(5), Ok(May))?
+  @assertion.assert_eq(Month::new(6), Ok(June))?
+  @assertion.assert_eq(Month::new(7), Ok(July))?
+  @assertion.assert_eq(Month::new(8), Ok(August))?
+  @assertion.assert_eq(Month::new(9), Ok(September))?
+  @assertion.assert_eq(Month::new(10), Ok(October))?
+  @assertion.assert_eq(Month::new(11), Ok(November))?
   @assertion.assert_eq(Month::new(12), Ok(December))?
 }
 
 test "value" {
-  @assertion.assert_eq(Month::January.value(), 1)?
-  @assertion.assert_eq(Month::February.value(), 2)?
-  @assertion.assert_eq(Month::March.value(), 3)?
-  @assertion.assert_eq(Month::April.value(), 4)?
-  @assertion.assert_eq(Month::May.value(), 5)?
-  @assertion.assert_eq(Month::June.value(), 6)?
-  @assertion.assert_eq(Month::July.value(), 7)?
-  @assertion.assert_eq(Month::August.value(), 8)?
-  @assertion.assert_eq(Month::September.value(), 9)?
-  @assertion.assert_eq(Month::October.value(), 10)?
-  @assertion.assert_eq(Month::November.value(), 11)?
-  @assertion.assert_eq(Month::December.value(), 12)?
+  inspect(Month::January.value(), ~content="1")?
+  inspect(Month::February.value(), ~content="2")?
+  inspect(Month::March.value(), ~content="3")?
+  inspect(Month::April.value(), ~content="4")?
+  inspect(Month::May.value(), ~content="5")?
+  inspect(Month::June.value(), ~content="6")?
+  inspect(Month::July.value(), ~content="7")?
+  inspect(Month::August.value(), ~content="8")?
+  inspect(Month::September.value(), ~content="9")?
+  inspect(Month::October.value(), ~content="10")?
+  inspect(Month::November.value(), ~content="11")?
+  inspect(Month::December.value(), ~content="12")?
 }
 
 test "length" {
-  @assertion.assert_eq(Month::February.length(), 28)?
-  @assertion.assert_eq(Month::February.length(leap_year=true), 29)?
-  @assertion.assert_eq(Month::April.length(), 30)?
-  @assertion.assert_eq(Month::May.length(), 31)?
+  inspect(Month::February.length(), ~content="28")?
+  inspect(Month::February.length(leap_year=true), ~content="29")?
+  inspect(Month::April.length(), ~content="30")?
+  inspect(Month::May.length(), ~content="31")?
+}
+
+test "add" {
+  let m = Month::January
+  inspect(m.add(1), ~content="February")?
+  inspect(m.add(2), ~content="March")?
+  inspect(m.add(3), ~content="April")?
+  inspect(m.add(4), ~content="May")?
+  inspect(m.add(5), ~content="June")?
+  inspect(m.add(6), ~content="July")?
+  inspect(m.add(7), ~content="August")?
+  inspect(m.add(8), ~content="September")?
+  inspect(m.add(9), ~content="October")?
+  inspect(m.add(10), ~content="November")?
+  inspect(m.add(11), ~content="December")?
+  inspect(m.add(12), ~content="January")?
 }
 
 test "first_day_of_year" {
-  @assertion.assert_eq(Month::January.first_day_of_year(), 1)?
-  @assertion.assert_eq(Month::February.first_day_of_year(), 32)?
-  @assertion.assert_eq(Month::March.first_day_of_year(), 60)?
-  @assertion.assert_eq(Month::April.first_day_of_year(), 91)?
-  @assertion.assert_eq(Month::May.first_day_of_year(), 121)?
-  @assertion.assert_eq(Month::June.first_day_of_year(), 152)?
-  @assertion.assert_eq(Month::July.first_day_of_year(), 182)?
-  @assertion.assert_eq(Month::August.first_day_of_year(), 213)?
-  @assertion.assert_eq(Month::September.first_day_of_year(), 244)?
-  @assertion.assert_eq(Month::October.first_day_of_year(), 274)?
-  @assertion.assert_eq(Month::November.first_day_of_year(), 305)?
-  @assertion.assert_eq(Month::December.first_day_of_year(), 335)?
+  inspect(Month::January.first_day_of_year(), ~content="1")?
+  inspect(Month::February.first_day_of_year(), ~content="32")?
+  inspect(Month::March.first_day_of_year(), ~content="60")?
+  inspect(Month::April.first_day_of_year(), ~content="91")?
+  inspect(Month::May.first_day_of_year(), ~content="121")?
+  inspect(Month::June.first_day_of_year(), ~content="152")?
+  inspect(Month::July.first_day_of_year(), ~content="182")?
+  inspect(Month::August.first_day_of_year(), ~content="213")?
+  inspect(Month::September.first_day_of_year(), ~content="244")?
+  inspect(Month::October.first_day_of_year(), ~content="274")?
+  inspect(Month::November.first_day_of_year(), ~content="305")?
+  inspect(Month::December.first_day_of_year(), ~content="335")?
 }

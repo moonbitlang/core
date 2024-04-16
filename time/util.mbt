@@ -68,13 +68,17 @@ fn checked_add(x : Int64, y : Int64) -> Option[Int64] {
 }
 
 /// FIXME: use checked_mul method of Int
-fn checked_mul(x : Int, y : Int) -> Option[Int] {
-  let r = x.to_int64() * y.to_int64()
-  if r > (2147483647).to_int64() || r < (-2147483648).to_int64() {
-    None
-  } else {
-    Some(r.to_int())
+fn checked_mul(x : Int64, y : Int64) -> Option[Int64] {
+  let r = x * y
+  let abs_x = x.abs()
+  let abs_y = y.abs()
+  if abs_x.lor(abs_y).lsr(31) != 0L {
+    // bits that greater than 2^31 might cause overflow
+    if ((y != 0L) && (r / y != x)) || (x == Int64::min_value() && y == -1L) {
+      return None
+    }
   }
+  Some(r)
 }
 
 test "add_prefix_zero" {
@@ -103,9 +107,9 @@ test "checked_add" {
 }
 
 test "checked_mul" {
-  @assertion.assert_eq(checked_mul(2, 3), Some(6))?
-  @assertion.assert_eq(checked_mul(-2, 3), Some(-6))?
-  @assertion.assert_eq(checked_mul(-2, -3), Some(6))?
-  @assertion.assert_eq(checked_mul(2, 2147483647), None)?
-  @assertion.assert_eq(checked_mul(2, -2147483648), None)?
+  @assertion.assert_eq(checked_mul(2L, 3L), Some(6L))?
+  @assertion.assert_eq(checked_mul(-2L, 3L), Some(-6L))?
+  @assertion.assert_eq(checked_mul(-2L, -3L), Some(6L))?
+  @assertion.assert_eq(checked_mul(2L, Int64::min_value()), None)?
+  @assertion.assert_eq(checked_mul(2L, Int64::max_value()), None)?
 }

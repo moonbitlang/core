@@ -63,8 +63,8 @@ test "new" {
 }
 
 test "valid" {
-  @assertion.assert_true(DayOfWeek::valid(1))?
-  @assertion.assert_true(DayOfWeek::valid(7))?
-  @assertion.assert_false(DayOfWeek::valid(0))?
-  @assertion.assert_false(DayOfWeek::valid(8))?
+  inspect(DayOfWeek::valid(1), ~content="true")?
+  inspect(DayOfWeek::valid(7), ~content="true")?
+  inspect(DayOfWeek::valid(0), ~content="false")?
+  inspect(DayOfWeek::valid(8), ~content="false")?
 }

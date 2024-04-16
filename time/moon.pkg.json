@@ -5,6 +5,7 @@
     "moonbitlang/core/strconv",
     "moonbitlang/core/vec",
     "moonbitlang/core/math",
-    "moonbitlang/core/coverage"
+    "moonbitlang/core/coverage",
+    "moonbitlang/core/int64"
   ]
 }

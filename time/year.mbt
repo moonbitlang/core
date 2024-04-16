@@ -55,11 +55,11 @@ test "new" {
 }
 
 test "is_leap" {
-  @assertion.assert_true(Year::Year(2000).is_leap_year())?
-  @assertion.assert_false(Year::Year(2001).is_leap_year())?
+  inspect(Year::Year(2000).is_leap_year(), ~content="true")?
+  inspect(Year::Year(2001).is_leap_year(), ~content="false")?
 }
 
 test "length" {
-  @assertion.assert_eq(Year::Year(2000).length(), 366)?
-  @assertion.assert_eq(Year::Year(2001).length(), 365)?
+  inspect(Year::Year(2000).length(), ~content="366")?
+  inspect(Year::Year(2001).length(), ~content="365")?
 }
