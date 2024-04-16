@@ -25,14 +25,14 @@
 /// ```
 pub fn sort[T : Compare](self : Vec[T]) -> Unit {
   quick_sort(
-    { array: self, start: 0, end: self.length() },
+    self.op_as_view(~start= 0, ~end= self.len),
     None,
     get_limit(self.length()),
   )
 }
 
 fn quick_sort[T : Compare](
-  arr : VecSlice[T],
+  arr : VecView[T],
   pred : Option[T],
   limit : Int
 ) -> Unit {
@@ -78,13 +78,13 @@ fn quick_sort[T : Compare](
           while i < len && pred == arr[i] {
             i = i + 1
           }
-          arr = arr.slice(i, len)
+          arr = arr.op_as_view(~start=i, ~end=len)
           continue
         }
       _ => ()
     }
-    let left = arr.slice(0, pivot)
-    let right = arr.slice(pivot + 1, len)
+    let left = arr.op_as_view(~start=0, ~end=pivot)
+    let right = arr.op_as_view(~start=pivot+1, ~end=len)
     // Reduce the stack depth by only call quick_sort on the smaller partition.
     if left.length() < right.length() {
       quick_sort(left, pred, limit)
@@ -113,7 +113,7 @@ fn get_limit(len : Int) -> Int {
 /// 
 /// Returns whether the array is sorted.
 fn try_bubble_sort[T : Compare](
-  arr : VecSlice[T],
+  arr : VecView[T],
   ~max_tries : Int = 8
 ) -> Bool {
   let mut tries = 0
@@ -138,7 +138,7 @@ fn try_bubble_sort[T : Compare](
 /// It will only tolerate at most 8 unsorted elements. The time complexity is O(n).
 /// 
 /// Returns whether the array is sorted.
-fn bubble_sort[T : Compare](arr : VecSlice[T]) -> Unit {
+fn bubble_sort[T : Compare](arr : VecView[T]) -> Unit {
   for i = 1; i < arr.length(); i = i + 1 {
     for j = i; j > 0 && arr[j - 1] > arr[j]; j = j - 1 {
       arr.swap(j, j - 1)
@@ -148,12 +148,12 @@ fn bubble_sort[T : Compare](arr : VecSlice[T]) -> Unit {
 
 test "try_bubble_sort" {
   let arr = Vec::[8, 7, 6, 5, 4, 3, 2, 1]
-  let sorted = try_bubble_sort({ array: arr, start: 0, end: 8 })
+  let sorted = try_bubble_sort(arr.op_as_view(~start= 0, ~end= 8))
   @assertion.assert_eq(sorted, true)?
   @assertion.assert_eq(arr, Vec::[1, 2, 3, 4, 5, 6, 7, 8])?
 }
 
-fn partition[T : Compare](arr : VecSlice[T], pivot_index : Int) -> (Int, Bool) {
+fn partition[T : Compare](arr : VecView[T], pivot_index : Int) -> (Int, Bool) {
   arr.swap(pivot_index, arr.length() - 1)
   let pivot = arr[arr.length() - 1]
   let mut i = 0
@@ -176,7 +176,7 @@ fn partition[T : Compare](arr : VecSlice[T], pivot_index : Int) -> (Int, Bool) {
 /// It avoids worst case performance by choosing a pivot that is likely to be close to the median.
 /// 
 /// Returns the pivot index and whether the array is likely sorted.
-fn choose_pivot[T : Compare](arr : VecSlice[T]) -> (Int, Bool) {
+fn choose_pivot[T : Compare](arr : VecView[T]) -> (Int, Bool) {
   let len = arr.length()
   let use_median_of_medians = 50
   let max_swaps = 4 * 3
@@ -213,18 +213,18 @@ fn choose_pivot[T : Compare](arr : VecSlice[T]) -> (Int, Bool) {
   }
 }
 
-fn heap_sort[T : Compare](arr : VecSlice[T]) -> Unit {
+fn heap_sort[T : Compare](arr : VecView[T]) -> Unit {
   let len = arr.length()
   for i = len / 2 - 1; i >= 0; i = i - 1 {
     sift_down(arr, i)
   }
   for i = len - 1; i > 0; i = i - 1 {
     arr.swap(0, i)
-    sift_down(arr.slice(0, i), 0)
+    sift_down(arr.op_as_view(~start=0, ~end=i), 0)
   }
 }
 
-fn sift_down[T : Compare](arr : VecSlice[T], index : Int) -> Unit {
+fn sift_down[T : Compare](arr : VecView[T], index : Int) -> Unit {
   let mut index = index
   let len = arr.length()
   let mut child = index * 2 + 1
@@ -270,12 +270,12 @@ fn test_sort(f : (Vec[Int]) -> Unit) -> Result[Unit, String] {
 }
 
 test "heap_sort" {
-  test_sort(fn(arr) { heap_sort({ array: arr, start: 0, end: arr.length() }) })?
+  test_sort(fn(arr) { heap_sort(arr.op_as_view(~start= 0, ~end= arr.len)) })?
 }
 
 test "bubble_sort" {
   test_sort(
-    fn(arr) { bubble_sort({ array: arr, start: 0, end: arr.length() }) },
+    fn(arr) { bubble_sort(arr.op_as_view(~start= 0, ~end= arr.len)) },
   )?
 }
 

@@ -26,14 +26,3 @@ pub fn to_string[X : Show](self : Array[X]) -> String {
 pub fn Array::default[X]() -> Array[X] {
   []
 }
-
-pub fn op_as_slice[T](self: Array[T], ~start: Int, ~end: Int) -> Slice[T] {
-  if start < 0 {
-    abort("Slice start index out of bounds")
-  } else if end > self.length() {
-    abort("Slice end index out of bounds")
-  } else if start > end {
-    abort("Slice start index greater than end index")
-  }
-  Slice :: { start, len: end - start, data: Arr(self) }
-}

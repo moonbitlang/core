@@ -36,6 +36,7 @@ fn Vec::map[T](Vec[T], (T) -> T) -> Unit
 fn Vec::mapi[T](Vec[T], (Int, T) -> T) -> Unit
 fn Vec::new[T]() -> Vec[T]
 fn Vec::op_add[T](Vec[T], Vec[T]) -> Vec[T]
+fn Vec::op_as_view[T](Vec[T], Int, Int) -> VecView[T]
 fn Vec::op_equal[T : @moonbitlang/core/builtin.Eq](Vec[T], Vec[T]) -> Bool
 fn Vec::op_get[T](Vec[T], Int) -> T
 fn Vec::op_set[T](Vec[T], Int, T) -> Unit
@@ -62,6 +63,9 @@ fn Vec::swap[T](Vec[T], Int, Int) -> Unit
 fn Vec::to_list[T](Vec[T]) -> List[T]
 fn Vec::to_string[T : @moonbitlang/core/builtin.Show](Vec[T]) -> String
 fn Vec::with_capacity[T](Int) -> Vec[T]
+
+type VecView
+fn VecView::op_as_view[T](VecView[T], Int, Int) -> VecView[T]
 
 // Traits
 
