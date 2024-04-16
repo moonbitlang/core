@@ -56,7 +56,7 @@ fn reverse[T](self : VecView[T]) -> Unit {
   }
 }
 
-fn op_as_slice[T](self: Vec[T], ~start: Int, ~end: Int) -> VecView[T] {
+pub fn op_as_slice[T](self: Vec[T], ~start: Int, ~end: Int) -> VecView[T] {
   if start < 0 {
     abort("Slice start index out of bounds")
   } else if end > self.length() {
@@ -67,7 +67,7 @@ fn op_as_slice[T](self: Vec[T], ~start: Int, ~end: Int) -> VecView[T] {
   VecView :: { buf: self.buf, start, len: end - start }
 }
 
-fn op_as_slice[T](self : VecView[T], ~start : Int, ~end : Int) -> VecView[T] {
+pub fn op_as_slice[T](self : VecView[T], ~start : Int, ~end : Int) -> VecView[T] {
   if start < 0 {
     abort("Slice start index out of bounds")
   } else if end > self.length() {
