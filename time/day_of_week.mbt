@@ -26,7 +26,7 @@ let min_day_of_week = 1
 
 let max_day_of_week = 7
 
-pub fn DayOfWeek::new_exact(day_of_week: Int) -> DayOfWeek {
+pub fn DayOfWeek::new_exact(day_of_week : Int) -> DayOfWeek {
   match DayOfWeek::new(day_of_week) {
     Ok(dow) => dow
     _ => abort(dow_out_of_range_err)
@@ -34,19 +34,15 @@ pub fn DayOfWeek::new_exact(day_of_week: Int) -> DayOfWeek {
 }
 
 pub fn DayOfWeek::new(day_of_week : Int) -> Result[DayOfWeek, String] {
-  if DayOfWeek::valid(day_of_week) {
-    match day_of_week {
-      1 => Ok(Monday)
-      2 => Ok(Tuesday)
-      3 => Ok(Wednesday)
-      4 => Ok(Thursday)
-      5 => Ok(Friday)
-      6 => Ok(Saturday)
-      7 => Ok(Sunday)
-      _ => Err(dow_out_of_range_err)
-    }
-  } else {
-    Err(dow_out_of_range_err)
+  match day_of_week {
+    1 => Ok(Monday)
+    2 => Ok(Tuesday)
+    3 => Ok(Wednesday)
+    4 => Ok(Thursday)
+    5 => Ok(Friday)
+    6 => Ok(Saturday)
+    7 => Ok(Sunday)
+    _ => Err(dow_out_of_range_err)
   }
 }
 

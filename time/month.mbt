@@ -32,9 +32,6 @@ let min_month : Int = 1
 let max_month : Int = 12
 
 pub fn Month::new(month : Int) -> Result[Month, String] {
-  if month < min_month || month > max_month {
-    return Err(month_out_of_range_err)
-  }
   match month {
     1 => Ok(January)
     2 => Ok(February)
