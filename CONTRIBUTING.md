@@ -61,6 +61,7 @@ After making your changes, it's important to test them to ensure they work as ex
   moon check
   moon test
   moon bundle
+  moon info // Generate mbti files, these files should be tracked by git
   ```
 
 ## Step 4: Submit a pull request and request a review

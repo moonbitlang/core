@@ -1,0 +1,14 @@
+package moonbitlang/core/unit
+
+// Values
+
+// Types and methods
+fn Unit::compare(Unit, Unit) -> Int
+fn Unit::default() -> Unit
+fn Unit::hash(Unit) -> Int
+fn Unit::to_string(Unit) -> String
+
+// Traits
+
+// Extension Methods
+

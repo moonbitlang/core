@@ -1,0 +1,11 @@
+package moonbitlang/core/bytes
+
+// Values
+
+// Types and methods
+fn Bytes::hash(Bytes) -> Int
+
+// Traits
+
+// Extension Methods
+

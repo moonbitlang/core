@@ -1,0 +1,21 @@
+package moonbitlang/core/coverage
+
+// Values
+fn end() -> Unit
+
+fn escape(String) -> String
+
+fn track(String, CoverageCounter) -> Unit
+
+// Types and methods
+type CoverageCounter
+fn CoverageCounter::incr(CoverageCounter, Int) -> Unit
+fn CoverageCounter::new(Int) -> CoverageCounter
+fn CoverageCounter::to_string(CoverageCounter) -> String
+
+type IO
+
+// Traits
+
+// Extension Methods
+

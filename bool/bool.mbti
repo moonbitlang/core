@@ -1,0 +1,17 @@
+package moonbitlang/core/bool
+
+// Values
+
+// Types and methods
+fn Bool::hash(Bool) -> Int
+fn Bool::to_bool(Bool) -> Bool
+fn Bool::to_int(Bool) -> Int
+fn Bool::to_int64(Bool) -> Int64
+
+// Traits
+pub trait Boolean {
+  to_bool(Self) -> Bool
+}
+
+// Extension Methods
+
