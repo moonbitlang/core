@@ -20,8 +20,8 @@ struct Vec[T] {
   mut len : Int
 }
 
-/// A `VecSlice` is a slice of a `Vec`.
-struct VecSlice[T] {
+/// A `VecView` is a slice of a `Vec`.
+struct VecView[T] {
   buf : UninitializedArray[T]
   start : Int
   len : Int
