@@ -198,6 +198,6 @@ test "assert_is_not.is.not" {
 }
 
 // For testing purposes
-struct T {
+priv struct T {
   mut x : Int
 } derive(Eq, Debug)
