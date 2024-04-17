@@ -23,10 +23,11 @@ struct Rational {
 } derive(Debug)
 
 fn gcd(a : Int64, b : Int64) -> Int64 {
-  if b == 0L {
-    a
-  } else {
-    gcd(b, a % b)
+  for a = a, b = b {
+    if b == 0L {
+      break a 
+    }
+    continue b , a %b
   }
 }
 
