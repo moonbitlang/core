@@ -448,31 +448,26 @@ pub fn Map::from_array[K : Compare, V](array : Array[(K, V)]) -> Map[K, V] {
 }
 
 test "from_array" {
-  let m = Map::[(3, "three"), (8, "eight"), (1, "one"), (2, "two"), (0, "zero")]
-  @assertion.assert_eq(
-    m.debug_tree(),
-    "(3,three,(1,one,(0,zero,_,_),(2,two,_,_)),(8,eight,_,_))",
-  )?
+  let m = Map::[(3, "three"), (8, "eight"), (1, "one"), (2, "two"), (0, "zero")]  
+  inspect(m.debug_tree(), content="(3,three,(1,one,(0,zero,_,_),(2,two,_,_)),(8,eight,_,_))")?
 }
 
 test "insert" {
   let m = Map::[(3, "three"), (8, "eight"), (1, "one")]
-  @assertion.assert_eq(m.debug_tree(), "(3,three,(1,one,_,_),(8,eight,_,_))")?
+  inspect(m.debug_tree(), ~content="(3,three,(1,one,_,_),(8,eight,_,_))")?
   let m = m.insert(5, "five").insert(2, "two").insert(0, "zero").insert(
     1, "one_updated",
   )
-  @assertion.assert_eq(
-    m.debug_tree(),
-    "(3,three,(1,one_updated,(0,zero,_,_),(2,two,_,_)),(8,eight,(5,five,_,_),_))",
-  )?
+  inspect(
+    m.debug_tree(),    
+    content="(3,three,(1,one_updated,(0,zero,_,_),(2,two,_,_)),(8,eight,(5,five,_,_),_))")?
 }
 
 test "remove" {
   let m = Map::[(3, "three"), (8, "eight"), (1, "one"), (2, "two"), (0, "zero")]
-  @assertion.assert_eq(
-    m.debug_tree(),
-    "(3,three,(1,one,(0,zero,_,_),(2,two,_,_)),(8,eight,_,_))",
-  )?
+  inspect(
+    m.debug_tree(),    
+    content="(3,three,(1,one,(0,zero,_,_),(2,two,_,_)),(8,eight,_,_))")?
   let m = m.remove(1).remove(3)
   @assertion.assert_eq(m.debug_tree(), "(2,two,(0,zero,_,_),(8,eight,_,_))")?
 }
@@ -486,10 +481,9 @@ test "lookup" {
 
 test "member" {
   let m = Map::[(3, "three"), (8, "eight"), (1, "one"), (2, "two"), (0, "zero")]
-  @assertion.assert_eq(
-    m.debug_tree(),
-    "(3,three,(1,one,(0,zero,_,_),(2,two,_,_)),(8,eight,_,_))",
-  )?
+  inspect(
+    m.debug_tree(),    
+    content="(3,three,(1,one,(0,zero,_,_),(2,two,_,_)),(8,eight,_,_))")?
   @assertion.assert_eq(m.member(8), true)?
   @assertion.assert_eq(m.member(2), true)?
   @assertion.assert_eq(m.member(4), false)?
