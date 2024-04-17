@@ -117,6 +117,7 @@ pub fn get_low_surrogate(self: Char) -> Option[Char] {
 
 test "get high/low surrogate" {
   @assertion.assert_eq('a'.get_high_surrogate(), None)?
+  @assertion.assert_eq('a'.get_low_surrogate(), None)?
   @assertion.assert_eq('🤣'.get_high_surrogate(), Some("🤣"[0]))?
   @assertion.assert_eq('🤣'.get_low_surrogate(), Some("🤣"[1]))?
 }
