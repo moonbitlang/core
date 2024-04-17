@@ -65,7 +65,12 @@ fn Vec::to_string[T : @moonbitlang/core/builtin.Show](Vec[T]) -> String
 fn Vec::with_capacity[T](Int) -> Vec[T]
 
 type VecView
+fn VecView::length[T](VecView[T]) -> Int
 fn VecView::op_as_view[T](VecView[T], Int, Int) -> VecView[T]
+fn VecView::op_get[T](VecView[T], Int) -> T
+fn VecView::op_set[T](VecView[T], Int, T) -> Unit
+fn VecView::reverse[T](VecView[T]) -> Unit
+fn VecView::swap[T](VecView[T], Int, Int) -> Unit
 
 // Traits
 
