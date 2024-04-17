@@ -37,7 +37,7 @@ pub fn op_set[T](self : VecView[T], index : Int, value : T) -> Unit {
 }
 
 pub fn swap[T](self : VecView[T], i : Int, j : Int) -> Unit {
-    if i >= self.len || j >= self.len || i < 0 || j < 0 {
+  if i >= self.len || j >= self.len || i < 0 || j < 0 {
     let len = self.len
     abort(
       "index out of bounds: the len is from 0 to \(len) but the index is (\(i), \(j))",
@@ -56,7 +56,7 @@ pub fn reverse[T](self : VecView[T]) -> Unit {
   }
 }
 
-pub fn op_as_view[T](self: Vec[T], ~start: Int, ~end: Int) -> VecView[T] {
+pub fn op_as_view[T](self : Vec[T], ~start : Int, ~end : Int) -> VecView[T] {
   if start < 0 {
     abort("Slice start index out of bounds")
   } else if end > self.length() {
@@ -64,7 +64,7 @@ pub fn op_as_view[T](self: Vec[T], ~start: Int, ~end: Int) -> VecView[T] {
   } else if start > end {
     abort("Slice start index greater than end index")
   }
-  VecView :: { buf: self.buf, start, len: end - start }
+  VecView::{ buf: self.buf, start, len: end - start }
 }
 
 pub fn op_as_view[T](self : VecView[T], ~start : Int, ~end : Int) -> VecView[T] {
@@ -75,13 +75,13 @@ pub fn op_as_view[T](self : VecView[T], ~start : Int, ~end : Int) -> VecView[T] 
   } else if start > end {
     abort("Slice start index greater than end index")
   }
-  VecView :: { buf: self.buf, start: self.start + start, len: end - start }
+  VecView::{ buf: self.buf, start: self.start + start, len: end - start }
 }
 
 test "slice" {
   let v = Vec::[1, 2, 3, 4, 5]
-  let s = v.op_as_view(~start=1, ~end=4)
+  let s = v.op_as_view(start=1, end=4)
   @assertion.assert_eq(s.length(), 3)?
-  @assertion.assert_eq(s.op_get(0), 2)?
-  @assertion.assert_eq(s.op_get(1), 3)?
+  @assertion.assert_eq(s[0], 2)?
+  @assertion.assert_eq(s[1], 3)?
 }
