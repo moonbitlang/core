@@ -13,7 +13,7 @@
 // limitations under the License.
 
 pub fn op_equal(self : Byte, that : Byte) -> Bool {
-  return self.to_int() == that.to_int() 
+  return self.to_int() == that.to_int()
 }
 
 pub fn compare(self : Byte, that : Byte) -> Int {

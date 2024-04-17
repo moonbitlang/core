@@ -24,39 +24,87 @@ test "Basic" {
 }
 
 test "Switch to Subnormal" {
-  @assertion.assert_eq(ryu_to_string(2.2250738585072014e-308), "2.2250738585072014e-308")?
-  @assertion.assert_eq(ryu_to_string(0x0010000000000000L.reinterpret_as_double()), "2.2250738585072014e-308")?
+  @assertion.assert_eq(
+    ryu_to_string(2.2250738585072014e-308),
+    "2.2250738585072014e-308",
+  )?
+  @assertion.assert_eq(
+    ryu_to_string(0x0010000000000000L.reinterpret_as_double()),
+    "2.2250738585072014e-308",
+  )?
 }
 
 test "Min and Max" {
-  @assertion.assert_eq(ryu_to_string(0x7FEF_FFFF_FFFF_FFFFL.reinterpret_as_double()), "1.7976931348623157e308")?
+  @assertion.assert_eq(
+    ryu_to_string(0x7FEF_FFFF_FFFF_FFFFL.reinterpret_as_double()),
+    "1.7976931348623157e308",
+  )?
   @assertion.assert_eq(ryu_to_string(1L.reinterpret_as_double()), "5.0e-324")?
 }
 
 test "Lots of Trailing Zeros" {
-  @assertion.assert_eq(ryu_to_string(2.98023223876953125e-8), "2.9802322387695312e-8")?
+  @assertion.assert_eq(
+    ryu_to_string(2.98023223876953125e-8),
+    "2.9802322387695312e-8",
+  )?
 }
 
 test "Regression" {
-  @assertion.assert_eq(ryu_to_string(-2.109808898695963e16), "-2.109808898695963e16")?
+  @assertion.assert_eq(
+    ryu_to_string(-2.109808898695963e16),
+    "-2.109808898695963e16",
+  )?
   @assertion.assert_eq(ryu_to_string(4.940656e-318), "4.940656e-318")?
   @assertion.assert_eq(ryu_to_string(1.18575755e-316), "1.18575755e-316")?
-  @assertion.assert_eq(ryu_to_string(2.989102097996e-312), "2.989102097996e-312")?
+  @assertion.assert_eq(
+    ryu_to_string(2.989102097996e-312),
+    "2.989102097996e-312",
+  )?
   @assertion.assert_eq(ryu_to_string(9.0608011534336e15), "9.0608011534336e15")?
-  @assertion.assert_eq(ryu_to_string(4.708356024711512e18), "4.708356024711512e18")?
-  @assertion.assert_eq(ryu_to_string(9.409340012568248e18), "9.409340012568248e18")?
+  @assertion.assert_eq(
+    ryu_to_string(4.708356024711512e18),
+    "4.708356024711512e18",
+  )?
+  @assertion.assert_eq(
+    ryu_to_string(9.409340012568248e18),
+    "9.409340012568248e18",
+  )?
   @assertion.assert_eq(ryu_to_string(1.2345678), "1.2345678")?
-  @assertion.assert_eq(ryu_to_string(1.8531501765868567e21), "1.8531501765868567e21")?
-  @assertion.assert_eq(ryu_to_string(-3.347727380279489e33), "-3.347727380279489e33")?
-  @assertion.assert_eq(ryu_to_string(1.9430376160308388e16), "1.9430376160308388e16")?
-  @assertion.assert_eq(ryu_to_string(-6.9741824662760956e19), "-6.9741824662760956e19")?
-  @assertion.assert_eq(ryu_to_string(4.3816050601147837e18), "4.3816050601147837e18")?
+  @assertion.assert_eq(
+    ryu_to_string(1.8531501765868567e21),
+    "1.8531501765868567e21",
+  )?
+  @assertion.assert_eq(
+    ryu_to_string(-3.347727380279489e33),
+    "-3.347727380279489e33",
+  )?
+  @assertion.assert_eq(
+    ryu_to_string(1.9430376160308388e16),
+    "1.9430376160308388e16",
+  )?
+  @assertion.assert_eq(
+    ryu_to_string(-6.9741824662760956e19),
+    "-6.9741824662760956e19",
+  )?
+  @assertion.assert_eq(
+    ryu_to_string(4.3816050601147837e18),
+    "4.3816050601147837e18",
+  )?
 }
 
 test "Looks Like Pow5" {
-  @assertion.assert_eq(ryu_to_string(0x4830F0CF064DD592L.reinterpret_as_double()), "5.764607523034235e39")?
-  @assertion.assert_eq(ryu_to_string(0x4840F0CF064DD592L.reinterpret_as_double()), "1.152921504606847e40")?
-  @assertion.assert_eq(ryu_to_string(0x4850F0CF064DD592L.reinterpret_as_double()), "2.305843009213694e40")?
+  @assertion.assert_eq(
+    ryu_to_string(0x4830F0CF064DD592L.reinterpret_as_double()),
+    "5.764607523034235e39",
+  )?
+  @assertion.assert_eq(
+    ryu_to_string(0x4840F0CF064DD592L.reinterpret_as_double()),
+    "1.152921504606847e40",
+  )?
+  @assertion.assert_eq(
+    ryu_to_string(0x4850F0CF064DD592L.reinterpret_as_double()),
+    "2.305843009213694e40",
+  )?
 }
 
 test "Output Length" {
@@ -88,22 +136,55 @@ test "32-bit chunking" {
 }
 
 test "Min Max Shift" {
-  @assertion.assert_eq(ryu_to_string(ieee_parts_to_double(false, 4, 0L)), "1.7800590868057611e-307")?
-  @assertion.assert_eq(ryu_to_string(ieee_parts_to_double(false, 6, 0x0010000000000000L)), "1.424047269444609e-306")?
-  @assertion.assert_eq(ryu_to_string(ieee_parts_to_double(false, 41, 0L)), "2.446494580089078e-296")?
-  @assertion.assert_eq(ryu_to_string(ieee_parts_to_double(false, 40, 0x0010000000000000L)), "2.446494580089078e-296")?
-  @assertion.assert_eq(ryu_to_string(ieee_parts_to_double(false, 1077, 0L)), "1.8014398509481984e16")?
-  @assertion.assert_eq(ryu_to_string(ieee_parts_to_double(false, 1076, 0x0010000000000000L)), "1.8014398509481984e16")?
-  @assertion.assert_eq(ryu_to_string(ieee_parts_to_double(false, 307, 0L)), "2.900835519859558e-216")?
-  @assertion.assert_eq(ryu_to_string(ieee_parts_to_double(false, 306, 0x0010000000000000L)), "2.900835519859558e-216")?
-  @assertion.assert_eq(ryu_to_string(ieee_parts_to_double(false, 934, 0x000FA7161A4D6E0CL)), "3.196104012172126e-27")?
+  @assertion.assert_eq(
+    ryu_to_string(ieee_parts_to_double(false, 4, 0L)),
+    "1.7800590868057611e-307",
+  )?
+  @assertion.assert_eq(
+    ryu_to_string(ieee_parts_to_double(false, 6, 0x0010000000000000L)),
+    "1.424047269444609e-306",
+  )?
+  @assertion.assert_eq(
+    ryu_to_string(ieee_parts_to_double(false, 41, 0L)),
+    "2.446494580089078e-296",
+  )?
+  @assertion.assert_eq(
+    ryu_to_string(ieee_parts_to_double(false, 40, 0x0010000000000000L)),
+    "2.446494580089078e-296",
+  )?
+  @assertion.assert_eq(
+    ryu_to_string(ieee_parts_to_double(false, 1077, 0L)),
+    "1.8014398509481984e16",
+  )?
+  @assertion.assert_eq(
+    ryu_to_string(ieee_parts_to_double(false, 1076, 0x0010000000000000L)),
+    "1.8014398509481984e16",
+  )?
+  @assertion.assert_eq(
+    ryu_to_string(ieee_parts_to_double(false, 307, 0L)),
+    "2.900835519859558e-216",
+  )?
+  @assertion.assert_eq(
+    ryu_to_string(ieee_parts_to_double(false, 306, 0x0010000000000000L)),
+    "2.900835519859558e-216",
+  )?
+  @assertion.assert_eq(
+    ryu_to_string(ieee_parts_to_double(false, 934, 0x000FA7161A4D6E0CL)),
+    "3.196104012172126e-27",
+  )?
 }
 
 test "Small Integers" {
   // 2^53-1
-  @assertion.assert_eq(ryu_to_string(9007199254740991.0), "9.007199254740991e15")?
+  @assertion.assert_eq(
+    ryu_to_string(9007199254740991.0),
+    "9.007199254740991e15",
+  )?
   // 2^53
-  @assertion.assert_eq(ryu_to_string(9007199254740992.0), "9.007199254740992e15")?
+  @assertion.assert_eq(
+    ryu_to_string(9007199254740992.0),
+    "9.007199254740992e15",
+  )?
   @assertion.assert_eq(ryu_to_string(1.0e+0), "1.0")?
   @assertion.assert_eq(ryu_to_string(1.2e+1), "12.0")?
   @assertion.assert_eq(ryu_to_string(1.23e+2), "123.0")?
@@ -119,8 +200,14 @@ test "Small Integers" {
   @assertion.assert_eq(ryu_to_string(1.23456789012e+11), "1.23456789012e11")?
   @assertion.assert_eq(ryu_to_string(1.234567890123e+12), "1.234567890123e12")?
   @assertion.assert_eq(ryu_to_string(1.2345678901234e+13), "1.2345678901234e13")?
-  @assertion.assert_eq(ryu_to_string(1.23456789012345e+14), "1.23456789012345e14")?
-  @assertion.assert_eq(ryu_to_string(1.234567890123456e+15), "1.234567890123456e15")?
+  @assertion.assert_eq(
+    ryu_to_string(1.23456789012345e+14),
+    "1.23456789012345e14",
+  )?
+  @assertion.assert_eq(
+    ryu_to_string(1.234567890123456e+15),
+    "1.234567890123456e15",
+  )?
 }
 
 test "10^i" {
@@ -191,7 +278,10 @@ test "Largest power of 2 <= 10^(i+1)" {
   @assertion.assert_eq(ryu_to_string(8796093022208.0), "8.796093022208e12")?
   @assertion.assert_eq(ryu_to_string(70368744177664.0), "7.0368744177664e13")?
   @assertion.assert_eq(ryu_to_string(562949953421312.0), "5.62949953421312e14")?
-  @assertion.assert_eq(ryu_to_string(9007199254740992.0), "9.007199254740992e15")?
+  @assertion.assert_eq(
+    ryu_to_string(9007199254740992.0),
+    "9.007199254740992e15",
+  )?
 }
 
 test "1000 * (Largest power of 2 <= 10^(i+1))" {
@@ -211,20 +301,24 @@ test "1000 * (Largest power of 2 <= 10^(i+1))" {
 }
 
 test "boundary conditions" {
-    // x = 1.0e7
+  // x = 1.0e7
   @assertion.assert_eq(ryu_to_string(1.0e7), "1.0e7")?
   // x < 1.0e7
   @assertion.assert_eq(ryu_to_string(9999999.999999998), "9999999.999999998")?
   // x = 1.0e-3
   @assertion.assert_eq(ryu_to_string(0.001), "0.001")?
   // x < 1.0e-3
-  @assertion.assert_eq(ryu_to_string(0.0009999999999999998), "9.999999999999998e-4")?
+  @assertion.assert_eq(
+    ryu_to_string(0.0009999999999999998),
+    "9.999999999999998e-4",
+  )?
 }
 
 // For testing purposes
-fn ieee_parts_to_double(sign : Bool, ieeeExponent : Int, ieeeMantissa : Int64) ->
-     Double {
-  sign.to_int64().lsl(63).lor(ieeeExponent.to_int64().lsl(52)).lor(
-    ieeeMantissa,
-  ).reinterpret_as_double()
+fn ieee_parts_to_double(
+  sign : Bool,
+  ieeeExponent : Int,
+  ieeeMantissa : Int64
+) -> Double {
+  sign.to_int64().lsl(63).lor(ieeeExponent.to_int64().lsl(52)).lor(ieeeMantissa).reinterpret_as_double()
 }

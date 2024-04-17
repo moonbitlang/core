@@ -104,10 +104,10 @@ pub fn to_array(self : String) -> Array[Char] {
 
 test "to_array" {
   let a = "你好！mbt".to_array()
-  inspect(a[0], ~content="你")?
-  inspect(a[1], ~content="好")?
-  inspect(a[2], ~content="！")?
-  inspect(a[3], ~content="m")?
-  inspect(a[4], ~content="b")?
-  inspect(a[5], ~content="t")?
+  inspect(a[0], content="你")?
+  inspect(a[1], content="好")?
+  inspect(a[2], content="！")?
+  inspect(a[3], content="m")?
+  inspect(a[4], content="b")?
+  inspect(a[5], content="t")?
 }

@@ -25,9 +25,9 @@ struct Rational {
 fn gcd(a : Int64, b : Int64) -> Int64 {
   for a = a, b = b {
     if b == 0L {
-      break a 
+      break a
     }
-    continue b , a %b
+    continue b, a % b
   }
 }
 
@@ -166,7 +166,6 @@ pub fn Rational::from_double(value : Double) -> Result[Rational, String] {
   if q > t_max_f {
     return Err(overflow_error)
   }
-
   for i = 0; i < max_iteration; i = i + 1 {
     if not(q >= -9223372036854775808.0 && q < 9223372036854775808.0) {
       break // overflow

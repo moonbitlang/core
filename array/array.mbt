@@ -277,7 +277,7 @@ pub fn fold_left[T, U](self : Array[T], f : (U, T) -> U, ~init : U) -> U {
 }
 
 test "fold_left" {
-  let sum = [1, 2, 3, 4, 5].fold_left(~init=0, fn { sum, elem => sum + elem })
+  let sum = [1, 2, 3, 4, 5].fold_left(init=0, fn { sum, elem => sum + elem })
   @assertion.assert_eq(sum, 15)?
 }
 
@@ -297,7 +297,7 @@ pub fn fold_right[T, U](self : Array[T], f : (U, T) -> U, ~init : U) -> U {
 }
 
 test "fold_right" {
-  let sum = [1, 2, 3, 4, 5].fold_right(~init=0, fn { sum, elem => sum + elem })
+  let sum = [1, 2, 3, 4, 5].fold_right(init=0, fn { sum, elem => sum + elem })
   @assertion.assert_eq(sum, 15)?
 }
 
@@ -318,7 +318,7 @@ pub fn fold_lefti[T, U](self : Array[T], f : (Int, U, T) -> U, ~init : U) -> U {
 
 test "fold_lefti" {
   let sum = [1, 2, 3, 4, 5].fold_lefti(
-    ~init=0,
+    init=0,
     fn { index, sum, _elem => sum + index },
   )
   @assertion.assert_eq(sum, 10)?
@@ -342,7 +342,7 @@ pub fn fold_righti[T, U](self : Array[T], f : (Int, U, T) -> U, ~init : U) -> U 
 
 test "fold_righti" {
   let sum = [1, 2, 3, 4, 5].fold_righti(
-    ~init=0,
+    init=0,
     fn { index, sum, _elem => sum + index },
   )
   @assertion.assert_eq(sum, 10)?
@@ -619,16 +619,16 @@ test "to_list" {
 }
 
 test "op_equal" {
-  inspect([1, 2] == [1], ~content="false")?
-  inspect(starts_with([1, 2, 3], [1, 3]), ~content="false")?
+  inspect([1, 2] == [1], content="false")?
+  inspect(starts_with([1, 2, 3], [1, 3]), content="false")?
 }
 
 test "op_add" {
-  inspect(([] : Array[Int]) + [], ~content="[]")?
-  inspect([] + [1, 2, 3, 4, 5], ~content="[1, 2, 3, 4, 5]")?
-  inspect([1, 2, 3, 4, 5] + [], ~content="[1, 2, 3, 4, 5]")?
+  inspect(([] : Array[Int]) + [], content="[]")?
+  inspect([] + [1, 2, 3, 4, 5], content="[1, 2, 3, 4, 5]")?
+  inspect([1, 2, 3, 4, 5] + [], content="[1, 2, 3, 4, 5]")?
   inspect(
     [1, 2, 3, 4, 5] + [6, 7, 8, 9, 10],
-    ~content="[1, 2, 3, 4, 5, 6, 7, 8, 9, 10]",
+    content="[1, 2, 3, 4, 5, 6, 7, 8, 9, 10]",
   )?
 }

@@ -23,7 +23,7 @@ pub fn to_string[X : Show](self : Ref[X]) -> String {
 }
 
 test "to_string" {
-  inspect(ref(3), ~content="{val: 3}")?
+  inspect(ref(3), content="{val: 3}")?
 }
 
 /// Maps the value of a `Ref` using a given function.
@@ -131,7 +131,7 @@ test "decr" {
   let a = ref(1)
   a.decr()
   @assertion.assert_eq(a.val, 0)?
-  a.decr(~value=5)
+  a.decr(value=5)
   @assertion.assert_eq(a.val, -5)?
 }
 
@@ -139,6 +139,6 @@ test "incr" {
   let a = ref(1)
   a.incr()
   @assertion.assert_eq(a.val, 2)?
-  a.incr(~value=5)
+  a.incr(value=5)
   @assertion.assert_eq(a.val, 7)?
 }

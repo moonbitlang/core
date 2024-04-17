@@ -104,7 +104,11 @@ pub fn op_get[K : Hash + Eq, V](self : HashMap[K, V], key : K) -> Option[V] {
 
 /// Get the value associated with a key, 
 /// returns the provided default value if the key does not exist.
-pub fn get_or_default[K: Hash + Eq, V](self: HashMap[K, V], key: K, default: V) -> V {
+pub fn get_or_default[K : Hash + Eq, V](
+  self : HashMap[K, V],
+  key : K,
+  default : V
+) -> V {
   match self.get(key) {
     Some(v) => v
     None => default
@@ -265,9 +269,7 @@ test "new" {
 }
 
 test "set" {
-  let m : HashMap[String, Int] = HashMap::new(
-    ~hasher=Some(fn(k) { k.length() }),
-  )
+  let m : HashMap[String, Int] = HashMap::new(hasher=Some(fn(k) { k.length() }))
   m.set("a", 1)
   m.set("b", 1)
   m.set("bc", 2)
@@ -345,9 +347,7 @@ test "from_array" {
 }
 
 test "remove" {
-  let m : HashMap[String, Int] = HashMap::new(
-    ~hasher=Some(fn(k) { k.length() }),
-  )
+  let m : HashMap[String, Int] = HashMap::new(hasher=Some(fn(k) { k.length() }))
   m.set("a", 1)
   m.set("ab", 2)
   m.set("bc", 2)
@@ -363,9 +363,7 @@ test "remove" {
 }
 
 test "remove_unexist_key" {
-  let m : HashMap[String, Int] = HashMap::new(
-    ~hasher=Some(fn(k) { k.length() }),
-  )
+  let m : HashMap[String, Int] = HashMap::new(hasher=Some(fn(k) { k.length() }))
   m.set("a", 1)
   m.set("ab", 2)
   m.set("abc", 3)
@@ -425,9 +423,7 @@ test "clear" {
 }
 
 test "grow" {
-  let m : HashMap[String, Int] = HashMap::new(
-    ~hasher=Some(fn(k) { k.length() }),
-  )
+  let m : HashMap[String, Int] = HashMap::new(hasher=Some(fn(k) { k.length() }))
   m.set("C", 1)
   m.set("Go", 2)
   m.set("C++", 3)

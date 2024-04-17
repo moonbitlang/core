@@ -398,13 +398,13 @@ test "reverse" {
 pub fn fold_left[T, U](self : List[T], f : (U, T) -> U, ~init : U) -> U {
   match self {
     Nil => init
-    Cons(head, tail) => tail.fold_left(f, ~init=f(init, head))
+    Cons(head, tail) => tail.fold_left(f, init=f(init, head))
   }
 }
 
 test "fold_left" {
   let ls = List::[1, 2, 3, 4, 5]
-  @assertion.assert_eq(ls.fold_left(fn(acc, x) { acc + x }, ~init=0), 15)?
+  @assertion.assert_eq(ls.fold_left(fn(acc, x) { acc + x }, init=0), 15)?
 }
 
 /// Fold the list from right.
@@ -422,7 +422,7 @@ pub fn fold_right[T, U](self : List[T], f : (T, U) -> U, ~init : U) -> U {
 
 test "fold_right" {
   let ls = List::["1", "2", "3", "4", "5"]
-  @assertion.assert_eq(ls.fold_right(fn(x, acc) { x + acc }, ~init=""), "12345")?
+  @assertion.assert_eq(ls.fold_right(fn(x, acc) { x + acc }, init=""), "12345")?
 }
 
 /// Fold the list from left with index.
@@ -439,10 +439,7 @@ pub fn fold_lefti[T, U](self : List[T], f : (Int, U, T) -> U, ~init : U) -> U {
 
 test "fold_lefti" {
   let ls = List::[1, 2, 3, 4, 5]
-  @assertion.assert_eq(
-    ls.fold_lefti(fn(i, acc, x) { acc + i * x }, ~init=0),
-    40,
-  )?
+  @assertion.assert_eq(ls.fold_lefti(fn(i, acc, x) { acc + i * x }, init=0), 40)?
 }
 
 /// Fold the list from right with index.
@@ -460,7 +457,7 @@ pub fn fold_righti[T, U](self : List[T], f : (Int, T, U) -> U, ~init : U) -> U {
 test "fold_righti" {
   let ls = List::[1, 2, 3, 4, 5]
   @assertion.assert_eq(
-    ls.fold_righti(fn(i, x, acc) { x * i + acc }, ~init=0),
+    ls.fold_righti(fn(i, x, acc) { x * i + acc }, init=0),
     40,
   )?
 }
@@ -756,14 +753,14 @@ pub fn unfold[T, State](
   ~init : State
 ) -> List[T] {
   match f(init) {
-    Some((element, new_state)) => Cons(element, unfold(~init=new_state, f))
+    Some((element, new_state)) => Cons(element, unfold(init=new_state, f))
     None => Nil
   }
 }
 
 test "unfold" {
   let ls = unfold(
-    ~init=0,
+    init=0,
     fn { i => if i == 3 { None } else { Some((i, i + 1)) } },
   )
   @assertion.assert_eq(ls, Cons(0, Cons(1, Cons(2, Nil))))?
@@ -884,14 +881,14 @@ pub fn scan_left[T, E](self : List[T], f : (E, T) -> E, ~init : E) -> List[E] {
     init,
     match self {
       Nil => Nil
-      Cons(x, xs) => xs.scan_left(f, ~init=f(init, x))
+      Cons(x, xs) => xs.scan_left(f, init=f(init, x))
     },
   )
 }
 
 test "scan_left" {
-  let ls = List::[1, 2, 3, 4, 5].scan_left(fn(acc, x) { acc + x }, ~init=0)
-  let ls2 = List::[1, 2, 3, 4].scan_left(fn(acc, x) { acc - x }, ~init=100)
+  let ls = List::[1, 2, 3, 4, 5].scan_left(fn(acc, x) { acc + x }, init=0)
+  let ls2 = List::[1, 2, 3, 4].scan_left(fn(acc, x) { acc - x }, init=100)
   @assertion.assert_eq(ls, List::[0, 1, 3, 6, 10, 15])?
   @assertion.assert_eq(ls2, List::[100, 99, 97, 94, 90])?
 }
@@ -916,8 +913,8 @@ pub fn scan_right[T, E](self : List[T], f : (T, E) -> E, ~init : E) -> List[E] {
 }
 
 test "scan_right" {
-  let ls = List::[1, 2, 3, 4].scan_right(fn(x, acc) { x + acc }, ~init=0)
-  let ls2 = List::[1, 2, 3, 4].scan_right(fn(x, acc) { x - acc }, ~init=100)
+  let ls = List::[1, 2, 3, 4].scan_right(fn(x, acc) { x + acc }, init=0)
+  let ls2 = List::[1, 2, 3, 4].scan_right(fn(x, acc) { x - acc }, init=100)
   @assertion.assert_eq(ls, List::[10, 9, 7, 4, 0])?
   @assertion.assert_eq(ls2, List::[98, -97, 99, -96, 100])?
 }
