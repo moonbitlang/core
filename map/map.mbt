@@ -287,12 +287,12 @@ pub fn to_list[K, V](self : Map[K, V]) -> List[(K, V)] {
 
 /// Convert to an ascending list.
 pub fn to_asc_list[K, V](self : Map[K, V]) -> List[(K, V)] {
-  self.foldr_with_key(fn(xs, k, v) { Cons((k, v), xs) }, ~init=List::[])
+  self.foldr_with_key(fn(xs, k, v) { Cons((k, v), xs) }, init=List::[])
 }
 
 /// Convert to an descending list.
 pub fn to_desc_list[K, V](self : Map[K, V]) -> List[(K, V)] {
-  self.foldl_with_key(fn(xs, k, v) { Cons((k, v), xs) }, ~init=List::[])
+  self.foldl_with_key(fn(xs, k, v) { Cons((k, v), xs) }, init=List::[])
 }
 
 /// Convert to a vector of key-value pairs.
@@ -304,7 +304,7 @@ pub fn to_vec[K, V](self : Map[K, V]) -> @vec.Vec[(K, V)] {
 
 /// Return all keys of the map in ascending order.
 pub fn keys[K, V](self : Map[K, V]) -> List[K] {
-  self.foldr_with_key(fn(xs, k, _v) { Cons(k, xs) }, ~init=List::[])
+  self.foldr_with_key(fn(xs, k, _v) { Cons(k, xs) }, init=List::[])
 }
 
 /// Return an immutable set of all keys of the map.
@@ -316,27 +316,32 @@ pub fn keys_set[K : Compare + Eq, V](
 
 /// Return all elements of the map in the ascending order of their keys.
 pub fn elems[K, V](self : Map[K, V]) -> List[V] {
-  self.foldr_with_key(fn(xs, _k, v) { Cons(v, xs) }, ~init=List::[])
+  self.foldr_with_key(fn(xs, _k, v) { Cons(v, xs) }, init=List::[])
 }
 
 pub fn op_equal[K : Eq, V : Eq](self : Map[K, V], other : Map[K, V]) -> Bool {
   self.to_list() == other.to_list()
 }
 
-pub fn debug_write[K : Debug, V : Debug](self : Map[K, V], buffer : Buffer) -> Unit {
+pub fn debug_write[K : Debug, V : Debug](
+  self : Map[K, V],
+  buffer : Buffer
+) -> Unit {
   buffer.write_string("Map::[")
   let mut first = true
-  self.iter(fn(k, v) {
-    if not(first) {
+  self.iter(
+    fn(k, v) {
+      if not(first) {
+        buffer.write_string(", ")
+      }
+      first = false
+      buffer.write_string("(")
+      k.debug_write(buffer)
       buffer.write_string(", ")
-    }
-    first = false
-    buffer.write_string("(")
-    k.debug_write(buffer)
-    buffer.write_string(", ")
-    v.debug_write(buffer)
-    buffer.write_string(")")
-  })
+      v.debug_write(buffer)
+      buffer.write_string(")")
+    },
+  )
   buffer.write_string("]")
 }
 
@@ -448,26 +453,31 @@ pub fn Map::from_array[K : Compare, V](array : Array[(K, V)]) -> Map[K, V] {
 }
 
 test "from_array" {
-  let m = Map::[(3, "three"), (8, "eight"), (1, "one"), (2, "two"), (0, "zero")]  
-  inspect(m.debug_tree(), content="(3,three,(1,one,(0,zero,_,_),(2,two,_,_)),(8,eight,_,_))")?
+  let m = Map::[(3, "three"), (8, "eight"), (1, "one"), (2, "two"), (0, "zero")]
+  inspect(
+    m.debug_tree(),
+    content="(3,three,(1,one,(0,zero,_,_),(2,two,_,_)),(8,eight,_,_))",
+  )?
 }
 
 test "insert" {
   let m = Map::[(3, "three"), (8, "eight"), (1, "one")]
-  inspect(m.debug_tree(), ~content="(3,three,(1,one,_,_),(8,eight,_,_))")?
+  inspect(m.debug_tree(), content="(3,three,(1,one,_,_),(8,eight,_,_))")?
   let m = m.insert(5, "five").insert(2, "two").insert(0, "zero").insert(
     1, "one_updated",
   )
   inspect(
-    m.debug_tree(),    
-    content="(3,three,(1,one_updated,(0,zero,_,_),(2,two,_,_)),(8,eight,(5,five,_,_),_))")?
+    m.debug_tree(),
+    content="(3,three,(1,one_updated,(0,zero,_,_),(2,two,_,_)),(8,eight,(5,five,_,_),_))",
+  )?
 }
 
 test "remove" {
   let m = Map::[(3, "three"), (8, "eight"), (1, "one"), (2, "two"), (0, "zero")]
   inspect(
-    m.debug_tree(),    
-    content="(3,three,(1,one,(0,zero,_,_),(2,two,_,_)),(8,eight,_,_))")?
+    m.debug_tree(),
+    content="(3,three,(1,one,(0,zero,_,_),(2,two,_,_)),(8,eight,_,_))",
+  )?
   let m = m.remove(1).remove(3)
   @assertion.assert_eq(m.debug_tree(), "(2,two,(0,zero,_,_),(8,eight,_,_))")?
 }
@@ -482,8 +492,9 @@ test "lookup" {
 test "member" {
   let m = Map::[(3, "three"), (8, "eight"), (1, "one"), (2, "two"), (0, "zero")]
   inspect(
-    m.debug_tree(),    
-    content="(3,three,(1,one,(0,zero,_,_),(2,two,_,_)),(8,eight,_,_))")?
+    m.debug_tree(),
+    content="(3,three,(1,one,(0,zero,_,_),(2,two,_,_)),(8,eight,_,_))",
+  )?
   @assertion.assert_eq(m.member(8), true)?
   @assertion.assert_eq(m.member(2), true)?
   @assertion.assert_eq(m.member(4), false)?
@@ -537,13 +548,13 @@ test "map_with_key" {
 
 test "fold" {
   let m = Map::[("a", 1), ("b", 2), ("c", 3), ("d", 4), ("e", 5)]
-  @assertion.assert_eq(m.fold(fn(acc, v) { acc + v }, ~init=0), 15)?
+  @assertion.assert_eq(m.fold(fn(acc, v) { acc + v }, init=0), 15)?
 }
 
 test "foldl_with_key" {
   let m = Map::[("a", 1), ("b", 2), ("c", 3), ("d", 4), ("e", 5)]
   @assertion.assert_eq(
-    m.foldl_with_key(fn(acc, k, v) { acc + k + v.to_string() }, ~init=""),
+    m.foldl_with_key(fn(acc, k, v) { acc + k + v.to_string() }, init=""),
     "a1b2c3d4e5",
   )?
 }
@@ -551,7 +562,7 @@ test "foldl_with_key" {
 test "foldr_with_key" {
   let m = Map::[("a", 1), ("b", 2), ("c", 3), ("d", 4), ("e", 5)]
   @assertion.assert_eq(
-    m.foldr_with_key(fn(acc, k, v) { acc + k + v.to_string() }, ~init=""),
+    m.foldr_with_key(fn(acc, k, v) { acc + k + v.to_string() }, init=""),
     "e5d4c3b2a1",
   )?
 }
@@ -676,8 +687,20 @@ test "glue" {
 }
 
 test "op_equal" {
-  let m1 = Map::[(3, "three"), (8, "eight"), (1, "one"), (2, "two"), (0, "zero")]
-  let m2 = Map::[(3, "three"), (8, "eight"), (1, "one"), (2, "two"), (0, "zero")]
+  let m1 = Map::[
+    (3, "three"),
+    (8, "eight"),
+    (1, "one"),
+    (2, "two"),
+    (0, "zero"),
+  ]
+  let m2 = Map::[
+    (3, "three"),
+    (8, "eight"),
+    (1, "one"),
+    (2, "two"),
+    (0, "zero"),
+  ]
   let m3 = Map::[(3, "three"), (8, "eight"), (1, "one"), (2, "two")]
   @assertion.assert_eq(m1 == m2, true)?
   @assertion.assert_eq(m1 == m3, false)?
@@ -687,5 +710,8 @@ test "debug_write" {
   let m = Map::[(3, "three"), (8, "eight"), (1, "one"), (2, "two"), (0, "zero")]
   let buffer = Buffer::make(0)
   m.debug_write(buffer)
-  @assertion.assert_eq(buffer.to_string(), "Map::[(0, \"zero\"), (1, \"one\"), (2, \"two\"), (3, \"three\"), (8, \"eight\")]")?
+  @assertion.assert_eq(
+    buffer.to_string(),
+    "Map::[(0, \"zero\"), (1, \"one\"), (2, \"two\"), (3, \"three\"), (8, \"eight\")]",
+  )?
 }

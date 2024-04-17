@@ -155,48 +155,44 @@ pub fn clear[K](self : HashSet[K]) -> Unit {
 
 /// Union of two hash sets.
 /// @alert unsafe "Panic if the hash set is full."
-pub fn union[K : Hash + Eq](self : HashSet[K], other : HashSet[K]) -> HashSet[K] {
-  let m = HashSet::new(~hasher=self.hasher)
+pub fn union[K : Hash + Eq](
+  self : HashSet[K],
+  other : HashSet[K]
+) -> HashSet[K] {
+  let m = HashSet::new(hasher=self.hasher)
   self.iter(fn(k) { m.insert(k) })
   other.iter(fn(k) { m.insert(k) })
   m
 }
 
 /// Intersection of two hash sets.
-pub fn intersection[K : Hash + Eq](self : HashSet[K], other : HashSet[K]) -> HashSet[K] {
-  let m = HashSet::new(~hasher=self.hasher)
-  self.iter(fn(k) {
-    if other.contains(k) {
-      m.insert(k)
-    }
-  })
+pub fn intersection[K : Hash + Eq](
+  self : HashSet[K],
+  other : HashSet[K]
+) -> HashSet[K] {
+  let m = HashSet::new(hasher=self.hasher)
+  self.iter(fn(k) { if other.contains(k) { m.insert(k) } })
   m
 }
 
 /// Difference of two hash sets.
-pub fn difference[K : Hash + Eq](self : HashSet[K], other : HashSet[K]) -> HashSet[K] {
-  let m = HashSet::new(~hasher=self.hasher)
-  self.iter(fn(k) {
-    if not(other.contains(k)) {
-      m.insert(k)
-    }
-  })
+pub fn difference[K : Hash + Eq](
+  self : HashSet[K],
+  other : HashSet[K]
+) -> HashSet[K] {
+  let m = HashSet::new(hasher=self.hasher)
+  self.iter(fn(k) { if not(other.contains(k)) { m.insert(k) } })
   m
 }
 
 /// Symmetric difference of two hash sets.
-pub fn symmetric_difference[K : Hash + Eq](self : HashSet[K], other : HashSet[K]) -> HashSet[K] {
-  let m = HashSet::new(~hasher=self.hasher)
-  self.iter(fn(k) {
-    if not(other.contains(k)) {
-      m.insert(k)
-    }
-  })
-  other.iter(fn(k) {
-    if not(self.contains(k)) {
-      m.insert(k)
-    }
-  })
+pub fn symmetric_difference[K : Hash + Eq](
+  self : HashSet[K],
+  other : HashSet[K]
+) -> HashSet[K] {
+  let m = HashSet::new(hasher=self.hasher)
+  self.iter(fn(k) { if not(other.contains(k)) { m.insert(k) } })
+  other.iter(fn(k) { if not(self.contains(k)) { m.insert(k) } })
   m
 }
 
@@ -281,7 +277,7 @@ test "new" {
 }
 
 test "set" {
-  let m : HashSet[String] = HashSet::new(~hasher=Some(fn(k) { k.length() }))
+  let m : HashSet[String] = HashSet::new(hasher=Some(fn(k) { k.length() }))
   m.insert("a")
   m.insert("b")
   m.insert("bc")
@@ -316,7 +312,7 @@ test "from_array" {
 }
 
 test "remove" {
-  let m : HashSet[String] = HashSet::new(~hasher=Some(fn(k) { k.length() }))
+  let m : HashSet[String] = HashSet::new(hasher=Some(fn(k) { k.length() }))
   m.insert("a")
   m.insert("ab")
   m.insert("bc")
@@ -332,7 +328,7 @@ test "remove" {
 }
 
 test "remove_unexist_key" {
-  let m : HashSet[String] = HashSet::new(~hasher=Some(fn(k) { k.length() }))
+  let m : HashSet[String] = HashSet::new(hasher=Some(fn(k) { k.length() }))
   m.insert("a")
   m.insert("ab")
   m.insert("abc")
@@ -389,7 +385,7 @@ test "clear" {
 }
 
 test "grow" {
-  let m : HashSet[String] = HashSet::new(~hasher=Some(fn(k) { k.length() }))
+  let m : HashSet[String] = HashSet::new(hasher=Some(fn(k) { k.length() }))
   m.insert("C")
   m.insert("Go")
   m.insert("C++")

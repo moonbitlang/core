@@ -87,11 +87,11 @@ pub fn debug_write[T : Show](self : Queue[T], buf : Buffer) -> Unit {
 
 test "to_string" {
   let queue : Queue[Int] = Queue::[1, 2, 3, 4]
-  inspect(queue, ~content="Queue::[1, 2, 3, 4]")?
+  inspect(queue, content="Queue::[1, 2, 3, 4]")?
   queue.push(11)
-  inspect(queue, ~content="Queue::[1, 2, 3, 4, 11]")?
+  inspect(queue, content="Queue::[1, 2, 3, 4, 11]")?
   queue.pop_exn() |> ignore
-  inspect(queue, ~content="Queue::[2, 3, 4, 11]")?
+  inspect(queue, content="Queue::[2, 3, 4, 11]")?
 }
 
 /// Tests if two queue cells are equal.
@@ -371,12 +371,12 @@ pub fn fold[T](self : Queue[T], ~init : T, f : (T, T) -> T) -> T {
 
 test "fold" {
   let queue : Queue[Int] = new()
-  let sum = queue.fold(~init=0, fn(acc, x) { acc + x })
+  let sum = queue.fold(init=0, fn(acc, x) { acc + x })
   @assertion.assert_eq(sum, 0)?
   Queue::[1, 2, 3, 4].transfer(queue)
-  let sum = queue.fold(~init=0, fn(acc, x) { acc + x })
+  let sum = queue.fold(init=0, fn(acc, x) { acc + x })
   @assertion.assert_eq(sum, 10)?
-  let sum2 = Queue::[1, 2, 3, 4].fold(~init=0, fn(acc, x) { acc + x })
+  let sum2 = Queue::[1, 2, 3, 4].fold(init=0, fn(acc, x) { acc + x })
   @assertion.assert_eq(sum2, 10)?
 }
 
