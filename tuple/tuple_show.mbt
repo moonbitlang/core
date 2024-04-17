@@ -12,30 +12,36 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-pub fn to_string[A : Debug, B : Debug](self : (A, B)) -> String {
-  let buf = Buffer::make(10)
-  Debug::debug_write(self, buf)
-  buf.to_string()
+pub fn to_string[A : Show, B : Show](self : (A, B)) -> String {
+  "(".to_string() + self.0.to_string() + ", " + self.1.to_string() + ")"
 }
 
-pub fn to_string[A : Debug, B : Debug, C : Debug](self : (A, B, C)) -> String {
-  let buf = Buffer::make(10)
-  Debug::debug_write(self, buf)
-  buf.to_string()
+pub fn to_string[A : Show, B : Show, C : Show](self : (A, B, C)) -> String {
+  "(".to_string() + self.0.to_string() + ", " + self.1.to_string() + ", " + self.2.to_string() +
+  ")"
 }
 
-pub fn to_string[A : Debug, B : Debug, C : Debug, D : Debug](
+pub fn to_string[A : Show, B : Show, C : Show, D : Show](
   self : (A, B, C, D)
 ) -> String {
-  let buf = Buffer::make(10)
-  Debug::debug_write(self, buf)
-  buf.to_string()
+  "(".to_string() + self.0.to_string() + ", " + self.1.to_string() + ", " + self.2.to_string() +
+  ", " + self.3.to_string() + ")"
 }
 
-pub fn to_string[A : Debug, B : Debug, C : Debug, D : Debug, E : Debug](
+pub fn to_string[A : Show, B : Show, C : Show, D : Show, E : Show](
   self : (A, B, C, D, E)
 ) -> String {
-  let buf = Buffer::make(10)
-  Debug::debug_write(self, buf)
-  buf.to_string()
+  "(".to_string() + self.0.to_string() + ", " + self.1.to_string() + ", " + self.2.to_string() +
+  ", " + self.3.to_string() + ", " + self.4.to_string() + ")"
+}
+
+test "to_string" {
+  let tuple2 = (1, 2)
+  let tuple3 = ("a", "b", "c")
+  let tuple4 = (1, 2, 3, "hello")
+  let tuple5 = (List::Cons(1, Nil), "2", 3, [4], 5)
+  inspect(tuple2, content="(1, 2)")?
+  inspect(tuple3, content="(a, b, c)")?
+  inspect(tuple4, content="(1, 2, 3, hello)")?
+  inspect(tuple5, content="(List::[1], 2, 3, [4], 5)")?
 }
