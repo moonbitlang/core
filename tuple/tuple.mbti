@@ -22,16 +22,16 @@ fn uncurry[T, U, V]((T) -> (U) -> V) -> (T, U) -> V
 // Types and methods
 fn Tuple::debug_write[X : @moonbitlang/core/builtin.Debug, Y : @moonbitlang/core/builtin.Debug](Tuple[X, Y], @moonbitlang/core/builtin.Buffer) -> Unit
 fn Tuple::op_equal[T0 : @moonbitlang/core/builtin.Eq, T1 : @moonbitlang/core/builtin.Eq](Tuple[T0, T1], Tuple[T0, T1]) -> Bool
-fn Tuple::to_string[A : @moonbitlang/core/builtin.Debug, B : @moonbitlang/core/builtin.Debug](Tuple[A, B]) -> String
+fn Tuple::to_string[A : @moonbitlang/core/builtin.Show, B : @moonbitlang/core/builtin.Show](Tuple[A, B]) -> String
 fn Tuple::debug_write[X : @moonbitlang/core/builtin.Debug, Y : @moonbitlang/core/builtin.Debug, Z : @moonbitlang/core/builtin.Debug](Tuple[X, Y, Z], @moonbitlang/core/builtin.Buffer) -> Unit
 fn Tuple::op_equal[T0 : @moonbitlang/core/builtin.Eq, T1 : @moonbitlang/core/builtin.Eq, T2 : @moonbitlang/core/builtin.Eq](Tuple[T0, T1, T2], Tuple[T0, T1, T2]) -> Bool
-fn Tuple::to_string[A : @moonbitlang/core/builtin.Debug, B : @moonbitlang/core/builtin.Debug, C : @moonbitlang/core/builtin.Debug](Tuple[A, B, C]) -> String
+fn Tuple::to_string[A : @moonbitlang/core/builtin.Show, B : @moonbitlang/core/builtin.Show, C : @moonbitlang/core/builtin.Show](Tuple[A, B, C]) -> String
 fn Tuple::debug_write[X : @moonbitlang/core/builtin.Debug, Y : @moonbitlang/core/builtin.Debug, Z : @moonbitlang/core/builtin.Debug, W : @moonbitlang/core/builtin.Debug](Tuple[X, Y, Z, W], @moonbitlang/core/builtin.Buffer) -> Unit
 fn Tuple::op_equal[T0 : @moonbitlang/core/builtin.Eq, T1 : @moonbitlang/core/builtin.Eq, T2 : @moonbitlang/core/builtin.Eq, T3 : @moonbitlang/core/builtin.Eq](Tuple[T0, T1, T2, T3], Tuple[T0, T1, T2, T3]) -> Bool
-fn Tuple::to_string[A : @moonbitlang/core/builtin.Debug, B : @moonbitlang/core/builtin.Debug, C : @moonbitlang/core/builtin.Debug, D : @moonbitlang/core/builtin.Debug](Tuple[A, B, C, D]) -> String
+fn Tuple::to_string[A : @moonbitlang/core/builtin.Show, B : @moonbitlang/core/builtin.Show, C : @moonbitlang/core/builtin.Show, D : @moonbitlang/core/builtin.Show](Tuple[A, B, C, D]) -> String
 fn Tuple::debug_write[X1 : @moonbitlang/core/builtin.Debug, X2 : @moonbitlang/core/builtin.Debug, X3 : @moonbitlang/core/builtin.Debug, X4 : @moonbitlang/core/builtin.Debug, X5 : @moonbitlang/core/builtin.Debug](Tuple[X1, X2, X3, X4, X5], @moonbitlang/core/builtin.Buffer) -> Unit
 fn Tuple::op_equal[T0 : @moonbitlang/core/builtin.Eq, T1 : @moonbitlang/core/builtin.Eq, T2 : @moonbitlang/core/builtin.Eq, T3 : @moonbitlang/core/builtin.Eq, T4 : @moonbitlang/core/builtin.Eq](Tuple[T0, T1, T2, T3, T4], Tuple[T0, T1, T2, T3, T4]) -> Bool
-fn Tuple::to_string[A : @moonbitlang/core/builtin.Debug, B : @moonbitlang/core/builtin.Debug, C : @moonbitlang/core/builtin.Debug, D : @moonbitlang/core/builtin.Debug, E : @moonbitlang/core/builtin.Debug](Tuple[A, B, C, D, E]) -> String
+fn Tuple::to_string[A : @moonbitlang/core/builtin.Show, B : @moonbitlang/core/builtin.Show, C : @moonbitlang/core/builtin.Show, D : @moonbitlang/core/builtin.Show, E : @moonbitlang/core/builtin.Show](Tuple[A, B, C, D, E]) -> String
 fn Tuple::op_equal[T0 : @moonbitlang/core/builtin.Eq, T1 : @moonbitlang/core/builtin.Eq, T2 : @moonbitlang/core/builtin.Eq, T3 : @moonbitlang/core/builtin.Eq, T4 : @moonbitlang/core/builtin.Eq, T5 : @moonbitlang/core/builtin.Eq](Tuple[T0, T1, T2, T3, T4, T5], Tuple[T0, T1, T2, T3, T4, T5]) -> Bool
 fn Tuple::op_equal[T0 : @moonbitlang/core/builtin.Eq, T1 : @moonbitlang/core/builtin.Eq, T2 : @moonbitlang/core/builtin.Eq, T3 : @moonbitlang/core/builtin.Eq, T4 : @moonbitlang/core/builtin.Eq, T5 : @moonbitlang/core/builtin.Eq, T6 : @moonbitlang/core/builtin.Eq](Tuple[T0, T1, T2, T3, T4, T5, T6], Tuple[T0, T1, T2, T3, T4, T5, T6]) -> Bool
 fn Tuple::op_equal[T0 : @moonbitlang/core/builtin.Eq, T1 : @moonbitlang/core/builtin.Eq, T2 : @moonbitlang/core/builtin.Eq, T3 : @moonbitlang/core/builtin.Eq, T4 : @moonbitlang/core/builtin.Eq, T5 : @moonbitlang/core/builtin.Eq, T6 : @moonbitlang/core/builtin.Eq, T7 : @moonbitlang/core/builtin.Eq](Tuple[T0, T1, T2, T3, T4, T5, T6, T7], Tuple[T0, T1, T2, T3, T4, T5, T6, T7]) -> Bool
