@@ -17,7 +17,7 @@ fn Result::map_err[T, E, F](Result[T, E], (E) -> F) -> Result[T, F]
 fn Result::or[T, E](Result[T, E], T) -> T
 fn Result::or_else[T, E](Result[T, E], () -> T) -> T
 fn Result::to_option[T, E](Result[T, E]) -> Option[T]
-fn Result::to_string[T : Show, E : Show](Result[T, E]) -> String
+fn Result::to_string[T : @moonbitlang/core/builtin.Show, E : @moonbitlang/core/builtin.Show](Result[T, E]) -> String
 fn Result::unwrap[T, E](Result[T, E]) -> T
 
 // Traits
