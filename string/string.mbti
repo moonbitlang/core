@@ -6,6 +6,7 @@ package moonbitlang/core/string
 fn String::compare(String, String) -> Int
 fn String::default() -> String
 fn String::hash(String) -> Int
+fn String::substring(String, Int, Int) -> String
 fn String::to_array(String) -> Array[Char]
 fn String::to_bytes(String) -> Bytes
 
