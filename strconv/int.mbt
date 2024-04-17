@@ -35,7 +35,7 @@ pub fn parse_int64(str : String, ~base : Int = 0) -> Result[Int64, String] {
   let mut neg = false
   if s[0] == '+' || s[0] == '-' {
     neg = s[0] == '-'
-    s = substring(s, 1, s.length() - 1)
+    s = s.substring(start=1)
   }
 
   // determine base
@@ -43,7 +43,7 @@ pub fn parse_int64(str : String, ~base : Int = 0) -> Result[Int64, String] {
   if base == 0 {
     num_base = determine_base(s)
     if num_base != 10 {
-      s = substring(s, 2, s.length() - 2)
+      s = s.substring(start=2)
     }
   } else if 2 <= base && base <= 36 {
     num_base = base
@@ -121,7 +121,7 @@ fn check_underscore(str : String) -> Bool {
   let mut last_char = '!'
   // sign
   if s.length() > 1 && (s[0] == '-' || s[0] == '+') {
-    s = substring(s, 1, s.length() - 1)
+    s = s.substring(start=1)
   }
   // base prefix
   let mut hex = false
@@ -129,7 +129,7 @@ fn check_underscore(str : String) -> Bool {
   s[1] == 'O' || s[1] == 'x' || s[1] == 'X') {
     last_char = '0'
     hex = s[1] == 'x' || s[1] == 'X'
-    s = substring(s, 2, s.length() - 2)
+    s = s.substring(start=2)
   }
   // number
   for i = 0; i < s.length(); i = i + 1 {
@@ -160,12 +160,12 @@ fn check_underscore(str : String) -> Bool {
   return last_char != '_'
 }
 
-// Determine the base of the value. 
+// Determine the base of the value.
 fn determine_base(s : String) -> Int {
   if s.length() < 2 {
     return 10
   }
-  match substring(s, 0, 2) {
+  match s.substring(end=2) {
     "0x" | "0X" => 16
     "0o" | "0O" => 8
     "0b" | "0B" => 2
@@ -189,12 +189,6 @@ fn overflow_threshold(base : Int, neg : Bool) -> Int64 {
   } else {
     int64_min / base.to_int64()
   }
-}
-
-fn substring(s : String, start : Int, len : Int) -> String {
-  let buf = Buffer::make(len)
-  buf.write_sub_string(s, start, len)
-  buf.to_string()
 }
 
 test "check_underscore" {
