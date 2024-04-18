@@ -5,3 +5,5 @@ target/
 moonbit-coverage-*.txt
 _coverage
 bisect.coverage
+
+node_modules

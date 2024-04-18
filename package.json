@@ -1,0 +1,10 @@
+{
+    "private": true,
+    "devDependencies": {
+        "vite": "^5.2.9"
+    },
+    "dependencies": {
+        "json5": "^2.2.3",
+        "tinybench": "^2.7.0"
+    }
+}

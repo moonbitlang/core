@@ -11,5 +11,12 @@
         "moonbitlang/core/result",
         "moonbitlang/core/assertion",
         "moonbitlang/core/coverage"
-    ]
+    ],
+    "link": {
+        "js": {
+            "exports": [
+                "parse"
+            ]
+        }
+    }
 }

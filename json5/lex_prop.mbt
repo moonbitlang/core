@@ -30,8 +30,8 @@ fn lex_property_name(ctx : ParseContext) -> Result[Token, ParseError] {
       let c = Char::from_int(c)
       if c == '$' || c == '_' || c >= 'a' && c <= 'z' || c >= 'A' && c <= 'Z' ||
       c > '\x7f' && non_ascii_id_start.contains(c) {
-        let buffer = Buffer::make(1)
-        buffer.write_char(c)
+        let buffer = StringBuilder::make()
+        buffer.add_char(c)
         let s = lex_ident(ctx, ctx.offset, ~buffer)?
         Ok(String(s))
       } else {
@@ -54,12 +54,12 @@ fn lex_property_name(ctx : ParseContext) -> Result[Token, ParseError] {
 fn lex_ident(
   ctx : ParseContext,
   start : Int,
-  ~buffer : Buffer = Buffer::make(0)
+  ~buffer : StringBuilder = StringBuilder::make()
 ) -> Result[String, ParseError] {
   let mut start = start
   fn flush(end : Int) {
     if start > 0 && end > start {
-      buffer.write_sub_string(ctx.input, start, end - start)
+      buffer.add_substring(ctx.input, start, end)
     }
   }
 
@@ -72,7 +72,7 @@ fn lex_ident(
         let c = Char::from_int(c)
         if c == '$' || c == '_' || c >= 'a' && c <= 'z' || c >= 'A' && c <= 'Z' ||
         c >= '0' && c <= '9' || c > '\x7f' && non_ascii_id_continue.contains(c) {
-          buffer.write_char(c)
+          buffer.add_char(c)
           start = ctx.offset
           continue
         } else {
