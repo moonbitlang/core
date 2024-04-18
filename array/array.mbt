@@ -180,24 +180,25 @@ test "map" {
 /// 
 /// # Example
 /// ```
-/// let v = [3, 4, 5]
-/// v.mapi(fn (i, x) {x + i}) // [3, 5, 6]
+/// let arr = [3, 4, 5]
+/// let added = arr.mapi(fn (i, x) { x + i })
+/// debug(added) //output: [3, 5, 7]
 /// ```
-pub fn mapi[T, U](self : Array[T], f : (T, Int) -> U) -> Array[U] {
+pub fn mapi[T, U](self : Array[T], f : (Int, T) -> U) -> Array[U] {
   if self.length() == 0 {
     return []
   }
-  let res = Array::make(self.length(), f(self[0], 0))
+  let res = Array::make(self.length(), f(0, self[0]))
   for i = 1; i < self.length(); i = i + 1 {
-    res[i] = f(self[i], i)
+    res[i] = f(i, self[i])
   }
   res
 }
 
 test "mapi" {
   let arr = [1, 2, 3, 4, 5]
-  let doubled = arr.mapi(fn(x, i) { x * 2 + i })
-  let empty : Array[Int] = Array::default().mapi(fn(x, i) { x + i })
+  let doubled = arr.mapi(fn(i, x) { x * 2 + i })
+  let empty : Array[Int] = Array::default().mapi(fn(i, x) { x + i })
   @assertion.assert_eq(empty, [])?
   @assertion.assert_eq(doubled, [2, 5, 8, 11, 14])?
 }
