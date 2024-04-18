@@ -18,24 +18,22 @@
 
 // Red-black tree implementation of a set.
 struct MutableSet[T] {
-  mut root: Node[T]
-} derive(Debug, Eq)
-
-enum Node[T] {
-  Empty(Color)
-  Node(NodeImpl[T])
-} derive(Debug, Eq)
+  mut root : Option[Node[T]]
+} derive(Eq)
 
 priv enum Color {
   Red
   Black
-  DBlack // Double black
 } derive(Debug, Eq)
 
-// HACK: mut is not allowed in enum variant, so we need to use a struct to wrap the fields.
-priv struct NodeImpl[T] {
-  mut color: Color
-  mut left: Node[T]
-  mut value: T
-  mut right: Node[T]
-} derive(Debug, Eq)
+// Invariants:
+// - Only root has None as its parent.
+// - Only leaves have None as their children.
+// - Only leaves have None as their value.
+priv struct Node[T] {
+  mut color : Color
+  mut left : Option[Node[T]]
+  mut value : Option[T]
+  mut right : Option[Node[T]]
+  mut parent : Option[Node[T]] // only root has None as parent
+} derive(Eq) // Don't derive Debug because it is self-referential
