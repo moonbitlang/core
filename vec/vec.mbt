@@ -36,13 +36,13 @@ pub fn to_string[T : Show](self : Vec[T]) -> String {
 
 test "to_string" {
   let empty : Vec[Int] = Vec::[]
-  inspect(empty, ~content="Vec::[]")?
+  inspect(empty, content="Vec::[]")?
   let a0 = Vec::[0]
-  inspect(a0, ~content="Vec::[0]")?
+  inspect(a0, content="Vec::[0]")?
   a0.push(1)
-  inspect(a0, ~content="Vec::[0, 1]")?
+  inspect(a0, content="Vec::[0, 1]")?
   a0.push(2)
-  inspect(a0, ~content="Vec::[0, 1, 2]")?
+  inspect(a0, content="Vec::[0, 1, 2]")?
 }
 
 pub fn debug_write[T : Show](self : Vec[T], buf : Buffer) -> Unit {
@@ -185,15 +185,15 @@ pub fn op_add[T](self : Vec[T], other : Vec[T]) -> Vec[T] {
 }
 
 test "op_add" {
-  inspect((Vec::[] : Vec[Int]) + Vec::[], ~content="Vec::[]")?
+  inspect((Vec::[] : Vec[Int]) + Vec::[], content="Vec::[]")?
   inspect(
     (Vec::[] : Vec[Int]) + Vec::[1, 2, 3, 4, 5],
-    ~content="Vec::[1, 2, 3, 4, 5]",
+    content="Vec::[1, 2, 3, 4, 5]",
   )?
-  inspect(Vec::[1, 2, 3, 4, 5] + Vec::[], ~content="Vec::[1, 2, 3, 4, 5]")?
+  inspect(Vec::[1, 2, 3, 4, 5] + Vec::[], content="Vec::[1, 2, 3, 4, 5]")?
   inspect(
     Vec::[1, 2, 3, 4, 5] + Vec::[6, 7, 8, 9, 10],
-    ~content="Vec::[1, 2, 3, 4, 5, 6, 7, 8, 9, 10]",
+    content="Vec::[1, 2, 3, 4, 5, 6, 7, 8, 9, 10]",
   )?
 }
 
@@ -1025,7 +1025,7 @@ pub fn fold_left[T, U](self : Vec[T], f : (U, T) -> U, ~init : U) -> U {
 
 test "fold_left" {
   let sum = Vec::[1, 2, 3, 4, 5].fold_left(
-    ~init=0,
+    init=0,
     fn { sum, elem => sum + elem },
   )
   @assertion.assert_eq(sum, 15)?
@@ -1048,7 +1048,7 @@ pub fn fold_right[T, U](self : Vec[T], f : (U, T) -> U, ~init : U) -> U {
 
 test "fold_right" {
   let sum = Vec::[1, 2, 3, 4, 5].fold_right(
-    ~init=0,
+    init=0,
     fn { sum, elem => sum + elem },
   )
   @assertion.assert_eq(sum, 15)?
@@ -1071,7 +1071,7 @@ pub fn fold_lefti[T, U](self : Vec[T], f : (Int, U, T) -> U, ~init : U) -> U {
 
 test "fold_lefti" {
   let sum = Vec::[1, 2, 3, 4, 5].fold_lefti(
-    ~init=0,
+    init=0,
     fn { index, sum, _elem => sum + index },
   )
   @assertion.assert_eq(sum, 10)?
@@ -1094,7 +1094,7 @@ pub fn fold_righti[T, U](self : Vec[T], f : (Int, U, T) -> U, ~init : U) -> U {
 
 test "fold_righti" {
   let sum = Vec::[1, 2, 3, 4, 5].fold_righti(
-    ~init=0,
+    init=0,
     fn { index, sum, _elem => sum + index },
   )
   @assertion.assert_eq(sum, 10)?

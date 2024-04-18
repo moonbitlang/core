@@ -71,7 +71,7 @@ fn timsort[T : Compare](arr : ArraySlice[T]) -> Unit {
           let right = runs[r + 1]
           merge(arr.slice(left.start, right.start + right.len), left.len)
           runs[r + 1] = { start: left.start, len: left.len + right.len }
-          let _ = runs.remove(r)
+          runs.remove(r) |> ignore
         }
         None => break
       }
@@ -96,16 +96,15 @@ fn merge[T : Compare](arr : ArraySlice[T], mid : Int) -> Unit {
     buf[i] = arr[mid + i]
   }
   let buf = { array: buf, start: 0, end: buf_len }
-  let buf_remaining = 
-    for p1 = mid - 1, p2 = buf_len - 1, p = mid + buf_len - 1
-        p1 >= 0 && p2 >= 0; {
-      if arr[p1] > buf[p2] {
-        arr[p] = arr[p1]
-        continue p1 - 1, p2, p - 1
-      } else {
-        arr[p] = buf[p2]
-        continue p1, p2 - 1, p - 1
-      }
+  let buf_remaining = for p1 = mid - 1, p2 = buf_len - 1, p = mid + buf_len - 1; p1 >=
+                         0 && p2 >= 0; {
+    if arr[p1] > buf[p2] {
+      arr[p] = arr[p1]
+      continue p1 - 1, p2, p - 1
+    } else {
+      arr[p] = buf[p2]
+      continue p1, p2 - 1, p - 1
+    }
   } else {
     p2
   }
@@ -480,22 +479,19 @@ test "stable_sort" {
   @assertion.assert_eq(arr, expected)?
 }
 
-pub fn is_sorted[T:Compare](arr : Array[T]) -> Bool {
-    for i = 1; i < arr.length(); i = i + 1 {
-      if arr[i] < arr[i - 1] {
-        break false
-      }
-    } else {
-    true
+pub fn is_sorted[T : Compare](arr : Array[T]) -> Bool {
+  for i = 1; i < arr.length(); i = i + 1 {
+    if arr[i] < arr[i - 1] {
+      break false
     }
+  } else {
+    true
+  }
 }
 
-
 test "stable_sort_complex" {
-  
-
   let run_lens = [86, 64, 21, 20, 22]
-  let total_len = run_lens.fold_left(~init=0, fn { acc, x => acc + x })
+  let total_len = run_lens.fold_left(init=0, fn { acc, x => acc + x })
   let arr = Array::make(total_len, 0)
   let mut index = 0
   for i = 0, len = run_lens.length(); i < len; i = i + 1 {

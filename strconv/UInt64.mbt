@@ -13,25 +13,23 @@
 // limitations under the License.
 
 /// Pretend we have UInt64
-priv type UInt64  Int64 derive(Eq)
-
+priv type UInt64 Int64 derive(Eq)
 
 fn new_UInt64_Int64(value : Int64) -> UInt64 {
-  UInt64 (value)
+  UInt64(value)
 }
 
 fn new_UInt64_Int(value : Int) -> UInt64 {
-  UInt64 (value.to_int64())
+  UInt64(value.to_int64())
 }
-
 
 fn UInt64::compare(self : UInt64, b : UInt64) -> Int {
   if self.0 >= 0L && b.0 >= 0L || self.0 < 0L && b.0 < 0L {
-     self.0.compare(b.0)
+    self.0.compare(b.0)
   } else if self.0 < 0L { // b.0 >= 0
-     1
+    1
   } else { // self.0 >= 0 && b.0 < 0
-     -1
+    -1
   }
 }
 

@@ -355,7 +355,7 @@ test "parse_int64_base" {
   ]
   for i = 0; i < tests.length(); i = i + 1 {
     let t = tests[i]
-    @assertion.assert_eq(parse_int64(t.0, ~base=t.1), t.2)?
+    @assertion.assert_eq(parse_int64(t.0, base=t.1), t.2)?
   }
 }
 
