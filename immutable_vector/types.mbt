@@ -15,6 +15,6 @@
 priv type UninitializedArray[T] Array[UnsafeMaybeUninit[T]]
 
 struct ImmutableVec[T] {
-  mut buf : UninitializedArray[T]
-  mut len : Int
+  buf : UninitializedArray[T]
+  len : Int
 }
