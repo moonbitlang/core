@@ -30,6 +30,7 @@ fn copy_to[T](
   }
 }
 
+/// Creates a new vector from an array.
 pub fn ImmutableVec::from_array[T](arr : Array[T]) -> ImmutableVec[T] {
   let len = arr.length()
   let buf = UninitializedArray::make(len)
@@ -68,6 +69,7 @@ pub fn debug_write[T : Show](self : ImmutableVec[T], buf : Buffer) -> Unit {
   buf.write_string(self.to_string())
 }
 
+/// Get the element at the specified index from the vector.
 pub fn op_get[T](self : ImmutableVec[T], index : Int) -> T {
   if index < 0 || index >= self.len {
     abort("index out of bounds")
@@ -75,6 +77,7 @@ pub fn op_get[T](self : ImmutableVec[T], index : Int) -> T {
   self.buf[index]
 }
 
+/// Sets the value of the element at the specified index.
 pub fn op_set[T](self : ImmutableVec[T], index : Int, value : T) -> Unit {
   if index < 0 || index >= self.len {
     abort("index out of bounds")
@@ -82,6 +85,7 @@ pub fn op_set[T](self : ImmutableVec[T], index : Int, value : T) -> Unit {
   self.buf[index] = value
 }
 
+/// Compares two vectors for equality.
 pub fn op_equal[T : Eq](
   self : ImmutableVec[T],
   other : ImmutableVec[T]
@@ -108,6 +112,7 @@ test "op_equal" {
   inspect(a1 != a3, content="true")?
 }
 
+/// Slice the vector from the start index to the end index.
 pub fn slice[T](
   self : ImmutableVec[T],
   start : Int,
@@ -128,6 +133,7 @@ test "slice" {
   inspect(a0.slice(1, 4), content="ImmutableVector::[2, 3, 4]")?
 }
 
+/// Clones the vector.
 pub fn clone[T](self : ImmutableVec[T]) -> ImmutableVec[T] {
   let buf = UninitializedArray::make(self.len)
   copy_to(self.buf, buf, 0, 0, self.len)
@@ -141,6 +147,9 @@ test "clone" {
   inspect(a1, content="ImmutableVector::[1, 2, 3]")?
 }
 
+/// Pop the last element from the vector. 
+/// 
+/// Returns a tuple containing the popped element or None and the new vector.
 pub fn pop[T](self : ImmutableVec[T]) -> (Option[T], ImmutableVec[T]) {
   match self.len {
     0 => (None, self)
@@ -156,6 +165,10 @@ test "pop" {
   inspect(a1.pop().1.pop(), content="(Some(2), ImmutableVector::[1])")?
 }
 
+/// Pop the last element from the vector.
+/// 
+/// Returns a tuple containing the popped element and the new vector, or panic if the vector is empty.
+/// @alert unsafe "Panic if the vector is empty."
 pub fn pop_exn[T](self : ImmutableVec[T]) -> (T, ImmutableVec[T]) {
   match self.len {
     0 => abort("pop_exn: empty vector")
@@ -169,6 +182,7 @@ test "pop_exn" {
   inspect(a0.pop_exn().1.pop_exn(), content="(2, ImmutableVector::[1])")?
 }
 
+/// Add an element to the end of the vector.
 pub fn push[T](self : ImmutableVec[T], value : T) -> ImmutableVec[T] {
   let len = self.len + 1
   let buf = UninitializedArray::make(len)
@@ -187,6 +201,7 @@ test "push" {
   inspect(a3, content="ImmutableVector::[1, 2, 3]")?
 }
 
+/// Concatenate two vectors.
 pub fn append[T](
   self : ImmutableVec[T],
   other : ImmutableVec[T]
@@ -213,6 +228,7 @@ test "op_add" {
   inspect(a1 + a2, content="ImmutableVector::[1, 2, 3, 4, 5, 6]")?
 }
 
+/// Iterate over the vector.
 pub fn iter[T](self : ImmutableVec[T], f : (T) -> Unit) -> Unit {
   for i = 0; i < self.len; i = i + 1 {
     f(self[i])
@@ -226,6 +242,7 @@ test "iter" {
   @assertion.assert_eq(sum, 6)?
 }
 
+/// Iterate over the vector in reverse.
 pub fn iter_rev[T](self : ImmutableVec[T], f : (T) -> Unit) -> Unit {
   for i = self.len - 1; i >= 0; i = i - 1 {
     f(self[i])
@@ -239,6 +256,7 @@ test "iter_rev" {
   @assertion.assert_eq(sum, 6)?
 }
 
+/// Iterate over the vector with the index.
 pub fn iteri[T](self : ImmutableVec[T], f : (Int, T) -> Unit) -> Unit {
   for i = 0; i < self.len; i = i + 1 {
     f(i, self[i])
@@ -252,6 +270,7 @@ test "iteri" {
   @assertion.assert_eq(sum, 8)?
 }
 
+/// Iterate over the vector with the index in reverse.
 pub fn iter_revi[T](self : ImmutableVec[T], f : (Int, T) -> Unit) -> Unit {
   for i = 0; i < self.len; i = i + 1 {
     f(i, self[self.len - i - 1])
@@ -265,6 +284,7 @@ test "iter_revi" {
   @assertion.assert_eq(sum, 4)?
 }
 
+/// Maps a function over the vector.
 pub fn map[T, U](self : ImmutableVec[T], f : (T) -> U) -> ImmutableVec[U] {
   let len = self.len
   let buf = UninitializedArray::make(len)
@@ -281,6 +301,7 @@ test "map" {
   inspect(a1.map(fn(x) { x + 1 }), content="ImmutableVector::[2, 3, 4]")?
 }
 
+/// Maps a function over the vector with the index.
 pub fn mapi[T, U](self : ImmutableVec[T], f : (Int, T) -> U) -> ImmutableVec[U] {
   let len = self.len
   let buf = UninitializedArray::make(len)
@@ -298,6 +319,7 @@ test "mapi" {
 
 }
 
+/// Checks if the vector is sorted.
 pub fn is_sorted[T : Compare](self : ImmutableVec[T]) -> Bool {
   for i = 1; i < self.len; i = i + 1 {
     if self[i - 1] > self[i] {
@@ -317,6 +339,7 @@ test "is_sorted" {
   inspect(a2.is_sorted(), content="false")?
 }
 
+/// Get the reverse of the vector.
 pub fn reverse[T](self : ImmutableVec[T]) -> ImmutableVec[T] {
   let len = self.len
   let buf = UninitializedArray::make(len)
@@ -334,6 +357,7 @@ test "reverse" {
   inspect(a1.reverse().reverse(), content="ImmutableVector::[1, 2, 3]")?
 }
 
+/// Split the vector at the specified index.
 pub fn split_at[T](
   self : ImmutableVec[T],
   index : Int
@@ -355,6 +379,7 @@ test "split_at" {
   inspect(a1.split_at(3), content="(ImmutableVector::[1, 2, 3], ImmutableVector::[])")?
 }
 
+/// Checks if the vector contains the specified value.
 pub fn contains[T : Eq](self : ImmutableVec[T], value : T) -> Bool {
   for i = 0; i < self.len; i = i + 1 {
     if self[i] == value {
@@ -373,6 +398,7 @@ test "contains" {
   inspect(a1.contains(4), content="false")?
 }
 
+/// Check if the vector starts with the specified prefix.
 pub fn starts_with[T : Eq](
   self : ImmutableVec[T],
   prefix : ImmutableVec[T]
@@ -400,6 +426,7 @@ test "starts_with" {
   inspect(a1.starts_with(ImmutableVec::[1, 2, 3, 4]), content="false")?
 }
 
+/// Check if the vector ends with the specified suffix.
 pub fn ends_with[T : Eq](
   self : ImmutableVec[T],
   suffix : ImmutableVec[T]
@@ -427,6 +454,7 @@ test "ends_with" {
   inspect(a1.ends_with(ImmutableVec::[0, 1, 2, 3]), content="false")?
 }
 
+/// Strip a prefix from the vector.
 pub fn strip_prefix[T : Eq](
   self : ImmutableVec[T],
   prefix : ImmutableVec[T]
@@ -449,6 +477,7 @@ test "strip_prefix" {
   inspect(a1.strip_prefix(ImmutableVec::[0, 1, 2, 3]), content="None")?
 }
 
+/// Strip a suffix from the vector.
 pub fn strip_suffix[T : Eq](
   self : ImmutableVec[T],
   suffix : ImmutableVec[T]
@@ -471,6 +500,7 @@ test "strip_suffix" {
   inspect(a1.strip_suffix(ImmutableVec::[0, 1, 2, 3]), content="None")?
 }
 
+/// Find the index of the first occurrence of the specified value in the vector.
 pub fn search[T : Eq](self : ImmutableVec[T], value : T) -> Option[Int] {
   for i = 0; i < self.len; i = i + 1 {
     if self[i] == value {
@@ -489,6 +519,7 @@ test "search" {
   inspect(a1.search(4), content="None")?
 }
 
+/// Swap two elements in the vector.
 pub fn swap[T](self : ImmutableVec[T], i : Int, j : Int) -> ImmutableVec[T] {
   if i < 0 || i >= self.len || j < 0 || j >= self.len {
     abort("swap: index out of bounds")
@@ -507,6 +538,7 @@ test "swap" {
   inspect(a1.swap(1, 2), content="ImmutableVector::[1, 3, 2]")?
 }
 
+/// Remove an element from the vector at the specified index.
 pub fn remove[T](self : ImmutableVec[T], index : Int) -> (T, ImmutableVec[T]) {
   if index < 0 || index >= self.len {
     abort("remove: index out of bounds")
@@ -524,6 +556,7 @@ test "remove" {
   inspect(a0.remove(0).1.remove(0), content="(2, ImmutableVector::[3])")?
 }
 
+/// Extract all elements from the vector that satisfy the predicate.
 pub fn extract[T](self : ImmutableVec[T], f : (T) -> Bool) -> ImmutableVec[T] {
   let mut len = 0
   let tags = UninitializedArray::make(self.len)
@@ -553,6 +586,7 @@ test "extract" {
   inspect(a1.extract(fn(x) { x % 2 == 0 }), content="ImmutableVector::[2, 4]")?
 }
 
+/// Insert an element into the vector at the specified index.
 pub fn insert[T](
   self : ImmutableVec[T],
   index : Int,
@@ -578,6 +612,7 @@ test "insert" {
   inspect(a1.insert(3, 4), content="ImmutableVector::[1, 2, 3, 4]")?
 }
 
+/// Flattens a vector of vectors into a single vector.
 pub fn flatten[T](self : ImmutableVec[ImmutableVec[T]]) -> ImmutableVec[T] {
   let mut len = 0
   for i = 0; i < self.len; i = i + 1 {
@@ -599,6 +634,7 @@ test "flatten" {
   inspect(a1.flatten(), content="ImmutableVector::[1, 2, 3, 4]")?
 }
 
+/// Create a vector by repeat a given vector for a given times.
 pub fn repeat[T](self : ImmutableVec[T], times : Int) -> ImmutableVec[T] {
   let len = self.len * times
   let buf = UninitializedArray::make(len)
@@ -617,6 +653,7 @@ test "repeat" {
 
 }
 
+/// Join a vector of vectors with a separator.
 pub fn join[T](
   self : ImmutableVec[ImmutableVec[T]],
   sep : ImmutableVec[T]
@@ -649,6 +686,7 @@ test "join" {
   inspect(a1.join(ImmutableVec::[0]), content="ImmutableVector::[1, 2, 0, 3, 4]")?
 }
 
+/// Fold out values from an vector according to certain rules.
 pub fn fold_left[T, U](self : ImmutableVec[T], init : U, f : (U, T) -> U) -> U {
   for i = 0, acc = init; i < self.len; {
     continue i + 1, f(acc, self[i])
@@ -664,6 +702,7 @@ test "fold_left" {
   inspect(a1.fold_left(0, fn(acc, x) { acc + x }), content="6")?
 }
 
+/// Fold out values from an vector according to certain rules in reversed turn.
 pub fn fold_right[T, U](self : ImmutableVec[T], init : U, f : (T, U) -> U) -> U {
   for i = self.len - 1, acc = init; i >= 0; {
     continue i - 1, f(self[i], acc)
@@ -679,6 +718,7 @@ test "fold_right" {
   inspect(a1.fold_right(0, fn(x, acc) { acc + x }), content="6")?
 }
 
+/// Fold out values from an vector according to certain rules with index.
 pub fn fold_lefti[T, U](
   self : ImmutableVec[T],
   init : U,
@@ -698,6 +738,7 @@ test "fold_lefti" {
   inspect(a1.fold_lefti(0, fn(acc, i, x) { acc + i * x }), content="8")?
 }
 
+/// Fold out values from an vector according to certain rules in reversed turn with index.
 pub fn fold_righti[T, U](
   self : ImmutableVec[T],
   init : U,
@@ -717,6 +758,7 @@ test "fold_righti" {
   inspect(a1.fold_righti(0, fn(i, x, acc) { acc + i * x }), content="8")?
 }
 
+/// Create immutable vector from a mutable vector.
 pub fn ImmutableVec::from_vector[T](vec : @vec.Vec[T]) -> ImmutableVec[T] {
   let len = vec.length()
   let buf = UninitializedArray::make(len)
@@ -732,6 +774,7 @@ test "from_vector" {
   inspect(a, content="ImmutableVector::[1, 2, 3]")?
 }
 
+/// Convert the immutable vector to a mutable vector.
 pub fn to_vector[T](self : ImmutableVec[T]) -> @vec.Vec[T] {
   let vec = @vec.Vec::with_capacity(self.len)
   for i = 0; i < self.len; i = i + 1 {
