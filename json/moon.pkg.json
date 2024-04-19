@@ -1,0 +1,12 @@
+{
+    "import": [
+        "moonbitlang/core/builtin",
+        "moonbitlang/core/double",
+        "moonbitlang/core/string",
+        "moonbitlang/core/bool",
+        "moonbitlang/core/tuple",
+        "moonbitlang/core/vec",
+        "moonbitlang/core/map",
+        "moonbitlang/core/coverage"
+    ]
+}

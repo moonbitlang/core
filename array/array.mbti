@@ -24,7 +24,7 @@ fn Array::iter_rev[T](Array[T], (T) -> Unit) -> Unit
 fn Array::iter_revi[T](Array[T], (Int, T) -> Unit) -> Unit
 fn Array::iteri[T](Array[T], (Int, T) -> Unit) -> Unit
 fn Array::map[T, U](Array[T], (T) -> U) -> Array[U]
-fn Array::mapi[T, U](Array[T], (T, Int) -> U) -> Array[U]
+fn Array::mapi[T, U](Array[T], (Int, T) -> U) -> Array[U]
 fn Array::op_add[T](Array[T], Array[T]) -> Array[T]
 fn Array::op_equal[T : @moonbitlang/core/builtin.Eq](Array[T], Array[T]) -> Bool
 fn Array::reverse[T](Array[T]) -> Unit
