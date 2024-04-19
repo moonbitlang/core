@@ -95,10 +95,11 @@ pub fn op_equal[T : Eq](
   } else {
     for i = 0; i < self.len; i = i + 1 {
       if self.buf[i] != other.buf[i] {
-        return false
+        break false
       }
+    } else {
+      true
     }
-    true
   }
 }
 
@@ -110,6 +111,7 @@ test "op_equal" {
   inspect(a0 == a0, content="true")?
   inspect(a1 == a2, content="true")?
   inspect(a1 != a3, content="true")?
+  inspect(a0 == a3, content="false")?
 }
 
 /// Slice the vector from the start index to the end index.
@@ -316,7 +318,6 @@ test "mapi" {
   inspect(a0.mapi(fn(i, x) { i + x }), content="ImmutableVector::[]")?
   let a1 = ImmutableVec::[1, 2, 3]
   inspect(a1.mapi(fn(i, x) { i + x }), content="ImmutableVector::[1, 3, 5]")?
-
 }
 
 /// Checks if the vector is sorted.
@@ -374,9 +375,18 @@ test "split_at" {
   let a0 : ImmutableVec[Int] = ImmutableVec::[]
   inspect(a0.split_at(0), content="(ImmutableVector::[], ImmutableVector::[])")?
   let a1 = ImmutableVec::[1, 2, 3]
-  inspect(a1.split_at(0), content="(ImmutableVector::[], ImmutableVector::[1, 2, 3])")?
-  inspect(a1.split_at(1), content="(ImmutableVector::[1], ImmutableVector::[2, 3])")?
-  inspect(a1.split_at(3), content="(ImmutableVector::[1, 2, 3], ImmutableVector::[])")?
+  inspect(
+    a1.split_at(0),
+    content="(ImmutableVector::[], ImmutableVector::[1, 2, 3])",
+  )?
+  inspect(
+    a1.split_at(1),
+    content="(ImmutableVector::[1], ImmutableVector::[2, 3])",
+  )?
+  inspect(
+    a1.split_at(3),
+    content="(ImmutableVector::[1, 2, 3], ImmutableVector::[])",
+  )?
 }
 
 /// Checks if the vector contains the specified value.
@@ -424,6 +434,7 @@ test "starts_with" {
   inspect(a1.starts_with(ImmutableVec::[1, 2]), content="true")?
   inspect(a1.starts_with(ImmutableVec::[1, 2, 3]), content="true")?
   inspect(a1.starts_with(ImmutableVec::[1, 2, 3, 4]), content="false")?
+  inspect(a1.starts_with(ImmutableVec::[0, 1]), content="false")?
 }
 
 /// Check if the vector ends with the specified suffix.
@@ -452,6 +463,7 @@ test "ends_with" {
   inspect(a1.ends_with(ImmutableVec::[2, 3]), content="true")?
   inspect(a1.ends_with(ImmutableVec::[1, 2, 3]), content="true")?
   inspect(a1.ends_with(ImmutableVec::[0, 1, 2, 3]), content="false")?
+  inspect(a1.ends_with(ImmutableVec::[0, 1]), content="false")?
 }
 
 /// Strip a prefix from the vector.
@@ -468,12 +480,27 @@ pub fn strip_prefix[T : Eq](
 
 test "strip_prefix" {
   let a0 : ImmutableVec[Int] = ImmutableVec::[]
-  inspect(a0.strip_prefix(ImmutableVec::[]), content="Some(ImmutableVector::[])")?
+  inspect(
+    a0.strip_prefix(ImmutableVec::[]),
+    content="Some(ImmutableVector::[])",
+  )?
   let a1 = ImmutableVec::[1, 2, 3]
-  inspect(a1.strip_prefix(ImmutableVec::[]), content="Some(ImmutableVector::[1, 2, 3])")?
-  inspect(a1.strip_prefix(ImmutableVec::[1]), content="Some(ImmutableVector::[2, 3])")?
-  inspect(a1.strip_prefix(ImmutableVec::[1, 2]), content="Some(ImmutableVector::[3])")?
-  inspect(a1.strip_prefix(ImmutableVec::[1, 2, 3]), content="Some(ImmutableVector::[])")?
+  inspect(
+    a1.strip_prefix(ImmutableVec::[]),
+    content="Some(ImmutableVector::[1, 2, 3])",
+  )?
+  inspect(
+    a1.strip_prefix(ImmutableVec::[1]),
+    content="Some(ImmutableVector::[2, 3])",
+  )?
+  inspect(
+    a1.strip_prefix(ImmutableVec::[1, 2]),
+    content="Some(ImmutableVector::[3])",
+  )?
+  inspect(
+    a1.strip_prefix(ImmutableVec::[1, 2, 3]),
+    content="Some(ImmutableVector::[])",
+  )?
   inspect(a1.strip_prefix(ImmutableVec::[0, 1, 2, 3]), content="None")?
 }
 
@@ -491,12 +518,27 @@ pub fn strip_suffix[T : Eq](
 
 test "strip_suffix" {
   let a0 : ImmutableVec[Int] = ImmutableVec::[]
-  inspect(a0.strip_suffix(ImmutableVec::[]), content="Some(ImmutableVector::[])")?
+  inspect(
+    a0.strip_suffix(ImmutableVec::[]),
+    content="Some(ImmutableVector::[])",
+  )?
   let a1 = ImmutableVec::[1, 2, 3]
-  inspect(a1.strip_suffix(ImmutableVec::[]), content="Some(ImmutableVector::[1, 2, 3])")?
-  inspect(a1.strip_suffix(ImmutableVec::[3]), content="Some(ImmutableVector::[1, 2])")?
-  inspect(a1.strip_suffix(ImmutableVec::[2, 3]), content="Some(ImmutableVector::[1])")?
-  inspect(a1.strip_suffix(ImmutableVec::[1, 2, 3]), content="Some(ImmutableVector::[])")?
+  inspect(
+    a1.strip_suffix(ImmutableVec::[]),
+    content="Some(ImmutableVector::[1, 2, 3])",
+  )?
+  inspect(
+    a1.strip_suffix(ImmutableVec::[3]),
+    content="Some(ImmutableVector::[1, 2])",
+  )?
+  inspect(
+    a1.strip_suffix(ImmutableVec::[2, 3]),
+    content="Some(ImmutableVector::[1])",
+  )?
+  inspect(
+    a1.strip_suffix(ImmutableVec::[1, 2, 3]),
+    content="Some(ImmutableVector::[])",
+  )?
   inspect(a1.strip_suffix(ImmutableVec::[0, 1, 2, 3]), content="None")?
 }
 
@@ -650,7 +692,6 @@ test "repeat" {
   let a1 = ImmutableVec::[1, 2, 3]
   inspect(a1.repeat(0), content="ImmutableVector::[]")?
   inspect(a1.repeat(3), content="ImmutableVector::[1, 2, 3, 1, 2, 3, 1, 2, 3]")?
-
 }
 
 /// Join a vector of vectors with a separator.
@@ -683,7 +724,10 @@ test "join" {
   let a0 : ImmutableVec[ImmutableVec[Int]] = ImmutableVec::[]
   inspect(a0.join(ImmutableVec::[1]), content="ImmutableVector::[]")?
   let a1 = ImmutableVec::[ImmutableVec::[1, 2], ImmutableVec::[3, 4]]
-  inspect(a1.join(ImmutableVec::[0]), content="ImmutableVector::[1, 2, 0, 3, 4]")?
+  inspect(
+    a1.join(ImmutableVec::[0]),
+    content="ImmutableVector::[1, 2, 0, 3, 4]",
+  )?
 }
 
 /// Fold out values from an vector according to certain rules.
