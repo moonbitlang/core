@@ -101,7 +101,7 @@ pub fn add[T : Compare + Show](self : MutableSet[T], value : T) -> Unit {
         if compare_result == 0 {
           ()
         } else if compare_result < 0 {
-          if is_leaf(node.left) {
+          if is_nil(node.left) {
             let l = new_node(Red, value, n)
             node.left = Some(l)
             balance(node)
@@ -109,7 +109,7 @@ pub fn add[T : Compare + Show](self : MutableSet[T], value : T) -> Unit {
             aux(node.left, value)
             balance(node)
           }
-        } else if is_leaf(node.right) {
+        } else if is_nil(node.right) {
           let r = new_node(Red, value, n)
           node.right = Some(r)
           balance(node)
@@ -134,6 +134,7 @@ pub fn add[T : Compare + Show](self : MutableSet[T], value : T) -> Unit {
 }
 
 pub fn remove[T : Show + Compare](self : MutableSet[T], value : T) -> Unit {
+  // Cite: https://github.com/fgoncalves/Generic-Red-Black-Tree/blob/master/rbtree.c
   let mut y = search_node(self, value)
   let z = y
   if y == None {
@@ -142,10 +143,14 @@ pub fn remove[T : Show + Compare](self : MutableSet[T], value : T) -> Unit {
   let mut y_original_color = get_color(y)
   let z_right = get_right(z)
   let mut x = Option::None
-  if is_leaf(get_left(z)) {
+  if is_nil(get_left(z)) {
+    if is_nil(get_right(z)) {
+      // remove the last node in the tree
+      self.root = None
+    }
     x = z_right
     transplant(self, z, z_right)
-  } else if is_leaf(z_right) {
+  } else if is_nil(z_right) {
     x = get_left(z)
     transplant(self, z, x)
   } else {
@@ -194,12 +199,220 @@ pub fn contains[T : Compare + Show](self : MutableSet[T], value : T) -> Bool {
   }
 }
 
+pub fn to_string[T : Show + Compare](self : MutableSet[T]) -> String {
+  match self.root {
+    None => "MutableSet::[]"
+    Some(node) => node.to_string()
+  }
+}
+
+/// Returns a deep clone of the MutableSet.
+/// 
+/// FIXME: it is just copying the tree structure, not the values.
+///        It requires a Clone trait on T, which we don't have yet.
+pub fn deep_clone[T](self : MutableSet[T]) -> MutableSet[T] {
+  match self.root {
+    None => MutableSet::new()
+    Some(node) => { root: deep_clone_node(self.root) }
+  }
+}
+
+// function joinRightRB(TL, k, TR):
+//     if (TL.color=black) and (TL.blackHeight=TR.blackHeight):
+//         return Node(TL,⟨k,red⟩,TR)
+//     T'=Node(TL.left,⟨TL.key,TL.color⟩,joinRightRB(TL.right,k,TR))
+//     if (TL.color=black) and (T'.right.color=T'.right.right.color=red):
+//         T'.right.right.color=black;
+//         return rotateLeft(T')
+//     return T' /* T''[recte T'] */
+
+// function joinLeftRB(TL, k, TR):
+//   /* symmetric to joinRightRB */
+
+// function join(TL, k, TR):
+//     if TL.blackHeight>TR.blackHeight:
+//         T'=joinRightRB(TL,k,TR)
+//         if (T'.color=red) and (T'.right.color=red):
+//             T'.color=black
+//         return T'
+//     if TR.blackHeight>TL.blackHeight:
+//         /* symmetric */
+//     if (TL.color=black) and (TR.color=black):
+//         return Node(TL,⟨k,red⟩,TR)
+//     return Node(TL,⟨k,black⟩,TR)
+
+fn black_height[T : Compare](n : Option[Node[T]]) -> Int {
+  loop n, 0 {
+    None, ct => 0
+    Some(node) as n, ct =>
+      if node.color == Black {
+        continue node.left, ct + 1
+      } else {
+        continue node.left, ct
+      }
+  }
+}
+
+fn join_right[T : Compare](
+  left : Option[Node[T]],
+  value : T,
+  right : Option[Node[T]]
+) -> Option[Node[T]] {
+  let left_color = get_color(left)
+  if left_color == Black && black_height(left) == black_height(right) {
+    return Some(new_node_full(Color::Red, left, Some(value), right, None))
+  }
+  let t = new_node_full(
+    left_color,
+    get_left(left),
+    Some(get_value(left)),
+    join_right(get_right(left), value, right),
+    None,
+  )
+  let ret = Option::Some(t)
+  let trr = get_right(t.right)
+  if left_color == Black && get_color(t.right) == Red && get_color(trr) == Red {
+    set_color(trr, Black)
+    rotate_left(None, ret)
+  }
+  ret
+}
+
+fn join_left[T : Compare](
+  left : Option[Node[T]],
+  value : T,
+  right : Option[Node[T]]
+) -> Option[Node[T]] {
+  let right_color = get_color(right)
+  if right_color == Black && black_height(right) == black_height(left) {
+    return Some(new_node_full(Color::Red, left, Some(value), right, None))
+  }
+  let t = new_node_full(
+    right_color,
+    join_left(left, value, get_left(right)),
+    Some(get_value(right)),
+    get_right(right),
+    None,
+  )
+  let ret = Option::Some(t)
+  let tll = get_left(t.left)
+  if right_color == Black && get_color(t.left) == Red && get_color(tll) == Red {
+    set_color(tll, Black)
+    rotate_right(None, ret)
+  }
+  ret
+}
+
+fn join[T : Compare](
+  left : Option[Node[T]],
+  value : T,
+  right : Option[Node[T]]
+) -> Option[Node[T]] {
+  let lh = black_height(left)
+  let rh = black_height(right)
+  if lh > rh {
+    let t = join_right(left, value, right)
+    if get_color(t) == Red && get_color(get_right(t)) == Red {
+      set_color(t, Black)
+    }
+    t
+  } else if rh > lh {
+    let t = join_left(left, value, right)
+    if get_color(t) == Red && get_color(get_left(t)) == Red {
+      set_color(t, Black)
+    }
+    t
+  } else {
+    let color = if get_color(left) == Black && get_color(right) == Black {
+      Color::Red
+    } else {
+      Color::Black
+    }
+    Some(new_node_full(color, left, Some(value), right, None))
+  }
+}
+
+test "join" {
+  let l = MutableSet::[13, 8, 17, 1, 11, 15, 25, 6]
+  let r = MutableSet::[22, 27, 19, 29, 1, 2]
+  let t = join(l.root, 3, r.root)
+  println(t.to_string())
+}
+
+fn split[T : Compare](
+  tree : Option[Node[T]],
+  k : T
+) -> (Option[Node[T]], Option[Node[T]]) {
+  match tree {
+    None => (None, None)
+    Some(node) => {
+      let value = get_value(tree)
+      let left = get_left(tree)
+      let right = get_right(tree)
+      if k == value {
+        (left, right)
+      } else if k < value {
+        let (l, r) = split(left, k)
+        (l, join(r, value, right))
+      } else {
+        let (l, r) = split(right, k)
+        (join(left, value, l), right)
+      }
+    }
+  }
+}
+
+
+
+// /// Returns the union of two sets.
+// /// 
+// /// NOTE: This operation first clones the two sets then returns a new set.
+// pub fn union[T : Compare + Show](self: MutableSet[T], src : MutableSet[T]) -> MutableSet[T] {
+//   fn aux(a: Option[Node[T]], b: Option[Node[T]) -> Option[Node[T]] {
+//     match (a, b) {
+//       (None, None) => None
+//       (Some(_), None) => a
+//       (None, Some(_)) => b
+//       (Some(_), Some(_)) => {
+//         let (l1, r1) = split(a, get_value(b))
+//         let tl = aux(l1, get_left(b))
+//         let tr = aux(r1, get_right(b))
+//         join(tl, get_value(b), tr)
+//       }
+//     }
+//   }
+
+//   match (self.root, src.root) {
+//     (_, None) => { root: None}
+//     (None, _) => {root: deep_clone_node(src.root)}
+//     (Some(_), Some(_)) => {
+//       let t1 = deep_clone_node(self.root)
+//       let t2 = deep_clone_node(src.root)
+//       { root: aux(t1, t2) }
+//     }
+//   }
+// }
+
+fn deep_clone_node[T](node : Option[Node[T]]) -> Option[Node[T]] {
+  match node {
+    None => None
+    Some(node) => {
+      let left = deep_clone_node(node.left)
+      let right = deep_clone_node(node.right)
+      let new_node = new_node_full(node.color, left, node.value, right, None)
+      set_parent(left, Some(new_node))
+      set_parent(right, Some(new_node))
+      Some(new_node)
+    }
+  }
+}
+
 fn to_array[T](self : Node[T]) -> Array[T] {
   fn aux(n : Option[Node[T]]) {
     match n {
       None => []
       _ =>
-        if is_leaf(n) {
+        if is_nil(n) {
           []
         } else {
           aux(get_left(n)) + [get_value(n)] + aux(get_right(n))
@@ -235,14 +448,8 @@ fn to_string[T : Show](self : Node[T]) -> String {
   }
 }
 
-pub fn to_string[T : Show + Compare](self : MutableSet[T]) -> String {
-  match self.root {
-    None => "MutableSet::[]"
-    Some(node) => node.to_string()
-  }
-}
-
 fn balance[T : Compare + Show](parent : Node[T]) -> Unit {
+  // Cite: Red-Black Trees in a Functional Setting by Chris Okasaki
   match parent {
     {
       color: Black,
@@ -402,14 +609,18 @@ fn set_right[T](x : Option[Node[T]], right : Option[Node[T]]) -> Unit {
   }
 }
 
-fn rotate_left[T](root : MutableSet[T], x : Option[Node[T]]) -> Unit {
+fn rotate_left[T](root : Option[MutableSet[T]], x : Option[Node[T]]) -> Unit {
   let y = get_right(x)
   set_right(x, get_left(y))
   set_parent(get_left(y), x)
   let x_parent = get_parent(x)
   set_parent(y, x_parent)
   match x_parent {
-    None => root.root = y
+    None =>
+      match root {
+        Some(root) => root.root = y
+        None => ()
+      }
     Some(_) =>
       if same_pointer(x, get_left(x_parent)) {
         set_left(x_parent, y)
@@ -421,14 +632,18 @@ fn rotate_left[T](root : MutableSet[T], x : Option[Node[T]]) -> Unit {
   set_parent(x, y)
 }
 
-fn rotate_right[T](root : MutableSet[T], x : Option[Node[T]]) -> Unit {
+fn rotate_right[T](root : Option[MutableSet[T]], x : Option[Node[T]]) -> Unit {
   let y = get_left(x)
   set_left(x, get_right(y))
   set_parent(get_right(y), x)
   let x_parent = get_parent(x)
   set_parent(y, x_parent)
   match x_parent {
-    None => root.root = y
+    None =>
+      match root {
+        Some(root) => root.root = y
+        None => ()
+      }
     Some(_) =>
       if same_pointer(x, get_right(x_parent)) {
         set_right(x_parent, y)
@@ -449,7 +664,7 @@ fn remove_fix[T : Show](root : MutableSet[T], x : Option[Node[T]]) -> Unit {
       if get_color(w) == Red {
         set_color(w, Black)
         set_color(x_parent, Red)
-        rotate_left(root, x_parent)
+        rotate_left(Some(root), x_parent)
         w = get_right(x_parent)
       }
       if get_color(get_left(w)) == Black && get_color(get_right(w)) == Black {
@@ -459,13 +674,13 @@ fn remove_fix[T : Show](root : MutableSet[T], x : Option[Node[T]]) -> Unit {
         if get_color(get_right(w)) == Black {
           set_color(get_left(w), Black)
           set_color(w, Red)
-          rotate_right(root, w)
+          rotate_right(Some(root), w)
           w = get_right(x_parent)
         }
         set_color(w, get_color(x_parent))
         set_color(x_parent, Black)
         set_color(get_right(w), Black)
-        rotate_left(root, x_parent)
+        rotate_left(Some(root), x_parent)
         x = root.root
       }
     } else {
@@ -473,7 +688,7 @@ fn remove_fix[T : Show](root : MutableSet[T], x : Option[Node[T]]) -> Unit {
       if get_color(w) == Red {
         set_color(w, Black)
         set_color(x_parent, Red)
-        rotate_right(root, x_parent)
+        rotate_right(Some(root), x_parent)
         w = get_left(x_parent)
       }
       if get_color(get_right(w)) == Black && get_color(get_left(w)) == Black {
@@ -483,13 +698,13 @@ fn remove_fix[T : Show](root : MutableSet[T], x : Option[Node[T]]) -> Unit {
         if get_color(get_left(w)) == Black {
           set_color(get_right(w), Black)
           set_color(w, Red)
-          rotate_left(root, w)
+          rotate_left(Some(root), w)
           w = get_left(x_parent)
         }
         set_color(w, get_color(x_parent))
         set_color(x_parent, Black)
         set_color(get_left(w), Black)
-        rotate_right(root, x_parent)
+        rotate_right(Some(root), x_parent)
         x = root.root
       }
     }
@@ -565,7 +780,7 @@ fn min_node[T : Compare + Show](tree : Option[Node[T]]) -> Option[Node[T]] {
       match left {
         None => rt
         Some(_) => {
-          if not(is_leaf(left)) {
+          if not(is_nil(left)) {
             rt = left
           }
           continue left
@@ -588,7 +803,7 @@ fn set_parent[T](x : Option[Node[T]], parent : Option[Node[T]]) -> Unit {
   }
 }
 
-fn get_color[T : Show](tree : Option[Node[T]]) -> Color {
+fn get_color[T](tree : Option[Node[T]]) -> Color {
   match tree {
     None => Black
     Some({ color, .. }) => color
@@ -609,11 +824,11 @@ fn get_node[T](node : Option[Node[T]], value : T) -> Node[T] {
   }
 }
 
-fn debug_write[T : Show](self : Node[T], buf : Buffer) -> Unit {
+fn eebug_write[T : Show](self : Node[T], buf : Buffer) -> Unit {
   buf.write_string(self.to_string())
 }
 
-fn is_leaf[T](node : Option[Node[T]]) -> Bool {
+fn is_nil[T](node : Option[Node[T]]) -> Bool {
   match node {
     None => false
     Some(node) =>
@@ -826,10 +1041,41 @@ test "add" {
   inspect(set, content="MutableSet::[1, 2]")?
 }
 
-test "remove" {
+test "add_and_remove" {
   let set = MutableSet::[7, 2, 9, 4, 5, 6, 3, 8, 1]
   set.remove(8)
   inspect(set, content="MutableSet::[1, 2, 3, 4, 5, 6, 7, 9]")?
+  let set = MutableSet::[1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+
+  // Test 1: Remove elements
+  set.remove(1)
+  inspect(set, content="MutableSet::[2, 3, 4, 5, 6, 7, 8, 9, 10]")?
+  set.remove(5)
+  inspect(set, content="MutableSet::[2, 3, 4, 6, 7, 8, 9, 10]")?
+  set.remove(10)
+  inspect(set, content="MutableSet::[2, 3, 4, 6, 7, 8, 9]")?
+
+  // Test 2: Add elements
+  set.add(1)
+  inspect(set, content="MutableSet::[1, 2, 3, 4, 6, 7, 8, 9]")?
+  set.add(5)
+  inspect(set, content="MutableSet::[1, 2, 3, 4, 5, 6, 7, 8, 9]")?
+  set.add(10)
+  inspect(set, content="MutableSet::[1, 2, 3, 4, 5, 6, 7, 8, 9, 10]")?
+
+  // Test 3: Add and remove the same element
+  set.add(11)
+  inspect(set, content="MutableSet::[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]")?
+  set.remove(11)
+  inspect(set, content="MutableSet::[1, 2, 3, 4, 5, 6, 7, 8, 9, 10]")?
+
+  // Test 4: Remove an element that doesn't exist
+  set.remove(12)
+  inspect(set, content="MutableSet::[1, 2, 3, 4, 5, 6, 7, 8, 9, 10]")?
+
+  // Test 5: Add an element that already exists
+  set.add(10)
+  inspect(set, content="MutableSet::[1, 2, 3, 4, 5, 6, 7, 8, 9, 10]")?
 }
 
 // test "is_empty" {

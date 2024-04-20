@@ -17,6 +17,9 @@
 // All operations over sets are purely applicative (no side-effects).
 
 // Red-black tree implementation of a set.
+
+// Invariant:
+// - root cannot be NIL, i.e., either get_value(root) succeeds, or root = None.
 struct MutableSet[T] {
   mut root : Option[Node[T]]
 } derive(Eq)
