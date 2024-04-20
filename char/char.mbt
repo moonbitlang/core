@@ -12,6 +12,18 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+let min_high_surrogate = 0xD800
+
+let max_high_surrogate = 0xDBFF
+
+let min_low_surrogate = 0xDC00
+
+let max_low_surrogate = 0xDFFF
+
+let min_surrogate : Int = min_high_surrogate
+
+let max_surrogate : Int = max_low_surrogate
+
 /// Convert Char to String
 pub fn to_string(self : Char) -> String {
   let bytes = Bytes::make(4, 0)
@@ -82,9 +94,9 @@ pub fn hash(self : Char) -> Int {
 }
 
 /// Check if the char is a surrogate unit
-pub fn is_surrogate(self: Char) -> Bool {
+pub fn is_surrogate(self : Char) -> Bool {
   let code = self.to_int()
-  0xD800 <= code && code <= 0xDFFF
+  min_surrogate <= code && code <= max_surrogate
 }
 
 test "is_surrogate" {
@@ -93,8 +105,56 @@ test "is_surrogate" {
   @assertion.assert_true("🤣"[1].is_surrogate())?
 }
 
+/// Check if the char is a low surrogate
+pub fn is_low_surrogate(self : Char) -> Bool {
+  let code = self.to_int()
+  min_low_surrogate <= code && code <= max_low_surrogate
+}
+
+test "is_low_surrogate" {
+  @assertion.assert_false("🤣"[0].is_low_surrogate())?
+  @assertion.assert_true("🤣"[1].is_low_surrogate())?
+}
+
+/// Check if the char is a high surrogate
+pub fn is_high_surrogate(self : Char) -> Bool {
+  let code = self.to_int()
+  min_high_surrogate <= code && code <= max_high_surrogate
+}
+
+test "is_high_surrogate" {
+  @assertion.assert_true("🤣"[0].is_high_surrogate())?
+  @assertion.assert_false("🤣"[1].is_high_surrogate())?
+}
+
+/// Check if the char pair is a surrogate pair
+pub fn Char::is_surrogate_pair(
+  high_surrogate : Char,
+  low_surrogate : Char
+) -> Bool {
+  high_surrogate.is_high_surrogate() && low_surrogate.is_low_surrogate()
+}
+
+test "is_surrogate_pair" {
+  @assertion.assert_true(is_surrogate_pair("🤣"[0], "🤣"[1]))?
+  @assertion.assert_false(is_surrogate_pair('a', 'b'))?
+}
+
+/// Creates a UTF-16 code point from a surrogate pair.
+pub fn Char::to_code_point(high_surrogate : Char, low_surrogate : Char) -> Int {
+  (high_surrogate.to_int() - min_high_surrogate) * 0x400 + (low_surrogate.to_int() -
+  min_low_surrogate) + 0x10000
+}
+
+test "to_code_point" {
+  @assertion.assert_eq(
+    Char::to_code_point("🤣"[0], "🤣"[1]),
+    '🤣'.to_int(),
+  )?
+}
+
 /// Get high surrogate of the char
-pub fn get_high_surrogate(self: Char) -> Option[Char] {
+pub fn get_high_surrogate(self : Char) -> Option[Char] {
   let code = self.to_int()
   if code < 0x10000 {
     None
@@ -105,7 +165,7 @@ pub fn get_high_surrogate(self: Char) -> Option[Char] {
 }
 
 /// Get low surrogate of the char
-pub fn get_low_surrogate(self: Char) -> Option[Char] {
+pub fn get_low_surrogate(self : Char) -> Option[Char] {
   let code = self.to_int()
   if code < 0x10000 {
     None

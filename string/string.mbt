@@ -111,3 +111,42 @@ test "to_array" {
   inspect(a[4], content="b")?
   inspect(a[5], content="t")?
 }
+
+/// Returns an integer between 0 and 65535 representing the UTF-16 code unit at the given index.
+pub fn char_code_at(self : String, index : Int) -> Option[Int] {
+  if index < 0 || index >= self.length() {
+    None
+  } else {
+    Some(self[index].to_int())
+  }
+}
+
+test "char_code_at" {
+  inspect("ABC".char_code_at(0), content="Some(65)")?
+  inspect("🤣".char_code_at(0), content="Some(55358)")?
+  inspect("🤣".char_code_at(1), content="Some(56611)")?
+  inspect("ABC".char_code_at(4), content="None")?
+}
+
+/// Returns a non-negative integer that is the Unicode code point value of the character starting at the given index.
+/// If the element at index is a UTF-16 leading surrogate, returns the code point of the surrogate pair.
+/// If the element at index is a UTF-16 trailing surrogate, returns only the trailing surrogate unit.
+pub fn code_point_at(self : String, index : Int) -> Option[Int] {
+  if index < 0 || index >= self.length() {
+    return None
+  }
+  let c = self[index]
+  if c.is_high_surrogate() {
+    let cl = self[index + 1]
+    Some(Char::to_code_point(c, cl))
+  } else {
+    Some(c.to_int())
+  }
+}
+
+test "code_point_at" {
+  inspect("ABC".code_point_at(0), content="Some(65)")?
+  inspect("🤣".code_point_at(0), content="Some(129315)")?
+  inspect("🤣".code_point_at(1), content="Some(56611)")?
+  inspect("ABC".code_point_at(4), content="None")?
+}
