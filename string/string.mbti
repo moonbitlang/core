@@ -3,6 +3,8 @@ package moonbitlang/core/string
 // Values
 
 // Types and methods
+fn String::char_code_at(String, Int) -> Option[Int]
+fn String::code_point_at(String, Int) -> Option[Int]
 fn String::compare(String, String) -> Int
 fn String::default() -> String
 fn String::hash(String) -> Int
