@@ -138,15 +138,17 @@ pub fn remove[T : Show + Compare](self : MutableSet[T], value : T) -> Unit {
   let mut y = search_node(self, value)
   let z = y
   if y == None {
-    abort("Can't remove an element in the set that does not exist.")
+    // nothing to remove
+    return
   }
   let mut y_original_color = get_color(y)
   let z_right = get_right(z)
   let mut x = Option::None
   if is_nil(get_left(z)) {
-    if is_nil(get_right(z)) {
+    if is_nil(get_right(z)) && same_pointer(z, self.root) {
       // remove the last node in the tree
       self.root = None
+      return
     }
     x = z_right
     transplant(self, z, z_right)
@@ -260,7 +262,12 @@ fn join_right[T : Compare](
 ) -> Option[Node[T]] {
   let left_color = get_color(left)
   if left_color == Black && black_height(left) == black_height(right) {
-    return Some(new_node_full(Color::Red, left, Some(value), right, None))
+    let ret = Option::Some(
+      new_node_full(Color::Red, left, Some(value), right, None),
+    )
+    set_parent(left, ret)
+    set_parent(right, ret)
+    return ret
   }
   let t = new_node_full(
     left_color,
@@ -275,6 +282,8 @@ fn join_right[T : Compare](
     set_color(trr, Black)
     rotate_left(None, ret)
   }
+  set_parent(t.left, ret)
+  set_parent(t.right, ret)
   ret
 }
 
@@ -285,7 +294,12 @@ fn join_left[T : Compare](
 ) -> Option[Node[T]] {
   let right_color = get_color(right)
   if right_color == Black && black_height(right) == black_height(left) {
-    return Some(new_node_full(Color::Red, left, Some(value), right, None))
+    let ret = Option::Some(
+      new_node_full(Color::Red, left, Some(value), right, None),
+    )
+    set_parent(left, ret)
+    set_parent(right, ret)
+    return ret
   }
   let t = new_node_full(
     right_color,
@@ -300,10 +314,12 @@ fn join_left[T : Compare](
     set_color(tll, Black)
     rotate_right(None, ret)
   }
+  set_parent(t.left, ret)
+  set_parent(t.right, ret)
   ret
 }
 
-fn join[T : Compare](
+fn join[T : Compare + Show](
   left : Option[Node[T]],
   value : T,
   right : Option[Node[T]]
@@ -334,18 +350,22 @@ fn join[T : Compare](
 
 test "join" {
   let l = MutableSet::[13, 8, 17, 1, 11, 15, 25, 6]
-  let r = MutableSet::[22, 27, 19, 29, 1, 2]
-  let t = join(l.root, 3, r.root)
-  println(t.to_string())
+  let r = MutableSet::[27, 28, 40, 35, 33]
+  let t = join(l.root, 26, r.root)
 }
 
-fn split[T : Compare](
+// Returns two red-black trees (l, r).
+// All values in l < k. All values in r >= k.
+fn split[T : Compare + Show](
   tree : Option[Node[T]],
   k : T
 ) -> (Option[Node[T]], Option[Node[T]]) {
   match tree {
     None => (None, None)
-    Some(node) => {
+    Some(_) => {
+      if is_nil(tree) {
+        return (new_nil(), new_nil())
+      }
       let value = get_value(tree)
       let left = get_left(tree)
       let right = get_right(tree)
@@ -356,42 +376,96 @@ fn split[T : Compare](
         (l, join(r, value, right))
       } else {
         let (l, r) = split(right, k)
-        (join(left, value, l), right)
+        (join(left, value, l), r)
       }
     }
   }
 }
 
+test "split" {
+  let (l, r) = split(MutableSet::[7, 2, 9, 4, 5, 6, 3, 8, 1].root, 5)
+  inspect(l, content="Some(MutableSet::[1, 2, 3, 4])")?
+  inspect(r, content="Some(MutableSet::[6, 7, 8, 9])")?
+  let (l, r) = split(MutableSet::[7, 2, 9, 4, 5, 6, 3, 8, 1].root, 0)
+  inspect(l, content="Some(MutableSet::[])")?
+  inspect(r, content="Some(MutableSet::[1, 2, 3, 4, 5, 6, 7, 8, 9])")?
+  let (l, r) = split(MutableSet::[7, 2, 9, 4, 5, 6, 3, 8, 1].root, 10)
+  inspect(l, content="Some(MutableSet::[1, 2, 3, 4, 5, 6, 7, 8, 9])")?
+  inspect(r, content="Some(MutableSet::[])")?
+  let (l, r) = split(MutableSet::[7, 2, 9, 4, 5, 6, 3, 8, 1].root, 4)
+  inspect(l, content="Some(MutableSet::[1, 2, 3])")?
+  inspect(r, content="Some(MutableSet::[5, 6, 7, 8, 9])")?
+}
 
+/// Returns the union of two sets.
+/// 
+/// NOTE: This operation first clones the two sets then returns a new set.
+pub fn union[T : Compare + Show](
+  self : MutableSet[T],
+  src : MutableSet[T]
+) -> MutableSet[T] {
+  fn aux(a : Option[Node[T]], b : Option[Node[T]]) -> Option[Node[T]] {
+    match (a, b) {
+      (Some(_), Some(_)) =>
+        if is_nil(a) {
+          b
+        } else if is_nil(b) {
+          a
+        } else {
+          let v = get_value(b)
+          let (l1, r1) = split(a, v)
+          let tl = aux(l1, get_left(b))
+          let tr = aux(r1, get_right(b))
+          join(tl, v, tr)
+        }
+      (Some(_), None) => a
+      (None, Some(_)) => b
+      (None, None) => None
+    }
+  }
 
-// /// Returns the union of two sets.
-// /// 
-// /// NOTE: This operation first clones the two sets then returns a new set.
-// pub fn union[T : Compare + Show](self: MutableSet[T], src : MutableSet[T]) -> MutableSet[T] {
-//   fn aux(a: Option[Node[T]], b: Option[Node[T]) -> Option[Node[T]] {
-//     match (a, b) {
-//       (None, None) => None
-//       (Some(_), None) => a
-//       (None, Some(_)) => b
-//       (Some(_), Some(_)) => {
-//         let (l1, r1) = split(a, get_value(b))
-//         let tl = aux(l1, get_left(b))
-//         let tr = aux(r1, get_right(b))
-//         join(tl, get_value(b), tr)
-//       }
-//     }
-//   }
+  match (self.root, src.root) {
+    (Some(_), Some(_)) => {
+      let t1 = deep_clone_node(self.root)
+      let t2 = deep_clone_node(src.root)
+      { root: aux(t1, t2) }
+    }
+    (Some(_), None) => { root: deep_clone_node(self.root) }
+    (None, _) => { root: deep_clone_node(src.root) }
+  }
+}
 
-//   match (self.root, src.root) {
-//     (_, None) => { root: None}
-//     (None, _) => {root: deep_clone_node(src.root)}
-//     (Some(_), Some(_)) => {
-//       let t1 = deep_clone_node(self.root)
-//       let t2 = deep_clone_node(src.root)
-//       { root: aux(t1, t2) }
-//     }
-//   }
-// }
+test "union" {
+  // Test 1: Union of two sets with no common elements
+  let set1 = MutableSet::[1, 2, 3]
+  let set2 = MutableSet::[4, 5, 6]
+  let set3 = set1.union(set2)
+  inspect(set3, content="MutableSet::[1, 2, 3, 4, 5, 6]")?
+
+  // Test 2: Union of two sets with some common elements
+  let set1 = MutableSet::[1, 2, 3]
+  let set2 = MutableSet::[2, 3, 4]
+  let set3 = set1.union(set2)
+  inspect(set3, content="MutableSet::[1, 2, 3, 4]")?
+
+  // Test 3: Union of two sets where one is a subset of the other
+  let set1 = MutableSet::[1, 2, 3]
+  let set2 = MutableSet::[2, 3]
+  let set3 = set1.union(set2)
+  inspect(set3, content="MutableSet::[1, 2, 3]")?
+
+  // Test 4: Union of two empty sets
+  let set1 :MutableSet[Int]= MutableSet::new()
+  let set2 = MutableSet::new()
+  let set3 = set1.union(set2)
+  inspect(set3, content="MutableSet::[]")?
+
+  // Test 5: Union of an empty set with a non-empty set
+  let set1 = MutableSet::[1, 2, 3]
+  let set2 = MutableSet::[]
+  let set3 = set1.union(set2)
+  inspect(set3, content="MutableSet::[1, 2, 3]")?
+}
 
 fn deep_clone_node[T](node : Option[Node[T]]) -> Option[Node[T]] {
   match node {
@@ -441,6 +515,9 @@ fn node_debug[T : Show](n : Option[Node[T]]) -> String {
 fn to_string[T : Show](self : Node[T]) -> String {
   let linear = self.to_array()
   let len = linear.length()
+  if len == 0 {
+    return "MutableSet::[]"
+  }
   for i = 0, str = "MutableSet::["; i < len - 1; {
     continue i + 1, str + linear[i].to_string() + ", "
   } else {
@@ -530,7 +607,6 @@ fn search_node[T : Compare + Show](
   tree : MutableSet[T],
   value : T
 ) -> Option[Node[T]] {
-  let mut ret = Option::None
   loop tree.root, value {
     Some({ left, value: node_value, right, .. }) as n, value => {
       if node_value == None {
@@ -538,12 +614,10 @@ fn search_node[T : Compare + Show](
       }
       let compare_result = value.compare(get_value(n))
       if compare_result == 0 {
-        ret
+        n
       } else if compare_result < 0 {
-        ret = left
         continue left, value
       } else {
-        ret = right
         continue right, value
       }
     }
@@ -749,6 +823,10 @@ fn new_node_full[T](
   { color, left, value, right, parent }
 }
 
+fn new_nil[T]() -> Option[Node[T]] {
+  Some({ color: Black, left: None, value: None, right: None, parent: None })
+}
+
 // @alert unsafe "Panic if called on an empty set.""
 fn min[T : Compare + Show](tree : Option[Node[T]]) -> T {
   let mut rt = match tree {
@@ -805,15 +883,15 @@ fn set_parent[T](x : Option[Node[T]], parent : Option[Node[T]]) -> Unit {
 
 fn get_color[T](tree : Option[Node[T]]) -> Color {
   match tree {
-    None => Black
+    None => abort("Impossible to reach") // why get color of None? 
     Some({ color, .. }) => color
   }
 }
 
 fn set_color[T](tree : Option[Node[T]], color : Color) -> Unit {
   match tree {
-    None => abort("Impossible to reach") // why set color of an empty tree?
     Some(tree) => tree.color = color
+    None => abort("Impossible to reach") // why set color of an empty tree?
   }
 }
 
@@ -988,26 +1066,26 @@ test "to_list" {
   )?
 }
 
-// test "to_array" {
-//   inspect(
-//     MutableSet::[7, 2, 9, 4, 5, 6, 3, 8, 1].to_array(),
-//     content="[1, 2, 3, 4, 5, 6, 7, 8, 9]",
-//   )?
-// }
+test "to_array" {
+  inspect(
+    MutableSet::[7, 2, 9, 4, 5, 6, 3, 8, 1].to_array(),
+    content="[1, 2, 3, 4, 5, 6, 7, 8, 9]",
+  )?
+}
 
-// test "to_vec" {
-//   inspect(
-//     MutableSet::[7, 2, 9, 4, 5, 6, 3, 8, 1].to_vec(),
-//     content="Vec::[1, 2, 3, 4, 5, 6, 7, 8, 9]",
-//   )?
-// }
+test "to_vec" {
+  inspect(
+    MutableSet::[7, 2, 9, 4, 5, 6, 3, 8, 1].to_vec(),
+    content="Vec::[1, 2, 3, 4, 5, 6, 7, 8, 9]",
+  )?
+}
 
-// test "from_array" {
-//   inspect(
-//     MutableSet::[7, 2, 9, 4, 5, 6, 3, 8, 1],
-//     content="MutableSet::[1, 2, 3, 4, 5, 6, 7, 8, 9]",
-//   )?
-// }
+test "from_array" {
+  inspect(
+    MutableSet::[7, 2, 9, 4, 5, 6, 3, 8, 1],
+    content="MutableSet::[1, 2, 3, 4, 5, 6, 7, 8, 9]",
+  )?
+}
 
 test "add" {
   let set = MutableSet::[7, 2, 9, 4, 6, 3, 8, 1]
@@ -1076,14 +1154,44 @@ test "add_and_remove" {
   // Test 5: Add an element that already exists
   set.add(10)
   inspect(set, content="MutableSet::[1, 2, 3, 4, 5, 6, 7, 8, 9, 10]")?
+
+  // Test 6: Remove all elements
+  set.remove(1)
+  inspect(set, content="MutableSet::[2, 3, 4, 5, 6, 7, 8, 9, 10]")?
+  set.remove(2)
+  inspect(set, content="MutableSet::[3, 4, 5, 6, 7, 8, 9, 10]")?
+  set.remove(3)
+  inspect(set, content="MutableSet::[4, 5, 6, 7, 8, 9, 10]")?
+  set.remove(4)
+  inspect(set, content="MutableSet::[5, 6, 7, 8, 9, 10]")?
+  set.remove(5)
+  inspect(set, content="MutableSet::[6, 7, 8, 9, 10]")?
+  set.remove(6)
+  inspect(set, content="MutableSet::[7, 8, 9, 10]")?
+  set.remove(7)
+  inspect(set, content="MutableSet::[8, 9, 10]")?
+  set.remove(8)
+  inspect(set, content="MutableSet::[9, 10]")?
+  set.remove(9)
+  inspect(set, content="MutableSet::[10]")?
+  set.remove(10)
+  inspect(set, content="MutableSet::[]")?
+  set.add(1)
+  inspect(set, content="MutableSet::[1]")?
+  set.add(2)
+  inspect(set, content="MutableSet::[1, 2]")?
+  set.add(3)
+  inspect(set, content="MutableSet::[1, 2, 3]")?
+  set.add(4)
+  inspect(set, content="MutableSet::[1, 2, 3, 4]")?
 }
 
-// test "is_empty" {
-//   inspect((MutableSet::[] : MutableSet[Int]).is_empty(), content="true")?
-//   inspect(MutableSet::[1].is_empty(), content="false")?
-// }
+test "is_empty" {
+  inspect((MutableSet::[] : MutableSet[Int]).is_empty(), content="true")?
+  inspect(MutableSet::[1].is_empty(), content="false")?
+}
 
-// test "to_string" {
-//   inspect(MutableSet::[1, 2, 3, 4, 5], content="MutableSet::[1, 2, 3, 4, 5]")?
-//   inspect((MutableSet::[] : MutableSet[Int]), content="MutableSet::[]")?
-// }
+test "to_string" {
+  inspect(MutableSet::[1, 2, 3, 4, 5], content="MutableSet::[1, 2, 3, 4, 5]")?
+  inspect((MutableSet::[] : MutableSet[Int]), content="MutableSet::[]")?
+}
