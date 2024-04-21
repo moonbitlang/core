@@ -58,4 +58,6 @@ test "to_string" {
   inspect(tuple3, content="(a, b, c)")?
   inspect(tuple4, content="(1, 2, 3, hello)")?
   inspect(tuple5, content="(List::[1], 2, 3, [4], 5)")?
+  inspect((1,2,3,4,5,6), ~content="(1, 2, 3, 4, 5, 6)")?
+  inspect((1,2,3,4,5,6,7), ~content="(1, 2, 3, 4, 5, 6, 7)")?
 }
