@@ -38,7 +38,7 @@ test "Bitset::has" {
 /// Get the index of the bit in the bitset.
 fn index_of(self : Bitset, idx : Int) -> Int {
   let items_below_idx = self.0.land((1).lsl(idx) - 1)
-  ctpop(items_below_idx)
+  items_below_idx.popcnt()
 }
 
 test "Bitset::index_of" {
@@ -80,7 +80,7 @@ test "Bitset::remove" {
 ///
 /// Calculate the size of a bitset
 fn size(self : Bitset) -> Int {
-  ctpop(self.0)
+  self.0.popcnt()
 }
 
 test "Bitset::size" {
@@ -92,36 +92,11 @@ test "Bitset::size" {
   @assertion.assert_eq(b.size(), 2)?
   let b = b.add(1)
   @assertion.assert_eq(b.size(), 2)?
+    
 }
 
-/// `ctpop(n: Int)`
-///
-/// Count the number of set bits (1s) in a 32-bit integer.
-fn ctpop(n : Int) -> Int {
-  // extract the lower bit of every 2-bit group
-  let low_of_2bits = 0x55555555
-  // count the number of "1"s in every 2-bit group
-  // store the result in the same 2-bit group
-  let c2 = n.land(low_of_2bits) + n.lsr(1).land(low_of_2bits)
-  // count the number of "1"s in every 4-bit group (i.e. two 2-bit groups),
-  // store the result in the same 4-bit group
-  let low_of_4bits = 0x33333333
-  let c4 = c2.land(low_of_4bits) + c2.lsr(2).land(low_of_4bits)
-  // similarly for every 8-bit group
-  let low_of_8bits = 0x0f0f0f0f
-  let c8 = c4.land(low_of_8bits) + c4.lsr(4).land(low_of_8bits)
-  // 16-bit group.
-  // there will be only two groups left, without rist of overlapping,
-  // so there's no need to clean the unused higher bits
-  let c16 = c8 + c8.lsr(8)
-  // the final 32-bit group
-  // [ctpop(x) <= 32], so only the last 6 bits are meaningful
-  let lower_6bits = 63 // 0x3f
-  (c16 + c16.lsr(16)).land(lower_6bits)
-}
 
 test "Bitset::ctpop" {
-  @assertion.assert_eq(ctpop(0), 0)?
-  @assertion.assert_eq(ctpop(0xf0f0f0f0), 16)?
-  @assertion.assert_eq(ctpop(0x3c3c0ff0), 16)?
+
+  inspect([0,0xf0f0f0f0,0x3c3c0ff0].map(fn{x=>x.popcnt()}), content="[0, 16, 16]")?
 }
