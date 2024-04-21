@@ -35,6 +35,20 @@ pub fn to_string[A : Show, B : Show, C : Show, D : Show, E : Show](
   ", " + self.3.to_string() + ", " + self.4.to_string() + ")"
 }
 
+pub fn to_string[A : Show, B : Show, C : Show, D : Show, E : Show, F : Show](
+  self : (A, B, C, D, E,F)
+) -> String {
+  let (a,b,c,d,e,f) = self
+  "(\(a), \(b), \(c), \(d), \(e), \(f))"  
+}
+
+pub fn to_string[A : Show, B : Show, C : Show, D : Show, E : Show, F : Show, G: Show](
+  self : (A, B, C, D, E, F, G)
+) -> String {
+  let (a,b,c,d,e,f,g) = self
+  "(\(a), \(b), \(c), \(d), \(e), \(f), \(g))"  
+}
+
 test "to_string" {
   let tuple2 = (1, 2)
   let tuple3 = ("a", "b", "c")
@@ -44,4 +58,6 @@ test "to_string" {
   inspect(tuple3, content="(a, b, c)")?
   inspect(tuple4, content="(1, 2, 3, hello)")?
   inspect(tuple5, content="(List::[1], 2, 3, [4], 5)")?
+  inspect((1,2,3,4,5,6), ~content="(1, 2, 3, 4, 5, 6)")?
+  inspect((1,2,3,4,5,6,7), ~content="(1, 2, 3, 4, 5, 6, 7)")?
 }
