@@ -69,10 +69,10 @@ fn remove[K : Eq, V](self : Bucket[K, V], key : K) -> Option[Bucket[K, V]] {
 
 /// Get the size of a bucket
 fn size[K, V](self : Bucket[K, V]) -> Int {
-  match self {
-    Just_One(_) => 1
-    More(_, _, rest) => rest.size() + 1
-  }
+  loop self, 1 {
+    Just_One(_), acc => acc 
+    More(_,_, rest), acc => continue rest, acc + 1
+  }  
 }
 
 test "Bucket" {
