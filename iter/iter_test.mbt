@@ -130,6 +130,35 @@ test "tap" {
   exb.expect(~content="1234512345")?
 }
 
+test "prepend" {
+  let iter = from_array(['0', '1', '2', '3', '4', '5'])
+  let exb = Buffer::make(0)
+  iter.prepend('X').iter(fn {
+    x => exb.write_char(x)
+  })
+  exb.expect(~content="X012345")?
+}
+
+test "append" {
+  let iter = from_array(['1', '2', '3', '4', '5'])
+  let exb = Buffer::make(0)
+  iter.append('6').iter(fn {
+    x => exb.write_char(x)
+  })
+  exb.expect(~content="123456")?
+}
+
+test "concat" {
+  let iter1 = from_array(['1', '2', '3'])
+  let iter2 = from_array(['4', '5', '6'])
+  let combined_iter = Iter::concat(iter1, iter2)
+  let exb = Buffer::make(0)
+  combined_iter.iter(fn {
+    x => exb.write_char(x)
+  })
+  exb.expect(~content="123456")?
+}
+
 // For testing purposes
 fn from_array[T](arr: Array[T]) -> Iter[T] {
   Iter::_unstable_internal_make(fn {
