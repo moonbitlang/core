@@ -1,3 +1,5 @@
+// Copyright 2024 International Digital Economy Academy
+//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -91,6 +93,10 @@ fn deep_clone_tree[T](node : Option[Node[T]]) -> Option[Node[T]] {
       Some(new_node)
     }
   }
+}
+
+fn new_tree[T](root : Option[Node[T]], size : Int64) -> MutableSet[T] {
+  { root, size }
 }
 
 // # Add
@@ -241,13 +247,12 @@ fn add_fix[T : Compare](parent : Node[T]) -> Unit {
 /// Remove a value from the MutableSet. If the value is not in the set, nothing happens.
 pub fn remove[T : Compare](self : MutableSet[T], value : T) -> Unit {
   // Cite: https://github.com/fgoncalves/Generic-Red-Black-Tree/blob/master/rbtree.c
-  let mut y = search_node(self, value)
-  let z = y
-  if y == None {
+  let z = search_node(self, value)
+  if z == None {
     // nothing to remove
     return
   }
-  let mut y_original_color = get_color(y)
+  let mut original_color = get_color(z)
   let z_right = get_right(z)
   let mut x = Option::None
   if is_nil(get_left(z)) {
@@ -262,8 +267,8 @@ pub fn remove[T : Compare](self : MutableSet[T], value : T) -> Unit {
     x = get_left(z)
     transplant(self, z, x)
   } else {
-    y = min_node(z_right)
-    y_original_color = get_color(y)
+    let y = min_node(z_right)
+    original_color = get_color(y)
     x = get_right(y)
     if same_pointer(get_parent(y), z) {
       set_parent(x, y)
@@ -277,7 +282,7 @@ pub fn remove[T : Compare](self : MutableSet[T], value : T) -> Unit {
     set_parent(get_left(y), y)
     set_color(y, get_color(z))
   }
-  if y_original_color == Black {
+  if original_color == Black {
     remove_fix(self, x)
   }
   self.size -= 1L
@@ -468,7 +473,7 @@ pub fn union[T : Compare](
         }
       (Some(_), None) => a
       (None, Some(_)) => b
-      (None, None) => None
+      (None, None) => abort("Impossible to reach")
     }
   }
 
@@ -476,7 +481,13 @@ pub fn union[T : Compare](
     (Some(_), Some(_)) => {
       let t1 = deep_clone_tree(self.root)
       let t2 = deep_clone_tree(src.root)
-      new_set(aux(t1, t2), self.size + src.size)
+      let t = aux(t1, t2)
+      let mut ct = 0L
+      let ret = new_set(t, 0L)
+      // TODO: optimize this. Avoid counting the size of the set.
+      ret.iter(fn(_x) { ct = ct + 1L })
+      ret.size = ct
+      ret
     }
     (Some(_), None) => new_set(deep_clone_tree(self.root), self.size)
     (None, Some(_)) => new_set(deep_clone_tree(src.root), src.size)
@@ -540,7 +551,7 @@ pub fn disjoint[T : Compare](self : MutableSet[T], src : MutableSet[T]) -> Bool 
 
 fn black_height[T : Compare](n : Option[Node[T]]) -> Int {
   loop n, 0 {
-    None, _ => 0
+    None, ct => ct
     Some(node), ct =>
       if node.color == Black {
         continue node.left, ct + 1
@@ -556,22 +567,24 @@ fn join_right[T : Compare](
   right : Option[Node[T]]
 ) -> Option[Node[T]] {
   let left_color = get_color(left)
+  // TODO: optimize this. We have computed the black height of left in `join`.
   if left_color == Black && black_height(left) == black_height(right) {
     let ret = Option::Some(
-      new_node_full(Color::Red, left, Some(value), right, None), // New node allocation
-    )
+      new_node_full(Color::Red, left, Some(value), right, None),
+    ) // New node allocation
     set_parent(left, ret)
     set_parent(right, ret)
     return ret
   }
   let new_right = join_right(get_right(left), value, right)
-  set_parent(new_right, left)
+  set_right(left, new_right)
   let rr = get_right(new_right)
-  set_right(new_right, left)
   if left_color == Black && get_color(new_right) == Red && get_color(rr) == Red {
     set_color(rr, Black)
     rotate_left(None, left)
+    return new_right
   }
+  set_parent(new_right, left)
   left
 }
 
@@ -583,20 +596,21 @@ fn join_left[T : Compare](
   let right_color = get_color(right)
   if right_color == Black && black_height(right) == black_height(left) {
     let ret = Option::Some(
-      new_node_full(Color::Red, left, Some(value), right, None), // New node allocation
-    )
+      new_node_full(Color::Red, left, Some(value), right, None),
+    ) // New node allocation
     set_parent(left, ret)
     set_parent(right, ret)
     return ret
   }
   let new_left = join_left(left, value, get_left(right))
-  set_parent(new_left, right)
   set_left(right, new_left)
   let ll = get_left(new_left)
   if right_color == Black && get_color(new_left) == Red && get_color(ll) == Red {
     set_color(ll, Black)
     rotate_right(None, right)
+    return new_left
   }
+  set_parent(new_left, right)
   right
 }
 
@@ -607,6 +621,20 @@ fn join[T : Compare](
   value : T,
   right : Option[Node[T]]
 ) -> Option[Node[T]] {
+  match (left, right) {
+    (Some(_), Some(_)) => ()
+    (None, None) => return Some(new_node(Black, value, None))
+    (Some(_), None) => {
+      let a = new_tree(left, 0L)
+      a.add(value)
+      return a.root
+    }
+    (None, Some(_)) => {
+      let a = new_tree(right, 0L)
+      a.add(value)
+      return a.root
+    }
+  }
   let lh = black_height(left)
   let rh = black_height(right)
   if lh > rh {
@@ -627,7 +655,10 @@ fn join[T : Compare](
     } else {
       Color::Black
     }
-    Some(new_node_full(color, left, Some(value), right, None)) // New node allocation
+    let ret = Option::Some(new_node_full(color, left, Some(value), right, None)) // New node allocation
+    set_parent(left, ret)
+    set_parent(right, ret)
+    ret
   }
 }
 
@@ -756,7 +787,7 @@ pub fn to_string[T : Compare + Show](self : MutableSet[T]) -> String {
 fn to_array[T](self : Node[T]) -> Array[T] {
   fn aux(n : Option[Node[T]]) {
     match n {
-      None => []
+      None => abort("Impossible to reach")
       _ =>
         if is_nil(n) {
           []
@@ -879,11 +910,15 @@ fn get_value[T](node : Option[Node[T]]) -> T {
 
 // # Other helper functions
 
-pub fn debug_write[T : Compare + Debug](self : MutableSet[T], buf : Buffer) -> Unit {
+pub fn debug_write[T : Compare + Debug](
+  self : MutableSet[T],
+  buf : Buffer
+) -> Unit {
   let linear = self.to_array()
   let len = linear.length()
   if len == 0 {
     buf.write_string("MutableSet::[]")
+    return
   }
   buf.write_string("MutableSet::[")
   for i = 0; i < len - 1; i = i + 1 {
@@ -915,38 +950,6 @@ fn same_pointer[T](x : Option[Node[T]], y : Option[Node[T]]) -> Bool {
 }
 
 // # Tests
-
-test "add" {
-  let set = MutableSet::[7, 2, 9, 4, 6, 3, 8, 1]
-  set.add(5)
-  inspect(set, content="MutableSet::[1, 2, 3, 4, 5, 6, 7, 8, 9]")?
-  let set = MutableSet::[2]
-  set.add(1)
-  inspect(set, content="MutableSet::[1, 2]")?
-  let set = MutableSet::[2]
-  set.add(3)
-  inspect(set, content="MutableSet::[2, 3]")?
-  let set = MutableSet::[2]
-  set.add(1)
-  set.add(3)
-  inspect(set, content="MutableSet::[1, 2, 3]")?
-  let set = MutableSet::[1, 2]
-  set.add(1)
-  inspect(set, content="MutableSet::[1, 2]")?
-  let set = MutableSet::[2, 3]
-  set.add(3)
-  inspect(set, content="MutableSet::[2, 3]")?
-  let set = MutableSet::[1, 2, 3]
-  set.add(1)
-  inspect(set, content="MutableSet::[1, 2, 3]")?
-  let set = MutableSet::[1, 2, 3]
-  set.add(3)
-  inspect(set, content="MutableSet::[1, 2, 3]")?
-  let set = MutableSet::[1]
-  set.add(2)
-  set.add(2)
-  inspect(set, content="MutableSet::[1, 2]")?
-}
 
 test "add_and_remove" {
   let set = MutableSet::[7, 2, 9, 4, 5, 6, 3, 8, 1]
@@ -1013,6 +1016,23 @@ test "add_and_remove" {
   inspect(set, content="MutableSet::[1, 2, 3]")?
   set.add(4)
   inspect(set, content="MutableSet::[1, 2, 3, 4]")?
+  let set = MutableSet::[7, 2, 9, 4, 5, 6, 3, 1]
+  set.remove(3)
+  inspect(set, content="MutableSet::[1, 2, 4, 5, 6, 7, 9]")?
+  set.remove(2)
+  inspect(set, content="MutableSet::[1, 4, 5, 6, 7, 9]")?
+  set.remove(5)
+  inspect(set, content="MutableSet::[1, 4, 6, 7, 9]")?
+  set.remove(9)
+  inspect(set, content="MutableSet::[1, 4, 6, 7]")?
+  set.remove(1)
+  inspect(set, content="MutableSet::[4, 6, 7]")?
+  set.remove(7)
+  inspect(set, content="MutableSet::[4, 6]")?
+  set.remove(4)
+  inspect(set, content="MutableSet::[6]")?
+  set.remove(6)
+  inspect(set.root, content="None")?
 }
 
 test "join" {
@@ -1021,6 +1041,27 @@ test "join" {
   inspect(
     join(l.root, 26, r.root),
     content="Some(MutableSet::[1, 6, 8, 11, 13, 15, 17, 25, 26, 27, 28, 33, 35, 40])",
+  )?
+  let l = MutableSet::[3, 2, 5, 1, 4]
+  let r = MutableSet::[7]
+  inspect(
+    join(l.root, 6, r.root),
+    content="Some(MutableSet::[1, 2, 3, 4, 5, 6, 7])",
+  )?
+  let l = MutableSet::[3, 2, 5, 1, 4]
+  let r = MutableSet::[]
+  inspect(
+    join(l.root, 6, r.root),
+    content="Some(MutableSet::[1, 2, 3, 4, 5, 6])",
+  )?
+  let l = MutableSet::[]
+  let r = MutableSet::[]
+  inspect(join(l.root, 6, r.root), content="Some(MutableSet::[6])")?
+  let l = MutableSet::[]
+  let r = MutableSet::[7, 8, 9, 10, 11, 12]
+  inspect(
+    join(l.root, 6, r.root),
+    content="Some(MutableSet::[6, 7, 8, 9, 10, 11, 12])",
   )?
 }
 
@@ -1040,6 +1081,25 @@ test "split" {
   let (l, r) = split(MutableSet::[].root, 7)
   inspect(l, content="None")?
   inspect(r, content="None")?
+  let (l, r) = split(
+    MutableSet::[
+      0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21,
+      22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40,
+      41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59,
+      60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78,
+      79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97,
+      98, 99, 100,
+    ].root,
+    50,
+  )
+  inspect(
+    l,
+    content="Some(MutableSet::[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49])",
+  )?
+  inspect(
+    r,
+    content="Some(MutableSet::[51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100])",
+  )?
 }
 
 test "union" {
@@ -1070,6 +1130,10 @@ test "union" {
   // Test 5: Union of an empty set with a non-empty set
   let set1 = MutableSet::[1, 2, 3]
   let set2 = MutableSet::[]
+  let set3 = set1.union(set2)
+  inspect(set3, content="MutableSet::[1, 2, 3]")?
+  let set1 = MutableSet::[]
+  let set2 = MutableSet::[1, 2, 3]
   let set3 = set1.union(set2)
   inspect(set3, content="MutableSet::[1, 2, 3]")?
 
@@ -1135,19 +1199,30 @@ test "filter" {
   )?
 }
 
+test "iter" {
+  let set = MutableSet::[7, 2, 9, 4, 5, 6, 3, 8, 1]
+  let result = Buffer::make(10)
+  set.iter(fn(x) { result.write_string(x.to_string()) })
+  inspect(result.to_string(), content="123456789")?
+  let set : MutableSet[Int] = new()
+  set.iter(fn(_x) { abort("Impossible to reach") })
+}
+
 test "contains" {
   let set = MutableSet::[7, 2, 9, 4, 6, 3, 8, 1]
+  inspect(set.contains(5), content="false")?
   set.add(5)
   inspect(set.contains(5), content="true")?
-  let set = MutableSet::[7, 2, 9, 4, 6, 3, 8, 1]
-  inspect(set.contains(5), content="false")?
+  inspect(MutableSet::[7, 2, 9, 4, 6, 3, 8, 1].contains(5), content="false")?
+  inspect(MutableSet::[].contains(1), content="false")?
 }
 
 test "to_list" {
   inspect(
-    MutableSet::[7, 2, 9, 4, 5, 6, 3, 8, 1],
-    content="MutableSet::[1, 2, 3, 4, 5, 6, 7, 8, 9]",
+    MutableSet::[7, 2, 9, 4, 5, 6, 3, 8, 1].to_list(),
+    content="List::[1, 2, 3, 4, 5, 6, 7, 8, 9]",
   )?
+  inspect((MutableSet::[] : MutableSet[Int]).to_list(), content="List::[]")?
 }
 
 test "to_array" {
@@ -1155,6 +1230,7 @@ test "to_array" {
     MutableSet::[7, 2, 9, 4, 5, 6, 3, 8, 1].to_array(),
     content="[1, 2, 3, 4, 5, 6, 7, 8, 9]",
   )?
+  inspect((MutableSet::[] : MutableSet[Int]).to_array(), content="[]")?
 }
 
 test "to_vec" {
@@ -1209,4 +1285,97 @@ test "size" {
   inspect(MutableSet::[1, 2, 3, 4, 5].size(), content="5")?
   inspect(MutableSet::[1].size(), content="1")?
   inspect((MutableSet::[] : MutableSet[Int]).size(), content="0")?
+}
+
+test "singleton" {
+  inspect(MutableSet::[1].size(), content="1")?
+  inspect(MutableSet::[1].contains(1), content="true")?
+  inspect(MutableSet::[1].contains(2), content="false")?
+}
+
+test "deep_clone" {
+  let set = MutableSet::[1, 2, 3, 4, 5]
+  let clone = set.deep_clone()
+  inspect(clone, content="MutableSet::[1, 2, 3, 4, 5]")?
+  let set : MutableSet[Int] = MutableSet::[]
+  let clone = set.deep_clone()
+  inspect(clone, content="MutableSet::[]")?
+}
+
+test "debug_write" {
+  let buf = Buffer::make(100)
+  let set = MutableSet::[1, 2, 3, 4, 5]
+  set.debug_write(buf)
+  inspect(buf.to_string(), content="MutableSet::[1, 2, 3, 4, 5]")?
+  let buf = Buffer::make(100)
+  let set : MutableSet[Int] = MutableSet::[]
+  set.debug_write(buf)
+  inspect(buf.to_string(), content="MutableSet::[]")?
+}
+
+test "is_nil" {
+  let node : Option[Node[Int]] = Option::None
+  inspect(is_nil(node), content="false")?
+}
+
+test "same_pointer" {
+  let node1 : Option[Node[Int]] = Option::None
+  inspect(same_pointer(node1, node1), content="true")?
+  let node2 : Option[Node[Int]] = MutableSet::[1].root
+  inspect(same_pointer(node1, node2), content="false")?
+}
+
+test "min_node" {
+  let set = MutableSet::[7, 2, 9, 4, 5, 6, 3, 8, 1]
+  inspect(min_node(set.root).unwrap().value, content="Some(1)")?
+  let set : MutableSet[Int] = MutableSet::[]
+  inspect(min_node(set.root), content="None")?
+}
+
+test "mix_everything" {
+  // test all functions together, including add, remove, union, diff, inter, subset, disjoint, size, is_empty, contains
+  let set1 = MutableSet::[1, 2, 3, 4, 5]
+  let set2 = MutableSet::[4, 5, 6, 7, 8]
+  set1.add(6)
+  inspect(set1, content="MutableSet::[1, 2, 3, 4, 5, 6]")?
+  set1.remove(6)
+  inspect(set1, content="MutableSet::[1, 2, 3, 4, 5]")?
+  let set3 = set1.union(set2)
+  inspect(set3, content="MutableSet::[1, 2, 3, 4, 5, 6, 7, 8]")?
+  let set4 = set1.diff(set2)
+  inspect(set4, content="MutableSet::[1, 2, 3]")?
+  let set5 = set1.intersect(set2)
+  inspect(set5, content="MutableSet::[4, 5]")?
+  inspect(set1.subset(set3), content="true")?
+  set3.remove(3)
+  inspect(set3, content="MutableSet::[1, 2, 4, 5, 6, 7, 8]")?
+  inspect(set3.size(), content="7")?
+  inspect(set3.is_empty(), content="false")?
+  inspect(set3.contains(1), content="true")?
+  inspect(set3.contains(3), content="false")?
+  inspect(set3.disjoint(set1), content="false")?
+  let set6 = set3.union(MutableSet::[])
+  inspect(set6, content="MutableSet::[1, 2, 4, 5, 6, 7, 8]")?
+  let set7 = set3.union(MutableSet::[12, 13, 14, 33, 22])
+  inspect(set7, content="MutableSet::[1, 2, 4, 5, 6, 7, 8, 12, 13, 14, 22, 33]")?
+  for i = 1; i <= 5; i = i + 1 {
+    set7.remove(i)
+  }
+  inspect(set7, content="MutableSet::[6, 7, 8, 12, 13, 14, 22, 33]")?
+  for i = 6; i <= 33; i = i + 1 {
+    set7.remove(i)
+  }
+  let set = MutableSet::[
+    90, 70, 13, 44, 11, 49, 39, 35, 52, 8, 80, 40, 58, 67, 84, 38, 93, 97, 54, 95,
+  ]
+  set.remove(70)
+  inspect(
+    set,
+    content="MutableSet::[8, 11, 13, 35, 38, 39, 40, 44, 49, 52, 54, 58, 67, 80, 84, 90, 93, 95, 97]",
+  )?
+  set.remove(52)
+  inspect(
+    set,
+    content="MutableSet::[8, 11, 13, 35, 38, 39, 40, 44, 49, 54, 58, 67, 80, 84, 90, 93, 95, 97]",
+  )?
 }
