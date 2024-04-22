@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+/// Try to get this element as a Null
 pub fn get_as_null(self : JsonValue) -> Option[Unit] {
   match self {
     Null => Some(())
@@ -19,10 +20,12 @@ pub fn get_as_null(self : JsonValue) -> Option[Unit] {
   }
 }
 
+/// Try to get this element as a Json Array and try to get the element at the `index` as a Null
 pub fn get_item_as_null(self : JsonValue, index : Int) -> Option[Unit] {
   self.get_as_array()?.get(index)?.get_as_null()
 }
 
+/// Try to get this element as a Json Object and try to get the element with the `key` as a Null
 pub fn get_value_as_null(self : JsonValue, key : String) -> Option[Unit] {
   self.get_as_object()?.lookup(key)?.get_as_null()
 }
@@ -49,6 +52,7 @@ test "get as null" {
   )?
 }
 
+/// Try to get this element as a Boolean
 pub fn get_as_bool(self : JsonValue) -> Option[Bool] {
   match self {
     Boolean(b) => Some(b)
@@ -56,10 +60,12 @@ pub fn get_as_bool(self : JsonValue) -> Option[Bool] {
   }
 }
 
+/// Try to get this element as a Json Array and try to get the element at the `index` as a Boolean
 pub fn get_item_as_bool(self : JsonValue, index : Int) -> Option[Bool] {
   self.get_as_array()?.get(index)?.get_as_bool()
 }
 
+/// Try to get this element as a Json Object and try to get the element with the `key` as a Boolean
 pub fn get_value_as_bool(self : JsonValue, key : String) -> Option[Bool] {
   self.get_as_object()?.lookup(key)?.get_as_bool()
 }
@@ -86,6 +92,7 @@ test "get as bool" {
   )?
 }
 
+/// Try to get this element as a Number
 pub fn get_as_number(self : JsonValue) -> Option[Double] {
   match self {
     Number(n) => Some(n)
@@ -93,10 +100,12 @@ pub fn get_as_number(self : JsonValue) -> Option[Double] {
   }
 }
 
+/// Try to get this element as a Json Array and try to get the element at the `index` as a Number
 pub fn get_item_as_number(self : JsonValue, index : Int) -> Option[Double] {
   self.get_as_array()?.get(index)?.get_as_number()
 }
 
+/// Try to get this element as a Json Object and try to get the element with the `key` as a Number
 pub fn get_value_as_number(self : JsonValue, key : String) -> Option[Double] {
   self.get_as_object()?.lookup(key)?.get_as_number()
 }
@@ -123,6 +132,7 @@ test "get as number" {
   )?
 }
 
+/// Try to get this element as a String
 pub fn get_as_string(self : JsonValue) -> Option[String] {
   match self {
     String(s) => Some(s)
@@ -130,10 +140,12 @@ pub fn get_as_string(self : JsonValue) -> Option[String] {
   }
 }
 
+/// Try to get this element as a Json Array and try to get the element at the `index` as a String
 pub fn get_item_as_string(self : JsonValue, index : Int) -> Option[String] {
   self.get_as_array()?.get(index)?.get_as_string()
 }
 
+/// Try to get this element as a Json Object and try to get the element with the `key` as a String
 pub fn get_value_as_string(self : JsonValue, key : String) -> Option[String] {
   self.get_as_object()?.lookup(key)?.get_as_string()
 }
@@ -163,6 +175,7 @@ test "get as string" {
   )?
 }
 
+/// Try to get this element as an Array
 pub fn get_as_array(self : JsonValue) -> Option[@vec.Vec[JsonValue]] {
   match self {
     Array(arr) => Some(arr)
@@ -170,6 +183,7 @@ pub fn get_as_array(self : JsonValue) -> Option[@vec.Vec[JsonValue]] {
   }
 }
 
+/// Try to get this element as a Json Array and try to get the element at the `index` as an Array
 pub fn get_item_as_array(
   self : JsonValue,
   index : Int
@@ -177,6 +191,7 @@ pub fn get_item_as_array(
   self.get_as_array()?.get(index)?.get_as_array()
 }
 
+/// Try to get this element as a Json Object and try to get the element with the `key` as an Array
 pub fn get_value_as_array(
   self : JsonValue,
   key : String
@@ -184,6 +199,7 @@ pub fn get_value_as_array(
   self.get_as_object()?.lookup(key)?.get_as_array()
 }
 
+/// Try to get this element as a Json Array and get the element at the `index` as a Json Value
 pub fn get_item(self : JsonValue, index : Int) -> Option[JsonValue] {
   self.get_as_array()?.get(index)
 }
@@ -228,6 +244,7 @@ test "get as array" {
   )?
 }
 
+/// Try to get this element as an Object
 pub fn get_as_object(self : JsonValue) -> Option[@map.Map[String, JsonValue]] {
   match self {
     Object(obj) => Some(obj)
@@ -235,6 +252,7 @@ pub fn get_as_object(self : JsonValue) -> Option[@map.Map[String, JsonValue]] {
   }
 }
 
+/// Try to get this element as a Json Array and try to get the element at the `index` as an Object
 pub fn get_item_as_object(
   self : JsonValue,
   index : Int
@@ -242,6 +260,7 @@ pub fn get_item_as_object(
   self.get_as_array()?.get(index)?.get_as_object()
 }
 
+/// Try to get this element as a Json Object and try to get the element with the `key` as an Object
 pub fn get_value_as_object(
   self : JsonValue,
   key : String
@@ -249,6 +268,7 @@ pub fn get_value_as_object(
   self.get_as_object()?.lookup(key)?.get_as_object()
 }
 
+/// Try to get this element as a Json Object and get the element with the `key` as a Json Value
 pub fn get_value(self : JsonValue, key : String) -> Option[JsonValue] {
   self.get_as_object()?.lookup(key)
 }
