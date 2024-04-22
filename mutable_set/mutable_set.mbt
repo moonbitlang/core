@@ -1288,9 +1288,9 @@ test "size" {
 }
 
 test "singleton" {
-  inspect(MutableSet::[1].size(), content="1")?
-  inspect(MutableSet::[1].contains(1), content="true")?
-  inspect(MutableSet::[1].contains(2), content="false")?
+  inspect(MutableSet::singleton(1).size(), content="1")?
+  inspect(MutableSet::singleton(1).contains(1), content="true")?
+  inspect(MutableSet::singleton(1).contains(2), content="false")?
 }
 
 test "deep_clone" {
