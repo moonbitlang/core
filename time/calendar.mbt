@@ -13,7 +13,8 @@
 // limitations under the License.
 
 pub trait Calendar {
-  id(Self) -> String
+  get_type(Self) -> CalendarType
+  to_string(Self) -> String
   era(Self, PlainDate) -> String
   era_year(Self, PlainDate) -> Int
   year(Self, PlainDate) -> Int
@@ -40,10 +41,17 @@ pub trait Calendar {
 pub enum CalendarType {
   // TODO: implements more calendar
   ISO8601
+} derive(Debug, Eq)
+
+pub fn to_string(self: CalendarType) -> String {
+  match self {
+    ISO8601 => "iso8601"
+  }
 }
 
-pub fn calendar_of(calendar_type : CalendarType) -> Calendar {
-  match calendar_type {
-    ISO8601 => IsoCalendar::IsoCalendar("iso")
+pub fn calendar_of(name : String) -> Option[Calendar] {
+  match name {
+    "iso8601" => Some(iso_calendar)
+    _ => None
   }
 }

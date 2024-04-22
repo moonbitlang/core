@@ -35,8 +35,15 @@ fn remove_prefix_zero(s : String) -> String {
 
 /// FIXME: use substring method of String
 fn substring(s : String, start : Int, len : Int) -> String {
-  let buf = Buffer::make(len)
-  buf.write_sub_string(s, start, len)
+  let mut sub_len = len
+  if start + len > s.length() {
+    sub_len = s.length() - start
+  }
+  if sub_len < 1 {
+    return ""
+  }
+  let buf = Buffer::make(sub_len)
+  buf.write_sub_string(s, start, sub_len)
   buf.to_string()
 }
 
@@ -102,6 +109,9 @@ test "remove_prefix_zero" {
 
 test "split" {
   inspect(split("2000-01-01", '-'), content="Vec::[2000, 01, 01]")?
+  inspect(split("-01-01", '-'), content="Vec::[, 01, 01]")?
+  inspect(split("12-31", '-'), content="Vec::[12, 31]")?
+  inspect(split("-01", '-'), content="Vec::[, 01]")?
 }
 
 test "checked_add_int64" {

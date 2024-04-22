@@ -1,12 +1,15 @@
 package moonbitlang/core/time
 
 // Values
-fn calendar_of(CalendarType) -> Calendar
+fn calendar_of(String) -> Option[Calendar]
 
 // Types and methods
 pub enum CalendarType {
   ISO8601
 }
+fn CalendarType::debug_write(CalendarType, @moonbitlang/core/builtin.Buffer) -> Unit
+fn CalendarType::op_equal(CalendarType, CalendarType) -> Bool
+fn CalendarType::to_string(CalendarType) -> String
 
 type DayOfWeek
 fn DayOfWeek::debug_write(DayOfWeek, @moonbitlang/core/builtin.Buffer) -> Unit
@@ -34,7 +37,7 @@ fn IsoCalendar::days_in_year(IsoCalendar, PlainDate) -> Int
 fn IsoCalendar::debug_write(IsoCalendar, @moonbitlang/core/builtin.Buffer) -> Unit
 fn IsoCalendar::era(IsoCalendar, PlainDate) -> String
 fn IsoCalendar::era_year(IsoCalendar, PlainDate) -> Int
-fn IsoCalendar::id(IsoCalendar) -> String
+fn IsoCalendar::get_type(IsoCalendar) -> CalendarType
 fn IsoCalendar::in_leap_year(IsoCalendar, PlainDate) -> Bool
 fn IsoCalendar::month(IsoCalendar, PlainDate) -> Int
 fn IsoCalendar::months_in_year(IsoCalendar, PlainDate) -> Int
@@ -63,10 +66,14 @@ fn PlainDate::day_of_year(PlainDate) -> Int
 fn PlainDate::days_in_month(PlainDate) -> Int
 fn PlainDate::days_in_week(PlainDate) -> Int
 fn PlainDate::days_in_year(PlainDate) -> Int
-fn PlainDate::from(Int, Int, Int, Calendar) -> Result[PlainDate, String]
+fn PlainDate::from_string(String) -> Result[PlainDate, String]
+fn PlainDate::get_calendar(PlainDate) -> Calendar
 fn PlainDate::in_leap_year(PlainDate) -> Bool
 fn PlainDate::month(PlainDate) -> Int
 fn PlainDate::months_in_year(PlainDate) -> Int
+fn PlainDate::of(Int, Int, Int, Calendar) -> Result[PlainDate, String]
+fn PlainDate::op_equal(PlainDate, PlainDate) -> Bool
+fn PlainDate::to_string(PlainDate) -> String
 fn PlainDate::with_calendar(PlainDate, Calendar) -> Result[PlainDate, String]
 fn PlainDate::with_day(PlainDate, Int) -> Result[PlainDate, String]
 fn PlainDate::with_month(PlainDate, Int) -> Result[PlainDate, String]
@@ -81,7 +88,8 @@ fn PlainTime::op_equal(PlainTime, PlainTime) -> Bool
 
 // Traits
 pub trait Calendar {
-  id(Self) -> String
+  get_type(Self) -> CalendarType
+  to_string(Self) -> String
   era(Self, PlainDate) -> String
   era_year(Self, PlainDate) -> Int
   year(Self, PlainDate) -> Int
