@@ -35,6 +35,7 @@ fn Array::sort_by_key[T, K : Compare + Eq](Array[T], (T) -> K) -> Unit
 fn Array::stable_sort[T : Compare + Eq](Array[T]) -> Unit
 fn Array::starts_with[T : Eq](Array[T], Array[T]) -> Bool
 fn Array::swap[T](Array[T], Int, Int) -> Unit
+fn Array::to_iter[T](Array[T]) -> @moonbitlang/core/iter.Iter[T]
 fn Array::to_list[T](Array[T]) -> List[T]
 
 // Traits
