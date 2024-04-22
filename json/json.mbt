@@ -184,6 +184,10 @@ pub fn get_value_as_array(
   self.get_as_object()?.lookup(key)?.get_as_array()
 }
 
+pub fn get_item(self : JsonValue, index : Int) -> Option[JsonValue] {
+  self.get_as_array()?.get(index)
+}
+
 test "get as array" {
   inspect(JsonValue::Null |> get_as_array, content="None")?
   inspect(JsonValue::Boolean(false) |> get_as_array, content="None")?
@@ -198,17 +202,20 @@ test "get as array" {
     JsonValue::Array(@vec.Vec::[JsonValue::String("Hello World")]).get_item_as_string(
       0,
     ),
-  ~content="Some(Hello World)")?
+    content="Some(Hello World)",
+  )?
   inspect(
     JsonValue::Array(@vec.Vec::[JsonValue::String("Hello World")]).get_item_as_string(
       1,
     ),
-  ~content="None")?
+    content="None",
+  )?
   inspect(
     JsonValue::Array(@vec.Vec::[JsonValue::String("Hello World")]).get_item_as_number(
       0,
     ),
-  ~content="None")?
+    content="None",
+  )?
   inspect(
     JsonValue::Object(
       @map.Map::[
@@ -240,6 +247,10 @@ pub fn get_value_as_object(
   key : String
 ) -> Option[@map.Map[String, JsonValue]] {
   self.get_as_object()?.lookup(key)?.get_as_object()
+}
+
+pub fn get_value(self : JsonValue, key : String) -> Option[JsonValue] {
+  self.get_as_object()?.lookup(key)
 }
 
 test "get as object" {
@@ -313,5 +324,66 @@ test "get as object" {
       ],
     ).get_value_as_number("asdf"),
     content="None",
+  )?
+}
+
+test "deep access" {
+  let json = JsonValue::Object(
+    @map.Map::[
+      (
+        "key",
+        JsonValue::Array(
+          @vec.Vec::[
+            JsonValue::Number(1.0),
+            JsonValue::Boolean(true),
+            JsonValue::Null,
+            JsonValue::Array(@vec.Vec::[]),
+            JsonValue::Object(
+              @map.Map::[
+                ("key", JsonValue::String("value")),
+                ("value", JsonValue::Number(100.0)),
+              ],
+            ),
+          ],
+        ),
+      ),
+      ("null", JsonValue::Null),
+      ("bool", JsonValue::Boolean(false)),
+      ("obj", JsonValue::Object(@map.Map::[])),
+    ],
+  )
+  inspect(json.get_value_as_null("null"), content="Some(())")?
+  inspect(
+    json.get_value("key").bind(fn { array => array.get_item_as_null(2) }),
+    content="Some(())",
+  )?
+  inspect(json.get_value_as_bool("bool"), content="Some(false)")?
+  inspect(
+    json.get_value("key").bind(fn { array => array.get_item_as_bool(1) }),
+    content="Some(true)",
+  )?
+  inspect(
+    json.get_value_as_array("key"),
+    content="Some(Vec::[Number(1.0), Boolean(true), Null, Array(Vec::[]), Object(Map::[(\"key\", String(\"value\")), (\"value\", Number(100.0))])])",
+  )?
+  inspect(
+    json.get_value("key").bind(fn { array => array.get_item_as_array(3) }),
+    content="Some(Vec::[])",
+  )?
+  inspect(
+    json.get_value("key").bind(fn { array => array.get_item_as_object(4) }).map(
+      @map.Map::to_vec,
+    ),
+    content="Some(Vec::[(key, String(\"value\")), (value, Number(100.0))])",
+  )?
+  inspect(
+    json.get_value_as_object("obj").map(@map.Map::to_vec),
+    content="Some(Vec::[])",
+  )?
+  inspect(
+    json.get_value("key").bind(fn { array => array.get_item(4) }).bind(
+      fn { obj => obj.get_value_as_number("value") },
+    ),
+    content="Some(100.0)",
   )?
 }
