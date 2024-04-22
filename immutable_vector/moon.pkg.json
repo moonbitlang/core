@@ -4,6 +4,7 @@
     "moonbitlang/core/assertion",
     "moonbitlang/core/tuple",
     "moonbitlang/core/vec",
+    "moonbitlang/core/array",
     "moonbitlang/core/coverage"
   ]
 }

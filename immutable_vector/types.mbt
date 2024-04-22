@@ -18,3 +18,15 @@ struct ImmutableVec[T] {
   buf : UninitializedArray[T]
   len : Int
 }
+
+enum Tree[T] {
+  Empty
+  Node(Array[Tree[T]])
+  Leaf(Array[T])
+} derive(Eq, Debug)
+
+struct PersistentVector[T] {
+  tree : Tree[T]
+  size : Int
+  shift : Int
+} derive(Debug)
