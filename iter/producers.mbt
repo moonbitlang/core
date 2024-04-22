@@ -13,7 +13,7 @@
 // limitations under the License.
 
 /// Do not use this method, it is for internal use only.
-pub fn Iter::_unstable_internal_make[T](f : ((T) -> Bool) -> Unit) -> Iter[T] {
+pub fn Iter::_unstable_internal_make[T](f : ((T) -> Bool) -> Bool) -> Iter[T] {
   Iter::Iter(f)
 }
 
@@ -27,7 +27,7 @@ pub fn Iter::_unstable_internal_make[T](f : ((T) -> Bool) -> Unit) -> Iter[T] {
 ///
 /// Returns an empty iterator of type `Iter[T]`.
 pub fn Iter::empty[T]() -> Iter[T] {
-  Iter::Iter(fn { _ => () })
+  Iter::Iter(fn { _ => true })
 }
 
 /// Creates an iterator that contains a single element.
@@ -44,7 +44,7 @@ pub fn Iter::empty[T]() -> Iter[T] {
 ///
 /// Returns an iterator of type `Iter[T]` that contains the single element `a`.
 pub fn Iter::singleton[T](a : T) -> Iter[T] {
-  Iter::Iter(fn { yield => ignore(yield(a)) })
+  Iter::Iter(fn { yield => yield(a) })
 }
 
 /// Creates an iterator that repeats the given element indefinitely.
@@ -60,13 +60,15 @@ pub fn Iter::singleton[T](a : T) -> Iter[T] {
 /// # Returns
 ///
 /// Returns an iterator of type `Iter[T]` that repeats the element `a` indefinitely.
-/// @intrinsic %iter.cycle
+/// @intrinsic %iter.repeat
 pub fn Iter::repeat[T](a : T) -> Iter[T] {
   Iter::Iter(
     fn(yield) {
       for ; ; {
-        if yield(a).not() {
-          break
+        if yield(a) {
+          continue
+        } else {
+          break false
         }
       }
     },

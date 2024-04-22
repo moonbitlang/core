@@ -136,9 +136,9 @@ fn from_array[T](arr: Array[T]) -> Iter[T] {
     yield => {
       for i = 0; i < arr.length(); i = i + 1 {
         if yield(arr[i]).not() {
-          break
+          break false
         }
-      }
+      } else { true }
     }
   })
 }

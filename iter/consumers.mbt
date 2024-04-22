@@ -13,13 +13,13 @@
 // limitations under the License.
 
 /// Iterates over each element in the iterator, applying the function `f` to each element.
-/// 
+///
 /// # Type Parameters
-/// 
+///
 /// - `T`: The type of the elements in the iterator.
-/// 
+///
 /// # Arguments
-/// 
+///
 /// - `self`: The iterator to consume.
 /// - `f`: A function that takes an element of type `T` and returns `Unit`. This function is applied to each element of the iterator.
 /// @intrinsic %iter.iter
@@ -31,29 +31,29 @@ pub fn iter[T](self : Iter[T], f : (T) -> Unit) -> Unit {
         true
       }
     },
-  )
+  ) |> ignore
 }
 
 /// Folds the elements of the iterator using the given function, starting with the given initial value.
-/// 
+///
 /// # Type Parameters
-/// 
+///
 /// - `T`: The type of the elements in the iterator.
 /// - `B`: The type of the accumulator value.
-/// 
+///
 /// # Arguments
-/// 
+///
 /// - `self`: The iterator to consume.
 /// - `f`: A function that takes an accumulator of type `B` and an element of type `T`, and returns a new accumulator value.
 /// - `init`: The initial value for the fold operation.
-/// 
+///
 /// # Returns
-/// 
+///
 /// Returns the final accumulator value after folding all elements of the iterator.
 /// @intrinsic %iter.reduce
 pub fn fold[T, B](self : Iter[T], f : (B, T) -> B, init : B) -> B {
   let mut acc = init
-  (self.0)(
+  let _ = (self.0)(
     fn {
       yield => {
         acc = f(acc, yield)
@@ -65,17 +65,17 @@ pub fn fold[T, B](self : Iter[T], f : (B, T) -> B, init : B) -> B {
 }
 
 /// Counts the number of elements in the iterator.
-/// 
+///
 /// # Type Parameters
-/// 
+///
 /// - `T`: The type of the elements in the iterator.
-/// 
+///
 /// # Arguments
-/// 
+///
 /// - `self`: The iterator to consume.
-/// 
+///
 /// # Returns
-/// 
+///
 /// Returns the number of elements in the iterator.
 pub fn count[T](self : Iter[T]) -> Int {
   self.fold(fn { acc, _ => acc + 1 }, 0)

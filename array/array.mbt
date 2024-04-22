@@ -901,9 +901,9 @@ pub fn to_iter[T](self : Array[T]) -> @iter.Iter[T] {
     fn(yield) {
       for i = 0, len = self.length(); i < len; i = i + 1 {
         if yield(self[i]).not() {
-          break
+          break false
         }
-      }
+      } else { true }
     },
   )
 }
