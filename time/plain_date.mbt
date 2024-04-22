@@ -19,13 +19,39 @@ struct PlainDate {
   calendar : Calendar
 }
 
-pub fn PlainDate::from(
+/// Creates a PlainDate from a year, month, day and calendar.
+/// The default calendar is ISO 8601 calendar.
+pub fn PlainDate::of(
   year : Int,
   month : Int,
   day : Int,
-  ~calendar : Calendar = calendar_of(ISO8601)
+  ~calendar : Calendar = iso_calendar
 ) -> Result[PlainDate, String] {
   calendar.date_from(year, month, day)
+}
+
+/// Creates a PlainDate from an ISO 8601 date string.
+pub fn PlainDate::from_string(str : String) -> Result[PlainDate, String] {
+  // TODO: better parsing implementation, parse the calendar specified in the string.
+  let s = substring(str, 0, 10)
+  let ymd = split(s, '-')
+  if ymd.length() < 3 {
+    return Err(invalid_date_err)
+  }
+  let y = ymd[0]
+  let m = ymd[1]
+  let d = ymd[2]
+  if y.length() < 4 || m.length() < 2 || d.length() < 2 {
+    return Err(invalid_date_err)
+  }
+  let year = @strconv.parse(y)?
+  let month = @strconv.parse(m)?
+  let day = @strconv.parse(d)?
+  iso_calendar.date_from(year, month, day)
+}
+
+pub fn op_equal(self : PlainDate, other : PlainDate) -> Bool {
+  self.compare(other) == 0 && self.calendar.get_type() == other.calendar.get_type()
 }
 
 pub fn compare(self : PlainDate, other : PlainDate) -> Int {
@@ -133,4 +159,58 @@ pub fn add_period(
   period : Period
 ) -> Result[PlainDate, String] {
   self.calendar.add_period(self, period)
+}
+
+pub fn get_calendar(self : PlainDate) -> Calendar {
+  self.calendar
+}
+
+/// Returns a string in the ISO 8601 date format representing the date.
+pub fn to_string(self : PlainDate) -> String {
+  let buf = Buffer::make(10)
+  buf.write_string(add_prefix_zero(self.year.to_string(), 4))
+  buf.write_char('-')
+  buf.write_string(add_prefix_zero(self.month.to_string(), 2))
+  buf.write_char('-')
+  buf.write_string(add_prefix_zero(self.day.to_string(), 2))
+  if self.calendar.get_type() != CalendarType::ISO8601 {
+    buf.write_string("[u-ca=")
+    buf.write_string(self.calendar.to_string())
+    buf.write_string("]")
+  }
+  buf.to_string()
+}
+
+test "compare" {
+  let d1 = PlainDate::of(2000, 1, 1)?
+  let d2 = PlainDate::of(2000, 1, 1)?
+  let d3 = PlainDate::of(2000, 2, 1)?
+  inspect(d1 == d2, content="true")?
+  inspect(d1 < d2, content="false")?
+  inspect(d1 > d2, content="false")?
+  inspect(d1 < d3, content="true")?
+  inspect(d1 > d3, content="false")?
+  inspect(d3 > d1, content="true")?
+  inspect(d3 > d2, content="true")?
+}
+
+test "of" {
+  inspect(PlainDate::of(2008, 8, 8), content="Ok(2008-08-08)")?
+  inspect(PlainDate::of(0, 1, 1), content="Ok(0000-01-01)")?
+  inspect(PlainDate::of(1, 1, 1), content="Ok(0001-01-01)")?
+  inspect(PlainDate::of(2000, 2, 29), content="Ok(2000-02-29)")?
+  inspect(PlainDate::of(2001, 2, 29), content="Err(Invalid date)")?
+  inspect(PlainDate::of(2001, 1, 32), content="Err(Invalid date)")?
+  inspect(PlainDate::of(10000, 1, 1), content="Err(Invalid date)")?
+}
+
+test "from_string" {
+  inspect(PlainDate::from_string("2008-08-08"), content="Ok(2008-08-08)")?
+  inspect(PlainDate::from_string("0000-01-01"), content="Ok(0000-01-01)")?
+  inspect(PlainDate::from_string("0001-01-01"), content="Ok(0001-01-01)")?
+  inspect(PlainDate::from_string("10000-01-01"), content="Err(Invalid date)")?
+  inspect(PlainDate::from_string("-1970-01-01"), content="Err(Invalid date)")?
+  inspect(PlainDate::from_string("-01-01"), content="Err(Invalid date)")?
+  inspect(PlainDate::from_string("12-31"), content="Err(Invalid date)")?
+  inspect(PlainDate::from_string("-01"), content="Err(Invalid date)")?
 }
