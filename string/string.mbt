@@ -111,3 +111,35 @@ test "to_array" {
   inspect(a[4], content="b")?
   inspect(a[5], content="t")?
 }
+
+/// @intrinsic %string.substring
+fn unsafe_substring(str : String, start : Int, end : Int) -> String {
+  let len = end - start
+  let buf = Buffer::make(len)
+  buf.write_sub_string(str, start, len)
+  buf.to_string()
+}
+
+/// Get substring of the string from [start] to [end] exclusive.
+pub fn substring(self : String, ~start : Int = 0, ~end : Int = self.length()) -> String {
+  if start < 0 {
+    abort("String::substring: start index is negative")
+  }
+  if end < 0 {
+    abort("String::substring: end index is negative")
+  }
+  if start > end {
+    abort("String::substring: start index is greater than end index")
+  }
+  if end > self.length() {
+    abort("String::substring: end index is greater than the length of the string")
+  }
+  unsafe_substring(self, start, end)
+}
+
+test "substring" {
+  @assertion.assert_eq("abc".substring(), "abc")?
+  @assertion.assert_eq("abc".substring(start=1), "bc")?
+  @assertion.assert_eq("abc".substring(end=2), "ab")?
+  @assertion.assert_eq("abc".substring(start=1, end=2), "b")?
+}
