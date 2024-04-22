@@ -1,5 +1,5 @@
-pub fn get_as_null(json : JsonValue) -> Option[Unit] {
-  match json {
+pub fn get_as_null(self : JsonValue) -> Option[Unit] {
+  match self {
     Null => Some(())
     _ => None
   }
@@ -25,8 +25,8 @@ test "get as null" {
   content="None")?
 }
 
-pub fn get_as_bool(json : JsonValue) -> Option[Bool] {
-  match json {
+pub fn get_as_bool(self : JsonValue) -> Option[Bool] {
+  match self {
     Boolean(b) => Some(b)
     _ => None
   }
@@ -54,8 +54,8 @@ test "get as bool" {
   )?
 }
 
-pub fn get_as_number(json : JsonValue) -> Option[Double] {
-  match json {
+pub fn get_as_number(self : JsonValue) -> Option[Double] {
+  match self {
     Number(n) => Some(n)
     _ => None
   }
@@ -83,8 +83,8 @@ test "get as number" {
   )?
 }
 
-pub fn get_as_string(json : JsonValue) -> Option[String] {
-  match json {
+pub fn get_as_string(self : JsonValue) -> Option[String] {
+  match self {
     String(s) => Some(s)
     _ => None
   }
@@ -112,8 +112,8 @@ test "get as string" {
   )?
 }
 
-pub fn get_as_array(json : JsonValue) -> Option[@vec.Vec[JsonValue]] {
-  match json {
+pub fn get_as_array(self : JsonValue) -> Option[@vec.Vec[JsonValue]] {
+  match self {
     Array(arr) => Some(arr)
     _ => None
   }
@@ -141,8 +141,8 @@ test "get as array" {
   )?
 }
 
-pub fn get_as_object(json : JsonValue) -> Option[@map.Map[String, JsonValue]] {
-  match json {
+pub fn get_as_object(self : JsonValue) -> Option[@map.Map[String, JsonValue]] {
+  match self {
     Object(obj) => Some(obj)
     _ => None
   }
