@@ -4,7 +4,7 @@ package moonbitlang/core/double
 
 // Types and methods
 fn Double::abs(Double) -> Double
-fn Double::debug_write(Double, @moonbitlang/core/builtin.Buffer) -> Unit
+fn Double::debug_write(Double, Buffer) -> Unit
 fn Double::from_int(Int) -> Double
 fn Double::hash(Double) -> Int
 fn Double::inf(Int) -> Double

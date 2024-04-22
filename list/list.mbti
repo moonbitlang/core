@@ -12,11 +12,11 @@ fn List::all[T](List[T], (T) -> Bool) -> Bool
 fn List::any[T](List[T], (T) -> Bool) -> Bool
 fn List::concat[T](List[T], List[T]) -> List[T]
 fn List::concat_map[T, U](List[T], (T) -> List[U]) -> List[U]
-fn List::contain[T : @moonbitlang/core/builtin.Eq](List[T], T) -> Bool
+fn List::contain[T : Eq](List[T], T) -> Bool
 fn List::default[X]() -> List[X]
 fn List::drop[T](List[T], Int) -> List[T]
 fn List::drop_while[T](List[T], (T) -> Bool) -> List[T]
-fn List::equal[T : @moonbitlang/core/builtin.Eq](List[T], List[T]) -> Bool
+fn List::equal[T : Eq](List[T], List[T]) -> Bool
 fn List::filter[T](List[T], (T) -> Bool) -> List[T]
 fn List::find[T](List[T], (T) -> Bool) -> Option[T]
 fn List::findi[T](List[T], (T, Int) -> Bool) -> Option[T]
@@ -32,26 +32,26 @@ fn List::init_[T](List[T]) -> List[T]
 fn List::intercalate[T](List[List[T]], List[T]) -> List[T]
 fn List::intersperse[T](List[T], T) -> List[T]
 fn List::is_empty[T](List[T]) -> Bool
-fn List::is_prefix[T : @moonbitlang/core/builtin.Eq](List[T], List[T]) -> Bool
-fn List::is_suffix[T : @moonbitlang/core/builtin.Eq](List[T], List[T]) -> Bool
+fn List::is_prefix[T : Eq](List[T], List[T]) -> Bool
+fn List::is_suffix[T : Eq](List[T], List[T]) -> Bool
 fn List::iter[T](List[T], (T) -> Unit) -> Unit
 fn List::iteri[T](List[T], (Int, T) -> Unit) -> Unit
 fn List::last[T](List[T]) -> T
 fn List::length[T](List[T]) -> Int
-fn List::lookup[T : @moonbitlang/core/builtin.Eq, E](List[Tuple[T, E]], T) -> Option[E]
+fn List::lookup[T : Eq, E](List[Tuple[T, E]], T) -> Option[E]
 fn List::map[T, U](List[T], (T) -> U) -> List[U]
 fn List::mapi[T, U](List[T], (Int, T) -> U) -> List[U]
-fn List::maximum[T : @moonbitlang/core/builtin.Compare + @moonbitlang/core/builtin.Eq](List[T]) -> T
-fn List::minimum[T : @moonbitlang/core/builtin.Compare + @moonbitlang/core/builtin.Eq](List[T]) -> T
+fn List::maximum[T : Compare + Eq](List[T]) -> T
+fn List::minimum[T : Compare + Eq](List[T]) -> T
 fn List::nth[T](List[T], Int) -> Option[T]
 fn List::nth_exn[T](List[T], Int) -> T
 fn List::op_add[T](List[T], List[T]) -> List[T]
-fn List::remove[T : @moonbitlang/core/builtin.Eq](List[T], T) -> List[T]
+fn List::remove[T : Eq](List[T], T) -> List[T]
 fn List::remove_at[T](List[T], Int) -> List[T]
 fn List::reverse[T](List[T]) -> List[T]
 fn List::scan_left[T, E](List[T], (E, T) -> E, E) -> List[E]
 fn List::scan_right[T, E](List[T], (T, E) -> E, E) -> List[E]
-fn List::sort[T : @moonbitlang/core/builtin.Compare + @moonbitlang/core/builtin.Eq](List[T]) -> List[T]
+fn List::sort[T : Compare + Eq](List[T]) -> List[T]
 fn List::tail[T](List[T]) -> List[T]
 fn List::take[T](List[T], Int) -> List[T]
 fn List::take_while[T](List[T], (T) -> Bool) -> List[T]

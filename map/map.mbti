@@ -1,5 +1,8 @@
 package moonbitlang/core/map
 
+alias @moonbitlang/core/immutable_set as @immutable_set
+alias @moonbitlang/core/vec as @vec
+
 // Values
 fn empty[K, V]() -> Map[K, V]
 
@@ -7,31 +10,31 @@ fn singleton[K, V](K, V) -> Map[K, V]
 
 // Types and methods
 type Map
-fn Map::debug_write[K : @moonbitlang/core/builtin.Debug, V : @moonbitlang/core/builtin.Debug](Map[K, V], @moonbitlang/core/builtin.Buffer) -> Unit
+fn Map::debug_write[K : Debug, V : Debug](Map[K, V], Buffer) -> Unit
 fn Map::elems[K, V](Map[K, V]) -> List[V]
-fn Map::filter[K : @moonbitlang/core/builtin.Compare + @moonbitlang/core/builtin.Eq, V](Map[K, V], (V) -> Bool) -> Map[K, V]
-fn Map::filter_with_key[K : @moonbitlang/core/builtin.Compare + @moonbitlang/core/builtin.Eq, V](Map[K, V], (K, V) -> Bool) -> Map[K, V]
+fn Map::filter[K : Compare + Eq, V](Map[K, V], (V) -> Bool) -> Map[K, V]
+fn Map::filter_with_key[K : Compare + Eq, V](Map[K, V], (K, V) -> Bool) -> Map[K, V]
 fn Map::fold[K, V, T](Map[K, V], (T, V) -> T, T) -> T
 fn Map::foldl_with_key[K, V, T](Map[K, V], (T, K, V) -> T, T) -> T
 fn Map::foldr_with_key[K, V, T](Map[K, V], (T, K, V) -> T, T) -> T
-fn Map::from_array[K : @moonbitlang/core/builtin.Compare + @moonbitlang/core/builtin.Eq, V](Array[Tuple[K, V]]) -> Map[K, V]
-fn Map::insert[K : @moonbitlang/core/builtin.Compare + @moonbitlang/core/builtin.Eq, V](Map[K, V], K, V) -> Map[K, V]
+fn Map::from_array[K : Compare + Eq, V](Array[Tuple[K, V]]) -> Map[K, V]
+fn Map::insert[K : Compare + Eq, V](Map[K, V], K, V) -> Map[K, V]
 fn Map::is_empty[K, V](Map[K, V]) -> Bool
 fn Map::iter[K, V](Map[K, V], (K, V) -> Unit) -> Unit
 fn Map::iteri[K, V](Map[K, V], (Int, K, V) -> Unit) -> Unit
 fn Map::keys[K, V](Map[K, V]) -> List[K]
-fn Map::keys_set[K : @moonbitlang/core/builtin.Compare + @moonbitlang/core/builtin.Eq, V](Map[K, V]) -> @moonbitlang/core/immutable_set.ImmutableSet[K]
-fn Map::lookup[K : @moonbitlang/core/builtin.Compare + @moonbitlang/core/builtin.Eq, V](Map[K, V], K) -> Option[V]
+fn Map::keys_set[K : Compare + Eq, V](Map[K, V]) -> @immutable_set.ImmutableSet[K]
+fn Map::lookup[K : Compare + Eq, V](Map[K, V], K) -> Option[V]
 fn Map::map[K, X, Y](Map[K, X], (X) -> Y) -> Map[K, Y]
 fn Map::map_with_key[K, X, Y](Map[K, X], (K, X) -> Y) -> Map[K, Y]
-fn Map::member[K : @moonbitlang/core/builtin.Compare + @moonbitlang/core/builtin.Eq, V](Map[K, V], K) -> Bool
-fn Map::op_equal[K : @moonbitlang/core/builtin.Eq, V : @moonbitlang/core/builtin.Eq](Map[K, V], Map[K, V]) -> Bool
-fn Map::remove[K : @moonbitlang/core/builtin.Compare + @moonbitlang/core/builtin.Eq, V](Map[K, V], K) -> Map[K, V]
+fn Map::member[K : Compare + Eq, V](Map[K, V], K) -> Bool
+fn Map::op_equal[K : Eq, V : Eq](Map[K, V], Map[K, V]) -> Bool
+fn Map::remove[K : Compare + Eq, V](Map[K, V], K) -> Map[K, V]
 fn Map::size[K, V](Map[K, V]) -> Int
 fn Map::to_asc_list[K, V](Map[K, V]) -> List[Tuple[K, V]]
 fn Map::to_desc_list[K, V](Map[K, V]) -> List[Tuple[K, V]]
 fn Map::to_list[K, V](Map[K, V]) -> List[Tuple[K, V]]
-fn Map::to_vec[K, V](Map[K, V]) -> @moonbitlang/core/vec.Vec[Tuple[K, V]]
+fn Map::to_vec[K, V](Map[K, V]) -> @vec.Vec[Tuple[K, V]]
 
 // Traits
 

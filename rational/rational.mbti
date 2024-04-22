@@ -7,7 +7,7 @@ type Rational
 fn Rational::abs(Rational) -> Rational
 fn Rational::ceil(Rational) -> Int64
 fn Rational::compare(Rational, Rational) -> Int
-fn Rational::debug_write(Rational, @moonbitlang/core/builtin.Buffer) -> Unit
+fn Rational::debug_write(Rational, Buffer) -> Unit
 fn Rational::floor(Rational) -> Int64
 fn Rational::fract(Rational) -> Rational
 fn Rational::from_double(Double) -> Result[Rational, String]

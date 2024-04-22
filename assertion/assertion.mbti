@@ -1,17 +1,19 @@
 package moonbitlang/core/assertion
 
+alias @moonbitlang/core/bool as @bool
+
 // Values
-fn assert_eq[T : @moonbitlang/core/builtin.Debug + @moonbitlang/core/builtin.Eq](T, T, @moonbitlang/core/builtin.SourceLoc) -> Result[Unit, String]
+fn assert_eq[T : Debug + Eq](T, T, SourceLoc) -> Result[Unit, String]
 
-fn assert_false[T : @moonbitlang/core/builtin.Debug + @moonbitlang/core/bool.Boolean](T, @moonbitlang/core/builtin.SourceLoc) -> Result[Unit, String]
+fn assert_false[T : Debug + @bool.Boolean](T, SourceLoc) -> Result[Unit, String]
 
-fn assert_is[T : @moonbitlang/core/builtin.Debug](T, T, @moonbitlang/core/builtin.SourceLoc) -> Result[Unit, String]
+fn assert_is[T : Debug](T, T, SourceLoc) -> Result[Unit, String]
 
-fn assert_is_not[T : @moonbitlang/core/builtin.Debug](T, T, @moonbitlang/core/builtin.SourceLoc) -> Result[Unit, String]
+fn assert_is_not[T : Debug](T, T, SourceLoc) -> Result[Unit, String]
 
-fn assert_ne[T : @moonbitlang/core/builtin.Debug + @moonbitlang/core/builtin.Eq](T, T, @moonbitlang/core/builtin.SourceLoc) -> Result[Unit, String]
+fn assert_ne[T : Debug + Eq](T, T, SourceLoc) -> Result[Unit, String]
 
-fn assert_true[T : @moonbitlang/core/builtin.Debug + @moonbitlang/core/bool.Boolean](T, @moonbitlang/core/builtin.SourceLoc) -> Result[Unit, String]
+fn assert_true[T : Debug + @bool.Boolean](T, SourceLoc) -> Result[Unit, String]
 
 // Types and methods
 

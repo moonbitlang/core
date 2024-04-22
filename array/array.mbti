@@ -1,7 +1,7 @@
 package moonbitlang/core/array
 
 // Values
-fn is_sorted[T : @moonbitlang/core/builtin.Compare + @moonbitlang/core/builtin.Eq](Array[T]) -> Bool
+fn is_sorted[T : Compare + Eq](Array[T]) -> Bool
 
 fn new[T](Int, () -> T) -> Array[T]
 
@@ -11,8 +11,8 @@ fn new_with_index[T](Int, (Int) -> T) -> Array[T]
 type TimSortRun
 fn Array::all[T](Array[T], (T) -> Bool) -> Bool
 fn Array::any[T](Array[T], (T) -> Bool) -> Bool
-fn Array::contains[T : @moonbitlang/core/builtin.Eq](Array[T], T) -> Bool
-fn Array::ends_with[T : @moonbitlang/core/builtin.Eq](Array[T], Array[T]) -> Bool
+fn Array::contains[T : Eq](Array[T], T) -> Bool
+fn Array::ends_with[T : Eq](Array[T], Array[T]) -> Bool
 fn Array::fill[T](Array[T], T) -> Unit
 fn Array::fold_left[T, U](Array[T], (U, T) -> U, U) -> U
 fn Array::fold_lefti[T, U](Array[T], (Int, U, T) -> U, U) -> U
@@ -26,14 +26,14 @@ fn Array::iteri[T](Array[T], (Int, T) -> Unit) -> Unit
 fn Array::map[T, U](Array[T], (T) -> U) -> Array[U]
 fn Array::mapi[T, U](Array[T], (Int, T) -> U) -> Array[U]
 fn Array::op_add[T](Array[T], Array[T]) -> Array[T]
-fn Array::op_equal[T : @moonbitlang/core/builtin.Eq](Array[T], Array[T]) -> Bool
+fn Array::op_equal[T : Eq](Array[T], Array[T]) -> Bool
 fn Array::reverse[T](Array[T]) -> Unit
-fn Array::search[T : @moonbitlang/core/builtin.Eq](Array[T], T) -> Option[Int]
-fn Array::sort[T : @moonbitlang/core/builtin.Compare + @moonbitlang/core/builtin.Eq](Array[T]) -> Unit
+fn Array::search[T : Eq](Array[T], T) -> Option[Int]
+fn Array::sort[T : Compare + Eq](Array[T]) -> Unit
 fn Array::sort_by[T](Array[T], (T, T) -> Int) -> Unit
-fn Array::sort_by_key[T, K : @moonbitlang/core/builtin.Compare + @moonbitlang/core/builtin.Eq](Array[T], (T) -> K) -> Unit
-fn Array::stable_sort[T : @moonbitlang/core/builtin.Compare + @moonbitlang/core/builtin.Eq](Array[T]) -> Unit
-fn Array::starts_with[T : @moonbitlang/core/builtin.Eq](Array[T], Array[T]) -> Bool
+fn Array::sort_by_key[T, K : Compare + Eq](Array[T], (T) -> K) -> Unit
+fn Array::stable_sort[T : Compare + Eq](Array[T]) -> Unit
+fn Array::starts_with[T : Eq](Array[T], Array[T]) -> Bool
 fn Array::swap[T](Array[T], Int, Int) -> Unit
 fn Array::to_list[T](Array[T]) -> List[T]
 
