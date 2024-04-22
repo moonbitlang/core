@@ -9,11 +9,11 @@ fn Vec::capacity[T](Vec[T]) -> Int
 fn Vec::chunk_by[T](Vec[T], (T, T) -> Bool) -> Vec[Vec[T]]
 fn Vec::chunks[T](Vec[T], Int) -> Vec[Vec[T]]
 fn Vec::clear[T](Vec[T]) -> Unit
-fn Vec::contains[T : @moonbitlang/core/builtin.Eq](Vec[T], T) -> Bool
-fn Vec::debug_write[T : @moonbitlang/core/builtin.Show](Vec[T], @moonbitlang/core/builtin.Buffer) -> Unit
-fn Vec::dedup[T : @moonbitlang/core/builtin.Eq](Vec[T]) -> Unit
+fn Vec::contains[T : Eq](Vec[T], T) -> Bool
+fn Vec::debug_write[T : Show](Vec[T], Buffer) -> Unit
+fn Vec::dedup[T : Eq](Vec[T]) -> Unit
 fn Vec::drain[T](Vec[T], Int, Int) -> Vec[T]
-fn Vec::ends_with[T : @moonbitlang/core/builtin.Eq](Vec[T], Vec[T]) -> Bool
+fn Vec::ends_with[T : Eq](Vec[T], Vec[T]) -> Bool
 fn Vec::extract_if[T](Vec[T], (T) -> Bool) -> Vec[T]
 fn Vec::fill[T](Vec[T], T) -> Unit
 fn Vec::fill_with[T](Vec[T], () -> T) -> Unit
@@ -25,7 +25,7 @@ fn Vec::fold_righti[T, U](Vec[T], (Int, U, T) -> U, U) -> U
 fn Vec::from_array[T](Array[T]) -> Vec[T]
 fn Vec::insert[T](Vec[T], Int, T) -> Unit
 fn Vec::is_empty[T](Vec[T]) -> Bool
-fn Vec::is_sorted[T : @moonbitlang/core/builtin.Compare + @moonbitlang/core/builtin.Eq](Vec[T]) -> Bool
+fn Vec::is_sorted[T : Compare + Eq](Vec[T]) -> Bool
 fn Vec::iter[T](Vec[T], (T) -> Unit) -> Unit
 fn Vec::iter_rev[T](Vec[T], (T) -> Unit) -> Unit
 fn Vec::iter_revi[T](Vec[T], (Int, T) -> Unit) -> Unit
@@ -37,7 +37,7 @@ fn Vec::mapi[T](Vec[T], (Int, T) -> T) -> Unit
 fn Vec::new[T]() -> Vec[T]
 fn Vec::op_add[T](Vec[T], Vec[T]) -> Vec[T]
 fn Vec::op_as_view[T](Vec[T], Int, Int) -> VecView[T]
-fn Vec::op_equal[T : @moonbitlang/core/builtin.Eq](Vec[T], Vec[T]) -> Bool
+fn Vec::op_equal[T : Eq](Vec[T], Vec[T]) -> Bool
 fn Vec::op_get[T](Vec[T], Int) -> T
 fn Vec::op_set[T](Vec[T], Int, T) -> Unit
 fn Vec::pop[T](Vec[T]) -> Option[T]
@@ -49,19 +49,19 @@ fn Vec::reserve_capacity[T](Vec[T], Int) -> Unit
 fn Vec::resize[T](Vec[T], Int, T) -> Unit
 fn Vec::retain[T](Vec[T], (T) -> Bool) -> Unit
 fn Vec::reverse[T](Vec[T]) -> Unit
-fn Vec::search[T : @moonbitlang/core/builtin.Eq](Vec[T], T) -> Option[Int]
+fn Vec::search[T : Eq](Vec[T], T) -> Option[Int]
 fn Vec::shrink_to_fit[T](Vec[T]) -> Unit
-fn Vec::sort[T : @moonbitlang/core/builtin.Compare + @moonbitlang/core/builtin.Eq](Vec[T]) -> Unit
+fn Vec::sort[T : Compare + Eq](Vec[T]) -> Unit
 fn Vec::sort_by[T](Vec[T], (T, T) -> Int) -> Unit
-fn Vec::sort_by_key[T, K : @moonbitlang/core/builtin.Compare + @moonbitlang/core/builtin.Eq](Vec[T], (T) -> K) -> Unit
+fn Vec::sort_by_key[T, K : Compare + Eq](Vec[T], (T) -> K) -> Unit
 fn Vec::split[T](Vec[T], (T) -> Bool) -> Vec[Vec[T]]
 fn Vec::split_at[T](Vec[T], Int) -> Tuple[Vec[T], Vec[T]]
-fn Vec::starts_with[T : @moonbitlang/core/builtin.Eq](Vec[T], Vec[T]) -> Bool
-fn Vec::strip_prefix[T : @moonbitlang/core/builtin.Eq](Vec[T], Vec[T]) -> Option[Vec[T]]
-fn Vec::strip_suffix[T : @moonbitlang/core/builtin.Eq](Vec[T], Vec[T]) -> Option[Vec[T]]
+fn Vec::starts_with[T : Eq](Vec[T], Vec[T]) -> Bool
+fn Vec::strip_prefix[T : Eq](Vec[T], Vec[T]) -> Option[Vec[T]]
+fn Vec::strip_suffix[T : Eq](Vec[T], Vec[T]) -> Option[Vec[T]]
 fn Vec::swap[T](Vec[T], Int, Int) -> Unit
 fn Vec::to_list[T](Vec[T]) -> List[T]
-fn Vec::to_string[T : @moonbitlang/core/builtin.Show](Vec[T]) -> String
+fn Vec::to_string[T : Show](Vec[T]) -> String
 fn Vec::with_capacity[T](Int) -> Vec[T]
 
 type VecView

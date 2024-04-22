@@ -3,7 +3,7 @@ package moonbitlang/core/char
 // Values
 
 // Types and methods
-fn Char::debug_write(Char, @moonbitlang/core/builtin.Buffer) -> Unit
+fn Char::debug_write(Char, Buffer) -> Unit
 fn Char::get_high_surrogate(Char) -> Option[Char]
 fn Char::get_low_surrogate(Char) -> Option[Char]
 fn Char::hash(Char) -> Int

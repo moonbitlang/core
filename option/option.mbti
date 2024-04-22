@@ -11,7 +11,7 @@ fn when[T](Bool, () -> T) -> Option[T]
 
 // Types and methods
 fn Option::bind[T, U](Option[T], (T) -> Option[U]) -> Option[U]
-fn Option::compare[X : @moonbitlang/core/builtin.Compare + @moonbitlang/core/builtin.Eq](Option[X], Option[X]) -> Int
+fn Option::compare[X : Compare + Eq](Option[X], Option[X]) -> Int
 fn Option::default[X]() -> Option[X]
 fn Option::filter[T](Option[T], (T) -> Bool) -> Option[T]
 fn Option::flatten[T](Option[Option[T]]) -> Option[T]
