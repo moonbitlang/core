@@ -17,14 +17,49 @@ pub fn Iter::_unstable_internal_make[T](f : ((T) -> Bool) -> Unit) -> Iter[T] {
   Iter::Iter(f)
 }
 
+/// Creates an empty iterator.
+///
+/// # Type Parameters
+///
+/// - `T`: The type of the elements in the iterator.
+///
+/// # Returns
+///
+/// Returns an empty iterator of type `Iter[T]`.
 pub fn Iter::empty[T]() -> Iter[T] {
   Iter::Iter(fn { _ => () })
 }
 
+/// Creates an iterator that contains a single element.
+///
+/// # Type Parameters
+///
+/// - `T`: The type of the element in the iterator.
+///
+/// # Arguments
+///
+/// - `a`: The single element to be contained in the iterator.
+///
+/// # Returns
+///
+/// Returns an iterator of type `Iter[T]` that contains the single element `a`.
 pub fn Iter::singleton[T](a : T) -> Iter[T] {
   Iter::Iter(fn { yield => ignore(yield(a)) })
 }
 
+/// Creates an iterator that repeats the given element indefinitely.
+///
+/// # Type Parameters
+///
+/// - `T`: The type of the elements in the iterator.
+///
+/// # Arguments
+///
+/// - `a`: The element to be repeated.
+///
+/// # Returns
+///
+/// Returns an iterator of type `Iter[T]` that repeats the element `a` indefinitely.
 /// @intrinsic %iter.cycle
 pub fn Iter::repeat[T](a : T) -> Iter[T] {
   Iter::Iter(

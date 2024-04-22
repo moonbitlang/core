@@ -12,19 +12,60 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-/// @intrinsic %iter.filter
+/// Filters the elements of the iterator based on a predicate function.
+/// 
+/// # Type Parameters
+/// 
+/// - `T`: The type of the elements in the iterator.
+/// 
+/// # Arguments
+///
+/// * `self` - The input iterator.
+/// * `f` - The predicate function that determines whether an element should be included in the filtered iterator.
+///
+/// # Returns
+///
+/// A new iterator that only contains the elements for which the predicate function returns `true`.
 pub fn filter[T](self : Iter[T], f : (T) -> Bool) -> Iter[T] {
   Iter::Iter(
     fn { yield => (self.0)(fn { a => if f(a) { yield(a) } else { true } }) },
   )
 }
 
-/// @intrinsic %iter.map
+/// Transforms the elements of the iterator using a mapping function.
+/// 
+/// # Type Parameters
+/// 
+/// - `T`: The type of the elements in the iterator.
+/// - `R`: The type of the transformed elements.
+///
+/// # Arguments
+///
+/// * `self` - The input iterator.
+/// * `f` - The mapping function that transforms each element of the iterator.
+///
+/// # Returns
+///
+/// A new iterator that contains the transformed elements.
 pub fn map[T, R](self : Iter[T], f : (T) -> R) -> Iter[R] {
   Iter::Iter(fn { yield => (self.0)(fn { a => yield(f(a)) }) })
 }
 
-/// @intrinsic %iter.flat_map
+/// Transforms each element of the iterator into an iterator and flattens the resulting iterators into a single iterator.
+/// 
+/// # Type Parameters
+/// 
+/// - `T`: The type of the elements in the iterator.
+/// - `R`: The type of the transformed elements.
+///
+/// # Arguments
+///
+/// * `self` - The input iterator.
+/// * `f` - The function that transforms each element of the iterator into an iterator.
+///
+/// # Returns
+///
+/// A new iterator that contains the flattened elements.
 pub fn flat_map[T, R](self : Iter[T], f : (T) -> Iter[R]) -> Iter[R] {
   Iter::Iter(
     fn {
@@ -41,12 +82,39 @@ pub fn flat_map[T, R](self : Iter[T], f : (T) -> Iter[R]) -> Iter[R] {
   )
 }
 
+/// Applies a function to each element of the iterator without modifying the iterator.
+/// 
+/// # Type Parameters
+/// 
+/// - `T`: The type of the elements in the iterator.
+///
+/// # Arguments
+///
+/// * `self` - The input iterator.
+/// * `f` - The function to apply to each element of the iterator.
+///
+/// # Returns
+///
+/// The same iterator.
 pub fn tap[T](self : Iter[T], f : (T) -> Unit) -> Iter[T] {
   self.iter(f)
   self
 }
 
-/// @intrinsic %iter.take
+/// Takes the first `n` elements from the iterator.
+/// 
+/// # Type Parameters
+/// 
+/// - `T`: The type of the elements in the iterator.
+///
+/// # Arguments
+///
+/// * `self` - The input iterator.
+/// * `n` - The number of elements to take.
+///
+/// # Returns
+///
+/// A new iterator that contains the first `n` elements.
 pub fn take[T](self : Iter[T], n : Int) -> Iter[T] {
   Iter::Iter(
     fn {
@@ -68,12 +136,41 @@ pub fn take[T](self : Iter[T], n : Int) -> Iter[T] {
   )
 }
 
+
+/// Takes elements from the iterator as long as the predicate function returns `true`.
+/// 
+/// # Type Parameters
+/// 
+/// - `T`: The type of the elements in the iterator.
+///
+/// # Arguments
+///
+/// * `self` - The input iterator.
+/// * `f` - The predicate function that determines whether an element should be taken.
+///
+/// # Returns
+///
+/// A new iterator that contains the elements as long as the predicate function returns `true`.
 pub fn take_while[T](self : Iter[T], f : (T) -> Bool) -> Iter[T] {
   Iter::Iter(
     fn { yield => (self.0)(fn { a => if f(a) { yield(a) } else { false } }) },
   )
 }
 
+/// Skips the first `n` elements from the iterator.
+/// 
+/// # Type Parameters
+/// 
+/// - `T`: The type of the elements in the iterator.
+///
+/// # Arguments
+///
+/// * `self` - The input iterator.
+/// * `n` - The number of elements to skip.
+///
+/// # Returns
+///
+/// A new iterator that starts after skipping the first `n` elements.
 pub fn drop[T](self : Iter[T], n : Int) -> Iter[T] {
   Iter::Iter(
     fn {
@@ -95,6 +192,20 @@ pub fn drop[T](self : Iter[T], n : Int) -> Iter[T] {
   )
 }
 
+/// Skips elements from the iterator as long as the predicate function returns `true`.
+/// 
+/// # Type Parameters
+/// 
+/// - `T`: The type of the elements in the iterator.
+///
+/// # Arguments
+///
+/// * `self` - The input iterator.
+/// * `f` - The predicate function that determines whether an element should be skipped.
+///
+/// # Returns
+///
+/// A new iterator that starts after skipping the elements as long as the predicate function returns `true`.
 pub fn drop_while[T](self : Iter[T], f : (T) -> Bool) -> Iter[T] {
   Iter::Iter(
     fn {
@@ -116,6 +227,20 @@ pub fn drop_while[T](self : Iter[T], f : (T) -> Bool) -> Iter[T] {
   )
 }
 
+/// Finds the first element in the iterator that satisfies the predicate function.
+/// 
+/// # Type Parameters
+/// 
+/// - `T`: The type of the elements in the iterator.
+///
+/// # Arguments
+///
+/// * `self` - The input iterator.
+/// * `f` - The predicate function that determines whether an element is the first element to be found.
+///
+/// # Returns
+///
+/// An `Option` that contains the first element that satisfies the predicate function, or `None` if no such element is found.
 pub fn find_first[T](self : Iter[T], f : (T) -> Bool) -> Option[T] {
   let mut result : Option[T] = None
   (self.0)(
