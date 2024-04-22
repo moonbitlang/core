@@ -8,6 +8,7 @@
     "moonbitlang/core/int",
     "moonbitlang/core/int64",
     "moonbitlang/core/double",
+    "moonbitlang/core/string",
     "moonbitlang/core/result",
     "moonbitlang/core/option",
     "moonbitlang/core/tuple"

@@ -33,7 +33,7 @@ pub fn PlainDate::of(
 /// Creates a PlainDate from an ISO 8601 date string.
 pub fn PlainDate::from_string(str : String) -> Result[PlainDate, String] {
   // TODO: better parsing implementation, parse the calendar specified in the string.
-  let s = substring(str, 0, 10)
+  let s = if str.length() > 10 { str.substring(end=10) } else { str }
   let ymd = split(s, '-')
   if ymd.length() < 3 {
     return Err(invalid_date_err)
