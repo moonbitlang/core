@@ -27,24 +27,10 @@ fn remove_prefix_zero(s : String) -> String {
     i += 1
   }
   if i < s.length() {
-    substring(s, i, s.length() - i)
+    s.substring(start=i)
   } else {
-    substring(s, s.length() - 1, 1)
+    s.substring(start=s.length() - 1)
   }
-}
-
-/// FIXME: use substring method of String
-fn substring(s : String, start : Int, len : Int) -> String {
-  let mut sub_len = len
-  if start + len > s.length() {
-    sub_len = s.length() - start
-  }
-  if sub_len < 1 {
-    return ""
-  }
-  let buf = Buffer::make(sub_len)
-  buf.write_sub_string(s, start, sub_len)
-  buf.to_string()
 }
 
 /// FIXME: use split method of String
