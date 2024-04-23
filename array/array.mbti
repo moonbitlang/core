@@ -1,5 +1,7 @@
 package moonbitlang/core/array
 
+alias @moonbitlang/core/iter as @iter
+
 // Values
 fn is_sorted[T : Compare + Eq](Array[T]) -> Bool
 
@@ -11,6 +13,7 @@ fn new_with_index[T](Int, (Int) -> T) -> Array[T]
 type TimSortRun
 fn Array::all[T](Array[T], (T) -> Bool) -> Bool
 fn Array::any[T](Array[T], (T) -> Bool) -> Bool
+fn Array::as_iter[T](Array[T]) -> @iter.Iter[T]
 fn Array::contains[T : Eq](Array[T], T) -> Bool
 fn Array::ends_with[T : Eq](Array[T], Array[T]) -> Bool
 fn Array::fill[T](Array[T], T) -> Unit

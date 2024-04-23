@@ -58,7 +58,7 @@ test "iter" {
   @assertion.assert_eq(i, 5)?
 }
 
-/// Iterates over the array with index. 
+/// Iterates over the array with index.
 ///
 /// # Arguments
 ///
@@ -150,7 +150,7 @@ test "iter_rev" {
   @assertion.assert_eq(i, 1)?
 }
 
-/// Iterates over the array with index in reversed turn. 
+/// Iterates over the array with index in reversed turn.
 ///
 /// # Arguments
 ///
@@ -162,7 +162,7 @@ test "iter_rev" {
 /// ```
 /// [1, 2, 3, 4, 5].iter_revi(fn(index, elem){
 ///   print("(\(index),\(elem)) ")
-/// }) //output: (4,5) (3,4) (2,3) (1,2) (0,1) 
+/// }) //output: (4,5) (3,4) (2,3) (1,2) (0,1)
 /// ```
 pub fn iter_revi[T](self : Array[T], f : (Int, T) -> Unit) -> Unit {
   let len = self.length()
@@ -238,7 +238,7 @@ test "map" {
 }
 
 /// Maps a function over the elements of the arr with index.
-/// 
+///
 /// # Example
 /// ```
 /// let arr = [3, 4, 5]
@@ -329,7 +329,7 @@ test "from_array" {
 }
 
 /// Fold out values from an array according to certain rules.
-/// 
+///
 /// # Example
 /// ```
 /// let sum = [1, 2, 3, 4, 5].fold_left(init=0, fn { sum, elem => sum + elem })
@@ -353,7 +353,7 @@ test "fold_left" {
 }
 
 /// Fold out values from an array according to certain rules in reversed turn.
-/// 
+///
 /// # Example
 /// ```
 /// let sum = [1, 2, 3, 4, 5].fold_right(init=0, fn { sum, elem => sum + elem })
@@ -377,7 +377,7 @@ test "fold_right" {
 }
 
 /// Fold out values from an array according to certain rules with index.
-/// 
+///
 /// # Example
 /// ```
 /// let sum = [1, 2, 3, 4, 5].fold_lefti(init=0, fn { index, sum, elem => sum + index })
@@ -406,7 +406,7 @@ test "fold_lefti" {
 }
 
 /// Fold out values from an array according to certain rules in reversed turn with index.
-/// 
+///
 /// # Example
 /// ```
 /// let sum = [1, 2, 3, 4, 5].fold_righti(init=0, fn { index, sum, elem => sum + index })
@@ -436,7 +436,7 @@ test "fold_righti" {
 }
 
 /// Reverses the order of elements in the slice, in place.
-/// 
+///
 /// # Example
 /// ```
 /// let arr = [1, 2, 3, 4, 5]
@@ -477,9 +477,9 @@ test "reverse" {
 }
 
 /// Swap two elements in the array.
-/// 
-/// # Example 
-/// 
+///
+/// # Example
+///
 /// ```
 /// let arr = [1, 2, 3, 4, 5]
 /// arr.swap(0, 1)
@@ -512,9 +512,9 @@ test "swap" {
 }
 
 /// Check if all the elements in the array match the condition.
-/// 
-/// # Example 
-/// 
+///
+/// # Example
+///
 /// ```
 /// let arr = [1, 2, 3, 4, 5]
 /// arr.all(fn(ele) { ele < 6 }) // true
@@ -546,9 +546,9 @@ test "all" {
 }
 
 /// Check if any of the elements in the array match the condition.
-/// 
-/// # Example 
-/// 
+///
+/// # Example
+///
 /// ```
 /// let arr = [1, 2, 3, 4, 5]
 /// arr.any(fn(ele) { ele < 6 }) // true
@@ -580,7 +580,7 @@ test "any" {
 }
 
 /// Fill the array with a given value.
-/// 
+///
 /// # Example
 /// ```
 /// [0, 0, 0, 0, 0].fill(3) // [3, 3, 3, 3, 3]
@@ -608,7 +608,7 @@ test "fill" {
 }
 
 /// Search the array index for a given element.
-/// 
+///
 /// # Example
 /// ```
 /// let arr = [3, 4, 5]
@@ -642,7 +642,7 @@ test "search" {
 }
 
 /// Checks if the array contains an element.
-/// 
+///
 /// # Example
 /// ```
 /// let arr = [3, 4, 5]
@@ -676,7 +676,7 @@ test "contains" {
 }
 
 /// Check if the array starts with a given prefix.
-/// 
+///
 /// # Example
 /// ```
 /// let arr = [3, 4, 5]
@@ -719,7 +719,7 @@ test "starts_with" {
 }
 
 /// Check if the array ends with a given suffix.
-/// 
+///
 /// # Example
 /// ```
 /// let v = [3, 4, 5]
@@ -768,7 +768,7 @@ test "ends_with" {
 }
 
 /// Convert array to list.
-/// 
+///
 /// # Example
 ///
 /// ```
@@ -892,5 +892,39 @@ test "op_add" {
   inspect(
     [1, 2, 3, 4, 5] + [6, 7, 8, 9, 10],
     content="[1, 2, 3, 4, 5, 6, 7, 8, 9, 10]",
+  )?
+}
+
+/// @intrinsic %iter.from_array
+pub fn as_iter[T](self : Array[T]) -> @iter.Iter[T] {
+  @iter.Iter::_unstable_internal_make(
+    fn(yield) {
+      for i = 0, len = self.length(); i < len; i = i + 1 {
+        if yield(self[i]).not() {
+          break false
+        }
+      } else { true }
+    },
+  )
+}
+
+test "as_iter" {
+  let arr = [1, 2, 3, 4, 5]
+  let iter = arr.as_iter()
+  let exb = Buffer::make(0)
+  let mut i = 0
+  iter.iter(fn(x) {
+    exb.write_string(x.to_string())
+    exb.write_char('\n')
+    i = i + 1
+  })
+  @assertion.assert_eq(i, arr.length())?
+  exb.expect(~content=
+    #|1
+    #|2
+    #|3
+    #|4
+    #|5
+    #|
   )?
 }

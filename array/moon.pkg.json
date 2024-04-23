@@ -4,6 +4,7 @@
     "moonbitlang/core/assertion",
     "moonbitlang/core/math",
     "moonbitlang/core/coverage",
-    "moonbitlang/core/vec"
+    "moonbitlang/core/vec",
+    "moonbitlang/core/iter"
   ]
 }

@@ -1,0 +1,31 @@
+package moonbitlang/core/iter
+
+// Values
+
+// Types and methods
+type Iter
+fn Iter::_unstable_internal_make[T](((T) -> Bool) -> Bool) -> Iter[T]
+fn Iter::append[T](Iter[T], T) -> Iter[T]
+fn Iter::concat[T](Iter[T], Iter[T]) -> Iter[T]
+fn Iter::count[T](Iter[T]) -> Int
+fn Iter::drop[T](Iter[T], Int) -> Iter[T]
+fn Iter::drop_while[T](Iter[T], (T) -> Bool) -> Iter[T]
+fn Iter::empty[T]() -> Iter[T]
+fn Iter::filter[T](Iter[T], (T) -> Bool) -> Iter[T]
+fn Iter::find_first[T](Iter[T], (T) -> Bool) -> Option[T]
+fn Iter::flat_map[T, R](Iter[T], (T) -> Iter[R]) -> Iter[R]
+fn Iter::fold[T, B](Iter[T], (B, T) -> B, B) -> B
+fn Iter::iter[T](Iter[T], (T) -> Unit) -> Unit
+fn Iter::map[T, R](Iter[T], (T) -> R) -> Iter[R]
+fn Iter::op_add[T](Iter[T], Iter[T]) -> Iter[T]
+fn Iter::prepend[T](Iter[T], T) -> Iter[T]
+fn Iter::repeat[T](T) -> Iter[T]
+fn Iter::singleton[T](T) -> Iter[T]
+fn Iter::take[T](Iter[T], Int) -> Iter[T]
+fn Iter::take_while[T](Iter[T], (T) -> Bool) -> Iter[T]
+fn Iter::tap[T](Iter[T], (T) -> Unit) -> Iter[T]
+
+// Traits
+
+// Extension Methods
+
