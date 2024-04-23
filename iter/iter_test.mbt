@@ -53,6 +53,15 @@ test "take" {
   exb.expect(~content="123")?
 }
 
+test "take2" {
+  let iter = from_array(['1', '2', '3', '4', '5'])
+  let exb = Buffer::make(0)
+  iter.take(10).concat(repeat('6').take(1)).iter(fn {
+    x => exb.write_char(x)
+  })
+  exb.expect(~content="123456")?
+}
+
 test "take_while" {
   let iter = from_array(['1', '2', '3', '4', '5'])
   let exb = Buffer::make(0)
@@ -60,6 +69,36 @@ test "take_while" {
     x => exb.write_char(x)
   })
   exb.expect(~content="123")?
+}
+
+test "take_while2" {
+  let iter = from_array(['1', '2', '3', '4', '5'])
+  let exb = Buffer::make(0)
+  iter.take_while(fn { x => x != '4' }).concat(singleton('6')).iter(fn {
+    x => exb.write_char(x)
+  })
+  exb.expect(~content="1236")?
+}
+
+test "take_while3" {
+  let iter = from_array([1, 2, 3])
+  let exb = Buffer::make(0)
+  let res = iter.take_while(fn { x => x != 4 }).concat(singleton(4)).find_first(fn { x => x % 2 == 0})
+  inspect(res, content="Some(2)")?
+}
+
+test "take_while4" {
+  let iter = from_array([1, 2, 3, 4, 5, 6])
+  let exb = Buffer::make(0)
+  let res = iter.take_while(fn { x => x <= 5 }).take(4).fold(fn (x, y) { x + y}, 0)
+  inspect(res, content="10")?
+}
+
+test "take_while5" {
+  let iter = from_array([1, 2, 3, 4, 5, 6])
+  let exb = Buffer::make(0)
+  let res = iter.take(4).take_while(fn { x => x >= 5 }).fold(fn (x, y) { x + y}, 0)
+  inspect(res, content="0")?
 }
 
 test "drop" {
@@ -78,6 +117,27 @@ test "drop_while" {
     x => exb.write_char(x)
   })
   exb.expect(~content="45")?
+}
+
+test "drop_while2" {
+  let iter = from_array([1, 2, 3, 4, 5])
+  let res = iter.drop_while(fn { x => x <= 3}).concat(singleton(6)).find_first(fn { x => x % 3 == 0})
+  inspect(res, content="Some(6)")?
+}
+
+test "drop_while3" {
+  let iter = from_array([1, 2, 3, 4, 5])
+  let exb = Buffer::make(0)
+  let res = iter.drop_while(fn { x => x < 3}).concat(singleton(6)).find_first(fn { x => { exb.write_char('x'); x % 3 == 0 }})
+  // make sure the predicate in find_first is called only once
+  exb.expect(content="x")?
+  inspect(res, content="Some(3)")?
+}
+
+test "drop_while4" {
+  let iter = from_array([1, 2, 3, 4, 5])
+  let res = iter.drop_while(fn { x => x <= 3}).concat(singleton(6)).drop(3).find_first(fn { x => x % 3 == 0})
+  inspect(res, content="None")?
 }
 
 test "filter" {
@@ -107,6 +167,15 @@ test "flat_map" {
   exb.expect(~content="1122334455")?
 }
 
+test "flat_map2" {
+  let iter = from_array(['1', '2', '3', '4', '5'])
+  let exb = Buffer::make(0)
+  iter.flat_map(fn { x => Iter::singleton(x) }).iter(fn {
+    x => exb.write_char(x)
+  })
+  exb.expect(~content="12345")?
+}
+
 test "fold" {
   let iter = from_array(['1', '2', '3', '4', '5'])
   let result = Char::from_int(iter.fold(fn { acc, x => acc + x.to_int() }, 0) / 5)
@@ -119,6 +188,12 @@ test "find_first" {
   @assertion.assert_eq(result, Some('4'))?
   let result2 = iter.find_first(fn { x => x > '5' })
   @assertion.assert_eq(result2, None)?
+}
+
+test "find_first2" {
+  let iter = from_array([1, 2, 3]).concat(from_array([4, 5, 6]))
+  let result = iter.find_first(fn { x => x % 2 == 0})
+  inspect(result, content="Some(2)")?
 }
 
 test "tap" {
