@@ -80,7 +80,7 @@ fn add_with_hash[K : Eq, V](
         hash.lsr(segment_length),
         value,
       )
-      Map::Branch(SparseArray::make(idx, child))
+      Map::Branch(singleton(idx, child))
     }
   }
 

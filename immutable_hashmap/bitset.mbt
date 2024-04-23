@@ -37,8 +37,7 @@ test "Bitset::has" {
 ///
 /// Get the index of the bit in the bitset.
 fn index_of(self : Bitset, idx : Int) -> Int {
-  let items_below_idx = self.0.land((1).lsl(idx) - 1)
-  items_below_idx.popcnt()
+  self.0.land((1).lsl(idx) - 1).popcnt()
 }
 
 test "Bitset::index_of" {
