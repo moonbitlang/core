@@ -114,7 +114,7 @@ test "realloc" {
   @assertion.assert_eq(result, [4, 5, 6, 7, 8, 9, 10])?
 }
 
-/// Return the fornt element from a deque, or `None` if it is empty.
+/// Return the front element from a deque, or `None` if it is empty.
 /// 
 /// # Example
 /// ```
@@ -189,7 +189,7 @@ pub fn push_back[T](self : Deque[T], value : T) -> Unit {
   self.len += 1
 }
 
-/// Removes a fornt element from a deque.
+/// Removes a front element from a deque.
 /// 
 /// # Example
 /// ```
@@ -221,7 +221,7 @@ pub fn pop_back_exn[T](self : Deque[T]) -> Unit {
   self.len -= 1
 }
 
-/// Removes a fornt element from a deque and returns it, or `None` if it is empty.
+/// Removes a front element from a deque and returns it, or `None` if it is empty.
 /// 
 /// # Example
 /// ```

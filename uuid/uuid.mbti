@@ -1,0 +1,42 @@
+package moonbitlang/core/uuid
+
+// Values
+fn from_bytes(Bytes) -> Result[UUID, String]
+
+fn from_hex(String) -> Result[UUID, String]
+
+// Types and methods
+type UUID
+fn UUID::as_version(UUID, Version) -> UUID
+fn UUID::compare(UUID, UUID) -> Int
+fn UUID::hash(UUID) -> Int
+fn UUID::op_equal(UUID, UUID) -> Bool
+fn UUID::to_bytes(UUID) -> Bytes
+fn UUID::to_string(UUID) -> String
+fn UUID::variant(UUID) -> Variant
+fn UUID::version(UUID) -> Option[Version]
+
+pub enum Variant {
+  ReservedNCS
+  RFC4122(Version)
+  ReservedMicrosoft
+  ReservedFuture
+}
+fn Variant::debug_write(Variant, @moonbitlang/core/builtin.Buffer) -> Unit
+fn Variant::to_string(Variant) -> String
+
+pub enum Version {
+  V1
+  V2
+  V3
+  V4
+  V5
+  Unknown(Int)
+}
+fn Version::debug_write(Version, @moonbitlang/core/builtin.Buffer) -> Unit
+fn Version::to_string(Version) -> String
+
+// Traits
+
+// Extension Methods
+
