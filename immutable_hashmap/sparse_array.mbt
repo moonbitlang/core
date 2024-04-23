@@ -72,34 +72,14 @@ fn replace[X](self : SparseArray[X], idx : Int, value : X) -> SparseArray[X] {
 }
 
 test "SparseArray" {
-  let arr = SparseArray::make(1, 1)
-  @assertion.assert_false(arr.has(0))?
-  @assertion.assert_eq(arr[0], None)?
-  @assertion.assert_true(arr.has(1))?
-  @assertion.assert_eq(arr[1], Some(1))?
-  @assertion.assert_false(arr.has(2))?
-  @assertion.assert_eq(arr[2], None)?
-  let arr = arr.add(2, 2)
-  @assertion.assert_false(arr.has(0))?
-  @assertion.assert_eq(arr[0], None)?
-  @assertion.assert_true(arr.has(1))?
-  @assertion.assert_eq(arr[1], Some(1))?
-  @assertion.assert_true(arr.has(2))?
-  @assertion.assert_eq(arr[2], Some(2))?
-  let arr = arr.add(0, 0)
-  @assertion.assert_true(arr.has(0))?
-  @assertion.assert_eq(arr[0], Some(0))?
-  @assertion.assert_true(arr.has(1))?
-  @assertion.assert_eq(arr[1], Some(1))?
-  @assertion.assert_true(arr.has(2))?
-  @assertion.assert_eq(arr[2], Some(2))?
-  let arr = arr.replace(1, 42)
-  @assertion.assert_true(arr.has(0))?
-  @assertion.assert_eq(arr[0], Some(0))?
-  @assertion.assert_true(arr.has(1))?
-  @assertion.assert_eq(arr[1], Some(42))?
-  @assertion.assert_true(arr.has(2))?
-  @assertion.assert_eq(arr[2], Some(2))?
+  let arr0 = singleton(1, 1)
+  inspect((arr0.has(0),arr0[0],arr0.has(1),arr0[1],arr0.has(2),arr0[2]), ~content="(false, None, true, Some(1), false, None)")?
+  let arr1 = arr0.add(2, 2)
+  inspect((arr1.has(0),arr1[0],arr1.has(1),arr1[1],arr1.has(2),arr1[2]), ~content="(false, None, true, Some(1), true, Some(2))")?  
+  let arr2 = arr1.add(0, 0)
+  inspect((arr2.has(0),arr2[0],arr2.has(1),arr2[1],arr2.has(2),arr2[2]), ~content="(true, Some(0), true, Some(1), true, Some(2))")?
+  let arr3 = arr2.replace(1, 42)
+  inspect((arr3.has(0),arr3[0],arr3.has(1),arr3[1],arr3.has(2),arr3[2]), ~content="(true, Some(0), true, Some(42), true, Some(2))")?
 }
 
 /// `size(self: SparseArray[X]) -> Int`
