@@ -12,12 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-priv type UninitializedArray[T] Array[UnsafeMaybeUninit[T]]
-
-struct ImmutableVec[T] {
-  buf : UninitializedArray[T]
-  len : Int
-}
+struct PersistentVector[T] {
+  tree : Tree[T]
+  size : Int
+  shift : Int
+} derive(Debug)
 
 enum Tree[T] {
   Empty
@@ -25,8 +24,4 @@ enum Tree[T] {
   Leaf(Array[T])
 } derive(Eq, Debug)
 
-struct PersistentVector[T] {
-  tree : Tree[T]
-  size : Int
-  shift : Int
-} derive(Debug)
+
