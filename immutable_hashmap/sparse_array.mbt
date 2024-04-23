@@ -20,7 +20,7 @@ priv struct SparseArray[X] {
   data : Array[X]
 }
 
-fn SparseArray::make[X](idx : Int, value : X) -> SparseArray[X] {
+fn SparseArray::singleton[X](idx : Int, value : X) -> SparseArray[X] {
   { elem_info: empty_bitset.add(idx), data: [value] }
 }
 
@@ -99,7 +99,7 @@ fn iter[X](self : SparseArray[X], f : (X) -> Unit) -> Unit {
 }
 
 test "SparseArray::iter" {
-  let arr = SparseArray::make(0, 0).add(1, 1).add(3, 3).add(31, 31)
+  let arr = singleton(0, 0).add(1, 1).add(3, 3).add(31, 31)
   let buf = Buffer::make(0)
   let mut is_first = true
   arr.iter(
