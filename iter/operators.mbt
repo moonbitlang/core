@@ -67,7 +67,7 @@ pub fn map[T, R](self : Iter[T], f : (T) -> R) -> Iter[R] {
 ///
 /// A new iterator that contains the flattened elements.
 pub fn flat_map[T, R](self : Iter[T], f : (T) -> Iter[R]) -> Iter[R] {
-  Iter::Iter(fn { yield => (self.0)(fn { x => (f(x).0)(yield).not() }) })
+  Iter::Iter(fn { yield => (self.0)(fn { x => (f(x).0)(yield) }) })
 }
 
 /// Applies a function to each element of the iterator without modifying the iterator.
@@ -111,14 +111,17 @@ pub fn take[T](self : Iter[T], n : Int) -> Iter[T] {
         (self.0)(
           fn {
             a =>
-              if i < n {
+              if i < n && yield(a) {
                 i = i + 1
-                yield(a)
+                true
               } else {
                 false
               }
           },
-        )
+        ) || i == n
+        // when the `take` operator exits, the overall return value is false only when
+        // any of the `yield(a)` return false. Otherwise, it returns true, including
+        // the case when `i` reaches the iteration count `n`.
       }
     },
   )
@@ -140,7 +143,29 @@ pub fn take[T](self : Iter[T], n : Int) -> Iter[T] {
 /// A new iterator that contains the elements as long as the predicate function returns `true`.
 pub fn take_while[T](self : Iter[T], f : (T) -> Bool) -> Iter[T] {
   Iter::Iter(
-    fn { yield => (self.0)(fn { a => if f(a) { yield(a) } else { false } }) },
+    fn {
+      yield => {
+        // `r` is the overall return value, which is false only when `yield(a)` returns false
+        let mut r = true
+        (self.0)(
+          fn {
+            a =>
+              if f(a) {
+                if yield(a) {
+                  true
+                } else {
+                  r = false
+                  false
+                }
+              } else {
+                false
+              }
+          },
+        )
+        |> ignore
+        r
+      }
+    },
   )
 }
 
