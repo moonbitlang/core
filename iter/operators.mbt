@@ -26,6 +26,7 @@
 /// # Returns
 ///
 /// A new iterator that only contains the elements for which the predicate function returns `true`.
+/// @intrinsic %iter.filter
 pub fn filter[T](self : Iter[T], f : (T) -> Bool) -> Iter[T] {
   Iter::Iter(
     fn { yield => (self.0)(fn { a => if f(a) { yield(a) } else { true } }) },
@@ -47,6 +48,7 @@ pub fn filter[T](self : Iter[T], f : (T) -> Bool) -> Iter[T] {
 /// # Returns
 ///
 /// A new iterator that contains the transformed elements.
+/// @intrinsic %iter.map
 pub fn map[T, R](self : Iter[T], f : (T) -> R) -> Iter[R] {
   Iter::Iter(fn { yield => (self.0)(fn { a => yield(f(a)) }) })
 }
@@ -66,6 +68,7 @@ pub fn map[T, R](self : Iter[T], f : (T) -> R) -> Iter[R] {
 /// # Returns
 ///
 /// A new iterator that contains the flattened elements.
+/// @intrinsic %iter.flat_map
 pub fn flat_map[T, R](self : Iter[T], f : (T) -> Iter[R]) -> Iter[R] {
   Iter::Iter(fn { yield => (self.0)(fn { x => (f(x).0)(yield) }) })
 }
@@ -103,6 +106,7 @@ pub fn tap[T](self : Iter[T], f : (T) -> Unit) -> Iter[T] {
 /// # Returns
 ///
 /// A new iterator that contains the first `n` elements.
+/// @intrinsic %iter.take
 pub fn take[T](self : Iter[T], n : Int) -> Iter[T] {
   Iter::Iter(
     fn {
