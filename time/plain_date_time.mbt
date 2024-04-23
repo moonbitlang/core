@@ -12,18 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-struct Duration {
-  seconds : Int64
-  nanoseconds : Int
-} derive(Eq, Compare)
-
-pub fn Duration::of(
-  ~hours : Int = 0,
-  ~minutes : Int = 0,
-  ~seconds : Int = 0,
-  ~nanoseconds : Int = 0
-) -> Duration {
-  let seconds = hours.to_int64() * seconds_per_hour + minutes.to_int64() *
-    seconds_per_minute + seconds.to_int64()
-  { seconds, nanoseconds }
+struct PlainDateTime {
+  date: PlainDate
+  time: PlainTime
 }
