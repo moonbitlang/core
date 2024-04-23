@@ -121,7 +121,11 @@ fn unsafe_substring(str : String, start : Int, end : Int) -> String {
 }
 
 /// Get substring of the string from [start] to [end] exclusive.
-pub fn substring(self : String, ~start : Int = 0, ~end : Int = self.length()) -> String {
+pub fn substring(
+  self : String,
+  ~start : Int = 0,
+  ~end : Int = self.length()
+) -> String {
   if start < 0 {
     abort("String::substring: start index is negative")
   }
@@ -132,7 +136,9 @@ pub fn substring(self : String, ~start : Int = 0, ~end : Int = self.length()) ->
     abort("String::substring: start index is greater than end index")
   }
   if end > self.length() {
-    abort("String::substring: end index is greater than the length of the string")
+    abort(
+      "String::substring: end index is greater than the length of the string",
+    )
   }
   unsafe_substring(self, start, end)
 }

@@ -82,7 +82,7 @@ pub fn hash(self : Char) -> Int {
 }
 
 /// Check if the char is a surrogate unit
-pub fn is_surrogate(self: Char) -> Bool {
+pub fn is_surrogate(self : Char) -> Bool {
   let code = self.to_int()
   0xD800 <= code && code <= 0xDFFF
 }
@@ -94,7 +94,7 @@ test "is_surrogate" {
 }
 
 /// Get high surrogate of the char
-pub fn get_high_surrogate(self: Char) -> Option[Char] {
+pub fn get_high_surrogate(self : Char) -> Option[Char] {
   let code = self.to_int()
   if code < 0x10000 {
     None
@@ -105,7 +105,7 @@ pub fn get_high_surrogate(self: Char) -> Option[Char] {
 }
 
 /// Get low surrogate of the char
-pub fn get_low_surrogate(self: Char) -> Option[Char] {
+pub fn get_low_surrogate(self : Char) -> Option[Char] {
   let code = self.to_int()
   if code < 0x10000 {
     None

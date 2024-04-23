@@ -94,7 +94,7 @@ test "to_string" {
 /// println(s1) // output: Stack::[3, 2, 1]
 /// ```
 pub fn Stack::from_stack[T](other : Stack[T]) -> Stack[T] {
-  { ..other,  }
+  { ..other }
 }
 
 test "from_stack" {
