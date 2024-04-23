@@ -69,7 +69,7 @@ jobs:
       - name: format diff
         run: |
           moon fmt
-          git diff
+          git diff --exit-code
 
   build-on-mac:
     runs-on: macos-latest
