@@ -129,5 +129,5 @@ test "Bucket::iter" {
       buf.write_string("\(k) => \(v)")
     },
   )
-  @assertion.assert_eq(buf.to_string(), "0 => 0, 1 => 1, 31 => 31")?
+  inspect(buf.to_string(), content="0 => 0, 1 => 1, 31 => 31")?
 }
