@@ -22,7 +22,7 @@ pub enum Variant {
   ReservedMicrosoft
   ReservedFuture
 }
-fn Variant::debug_write(Variant, @moonbitlang/core/builtin.Buffer) -> Unit
+fn Variant::debug_write(Variant, Buffer) -> Unit
 fn Variant::to_string(Variant) -> String
 
 pub enum Version {
@@ -33,7 +33,7 @@ pub enum Version {
   V5
   Unknown(Int)
 }
-fn Version::debug_write(Version, @moonbitlang/core/builtin.Buffer) -> Unit
+fn Version::debug_write(Version, Buffer) -> Unit
 fn Version::to_string(Version) -> String
 
 // Traits
