@@ -13,7 +13,7 @@
 // limitations under the License.
 
 /// Try to get this element as a Null
-pub fn get_as_null(self : JsonValue) -> Option[Unit] {
+pub fn as_null(self : JsonValue) -> Option[Unit] {
   match self {
     Null => Some(())
     _ => None
@@ -21,23 +21,26 @@ pub fn get_as_null(self : JsonValue) -> Option[Unit] {
 }
 
 /// Try to get this element as a Json Array and try to get the element at the `index` as a Null
-pub fn get_item_as_null(self : JsonValue, index : Int) -> Option[Unit] {
-  self.get_as_array()?.get(index)?.get_as_null()
+/// 
+/// Same as `item(index)?.as_null()`
+pub fn item_as_null(self : JsonValue, index : Int) -> Option[Unit] {
+  self.as_array()?.get(index)?.as_null()
 }
 
 /// Try to get this element as a Json Object and try to get the element with the `key` as a Null
-pub fn get_value_as_null(self : JsonValue, key : String) -> Option[Unit] {
-  self.get_as_object()?.lookup(key)?.get_as_null()
+/// 
+/// Same as `value(key)?.as_null()`
+pub fn value_as_null(self : JsonValue, key : String) -> Option[Unit] {
+  self.as_object()?.lookup(key)?.as_null()
 }
 
 test "get as null" {
-  inspect(JsonValue::Null |> get_as_null, content="Some(())")?
-  inspect(JsonValue::Boolean(false) |> get_as_null, content="None")?
-  inspect(JsonValue::Number(1.0) |> get_as_null, content="None")?
-  inspect(JsonValue::String("Hello World") |> get_as_null, content="None")?
+  inspect(JsonValue::Null |> as_null, content="Some(())")?
+  inspect(JsonValue::Boolean(false) |> as_null, content="None")?
+  inspect(JsonValue::Number(1.0) |> as_null, content="None")?
+  inspect(JsonValue::String("Hello World") |> as_null, content="None")?
   inspect(
-    JsonValue::Array(@vec.Vec::[JsonValue::String("Hello World")])
-    |> get_as_null,
+    JsonValue::Array(@vec.Vec::[JsonValue::String("Hello World")]) |> as_null,
     content="None",
   )?
   inspect(
@@ -47,13 +50,13 @@ test "get as null" {
         ("value", JsonValue::Number(100.0)),
       ],
     )
-    |> get_as_null,
+    |> as_null,
     content="None",
   )?
 }
 
 /// Try to get this element as a Boolean
-pub fn get_as_bool(self : JsonValue) -> Option[Bool] {
+pub fn as_bool(self : JsonValue) -> Option[Bool] {
   match self {
     Boolean(b) => Some(b)
     _ => None
@@ -61,23 +64,26 @@ pub fn get_as_bool(self : JsonValue) -> Option[Bool] {
 }
 
 /// Try to get this element as a Json Array and try to get the element at the `index` as a Boolean
-pub fn get_item_as_bool(self : JsonValue, index : Int) -> Option[Bool] {
-  self.get_as_array()?.get(index)?.get_as_bool()
+/// 
+/// Same as `item(index)?.as_bool()`
+pub fn item_as_bool(self : JsonValue, index : Int) -> Option[Bool] {
+  self.as_array()?.get(index)?.as_bool()
 }
 
 /// Try to get this element as a Json Object and try to get the element with the `key` as a Boolean
-pub fn get_value_as_bool(self : JsonValue, key : String) -> Option[Bool] {
-  self.get_as_object()?.lookup(key)?.get_as_bool()
+/// 
+/// Same as `value(key)?.as_bool()`
+pub fn value_as_bool(self : JsonValue, key : String) -> Option[Bool] {
+  self.as_object()?.lookup(key)?.as_bool()
 }
 
 test "get as bool" {
-  inspect(JsonValue::Null |> get_as_bool, content="None")?
-  inspect(JsonValue::Boolean(false) |> get_as_bool, content="Some(false)")?
-  inspect(JsonValue::Number(1.0) |> get_as_bool, content="None")?
-  inspect(JsonValue::String("Hello World") |> get_as_bool, content="None")?
+  inspect(JsonValue::Null |> as_bool, content="None")?
+  inspect(JsonValue::Boolean(false) |> as_bool, content="Some(false)")?
+  inspect(JsonValue::Number(1.0) |> as_bool, content="None")?
+  inspect(JsonValue::String("Hello World") |> as_bool, content="None")?
   inspect(
-    JsonValue::Array(@vec.Vec::[JsonValue::String("Hello World")])
-    |> get_as_bool,
+    JsonValue::Array(@vec.Vec::[JsonValue::String("Hello World")]) |> as_bool,
     content="None",
   )?
   inspect(
@@ -87,13 +93,13 @@ test "get as bool" {
         ("value", JsonValue::Number(100.0)),
       ],
     )
-    |> get_as_bool,
+    |> as_bool,
     content="None",
   )?
 }
 
 /// Try to get this element as a Number
-pub fn get_as_number(self : JsonValue) -> Option[Double] {
+pub fn as_number(self : JsonValue) -> Option[Double] {
   match self {
     Number(n) => Some(n)
     _ => None
@@ -101,23 +107,26 @@ pub fn get_as_number(self : JsonValue) -> Option[Double] {
 }
 
 /// Try to get this element as a Json Array and try to get the element at the `index` as a Number
-pub fn get_item_as_number(self : JsonValue, index : Int) -> Option[Double] {
-  self.get_as_array()?.get(index)?.get_as_number()
+/// 
+/// Same as `item(index)?.as_number()`
+pub fn item_as_number(self : JsonValue, index : Int) -> Option[Double] {
+  self.as_array()?.get(index)?.as_number()
 }
 
 /// Try to get this element as a Json Object and try to get the element with the `key` as a Number
-pub fn get_value_as_number(self : JsonValue, key : String) -> Option[Double] {
-  self.get_as_object()?.lookup(key)?.get_as_number()
+/// 
+/// Same as `value(key)?.as_number()`
+pub fn value_as_number(self : JsonValue, key : String) -> Option[Double] {
+  self.as_object()?.lookup(key)?.as_number()
 }
 
 test "get as number" {
-  inspect(JsonValue::Null |> get_as_number, content="None")?
-  inspect(JsonValue::Boolean(false) |> get_as_number, content="None")?
-  inspect(JsonValue::Number(1.0) |> get_as_number, content="Some(1.0)")?
-  inspect(JsonValue::String("Hello World") |> get_as_number, content="None")?
+  inspect(JsonValue::Null |> as_number, content="None")?
+  inspect(JsonValue::Boolean(false) |> as_number, content="None")?
+  inspect(JsonValue::Number(1.0) |> as_number, content="Some(1.0)")?
+  inspect(JsonValue::String("Hello World") |> as_number, content="None")?
   inspect(
-    JsonValue::Array(@vec.Vec::[JsonValue::String("Hello World")])
-    |> get_as_number,
+    JsonValue::Array(@vec.Vec::[JsonValue::String("Hello World")]) |> as_number,
     content="None",
   )?
   inspect(
@@ -127,13 +136,13 @@ test "get as number" {
         ("value", JsonValue::Number(100.0)),
       ],
     )
-    |> get_as_number,
+    |> as_number,
     content="None",
   )?
 }
 
 /// Try to get this element as a String
-pub fn get_as_string(self : JsonValue) -> Option[String] {
+pub fn as_string(self : JsonValue) -> Option[String] {
   match self {
     String(s) => Some(s)
     _ => None
@@ -141,26 +150,29 @@ pub fn get_as_string(self : JsonValue) -> Option[String] {
 }
 
 /// Try to get this element as a Json Array and try to get the element at the `index` as a String
-pub fn get_item_as_string(self : JsonValue, index : Int) -> Option[String] {
-  self.get_as_array()?.get(index)?.get_as_string()
+/// 
+/// Same as `item(index)?.as_string()`
+pub fn item_as_string(self : JsonValue, index : Int) -> Option[String] {
+  self.as_array()?.get(index)?.as_string()
 }
 
 /// Try to get this element as a Json Object and try to get the element with the `key` as a String
-pub fn get_value_as_string(self : JsonValue, key : String) -> Option[String] {
-  self.get_as_object()?.lookup(key)?.get_as_string()
+/// 
+/// Same as `value(key)?.as_string()`
+pub fn value_as_string(self : JsonValue, key : String) -> Option[String] {
+  self.as_object()?.lookup(key)?.as_string()
 }
 
 test "get as string" {
-  inspect(JsonValue::Null |> get_as_string, content="None")?
-  inspect(JsonValue::Boolean(false) |> get_as_string, content="None")?
-  inspect(JsonValue::Number(1.0) |> get_as_string, content="None")?
+  inspect(JsonValue::Null |> as_string, content="None")?
+  inspect(JsonValue::Boolean(false) |> as_string, content="None")?
+  inspect(JsonValue::Number(1.0) |> as_string, content="None")?
   inspect(
-    JsonValue::String("Hello World") |> get_as_string,
+    JsonValue::String("Hello World") |> as_string,
     content="Some(Hello World)",
   )?
   inspect(
-    JsonValue::Array(@vec.Vec::[JsonValue::String("Hello World")])
-    |> get_as_string,
+    JsonValue::Array(@vec.Vec::[JsonValue::String("Hello World")]) |> as_string,
     content="None",
   )?
   inspect(
@@ -170,13 +182,13 @@ test "get as string" {
         ("value", JsonValue::Number(100.0)),
       ],
     )
-    |> get_as_string,
+    |> as_string,
     content="None",
   )?
 }
 
 /// Try to get this element as an Array
-pub fn get_as_array(self : JsonValue) -> Option[@vec.Vec[JsonValue]] {
+pub fn as_array(self : JsonValue) -> Option[@vec.Vec[JsonValue]] {
   match self {
     Array(arr) => Some(arr)
     _ => None
@@ -184,50 +196,53 @@ pub fn get_as_array(self : JsonValue) -> Option[@vec.Vec[JsonValue]] {
 }
 
 /// Try to get this element as a Json Array and try to get the element at the `index` as an Array
-pub fn get_item_as_array(
+/// 
+/// Same as `item(index)?.as_array()`
+pub fn item_as_array(
   self : JsonValue,
   index : Int
 ) -> Option[@vec.Vec[JsonValue]] {
-  self.get_as_array()?.get(index)?.get_as_array()
+  self.as_array()?.get(index)?.as_array()
 }
 
 /// Try to get this element as a Json Object and try to get the element with the `key` as an Array
-pub fn get_value_as_array(
+/// 
+/// Same as `value(key)?.as_array()`
+pub fn value_as_array(
   self : JsonValue,
   key : String
 ) -> Option[@vec.Vec[JsonValue]] {
-  self.get_as_object()?.lookup(key)?.get_as_array()
+  self.as_object()?.lookup(key)?.as_array()
 }
 
 /// Try to get this element as a Json Array and get the element at the `index` as a Json Value
-pub fn get_item(self : JsonValue, index : Int) -> Option[JsonValue] {
-  self.get_as_array()?.get(index)
+pub fn item(self : JsonValue, index : Int) -> Option[JsonValue] {
+  self.as_array()?.get(index)
 }
 
 test "get as array" {
-  inspect(JsonValue::Null |> get_as_array, content="None")?
-  inspect(JsonValue::Boolean(false) |> get_as_array, content="None")?
-  inspect(JsonValue::Number(1.0) |> get_as_array, content="None")?
-  inspect(JsonValue::String("Hello World") |> get_as_array, content="None")?
+  inspect(JsonValue::Null |> as_array, content="None")?
+  inspect(JsonValue::Boolean(false) |> as_array, content="None")?
+  inspect(JsonValue::Number(1.0) |> as_array, content="None")?
+  inspect(JsonValue::String("Hello World") |> as_array, content="None")?
   inspect(
-    JsonValue::Array(@vec.Vec::[JsonValue::String("Hello World")])
-    |> get_as_array,
+    JsonValue::Array(@vec.Vec::[JsonValue::String("Hello World")]) |> as_array,
     content="Some(Vec::[String(\"Hello World\")])",
   )?
   inspect(
-    JsonValue::Array(@vec.Vec::[JsonValue::String("Hello World")]).get_item_as_string(
+    JsonValue::Array(@vec.Vec::[JsonValue::String("Hello World")]).item_as_string(
       0,
     ),
     content="Some(Hello World)",
   )?
   inspect(
-    JsonValue::Array(@vec.Vec::[JsonValue::String("Hello World")]).get_item_as_string(
+    JsonValue::Array(@vec.Vec::[JsonValue::String("Hello World")]).item_as_string(
       1,
     ),
     content="None",
   )?
   inspect(
-    JsonValue::Array(@vec.Vec::[JsonValue::String("Hello World")]).get_item_as_number(
+    JsonValue::Array(@vec.Vec::[JsonValue::String("Hello World")]).item_as_number(
       0,
     ),
     content="None",
@@ -239,13 +254,13 @@ test "get as array" {
         ("value", JsonValue::Number(100.0)),
       ],
     )
-    |> get_as_array,
+    |> as_array,
     content="None",
   )?
 }
 
 /// Try to get this element as an Object
-pub fn get_as_object(self : JsonValue) -> Option[@map.Map[String, JsonValue]] {
+pub fn as_object(self : JsonValue) -> Option[@map.Map[String, JsonValue]] {
   match self {
     Object(obj) => Some(obj)
     _ => None
@@ -253,48 +268,52 @@ pub fn get_as_object(self : JsonValue) -> Option[@map.Map[String, JsonValue]] {
 }
 
 /// Try to get this element as a Json Array and try to get the element at the `index` as an Object
-pub fn get_item_as_object(
+/// 
+/// Same as `item(index)?.as_object()`
+pub fn item_as_object(
   self : JsonValue,
   index : Int
 ) -> Option[@map.Map[String, JsonValue]] {
-  self.get_as_array()?.get(index)?.get_as_object()
+  self.as_array()?.get(index)?.as_object()
 }
 
 /// Try to get this element as a Json Object and try to get the element with the `key` as an Object
-pub fn get_value_as_object(
+/// 
+/// Same as `value(key)?.as_object()`
+pub fn value_as_object(
   self : JsonValue,
   key : String
 ) -> Option[@map.Map[String, JsonValue]] {
-  self.get_as_object()?.lookup(key)?.get_as_object()
+  self.as_object()?.lookup(key)?.as_object()
 }
 
 /// Try to get this element as a Json Object and get the element with the `key` as a Json Value
-pub fn get_value(self : JsonValue, key : String) -> Option[JsonValue] {
-  self.get_as_object()?.lookup(key)
+pub fn value(self : JsonValue, key : String) -> Option[JsonValue] {
+  self.as_object()?.lookup(key)
 }
 
 test "get as object" {
   inspect(
-    JsonValue::Null |> get_as_object |> Option::map(@map.Map::to_vec),
+    JsonValue::Null |> as_object |> Option::map(@map.Map::to_vec),
     content="None",
   )?
   inspect(
-    JsonValue::Boolean(false) |> get_as_object |> Option::map(@map.Map::to_vec),
+    JsonValue::Boolean(false) |> as_object |> Option::map(@map.Map::to_vec),
     content="None",
   )?
   inspect(
-    JsonValue::Number(1.0) |> get_as_object |> Option::map(@map.Map::to_vec),
+    JsonValue::Number(1.0) |> as_object |> Option::map(@map.Map::to_vec),
     content="None",
   )?
   inspect(
     JsonValue::String("Hello World")
-    |> get_as_object
+    |> as_object
     |> Option::map(@map.Map::to_vec),
     content="None",
   )?
   inspect(
     JsonValue::Array(@vec.Vec::[JsonValue::String("Hello World")])
-    |> get_as_object
+    |> as_object
     |> Option::map(@map.Map::to_vec),
     content="None",
   )?
@@ -305,7 +324,7 @@ test "get as object" {
         ("value", JsonValue::Number(100.0)),
       ],
     )
-    |> get_as_object
+    |> as_object
     |> Option::map(@map.Map::to_vec),
     content="Some(Vec::[(key, String(\"key\")), (value, Number(100.0))])",
   )?
@@ -315,7 +334,7 @@ test "get as object" {
         ("key", JsonValue::String("key")),
         ("value", JsonValue::Number(100.0)),
       ],
-    ).get_value_as_string("key"),
+    ).value_as_string("key"),
     content="Some(key)",
   )?
   inspect(
@@ -324,7 +343,7 @@ test "get as object" {
         ("key", JsonValue::String("key")),
         ("value", JsonValue::Number(100.0)),
       ],
-    ).get_value_as_number("value"),
+    ).value_as_number("value"),
     content="Some(100.0)",
   )?
   inspect(
@@ -333,7 +352,7 @@ test "get as object" {
         ("key", JsonValue::String("key")),
         ("value", JsonValue::Number(100.0)),
       ],
-    ).get_value_as_number("key"),
+    ).value_as_number("key"),
     content="None",
   )?
   inspect(
@@ -342,7 +361,7 @@ test "get as object" {
         ("key", JsonValue::String("key")),
         ("value", JsonValue::Number(100.0)),
       ],
-    ).get_value_as_number("asdf"),
+    ).value_as_number("asdf"),
     content="None",
   )?
 }
@@ -372,38 +391,36 @@ test "deep access" {
       ("obj", JsonValue::Object(@map.Map::[])),
     ],
   )
-  inspect(json.get_value_as_null("null"), content="Some(())")?
+  inspect(json.value_as_null("null"), content="Some(())")?
   inspect(
-    json.get_value("key").bind(fn { array => array.get_item_as_null(2) }),
+    json.value("key").bind(fn { array => array.item_as_null(2) }),
     content="Some(())",
   )?
-  inspect(json.get_value_as_bool("bool"), content="Some(false)")?
+  inspect(json.value_as_bool("bool"), content="Some(false)")?
   inspect(
-    json.get_value("key").bind(fn { array => array.get_item_as_bool(1) }),
+    json.value("key").bind(fn { array => array.item_as_bool(1) }),
     content="Some(true)",
   )?
   inspect(
-    json.get_value_as_array("key"),
+    json.value_as_array("key"),
     content="Some(Vec::[Number(1.0), Boolean(true), Null, Array(Vec::[]), Object(Map::[(\"key\", String(\"value\")), (\"value\", Number(100.0))])])",
   )?
   inspect(
-    json.get_value("key").bind(fn { array => array.get_item_as_array(3) }),
+    json.value("key").bind(fn { array => array.item_as_array(3) }),
     content="Some(Vec::[])",
   )?
   inspect(
-    json.get_value("key").bind(fn { array => array.get_item_as_object(4) }).map(
+    json.value("key").bind(fn { array => array.item_as_object(4) }).map(
       @map.Map::to_vec,
     ),
     content="Some(Vec::[(key, String(\"value\")), (value, Number(100.0))])",
   )?
   inspect(
-    json.get_value_as_object("obj").map(@map.Map::to_vec),
+    json.value_as_object("obj").map(@map.Map::to_vec),
     content="Some(Vec::[])",
   )?
   inspect(
-    json.get_value("key").bind(fn { array => array.get_item(4) }).bind(
-      fn { obj => obj.get_value_as_number("value") },
-    ),
+    (fn() { json.value("key")?.item(4)?.value_as_number("value") })(),
     content="Some(100.0)",
   )?
 }
