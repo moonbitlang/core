@@ -100,11 +100,32 @@ fn PlainDate::with_month(PlainDate, Int) -> Result[PlainDate, String]
 fn PlainDate::with_year(PlainDate, Int) -> Result[PlainDate, String]
 fn PlainDate::year(PlainDate) -> Int
 
+type PlainDateTime
+
 type PlainTime
+fn PlainTime::add_hours(PlainTime, Int) -> Result[PlainTime, String]
+fn PlainTime::add_minutes(PlainTime, Int) -> Result[PlainTime, String]
+fn PlainTime::add_nanoseconds(PlainTime, Int64) -> Result[PlainTime, String]
+fn PlainTime::add_seconds(PlainTime, Int) -> Result[PlainTime, String]
+fn PlainTime::at_date(PlainTime, PlainDate) -> PlainDateTime
 fn PlainTime::compare(PlainTime, PlainTime) -> Int
 fn PlainTime::debug_write(PlainTime, Buffer) -> Unit
-fn PlainTime::from(Int, Int, Int, Int) -> Result[PlainTime, String]
+fn PlainTime::from_nanosecond_of_day(Int64) -> Result[PlainTime, String]
+fn PlainTime::from_second_of_day(Int) -> Result[PlainTime, String]
+fn PlainTime::from_string(String) -> Result[PlainTime, String]
+fn PlainTime::hour(PlainTime) -> Int
+fn PlainTime::minute(PlainTime) -> Int
+fn PlainTime::nanosecond(PlainTime) -> Int
+fn PlainTime::nanosecond_of_day(PlainTime) -> Int64
+fn PlainTime::of(Int, Int, Int, Int) -> Result[PlainTime, String]
 fn PlainTime::op_equal(PlainTime, PlainTime) -> Bool
+fn PlainTime::second(PlainTime) -> Int
+fn PlainTime::second_of_day(PlainTime) -> Int
+fn PlainTime::to_string(PlainTime) -> String
+fn PlainTime::with_hour(PlainTime, Int) -> Result[PlainTime, String]
+fn PlainTime::with_minute(PlainTime, Int) -> Result[PlainTime, String]
+fn PlainTime::with_nanosecond(PlainTime, Int) -> Result[PlainTime, String]
+fn PlainTime::with_second(PlainTime, Int) -> Result[PlainTime, String]
 
 // Traits
 pub trait Calendar {
