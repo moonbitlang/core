@@ -7,12 +7,12 @@ fn calendar_of(String) -> Option[Calendar]
 pub enum CalendarType {
   ISO8601
 }
-fn CalendarType::debug_write(CalendarType, @moonbitlang/core/builtin.Buffer) -> Unit
+fn CalendarType::debug_write(CalendarType, Buffer) -> Unit
 fn CalendarType::op_equal(CalendarType, CalendarType) -> Bool
 fn CalendarType::to_string(CalendarType) -> String
 
 type DayOfWeek
-fn DayOfWeek::debug_write(DayOfWeek, @moonbitlang/core/builtin.Buffer) -> Unit
+fn DayOfWeek::debug_write(DayOfWeek, Buffer) -> Unit
 fn DayOfWeek::op_equal(DayOfWeek, DayOfWeek) -> Bool
 fn DayOfWeek::to_string(DayOfWeek) -> String
 
@@ -34,7 +34,7 @@ fn IsoCalendar::day_of_year(IsoCalendar, PlainDate) -> Int
 fn IsoCalendar::days_in_month(IsoCalendar, PlainDate) -> Int
 fn IsoCalendar::days_in_week(IsoCalendar, PlainDate) -> Int
 fn IsoCalendar::days_in_year(IsoCalendar, PlainDate) -> Int
-fn IsoCalendar::debug_write(IsoCalendar, @moonbitlang/core/builtin.Buffer) -> Unit
+fn IsoCalendar::debug_write(IsoCalendar, Buffer) -> Unit
 fn IsoCalendar::era(IsoCalendar, PlainDate) -> String
 fn IsoCalendar::era_year(IsoCalendar, PlainDate) -> Int
 fn IsoCalendar::get_type(IsoCalendar) -> CalendarType
@@ -43,16 +43,35 @@ fn IsoCalendar::month(IsoCalendar, PlainDate) -> Int
 fn IsoCalendar::months_in_year(IsoCalendar, PlainDate) -> Int
 fn IsoCalendar::op_equal(IsoCalendar, IsoCalendar) -> Bool
 fn IsoCalendar::to_string(IsoCalendar) -> String
+fn IsoCalendar::until(IsoCalendar, PlainDate, PlainDate) -> Result[Period, String]
 fn IsoCalendar::with_day(IsoCalendar, PlainDate, Int) -> Result[PlainDate, String]
 fn IsoCalendar::with_month(IsoCalendar, PlainDate, Int) -> Result[PlainDate, String]
 fn IsoCalendar::with_year(IsoCalendar, PlainDate, Int) -> Result[PlainDate, String]
 fn IsoCalendar::year(IsoCalendar, PlainDate) -> Int
 
 type Period
+fn Period::add_days(Period, Int) -> Result[Period, String]
+fn Period::add_months(Period, Int) -> Result[Period, String]
+fn Period::add_weeks(Period, Int) -> Result[Period, String]
+fn Period::add_years(Period, Int) -> Result[Period, String]
+fn Period::between(PlainDate, PlainDate) -> Period
 fn Period::compare(Period, Period) -> Int
-fn Period::debug_write(Period, @moonbitlang/core/builtin.Buffer) -> Unit
+fn Period::days(Period) -> Int
+fn Period::debug_write(Period, Buffer) -> Unit
+fn Period::from_string(String) -> Result[Period, String]
+fn Period::get_calendar(Period) -> Calendar
+fn Period::is_neg(Period) -> Bool
+fn Period::is_zero(Period) -> Bool
+fn Period::months(Period) -> Int
 fn Period::of(Int, Int, Int, Int) -> Period
 fn Period::op_equal(Period, Period) -> Bool
+fn Period::to_string(Period) -> String
+fn Period::weeks(Period) -> Int
+fn Period::with_days(Period, Int) -> Period
+fn Period::with_months(Period, Int) -> Period
+fn Period::with_weeks(Period, Int) -> Period
+fn Period::with_years(Period, Int) -> Period
+fn Period::years(Period) -> Int
 
 type PlainDate
 fn PlainDate::add_days(PlainDate, Int) -> Result[PlainDate, String]
@@ -74,6 +93,7 @@ fn PlainDate::months_in_year(PlainDate) -> Int
 fn PlainDate::of(Int, Int, Int, Calendar) -> Result[PlainDate, String]
 fn PlainDate::op_equal(PlainDate, PlainDate) -> Bool
 fn PlainDate::to_string(PlainDate) -> String
+fn PlainDate::until(PlainDate, PlainDate) -> Period
 fn PlainDate::with_calendar(PlainDate, Calendar) -> Result[PlainDate, String]
 fn PlainDate::with_day(PlainDate, Int) -> Result[PlainDate, String]
 fn PlainDate::with_month(PlainDate, Int) -> Result[PlainDate, String]
@@ -82,7 +102,7 @@ fn PlainDate::year(PlainDate) -> Int
 
 type PlainTime
 fn PlainTime::compare(PlainTime, PlainTime) -> Int
-fn PlainTime::debug_write(PlainTime, @moonbitlang/core/builtin.Buffer) -> Unit
+fn PlainTime::debug_write(PlainTime, Buffer) -> Unit
 fn PlainTime::from(Int, Int, Int, Int) -> Result[PlainTime, String]
 fn PlainTime::op_equal(PlainTime, PlainTime) -> Bool
 
@@ -110,6 +130,7 @@ pub trait Calendar {
   with_year(Self, PlainDate, Int) -> Result[PlainDate, String]
   with_month(Self, PlainDate, Int) -> Result[PlainDate, String]
   with_day(Self, PlainDate, Int) -> Result[PlainDate, String]
+  until(Self, PlainDate, PlainDate) -> Result[Period, String]
   date_from(Self, Int, Int, Int) -> Result[PlainDate, String]
 }
 

@@ -35,6 +35,7 @@ pub trait Calendar {
   with_year(Self, PlainDate, Int) -> Result[PlainDate, String]
   with_month(Self, PlainDate, Int) -> Result[PlainDate, String]
   with_day(Self, PlainDate, Int) -> Result[PlainDate, String]
+  until(Self, PlainDate, PlainDate) -> Result[Period, String]
   date_from(Self, Int, Int, Int) -> Result[PlainDate, String]
 }
 
