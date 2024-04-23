@@ -82,21 +82,18 @@ test "take_while2" {
 
 test "take_while3" {
   let iter = from_array([1, 2, 3])
-  let exb = Buffer::make(0)
   let res = iter.take_while(fn { x => x != 4 }).concat(singleton(4)).find_first(fn { x => x % 2 == 0})
   inspect(res, content="Some(2)")?
 }
 
 test "take_while4" {
   let iter = from_array([1, 2, 3, 4, 5, 6])
-  let exb = Buffer::make(0)
   let res = iter.take_while(fn { x => x <= 5 }).take(4).fold(fn (x, y) { x + y}, 0)
   inspect(res, content="10")?
 }
 
 test "take_while5" {
   let iter = from_array([1, 2, 3, 4, 5, 6])
-  let exb = Buffer::make(0)
   let res = iter.take(4).take_while(fn { x => x >= 5 }).fold(fn (x, y) { x + y}, 0)
   inspect(res, content="0")?
 }
