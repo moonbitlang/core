@@ -70,7 +70,12 @@ fn add_string(self : StringBuilder, s : String) -> Unit {
   self.buffer = self.buffer + s
 }
 
-fn add_substring(self :  StringBuilder, s : String, start : Int, end : Int) -> Unit {
+fn add_substring(
+  self : StringBuilder,
+  s : String,
+  start : Int,
+  end : Int
+) -> Unit {
   self.buffer = self.buffer + s.substring(~start, ~end)
 }
 

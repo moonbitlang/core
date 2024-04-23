@@ -31,7 +31,8 @@ pub fn iter[T](self : Iter[T], f : (T) -> Unit) -> Unit {
         true
       }
     },
-  ) |> ignore
+  )
+  |> ignore
 }
 
 /// Folds the elements of the iterator using the given function, starting with the given initial value.

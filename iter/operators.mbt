@@ -320,8 +320,8 @@ pub fn append[T](self : Iter[T], a : T) -> Iter[T] {
 ///
 /// Returns a new iterator that contains the elements of `self` followed by the elements of `other`.
 /// @intrinsic %iter.concat
-pub fn Iter::concat[T](this : Iter[T], other : Iter[T]) -> Iter[T] {
-  Iter::Iter(fn(yield) { (this.0)(yield) && (other.0)(yield) })
+pub fn Iter::concat[T](self : Iter[T], other : Iter[T]) -> Iter[T] {
+  Iter::Iter(fn(yield) { (self.0)(yield) && (other.0)(yield) })
 }
 
 pub fn op_add[T](self : Iter[T], other : Iter[T]) -> Iter[T] {

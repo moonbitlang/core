@@ -903,7 +903,9 @@ pub fn as_iter[T](self : Array[T]) -> @iter.Iter[T] {
         if yield(self[i]).not() {
           break false
         }
-      } else { true }
+      } else {
+        true
+      }
     },
   )
 }
@@ -913,18 +915,22 @@ test "as_iter" {
   let iter = arr.as_iter()
   let exb = Buffer::make(0)
   let mut i = 0
-  iter.iter(fn(x) {
-    exb.write_string(x.to_string())
-    exb.write_char('\n')
-    i = i + 1
-  })
+  iter.iter(
+    fn(x) {
+      exb.write_string(x.to_string())
+      exb.write_char('\n')
+      i = i + 1
+    },
+  )
   @assertion.assert_eq(i, arr.length())?
-  exb.expect(~content=
+  exb.expect(
+    content=
     #|1
     #|2
     #|3
     #|4
     #|5
     #|
+    ,
   )?
 }
