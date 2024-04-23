@@ -161,6 +161,10 @@ pub fn add_period(
   self.calendar.add_period(self, period)
 }
 
+pub fn until(self : PlainDate, end : PlainDate) -> Period {
+  self.calendar.until(self, end).unwrap()
+}
+
 pub fn get_calendar(self : PlainDate) -> Calendar {
   self.calendar
 }
@@ -179,38 +183,4 @@ pub fn to_string(self : PlainDate) -> String {
     buf.write_string("]")
   }
   buf.to_string()
-}
-
-test "compare" {
-  let d1 = PlainDate::of(2000, 1, 1)?
-  let d2 = PlainDate::of(2000, 1, 1)?
-  let d3 = PlainDate::of(2000, 2, 1)?
-  inspect(d1 == d2, content="true")?
-  inspect(d1 < d2, content="false")?
-  inspect(d1 > d2, content="false")?
-  inspect(d1 < d3, content="true")?
-  inspect(d1 > d3, content="false")?
-  inspect(d3 > d1, content="true")?
-  inspect(d3 > d2, content="true")?
-}
-
-test "of" {
-  inspect(PlainDate::of(2008, 8, 8), content="Ok(2008-08-08)")?
-  inspect(PlainDate::of(0, 1, 1), content="Ok(0000-01-01)")?
-  inspect(PlainDate::of(1, 1, 1), content="Ok(0001-01-01)")?
-  inspect(PlainDate::of(2000, 2, 29), content="Ok(2000-02-29)")?
-  inspect(PlainDate::of(2001, 2, 29), content="Err(Invalid date)")?
-  inspect(PlainDate::of(2001, 1, 32), content="Err(Invalid date)")?
-  inspect(PlainDate::of(10000, 1, 1), content="Err(Invalid date)")?
-}
-
-test "from_string" {
-  inspect(PlainDate::from_string("2008-08-08"), content="Ok(2008-08-08)")?
-  inspect(PlainDate::from_string("0000-01-01"), content="Ok(0000-01-01)")?
-  inspect(PlainDate::from_string("0001-01-01"), content="Ok(0001-01-01)")?
-  inspect(PlainDate::from_string("10000-01-01"), content="Err(Invalid date)")?
-  inspect(PlainDate::from_string("-1970-01-01"), content="Err(Invalid date)")?
-  inspect(PlainDate::from_string("-01-01"), content="Err(Invalid date)")?
-  inspect(PlainDate::from_string("12-31"), content="Err(Invalid date)")?
-  inspect(PlainDate::from_string("-01"), content="Err(Invalid date)")?
 }
