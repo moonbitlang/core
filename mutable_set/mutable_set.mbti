@@ -1,0 +1,37 @@
+package moonbitlang/core/mutable_set
+
+alias @moonbitlang/core/vec as @vec
+
+// Values
+
+// Types and methods
+type MutableSet
+fn MutableSet::add[T : Compare + Eq](MutableSet[T], T) -> Unit
+fn MutableSet::contains[T : Compare + Eq](MutableSet[T], T) -> Bool
+fn MutableSet::debug_write[T : Compare + Debug + Eq](MutableSet[T], Buffer) -> Unit
+fn MutableSet::deep_clone[T](MutableSet[T]) -> MutableSet[T]
+fn MutableSet::diff[T : Compare + Eq](MutableSet[T], MutableSet[T]) -> MutableSet[T]
+fn MutableSet::disjoint[T : Compare + Eq](MutableSet[T], MutableSet[T]) -> Bool
+fn MutableSet::filter[T : Compare + Eq](MutableSet[T], (T) -> Bool) -> MutableSet[T]
+fn MutableSet::from_array[T : Compare + Eq](Array[T]) -> MutableSet[T]
+fn MutableSet::from_list[T : Compare + Eq](List[T]) -> MutableSet[T]
+fn MutableSet::from_vec[T : Compare + Eq](@vec.Vec[T]) -> MutableSet[T]
+fn MutableSet::intersect[T : Compare + Eq](MutableSet[T], MutableSet[T]) -> MutableSet[T]
+fn MutableSet::is_empty[T : Compare + Eq](MutableSet[T]) -> Bool
+fn MutableSet::iter[T : Compare + Eq](MutableSet[T], (T) -> Unit) -> Unit
+fn MutableSet::new[T]() -> MutableSet[T]
+fn MutableSet::op_equal[T : Eq](MutableSet[T], MutableSet[T]) -> Bool
+fn MutableSet::remove[T : Compare + Eq](MutableSet[T], T) -> Unit
+fn MutableSet::singleton[T : Compare + Eq](T) -> MutableSet[T]
+fn MutableSet::size[T : Compare + Eq](MutableSet[T]) -> Int64
+fn MutableSet::subset[T : Compare + Eq](MutableSet[T], MutableSet[T]) -> Bool
+fn MutableSet::to_array[T : Compare + Eq](MutableSet[T]) -> Array[T]
+fn MutableSet::to_list[T : Compare + Eq](MutableSet[T]) -> List[T]
+fn MutableSet::to_string[T : Compare + Show + Eq](MutableSet[T]) -> String
+fn MutableSet::to_vec[T : Compare + Eq](MutableSet[T]) -> @vec.Vec[T]
+fn MutableSet::union[T : Compare + Eq](MutableSet[T], MutableSet[T]) -> MutableSet[T]
+
+// Traits
+
+// Extension Methods
+
