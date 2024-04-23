@@ -5,6 +5,7 @@
     "moonbitlang/core/tuple",
     "moonbitlang/core/array",
     "moonbitlang/core/int",
-    "moonbitlang/core/coverage"
+    "moonbitlang/core/coverage",
+    "moonbitlang/core/option"
   ]
 }
