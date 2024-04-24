@@ -150,10 +150,7 @@ pub fn IsoCalendar::add_years(
   if years == 0 {
     return Ok(date)
   }
-  let new_year = match checked_add_int(date.year, years) {
-    Some(v) => v
-    None => return Err(invalid_date_err)
-  }
+  let new_year = checked_add_int(date.year, years)?
   if iso_validate_year(new_year) {
     let new_date = date_from_valid(new_year, date.month, date.day)
     Ok(new_date)
@@ -171,10 +168,7 @@ pub fn IsoCalendar::add_months(
     return Ok(date)
   }
   let total_months = date.year * 12 + (date.month - 1)
-  let new_total_months = match checked_add_int(total_months, months) {
-    Some(v) => v
-    None => return Err(invalid_date_err)
-  }
+  let new_total_months = checked_add_int(total_months, months)?
   let new_year = new_total_months / 12
   let new_month = new_total_months % 12 + 1
   if iso_validate_year(new_year) && iso_validate_month(new_month) {
@@ -193,10 +187,7 @@ pub fn add_weeks(
   if weeks == 0 {
     return Ok(date)
   }
-  let days_to_add = match checked_mul_int(weeks, 7) {
-    Some(v) => v
-    None => return Err(invalid_date_err)
-  }
+  let days_to_add = checked_mul_int(weeks, 7)?
   self.add_days(date, days_to_add)
 }
 
@@ -209,10 +200,7 @@ pub fn add_days(
     return Ok(date)
   }
   let fixed_days = date_to_fixed_days(date.year, date.month, date.day)
-  let new_days = match checked_add_int64(fixed_days, days.to_int64()) {
-    Some(v) => v
-    None => return Err(invalid_date_err)
-  }
+  let new_days = checked_add_int64(fixed_days, days.to_int64())?
   let (y, m, d, _) = fixed_days_to_date(new_days)
   self.date_from(y, m, d)
 }
@@ -228,9 +216,6 @@ pub fn add_period(
   }
   if period.months != 0 {
     d = self.add_months(d, period.months)?
-  }
-  if period.weeks != 0 {
-    d = self.add_weeks(d, period.weeks)?
   }
   if period.days != 0 {
     d = self.add_days(d, period.days)?

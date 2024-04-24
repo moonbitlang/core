@@ -206,10 +206,6 @@ test "add_period" {
     content="Ok(2000-03-29)",
   )?
   inspect(
-    iso_calendar.add_period(d, Period::of(weeks=1)),
-    content="Ok(2000-03-07)",
-  )?
-  inspect(
     iso_calendar.add_period(d, Period::of(days=1)),
     content="Ok(2000-03-01)",
   )?

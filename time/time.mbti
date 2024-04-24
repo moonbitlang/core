@@ -17,9 +17,25 @@ fn DayOfWeek::op_equal(DayOfWeek, DayOfWeek) -> Bool
 fn DayOfWeek::to_string(DayOfWeek) -> String
 
 type Duration
+fn Duration::add_duration(Duration, Duration) -> Result[Duration, String]
+fn Duration::add_hours(Duration, Int64) -> Result[Duration, String]
+fn Duration::add_minutes(Duration, Int64) -> Result[Duration, String]
+fn Duration::add_nanoseconds(Duration, Int64) -> Result[Duration, String]
+fn Duration::add_seconds(Duration, Int64) -> Result[Duration, String]
 fn Duration::compare(Duration, Duration) -> Int
-fn Duration::of(Int, Int, Int, Int) -> Duration
+fn Duration::from_string(String) -> Result[Duration, String]
+fn Duration::is_neg(Duration) -> Bool
+fn Duration::is_zero(Duration) -> Bool
+fn Duration::nanoseconds(Duration) -> Int
+fn Duration::of(Int64, Int64, Int64, Int64) -> Result[Duration, String]
+fn Duration::op_add(Duration, Duration) -> Result[Duration, String]
 fn Duration::op_equal(Duration, Duration) -> Bool
+fn Duration::seconds(Duration) -> Int64
+fn Duration::to_nanoseconds(Duration) -> Int64
+fn Duration::to_string(Duration) -> String
+fn Duration::with_nanoseconds(Duration, Int) -> Result[Duration, String]
+fn Duration::with_seconds(Duration, Int64) -> Duration
+fn Duration::zero() -> Duration
 
 type IsoCalendar
 fn IsoCalendar::add_days(IsoCalendar, PlainDate, Int) -> Result[PlainDate, String]
@@ -52,9 +68,9 @@ fn IsoCalendar::year(IsoCalendar, PlainDate) -> Int
 type Period
 fn Period::add_days(Period, Int) -> Result[Period, String]
 fn Period::add_months(Period, Int) -> Result[Period, String]
+fn Period::add_period(Period, Period) -> Result[Period, String]
 fn Period::add_weeks(Period, Int) -> Result[Period, String]
 fn Period::add_years(Period, Int) -> Result[Period, String]
-fn Period::between(PlainDate, PlainDate) -> Period
 fn Period::compare(Period, Period) -> Int
 fn Period::days(Period) -> Int
 fn Period::debug_write(Period, Buffer) -> Unit
@@ -63,15 +79,18 @@ fn Period::get_calendar(Period) -> Calendar
 fn Period::is_neg(Period) -> Bool
 fn Period::is_zero(Period) -> Bool
 fn Period::months(Period) -> Int
-fn Period::of(Int, Int, Int, Int) -> Period
+fn Period::multiply(Period, Int) -> Result[Period, String]
+fn Period::negated(Period) -> Result[Period, String]
+fn Period::of(Int, Int, Int) -> Period
+fn Period::op_add(Period, Period) -> Result[Period, String]
 fn Period::op_equal(Period, Period) -> Bool
+fn Period::op_sub(Period, Period) -> Result[Period, String]
 fn Period::to_string(Period) -> String
-fn Period::weeks(Period) -> Int
 fn Period::with_days(Period, Int) -> Period
 fn Period::with_months(Period, Int) -> Period
-fn Period::with_weeks(Period, Int) -> Period
 fn Period::with_years(Period, Int) -> Period
 fn Period::years(Period) -> Int
+fn Period::zero() -> Period
 
 type PlainDate
 fn PlainDate::add_days(PlainDate, Int) -> Result[PlainDate, String]
@@ -101,8 +120,11 @@ fn PlainDate::with_year(PlainDate, Int) -> Result[PlainDate, String]
 fn PlainDate::year(PlainDate) -> Int
 
 type PlainDateTime
+fn PlainDateTime::date(PlainDateTime) -> PlainDate
+fn PlainDateTime::time(PlainDateTime) -> PlainTime
 
 type PlainTime
+fn PlainTime::add_duration(PlainTime, Duration) -> Result[PlainTime, String]
 fn PlainTime::add_hours(PlainTime, Int) -> Result[PlainTime, String]
 fn PlainTime::add_minutes(PlainTime, Int) -> Result[PlainTime, String]
 fn PlainTime::add_nanoseconds(PlainTime, Int64) -> Result[PlainTime, String]
@@ -121,7 +143,10 @@ fn PlainTime::of(Int, Int, Int, Int) -> Result[PlainTime, String]
 fn PlainTime::op_equal(PlainTime, PlainTime) -> Bool
 fn PlainTime::second(PlainTime) -> Int
 fn PlainTime::second_of_day(PlainTime) -> Int
+fn PlainTime::to_nanosecond_of_day(PlainTime) -> Int64
+fn PlainTime::to_second_of_day(PlainTime) -> Int
 fn PlainTime::to_string(PlainTime) -> String
+fn PlainTime::until(PlainTime, PlainTime) -> Result[Duration, String]
 fn PlainTime::with_hour(PlainTime, Int) -> Result[PlainTime, String]
 fn PlainTime::with_minute(PlainTime, Int) -> Result[PlainTime, String]
 fn PlainTime::with_nanosecond(PlainTime, Int) -> Result[PlainTime, String]

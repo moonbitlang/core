@@ -17,3 +17,5 @@ let invalid_time_err = "Invalid time"
 let invalid_date_err = "Invalid date"
 
 let invalid_period_err = "Invalid period"
+
+let invalid_duration_err = "Invalid duration"
