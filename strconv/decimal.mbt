@@ -104,7 +104,7 @@ pub fn Decimal::parse_decimal(str : String) -> Result[Decimal, String] {
     d.decimal_point = d.digits_num
   }
   // read exponent part
-  if i < str.length() && str[i] == 'e' || str[i] == 'E' {
+  if i < str.length() && (str[i] == 'e' || str[i] == 'E') {
     i += 1
     if i >= str.length() {
       return Err(syntax_err)
