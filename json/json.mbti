@@ -22,21 +22,9 @@ fn JsonValue::as_object(JsonValue) -> Option[@map.Map[String, JsonValue]]
 fn JsonValue::as_string(JsonValue) -> Option[String]
 fn JsonValue::debug_write(JsonValue, Buffer) -> Unit
 fn JsonValue::item(JsonValue, Int) -> Option[JsonValue]
-fn JsonValue::item_as_array(JsonValue, Int) -> Option[@vec.Vec[JsonValue]]
-fn JsonValue::item_as_bool(JsonValue, Int) -> Option[Bool]
-fn JsonValue::item_as_null(JsonValue, Int) -> Option[Unit]
-fn JsonValue::item_as_number(JsonValue, Int) -> Option[Double]
-fn JsonValue::item_as_object(JsonValue, Int) -> Option[@map.Map[String, JsonValue]]
-fn JsonValue::item_as_string(JsonValue, Int) -> Option[String]
 fn JsonValue::op_equal(JsonValue, JsonValue) -> Bool
 fn JsonValue::to_string(JsonValue) -> String
 fn JsonValue::value(JsonValue, String) -> Option[JsonValue]
-fn JsonValue::value_as_array(JsonValue, String) -> Option[@vec.Vec[JsonValue]]
-fn JsonValue::value_as_bool(JsonValue, String) -> Option[Bool]
-fn JsonValue::value_as_null(JsonValue, String) -> Option[Unit]
-fn JsonValue::value_as_number(JsonValue, String) -> Option[Double]
-fn JsonValue::value_as_object(JsonValue, String) -> Option[@map.Map[String, JsonValue]]
-fn JsonValue::value_as_string(JsonValue, String) -> Option[String]
 
 // Traits
 
