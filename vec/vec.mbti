@@ -23,6 +23,7 @@ fn Vec::fold_lefti[T, U](Vec[T], (Int, U, T) -> U, U) -> U
 fn Vec::fold_right[T, U](Vec[T], (U, T) -> U, U) -> U
 fn Vec::fold_righti[T, U](Vec[T], (Int, U, T) -> U, U) -> U
 fn Vec::from_array[T](Array[T]) -> Vec[T]
+fn Vec::get[T](Vec[T], Int) -> Option[T]
 fn Vec::insert[T](Vec[T], Int, T) -> Unit
 fn Vec::is_empty[T](Vec[T]) -> Bool
 fn Vec::is_sorted[T : Compare + Eq](Vec[T]) -> Bool

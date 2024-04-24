@@ -120,6 +120,28 @@ pub fn op_get[T](self : Vec[T], index : Int) -> T {
   self.buf[index]
 }
 
+/// Retrieves the element at the specified index from the vector, or `None` if index is out of bounds
+/// 
+/// # Example
+/// ```
+/// let v = Vec::new()
+/// v.push(3)
+/// println(v.get(0)) // Some(3)
+/// ```
+pub fn get[T](self : Vec[T], index : Int) -> Option[T] {
+  if index < 0 || index >= self.len {
+    return None
+  }
+  Some(self.buf[index])
+}
+
+test "get" {
+  let v = Vec::[3]
+  inspect(v.get(-1), content="None")?
+  inspect(v.get(0), content="Some(3)")?
+  inspect(v.get(1), content="None")?
+}
+
 /// Sets the value of the element at the specified index.
 /// 
 /// # Example
