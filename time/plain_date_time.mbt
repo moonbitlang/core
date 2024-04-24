@@ -16,3 +16,11 @@ struct PlainDateTime {
   date: PlainDate
   time: PlainTime
 }
+
+pub fn date(self: PlainDateTime) -> PlainDate {
+  self.date
+}
+
+pub fn time(self: PlainDateTime) -> PlainTime {
+  self.time
+}

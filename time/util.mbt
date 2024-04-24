@@ -22,6 +22,9 @@ fn add_prefix_zero(s : String, len : Int) -> String {
 }
 
 fn remove_prefix_zero(s : String) -> String {
+  if s.length() == 0 {
+    return s
+  }
   let mut i = 0
   while s[i] == '0' && i < s.length() {
     i += 1
@@ -33,9 +36,32 @@ fn remove_prefix_zero(s : String) -> String {
   }
 }
 
+fn add_suffix_zero(s : String, len : Int) -> String {
+  let buf = Buffer::make(len)
+  buf.write_string(s)
+  for i = s.length(); i < len; i = i + 1 {
+    buf.write_char('0')
+  }
+  buf.to_string()
+}
+
+fn remove_suffix_zero(s : String) -> String {
+  if s.length() == 0 {
+    return s
+  }
+  let mut i = s.length() - 1
+  while s[i] == '0' && i > 0 {
+    i -= 1
+  }
+  s.substring(end=i + 1)
+}
+
 /// FIXME: use split method of String
 fn split(s : String, delimiter : Char) -> @vec.Vec[String] {
   let spl : @vec.Vec[String] = @vec.Vec::new()
+  if s.length() == 0 {
+    return spl
+  }
   let buf = Buffer::make(0)
   for i = 0; i < s.length(); i = i + 1 {
     if s[i] == delimiter {
@@ -49,38 +75,57 @@ fn split(s : String, delimiter : Char) -> @vec.Vec[String] {
   spl
 }
 
+let int_overflow_err = "Int overflow"
+
+let int64_overflow_err = "Int64 overflow"
+
 /// FIXME: use checked_add method of Int
-fn checked_add_int(x : Int, y : Int) -> Option[Int] {
+fn checked_add_int(x : Int, y : Int) -> Result[Int, String] {
   let r = x.to_int64() + y.to_int64()
   if r < Int::min_value().to_int64() || r > Int::max_value().to_int64() {
-    None
+    Err(int_overflow_err)
   } else {
-    Some(r.to_int())
+    Ok(r.to_int())
   }
 }
 
 /// FIXME: use checked_mul method of Int
-fn checked_mul_int(x : Int, y : Int) -> Option[Int] {
+fn checked_mul_int(x : Int, y : Int) -> Result[Int, String] {
   let r = x.to_int64() * y.to_int64()
   if r < Int::min_value().to_int64() || r > Int::max_value().to_int64() {
-    None
+    Err(int_overflow_err)
   } else {
-    Some(r.to_int())
+    Ok(r.to_int())
   }
 }
 
 /// FIXME: use checked_add method of Int64
-fn checked_add_int64(x : Int64, y : Int64) -> Option[Int64] {
+fn checked_add_int64(x : Int64, y : Int64) -> Result[Int64, String] {
   let r = x + y
   // Overflow iff both arguments have the opposite sign of the result
   if x.lxor(r).land(y.lxor(r)) < 0L {
-    None
+    Err(int64_overflow_err)
   } else {
-    Some(r)
+    Ok(r)
   }
 }
 
+/// FIXME: use checked_mul method of Int64
+fn checked_mul_int64(x : Int64, y : Int64) -> Result[Int64, String] {
+  let r = x * y
+  let abs_x = x.abs()
+  let abs_y = y.abs()
+  if abs_x.lor(abs_y).lsr(31) != 0L {
+    // bits that greater than 2^31 might cause overflow
+    if y != 0L && r / y != x || x == Int64::min_value() && y == -1L {
+      return Err(int64_overflow_err)
+    }
+  }
+  Ok(r)
+}
+
 test "add_prefix_zero" {
+  inspect(add_prefix_zero("", 2), content="00")?
   inspect(add_prefix_zero("1", 0), content="1")?
   inspect(add_prefix_zero("1", 1), content="1")?
   inspect(add_prefix_zero("1", 2), content="01")?
@@ -88,9 +133,24 @@ test "add_prefix_zero" {
 }
 
 test "remove_prefix_zero" {
+  inspect(remove_prefix_zero(""), content="")?
   inspect(remove_prefix_zero("01"), content="1")?
   inspect(remove_prefix_zero("09"), content="9")?
   inspect(remove_prefix_zero("000"), content="0")?
+}
+
+test "add_suffix_zero" {
+  inspect(add_suffix_zero("", 2), content="00")?
+  inspect(add_suffix_zero("1", 0), content="1")?
+  inspect(add_suffix_zero("1", 1), content="1")?
+  inspect(add_suffix_zero("1", 2), content="10")?
+  inspect(add_suffix_zero("1", 3), content="100")?
+}
+
+test "remove_suffix_zero" {
+  inspect(remove_suffix_zero(""), content="")?
+  inspect(remove_suffix_zero("1000100"), content="10001")?
+  inspect(remove_suffix_zero("000"), content="0")?
 }
 
 test "split" {
@@ -98,28 +158,51 @@ test "split" {
   inspect(split("-01-01", '-'), content="Vec::[, 01, 01]")?
   inspect(split("12-31", '-'), content="Vec::[12, 31]")?
   inspect(split("-01", '-'), content="Vec::[, 01]")?
-}
-
-test "checked_add_int64" {
-  inspect(checked_add_int64(1L, 1L), content="Some(2)")?
-  inspect(checked_add_int64(1L, -1L), content="Some(0)")?
-  inspect(checked_add_int64(-1L, -1L), content="Some(-2)")?
-  inspect(checked_add_int64(1L, Int64::max_value()), content="None")?
-  inspect(checked_add_int64(-1L, Int64::min_value()), content="None")?
+  inspect(split("-", '-'), content="Vec::[, ]")?
+  inspect(split("", '-'), content="Vec::[]")?
+  inspect(split("0", '-'), content="Vec::[0]")?
 }
 
 test "checked_add_int" {
-  inspect(checked_add_int(1, 1), content="Some(2)")?
-  inspect(checked_add_int(1, -1), content="Some(0)")?
-  inspect(checked_add_int(-1, -1), content="Some(-2)")?
-  inspect(checked_add_int(Int::max_value(), 1), content="None")?
-  inspect(checked_add_int(Int::min_value(), -1), content="None")?
+  inspect(checked_add_int(1, 1), content="Ok(2)")?
+  inspect(checked_add_int(1, -1), content="Ok(0)")?
+  inspect(checked_add_int(-1, -1), content="Ok(-2)")?
+  inspect(checked_add_int(Int::max_value(), 1), content="Err(Int overflow)")?
+  inspect(checked_add_int(Int::min_value(), -1), content="Err(Int overflow)")?
 }
 
 test "checked_mul_int" {
-  inspect(checked_mul_int(2, 3), content="Some(6)")?
-  inspect(checked_mul_int(2, -3), content="Some(-6)")?
-  inspect(checked_mul_int(-2, -3), content="Some(6)")?
-  inspect(checked_mul_int(Int::max_value(), 2), content="None")?
-  inspect(checked_mul_int(Int::min_value(), 2), content="None")?
+  inspect(checked_mul_int(2, 3), content="Ok(6)")?
+  inspect(checked_mul_int(2, -3), content="Ok(-6)")?
+  inspect(checked_mul_int(-2, -3), content="Ok(6)")?
+  inspect(checked_mul_int(Int::max_value(), 2), content="Err(Int overflow)")?
+  inspect(checked_mul_int(Int::min_value(), 2), content="Err(Int overflow)")?
+}
+
+test "checked_add_int64" {
+  inspect(checked_add_int64(1L, 1L), content="Ok(2)")?
+  inspect(checked_add_int64(1L, -1L), content="Ok(0)")?
+  inspect(checked_add_int64(-1L, -1L), content="Ok(-2)")?
+  inspect(
+    checked_add_int64(1L, Int64::max_value()),
+    content="Err(Int64 overflow)",
+  )?
+  inspect(
+    checked_add_int64(-1L, Int64::min_value()),
+    content="Err(Int64 overflow)",
+  )?
+}
+
+test "checked_mul_int64" {
+  inspect(checked_mul_int64(2L, 3L), content="Ok(6)")?
+  inspect(checked_mul_int64(2L, -3L), content="Ok(-6)")?
+  inspect(checked_mul_int64(-2L, -3L), content="Ok(6)")?
+  inspect(
+    checked_mul_int64(Int64::max_value(), 2L),
+    content="Err(Int64 overflow)",
+  )?
+  inspect(
+    checked_mul_int64(Int64::min_value(), 2L),
+    content="Err(Int64 overflow)",
+  )?
 }

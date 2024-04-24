@@ -166,11 +166,21 @@ test "add_nanoseconds" {
   inspect(time.add_nanoseconds(0L), content="Ok(00:00:00.1000)")?
   inspect(time.add_nanoseconds(1L), content="Ok(00:00:00.1001)")?
   inspect(time.add_nanoseconds(123456789L), content="Ok(00:00:00.123457789)")?
-  inspect(time.add_nanoseconds(Int64::min_value()), content="Ok(00:12:43.145225192)")?
-  inspect(time.add_nanoseconds(Int64::max_value()), content="Ok(23:47:16.854776807)")?
+  inspect(
+    time.add_nanoseconds(Int64::min_value()),
+    content="Ok(00:12:43.145225192)",
+  )?
+  inspect(
+    time.add_nanoseconds(Int64::max_value()),
+    content="Ok(23:47:16.854776807)",
+  )?
 }
 
 test "with_hour" {
+  inspect(
+    PlainTime::of(1, 20, 30, 400)?.with_hour(1),
+    content="Ok(01:20:30.400)",
+  )?
   inspect(
     PlainTime::of(1, 20, 30, 400)?.with_hour(10),
     content="Ok(10:20:30.400)",
@@ -195,6 +205,10 @@ test "with_hour" {
 
 test "with_minute" {
   inspect(
+    PlainTime::of(1, 20, 30, 400)?.with_minute(20),
+    content="Ok(01:20:30.400)",
+  )?
+  inspect(
     PlainTime::of(1, 20, 30, 400)?.with_minute(10),
     content="Ok(01:10:30.400)",
   )?
@@ -218,6 +232,10 @@ test "with_minute" {
 
 test "with_second" {
   inspect(
+    PlainTime::of(1, 20, 30, 400)?.with_second(30),
+    content="Ok(01:20:30.400)",
+  )?
+  inspect(
     PlainTime::of(1, 20, 30, 400)?.with_second(10),
     content="Ok(01:20:10.400)",
   )?
@@ -240,5 +258,55 @@ test "with_second" {
 }
 
 test "with_nanosecond" {
+  inspect(
+    PlainTime::of(1, 20, 30, 400)?.with_nanosecond(400),
+    content="Ok(01:20:30.400)",
+  )?
+  inspect(
+    PlainTime::of(1, 20, 30, 400)?.with_nanosecond(100),
+    content="Ok(01:20:30.100)",
+  )?
+  inspect(
+    PlainTime::of(1, 20, 30, 400)?.with_nanosecond(0),
+    content="Ok(01:20:30)",
+  )?
+  inspect(
+    PlainTime::of(1, 20, 30, 400)?.with_nanosecond(999_999_999),
+    content="Ok(01:20:30.999999999)",
+  )?
+  inspect(
+    PlainTime::of(1, 20, 30, 400)?.with_nanosecond(-1),
+    content="Err(Invalid time)",
+  )?
+  inspect(
+    PlainTime::of(1, 20, 30, 400)?.with_second(1_000_000_000),
+    content="Err(Invalid time)",
+  )?
+}
 
+test "until" {
+  let time = PlainTime::of(12, 0, 0, 0)?
+  inspect(
+    time.until(PlainTime::of(13, 30, 30, 1_000_000)?),
+    content="Ok(PT1H30M30.001S)",
+  )?
+  inspect(
+    time.until(PlainTime::of(11, 30, 30, 1_000_000)?),
+    content="Ok(PT-29M-29.999S)",
+  )?
+}
+
+test "add_duration" {
+  let time = PlainTime::of(12, 0, 0, 0)?
+  inspect(
+    time.add_duration(
+      Duration::of(hours=1L, minutes=30L, seconds=30L, nanoseconds=1_000_000L)?,
+    ),
+    content="Ok(13:30:30.1000000)",
+  )?
+  inspect(
+    time.add_duration(
+      Duration::of(minutes=-29L, seconds=-29L, nanoseconds=-999_000_000L)?,
+    ),
+  content="Ok(11:30:30.1000000)")?
 }

@@ -40,10 +40,6 @@ let seconds_per_hour : Int64 = seconds_per_minute * 60L
 
 let seconds_per_day : Int64 = seconds_per_hour * 24L
 
-let nanoseconds_per_microsecond = 1_000L
-
-let nanoseconds_per_millisecond = 1_000_000L
-
 let nanoseconds_per_second = 1_000_000_000L
 
 let nanoseconds_per_minute : Int64 = nanoseconds_per_second * seconds_per_minute
@@ -173,6 +169,15 @@ pub fn PlainTime::from_nanosecond_of_day(
   PlainTime::of(hour.to_int(), minute.to_int(), second.to_int(), nanos.to_int())
 }
 
+pub fn to_second_of_day(self : PlainTime) -> Int {
+  self.hour * seconds_per_hour.to_int() + self.minute * seconds_per_minute.to_int() +
+  self.second
+}
+
+pub fn to_nanosecond_of_day(self : PlainTime) -> Int64 {
+  self.to_second_of_day().to_int64() * nanoseconds_per_second + self.nanosecond.to_int64()
+}
+
 pub fn add_hours(self : PlainTime, hours : Int) -> Result[PlainTime, String] {
   if hours == 0 {
     return Ok(self)
@@ -238,6 +243,16 @@ pub fn add_nanoseconds(
   PlainTime::from_nanosecond_of_day(new_nanos)
 }
 
+pub fn add_duration(
+  self : PlainTime,
+  duration : Duration
+) -> Result[PlainTime, String] {
+  if duration.is_zero() {
+    return Ok(self)
+  }
+  self.add_nanoseconds(duration.to_nanoseconds())
+}
+
 pub fn with_hour(self : PlainTime, hour : Int) -> Result[PlainTime, String] {
   if hour == self.hour {
     return Ok(self)
@@ -267,6 +282,11 @@ pub fn with_nanosecond(
     return Ok(self)
   }
   PlainTime::of(self.hour, self.minute, self.second, nanosecond)
+}
+
+pub fn until(self : PlainTime, end : PlainTime) -> Result[Duration, String] {
+  let nanoseconds = end.to_nanosecond_of_day() - self.to_nanosecond_of_day()
+  Duration::of(~nanoseconds)
 }
 
 pub fn at_date(self : PlainTime, date : PlainDate) -> PlainDateTime {
