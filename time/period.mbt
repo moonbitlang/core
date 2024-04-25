@@ -202,7 +202,3 @@ pub fn is_zero(self : Period) -> Bool {
 pub fn is_neg(self : Period) -> Bool {
   self.years < 0 || self.months < 0 || self.days < 0
 }
-
-pub fn Period::get_calendar(_self : Period) -> Calendar {
-  iso_calendar
-}
