@@ -8,8 +8,10 @@ alias @moonbitlang/core/math as @math
 type Iter
 fn Iter::_unstable_internal_make[T](((T) -> Bool) -> Bool) -> Iter[T]
 fn Iter::append[T](Iter[T], T) -> Iter[T]
+fn Iter::ascending[T : Default + @math.Add + @math.Unity](T, T) -> Iter[T]
 fn Iter::concat[T](Iter[T], Iter[T]) -> Iter[T]
 fn Iter::count[T](Iter[T]) -> Int
+fn Iter::descending[T : Default + @math.Subtract + @math.Unity](T, T) -> Iter[T]
 fn Iter::drop[T](Iter[T], Int) -> Iter[T]
 fn Iter::drop_while[T](Iter[T], (T) -> Bool) -> Iter[T]
 fn Iter::empty[T]() -> Iter[T]

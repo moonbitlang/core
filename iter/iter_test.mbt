@@ -249,3 +249,21 @@ test "sum" {
 test "product" {
   inspect(repeat(2).take(8).product(), content="256")?
 }
+
+test "ascending" {
+  let it : Iter[Int] = ascending()
+  inspect(it.take(5).sum(), content="10")?
+  inspect(it.take(10).sum(), content="45")?
+  inspect(ascending(step=2).take(5).sum(), content="20")?
+  inspect(ascending(init=5).take(5).sum(), content="35")?
+  inspect(ascending(init=5, step=3).take(5).sum(), content="55")?
+}
+
+test "descending" {
+  let it : Iter[Int] = descending()
+  inspect(it.take(5).sum(), content="-10")?
+  inspect(it.take(10).sum(), content="-45")?
+  inspect(descending(step=2).take(5).sum(), content="-20")?
+  inspect(descending(init=5).take(5).sum(), content="15")?
+  inspect(descending(init=5, step=3).take(5).sum(), content="-5")?
+}
