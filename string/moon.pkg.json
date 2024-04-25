@@ -4,6 +4,7 @@
         "moonbitlang/core/assertion",
         "moonbitlang/core/coverage",
         "moonbitlang/core/bytes",
-        "moonbitlang/core/char"
+        "moonbitlang/core/char",
+        "moonbitlang/core/iter"
     ]
 }

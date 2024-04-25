@@ -149,3 +149,53 @@ test "substring" {
   @assertion.assert_eq("abc".substring(end=2), "ab")?
   @assertion.assert_eq("abc".substring(start=1, end=2), "b")?
 }
+
+fn next_code_point(self : String, index : Int) -> Option[(Char, Int)] {
+  let len = self.length()
+  if index >= len {
+    return None
+  }
+  let c = self[index].to_int()
+  if c >= 0xD800 && c <= 0xDBFF && index + 1 < len {
+    let c2 = self[index + 1].to_int()
+    if c2 >= 0xDC00 && c2 <= 0xDFFF {
+      return Some(
+        (
+          Char::from_int((c - 0xD800) * 0x400 + c2 - 0xDC00 + 0x10000),
+          index + 2,
+        ),
+      )
+    }
+  }
+  return Some((Char::from_int(c), index + 1))
+}
+
+pub fn as_iter(self : String) -> @iter.Iter[Char] {
+  @iter._unstable_internal_make(
+    fn(yield) {
+      for i = 0 {
+        match self.next_code_point(i) {
+          None => break true
+          Some((c, next_i)) =>
+            if yield(c) {
+              continue next_i
+            } else {
+              break false
+            }
+        }
+      }
+    },
+  )
+}
+
+test "chars" {
+  let mut str = ""
+  let chars = "A😊𠮷B".as_iter().iter(fn (c) { str = str + c.to_int().to_string() + "\n" })
+  inspect(str, content=
+    #|65
+    #|128522
+    #|134071
+    #|66
+    #|
+  )?
+}
