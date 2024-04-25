@@ -50,13 +50,6 @@ test "is_neg" {
   inspect(Period::of(years=-1, months=1).is_neg(), content="true")?
 }
 
-test "get_calendar" {
-  inspect(
-    Period::of().get_calendar().get_type() == iso_calendar.get_type(),
-    content="true",
-  )?
-}
-
 test "add_years" {
   let p = Period::of(years=10)
   inspect(p.add_years(0), content="Ok(P10Y)")?

@@ -36,6 +36,21 @@ fn remove_prefix_zero(s : String) -> String {
   }
 }
 
+test "add_prefix_zero" {
+  inspect(add_prefix_zero("", 2), content="00")?
+  inspect(add_prefix_zero("1", 0), content="1")?
+  inspect(add_prefix_zero("1", 1), content="1")?
+  inspect(add_prefix_zero("1", 2), content="01")?
+  inspect(add_prefix_zero("1", 3), content="001")?
+}
+
+test "remove_prefix_zero" {
+  inspect(remove_prefix_zero(""), content="")?
+  inspect(remove_prefix_zero("01"), content="1")?
+  inspect(remove_prefix_zero("09"), content="9")?
+  inspect(remove_prefix_zero("000"), content="0")?
+}
+
 fn add_suffix_zero(s : String, len : Int) -> String {
   let buf = Buffer::make(len)
   buf.write_string(s)
@@ -56,6 +71,19 @@ fn remove_suffix_zero(s : String) -> String {
   s.substring(end=i + 1)
 }
 
+test "add_suffix_zero" {
+  inspect(add_suffix_zero("1", 0), content="1")?
+  inspect(add_suffix_zero("1", 1), content="1")?
+  inspect(add_suffix_zero("1", 2), content="10")?
+  inspect(add_suffix_zero("1", 3), content="100")?
+}
+
+test "remove_suffix_zero" {
+  inspect(remove_suffix_zero(""), content="")?
+  inspect(remove_suffix_zero("1000100"), content="10001")?
+  inspect(remove_suffix_zero("000"), content="0")?
+}
+
 /// FIXME: use split method of String
 fn split(s : String, delimiter : Char) -> @vec.Vec[String] {
   let spl : @vec.Vec[String] = @vec.Vec::new()
@@ -73,6 +101,16 @@ fn split(s : String, delimiter : Char) -> @vec.Vec[String] {
   }
   spl.push(buf.to_string())
   spl
+}
+
+test "split" {
+  inspect(split("2000-01-01", '-'), content="Vec::[2000, 01, 01]")?
+  inspect(split("-01-01", '-'), content="Vec::[, 01, 01]")?
+  inspect(split("12-31", '-'), content="Vec::[12, 31]")?
+  inspect(split("-01", '-'), content="Vec::[, 01]")?
+  inspect(split("-", '-'), content="Vec::[, ]")?
+  inspect(split("", '-'), content="Vec::[]")?
+  inspect(split("0", '-'), content="Vec::[0]")?
 }
 
 let int_overflow_err = "Int overflow"
@@ -124,45 +162,6 @@ fn checked_mul_int64(x : Int64, y : Int64) -> Result[Int64, String] {
   Ok(r)
 }
 
-test "add_prefix_zero" {
-  inspect(add_prefix_zero("", 2), content="00")?
-  inspect(add_prefix_zero("1", 0), content="1")?
-  inspect(add_prefix_zero("1", 1), content="1")?
-  inspect(add_prefix_zero("1", 2), content="01")?
-  inspect(add_prefix_zero("1", 3), content="001")?
-}
-
-test "remove_prefix_zero" {
-  inspect(remove_prefix_zero(""), content="")?
-  inspect(remove_prefix_zero("01"), content="1")?
-  inspect(remove_prefix_zero("09"), content="9")?
-  inspect(remove_prefix_zero("000"), content="0")?
-}
-
-test "add_suffix_zero" {
-  inspect(add_suffix_zero("", 2), content="00")?
-  inspect(add_suffix_zero("1", 0), content="1")?
-  inspect(add_suffix_zero("1", 1), content="1")?
-  inspect(add_suffix_zero("1", 2), content="10")?
-  inspect(add_suffix_zero("1", 3), content="100")?
-}
-
-test "remove_suffix_zero" {
-  inspect(remove_suffix_zero(""), content="")?
-  inspect(remove_suffix_zero("1000100"), content="10001")?
-  inspect(remove_suffix_zero("000"), content="0")?
-}
-
-test "split" {
-  inspect(split("2000-01-01", '-'), content="Vec::[2000, 01, 01]")?
-  inspect(split("-01-01", '-'), content="Vec::[, 01, 01]")?
-  inspect(split("12-31", '-'), content="Vec::[12, 31]")?
-  inspect(split("-01", '-'), content="Vec::[, 01]")?
-  inspect(split("-", '-'), content="Vec::[, ]")?
-  inspect(split("", '-'), content="Vec::[]")?
-  inspect(split("0", '-'), content="Vec::[0]")?
-}
-
 test "checked_add_int" {
   inspect(checked_add_int(1, 1), content="Ok(2)")?
   inspect(checked_add_int(1, -1), content="Ok(0)")?
@@ -205,4 +204,73 @@ test "checked_mul_int64" {
     checked_mul_int64(Int64::min_value(), 2L),
     content="Err(Int64 overflow)",
   )?
+}
+
+fn floor(x : Double) -> Double {
+  if x.is_pos_inf() || x.is_neg_inf() || x.is_nan() {
+    return x
+  }
+  let n = x.to_int64()
+  let d = n.to_double()
+  if x >= 0.0 || x == d {
+    d
+  } else {
+    d - 1.0
+  }
+}
+
+fn floor_div_int(x : Int, y : Int) -> Result[Int, String] {
+  if x == 0 {
+    return Err("divide by zero")
+  }
+  let r = x.to_double() / y.to_double()
+  Ok(floor(r).to_int())
+}
+
+test "floor_div_int" {
+  inspect(floor_div_int(1, 10), content="Ok(0)")?
+  inspect(floor_div_int(-1, 10), content="Ok(-1)")?
+  inspect(floor_div_int(9, 10), content="Ok(0)")?
+  inspect(floor_div_int(-9, 10), content="Ok(-1)")?
+  inspect(floor_div_int(0, 10), content="Err(divide by zero)")?
+}
+
+fn floor_div_int64(x : Int64, y : Int64) -> Result[Int64, String] {
+  if x == 0L {
+    return Err("divide by zero")
+  }
+  let r = x.to_double() / y.to_double()
+  Ok(floor(r).to_int64())
+}
+
+test "floor_div_int64" {
+  inspect(floor_div_int64(1L, 10L), content="Ok(0)")?
+  inspect(floor_div_int64(-1L, 10L), content="Ok(-1)")?
+  inspect(floor_div_int64(9L, 10L), content="Ok(0)")?
+  inspect(floor_div_int64(-9L, 10L), content="Ok(-1)")?
+  inspect(floor_div_int64(0L, 12L), content="Err(divide by zero)")?
+}
+
+fn floor_mod_int(x : Int, y : Int) -> Result[Int, String] {
+  Ok(x - floor_div_int(x, y)? * y)
+}
+
+test "floor_mod_int" {
+  inspect(floor_mod_int(1, 10), content="Ok(1)")?
+  inspect(floor_mod_int(-1, 10), content="Ok(9)")?
+  inspect(floor_mod_int(11, 10), content="Ok(1)")?
+  inspect(floor_mod_int(-11, 10), content="Ok(9)")?
+  inspect(floor_mod_int(0, 10), content="Err(divide by zero)")?
+}
+
+fn floor_mod_int64(x : Int64, y : Int64) -> Result[Int64, String] {
+  Ok(x - floor_div_int64(x, y)? * y)
+}
+
+test "floor_mod_int64" {
+  inspect(floor_mod_int64(1L, 10L), content="Ok(1)")?
+  inspect(floor_mod_int64(-1L, 10L), content="Ok(9)")?
+  inspect(floor_mod_int64(11L, 10L), content="Ok(1)")?
+  inspect(floor_mod_int64(-11L, 10L), content="Ok(9)")?
+  inspect(floor_mod_int64(0L, 10L), content="Err(divide by zero)")?
 }

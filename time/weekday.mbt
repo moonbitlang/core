@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-enum DayOfWeek {
+enum Weekday {
   Monday
   Tuesday
   Wednesday
@@ -22,7 +22,7 @@ enum DayOfWeek {
   Sunday
 } derive(Debug, Eq, Show)
 
-fn DayOfWeek::new(week_day : Int) -> Option[DayOfWeek] {
+fn Weekday::new(week_day : Int) -> Option[Weekday] {
   match week_day {
     1 => Some(Monday)
     2 => Some(Tuesday)
@@ -35,7 +35,7 @@ fn DayOfWeek::new(week_day : Int) -> Option[DayOfWeek] {
   }
 }
 
-fn value(self : DayOfWeek) -> Int {
+fn value(self : Weekday) -> Int {
   match self {
     Monday => 1
     Tuesday => 2
@@ -48,23 +48,23 @@ fn value(self : DayOfWeek) -> Int {
 }
 
 test "new" {
-  inspect(DayOfWeek::new(0), content="None")?
-  inspect(DayOfWeek::new(1), content="Some(Monday)")?
-  inspect(DayOfWeek::new(2), content="Some(Tuesday)")?
-  inspect(DayOfWeek::new(3), content="Some(Wednesday)")?
-  inspect(DayOfWeek::new(4), content="Some(Thursday)")?
-  inspect(DayOfWeek::new(5), content="Some(Friday)")?
-  inspect(DayOfWeek::new(6), content="Some(Saturday)")?
-  inspect(DayOfWeek::new(7), content="Some(Sunday)")?
-  inspect(DayOfWeek::new(8), content="None")?
+  inspect(Weekday::new(0), content="None")?
+  inspect(Weekday::new(1), content="Some(Monday)")?
+  inspect(Weekday::new(2), content="Some(Tuesday)")?
+  inspect(Weekday::new(3), content="Some(Wednesday)")?
+  inspect(Weekday::new(4), content="Some(Thursday)")?
+  inspect(Weekday::new(5), content="Some(Friday)")?
+  inspect(Weekday::new(6), content="Some(Saturday)")?
+  inspect(Weekday::new(7), content="Some(Sunday)")?
+  inspect(Weekday::new(8), content="None")?
 }
 
 test "value" {
-  inspect(DayOfWeek::Monday.value(), content="1")?
-  inspect(DayOfWeek::Tuesday.value(), content="2")?
-  inspect(DayOfWeek::Wednesday.value(), content="3")?
-  inspect(DayOfWeek::Thursday.value(), content="4")?
-  inspect(DayOfWeek::Friday.value(), content="5")?
-  inspect(DayOfWeek::Saturday.value(), content="6")?
-  inspect(DayOfWeek::Sunday.value(), content="7")?
+  inspect(Weekday::Monday.value(), content="1")?
+  inspect(Weekday::Tuesday.value(), content="2")?
+  inspect(Weekday::Wednesday.value(), content="3")?
+  inspect(Weekday::Thursday.value(), content="4")?
+  inspect(Weekday::Friday.value(), content="5")?
+  inspect(Weekday::Saturday.value(), content="6")?
+  inspect(Weekday::Sunday.value(), content="7")?
 }
