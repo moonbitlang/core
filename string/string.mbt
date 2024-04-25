@@ -150,26 +150,6 @@ test "substring" {
   @assertion.assert_eq("abc".substring(start=1, end=2), "b")?
 }
 
-fn next_code_point(self : String, index : Int) -> Option[(Char, Int)] {
-  let len = self.length()
-  if index >= len {
-    return None
-  }
-  let c = self[index].to_int()
-  if c >= 0xD800 && c <= 0xDBFF && index + 1 < len {
-    let c2 = self[index + 1].to_int()
-    if c2 >= 0xDC00 && c2 <= 0xDFFF {
-      return Some(
-        (
-          Char::from_int((c - 0xD800) * 0x400 + c2 - 0xDC00 + 0x10000),
-          index + 2,
-        ),
-      )
-    }
-  }
-  return Some((Char::from_int(c), index + 1))
-}
-
 pub fn as_iter(self : String) -> @iter.Iter[Char] {
   @iter._unstable_internal_make(
     fn(yield) {
