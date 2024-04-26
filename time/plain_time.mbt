@@ -12,42 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-let min_hour = 0
-
-let max_hour = 23
-
-let min_minute = 0
-
-let max_minute = 59
-
-let min_second = 0
-
-let max_second = 59
-
-let min_nanoseconds = 0
-
-let max_nanoseconds = 999_999_999
-
-let hours_per_day : Int = 24
-
-let minutes_per_hour : Int = 60
-
-let minutes_per_day : Int = 24 * minutes_per_hour
-
-let seconds_per_minute = 60L
-
-let seconds_per_hour : Int64 = seconds_per_minute * 60L
-
-let seconds_per_day : Int64 = seconds_per_hour * 24L
-
-let nanoseconds_per_second = 1_000_000_000L
-
-let nanoseconds_per_minute : Int64 = nanoseconds_per_second * seconds_per_minute
-
-let nanoseconds_per_hour : Int64 = nanoseconds_per_minute * minutes_per_hour.to_int64()
-
-let nanoseconds_per_day : Int64 = nanoseconds_per_second * seconds_per_day
-
 struct PlainTime {
   hour : Int
   minute : Int
@@ -66,15 +30,6 @@ pub fn PlainTime::of(
   } else {
     Err(invalid_time_err)
   }
-}
-
-fn validate_time(h : Int, m : Int, s : Int, ns : Int) -> Bool {
-  let valid_hour = h >= min_hour && h <= max_hour
-  let valid_minute = m >= min_minute && m <= max_minute
-  let valid_second = s >= min_second && s <= max_second
-  let valid_nanosecond = ns >= min_nanoseconds && ns <= max_nanoseconds
-  let zero = h == 24 && m == 0 && s == 0 && ns == 0
-  valid_hour && valid_minute && valid_second && valid_nanosecond || zero
 }
 
 pub fn PlainTime::from_string(str : String) -> Result[PlainTime, String] {
@@ -109,7 +64,10 @@ pub fn PlainTime::to_string(self : PlainTime) -> String {
   buf.write_string(add_prefix_zero(self.second.to_string(), 2))
   if self.nanosecond > 0 {
     buf.write_char('.')
-    buf.write_string(self.nanosecond.to_string())
+    let nanos_str = (self.nanosecond.to_int64() + nanoseconds_per_second).to_string().substring(
+      start=1,
+    )
+    buf.write_string(remove_suffix_zero(nanos_str))
   }
   buf.to_string()
 }
@@ -169,55 +127,50 @@ pub fn PlainTime::from_nanosecond_of_day(
   PlainTime::of(hour.to_int(), minute.to_int(), second.to_int(), nanos.to_int())
 }
 
-pub fn to_second_of_day(self : PlainTime) -> Int {
-  self.hour * seconds_per_hour.to_int() + self.minute * seconds_per_minute.to_int() +
-  self.second
-}
-
-pub fn to_nanosecond_of_day(self : PlainTime) -> Int64 {
-  self.to_second_of_day().to_int64() * nanoseconds_per_second + self.nanosecond.to_int64()
-}
-
-pub fn add_hours(self : PlainTime, hours : Int) -> Result[PlainTime, String] {
-  if hours == 0 {
+pub fn add_hours(self : PlainTime, hours : Int64) -> Result[PlainTime, String] {
+  if hours == 0L {
     return Ok(self)
   }
-  let new_hour = (hours % hours_per_day + self.hour) % hours_per_day
-  PlainTime::of(new_hour, self.minute, self.second, self.nanosecond)
+  let new_hour = (hours % hours_per_day + self.hour.to_int64()) % hours_per_day
+  PlainTime::of(new_hour.to_int(), self.minute, self.second, self.nanosecond)
 }
 
 pub fn add_minutes(
   self : PlainTime,
-  minutes : Int
+  minutes : Int64
 ) -> Result[PlainTime, String] {
-  if minutes == 0 {
+  if minutes == 0L {
     return Ok(self)
   }
-  let mins = self.hour * minutes_per_hour + self.minute
+  let mins = self.hour.to_int64() * minutes_per_hour + self.minute.to_int64()
   let new_mins = (minutes % minutes_per_day + mins + minutes_per_day) % minutes_per_day
   if mins == new_mins {
     return Ok(self)
   }
   let new_hour = new_mins / minutes_per_hour
   let new_minute = new_mins % minutes_per_hour
-  PlainTime::of(new_hour, new_minute, self.second, self.nanosecond)
+  PlainTime::of(
+    new_hour.to_int(),
+    new_minute.to_int(),
+    self.second,
+    self.nanosecond,
+  )
 }
 
 pub fn add_seconds(
   self : PlainTime,
-  seconds : Int
+  seconds : Int64
 ) -> Result[PlainTime, String] {
-  if seconds == 0 {
+  if seconds == 0L {
     return Ok(self)
   }
   let secs = self.second_of_day().to_int64()
-  let new_secs = (seconds.to_int64() % seconds_per_day + secs + seconds_per_day) %
-    seconds_per_day
+  let new_secs = (seconds % seconds_per_day + secs + seconds_per_day) % seconds_per_day
   if secs == new_secs {
     return Ok(self)
   }
   let new_hour = new_secs / seconds_per_day
-  let new_minute = new_secs / seconds_per_minute % minutes_per_hour.to_int64()
+  let new_minute = new_secs / seconds_per_minute % minutes_per_hour
   let new_second = new_secs % seconds_per_minute
   PlainTime::of(
     new_hour.to_int(),
@@ -285,10 +238,59 @@ pub fn with_nanosecond(
 }
 
 pub fn until(self : PlainTime, end : PlainTime) -> Result[Duration, String] {
-  let nanoseconds = end.to_nanosecond_of_day() - self.to_nanosecond_of_day()
+  let nanoseconds = end.nanosecond_of_day() - self.nanosecond_of_day()
   Duration::of(~nanoseconds)
 }
 
 pub fn at_date(self : PlainTime, date : PlainDate) -> PlainDateTime {
   PlainDateTime::{ date, time: self }
+}
+
+// *****************************
+// * internal helper functions *
+// *****************************
+
+let min_hour = 0
+
+let max_hour = 23
+
+let min_minute = 0
+
+let max_minute = 59
+
+let min_second = 0
+
+let max_second = 59
+
+let min_nanoseconds = 0
+
+let max_nanoseconds = 999_999_999
+
+let hours_per_day = 24L
+
+let minutes_per_hour = 60L
+
+let minutes_per_day : Int64 = 24L * minutes_per_hour
+
+let seconds_per_minute = 60L
+
+let seconds_per_hour : Int64 = seconds_per_minute * 60L
+
+let seconds_per_day : Int64 = seconds_per_hour * 24L
+
+let nanoseconds_per_second = 1_000_000_000L
+
+let nanoseconds_per_minute : Int64 = nanoseconds_per_second * seconds_per_minute
+
+let nanoseconds_per_hour : Int64 = nanoseconds_per_minute * minutes_per_hour
+
+let nanoseconds_per_day : Int64 = nanoseconds_per_second * seconds_per_day
+
+fn validate_time(h : Int, m : Int, s : Int, ns : Int) -> Bool {
+  let valid_hour = h >= min_hour && h <= max_hour
+  let valid_minute = m >= min_minute && m <= max_minute
+  let valid_second = s >= min_second && s <= max_second
+  let valid_nanosecond = ns >= min_nanoseconds && ns <= max_nanoseconds
+  let zero = h == 24 && m == 0 && s == 0 && ns == 0
+  valid_hour && valid_minute && valid_second && valid_nanosecond || zero
 }
