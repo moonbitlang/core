@@ -15,7 +15,7 @@
 struct PlainDateTime {
   date : PlainDate
   time : PlainTime
-} derive(Debug, Eq, Compare)
+} derive(Eq, Compare)
 
 pub fn PlainDateTime::of(
   year : Int,
@@ -32,6 +32,28 @@ pub fn PlainDateTime::of(
       time: PlainTime::of(hour, minute, second, nanosecond)?,
     },
   )
+}
+
+pub fn PlainDateTime::from_unix_second(
+  second : Int64,
+  nanosecond : Int,
+  offset : ZoneOffset
+) -> Result[PlainDateTime, String] {
+  if not(validate_nano(nanosecond)) {
+    return Err(invalid_date_time_err)
+  }
+  let sec = second + offset.seconds().to_int64()
+  let unix_day = floor_div_int64(sec, seconds_per_day)?
+  let seconds_of_day = floor_mod_int64(sec, seconds_per_day)?
+  let date = PlainDate::from_unix_day(unix_day)?
+  let time = PlainTime::from_nanosecond_of_day(
+    seconds_of_day * nanoseconds_per_second + nanosecond.to_int64(),
+  )?
+  Ok({ date, time })
+}
+
+pub fn to_unix_second(self : PlainDateTime) -> Int64 {
+  self.date.to_unix_day() * seconds_per_day + self.time.second_of_day().to_int64()
 }
 
 pub fn PlainDateTime::from_string(
@@ -117,14 +139,6 @@ pub fn second(self : PlainDateTime) -> Int {
 
 pub fn nanosecond(self : PlainDateTime) -> Int {
   self.time.nanosecond()
-}
-
-pub fn second_of_day(self : PlainDateTime) -> Int {
-  self.time.second_of_day()
-}
-
-pub fn nanosecond_of_day(self : PlainDateTime) -> Int64 {
-  self.time.nanosecond_of_day()
 }
 
 pub fn add_years(

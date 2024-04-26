@@ -62,10 +62,10 @@ fn PlainDate::day(PlainDate) -> Int
 fn PlainDate::days_in_month(PlainDate) -> Int
 fn PlainDate::days_in_week(PlainDate) -> Int
 fn PlainDate::days_in_year(PlainDate) -> Int
-fn PlainDate::debug_write(PlainDate, Buffer) -> Unit
 fn PlainDate::era(PlainDate) -> String
 fn PlainDate::era_year(PlainDate) -> Int
 fn PlainDate::from_string(String) -> Result[PlainDate, String]
+fn PlainDate::from_unix_day(Int64) -> Result[PlainDate, String]
 fn PlainDate::from_year_ord(Int, Int) -> Result[PlainDate, String]
 fn PlainDate::in_leap_year(PlainDate) -> Bool
 fn PlainDate::month(PlainDate) -> Int
@@ -74,6 +74,7 @@ fn PlainDate::of(Int, Int, Int) -> Result[PlainDate, String]
 fn PlainDate::op_equal(PlainDate, PlainDate) -> Bool
 fn PlainDate::ordinal(PlainDate) -> Int
 fn PlainDate::to_string(PlainDate) -> String
+fn PlainDate::to_unix_day(PlainDate) -> Int64
 fn PlainDate::until(PlainDate, PlainDate) -> Result[Period, String]
 fn PlainDate::weekday(PlainDate) -> Weekday
 fn PlainDate::with_day(PlainDate, Int) -> Result[PlainDate, String]
@@ -98,25 +99,24 @@ fn PlainDateTime::day(PlainDateTime) -> Int
 fn PlainDateTime::days_in_month(PlainDateTime) -> Int
 fn PlainDateTime::days_in_week(PlainDateTime) -> Int
 fn PlainDateTime::days_in_year(PlainDateTime) -> Int
-fn PlainDateTime::debug_write(PlainDateTime, Buffer) -> Unit
 fn PlainDateTime::era(PlainDateTime) -> String
 fn PlainDateTime::era_year(PlainDateTime) -> Int
 fn PlainDateTime::from_string(String) -> Result[PlainDateTime, String]
+fn PlainDateTime::from_unix_second(Int64, Int, ZoneOffset) -> Result[PlainDateTime, String]
 fn PlainDateTime::hour(PlainDateTime) -> Int
 fn PlainDateTime::in_leap_year(PlainDateTime) -> Bool
 fn PlainDateTime::minute(PlainDateTime) -> Int
 fn PlainDateTime::month(PlainDateTime) -> Int
 fn PlainDateTime::months_in_year(PlainDateTime) -> Int
 fn PlainDateTime::nanosecond(PlainDateTime) -> Int
-fn PlainDateTime::nanosecond_of_day(PlainDateTime) -> Int64
 fn PlainDateTime::of(Int, Int, Int, Int, Int, Int, Int) -> Result[PlainDateTime, String]
 fn PlainDateTime::op_equal(PlainDateTime, PlainDateTime) -> Bool
 fn PlainDateTime::ordinal(PlainDateTime) -> Int
 fn PlainDateTime::second(PlainDateTime) -> Int
-fn PlainDateTime::second_of_day(PlainDateTime) -> Int
 fn PlainDateTime::to_plain_date(PlainDateTime) -> PlainDate
 fn PlainDateTime::to_plain_time(PlainDateTime) -> PlainTime
 fn PlainDateTime::to_string(PlainDateTime) -> String
+fn PlainDateTime::to_unix_second(PlainDateTime) -> Int64
 fn PlainDateTime::weekday(PlainDateTime) -> Weekday
 fn PlainDateTime::with_day(PlainDateTime, Int) -> Result[PlainDateTime, String]
 fn PlainDateTime::with_hour(PlainDateTime, Int) -> Result[PlainDateTime, String]
@@ -136,7 +136,6 @@ fn PlainTime::add_nanoseconds(PlainTime, Int64) -> Result[PlainTime, String]
 fn PlainTime::add_seconds(PlainTime, Int64) -> Result[PlainTime, String]
 fn PlainTime::at_date(PlainTime, PlainDate) -> PlainDateTime
 fn PlainTime::compare(PlainTime, PlainTime) -> Int
-fn PlainTime::debug_write(PlainTime, Buffer) -> Unit
 fn PlainTime::from_nanosecond_of_day(Int64) -> Result[PlainTime, String]
 fn PlainTime::from_second_of_day(Int) -> Result[PlainTime, String]
 fn PlainTime::from_string(String) -> Result[PlainTime, String]
@@ -159,6 +158,68 @@ type Weekday
 fn Weekday::debug_write(Weekday, Buffer) -> Unit
 fn Weekday::op_equal(Weekday, Weekday) -> Bool
 fn Weekday::to_string(Weekday) -> String
+
+type Zone
+fn Zone::fixed(String, Int) -> Result[Zone, String]
+fn Zone::is_fixed(Zone) -> Bool
+fn Zone::op_equal(Zone, Zone) -> Bool
+fn Zone::to_string(Zone) -> String
+fn Zone::utc() -> Zone
+
+type ZoneOffset
+fn ZoneOffset::compare(ZoneOffset, ZoneOffset) -> Int
+fn ZoneOffset::from_seconds(Int) -> Result[ZoneOffset, String]
+fn ZoneOffset::id(ZoneOffset) -> String
+fn ZoneOffset::is_dst(ZoneOffset) -> Bool
+fn ZoneOffset::of(Int, Int, Int) -> Result[ZoneOffset, String]
+fn ZoneOffset::op_equal(ZoneOffset, ZoneOffset) -> Bool
+fn ZoneOffset::seconds(ZoneOffset) -> Int
+fn ZoneOffset::to_string(ZoneOffset) -> String
+fn ZoneOffset::utc() -> ZoneOffset
+
+type ZonedDateTime
+fn ZonedDateTime::add_days(ZonedDateTime, Int64) -> Result[ZonedDateTime, String]
+fn ZonedDateTime::add_hours(ZonedDateTime, Int64) -> Result[ZonedDateTime, String]
+fn ZonedDateTime::add_minutes(ZonedDateTime, Int64) -> Result[ZonedDateTime, String]
+fn ZonedDateTime::add_months(ZonedDateTime, Int64) -> Result[ZonedDateTime, String]
+fn ZonedDateTime::add_nanoseconds(ZonedDateTime, Int64) -> Result[ZonedDateTime, String]
+fn ZonedDateTime::add_seconds(ZonedDateTime, Int64) -> Result[ZonedDateTime, String]
+fn ZonedDateTime::add_weeks(ZonedDateTime, Int64) -> Result[ZonedDateTime, String]
+fn ZonedDateTime::add_years(ZonedDateTime, Int64) -> Result[ZonedDateTime, String]
+fn ZonedDateTime::day(ZonedDateTime) -> Int
+fn ZonedDateTime::days_in_month(ZonedDateTime) -> Int
+fn ZonedDateTime::days_in_week(ZonedDateTime) -> Int
+fn ZonedDateTime::days_in_year(ZonedDateTime) -> Int
+fn ZonedDateTime::era(ZonedDateTime) -> String
+fn ZonedDateTime::era_year(ZonedDateTime) -> Int
+fn ZonedDateTime::from_plain_datetime(PlainDateTime, Zone) -> ZonedDateTime
+fn ZonedDateTime::from_unix_second(Int64, Int, Zone) -> Result[ZonedDateTime, String]
+fn ZonedDateTime::hour(ZonedDateTime) -> Int
+fn ZonedDateTime::in_leap_year(ZonedDateTime) -> Bool
+fn ZonedDateTime::minute(ZonedDateTime) -> Int
+fn ZonedDateTime::month(ZonedDateTime) -> Int
+fn ZonedDateTime::months_in_year(ZonedDateTime) -> Int
+fn ZonedDateTime::nanosecond(ZonedDateTime) -> Int
+fn ZonedDateTime::of(Int, Int, Int, Int, Int, Int, Zone) -> Result[ZonedDateTime, String]
+fn ZonedDateTime::offset(ZonedDateTime) -> ZoneOffset
+fn ZonedDateTime::ordinal(ZonedDateTime) -> Int
+fn ZonedDateTime::second(ZonedDateTime) -> Int
+fn ZonedDateTime::to_plain_date(ZonedDateTime) -> PlainDate
+fn ZonedDateTime::to_plain_date_time(ZonedDateTime) -> PlainDateTime
+fn ZonedDateTime::to_plain_time(ZonedDateTime) -> PlainTime
+fn ZonedDateTime::to_string(ZonedDateTime) -> String
+fn ZonedDateTime::to_unix_second(ZonedDateTime) -> Int64
+fn ZonedDateTime::weekday(ZonedDateTime) -> Weekday
+fn ZonedDateTime::with_day(ZonedDateTime, Int) -> Result[ZonedDateTime, String]
+fn ZonedDateTime::with_hour(ZonedDateTime, Int) -> Result[ZonedDateTime, String]
+fn ZonedDateTime::with_minute(ZonedDateTime, Int) -> Result[ZonedDateTime, String]
+fn ZonedDateTime::with_month(ZonedDateTime, Int) -> Result[ZonedDateTime, String]
+fn ZonedDateTime::with_nanosecond(ZonedDateTime, Int) -> Result[ZonedDateTime, String]
+fn ZonedDateTime::with_ordinal(ZonedDateTime, Int) -> Result[ZonedDateTime, String]
+fn ZonedDateTime::with_second(ZonedDateTime, Int) -> Result[ZonedDateTime, String]
+fn ZonedDateTime::with_year(ZonedDateTime, Int) -> Result[ZonedDateTime, String]
+fn ZonedDateTime::year(ZonedDateTime) -> Int
+fn ZonedDateTime::zone(ZonedDateTime) -> Zone
 
 // Traits
 pub trait Datelike {

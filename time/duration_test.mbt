@@ -197,11 +197,9 @@ test "op_add" {
   let p2 = Duration::of(hours=-1L, minutes=-1L, seconds=-1L, nanoseconds=-1000L)?
   let p3 = Duration::of(
     seconds=Int64::max_value(),
-    nanoseconds=max_nanoseconds.to_int64(),
+    nanoseconds=max_nanosecond.to_int64(),
   )?
-  let p4 = Duration::of(
-    seconds=Int64::min_value(),
-  )?
+  let p4 = Duration::of(seconds=Int64::min_value())?
   inspect(p1 + Duration::zero(), content="Ok(PT1H1M1.000001S)")?
   inspect(p1 + p2, content="Ok(PT0S)")?
   inspect(p1 + p1, content="Ok(PT2H2M2.000002S)")?
