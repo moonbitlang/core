@@ -11,34 +11,36 @@ fn new_with_index[T](Int, (Int) -> T) -> Array[T]
 
 // Types and methods
 type TimSortRun
-fn Array::all[T](Array[T], (T) -> Bool) -> Bool
-fn Array::any[T](Array[T], (T) -> Bool) -> Bool
-fn Array::as_iter[T](Array[T]) -> @iter.Iter[T]
-fn Array::contains[T : Eq](Array[T], T) -> Bool
-fn Array::ends_with[T : Eq](Array[T], Array[T]) -> Bool
-fn Array::fill[T](Array[T], T) -> Unit
-fn Array::fold_left[T, U](Array[T], (U, T) -> U, U) -> U
-fn Array::fold_lefti[T, U](Array[T], (Int, U, T) -> U, U) -> U
-fn Array::fold_right[T, U](Array[T], (U, T) -> U, U) -> U
-fn Array::fold_righti[T, U](Array[T], (Int, U, T) -> U, U) -> U
-fn Array::from_array[T](Array[T]) -> Array[T]
-fn Array::iter[T](Array[T], (T) -> Unit) -> Unit
-fn Array::iter_rev[T](Array[T], (T) -> Unit) -> Unit
-fn Array::iter_revi[T](Array[T], (Int, T) -> Unit) -> Unit
-fn Array::iteri[T](Array[T], (Int, T) -> Unit) -> Unit
-fn Array::map[T, U](Array[T], (T) -> U) -> Array[U]
-fn Array::mapi[T, U](Array[T], (Int, T) -> U) -> Array[U]
-fn Array::op_add[T](Array[T], Array[T]) -> Array[T]
-fn Array::op_equal[T : Eq](Array[T], Array[T]) -> Bool
-fn Array::reverse[T](Array[T]) -> Unit
-fn Array::search[T : Eq](Array[T], T) -> Option[Int]
-fn Array::sort[T : Compare + Eq](Array[T]) -> Unit
-fn Array::sort_by[T](Array[T], (T, T) -> Int) -> Unit
-fn Array::sort_by_key[T, K : Compare + Eq](Array[T], (T) -> K) -> Unit
-fn Array::stable_sort[T : Compare + Eq](Array[T]) -> Unit
-fn Array::starts_with[T : Eq](Array[T], Array[T]) -> Bool
-fn Array::swap[T](Array[T], Int, Int) -> Unit
-fn Array::to_list[T](Array[T]) -> List[T]
+impl Array {
+  all[T](Self[T], (T) -> Bool) -> Bool
+  any[T](Self[T], (T) -> Bool) -> Bool
+  as_iter[T](Self[T]) -> @iter.Iter[T]
+  contains[T : Eq](Self[T], T) -> Bool
+  ends_with[T : Eq](Self[T], Self[T]) -> Bool
+  fill[T](Self[T], T) -> Unit
+  fold_left[T, U](Self[T], (U, T) -> U, ~init : U) -> U
+  fold_lefti[T, U](Self[T], (Int, U, T) -> U, ~init : U) -> U
+  fold_right[T, U](Self[T], (U, T) -> U, ~init : U) -> U
+  fold_righti[T, U](Self[T], (Int, U, T) -> U, ~init : U) -> U
+  from_array[T](Self[T]) -> Self[T]
+  iter[T](Self[T], (T) -> Unit) -> Unit
+  iter_rev[T](Self[T], (T) -> Unit) -> Unit
+  iter_revi[T](Self[T], (Int, T) -> Unit) -> Unit
+  iteri[T](Self[T], (Int, T) -> Unit) -> Unit
+  map[T, U](Self[T], (T) -> U) -> Self[U]
+  mapi[T, U](Self[T], (Int, T) -> U) -> Self[U]
+  op_add[T](Self[T], Self[T]) -> Self[T]
+  op_equal[T : Eq](Self[T], Self[T]) -> Bool
+  reverse[T](Self[T]) -> Unit
+  search[T : Eq](Self[T], T) -> Option[Int]
+  sort[T : Compare + Eq](Self[T]) -> Unit
+  sort_by[T](Self[T], (T, T) -> Int) -> Unit
+  sort_by_key[T, K : Compare + Eq](Self[T], (T) -> K) -> Unit
+  stable_sort[T : Compare + Eq](Self[T]) -> Unit
+  starts_with[T : Eq](Self[T], Self[T]) -> Bool
+  swap[T](Self[T], Int, Int) -> Unit
+  to_list[T](Self[T]) -> List[T]
+}
 
 // Traits
 

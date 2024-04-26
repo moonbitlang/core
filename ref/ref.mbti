@@ -6,13 +6,15 @@ alias @moonbitlang/core/num as @num
 fn ref[T](T) -> Ref[T]
 
 // Types and methods
-fn Ref::decr[T : @num.Num](Ref[T], T) -> Unit
-fn Ref::incr[T : @num.Num](Ref[T], T) -> Unit
-fn Ref::map[T, R](Ref[T], (T) -> R) -> Ref[R]
-fn Ref::protect[T, R](Ref[T], T, () -> R) -> R
-fn Ref::swap[T](Ref[T], Ref[T]) -> Unit
-fn Ref::to_string[X : Show](Ref[X]) -> String
-fn Ref::update[T](Ref[T], (T) -> T) -> Unit
+impl Ref {
+  decr[T : @num.Num](Self[T], ~value : T = ..) -> Unit
+  incr[T : @num.Num](Self[T], ~value : T = ..) -> Unit
+  map[T, R](Self[T], (T) -> R) -> Self[R]
+  protect[T, R](Self[T], T, () -> R) -> R
+  swap[T](Self[T], Self[T]) -> Unit
+  to_string[X : Show](Self[X]) -> String
+  update[T](Self[T], (T) -> T) -> Unit
+}
 
 // Traits
 

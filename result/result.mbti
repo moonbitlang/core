@@ -6,19 +6,21 @@ fn err[T, E](E) -> Result[T, E]
 fn ok[T, E](T) -> Result[T, E]
 
 // Types and methods
-fn Result::bind[T, E, U](Result[T, E], (T) -> Result[U, E]) -> Result[U, E]
-fn Result::compare[T : Compare + Eq, E : Compare + Eq](Result[T, E], Result[T, E]) -> Int
-fn Result::flatten[T, E](Result[Result[T, E], E]) -> Result[T, E]
-fn Result::fold[T, E, V](Result[T, E], (T) -> V, (E) -> V) -> V
-fn Result::is_err[T, E](Result[T, E]) -> Bool
-fn Result::is_ok[T, E](Result[T, E]) -> Bool
-fn Result::map[T, E, U](Result[T, E], (T) -> U) -> Result[U, E]
-fn Result::map_err[T, E, F](Result[T, E], (E) -> F) -> Result[T, F]
-fn Result::or[T, E](Result[T, E], T) -> T
-fn Result::or_else[T, E](Result[T, E], () -> T) -> T
-fn Result::to_option[T, E](Result[T, E]) -> Option[T]
-fn Result::to_string[T : Show, E : Show](Result[T, E]) -> String
-fn Result::unwrap[T, E](Result[T, E]) -> T
+impl Result {
+  bind[T, E, U](Self[T, E], (T) -> Self[U, E]) -> Self[U, E]
+  compare[T : Compare + Eq, E : Compare + Eq](Self[T, E], Self[T, E]) -> Int
+  flatten[T, E](Self[Self[T, E], E]) -> Self[T, E]
+  fold[T, E, V](Self[T, E], (T) -> V, (E) -> V) -> V
+  is_err[T, E](Self[T, E]) -> Bool
+  is_ok[T, E](Self[T, E]) -> Bool
+  map[T, E, U](Self[T, E], (T) -> U) -> Self[U, E]
+  map_err[T, E, F](Self[T, E], (E) -> F) -> Self[T, F]
+  or[T, E](Self[T, E], T) -> T
+  or_else[T, E](Self[T, E], () -> T) -> T
+  to_option[T, E](Self[T, E]) -> Option[T]
+  to_string[T : Show, E : Show](Self[T, E]) -> String
+  unwrap[T, E](Self[T, E]) -> T
+}
 
 // Traits
 

@@ -13,9 +13,11 @@ fn tan(Double) -> Double
 
 // Types and methods
 type T
-fn T::compare(T, T) -> Int
-fn T::debug_write(T, Buffer) -> Unit
-fn T::op_equal(T, T) -> Bool
+impl T {
+  compare(Self, Self) -> Int
+  debug_write(Self, Buffer) -> Unit
+  op_equal(Self, Self) -> Bool
+}
 
 // Traits
 

@@ -20,31 +20,61 @@ fn swap[T, U](Tuple[T, U]) -> Tuple[U, T]
 fn uncurry[T, U, V]((T) -> (U) -> V) -> (T, U) -> V
 
 // Types and methods
-fn Tuple::debug_write[X : Debug, Y : Debug](Tuple[X, Y], Buffer) -> Unit
-fn Tuple::op_equal[T0 : Eq, T1 : Eq](Tuple[T0, T1], Tuple[T0, T1]) -> Bool
-fn Tuple::to_string[A : Show, B : Show](Tuple[A, B]) -> String
-fn Tuple::debug_write[X : Debug, Y : Debug, Z : Debug](Tuple[X, Y, Z], Buffer) -> Unit
-fn Tuple::op_equal[T0 : Eq, T1 : Eq, T2 : Eq](Tuple[T0, T1, T2], Tuple[T0, T1, T2]) -> Bool
-fn Tuple::to_string[A : Show, B : Show, C : Show](Tuple[A, B, C]) -> String
-fn Tuple::debug_write[X : Debug, Y : Debug, Z : Debug, W : Debug](Tuple[X, Y, Z, W], Buffer) -> Unit
-fn Tuple::op_equal[T0 : Eq, T1 : Eq, T2 : Eq, T3 : Eq](Tuple[T0, T1, T2, T3], Tuple[T0, T1, T2, T3]) -> Bool
-fn Tuple::to_string[A : Show, B : Show, C : Show, D : Show](Tuple[A, B, C, D]) -> String
-fn Tuple::debug_write[X1 : Debug, X2 : Debug, X3 : Debug, X4 : Debug, X5 : Debug](Tuple[X1, X2, X3, X4, X5], Buffer) -> Unit
-fn Tuple::op_equal[T0 : Eq, T1 : Eq, T2 : Eq, T3 : Eq, T4 : Eq](Tuple[T0, T1, T2, T3, T4], Tuple[T0, T1, T2, T3, T4]) -> Bool
-fn Tuple::to_string[A : Show, B : Show, C : Show, D : Show, E : Show](Tuple[A, B, C, D, E]) -> String
-fn Tuple::op_equal[T0 : Eq, T1 : Eq, T2 : Eq, T3 : Eq, T4 : Eq, T5 : Eq](Tuple[T0, T1, T2, T3, T4, T5], Tuple[T0, T1, T2, T3, T4, T5]) -> Bool
-fn Tuple::to_string[A : Show, B : Show, C : Show, D : Show, E : Show, F : Show](Tuple[A, B, C, D, E, F]) -> String
-fn Tuple::op_equal[T0 : Eq, T1 : Eq, T2 : Eq, T3 : Eq, T4 : Eq, T5 : Eq, T6 : Eq](Tuple[T0, T1, T2, T3, T4, T5, T6], Tuple[T0, T1, T2, T3, T4, T5, T6]) -> Bool
-fn Tuple::to_string[A : Show, B : Show, C : Show, D : Show, E : Show, F : Show, G : Show](Tuple[A, B, C, D, E, F, G]) -> String
-fn Tuple::op_equal[T0 : Eq, T1 : Eq, T2 : Eq, T3 : Eq, T4 : Eq, T5 : Eq, T6 : Eq, T7 : Eq](Tuple[T0, T1, T2, T3, T4, T5, T6, T7], Tuple[T0, T1, T2, T3, T4, T5, T6, T7]) -> Bool
-fn Tuple::op_equal[T0 : Eq, T1 : Eq, T2 : Eq, T3 : Eq, T4 : Eq, T5 : Eq, T6 : Eq, T7 : Eq, T8 : Eq](Tuple[T0, T1, T2, T3, T4, T5, T6, T7, T8], Tuple[T0, T1, T2, T3, T4, T5, T6, T7, T8]) -> Bool
-fn Tuple::op_equal[T0 : Eq, T1 : Eq, T2 : Eq, T3 : Eq, T4 : Eq, T5 : Eq, T6 : Eq, T7 : Eq, T8 : Eq, T9 : Eq](Tuple[T0, T1, T2, T3, T4, T5, T6, T7, T8, T9], Tuple[T0, T1, T2, T3, T4, T5, T6, T7, T8, T9]) -> Bool
-fn Tuple::op_equal[T0 : Eq, T1 : Eq, T2 : Eq, T3 : Eq, T4 : Eq, T5 : Eq, T6 : Eq, T7 : Eq, T8 : Eq, T9 : Eq, T10 : Eq](Tuple[T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10], Tuple[T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10]) -> Bool
-fn Tuple::op_equal[T0 : Eq, T1 : Eq, T2 : Eq, T3 : Eq, T4 : Eq, T5 : Eq, T6 : Eq, T7 : Eq, T8 : Eq, T9 : Eq, T10 : Eq, T11 : Eq](Tuple[T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11], Tuple[T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11]) -> Bool
-fn Tuple::op_equal[T0 : Eq, T1 : Eq, T2 : Eq, T3 : Eq, T4 : Eq, T5 : Eq, T6 : Eq, T7 : Eq, T8 : Eq, T9 : Eq, T10 : Eq, T11 : Eq, T12 : Eq](Tuple[T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12], Tuple[T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12]) -> Bool
-fn Tuple::op_equal[T0 : Eq, T1 : Eq, T2 : Eq, T3 : Eq, T4 : Eq, T5 : Eq, T6 : Eq, T7 : Eq, T8 : Eq, T9 : Eq, T10 : Eq, T11 : Eq, T12 : Eq, T13 : Eq](Tuple[T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13], Tuple[T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13]) -> Bool
-fn Tuple::op_equal[T0 : Eq, T1 : Eq, T2 : Eq, T3 : Eq, T4 : Eq, T5 : Eq, T6 : Eq, T7 : Eq, T8 : Eq, T9 : Eq, T10 : Eq, T11 : Eq, T12 : Eq, T13 : Eq, T14 : Eq](Tuple[T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14], Tuple[T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14]) -> Bool
-fn Tuple::op_equal[T0 : Eq, T1 : Eq, T2 : Eq, T3 : Eq, T4 : Eq, T5 : Eq, T6 : Eq, T7 : Eq, T8 : Eq, T9 : Eq, T10 : Eq, T11 : Eq, T12 : Eq, T13 : Eq, T14 : Eq, T15 : Eq](Tuple[T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15], Tuple[T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15]) -> Bool
+impl Tuple {
+  debug_write[X : Debug, Y : Debug](Self[X, Y], Buffer) -> Unit
+  op_equal[T0 : Eq, T1 : Eq](Self[T0, T1], Self[T0, T1]) -> Bool
+  to_string[A : Show, B : Show](Self[A, B]) -> String
+}
+impl Tuple {
+  debug_write[X : Debug, Y : Debug, Z : Debug](Self[X, Y, Z], Buffer) -> Unit
+  op_equal[T0 : Eq, T1 : Eq, T2 : Eq](Self[T0, T1, T2], Self[T0, T1, T2]) -> Bool
+  to_string[A : Show, B : Show, C : Show](Self[A, B, C]) -> String
+}
+impl Tuple {
+  debug_write[X : Debug, Y : Debug, Z : Debug, W : Debug](Self[X, Y, Z, W], Buffer) -> Unit
+  op_equal[T0 : Eq, T1 : Eq, T2 : Eq, T3 : Eq](Self[T0, T1, T2, T3], Self[T0, T1, T2, T3]) -> Bool
+  to_string[A : Show, B : Show, C : Show, D : Show](Self[A, B, C, D]) -> String
+}
+impl Tuple {
+  debug_write[X1 : Debug, X2 : Debug, X3 : Debug, X4 : Debug, X5 : Debug](Self[X1, X2, X3, X4, X5], Buffer) -> Unit
+  op_equal[T0 : Eq, T1 : Eq, T2 : Eq, T3 : Eq, T4 : Eq](Self[T0, T1, T2, T3, T4], Self[T0, T1, T2, T3, T4]) -> Bool
+  to_string[A : Show, B : Show, C : Show, D : Show, E : Show](Self[A, B, C, D, E]) -> String
+}
+impl Tuple {
+  op_equal[T0 : Eq, T1 : Eq, T2 : Eq, T3 : Eq, T4 : Eq, T5 : Eq](Self[T0, T1, T2, T3, T4, T5], Self[T0, T1, T2, T3, T4, T5]) -> Bool
+  to_string[A : Show, B : Show, C : Show, D : Show, E : Show, F : Show](Self[A, B, C, D, E, F]) -> String
+}
+impl Tuple {
+  op_equal[T0 : Eq, T1 : Eq, T2 : Eq, T3 : Eq, T4 : Eq, T5 : Eq, T6 : Eq](Self[T0, T1, T2, T3, T4, T5, T6], Self[T0, T1, T2, T3, T4, T5, T6]) -> Bool
+  to_string[A : Show, B : Show, C : Show, D : Show, E : Show, F : Show, G : Show](Self[A, B, C, D, E, F, G]) -> String
+}
+impl Tuple {
+  op_equal[T0 : Eq, T1 : Eq, T2 : Eq, T3 : Eq, T4 : Eq, T5 : Eq, T6 : Eq, T7 : Eq](Self[T0, T1, T2, T3, T4, T5, T6, T7], Self[T0, T1, T2, T3, T4, T5, T6, T7]) -> Bool
+}
+impl Tuple {
+  op_equal[T0 : Eq, T1 : Eq, T2 : Eq, T3 : Eq, T4 : Eq, T5 : Eq, T6 : Eq, T7 : Eq, T8 : Eq](Self[T0, T1, T2, T3, T4, T5, T6, T7, T8], Self[T0, T1, T2, T3, T4, T5, T6, T7, T8]) -> Bool
+}
+impl Tuple {
+  op_equal[T0 : Eq, T1 : Eq, T2 : Eq, T3 : Eq, T4 : Eq, T5 : Eq, T6 : Eq, T7 : Eq, T8 : Eq, T9 : Eq](Self[T0, T1, T2, T3, T4, T5, T6, T7, T8, T9], Self[T0, T1, T2, T3, T4, T5, T6, T7, T8, T9]) -> Bool
+}
+impl Tuple {
+  op_equal[T0 : Eq, T1 : Eq, T2 : Eq, T3 : Eq, T4 : Eq, T5 : Eq, T6 : Eq, T7 : Eq, T8 : Eq, T9 : Eq, T10 : Eq](Self[T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10], Self[T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10]) -> Bool
+}
+impl Tuple {
+  op_equal[T0 : Eq, T1 : Eq, T2 : Eq, T3 : Eq, T4 : Eq, T5 : Eq, T6 : Eq, T7 : Eq, T8 : Eq, T9 : Eq, T10 : Eq, T11 : Eq](Self[T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11], Self[T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11]) -> Bool
+}
+impl Tuple {
+  op_equal[T0 : Eq, T1 : Eq, T2 : Eq, T3 : Eq, T4 : Eq, T5 : Eq, T6 : Eq, T7 : Eq, T8 : Eq, T9 : Eq, T10 : Eq, T11 : Eq, T12 : Eq](Self[T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12], Self[T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12]) -> Bool
+}
+impl Tuple {
+  op_equal[T0 : Eq, T1 : Eq, T2 : Eq, T3 : Eq, T4 : Eq, T5 : Eq, T6 : Eq, T7 : Eq, T8 : Eq, T9 : Eq, T10 : Eq, T11 : Eq, T12 : Eq, T13 : Eq](Self[T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13], Self[T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13]) -> Bool
+}
+impl Tuple {
+  op_equal[T0 : Eq, T1 : Eq, T2 : Eq, T3 : Eq, T4 : Eq, T5 : Eq, T6 : Eq, T7 : Eq, T8 : Eq, T9 : Eq, T10 : Eq, T11 : Eq, T12 : Eq, T13 : Eq, T14 : Eq](Self[T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14], Self[T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14]) -> Bool
+}
+impl Tuple {
+  op_equal[T0 : Eq, T1 : Eq, T2 : Eq, T3 : Eq, T4 : Eq, T5 : Eq, T6 : Eq, T7 : Eq, T8 : Eq, T9 : Eq, T10 : Eq, T11 : Eq, T12 : Eq, T13 : Eq, T14 : Eq, T15 : Eq](Self[T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15], Self[T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15]) -> Bool
+}
 
 // Traits
 

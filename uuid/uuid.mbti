@@ -7,14 +7,16 @@ fn from_hex(String) -> Result[UUID, String]
 
 // Types and methods
 type UUID
-fn UUID::as_version(UUID, Version) -> UUID
-fn UUID::compare(UUID, UUID) -> Int
-fn UUID::hash(UUID) -> Int
-fn UUID::op_equal(UUID, UUID) -> Bool
-fn UUID::to_bytes(UUID) -> Bytes
-fn UUID::to_string(UUID) -> String
-fn UUID::variant(UUID) -> Variant
-fn UUID::version(UUID) -> Option[Version]
+impl UUID {
+  as_version(Self, Version) -> Self
+  compare(Self, Self) -> Int
+  hash(Self) -> Int
+  op_equal(Self, Self) -> Bool
+  to_bytes(Self) -> Bytes
+  to_string(Self) -> String
+  variant(Self) -> Variant
+  version(Self) -> Option[Version]
+}
 
 pub enum Variant {
   ReservedNCS
@@ -22,8 +24,10 @@ pub enum Variant {
   ReservedMicrosoft
   ReservedFuture
 }
-fn Variant::debug_write(Variant, Buffer) -> Unit
-fn Variant::to_string(Variant) -> String
+impl Variant {
+  debug_write(Self, Buffer) -> Unit
+  to_string(Self) -> String
+}
 
 pub enum Version {
   V1
@@ -33,8 +37,10 @@ pub enum Version {
   V5
   Unknown(Int)
 }
-fn Version::debug_write(Version, Buffer) -> Unit
-fn Version::to_string(Version) -> String
+impl Version {
+  debug_write(Self, Buffer) -> Unit
+  to_string(Self) -> String
+}
 
 // Traits
 
