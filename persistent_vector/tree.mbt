@@ -40,7 +40,7 @@ fn get_last[T](self : Tree[T]) -> T {
 
 fn get[T](self : Tree[T], index : Int, shift : Int) -> T {
   match self {
-    Tree::Leaf(leaf) => leaf[index.land(bitmask)]
+    Leaf(leaf) => leaf[index.land(bitmask)]
     Node(node) =>
       get(node[index.lsr(shift).land(bitmask)], index, shift - num_bits)
     Empty => abort("Index out of bounds")
@@ -51,5 +51,31 @@ fn is_empty_tree[T](self : Tree[T]) -> Bool {
   match self {
     Tree::Empty => true
     _ => false
+  }
+}
+
+fn new_branch[T](leaf : Array[T], shift : Int) -> Tree[T] {
+  match shift {
+    0 => Leaf(leaf)
+    s => Node([new_branch(leaf, s - num_bits)])
+  }
+}
+
+fn add[T](self : Tree[T], index : Int, shift : Int, value : T) -> Tree[T] {
+  match self {
+    Leaf(l) => {
+      let l1 = Array::make(l.length() + 1, value)
+      array_blit(src=l, dst=l1, 0, 0, l.length())
+      Leaf(l1)
+    }
+    Node(n) => {
+      let idx = index.lsr(shift).land(bitmask)
+      if idx < n.length() {
+        Node(immutable_set(n, idx, n[idx].add(index, shift - num_bits, value)))
+      } else {
+        Node(immutable_push(n, new_branch([value], shift - num_bits)))
+      }
+    }
+    Empty => Leaf([value])
   }
 }

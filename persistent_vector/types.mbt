@@ -23,5 +23,3 @@ enum Tree[T] {
   Node(Array[Tree[T]])
   Leaf(Array[T])
 } derive(Eq, Debug)
-
-

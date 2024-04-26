@@ -28,19 +28,19 @@ pub fn to_string[T : Show](self : PersistentVector[T]) -> String {
   s
 }
 
+test "to_string" {
+  let v = PersistentVector::[1, 2, 3, 4, 5]
+  let ve : PersistentVector[Int] = PersistentVector::empty()
+  inspect(v, content="[1, 2, 3, 4, 5]")?
+  inspect(ve, content="[]")?
+}
+
 pub fn is_empty[T](v : PersistentVector[T]) -> Bool {
   v.size == 0
 }
 
 pub fn length[T](v : PersistentVector[T]) -> Int {
   v.size
-}
-
-pub fn new_branch[T](leaf : Array[T], shift : Int) -> Tree[T] {
-  match shift {
-    0 => Leaf(leaf)
-    s => Node([new_branch(leaf, s - num_bits)])
-  }
 }
 
 pub fn copy[T](self : PersistentVector[T]) -> PersistentVector[T] {
@@ -56,6 +56,13 @@ pub fn copy[T](self : PersistentVector[T]) -> PersistentVector[T] {
   { tree: copy(self.tree), size: self.size, shift: self.shift }
 }
 
+test "copy" {
+  let v = PersistentVector::[1, 2, 3, 4, 5]
+  let vc = v.copy()
+  inspect(vc, content="[1, 2, 3, 4, 5]")?
+  inspect(v == vc, content="true")?
+}
+
 pub fn op_get[T](self : PersistentVector[T], index : Int) -> T {
   if index == 0 {
     self.tree.get_first()
@@ -66,7 +73,16 @@ pub fn op_get[T](self : PersistentVector[T], index : Int) -> T {
   }
 }
 
-pub fn op_set[T](
+test "op_get" {
+  let v = PersistentVector::[1, 2, 3, 4, 5]
+  inspect(v[0], content="1")?
+  inspect(v[1], content="2")?
+  inspect(v[2], content="3")?
+  inspect(v[3], content="4")?
+  inspect(v[4], content="5")?
+}
+
+pub fn set[T](
   self : PersistentVector[T],
   index : Int,
   value : T
@@ -89,26 +105,15 @@ pub fn op_set[T](
   }
 }
 
-pub fn push[T](self : PersistentVector[T], value : T) -> PersistentVector[T] {
-  fn add(i : Int, e, s, t : Tree[T]) -> Tree[T] {
-    match t {
-      Leaf(l) => {
-        let l1 = Array::make(l.length() + 1, value)
-        array_blit(src=l, dst=l1, 0, 0, l.length())
-        Leaf(l1)
-      }
-      Node(n) => {
-        let ci = i.lsr(s).land(bitmask)
-        if ci < n.length() {
-          Node(immutable_set(n, ci, add(i, e, s - num_bits, n[ci])))
-        } else {
-          Node(immutable_push(n, new_branch([e], s - num_bits)))
-        }
-      }
-      Empty => Leaf([e])
-    }
-  }
+test "set" {
+  let v = PersistentVector::[1, 2, 3, 4, 5]
+  let v1 = v.set(1, 10)
+  let v2 = v.set(2, 10)
+  inspect(v1, content="[1, 10, 3, 4, 5]")?
+  inspect(v2, content="[1, 2, 10, 4, 5]")?
+}
 
+pub fn push[T](self : PersistentVector[T], value : T) -> PersistentVector[T] {
   if self.size == branching_factor.lsl(self.shift) {
     {
       tree: Node([self.tree, new_branch([value], self.shift)]),
@@ -117,7 +122,7 @@ pub fn push[T](self : PersistentVector[T], value : T) -> PersistentVector[T] {
     }
   } else {
     {
-      tree: add(self.size, value, self.shift, self.tree),
+      tree: self.tree.add(self.size, self.shift, value),
       size: self.size + 1,
       shift: self.shift,
     }
