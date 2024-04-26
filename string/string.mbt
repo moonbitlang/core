@@ -149,3 +149,47 @@ test "substring" {
   @assertion.assert_eq("abc".substring(end=2), "ab")?
   @assertion.assert_eq("abc".substring(start=1, end=2), "b")?
 }
+
+pub fn as_iter(self : String) -> @iter.Iter[Char] {
+  @iter._unstable_internal_make(
+    fn(yield) {
+      let len = self.length()    
+      for index = 0 ; index < len ; index = index + 1 {        
+        let c = self[index].to_int()
+        if c >= 0xD800 && c <= 0xDBFF && index + 1 < len {
+          let c2 = self[index + 1].to_int()
+          if c2 >= 0xDC00 && c2 <= 0xDFFF {
+            let c =   Char::from_int((c - 0xD800) * 0x400 + c2 - 0xDC00 + 0x10000)
+            if yield(c){
+              continue index + 2
+            } else {
+              break false
+            }
+          }
+        }
+        //TODO: handle garbage input
+        if not(yield(Char::from_int(c))){
+          break false
+        } 
+      } else {
+        true
+      }
+    },
+  )
+}
+
+test "chars" {
+  let mut str = ""
+  "A😊𠮷BA😊𠮷B".as_iter().iter(fn (c) { str = str + c.to_int().to_string() + "\n" })
+  inspect(str, content=
+    #|65
+    #|128522
+    #|134071
+    #|66
+    #|65
+    #|128522
+    #|134071
+    #|66
+    #|
+  )?
+}

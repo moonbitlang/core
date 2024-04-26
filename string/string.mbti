@@ -1,8 +1,11 @@
 package moonbitlang/core/string
 
+alias @moonbitlang/core/iter as @iter
+
 // Values
 
 // Types and methods
+fn String::as_iter(String) -> @iter.Iter[Char]
 fn String::compare(String, String) -> Int
 fn String::default() -> String
 fn String::hash(String) -> Int
