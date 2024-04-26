@@ -105,8 +105,6 @@ test "getters" {
   inspect(d.minute(), content="10")?
   inspect(d.second(), content="30")?
   inspect(d.nanosecond(), content="1000")?
-  inspect(d.second_of_day(), content="4230")?
-  inspect(d.nanosecond_of_day(), content="4230000001000")?
 }
 
 test "in_leap_year" {

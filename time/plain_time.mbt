@@ -17,7 +17,7 @@ struct PlainTime {
   minute : Int
   second : Int
   nanosecond : Int
-} derive(Debug, Eq, Compare)
+} derive(Eq, Compare)
 
 pub fn PlainTime::of(
   hour : Int,
@@ -262,9 +262,9 @@ let min_second = 0
 
 let max_second = 59
 
-let min_nanoseconds = 0
+let min_nanosecond = 0
 
-let max_nanoseconds = 999_999_999
+let max_nanosecond = 999_999_999
 
 let hours_per_day = 24L
 
@@ -287,10 +287,26 @@ let nanoseconds_per_hour : Int64 = nanoseconds_per_minute * minutes_per_hour
 let nanoseconds_per_day : Int64 = nanoseconds_per_second * seconds_per_day
 
 fn validate_time(h : Int, m : Int, s : Int, ns : Int) -> Bool {
-  let valid_hour = h >= min_hour && h <= max_hour
-  let valid_minute = m >= min_minute && m <= max_minute
-  let valid_second = s >= min_second && s <= max_second
-  let valid_nanosecond = ns >= min_nanoseconds && ns <= max_nanoseconds
+  let valid_hour = validate_hour(h)
+  let valid_minute = validate_minute(m)
+  let valid_second = validate_second(s)
+  let valid_nano = validate_nano(ns)
   let zero = h == 24 && m == 0 && s == 0 && ns == 0
-  valid_hour && valid_minute && valid_second && valid_nanosecond || zero
+  valid_hour && valid_minute && valid_second && valid_nano || zero
+}
+
+fn validate_hour(h : Int) -> Bool {
+  h >= min_hour && h <= max_hour
+}
+
+fn validate_minute(m : Int) -> Bool {
+  m >= min_minute && m <= max_minute
+}
+
+fn validate_second(s : Int) -> Bool {
+  s >= min_second && s <= max_second
+}
+
+fn validate_nano(n : Int) -> Bool {
+  n >= min_nanosecond && n <= max_nanosecond
 }

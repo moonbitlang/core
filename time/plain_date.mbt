@@ -17,7 +17,7 @@ struct PlainDate {
   year : Int
   month : Int
   day : Int
-} derive(Debug)
+}
 
 /// Creates a PlainDate from year, month and day.
 pub fn PlainDate::of(
@@ -47,6 +47,18 @@ pub fn PlainDate::from_year_ord(
     month += 1
   }
   Ok(PlainDate::{ year, month, day })
+}
+
+pub fn PlainDate::from_unix_day(unix_day : Int64) -> Result[PlainDate, String] {
+  let (year, ord) = fixed_days_to_year_ord(
+    unix_day + days_zero_year_to_unix_epoch,
+  )
+  PlainDate::from_year_ord(year, ord)
+}
+
+pub fn to_unix_day(self : PlainDate) -> Int64 {
+  let days = date_to_fixed_days(self.year, self.month, self.day)
+  days - days_zero_year_to_unix_epoch
 }
 
 /// Creates a PlainDate from an ISO 8601 date string.
@@ -255,7 +267,10 @@ pub fn add_years(self : PlainDate, years : Int64) -> Result[PlainDate, String] {
   }
 }
 
-pub fn add_months(self : PlainDate, months : Int64) -> Result[PlainDate, String] {
+pub fn add_months(
+  self : PlainDate,
+  months : Int64
+) -> Result[PlainDate, String] {
   if months == 0L {
     return Ok(self)
   }
@@ -341,6 +356,9 @@ let min_ordinal = 1
 let max_ordinal = 366
 
 let days_per_400_years : Int64 = 400L * 365L + 97L
+
+let days_zero_year_to_unix_epoch : Int64 = 5L * days_per_400_years - (30L * 365L +
+  7L)
 
 fn create_from_valid(year : Int, month : Int, day : Int) -> PlainDate {
   let mut d = day

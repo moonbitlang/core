@@ -36,7 +36,7 @@ pub fn Duration::of(
 }
 
 fn create(secs : Int64, nanos : Int) -> Result[Duration, String] {
-  if nanos < min_nanoseconds || nanos > max_nanoseconds {
+  if nanos < min_nanosecond || nanos > max_nanosecond {
     return Err(invalid_duration_err)
   }
   Ok({ secs, nanos })
@@ -211,7 +211,7 @@ pub fn add_duration(
   let mut secs = checked_add_int64(self.secs, other.secs)?
   secs = checked_add_int64(secs, nanos / nanoseconds_per_second)?
   nanos = nanos % nanoseconds_per_second
-  if (nanos < 0L) {
+  if nanos < 0L {
     secs -= 1L
     nanos += nanoseconds_per_second
   }
