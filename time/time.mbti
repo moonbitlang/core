@@ -44,6 +44,7 @@ fn Period::op_add(Period, Period) -> Result[Period, String]
 fn Period::op_equal(Period, Period) -> Bool
 fn Period::op_sub(Period, Period) -> Result[Period, String]
 fn Period::to_string(Period) -> String
+fn Period::total_months(Period) -> Int64
 fn Period::with_days(Period, Int) -> Period
 fn Period::with_months(Period, Int) -> Period
 fn Period::with_years(Period, Int) -> Period
@@ -51,24 +52,25 @@ fn Period::years(Period) -> Int
 fn Period::zero() -> Period
 
 type PlainDate
-fn PlainDate::add_days(PlainDate, Int) -> Result[PlainDate, String]
-fn PlainDate::add_months(PlainDate, Int) -> Result[PlainDate, String]
+fn PlainDate::add_days(PlainDate, Int64) -> Result[PlainDate, String]
+fn PlainDate::add_months(PlainDate, Int64) -> Result[PlainDate, String]
 fn PlainDate::add_period(PlainDate, Period) -> Result[PlainDate, String]
-fn PlainDate::add_weeks(PlainDate, Int) -> Result[PlainDate, String]
-fn PlainDate::add_years(PlainDate, Int) -> Result[PlainDate, String]
+fn PlainDate::add_weeks(PlainDate, Int64) -> Result[PlainDate, String]
+fn PlainDate::add_years(PlainDate, Int64) -> Result[PlainDate, String]
 fn PlainDate::compare(PlainDate, PlainDate) -> Int
 fn PlainDate::day(PlainDate) -> Int
 fn PlainDate::days_in_month(PlainDate) -> Int
 fn PlainDate::days_in_week(PlainDate) -> Int
 fn PlainDate::days_in_year(PlainDate) -> Int
+fn PlainDate::debug_write(PlainDate, Buffer) -> Unit
 fn PlainDate::era(PlainDate) -> String
 fn PlainDate::era_year(PlainDate) -> Int
 fn PlainDate::from_string(String) -> Result[PlainDate, String]
 fn PlainDate::from_year_ord(Int, Int) -> Result[PlainDate, String]
-fn PlainDate::from_ymd(Int, Int, Int) -> Result[PlainDate, String]
 fn PlainDate::in_leap_year(PlainDate) -> Bool
 fn PlainDate::month(PlainDate) -> Int
 fn PlainDate::months_in_year(PlainDate) -> Int
+fn PlainDate::of(Int, Int, Int) -> Result[PlainDate, String]
 fn PlainDate::op_equal(PlainDate, PlainDate) -> Bool
 fn PlainDate::ordinal(PlainDate) -> Int
 fn PlainDate::to_string(PlainDate) -> String
@@ -81,15 +83,57 @@ fn PlainDate::with_year(PlainDate, Int) -> Result[PlainDate, String]
 fn PlainDate::year(PlainDate) -> Int
 
 type PlainDateTime
-fn PlainDateTime::date(PlainDateTime) -> PlainDate
-fn PlainDateTime::time(PlainDateTime) -> PlainTime
+fn PlainDateTime::add_days(PlainDateTime, Int64) -> Result[PlainDateTime, String]
+fn PlainDateTime::add_duration(PlainDateTime, Duration) -> Result[PlainDateTime, String]
+fn PlainDateTime::add_hours(PlainDateTime, Int64) -> Result[PlainDateTime, String]
+fn PlainDateTime::add_minutes(PlainDateTime, Int64) -> Result[PlainDateTime, String]
+fn PlainDateTime::add_months(PlainDateTime, Int64) -> Result[PlainDateTime, String]
+fn PlainDateTime::add_nanoseconds(PlainDateTime, Int64) -> Result[PlainDateTime, String]
+fn PlainDateTime::add_period(PlainDateTime, Period) -> Result[PlainDateTime, String]
+fn PlainDateTime::add_seconds(PlainDateTime, Int64) -> Result[PlainDateTime, String]
+fn PlainDateTime::add_weeks(PlainDateTime, Int64) -> Result[PlainDateTime, String]
+fn PlainDateTime::add_years(PlainDateTime, Int64) -> Result[PlainDateTime, String]
+fn PlainDateTime::compare(PlainDateTime, PlainDateTime) -> Int
+fn PlainDateTime::day(PlainDateTime) -> Int
+fn PlainDateTime::days_in_month(PlainDateTime) -> Int
+fn PlainDateTime::days_in_week(PlainDateTime) -> Int
+fn PlainDateTime::days_in_year(PlainDateTime) -> Int
+fn PlainDateTime::debug_write(PlainDateTime, Buffer) -> Unit
+fn PlainDateTime::era(PlainDateTime) -> String
+fn PlainDateTime::era_year(PlainDateTime) -> Int
+fn PlainDateTime::from_string(String) -> Result[PlainDateTime, String]
+fn PlainDateTime::hour(PlainDateTime) -> Int
+fn PlainDateTime::in_leap_year(PlainDateTime) -> Bool
+fn PlainDateTime::minute(PlainDateTime) -> Int
+fn PlainDateTime::month(PlainDateTime) -> Int
+fn PlainDateTime::months_in_year(PlainDateTime) -> Int
+fn PlainDateTime::nanosecond(PlainDateTime) -> Int
+fn PlainDateTime::nanosecond_of_day(PlainDateTime) -> Int64
+fn PlainDateTime::of(Int, Int, Int, Int, Int, Int, Int) -> Result[PlainDateTime, String]
+fn PlainDateTime::op_equal(PlainDateTime, PlainDateTime) -> Bool
+fn PlainDateTime::ordinal(PlainDateTime) -> Int
+fn PlainDateTime::second(PlainDateTime) -> Int
+fn PlainDateTime::second_of_day(PlainDateTime) -> Int
+fn PlainDateTime::to_plain_date(PlainDateTime) -> PlainDate
+fn PlainDateTime::to_plain_time(PlainDateTime) -> PlainTime
+fn PlainDateTime::to_string(PlainDateTime) -> String
+fn PlainDateTime::weekday(PlainDateTime) -> Weekday
+fn PlainDateTime::with_day(PlainDateTime, Int) -> Result[PlainDateTime, String]
+fn PlainDateTime::with_hour(PlainDateTime, Int) -> Result[PlainDateTime, String]
+fn PlainDateTime::with_minute(PlainDateTime, Int) -> Result[PlainDateTime, String]
+fn PlainDateTime::with_month(PlainDateTime, Int) -> Result[PlainDateTime, String]
+fn PlainDateTime::with_nanosecond(PlainDateTime, Int) -> Result[PlainDateTime, String]
+fn PlainDateTime::with_ordinal(PlainDateTime, Int) -> Result[PlainDateTime, String]
+fn PlainDateTime::with_second(PlainDateTime, Int) -> Result[PlainDateTime, String]
+fn PlainDateTime::with_year(PlainDateTime, Int) -> Result[PlainDateTime, String]
+fn PlainDateTime::year(PlainDateTime) -> Int
 
 type PlainTime
 fn PlainTime::add_duration(PlainTime, Duration) -> Result[PlainTime, String]
-fn PlainTime::add_hours(PlainTime, Int) -> Result[PlainTime, String]
-fn PlainTime::add_minutes(PlainTime, Int) -> Result[PlainTime, String]
+fn PlainTime::add_hours(PlainTime, Int64) -> Result[PlainTime, String]
+fn PlainTime::add_minutes(PlainTime, Int64) -> Result[PlainTime, String]
 fn PlainTime::add_nanoseconds(PlainTime, Int64) -> Result[PlainTime, String]
-fn PlainTime::add_seconds(PlainTime, Int) -> Result[PlainTime, String]
+fn PlainTime::add_seconds(PlainTime, Int64) -> Result[PlainTime, String]
 fn PlainTime::at_date(PlainTime, PlainDate) -> PlainDateTime
 fn PlainTime::compare(PlainTime, PlainTime) -> Int
 fn PlainTime::debug_write(PlainTime, Buffer) -> Unit
@@ -104,8 +148,6 @@ fn PlainTime::of(Int, Int, Int, Int) -> Result[PlainTime, String]
 fn PlainTime::op_equal(PlainTime, PlainTime) -> Bool
 fn PlainTime::second(PlainTime) -> Int
 fn PlainTime::second_of_day(PlainTime) -> Int
-fn PlainTime::to_nanosecond_of_day(PlainTime) -> Int64
-fn PlainTime::to_second_of_day(PlainTime) -> Int
 fn PlainTime::to_string(PlainTime) -> String
 fn PlainTime::until(PlainTime, PlainTime) -> Result[Duration, String]
 fn PlainTime::with_hour(PlainTime, Int) -> Result[PlainTime, String]

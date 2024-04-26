@@ -41,7 +41,7 @@ test "from_string" {
   inspect(PlainTime::from_string("23:59"), content="Ok(23:59:00)")?
   inspect(PlainTime::from_string("24:00"), content="Ok(24:00:00)")?
   inspect(PlainTime::from_string("23:59:59"), content="Ok(23:59:59)")?
-  inspect(PlainTime::from_string("01:00:00.123"), content="Ok(01:00:00.123)")?
+  inspect(PlainTime::from_string("01:00:00.123"), content="Ok(01:00:00.000000123)")?
   inspect(PlainTime::from_string("1:00"), content="Err(Invalid time)")?
   inspect(PlainTime::from_string("10:0"), content="Err(Invalid time)")?
   inspect(PlainTime::from_string("100000"), content="Err(Invalid time)")?
@@ -107,64 +107,64 @@ test "from_nanosecond_of_day" {
 
 test "add_hours" {
   let time = PlainTime::of(10, 0, 0, 0)?
-  inspect(time.add_hours(-1), content="Ok(09:00:00)")?
-  inspect(time.add_hours(0), content="Ok(10:00:00)")?
-  inspect(time.add_hours(1), content="Ok(11:00:00)")?
-  inspect(time.add_hours(12), content="Ok(22:00:00)")?
-  inspect(time.add_hours(24), content="Ok(10:00:00)")?
-  inspect(time.add_hours(25), content="Ok(11:00:00)")?
-  inspect(time.add_hours(26), content="Ok(12:00:00)")?
-  inspect(time.add_hours(27), content="Ok(13:00:00)")?
-  inspect(time.add_hours(28), content="Ok(14:00:00)")?
-  inspect(time.add_hours(29), content="Ok(15:00:00)")?
-  inspect(time.add_hours(30), content="Ok(16:00:00)")?
-  inspect(time.add_hours(31), content="Ok(17:00:00)")?
-  inspect(time.add_hours(32), content="Ok(18:00:00)")?
-  inspect(time.add_hours(33), content="Ok(19:00:00)")?
-  inspect(time.add_hours(34), content="Ok(20:00:00)")?
-  inspect(time.add_hours(35), content="Ok(21:00:00)")?
-  inspect(time.add_hours(36), content="Ok(22:00:00)")?
-  inspect(time.add_hours(37), content="Ok(23:00:00)")?
-  inspect(time.add_hours(38), content="Ok(00:00:00)")?
-  inspect(time.add_hours(39), content="Ok(01:00:00)")?
-  inspect(time.add_hours(40), content="Ok(02:00:00)")?
-  inspect(time.add_hours(Int::min_value()), content="Ok(02:00:00)")?
-  inspect(time.add_hours(Int::max_value()), content="Ok(17:00:00)")?
+  inspect(time.add_hours(-1L), content="Ok(09:00:00)")?
+  inspect(time.add_hours(0L), content="Ok(10:00:00)")?
+  inspect(time.add_hours(1L), content="Ok(11:00:00)")?
+  inspect(time.add_hours(12L), content="Ok(22:00:00)")?
+  inspect(time.add_hours(24L), content="Ok(10:00:00)")?
+  inspect(time.add_hours(25L), content="Ok(11:00:00)")?
+  inspect(time.add_hours(26L), content="Ok(12:00:00)")?
+  inspect(time.add_hours(27L), content="Ok(13:00:00)")?
+  inspect(time.add_hours(28L), content="Ok(14:00:00)")?
+  inspect(time.add_hours(29L), content="Ok(15:00:00)")?
+  inspect(time.add_hours(30L), content="Ok(16:00:00)")?
+  inspect(time.add_hours(31L), content="Ok(17:00:00)")?
+  inspect(time.add_hours(32L), content="Ok(18:00:00)")?
+  inspect(time.add_hours(33L), content="Ok(19:00:00)")?
+  inspect(time.add_hours(34L), content="Ok(20:00:00)")?
+  inspect(time.add_hours(35L), content="Ok(21:00:00)")?
+  inspect(time.add_hours(36L), content="Ok(22:00:00)")?
+  inspect(time.add_hours(37L), content="Ok(23:00:00)")?
+  inspect(time.add_hours(38L), content="Ok(00:00:00)")?
+  inspect(time.add_hours(39L), content="Ok(01:00:00)")?
+  inspect(time.add_hours(40L), content="Ok(02:00:00)")?
+  inspect(time.add_hours(Int64::min_value()), content="Ok(02:00:00)")?
+  inspect(time.add_hours(Int64::max_value()), content="Ok(17:00:00)")?
 }
 
 test "add_minutes" {
   let time = PlainTime::of(0, 30, 0, 0)?
-  inspect(time.add_minutes(-1), content="Ok(00:29:00)")?
-  inspect(time.add_minutes(0), content="Ok(00:30:00)")?
-  inspect(time.add_minutes(1), content="Ok(00:31:00)")?
-  inspect(time.add_minutes(30), content="Ok(01:00:00)")?
-  inspect(time.add_minutes(360), content="Ok(06:30:00)")?
-  inspect(time.add_minutes(720), content="Ok(12:30:00)")?
-  inspect(time.add_minutes(1234), content="Ok(21:04:00)")?
-  inspect(time.add_minutes(1440), content="Ok(00:30:00)")?
-  inspect(time.add_minutes(2345), content="Ok(15:35:00)")?
-  inspect(time.add_minutes(2880), content="Ok(00:30:00)")?
-  inspect(time.add_minutes(Int::min_value()), content="Ok(22:22:00)")?
-  inspect(time.add_minutes(Int::max_value()), content="Ok(02:37:00)")?
+  inspect(time.add_minutes(-1L), content="Ok(00:29:00)")?
+  inspect(time.add_minutes(0L), content="Ok(00:30:00)")?
+  inspect(time.add_minutes(1L), content="Ok(00:31:00)")?
+  inspect(time.add_minutes(30L), content="Ok(01:00:00)")?
+  inspect(time.add_minutes(360L), content="Ok(06:30:00)")?
+  inspect(time.add_minutes(720L), content="Ok(12:30:00)")?
+  inspect(time.add_minutes(1234L), content="Ok(21:04:00)")?
+  inspect(time.add_minutes(1440L), content="Ok(00:30:00)")?
+  inspect(time.add_minutes(2345L), content="Ok(15:35:00)")?
+  inspect(time.add_minutes(2880L), content="Ok(00:30:00)")?
+  inspect(time.add_minutes(Int64::min_value()), content="Ok(06:22:00)")?
+  inspect(time.add_minutes(Int64::max_value()), content="Ok(18:37:00)")?
 }
 
 test "add_seconds" {
   let time = PlainTime::of(0, 0, 30, 0)?
-  inspect(time.add_seconds(-1), content="Ok(00:00:29)")?
-  inspect(time.add_seconds(0), content="Ok(00:00:30)")?
-  inspect(time.add_seconds(1), content="Ok(00:00:31)")?
-  inspect(time.add_seconds(30), content="Ok(00:01:00)")?
-  inspect(time.add_seconds(60), content="Ok(00:01:30)")?
-  inspect(time.add_seconds(12345678), content="Ok(00:21:48)")?
-  inspect(time.add_seconds(Int::min_value()), content="Ok(00:46:22)")?
-  inspect(time.add_seconds(Int::max_value()), content="Ok(00:14:37)")?
+  inspect(time.add_seconds(-1L), content="Ok(00:00:29)")?
+  inspect(time.add_seconds(0L), content="Ok(00:00:30)")?
+  inspect(time.add_seconds(1L), content="Ok(00:00:31)")?
+  inspect(time.add_seconds(30L), content="Ok(00:01:00)")?
+  inspect(time.add_seconds(60L), content="Ok(00:01:30)")?
+  inspect(time.add_seconds(12345678L), content="Ok(00:21:48)")?
+  inspect(time.add_seconds(Int64::min_value()), content="Ok(00:30:22)")?
+  inspect(time.add_seconds(Int64::max_value()), content="Ok(00:30:37)")?
 }
 
 test "add_nanoseconds" {
   let time = PlainTime::of(0, 0, 00, 1000)?
-  inspect(time.add_nanoseconds(-1L), content="Ok(00:00:00.999)")?
-  inspect(time.add_nanoseconds(0L), content="Ok(00:00:00.1000)")?
-  inspect(time.add_nanoseconds(1L), content="Ok(00:00:00.1001)")?
+  inspect(time.add_nanoseconds(-1L), content="Ok(00:00:00.000000999)")?
+  inspect(time.add_nanoseconds(0L), content="Ok(00:00:00.000001)")?
+  inspect(time.add_nanoseconds(1L), content="Ok(00:00:00.000001001)")?
   inspect(time.add_nanoseconds(123456789L), content="Ok(00:00:00.123457789)")?
   inspect(
     time.add_nanoseconds(Int64::min_value()),
@@ -179,15 +179,15 @@ test "add_nanoseconds" {
 test "with_hour" {
   inspect(
     PlainTime::of(1, 20, 30, 400)?.with_hour(1),
-    content="Ok(01:20:30.400)",
+    content="Ok(01:20:30.0000004)",
   )?
   inspect(
     PlainTime::of(1, 20, 30, 400)?.with_hour(10),
-    content="Ok(10:20:30.400)",
+    content="Ok(10:20:30.0000004)",
   )?
   inspect(
     PlainTime::of(1, 20, 30, 400)?.with_hour(0),
-    content="Ok(00:20:30.400)",
+    content="Ok(00:20:30.0000004)",
   )?
   inspect(
     PlainTime::of(1, 20, 30, 400)?.with_hour(-1),
@@ -206,19 +206,19 @@ test "with_hour" {
 test "with_minute" {
   inspect(
     PlainTime::of(1, 20, 30, 400)?.with_minute(20),
-    content="Ok(01:20:30.400)",
+    content="Ok(01:20:30.0000004)",
   )?
   inspect(
     PlainTime::of(1, 20, 30, 400)?.with_minute(10),
-    content="Ok(01:10:30.400)",
+    content="Ok(01:10:30.0000004)",
   )?
   inspect(
     PlainTime::of(1, 20, 30, 400)?.with_minute(0),
-    content="Ok(01:00:30.400)",
+    content="Ok(01:00:30.0000004)",
   )?
   inspect(
     PlainTime::of(1, 20, 30, 400)?.with_minute(59),
-    content="Ok(01:59:30.400)",
+    content="Ok(01:59:30.0000004)",
   )?
   inspect(
     PlainTime::of(1, 20, 30, 400)?.with_minute(-1),
@@ -233,19 +233,19 @@ test "with_minute" {
 test "with_second" {
   inspect(
     PlainTime::of(1, 20, 30, 400)?.with_second(30),
-    content="Ok(01:20:30.400)",
+    content="Ok(01:20:30.0000004)",
   )?
   inspect(
     PlainTime::of(1, 20, 30, 400)?.with_second(10),
-    content="Ok(01:20:10.400)",
+    content="Ok(01:20:10.0000004)",
   )?
   inspect(
     PlainTime::of(1, 20, 30, 400)?.with_second(0),
-    content="Ok(01:20:00.400)",
+    content="Ok(01:20:00.0000004)",
   )?
   inspect(
     PlainTime::of(1, 20, 30, 400)?.with_second(59),
-    content="Ok(01:20:59.400)",
+    content="Ok(01:20:59.0000004)",
   )?
   inspect(
     PlainTime::of(1, 20, 30, 400)?.with_second(-1),
@@ -260,11 +260,11 @@ test "with_second" {
 test "with_nanosecond" {
   inspect(
     PlainTime::of(1, 20, 30, 400)?.with_nanosecond(400),
-    content="Ok(01:20:30.400)",
+    content="Ok(01:20:30.0000004)",
   )?
   inspect(
     PlainTime::of(1, 20, 30, 400)?.with_nanosecond(100),
-    content="Ok(01:20:30.100)",
+    content="Ok(01:20:30.0000001)",
   )?
   inspect(
     PlainTime::of(1, 20, 30, 400)?.with_nanosecond(0),
@@ -279,7 +279,7 @@ test "with_nanosecond" {
     content="Err(Invalid time)",
   )?
   inspect(
-    PlainTime::of(1, 20, 30, 400)?.with_second(1_000_000_000),
+    PlainTime::of(1, 20, 30, 400)?.with_nanosecond(1_000_000_000),
     content="Err(Invalid time)",
   )?
 }
@@ -302,11 +302,11 @@ test "add_duration" {
     time.add_duration(
       Duration::of(hours=1L, minutes=30L, seconds=30L, nanoseconds=1_000_000L)?,
     ),
-    content="Ok(13:30:30.1000000)",
+    content="Ok(13:30:30.001)",
   )?
   inspect(
     time.add_duration(
       Duration::of(minutes=-29L, seconds=-29L, nanoseconds=-999_000_000L)?,
     ),
-  content="Ok(11:30:30.1000000)")?
+  content="Ok(11:30:30.001)")?
 }

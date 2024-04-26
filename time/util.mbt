@@ -220,8 +220,8 @@ fn floor(x : Double) -> Double {
 }
 
 fn floor_div_int(x : Int, y : Int) -> Result[Int, String] {
-  if x == 0 {
-    return Err("divide by zero")
+  if y == 0 {
+    return Err("division by zero")
   }
   let r = x.to_double() / y.to_double()
   Ok(floor(r).to_int())
@@ -232,12 +232,13 @@ test "floor_div_int" {
   inspect(floor_div_int(-1, 10), content="Ok(-1)")?
   inspect(floor_div_int(9, 10), content="Ok(0)")?
   inspect(floor_div_int(-9, 10), content="Ok(-1)")?
-  inspect(floor_div_int(0, 10), content="Err(divide by zero)")?
+  inspect(floor_div_int(0, 10), content="Ok(0)")?
+  inspect(floor_div_int(10, 0), content="Err(division by zero)")?
 }
 
 fn floor_div_int64(x : Int64, y : Int64) -> Result[Int64, String] {
-  if x == 0L {
-    return Err("divide by zero")
+  if y == 0L {
+    return Err("division by zero")
   }
   let r = x.to_double() / y.to_double()
   Ok(floor(r).to_int64())
@@ -248,7 +249,8 @@ test "floor_div_int64" {
   inspect(floor_div_int64(-1L, 10L), content="Ok(-1)")?
   inspect(floor_div_int64(9L, 10L), content="Ok(0)")?
   inspect(floor_div_int64(-9L, 10L), content="Ok(-1)")?
-  inspect(floor_div_int64(0L, 12L), content="Err(divide by zero)")?
+  inspect(floor_div_int64(0L, 10L), content="Ok(0)")?
+  inspect(floor_div_int64(10L, 0L), content="Err(division by zero)")?
 }
 
 fn floor_mod_int(x : Int, y : Int) -> Result[Int, String] {
@@ -260,7 +262,8 @@ test "floor_mod_int" {
   inspect(floor_mod_int(-1, 10), content="Ok(9)")?
   inspect(floor_mod_int(11, 10), content="Ok(1)")?
   inspect(floor_mod_int(-11, 10), content="Ok(9)")?
-  inspect(floor_mod_int(0, 10), content="Err(divide by zero)")?
+  inspect(floor_mod_int(0, 10), content="Ok(0)")?
+  inspect(floor_mod_int(10, 0), content="Err(division by zero)")?
 }
 
 fn floor_mod_int64(x : Int64, y : Int64) -> Result[Int64, String] {
@@ -272,5 +275,6 @@ test "floor_mod_int64" {
   inspect(floor_mod_int64(-1L, 10L), content="Ok(9)")?
   inspect(floor_mod_int64(11L, 10L), content="Ok(1)")?
   inspect(floor_mod_int64(-11L, 10L), content="Ok(9)")?
-  inspect(floor_mod_int64(0L, 10L), content="Err(divide by zero)")?
+  inspect(floor_mod_int64(0L, 10L), content="Ok(0)")?
+  inspect(floor_mod_int64(10L, 0L), content="Err(division by zero)")?
 }

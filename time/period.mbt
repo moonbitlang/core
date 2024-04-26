@@ -202,3 +202,7 @@ pub fn is_zero(self : Period) -> Bool {
 pub fn is_neg(self : Period) -> Bool {
   self.years < 0 || self.months < 0 || self.days < 0
 }
+
+pub fn total_months(self : Period) -> Int64 {
+  self.years.to_int64() * 12L + self.months.to_int64()
+}
