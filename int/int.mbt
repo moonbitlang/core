@@ -48,6 +48,10 @@ pub fn Int::min_value() -> Int {
   min_val
 }
 
+pub fn Int::unity() -> Int {
+  1
+}
+
 pub fn hash(self : Int) -> Int {
   self
 }

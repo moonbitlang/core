@@ -9,6 +9,7 @@ fn Int::hash(Int) -> Int
 fn Int::max_value() -> Int
 fn Int::min_value() -> Int
 fn Int::signum(Int) -> Int
+fn Int::unity() -> Int
 
 // Traits
 

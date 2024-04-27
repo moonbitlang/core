@@ -119,6 +119,10 @@ pub trait Num: FromInt + Add + Subtract + Multiply + Divide + Negate {
   signum(Self) -> Self
 }
 
+pub trait Unity {
+  unity() -> Self
+}
+
 // For testing purposes
 struct T {
   mut x : Int

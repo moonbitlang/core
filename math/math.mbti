@@ -47,5 +47,9 @@ pub trait Subtract {
   op_sub(Self, Self) -> Self
 }
 
+pub trait Unity {
+  unity() -> Self
+}
+
 // Extension Methods
 
