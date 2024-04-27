@@ -123,6 +123,15 @@ impl Buffer {
   write_sub_string(Self, String, Int, Int) -> Unit
 }
 
+type BytesView
+impl BytesView {
+  length(Self) -> Int
+  op_as_view(Self, ~start : Int, ~end : Int) -> Self
+  op_get(Self, Int) -> Byte
+  op_set(Self, Int, Byte) -> Unit
+  swap(Self, Int, Int) -> Unit
+}
+
 type Iter
 impl Iter {
   _unstable_internal_make[T](((T) -> Bool) -> Bool) -> Self[T]
@@ -343,6 +352,7 @@ impl Bytes {
   length(Bytes) -> Int
   make(Int, ~init : Byte = ..) -> Bytes
   of_string(String) -> Bytes
+  op_as_view(Bytes, ~start : Int, ~end : Int) -> BytesView
   op_get(Bytes, Int) -> Byte
   op_set(Bytes, Int, Byte) -> Unit
   set_utf16_char(Bytes, Int, Char) -> Int
