@@ -55,3 +55,10 @@ pub fn Int::unity() -> Int {
 pub fn hash(self : Int) -> Int {
   self
 }
+
+test "misc" {
+  inspect(max_value(), content="2147483647")?
+  inspect(min_value(), content="-2147483648")?
+  inspect(unity(), content="1")?
+  inspect((42).hash(), content="42")?
+}

@@ -57,3 +57,10 @@ pub fn hash(self : Int64) -> Int {
   let hi = self.lsr(32).to_int()
   lo.lxor(hi)
 }
+
+test "misc" {
+  inspect(max_value(), content="9223372036854775807")?
+  inspect(min_value(), content="-9223372036854775808")?
+  inspect(unity(), content="1")?
+  inspect(42L.hash(), content="42")?
+}
