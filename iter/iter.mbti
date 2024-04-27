@@ -1,5 +1,7 @@
 package moonbitlang/core/iter
 
+alias @moonbitlang/core/math as @math
+
 // Values
 
 // Types and methods
@@ -19,8 +21,10 @@ fn Iter::iter[T](Iter[T], (T) -> Unit) -> Unit
 fn Iter::map[T, R](Iter[T], (T) -> R) -> Iter[R]
 fn Iter::op_add[T](Iter[T], Iter[T]) -> Iter[T]
 fn Iter::prepend[T](Iter[T], T) -> Iter[T]
+fn Iter::product[T : @math.Unity + @math.Multiply](Iter[T]) -> T
 fn Iter::repeat[T](T) -> Iter[T]
 fn Iter::singleton[T](T) -> Iter[T]
+fn Iter::sum[T : Default + @math.Add](Iter[T]) -> T
 fn Iter::take[T](Iter[T], Int) -> Iter[T]
 fn Iter::take_while[T](Iter[T], (T) -> Bool) -> Iter[T]
 fn Iter::tap[T](Iter[T], (T) -> Unit) -> Iter[T]

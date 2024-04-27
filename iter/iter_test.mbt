@@ -241,3 +241,11 @@ fn from_array[T](arr : Array[T]) -> Iter[T] {
     },
   )
 }
+
+test "sum" {
+  inspect(repeat(1).take(5).sum(), content="5")?
+}
+
+test "product" {
+  inspect(repeat(2).take(8).product(), content="256")?
+}

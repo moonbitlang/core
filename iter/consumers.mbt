@@ -81,3 +81,43 @@ pub fn fold[T, B](self : Iter[T], f : (B, T) -> B, init : B) -> B {
 pub fn count[T](self : Iter[T]) -> Int {
   self.fold(fn { acc, _ => acc + 1 }, 0)
 }
+
+/// Calculates the sum of elements in the iterator.
+///
+/// Only available if the elements implements the `Default` trait and have the
+/// `op_add()` function. The result is simply adding all elements sequentially
+/// to the default value of the element type, which means the `sum()` of an
+/// empty iterator is the default value itself.
+///
+/// # Examples
+///
+/// ```
+/// let arr = [1, 2, 3, 4, 5]
+/// print(arr.as_iter().sum())  // output: 15
+///
+/// let empty_arr: Array[Int] = []
+/// print(empty_arr.as_iter().sum())  // output: 0
+/// ```
+pub fn sum[T : Default + @math.Add](self : Iter[T]) -> T {
+  self.fold(fn { acc, x => acc + x }, T::default())
+}
+
+/// Calculates the product of elements in the iterator.
+///
+/// Only available if the elements implements the `Unity` trait and have the
+/// `op_mul()` function. The result is simply multiplying all elements
+/// sequentially to the unity value of the element type, which means the
+/// `product()` of an empty iterator is the unity value itself.
+///
+/// # Examples
+///
+/// ```
+/// let arr = [1, 2, 3, 4, 5]
+/// print(arr.as_iter().product())  // output: 120
+///
+/// let empty_arr: Array[Int] = []
+/// print(empty_arr.as_iter().product())  // output: 1
+/// ```
+pub fn product[T : @math.Unity + @math.Multiply](self : Iter[T]) -> T {
+  self.fold(fn { acc, x => acc * x }, T::unity())
+}

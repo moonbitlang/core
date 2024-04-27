@@ -4,7 +4,6 @@
     "moonbitlang/core/assertion",
     "moonbitlang/core/result",
     "moonbitlang/core/double",
-    "moonbitlang/core/string",
     "moonbitlang/core/coverage"
   ],
   "test_import": [
