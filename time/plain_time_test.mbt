@@ -41,7 +41,8 @@ test "from_string" {
   inspect(PlainTime::from_string("23:59"), content="Ok(23:59:00)")?
   inspect(PlainTime::from_string("24:00"), content="Ok(24:00:00)")?
   inspect(PlainTime::from_string("23:59:59"), content="Ok(23:59:59)")?
-  inspect(PlainTime::from_string("01:00:00.123"), content="Ok(01:00:00.000000123)")?
+  inspect(PlainTime::from_string("01:00:00.123"), content="Ok(01:00:00.123)")?
+  inspect(PlainTime::from_string("01:00:00.0000123"), content="Ok(01:00:00.0000123)")?
   inspect(PlainTime::from_string("1:00"), content="Err(Invalid time)")?
   inspect(PlainTime::from_string("10:0"), content="Err(Invalid time)")?
   inspect(PlainTime::from_string("100000"), content="Err(Invalid time)")?

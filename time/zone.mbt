@@ -19,23 +19,21 @@ struct Zone {
   // TODO: offset transition rules
 } derive(Eq)
 
-let utc_zone : Zone = { id: "UTC", offsets: [utc_offset] }
+/// UTC time zone.
+pub let utc_zone : Zone = { id: "UTC", offsets: [utc_offset] }
 
 /// Creates a time zone with fixed offset from time zone id and offset seconds.
-pub fn Zone::fixed(id : String, offset_seconds : Int) -> Result[Zone, String] {
+pub fn fixed_zone(id : String, offset_seconds : Int) -> Result[Zone, String] {
   let offset = ZoneOffset::from_seconds(offset_seconds)?
   Ok(Zone::{ id, offsets: [offset] })
 }
 
-/// Returns the UTC time zone.
-pub fn Zone::utc() -> Zone {
-  utc_zone
-}
-
+/// Checks if this zone only has one offset.
 pub fn is_fixed(self : Zone) -> Bool {
   self.offsets.length() == 1
 }
 
+/// Returns the zone id.
 pub fn to_string(self : Zone) -> String {
   self.id
 }

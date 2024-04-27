@@ -11,13 +11,21 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
+test "date_time" {
+
+}
+
+test "unix" {
+  let zone = fixed_zone("Asia/Shanghai", 8*60*60)?
+  inspect(unix(1714227729L, nanosecond=1000, ~zone), content="Ok(2024-04-27T22:22:09.000001+08:00[Asia/Shanghai])")?
+}
 
 test "of" {
   inspect(
     ZonedDateTime::of(2000, 1, 1, hour=1, minute=2, second=3),
     content="Ok(2000-01-01T01:02:03Z)",
   )?
-  let zone = Zone::fixed("Asia/Shanghai", 8 * 60 * 60)?
+  let zone = fixed_zone("Asia/Shanghai", 8 * 60 * 60)?
   inspect(
     ZonedDateTime::of(2000, 1, 1, hour=1, minute=2, second=3, ~zone),
     content="Ok(2000-01-01T01:02:03+08:00[Asia/Shanghai])",
@@ -25,7 +33,7 @@ test "of" {
 }
 
 test "from_plain_datetime" {
-  let zone = Zone::fixed("Asia/Shanghai", 8 * 60 * 60)?
+  let zone = fixed_zone("Asia/Shanghai", 8 * 60 * 60)?
   let datetime = PlainDateTime::of(2000, 1, 1)?
   inspect(
     ZonedDateTime::from_plain_datetime(datetime, ~zone),
@@ -34,23 +42,23 @@ test "from_plain_datetime" {
 }
 
 test "from_unix_second" {
-  let zone = Zone::fixed("Asia/Shanghai", 8 * 60 * 60)?
+  let zone = fixed_zone("Asia/Shanghai", 8 * 60 * 60)?
   inspect(
-    ZonedDateTime::from_unix_second(0L, 0),
+    ZonedDateTime::from_unix_second(0L),
     content="Ok(1970-01-01T00:00:00Z)",
   )?
   inspect(
-    ZonedDateTime::from_unix_second(60L * 60L, 1000),
+    ZonedDateTime::from_unix_second(60L * 60L, nanosecond=1000),
     content="Ok(1970-01-01T01:00:00.000001Z)",
   )?
   inspect(
-    ZonedDateTime::from_unix_second(0L, 0, ~zone),
+    ZonedDateTime::from_unix_second(0L, ~zone),
     content="Ok(1970-01-01T08:00:00+08:00[Asia/Shanghai])",
   )?
 }
 
 test "to_unix_second" {
-  let zone = Zone::fixed("Asia/Shanghai", 8 * 60 * 60)?
+  let zone = fixed_zone("Asia/Shanghai", 8 * 60 * 60)?
   inspect(ZonedDateTime::of(1970, 1, 1)?.to_unix_second(), content="0")?
   inspect(
     ZonedDateTime::of(1970, 1, 1, ~zone)?.to_unix_second(),
@@ -59,7 +67,7 @@ test "to_unix_second" {
 }
 
 test "conversions" {
-  let zone = Zone::fixed("Asia/Shanghai", 8 * 60 * 60)?
+  let zone = fixed_zone("Asia/Shanghai", 8 * 60 * 60)?
   let zdt = ZonedDateTime::of(2000, 1, 1, hour=1, minute=2, second=3, ~zone)?
   inspect(zdt.to_unix_second(), content="946659723")?
   inspect(zdt.to_plain_date(), content="2000-01-01")?
@@ -68,7 +76,7 @@ test "conversions" {
 }
 
 test "getters" {
-  let zone = Zone::fixed("Asia/Shanghai", 8 * 60 * 60)?
+  let zone = fixed_zone("Asia/Shanghai", 8 * 60 * 60)?
   let zdt = ZonedDateTime::of(2000, 1, 1, hour=1, minute=2, second=3, ~zone)?
   inspect(zdt.era(), content="CE")?
   inspect(zdt.era_year(), content="2000")?
@@ -90,7 +98,7 @@ test "getters" {
 }
 
 test "add_years" {
-  let zone = Zone::fixed("Asia/Shanghai", 8 * 60 * 60)?
+  let zone = fixed_zone("Asia/Shanghai", 8 * 60 * 60)?
   let zdt = ZonedDateTime::of(2000, 1, 1, hour=1, minute=2, second=3, ~zone)?
   inspect(
     zdt.add_years(1L),
@@ -99,7 +107,7 @@ test "add_years" {
 }
 
 test "add_months" {
-  let zone = Zone::fixed("Asia/Shanghai", 8 * 60 * 60)?
+  let zone = fixed_zone("Asia/Shanghai", 8 * 60 * 60)?
   let zdt = ZonedDateTime::of(2000, 1, 1, hour=1, minute=2, second=3, ~zone)?
   inspect(
     zdt.add_months(1L),
@@ -108,7 +116,7 @@ test "add_months" {
 }
 
 test "add_weeks" {
-  let zone = Zone::fixed("Asia/Shanghai", 8 * 60 * 60)?
+  let zone = fixed_zone("Asia/Shanghai", 8 * 60 * 60)?
   let zdt = ZonedDateTime::of(2000, 1, 1, hour=1, minute=2, second=3, ~zone)?
   inspect(
     zdt.add_weeks(1L),
@@ -117,7 +125,7 @@ test "add_weeks" {
 }
 
 test "add_days" {
-  let zone = Zone::fixed("Asia/Shanghai", 8 * 60 * 60)?
+  let zone = fixed_zone("Asia/Shanghai", 8 * 60 * 60)?
   let zdt = ZonedDateTime::of(2000, 1, 1, hour=1, minute=2, second=3, ~zone)?
   inspect(
     zdt.add_days(1L),
@@ -126,7 +134,7 @@ test "add_days" {
 }
 
 test "add_hours" {
-  let zone = Zone::fixed("Asia/Shanghai", 8 * 60 * 60)?
+  let zone = fixed_zone("Asia/Shanghai", 8 * 60 * 60)?
   let zdt = ZonedDateTime::of(2000, 1, 1, hour=1, minute=2, second=3, ~zone)?
   inspect(
     zdt.add_hours(1L),
@@ -135,7 +143,7 @@ test "add_hours" {
 }
 
 test "add_minutes" {
-  let zone = Zone::fixed("Asia/Shanghai", 8 * 60 * 60)?
+  let zone = fixed_zone("Asia/Shanghai", 8 * 60 * 60)?
   let zdt = ZonedDateTime::of(2000, 1, 1, hour=1, minute=2, second=3, ~zone)?
   inspect(
     zdt.add_minutes(1L),
@@ -144,7 +152,7 @@ test "add_minutes" {
 }
 
 test "add_seconds" {
-  let zone = Zone::fixed("Asia/Shanghai", 8 * 60 * 60)?
+  let zone = fixed_zone("Asia/Shanghai", 8 * 60 * 60)?
   let zdt = ZonedDateTime::of(2000, 1, 1, hour=1, minute=2, second=3, ~zone)?
   inspect(
     zdt.add_seconds(1L),
@@ -153,7 +161,7 @@ test "add_seconds" {
 }
 
 test "add_nanoseconds" {
-  let zone = Zone::fixed("Asia/Shanghai", 8 * 60 * 60)?
+  let zone = fixed_zone("Asia/Shanghai", 8 * 60 * 60)?
   let zdt = ZonedDateTime::of(2000, 1, 1, hour=1, minute=2, second=3, ~zone)?
   inspect(
     zdt.add_nanoseconds(1000L),
@@ -162,7 +170,7 @@ test "add_nanoseconds" {
 }
 
 test "with_year" {
-  let zone = Zone::fixed("Asia/Shanghai", 8 * 60 * 60)?
+  let zone = fixed_zone("Asia/Shanghai", 8 * 60 * 60)?
   let zdt = ZonedDateTime::of(2000, 1, 1, hour=1, minute=2, second=3, ~zone)?
   inspect(
     zdt.with_year(2024),
@@ -171,7 +179,7 @@ test "with_year" {
 }
 
 test "with_month" {
-  let zone = Zone::fixed("Asia/Shanghai", 8 * 60 * 60)?
+  let zone = fixed_zone("Asia/Shanghai", 8 * 60 * 60)?
   let zdt = ZonedDateTime::of(2000, 1, 1, hour=1, minute=2, second=3, ~zone)?
   inspect(
     zdt.with_month(2),
@@ -180,7 +188,7 @@ test "with_month" {
 }
 
 test "with_day" {
-  let zone = Zone::fixed("Asia/Shanghai", 8 * 60 * 60)?
+  let zone = fixed_zone("Asia/Shanghai", 8 * 60 * 60)?
   let zdt = ZonedDateTime::of(2000, 1, 1, hour=1, minute=2, second=3, ~zone)?
   inspect(
     zdt.with_day(31),
@@ -189,7 +197,7 @@ test "with_day" {
 }
 
 test "with_ordinal" {
-  let zone = Zone::fixed("Asia/Shanghai", 8 * 60 * 60)?
+  let zone = fixed_zone("Asia/Shanghai", 8 * 60 * 60)?
   let zdt = ZonedDateTime::of(2000, 1, 1, hour=1, minute=2, second=3, ~zone)?
   inspect(
     zdt.with_ordinal(365),
@@ -198,7 +206,7 @@ test "with_ordinal" {
 }
 
 test "with_hour" {
-  let zone = Zone::fixed("Asia/Shanghai", 8 * 60 * 60)?
+  let zone = fixed_zone("Asia/Shanghai", 8 * 60 * 60)?
   let zdt = ZonedDateTime::of(2000, 1, 1, hour=1, minute=2, second=3, ~zone)?
   inspect(
     zdt.with_hour(12),
@@ -207,7 +215,7 @@ test "with_hour" {
 }
 
 test "with_minute" {
-  let zone = Zone::fixed("Asia/Shanghai", 8 * 60 * 60)?
+  let zone = fixed_zone("Asia/Shanghai", 8 * 60 * 60)?
   let zdt = ZonedDateTime::of(2000, 1, 1, hour=1, minute=2, second=3, ~zone)?
   inspect(
     zdt.with_minute(30),
@@ -216,7 +224,7 @@ test "with_minute" {
 }
 
 test "with_second" {
-  let zone = Zone::fixed("Asia/Shanghai", 8 * 60 * 60)?
+  let zone = fixed_zone("Asia/Shanghai", 8 * 60 * 60)?
   let zdt = ZonedDateTime::of(2000, 1, 1, hour=1, minute=2, second=3, ~zone)?
   inspect(
     zdt.with_second(30),
@@ -225,7 +233,7 @@ test "with_second" {
 }
 
 test "with_nanosecond" {
-  let zone = Zone::fixed("Asia/Shanghai", 8 * 60 * 60)?
+  let zone = fixed_zone("Asia/Shanghai", 8 * 60 * 60)?
   let zdt = ZonedDateTime::of(2000, 1, 1, hour=1, minute=2, second=3, ~zone)?
   inspect(
     zdt.with_nanosecond(999_999_999),

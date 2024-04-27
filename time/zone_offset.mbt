@@ -27,8 +27,14 @@ let max_offset_seconds : Int = max_offset_hours * seconds_per_hour.to_int()
 
 let min_offset_seconds : Int = min_offset_hours * seconds_per_hour.to_int()
 
-let utc_offset : ZoneOffset = ZoneOffset::{ id: "Z", seconds: 0, dst: false }
+/// UTC+0 offset.
+pub let utc_offset : ZoneOffset = ZoneOffset::{
+  id: "Z",
+  seconds: 0,
+  dst: false,
+}
 
+/// Creates a offset from hours, minutes and seconds.
 pub fn ZoneOffset::of(
   ~hours : Int = 0,
   ~minutes : Int = 0,
@@ -40,6 +46,7 @@ pub fn ZoneOffset::of(
   ZoneOffset::from_seconds(secs)
 }
 
+/// Creates a offset from seconds.
 pub fn ZoneOffset::from_seconds(seconds : Int) -> Result[ZoneOffset, String] {
   if seconds == 0 {
     return Ok(utc_offset)
@@ -50,10 +57,7 @@ pub fn ZoneOffset::from_seconds(seconds : Int) -> Result[ZoneOffset, String] {
   Ok({ id: create_id(seconds), seconds, dst: false })
 }
 
-pub fn ZoneOffset::utc() -> ZoneOffset {
-  utc_offset
-}
-
+/// Returns the offset id.
 pub fn to_string(self : ZoneOffset) -> String {
   self.id
 }
@@ -66,14 +70,17 @@ pub fn compare(self : ZoneOffset, other : ZoneOffset) -> Int {
   other.seconds - self.seconds
 }
 
+/// Returns the offset id.
 pub fn id(self : ZoneOffset) -> String {
   self.id
 }
 
+/// Returns the total seconds of this offset.
 pub fn seconds(self : ZoneOffset) -> Int {
   self.seconds
 }
 
+/// Checks if this offset is daylight saving time.
 pub fn is_dst(self : ZoneOffset) -> Bool {
   self.dst
 }
