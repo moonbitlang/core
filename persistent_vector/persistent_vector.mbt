@@ -17,7 +17,7 @@ pub fn PersistentVector::empty[T]() -> PersistentVector[T] {
 }
 
 pub fn to_string[T : Show](self : PersistentVector[T]) -> String {
-  let mut s = "[".to_string()
+  let mut s = "PersistentVector::[".to_string()
   for i = 0; i < self.size; i = i + 1 {
     s = s + self[i].to_string()
     if i < self.size - 1 {
@@ -31,16 +31,30 @@ pub fn to_string[T : Show](self : PersistentVector[T]) -> String {
 test "to_string" {
   let v = PersistentVector::[1, 2, 3, 4, 5]
   let ve : PersistentVector[Int] = PersistentVector::empty()
-  inspect(v, content="[1, 2, 3, 4, 5]")?
-  inspect(ve, content="[]")?
+  inspect(v, content="PersistentVector::[1, 2, 3, 4, 5]")?
+  inspect(ve, content="PersistentVector::[]")?
 }
 
 pub fn is_empty[T](v : PersistentVector[T]) -> Bool {
   v.size == 0
 }
 
+test "is_empty" {
+  let v = PersistentVector::[1, 2, 3, 4, 5]
+  let ve : PersistentVector[Int] = PersistentVector::empty()
+  inspect(is_empty(v), content="false")?
+  inspect(is_empty(ve), content="true")?
+}
+
 pub fn length[T](v : PersistentVector[T]) -> Int {
   v.size
+}
+
+test "length" {
+  let v = PersistentVector::[1, 2, 3, 4, 5]
+  let ve : PersistentVector[Int] = PersistentVector::empty()
+  inspect(length(v), content="5")?
+  inspect(length(ve), content="0")?
 }
 
 pub fn copy[T](self : PersistentVector[T]) -> PersistentVector[T] {
@@ -59,7 +73,7 @@ pub fn copy[T](self : PersistentVector[T]) -> PersistentVector[T] {
 test "copy" {
   let v = PersistentVector::[1, 2, 3, 4, 5]
   let vc = v.copy()
-  inspect(vc, content="[1, 2, 3, 4, 5]")?
+  inspect(vc, content="PersistentVector::[1, 2, 3, 4, 5]")?
   inspect(v == vc, content="true")?
 }
 
@@ -109,8 +123,8 @@ test "set" {
   let v = PersistentVector::[1, 2, 3, 4, 5]
   let v1 = v.set(1, 10)
   let v2 = v.set(2, 10)
-  inspect(v1, content="[1, 10, 3, 4, 5]")?
-  inspect(v2, content="[1, 2, 10, 4, 5]")?
+  inspect(v1, content="PersistentVector::[1, 10, 3, 4, 5]")?
+  inspect(v2, content="PersistentVector::[1, 2, 10, 4, 5]")?
 }
 
 pub fn push[T](self : PersistentVector[T], value : T) -> PersistentVector[T] {
@@ -131,27 +145,44 @@ pub fn push[T](self : PersistentVector[T], value : T) -> PersistentVector[T] {
 
 test "push" {
   let v = PersistentVector::empty().push(1).push(2).push(3)
-  inspect(v, content="[1, 2, 3]")?
-  inspect(v.push(1), content="[1, 2, 3, 1]")?
-  inspect(v.push(2), content="[1, 2, 3, 2]")?
-  inspect(v.push(3), content="[1, 2, 3, 3]")?
+  inspect(v, content="PersistentVector::[1, 2, 3]")?
+  inspect(v.push(1), content="PersistentVector::[1, 2, 3, 1]")?
+  inspect(v.push(2), content="PersistentVector::[1, 2, 3, 2]")?
+  inspect(v.push(3), content="PersistentVector::[1, 2, 3, 3]")?
 }
 
-/// TODO : A more efficient implementation
 pub fn PersistentVector::from_array[T](arr : Array[T]) -> PersistentVector[T] {
-  let mut v = PersistentVector::empty()
-  arr.iter(fn(e) { v = v.push(e) })
-  v
+  new_with_index(arr.length(), fn(i) { arr[i] })
 }
 
 test "from_array" {
   let v = PersistentVector::[1, 1, 4, 5, 1, 4]
   let vv = PersistentVector::from_array(Array::make(30, 1))
-  inspect(v, content="[1, 1, 4, 5, 1, 4]")?
+  inspect(v, content="PersistentVector::[1, 1, 4, 5, 1, 4]")?
   inspect(
     vv,
-    content="[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]",
+    content="PersistentVector::[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]",
   )?
+}
+
+pub fn PersistentVector::from_vector[T](
+  vec : @vec.Vec[T]
+) -> PersistentVector[T] {
+  new_by_leaves(
+    vec.length(),
+    fn(s, l) { @array.new_with_index(l, fn(i) { vec[s + i] }) },
+  )
+}
+
+test "from_vector" {
+  let v : PersistentVector[Int] = PersistentVector::from_vector(
+    @vec.from_array([1, 2, 3, 4, 5]),
+  )
+  let v1 : PersistentVector[Int] = PersistentVector::from_vector(
+    @vec.from_array([]),
+  )
+  inspect(v, content="PersistentVector::[1, 2, 3, 4, 5]")?
+  inspect(v1, content="PersistentVector::[]")?
 }
 
 pub fn iter[T](self : PersistentVector[T], f : (T) -> Unit) -> Unit {
@@ -173,45 +204,48 @@ test "iter" {
   inspect(s, content="15")?
 }
 
+pub fn iteri[T](self : PersistentVector[T], f : (Int, T) -> Unit) -> Unit {
+  fn go(t : Tree[T], acc : Int) -> Int {
+    match t {
+      Empty => -1
+      Node(node) => node.fold_left(fn(v, tr) { go(tr, v) }, init=acc)
+      Leaf(l) => {
+        l.iteri(fn(i, _e) { f(acc + i, l[i]) })
+        acc + l.length()
+      }
+    }
+  }
+
+  ignore(go(self.tree, 0))
+}
+
+test "iteri" {
+  let v = PersistentVector::[1, 2, 3, 4, 5]
+  let mut s = 0
+  v.iteri(fn(i, e) { s = s + i * e })
+  inspect(s, content="40")?
+}
+
 pub fn op_equal[T : Eq](
   self : PersistentVector[T],
   other : PersistentVector[T]
 ) -> Bool {
-  if self.size != other.size {
-    false
-  } else {
-    fn go(t1 : Tree[T], t2 : Tree[T]) -> Bool {
-      match (t1, t2) {
-        (Empty, Empty) => true
-        (Leaf(l1), Leaf(l2)) => l1 == l2
-        (Node(n1), Node(n2)) =>
-          if n1.length() != n2.length() {
-            false
-          } else {
-            for i = 0; i < n1.length(); i = i + 1 {
-              if go(n1[i], n2[i]).not() {
-                break false
-              }
-            } else {
-              true
-            }
-          }
-        _ => false
-      }
-    }
-
-    go(self.tree, other.tree)
-  }
+  self.size == other.size && self.tree == other.tree
 }
 
 test "op_equal" {
+  let v0 : PersistentVector[Int] = PersistentVector::[]
   let v1 = PersistentVector::[1, 2, 3, 4, 5]
   let v2 = PersistentVector::[1, 2, 3, 4, 5]
   let v3 = PersistentVector::[1, 2, 3, 4, 6]
   let v4 = PersistentVector::[1, 2, 3, 4]
+  let v5 = PersistentVector::new(5, 1)
+  let v6 = PersistentVector::[1, 1, 1, 1, 1]
+  inspect(v0 == PersistentVector::empty(), content="true")?
   inspect(v1 == v2, content="true")?
   inspect(v1 == v3, content="false")?
   inspect(v1 == v4, content="false")?
+  inspect(v5 == v6, content="true")?
 }
 
 pub fn fold_left[T](
@@ -231,7 +265,9 @@ pub fn fold_left[T](
 }
 
 test "fold_left" {
+  let e = PersistentVector::empty()
   let v = PersistentVector::[1, 2, 3, 4, 5]
+  inspect(e.fold_left(fn(a, b) { a + b }, init=0), content="0")?
   inspect(v.fold_left(fn(a, b) { a + b }, init=0), content="15")?
 }
 
@@ -252,7 +288,9 @@ pub fn fold_right[T](
 }
 
 test "fold_right" {
+  let e = PersistentVector::empty()
   let v = PersistentVector::[1, 2, 3, 4, 5]
+  inspect(e.fold_left(fn(a, b) { a + b }, init=0), content="0")?
   inspect(v.fold_right(fn(a, b) { a + b }, init=0), content="15")?
 }
 
@@ -273,10 +311,101 @@ pub fn map[T, U](
 
 test "map" {
   let v = PersistentVector::[1, 2, 3, 4, 5]
-  inspect(v.map(fn(e) { e * 2 }), content="[2, 4, 6, 8, 10]")?
-  inspect(v.map(fn(e) { e.to_string() }), content="[1, 2, 3, 4, 5]")?
+  inspect(v.map(fn(e) { e * 2 }), content="PersistentVector::[2, 4, 6, 8, 10]")?
+  inspect(
+    v.map(fn(e) { e.to_string() }),
+    content="PersistentVector::[1, 2, 3, 4, 5]",
+  )?
   inspect(
     v.map(fn(e) { e % 2 == 0 }),
-    content="[false, true, false, true, false]",
+    content="PersistentVector::[false, true, false, true, false]",
+  )?
+  inspect(
+    PersistentVector::empty().map(fn(e : Int) { e }),
+    content="PersistentVector::[]",
+  )?
+}
+
+fn new_by_leaves[T](
+  len : Int,
+  gen_leaf : (Int, Int) -> Array[T]
+) -> PersistentVector[T] {
+  fn tree(cap, len, s) -> Tree[T] {
+    if cap == branching_factor {
+      Leaf(gen_leaf(s, len))
+    } else {
+      let child_cap = cap / branching_factor
+      let part = len / child_cap
+      let (child_count, last_child_len) = match len % child_cap {
+        0 => (part, child_cap)
+        r => (part + 1, r)
+      }
+      fn child(k) {
+        let i = s + k * child_cap
+        let len = if k + 1 == child_count { last_child_len } else { child_cap }
+        tree(cap / branching_factor, len, i)
+      }
+
+      Node(@array.new_with_index(child_count, child))
+    }
+  }
+
+  if len == 0 {
+    PersistentVector::empty()
+  } else {
+    let (cap, shift) = loop len, branching_factor, 1 {
+      len, m_pow, depth =>
+        match len <= m_pow {
+          false => continue len, m_pow * branching_factor, depth + 1
+          true => (m_pow, (depth - 1) * num_bits)
+        }
+    }
+    { shift, tree: tree(cap, len, 0), size: len }
+  }
+}
+
+test "new_by_leaves" {
+  let e : PersistentVector[Int] = new_by_leaves(
+    0,
+    fn(_s, _l) { abort("never reach") },
+  )
+  let v = new_by_leaves(5, fn(_s, l) { Array::make(l, 1) })
+  let v2 = new_by_leaves(33, fn(_s, l) { Array::make(l, 10) })
+  inspect(e, content="PersistentVector::[]")?
+  inspect(v, content="PersistentVector::[1, 1, 1, 1, 1]")?
+  inspect(
+    v2,
+    content="PersistentVector::[10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10]",
+  )?
+}
+
+pub fn PersistentVector::new[T](len : Int, value : T) -> PersistentVector[T] {
+  new_by_leaves(len, fn(_s, l) { Array::make(l, value) })
+}
+
+test "new" {
+  let v = PersistentVector::new(5, 1)
+  let v2 = PersistentVector::new(33, 10)
+  inspect(v, content="PersistentVector::[1, 1, 1, 1, 1]")?
+  inspect(
+    v2,
+    content="PersistentVector::[10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10]",
+  )?
+}
+
+pub fn PersistentVector::new_with_index[T](
+  len : Int,
+  f : (Int) -> T
+) -> PersistentVector[T] {
+  new_by_leaves(len, fn(s, l) { @array.new_with_index(l, fn(i) { f(s + i) }) })
+}
+
+test "new_with" {
+  let v = new_with_index(5, fn(i) { i })
+  let v2 = new_with_index(33, fn(i) { i * 10 })
+  inspect(v, content="PersistentVector::[0, 1, 2, 3, 4]")?
+  inspect(
+    v2,
+    content="PersistentVector::[0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 110, 120, 130, 140, 150, 160, 170, 180, 190, 200, 210, 220, 230, 240, 250, 260, 270, 280, 290, 300, 310, 320]",
   )?
 }
