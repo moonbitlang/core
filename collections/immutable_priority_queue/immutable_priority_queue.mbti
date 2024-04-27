@@ -1,4 +1,4 @@
-package moonbitlang/core/immutable_priority_queue
+package moonbitlang/core/collections/immutable_priority_queue
 
 // Values
 

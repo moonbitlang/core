@@ -16,7 +16,9 @@
 let default_init_capacity = 8
 
 /// Create new hash map.
-pub fn HashMap::new[K, V](~hasher : Option[(K) -> Int] = None) -> HashMap[K, V] {
+pub fn RobinhoodHash::new[K, V](
+  ~hasher : Option[(K) -> Int] = None
+) -> RobinhoodHash[K, V] {
   {
     size: 0,
     capacity: default_init_capacity,
@@ -27,17 +29,26 @@ pub fn HashMap::new[K, V](~hasher : Option[(K) -> Int] = None) -> HashMap[K, V] 
 }
 
 /// Create new hash map from array.
-pub fn HashMap::from_array[K : Hash + Eq, V](
+pub fn RobinhoodHash::from_array[K : Hash + Eq, V](
   arr : Array[(K, V)]
-) -> HashMap[K, V] {
+) -> RobinhoodHash[K, V] {
   let m = new()
   arr.iter(fn(e) { m.set(e.0, e.1) })
   m
 }
 
+/// Get the hasher.
+pub fn hasher[K, V](self : RobinhoodHash[K, V]) -> Option[(K) -> Int] {
+  self.hasher
+}
+
 /// Set a key-value pair into hash map.
 /// @alert unsafe "Panic if the hash map is full."
-pub fn set[K : Hash + Eq, V](self : HashMap[K, V], key : K, value : V) -> Unit {
+pub fn set[K : Hash + Eq, V](
+  self : RobinhoodHash[K, V],
+  key : K,
+  value : V
+) -> Unit {
   if self.capacity == 0 || self.size >= self.growAt {
     self.grow()
   }
@@ -45,7 +56,7 @@ pub fn set[K : Hash + Eq, V](self : HashMap[K, V], key : K, value : V) -> Unit {
   loop 0, self.index(hash), 0, hash, key, value {
     i, idx, psl, hash, key, value => {
       if i == self.capacity {
-        abort("HashMap is full")
+        abort("RobinhoodHash is full")
       }
       match self.entries[idx] {
         Empty => {
@@ -70,7 +81,7 @@ pub fn set[K : Hash + Eq, V](self : HashMap[K, V], key : K, value : V) -> Unit {
 }
 
 pub fn op_set[K : Hash + Eq, V](
-  self : HashMap[K, V],
+  self : RobinhoodHash[K, V],
   key : K,
   value : V
 ) -> Unit {
@@ -78,7 +89,7 @@ pub fn op_set[K : Hash + Eq, V](
 }
 
 /// Get the value associated with a key.
-pub fn get[K : Hash + Eq, V](self : HashMap[K, V], key : K) -> Option[V] {
+pub fn get[K : Hash + Eq, V](self : RobinhoodHash[K, V], key : K) -> Option[V] {
   let hash = self.make_hash(key)
   for distance = 0, idx = self.index(hash)
       distance < self.capacity
@@ -98,14 +109,17 @@ pub fn get[K : Hash + Eq, V](self : HashMap[K, V], key : K) -> Option[V] {
   None
 }
 
-pub fn op_get[K : Hash + Eq, V](self : HashMap[K, V], key : K) -> Option[V] {
+pub fn op_get[K : Hash + Eq, V](
+  self : RobinhoodHash[K, V],
+  key : K
+) -> Option[V] {
   self.get(key)
 }
 
 /// Get the value associated with a key, 
 /// returns the provided default value if the key does not exist.
 pub fn get_or_default[K : Hash + Eq, V](
-  self : HashMap[K, V],
+  self : RobinhoodHash[K, V],
   key : K,
   default : V
 ) -> V {
@@ -116,7 +130,7 @@ pub fn get_or_default[K : Hash + Eq, V](
 }
 
 /// Check if the hash map contains a key.
-pub fn contains[K : Hash + Eq, V](self : HashMap[K, V], key : K) -> Bool {
+pub fn contains[K : Hash + Eq, V](self : RobinhoodHash[K, V], key : K) -> Bool {
   match self.get(key) {
     Some(_) => true
     None => false
@@ -124,7 +138,7 @@ pub fn contains[K : Hash + Eq, V](self : HashMap[K, V], key : K) -> Bool {
 }
 
 /// Remove a key-value pair from hash map.
-pub fn remove[K : Hash + Eq, V](self : HashMap[K, V], key : K) -> Unit {
+pub fn remove[K : Hash + Eq, V](self : RobinhoodHash[K, V], key : K) -> Unit {
   let hash = self.make_hash(key)
   for distance = 0, idx = self.index(hash)
       distance < self.capacity
@@ -147,27 +161,27 @@ pub fn remove[K : Hash + Eq, V](self : HashMap[K, V], key : K) -> Unit {
 }
 
 /// Get the number of key-value pairs in the map.
-pub fn size[K, V](self : HashMap[K, V]) -> Int {
+pub fn size[K, V](self : RobinhoodHash[K, V]) -> Int {
   self.size
 }
 
 /// Get the capacity of the map.
-pub fn capacity[K, V](self : HashMap[K, V]) -> Int {
+pub fn capacity[K, V](self : RobinhoodHash[K, V]) -> Int {
   self.capacity
 }
 
 /// Check if the hash map is empty.
-pub fn is_empty[K, V](self : HashMap[K, V]) -> Bool {
+pub fn is_empty[K, V](self : RobinhoodHash[K, V]) -> Bool {
   self.size == 0
 }
 
 // Iterate over all key-value pairs of the map.
-pub fn iter[K, V](self : HashMap[K, V], f : (K, V) -> Unit) -> Unit {
+pub fn iter[K, V](self : RobinhoodHash[K, V], f : (K, V) -> Unit) -> Unit {
   self.iteri(fn(_i, k, v) { f(k, v) })
 }
 
 // Iterate over all key-value pairs of the map, with index.
-pub fn iteri[K, V](self : HashMap[K, V], f : (Int, K, V) -> Unit) -> Unit {
+pub fn iteri[K, V](self : RobinhoodHash[K, V], f : (Int, K, V) -> Unit) -> Unit {
   let mut idx = 0
   for i = 0; i < self.capacity; i = i + 1 {
     match self.entries[i] {
@@ -181,14 +195,17 @@ pub fn iteri[K, V](self : HashMap[K, V], f : (Int, K, V) -> Unit) -> Unit {
 }
 
 // Clears the map, removing all key-value pairs. Keeps the allocated space.
-pub fn clear[K, V](self : HashMap[K, V]) -> Unit {
+pub fn clear[K, V](self : RobinhoodHash[K, V]) -> Unit {
   for i = 0; i < self.capacity; i = i + 1 {
     self.entries[i] = Empty
   }
   self.size = 0
 }
 
-fn shift_back[K : Hash, V](self : HashMap[K, V], start_index : Int) -> Unit {
+fn shift_back[K : Hash, V](
+  self : RobinhoodHash[K, V],
+  start_index : Int
+) -> Unit {
   for i = 0, prev = start_index, curr = self.next_index(start_index)
       i < self.entries.length()
       i = i + 1, prev = curr, curr = self.next_index(curr) {
@@ -205,7 +222,7 @@ fn shift_back[K : Hash, V](self : HashMap[K, V], start_index : Int) -> Unit {
   }
 }
 
-fn grow[K : Hash + Eq, V](self : HashMap[K, V]) -> Unit {
+fn grow[K : Hash + Eq, V](self : RobinhoodHash[K, V]) -> Unit {
   // handle zero capacity
   if self.capacity == 0 {
     self.capacity = default_init_capacity
@@ -227,7 +244,7 @@ fn grow[K : Hash + Eq, V](self : HashMap[K, V]) -> Unit {
   }
 }
 
-fn make_hash[K : Hash, V](self : HashMap[K, V], key : K) -> Int {
+fn make_hash[K : Hash, V](self : RobinhoodHash[K, V], key : K) -> Int {
   let hash : Int = match self.hasher {
     Some(hasher) => hasher(key)
     None => key.hash()
@@ -236,11 +253,11 @@ fn make_hash[K : Hash, V](self : HashMap[K, V], key : K) -> Int {
   hash.lxor(hash.lsr(16))
 }
 
-fn index[K : Hash, V](self : HashMap[K, V], hash : Int) -> Int {
+fn index[K : Hash, V](self : RobinhoodHash[K, V], hash : Int) -> Int {
   hash.abs().land(self.capacity - 1)
 }
 
-fn next_index[K : Hash, V](self : HashMap[K, V], index : Int) -> Int {
+fn next_index[K : Hash, V](self : RobinhoodHash[K, V], index : Int) -> Int {
   (index + 1).land(self.capacity - 1)
 }
 
@@ -248,7 +265,7 @@ fn calc_grow_threshold(capacity : Int) -> Int {
   capacity * 13 / 16
 }
 
-fn debug_entries[K : Show, V : Show](self : HashMap[K, V]) -> String {
+fn debug_entries[K : Show, V : Show](self : RobinhoodHash[K, V]) -> String {
   let mut s = ""
   for i = 0; i < self.entries.length(); i = i + 1 {
     if i > 0 {
@@ -263,13 +280,15 @@ fn debug_entries[K : Show, V : Show](self : HashMap[K, V]) -> String {
 }
 
 test "new" {
-  let m : HashMap[Int, Int] = HashMap::new()
+  let m : RobinhoodHash[Int, Int] = RobinhoodHash::new()
   @assertion.assert_eq(m.capacity, default_init_capacity)?
   @assertion.assert_eq(m.size, 0)?
 }
 
 test "set" {
-  let m : HashMap[String, Int] = HashMap::new(hasher=Some(fn(k) { k.length() }))
+  let m : RobinhoodHash[String, Int] = RobinhoodHash::new(
+    hasher=Some(fn(k) { k.length() }),
+  )
   m.set("a", 1)
   m.set("b", 1)
   m.set("bc", 2)
@@ -285,7 +304,7 @@ test "set" {
 }
 
 test "get" {
-  let m : HashMap[String, Int] = HashMap::new()
+  let m : RobinhoodHash[String, Int] = RobinhoodHash::new()
   m.set("a", 1)
   m.set("b", 2)
   m.set("c", 3)
@@ -296,7 +315,7 @@ test "get" {
 }
 
 test "get_or_default" {
-  let m : HashMap[String, Int] = HashMap::new()
+  let m : RobinhoodHash[String, Int] = RobinhoodHash::new()
   m.set("a", 1)
   m.set("b", 2)
   m.set("c", 3)
@@ -307,7 +326,7 @@ test "get_or_default" {
 }
 
 test "op_set" {
-  let m : HashMap[String, Int] = HashMap::new()
+  let m : RobinhoodHash[String, Int] = RobinhoodHash::new()
   m["a"] = 1
   m["b"] = 2
   @assertion.assert_eq(m.get("a"), Some(1))?
@@ -315,7 +334,7 @@ test "op_set" {
 }
 
 test "op_get" {
-  let m : HashMap[String, Int] = HashMap::new()
+  let m : RobinhoodHash[String, Int] = RobinhoodHash::new()
   m.set("a", 1)
   m.set("b", 2)
   @assertion.assert_eq(m["a"], Some(1))?
@@ -324,7 +343,7 @@ test "op_get" {
 }
 
 test "set_update" {
-  let m : HashMap[String, Int] = HashMap::new()
+  let m : RobinhoodHash[String, Int] = RobinhoodHash::new()
   m.set("a", 1)
   m.set("b", 2)
   @assertion.assert_eq(m.get("a"), Some(1))?
@@ -333,21 +352,23 @@ test "set_update" {
 }
 
 test "contains" {
-  let m : HashMap[String, Int] = HashMap::new()
+  let m : RobinhoodHash[String, Int] = RobinhoodHash::new()
   m.set("a", 1)
   @assertion.assert_eq(m.contains("a"), true)?
   @assertion.assert_eq(m.contains("b"), false)?
 }
 
 test "from_array" {
-  let m = HashMap::[("a", 1), ("b", 2), ("c", 3)]
+  let m = RobinhoodHash::[("a", 1), ("b", 2), ("c", 3)]
   @assertion.assert_eq(m.get("a"), Some(1))?
   @assertion.assert_eq(m.get("b"), Some(2))?
   @assertion.assert_eq(m.get("c"), Some(3))?
 }
 
 test "remove" {
-  let m : HashMap[String, Int] = HashMap::new(hasher=Some(fn(k) { k.length() }))
+  let m : RobinhoodHash[String, Int] = RobinhoodHash::new(
+    hasher=Some(fn(k) { k.length() }),
+  )
   m.set("a", 1)
   m.set("ab", 2)
   m.set("bc", 2)
@@ -363,7 +384,9 @@ test "remove" {
 }
 
 test "remove_unexist_key" {
-  let m : HashMap[String, Int] = HashMap::new(hasher=Some(fn(k) { k.length() }))
+  let m : RobinhoodHash[String, Int] = RobinhoodHash::new(
+    hasher=Some(fn(k) { k.length() }),
+  )
   m.set("a", 1)
   m.set("ab", 2)
   m.set("abc", 3)
@@ -376,14 +399,14 @@ test "remove_unexist_key" {
 }
 
 test "size" {
-  let m : HashMap[String, Int] = HashMap::new()
+  let m : RobinhoodHash[String, Int] = RobinhoodHash::new()
   @assertion.assert_eq(m.size(), 0)?
   m.set("a", 1)
   @assertion.assert_eq(m.size(), 1)?
 }
 
 test "is_empty" {
-  let m : HashMap[String, Int] = HashMap::new()
+  let m : RobinhoodHash[String, Int] = RobinhoodHash::new()
   @assertion.assert_eq(m.is_empty(), true)?
   m.set("a", 1)
   @assertion.assert_eq(m.is_empty(), false)?
@@ -392,14 +415,22 @@ test "is_empty" {
 }
 
 test "iter" {
-  let m : HashMap[String, Int] = HashMap::[("a", 1), ("b", 2), ("c", 3)]
+  let m : RobinhoodHash[String, Int] = RobinhoodHash::[
+    ("a", 1),
+    ("b", 2),
+    ("c", 3),
+  ]
   let mut sum = 0
   m.iter(fn(_k, v) { sum += v })
   @assertion.assert_eq(sum, 6)?
 }
 
 test "iteri" {
-  let m : HashMap[String, Int] = HashMap::[("a", 1), ("b", 2), ("c", 3)]
+  let m : RobinhoodHash[String, Int] = RobinhoodHash::[
+    ("a", 1),
+    ("b", 2),
+    ("c", 3),
+  ]
   let mut sum = 0
   let mut s = ""
   m.iteri(
@@ -413,7 +444,11 @@ test "iteri" {
 }
 
 test "clear" {
-  let m : HashMap[String, Int] = HashMap::[("a", 1), ("b", 2), ("c", 3)]
+  let m : RobinhoodHash[String, Int] = RobinhoodHash::[
+    ("a", 1),
+    ("b", 2),
+    ("c", 3),
+  ]
   m.clear()
   @assertion.assert_eq(m.size, 0)?
   @assertion.assert_eq(m.capacity, 8)?
@@ -423,7 +458,9 @@ test "clear" {
 }
 
 test "grow" {
-  let m : HashMap[String, Int] = HashMap::new(hasher=Some(fn(k) { k.length() }))
+  let m : RobinhoodHash[String, Int] = RobinhoodHash::new(
+    hasher=Some(fn(k) { k.length() }),
+  )
   m.set("C", 1)
   m.set("Go", 2)
   m.set("C++", 3)

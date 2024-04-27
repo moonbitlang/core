@@ -1,4 +1,4 @@
-package moonbitlang/core/priority_queue
+package moonbitlang/core/collections/priority_queue
 
 // Values
 

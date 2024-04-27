@@ -1,4 +1,4 @@
-package moonbitlang/core/stack
+package moonbitlang/core/collections/stack
 
 // Values
 

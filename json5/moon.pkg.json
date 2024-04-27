@@ -6,7 +6,7 @@
         "moonbitlang/core/double",
         "moonbitlang/core/strconv",
         "moonbitlang/core/vec",
-        "moonbitlang/core/map",
+        "moonbitlang/core/collections/map",
         "moonbitlang/core/json",
         "moonbitlang/core/result",
         "moonbitlang/core/assertion",

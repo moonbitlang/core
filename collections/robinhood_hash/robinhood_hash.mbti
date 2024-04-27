@@ -1,0 +1,27 @@
+package moonbitlang/core/collections/robinhood_hash
+
+// Values
+
+// Types and methods
+type RobinhoodHash
+fn RobinhoodHash::capacity[K, V](RobinhoodHash[K, V]) -> Int
+fn RobinhoodHash::clear[K, V](RobinhoodHash[K, V]) -> Unit
+fn RobinhoodHash::contains[K : Hash + Eq, V](RobinhoodHash[K, V], K) -> Bool
+fn RobinhoodHash::from_array[K : Hash + Eq, V](Array[Tuple[K, V]]) -> RobinhoodHash[K, V]
+fn RobinhoodHash::get[K : Hash + Eq, V](RobinhoodHash[K, V], K) -> Option[V]
+fn RobinhoodHash::get_or_default[K : Hash + Eq, V](RobinhoodHash[K, V], K, V) -> V
+fn RobinhoodHash::hasher[K, V](RobinhoodHash[K, V]) -> Option[(K) -> Int]
+fn RobinhoodHash::is_empty[K, V](RobinhoodHash[K, V]) -> Bool
+fn RobinhoodHash::iter[K, V](RobinhoodHash[K, V], (K, V) -> Unit) -> Unit
+fn RobinhoodHash::iteri[K, V](RobinhoodHash[K, V], (Int, K, V) -> Unit) -> Unit
+fn RobinhoodHash::new[K, V](Option[(K) -> Int]) -> RobinhoodHash[K, V]
+fn RobinhoodHash::op_get[K : Hash + Eq, V](RobinhoodHash[K, V], K) -> Option[V]
+fn RobinhoodHash::op_set[K : Hash + Eq, V](RobinhoodHash[K, V], K, V) -> Unit
+fn RobinhoodHash::remove[K : Hash + Eq, V](RobinhoodHash[K, V], K) -> Unit
+fn RobinhoodHash::set[K : Hash + Eq, V](RobinhoodHash[K, V], K, V) -> Unit
+fn RobinhoodHash::size[K, V](RobinhoodHash[K, V]) -> Int
+
+// Traits
+
+// Extension Methods
+

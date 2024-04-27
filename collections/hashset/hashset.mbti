@@ -1,4 +1,4 @@
-package moonbitlang/core/hashset
+package moonbitlang/core/collections/hashset
 
 // Values
 

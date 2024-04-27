@@ -6,7 +6,7 @@
     "moonbitlang/core/list",
     "moonbitlang/core/string",
     "moonbitlang/core/vec",
-    "moonbitlang/core/immutable_set",
+    "moonbitlang/core/collections/immutable_set",
     "moonbitlang/core/coverage"
   ]
 }

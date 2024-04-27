@@ -1,4 +1,4 @@
-package moonbitlang/core/immutable_set
+package moonbitlang/core/collections/immutable_set
 
 alias @moonbitlang/core/vec as @vec
 

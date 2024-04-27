@@ -1,4 +1,4 @@
-package moonbitlang/core/hashmap
+package moonbitlang/core/collections/hashmap
 
 // Values
 

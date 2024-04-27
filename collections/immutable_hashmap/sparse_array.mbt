@@ -45,10 +45,10 @@ fn add[X](self : SparseArray[X], idx : Int, value : X) -> SparseArray[X] {
   let new_len = self.data.length() + 1
   let pos_of_new_item = self.elem_info.index_of(idx)
   let new_data = Array::make(new_len, value)
-  for i = 0;  i < pos_of_new_item; i = i + 1 {
+  for i = 0; i < pos_of_new_item; i = i + 1 {
     new_data[i] = self.data[i]
   }
-  for i = pos_of_new_item + 1 ;  i < new_len ; i = i + 1{
+  for i = pos_of_new_item + 1; i < new_len; i = i + 1 {
     new_data[i] = self.data[i - 1]
   }
   { elem_info: self.elem_info.add(idx), data: new_data }
@@ -69,13 +69,25 @@ fn replace[X](self : SparseArray[X], idx : Int, value : X) -> SparseArray[X] {
 
 test "SparseArray" {
   let arr0 = singleton(1, 1)
-  inspect((arr0.has(0),arr0[0],arr0.has(1),arr0[1],arr0.has(2),arr0[2]), ~content="(false, None, true, Some(1), false, None)")?
+  inspect(
+    (arr0.has(0), arr0[0], arr0.has(1), arr0[1], arr0.has(2), arr0[2]),
+    content="(false, None, true, Some(1), false, None)",
+  )?
   let arr1 = arr0.add(2, 2)
-  inspect((arr1.has(0),arr1[0],arr1.has(1),arr1[1],arr1.has(2),arr1[2]), ~content="(false, None, true, Some(1), true, Some(2))")?  
+  inspect(
+    (arr1.has(0), arr1[0], arr1.has(1), arr1[1], arr1.has(2), arr1[2]),
+    content="(false, None, true, Some(1), true, Some(2))",
+  )?
   let arr2 = arr1.add(0, 0)
-  inspect((arr2.has(0),arr2[0],arr2.has(1),arr2[1],arr2.has(2),arr2[2]), ~content="(true, Some(0), true, Some(1), true, Some(2))")?
+  inspect(
+    (arr2.has(0), arr2[0], arr2.has(1), arr2[1], arr2.has(2), arr2[2]),
+    content="(true, Some(0), true, Some(1), true, Some(2))",
+  )?
   let arr3 = arr2.replace(1, 42)
-  inspect((arr3.has(0),arr3[0],arr3.has(1),arr3[1],arr3.has(2),arr3[2]), ~content="(true, Some(0), true, Some(42), true, Some(2))")?
+  inspect(
+    (arr3.has(0), arr3[0], arr3.has(1), arr3[1], arr3.has(2), arr3[2]),
+    content="(true, Some(0), true, Some(42), true, Some(2))",
+  )?
 }
 
 /// `size(self: SparseArray[X]) -> Int`

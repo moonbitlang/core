@@ -1,6 +1,6 @@
-package moonbitlang/core/map
+package moonbitlang/core/collections/map
 
-alias @moonbitlang/core/immutable_set as @immutable_set
+alias @moonbitlang/core/collections/immutable_set as @immutable_set
 alias @moonbitlang/core/vec as @vec
 
 // Values

@@ -1,6 +1,6 @@
 package moonbitlang/core/json
 
-alias @moonbitlang/core/map as @map
+alias @moonbitlang/core/collections/map as @map
 alias @moonbitlang/core/vec as @vec
 
 // Values

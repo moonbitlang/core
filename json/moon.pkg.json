@@ -6,7 +6,7 @@
     "moonbitlang/core/bool",
     "moonbitlang/core/tuple",
     "moonbitlang/core/vec",
-    "moonbitlang/core/map",
+    "moonbitlang/core/collections/map",
     "moonbitlang/core/coverage",
     "moonbitlang/core/assertion",
     "moonbitlang/core/int",
