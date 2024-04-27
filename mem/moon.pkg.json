@@ -1,0 +1,11 @@
+{
+  "import": [
+      "moonbitlang/core/builtin",
+      "moonbitlang/core/coverage"
+  ],
+  "test_import": [
+      "moonbitlang/core/bytes",
+      "moonbitlang/core/iter",
+      "moonbitlang/core/vec"
+  ]
+}

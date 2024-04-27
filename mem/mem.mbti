@@ -1,0 +1,30 @@
+package moonbitlang/core/mem
+
+// Values
+fn copy(Storable, Loadable, Int) -> Unit
+
+// Types and methods
+pub enum Endian {
+  Little
+  Big
+}
+
+// Traits
+pub trait Loadable {
+  op_get(Self, Int) -> Int
+  length(Self) -> Int
+  load_int(Self, Int, Endian) -> Int
+  load_int64(Self, Int, Endian) -> Int64
+}
+
+pub trait Storable {
+  op_set(Self, Int, Int) -> Unit
+  store_int(Self, Int, Int, Endian) -> Unit
+  store_int64(Self, Int, Int64, Endian) -> Unit
+}
+
+// Extension Methods
+impl Loadable for Loadable
+
+impl Storable for Storable
+
