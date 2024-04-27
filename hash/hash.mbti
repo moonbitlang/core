@@ -1,0 +1,14 @@
+package moonbitlang/core/hash
+
+// Values
+
+// Types and methods
+type SHA1
+fn SHA1::digest(SHA1) -> Bytes
+fn SHA1::make(Bytes) -> SHA1
+fn SHA1::update(SHA1, Bytes) -> Unit
+
+// Traits
+
+// Extension Methods
+

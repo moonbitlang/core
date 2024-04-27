@@ -1,0 +1,9 @@
+{
+    "import": [
+        "moonbitlang/core/array",
+        "moonbitlang/core/builtin",
+        "moonbitlang/core/bytes",
+        "moonbitlang/core/coverage",
+        "moonbitlang/core/mem"
+    ]
+}
