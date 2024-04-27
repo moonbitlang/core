@@ -12,7 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 test "date_time" {
-
+  let zone = fixed_zone("Asia/Shanghai", 8*60*60)?
+  inspect(date_time(2000, 1, 1, hour=10, minute=20, second=30, ~zone), content="Ok(2000-01-01T10:20:30+08:00[Asia/Shanghai])")?
 }
 
 test "unix" {

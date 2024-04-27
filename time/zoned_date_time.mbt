@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-/// A datetime witha time zone and offset in the ISO 8601 calendar system.
+/// A datetime with a time zone and offset in the ISO 8601 calendar system.
 struct ZonedDateTime {
   datetime : PlainDateTime
   zone : Zone

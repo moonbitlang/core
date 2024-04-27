@@ -156,9 +156,10 @@ test "add_seconds" {
   inspect(time.add_seconds(1L), content="Ok(00:00:31)")?
   inspect(time.add_seconds(30L), content="Ok(00:01:00)")?
   inspect(time.add_seconds(60L), content="Ok(00:01:30)")?
-  inspect(time.add_seconds(12345678L), content="Ok(00:21:48)")?
-  inspect(time.add_seconds(Int64::min_value()), content="Ok(00:30:22)")?
-  inspect(time.add_seconds(Int64::max_value()), content="Ok(00:30:37)")?
+  inspect(time.add_seconds(12345678L), content="Ok(21:21:48)")?
+  inspect(time.add_seconds(Int64::min_value()), content="Ok(08:30:22)")?
+  inspect(time.add_seconds(Int64::max_value()), content="Ok(15:30:37)")?
+  inspect(time.add_seconds(24L*60L*60L), content="Ok(00:00:30)")?
 }
 
 test "add_nanoseconds" {
@@ -175,6 +176,7 @@ test "add_nanoseconds" {
     time.add_nanoseconds(Int64::max_value()),
     content="Ok(23:47:16.854776807)",
   )?
+  inspect(time.add_nanoseconds(nanoseconds_per_day), content="Ok(00:00:00.000001)")?
 }
 
 test "with_hour" {
@@ -310,4 +312,11 @@ test "add_duration" {
       Duration::of(minutes=-29L, seconds=-29L, nanoseconds=-999_000_000L)?,
     ),
   content="Ok(11:30:30.001)")?
+  inspect(time.add_duration(Duration::zero()), content="Ok(12:00:00)")?
+}
+
+test "at_date" {
+  let time = PlainTime::of(12, 0, 0, 0)?
+  let date = PlainDate::of(2000, 1, 1)?
+  inspect(time.at_date(date), content="2000-01-01T12:00:00")?
 }
