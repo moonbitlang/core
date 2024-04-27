@@ -1,6 +1,7 @@
 {
   "import": [
     "moonbitlang/core/builtin",
+    "moonbitlang/core/coverage",
     "moonbitlang/core/collections/robinhood_hash"
   ]
 }
