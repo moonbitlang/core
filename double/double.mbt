@@ -100,30 +100,6 @@ pub fn is_neg_inf(self : Double) -> Bool {
   self < -max_val
 }
 
-fn test_num[T : @num.Num + Debug + Default + Eq](
-  x : T,
-  y : T,
-  x_plus_y : T,
-  x_mul_y : T,
-  x_minus_y : T,
-  x_div_y : T,
-  x_signum : T
-) -> Result[Unit, String] {
-  @assertion.assert_eq(x + y, x_plus_y)?
-  @assertion.assert_eq(x * y, x_mul_y)?
-  @assertion.assert_eq(x - y, x_minus_y)?
-  @assertion.assert_eq(x / y, x_div_y)?
-  @assertion.assert_eq(x.abs(), T::default() - x)?
-  @assertion.assert_eq(x.signum(), x_signum)?
-  Ok(())
-}
-
-test "double.num" {
-  let x = -500.0
-  let y = 792.0
-  test_num(x, y, x + y, x * y, x - y, x / y, -1.0)?
-}
-
 test "from_int" {
   @assertion.assert_eq(Double::from_int(1), 1.0)?
   @assertion.assert_eq(Double::from_int(0), 0.0)?

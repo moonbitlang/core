@@ -2,9 +2,11 @@
     "import": [
         "moonbitlang/core/builtin",
         "moonbitlang/core/assertion",
+        "moonbitlang/core/math",
         "moonbitlang/core/coverage"
     ],
     "test_import": [
+        "moonbitlang/core/int",
         "moonbitlang/core/char"
     ]
 }

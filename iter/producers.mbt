@@ -74,3 +74,63 @@ pub fn Iter::repeat[T](a : T) -> Iter[T] {
     },
   )
 }
+
+/// Creates an iterator that produces an ascending sequence.
+///
+/// By default, the sequence starts from the `default()` value of the yielded
+/// element type, and increases (`op_add()`) by the `unity()` value of the 
+/// element type. Therefore, the element type must implement the `Default`
+/// trait, as well as the `@math.Add` and `@math.Unity` traits.
+/// 
+/// # Example
+/// 
+/// ```moonbit
+/// let sum: Int = @iter.ascending().take(100).sum()
+/// print(sum)  // outputs: 4950
+/// ```
+pub fn Iter::ascending[T : Default + @math.Add + @math.Unity](
+  ~init : T = T::default(),
+  ~step : T = T::unity()
+) -> Iter[T] {
+  Iter(
+    fn(yield) {
+      for v = init {
+        if yield(v) {
+          continue v + step
+        } else {
+          break false
+        }
+      }
+    },
+  )
+}
+
+/// Creates an iterator that produces an descending sequence.
+///
+/// By default, the sequence starts from the `default()` value of the yielded
+/// element type, and decreases (`op_sub()`) by the `unity()` value of the 
+/// element type. Therefore, the element type must implement the `Default`
+/// trait, as well as the `@math.Subtract` and `@math.Unity` traits.
+/// 
+/// # Example
+/// 
+/// ```moonbit
+/// let sum: Int = @iter.descending().take(100).sum()
+/// print(sum)  // outputs: -4950
+/// ```
+pub fn Iter::descending[T : Default + @math.Subtract + @math.Unity](
+  ~init : T = T::default(),
+  ~step : T = T::unity()
+) -> Iter[T] {
+  Iter(
+    fn(yield) {
+      for v = init {
+        if yield(v) {
+          continue v - step
+        } else {
+          break false
+        }
+      }
+    },
+  )
+}

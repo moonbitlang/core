@@ -48,30 +48,17 @@ pub fn Int::min_value() -> Int {
   min_val
 }
 
-fn test_num[T : @num.Num + Debug + Default + Eq](
-  x : T,
-  y : T,
-  x_plus_y : T,
-  x_mul_y : T,
-  x_minus_y : T,
-  x_div_y : T,
-  x_signum : T
-) -> Result[Unit, String] {
-  @assertion.assert_eq(x + y, x_plus_y)?
-  @assertion.assert_eq(x * y, x_mul_y)?
-  @assertion.assert_eq(x - y, x_minus_y)?
-  @assertion.assert_eq(x / y, x_div_y)?
-  @assertion.assert_eq(x.abs(), T::default() - x)?
-  @assertion.assert_eq(x.signum(), x_signum)?
-  Ok(())
-}
-
-test "int.num" {
-  let x = -5
-  let y = 7
-  test_num(x, y, x + y, x * y, x - y, x / y, -1)?
+pub fn Int::unity() -> Int {
+  1
 }
 
 pub fn hash(self : Int) -> Int {
   self
+}
+
+test "misc" {
+  inspect(max_value(), content="2147483647")?
+  inspect(min_value(), content="-2147483648")?
+  inspect(unity(), content="1")?
+  inspect((42).hash(), content="42")?
 }
