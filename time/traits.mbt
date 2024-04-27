@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+/// Some date related operations
 pub trait Datelike {
   year(Self) -> Int
   month(Self) -> Int
@@ -24,6 +25,7 @@ pub trait Datelike {
   with_ordinal(Self, Int) -> Result[Self, String]
 }
 
+/// Some time related operations
 pub trait Timelike {
   hour(Self) -> Int
   minute(Self) -> Int

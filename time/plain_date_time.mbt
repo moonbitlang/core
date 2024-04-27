@@ -12,11 +12,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+/// A datetime without a time zone in the ISO 8601 calendar system.
 struct PlainDateTime {
   date : PlainDate
   time : PlainTime
 } derive(Eq, Compare)
 
+/// Creates a PlainDateTime from the year, month, day, hour, minute, second and nanosecond.
 pub fn PlainDateTime::of(
   year : Int,
   month : Int,
@@ -34,6 +36,7 @@ pub fn PlainDateTime::of(
   )
 }
 
+/// Creates a PlainDateTime from the elapsed seconds since the unix epoch.
 pub fn PlainDateTime::from_unix_second(
   second : Int64,
   nanosecond : Int,
@@ -52,10 +55,12 @@ pub fn PlainDateTime::from_unix_second(
   Ok({ date, time })
 }
 
+/// Converts this datetime to the elapsed seconds since the unix epoch.
 pub fn to_unix_second(self : PlainDateTime) -> Int64 {
   self.date.to_unix_day() * seconds_per_day + self.time.second_of_day().to_int64()
 }
 
+/// Creates a PlainTime from a string, like '2008-08-08T20:00:00'.
 pub fn PlainDateTime::from_string(
   str : String
 ) -> Result[PlainDateTime, String] {
@@ -69,6 +74,7 @@ pub fn PlainDateTime::from_string(
   Ok({ date, time })
 }
 
+/// Returns a string representing the datetime.
 pub fn to_string(self : PlainDateTime) -> String {
   let buf = Buffer::make(18)
   buf.write_string(self.date.to_string())
@@ -77,70 +83,87 @@ pub fn to_string(self : PlainDateTime) -> String {
   buf.to_string()
 }
 
+/// Returns the era of this datetime.
 pub fn era(self : PlainDateTime) -> String {
   self.date.era()
 }
 
+/// Returns the year of era of this datetime.
 pub fn era_year(self : PlainDateTime) -> Int {
   self.date.era_year()
 }
 
+/// Returns the year of this datetime.
 pub fn year(self : PlainDateTime) -> Int {
   self.date.year()
 }
 
+/// Returns the month of this datetime.
 pub fn month(self : PlainDateTime) -> Int {
   self.date.month()
 }
 
+/// Returns the day of month of this datetime.
 pub fn day(self : PlainDateTime) -> Int {
   self.date.day()
 }
 
+/// Returns the weekday of this datetime.
 pub fn weekday(self : PlainDateTime) -> Weekday {
   self.date.weekday()
 }
 
+/// Returns the ordinal day of year of this datetime.
 pub fn ordinal(self : PlainDateTime) -> Int {
   self.date.ordinal()
 }
 
+/// Returns the number of days in a week of this datetime.
 pub fn days_in_week(self : PlainDateTime) -> Int {
   self.date.days_in_week()
 }
 
+/// Returns the number of days in a month of this datetime.
 pub fn days_in_month(self : PlainDateTime) -> Int {
   self.date.days_in_month()
 }
 
+/// Returns the number of days in a year of this datetime.
 pub fn days_in_year(self : PlainDateTime) -> Int {
   self.date.days_in_year()
 }
 
+/// Returns the number of months in a year of this datetime.
 pub fn months_in_year(self : PlainDateTime) -> Int {
   self.date.months_in_year()
 }
 
+/// Checks if this datetime is in a leap year.
 pub fn in_leap_year(self : PlainDateTime) -> Bool {
   self.date.in_leap_year()
 }
 
+/// Returns the hour of this datetime.
 pub fn hour(self : PlainDateTime) -> Int {
   self.time.hour()
 }
 
+/// Returns the minute of this datetime.
 pub fn minute(self : PlainDateTime) -> Int {
   self.time.minute()
 }
 
+/// Returns the second of this datetime.
 pub fn second(self : PlainDateTime) -> Int {
   self.time.second()
 }
 
+/// Returns the nanosecond of this datetime.
 pub fn nanosecond(self : PlainDateTime) -> Int {
   self.time.nanosecond()
 }
 
+/// Adds specified years to this datetime, and returns a new datetime.
 pub fn add_years(
   self : PlainDateTime,
   years : Int64
@@ -148,6 +171,7 @@ pub fn add_years(
   Ok({ ..self, date: self.date.add_years(years)? })
 }
 
+/// Adds specified months to this datetime, and returns a new datetime.
 pub fn add_months(
   self : PlainDateTime,
   months : Int64
@@ -155,6 +179,7 @@ pub fn add_months(
   Ok({ ..self, date: self.date.add_months(months)? })
 }
 
+/// Adds specified weeks to this datetime, and returns a new datetime.
 pub fn add_weeks(
   self : PlainDateTime,
   weeks : Int64
@@ -162,6 +187,7 @@ pub fn add_weeks(
   Ok({ ..self, date: self.date.add_weeks(weeks)? })
 }
 
+/// Adds specified days to this datetime, and returns a new datetime.
 pub fn add_days(
   self : PlainDateTime,
   days : Int64
@@ -169,6 +195,7 @@ pub fn add_days(
   Ok({ ..self, date: self.date.add_days(days)? })
 }
 
+/// Adds a period of date to this datetime, and returns a new datetime.
 pub fn add_period(
   self : PlainDateTime,
   period : Period
@@ -176,6 +203,7 @@ pub fn add_period(
   Ok({ ..self, date: self.date.add_period(period)? })
 }
 
+/// Adds specified hours to this datetime, and returns a new datetime.
 pub fn add_hours(
   self : PlainDateTime,
   hours : Int64
@@ -186,6 +214,7 @@ pub fn add_hours(
   self.overflowing_add(h=hours)
 }
 
+/// Adds specified minutes to this datetime, and returns a new datetime.
 pub fn add_minutes(
   self : PlainDateTime,
   minutes : Int64
@@ -196,6 +225,7 @@ pub fn add_minutes(
   self.overflowing_add(m=minutes)
 }
 
+/// Adds specified seconds to this datetime, and returns a new datetime.
 pub fn add_seconds(
   self : PlainDateTime,
   seconds : Int64
@@ -206,6 +236,7 @@ pub fn add_seconds(
   self.overflowing_add(s=seconds)
 }
 
+/// Adds specified nanoseconds to this datetime, and returns a new datetime.
 pub fn add_nanoseconds(
   self : PlainDateTime,
   nanoseconds : Int64
@@ -216,6 +247,7 @@ pub fn add_nanoseconds(
   self.overflowing_add(ns=nanoseconds)
 }
 
+/// Adds a duration of time to this datetime, and returns a new datetime.
 pub fn add_duration(
   self : PlainDateTime,
   duration : Duration
@@ -226,6 +258,7 @@ pub fn add_duration(
   self.overflowing_add(s=duration.secs, ns=duration.nanos.to_int64())
 }
 
+/// Returns a new datetime with the specified year.
 pub fn with_year(
   self : PlainDateTime,
   year : Int
@@ -233,6 +266,7 @@ pub fn with_year(
   Ok({ ..self, date: self.date.with_year(year)? })
 }
 
+/// Returns a new datetime with the specified month.
 pub fn with_month(
   self : PlainDateTime,
   month : Int
@@ -240,6 +274,7 @@ pub fn with_month(
   Ok({ ..self, date: self.date.with_month(month)? })
 }
 
+/// Returns a new datetime with the specified day of month.
 pub fn with_day(
   self : PlainDateTime,
   day : Int
@@ -247,6 +282,7 @@ pub fn with_day(
   Ok({ ..self, date: self.date.with_day(day)? })
 }
 
+/// Returns a new datetime with the specified ordinal day of year.
 pub fn with_ordinal(
   self : PlainDateTime,
   ordinal : Int
@@ -254,6 +290,7 @@ pub fn with_ordinal(
   Ok({ ..self, date: self.date.with_ordinal(ordinal)? })
 }
 
+/// Returns a new datetime with the specified hour.
 pub fn with_hour(
   self : PlainDateTime,
   hour : Int
@@ -261,6 +298,7 @@ pub fn with_hour(
   Ok({ ..self, time: self.time.with_hour(hour)? })
 }
 
+/// Returns a new datetime with the specified minute.
 pub fn with_minute(
   self : PlainDateTime,
   minute : Int
@@ -268,6 +306,7 @@ pub fn with_minute(
   Ok({ ..self, time: self.time.with_minute(minute)? })
 }
 
+/// Returns a new datetime with the specified second.
 pub fn with_second(
   self : PlainDateTime,
   second : Int
@@ -275,6 +314,7 @@ pub fn with_second(
   Ok({ ..self, time: self.time.with_second(second)? })
 }
 
+/// Returns a new datetime with the specified nanosecond.
 pub fn with_nanosecond(
   self : PlainDateTime,
   nanosecond : Int
@@ -282,10 +322,12 @@ pub fn with_nanosecond(
   Ok({ ..self, time: self.time.with_nanosecond(nanosecond)? })
 }
 
+/// Returns the date part of this datetime.
 pub fn to_plain_date(self : PlainDateTime) -> PlainDate {
   self.date
 }
 
+/// Returns the time part of this datetime.
 pub fn to_plain_time(self : PlainDateTime) -> PlainTime {
   self.time
 }

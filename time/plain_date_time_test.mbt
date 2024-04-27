@@ -59,6 +59,10 @@ test "from_string" {
     content="Ok(-9999-12-31T23:59:59)",
   )?
   inspect(
+    PlainDateTime::from_string("2000-01-01T00:00:00.12345"),
+    content="Ok(2000-01-01T00:00:00.12345)",
+  )?
+  inspect(
     PlainDateTime::from_string("9999-12-31T23:59:60"),
     content="Err(Invalid time)",
   )?

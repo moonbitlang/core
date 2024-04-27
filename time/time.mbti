@@ -1,6 +1,15 @@
 package moonbitlang/core/time
 
 // Values
+fn date_time(Int, Int, Int, Int, Int, Int, Zone) -> Result[ZonedDateTime, String]
+
+fn fixed_zone(String, Int) -> Result[Zone, String]
+
+fn unix(Int64, Int, Zone) -> Result[ZonedDateTime, String]
+
+let utc_offset : ZoneOffset
+
+let utc_zone : Zone
 
 // Types and methods
 type Duration
@@ -44,7 +53,7 @@ fn Period::op_add(Period, Period) -> Result[Period, String]
 fn Period::op_equal(Period, Period) -> Bool
 fn Period::op_sub(Period, Period) -> Result[Period, String]
 fn Period::to_string(Period) -> String
-fn Period::total_months(Period) -> Int64
+fn Period::to_total_months(Period) -> Int64
 fn Period::with_days(Period, Int) -> Period
 fn Period::with_months(Period, Int) -> Period
 fn Period::with_years(Period, Int) -> Period
@@ -160,11 +169,9 @@ fn Weekday::op_equal(Weekday, Weekday) -> Bool
 fn Weekday::to_string(Weekday) -> String
 
 type Zone
-fn Zone::fixed(String, Int) -> Result[Zone, String]
 fn Zone::is_fixed(Zone) -> Bool
 fn Zone::op_equal(Zone, Zone) -> Bool
 fn Zone::to_string(Zone) -> String
-fn Zone::utc() -> Zone
 
 type ZoneOffset
 fn ZoneOffset::compare(ZoneOffset, ZoneOffset) -> Int
@@ -175,7 +182,6 @@ fn ZoneOffset::of(Int, Int, Int) -> Result[ZoneOffset, String]
 fn ZoneOffset::op_equal(ZoneOffset, ZoneOffset) -> Bool
 fn ZoneOffset::seconds(ZoneOffset) -> Int
 fn ZoneOffset::to_string(ZoneOffset) -> String
-fn ZoneOffset::utc() -> ZoneOffset
 
 type ZonedDateTime
 fn ZonedDateTime::add_days(ZonedDateTime, Int64) -> Result[ZonedDateTime, String]

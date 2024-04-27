@@ -61,11 +61,10 @@ test "from_seconds" {
 }
 
 test "utc" {
-  let utc = ZoneOffset::utc()
-  inspect(utc, content="Z")?
-  inspect(utc.id(), content="Z")?
-  inspect(utc.seconds(), content="0")?
-  inspect(utc.is_dst(), content="false")?
+  inspect(utc_offset, content="Z")?
+  inspect(utc_offset.id(), content="Z")?
+  inspect(utc_offset.seconds(), content="0")?
+  inspect(utc_offset.is_dst(), content="false")?
 }
 
 test "compare" {

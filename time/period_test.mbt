@@ -34,6 +34,7 @@ test "getters" {
   inspect(p.years(), content="1")?
   inspect(p.months(), content="2")?
   inspect(p.days(), content="3")?
+  inspect(p.to_total_months(), content="14")?
 }
 
 test "is_zero" {
