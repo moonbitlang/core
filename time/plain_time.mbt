@@ -180,14 +180,14 @@ pub fn add_seconds(
   if seconds == 0L {
     return Ok(self)
   }
-  let secs = self.second_of_day().to_int64()
-  let new_secs = (seconds % seconds_per_day + secs + seconds_per_day) % seconds_per_day
-  if secs == new_secs {
+  let secs_of_day = self.second_of_day().to_int64()
+  let new_secs_of_day = (seconds % seconds_per_day + secs_of_day + seconds_per_day) % seconds_per_day
+  if secs_of_day == new_secs_of_day {
     return Ok(self)
   }
-  let new_hour = new_secs / seconds_per_day
-  let new_minute = new_secs / seconds_per_minute % minutes_per_hour
-  let new_second = new_secs % seconds_per_minute
+  let new_hour = new_secs_of_day / seconds_per_hour
+  let new_minute = new_secs_of_day / seconds_per_minute % minutes_per_hour
+  let new_second = new_secs_of_day % seconds_per_minute
   PlainTime::of(
     new_hour.to_int(),
     new_minute.to_int(),

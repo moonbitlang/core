@@ -192,6 +192,18 @@ test "add_nanoseconds" {
   )?
 }
 
+test "with_seconds" {
+  let d = Duration::of(seconds=20L)?
+  inspect(d.with_seconds(20L), content="PT20S")?
+  inspect(d.with_seconds(30L), content="PT30S")?
+}
+
+test "with_nanoseconds" {
+  let d = Duration::of(nanoseconds=1000L)?
+  inspect(d.with_nanoseconds(1000), content="Ok(PT0.000001S)")?
+  inspect(d.with_nanoseconds(2000), content="Ok(PT0.000002S)")?
+}
+
 test "op_add" {
   let p1 = Duration::of(hours=1L, minutes=1L, seconds=1L, nanoseconds=1000L)?
   let p2 = Duration::of(hours=-1L, minutes=-1L, seconds=-1L, nanoseconds=-1000L)?
