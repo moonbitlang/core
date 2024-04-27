@@ -77,6 +77,13 @@ test "copy" {
   inspect(v == vc, content="true")?
 }
 
+/// Get a value at the given index.
+/// 
+/// # Examples
+/// ```
+/// let v = PersistentVector::[1, 2, 3, 4, 5]
+/// v[0]
+/// ```
 pub fn op_get[T](self : PersistentVector[T], index : Int) -> T {
   if index == 0 {
     self.tree.get_first()
@@ -96,6 +103,13 @@ test "op_get" {
   inspect(v[4], content="5")?
 }
 
+/// Set a value at the given index (immutable).
+/// 
+/// # Example
+/// ```
+/// let v = PersistentVector::[1, 2, 3, 4, 5]
+/// v.set(1, 10)
+/// ```
 pub fn set[T](
   self : PersistentVector[T],
   index : Int,
@@ -127,6 +141,13 @@ test "set" {
   inspect(v2, content="PersistentVector::[1, 2, 10, 4, 5]")?
 }
 
+/// Push a value to the end of the vector.
+/// 
+/// # Example
+/// ```
+/// let v = PersistentVector::[1, 2, 3]
+/// v.push(4)
+/// ```
 pub fn push[T](self : PersistentVector[T], value : T) -> PersistentVector[T] {
   if self.size == branching_factor.lsl(self.shift) {
     {
@@ -151,6 +172,12 @@ test "push" {
   inspect(v.push(3), content="PersistentVector::[1, 2, 3, 3]")?
 }
 
+/// Create a persistent vector from an array.
+/// 
+/// # Example
+/// ```
+/// let v = PersistentVector::[1, 2, 3]
+/// ```
 pub fn PersistentVector::from_array[T](arr : Array[T]) -> PersistentVector[T] {
   new_with_index(arr.length(), fn(i) { arr[i] })
 }
@@ -165,6 +192,12 @@ test "from_array" {
   )?
 }
 
+/// Create a persistent vector from a vector.
+/// 
+/// # Example
+/// ```
+/// let v = PersistentVector::from_vector(@vec.from_array([1, 2, 3, 4, 5]))
+/// ```
 pub fn PersistentVector::from_vector[T](
   vec : @vec.Vec[T]
 ) -> PersistentVector[T] {
@@ -185,6 +218,13 @@ test "from_vector" {
   inspect(v1, content="PersistentVector::[]")?
 }
 
+/// Iterate over the vector.
+/// 
+/// # Example
+/// ```
+/// let v = PersistentVector::[1, 2, 3, 4, 5]
+/// v.iter(fn(e) { print(e) })
+/// ```
 pub fn iter[T](self : PersistentVector[T], f : (T) -> Unit) -> Unit {
   fn go(t : Tree[T]) -> Unit {
     match t {
@@ -204,6 +244,13 @@ test "iter" {
   inspect(s, content="15")?
 }
 
+/// Iterate over the vector with index.
+/// 
+/// # Example
+/// ```
+/// let v = PersistentVector::[1, 2, 3, 4, 5]
+/// v.iteri(fn(i, e) { print(i * e) })
+/// ```
 pub fn iteri[T](self : PersistentVector[T], f : (Int, T) -> Unit) -> Unit {
   fn go(t : Tree[T], acc : Int) -> Int {
     match t {
@@ -248,6 +295,13 @@ test "op_equal" {
   inspect(v5 == v6, content="true")?
 }
 
+/// Fold the vector from left to right.
+/// 
+/// # Example
+/// ```
+/// let v = PersistentVector::[1, 2, 3, 4, 5]
+/// v.fold_left(fn(a, b) { a + b }, init=0)
+/// ```
 pub fn fold_left[T](
   self : PersistentVector[T],
   f : (T, T) -> T,
@@ -271,6 +325,13 @@ test "fold_left" {
   inspect(v.fold_left(fn(a, b) { a + b }, init=0), content="15")?
 }
 
+/// Fold the vector from right to left.
+/// 
+/// # Example
+/// ```
+/// let v = PersistentVector::[1, 2, 3, 4, 5]
+/// v.fold_right(fn(a, b) { a + b }, init=0)
+/// ```
 pub fn fold_right[T](
   self : PersistentVector[T],
   f : (T, T) -> T,
@@ -294,6 +355,13 @@ test "fold_right" {
   inspect(v.fold_right(fn(a, b) { a + b }, init=0), content="15")?
 }
 
+/// Map a function over the vector.
+/// 
+/// # Example
+/// ```
+/// let v = PersistentVector::[1, 2, 3, 4, 5]
+/// v.map(fn(e) { e * 2 })
+/// ```
 pub fn map[T, U](
   self : PersistentVector[T],
   f : (T) -> U
@@ -379,6 +447,7 @@ test "new_by_leaves" {
   )?
 }
 
+/// Create a persistent vector with a given length and value.
 pub fn PersistentVector::new[T](len : Int, value : T) -> PersistentVector[T] {
   new_by_leaves(len, fn(_s, l) { Array::make(l, value) })
 }
@@ -393,6 +462,7 @@ test "new" {
   )?
 }
 
+/// Create a persistent vector with a given length and a function to generate values.
 pub fn PersistentVector::new_with_index[T](
   len : Int,
   f : (Int) -> T
