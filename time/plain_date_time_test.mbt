@@ -45,6 +45,25 @@ test "of" {
   )?
 }
 
+test "from_unix_second" {
+  inspect(
+    PlainDateTime::from_unix_second(1714227729L, 1000, utc_offset),
+    content="Ok(2024-04-27T14:22:09.000001)",
+  )?
+  inspect(
+    PlainDateTime::from_unix_second(
+      1714227729L,
+      1000,
+      ZoneOffset::from_seconds(8 * 60 * 60)?,
+    ),
+    content="Ok(2024-04-27T22:22:09.000001)",
+  )?
+  inspect(
+    PlainDateTime::from_unix_second(1714227729L, 1_000_000_000, utc_offset),
+    content="Err(Invalid date time)",
+  )?
+}
+
 test "from_string" {
   inspect(
     PlainDateTime::from_string("0000-01-01T00:00:00"),

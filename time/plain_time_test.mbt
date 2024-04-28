@@ -42,7 +42,10 @@ test "from_string" {
   inspect(PlainTime::from_string("24:00"), content="Ok(24:00:00)")?
   inspect(PlainTime::from_string("23:59:59"), content="Ok(23:59:59)")?
   inspect(PlainTime::from_string("01:00:00.123"), content="Ok(01:00:00.123)")?
-  inspect(PlainTime::from_string("01:00:00.0000123"), content="Ok(01:00:00.0000123)")?
+  inspect(
+    PlainTime::from_string("01:00:00.0000123"),
+    content="Ok(01:00:00.0000123)",
+  )?
   inspect(PlainTime::from_string("1:00"), content="Err(Invalid time)")?
   inspect(PlainTime::from_string("10:0"), content="Err(Invalid time)")?
   inspect(PlainTime::from_string("100000"), content="Err(Invalid time)")?
@@ -159,7 +162,7 @@ test "add_seconds" {
   inspect(time.add_seconds(12345678L), content="Ok(21:21:48)")?
   inspect(time.add_seconds(Int64::min_value()), content="Ok(08:30:22)")?
   inspect(time.add_seconds(Int64::max_value()), content="Ok(15:30:37)")?
-  inspect(time.add_seconds(24L*60L*60L), content="Ok(00:00:30)")?
+  inspect(time.add_seconds(24L * 60L * 60L), content="Ok(00:00:30)")?
 }
 
 test "add_nanoseconds" {
@@ -176,7 +179,10 @@ test "add_nanoseconds" {
     time.add_nanoseconds(Int64::max_value()),
     content="Ok(23:47:16.854776807)",
   )?
-  inspect(time.add_nanoseconds(nanoseconds_per_day), content="Ok(00:00:00.000001)")?
+  inspect(
+    time.add_nanoseconds(nanoseconds_per_day),
+    content="Ok(00:00:00.000001)",
+  )?
 }
 
 test "with_hour" {
@@ -311,7 +317,8 @@ test "add_duration" {
     time.add_duration(
       Duration::of(minutes=-29L, seconds=-29L, nanoseconds=-999_000_000L)?,
     ),
-  content="Ok(11:30:30.001)")?
+    content="Ok(11:30:30.001)",
+  )?
   inspect(time.add_duration(Duration::zero()), content="Ok(12:00:00)")?
 }
 

@@ -53,13 +53,34 @@ test "from_string" {
 }
 
 test "compare" {
-  inspect(PlainDate::of(2000, 1, 1)? == PlainDate::of(2000, 1, 1)?, content="true")?
-  inspect(PlainDate::of(2001, 1, 1)? > PlainDate::of(2000, 1, 1)?, content="true")?
-  inspect(PlainDate::of(2000, 1, 1)? < PlainDate::of(2001, 1, 1)?, content="true")?
-  inspect(PlainDate::of(2000, 2, 1)? > PlainDate::of(2000, 1, 1)?, content="true")?
-  inspect(PlainDate::of(2000, 1, 1)? < PlainDate::of(2000, 2, 1)?, content="true")?
-  inspect(PlainDate::of(2000, 1, 2)? > PlainDate::of(2000, 1, 1)?, content="true")?
-  inspect(PlainDate::of(2000, 1, 1)? < PlainDate::of(2000, 1, 2)?, content="true")?
+  inspect(
+    PlainDate::of(2000, 1, 1)? == PlainDate::of(2000, 1, 1)?,
+    content="true",
+  )?
+  inspect(
+    PlainDate::of(2001, 1, 1)? > PlainDate::of(2000, 1, 1)?,
+    content="true",
+  )?
+  inspect(
+    PlainDate::of(2000, 1, 1)? < PlainDate::of(2001, 1, 1)?,
+    content="true",
+  )?
+  inspect(
+    PlainDate::of(2000, 2, 1)? > PlainDate::of(2000, 1, 1)?,
+    content="true",
+  )?
+  inspect(
+    PlainDate::of(2000, 1, 1)? < PlainDate::of(2000, 2, 1)?,
+    content="true",
+  )?
+  inspect(
+    PlainDate::of(2000, 1, 2)? > PlainDate::of(2000, 1, 1)?,
+    content="true",
+  )?
+  inspect(
+    PlainDate::of(2000, 1, 1)? < PlainDate::of(2000, 1, 2)?,
+    content="true",
+  )?
 }
 
 test "era" {
@@ -280,13 +301,34 @@ test "with_ordinal" {
 }
 
 test "until" {
-  inspect(PlainDate::of(1970, 1, 1)?.until(PlainDate::of(2000, 1, 1)?), content="Ok(P30Y)")?
-  inspect(PlainDate::of(2000, 2, 1)?.until(PlainDate::of(2000, 1, 15)?), content="Ok(P-17D)")?
-  inspect(PlainDate::of(2000, 1, 15)?.until(PlainDate::of(2000, 2, 1)?), content="Ok(P17D)")?
-  inspect(PlainDate::of(2000, 1, 15)?.until(PlainDate::of(2000, 3, 1)?), content="Ok(P1M15D)")?
-  inspect(PlainDate::of(2000, 1, 1)?.until(PlainDate::of(2001, 2, 15)?), content="Ok(P1Y1M14D)")?
-  inspect(PlainDate::of(2001, 2, 15)?.until(PlainDate::of(2000, 1, 1)?), content="Ok(P-1Y-1M-14D)")?
-  inspect(PlainDate::of(-9999, 1, 1)?.until(PlainDate::of(9999, 1, 1)?), content="Ok(P19998Y)")?
+  inspect(
+    PlainDate::of(1970, 1, 1)?.until(PlainDate::of(2000, 1, 1)?),
+    content="Ok(P30Y)",
+  )?
+  inspect(
+    PlainDate::of(2000, 2, 1)?.until(PlainDate::of(2000, 1, 15)?),
+    content="Ok(P-17D)",
+  )?
+  inspect(
+    PlainDate::of(2000, 1, 15)?.until(PlainDate::of(2000, 2, 1)?),
+    content="Ok(P17D)",
+  )?
+  inspect(
+    PlainDate::of(2000, 1, 15)?.until(PlainDate::of(2000, 3, 1)?),
+    content="Ok(P1M15D)",
+  )?
+  inspect(
+    PlainDate::of(2000, 1, 1)?.until(PlainDate::of(2001, 2, 15)?),
+    content="Ok(P1Y1M14D)",
+  )?
+  inspect(
+    PlainDate::of(2001, 2, 15)?.until(PlainDate::of(2000, 1, 1)?),
+    content="Ok(P-1Y-1M-14D)",
+  )?
+  inspect(
+    PlainDate::of(-9999, 1, 1)?.until(PlainDate::of(9999, 1, 1)?),
+    content="Ok(P19998Y)",
+  )?
 }
 
 test "until and add_period" {

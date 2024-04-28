@@ -181,7 +181,8 @@ pub fn add_seconds(
     return Ok(self)
   }
   let secs_of_day = self.second_of_day().to_int64()
-  let new_secs_of_day = (seconds % seconds_per_day + secs_of_day + seconds_per_day) % seconds_per_day
+  let new_secs_of_day = (seconds % seconds_per_day + secs_of_day + seconds_per_day) %
+    seconds_per_day
   if secs_of_day == new_secs_of_day {
     return Ok(self)
   }
