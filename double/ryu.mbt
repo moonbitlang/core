@@ -29,7 +29,7 @@ fn log10Pow2(e : Int) -> Int {
 fn string_from_bytes(bytes : Bytes, from : Int, to : Int) -> String {
   let buf = Buffer::make(bytes.length())
   for i = from; i < to; i = i + 1 {
-    buf.write_char(Char::from_int(bytes[i]))
+    buf.write_char(Char::from_int(bytes[i]).unwrap())
   }
   buf.to_string()
 }

@@ -102,7 +102,7 @@ fn prefix_eq_ignore_case(self : StringSlice, s2 : String) -> Bool {
 
 fn lower(c : Char) -> Char {
   if 'A' <= c && c <= 'Z' {
-    Char::from_int(c.to_int() + 'a'.to_int() - 'A'.to_int())
+    Char::from_int(c.to_int() + 'a'.to_int() - 'A'.to_int()).unwrap()
   } else {
     c
   }

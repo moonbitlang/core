@@ -5,6 +5,7 @@
         "moonbitlang/core/coverage"
     ],
     "test_import": [
-        "moonbitlang/core/char"
+        "moonbitlang/core/char",
+        "moonbitlang/core/option"
     ]
 }

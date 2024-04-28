@@ -150,7 +150,7 @@ test "filter" {
 test "map" {
   let iter = from_array(['1', '2', '3', '4', '5'])
   let exb = Buffer::make(0)
-  iter.map(fn { x => Char::from_int(x.to_int() + 1) }).iter(
+  iter.map(fn { x => Char::from_int(x.to_int() + 1).unwrap() }).iter(
     fn { x => exb.write_char(x) },
   )
   exb.expect(content="23456")?
@@ -176,7 +176,7 @@ test "flat_map2" {
 
 test "fold" {
   let iter = from_array(['1', '2', '3', '4', '5'])
-  let result = Char::from_int(
+  let result = Char::from_int_unsafe(
     iter.fold(fn { acc, x => acc + x.to_int() }, 0) / 5,
   )
   @assertion.assert_eq(result, '3')?

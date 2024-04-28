@@ -1,11 +1,16 @@
 package moonbitlang/core/char
 
 // Values
+let max : Char
+
+let min : Char
 
 // Types and methods
 impl Char {
   debug_write(Char, Buffer) -> Unit
+  from_int(Int) -> Option[Char]
   hash(Char) -> Int
+  is_valid(Char) -> Bool
   to_string(Char) -> String
 }
 

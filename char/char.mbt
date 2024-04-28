@@ -28,9 +28,9 @@ test "to_string" {
 pub fn debug_write(self : Char, buf : Buffer) -> Unit {
   fn to_hex_digit(i : Int) -> Char {
     if i < 10 {
-      Char::from_int('0'.to_int() + i)
+      Char::from_int('0'.to_int() + i).unwrap()
     } else {
-      Char::from_int('a'.to_int() + (i - 10))
+      Char::from_int('a'.to_int() + (i - 10)).unwrap()
     }
   }
 
@@ -61,7 +61,7 @@ pub fn debug_write(self : Char, buf : Buffer) -> Unit {
 
 test "debug_write" {
   fn repr(chr) {
-    let buf = Buffer::make(0)
+    let buf = Buffer::make(4)
     debug_write(chr, buf)
     buf.to_string()
   }
@@ -74,9 +74,49 @@ test "debug_write" {
   @assertion.assert_eq(repr('\r'), "'\\r'")?
   @assertion.assert_eq(repr('\b'), "'\\b'")?
   @assertion.assert_eq(repr('\t'), "'\\t'")?
-  @assertion.assert_eq(repr(Char::from_int(0)), "'\\x00'")?
+  @assertion.assert_eq(repr('\x0f'), "'\\x0f'")?
+  @assertion.assert_eq(repr(Char::from_int_unsafe(0)), "'\\x00'")?
 }
 
 pub fn hash(self : Char) -> Int {
   self.to_int()
+}
+
+// The lowest valid code point a char can have, '\u{0}'.
+pub let min : Char = '\u{0}'
+
+// The highest valid code point a char can have, '\u{10FFFF}'.
+pub let max : Char = '\u{10FFFF}'
+
+let lo_bound : Char = '\u{D7FF}'
+
+let hi_bound : Char = '\u{E000}'
+
+pub fn is_valid(self : Char) -> Bool {
+  min <= self && self <= lo_bound || hi_bound <= self && self <= max
+}
+
+// Converts a Int to a Char.
+pub fn Char::from_int(i : Int) -> Option[Char] {
+  let c = Char::from_int_unsafe(i)
+  if c.is_valid() {
+    Some(c)
+  } else {
+    None
+  }
+}
+
+test "invalid" {
+  inspect(Char::from_int_unsafe(0xD800).is_valid(), content="false")?
+  inspect(Char::from_int(0xD800), content="None")?
+  inspect(Char::from_int(-1), content="None")?
+}
+
+test "Unicode" {
+  inspect(Char::from_int_unsafe(97), content="a")?
+  inspect('中'.to_int(), content="20013")?
+  inspect(Char::from_int(20013), content="Some(中)")?
+  inspect(Char::from_int_unsafe(20013), content="中")?
+  inspect('🤣'.to_int(), content="129315")?
+  inspect(Char::from_int(129315), content="Some(🤣)")?
 }
