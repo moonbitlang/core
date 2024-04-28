@@ -275,6 +275,8 @@ pub fn iteri[T](self : PersistentVector[T], f : (Int, T) -> Unit) -> Unit {
 }
 
 test "iteri" {
+  let v : PersistentVector[Int] = PersistentVector::empty()
+  v.iteri(fn(_i, _e) { abort("never reach") })
   let v = PersistentVector::[1, 2, 3, 4, 5]
   let mut s = 0
   v.iteri(fn(i, e) { s = s + i * e })
@@ -358,6 +360,7 @@ pub fn fold_right[T](
 
 test "fold_right" {
   let e = PersistentVector::empty()
+  inspect(e.fold_right(fn(a, b) { a + b }, init=0), content="0")?
   let v = PersistentVector::[1, 2, 3, 4, 5]
   inspect(e.fold_left(fn(a, b) { a + b }, init=0), content="0")?
   inspect(v.fold_right(fn(a, b) { a + b }, init=0), content="15")?
@@ -514,4 +517,9 @@ test "mix" {
   let mut ct = 0
   v.iteri(fn(i, e) { ct = ct + i - e })
   inspect(ct, content="0")?
+  inspect(v == v2, content="false")?
+  inspect(v2.tree.is_empty_tree(), content="false")?
+  for i = 0; i < 1000; i = i + 1 {
+    v2 = v2.push(i)
+  }
 }
