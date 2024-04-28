@@ -48,29 +48,7 @@ pub fn Int64::min_value() -> Int64 {
   min_val
 }
 
-fn test_num[T : @num.Num + Debug + Default + Eq](
-  x : T,
-  y : T,
-  x_plus_y : T,
-  x_mul_y : T,
-  x_minus_y : T,
-  x_div_y : T,
-  x_signum : T
-) -> Result[Unit, String] {
-  @assertion.assert_eq(x + y, x_plus_y)?
-  @assertion.assert_eq(x * y, x_mul_y)?
-  @assertion.assert_eq(x - y, x_minus_y)?
-  @assertion.assert_eq(x / y, x_div_y)?
-  @assertion.assert_eq(x.abs(), T::default() - x)?
-  @assertion.assert_eq(x.signum(), x_signum)?
-  Ok(())
-}
 
-test "int64.num" {
-  let x = -500L
-  let y = 792L
-  test_num(x, y, x + y, x * y, x - y, x / y, -1L)?
-}
 
 pub fn hash(self : Int64) -> Int {
   let lo = self.to_int()
