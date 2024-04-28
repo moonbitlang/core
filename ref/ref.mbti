@@ -1,13 +1,9 @@
 package moonbitlang/core/ref
 
-alias @moonbitlang/core/num as @num
-
 // Values
 fn ref[T](T) -> Ref[T]
 
 // Types and methods
-fn Ref::decr[T : @num.Num](Ref[T], T) -> Unit
-fn Ref::incr[T : @num.Num](Ref[T], T) -> Unit
 fn Ref::map[T, R](Ref[T], (T) -> R) -> Ref[R]
 fn Ref::protect[T, R](Ref[T], T, () -> R) -> R
 fn Ref::swap[T](Ref[T], Ref[T]) -> Unit
