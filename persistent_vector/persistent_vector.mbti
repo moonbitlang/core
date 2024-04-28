@@ -1,0 +1,46 @@
+package moonbitlang/core/persistent_vector
+
+alias @moonbitlang/core/vec as @vec
+
+// Values
+fn array_blit[T](Array[T], Array[T], Int, Int, Int) -> Unit
+
+fn immutable_copy[T](Array[T]) -> Array[T]
+
+fn immutable_push[T](Array[T], T) -> Array[T]
+
+fn immutable_set[T](Array[T], Int, T) -> Array[T]
+
+fn is_empty[T](PersistentVector[T]) -> Bool
+
+fn length[T](PersistentVector[T]) -> Int
+
+// Types and methods
+type PersistentVector
+fn PersistentVector::copy[T](PersistentVector[T]) -> PersistentVector[T]
+fn PersistentVector::debug_write[T : Debug](PersistentVector[T], Buffer) -> Unit
+fn PersistentVector::empty[T]() -> PersistentVector[T]
+fn PersistentVector::fold_left[T](PersistentVector[T], (T, T) -> T, T) -> T
+fn PersistentVector::fold_right[T](PersistentVector[T], (T, T) -> T, T) -> T
+fn PersistentVector::from_array[T](Array[T]) -> PersistentVector[T]
+fn PersistentVector::from_vector[T](@vec.Vec[T]) -> PersistentVector[T]
+fn PersistentVector::iter[T](PersistentVector[T], (T) -> Unit) -> Unit
+fn PersistentVector::iteri[T](PersistentVector[T], (Int, T) -> Unit) -> Unit
+fn PersistentVector::map[T, U](PersistentVector[T], (T) -> U) -> PersistentVector[U]
+fn PersistentVector::new[T](Int, T) -> PersistentVector[T]
+fn PersistentVector::new_with_index[T](Int, (Int) -> T) -> PersistentVector[T]
+fn PersistentVector::op_equal[T : Eq](PersistentVector[T], PersistentVector[T]) -> Bool
+fn PersistentVector::op_get[T](PersistentVector[T], Int) -> T
+fn PersistentVector::push[T](PersistentVector[T], T) -> PersistentVector[T]
+fn PersistentVector::set[T](PersistentVector[T], Int, T) -> PersistentVector[T]
+fn PersistentVector::to_string[T : Show](PersistentVector[T]) -> String
+
+type Tree
+fn Tree::debug_write[T : Debug](Tree[T], Buffer) -> Unit
+fn Tree::empty[T]() -> Tree[T]
+fn Tree::op_equal[T : Eq](Tree[T], Tree[T]) -> Bool
+
+// Traits
+
+// Extension Methods
+
