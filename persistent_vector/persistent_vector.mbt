@@ -508,6 +508,7 @@ test "new_with" {
 
 test "mix" {
   let mut v = PersistentVector::empty()
+  inspect(v.tree.is_empty_tree(), content="true")?
   for i = 0; i < 100; i = i + 1 {
     v = v.push(i)
   }
@@ -530,7 +531,7 @@ test "mix" {
   inspect(ct1, content="19800")?
   inspect(ct2, content="19800")?
   inspect(v.tree.is_empty_tree(), content="false")?
-  let large_const = 1000
+  let large_const = branching_factor * branching_factor + 1
   let mut v = PersistentVector::empty()
   for i = 0; i < large_const; i = i + 1 {
     v = v.push(i)
