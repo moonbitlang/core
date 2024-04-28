@@ -63,11 +63,7 @@ fn new_branch[T](leaf : Array[T], shift : Int) -> Tree[T] {
 
 fn add[T](self : Tree[T], index : Int, shift : Int, value : T) -> Tree[T] {
   match self {
-    Leaf(l) => {
-      let l1 = Array::make(l.length() + 1, value)
-      array_blit(src=l, dst=l1, 0, 0, l.length())
-      Leaf(l1)
-    }
+    Leaf(l) => Leaf(immutable_push(l, value))
     Node(n) => {
       let idx = index.lsr(shift).land(bitmask)
       if idx < n.length() {

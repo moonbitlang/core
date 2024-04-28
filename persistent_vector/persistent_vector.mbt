@@ -75,6 +75,12 @@ test "copy" {
   let vc = v.copy()
   inspect(vc, content="PersistentVector::[1, 2, 3, 4, 5]")?
   inspect(v == vc, content="true")?
+  @assertion.assert_false(physical_equal(v, vc))?
+  let v = PersistentVector::empty()
+  let vc : PersistentVector[Int] = v.copy()
+  inspect(vc, content="PersistentVector::[]")?
+  inspect(v == vc, content="true")?
+  @assertion.assert_false(physical_equal(v, vc))?
 }
 
 /// Get a value at the given index.
@@ -242,6 +248,8 @@ test "iter" {
   let mut s = 0
   v.iter(fn(e) { s = s + e })
   inspect(s, content="15")?
+  let v : PersistentVector[Int] = PersistentVector::empty()
+  v.iter(fn(_e) { abort("never reach") })
 }
 
 /// Iterate over the vector with index.
@@ -478,4 +486,32 @@ test "new_with" {
     v2,
     content="PersistentVector::[0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 110, 120, 130, 140, 150, 160, 170, 180, 190, 200, 210, 220, 230, 240, 250, 260, 270, 280, 290, 300, 310, 320]",
   )?
+}
+
+test "mix" {
+  let mut v = PersistentVector::empty()
+  for i = 0; i < 100; i = i + 1 {
+    v = v.push(i)
+  }
+  inspect(
+    v,
+    content="PersistentVector::[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99]",
+  )?
+  let mut v2 = v.copy()
+  for i = 0; i < 100; i = i + 1 {
+    v2 = v2.set(i, i * 2)
+  }
+  let mut ct = 0
+  v.iter(fn(e) { ct = ct + e })
+  inspect(ct, content="4950")?
+  v2.iter(fn(e) { ct = ct + e })
+  inspect(ct, content="14850")?
+  v2 = v2.map(fn(e) { e * 2 })
+  let ct1 = fold_left(v2, fn(a, b) { a + b }, init=0)
+  let ct2 = fold_right(v2, fn(a, b) { a + b }, init=0)
+  inspect(ct1, content="19800")?
+  inspect(ct2, content="19800")?
+  let mut ct = 0
+  v.iteri(fn(i, e) { ct = ct + i - e })
+  inspect(ct, content="0")?
 }
