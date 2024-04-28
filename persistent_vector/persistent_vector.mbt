@@ -260,18 +260,25 @@ test "iter" {
 /// v.iteri(fn(i, e) { print(i * e) })
 /// ```
 pub fn iteri[T](self : PersistentVector[T], f : (Int, T) -> Unit) -> Unit {
-  fn go(t : Tree[T], acc : Int) -> Int {
+  fn go(t : Tree[T], shift : Int, start : Int) -> Unit {
     match t {
-      Empty => -1
-      Node(node) => node.fold_left(fn(v, tr) { go(tr, v) }, init=acc)
-      Leaf(l) => {
-        l.iteri(fn(i, _e) { f(acc + i, l[i]) })
-        acc + l.length()
+      Empty => ()
+      Leaf(l) =>
+        for i = 0; i < l.length(); i = i + 1 {
+          f(start + i, l[i])
+        }
+      Node(n) => {
+        let child_shift = shift - num_bits
+        let mut start = start
+        for i = 0; i < n.length(); i = i + 1 {
+          go(n[i], child_shift, start)
+          start += (1).lsl(shift)
+        }
       }
     }
   }
 
-  ignore(go(self.tree, 0))
+  go(self.tree, self.shift, 0)
 }
 
 test "iteri" {
@@ -281,6 +288,9 @@ test "iteri" {
   let mut s = 0
   v.iteri(fn(i, e) { s = s + i * e })
   inspect(s, content="40")?
+  let vec = @vec.new()
+  v.iteri(fn(i, _e) { vec.push(i) })
+  inspect(vec, content="Vec::[0, 1, 2, 3, 4]")?
 }
 
 pub fn op_equal[T : Eq](
@@ -514,12 +524,16 @@ test "mix" {
   let ct2 = fold_right(v2, fn(a, b) { a + b }, init=0)
   inspect(ct1, content="19800")?
   inspect(ct2, content="19800")?
-  let mut ct = 0
-  v.iteri(fn(i, e) { ct = ct + i - e })
-  inspect(ct, content="0")?
-  inspect(v == v2, content="false")?
-  inspect(v2.tree.is_empty_tree(), content="false")?
-  for i = 0; i < 1000; i = i + 1 {
-    v2 = v2.push(i)
+  inspect(v.tree.is_empty_tree(), content="false")?
+
+  let large_const = 1000
+  let mut v = PersistentVector::empty()
+  for i = 0; i < large_const; i = i + 1 {
+    v = v.push(i)
+  }
+  let vec = @vec.new()
+  v.iteri(fn(i, _e) { vec.push(i) })
+  for i = 0; i < large_const; i = i + 1 {
+    @assertion.assert_eq(vec[i], i)?
   }
 }
