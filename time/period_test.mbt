@@ -13,10 +13,7 @@
 // limitations under the License.
 
 test "of" {
-  inspect(
-    Period::of(years=1000, months=24, days=365),
-    content="P1000Y24M365D",
-  )?
+  inspect(Period::of(years=1000, months=24, days=365), content="P1000Y24M365D")?
 }
 
 test "from_string" {
@@ -65,6 +62,13 @@ test "add_months" {
   inspect(p.add_months(-1), content="Ok(P9M)")?
 }
 
+test "add_weeks" {
+  let p = Period::of(days=10)
+  inspect(p.add_weeks(0), content="Ok(P10D)")?
+  inspect(p.add_weeks(1), content="Ok(P17D)")?
+  inspect(p.add_weeks(-1), content="Ok(P3D)")?
+}
+
 test "add_days" {
   let p = Period::of(days=10)
   inspect(p.add_days(0), content="Ok(P10D)")?
@@ -93,8 +97,16 @@ test "with_days" {
 test "op_add" {
   let p1 = Period::of(years=1, months=2, days=3)
   let p2 = Period::of(years=-1, months=-2, days=-3)
-  let p3 = Period::of(years=Int::max_value(), months=Int::max_value(), days=Int::max_value())
-  let p4 = Period::of(years=Int::min_value(), months=Int::min_value(), days=Int::min_value())
+  let p3 = Period::of(
+    years=Int::max_value(),
+    months=Int::max_value(),
+    days=Int::max_value(),
+  )
+  let p4 = Period::of(
+    years=Int::min_value(),
+    months=Int::min_value(),
+    days=Int::min_value(),
+  )
   inspect(p1 + Period::zero(), content="Ok(P1Y2M3D)")?
   inspect(p1 + p2, content="Ok(P0D)")?
   inspect(p1 + p1, content="Ok(P2Y4M6D)")?
@@ -106,8 +118,16 @@ test "op_add" {
 test "op_sub" {
   let p1 = Period::of(years=1, months=2, days=3)
   let p2 = Period::of(years=-1, months=-2, days=-3)
-  let p3 = Period::of(years=Int::max_value(), months=Int::max_value(), days=Int::max_value())
-  let p4 = Period::of(years=Int::min_value(), months=Int::min_value(), days=Int::min_value())
+  let p3 = Period::of(
+    years=Int::max_value(),
+    months=Int::max_value(),
+    days=Int::max_value(),
+  )
+  let p4 = Period::of(
+    years=Int::min_value(),
+    months=Int::min_value(),
+    days=Int::min_value(),
+  )
   inspect(p1 - p1, content="Ok(P0D)")?
   inspect(p1 - p2, content="Ok(P2Y4M6D)")?
   inspect(p2 - p1, content="Ok(P-2Y-4M-6D)")?
@@ -129,9 +149,17 @@ test "negated" {
   let p = Period::of(years=1, months=1, days=1)
   inspect(p.negated(), content="Ok(P-1Y-1M-1D)")?
   inspect(p.negated()?.negated()? == p, content="true")?
-  let p = Period::of(years=Int::max_value(), months=Int::max_value(), days=Int::max_value())
+  let p = Period::of(
+    years=Int::max_value(),
+    months=Int::max_value(),
+    days=Int::max_value(),
+  )
   inspect(p.negated(), content="Ok(P-2147483647Y-2147483647M-2147483647D)")?
   inspect(p.negated()?.negated()? == p, content="true")?
-  let p = Period::of(years=Int::min_value(), months=Int::min_value(), days=Int::min_value())
+  let p = Period::of(
+    years=Int::min_value(),
+    months=Int::min_value(),
+    days=Int::min_value(),
+  )
   inspect(p.negated(), content="Err(Int overflow)")?
 }

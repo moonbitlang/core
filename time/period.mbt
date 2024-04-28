@@ -127,13 +127,7 @@ pub fn add_months(self : Period, months : Int) -> Result[Period, String] {
     return Ok(self)
   }
   let new_months = checked_add_int(self.months, months)?
-  Ok(
-    Period::of(
-      years=self.years,
-      months=new_months,
-      days=self.days,
-    ),
-  )
+  Ok(Period::of(years=self.years, months=new_months, days=self.days))
 }
 
 /// Adds specified days to this period, and returns a new period.
@@ -142,13 +136,7 @@ pub fn add_days(self : Period, days : Int) -> Result[Period, String] {
     return Ok(self)
   }
   let new_days = checked_add_int(self.days, days)?
-  Ok(
-    Period::of(
-      years=self.years,
-      months=self.months,
-      days=new_days,
-    ),
-  )
+  Ok(Period::of(years=self.years, months=self.months, days=new_days))
 }
 
 /// Adds other period to this period, and returns a new period.
@@ -156,7 +144,9 @@ pub fn add_period(self : Period, other : Period) -> Result[Period, String] {
   if other.is_zero() {
     return Ok(self)
   }
-  self.add_years(other.years())?.add_months(other.months())?.add_days(other.days())
+  self.add_years(other.years())?.add_months(other.months())?.add_days(
+    other.days(),
+  )
 }
 
 pub fn op_add(self : Period, other : Period) -> Result[Period, String] {

@@ -47,6 +47,7 @@ test "from_string" {
     content="Ok(PT-1H-2M-3.456789S)",
   )?
   inspect(Duration::from_string("PT0.45S"), content="Ok(PT0.45S)")?
+  inspect(Duration::from_string("PT0.000.45S"), content="Err(Invalid duration)")?
   inspect(
     Duration::from_string("P1Y2M3DT4H5M6S"),
     content="Err(Invalid duration)",
@@ -202,6 +203,7 @@ test "with_nanoseconds" {
   let d = Duration::of(nanoseconds=1000L)?
   inspect(d.with_nanoseconds(1000), content="Ok(PT0.000001S)")?
   inspect(d.with_nanoseconds(2000), content="Ok(PT0.000002S)")?
+  inspect(d.with_nanoseconds(1_000_000_000), content="Err(Invalid duration)")?
 }
 
 test "op_add" {
