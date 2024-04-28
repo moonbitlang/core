@@ -444,7 +444,7 @@ fn new_by_leaves[T](
   } else {
     let (cap, shift) = loop len, branching_factor, 1 {
       len, m_pow, depth =>
-        match len <= m_pow {
+        match len < m_pow {
           false => continue len, m_pow * branching_factor, depth + 1
           true => (m_pow, (depth - 1) * num_bits)
         }
@@ -465,6 +465,11 @@ test "new_by_leaves" {
   inspect(
     v2,
     content="PersistentVector::[10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10]",
+  )?
+  let v3 = new_by_leaves(32, fn(_s, l) { Array::make(l, 10) })
+  inspect(
+    v3,
+    content="PersistentVector::[10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10]",
   )?
 }
 
@@ -525,7 +530,6 @@ test "mix" {
   inspect(ct1, content="19800")?
   inspect(ct2, content="19800")?
   inspect(v.tree.is_empty_tree(), content="false")?
-
   let large_const = 1000
   let mut v = PersistentVector::empty()
   for i = 0; i < large_const; i = i + 1 {
