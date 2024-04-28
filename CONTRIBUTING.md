@@ -71,7 +71,7 @@ Simply follow the standard [GitHub flow](https://docs.github.com/en/get-started/
 After submitting your pull request, request a review from the project maintainers or other contributors.
 
 
-# What kind of contributions are more likely to accepted
+# What kind of contributions are more likely to be accepted
 
 - Test, documentation and bug fixes 
 
