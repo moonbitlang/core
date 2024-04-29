@@ -24,6 +24,8 @@ let radix : Int64 = 1L.lsl(radix_bit_len) // TODO: This can be generalized once 
 
 let radix_mask : Int64 = radix - 1L
 
+let decimal_ratio = 0.302 // log10(2)
+
 // Useful bigints
 
 let zero : BigInt = from_int64(0L)
@@ -87,8 +89,8 @@ pub fn op_add(self : BigInt, other : BigInt) -> BigInt {
   } else if other.sign == Negative {
     return self - -other
   }
-  let self_len = self.limbs.length()
-  let other_len = other.limbs.length()
+  let self_len = self.len
+  let other_len = other.len
   let limbs = Array::make(1 + max(self_len, other_len), 0)
   let mut carry = 0L
   let mut i = 0
@@ -117,8 +119,8 @@ pub fn op_sub(self : BigInt, other : BigInt) -> BigInt {
   if self < other {
     return -(other - self)
   }
-  let self_len = self.limbs.length()
-  let other_len = other.limbs.length()
+  let self_len = self.len
+  let other_len = other.len
   let limbs = Array::make(max(self_len, other_len), 0)
   let mut borrow = 0L
   let mut i = 0
@@ -146,8 +148,8 @@ pub fn op_mul(self : BigInt, other : BigInt) -> BigInt {
 // Simplest way to multiply two BigInts.
 fn grade_school_mul(self : BigInt, other : BigInt) -> BigInt {
   let sign : Sign = if self.sign == other.sign { Positive } else { Negative }
-  let self_len = self.limbs.length()
-  let other_len = other.limbs.length()
+  let self_len = self.len
+  let other_len = other.len
   let limbs = Array::make(self_len + other_len, 0)
   let mut i = 0
   while i < self_len {
@@ -257,7 +259,6 @@ fn grade_school_div(self : BigInt, other : BigInt) -> (BigInt, BigInt) {
   }
   let v1 = b[b_len - 1]
   let v2 = b[b_len - 2]
-
   let q = Array::make(a_len - b_len, 0)
   for i = q.length() - 1; i >= 0; i = i - 1 {
     let u0 = a[i + b_len]
@@ -441,8 +442,8 @@ pub fn compare(self : BigInt, other : BigInt) -> Int {
   if self.sign != other.sign {
     return if self.sign == Positive { 1 } else { -1 }
   }
-  let self_len = self.limbs.length()
-  let other_len = other.limbs.length()
+  let self_len = self.len
+  let other_len = other.len
   if self_len != other_len {
     return if self.sign == Positive {
       self_len - other_len
@@ -450,8 +451,7 @@ pub fn compare(self : BigInt, other : BigInt) -> Int {
       other_len - self_len
     }
   }
-  let mut i = self_len - 1
-  while i >= 0 {
+  for i = self_len - 1; i >= 0; i = i - 1 {
     if self.limbs[i] != other.limbs[i] {
       return if self.sign == Positive {
         self.limbs[i].compare(other.limbs[i])
@@ -459,22 +459,19 @@ pub fn compare(self : BigInt, other : BigInt) -> Int {
         other.limbs[i].compare(self.limbs[i])
       }
     }
-    i -= 1
   }
   0
 }
 
 /// Implements the Eq trait for BigInt
 pub fn op_equal(self : BigInt, other : BigInt) -> Bool {
-  if self.sign != other.sign || self.limbs.length() != other.limbs.length() {
+  if self.sign != other.sign || self.len != other.len {
     return false
   }
-  let mut i = 0
-  while i < self.limbs.length() {
+  for i = 0; i < self.len; i = i + 1 {
     if self.limbs[i] != other.limbs[i] {
       return false
     }
-    i += 1
   }
   true
 }
@@ -486,8 +483,7 @@ pub fn to_decimal_string(self : BigInt) -> String {
   if self.is_zero() {
     return "0"
   }
-  let decimal_ratio = 0.302 // log10(2)
-  let decimal_radix_bit_len = 19 - (1 + radix_bit_len) / 3 - 1 // < len(9,223,372,036,854,775,807) - len(2^radix_bit_len). len means the number of digits in decimal.
+  let decimal_radix_bit_len = 19 - 1 - (1 + radix_bit_len) / 3 // < len(9,223,372,036,854,775,807) - len(2^radix_bit_len). len means the number of digits in decimal.
   let decimal_mask = 10000000000000L // 10^(decimal_radix_bit_len). TODO: compute it when we have power function.
   // The following value should fit well into an Int without precision loss.
   // This is an approximation of the number of slots needed to represent the decimal value.
@@ -524,6 +520,50 @@ pub fn to_decimal_string(self : BigInt) -> String {
     ret = y.to_string() + ret
   }
   s + ret
+}
+
+/// Converts decimal string to a BigInt.
+pub fn from_decimal_string(input : String) -> BigInt {
+  let len = input.length()
+  if len == 0 {
+    return abort("empty string")
+  }
+  let sign : Sign = if input[0] == '-' { Negative } else { Positive }
+  let mut b_len = ((len.to_double() / decimal_ratio).to_int() + 1 + radix_bit_len - 1) /
+    radix_bit_len
+  let b = Array::make(b_len, 0)
+  for i = match sign {
+          Negative => 1
+          Positive => 0
+        }
+      i < input.length()
+      i = i + 1 {
+    let x = input[i].to_int() - 48 // ASCII value of '0'
+    if x < 0 || x > 9 {
+      return abort("invalid character")
+    }
+    let mut carry = x.to_int64()
+    for j = 0; j < b_len; j = j + 1 {
+      carry += (b[j] * 10).to_int64()
+      b[j] = (carry % radix).to_int()
+      carry /= radix
+    }
+  }
+  while b[b_len - 1] == 0 {
+    b_len -= 1
+  }
+  { limbs: b, sign, len: b_len }
+}
+
+test "from_decimal_string" {
+  let a = from_decimal_string("123")
+  inspect(a.to_decimal_string(), content="123")?
+  @assertion.assert_eq(a, from_int64(123L))?
+  let a = from_decimal_string("1234567890123456789")
+  inspect(a.to_decimal_string(), content="1234567890123456789")?
+  let b = from_decimal_string("-1234567890")
+  inspect(b.to_decimal_string(), content="-1234567890")?
+  @assertion.assert_eq(a, from_int64(1234567890123456789L))?
 }
 
 pub fn deep_clone(self : BigInt) -> BigInt {

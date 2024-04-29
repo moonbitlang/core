@@ -1,0 +1,41 @@
+package moonbitlang/core/bigint
+
+// Values
+fn from_decimal_string(String) -> BigInt
+
+fn from_int(Int) -> BigInt
+
+fn from_int64(Int64) -> BigInt
+
+fn make_zero() -> BigInt
+
+// Types and methods
+type BigInt
+impl BigInt {
+  compare(Self, Self) -> Int
+  debug_write(Self, Buffer) -> Unit
+  deep_clone(Self) -> Self
+  is_zero(Self) -> Bool
+  lsl(Self, Int) -> Self
+  lsr(Self, Int) -> Self
+  op_add(Self, Self) -> Self
+  op_div(Self, Self) -> Self
+  op_equal(Self, Self) -> Bool
+  op_mod(Self, Self) -> Self
+  op_mul(Self, Self) -> Self
+  op_neg(Self) -> Self
+  op_sub(Self, Self) -> Self
+  to_decimal_string(Self) -> String
+}
+
+type Sign
+impl Sign {
+  debug_write(Self, Buffer) -> Unit
+  op_equal(Self, Self) -> Bool
+  to_string(Self) -> String
+}
+
+// Traits
+
+// Extension Methods
+

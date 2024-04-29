@@ -18,10 +18,7 @@ enum Sign {
 } derive(Show, Debug, Eq)
 
 struct BigInt {
-  mut limbs: Array[Int]
-  sign: Sign // true for positive, false for negative
-  mut len: Int
+  mut limbs : Array[Int] // Note: do not use limbs.length(), use len instead because of leading zeros
+  sign : Sign // true for positive, false for negative
+  mut len : Int
 } derive(Debug)
-
-
-
