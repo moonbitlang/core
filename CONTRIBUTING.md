@@ -77,7 +77,7 @@ After submitting your pull request, request a review from the project maintainer
 
 - Standalone packages with good functionalites, for example, bigint package
 
-- Fast and efficient abstractions are preferred over *beautiful* abstractions
+- Fast and efficient abstractions are preferred over *theoretically perfect* abstractions
 
    MoonBit is a pragmatic language, we care about both compile time and runtime performance. Take `+` for example, it is a trait method in Rust,
    it could be the same in MoonBit, but we care about compile time performance so much that we would prefer it as a simple function to make sure 
