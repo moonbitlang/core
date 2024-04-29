@@ -16,7 +16,17 @@
 // The types stored in set need to implement the Compare trait.
 // All operations over sets are purely applicative (no side-effects).
 
+test "new" {
+  let empty : ImmutableSet[Int] = ImmutableSet::new()
+  inspect(empty, content="ImmutableSet::[]")?
+}
+
 test "disjoint" {
+  inspect(ImmutableSet::[1].disjoint(ImmutableSet::[1, 2, 3]), content="false")?
+  inspect(
+    ImmutableSet::[1, 2, 3].disjoint(ImmutableSet::[1, 2, 3]),
+    content="false",
+  )?
   inspect(
     ImmutableSet::[1, 2, 3].disjoint(ImmutableSet::[4, 5, 6]),
     content="true",
@@ -39,9 +49,19 @@ test "subset" {
 }
 
 test "diff" {
+  let empty : ImmutableSet[Int] = ImmutableSet::new()
+  inspect(empty.diff(ImmutableSet::[1, 2, 3]), content="ImmutableSet::[]")?
+  inspect(
+    ImmutableSet::[1, 2, 3].diff(empty),
+    content="ImmutableSet::[1, 2, 3]",
+  )?
   inspect(
     ImmutableSet::[1, 2, 3].diff(ImmutableSet::[4, 5, 1]),
     content="ImmutableSet::[2, 3]",
+  )?
+  inspect(
+    ImmutableSet::[1, 2, 3].diff(ImmutableSet::[1, 2, 3]),
+    content="ImmutableSet::[]",
   )?
 }
 
@@ -50,9 +70,30 @@ test "inter" {
     ImmutableSet::[3, 4, 5].inter(ImmutableSet::[4, 5, 6]),
     content="ImmutableSet::[4, 5]",
   )?
+  inspect(
+    ImmutableSet::[3, 4].inter(ImmutableSet::[5, 6]),
+    content="ImmutableSet::[]",
+  )?
 }
 
 test "union" {
+  let empty : ImmutableSet[Int] = ImmutableSet::new()
+  inspect(
+    empty.union(ImmutableSet::[4, 5, 6]),
+    content="ImmutableSet::[4, 5, 6]",
+  )?
+  inspect(
+    ImmutableSet::[4, 5, 6].union(empty),
+    content="ImmutableSet::[4, 5, 6]",
+  )?
+  inspect(
+    ImmutableSet::[3].union(ImmutableSet::[4, 5, 6]),
+    content="ImmutableSet::[3, 4, 5, 6]",
+  )?
+  inspect(
+    ImmutableSet::[3, 4, 5].union(ImmutableSet::[6]),
+    content="ImmutableSet::[3, 4, 5, 6]",
+  )?
   inspect(
     ImmutableSet::[3, 4, 5].union(ImmutableSet::[4, 5, 6]),
     content="ImmutableSet::[3, 4, 5, 6]",
@@ -90,10 +131,6 @@ test "filter" {
   )?
 }
 
-test "max" {
-  inspect(ImmutableSet::[7, 2, 9, 4, 5, 6, 3, 8, 1].max(), content="9")?
-}
-
 test "split" {
   let (left, present, right) = ImmutableSet::[7, 2, 9, 4, 5, 6, 3, 8, 1].split(
     5,
@@ -118,6 +155,8 @@ test "contain" {
 }
 
 test "from_list" {
+  let empty_list : List[Int] = List::[]
+  inspect(ImmutableSet::from_list(empty_list), content="ImmutableSet::[]")?
   inspect(ImmutableSet::from_list(List::[1]), content="ImmutableSet::[1]")?
   inspect(ImmutableSet::from_list(List::[1, 2]), content="ImmutableSet::[1, 2]")?
   inspect(
@@ -129,6 +168,10 @@ test "from_list" {
     content="ImmutableSet::[1, 2, 3, 4]",
   )?
   inspect(
+    ImmutableSet::from_list(List::[1, 2, 3, 4, 5]),
+    content="ImmutableSet::[1, 2, 3, 4, 5]",
+  )?
+  inspect(
     ImmutableSet::from_list(List::[7, 2, 9, 4, 5, 6, 3, 8, 1]),
     content="ImmutableSet::[1, 2, 3, 4, 5, 6, 7, 8, 9]",
   )?
@@ -136,9 +179,11 @@ test "from_list" {
 
 test "to_list" {
   inspect(
-    ImmutableSet::[7, 2, 9, 4, 5, 6, 3, 8, 1],
-    content="ImmutableSet::[1, 2, 3, 4, 5, 6, 7, 8, 9]",
+    ImmutableSet::[7, 2, 9, 4, 5, 6, 3, 8, 1].to_list(),
+    content="List::[1, 2, 3, 4, 5, 6, 7, 8, 9]",
   )?
+  let empty : ImmutableSet[Int] = ImmutableSet::new()
+  inspect(empty.to_list(), content="List::[]")?
 }
 
 test "to_array" {
@@ -182,14 +227,54 @@ test "add" {
 }
 
 test "remove" {
+  let empty : ImmutableSet[Int] = ImmutableSet::new()
+  inspect(empty.remove(1), content="ImmutableSet::[]")?
+  inspect(
+    ImmutableSet::[7, 2, 9, 4, 5, 6, 3, 8, 1].remove(1),
+    content="ImmutableSet::[2, 3, 4, 5, 6, 7, 8, 9]",
+  )?
+  inspect(
+    ImmutableSet::[7, 2, 9, 4, 5, 6, 3, 8, 1].remove(9),
+    content="ImmutableSet::[1, 2, 3, 4, 5, 6, 7, 8]",
+  )?
   inspect(
     ImmutableSet::[7, 2, 9, 4, 5, 6, 3, 8, 1].remove(8),
     content="ImmutableSet::[1, 2, 3, 4, 5, 6, 7, 9]",
+  )?
+  inspect(
+    ImmutableSet::[7, 2, 9, 4, 5, 6, 3, 8, 1].remove(0),
+    content="ImmutableSet::[1, 2, 3, 4, 5, 6, 7, 8, 9]",
+  )?
+  inspect(
+    ImmutableSet::[7, 2, 9, 4, 5, 6, 3, 8, 1].remove(10),
+    content="ImmutableSet::[1, 2, 3, 4, 5, 6, 7, 8, 9]",
   )?
 }
 
 test "min" {
   inspect(ImmutableSet::[7, 2, 9, 4, 5, 6, 3, 8, 1].min(), content="1")?
+}
+
+test "min_option" {
+  let empty : ImmutableSet[Int] = ImmutableSet::new()
+  inspect(empty.min_option(), content="None")?
+  inspect(
+    ImmutableSet::[7, 2, 9, 4, 5, 6, 3, 8, 1].min_option(),
+    content="Some(1)",
+  )?
+}
+
+test "max" {
+  inspect(ImmutableSet::[7, 2, 9, 4, 5, 6, 3, 8, 1].max(), content="9")?
+}
+
+test "max_option" {
+  let empty : ImmutableSet[Int] = ImmutableSet::new()
+  inspect(empty.max_option(), content="None")?
+  inspect(
+    ImmutableSet::[7, 2, 9, 4, 5, 6, 3, 8, 1].max_option(),
+    content="Some(9)",
+  )?
 }
 
 test "is_empty" {
@@ -203,4 +288,21 @@ test "to_string" {
     content="ImmutableSet::[1, 2, 3, 4, 5]",
   )?
   inspect((ImmutableSet::[] : ImmutableSet[Int]), content="ImmutableSet::[]")?
+}
+
+test "iter" {
+  let mut s = ""
+  ImmutableSet::[7, 2, 9, 4, 5, 6, 3, 8, 1].iter(fn(x) { s += x.to_string() })
+  inspect(s, content="123456789")?
+  let empty : ImmutableSet[Int] = ImmutableSet::[]
+  s = ""
+  empty.iter(fn(x) { s += x.to_string() })
+  inspect(s, content="")?
+}
+
+test "split_bis" {
+  inspect(ImmutableSet::[1, 2, 3].split_bis(1), content="Found")?
+  inspect(ImmutableSet::[1, 2, 3].split_bis(3), content="Found")?
+  inspect(ImmutableSet::[1, 2, 3].split_bis(0), content="NotFound")?
+  inspect(ImmutableSet::[1, 2, 3].split_bis(4), content="NotFound")?
 }

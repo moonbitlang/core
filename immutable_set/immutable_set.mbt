@@ -576,6 +576,13 @@ priv enum SplitBis[T] {
   NotFound(ImmutableSet[T], () -> ImmutableSet[T])
 }
 
+fn to_string[T : Show](self: SplitBis[T])->String {
+  match self {
+    Found => "Found"
+    NotFound(_) => "NotFound"
+  }
+}
+
 /// Same as split, but compute the left and right only if the pivot value is not in the ImmutableSet.
 /// The right is computed on demand.
 fn split_bis[T : Compare](self : ImmutableSet[T], value : T) -> SplitBis[T] {
