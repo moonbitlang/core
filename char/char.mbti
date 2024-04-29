@@ -3,9 +3,11 @@ package moonbitlang/core/char
 // Values
 
 // Types and methods
-fn Char::debug_write(Char, Buffer) -> Unit
-fn Char::hash(Char) -> Int
-fn Char::to_string(Char) -> String
+impl Char {
+  debug_write(Char, Buffer) -> Unit
+  hash(Char) -> Int
+  to_string(Char) -> String
+}
 
 // Traits
 

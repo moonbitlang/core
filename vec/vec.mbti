@@ -4,74 +4,78 @@ package moonbitlang/core/vec
 
 // Types and methods
 type Vec
-fn Vec::append[T](Vec[T], Vec[T]) -> Unit
-fn Vec::capacity[T](Vec[T]) -> Int
-fn Vec::chunk_by[T](Vec[T], (T, T) -> Bool) -> Vec[Vec[T]]
-fn Vec::chunks[T](Vec[T], Int) -> Vec[Vec[T]]
-fn Vec::clear[T](Vec[T]) -> Unit
-fn Vec::contains[T : Eq](Vec[T], T) -> Bool
-fn Vec::debug_write[T : Show](Vec[T], Buffer) -> Unit
-fn Vec::dedup[T : Eq](Vec[T]) -> Unit
-fn Vec::drain[T](Vec[T], Int, Int) -> Vec[T]
-fn Vec::ends_with[T : Eq](Vec[T], Vec[T]) -> Bool
-fn Vec::extract_if[T](Vec[T], (T) -> Bool) -> Vec[T]
-fn Vec::fill[T](Vec[T], T) -> Unit
-fn Vec::fill_with[T](Vec[T], () -> T) -> Unit
-fn Vec::flatten[T](Vec[Vec[T]]) -> Vec[T]
-fn Vec::fold_left[T, U](Vec[T], (U, T) -> U, U) -> U
-fn Vec::fold_lefti[T, U](Vec[T], (Int, U, T) -> U, U) -> U
-fn Vec::fold_right[T, U](Vec[T], (U, T) -> U, U) -> U
-fn Vec::fold_righti[T, U](Vec[T], (Int, U, T) -> U, U) -> U
-fn Vec::from_array[T](Array[T]) -> Vec[T]
-fn Vec::get[T](Vec[T], Int) -> Option[T]
-fn Vec::insert[T](Vec[T], Int, T) -> Unit
-fn Vec::is_empty[T](Vec[T]) -> Bool
-fn Vec::is_sorted[T : Compare + Eq](Vec[T]) -> Bool
-fn Vec::iter[T](Vec[T], (T) -> Unit) -> Unit
-fn Vec::iter_rev[T](Vec[T], (T) -> Unit) -> Unit
-fn Vec::iter_revi[T](Vec[T], (Int, T) -> Unit) -> Unit
-fn Vec::iteri[T](Vec[T], (Int, T) -> Unit) -> Unit
-fn Vec::join[T](Vec[Vec[T]], T) -> Vec[T]
-fn Vec::length[T](Vec[T]) -> Int
-fn Vec::map[T](Vec[T], (T) -> T) -> Unit
-fn Vec::mapi[T](Vec[T], (Int, T) -> T) -> Unit
-fn Vec::new[T]() -> Vec[T]
-fn Vec::op_add[T](Vec[T], Vec[T]) -> Vec[T]
-fn Vec::op_as_view[T](Vec[T], Int, Int) -> VecView[T]
-fn Vec::op_equal[T : Eq](Vec[T], Vec[T]) -> Bool
-fn Vec::op_get[T](Vec[T], Int) -> T
-fn Vec::op_set[T](Vec[T], Int, T) -> Unit
-fn Vec::pop[T](Vec[T]) -> Option[T]
-fn Vec::pop_exn[T](Vec[T]) -> T
-fn Vec::push[T](Vec[T], T) -> Unit
-fn Vec::remove[T](Vec[T], Int) -> T
-fn Vec::repeat[T](Vec[T], Int) -> Vec[T]
-fn Vec::reserve_capacity[T](Vec[T], Int) -> Unit
-fn Vec::resize[T](Vec[T], Int, T) -> Unit
-fn Vec::retain[T](Vec[T], (T) -> Bool) -> Unit
-fn Vec::reverse[T](Vec[T]) -> Unit
-fn Vec::search[T : Eq](Vec[T], T) -> Option[Int]
-fn Vec::shrink_to_fit[T](Vec[T]) -> Unit
-fn Vec::sort[T : Compare + Eq](Vec[T]) -> Unit
-fn Vec::sort_by[T](Vec[T], (T, T) -> Int) -> Unit
-fn Vec::sort_by_key[T, K : Compare + Eq](Vec[T], (T) -> K) -> Unit
-fn Vec::split[T](Vec[T], (T) -> Bool) -> Vec[Vec[T]]
-fn Vec::split_at[T](Vec[T], Int) -> Tuple[Vec[T], Vec[T]]
-fn Vec::starts_with[T : Eq](Vec[T], Vec[T]) -> Bool
-fn Vec::strip_prefix[T : Eq](Vec[T], Vec[T]) -> Option[Vec[T]]
-fn Vec::strip_suffix[T : Eq](Vec[T], Vec[T]) -> Option[Vec[T]]
-fn Vec::swap[T](Vec[T], Int, Int) -> Unit
-fn Vec::to_list[T](Vec[T]) -> List[T]
-fn Vec::to_string[T : Show](Vec[T]) -> String
-fn Vec::with_capacity[T](Int) -> Vec[T]
+impl Vec {
+  append[T](Self[T], Self[T]) -> Unit
+  capacity[T](Self[T]) -> Int
+  chunk_by[T](Self[T], (T, T) -> Bool) -> Self[Self[T]]
+  chunks[T](Self[T], Int) -> Self[Self[T]]
+  clear[T](Self[T]) -> Unit
+  contains[T : Eq](Self[T], T) -> Bool
+  debug_write[T : Show](Self[T], Buffer) -> Unit
+  dedup[T : Eq](Self[T]) -> Unit
+  drain[T](Self[T], Int, Int) -> Self[T]
+  ends_with[T : Eq](Self[T], Self[T]) -> Bool
+  extract_if[T](Self[T], (T) -> Bool) -> Self[T]
+  fill[T](Self[T], T) -> Unit
+  fill_with[T](Self[T], () -> T) -> Unit
+  flatten[T](Self[Self[T]]) -> Self[T]
+  fold_left[T, U](Self[T], (U, T) -> U, ~init : U) -> U
+  fold_lefti[T, U](Self[T], (Int, U, T) -> U, ~init : U) -> U
+  fold_right[T, U](Self[T], (U, T) -> U, ~init : U) -> U
+  fold_righti[T, U](Self[T], (Int, U, T) -> U, ~init : U) -> U
+  from_array[T](Array[T]) -> Self[T]
+  get[T](Self[T], Int) -> Option[T]
+  insert[T](Self[T], Int, T) -> Unit
+  is_empty[T](Self[T]) -> Bool
+  is_sorted[T : Compare + Eq](Self[T]) -> Bool
+  iter[T](Self[T], (T) -> Unit) -> Unit
+  iter_rev[T](Self[T], (T) -> Unit) -> Unit
+  iter_revi[T](Self[T], (Int, T) -> Unit) -> Unit
+  iteri[T](Self[T], (Int, T) -> Unit) -> Unit
+  join[T](Self[Self[T]], T) -> Self[T]
+  length[T](Self[T]) -> Int
+  map[T](Self[T], (T) -> T) -> Unit
+  mapi[T](Self[T], (Int, T) -> T) -> Unit
+  new[T]() -> Self[T]
+  op_add[T](Self[T], Self[T]) -> Self[T]
+  op_as_view[T](Self[T], ~start : Int, ~end : Int) -> VecView[T]
+  op_equal[T : Eq](Self[T], Self[T]) -> Bool
+  op_get[T](Self[T], Int) -> T
+  op_set[T](Self[T], Int, T) -> Unit
+  pop[T](Self[T]) -> Option[T]
+  pop_exn[T](Self[T]) -> T
+  push[T](Self[T], T) -> Unit
+  remove[T](Self[T], Int) -> T
+  repeat[T](Self[T], Int) -> Self[T]
+  reserve_capacity[T](Self[T], Int) -> Unit
+  resize[T](Self[T], Int, T) -> Unit
+  retain[T](Self[T], (T) -> Bool) -> Unit
+  reverse[T](Self[T]) -> Unit
+  search[T : Eq](Self[T], T) -> Option[Int]
+  shrink_to_fit[T](Self[T]) -> Unit
+  sort[T : Compare + Eq](Self[T]) -> Unit
+  sort_by[T](Self[T], (T, T) -> Int) -> Unit
+  sort_by_key[T, K : Compare + Eq](Self[T], (T) -> K) -> Unit
+  split[T](Self[T], (T) -> Bool) -> Self[Self[T]]
+  split_at[T](Self[T], Int) -> Tuple[Self[T], Self[T]]
+  starts_with[T : Eq](Self[T], Self[T]) -> Bool
+  strip_prefix[T : Eq](Self[T], Self[T]) -> Option[Self[T]]
+  strip_suffix[T : Eq](Self[T], Self[T]) -> Option[Self[T]]
+  swap[T](Self[T], Int, Int) -> Unit
+  to_list[T](Self[T]) -> List[T]
+  to_string[T : Show](Self[T]) -> String
+  with_capacity[T](Int) -> Self[T]
+}
 
 type VecView
-fn VecView::length[T](VecView[T]) -> Int
-fn VecView::op_as_view[T](VecView[T], Int, Int) -> VecView[T]
-fn VecView::op_get[T](VecView[T], Int) -> T
-fn VecView::op_set[T](VecView[T], Int, T) -> Unit
-fn VecView::reverse[T](VecView[T]) -> Unit
-fn VecView::swap[T](VecView[T], Int, Int) -> Unit
+impl VecView {
+  length[T](Self[T]) -> Int
+  op_as_view[T](Self[T], ~start : Int, ~end : Int) -> Self[T]
+  op_get[T](Self[T], Int) -> T
+  op_set[T](Self[T], Int, T) -> Unit
+  reverse[T](Self[T]) -> Unit
+  swap[T](Self[T], Int, Int) -> Unit
+}
 
 // Traits
 

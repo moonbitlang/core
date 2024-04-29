@@ -9,9 +9,11 @@ fn track(String, CoverageCounter) -> Unit
 
 // Types and methods
 type CoverageCounter
-fn CoverageCounter::incr(CoverageCounter, Int) -> Unit
-fn CoverageCounter::new(Int) -> CoverageCounter
-fn CoverageCounter::to_string(CoverageCounter) -> String
+impl CoverageCounter {
+  incr(Self, Int) -> Unit
+  new(Int) -> Self
+  to_string(Self) -> String
+}
 
 type IO
 

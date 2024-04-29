@@ -4,21 +4,23 @@ package moonbitlang/core/hashmap
 
 // Types and methods
 type HashMap
-fn HashMap::capacity[K, V](HashMap[K, V]) -> Int
-fn HashMap::clear[K, V](HashMap[K, V]) -> Unit
-fn HashMap::contains[K : Hash + Eq, V](HashMap[K, V], K) -> Bool
-fn HashMap::from_array[K : Hash + Eq, V](Array[Tuple[K, V]]) -> HashMap[K, V]
-fn HashMap::get[K : Hash + Eq, V](HashMap[K, V], K) -> Option[V]
-fn HashMap::get_or_default[K : Hash + Eq, V](HashMap[K, V], K, V) -> V
-fn HashMap::is_empty[K, V](HashMap[K, V]) -> Bool
-fn HashMap::iter[K, V](HashMap[K, V], (K, V) -> Unit) -> Unit
-fn HashMap::iteri[K, V](HashMap[K, V], (Int, K, V) -> Unit) -> Unit
-fn HashMap::new[K, V](Option[(K) -> Int]) -> HashMap[K, V]
-fn HashMap::op_get[K : Hash + Eq, V](HashMap[K, V], K) -> Option[V]
-fn HashMap::op_set[K : Hash + Eq, V](HashMap[K, V], K, V) -> Unit
-fn HashMap::remove[K : Hash + Eq, V](HashMap[K, V], K) -> Unit
-fn HashMap::set[K : Hash + Eq, V](HashMap[K, V], K, V) -> Unit
-fn HashMap::size[K, V](HashMap[K, V]) -> Int
+impl HashMap {
+  capacity[K, V](Self[K, V]) -> Int
+  clear[K, V](Self[K, V]) -> Unit
+  contains[K : Hash + Eq, V](Self[K, V], K) -> Bool
+  from_array[K : Hash + Eq, V](Array[Tuple[K, V]]) -> Self[K, V]
+  get[K : Hash + Eq, V](Self[K, V], K) -> Option[V]
+  get_or_default[K : Hash + Eq, V](Self[K, V], K, V) -> V
+  is_empty[K, V](Self[K, V]) -> Bool
+  iter[K, V](Self[K, V], (K, V) -> Unit) -> Unit
+  iteri[K, V](Self[K, V], (Int, K, V) -> Unit) -> Unit
+  new[K, V](~hasher : Option[(K) -> Int] = ..) -> Self[K, V]
+  op_get[K : Hash + Eq, V](Self[K, V], K) -> Option[V]
+  op_set[K : Hash + Eq, V](Self[K, V], K, V) -> Unit
+  remove[K : Hash + Eq, V](Self[K, V], K) -> Unit
+  set[K : Hash + Eq, V](Self[K, V], K, V) -> Unit
+  size[K, V](Self[K, V]) -> Int
+}
 
 // Traits
 

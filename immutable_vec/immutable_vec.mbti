@@ -3,7 +3,7 @@ package moonbitlang/core/immutable_vec
 alias @moonbitlang/core/vec as @vec
 
 // Values
-fn array_blit[T](Array[T], Array[T], Int, Int, Int) -> Unit
+fn array_blit[T](~src : Array[T], ~dst : Array[T], Int, Int, Int) -> Unit
 
 fn immutable_copy[T](Array[T]) -> Array[T]
 
@@ -17,28 +17,32 @@ fn length[T](ImmutableVec[T]) -> Int
 
 // Types and methods
 type ImmutableVec
-fn ImmutableVec::copy[T](ImmutableVec[T]) -> ImmutableVec[T]
-fn ImmutableVec::debug_write[T : Debug](ImmutableVec[T], Buffer) -> Unit
-fn ImmutableVec::empty[T]() -> ImmutableVec[T]
-fn ImmutableVec::fold_left[T](ImmutableVec[T], (T, T) -> T, T) -> T
-fn ImmutableVec::fold_right[T](ImmutableVec[T], (T, T) -> T, T) -> T
-fn ImmutableVec::from_array[T](Array[T]) -> ImmutableVec[T]
-fn ImmutableVec::from_vector[T](@vec.Vec[T]) -> ImmutableVec[T]
-fn ImmutableVec::iter[T](ImmutableVec[T], (T) -> Unit) -> Unit
-fn ImmutableVec::iteri[T](ImmutableVec[T], (Int, T) -> Unit) -> Unit
-fn ImmutableVec::map[T, U](ImmutableVec[T], (T) -> U) -> ImmutableVec[U]
-fn ImmutableVec::new[T](Int, T) -> ImmutableVec[T]
-fn ImmutableVec::new_with_index[T](Int, (Int) -> T) -> ImmutableVec[T]
-fn ImmutableVec::op_equal[T : Eq](ImmutableVec[T], ImmutableVec[T]) -> Bool
-fn ImmutableVec::op_get[T](ImmutableVec[T], Int) -> T
-fn ImmutableVec::push[T](ImmutableVec[T], T) -> ImmutableVec[T]
-fn ImmutableVec::set[T](ImmutableVec[T], Int, T) -> ImmutableVec[T]
-fn ImmutableVec::to_string[T : Show](ImmutableVec[T]) -> String
+impl ImmutableVec {
+  copy[T](Self[T]) -> Self[T]
+  debug_write[T : Debug](Self[T], Buffer) -> Unit
+  empty[T]() -> Self[T]
+  fold_left[T](Self[T], (T, T) -> T, ~init : T) -> T
+  fold_right[T](Self[T], (T, T) -> T, ~init : T) -> T
+  from_array[T](Array[T]) -> Self[T]
+  from_vector[T](@vec.Vec[T]) -> Self[T]
+  iter[T](Self[T], (T) -> Unit) -> Unit
+  iteri[T](Self[T], (Int, T) -> Unit) -> Unit
+  map[T, U](Self[T], (T) -> U) -> Self[U]
+  new[T](Int, T) -> Self[T]
+  new_with_index[T](Int, (Int) -> T) -> Self[T]
+  op_equal[T : Eq](Self[T], Self[T]) -> Bool
+  op_get[T](Self[T], Int) -> T
+  push[T](Self[T], T) -> Self[T]
+  set[T](Self[T], Int, T) -> Self[T]
+  to_string[T : Show](Self[T]) -> String
+}
 
 type Tree
-fn Tree::debug_write[T : Debug](Tree[T], Buffer) -> Unit
-fn Tree::empty[T]() -> Tree[T]
-fn Tree::op_equal[T : Eq](Tree[T], Tree[T]) -> Bool
+impl Tree {
+  debug_write[T : Debug](Self[T], Buffer) -> Unit
+  empty[T]() -> Self[T]
+  op_equal[T : Eq](Self[T], Self[T]) -> Bool
+}
 
 // Traits
 

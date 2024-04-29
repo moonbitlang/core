@@ -4,21 +4,23 @@ package moonbitlang/core/hashset
 
 // Types and methods
 type HashSet
-fn HashSet::capacity[K](HashSet[K]) -> Int
-fn HashSet::clear[K](HashSet[K]) -> Unit
-fn HashSet::contains[K : Hash + Eq](HashSet[K], K) -> Bool
-fn HashSet::difference[K : Hash + Eq](HashSet[K], HashSet[K]) -> HashSet[K]
-fn HashSet::from_array[K : Hash + Eq](Array[K]) -> HashSet[K]
-fn HashSet::insert[K : Hash + Eq](HashSet[K], K) -> Unit
-fn HashSet::intersection[K : Hash + Eq](HashSet[K], HashSet[K]) -> HashSet[K]
-fn HashSet::is_empty[K](HashSet[K]) -> Bool
-fn HashSet::iter[K](HashSet[K], (K) -> Unit) -> Unit
-fn HashSet::iteri[K](HashSet[K], (Int, K) -> Unit) -> Unit
-fn HashSet::new[K](Option[(K) -> Int]) -> HashSet[K]
-fn HashSet::remove[K : Hash + Eq](HashSet[K], K) -> Unit
-fn HashSet::size[K](HashSet[K]) -> Int
-fn HashSet::symmetric_difference[K : Hash + Eq](HashSet[K], HashSet[K]) -> HashSet[K]
-fn HashSet::union[K : Hash + Eq](HashSet[K], HashSet[K]) -> HashSet[K]
+impl HashSet {
+  capacity[K](Self[K]) -> Int
+  clear[K](Self[K]) -> Unit
+  contains[K : Hash + Eq](Self[K], K) -> Bool
+  difference[K : Hash + Eq](Self[K], Self[K]) -> Self[K]
+  from_array[K : Hash + Eq](Array[K]) -> Self[K]
+  insert[K : Hash + Eq](Self[K], K) -> Unit
+  intersection[K : Hash + Eq](Self[K], Self[K]) -> Self[K]
+  is_empty[K](Self[K]) -> Bool
+  iter[K](Self[K], (K) -> Unit) -> Unit
+  iteri[K](Self[K], (Int, K) -> Unit) -> Unit
+  new[K](~hasher : Option[(K) -> Int] = ..) -> Self[K]
+  remove[K : Hash + Eq](Self[K], K) -> Unit
+  size[K](Self[K]) -> Int
+  symmetric_difference[K : Hash + Eq](Self[K], Self[K]) -> Self[K]
+  union[K : Hash + Eq](Self[K], Self[K]) -> Self[K]
+}
 
 // Traits
 

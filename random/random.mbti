@@ -4,16 +4,22 @@ package moonbitlang/core/random
 
 // Types and methods
 type RandomDouble
-fn RandomDouble::new(Int) -> RandomDouble
-fn RandomDouble::summon(RandomDouble) -> Double
+impl RandomDouble {
+  new(Int) -> Self
+  summon(Self) -> Double
+}
 
 type RandomInt
-fn RandomInt::new(Int) -> RandomInt
-fn RandomInt::summon(RandomInt) -> Int
+impl RandomInt {
+  new(Int) -> Self
+  summon(Self) -> Int
+}
 
 type RandomInt64
-fn RandomInt64::new(Int) -> RandomInt64
-fn RandomInt64::summon(RandomInt64) -> Int64
+impl RandomInt64 {
+  new(Int) -> Self
+  summon(Self) -> Int64
+}
 
 // Traits
 
