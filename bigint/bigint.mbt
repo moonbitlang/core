@@ -47,6 +47,11 @@ pub fn from_int64(n : Int64) -> BigInt {
   { limbs, sign: if n < 0L { Negative } else { Positive }, len: i }
 }
 
+/// Construct a zero
+pub fn make_zero() -> BigInt {
+  { limbs: Array::make(1, 0), sign: Positive, len: 1 }
+}
+
 // Arithmetic Operations
 
 /// Negate a bigint
@@ -312,7 +317,7 @@ pub fn lsl(self : BigInt, n : Int) -> BigInt {
     }
     { limbs: new_limbs, sign: self.sign, len }
   } else {
-    { limbs: Array::make(1, 0), sign: Positive, len: 1 }
+    make_zero()
   }
 }
 
@@ -325,6 +330,45 @@ test "lsl" {
     c.to_decimal_string(),
     content="22773757910726981402256170801141121024",
   )?
+}
+
+/// Right shift a bigint
+pub fn lsr(self : BigInt, n : Int) -> BigInt {
+  if n < 0 {
+    return abort("negative shift count")
+  }    
+  
+  let r = n % radix_bit_len
+  let lz = n / radix_bit_len 
+  if lz >= self.len {
+    return make_zero()
+  }
+
+  if (r == 0) {
+    let new_limbs = Array::make(self.len - lz, 0)
+    for i = lz; i < self.len; i = i + 1 {
+      new_limbs[i - lz] = self.limbs[i]
+    }
+    { limbs: new_limbs, sign: self.sign, len: self.len - lz }
+  } else {
+    let new_limbs = Array::make(self.len - lz, 0)
+    let a = self.limbs
+    let mut carry = 0L
+    for i = self.len - 1; i >= lz; i = i - 1 {
+      let x = a[i].to_int64()
+      new_limbs[i - lz] = (x.lsr(r).lor(carry)).to_int()
+      carry = x.lsl(radix_bit_len - r) % radix
+    }
+    { limbs: new_limbs, sign: self.sign, len: self.len - lz }
+  }
+}
+
+test "lsr" {
+  let a = from_int64(1234567890123456789L)
+  let b = a.lsr(1)
+  inspect(b.to_decimal_string(), content="617283945061728394")?
+  let c = a.lsr(64)
+  inspect(c.to_decimal_string(), content="0")?
 }
 
 // Comparison Operations
