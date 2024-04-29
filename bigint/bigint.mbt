@@ -189,6 +189,7 @@ pub fn op_mod(self : BigInt, other : BigInt) -> BigInt {
 // Simplest way to divide two BigInts.
 // Assumption: other != zero.
 fn grade_school_div(self : BigInt, other : BigInt) -> (BigInt, BigInt) {
+  // Handle negative numbers
   if self.sign == Negative {
     if other.sign == Negative {
       return grade_school_div(-self, -other)
@@ -201,15 +202,41 @@ fn grade_school_div(self : BigInt, other : BigInt) -> (BigInt, BigInt) {
     return (-quotient, remainder)
   }
 
+  // Handle edge cases
   if self < other {
     return (zero, self)
   } else if self == other {
     return (from_int(1), zero)
   }
+  if other.len == 1 {
+    let number = other.limbs[0]
+    if number == 0 {
+      abort("divided by zero")
+    }
+    let ret = self.deep_clone()
+    if number == 1 {
+      return (ret, zero)
+    }
+    let a = ret.limbs
+    let x = number.to_int64()
+    let mut y = 0L
+    for i = self.len - 1; i >= 0; i = i - 1 {
+      y = y.lsl(radix_bit_len)
+      y += a[i].to_int64()
+      a[i] = (y / x).land(radix_mask).to_int()
+      y %= x
+    }
+    if ret.limbs[ret.len - 1] == 0 {
+      ret.len -= 1
+    }
+    return (ret, from_int64(y.land(radix_mask)))
+  }
 
   // Cite: TAOCP Vol. 2, 4.3.1
   let dividend = self.deep_clone()
   let divisor = other.deep_clone()
+
+  // normalize 
   let mut lshift = 0
   let mut back = divisor.limbs[divisor.len - 1].to_int64()
   while back < radix / 2L {
@@ -230,7 +257,7 @@ fn grade_school_div(self : BigInt, other : BigInt) -> (BigInt, BigInt) {
   }
   let v1 = b[b_len - 1]
   let v2 = b[b_len - 2]
-  // TODO: case when b_len == 1
+
   let q = Array::make(a_len - b_len, 0)
   for i = q.length() - 1; i >= 0; i = i - 1 {
     let u0 = a[i + b_len]
@@ -271,6 +298,7 @@ fn grade_school_div(self : BigInt, other : BigInt) -> (BigInt, BigInt) {
     q[i] = qh.to_int()
   }
   let len = if q[q.length() - 1] == 0 { q.length() - 1 } else { q.length() }
+
   // strip leading zeros
   let mut i = a.length() - 1
   while i >= 0 && a[i] == 0L {
@@ -295,18 +323,24 @@ test "grade_school_div" {
   let (quotient, remainder) = grade_school_div(a, b)
   inspect(quotient.to_decimal_string(), content="10000000001")?
   inspect(remainder.to_decimal_string(), content="0")?
-
   let a = from_int64(9223372036854775807L)
   let b = from_int64(123456789L)
   let (quotient, remainder) = grade_school_div(a, b)
   inspect(quotient.to_decimal_string(), content="74709314178")?
   inspect(remainder.to_decimal_string(), content="46721365")?
-
   let a = from_int64(9223372036854775807L)
   let b = from_int64(2333333333L)
   let (quotient, remainder) = grade_school_div(a, b)
   inspect(quotient.to_decimal_string(), content="3952873730")?
   inspect(remainder.to_decimal_string(), content="1505733717")?
+
+  // single digit divisor
+
+  let a = from_int64(1234567890123456789L)
+  let b = from_int64(123L)
+  let (quotient, remainder) = grade_school_div(a, b)
+  inspect(quotient.to_decimal_string(), content="10037137318076884")?
+  inspect(remainder.to_decimal_string(), content="57")?
 }
 
 // Bitwise Operations

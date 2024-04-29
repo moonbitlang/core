@@ -20,7 +20,7 @@ enum Sign {
 struct BigInt {
   mut limbs: Array[Int]
   sign: Sign // true for positive, false for negative
-  len: Int
+  mut len: Int
 } derive(Debug)
 
 
