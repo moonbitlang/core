@@ -3,6 +3,13 @@
         "moonbitlang/core/builtin",
         "moonbitlang/core/num",
         "moonbitlang/core/assertion",
-        "moonbitlang/core/coverage"
+        "moonbitlang/core/coverage",
+        "moonbitlang/core/byte",
+        "moonbitlang/core/representation"
+    ],
+    "test_import": [
+      "moonbitlang/core/bytes",
+      "moonbitlang/core/num",
+      "moonbitlang/core/assertion"
     ]
 }
