@@ -4,33 +4,35 @@ package moonbitlang/core/stack
 
 // Types and methods
 type Stack
-fn Stack::clear[T](Stack[T]) -> Unit
-fn Stack::debug_write[T : Debug](Stack[T], Buffer) -> Unit
-fn Stack::default[T : Default]() -> Stack[T]
-fn Stack::drop[T](Stack[T]) -> Unit
-fn Stack::drop_result[T](Stack[T]) -> Result[Unit, Unit]
-fn Stack::equal[T : Eq](Stack[T], Stack[T]) -> Bool
-fn Stack::fold[T, U](Stack[T], U, (U, T) -> U) -> U
-fn Stack::from_array[T](Array[T]) -> Stack[T]
-fn Stack::from_list[T](List[T]) -> Stack[T]
-fn Stack::from_stack[T](Stack[T]) -> Stack[T]
-fn Stack::is_empty[T](Stack[T]) -> Bool
-fn Stack::iter[T](Stack[T], (T) -> Unit) -> Unit
-fn Stack::length[T](Stack[T]) -> Int
-fn Stack::new[T]() -> Stack[T]
-fn Stack::op_equal[T : Eq](Stack[T], Stack[T]) -> Bool
-fn Stack::peek[T](Stack[T]) -> Option[T]
-fn Stack::peek_exn[T](Stack[T]) -> T
-fn Stack::pop[T](Stack[T]) -> Option[T]
-fn Stack::pop_exn[T](Stack[T]) -> T
-fn Stack::push[T](Stack[T], T) -> Unit
-fn Stack::push_array[T](Stack[T], Array[T]) -> Unit
-fn Stack::push_list[T](Stack[T], List[T]) -> Unit
-fn Stack::push_stack[T](Stack[T], Stack[T]) -> Unit
-fn Stack::return_with_clear[T](Stack[T]) -> Stack[T]
-fn Stack::to_array[T : Default](Stack[T]) -> Array[T]
-fn Stack::to_list[T](Stack[T]) -> List[T]
-fn Stack::to_string[T : Show](Stack[T]) -> String
+impl Stack {
+  clear[T](Self[T]) -> Unit
+  debug_write[T : Debug](Self[T], Buffer) -> Unit
+  default[T : Default]() -> Self[T]
+  drop[T](Self[T]) -> Unit
+  drop_result[T](Self[T]) -> Result[Unit, Unit]
+  equal[T : Eq](Self[T], Self[T]) -> Bool
+  fold[T, U](Self[T], ~init : U, (U, T) -> U) -> U
+  from_array[T](Array[T]) -> Self[T]
+  from_list[T](List[T]) -> Self[T]
+  from_stack[T](Self[T]) -> Self[T]
+  is_empty[T](Self[T]) -> Bool
+  iter[T](Self[T], (T) -> Unit) -> Unit
+  length[T](Self[T]) -> Int
+  new[T]() -> Self[T]
+  op_equal[T : Eq](Self[T], Self[T]) -> Bool
+  peek[T](Self[T]) -> Option[T]
+  peek_exn[T](Self[T]) -> T
+  pop[T](Self[T]) -> Option[T]
+  pop_exn[T](Self[T]) -> T
+  push[T](Self[T], T) -> Unit
+  push_array[T](Self[T], Array[T]) -> Unit
+  push_list[T](Self[T], List[T]) -> Unit
+  push_stack[T](Self[T], Self[T]) -> Unit
+  return_with_clear[T](Self[T]) -> Self[T]
+  to_array[T : Default](Self[T]) -> Array[T]
+  to_list[T](Self[T]) -> List[T]
+  to_string[T : Show](Self[T]) -> String
+}
 
 // Traits
 

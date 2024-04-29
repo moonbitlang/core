@@ -10,16 +10,18 @@ fn unless[T](Bool, () -> T) -> Option[T]
 fn when[T](Bool, () -> T) -> Option[T]
 
 // Types and methods
-fn Option::bind[T, U](Option[T], (T) -> Option[U]) -> Option[U]
-fn Option::compare[X : Compare + Eq](Option[X], Option[X]) -> Int
-fn Option::default[X]() -> Option[X]
-fn Option::filter[T](Option[T], (T) -> Bool) -> Option[T]
-fn Option::flatten[T](Option[Option[T]]) -> Option[T]
-fn Option::is_empty[T](Option[T]) -> Bool
-fn Option::map[T, U](Option[T], (T) -> U) -> Option[U]
-fn Option::or[T](Option[T], T) -> T
-fn Option::or_else[T](Option[T], () -> T) -> T
-fn Option::unwrap[X](Option[X]) -> X
+impl Option {
+  bind[T, U](Self[T], (T) -> Self[U]) -> Self[U]
+  compare[X : Compare + Eq](Self[X], Self[X]) -> Int
+  default[X]() -> Self[X]
+  filter[T](Self[T], (T) -> Bool) -> Self[T]
+  flatten[T](Self[Self[T]]) -> Self[T]
+  is_empty[T](Self[T]) -> Bool
+  map[T, U](Self[T], (T) -> U) -> Self[U]
+  or[T](Self[T], T) -> T
+  or_else[T](Self[T], () -> T) -> T
+  unwrap[X](Self[X]) -> X
+}
 
 // Traits
 

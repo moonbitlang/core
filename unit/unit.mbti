@@ -3,10 +3,12 @@ package moonbitlang/core/unit
 // Values
 
 // Types and methods
-fn Unit::compare(Unit, Unit) -> Int
-fn Unit::default() -> Unit
-fn Unit::hash(Unit) -> Int
-fn Unit::to_string(Unit) -> String
+impl Unit {
+  compare(Unit, Unit) -> Int
+  default() -> Unit
+  hash(Unit) -> Int
+  to_string(Unit) -> String
+}
 
 // Traits
 

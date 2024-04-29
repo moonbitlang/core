@@ -14,17 +14,19 @@ pub enum JsonValue {
   Array(@vec.Vec[JsonValue])
   Object(@map.Map[String, JsonValue])
 }
-fn JsonValue::as_array(JsonValue) -> Option[@vec.Vec[JsonValue]]
-fn JsonValue::as_bool(JsonValue) -> Option[Bool]
-fn JsonValue::as_null(JsonValue) -> Option[Unit]
-fn JsonValue::as_number(JsonValue) -> Option[Double]
-fn JsonValue::as_object(JsonValue) -> Option[@map.Map[String, JsonValue]]
-fn JsonValue::as_string(JsonValue) -> Option[String]
-fn JsonValue::debug_write(JsonValue, Buffer) -> Unit
-fn JsonValue::item(JsonValue, Int) -> Option[JsonValue]
-fn JsonValue::op_equal(JsonValue, JsonValue) -> Bool
-fn JsonValue::to_string(JsonValue) -> String
-fn JsonValue::value(JsonValue, String) -> Option[JsonValue]
+impl JsonValue {
+  as_array(Self) -> Option[@vec.Vec[Self]]
+  as_bool(Self) -> Option[Bool]
+  as_null(Self) -> Option[Unit]
+  as_number(Self) -> Option[Double]
+  as_object(Self) -> Option[@map.Map[String, Self]]
+  as_string(Self) -> Option[String]
+  debug_write(Self, Buffer) -> Unit
+  item(Self, Int) -> Option[Self]
+  op_equal(Self, Self) -> Bool
+  to_string(Self) -> String
+  value(Self, String) -> Option[Self]
+}
 
 // Traits
 

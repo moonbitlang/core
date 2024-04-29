@@ -3,17 +3,17 @@ package moonbitlang/core/assertion
 alias @moonbitlang/core/bool as @bool
 
 // Values
-fn assert_eq[T : Debug + Eq](T, T, SourceLoc) -> Result[Unit, String]
+fn assert_eq[T : Debug + Eq](T, T, ~loc : SourceLoc = _) -> Result[Unit, String]
 
-fn assert_false[T : Debug + @bool.Boolean](T, SourceLoc) -> Result[Unit, String]
+fn assert_false[T : Debug + @bool.Boolean](T, ~loc : SourceLoc = _) -> Result[Unit, String]
 
-fn assert_is[T : Debug](T, T, SourceLoc) -> Result[Unit, String]
+fn assert_is[T : Debug](T, T, ~loc : SourceLoc = _) -> Result[Unit, String]
 
-fn assert_is_not[T : Debug](T, T, SourceLoc) -> Result[Unit, String]
+fn assert_is_not[T : Debug](T, T, ~loc : SourceLoc = _) -> Result[Unit, String]
 
-fn assert_ne[T : Debug + Eq](T, T, SourceLoc) -> Result[Unit, String]
+fn assert_ne[T : Debug + Eq](T, T, ~loc : SourceLoc = _) -> Result[Unit, String]
 
-fn assert_true[T : Debug + @bool.Boolean](T, SourceLoc) -> Result[Unit, String]
+fn assert_true[T : Debug + @bool.Boolean](T, ~loc : SourceLoc = _) -> Result[Unit, String]
 
 // Types and methods
 

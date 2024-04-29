@@ -4,25 +4,27 @@ package moonbitlang/core/rational
 
 // Types and methods
 type Rational
-fn Rational::abs(Rational) -> Rational
-fn Rational::ceil(Rational) -> Int64
-fn Rational::compare(Rational, Rational) -> Int
-fn Rational::debug_write(Rational, Buffer) -> Unit
-fn Rational::floor(Rational) -> Int64
-fn Rational::fract(Rational) -> Rational
-fn Rational::from_double(Double) -> Result[Rational, String]
-fn Rational::is_integer(Rational) -> Bool
-fn Rational::neg(Rational) -> Rational
-fn Rational::new(Int64, Int64) -> Option[Rational]
-fn Rational::op_add(Rational, Rational) -> Rational
-fn Rational::op_div(Rational, Rational) -> Rational
-fn Rational::op_equal(Rational, Rational) -> Bool
-fn Rational::op_mul(Rational, Rational) -> Rational
-fn Rational::op_sub(Rational, Rational) -> Rational
-fn Rational::reciprocal(Rational) -> Rational
-fn Rational::to_double(Rational) -> Double
-fn Rational::to_string(Rational) -> String
-fn Rational::trunc(Rational) -> Int64
+impl Rational {
+  abs(Self) -> Self
+  ceil(Self) -> Int64
+  compare(Self, Self) -> Int
+  debug_write(Self, Buffer) -> Unit
+  floor(Self) -> Int64
+  fract(Self) -> Self
+  from_double(Double) -> Result[Self, String]
+  is_integer(Self) -> Bool
+  neg(Self) -> Self
+  new(Int64, Int64) -> Option[Self]
+  op_add(Self, Self) -> Self
+  op_div(Self, Self) -> Self
+  op_equal(Self, Self) -> Bool
+  op_mul(Self, Self) -> Self
+  op_sub(Self, Self) -> Self
+  reciprocal(Self) -> Self
+  to_double(Self) -> Double
+  to_string(Self) -> String
+  trunc(Self) -> Int64
+}
 
 // Traits
 
