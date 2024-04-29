@@ -3,8 +3,14 @@ package moonbitlang/core/bytes
 // Values
 
 // Types and methods
+type BytesView
+fn BytesView::length(BytesView) -> Int
+fn BytesView::op_as_view(BytesView, Int, Int) -> BytesView
+fn BytesView::op_get(BytesView, Int) -> Int
+fn BytesView::op_set(BytesView, Int, Int) -> Unit
 fn Bytes::from_array(Array[Int]) -> Bytes
 fn Bytes::hash(Bytes) -> Int
+fn Bytes::op_as_view(Bytes, Int, Int) -> BytesView
 
 // Traits
 
