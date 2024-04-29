@@ -12,12 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-pub fn PersistentVector::empty[T]() -> PersistentVector[T] {
+pub fn ImmutableVec::empty[T]() -> ImmutableVec[T] {
   { tree: Tree::empty(), size: 0, shift: 0 }
 }
 
-pub fn to_string[T : Show](self : PersistentVector[T]) -> String {
-  let mut s = "PersistentVector::[".to_string()
+pub fn to_string[T : Show](self : ImmutableVec[T]) -> String {
+  let mut s = "ImmutableVec::[".to_string()
   for i = 0; i < self.size; i = i + 1 {
     s = s + self[i].to_string()
     if i < self.size - 1 {
@@ -29,35 +29,35 @@ pub fn to_string[T : Show](self : PersistentVector[T]) -> String {
 }
 
 test "to_string" {
-  let v = PersistentVector::[1, 2, 3, 4, 5]
-  let ve : PersistentVector[Int] = PersistentVector::empty()
-  inspect(v, content="PersistentVector::[1, 2, 3, 4, 5]")?
-  inspect(ve, content="PersistentVector::[]")?
+  let v = ImmutableVec::[1, 2, 3, 4, 5]
+  let ve : ImmutableVec[Int] = ImmutableVec::empty()
+  inspect(v, content="ImmutableVec::[1, 2, 3, 4, 5]")?
+  inspect(ve, content="ImmutableVec::[]")?
 }
 
-pub fn is_empty[T](v : PersistentVector[T]) -> Bool {
+pub fn is_empty[T](v : ImmutableVec[T]) -> Bool {
   v.size == 0
 }
 
 test "is_empty" {
-  let v = PersistentVector::[1, 2, 3, 4, 5]
-  let ve : PersistentVector[Int] = PersistentVector::empty()
+  let v = ImmutableVec::[1, 2, 3, 4, 5]
+  let ve : ImmutableVec[Int] = ImmutableVec::empty()
   inspect(is_empty(v), content="false")?
   inspect(is_empty(ve), content="true")?
 }
 
-pub fn length[T](v : PersistentVector[T]) -> Int {
+pub fn length[T](v : ImmutableVec[T]) -> Int {
   v.size
 }
 
 test "length" {
-  let v = PersistentVector::[1, 2, 3, 4, 5]
-  let ve : PersistentVector[Int] = PersistentVector::empty()
+  let v = ImmutableVec::[1, 2, 3, 4, 5]
+  let ve : ImmutableVec[Int] = ImmutableVec::empty()
   inspect(length(v), content="5")?
   inspect(length(ve), content="0")?
 }
 
-pub fn copy[T](self : PersistentVector[T]) -> PersistentVector[T] {
+pub fn copy[T](self : ImmutableVec[T]) -> ImmutableVec[T] {
   fn copy(t : Tree[T]) -> Tree[T] {
     match t {
       Leaf(l) => Leaf(immutable_copy(l))
@@ -71,14 +71,14 @@ pub fn copy[T](self : PersistentVector[T]) -> PersistentVector[T] {
 }
 
 test "copy" {
-  let v = PersistentVector::[1, 2, 3, 4, 5]
+  let v = ImmutableVec::[1, 2, 3, 4, 5]
   let vc = v.copy()
-  inspect(vc, content="PersistentVector::[1, 2, 3, 4, 5]")?
+  inspect(vc, content="ImmutableVec::[1, 2, 3, 4, 5]")?
   inspect(v == vc, content="true")?
   @assertion.assert_false(physical_equal(v, vc))?
-  let v = PersistentVector::empty()
-  let vc : PersistentVector[Int] = v.copy()
-  inspect(vc, content="PersistentVector::[]")?
+  let v = ImmutableVec::empty()
+  let vc : ImmutableVec[Int] = v.copy()
+  inspect(vc, content="ImmutableVec::[]")?
   inspect(v == vc, content="true")?
   @assertion.assert_false(physical_equal(v, vc))?
 }
@@ -87,10 +87,10 @@ test "copy" {
 /// 
 /// # Examples
 /// ```
-/// let v = PersistentVector::[1, 2, 3, 4, 5]
+/// let v = ImmutableVec::[1, 2, 3, 4, 5]
 /// v[0]
 /// ```
-pub fn op_get[T](self : PersistentVector[T], index : Int) -> T {
+pub fn op_get[T](self : ImmutableVec[T], index : Int) -> T {
   if index == 0 {
     self.tree.get_first()
   } else if index == self.size - 1 {
@@ -101,7 +101,7 @@ pub fn op_get[T](self : PersistentVector[T], index : Int) -> T {
 }
 
 test "op_get" {
-  let v = PersistentVector::[1, 2, 3, 4, 5]
+  let v = ImmutableVec::[1, 2, 3, 4, 5]
   inspect(v[0], content="1")?
   inspect(v[1], content="2")?
   inspect(v[2], content="3")?
@@ -113,14 +113,14 @@ test "op_get" {
 /// 
 /// # Example
 /// ```
-/// let v = PersistentVector::[1, 2, 3, 4, 5]
+/// let v = ImmutableVec::[1, 2, 3, 4, 5]
 /// v.set(1, 10)
 /// ```
 pub fn set[T](
-  self : PersistentVector[T],
+  self : ImmutableVec[T],
   index : Int,
   value : T
-) -> PersistentVector[T] {
+) -> ImmutableVec[T] {
   fn set(i : Int, e, s, t : Tree[T]) -> Tree[T] {
     match t {
       Leaf(l) => Leaf(immutable_set(l, i.land(bitmask), e))
@@ -140,21 +140,21 @@ pub fn set[T](
 }
 
 test "set" {
-  let v = PersistentVector::[1, 2, 3, 4, 5]
+  let v = ImmutableVec::[1, 2, 3, 4, 5]
   let v1 = v.set(1, 10)
   let v2 = v.set(2, 10)
-  inspect(v1, content="PersistentVector::[1, 10, 3, 4, 5]")?
-  inspect(v2, content="PersistentVector::[1, 2, 10, 4, 5]")?
+  inspect(v1, content="ImmutableVec::[1, 10, 3, 4, 5]")?
+  inspect(v2, content="ImmutableVec::[1, 2, 10, 4, 5]")?
 }
 
 /// Push a value to the end of the vector.
 /// 
 /// # Example
 /// ```
-/// let v = PersistentVector::[1, 2, 3]
+/// let v = ImmutableVec::[1, 2, 3]
 /// v.push(4)
 /// ```
-pub fn push[T](self : PersistentVector[T], value : T) -> PersistentVector[T] {
+pub fn push[T](self : ImmutableVec[T], value : T) -> ImmutableVec[T] {
   if self.size == branching_factor.lsl(self.shift) {
     {
       tree: Node([self.tree, new_branch([value], self.shift)]),
@@ -171,30 +171,30 @@ pub fn push[T](self : PersistentVector[T], value : T) -> PersistentVector[T] {
 }
 
 test "push" {
-  let v = PersistentVector::empty().push(1).push(2).push(3)
-  inspect(v, content="PersistentVector::[1, 2, 3]")?
-  inspect(v.push(1), content="PersistentVector::[1, 2, 3, 1]")?
-  inspect(v.push(2), content="PersistentVector::[1, 2, 3, 2]")?
-  inspect(v.push(3), content="PersistentVector::[1, 2, 3, 3]")?
+  let v = ImmutableVec::empty().push(1).push(2).push(3)
+  inspect(v, content="ImmutableVec::[1, 2, 3]")?
+  inspect(v.push(1), content="ImmutableVec::[1, 2, 3, 1]")?
+  inspect(v.push(2), content="ImmutableVec::[1, 2, 3, 2]")?
+  inspect(v.push(3), content="ImmutableVec::[1, 2, 3, 3]")?
 }
 
 /// Create a persistent vector from an array.
 /// 
 /// # Example
 /// ```
-/// let v = PersistentVector::[1, 2, 3]
+/// let v = ImmutableVec::[1, 2, 3]
 /// ```
-pub fn PersistentVector::from_array[T](arr : Array[T]) -> PersistentVector[T] {
+pub fn ImmutableVec::from_array[T](arr : Array[T]) -> ImmutableVec[T] {
   new_with_index(arr.length(), fn(i) { arr[i] })
 }
 
 test "from_array" {
-  let v = PersistentVector::[1, 1, 4, 5, 1, 4]
-  let vv = PersistentVector::from_array(Array::make(30, 1))
-  inspect(v, content="PersistentVector::[1, 1, 4, 5, 1, 4]")?
+  let v = ImmutableVec::[1, 1, 4, 5, 1, 4]
+  let vv = ImmutableVec::from_array(Array::make(30, 1))
+  inspect(v, content="ImmutableVec::[1, 1, 4, 5, 1, 4]")?
   inspect(
     vv,
-    content="PersistentVector::[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]",
+    content="ImmutableVec::[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]",
   )?
 }
 
@@ -202,11 +202,11 @@ test "from_array" {
 /// 
 /// # Example
 /// ```
-/// let v = PersistentVector::from_vector(@vec.from_array([1, 2, 3, 4, 5]))
+/// let v = ImmutableVec::from_vector(@vec.from_array([1, 2, 3, 4, 5]))
 /// ```
-pub fn PersistentVector::from_vector[T](
+pub fn ImmutableVec::from_vector[T](
   vec : @vec.Vec[T]
-) -> PersistentVector[T] {
+) -> ImmutableVec[T] {
   new_by_leaves(
     vec.length(),
     fn(s, l) { @array.new_with_index(l, fn(i) { vec[s + i] }) },
@@ -214,24 +214,24 @@ pub fn PersistentVector::from_vector[T](
 }
 
 test "from_vector" {
-  let v : PersistentVector[Int] = PersistentVector::from_vector(
+  let v : ImmutableVec[Int] = ImmutableVec::from_vector(
     @vec.from_array([1, 2, 3, 4, 5]),
   )
-  let v1 : PersistentVector[Int] = PersistentVector::from_vector(
+  let v1 : ImmutableVec[Int] = ImmutableVec::from_vector(
     @vec.from_array([]),
   )
-  inspect(v, content="PersistentVector::[1, 2, 3, 4, 5]")?
-  inspect(v1, content="PersistentVector::[]")?
+  inspect(v, content="ImmutableVec::[1, 2, 3, 4, 5]")?
+  inspect(v1, content="ImmutableVec::[]")?
 }
 
 /// Iterate over the vector.
 /// 
 /// # Example
 /// ```
-/// let v = PersistentVector::[1, 2, 3, 4, 5]
+/// let v = ImmutableVec::[1, 2, 3, 4, 5]
 /// v.iter(fn(e) { print(e) })
 /// ```
-pub fn iter[T](self : PersistentVector[T], f : (T) -> Unit) -> Unit {
+pub fn iter[T](self : ImmutableVec[T], f : (T) -> Unit) -> Unit {
   fn go(t : Tree[T]) -> Unit {
     match t {
       Empty => ()
@@ -244,11 +244,11 @@ pub fn iter[T](self : PersistentVector[T], f : (T) -> Unit) -> Unit {
 }
 
 test "iter" {
-  let v = PersistentVector::[1, 2, 3, 4, 5]
+  let v = ImmutableVec::[1, 2, 3, 4, 5]
   let mut s = 0
   v.iter(fn(e) { s = s + e })
   inspect(s, content="15")?
-  let v : PersistentVector[Int] = PersistentVector::empty()
+  let v : ImmutableVec[Int] = ImmutableVec::empty()
   v.iter(fn(_e) { abort("never reach") })
 }
 
@@ -256,10 +256,10 @@ test "iter" {
 /// 
 /// # Example
 /// ```
-/// let v = PersistentVector::[1, 2, 3, 4, 5]
+/// let v = ImmutableVec::[1, 2, 3, 4, 5]
 /// v.iteri(fn(i, e) { print(i * e) })
 /// ```
-pub fn iteri[T](self : PersistentVector[T], f : (Int, T) -> Unit) -> Unit {
+pub fn iteri[T](self : ImmutableVec[T], f : (Int, T) -> Unit) -> Unit {
   fn go(t : Tree[T], shift : Int, start : Int) -> Unit {
     match t {
       Empty => ()
@@ -282,9 +282,9 @@ pub fn iteri[T](self : PersistentVector[T], f : (Int, T) -> Unit) -> Unit {
 }
 
 test "iteri" {
-  let v : PersistentVector[Int] = PersistentVector::empty()
+  let v : ImmutableVec[Int] = ImmutableVec::empty()
   v.iteri(fn(_i, _e) { abort("never reach") })
-  let v = PersistentVector::[1, 2, 3, 4, 5]
+  let v = ImmutableVec::[1, 2, 3, 4, 5]
   let mut s = 0
   v.iteri(fn(i, e) { s = s + i * e })
   inspect(s, content="40")?
@@ -294,21 +294,21 @@ test "iteri" {
 }
 
 pub fn op_equal[T : Eq](
-  self : PersistentVector[T],
-  other : PersistentVector[T]
+  self : ImmutableVec[T],
+  other : ImmutableVec[T]
 ) -> Bool {
   self.size == other.size && self.tree == other.tree
 }
 
 test "op_equal" {
-  let v0 : PersistentVector[Int] = PersistentVector::[]
-  let v1 = PersistentVector::[1, 2, 3, 4, 5]
-  let v2 = PersistentVector::[1, 2, 3, 4, 5]
-  let v3 = PersistentVector::[1, 2, 3, 4, 6]
-  let v4 = PersistentVector::[1, 2, 3, 4]
-  let v5 = PersistentVector::new(5, 1)
-  let v6 = PersistentVector::[1, 1, 1, 1, 1]
-  inspect(v0 == PersistentVector::empty(), content="true")?
+  let v0 : ImmutableVec[Int] = ImmutableVec::[]
+  let v1 = ImmutableVec::[1, 2, 3, 4, 5]
+  let v2 = ImmutableVec::[1, 2, 3, 4, 5]
+  let v3 = ImmutableVec::[1, 2, 3, 4, 6]
+  let v4 = ImmutableVec::[1, 2, 3, 4]
+  let v5 = ImmutableVec::new(5, 1)
+  let v6 = ImmutableVec::[1, 1, 1, 1, 1]
+  inspect(v0 == ImmutableVec::empty(), content="true")?
   inspect(v1 == v2, content="true")?
   inspect(v1 == v3, content="false")?
   inspect(v1 == v4, content="false")?
@@ -319,11 +319,11 @@ test "op_equal" {
 /// 
 /// # Example
 /// ```
-/// let v = PersistentVector::[1, 2, 3, 4, 5]
+/// let v = ImmutableVec::[1, 2, 3, 4, 5]
 /// v.fold_left(fn(a, b) { a + b }, init=0)
 /// ```
 pub fn fold_left[T](
-  self : PersistentVector[T],
+  self : ImmutableVec[T],
   f : (T, T) -> T,
   ~init : T
 ) -> T {
@@ -339,8 +339,8 @@ pub fn fold_left[T](
 }
 
 test "fold_left" {
-  let e = PersistentVector::empty()
-  let v = PersistentVector::[1, 2, 3, 4, 5]
+  let e = ImmutableVec::empty()
+  let v = ImmutableVec::[1, 2, 3, 4, 5]
   inspect(e.fold_left(fn(a, b) { a + b }, init=0), content="0")?
   inspect(v.fold_left(fn(a, b) { a + b }, init=0), content="15")?
 }
@@ -349,11 +349,11 @@ test "fold_left" {
 /// 
 /// # Example
 /// ```
-/// let v = PersistentVector::[1, 2, 3, 4, 5]
+/// let v = ImmutableVec::[1, 2, 3, 4, 5]
 /// v.fold_right(fn(a, b) { a + b }, init=0)
 /// ```
 pub fn fold_right[T](
-  self : PersistentVector[T],
+  self : ImmutableVec[T],
   f : (T, T) -> T,
   ~init : T
 ) -> T {
@@ -369,9 +369,9 @@ pub fn fold_right[T](
 }
 
 test "fold_right" {
-  let e = PersistentVector::empty()
+  let e = ImmutableVec::empty()
   inspect(e.fold_right(fn(a, b) { a + b }, init=0), content="0")?
-  let v = PersistentVector::[1, 2, 3, 4, 5]
+  let v = ImmutableVec::[1, 2, 3, 4, 5]
   inspect(e.fold_left(fn(a, b) { a + b }, init=0), content="0")?
   inspect(v.fold_right(fn(a, b) { a + b }, init=0), content="15")?
 }
@@ -380,13 +380,13 @@ test "fold_right" {
 /// 
 /// # Example
 /// ```
-/// let v = PersistentVector::[1, 2, 3, 4, 5]
+/// let v = ImmutableVec::[1, 2, 3, 4, 5]
 /// v.map(fn(e) { e * 2 })
 /// ```
 pub fn map[T, U](
-  self : PersistentVector[T],
+  self : ImmutableVec[T],
   f : (T) -> U
-) -> PersistentVector[U] {
+) -> ImmutableVec[U] {
   fn go(t : Tree[T]) -> Tree[U] {
     match t {
       Empty => Empty
@@ -399,26 +399,26 @@ pub fn map[T, U](
 }
 
 test "map" {
-  let v = PersistentVector::[1, 2, 3, 4, 5]
-  inspect(v.map(fn(e) { e * 2 }), content="PersistentVector::[2, 4, 6, 8, 10]")?
+  let v = ImmutableVec::[1, 2, 3, 4, 5]
+  inspect(v.map(fn(e) { e * 2 }), content="ImmutableVec::[2, 4, 6, 8, 10]")?
   inspect(
     v.map(fn(e) { e.to_string() }),
-    content="PersistentVector::[1, 2, 3, 4, 5]",
+    content="ImmutableVec::[1, 2, 3, 4, 5]",
   )?
   inspect(
     v.map(fn(e) { e % 2 == 0 }),
-    content="PersistentVector::[false, true, false, true, false]",
+    content="ImmutableVec::[false, true, false, true, false]",
   )?
   inspect(
-    PersistentVector::empty().map(fn(e : Int) { e }),
-    content="PersistentVector::[]",
+    ImmutableVec::empty().map(fn(e : Int) { e }),
+    content="ImmutableVec::[]",
   )?
 }
 
 fn new_by_leaves[T](
   len : Int,
   gen_leaf : (Int, Int) -> Array[T]
-) -> PersistentVector[T] {
+) -> ImmutableVec[T] {
   fn tree(cap, len, s) -> Tree[T] {
     if cap == branching_factor {
       Leaf(gen_leaf(s, len))
@@ -440,7 +440,7 @@ fn new_by_leaves[T](
   }
 
   if len == 0 {
-    PersistentVector::empty()
+    ImmutableVec::empty()
   } else {
     let (cap, shift) = loop len, branching_factor, 1 {
       len, m_pow, depth =>
@@ -454,67 +454,67 @@ fn new_by_leaves[T](
 }
 
 test "new_by_leaves" {
-  let e : PersistentVector[Int] = new_by_leaves(
+  let e : ImmutableVec[Int] = new_by_leaves(
     0,
     fn(_s, _l) { abort("never reach") },
   )
   let v = new_by_leaves(5, fn(_s, l) { Array::make(l, 1) })
   let v2 = new_by_leaves(33, fn(_s, l) { Array::make(l, 10) })
-  inspect(e, content="PersistentVector::[]")?
-  inspect(v, content="PersistentVector::[1, 1, 1, 1, 1]")?
+  inspect(e, content="ImmutableVec::[]")?
+  inspect(v, content="ImmutableVec::[1, 1, 1, 1, 1]")?
   inspect(
     v2,
-    content="PersistentVector::[10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10]",
+    content="ImmutableVec::[10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10]",
   )?
   let v3 = new_by_leaves(32, fn(_s, l) { Array::make(l, 10) })
   inspect(
     v3,
-    content="PersistentVector::[10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10]",
+    content="ImmutableVec::[10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10]",
   )?
 }
 
 /// Create a persistent vector with a given length and value.
-pub fn PersistentVector::new[T](len : Int, value : T) -> PersistentVector[T] {
+pub fn ImmutableVec::new[T](len : Int, value : T) -> ImmutableVec[T] {
   new_by_leaves(len, fn(_s, l) { Array::make(l, value) })
 }
 
 test "new" {
-  let v = PersistentVector::new(5, 1)
-  let v2 = PersistentVector::new(33, 10)
-  inspect(v, content="PersistentVector::[1, 1, 1, 1, 1]")?
+  let v = ImmutableVec::new(5, 1)
+  let v2 = ImmutableVec::new(33, 10)
+  inspect(v, content="ImmutableVec::[1, 1, 1, 1, 1]")?
   inspect(
     v2,
-    content="PersistentVector::[10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10]",
+    content="ImmutableVec::[10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10]",
   )?
 }
 
 /// Create a persistent vector with a given length and a function to generate values.
-pub fn PersistentVector::new_with_index[T](
+pub fn ImmutableVec::new_with_index[T](
   len : Int,
   f : (Int) -> T
-) -> PersistentVector[T] {
+) -> ImmutableVec[T] {
   new_by_leaves(len, fn(s, l) { @array.new_with_index(l, fn(i) { f(s + i) }) })
 }
 
 test "new_with" {
   let v = new_with_index(5, fn(i) { i })
   let v2 = new_with_index(33, fn(i) { i * 10 })
-  inspect(v, content="PersistentVector::[0, 1, 2, 3, 4]")?
+  inspect(v, content="ImmutableVec::[0, 1, 2, 3, 4]")?
   inspect(
     v2,
-    content="PersistentVector::[0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 110, 120, 130, 140, 150, 160, 170, 180, 190, 200, 210, 220, 230, 240, 250, 260, 270, 280, 290, 300, 310, 320]",
+    content="ImmutableVec::[0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 110, 120, 130, 140, 150, 160, 170, 180, 190, 200, 210, 220, 230, 240, 250, 260, 270, 280, 290, 300, 310, 320]",
   )?
 }
 
 test "mix" {
-  let mut v = PersistentVector::empty()
+  let mut v = ImmutableVec::empty()
   inspect(v.tree.is_empty_tree(), content="true")?
   for i = 0; i < 100; i = i + 1 {
     v = v.push(i)
   }
   inspect(
     v,
-    content="PersistentVector::[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99]",
+    content="ImmutableVec::[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99]",
   )?
   let mut v2 = v.copy()
   for i = 0; i < 100; i = i + 1 {
@@ -532,7 +532,7 @@ test "mix" {
   inspect(ct2, content="19800")?
   inspect(v.tree.is_empty_tree(), content="false")?
   let large_const = branching_factor * branching_factor + 1
-  let mut v = PersistentVector::empty()
+  let mut v = ImmutableVec::empty()
   for i = 0; i < large_const; i = i + 1 {
     v = v.push(i)
   }

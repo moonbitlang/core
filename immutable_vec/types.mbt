@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-struct PersistentVector[T] {
+struct ImmutableVec[T] {
   tree : Tree[T]
   size : Int
   shift : Int

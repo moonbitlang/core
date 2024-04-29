@@ -6,5 +6,5 @@ Currently, only `push`, `set` and `get` are implemented, alongside with some ite
 
 ## TODO
 
-- Add `insert`.
+- Add `insert` and `delete`.
 - Support tail optimization.
