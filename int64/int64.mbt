@@ -48,10 +48,109 @@ pub fn Int64::min_value() -> Int64 {
   min_val
 }
 
-
-
 pub fn hash(self : Int64) -> Int {
   let lo = self.to_int()
   let hi = self.lsr(32).to_int()
   lo.lxor(hi)
+}
+
+/// Write bytes representation of an `Int64` by specified endianness into target view of `Byte`.
+/// 
+/// # Example
+/// 
+/// ```
+/// let bytes = Bytes::[0x4D, 0x00, 0x7A, 0x00, 0x7A, 0x00, 0x7A, 0x00, 0x7A, 0x00, 0x42, 0x00]
+/// 0x8A008BED51546708.into_view(@representation.Endianness::LittleEndian, bytes[2..6])
+/// @assertion.assert_eq(bytes.to_string(), "M\u{6708}\u{5154}\u{8BED}\u{8A00}B")? 
+/// // "M\u{6708}\u{5154}\u{8BED}\u{8A00}B" 
+/// // => "M月兔语言B" 
+/// // => hex:4D,00,08,67,54,51,ED,8B,00,8A,42,00 (UTF-16)
+/// ```
+/// 
+/// Note: `into_byte_view_le()` and `into_byte_view_be()` can be used as a shorthand 
+/// to avoid writing `Endianness` enum variant explicitly.
+/// 
+/// # Panics
+/// 
+/// 8 bytes of data are required in view. Panics when insufficient.
+pub fn into_byte_view[V: @byte.ByteMutView](self: Int64, view: V, endian: @representation.Endianness) -> Unit {
+  if view.length() < 8 {
+    let len = view.length()
+    abort("insufficient length: \(len) provided, 8 required")
+  }
+  for bs = 0; bs < 8; bs = bs + 1 {
+    let bd = endian.convert_index(bs, 8)
+    view[bd] = Byte::from_int(self.lsr(bs * 8).land(0xFFL).to_int())
+  }
+}
+
+/// Write bytes representation of an `Int64` by little-endian into target view of `Byte`. A shorthand 
+/// of `into_byte_view(V, @representation.Endianness::LittleEndian)`.
+/// 
+/// # Panics
+/// 
+/// 8 bytes of data are required in view. Panics when insufficient.
+pub fn into_byte_view_le[V: @byte.ByteMutView](self: Int64, view: V) -> Unit {
+  self.into_byte_view(view, @representation.Endianness::LittleEndian)
+}
+
+/// Write bytes representation of an `Int64` by little-endian into target view of `Byte`. A shorthand 
+/// of `into_byte_view(V, @representation.Endianness::LittleEndian)`.
+/// 
+/// # Panics
+/// 
+/// 4 bytes of data are required in view. Panics when insufficient.
+pub fn into_byte_view_be[V: @byte.ByteMutView](self: Int64, view: V) -> Unit {
+  self.into_byte_view(view, @representation.Endianness::BigEndian)
+}
+
+/// Extract an `Int64` from the source view of `Byte` by specified endianness.
+/// 
+/// # Example
+/// 
+/// ```
+/// let bytes = Bytes::[0xAA, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0xDD]
+/// @assertion.assert_eq(
+///   Int64::from_byte_view(bytes[1..8], @representation.Endianness::LittleEndian),
+///   0x0807060504030201L
+/// )? 
+/// ```
+/// 
+/// Note: `from_byte_view_le()` and `from_byte_view_be()` can be used as a shorthand 
+/// to avoid writing `Endianness` enum variant explicitly.
+/// 
+/// # Panics
+/// 
+/// 4 bytes of data are required in view. Panics when insufficient.
+pub fn Int64::from_byte_view[V: @byte.ByteView](view: V, endian: @representation.Endianness) -> Int64 {
+  if view.length() < 8 {
+    let len = view.length()
+    abort("insufficient length: \(len) provided, 4 required")
+  }
+  let mut r = 0L
+  for bd = 0; bd < 8; bd = bd + 1 {
+    let bs = endian.convert_index(bd, 8)
+    r = r.lor(view[bs].to_int().land(0xff).to_int64().lsl(8 * bd))
+  }
+  r
+}
+
+/// Extract an `Int64` from the source view of `Byte` by little-endian. A shorthand 
+/// of `from_byte_view(V, @representation.Endianness::LittleEndian)`.
+/// 
+/// # Panics
+/// 
+/// 8 bytes of data are required in view. Panics when insufficient.
+pub fn Int64::from_byte_view_le[V: @byte.ByteView](view: V) -> Int64 {
+  Int64::from_byte_view(view, @representation.Endianness::LittleEndian)
+}
+
+/// Extract an `Int64` from the source view of `Byte` by big-endian. A shorthand 
+/// of `from_byte_view(V, @representation.Endianness::BigEndian)`.
+/// 
+/// # Panics
+/// 
+/// 8 bytes of data are required in view. Panics when insufficient.
+pub fn Int64::from_byte_view_be[V: @byte.ByteView](view: V) -> Int64 {
+  Int64::from_byte_view(view, @representation.Endianness::BigEndian)
 }
