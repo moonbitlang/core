@@ -22,6 +22,8 @@ let radix_bit_len = 16
 
 let radix : Int64 = 1L.lsl(radix_bit_len) // TODO: This can be generalized once we have const generics
 
+let radix_mask : Int64 = radix - 1L
+
 // Useful bigints
 
 let zero : BigInt = from_int64(0L)
@@ -30,8 +32,15 @@ let zero : BigInt = from_int64(0L)
 
 /// Convert an Int to a BigInt.
 pub fn from_int(n : Int) -> BigInt {
-  let n = n.to_int64()
-  from_int64(n)
+  {
+    limbs: Array::make(1, n),
+    sign: if n < 0 {
+      Negative
+    } else {
+      Positive
+    },
+    len: 1,
+  }
 }
 
 /// Convert an Int64 to a BigInt.
@@ -192,95 +201,112 @@ fn grade_school_div(self : BigInt, other : BigInt) -> (BigInt, BigInt) {
     return (-quotient, remainder)
   }
 
-  // Cite: TAOCP Vol. 2, 4.3.1
   if self < other {
     return (zero, self)
   } else if self == other {
     return (from_int(1), zero)
   }
 
-  // implement the algorithm in Knuth[The Art of Computer Programming]
+  // Cite: TAOCP Vol. 2, 4.3.1
   let dividend = self.deep_clone()
   let divisor = other.deep_clone()
-  // 1. normalize
-  let base = radix
   let mut lshift = 0
-  let mut back = divisor.limbs[divisor.limbs.length() - 1].to_int64()
-  while back < base / 2L {
+  let mut back = divisor.limbs[divisor.len - 1].to_int64()
+  while back < radix / 2L {
     back = back.lsl(1)
     lshift += 1
   }
   let dividend = dividend.lsl(lshift)
   let divisor = divisor.lsl(lshift)
-  let b = divisor.limbs
-  let sz_b = b.length() // size of divisor
-  dividend.limbs = dividend.limbs + Array::make(sz_b, 0)
-  // let a = dividend.limbs
-
-  // // 2. loop
-  // const uint_type &v1 = b[sz_b-1], &v2 = b[sz_b-2];
-  // q.resize(a.size() - b.size());
-  // for(size_type i = q.size() - 1; i != (size_type)-1; --i)
-  // {
-  //     // get the estimated value of q
-  //     ull_type qh;
-  //     uint_type &u0 = a[i+sz_b], &u1 = a[i+sz_b-1], &u2 = a[i+sz_b-2];
-  //     qh = (u0 * base + u1) / v1;
-  //     if(qh * v2 > base * (u0 * base + u1 - qh * v1) + u2) --qh;
-
-  //     // multi and subtract
-  //     llint_type borrow = 0;
-  //     ull_type carry = 0;
-  //     for(size_type j = 0; j < sz_b; ++j)
-  //     {
-  //         carry += qh * b[j];
-  //         borrow += a[i+j];
-  //         borrow -= uint_type(carry);
-  //         a[i+j] = uint_type(borrow);
-  //         borrow >>= UINT_LEN;
-  //         carry >>= UINT_LEN;
-  //     }
-  //     borrow += a[i+sz_b];
-  //     borrow -= carry;
-  //     a[i+sz_b] = uint_type(borrow);
-  //     borrow >>= UINT_LEN;
-  //     while(borrow < 0)
-  //     {
-  //         // add divisor back to dividend
-  //         assert(borrow==-1);
-  //         carry = 0;
-  //         for(size_type j = 0; j < sz_b; ++j)
-  //         {
-  //             carry += a[i+j];
-  //             carry += b[j];
-  //             a[i+j] = uint_type(carry);
-  //             carry >>= UINT_LEN;
-  //         }
-  //         carry += a[i+sz_b];
-  //         a[i+sz_b] = uint_type(carry);
-  //         carry >>= UINT_LEN;
-  //         borrow += carry;
-  //         --qh; // don't forget
-  //     }
-  //     assert(borrow == 0);
-  //     q[i] = uint_type(qh);
-
-  // }
-  // // 3. get quotient and real remainder
-  // unsigned_bigint quotient(std::move(q));
-  // dividend.strip();
-  // dividend >>= lshift;
-  // return std::make_pair(std::move(quotient), std::move(dividend));
-
-  (zero, zero)
+  let a_len = dividend.len + 1
+  let b_len = divisor.len
+  let b = Array::make(b_len, 0L)
+  for i = 0; i < b_len; i = i + 1 {
+    b[i] = divisor.limbs[i].to_int64()
+  }
+  let a = Array::make(a_len + 1, 0L)
+  for i = 0; i < a_len - 1; i = i + 1 {
+    a[i] = dividend.limbs[i].to_int64()
+  }
+  let v1 = b[b_len - 1]
+  let v2 = b[b_len - 2]
+  // TODO: case when b_len == 1
+  let q = Array::make(a_len - b_len, 0)
+  for i = q.length() - 1; i >= 0; i = i - 1 {
+    let u0 = a[i + b_len]
+    let u1 = a[i + b_len - 1]
+    let u2 = a[i + b_len - 2]
+    let mut qh = (u0 * radix + u1) / v1
+    if qh * v2 > radix * (u0 * radix + u1 - qh * v1) + u2 {
+      qh -= 1L
+    }
+    let mut borrow = 0L
+    let mut carry = 0L
+    for j = 0; j < b_len; j = j + 1 {
+      carry += qh * b[j]
+      borrow += a[i + j]
+      borrow -= carry.land(radix_mask)
+      a[i + j] = borrow.land(radix_mask)
+      borrow = borrow.asr(radix_bit_len)
+      carry = carry.asr(radix_bit_len)
+    }
+    borrow = borrow + a[i + b_len]
+    borrow -= carry
+    a[i + b_len] = borrow.land(radix_mask)
+    borrow = borrow.asr(radix_bit_len)
+    while borrow < 0L {
+      carry = 0L
+      for j = 0; j < b_len; j = j + 1 {
+        carry += a[i + j]
+        carry += b[j]
+        a[i + j] = carry.land(radix_mask)
+        carry = carry.asr(radix.to_int())
+      }
+      carry += a[i + b_len]
+      a[i + b_len] = carry.land(radix_mask)
+      carry = carry.asr(radix.to_int())
+      borrow += carry
+      qh -= 1L
+    }
+    q[i] = qh.to_int()
+  }
+  let len = if q[q.length() - 1] == 0 { q.length() - 1 } else { q.length() }
+  // strip leading zeros
+  let mut i = a.length() - 1
+  while i >= 0 && a[i] == 0L {
+    i -= 1
+  }
+  if i < 0 {
+    i = 1
+  } else {
+    i += 1
+  }
+  let modulo = Array::make(i, 0)
+  for j = 0; j < i; j = j + 1 {
+    modulo[j] = a[j].to_int()
+  }
+  let modulo = { limbs: modulo, sign: Positive, len: i }
+  ({ limbs: q, sign: Positive, len }, modulo.lsr(lshift))
 }
 
 test "grade_school_div" {
-  // let a = from_int64(1234567890123456789L)
-  // let b = from_int64(123456789L)
-  // let (quotient, remainder) = grade_school_div(a, b)
-  // assert(quotient == from_int64(10000000000L))
-  // assert(remainder == from_int64(987654321L))
+  let a = from_int64(1234567890123456789L)
+  let b = from_int64(123456789L)
+  let (quotient, remainder) = grade_school_div(a, b)
+  inspect(quotient.to_decimal_string(), content="10000000001")?
+  inspect(remainder.to_decimal_string(), content="0")?
+
+  let a = from_int64(9223372036854775807L)
+  let b = from_int64(123456789L)
+  let (quotient, remainder) = grade_school_div(a, b)
+  inspect(quotient.to_decimal_string(), content="74709314178")?
+  inspect(remainder.to_decimal_string(), content="46721365")?
+
+  let a = from_int64(9223372036854775807L)
+  let b = from_int64(2333333333L)
+  let (quotient, remainder) = grade_school_div(a, b)
+  inspect(quotient.to_decimal_string(), content="3952873730")?
+  inspect(remainder.to_decimal_string(), content="1505733717")?
 }
 
 // Bitwise Operations
@@ -301,17 +327,17 @@ pub fn lsl(self : BigInt, n : Int) -> BigInt {
     let mut len = self.len + lz
     if r != 0 {
       let mut carry = 0L
-      for i = 0; i < a.length(); i = i + 1 {
+      for i = 0; i < self.len; i = i + 1 {
         carry = carry.lor(a[i].to_int64().lsl(r))
-        new_limbs[i + lz] = carry.to_int()
+        new_limbs[i + lz] = (carry % radix).to_int()
         carry = carry.lsr(radix_bit_len)
       }
       if carry > 0L {
-        new_limbs[a.length() + lz] = carry.to_int()
+        new_limbs[self.len + lz] = carry.to_int()
         len += 1
       }
     } else {
-      for i = 0; i < a.length(); i = i + 1 {
+      for i = 0; i < self.len; i = i + 1 {
         new_limbs[i + lz] = a[i]
       }
     }
@@ -336,15 +362,13 @@ test "lsl" {
 pub fn lsr(self : BigInt, n : Int) -> BigInt {
   if n < 0 {
     return abort("negative shift count")
-  }    
-  
+  }
   let r = n % radix_bit_len
-  let lz = n / radix_bit_len 
+  let lz = n / radix_bit_len
   if lz >= self.len {
     return make_zero()
   }
-
-  if (r == 0) {
+  if r == 0 {
     let new_limbs = Array::make(self.len - lz, 0)
     for i = lz; i < self.len; i = i + 1 {
       new_limbs[i - lz] = self.limbs[i]
@@ -356,7 +380,7 @@ pub fn lsr(self : BigInt, n : Int) -> BigInt {
     let mut carry = 0L
     for i = self.len - 1; i >= lz; i = i - 1 {
       let x = a[i].to_int64()
-      new_limbs[i - lz] = (x.lsr(r).lor(carry)).to_int()
+      new_limbs[i - lz] = x.lsr(r).lor(carry).to_int()
       carry = x.lsl(radix_bit_len - r) % radix
     }
     { limbs: new_limbs, sign: self.sign, len: self.len - lz }
