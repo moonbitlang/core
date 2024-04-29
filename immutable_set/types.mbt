@@ -19,12 +19,10 @@
 /// ImmutableSets are represented by balanced binary trees (the heights of the children differ by at most 2).
 enum ImmutableSet[T] {
   Empty
-  Node(Node[T])
-} derive(Default, Debug, Eq)
-
-priv struct Node[T] {
-  left : ImmutableSet[T]
-  right : ImmutableSet[T]
-  height : Int
-  value : T
+  Node(
+    ~left : ImmutableSet[T],
+    ~right : ImmutableSet[T],
+    ~height : Int,
+    ~value : T
+  )
 } derive(Default, Debug, Eq)
