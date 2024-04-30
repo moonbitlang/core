@@ -157,7 +157,7 @@ fn provide_sorted_batch[T : Compare](
     // v[start_found..end] are elements that are already sorted in the input. We want to extend
     // the sorted region to the left, so we push up MIN_INSERTION_RUN - 1 to the right. Which is
     // more efficient that trying to push those already sorted elements to the left.
-    let sort_end = @math.minimum(len, start + min_insertion_run)
+    let sort_end = minimum(len, start + min_insertion_run)
     insertion_sort(arr.slice(start, sort_end))
     sort_end
   } else {
@@ -239,7 +239,7 @@ fn quick_sort[T : Compare](
     }
     let (pivot, partitioned) = partition(arr, pivot_index)
     was_partitioned = partitioned
-    balanced = @math.minimum(pivot, len - pivot) >= len / 8
+    balanced = minimum(pivot, len - pivot) >= len / 8
     if not(balanced) {
       limit -= 1
     }
