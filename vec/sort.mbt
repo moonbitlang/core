@@ -65,7 +65,7 @@ fn quick_sort[T : Compare](
     }
     let (pivot, partitioned) = partition(arr, pivot_index)
     was_partitioned = partitioned
-    balanced = @math.minimum(pivot, len - pivot) >= len / 8
+    balanced = minimum(pivot, len - pivot) >= len / 8
     if not(balanced) {
       limit -= 1
     }
