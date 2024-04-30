@@ -198,8 +198,16 @@ test "grow" {
 
 test "as_iter" {
   let buf = Buffer::make(20)
-  let map = HashMap::[(1, "one"), (2, "two")]
+  let map = HashMap::[(1, "one"), (2, "two"), (3, "three")]
   map.as_iter().iter(
+    fn(e) {
+      let (k, v) = e
+      buf.write_string("[\(k)-\(v)]")
+    },
+  )
+  inspect(buf, content="[1-one][2-two][3-three]")?
+  buf.reset()
+  map.as_iter().take(2).iter(
     fn(e) {
       let (k, v) = e
       buf.write_string("[\(k)-\(v)]")
