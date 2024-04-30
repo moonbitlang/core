@@ -48,7 +48,7 @@ pub fn from_int(n : Int) -> BigInt {
 /// Convert an Int64 to a BigInt.
 pub fn from_int64(n : Int64) -> BigInt {
   let limbs = Array::make(64 / radix_bit_len, 0)
-  let mut m = n.abs()
+  let mut m = if n < 0L { -n } else { n }
   let mut i = 0
   while m > 0L {
     limbs[i] = (m % radix).to_int()
@@ -318,32 +318,6 @@ fn grade_school_div(self : BigInt, other : BigInt) -> (BigInt, BigInt) {
   ({ limbs: q, sign: Positive, len }, modulo.lsr(lshift))
 }
 
-test "grade_school_div" {
-  let a = from_int64(1234567890123456789L)
-  let b = from_int64(123456789L)
-  let (quotient, remainder) = grade_school_div(a, b)
-  inspect(quotient.to_decimal_string(), content="10000000001")?
-  inspect(remainder.to_decimal_string(), content="0")?
-  let a = from_int64(9223372036854775807L)
-  let b = from_int64(123456789L)
-  let (quotient, remainder) = grade_school_div(a, b)
-  inspect(quotient.to_decimal_string(), content="74709314178")?
-  inspect(remainder.to_decimal_string(), content="46721365")?
-  let a = from_int64(9223372036854775807L)
-  let b = from_int64(2333333333L)
-  let (quotient, remainder) = grade_school_div(a, b)
-  inspect(quotient.to_decimal_string(), content="3952873730")?
-  inspect(remainder.to_decimal_string(), content="1505733717")?
-
-  // single digit divisor
-
-  let a = from_int64(1234567890123456789L)
-  let b = from_int64(123L)
-  let (quotient, remainder) = grade_school_div(a, b)
-  inspect(quotient.to_decimal_string(), content="10037137318076884")?
-  inspect(remainder.to_decimal_string(), content="57")?
-}
-
 // Bitwise Operations
 
 /// Left shift a bigint
@@ -382,17 +356,6 @@ pub fn lsl(self : BigInt, n : Int) -> BigInt {
   }
 }
 
-test "lsl" {
-  let a = from_int64(1234567890123456789L)
-  let b = a.lsl(1)
-  inspect(b.to_decimal_string(), content="2469135780246913578")?
-  let c = a.lsl(64)
-  inspect(
-    c.to_decimal_string(),
-    content="22773757910726981402256170801141121024",
-  )?
-}
-
 /// Right shift a bigint
 pub fn lsr(self : BigInt, n : Int) -> BigInt {
   if n < 0 {
@@ -420,14 +383,6 @@ pub fn lsr(self : BigInt, n : Int) -> BigInt {
     }
     { limbs: new_limbs, sign: self.sign, len: self.len - lz }
   }
-}
-
-test "lsr" {
-  let a = from_int64(1234567890123456789L)
-  let b = a.lsr(1)
-  inspect(b.to_decimal_string(), content="617283945061728394")?
-  let c = a.lsr(64)
-  inspect(c.to_decimal_string(), content="0")?
 }
 
 // Comparison Operations
@@ -555,19 +510,11 @@ pub fn from_decimal_string(input : String) -> BigInt {
   { limbs: b, sign, len: b_len }
 }
 
-test "from_decimal_string" {
-  let a = from_decimal_string("123")
-  inspect(a.to_decimal_string(), content="123")?
-  @assertion.assert_eq(a, from_int64(123L))?
-  let a = from_decimal_string("1234567890123456789")
-  inspect(a.to_decimal_string(), content="1234567890123456789")?
-  let b = from_decimal_string("-1234567890")
-  inspect(b.to_decimal_string(), content="-1234567890")?
-  @assertion.assert_eq(a, from_int64(1234567890123456789L))?
-}
-
 pub fn deep_clone(self : BigInt) -> BigInt {
-  let new_limbs = self.limbs.map(fn(x) { x })
+  let new_limbs = Array::make(self.len, 0)
+  for i = 0; i < self.len; i = i + 1 {
+    new_limbs[i] = self.limbs[i]
+  }
   { limbs: new_limbs, sign: self.sign, len: self.len }
 }
 
@@ -577,13 +524,4 @@ fn max[T : Compare](a : T, b : T) -> T {
   } else {
     b
   }
-}
-
-// Tests
-
-test "to_decimal_string" {
-  let a = from_int64(1234567890123456789L)
-  inspect(a.to_decimal_string(), content="1234567890123456789")?
-  let b = from_int64(-1234567890L)
-  inspect(b.to_decimal_string(), content="-1234567890")?
 }
