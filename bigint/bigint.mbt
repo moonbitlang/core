@@ -150,7 +150,8 @@ fn grade_school_mul(self : BigInt, other : BigInt) -> BigInt {
   let sign : Sign = if self.sign == other.sign { Positive } else { Negative }
   let self_len = self.len
   let other_len = other.len
-  let limbs = Array::make(self_len + other_len, 0)
+  let mut len = self_len + other_len
+  let limbs = Array::make(len, 0)
   let mut i = 0
   while i < self_len {
     let mut j = 0
@@ -167,7 +168,10 @@ fn grade_school_mul(self : BigInt, other : BigInt) -> BigInt {
     }
     i += 1
   }
-  { limbs, sign, len: self_len + other_len }
+  if limbs[self_len + other_len - 1] == 0 {
+    len -= 1
+  }
+  { limbs, sign, len }
 }
 
 /// Divide two bigint
@@ -362,7 +366,7 @@ pub fn lsr(self : BigInt, n : Int) -> BigInt {
     return abort("negative shift count")
   }
   let r = n % radix_bit_len
-  let lz = n / radix_bit_len
+  let mut lz = n / radix_bit_len
   if lz >= self.len {
     return make_zero()
   }
@@ -370,6 +374,9 @@ pub fn lsr(self : BigInt, n : Int) -> BigInt {
     let new_limbs = Array::make(self.len - lz, 0)
     for i = lz; i < self.len; i = i + 1 {
       new_limbs[i - lz] = self.limbs[i]
+    }
+    if new_limbs[new_limbs.length() - 1] == 0 {
+      lz += 1
     }
     { limbs: new_limbs, sign: self.sign, len: self.len - lz }
   } else {
@@ -381,6 +388,9 @@ pub fn lsr(self : BigInt, n : Int) -> BigInt {
       new_limbs[i - lz] = x.lsr(r).lor(carry).to_int()
       carry = x.lsl(radix_bit_len - r) % radix
     }
+    if new_limbs[new_limbs.length() - 1] == 0 {
+      lz += 1
+    }
     { limbs: new_limbs, sign: self.sign, len: self.len - lz }
   }
 }
@@ -389,7 +399,7 @@ pub fn lsr(self : BigInt, n : Int) -> BigInt {
 
 /// Check if a bigint is zero
 pub fn is_zero(self : BigInt) -> Bool {
-  self.len == 0 || self.len == 1 && self.limbs[0] == 0
+   self.len == 1 && self.limbs[0] == 0
 }
 
 /// Implements the compare trait for BigInt
@@ -484,8 +494,8 @@ pub fn from_decimal_string(input : String) -> BigInt {
     return abort("empty string")
   }
   let sign : Sign = if input[0] == '-' { Negative } else { Positive }
-  let mut b_len = ((len.to_double() / decimal_ratio).to_int() + 1 + radix_bit_len - 1) /
-    radix_bit_len
+  let mut b_len = ((len.to_double() / decimal_ratio).to_int() + 1 + radix_bit_len -
+    1) / radix_bit_len
   let b = Array::make(b_len, 0)
   for i = match sign {
           Negative => 1

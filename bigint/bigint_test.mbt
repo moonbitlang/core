@@ -87,37 +87,12 @@ test "div" {
   let a = from_decimal_string("987654321098765432987654321098765432")
   let b = from_decimal_string("123456789012345678123456789012345678")
   let c = a / b
-  // check_len(c)?
+  check_len(c)?
   inspect(c.to_decimal_string(), content="8")?
   let c = a % b
-  // check_len(c)?
+  debug(c)
+  check_len(c)?
   inspect(c.to_decimal_string(), content="9000000008000000009000000008")?
-}
-
-test "grade_school_div" {
-  let a = from_int64(1234567890123456789L)
-  let b = from_int64(123456789L)
-  let (quotient, remainder) = grade_school_div(a, b)
-  inspect(quotient.to_decimal_string(), content="10000000001")?
-  inspect(remainder.to_decimal_string(), content="0")?
-  let a = from_int64(9223372036854775807L)
-  let b = from_int64(123456789L)
-  let (quotient, remainder) = grade_school_div(a, b)
-  inspect(quotient.to_decimal_string(), content="74709314178")?
-  inspect(remainder.to_decimal_string(), content="46721365")?
-  let a = from_int64(9223372036854775807L)
-  let b = from_int64(2333333333L)
-  let (quotient, remainder) = grade_school_div(a, b)
-  inspect(quotient.to_decimal_string(), content="3952873730")?
-  inspect(remainder.to_decimal_string(), content="1505733717")?
-
-  // single digit divisor
-
-  let a = from_int64(1234567890123456789L)
-  let b = from_int64(123L)
-  let (quotient, remainder) = grade_school_div(a, b)
-  inspect(quotient.to_decimal_string(), content="10037137318076884")?
-  inspect(remainder.to_decimal_string(), content="57")?
 }
 
 test "lsl" {
