@@ -12,10 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-priv enum Entry[K, V] {
+enum Entry[K, V] {
   Empty
   // (Probe Sequence Length, Hash, Key, Value)
-  Valid(Int, Int, K, V)
+  Valid(~psl: Int, ~hash: Int, ~key: K, ~value: V)
 } derive(Debug)
 
 /// A mutable hash map implements with Robin Hood hashing.
