@@ -1,5 +1,6 @@
 package moonbitlang/core/immutable_set
 
+alias @moonbitlang/core/iter as @iter
 alias @moonbitlang/core/vec as @vec
 
 // Values
@@ -8,6 +9,7 @@ alias @moonbitlang/core/vec as @vec
 type ImmutableSet
 impl ImmutableSet {
   add[T : Compare + Eq](Self[T], T) -> Self[T]
+  as_iter[T](Self[T]) -> @iter.Iter[T]
   contain[T : Compare + Eq](Self[T], T) -> Bool
   debug_write[T : Debug](Self[T], Buffer) -> Unit
   default[T : Default]() -> Self[T]
