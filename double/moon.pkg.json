@@ -5,7 +5,12 @@
     "moonbitlang/core/assertion",
     "moonbitlang/core/bool",
     "moonbitlang/core/int64",
-    "moonbitlang/core/coverage"
+    "moonbitlang/core/coverage",
+    "moonbitlang/core/byte",
+    "moonbitlang/core/representation"
   ],
-  "test_import": ["moonbitlang/core/num"]
+  "test_import": [
+    "moonbitlang/core/num",
+    "moonbitlang/core/bytes"
+  ]
 }

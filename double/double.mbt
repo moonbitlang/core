@@ -174,3 +174,67 @@ test "min_normal" {
 pub fn hash(self : Double) -> Int {
   self.reinterpret_as_i64().hash()
 }
+
+/// Write bytes representation of a `Double` by specified endianness into target view of `Byte`.
+/// 
+/// Note: `into_byte_view_le()` and `into_byte_view_be()` can be used as a shorthand 
+/// to avoid writing `Endianness` enum variant explicitly.
+/// 
+/// # Panics
+/// 
+/// 8 bytes of data are required in view. Panics when insufficient.
+pub fn into_byte_view[V: @byte.ByteMutView](self: Double, view: V, endian: @representation.Endianness) -> Unit {
+  self.reinterpret_as_i64().into_byte_view(view, endian)
+}
+
+/// Write bytes representation of a `Double` by little-endian into target view of `Byte`. A shorthand 
+/// of `into_byte_view(V, @representation.Endianness::LittleEndian)`.
+/// 
+/// # Panics
+/// 
+/// 8 bytes of data are required in view. Panics when insufficient.
+pub fn into_byte_view_le[V: @byte.ByteMutView](self: Double, view: V) -> Unit {
+  self.reinterpret_as_i64().into_byte_view(view, @representation.Endianness::LittleEndian)
+}
+
+/// Write bytes representation of a `Double` by little-endian into target view of `Byte`. A shorthand 
+/// of `into_byte_view(V, @representation.Endianness::LittleEndian)`.
+/// 
+/// # Panics
+/// 
+/// 4 bytes of data are required in view. Panics when insufficient.
+pub fn into_byte_view_be[V: @byte.ByteMutView](self: Double, view: V) -> Unit {
+  self.reinterpret_as_i64().into_byte_view(view, @representation.Endianness::BigEndian)
+}
+
+/// Extract a `Double` from the source view of `Byte` by specified endianness.
+/// 
+/// Note: `from_byte_view_le()` and `from_byte_view_be()` can be used as a shorthand 
+/// to avoid writing `Endianness` enum variant explicitly.
+/// 
+/// # Panics
+/// 
+/// 4 bytes of data are required in view. Panics when insufficient.
+pub fn Double::from_byte_view[V: @byte.ByteView](view: V, endian: @representation.Endianness) -> Double {
+  Int64::from_byte_view(view, endian).reinterpret_as_double()
+}
+
+/// Extract a `Double` from the source view of `Byte` by little-endian. A shorthand 
+/// of `from_byte_view(V, @representation.Endianness::LittleEndian)`.
+/// 
+/// # Panics
+/// 
+/// 8 bytes of data are required in view. Panics when insufficient.
+pub fn Double::from_byte_view_le[V: @byte.ByteView](view: V) -> Double {
+  Int64::from_byte_view(view, @representation.Endianness::LittleEndian).reinterpret_as_double()
+}
+
+/// Extract a `Double` from the source view of `Byte` by big-endian. A shorthand 
+/// of `from_byte_view(V, @representation.Endianness::BigEndian)`.
+/// 
+/// # Panics
+/// 
+/// 8 bytes of data are required in view. Panics when insufficient.
+pub fn Double::from_byte_view_be[V: @byte.ByteView](view: V) -> Double {
+  Int64::from_byte_view(view, @representation.Endianness::BigEndian).reinterpret_as_double()
+}
