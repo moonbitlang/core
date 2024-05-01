@@ -3,8 +3,8 @@ package moonbitlang/core/devec
 // Values
 
 // Types and methods
-type Deque
-impl Deque {
+type Devec
+impl Devec {
   back[T](Self[T]) -> Option[T]
   capacity[T](Self[T]) -> Int
   clear[T](Self[T]) -> Unit
