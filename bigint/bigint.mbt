@@ -219,7 +219,8 @@ fn grade_school_div(self : BigInt, other : BigInt) -> (BigInt, BigInt) {
   fn fix(a : (BigInt, BigInt), divisor : BigInt) -> (BigInt, BigInt) {
     let (res, remain) = a
     if remain == zero {
-      return (res, zero.deep_clone())
+      res.sign = Negative
+      return (res, make_zero())
     }
     let remain = match divisor.sign {
       Positive => divisor - remain
@@ -230,6 +231,7 @@ fn grade_school_div(self : BigInt, other : BigInt) -> (BigInt, BigInt) {
     res.sign = Negative
     (res, remain)
   }
+
   // Handle negative numbers
 
   if self.sign == Negative {
@@ -244,9 +246,9 @@ fn grade_school_div(self : BigInt, other : BigInt) -> (BigInt, BigInt) {
 
   // Handle edge cases
   if self < other {
-    return (zero, self)
+    return (make_zero(), self)
   } else if self == other {
-    return (from_int(1), zero)
+    return (from_int(1), make_zero())
   }
   if other.len == 1 {
     let number = other.limbs[0]
@@ -255,7 +257,7 @@ fn grade_school_div(self : BigInt, other : BigInt) -> (BigInt, BigInt) {
     }
     let ret = self.deep_clone()
     if number == 1 {
-      return (ret, zero)
+      return (ret, make_zero())
     }
     let a = ret.limbs
     let x = number.to_int64()
@@ -285,14 +287,14 @@ fn grade_school_div(self : BigInt, other : BigInt) -> (BigInt, BigInt) {
   }
   let dividend = dividend.lsl(lshift)
   let divisor = divisor.lsl(lshift)
-  let a_len = dividend.len + 1
+  let a_len = dividend.len
   let b_len = divisor.len
   let b = Array::make(b_len, 0L)
   for i = 0; i < b_len; i = i + 1 {
     b[i] = divisor.limbs[i].to_int64()
   }
-  let a = Array::make(a_len + 1, 0L)
-  for i = 0; i < a_len - 1; i = i + 1 {
+  let a = Array::make(a_len, 0L)
+  for i = 0; i < a_len; i = i + 1 {
     a[i] = dividend.limbs[i].to_int64()
   }
   let v1 = b[b_len - 1]
@@ -326,11 +328,11 @@ fn grade_school_div(self : BigInt, other : BigInt) -> (BigInt, BigInt) {
         carry += a[i + j]
         carry += b[j]
         a[i + j] = carry.land(radix_mask)
-        carry = carry.asr(radix.to_int())
+        carry = carry.asr(radix_bit_len)
       }
       carry += a[i + b_len]
       a[i + b_len] = carry.land(radix_mask)
-      carry = carry.asr(radix.to_int())
+      carry = carry.asr(radix_bit_len)
       borrow += carry
       qh -= 1L
     }

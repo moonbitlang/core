@@ -278,11 +278,11 @@ test "div" {
     content="38580247791358024838580247791358024841661120157195963893277947",
   )?
   let b = from_decimal_string(
-    "-123456789012345678123456789012345678123456789012345678123456789012345678",
+    "123456789012345678123456789012345678123456789012345678123456789012345678",
   )
   let c = a / b
   check_len(c)?
-  inspect(c.to_decimal_string(), content="1")?
+  inspect(c.to_decimal_string(), content="-1")?
   let c = a % b
   check_len(c)?
   inspect(c.to_decimal_string(), content="0")?
@@ -296,54 +296,109 @@ test "div" {
   let c = a % b
   check_len(c)?
   inspect(c.to_decimal_string(), content="24")?
+  let a = from_int64(radix * 2L)
+  let b = from_int(3)
+  let c = a / b
+  check_len(c)?
+  inspect(c.to_decimal_string(), content="43690")?
+  let c = a % b
+  check_len(c)?
+  inspect(c.to_decimal_string(), content="2")?
+  let a = from_decimal_string(
+    "192840512535448761530339373212972361809285001825938158026158292411480026580386667968523131569543343891463401449181505398836",
+  )
+  let b = from_decimal_string(
+    "53114991887765067119604462397623222751521283658033792",
+  )
+  let c = a / b
+  check_len(c)?
+  inspect(
+    c.to_decimal_string(),
+    content="3630623025283172274355511610456320508397929760764978568884844414130904",
+  )?
+  let a = from_decimal_string("65535232222222222222222222222")
+  let b = from_decimal_string("65536")
+  let c = a / b
+  check_len(c)?
+  // inspect(c.to_decimal_string(), content="1")?
 }
 
 test "lsl" {
   let a = from_int64(1234567890123456789L)
   let b = a.lsl(1)
+  check_len(b)?
   inspect(b.to_decimal_string(), content="2469135780246913578")?
   let c = a.lsl(64)
+  check_len(c)?
   inspect(
     c.to_decimal_string(),
     content="22773757910726981402256170801141121024",
   )?
   let a = zero.deep_clone()
   let b = a.lsl(1)
+  check_len(b)?
   inspect(b.to_decimal_string(), content="0")?
 }
 
 test "lsr" {
   let a = from_int64(1234567890123456789L)
   let b = a.lsr(1)
+  check_len(b)?
   inspect(b.to_decimal_string(), content="617283945061728394")?
   let c = a.lsr(64)
+  check_len(c)?
   inspect(c.to_decimal_string(), content="0")?
   let a = from_int64(radix * radix / 2L)
   let b = a.lsr(radix_bit_len * 2)
+  check_len(b)?
   inspect(b.to_decimal_string(), content="0")?
+  let b = a.lsr(radix_bit_len)
+  check_len(b)?
+  // inspect(b.to_decimal_string(), content="500
+  let a = from_decimal_string("1234567890123456798912873456789")
+  let b = a.lsr(17)
+  check_len(b)?
+  // inspect(b.to_decimal_string(), content="9444444444444444444444444")?
 }
 
 test "from_decimal_string" {
   let a = from_decimal_string("123")
+  check_len(a)?
   inspect(a.to_decimal_string(), content="123")?
   @assertion.assert_eq(a, from_int64(123L))?
   let a = from_decimal_string("1234567890123456789")
+  check_len(a)?
   inspect(a.to_decimal_string(), content="1234567890123456789")?
   let b = from_decimal_string("-1234567890")
+  check_len(b)?
   inspect(b.to_decimal_string(), content="-1234567890")?
   @assertion.assert_eq(a, from_int64(1234567890123456789L))?
 }
 
 test "to_decimal_string" {
   let a = from_int64(1234567890123456789L)
+  check_len(a)?
   inspect(a.to_decimal_string(), content="1234567890123456789")?
   let b = from_int64(-1234567890L)
+  check_len(b)?
   inspect(b.to_decimal_string(), content="-1234567890")?
 }
 
 test "from_int" {
   let a = from_int(1234567899)
+  check_len(a)?
   inspect(a.to_decimal_string(), content="1234567899")?
   let b = from_int(-1234567890)
+  check_len(b)?
   inspect(b.to_decimal_string(), content="-1234567890")?
+}
+
+test "compare" {
+  let a = from_int64(1234567890123456789L)
+  let b = from_int64(-1234567890123456789L)
+  inspect(a.compare(b), content="1")?
+  inspect(b.compare(a), content="-1")?
+  let b = from_int64(123456789L)
+  @assertion.assert_true(a.compare(b) > 0)?
+  @assertion.assert_true(b.compare(a) < 0)?
 }
