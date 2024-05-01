@@ -29,7 +29,8 @@ let decimal_ratio = 0.302 // log10(2)
 // Useful bigints
 
 let zero : BigInt = from_int64(0L)
-let one: BigInt = from_int64(1L)
+
+let one : BigInt = from_int64(1L)
 
 // Conversion Functions
 
@@ -44,6 +45,9 @@ pub fn from_int(n : Int) -> BigInt {
 
 /// Convert an Int64 to a BigInt.
 pub fn from_int64(n : Int64) -> BigInt {
+  if n == 0L {
+    return { limbs: Array::make(1, 0), sign: Positive, len: 1 }
+  }
   let limbs = Array::make(64 / radix_bit_len, 0)
   let mut m = if n < 0L { -n } else { n }
   let mut i = 0
@@ -212,7 +216,7 @@ pub fn op_mod(self : BigInt, other : BigInt) -> BigInt {
 // Simplest way to divide two BigInts.
 // Assumption: other != zero.
 fn grade_school_div(self : BigInt, other : BigInt) -> (BigInt, BigInt) {
-  fn fix(a: (BigInt, BigInt), divisor: BigInt) -> (BigInt, BigInt) {
+  fn fix(a : (BigInt, BigInt), divisor : BigInt) -> (BigInt, BigInt) {
     let (res, remain) = a
     if remain == zero {
       return (res, zero.deep_clone())
@@ -227,6 +231,7 @@ fn grade_school_div(self : BigInt, other : BigInt) -> (BigInt, BigInt) {
     (res, remain)
   }
   // Handle negative numbers
+
   if self.sign == Negative {
     if other.sign == Negative {
       return grade_school_div(neg(self), neg(other))
@@ -395,21 +400,22 @@ pub fn lsr(self : BigInt, n : Int) -> BigInt {
     return abort("negative shift count")
   }
   let r = n % radix_bit_len
-  let mut lz = n / radix_bit_len
+  let lz = n / radix_bit_len
   if lz >= self.len {
     return make_zero()
   }
+  let mut new_len = self.len - lz
   if r == 0 {
-    let new_limbs = Array::make(self.len - lz, 0)
+    let new_limbs = Array::make(new_len, 0)
     for i = lz; i < self.len; i = i + 1 {
       new_limbs[i - lz] = self.limbs[i]
     }
-    if new_limbs[new_limbs.length() - 1] == 0 {
-      lz += 1
+    if new_len > 1 && new_limbs[new_len - 1] == 0 {
+      new_len -= 1
     }
-    { limbs: new_limbs, sign: self.sign, len: self.len - lz }
+    { limbs: new_limbs, sign: self.sign, len: new_len }
   } else {
-    let new_limbs = Array::make(self.len - lz, 0)
+    let new_limbs = Array::make(new_len, 0)
     let a = self.limbs
     let mut carry = 0L
     for i = self.len - 1; i >= lz; i = i - 1 {
@@ -417,10 +423,10 @@ pub fn lsr(self : BigInt, n : Int) -> BigInt {
       new_limbs[i - lz] = x.lsr(r).lor(carry).to_int()
       carry = x.lsl(radix_bit_len - r) % radix
     }
-    if new_limbs[new_limbs.length() - 1] == 0 {
-      lz += 1
+    if new_len > 1 && new_limbs[new_len - 1] == 0 {
+      new_len -= 1
     }
-    { limbs: new_limbs, sign: self.sign, len: self.len - lz }
+    { limbs: new_limbs, sign: self.sign, len: new_len }
   }
 }
 

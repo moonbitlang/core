@@ -13,6 +13,9 @@
 // limitations under the License.
 
 fn check_len(a : BigInt) -> Result[Unit, String] {
+  if a.is_zero() {
+    return Ok(())
+  }
   @assertion.assert_ne(a.limbs[a.len - 1], 0)?
   for i = a.len; i < a.limbs.length(); i = i + 1 {
     @assertion.assert_eq(a.limbs[i], 0)?
@@ -214,7 +217,6 @@ test "div" {
   let c = a % b
   check_len(c)?
   inspect(c.to_decimal_string(), content="9000000008000000009000000008")?
-
   let a = from_decimal_string(
     "-123456789012345678123456789012345678123456789012345678123456789012345678",
   )
@@ -226,8 +228,10 @@ test "div" {
   inspect(c.to_decimal_string(), content="22578502")?
   let c = a % b
   check_len(c)?
-  inspect(c.to_decimal_string(), content="1411754890143397710214334775703365651947321477507789807694283800")?
-
+  inspect(
+    c.to_decimal_string(),
+    content="1411754890143397710214334775703365651947321477507789807694283800",
+  )?
   let a = from_decimal_string(
     "12421645375698213532453474567345623538756734578959876125298763582362",
   )
@@ -239,9 +243,59 @@ test "div" {
   inspect(c.to_decimal_string(), content="-2272")?
   let c = a % b
   check_len(c)?
-  inspect(c.to_decimal_string(), content="-1402948258011299942147915894441293642113821688447833429560447046")?
-
-
+  inspect(
+    c.to_decimal_string(),
+    content="-1402948258011299942147915894441293642113821688447833429560447046",
+  )?
+  let a = from_decimal_string(
+    "559480073748030317374803031737502937374948313029373748143063751326169",
+  )
+  let b = from_decimal_string(
+    "5467890987656789098765678909876789098767098767890987657890987689",
+  )
+  let c = a / b
+  check_len(c)?
+  inspect(c.to_decimal_string(), content="102321")?
+  let c = a % b
+  check_len(c)?
+  inspect(c.to_decimal_string(), content="0")?
+  let c = b / a
+  check_len(c)?
+  inspect(c.to_decimal_string(), content="0")?
+  let a = from_decimal_string(
+    "-123456789012345678123456789012345678123456789012345678123456789012345678",
+  )
+  let b = from_decimal_string(
+    "98765432109876543298765432109876543298765432112341241213125125",
+  )
+  let c = a / b
+  check_len(c)?
+  inspect(c.to_decimal_string(), content="-1249999989")?
+  let c = a % b
+  check_len(c)?
+  inspect(
+    c.to_decimal_string(),
+    content="38580247791358024838580247791358024841661120157195963893277947",
+  )?
+  let b = from_decimal_string(
+    "-123456789012345678123456789012345678123456789012345678123456789012345678",
+  )
+  let c = a / b
+  check_len(c)?
+  inspect(c.to_decimal_string(), content="1")?
+  let c = a % b
+  check_len(c)?
+  inspect(c.to_decimal_string(), content="0")?
+  let b = from_int(42)
+  let c = a / b
+  check_len(c)?
+  inspect(
+    c.to_decimal_string(),
+    content="-2939447357436801860082304500293944717225161643151087574368018786008231",
+  )?
+  let c = a % b
+  check_len(c)?
+  inspect(c.to_decimal_string(), content="24")?
 }
 
 test "lsl" {
@@ -253,6 +307,9 @@ test "lsl" {
     c.to_decimal_string(),
     content="22773757910726981402256170801141121024",
   )?
+  let a = zero.deep_clone()
+  let b = a.lsl(1)
+  inspect(b.to_decimal_string(), content="0")?
 }
 
 test "lsr" {
@@ -261,6 +318,9 @@ test "lsr" {
   inspect(b.to_decimal_string(), content="617283945061728394")?
   let c = a.lsr(64)
   inspect(c.to_decimal_string(), content="0")?
+  let a = from_int64(radix * radix / 2L)
+  let b = a.lsr(radix_bit_len * 2)
+  inspect(b.to_decimal_string(), content="0")?
 }
 
 test "from_decimal_string" {
