@@ -924,8 +924,7 @@ test "as_iter" {
   )
   @assertion.assert_eq(i, arr.length())?
   exb.expect(
-    content=
-    #|1
+    content=#|1
     #|2
     #|3
     #|4

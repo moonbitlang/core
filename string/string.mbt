@@ -180,9 +180,12 @@ pub fn as_iter(self : String) -> @iter.Iter[Char] {
 
 test "chars" {
   let mut str = ""
-  "A😊𠮷BA😊𠮷B".as_iter().iter(fn (c) { str = str + c.to_int().to_string() + "\n" })
-  inspect(str, content=
-    #|65
+  "A😊𠮷BA😊𠮷B".as_iter().iter(
+    fn(c) { str = str + c.to_int().to_string() + "\n" },
+  )
+  inspect(
+    str,
+    content=#|65
     #|128522
     #|134071
     #|66
@@ -191,5 +194,6 @@ test "chars" {
     #|134071
     #|66
     #|
+    ,
   )?
 }
