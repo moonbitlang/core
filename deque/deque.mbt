@@ -94,18 +94,18 @@ fn realloc[T](self : Deque[T]) -> Unit {
 }
 
 test "realloc" {
-  let dq = Deque::[1, 2, 3, 4, 5]
-  @assertion.assert_eq(dq.pop_front(), Some(1))?
-  @assertion.assert_eq(dq.pop_front(), Some(2))?
-  @assertion.assert_eq(dq.pop_front(), Some(3))?
-  dq.push_back(6)
-  dq.push_back(7)
-  dq.push_back(8)
-  dq.push_back(9)
-  dq.push_back(10)
+  let dv = Deque::[1, 2, 3, 4, 5]
+  @assertion.assert_eq(dv.pop_front(), Some(1))?
+  @assertion.assert_eq(dv.pop_front(), Some(2))?
+  @assertion.assert_eq(dv.pop_front(), Some(3))?
+  dv.push_back(6)
+  dv.push_back(7)
+  dv.push_back(8)
+  dv.push_back(9)
+  dv.push_back(10)
   let result = Array::make(7, 0)
   let mut i = 0
-  dq.iter(
+  dv.iter(
     fn(x) {
       result[i] = x
       i += 1
@@ -118,8 +118,8 @@ test "realloc" {
 /// 
 /// # Example
 /// ```
-/// let dq = Deque::[1, 2, 3, 4, 5]
-/// dq.front()
+/// let dv = Deque::[1, 2, 3, 4, 5]
+/// dv.front()
 /// ```
 pub fn front[T](self : Deque[T]) -> Option[T] {
   if self.len == 0 {
@@ -133,8 +133,8 @@ pub fn front[T](self : Deque[T]) -> Option[T] {
 /// 
 /// # Example
 /// ```
-/// let dq = Deque::[1, 2, 3, 4, 5]
-/// dq.back()
+/// let dv = Deque::[1, 2, 3, 4, 5]
+/// dv.back()
 /// ```
 pub fn back[T](self : Deque[T]) -> Option[T] {
   if self.len == 0 {
@@ -145,12 +145,12 @@ pub fn back[T](self : Deque[T]) -> Option[T] {
 }
 
 test "front_and_back" {
-  let dq = Deque::[1, 2, 3, 4, 5]
-  @assertion.assert_eq(dq.back(), Some(5))?
-  @assertion.assert_eq(dq.front(), Some(1))?
-  let dq : Deque[Int] = Deque::[]
-  @assertion.assert_eq(dq.back(), None)?
-  @assertion.assert_eq(dq.front(), None)?
+  let dv = Deque::[1, 2, 3, 4, 5]
+  @assertion.assert_eq(dv.back(), Some(5))?
+  @assertion.assert_eq(dv.front(), Some(1))?
+  let dv : Deque[Int] = Deque::[]
+  @assertion.assert_eq(dv.back(), None)?
+  @assertion.assert_eq(dv.front(), None)?
 }
 
 /// Adds an element to the front of the deque.
@@ -159,8 +159,8 @@ test "front_and_back" {
 /// 
 /// # Example
 /// ```
-/// let dq = Deque::[1, 2, 3, 4, 5]
-/// dq.push(0)
+/// let dv = Deque::[1, 2, 3, 4, 5]
+/// dv.push(0)
 /// ```
 pub fn push_front[T](self : Deque[T], value : T) -> Unit {
   if self.len == self.buf.length() {
@@ -177,8 +177,8 @@ pub fn push_front[T](self : Deque[T], value : T) -> Unit {
 /// 
 /// # Example
 /// ```
-/// let dq = Deque::[1, 2, 3, 4, 5]
-/// dq.push(6)
+/// let dv = Deque::[1, 2, 3, 4, 5]
+/// dv.push(6)
 /// ```
 pub fn push_back[T](self : Deque[T], value : T) -> Unit {
   if self.len == self.buf.length() {
@@ -193,8 +193,8 @@ pub fn push_back[T](self : Deque[T], value : T) -> Unit {
 /// 
 /// # Example
 /// ```
-/// let dq = Deque::[1, 2, 3, 4, 5]
-/// dq.pop_front_exn()
+/// let dv = Deque::[1, 2, 3, 4, 5]
+/// dv.pop_front_exn()
 /// ```
 /// @alert unsafe "Panic if the deque is empty."
 pub fn pop_front_exn[T](self : Deque[T]) -> Unit {
@@ -209,8 +209,8 @@ pub fn pop_front_exn[T](self : Deque[T]) -> Unit {
 /// 
 /// # Example
 /// ```
-/// let dq = Deque::[1, 2, 3, 4, 5]
-/// dq.pop_back_exn()
+/// let dv = Deque::[1, 2, 3, 4, 5]
+/// dv.pop_back_exn()
 /// ```
 /// @alert unsafe "Panic if the deque is empty."
 pub fn pop_back_exn[T](self : Deque[T]) -> Unit {
@@ -225,8 +225,8 @@ pub fn pop_back_exn[T](self : Deque[T]) -> Unit {
 /// 
 /// # Example
 /// ```
-/// let dq = Deque::[1, 2, 3, 4, 5]
-/// dq.pop_front()
+/// let dv = Deque::[1, 2, 3, 4, 5]
+/// dv.pop_front()
 /// ```
 pub fn pop_front[T](self : Deque[T]) -> Option[T] {
   if self.len == 0 {
@@ -242,8 +242,8 @@ pub fn pop_front[T](self : Deque[T]) -> Option[T] {
 /// 
 /// # Example
 /// ```
-/// let dq = Deque::[1, 2, 3, 4, 5]
-/// dq.pop_back()
+/// let dv = Deque::[1, 2, 3, 4, 5]
+/// dv.pop_back()
 /// ```
 pub fn pop_back[T](self : Deque[T]) -> Option[T] {
   if self.len == 0 {
@@ -256,38 +256,38 @@ pub fn pop_back[T](self : Deque[T]) -> Option[T] {
 }
 
 test "push_and_pop" {
-  let dq = Deque::[1, 2, 3, 4, 5]
-  @assertion.assert_eq(dq.pop_back(), Some(5))?
-  @assertion.assert_eq(dq.length(), 4)?
-  @assertion.assert_eq(dq.back(), Some(4))?
-  @assertion.assert_eq(dq.pop_front(), Some(1))?
-  @assertion.assert_eq(dq.length(), 3)?
-  @assertion.assert_eq(dq.front(), Some(2))?
-  dq.push_front(5)
-  dq.push_front(6)
-  dq.push_back(7)
-  dq.push_back(8)
-  @assertion.assert_eq(dq.length(), 7)?
-  @assertion.assert_eq(dq.pop_front(), Some(6))?
-  @assertion.assert_eq(dq.front(), Some(5))?
-  @assertion.assert_eq(dq.length(), 6)?
-  @assertion.assert_eq(dq.pop_back(), Some(8))?
-  @assertion.assert_eq(dq.back(), Some(7))?
-  let dq = Deque::[1]
-  @assertion.assert_eq(dq.pop_front(), Some(1))?
-  @assertion.assert_eq(dq.pop_front(), None)?
-  @assertion.assert_eq(dq.pop_back(), None)?
+  let dv = Deque::[1, 2, 3, 4, 5]
+  @assertion.assert_eq(dv.pop_back(), Some(5))?
+  @assertion.assert_eq(dv.length(), 4)?
+  @assertion.assert_eq(dv.back(), Some(4))?
+  @assertion.assert_eq(dv.pop_front(), Some(1))?
+  @assertion.assert_eq(dv.length(), 3)?
+  @assertion.assert_eq(dv.front(), Some(2))?
+  dv.push_front(5)
+  dv.push_front(6)
+  dv.push_back(7)
+  dv.push_back(8)
+  @assertion.assert_eq(dv.length(), 7)?
+  @assertion.assert_eq(dv.pop_front(), Some(6))?
+  @assertion.assert_eq(dv.front(), Some(5))?
+  @assertion.assert_eq(dv.length(), 6)?
+  @assertion.assert_eq(dv.pop_back(), Some(8))?
+  @assertion.assert_eq(dv.back(), Some(7))?
+  let dv = Deque::[1]
+  @assertion.assert_eq(dv.pop_front(), Some(1))?
+  @assertion.assert_eq(dv.pop_front(), None)?
+  @assertion.assert_eq(dv.pop_back(), None)?
 }
 
 test "push_realloc" {
-  let dq : Deque[Int] = Deque::with_capacity(0)
-  dq.push_front(1)
-  @assertion.assert_eq(dq.pop_front(), Some(1))?
-  @assertion.assert_true(dq.capacity() > 0)?
-  let dq : Deque[Int] = Deque::with_capacity(0)
-  dq.push_back(1)
-  @assertion.assert_eq(dq.pop_back(), Some(1))?
-  @assertion.assert_true(dq.capacity() > 0)?
+  let dv : Deque[Int] = Deque::with_capacity(0)
+  dv.push_front(1)
+  @assertion.assert_eq(dv.pop_front(), Some(1))?
+  @assertion.assert_true(dv.capacity() > 0)?
+  let dv : Deque[Int] = Deque::with_capacity(0)
+  dv.push_back(1)
+  @assertion.assert_eq(dv.pop_back(), Some(1))?
+  @assertion.assert_true(dv.capacity() > 0)?
 }
 
 /// Retrieves the element at the specified index from the deque.
@@ -296,8 +296,8 @@ test "push_realloc" {
 /// 
 /// # Example
 /// ```
-/// let dq = Deque::[1, 2, 3, 4, 5]
-/// println(dq[2]) // 3
+/// let dv = Deque::[1, 2, 3, 4, 5]
+/// println(dv[2]) // 3
 /// ```
 /// @alert unsafe "Panic if the index is out of bounds."
 pub fn op_get[T](self : Deque[T], index : Int) -> T {
@@ -315,17 +315,17 @@ pub fn op_get[T](self : Deque[T], index : Int) -> T {
 }
 
 test "op_get" {
-  let dq = Deque::[1, 2, 3, 4, 5]
-  @assertion.assert_eq(dq[0], 1)?
-  @assertion.assert_eq(dq[1], 2)?
-  @assertion.assert_eq(dq[2], 3)?
-  @assertion.assert_eq(dq[3], 4)?
-  @assertion.assert_eq(dq[4], 5)?
-  let _ = dq.pop_front()
-  dq.push_back(1)
-  @assertion.assert_eq(dq[4], 1)?
-  dq.push_front(2)
-  @assertion.assert_eq(dq[0], 2)?
+  let dv = Deque::[1, 2, 3, 4, 5]
+  @assertion.assert_eq(dv[0], 1)?
+  @assertion.assert_eq(dv[1], 2)?
+  @assertion.assert_eq(dv[2], 3)?
+  @assertion.assert_eq(dv[3], 4)?
+  @assertion.assert_eq(dv[4], 5)?
+  let _ = dv.pop_front()
+  dv.push_back(1)
+  @assertion.assert_eq(dv[4], 1)?
+  dv.push_front(2)
+  @assertion.assert_eq(dv[0], 2)?
 }
 
 /// Sets the value of the element at the specified index.
@@ -334,9 +334,9 @@ test "op_get" {
 /// 
 /// # Example
 /// ```
-/// let dq = Deque::[1, 2, 3, 4, 5]
-/// dq[2] = 1
-/// println(dq[2]) // 1
+/// let dv = Deque::[1, 2, 3, 4, 5]
+/// dv[2] = 1
+/// println(dv[2]) // 1
 /// ```
 /// @alert unsafe "Panic if the index is out of bounds."
 pub fn op_set[T](self : Deque[T], index : Int, value : T) -> Unit {
@@ -354,9 +354,9 @@ pub fn op_set[T](self : Deque[T], index : Int, value : T) -> Unit {
 }
 
 test "op_set" {
-  let dq = Deque::[1, 2, 3, 4, 5]
-  dq[1] = 3
-  @assertion.assert_eq(dq[1], 3)?
+  let dv = Deque::[1, 2, 3, 4, 5]
+  dv[1] = 3
+  @assertion.assert_eq(dv[1], 3)?
 }
 
 /// Compares two deques for equality.
@@ -390,9 +390,9 @@ test "op_equal" {
 /// 
 /// # Example
 /// ```
-/// let dq = Deque::[1, 2, 3, 4, 5]
+/// let dv = Deque::[1, 2, 3, 4, 5]
 /// let mut sum = 0
-/// dq.iter(fn (x) {sum = sum + x})
+/// dv.iter(fn (x) {sum = sum + x})
 /// ```
 pub fn iter[T](self : Deque[T], f : (T) -> Unit) -> Unit {
   for i = 0; i < self.length(); i = i + 1 {
@@ -427,9 +427,9 @@ test "iter2" {
 /// 
 /// # Example
 /// ```
-/// let dq = Deque::[1, 2, 3, 4, 5]
+/// let dv = Deque::[1, 2, 3, 4, 5]
 /// let mut idx_sum = 0
-/// dq.iteri(fn (i, x) {idx_sum = idx_sum + i})
+/// dv.iteri(fn (i, x) {idx_sum = idx_sum + i})
 /// ```
 pub fn iteri[T](self : Deque[T], f : (Int, T) -> Unit) -> Unit {
   for i = 0; i < self.length(); i = i + 1 {
@@ -455,9 +455,9 @@ test "iteri" {
 /// 
 /// # Example
 /// ```
-/// let dq = Deque::[1, 2, 3, 4, 5]
+/// let dv = Deque::[1, 2, 3, 4, 5]
 /// let mut sum = 0
-/// dq.iter_rev(fn (x) {sum = sum + x})
+/// dv.iter_rev(fn (x) {sum = sum + x})
 /// ```
 pub fn iter_rev[T](self : Deque[T], f : (T) -> Unit) -> Unit {
   for i = self.length() - 1; i >= 0; i = i - 1 {
@@ -483,9 +483,9 @@ test "iter_rev" {
 /// 
 /// # Example
 /// ```
-/// let dq = Deque::[1, 2, 3, 4, 5]
+/// let dv = Deque::[1, 2, 3, 4, 5]
 /// let mut idx_sum = 0
-/// dq.iter_revi(fn (i, x) {idx_sum = idx_sum + i})
+/// dv.iter_revi(fn (i, x) {idx_sum = idx_sum + i})
 /// ```
 pub fn iter_revi[T](self : Deque[T], f : (Int, T) -> Unit) -> Unit {
   for i = 0; i < self.len; i = i + 1 {
@@ -515,8 +515,8 @@ test "iter_revi" {
 /// 
 /// # Example
 /// ```
-/// let dq = Deque:: [1, 2, 3, 4, 5]
-/// dq.clear()
+/// let dv = Deque:: [1, 2, 3, 4, 5]
+/// dv.clear()
 /// ```
 pub fn clear[T](self : Deque[T]) -> Unit {
   self.len = 0
@@ -525,17 +525,17 @@ pub fn clear[T](self : Deque[T]) -> Unit {
 }
 
 test "clear" {
-  let dq = Deque::[3, 4, 5]
-  dq.clear()
-  @assertion.assert_eq(dq.length(), 0)?
-  @assertion.assert_eq(dq.capacity(), 3)?
+  let dv = Deque::[3, 4, 5]
+  dv.clear()
+  @assertion.assert_eq(dv.length(), 0)?
+  @assertion.assert_eq(dv.capacity(), 3)?
 }
 
 /// Maps a function over the elements of the deque.
 /// 
 /// # Example
 /// ```
-/// let dq = Deque::[3, 4, 5]
+/// let dv = Deque::[3, 4, 5]
 /// v.map(fn (x) {x + 1})
 /// ```
 pub fn map[T](self : Deque[T], f : (T) -> T) -> Unit {
@@ -545,18 +545,18 @@ pub fn map[T](self : Deque[T], f : (T) -> T) -> Unit {
 }
 
 test "map" {
-  let dq = Deque::[3, 4, 5]
-  dq.map(fn(x) { x + 1 })
-  @assertion.assert_eq(dq[0], 4)?
-  @assertion.assert_eq(dq[1], 5)?
-  @assertion.assert_eq(dq[2], 6)?
+  let dv = Deque::[3, 4, 5]
+  dv.map(fn(x) { x + 1 })
+  @assertion.assert_eq(dv[0], 4)?
+  @assertion.assert_eq(dv[1], 5)?
+  @assertion.assert_eq(dv[2], 6)?
 }
 
 /// Maps a function over the elements of the deque with index.
 /// 
 /// # Example
 /// ```
-/// let dq = Deque::[3, 4, 5]
+/// let dv = Deque::[3, 4, 5]
 /// v.mapi(fn (i, x) {x + i})
 /// ```
 pub fn mapi[T](self : Deque[T], f : (Int, T) -> T) -> Unit {
@@ -566,37 +566,37 @@ pub fn mapi[T](self : Deque[T], f : (Int, T) -> T) -> Unit {
 }
 
 test "mapi" {
-  let dq = Deque::[3, 4, 5]
-  dq.mapi(fn(i, x) { x + i })
-  @assertion.assert_eq(dq[0], 3)?
-  @assertion.assert_eq(dq[1], 5)?
-  @assertion.assert_eq(dq[2], 7)?
+  let dv = Deque::[3, 4, 5]
+  dv.mapi(fn(i, x) { x + i })
+  @assertion.assert_eq(dv[0], 3)?
+  @assertion.assert_eq(dv[1], 5)?
+  @assertion.assert_eq(dv[2], 7)?
 }
 
 /// Test if the deque is empty.
 /// 
 /// # Example
 /// ```
-/// let dq = Deque::new()
-/// dq.is_empty()
+/// let dv = Deque::new()
+/// dv.is_empty()
 /// ```
 pub fn is_empty[T](self : Deque[T]) -> Bool {
   self.len == 0
 }
 
 test "is_empty" {
-  let dq = Deque::new()
-  @assertion.assert_true(dq.is_empty())?
-  dq.push_back(3)
-  @assertion.assert_false(dq.is_empty())?
+  let dv = Deque::new()
+  @assertion.assert_true(dv.is_empty())?
+  dv.push_back(3)
+  @assertion.assert_false(dv.is_empty())?
 }
 
 /// Search the deque index for a given element.
 /// 
 /// # Example
 /// ```
-/// let dq = Deque::[3, 4, 5]
-/// dq.search(3) // Some(0)
+/// let dv = Deque::[3, 4, 5]
+/// dv.search(3) // Some(0)
 /// ```
 pub fn search[T : Eq](self : Deque[T], value : T) -> Option[Int] {
   for i = 0; i < self.len; i = i + 1 {
@@ -608,19 +608,19 @@ pub fn search[T : Eq](self : Deque[T], value : T) -> Option[Int] {
 }
 
 test "search" {
-  let dq = Deque::[3, 4, 5]
-  @assertion.assert_eq(dq.search(3), Some(0))?
-  @assertion.assert_eq(dq.search(4), Some(1))?
-  @assertion.assert_eq(dq.search(5), Some(2))?
-  @assertion.assert_eq(dq.search(6), None)?
+  let dv = Deque::[3, 4, 5]
+  @assertion.assert_eq(dv.search(3), Some(0))?
+  @assertion.assert_eq(dv.search(4), Some(1))?
+  @assertion.assert_eq(dv.search(5), Some(2))?
+  @assertion.assert_eq(dv.search(6), None)?
 }
 
 /// Checks if the vector contains an element.
 /// 
 /// # Example
 /// ```
-/// let dq = Deque::[3, 4, 5]
-/// dq.contains(3) // true
+/// let dv = Deque::[3, 4, 5]
+/// dv.contains(3) // true
 /// ```
 pub fn contains[T : Eq](self : Deque[T], value : T) -> Bool {
   for i = 0; i < self.len; i = i + 1 {
@@ -632,11 +632,11 @@ pub fn contains[T : Eq](self : Deque[T], value : T) -> Bool {
 }
 
 test "contains" {
-  let dq = Deque::[3, 4, 5]
-  @assertion.assert_true(dq.contains(3))?
-  @assertion.assert_true(dq.contains(4))?
-  @assertion.assert_true(dq.contains(5))?
-  @assertion.assert_false(dq.contains(6))?
+  let dv = Deque::[3, 4, 5]
+  @assertion.assert_true(dv.contains(3))?
+  @assertion.assert_true(dv.contains(4))?
+  @assertion.assert_true(dv.contains(5))?
+  @assertion.assert_false(dv.contains(6))?
 }
 
 /// Reserves capacity to ensure that it can hold at least the number of elements
@@ -645,9 +645,9 @@ test "contains" {
 /// # Example
 /// 
 /// ```
-/// let dq = Deque::[1]
-/// dq.reserve_capacity(10)
-/// println(dq.capacity()) // 10
+/// let dv = Deque::[1]
+/// dv.reserve_capacity(10)
+/// println(dv.capacity()) // 10
 /// ```
 pub fn reserve_capacity[T](self : Deque[T], capacity : Int) -> Unit {
   if self.capacity() >= capacity {
@@ -666,22 +666,22 @@ pub fn reserve_capacity[T](self : Deque[T], capacity : Int) -> Unit {
 }
 
 test "reserve_capacity" {
-  let dq = Deque::[1, 2, 3, 4, 5]
-  dq.pop_front() |> ignore() // 2, 3, 4, 5
-  dq.push_back(1) // 2, 3, 4, 5, 1
-  dq.pop_front() |> ignore() // 3, 4, 5, 1
-  dq.pop_front() |> ignore() // 4, 5, 1
-  dq.reserve_capacity(10)
-  @assertion.assert_true(dq.capacity() == 10)?
-  @assertion.assert_eq(dq[0], 4)?
-  @assertion.assert_eq(dq[1], 5)?
-  @assertion.assert_eq(dq[2], 1)?
+  let dv = Deque::[1, 2, 3, 4, 5]
+  dv.pop_front() |> ignore() // 2, 3, 4, 5
+  dv.push_back(1) // 2, 3, 4, 5, 1
+  dv.pop_front() |> ignore() // 3, 4, 5, 1
+  dv.pop_front() |> ignore() // 4, 5, 1
+  dv.reserve_capacity(10)
+  @assertion.assert_true(dv.capacity() == 10)?
+  @assertion.assert_eq(dv[0], 4)?
+  @assertion.assert_eq(dv[1], 5)?
+  @assertion.assert_eq(dv[2], 1)?
 }
 
 test "reserve_capacity_2" {
-  let dq = Deque::[1, 2, 3, 4, 5]
-  dq.reserve_capacity(3)
-  @assertion.assert_true(dq.capacity() == 5)?
+  let dv = Deque::[1, 2, 3, 4, 5]
+  dv.reserve_capacity(3)
+  @assertion.assert_true(dv.capacity() == 5)?
 }
 
 /// Shrinks the capacity of the deque as much as possible.
@@ -689,13 +689,13 @@ test "reserve_capacity_2" {
 /// # Example
 /// 
 /// ```
-/// let dq = Deque::with_capacity(10)
-/// dq.push_back(1)
-/// dq.push_back(2)
-/// dq.push_back(3)
-/// println(dq.capacity()) // >= 10
-/// dq.shrink_to_fit()
-/// println(dq.capacity()) // >= 3
+/// let dv = Deque::with_capacity(10)
+/// dv.push_back(1)
+/// dv.push_back(2)
+/// dv.push_back(3)
+/// println(dv.capacity()) // >= 10
+/// dv.shrink_to_fit()
+/// println(dv.capacity()) // >= 3
 /// ```
 pub fn shrink_to_fit[T](self : Deque[T]) -> Unit {
   if self.capacity() <= self.length() {
@@ -712,22 +712,22 @@ pub fn shrink_to_fit[T](self : Deque[T]) -> Unit {
 }
 
 test "shrink_to_fit" {
-  let dq : Deque[Int] = Deque::[1, 2, 3, 4, 5]
-  dq.pop_front() |> ignore()
-  dq.push_back(1)
-  dq.pop_front() |> ignore()
-  dq.pop_front() |> ignore()
-  @assertion.assert_true(dq.capacity() == 5)?
-  dq.shrink_to_fit()
-  @assertion.assert_true(dq.capacity() == 3)?
-  @assertion.assert_eq(dq[0], 4)?
-  @assertion.assert_eq(dq[1], 5)?
-  @assertion.assert_eq(dq[2], 1)?
+  let dv : Deque[Int] = Deque::[1, 2, 3, 4, 5]
+  dv.pop_front() |> ignore()
+  dv.push_back(1)
+  dv.pop_front() |> ignore()
+  dv.pop_front() |> ignore()
+  @assertion.assert_true(dv.capacity() == 5)?
+  dv.shrink_to_fit()
+  @assertion.assert_true(dv.capacity() == 3)?
+  @assertion.assert_eq(dv[0], 4)?
+  @assertion.assert_eq(dv[1], 5)?
+  @assertion.assert_eq(dv[2], 1)?
 }
 
 test "shrink_to_fit_2" {
-  let dq : Deque[Int] = Deque::[1, 2, 3]
-  @assertion.assert_true(dq.capacity() == 3)?
-  dq.shrink_to_fit()
-  @assertion.assert_true(dq.capacity() == 3)?
+  let dv : Deque[Int] = Deque::[1, 2, 3]
+  @assertion.assert_true(dv.capacity() == 3)?
+  dv.shrink_to_fit()
+  @assertion.assert_true(dv.capacity() == 3)?
 }
