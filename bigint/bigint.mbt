@@ -34,14 +34,10 @@ let zero : BigInt = from_int64(0L)
 
 /// Convert an Int to a BigInt.
 pub fn from_int(n : Int) -> BigInt {
-  {
-    limbs: Array::make(1, n),
-    sign: if n < 0 {
-      Negative
-    } else {
-      Positive
-    },
-    len: 1,
+  if n < 0 {
+    { limbs: Array::make(1, -n), sign: Negative, len: 1 }
+  } else {
+    { limbs: Array::make(1, n), sign: Positive, len: 1 }
   }
 }
 
@@ -67,6 +63,24 @@ pub fn make_zero() -> BigInt {
 
 /// Negate a bigint
 pub fn op_neg(self : BigInt) -> BigInt {
+  // copy limbs
+  let limbs = Array::make(self.len, 0)
+  for i = 0; i < self.len; i = i + 1 {
+    limbs[i] = self.limbs[i]
+  }
+  {
+    limbs,
+    sign: if self.sign == Positive {
+      Negative
+    } else {
+      Positive
+    },
+    len: self.len,
+  }
+}
+
+/// Negate a bigint without copying limbs, for internal use.
+fn neg(self : BigInt) -> BigInt {
   {
     limbs: self.limbs,
     sign: if self.sign == Positive {
@@ -82,12 +96,12 @@ pub fn op_neg(self : BigInt) -> BigInt {
 pub fn op_add(self : BigInt, other : BigInt) -> BigInt {
   if self.sign == Negative {
     if other.sign == Negative {
-      return -(-other + -self)
+      return neg(neg(other) + neg(self))
     } else {
-      return other - -self
+      return other - neg(self)
     }
   } else if other.sign == Negative {
-    return self - -other
+    return self - neg(other)
   }
   let self_len = self.len
   let other_len = other.len
@@ -107,17 +121,19 @@ pub fn op_add(self : BigInt, other : BigInt) -> BigInt {
 
 /// Subtract two bigint
 pub fn op_sub(self : BigInt, other : BigInt) -> BigInt {
+  // first make sure self and other > 0
   if self.sign == Negative {
     if other.sign == Negative {
-      return -other - -self
+      return neg(other) - neg(self)
     } else {
-      return -(other + -self)
+      return neg(other + neg(self))
     }
   } else if other.sign == Negative {
-    return self + -other
+    return self + neg(other)
   }
+  // then make sure self >= other
   if self < other {
-    return -(other - self)
+    return neg(other - self)
   }
   let self_len = self.len
   let other_len = other.len
@@ -127,12 +143,12 @@ pub fn op_sub(self : BigInt, other : BigInt) -> BigInt {
   while i < self_len || i < other_len || borrow != 0L {
     let a = if i < self_len { self.limbs[i].to_int64() } else { 0L }
     let b = if i < other_len { other.limbs[i].to_int64() } else { 0L }
-    let diff = a - b - borrow
+    let diff = a - b - borrow // 0 <= a < radix, 0 <= b < radix, 0 <= borrow <= 1 => -radix <= diff < radix
     if diff < 0L {
-      limbs[i] = ((diff + radix) % radix).to_int()
+      limbs[i] = (diff + radix).to_int() // -radix <= diff < 0, so we don't need to mod by radix
       borrow = 1L
     } else {
-      limbs[i] = diff.to_int()
+      limbs[i] = diff.to_int() // 0 <= diff < radix, so we don't need to mod by radix
       borrow = 0L
     }
     i += 1
@@ -399,7 +415,7 @@ pub fn lsr(self : BigInt, n : Int) -> BigInt {
 
 /// Check if a bigint is zero
 pub fn is_zero(self : BigInt) -> Bool {
-   self.len == 1 && self.limbs[0] == 0
+  self.len == 1 && self.limbs[0] == 0
 }
 
 /// Implements the compare trait for BigInt
