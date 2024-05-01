@@ -29,6 +29,7 @@ let decimal_ratio = 0.302 // log10(2)
 // Useful bigints
 
 let zero : BigInt = from_int64(0L)
+let one: BigInt = from_int64(1L)
 
 // Conversion Functions
 
@@ -211,17 +212,29 @@ pub fn op_mod(self : BigInt, other : BigInt) -> BigInt {
 // Simplest way to divide two BigInts.
 // Assumption: other != zero.
 fn grade_school_div(self : BigInt, other : BigInt) -> (BigInt, BigInt) {
+  fn fix(a: (BigInt, BigInt), divisor: BigInt) -> (BigInt, BigInt) {
+    let (res, remain) = a
+    if remain == zero {
+      return (res, zero.deep_clone())
+    }
+    let remain = match divisor.sign {
+      Positive => divisor - remain
+      Negative => neg(divisor) - remain
+    }
+    remain.sign = divisor.sign
+    let res = res + one
+    res.sign = Negative
+    (res, remain)
+  }
   // Handle negative numbers
   if self.sign == Negative {
     if other.sign == Negative {
-      return grade_school_div(-self, -other)
+      return grade_school_div(neg(self), neg(other))
     } else {
-      let (quotient, remainder) = grade_school_div(-self, other)
-      return (-quotient, -remainder)
+      return fix(grade_school_div(neg(self), other), other)
     }
   } else if other.sign == Negative {
-    let (quotient, remainder) = grade_school_div(self, -other)
-    return (-quotient, remainder)
+    return fix(grade_school_div(self, neg(other)), other)
   }
 
   // Handle edge cases

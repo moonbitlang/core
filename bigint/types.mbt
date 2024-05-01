@@ -31,7 +31,7 @@
 /// - forall i in len..limbs.length(), limbs[i] == 0
 struct BigInt {
   mut limbs : Array[Int] // Note: do not use limbs.length(), use len instead because of leading zeros
-  sign : Sign // true for positive, false for negative
+  mut sign : Sign // true for positive, false for negative
   mut len : Int
 } derive(Debug)
 
