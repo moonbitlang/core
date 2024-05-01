@@ -48,8 +48,6 @@ pub fn Int64::min_value() -> Int64 {
   min_val
 }
 
-
-
 pub fn hash(self : Int64) -> Int {
   let lo = self.to_int()
   let hi = self.lsr(32).to_int()

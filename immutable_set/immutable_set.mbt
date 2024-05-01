@@ -576,7 +576,7 @@ priv enum SplitBis[T] {
   NotFound(ImmutableSet[T], () -> ImmutableSet[T])
 }
 
-fn to_string[T : Show](self: SplitBis[T])->String {
+fn to_string[T : Show](self : SplitBis[T]) -> String {
   match self {
     Found => "Found"
     NotFound(_) => "NotFound"
@@ -812,4 +812,3 @@ fn of_sorted_list[T : Compare](list : List[T]) -> ImmutableSet[T] {
 
   sub(list.length(), list).0
 }
-

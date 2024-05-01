@@ -26,6 +26,8 @@ pub fn as_iter[T](self : ImmutableSet[T]) -> @iter.Iter[T] {
 
 test {
   let buf = Buffer::make(20)
-  ImmutableSet::[2,7,1,2,3,4,5].as_iter().iter(fn {x => buf.write_string(x.to_string())})
+  ImmutableSet::[2, 7, 1, 2, 3, 4, 5].as_iter().iter(
+    fn { x => buf.write_string(x.to_string()) },
+  )
   inspect(buf, content="123457")?
 }

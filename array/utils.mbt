@@ -12,7 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-
 fn minimum(x : Int, y : Int) -> Int {
   if x > y {
     y
