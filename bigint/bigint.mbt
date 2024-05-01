@@ -20,11 +20,17 @@
 /// - radix_bit_len < 32 (TODO: change this to <= 32 once we have unsigned integers)
 let radix_bit_len = 16
 
+/// The base of the number system.
 let radix : Int64 = 1L.lsl(radix_bit_len) // TODO: This can be generalized once we have const generics
 
+/// The mask to extract the lower `radix_bit_len` bits.
 let radix_mask : Int64 = radix - 1L
 
+/// The ratio of the number of decimal digits to the number of radix digits.
 let decimal_ratio = 0.302 // log10(2)
+
+/// When to switch to Karatsuba multiplication
+let karatsuba_threshold = 50
 
 // Useful bigints
 
@@ -158,17 +164,28 @@ pub fn op_sub(self : BigInt, other : BigInt) -> BigInt {
     }
     i += 1
   }
+  if limbs[i - 1] == 0 {
+    i -= 1
+  }
   { limbs, sign: Positive, len: i }
 }
 
 /// Multiply two bigint 
 pub fn op_mul(self : BigInt, other : BigInt) -> BigInt {
-  grade_school_mul(self, other)
+  if self.is_zero() || other.is_zero() {
+    return make_zero()
+  }
+  let ret = if self.len < karatsuba_threshold || other.len < karatsuba_threshold {
+    grade_school_mul(self, other)
+  } else {
+    karatsuba_mul(self, other)
+  }
+  ret.sign = if self.sign == other.sign { Positive } else { Negative }
+  ret
 }
 
 // Simplest way to multiply two BigInts.
 fn grade_school_mul(self : BigInt, other : BigInt) -> BigInt {
-  let sign : Sign = if self.sign == other.sign { Positive } else { Negative }
   let self_len = self.len
   let other_len = other.len
   let mut len = self_len + other_len
@@ -192,13 +209,55 @@ fn grade_school_mul(self : BigInt, other : BigInt) -> BigInt {
   if limbs[self_len + other_len - 1] == 0 {
     len -= 1
   }
-  { limbs, sign, len }
+  { limbs, sign: Positive, len }
+}
+
+// Karatsuba multiplication
+fn karatsuba_mul(self : BigInt, other : BigInt) -> BigInt {
+  let half = (max(self.len, other.len) + 1) / 2
+  let xl = self.get_lower(half)
+  let xh = self.get_upper(half)
+  let yl = other.get_lower(half)
+  let yh = other.get_upper(half)
+
+  let p1 = xh * yh
+  let p2 = xl * yl
+
+  let p3 = (xh + xl) * (yh + yl)
+  // result = p1 * 2^(32*2*half) + (p3 - p1 - p2) * 2^(32*half) + p2
+   p1.lsl(radix_bit_len*2 * half) + (p3 - p1 - p2).lsl(radix_bit_len * half) + p2
+}
+
+// Get the lower half of the number.
+fn get_lower(self : BigInt, half : Int) -> BigInt {
+  if self.len <= half {
+    return self.deep_clone()
+  }
+  let len = min(self.len, half)
+  let limbs = Array::make(len, 0)
+  for i = 0; i < len; i = i + 1 {
+    limbs[i] = self.limbs[i]
+  }
+  { limbs, sign: Positive, len}
+}
+
+// Get the upper half of the number.
+fn get_upper(self : BigInt, half : Int) -> BigInt {
+  if self.len <= half {
+    return make_zero()
+  }
+  let len = self.len - half
+  let limbs = Array::make(len, 0)
+  for i = half; i < len + half; i = i + 1 {
+    limbs[i - half] = self.limbs[i]
+  }
+  { limbs, sign: Positive, len  }
 }
 
 /// Divide two bigint
 pub fn op_div(self : BigInt, other : BigInt) -> BigInt {
   if other == zero {
-    return abort("division by zero")
+    abort("division by zero")
   }
   let (quotient, _) = grade_school_div(self, other)
   quotient
@@ -207,7 +266,7 @@ pub fn op_div(self : BigInt, other : BigInt) -> BigInt {
 /// Modulo two bigint
 pub fn op_mod(self : BigInt, other : BigInt) -> BigInt {
   if other == zero {
-    return abort("division by zero")
+    abort("division by zero")
   }
   let (_, remainder) = grade_school_div(self, other)
   remainder
@@ -363,7 +422,7 @@ fn grade_school_div(self : BigInt, other : BigInt) -> (BigInt, BigInt) {
 /// Left shift a bigint
 pub fn lsl(self : BigInt, n : Int) -> BigInt {
   if n < 0 {
-    return abort("negative shift count")
+    abort("negative shift count")
   }
   if not(self.is_zero()) {
     let new_limbs = Array::make(
@@ -399,7 +458,7 @@ pub fn lsl(self : BigInt, n : Int) -> BigInt {
 /// Right shift a bigint
 pub fn lsr(self : BigInt, n : Int) -> BigInt {
   if n < 0 {
-    return abort("negative shift count")
+    abort("negative shift count")
   }
   let r = n % radix_bit_len
   let lz = n / radix_bit_len
@@ -411,10 +470,7 @@ pub fn lsr(self : BigInt, n : Int) -> BigInt {
     let new_limbs = Array::make(new_len, 0)
     for i = lz; i < self.len; i = i + 1 {
       new_limbs[i - lz] = self.limbs[i]
-    }
-    if new_len > 1 && new_limbs[new_len - 1] == 0 {
-      new_len -= 1
-    }
+    } 
     { limbs: new_limbs, sign: self.sign, len: new_len }
   } else {
     let new_limbs = Array::make(new_len, 0)
@@ -528,7 +584,7 @@ pub fn to_decimal_string(self : BigInt) -> String {
 pub fn from_decimal_string(input : String) -> BigInt {
   let len = input.length()
   if len == 0 {
-    return abort("empty string")
+    abort("empty string")
   }
   let sign : Sign = if input[0] == '-' { Negative } else { Positive }
   let mut b_len = ((len.to_double() / decimal_ratio).to_int() + 1 + radix_bit_len -
@@ -542,7 +598,7 @@ pub fn from_decimal_string(input : String) -> BigInt {
       i = i + 1 {
     let x = input[i].to_int() - 48 // ASCII value of '0'
     if x < 0 || x > 9 {
-      return abort("invalid character")
+      abort("invalid character")
     }
     let mut carry = x.to_int64()
     for j = 0; j < b_len; j = j + 1 {
@@ -567,6 +623,14 @@ pub fn deep_clone(self : BigInt) -> BigInt {
 
 fn max[T : Compare](a : T, b : T) -> T {
   if a > b {
+    a
+  } else {
+    b
+  }
+}
+
+fn min[T : Compare](a : T, b : T) -> T {
+  if a < b {
     a
   } else {
     b
