@@ -1,10 +1,13 @@
 package moonbitlang/core/hashmap
 
+alias @moonbitlang/core/iter as @iter
+
 // Values
 
 // Types and methods
 type HashMap
 impl HashMap {
+  as_iter[K, V](Self[K, V]) -> @iter.Iter[Tuple[K, V]]
   capacity[K, V](Self[K, V]) -> Int
   clear[K, V](Self[K, V]) -> Unit
   contains[K : Hash + Eq, V](Self[K, V], K) -> Bool
