@@ -2,13 +2,13 @@
 
 ## Overview
 
-Deque is a double-ended queue implemented as a round-robin queue, supporting O(1) head or tail insertion and querying, just like double-ended queues in other languages(C++ std::deque / Rust VecDeque), here deque also supports random access.
+Deque is a double-ended queue implemented as a round-robin queue, supporting O(1) head or tail insertion and querying, just like double-ended queues in other languages(C++ std::devec / Rust VecDeque), here devec also supports random access.
 
 ## Usage
 
 ### Create
 
-You can create a deque manually via the `new()` or construct it using the `from_array()`.
+You can create a devec manually via the `new()` or construct it using the `from_array()`.
 
 ```moonbit
 let dv : Deque[Int] = Deque::new()
@@ -23,7 +23,7 @@ let dv = Deque::with_capacity(100);
 
 ### Length & Capacity
 
-A deque is an indefinite-length, auto-expandable datatype. You can use `length()` to get the number of elements in the current queue, or `capacity()` to get the current capacity.
+A devec is an indefinite-length, auto-expandable datatype. You can use `length()` to get the number of elements in the current queue, or `capacity()` to get the current capacity.
 
 ```moonbit
 let dv = Deque::[1, 2, 3, 4, 5]
@@ -47,7 +47,7 @@ dv.reserve_capacity(10)
 println(dv.capacity()) // 10
 ```
 
-Also, you can use `shrink_to_fit` to shrink the capacity of the deque.
+Also, you can use `shrink_to_fit` to shrink the capacity of the devec.
 
 ```moonbit
 let dv = Deque::with_capacity(10)
@@ -124,7 +124,7 @@ dv.back() // Some(3)
 
 ### Clear
 
-You can use `clear` to clear a deque. But note that the memory it already occupies does not change.
+You can use `clear` to clear a devec. But note that the memory it already occupies does not change.
 
 ```moonbit
 let dv = Deque::[1, 2, 3, 4, 5]
@@ -134,7 +134,7 @@ dv.is_empty() // true
 
 ### Equal
 
-deque supports comparing them directly using `op_equal`.
+devec supports comparing them directly using `op_equal`.
 
 ```moonbit
 let dqa = Deque::[1, 2, 3, 4, 5]
@@ -144,7 +144,7 @@ dqa == dqb // true
 
 ### Iter & Map
 
-deque supports vector-like `iter/iteri/map/mapi` functions and their inverse forms.
+devec supports vector-like `iter/iteri/map/mapi` functions and their inverse forms.
 
 ```moonbit
  let dv = Deque::[1, 2, 3, 4, 5]
@@ -156,7 +156,7 @@ deque supports vector-like `iter/iteri/map/mapi` functions and their inverse for
 
 ### Search & Contains
 
-You can use `contains()` to find out if a value is in the deque, or `search()` to find its index in the deque.
+You can use `contains()` to find out if a value is in the devec, or `search()` to find its index in the devec.
 
 ```moonbit
 let dv = Deque::[1, 2, 3, 4, 5]

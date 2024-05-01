@@ -22,12 +22,12 @@ fn length[T](self : UninitializedArray[T]) -> Int {
   self.0.length()
 }
 
-/// Creates a new, empty deque.
+/// Creates a new, empty devec.
 pub fn Deque::new[T]() -> Deque[T] {
   Deque::{ buf: UninitializedArray::make(0), len: 0, head: 0, tail: 0 }
 }
 
-/// Creates a new, empty deque with a specified initial capacity.
+/// Creates a new, empty devec with a specified initial capacity.
 pub fn Deque::with_capacity[T](cap : Int) -> Deque[T] {
   Deque::{ buf: UninitializedArray::make(cap), len: 0, head: 0, tail: 0 }
 }
@@ -42,7 +42,7 @@ test "with_capacity_non_zero" {
   @assertion.assert_eq(d.buf.length(), 10)?
 }
 
-/// Creates a new deque from an array.
+/// Creates a new devec from an array.
 pub fn Deque::from_array[T](arr : Array[T]) -> Deque[T] {
   let deq = Deque::{
     buf: UninitializedArray::make(arr.length()),
@@ -56,17 +56,17 @@ pub fn Deque::from_array[T](arr : Array[T]) -> Deque[T] {
   deq
 }
 
-/// Returns the deque of elements in the vector.
+/// Returns the devec of elements in the vector.
 pub fn length[T](self : Deque[T]) -> Int {
   self.len
 }
 
-/// Returns the total number of elements the deque can hold without reallocating.
+/// Returns the total number of elements the devec can hold without reallocating.
 pub fn capacity[T](self : Deque[T]) -> Int {
   self.buf.length()
 }
 
-/// Reallocate the deque with a new capacity.
+/// Reallocate the devec with a new capacity.
 fn realloc[T](self : Deque[T]) -> Unit {
   let old_cap = self.len
   let new_cap = if old_cap == 0 { 8 } else { old_cap * 2 }
@@ -114,7 +114,7 @@ test "realloc" {
   @assertion.assert_eq(result, [4, 5, 6, 7, 8, 9, 10])?
 }
 
-/// Return the front element from a deque, or `None` if it is empty.
+/// Return the front element from a devec, or `None` if it is empty.
 /// 
 /// # Example
 /// ```
@@ -129,7 +129,7 @@ pub fn front[T](self : Deque[T]) -> Option[T] {
   }
 }
 
-/// Return the back element from a deque, or `None` if it is empty.
+/// Return the back element from a devec, or `None` if it is empty.
 /// 
 /// # Example
 /// ```
@@ -153,9 +153,9 @@ test "front_and_back" {
   @assertion.assert_eq(dv.front(), None)?
 }
 
-/// Adds an element to the front of the deque.
+/// Adds an element to the front of the devec.
 /// 
-/// If the deque is at capacity, it will be reallocated.
+/// If the devec is at capacity, it will be reallocated.
 /// 
 /// # Example
 /// ```
@@ -171,9 +171,9 @@ pub fn push_front[T](self : Deque[T], value : T) -> Unit {
   self.len += 1
 }
 
-/// Adds an element to the back of the deque.
+/// Adds an element to the back of the devec.
 /// 
-/// If the deque is at capacity, it will be reallocated.
+/// If the devec is at capacity, it will be reallocated.
 /// 
 /// # Example
 /// ```
@@ -189,39 +189,39 @@ pub fn push_back[T](self : Deque[T], value : T) -> Unit {
   self.len += 1
 }
 
-/// Removes a front element from a deque.
+/// Removes a front element from a devec.
 /// 
 /// # Example
 /// ```
 /// let dv = Deque::[1, 2, 3, 4, 5]
 /// dv.pop_front_exn()
 /// ```
-/// @alert unsafe "Panic if the deque is empty."
+/// @alert unsafe "Panic if the devec is empty."
 pub fn pop_front_exn[T](self : Deque[T]) -> Unit {
   if self.len == 0 {
-    abort("The deque is empty!")
+    abort("The devec is empty!")
   }
   self.head = if self.head < self.buf.length() - 1 { self.head + 1 } else { 0 }
   self.len -= 1
 }
 
-/// Removes a back element from a deque.
+/// Removes a back element from a devec.
 /// 
 /// # Example
 /// ```
 /// let dv = Deque::[1, 2, 3, 4, 5]
 /// dv.pop_back_exn()
 /// ```
-/// @alert unsafe "Panic if the deque is empty."
+/// @alert unsafe "Panic if the devec is empty."
 pub fn pop_back_exn[T](self : Deque[T]) -> Unit {
   if self.len == 0 {
-    abort("The deque is empty!")
+    abort("The devec is empty!")
   }
   self.tail = if self.tail > 0 { self.tail - 1 } else { self.buf.length() - 1 }
   self.len -= 1
 }
 
-/// Removes a front element from a deque and returns it, or `None` if it is empty.
+/// Removes a front element from a devec and returns it, or `None` if it is empty.
 /// 
 /// # Example
 /// ```
@@ -238,7 +238,7 @@ pub fn pop_front[T](self : Deque[T]) -> Option[T] {
   Some(self.buf[origin_head])
 }
 
-/// Removes a back element from a deque and returns it, or `None` if it is empty.
+/// Removes a back element from a devec and returns it, or `None` if it is empty.
 /// 
 /// # Example
 /// ```
@@ -290,7 +290,7 @@ test "push_realloc" {
   @assertion.assert_true(dv.capacity() > 0)?
 }
 
-/// Retrieves the element at the specified index from the deque.
+/// Retrieves the element at the specified index from the devec.
 /// 
 /// If you try to access an index which isn’t in the Deque, it will panic.
 /// 
@@ -386,7 +386,7 @@ test "op_equal" {
   @assertion.assert_false(dq1 == dq2)?
 }
 
-/// Iterates over the elements of the deque.
+/// Iterates over the elements of the devec.
 /// 
 /// # Example
 /// ```
@@ -423,7 +423,7 @@ test "iter2" {
   @assertion.assert_eq(sum, 9)?
 }
 
-/// Iterates over the elements of the deque with index.
+/// Iterates over the elements of the devec with index.
 /// 
 /// # Example
 /// ```
@@ -451,7 +451,7 @@ test "iteri" {
   @assertion.assert_false(failed)?
 }
 
-/// Iterates over the elements of the deque in reversed turn.
+/// Iterates over the elements of the devec in reversed turn.
 /// 
 /// # Example
 /// ```
@@ -479,7 +479,7 @@ test "iter_rev" {
   @assertion.assert_false(failed)?
 }
 
-/// Iterates over the elements of the deque in reversed turn with index.
+/// Iterates over the elements of the devec in reversed turn with index.
 /// 
 /// # Example
 /// ```
@@ -509,9 +509,9 @@ test "iter_revi" {
   @assertion.assert_false(failed)?
 }
 
-/// Clears the deque, removing all values.
+/// Clears the devec, removing all values.
 /// 
-/// This method has no effect on the allocated capacity of the deque, only setting the length to 0.
+/// This method has no effect on the allocated capacity of the devec, only setting the length to 0.
 /// 
 /// # Example
 /// ```
@@ -531,7 +531,7 @@ test "clear" {
   @assertion.assert_eq(dv.capacity(), 3)?
 }
 
-/// Maps a function over the elements of the deque.
+/// Maps a function over the elements of the devec.
 /// 
 /// # Example
 /// ```
@@ -552,7 +552,7 @@ test "map" {
   @assertion.assert_eq(dv[2], 6)?
 }
 
-/// Maps a function over the elements of the deque with index.
+/// Maps a function over the elements of the devec with index.
 /// 
 /// # Example
 /// ```
@@ -573,7 +573,7 @@ test "mapi" {
   @assertion.assert_eq(dv[2], 7)?
 }
 
-/// Test if the deque is empty.
+/// Test if the devec is empty.
 /// 
 /// # Example
 /// ```
@@ -591,7 +591,7 @@ test "is_empty" {
   @assertion.assert_false(dv.is_empty())?
 }
 
-/// Search the deque index for a given element.
+/// Search the devec index for a given element.
 /// 
 /// # Example
 /// ```
@@ -684,7 +684,7 @@ test "reserve_capacity_2" {
   @assertion.assert_true(dv.capacity() == 5)?
 }
 
-/// Shrinks the capacity of the deque as much as possible.
+/// Shrinks the capacity of the devec as much as possible.
 /// 
 /// # Example
 /// 
