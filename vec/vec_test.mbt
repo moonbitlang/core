@@ -209,6 +209,7 @@ test "starts_with" {
   let v = Vec::[3, 4, 5]
   @assertion.assert_true(v.starts_with(Vec::[3, 4]))?
   @assertion.assert_true(v.starts_with(Vec::[3, 4, 5]))?
+  @assertion.assert_false(v.starts_with(Vec::[3, 4, 6]))?
   @assertion.assert_false(v.starts_with(Vec::[3, 4, 5, 6]))?
 }
 
@@ -216,6 +217,7 @@ test "ends_with" {
   let v = Vec::[3, 4, 5]
   @assertion.assert_true(v.ends_with(Vec::[4, 5]))?
   @assertion.assert_true(v.ends_with(Vec::[3, 4, 5]))?
+  @assertion.assert_false(v.ends_with(Vec::[3, 4, 6]))?
   @assertion.assert_false(v.ends_with(Vec::[2, 3, 4, 5]))?
 }
 
@@ -224,6 +226,7 @@ test "strip_prefix" {
   let sv = v.strip_prefix(Vec::[3])
   @assertion.assert_eq(v, Vec::[3, 4, 5])?
   @assertion.assert_eq(sv, Some(Vec::[4, 5]))?
+  @assertion.assert_eq(v.strip_prefix(Vec::[4]), None)?
 }
 
 test "strip_suffix" {
@@ -231,6 +234,7 @@ test "strip_suffix" {
   let sv = v.strip_suffix(Vec::[5])
   @assertion.assert_eq(v, Vec::[3, 4, 5])?
   @assertion.assert_eq(sv, Some(Vec::[3, 4]))?
+  @assertion.assert_eq(v.strip_suffix(Vec::[4]), None)?
 }
 
 test "search" {
