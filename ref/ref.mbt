@@ -104,14 +104,12 @@ test "swap" {
   let y = ref(2)
   swap(x, y)
   inspect(x.val, content="2")?
-  inspect(y.val,content="1")?
+  inspect(y.val, content="1")?
 }
 
 pub fn update[T](self : Ref[T], f : (T) -> T) -> Unit {
   self.val = f(self.val)
 }
-
-
 
 test "decr" {
   let a = ref(1)

@@ -12,7 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-
 fn test_num[T : @num.Num + Debug + Default + Eq](
   x : T,
   y : T,

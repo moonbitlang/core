@@ -204,9 +204,7 @@ test "from_array" {
 /// ```
 /// let v = ImmutableVec::from_vector(@vec.from_array([1, 2, 3, 4, 5]))
 /// ```
-pub fn ImmutableVec::from_vector[T](
-  vec : @vec.Vec[T]
-) -> ImmutableVec[T] {
+pub fn ImmutableVec::from_vector[T](vec : @vec.Vec[T]) -> ImmutableVec[T] {
   new_by_leaves(
     vec.length(),
     fn(s, l) { @array.new_with_index(l, fn(i) { vec[s + i] }) },
@@ -217,9 +215,7 @@ test "from_vector" {
   let v : ImmutableVec[Int] = ImmutableVec::from_vector(
     @vec.from_array([1, 2, 3, 4, 5]),
   )
-  let v1 : ImmutableVec[Int] = ImmutableVec::from_vector(
-    @vec.from_array([]),
-  )
+  let v1 : ImmutableVec[Int] = ImmutableVec::from_vector(@vec.from_array([]))
   inspect(v, content="ImmutableVec::[1, 2, 3, 4, 5]")?
   inspect(v1, content="ImmutableVec::[]")?
 }
@@ -322,11 +318,7 @@ test "op_equal" {
 /// let v = ImmutableVec::[1, 2, 3, 4, 5]
 /// v.fold_left(fn(a, b) { a + b }, init=0)
 /// ```
-pub fn fold_left[T](
-  self : ImmutableVec[T],
-  f : (T, T) -> T,
-  ~init : T
-) -> T {
+pub fn fold_left[T](self : ImmutableVec[T], f : (T, T) -> T, ~init : T) -> T {
   fn go(t : Tree[T], acc : T) -> T {
     match t {
       Empty => acc
@@ -352,11 +344,7 @@ test "fold_left" {
 /// let v = ImmutableVec::[1, 2, 3, 4, 5]
 /// v.fold_right(fn(a, b) { a + b }, init=0)
 /// ```
-pub fn fold_right[T](
-  self : ImmutableVec[T],
-  f : (T, T) -> T,
-  ~init : T
-) -> T {
+pub fn fold_right[T](self : ImmutableVec[T], f : (T, T) -> T, ~init : T) -> T {
   fn go(t : Tree[T], acc : T) -> T {
     match t {
       Empty => acc
@@ -383,10 +371,7 @@ test "fold_right" {
 /// let v = ImmutableVec::[1, 2, 3, 4, 5]
 /// v.map(fn(e) { e * 2 })
 /// ```
-pub fn map[T, U](
-  self : ImmutableVec[T],
-  f : (T) -> U
-) -> ImmutableVec[U] {
+pub fn map[T, U](self : ImmutableVec[T], f : (T) -> U) -> ImmutableVec[U] {
   fn go(t : Tree[T]) -> Tree[U] {
     match t {
       Empty => Empty
