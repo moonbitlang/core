@@ -958,3 +958,17 @@ pub fn shrink_to_fit[T](self : Vec[T]) -> Unit {
   }
   self.buf = new_buf
 }
+
+pub fn as_iter[T](self : Vec[T]) -> @iter.Iter[T] {
+  @iter.Iter::_unstable_internal_make(
+    fn(yield) {
+      for i = 0, len = self.length(); i < len; i = i + 1 {
+        if yield(self[i]).not() {
+          break false
+        }
+      } else {
+        true
+      }
+    },
+  )
+}

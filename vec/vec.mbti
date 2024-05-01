@@ -1,11 +1,14 @@
 package moonbitlang/core/vec
 
+alias @moonbitlang/core/iter as @iter
+
 // Values
 
 // Types and methods
 type Vec
 impl Vec {
   append[T](Self[T], Self[T]) -> Unit
+  as_iter[T](Self[T]) -> @iter.Iter[T]
   capacity[T](Self[T]) -> Int
   chunk_by[T](Self[T], (T, T) -> Bool) -> Self[Self[T]]
   chunks[T](Self[T], Int) -> Self[Self[T]]

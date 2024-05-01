@@ -428,3 +428,16 @@ test "shrink_to_fit_2" {
   v.shrink_to_fit()
   @assertion.assert_true(v.capacity() == 3)?
 }
+
+test "as_iter" {
+  let buf = Buffer::make(5)
+  Vec::[1, 2, 3, 4, 5].as_iter().iter(
+    fn { x => buf.write_string(x.to_string()) },
+  )
+  inspect(buf, content="12345")?
+  buf.reset()
+  Vec::[1, 2, 3, 4, 5].as_iter().take(2).iter(
+    fn { x => buf.write_string(x.to_string()) },
+  )
+  inspect(buf, content="12")?
+}
