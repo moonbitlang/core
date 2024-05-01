@@ -215,43 +215,33 @@ fn grade_school_mul(self : BigInt, other : BigInt) -> BigInt {
 // Karatsuba multiplication
 fn karatsuba_mul(self : BigInt, other : BigInt) -> BigInt {
   let half = (max(self.len, other.len) + 1) / 2
-  let xl = self.get_lower(half)
-  let xh = self.get_upper(half)
-  let yl = other.get_lower(half)
-  let yh = other.get_upper(half)
-
+  let (xl, xh) = self.split(half)
+  let (yl, yh) = other.split(half)
   let p1 = xh * yh
   let p2 = xl * yl
-
   let p3 = (xh + xl) * (yh + yl)
-  // result = p1 * 2^(32*2*half) + (p3 - p1 - p2) * 2^(32*half) + p2
-   p1.lsl(radix_bit_len*2 * half) + (p3 - p1 - p2).lsl(radix_bit_len * half) + p2
+  p1.lsl(radix_bit_len * 2 * half) + (p3 - p1 - p2).lsl(radix_bit_len * half) + p2
 }
 
 // Get the lower half of the number.
-fn get_lower(self : BigInt, half : Int) -> BigInt {
+fn split(self : BigInt, half : Int) -> (BigInt, BigInt) {
   if self.len <= half {
-    return self.deep_clone()
+    let ret = self.deep_clone()
+    ret.sign = Positive
+    return (ret, make_zero())
   }
-  let len = min(self.len, half)
-  let limbs = Array::make(len, 0)
-  for i = 0; i < len; i = i + 1 {
-    limbs[i] = self.limbs[i]
+  let lower = Array::make(half, 0)
+  for i = 0; i < half; i = i + 1 {
+    lower[i] = self.limbs[i]
   }
-  { limbs, sign: Positive, len}
-}
-
-// Get the upper half of the number.
-fn get_upper(self : BigInt, half : Int) -> BigInt {
-  if self.len <= half {
-    return make_zero()
+  let upper = Array::make(self.len - half, 0)
+  for i = half; i < self.len; i = i + 1 {
+    upper[i - half] = self.limbs[i]
   }
-  let len = self.len - half
-  let limbs = Array::make(len, 0)
-  for i = half; i < len + half; i = i + 1 {
-    limbs[i - half] = self.limbs[i]
-  }
-  { limbs, sign: Positive, len  }
+  (
+    { limbs: lower, sign: Positive, len: half },
+    { limbs: upper, sign: Positive, len: self.len - half },
+  )
 }
 
 /// Divide two bigint
@@ -470,7 +460,7 @@ pub fn lsr(self : BigInt, n : Int) -> BigInt {
     let new_limbs = Array::make(new_len, 0)
     for i = lz; i < self.len; i = i + 1 {
       new_limbs[i - lz] = self.limbs[i]
-    } 
+    }
     { limbs: new_limbs, sign: self.sign, len: new_len }
   } else {
     let new_limbs = Array::make(new_len, 0)
@@ -587,8 +577,8 @@ pub fn from_decimal_string(input : String) -> BigInt {
     abort("empty string")
   }
   let sign : Sign = if input[0] == '-' { Negative } else { Positive }
-  let mut b_len = ((len.to_double() / decimal_ratio).to_int() + 1 + radix_bit_len -
-    1) / radix_bit_len
+  let mut b_len = ((len.to_double() / decimal_ratio).to_int() + 1 + radix_bit_len) /
+    radix_bit_len + 1
   let b = Array::make(b_len, 0)
   for i = match sign {
           Negative => 1
@@ -623,14 +613,6 @@ pub fn deep_clone(self : BigInt) -> BigInt {
 
 fn max[T : Compare](a : T, b : T) -> T {
   if a > b {
-    a
-  } else {
-    b
-  }
-}
-
-fn min[T : Compare](a : T, b : T) -> T {
-  if a < b {
     a
   } else {
     b
