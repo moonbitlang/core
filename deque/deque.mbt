@@ -359,7 +359,7 @@ test "op_set" {
   @assertion.assert_eq(dv[1], 3)?
 }
 
-/// Compares two deques for equality.
+/// Compares two devecs for equality.
 pub fn op_equal[T : Eq](self : Devec[T], other : Devec[T]) -> Bool {
   if self.len != other.len {
     return false
