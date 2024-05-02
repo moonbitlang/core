@@ -70,7 +70,7 @@ test "Bitset::remove" {
   inspect(b.index_of(2), content="0")?
   inspect(b.index_of(3), content="1")?
   let b = b.remove(2)
-  @assertion.assert_false(b.has(2))?
+  inspect(b.has(2), content="false")?
   inspect(b.has(3), content="true")?
   inspect(b.index_of(3), content="0")?
 }
