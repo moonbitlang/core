@@ -356,7 +356,7 @@ test "lsl" {
   let c = a.lsl(64)
   check_len(c)?
   inspect(c.to_string(), content="22773757910726981402256170801141121024")?
-  let a = zero.deep_clone()
+  let a = make_zero()
   let b = a.lsl(1)
   check_len(b)?
   inspect(b.to_string(), content="0")?

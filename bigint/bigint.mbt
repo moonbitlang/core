@@ -326,8 +326,8 @@ fn grade_school_div(self : BigInt, other : BigInt) -> (BigInt, BigInt) {
   }
 
   // Cite: TAOCP Vol. 2, 4.3.1
-  let dividend = self.deep_clone()
-  let divisor = other.deep_clone()
+  let dividend = self
+  let divisor = other
 
   // normalize 
   let mut lshift = 0
