@@ -14,7 +14,6 @@ type BigInt
 impl BigInt {
   compare(Self, Self) -> Int
   debug_write(Self, Buffer) -> Unit
-  deep_clone(Self) -> Self
   is_zero(Self) -> Bool
   lsl(Self, Int) -> Self
   lsr(Self, Int) -> Self
@@ -26,13 +25,6 @@ impl BigInt {
   op_neg(Self) -> Self
   op_sub(Self, Self) -> Self
   to_decimal_string(Self) -> String
-}
-
-type Sign
-impl Sign {
-  debug_write(Self, Buffer) -> Unit
-  op_equal(Self, Self) -> Bool
-  to_string(Self) -> String
 }
 
 // Traits

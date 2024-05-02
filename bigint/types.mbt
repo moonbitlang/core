@@ -35,7 +35,7 @@ struct BigInt {
   mut len : Int
 } derive(Debug)
 
-enum Sign {
+priv enum Sign {
   Positive
   Negative
 } derive(Show, Debug, Eq)

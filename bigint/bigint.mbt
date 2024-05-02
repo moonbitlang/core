@@ -66,6 +66,8 @@ pub fn from_int64(n : Int64) -> BigInt {
 }
 
 /// Construct a zero
+/// 
+/// TODO: modify function name after literal syntax is supported
 pub fn make_zero() -> BigInt {
   { limbs: Array::make(1, 0), sign: Positive, len: 1 }
 }
@@ -603,7 +605,7 @@ pub fn from_decimal_string(input : String) -> BigInt {
   { limbs: b, sign, len: b_len }
 }
 
-pub fn deep_clone(self : BigInt) -> BigInt {
+fn deep_clone(self : BigInt) -> BigInt {
   let new_limbs = Array::make(self.len, 0)
   for i = 0; i < self.len; i = i + 1 {
     new_limbs[i] = self.limbs[i]
