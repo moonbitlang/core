@@ -527,7 +527,7 @@ pub fn op_equal(self : BigInt, other : BigInt) -> Bool {
 }
 
 /// Returns the decimal string representation of the BigInt.
-pub fn to_decimal_string(self : BigInt) -> String {
+pub fn to_string(self : BigInt) -> String {
   // This function first converts the BigInt to a decimal representation, with a radix of 2^(`decimal_radix_bit_len`).
   // Then it converts the decimal representation to a string slot by slot.
   if self.is_zero() {
@@ -573,7 +573,7 @@ pub fn to_decimal_string(self : BigInt) -> String {
 }
 
 /// Converts decimal string to a BigInt.
-pub fn from_decimal_string(input : String) -> BigInt {
+pub fn from_string(input : String) -> BigInt {
   let len = input.length()
   if len == 0 {
     abort("empty string")
