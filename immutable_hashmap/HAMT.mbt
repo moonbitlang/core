@@ -134,9 +134,9 @@ test "HAMT" {
   for i = 0; i < 100; i = i + 1 {
     @assertion.assert_eq((i, map.find(i)), (i, Some(i)))?
   }
-  @assertion.assert_eq((100, map.find(100)), (100, None))?
+  inspect((100, map.find(100)), content="(100, None)")?
   let map = map.add(100, 100)
-  @assertion.assert_eq((100, map.find(100)), (100, Some(100)))?
+  inspect((100, map.find(100)), content="(100, Some(100))")?
   // test for replacement
   let map = loop 0, map {
     100, map => map
