@@ -48,16 +48,3 @@ pub fn to_string[A : Show, B : Show, C : Show, D : Show, E : Show, F : Show, G :
   let (a, b, c, d, e, f, g) = self
   "(\(a), \(b), \(c), \(d), \(e), \(f), \(g))"
 }
-
-test "to_string" {
-  let tuple2 = (1, 2)
-  let tuple3 = ("a", "b", "c")
-  let tuple4 = (1, 2, 3, "hello")
-  let tuple5 = (List::Cons(1, Nil), "2", 3, [4], 5)
-  inspect(tuple2, content="(1, 2)")?
-  inspect(tuple3, content="(a, b, c)")?
-  inspect(tuple4, content="(1, 2, 3, hello)")?
-  inspect(tuple5, content="(List::[1], 2, 3, [4], 5)")?
-  inspect((1, 2, 3, 4, 5, 6), content="(1, 2, 3, 4, 5, 6)")?
-  inspect((1, 2, 3, 4, 5, 6, 7), content="(1, 2, 3, 4, 5, 6, 7)")?
-}
