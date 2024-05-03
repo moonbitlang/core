@@ -14,7 +14,7 @@
 
 priv type UninitializedArray[T] Array[UnsafeMaybeUninit[T]]
 
-struct Deque[T] {
+struct Devec[T] {
   mut buf : UninitializedArray[T]
   mut len : Int
   mut head : Int
