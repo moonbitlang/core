@@ -115,7 +115,7 @@ test "realloc" {
 }
 
 /// Return the front element from a devec, or `None` if it is empty.
-/// 
+///
 /// # Example
 /// ```
 /// let dv = Devec::[1, 2, 3, 4, 5]
@@ -130,7 +130,7 @@ pub fn front[T](self : Devec[T]) -> Option[T] {
 }
 
 /// Return the back element from a devec, or `None` if it is empty.
-/// 
+///
 /// # Example
 /// ```
 /// let dv = Devec::[1, 2, 3, 4, 5]
@@ -154,9 +154,9 @@ test "front_and_back" {
 }
 
 /// Adds an element to the front of the devec.
-/// 
+///
 /// If the devec is at capacity, it will be reallocated.
-/// 
+///
 /// # Example
 /// ```
 /// let dv = Devec::[1, 2, 3, 4, 5]
@@ -172,9 +172,9 @@ pub fn push_front[T](self : Devec[T], value : T) -> Unit {
 }
 
 /// Adds an element to the back of the devec.
-/// 
+///
 /// If the devec is at capacity, it will be reallocated.
-/// 
+///
 /// # Example
 /// ```
 /// let dv = Devec::[1, 2, 3, 4, 5]
@@ -190,7 +190,7 @@ pub fn push_back[T](self : Devec[T], value : T) -> Unit {
 }
 
 /// Removes a front element from a devec.
-/// 
+///
 /// # Example
 /// ```
 /// let dv = Devec::[1, 2, 3, 4, 5]
@@ -206,7 +206,7 @@ pub fn pop_front_exn[T](self : Devec[T]) -> Unit {
 }
 
 /// Removes a back element from a devec.
-/// 
+///
 /// # Example
 /// ```
 /// let dv = Devec::[1, 2, 3, 4, 5]
@@ -222,7 +222,7 @@ pub fn pop_back_exn[T](self : Devec[T]) -> Unit {
 }
 
 /// Removes a front element from a devec and returns it, or `None` if it is empty.
-/// 
+///
 /// # Example
 /// ```
 /// let dv = Devec::[1, 2, 3, 4, 5]
@@ -239,7 +239,7 @@ pub fn pop_front[T](self : Devec[T]) -> Option[T] {
 }
 
 /// Removes a back element from a devec and returns it, or `None` if it is empty.
-/// 
+///
 /// # Example
 /// ```
 /// let dv = Devec::[1, 2, 3, 4, 5]
@@ -291,9 +291,9 @@ test "push_realloc" {
 }
 
 /// Retrieves the element at the specified index from the devec.
-/// 
+///
 /// If you try to access an index which isn’t in the Devec, it will panic.
-/// 
+///
 /// # Example
 /// ```
 /// let dv = Devec::[1, 2, 3, 4, 5]
@@ -329,9 +329,9 @@ test "op_get" {
 }
 
 /// Sets the value of the element at the specified index.
-/// 
+///
 /// If you try to access an index which isn’t in the Devec, it will panic.
-/// 
+///
 /// # Example
 /// ```
 /// let dv = Devec::[1, 2, 3, 4, 5]
@@ -373,21 +373,21 @@ pub fn op_equal[T : Eq](self : Devec[T], other : Devec[T]) -> Bool {
 }
 
 test "op_equal" {
-  let dq1 = Devec::[1, 2, 3]
-  let dq2 = Devec::[1, 2, 3]
-  @assertion.assert_true(dq1 == dq2)?
-  let dq1 = Devec::[1, 2, 3]
-  let dq2 = Devec::[1, 2, 3]
-  dq2[0] = 2
-  @assertion.assert_false(dq1 == dq2)?
-  let dq1 = Devec::[1, 2, 3]
-  let dq2 = Devec::[1, 2, 3]
-  dq2.push_front(1)
-  @assertion.assert_false(dq1 == dq2)?
+  let dv1 = Devec::[1, 2, 3]
+  let dv2 = Devec::[1, 2, 3]
+  @assertion.assert_true(dv1 == dv2)?
+  let dv1 = Devec::[1, 2, 3]
+  let dv2 = Devec::[1, 2, 3]
+  dv2[0] = 2
+  @assertion.assert_false(dv1 == dv2)?
+  let dv1 = Devec::[1, 2, 3]
+  let dv2 = Devec::[1, 2, 3]
+  dv2.push_front(1)
+  @assertion.assert_false(dv1 == dv2)?
 }
 
 /// Iterates over the elements of the devec.
-/// 
+///
 /// # Example
 /// ```
 /// let dv = Devec::[1, 2, 3, 4, 5]
@@ -424,7 +424,7 @@ test "iter2" {
 }
 
 /// Iterates over the elements of the devec with index.
-/// 
+///
 /// # Example
 /// ```
 /// let dv = Devec::[1, 2, 3, 4, 5]
@@ -452,7 +452,7 @@ test "iteri" {
 }
 
 /// Iterates over the elements of the devec in reversed turn.
-/// 
+///
 /// # Example
 /// ```
 /// let dv = Devec::[1, 2, 3, 4, 5]
@@ -480,7 +480,7 @@ test "iter_rev" {
 }
 
 /// Iterates over the elements of the devec in reversed turn with index.
-/// 
+///
 /// # Example
 /// ```
 /// let dv = Devec::[1, 2, 3, 4, 5]
@@ -510,9 +510,9 @@ test "iter_revi" {
 }
 
 /// Clears the devec, removing all values.
-/// 
+///
 /// This method has no effect on the allocated capacity of the devec, only setting the length to 0.
-/// 
+///
 /// # Example
 /// ```
 /// let dv = Devec:: [1, 2, 3, 4, 5]
@@ -532,7 +532,7 @@ test "clear" {
 }
 
 /// Maps a function over the elements of the devec.
-/// 
+///
 /// # Example
 /// ```
 /// let dv = Devec::[3, 4, 5]
@@ -553,7 +553,7 @@ test "map" {
 }
 
 /// Maps a function over the elements of the devec with index.
-/// 
+///
 /// # Example
 /// ```
 /// let dv = Devec::[3, 4, 5]
@@ -574,7 +574,7 @@ test "mapi" {
 }
 
 /// Test if the devec is empty.
-/// 
+///
 /// # Example
 /// ```
 /// let dv = Devec::new()
@@ -592,7 +592,7 @@ test "is_empty" {
 }
 
 /// Search the devec index for a given element.
-/// 
+///
 /// # Example
 /// ```
 /// let dv = Devec::[3, 4, 5]
@@ -616,7 +616,7 @@ test "search" {
 }
 
 /// Checks if the vector contains an element.
-/// 
+///
 /// # Example
 /// ```
 /// let dv = Devec::[3, 4, 5]
@@ -641,9 +641,9 @@ test "contains" {
 
 /// Reserves capacity to ensure that it can hold at least the number of elements
 /// specified by the `capacity` argument.
-/// 
+///
 /// # Example
-/// 
+///
 /// ```
 /// let dv = Devec::[1]
 /// dv.reserve_capacity(10)
@@ -685,9 +685,9 @@ test "reserve_capacity_2" {
 }
 
 /// Shrinks the capacity of the devec as much as possible.
-/// 
+///
 /// # Example
-/// 
+///
 /// ```
 /// let dv = Devec::with_capacity(10)
 /// dv.push_back(1)
