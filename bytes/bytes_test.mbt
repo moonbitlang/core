@@ -12,20 +12,17 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-/// Makes a new Bytes with the given integer array.
-/// 
-/// Each integer in the array must be a 0~255 (inclusive) number.
-/// 
-/// # Usage
-/// 
-/// ```moonbit
-/// let b = Bytes::[65, 66, 67]
-/// ```
-/// 
-pub fn Bytes::from_array(arr : Array[Int]) -> Bytes {
-  let rv = Bytes::make(arr.length(), 0)
-  for i = 0; i < arr.length(); i = i + 1 {
-    rv[i] = arr[i]
-  }
-  rv
+test "from_array" {
+  let b = Bytes::[65, 0, 66, 0, 67, 0]
+  inspect(b.to_string(), content="ABC")?
+}
+
+test "hash" {
+  let b1 = Bytes::[65, 0, 66, 0, 67, 0, 68, 0, 69, 0, 70, 0, 71, 0, 72, 0, 73, 0]
+  let b2 = Bytes::[65, 0, 66, 0, 67, 0, 68, 0, 69, 0, 70, 0, 71, 0, 72, 0, 74, 0]
+  inspect(b1.hash(), content="273427599")?
+  inspect(b2.hash(), content="2013728637")?
+  inspect(b1.hash() == b1.hash(), content="true")?
+  inspect(b2.hash() == b2.hash(), content="true")?
+  inspect(b1.hash() == b2.hash(), content="false")?
 }
