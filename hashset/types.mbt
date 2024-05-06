@@ -15,7 +15,7 @@
 priv enum Entry[K] {
   Empty
   // (Probe Sequence Length, Hash, Key)
-  Valid(Int, Int, K)
+  Valid(~psl : Int, ~hash : Int, ~key : K)
 } derive(Debug)
 
 /// A mutable hash set implements with Robin Hood hashing.
