@@ -40,17 +40,16 @@ fn op_get[X](self : SparseArray[X], idx : Int) -> Option[X] {
 ///
 /// Add a new element into the sparse array.
 /// [idx] must be absent from [self]
-/// TODO: use blit intrinsic instead 
 fn add[X](self : SparseArray[X], idx : Int, value : X) -> SparseArray[X] {
-  let new_len = self.data.length() + 1
+  let old_data = self.data   
+  let old_len = old_data.length()
+  let new_len = old_len + 1
   let pos_of_new_item = self.elem_info.index_of(idx)
   let new_data = Array::make(new_len, value)
-  for i = 0; i < pos_of_new_item; i = i + 1 {
-    new_data[i] = self.data[i]
-  }
-  for i = pos_of_new_item + 1; i < new_len; i = i + 1 {
-    new_data[i] = self.data[i - 1]
-  }
+  
+  old_data.blit_to(new_data,len=pos_of_new_item)
+  old_data.blit_to(new_data,len=old_len - pos_of_new_item, src_offset=pos_of_new_item, dst_offset= pos_of_new_item + 1)
+
   { elem_info: self.elem_info.add(idx), data: new_data }
 }
 
@@ -58,12 +57,8 @@ fn add[X](self : SparseArray[X], idx : Int, value : X) -> SparseArray[X] {
 ///
 // replace an existing element in the sparse array.
 fn replace[X](self : SparseArray[X], idx : Int, value : X) -> SparseArray[X] {
-  let len = self.data.length()
-  let pos_of_new_item = self.elem_info.index_of(idx)
-  let new_data = Array::make(len, value)
-  for i = 0; i < len; i = i + 1 {
-    new_data[i] = if i == pos_of_new_item { value } else { self.data[i] }
-  }
+  let new_data = self.data.copy()
+  new_data[self.elem_info.index_of(idx)] = value  
   { elem_info: self.elem_info, data: new_data }
 }
 

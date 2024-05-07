@@ -47,6 +47,13 @@ test "Bitset::index_of" {
   inspect(b.index_of(2), content="1")?
   let b = b.add(5)
   inspect(b.index_of(2), content="1")?
+  // when elem is missing  
+  inspect(b.index_of(3), content="2")?
+  inspect(b.index_of(4), content="2")?
+  // 5 is 
+  inspect(b.index_of(5), content="2")?
+  // 6 is not
+  inspect(b.index_of(6), content="3")?
 }
 
 /// `add(self: Bitset, idx: Int)`
