@@ -15,7 +15,9 @@ impl Array {
   all[T](Self[T], (T) -> Bool) -> Bool
   any[T](Self[T], (T) -> Bool) -> Bool
   as_iter[T](Self[T]) -> @iter.Iter[T]
+  blit_to[A](Self[A], Self[A], ~len : Int, ~src_offset : Int = .., ~dst_offset : Int = ..) -> Unit
   contains[T : Eq](Self[T], T) -> Bool
+  copy[T](Self[T]) -> Self[T]
   ends_with[T : Eq](Self[T], Self[T]) -> Bool
   fill[T](Self[T], T) -> Unit
   fold_left[T, U](Self[T], (U, T) -> U, ~init : U) -> U
