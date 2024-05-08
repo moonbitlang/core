@@ -607,12 +607,13 @@ pub fn from_string(input : String) -> BigInt {
 
 /// Converts a hex string to a BigInt.
 pub fn from_hex(input : String) -> BigInt {
+  // WARN: this implementation assumes that `radix` is a power of 2.
   let len = input.length()
   if len == 0 {
     abort("empty string")
   }
   let sign : Sign = if input[0] == '-' { Negative } else { Positive }
-  let mut b_len = (len * 4 + 1 + radix_bit_len) / radix_bit_len + 1
+  let mut b_len = (len * 4 + 1 + radix_bit_len) / radix_bit_len + 1 // TODO: 4 is hardcoded.
   let b = Array::make(b_len, 0)
   for i = match sign {
           Negative => 1
@@ -648,8 +649,9 @@ pub fn from_hex(input : String) -> BigInt {
 
 /// Converts a BigInt to a hex string.
 pub fn to_hex(self : BigInt) -> String {
+  // WARN: this implementation assumes that `radix_bit_len` is a multiple of 4.
   let mut result = ""
-  for i = self.len - 1; i >= 0; i = i - 1 {
+  for i = self.len - 1; i >= 0; i = i - 1 { // TODO: reverse iteration would be a bit faster.
     // split the limb into 4-bit chunks
     let mut x = self.limbs[i]
     let mut tmp = ""
