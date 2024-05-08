@@ -612,7 +612,6 @@ pub fn from_hex(input : String) -> BigInt {
     abort("empty string")
   }
   let sign : Sign = if input[0] == '-' { Negative } else { Positive }
-
   let mut b_len = (len * 4 + 1 + radix_bit_len) / radix_bit_len + 1
   let b = Array::make(b_len, 0)
   for i = match sign {
