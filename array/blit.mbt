@@ -64,6 +64,6 @@ test "copy" {
   a.blit_to(c, len=4, dst_offset=3)
   inspect(c, content="[0, 0, 0, 1, 2, 3, 4, 0]")?
   inspect(([] : Array[Int]).copy(), content="[]")?
-  a.blit_to(a,len=2,src_offset=1);
+  a.blit_to(a, len=2, src_offset=1)
   inspect(a, content="[2, 3, 3, 4]")?
 }

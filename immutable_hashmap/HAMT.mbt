@@ -126,8 +126,6 @@ pub fn add[K : Eq + Hash, V](self : Map[K, V], key : K, value : V) -> Map[K, V] 
   self.add_with_hash(key, 0, key.hash(), value)
 }
 
-
-
 /// Remove an element from a map
 pub fn remove[K : Eq + Hash, V](self : Map[K, V], key : K) -> Map[K, V] {
   self.remove_with_hash(key, 0, key.hash())
@@ -172,7 +170,6 @@ fn remove_with_hash[K : Eq, V](
   }
 }
 
-
 /// Calculate the size of a map.
 ///
 /// WARNING: this operation is `O(N)` in map size
@@ -190,7 +187,6 @@ pub fn size[K, V](self : Map[K, V]) -> Int {
     }
   }
 }
-
 
 /// Iterate through the elements in a hash map
 pub fn iter[K, V](self : Map[K, V], f : (K, V) -> Unit) -> Unit {
@@ -236,8 +232,9 @@ test "HAMT::to_string" {
     42, 42,
   )
   inspect(
-    map,    
-    content="@immutable_hashmap.Map::[(1, 1), (3, 3), (42, 42), (268435455, 268435455)]")?
+    map,
+    content="@immutable_hashmap.Map::[(1, 1), (3, 3), (42, 42), (268435455, 268435455)]",
+  )?
 }
 
 pub fn Map::from_array[K : Eq + Hash, V](arr : Array[(K, V)]) -> Map[K, V] {

@@ -20,7 +20,6 @@ test "HAMT::size" {
   }
 }
 
-
 test "HAMT" {
   let map = loop 0, Map::make() {
     100, map => map
