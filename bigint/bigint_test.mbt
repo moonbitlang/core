@@ -377,6 +377,9 @@ test "lsr" {
 }
 
 test "decimal_string" {
+  let a = from_string("0")
+  check_len(a)?
+  inspect(a.to_string(), content="0")?
   let a = from_string("123")
   check_len(a)?
   inspect(a.to_string(), content="123")?
