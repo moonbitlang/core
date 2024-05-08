@@ -599,7 +599,7 @@ pub fn from_string(input : String) -> BigInt {
       carry /= radix
     }
   }
-  while b[b_len - 1] == 0 {
+  while b[b_len - 1] == 0 && b_len > 1 {
     b_len -= 1
   }
   { limbs: b, sign, len: b_len }
