@@ -1,6 +1,7 @@
 {
   "import": [
     "moonbitlang/core/builtin",
+    "moonbitlang/core/char",
     "moonbitlang/core/coverage"
   ],
   "test_import": ["moonbitlang/core/assertion"]

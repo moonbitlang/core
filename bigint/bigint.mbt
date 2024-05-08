@@ -605,6 +605,83 @@ pub fn from_string(input : String) -> BigInt {
   { limbs: b, sign, len: b_len }
 }
 
+/// Converts a hex string to a BigInt.
+pub fn from_hex(input : String) -> BigInt {
+  // WARN: this implementation assumes that `radix` is a power of 2.
+  let len = input.length()
+  if len == 0 {
+    abort("empty string")
+  }
+  let sign : Sign = if input[0] == '-' { Negative } else { Positive }
+  let mut b_len = (len * 4 + 1 + radix_bit_len) / radix_bit_len + 1 // TODO: 4 is hardcoded.
+  let b = Array::make(b_len, 0)
+  for i = match sign {
+          Negative => 1
+          Positive => 0
+        }
+      i < input.length()
+      i = i + 1 {
+    let x = input[i].to_int()
+    let y = if x >= 48 && x <= 57 {
+      // ASCII value of '0'
+      x - 48
+    } else if x >= 65 && x <= 70 {
+      // ASCII value of 'A'
+      x - 55
+    } else if x >= 97 && x <= 102 {
+      // ASCII value of 'a'
+      x - 87
+    } else {
+      abort("invalid character")
+    }
+    let mut carry = y
+    for j = 0; j < b_len; j = j + 1 {
+      carry += b[j] * 16
+      b[j] = carry % radix.to_int()
+      carry /= radix.to_int()
+    }
+  }
+  while b[b_len - 1] == 0 && b_len > 1 {
+    b_len -= 1
+  }
+  { limbs: b, sign, len: b_len }
+}
+
+/// Converts a BigInt to a hex string.
+pub fn to_hex(self : BigInt) -> String {
+  // WARN: this implementation assumes that `radix_bit_len` is a multiple of 4.
+  let mut result = ""
+  for i = self.len - 1; i >= 0; i = i - 1 { // TODO: reverse iteration would be a bit faster.
+    // split the limb into 4-bit chunks
+    let mut x = self.limbs[i]
+    let mut tmp = ""
+    while x > 0 {
+      let y = x % 16
+      x /= 16
+      tmp = if y < 10 {
+          Char::from_int(y + 48).to_string()
+        } else {
+          Char::from_int(y + 55).to_string()
+        } + tmp
+    }
+    if i != self.len - 1 && tmp.length() < 4 {
+      let pad = 4 - tmp.length()
+      // pad with zeros if not the last limb(the front of the BigInt)
+      for j = 0; j < pad; j = j + 1 {
+        tmp = "0" + tmp
+      }
+    }
+    result = result + tmp
+  }
+  if result == "" {
+    "0"
+  } else if self.sign == Negative {
+    "-" + result
+  } else {
+    result
+  }
+}
+
 fn deep_clone(self : BigInt) -> BigInt {
   let new_limbs = Array::make(self.len, 0)
   for i = 0; i < self.len; i = i + 1 {

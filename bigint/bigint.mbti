@@ -1,6 +1,8 @@
 package moonbitlang/core/bigint
 
 // Values
+fn from_hex(String) -> BigInt
+
 fn from_int(Int) -> BigInt
 
 fn from_int64(Int64) -> BigInt
@@ -24,6 +26,7 @@ impl BigInt {
   op_mul(Self, Self) -> Self
   op_neg(Self) -> Self
   op_sub(Self, Self) -> Self
+  to_hex(Self) -> String
   to_string(Self) -> String
 }
 
