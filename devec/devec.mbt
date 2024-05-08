@@ -731,3 +731,46 @@ test "shrink_to_fit_2" {
   dv.shrink_to_fit()
   @assertion.assert_true(dv.capacity() == 3)?
 }
+
+pub fn as_iter[T](self : Devec[T]) -> @iter.Iter[T] {
+  @iter.Iter::_unstable_internal_make(
+    fn(yield) {
+      for i = 0, len = self.length(); i < len; i = i + 1 {
+        if yield(self[i]).not() {
+          break false
+        }
+      } else {
+        true
+      }
+    },
+  )
+}
+
+test "as_iter" {
+  let dv = Devec::[1, 2, 3, 4, 5]
+  let iter = dv.as_iter()
+  let buf = Buffer::make(0)
+  let mut i = 0
+  iter.iter(
+    fn(x) {
+      buf.write_string(x.to_string())
+      buf.write_char('\n')
+      i = i + 1
+    },
+  )
+  @assertion.assert_eq(i, dv.length())?
+  buf.expect(
+    content=
+      #|1
+      #|2
+      #|3
+      #|4
+      #|5
+      #|
+    ,
+  )?
+  inspect(
+    iter.take(4).filter(fn(x) { x % 2 == 0 }).fold(fn(a, x) { a + x }, 0),
+    content="6",
+  )?
+}
