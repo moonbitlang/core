@@ -78,7 +78,7 @@ fn realloc[T](self : Devec[T]) -> Unit {
       }
     } else {
       let mut j = 0
-      for i = self.head; i < old_cap; i = i + 1 {
+      for i = self.head; i < self.buf.length(); i = i + 1 {
         new_buf[j] = self.buf[i]
         j += 1
       }
