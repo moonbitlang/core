@@ -792,7 +792,7 @@ test "reserve and push" {
   b.push_back(Some(1))
   inspect(b.front(), content="Some(Some(1))")?
   inspect(b.back(), content="Some(Some(1))")?
-    // capacity > 0, len = 0
+  // capacity > 0, len = 0
   let c : Devec[Option[Int]] = Devec::with_capacity(2)
   c.push_front(Some(1))
   inspect(c.front(), content="Some(Some(1))")?
