@@ -38,6 +38,8 @@ enum Map[K, V] {
 // The number of bits consumed at every [Branch] node
 let segment_length : Int = 5
 
+let segment_mask : Int = 0b11111
+
 pub fn Map::make[K, V]() -> Map[K, V] {
   Empty
 }
@@ -50,7 +52,7 @@ pub fn find[K : Eq + Hash, V](self : Map[K, V], key : K) -> Option[V] {
     Collision(bucket), _ => bucket.find(key)
     Branch(children), hash => {
       // get the first segment (lower 5 bits) of the hash value
-      let idx = hash.land((1).lsl(segment_length) - 1)
+      let idx = hash.land(segment_mask)
       match children[idx] {
         Some(child) =>
           // when searching recursively, drop the segment just used
@@ -73,7 +75,7 @@ fn add_with_hash[K : Eq, V](
     if depth >= 32 {
       Map::Leaf(key, value)
     } else {
-      let idx = hash.land((1).lsl(segment_length) - 1)
+      let idx = hash.land(segment_mask)
       let child = make_leaf(
         depth + segment_length,
         key,
@@ -94,7 +96,7 @@ fn add_with_hash[K : Eq, V](
       }
     Collision(bucket) => Collision(bucket.add(key, value))
     Branch(children) => {
-      let idx = hash.land((1).lsl(segment_length) - 1)
+      let idx = hash.land(segment_mask)
       match children[idx] {
         Some(child) => {
           let child = child.add_with_hash(
@@ -147,7 +149,7 @@ fn remove_with_hash[K : Eq, V](
         Some(new_bucket) => Collision(new_bucket)
       }
     Branch(children) => {
-      let idx = hash.land((1).lsl(segment_length) - 1)
+      let idx = hash.land(segment_mask)
       match children[idx] {
         None => self
         Some(child) => {
