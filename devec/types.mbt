@@ -14,6 +14,7 @@
 
 priv type UninitializedArray[T] Array[UnsafeMaybeUninit[T]]
 
+// head and tail point to non-empty slots. When the buffer is empty, head and tail points to the same slot.
 struct Devec[T] {
   mut buf : UninitializedArray[T]
   mut len : Int

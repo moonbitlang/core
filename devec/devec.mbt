@@ -71,14 +71,14 @@ fn realloc[T](self : Devec[T]) -> Unit {
   let old_cap = self.len
   let new_cap = if old_cap == 0 { 8 } else { old_cap * 2 }
   let new_buf = UninitializedArray::make(new_cap)
-  if self.len > 0 {
+  if old_cap > 0 {
     if self.tail >= self.head {
       for i = self.head, j = 0; i <= self.tail; i = i + 1, j = j + 1 {
         new_buf[j] = self.buf[i]
       }
     } else {
       let mut j = 0
-      for i = self.head; i < self.buf.length(); i = i + 1 {
+      for i = self.head; i < old_cap; i = i + 1 {
         new_buf[j] = self.buf[i]
         j += 1
       }
@@ -87,9 +87,11 @@ fn realloc[T](self : Devec[T]) -> Unit {
         j += 1
       }
     }
+    self.tail = self.len - 1
+  } else {
+    self.tail = 0
   }
   self.head = 0
-  self.tail = self.len - 1
   self.buf = new_buf
 }
 
@@ -166,7 +168,9 @@ pub fn push_front[T](self : Devec[T], value : T) -> Unit {
   if self.len == self.buf.length() {
     self.realloc()
   }
-  self.head = if self.head > 0 { self.head - 1 } else { self.buf.length() - 1 }
+  if self.len != 0 {
+    self.head = (self.head + self.buf.length() - 1) % self.buf.length()
+  }
   self.buf[self.head] = value
   self.len += 1
 }
@@ -184,7 +188,9 @@ pub fn push_back[T](self : Devec[T], value : T) -> Unit {
   if self.len == self.buf.length() {
     self.realloc()
   }
-  self.tail = if self.tail < self.buf.length() - 1 { self.tail + 1 } else { 0 }
+  if self.len != 0 {
+    self.tail = (self.tail + self.buf.length() + 1) % self.buf.length()
+  }
   self.buf[self.tail] = value
   self.len += 1
 }
@@ -776,7 +782,8 @@ test "as_iter" {
 }
 
 test "reserve and push" {
-  let a: Devec[Option[Int]] = Devec::with_capacity(2)
+  let a : Devec[Option[Int]] = Devec::with_capacity(2)
   a.push_back(Some(1))
-  inspect(a.front(), content="Some(None)")?
+  inspect(a.front(), content="Some(Some(1))")?
+  inspect(a.back(), content="Some(Some(1))")?
 }
