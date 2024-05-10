@@ -26,7 +26,7 @@ fn remove_prefix_zero(s : String) -> String {
     return s
   }
   let mut i = 0
-  while s[i] == '0' && i < s.length() {
+  while i < s.length() && s[i] == '0' {
     i += 1
   }
   if i < s.length() {
