@@ -774,3 +774,9 @@ test "as_iter" {
     content="6",
   )?
 }
+
+test "reserve and push" {
+  let a: Devec[Option[Int]] = Devec::with_capacity(2)
+  a.push_back(Some(1))
+  inspect(a.front(), content="Some(None)")?
+}
