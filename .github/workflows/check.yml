@@ -47,6 +47,11 @@ jobs:
           /bin/bash -c "$(curl -fsSL https://cli.moonbitlang.com/ubuntu_x86_64_moon_setup.sh)"
           echo "/home/runner/.moon/bin" >> $GITHUB_PATH
 
+      - name: version
+        run: |
+          moon version --all
+          moonrun --version
+
       - name: moon check
         run: moon check
 
@@ -80,6 +85,11 @@ jobs:
         run: |
           /bin/bash -c "$(curl -fsSL https://cli.moonbitlang.com/mac_intel_moon_setup.sh)"
           echo "$HOME/.moon/bin" >> $GITHUB_PATH
+
+      - name: version
+        run: |
+          moon version --all
+          moonrun --version
 
       - name: moon check
         run: moon check
@@ -116,6 +126,11 @@ jobs:
           /bin/bash -c "$(curl -fsSL https://cli.moonbitlang.com/bleeding/mac_m1_moon_setup.sh)"
           echo "$HOME/.moon/bin" >> $GITHUB_PATH
 
+      - name: version
+        run: |
+          moon version --all
+          moonrun --version
+
       - name: moon check
         run: moon check
 
@@ -150,6 +165,11 @@ jobs:
         run: |
           /bin/bash -c "$(curl -fsSL https://cli.moonbitlang.com/bleeding/mac_m1_moon_setup.sh)"
           echo "$HOME/.moon/bin" >> $GITHUB_PATH
+
+      - name: version
+        run: |
+          moon version --all
+          moonrun --version
 
       - name: moon test
         run: moon test --enable-coverage
