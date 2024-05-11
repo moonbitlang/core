@@ -180,13 +180,14 @@ pub fn size[K, V](self : Map[K, V]) -> Int {
     Empty => 0
     Leaf(_) => 1
     Collision(bucket) => bucket.size()
-    Branch(children) => {
-      let mut total_size = 0
-      for i = 0; i < children.data.length(); i = i + 1 {
-        total_size = total_size + children.data[i].size()
+    Branch(children) =>
+      for i = 0, total_size = 0 {
+        if i < children.data.length() {
+          continue i + 1, total_size + children.data[i].size()
+        } else {
+          break total_size
+        }
       }
-      total_size
-    }
   }
 }
 
