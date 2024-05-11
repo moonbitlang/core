@@ -38,6 +38,8 @@ enum Map[K, V] {
 // The number of bits consumed at every [Branch] node
 let segment_length : Int = 5
 
+let segment_mask : Int = 0b11111
+
 pub fn Map::make[K, V]() -> Map[K, V] {
   Empty
 }
@@ -48,15 +50,15 @@ pub fn find[K : Eq + Hash, V](self : Map[K, V], key : K) -> Option[V] {
     Empty, _ => None
     Leaf(key1, value), _ => if key == key1 { Some(value) } else { None }
     Collision(bucket), _ => bucket.find(key)
+    // get the first segment (lower 5 bits) of the hash value      
+    // inline the hot path of Sparse_array::op_get
     Branch(children), hash => {
-      // get the first segment (lower 5 bits) of the hash value
-      let idx = hash.land((1).lsl(segment_length) - 1)
-      match children[idx] {
-        Some(child) =>
-          // when searching recursively, drop the segment just used
-          continue child, hash.lsr(segment_length)
-        None => None
+      let idx = hash.land(segment_mask)
+      if children.elem_info.has(idx) {
+        let child = children.data[children.elem_info.index_of(idx)]
+        continue child, hash.lsr(segment_length)
       }
+      None
     }
   }
 }
@@ -73,7 +75,7 @@ fn add_with_hash[K : Eq, V](
     if depth >= 32 {
       Map::Leaf(key, value)
     } else {
-      let idx = hash.land((1).lsl(segment_length) - 1)
+      let idx = hash.land(segment_mask)
       let child = make_leaf(
         depth + segment_length,
         key,
@@ -94,7 +96,7 @@ fn add_with_hash[K : Eq, V](
       }
     Collision(bucket) => Collision(bucket.add(key, value))
     Branch(children) => {
-      let idx = hash.land((1).lsl(segment_length) - 1)
+      let idx = hash.land(segment_mask)
       match children[idx] {
         Some(child) => {
           let child = child.add_with_hash(
@@ -147,7 +149,7 @@ fn remove_with_hash[K : Eq, V](
         Some(new_bucket) => Collision(new_bucket)
       }
     Branch(children) => {
-      let idx = hash.land((1).lsl(segment_length) - 1)
+      let idx = hash.land(segment_mask)
       match children[idx] {
         None => self
         Some(child) => {
@@ -178,13 +180,14 @@ pub fn size[K, V](self : Map[K, V]) -> Int {
     Empty => 0
     Leaf(_) => 1
     Collision(bucket) => bucket.size()
-    Branch(children) => {
-      let mut total_size = 0
-      for i = 0; i < children.data.length(); i = i + 1 {
-        total_size = total_size + children.data[i].size()
+    Branch(children) =>
+      for i = 0, total_size = 0 {
+        if i < children.data.length() {
+          continue i + 1, total_size + children.data[i].size()
+        } else {
+          break total_size
+        }
       }
-      total_size
-    }
   }
 }
 
