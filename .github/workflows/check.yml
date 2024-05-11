@@ -89,10 +89,15 @@ jobs:
           moon test --target js
 
       - name: moon bundle
-        run: moon bundle
+        run: moon bundle --all
 
       - name: check core size
-        run: ls -alh `find ./target/bundle -name *.core`
+        if: ${{ matrix.os != 'windows-latest' }}
+        run: find ./target -path '**/bundle/**/*.core' | xargs ls -lh
+
+      - name: check core size
+        if: ${{ matrix.os == 'windows-latest' }}
+        run: Get-ChildItem -Path ".\target" -Recurse -Filter "*.core" | ForEach-Object { "{0} ({1} bytes)" -f $_.FullName, $_.Length }
 
       - name: format diff
         run: |
