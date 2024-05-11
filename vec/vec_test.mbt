@@ -149,14 +149,17 @@ test "clear" {
 
 test "map" {
   let v = Vec::[3, 4, 5]
-  v.map(fn(x) { x + 1 })
-  @assertion.assert_eq(v, Vec::[4, 5, 6])?
+  inspect(v.map(fn(x) { x + 1 }), content="Vec::[4, 5, 6]")?
+  inspect(v.map(fn(x) { x.to_string() }), content="Vec::[3, 4, 5]")?
+
+  // Is it correct?
+  inspect(Vec::["a", "b", "c"], content="Vec::[a, b, c]")?
 }
 
 test "mapi" {
   let v = Vec::[3, 4, 5]
-  v.mapi(fn(i, x) { x + i })
-  @assertion.assert_eq(v, Vec::[3, 5, 7])?
+  inspect(v.mapi(fn(i, x) { x + i }), content="Vec::[3, 5, 7]")?
+  inspect(v.mapi(fn(i, x) { (x + i).to_string() }), content="Vec::[3, 5, 7]")?
 }
 
 test "is_empty" {
