@@ -93,7 +93,7 @@ jobs:
 
       - name: check core size
         if: ${{ matrix.os != 'windows-latest' }}
-        run: find ./target -path '**/bundle/**/*.core' | xargs ls -lh
+        run: find ./target -name '*.core' | xargs ls -lh
 
       - name: check core size
         if: ${{ matrix.os == 'windows-latest' }}
