@@ -321,7 +321,7 @@ fn bubble_sort[T : Compare](arr : ArraySlice[T]) -> Unit {
 }
 
 test "try_bubble_sort" {
-  let arr = [8, 7, 6, 5, 4, 3, 2, 1]
+  let arr : Array[_] = [8, 7, 6, 5, 4, 3, 2, 1]
   let sorted = try_bubble_sort({ array: arr, start: 0, end: 8 })
   @assertion.assert_eq(sorted, true)?
   @assertion.assert_eq(arr, [1, 2, 3, 4, 5, 6, 7, 8])?
@@ -419,13 +419,13 @@ fn sift_down[T : Compare](arr : ArraySlice[T], index : Int) -> Unit {
 }
 
 fn test_sort(f : (Array[Int]) -> Unit) -> Result[Unit, String] {
-  let arr = [5, 4, 3, 2, 1]
+  let arr : Array[_] = [5, 4, 3, 2, 1]
   f(arr)
   @assertion.assert_eq(arr, [1, 2, 3, 4, 5])?
-  let arr = [5, 5, 5, 5, 1]
+  let arr : Array[_] = [5, 5, 5, 5, 1]
   f(arr)
   @assertion.assert_eq(arr, [1, 5, 5, 5, 5])?
-  let arr = [1, 2, 3, 4, 5]
+  let arr : Array[_] = [1, 2, 3, 4, 5]
   f(arr)
   @assertion.assert_eq(arr, [1, 2, 3, 4, 5])?
   {
@@ -461,7 +461,7 @@ test "sort" {
 }
 
 test "stable_sort" {
-  let arr = [5, 1, 3, 4, 2]
+  let arr : Array[_] = [5, 1, 3, 4, 2]
   arr.stable_sort()
   @assertion.assert_eq(arr, [1, 2, 3, 4, 5])?
   let arr = Array::make(1000, 0)

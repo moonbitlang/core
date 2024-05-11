@@ -604,7 +604,7 @@ test "to_string" {
 }
 
 test "shift" {
-  let tests = [
+  let tests : Array[_] = [
     (0L, 100, "0"),
     (0L, -100, "0"),
     (1L, 100, "1267650600228229401496703205376"),

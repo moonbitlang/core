@@ -42,18 +42,18 @@ test "iter" {
   }
   {
     i = 0
-    [].iter(f)
+    ([] : Array[_]).iter(f)
     @assertion.assert_false(failed)?
     @assertion.assert_eq(i, 0)?
   }
   {
     i = 0
-    [1].iter(f)
+    ([1] : Array[_]).iter(f)
     @assertion.assert_false(failed)?
     @assertion.assert_eq(i, 1)?
   }
   i = 0
-  [1, 2, 3, 4, 5].iter(f)
+  ([1, 2, 3, 4, 5] : Array[_]).iter(f)
   @assertion.assert_false(failed)?
   @assertion.assert_eq(i, 5)?
 }
@@ -89,18 +89,18 @@ test "iteri" {
   }
   {
     i = 0
-    [].iteri(f)
+    ([] : Array[_]).iteri(f)
     @assertion.assert_false(failed)?
     @assertion.assert_eq(i, 0)?
   }
   {
     i = 0
-    [1].iteri(f)
+    ([1] : Array[_]).iteri(f)
     @assertion.assert_false(failed)?
     @assertion.assert_eq(i, 1)?
   }
   i = 0
-  [1, 2, 3, 4, 5].iteri(f)
+  ([1, 2, 3, 4, 5] : Array[_]).iteri(f)
   @assertion.assert_false(failed)?
   @assertion.assert_eq(i, 5)?
 }
@@ -134,18 +134,18 @@ test "iter_rev" {
   }
   {
     i = 1
-    [].iter_rev(f)
+    ([] : Array[_]).iter_rev(f)
     @assertion.assert_false(failed)?
     @assertion.assert_eq(i, 1)?
   }
   {
     i = 2
-    [1].iter_rev(f)
+    ([1] : Array[_]).iter_rev(f)
     @assertion.assert_false(failed)?
     @assertion.assert_eq(i, 1)?
   }
   i = 6
-  [1, 2, 3, 4, 5].iter_rev(f)
+  ([1, 2, 3, 4, 5] : Array[_]).iter_rev(f)
   @assertion.assert_false(failed)?
   @assertion.assert_eq(i, 1)?
 }
@@ -185,7 +185,7 @@ test "iter_revi" {
   {
     i = 1
     j = 0
-    [].iter_revi(f)
+    ([] : Array[_]).iter_revi(f)
     @assertion.assert_false(failed)?
     @assertion.assert_eq(i, 1)?
     @assertion.assert_eq(j, 0)?
@@ -193,14 +193,14 @@ test "iter_revi" {
   {
     i = 2
     j = 0
-    [1].iter_revi(f)
+    ([1] : Array[_]).iter_revi(f)
     @assertion.assert_false(failed)?
     @assertion.assert_eq(i, 1)?
     @assertion.assert_eq(j, 1)?
   }
   i = 6
   j = 0
-  [1, 2, 3, 4, 5].iter_revi(f)
+  ([1, 2, 3, 4, 5] : Array[_]).iter_revi(f)
   @assertion.assert_false(failed)?
   @assertion.assert_eq(i, 1)?
   @assertion.assert_eq(j, 5)?
@@ -229,10 +229,10 @@ pub fn map[T, U](self : Array[T], f : (T) -> U) -> Array[U] {
 test "map" {
   let empty : Array[Unit] = Array::default().map(fn(x) { x })
   @assertion.assert_eq(empty, [])?
-  let simple_arr = [6]
+  let simple_arr : Array[_] = [6]
   let simple_doubled = simple_arr.map(fn(x) { x * 2 })
   @assertion.assert_eq(simple_doubled, [12])?
-  let arr = [1, 2, 3, 4, 5]
+  let arr : Array[_] = [1, 2, 3, 4, 5]
   let doubled = arr.map(fn(x) { x * 2 })
   @assertion.assert_eq(doubled, [2, 4, 6, 8, 10])?
 }
@@ -259,10 +259,10 @@ pub fn mapi[T, U](self : Array[T], f : (Int, T) -> U) -> Array[U] {
 test "mapi" {
   let empty : Array[Int] = Array::default().mapi(fn(i, x) { x + i })
   @assertion.assert_eq(empty, [])?
-  let simple_arr = [6]
+  let simple_arr : Array[_] = [6]
   let simple_doubled = simple_arr.mapi(fn(i, x) { x * 2 + i })
   @assertion.assert_eq(simple_doubled, [12])?
-  let arr = [1, 2, 3, 4, 5]
+  let arr : Array[_] = [1, 2, 3, 4, 5]
   let doubled = arr.mapi(fn(i, x) { x * 2 + i })
   @assertion.assert_eq(doubled, [2, 5, 8, 11, 14])?
 }
@@ -344,11 +344,14 @@ pub fn fold_left[T, U](self : Array[T], f : (U, T) -> U, ~init : U) -> U {
 }
 
 test "fold_left" {
-  let sum = [].fold_left(init=1, fn { sum, elem => sum + elem })
+  let sum = ([] : Array[_]).fold_left(init=1, fn { sum, elem => sum + elem })
   @assertion.assert_eq(sum, 1)?
-  let sum = [1].fold_left(init=2, fn { sum, elem => sum + elem })
+  let sum = ([1] : Array[_]).fold_left(init=2, fn { sum, elem => sum + elem })
   @assertion.assert_eq(sum, 3)?
-  let sum = [1, 2, 3, 4, 5].fold_left(init=0, fn { sum, elem => sum + elem })
+  let sum = ([1, 2, 3, 4, 5] : Array[_]).fold_left(
+    init=0,
+    fn { sum, elem => sum + elem },
+  )
   @assertion.assert_eq(sum, 15)?
 }
 
@@ -368,11 +371,14 @@ pub fn fold_right[T, U](self : Array[T], f : (U, T) -> U, ~init : U) -> U {
 }
 
 test "fold_right" {
-  let sum = [].fold_right(init=1, fn { sum, elem => sum + elem })
+  let sum = ([] : Array[_]).fold_right(init=1, fn { sum, elem => sum + elem })
   @assertion.assert_eq(sum, 1)?
-  let sum = [1].fold_right(init=2, fn { sum, elem => sum + elem })
+  let sum = ([1] : Array[_]).fold_right(init=2, fn { sum, elem => sum + elem })
   @assertion.assert_eq(sum, 3)?
-  let sum = [1, 2, 3, 4, 5].fold_right(init=0, fn { sum, elem => sum + elem })
+  let sum = ([1, 2, 3, 4, 5] : Array[_]).fold_right(
+    init=0,
+    fn { sum, elem => sum + elem },
+  )
   @assertion.assert_eq(sum, 15)?
 }
 
@@ -394,14 +400,14 @@ pub fn fold_lefti[T, U](self : Array[T], f : (Int, U, T) -> U, ~init : U) -> U {
 test "fold_lefti" {
   let f = fn { index, sum, elem => index + sum + elem }
   {
-    let sum = [].fold_lefti(init=1, f)
+    let sum = ([] : Array[_]).fold_lefti(init=1, f)
     @assertion.assert_eq(sum, 1)?
   }
   {
-    let sum = [1].fold_lefti(init=2, f)
+    let sum = ([1] : Array[_]).fold_lefti(init=2, f)
     @assertion.assert_eq(sum, 3)?
   }
-  let sum = [1, 2, 3, 4, 5].fold_lefti(init=0, f)
+  let sum = ([1, 2, 3, 4, 5] : Array[_]).fold_lefti(init=0, f)
   @assertion.assert_eq(sum, 25)?
 }
 
@@ -424,14 +430,14 @@ pub fn fold_righti[T, U](self : Array[T], f : (Int, U, T) -> U, ~init : U) -> U 
 test "fold_righti" {
   let f = fn { index, sum, elem => index + sum + elem }
   {
-    let sum = [].fold_lefti(init=1, f)
+    let sum = ([] : Array[_]).fold_lefti(init=1, f)
     @assertion.assert_eq(sum, 1)?
   }
   {
-    let sum = [1].fold_lefti(init=2, f)
+    let sum = ([1] : Array[_]).fold_lefti(init=2, f)
     @assertion.assert_eq(sum, 3)?
   }
-  let sum = [1, 2, 3, 4, 5].fold_righti(init=0, f)
+  let sum = ([1, 2, 3, 4, 5] : Array[_]).fold_righti(init=0, f)
   @assertion.assert_eq(sum, 25)?
 }
 
@@ -457,21 +463,21 @@ test "reverse" {
     @assertion.assert_eq(arr, [])?
   }
   {
-    let arr = [1]
+    let arr : Array[_] = [1]
     arr.reverse()
     @assertion.assert_eq(arr, [1])?
   }
   {
-    let arr = [1, 2]
+    let arr : Array[_] = [1, 2]
     arr.reverse()
     @assertion.assert_eq(arr, [2, 1])?
   }
   {
-    let arr = [1, 2, 3, 4, 5]
+    let arr : Array[_] = [1, 2, 3, 4, 5]
     arr.reverse()
     @assertion.assert_eq(arr, [5, 4, 3, 2, 1])?
   }
-  let arr = [1, 2, 3, 4, 5, 6]
+  let arr : Array[_] = [1, 2, 3, 4, 5, 6]
   arr.reverse()
   @assertion.assert_eq(arr, [6, 5, 4, 3, 2, 1])?
 }
@@ -498,13 +504,13 @@ test "swap" {
     @assertion.assert_eq(arr, [1])?
   }
   {
-    let arr = [1, 2]
+    let arr : Array[_] = [1, 2]
     arr.swap(0, 0)
     @assertion.assert_eq(arr, [1, 2])?
     arr.swap(0, 1)
     @assertion.assert_eq(arr, [2, 1])?
   }
-  let arr = [1, 2, 3, 4, 5]
+  let arr : Array[_] = [1, 2, 3, 4, 5]
   arr.swap(3, 3)
   @assertion.assert_eq(arr, [1, 2, 3, 4, 5])?
   arr.swap(1, 3)
@@ -536,11 +542,11 @@ test "all" {
     @assertion.assert_true(arr.all(fn(ele) { ele < 5 }))?
   }
   {
-    let arr = [5]
+    let arr : Array[_] = [5]
     @assertion.assert_true(arr.all(fn(ele) { ele < 6 }))?
     @assertion.assert_false(arr.all(fn(ele) { ele < 5 }))?
   }
-  let arr = [1, 2, 3, 4, 5]
+  let arr : Array[_] = [1, 2, 3, 4, 5]
   @assertion.assert_true(arr.all(fn(ele) { ele < 6 }))?
   @assertion.assert_false(arr.all(fn(ele) { ele < 5 }))?
 }
@@ -570,11 +576,11 @@ test "any" {
     @assertion.assert_false(arr.any(fn(ele) { ele < 5 }))?
   }
   {
-    let arr = [5]
+    let arr : Array[_] = [5]
     @assertion.assert_true(arr.any(fn(ele) { ele < 6 }))?
     @assertion.assert_false(arr.any(fn(ele) { ele < 5 }))?
   }
-  let arr = [1, 2, 3, 4, 5]
+  let arr : Array[_] = [1, 2, 3, 4, 5]
   @assertion.assert_true(arr.any(fn(ele) { ele < 6 }))?
   @assertion.assert_true(arr.any(fn(ele) { ele < 5 }))?
 }
@@ -598,11 +604,11 @@ test "fill" {
     @assertion.assert_eq(arr, [])?
   }
   {
-    let arr = [6]
+    let arr : Array[_] = [6]
     arr.fill(5)
     @assertion.assert_eq(arr, [5])?
   }
-  let arr = [0, 0, 0, 0, 0]
+  let arr : Array[_] = [0, 0, 0, 0, 0]
   arr.fill(3)
   @assertion.assert_eq(arr, [3, 3, 3, 3, 3])?
 }
@@ -630,11 +636,11 @@ test "search" {
     @assertion.assert_eq(arr.search(-1), None)?
   }
   {
-    let arr = [3]
+    let arr : Array[_] = [3]
     @assertion.assert_eq(arr.search(3), Some(0))?
     @assertion.assert_eq(arr.search(-1), None)?
   }
-  let arr = [1, 2, 3, 4, 5]
+  let arr : Array[_] = [1, 2, 3, 4, 5]
   @assertion.assert_eq(arr.search(1), Some(0))?
   @assertion.assert_eq(arr.search(5), Some(4))?
   @assertion.assert_eq(arr.search(3), Some(2))?
@@ -664,11 +670,11 @@ test "contains" {
     @assertion.assert_false(arr.contains(-1))?
   }
   {
-    let arr = [3]
+    let arr : Array[_] = [3]
     @assertion.assert_true(arr.contains(3))?
     @assertion.assert_false(arr.contains(-1))?
   }
-  let arr = [3, 4, 5]
+  let arr : Array[_] = [3, 4, 5]
   @assertion.assert_true(arr.contains(3))?
   @assertion.assert_true(arr.contains(4))?
   @assertion.assert_true(arr.contains(5))?
@@ -701,13 +707,13 @@ test "starts_with" {
     @assertion.assert_false(arr.starts_with([1]))?
   }
   {
-    let arr = [3]
+    let arr : Array[_] = [3]
     @assertion.assert_true(arr.starts_with([]))?
     @assertion.assert_true(arr.starts_with([3]))?
     @assertion.assert_false(arr.starts_with([2]))?
     @assertion.assert_false(arr.starts_with([3, 1]))?
   }
-  let arr = [3, 4, 5]
+  let arr : Array[_] = [3, 4, 5]
   @assertion.assert_true(arr.starts_with([]))?
   @assertion.assert_true(arr.starts_with([3]))?
   @assertion.assert_false(arr.starts_with([2]))?
@@ -746,13 +752,13 @@ test "ends_with" {
     @assertion.assert_false(arr.ends_with([1]))?
   }
   {
-    let arr = [3]
+    let arr : Array[_] = [3]
     @assertion.assert_true(arr.ends_with([]))?
     @assertion.assert_true(arr.ends_with([3]))?
     @assertion.assert_false(arr.ends_with([2]))?
     @assertion.assert_false(arr.ends_with([3, 1]))?
   }
-  let arr = [3, 4, 5]
+  let arr : Array[_] = [3, 4, 5]
   @assertion.assert_true(arr.ends_with([]))?
   @assertion.assert_true(arr.ends_with([5]))?
   @assertion.assert_false(arr.ends_with([2]))?
@@ -784,14 +790,14 @@ pub fn to_list[T](self : Array[T]) -> List[T] {
 
 test "to_list" {
   {
-    let ls : List[Int] = [].to_list()
+    let ls : List[Int] = ([] : Array[_]).to_list()
     @assertion.assert_eq(ls, Nil)?
   }
   {
-    let ls = [3].to_list()
+    let ls = ([3] : Array[_]).to_list()
     @assertion.assert_eq(ls, Cons(3, Nil))?
   }
-  let ls = [1, 2, 3, 4, 5].to_list()
+  let ls = ([1, 2, 3, 4, 5] : Array[_]).to_list()
   @assertion.assert_eq(ls, Cons(1, Cons(2, Cons(3, Cons(4, Cons(5, Nil))))))?
 }
 
@@ -810,21 +816,21 @@ pub fn op_equal[T : Eq](self : Array[T], that : Array[T]) -> Bool {
 test "op_equal" {
   {
     inspect(([] : Array[Int]) == [], content="true")?
-    inspect([] == [1], content="false")?
-    inspect([1, 2] == [], content="false")?
+    inspect(([] : Array[_]) == [1], content="false")?
+    inspect(([1, 2] : Array[_]) == [], content="false")?
   }
   {
-    inspect([1] == [1], content="true")?
-    inspect([1] == [2], content="false")?
-    inspect([1, 2] == [1], content="false")?
-    inspect([1] == [1, 2], content="false")?
+    inspect(([1] : Array[_]) == [1], content="true")?
+    inspect(([1] : Array[_]) == [2], content="false")?
+    inspect(([1, 2] : Array[_]) == [1], content="false")?
+    inspect(([1] : Array[_]) == [1, 2], content="false")?
   }
-  inspect([1, 2, 3, 4, 5] == [1, 2, 3, 4, 5], content="true")?
-  inspect([1, 2, 3, 4, 5] == [1, 2, 3, 4], content="false")?
-  inspect([1, 2, 3, 4] == [1, 2, 3, 4, 5], content="false")?
-  inspect([1, 2, 3, 4, 5] == [6, 2, 3, 4, 5], content="false")?
-  inspect([1, 2, 3, 4, 5] == [1, 2, 6, 4, 5], content="false")?
-  inspect([1, 2, 3, 4, 5] == [1, 2, 3, 4, 6], content="false")?
+  inspect(([1, 2, 3, 4, 5] : Array[_]) == [1, 2, 3, 4, 5], content="true")?
+  inspect(([1, 2, 3, 4, 5] : Array[_]) == [1, 2, 3, 4], content="false")?
+  inspect(([1, 2, 3, 4] : Array[_]) == [1, 2, 3, 4, 5], content="false")?
+  inspect(([1, 2, 3, 4, 5] : Array[_]) == [6, 2, 3, 4, 5], content="false")?
+  inspect(([1, 2, 3, 4, 5] : Array[_]) == [1, 2, 6, 4, 5], content="false")?
+  inspect(([1, 2, 3, 4, 5] : Array[_]) == [1, 2, 3, 4, 6], content="false")?
 }
 
 fn deep_clone[T](arr : Array[T]) -> Array[T] {
@@ -848,12 +854,12 @@ test "deep_clone" {
     @assertion.assert_eq(arr, [])?
   }
   {
-    let pre = [3]
+    let pre : Array[_] = [3]
     let arr = deep_clone(pre)
     @assertion.assert_is_not(arr, pre)?
     @assertion.assert_eq(arr, [3])?
   }
-  let pre = [1, 2, 3, 4, 5]
+  let pre : Array[_] = [1, 2, 3, 4, 5]
   let arr = deep_clone(pre)
   @assertion.assert_is_not(arr, pre)?
   @assertion.assert_eq(arr, [1, 2, 3, 4, 5])?
@@ -881,16 +887,16 @@ pub fn op_add[T](self : Array[T], other : Array[T]) -> Array[T] {
 test "op_add" {
   {
     inspect(([] : Array[Int]) + [], content="[]")?
-    inspect([] + [1, 2, 3, 4, 5], content="[1, 2, 3, 4, 5]")?
-    inspect([1, 2, 3, 4, 5] + [], content="[1, 2, 3, 4, 5]")?
+    inspect(([] : Array[_]) + [1, 2, 3, 4, 5], content="[1, 2, 3, 4, 5]")?
+    inspect(([1, 2, 3, 4, 5] : Array[_]) + [], content="[1, 2, 3, 4, 5]")?
   }
   {
-    inspect([1] + [2], content="[1, 2]")?
-    inspect([1] + [1, 2, 3, 4, 5], content="[1, 1, 2, 3, 4, 5]")?
-    inspect([1, 2, 3, 4, 5] + [1], content="[1, 2, 3, 4, 5, 1]")?
+    inspect(([1] : Array[_]) + [2], content="[1, 2]")?
+    inspect(([1] : Array[_]) + [1, 2, 3, 4, 5], content="[1, 1, 2, 3, 4, 5]")?
+    inspect(([1, 2, 3, 4, 5] : Array[_]) + [1], content="[1, 2, 3, 4, 5, 1]")?
   }
   inspect(
-    [1, 2, 3, 4, 5] + [6, 7, 8, 9, 10],
+    ([1, 2, 3, 4, 5] : Array[_]) + [6, 7, 8, 9, 10],
     content="[1, 2, 3, 4, 5, 6, 7, 8, 9, 10]",
   )?
 }
@@ -911,7 +917,7 @@ pub fn as_iter[T](self : Array[T]) -> @iter.Iter[T] {
 }
 
 test "as_iter" {
-  let arr = [1, 2, 3, 4, 5]
+  let arr : Array[_] = [1, 2, 3, 4, 5]
   let iter = arr.as_iter()
   let exb = Buffer::make(0)
   let mut i = 0
