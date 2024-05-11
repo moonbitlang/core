@@ -14,7 +14,7 @@
 
 test "slice" {
   let v = Vec::[1, 2, 3, 4, 5]
-  let s = v.op_as_view(start=1, end=4)
+  let s = v[1..4]
   @assertion.assert_eq(s.length(), 3)?
   @assertion.assert_eq(s[0], 2)?
   @assertion.assert_eq(s[1], 3)?
