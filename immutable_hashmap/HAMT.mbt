@@ -50,15 +50,15 @@ pub fn find[K : Eq + Hash, V](self : Map[K, V], key : K) -> Option[V] {
     Empty, _ => None
     Leaf(key1, value), _ => if key == key1 { Some(value) } else { None }
     Collision(bucket), _ => bucket.find(key)
+    // get the first segment (lower 5 bits) of the hash value      
+    // inline the hot path of Sparse_array::op_get
     Branch(children), hash => {
-      // get the first segment (lower 5 bits) of the hash value
       let idx = hash.land(segment_mask)
-      match children[idx] {
-        Some(child) =>
-          // when searching recursively, drop the segment just used
-          continue child, hash.lsr(segment_length)
-        None => None
+      if children.elem_info.has(idx) {
+        let child = children.data[children.elem_info.index_of(idx)]
+        continue child, hash.lsr(segment_length)
       }
+      None
     }
   }
 }
