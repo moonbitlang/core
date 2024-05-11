@@ -40,35 +40,31 @@ jobs:
   build:
     strategy:
       matrix:
-        os: [ubuntu-latest, macos-latest, windows-latest, macos-14]
-    runs-on: ${{ matrix.os }}
-    continue-on-error: ${{ matrix.os == 'macos-14' }}
+        os: 
+          - name: ubuntu-latest
+            path: ubuntu_x86_64_moon_setup
+          - name: macos-latest
+            path: mac_intel_moon_setup
+          - name: macos-14
+            path: mac_m1_moon_setup
+          - name: windows-latest
+          
+    runs-on: ${{ matrix.os.name }}
+    continue-on-error: ${{ matrix.os.name == 'macos-14' }}
     steps:
       - uses: actions/checkout@v4
 
-      - name: install on ubuntu
-        if: ${{ matrix.os == 'ubuntu-latest' }}
+      - name: install
+        if: ${{ matrix.os.name != 'windows-latest' }}
         run: |
-          /bin/bash -c "$(curl -fsSL https://cli.moonbitlang.com/ubuntu_x86_64_moon_setup.sh)"
-          echo "/home/runner/.moon/bin" >> $GITHUB_PATH
-
-      - name: install on intel mac
-        if: ${{ matrix.os == 'macos-latest' }}
-        run: |
-          /bin/bash -c "$(curl -fsSL https://cli.moonbitlang.com/mac_intel_moon_setup.sh)"
+          /bin/bash -c "$(curl -fsSL https://cli.moonbitlang.com/${{ matrix.os.path }}.sh)"
           echo "$HOME/.moon/bin" >> $GITHUB_PATH
 
       - name: install on windows
-        if: ${{ matrix.os == 'windows-latest' }}
+        if: ${{ matrix.os.name == 'windows-latest' }}
         run: |
           Set-ExecutionPolicy RemoteSigned -Scope CurrentUser; irm https://cli.moonbitlang.cn/windows_moon_setup.ps1 | iex
           "C:\Users\runneradmin\.moon\bin" | Out-File -FilePath $env:GITHUB_PATH -Append
-      
-      - name: install on M1 mac (bleeding)
-        if: ${{ matrix.os == 'macos-14' }}
-        run: |
-          /bin/bash -c "$(curl -fsSL https://cli.moonbitlang.com/bleeding/mac_m1_moon_setup.sh)"
-          echo "$HOME/.moon/bin" >> $GITHUB_PATH
       
       - name: moon version
         run: |
@@ -92,11 +88,11 @@ jobs:
         run: moon bundle --all
 
       - name: check core size
-        if: ${{ matrix.os != 'windows-latest' }}
+        if: ${{ matrix.os.name != 'windows-latest' }}
         run: find ./target -name '*.core' | xargs ls -lh
 
-      - name: check core size
-        if: ${{ matrix.os == 'windows-latest' }}
+      - name: check core size on windows
+        if: ${{ matrix.os.name == 'windows-latest' }}
         run: Get-ChildItem -Path ".\target" -Recurse -Filter "*.core" | ForEach-Object { "{0} ({1} bytes)" -f $_.FullName, $_.Length }
 
       - name: format diff
