@@ -357,13 +357,13 @@ pub fn map[T, U](self : Vec[T], f : (T) -> U) -> Vec[U] {
 /// let v = Vec::from_array([3, 4, 5])
 /// v.mapi(fn (i, x) {x + i})
 /// ```
-pub fn mapi[T,U](self : Vec[T], f : (Int, T) -> U) -> Vec[U] {
+pub fn mapi[T, U](self : Vec[T], f : (Int, T) -> U) -> Vec[U] {
   if self.length() == 0 {
     return Vec::{ buf: UninitializedArray::make(0), len: 0 }
   }
   let buf : UninitializedArray[U] = UninitializedArray::make(self.length())
   for i = 0; i < self.length(); i = i + 1 {
-    buf[i] = f(i,self[i])
+    buf[i] = f(i, self[i])
   }
   Vec::{ buf, len: self.length() }
 }

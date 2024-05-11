@@ -162,7 +162,7 @@ test "mapi" {
   let e : Vec[Int] = Vec::[]
   inspect(v.mapi(fn(i, x) { x + i }), content="Vec::[3, 5, 7]")?
   inspect(v.mapi(fn(i, x) { (x + i).to_string() }), content="Vec::[3, 5, 7]")?
-  inspect(e.mapi(fn(_i,x) { x + 1 }), content="Vec::[]")?
+  inspect(e.mapi(fn(_i, x) { x + 1 }), content="Vec::[]")?
 }
 
 test "is_empty" {
