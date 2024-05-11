@@ -56,7 +56,7 @@ pub fn copy[T](self : Array[T]) -> Array[T] {
 }
 
 test "copy" {
-  let a = [1, 2, 3, 4]
+  let a : Array[_] = [1, 2, 3, 4]
   let b = a.copy()
   inspect(b, content="[1, 2, 3, 4]")?
   inspect(physical_equal(b, a), content="false")?

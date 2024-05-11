@@ -102,7 +102,7 @@ test "Bitset::size" {
 
 test "Bitset::ctpop" {
   inspect(
-    [0, 0xf0f0f0f0, 0x3c3c0ff0].map(fn { x => x.popcnt() }),
+    ([0, 0xf0f0f0f0, 0x3c3c0ff0] : Array[_]).map(fn { x => x.popcnt() }),
     content="[0, 16, 16]",
   )?
 }

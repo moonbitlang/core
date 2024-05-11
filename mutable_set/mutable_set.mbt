@@ -755,7 +755,7 @@ pub fn to_list[T : Compare](self : MutableSet[T]) -> List[T] {
 
 /// Convert MutableSet[T] to Array[T], the result must be ordered.
 pub fn to_array[T : Compare](self : MutableSet[T]) -> Array[T] {
-  fn aux(set : Option[Node[T]]) {
+  fn aux(set : Option[Node[T]]) -> Array[_] {
     match set {
       None => []
       Some(node) =>
@@ -785,7 +785,7 @@ pub fn to_string[T : Compare + Show](self : MutableSet[T]) -> String {
 }
 
 fn to_array[T](self : Node[T]) -> Array[T] {
-  fn aux(n : Option[Node[T]]) {
+  fn aux(n : Option[Node[T]]) -> Array[_] {
     match n {
       None => abort("Impossible to reach")
       _ =>
