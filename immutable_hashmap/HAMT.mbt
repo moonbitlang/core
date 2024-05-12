@@ -158,13 +158,9 @@ fn remove_with_hash[K : Eq, V](
             depth + segment_length,
             hash.lsr(segment_length),
           )
-          if children.size() == 1 {
-            match new_child {
-              Empty => Empty
-              _ => Branch(children.replace(idx, new_child))
-            }
-          } else {
-            Branch(children.replace(idx, new_child))
+          match (children.size(), new_child) {
+            (1, Empty) => Empty
+            (_, _) => Branch(children.replace(idx, new_child))
           }
         }
       }
