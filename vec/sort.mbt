@@ -65,7 +65,7 @@ fn quick_sort[T : Compare](
     }
     let (pivot, partitioned) = partition(arr, pivot_index)
     was_partitioned = partitioned
-    balanced = @math.minimum(pivot, len - pivot) >= len / 8
+    balanced = minimum(pivot, len - pivot) >= len / 8
     if not(balanced) {
       limit -= 1
     }
@@ -141,13 +141,6 @@ fn bubble_sort[T : Compare](arr : VecView[T]) -> Unit {
       arr.swap(j, j - 1)
     }
   }
-}
-
-test "try_bubble_sort" {
-  let arr = Vec::[8, 7, 6, 5, 4, 3, 2, 1]
-  let sorted = try_bubble_sort(arr.op_as_view(start=0, end=8))
-  @assertion.assert_eq(sorted, true)?
-  @assertion.assert_eq(arr, Vec::[1, 2, 3, 4, 5, 6, 7, 8])?
 }
 
 fn partition[T : Compare](arr : VecView[T], pivot_index : Int) -> (Int, Bool) {
@@ -236,44 +229,4 @@ fn sift_down[T : Compare](arr : VecView[T], index : Int) -> Unit {
     index = child
     child = index * 2 + 1
   }
-}
-
-fn test_sort(f : (Vec[Int]) -> Unit) -> Result[Unit, String] {
-  let arr = Vec::[5, 4, 3, 2, 1]
-  f(arr)
-  @assertion.assert_eq(arr, Vec::[1, 2, 3, 4, 5])?
-  let arr = Vec::[5, 5, 5, 5, 1]
-  f(arr)
-  @assertion.assert_eq(arr, Vec::[1, 5, 5, 5, 5])?
-  let arr = Vec::[1, 2, 3, 4, 5]
-  f(arr)
-  @assertion.assert_eq(arr, Vec::[1, 2, 3, 4, 5])?
-  {
-    let arr = Vec::with_capacity(1000)
-    for i = 0; i < 1000; i = i + 1 {
-      arr.push(1000 - i - 1)
-    }
-    for i = 10; i < 1000; i = i + 10 {
-      arr.swap(i, i - 1)
-    }
-    f(arr)
-    let expected = Vec::with_capacity(1000)
-    for i = 0; i < 1000; i = i + 1 {
-      expected.push(i)
-    }
-    @assertion.assert_eq(arr, expected)?
-  }
-  Ok(())
-}
-
-test "heap_sort" {
-  test_sort(fn(arr) { heap_sort(arr.op_as_view(start=0, end=arr.len)) })?
-}
-
-test "bubble_sort" {
-  test_sort(fn(arr) { bubble_sort(arr.op_as_view(start=0, end=arr.len)) })?
-}
-
-test "sort" {
-  test_sort(fn(arr) { arr.sort() })?
 }

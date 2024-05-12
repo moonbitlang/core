@@ -4,15 +4,17 @@ package moonbitlang/core/priority_queue
 
 // Types and methods
 type PriorityQueue
-fn PriorityQueue::clear[T](PriorityQueue[T]) -> Unit
-fn PriorityQueue::from_array[T : @moonbitlang/core/builtin.Compare + @moonbitlang/core/builtin.Eq](Array[T]) -> PriorityQueue[T]
-fn PriorityQueue::is_empty[T](PriorityQueue[T]) -> Bool
-fn PriorityQueue::length[T](PriorityQueue[T]) -> Int
-fn PriorityQueue::new[T : @moonbitlang/core/builtin.Compare + @moonbitlang/core/builtin.Eq]() -> PriorityQueue[T]
-fn PriorityQueue::peek[T](PriorityQueue[T]) -> Option[T]
-fn PriorityQueue::pop[T : @moonbitlang/core/builtin.Compare + @moonbitlang/core/builtin.Eq](PriorityQueue[T]) -> Option[T]
-fn PriorityQueue::pop_exn[T : @moonbitlang/core/builtin.Compare + @moonbitlang/core/builtin.Eq](PriorityQueue[T]) -> Unit
-fn PriorityQueue::push[T : @moonbitlang/core/builtin.Compare + @moonbitlang/core/builtin.Eq](PriorityQueue[T], T) -> Unit
+impl PriorityQueue {
+  clear[T](Self[T]) -> Unit
+  from_array[T : Compare + Eq](Array[T]) -> Self[T]
+  is_empty[T](Self[T]) -> Bool
+  length[T](Self[T]) -> Int
+  new[T : Compare + Eq]() -> Self[T]
+  peek[T](Self[T]) -> Option[T]
+  pop[T : Compare + Eq](Self[T]) -> Option[T]
+  pop_exn[T : Compare + Eq](Self[T]) -> Unit
+  push[T : Compare + Eq](Self[T], T) -> Unit
+}
 
 // Traits
 

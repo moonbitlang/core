@@ -69,3 +69,23 @@ After making your changes, it's important to test them to ensure they work as ex
 Simply follow the standard [GitHub flow](https://docs.github.com/en/get-started/using-github/github-flow) to submit your pull request.
 
 After submitting your pull request, request a review from the project maintainers or other contributors.
+
+
+# What kind of contributions are more likely to be accepted
+
+- Test, documentation and bug fixes 
+
+- Standalone packages with good functionalites, for example, bigint package
+
+- Fast and efficient abstractions are preferred over *theoretically perfect* abstractions
+
+   MoonBit is a pragmatic language, we care about both compile time and runtime performance. Take `+` for example, it is a trait method in Rust,
+   it could be the same in MoonBit, but we care about compile time performance so much that we would prefer it as a simple function to make sure 
+   both compile time and runtime are fast
+
+- Large changes are encourgaged to communicate earlier before the implementation
+
+   The core library is coupled with the compiler to some extent, it is better to communicate your ideas first if you 
+   plan to make large structural changes.  
+
+  

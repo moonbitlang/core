@@ -7,7 +7,7 @@ fn debug[X : Debug](X) -> Unit
 
 fn ignore[T](T) -> Unit
 
-fn inspect(Show, String, SourceLoc, ArgsLoc) -> Result[Unit, String]
+fn inspect(Show, ~content : String = .., ~loc : SourceLoc = _, ~args_loc : ArgsLoc = _) -> Result[Unit, String]
 
 fn op_ge[T : Compare + Eq](T, T) -> Bool
 
@@ -29,162 +29,198 @@ fn println[T : Show](T) -> Unit
 
 // Types and methods
 pub type ArgsLoc Array[Option[SourceLoc]]
-fn ArgsLoc::to_json(ArgsLoc) -> String
-fn ArgsLoc::to_string(ArgsLoc) -> String
+impl ArgsLoc {
+  to_json(Self) -> String
+  to_string(Self) -> String
+}
 
 type Buffer
-fn Buffer::expect(Buffer, String, SourceLoc, ArgsLoc) -> Result[Unit, String]
-fn Buffer::make(Int) -> Buffer
-fn Buffer::reset(Buffer) -> Unit
-fn Buffer::to_bytes(Buffer) -> Bytes
-fn Buffer::to_string(Buffer) -> String
-fn Buffer::write_char(Buffer, Char) -> Unit
-fn Buffer::write_string(Buffer, String) -> Unit
-fn Buffer::write_sub_string(Buffer, String, Int, Int) -> Unit
+impl Buffer {
+  expect(Self, ~content : String = .., ~loc : SourceLoc = _, ~args_loc : ArgsLoc = _) -> Result[Unit, String]
+  make(Int) -> Self
+  reset(Self) -> Unit
+  to_bytes(Self) -> Bytes
+  to_string(Self) -> String
+  write_char(Self, Char) -> Unit
+  write_string(Self, String) -> Unit
+  write_sub_string(Self, String, Int, Int) -> Unit
+}
 
 pub type Js_string
-fn Js_string::log(Js_string) -> Unit
-fn Js_string::new(String) -> Js_string
-fn Js_string::op_add(Js_string, Js_string) -> Js_string
+impl Js_string {
+  log(Self) -> Unit
+  new(String) -> Self
+  op_add(Self, Self) -> Self
+}
 
 pub type SourceLoc
-fn SourceLoc::debug_write(SourceLoc, Buffer) -> Unit
-fn SourceLoc::to_string(SourceLoc) -> String
+impl SourceLoc {
+  debug_write(Self, Buffer) -> Unit
+  to_string(Self) -> String
+}
 
 pub type UnsafeMaybeUninit
-fn Unit::debug_write(Unit, Buffer) -> Unit
-fn Unit::op_equal(Unit, Unit) -> Bool
-fn Bool::debug_write(Bool, Buffer) -> Unit
-fn Bool::default() -> Bool
-fn Bool::not(Bool) -> Bool
-fn Bool::op_compare(Bool, Bool) -> Int
-fn Bool::op_equal(Bool, Bool) -> Bool
-fn Bool::to_string(Bool) -> String
-fn Byte::compare(Byte, Byte) -> Int
-fn Byte::debug_write(Byte, Buffer) -> Unit
-fn Byte::op_equal(Byte, Byte) -> Bool
-fn Byte::to_int(Byte) -> Int
-fn Byte::to_string(Byte) -> String
-fn Char::compare(Char, Char) -> Int
-fn Char::default() -> Char
-fn Char::from_int(Int) -> Char
-fn Char::op_equal(Char, Char) -> Bool
-fn Char::to_int(Char) -> Int
-fn Int::asr(Int, Int) -> Int
-fn Int::clz(Int) -> Int
-fn Int::compare(Int, Int) -> Int
-fn Int::compare_u(Int, Int) -> Int
-fn Int::ctz(Int) -> Int
-fn Int::debug_write(Int, Buffer) -> Unit
-fn Int::default() -> Int
-fn Int::div_u(Int, Int) -> Int
-fn Int::is_neg(Int) -> Bool
-fn Int::is_non_neg(Int) -> Bool
-fn Int::is_non_pos(Int) -> Bool
-fn Int::is_pos(Int) -> Bool
-fn Int::land(Int, Int) -> Int
-fn Int::lnot(Int) -> Int
-fn Int::lor(Int, Int) -> Int
-fn Int::lsl(Int, Int) -> Int
-fn Int::lsr(Int, Int) -> Int
-fn Int::lxor(Int, Int) -> Int
-fn Int::mod_u(Int, Int) -> Int
-fn Int::op_add(Int, Int) -> Int
-fn Int::op_div(Int, Int) -> Int
-fn Int::op_equal(Int, Int) -> Bool
-fn Int::op_mod(Int, Int) -> Int
-fn Int::op_mul(Int, Int) -> Int
-fn Int::op_neg(Int) -> Int
-fn Int::op_sub(Int, Int) -> Int
-fn Int::popcnt(Int) -> Int
-fn Int::to_double(Int) -> Double
-fn Int::to_int64(Int) -> Int64
-fn Int::to_string(Int) -> String
-fn Int::trunc_double_u(Double) -> Int
-fn Int64::asr(Int64, Int) -> Int64
-fn Int64::clz(Int64) -> Int
-fn Int64::compare(Int64, Int64) -> Int
-fn Int64::compare_u(Int64, Int64) -> Int
-fn Int64::ctz(Int64) -> Int
-fn Int64::debug_write(Int64, Buffer) -> Unit
-fn Int64::default() -> Int64
-fn Int64::div_u(Int64, Int64) -> Int64
-fn Int64::extend_i32_u(Int) -> Int64
-fn Int64::land(Int64, Int64) -> Int64
-fn Int64::lnot(Int64) -> Int64
-fn Int64::lor(Int64, Int64) -> Int64
-fn Int64::lsl(Int64, Int) -> Int64
-fn Int64::lsr(Int64, Int) -> Int64
-fn Int64::lxor(Int64, Int64) -> Int64
-fn Int64::mod_u(Int64, Int64) -> Int64
-fn Int64::op_add(Int64, Int64) -> Int64
-fn Int64::op_div(Int64, Int64) -> Int64
-fn Int64::op_equal(Int64, Int64) -> Bool
-fn Int64::op_mod(Int64, Int64) -> Int64
-fn Int64::op_mul(Int64, Int64) -> Int64
-fn Int64::op_neg(Int64) -> Int64
-fn Int64::op_sub(Int64, Int64) -> Int64
-fn Int64::popcnt(Int64) -> Int
-fn Int64::reinterpret_as_double(Int64) -> Double
-fn Int64::to_double(Int64) -> Double
-fn Int64::to_int(Int64) -> Int
-fn Int64::to_string(Int64) -> String
-fn Int64::trunc_double_u(Double) -> Int64
-fn Double::compare(Double, Double) -> Int
-fn Double::convert_i32_u(Int) -> Double
-fn Double::convert_i64_u(Int64) -> Double
-fn Double::default() -> Double
-fn Double::op_add(Double, Double) -> Double
-fn Double::op_div(Double, Double) -> Double
-fn Double::op_equal(Double, Double) -> Bool
-fn Double::op_mod(Double, Double) -> Double
-fn Double::op_mul(Double, Double) -> Double
-fn Double::op_neg(Double) -> Double
-fn Double::op_neq(Double, Double) -> Bool
-fn Double::op_sub(Double, Double) -> Double
-fn Double::reinterpret_as_i64(Double) -> Int64
-fn Double::sqrt(Double) -> Double
-fn Double::to_int(Double) -> Int
-fn Double::to_int64(Double) -> Int64
-fn String::debug_write(String, Buffer) -> Unit
-fn String::get(String, Int) -> Char
-fn String::length(String) -> Int
-fn String::make(Int, Char) -> String
-fn String::op_add(String, String) -> String
-fn String::op_equal(String, String) -> Bool
-fn String::op_get(String, Int) -> Char
-fn String::to_js_string(String) -> Js_string
-fn String::to_string(String) -> String
-fn Option::debug_write[X : Debug](Option[X], Buffer) -> Unit
-fn Option::op_equal[X : Eq](Option[X], Option[X]) -> Bool
-fn Option::to_string[X : Show](Option[X]) -> String
-fn Result::debug_write[T : Debug, E : Debug](Result[T, E], Buffer) -> Unit
-fn Result::op_equal[T : Eq, E : Eq](Result[T, E], Result[T, E]) -> Bool
-fn List::debug_write[X : Debug](List[X], Buffer) -> Unit
-fn List::op_equal[X : Eq](List[X], List[X]) -> Bool
-fn List::to_string[X : Debug](List[X]) -> String
-fn Array::debug_write[X : Debug](Array[X], Buffer) -> Unit
-fn Array::default[X]() -> Array[X]
-fn Array::get[T](Array[T], Int) -> T
-fn Array::length[T](Array[T]) -> Int
-fn Array::make[T](Int, T) -> Array[T]
-fn Array::op_get[T](Array[T], Int) -> T
-fn Array::op_set[T](Array[T], Int, T) -> Unit
-fn Array::set[T](Array[T], Int, T) -> Unit
-fn Array::to_string[X : Show](Array[X]) -> String
-fn Bytes::blit(Bytes, Int, Bytes, Int, Int) -> Unit
-fn Bytes::blit_from_string(Bytes, Int, String, Int, Int) -> Unit
-fn Bytes::copy(Bytes) -> Bytes
-fn Bytes::length(Bytes) -> Int
-fn Bytes::make(Int, Int) -> Bytes
-fn Bytes::of_string(String) -> Bytes
-fn Bytes::op_get(Bytes, Int) -> Int
-fn Bytes::op_set(Bytes, Int, Int) -> Unit
-fn Bytes::set_utf16_char(Bytes, Int, Char) -> Int
-fn Bytes::set_utf8_char(Bytes, Int, Char) -> Int
-fn Bytes::sub_string(Bytes, Int, Int) -> String
-fn Bytes::to_string(Bytes) -> String
-fn Ref::debug_write[X : Debug](Ref[X], Buffer) -> Unit
+impl Unit {
+  debug_write(Unit, Buffer) -> Unit
+  op_equal(Unit, Unit) -> Bool
+}
+impl Bool {
+  debug_write(Bool, Buffer) -> Unit
+  default() -> Bool
+  not(Bool) -> Bool
+  op_compare(Bool, Bool) -> Int
+  op_equal(Bool, Bool) -> Bool
+  to_string(Bool) -> String
+}
+impl Byte {
+  compare(Byte, Byte) -> Int
+  debug_write(Byte, Buffer) -> Unit
+  op_equal(Byte, Byte) -> Bool
+  to_int(Byte) -> Int
+  to_string(Byte) -> String
+}
+impl Char {
+  compare(Char, Char) -> Int
+  default() -> Char
+  from_int(Int) -> Char
+  op_equal(Char, Char) -> Bool
+  to_int(Char) -> Int
+}
+impl Int {
+  asr(Int, Int) -> Int
+  clz(Int) -> Int
+  compare(Int, Int) -> Int
+  compare_u(Int, Int) -> Int
+  ctz(Int) -> Int
+  debug_write(Int, Buffer) -> Unit
+  default() -> Int
+  div_u(Int, Int) -> Int
+  is_neg(Int) -> Bool
+  is_non_neg(Int) -> Bool
+  is_non_pos(Int) -> Bool
+  is_pos(Int) -> Bool
+  land(Int, Int) -> Int
+  lnot(Int) -> Int
+  lor(Int, Int) -> Int
+  lsl(Int, Int) -> Int
+  lsr(Int, Int) -> Int
+  lxor(Int, Int) -> Int
+  mod_u(Int, Int) -> Int
+  op_add(Int, Int) -> Int
+  op_div(Int, Int) -> Int
+  op_equal(Int, Int) -> Bool
+  op_mod(Int, Int) -> Int
+  op_mul(Int, Int) -> Int
+  op_neg(Int) -> Int
+  op_sub(Int, Int) -> Int
+  popcnt(Int) -> Int
+  to_double(Int) -> Double
+  to_int64(Int) -> Int64
+  to_string(Int) -> String
+  trunc_double_u(Double) -> Int
+}
+impl Int64 {
+  asr(Int64, Int) -> Int64
+  clz(Int64) -> Int
+  compare(Int64, Int64) -> Int
+  compare_u(Int64, Int64) -> Int
+  ctz(Int64) -> Int
+  debug_write(Int64, Buffer) -> Unit
+  default() -> Int64
+  div_u(Int64, Int64) -> Int64
+  extend_i32_u(Int) -> Int64
+  land(Int64, Int64) -> Int64
+  lnot(Int64) -> Int64
+  lor(Int64, Int64) -> Int64
+  lsl(Int64, Int) -> Int64
+  lsr(Int64, Int) -> Int64
+  lxor(Int64, Int64) -> Int64
+  mod_u(Int64, Int64) -> Int64
+  op_add(Int64, Int64) -> Int64
+  op_div(Int64, Int64) -> Int64
+  op_equal(Int64, Int64) -> Bool
+  op_mod(Int64, Int64) -> Int64
+  op_mul(Int64, Int64) -> Int64
+  op_neg(Int64) -> Int64
+  op_sub(Int64, Int64) -> Int64
+  popcnt(Int64) -> Int
+  reinterpret_as_double(Int64) -> Double
+  to_double(Int64) -> Double
+  to_int(Int64) -> Int
+  to_string(Int64) -> String
+  trunc_double_u(Double) -> Int64
+}
+impl Double {
+  compare(Double, Double) -> Int
+  convert_i32_u(Int) -> Double
+  convert_i64_u(Int64) -> Double
+  default() -> Double
+  op_add(Double, Double) -> Double
+  op_div(Double, Double) -> Double
+  op_equal(Double, Double) -> Bool
+  op_mod(Double, Double) -> Double
+  op_mul(Double, Double) -> Double
+  op_neg(Double) -> Double
+  op_neq(Double, Double) -> Bool
+  op_sub(Double, Double) -> Double
+  reinterpret_as_i64(Double) -> Int64
+  sqrt(Double) -> Double
+  to_int(Double) -> Int
+  to_int64(Double) -> Int64
+}
+impl String {
+  debug_write(String, Buffer) -> Unit
+  get(String, Int) -> Char
+  length(String) -> Int
+  make(Int, Char) -> String
+  op_add(String, String) -> String
+  op_equal(String, String) -> Bool
+  op_get(String, Int) -> Char
+  to_js_string(String) -> Js_string
+  to_string(String) -> String
+}
+impl Option {
+  debug_write[X : Debug](Self[X], Buffer) -> Unit
+  op_equal[X : Eq](Self[X], Self[X]) -> Bool
+  to_string[X : Show](Self[X]) -> String
+}
+impl Result {
+  debug_write[T : Debug, E : Debug](Self[T, E], Buffer) -> Unit
+  op_equal[T : Eq, E : Eq](Self[T, E], Self[T, E]) -> Bool
+}
+impl List {
+  debug_write[X : Debug](Self[X], Buffer) -> Unit
+  op_equal[X : Eq](Self[X], Self[X]) -> Bool
+  to_string[X : Debug](Self[X]) -> String
+}
+impl Array {
+  debug_write[X : Debug](Self[X], Buffer) -> Unit
+  default[X]() -> Self[X]
+  get[T](Self[T], Int) -> T
+  length[T](Self[T]) -> Int
+  make[T](Int, T) -> Self[T]
+  op_get[T](Self[T], Int) -> T
+  op_set[T](Self[T], Int, T) -> Unit
+  set[T](Self[T], Int, T) -> Unit
+  to_string[X : Show](Self[X]) -> String
+}
+impl Bytes {
+  blit(Bytes, Int, Bytes, Int, Int) -> Unit
+  blit_from_string(Bytes, Int, String, Int, Int) -> Unit
+  copy(Bytes) -> Bytes
+  length(Bytes) -> Int
+  make(Int, Int) -> Bytes
+  of_string(String) -> Bytes
+  op_get(Bytes, Int) -> Int
+  op_set(Bytes, Int, Int) -> Unit
+  set_utf16_char(Bytes, Int, Char) -> Int
+  set_utf8_char(Bytes, Int, Char) -> Int
+  sub_string(Bytes, Int, Int) -> String
+  to_string(Bytes) -> String
+}
+impl Ref {
+  debug_write[X : Debug](Self[X], Buffer) -> Unit
+}
 
 // Traits
 pub trait Compare : Eq {

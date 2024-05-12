@@ -4,15 +4,17 @@ package moonbitlang/core/immutable_hashmap
 
 // Types and methods
 type Map
-fn Map::add[K : @moonbitlang/core/builtin.Eq + @moonbitlang/core/builtin.Hash, V](Map[K, V], K, V) -> Map[K, V]
-fn Map::debug_write[K : @moonbitlang/core/builtin.Debug, V : @moonbitlang/core/builtin.Debug](Map[K, V], @moonbitlang/core/builtin.Buffer) -> Unit
-fn Map::find[K : @moonbitlang/core/builtin.Eq + @moonbitlang/core/builtin.Hash, V](Map[K, V], K) -> Option[V]
-fn Map::from_array[K : @moonbitlang/core/builtin.Eq + @moonbitlang/core/builtin.Hash, V](Array[Tuple[K, V]]) -> Map[K, V]
-fn Map::iter[K, V](Map[K, V], (K, V) -> Unit) -> Unit
-fn Map::make[K, V]() -> Map[K, V]
-fn Map::remove[K : @moonbitlang/core/builtin.Eq + @moonbitlang/core/builtin.Hash, V](Map[K, V], K) -> Map[K, V]
-fn Map::size[K, V](Map[K, V]) -> Int
-fn Map::to_string[K : @moonbitlang/core/builtin.Debug, V : @moonbitlang/core/builtin.Debug](Map[K, V]) -> String
+impl Map {
+  add[K : Eq + Hash, V](Self[K, V], K, V) -> Self[K, V]
+  debug_write[K : Debug, V : Debug](Self[K, V], Buffer) -> Unit
+  find[K : Eq + Hash, V](Self[K, V], K) -> Option[V]
+  from_array[K : Eq + Hash, V](Array[Tuple[K, V]]) -> Self[K, V]
+  iter[K, V](Self[K, V], (K, V) -> Unit) -> Unit
+  make[K, V]() -> Self[K, V]
+  remove[K : Eq + Hash, V](Self[K, V], K) -> Self[K, V]
+  size[K, V](Self[K, V]) -> Int
+  to_string[K : Debug, V : Debug](Self[K, V]) -> String
+}
 
 // Traits
 

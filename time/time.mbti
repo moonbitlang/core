@@ -1,0 +1,251 @@
+package moonbitlang/core/time
+
+// Values
+fn date_time(Int, Int, Int, ~hour : Int = .., ~minute : Int = .., ~second : Int = .., ~zone : Zone = ..) -> Result[ZonedDateTime, String]
+
+fn fixed_zone(String, Int) -> Result[Zone, String]
+
+fn unix(Int64, ~nanosecond : Int = .., ~zone : Zone = ..) -> Result[ZonedDateTime, String]
+
+let utc_offset : ZoneOffset
+
+let utc_zone : Zone
+
+// Types and methods
+type Duration
+impl Duration {
+  add_duration(Self, Self) -> Result[Self, String]
+  add_hours(Self, Int64) -> Result[Self, String]
+  add_minutes(Self, Int64) -> Result[Self, String]
+  add_nanoseconds(Self, Int64) -> Result[Self, String]
+  add_seconds(Self, Int64) -> Result[Self, String]
+  compare(Self, Self) -> Int
+  from_string(String) -> Result[Self, String]
+  is_neg(Self) -> Bool
+  is_zero(Self) -> Bool
+  nanoseconds(Self) -> Int
+  of(~hours : Int64 = .., ~minutes : Int64 = .., ~seconds : Int64 = .., ~nanoseconds : Int64 = ..) -> Result[Self, String]
+  op_add(Self, Self) -> Result[Self, String]
+  op_equal(Self, Self) -> Bool
+  seconds(Self) -> Int64
+  to_nanoseconds(Self) -> Int64
+  to_string(Self) -> String
+  with_nanoseconds(Self, Int) -> Result[Self, String]
+  with_seconds(Self, Int64) -> Self
+  zero() -> Self
+}
+
+type Period
+impl Period {
+  add_days(Self, Int) -> Result[Self, String]
+  add_months(Self, Int) -> Result[Self, String]
+  add_period(Self, Self) -> Result[Self, String]
+  add_weeks(Self, Int) -> Result[Self, String]
+  add_years(Self, Int) -> Result[Self, String]
+  compare(Self, Self) -> Int
+  days(Self) -> Int
+  debug_write(Self, Buffer) -> Unit
+  from_string(String) -> Result[Self, String]
+  is_neg(Self) -> Bool
+  is_zero(Self) -> Bool
+  months(Self) -> Int
+  multiply(Self, Int) -> Result[Self, String]
+  negated(Self) -> Result[Self, String]
+  of(~years : Int = .., ~months : Int = .., ~days : Int = ..) -> Self
+  op_add(Self, Self) -> Result[Self, String]
+  op_equal(Self, Self) -> Bool
+  op_sub(Self, Self) -> Result[Self, String]
+  to_string(Self) -> String
+  to_total_months(Self) -> Int64
+  with_days(Self, Int) -> Self
+  with_months(Self, Int) -> Self
+  with_years(Self, Int) -> Self
+  years(Self) -> Int
+  zero() -> Self
+}
+
+type PlainDate
+impl PlainDate {
+  add_days(Self, Int64) -> Result[Self, String]
+  add_months(Self, Int64) -> Result[Self, String]
+  add_period(Self, Period) -> Result[Self, String]
+  add_weeks(Self, Int64) -> Result[Self, String]
+  add_years(Self, Int64) -> Result[Self, String]
+  compare(Self, Self) -> Int
+  day(Self) -> Int
+  days_in_month(Self) -> Int
+  days_in_week(Self) -> Int
+  days_in_year(Self) -> Int
+  era(Self) -> String
+  era_year(Self) -> Int
+  from_string(String) -> Result[Self, String]
+  from_unix_day(Int64) -> Result[Self, String]
+  from_year_ord(Int, Int) -> Result[Self, String]
+  in_leap_year(Self) -> Bool
+  month(Self) -> Int
+  months_in_year(Self) -> Int
+  of(Int, Int, Int) -> Result[Self, String]
+  op_equal(Self, Self) -> Bool
+  ordinal(Self) -> Int
+  to_string(Self) -> String
+  to_unix_day(Self) -> Int64
+  until(Self, Self) -> Result[Period, String]
+  weekday(Self) -> Weekday
+  with_day(Self, Int) -> Result[Self, String]
+  with_month(Self, Int) -> Result[Self, String]
+  with_ordinal(Self, Int) -> Result[Self, String]
+  with_year(Self, Int) -> Result[Self, String]
+  year(Self) -> Int
+}
+
+type PlainDateTime
+impl PlainDateTime {
+  add_days(Self, Int64) -> Result[Self, String]
+  add_duration(Self, Duration) -> Result[Self, String]
+  add_hours(Self, Int64) -> Result[Self, String]
+  add_minutes(Self, Int64) -> Result[Self, String]
+  add_months(Self, Int64) -> Result[Self, String]
+  add_nanoseconds(Self, Int64) -> Result[Self, String]
+  add_period(Self, Period) -> Result[Self, String]
+  add_seconds(Self, Int64) -> Result[Self, String]
+  add_weeks(Self, Int64) -> Result[Self, String]
+  add_years(Self, Int64) -> Result[Self, String]
+  compare(Self, Self) -> Int
+  day(Self) -> Int
+  days_in_month(Self) -> Int
+  days_in_week(Self) -> Int
+  days_in_year(Self) -> Int
+  era(Self) -> String
+  era_year(Self) -> Int
+  from_string(String) -> Result[Self, String]
+  from_unix_second(Int64, Int, ZoneOffset) -> Result[Self, String]
+  hour(Self) -> Int
+  in_leap_year(Self) -> Bool
+  minute(Self) -> Int
+  month(Self) -> Int
+  months_in_year(Self) -> Int
+  nanosecond(Self) -> Int
+  of(Int, Int, Int, ~hour : Int = .., ~minute : Int = .., ~second : Int = .., ~nanosecond : Int = ..) -> Result[Self, String]
+  op_equal(Self, Self) -> Bool
+  ordinal(Self) -> Int
+  second(Self) -> Int
+  to_plain_date(Self) -> PlainDate
+  to_plain_time(Self) -> PlainTime
+  to_string(Self) -> String
+  to_unix_second(Self) -> Int64
+  weekday(Self) -> Weekday
+  with_day(Self, Int) -> Result[Self, String]
+  with_hour(Self, Int) -> Result[Self, String]
+  with_minute(Self, Int) -> Result[Self, String]
+  with_month(Self, Int) -> Result[Self, String]
+  with_nanosecond(Self, Int) -> Result[Self, String]
+  with_ordinal(Self, Int) -> Result[Self, String]
+  with_second(Self, Int) -> Result[Self, String]
+  with_year(Self, Int) -> Result[Self, String]
+  year(Self) -> Int
+}
+
+type PlainTime
+impl PlainTime {
+  add_duration(Self, Duration) -> Result[Self, String]
+  add_hours(Self, Int64) -> Result[Self, String]
+  add_minutes(Self, Int64) -> Result[Self, String]
+  add_nanoseconds(Self, Int64) -> Result[Self, String]
+  add_seconds(Self, Int64) -> Result[Self, String]
+  at_date(Self, PlainDate) -> PlainDateTime
+  compare(Self, Self) -> Int
+  from_nanosecond_of_day(Int64) -> Result[Self, String]
+  from_second_of_day(Int) -> Result[Self, String]
+  from_string(String) -> Result[Self, String]
+  hour(Self) -> Int
+  minute(Self) -> Int
+  nanosecond(Self) -> Int
+  nanosecond_of_day(Self) -> Int64
+  of(Int, Int, Int, Int) -> Result[Self, String]
+  op_equal(Self, Self) -> Bool
+  second(Self) -> Int
+  second_of_day(Self) -> Int
+  to_string(Self) -> String
+  until(Self, Self) -> Result[Duration, String]
+  with_hour(Self, Int) -> Result[Self, String]
+  with_minute(Self, Int) -> Result[Self, String]
+  with_nanosecond(Self, Int) -> Result[Self, String]
+  with_second(Self, Int) -> Result[Self, String]
+}
+
+type Weekday
+impl Weekday {
+  debug_write(Self, Buffer) -> Unit
+  op_equal(Self, Self) -> Bool
+  to_string(Self) -> String
+}
+
+type Zone
+impl Zone {
+  is_fixed(Self) -> Bool
+  op_equal(Self, Self) -> Bool
+  to_string(Self) -> String
+}
+
+type ZoneOffset
+impl ZoneOffset {
+  compare(Self, Self) -> Int
+  from_seconds(Int) -> Result[Self, String]
+  id(Self) -> String
+  is_dst(Self) -> Bool
+  of(~hours : Int = .., ~minutes : Int = .., ~seconds : Int = ..) -> Result[Self, String]
+  op_equal(Self, Self) -> Bool
+  seconds(Self) -> Int
+  to_string(Self) -> String
+}
+
+type ZonedDateTime
+impl ZonedDateTime {
+  add_days(Self, Int64) -> Result[Self, String]
+  add_hours(Self, Int64) -> Result[Self, String]
+  add_minutes(Self, Int64) -> Result[Self, String]
+  add_months(Self, Int64) -> Result[Self, String]
+  add_nanoseconds(Self, Int64) -> Result[Self, String]
+  add_seconds(Self, Int64) -> Result[Self, String]
+  add_weeks(Self, Int64) -> Result[Self, String]
+  add_years(Self, Int64) -> Result[Self, String]
+  day(Self) -> Int
+  days_in_month(Self) -> Int
+  days_in_week(Self) -> Int
+  days_in_year(Self) -> Int
+  era(Self) -> String
+  era_year(Self) -> Int
+  from_plain_datetime(PlainDateTime, ~zone : Zone = ..) -> Self
+  from_unix_second(Int64, ~nanosecond : Int = .., ~zone : Zone = ..) -> Result[Self, String]
+  hour(Self) -> Int
+  in_leap_year(Self) -> Bool
+  minute(Self) -> Int
+  month(Self) -> Int
+  months_in_year(Self) -> Int
+  nanosecond(Self) -> Int
+  of(Int, Int, Int, ~hour : Int = .., ~minute : Int = .., ~second : Int = .., ~zone : Zone = ..) -> Result[Self, String]
+  offset(Self) -> ZoneOffset
+  ordinal(Self) -> Int
+  second(Self) -> Int
+  to_plain_date(Self) -> PlainDate
+  to_plain_date_time(Self) -> PlainDateTime
+  to_plain_time(Self) -> PlainTime
+  to_string(Self) -> String
+  to_unix_second(Self) -> Int64
+  weekday(Self) -> Weekday
+  with_day(Self, Int) -> Result[Self, String]
+  with_hour(Self, Int) -> Result[Self, String]
+  with_minute(Self, Int) -> Result[Self, String]
+  with_month(Self, Int) -> Result[Self, String]
+  with_nanosecond(Self, Int) -> Result[Self, String]
+  with_ordinal(Self, Int) -> Result[Self, String]
+  with_second(Self, Int) -> Result[Self, String]
+  with_year(Self, Int) -> Result[Self, String]
+  year(Self) -> Int
+  zone(Self) -> Zone
+}
+
+// Traits
+
+// Extension Methods
+

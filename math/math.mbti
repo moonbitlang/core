@@ -3,9 +3,9 @@ package moonbitlang/core/math
 // Values
 fn cos(Double) -> Double
 
-fn maximum[T : @moonbitlang/core/builtin.Compare + @moonbitlang/core/builtin.Eq](T, T) -> T
+fn maximum[T : Compare + Eq](T, T) -> T
 
-fn minimum[T : @moonbitlang/core/builtin.Compare + @moonbitlang/core/builtin.Eq](T, T) -> T
+fn minimum[T : Compare + Eq](T, T) -> T
 
 fn sin(Double) -> Double
 
@@ -13,9 +13,11 @@ fn tan(Double) -> Double
 
 // Types and methods
 type T
-fn T::compare(T, T) -> Int
-fn T::debug_write(T, @moonbitlang/core/builtin.Buffer) -> Unit
-fn T::op_equal(T, T) -> Bool
+impl T {
+  compare(Self, Self) -> Int
+  debug_write(Self, Buffer) -> Unit
+  op_equal(Self, Self) -> Bool
+}
 
 // Traits
 

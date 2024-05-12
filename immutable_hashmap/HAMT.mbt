@@ -38,6 +38,8 @@ enum Map[K, V] {
 // The number of bits consumed at every [Branch] node
 let segment_length : Int = 5
 
+let segment_mask : Int = 0b11111
+
 pub fn Map::make[K, V]() -> Map[K, V] {
   Empty
 }
@@ -48,15 +50,15 @@ pub fn find[K : Eq + Hash, V](self : Map[K, V], key : K) -> Option[V] {
     Empty, _ => None
     Leaf(key1, value), _ => if key == key1 { Some(value) } else { None }
     Collision(bucket), _ => bucket.find(key)
+    // get the first segment (lower 5 bits) of the hash value      
+    // inline the hot path of Sparse_array::op_get
     Branch(children), hash => {
-      // get the first segment (lower 5 bits) of the hash value
-      let idx = hash.land((1).lsl(segment_length) - 1)
-      match children[idx] {
-        Some(child) =>
-          // when searching recursively, drop the segment just used
-          continue child, hash.lsr(segment_length)
-        None => None
+      let idx = hash.land(segment_mask)
+      if children.elem_info.has(idx) {
+        let child = children.data[children.elem_info.index_of(idx)]
+        continue child, hash.lsr(segment_length)
       }
+      None
     }
   }
 }
@@ -73,14 +75,14 @@ fn add_with_hash[K : Eq, V](
     if depth >= 32 {
       Map::Leaf(key, value)
     } else {
-      let idx = hash.land((1).lsl(segment_length) - 1)
+      let idx = hash.land(segment_mask)
       let child = make_leaf(
         depth + segment_length,
         key,
         hash.lsr(segment_length),
         value,
       )
-      Map::Branch(SparseArray::make(idx, child))
+      Map::Branch(singleton(idx, child))
     }
   }
 
@@ -94,7 +96,7 @@ fn add_with_hash[K : Eq, V](
       }
     Collision(bucket) => Collision(bucket.add(key, value))
     Branch(children) => {
-      let idx = hash.land((1).lsl(segment_length) - 1)
+      let idx = hash.land(segment_mask)
       match children[idx] {
         Some(child) => {
           let child = child.add_with_hash(
@@ -126,28 +128,6 @@ pub fn add[K : Eq + Hash, V](self : Map[K, V], key : K, value : V) -> Map[K, V] 
   self.add_with_hash(key, 0, key.hash(), value)
 }
 
-test "HAMT" {
-  let map = loop 0, Map::make() {
-    100, map => map
-    i, map => continue i + 1, map.add(i, i)
-  }
-  for i = 0; i < 100; i = i + 1 {
-    @assertion.assert_eq((i, map.find(i)), (i, Some(i)))?
-  }
-  @assertion.assert_eq((100, map.find(100)), (100, None))?
-  let map = map.add(100, 100)
-  @assertion.assert_eq((100, map.find(100)), (100, Some(100)))?
-  // test for replacement
-  let map = loop 0, map {
-    100, map => map
-    i, map => continue i + 2, map.add(i, i + 1)
-  }
-  for i = 0; i < 100; i = i + 2 {
-    @assertion.assert_eq((i, map.find(i)), (i, Some(i + 1)))?
-    @assertion.assert_eq((i + 1, map.find(i + 1)), (i + 1, Some(i + 1)))?
-  }
-}
-
 /// Remove an element from a map
 pub fn remove[K : Eq + Hash, V](self : Map[K, V], key : K) -> Map[K, V] {
   self.remove_with_hash(key, 0, key.hash())
@@ -169,7 +149,7 @@ fn remove_with_hash[K : Eq, V](
         Some(new_bucket) => Collision(new_bucket)
       }
     Branch(children) => {
-      let idx = hash.land((1).lsl(segment_length) - 1)
+      let idx = hash.land(segment_mask)
       match children[idx] {
         None => self
         Some(child) => {
@@ -192,24 +172,6 @@ fn remove_with_hash[K : Eq, V](
   }
 }
 
-test "HAMT::remove" {
-  let map = loop 0, Map::make() {
-    100, map => map
-    i, map => continue i + 1, map.add(i, i)
-  }
-  for i = 0; i < 100; i = i + 1 {
-    @assertion.assert_eq((i, map.find(i)), (i, Some(i)))?
-  }
-  let map = loop 0, map {
-    100, map => map.remove(100) // test for removing non-existing element
-    i, map => continue i + 2, map.remove(i)
-  }
-  for i = 0; i < 100; i = i + 2 {
-    @assertion.assert_eq(map.find(i), None)?
-    @assertion.assert_eq(map.find(i + 1), Some(i + 1))?
-  }
-}
-
 /// Calculate the size of a map.
 ///
 /// WARNING: this operation is `O(N)` in map size
@@ -218,21 +180,14 @@ pub fn size[K, V](self : Map[K, V]) -> Int {
     Empty => 0
     Leaf(_) => 1
     Collision(bucket) => bucket.size()
-    Branch(children) => {
-      let mut total_size = 0
-      for i = 0; i < children.data.length(); i = i + 1 {
-        total_size = total_size + children.data[i].size()
+    Branch(children) =>
+      for i = 0, total_size = 0 {
+        if i < children.data.length() {
+          continue i + 1, total_size + children.data[i].size()
+        } else {
+          break total_size
+        }
       }
-      total_size
-    }
-  }
-}
-
-test "HAMT::size" {
-  for i = 0, map = Map::make(); i < 20; i = i + 1, map = map.add(i, i) {
-    @assertion.assert_eq(map.size(), i)?
-  } else {
-    @assertion.assert_eq(map.add(0, 0).size(), 20)?
   }
 }
 
@@ -279,9 +234,9 @@ test "HAMT::to_string" {
   let map = Map::make().add(1, 1).add(3, 3).add(0x0f_ff_ff_ff, 0x0f_ff_ff_ff).add(
     42, 42,
   )
-  @assertion.assert_eq(
-    map.to_string(),
-    "@immutable_hashmap.Map::[(1, 1), (3, 3), (42, 42), (268435455, 268435455)]",
+  inspect(
+    map,
+    content="@immutable_hashmap.Map::[(1, 1), (3, 3), (42, 42), (268435455, 268435455)]",
   )?
 }
 
@@ -297,8 +252,8 @@ pub fn Map::from_array[K : Eq + Hash, V](arr : Array[(K, V)]) -> Map[K, V] {
 
 test "HAMT::from_array" {
   let map = Map::[(1, "1"), (2, "2"), (42, "42")]
-  @assertion.assert_eq((1, map.find(1)), (1, Some("1")))?
-  @assertion.assert_eq((2, map.find(2)), (2, Some("2")))?
-  @assertion.assert_eq((42, map.find(42)), (42, Some("42")))?
-  @assertion.assert_eq((43, map.find(43)), (43, None))?
+  inspect((1, map.find(1)), content="(1, Some(1))")?
+  inspect((2, map.find(2)), content="(2, Some(2))")?
+  inspect((42, map.find(42)), content="(42, Some(42))")?
+  inspect((43, map.find(43)), content="(43, None)")?
 }

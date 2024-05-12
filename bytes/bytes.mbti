@@ -3,8 +3,10 @@ package moonbitlang/core/bytes
 // Values
 
 // Types and methods
-fn Bytes::from_array(Array[Int]) -> Bytes
-fn Bytes::hash(Bytes) -> Int
+impl Bytes {
+  from_array(Array[Int]) -> Bytes
+  hash(Bytes) -> Int
+}
 
 // Traits
 

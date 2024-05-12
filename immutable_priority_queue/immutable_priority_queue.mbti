@@ -4,18 +4,22 @@ package moonbitlang/core/immutable_priority_queue
 
 // Types and methods
 type Cont
-fn Cont::debug_write[T : @moonbitlang/core/builtin.Debug](Cont[T], @moonbitlang/core/builtin.Buffer) -> Unit
-fn Cont::to_string[T : @moonbitlang/core/builtin.Debug](Cont[T]) -> String
+impl Cont {
+  debug_write[T : Debug](Self[T], Buffer) -> Unit
+  to_string[T : Debug](Self[T]) -> String
+}
 
 type ImmutablePriorityQueue
-fn ImmutablePriorityQueue::from_array[T : @moonbitlang/core/builtin.Compare + @moonbitlang/core/builtin.Eq](Array[T]) -> ImmutablePriorityQueue[T]
-fn ImmutablePriorityQueue::is_empty[T](ImmutablePriorityQueue[T]) -> Bool
-fn ImmutablePriorityQueue::length[T](ImmutablePriorityQueue[T]) -> Int
-fn ImmutablePriorityQueue::new[T : @moonbitlang/core/builtin.Compare + @moonbitlang/core/builtin.Eq]() -> ImmutablePriorityQueue[T]
-fn ImmutablePriorityQueue::peek[T](ImmutablePriorityQueue[T]) -> Option[T]
-fn ImmutablePriorityQueue::pop[T : @moonbitlang/core/builtin.Compare + @moonbitlang/core/builtin.Eq](ImmutablePriorityQueue[T]) -> Option[ImmutablePriorityQueue[T]]
-fn ImmutablePriorityQueue::pop_exn[T : @moonbitlang/core/builtin.Compare + @moonbitlang/core/builtin.Eq](ImmutablePriorityQueue[T]) -> ImmutablePriorityQueue[T]
-fn ImmutablePriorityQueue::push[T : @moonbitlang/core/builtin.Compare + @moonbitlang/core/builtin.Eq](ImmutablePriorityQueue[T], T) -> ImmutablePriorityQueue[T]
+impl ImmutablePriorityQueue {
+  from_array[T : Compare + Eq](Array[T]) -> Self[T]
+  is_empty[T](Self[T]) -> Bool
+  length[T](Self[T]) -> Int
+  new[T : Compare + Eq]() -> Self[T]
+  peek[T](Self[T]) -> Option[T]
+  pop[T : Compare + Eq](Self[T]) -> Option[Self[T]]
+  pop_exn[T : Compare + Eq](Self[T]) -> Self[T]
+  push[T : Compare + Eq](Self[T], T) -> Self[T]
+}
 
 // Traits
 

@@ -4,23 +4,25 @@ package moonbitlang/core/queue
 
 // Types and methods
 type Queue
-fn Queue::clear[T](Queue[T]) -> Unit
-fn Queue::copy[T](Queue[T]) -> Queue[T]
-fn Queue::debug_write[T : @moonbitlang/core/builtin.Show](Queue[T], @moonbitlang/core/builtin.Buffer) -> Unit
-fn Queue::fold[T](Queue[T], T, (T, T) -> T) -> T
-fn Queue::from_array[T](Array[T]) -> Queue[T]
-fn Queue::is_empty[T](Queue[T]) -> Bool
-fn Queue::iter[T](Queue[T], (T) -> Unit) -> Unit
-fn Queue::iteri[T](Queue[T], (Int, T) -> Unit) -> Unit
-fn Queue::length[T](Queue[T]) -> Int
-fn Queue::new[T]() -> Queue[T]
-fn Queue::peek[T](Queue[T]) -> Option[T]
-fn Queue::peek_exn[T](Queue[T]) -> T
-fn Queue::pop[T](Queue[T]) -> Option[T]
-fn Queue::pop_exn[T](Queue[T]) -> T
-fn Queue::push[T](Queue[T], T) -> Unit
-fn Queue::to_string[T : @moonbitlang/core/builtin.Show](Queue[T]) -> String
-fn Queue::transfer[T](Queue[T], Queue[T]) -> Unit
+impl Queue {
+  clear[T](Self[T]) -> Unit
+  copy[T](Self[T]) -> Self[T]
+  debug_write[T : Show](Self[T], Buffer) -> Unit
+  fold[T](Self[T], ~init : T, (T, T) -> T) -> T
+  from_array[T](Array[T]) -> Self[T]
+  is_empty[T](Self[T]) -> Bool
+  iter[T](Self[T], (T) -> Unit) -> Unit
+  iteri[T](Self[T], (Int, T) -> Unit) -> Unit
+  length[T](Self[T]) -> Int
+  new[T]() -> Self[T]
+  peek[T](Self[T]) -> Option[T]
+  peek_exn[T](Self[T]) -> T
+  pop[T](Self[T]) -> Option[T]
+  pop_exn[T](Self[T]) -> T
+  push[T](Self[T], T) -> Unit
+  to_string[T : Show](Self[T]) -> String
+  transfer[T](Self[T], Self[T]) -> Unit
+}
 
 // Traits
 

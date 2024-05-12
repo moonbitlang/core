@@ -3,60 +3,62 @@ package moonbitlang/core/list
 // Values
 fn repeat[T](Int, T) -> List[T]
 
-fn unfold[T, State]((State) -> Option[Tuple[T, State]], State) -> List[T]
+fn unfold[T, State]((State) -> Option[Tuple[T, State]], ~init : State) -> List[T]
 
 fn unzip[T, U](List[Tuple[T, U]]) -> Tuple[List[T], List[U]]
 
 // Types and methods
-fn List::all[T](List[T], (T) -> Bool) -> Bool
-fn List::any[T](List[T], (T) -> Bool) -> Bool
-fn List::concat[T](List[T], List[T]) -> List[T]
-fn List::concat_map[T, U](List[T], (T) -> List[U]) -> List[U]
-fn List::contain[T : @moonbitlang/core/builtin.Eq](List[T], T) -> Bool
-fn List::default[X]() -> List[X]
-fn List::drop[T](List[T], Int) -> List[T]
-fn List::drop_while[T](List[T], (T) -> Bool) -> List[T]
-fn List::equal[T : @moonbitlang/core/builtin.Eq](List[T], List[T]) -> Bool
-fn List::filter[T](List[T], (T) -> Bool) -> List[T]
-fn List::find[T](List[T], (T) -> Bool) -> Option[T]
-fn List::findi[T](List[T], (T, Int) -> Bool) -> Option[T]
-fn List::flatten[T](List[List[T]]) -> List[T]
-fn List::fold_left[T, U](List[T], (U, T) -> U, U) -> U
-fn List::fold_lefti[T, U](List[T], (Int, U, T) -> U, U) -> U
-fn List::fold_right[T, U](List[T], (T, U) -> U, U) -> U
-fn List::fold_righti[T, U](List[T], (Int, T, U) -> U, U) -> U
-fn List::from_array[T](Array[T]) -> List[T]
-fn List::head[T](List[T]) -> Option[T]
-fn List::head_exn[T](List[T]) -> T
-fn List::init_[T](List[T]) -> List[T]
-fn List::intercalate[T](List[List[T]], List[T]) -> List[T]
-fn List::intersperse[T](List[T], T) -> List[T]
-fn List::is_empty[T](List[T]) -> Bool
-fn List::is_prefix[T : @moonbitlang/core/builtin.Eq](List[T], List[T]) -> Bool
-fn List::is_suffix[T : @moonbitlang/core/builtin.Eq](List[T], List[T]) -> Bool
-fn List::iter[T](List[T], (T) -> Unit) -> Unit
-fn List::iteri[T](List[T], (Int, T) -> Unit) -> Unit
-fn List::last[T](List[T]) -> T
-fn List::length[T](List[T]) -> Int
-fn List::lookup[T : @moonbitlang/core/builtin.Eq, E](List[Tuple[T, E]], T) -> Option[E]
-fn List::map[T, U](List[T], (T) -> U) -> List[U]
-fn List::mapi[T, U](List[T], (Int, T) -> U) -> List[U]
-fn List::maximum[T : @moonbitlang/core/builtin.Compare + @moonbitlang/core/builtin.Eq](List[T]) -> T
-fn List::minimum[T : @moonbitlang/core/builtin.Compare + @moonbitlang/core/builtin.Eq](List[T]) -> T
-fn List::nth[T](List[T], Int) -> Option[T]
-fn List::nth_exn[T](List[T], Int) -> T
-fn List::op_add[T](List[T], List[T]) -> List[T]
-fn List::remove[T : @moonbitlang/core/builtin.Eq](List[T], T) -> List[T]
-fn List::remove_at[T](List[T], Int) -> List[T]
-fn List::reverse[T](List[T]) -> List[T]
-fn List::scan_left[T, E](List[T], (E, T) -> E, E) -> List[E]
-fn List::scan_right[T, E](List[T], (T, E) -> E, E) -> List[E]
-fn List::sort[T : @moonbitlang/core/builtin.Compare + @moonbitlang/core/builtin.Eq](List[T]) -> List[T]
-fn List::tail[T](List[T]) -> List[T]
-fn List::take[T](List[T], Int) -> List[T]
-fn List::take_while[T](List[T], (T) -> Bool) -> List[T]
-fn List::to_array[T](List[T]) -> Array[T]
-fn List::zip[T, U](List[T], List[U]) -> List[Tuple[T, U]]
+impl List {
+  all[T](Self[T], (T) -> Bool) -> Bool
+  any[T](Self[T], (T) -> Bool) -> Bool
+  concat[T](Self[T], Self[T]) -> Self[T]
+  concat_map[T, U](Self[T], (T) -> Self[U]) -> Self[U]
+  contain[T : Eq](Self[T], T) -> Bool
+  default[X]() -> Self[X]
+  drop[T](Self[T], Int) -> Self[T]
+  drop_while[T](Self[T], (T) -> Bool) -> Self[T]
+  equal[T : Eq](Self[T], Self[T]) -> Bool
+  filter[T](Self[T], (T) -> Bool) -> Self[T]
+  find[T](Self[T], (T) -> Bool) -> Option[T]
+  findi[T](Self[T], (T, Int) -> Bool) -> Option[T]
+  flatten[T](Self[Self[T]]) -> Self[T]
+  fold_left[T, U](Self[T], (U, T) -> U, ~init : U) -> U
+  fold_lefti[T, U](Self[T], (Int, U, T) -> U, ~init : U) -> U
+  fold_right[T, U](Self[T], (T, U) -> U, ~init : U) -> U
+  fold_righti[T, U](Self[T], (Int, T, U) -> U, ~init : U) -> U
+  from_array[T](Array[T]) -> Self[T]
+  head[T](Self[T]) -> Option[T]
+  head_exn[T](Self[T]) -> T
+  init_[T](Self[T]) -> Self[T]
+  intercalate[T](Self[Self[T]], Self[T]) -> Self[T]
+  intersperse[T](Self[T], T) -> Self[T]
+  is_empty[T](Self[T]) -> Bool
+  is_prefix[T : Eq](Self[T], Self[T]) -> Bool
+  is_suffix[T : Eq](Self[T], Self[T]) -> Bool
+  iter[T](Self[T], (T) -> Unit) -> Unit
+  iteri[T](Self[T], (Int, T) -> Unit) -> Unit
+  last[T](Self[T]) -> T
+  length[T](Self[T]) -> Int
+  lookup[T : Eq, E](Self[Tuple[T, E]], T) -> Option[E]
+  map[T, U](Self[T], (T) -> U) -> Self[U]
+  mapi[T, U](Self[T], (Int, T) -> U) -> Self[U]
+  maximum[T : Compare + Eq](Self[T]) -> T
+  minimum[T : Compare + Eq](Self[T]) -> T
+  nth[T](Self[T], Int) -> Option[T]
+  nth_exn[T](Self[T], Int) -> T
+  op_add[T](Self[T], Self[T]) -> Self[T]
+  remove[T : Eq](Self[T], T) -> Self[T]
+  remove_at[T](Self[T], Int) -> Self[T]
+  reverse[T](Self[T]) -> Self[T]
+  scan_left[T, E](Self[T], (E, T) -> E, ~init : E) -> Self[E]
+  scan_right[T, E](Self[T], (T, E) -> E, ~init : E) -> Self[E]
+  sort[T : Compare + Eq](Self[T]) -> Self[T]
+  tail[T](Self[T]) -> Self[T]
+  take[T](Self[T], Int) -> Self[T]
+  take_while[T](Self[T], (T) -> Bool) -> Self[T]
+  to_array[T](Self[T]) -> Array[T]
+  zip[T, U](Self[T], Self[U]) -> Self[Tuple[T, U]]
+}
 
 // Traits
 

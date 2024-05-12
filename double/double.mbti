@@ -3,21 +3,23 @@ package moonbitlang/core/double
 // Values
 
 // Types and methods
-fn Double::abs(Double) -> Double
-fn Double::debug_write(Double, @moonbitlang/core/builtin.Buffer) -> Unit
-fn Double::from_int(Int) -> Double
-fn Double::hash(Double) -> Int
-fn Double::inf(Int) -> Double
-fn Double::is_inf(Double) -> Bool
-fn Double::is_nan(Double) -> Bool
-fn Double::is_neg_inf(Double) -> Bool
-fn Double::is_pos_inf(Double) -> Bool
-fn Double::max_value() -> Double
-fn Double::min_normal() -> Double
-fn Double::min_value() -> Double
-fn Double::nan() -> Double
-fn Double::signum(Double) -> Double
-fn Double::to_string(Double) -> String
+impl Double {
+  abs(Double) -> Double
+  debug_write(Double, Buffer) -> Unit
+  from_int(Int) -> Double
+  hash(Double) -> Int
+  inf(Int) -> Double
+  is_inf(Double) -> Bool
+  is_nan(Double) -> Bool
+  is_neg_inf(Double) -> Bool
+  is_pos_inf(Double) -> Bool
+  max_value() -> Double
+  min_normal() -> Double
+  min_value() -> Double
+  nan() -> Double
+  signum(Double) -> Double
+  to_string(Double) -> String
+}
 
 // Traits
 

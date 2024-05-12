@@ -87,7 +87,7 @@ fn quick_sort_by[T](
     }
     let (pivot, partitioned) = partition_by(arr, cmp, pivot_index)
     was_partitioned = partitioned
-    balanced = @math.minimum(pivot, len - pivot) >= len / 8
+    balanced = minimum(pivot, len - pivot) >= len / 8
     if not(balanced) {
       limit -= 1
     }
@@ -157,16 +157,6 @@ fn bubble_sort_by[T](arr : VecView[T], cmp : (T, T) -> Int) -> Unit {
       arr.swap(j, j - 1)
     }
   }
-}
-
-test "try_bubble_sort" {
-  let arr = Vec::[8, 7, 6, 5, 4, 3, 2, 1]
-  let sorted = try_bubble_sort_by(
-    arr.op_as_view(start=0, end=8),
-    fn(a, b) { a - b },
-  )
-  @assertion.assert_eq(sorted, true)?
-  @assertion.assert_eq(arr, Vec::[1, 2, 3, 4, 5, 6, 7, 8])?
 }
 
 fn partition_by[T](
@@ -259,36 +249,4 @@ fn sift_down_by[T](arr : VecView[T], index : Int, cmp : (T, T) -> Int) -> Unit {
     index = child
     child = index * 2 + 1
   }
-}
-
-test "heap_sort" {
-  test_sort(
-    fn(arr) {
-      heap_sort_by(
-        arr.op_as_view(start=0, end=arr.length()),
-        fn(a, b) { a - b },
-      )
-    },
-  )?
-}
-
-test "bubble_sort" {
-  test_sort(
-    fn(arr) {
-      bubble_sort_by(
-        arr.op_as_view(start=0, end=arr.length()),
-        fn(a, b) { a - b },
-      )
-    },
-  )?
-}
-
-test "sort" {
-  test_sort(fn(arr) { arr.sort() })?
-}
-
-test "sort_by" {
-  let arr = Vec::[5, 1, 3, 4, 2]
-  arr.sort_by_key(fn(x) { -x })
-  @assertion.assert_eq(arr, Vec::[5, 4, 3, 2, 1])?
 }

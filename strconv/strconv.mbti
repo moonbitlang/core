@@ -7,17 +7,19 @@ fn parse_bool(String) -> Result[Bool, String]
 
 fn parse_double(String) -> Result[Double, String]
 
-fn parse_int(String, Int) -> Result[Int, String]
+fn parse_int(String, ~base : Int = ..) -> Result[Int, String]
 
-fn parse_int64(String, Int) -> Result[Int64, String]
+fn parse_int64(String, ~base : Int = ..) -> Result[Int64, String]
 
 // Types and methods
 type Decimal
-fn Decimal::from_int64(Int64) -> Decimal
-fn Decimal::new() -> Decimal
-fn Decimal::parse_decimal(String) -> Result[Decimal, String]
-fn Decimal::shift(Decimal, Int) -> Unit
-fn Decimal::to_double(Decimal) -> Result[Double, String]
+impl Decimal {
+  from_int64(Int64) -> Self
+  new() -> Self
+  parse_decimal(String) -> Result[Self, String]
+  shift(Self, Int) -> Unit
+  to_double(Self) -> Result[Double, String]
+}
 
 type Number
 

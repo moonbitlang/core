@@ -1,5 +1,8 @@
 package moonbitlang/core/json
 
+alias @moonbitlang/core/map as @map
+alias @moonbitlang/core/vec as @vec
+
 // Values
 
 // Types and methods
@@ -8,12 +11,22 @@ pub enum JsonValue {
   Boolean(Bool)
   Number(Double)
   String(String)
-  Array(@moonbitlang/core/vec.Vec[JsonValue])
-  Object(@moonbitlang/core/map.Map[String, JsonValue])
+  Array(@vec.Vec[JsonValue])
+  Object(@map.Map[String, JsonValue])
 }
-fn JsonValue::debug_write(JsonValue, @moonbitlang/core/builtin.Buffer) -> Unit
-fn JsonValue::op_equal(JsonValue, JsonValue) -> Bool
-fn JsonValue::to_string(JsonValue) -> String
+impl JsonValue {
+  as_array(Self) -> Option[@vec.Vec[Self]]
+  as_bool(Self) -> Option[Bool]
+  as_null(Self) -> Option[Unit]
+  as_number(Self) -> Option[Double]
+  as_object(Self) -> Option[@map.Map[String, Self]]
+  as_string(Self) -> Option[String]
+  debug_write(Self, Buffer) -> Unit
+  item(Self, Int) -> Option[Self]
+  op_equal(Self, Self) -> Bool
+  to_string(Self) -> String
+  value(Self, String) -> Option[Self]
+}
 
 // Traits
 

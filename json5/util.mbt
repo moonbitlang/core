@@ -32,12 +32,6 @@ fn invalid_char(ctx : ParseContext, ~shift : Int = 0) -> ParseError {
   InvalidChar(offset_to_position(ctx.input, offset), ctx.input[offset])
 }
 
-fn slice_string(s : String, start : Int, end : Int) -> String {
-  let buf = Buffer::make(0)
-  buf.write_sub_string(s, start, end - start)
-  buf.to_string()
-}
-
 fn hex_digit_to_int(c : Char) -> Int {
   if c >= 'A' {
     c.to_int().land((32).lnot()) - 'A'.to_int() + 10

@@ -87,7 +87,7 @@ fn quick_sort_by[T](
     }
     let (pivot, partitioned) = partition_by(arr, cmp, pivot_index)
     was_partitioned = partitioned
-    balanced = @math.minimum(pivot, len - pivot) >= len / 8
+    balanced = minimum(pivot, len - pivot) >= len / 8
     if not(balanced) {
       limit -= 1
     }
@@ -160,7 +160,7 @@ fn bubble_sort_by[T](arr : ArraySlice[T], cmp : (T, T) -> Int) -> Unit {
 }
 
 test "try_bubble_sort" {
-  let arr = [8, 7, 6, 5, 4, 3, 2, 1]
+  let arr : Array[_] = [8, 7, 6, 5, 4, 3, 2, 1]
   let sorted = try_bubble_sort_by(
     { array: arr, start: 0, end: 8 },
     fn(a, b) { a - b },

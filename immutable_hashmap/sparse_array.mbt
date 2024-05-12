@@ -20,7 +20,7 @@ priv struct SparseArray[X] {
   data : Array[X]
 }
 
-fn SparseArray::make[X](idx : Int, value : X) -> SparseArray[X] {
+fn SparseArray::singleton[X](idx : Int, value : X) -> SparseArray[X] {
   { elem_info: empty_bitset.add(idx), data: [value] }
 }
 
@@ -41,20 +41,18 @@ fn op_get[X](self : SparseArray[X], idx : Int) -> Option[X] {
 /// Add a new element into the sparse array.
 /// [idx] must be absent from [self]
 fn add[X](self : SparseArray[X], idx : Int, value : X) -> SparseArray[X] {
-  let new_len = self.data.length() + 1
+  let old_data = self.data
+  let old_len = old_data.length()
+  let new_len = old_len + 1
   let pos_of_new_item = self.elem_info.index_of(idx)
   let new_data = Array::make(new_len, value)
-  let mut i = 0
-  while i < pos_of_new_item {
-    new_data[i] = self.data[i]
-    i = i + 1
-  }
-  new_data[i] = value
-  i = i + 1
-  while i < new_len {
-    new_data[i] = self.data[i - 1]
-    i = i + 1
-  }
+  old_data.blit_to(new_data, len=pos_of_new_item)
+  old_data.blit_to(
+    new_data,
+    len=old_len - pos_of_new_item,
+    src_offset=pos_of_new_item,
+    dst_offset=pos_of_new_item + 1,
+  )
   { elem_info: self.elem_info.add(idx), data: new_data }
 }
 
@@ -62,44 +60,32 @@ fn add[X](self : SparseArray[X], idx : Int, value : X) -> SparseArray[X] {
 ///
 // replace an existing element in the sparse array.
 fn replace[X](self : SparseArray[X], idx : Int, value : X) -> SparseArray[X] {
-  let len = self.data.length()
-  let pos_of_new_item = self.elem_info.index_of(idx)
-  let new_data = Array::make(len, value)
-  for i = 0; i < len; i = i + 1 {
-    new_data[i] = if i == pos_of_new_item { value } else { self.data[i] }
-  }
+  let new_data = self.data.copy()
+  new_data[self.elem_info.index_of(idx)] = value
   { elem_info: self.elem_info, data: new_data }
 }
 
 test "SparseArray" {
-  let arr = SparseArray::make(1, 1)
-  @assertion.assert_false(arr.has(0))?
-  @assertion.assert_eq(arr[0], None)?
-  @assertion.assert_true(arr.has(1))?
-  @assertion.assert_eq(arr[1], Some(1))?
-  @assertion.assert_false(arr.has(2))?
-  @assertion.assert_eq(arr[2], None)?
-  let arr = arr.add(2, 2)
-  @assertion.assert_false(arr.has(0))?
-  @assertion.assert_eq(arr[0], None)?
-  @assertion.assert_true(arr.has(1))?
-  @assertion.assert_eq(arr[1], Some(1))?
-  @assertion.assert_true(arr.has(2))?
-  @assertion.assert_eq(arr[2], Some(2))?
-  let arr = arr.add(0, 0)
-  @assertion.assert_true(arr.has(0))?
-  @assertion.assert_eq(arr[0], Some(0))?
-  @assertion.assert_true(arr.has(1))?
-  @assertion.assert_eq(arr[1], Some(1))?
-  @assertion.assert_true(arr.has(2))?
-  @assertion.assert_eq(arr[2], Some(2))?
-  let arr = arr.replace(1, 42)
-  @assertion.assert_true(arr.has(0))?
-  @assertion.assert_eq(arr[0], Some(0))?
-  @assertion.assert_true(arr.has(1))?
-  @assertion.assert_eq(arr[1], Some(42))?
-  @assertion.assert_true(arr.has(2))?
-  @assertion.assert_eq(arr[2], Some(2))?
+  let arr0 = singleton(1, 1)
+  inspect(
+    (arr0.has(0), arr0[0], arr0.has(1), arr0[1], arr0.has(2), arr0[2]),
+    content="(false, None, true, Some(1), false, None)",
+  )?
+  let arr1 = arr0.add(2, 2)
+  inspect(
+    (arr1.has(0), arr1[0], arr1.has(1), arr1[1], arr1.has(2), arr1[2]),
+    content="(false, None, true, Some(1), true, Some(2))",
+  )?
+  let arr2 = arr1.add(0, 0)
+  inspect(
+    (arr2.has(0), arr2[0], arr2.has(1), arr2[1], arr2.has(2), arr2[2]),
+    content="(true, Some(0), true, Some(1), true, Some(2))",
+  )?
+  let arr3 = arr2.replace(1, 42)
+  inspect(
+    (arr3.has(0), arr3[0], arr3.has(1), arr3[1], arr3.has(2), arr3[2]),
+    content="(true, Some(0), true, Some(42), true, Some(2))",
+  )?
 }
 
 /// `size(self: SparseArray[X]) -> Int`
@@ -119,7 +105,7 @@ fn iter[X](self : SparseArray[X], f : (X) -> Unit) -> Unit {
 }
 
 test "SparseArray::iter" {
-  let arr = SparseArray::make(0, 0).add(1, 1).add(3, 3).add(31, 31)
+  let arr = singleton(0, 0).add(1, 1).add(3, 3).add(31, 31)
   let buf = Buffer::make(0)
   let mut is_first = true
   arr.iter(
@@ -132,5 +118,5 @@ test "SparseArray::iter" {
       buf.write_string(x.to_string())
     },
   )
-  @assertion.assert_eq(buf.to_string(), "0, 1, 3, 31")?
+  inspect(buf, content="0, 1, 3, 31")?
 }

@@ -1,41 +1,47 @@
 package moonbitlang/core/immutable_set
 
+alias @moonbitlang/core/iter as @iter
+alias @moonbitlang/core/vec as @vec
+
 // Values
 
 // Types and methods
 type ImmutableSet
-fn ImmutableSet::add[T : @moonbitlang/core/builtin.Compare + @moonbitlang/core/builtin.Eq](ImmutableSet[T], T) -> ImmutableSet[T]
-fn ImmutableSet::contain[T : @moonbitlang/core/builtin.Compare + @moonbitlang/core/builtin.Eq](ImmutableSet[T], T) -> Bool
-fn ImmutableSet::debug_write[T : @moonbitlang/core/builtin.Debug](ImmutableSet[T], @moonbitlang/core/builtin.Buffer) -> Unit
-fn ImmutableSet::default[T : @moonbitlang/core/builtin.Default]() -> ImmutableSet[T]
-fn ImmutableSet::diff[T : @moonbitlang/core/builtin.Compare + @moonbitlang/core/builtin.Eq](ImmutableSet[T], ImmutableSet[T]) -> ImmutableSet[T]
-fn ImmutableSet::disjoint[T : @moonbitlang/core/builtin.Compare + @moonbitlang/core/builtin.Eq](ImmutableSet[T], ImmutableSet[T]) -> Bool
-fn ImmutableSet::exists[T : @moonbitlang/core/builtin.Compare + @moonbitlang/core/builtin.Eq](ImmutableSet[T], (T) -> Bool) -> Bool
-fn ImmutableSet::filter[T : @moonbitlang/core/builtin.Compare + @moonbitlang/core/builtin.Eq](ImmutableSet[T], (T) -> Bool) -> ImmutableSet[T]
-fn ImmutableSet::fold[T : @moonbitlang/core/builtin.Compare + @moonbitlang/core/builtin.Eq, U](ImmutableSet[T], (U, T) -> U, U) -> U
-fn ImmutableSet::forall[T : @moonbitlang/core/builtin.Compare + @moonbitlang/core/builtin.Eq](ImmutableSet[T], (T) -> Bool) -> Bool
-fn ImmutableSet::from_array[T : @moonbitlang/core/builtin.Compare + @moonbitlang/core/builtin.Eq](Array[T]) -> ImmutableSet[T]
-fn ImmutableSet::from_list[T : @moonbitlang/core/builtin.Compare + @moonbitlang/core/builtin.Eq](List[T]) -> ImmutableSet[T]
-fn ImmutableSet::inter[T : @moonbitlang/core/builtin.Compare + @moonbitlang/core/builtin.Eq](ImmutableSet[T], ImmutableSet[T]) -> ImmutableSet[T]
-fn ImmutableSet::is_empty[T : @moonbitlang/core/builtin.Compare + @moonbitlang/core/builtin.Eq](ImmutableSet[T]) -> Bool
-fn ImmutableSet::iter[T : @moonbitlang/core/builtin.Compare + @moonbitlang/core/builtin.Eq](ImmutableSet[T], (T) -> Unit) -> Unit
-fn ImmutableSet::map[T : @moonbitlang/core/builtin.Compare + @moonbitlang/core/builtin.Eq, U : @moonbitlang/core/builtin.Compare + @moonbitlang/core/builtin.Eq](ImmutableSet[T], (T) -> U) -> ImmutableSet[U]
-fn ImmutableSet::max[T : @moonbitlang/core/builtin.Compare + @moonbitlang/core/builtin.Eq](ImmutableSet[T]) -> T
-fn ImmutableSet::max_option[T : @moonbitlang/core/builtin.Compare + @moonbitlang/core/builtin.Eq](ImmutableSet[T]) -> Option[T]
-fn ImmutableSet::min[T : @moonbitlang/core/builtin.Compare + @moonbitlang/core/builtin.Eq](ImmutableSet[T]) -> T
-fn ImmutableSet::min_option[T : @moonbitlang/core/builtin.Compare + @moonbitlang/core/builtin.Eq](ImmutableSet[T]) -> Option[T]
-fn ImmutableSet::new[T]() -> ImmutableSet[T]
-fn ImmutableSet::op_equal[T : @moonbitlang/core/builtin.Eq](ImmutableSet[T], ImmutableSet[T]) -> Bool
-fn ImmutableSet::remove[T : @moonbitlang/core/builtin.Compare + @moonbitlang/core/builtin.Eq](ImmutableSet[T], T) -> ImmutableSet[T]
-fn ImmutableSet::remove_min[T : @moonbitlang/core/builtin.Compare + @moonbitlang/core/builtin.Eq](ImmutableSet[T]) -> ImmutableSet[T]
-fn ImmutableSet::singleton[T : @moonbitlang/core/builtin.Compare + @moonbitlang/core/builtin.Eq](T) -> ImmutableSet[T]
-fn ImmutableSet::split[T : @moonbitlang/core/builtin.Compare + @moonbitlang/core/builtin.Eq](ImmutableSet[T], T) -> Tuple[ImmutableSet[T], Bool, ImmutableSet[T]]
-fn ImmutableSet::subset[T : @moonbitlang/core/builtin.Compare + @moonbitlang/core/builtin.Eq](ImmutableSet[T], ImmutableSet[T]) -> Bool
-fn ImmutableSet::to_array[T : @moonbitlang/core/builtin.Compare + @moonbitlang/core/builtin.Eq](ImmutableSet[T]) -> Array[T]
-fn ImmutableSet::to_list[T : @moonbitlang/core/builtin.Compare + @moonbitlang/core/builtin.Eq](ImmutableSet[T]) -> List[T]
-fn ImmutableSet::to_string[T : @moonbitlang/core/builtin.Show + @moonbitlang/core/builtin.Compare + @moonbitlang/core/builtin.Eq](ImmutableSet[T]) -> String
-fn ImmutableSet::to_vec[T : @moonbitlang/core/builtin.Compare + @moonbitlang/core/builtin.Eq](ImmutableSet[T]) -> @moonbitlang/core/vec.Vec[T]
-fn ImmutableSet::union[T : @moonbitlang/core/builtin.Compare + @moonbitlang/core/builtin.Eq](ImmutableSet[T], ImmutableSet[T]) -> ImmutableSet[T]
+impl ImmutableSet {
+  add[T : Compare + Eq](Self[T], T) -> Self[T]
+  as_iter[T](Self[T]) -> @iter.Iter[T]
+  contain[T : Compare + Eq](Self[T], T) -> Bool
+  debug_write[T : Debug](Self[T], Buffer) -> Unit
+  default[T : Default]() -> Self[T]
+  diff[T : Compare + Eq](Self[T], Self[T]) -> Self[T]
+  disjoint[T : Compare + Eq](Self[T], Self[T]) -> Bool
+  exists[T : Compare + Eq](Self[T], (T) -> Bool) -> Bool
+  filter[T : Compare + Eq](Self[T], (T) -> Bool) -> Self[T]
+  fold[T : Compare + Eq, U](Self[T], (U, T) -> U, ~init : U) -> U
+  forall[T : Compare + Eq](Self[T], (T) -> Bool) -> Bool
+  from_array[T : Compare + Eq](Array[T]) -> Self[T]
+  from_list[T : Compare + Eq](List[T]) -> Self[T]
+  inter[T : Compare + Eq](Self[T], Self[T]) -> Self[T]
+  is_empty[T : Compare + Eq](Self[T]) -> Bool
+  iter[T : Compare + Eq](Self[T], (T) -> Unit) -> Unit
+  map[T : Compare + Eq, U : Compare + Eq](Self[T], (T) -> U) -> Self[U]
+  max[T : Compare + Eq](Self[T]) -> T
+  max_option[T : Compare + Eq](Self[T]) -> Option[T]
+  min[T : Compare + Eq](Self[T]) -> T
+  min_option[T : Compare + Eq](Self[T]) -> Option[T]
+  new[T]() -> Self[T]
+  op_equal[T : Eq](Self[T], Self[T]) -> Bool
+  remove[T : Compare + Eq](Self[T], T) -> Self[T]
+  remove_min[T : Compare + Eq](Self[T]) -> Self[T]
+  singleton[T : Compare + Eq](T) -> Self[T]
+  split[T : Compare + Eq](Self[T], T) -> Tuple[Self[T], Bool, Self[T]]
+  subset[T : Compare + Eq](Self[T], Self[T]) -> Bool
+  to_array[T : Compare + Eq](Self[T]) -> Array[T]
+  to_list[T : Compare + Eq](Self[T]) -> List[T]
+  to_string[T : Show + Compare + Eq](Self[T]) -> String
+  to_vec[T : Compare + Eq](Self[T]) -> @vec.Vec[T]
+  union[T : Compare + Eq](Self[T], Self[T]) -> Self[T]
+}
 
 // Traits
 
