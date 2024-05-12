@@ -37,8 +37,8 @@ impl Vec {
   iteri[T](Self[T], (Int, T) -> Unit) -> Unit
   join[T](Self[Self[T]], T) -> Self[T]
   length[T](Self[T]) -> Int
-  map[T](Self[T], (T) -> T) -> Unit
-  mapi[T](Self[T], (Int, T) -> T) -> Unit
+  map[T, U](Self[T], (T) -> U) -> Self[U]
+  mapi[T, U](Self[T], (Int, T) -> U) -> Self[U]
   new[T]() -> Self[T]
   op_add[T](Self[T], Self[T]) -> Self[T]
   op_as_view[T](Self[T], ~start : Int, ~end : Int) -> VecView[T]

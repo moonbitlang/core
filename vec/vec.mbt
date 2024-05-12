@@ -80,7 +80,7 @@ fn realloc[T](self : Vec[T]) -> Unit {
 }
 
 /// Retrieves the element at the specified index from the vector.
-/// 
+///
 /// # Example
 /// ```
 /// let v = Vec::new()
@@ -99,7 +99,7 @@ pub fn op_get[T](self : Vec[T], index : Int) -> T {
 }
 
 /// Retrieves the element at the specified index from the vector, or `None` if index is out of bounds
-/// 
+///
 /// # Example
 /// ```
 /// let v = Vec::new()
@@ -114,7 +114,7 @@ pub fn get[T](self : Vec[T], index : Int) -> Option[T] {
 }
 
 /// Sets the value of the element at the specified index.
-/// 
+///
 /// # Example
 /// ```
 /// let v = Vec::new()
@@ -138,7 +138,7 @@ pub fn op_equal[T : Eq](self : Vec[T], other : Vec[T]) -> Bool {
     return false
   }
   for i = 0 {
-    // CR: format issue  
+    // CR: format issue
     if i >= self.len {
       break true
     }
@@ -178,7 +178,7 @@ pub fn op_add[T](self : Vec[T], other : Vec[T]) -> Vec[T] {
 }
 
 /// Removes the last element from a vector and returns it, or `None` if it is empty.
-/// 
+///
 /// # Example
 /// ```
 /// let v = Vec::[1, 2, 3]
@@ -195,7 +195,7 @@ pub fn pop[T](self : Vec[T]) -> Option[T] {
 }
 
 /// Removes the last element from a vector and returns it.
-/// 
+///
 /// # Example
 /// ```
 /// let v = Vec::[1, 2, 3]
@@ -211,9 +211,9 @@ pub fn pop_exn[T](self : Vec[T]) -> T {
 }
 
 /// Adds an element to the end of the vector.
-/// 
+///
 /// If the vector is at capacity, it will be reallocated.
-/// 
+///
 /// # Example
 /// ```
 /// let v = Vec::new()
@@ -228,9 +228,9 @@ pub fn push[T](self : Vec[T], value : T) -> Unit {
 }
 
 /// Removes the specified range from the vector and returns it.
-/// 
+///
 /// This functions returns a vector range from `begin` to `end` `[begin, end)`
-/// 
+///
 /// # Example
 /// ```
 /// let v = Vec::[3, 4, 5]
@@ -258,7 +258,7 @@ pub fn drain[T](self : Vec[T], begin : Int, end : Int) -> Vec[T] {
 }
 
 /// Appends all the elements of other vector into self
-/// 
+///
 /// # Example
 /// ```
 /// let v1 = Vec::[3, 4, 5]
@@ -273,7 +273,7 @@ pub fn append[T](self : Vec[T], other : Vec[T]) -> Unit {
 }
 
 /// Iterates over the elements of the vector.
-/// 
+///
 /// # Example
 /// ```
 /// let v = Vec::with_capacity(3)
@@ -296,7 +296,7 @@ pub fn iter_rev[T](self : Vec[T], f : (T) -> Unit) -> Unit {
 }
 
 /// Iterates over the elements of the vector with index.
-/// 
+///
 /// # Example
 /// ```
 /// let v = Vec::with_capacity(3)
@@ -320,9 +320,9 @@ pub fn iter_revi[T](self : Vec[T], f : (Int, T) -> Unit) -> Unit {
 }
 
 /// Clears the vector, removing all values.
-/// 
+///
 /// This method has no effect on the allocated capacity of the vector, only setting the length to 0.
-/// 
+///
 /// # Example
 /// ```
 /// let v = Vec::from_array([3, 4, 5])
@@ -333,33 +333,43 @@ pub fn clear[T](self : Vec[T]) -> Unit {
 }
 
 /// Maps a function over the elements of the vector.
-/// 
+///
 /// # Example
 /// ```
 /// let v = Vec::from_array([3, 4, 5])
 /// v.map(fn (x) {x + 1})
 /// ```
-pub fn map[T](self : Vec[T], f : (T) -> T) -> Unit {
-  for i = 0; i < self.len; i = i + 1 {
-    self.buf[i] = f(self.buf[i])
+pub fn map[T, U](self : Vec[T], f : (T) -> U) -> Vec[U] {
+  if self.length() == 0 {
+    return Vec::{ buf: UninitializedArray::make(0), len: 0 }
   }
+  let buf : UninitializedArray[U] = UninitializedArray::make(self.length())
+  for i = 0; i < self.length(); i = i + 1 {
+    buf[i] = f(self[i])
+  }
+  Vec::{ buf, len: self.length() }
 }
 
 /// Maps a function over the elements of the vector with index.
-/// 
+///
 /// # Example
 /// ```
 /// let v = Vec::from_array([3, 4, 5])
 /// v.mapi(fn (i, x) {x + i})
 /// ```
-pub fn mapi[T](self : Vec[T], f : (Int, T) -> T) -> Unit {
-  for i = 0; i < self.len; i = i + 1 {
-    self.buf[i] = f(i, self.buf[i])
+pub fn mapi[T, U](self : Vec[T], f : (Int, T) -> U) -> Vec[U] {
+  if self.length() == 0 {
+    return Vec::{ buf: UninitializedArray::make(0), len: 0 }
   }
+  let buf : UninitializedArray[U] = UninitializedArray::make(self.length())
+  for i = 0; i < self.length(); i = i + 1 {
+    buf[i] = f(i, self[i])
+  }
+  Vec::{ buf, len: self.length() }
 }
 
 /// Test if the vector is empty.
-/// 
+///
 /// # Example
 /// ```
 /// let v = Vec::new()
@@ -370,7 +380,7 @@ pub fn is_empty[T](self : Vec[T]) -> Bool {
 }
 
 /// Test if the vector is sorted.
-/// 
+///
 /// # Example
 /// ```
 /// let v = Vec::[3, 4, 5]
@@ -389,7 +399,7 @@ pub fn is_sorted[T : Compare](self : Vec[T]) -> Bool {
 }
 
 /// Reverses the order of elements in the slice, in place.
-/// 
+///
 /// # Example
 /// ```
 /// let v = Vec::[3, 4, 5]
@@ -404,7 +414,7 @@ pub fn reverse[T](self : Vec[T]) -> Unit {
 }
 
 /// Split the vector into two at the given index.
-/// 
+///
 /// # Example
 /// ```
 /// let v = Vec::[3, 4, 5]
@@ -431,7 +441,7 @@ pub fn split_at[T](self : Vec[T], index : Int) -> (Vec[T], Vec[T]) {
 }
 
 /// Checks if the vector contains an element.
-/// 
+///
 /// # Example
 /// ```
 /// let v = Vec::[3, 4, 5]
@@ -448,7 +458,7 @@ pub fn contains[T : Eq](self : Vec[T], value : T) -> Bool {
 }
 
 /// Check if the vector starts with a given prefix.
-/// 
+///
 /// # Example
 /// ```
 /// let v = Vec::[3, 4, 5]
@@ -468,7 +478,7 @@ pub fn starts_with[T : Eq](self : Vec[T], prefix : Vec[T]) -> Bool {
 }
 
 /// Check if the vector ends with a given suffix.
-/// 
+///
 /// # Example
 /// ```
 /// let v = Vec::[3, 4, 5]
@@ -488,9 +498,9 @@ pub fn ends_with[T : Eq](self : Vec[T], suffix : Vec[T]) -> Bool {
 }
 
 /// Strip a prefix from the vector.
-/// 
+///
 /// If the vector starts with the prefix, return the vector after the prefix, otherwise return None.
-/// 
+///
 /// # Example
 /// ```
 /// let v = Vec::[3, 4, 5]
@@ -510,9 +520,9 @@ pub fn strip_prefix[T : Eq](self : Vec[T], prefix : Vec[T]) -> Option[Vec[T]] {
 }
 
 /// Strip a suffix from the vector.
-/// 
+///
 /// If the vector ends with the suffix, return the vector before the suffix, otherwise return None.
-/// 
+///
 /// # Example
 /// ```
 /// let v = Vec::[3, 4, 5]
@@ -532,7 +542,7 @@ pub fn strip_suffix[T : Eq](self : Vec[T], suffix : Vec[T]) -> Option[Vec[T]] {
 }
 
 /// Search the vector index for a given element.
-/// 
+///
 /// # Example
 /// ```
 /// let v = Vec::[3, 4, 5]
@@ -549,7 +559,7 @@ pub fn search[T : Eq](self : Vec[T], value : T) -> Option[Int] {
 }
 
 /// Swap two elements in the vector.
-/// 
+///
 /// # Example
 /// ```
 /// let v = Vec::[3, 4, 5]
@@ -569,9 +579,9 @@ pub fn swap[T](self : Vec[T], i : Int, j : Int) -> Unit {
 }
 
 /// Remove an element from the vector at a given index.
-/// 
+///
 /// Removes and returns the element at position index within the vector, shifting all elements after it to the left.
-/// 
+///
 /// # Example
 /// ```
 /// let v = Vec::[3, 4, 5]
@@ -594,7 +604,7 @@ pub fn remove[T](self : Vec[T], index : Int) -> T {
 }
 
 /// Retains only the elements specified by the predicate.
-/// 
+///
 /// # Example
 /// ```
 /// let v = Vec::[3, 4, 5]
@@ -613,7 +623,7 @@ pub fn retain[T](self : Vec[T], f : (T) -> Bool) -> Unit {
 }
 
 /// Resize the vector to a new length with a default value.
-/// 
+///
 /// # Example
 /// ```
 /// Vec::[3, 4, 5].resize(1)
@@ -633,7 +643,7 @@ pub fn resize[T](self : Vec[T], new_len : Int, f : T) -> Unit {
 }
 
 /// Inserts an element at a given index within the vector.
-/// 
+///
 /// # Example
 /// ```
 /// Vec::[3, 4, 5].insert(1, 6)
@@ -657,7 +667,7 @@ pub fn insert[T](self : Vec[T], index : Int, value : T) -> Unit {
 }
 
 /// Fill the vector (by capacity) with a given value.
-/// 
+///
 /// # Example
 /// ```
 /// Vec::with_capacity(3).fill(3)
@@ -670,7 +680,7 @@ pub fn fill[T](self : Vec[T], value : T) -> Unit {
 }
 
 /// Fill the vector by calling a function (By capacity).
-/// 
+///
 /// # Example
 /// ```
 /// Vec::with_capacity(3).fill_with(fn() { 3 })
@@ -683,7 +693,7 @@ pub fn fill_with[T](self : Vec[T], f : () -> T) -> Unit {
 }
 
 /// Flattens a vector of vectors into a vector.
-/// 
+///
 /// # Example
 /// ```
 /// Vec::[Vec::[3, 4], Vec::[5, 6]].flatten()
@@ -697,7 +707,7 @@ pub fn flatten[T](self : Vec[Vec[T]]) -> Vec[T] {
 }
 
 /// Create a vector by repeat a given vector for a given times.
-/// 
+///
 /// # Example
 /// ```
 /// Vec::[3, 4].repeat(2)
@@ -711,7 +721,7 @@ pub fn repeat[T](self : Vec[T], times : Int) -> Vec[T] {
 }
 
 /// Flattens a vector of vectors with a given separator.
-/// 
+///
 /// # Example
 /// ```
 /// Vec::[Vec::[3, 4], Vec::[5, 6]].join(0)
@@ -728,7 +738,7 @@ pub fn join[T](self : Vec[Vec[T]], sep : T) -> Vec[T] {
 }
 
 /// Fold out values from an array according to certain rules.
-/// 
+///
 /// # Example
 /// ```
 /// let sum = [1, 2, 3, 4, 5].fold_left(~init=0, fn { sum, elem => sum + elem })
@@ -743,7 +753,7 @@ pub fn fold_left[T, U](self : Vec[T], f : (U, T) -> U, ~init : U) -> U {
 }
 
 /// Fold out values from an array according to certain rules in reversed turn.
-/// 
+///
 /// # Example
 /// ```
 /// let sum = [1, 2, 3, 4, 5].fold_right(~init=0, fn { sum, elem => sum + elem })
@@ -758,7 +768,7 @@ pub fn fold_right[T, U](self : Vec[T], f : (U, T) -> U, ~init : U) -> U {
 }
 
 /// Fold out values from an array according to certain rules with index.
-/// 
+///
 /// # Example
 /// ```
 /// let sum = [1, 2, 3, 4, 5].fold_lefti(~init=0, fn { index, sum, elem => sum + index })
@@ -773,7 +783,7 @@ pub fn fold_lefti[T, U](self : Vec[T], f : (Int, U, T) -> U, ~init : U) -> U {
 }
 
 /// Fold out values from an array according to certain rules in reversed turn with index.
-/// 
+///
 /// # Example
 /// ```
 /// let sum = [1, 2, 3, 4, 5].fold_righti(~init=0, fn { index, sum, elem => sum + index })
@@ -788,7 +798,7 @@ pub fn fold_righti[T, U](self : Vec[T], f : (Int, U, T) -> U, ~init : U) -> U {
 }
 
 /// Removes consecutive repeated elements in the vector according to the Eq trait.
-/// 
+///
 /// # Example
 /// ```
 /// let v = Vec::[3, 4, 4, 5, 5, 5]
@@ -808,7 +818,7 @@ pub fn dedup[T : Eq](self : Vec[T]) -> Unit {
 }
 
 /// Extract elements from the vector according to the given function.
-/// 
+///
 /// This function will remove the elements from the original vector and return a new vector.
 /// # Example
 /// ```
@@ -831,9 +841,9 @@ pub fn extract_if[T](self : Vec[T], f : (T) -> Bool) -> Vec[T] {
 }
 
 /// Group the elements of the vector into sized chunks.
-/// 
+///
 /// If the elements of the vector cannot be divided into equal-sized chunks, the last chunk will be smaller.
-/// 
+///
 /// # Example
 /// ```
 /// let v = Vec::[1, 2, 3, 4, 5, 6, 7, 8, 9]
@@ -854,11 +864,11 @@ pub fn chunks[T](self : Vec[T], size : Int) -> Vec[Vec[T]] {
 }
 
 /// Group the elements of the vector into chunks based on a predicate.
-/// 
+///
 /// # Example
 /// ```
 /// let v = Vec::[1, 1, 2, 3, 2, 3, 2, 3, 4]
-/// let chunks = v.chunk_by(fn(x, y) { x <= y }) 
+/// let chunks = v.chunk_by(fn(x, y) { x <= y })
 /// // chunks = Vec::[Vec::[1, 1, 2, 3], Vec::[2, 3], Vec::[2, 3], Vec::[4]]
 /// ```
 pub fn chunk_by[T](self : Vec[T], pred : (T, T) -> Bool) -> Vec[Vec[T]] {
@@ -878,7 +888,7 @@ pub fn chunk_by[T](self : Vec[T], pred : (T, T) -> Bool) -> Vec[Vec[T]] {
 }
 
 /// Split the vector into chunks based on a predicate.
-/// 
+///
 /// # Example
 /// ```
 /// let v = Vec::[1, 0, 2, 0, 3, 0, 4]
@@ -900,7 +910,7 @@ pub fn split[T](self : Vec[T], pred : (T) -> Bool) -> Vec[Vec[T]] {
 }
 
 /// Convert vec to list.
-/// 
+///
 /// # Example
 ///
 /// ```
@@ -916,9 +926,9 @@ pub fn to_list[T](self : Vec[T]) -> List[T] {
 
 /// Reserves capacity to ensure that it can hold at least the number of elements
 /// specified by the `capacity` argument.
-/// 
+///
 /// # Example
-/// 
+///
 /// ```
 /// let v = Vec::[1]
 /// v.reserve_capacity(10)
@@ -936,9 +946,9 @@ pub fn reserve_capacity[T](self : Vec[T], capacity : Int) -> Unit {
 }
 
 /// Shrinks the capacity of the vector as much as possible.
-/// 
+///
 /// # Example
-/// 
+///
 /// ```
 /// let v = Vec::with_capacity(10)
 /// v.push(1)
