@@ -31,9 +31,9 @@ struct RandomInt {
 /// 
 /// # Example
 /// ```
-/// let summoner = RandomInt::new(114514)
+/// let summoner = RandomInt::new(seed=3) 
 /// ```
-pub fn RandomInt::new(seed : Int) -> RandomInt {
+pub fn RandomInt::new(~seed : Int = 0) -> RandomInt {
   let state = Array::make(n32, 0)
   state[0] = seed
   for i = 1; i < n32; i = i + 1 {
@@ -78,7 +78,7 @@ pub fn summon(self : RandomInt) -> Int {
 }
 
 test "rand_int" {
-  let summoner = RandomInt::new(114514)
+  let summoner = RandomInt::new(seed=33)
   let a = summoner.summon()
   let b = summoner.summon()
   let c = summoner.summon()
