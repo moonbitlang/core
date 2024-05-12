@@ -5,19 +5,19 @@ package moonbitlang/core/random
 // Types and methods
 type RandomDouble
 impl RandomDouble {
-  new(Int) -> Self
+  new(~seed : Int = ..) -> Self
   summon(Self) -> Double
 }
 
 type RandomInt
 impl RandomInt {
-  new(Int) -> Self
+  new(~seed : Int = ..) -> Self
   summon(Self) -> Int
 }
 
 type RandomInt64
 impl RandomInt64 {
-  new(Int) -> Self
+  new(~seed : Int = ..) -> Self
   summon(Self) -> Int64
 }
 
