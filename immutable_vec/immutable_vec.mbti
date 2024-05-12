@@ -3,10 +3,6 @@ package moonbitlang/core/immutable_vec
 alias @moonbitlang/core/vec as @vec
 
 // Values
-fn array_blit[T](~src : Array[T], ~dst : Array[T], Int, Int, Int) -> Unit
-
-fn immutable_copy[T](Array[T]) -> Array[T]
-
 fn immutable_push[T](Array[T], T) -> Array[T]
 
 fn immutable_set[T](Array[T], Int, T) -> Array[T]
