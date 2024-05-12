@@ -13,7 +13,7 @@
 // limitations under the License.
 
 pub fn immutable_set[T](arr : Array[T], i : Int, v : T) -> Array[T] {
-  let arr = @array.copy(arr)
+  let arr = arr.copy()
   arr[i] = v
   arr
 }
