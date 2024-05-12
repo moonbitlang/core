@@ -33,7 +33,7 @@ struct RandomInt {
 /// ```
 /// let summoner = RandomInt::new(seed=3) 
 /// ```
-pub fn RandomInt::new(~seed : Int=0) -> RandomInt {
+pub fn RandomInt::new(~seed : Int = 0) -> RandomInt {
   let state = Array::make(n32, 0)
   state[0] = seed
   for i = 1; i < n32; i = i + 1 {
