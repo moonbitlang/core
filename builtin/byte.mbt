@@ -12,6 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+fn unsafe_from_int(i : Int) -> Byte = "%identity"
+
+pub fn Byte::from_int(i : Int) -> Byte {
+  unsafe_from_int(i.land(0xFF))
+}
+
 pub fn op_equal(self : Byte, that : Byte) -> Bool {
   return self.to_int() == that.to_int()
 }
