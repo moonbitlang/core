@@ -157,12 +157,30 @@ test "map" {
   inspect(Vec::["a", "b", "c"], content="Vec::[a, b, c]")?
 }
 
+test "map_inplace" {
+  let v = Vec::[3, 4, 5]
+  let e : Vec[Int] = Vec::[]
+  v.map_inplace(fn(x) { x + 1 })
+  e.map_inplace(fn(x) { x + 1 })
+  inspect(v, content="Vec::[4, 5, 6]")?
+  inspect(e, content="Vec::[]")?
+}
+
 test "mapi" {
   let v = Vec::[3, 4, 5]
   let e : Vec[Int] = Vec::[]
   inspect(v.mapi(fn(i, x) { x + i }), content="Vec::[3, 5, 7]")?
   inspect(v.mapi(fn(i, x) { (x + i).to_string() }), content="Vec::[3, 5, 7]")?
   inspect(e.mapi(fn(_i, x) { x + 1 }), content="Vec::[]")?
+}
+
+test "mapi_inplace" {
+  let v = Vec::[3, 4, 5]
+  let e : Vec[Int] = Vec::[]
+  v.mapi_inplace(fn(i, x) { x + i })
+  e.mapi_inplace(fn(_i, x) { x + 1 })
+  inspect(v, content="Vec::[3, 5, 7]")?
+  inspect(e, content="Vec::[]")?
 }
 
 test "is_empty" {
