@@ -60,7 +60,7 @@ test "length" {
 pub fn copy[T](self : ImmutableVec[T]) -> ImmutableVec[T] {
   fn copy(t : Tree[T]) -> Tree[T] {
     match t {
-      Leaf(l) => Leaf(immutable_copy(l))
+      Leaf(l) => Leaf(l.copy())
       Empty => Empty
       Node(node) =>
         Node(@array.new_with_index(node.length(), fn(i) { copy(node[i]) }))

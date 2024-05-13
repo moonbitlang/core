@@ -35,9 +35,9 @@ struct RandomDouble {
 /// 
 /// # Example
 /// ```
-/// let summoner = RandomInt64::new(114514)
+/// let summoner = RandomInt64::new(seed=3)
 /// ```
-pub fn RandomInt64::new(seed : Int) -> RandomInt64 {
+pub fn RandomInt64::new(~seed : Int = 0) -> RandomInt64 {
   let state = Array::make(n64, 0L)
   state[0] = seed.to_int64()
   for i = 1; i < n64; i = i + 1 {
@@ -51,10 +51,10 @@ pub fn RandomInt64::new(seed : Int) -> RandomInt64 {
 /// 
 /// # Example
 /// ```
-/// let summoner = RandomDouble::new(114514)
+/// let summoner = RandomDouble::new(seed=3)
 /// ```
-pub fn RandomDouble::new(seed : Int) -> RandomDouble {
-  RandomDouble::{ i64: RandomInt64::new(seed) }
+pub fn RandomDouble::new(~seed : Int = 0) -> RandomDouble {
+  RandomDouble::{ i64: RandomInt64::new(~seed) }
 }
 
 fn twist(self : RandomInt64) -> Unit {
@@ -102,7 +102,7 @@ pub fn summon(self : RandomInt64) -> Int64 {
 }
 
 test "rand_int64" {
-  let summoner = RandomInt64::new(114514)
+  let summoner = RandomInt64::new()
   let a = summoner.summon()
   let b = summoner.summon()
   let c = summoner.summon()
@@ -110,7 +110,7 @@ test "rand_int64" {
 }
 
 test "rand_double" {
-  let summoner = RandomDouble::new(114514)
+  let summoner = RandomDouble::new()
   let a = summoner.summon()
   let b = summoner.summon()
   let c = summoner.summon()
