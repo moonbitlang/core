@@ -350,6 +350,19 @@ pub fn map[T, U](self : Vec[T], f : (T) -> U) -> Vec[U] {
   Vec::{ buf, len: self.length() }
 }
 
+/// Maps a function over the elements of the vector in place.
+/// 
+/// # Example
+/// ```
+/// let v = Vec::from_array([3, 4, 5])
+/// v.map_inplace(fn (x) {x + 1})
+/// ```
+pub fn map_inplace[T](self : Vec[T], f : (T) -> T) -> Unit {
+  for i = 0; i < self.length(); i = i + 1 {
+    self[i] = f(self[i])
+  }
+}
+
 /// Maps a function over the elements of the vector with index.
 ///
 /// # Example
@@ -366,6 +379,19 @@ pub fn mapi[T, U](self : Vec[T], f : (Int, T) -> U) -> Vec[U] {
     buf[i] = f(i, self[i])
   }
   Vec::{ buf, len: self.length() }
+}
+
+/// Maps a function over the elements of the vector with index in place.
+/// 
+/// # Example
+/// ```
+/// let v = Vec::from_array([3, 4, 5])
+/// v.mapi_inplace(fn (i, x) {x + i})
+/// ```
+pub fn mapi_inplace[T](self : Vec[T], f : (Int, T) -> T) -> Unit {
+  for i = 0; i < self.length(); i = i + 1 {
+    self[i] = f(i, self[i])
+  }
 }
 
 /// Test if the vector is empty.
