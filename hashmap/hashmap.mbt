@@ -147,71 +147,6 @@ pub fn remove[K : Hash + Eq, V](self : HashMap[K, V], key : K) -> Unit {
   }
 }
 
-/// Get the number of key-value pairs in the map.
-pub fn size[K, V](self : HashMap[K, V]) -> Int {
-  self.size
-}
-
-/// Get the capacity of the map.
-pub fn capacity[K, V](self : HashMap[K, V]) -> Int {
-  self.capacity
-}
-
-/// Check if the hash map is empty.
-pub fn is_empty[K, V](self : HashMap[K, V]) -> Bool {
-  self.size == 0
-}
-
-// Iterate over all key-value pairs of the map.
-pub fn iter[K, V](self : HashMap[K, V], f : (K, V) -> Unit) -> Unit {
-  for i = 0; i < self.capacity; i = i + 1 {
-    match self.entries[i] {
-      Valid(_) as entry => f(entry.key, entry.value)
-      Empty => ()
-    }
-  }
-}
-
-// Iterate over all key-value pairs of the map, with index.
-pub fn iteri[K, V](self : HashMap[K, V], f : (Int, K, V) -> Unit) -> Unit {
-  for i = 0, idx = 0; i < self.capacity; {
-    match self.entries[i] {
-      Valid(_) as entry => {
-        f(idx, entry.key, entry.value)
-        continue i + 1, idx + 1
-      }
-      Empty => continue i + 1, idx
-    }
-  }
-}
-
-// TODO: add %array.fill entry
-// Clears the map, removing all key-value pairs. Keeps the allocated space.
-pub fn clear[K, V](self : HashMap[K, V]) -> Unit {
-  for i = 0; i < self.capacity; i = i + 1 {
-    self.entries[i] = Empty
-  }
-  self.size = 0
-}
-
-pub fn as_iter[K, V](self : HashMap[K, V]) -> @iter.Iter[(K, V)] {
-  @iter.Iter::_unstable_internal_make(
-    fn(yield) {
-      for i = 0, len = self.entries.length(); i < len; i = i + 1 {
-        match self.entries[i] {
-          Valid(~key, ~value, ..) =>
-            if yield((key, value)).not() {
-              break false
-            }
-          _ => continue
-        }
-      } else {
-        true
-      }
-    },
-  )
-}
-
 fn shift_back[K : Hash, V](self : HashMap[K, V], start_index : Int) -> Unit {
   for i = 0, prev = start_index, curr = self.next_index(start_index)
       i < self.entries.length()
@@ -270,17 +205,4 @@ fn next_index[K : Hash, V](self : HashMap[K, V], index : Int) -> Int {
 
 fn calc_grow_threshold(capacity : Int) -> Int {
   capacity * 13 / 16
-}
-
-fn debug_entries[K : Show, V : Show](self : HashMap[K, V]) -> String {
-  for s = "", i = 0; i < self.entries.length(); {
-    let s = if i > 0 { s + "," } else { s }
-    match self.entries[i] {
-      Empty => continue s + "_", i + 1
-      Valid(~psl, ~key, ~value, ..) =>
-        continue s + "(\(psl),\(key),\(value))", i + 1
-    }
-  } else {
-    s
-  }
 }
