@@ -28,9 +28,9 @@ test "set" {
   m.set("c", 1)
   m.set("d", 1)
   @assertion.assert_eq(m.size, 7)?
-  @assertion.assert_eq(
+  inspect(
     m.debug_entries(),
-    "_,(0,a,1),(1,b,1),(2,c,1),(3,d,1),(3,bc,2),(4,cd,2),(4,abc,3),_,_,_,_,_,_,_,_",
+    content="_,(0,a,1),(1,b,1),(2,c,1),(3,d,1),(3,bc,2),(4,cd,2),(4,abc,3),_,_,_,_,_,_,_,_",
   )?
 }
 
@@ -39,10 +39,10 @@ test "get" {
   m.set("a", 1)
   m.set("b", 2)
   m.set("c", 3)
-  @assertion.assert_eq(m.get("a"), Some(1))?
-  @assertion.assert_eq(m.get("b"), Some(2))?
-  @assertion.assert_eq(m.get("c"), Some(3))?
-  @assertion.assert_eq(m.get("d"), None)?
+  inspect(m.get("a"), content="Some(1)")?
+  inspect(m.get("b"), content="Some(2)")?
+  inspect(m.get("c"), content="Some(3)")?
+  inspect(m.get("d"), content="None")?
 }
 
 test "get_or_default" {
@@ -106,9 +106,9 @@ test "remove" {
   m.set("abcdef", 6)
   m.remove("ab")
   @assertion.assert_eq(m.size(), 5)?
-  @assertion.assert_eq(
+  inspect(
     m.debug_entries(),
-    "_,(0,a,1),(0,bc,2),(1,cd,2),(1,abc,3),_,(0,abcdef,6),_",
+    content="_,(0,a,1),(0,bc,2),(1,cd,2),(1,abc,3),_,(0,abcdef,6),_",
   )?
 }
 
@@ -119,10 +119,7 @@ test "remove_unexist_key" {
   m.set("abc", 3)
   m.remove("d")
   @assertion.assert_eq(m.size(), 3)?
-  @assertion.assert_eq(
-    m.debug_entries(),
-    "_,(0,a,1),(0,ab,2),(0,abc,3),_,_,_,_",
-  )?
+  inspect(m.debug_entries(), content="_,(0,a,1),(0,ab,2),(0,abc,3),_,_,_,_")?
 }
 
 test "size" {
@@ -190,9 +187,9 @@ test "grow" {
   m.set("Rescript", 8)
   @assertion.assert_eq(m.size, 10)?
   @assertion.assert_eq(m.capacity, 16)?
-  @assertion.assert_eq(
+  inspect(
     m.debug_entries(),
-    "_,(0,C,1),(0,Go,2),(0,C++,3),(0,Java,4),(0,Scala,5),(1,Julia,5),(2,Cobol,5),(2,Python,6),(2,Haskell,7),(2,Rescript,8),_,_,_,_,_",
+    content="_,(0,C,1),(0,Go,2),(0,C++,3),(0,Java,4),(0,Scala,5),(1,Julia,5),(2,Cobol,5),(2,Python,6),(2,Haskell,7),(2,Rescript,8),_,_,_,_,_",
   )?
 }
 
