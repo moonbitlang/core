@@ -180,6 +180,7 @@ pub fn iteri[K, V](self : HashMap[K, V], f : (Int, K, V) -> Unit) -> Unit {
   }
 }
 
+// TODO: add %array.fill entry
 // Clears the map, removing all key-value pairs. Keeps the allocated space.
 pub fn clear[K, V](self : HashMap[K, V]) -> Unit {
   for i = 0; i < self.capacity; i = i + 1 {
