@@ -80,22 +80,23 @@ pub fn op_set[K : Hash + Eq, V](
 /// Get the value associated with a key.
 pub fn get[K : Hash + Eq, V](self : HashMap[K, V], key : K) -> Option[V] {
   let hash = self.make_hash(key)
-  for distance = 0, idx = self.index(hash)
-      distance < self.capacity
-      distance = distance + 1, idx = self.next_index(idx) {
+  for i = 0, idx = self.index(hash)
+      i < self.capacity
+      i = i + 1, idx = self.next_index(idx) {
     match self.entries[idx] {
-      Valid(psl=d, hash=h, key=k, value=v) => {
-        if h == hash && k == key {
-          return Some(v)
+      Valid(_) as entry => {
+        if entry.hash == hash && entry.key == key {
+          break Some(entry.value)
         }
-        if distance > d {
-          return None
+        if i > entry.psl {
+          break None
         }
       }
-      Empty => return None
+      Empty => break None
     }
+  } else {
+    None
   }
-  None
 }
 
 pub fn op_get[K : Hash + Eq, V](self : HashMap[K, V], key : K) -> Option[V] {
@@ -126,18 +127,18 @@ pub fn contains[K : Hash + Eq, V](self : HashMap[K, V], key : K) -> Bool {
 /// Remove a key-value pair from hash map.
 pub fn remove[K : Hash + Eq, V](self : HashMap[K, V], key : K) -> Unit {
   let hash = self.make_hash(key)
-  for distance = 0, idx = self.index(hash)
-      distance < self.capacity
-      distance = distance + 1, idx = self.next_index(idx) {
+  for i = 0, idx = self.index(hash)
+      i < self.capacity
+      i = i + 1, idx = self.next_index(idx) {
     match self.entries[idx] {
-      Valid(psl=d, hash=h, key=k, ..) => {
-        if h == hash && k == key {
+      Valid(_) as entry => {
+        if entry.hash == hash && entry.key == key {
           self.entries[idx] = Empty
           self.shift_back(idx)
           self.size -= 1
           break
         }
-        if distance > d {
+        if i > entry.psl {
           return
         }
       }
