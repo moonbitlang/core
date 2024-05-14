@@ -164,7 +164,12 @@ pub fn is_empty[K, V](self : HashMap[K, V]) -> Bool {
 
 // Iterate over all key-value pairs of the map.
 pub fn iter[K, V](self : HashMap[K, V], f : (K, V) -> Unit) -> Unit {
-  self.iteri(fn(_i, k, v) { f(k, v) })
+  for i = 0; i < self.capacity; i = i + 1 {
+    match self.entries[i] {
+      Valid(_) as entry => f(entry.key, entry.value)
+      Empty => ()
+    }
+  }
 }
 
 // Iterate over all key-value pairs of the map, with index.
