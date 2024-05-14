@@ -59,3 +59,10 @@ test "HAMT::remove" {
     @assertion.assert_eq(map.find(i + 1), Some(i + 1))?
   }
 }
+
+test "HAMT::as_iter" {
+  let data = Map::[(0, "a"), (2, "b"), (3, "d"), (5, "e"), (11111, "f")]
+  let mut s = ""
+  data.as_iter().iter(fn { (k, v) => s += " \(k),\(v)" })
+  inspect(s, content=" 0,a 2,b 3,d 5,e 11111,f")?
+}

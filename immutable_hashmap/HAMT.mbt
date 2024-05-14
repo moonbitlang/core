@@ -197,6 +197,17 @@ pub fn iter[K, V](self : Map[K, V], f : (K, V) -> Unit) -> Unit {
   }
 }
 
+/// Converted to @iter.Iter
+pub fn as_iter[K, V](self : Map[K, V]) -> @iter.Iter[(K, V)] {
+  match self {
+    Empty => @iter.empty()
+    Leaf(k, v) => @iter.singleton((k, v))
+    Collision(bucket) => bucket.as_iter()
+    Branch(children) =>
+      children.data.as_iter().flat_map(fn { map => map.as_iter() })
+  }
+}
+
 pub fn debug_write[K : Debug, V : Debug](
   self : Map[K, V],
   buf : Buffer
