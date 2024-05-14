@@ -158,13 +158,9 @@ fn remove_with_hash[K : Eq, V](
             depth + segment_length,
             hash.lsr(segment_length),
           )
-          if children.size() == 1 {
-            match new_child {
-              Empty => Empty
-              _ => Branch(children.replace(idx, new_child))
-            }
-          } else {
-            Branch(children.replace(idx, new_child))
+          match (children.size(), new_child) {
+            (1, Empty) => Empty
+            (_, _) => Branch(children.replace(idx, new_child))
           }
         }
       }
@@ -198,6 +194,17 @@ pub fn iter[K, V](self : Map[K, V], f : (K, V) -> Unit) -> Unit {
     Leaf(k, v) => f(k, v)
     Collision(bucket) => bucket.iter(f)
     Branch(children) => children.iter(fn { child => child.iter(f) })
+  }
+}
+
+/// Converted to @iter.Iter
+pub fn as_iter[K, V](self : Map[K, V]) -> @iter.Iter[(K, V)] {
+  match self {
+    Empty => @iter.empty()
+    Leaf(k, v) => @iter.singleton((k, v))
+    Collision(bucket) => bucket.as_iter()
+    Branch(children) =>
+      children.data.as_iter().flat_map(fn { map => map.as_iter() })
   }
 }
 
