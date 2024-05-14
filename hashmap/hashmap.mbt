@@ -169,14 +169,13 @@ pub fn iter[K, V](self : HashMap[K, V], f : (K, V) -> Unit) -> Unit {
 
 // Iterate over all key-value pairs of the map, with index.
 pub fn iteri[K, V](self : HashMap[K, V], f : (Int, K, V) -> Unit) -> Unit {
-  let mut idx = 0
-  for i = 0; i < self.capacity; i = i + 1 {
+  for i = 0, idx = 0; i < self.capacity; {
     match self.entries[i] {
-      Valid(key=k, value=v, ..) => {
-        f(idx, k, v)
-        idx += 1
+      Valid(_) as entry => {
+        f(idx, entry.key, entry.value)
+        continue i + 1, idx + 1
       }
-      _ => ()
+      Empty => continue i + 1, idx
     }
   }
 }
@@ -268,15 +267,14 @@ fn calc_grow_threshold(capacity : Int) -> Int {
 }
 
 fn debug_entries[K : Show, V : Show](self : HashMap[K, V]) -> String {
-  let mut s = ""
-  for i = 0; i < self.entries.length(); i = i + 1 {
-    if i > 0 {
-      s += ","
-    }
+  for s = "", i = 0; i < self.entries.length(); {
+    let s = if i > 0 { s + "," } else { s }
     match self.entries[i] {
-      Empty => s += "_"
-      Valid(~psl, ~key, ~value, ..) => s += "(\(psl),\(key),\(value))"
+      Empty => continue s + "_", i + 1
+      Valid(~psl, ~key, ~value, ..) =>
+        continue s + "(\(psl),\(key),\(value))", i + 1
     }
+  } else {
+    s
   }
-  s
 }
