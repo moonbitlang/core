@@ -1,6 +1,6 @@
 test "from_array" {
   let ls = List::[1, 2, 3, 4, 5]
-  let el: List[Int] = List::[]
+  let el : List[Int] = Nil
   inspect(ls, content="List::[1, 2, 3, 4, 5]")?
   inspect(el, content="List::[]")?
 }
@@ -42,14 +42,14 @@ test "iteri" {
 
 test "map" {
   let ls = List::[1, 2, 3, 4, 5]
-  let rs:List[Int] = List::[]
+  let rs : List[Int] = Nil
   inspect(ls.map(fn(x) { x * 2 }), content="List::[2, 4, 6, 8, 10]")?
   inspect(rs.map(fn(x) { x * 2 }), content="List::[]")?
 }
 
 test "mapi" {
   let ls = List::[1, 2, 3, 4, 5]
-  let el :List[Int] = List::[]
+  let el : List[Int] = Nil
   inspect(ls.mapi(fn(i, x) { i * x }), content="List::[0, 2, 6, 12, 20]")?
   inspect(el.mapi(fn(i, x) { i * x }), content="List::[]")?
 }
@@ -65,90 +65,95 @@ test "to_array" {
 
 test "filter" {
   let ls = List::[1, 2, 3, 4, 5]
-  let rs = List::[2, 4]
-  @assertion.assert_eq(ls.filter(fn(x) { x % 2 == 0 }), rs)?
+  let rs : List[Int] = Nil
+  inspect(ls.filter(fn(x) { x % 2 == 0 }), content="List::[2, 4]")?
+  inspect(rs.filter(fn(x) { x % 2 == 0 }), content="List::[]")?
 }
 
 test "all" {
   let ls = List::[1, 2, 3, 4, 5]
-  @assertion.assert_true(ls.all(fn(x) { x > 0 }))?
-  @assertion.assert_false(ls.all(fn(x) { x > 1 }))?
+  inspect(ls.all(fn(x) { x > 0 }), content="true")?
+  inspect(ls.all(fn(x) { x > 1 }), content="false")?
 }
 
 test "any" {
   let ls = List::[1, 2, 3, 4, 5]
-  @assertion.assert_true(ls.any(fn(x) { x > 4 }))?
-  @assertion.assert_false(ls.any(fn(x) { x > 5 }))?
+  inspect(ls.any(fn(x) { x > 4 }))?
+  inspect(ls.any(fn(x) { x > 5 }))?
 }
 
 test "tail" {
   let ls = List::[1, 2, 3, 4, 5]
-  let rs = List::[2, 3, 4, 5]
   let el : List[Int] = Nil
-  @assertion.assert_eq(ls.tail(), rs)?
-  @assertion.assert_eq(el.tail(), Nil)?
+  inspect(ls.tail(), content="List::[2, 3, 4, 5]")?
+  inspect(el.tail(), content="List::[]")?
 }
 
 test "head_exn" {
   let ls = List::[1, 2, 3, 4, 5]
-  @assertion.assert_eq(ls.head_exn(), 1)?
+  inspect(ls.head_exn(), content="1")?
 }
 
 test "head" {
   let ls = List::[1, 2, 3, 4, 5]
-  let el : List[Unit] = List::[]
-  @assertion.assert_eq(ls.head(), Some(1))?
-  @assertion.assert_eq(el.head(), None)?
+  let el : List[Int] = List::[]
+  inspect(ls.head(), content="Some(1)")?
+  inspect(el.head(), content="None")?
 }
 
 test "last" {
   let ls = List::[1, 2, 3, 4, 5]
-  @assertion.assert_eq(ls.last(), 5)?
+  inspect(ls.last(), content="5")?
 }
 
 test "init_" {
   let ls = List::[1, 2, 3, 4, 5]
-  let rs = List::[1, 2, 3, 4]
   let el : List[Int] = Nil
-  @assertion.assert_eq(ls.init_(), rs)?
-  @assertion.assert_eq(el.init_(), Nil)?
+  inspect(ls.init_(), content="List::[1, 2, 3, 4]")?
+  inspect(el.init_(), content="List::[]")?
 }
 
 test "concat" {
   let ls = List::[1, 2, 3, 4, 5]
   let rs = List::[6, 7, 8, 9, 10]
-  let ts = List::[1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
-  @assertion.assert_eq(ls.concat(rs), ts)?
+  inspect(ls.concat(Nil), content="List::[1, 2, 3, 4, 5]")?
+  inspect((Nil : List[Int]).concat(rs), content="List::[6, 7, 8, 9, 10]")?
+  inspect(ls.concat(rs), content="List::[1, 2, 3, 4, 5, 6, 7, 8, 9, 10]")?
 }
 
 test "reverse" {
   let ls = List::[1, 2, 3, 4, 5]
   let rs = List::[5, 4, 3, 2, 1]
-  @assertion.assert_eq(rs.reverse(), ls)?
-  @assertion.assert_eq(ls, ls.reverse().reverse())?
+  inspect(rs.reverse(), content="List::[1, 2, 3, 4, 5]")?
+  inspect(ls.reverse().reverse(), content="List::[1, 2, 3, 4, 5]")?
 }
 
 test "fold_left" {
   let ls = List::[1, 2, 3, 4, 5]
-  @assertion.assert_eq(ls.fold_left(fn(acc, x) { acc + x }, init=0), 15)?
+  let el : List[Int] = Nil
+  inspect(el.fold_left(fn(acc, x) { acc + x }, init=0), content="0")?
+  inspect(ls.fold_left(fn(acc, x) { acc + x }, init=0), content="15")?
 }
 
 test "fold_right" {
   let ls = List::["1", "2", "3", "4", "5"]
-  @assertion.assert_eq(ls.fold_right(fn(x, acc) { x + acc }, init=""), "12345")?
+  let el : List[String] = Nil
+  inspect(ls.fold_right(fn(x, acc) { x + acc }, init=""), content="12345")?
+  inspect(el.fold_right(fn(x, acc) { x + acc }, init="init"), content="init")?
 }
 
 test "fold_lefti" {
   let ls = List::[1, 2, 3, 4, 5]
-  @assertion.assert_eq(ls.fold_lefti(fn(i, acc, x) { acc + i * x }, init=0), 40)?
+  let el : List[Int] = Nil
+  inspect(ls.fold_lefti(fn(i, acc, x) { acc + i * x }, init=0), content="40")?
+  inspect(el.fold_lefti(fn(i, acc, x) { acc + i * x }, init=0), content="0")?
 }
 
 test "fold_righti" {
   let ls = List::[1, 2, 3, 4, 5]
-  @assertion.assert_eq(
-    ls.fold_righti(fn(i, x, acc) { x * i + acc }, init=0),
-    40,
-  )?
+  let el : List[Int] = Nil
+  inspect(ls.fold_righti(fn(i, x, acc) { x * i + acc }, init=0), content="40")?
+  inspect(el.fold_righti(fn(i, x, acc) { x * i + acc }, init=0), content="0")?
 }
 
 test "zip" {
@@ -159,83 +164,85 @@ test "zip" {
 
 test "concat_map" {
   let ls = List::[1, 2, 3]
-  let rs = List::[1, 2, 2, 4, 3, 6]
-  @assertion.assert_eq(ls.concat_map(fn(x) { List::[x, x * 2] }), rs)?
+  let rs : List[Int] = Nil
+  inspect(rs.concat_map(fn(x) { List::[x, x * 2] }), content="List::[]")?
+  inspect(
+    ls.concat_map(fn(x) { List::[x, x * 2] }),
+    content="List::[1, 2, 2, 4, 3, 6]",
+  )?
 }
 
 test "nth_exn" {
   let ls = List::[1, 2, 3, 4, 5]
-  @assertion.assert_eq(ls.nth_exn(0), 1)?
-  @assertion.assert_eq(ls.nth_exn(1), 2)?
-  @assertion.assert_eq(ls.nth_exn(2), 3)?
-  @assertion.assert_eq(ls.nth_exn(3), 4)?
-  @assertion.assert_eq(ls.nth_exn(4), 5)?
+  inspect(ls.nth_exn(0), content="1")?
+  inspect(ls.nth_exn(1), content="2")?
 }
 
 test "nth" {
   let ls = List::[1, 2, 3, 4, 5]
-  @assertion.assert_eq(ls.nth(0), Some(1))?
-  @assertion.assert_eq(ls.nth(1), Some(2))?
-  @assertion.assert_eq(ls.nth(2), Some(3))?
-  @assertion.assert_eq(ls.nth(3), Some(4))?
-  @assertion.assert_eq(ls.nth(4), Some(5))?
-  @assertion.assert_eq(ls.nth(5), None)?
+  inspect(ls.nth(0), content="Some(1)")?
+  inspect(ls.nth(20), content="None")?
 }
 
 test "repeat" {
-  let ls = List::[1, 1, 1, 1, 1]
-  @assertion.assert_eq(repeat(5, 1), ls)?
+  inspect(repeat(5, 1), content="List::[1, 1, 1, 1, 1]")?
+  inspect(repeat(0, 10), content="List::[]")?
 }
 
 test "intersperse" {
-  let ls = List::["1", "|", "2", "|", "3", "|", "4", "|", "5"]
+  let ls = List::["1", "2", "3", "4", "5"]
   let el : List[String] = Nil
-  @assertion.assert_eq(List::["1", "2", "3", "4", "5"].intersperse("|"), ls)?
-  @assertion.assert_eq(el.intersperse("|"), Nil)?
+  inspect(
+    ls.intersperse("|"),
+    content="List::[\"1\", \"|\", \"2\", \"|\", \"3\", \"|\", \"4\", \"|\", \"5\"]",
+  )?
+  inspect(el.intersperse("|"), content="List::[]")?
 }
 
 test "is_empty" {
   let ls = List::[1, 2, 3, 4, 5]
-  @assertion.assert_false(ls.is_empty())?
-  @assertion.assert_true((List::Nil : List[Unit]).is_empty())?
+  inspect(ls.is_empty())?
+  inspect((List::Nil : List[Unit]).is_empty())?
 }
 
 test "unzip" {
   let ls = List::[(1, 2), (3, 4), (5, 6)]
   let (a, b) = unzip(ls)
-  @assertion.assert_eq(a, List::[1, 3, 5])?
-  @assertion.assert_eq(b, List::[2, 4, 6])?
+  inspect(a, content="List::[1, 3, 5]")?
+  inspect(b, content="List::[2, 4, 6]")?
 }
 
 test "flatten" {
   let ls = List::[List::[1, 2, 3], List::[4, 5, 6], List::[7, 8, 9]]
-  let rs = List::[1, 2, 3, 4, 5, 6, 7, 8, 9]
-  @assertion.assert_eq(flatten(ls), rs)?
+  let el : List[List[Int]] = Nil
+  inspect(ls.flatten(), content="List::[1, 2, 3, 4, 5, 6, 7, 8, 9]")?
+  inspect(el.flatten(), content="List::[]")?
 }
 
 test "maximum" {
   let ls = List::[1, 123, 52, 3, 6, 0, -6, -76]
-  @assertion.assert_eq(ls.maximum(), 123)?
+  inspect(ls.maximum(), content="123")?
 }
 
 test "minimum" {
   let ls = List::[1, 123, 52, 3, 6, 0, -6, -76]
-  @assertion.assert_eq(ls.minimum(), -76)?
+  inspect(ls.minimum(), content="-76")?
 }
 
 test "sort" {
   let ls = List::[1, 123, 52, 3, 6, 0, -6, -76]
-  let rs = List::[-76, -6, 0, 1, 3, 6, 52, 123]
-  @assertion.assert_eq(ls.sort(), rs)?
+  let el : List[Int] = Nil
+  inspect(el.sort(), content="List::[]")?
+  inspect(ls.sort(), content="List::[-76, -6, 0, 1, 3, 6, 52, 123]")?
 }
 
 test "contain" {
   let ls = List::[1, 2, 3]
-  @assertion.assert_true(ls.contain(1))?
-  @assertion.assert_true(ls.contain(2))?
-  @assertion.assert_true(ls.contain(3))?
-  @assertion.assert_false(ls.contain(0))?
-  @assertion.assert_false(ls.contain(4))?
+  inspect(ls.contain(1))?
+  inspect(ls.contain(2))?
+  inspect(ls.contain(3))?
+  inspect(ls.contain(0))?
+  inspect(ls.contain(4))?
 }
 
 test "unfold" {
@@ -243,136 +250,155 @@ test "unfold" {
     init=0,
     fn { i => if i == 3 { None } else { Some((i, i + 1)) } },
   )
-  @assertion.assert_eq(ls, Cons(0, Cons(1, Cons(2, Nil))))?
+  inspect(ls, content="List::[0, 1, 2]")?
 }
 
 test "take" {
   let ls = List::[1, 2, 3, 4, 5].take(3)
-  @assertion.assert_eq(ls, Cons(1, Cons(2, Cons(3, Nil))))?
-  @assertion.assert_eq(ls.take(-1), Nil)?
-  @assertion.assert_eq(ls.take(0), Nil)?
+  inspect(ls, content="List::[1, 2, 3]")?
+  inspect(ls.take(-1), content="List::[]")?
+  inspect(ls.take(0), content="List::[]")?
+  inspect(ls, content="List::[1, 2, 3]")?
 }
 
 test "drop" {
   let ls = List::[1, 2, 3, 4, 5].drop(3)
-  @assertion.assert_eq(ls, Cons(4, Cons(5, Nil)))?
-  @assertion.assert_eq(ls.drop(-10), ls)?
-  @assertion.assert_eq(ls.drop(0), ls)?
+  let el : List[Int] = Nil
+  inspect(ls, content="List::[4, 5]")?
+  inspect(ls.drop(-10), content="List::[4, 5]")?
+  inspect(ls.drop(0), content="List::[4, 5]")?
+  inspect(el.drop(0), content="List::[]")?
 }
 
 test "take_while" {
   let ls = take_while(List::[0, 1, 2, 3, 4], fn(x) { x < 3 })
-  let ls2 : List[Int] = take_while(Nil, fn(_e) { true })
-  @assertion.assert_eq(ls, Cons(0, Cons(1, Cons(2, Nil))))?
-  @assertion.assert_eq(ls2, Nil)?
+  let el : List[Int] = take_while(Nil, fn(_e) { true })
+  inspect(ls, content="List::[0, 1, 2]")?
+  inspect(el, content="List::[]")?
 }
 
 test "drop_while" {
   let ls = drop_while(List::[0, 1, 2, 3, 4], fn(x) { x < 3 })
-  let ls2 : List[Int] = drop_while(Nil, fn(_e) { true })
-  @assertion.assert_eq(ls, Cons(3, Cons(4, Nil)))?
-  @assertion.assert_eq(ls2, Nil)?
+  let el : List[Int] = drop_while(Nil, fn(_e) { true })
+  inspect(ls, content="List::[3, 4]")?
+  inspect(el, content="List::[]")?
 }
 
 test "scan_left" {
+  let el = List::[].scan_left(fn(acc, x) { acc + x }, init=0)
   let ls = List::[1, 2, 3, 4, 5].scan_left(fn(acc, x) { acc + x }, init=0)
   let ls2 = List::[1, 2, 3, 4].scan_left(fn(acc, x) { acc - x }, init=100)
-  @assertion.assert_eq(ls, List::[0, 1, 3, 6, 10, 15])?
-  @assertion.assert_eq(ls2, List::[100, 99, 97, 94, 90])?
+  inspect(el, content="List::[0]")?
+  inspect(ls, content="List::[0, 1, 3, 6, 10, 15]")?
+  inspect(ls2, content="List::[100, 99, 97, 94, 90]")?
 }
 
 test "scan_right" {
+  let el = List::[].scan_right(fn(x, acc) { x + acc }, init=0)
   let ls = List::[1, 2, 3, 4].scan_right(fn(x, acc) { x + acc }, init=0)
   let ls2 = List::[1, 2, 3, 4].scan_right(fn(x, acc) { x - acc }, init=100)
-  @assertion.assert_eq(ls, List::[10, 9, 7, 4, 0])?
-  @assertion.assert_eq(ls2, List::[98, -97, 99, -96, 100])?
+  inspect(el, content="List::[0]")?
+  inspect(ls, content="List::[10, 9, 7, 4, 0]")?
+  inspect(ls2, content="List::[98, -97, 99, -96, 100]")?
 }
 
 test "lookup" {
   let ls = List::[(1, "a"), (2, "b"), (3, "c")]
-  @assertion.assert_eq(ls.lookup(3), Some("c"))?
-  @assertion.assert_eq(ls.lookup(4), None)?
+  let el : List[(Int, Int)] = Nil
+  inspect(el.lookup(1), content="None")?
+  inspect(ls.lookup(3), content="Some(c)")?
+  inspect(ls.lookup(4), content="None")?
 }
 
 test "find" {
-  @assertion.assert_eq(
+  inspect(
     List::[1, 3, 5, 8].find(fn(element) -> Bool { element % 2 == 0 }),
-    Some(8),
+    content="Some(8)",
   )?
-  @assertion.assert_eq(
+  inspect(
     List::[1, 3, 5, 7].find(fn(element) -> Bool { element % 2 == 0 }),
-    None,
+    content="None",
+  )?
+  inspect(
+    (Nil : List[Int]).find(fn(element) -> Bool { element % 2 == 0 }),
+    content="None",
   )?
 }
 
 test "findi" {
-  @assertion.assert_eq(
+  inspect(
     List::[1, 3, 5, 8].findi(
       fn(element, i) -> Bool { element % 2 == 0 && i == 3 },
     ),
-    Some(8),
+    content="Some(8)",
   )?
-  @assertion.assert_eq(
+  inspect(
     List::[1, 3, 8, 5].findi(
       fn(element, i) -> Bool { element % 2 == 0 && i == 3 },
     ),
-    None,
+    content="None",
+  )?
+  inspect(
+    (Nil : List[Int]).findi(
+      fn(element, i) -> Bool { element % 2 == 0 && i == 3 },
+    ),
+    content="None",
   )?
 }
 
 test "remove_at" {
   let ls = List::[1, 2, 3, 4, 5]
-  let rs = List::[1, 2, 4, 5]
-  @assertion.assert_eq(ls.remove_at(2), rs)?
-  @assertion.assert_eq(ls.remove_at(0), List::[2, 3, 4, 5])?
-  @assertion.assert_eq(
+  inspect(ls.remove_at(2), content="List::[1, 2, 4, 5]")?
+  inspect(ls.remove_at(0), content="List::[2, 3, 4, 5]")?
+  inspect(
     List::["a", "b", "c", "d", "e"].remove_at(2),
-    List::["a", "b", "d", "e"],
+    content="List::[\"a\", \"b\", \"d\", \"e\"]",
   )?
-  @assertion.assert_eq(
+  inspect(
     List::["a", "b", "c", "d", "e"].remove_at(5),
-    List::["a", "b", "c", "d", "e"],
+    content="List::[\"a\", \"b\", \"c\", \"d\", \"e\"]",
   )?
 }
 
 test "remove" {
-  @assertion.assert_eq(List::[1, 2, 3, 4, 5].remove(3), List::[1, 2, 4, 5])?
-  @assertion.assert_eq(
+  inspect(List::[1, 2, 3, 4, 5].remove(3), content="List::[1, 2, 4, 5]")?
+  inspect(
     List::["a", "b", "c", "d", "e"].remove("c"),
-    List::["a", "b", "d", "e"],
+    content="List::[\"a\", \"b\", \"d\", \"e\"]",
   )?
-  @assertion.assert_eq(
+  inspect(
     List::["a", "b", "c", "d", "e"].remove("f"),
-    List::["a", "b", "c", "d", "e"],
+    content="List::[\"a\", \"b\", \"c\", \"d\", \"e\"]",
   )?
 }
 
 test "is_prefix" {
-  @assertion.assert_true(List::[1, 2, 3, 4, 5].is_prefix(List::[1, 2, 3]))?
-  @assertion.assert_false(List::[1, 2, 3, 4, 5].is_prefix(List::[3, 2, 3]))?
-  @assertion.assert_false(List::Nil.is_prefix(List::[1, 2, 3]))?
+  inspect(List::[1, 2, 3, 4, 5].is_prefix(List::[1, 2, 3]))?
+  inspect(List::[1, 2, 3, 4, 5].is_prefix(List::[3, 2, 3]))?
+  inspect(List::Nil.is_prefix(List::[1, 2, 3]))?
 }
 
 test "equal" {
-  @assertion.assert_true(List::[1, 2, 3].equal(List::[1, 2, 3]))?
-  @assertion.assert_false(List::[1, 2, 3].equal(List::[1, 3, 3]))?
-  @assertion.assert_false(List::Nil.equal(List::[1]))?
+  inspect(List::[1, 2, 3].equal(List::[1, 2, 3]))?
+  inspect(List::[1, 2, 3].equal(List::[1, 3, 3]))?
+  inspect(List::Nil.equal(List::[1]))?
 }
 
 test "is_suffix" {
-  @assertion.assert_true(List::[1, 2, 3, 4, 5].is_suffix(List::[3, 4, 5]))?
-  @assertion.assert_false(List::[1, 2, 3, 4, 5].is_suffix(List::[3, 4, 6]))?
+  inspect(List::[1, 2, 3, 4, 5].is_suffix(List::[3, 4, 5]))?
+  inspect(List::[1, 2, 3, 4, 5].is_suffix(List::[3, 4, 6]))?
 }
 
 test "intercalate" {
   let ls = List::[List::[1, 2, 3], List::[4, 5, 6], List::[7, 8, 9]]
-  @assertion.assert_eq(
+  let el :List[List[Int]] = Nil
+  inspect(
     ls.intercalate(List::[0]),
-    List::[1, 2, 3, 0, 4, 5, 6, 0, 7, 8, 9],
-  )?
+  content="List::[1, 2, 3, 0, 4, 5, 6, 0, 7, 8, 9]")?
+  inspect(el.intersperse(List::[1]), content="List::[]")?
 }
 
 test "default" {
   let ls : List[Int] = List::default()
-  @assertion.assert_eq(ls, Nil)?
+  inspect(ls, content="List::[]")?
 }
