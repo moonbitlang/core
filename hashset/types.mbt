@@ -38,5 +38,4 @@ struct HashSet[K] {
   mut size : Int // active key count
   mut capacity : Int // current capacity 
   mut growAt : Int // threshold that triggers grow
-  hasher : Option[(K) -> Int] // custom hasher
 }

@@ -18,15 +18,25 @@ test "new" {
   @assertion.assert_eq(m.size, 0)?
 }
 
+type MyString String derive(Eq)
+
+impl Hash for MyString with hash(self) { self.0.length() }
+
+impl Show for MyString with to_string(self) { self.0 }
+
 test "set" {
-  let m : HashSet[String] = HashSet::new(hasher=Some(fn(k) { k.length() }))
-  m.insert("a")
-  m.insert("b")
-  m.insert("bc")
-  m.insert("abc")
-  m.insert("cd")
-  m.insert("c")
-  m.insert("d")
+  let m : HashSet[MyString] = HashSet::new()
+  fn i(s) {
+    MyString::MyString(s)
+  }
+
+  m.insert("a" |> i)
+  m.insert("b" |> i)
+  m.insert("bc" |> i)
+  m.insert("abc" |> i)
+  m.insert("cd" |> i)
+  m.insert("c" |> i)
+  m.insert("d" |> i)
   @assertion.assert_eq(m.size, 7)?
   @assertion.assert_eq(
     m.debug_entries(),
@@ -54,14 +64,18 @@ test "from_array" {
 }
 
 test "remove" {
-  let m : HashSet[String] = HashSet::new(hasher=Some(fn(k) { k.length() }))
-  m.insert("a")
-  m.insert("ab")
-  m.insert("bc")
-  m.insert("cd")
-  m.insert("abc")
-  m.insert("abcdef")
-  m.remove("ab")
+  let m : HashSet[MyString] = HashSet::new()
+  fn i(s) {
+    MyString::MyString(s)
+  }
+
+  m.insert("a" |> i)
+  m.insert("ab" |> i)
+  m.insert("bc" |> i)
+  m.insert("cd" |> i)
+  m.insert("abc" |> i)
+  m.insert("abcdef" |> i)
+  m.remove("ab" |> i)
   @assertion.assert_eq(m.size(), 5)?
   @assertion.assert_eq(
     m.debug_entries(),
@@ -70,11 +84,15 @@ test "remove" {
 }
 
 test "remove_unexist_key" {
-  let m : HashSet[String] = HashSet::new(hasher=Some(fn(k) { k.length() }))
-  m.insert("a")
-  m.insert("ab")
-  m.insert("abc")
-  m.remove("d")
+  let m : HashSet[MyString] = HashSet::new()
+  fn i(s) {
+    MyString::MyString(s)
+  }
+
+  m.insert("a" |> i)
+  m.insert("ab" |> i)
+  m.insert("abc" |> i)
+  m.remove("d" |> i)
   @assertion.assert_eq(m.size(), 3)?
   @assertion.assert_eq(m.debug_entries(), "_,(0,a),(0,ab),(0,abc),_,_,_,_")?
 }
@@ -127,21 +145,25 @@ test "clear" {
 }
 
 test "grow" {
-  let m : HashSet[String] = HashSet::new(hasher=Some(fn(k) { k.length() }))
-  m.insert("C")
-  m.insert("Go")
-  m.insert("C++")
-  m.insert("Java")
-  m.insert("Scala")
-  m.insert("Julia")
+  let m : HashSet[MyString] = HashSet::new()
+  fn i(s) {
+    MyString::MyString(s)
+  }
+
+  m.insert("C" |> i)
+  m.insert("Go" |> i)
+  m.insert("C++" |> i)
+  m.insert("Java" |> i)
+  m.insert("Scala" |> i)
+  m.insert("Julia" |> i)
   @assertion.assert_eq(m.size, 6)?
   @assertion.assert_eq(m.capacity, 8)?
-  m.insert("Cobol")
+  m.insert("Cobol" |> i)
   @assertion.assert_eq(m.size, 7)?
   @assertion.assert_eq(m.capacity, 16)?
-  m.insert("Python")
-  m.insert("Haskell")
-  m.insert("Rescript")
+  m.insert("Python" |> i)
+  m.insert("Haskell" |> i)
+  m.insert("Rescript" |> i)
   @assertion.assert_eq(m.size, 10)?
   @assertion.assert_eq(m.capacity, 16)?
   @assertion.assert_eq(

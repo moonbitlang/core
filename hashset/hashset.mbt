@@ -16,12 +16,11 @@
 let default_init_capacity = 8
 
 /// Create new hash set.
-pub fn HashSet::new[K](~hasher : Option[(K) -> Int] = None) -> HashSet[K] {
+pub fn HashSet::new[K]() -> HashSet[K] {
   {
     size: 0,
     capacity: default_init_capacity,
     growAt: calc_grow_threshold(default_init_capacity),
-    hasher,
     entries: @array.new(default_init_capacity, fn() { Empty }),
   }
 }
@@ -39,7 +38,7 @@ pub fn insert[K : Hash + Eq](self : HashSet[K], key : K) -> Unit {
   if self.capacity == 0 || self.size >= self.growAt {
     self.grow()
   }
-  let hash = self.make_hash(key)
+  let hash = make_hash(key)
   loop 0, self.index(hash), 0, hash, key {
     i, idx, psl, hash, key => {
       if i == self.capacity {
@@ -69,7 +68,7 @@ pub fn insert[K : Hash + Eq](self : HashSet[K], key : K) -> Unit {
 
 /// Check if the hash set contains a key.
 pub fn contains[K : Hash + Eq](self : HashSet[K], key : K) -> Bool {
-  let hash = self.make_hash(key)
+  let hash = make_hash(key)
   for distance = 0, idx = self.index(hash)
       distance < self.capacity
       distance = distance + 1, idx = self.next_index(idx) {
@@ -90,7 +89,7 @@ pub fn contains[K : Hash + Eq](self : HashSet[K], key : K) -> Bool {
 
 /// Remove a key from hash set.
 pub fn remove[K : Hash + Eq](self : HashSet[K], key : K) -> Unit {
-  let hash = self.make_hash(key)
+  let hash = make_hash(key)
   for distance = 0, idx = self.index(hash)
       distance < self.capacity
       distance = distance + 1, idx = self.next_index(idx) {
@@ -159,7 +158,7 @@ pub fn union[K : Hash + Eq](
   self : HashSet[K],
   other : HashSet[K]
 ) -> HashSet[K] {
-  let m = HashSet::new(hasher=self.hasher)
+  let m = HashSet::new()
   self.iter(fn(k) { m.insert(k) })
   other.iter(fn(k) { m.insert(k) })
   m
@@ -170,7 +169,7 @@ pub fn intersection[K : Hash + Eq](
   self : HashSet[K],
   other : HashSet[K]
 ) -> HashSet[K] {
-  let m = HashSet::new(hasher=self.hasher)
+  let m = HashSet::new()
   self.iter(fn(k) { if other.contains(k) { m.insert(k) } })
   m
 }
@@ -180,7 +179,7 @@ pub fn difference[K : Hash + Eq](
   self : HashSet[K],
   other : HashSet[K]
 ) -> HashSet[K] {
-  let m = HashSet::new(hasher=self.hasher)
+  let m = HashSet::new()
   self.iter(fn(k) { if not(other.contains(k)) { m.insert(k) } })
   m
 }
@@ -190,7 +189,7 @@ pub fn symmetric_difference[K : Hash + Eq](
   self : HashSet[K],
   other : HashSet[K]
 ) -> HashSet[K] {
-  let m = HashSet::new(hasher=self.hasher)
+  let m = HashSet::new()
   self.iter(fn(k) { if not(other.contains(k)) { m.insert(k) } })
   other.iter(fn(k) { if not(self.contains(k)) { m.insert(k) } })
   m
@@ -250,11 +249,8 @@ fn grow[K : Hash + Eq](self : HashSet[K]) -> Unit {
   }
 }
 
-fn make_hash[K : Hash](self : HashSet[K], key : K) -> Int {
-  let hash : Int = match self.hasher {
-    Some(hasher) => hasher(key)
-    None => key.hash()
-  }
+fn make_hash[K : Hash](key : K) -> Int {
+  let hash = key.hash()
   // Let higher 16 bits of the hash value participate in the calculation
   hash.lxor(hash.lsr(16))
 }
