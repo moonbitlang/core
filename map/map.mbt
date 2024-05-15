@@ -21,7 +21,7 @@ pub fn insert[K : Compare, V](
 ) -> Map[K, V] {
   match self {
     Empty => singleton(key, value)
-    Tree(k, v, _, l, r) =>
+    Tree(k, value=v, l, r, ..) =>
       match key.compare(k) {
         -1 => balance(k, v, insert(l, key, value), r)
         1 => balance(k, v, l, insert(r, key, value))
@@ -32,8 +32,8 @@ pub fn insert[K : Compare, V](
 
 fn split_max[K : Compare, V](self : Map[K, V]) -> (K, V, Map[K, V]) {
   match self {
-    Tree(k, v, _, l, Empty) => (k, v, l)
-    Tree(k, v, _, l, r) => {
+    Tree(k, value=v, l, Empty, ..) => (k, v, l)
+    Tree(k, value=v, l, r, ..) => {
       let (k1, v1, r) = split_max(r)
       (k1, v1, balance(k, v, l, r))
     }
@@ -43,8 +43,8 @@ fn split_max[K : Compare, V](self : Map[K, V]) -> (K, V, Map[K, V]) {
 
 fn split_min[K : Compare, V](self : Map[K, V]) -> (K, V, Map[K, V]) {
   match self {
-    Tree(k, v, _, Empty, r) => (k, v, r)
-    Tree(k, v, _, l, r) => {
+    Tree(k, value=v, Empty, r, ..) => (k, v, r)
+    Tree(k, value=v, l, r, ..) => {
       let (k1, v1, l) = split_min(l)
       (k1, v1, balance(k, v, l, r))
     }
@@ -72,7 +72,7 @@ fn glue[K : Compare, V](self : Map[K, V], other : Map[K, V]) -> Map[K, V] {
 pub fn remove[K : Compare, V](self : Map[K, V], key : K) -> Map[K, V] {
   match self {
     Empty => Empty
-    Tree(k, v, _, l, r) => {
+    Tree(k, value=v, l, r, ..) => {
       let c = key.compare(k)
       if c == 0 {
         glue(l, r)
@@ -100,7 +100,7 @@ pub fn filter_with_key[K : Compare, V](
 ) -> Map[K, V] {
   match self {
     Empty => Empty
-    Tree(k, v, _, l, r) =>
+    Tree(k, value=v, l, r, ..) =>
       if pred(k, v) {
         balance(k, v, filter_with_key(l, pred), filter_with_key(r, pred))
       } else {
@@ -167,12 +167,14 @@ fn balance[K : Compare, V](
   //        / \             / \
   //       y   z           x   y
   fn single_l {
-    k1, v1, x, Map::Tree(k2, v2, _, y, z) => new(k2, v2, new(k1, v1, x, y), z)
+    k1, v1, x, Map::Tree(k2, value=v2, y, z, ..) =>
+      new(k2, v2, new(k1, v1, x, y), z)
     _, _, _, _ => abort("single_l error")
   }
 
   fn single_r {
-    k2, v2, Map::Tree(k1, v1, _, x, y), z => new(k1, v1, x, new(k2, v2, y, z))
+    k2, v2, Map::Tree(k1, value=v1, x, y, ..), z =>
+      new(k1, v1, x, new(k2, v2, y, z))
     _, _, _, _ => abort("single_r error")
   }
 
@@ -184,7 +186,7 @@ fn balance[K : Compare, V](
   //     / \
   //    y1 y2
   fn double_l {
-    k1, v1, x, Map::Tree(k3, v3, _, Tree(k2, v2, _, y1, y2), z) =>
+    k1, v1, x, Map::Tree(k3, value=v3, Tree(k2, value=v2, y1, y2, ..), z, ..) =>
       new(k2, v2, new(k1, v1, x, y1), new(k3, v3, y2, z))
     _, _, _, _ => abort("double_l error")
   }
@@ -197,7 +199,7 @@ fn balance[K : Compare, V](
   //    / \
   //   y1 y2
   fn double_r {
-    k3, v3, Map::Tree(k1, v1, _, x, Tree(k2, v2, _, y1, y2)), z =>
+    k3, v3, Map::Tree(k1, value=v1, x, Tree(k2, value=v2, y1, y2, ..), ..), z =>
       new(k2, v2, new(k1, v1, x, y1), new(k3, v3, y2, z))
     _, _, _, _ => abort("double_r error")
   }
@@ -209,7 +211,7 @@ fn balance[K : Compare, V](
   } else if rn > ratio * ln {
     // right is too big
     let (rl, rr) = match r {
-      Tree(_, _, _, rl, rr) => (rl, rr)
+      Tree(_, rl, rr, ..) => (rl, rr)
       Empty => abort("unreachable")
     }
     let rln = size(rl)
@@ -222,7 +224,7 @@ fn balance[K : Compare, V](
   } else if ln > ratio * rn {
     // left is too big
     let (ll, lr) = match l {
-      Tree(_, _, _, ll, lr) => (ll, lr)
+      Tree(_, ll, lr, ..) => (ll, lr)
       Empty => abort("unreachable")
     }
     let lln = size(ll)

@@ -236,7 +236,7 @@ test "glue" {
     "(3,three,(1,one,(0,zero,_,_),(2,two,_,_)),(8,eight,_,_))",
   )?
   let (l, r) = match m {
-    Tree(_, _, _, l, r) => (l, r)
+    Tree(_, l, r, ..) => (l, r)
     _ => abort("unreachable")
   }
   let m = l.glue(r)

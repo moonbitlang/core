@@ -32,5 +32,5 @@
 /// ```
 enum Map[K, V] {
   Empty
-  Tree(K, V, Int, Map[K, V], Map[K, V])
+  Tree(K, ~value : V, ~size : Int, Map[K, V], Map[K, V])
 }
