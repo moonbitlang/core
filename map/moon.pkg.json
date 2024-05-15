@@ -8,5 +8,8 @@
     "moonbitlang/core/vec",
     "moonbitlang/core/immutable_set",
     "moonbitlang/core/coverage"
+  ],
+  "test_import" : [
+    
   ]
 }
