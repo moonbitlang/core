@@ -20,12 +20,9 @@ test "new" {
 
 type MyString String derive(Eq)
 
-impl Hash for MyString with hash(self) {
-  self.0.length()  
-}
+impl Hash for MyString with hash(self) { self.0.length() }
 
 impl Show for MyString with to_string(self) { self.0 }
-
 
 test "set" {
   let m : HashMap[MyString, Int] = HashMap::new()
