@@ -12,6 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+type MyString String derive(Eq)
+
+impl Hash for MyString with hash(self) { self.0.length() }
+
+impl Show for MyString with to_string(self) { self.0 }
+
 test "new" {
   let m : LinkedHashMap[Int, Int] = LinkedHashMap::new()
   @assertion.assert_eq(m.capacity, default_init_capacity)?
@@ -19,16 +25,18 @@ test "new" {
 }
 
 test "set" {
-  let m : LinkedHashMap[String, Int] = LinkedHashMap::new(
-    hasher=Some(fn(k) { k.length() }),
-  )
-  m.set("a", 1)
-  m.set("b", 1)
-  m.set("bc", 2)
-  m.set("abc", 3)
-  m.set("cd", 2)
-  m.set("c", 1)
-  m.set("d", 1)
+  let m : LinkedHashMap[MyString, Int] = LinkedHashMap::new()
+  fn i(s) {
+    MyString::MyString(s)
+  }
+
+  m.set("a" |> i, 1)
+  m.set("b" |> i, 1)
+  m.set("bc" |> i, 2)
+  m.set("abc" |> i, 3)
+  m.set("cd" |> i, 2)
+  m.set("c" |> i, 1)
+  m.set("d" |> i, 1)
   @assertion.assert_eq(m.size, 7)?
   @assertion.assert_eq(
     m.debug_entries(),
@@ -99,16 +107,18 @@ test "from_array" {
 }
 
 test "remove" {
-  let m : LinkedHashMap[String, Int] = LinkedHashMap::new(
-    hasher=Some(fn(k) { k.length() }),
-  )
-  m.set("a", 1)
-  m.set("ab", 2)
-  m.set("bc", 2)
-  m.set("cd", 2)
-  m.set("abc", 3)
-  m.set("abcdef", 6)
-  m.remove("ab")
+  let m : LinkedHashMap[MyString, Int] = LinkedHashMap::new()
+  fn i(s) {
+    MyString::MyString(s)
+  }
+
+  m.set("a" |> i, 1)
+  m.set("ab" |> i, 2)
+  m.set("bc" |> i, 2)
+  m.set("cd" |> i, 2)
+  m.set("abc" |> i, 3)
+  m.set("abcdef" |> i, 6)
+  m.remove("ab" |> i)
   @assertion.assert_eq(m.size(), 5)?
   @assertion.assert_eq(
     m.debug_entries(),
@@ -117,13 +127,15 @@ test "remove" {
 }
 
 test "remove_unexist_key" {
-  let m : LinkedHashMap[String, Int] = LinkedHashMap::new(
-    hasher=Some(fn(k) { k.length() }),
-  )
-  m.set("a", 1)
-  m.set("ab", 2)
-  m.set("abc", 3)
-  m.remove("d")
+  let m : LinkedHashMap[MyString, Int] = LinkedHashMap::new()
+  fn i(s) {
+    MyString::MyString(s)
+  }
+
+  m.set("a" |> i, 1)
+  m.set("ab" |> i, 2)
+  m.set("abc" |> i, 3)
+  m.remove("d" |> i)
   @assertion.assert_eq(m.size(), 3)?
   @assertion.assert_eq(
     m.debug_entries(),
@@ -193,23 +205,25 @@ test "clear" {
 }
 
 test "grow" {
-  let m : LinkedHashMap[String, Int] = LinkedHashMap::new(
-    hasher=Some(fn(k) { k.length() }),
-  )
-  m.set("C", 1)
-  m.set("Go", 2)
-  m.set("C++", 3)
-  m.set("Java", 4)
-  m.set("Scala", 5)
-  m.set("Julia", 5)
+  let m : LinkedHashMap[MyString, Int] = LinkedHashMap::new()
+  fn i(s) {
+    MyString::MyString(s)
+  }
+
+  m.set("C" |> i, 1)
+  m.set("Go" |> i, 2)
+  m.set("C++" |> i, 3)
+  m.set("Java" |> i, 4)
+  m.set("Scala" |> i, 5)
+  m.set("Julia" |> i, 5)
   @assertion.assert_eq(m.size(), 6)?
   @assertion.assert_eq(m.capacity(), 8)?
-  m.set("Cobol", 5)
+  m.set("Cobol" |> i, 5)
   @assertion.assert_eq(m.size(), 7)?
   @assertion.assert_eq(m.capacity(), 16)?
-  m.set("Python", 6)
-  m.set("Haskell", 7)
-  m.set("Rescript", 8)
+  m.set("Python" |> i, 6)
+  m.set("Haskell" |> i, 7)
+  m.set("Rescript" |> i, 8)
   @assertion.assert_eq(m.size(), 10)?
   @assertion.assert_eq(m.capacity(), 16)?
   @assertion.assert_eq(
