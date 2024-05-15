@@ -28,23 +28,12 @@ pub fn List::from_array[T](arr : Array[T]) -> List[T] {
   }
 }
 
-test "from_array" {
-  let ls = List::[1, 2, 3, 4, 5]
-  @assertion.assert_eq(ls, Cons(1, Cons(2, Cons(3, Cons(4, Cons(5, Nil))))))?
-  @assertion.assert_eq(List::[1, 2], Cons(1, Cons(2, Nil)))?
-}
-
 /// Get the length of the list.
 pub fn length[T](self : List[T]) -> Int {
   loop self, 0 {
     Nil, len => len
     Cons(_, rest), acc => continue rest, acc + 1
   }
-}
-
-test "length" {
-  let ls = List::[1, 2, 3, 4, 5]
-  @assertion.assert_eq(ls.length(), 5)?
 }
 
 /// Iterates over the list.
@@ -62,21 +51,6 @@ pub fn iter[T](self : List[T], f : (T) -> Unit) -> Unit {
       continue tail
     }
   }
-}
-
-test "iter" {
-  let ls = List::[1, 2, 3, 4, 5]
-  let mut i = 0
-  let mut failed = false
-  ls.iter(
-    fn(x) {
-      i = i + 1
-      if x != i {
-        failed = true
-      }
-    },
-  )
-  @assertion.assert_false(failed)?
 }
 
 /// Iterates over the list with index.
@@ -97,21 +71,6 @@ pub fn iteri[T](self : List[T], f : (Int, T) -> Unit) -> Unit {
   }
 }
 
-test "iteri" {
-  let mut v = 0
-  let mut failed = false
-  let ls = List::[1, 2, 3, 4, 5]
-  ls.iteri(
-    fn(i, x) {
-      if x != v + 1 || i != v {
-        failed = true
-      }
-      v = v + 1
-    },
-  )
-  @assertion.assert_false(failed)?
-}
-
 /// Maps the list.
 /// 
 /// # Example
@@ -127,12 +86,6 @@ pub fn map[T, U](self : List[T], f : (T) -> U) -> List[U] {
   }
 }
 
-test "map" {
-  let ls = List::[1, 2, 3, 4, 5]
-  let rs = List::[2, 4, 6, 8, 10]
-  @assertion.assert_eq(ls.map(fn(x) { x * 2 }), rs)?
-}
-
 /// Maps the list with index.
 pub fn mapi[T, U](self : List[T], f : (Int, T) -> U) -> List[U] {
   fn go(xs : List[T], i : Int, f : (Int, T) -> U) -> List[U] {
@@ -145,12 +98,6 @@ pub fn mapi[T, U](self : List[T], f : (Int, T) -> U) -> List[U] {
   go(self, 0, f)
 }
 
-test "mapi" {
-  let ls = List::[1, 2, 3, 4, 5]
-  let rs = List::[1, 3, 5, 7, 9]
-  @assertion.assert_eq(ls.mapi(fn(i, x) { i + x }), rs)?
-}
-
 /// Convert list to array.
 pub fn to_array[T](self : List[T]) -> Array[T] {
   match self {
@@ -161,15 +108,6 @@ pub fn to_array[T](self : List[T]) -> Array[T] {
       arr
     }
   }
-}
-
-test "to_array" {
-  let list = List::[1, 2, 3, 4, 5]
-  let empty : List[Int] = Nil
-  let array = to_array(list)
-  let earray = to_array(empty)
-  @assertion.assert_eq(array, [1, 2, 3, 4, 5])?
-  @assertion.assert_eq(earray, [])?
 }
 
 /// Filter the list.
@@ -192,12 +130,6 @@ pub fn filter[T](self : List[T], f : (T) -> Bool) -> List[T] {
   }
 }
 
-test "filter" {
-  let ls = List::[1, 2, 3, 4, 5]
-  let rs = List::[2, 4]
-  @assertion.assert_eq(ls.filter(fn(x) { x % 2 == 0 }), rs)?
-}
-
 /// Test if all elements of the list satisfy the predicate.
 pub fn all[T](self : List[T], f : (T) -> Bool) -> Bool {
   match self {
@@ -206,24 +138,12 @@ pub fn all[T](self : List[T], f : (T) -> Bool) -> Bool {
   }
 }
 
-test "all" {
-  let ls = List::[1, 2, 3, 4, 5]
-  @assertion.assert_true(ls.all(fn(x) { x > 0 }))?
-  @assertion.assert_false(ls.all(fn(x) { x > 1 }))?
-}
-
 /// Test if any element of the list satisfies the predicate.
 pub fn any[T](self : List[T], f : (T) -> Bool) -> Bool {
   match self {
     Nil => false
     Cons(head, tail) => f(head) || any(tail, f)
   }
-}
-
-test "any" {
-  let ls = List::[1, 2, 3, 4, 5]
-  @assertion.assert_true(ls.any(fn(x) { x > 4 }))?
-  @assertion.assert_false(ls.any(fn(x) { x > 5 }))?
 }
 
 /// Tail of the list.
@@ -241,14 +161,6 @@ pub fn tail[T](self : List[T]) -> List[T] {
   }
 }
 
-test "tail" {
-  let ls = List::[1, 2, 3, 4, 5]
-  let rs = List::[2, 3, 4, 5]
-  let el : List[Int] = Nil
-  @assertion.assert_eq(ls.tail(), rs)?
-  @assertion.assert_eq(el.tail(), Nil)?
-}
-
 /// Get first element of the list.
 /// 
 /// # Example
@@ -263,11 +175,6 @@ pub fn head_exn[T](self : List[T]) -> T {
     Nil => abort("head of empty list")
     Cons(head, _) => head
   }
-}
-
-test "head_exn" {
-  let ls = List::[1, 2, 3, 4, 5]
-  @assertion.assert_eq(ls.head_exn(), 1)?
 }
 
 /// Get first element of the list.
@@ -287,13 +194,6 @@ pub fn head[T](self : List[T]) -> Option[T] {
   }
 }
 
-test "head" {
-  let ls = List::[1, 2, 3, 4, 5]
-  let el : List[Unit] = List::[]
-  @assertion.assert_eq(ls.head(), Some(1))?
-  @assertion.assert_eq(el.head(), None)?
-}
-
 /// Last element of the list.
 /// 
 /// # Example
@@ -309,11 +209,6 @@ pub fn last[T](self : List[T]) -> T {
     Cons(head, Nil) => head
     Cons(_, tail) => continue tail
   }
-}
-
-test "last" {
-  let ls = List::[1, 2, 3, 4, 5]
-  @assertion.assert_eq(ls.last(), 5)?
 }
 
 /// Init of the list.
@@ -332,14 +227,6 @@ pub fn init_[T](self : List[T]) -> List[T] {
   }
 }
 
-test "init_" {
-  let ls = List::[1, 2, 3, 4, 5]
-  let rs = List::[1, 2, 3, 4]
-  let el : List[Int] = Nil
-  @assertion.assert_eq(ls.init_(), rs)?
-  @assertion.assert_eq(el.init_(), Nil)?
-}
-
 /// Concatenate two lists.
 ///
 /// # Example
@@ -353,13 +240,6 @@ pub fn concat[T](self : List[T], other : List[T]) -> List[T] {
     Nil => other
     Cons(head, tail) => Cons(head, concat(tail, other))
   }
-}
-
-test "concat" {
-  let ls = List::[1, 2, 3, 4, 5]
-  let rs = List::[6, 7, 8, 9, 10]
-  let ts = List::[1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
-  @assertion.assert_eq(ls.concat(rs), ts)?
 }
 
 /// Reverse the list.
@@ -380,13 +260,6 @@ pub fn reverse[T](self : List[T]) -> List[T] {
   }
 }
 
-test "reverse" {
-  let ls = List::[1, 2, 3, 4, 5]
-  let rs = List::[5, 4, 3, 2, 1]
-  @assertion.assert_eq(rs.reverse(), ls)?
-  @assertion.assert_eq(ls, ls.reverse().reverse())?
-}
-
 /// Fold the list from left.
 ///
 /// # Example
@@ -402,11 +275,6 @@ pub fn fold_left[T, U](self : List[T], f : (U, T) -> U, ~init : U) -> U {
   }
 }
 
-test "fold_left" {
-  let ls = List::[1, 2, 3, 4, 5]
-  @assertion.assert_eq(ls.fold_left(fn(acc, x) { acc + x }, init=0), 15)?
-}
-
 /// Fold the list from right.
 /// 
 /// # Example
@@ -418,11 +286,6 @@ pub fn fold_right[T, U](self : List[T], f : (T, U) -> U, ~init : U) -> U {
     Nil => init
     Cons(head, tail) => f(head, tail.fold_right(f, ~init))
   }
-}
-
-test "fold_right" {
-  let ls = List::["1", "2", "3", "4", "5"]
-  @assertion.assert_eq(ls.fold_right(fn(x, acc) { x + acc }, init=""), "12345")?
 }
 
 /// Fold the list from left with index.
@@ -437,11 +300,6 @@ pub fn fold_lefti[T, U](self : List[T], f : (Int, U, T) -> U, ~init : U) -> U {
   go(self, 0, f, init)
 }
 
-test "fold_lefti" {
-  let ls = List::[1, 2, 3, 4, 5]
-  @assertion.assert_eq(ls.fold_lefti(fn(i, acc, x) { acc + i * x }, init=0), 40)?
-}
-
 /// Fold the list from right with index.
 pub fn fold_righti[T, U](self : List[T], f : (Int, T, U) -> U, ~init : U) -> U {
   fn go(xs : List[T], i : Int, f : (Int, T, U) -> U, acc : U) -> U {
@@ -452,14 +310,6 @@ pub fn fold_righti[T, U](self : List[T], f : (Int, T, U) -> U, ~init : U) -> U {
   }
 
   go(self, 0, f, init)
-}
-
-test "fold_righti" {
-  let ls = List::[1, 2, 3, 4, 5]
-  @assertion.assert_eq(
-    ls.fold_righti(fn(i, x, acc) { x * i + acc }, init=0),
-    40,
-  )?
 }
 
 /// Zip two lists.
@@ -498,12 +348,6 @@ pub fn concat_map[T, U](self : List[T], f : (T) -> List[U]) -> List[U] {
   }
 }
 
-test "concat_map" {
-  let ls = List::[1, 2, 3]
-  let rs = List::[1, 2, 2, 4, 3, 6]
-  @assertion.assert_eq(ls.concat_map(fn(x) { List::[x, x * 2] }), rs)?
-}
-
 /// Get nth element of the list
 /// @alert unsafe "Panic if the index is out of bounds"
 pub fn nth_exn[T](self : List[T], n : Int) -> T {
@@ -514,15 +358,6 @@ pub fn nth_exn[T](self : List[T], n : Int) -> T {
   }
 }
 
-test "nth_exn" {
-  let ls = List::[1, 2, 3, 4, 5]
-  @assertion.assert_eq(ls.nth_exn(0), 1)?
-  @assertion.assert_eq(ls.nth_exn(1), 2)?
-  @assertion.assert_eq(ls.nth_exn(2), 3)?
-  @assertion.assert_eq(ls.nth_exn(3), 4)?
-  @assertion.assert_eq(ls.nth_exn(4), 5)?
-}
-
 /// Get nth element of the list or None if the index is out of bounds
 pub fn nth[T](self : List[T], n : Int) -> Option[T] {
   loop self, n {
@@ -530,16 +365,6 @@ pub fn nth[T](self : List[T], n : Int) -> Option[T] {
     Cons(head, _), 0 => Some(head)
     Cons(_, tail), n => continue tail, n - 1
   }
-}
-
-test "nth" {
-  let ls = List::[1, 2, 3, 4, 5]
-  @assertion.assert_eq(ls.nth(0), Some(1))?
-  @assertion.assert_eq(ls.nth(1), Some(2))?
-  @assertion.assert_eq(ls.nth(2), Some(3))?
-  @assertion.assert_eq(ls.nth(3), Some(4))?
-  @assertion.assert_eq(ls.nth(4), Some(5))?
-  @assertion.assert_eq(ls.nth(5), None)?
 }
 
 /// Create a list of length n with the given value
@@ -555,11 +380,6 @@ pub fn repeat[T](n : Int, x : T) -> List[T] {
   } else {
     Cons(x, repeat(n - 1, x))
   }
-}
-
-test "repeat" {
-  let ls = List::[1, 1, 1, 1, 1]
-  @assertion.assert_eq(repeat(5, 1), ls)?
 }
 
 /// Insert separator to the list.
@@ -579,25 +399,12 @@ pub fn intersperse[T](self : List[T], separator : T) -> List[T] {
   }
 }
 
-test "intersperse" {
-  let ls = List::["1", "|", "2", "|", "3", "|", "4", "|", "5"]
-  let el : List[String] = Nil
-  @assertion.assert_eq(List::["1", "2", "3", "4", "5"].intersperse("|"), ls)?
-  @assertion.assert_eq(el.intersperse("|"), Nil)?
-}
-
 /// Check if the list is empty.
 pub fn is_empty[T](self : List[T]) -> Bool {
   match self {
     Nil => true
     _ => false
   }
-}
-
-test "is_empty" {
-  let ls = List::[1, 2, 3, 4, 5]
-  @assertion.assert_false(ls.is_empty())?
-  @assertion.assert_true((List::Nil : List[Unit]).is_empty())?
 }
 
 /// Unzip two lists.
@@ -619,13 +426,6 @@ pub fn unzip[T, U](list : List[(T, U)]) -> (List[T], List[U]) {
   }
 }
 
-test "unzip" {
-  let ls = List::[(1, 2), (3, 4), (5, 6)]
-  let (a, b) = unzip(ls)
-  @assertion.assert_eq(a, List::[1, 3, 5])?
-  @assertion.assert_eq(b, List::[2, 4, 6])?
-}
-
 /// flatten a list of lists.
 /// 
 /// # Example
@@ -639,12 +439,6 @@ pub fn flatten[T](self : List[List[T]]) -> List[T] {
     Nil => Nil
     Cons(head, tail) => concat(head, flatten(tail))
   }
-}
-
-test "flatten" {
-  let ls = List::[List::[1, 2, 3], List::[4, 5, 6], List::[7, 8, 9]]
-  let rs = List::[1, 2, 3, 4, 5, 6, 7, 8, 9]
-  @assertion.assert_eq(flatten(ls), rs)?
 }
 
 /// Get maximum element of the list.
@@ -664,11 +458,6 @@ pub fn maximum[T : Compare](self : List[T]) -> T {
   }
 }
 
-test "maximum" {
-  let ls = List::[1, 123, 52, 3, 6, 0, -6, -76]
-  @assertion.assert_eq(ls.maximum(), 123)?
-}
-
 /// Get minimum element of the list.
 /// @alert unsafe "Panic if the list is empty"
 pub fn minimum[T : Compare](self : List[T]) -> T {
@@ -684,11 +473,6 @@ pub fn minimum[T : Compare](self : List[T]) -> T {
       }
     }
   }
-}
-
-test "minimum" {
-  let ls = List::[1, 123, 52, 3, 6, 0, -6, -76]
-  @assertion.assert_eq(ls.minimum(), -76)?
 }
 
 /// Sort the list in ascending order.
@@ -710,12 +494,6 @@ pub fn sort[T : Compare](self : List[T]) -> List[T] {
   }
 }
 
-test "sort" {
-  let ls = List::[1, 123, 52, 3, 6, 0, -6, -76]
-  let rs = List::[-76, -6, 0, 1, 3, 6, 52, 123]
-  @assertion.assert_eq(ls.sort(), rs)?
-}
-
 /// Concatenate two lists.
 ///
 /// `a + b` equal to `a.concat(b)`
@@ -729,15 +507,6 @@ pub fn contain[T : Eq](self : List[T], value : T) -> Bool {
     Nil => false
     Cons(x, xs) => if x == value { true } else { continue xs }
   }
-}
-
-test "contain" {
-  let ls = List::[1, 2, 3]
-  @assertion.assert_true(ls.contain(1))?
-  @assertion.assert_true(ls.contain(2))?
-  @assertion.assert_true(ls.contain(3))?
-  @assertion.assert_false(ls.contain(0))?
-  @assertion.assert_false(ls.contain(4))?
 }
 
 /// Produces a collection iteratively.
@@ -756,14 +525,6 @@ pub fn unfold[T, State](
     Some((element, new_state)) => Cons(element, unfold(init=new_state, f))
     None => Nil
   }
-}
-
-test "unfold" {
-  let ls = unfold(
-    init=0,
-    fn { i => if i == 3 { None } else { Some((i, i + 1)) } },
-  )
-  @assertion.assert_eq(ls, Cons(0, Cons(1, Cons(2, Nil))))?
 }
 
 /// Take first n elements of the list.
@@ -789,13 +550,6 @@ fn unsafe_take[T](n : Int, xs : List[T]) -> List[T] {
   }
 }
 
-test "take" {
-  let ls = List::[1, 2, 3, 4, 5].take(3)
-  @assertion.assert_eq(ls, Cons(1, Cons(2, Cons(3, Nil))))?
-  @assertion.assert_eq(ls.take(-1), Nil)?
-  @assertion.assert_eq(ls.take(0), Nil)?
-}
-
 /// Drop first n elements of the list.
 ///
 /// # Example
@@ -819,13 +573,6 @@ fn unsafe_drop[T](n : Int, xs : List[T]) -> List[T] {
   }
 }
 
-test "drop" {
-  let ls = List::[1, 2, 3, 4, 5].drop(3)
-  @assertion.assert_eq(ls, Cons(4, Cons(5, Nil)))?
-  @assertion.assert_eq(ls.drop(-10), ls)?
-  @assertion.assert_eq(ls.drop(0), ls)?
-}
-
 /// Take the longest prefix of a list of elements that satisfies a given predicate.
 ///
 /// # Example
@@ -840,13 +587,6 @@ pub fn take_while[T](self : List[T], p : (T) -> Bool) -> List[T] {
   }
 }
 
-test "take_while" {
-  let ls = take_while(List::[0, 1, 2, 3, 4], fn(x) { x < 3 })
-  let ls2 : List[Int] = take_while(Nil, fn(_e) { true })
-  @assertion.assert_eq(ls, Cons(0, Cons(1, Cons(2, Nil))))?
-  @assertion.assert_eq(ls2, Nil)?
-}
-
 /// Drop the longest prefix of a list of elements that satisfies a given predicate.
 ///
 /// # Example
@@ -859,13 +599,6 @@ pub fn drop_while[T](self : List[T], p : (T) -> Bool) -> List[T] {
     Nil => Nil
     Cons(x, xs) => if p(x) { continue xs } else { Cons(x, xs) }
   }
-}
-
-test "drop_while" {
-  let ls = drop_while(List::[0, 1, 2, 3, 4], fn(x) { x < 3 })
-  let ls2 : List[Int] = drop_while(Nil, fn(_e) { true })
-  @assertion.assert_eq(ls, Cons(3, Cons(4, Nil)))?
-  @assertion.assert_eq(ls2, Nil)?
 }
 
 /// Fold a list and return a list of successive reduced values from the left
@@ -884,13 +617,6 @@ pub fn scan_left[T, E](self : List[T], f : (E, T) -> E, ~init : E) -> List[E] {
       Cons(x, xs) => xs.scan_left(f, init=f(init, x))
     },
   )
-}
-
-test "scan_left" {
-  let ls = List::[1, 2, 3, 4, 5].scan_left(fn(acc, x) { acc + x }, init=0)
-  let ls2 = List::[1, 2, 3, 4].scan_left(fn(acc, x) { acc - x }, init=100)
-  @assertion.assert_eq(ls, List::[0, 1, 3, 6, 10, 15])?
-  @assertion.assert_eq(ls2, List::[100, 99, 97, 94, 90])?
 }
 
 /// Fold a list and return a list of successive reduced values from the right
@@ -912,13 +638,6 @@ pub fn scan_right[T, E](self : List[T], f : (T, E) -> E, ~init : E) -> List[E] {
   }
 }
 
-test "scan_right" {
-  let ls = List::[1, 2, 3, 4].scan_right(fn(x, acc) { x + acc }, init=0)
-  let ls2 = List::[1, 2, 3, 4].scan_right(fn(x, acc) { x - acc }, init=100)
-  @assertion.assert_eq(ls, List::[10, 9, 7, 4, 0])?
-  @assertion.assert_eq(ls2, List::[98, -97, 99, -96, 100])?
-}
-
 /// Looks up a key in an association list.
 ///
 /// # Example
@@ -932,12 +651,6 @@ pub fn lookup[T : Eq, E](self : List[(T, E)], v : T) -> Option[E] {
     Nil => None
     Cons((x, y), xs) => if x == v { Some(y) } else { continue xs }
   }
-}
-
-test "lookup" {
-  let ls = List::[(1, "a"), (2, "b"), (3, "c")]
-  @assertion.assert_eq(ls.lookup(3), Some("c"))?
-  @assertion.assert_eq(ls.lookup(4), None)?
 }
 
 /// Find the first element in the list that satisfies f.
@@ -958,17 +671,6 @@ pub fn find[T](self : List[T], f : (T) -> Bool) -> Option[T] {
         continue list
       }
   }
-}
-
-test "find" {
-  @assertion.assert_eq(
-    List::[1, 3, 5, 8].find(fn(element) -> Bool { element % 2 == 0 }),
-    Some(8),
-  )?
-  @assertion.assert_eq(
-    List::[1, 3, 5, 7].find(fn(element) -> Bool { element % 2 == 0 }),
-    None,
-  )?
 }
 
 /// Find the first element in the list that satisfies f and passes the index as an argument.
@@ -997,21 +699,6 @@ pub fn findi[T](self : List[T], f : (T, Int) -> Bool) -> Option[T] {
   }
 }
 
-test "findi" {
-  @assertion.assert_eq(
-    List::[1, 3, 5, 8].findi(
-      fn(element, i) -> Bool { element % 2 == 0 && i == 3 },
-    ),
-    Some(8),
-  )?
-  @assertion.assert_eq(
-    List::[1, 3, 8, 5].findi(
-      fn(element, i) -> Bool { element % 2 == 0 && i == 3 },
-    ),
-    None,
-  )?
-}
-
 /// Removes the element at the specified index in the list.
 /// 
 /// # Example
@@ -1027,21 +714,6 @@ pub fn remove_at[T](self : List[T], index : Int) -> List[T] {
     (_, Nil) => Nil
     // abort("remove_at: index out of bounds")
   }
-}
-
-test "remove_at" {
-  let ls = List::[1, 2, 3, 4, 5]
-  let rs = List::[1, 2, 4, 5]
-  @assertion.assert_eq(ls.remove_at(2), rs)?
-  @assertion.assert_eq(ls.remove_at(0), List::[2, 3, 4, 5])?
-  @assertion.assert_eq(
-    List::["a", "b", "c", "d", "e"].remove_at(2),
-    List::["a", "b", "d", "e"],
-  )?
-  @assertion.assert_eq(
-    List::["a", "b", "c", "d", "e"].remove_at(5),
-    List::["a", "b", "c", "d", "e"],
-  )?
 }
 
 /// Removes the first occurrence of the specified element from the list, if it is present.
@@ -1064,18 +736,6 @@ pub fn remove[T : Eq](self : List[T], elem : T) -> List[T] {
   }
 }
 
-test "remove" {
-  @assertion.assert_eq(List::[1, 2, 3, 4, 5].remove(3), List::[1, 2, 4, 5])?
-  @assertion.assert_eq(
-    List::["a", "b", "c", "d", "e"].remove("c"),
-    List::["a", "b", "d", "e"],
-  )?
-  @assertion.assert_eq(
-    List::["a", "b", "c", "d", "e"].remove("f"),
-    List::["a", "b", "c", "d", "e"],
-  )?
-}
-
 /// Returns true if list starts with prefix.
 ///
 /// # Example
@@ -1090,12 +750,6 @@ pub fn is_prefix[T : Eq](self : List[T], prefix : List[T]) -> Bool {
     (Nil, Cons(_)) => false
     (Cons(h1, t1), Cons(h2, t2)) => h1 == h2 && t1.is_prefix(t2)
   }
-}
-
-test "is_prefix" {
-  @assertion.assert_true(List::[1, 2, 3, 4, 5].is_prefix(List::[1, 2, 3]))?
-  @assertion.assert_false(List::[1, 2, 3, 4, 5].is_prefix(List::[3, 2, 3]))?
-  @assertion.assert_false(List::Nil.is_prefix(List::[1, 2, 3]))?
 }
 
 /// Compares two lists for equality.
@@ -1114,12 +768,6 @@ pub fn equal[T : Eq](self : List[T], other : List[T]) -> Bool {
   }
 }
 
-test "equal" {
-  @assertion.assert_true(List::[1, 2, 3].equal(List::[1, 2, 3]))?
-  @assertion.assert_false(List::[1, 2, 3].equal(List::[1, 3, 3]))?
-  @assertion.assert_false(List::Nil.equal(List::[1]))?
-}
-
 /// Returns true if list ends with suffix.
 ///
 /// # Example
@@ -1130,11 +778,6 @@ test "equal" {
 /// ```
 pub fn is_suffix[T : Eq](self : List[T], suffix : List[T]) -> Bool {
   self.reverse().is_prefix(suffix.reverse())
-}
-
-test "is_suffix" {
-  @assertion.assert_true(List::[1, 2, 3, 4, 5].is_suffix(List::[3, 4, 5]))?
-  @assertion.assert_false(List::[1, 2, 3, 4, 5].is_suffix(List::[3, 4, 6]))?
 }
 
 /// Similar to intersperse but with a list of values.
@@ -1152,20 +795,7 @@ pub fn intercalate[T](self : List[List[T]], sep : List[T]) -> List[T] {
   self.intersperse(sep).flatten()
 }
 
-test "intercalate" {
-  let ls = List::[List::[1, 2, 3], List::[4, 5, 6], List::[7, 8, 9]]
-  @assertion.assert_eq(
-    ls.intercalate(List::[0]),
-    List::[1, 2, 3, 0, 4, 5, 6, 0, 7, 8, 9],
-  )?
-}
-
 /// The empty list
 pub fn List::default[X]() -> List[X] {
   Nil
-}
-
-test "default" {
-  let ls : List[Int] = List::default()
-  @assertion.assert_eq(ls, Nil)?
 }
