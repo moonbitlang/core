@@ -1,3 +1,17 @@
+// Copyright 2024 International Digital Economy Academy
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
 test "from_array" {
   let ls = List::[1, 2, 3, 4, 5]
   let el : List[Int] = Nil
@@ -59,8 +73,8 @@ test "to_array" {
   let empty : List[Int] = Nil
   let array = to_array(list)
   let earray = to_array(empty)
-  inspect(array)?
-  inspect(earray)?
+  inspect(array, content="[1, 2, 3, 4, 5]")?
+  inspect(earray, content="[]")?
 }
 
 test "filter" {
@@ -78,8 +92,8 @@ test "all" {
 
 test "any" {
   let ls = List::[1, 2, 3, 4, 5]
-  inspect(ls.any(fn(x) { x > 4 }))?
-  inspect(ls.any(fn(x) { x > 5 }))?
+  inspect(ls.any(fn(x) { x > 4 }), content="true")?
+  inspect(ls.any(fn(x) { x > 5 }), content="false")?
 }
 
 test "tail" {
@@ -201,8 +215,8 @@ test "intersperse" {
 
 test "is_empty" {
   let ls = List::[1, 2, 3, 4, 5]
-  inspect(ls.is_empty())?
-  inspect((List::Nil : List[Unit]).is_empty())?
+  inspect(ls.is_empty(), content="false")?
+  inspect((List::Nil : List[Unit]).is_empty(), content="true")?
 }
 
 test "unzip" {
@@ -238,11 +252,11 @@ test "sort" {
 
 test "contain" {
   let ls = List::[1, 2, 3]
-  inspect(ls.contain(1))?
-  inspect(ls.contain(2))?
-  inspect(ls.contain(3))?
-  inspect(ls.contain(0))?
-  inspect(ls.contain(4))?
+  inspect(ls.contain(1), content="true")?
+  inspect(ls.contain(2), content="true")?
+  inspect(ls.contain(3), content="true")?
+  inspect(ls.contain(0), content="false")?
+  inspect(ls.contain(4), content="false")?
 }
 
 test "unfold" {
@@ -373,28 +387,29 @@ test "remove" {
 }
 
 test "is_prefix" {
-  inspect(List::[1, 2, 3, 4, 5].is_prefix(List::[1, 2, 3]))?
-  inspect(List::[1, 2, 3, 4, 5].is_prefix(List::[3, 2, 3]))?
-  inspect(List::Nil.is_prefix(List::[1, 2, 3]))?
+  inspect(List::[1, 2, 3, 4, 5].is_prefix(List::[1, 2, 3]), content="true")?
+  inspect(List::[1, 2, 3, 4, 5].is_prefix(List::[3, 2, 3]), content="false")?
+  inspect(List::Nil.is_prefix(List::[1, 2, 3]), content="false")?
 }
 
 test "equal" {
-  inspect(List::[1, 2, 3].equal(List::[1, 2, 3]))?
-  inspect(List::[1, 2, 3].equal(List::[1, 3, 3]))?
-  inspect(List::Nil.equal(List::[1]))?
+  inspect(List::[1, 2, 3].equal(List::[1, 2, 3]), content="true")?
+  inspect(List::[1, 2, 3].equal(List::[1, 3, 3]), content="false")?
+  inspect(List::Nil.equal(List::[1]), content="false")?
 }
 
 test "is_suffix" {
-  inspect(List::[1, 2, 3, 4, 5].is_suffix(List::[3, 4, 5]))?
-  inspect(List::[1, 2, 3, 4, 5].is_suffix(List::[3, 4, 6]))?
+  inspect(List::[1, 2, 3, 4, 5].is_suffix(List::[3, 4, 5]), content="true")?
+  inspect(List::[1, 2, 3, 4, 5].is_suffix(List::[3, 4, 6]), content="false")?
 }
 
 test "intercalate" {
   let ls = List::[List::[1, 2, 3], List::[4, 5, 6], List::[7, 8, 9]]
-  let el :List[List[Int]] = Nil
+  let el : List[List[Int]] = Nil
   inspect(
     ls.intercalate(List::[0]),
-  content="List::[1, 2, 3, 0, 4, 5, 6, 0, 7, 8, 9]")?
+    content="List::[1, 2, 3, 0, 4, 5, 6, 0, 7, 8, 9]",
+  )?
   inspect(el.intersperse(List::[1]), content="List::[]")?
 }
 
