@@ -16,12 +16,11 @@
 let default_init_capacity = 8
 
 /// Create new hash map.
-pub fn HashMap::new[K, V](~hasher : Option[(K) -> Int] = None) -> HashMap[K, V] {
+pub fn HashMap::new[K, V]() -> HashMap[K, V] {
   {
     size: 0,
     capacity: default_init_capacity,
     growAt: calc_grow_threshold(default_init_capacity),
-    hasher,
     entries: @array.new(default_init_capacity, fn() { Empty }),
   }
 }
@@ -41,7 +40,7 @@ pub fn set[K : Hash + Eq, V](self : HashMap[K, V], key : K, value : V) -> Unit {
   if self.capacity == 0 || self.size >= self.growAt {
     self.grow()
   }
-  let hash = self.make_hash(key)
+  let hash = make_hash(key)
   loop 0, self.index(hash), 0, hash, key, value {
     i, idx, psl, hash, key, value => {
       if i == self.capacity {
@@ -79,7 +78,7 @@ pub fn op_set[K : Hash + Eq, V](
 
 /// Get the value associated with a key.
 pub fn get[K : Hash + Eq, V](self : HashMap[K, V], key : K) -> Option[V] {
-  let hash = self.make_hash(key)
+  let hash = make_hash(key)
   for i = 0, idx = self.index(hash)
       i < self.capacity
       i = i + 1, idx = self.next_index(idx) {
@@ -126,7 +125,7 @@ pub fn contains[K : Hash + Eq, V](self : HashMap[K, V], key : K) -> Bool {
 
 /// Remove a key-value pair from hash map.
 pub fn remove[K : Hash + Eq, V](self : HashMap[K, V], key : K) -> Unit {
-  let hash = self.make_hash(key)
+  let hash = make_hash(key)
   for i = 0, idx = self.index(hash)
       i < self.capacity
       i = i + 1, idx = self.next_index(idx) {
@@ -186,11 +185,8 @@ fn grow[K : Hash + Eq, V](self : HashMap[K, V]) -> Unit {
   }
 }
 
-fn make_hash[K : Hash, V](self : HashMap[K, V], key : K) -> Int {
-  let hash : Int = match self.hasher {
-    Some(hasher) => hasher(key)
-    None => key.hash()
-  }
+fn make_hash[K : Hash](key : K) -> Int {
+  let hash : Int = key.hash()
   // Let higher 16 bits of the hash value participate in the calculation
   hash.lxor(hash.lsr(16))
 }

@@ -40,5 +40,4 @@ struct HashMap[K, V] {
   mut size : Int // active key-value pairs count
   mut capacity : Int // current capacity 
   mut growAt : Int // threshold that triggers grow
-  hasher : Option[(K) -> Int] // custom hasher
 }
