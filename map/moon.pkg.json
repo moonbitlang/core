@@ -3,13 +3,10 @@
     "moonbitlang/core/builtin",
     "moonbitlang/core/assertion",
     "moonbitlang/core/tuple",
-    "moonbitlang/core/list",
+    
     "moonbitlang/core/string",
     "moonbitlang/core/vec",
-    "moonbitlang/core/immutable_set",
     "moonbitlang/core/coverage"
   ],
-  "test_import" : [
-    
-  ]
+  "test_import": ["moonbitlang/core/immutable_set","moonbitlang/core/list"]
 }

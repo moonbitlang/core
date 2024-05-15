@@ -1,6 +1,5 @@
 package moonbitlang/core/map
 
-alias @moonbitlang/core/immutable_set as @immutable_set
 alias @moonbitlang/core/vec as @vec
 
 // Values
@@ -12,7 +11,6 @@ fn singleton[K, V](K, V) -> Map[K, V]
 type Map
 impl Map {
   debug_write[K : Debug, V : Debug](Self[K, V], Buffer) -> Unit
-  elems[K, V](Self[K, V]) -> List[V]
   filter[K : Compare + Eq, V](Self[K, V], (V) -> Bool) -> Self[K, V]
   filter_with_key[K : Compare + Eq, V](Self[K, V], (K, V) -> Bool) -> Self[K, V]
   fold[K, V, T](Self[K, V], (T, V) -> T, ~init : T) -> T
@@ -23,8 +21,6 @@ impl Map {
   is_empty[K, V](Self[K, V]) -> Bool
   iter[K, V](Self[K, V], (K, V) -> Unit) -> Unit
   iteri[K, V](Self[K, V], (Int, K, V) -> Unit) -> Unit
-  keys[K, V](Self[K, V]) -> List[K]
-  keys_set[K : Compare + Eq, V](Self[K, V]) -> @immutable_set.ImmutableSet[K]
   lookup[K : Compare + Eq, V](Self[K, V], K) -> Option[V]
   map[K, X, Y](Self[K, X], (X) -> Y) -> Self[K, Y]
   map_with_key[K, X, Y](Self[K, X], (K, X) -> Y) -> Self[K, Y]
@@ -32,9 +28,6 @@ impl Map {
   op_equal[K : Eq, V : Eq](Self[K, V], Self[K, V]) -> Bool
   remove[K : Compare + Eq, V](Self[K, V], K) -> Self[K, V]
   size[K, V](Self[K, V]) -> Int
-  to_asc_list[K, V](Self[K, V]) -> List[Tuple[K, V]]
-  to_desc_list[K, V](Self[K, V]) -> List[Tuple[K, V]]
-  to_list[K, V](Self[K, V]) -> List[Tuple[K, V]]
   to_vec[K, V](Self[K, V]) -> @vec.Vec[Tuple[K, V]]
 }
 
