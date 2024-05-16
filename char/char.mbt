@@ -14,7 +14,7 @@
 
 /// Convert Char to String
 pub fn to_string(self : Char) -> String {
-  let bytes = Bytes::make(4, b'\x00')
+  let bytes = Bytes::make(4)
   let len = bytes.set_utf16_char(0, self)
   bytes.sub_string(0, len)
 }

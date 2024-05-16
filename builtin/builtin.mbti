@@ -213,7 +213,7 @@ impl Bytes {
   blit_from_string(Bytes, Int, String, Int, Int) -> Unit
   copy(Bytes) -> Bytes
   length(Bytes) -> Int
-  make(Int, Byte) -> Bytes
+  make(Int, ~init : Byte = ..) -> Bytes
   of_string(String) -> Bytes
   op_get(Bytes, Int) -> Byte
   op_set(Bytes, Int, Byte) -> Unit

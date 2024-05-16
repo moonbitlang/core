@@ -64,7 +64,7 @@ pub fn to_string(self : Bytes) -> String {
 
 /// Create byte sequence from String.
 pub fn Bytes::of_string(str : String) -> Bytes {
-  let bytes = Bytes::make(str.length() * 2, b'\x00')
+  let bytes = Bytes::make(str.length() * 2)
   bytes.blit_from_string(0, str, 0, str.length())
   bytes
 }
@@ -110,7 +110,7 @@ pub fn blit_from_string(
 
 /// Return a new Bytes that contains the same byte sequence.
 pub fn copy(self : Bytes) -> Bytes {
-  let dst = Bytes::make(self.length(), b'\x00')
+  let dst = Bytes::make(self.length())
   blit(dst, 0, self, 0, self.length())
   dst
 }

@@ -495,7 +495,7 @@ fn d2d(ieeeMantissa : Int64, ieeeExponent : Int) -> FloatingDecimal64 {
 
 fn to_chars(v : FloatingDecimal64, sign : Bool) -> String {
   // Step 5: Print the decimal representation.
-  let result = Bytes::make(24, (0).to_byte())
+  let result = Bytes::make(24)
   let mut index : Int = 0
   if sign {
     result[index] = '-'.to_int().to_byte()
