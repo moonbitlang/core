@@ -109,21 +109,6 @@ pub fn filter_with_key[K : Compare, V](
   }
 }
 
-/// Convert to a list of key-value pairs.
-pub fn to_list[K, V](self : Map[K, V]) -> List[(K, V)] {
-  self.to_asc_list()
-}
-
-/// Convert to an ascending list.
-pub fn to_asc_list[K, V](self : Map[K, V]) -> List[(K, V)] {
-  self.foldr_with_key(fn(xs, k, v) { Cons((k, v), xs) }, init=List::[])
-}
-
-/// Convert to an descending list.
-pub fn to_desc_list[K, V](self : Map[K, V]) -> List[(K, V)] {
-  self.foldl_with_key(fn(xs, k, v) { Cons((k, v), xs) }, init=List::[])
-}
-
 /// Convert to a vector of key-value pairs.
 pub fn to_vec[K, V](self : Map[K, V]) -> @vec.Vec[(K, V)] {
   let vec = @vec.new()
@@ -131,25 +116,8 @@ pub fn to_vec[K, V](self : Map[K, V]) -> @vec.Vec[(K, V)] {
   vec
 }
 
-/// Return all keys of the map in ascending order.
-pub fn keys[K, V](self : Map[K, V]) -> List[K] {
-  self.foldr_with_key(fn(xs, k, _v) { Cons(k, xs) }, init=List::[])
-}
-
-/// Return an immutable set of all keys of the map.
-pub fn keys_set[K : Compare + Eq, V](
-  self : Map[K, V]
-) -> @immutable_set.ImmutableSet[K] {
-  @immutable_set.from_list(self.keys())
-}
-
-/// Return all elements of the map in the ascending order of their keys.
-pub fn elems[K, V](self : Map[K, V]) -> List[V] {
-  self.foldr_with_key(fn(xs, _k, v) { Cons(v, xs) }, init=List::[])
-}
-
 pub fn op_equal[K : Eq, V : Eq](self : Map[K, V], other : Map[K, V]) -> Bool {
-  self.to_list() == other.to_list()
+  self.to_vec() == other.to_vec()
 }
 
 /// The ratio between the sizes of the left and right subtrees.
