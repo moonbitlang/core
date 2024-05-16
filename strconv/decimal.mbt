@@ -170,7 +170,8 @@ pub fn to_double(self : Decimal) -> Result[Double, String] {
     exponent += n
   }
   // left shift
-  while self.decimal_point < 0 || self.decimal_point == 0 && self.digits[0].to_int() < 5 {
+  while self.decimal_point < 0 || self.decimal_point == 0 && self.digits[0].to_int() <
+        5 {
     let mut n = 0
     if -self.decimal_point >= powtab.length() {
       n = 60

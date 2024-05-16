@@ -202,7 +202,7 @@ pub fn Bytes::length(self : Bytes) -> Int = "%bytes_length"
 
 pub fn Bytes::make(len : Int, init : Byte) -> Bytes = "%bytes_make"
 
-fn identity[A,B](x : A) -> B = "%identity"
+fn identity[A, B](x : A) -> B = "%identity"
 
 pub fn Int::to_byte(self : Int) -> Byte {
   identity(self.land(0xFF))
@@ -251,4 +251,3 @@ pub fn Byte::to_int(self : Byte) -> Int = "%byte_to_int"
 pub fn Byte::to_int64(self : Byte) -> Int64 {
   self.to_int().to_int64()
 }
-
