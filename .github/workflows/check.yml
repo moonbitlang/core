@@ -130,32 +130,6 @@ jobs:
         env:
           COVERALLS_REPO_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      # The following is workaround for https://github.com/codecov/feedback/issues/126
-      # See `coverage-report-upload.yml` for more info.
-
-      # Workaround for https://github.com/orgs/community/discussions/25220
-      # Triggered sub-workflow is not able to detect the original commit/PR which is available
-      # in this workflow.
-      - name: Store PR number and commit SHA
-        run: |
-          echo "Storing PR number ${{ github.event.number }}"
-          echo "${{ github.event.number }}" > pr_number.txt
-
-          echo "Storing commit SHA ${{ github.event.pull_request.head.sha }}"
-          echo "${{ github.event.pull_request.head.sha }}" > commit_sha.txt
-
-      # This stores the coverage report in artifacts. The actual upload to Codecov
-      # is executed by a different workflow `coverage-report-upload.yml`. The reason for this
-      # split is because `on.pull_request` workflows don't have access to secrets.
-      - name: Store coverage report in artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: codecov_report
-          path: |
-            pr_number.txt
-            commit_sha.txt
-            codecov_report.json
-
   typo-check:
     runs-on: ubuntu-latest
     timeout-minutes: 10
