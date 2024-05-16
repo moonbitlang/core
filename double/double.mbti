@@ -5,8 +5,8 @@ package moonbitlang/core/double
 // Types and methods
 impl Double {
   abs(Double) -> Double
-  debug_write(Double, Buffer) -> Unit
   ceil(Double) -> Double
+  debug_write(Double, Buffer) -> Unit
   floor(Double) -> Double
   from_int(Int) -> Double
   hash(Double) -> Int
