@@ -1,11 +1,9 @@
 {
   "import": [
     "moonbitlang/core/builtin",
-
     "moonbitlang/core/assertion",
     "moonbitlang/core/bool",
     "moonbitlang/core/int64",
     "moonbitlang/core/coverage"
-  ],
-  "test_import": ["moonbitlang/core/num"]
+  ]
 }
