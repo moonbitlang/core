@@ -53,6 +53,7 @@ pub fn trunc(self : Double) -> Double {
 test "trunc" {
   @assertion.assert_eq(4503599627370497.0.trunc(), 4503599627370497.0)?
   @assertion.assert_eq(2251799813685248.5.trunc(), 2251799813685248.0)?
+  @assertion.assert_eq(4.5.trunc(), 4.0)?
   @assertion.assert_eq(1.5.trunc(), 1.0)?
   @assertion.assert_eq(1.0.trunc(), 1.0)?
   @assertion.assert_eq(0.2.trunc(), 0.0)?
@@ -128,6 +129,8 @@ pub fn round(self : Double) -> Double {
 test "round" {
   @assertion.assert_eq(4503599627370497.5.round(), 4503599627370498.0)?
   @assertion.assert_eq(2251799813685248.5.round(), 2251799813685249.0)?
+  @assertion.assert_eq(5.5.round(), 6.0)?
+  @assertion.assert_eq(5.2.round(), 5.0)?
   @assertion.assert_eq(1.1.round(), 1.0)?
   @assertion.assert_eq(1.0.round(), 1.0)?
   @assertion.assert_eq(0.9.round(), 1.0)?
