@@ -50,7 +50,7 @@ pub fn to_string(self : Int64) -> String {
     if num2 != 0L {
       write_digits(num2)
     }
-    buf.write_char(Char::from_int(abs(num % 10L).to_int() + 48))
+    buf.write_char(Char::from_int_unsafe(abs(num % 10L).to_int() + 48))
   }
 
   write_digits(self)
@@ -78,7 +78,7 @@ pub fn to_string(self : Int) -> String {
     if num2 != 0 {
       write_digits(num2)
     }
-    buf.write_char(Char::from_int(abs(num % 10) + 48))
+    buf.write_char(Char::from_int_unsafe(abs(num % 10) + 48))
   }
 
   write_digits(self)

@@ -27,7 +27,7 @@ fn lex_property_name(ctx : ParseContext) -> Result[Token, ParseError] {
     Some('\\') => {
       lex_assert_char(ctx, 'u')?
       let c = lex_hex_digits(ctx, 4)?
-      let c = Char::from_int(c)
+      let c = Char::from_int_unsafe(c)
       if c == '$' || c == '_' || c >= 'a' && c <= 'z' || c >= 'A' && c <= 'Z' ||
       c > '\x7f' && non_ascii_id_start.contains(c) {
         let buffer = StringBuilder::make()
@@ -69,7 +69,7 @@ fn lex_ident(
         flush(ctx.offset - 1)
         lex_assert_char(ctx, 'u')?
         let c = lex_hex_digits(ctx, 4)?
-        let c = Char::from_int(c)
+        let c = Char::from_int_unsafe(c)
         if c == '$' || c == '_' || c >= 'a' && c <= 'z' || c >= 'A' && c <= 'Z' ||
         c >= '0' && c <= '9' || c > '\x7f' && non_ascii_id_continue.contains(c) {
           buffer.add_char(c)

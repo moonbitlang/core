@@ -82,7 +82,7 @@ impl Byte {
 impl Char {
   compare(Char, Char) -> Int
   default() -> Char
-  from_int(Int) -> Char
+  from_int_unsafe(Int) -> Char
   op_equal(Char, Char) -> Bool
   to_int(Char) -> Int
 }

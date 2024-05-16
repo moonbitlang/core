@@ -659,9 +659,9 @@ pub fn to_hex(self : BigInt) -> String {
       let y = x % 16
       x /= 16
       tmp = if y < 10 {
-          Char::from_int(y + 48).to_string()
+          Char::from_int(y + 48).unwrap().to_string()
         } else {
-          Char::from_int(y + 55).to_string()
+          Char::from_int(y + 55).unwrap().to_string()
         } + tmp
     }
     if i != self.len - 1 && tmp.length() < 4 {
