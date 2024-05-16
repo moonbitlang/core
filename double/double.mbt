@@ -24,6 +24,8 @@ let min_val : Double = 0x1L.reinterpret_as_double()
 
 let min_norm : Double = 0x0010000000000000L.reinterpret_as_double()
 
+let sign_mask : Int64 = 0x8000_0000_0000_0000L
+
 pub fn Double::from_int(i : Int) -> Double {
   i.to_double()
 }
@@ -34,6 +36,108 @@ pub fn abs(self : Double) -> Double {
   } else {
     self
   }
+}
+
+pub fn trunc(self : Double) -> Double {
+  let u64 = self.reinterpret_as_i64()
+  let biased_exp = u64.lsr(52).land(0x7ffL).to_int()
+  if biased_exp < 1023 {
+    return u64.land(sign_mask).reinterpret_as_double()
+  }
+  if biased_exp >= 1075 {
+    return self
+  }
+  u64.land(sign_mask.asr(biased_exp - 1012)).reinterpret_as_double()
+}
+
+test "trunc" {
+  @assertion.assert_eq(4503599627370497.0.trunc(), 4503599627370497.0)?
+  @assertion.assert_eq(2251799813685248.5.trunc(), 2251799813685248.0)?
+  @assertion.assert_eq(1.5.trunc(), 1.0)?
+  @assertion.assert_eq(1.0.trunc(), 1.0)?
+  @assertion.assert_eq(0.2.trunc(), 0.0)?
+  @assertion.assert_eq(0.0.trunc(), 0.0)?
+  @assertion.assert_eq((-0.0).trunc().reinterpret_as_i64(), sign_mask)?
+  @assertion.assert_eq((-0.2).trunc().reinterpret_as_i64(), sign_mask)?
+  @assertion.assert_eq((-1.0).trunc(), -1.0)?
+  @assertion.assert_eq((-1.5).trunc(), -1.0)?
+  @assertion.assert_eq((-2251799813685248.5).trunc(), -2251799813685248.0)?
+  @assertion.assert_eq((-4503599627370497.0).trunc(), -4503599627370497.0)?
+}
+
+pub fn ceil(self : Double) -> Double {
+  let trunced = self.trunc()
+  if self == trunced || self < 0.0 {
+    trunced
+  } else {
+    trunced + 1.0
+  }
+}
+
+test "ceil" {
+  @assertion.assert_eq(2251799813685248.5.ceil(), 2251799813685249.0)?
+  @assertion.assert_eq(1.1.ceil(), 2.0)?
+  @assertion.assert_eq(1.0.ceil(), 1.0)?
+  @assertion.assert_eq(0.9.ceil(), 1.0)?
+  @assertion.assert_eq(0.0.ceil(), 0.0)?
+  @assertion.assert_eq((-0.0).ceil().reinterpret_as_i64(), sign_mask)?
+  @assertion.assert_eq((-0.1).ceil().reinterpret_as_i64(), sign_mask)?
+  @assertion.assert_eq((-2251799813685248.5).ceil(), -2251799813685248.0)?
+}
+
+pub fn floor(self : Double) -> Double {
+  let trunced = self.trunc()
+  if self == trunced || self > 0.0 {
+    trunced
+  } else {
+    trunced - 1.0
+  }
+}
+
+test "floor" {
+  @assertion.assert_eq(2251799813685248.5.floor(), 2251799813685248.0)?
+  @assertion.assert_eq(1.1.floor(), 1.0)?
+  @assertion.assert_eq(1.0.floor(), 1.0)?
+  @assertion.assert_eq(0.9.floor(), 0.0)?
+  @assertion.assert_eq(0.0.floor(), 0.0)?
+  @assertion.assert_eq((-0.0).floor().reinterpret_as_i64(), sign_mask)?
+  @assertion.assert_eq((-0.1).floor(), -1.0)?
+  @assertion.assert_eq((-2251799813685248.5).floor(), -2251799813685249.0)?
+}
+
+pub fn round(self : Double) -> Double {
+  let u64 = self.reinterpret_as_i64()
+  let biased_exp = u64.lsr(52).land(0x7ffL).to_int()
+  if biased_exp >= 1075 {
+    return self
+  } else if biased_exp < 1022 {
+    return u64.land(sign_mask).reinterpret_as_double()
+  } else if biased_exp == 1022 {
+    return u64.land(sign_mask).lor(0x3FF0_0000_0000_0000L).reinterpret_as_double()
+  }
+  let trunced = u64.land(sign_mask.asr(biased_exp - 1012)).reinterpret_as_double()
+  if u64.land(sign_mask.lsr(biased_exp - 1011)) == 0L {
+    return trunced
+  } else if self > 0.0 {
+    return trunced + 1.0
+  } else {
+    return trunced - 1.0
+  }
+}
+
+test "round" {
+  @assertion.assert_eq(4503599627370497.5.round(), 4503599627370498.0)?
+  @assertion.assert_eq(2251799813685248.5.round(), 2251799813685249.0)?
+  @assertion.assert_eq(1.1.round(), 1.0)?
+  @assertion.assert_eq(1.0.round(), 1.0)?
+  @assertion.assert_eq(0.9.round(), 1.0)?
+  @assertion.assert_eq(0.5.round(), 1.0)?
+  @assertion.assert_eq(0.4.round(), 0.0)?
+  @assertion.assert_eq(0.0.round(), 0.0)?
+  @assertion.assert_eq((-0.0).round().reinterpret_as_i64(), sign_mask)?
+  @assertion.assert_eq((-0.1).round().reinterpret_as_i64(), sign_mask)?
+  @assertion.assert_eq((-0.5).round(), -1.0)?
+  @assertion.assert_eq((-2251799813685248.5).round(), -2251799813685249.0)?
 }
 
 /// Returns the sign of the double.

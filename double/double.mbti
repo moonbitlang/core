@@ -6,6 +6,8 @@ package moonbitlang/core/double
 impl Double {
   abs(Double) -> Double
   debug_write(Double, Buffer) -> Unit
+  ceil(Double) -> Double
+  floor(Double) -> Double
   from_int(Int) -> Double
   hash(Double) -> Int
   inf(Int) -> Double
@@ -17,8 +19,10 @@ impl Double {
   min_normal() -> Double
   min_value() -> Double
   nan() -> Double
+  round(Double) -> Double
   signum(Double) -> Double
   to_string(Double) -> String
+  trunc(Double) -> Double
 }
 
 // Traits
