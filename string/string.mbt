@@ -54,10 +54,14 @@ pub fn to_bytes(self : String) -> Bytes {
 }
 
 test "to_bytes" {
-  @assertion.assert_eq("中文".to_bytes().to_string(), "中文")?
-  @assertion.assert_eq("asdf".to_bytes().to_string(), "asdf")?
-  @assertion.assert_eq("🤣🤣".to_bytes().to_string(), "🤣🤣")?
-  @assertion.assert_eq("🤔".to_bytes().to_string(), "🤔")?
+  fn f(x : String) {
+    x.to_bytes().to_unchecked_string()
+  }
+
+  inspect("中文" |> f, content="中文")?
+  inspect("asdf" |> f, content="asdf")?
+  inspect("🤣🤣" |> f, content="🤣🤣")?
+  inspect("🤔" |> f, content="🤔")?
 }
 
 pub fn hash(self : String) -> Int {
@@ -89,7 +93,7 @@ test "debug_write" {
 test "Buffer::to_bytes" {
   let buffer = Buffer::make(16)
   buffer.write_string("中文")
-  @assertion.assert_eq(buffer.to_bytes().to_string(), "中文")?
+  inspect(buffer.to_bytes().to_unchecked_string(), content="中文")?
 }
 
 /// Converts the String into an array of Chars.

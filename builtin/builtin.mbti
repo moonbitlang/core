@@ -208,6 +208,7 @@ impl Bytes {
   blit(Bytes, Int, Bytes, Int, Int) -> Unit
   blit_from_string(Bytes, Int, String, Int, Int) -> Unit
   copy(Bytes) -> Bytes
+  debug_write(Bytes, Buffer) -> Unit
   length(Bytes) -> Int
   make(Int, Int) -> Bytes
   of_string(String) -> Bytes
@@ -217,6 +218,7 @@ impl Bytes {
   set_utf8_char(Bytes, Int, Char) -> Int
   sub_string(Bytes, Int, Int) -> String
   to_string(Bytes) -> String
+  to_unchecked_string(Bytes) -> String
 }
 impl Ref {
   debug_write[X : Debug](Self[X], Buffer) -> Unit

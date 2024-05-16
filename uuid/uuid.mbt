@@ -80,7 +80,10 @@ test "bytes" {
   let buf = Bytes::[
     201, 130, 251, 104, 223, 80, 76, 161, 145, 248, 186, 162, 4, 9, 229, 185,
   ]
-  inspect(from_bytes(buf)?.to_bytes(), content="苉棻僟ꅌꊺऄ맥")? // XXX: this is a terrible Show
+  inspect(
+    from_bytes(buf)?.to_bytes(),
+    content="Bytes::[201,130,251,104,223,80,76,161,145,248,186,162,4,9,229,185]",
+  )?
   inspect(from_bytes(Bytes::make(15, 0)), content="Err(requires 16 bytes)")?
   inspect(from_bytes(Bytes::make(17, 0)), content="Err(requires 16 bytes)")?
 }
@@ -167,14 +170,14 @@ pub fn to_string(self : UUID) -> String {
       rv[i - 1] = dash
       continue v, i - 2, i - 2, d - 1
     } else {
-      break rv.to_string()
+      break rv.to_unchecked_string()
     }
   }
 }
 
 test "from_hex" {
   let hex = "13cb501c-1234-5678-9034-abcdef937e20"
-  inspect(from_hex(hex)?, content=hex)?
+  inspect(from_hex(hex)?, content="13cb501c-1234-5678-9034-abcdef937e20")?
   inspect(
     from_hex("12345678-1234-1234-1234-ABCDEF098765")?,
     content="12345678-1234-1234-1234-abcdef098765",

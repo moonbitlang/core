@@ -59,6 +59,33 @@ pub fn blit(
 
 /// Create a new String from byte sequence.
 pub fn to_string(self : Bytes) -> String {
+  // the length of the result string is at most bytes.length() * 4 + 8
+  let buf = Buffer::make(self.length() * 4 + 8)
+  buf.write_string("Bytes::[")
+  for i = 0; i < self.length(); i = i + 1 {
+    if i != 0 {
+      buf.write_char(',')
+    }
+    self[i].debug_write(buf)
+  }
+  buf.write_char(']')
+  buf.to_string()
+}
+
+pub fn debug_write(self : Bytes, buf : Buffer) -> Unit {
+  buf.write_string("Bytes::[")
+  for i = 0; i < self.length(); i = i + 1 {
+    if i != 0 {
+      buf.write_char(',')
+    }
+    self[i].debug_write(buf)
+  }
+  buf.write_char(']')
+}
+
+/// Create a new String from byte sequence.
+/// @alert unsafe "This function do not guarantee the return string is valid utf16 encoded."
+pub fn to_unchecked_string(self : Bytes) -> String {
   self.sub_string(0, self.length())
 }
 
