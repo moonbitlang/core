@@ -69,7 +69,7 @@ fn grow_if_necessary(self : Buffer, required : Int) -> Unit {
     enough_space = enough_space * 2
   }
   if enough_space != self.bytes.length() {
-    let new_bytes = Bytes::make(enough_space, 0)
+    let new_bytes = Bytes::make(enough_space, b'\x00')
     blit(new_bytes, 0, self.bytes, 0, self.len)
     self.bytes = new_bytes
   }
@@ -83,7 +83,7 @@ pub fn to_string(self : Buffer) -> String {
 /// Create a buffer with initial capacity.
 pub fn Buffer::make(initial_capacity : Int) -> Buffer {
   let initial = if initial_capacity < 1 { 1 } else { initial_capacity }
-  let bytes = Bytes::make(initial, 0)
+  let bytes = Bytes::make(initial, b'\x00')
   { bytes, len: 0, initial_bytes: bytes }
 }
 
@@ -116,13 +116,20 @@ pub fn write_char(self : Buffer, value : Char) -> Unit {
   self.len = self.len + inc
 }
 
+/// Write a byte into buffer.
+pub fn write_byte(self : Buffer, value : Byte) -> Unit {
+  self.grow_if_necessary(self.len + 1)
+  self.bytes[self.len] = value
+  self.len += 1
+}
+
 pub fn reset(self : Buffer) -> Unit {
   self.bytes = self.initial_bytes
   self.len = 0
 }
 
 pub fn to_bytes(self : Buffer) -> Bytes {
-  let bytes = Bytes::make(self.len, 0)
+  let bytes = Bytes::make(self.len, b'\x00')
   bytes.blit(0, self.bytes, 0, self.len)
   bytes
 }

@@ -29,7 +29,7 @@ fn log10Pow2(e : Int) -> Int {
 fn string_from_bytes(bytes : Bytes, from : Int, to : Int) -> String {
   let buf = Buffer::make(bytes.length())
   for i = from; i < to; i = i + 1 {
-    buf.write_char(Char::from_int(bytes[i]))
+    buf.write_char(Char::from_int(bytes[i].to_int()))
   }
   buf.to_string()
 }
@@ -495,10 +495,10 @@ fn d2d(ieeeMantissa : Int64, ieeeExponent : Int) -> FloatingDecimal64 {
 
 fn to_chars(v : FloatingDecimal64, sign : Bool) -> String {
   // Step 5: Print the decimal representation.
-  let result = Bytes::make(24, 0)
+  let result = Bytes::make(24, (0).to_byte())
   let mut index : Int = 0
   if sign {
-    result[index] = '-'.to_int()
+    result[index] = '-'.to_int().to_byte()
     index = index + 1
   }
   let mut output : Int64 = v.mantissa
@@ -510,23 +510,23 @@ fn to_chars(v : FloatingDecimal64, sign : Bool) -> String {
     for i = 0; i < olength - 1; i = i + 1 {
       let c = output % 10L
       output = output / 10L
-      result[index + olength - i] = '0'.to_int() + c.to_int()
+      result[index + olength - i] = ('0'.to_int() + c.to_int()).to_byte()
     }
-    result[index] = '0'.to_int() + output.to_int() % 10
+    result[index] = ('0'.to_int() + output.to_int() % 10).to_byte()
 
     // Always print point
-    result[index + 1] = '.'.to_int()
+    result[index + 1] = '.'.to_int().to_byte()
     index = index + olength + 1
     if olength == 1 {
-      result[index] = '0'.to_int()
+      result[index] = '0'.to_int().to_byte()
       index = index + 1
     }
 
     // Print the exponent.
-    result[index] = 'e'.to_int()
+    result[index] = 'e'.to_int().to_byte()
     index = index + 1
     if exp < 0 {
-      result[index] = '-'.to_int()
+      result[index] = '-'.to_int().to_byte()
       index = index + 1
       exp = -exp
     }
@@ -534,62 +534,62 @@ fn to_chars(v : FloatingDecimal64, sign : Bool) -> String {
       let a = exp / 100
       let b = exp / 10 % 10
       let c = exp % 10
-      result[index + 0] = '0'.to_int() + a
-      result[index + 1] = '0'.to_int() + b
-      result[index + 2] = '0'.to_int() + c
+      result[index + 0] = ('0'.to_int() + a).to_byte()
+      result[index + 1] = ('0'.to_int() + b).to_byte()
+      result[index + 2] = ('0'.to_int() + c).to_byte()
       index = index + 3
     } else if exp >= 10 {
       let a = exp / 10
       let b = exp % 10
-      result[index + 0] = '0'.to_int() + a
-      result[index + 1] = '0'.to_int() + b
+      result[index + 0] = ('0'.to_int() + a).to_byte()
+      result[index + 1] = ('0'.to_int() + b).to_byte()
       index = index + 2
     } else {
-      result[index] = '0'.to_int() + exp
+      result[index] = ('0'.to_int() + exp).to_byte()
       index = index + 1
     }
     string_from_bytes(result, 0, index)
   } else {
     if exp < 0 {
       // Decimal dot is before any of the digits.
-      result[index] = '0'.to_int()
+      result[index] = '0'.to_int().to_byte()
       index = index + 1
-      result[index] = '.'.to_int()
+      result[index] = '.'.to_int().to_byte()
       index = index + 1
       for i = -1; i > exp; i = i - 1 {
-        result[index] = '0'.to_int()
+        result[index] = '0'.to_int().to_byte()
         index = index + 1
       }
       let current = index
       for i = 0; i < olength; i = i + 1 {
-        result[current + olength - i - 1] = '0'.to_int() + (output % 10L).to_int()
+        result[current + olength - i - 1] = ('0'.to_int() + (output % 10L).to_int()).to_byte()
         output = output / 10L
         index = index + 1
       }
     } else if exp + 1 >= olength {
       // Decimal dot is after any of the digits.
       for i = 0; i < olength; i = i + 1 {
-        result[index + olength - i - 1] = '0'.to_int() + (output % 10L).to_int()
+        result[index + olength - i - 1] = ('0'.to_int() + (output % 10L).to_int()).to_byte()
         output = output / 10L
       }
       index = index + olength
       for i = olength; i < exp + 1; i = i + 1 {
-        result[index] = '0'.to_int()
+        result[index] = '0'.to_int().to_byte()
         index = index + 1
       }
-      result[index] = '.'.to_int()
+      result[index] = '.'.to_int().to_byte()
       index = index + 1
-      result[index] = '0'.to_int()
+      result[index] = '0'.to_int().to_byte()
       index = index + 1
     } else {
       // Decimal dot is somewhere between the digits.
       let mut current = index + 1
       for i = 0; i < olength; i = i + 1 {
         if olength - i - 1 == exp {
-          result[current + olength - i - 1] = '.'.to_int()
+          result[current + olength - i - 1] = '.'.to_int().to_byte()
           current = current - 1
         }
-        result[current + olength - i - 1] = '0'.to_int() + (output % 10L).to_int()
+        result[current + olength - i - 1] = ('0'.to_int() + (output % 10L).to_int()).to_byte()
         output = output / 10L
       }
       index = index + olength + 1

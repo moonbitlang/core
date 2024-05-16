@@ -23,9 +23,9 @@
 /// ```
 /// 
 pub fn Bytes::from_array(arr : Array[Int]) -> Bytes {
-  let rv = Bytes::make(arr.length(), 0)
+  let rv = Bytes::make(arr.length(), b'\x00')
   for i = 0; i < arr.length(); i = i + 1 {
-    rv[i] = arr[i]
+    rv[i] = arr[i].to_byte()
   }
   rv
 }

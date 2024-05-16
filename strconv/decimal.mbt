@@ -39,7 +39,7 @@ let powtab = [
 /// Create a zero decimal.
 pub fn Decimal::new() -> Decimal {
   {
-    digits: Bytes::make(800, 0),
+    digits: Bytes::make(800, b'\x00'),
     digits_num: 0,
     decimal_point: 0,
     negative: false,
@@ -87,7 +87,7 @@ pub fn Decimal::parse_decimal(str : String) -> Result[Decimal, String] {
           continue
         }
         if d.digits_num < d.digits.length() {
-          d.digits[d.digits_num] = str[i].to_int() - '0'.to_int()
+          d.digits[d.digits_num] = (str[i].to_int() - '0'.to_int()).to_byte()
           d.digits_num += 1
         } else if str[i] != '0' {
           d.truncated = true
@@ -170,7 +170,7 @@ pub fn to_double(self : Decimal) -> Result[Double, String] {
     exponent += n
   }
   // left shift
-  while self.decimal_point < 0 || self.decimal_point == 0 && self.digits[0] < 5 {
+  while self.decimal_point < 0 || self.decimal_point == 0 && self.digits[0].to_int() < 5 {
     let mut n = 0
     if -self.decimal_point >= powtab.length() {
       n = 60
@@ -289,29 +289,29 @@ fn should_round_up(self : Decimal, d : Int) -> Bool {
   if d < 0 || d >= self.digits_num {
     return false
   }
-  if self.digits[d] == 5 && d + 1 == self.digits_num {
+  if self.digits[d].to_int() == 5 && d + 1 == self.digits_num {
     // half-way between two integers
     // if truncated, the real value is higher than stored value, round up.
     if self.truncated {
       return true
     }
     // round to even
-    return d > 0 && self.digits[d - 1] % 2 != 0
+    return d > 0 && self.digits[d - 1].to_int() % 2 != 0
   }
   // normal case
-  self.digits[d] >= 5
+  self.digits[d].to_int() >= 5
 }
 
 /// Assign a Int64 value to decimal.
 fn assign(self : Decimal, v : Int64) -> Unit {
-  let buf = Bytes::make(24, 0)
+  let buf = Bytes::make(24, b'\x00')
 
   // write value to buf
   let mut n = 0
   let mut v = v
   while v > 0L {
     let v1 = v / 10L
-    buf[n] = (v - 10L * v1).to_int()
+    buf[n] = (v - 10L * v1).to_byte()
     n += 1
     v = v1
   }
@@ -352,7 +352,7 @@ fn right_shift(self : Decimal, s : Int) -> Unit {
   while read_index < self.digits_num {
     // output (acc >> s)
     let out = acc.lsr(s).to_int()
-    self.digits[write_index] = out
+    self.digits[write_index] = out.to_byte()
     write_index += 1
     // contract
     acc = acc.land(mask)
@@ -366,7 +366,7 @@ fn right_shift(self : Decimal, s : Int) -> Unit {
   while acc > 0L {
     let out = acc.lsr(s).to_int()
     if write_index < self.digits.length() {
-      self.digits[write_index] = out
+      self.digits[write_index] = out.to_byte()
       write_index += 1
     } else if out > 0 {
       self.truncated = true
@@ -459,8 +459,8 @@ fn new_digits(self : Decimal, s : Int) -> Int {
       break
     }
     let d = cheat_num[i].to_int() - '0'.to_int()
-    if self.digits[i] != d {
-      less = self.digits[i] < d
+    if self.digits[i].to_int() != d {
+      less = self.digits[i].to_int() < d
       break
     }
   }
@@ -488,7 +488,7 @@ fn left_shift(self : Decimal, s : Int) -> Unit {
     let rem = (acc - quo * 10L).to_int()
     write_index -= 1
     if write_index < self.digits.length() {
-      self.digits[write_index] = rem
+      self.digits[write_index] = rem.to_byte()
     } else if rem != 0 {
       self.truncated = true
     }
@@ -502,7 +502,7 @@ fn left_shift(self : Decimal, s : Int) -> Unit {
     let rem = (acc - 10L * quo).to_int()
     write_index -= 1
     if write_index < self.digits.length() {
-      self.digits[write_index] = rem
+      self.digits[write_index] = rem.to_byte()
     } else if rem != 0 {
       self.truncated = true
     }
@@ -520,7 +520,7 @@ fn left_shift(self : Decimal, s : Int) -> Unit {
 
 /// Trim trailing zeros.
 fn trim(self : Decimal) -> Unit {
-  while self.digits_num > 0 && self.digits[self.digits_num - 1] == 0 {
+  while self.digits_num > 0 && self.digits[self.digits_num - 1].to_int() == 0 {
     self.digits_num -= 1
   }
   if self.digits_num == 0 {
@@ -547,7 +547,7 @@ fn to_string(self : Decimal) -> String {
       buf.write_char('0')
     }
     for i = 0; i < self.digits_num; i = i + 1 {
-      buf.write_string(self.digits[i].to_string())
+      buf.write_string(self.digits[i].to_int().to_string())
     }
   } else if self.decimal_point < self.digits_num {
     // decimal point in the middle of digits
@@ -555,12 +555,12 @@ fn to_string(self : Decimal) -> String {
       if i == self.decimal_point {
         buf.write_char('.')
       }
-      buf.write_string(self.digits[i].to_string())
+      buf.write_string(self.digits[i].to_int().to_string())
     }
   } else {
     // zeros filling between the digits and the decimal point
     for i = 0; i < self.digits_num; i = i + 1 {
-      buf.write_string(self.digits[i].to_string())
+      buf.write_string(self.digits[i].to_int().to_string())
     }
     for i = 0; i < self.decimal_point - self.digits_num; i = i + 1 {
       buf.write_char('0')

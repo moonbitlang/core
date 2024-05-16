@@ -64,7 +64,7 @@ pub fn to_string(self : Bytes) -> String {
 
 /// Create byte sequence from String.
 pub fn Bytes::of_string(str : String) -> Bytes {
-  let bytes = Bytes::make(str.length() * 2, 0)
+  let bytes = Bytes::make(str.length() * 2, b'\x00')
   bytes.blit_from_string(0, str, 0, str.length())
   bytes
 }
@@ -102,15 +102,15 @@ pub fn blit_from_string(
         i < end_str_offset
         i = i + 1, j = j + 2 {
       let c = str[i].to_int()
-      self[j] = c.land(0xff)
-      self[j + 1] = c.lsr(8)
+      self[j] = c.land(0xff).to_byte()
+      self[j + 1] = c.lsr(8).to_byte()
     }
   }
 }
 
 /// Return a new Bytes that contains the same byte sequence.
 pub fn copy(self : Bytes) -> Bytes {
-  let dst = Bytes::make(self.length(), 0)
+  let dst = Bytes::make(self.length(), b'\x00')
   blit(dst, 0, self, 0, self.length())
   dst
 }
@@ -120,22 +120,22 @@ pub fn copy(self : Bytes) -> Bytes {
 pub fn set_utf8_char(self : Bytes, offset : Int, value : Char) -> Int {
   let code = value.to_int()
   if code < 0x80 {
-    self[offset] = code.land(0x7F).lor(0x00)
+    self[offset] = code.land(0x7F).lor(0x00).to_byte()
     1
   } else if code < 0x0800 {
-    self[offset] = code.lsr(6).land(0x1F).lor(0xC0)
-    self[offset + 1] = code.land(0x3F).lor(0x80)
+    self[offset] = code.lsr(6).land(0x1F).lor(0xC0).to_byte()
+    self[offset + 1] = code.land(0x3F).lor(0x80).to_byte()
     2
   } else if code < 0x010000 {
-    self[offset] = code.lsr(12).land(0x0F).lor(0xE0)
-    self[offset + 1] = code.lsr(6).land(0x3F).lor(0x80)
-    self[offset + 2] = code.land(0x3F).lor(0x80)
+    self[offset] = code.lsr(12).land(0x0F).lor(0xE0).to_byte()
+    self[offset + 1] = code.lsr(6).land(0x3F).lor(0x80).to_byte()
+    self[offset + 2] = code.land(0x3F).lor(0x80).to_byte()
     3
   } else if code < 0x110000 {
-    self[offset] = code.lsr(18).land(0x07).lor(0xF0)
-    self[offset + 1] = code.lsr(12).land(0x3F).lor(0x80)
-    self[offset + 2] = code.lsr(6).land(0x3F).lor(0x80)
-    self[offset + 3] = code.land(0x3F).lor(0x80)
+    self[offset] = code.lsr(18).land(0x07).lor(0xF0).to_byte()
+    self[offset + 1] = code.lsr(12).land(0x3F).lor(0x80).to_byte()
+    self[offset + 2] = code.lsr(6).land(0x3F).lor(0x80).to_byte()
+    self[offset + 3] = code.land(0x3F).lor(0x80).to_byte()
     4
   } else {
     abort("Char out of range")
@@ -147,17 +147,17 @@ pub fn set_utf8_char(self : Bytes, offset : Int, value : Char) -> Int {
 pub fn set_utf16_char(self : Bytes, offset : Int, value : Char) -> Int {
   let code = value.to_int()
   if code < 0x10000 {
-    self[offset] = code.land(0xFF)
-    self[offset + 1] = code.lsr(8)
+    self[offset] = code.land(0xFF).to_byte()
+    self[offset + 1] = code.lsr(8).to_byte()
     2
   } else {
     let hi = code - 0x10000
     let lo = hi.lsr(10).lor(0xD800)
     let hi = hi.land(0x3FF).lor(0xDC00)
-    self[offset] = lo.land(0xFF)
-    self[offset + 1] = lo.lsr(8)
-    self[offset + 2] = hi.land(0xFF)
-    self[offset + 3] = hi.lsr(8)
+    self[offset] = lo.land(0xFF).to_byte()
+    self[offset + 1] = lo.lsr(8).to_byte()
+    self[offset + 2] = hi.land(0xFF).to_byte()
+    self[offset + 3] = hi.lsr(8).to_byte()
     4
   }
 }
