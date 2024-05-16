@@ -119,7 +119,16 @@ jobs:
           moon coverage report -f summary summary > coverage_summary.txt
           # Put the coverage report in the pipline output
           cat coverage_summary.txt >> "$GITHUB_STEP_SUMMARY"
-          moon coverage report -f coveralls -o codecov_report.json --service-name github --service-job-id $GITHUB_RUN_NUMBER
+          # We don't use the official coveralls upload tool because it takes >1min to build itself
+          moon coverage report \
+            -f coveralls \
+            -o codecov_report.json \
+            --service-name github \
+            --service-job-id "$GITHUB_RUN_NUMBER" \
+            --service-pull-request "${{ github.event.number }}" \
+            --send-to coveralls
+        env:
+          COVERALLS_REPO_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       # The following is workaround for https://github.com/codecov/feedback/issues/126
       # See `coverage-report-upload.yml` for more info.
