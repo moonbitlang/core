@@ -17,5 +17,5 @@ test "slice" {
   let s = v[1..4]
   @assertion.assert_eq(s.length(), 3)?
   @assertion.assert_eq(s[0], 2)?
-  @assertion.assert_eq(s[1], 3)?
+  @assertion.assert_eq(s[2], 4)?
 }
