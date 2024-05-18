@@ -452,7 +452,9 @@ pub fn reverse[T](self : Array[T]) -> Unit {
   let mid_len = self.length() / 2
   for i = 0; i < mid_len; i = i + 1 {
     let j = self.length() - i - 1
-    self.swap(i, j)
+    let temp = self[i]
+    self[i] = self[j]
+    self[j] = temp
   }
 }
 
@@ -491,7 +493,7 @@ test "reverse" {
 /// arr.swap(0, 1)
 /// debug(arr) //output: [2, 1, 3, 4, 5]
 /// ```
-pub fn swap[T](self : Array[T], i : Int, j : Int) -> Unit {
+fn swap[T](self : Array[T], i : Int, j : Int) -> Unit {
   let temp = self[i]
   self[i] = self[j]
   self[j] = temp
@@ -771,34 +773,6 @@ test "ends_with" {
   @assertion.assert_false(arr.ends_with([2, 4, 5]))?
   @assertion.assert_false(arr.ends_with([3, 4, 5, 6]))?
   @assertion.assert_false(arr.ends_with([2, 3, 4, 5]))?
-}
-
-/// Convert array to list.
-///
-/// # Example
-///
-/// ```
-/// [1, 2, 3, 4, 5].to_list()
-/// ```
-pub fn to_list[T](self : Array[T]) -> List[T] {
-  for i = self.length() - 1, list = List::Nil; i >= 0; {
-    continue i - 1, List::Cons(self[i], list)
-  } else {
-    list
-  }
-}
-
-test "to_list" {
-  {
-    let ls : List[Int] = ([] : Array[_]).to_list()
-    @assertion.assert_eq(ls, Nil)?
-  }
-  {
-    let ls = ([3] : Array[_]).to_list()
-    @assertion.assert_eq(ls, Cons(3, Nil))?
-  }
-  let ls = ([1, 2, 3, 4, 5] : Array[_]).to_list()
-  @assertion.assert_eq(ls, Cons(1, Cons(2, Cons(3, Cons(4, Cons(5, Nil))))))?
 }
 
 pub fn op_equal[T : Eq](self : Array[T], that : Array[T]) -> Bool {
