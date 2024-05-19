@@ -15,6 +15,9 @@ impl Double {
   is_nan(Double) -> Bool
   is_neg_inf(Double) -> Bool
   is_pos_inf(Double) -> Bool
+  ln(Double) -> Double
+  log10(Double) -> Double
+  log2(Double) -> Double
   max_value() -> Double
   min_normal() -> Double
   min_value() -> Double
