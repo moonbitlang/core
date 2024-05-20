@@ -14,6 +14,7 @@ impl Map {
   from_array[K : Eq + Hash, V](Array[Tuple[K, V]]) -> Self[K, V]
   iter[K, V](Self[K, V], (K, V) -> Unit) -> Unit
   make[K, V]() -> Self[K, V]
+  op_get[K : Eq + Hash, V](Self[K, V], K) -> Option[V]
   remove[K : Eq + Hash, V](Self[K, V], K) -> Self[K, V]
   size[K, V](Self[K, V]) -> Int
   to_string[K : Debug, V : Debug](Self[K, V]) -> String

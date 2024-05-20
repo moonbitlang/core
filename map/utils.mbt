@@ -75,6 +75,10 @@ pub fn lookup[K : Compare, V](self : Map[K, V], key : K) -> Option[V] {
   }
 }
 
+pub fn op_get[K : Compare, V](self : Map[K, V], key : K) -> Option[V] {
+  self.lookup(key)
+}
+
 /// Iterate over the key-value pairs in the map.
 pub fn iter[K, V](self : Map[K, V], f : (K, V) -> Unit) -> Unit {
   match self {
