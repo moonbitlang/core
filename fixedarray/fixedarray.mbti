@@ -3,15 +3,15 @@ package moonbitlang/core/fixedarray
 alias @moonbitlang/core/iter as @iter
 
 // Values
-fn is_sorted[T : Compare + Eq](Array[T]) -> Bool
+fn is_sorted[T : Compare + Eq](FixedArray[T]) -> Bool
 
-fn new[T](Int, () -> T) -> Array[T]
+fn new[T](Int, () -> T) -> FixedArray[T]
 
-fn new_with_index[T](Int, (Int) -> T) -> Array[T]
+fn new_with_index[T](Int, (Int) -> T) -> FixedArray[T]
 
 // Types and methods
 type TimSortRun
-impl Array {
+impl FixedArray {
   all[T](Self[T], (T) -> Bool) -> Bool
   any[T](Self[T], (T) -> Bool) -> Bool
   as_iter[T](Self[T]) -> @iter.Iter[T]

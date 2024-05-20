@@ -36,7 +36,7 @@ impl ImmutableSet {
   split[T : Compare + Eq](Self[T], T) -> Tuple[Self[T], Bool, Self[T]]
   subset[T : Compare + Eq](Self[T], Self[T]) -> Bool
   to_array[T : Compare + Eq](Self[T]) -> Array[T]
-  to_fixed_array[T : Compare + Eq](Self[T]) -> Array[T]
+  to_fixed_array[T : Compare + Eq](Self[T]) -> FixedArray[T]
   to_list[T : Compare + Eq](Self[T]) -> List[T]
   to_string[T : Show + Compare + Eq](Self[T]) -> String
   union[T : Compare + Eq](Self[T], Self[T]) -> Self[T]

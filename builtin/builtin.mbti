@@ -54,7 +54,7 @@ impl Array {
   fold_lefti[T, U](Self[T], (Int, U, T) -> U, ~init : U) -> U
   fold_right[T, U](Self[T], (U, T) -> U, ~init : U) -> U
   fold_righti[T, U](Self[T], (Int, U, T) -> U, ~init : U) -> U
-  from_fixed_array[T](Array[T]) -> Self[T]
+  from_fixed_array[T](FixedArray[T]) -> Self[T]
   get[T](Self[T], Int) -> Option[T]
   insert[T](Self[T], Int, T) -> Unit
   is_empty[T](Self[T]) -> Bool
@@ -270,7 +270,7 @@ impl List {
   op_equal[X : Eq](Self[X], Self[X]) -> Bool
   to_string[X : Debug](Self[X]) -> String
 }
-impl Array {
+impl FixedArray {
   debug_write[X : Debug](Self[X], Buffer) -> Unit
   default[X]() -> Self[X]
   get[T](Self[T], Int) -> T
@@ -285,6 +285,7 @@ impl Bytes {
   blit(Bytes, Int, Bytes, Int, Int) -> Unit
   blit_from_string(Bytes, Int, String, Int, Int) -> Unit
   copy(Bytes) -> Bytes
+  debug_write(Bytes, Buffer) -> Unit
   length(Bytes) -> Int
   make(Int, ~init : Byte = ..) -> Bytes
   of_string(String) -> Bytes
