@@ -49,7 +49,23 @@ pub fn Int64::min_value() -> Int64 {
 }
 
 pub fn hash(self : Int64) -> Int {
-  let lo = self.to_int()
-  let hi = self.lsr(32).to_int()
-  lo.lxor(hi)
+  let b = Bytes::make(8, 0)
+  b[0] = self.lsr(56).to_int()
+  b[1] = self.lsr(48).land(0xFFL).to_int()
+  b[2] = self.lsr(40).land(0xFFL).to_int()
+  b[3] = self.lsr(32).land(0xFFL).to_int()
+  b[4] = self.lsr(24).land(0xFFL).to_int()
+  b[5] = self.lsr(16).land(0xFFL).to_int()
+  b[6] = self.lsr(8).land(0xFFL).to_int()
+  b[7] = self.land(0xFFL).to_int()
+  b.hash()
+}
+
+test "int64 hash" {
+  @assertion.assert_eq(0L.hash(), 0L.hash())?
+  @assertion.assert_eq(1L.hash(), 1L.hash())?
+  @assertion.assert_ne(0L.hash(), 1L.hash())?
+  @assertion.assert_eq(0x7fffffffffffffffL.hash(), 0x7fffffffffffffffL.hash())?
+  @assertion.assert_ne(0x7fffffffffffffffL.hash(), 0x8000000000000000L.hash())?
+  @assertion.assert_eq(0x8000000000000000L.hash(), 0x8000000000000000L.hash())?
 }
