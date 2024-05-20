@@ -63,7 +63,7 @@ pub fn Array::from_fixed_array[T](arr : FixedArray[T]) -> Array[T] {
   { buf, len }
 }
 
-pub fn Array::make[T](len: Int, elem: T) -> Array[T] {
+pub fn Array::make[T](len : Int, elem : T) -> Array[T] {
   let buf = UninitializedArray::make(len)
   for i = 0; i < len; i = i + 1 {
     buf[i] = elem
@@ -545,7 +545,10 @@ pub fn ends_with[T : Eq](self : Array[T], suffix : Array[T]) -> Bool {
 /// let v = Array::[3, 4, 5]
 /// v.strip_prefix(Array::[3]) // Some(Array::[4, 5])
 /// ```
-pub fn strip_prefix[T : Eq](self : Array[T], prefix : Array[T]) -> Option[Array[T]] {
+pub fn strip_prefix[T : Eq](
+  self : Array[T],
+  prefix : Array[T]
+) -> Option[Array[T]] {
   if self.starts_with(prefix) {
     let v = Array::with_capacity(self.len - prefix.len)
     for i = prefix.len; i < self.len; i = i + 1 {
@@ -567,7 +570,10 @@ pub fn strip_prefix[T : Eq](self : Array[T], prefix : Array[T]) -> Option[Array[
 /// let v = Array::[3, 4, 5]
 /// v.strip_suffix(Array::[5]) // Some(Array::[3, 4])
 /// ```
-pub fn strip_suffix[T : Eq](self : Array[T], suffix : Array[T]) -> Option[Array[T]] {
+pub fn strip_suffix[T : Eq](
+  self : Array[T],
+  suffix : Array[T]
+) -> Option[Array[T]] {
   if self.ends_with(suffix) {
     let v = Array::with_capacity(self.len - suffix.len)
     for i = 0; i < self.len - suffix.len; i = i + 1 {

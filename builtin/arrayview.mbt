@@ -66,7 +66,11 @@ pub fn op_as_view[T](self : Array[T], ~start : Int, ~end : Int) -> ArrayView[T] 
   ArrayView::{ buf: self.buf, start, len: end - start }
 }
 
-pub fn op_as_view[T](self : ArrayView[T], ~start : Int, ~end : Int) -> ArrayView[T] {
+pub fn op_as_view[T](
+  self : ArrayView[T],
+  ~start : Int,
+  ~end : Int
+) -> ArrayView[T] {
   if start < 0 {
     abort("Slice start index out of bounds")
   } else if end > self.length() {

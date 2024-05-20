@@ -112,7 +112,10 @@ fn get_limit(len : Int) -> Int {
 /// It will only tolerate at most 8 unsorted elements. The time complexity is O(n).
 /// 
 /// Returns whether the array is sorted.
-fn try_bubble_sort[T : Compare](arr : ArrayView[T], ~max_tries : Int = 8) -> Bool {
+fn try_bubble_sort[T : Compare](
+  arr : ArrayView[T],
+  ~max_tries : Int = 8
+) -> Bool {
   let mut tries = 0
   for i = 1; i < arr.length(); i = i + 1 {
     let mut sorted = true

@@ -344,9 +344,15 @@ pub fn fold_left[T, U](self : FixedArray[T], f : (U, T) -> U, ~init : U) -> U {
 }
 
 test "fold_left" {
-  let sum = ([] : FixedArray[_]).fold_left(init=1, fn { sum, elem => sum + elem })
+  let sum = ([] : FixedArray[_]).fold_left(
+    init=1,
+    fn { sum, elem => sum + elem },
+  )
   @assertion.assert_eq(sum, 1)?
-  let sum = ([1] : FixedArray[_]).fold_left(init=2, fn { sum, elem => sum + elem })
+  let sum = ([1] : FixedArray[_]).fold_left(
+    init=2,
+    fn { sum, elem => sum + elem },
+  )
   @assertion.assert_eq(sum, 3)?
   let sum = ([1, 2, 3, 4, 5] : FixedArray[_]).fold_left(
     init=0,
@@ -371,9 +377,15 @@ pub fn fold_right[T, U](self : FixedArray[T], f : (U, T) -> U, ~init : U) -> U {
 }
 
 test "fold_right" {
-  let sum = ([] : FixedArray[_]).fold_right(init=1, fn { sum, elem => sum + elem })
+  let sum = ([] : FixedArray[_]).fold_right(
+    init=1,
+    fn { sum, elem => sum + elem },
+  )
   @assertion.assert_eq(sum, 1)?
-  let sum = ([1] : FixedArray[_]).fold_right(init=2, fn { sum, elem => sum + elem })
+  let sum = ([1] : FixedArray[_]).fold_right(
+    init=2,
+    fn { sum, elem => sum + elem },
+  )
   @assertion.assert_eq(sum, 3)?
   let sum = ([1, 2, 3, 4, 5] : FixedArray[_]).fold_right(
     init=0,
@@ -389,7 +401,11 @@ test "fold_right" {
 /// let sum = [1, 2, 3, 4, 5].fold_lefti(init=0, fn { index, sum, elem => sum + index })
 /// sum // 10
 /// ```
-pub fn fold_lefti[T, U](self : FixedArray[T], f : (Int, U, T) -> U, ~init : U) -> U {
+pub fn fold_lefti[T, U](
+  self : FixedArray[T],
+  f : (Int, U, T) -> U,
+  ~init : U
+) -> U {
   for i = 0, acc = init; i < self.length(); {
     continue i + 1, f(i, acc, self[i])
   } else {
@@ -418,7 +434,11 @@ test "fold_lefti" {
 /// let sum = [1, 2, 3, 4, 5].fold_righti(init=0, fn { index, sum, elem => sum + index })
 /// sum // 10
 /// ```
-pub fn fold_righti[T, U](self : FixedArray[T], f : (Int, U, T) -> U, ~init : U) -> U {
+pub fn fold_righti[T, U](
+  self : FixedArray[T],
+  f : (Int, U, T) -> U,
+  ~init : U
+) -> U {
   let len = self.length()
   for i = len - 1, acc = init; i >= 0; {
     continue i - 1, f(len - i - 1, acc, self[i])
@@ -690,7 +710,10 @@ test "contains" {
 /// let arr = [3, 4, 5]
 /// arr.starts_with([3, 4]) // true
 /// ```
-pub fn starts_with[T : Eq](self : FixedArray[T], prefix : FixedArray[T]) -> Bool {
+pub fn starts_with[T : Eq](
+  self : FixedArray[T],
+  prefix : FixedArray[T]
+) -> Bool {
   if prefix.length() > self.length() {
     return false
   }
@@ -866,8 +889,14 @@ test "op_add" {
   }
   {
     inspect(([1] : FixedArray[_]) + [2], content="[1, 2]")?
-    inspect(([1] : FixedArray[_]) + [1, 2, 3, 4, 5], content="[1, 1, 2, 3, 4, 5]")?
-    inspect(([1, 2, 3, 4, 5] : FixedArray[_]) + [1], content="[1, 2, 3, 4, 5, 1]")?
+    inspect(
+      ([1] : FixedArray[_]) + [1, 2, 3, 4, 5],
+      content="[1, 1, 2, 3, 4, 5]",
+    )?
+    inspect(
+      ([1, 2, 3, 4, 5] : FixedArray[_]) + [1],
+      content="[1, 2, 3, 4, 5, 1]",
+    )?
   }
   inspect(
     ([1, 2, 3, 4, 5] : FixedArray[_]) + [6, 7, 8, 9, 10],

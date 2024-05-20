@@ -234,7 +234,11 @@ fn heap_sort_by[T](arr : ArrayView[T], cmp : (T, T) -> Int) -> Unit {
   }
 }
 
-fn sift_down_by[T](arr : ArrayView[T], index : Int, cmp : (T, T) -> Int) -> Unit {
+fn sift_down_by[T](
+  arr : ArrayView[T],
+  index : Int,
+  cmp : (T, T) -> Int
+) -> Unit {
   let mut index = index
   let len = arr.length()
   let mut child = index * 2 + 1

@@ -810,7 +810,9 @@ fn to_string[T : Show](self : Node[T]) -> String {
 // Convert from other data structures to MutableSet.
 
 /// Initialize an MutableSet[T] from a FixedArray[T]
-pub fn MutableSet::from_fixed_array[T : Compare](array : FixedArray[T]) -> MutableSet[T] {
+pub fn MutableSet::from_fixed_array[T : Compare](
+  array : FixedArray[T]
+) -> MutableSet[T] {
   let set = MutableSet::new()
   for i = 0; i < array.length(); i = i + 1 {
     set.add(array[i])

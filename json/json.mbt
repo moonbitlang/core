@@ -154,21 +154,15 @@ test "get as array" {
     content="Some([String(\"Hello World\")])",
   )?
   inspect(
-    JsonValue::Array([JsonValue::String("Hello World")]).item(0).bind(
-      as_string,
-    ),
+    JsonValue::Array([JsonValue::String("Hello World")]).item(0).bind(as_string),
     content="Some(Hello World)",
   )?
   inspect(
-    JsonValue::Array([JsonValue::String("Hello World")]).item(1).bind(
-      as_string,
-    ),
+    JsonValue::Array([JsonValue::String("Hello World")]).item(1).bind(as_string),
     content="None",
   )?
   inspect(
-    JsonValue::Array([JsonValue::String("Hello World")]).item(0).bind(
-      as_number,
-    ),
+    JsonValue::Array([JsonValue::String("Hello World")]).item(0).bind(as_number),
     content="None",
   )?
   inspect(

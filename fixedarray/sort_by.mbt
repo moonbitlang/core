@@ -23,7 +23,10 @@
 /// arr.sort_by_key(fn (x) {-x})
 /// debug(arr) //output: [5, 4, 3, 2, 1]
 /// ```
-pub fn sort_by_key[T, K : Compare](self : FixedArray[T], map : (T) -> K) -> Unit {
+pub fn sort_by_key[T, K : Compare](
+  self : FixedArray[T],
+  map : (T) -> K
+) -> Unit {
   quick_sort_by(
     { array: self, start: 0, end: self.length() },
     fn(a, b) { map(a).compare(map(b)) },
@@ -196,7 +199,10 @@ fn partition_by[T](
 /// It avoids worst case performance by choosing a pivot that is likely to be close to the median.
 /// 
 /// Returns the pivot index and whether the array is likely sorted.
-fn choose_pivot_by[T](arr : FixedArraySlice[T], cmp : (T, T) -> Int) -> (Int, Bool) {
+fn choose_pivot_by[T](
+  arr : FixedArraySlice[T],
+  cmp : (T, T) -> Int
+) -> (Int, Bool) {
   let len = arr.length()
   let use_median_of_medians = 50
   let max_swaps = 4 * 3

@@ -42,6 +42,10 @@ fn reverse[T](self : FixedArraySlice[T]) -> Unit {
   }
 }
 
-fn slice[T](self : FixedArraySlice[T], start : Int, end : Int) -> FixedArraySlice[T] {
+fn slice[T](
+  self : FixedArraySlice[T],
+  start : Int,
+  end : Int
+) -> FixedArraySlice[T] {
   { array: self.array, start: self.start + start, end: self.start + end }
 }

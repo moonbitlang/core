@@ -13,7 +13,7 @@
 // limitations under the License.
 
 test "to_string" {
-  let empty: Array[Int] = []
+  let empty : Array[Int] = []
   inspect(empty, content="[]")?
   let a0 = [0]
   inspect(a0, content="[0]")?
@@ -32,10 +32,7 @@ test "get" {
 
 test "op_add" {
   inspect(([] : Array[Int]) + [], content="[]")?
-  inspect(
-    ([] : Array[Int]) + [1, 2, 3, 4, 5],
-    content="[1, 2, 3, 4, 5]",
-  )?
+  inspect(([] : Array[Int]) + [1, 2, 3, 4, 5], content="[1, 2, 3, 4, 5]")?
   inspect([1, 2, 3, 4, 5] + [], content="[1, 2, 3, 4, 5]")?
   inspect(
     [1, 2, 3, 4, 5] + [6, 7, 8, 9, 10],
@@ -180,7 +177,7 @@ test "is_empty" {
 }
 
 test "is_sorted" {
-  let v: Array[Int] = []
+  let v : Array[Int] = []
   @assertion.assert_true(v.is_sorted())?
   let v = [3, 4, 5]
   @assertion.assert_true(v.is_sorted())?
@@ -199,7 +196,7 @@ test "reverse" {
   @assertion.assert_eq(v, [4, 3])?
   v.reverse()
   @assertion.assert_eq(v, [3, 4])?
-  let empty: Array[Int] = []
+  let empty : Array[Int] = []
   @assertion.assert_eq(empty, empty)?
 }
 
@@ -333,18 +330,12 @@ test "join" {
 }
 
 test "fold_left" {
-  let sum = [1, 2, 3, 4, 5].fold_left(
-    init=0,
-    fn { sum, elem => sum + elem },
-  )
+  let sum = [1, 2, 3, 4, 5].fold_left(init=0, fn { sum, elem => sum + elem })
   @assertion.assert_eq(sum, 15)?
 }
 
 test "fold_right" {
-  let sum = [1, 2, 3, 4, 5].fold_right(
-    init=0,
-    fn { sum, elem => sum + elem },
-  )
+  let sum = [1, 2, 3, 4, 5].fold_right(init=0, fn { sum, elem => sum + elem })
   @assertion.assert_eq(sum, 15)?
 }
 
@@ -383,14 +374,8 @@ test "chunks" {
   let v = [1, 2, 3, 4, 5, 6, 7, 8, 9]
   let chunks = v.chunks(3)
   let chunks2 = v.chunks(2)
-  @assertion.assert_eq(
-    chunks,
-    [[1, 2, 3], [4, 5, 6], [7, 8, 9]],
-  )?
-  @assertion.assert_eq(
-    chunks2,
-    [[1, 2], [3, 4], [5, 6], [7, 8], [9]],
-  )?
+  @assertion.assert_eq(chunks, [[1, 2, 3], [4, 5, 6], [7, 8, 9]])?
+  @assertion.assert_eq(chunks2, [[1, 2], [3, 4], [5, 6], [7, 8], [9]])?
 }
 
 test "chunk_by" {
@@ -444,9 +429,7 @@ test "shrink_to_fit_2" {
 
 test "as_iter" {
   let buf = Buffer::make(5)
-  [1, 2, 3, 4, 5].as_iter().iter(
-    fn { x => buf.write_string(x.to_string()) },
-  )
+  [1, 2, 3, 4, 5].as_iter().iter(fn { x => buf.write_string(x.to_string()) })
   inspect(buf, content="12345")?
   buf.reset()
   [1, 2, 3, 4, 5].as_iter().take(2).iter(
