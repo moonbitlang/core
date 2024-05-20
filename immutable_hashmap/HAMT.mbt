@@ -63,6 +63,10 @@ pub fn find[K : Eq + Hash, V](self : Map[K, V], key : K) -> Option[V] {
   }
 }
 
+pub fn op_get[K : Eq + Hash, V](self : Map[K, V], key : K) -> Option[V] {
+  self.find(key)
+}
+
 fn add_with_hash[K : Eq, V](
   self : Map[K, V],
   key : K,
