@@ -41,6 +41,7 @@ impl Buffer {
   reset(Self) -> Unit
   to_bytes(Self) -> Bytes
   to_string(Self) -> String
+  write_byte(Self, Byte) -> Unit
   write_char(Self, Char) -> Unit
   write_string(Self, String) -> Unit
   write_sub_string(Self, String, Int, Int) -> Unit
@@ -77,6 +78,7 @@ impl Byte {
   debug_write(Byte, Buffer) -> Unit
   op_equal(Byte, Byte) -> Bool
   to_int(Byte) -> Int
+  to_int64(Byte) -> Int64
   to_string(Byte) -> String
 }
 impl Char {
@@ -114,6 +116,7 @@ impl Int {
   op_neg(Int) -> Int
   op_sub(Int, Int) -> Int
   popcnt(Int) -> Int
+  to_byte(Int) -> Byte
   to_double(Int) -> Double
   to_int64(Int) -> Int64
   to_string(Int) -> String
@@ -145,6 +148,7 @@ impl Int64 {
   op_sub(Int64, Int64) -> Int64
   popcnt(Int64) -> Int
   reinterpret_as_double(Int64) -> Double
+  to_byte(Int64) -> Byte
   to_double(Int64) -> Double
   to_int(Int64) -> Int
   to_string(Int64) -> String
@@ -209,10 +213,10 @@ impl Bytes {
   blit_from_string(Bytes, Int, String, Int, Int) -> Unit
   copy(Bytes) -> Bytes
   length(Bytes) -> Int
-  make(Int, Int) -> Bytes
+  make(Int, ~init : Byte = ..) -> Bytes
   of_string(String) -> Bytes
-  op_get(Bytes, Int) -> Int
-  op_set(Bytes, Int, Int) -> Unit
+  op_get(Bytes, Int) -> Byte
+  op_set(Bytes, Int, Byte) -> Unit
   set_utf16_char(Bytes, Int, Char) -> Int
   set_utf8_char(Bytes, Int, Char) -> Int
   sub_string(Bytes, Int, Int) -> String

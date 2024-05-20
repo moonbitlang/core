@@ -48,7 +48,7 @@ pub fn String::default() -> String {
 
 pub fn to_bytes(self : String) -> Bytes {
   let len = self.length()
-  let bytes = Bytes::make(len * 2, 0)
+  let bytes = Bytes::make(len * 2)
   bytes.blit_from_string(0, self, 0, len)
   bytes
 }

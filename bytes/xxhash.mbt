@@ -54,9 +54,9 @@ fn avalanche(h : Int) -> Int {
 }
 
 fn endian32(input : Bytes, cur : Int) -> Int {
-  input[cur + 0].lor(
-    input[cur + 1].lsl(8).lor(
-      input[cur + 2].lsl(16).lor(input[cur + 3].lsl(24)),
+  input[cur + 0].to_int().lor(
+    input[cur + 1].to_int().lsl(8).lor(
+      input[cur + 2].to_int().lsl(16).lor(input[cur + 3].to_int().lsl(24)),
     ),
   )
 }
@@ -75,7 +75,7 @@ fn finalize(h : Int, input : Bytes, cur : Int, remain : Int) -> Int {
     )
   } else if remain > 0 {
     finalize(
-      rotl(h + input[cur] * gPRIME5, 11) * gPRIME1,
+      rotl(h + input[cur].to_int() * gPRIME5, 11) * gPRIME1,
       input,
       cur + 1,
       remain - 1,
