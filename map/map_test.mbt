@@ -195,14 +195,6 @@ test "to_desc_list" {
   )?
 }
 
-test "to_vec" {
-  let m = Map::[(1, "one"), (2, "two"), (3, "three")]
-  let v = m.to_vec()
-  @assertion.assert_eq(v[0], (1, "one"))?
-  @assertion.assert_eq(v[1], (2, "two"))?
-  @assertion.assert_eq(v[2], (3, "three"))?
-}
-
 test "keys" {
   let m = Map::[(1, "one"), (2, "two"), (3, "three")]
   @assertion.assert_eq(m.keys_list(), List::[1, 2, 3])?

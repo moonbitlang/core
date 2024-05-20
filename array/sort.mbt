@@ -12,201 +12,27 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-/// Sorts the array
-/// 
-/// It's an stable sort(it will not reorder equal elements). The time complexity is *O*(*n* \* log(*n*)) in the worst case.
-/// 
-/// # Example
-/// 
-/// ```
-/// let arr = [5, 4, 3, 2, 1]
-/// arr.stable_sort()
-/// debug(arr) //output: [1, 2, 3, 4, 5]
-/// ```
-pub fn stable_sort[T : Compare](self : Array[T]) -> Unit {
-  timsort({ array: self, start: 0, end: self.length() })
-}
-
-struct TimSortRun {
-  len : Int
-  start : Int
-}
-
-/// The algorithm identifies strictly descending and non-descending subsequences, which are called
-/// natural runs. There is a stack of pending runs yet to be merged. Each newly found run is pushed
-/// onto the stack, and then some pairs of adjacent runs are merged until these two invariants are
-/// satisfied:
-///
-/// 1. for every `i` in `1..runs.len()`: `runs[i - 1].len > runs[i].len`
-/// 2. for every `i` in `2..runs.len()`: `runs[i - 2].len > runs[i - 1].len + runs[i].len`
-///
-/// The invariants ensure that the total running time is *O*(*n* \* log(*n*)) worst-case.
-fn timsort[T : Compare](arr : ArraySlice[T]) -> Unit {
-  // Slices of up to this length get sorted using insertion sort.
-  let max_insertion = 20
-
-  // Short arrays get sorted in-place via insertion sort to avoid allocations.
-  let len = arr.length()
-  if len <= max_insertion {
-    insertion_sort(arr)
-  }
-  let mut end = 0
-  let mut start = 0
-  let runs : @vec.Vec[TimSortRun] = @vec.Vec::new()
-  while end < len {
-    let (streak_end, was_reversed) = find_streak(arr.slice(start, arr.end))
-    end += streak_end
-    if was_reversed {
-      arr.slice(start, end).reverse()
-    }
-    // Insert some more elements into the run if it's too short. Insertion sort is faster than
-    // merge sort on short sequences, so this significantly improves performance.
-    end = provide_sorted_batch(arr, start, end)
-    runs.push({ start, len: end - start })
-    start = end
-    while true {
-      match collapse(runs, len) {
-        Some(r) => {
-          let left = runs[r]
-          let right = runs[r + 1]
-          merge(arr.slice(left.start, right.start + right.len), left.len)
-          runs[r + 1] = { start: left.start, len: left.len + right.len }
-          runs.remove(r) |> ignore
-        }
-        None => break
-      }
-    }
-  }
-}
-
-fn insertion_sort[T : Compare](arr : ArraySlice[T]) -> Unit {
-  for i = 1, len = arr.length(); i < len; i = i + 1 {
-    for j = i; j > 0 && arr[j] < arr[j - 1]; j = j - 1 {
-      arr.swap(j, j - 1)
-    }
-  }
-}
-
-/// Merges non-decreasing runs `arr[..mid]` and `arr[mid..]`. Copy `arr[mid..]` to buf and merge 
-/// `buf` and `arr[..mid]` to `arr[..]`
-fn merge[T : Compare](arr : ArraySlice[T], mid : Int) -> Unit {
-  let buf_len = arr.length() - mid
-  let buf : Array[T] = Array::make(buf_len, arr[mid])
-  for i = 0; i < buf.length(); i = i + 1 {
-    buf[i] = arr[mid + i]
-  }
-  let buf = { array: buf, start: 0, end: buf_len }
-  let buf_remaining = for p1 = mid - 1, p2 = buf_len - 1, p = mid + buf_len - 1; p1 >=
-                         0 && p2 >= 0; {
-    if arr[p1] > buf[p2] {
-      arr[p] = arr[p1]
-      continue p1 - 1, p2, p - 1
-    } else {
-      arr[p] = buf[p2]
-      continue p1, p2 - 1, p - 1
-    }
-  } else {
-    p2
-  }
-  for i = buf_remaining; i >= 0; i = i - 1 {
-    arr[i] = buf[i]
-  }
-}
-
-/// Finds a streak of presorted elements starting at the beginning of the slice. Returns the first
-/// value that is not part of said streak, and a bool denoting whether the streak was reversed.
-/// Streaks can be increasing or decreasing.
-fn find_streak[T : Compare](arr : ArraySlice[T]) -> (Int, Bool) {
-  let len = arr.length()
-  if len < 2 {
-    return (len, false)
-  }
-  let assume_reverse = arr[1] < arr[0]
-  if assume_reverse {
-    for end = 2 {
-      if end < len && arr[end] < arr[end - 1] {
-        continue end + 1
-      } else {
-        break (end, true)
-      }
-    }
-  } else {
-    for end = 2 {
-      if end < len && arr[end] >= arr[end - 1] {
-        continue end + 1
-      } else {
-        break (end, false)
-      }
-    }
-  }
-}
-
-fn provide_sorted_batch[T : Compare](
-  arr : ArraySlice[T],
-  start : Int,
-  end : Int
-) -> Int {
-  let len = arr.length()
-  // This value is a balance between least comparisons and best performance, as
-  // influenced by for example cache locality.
-  let min_insertion_run = 10
-  // Insert some more elements into the run if it's too short. Insertion sort is faster than
-  // merge sort on short sequences, so this significantly improves performance.
-  let start_end_diff = end - start
-  if start_end_diff < min_insertion_run && end < len {
-    // v[start_found..end] are elements that are already sorted in the input. We want to extend
-    // the sorted region to the left, so we push up MIN_INSERTION_RUN - 1 to the right. Which is
-    // more efficient that trying to push those already sorted elements to the left.
-    let sort_end = minimum(len, start + min_insertion_run)
-    insertion_sort(arr.slice(start, sort_end))
-    sort_end
-  } else {
-    end
-  }
-}
-
-// TimSort is infamous for its buggy implementations, as described here:
-// http://envisage-project.eu/timsort-specification-and-verification/
-//
-// This function correctly checks invariants for the top four runs. Additionally, if the top
-// run starts at index 0, it will always demand a merge operation until the stack is fully
-// collapsed, in order to complete the sort.
-fn collapse(runs : @vec.Vec[TimSortRun], stop : Int) -> Option[Int] {
-  let n : Int = runs.length()
-  if n >= 2 && (runs[n - 1].start + runs[n - 1].len == stop || runs[n - 2].len <=
-  runs[n - 1].len || n >= 3 && runs[n - 3].len <= runs[n - 2].len + runs[n - 1].len ||
-  n >= 4 && runs[n - 4].len <= runs[n - 3].len + runs[n - 2].len) {
-    if n >= 3 && runs[n - 3].len < runs[n - 1].len {
-      Some(n - 3)
-    } else {
-      Some(n - 2)
-    }
-  } else {
-    None
-  }
-}
-
-/// Sorts the array
+/// Sorts the vector in place.
 /// 
 /// It's an in-place, unstable sort(it will reorder equal elements). The time complexity is O(n log n) in the worst case.
 /// 
 /// # Example
 /// 
 /// ```
-/// let arr = [5, 4, 3, 2, 1]
+/// let arr = Array::[5, 4, 3, 2, 1]
 /// arr.sort()
-/// debug(arr) //output: [1, 2, 3, 4, 5]
+/// debug(arr) //output: Array::[1, 2, 3, 4, 5]
 /// ```
 pub fn sort[T : Compare](self : Array[T]) -> Unit {
   quick_sort(
-    { array: self, start: 0, end: self.length() },
+    self.op_as_view(start=0, end=self.length()),
     None,
     get_limit(self.length()),
   )
 }
 
 fn quick_sort[T : Compare](
-  arr : ArraySlice[T],
+  arr : ArrayView[T],
   pred : Option[T],
   limit : Int
 ) -> Unit {
@@ -252,13 +78,13 @@ fn quick_sort[T : Compare](
           while i < len && pred == arr[i] {
             i = i + 1
           }
-          arr = arr.slice(i, len)
+          arr = arr.op_as_view(start=i, end=len)
           continue
         }
       _ => ()
     }
-    let left = arr.slice(0, pivot)
-    let right = arr.slice(pivot + 1, len)
+    let left = arr.op_as_view(start=0, end=pivot)
+    let right = arr.op_as_view(start=pivot + 1, end=len)
     // Reduce the stack depth by only call quick_sort on the smaller partition.
     if left.length() < right.length() {
       quick_sort(left, pred, limit)
@@ -286,10 +112,7 @@ fn get_limit(len : Int) -> Int {
 /// It will only tolerate at most 8 unsorted elements. The time complexity is O(n).
 /// 
 /// Returns whether the array is sorted.
-fn try_bubble_sort[T : Compare](
-  arr : ArraySlice[T],
-  ~max_tries : Int = 8
-) -> Bool {
+fn try_bubble_sort[T : Compare](arr : ArrayView[T], ~max_tries : Int = 8) -> Bool {
   let mut tries = 0
   for i = 1; i < arr.length(); i = i + 1 {
     let mut sorted = true
@@ -312,7 +135,7 @@ fn try_bubble_sort[T : Compare](
 /// It will only tolerate at most 8 unsorted elements. The time complexity is O(n).
 /// 
 /// Returns whether the array is sorted.
-fn bubble_sort[T : Compare](arr : ArraySlice[T]) -> Unit {
+fn bubble_sort[T : Compare](arr : ArrayView[T]) -> Unit {
   for i = 1; i < arr.length(); i = i + 1 {
     for j = i; j > 0 && arr[j - 1] > arr[j]; j = j - 1 {
       arr.swap(j, j - 1)
@@ -320,17 +143,7 @@ fn bubble_sort[T : Compare](arr : ArraySlice[T]) -> Unit {
   }
 }
 
-test "try_bubble_sort" {
-  let arr : Array[_] = [8, 7, 6, 5, 4, 3, 2, 1]
-  let sorted = try_bubble_sort({ array: arr, start: 0, end: 8 })
-  @assertion.assert_eq(sorted, true)?
-  @assertion.assert_eq(arr, [1, 2, 3, 4, 5, 6, 7, 8])?
-}
-
-fn partition[T : Compare](
-  arr : ArraySlice[T],
-  pivot_index : Int
-) -> (Int, Bool) {
+fn partition[T : Compare](arr : ArrayView[T], pivot_index : Int) -> (Int, Bool) {
   arr.swap(pivot_index, arr.length() - 1)
   let pivot = arr[arr.length() - 1]
   let mut i = 0
@@ -353,7 +166,7 @@ fn partition[T : Compare](
 /// It avoids worst case performance by choosing a pivot that is likely to be close to the median.
 /// 
 /// Returns the pivot index and whether the array is likely sorted.
-fn choose_pivot[T : Compare](arr : ArraySlice[T]) -> (Int, Bool) {
+fn choose_pivot[T : Compare](arr : ArrayView[T]) -> (Int, Bool) {
   let len = arr.length()
   let use_median_of_medians = 50
   let max_swaps = 4 * 3
@@ -390,18 +203,18 @@ fn choose_pivot[T : Compare](arr : ArraySlice[T]) -> (Int, Bool) {
   }
 }
 
-fn heap_sort[T : Compare](arr : ArraySlice[T]) -> Unit {
+fn heap_sort[T : Compare](arr : ArrayView[T]) -> Unit {
   let len = arr.length()
   for i = len / 2 - 1; i >= 0; i = i - 1 {
     sift_down(arr, i)
   }
   for i = len - 1; i > 0; i = i - 1 {
     arr.swap(0, i)
-    sift_down(arr.slice(0, i), 0)
+    sift_down(arr.op_as_view(start=0, end=i), 0)
   }
 }
 
-fn sift_down[T : Compare](arr : ArraySlice[T], index : Int) -> Unit {
+fn sift_down[T : Compare](arr : ArrayView[T], index : Int) -> Unit {
   let mut index = index
   let len = arr.length()
   let mut child = index * 2 + 1
@@ -416,91 +229,4 @@ fn sift_down[T : Compare](arr : ArraySlice[T], index : Int) -> Unit {
     index = child
     child = index * 2 + 1
   }
-}
-
-fn test_sort(f : (Array[Int]) -> Unit) -> Result[Unit, String] {
-  let arr : Array[_] = [5, 4, 3, 2, 1]
-  f(arr)
-  @assertion.assert_eq(arr, [1, 2, 3, 4, 5])?
-  let arr : Array[_] = [5, 5, 5, 5, 1]
-  f(arr)
-  @assertion.assert_eq(arr, [1, 5, 5, 5, 5])?
-  let arr : Array[_] = [1, 2, 3, 4, 5]
-  f(arr)
-  @assertion.assert_eq(arr, [1, 2, 3, 4, 5])?
-  {
-    let arr = Array::make(1000, 0)
-    for i = 0; i < 1000; i = i + 1 {
-      arr[i] = 1000 - i - 1
-    }
-    for i = 10; i < 1000; i = i + 10 {
-      arr.swap(i, i - 1)
-    }
-    f(arr)
-    let expected = Array::make(1000, 0)
-    for i = 0; i < 1000; i = i + 1 {
-      expected[i] = i
-    }
-    @assertion.assert_eq(arr, expected)?
-  }
-  Ok(())
-}
-
-test "heap_sort" {
-  test_sort(fn(arr) { heap_sort({ array: arr, start: 0, end: arr.length() }) })?
-}
-
-test "bubble_sort" {
-  test_sort(
-    fn(arr) { bubble_sort({ array: arr, start: 0, end: arr.length() }) },
-  )?
-}
-
-test "sort" {
-  test_sort(fn(arr) { arr.sort() })?
-}
-
-test "stable_sort" {
-  let arr : Array[_] = [5, 1, 3, 4, 2]
-  arr.stable_sort()
-  @assertion.assert_eq(arr, [1, 2, 3, 4, 5])?
-  let arr = Array::make(1000, 0)
-  for i = 0; i < 1000; i = i + 1 {
-    arr[i] = 1000 - i - 1
-  }
-  for i = 10; i < 1000; i = i + 10 {
-    arr.swap(i, i - 1)
-  }
-  arr.stable_sort()
-  let expected = Array::make(1000, 0)
-  for i = 0; i < 1000; i = i + 1 {
-    expected[i] = i
-  }
-  @assertion.assert_eq(arr, expected)?
-}
-
-pub fn is_sorted[T : Compare](arr : Array[T]) -> Bool {
-  for i = 1; i < arr.length(); i = i + 1 {
-    if arr[i] < arr[i - 1] {
-      break false
-    }
-  } else {
-    true
-  }
-}
-
-test "stable_sort_complex" {
-  let run_lens = [86, 64, 21, 20, 22]
-  let total_len = run_lens.fold_left(init=0, fn { acc, x => acc + x })
-  let arr = Array::make(total_len, 0)
-  let mut index = 0
-  for i = 0, len = run_lens.length(); i < len; i = i + 1 {
-    for j = 0; j < run_lens[i]; j = j + 1 {
-      arr[index] = j
-      index += 1
-    }
-  }
-  @assertion.assert_false(is_sorted(arr))?
-  arr.stable_sort()
-  @assertion.assert_true(is_sorted(arr))?
 }

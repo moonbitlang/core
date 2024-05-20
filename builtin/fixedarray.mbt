@@ -12,17 +12,17 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-priv type UninitializedArray[T] Array[UnsafeMaybeUninit[T]]
-
-/// A `Vec` is a generic vector (dynamic array) that can grow in size.
-struct Vec[T] {
-  mut buf : UninitializedArray[T]
-  mut len : Int
+pub fn to_string[X : Show](self : FixedArray[X]) -> String {
+  let mut acc = "["
+  for i = 0; i < self.length(); i = i + 1 {
+    if i > 0 {
+      acc = acc + ", "
+    }
+    acc = acc + self[i].to_string()
+  }
+  acc + "]"
 }
 
-/// A `VecView` is a slice of a `Vec`.
-struct VecView[T] {
-  buf : UninitializedArray[T]
-  start : Int
-  len : Int
+pub fn FixedArray::default[X]() -> FixedArray[X] {
+  []
 }

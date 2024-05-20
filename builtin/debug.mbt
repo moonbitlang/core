@@ -76,6 +76,17 @@ pub fn debug_write[X : Debug](self : Ref[X], buf : Buffer) -> Unit {
   buf.write_string("}")
 }
 
+pub fn debug_write[X : Debug](self : FixedArray[X], buf : Buffer) -> Unit {
+  buf.write_char('[')
+  for i = 0; i < self.length(); i = i + 1 {
+    if i > 0 {
+      buf.write_string(", ")
+    }
+    self[i].debug_write(buf)
+  }
+  buf.write_char(']')
+}
+
 pub fn debug_write[X : Debug](self : Array[X], buf : Buffer) -> Unit {
   buf.write_char('[')
   for i = 0; i < self.length(); i = i + 1 {

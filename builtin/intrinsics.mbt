@@ -216,19 +216,19 @@ pub fn Int64::to_byte(self : Int64) -> Byte {
   identity(self.to_int().land(0xFF))
 }
 
-// Array primitive ops
+// FixedArray primitive ops
 
-pub fn Array::op_get[T](self : Array[T], idx : Int) -> T = "%array_get"
+pub fn FixedArray::op_get[T](self : FixedArray[T], idx : Int) -> T = "%array_get"
 
-pub fn Array::get[T](self : Array[T], idx : Int) -> T = "%array_get"
+pub fn FixedArray::get[T](self : FixedArray[T], idx : Int) -> T = "%array_get"
 
-pub fn Array::op_set[T](self : Array[T], idx : Int, val : T) -> Unit = "%array_set"
+pub fn FixedArray::op_set[T](self : FixedArray[T], idx : Int, val : T) -> Unit = "%array_set"
 
-pub fn Array::set[T](self : Array[T], idx : Int, val : T) -> Unit = "%array_set"
+pub fn FixedArray::set[T](self : FixedArray[T], idx : Int, val : T) -> Unit = "%array_set"
 
-pub fn Array::length[T](self : Array[T]) -> Int = "%array_length"
+pub fn FixedArray::length[T](self : FixedArray[T]) -> Int = "%array_length"
 
-pub fn Array::make[T](len : Int, init : T) -> Array[T] = "%array_make"
+pub fn FixedArray::make[T](len : Int, init : T) -> FixedArray[T] = "%array_make"
 
 // String primitive ops
 

@@ -769,13 +769,6 @@ pub fn to_array[T : Compare](self : MutableSet[T]) -> Array[T] {
   aux(self.root)
 }
 
-/// Convert MutableSet[T] to Vec[T], the result must be ordered.
-pub fn to_vec[T : Compare](self : MutableSet[T]) -> @vec.Vec[T] {
-  // This approach is better than vec splicing implementation 
-  // due to the scaling cost of Vec
-  @vec.from_array(self.to_array())
-}
-
 /// Convert MutableSet[T] to String, the result must be ordered.
 pub fn to_string[T : Compare + Show](self : MutableSet[T]) -> String {
   match self.root {
@@ -816,8 +809,8 @@ fn to_string[T : Show](self : Node[T]) -> String {
 // # Convert from
 // Convert from other data structures to MutableSet.
 
-/// Initialize an MutableSet[T] from a Array[T]
-pub fn MutableSet::from_array[T : Compare](array : Array[T]) -> MutableSet[T] {
+/// Initialize an MutableSet[T] from a FixedArray[T]
+pub fn MutableSet::from_fixed_array[T : Compare](array : FixedArray[T]) -> MutableSet[T] {
   let set = MutableSet::new()
   for i = 0; i < array.length(); i = i + 1 {
     set.add(array[i])
@@ -832,10 +825,10 @@ pub fn MutableSet::from_list[T : Compare](list : List[T]) -> MutableSet[T] {
   set
 }
 
-/// Initialize an MutableSet[T] from a Vec[T]
-pub fn MutableSet::from_vec[T : Compare](vec : @vec.Vec[T]) -> MutableSet[T] {
+/// Initialize an MutableSet[T] from a Array[T]
+pub fn MutableSet::from_array[T : Compare](array : Array[T]) -> MutableSet[T] {
   let set = MutableSet::new()
-  vec.iter(fn(x) { set.add(x) })
+  array.iter(fn(x) { set.add(x) })
   set
 }
 
@@ -1233,13 +1226,6 @@ test "to_array" {
   inspect((MutableSet::[] : MutableSet[Int]).to_array(), content="[]")?
 }
 
-test "to_vec" {
-  inspect(
-    MutableSet::[7, 2, 9, 4, 5, 6, 3, 8, 1].to_vec(),
-    content="Vec::[1, 2, 3, 4, 5, 6, 7, 8, 9]",
-  )?
-}
-
 test "to_string" {
   inspect(MutableSet::[1, 2, 3, 4, 5], content="MutableSet::[1, 2, 3, 4, 5]")?
   inspect((MutableSet::[] : MutableSet[Int]), content="MutableSet::[]")?
@@ -1265,13 +1251,6 @@ test "from_list" {
 test "from_array" {
   inspect(
     MutableSet::[7, 2, 9, 4, 5, 6, 3, 8, 1],
-    content="MutableSet::[1, 2, 3, 4, 5, 6, 7, 8, 9]",
-  )?
-}
-
-test "from_vec" {
-  inspect(
-    MutableSet::from_vec(@vec.from_array([7, 2, 9, 4, 5, 6, 3, 8, 1])),
     content="MutableSet::[1, 2, 3, 4, 5, 6, 7, 8, 9]",
   )?
 }

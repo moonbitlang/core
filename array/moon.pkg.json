@@ -1,10 +1,8 @@
 {
   "import": [
     "moonbitlang/core/builtin",
-    "moonbitlang/core/assertion",
-    
     "moonbitlang/core/coverage",
-    "moonbitlang/core/vec",
     "moonbitlang/core/iter"
-  ]
+  ],
+  "test_import": ["moonbitlang/core/assertion"]
 }

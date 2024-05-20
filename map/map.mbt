@@ -109,15 +109,15 @@ pub fn filter_with_key[K : Compare, V](
   }
 }
 
-/// Convert to a vector of key-value pairs.
-pub fn to_vec[K, V](self : Map[K, V]) -> @vec.Vec[(K, V)] {
-  let vec = @vec.new()
-  self.iter(fn(k, v) { vec.push((k, v)) })
-  vec
+/// Convert to an array of key-value pairs.
+pub fn to_array[K, V](self : Map[K, V]) -> Array[(K, V)] {
+  let arr = Array::new()
+  self.iter(fn(k, v) { arr.push((k, v)) })
+  arr
 }
 
 pub fn op_equal[K : Eq, V : Eq](self : Map[K, V], other : Map[K, V]) -> Bool {
-  self.to_vec() == other.to_vec()
+  self.to_array() == other.to_array()
 }
 
 /// The ratio between the sizes of the left and right subtrees.

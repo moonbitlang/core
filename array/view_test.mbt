@@ -12,12 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-priv type UninitializedArray[T] FixedArray[UnsafeMaybeUninit[T]]
-
-// head and tail point to non-empty slots. When the buffer is empty, head and tail points to the same slot.
-struct Devec[T] {
-  mut buf : UninitializedArray[T]
-  mut len : Int
-  mut head : Int
-  mut tail : Int
+test "slice" {
+  let v = [1, 2, 3, 4, 5]
+  let s = v[1..4]
+  @assertion.assert_eq(s.length(), 3)?
+  @assertion.assert_eq(s[0], 2)?
+  @assertion.assert_eq(s[1], 3)?
 }
