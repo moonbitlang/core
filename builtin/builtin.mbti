@@ -34,6 +34,79 @@ impl ArgsLoc {
   to_string(Self) -> String
 }
 
+type Array
+impl Array {
+  append[T](Self[T], Self[T]) -> Unit
+  capacity[T](Self[T]) -> Int
+  chunk_by[T](Self[T], (T, T) -> Bool) -> Self[Self[T]]
+  chunks[T](Self[T], Int) -> Self[Self[T]]
+  clear[T](Self[T]) -> Unit
+  contains[T : Eq](Self[T], T) -> Bool
+  debug_write[X : Debug](Self[X], Buffer) -> Unit
+  dedup[T : Eq](Self[T]) -> Unit
+  drain[T](Self[T], Int, Int) -> Self[T]
+  ends_with[T : Eq](Self[T], Self[T]) -> Bool
+  extract_if[T](Self[T], (T) -> Bool) -> Self[T]
+  fill[T](Self[T], T) -> Unit
+  fill_with[T](Self[T], () -> T) -> Unit
+  flatten[T](Self[Self[T]]) -> Self[T]
+  fold_left[T, U](Self[T], (U, T) -> U, ~init : U) -> U
+  fold_lefti[T, U](Self[T], (Int, U, T) -> U, ~init : U) -> U
+  fold_right[T, U](Self[T], (U, T) -> U, ~init : U) -> U
+  fold_righti[T, U](Self[T], (Int, U, T) -> U, ~init : U) -> U
+  from_fixed_array[T](FixedArray[T]) -> Self[T]
+  get[T](Self[T], Int) -> Option[T]
+  insert[T](Self[T], Int, T) -> Unit
+  is_empty[T](Self[T]) -> Bool
+  is_sorted[T : Compare + Eq](Self[T]) -> Bool
+  iter[T](Self[T], (T) -> Unit) -> Unit
+  iter_rev[T](Self[T], (T) -> Unit) -> Unit
+  iter_revi[T](Self[T], (Int, T) -> Unit) -> Unit
+  iteri[T](Self[T], (Int, T) -> Unit) -> Unit
+  join[T](Self[Self[T]], T) -> Self[T]
+  length[T](Self[T]) -> Int
+  make[T](Int, T) -> Self[T]
+  map[T, U](Self[T], (T) -> U) -> Self[U]
+  map_inplace[T](Self[T], (T) -> T) -> Unit
+  mapi[T, U](Self[T], (Int, T) -> U) -> Self[U]
+  mapi_inplace[T](Self[T], (Int, T) -> T) -> Unit
+  new[T]() -> Self[T]
+  op_add[T](Self[T], Self[T]) -> Self[T]
+  op_as_view[T](Self[T], ~start : Int, ~end : Int) -> ArrayView[T]
+  op_equal[T : Eq](Self[T], Self[T]) -> Bool
+  op_get[T](Self[T], Int) -> T
+  op_set[T](Self[T], Int, T) -> Unit
+  pop[T](Self[T]) -> Option[T]
+  pop_exn[T](Self[T]) -> T
+  push[T](Self[T], T) -> Unit
+  remove[T](Self[T], Int) -> T
+  repeat[T](Self[T], Int) -> Self[T]
+  reserve_capacity[T](Self[T], Int) -> Unit
+  resize[T](Self[T], Int, T) -> Unit
+  retain[T](Self[T], (T) -> Bool) -> Unit
+  reverse[T](Self[T]) -> Unit
+  search[T : Eq](Self[T], T) -> Option[Int]
+  shrink_to_fit[T](Self[T]) -> Unit
+  split[T](Self[T], (T) -> Bool) -> Self[Self[T]]
+  split_at[T](Self[T], Int) -> Tuple[Self[T], Self[T]]
+  starts_with[T : Eq](Self[T], Self[T]) -> Bool
+  strip_prefix[T : Eq](Self[T], Self[T]) -> Option[Self[T]]
+  strip_suffix[T : Eq](Self[T], Self[T]) -> Option[Self[T]]
+  swap[T](Self[T], Int, Int) -> Unit
+  to_list[T](Self[T]) -> List[T]
+  to_string[T : Show](Self[T]) -> String
+  with_capacity[T](Int) -> Self[T]
+}
+
+type ArrayView
+impl ArrayView {
+  length[T](Self[T]) -> Int
+  op_as_view[T](Self[T], ~start : Int, ~end : Int) -> Self[T]
+  op_get[T](Self[T], Int) -> T
+  op_set[T](Self[T], Int, T) -> Unit
+  swap[T](Self[T], Int, Int) -> Unit
+}
+
 type Buffer
 impl Buffer {
   expect(Self, ~content : String = .., ~loc : SourceLoc = _, ~args_loc : ArgsLoc = _) -> Result[Unit, String]
@@ -197,7 +270,7 @@ impl List {
   op_equal[X : Eq](Self[X], Self[X]) -> Bool
   to_string[X : Debug](Self[X]) -> String
 }
-impl Array {
+impl FixedArray {
   debug_write[X : Debug](Self[X], Buffer) -> Unit
   default[X]() -> Self[X]
   get[T](Self[T], Int) -> T
@@ -212,6 +285,7 @@ impl Bytes {
   blit(Bytes, Int, Bytes, Int, Int) -> Unit
   blit_from_string(Bytes, Int, String, Int, Int) -> Unit
   copy(Bytes) -> Bytes
+  debug_write(Bytes, Buffer) -> Unit
   length(Bytes) -> Int
   make(Int, ~init : Byte = ..) -> Bytes
   of_string(String) -> Bytes

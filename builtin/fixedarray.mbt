@@ -12,10 +12,17 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-test "slice" {
-  let v = Vec::[1, 2, 3, 4, 5]
-  let s = v[1..4]
-  @assertion.assert_eq(s.length(), 3)?
-  @assertion.assert_eq(s[0], 2)?
-  @assertion.assert_eq(s[1], 3)?
+pub fn to_string[X : Show](self : FixedArray[X]) -> String {
+  let mut acc = "["
+  for i = 0; i < self.length(); i = i + 1 {
+    if i > 0 {
+      acc = acc + ", "
+    }
+    acc = acc + self[i].to_string()
+  }
+  acc + "]"
+}
+
+pub fn FixedArray::default[X]() -> FixedArray[X] {
+  []
 }

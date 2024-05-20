@@ -13,13 +13,13 @@
 // limitations under the License.
 
 test "try_bubble_sort" {
-  let arr = Vec::[8, 7, 6, 5, 4, 3, 2, 1]
+  let arr = [8, 7, 6, 5, 4, 3, 2, 1]
   let sorted = try_bubble_sort_by(
     arr.op_as_view(start=0, end=8),
     fn(a, b) { a - b },
   )
   @assertion.assert_eq(sorted, true)?
-  @assertion.assert_eq(arr, Vec::[1, 2, 3, 4, 5, 6, 7, 8])?
+  @assertion.assert_eq(arr, [1, 2, 3, 4, 5, 6, 7, 8])?
 }
 
 test "heap_sort" {
@@ -45,9 +45,9 @@ test "bubble_sort" {
 }
 
 test "sort_by_key" {
-  let arr = Vec::[5, 1, 3, 4, 2]
+  let arr = [5, 1, 3, 4, 2]
   arr.sort_by_key(fn(x) { -x })
-  @assertion.assert_eq(arr, Vec::[5, 4, 3, 2, 1])?
+  @assertion.assert_eq(arr, [5, 4, 3, 2, 1])?
 }
 
 test "sort_by" {

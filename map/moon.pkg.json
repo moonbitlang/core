@@ -5,7 +5,7 @@
     "moonbitlang/core/tuple",
     
     "moonbitlang/core/string",
-    "moonbitlang/core/vec",
+    "moonbitlang/core/array",
     "moonbitlang/core/coverage"
   ],
   "test_import": ["moonbitlang/core/immutable_set","moonbitlang/core/list"]

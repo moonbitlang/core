@@ -1,7 +1,5 @@
 package moonbitlang/core/mutable_set
 
-alias @moonbitlang/core/vec as @vec
-
 // Values
 
 // Types and methods
@@ -15,8 +13,8 @@ impl MutableSet {
   disjoint[T : Compare + Eq](Self[T], Self[T]) -> Bool
   filter[T : Compare + Eq](Self[T], (T) -> Bool) -> Self[T]
   from_array[T : Compare + Eq](Array[T]) -> Self[T]
+  from_fixed_array[T : Compare + Eq](FixedArray[T]) -> Self[T]
   from_list[T : Compare + Eq](List[T]) -> Self[T]
-  from_vec[T : Compare + Eq](@vec.Vec[T]) -> Self[T]
   intersect[T : Compare + Eq](Self[T], Self[T]) -> Self[T]
   is_empty[T : Compare + Eq](Self[T]) -> Bool
   iter[T : Compare + Eq](Self[T], (T) -> Unit) -> Unit
@@ -29,7 +27,6 @@ impl MutableSet {
   to_array[T : Compare + Eq](Self[T]) -> Array[T]
   to_list[T : Compare + Eq](Self[T]) -> List[T]
   to_string[T : Compare + Show + Eq](Self[T]) -> String
-  to_vec[T : Compare + Eq](Self[T]) -> @vec.Vec[T]
   union[T : Compare + Eq](Self[T], Self[T]) -> Self[T]
 }
 

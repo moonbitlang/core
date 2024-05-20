@@ -12,18 +12,18 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-fn test_sort(f : (Vec[Int]) -> Unit) -> Result[Unit, String] {
-  let arr = Vec::[5, 4, 3, 2, 1]
+fn test_sort(f : (Array[Int]) -> Unit) -> Result[Unit, String] {
+  let arr = [5, 4, 3, 2, 1]
   f(arr)
-  @assertion.assert_eq(arr, Vec::[1, 2, 3, 4, 5])?
-  let arr = Vec::[5, 5, 5, 5, 1]
+  @assertion.assert_eq(arr, [1, 2, 3, 4, 5])?
+  let arr = [5, 5, 5, 5, 1]
   f(arr)
-  @assertion.assert_eq(arr, Vec::[1, 5, 5, 5, 5])?
-  let arr = Vec::[1, 2, 3, 4, 5]
+  @assertion.assert_eq(arr, [1, 5, 5, 5, 5])?
+  let arr = [1, 2, 3, 4, 5]
   f(arr)
-  @assertion.assert_eq(arr, Vec::[1, 2, 3, 4, 5])?
+  @assertion.assert_eq(arr, [1, 2, 3, 4, 5])?
   {
-    let arr = Vec::with_capacity(1000)
+    let arr = with_capacity(1000)
     for i = 0; i < 1000; i = i + 1 {
       arr.push(1000 - i - 1)
     }
@@ -31,7 +31,7 @@ fn test_sort(f : (Vec[Int]) -> Unit) -> Result[Unit, String] {
       arr.swap(i, i - 1)
     }
     f(arr)
-    let expected = Vec::with_capacity(1000)
+    let expected = with_capacity(1000)
     for i = 0; i < 1000; i = i + 1 {
       expected.push(i)
     }
@@ -41,18 +41,18 @@ fn test_sort(f : (Vec[Int]) -> Unit) -> Result[Unit, String] {
 }
 
 test "try_bubble_sort" {
-  let arr = Vec::[8, 7, 6, 5, 4, 3, 2, 1]
+  let arr = [8, 7, 6, 5, 4, 3, 2, 1]
   let sorted = try_bubble_sort(arr.op_as_view(start=0, end=8))
   @assertion.assert_eq(sorted, true)?
-  @assertion.assert_eq(arr, Vec::[1, 2, 3, 4, 5, 6, 7, 8])?
+  @assertion.assert_eq(arr, [1, 2, 3, 4, 5, 6, 7, 8])?
 }
 
 test "heap_sort" {
-  test_sort(fn(arr) { heap_sort(arr.op_as_view(start=0, end=arr.len)) })?
+  test_sort(fn(arr) { heap_sort(arr.op_as_view(start=0, end=arr.length())) })?
 }
 
 test "bubble_sort" {
-  test_sort(fn(arr) { bubble_sort(arr.op_as_view(start=0, end=arr.len)) })?
+  test_sort(fn(arr) { bubble_sort(arr.op_as_view(start=0, end=arr.length())) })?
 }
 
 test "sort" {

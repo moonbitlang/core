@@ -14,9 +14,9 @@
 
 /// @intrinsic %array.copy
 fn unsafe_blit[A](
-  dst : Array[A],
+  dst : FixedArray[A],
   dst_offset : Int,
-  src : Array[A],
+  src : FixedArray[A],
   src_offset : Int,
   len : Int
 ) -> Unit {
@@ -32,8 +32,8 @@ fn unsafe_blit[A](
 }
 
 pub fn blit_to[A](
-  self : Array[A],
-  dst : Array[A],
+  self : FixedArray[A],
+  dst : FixedArray[A],
   ~len : Int,
   ~src_offset : Int = 0,
   ~dst_offset : Int = 0
@@ -44,26 +44,26 @@ pub fn blit_to[A](
   unsafe_blit(dst, dst_offset, self, src_offset, len)
 }
 
-pub fn copy[T](self : Array[T]) -> Array[T] {
+pub fn copy[T](self : FixedArray[T]) -> FixedArray[T] {
   let len = self.length()
   if len == 0 {
     []
   } else {
-    let arr = Array::make(len, self[0])
+    let arr = FixedArray::make(len, self[0])
     unsafe_blit(arr, 0, self, 0, len)
     arr
   }
 }
 
 test "copy" {
-  let a : Array[_] = [1, 2, 3, 4]
+  let a : FixedArray[_] = [1, 2, 3, 4]
   let b = a.copy()
   inspect(b, content="[1, 2, 3, 4]")?
   inspect(physical_equal(b, a), content="false")?
-  let c = Array::make(8, 0)
+  let c = FixedArray::make(8, 0)
   a.blit_to(c, len=4, dst_offset=3)
   inspect(c, content="[0, 0, 0, 1, 2, 3, 4, 0]")?
-  inspect(([] : Array[Int]).copy(), content="[]")?
+  inspect(([] : FixedArray[Int]).copy(), content="[]")?
   a.blit_to(a, len=2, src_offset=1)
   inspect(a, content="[2, 3, 3, 4]")?
 }

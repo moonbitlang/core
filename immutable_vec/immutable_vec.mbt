@@ -198,28 +198,6 @@ test "from_array" {
   )?
 }
 
-/// Create a persistent vector from a vector.
-/// 
-/// # Example
-/// ```
-/// let v = ImmutableVec::from_vector(@vec.from_array([1, 2, 3, 4, 5]))
-/// ```
-pub fn ImmutableVec::from_vector[T](vec : @vec.Vec[T]) -> ImmutableVec[T] {
-  new_by_leaves(
-    vec.length(),
-    fn(s, l) { @array.new_with_index(l, fn(i) { vec[s + i] }) },
-  )
-}
-
-test "from_vector" {
-  let v : ImmutableVec[Int] = ImmutableVec::from_vector(
-    @vec.from_array([1, 2, 3, 4, 5]),
-  )
-  let v1 : ImmutableVec[Int] = ImmutableVec::from_vector(@vec.from_array([]))
-  inspect(v, content="ImmutableVec::[1, 2, 3, 4, 5]")?
-  inspect(v1, content="ImmutableVec::[]")?
-}
-
 /// Iterate over the vector.
 /// 
 /// # Example
@@ -284,9 +262,9 @@ test "iteri" {
   let mut s = 0
   v.iteri(fn(i, e) { s = s + i * e })
   inspect(s, content="40")?
-  let vec = @vec.new()
+  let vec = Array::new()
   v.iteri(fn(i, _e) { vec.push(i) })
-  inspect(vec, content="Vec::[0, 1, 2, 3, 4]")?
+  inspect(vec, content="[0, 1, 2, 3, 4]")?
 }
 
 pub fn op_equal[T : Eq](
@@ -521,7 +499,7 @@ test "mix" {
   for i = 0; i < large_const; i = i + 1 {
     v = v.push(i)
   }
-  let vec = @vec.new()
+  let vec = Array::new()
   v.iteri(fn(i, _e) { vec.push(i) })
   for i = 0; i < large_const; i = i + 1 {
     @assertion.assert_eq(vec[i], i)?

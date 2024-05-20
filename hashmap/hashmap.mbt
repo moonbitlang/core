@@ -21,7 +21,7 @@ pub fn HashMap::new[K, V]() -> HashMap[K, V] {
     size: 0,
     capacity: default_init_capacity,
     growAt: calc_grow_threshold(default_init_capacity),
-    entries: @array.new(default_init_capacity, fn() { Empty }),
+    entries: Array::make(default_init_capacity, Empty),
   }
 }
 
@@ -169,11 +169,11 @@ fn grow[K : Hash + Eq, V](self : HashMap[K, V]) -> Unit {
     self.capacity = default_init_capacity
     self.growAt = calc_grow_threshold(self.capacity)
     self.size = 0
-    self.entries = @array.new(self.capacity, fn() { Empty })
+    self.entries = Array::make(self.capacity, Empty)
     return
   }
   let old_entries = self.entries
-  self.entries = @array.new(self.capacity * 2, fn() { Empty })
+  self.entries = Array::make(self.capacity * 2, Empty)
   self.capacity = self.capacity * 2
   self.growAt = calc_grow_threshold(self.capacity)
   self.size = 0

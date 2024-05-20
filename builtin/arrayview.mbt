@@ -12,11 +12,18 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-pub fn length[T](self : VecView[T]) -> Int {
+/// A `ArrayView` is a slice of a `Array`.
+struct ArrayView[T] {
+  buf : UninitializedArray[T]
+  start : Int
+  len : Int
+}
+
+pub fn length[T](self : ArrayView[T]) -> Int {
   self.len
 }
 
-pub fn op_get[T](self : VecView[T], index : Int) -> T {
+pub fn op_get[T](self : ArrayView[T], index : Int) -> T {
   if index < 0 || index >= self.len {
     let len = self.len
     abort(
@@ -26,7 +33,7 @@ pub fn op_get[T](self : VecView[T], index : Int) -> T {
   self.buf[self.start + index]
 }
 
-pub fn op_set[T](self : VecView[T], index : Int, value : T) -> Unit {
+pub fn op_set[T](self : ArrayView[T], index : Int, value : T) -> Unit {
   if index < 0 || index >= self.len {
     let len = self.len
     abort(
@@ -36,7 +43,7 @@ pub fn op_set[T](self : VecView[T], index : Int, value : T) -> Unit {
   self.buf[self.start + index] = value
 }
 
-pub fn swap[T](self : VecView[T], i : Int, j : Int) -> Unit {
+pub fn swap[T](self : ArrayView[T], i : Int, j : Int) -> Unit {
   if i >= self.len || j >= self.len || i < 0 || j < 0 {
     let len = self.len
     abort(
@@ -48,15 +55,7 @@ pub fn swap[T](self : VecView[T], i : Int, j : Int) -> Unit {
   self.buf[self.start + j] = temp
 }
 
-pub fn reverse[T](self : VecView[T]) -> Unit {
-  let mid_len = self.length() / 2
-  for i = 0; i < mid_len; i = i + 1 {
-    let j = self.length() - i - 1
-    self.swap(i, j)
-  }
-}
-
-pub fn op_as_view[T](self : Vec[T], ~start : Int, ~end : Int) -> VecView[T] {
+pub fn op_as_view[T](self : Array[T], ~start : Int, ~end : Int) -> ArrayView[T] {
   if start < 0 {
     abort("Slice start index out of bounds")
   } else if end > self.length() {
@@ -64,10 +63,14 @@ pub fn op_as_view[T](self : Vec[T], ~start : Int, ~end : Int) -> VecView[T] {
   } else if start > end {
     abort("Slice start index greater than end index")
   }
-  VecView::{ buf: self.buf, start, len: end - start }
+  ArrayView::{ buf: self.buf, start, len: end - start }
 }
 
-pub fn op_as_view[T](self : VecView[T], ~start : Int, ~end : Int) -> VecView[T] {
+pub fn op_as_view[T](
+  self : ArrayView[T],
+  ~start : Int,
+  ~end : Int
+) -> ArrayView[T] {
   if start < 0 {
     abort("Slice start index out of bounds")
   } else if end > self.length() {
@@ -75,5 +78,5 @@ pub fn op_as_view[T](self : VecView[T], ~start : Int, ~end : Int) -> VecView[T] 
   } else if start > end {
     abort("Slice start index greater than end index")
   }
-  VecView::{ buf: self.buf, start: self.start + start, len: end - start }
+  ArrayView::{ buf: self.buf, start: self.start + start, len: end - start }
 }

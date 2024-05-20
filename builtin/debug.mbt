@@ -41,6 +41,10 @@ pub fn debug_write(self : Int64, buf : Buffer) -> Unit {
   buf.write_string(self.to_string())
 }
 
+pub fn debug_write(self : Bytes, buf : Buffer) -> Unit {
+  buf.write_string(self.to_string())
+}
+
 pub fn debug_write[X : Debug](self : Option[X], buf : Buffer) -> Unit {
   match self {
     None => buf.write_string("None")
@@ -74,6 +78,17 @@ pub fn debug_write[X : Debug](self : Ref[X], buf : Buffer) -> Unit {
   buf.write_string("{val: ")
   self.val.debug_write(buf)
   buf.write_string("}")
+}
+
+pub fn debug_write[X : Debug](self : FixedArray[X], buf : Buffer) -> Unit {
+  buf.write_char('[')
+  for i = 0; i < self.length(); i = i + 1 {
+    if i > 0 {
+      buf.write_string(", ")
+    }
+    self[i].debug_write(buf)
+  }
+  buf.write_char(']')
 }
 
 pub fn debug_write[X : Debug](self : Array[X], buf : Buffer) -> Unit {

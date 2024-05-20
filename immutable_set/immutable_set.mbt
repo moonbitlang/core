@@ -68,19 +68,19 @@ pub fn to_list[T : Compare](self : ImmutableSet[T]) -> List[T] {
 }
 
 /// Convert ImmutableSet[T] to Array[T], the result must be ordered.
-pub fn to_array[T : Compare](self : ImmutableSet[T]) -> Array[T] {
+pub fn to_fixed_array[T : Compare](self : ImmutableSet[T]) -> FixedArray[T] {
   match self {
     Empty => []
     Node(~left, ~value, ~right, ..) =>
-      to_array(left) + [value] + to_array(right)
+      to_fixed_array(left) + [value] + to_fixed_array(right)
   }
 }
 
-/// Convert ImmutableSet[T] to Vec[T], the result must be ordered.
-pub fn to_vec[T : Compare](self : ImmutableSet[T]) -> @vec.Vec[T] {
+/// Convert ImmutableSet[T] to Array[T], the result must be ordered.
+pub fn to_array[T : Compare](self : ImmutableSet[T]) -> Array[T] {
   // This approach is better than using vec splicing implementation 
   // due to the existence of scaling costs for Vec
-  @vec.from_array(self.to_array())
+  Array::from_fixed_array(self.to_fixed_array())
 }
 
 /// Remove the smallest value,

@@ -193,13 +193,6 @@ test "to_array" {
   )?
 }
 
-test "to_vec" {
-  inspect(
-    ImmutableSet::[7, 2, 9, 4, 5, 6, 3, 8, 1].to_vec(),
-    content="Vec::[1, 2, 3, 4, 5, 6, 7, 8, 9]",
-  )?
-}
-
 test "from_array" {
   inspect(
     ImmutableSet::[7, 2, 9, 4, 5, 6, 3, 8, 1],

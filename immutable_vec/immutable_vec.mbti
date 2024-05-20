@@ -1,7 +1,5 @@
 package moonbitlang/core/immutable_vec
 
-alias @moonbitlang/core/vec as @vec
-
 // Values
 fn immutable_push[T](Array[T], T) -> Array[T]
 
@@ -20,7 +18,6 @@ impl ImmutableVec {
   fold_left[T](Self[T], (T, T) -> T, ~init : T) -> T
   fold_right[T](Self[T], (T, T) -> T, ~init : T) -> T
   from_array[T](Array[T]) -> Self[T]
-  from_vector[T](@vec.Vec[T]) -> Self[T]
   iter[T](Self[T], (T) -> Unit) -> Unit
   iteri[T](Self[T], (Int, T) -> Unit) -> Unit
   map[T, U](Self[T], (T) -> U) -> Self[U]

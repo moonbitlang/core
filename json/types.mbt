@@ -17,6 +17,6 @@ pub enum JsonValue {
   Boolean(Bool)
   Number(Double)
   String(String)
-  Array(@vec.Vec[JsonValue])
+  Array(Array[JsonValue])
   Object(@map.Map[String, JsonValue])
 } derive(Eq, Debug, Show)
