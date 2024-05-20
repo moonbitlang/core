@@ -49,15 +49,15 @@ pub fn Int64::min_value() -> Int64 {
 }
 
 pub fn hash(self : Int64) -> Int {
-  let b = Bytes::make(8, 0)
-  b[0] = self.lsr(56).to_int()
-  b[1] = self.lsr(48).land(0xFFL).to_int()
-  b[2] = self.lsr(40).land(0xFFL).to_int()
-  b[3] = self.lsr(32).land(0xFFL).to_int()
-  b[4] = self.lsr(24).land(0xFFL).to_int()
-  b[5] = self.lsr(16).land(0xFFL).to_int()
-  b[6] = self.lsr(8).land(0xFFL).to_int()
-  b[7] = self.land(0xFFL).to_int()
+  let b = Bytes::make(8)
+  b[0] = self.lsr(56).to_byte()
+  b[1] = self.lsr(48).land(0xFFL).to_byte()
+  b[2] = self.lsr(40).land(0xFFL).to_byte()
+  b[3] = self.lsr(32).land(0xFFL).to_byte()
+  b[4] = self.lsr(24).land(0xFFL).to_byte()
+  b[5] = self.lsr(16).land(0xFFL).to_byte()
+  b[6] = self.lsr(8).land(0xFFL).to_byte()
+  b[7] = self.land(0xFFL).to_byte()
   b.hash()
 }
 
