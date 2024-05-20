@@ -60,3 +60,12 @@ pub fn hash(self : Int64) -> Int {
   b[7] = self.land(0xFFL).to_int()
   b.hash()
 }
+
+test "int64 hash" {
+  @assertion.assert_eq(0L.hash(), 0L.hash())?
+  @assertion.assert_eq(1L.hash(), 1L.hash())?
+  @assertion.assert_ne(0L.hash(), 1L.hash())?
+  @assertion.assert_eq(0x7fffffffffffffffL.hash(), 0x7fffffffffffffffL.hash())?
+  @assertion.assert_ne(0x7fffffffffffffffL.hash(), 0x8000000000000000L.hash())?
+  @assertion.assert_eq(0x8000000000000000L.hash(), 0x8000000000000000L.hash())?
+}
