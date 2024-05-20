@@ -1,7 +1,5 @@
 package moonbitlang/core/map
 
-alias @moonbitlang/core/vec as @vec
-
 // Values
 fn empty[K, V]() -> Map[K, V]
 
@@ -29,7 +27,7 @@ impl Map {
   op_get[K : Compare + Eq, V](Self[K, V], K) -> Option[V]
   remove[K : Compare + Eq, V](Self[K, V], K) -> Self[K, V]
   size[K, V](Self[K, V]) -> Int
-  to_vec[K, V](Self[K, V]) -> @vec.Vec[Tuple[K, V]]
+  to_array[K, V](Self[K, V]) -> Array[Tuple[K, V]]
 }
 
 // Traits

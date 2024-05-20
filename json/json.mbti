@@ -1,7 +1,6 @@
 package moonbitlang/core/json
 
 alias @moonbitlang/core/map as @map
-alias @moonbitlang/core/vec as @vec
 
 // Values
 
@@ -11,11 +10,11 @@ pub enum JsonValue {
   Boolean(Bool)
   Number(Double)
   String(String)
-  Array(@vec.Vec[JsonValue])
+  Array(Array[JsonValue])
   Object(@map.Map[String, JsonValue])
 }
 impl JsonValue {
-  as_array(Self) -> Option[@vec.Vec[Self]]
+  as_array(Self) -> Option[Array[Self]]
   as_bool(Self) -> Option[Bool]
   as_null(Self) -> Option[Unit]
   as_number(Self) -> Option[Double]

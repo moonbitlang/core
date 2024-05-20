@@ -1,4 +1,4 @@
-package moonbitlang/core/array
+package moonbitlang/core/fixedarray
 
 alias @moonbitlang/core/iter as @iter
 
