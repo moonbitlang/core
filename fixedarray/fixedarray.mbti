@@ -10,7 +10,6 @@ fn new[T](Int, () -> T) -> FixedArray[T]
 fn new_with_index[T](Int, (Int) -> T) -> FixedArray[T]
 
 // Types and methods
-type TimSortRun
 impl FixedArray {
   all[T](Self[T], (T) -> Bool) -> Bool
   any[T](Self[T], (T) -> Bool) -> Bool
