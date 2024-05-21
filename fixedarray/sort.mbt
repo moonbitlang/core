@@ -27,7 +27,7 @@ pub fn stable_sort[T : Compare](self : FixedArray[T]) -> Unit {
   timsort({ array: self, start: 0, end: self.length() })
 }
 
-struct TimSortRun {
+priv struct TimSortRun {
   len : Int
   start : Int
 }
