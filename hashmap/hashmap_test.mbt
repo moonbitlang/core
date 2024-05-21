@@ -104,7 +104,6 @@ test "from_array" {
 
 test "remove" {
   let m : HashMap[MyString, Int] = HashMap::new()
-
   m.set("a", 1)
   m.set("ab", 2)
   m.set("bc", 2)
