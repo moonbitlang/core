@@ -38,10 +38,8 @@ pub fn keys_list[K, V](self : Map[K, V]) -> List[K] {
 }
 
 /// Return an immutable set of all keys of the map.
-fn keys_set[K : Compare + Eq, V](
-  self : Map[K, V]
-) -> @immutable_set.ImmutableSet[K] {
-  @immutable_set.from_list(self.keys_list())
+fn keys_set[K : Compare + Eq, V](self : Map[K, V]) -> @set.ImmutableSet[K] {
+  @set.from_list(self.keys_list())
 }
 
 test "from_array" {

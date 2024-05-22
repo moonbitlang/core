@@ -177,10 +177,6 @@ test "clear" {
 
 test "grow" {
   let m : HashMap[MyString, Int] = HashMap::new()
-  fn i(s) {
-    MyString::MyString(s)
-  }
-
   m.set("C", 1)
   m.set("Go", 2)
   m.set("C++", 3)
