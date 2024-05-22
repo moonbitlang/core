@@ -49,6 +49,7 @@ impl Array {
   extract_if[T](Self[T], (T) -> Bool) -> Self[T]
   fill[T](Self[T], T) -> Unit
   fill_with[T](Self[T], () -> T) -> Unit
+  filter[T](Self[T], (T) -> Bool) -> Self[T]
   flatten[T](Self[Self[T]]) -> Self[T]
   fold_left[T, U](Self[T], (U, T) -> U, ~init : U) -> U
   fold_lefti[T, U](Self[T], (Int, U, T) -> U, ~init : U) -> U
