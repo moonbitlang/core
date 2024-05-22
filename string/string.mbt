@@ -94,22 +94,24 @@ test "Buffer::to_bytes" {
 
 /// Converts the String into an array of Chars.
 pub fn to_array(self : String) -> Array[Char] {
-  let len = self.length()
-  let rv = Array::make(len, '\x00')
-  for i = 0; i < len; i = i + 1 {
-    rv[i] = self[i]
-  }
-  rv
+  self.as_iter().fold(
+    fn(rv, c) {
+      rv.push(c)
+      rv
+    },
+    Array::with_capacity(self.length()),
+  )
 }
 
 test "to_array" {
-  let a = "你好！mbt".to_array()
+  let a = "你好！mbt😀".to_array()
   inspect(a[0], content="你")?
   inspect(a[1], content="好")?
   inspect(a[2], content="！")?
   inspect(a[3], content="m")?
   inspect(a[4], content="b")?
   inspect(a[5], content="t")?
+  inspect(a[6], content="😀")?
 }
 
 /// @intrinsic %string.substring
