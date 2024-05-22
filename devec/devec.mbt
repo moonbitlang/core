@@ -803,3 +803,37 @@ test "reserve and push" {
   inspect(d.front(), content="Some(Some(1))")?
   inspect(d.back(), content="Some(Some(1))")?
 }
+
+/// Convert the queue to a string.
+///
+/// # Example
+///
+/// ```
+/// let dv = Devec::[1, 2, 3, 4]
+/// println(dv) // "Devec::[1, 2, 3, 4]"
+/// ```
+pub fn to_string[T : Show](self : Devec[T]) -> String {
+  let mut res = "Devec::["
+  self.iteri(
+    fn(i, t) {
+      if i > 0 {
+        res += ", "
+      }
+      res += t.to_string()
+    },
+  )
+  res + "]"
+}
+
+pub fn debug_write[T : Show](self : Devec[T], buf : Buffer) -> Unit {
+  buf.write_string(self.to_string())
+}
+
+test "to_string" {
+  let dv : Devec[Int] = Devec::[1, 2, 3, 4]
+  inspect(dv, content="Devec::[1, 2, 3, 4]")?
+  dv.push_back(5)
+  inspect(dv, content="Devec::[1, 2, 3, 4, 5]")?
+  dv.pop_front() |> ignore
+  inspect(dv, content="Devec::[2, 3, 4, 5]")?
+}
