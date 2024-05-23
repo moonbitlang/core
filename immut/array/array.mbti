@@ -1,4 +1,4 @@
-package moonbitlang/core/immutable_vec
+package moonbitlang/core/immut/array
 
 // Values
 fn immutable_push[T](Array[T], T) -> Array[T]
