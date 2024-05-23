@@ -1,14 +1,8 @@
-package moonbitlang/core/immutable_priority_queue
+package moonbitlang/core/immut/priority_queue
 
 // Values
 
 // Types and methods
-type Cont
-impl Cont {
-  debug_write[T : Debug](Self[T], Buffer) -> Unit
-  to_string[T : Debug](Self[T]) -> String
-}
-
 type ImmutablePriorityQueue
 impl ImmutablePriorityQueue {
   from_array[T : Compare + Eq](Array[T]) -> Self[T]

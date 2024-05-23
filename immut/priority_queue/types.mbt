@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-enum Cont[T] {
+priv enum Cont[T] {
   Empty
   Node(T, List[Cont[T]])
 } derive(Show, Debug)

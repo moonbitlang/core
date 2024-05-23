@@ -1,4 +1,4 @@
-package moonbitlang/core/immutable_set
+package moonbitlang/core/immut/set
 
 alias @moonbitlang/core/iter as @iter
 
