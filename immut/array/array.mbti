@@ -30,13 +30,6 @@ impl ImmutableVec {
   to_string[T : Show](Self[T]) -> String
 }
 
-type Tree
-impl Tree {
-  debug_write[T : Debug](Self[T], Buffer) -> Unit
-  empty[T]() -> Self[T]
-  op_equal[T : Eq](Self[T], Self[T]) -> Bool
-}
-
 // Traits
 
 // Extension Methods

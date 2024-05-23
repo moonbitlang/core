@@ -18,7 +18,7 @@ struct ImmutableVec[T] {
   shift : Int
 } derive(Debug)
 
-enum Tree[T] {
+priv enum Tree[T] {
   Empty
   Node(Array[Tree[T]])
   Leaf(Array[T])
