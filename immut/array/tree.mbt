@@ -18,7 +18,7 @@ let branching_factor : Int = (1).lsl(num_bits)
 
 let bitmask : Int = branching_factor - 1
 
-pub fn Tree::empty[T]() -> Tree[T] {
+fn Tree::empty[T]() -> Tree[T] {
   Tree::Empty
 }
 
