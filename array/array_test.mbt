@@ -169,6 +169,11 @@ test "mapi_inplace" {
   inspect(e, content="[]")?
 }
 
+test "filter" {
+  let arr = [1, 2, 3, 4, 5, 6]
+  inspect(arr.filter(fn(x) { x % 2 == 0 }), content="[2, 4, 6]")?
+}
+
 test "is_empty" {
   let v = Array::new()
   @assertion.assert_true(v.is_empty())?

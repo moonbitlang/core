@@ -407,6 +407,19 @@ pub fn mapi_inplace[T](self : Array[T], f : (Int, T) -> T) -> Unit {
   }
 }
 
+/// Filters the array with a predicate function.
+///
+/// # Example
+/// ```
+/// let arr = [1, 2, 3, 4, 5, 6]
+/// arr.filter(fn (x) { x % 2 == 0 }) // [2, 4, 6]
+/// ```
+pub fn filter[T](self : Array[T], f : (T) -> Bool) -> Array[T] {
+  let arr = []
+  self.iter(fn(e) { if f(e) { arr.push(e) } })
+  arr
+}
+
 /// Test if the vector is empty.
 ///
 /// # Example
