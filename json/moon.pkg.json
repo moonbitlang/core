@@ -3,14 +3,16 @@
     "moonbitlang/core/builtin",
     "moonbitlang/core/double",
     "moonbitlang/core/string",
-    "moonbitlang/core/bool",
-    "moonbitlang/core/tuple",
-    "moonbitlang/core/array",
+    "moonbitlang/core/char",
     "moonbitlang/core/map",
     "moonbitlang/core/coverage",
+    "moonbitlang/core/strconv"
+  ],
+  "test-import": [
     "moonbitlang/core/assertion",
-    "moonbitlang/core/int",
-    "moonbitlang/core/unit",
-    "moonbitlang/core/option"
+    "moonbitlang/core/tuple",
+    "moonbitlang/core/option",
+    "moonbitlang/core/result",
+    "moonbitlang/core/unit"
   ]
 }
