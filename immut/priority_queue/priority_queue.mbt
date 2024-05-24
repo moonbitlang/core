@@ -46,6 +46,50 @@ test "from_array" {
   inspect(queue.peek(), content="Some(5)")?
 }
 
+pub fn to_array[T : Compare](self : ImmutablePriorityQueue[T]) -> Array[T] {
+  let arr = Array::new()
+  loop self, self.peek() {
+    queue, Some(p) => {
+      arr.push(p)
+      continue queue.pop_exn(), queue.pop_exn().peek()
+    }
+    _, None => ()
+  }
+  arr
+}
+
+test "to_array" {
+  let v = ImmutablePriorityQueue::[1, 2, 3, 4]
+  inspect(v.to_array().to_string(), content="[4, 3, 2, 1]")?
+  inspect(v.push(0).to_array().to_string(), content="[4, 3, 2, 1, 0]")?
+}
+
+pub fn as_iter[T : Compare](self : ImmutablePriorityQueue[T]) -> @iter.Iter[T] {
+  @iter.Iter::_unstable_internal_make(
+    fn(yield) {
+      loop self, self.peek() {
+        queue, Some(p) => {
+          if yield(p).not() {
+            break false
+          }
+          continue queue.pop_exn(), queue.pop_exn().peek()
+        }
+        _, None => true
+      }
+    },
+  )
+}
+
+test "as_iter" {
+  let buf = Buffer::make(20)
+  let v = ImmutablePriorityQueue::[1, 2, 3]
+  v.as_iter().iter(fn(e) { buf.write_string("[\(e)]") })
+  inspect(buf, content="[3][2][1]")?
+  buf.reset()
+  v.as_iter().take(2).iter(fn(e) { buf.write_string("[\(e)]") })
+  inspect(buf, content="[3][2]")?
+}
+
 fn meld[T : Compare](l : Cont[T], r : Cont[T]) -> Cont[T] {
   match (l, r) {
     (Empty, _) => r
