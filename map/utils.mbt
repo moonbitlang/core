@@ -208,3 +208,18 @@ pub fn Map::from_array[K : Compare, V](array : Array[(K, V)]) -> Map[K, V] {
     mp
   }
 }
+
+pub fn as_iter[K, V](self : Map[K, V]) -> @iter.Iter[(K, V)] {
+  @iter.Iter::_unstable_internal_make(
+    fn(yield) {
+      let arr = self.to_array()
+      for i = 0, len = arr.length(); i < len; i = i + 1 {
+        match arr[i] {
+          (key, value) => if yield((key, value)).not() { break false }
+        }
+      } else {
+        true
+      }
+    },
+  )
+}

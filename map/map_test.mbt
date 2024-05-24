@@ -297,3 +297,23 @@ test "debug_write" {
     "Map::[(0, \"zero\"), (1, \"one\"), (2, \"two\"), (3, \"three\"), (8, \"eight\")]",
   )?
 }
+
+test "as_iter" {
+  let buf = Buffer::make(20)
+  let map = Map::[(1, "one"), (2, "two"), (3, "three")]
+  map.as_iter().iter(
+    fn(e) {
+      let (k, v) = e
+      buf.write_string("[\(k)-\(v)]")
+    },
+  )
+  inspect(buf, content="[1-one][2-two][3-three]")?
+  buf.reset()
+  map.as_iter().take(2).iter(
+    fn(e) {
+      let (k, v) = e
+      buf.write_string("[\(k)-\(v)]")
+    },
+  )
+  inspect(buf, content="[1-one][2-two]")?
+}

@@ -3,7 +3,7 @@
     "moonbitlang/core/builtin",
     "moonbitlang/core/assertion",
     "moonbitlang/core/tuple",
-    
+    "moonbitlang/core/iter",
     "moonbitlang/core/string",
     "moonbitlang/core/array",
     "moonbitlang/core/coverage"
