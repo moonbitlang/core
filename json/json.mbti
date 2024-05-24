@@ -3,6 +3,9 @@ package moonbitlang/core/json
 alias @moonbitlang/core/map as @map
 
 // Values
+fn parse(String) -> Result[JsonValue, ParseError]
+
+fn valid(String) -> Bool
 
 // Types and methods
 pub enum JsonValue {
@@ -23,8 +26,30 @@ impl JsonValue {
   debug_write(Self, Buffer) -> Unit
   item(Self, Int) -> Option[Self]
   op_equal(Self, Self) -> Bool
+  stringify(Self) -> String
   to_string(Self) -> String
   value(Self, String) -> Option[Self]
+}
+
+pub enum ParseError {
+  InvalidChar(Position, Char)
+  InvalidEof
+  InvalidNumber(Position, String)
+  InvalidIdentEscape(Position)
+}
+impl ParseError {
+  debug_write(Self, Buffer) -> Unit
+  op_equal(Self, Self) -> Bool
+  to_string(Self) -> String
+}
+
+pub struct Position {
+  pub line : Int
+  pub column : Int
+}
+impl Position {
+  debug_write(Self, Buffer) -> Unit
+  op_equal(Self, Self) -> Bool
 }
 
 // Traits
