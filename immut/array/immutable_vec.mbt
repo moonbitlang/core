@@ -16,6 +16,13 @@ pub fn ImmutableVec::empty[T]() -> ImmutableVec[T] {
   { tree: Tree::empty(), size: 0, shift: 0 }
 }
 
+test "is_empty" {
+  let v = ImmutableVec::[1, 2, 3, 4, 5]
+  let ve : ImmutableVec[Int] = ImmutableVec::empty()
+  inspect(is_empty(v), content="false")?
+  inspect(is_empty(ve), content="true")?
+}
+
 pub fn to_string[T : Show](self : ImmutableVec[T]) -> String {
   let mut s = "ImmutableVec::[".to_string()
   for i = 0; i < self.size; i = i + 1 {
@@ -39,16 +46,18 @@ pub fn is_empty[T](v : ImmutableVec[T]) -> Bool {
   v.size == 0
 }
 
-pub fn to_array[T : Show](self : ImmutableVec[T]) -> String {
-  let mut s = "ImmutableVec::[".to_string()
+pub fn to_array[T](self : ImmutableVec[T]) -> Array[T] {
+  let arr = Array::new()
   for i = 0; i < self.size; i = i + 1 {
-    s = s + self[i].to_string()
-    if i < self.size - 1 {
-      s = s + ", "
-    }
+    arr.push(self[i])
   }
-  s = s + "]"
-  s
+  arr
+}
+
+test "to_array" {
+  let v = ImmutableVec::[1, 2, 3, 4]
+  inspect(v.to_array().to_string(), content="[1, 2, 3, 4]")?
+  inspect(v.push(5).to_array().to_string(), content="[1, 2, 3, 4, 5]")?
 }
 
 pub fn as_iter[T](self : ImmutableVec[T]) -> @iter.Iter[T] {
@@ -68,27 +77,11 @@ pub fn as_iter[T](self : ImmutableVec[T]) -> @iter.Iter[T] {
 test "as_iter" {
   let buf = Buffer::make(20)
   let v = ImmutableVec::[1, 2, 3]
-  v.as_iter().iter(
-    fn(e) {
-      buf.write_string("[\(e)]")
-    },
-  )
+  v.as_iter().iter(fn(e) { buf.write_string("[\(e)]") })
   inspect(buf, content="[1][2][3]")?
   buf.reset()
-  v.as_iter().take(2).iter(
-    fn(e) {
-      buf.write_string("[\(e)]")
-    },
-  )
+  v.as_iter().take(2).iter(fn(e) { buf.write_string("[\(e)]") })
   inspect(buf, content="[1][2]")?
-}
-
-
-test "is_empty" {
-  let v = ImmutableVec::[1, 2, 3, 4, 5]
-  let ve : ImmutableVec[Int] = ImmutableVec::empty()
-  inspect(is_empty(v), content="false")?
-  inspect(is_empty(ve), content="true")?
 }
 
 pub fn length[T](v : ImmutableVec[T]) -> Int {
