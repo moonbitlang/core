@@ -8,5 +8,5 @@
     "moonbitlang/core/array",
     "moonbitlang/core/coverage"
   ],
-  "test_import": ["moonbitlang/core/immut/set","moonbitlang/core/list"]
+  "test-import": ["moonbitlang/core/immut/set","moonbitlang/core/list"]
 }
