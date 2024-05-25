@@ -47,7 +47,7 @@ pub fn is_empty[T](v : ImmutableVec[T]) -> Bool {
 }
 
 pub fn to_array[T](self : ImmutableVec[T]) -> Array[T] {
-  let arr = Array::new()
+  let arr = []
   self.iter(fn(v) { arr.push(v) })
   arr
 }
