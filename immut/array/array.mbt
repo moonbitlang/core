@@ -25,12 +25,12 @@ test "is_empty" {
 
 pub fn to_string[T : Show](self : ImmutableVec[T]) -> String {
   let mut s = "ImmutableVec::[".to_string()
-  for i = 0; i < self.size; i = i + 1 {
-    s = s + self[i].to_string()
+  self.iteri(fn(i, v) { 
+    s = s + v.to_string()
     if i < self.size - 1 {
       s = s + ", "
     }
-  }
+  })
   s = s + "]"
   s
 }
@@ -48,9 +48,7 @@ pub fn is_empty[T](v : ImmutableVec[T]) -> Bool {
 
 pub fn to_array[T](self : ImmutableVec[T]) -> Array[T] {
   let arr = Array::new()
-  for i = 0; i < self.size; i = i + 1 {
-    arr.push(self[i])
-  }
+  self.iter(fn(v) { arr.push(v) })
   arr
 }
 
@@ -63,8 +61,9 @@ test "to_array" {
 pub fn as_iter[T](self : ImmutableVec[T]) -> @iter.Iter[T] {
   @iter.Iter::_unstable_internal_make(
     fn(yield) {
+      let arr = self.to_array()
       for i = 0; i < self.size; i = i + 1 {
-        if yield(self[i]).not() {
+        if yield(arr[i]).not() {
           break false
         }
       } else {
