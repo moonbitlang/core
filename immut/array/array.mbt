@@ -25,12 +25,14 @@ test "is_empty" {
 
 pub fn to_string[T : Show](self : ImmutableVec[T]) -> String {
   let mut s = "ImmutableVec::[".to_string()
-  self.iteri(fn(i, v) { 
-    s = s + v.to_string()
-    if i < self.size - 1 {
-      s = s + ", "
-    }
-  })
+  self.iteri(
+    fn(i, v) {
+      s = s + v.to_string()
+      if i < self.size - 1 {
+        s = s + ", "
+      }
+    },
+  )
   s = s + "]"
   s
 }
