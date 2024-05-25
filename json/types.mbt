@@ -20,3 +20,27 @@ pub enum JsonValue {
   Array(Array[JsonValue])
   Object(@map.Map[String, JsonValue])
 } derive(Eq, Debug, Show)
+
+pub struct Position {
+  line : Int // 1-based
+  column : Int // 0-based
+} derive(Eq, Debug)
+
+pub enum ParseError {
+  InvalidChar(Position, Char)
+  InvalidEof
+  InvalidNumber(Position, String)
+  InvalidIdentEscape(Position)
+} derive(Eq, Debug)
+
+pub fn ParseError::to_string(self : ParseError) -> String {
+  match self {
+    ParseError::InvalidChar({ line, column }, c) =>
+      "Invalid character '\(c)' at line \(line), column \(column)"
+    ParseError::InvalidEof => "Unexpected end of file"
+    ParseError::InvalidNumber({ line, column }, s) =>
+      "Invalid number \(s) at line \(line), column \(column)"
+    ParseError::InvalidIdentEscape({ line, column }) =>
+      "Invalid escape sequence in identifier at line \(line), column \(column)"
+  }
+}
