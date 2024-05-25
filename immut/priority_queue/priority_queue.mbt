@@ -47,14 +47,19 @@ test "from_array" {
 }
 
 pub fn to_array[T : Compare](self : ImmutablePriorityQueue[T]) -> Array[T] {
-  let arr = Array::new()
-  loop self, self.peek() {
-    queue, Some(p) => {
-      arr.push(p)
-      continue queue.pop_exn(), queue.pop_exn().peek()
+  let arr : Array[T] = []
+  fn go(x : Cont[T]) {
+    match x {
+      Node(v, child) => {
+        arr.push(v)
+        child.iter(fn(v) { go(v) }) |> ignore
+      }
+      Empty => ()
     }
-    _, None => ()
   }
+
+  go(self.body)
+  arr.sort_by(fn(x, y) { if x < y { 1 } else { -1 } })
   arr
 }
 
@@ -67,14 +72,13 @@ test "to_array" {
 pub fn as_iter[T : Compare](self : ImmutablePriorityQueue[T]) -> @iter.Iter[T] {
   @iter.Iter::_unstable_internal_make(
     fn(yield) {
-      loop self, self.peek() {
-        queue, Some(p) => {
-          if yield(p).not() {
-            break false
-          }
-          continue queue.pop_exn(), queue.pop_exn().peek()
+      let arr = self.to_array()
+      for i = 0; i < arr.length(); i = i + 1 {
+        if yield(arr[i]).not() {
+          break false
         }
-        _, None => true
+      } else {
+        true
       }
     },
   )
