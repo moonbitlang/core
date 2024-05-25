@@ -53,7 +53,7 @@ test "from_array" {
   @assertion.assert_eq(pq.peek(), Some(5))?
 }
 
-fn copy_node[T : Compare](x : Node[T]) -> Node[T] {
+fn copy_node[T](x : Node[T]) -> Node[T] {
   match x {
     Nil => Nil
     Cons(top) =>
@@ -74,7 +74,7 @@ fn copy_node[T : Compare](x : Node[T]) -> Node[T] {
 /// let queue : PriorityQueue[Int] = PriorityQueue::[1, 2, 3, 4]
 /// let queue2 : PriorityQueue[Int] = PriorityQueue.copy()
 /// ```
-pub fn copy[T : Compare](self : PriorityQueue[T]) -> PriorityQueue[T] {
+pub fn copy[T](self : PriorityQueue[T]) -> PriorityQueue[T] {
   let new_que : PriorityQueue[T] = { len: self.len, top: copy_node(self.top) }
   new_que
 }

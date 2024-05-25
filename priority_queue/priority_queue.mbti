@@ -9,7 +9,7 @@ type PriorityQueue
 impl PriorityQueue {
   as_iter[T : Compare + Eq](Self[T]) -> @iter.Iter[T]
   clear[T](Self[T]) -> Unit
-  copy[T : Compare + Eq](Self[T]) -> Self[T]
+  copy[T](Self[T]) -> Self[T]
   from_array[T : Compare + Eq](Array[T]) -> Self[T]
   is_empty[T](Self[T]) -> Bool
   length[T](Self[T]) -> Int
