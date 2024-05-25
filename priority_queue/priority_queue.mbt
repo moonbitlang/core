@@ -90,16 +90,20 @@ test "copy" {
 }
 
 pub fn to_array[T : Compare](self : PriorityQueue[T]) -> Array[T] {
-  let queue = self.copy()
-  let arr = Array::new()
-  loop queue.peek() {
-    Some(p) => {
-      arr.push(p)
-      queue.pop_exn()
-      continue queue.peek()
+  let arr : Array[T] = []
+  fn go(x : Node[T]) {
+    match x {
+      Cons(node) => {
+        arr.push(node.content)
+        go(node.sibling)
+        go(node.child)
+      }
+      Nil => ()
     }
-    None => ()
   }
+
+  go(self.top)
+  arr.sort_by(fn(x, y) { if x < y { 1 } else { -1 } })
   arr
 }
 
@@ -112,16 +116,13 @@ test "to_array" {
 pub fn as_iter[T : Compare](self : PriorityQueue[T]) -> @iter.Iter[T] {
   @iter.Iter::_unstable_internal_make(
     fn(yield) {
-      let queue = self.copy()
-      loop queue.peek() {
-        Some(p) => {
-          if yield(p).not() {
-            break false
-          }
-          queue.pop_exn()
-          continue queue.peek()
+      let arr = self.to_array()
+      for i = 0; i < arr.length(); i = i + 1 {
+        if yield(arr[i]).not() {
+          break false
         }
-        None => true
+      } else {
+        true
       }
     },
   )
