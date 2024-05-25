@@ -13,15 +13,15 @@
 // limitations under the License.
 
 // Not needed for 8 bytes data
-// let gPRIME1 = -1640531535
+// let gPRIME1 = 0x9E3779B1
 
-let gPRIME2 = -2048144777
+let gPRIME2 = 0x85EBCA77
 
-let gPRIME3 = -1028477379
+let gPRIME3 = 0xC2B2AE3D
 
-let gPRIME4 = 668265263
+let gPRIME4 = 0x27D4EB2F
 
-let gPRIME5 = 374761393
+let gPRIME5 = 0x165667B1
 
 // https://github.com/Cyan4973/xxHash/blob/dev/doc/xxhash_spec.md#xxh32-algorithm-description
 // For a more readable version, see bytes/xxhash.mbt
