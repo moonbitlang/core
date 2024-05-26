@@ -12,9 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-let int_min = -2_147_483_648
+let int_min = 0x80000000
 
-let int_max = 2_147_483_647
+let int_max = 0x7fffffff
 
 let int64_min = -9_223_372_036_854_775_808L
 
