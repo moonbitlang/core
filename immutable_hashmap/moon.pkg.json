@@ -1,6 +1,6 @@
 {
   "import": [
-    "moonbitlang/core/builtin",  
+    "moonbitlang/core/builtin",
     "moonbitlang/core/tuple",
     "moonbitlang/core/array",
     "moonbitlang/core/int",
@@ -8,7 +8,7 @@
     "moonbitlang/core/coverage",
     "moonbitlang/core/option"
   ],
-  "test_import" : [
+  "test-import" : [
     "moonbitlang/core/assertion"
   ]
 }

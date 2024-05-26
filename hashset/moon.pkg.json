@@ -5,5 +5,5 @@
     "moonbitlang/core/iter",
     "moonbitlang/core/coverage"
   ],
-  "test_import": ["moonbitlang/core/string", "moonbitlang/core/assertion"]
+  "test-import": ["moonbitlang/core/string", "moonbitlang/core/assertion"]
 }

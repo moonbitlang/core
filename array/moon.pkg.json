@@ -4,5 +4,5 @@
     "moonbitlang/core/coverage",
     "moonbitlang/core/iter"
   ],
-  "test_import": ["moonbitlang/core/assertion"]
+  "test-import": ["moonbitlang/core/assertion"]
 }
