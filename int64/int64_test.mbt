@@ -13,12 +13,8 @@
 // limitations under the License.
 
 test "overflow" {
-  // signed integer expected to be negative
-  inspect(0xC2B2AE3D, content="-1028477379")?
-  inspect(0x85EBCA77, content="-2048144777")?
-  inspect(0x80000000, content="-2147483648")?
-  // here it works as expected due to overflow
-  inspect(-0x80000000, content="-2147483648")?
-  inspect(0x7fff_ffff, content="2147483647")?
-  inspect(-0x7fff_ffff, content="-2147483647")?
+  inspect(0x8000000000000000L, content="-9223372036854775808")?
+  inspect(-0x8000000000000000L, content="-9223372036854775808")?
+  inspect(0x7fffffffffffffffL, content="9223372036854775807")?
+  inspect(-0x7fffffffffffffffL, content="-9223372036854775807")?
 }

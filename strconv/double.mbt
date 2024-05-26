@@ -93,22 +93,22 @@ fn pow10_fast_path(exponent : Int) -> Double {
 }
 
 let int_pow10 : Array[UInt64] = [
-  new_UInt64_Int64(1L),
-  new_UInt64_Int64(10L),
-  new_UInt64_Int64(100L),
-  new_UInt64_Int64(1000L),
-  new_UInt64_Int64(10000L),
-  new_UInt64_Int64(100000L),
-  new_UInt64_Int64(1000000L),
-  new_UInt64_Int64(10000000L),
-  new_UInt64_Int64(100000000L),
-  new_UInt64_Int64(1000000000L),
-  new_UInt64_Int64(10000000000L),
-  new_UInt64_Int64(100000000000L),
-  new_UInt64_Int64(1000000000000L),
-  new_UInt64_Int64(10000000000000L),
-  new_UInt64_Int64(100000000000000L),
-  new_UInt64_Int64(1000000000000000L),
+  UInt64(1L),
+  UInt64(10L),
+  UInt64(100L),
+  UInt64(1000L),
+  UInt64(10000L),
+  UInt64(100000L),
+  UInt64(1000000L),
+  UInt64(10000000L),
+  UInt64(100000000L),
+  UInt64(1000000000L),
+  UInt64(10000000000L),
+  UInt64(100000000000L),
+  UInt64(1000000000000L),
+  UInt64(10000000000000L),
+  UInt64(100000000000000L),
+  UInt64(1000000000000000L),
 ]
 
 fn try_fast_path(self : Number) -> Option[Double] {

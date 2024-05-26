@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-let min_19digit_int : UInt64 = new_UInt64_Int64(100_0000_0000_0000_0000L)
+let min_19digit_int : UInt64 = UInt64(100_0000_0000_0000_0000L)
 
 struct Number {
   exponent : Int64
@@ -153,7 +153,7 @@ fn parse_number(s : String) -> Option[(Number, Int)] {
   if n_digits > 0 {
     // at this point we have more than 19 significant digits, let's try again
     many_digits = true
-    mantissa = new_UInt64_Int64(0L)
+    mantissa = UInt64(0L)
     let s = start
     let (s, new_mantissa, consumed_digit) = try_parse_19digits(s, mantissa)
     mantissa = new_mantissa

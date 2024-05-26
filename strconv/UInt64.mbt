@@ -15,10 +15,6 @@
 /// Pretend we have UInt64
 priv type UInt64 Int64 derive(Eq)
 
-fn new_UInt64_Int64(value : Int64) -> UInt64 {
-  UInt64(value)
-}
-
 fn new_UInt64_Int(value : Int) -> UInt64 {
   UInt64(value.to_int64())
 }
@@ -34,47 +30,47 @@ fn UInt64::compare(self : UInt64, b : UInt64) -> Int {
 }
 
 fn op_add(self : UInt64, b : UInt64) -> UInt64 {
-  new_UInt64_Int64(self.0 + b.0)
+  UInt64(self.0 + b.0)
 }
 
 fn op_sub(self : UInt64, b : UInt64) -> UInt64 {
-  new_UInt64_Int64(self.0 - b.0)
+  UInt64(self.0 - b.0)
 }
 
 fn op_mul(self : UInt64, b : UInt64) -> UInt64 {
-  new_UInt64_Int64(self.0 * b.0)
+  UInt64(self.0 * b.0)
 }
 
 // fn op_div(self : UInt64, b : UInt64) -> UInt64 {
-//   new_UInt64_Int64(self.0 / b.0)
+//   UInt64(self.0 / b.0)
 // }
 
 fn op_neg(self : UInt64) -> UInt64 {
-  new_UInt64_Int64(-self.0)
+  UInt64(-self.0)
 }
 
 fn lnot(self : UInt64) -> UInt64 {
-  new_UInt64_Int64(self.0.lnot())
+  UInt64(self.0.lnot())
 }
 
 fn land(self : UInt64, b : UInt64) -> UInt64 {
-  new_UInt64_Int64(self.0.land(b.0))
+  UInt64(self.0.land(b.0))
 }
 
 fn lor(self : UInt64, b : UInt64) -> UInt64 {
-  new_UInt64_Int64(self.0.lor(b.0))
+  UInt64(self.0.lor(b.0))
 }
 
 fn lxor(self : UInt64, b : UInt64) -> UInt64 {
-  new_UInt64_Int64(self.0.lxor(b.0))
+  UInt64(self.0.lxor(b.0))
 }
 
 fn lsr(self : UInt64, b : Int) -> UInt64 {
-  new_UInt64_Int64(self.0.lsr(b))
+  UInt64(self.0.lsr(b))
 }
 
 fn lsl(self : UInt64, b : Int) -> UInt64 {
-  new_UInt64_Int64(self.0.lsl(b))
+  UInt64(self.0.lsl(b))
 }
 
 fn to_int64(self : UInt64) -> Int64 {
@@ -94,7 +90,7 @@ fn to_double(self : UInt64) -> Double {
 /// Otherwise, returns Some(m), where m = self * b.
 fn checked_mul(self : UInt64, b : UInt64) -> Option[UInt64] {
   if self.0 == 0L || b.0 == 0L {
-    return Some(new_UInt64_Int64(0L))
+    return Some(UInt64(0L))
   }
   if self.0 == 1L {
     return Some(b)
@@ -105,8 +101,8 @@ fn checked_mul(self : UInt64, b : UInt64) -> Option[UInt64] {
   if b.0 < 0L || self.0 < 0L {
     return None
   }
-  let r = new_UInt64_Int64(Int64::max_value() / b.0)
-  let q = new_UInt64_Int64(1L / b.0)
+  let r : UInt64 = UInt64(Int64::max_value() / b.0)
+  let q : UInt64 = UInt64(1L / b.0)
   if r + r + q < self {
     return None
   }
@@ -115,5 +111,5 @@ fn checked_mul(self : UInt64, b : UInt64) -> Option[UInt64] {
 
 test "op_lt" {
   @assertion.assert_true(new_UInt64_Int(1) < new_UInt64_Int(2))?
-  @assertion.assert_true(new_UInt64_Int64(-1L) > new_UInt64_Int64(2L))?
+  @assertion.assert_true(UInt64::UInt64(-1L) > UInt64(2L))?
 }
