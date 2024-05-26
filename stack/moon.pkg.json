@@ -2,7 +2,7 @@
   "import": [
     "moonbitlang/core/builtin",
     "moonbitlang/core/assertion",
-    "moonbitlang/core/list",
+    "moonbitlang/core/immut/list",
     "moonbitlang/core/array",
     "moonbitlang/core/coverage"
   ]
