@@ -1,4 +1,4 @@
-package moonbitlang/core/immutable_hashmap
+package moonbitlang/core/immut/hashmap
 
 alias @moonbitlang/core/iter as @iter
 
