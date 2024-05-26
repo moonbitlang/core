@@ -52,7 +52,13 @@ pub fn to_array[T : Compare](self : ImmutablePriorityQueue[T]) -> Array[T] {
     match x {
       Node(v, child) => {
         arr.push(v)
-        child.iter(fn(v) { go(v) }) |> ignore
+        loop child {
+          Nil => ()
+          Cons(x, xs) => {
+            go(x)
+            continue xs
+          }
+        }
       }
       Empty => ()
     }
