@@ -4,6 +4,7 @@
     "moonbitlang/core/fixedarray",
     "moonbitlang/core/coverage",
     "moonbitlang/core/array",
+    "moonbitlang/core/iter",
     "moonbitlang/core/assertion"
   ]
 }

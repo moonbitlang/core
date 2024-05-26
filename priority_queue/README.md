@@ -80,3 +80,12 @@ let pq = PriorityQueue::[1, 2, 3, 4, 5]
 pq.clear()
 pq.is_empty() // true
 ```
+
+### Copy and Transfer
+
+You can copy a priority queue using the `copy` method.
+
+```moonbit
+let pq = PriorityQueue::[1, 2, 3]
+let pq2 = pq.copy()
+```

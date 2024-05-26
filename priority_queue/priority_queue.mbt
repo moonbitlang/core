@@ -53,6 +53,91 @@ test "from_array" {
   @assertion.assert_eq(pq.peek(), Some(5))?
 }
 
+fn copy_node[T](x : Node[T]) -> Node[T] {
+  match x {
+    Nil => Nil
+    Cons(top) =>
+      Cons(
+        {
+          content: top.content,
+          sibling: copy_node(top.sibling),
+          child: copy_node(top.child),
+        },
+      )
+  }
+}
+
+/// Return a copy of the queue.
+/// 
+/// # Example
+/// ```
+/// let queue : PriorityQueue[Int] = PriorityQueue::[1, 2, 3, 4]
+/// let queue2 : PriorityQueue[Int] = PriorityQueue.copy()
+/// ```
+pub fn copy[T](self : PriorityQueue[T]) -> PriorityQueue[T] {
+  let new_que : PriorityQueue[T] = { len: self.len, top: copy_node(self.top) }
+  new_que
+}
+
+test "copy" {
+  let v = PriorityQueue::[1, 2, 3, 4]
+  let ve = v.copy()
+  inspect(v.peek().to_string(), content="Some(4)")?
+  inspect(ve.peek().to_string(), content="Some(4)")?
+  v.pop() |> ignore
+  inspect(v.peek().to_string(), content="Some(3)")?
+  inspect(ve.peek().to_string(), content="Some(4)")?
+}
+
+pub fn to_array[T : Compare](self : PriorityQueue[T]) -> Array[T] {
+  let arr : Array[T] = []
+  fn go(x : Node[T]) {
+    match x {
+      Cons(node) => {
+        arr.push(node.content)
+        go(node.sibling)
+        go(node.child)
+      }
+      Nil => ()
+    }
+  }
+
+  go(self.top)
+  arr.sort_by(fn(x, y) { if x < y { 1 } else { -1 } })
+  arr
+}
+
+test "to_array" {
+  let v = PriorityQueue::[1, 2, 3, 4]
+  inspect(v.to_array().to_string(), content="[4, 3, 2, 1]")?
+  inspect(v.to_array().to_string(), content="[4, 3, 2, 1]")?
+}
+
+pub fn as_iter[T : Compare](self : PriorityQueue[T]) -> @iter.Iter[T] {
+  @iter.Iter::_unstable_internal_make(
+    fn(yield) {
+      let arr = self.to_array()
+      for i = 0; i < arr.length(); i = i + 1 {
+        if yield(arr[i]).not() {
+          break false
+        }
+      } else {
+        true
+      }
+    },
+  )
+}
+
+test "as_iter" {
+  let buf = Buffer::make(20)
+  let v = PriorityQueue::[1, 2, 3]
+  v.as_iter().iter(fn(e) { buf.write_string("[\(e)]") })
+  inspect(buf, content="[3][2][1]")?
+  buf.reset()
+  v.as_iter().take(2).iter(fn(e) { buf.write_string("[\(e)]") })
+  inspect(buf, content="[3][2]")?
+}
+
 fn meld[T : Compare](x : Node[T], y : Node[T]) -> Node[T] {
   match (x, y) {
     (Nil, _) => y
