@@ -16,9 +16,9 @@ let int_min = 0x80000000
 
 let int_max = 0x7fffffff
 
-let int64_min = -9_223_372_036_854_775_808L
+let int64_min = -0x8000000000000000L
 
-let int64_max = 9_223_372_036_854_775_807L
+let int64_max = 0x7fffffffffffffffL
 
 /// Parse a string in the given base (0, 2 to 36), return a Int64 number or an error.
 /// If the `~base` argument is 0, the base will be inferred by the prefix.
