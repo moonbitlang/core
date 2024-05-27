@@ -7,5 +7,5 @@
     "moonbitlang/core/array",
     "moonbitlang/core/option"
   ],
-  "test-import": ["moonbitlang/core/string", "moonbitlang/core/assertion"]
+  "test-import": ["moonbitlang/core/string", "moonbitlang/core/assertion", "moonbitlang/core/tuple"]
 }

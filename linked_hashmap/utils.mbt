@@ -83,17 +83,15 @@ pub fn iteri[K, V](self : LinkedHashMap[K, V], f : (Int, K, V) -> Unit) -> Unit 
   }
 }
 
-/// Clear the map, removing all key-value pairs. Keeps the allocated space.
+/// Clears the map, removing all key-value pairs. Keeps the allocated space.
 pub fn clear[K, V](self : LinkedHashMap[K, V]) -> Unit {
-  for i = 0; i < self.capacity; i = i + 1 {
-    self.entries[i] = Empty
-  }
+  self.entries.fill(Empty)
   self.size = 0
   self.head = None
   self.tail = None
 }
 
-/// Return the iterator of the hash map, provide elements in the order of insertion.
+/// Returns the iterator of the hash map, provide elements in the order of insertion.
 pub fn as_iter[K, V](self : LinkedHashMap[K, V]) -> @iter.Iter[(K, V)] {
   @iter.Iter::_unstable_internal_make(
     fn(yield) {
@@ -108,4 +106,17 @@ pub fn as_iter[K, V](self : LinkedHashMap[K, V]) -> @iter.Iter[(K, V)] {
       }
     },
   )
+}
+
+/// Converts the hash map to an array.
+pub fn to_array[K, V](self : LinkedHashMap[K, V]) -> Array[(K, V)] {
+  let arr = []
+  loop self.head {
+    Some(Valid(~key, ~value, ~next, ..)) => {
+      arr.push((key, value))
+      continue next
+    }
+    _ => break
+  }
+  arr
 }

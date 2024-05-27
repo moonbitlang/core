@@ -23,6 +23,7 @@ impl LinkedHashMap {
   remove[K : Hash + Eq, V](Self[K, V], K) -> Unit
   set[K : Hash + Eq, V](Self[K, V], K, V) -> Unit
   size[K, V](Self[K, V]) -> Int
+  to_array[K, V](Self[K, V]) -> Array[Tuple[K, V]]
 }
 
 // Traits
