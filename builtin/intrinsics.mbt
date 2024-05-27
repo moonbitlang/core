@@ -20,6 +20,8 @@ pub fn print_string(s : String) -> Unit = "%print_string"
 
 pub fn abort[T](msg : String) -> T = "%abort"
 
+pub fn panic[T]() -> T = "%panic"
+
 // Bool primitive ops
 
 pub fn Bool::not(self : Bool) -> Bool = "%bool_not"

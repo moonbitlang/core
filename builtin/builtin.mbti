@@ -19,6 +19,8 @@ fn op_lt[T : Compare + Eq](T, T) -> Bool
 
 fn op_notequal[T : Eq](T, T) -> Bool
 
+fn panic[T]() -> T
+
 fn physical_equal[T](T, T) -> Bool
 
 fn print[T : Show](T) -> Unit
