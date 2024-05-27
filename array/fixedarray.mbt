@@ -268,7 +268,7 @@ test "mapi" {
 }
 
 /// Create a new array. Values are lazily built.
-pub fn new[T](length : Int, value : () -> T) -> FixedArray[T] {
+pub fn FixedArray::new[T](length : Int, value : () -> T) -> FixedArray[T] {
   if length <= 0 {
     []
   } else {

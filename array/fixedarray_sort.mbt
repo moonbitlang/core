@@ -479,7 +479,7 @@ test "stable_sort" {
   @assertion.assert_eq(arr, expected)?
 }
 
-pub fn is_sorted[T : Compare](arr : FixedArray[T]) -> Bool {
+pub fn FixedArray::is_sorted[T : Compare](arr : FixedArray[T]) -> Bool {
   for i = 1; i < arr.length(); i = i + 1 {
     if arr[i] < arr[i - 1] {
       break false
