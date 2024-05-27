@@ -68,7 +68,7 @@ pub fn copy[T](self : Array[T]) -> Array[T] {
   }
 }
 
-pub fn new_with_index[T](length : Int, value : (Int) -> T) -> Array[T] {
+pub fn Array::new_with_index[T](length : Int, value : (Int) -> T) -> Array[T] {
   if length <= 0 {
     []
   } else {

@@ -13,7 +13,7 @@
 // limitations under the License.
 
 /// @intrinsic %array.copy
-fn unsafe_blit[A](
+fn fixed_unsafe_blit[A](
   dst : FixedArray[A],
   dst_offset : Int,
   src : FixedArray[A],
@@ -41,7 +41,7 @@ pub fn blit_to[A](
   if dst_offset + len > dst.length() || src_offset + len > self.length() {
     abort("invalid argument in blit")
   }
-  unsafe_blit(dst, dst_offset, self, src_offset, len)
+  fixed_unsafe_blit(dst, dst_offset, self, src_offset, len)
 }
 
 pub fn copy[T](self : FixedArray[T]) -> FixedArray[T] {
@@ -50,7 +50,7 @@ pub fn copy[T](self : FixedArray[T]) -> FixedArray[T] {
     []
   } else {
     let arr = FixedArray::make(len, self[0])
-    unsafe_blit(arr, 0, self, 0, len)
+    fixed_unsafe_blit(arr, 0, self, 0, len)
     arr
   }
 }
