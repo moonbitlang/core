@@ -418,7 +418,7 @@ fn fixed_sift_down[T : Compare](arr : FixedArraySlice[T], index : Int) -> Unit {
   }
 }
 
-fn test_sort(f : (FixedArray[Int]) -> Unit) -> Result[Unit, String] {
+fn fixed_test_sort(f : (FixedArray[Int]) -> Unit) -> Result[Unit, String] {
   let arr : FixedArray[_] = [5, 4, 3, 2, 1]
   f(arr)
   @assertion.assert_eq(arr, [1, 2, 3, 4, 5])?
@@ -447,17 +447,17 @@ fn test_sort(f : (FixedArray[Int]) -> Unit) -> Result[Unit, String] {
 }
 
 test "fixed_heap_sort" {
-  test_sort(fn(arr) { fixed_heap_sort({ array: arr, start: 0, end: arr.length() }) })?
+  fixed_test_sort(fn(arr) { fixed_heap_sort({ array: arr, start: 0, end: arr.length() }) })?
 }
 
 test "fixed_bubble_sort" {
-  test_sort(
+  fixed_test_sort(
     fn(arr) { fixed_bubble_sort({ array: arr, start: 0, end: arr.length() }) },
   )?
 }
 
 test "sort" {
-  test_sort(fn(arr) { arr.sort() })?
+  fixed_test_sort(fn(arr) { arr.sort() })?
 }
 
 test "stable_sort" {

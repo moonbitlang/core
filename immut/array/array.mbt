@@ -102,7 +102,7 @@ pub fn copy[T](self : ImmutableVec[T]) -> ImmutableVec[T] {
       Leaf(l) => Leaf(l.copy())
       Empty => Empty
       Node(node) =>
-        Node(@array.new_with_index(node.length(), fn(i) { copy(node[i]) }))
+        Node(Array::new_with_index(node.length(), fn(i) { copy(node[i]) }))
     }
   }
 
@@ -393,7 +393,7 @@ pub fn map[T, U](self : ImmutableVec[T], f : (T) -> U) -> ImmutableVec[U] {
     match t {
       Empty => Empty
       Leaf(l) => Leaf(l.map(f))
-      Node(n) => Node(@array.new_with_index(n.length(), fn(i) { go(n[i]) }))
+      Node(n) => Node(Array::new_with_index(n.length(), fn(i) { go(n[i]) }))
     }
   }
 
@@ -437,7 +437,7 @@ fn new_by_leaves[T](
         tree(cap / branching_factor, len, i)
       }
 
-      Node(@array.new_with_index(child_count, child))
+      Node(Array::new_with_index(child_count, child))
     }
   }
 
@@ -495,7 +495,7 @@ pub fn ImmutableVec::new_with_index[T](
   len : Int,
   f : (Int) -> T
 ) -> ImmutableVec[T] {
-  new_by_leaves(len, fn(s, l) { @array.new_with_index(l, fn(i) { f(s + i) }) })
+  new_by_leaves(len, fn(s, l) { Array::new_with_index(l, fn(i) { f(s + i) }) })
 }
 
 test "new_with" {

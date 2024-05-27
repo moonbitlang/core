@@ -294,7 +294,7 @@ test "new" {
 }
 
 /// Create a new array. Values are built from indexes.
-pub fn new_with_index[T](length : Int, value : (Int) -> T) -> FixedArray[T] {
+pub fn FixedArray::new_with_index[T](length : Int, value : (Int) -> T) -> FixedArray[T] {
   if length <= 0 {
     []
   } else {
@@ -306,13 +306,13 @@ pub fn new_with_index[T](length : Int, value : (Int) -> T) -> FixedArray[T] {
   }
 }
 
-test "new_with_index" {
-  let empty = new_with_index(0, fn { i => i })
+test "fixedarray_new_with_index" {
+  let empty = FixedArray::new_with_index(0, fn { i => i })
   @assertion.assert_eq(empty.length(), 0)?
-  let simple_arr = new_with_index(1, fn { i => i })
+  let simple_arr = FixedArray::new_with_index(1, fn { i => i })
   @assertion.assert_eq(simple_arr.length(), 1)?
   @assertion.assert_eq(simple_arr[0], 0)?
-  let arr = new_with_index(2, fn { i => i })
+  let arr = FixedArray::new_with_index(2, fn { i => i })
   @assertion.assert_eq(arr.length(), 2)?
   @assertion.assert_eq(arr[0], 0)?
   @assertion.assert_eq(arr[1], 1)?
