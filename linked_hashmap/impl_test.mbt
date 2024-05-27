@@ -332,3 +332,8 @@ test "linked list" {
   m.remove("four")
   inspect(m.debug_linked_list(), content="end")?
 }
+
+test "to_array" {
+  let map = LinkedHashMap::[(1, "one"), (2, "two"), (3, "three")]
+  inspect(map.to_array(), content="[(1, one), (2, two), (3, three)]")?
+}
