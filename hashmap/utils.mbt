@@ -25,15 +25,13 @@ fn debug_entries[K : Show, V : Show](self : HashMap[K, V]) -> String {
   }
 }
 
-// TODO: add %array.fill entry
-// Clears the map, removing all key-value pairs. Keeps the allocated space.
+/// Clears the map, removing all key-value pairs. Keeps the allocated space.
 pub fn clear[K, V](self : HashMap[K, V]) -> Unit {
-  for i = 0; i < self.capacity; i = i + 1 {
-    self.entries[i] = Empty
-  }
+  self.entries.fill(Empty)
   self.size = 0
 }
 
+/// Returns an iterator of the map.
 pub fn as_iter[K, V](self : HashMap[K, V]) -> @iter.Iter[(K, V)] {
   @iter.Iter::_unstable_internal_make(
     fn(yield) {
@@ -52,6 +50,18 @@ pub fn as_iter[K, V](self : HashMap[K, V]) -> @iter.Iter[(K, V)] {
   )
 }
 
+/// Converts the map to an array.
+pub fn to_array[K, V](self : HashMap[K, V]) -> Array[(K, V)] {
+  let arr = []
+  for i = 0, len = self.entries.length(); i < len; i = i + 1 {
+    match self.entries[i] {
+      Valid(~key, ~value, ..) => arr.push((key, value))
+      _ => continue
+    }
+  }
+  arr
+}
+
 /// Get the number of key-value pairs in the map.
 pub fn size[K, V](self : HashMap[K, V]) -> Int {
   self.size
@@ -67,7 +77,7 @@ pub fn is_empty[K, V](self : HashMap[K, V]) -> Bool {
   self.size == 0
 }
 
-// Iterate over all key-value pairs of the map.
+/// Iterate over all key-value pairs of the map.
 pub fn iter[K, V](self : HashMap[K, V], f : (K, V) -> Unit) -> Unit {
   for i = 0; i < self.capacity; i = i + 1 {
     match self.entries[i] {
@@ -77,7 +87,7 @@ pub fn iter[K, V](self : HashMap[K, V], f : (K, V) -> Unit) -> Unit {
   }
 }
 
-// Iterate over all key-value pairs of the map, with index.
+/// Iterate over all key-value pairs of the map, with index.
 pub fn iteri[K, V](self : HashMap[K, V], f : (Int, K, V) -> Unit) -> Unit {
   for i = 0, idx = 0; i < self.capacity; {
     match self.entries[i] {
