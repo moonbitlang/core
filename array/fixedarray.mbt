@@ -294,7 +294,10 @@ test "new" {
 }
 
 /// Create a new array. Values are built from indexes.
-pub fn FixedArray::new_with_index[T](length : Int, value : (Int) -> T) -> FixedArray[T] {
+pub fn FixedArray::new_with_index[T](
+  length : Int,
+  value : (Int) -> T
+) -> FixedArray[T] {
   if length <= 0 {
     []
   } else {

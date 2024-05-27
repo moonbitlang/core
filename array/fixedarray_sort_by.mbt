@@ -154,7 +154,10 @@ fn fixed_try_bubble_sort_by[T](
 /// It will only tolerate at most 8 unsorted elements. The time complexity is O(n).
 /// 
 /// Returns whether the array is sorted.
-fn fixed_bubble_sort_by[T](arr : FixedArraySlice[T], cmp : (T, T) -> Int) -> Unit {
+fn fixed_bubble_sort_by[T](
+  arr : FixedArraySlice[T],
+  cmp : (T, T) -> Int
+) -> Unit {
   for i = 1; i < arr.length(); i = i + 1 {
     for j = i; j > 0 && cmp(arr[j - 1], arr[j]) > 0; j = j - 1 {
       arr.swap(j, j - 1)
