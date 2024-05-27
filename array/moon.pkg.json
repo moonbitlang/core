@@ -2,7 +2,7 @@
   "import": [
     "moonbitlang/core/builtin",
     "moonbitlang/core/coverage",
-    "moonbitlang/core/iter"
-  ],
-  "test-import": ["moonbitlang/core/assertion"]
+    "moonbitlang/core/iter",
+    "moonbitlang/core/assertion"
+  ]
 }
