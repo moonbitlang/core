@@ -19,7 +19,6 @@ impl ImmutableSet {
   fold[T : Compare + Eq, U](Self[T], (U, T) -> U, ~init : U) -> U
   forall[T : Compare + Eq](Self[T], (T) -> Bool) -> Bool
   from_array[T : Compare + Eq](Array[T]) -> Self[T]
-  from_list[T : Compare + Eq](List[T]) -> Self[T]
   inter[T : Compare + Eq](Self[T], Self[T]) -> Self[T]
   is_empty[T : Compare + Eq](Self[T]) -> Bool
   iter[T : Compare + Eq](Self[T], (T) -> Unit) -> Unit
@@ -37,7 +36,6 @@ impl ImmutableSet {
   subset[T : Compare + Eq](Self[T], Self[T]) -> Bool
   to_array[T : Compare + Eq](Self[T]) -> Array[T]
   to_fixed_array[T : Compare + Eq](Self[T]) -> FixedArray[T]
-  to_list[T : Compare + Eq](Self[T]) -> List[T]
   to_string[T : Show + Compare + Eq](Self[T]) -> String
   union[T : Compare + Eq](Self[T], Self[T]) -> Self[T]
 }

@@ -1,9 +1,11 @@
 {
   "import": [
     "moonbitlang/core/builtin",
-    "moonbitlang/core/list",
     "moonbitlang/core/array",
     "moonbitlang/core/coverage",
     "moonbitlang/core/iter"
+  ],
+  "test-import" : [
+    "moonbitlang/core/list"
   ]
 }

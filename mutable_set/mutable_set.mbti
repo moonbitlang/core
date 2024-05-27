@@ -25,7 +25,6 @@ impl MutableSet {
   size[T : Compare + Eq](Self[T]) -> Int64
   subset[T : Compare + Eq](Self[T], Self[T]) -> Bool
   to_array[T : Compare + Eq](Self[T]) -> Array[T]
-  to_list[T : Compare + Eq](Self[T]) -> List[T]
   to_string[T : Compare + Show + Eq](Self[T]) -> String
   union[T : Compare + Eq](Self[T], Self[T]) -> Self[T]
 }
