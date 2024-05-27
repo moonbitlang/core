@@ -218,3 +218,8 @@ test "as_iter" {
   )
   inspect(buf, content="[1-one][2-two]")?
 }
+
+test "to_array" {
+  let map = HashMap::[(1, "one"), (2, "two"), (3, "three")]
+  inspect(map.to_array(), content="[(1, one), (2, two), (3, three)]")?
+}
