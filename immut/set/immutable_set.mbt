@@ -26,23 +26,6 @@ pub fn ImmutableSet::singleton[T : Compare](value : T) -> ImmutableSet[T] {
   Node(left=Empty, ~value, right=Empty, height=1)
 }
 
-/// Initialize an ImmutableSet[T] from a List[T]
-pub fn ImmutableSet::from_list[T : Compare](list : List[T]) -> ImmutableSet[T] {
-  match list {
-    Nil => Empty
-    // For very small lists, adding values to the set directly using the add function is much faster than sorting and de-important the entire list.
-    Cons(value, Nil) => singleton(value)
-    Cons(value, Cons(value1, Nil)) => singleton(value).add(value1)
-    Cons(value, Cons(value1, Cons(value2, Nil))) =>
-      singleton(value).add(value1).add(value2)
-    Cons(value, Cons(value1, Cons(value2, Cons(value3, Nil)))) =>
-      singleton(value).add(value1).add(value2).add(value3)
-    Cons(value, Cons(value1, Cons(value2, Cons(value3, Cons(value4, Nil))))) =>
-      singleton(value).add(value1).add(value2).add(value3).add(value4)
-    _ => of_sorted_list(list.sort())
-  }
-}
-
 /// Initialize an ImmutableSet[T] from a Array[T]
 pub fn ImmutableSet::from_array[T : Compare](
   array : Array[T]
@@ -52,19 +35,6 @@ pub fn ImmutableSet::from_array[T : Compare](
   } else {
     set
   }
-}
-
-/// Convert ImmutableSet[T] to List[T], the result must be ordered.
-pub fn to_list[T : Compare](self : ImmutableSet[T]) -> List[T] {
-  fn values_aux(set : ImmutableSet[T], list : List[T]) {
-    match set {
-      Empty => list
-      Node(~left, ~right, ~value, ..) =>
-        values_aux(left, Cons(value, values_aux(right, list)))
-    }
-  }
-
-  values_aux(self, Nil)
 }
 
 /// Convert ImmutableSet[T] to Array[T], the result must be ordered.
@@ -763,52 +733,4 @@ fn concat[T : Compare](
     (_, Empty) => self
     _ => join(self, other.min(), other.remove_min())
   }
-}
-
-// Convert a sorted list into a balanced binary search tree to facilitate subsequent search, insertion, and deletion operations.
-fn of_sorted_list[T : Compare](list : List[T]) -> ImmutableSet[T] {
-  // Recursively process the input list and build a balanced binary search tree based on the length n of the list.
-  fn sub(n : Int, list : List[T]) -> (ImmutableSet[T], List[T]) {
-    match (n, list) {
-      (0, list) => (Empty, list)
-      (1, Cons(value, list)) =>
-        (Node(left=Empty, ~value, right=Empty, height=1), list)
-      (2, Cons(value, Cons(value1, list))) =>
-        (
-          Node(
-            left=Node(left=Empty, ~value, right=Empty, height=1),
-            value=value1,
-            right=Empty,
-            height=2,
-          ),
-          list,
-        )
-      (3, Cons(value, Cons(value1, Cons(value2, list)))) =>
-        (
-          Node(
-            left=Node(left=Empty, ~value, right=Empty, height=1),
-            value=value1,
-            right=Node(left=Empty, value=value2, right=Empty, height=1),
-            height=2,
-          ),
-          list,
-        )
-
-      // For n > 3, the function first calculates the size of the left subtree,
-      // and then recursively constructs the left subtree.
-      _ => {
-        let left_length = n / 2
-        let (left, list) = sub(left_length, list)
-        match list {
-          Nil => abort("of_sorted_list: cannot constructs the left")
-          Cons(mid, list) => {
-            let (right, list) = sub(n - left_length - 1, list)
-            (create(left, mid, right), list)
-          }
-        }
-      }
-    }
-  }
-
-  sub(list.length(), list).0
 }

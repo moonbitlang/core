@@ -737,22 +737,6 @@ pub fn filter[T : Compare](
 // # Convert to
 // Convert a MutableSet to other data structures, including list, array, and vec.
 
-/// Convert MutableSet[T] to List[T], the result must be ordered.
-pub fn to_list[T : Compare](self : MutableSet[T]) -> List[T] {
-  fn aux(set : Option[Node[T]], list : List[T]) {
-    match set {
-      None => list
-      Some(node) =>
-        match node.value {
-          None => list
-          Some(value) => aux(node.left, Cons(value, aux(node.right, list)))
-        }
-    }
-  }
-
-  aux(self.root, Nil)
-}
-
 /// Convert MutableSet[T] to Array[T], the result must be ordered.
 pub fn to_array[T : Compare](self : MutableSet[T]) -> Array[T] {
   fn aux(set : Option[Node[T]]) -> Array[_] {
@@ -1210,14 +1194,6 @@ test "contains" {
   inspect(set.contains(5), content="true")?
   inspect(MutableSet::[7, 2, 9, 4, 6, 3, 8, 1].contains(5), content="false")?
   inspect(MutableSet::[].contains(1), content="false")?
-}
-
-test "to_list" {
-  inspect(
-    MutableSet::[7, 2, 9, 4, 5, 6, 3, 8, 1].to_list(),
-    content="List::[1, 2, 3, 4, 5, 6, 7, 8, 9]",
-  )?
-  inspect((MutableSet::[] : MutableSet[Int]).to_list(), content="List::[]")?
 }
 
 test "to_array" {
