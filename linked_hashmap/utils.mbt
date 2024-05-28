@@ -69,7 +69,13 @@ pub fn is_empty[K, V](self : LinkedHashMap[K, V]) -> Bool {
 
 /// Iterate over all key-value pairs of the map in the order of insertion.
 pub fn iter[K, V](self : LinkedHashMap[K, V], f : (K, V) -> Unit) -> Unit {
-  self.iteri(fn(_i, k, v) { f(k, v) })
+  loop self.head {
+    Some(Valid(~key, ~value, ~next, ..)) => {
+      f(key, value)
+      continue next
+    }
+    None | Some(Empty) => break
+  }
 }
 
 /// Iterate over all key-value pairs of the map in the order of insertion, with index.
@@ -79,7 +85,7 @@ pub fn iteri[K, V](self : LinkedHashMap[K, V], f : (Int, K, V) -> Unit) -> Unit 
       f(idx, key, value)
       continue idx + 1, next
     }
-    _, _ => break
+    _, None | Some(Empty) => break
   }
 }
 
