@@ -317,3 +317,62 @@ test "as_iter" {
   )
   inspect(buf, content="[1-one][2-two]")?
 }
+
+test "insert" {
+  let m = Map::[(3, "three"), (8, "eight"), (1, "one")]
+  inspect(m.debug_tree(), content="(3,three,(1,one,_,_),(8,eight,_,_))")?
+  let m = m.insert(5, "five").insert(2, "two").insert(0, "zero").insert(
+    1, "one_updated",
+  )
+  inspect(
+    m.debug_tree(),
+    content="(3,three,(1,one_updated,(0,zero,_,_),(2,two,_,_)),(8,eight,(5,five,_,_),_))",
+  )?
+}
+
+test "remove" {
+  let m = Map::[(3, "three"), (8, "eight"), (1, "one"), (2, "two"), (0, "zero")]
+  inspect(
+    m.debug_tree(),
+    content="(3,three,(1,one,(0,zero,_,_),(2,two,_,_)),(8,eight,_,_))",
+  )?
+  let m = m.remove(1).remove(3)
+  @assertion.assert_eq(m.debug_tree(), "(2,two,(0,zero,_,_),(8,eight,_,_))")?
+}
+
+test "filter" {
+  let m = Map::[(3, "three"), (8, "eight"), (1, "one"), (2, "two"), (0, "zero")]
+  let fm = m.filter(fn(v) { v.length() > 3 })
+  @assertion.assert_eq(fm.debug_tree(), "(3,three,(0,zero,_,_),(8,eight,_,_))")?
+}
+
+test "filter_with_key" {
+  let m = Map::[(3, "three"), (8, "eight"), (1, "one"), (2, "two"), (0, "zero")]
+  let fm = m.filter_with_key(fn(k, v) { k > 3 && v.length() > 3 })
+  @assertion.assert_eq(fm.debug_tree(), "(8,eight,_,_)")?
+}
+
+test "to_array" {
+  let m = Map::[(1, "one"), (2, "two"), (3, "three")]
+  @assertion.assert_eq(m.to_array(), [(1, "one"), (2, "two"), (3, "three")])?
+}
+
+test "op_equal" {
+  let m1 = Map::[
+    (3, "three"),
+    (8, "eight"),
+    (1, "one"),
+    (2, "two"),
+    (0, "zero"),
+  ]
+  let m2 = Map::[
+    (3, "three"),
+    (8, "eight"),
+    (1, "one"),
+    (2, "two"),
+    (0, "zero"),
+  ]
+  let m3 = Map::[(3, "three"), (8, "eight"), (1, "one"), (2, "two")]
+  @assertion.assert_eq(m1 == m2, true)?
+  @assertion.assert_eq(m1 == m3, false)?
+}
