@@ -317,6 +317,7 @@ test "as_iter" {
   )
   inspect(buf, content="[1-one][2-two]")?
 }
+
 test "insert" {
   let m = Map::[(3, "three"), (8, "eight"), (1, "one")]
   inspect(m.debug_tree(), content="(3,three,(1,one,_,_),(8,eight,_,_))")?
@@ -353,10 +354,7 @@ test "filter_with_key" {
 
 test "to_array" {
   let m = Map::[(1, "one"), (2, "two"), (3, "three")]
-  @assertion.assert_eq(
-    m.to_array(),
-    [(1, "one"), (2, "two"), (3, "three")],
-  )?
+  @assertion.assert_eq(m.to_array(), [(1, "one"), (2, "two"), (3, "three")])?
 }
 
 test "op_equal" {
