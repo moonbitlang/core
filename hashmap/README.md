@@ -15,13 +15,6 @@ let map1 : HashMap[String, Int] = HashMap::new()
 let map2 = HashMap::[1, 2, 3, 4, 5]
 ```
 
-When creating via `new()`, you can set a custom hasher by providing a labeled argument `~hasher`. 
-
-```moonbit
-// Create with custom hasher.
-let map = HashMap::new(~hasher=Some(fn(k) { k.length() }))
-```
-
 ### Set & Get
 
 You can use `set()` to add a key-value pair to the map, and use `get()` to get a key-value pair.
