@@ -15,13 +15,6 @@ let map1 : LinkedHashMap[String, Int] = LinkedHashMap::new()
 let map2 = LinkedHashMap::[("one", 1), ("two", 2), ("three", 3), ("four", 4), ("five", 5)]
 ```
 
-When creating via `new()`, you can set a custom hasher by providing a labeled argument `~hasher`. 
-
-```moonbit
-// Create with custom hasher.
-let map = LinkedHashMap::new(~hasher=Some(fn(k) { k.length() }))
-```
-
 ### Set & Get
 
 You can use `set()` to add a key-value pair to the map, and use `get()` to get a key-value pair.

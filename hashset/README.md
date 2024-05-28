@@ -15,13 +15,6 @@ let set1 : HashSet[String] = HashSet::new()
 let set2 = HashSet::[1, 2, 3, 4, 5]
 ```
 
-When creating via `new()`, you can set a custom hasher by providing a labeled argument `~hasher`.
-
-```moonbit
-// Create with custom hasher.
-let set = HashSet::new(~hasher=Some(fn(k) { k.length() }))
-```
-
 ### Insert & Contain
 
 You can use `insert()` to add a key to the set, and `contains()` to check whether a key exists.
