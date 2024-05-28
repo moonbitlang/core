@@ -12,15 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-priv struct Cont[T] {
-  content : T
-  mut sibling : Node[T]
-  mut child : Node[T]
-}
-
 priv enum Node[T] {
   Nil
-  Cons(Cont[T])
+  Cons(~content : T, mut ~sibling : Node[T], mut ~child : Node[T])
 }
 
 struct PriorityQueue[T] {
