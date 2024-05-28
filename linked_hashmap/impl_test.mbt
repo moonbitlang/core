@@ -456,3 +456,220 @@ test "to_array" {
   m.set("c", 3)
   @assertion.assert_eq(m.to_array(), [("a", 1), ("b", 2), ("c", 3)])?
 }
+
+test "new" {
+  let m : LinkedHashMap[String, Int] = LinkedHashMap::new()
+  @assertion.assert_eq(m.size, 0)?
+  @assertion.assert_eq(m.capacity, 8)?
+  @assertion.assert_eq(m.head, None)?
+  @assertion.assert_eq(m.tail, None)?
+  for i = 0; i < m.capacity; i = i + 1 {
+    @assertion.assert_is(m.entries[i], Empty)?
+  }
+}
+
+test "get" {
+  let m : LinkedHashMap[String, Int] = LinkedHashMap::new()
+  m.set("a", 1)
+  m.set("b", 2)
+  m.set("c", 3)
+  @assertion.assert_eq(m.get("a"), Some(1))?
+  @assertion.assert_eq(m.get("b"), Some(2))?
+  @assertion.assert_eq(m.get("c"), Some(3))?
+  @assertion.assert_eq(m.get("d"), None)?
+}
+
+test "get_or_default" {
+  let m : LinkedHashMap[String, Int] = LinkedHashMap::new()
+  m.set("a", 1)
+  m.set("b", 2)
+  m.set("c", 3)
+  @assertion.assert_eq(m.get_or_default("a", 42), 1)?
+  @assertion.assert_eq(m.get_or_default("b", 42), 2)?
+  @assertion.assert_eq(m.get_or_default("c", 42), 3)?
+  @assertion.assert_eq(m.get_or_default("d", 42), 42)?
+}
+
+test "contains" {
+  let m : LinkedHashMap[String, Int] = LinkedHashMap::new()
+  m.set("a", 1)
+  @assertion.assert_eq(m.contains("a"), true)?
+  @assertion.assert_eq(m.contains("b"), false)?
+}
+
+test "size" {
+  let m : LinkedHashMap[String, Int] = LinkedHashMap::new()
+  @assertion.assert_eq(m.size, 0)?
+  m.set("a", 1)
+  @assertion.assert_eq(m.size, 1)?
+}
+
+test "is_empty" {
+  let m : LinkedHashMap[String, Int] = LinkedHashMap::new()
+  @assertion.assert_eq(m.is_empty(), true)?
+  m.set("a", 1)
+  @assertion.assert_eq(m.is_empty(), false)?
+  m.remove("a")
+  @assertion.assert_eq(m.is_empty(), true)?
+}
+
+test "iter" {
+  let m : LinkedHashMap[String, Int] = LinkedHashMap::new()
+  m.set("a", 1)
+  m.set("b", 2)
+  m.set("c", 3)
+  let mut sum = 0
+  m.iter(fn(_k, v) { sum += v })
+  @assertion.assert_eq(sum, 6)?
+}
+
+test "iteri" {
+  let m : LinkedHashMap[String, Int] = LinkedHashMap::new()
+  m.set("a", 1)
+  m.set("b", 2)
+  m.set("c", 3)
+  let mut sum = 0
+  let mut s = ""
+  m.iteri(
+    fn(i, _k, v) {
+      s += i.to_string()
+      sum += v
+    },
+  )
+  @assertion.assert_eq(s, "012")?
+  @assertion.assert_eq(sum, 6)?
+}
+
+test "clear" {
+  let m : LinkedHashMap[String, Int] = LinkedHashMap::new()
+  m.set("a", 1)
+  m.set("b", 2)
+  m.set("c", 3)
+  m.clear()
+  @assertion.assert_eq(m.size, 0)?
+  @assertion.assert_eq(m.capacity, 8)?
+  @assertion.assert_eq(m.head, None)?
+  @assertion.assert_eq(m.tail, None)?
+  for i = 0; i < m.capacity; i = i + 1 {
+    @assertion.assert_is(m.entries[i], Empty)?
+  }
+}
+
+test "set_existing_key" {
+  let m : LinkedHashMap[String, Int] = LinkedHashMap::new()
+  m.set("a", 1)
+  m.set("b", 2)
+  m.set("c", 3)
+  m.set("a", 4)
+  @assertion.assert_eq(m.size, 3)?
+  @assertion.assert_eq(m.get("a"), Some(4))?
+}
+
+test "get_nonexistent_key" {
+  let m : LinkedHashMap[String, Int] = LinkedHashMap::new()
+  m.set("a", 1)
+  m.set("b", 2)
+  m.set("c", 3)
+  @assertion.assert_eq(m.get("d"), None)?
+}
+
+test "get_or_default_existing_key" {
+  let m : LinkedHashMap[String, Int] = LinkedHashMap::new()
+  m.set("a", 1)
+  m.set("b", 2)
+  m.set("c", 3)
+  @assertion.assert_eq(m.get_or_default("a", 42), 1)?
+}
+
+test "get_or_default_nonexistent_key" {
+  let m : LinkedHashMap[String, Int] = LinkedHashMap::new()
+  m.set("a", 1)
+  m.set("b", 2)
+  m.set("c", 3)
+  @assertion.assert_eq(m.get_or_default("d", 42), 42)?
+}
+
+test "remove_existing_key" {
+  let m : LinkedHashMap[String, Int] = LinkedHashMap::new()
+  m.set("a", 1)
+  m.set("b", 2)
+  m.set("c", 3)
+  m.remove("b")
+  @assertion.assert_eq(m.size(), 2)?
+  @assertion.assert_eq(m.get("b"), None)?
+}
+
+test "remove_nonexistent_key" {
+  let m : LinkedHashMap[String, Int] = LinkedHashMap::new()
+  m.set("a", 1)
+  m.set("b", 2)
+  m.set("c", 3)
+  m.remove("d")
+  @assertion.assert_eq(m.size(), 3)?
+}
+
+test "contains_existing_key" {
+  let m : LinkedHashMap[String, Int] = LinkedHashMap::new()
+  m.set("a", 1)
+  m.set("b", 2)
+  m.set("c", 3)
+  @assertion.assert_eq(m.contains("b"), true)?
+}
+
+test "contains_nonexistent_key" {
+  let m : LinkedHashMap[String, Int] = LinkedHashMap::new()
+  m.set("a", 1)
+  m.set("b", 2)
+  m.set("c", 3)
+  @assertion.assert_eq(m.contains("d"), false)?
+}
+
+test "clear" {
+  let m : LinkedHashMap[String, Int] = LinkedHashMap::new()
+  m.set("a", 1)
+  m.set("b", 2)
+  m.set("c", 3)
+  m.clear()
+  @assertion.assert_eq(m.size, 0)?
+  @assertion.assert_eq(m.capacity, 8)?
+  @assertion.assert_eq(m.head, None)?
+  @assertion.assert_eq(m.tail, None)?
+  for i = 0; i < m.capacity; i = i + 1 {
+    @assertion.assert_is(m.entries[i], Empty)?
+  }
+}
+
+test "iter" {
+  let m : LinkedHashMap[String, Int] = LinkedHashMap::new()
+  m.set("a", 1)
+  m.set("b", 2)
+  m.set("c", 3)
+  let mut sum = 0
+  m.iter(fn(_k, v) { sum += v })
+  @assertion.assert_eq(sum, 6)?
+}
+
+test "iteri" {
+  let m : LinkedHashMap[String, Int] = LinkedHashMap::new()
+  m.set("a", 1)
+  m.set("b", 2)
+  m.set("c", 3)
+  let mut sum = 0
+  let mut s = ""
+  m.iteri(
+    fn(i, _k, v) {
+      s += i.to_string()
+      sum += v
+    },
+  )
+  @assertion.assert_eq(s, "012")?
+  @assertion.assert_eq(sum, 6)?
+}
+
+test "to_array" {
+  let m : LinkedHashMap[String, Int] = LinkedHashMap::new()
+  m.set("a", 1)
+  m.set("b", 2)
+  m.set("c", 3)
+  @assertion.assert_eq(m.to_array(), [("a", 1), ("b", 2), ("c", 3)])?
+}
