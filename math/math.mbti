@@ -12,12 +12,6 @@ fn sin(Double) -> Double
 fn tan(Double) -> Double
 
 // Types and methods
-type T
-impl T {
-  compare(Self, Self) -> Int
-  debug_write(Self, Buffer) -> Unit
-  op_equal(Self, Self) -> Bool
-}
 
 // Traits
 
