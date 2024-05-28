@@ -39,9 +39,15 @@ pub fn blit_to[A](
   ~dst_offset : Int = 0
 ) -> Unit {
   if dst_offset + len > dst.length() || src_offset + len > self.length() {
-    abort("invalid argument in blit")
+    panic()
   }
   fixed_unsafe_blit(dst, dst_offset, self, src_offset, len)
+}
+
+test "panic" {
+  let a : FixedArray[Int] = [1, 2, 3, 4]
+  let b : FixedArray[Int] = [1, 2, 3, 4]
+  a.blit_to(b, len=13)
 }
 
 pub fn copy[T](self : FixedArray[T]) -> FixedArray[T] {
