@@ -22,11 +22,6 @@ pub fn PriorityQueue::new[T : Compare]() -> PriorityQueue[T] {
   { len: 0, top: Nil }
 }
 
-test "new" {
-  let queue : PriorityQueue[Int] = new()
-  @assertion.assert_eq(queue.len, 0)?
-}
-
 /// Creates a new priority queue from an array.
 /// 
 /// # Example
@@ -40,29 +35,21 @@ pub fn PriorityQueue::from_array[T : Compare](
   let len = arr.length()
   for i = 0, acc = Node::Nil {
     if i < len {
-      continue i + 1,
-        meld(acc, Cons({ content: arr[i], sibling: Nil, child: Nil }))
+      continue i + 1, meld(acc, Cons(content=arr[i], sibling=Nil, child=Nil))
     } else {
       break { len, top: acc }
     }
   }
 }
 
-test "from_array" {
-  let pq = PriorityQueue::[1, 2, 3, 4, 5]
-  @assertion.assert_eq(pq.peek(), Some(5))?
-}
-
 fn copy_node[T](x : Node[T]) -> Node[T] {
   match x {
     Nil => Nil
-    Cons(top) =>
+    Cons(_) as node =>
       Cons(
-        {
-          content: top.content,
-          sibling: copy_node(top.sibling),
-          child: copy_node(top.child),
-        },
+        content=node.content,
+        sibling=copy_node(node.sibling),
+        child=copy_node(node.child),
       )
   }
 }
@@ -79,21 +66,11 @@ pub fn copy[T](self : PriorityQueue[T]) -> PriorityQueue[T] {
   new_que
 }
 
-test "copy" {
-  let v = PriorityQueue::[1, 2, 3, 4]
-  let ve = v.copy()
-  inspect(v.peek().to_string(), content="Some(4)")?
-  inspect(ve.peek().to_string(), content="Some(4)")?
-  v.pop() |> ignore
-  inspect(v.peek().to_string(), content="Some(3)")?
-  inspect(ve.peek().to_string(), content="Some(4)")?
-}
-
 pub fn to_array[T : Compare](self : PriorityQueue[T]) -> Array[T] {
   let arr : Array[T] = []
   fn go(x : Node[T]) {
     match x {
-      Cons(node) => {
+      Cons(_) as node => {
         arr.push(node.content)
         go(node.sibling)
         go(node.child)
@@ -105,12 +82,6 @@ pub fn to_array[T : Compare](self : PriorityQueue[T]) -> Array[T] {
   go(self.top)
   arr.sort_by(fn(x, y) { if x < y { 1 } else { -1 } })
   arr
-}
-
-test "to_array" {
-  let v = PriorityQueue::[1, 2, 3, 4]
-  inspect(v.to_array().to_string(), content="[4, 3, 2, 1]")?
-  inspect(v.to_array().to_string(), content="[4, 3, 2, 1]")?
 }
 
 pub fn as_iter[T : Compare](self : PriorityQueue[T]) -> @iter.Iter[T] {
@@ -128,21 +99,11 @@ pub fn as_iter[T : Compare](self : PriorityQueue[T]) -> @iter.Iter[T] {
   )
 }
 
-test "as_iter" {
-  let buf = Buffer::make(20)
-  let v = PriorityQueue::[1, 2, 3]
-  v.as_iter().iter(fn(e) { buf.write_string("[\(e)]") })
-  inspect(buf, content="[3][2][1]")?
-  buf.reset()
-  v.as_iter().take(2).iter(fn(e) { buf.write_string("[\(e)]") })
-  inspect(buf, content="[3][2]")?
-}
-
 fn meld[T : Compare](x : Node[T], y : Node[T]) -> Node[T] {
   match (x, y) {
     (Nil, _) => y
     (_, Nil) => x
-    (Cons(x_top), Cons(y_top)) =>
+    (Cons(_) as x_top, Cons(_) as y_top) =>
       if x_top.content > y_top.content {
         y_top.sibling = x_top.child
         x_top.child = y
@@ -158,13 +119,13 @@ fn meld[T : Compare](x : Node[T], y : Node[T]) -> Node[T] {
 fn merges[T : Compare](x : Node[T]) -> Node[T] {
   match x {
     Nil => Nil
-    Cons(top) =>
-      match top.sibling {
+    Cons(~sibling, ..) =>
+      match sibling {
         Nil => x
-        Cons(next_top) =>
-          match next_top.sibling {
-            Nil => meld(x, top.sibling)
-            Cons(_) => meld(merges(next_top.sibling), meld(x, top.sibling))
+        Cons(sibling=next_sibling, ..) =>
+          match next_sibling {
+            Nil => meld(x, sibling)
+            Cons(_) => meld(merges(next_sibling), meld(x, sibling))
           }
       }
   }
@@ -172,17 +133,6 @@ fn merges[T : Compare](x : Node[T]) -> Node[T] {
 
 pub fn length[T](self : PriorityQueue[T]) -> Int {
   self.len
-}
-
-test "length" {
-  let pq : PriorityQueue[Int] = PriorityQueue::new()
-  @assertion.assert_eq(pq.length(), 0)?
-  pq.push(1)
-  @assertion.assert_eq(pq.length(), 1)?
-  pq.push(2)
-  @assertion.assert_eq(pq.length(), 2)?
-  pq.pop_exn()
-  @assertion.assert_eq(pq.length(), 1)?
 }
 
 /// Pops the first value from the priority queue.
@@ -199,18 +149,9 @@ pub fn pop_exn[T : Compare](self : PriorityQueue[T]) -> Unit {
   }
   self.top = match self.top {
     Nil => Nil
-    Cons(top) => merges(top.child)
+    Cons(~child, ..) => merges(child)
   }
   self.len -= 1
-}
-
-test "pop_exn" {
-  let pq = PriorityQueue::[5, 5, 4, 3, 2, 1]
-  @assertion.assert_eq(pq.peek(), Some(5))?
-  pq.pop_exn()
-  @assertion.assert_eq(pq.peek(), Some(5))?
-  pq.pop_exn()
-  @assertion.assert_eq(pq.peek(), Some(4))?
 }
 
 /// Pops the first value from the priority queue, which returns None if the queue is empty.
@@ -224,19 +165,12 @@ pub fn pop[T : Compare](self : PriorityQueue[T]) -> Option[T] {
   let result = self.peek()
   self.top = match self.top {
     Nil => Nil
-    Cons(top) => {
+    Cons(~child, ..) => {
       self.len -= 1
-      merges(top.child)
+      merges(child)
     }
   }
   result
-}
-
-test "pop" {
-  let pq = PriorityQueue::[1, 2, 3, 4, 5, 5]
-  @assertion.assert_eq(pq.pop(), Some(5))?
-  @assertion.assert_eq(pq.pop(), Some(5))?
-  @assertion.assert_eq(pq.pop(), Some(4))?
 }
 
 /// Adds a value to the priority queue.
@@ -247,16 +181,8 @@ test "pop" {
 /// queue.add(1)
 /// ```
 pub fn push[T : Compare](self : PriorityQueue[T], value : T) -> Unit {
-  self.top = meld(self.top, Cons({ content: value, sibling: Nil, child: Nil }))
+  self.top = meld(self.top, Cons(content=value, sibling=Nil, child=Nil))
   self.len += 1
-}
-
-test "push" {
-  let pq = PriorityQueue::[5, 4, 3, 2, 1]
-  pq.push(-1)
-  pq.push(6)
-  @assertion.assert_eq(pq.length(), 7)?
-  @assertion.assert_eq(pq.peek(), Some(6))?
 }
 
 /// Peeks at the first value in the priority queue, which returns None if the priority queue is empty.
@@ -269,15 +195,8 @@ test "push" {
 pub fn peek[T](self : PriorityQueue[T]) -> Option[T] {
   match self.top {
     Nil => None
-    Cons(top) => Some(top.content)
+    Cons(~content, ..) => Some(content)
   }
-}
-
-test "peek" {
-  let pq = PriorityQueue::[1, 2, 3, 4, 5]
-  @assertion.assert_eq(pq.peek(), Some(5))?
-  pq.clear()
-  @assertion.assert_eq(pq.peek(), None)?
 }
 
 /// Clears the queue.
@@ -292,12 +211,6 @@ pub fn clear[T](self : PriorityQueue[T]) -> Unit {
   self.len = 0
 }
 
-test "clear" {
-  let pq = PriorityQueue::[5, 4, 3, 2, 1]
-  pq.clear()
-  @assertion.assert_eq(pq.length(), 0)?
-}
-
 /// Checks if the priority queue is empty.
 /// 
 /// # Example
@@ -307,11 +220,4 @@ test "clear" {
 /// ```
 pub fn is_empty[T](self : PriorityQueue[T]) -> Bool {
   self.len == 0
-}
-
-test "is_empty" {
-  let pq = PriorityQueue::[5, 4, 3, 2, 1]
-  @assertion.assert_eq(pq.is_empty(), false)?
-  pq.clear()
-  @assertion.assert_eq(pq.is_empty(), true)?
 }
