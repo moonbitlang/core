@@ -22,8 +22,8 @@ pub fn LinkedHashMap::new[K, V]() -> LinkedHashMap[K, V] {
     capacity: default_init_capacity,
     growAt: calc_grow_threshold(default_init_capacity),
     entries: Array::make(default_init_capacity, Empty),
-    head: None,
-    tail: None,
+    head: Empty,
+    tail: Empty,
   }
 }
 
@@ -52,8 +52,8 @@ pub fn set[K : Hash + Eq, V](
     ~hash,
     ~key,
     ~value,
-    prev=None,
-    next=None,
+    prev=Empty,
+    next=Empty,
   )
   loop 0, self.index(hash), insert_entry {
     i, idx, Valid(~psl, ~hash, ~key, ~value, ..) as entry => {
@@ -176,16 +176,15 @@ fn add_entry_to_tail[K : Eq, V](
   match entry {
     Valid(_) as e =>
       match self.tail {
-        None => {
-          self.head = Some(entry)
-          self.tail = Some(entry)
+        Empty => {
+          self.head = entry
+          self.tail = entry
         }
-        Some(Valid(_) as tail) => {
-          tail.next = Some(entry)
-          e.prev = Some(tail)
-          self.tail = Some(entry)
+        Valid(_) as tail => {
+          tail.next = entry
+          e.prev = tail
+          self.tail = entry
         }
-        Some(Empty) => ()
       }
     Empty => ()
   }
@@ -198,28 +197,28 @@ fn remove_entry[K : Eq, V](
   match entry {
     Valid(_) as e => {
       if self.is_empty() {
-        self.head = None
-        self.tail = None
+        self.head = Empty
+        self.tail = Empty
       } else {
         match self.head {
-          Some(v) => if v == e { self.head = e.next }
-          None => ()
+          Valid(_) as v => if v == e { self.head = e.next }
+          Empty => ()
         }
         match self.tail {
-          Some(v) => if v == e { self.tail = e.prev }
-          None => ()
+          Valid(_) as v => if v == e { self.tail = e.prev }
+          Empty => ()
         }
         match e.prev {
-          Some(Valid(_) as prev) => prev.next = e.next
-          _ => ()
+          Valid(_) as prev => prev.next = e.next
+          Empty => ()
         }
         match e.next {
-          Some(Valid(_) as next) => next.prev = e.prev
-          _ => ()
+          Valid(_) as next => next.prev = e.prev
+          Empty => ()
         }
       }
-      e.prev = None
-      e.next = None
+      e.prev = Empty
+      e.next = Empty
     }
     Empty => ()
   }
@@ -260,13 +259,13 @@ fn grow[K : Hash + Eq, V](self : LinkedHashMap[K, V]) -> Unit {
   self.capacity = self.capacity * 2
   self.growAt = calc_grow_threshold(self.capacity)
   self.size = 0
-  self.head = None
+  self.head = Empty
   loop old_head {
-    Some(Valid(~key, ~value, ~next, ..)) => {
+    Valid(~key, ~value, ~next, ..) => {
       self.set(key, value)
       continue next
     }
-    _ => break
+    Empty => break
   }
 }
 
