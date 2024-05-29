@@ -9,6 +9,7 @@
     "moonbitlang/core/option"
   ],
   "test-import" : [
-    "moonbitlang/core/assertion"
+    "moonbitlang/core/assertion",
+    "moonbitlang/core/string"
   ]
 }
