@@ -21,7 +21,7 @@ pub fn LinkedHashMap::new[K, V]() -> LinkedHashMap[K, V] {
     size: 0,
     capacity: default_init_capacity,
     growAt: calc_grow_threshold(default_init_capacity),
-    entries: Array::make(default_init_capacity, Empty),
+    entries: FixedArray::make(default_init_capacity, Empty),
     head: Empty,
     tail: Empty,
   }
@@ -58,7 +58,7 @@ pub fn set[K : Hash + Eq, V](
   loop 0, self.index(hash), insert_entry {
     i, idx, Valid(~psl, ~hash, ~key, ~value, ..) as entry => {
       if i == self.capacity {
-        abort("HashMap is full")
+        panic()
       }
       match self.entries[idx] {
         Empty => {
@@ -83,7 +83,7 @@ pub fn set[K : Hash + Eq, V](
         }
       }
     }
-    _, _, _ => break
+    _, _, Empty => break
   }
 }
 
@@ -251,11 +251,11 @@ fn grow[K : Hash + Eq, V](self : LinkedHashMap[K, V]) -> Unit {
     self.capacity = default_init_capacity
     self.growAt = calc_grow_threshold(self.capacity)
     self.size = 0
-    self.entries = Array::make(self.capacity, Empty)
+    self.entries = FixedArray::make(self.capacity, Empty)
     return
   }
   let old_head = self.head
-  self.entries = Array::make(self.capacity * 2, Empty)
+  self.entries = FixedArray::make(self.capacity * 2, Empty)
   self.capacity = self.capacity * 2
   self.growAt = calc_grow_threshold(self.capacity)
   self.size = 0

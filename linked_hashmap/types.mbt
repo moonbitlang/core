@@ -51,7 +51,7 @@ fn op_equal[K : Eq, V](self : Entry[K, V], other : Entry[K, V]) -> Bool {
 /// // 1-one
 /// ```
 struct LinkedHashMap[K, V] {
-  mut entries : Array[Entry[K, V]]
+  mut entries : FixedArray[Entry[K, V]]
   mut size : Int // active key-value pairs count
   mut capacity : Int // current capacity 
   mut growAt : Int // threshold that triggers grow
