@@ -16,8 +16,8 @@ fn debug_entries[K : Show, V : Show](self : HashMap[K, V]) -> String {
   for s = "", i = 0; i < self.entries.length(); {
     let s = if i > 0 { s + "," } else { s }
     match self.entries[i] {
-      Empty => continue s + "_", i + 1
-      Valid(~psl, ~key, ~value, ..) =>
+      None => continue s + "_", i + 1
+      Some({ psl, key, value, .. }) =>
         continue s + "(\(psl),\(key),\(value))", i + 1
     }
   } else {
@@ -27,7 +27,7 @@ fn debug_entries[K : Show, V : Show](self : HashMap[K, V]) -> String {
 
 /// Clears the map, removing all key-value pairs. Keeps the allocated space.
 pub fn clear[K, V](self : HashMap[K, V]) -> Unit {
-  self.entries.fill(Empty)
+  self.entries.fill(None)
   self.size = 0
 }
 
@@ -37,11 +37,11 @@ pub fn as_iter[K, V](self : HashMap[K, V]) -> @iter.Iter[(K, V)] {
     fn(yield) {
       for i = 0, len = self.entries.length(); i < len; i = i + 1 {
         match self.entries[i] {
-          Valid(~key, ~value, ..) =>
+          Some({ key, value, .. }) =>
             if yield((key, value)).not() {
               break false
             }
-          _ => continue
+          None => continue
         }
       } else {
         true
@@ -55,8 +55,8 @@ pub fn to_array[K, V](self : HashMap[K, V]) -> Array[(K, V)] {
   let arr = []
   for i = 0, len = self.entries.length(); i < len; i = i + 1 {
     match self.entries[i] {
-      Valid(~key, ~value, ..) => arr.push((key, value))
-      _ => continue
+      Some({ key, value, .. }) => arr.push((key, value))
+      None => continue
     }
   }
   arr
@@ -81,8 +81,8 @@ pub fn is_empty[K, V](self : HashMap[K, V]) -> Bool {
 pub fn iter[K, V](self : HashMap[K, V], f : (K, V) -> Unit) -> Unit {
   for i = 0; i < self.capacity; i = i + 1 {
     match self.entries[i] {
-      Valid(_) as entry => f(entry.key, entry.value)
-      Empty => ()
+      Some({ key, value, .. }) => f(key, value)
+      None => ()
     }
   }
 }
@@ -91,11 +91,11 @@ pub fn iter[K, V](self : HashMap[K, V], f : (K, V) -> Unit) -> Unit {
 pub fn iteri[K, V](self : HashMap[K, V], f : (Int, K, V) -> Unit) -> Unit {
   for i = 0, idx = 0; i < self.capacity; {
     match self.entries[i] {
-      Valid(_) as entry => {
-        f(idx, entry.key, entry.value)
+      Some({ key, value, .. }) => {
+        f(idx, key, value)
         continue i + 1, idx + 1
       }
-      Empty => continue i + 1, idx
+      None => continue i + 1, idx
     }
   }
 }

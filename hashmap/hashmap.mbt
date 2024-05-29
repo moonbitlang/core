@@ -21,7 +21,7 @@ pub fn HashMap::new[K, V]() -> HashMap[K, V] {
     size: 0,
     capacity: default_init_capacity,
     growAt: calc_grow_threshold(default_init_capacity),
-    entries: Array::make(default_init_capacity, Empty),
+    entries: FixedArray::make(default_init_capacity, None),
   }
 }
 
@@ -41,30 +41,35 @@ pub fn set[K : Hash + Eq, V](self : HashMap[K, V], key : K, value : V) -> Unit {
     self.grow()
   }
   let hash = make_hash(key)
-  loop 0, self.index(hash), 0, hash, key, value {
-    i, idx, psl, hash, key, value => {
+  let insert_entry = { psl: 0, hash, key, value }
+  loop 0, self.index(hash), Option::Some(insert_entry) {
+    i, idx, Some(entry) => {
       if i == self.capacity {
-        abort("HashMap is full")
+        panic()
       }
       match self.entries[idx] {
-        Empty => {
-          self.entries[idx] = Entry::Valid(~psl, ~hash, ~key, ~value)
+        None => {
+          self.entries[idx] = Some(entry)
           self.size += 1
           break
         }
-        Valid(psl=d, hash=h, key=k, value=v) => {
-          if h == hash && k == key {
-            self.entries[idx] = Valid(psl=d, hash=h, key=k, ~value)
+        Some(curr_entry) => {
+          if curr_entry.hash == entry.hash && curr_entry.key == entry.key {
+            curr_entry.value = entry.value
             break
           }
-          if psl > d {
-            self.entries[idx] = Entry::Valid(~psl, ~hash, ~key, ~value)
-            continue i + 1, self.next_index(idx), d + 1, h, k, v
+          if entry.psl > curr_entry.psl {
+            self.entries[idx] = Some(entry)
+            curr_entry.psl += 1
+            continue i + 1, self.next_index(idx), Some(curr_entry)
+          } else {
+            entry.psl += 1
+            continue i + 1, self.next_index(idx), Some(entry)
           }
-          continue i + 1, self.next_index(idx), psl + 1, hash, key, value
         }
       }
     }
+    _, _, None => break
   }
 }
 
@@ -83,7 +88,7 @@ pub fn get[K : Hash + Eq, V](self : HashMap[K, V], key : K) -> Option[V] {
       i < self.capacity
       i = i + 1, idx = self.next_index(idx) {
     match self.entries[idx] {
-      Valid(_) as entry => {
+      Some(entry) => {
         if entry.hash == hash && entry.key == key {
           break Some(entry.value)
         }
@@ -91,7 +96,7 @@ pub fn get[K : Hash + Eq, V](self : HashMap[K, V], key : K) -> Option[V] {
           break None
         }
       }
-      Empty => break None
+      None => break None
     }
   } else {
     None
@@ -130,9 +135,9 @@ pub fn remove[K : Hash + Eq, V](self : HashMap[K, V], key : K) -> Unit {
       i < self.capacity
       i = i + 1, idx = self.next_index(idx) {
     match self.entries[idx] {
-      Valid(_) as entry => {
+      Some(entry) => {
         if entry.hash == hash && entry.key == key {
-          self.entries[idx] = Empty
+          self.entries[idx] = None
           self.shift_back(idx)
           self.size -= 1
           break
@@ -141,7 +146,7 @@ pub fn remove[K : Hash + Eq, V](self : HashMap[K, V], key : K) -> Unit {
           return
         }
       }
-      Empty => ()
+      None => ()
     }
   }
 }
@@ -151,14 +156,14 @@ fn shift_back[K : Hash, V](self : HashMap[K, V], start_index : Int) -> Unit {
       i < self.entries.length()
       i = i + 1, prev = curr, curr = self.next_index(curr) {
     match self.entries[curr] {
-      Valid(~psl, ~hash, ~key, ~value) => {
+      Some({ psl, hash, key, value, .. }) => {
         if psl == 0 {
           break
         }
-        self.entries[prev] = Valid(psl=psl - 1, ~hash, ~key, ~value)
-        self.entries[curr] = Empty
+        self.entries[prev] = Some({ psl: psl - 1, hash, key, value })
+        self.entries[curr] = None
       }
-      Empty => break
+      None => break
     }
   }
 }
@@ -169,18 +174,18 @@ fn grow[K : Hash + Eq, V](self : HashMap[K, V]) -> Unit {
     self.capacity = default_init_capacity
     self.growAt = calc_grow_threshold(self.capacity)
     self.size = 0
-    self.entries = Array::make(self.capacity, Empty)
+    self.entries = FixedArray::make(self.capacity, None)
     return
   }
   let old_entries = self.entries
-  self.entries = Array::make(self.capacity * 2, Empty)
+  self.entries = FixedArray::make(self.capacity * 2, None)
   self.capacity = self.capacity * 2
   self.growAt = calc_grow_threshold(self.capacity)
   self.size = 0
   for i = 0; i < old_entries.length(); i = i + 1 {
     match old_entries[i] {
-      Valid(~key, ~value, ..) => self.set(key, value)
-      _ => ()
+      Some({ key, value, .. }) => self.set(key, value)
+      None => ()
     }
   }
 }
