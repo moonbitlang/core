@@ -12,10 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-priv enum Entry[K, V] {
-  Empty
-  // (Probe Sequence Length, Hash, Key, Value)
-  Valid(~psl : Int, ~hash : Int, ~key : K, ~value : V)
+priv struct Entry[K, V] {
+  mut psl : Int
+  hash : Int
+  key : K
+  mut value : V
 } derive(Debug)
 
 /// A mutable hash map implements with Robin Hood hashing.
@@ -36,7 +37,7 @@ priv enum Entry[K, V] {
 /// println(map.get(3)) // output: Some("updated")
 /// ```
 struct HashMap[K, V] {
-  mut entries : Array[Entry[K, V]]
+  mut entries : FixedArray[Option[Entry[K, V]]]
   mut size : Int // active key-value pairs count
   mut capacity : Int // current capacity 
   mut growAt : Int // threshold that triggers grow
