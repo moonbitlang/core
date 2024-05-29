@@ -42,8 +42,8 @@ pub fn set[K : Hash + Eq, V](self : HashMap[K, V], key : K, value : V) -> Unit {
   }
   let hash = make_hash(key)
   let insert_entry = { psl: 0, hash, key, value }
-  loop 0, self.index(hash), Option::Some(insert_entry) {
-    i, idx, Some(entry) => {
+  loop 0, self.index(hash), insert_entry {
+    i, idx, entry => {
       if i == self.capacity {
         panic()
       }
@@ -61,15 +61,14 @@ pub fn set[K : Hash + Eq, V](self : HashMap[K, V], key : K, value : V) -> Unit {
           if entry.psl > curr_entry.psl {
             self.entries[idx] = Some(entry)
             curr_entry.psl += 1
-            continue i + 1, self.next_index(idx), Some(curr_entry)
+            continue i + 1, self.next_index(idx), curr_entry
           } else {
             entry.psl += 1
-            continue i + 1, self.next_index(idx), Some(entry)
+            continue i + 1, self.next_index(idx), entry
           }
         }
       }
     }
-    _, _, None => break
   }
 }
 
