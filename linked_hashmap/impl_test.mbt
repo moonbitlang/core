@@ -197,8 +197,8 @@ test "clear" {
   m.clear()
   @assertion.assert_eq(m.size, 0)?
   @assertion.assert_eq(m.capacity, 8)?
-  @assertion.assert_eq(m.head, Empty)?
-  @assertion.assert_eq(m.tail, Empty)?
+  @assertion.assert_eq(m.head, None)?
+  @assertion.assert_eq(m.tail, None)?
   for i = 0; i < m.capacity; i = i + 1 {
     @assertion.assert_is(m.entries[i], Empty)?
   }
@@ -415,8 +415,8 @@ test "clear" {
   m.clear()
   @assertion.assert_eq(m.size, 0)?
   @assertion.assert_eq(m.capacity, 8)?
-  @assertion.assert_eq(m.head, Empty)?
-  @assertion.assert_eq(m.tail, Empty)?
+  @assertion.assert_eq(m.head, None)?
+  @assertion.assert_eq(m.tail, None)?
   for i = 0; i < m.capacity; i = i + 1 {
     @assertion.assert_is(m.entries[i], Empty)?
   }
@@ -461,8 +461,8 @@ test "new" {
   let m : LinkedHashMap[String, Int] = LinkedHashMap::new()
   @assertion.assert_eq(m.size, 0)?
   @assertion.assert_eq(m.capacity, 8)?
-  @assertion.assert_eq(m.head, Empty)?
-  @assertion.assert_eq(m.tail, Empty)?
+  @assertion.assert_eq(m.head, None)?
+  @assertion.assert_eq(m.tail, None)?
   for i = 0; i < m.capacity; i = i + 1 {
     @assertion.assert_is(m.entries[i], Empty)?
   }
@@ -548,8 +548,8 @@ test "clear" {
   m.clear()
   @assertion.assert_eq(m.size, 0)?
   @assertion.assert_eq(m.capacity, 8)?
-  @assertion.assert_eq(m.head, Empty)?
-  @assertion.assert_eq(m.tail, Empty)?
+  @assertion.assert_eq(m.head, None)?
+  @assertion.assert_eq(m.tail, None)?
   for i = 0; i < m.capacity; i = i + 1 {
     @assertion.assert_is(m.entries[i], Empty)?
   }
@@ -632,8 +632,8 @@ test "clear" {
   m.clear()
   @assertion.assert_eq(m.size, 0)?
   @assertion.assert_eq(m.capacity, 8)?
-  @assertion.assert_eq(m.head, Empty)?
-  @assertion.assert_eq(m.tail, Empty)?
+  @assertion.assert_eq(m.head, None)?
+  @assertion.assert_eq(m.tail, None)?
   for i = 0; i < m.capacity; i = i + 1 {
     @assertion.assert_is(m.entries[i], Empty)?
   }

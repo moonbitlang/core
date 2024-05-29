@@ -19,8 +19,8 @@ priv enum Entry[K, V] {
     ~hash : Int,
     ~key : K,
     mut ~value : V,
-    mut ~prev : Entry[K, V],
-    mut ~next : Entry[K, V]
+    mut ~prev : Option[Entry[K, V]],
+    mut ~next : Option[Entry[K, V]]
   )
 } derive(Debug)
 
@@ -55,6 +55,6 @@ struct LinkedHashMap[K, V] {
   mut size : Int // active key-value pairs count
   mut capacity : Int // current capacity 
   mut growAt : Int // threshold that triggers grow
-  mut head : Entry[K, V] // head of linked list
-  mut tail : Entry[K, V] // tail of linked list
+  mut head : Option[Entry[K, V]] // head of linked list
+  mut tail : Option[Entry[K, V]] // tail of linked list
 }
