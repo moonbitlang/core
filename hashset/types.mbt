@@ -12,10 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-priv enum Entry[K] {
-  Empty
-  // (Probe Sequence Length, Hash, Key)
-  Valid(~psl : Int, ~hash : Int, ~key : K)
+priv struct Entry[K] {
+  mut psl : Int
+  hash : Int
+  key : K
 } derive(Debug)
 
 /// A mutable hash set implements with Robin Hood hashing.
@@ -34,7 +34,7 @@ priv enum Entry[K] {
 /// println(set.contains(3)) // output: true
 /// ```
 struct HashSet[K] {
-  mut entries : Array[Entry[K]]
+  mut entries : FixedArray[Option[Entry[K]]]
   mut size : Int // active key count
   mut capacity : Int // current capacity 
   mut growAt : Int // threshold that triggers grow

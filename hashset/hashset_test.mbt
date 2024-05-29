@@ -140,7 +140,7 @@ test "clear" {
   @assertion.assert_eq(m.size, 0)?
   @assertion.assert_eq(m.capacity, 8)?
   for i = 0; i < m.capacity; i = i + 1 {
-    @assertion.assert_is(m.entries[i], Empty)?
+    @assertion.assert_is(m.entries[i], None)?
   }
 }
 
