@@ -21,9 +21,9 @@ pub fn LinkedHashMap::new[K, V]() -> LinkedHashMap[K, V] {
     size: 0,
     capacity: default_init_capacity,
     growAt: calc_grow_threshold(default_init_capacity),
-    entries: Array::make(default_init_capacity, Empty),
-    head: Empty,
-    tail: Empty,
+    entries: FixedArray::make(default_init_capacity, Empty),
+    head: None,
+    tail: None,
   }
 }
 
@@ -52,13 +52,13 @@ pub fn set[K : Hash + Eq, V](
     ~hash,
     ~key,
     ~value,
-    prev=Empty,
-    next=Empty,
+    prev=None,
+    next=None,
   )
   loop 0, self.index(hash), insert_entry {
     i, idx, Valid(~psl, ~hash, ~key, ~value, ..) as entry => {
       if i == self.capacity {
-        abort("HashMap is full")
+        panic()
       }
       match self.entries[idx] {
         Empty => {
@@ -83,7 +83,7 @@ pub fn set[K : Hash + Eq, V](
         }
       }
     }
-    _, _, _ => break
+    _, _, Empty => break
   }
 }
 
@@ -176,14 +176,14 @@ fn add_entry_to_tail[K : Eq, V](
   match entry {
     Valid(_) as e =>
       match self.tail {
-        Empty => {
-          self.head = entry
-          self.tail = entry
+        None | Some(Empty) => {
+          self.head = Some(entry)
+          self.tail = Some(entry)
         }
-        Valid(_) as tail => {
-          tail.next = entry
-          e.prev = tail
-          self.tail = entry
+        Some(Valid(_) as tail) => {
+          tail.next = Some(entry)
+          e.prev = Some(tail)
+          self.tail = Some(entry)
         }
       }
     Empty => ()
@@ -197,28 +197,28 @@ fn remove_entry[K : Eq, V](
   match entry {
     Valid(_) as e => {
       if self.is_empty() {
-        self.head = Empty
-        self.tail = Empty
+        self.head = None
+        self.tail = None
       } else {
         match self.head {
-          Valid(_) as v => if v == e { self.head = e.next }
-          Empty => ()
+          Some(Valid(_) as v) => if v == e { self.head = e.next }
+          None | Some(Empty) => ()
         }
         match self.tail {
-          Valid(_) as v => if v == e { self.tail = e.prev }
-          Empty => ()
+          Some(Valid(_) as v) => if v == e { self.tail = e.prev }
+          None | Some(Empty) => ()
         }
         match e.prev {
-          Valid(_) as prev => prev.next = e.next
-          Empty => ()
+          Some(Valid(_) as prev) => prev.next = e.next
+          None | Some(Empty) => ()
         }
         match e.next {
-          Valid(_) as next => next.prev = e.prev
-          Empty => ()
+          Some(Valid(_) as next) => next.prev = e.prev
+          None | Some(Empty) => ()
         }
       }
-      e.prev = Empty
-      e.next = Empty
+      e.prev = None
+      e.next = None
     }
     Empty => ()
   }
@@ -251,21 +251,21 @@ fn grow[K : Hash + Eq, V](self : LinkedHashMap[K, V]) -> Unit {
     self.capacity = default_init_capacity
     self.growAt = calc_grow_threshold(self.capacity)
     self.size = 0
-    self.entries = Array::make(self.capacity, Empty)
+    self.entries = FixedArray::make(self.capacity, Empty)
     return
   }
   let old_head = self.head
-  self.entries = Array::make(self.capacity * 2, Empty)
+  self.entries = FixedArray::make(self.capacity * 2, Empty)
   self.capacity = self.capacity * 2
   self.growAt = calc_grow_threshold(self.capacity)
   self.size = 0
-  self.head = Empty
+  self.head = None
   loop old_head {
-    Valid(~key, ~value, ~next, ..) => {
+    Some(Valid(~key, ~value, ~next, ..)) => {
       self.set(key, value)
       continue next
     }
-    Empty => break
+    None | Some(Empty) => break
   }
 }
 
