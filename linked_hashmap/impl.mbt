@@ -188,7 +188,7 @@ fn add_entry_to_tail[K : Eq, V](
           _ => ()
         }
       }
-    _ => ()
+    Empty => ()
   }
 }
 
@@ -220,7 +220,7 @@ fn remove_entry[K : Eq, V](
       e.prev = None
       e.next = None
     }
-    _ => ()
+    Empty => ()
   }
 }
 
