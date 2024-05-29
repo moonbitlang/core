@@ -21,7 +21,7 @@ pub fn HashSet::new[K]() -> HashSet[K] {
     size: 0,
     capacity: default_init_capacity,
     growAt: calc_grow_threshold(default_init_capacity),
-    entries: Array::make(default_init_capacity, Empty),
+    entries: FixedArray::make(default_init_capacity, None),
   }
 }
 
@@ -39,27 +39,30 @@ pub fn insert[K : Hash + Eq](self : HashSet[K], key : K) -> Unit {
     self.grow()
   }
   let hash = make_hash(key)
-  loop 0, self.index(hash), 0, hash, key {
-    i, idx, psl, hash, key => {
+  let entry = { psl: 0, hash, key }
+  loop 0, self.index(hash), entry {
+    i, idx, entry => {
       if i == self.capacity {
-        abort("HashSet is full")
+        panic()
       }
       match self.entries[idx] {
-        Empty => {
-          self.entries[idx] = Valid(~psl, ~hash, ~key)
+        None => {
+          self.entries[idx] = Some(entry)
           self.size += 1
           break
         }
-        Valid(psl=d, hash=h, key=k) => {
-          if h == hash && k == key {
-            self.entries[idx] = Valid(psl=d, hash=h, ~key)
+        Some(curr_entry) => {
+          if curr_entry.hash == entry.hash && curr_entry.key == entry.key {
+            self.entries[idx] = Some(entry)
             break
           }
-          if psl > d {
-            self.entries[idx] = Valid(~psl, ~hash, ~key)
-            continue i + 1, self.next_index(idx), d + 1, h, k
+          if entry.psl > curr_entry.psl {
+            self.entries[idx] = Some(entry)
+            curr_entry.psl += 1
+            continue i + 1, self.next_index(idx), curr_entry
           }
-          continue i + 1, self.next_index(idx), psl + 1, hash, key
+          entry.psl += 1
+          continue i + 1, self.next_index(idx), entry
         }
       }
     }
@@ -69,19 +72,19 @@ pub fn insert[K : Hash + Eq](self : HashSet[K], key : K) -> Unit {
 /// Check if the hash set contains a key.
 pub fn contains[K : Hash + Eq](self : HashSet[K], key : K) -> Bool {
   let hash = make_hash(key)
-  for distance = 0, idx = self.index(hash)
-      distance < self.capacity
-      distance = distance + 1, idx = self.next_index(idx) {
+  for i = 0, idx = self.index(hash)
+      i < self.capacity
+      i = i + 1, idx = self.next_index(idx) {
     match self.entries[idx] {
-      Valid(psl=d, hash=h, key=k) => {
-        if h == hash && k == key {
+      Some(entry) => {
+        if entry.hash == hash && entry.key == key {
           return true
         }
-        if distance > d {
+        if i > entry.psl {
           return false
         }
       }
-      Empty => return false
+      None => return false
     }
   }
   false
@@ -90,22 +93,22 @@ pub fn contains[K : Hash + Eq](self : HashSet[K], key : K) -> Bool {
 /// Remove a key from hash set.
 pub fn remove[K : Hash + Eq](self : HashSet[K], key : K) -> Unit {
   let hash = make_hash(key)
-  for distance = 0, idx = self.index(hash)
-      distance < self.capacity
-      distance = distance + 1, idx = self.next_index(idx) {
+  for i = 0, idx = self.index(hash)
+      i < self.capacity
+      i = i + 1, idx = self.next_index(idx) {
     match self.entries[idx] {
-      Valid(psl=d, hash=h, key=k) => {
-        if h == hash && k == key {
-          self.entries[idx] = Empty
+      Some(entry) => {
+        if entry.hash == hash && entry.key == key {
+          self.entries[idx] = None
           self.shift_back(idx)
           self.size -= 1
           break
         }
-        if distance > d {
+        if i > entry.psl {
           return
         }
       }
-      Empty => ()
+      None => ()
     }
   }
 }
@@ -135,11 +138,11 @@ pub fn iteri[K](self : HashSet[K], f : (Int, K) -> Unit) -> Unit {
   let mut idx = 0
   for i = 0; i < self.capacity; i = i + 1 {
     match self.entries[i] {
-      Valid(~key, ..) => {
+      Some({ key, .. }) => {
         f(idx, key)
         idx += 1
       }
-      _ => ()
+      None => ()
     }
   }
 }
@@ -147,7 +150,7 @@ pub fn iteri[K](self : HashSet[K], f : (Int, K) -> Unit) -> Unit {
 /// Clears the set, removing all keys. Keeps the allocated space.
 pub fn clear[K](self : HashSet[K]) -> Unit {
   for i = 0; i < self.capacity; i = i + 1 {
-    self.entries[i] = Empty
+    self.entries[i] = None
   }
   self.size = 0
 }
@@ -200,8 +203,8 @@ pub fn as_iter[K](self : HashSet[K]) -> @iter.Iter[K] {
     fn(yield) {
       for i = 0, len = self.entries.length(); i < len; i = i + 1 {
         match self.entries[i] {
-          Valid(~key, ..) => if yield(key).not() { break false }
-          _ => continue
+          Some({ key, .. }) => if yield(key).not() { break false }
+          None => continue
         }
       } else {
         true
@@ -215,14 +218,15 @@ fn shift_back[K : Hash](self : HashSet[K], start_index : Int) -> Unit {
       i < self.entries.length()
       i = i + 1, prev = curr, curr = self.next_index(curr) {
     match self.entries[curr] {
-      Valid(~psl, ~hash, ~key) => {
-        if psl == 0 {
+      Some(entry) => {
+        if entry.psl == 0 {
           break
         }
-        self.entries[prev] = Valid(psl=psl - 1, ~hash, ~key)
-        self.entries[curr] = Empty
+        entry.psl -= 1
+        self.entries[prev] = Some(entry)
+        self.entries[curr] = None
       }
-      Empty => break
+      None => break
     }
   }
 }
@@ -233,18 +237,18 @@ fn grow[K : Hash + Eq](self : HashSet[K]) -> Unit {
     self.capacity = default_init_capacity
     self.growAt = calc_grow_threshold(self.capacity)
     self.size = 0
-    self.entries = Array::make(self.capacity, Empty)
+    self.entries = FixedArray::make(self.capacity, None)
     return
   }
   let old_entries = self.entries
-  self.entries = Array::make(self.capacity * 2, Empty)
+  self.entries = FixedArray::make(self.capacity * 2, None)
   self.capacity = self.capacity * 2
   self.growAt = calc_grow_threshold(self.capacity)
   self.size = 0
   for i = 0; i < old_entries.length(); i = i + 1 {
     match old_entries[i] {
-      Valid(~key, ..) => self.insert(key)
-      _ => ()
+      Some({ key, .. }) => self.insert(key)
+      None => ()
     }
   }
 }
@@ -282,8 +286,8 @@ fn debug_entries[K : Show](self : HashSet[K]) -> String {
       s += ","
     }
     match self.entries[i] {
-      Empty => s += "_"
-      Valid(~psl, ~key, ..) => s += "(\(psl),\(key))"
+      None => s += "_"
+      Some({ psl, key, .. }) => s += "(\(psl),\(key))"
     }
   }
   s
