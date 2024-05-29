@@ -200,7 +200,7 @@ test "clear" {
   @assertion.assert_eq(m.head, None)?
   @assertion.assert_eq(m.tail, None)?
   for i = 0; i < m.capacity; i = i + 1 {
-    @assertion.assert_is(m.entries[i], Empty)?
+    @assertion.assert_is(m.entries[i], None)?
   }
 }
 
@@ -418,7 +418,7 @@ test "clear" {
   @assertion.assert_eq(m.head, None)?
   @assertion.assert_eq(m.tail, None)?
   for i = 0; i < m.capacity; i = i + 1 {
-    @assertion.assert_is(m.entries[i], Empty)?
+    @assertion.assert_is(m.entries[i], None)?
   }
 }
 
@@ -464,7 +464,7 @@ test "new" {
   @assertion.assert_eq(m.head, None)?
   @assertion.assert_eq(m.tail, None)?
   for i = 0; i < m.capacity; i = i + 1 {
-    @assertion.assert_is(m.entries[i], Empty)?
+    @assertion.assert_is(m.entries[i], None)?
   }
 }
 
@@ -551,7 +551,7 @@ test "clear" {
   @assertion.assert_eq(m.head, None)?
   @assertion.assert_eq(m.tail, None)?
   for i = 0; i < m.capacity; i = i + 1 {
-    @assertion.assert_is(m.entries[i], Empty)?
+    @assertion.assert_is(m.entries[i], None)?
   }
 }
 
@@ -635,7 +635,7 @@ test "clear" {
   @assertion.assert_eq(m.head, None)?
   @assertion.assert_eq(m.tail, None)?
   for i = 0; i < m.capacity; i = i + 1 {
-    @assertion.assert_is(m.entries[i], Empty)?
+    @assertion.assert_is(m.entries[i], None)?
   }
 }
 

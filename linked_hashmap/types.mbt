@@ -12,26 +12,17 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-priv enum Entry[K, V] {
-  Empty
-  Valid(
-    mut ~psl : Int,
-    ~hash : Int,
-    ~key : K,
-    mut ~value : V,
-    mut ~prev : Option[Entry[K, V]],
-    mut ~next : Option[Entry[K, V]]
-  )
+priv struct Entry[K, V] {
+  mut psl : Int
+  hash : Int
+  key : K
+  mut value : V
+  mut prev : Option[Entry[K, V]]
+  mut next : Option[Entry[K, V]]
 } derive(Debug)
 
 fn op_equal[K : Eq, V](self : Entry[K, V], other : Entry[K, V]) -> Bool {
-  match (self, other) {
-    (Empty, Empty) => true
-    (Valid(_), Empty) => false
-    (Empty, Valid(_)) => false
-    (Valid(hash=h1, key=k1, ..), Valid(hash=h2, key=k2, ..)) =>
-      h1 == h2 && k1 == k2
-  }
+  self.hash == other.hash && self.key == other.key
 }
 
 /// Mutable linked hash map that maintains the order of insertion, not thread safe. 
@@ -51,7 +42,7 @@ fn op_equal[K : Eq, V](self : Entry[K, V], other : Entry[K, V]) -> Bool {
 /// // 1-one
 /// ```
 struct LinkedHashMap[K, V] {
-  mut entries : FixedArray[Entry[K, V]]
+  mut entries : FixedArray[Option[Entry[K, V]]]
   mut size : Int // active key-value pairs count
   mut capacity : Int // current capacity 
   mut growAt : Int // threshold that triggers grow

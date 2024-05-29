@@ -21,7 +21,7 @@ pub fn LinkedHashMap::new[K, V]() -> LinkedHashMap[K, V] {
     size: 0,
     capacity: default_init_capacity,
     growAt: calc_grow_threshold(default_init_capacity),
-    entries: FixedArray::make(default_init_capacity, Empty),
+    entries: FixedArray::make(default_init_capacity, None),
     head: None,
     tail: None,
   }
@@ -47,43 +47,36 @@ pub fn set[K : Hash + Eq, V](
     self.grow()
   }
   let hash = make_hash(key)
-  let insert_entry = Entry::Valid(
-    psl=0,
-    ~hash,
-    ~key,
-    ~value,
-    prev=None,
-    next=None,
-  )
-  loop 0, self.index(hash), insert_entry {
-    i, idx, Valid(~psl, ~hash, ~key, ~value, ..) as entry => {
+  let insert_entry = { psl: 0, hash, key, value, prev: None, next: None }
+  loop 0, self.index(hash), Option::Some(insert_entry) {
+    i, idx, Some(entry) => {
       if i == self.capacity {
         panic()
       }
       match self.entries[idx] {
-        Empty => {
-          self.entries[idx] = entry
+        None => {
+          self.entries[idx] = Some(entry)
           self.size += 1
           self.add_entry_to_tail(insert_entry)
           break
         }
-        Valid(_) as curr_entry => {
-          if curr_entry.hash == hash && curr_entry.key == key {
-            curr_entry.value = value
+        Some(curr_entry) => {
+          if curr_entry.hash == entry.hash && curr_entry.key == entry.key {
+            curr_entry.value = entry.value
             break
           }
-          if psl > curr_entry.psl {
-            self.entries[idx] = entry
+          if entry.psl > curr_entry.psl {
+            self.entries[idx] = Some(entry)
             curr_entry.psl += 1
-            continue i + 1, self.next_index(idx), curr_entry
+            continue i + 1, self.next_index(idx), Some(curr_entry)
           } else {
             entry.psl += 1
-            continue i + 1, self.next_index(idx), entry
+            continue i + 1, self.next_index(idx), Some(entry)
           }
         }
       }
     }
-    _, _, Empty => break
+    _, _, None => break
   }
 }
 
@@ -102,7 +95,7 @@ pub fn get[K : Hash + Eq, V](self : LinkedHashMap[K, V], key : K) -> Option[V] {
       i < self.capacity
       i = i + 1, idx = self.next_index(idx) {
     match self.entries[idx] {
-      Valid(_) as entry => {
+      Some(entry) => {
         if entry.hash == hash && entry.key == key {
           break Some(entry.value)
         }
@@ -110,7 +103,7 @@ pub fn get[K : Hash + Eq, V](self : LinkedHashMap[K, V], key : K) -> Option[V] {
           break None
         }
       }
-      Empty => break None
+      None => break None
     }
   } else {
     None
@@ -152,9 +145,9 @@ pub fn remove[K : Hash + Eq, V](self : LinkedHashMap[K, V], key : K) -> Unit {
       i < self.capacity
       i = i + 1, idx = self.next_index(idx) {
     match self.entries[idx] {
-      Valid(_) as entry => {
+      Some(entry) => {
         if entry.hash == hash && entry.key == key {
-          self.entries[idx] = Empty
+          self.entries[idx] = None
           self.shift_back(idx)
           self.size -= 1
           self.remove_entry(entry)
@@ -164,7 +157,7 @@ pub fn remove[K : Hash + Eq, V](self : LinkedHashMap[K, V], key : K) -> Unit {
           return
         }
       }
-      Empty => ()
+      None => ()
     }
   }
 }
@@ -173,20 +166,16 @@ fn add_entry_to_tail[K : Eq, V](
   self : LinkedHashMap[K, V],
   entry : Entry[K, V]
 ) -> Unit {
-  match entry {
-    Valid(_) as e =>
-      match self.tail {
-        None | Some(Empty) => {
-          self.head = Some(entry)
-          self.tail = Some(entry)
-        }
-        Some(Valid(_) as tail) => {
-          tail.next = Some(entry)
-          e.prev = Some(tail)
-          self.tail = Some(entry)
-        }
-      }
-    Empty => ()
+  match self.tail {
+    None => {
+      self.head = Some(entry)
+      self.tail = Some(entry)
+    }
+    Some(tail) => {
+      tail.next = Some(entry)
+      entry.prev = Some(tail)
+      self.tail = Some(entry)
+    }
   }
 }
 
@@ -194,34 +183,29 @@ fn remove_entry[K : Eq, V](
   self : LinkedHashMap[K, V],
   entry : Entry[K, V]
 ) -> Unit {
-  match entry {
-    Valid(_) as e => {
-      if self.is_empty() {
-        self.head = None
-        self.tail = None
-      } else {
-        match self.head {
-          Some(Valid(_) as v) => if v == e { self.head = e.next }
-          None | Some(Empty) => ()
-        }
-        match self.tail {
-          Some(Valid(_) as v) => if v == e { self.tail = e.prev }
-          None | Some(Empty) => ()
-        }
-        match e.prev {
-          Some(Valid(_) as prev) => prev.next = e.next
-          None | Some(Empty) => ()
-        }
-        match e.next {
-          Some(Valid(_) as next) => next.prev = e.prev
-          None | Some(Empty) => ()
-        }
-      }
-      e.prev = None
-      e.next = None
+  if self.is_empty() {
+    self.head = None
+    self.tail = None
+  } else {
+    match self.head {
+      Some(head) => if head == entry { self.head = entry.next }
+      None => ()
     }
-    Empty => ()
+    match self.tail {
+      Some(tail) => if tail == entry { self.tail = entry.prev }
+      None => ()
+    }
+    match entry.prev {
+      Some(prev) => prev.next = entry.next
+      None => ()
+    }
+    match entry.next {
+      Some(next) => next.prev = entry.prev
+      None => ()
+    }
   }
+  entry.prev = None
+  entry.next = None
 }
 
 fn shift_back[K : Hash, V](
@@ -232,15 +216,15 @@ fn shift_back[K : Hash, V](
       i < self.entries.length()
       i = i + 1, prev = curr, curr = self.next_index(curr) {
     match self.entries[curr] {
-      Valid(~psl, ..) as entry => {
-        if psl == 0 {
+      Some(entry) => {
+        if entry.psl == 0 {
           break
         }
         entry.psl -= 1
-        self.entries[prev] = entry
-        self.entries[curr] = Empty
+        self.entries[prev] = Some(entry)
+        self.entries[curr] = None
       }
-      Empty => break
+      None => break
     }
   }
 }
@@ -251,21 +235,21 @@ fn grow[K : Hash + Eq, V](self : LinkedHashMap[K, V]) -> Unit {
     self.capacity = default_init_capacity
     self.growAt = calc_grow_threshold(self.capacity)
     self.size = 0
-    self.entries = FixedArray::make(self.capacity, Empty)
+    self.entries = FixedArray::make(self.capacity, None)
     return
   }
   let old_head = self.head
-  self.entries = FixedArray::make(self.capacity * 2, Empty)
+  self.entries = FixedArray::make(self.capacity * 2, None)
   self.capacity = self.capacity * 2
   self.growAt = calc_grow_threshold(self.capacity)
   self.size = 0
   self.head = None
   loop old_head {
-    Some(Valid(~key, ~value, ~next, ..)) => {
+    Some({ key, value, next, .. }) => {
       self.set(key, value)
       continue next
     }
-    None | Some(Empty) => break
+    None => break
   }
 }
 

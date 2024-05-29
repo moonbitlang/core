@@ -19,8 +19,8 @@ fn debug_entries[K : Show, V : Show](self : LinkedHashMap[K, V]) -> String {
       buf.write_char(',')
     }
     match self.entries[i] {
-      Empty => buf.write_char('_')
-      Valid(~psl, ~key, ~value, ..) =>
+      None => buf.write_char('_')
+      Some({ psl, key, value, .. }) =>
         buf.write_string("(\(psl),\(key),\(value))")
     }
   }
@@ -30,24 +30,24 @@ fn debug_entries[K : Show, V : Show](self : LinkedHashMap[K, V]) -> String {
 fn debug_linked_list[K : Show, V : Show](self : LinkedHashMap[K, V]) -> String {
   let buf = Buffer::make(0)
   loop self.head {
-    Some(Valid(~key, ~value, ~prev, ~next, ~hash, ..)) => {
+    Some({ key, value, prev, next, hash, .. }) => {
       buf.write_char('(')
       buf.write_string("\(hash),\(key),\(value)")
       buf.write_string(",prev:")
       match prev {
-        Some(Valid(~hash, ..)) => buf.write_string(hash.to_string())
-        None | Some(Empty) => buf.write_char('_')
+        Some({ hash, .. }) => buf.write_string(hash.to_string())
+        None => buf.write_char('_')
       }
       buf.write_string(",next:")
       match next {
-        Some(Valid(~hash, ..)) => buf.write_string(hash.to_string())
-        None | Some(Empty) => buf.write_char('_')
+        Some({ hash, .. }) => buf.write_string(hash.to_string())
+        None => buf.write_char('_')
       }
       buf.write_char(')')
       buf.write_char('\n')
       continue next
     }
-    None | Some(Empty) => buf.write_string("end")
+    None => buf.write_string("end")
   }
   buf.to_string()
 }
@@ -70,28 +70,28 @@ pub fn is_empty[K, V](self : LinkedHashMap[K, V]) -> Bool {
 /// Iterate over all key-value pairs of the map in the order of insertion.
 pub fn iter[K, V](self : LinkedHashMap[K, V], f : (K, V) -> Unit) -> Unit {
   loop self.head {
-    Some(Valid(~key, ~value, ~next, ..)) => {
+    Some({ key, value, next, .. }) => {
       f(key, value)
       continue next
     }
-    None | Some(Empty) => break
+    None => break
   }
 }
 
 /// Iterate over all key-value pairs of the map in the order of insertion, with index.
 pub fn iteri[K, V](self : LinkedHashMap[K, V], f : (Int, K, V) -> Unit) -> Unit {
   loop 0, self.head {
-    idx, Some(Valid(~key, ~value, ~next, ..)) => {
+    idx, Some({ key, value, next, .. }) => {
       f(idx, key, value)
       continue idx + 1, next
     }
-    _, None | Some(Empty) => break
+    _, None => break
   }
 }
 
 /// Clears the map, removing all key-value pairs. Keeps the allocated space.
 pub fn clear[K, V](self : LinkedHashMap[K, V]) -> Unit {
-  self.entries.fill(Empty)
+  self.entries.fill(None)
   self.size = 0
   self.head = None
   self.tail = None
@@ -102,13 +102,13 @@ pub fn as_iter[K, V](self : LinkedHashMap[K, V]) -> @iter.Iter[(K, V)] {
   @iter.Iter::_unstable_internal_make(
     fn(yield) {
       loop self.head {
-        Some(Valid(~key, ~value, ~next, ..)) => {
+        Some({ key, value, next, .. }) => {
           if yield((key, value)).not() {
             break false
           }
           continue next
         }
-        None | Some(Empty) => break true
+        None => break true
       }
     },
   )
@@ -118,11 +118,11 @@ pub fn as_iter[K, V](self : LinkedHashMap[K, V]) -> @iter.Iter[(K, V)] {
 pub fn to_array[K, V](self : LinkedHashMap[K, V]) -> Array[(K, V)] {
   let arr = []
   loop self.head {
-    Some(Valid(~key, ~value, ~next, ..)) => {
+    Some({ key, value, next, .. }) => {
       arr.push((key, value))
       continue next
     }
-    None | Some(Empty) => break
+    None => break
   }
   arr
 }
