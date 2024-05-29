@@ -175,18 +175,17 @@ fn add_entry_to_tail[K : Eq, V](
 ) -> Unit {
   match entry {
     Valid(_) as e =>
-      if self.tail.is_empty() {
-        self.head = Some(entry)
-        self.tail = Some(entry)
-      } else {
-        match self.tail.unwrap() {
-          Valid(_) as tail => {
-            tail.next = Some(entry)
-            e.prev = Some(tail)
-            self.tail = Some(entry)
-          }
-          _ => ()
+      match self.tail {
+        None => {
+          self.head = Some(entry)
+          self.tail = Some(entry)
         }
+        Some(Valid(_) as tail) => {
+          tail.next = Some(entry)
+          e.prev = Some(tail)
+          self.tail = Some(entry)
+        }
+        Some(Empty) => ()
       }
     Empty => ()
   }
@@ -202,11 +201,13 @@ fn remove_entry[K : Eq, V](
         self.head = None
         self.tail = None
       } else {
-        if e == self.head.unwrap() {
-          self.head = e.next
+        match self.head {
+          Some(v) => if v == e { self.head = e.next }
+          None => ()
         }
-        if e == self.tail.unwrap() {
-          self.tail = e.prev
+        match self.tail {
+          Some(v) => if v == e { self.tail = e.prev }
+          None => ()
         }
         match e.prev {
           Some(Valid(_) as prev) => prev.next = e.next
