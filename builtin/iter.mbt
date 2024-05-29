@@ -471,3 +471,10 @@ pub fn Iter::concat[T](self : Iter[T], other : Iter[T]) -> Iter[T] {
 pub fn op_add[T](self : Iter[T], other : Iter[T]) -> Iter[T] {
   Iter::concat(self, other)
 }
+
+/// Collects the elements of the iterator into an array.
+pub fn collect[T](self : Iter[T]) -> Array[T] {
+  let result = []
+  self.iter(fn(e) { result.push(e) })
+  result
+}

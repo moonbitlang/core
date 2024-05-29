@@ -127,6 +127,7 @@ type Iter
 impl Iter {
   _unstable_internal_make[T](((T) -> Bool) -> Bool) -> Self[T]
   append[T](Self[T], T) -> Self[T]
+  collect[T](Self[T]) -> Array[T]
   concat[T](Self[T], Self[T]) -> Self[T]
   count[T](Self[T]) -> Int
   drop[T](Self[T], Int) -> Self[T]
