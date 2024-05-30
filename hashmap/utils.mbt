@@ -35,7 +35,8 @@ pub fn clear[K, V](self : HashMap[K, V]) -> Unit {
 pub fn as_iter[K, V](self : HashMap[K, V]) -> @iter.Iter[(K, V)] {
   @iter.Iter::_unstable_internal_make(
     fn(yield) {
-      for i = 0, len = self.entries.length(); i < len; i = i + 1 {
+      let len = self.entries.length()
+      for i = 0; i < len; i = i + 1 {
         match self.entries[i] {
           Some({ key, value, .. }) =>
             if yield((key, value)).not() {
@@ -53,7 +54,8 @@ pub fn as_iter[K, V](self : HashMap[K, V]) -> @iter.Iter[(K, V)] {
 /// Converts the map to an array.
 pub fn to_array[K, V](self : HashMap[K, V]) -> Array[(K, V)] {
   let arr = []
-  for i = 0, len = self.entries.length(); i < len; i = i + 1 {
+  let len = self.entries.length()
+  for i = 0; i < len; i = i + 1 {
     match self.entries[i] {
       Some({ key, value, .. }) => arr.push((key, value))
       None => continue
