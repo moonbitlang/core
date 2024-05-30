@@ -41,32 +41,29 @@ pub fn set[K : Hash + Eq, V](self : HashMap[K, V], key : K, value : V) -> Unit {
     self.grow()
   }
   let hash = make_hash(key)
-  let insert_entry = { psl: 0, hash, key, value }
-  loop 0, self.index(hash), insert_entry {
-    i, idx, entry => {
-      if i == self.capacity {
-        panic()
+  for i = 0, idx = self.index(hash), entry = { psl: 0, hash, key, value } {
+    if i == self.capacity {
+      panic()
+    }
+    match self.entries[idx] {
+      None => {
+        self.entries[idx] = Some(entry)
+        self.size += 1
+        break
       }
-      match self.entries[idx] {
-        None => {
-          self.entries[idx] = Some(entry)
-          self.size += 1
+      Some(curr_entry) => {
+        if curr_entry.hash == entry.hash && curr_entry.key == entry.key {
+          curr_entry.value = entry.value
           break
         }
-        Some(curr_entry) => {
-          if curr_entry.hash == entry.hash && curr_entry.key == entry.key {
-            curr_entry.value = entry.value
-            break
-          }
-          if entry.psl > curr_entry.psl {
-            self.entries[idx] = Some(entry)
-            curr_entry.psl += 1
-            continue i + 1, self.next_index(idx), curr_entry
-          } else {
-            entry.psl += 1
-            continue i + 1, self.next_index(idx), entry
-          }
+        let curr_entry = if entry.psl > curr_entry.psl {
+          self.entries[idx] = Some(entry)
+          curr_entry
+        } else {
+          entry
         }
+        curr_entry.psl += 1
+        continue i + 1, self.next_index(idx), curr_entry
       }
     }
   }
