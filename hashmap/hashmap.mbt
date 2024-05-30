@@ -95,8 +95,8 @@ pub fn get[K : Hash + Eq, V](self : HashMap[K, V], key : K) -> Option[V] {
           continue i + 1, self.next_index(idx)
         }
         None => break None
-      }      
-    }    
+      }
+    }
   }
 }
 
