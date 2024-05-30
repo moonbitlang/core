@@ -734,9 +734,6 @@ pub fn filter[T : Compare](
   ret
 }
 
-// # Convert to
-// Convert a MutableSet to other data structures, including list, array, and vec.
-
 /// Convert MutableSet[T] to Array[T], the result must be ordered.
 pub fn to_array[T : Compare](self : MutableSet[T]) -> Array[T] {
   fn aux(set : Option[Node[T]]) -> Array[_] {
@@ -801,13 +798,6 @@ pub fn MutableSet::from_fixed_array[T : Compare](
   for i = 0; i < array.length(); i = i + 1 {
     set.add(array[i])
   }
-  set
-}
-
-/// Initialize an MutableSet[T] from a List[T]
-pub fn MutableSet::from_list[T : Compare](list : List[T]) -> MutableSet[T] {
-  let set = MutableSet::new()
-  list.iter(fn(x) { set.add(x) })
   set
 }
 
@@ -1207,23 +1197,6 @@ test "to_array" {
 test "to_string" {
   inspect(MutableSet::[1, 2, 3, 4, 5], content="MutableSet::[1, 2, 3, 4, 5]")?
   inspect((MutableSet::[] : MutableSet[Int]), content="MutableSet::[]")?
-}
-
-test "from_list" {
-  inspect(MutableSet::from_list(List::[1]), content="MutableSet::[1]")?
-  inspect(MutableSet::from_list(List::[1, 2]), content="MutableSet::[1, 2]")?
-  inspect(
-    MutableSet::from_list(List::[1, 2, 3]),
-    content="MutableSet::[1, 2, 3]",
-  )?
-  inspect(
-    MutableSet::from_list(List::[1, 2, 3, 4]),
-    content="MutableSet::[1, 2, 3, 4]",
-  )?
-  inspect(
-    MutableSet::from_list(List::[7, 2, 9, 4, 5, 6, 3, 8, 1]),
-    content="MutableSet::[1, 2, 3, 4, 5, 6, 7, 8, 9]",
-  )?
 }
 
 test "from_array" {

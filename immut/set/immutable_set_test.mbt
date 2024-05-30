@@ -154,38 +154,6 @@ test "contain" {
   inspect(ImmutableSet::[7, 2, 9, 4, 6, 3, 8, 1].contain(5), content="false")?
 }
 
-test "from_list" {
-  let empty_list : List[Int] = List::[]
-  inspect(ImmutableSet::from_list(empty_list), content="ImmutableSet::[]")?
-  inspect(ImmutableSet::from_list(List::[1]), content="ImmutableSet::[1]")?
-  inspect(ImmutableSet::from_list(List::[1, 2]), content="ImmutableSet::[1, 2]")?
-  inspect(
-    ImmutableSet::from_list(List::[1, 2, 3]),
-    content="ImmutableSet::[1, 2, 3]",
-  )?
-  inspect(
-    ImmutableSet::from_list(List::[1, 2, 3, 4]),
-    content="ImmutableSet::[1, 2, 3, 4]",
-  )?
-  inspect(
-    ImmutableSet::from_list(List::[1, 2, 3, 4, 5]),
-    content="ImmutableSet::[1, 2, 3, 4, 5]",
-  )?
-  inspect(
-    ImmutableSet::from_list(List::[7, 2, 9, 4, 5, 6, 3, 8, 1]),
-    content="ImmutableSet::[1, 2, 3, 4, 5, 6, 7, 8, 9]",
-  )?
-}
-
-test "to_list" {
-  inspect(
-    ImmutableSet::[7, 2, 9, 4, 5, 6, 3, 8, 1].to_list(),
-    content="List::[1, 2, 3, 4, 5, 6, 7, 8, 9]",
-  )?
-  let empty : ImmutableSet[Int] = ImmutableSet::new()
-  inspect(empty.to_list(), content="List::[]")?
-}
-
 test "to_array" {
   inspect(
     ImmutableSet::[7, 2, 9, 4, 5, 6, 3, 8, 1].to_array(),
@@ -300,28 +268,22 @@ test "split_bis" {
   inspect(ImmutableSet::[1, 2, 3].split_bis(4), content="NotFound")?
 }
 
-/// Convert ImmutableSet[T] to List[T], the result must be ordered.
-pub fn to_list[T : Compare](self : ImmutableSet[T]) -> List[T] {
-  fn values_aux(set : ImmutableSet[T], list : List[T]) {
-    match set {
-      Empty => list
-      Node(~left, ~right, ~value, ..) =>
-        values_aux(left, Cons(value, values_aux(right, list)))
-    }
-  }
-
-  values_aux(self, Nil)
+test "of_sorted_array" {
+  inspect(
+    of_sorted_array([1, 2, 3, 4, 5, 6, 7, 8, 9]),
+    content="ImmutableSet::[1, 2, 3, 4, 5, 6, 7, 8, 9]",
+  )?
 }
 
-// Convert a sorted list into a balanced binary search tree to facilitate subsequent search, insertion, and deletion operations.
-fn of_sorted_list[T : Compare](list : List[T]) -> ImmutableSet[T] {
-  // Recursively process the input list and build a balanced binary search tree based on the length n of the list.
-  fn sub(n : Int, list : List[T]) -> (ImmutableSet[T], List[T]) {
-    match (n, list) {
-      (0, list) => (Empty, list)
-      (1, Cons(value, list)) =>
-        (Node(left=Empty, ~value, right=Empty, height=1), list)
-      (2, Cons(value, Cons(value1, list))) =>
+// Convert a sorted array into a balanced binary search tree to facilitate subsequent search, insertion, and deletion operations.
+fn of_sorted_array[T : Compare](array : Array[T]) -> ImmutableSet[T] {
+  // Recursively process the input array and build a balanced binary search tree based on the length n of the array.
+  fn sub(n : Int, xs: ArrayView[T]) -> (ImmutableSet[T], ArrayView[T]) {
+    match (n, xs) {
+      (0, xs) => (Empty, xs)
+      (1, [value, .. as remain]) =>
+        (Node(left=Empty, ~value, right=Empty, height=1), remain)
+      (2, [value, value1, .. as remain]) =>
         (
           Node(
             left=Node(left=Empty, ~value, right=Empty, height=1),
@@ -329,9 +291,9 @@ fn of_sorted_list[T : Compare](list : List[T]) -> ImmutableSet[T] {
             right=Empty,
             height=2,
           ),
-          list,
+          remain,
         )
-      (3, Cons(value, Cons(value1, Cons(value2, list)))) =>
+      (3, [value,value1,value2, .. as remain]) =>
         (
           Node(
             left=Node(left=Empty, ~value, right=Empty, height=1),
@@ -339,41 +301,24 @@ fn of_sorted_list[T : Compare](list : List[T]) -> ImmutableSet[T] {
             right=Node(left=Empty, value=value2, right=Empty, height=1),
             height=2,
           ),
-          list,
+          remain,
         )
 
       // For n > 3, the function first calculates the size of the left subtree,
       // and then recursively constructs the left subtree.
       _ => {
         let left_length = n / 2
-        let (left, list) = sub(left_length, list)
-        match list {
-          Nil => abort("of_sorted_list: cannot constructs the left")
-          Cons(mid, list) => {
-            let (right, list) = sub(n - left_length - 1, list)
-            (create(left, mid, right), list)
+        let (left, xs) = sub(left_length, xs)
+        match xs {
+          [] => abort("of_sorted_array: cannot constructs the left")
+          [mid, .. as xs] => {
+            let (right, xs) = sub(n - left_length - 1, xs)
+            (create(left, mid, right), xs)
           }
         }
       }
     }
   }
-
-  sub(list.length(), list).0
+  sub(array.length(), array[..]).0
 }
 
-/// Initialize an ImmutableSet[T] from a List[T]
-pub fn ImmutableSet::from_list[T : Compare](list : List[T]) -> ImmutableSet[T] {
-  match list {
-    Nil => Empty
-    // For very small lists, adding values to the set directly using the add function is much faster than sorting and de-important the entire list.
-    Cons(value, Nil) => singleton(value)
-    Cons(value, Cons(value1, Nil)) => singleton(value).add(value1)
-    Cons(value, Cons(value1, Cons(value2, Nil))) =>
-      singleton(value).add(value1).add(value2)
-    Cons(value, Cons(value1, Cons(value2, Cons(value3, Nil)))) =>
-      singleton(value).add(value1).add(value2).add(value3)
-    Cons(value, Cons(value1, Cons(value2, Cons(value3, Cons(value4, Nil))))) =>
-      singleton(value).add(value1).add(value2).add(value3).add(value4)
-    _ => of_sorted_list(list.sort())
-  }
-}

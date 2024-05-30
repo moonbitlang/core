@@ -13,22 +13,9 @@ You can create an empty MutableSet or a MutableSet from other containers.
 ```moonbit
 let set1 : MutableSet[Int] = MutableSet::new()
 let set2 = MutableSet::singleton(1)
-let set3 = MutableSet::from_list(Cons(1, Nil))
 let set4 = MutableSet::from_array([1])
 let set5= MutableSet::[1]
 ```
-
-### Convert
-
-Convert an MutableSet to a List/Array/Vec, which will be sorted.
-
-```moonbit
-let set = MutableSet::[3, 2, 1]
-set.to_array() // [1, 2, 3]
-set.to_list() // List::[1, 2, 3]
-set.to_vec() // Vec::[1, 2, 3]
-```
-
 ### Container Operations
 
 Add an element to the MutableSet in place.
