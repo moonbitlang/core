@@ -967,21 +967,6 @@ pub fn split[T](self : Array[T], pred : (T) -> Bool) -> Array[Array[T]] {
   chunks
 }
 
-/// Convert vec to list.
-///
-/// # Example
-///
-/// ```
-/// Array::[1, 2, 3, 4, 5].to_list()
-/// ```
-pub fn to_list[T](self : Array[T]) -> List[T] {
-  for i = self.len - 1, list = List::Nil; i >= 0; {
-    continue i - 1, List::Cons(self[i], list)
-  } else {
-    list
-  }
-}
-
 /// Reserves capacity to ensure that it can hold at least the number of elements
 /// specified by the `capacity` argument.
 ///

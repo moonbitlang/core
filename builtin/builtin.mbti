@@ -96,7 +96,6 @@ impl Array {
   strip_prefix[T : Eq](Self[T], Self[T]) -> Option[Self[T]]
   strip_suffix[T : Eq](Self[T], Self[T]) -> Option[Self[T]]
   swap[T](Self[T], Int, Int) -> Unit
-  to_list[T](Self[T]) -> List[T]
   to_string[T : Show](Self[T]) -> String
   with_capacity[T](Int) -> Self[T]
 }
