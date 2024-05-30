@@ -223,3 +223,13 @@ pub fn as_iter[K, V](self : Map[K, V]) -> Iter[(K, V)] {
     },
   )
 }
+
+/// Return all keys of the map in ascending order.
+pub fn keys[K, V](self : Map[K, V]) -> Array[K] {
+  self.as_iter().map(fn { (k, _) => k }).collect()
+}
+
+/// Return all elements of the map in the ascending order of their keys.
+pub fn elems[K, V](self : Map[K, V]) -> Array[V] {
+  self.as_iter().map(fn { (_, v) => v }).collect()
+}

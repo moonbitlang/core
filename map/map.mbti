@@ -10,6 +10,7 @@ type Map
 impl Map {
   as_iter[K, V](Self[K, V]) -> Iter[Tuple[K, V]]
   debug_write[K : Debug, V : Debug](Self[K, V], Buffer) -> Unit
+  elems[K, V](Self[K, V]) -> Array[V]
   filter[K : Compare + Eq, V](Self[K, V], (V) -> Bool) -> Self[K, V]
   filter_with_key[K : Compare + Eq, V](Self[K, V], (K, V) -> Bool) -> Self[K, V]
   fold[K, V, T](Self[K, V], (T, V) -> T, ~init : T) -> T
@@ -20,6 +21,7 @@ impl Map {
   is_empty[K, V](Self[K, V]) -> Bool
   iter[K, V](Self[K, V], (K, V) -> Unit) -> Unit
   iteri[K, V](Self[K, V], (Int, K, V) -> Unit) -> Unit
+  keys[K, V](Self[K, V]) -> Array[K]
   lookup[K : Compare + Eq, V](Self[K, V], K) -> Option[V]
   map[K, X, Y](Self[K, X], (X) -> Y) -> Self[K, Y]
   map_with_key[K, X, Y](Self[K, X], (K, X) -> Y) -> Self[K, Y]
