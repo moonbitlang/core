@@ -112,6 +112,62 @@ test "map" {
   @assertion.assert_eq(b.map(fn(x) { x * 2 }), None)?
 }
 
+/// Returns the provided default result (if none), or applies a function to the contained value (if any).
+/// Arguments passed to map_or are eagerly evaluated; if you are passing the result of a function call, it is recommended to use `map_or_else`, which is lazily evaluated.
+///
+/// # Example
+///
+/// ```
+/// let a = Some(5)
+/// debug(a.map_or(3, fn(x){ x * 2 })) //output: 10
+///
+/// let b: Option[Int] = None
+/// debug(b.map(3, fn(x){ x * 2 })) //output: 3
+/// ```
+pub fn map_or[T, U](self : Option[T], default : U, f : (T) -> U) -> U {
+  match self {
+    None => default
+    Some(x) => f(x)
+  }
+}
+
+test "map_or" {
+  let a = Option::Some("foo")
+  let b : Option[String] = Option::None
+  @assertion.assert_eq(a.map_or(42, fn(x) { x.length() }), 3)?
+  @assertion.assert_eq(b.map_or(42, fn(x) { x.length() }), 42)?
+}
+
+/// Computes a default function result (if none), or applies a different function to the contained value (if any).
+/// 
+/// # Example
+///
+/// ```
+/// let a = Some(5)
+/// debug(a.map_or_else(() => 3, fn(x){ x * 2 })) //output: 10
+///
+/// let b: Option[Int] = None
+/// debug(b.map(() => 5, fn(x){ x * 2 })) //output: 3
+/// ```
+pub fn map_or_else[T, U](
+  self : Option[T],
+  default : () -> U,
+  f : (T) -> U
+) -> U {
+  match self {
+    None => default()
+    Some(x) => f(x)
+  }
+}
+
+test "map_or_else" {
+  let k = 21
+  let a = Option::Some("foo")
+  let b : Option[String] = Option::None
+  @assertion.assert_eq(a.map_or_else(fn() { 2 * k }, fn(x) { x.length() }), 3)?
+  @assertion.assert_eq(b.map_or_else(fn() { 2 * k }, fn(x) { x.length() }), 42)?
+}
+
 /// Binds an option to a function that returns another option.
 ///
 /// # Example
