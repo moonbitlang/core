@@ -3,6 +3,9 @@
     ],
     "test-import": [
         "moonbitlang/core/assertion",
-        "moonbitlang/core/char"
+        "moonbitlang/core/char",
+        "moonbitlang/core/string",
+        "moonbitlang/core/int",
+        "moonbitlang/core/tuple"
     ]
 }

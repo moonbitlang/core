@@ -154,6 +154,27 @@ impl Js_string {
   op_add(Self, Self) -> Self
 }
 
+type LinkedHashMap
+impl LinkedHashMap {
+  as_iter[K, V](Self[K, V]) -> Iter[Tuple[K, V]]
+  capacity[K, V](Self[K, V]) -> Int
+  clear[K, V](Self[K, V]) -> Unit
+  contains[K : Hash + Eq, V](Self[K, V], K) -> Bool
+  from_array[K : Hash + Eq, V](Array[Tuple[K, V]]) -> Self[K, V]
+  get[K : Hash + Eq, V](Self[K, V], K) -> Option[V]
+  get_or_default[K : Hash + Eq, V](Self[K, V], K, V) -> V
+  is_empty[K, V](Self[K, V]) -> Bool
+  iter[K, V](Self[K, V], (K, V) -> Unit) -> Unit
+  iteri[K, V](Self[K, V], (Int, K, V) -> Unit) -> Unit
+  new[K, V]() -> Self[K, V]
+  op_get[K : Hash + Eq, V](Self[K, V], K) -> Option[V]
+  op_set[K : Hash + Eq, V](Self[K, V], K, V) -> Unit
+  remove[K : Hash + Eq, V](Self[K, V], K) -> Unit
+  set[K : Hash + Eq, V](Self[K, V], K, V) -> Unit
+  size[K, V](Self[K, V]) -> Int
+  to_array[K, V](Self[K, V]) -> Array[Tuple[K, V]]
+}
+
 pub type SourceLoc
 impl SourceLoc {
   debug_write(Self, Buffer) -> Unit
@@ -300,6 +321,7 @@ impl List {
 impl FixedArray {
   debug_write[X : Debug](Self[X], Buffer) -> Unit
   default[X]() -> Self[X]
+  fill[T](Self[T], T) -> Unit
   get[T](Self[T], Int) -> T
   length[T](Self[T]) -> Int
   make[T](Int, T) -> Self[T]

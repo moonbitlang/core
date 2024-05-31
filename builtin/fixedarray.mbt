@@ -26,3 +26,15 @@ pub fn to_string[X : Show](self : FixedArray[X]) -> String {
 pub fn FixedArray::default[X]() -> FixedArray[X] {
   []
 }
+
+/// Fill the array with a given value.
+///
+/// # Example
+/// ```
+/// [0, 0, 0, 0, 0].fill(3) // [3, 3, 3, 3, 3]
+/// ```
+pub fn fill[T](self : FixedArray[T], value : T) -> Unit {
+  for i = 0; i < self.length(); i = i + 1 {
+    self[i] = value
+  }
+}
