@@ -1,7 +1,5 @@
 package moonbitlang/core/map
 
-alias @moonbitlang/core/iter as @iter
-
 // Values
 fn empty[K, V]() -> Map[K, V]
 
@@ -10,7 +8,7 @@ fn singleton[K, V](K, V) -> Map[K, V]
 // Types and methods
 type Map
 impl Map {
-  as_iter[K, V](Self[K, V]) -> @iter.Iter[Tuple[K, V]]
+  as_iter[K, V](Self[K, V]) -> Iter[Tuple[K, V]]
   debug_write[K : Debug, V : Debug](Self[K, V], Buffer) -> Unit
   filter[K : Compare + Eq, V](Self[K, V], (V) -> Bool) -> Self[K, V]
   filter_with_key[K : Compare + Eq, V](Self[K, V], (K, V) -> Bool) -> Self[K, V]

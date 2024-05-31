@@ -1,13 +1,11 @@
 package moonbitlang/core/devec
 
-alias @moonbitlang/core/iter as @iter
-
 // Values
 
 // Types and methods
 type Devec
 impl Devec {
-  as_iter[T](Self[T]) -> @iter.Iter[T]
+  as_iter[T](Self[T]) -> Iter[T]
   back[T](Self[T]) -> Option[T]
   capacity[T](Self[T]) -> Int
   clear[T](Self[T]) -> Unit

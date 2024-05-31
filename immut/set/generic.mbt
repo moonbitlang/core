@@ -16,9 +16,9 @@
 // The types stored in set need to implement the Compare trait.
 // All operations over sets are purely applicative (no side-effects).
 
-pub fn as_iter[T](self : ImmutableSet[T]) -> @iter.Iter[T] {
+pub fn as_iter[T](self : ImmutableSet[T]) -> Iter[T] {
   match self {
-    Empty => @iter.empty()
+    Empty => Iter::empty()
     Node(~left, ~right, ~value, ..) =>
       left.as_iter().append(value).concat(right.as_iter())
   }

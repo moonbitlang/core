@@ -12,6 +12,148 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+// Types
+type Iter[T] ((T) -> Bool) -> Bool
+
+// Consumers
+
+/// Iterates over each element in the iterator, applying the function `f` to each element.
+///
+/// # Type Parameters
+///
+/// - `T`: The type of the elements in the iterator.
+///
+/// # Arguments
+///
+/// - `self`: The iterator to consume.
+/// - `f`: A function that takes an element of type `T` and returns `Unit`. This function is applied to each element of the iterator.
+/// @intrinsic %iter.iter
+pub fn iter[T](self : Iter[T], f : (T) -> Unit) -> Unit {
+  (self.0)(
+    fn {
+      yield => {
+        f(yield)
+        true
+      }
+    },
+  )
+  |> ignore
+}
+
+/// Folds the elements of the iterator using the given function, starting with the given initial value.
+///
+/// # Type Parameters
+///
+/// - `T`: The type of the elements in the iterator.
+/// - `B`: The type of the accumulator value.
+///
+/// # Arguments
+///
+/// - `self`: The iterator to consume.
+/// - `f`: A function that takes an accumulator of type `B` and an element of type `T`, and returns a new accumulator value.
+/// - `init`: The initial value for the fold operation.
+///
+/// # Returns
+///
+/// Returns the final accumulator value after folding all elements of the iterator.
+/// @intrinsic %iter.reduce
+pub fn fold[T, B](self : Iter[T], f : (B, T) -> B, init : B) -> B {
+  let mut acc = init
+  let _ = (self.0)(
+    fn {
+      yield => {
+        acc = f(acc, yield)
+        true
+      }
+    },
+  )
+  acc
+}
+
+/// Counts the number of elements in the iterator.
+///
+/// # Type Parameters
+///
+/// - `T`: The type of the elements in the iterator.
+///
+/// # Arguments
+///
+/// - `self`: The iterator to consume.
+///
+/// # Returns
+///
+/// Returns the number of elements in the iterator.
+pub fn count[T](self : Iter[T]) -> Int {
+  self.fold(fn { acc, _ => acc + 1 }, 0)
+}
+
+// Producers
+
+/// Do not use this method, it is for internal use only.
+pub fn Iter::_unstable_internal_make[T](f : ((T) -> Bool) -> Bool) -> Iter[T] {
+  Iter(f)
+}
+
+/// Creates an empty iterator.
+///
+/// # Type Parameters
+///
+/// - `T`: The type of the elements in the iterator.
+///
+/// # Returns
+///
+/// Returns an empty iterator of type `Iter[T]`.
+pub fn Iter::empty[T]() -> Iter[T] {
+  Iter(fn { _ => true })
+}
+
+/// Creates an iterator that contains a single element.
+///
+/// # Type Parameters
+///
+/// - `T`: The type of the element in the iterator.
+///
+/// # Arguments
+///
+/// - `a`: The single element to be contained in the iterator.
+///
+/// # Returns
+///
+/// Returns an iterator of type `Iter[T]` that contains the single element `a`.
+pub fn Iter::singleton[T](a : T) -> Iter[T] {
+  Iter(fn { yield => yield(a) })
+}
+
+/// Creates an iterator that repeats the given element indefinitely.
+///
+/// # Type Parameters
+///
+/// - `T`: The type of the elements in the iterator.
+///
+/// # Arguments
+///
+/// - `a`: The element to be repeated.
+///
+/// # Returns
+///
+/// Returns an iterator of type `Iter[T]` that repeats the element `a` indefinitely.
+/// @intrinsic %iter.repeat
+pub fn Iter::repeat[T](a : T) -> Iter[T] {
+  Iter(
+    fn(yield) {
+      for ; ; {
+        if yield(a) {
+          continue
+        } else {
+          break false
+        }
+      }
+    },
+  )
+}
+
+// operators
+
 /// Filters the elements of the iterator based on a predicate function.
 ///
 /// # Type Parameters
@@ -28,9 +170,7 @@
 /// A new iterator that only contains the elements for which the predicate function returns `true`.
 /// @intrinsic %iter.filter
 pub fn filter[T](self : Iter[T], f : (T) -> Bool) -> Iter[T] {
-  Iter::Iter(
-    fn { yield => (self.0)(fn { a => if f(a) { yield(a) } else { true } }) },
-  )
+  Iter(fn { yield => (self.0)(fn { a => if f(a) { yield(a) } else { true } }) })
 }
 
 /// Transforms the elements of the iterator using a mapping function.
@@ -50,7 +190,7 @@ pub fn filter[T](self : Iter[T], f : (T) -> Bool) -> Iter[T] {
 /// A new iterator that contains the transformed elements.
 /// @intrinsic %iter.map
 pub fn map[T, R](self : Iter[T], f : (T) -> R) -> Iter[R] {
-  Iter::Iter(fn { yield => (self.0)(fn { a => yield(f(a)) }) })
+  Iter(fn { yield => (self.0)(fn { a => yield(f(a)) }) })
 }
 
 /// Transforms each element of the iterator into an iterator and flattens the resulting iterators into a single iterator.
@@ -70,7 +210,7 @@ pub fn map[T, R](self : Iter[T], f : (T) -> R) -> Iter[R] {
 /// A new iterator that contains the flattened elements.
 /// @intrinsic %iter.flat_map
 pub fn flat_map[T, R](self : Iter[T], f : (T) -> Iter[R]) -> Iter[R] {
-  Iter::Iter(fn { yield => (self.0)(fn { x => (f(x).0)(yield) }) })
+  Iter(fn { yield => (self.0)(fn { x => (f(x).0)(yield) }) })
 }
 
 /// Applies a function to each element of the iterator without modifying the iterator.
@@ -108,7 +248,7 @@ pub fn tap[T](self : Iter[T], f : (T) -> Unit) -> Iter[T] {
 /// A new iterator that contains the first `n` elements.
 /// @intrinsic %iter.take
 pub fn take[T](self : Iter[T], n : Int) -> Iter[T] {
-  Iter::Iter(
+  Iter(
     fn {
       yield => {
         let mut i = 0
@@ -146,7 +286,7 @@ pub fn take[T](self : Iter[T], n : Int) -> Iter[T] {
 ///
 /// A new iterator that contains the elements as long as the predicate function returns `true`.
 pub fn take_while[T](self : Iter[T], f : (T) -> Bool) -> Iter[T] {
-  Iter::Iter(
+  Iter(
     fn {
       yield => {
         // `r` is the overall return value, which is false only when `yield(a)` returns false
@@ -188,7 +328,7 @@ pub fn take_while[T](self : Iter[T], f : (T) -> Bool) -> Iter[T] {
 ///
 /// A new iterator that starts after skipping the first `n` elements.
 pub fn drop[T](self : Iter[T], n : Int) -> Iter[T] {
-  Iter::Iter(
+  Iter(
     fn {
       yield => {
         let mut i = 0
@@ -223,7 +363,7 @@ pub fn drop[T](self : Iter[T], n : Int) -> Iter[T] {
 ///
 /// A new iterator that starts after skipping the elements as long as the predicate function returns `true`.
 pub fn drop_while[T](self : Iter[T], f : (T) -> Bool) -> Iter[T] {
-  Iter::Iter(
+  Iter(
     fn {
       yield => {
         let mut dropping = true
@@ -288,7 +428,7 @@ pub fn find_first[T](self : Iter[T], f : (T) -> Bool) -> Option[T] {
 ///
 /// Returns a new iterator with the element `a` prepended to the original iterator.
 pub fn prepend[T](self : Iter[T], a : T) -> Iter[T] {
-  Iter::Iter(fn(yield) { yield(a) && (self.0)(yield) })
+  Iter(fn(yield) { yield(a) && (self.0)(yield) })
 }
 
 /// Appends a single element to the end of the iterator.
@@ -306,7 +446,7 @@ pub fn prepend[T](self : Iter[T], a : T) -> Iter[T] {
 ///
 /// Returns a new iterator with the element `a` appended to the original iterator.
 pub fn append[T](self : Iter[T], a : T) -> Iter[T] {
-  Iter::Iter(fn(yield) { (self.0)(yield) && yield(a) })
+  Iter(fn(yield) { (self.0)(yield) && yield(a) })
 }
 
 /// Combines two iterators into one by appending the elements of the second iterator to the first.
@@ -325,7 +465,7 @@ pub fn append[T](self : Iter[T], a : T) -> Iter[T] {
 /// Returns a new iterator that contains the elements of `self` followed by the elements of `other`.
 /// @intrinsic %iter.concat
 pub fn Iter::concat[T](self : Iter[T], other : Iter[T]) -> Iter[T] {
-  Iter::Iter(fn(yield) { (self.0)(yield) && (other.0)(yield) })
+  Iter(fn(yield) { (self.0)(yield) && (other.0)(yield) })
 }
 
 pub fn op_add[T](self : Iter[T], other : Iter[T]) -> Iter[T] {

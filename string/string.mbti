@@ -1,12 +1,10 @@
 package moonbitlang/core/string
 
-alias @moonbitlang/core/iter as @iter
-
 // Values
 
 // Types and methods
 impl String {
-  as_iter(String) -> @iter.Iter[Char]
+  as_iter(String) -> Iter[Char]
   compare(String, String) -> Int
   default() -> String
   hash(String) -> Int

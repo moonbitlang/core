@@ -103,8 +103,8 @@ fn iter[K, V](self : Bucket[K, V], f : (K, V) -> Unit) -> Unit {
   }
 }
 
-fn as_iter[K, V](self : Bucket[K, V]) -> @iter.Iter[(K, V)] {
-  @iter.Iter::_unstable_internal_make(
+fn as_iter[K, V](self : Bucket[K, V]) -> Iter[(K, V)] {
+  Iter::_unstable_internal_make(
     fn {
       f =>
         loop self {

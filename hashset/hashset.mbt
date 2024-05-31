@@ -198,8 +198,8 @@ pub fn symmetric_difference[K : Hash + Eq](
   m
 }
 
-pub fn as_iter[K](self : HashSet[K]) -> @iter.Iter[K] {
-  @iter.Iter::_unstable_internal_make(
+pub fn as_iter[K](self : HashSet[K]) -> Iter[K] {
+  Iter::_unstable_internal_make(
     fn(yield) {
       for i = 0, len = self.entries.length(); i < len; i = i + 1 {
         match self.entries[i] {

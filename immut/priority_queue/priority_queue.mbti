@@ -1,13 +1,11 @@
 package moonbitlang/core/immut/priority_queue
 
-alias @moonbitlang/core/iter as @iter
-
 // Values
 
 // Types and methods
 type ImmutablePriorityQueue
 impl ImmutablePriorityQueue {
-  as_iter[T : Compare + Eq](Self[T]) -> @iter.Iter[T]
+  as_iter[T : Compare + Eq](Self[T]) -> Iter[T]
   from_array[T : Compare + Eq](Array[T]) -> Self[T]
   is_empty[T](Self[T]) -> Bool
   length[T](Self[T]) -> Int

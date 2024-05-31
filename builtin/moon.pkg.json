@@ -1,1 +1,8 @@
-{}
+{
+    "import": [
+    ],
+    "test-import": [
+        "moonbitlang/core/assertion",
+        "moonbitlang/core/char"
+    ]
+}

@@ -48,7 +48,9 @@ test "take" {
 test "take2" {
   let iter = from_array(['1', '2', '3', '4', '5'])
   let exb = Buffer::make(0)
-  iter.take(10).concat(repeat('6').take(1)).iter(fn { x => exb.write_char(x) })
+  iter.take(10).concat(Iter::repeat('6').take(1)).iter(
+    fn { x => exb.write_char(x) },
+  )
   exb.expect(content="123456")?
 }
 

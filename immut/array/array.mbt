@@ -60,8 +60,8 @@ test "to_array" {
   inspect(v.push(5).to_array().to_string(), content="[1, 2, 3, 4, 5]")?
 }
 
-pub fn as_iter[T](self : ImmutableVec[T]) -> @iter.Iter[T] {
-  @iter.Iter::_unstable_internal_make(
+pub fn as_iter[T](self : ImmutableVec[T]) -> Iter[T] {
+  Iter::_unstable_internal_make(
     fn(yield) {
       let arr = self.to_array()
       for i = 0; i < self.size; i = i + 1 {
