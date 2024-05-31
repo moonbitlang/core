@@ -272,11 +272,11 @@ test "linked list" {
   inspect(
     m.debug_linked_list(),
     content=
-      #|(-684895554,one,1,prev:_,next:1759431067)
-      #|(1759431067,two,2,prev:-684895554,next:957279207)
-      #|(957279207,three,3,prev:1759431067,next:-1028309232)
-      #|(-1028309232,four,4,prev:957279207,next:-1715640224)
-      #|(-1715640224,five,5,prev:-1028309232,next:_)
+      #|(-684882541,one,1,prev:_,next:1759420741)
+      #|(1759420741,two,2,prev:-684882541,next:957272809)
+      #|(957272809,three,3,prev:1759420741,next:-1028260443)
+      #|(-1028260443,four,4,prev:957272809,next:-1715605027)
+      #|(-1715605027,five,5,prev:-1028260443,next:_)
       #|end
     ,
   )?
@@ -284,10 +284,10 @@ test "linked list" {
   inspect(
     m.debug_linked_list(),
     content=
-      #|(-684895554,one,1,prev:_,next:1759431067)
-      #|(1759431067,two,2,prev:-684895554,next:-1028309232)
-      #|(-1028309232,four,4,prev:1759431067,next:-1715640224)
-      #|(-1715640224,five,5,prev:-1028309232,next:_)
+      #|(-684882541,one,1,prev:_,next:1759420741)
+      #|(1759420741,two,2,prev:-684882541,next:-1028260443)
+      #|(-1028260443,four,4,prev:1759420741,next:-1715605027)
+      #|(-1715605027,five,5,prev:-1028260443,next:_)
       #|end
     ,
   )?
@@ -295,10 +295,10 @@ test "linked list" {
   inspect(
     m.debug_linked_list(),
     content=
-      #|(-684895554,one,1,prev:_,next:1759431067)
-      #|(1759431067,two,20,prev:-684895554,next:-1028309232)
-      #|(-1028309232,four,4,prev:1759431067,next:-1715640224)
-      #|(-1715640224,five,5,prev:-1028309232,next:_)
+      #|(-684882541,one,1,prev:_,next:1759420741)
+      #|(1759420741,two,20,prev:-684882541,next:-1028260443)
+      #|(-1028260443,four,4,prev:1759420741,next:-1715605027)
+      #|(-1715605027,five,5,prev:-1028260443,next:_)
       #|end
     ,
   )?
@@ -306,9 +306,9 @@ test "linked list" {
   inspect(
     m.debug_linked_list(),
     content=
-      #|(1759431067,two,20,prev:_,next:-1028309232)
-      #|(-1028309232,four,4,prev:1759431067,next:-1715640224)
-      #|(-1715640224,five,5,prev:-1028309232,next:_)
+      #|(1759420741,two,20,prev:_,next:-1028260443)
+      #|(-1028260443,four,4,prev:1759420741,next:-1715605027)
+      #|(-1715605027,five,5,prev:-1028260443,next:_)
       #|end
     ,
   )?
@@ -316,8 +316,8 @@ test "linked list" {
   inspect(
     m.debug_linked_list(),
     content=
-      #|(1759431067,two,20,prev:_,next:-1028309232)
-      #|(-1028309232,four,4,prev:1759431067,next:_)
+      #|(1759420741,two,20,prev:_,next:-1028260443)
+      #|(-1028260443,four,4,prev:1759420741,next:_)
       #|end
     ,
   )?
@@ -325,7 +325,7 @@ test "linked list" {
   inspect(
     m.debug_linked_list(),
     content=
-      #|(-1028309232,four,4,prev:_,next:_)
+      #|(-1028260443,four,4,prev:_,next:_)
       #|end
     ,
   )?

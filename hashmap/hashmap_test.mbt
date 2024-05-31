@@ -208,7 +208,7 @@ test "as_iter" {
       buf.write_string("[\(k)-\(v)]")
     },
   )
-  inspect(buf, content="[1-one][2-two][3-three]")?
+  inspect(buf, content="[3-three][1-one][2-two]")?
   buf.reset()
   map.as_iter().take(2).iter(
     fn(e) {
@@ -216,10 +216,10 @@ test "as_iter" {
       buf.write_string("[\(k)-\(v)]")
     },
   )
-  inspect(buf, content="[1-one][2-two]")?
+  inspect(buf, content="[3-three][1-one]")?
 }
 
 test "to_array" {
   let map = HashMap::[(1, "one"), (2, "two"), (3, "three")]
-  inspect(map.to_array(), content="[(1, one), (2, two), (3, three)]")?
+  inspect(map.to_array(), content="[(3, three), (1, one), (2, two)]")?
 }

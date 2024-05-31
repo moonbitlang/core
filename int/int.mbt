@@ -50,8 +50,7 @@ pub fn Int::min_value() -> Int {
 
 // https://github.com/skeeto/hash-prospector
 pub fn hash(self : Int) -> Int {
-  let mut x = self.lxor(self.lsr(16))
-  x = x.lxor(x.lsr(17))
+  let mut x = self.lxor(self.lsr(17))
   x = x * 0xed5ad4bb
   x = x.lxor(x.lsr(11))
   x = x * 0xac4c1b51
