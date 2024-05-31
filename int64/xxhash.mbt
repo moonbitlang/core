@@ -28,15 +28,14 @@ let gPRIME5 = 0x165667B1
 pub fn hash(self : Int64) -> Int {
   let mut input = self
   let seed = 0
-  let mut len = 8
-  let mut acc = seed + gPRIME5 + len
-  while len > 0 {
-    len -= 4
-    let x = acc + input.to_int() * gPRIME3
-    let r = 17
-    acc = x.lsl(r).lor(x.lsr(32 - r)) * gPRIME4
-    input = input.lsr(32)
-  }
+  let mut acc = seed + gPRIME5 + 8
+  let mut x = acc + input.to_int() * gPRIME3
+  let r = 17
+  acc = x.lsl(r).lor(x.lsr(32 - r)) * gPRIME4
+  input = input.lsr(32)
+  x = acc + input.to_int() * gPRIME3
+  acc = x.lsl(r).lor(x.lsr(32 - r)) * gPRIME4
+  input = input.lsr(32)
   acc = acc.lxor(acc.lsr(15))
   acc *= gPRIME2
   acc = acc.lxor(acc.lsr(13))
