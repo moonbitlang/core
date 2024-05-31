@@ -38,7 +38,7 @@ pub fn insert[K : Hash + Eq](self : HashSet[K], key : K) -> Unit {
   if self.capacity == 0 || self.size >= self.growAt {
     self.grow()
   }
-  let hash = make_hash(key)
+  let hash = key.hash()
   let entry = { psl: 0, hash, key }
   loop 0, self.index(hash), entry {
     i, idx, entry => {
@@ -71,7 +71,7 @@ pub fn insert[K : Hash + Eq](self : HashSet[K], key : K) -> Unit {
 
 /// Check if the hash set contains a key.
 pub fn contains[K : Hash + Eq](self : HashSet[K], key : K) -> Bool {
-  let hash = make_hash(key)
+  let hash = key.hash()
   for i = 0, idx = self.index(hash)
       i < self.capacity
       i = i + 1, idx = self.next_index(idx) {
@@ -92,7 +92,7 @@ pub fn contains[K : Hash + Eq](self : HashSet[K], key : K) -> Bool {
 
 /// Remove a key from hash set.
 pub fn remove[K : Hash + Eq](self : HashSet[K], key : K) -> Unit {
-  let hash = make_hash(key)
+  let hash = key.hash()
   for i = 0, idx = self.index(hash)
       i < self.capacity
       i = i + 1, idx = self.next_index(idx) {
@@ -251,12 +251,6 @@ fn grow[K : Hash + Eq](self : HashSet[K]) -> Unit {
       None => ()
     }
   }
-}
-
-fn make_hash[K : Hash](key : K) -> Int {
-  let hash = key.hash()
-  // Let higher 16 bits of the hash value participate in the calculation
-  hash.lxor(hash.lsr(16))
 }
 
 fn index[K : Hash](self : HashSet[K], hash : Int) -> Int {
