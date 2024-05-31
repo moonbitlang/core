@@ -1,13 +1,11 @@
 package moonbitlang/core/priority_queue
 
-alias @moonbitlang/core/iter as @iter
-
 // Values
 
 // Types and methods
 type PriorityQueue
 impl PriorityQueue {
-  as_iter[T : Compare + Eq](Self[T]) -> @iter.Iter[T]
+  as_iter[T : Compare + Eq](Self[T]) -> Iter[T]
   clear[T](Self[T]) -> Unit
   copy[T](Self[T]) -> Self[T]
   from_array[T : Compare + Eq](Array[T]) -> Self[T]

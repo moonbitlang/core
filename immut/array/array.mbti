@@ -1,7 +1,5 @@
 package moonbitlang/core/immut/array
 
-alias @moonbitlang/core/iter as @iter
-
 // Values
 fn immutable_push[T](Array[T], T) -> Array[T]
 
@@ -14,7 +12,7 @@ fn length[T](ImmutableVec[T]) -> Int
 // Types and methods
 type ImmutableVec
 impl ImmutableVec {
-  as_iter[T](Self[T]) -> @iter.Iter[T]
+  as_iter[T](Self[T]) -> Iter[T]
   copy[T](Self[T]) -> Self[T]
   debug_write[T : Debug](Self[T], Buffer) -> Unit
   empty[T]() -> Self[T]

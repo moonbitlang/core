@@ -75,8 +75,8 @@ test "to_array" {
   inspect(v.push(0).to_array().to_string(), content="[4, 3, 2, 1, 0]")?
 }
 
-pub fn as_iter[T : Compare](self : ImmutablePriorityQueue[T]) -> @iter.Iter[T] {
-  @iter.Iter::_unstable_internal_make(
+pub fn as_iter[T : Compare](self : ImmutablePriorityQueue[T]) -> Iter[T] {
+  Iter::_unstable_internal_make(
     fn(yield) {
       let arr = self.to_array()
       for i = 0; i < arr.length(); i = i + 1 {

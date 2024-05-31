@@ -738,8 +738,8 @@ test "shrink_to_fit_2" {
   @assertion.assert_true(dv.capacity() == 3)?
 }
 
-pub fn as_iter[T](self : Devec[T]) -> @iter.Iter[T] {
-  @iter.Iter::_unstable_internal_make(
+pub fn as_iter[T](self : Devec[T]) -> Iter[T] {
+  Iter::_unstable_internal_make(
     fn(yield) {
       for i = 0, len = self.length(); i < len; i = i + 1 {
         if yield(self[i]).not() {

@@ -152,8 +152,8 @@ test "substring" {
   @assertion.assert_eq("abc".substring(start=1, end=2), "b")?
 }
 
-pub fn as_iter(self : String) -> @iter.Iter[Char] {
-  @iter._unstable_internal_make(
+pub fn as_iter(self : String) -> Iter[Char] {
+  Iter::_unstable_internal_make(
     fn(yield) {
       let len = self.length()
       for index = 0; index < len; index = index + 1 {

@@ -1,14 +1,12 @@
 package moonbitlang/core/array
 
-alias @moonbitlang/core/iter as @iter
-
 // Values
 
 // Types and methods
 impl FixedArray {
   all[T](Self[T], (T) -> Bool) -> Bool
   any[T](Self[T], (T) -> Bool) -> Bool
-  as_iter[T](Self[T]) -> @iter.Iter[T]
+  as_iter[T](Self[T]) -> Iter[T]
   blit_to[A](Self[A], Self[A], ~len : Int, ~src_offset : Int = .., ~dst_offset : Int = ..) -> Unit
   contains[T : Eq](Self[T], T) -> Bool
   copy[T](Self[T]) -> Self[T]
@@ -39,7 +37,7 @@ impl FixedArray {
   starts_with[T : Eq](Self[T], Self[T]) -> Bool
 }
 impl Array {
-  as_iter[T](Self[T]) -> @iter.Iter[T]
+  as_iter[T](Self[T]) -> Iter[T]
   blit_to[A](Self[A], Self[A], ~len : Int, ~src_offset : Int = .., ~dst_offset : Int = ..) -> Unit
   copy[T](Self[T]) -> Self[T]
   new_with_index[T](Int, (Int) -> T) -> Self[T]

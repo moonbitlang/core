@@ -1,13 +1,11 @@
 package moonbitlang/core/hashset
 
-alias @moonbitlang/core/iter as @iter
-
 // Values
 
 // Types and methods
 type HashSet
 impl HashSet {
-  as_iter[K](Self[K]) -> @iter.Iter[K]
+  as_iter[K](Self[K]) -> Iter[K]
   capacity[K](Self[K]) -> Int
   clear[K](Self[K]) -> Unit
   contains[K : Hash + Eq](Self[K], K) -> Bool
