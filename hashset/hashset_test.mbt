@@ -117,7 +117,7 @@ test "iter" {
   let m : HashSet[String] = HashSet::["a", "b", "c"]
   let mut sum = ""
   m.iter(fn(k) { sum += k })
-  @assertion.assert_eq(sum, "cab")?
+  @assertion.assert_eq(sum, "abc")?
 }
 
 test "iteri" {
@@ -130,7 +130,7 @@ test "iteri" {
       sum += i
     },
   )
-  @assertion.assert_eq(s, "321")?
+  @assertion.assert_eq(s, "213")?
   @assertion.assert_eq(sum, 3)?
 }
 
@@ -220,8 +220,8 @@ test "as_iter" {
   let buf = Buffer::make(20)
   let map = HashSet::["a", "b", "c"]
   map.as_iter().iter(fn(e) { buf.write_string("[\(e)]") })
-  inspect(buf, content="[c][a][b]")?
+  inspect(buf, content="[a][b][c]")?
   buf.reset()
   map.as_iter().take(2).iter(fn(e) { buf.write_string("[\(e)]") })
-  inspect(buf, content="[c][a]")?
+  inspect(buf, content="[a][b]")?
 }

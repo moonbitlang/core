@@ -22,3 +22,18 @@ test "overflow" {
   inspect(0x7fff_ffff, content="2147483647")?
   inspect(-0x7fff_ffff, content="-2147483647")?
 }
+
+test "hash" {
+  inspect(hash(0), content="0")?
+  inspect(hash(1), content="69681622")?
+  inspect(hash(2), content="-236984087")?
+  inspect(hash(3), content="-1057966777")?
+  inspect(hash(4), content="-744398955")?
+  inspect(hash(5), content="-482482911")?
+  inspect(hash(6), content="-1506254959")?
+  inspect(hash(7), content="1327878809")?
+  inspect(hash(8), content="1120898975")?
+  inspect(hash(9), content="1567958539")?
+  inspect(hash(0x7fffffff), content="943411498")?
+  inspect(hash(0x7fffffff + 1), content="963800214")?
+}
