@@ -18,6 +18,8 @@ impl Option {
   flatten[T](Self[Self[T]]) -> Self[T]
   is_empty[T](Self[T]) -> Bool
   map[T, U](Self[T], (T) -> U) -> Self[U]
+  map_or[T, U](Self[T], U, (T) -> U) -> U
+  map_or_else[T, U](Self[T], () -> U, (T) -> U) -> U
   or[T](Self[T], T) -> T
   or_else[T](Self[T], () -> T) -> T
   unwrap[X](Self[X]) -> X
