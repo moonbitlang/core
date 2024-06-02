@@ -78,22 +78,21 @@ pub fn op_set[K : Hash + Eq, V](
 /// Get the value associated with a key.
 pub fn get[K : Hash + Eq, V](self : HashMap[K, V], key : K) -> Option[V] {
   let hash = key.hash()
-  for i = 0, idx = self.index(hash) {
+  for i = 0, idx = hash.land(self.capacity - 1) {
     if i == self.capacity {
       break None
-    } else {
-      match self.entries[idx] {
-        Some(entry) => {
-          if entry.hash == hash && entry.key == key {
-            break Some(entry.value)
-          }
-          if i > entry.psl {
-            break None
-          }
-          continue i + 1, self.next_index(idx)
+    }
+    match self.entries[idx] {
+      Some(entry) => {
+        if entry.hash == hash && entry.key == key {
+          break Some(entry.value)
         }
-        None => break None
+        if i > entry.psl {
+          break None
+        }
+        continue i + 1, (idx + 1).land(self.capacity - 1)
       }
+      None => break None
     }
   }
 }

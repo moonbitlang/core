@@ -38,7 +38,7 @@ priv struct Entry[K, V] {
 /// ```
 struct HashMap[K, V] {
   mut entries : FixedArray[Option[Entry[K, V]]]
-  mut capacity : Int 
+  mut capacity : Int
   // size of field `entries`, it is redundant but useful for performance
   // so we don't need do `self.entries.length()` every time
   mut size : Int // active key-value pairs count  
