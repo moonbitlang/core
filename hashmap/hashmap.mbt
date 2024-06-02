@@ -125,9 +125,10 @@ pub fn contains[K : Hash + Eq, V](self : HashMap[K, V], key : K) -> Bool {
 /// Remove a key-value pair from hash map.
 pub fn remove[K : Hash + Eq, V](self : HashMap[K, V], key : K) -> Unit {
   let hash = key.hash()
-  for i = 0, idx = self.index(hash)
-      i < self.capacity
-      i = i + 1, idx = self.next_index(idx) {
+  for i = 0, idx = hash.land(self.capacity - 1) {
+    if i >= self.capacity {
+      break
+    }
     match self.entries[idx] {
       Some(entry) => {
         if entry.hash == hash && entry.key == key {
@@ -137,10 +138,11 @@ pub fn remove[K : Hash + Eq, V](self : HashMap[K, V], key : K) -> Unit {
           break
         }
         if i > entry.psl {
-          return
+          break
         }
+        continue i + 1, (idx + 1).land(self.capacity - 1)
       }
-      None => ()
+      None => continue i + 1, (idx + 1).land(self.capacity - 1)
     }
   }
 }
