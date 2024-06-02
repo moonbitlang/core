@@ -35,7 +35,6 @@ pub fn HashMap::new[K, V](~capacity : Int = 8) -> HashMap[K, V] {
   { size: 0, capacity, entries: FixedArray::make(capacity, None) }
 }
 
-
 /// Create new hash map from array.
 pub fn HashMap::from_array[K : Hash + Eq, V](
   arr : Array[(K, V)]
