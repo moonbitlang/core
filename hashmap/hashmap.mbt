@@ -42,10 +42,7 @@ pub fn set[K : Hash + Eq, V](self : HashMap[K, V], key : K, value : V) -> Unit {
     self.grow()
   }
   let hash = key.hash()
-  for i = 0, idx = self.index(hash), entry = { psl: 0, hash, key, value } {
-    if i == self.capacity {
-      panic()
-    }
+  for idx = hash.land(self.capacity - 1), entry = { psl: 0, hash, key, value } {
     match self.entries[idx] {
       None => {
         self.entries[idx] = Some(entry)
@@ -64,7 +61,7 @@ pub fn set[K : Hash + Eq, V](self : HashMap[K, V], key : K, value : V) -> Unit {
           entry
         }
         curr_entry.psl += 1
-        continue i + 1, self.next_index(idx), curr_entry
+        continue (idx + 1).land(self.capacity - 1), curr_entry
       }
     }
   }
