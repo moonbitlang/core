@@ -155,11 +155,7 @@ pub fn remove[K : Hash + Eq, V](self : HashMap[K, V], key : K) -> Unit {
 }
 
 fn shift_back[K : Hash, V](self : HashMap[K, V], start_index : Int) -> Unit {
-  for i = 0, prev = start_index, curr = (start_index + 1).land(
-          self.capacity - 1,
-        )
-      i < self.entries.length()
-      i = i + 1, prev = curr, curr = (curr + 1).land(self.capacity - 1) {
+  for prev = start_index, curr = (start_index + 1).land(self.capacity - 1) {
     match self.entries[curr] {
       Some({ psl, hash, key, value, .. }) => {
         if psl == 0 {
@@ -167,6 +163,7 @@ fn shift_back[K : Hash, V](self : HashMap[K, V], start_index : Int) -> Unit {
         }
         self.entries[prev] = Some({ psl: psl - 1, hash, key, value })
         self.entries[curr] = None
+        continue curr, (curr + 1).land(self.capacity - 1)
       }
       None => break
     }
