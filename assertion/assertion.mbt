@@ -28,7 +28,7 @@ pub fn assert_eq[T : Debug + Eq](
   } else {
     let a = debug_string(a)
     let b = debug_string(b)
-    Err("FAILED:\(loc) `\(a) == \(b)`")
+    Err("FAILED: \(loc) `\(a) == \(b)`")
   }
 }
 
@@ -56,7 +56,7 @@ pub fn assert_ne[T : Debug + Eq](
   } else {
     let a = debug_string(a)
     let b = debug_string(b)
-    Err("FAILED:\(loc) `\(a) != \(b)`")
+    Err("FAILED: \(loc) `\(a) != \(b)`")
   }
 }
 
@@ -77,7 +77,7 @@ pub fn assert_false[T : Debug + @bool.Boolean](
 ) -> Result[Unit, String] {
   if x.to_bool() {
     let x = debug_string(x)
-    Err("FAILED:\(loc) `\(x)` is not false")
+    Err("FAILED: \(loc) `\(x)` is not false")
   } else {
     Ok(())
   }
@@ -99,7 +99,7 @@ pub fn assert_true[T : Debug + @bool.Boolean](
     Ok(())
   } else {
     let x = debug_string(x)
-    Err("FAILED:\(loc): `\(x)` is not true")
+    Err("FAILED: \(loc): `\(x)` is not true")
   }
 }
 
@@ -136,7 +136,7 @@ pub fn assert_is[T : Debug](
   } else {
     let a = debug_string(a)
     let b = debug_string(b)
-    Err("FAILED:\(loc) `\(a) is \(b)`")
+    Err("FAILED: \(loc) `\(a) is \(b)`")
   }
 }
 
@@ -179,7 +179,7 @@ pub fn assert_is_not[T : Debug](
   } else {
     let a = debug_string(a)
     let b = debug_string(b)
-    Err("FAILED:\(loc) `not(\(a) is \(b))`")
+    Err("FAILED: \(loc) `not(\(a) is \(b))`")
   }
 }
 
