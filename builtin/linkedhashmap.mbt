@@ -58,17 +58,37 @@ struct LinkedHashMap[K, V] {
 
 // Implementations
 
-// Default initial capacity
-let default_init_capacity = 8
+fn power_2_above(x : Int, n : Int) -> Int {
+  let n = n.to_int64()
+  for i = x.to_int64() {
+    if i > 2147483647L {
+      break 2147483647
+    }
+    if i >= n {
+      break i.to_int()
+    }
+    continue i.lsl(1)
+  }
+}
+
+test "power_2_above" {
+  inspect(power_2_above(1, 15), content="16")?
+  inspect(power_2_above(1, 16), content="16")?
+  inspect(power_2_above(1, 17), content="32")?
+  inspect(power_2_above(1, 32), content="32")?
+  inspect(power_2_above(128, 33), content="128")?
+  inspect(power_2_above(1, 2147483647), content="2147483647")?
+}
 
 /// Create a hash map.
-pub fn LinkedHashMap::new[K, V]() -> LinkedHashMap[K, V] {
+pub fn LinkedHashMap::new[K, V](~capacity : Int = 8) -> LinkedHashMap[K, V] {
+  let capacity = power_2_above(8, capacity)
   {
     size: 0,
-    capacity: default_init_capacity,
-    growAt: calc_grow_threshold(default_init_capacity),
-    entries: FixedArray::make(default_init_capacity, None),
-    list: FixedArray::make(default_init_capacity, { prev: None, next: None }),
+    capacity,
+    growAt: calc_grow_threshold(capacity),
+    entries: FixedArray::make(capacity, None),
+    list: FixedArray::make(capacity, { prev: None, next: None }),
     head: None,
     tail: None,
   }
@@ -78,7 +98,7 @@ pub fn LinkedHashMap::new[K, V]() -> LinkedHashMap[K, V] {
 pub fn LinkedHashMap::from_array[K : Hash + Eq, V](
   arr : Array[(K, V)]
 ) -> LinkedHashMap[K, V] {
-  let m = LinkedHashMap::new()
+  let m = LinkedHashMap::new(capacity=arr.length())
   arr.iter(fn(e) { m.set(e.0, e.1) })
   m
 }
@@ -90,12 +110,16 @@ pub fn set[K : Hash + Eq, V](
   key : K,
   value : V
 ) -> Unit {
-  if self.capacity == 0 || self.size >= self.growAt {
+  if self.size >= self.growAt {
     self.grow()
   }
   let hash = key.hash()
   let insert_entry = { idx: -1, psl: 0, hash, key, value }
-  loop 0, self.index(hash), insert_entry, { prev: None, next: None } {
+  loop
+    0,
+    hash.land(self.capacity - 1),
+    insert_entry,
+    { prev: None, next: None } {
     i, idx, entry, node => {
       if i == self.capacity {
         panic()
@@ -120,10 +144,13 @@ pub fn set[K : Hash + Eq, V](
             self.list[idx] = node
             entry.idx = idx
             curr_entry.psl += 1
-            continue i + 1, self.next_index(idx), curr_entry, curr_node
+            continue i + 1,
+              (idx + 1).land(self.capacity - 1),
+              curr_entry,
+              curr_node
           } else {
             entry.psl += 1
-            continue i + 1, self.next_index(idx), entry, node
+            continue i + 1, (idx + 1).land(self.capacity - 1), entry, node
           }
         }
       }
@@ -142,9 +169,7 @@ pub fn op_set[K : Hash + Eq, V](
 /// Get the value associated with a key.
 pub fn get[K : Hash + Eq, V](self : LinkedHashMap[K, V], key : K) -> Option[V] {
   let hash = key.hash()
-  for i = 0, idx = self.index(hash)
-      i < self.capacity
-      i = i + 1, idx = self.next_index(idx) {
+  for i = 0, idx = hash.land(self.capacity - 1) {
     match self.entries[idx] {
       Some(entry) => {
         if entry.hash == hash && entry.key == key {
@@ -153,11 +178,10 @@ pub fn get[K : Hash + Eq, V](self : LinkedHashMap[K, V], key : K) -> Option[V] {
         if i > entry.psl {
           break None
         }
+        continue i + 1, (idx + 1).land(self.capacity - 1)
       }
       None => break None
     }
-  } else {
-    None
   }
 }
 
@@ -192,9 +216,7 @@ pub fn contains[K : Hash + Eq, V](self : LinkedHashMap[K, V], key : K) -> Bool {
 /// Remove a key-value pair from hash map.
 pub fn remove[K : Hash + Eq, V](self : LinkedHashMap[K, V], key : K) -> Unit {
   let hash = key.hash()
-  for i = 0, idx = self.index(hash)
-      i < self.capacity
-      i = i + 1, idx = self.next_index(idx) {
+  for i = 0, idx = hash.land(self.capacity - 1) {
     match self.entries[idx] {
       Some(entry) => {
         if entry.hash == hash && entry.key == key {
@@ -205,10 +227,11 @@ pub fn remove[K : Hash + Eq, V](self : LinkedHashMap[K, V], key : K) -> Unit {
           break
         }
         if i > entry.psl {
-          return
+          break
         }
+        continue i + 1, (idx + 1).land(self.capacity - 1)
       }
-      None => ()
+      None => break
     }
   }
 }
@@ -264,9 +287,7 @@ fn shift_back[K : Hash, V](
   self : LinkedHashMap[K, V],
   start_index : Int
 ) -> Unit {
-  for i = 0, prev = start_index, curr = self.next_index(start_index)
-      i < self.entries.length()
-      i = i + 1, prev = curr, curr = self.next_index(curr) {
+  for prev = start_index, curr = (start_index + 1).land(self.capacity - 1) {
     match self.entries[curr] {
       Some(entry) => {
         if entry.psl == 0 {
@@ -276,6 +297,7 @@ fn shift_back[K : Hash, V](
         entry.idx = prev
         self.entries[prev] = Some(entry)
         self.entries[curr] = None
+        continue curr, (curr + 1).land(self.capacity - 1)
       }
       None => break
     }
@@ -283,20 +305,12 @@ fn shift_back[K : Hash, V](
 }
 
 fn grow[K : Hash + Eq, V](self : LinkedHashMap[K, V]) -> Unit {
-  // handle zero capacity
-  if self.capacity == 0 {
-    self.capacity = default_init_capacity
-    self.growAt = calc_grow_threshold(self.capacity)
-    self.size = 0
-    self.entries = FixedArray::make(self.capacity, None)
-    self.list = FixedArray::make(self.capacity, { prev: None, next: None })
-    return
-  }
   let old_head = self.head
   let old_list = self.list
-  self.entries = FixedArray::make(self.capacity * 2, None)
-  self.list = FixedArray::make(self.capacity * 2, { prev: None, next: None })
-  self.capacity = self.capacity * 2
+  let new_capacity = self.capacity.lsl(1)
+  self.entries = FixedArray::make(new_capacity, None)
+  self.list = FixedArray::make(new_capacity, { prev: None, next: None })
+  self.capacity = new_capacity
   self.growAt = calc_grow_threshold(self.capacity)
   self.size = 0
   self.head = None
@@ -308,14 +322,6 @@ fn grow[K : Hash + Eq, V](self : LinkedHashMap[K, V]) -> Unit {
     }
     None => break
   }
-}
-
-fn index[K : Hash, V](self : LinkedHashMap[K, V], hash : Int) -> Int {
-  hash.land(self.capacity - 1)
-}
-
-fn next_index[K : Hash, V](self : LinkedHashMap[K, V], index : Int) -> Int {
-  (index + 1).land(self.capacity - 1)
 }
 
 fn calc_grow_threshold(capacity : Int) -> Int {
