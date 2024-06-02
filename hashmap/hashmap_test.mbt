@@ -14,7 +14,7 @@
 
 test "new" {
   let m : HashMap[Int, Int] = HashMap::new()
-  @assertion.assert_eq(m.capacity, default_init_capacity)?
+  inspect(m.capacity, content="8")?
   @assertion.assert_eq(m.size, 0)?
 }
 
@@ -114,7 +114,7 @@ test "remove" {
   @assertion.assert_eq(m.size(), 5)?
   inspect(
     m.debug_entries(),
-    content="_,(0,a,1),(0,bc,2),(1,cd,2),(1,abc,3),_,(0,abcdef,6),_",
+    content="_,(0,a,1),(0,bc,2),(1,cd,2),(1,abc,3),_,(0,abcdef,6),_,_,_,_,_,_,_,_,_",
   )?
 }
 
@@ -184,18 +184,18 @@ test "grow" {
   m.set("Scala", 5)
   m.set("Julia", 5)
   @assertion.assert_eq(m.size, 6)?
-  @assertion.assert_eq(m.capacity, 8)?
+  inspect(m.capacity, content="16")?
   m.set("Cobol", 5)
   @assertion.assert_eq(m.size, 7)?
-  @assertion.assert_eq(m.capacity, 16)?
+  inspect(m.capacity, content="16")?
   m.set("Python", 6)
   m.set("Haskell", 7)
   m.set("Rescript", 8)
   @assertion.assert_eq(m.size, 10)?
-  @assertion.assert_eq(m.capacity, 16)?
+  inspect(m.capacity, content="32")?
   inspect(
     m.debug_entries(),
-    content="_,(0,C,1),(0,Go,2),(0,C++,3),(0,Java,4),(0,Scala,5),(1,Julia,5),(2,Cobol,5),(2,Python,6),(2,Haskell,7),(2,Rescript,8),_,_,_,_,_",
+    content="_,(0,C,1),(0,Go,2),(0,C++,3),(0,Java,4),(0,Scala,5),(1,Julia,5),(2,Cobol,5),(2,Python,6),(2,Haskell,7),(2,Rescript,8),_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_",
   )?
 }
 
