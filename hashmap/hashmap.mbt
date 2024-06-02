@@ -25,6 +25,8 @@ pub fn HashMap::new[K, V]() -> HashMap[K, V] {
   }
 }
 
+/// TODO: calculate the size of the array
+/// and pre-allocate the array with the size.
 /// Create new hash map from array.
 pub fn HashMap::from_array[K : Hash + Eq, V](
   arr : Array[(K, V)]
@@ -187,8 +189,9 @@ fn grow[K : Hash + Eq, V](self : HashMap[K, V]) -> Unit {
   }
 }
 
+/// TODO: inline this function
 fn index[K : Hash, V](self : HashMap[K, V], hash : Int) -> Int {
-  hash.abs().land(self.capacity - 1)
+  hash.land(self.capacity - 1)
 }
 
 fn next_index[K : Hash, V](self : HashMap[K, V], index : Int) -> Int {
