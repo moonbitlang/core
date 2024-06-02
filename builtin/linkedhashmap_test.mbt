@@ -104,17 +104,13 @@ test "from_array" {
 
 test "remove" {
   let m : LinkedHashMap[MyString, Int] = LinkedHashMap::new()
-  fn i(s) {
-    MyString::MyString(s)
-  }
-
-  m.set("a" |> i, 1)
-  m.set("ab" |> i, 2)
-  m.set("bc" |> i, 2)
-  m.set("cd" |> i, 2)
-  m.set("abc" |> i, 3)
-  m.set("abcdef" |> i, 6)
-  m.remove("ab" |> i)
+  m.set("a", 1)
+  m.set("ab", 2)
+  m.set("bc", 2)
+  m.set("cd", 2)
+  m.set("abc", 3)
+  m.set("abcdef", 6)
+  m.remove("ab")
   @assertion.assert_eq(m.size(), 5)?
   @assertion.assert_eq(
     m.debug_entries(),
@@ -124,14 +120,10 @@ test "remove" {
 
 test "remove_unexist_key" {
   let m : LinkedHashMap[MyString, Int] = LinkedHashMap::new()
-  fn i(s) {
-    MyString::MyString(s)
-  }
-
-  m.set("a" |> i, 1)
-  m.set("ab" |> i, 2)
-  m.set("abc" |> i, 3)
-  m.remove("d" |> i)
+  m.set("a", 1)
+  m.set("ab", 2)
+  m.set("abc", 3)
+  m.remove("d")
   @assertion.assert_eq(m.size(), 3)?
   @assertion.assert_eq(
     m.debug_entries(),
@@ -202,24 +194,20 @@ test "clear" {
 
 test "grow" {
   let m : LinkedHashMap[MyString, Int] = LinkedHashMap::new()
-  fn i(s) {
-    MyString::MyString(s)
-  }
-
-  m.set("C" |> i, 1)
-  m.set("Go" |> i, 2)
-  m.set("C++" |> i, 3)
-  m.set("Java" |> i, 4)
-  m.set("Scala" |> i, 5)
-  m.set("Julia" |> i, 5)
+  m.set("C", 1)
+  m.set("Go", 2)
+  m.set("C++", 3)
+  m.set("Java", 4)
+  m.set("Scala", 5)
+  m.set("Julia", 5)
   @assertion.assert_eq(m.size(), 6)?
   @assertion.assert_eq(m.capacity(), 8)?
-  m.set("Cobol" |> i, 5)
+  m.set("Cobol", 5)
   @assertion.assert_eq(m.size(), 7)?
   @assertion.assert_eq(m.capacity(), 16)?
-  m.set("Python" |> i, 6)
-  m.set("Haskell" |> i, 7)
-  m.set("Rescript" |> i, 8)
+  m.set("Python", 6)
+  m.set("Haskell", 7)
+  m.set("Rescript", 8)
   @assertion.assert_eq(m.size(), 10)?
   @assertion.assert_eq(m.capacity(), 16)?
   @assertion.assert_eq(
