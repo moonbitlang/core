@@ -26,17 +26,13 @@ test "new" {
 
 test "set" {
   let m : LinkedHashMap[MyString, Int] = LinkedHashMap::new()
-  fn i(s) {
-    MyString::MyString(s)
-  }
-
-  m.set("a" |> i, 1)
-  m.set("b" |> i, 1)
-  m.set("bc" |> i, 2)
-  m.set("abc" |> i, 3)
-  m.set("cd" |> i, 2)
-  m.set("c" |> i, 1)
-  m.set("d" |> i, 1)
+  m.set("a", 1)
+  m.set("b", 1)
+  m.set("bc", 2)
+  m.set("abc", 3)
+  m.set("cd", 2)
+  m.set("c", 1)
+  m.set("d", 1)
   @assertion.assert_eq(m.size, 7)?
   @assertion.assert_eq(
     m.debug_entries(),

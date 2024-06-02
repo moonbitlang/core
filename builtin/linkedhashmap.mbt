@@ -14,16 +14,20 @@
 
 // Types
 priv struct Entry[K, V] {
+  mut idx : Int
   mut psl : Int
   hash : Int
   key : K
   mut value : V
-  mut prev : Option[Entry[K, V]]
-  mut next : Option[Entry[K, V]]
 } derive(Debug)
 
 fn op_equal[K : Eq, V](self : Entry[K, V], other : Entry[K, V]) -> Bool {
   self.hash == other.hash && self.key == other.key
+}
+
+priv struct ListNode[K, V] {
+  mut prev : Option[Entry[K, V]]
+  mut next : Option[Entry[K, V]]
 }
 
 /// Mutable linked hash map that maintains the order of insertion, not thread safe. 
@@ -44,6 +48,7 @@ fn op_equal[K : Eq, V](self : Entry[K, V], other : Entry[K, V]) -> Bool {
 /// ```
 struct LinkedHashMap[K, V] {
   mut entries : FixedArray[Option[Entry[K, V]]]
+  mut list : FixedArray[ListNode[K, V]] // list of (prev, next)
   mut size : Int // active key-value pairs count
   mut capacity : Int // current capacity 
   mut growAt : Int // threshold that triggers grow
@@ -63,6 +68,7 @@ pub fn LinkedHashMap::new[K, V]() -> LinkedHashMap[K, V] {
     capacity: default_init_capacity,
     growAt: calc_grow_threshold(default_init_capacity),
     entries: FixedArray::make(default_init_capacity, None),
+    list: FixedArray::make(default_init_capacity, { prev: None, next: None }),
     head: None,
     tail: None,
   }
@@ -88,31 +94,36 @@ pub fn set[K : Hash + Eq, V](
     self.grow()
   }
   let hash = key.hash()
-  let insert_entry = { psl: 0, hash, key, value, prev: None, next: None }
-  loop 0, self.index(hash), insert_entry {
-    i, idx, entry => {
+  let insert_entry = { idx: -1, psl: 0, hash, key, value }
+  loop 0, self.index(hash), insert_entry, { prev: None, next: None } {
+    i, idx, entry, node => {
       if i == self.capacity {
         panic()
       }
       match self.entries[idx] {
         None => {
           self.entries[idx] = Some(entry)
-          self.size += 1
+          self.list[idx] = node
+          entry.idx = idx
           self.add_entry_to_tail(insert_entry)
+          self.size += 1
           break
         }
         Some(curr_entry) => {
+          let curr_node = self.list[curr_entry.idx]
           if curr_entry.hash == entry.hash && curr_entry.key == entry.key {
             curr_entry.value = entry.value
             break
           }
           if entry.psl > curr_entry.psl {
             self.entries[idx] = Some(entry)
+            self.list[idx] = node
+            entry.idx = idx
             curr_entry.psl += 1
-            continue i + 1, self.next_index(idx), curr_entry
+            continue i + 1, self.next_index(idx), curr_entry, curr_node
           } else {
             entry.psl += 1
-            continue i + 1, self.next_index(idx), entry
+            continue i + 1, self.next_index(idx), entry, node
           }
         }
       }
@@ -212,8 +223,8 @@ fn add_entry_to_tail[K : Eq, V](
       self.tail = Some(entry)
     }
     Some(tail) => {
-      tail.next = Some(entry)
-      entry.prev = Some(tail)
+      self.list[tail.idx].next = Some(entry)
+      self.list[entry.idx].prev = Some(tail)
       self.tail = Some(entry)
     }
   }
@@ -223,29 +234,30 @@ fn remove_entry[K : Eq, V](
   self : LinkedHashMap[K, V],
   entry : Entry[K, V]
 ) -> Unit {
+  let node = self.list[entry.idx]
   if self.is_empty() {
     self.head = None
     self.tail = None
   } else {
     match self.head {
-      Some(head) => if head == entry { self.head = entry.next }
+      Some(head) => if head == entry { self.head = node.next }
       None => ()
     }
     match self.tail {
-      Some(tail) => if tail == entry { self.tail = entry.prev }
+      Some(tail) => if tail == entry { self.tail = node.prev }
       None => ()
     }
-    match entry.prev {
-      Some(prev) => prev.next = entry.next
+    match node.prev {
+      Some(prev) => self.list[prev.idx].next = node.next
       None => ()
     }
-    match entry.next {
-      Some(next) => next.prev = entry.prev
+    match node.next {
+      Some(next) => self.list[next.idx].prev = node.prev
       None => ()
     }
   }
-  entry.prev = None
-  entry.next = None
+  node.prev = None
+  node.next = None
 }
 
 fn shift_back[K : Hash, V](
@@ -261,6 +273,7 @@ fn shift_back[K : Hash, V](
           break
         }
         entry.psl -= 1
+        entry.idx = prev
         self.entries[prev] = Some(entry)
         self.entries[curr] = None
       }
@@ -276,33 +289,29 @@ fn grow[K : Hash + Eq, V](self : LinkedHashMap[K, V]) -> Unit {
     self.growAt = calc_grow_threshold(self.capacity)
     self.size = 0
     self.entries = FixedArray::make(self.capacity, None)
+    self.list = FixedArray::make(self.capacity, { prev: None, next: None })
     return
   }
   let old_head = self.head
+  let old_list = self.list
   self.entries = FixedArray::make(self.capacity * 2, None)
+  self.list = FixedArray::make(self.capacity * 2, { prev: None, next: None })
   self.capacity = self.capacity * 2
   self.growAt = calc_grow_threshold(self.capacity)
   self.size = 0
   self.head = None
+  self.tail = None
   loop old_head {
-    Some({ key, value, next, .. }) => {
+    Some({ idx, key, value, .. }) => {
       self.set(key, value)
-      continue next
+      continue old_list[idx].next
     }
     None => break
   }
 }
 
-fn abs(self : Int) -> Int {
-  if self < 0 {
-    -self
-  } else {
-    self
-  }
-}
-
 fn index[K : Hash, V](self : LinkedHashMap[K, V], hash : Int) -> Int {
-  hash.abs().land(self.capacity - 1)
+  hash.land(self.capacity - 1)
 }
 
 fn next_index[K : Hash, V](self : LinkedHashMap[K, V], index : Int) -> Int {
@@ -333,22 +342,23 @@ fn debug_entries[K : Show, V : Show](self : LinkedHashMap[K, V]) -> String {
 fn debug_linked_list[K : Show, V : Show](self : LinkedHashMap[K, V]) -> String {
   let buf = Buffer::make(0)
   loop self.head {
-    Some({ key, value, prev, next, hash, .. }) => {
+    Some({ idx, key, value, hash, .. }) => {
       buf.write_char('(')
       buf.write_string("\(hash),\(key),\(value)")
       buf.write_string(",prev:")
-      match prev {
+      let node = self.list[idx]
+      match node.prev {
         Some({ hash, .. }) => buf.write_string(hash.to_string())
         None => buf.write_char('_')
       }
       buf.write_string(",next:")
-      match next {
+      match node.next {
         Some({ hash, .. }) => buf.write_string(hash.to_string())
         None => buf.write_char('_')
       }
       buf.write_char(')')
       buf.write_char('\n')
-      continue next
+      continue node.next
     }
     None => buf.write_string("end")
   }
@@ -373,9 +383,9 @@ pub fn is_empty[K, V](self : LinkedHashMap[K, V]) -> Bool {
 /// Iterate over all key-value pairs of the map in the order of insertion.
 pub fn iter[K, V](self : LinkedHashMap[K, V], f : (K, V) -> Unit) -> Unit {
   loop self.head {
-    Some({ key, value, next, .. }) => {
+    Some({ key, value, idx, .. }) => {
       f(key, value)
-      continue next
+      continue self.list[idx].next
     }
     None => break
   }
@@ -384,9 +394,9 @@ pub fn iter[K, V](self : LinkedHashMap[K, V], f : (K, V) -> Unit) -> Unit {
 /// Iterate over all key-value pairs of the map in the order of insertion, with index.
 pub fn iteri[K, V](self : LinkedHashMap[K, V], f : (Int, K, V) -> Unit) -> Unit {
   loop 0, self.head {
-    idx, Some({ key, value, next, .. }) => {
-      f(idx, key, value)
-      continue idx + 1, next
+    i, Some({ key, value, idx, .. }) => {
+      f(i, key, value)
+      continue i + 1, self.list[idx].next
     }
     _, None => break
   }
@@ -405,11 +415,11 @@ pub fn as_iter[K, V](self : LinkedHashMap[K, V]) -> Iter[(K, V)] {
   Iter::_unstable_internal_make(
     fn(yield) {
       loop self.head {
-        Some({ key, value, next, .. }) => {
+        Some({ key, value, idx, .. }) => {
           if yield((key, value)).not() {
             break false
           }
-          continue next
+          continue self.list[idx].next
         }
         None => break true
       }
@@ -421,9 +431,9 @@ pub fn as_iter[K, V](self : LinkedHashMap[K, V]) -> Iter[(K, V)] {
 pub fn to_array[K, V](self : LinkedHashMap[K, V]) -> Array[(K, V)] {
   let arr = []
   loop self.head {
-    Some({ key, value, next, .. }) => {
+    Some({ key, value, idx, .. }) => {
       arr.push((key, value))
-      continue next
+      continue self.list[idx].next
     }
     None => break
   }
