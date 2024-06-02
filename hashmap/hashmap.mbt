@@ -20,7 +20,6 @@ pub fn HashMap::new[K, V]() -> HashMap[K, V] {
   {
     size: 0,
     capacity: default_init_capacity,
-    growAt: calc_grow_threshold(default_init_capacity),
     entries: FixedArray::make(default_init_capacity, None),
   }
 }
@@ -39,7 +38,7 @@ pub fn HashMap::from_array[K : Hash + Eq, V](
 /// Set a key-value pair into hash map.
 /// @alert unsafe "Panic if the hash map is full."
 pub fn set[K : Hash + Eq, V](self : HashMap[K, V], key : K, value : V) -> Unit {
-  if self.capacity == 0 || self.size >= self.growAt {
+  if self.capacity == 0 || self.size >= self.capacity.lsr(1) {
     self.grow()
   }
   let hash = key.hash()
@@ -171,7 +170,6 @@ fn grow[K : Hash + Eq, V](self : HashMap[K, V]) -> Unit {
   // handle zero capacity
   if self.capacity == 0 {
     self.capacity = default_init_capacity
-    self.growAt = calc_grow_threshold(self.capacity)
     self.size = 0
     self.entries = FixedArray::make(self.capacity, None)
     return
@@ -179,7 +177,6 @@ fn grow[K : Hash + Eq, V](self : HashMap[K, V]) -> Unit {
   let old_entries = self.entries
   self.entries = FixedArray::make(self.capacity * 2, None)
   self.capacity = self.capacity * 2
-  self.growAt = calc_grow_threshold(self.capacity)
   self.size = 0
   for i = 0; i < old_entries.length(); i = i + 1 {
     match old_entries[i] {
@@ -196,8 +193,4 @@ fn index[K : Hash, V](self : HashMap[K, V], hash : Int) -> Int {
 
 fn next_index[K : Hash, V](self : HashMap[K, V], index : Int) -> Int {
   (index + 1).land(self.capacity - 1)
-}
-
-fn calc_grow_threshold(capacity : Int) -> Int {
-  capacity * 13 / 16
 }
