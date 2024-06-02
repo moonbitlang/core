@@ -170,10 +170,12 @@ fn shift_back[K : Hash, V](self : HashMap[K, V], start_index : Int) -> Unit {
   }
 }
 
+// TODO: this could be further optimized
 fn grow[K : Hash + Eq, V](self : HashMap[K, V]) -> Unit {
   let old_entries = self.entries
-  self.entries = FixedArray::make(self.capacity.lsl(1), None)
-  self.capacity = self.capacity * 2
+  let new_capacity = self.capacity.lsl(1)
+  self.entries = FixedArray::make(new_capacity, None)
+  self.capacity = new_capacity
   self.size = 0
   for i = 0; i < old_entries.length(); i = i + 1 {
     match old_entries[i] {
