@@ -148,9 +148,11 @@ pub fn remove[K : Hash + Eq, V](self : HashMap[K, V], key : K) -> Unit {
 }
 
 fn shift_back[K : Hash, V](self : HashMap[K, V], start_index : Int) -> Unit {
-  for i = 0, prev = start_index, curr = self.next_index(start_index)
+  for i = 0, prev = start_index, curr = (start_index + 1).land(
+          self.capacity - 1,
+        )
       i < self.entries.length()
-      i = i + 1, prev = curr, curr = self.next_index(curr) {
+      i = i + 1, prev = curr, curr = (curr + 1).land(self.capacity - 1) {
     match self.entries[curr] {
       Some({ psl, hash, key, value, .. }) => {
         if psl == 0 {
@@ -184,11 +186,3 @@ fn grow[K : Hash + Eq, V](self : HashMap[K, V]) -> Unit {
   }
 }
 
-/// TODO: inline this function
-fn index[K : Hash, V](self : HashMap[K, V], hash : Int) -> Int {
-  hash.land(self.capacity - 1)
-}
-
-fn next_index[K : Hash, V](self : HashMap[K, V], index : Int) -> Int {
-  (index + 1).land(self.capacity - 1)
-}
