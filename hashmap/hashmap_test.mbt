@@ -14,7 +14,7 @@
 
 test "new" {
   let m : HashMap[Int, Int] = HashMap::new()
-  @assertion.assert_eq(m.capacity, default_init_capacity)?
+  inspect(m.capacity, content="8")?
   @assertion.assert_eq(m.size, 0)?
 }
 
