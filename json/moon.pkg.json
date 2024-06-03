@@ -4,7 +4,7 @@
     "moonbitlang/core/double",
     "moonbitlang/core/string",
     "moonbitlang/core/char",
-    "moonbitlang/core/map",
+    { "path": "moonbitlang/core/ordered_map", "alias": "map" },
     "moonbitlang/core/coverage",
     "moonbitlang/core/strconv"
   ],

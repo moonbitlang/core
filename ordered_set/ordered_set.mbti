@@ -1,4 +1,4 @@
-package moonbitlang/core/mutable_set
+package moonbitlang/core/ordered_set
 
 // Values
 
