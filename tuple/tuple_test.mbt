@@ -188,7 +188,7 @@ test "debug_write" {
   let tuple2 = (1, 2)
   let tuple3 = ("a", "b", "c")
   let tuple4 = (1, 2, 3, "hello")
-  let tuple5 = (List::Cons(1, Nil), "2", 3, ([4] : Array[_]), 5)
+  let tuple5 = ([1], "2", 3, ([4] : Array[_]), 5)
   let buf = Buffer::make(0)
   tuple2.debug_write(buf)
   inspect(buf, content="(1, 2)")?
@@ -200,18 +200,23 @@ test "debug_write" {
   inspect(buf, content="(1, 2, 3, \"hello\")")?
   buf.reset()
   tuple5.debug_write(buf)
-  inspect(buf, content="(List::[1], \"2\", 3, [4], 5)")?
+  inspect(
+    buf,
+    content=
+      #|([1], "2", 3, [4], 5)
+    ,
+  )?
 }
 
 test "to_string" {
   let tuple2 = (1, 2)
   let tuple3 = ("a", "b", "c")
   let tuple4 = (1, 2, 3, "hello")
-  let tuple5 = (List::Cons(1, Nil), "2", 3, ([4] : Array[_]), 5)
+  let tuple5 = ([1], "2", 3, ([4] : Array[_]), 5)
   inspect(tuple2, content="(1, 2)")?
   inspect(tuple3, content="(a, b, c)")?
   inspect(tuple4, content="(1, 2, 3, hello)")?
-  inspect(tuple5, content="(List::[1], 2, 3, [4], 5)")?
+  inspect(tuple5, content="([1], 2, 3, [4], 5)")?
   inspect((1, 2, 3, 4, 5, 6), content="(1, 2, 3, 4, 5, 6)")?
   inspect((1, 2, 3, 4, 5, 6, 7), content="(1, 2, 3, 4, 5, 6, 7)")?
 }
