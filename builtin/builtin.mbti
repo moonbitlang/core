@@ -313,11 +313,6 @@ impl Result {
   debug_write[T : Debug, E : Debug](Self[T, E], Buffer) -> Unit
   op_equal[T : Eq, E : Eq](Self[T, E], Self[T, E]) -> Bool
 }
-impl List {
-  debug_write[X : Debug](Self[X], Buffer) -> Unit
-  op_equal[X : Eq](Self[X], Self[X]) -> Bool
-  to_string[X : Debug](Self[X]) -> String
-}
 impl FixedArray {
   debug_write[X : Debug](Self[X], Buffer) -> Unit
   default[X]() -> Self[X]
