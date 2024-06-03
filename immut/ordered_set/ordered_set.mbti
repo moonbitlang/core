@@ -1,4 +1,4 @@
-package moonbitlang/core/immut/set
+package moonbitlang/core/immut/ordered_set
 
 // Values
 
