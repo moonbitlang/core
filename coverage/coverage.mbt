@@ -64,12 +64,17 @@ test "incr_counter" {
   }
 }
 
+priv enum MList[T] {
+  MNil
+  MCons(T, MList[T])
+}
+
 /// The global list of counters currently tracking.
-let counters : Ref[List[(String, CoverageCounter)]] = { val: Nil }
+let counters : Ref[MList[(String, CoverageCounter)]] = { val: MNil }
 
 /// Add the given counter along its ID to the tracking list.
 pub fn track(name : String, counter : CoverageCounter) -> Unit {
-  counters.val = Cons((name, counter), counters.val)
+  counters.val = MCons((name, counter), counters.val)
 }
 
 trait Output {
@@ -157,7 +162,7 @@ test "backslash escape" {
 //   @assertion.assert_eq(s.escape(), expected)?
 // }
 
-fn log(counters : List[(String, CoverageCounter)], io : Output) -> Unit {
+fn log(counters : MList[(String, CoverageCounter)], io : Output) -> Unit {
   let print = fn { x => io.output(x) }
   let println = fn {
     x => {
@@ -167,7 +172,7 @@ fn log(counters : List[(String, CoverageCounter)], io : Output) -> Unit {
   }
   print("{ ")
   loop counters, 0 {
-    Cons((name, counter), xs), ix => {
+    MCons((name, counter), xs), ix => {
       if ix != 0 {
         print(", ")
       }
@@ -178,7 +183,7 @@ fn log(counters : List[(String, CoverageCounter)], io : Output) -> Unit {
       println(counter_dump)
       continue xs, ix + 1
     }
-    Nil, _ => ()
+    MNil, _ => ()
   }
   println("}")
 }
@@ -188,9 +193,9 @@ test "log" {
   let test_counter_b = CoverageCounter::new(2)
   test_counter_a.incr(0)
   test_counter_b.incr(1)
-  let counters : List[(String, CoverageCounter)] = Cons(
+  let counters : MList[(String, CoverageCounter)] = MCons(
     ("foo/foo", test_counter_a),
-    Cons(("foo/bar", test_counter_b), Nil),
+    MCons(("foo/bar", test_counter_b), MNil),
   )
   let buf = Buffer::make(1024)
   log(counters, buf)
