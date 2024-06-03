@@ -12,13 +12,17 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-// TODO: error handling when int overflow
 fn power_2_above(x : Int, n : Int) -> Int {
   for i = x {
     if i >= n {
       break i
     }
-    continue i.lsl(1)
+    let next = i.lsl(1)
+    if next < 0 {
+      // overflow happend  
+      break i
+    }
+    continue next
   }
 }
 
@@ -28,6 +32,7 @@ test "power_2_above" {
   inspect(power_2_above(1, 17), content="32")?
   inspect(power_2_above(1, 32), content="32")?
   inspect(power_2_above(128, 33), content="128")?
+  inspect(power_2_above(1, 2147483647), content="1073741824")?
 }
 
 /// Create new hash map.
