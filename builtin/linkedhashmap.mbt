@@ -62,7 +62,7 @@ fn power_2_above(x : Int, n : Int) -> Int {
   let n = n.to_int64()
   for i = x.to_int64() {
     if i > 2147483647L {
-      break 2147483647
+      break i.lsr(1).to_int()
     }
     if i >= n {
       break i.to_int()
@@ -77,7 +77,7 @@ test "power_2_above" {
   inspect(power_2_above(1, 17), content="32")?
   inspect(power_2_above(1, 32), content="32")?
   inspect(power_2_above(128, 33), content="128")?
-  inspect(power_2_above(1, 2147483647), content="2147483647")?
+  inspect(power_2_above(1, 2147483647), content="1073741824")?
 }
 
 /// Create a hash map.
