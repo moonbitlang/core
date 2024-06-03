@@ -46,7 +46,7 @@ priv struct ListNode[K, V] {
 /// // 8-eight
 /// // 1-one
 /// ```
-struct LinkedHashMap[K, V] {
+struct Map[K, V] {
   mut entries : FixedArray[Option[Entry[K, V]]]
   mut list : FixedArray[ListNode[K, V]] // list of (prev, next)
   mut size : Int // active key-value pairs count
@@ -82,7 +82,7 @@ test "power_2_above" {
 }
 
 /// Create a hash map.
-pub fn LinkedHashMap::new[K, V](~capacity : Int = 8) -> LinkedHashMap[K, V] {
+pub fn Map::new[K, V](~capacity : Int = 8) -> Map[K, V] {
   let capacity = power_2_above(8, capacity)
   {
     size: 0,
@@ -96,21 +96,15 @@ pub fn LinkedHashMap::new[K, V](~capacity : Int = 8) -> LinkedHashMap[K, V] {
 }
 
 /// Create a hash map from array.
-pub fn LinkedHashMap::from_array[K : Hash + Eq, V](
-  arr : Array[(K, V)]
-) -> LinkedHashMap[K, V] {
-  let m = LinkedHashMap::new(capacity=arr.length())
+pub fn Map::from_array[K : Hash + Eq, V](arr : Array[(K, V)]) -> Map[K, V] {
+  let m = Map::new(capacity=arr.length())
   arr.iter(fn(e) { m.set(e.0, e.1) })
   m
 }
 
 /// Set a key-value pair into the hash map.
 /// @alert unsafe "Panic if the hash map is full."
-pub fn set[K : Hash + Eq, V](
-  self : LinkedHashMap[K, V],
-  key : K,
-  value : V
-) -> Unit {
+pub fn set[K : Hash + Eq, V](self : Map[K, V], key : K, value : V) -> Unit {
   if self.size >= self.growAt {
     self.grow()
   }
@@ -159,16 +153,12 @@ pub fn set[K : Hash + Eq, V](
   }
 }
 
-pub fn op_set[K : Hash + Eq, V](
-  self : LinkedHashMap[K, V],
-  key : K,
-  value : V
-) -> Unit {
+pub fn op_set[K : Hash + Eq, V](self : Map[K, V], key : K, value : V) -> Unit {
   self.set(key, value)
 }
 
 /// Get the value associated with a key.
-pub fn get[K : Hash + Eq, V](self : LinkedHashMap[K, V], key : K) -> Option[V] {
+pub fn get[K : Hash + Eq, V](self : Map[K, V], key : K) -> Option[V] {
   let hash = key.hash()
   for i = 0, idx = hash.land(self.capacity - 1) {
     match self.entries[idx] {
@@ -186,17 +176,14 @@ pub fn get[K : Hash + Eq, V](self : LinkedHashMap[K, V], key : K) -> Option[V] {
   }
 }
 
-pub fn op_get[K : Hash + Eq, V](
-  self : LinkedHashMap[K, V],
-  key : K
-) -> Option[V] {
+pub fn op_get[K : Hash + Eq, V](self : Map[K, V], key : K) -> Option[V] {
   self.get(key)
 }
 
 /// Get the value associated with a key, 
 /// returns the provided default value if the key does not exist.
 pub fn get_or_default[K : Hash + Eq, V](
-  self : LinkedHashMap[K, V],
+  self : Map[K, V],
   key : K,
   default : V
 ) -> V {
@@ -207,7 +194,7 @@ pub fn get_or_default[K : Hash + Eq, V](
 }
 
 /// Check if the hash map contains a key.
-pub fn contains[K : Hash + Eq, V](self : LinkedHashMap[K, V], key : K) -> Bool {
+pub fn contains[K : Hash + Eq, V](self : Map[K, V], key : K) -> Bool {
   match self.get(key) {
     Some(_) => true
     None => false
@@ -215,7 +202,7 @@ pub fn contains[K : Hash + Eq, V](self : LinkedHashMap[K, V], key : K) -> Bool {
 }
 
 /// Remove a key-value pair from hash map.
-pub fn remove[K : Hash + Eq, V](self : LinkedHashMap[K, V], key : K) -> Unit {
+pub fn remove[K : Hash + Eq, V](self : Map[K, V], key : K) -> Unit {
   let hash = key.hash()
   for i = 0, idx = hash.land(self.capacity - 1) {
     match self.entries[idx] {
@@ -237,10 +224,7 @@ pub fn remove[K : Hash + Eq, V](self : LinkedHashMap[K, V], key : K) -> Unit {
   }
 }
 
-fn add_entry_to_tail[K : Eq, V](
-  self : LinkedHashMap[K, V],
-  entry : Entry[K, V]
-) -> Unit {
+fn add_entry_to_tail[K : Eq, V](self : Map[K, V], entry : Entry[K, V]) -> Unit {
   match self.tail {
     None => {
       self.head = Some(entry)
@@ -254,10 +238,7 @@ fn add_entry_to_tail[K : Eq, V](
   }
 }
 
-fn remove_entry[K : Eq, V](
-  self : LinkedHashMap[K, V],
-  entry : Entry[K, V]
-) -> Unit {
+fn remove_entry[K : Eq, V](self : Map[K, V], entry : Entry[K, V]) -> Unit {
   let node = self.list[entry.idx]
   if self.is_empty() {
     self.head = None
@@ -284,10 +265,7 @@ fn remove_entry[K : Eq, V](
   node.next = None
 }
 
-fn shift_back[K : Hash, V](
-  self : LinkedHashMap[K, V],
-  start_index : Int
-) -> Unit {
+fn shift_back[K : Hash, V](self : Map[K, V], start_index : Int) -> Unit {
   for prev = start_index, curr = (start_index + 1).land(self.capacity - 1) {
     match self.entries[curr] {
       Some(entry) => {
@@ -305,7 +283,7 @@ fn shift_back[K : Hash, V](
   }
 }
 
-fn grow[K : Hash + Eq, V](self : LinkedHashMap[K, V]) -> Unit {
+fn grow[K : Hash + Eq, V](self : Map[K, V]) -> Unit {
   let old_head = self.head
   let old_list = self.list
   let new_capacity = self.capacity.lsl(1)
@@ -331,7 +309,7 @@ fn calc_grow_threshold(capacity : Int) -> Int {
 
 // Utils
 
-fn debug_entries[K : Show, V : Show](self : LinkedHashMap[K, V]) -> String {
+fn debug_entries[K : Show, V : Show](self : Map[K, V]) -> String {
   let buf = Buffer::make(0)
   for i = 0; i < self.entries.length(); i = i + 1 {
     if i > 0 {
@@ -346,7 +324,7 @@ fn debug_entries[K : Show, V : Show](self : LinkedHashMap[K, V]) -> String {
   buf.to_string()
 }
 
-fn debug_linked_list[K : Show, V : Show](self : LinkedHashMap[K, V]) -> String {
+fn debug_linked_list[K : Show, V : Show](self : Map[K, V]) -> String {
   let buf = Buffer::make(0)
   loop self.head {
     Some({ idx, key, value, hash, .. }) => {
@@ -373,22 +351,22 @@ fn debug_linked_list[K : Show, V : Show](self : LinkedHashMap[K, V]) -> String {
 }
 
 /// Get the number of key-value pairs in the map.
-pub fn size[K, V](self : LinkedHashMap[K, V]) -> Int {
+pub fn size[K, V](self : Map[K, V]) -> Int {
   self.size
 }
 
 /// Get the capacity of the map.
-pub fn capacity[K, V](self : LinkedHashMap[K, V]) -> Int {
+pub fn capacity[K, V](self : Map[K, V]) -> Int {
   self.capacity
 }
 
 /// Check if the hash map is empty.
-pub fn is_empty[K, V](self : LinkedHashMap[K, V]) -> Bool {
+pub fn is_empty[K, V](self : Map[K, V]) -> Bool {
   self.size == 0
 }
 
 /// Iterate over all key-value pairs of the map in the order of insertion.
-pub fn iter[K, V](self : LinkedHashMap[K, V], f : (K, V) -> Unit) -> Unit {
+pub fn iter[K, V](self : Map[K, V], f : (K, V) -> Unit) -> Unit {
   loop self.head {
     Some({ key, value, idx, .. }) => {
       f(key, value)
@@ -399,7 +377,7 @@ pub fn iter[K, V](self : LinkedHashMap[K, V], f : (K, V) -> Unit) -> Unit {
 }
 
 /// Iterate over all key-value pairs of the map in the order of insertion, with index.
-pub fn iteri[K, V](self : LinkedHashMap[K, V], f : (Int, K, V) -> Unit) -> Unit {
+pub fn iteri[K, V](self : Map[K, V], f : (Int, K, V) -> Unit) -> Unit {
   loop 0, self.head {
     i, Some({ key, value, idx, .. }) => {
       f(i, key, value)
@@ -410,7 +388,7 @@ pub fn iteri[K, V](self : LinkedHashMap[K, V], f : (Int, K, V) -> Unit) -> Unit 
 }
 
 /// Clears the map, removing all key-value pairs. Keeps the allocated space.
-pub fn clear[K, V](self : LinkedHashMap[K, V]) -> Unit {
+pub fn clear[K, V](self : Map[K, V]) -> Unit {
   self.entries.fill(None)
   self.size = 0
   self.head = None
@@ -418,7 +396,7 @@ pub fn clear[K, V](self : LinkedHashMap[K, V]) -> Unit {
 }
 
 /// Returns the iterator of the hash map, provide elements in the order of insertion.
-pub fn as_iter[K, V](self : LinkedHashMap[K, V]) -> Iter[(K, V)] {
+pub fn as_iter[K, V](self : Map[K, V]) -> Iter[(K, V)] {
   Iter::_unstable_internal_make(
     fn(yield) {
       loop self.head {
@@ -435,7 +413,7 @@ pub fn as_iter[K, V](self : LinkedHashMap[K, V]) -> Iter[(K, V)] {
 }
 
 /// Converts the hash map to an array.
-pub fn to_array[K, V](self : LinkedHashMap[K, V]) -> Array[(K, V)] {
+pub fn to_array[K, V](self : Map[K, V]) -> Array[(K, V)] {
   let arr = []
   loop self.head {
     Some({ key, value, idx, .. }) => {

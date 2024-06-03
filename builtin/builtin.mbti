@@ -154,8 +154,8 @@ impl Js_string {
   op_add(Self, Self) -> Self
 }
 
-type LinkedHashMap
-impl LinkedHashMap {
+type Map
+impl Map {
   as_iter[K, V](Self[K, V]) -> Iter[Tuple[K, V]]
   capacity[K, V](Self[K, V]) -> Int
   clear[K, V](Self[K, V]) -> Unit

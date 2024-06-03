@@ -19,20 +19,20 @@ impl Hash for MyString with hash(self) { self.0.length() }
 impl Show for MyString with to_string(self) { self.0 }
 
 test "new" {
-  let m : LinkedHashMap[Int, Int] = LinkedHashMap::new()
+  let m : Map[Int, Int] = Map::new()
   @assertion.assert_eq(m.capacity, 8)?
   @assertion.assert_eq(m.size, 0)?
 }
 
 test "set" {
-  let m : LinkedHashMap[MyString, Int] = LinkedHashMap::new()
-  m["a"] = 1
-  m["b"] = 1
-  m["bc"] = 2
-  m["abc"] = 3
-  m["cd"] = 2
-  m["c"] = 1
-  m["d"] = 1
+  let m : Map[MyString, Int] = Map::new()
+  m.set("a", 1)
+  m.set("b", 1)
+  m.set("bc", 2)
+  m.set("abc", 3)
+  m.set("cd", 2)
+  m.set("c", 1)
+  m.set("d", 1)
   @assertion.assert_eq(m.size, 7)?
   @assertion.assert_eq(
     m.debug_entries(),
@@ -41,7 +41,7 @@ test "set" {
 }
 
 test "get" {
-  let m : LinkedHashMap[String, Int] = LinkedHashMap::new()
+  let m : Map[String, Int] = Map::new()
   m.set("a", 1)
   m.set("b", 2)
   m.set("c", 3)
@@ -52,7 +52,7 @@ test "get" {
 }
 
 test "get_or_default" {
-  let m : LinkedHashMap[String, Int] = LinkedHashMap::new()
+  let m : Map[String, Int] = Map::new()
   m.set("a", 1)
   m.set("b", 2)
   m.set("c", 3)
@@ -63,7 +63,7 @@ test "get_or_default" {
 }
 
 test "op_set" {
-  let m : LinkedHashMap[String, Int] = LinkedHashMap::new()
+  let m : Map[String, Int] = Map::new()
   m["a"] = 1
   m["b"] = 2
   @assertion.assert_eq(m.get("a"), Some(1))?
@@ -71,7 +71,7 @@ test "op_set" {
 }
 
 test "op_get" {
-  let m : LinkedHashMap[String, Int] = LinkedHashMap::new()
+  let m : Map[String, Int] = Map::new()
   m.set("a", 1)
   m.set("b", 2)
   @assertion.assert_eq(m["a"], Some(1))?
@@ -80,7 +80,7 @@ test "op_get" {
 }
 
 test "set_update" {
-  let m : LinkedHashMap[String, Int] = LinkedHashMap::new()
+  let m : Map[String, Int] = Map::new()
   m.set("a", 1)
   m.set("b", 2)
   @assertion.assert_eq(m.get("a"), Some(1))?
@@ -89,21 +89,21 @@ test "set_update" {
 }
 
 test "contains" {
-  let m : LinkedHashMap[String, Int] = LinkedHashMap::new()
+  let m : Map[String, Int] = Map::new()
   m.set("a", 1)
   @assertion.assert_eq(m.contains("a"), true)?
   @assertion.assert_eq(m.contains("b"), false)?
 }
 
 test "from_array" {
-  let m = LinkedHashMap::[("a", 1), ("b", 2), ("c", 3)]
+  let m = Map::[("a", 1), ("b", 2), ("c", 3)]
   @assertion.assert_eq(m.get("a"), Some(1))?
   @assertion.assert_eq(m.get("b"), Some(2))?
   @assertion.assert_eq(m.get("c"), Some(3))?
 }
 
 test "remove" {
-  let m : LinkedHashMap[MyString, Int] = LinkedHashMap::new()
+  let m : Map[MyString, Int] = Map::new()
   m.set("a", 1)
   m.set("ab", 2)
   m.set("bc", 2)
@@ -119,7 +119,7 @@ test "remove" {
 }
 
 test "remove_unexist_key" {
-  let m : LinkedHashMap[MyString, Int] = LinkedHashMap::new()
+  let m : Map[MyString, Int] = Map::new()
   m.set("a", 1)
   m.set("ab", 2)
   m.set("abc", 3)
@@ -132,14 +132,14 @@ test "remove_unexist_key" {
 }
 
 test "size" {
-  let m : LinkedHashMap[String, Int] = LinkedHashMap::new()
+  let m : Map[String, Int] = Map::new()
   @assertion.assert_eq(m.size(), 0)?
   m.set("a", 1)
   @assertion.assert_eq(m.size(), 1)?
 }
 
 test "is_empty" {
-  let m : LinkedHashMap[String, Int] = LinkedHashMap::new()
+  let m : Map[String, Int] = Map::new()
   @assertion.assert_eq(m.is_empty(), true)?
   m.set("a", 1)
   @assertion.assert_eq(m.is_empty(), false)?
@@ -148,22 +148,14 @@ test "is_empty" {
 }
 
 test "iter" {
-  let m : LinkedHashMap[String, Int] = LinkedHashMap::[
-    ("a", 1),
-    ("b", 2),
-    ("c", 3),
-  ]
+  let m : Map[String, Int] = Map::[("a", 1), ("b", 2), ("c", 3)]
   let mut sum = 0
   m.iter(fn(_k, v) { sum += v })
   @assertion.assert_eq(sum, 6)?
 }
 
 test "iteri" {
-  let m : LinkedHashMap[String, Int] = LinkedHashMap::[
-    ("a", 1),
-    ("b", 2),
-    ("c", 3),
-  ]
+  let m : Map[String, Int] = Map::[("a", 1), ("b", 2), ("c", 3)]
   let mut sum = 0
   let mut s = ""
   m.iteri(
@@ -177,11 +169,7 @@ test "iteri" {
 }
 
 test "clear" {
-  let m : LinkedHashMap[String, Int] = LinkedHashMap::[
-    ("a", 1),
-    ("b", 2),
-    ("c", 3),
-  ]
+  let m : Map[String, Int] = Map::[("a", 1), ("b", 2), ("c", 3)]
   m.clear()
   @assertion.assert_eq(m.size, 0)?
   @assertion.assert_eq(m.capacity, 8)?
@@ -193,7 +181,7 @@ test "clear" {
 }
 
 test "grow" {
-  let m : LinkedHashMap[MyString, Int] = LinkedHashMap::new()
+  let m : Map[MyString, Int] = Map::new()
   m.set("C", 1)
   m.set("Go", 2)
   m.set("C++", 3)
@@ -218,7 +206,7 @@ test "grow" {
 
 test "as_iter" {
   let buf = Buffer::make(20)
-  let map = LinkedHashMap::[(1, "one"), (2, "two"), (3, "three")]
+  let map = Map::[(1, "one"), (2, "two"), (3, "three")]
   map.as_iter().iter(
     fn(e) {
       let (k, v) = e
@@ -237,7 +225,7 @@ test "as_iter" {
 }
 
 test "iter order" {
-  let m = LinkedHashMap::[("one", 1)]
+  let m = Map::[("one", 1)]
   m["three"] = 3
   m["two"] = 2
   let buf = Buffer::make(0)
@@ -246,7 +234,7 @@ test "iter order" {
 }
 
 test "linked list" {
-  let m : LinkedHashMap[String, Int] = LinkedHashMap::[]
+  let m : Map[String, Int] = Map::[]
   inspect(m.debug_linked_list(), content="end")?
   m["one"] = 1
   m["two"] = 2
@@ -318,12 +306,12 @@ test "linked list" {
 }
 
 test "to_array" {
-  let map = LinkedHashMap::[(1, "one"), (2, "two"), (3, "three")]
+  let map = Map::[(1, "one"), (2, "two"), (3, "three")]
   inspect(map.to_array(), content="[(1, one), (2, two), (3, three)]")?
 }
 
 test "set_existing_key" {
-  let m : LinkedHashMap[String, Int] = LinkedHashMap::new()
+  let m : Map[String, Int] = Map::new()
   m.set("a", 1)
   m.set("b", 2)
   m.set("c", 3)
@@ -333,7 +321,7 @@ test "set_existing_key" {
 }
 
 test "get_nonexistent_key" {
-  let m : LinkedHashMap[String, Int] = LinkedHashMap::new()
+  let m : Map[String, Int] = Map::new()
   m.set("a", 1)
   m.set("b", 2)
   m.set("c", 3)
@@ -341,7 +329,7 @@ test "get_nonexistent_key" {
 }
 
 test "get_or_default_existing_key" {
-  let m : LinkedHashMap[String, Int] = LinkedHashMap::new()
+  let m : Map[String, Int] = Map::new()
   m.set("a", 1)
   m.set("b", 2)
   m.set("c", 3)
@@ -349,7 +337,7 @@ test "get_or_default_existing_key" {
 }
 
 test "get_or_default_nonexistent_key" {
-  let m : LinkedHashMap[String, Int] = LinkedHashMap::new()
+  let m : Map[String, Int] = Map::new()
   m.set("a", 1)
   m.set("b", 2)
   m.set("c", 3)
@@ -357,7 +345,7 @@ test "get_or_default_nonexistent_key" {
 }
 
 test "remove_existing_key" {
-  let m : LinkedHashMap[String, Int] = LinkedHashMap::new()
+  let m : Map[String, Int] = Map::new()
   m.set("a", 1)
   m.set("b", 2)
   m.set("c", 3)
@@ -367,7 +355,7 @@ test "remove_existing_key" {
 }
 
 test "remove_nonexistent_key" {
-  let m : LinkedHashMap[String, Int] = LinkedHashMap::new()
+  let m : Map[String, Int] = Map::new()
   m.set("a", 1)
   m.set("b", 2)
   m.set("c", 3)
@@ -376,7 +364,7 @@ test "remove_nonexistent_key" {
 }
 
 test "contains_existing_key" {
-  let m : LinkedHashMap[String, Int] = LinkedHashMap::new()
+  let m : Map[String, Int] = Map::new()
   m.set("a", 1)
   m.set("b", 2)
   m.set("c", 3)
@@ -384,7 +372,7 @@ test "contains_existing_key" {
 }
 
 test "contains_nonexistent_key" {
-  let m : LinkedHashMap[String, Int] = LinkedHashMap::new()
+  let m : Map[String, Int] = Map::new()
   m.set("a", 1)
   m.set("b", 2)
   m.set("c", 3)
@@ -392,7 +380,7 @@ test "contains_nonexistent_key" {
 }
 
 test "clear" {
-  let m : LinkedHashMap[String, Int] = LinkedHashMap::new()
+  let m : Map[String, Int] = Map::new()
   m.set("a", 1)
   m.set("b", 2)
   m.set("c", 3)
@@ -407,7 +395,7 @@ test "clear" {
 }
 
 test "iter" {
-  let m : LinkedHashMap[String, Int] = LinkedHashMap::new()
+  let m : Map[String, Int] = Map::new()
   m.set("a", 1)
   m.set("b", 2)
   m.set("c", 3)
@@ -417,7 +405,7 @@ test "iter" {
 }
 
 test "iteri" {
-  let m : LinkedHashMap[String, Int] = LinkedHashMap::new()
+  let m : Map[String, Int] = Map::new()
   m.set("a", 1)
   m.set("b", 2)
   m.set("c", 3)
@@ -434,7 +422,7 @@ test "iteri" {
 }
 
 test "to_array" {
-  let m : LinkedHashMap[String, Int] = LinkedHashMap::new()
+  let m : Map[String, Int] = Map::new()
   m.set("a", 1)
   m.set("b", 2)
   m.set("c", 3)
@@ -442,7 +430,7 @@ test "to_array" {
 }
 
 test "new" {
-  let m : LinkedHashMap[String, Int] = LinkedHashMap::new()
+  let m : Map[String, Int] = Map::new()
   @assertion.assert_eq(m.size, 0)?
   @assertion.assert_eq(m.capacity, 8)?
   @assertion.assert_eq(m.head, None)?
@@ -453,7 +441,7 @@ test "new" {
 }
 
 test "get" {
-  let m : LinkedHashMap[String, Int] = LinkedHashMap::new()
+  let m : Map[String, Int] = Map::new()
   m.set("a", 1)
   m.set("b", 2)
   m.set("c", 3)
@@ -464,7 +452,7 @@ test "get" {
 }
 
 test "get_or_default" {
-  let m : LinkedHashMap[String, Int] = LinkedHashMap::new()
+  let m : Map[String, Int] = Map::new()
   m.set("a", 1)
   m.set("b", 2)
   m.set("c", 3)
@@ -475,21 +463,21 @@ test "get_or_default" {
 }
 
 test "contains" {
-  let m : LinkedHashMap[String, Int] = LinkedHashMap::new()
+  let m : Map[String, Int] = Map::new()
   m.set("a", 1)
   @assertion.assert_eq(m.contains("a"), true)?
   @assertion.assert_eq(m.contains("b"), false)?
 }
 
 test "size" {
-  let m : LinkedHashMap[String, Int] = LinkedHashMap::new()
+  let m : Map[String, Int] = Map::new()
   @assertion.assert_eq(m.size, 0)?
   m.set("a", 1)
   @assertion.assert_eq(m.size, 1)?
 }
 
 test "is_empty" {
-  let m : LinkedHashMap[String, Int] = LinkedHashMap::new()
+  let m : Map[String, Int] = Map::new()
   @assertion.assert_eq(m.is_empty(), true)?
   m.set("a", 1)
   @assertion.assert_eq(m.is_empty(), false)?
@@ -498,7 +486,7 @@ test "is_empty" {
 }
 
 test "iter" {
-  let m : LinkedHashMap[String, Int] = LinkedHashMap::new()
+  let m : Map[String, Int] = Map::new()
   m.set("a", 1)
   m.set("b", 2)
   m.set("c", 3)
@@ -508,7 +496,7 @@ test "iter" {
 }
 
 test "iteri" {
-  let m : LinkedHashMap[String, Int] = LinkedHashMap::new()
+  let m : Map[String, Int] = Map::new()
   m.set("a", 1)
   m.set("b", 2)
   m.set("c", 3)
@@ -525,7 +513,7 @@ test "iteri" {
 }
 
 test "clear" {
-  let m : LinkedHashMap[String, Int] = LinkedHashMap::new()
+  let m : Map[String, Int] = Map::new()
   m.set("a", 1)
   m.set("b", 2)
   m.set("c", 3)
@@ -540,7 +528,7 @@ test "clear" {
 }
 
 test "set_existing_key" {
-  let m : LinkedHashMap[String, Int] = LinkedHashMap::new()
+  let m : Map[String, Int] = Map::new()
   m.set("a", 1)
   m.set("b", 2)
   m.set("c", 3)
@@ -550,7 +538,7 @@ test "set_existing_key" {
 }
 
 test "get_nonexistent_key" {
-  let m : LinkedHashMap[String, Int] = LinkedHashMap::new()
+  let m : Map[String, Int] = Map::new()
   m.set("a", 1)
   m.set("b", 2)
   m.set("c", 3)
@@ -558,7 +546,7 @@ test "get_nonexistent_key" {
 }
 
 test "get_or_default_existing_key" {
-  let m : LinkedHashMap[String, Int] = LinkedHashMap::new()
+  let m : Map[String, Int] = Map::new()
   m.set("a", 1)
   m.set("b", 2)
   m.set("c", 3)
@@ -566,7 +554,7 @@ test "get_or_default_existing_key" {
 }
 
 test "get_or_default_nonexistent_key" {
-  let m : LinkedHashMap[String, Int] = LinkedHashMap::new()
+  let m : Map[String, Int] = Map::new()
   m.set("a", 1)
   m.set("b", 2)
   m.set("c", 3)
@@ -574,7 +562,7 @@ test "get_or_default_nonexistent_key" {
 }
 
 test "remove_existing_key" {
-  let m : LinkedHashMap[String, Int] = LinkedHashMap::new()
+  let m : Map[String, Int] = Map::new()
   m.set("a", 1)
   m.set("b", 2)
   m.set("c", 3)
@@ -584,7 +572,7 @@ test "remove_existing_key" {
 }
 
 test "remove_nonexistent_key" {
-  let m : LinkedHashMap[String, Int] = LinkedHashMap::new()
+  let m : Map[String, Int] = Map::new()
   m.set("a", 1)
   m.set("b", 2)
   m.set("c", 3)
@@ -593,7 +581,7 @@ test "remove_nonexistent_key" {
 }
 
 test "contains_existing_key" {
-  let m : LinkedHashMap[String, Int] = LinkedHashMap::new()
+  let m : Map[String, Int] = Map::new()
   m.set("a", 1)
   m.set("b", 2)
   m.set("c", 3)
@@ -601,7 +589,7 @@ test "contains_existing_key" {
 }
 
 test "contains_nonexistent_key" {
-  let m : LinkedHashMap[String, Int] = LinkedHashMap::new()
+  let m : Map[String, Int] = Map::new()
   m.set("a", 1)
   m.set("b", 2)
   m.set("c", 3)
@@ -609,7 +597,7 @@ test "contains_nonexistent_key" {
 }
 
 test "clear" {
-  let m : LinkedHashMap[String, Int] = LinkedHashMap::new()
+  let m : Map[String, Int] = Map::new()
   m.set("a", 1)
   m.set("b", 2)
   m.set("c", 3)
@@ -624,7 +612,7 @@ test "clear" {
 }
 
 test "iter" {
-  let m : LinkedHashMap[String, Int] = LinkedHashMap::new()
+  let m : Map[String, Int] = Map::new()
   m.set("a", 1)
   m.set("b", 2)
   m.set("c", 3)
@@ -634,7 +622,7 @@ test "iter" {
 }
 
 test "iteri" {
-  let m : LinkedHashMap[String, Int] = LinkedHashMap::new()
+  let m : Map[String, Int] = Map::new()
   m.set("a", 1)
   m.set("b", 2)
   m.set("c", 3)
@@ -651,7 +639,7 @@ test "iteri" {
 }
 
 test "to_array" {
-  let m : LinkedHashMap[String, Int] = LinkedHashMap::new()
+  let m : Map[String, Int] = Map::new()
   m.set("a", 1)
   m.set("b", 2)
   m.set("c", 3)
