@@ -55,7 +55,7 @@ pub fn sort_by[T](self : Array[T], cmp : (T, T) -> Int) -> Unit {
 fn quick_sort_by[T](
   arr : ArrayView[T],
   cmp : (T, T) -> Int,
-  pred : Option[T],
+  pred : T?,
   limit : Int
 ) -> Unit {
   let mut limit = limit

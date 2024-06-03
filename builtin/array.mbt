@@ -119,7 +119,7 @@ pub fn op_get[T](self : Array[T], index : Int) -> T {
 /// v.push(3)
 /// println(v.get(0)) // Some(3)
 /// ```
-pub fn get[T](self : Array[T], index : Int) -> Option[T] {
+pub fn get[T](self : Array[T], index : Int) -> T? {
   if index < 0 || index >= self.len {
     return None
   }
@@ -197,7 +197,7 @@ pub fn op_add[T](self : Array[T], other : Array[T]) -> Array[T] {
 /// let v = Array::[1, 2, 3]
 /// v.pop()
 /// ```
-pub fn pop[T](self : Array[T]) -> Option[T] {
+pub fn pop[T](self : Array[T]) -> T? {
   if self.len == 0 {
     None
   } else {
@@ -558,10 +558,7 @@ pub fn ends_with[T : Eq](self : Array[T], suffix : Array[T]) -> Bool {
 /// let v = Array::[3, 4, 5]
 /// v.strip_prefix(Array::[3]) // Some(Array::[4, 5])
 /// ```
-pub fn strip_prefix[T : Eq](
-  self : Array[T],
-  prefix : Array[T]
-) -> Option[Array[T]] {
+pub fn strip_prefix[T : Eq](self : Array[T], prefix : Array[T]) -> Array[T]? {
   if self.starts_with(prefix) {
     let v = Array::with_capacity(self.len - prefix.len)
     for i = prefix.len; i < self.len; i = i + 1 {
@@ -583,10 +580,7 @@ pub fn strip_prefix[T : Eq](
 /// let v = Array::[3, 4, 5]
 /// v.strip_suffix(Array::[5]) // Some(Array::[3, 4])
 /// ```
-pub fn strip_suffix[T : Eq](
-  self : Array[T],
-  suffix : Array[T]
-) -> Option[Array[T]] {
+pub fn strip_suffix[T : Eq](self : Array[T], suffix : Array[T]) -> Array[T]? {
   if self.ends_with(suffix) {
     let v = Array::with_capacity(self.len - suffix.len)
     for i = 0; i < self.len - suffix.len; i = i + 1 {
@@ -606,7 +600,7 @@ pub fn strip_suffix[T : Eq](
 /// let v = Array::[3, 4, 5]
 /// v.search(3)
 /// ```
-pub fn search[T : Eq](self : Array[T], value : T) -> Option[Int] {
+pub fn search[T : Eq](self : Array[T], value : T) -> Int? {
   for i = 0; i < self.len; i = i + 1 {
     if self.buf[i] == value {
       break Some(i)

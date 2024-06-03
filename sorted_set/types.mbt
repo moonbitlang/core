@@ -21,7 +21,7 @@
 // Invariant:
 // - root cannot be NIL, i.e., either get_value(root) succeeds, or root = None.
 struct MutableSet[T] {
-  mut root : Option[Node[T]]
+  mut root : Node[T]?
   mut size : Int64
 } derive(Eq)
 
@@ -36,8 +36,8 @@ priv enum Color {
 // - Only leaves have None as their value.
 priv struct Node[T] {
   mut color : Color
-  mut left : Option[Node[T]]
-  mut value : Option[T]
-  mut right : Option[Node[T]]
-  mut parent : Option[Node[T]]
+  mut left : Node[T]?
+  mut value : T?
+  mut right : Node[T]?
+  mut parent : Node[T]?
 } derive(Eq) // Don't derive Debug because it is self-referential on `parent`

@@ -45,7 +45,7 @@ pub fn Map::make[K, V]() -> Map[K, V] {
 }
 
 /// Lookup a key from a hash map
-pub fn find[K : Eq + Hash, V](self : Map[K, V], key : K) -> Option[V] {
+pub fn find[K : Eq + Hash, V](self : Map[K, V], key : K) -> V? {
   loop self, key.hash() {
     Empty, _ => None
     Leaf(key1, value), _ => if key == key1 { Some(value) } else { None }
@@ -63,7 +63,7 @@ pub fn find[K : Eq + Hash, V](self : Map[K, V], key : K) -> Option[V] {
   }
 }
 
-pub fn op_get[K : Eq + Hash, V](self : Map[K, V], key : K) -> Option[V] {
+pub fn op_get[K : Eq + Hash, V](self : Map[K, V], key : K) -> V? {
   self.find(key)
 }
 

@@ -123,7 +123,7 @@ test "realloc" {
 /// let dv = Devec::[1, 2, 3, 4, 5]
 /// dv.front()
 /// ```
-pub fn front[T](self : Devec[T]) -> Option[T] {
+pub fn front[T](self : Devec[T]) -> T? {
   if self.len == 0 {
     None
   } else {
@@ -138,7 +138,7 @@ pub fn front[T](self : Devec[T]) -> Option[T] {
 /// let dv = Devec::[1, 2, 3, 4, 5]
 /// dv.back()
 /// ```
-pub fn back[T](self : Devec[T]) -> Option[T] {
+pub fn back[T](self : Devec[T]) -> T? {
   if self.len == 0 {
     None
   } else {
@@ -234,7 +234,7 @@ pub fn pop_back_exn[T](self : Devec[T]) -> Unit {
 /// let dv = Devec::[1, 2, 3, 4, 5]
 /// dv.pop_front()
 /// ```
-pub fn pop_front[T](self : Devec[T]) -> Option[T] {
+pub fn pop_front[T](self : Devec[T]) -> T? {
   if self.len == 0 {
     return None
   }
@@ -251,7 +251,7 @@ pub fn pop_front[T](self : Devec[T]) -> Option[T] {
 /// let dv = Devec::[1, 2, 3, 4, 5]
 /// dv.pop_back()
 /// ```
-pub fn pop_back[T](self : Devec[T]) -> Option[T] {
+pub fn pop_back[T](self : Devec[T]) -> T? {
   if self.len == 0 {
     return None
   }
@@ -604,7 +604,7 @@ test "is_empty" {
 /// let dv = Devec::[3, 4, 5]
 /// dv.search(3) // Some(0)
 /// ```
-pub fn search[T : Eq](self : Devec[T], value : T) -> Option[Int] {
+pub fn search[T : Eq](self : Devec[T], value : T) -> Int? {
   for i = 0; i < self.len; i = i + 1 {
     if self.buf[i] == value {
       return Some(i)
@@ -783,22 +783,22 @@ test "as_iter" {
 
 test "reserve and push" {
   // capacity > 0, len = 0
-  let a : Devec[Option[Int]] = Devec::with_capacity(2)
+  let a : Devec[Int?] = Devec::with_capacity(2)
   a.push_back(Some(1))
   inspect(a.front(), content="Some(Some(1))")?
   inspect(a.back(), content="Some(Some(1))")?
   // capacity = 0, len = 0
-  let b : Devec[Option[Int]] = Devec::with_capacity(0)
+  let b : Devec[Int?] = Devec::with_capacity(0)
   b.push_back(Some(1))
   inspect(b.front(), content="Some(Some(1))")?
   inspect(b.back(), content="Some(Some(1))")?
   // capacity > 0, len = 0
-  let c : Devec[Option[Int]] = Devec::with_capacity(2)
+  let c : Devec[Int?] = Devec::with_capacity(2)
   c.push_front(Some(1))
   inspect(c.front(), content="Some(Some(1))")?
   inspect(c.back(), content="Some(Some(1))")?
   // capacity = 0, len = 0
-  let d : Devec[Option[Int]] = Devec::with_capacity(0)
+  let d : Devec[Int?] = Devec::with_capacity(0)
   d.push_front(Some(1))
   inspect(d.front(), content="Some(Some(1))")?
   inspect(d.back(), content="Some(Some(1))")?

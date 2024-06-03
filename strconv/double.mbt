@@ -111,7 +111,7 @@ let int_pow10 : Array[UInt64] = [
   UInt64(1000000000000000L),
 ]
 
-fn try_fast_path(self : Number) -> Option[Double] {
+fn try_fast_path(self : Number) -> Double? {
   if self.is_fast_path() {
     let mut value = if self.exponent <= max_exponent_fast_path {
       // normal fast path

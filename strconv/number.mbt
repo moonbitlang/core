@@ -56,7 +56,7 @@ fn try_parse_19digits(
   (s, x, len)
 }
 
-fn parse_scientific(s : StringSlice) -> Option[(StringSlice, Int64)] {
+fn parse_scientific(s : StringSlice) -> (StringSlice, Int64)? {
   // the first character is 'e'/'E' and scientific mode is enabled
   let mut s = s.step(1)?
   let exp_num = 0L
@@ -88,7 +88,7 @@ fn parse_scientific(s : StringSlice) -> Option[(StringSlice, Int64)] {
 }
 
 /// Parse the number from the string, returning the number and the length of the parsed string.
-fn parse_number(s : String) -> Option[(Number, Int)] {
+fn parse_number(s : String) -> (Number, Int)? {
   let mut s = full_slice(s)
   let start = s
 
@@ -171,7 +171,7 @@ fn parse_number(s : String) -> Option[(Number, Int)] {
 }
 
 /// Parse the number from the string, returning the number and the length of the parsed string.
-fn parse_inf_nan(s : String) -> Option[(Double, Int)] {
+fn parse_inf_nan(s : String) -> (Double, Int)? {
   fn parse_inf_rest(s : StringSlice) -> Int {
     if s.length() >= 8 && s.subfix_unchecked(3).prefix_eq_ignore_case("inity") {
       8

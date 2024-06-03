@@ -166,7 +166,7 @@ pub fn min[T : Compare](self : ImmutableSet[T]) -> T {
 
 /// Returns the smallest value in the ImmutableSet.
 /// But returns None when the value does not exist.
-pub fn min_option[T : Compare](self : ImmutableSet[T]) -> Option[T] {
+pub fn min_option[T : Compare](self : ImmutableSet[T]) -> T? {
   match self {
     Empty => None
     Node(~left, ~value, ..) =>
@@ -199,7 +199,7 @@ pub fn max[T : Compare](self : ImmutableSet[T]) -> T {
 
 /// Returns the largest value in the ImmutableSet.
 /// But returns None when the value does not exist.
-pub fn max_option[T : Compare](self : ImmutableSet[T]) -> Option[T] {
+pub fn max_option[T : Compare](self : ImmutableSet[T]) -> T? {
   match self {
     Empty => None
     Node(~right, ~value, ..) =>

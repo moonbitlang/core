@@ -31,11 +31,7 @@ pub fn sort[T : Compare](self : Array[T]) -> Unit {
   )
 }
 
-fn quick_sort[T : Compare](
-  arr : ArrayView[T],
-  pred : Option[T],
-  limit : Int
-) -> Unit {
+fn quick_sort[T : Compare](arr : ArrayView[T], pred : T?, limit : Int) -> Unit {
   let mut limit = limit
   let mut arr = arr
   let mut pred = pred

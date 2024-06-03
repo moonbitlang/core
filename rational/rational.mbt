@@ -32,10 +32,7 @@ fn gcd(a : Int64, b : Int64) -> Int64 {
 }
 
 /// Creates a rational number.
-pub fn Rational::new(
-  numerator : Int64,
-  denominator : Int64
-) -> Option[Rational] {
+pub fn Rational::new(numerator : Int64, denominator : Int64) -> Rational? {
   if denominator == 0L {
     None
   } else {

@@ -26,8 +26,8 @@ fn op_equal[K : Eq, V](self : Entry[K, V], other : Entry[K, V]) -> Bool {
 }
 
 priv struct ListNode[K, V] {
-  mut prev : Option[Entry[K, V]]
-  mut next : Option[Entry[K, V]]
+  mut prev : Entry[K, V]?
+  mut next : Entry[K, V]?
 }
 
 /// Mutable linked hash map that maintains the order of insertion, not thread safe. 
@@ -47,13 +47,13 @@ priv struct ListNode[K, V] {
 /// // 1-one
 /// ```
 struct Map[K, V] {
-  mut entries : FixedArray[Option[Entry[K, V]]]
+  mut entries : FixedArray[Entry[K, V]?]
   mut list : FixedArray[ListNode[K, V]] // list of (prev, next)
   mut size : Int // active key-value pairs count
   mut capacity : Int // current capacity 
   mut growAt : Int // threshold that triggers grow
-  mut head : Option[Entry[K, V]] // head of linked list
-  mut tail : Option[Entry[K, V]] // tail of linked list
+  mut head : Entry[K, V]? // head of linked list
+  mut tail : Entry[K, V]? // tail of linked list
 }
 
 // Implementations
@@ -158,7 +158,7 @@ pub fn op_set[K : Hash + Eq, V](self : Map[K, V], key : K, value : V) -> Unit {
 }
 
 /// Get the value associated with a key.
-pub fn get[K : Hash + Eq, V](self : Map[K, V], key : K) -> Option[V] {
+pub fn get[K : Hash + Eq, V](self : Map[K, V], key : K) -> V? {
   let hash = key.hash()
   for i = 0, idx = hash.land(self.capacity - 1) {
     match self.entries[idx] {
@@ -176,7 +176,7 @@ pub fn get[K : Hash + Eq, V](self : Map[K, V], key : K) -> Option[V] {
   }
 }
 
-pub fn op_get[K : Hash + Eq, V](self : Map[K, V], key : K) -> Option[V] {
+pub fn op_get[K : Hash + Eq, V](self : Map[K, V], key : K) -> V? {
   self.get(key)
 }
 

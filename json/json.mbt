@@ -13,7 +13,7 @@
 // limitations under the License.
 
 /// Try to get this element as a Null
-pub fn as_null(self : JsonValue) -> Option[Unit] {
+pub fn as_null(self : JsonValue) -> Unit? {
   match self {
     Null => Some(())
     _ => None
@@ -21,7 +21,7 @@ pub fn as_null(self : JsonValue) -> Option[Unit] {
 }
 
 /// Try to get this element as a Boolean
-pub fn as_bool(self : JsonValue) -> Option[Bool] {
+pub fn as_bool(self : JsonValue) -> Bool? {
   match self {
     Boolean(b) => Some(b)
     _ => None
@@ -29,7 +29,7 @@ pub fn as_bool(self : JsonValue) -> Option[Bool] {
 }
 
 /// Try to get this element as a Number
-pub fn as_number(self : JsonValue) -> Option[Double] {
+pub fn as_number(self : JsonValue) -> Double? {
   match self {
     Number(n) => Some(n)
     _ => None
@@ -37,7 +37,7 @@ pub fn as_number(self : JsonValue) -> Option[Double] {
 }
 
 /// Try to get this element as a String
-pub fn as_string(self : JsonValue) -> Option[String] {
+pub fn as_string(self : JsonValue) -> String? {
   match self {
     String(s) => Some(s)
     _ => None
@@ -45,7 +45,7 @@ pub fn as_string(self : JsonValue) -> Option[String] {
 }
 
 /// Try to get this element as an Array
-pub fn as_array(self : JsonValue) -> Option[Array[JsonValue]] {
+pub fn as_array(self : JsonValue) -> Array[JsonValue]? {
   match self {
     Array(arr) => Some(arr)
     _ => None
@@ -53,12 +53,12 @@ pub fn as_array(self : JsonValue) -> Option[Array[JsonValue]] {
 }
 
 /// Try to get this element as a Json Array and get the element at the `index` as a Json Value
-pub fn item(self : JsonValue, index : Int) -> Option[JsonValue] {
+pub fn item(self : JsonValue, index : Int) -> JsonValue? {
   self.as_array()?.get(index)
 }
 
 /// Try to get this element as an Object
-pub fn as_object(self : JsonValue) -> Option[@map.Map[String, JsonValue]] {
+pub fn as_object(self : JsonValue) -> @map.Map[String, JsonValue]? {
   match self {
     Object(obj) => Some(obj)
     _ => None
@@ -66,7 +66,7 @@ pub fn as_object(self : JsonValue) -> Option[@map.Map[String, JsonValue]] {
 }
 
 /// Try to get this element as a Json Object and get the element with the `key` as a Json Value
-pub fn value(self : JsonValue, key : String) -> Option[JsonValue] {
+pub fn value(self : JsonValue, key : String) -> JsonValue? {
   self.as_object()?.lookup(key)
 }
 

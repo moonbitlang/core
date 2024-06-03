@@ -161,7 +161,7 @@ pub fn pop_exn[T : Compare](self : PriorityQueue[T]) -> Unit {
 /// let queue = PriorityQueue::[1, 2, 3, 4]
 /// let first = queue.pop() // Some(4)
 /// ```
-pub fn pop[T : Compare](self : PriorityQueue[T]) -> Option[T] {
+pub fn pop[T : Compare](self : PriorityQueue[T]) -> T? {
   let result = self.peek()
   self.top = match self.top {
     Nil => Nil
@@ -192,7 +192,7 @@ pub fn push[T : Compare](self : PriorityQueue[T], value : T) -> Unit {
 /// let queue : PriorityQueue[Int] = PriorityQueue::[1, 2, 3, 4]
 /// let first = queue.peek() // Some(4)
 /// ```
-pub fn peek[T](self : PriorityQueue[T]) -> Option[T] {
+pub fn peek[T](self : PriorityQueue[T]) -> T? {
   match self.top {
     Nil => None
     Cons(~content, ..) => Some(content)

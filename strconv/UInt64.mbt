@@ -88,7 +88,7 @@ fn to_double(self : UInt64) -> Double {
 
 /// Returns None if the multiplication might overflow (there are some false-negative corner cases).
 /// Otherwise, returns Some(m), where m = self * b.
-fn checked_mul(self : UInt64, b : UInt64) -> Option[UInt64] {
+fn checked_mul(self : UInt64, b : UInt64) -> UInt64? {
   if self.0 == 0L || b.0 == 0L {
     return Some(UInt64(0L))
   }

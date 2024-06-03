@@ -247,7 +247,7 @@ test "fold" {
 /// let x = Ok(6)
 /// let y = x.to_option()
 /// ```
-pub fn to_option[T, E](self : Result[T, E]) -> Option[T] {
+pub fn to_option[T, E](self : Result[T, E]) -> T? {
   match self {
     Ok(value) => Some(value)
     Err(_) => None

@@ -233,7 +233,7 @@ test "peek_exn" {
 /// let queue : Queue[Int] = Queue::[1, 2, 3, 4]
 /// let first = queue.peek()
 /// ```
-pub fn peek[T](self : Queue[T]) -> Option[T] {
+pub fn peek[T](self : Queue[T]) -> T? {
   match self.first {
     Nil => None
     Cons(first) => Some(first.content)
@@ -286,7 +286,7 @@ test "pop_exn" {
 /// let queue : Queue[Int] = Queue::[1, 2, 3, 4]
 /// let first = queue.pop()
 /// ```
-pub fn pop[T](self : Queue[T]) -> Option[T] {
+pub fn pop[T](self : Queue[T]) -> T? {
   if self.length == 0 {
     None
   } else {

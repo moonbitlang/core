@@ -633,7 +633,7 @@ test "fill" {
 /// let arr = [3, 4, 5]
 /// arr.search(3) // 0
 /// ```
-pub fn search[T : Eq](self : FixedArray[T], value : T) -> Option[Int] {
+pub fn search[T : Eq](self : FixedArray[T], value : T) -> Int? {
   for i = 0; i < self.length(); i = i + 1 {
     if self[i] == value {
       return Some(i)

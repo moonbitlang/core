@@ -34,7 +34,7 @@ priv struct Entry[K] {
 /// println(set.contains(3)) // output: true
 /// ```
 struct HashSet[K] {
-  mut entries : FixedArray[Option[Entry[K]]]
+  mut entries : FixedArray[Entry[K]?]
   mut size : Int // active key count
   mut capacity : Int // current capacity 
   mut growAt : Int // threshold that triggers grow

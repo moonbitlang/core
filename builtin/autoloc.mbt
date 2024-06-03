@@ -20,7 +20,7 @@ pub fn SourceLoc::debug_write(self : SourceLoc, buf : Buffer) -> Unit {
   buf.write_string(self.to_string())
 }
 
-pub type ArgsLoc Array[Option[SourceLoc]]
+pub type ArgsLoc Array[SourceLoc?]
 
 pub fn ArgsLoc::to_string(self : ArgsLoc) -> String {
   self.0.to_string()
