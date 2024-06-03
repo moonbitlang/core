@@ -1,4 +1,4 @@
-package moonbitlang/core/map
+package moonbitlang/core/ordered_map
 
 // Values
 fn empty[K, V]() -> Map[K, V]
