@@ -1,6 +1,6 @@
 package moonbitlang/core/json
 
-alias @moonbitlang/core/map as @map
+alias @moonbitlang/core/ordered_map as @ordered_map
 
 // Values
 fn parse(String) -> Result[JsonValue, ParseError]
@@ -14,14 +14,14 @@ pub enum JsonValue {
   Number(Double)
   String(String)
   Array(Array[JsonValue])
-  Object(@map.Map[String, JsonValue])
+  Object(@ordered_map.Map[String, JsonValue])
 }
 impl JsonValue {
   as_array(Self) -> Option[Array[Self]]
   as_bool(Self) -> Option[Bool]
   as_null(Self) -> Option[Unit]
   as_number(Self) -> Option[Double]
-  as_object(Self) -> Option[@map.Map[String, Self]]
+  as_object(Self) -> Option[@ordered_map.Map[String, Self]]
   as_string(Self) -> Option[String]
   debug_write(Self, Buffer) -> Unit
   item(Self, Int) -> Option[Self]
