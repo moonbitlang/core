@@ -59,15 +59,16 @@ struct LinkedHashMap[K, V] {
 // Implementations
 
 fn power_2_above(x : Int, n : Int) -> Int {
-  let n = n.to_int64()
-  for i = x.to_int64() {
-    if i > 2147483647L {
-      break i.lsr(1).to_int()
-    }
+  for i = x {
     if i >= n {
-      break i.to_int()
+      break i
     }
-    continue i.lsl(1)
+    let next = i.lsl(1)
+    if next < 0 {
+      // overflow happend  
+      break i
+    }
+    continue next
   }
 }
 
