@@ -228,6 +228,20 @@ test "concat" {
   exb.expect(content="123456")?
 }
 
+test "collect" {
+  let arr = ['1', '2', '3', '4', '5']
+  let iter = Iter::_unstable_internal_make(
+    fn(yield) {
+      for i = 0, len = arr.length(); i < len; i = i + 1 {
+        yield(arr[i]) |> ignore
+      }
+      true
+    },
+  )
+  let vec = iter.collect()
+  @assertion.assert_eq(vec, ['1', '2', '3', '4', '5'])?
+}
+
 // For testing purposes
 fn test_from_array[T](arr : Array[T]) -> Iter[T] {
   Iter::_unstable_internal_make(

@@ -10,24 +10,22 @@ ImmutableSet is an immutable, persistent implementation of the set structure (ea
 
 Since set is based on comparison, the type used to construct ImmutableSet needs to implement Compare trait.
 
-You can create an empty ImmutableSet with a value separately through the following methods, or create it directly from the Array and List.
+You can create an empty ImmutableSet with a value separately through the following methods, or create it directly from the Array.
 
 ```moonbit
 let set1 : ImmutableSet[Int] = ImmutableSet::new()
 let set2 = ImmutableSet::singleton(1)
-let set3 = ImmutableSet::from_list(Cons(1, Nil))
 let set4 = ImmutableSet::from_array([1])
 let set5= ImmutableSet::[1]
 ```
 
 ### Convert
 
-Instead, you can convert an ImmutableSet to a List/Array/Vec, which will be sorted.
+Instead, you can convert an ImmutableSet to a Array/Vec, which will be sorted.
 
 ```moonbit
 let set = ImmutableSet::[3, 2, 1]
 set.to_array() // [1, 2, 3]
-set.to_list() // List::[1, 2, 3]
 set.to_vec() // Vec::[1, 2, 3]
 ```
 

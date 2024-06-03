@@ -96,7 +96,6 @@ impl Array {
   strip_prefix[T : Eq](Self[T], Self[T]) -> Option[Self[T]]
   strip_suffix[T : Eq](Self[T], Self[T]) -> Option[Self[T]]
   swap[T](Self[T], Int, Int) -> Unit
-  to_list[T](Self[T]) -> List[T]
   to_string[T : Show](Self[T]) -> String
   with_capacity[T](Int) -> Self[T]
 }
@@ -127,6 +126,7 @@ type Iter
 impl Iter {
   _unstable_internal_make[T](((T) -> Bool) -> Bool) -> Self[T]
   append[T](Self[T], T) -> Self[T]
+  collect[T](Self[T]) -> Array[T]
   concat[T](Self[T], Self[T]) -> Self[T]
   count[T](Self[T]) -> Int
   drop[T](Self[T], Int) -> Self[T]
@@ -312,11 +312,6 @@ impl Option {
 impl Result {
   debug_write[T : Debug, E : Debug](Self[T, E], Buffer) -> Unit
   op_equal[T : Eq, E : Eq](Self[T, E], Self[T, E]) -> Bool
-}
-impl List {
-  debug_write[X : Debug](Self[X], Buffer) -> Unit
-  op_equal[X : Eq](Self[X], Self[X]) -> Bool
-  to_string[X : Debug](Self[X]) -> String
 }
 impl FixedArray {
   debug_write[X : Debug](Self[X], Buffer) -> Unit

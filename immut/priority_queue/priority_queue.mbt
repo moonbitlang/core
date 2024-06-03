@@ -34,7 +34,7 @@ pub fn ImmutablePriorityQueue::from_array[T : Compare](
   let len = arr.length()
   for i = 0, acc = Cont::Empty {
     if i < len {
-      continue i + 1, meld(acc, Node(arr[i], Nil))
+      continue i + 1, meld(acc, Node(arr[i], MNil))
     } else {
       break { body: acc, len: arr.length() }
     }
@@ -53,8 +53,8 @@ pub fn to_array[T : Compare](self : ImmutablePriorityQueue[T]) -> Array[T] {
       Node(v, child) => {
         arr.push(v)
         loop child {
-          Nil => ()
-          Cons(x, xs) => {
+          MNil => ()
+          MCons(x, xs) => {
             go(x)
             continue xs
           }
@@ -106,9 +106,9 @@ fn meld[T : Compare](l : Cont[T], r : Cont[T]) -> Cont[T] {
     (_, Empty) => l
     (Node(x, left), Node(y, right)) =>
       if x > y {
-        Node(x, Cons(r, left))
+        Node(x, MList::MCons(r, left))
       } else {
-        Node(y, Cons(l, right))
+        Node(y, MList::MCons(l, right))
       }
   }
 }
@@ -116,28 +116,28 @@ fn meld[T : Compare](l : Cont[T], r : Cont[T]) -> Cont[T] {
 test "meld" {
   inspect(
     meld(Empty, ImmutablePriorityQueue::[1].body),
-    content="Node(1, List::[])",
+    content="Node(1, MNil)",
   )?
   inspect(
     meld(ImmutablePriorityQueue::[1].body, Empty),
-    content="Node(1, List::[])",
+    content="Node(1, MNil)",
   )?
   inspect(
     meld(ImmutablePriorityQueue::[1].body, ImmutablePriorityQueue::[2].body),
-    content="Node(2, List::[Node(1, List::[])])",
+    content="Node(2, MCons(Node(1, MNil), MNil))",
   )?
 }
 
-fn merges[T : Compare](x : List[Cont[T]]) -> Cont[T] {
+fn merges[T : Compare](x : MList[Cont[T]]) -> Cont[T] {
   loop x, Cont::Empty {
-    Nil, acc => acc
-    Cons(t, rest), acc => continue rest, meld(t, acc)
+    MNil, acc => acc
+    MCons(t, rest), acc => continue rest, meld(t, acc)
   }
 }
 
 test "merges" {
   inspect(
-    match merges((Nil : List[Cont[Int]])) {
+    match merges((MNil : MList[Cont[Int]])) {
       Empty => true
       _ => false
     },
@@ -219,7 +219,7 @@ pub fn push[T : Compare](
   self : ImmutablePriorityQueue[T],
   value : T
 ) -> ImmutablePriorityQueue[T] {
-  { body: meld(self.body, Node(value, Nil)), len: self.len + 1 }
+  { body: meld(self.body, Node(value, MNil)), len: self.len + 1 }
 }
 
 test "push" {

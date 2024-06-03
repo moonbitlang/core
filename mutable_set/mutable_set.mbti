@@ -14,7 +14,6 @@ impl MutableSet {
   filter[T : Compare + Eq](Self[T], (T) -> Bool) -> Self[T]
   from_array[T : Compare + Eq](Array[T]) -> Self[T]
   from_fixed_array[T : Compare + Eq](FixedArray[T]) -> Self[T]
-  from_list[T : Compare + Eq](List[T]) -> Self[T]
   intersect[T : Compare + Eq](Self[T], Self[T]) -> Self[T]
   is_empty[T : Compare + Eq](Self[T]) -> Bool
   iter[T : Compare + Eq](Self[T], (T) -> Unit) -> Unit

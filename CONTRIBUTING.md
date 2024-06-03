@@ -36,10 +36,10 @@
   moon new hello
   cd hello
   echo """fn main {
-    println(@list.reverse(@list.from_array([1, 2, 3])))
+    println([1, 2, 3].reverse())
   }""" > main/main.mbt
   moon run main
-  # Output: List::Cons(3,List::Cons(2,List::Cons(1,Nil)))
+  # Output: [3, 2, 1]
   ```
 
 ## Step 2: Make your change

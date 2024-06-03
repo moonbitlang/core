@@ -118,29 +118,6 @@ let map = Map::[("a", 1), ("b", 2), ("c", 3)]
 let keys = map.keys() // ["a", "b", "c"]
 ```
 
-Use `keys_set()` to get the set of all keys of the map.
-
-```moonbit
-let map = Map::[("a", 1), ("b", 2), ("c", 3)]
-let keys_set = map.keys_set()
-```
-
-Use `to_list()` / `to_asc_list()` / `to_desc_list()` to convert the map to ascending or descending list.
-
-```moonbit
-let map = Map::[("a", 1), ("b", 2), ("c", 3)]
-let list = map.to_list() // List::[("a", 1), ("b", 2), ("c", 3)]
-let asc_list = map.to_asc_list() // List::[("a", 1), ("b", 2), ("c", 3)]
-let desc_list = map.to_desc_list() // List::[("c", 3), ("b", 2), ("a", 1)]
-```
-
-Use `to_vec()` to convert the map to a vector.
-
-```moonbit
-let map = Map::[("a", 1), ("b", 2), ("c", 3)]
-let vec = map.to_vec() // Vec::[("a", 1), ("b", 2), ("c", 3)]
-```
-
 ## TODO
 
 - Set operations like `union`/`difference`/`intersection`
