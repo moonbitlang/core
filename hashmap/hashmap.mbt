@@ -135,9 +135,7 @@ pub fn contains[K : Hash + Eq, V](self : HashMap[K, V], key : K) -> Bool {
 /// Remove a key-value pair from hash map.
 pub fn remove[K : Hash + Eq, V](self : HashMap[K, V], key : K) -> Unit {
   let hash = key.hash()
-  for i = 0, idx = hash.land(self.capacity - 1)
-      i < self.capacity
-      i = i + 1, idx = (idx + 1).land(self.capacity - 1) {
+  for i = 0, idx = hash.land(self.capacity - 1) {
     match self.entries[idx] {
       Some(entry) => {
         if entry.hash == hash && entry.key == key {
@@ -147,20 +145,17 @@ pub fn remove[K : Hash + Eq, V](self : HashMap[K, V], key : K) -> Unit {
           break
         }
         if i > entry.psl {
-          return
+          break
         }
+        continue i + 1, (idx + 1).land(self.capacity - 1)
       }
-      None => ()
+      None => break
     }
   }
 }
 
 fn shift_back[K : Hash, V](self : HashMap[K, V], start_index : Int) -> Unit {
-  for i = 0, prev = start_index, curr = (start_index + 1).land(
-          self.capacity - 1,
-        )
-      i < self.entries.length()
-      i = i + 1, prev = curr, curr = (curr + 1).land(self.capacity - 1) {
+  for prev = start_index, curr = (start_index + 1).land(self.capacity - 1) {
     match self.entries[curr] {
       Some({ psl, hash, key, value, .. }) => {
         if psl == 0 {
@@ -168,16 +163,19 @@ fn shift_back[K : Hash, V](self : HashMap[K, V], start_index : Int) -> Unit {
         }
         self.entries[prev] = Some({ psl: psl - 1, hash, key, value })
         self.entries[curr] = None
+        continue curr, (curr + 1).land(self.capacity - 1)
       }
       None => break
     }
   }
 }
 
+// TODO: this could be further optimized
 fn grow[K : Hash + Eq, V](self : HashMap[K, V]) -> Unit {
   let old_entries = self.entries
-  self.entries = FixedArray::make(self.capacity.lsl(1), None)
-  self.capacity = self.capacity * 2
+  let new_capacity = self.capacity.lsl(1)
+  self.entries = FixedArray::make(new_capacity, None)
+  self.capacity = new_capacity
   self.size = 0
   for i = 0; i < old_entries.length(); i = i + 1 {
     match old_entries[i] {
