@@ -20,7 +20,7 @@ impl Show for MyString with to_string(self) { self.0 }
 
 test "new" {
   let m : LinkedHashMap[Int, Int] = LinkedHashMap::new()
-  @assertion.assert_eq(m.capacity, default_init_capacity)?
+  @assertion.assert_eq(m.capacity, 8)?
   @assertion.assert_eq(m.size, 0)?
 }
 
