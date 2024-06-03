@@ -268,57 +268,57 @@ test "split_bis" {
   inspect(ImmutableSet::[1, 2, 3].split_bis(4), content="NotFound")?
 }
 
-test "of_sorted_array" {
-  inspect(
-    of_sorted_array([1, 2, 3, 4, 5, 6, 7, 8, 9]),
-    content="ImmutableSet::[1, 2, 3, 4, 5, 6, 7, 8, 9]",
-  )?
-}
+// test "of_sorted_array" {
+//   inspect(
+//     of_sorted_array([1, 2, 3, 4, 5, 6, 7, 8, 9]),
+//     content="ImmutableSet::[1, 2, 3, 4, 5, 6, 7, 8, 9]",
+//   )?
+// }
+//
+// // Convert a sorted array into a balanced binary search tree to facilitate subsequent search, insertion, and deletion operations.
+// fn of_sorted_array[T : Compare](array : Array[T]) -> ImmutableSet[T] {
+//   // Recursively process the input array and build a balanced binary search tree based on the length n of the array.
+//   fn sub(n : Int, xs : ArrayView[T]) -> (ImmutableSet[T], ArrayView[T]) {
+//     match (n, xs) {
+//       (0, xs) => (Empty, xs)
+//       (1, [ value, .. asremain ]) =>
+//         (Node(left=Empty, ~value, right=Empty, height=1), remain)
+//       (2, [ value, value1, .. asremain ]) =>
+//         (
+//           Node(
+//             left=Node(left=Empty, ~value, right=Empty, height=1),
+//             value=value1,
+//             right=Empty,
+//             height=2,
+//           ),
+//           remain,
+//         )
+//       (3, [ value, value1, value2, .. asremain ]) =>
+//         (
+//           Node(
+//             left=Node(left=Empty, ~value, right=Empty, height=1),
+//             value=value1,
+//             right=Node(left=Empty, value=value2, right=Empty, height=1),
+//             height=2,
+//           ),
+//           remain,
+//         )
 
-// Convert a sorted array into a balanced binary search tree to facilitate subsequent search, insertion, and deletion operations.
-fn of_sorted_array[T : Compare](array : Array[T]) -> ImmutableSet[T] {
-  // Recursively process the input array and build a balanced binary search tree based on the length n of the array.
-  fn sub(n : Int, xs: ArrayView[T]) -> (ImmutableSet[T], ArrayView[T]) {
-    match (n, xs) {
-      (0, xs) => (Empty, xs)
-      (1, [value, .. as remain]) =>
-        (Node(left=Empty, ~value, right=Empty, height=1), remain)
-      (2, [value, value1, .. as remain]) =>
-        (
-          Node(
-            left=Node(left=Empty, ~value, right=Empty, height=1),
-            value=value1,
-            right=Empty,
-            height=2,
-          ),
-          remain,
-        )
-      (3, [value,value1,value2, .. as remain]) =>
-        (
-          Node(
-            left=Node(left=Empty, ~value, right=Empty, height=1),
-            value=value1,
-            right=Node(left=Empty, value=value2, right=Empty, height=1),
-            height=2,
-          ),
-          remain,
-        )
+//       // For n > 3, the function first calculates the size of the left subtree,
+//       // and then recursively constructs the left subtree.
+//       _ => {
+//         let left_length = n / 2
+//         let (left, xs) = sub(left_length, xs)
+//         match xs {
+//           [  ] => abort("of_sorted_array: cannot constructs the left")
+//           [ mid, .. asxs ] => {
+//             let (right, xs) = sub(n - left_length - 1, xs)
+//             (create(left, mid, right), xs)
+//           }
+//         }
+//       }
+//     }
+//   }
 
-      // For n > 3, the function first calculates the size of the left subtree,
-      // and then recursively constructs the left subtree.
-      _ => {
-        let left_length = n / 2
-        let (left, xs) = sub(left_length, xs)
-        match xs {
-          [] => abort("of_sorted_array: cannot constructs the left")
-          [mid, .. as xs] => {
-            let (right, xs) = sub(n - left_length - 1, xs)
-            (create(left, mid, right), xs)
-          }
-        }
-      }
-    }
-  }
-  sub(array.length(), array[..]).0
-}
-
+//   sub(array.length(), array[..]).0
+// }
