@@ -54,7 +54,7 @@ pub fn deep_clone[T](self : MutableSet[T]) -> MutableSet[T] {
   }
 }
 
-fn new_node[T](color : Color, value : T, parent : Option[Node[T]]) -> Node[T] {
+fn new_node[T](color : Color, value : T, parent : Node[T]?) -> Node[T] {
   let left = new_nil()
   let right = new_nil()
   let ret = new_node_full(color, left, Some(value), right, parent)
@@ -65,23 +65,23 @@ fn new_node[T](color : Color, value : T, parent : Option[Node[T]]) -> Node[T] {
 
 fn new_node_full[T](
   color : Color,
-  left : Option[Node[T]],
-  value : Option[T],
-  right : Option[Node[T]],
-  parent : Option[Node[T]]
+  left : Node[T]?,
+  value : T?,
+  right : Node[T]?,
+  parent : Node[T]?
 ) -> Node[T] {
   { color, left, value, right, parent }
 }
 
-fn new_nil[T]() -> Option[Node[T]] {
+fn new_nil[T]() -> Node[T]? {
   Some({ color: Black, left: None, value: None, right: None, parent: None })
 }
 
-fn new_set[T](root : Option[Node[T]], size : Int64) -> MutableSet[T] {
+fn new_set[T](root : Node[T]?, size : Int64) -> MutableSet[T] {
   { root, size }
 }
 
-fn deep_clone_tree[T](node : Option[Node[T]]) -> Option[Node[T]] {
+fn deep_clone_tree[T](node : Node[T]?) -> Node[T]? {
   match node {
     None => None
     Some(node) => {
@@ -95,7 +95,7 @@ fn deep_clone_tree[T](node : Option[Node[T]]) -> Option[Node[T]] {
   }
 }
 
-fn new_tree[T](root : Option[Node[T]], size : Int64) -> MutableSet[T] {
+fn new_tree[T](root : Node[T]?, size : Int64) -> MutableSet[T] {
   { root, size }
 }
 
@@ -103,7 +103,7 @@ fn new_tree[T](root : Option[Node[T]], size : Int64) -> MutableSet[T] {
 
 /// Add a value into the set.
 pub fn add[T : Compare](self : MutableSet[T], value : T) -> Unit {
-  fn aux(n : Option[Node[T]], value : T) -> Unit {
+  fn aux(n : Node[T]?, value : T) -> Unit {
     match n {
       None => abort("Impossible to reach")
       Some(node) => {
@@ -288,7 +288,7 @@ pub fn remove[T : Compare](self : MutableSet[T], value : T) -> Unit {
   self.size -= 1L
 }
 
-fn remove_fix[T](root : MutableSet[T], x : Option[Node[T]]) -> Unit {
+fn remove_fix[T](root : MutableSet[T], x : Node[T]?) -> Unit {
   let mut x = x
   while not(same_pointer(x, root.root)) && get_color(x) == Black {
     let x_parent = get_parent(x)
@@ -345,11 +345,7 @@ fn remove_fix[T](root : MutableSet[T], x : Option[Node[T]]) -> Unit {
   set_color(x, Black)
 }
 
-fn transplant[T](
-  tree : MutableSet[T],
-  u : Option[Node[T]],
-  v : Option[Node[T]]
-) -> Unit {
+fn transplant[T](tree : MutableSet[T], u : Node[T]?, v : Node[T]?) -> Unit {
   match u {
     None => abort("Impossible to reach") // why transplant an empty tree?
     Some(u_inner) => {
@@ -367,7 +363,7 @@ fn transplant[T](
   }
 }
 
-fn search_node[T : Compare](tree : MutableSet[T], value : T) -> Option[Node[T]] {
+fn search_node[T : Compare](tree : MutableSet[T], value : T) -> Node[T]? {
   loop tree.root, value {
     Some({ left, value: node_value, right, .. }) as n, value => {
       if node_value == None {
@@ -386,7 +382,7 @@ fn search_node[T : Compare](tree : MutableSet[T], value : T) -> Option[Node[T]] 
   }
 }
 
-fn rotate_left[T](root : Option[MutableSet[T]], x : Option[Node[T]]) -> Unit {
+fn rotate_left[T](root : MutableSet[T]?, x : Node[T]?) -> Unit {
   let y = get_right(x)
   set_right(x, get_left(y))
   set_parent(get_left(y), x)
@@ -409,7 +405,7 @@ fn rotate_left[T](root : Option[MutableSet[T]], x : Option[Node[T]]) -> Unit {
   set_parent(x, y)
 }
 
-fn rotate_right[T](root : Option[MutableSet[T]], x : Option[Node[T]]) -> Unit {
+fn rotate_right[T](root : MutableSet[T]?, x : Node[T]?) -> Unit {
   let y = get_left(x)
   set_left(x, get_right(y))
   set_parent(get_right(y), x)
@@ -432,7 +428,7 @@ fn rotate_right[T](root : Option[MutableSet[T]], x : Option[Node[T]]) -> Unit {
   set_parent(x, y)
 }
 
-fn min_node[T : Compare](tree : Option[Node[T]]) -> Option[Node[T]] {
+fn min_node[T : Compare](tree : Node[T]?) -> Node[T]? {
   let mut rt = tree
   loop tree {
     None => rt
@@ -459,7 +455,7 @@ pub fn union[T : Compare](
   self : MutableSet[T],
   src : MutableSet[T]
 ) -> MutableSet[T] {
-  fn aux(a : Option[Node[T]], b : Option[Node[T]]) -> Option[Node[T]] {
+  fn aux(a : Node[T]?, b : Node[T]?) -> Node[T]? {
     match (a, b) {
       (Some(_), Some(_)) =>
         if is_nil(a) {
@@ -549,7 +545,7 @@ pub fn disjoint[T : Compare](self : MutableSet[T], src : MutableSet[T]) -> Bool 
   ret
 }
 
-fn black_height[T : Compare](n : Option[Node[T]]) -> Int {
+fn black_height[T : Compare](n : Node[T]?) -> Int {
   loop n, 0 {
     None, ct => ct
     Some(node), ct =>
@@ -562,10 +558,10 @@ fn black_height[T : Compare](n : Option[Node[T]]) -> Int {
 }
 
 fn join_right[T : Compare](
-  left : Option[Node[T]],
+  left : Node[T]?,
   value : T,
-  right : Option[Node[T]]
-) -> Option[Node[T]] {
+  right : Node[T]?
+) -> Node[T]? {
   let left_color = get_color(left)
   // TODO: optimize this. We have computed the black height of left in `join`.
   if left_color == Black && black_height(left) == black_height(right) {
@@ -589,10 +585,10 @@ fn join_right[T : Compare](
 }
 
 fn join_left[T : Compare](
-  left : Option[Node[T]],
+  left : Node[T]?,
   value : T,
-  right : Option[Node[T]]
-) -> Option[Node[T]] {
+  right : Node[T]?
+) -> Node[T]? {
   let right_color = get_color(right)
   if right_color == Black && black_height(right) == black_height(left) {
     let ret = Option::Some(
@@ -616,11 +612,7 @@ fn join_left[T : Compare](
 
 // Given two red-black trees (l, r), and a value k. For all values in l < k, and all values in r >= k.
 // Returns a new red-black tree containing all values in l and r, and the value k.
-fn join[T : Compare](
-  left : Option[Node[T]],
-  value : T,
-  right : Option[Node[T]]
-) -> Option[Node[T]] {
+fn join[T : Compare](left : Node[T]?, value : T, right : Node[T]?) -> Node[T]? {
   match (left, right) {
     (Some(_), Some(_)) => ()
     (None, None) => return Some(new_node(Black, value, None))
@@ -664,10 +656,7 @@ fn join[T : Compare](
 
 // Returns two red-black trees (l, r).
 // All values in l < k. All values in r >= k.
-fn split[T : Compare](
-  tree : Option[Node[T]],
-  k : T
-) -> (Option[Node[T]], Option[Node[T]]) {
+fn split[T : Compare](tree : Node[T]?, k : T) -> (Node[T]?, Node[T]?) {
   match tree {
     None => (None, None)
     Some(_) => {
@@ -707,7 +696,7 @@ pub fn size[T : Compare](self : MutableSet[T]) -> Int64 {
 
 /// An iterator over the MutableSet, iterates over all elements in the set.
 pub fn iter[T : Compare](self : MutableSet[T], f : (T) -> Unit) -> Unit {
-  fn aux(n : Option[Node[T]], f : (T) -> Unit) {
+  fn aux(n : Node[T]?, f : (T) -> Unit) {
     match n {
       Some(node) => {
         if is_nil(n) {
@@ -736,7 +725,7 @@ pub fn filter[T : Compare](
 
 /// Convert MutableSet[T] to Array[T], the result must be ordered.
 pub fn to_array[T : Compare](self : MutableSet[T]) -> Array[T] {
-  fn aux(set : Option[Node[T]]) -> Array[_] {
+  fn aux(set : Node[T]?) -> Array[_] {
     match set {
       None => []
       Some(node) =>
@@ -759,7 +748,7 @@ pub fn to_string[T : Compare + Show](self : MutableSet[T]) -> String {
 }
 
 fn to_array[T](self : Node[T]) -> Array[T] {
-  fn aux(n : Option[Node[T]]) -> Array[_] {
+  fn aux(n : Node[T]?) -> Array[_] {
     match n {
       None => abort("Impossible to reach")
       _ =>
@@ -810,63 +799,63 @@ pub fn MutableSet::from_array[T : Compare](array : Array[T]) -> MutableSet[T] {
 
 // # Getter and setter functions
 
-fn get_left[T](x : Option[Node[T]]) -> Option[Node[T]] {
+fn get_left[T](x : Node[T]?) -> Node[T]? {
   match x {
     None => abort("Impossible to reach") // why get left of an empty tree?
     Some({ left, .. }) => left
   }
 }
 
-fn set_left[T](x : Option[Node[T]], left : Option[Node[T]]) -> Unit {
+fn set_left[T](x : Node[T]?, left : Node[T]?) -> Unit {
   match x {
     None => abort("Impossible to reach") // why set left of an empty tree?
     Some(tree) => tree.left = left
   }
 }
 
-fn get_right[T](x : Option[Node[T]]) -> Option[Node[T]] {
+fn get_right[T](x : Node[T]?) -> Node[T]? {
   match x {
     None => abort("Impossible to reach") // why get right of an empty tree?
     Some({ right, .. }) => right
   }
 }
 
-fn set_right[T](x : Option[Node[T]], right : Option[Node[T]]) -> Unit {
+fn set_right[T](x : Node[T]?, right : Node[T]?) -> Unit {
   match x {
     None => abort("Impossible to reach") // why set right of an empty tree?
     Some(tree) => tree.right = right
   }
 }
 
-fn get_parent[T](x : Option[Node[T]]) -> Option[Node[T]] {
+fn get_parent[T](x : Node[T]?) -> Node[T]? {
   match x {
     None => abort("Impossible to reach") // why get parent of an empty tree?
     Some(tree) => tree.parent
   }
 }
 
-fn set_parent[T](x : Option[Node[T]], parent : Option[Node[T]]) -> Unit {
+fn set_parent[T](x : Node[T]?, parent : Node[T]?) -> Unit {
   match x {
     None => ()
     Some(tree) => tree.parent = parent
   }
 }
 
-fn get_color[T](tree : Option[Node[T]]) -> Color {
+fn get_color[T](tree : Node[T]?) -> Color {
   match tree {
     None => abort("Impossible to reach") // why get color of None? 
     Some({ color, .. }) => color
   }
 }
 
-fn set_color[T](tree : Option[Node[T]], color : Color) -> Unit {
+fn set_color[T](tree : Node[T]?, color : Color) -> Unit {
   match tree {
     Some(tree) => tree.color = color
     None => abort("Impossible to reach") // why set color of an empty tree?
   }
 }
 
-fn get_value[T](node : Option[Node[T]]) -> T {
+fn get_value[T](node : Node[T]?) -> T {
   match node {
     None => abort("Impossible to reach") // why get value of an empty tree?
     Some({ value, .. }) =>
@@ -899,7 +888,7 @@ pub fn debug_write[T : Compare + Debug](
   }
 }
 
-fn is_nil[T](node : Option[Node[T]]) -> Bool {
+fn is_nil[T](node : Node[T]?) -> Bool {
   match node {
     None => false
     Some(node) =>
@@ -910,7 +899,7 @@ fn is_nil[T](node : Option[Node[T]]) -> Bool {
   }
 }
 
-fn same_pointer[T](x : Option[Node[T]], y : Option[Node[T]]) -> Bool {
+fn same_pointer[T](x : Node[T]?, y : Node[T]?) -> Bool {
   match (x, y) {
     (None, None) => true
     (Some(x), Some(y)) => physical_equal(x, y)
@@ -1244,14 +1233,14 @@ test "debug_write" {
 }
 
 test "is_nil" {
-  let node : Option[Node[Int]] = Option::None
+  let node : Node[Int]? = Option::None
   inspect(is_nil(node), content="false")?
 }
 
 test "same_pointer" {
-  let node1 : Option[Node[Int]] = Option::None
+  let node1 : Node[Int]? = Option::None
   inspect(same_pointer(node1, node1), content="true")?
-  let node2 : Option[Node[Int]] = MutableSet::[1].root
+  let node2 : Node[Int]? = MutableSet::[1].root
   inspect(same_pointer(node1, node2), content="false")?
 }
 

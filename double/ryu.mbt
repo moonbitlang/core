@@ -601,7 +601,7 @@ fn to_chars(v : FloatingDecimal64, sign : Bool) -> String {
 fn d2d_small_int(
   ieeeMantissa : Int64,
   ieeeExponent : Int
-) -> Option[FloatingDecimal64] {
+) -> FloatingDecimal64? {
   let m2 : Int64 = 1L.lsl(gDOUBLE_MANTISSA_BITS).lor(ieeeMantissa)
   let e2 : Int = ieeeExponent - gDOUBLE_BIAS - gDOUBLE_MANTISSA_BITS
   if e2 > 0 {

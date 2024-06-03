@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-fn read_char(ctx : ParseContext) -> Option[Char] {
+fn read_char(ctx : ParseContext) -> Char? {
   if ctx.offset < ctx.end_offset {
     let c = ctx.input[ctx.offset]
     ctx.offset += 1

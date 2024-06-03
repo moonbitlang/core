@@ -154,7 +154,7 @@ test "merges" {
 /// ```
 pub fn pop[T : Compare](
   self : ImmutablePriorityQueue[T]
-) -> Option[ImmutablePriorityQueue[T]] {
+) -> ImmutablePriorityQueue[T]? {
   match self.body {
     Empty => None
     Node(_, ts) => Some({ body: merges(ts), len: self.len - 1 })
@@ -234,7 +234,7 @@ test "push" {
 /// let queue : ImmutablePriorityQueue[Int] = ImmutablePriorityQueue::[1, 2, 3, 4]
 /// queue.peek() // Some(4)
 /// ```
-pub fn peek[T](self : ImmutablePriorityQueue[T]) -> Option[T] {
+pub fn peek[T](self : ImmutablePriorityQueue[T]) -> T? {
   match self.body {
     Empty => None
     Node(v, _) => Some(v)

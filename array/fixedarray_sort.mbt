@@ -171,7 +171,7 @@ fn provide_sorted_batch[T : Compare](
 // This function correctly checks invariants for the top four runs. Additionally, if the top
 // run starts at index 0, it will always demand a merge operation until the stack is fully
 // collapsed, in order to complete the sort.
-fn collapse(runs : Array[TimSortRun], stop : Int) -> Option[Int] {
+fn collapse(runs : Array[TimSortRun], stop : Int) -> Int? {
   let n : Int = runs.length()
   if n >= 2 && (runs[n - 1].start + runs[n - 1].len == stop || runs[n - 2].len <=
   runs[n - 1].len || n >= 3 && runs[n - 3].len <= runs[n - 2].len + runs[n - 1].len ||
@@ -207,7 +207,7 @@ pub fn sort[T : Compare](self : FixedArray[T]) -> Unit {
 
 fn fixed_quick_sort[T : Compare](
   arr : FixedArraySlice[T],
-  pred : Option[T],
+  pred : T?,
   limit : Int
 ) -> Unit {
   let mut limit = limit

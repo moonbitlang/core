@@ -46,7 +46,7 @@ fn first_is_digit(self : StringSlice) -> Bool {
 
 /// Step over `step` non-underscore characters. 
 /// Return None if there are not enough characters.
-fn step(self : StringSlice, step : Int) -> Option[StringSlice] {
+fn step(self : StringSlice, step : Int) -> StringSlice? {
   let c = self
   let mut step = step
   let mut start = c.start

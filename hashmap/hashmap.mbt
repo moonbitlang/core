@@ -91,7 +91,7 @@ pub fn op_set[K : Hash + Eq, V](
 }
 
 /// Get the value associated with a key.
-pub fn get[K : Hash + Eq, V](self : HashMap[K, V], key : K) -> Option[V] {
+pub fn get[K : Hash + Eq, V](self : HashMap[K, V], key : K) -> V? {
   let hash = key.hash()
   for i = 0, idx = hash.land(self.capacity - 1) {
     // if i == self.capacity {
@@ -112,7 +112,7 @@ pub fn get[K : Hash + Eq, V](self : HashMap[K, V], key : K) -> Option[V] {
   }
 }
 
-pub fn op_get[K : Hash + Eq, V](self : HashMap[K, V], key : K) -> Option[V] {
+pub fn op_get[K : Hash + Eq, V](self : HashMap[K, V], key : K) -> V? {
   self.get(key)
 }
 

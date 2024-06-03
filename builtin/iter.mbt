@@ -397,8 +397,8 @@ pub fn drop_while[T](self : Iter[T], f : (T) -> Bool) -> Iter[T] {
 /// # Returns
 ///
 /// An `Option` that contains the first element that satisfies the predicate function, or `None` if no such element is found.
-pub fn find_first[T](self : Iter[T], f : (T) -> Bool) -> Option[T] {
-  let mut result : Option[T] = None
+pub fn find_first[T](self : Iter[T], f : (T) -> Bool) -> T? {
+  let mut result : T? = None
   let _ = (self.0)(
     fn {
       a =>

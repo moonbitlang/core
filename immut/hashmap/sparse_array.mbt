@@ -28,7 +28,7 @@ fn has[X](self : SparseArray[X], idx : Int) -> Bool {
   self.elem_info.has(idx)
 }
 
-fn op_get[X](self : SparseArray[X], idx : Int) -> Option[X] {
+fn op_get[X](self : SparseArray[X], idx : Int) -> X? {
   if self.elem_info.has(idx) {
     Some(self.data[self.elem_info.index_of(idx)])
   } else {

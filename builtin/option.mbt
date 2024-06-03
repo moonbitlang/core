@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-pub fn op_equal[X : Eq](self : Option[X], other : Option[X]) -> Bool {
+pub fn op_equal[X : Eq](self : X?, other : X?) -> Bool {
   match (self, other) {
     (None, None) => true
     (Some(x), Some(y)) => x == y
@@ -20,7 +20,7 @@ pub fn op_equal[X : Eq](self : Option[X], other : Option[X]) -> Bool {
   }
 }
 
-pub fn to_string[X : Show](self : Option[X]) -> String {
+pub fn to_string[X : Show](self : X?) -> String {
   match self {
     None => "None"
     Some(x) => "Some(" + x.to_string() + ")"

@@ -20,7 +20,7 @@ priv enum Bucket[K, V] {
 }
 
 /// Lookup a key from the bucket
-fn find[K : Eq, V](self : Bucket[K, V], key : K) -> Option[V] {
+fn find[K : Eq, V](self : Bucket[K, V], key : K) -> V? {
   match self {
     Just_One(key1, value) => if key == key1 { Some(value) } else { None }
     More(key1, value, rest) =>
@@ -52,7 +52,7 @@ fn add[K : Eq, V](self : Bucket[K, V], key : K, value : V) -> Bucket[K, V] {
 }
 
 /// Remove a key from a bucket
-fn remove[K : Eq, V](self : Bucket[K, V], key : K) -> Option[Bucket[K, V]] {
+fn remove[K : Eq, V](self : Bucket[K, V], key : K) -> Bucket[K, V]? {
   match self {
     Just_One(old_key, _) => if key == old_key { None } else { Some(self) }
     More(old_key, old_value, rest) =>

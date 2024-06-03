@@ -59,7 +59,7 @@ fn new[K, V](key : K, value : V, l : Map[K, V], r : Map[K, V]) -> Map[K, V] {
 
 /// Get the value associated with a key.
 /// O(log n).
-pub fn lookup[K : Compare, V](self : Map[K, V], key : K) -> Option[V] {
+pub fn lookup[K : Compare, V](self : Map[K, V], key : K) -> V? {
   loop self {
     Empty => None
     Tree(k, ~value, l, r, ..) => {
@@ -75,7 +75,7 @@ pub fn lookup[K : Compare, V](self : Map[K, V], key : K) -> Option[V] {
   }
 }
 
-pub fn op_get[K : Compare, V](self : Map[K, V], key : K) -> Option[V] {
+pub fn op_get[K : Compare, V](self : Map[K, V], key : K) -> V? {
   self.lookup(key)
 }
 

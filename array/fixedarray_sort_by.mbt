@@ -58,7 +58,7 @@ pub fn sort_by[T](self : FixedArray[T], cmp : (T, T) -> Int) -> Unit {
 fn fixed_quick_sort_by[T](
   arr : FixedArraySlice[T],
   cmp : (T, T) -> Int,
-  pred : Option[T],
+  pred : T?,
   limit : Int
 ) -> Unit {
   let mut limit = limit
