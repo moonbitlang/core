@@ -45,7 +45,7 @@ pub fn to_string[T : Show](self : Array[T]) -> String {
 
 /// Creates a new, empty vector.
 pub fn Array::new[T]() -> Array[T] {
-  { buf: UninitializedArray::make(0), len: 0 }
+  []
 }
 
 /// Creates a new, empty vector with a specified initial capacity.
@@ -354,7 +354,7 @@ pub fn clear[T](self : Array[T]) -> Unit {
 /// ```
 pub fn map[T, U](self : Array[T], f : (T) -> U) -> Array[U] {
   if self.length() == 0 {
-    return Array::{ buf: UninitializedArray::make(0), len: 0 }
+    return []
   }
   let buf : UninitializedArray[U] = UninitializedArray::make(self.length())
   for i = 0; i < self.length(); i = i + 1 {
@@ -385,7 +385,7 @@ pub fn map_inplace[T](self : Array[T], f : (T) -> T) -> Unit {
 /// ```
 pub fn mapi[T, U](self : Array[T], f : (Int, T) -> U) -> Array[U] {
   if self.length() == 0 {
-    return Array::{ buf: UninitializedArray::make(0), len: 0 }
+    return []
   }
   let buf : UninitializedArray[U] = UninitializedArray::make(self.length())
   for i = 0; i < self.length(); i = i + 1 {
