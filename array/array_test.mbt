@@ -440,6 +440,11 @@ test "as_iter" {
 
 test "shuffle" {
   let arr : Array[Int] = [1, 2, 3, 4, 5, 6, 7]
-  Array::shuffle(arr)
+  fn rand(upper : Int) -> Int {
+    let rng = @random.RandomInt::new()
+    rng.summon() % upper
+  }
+
+  Array::shuffle_in_place(arr, ~rand=rand)
   inspect(arr, content="[2, 3, 7, 5, 6, 1, 4]")?
 }
