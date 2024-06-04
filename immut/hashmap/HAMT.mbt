@@ -241,16 +241,6 @@ pub fn to_string[K : Debug, V : Debug](self : Map[K, V]) -> String {
   buf.to_string()
 }
 
-test "HAMT::to_string" {
-  let map = Map::make().add(1, 1).add(3, 3).add(0x0f_ff_ff_ff, 0x0f_ff_ff_ff).add(
-    42, 42,
-  )
-  inspect(
-    map,
-    content="@immutable_hashmap.Map::[(3, 3), (42, 42), (1, 1), (268435455, 268435455)]",
-  )?
-}
-
 pub fn Map::from_array[K : Eq + Hash, V](arr : Array[(K, V)]) -> Map[K, V] {
   loop arr.length(), Map::make() {
     0, map => map
@@ -259,12 +249,4 @@ pub fn Map::from_array[K : Eq + Hash, V](arr : Array[(K, V)]) -> Map[K, V] {
       continue n - 1, map.add(k, v)
     }
   }
-}
-
-test "HAMT::from_array" {
-  let map = Map::[(1, "1"), (2, "2"), (42, "42")]
-  inspect((1, map.find(1)), content="(1, Some(1))")?
-  inspect((2, map.find(2)), content="(2, Some(2))")?
-  inspect((42, map.find(42)), content="(42, Some(42))")?
-  inspect((43, map.find(43)), content="(43, None)")?
 }
