@@ -23,7 +23,7 @@ let upper_mask_32 : Int = 0x80000000
 let lower_mask_32 : Int = 0x7fffffff
 
 struct RandomInt {
-  state : Array[Int]
+  state : FixedArray[Int]
   mut index : Int
 }
 
@@ -34,7 +34,7 @@ struct RandomInt {
 /// let summoner = RandomInt::new(seed=3) 
 /// ```
 pub fn RandomInt::new(~seed : Int = 0) -> RandomInt {
-  let state = Array::make(n32, 0)
+  let state = FixedArray::make(n32, 0)
   state[0] = seed
   for i = 1; i < n32; i = i + 1 {
     state[i] = (1812433253 * state[i - 1].lxor(state[i - 1].asr(30)) + i).land(

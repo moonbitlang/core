@@ -23,13 +23,11 @@ let upper_mask_64 : Int64 = 0xFFFFFFFF80000000L
 let lower_mask_64 : Int64 = 0x7FFFFFFFL
 
 struct RandomInt64 {
-  state : Array[Int64]
+  state : FixedArray[Int64]
   mut index : Int
 }
 
-struct RandomDouble {
-  i64 : RandomInt64
-}
+type RandomDouble RandomInt64
 
 /// Creates a randint64 summoner.
 /// 
@@ -38,7 +36,7 @@ struct RandomDouble {
 /// let summoner = RandomInt64::new(seed=3)
 /// ```
 pub fn RandomInt64::new(~seed : Int = 0) -> RandomInt64 {
-  let state = Array::make(n64, 0L)
+  let state = FixedArray::make(n64, 0L)
   state[0] = seed.to_int64()
   for i = 1; i < n64; i = i + 1 {
     state[i] = (6364136223846793005L * state[i - 1].lxor(state[i - 1].asr(62)) +
@@ -54,7 +52,7 @@ pub fn RandomInt64::new(~seed : Int = 0) -> RandomInt64 {
 /// let summoner = RandomDouble::new(seed=3)
 /// ```
 pub fn RandomDouble::new(~seed : Int = 0) -> RandomDouble {
-  RandomDouble::{ i64: RandomInt64::new(~seed) }
+  RandomDouble(RandomInt64::new(~seed))
 }
 
 fn twist(self : RandomInt64) -> Unit {
@@ -78,7 +76,7 @@ fn twist(self : RandomInt64) -> Unit {
 /// summoner.summon()
 /// ```
 pub fn summon(self : RandomDouble) -> Double {
-  self.i64.summon().to_double() / Int64::max_value().to_double()
+  self.0.summon().to_double() / Int64::max_value().to_double()
 }
 
 /// summon a random integer number in the Int64 range
