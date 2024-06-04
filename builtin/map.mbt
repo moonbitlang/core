@@ -16,13 +16,12 @@
 priv struct Entry[K, V] {
   mut idx : Int
   mut psl : Int
-  hash : Int
   key : K
   mut value : V
 } derive(Debug)
 
 fn op_equal[K : Eq, V](self : Entry[K, V], other : Entry[K, V]) -> Bool {
-  self.hash == other.hash && self.key == other.key
+  self.key == other.key
 }
 
 priv struct ListNode[K, V] {
@@ -109,7 +108,7 @@ pub fn set[K : Hash + Eq, V](self : Map[K, V], key : K, value : V) -> Unit {
     self.grow()
   }
   let hash = key.hash()
-  let insert_entry = { idx: -1, psl: 0, hash, key, value }
+  let insert_entry = { idx: -1, psl: 0, key, value }
   loop
     0,
     hash.land(self.capacity - 1),
@@ -130,7 +129,7 @@ pub fn set[K : Hash + Eq, V](self : Map[K, V], key : K, value : V) -> Unit {
         }
         Some(curr_entry) => {
           let curr_node = self.list[curr_entry.idx]
-          if curr_entry.hash == entry.hash && curr_entry.key == entry.key {
+          if curr_entry.key == entry.key {
             curr_entry.value = entry.value
             break
           }
@@ -163,7 +162,7 @@ pub fn get[K : Hash + Eq, V](self : Map[K, V], key : K) -> V? {
   for i = 0, idx = hash.land(self.capacity - 1) {
     match self.entries[idx] {
       Some(entry) => {
-        if entry.hash == hash && entry.key == key {
+        if entry.key == key {
           break Some(entry.value)
         }
         if i > entry.psl {
@@ -207,7 +206,7 @@ pub fn remove[K : Hash + Eq, V](self : Map[K, V], key : K) -> Unit {
   for i = 0, idx = hash.land(self.capacity - 1) {
     match self.entries[idx] {
       Some(entry) => {
-        if entry.hash == hash && entry.key == key {
+        if entry.key == key {
           self.entries[idx] = None
           self.shift_back(idx)
           self.size -= 1
@@ -320,32 +319,6 @@ fn debug_entries[K : Show, V : Show](self : Map[K, V]) -> String {
       Some({ psl, key, value, .. }) =>
         buf.write_string("(\(psl),\(key),\(value))")
     }
-  }
-  buf.to_string()
-}
-
-fn debug_linked_list[K : Show, V : Show](self : Map[K, V]) -> String {
-  let buf = Buffer::make(0)
-  loop self.head {
-    Some({ idx, key, value, hash, .. }) => {
-      buf.write_char('(')
-      buf.write_string("\(hash),\(key),\(value)")
-      buf.write_string(",prev:")
-      let node = self.list[idx]
-      match node.prev {
-        Some({ hash, .. }) => buf.write_string(hash.to_string())
-        None => buf.write_char('_')
-      }
-      buf.write_string(",next:")
-      match node.next {
-        Some({ hash, .. }) => buf.write_string(hash.to_string())
-        None => buf.write_char('_')
-      }
-      buf.write_char(')')
-      buf.write_char('\n')
-      continue node.next
-    }
-    None => buf.write_string("end")
   }
   buf.to_string()
 }

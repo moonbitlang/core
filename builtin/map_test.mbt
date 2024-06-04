@@ -233,6 +233,32 @@ test "iter order" {
   inspect(buf.to_string(), content="[one-1][three-3][two-2]")?
 }
 
+fn debug_linked_list[K : Show, V : Show](self : Map[K, V]) -> String {
+  let buf = Buffer::make(0)
+  loop self.head {
+    Some({ idx, key, value, .. }) => {
+      buf.write_char('(')
+      buf.write_string("\(idx),\(key),\(value)")
+      buf.write_string("|prev:")
+      let node = self.list[idx]
+      match node.prev {
+        Some({ idx, .. }) => buf.write_string(idx.to_string())
+        None => buf.write_char('_')
+      }
+      buf.write_string("|next:")
+      match node.next {
+        Some({ idx, .. }) => buf.write_string(idx.to_string())
+        None => buf.write_char('_')
+      }
+      buf.write_char(')')
+      buf.write_char('\n')
+      continue node.next
+    }
+    None => buf.write_string("end")
+  }
+  buf.to_string()
+}
+
 test "linked list" {
   let m : Map[String, Int] = Map::[]
   inspect(m.debug_linked_list(), content="end")?
@@ -244,11 +270,11 @@ test "linked list" {
   inspect(
     m.debug_linked_list(),
     content=
-      #|(-684882541,one,1,prev:_,next:1759420741)
-      #|(1759420741,two,2,prev:-684882541,next:957272809)
-      #|(957272809,three,3,prev:1759420741,next:-1028260443)
-      #|(-1028260443,four,4,prev:957272809,next:-1715605027)
-      #|(-1715605027,five,5,prev:-1028260443,next:_)
+      #|(3,one,1|prev:_|next:5)
+      #|(5,two,2|prev:3|next:1)
+      #|(1,three,3|prev:5|next:6)
+      #|(6,four,4|prev:1|next:7)
+      #|(7,five,5|prev:6|next:_)
       #|end
     ,
   )?
@@ -256,10 +282,10 @@ test "linked list" {
   inspect(
     m.debug_linked_list(),
     content=
-      #|(-684882541,one,1,prev:_,next:1759420741)
-      #|(1759420741,two,2,prev:-684882541,next:-1028260443)
-      #|(-1028260443,four,4,prev:1759420741,next:-1715605027)
-      #|(-1715605027,five,5,prev:-1028260443,next:_)
+      #|(3,one,1|prev:_|next:5)
+      #|(5,two,2|prev:3|next:6)
+      #|(6,four,4|prev:5|next:7)
+      #|(7,five,5|prev:6|next:_)
       #|end
     ,
   )?
@@ -267,10 +293,10 @@ test "linked list" {
   inspect(
     m.debug_linked_list(),
     content=
-      #|(-684882541,one,1,prev:_,next:1759420741)
-      #|(1759420741,two,20,prev:-684882541,next:-1028260443)
-      #|(-1028260443,four,4,prev:1759420741,next:-1715605027)
-      #|(-1715605027,five,5,prev:-1028260443,next:_)
+      #|(3,one,1|prev:_|next:5)
+      #|(5,two,20|prev:3|next:6)
+      #|(6,four,4|prev:5|next:7)
+      #|(7,five,5|prev:6|next:_)
       #|end
     ,
   )?
@@ -278,9 +304,9 @@ test "linked list" {
   inspect(
     m.debug_linked_list(),
     content=
-      #|(1759420741,two,20,prev:_,next:-1028260443)
-      #|(-1028260443,four,4,prev:1759420741,next:-1715605027)
-      #|(-1715605027,five,5,prev:-1028260443,next:_)
+      #|(5,two,20|prev:_|next:6)
+      #|(6,four,4|prev:5|next:7)
+      #|(7,five,5|prev:6|next:_)
       #|end
     ,
   )?
@@ -288,8 +314,8 @@ test "linked list" {
   inspect(
     m.debug_linked_list(),
     content=
-      #|(1759420741,two,20,prev:_,next:-1028260443)
-      #|(-1028260443,four,4,prev:1759420741,next:_)
+      #|(5,two,20|prev:_|next:6)
+      #|(6,four,4|prev:5|next:_)
       #|end
     ,
   )?
@@ -297,7 +323,7 @@ test "linked list" {
   inspect(
     m.debug_linked_list(),
     content=
-      #|(-1028260443,four,4,prev:_,next:_)
+      #|(5,four,4|prev:_|next:_)
       #|end
     ,
   )?
