@@ -22,7 +22,7 @@ pub trait Eq {
 /// The return value of [compare] is:
 /// - zero, if the two arguments are equal
 /// - negative, if the first argument is smaller
-/// - positive, if the second argument is greater
+/// - positive, if the first argument is greater
 pub trait Compare: Eq {
   compare(Self, Self) -> Int
 }
