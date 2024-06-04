@@ -79,3 +79,18 @@ pub fn Array::new_with_index[T](length : Int, value : (Int) -> T) -> Array[T] {
     array
   }
 }
+
+fn rand(upper : Int) -> Int {
+  let summoner = @random.RandomInt::new()
+  summoner.summon() % upper
+}
+
+pub fn Array::shuffle[T](arr : Array[T], ~rand : (Int) -> Int = rand) -> Unit {
+  let n = arr.length()
+  let mut i = n - 1
+  while i > 0 {
+    let j = rand(i + 1)
+    arr.swap(i, j)
+    i = i - 1
+  }
+}

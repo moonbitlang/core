@@ -437,3 +437,9 @@ test "as_iter" {
   )
   inspect(buf, content="12")?
 }
+
+test "shuffle" {
+  let arr : Array[Int] = [1, 2, 3, 4, 5, 6, 7]
+  Array::shuffle(arr)
+  inspect(arr, content="[2, 3, 7, 5, 6, 1, 4]")?
+}
