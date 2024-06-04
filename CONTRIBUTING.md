@@ -49,7 +49,7 @@ Now it's time to make your changes to the codebase. Whether it's fixing a bug, a
 Currently there are some simple restrictions for naming convention and code formatting:
 
 - All function names, method names, and variables should use `snake_case`, while all type names should use `PascalCase`.
-- The code formatting should align with the result of moonfmt as much as possible.
+- The code formatting should align with the result of `moon fmt`.
 - For public functions and types, tests and documentation should be provided. 
 
 
@@ -60,6 +60,7 @@ After making your changes, it's important to test them to ensure they work as ex
   ```bash
   moon check
   moon test
+  moon fmt
   moon bundle
   moon info // Generate mbti files, these files should be tracked by git
   ```
