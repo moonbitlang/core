@@ -3,8 +3,8 @@
 ## Step 0: Contributor License Agreement
 
 - Before sending your first change to the moonbitlang/core project, you must have completed one of the following two CLAs, depending on who owns the copyright to your work:
-  - To sign the Individual Contributor License Agreement, you can either sign it online by visiting https://moonbitlang.com/cla or download the CLA from [ICLA-IDEA_IDEA Legal_202311.pdf
-](https://github.com/moonbitlang/CLA/blob/main/ICLA-IDEA_IDEA%20Legal_202311.pdf), sign it, and send it to us at jichuruanjian@idea.edu.cn.
+  - To sign the Individual Contributor License Agreement, you can either sign it online by visiting https://moonbitlang.com/cla (**recommended**) or download the CLA from [ICLA-IDEA_IDEA Legal_202311.pdf
+](https://github.com/moonbitlang/CLA/blob/main/ICLA-IDEA_IDEA%20Legal_202311.pdf), include your GitHub username, sign it, and send it to us at jichuruanjian@idea.edu.cn.
   - To sign the Corporate Contributor License Agreement, download the CLA from [CCLA-IDEA_IDEA Legal_202311.pdf
 ](https://github.com/moonbitlang/CLA/blob/main/CCLA-IDEA_IDEA%20Legal_202311.pdf), sign it, and send it to us at jichuruanjian@idea.edu.cn.
 
