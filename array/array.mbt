@@ -97,7 +97,7 @@ pub fn Array::new_with_index[T](length : Int, value : (Int) -> T) -> Array[T] {
 pub fn Array::shuffle_in_place[T](arr : Array[T], ~rand : (Int) -> Int) -> Unit {
   let n = arr.length()
   for i = n - 1; i > 0; i = i - 1 {
-    let j = rand(i + 1) % (i + 1) 
+    let j = rand(i + 1) % (i + 1)
     // for safety, perf is not a concern here
     // TODO: maybe return an error later
     arr.swap(i, j)
