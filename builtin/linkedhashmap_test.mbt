@@ -86,21 +86,21 @@ test "op_equal" {
       hash: 123,
       key: "a",
       value: 456,
-  };
+  }
   let entry2 =  {
       idx: 2,
       psl: 0,
       hash: 123,
       key: "a",
       value: 456,
-  };
+  }
   let entry3 =  {
       idx: 2,
       psl: 0,
       hash: 123,
       key: "b",
       value: 456,
-  };
+  }
 
   let entry4 =  {
       idx: 2,
@@ -108,7 +108,7 @@ test "op_equal" {
       hash: 124,
       key: "a",
       value: 456,
-  };
+  }
 
   @assertion.assert_true(entry1 == entry2)?
   @assertion.assert_true(entry1 != entry3)?
