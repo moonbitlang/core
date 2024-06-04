@@ -79,6 +79,42 @@ test "op_get" {
   @assertion.assert_eq(m["c"], None)?
 }
 
+test "op_equal" {
+  let entry1 =  {
+      idx: 0,
+      psl: 0,
+      hash: 123,
+      key: "a",
+      value: 456,
+  };
+  let entry2 =  {
+      idx: 2,
+      psl: 0,
+      hash: 123,
+      key: "a",
+      value: 456,
+  };
+  let entry3 =  {
+      idx: 2,
+      psl: 0,
+      hash: 123,
+      key: "b",
+      value: 456,
+  };
+
+  let entry4 =  {
+      idx: 2,
+      psl: 0,
+      hash: 124,
+      key: "a",
+      value: 456,
+  };
+
+  @assertion.assert_true(entry1 == entry2)?
+  @assertion.assert_true(entry1 != entry3)?
+  @assertion.assert_true(entry1 != entry4)?
+}
+
 test "set_update" {
   let m : Map[String, Int] = Map::new()
   m.set("a", 1)
