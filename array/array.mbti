@@ -40,7 +40,8 @@ impl Array {
   blit_to[A](Self[A], Self[A], ~len : Int, ~src_offset : Int = .., ~dst_offset : Int = ..) -> Unit
   copy[T](Self[T]) -> Self[T]
   new_with_index[T](Int, (Int) -> T) -> Self[T]
-  shuffle[T](Self[T], ~rand : (Int) -> Int = ..) -> Unit
+  shuffle[T](Self[T], ~rand : (Int) -> Int) -> Self[T]
+  shuffle_in_place[T](Self[T], ~rand : (Int) -> Int) -> Unit
   sort[T : Compare + Eq](Self[T]) -> Unit
   sort_by[T](Self[T], (T, T) -> Int) -> Unit
   sort_by_key[T, K : Compare + Eq](Self[T], (T) -> K) -> Unit

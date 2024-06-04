@@ -438,6 +438,17 @@ test "as_iter" {
   inspect(buf, content="12")?
 }
 
+test "shuffle_in_place" {
+  let arr : Array[Int] = [1, 2, 3, 4, 5, 6, 7]
+  fn rand(upper : Int) -> Int {
+    let rng = @random.RandomInt::new()
+    rng.summon() % upper
+  }
+
+  Array::shuffle_in_place(arr, ~rand)
+  inspect(arr, content="[2, 3, 7, 5, 6, 1, 4]")?
+}
+
 test "shuffle" {
   let arr : Array[Int] = [1, 2, 3, 4, 5, 6, 7]
   fn rand(upper : Int) -> Int {
@@ -445,6 +456,6 @@ test "shuffle" {
     rng.summon() % upper
   }
 
-  Array::shuffle_in_place(arr, ~rand=rand)
-  inspect(arr, content="[2, 3, 7, 5, 6, 1, 4]")?
+  let shuffled = Array::shuffle(arr, ~rand)
+  inspect(shuffled, content="[2, 3, 7, 5, 6, 1, 4]")?
 }
