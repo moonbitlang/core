@@ -50,7 +50,8 @@ struct Map[K, V] {
   mut entries : FixedArray[Entry[K, V]?]
   mut list : FixedArray[ListNode[K, V]] // list of (prev, next)
   mut size : Int // active key-value pairs count
-  mut capacity : Int // current capacity 
+  mut capacity : Int // current capacity
+  mut capacity_mask : Int // capacity_mask = capacity - 1, used to find idx
   mut growAt : Int // threshold that triggers grow
   mut head : Entry[K, V]? // head of linked list
   mut tail : Entry[K, V]? // tail of linked list
@@ -82,11 +83,14 @@ test "power_2_above" {
 }
 
 /// Create a hash map.
+/// The capacity of the map will be the smallest power of 2 that is
+/// greater than or equal to the provided [capacity].
 pub fn Map::new[K, V](~capacity : Int = 8) -> Map[K, V] {
   let capacity = power_2_above(8, capacity)
   {
     size: 0,
     capacity,
+    capacity_mask: capacity - 1,
     growAt: calc_grow_threshold(capacity),
     entries: FixedArray::make(capacity, None),
     list: FixedArray::make(capacity, { prev: None, next: None }),
@@ -112,7 +116,7 @@ pub fn set[K : Hash + Eq, V](self : Map[K, V], key : K, value : V) -> Unit {
   let insert_entry = { idx: -1, psl: 0, hash, key, value }
   loop
     0,
-    hash.land(self.capacity - 1),
+    hash.land(self.capacity_mask),
     insert_entry,
     { prev: None, next: None } {
     i, idx, entry, node => {
@@ -140,12 +144,12 @@ pub fn set[K : Hash + Eq, V](self : Map[K, V], key : K, value : V) -> Unit {
             entry.idx = idx
             curr_entry.psl += 1
             continue i + 1,
-              (idx + 1).land(self.capacity - 1),
+              (idx + 1).land(self.capacity_mask),
               curr_entry,
               curr_node
           } else {
             entry.psl += 1
-            continue i + 1, (idx + 1).land(self.capacity - 1), entry, node
+            continue i + 1, (idx + 1).land(self.capacity_mask), entry, node
           }
         }
       }
@@ -160,7 +164,7 @@ pub fn op_set[K : Hash + Eq, V](self : Map[K, V], key : K, value : V) -> Unit {
 /// Get the value associated with a key.
 pub fn get[K : Hash + Eq, V](self : Map[K, V], key : K) -> V? {
   let hash = key.hash()
-  for i = 0, idx = hash.land(self.capacity - 1) {
+  for i = 0, idx = hash.land(self.capacity_mask) {
     match self.entries[idx] {
       Some(entry) => {
         if entry.hash == hash && entry.key == key {
@@ -169,7 +173,7 @@ pub fn get[K : Hash + Eq, V](self : Map[K, V], key : K) -> V? {
         if i > entry.psl {
           break None
         }
-        continue i + 1, (idx + 1).land(self.capacity - 1)
+        continue i + 1, (idx + 1).land(self.capacity_mask)
       }
       None => break None
     }
@@ -204,7 +208,7 @@ pub fn contains[K : Hash + Eq, V](self : Map[K, V], key : K) -> Bool {
 /// Remove a key-value pair from hash map.
 pub fn remove[K : Hash + Eq, V](self : Map[K, V], key : K) -> Unit {
   let hash = key.hash()
-  for i = 0, idx = hash.land(self.capacity - 1) {
+  for i = 0, idx = hash.land(self.capacity_mask) {
     match self.entries[idx] {
       Some(entry) => {
         if entry.hash == hash && entry.key == key {
@@ -217,7 +221,7 @@ pub fn remove[K : Hash + Eq, V](self : Map[K, V], key : K) -> Unit {
         if i > entry.psl {
           break
         }
-        continue i + 1, (idx + 1).land(self.capacity - 1)
+        continue i + 1, (idx + 1).land(self.capacity_mask)
       }
       None => break
     }
@@ -266,7 +270,7 @@ fn remove_entry[K : Eq, V](self : Map[K, V], entry : Entry[K, V]) -> Unit {
 }
 
 fn shift_back[K : Hash, V](self : Map[K, V], start_index : Int) -> Unit {
-  for prev = start_index, curr = (start_index + 1).land(self.capacity - 1) {
+  for prev = start_index, curr = (start_index + 1).land(self.capacity_mask) {
     match self.entries[curr] {
       Some(entry) => {
         if entry.psl == 0 {
@@ -276,7 +280,7 @@ fn shift_back[K : Hash, V](self : Map[K, V], start_index : Int) -> Unit {
         entry.idx = prev
         self.entries[prev] = Some(entry)
         self.entries[curr] = None
-        continue curr, (curr + 1).land(self.capacity - 1)
+        continue curr, (curr + 1).land(self.capacity_mask)
       }
       None => break
     }
@@ -290,6 +294,7 @@ fn grow[K : Hash + Eq, V](self : Map[K, V]) -> Unit {
   self.entries = FixedArray::make(new_capacity, None)
   self.list = FixedArray::make(new_capacity, { prev: None, next: None })
   self.capacity = new_capacity
+  self.capacity_mask = new_capacity - 1
   self.growAt = calc_grow_threshold(self.capacity)
   self.size = 0
   self.head = None
