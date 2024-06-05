@@ -670,3 +670,12 @@ test "op_equal" {
   let m2 : Map[String, Int] = Map::[("a", 1), ("b", 2), ("c", 3)]
   @assertion.assert_eq(m1 == m2, true)?
 }
+
+test "to_string" {
+  let m : Map[String, Int] = Map::new()
+  inspect(m.to_string(), content="Map::[]")?
+  m.set("a", 1)
+  m.set("b", 2)
+  m.set("c", 3)
+  inspect(m.to_string(), content="Map::[{a:1}, {b:2}, {c:3}]")?
+}
