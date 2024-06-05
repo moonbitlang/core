@@ -160,6 +160,7 @@ impl Map {
   capacity[K, V](Self[K, V]) -> Int
   clear[K, V](Self[K, V]) -> Unit
   contains[K : Hash + Eq, V](Self[K, V], K) -> Bool
+  debug_write[K : Debug, V : Debug](Self[K, V], Buffer) -> Unit
   from_array[K : Hash + Eq, V](Array[Tuple[K, V]]) -> Self[K, V]
   get[K : Hash + Eq, V](Self[K, V], K) -> Option[V]
   get_or_default[K : Hash + Eq, V](Self[K, V], K, V) -> V
@@ -167,12 +168,14 @@ impl Map {
   iter[K, V](Self[K, V], (K, V) -> Unit) -> Unit
   iteri[K, V](Self[K, V], (Int, K, V) -> Unit) -> Unit
   new[K, V](~capacity : Int = ..) -> Self[K, V]
+  op_equal[K : Eq, V : Eq](Self[K, V], Self[K, V]) -> Bool
   op_get[K : Hash + Eq, V](Self[K, V], K) -> Option[V]
   op_set[K : Hash + Eq, V](Self[K, V], K, V) -> Unit
   remove[K : Hash + Eq, V](Self[K, V], K) -> Unit
   set[K : Hash + Eq, V](Self[K, V], K, V) -> Unit
   size[K, V](Self[K, V]) -> Int
   to_array[K, V](Self[K, V]) -> Array[Tuple[K, V]]
+  to_string[K : Debug, V : Debug](Self[K, V]) -> String
 }
 
 pub type SourceLoc
