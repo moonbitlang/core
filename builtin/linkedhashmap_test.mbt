@@ -235,74 +235,90 @@ test "iter order" {
 
 test "linked list" {
   let m : Map[String, Int] = Map::[]
-  inspect(m.debug_linked_list(), content="end")?
+  let buf = Buffer::make(0)
+  m.debug_write(buf)
+  inspect(buf, content="end")?
   m["one"] = 1
   m["two"] = 2
   m["three"] = 3
   m["four"] = 4
   m["five"] = 5
+  let buf = Buffer::make(0)
+  m.debug_write(buf)
   inspect(
-    m.debug_linked_list(),
+    buf,
     content=
-      #|(-684882541,one,1,prev:_,next:1759420741)
-      #|(1759420741,two,2,prev:-684882541,next:957272809)
-      #|(957272809,three,3,prev:1759420741,next:-1028260443)
-      #|(-1028260443,four,4,prev:957272809,next:-1715605027)
-      #|(-1715605027,five,5,prev:-1028260443,next:_)
+      #|(-684882541,"one",1),prev:_,next:1759420741)
+      #|(1759420741,"two",2),prev:-684882541,next:957272809)
+      #|(957272809,"three",3),prev:1759420741,next:-1028260443)
+      #|(-1028260443,"four",4),prev:957272809,next:-1715605027)
+      #|(-1715605027,"five",5),prev:-1028260443,next:_)
       #|end
     ,
   )?
   m.remove("three")
+  let buf = Buffer::make(0)
+  m.debug_write(buf)
   inspect(
-    m.debug_linked_list(),
+    buf,
     content=
-      #|(-684882541,one,1,prev:_,next:1759420741)
-      #|(1759420741,two,2,prev:-684882541,next:-1028260443)
-      #|(-1028260443,four,4,prev:1759420741,next:-1715605027)
-      #|(-1715605027,five,5,prev:-1028260443,next:_)
+      #|(-684882541,"one",1),prev:_,next:1759420741)
+      #|(1759420741,"two",2),prev:-684882541,next:-1028260443)
+      #|(-1028260443,"four",4),prev:1759420741,next:-1715605027)
+      #|(-1715605027,"five",5),prev:-1028260443,next:_)
       #|end
     ,
   )?
   m.set("two", 20)
+  let buf = Buffer::make(0)
+  m.debug_write(buf)
   inspect(
-    m.debug_linked_list(),
+    buf,
     content=
-      #|(-684882541,one,1,prev:_,next:1759420741)
-      #|(1759420741,two,20,prev:-684882541,next:-1028260443)
-      #|(-1028260443,four,4,prev:1759420741,next:-1715605027)
-      #|(-1715605027,five,5,prev:-1028260443,next:_)
+      #|(-684882541,"one",1),prev:_,next:1759420741)
+      #|(1759420741,"two",20),prev:-684882541,next:-1028260443)
+      #|(-1028260443,"four",4),prev:1759420741,next:-1715605027)
+      #|(-1715605027,"five",5),prev:-1028260443,next:_)
       #|end
     ,
   )?
   m.remove("one")
+  let buf = Buffer::make(0)
+  m.debug_write(buf)
   inspect(
-    m.debug_linked_list(),
+    buf,
     content=
-      #|(1759420741,two,20,prev:_,next:-1028260443)
-      #|(-1028260443,four,4,prev:1759420741,next:-1715605027)
-      #|(-1715605027,five,5,prev:-1028260443,next:_)
+      #|(1759420741,"two",20),prev:_,next:-1028260443)
+      #|(-1028260443,"four",4),prev:1759420741,next:-1715605027)
+      #|(-1715605027,"five",5),prev:-1028260443,next:_)
       #|end
     ,
   )?
   m.remove("five")
+  let buf = Buffer::make(0)
+  m.debug_write(buf)
   inspect(
-    m.debug_linked_list(),
+    buf,
     content=
-      #|(1759420741,two,20,prev:_,next:-1028260443)
-      #|(-1028260443,four,4,prev:1759420741,next:_)
+      #|(1759420741,"two",20),prev:_,next:-1028260443)
+      #|(-1028260443,"four",4),prev:1759420741,next:_)
       #|end
     ,
   )?
   m.remove("two")
+  let buf = Buffer::make(0)
+  m.debug_write(buf)
   inspect(
-    m.debug_linked_list(),
+    buf,
     content=
-      #|(-1028260443,four,4,prev:_,next:_)
+      #|(-1028260443,"four",4),prev:_,next:_)
       #|end
     ,
   )?
   m.remove("four")
-  inspect(m.debug_linked_list(), content="end")?
+  let buf = Buffer::make(0)
+  m.debug_write(buf)
+  inspect(buf, content="end")?
 }
 
 test "to_array" {
@@ -644,4 +660,22 @@ test "to_array" {
   m.set("b", 2)
   m.set("c", 3)
   @assertion.assert_eq(m.to_array(), [("a", 1), ("b", 2), ("c", 3)])?
+}
+
+test "op_equal" {
+  let m1 : Map[String, Int] = Map::new()
+  m1.set("a", 1)
+  m1.set("b", 2)
+  m1.set("c", 3)
+  let m2 : Map[String, Int] = Map::[("a", 1), ("b", 2), ("c", 3)]
+  @assertion.assert_eq(m1 == m2, true)?
+}
+
+test "to_string" {
+  let m : Map[String, Int] = Map::new()
+  inspect(m.to_string(), content="Map::[]")?
+  m.set("a", 1)
+  m.set("b", 2)
+  m.set("c", 3)
+  inspect(m.to_string(), content="Map::[{a:1}, {b:2}, {c:3}]")?
 }

@@ -329,30 +329,21 @@ fn debug_entries[K : Show, V : Show](self : Map[K, V]) -> String {
   buf.to_string()
 }
 
-fn debug_linked_list[K : Show, V : Show](self : Map[K, V]) -> String {
-  let buf = Buffer::make(0)
-  loop self.head {
-    Some({ idx, key, value, hash, .. }) => {
-      buf.write_char('(')
-      buf.write_string("\(hash),\(key),\(value)")
-      buf.write_string(",prev:")
-      let node = self.list[idx]
-      match node.prev {
-        Some({ hash, .. }) => buf.write_string(hash.to_string())
-        None => buf.write_char('_')
-      }
-      buf.write_string(",next:")
-      match node.next {
-        Some({ hash, .. }) => buf.write_string(hash.to_string())
-        None => buf.write_char('_')
-      }
-      buf.write_char(')')
-      buf.write_char('\n')
-      continue node.next
-    }
-    None => buf.write_string("end")
+pub fn to_string[K : Show, V : Show](self : Map[K, V]) -> String {
+  if self.size == 0 {
+    return "Map::[]"
   }
-  buf.to_string()
+  loop 0, self.head, "Map::[" {
+    _, None, _ as acc => return acc + "]"
+    i, Some({ key, value, idx, .. }), acc => {
+      let nxt = self.list[idx].next
+      if i > 0 {
+        // To remove the last comma
+        continue i + 1, nxt, acc + ", {\(key):\(value)}"
+      }
+      continue i + 1, nxt, acc + "{\(key):\(value)}"
+    }
+  }
 }
 
 /// Get the number of key-value pairs in the map.
@@ -428,4 +419,21 @@ pub fn to_array[K, V](self : Map[K, V]) -> Array[(K, V)] {
     None => break
   }
   arr
+}
+
+pub fn op_equal[K : Eq, V : Eq](self : Map[K, V], that : Map[K, V]) -> Bool {
+  if self.size != that.size {
+    return false
+  }
+  loop self.head, that.head {
+    None, None => true
+    Some({ key: k1, value: v1, idx: i1, .. }),
+    Some({ key: k2, value: v2, idx: i2, .. }) => {
+      if k1 != k2 || v1 != v2 {
+        return false
+      }
+      continue self.list[i1].next, that.list[i2].next
+    }
+    _, _ => false
+  }
 }

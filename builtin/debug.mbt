@@ -159,3 +159,36 @@ pub fn debug_write(self : String, buf : Buffer) -> Unit {
   flush_segment(self.length())
   buf.write_char('"')
 }
+
+pub fn debug_write[K : Debug, V : Debug](
+  self : Map[K, V],
+  buf : Buffer
+) -> Unit {
+  loop self.head {
+    Some({ idx, key, value, hash, .. }) => {
+      buf.write_char('(')
+      // buf.write_string("\(hash),\(key),\(value)")
+      hash.debug_write(buf)
+      buf.write_char(',')
+      key.debug_write(buf)
+      buf.write_char(',')
+      value.debug_write(buf)
+      buf.write_char(')')
+      buf.write_string(",prev:")
+      let node = self.list[idx]
+      match node.prev {
+        Some({ hash, .. }) => buf.write_string(hash.to_string())
+        None => buf.write_char('_')
+      }
+      buf.write_string(",next:")
+      match node.next {
+        Some({ hash, .. }) => buf.write_string(hash.to_string())
+        None => buf.write_char('_')
+      }
+      buf.write_char(')')
+      buf.write_char('\n')
+      continue node.next
+    }
+    None => buf.write_string("end")
+  }
+}
