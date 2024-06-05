@@ -661,3 +661,12 @@ test "to_array" {
   m.set("c", 3)
   @assertion.assert_eq(m.to_array(), [("a", 1), ("b", 2), ("c", 3)])?
 }
+
+test "op_equal" {
+  let m1 : Map[String, Int] = Map::new()
+  m1.set("a", 1)
+  m1.set("b", 2)
+  m1.set("c", 3)
+  let m2 : Map[String, Int] = Map::[("a", 1), ("b", 2), ("c", 3)]
+  @assertion.assert_eq(m1 == m2, true)?
+}
