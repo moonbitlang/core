@@ -419,7 +419,7 @@ pub fn as_iter[K, V](self : Map[K, V]) -> Iter[(K, V)] {
 
 /// Converts the hash map to an array.
 pub fn to_array[K, V](self : Map[K, V]) -> Array[(K, V)] {
-  let arr = []
+  let arr = Array::with_capacity(self.size)
   loop self.head {
     Some({ key, value, idx, .. }) => {
       arr.push((key, value))
