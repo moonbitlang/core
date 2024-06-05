@@ -1,0 +1,458 @@
+// Copyright 2024 International Digital Economy Academy
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+//region MyInt64
+priv struct MyInt64 {
+  hi : Int
+  lo : Int
+}
+
+fn MyInt64::to_int64(self : MyInt64) -> Int64 = "%identity"
+
+fn MyInt64::from_int64(value : Int64) -> MyInt64 = "%identity"
+
+fn MyInt64::op_neg(self : MyInt64) -> MyInt64 {
+  if self.lo == 0 {
+    { hi: self.hi.lnot() + 1, lo: 0 }
+  } else {
+    { hi: self.hi.lnot(), lo: self.lo.lnot() + 1 }
+  }
+}
+
+fn MyInt64::add_hi_lo(self : MyInt64, bhi : Int, blo : Int) -> MyInt64 {
+  let { hi: ahi, lo: alo } = self
+  let lo = alo + blo
+  let s = lo.asr(31)
+  let as_ = alo.asr(31)
+  let bs = blo.asr(31)
+  let c = as_.land(bs).lor(s.lnot().land(as_.lxor(bs))).land(1)
+  let hi = ahi + bhi + c
+  { hi, lo }
+}
+
+fn MyInt64::op_add(self : MyInt64, other : MyInt64) -> MyInt64 {
+  add_hi_lo(self, other.hi, other.lo)
+}
+
+fn MyInt64::op_sub(self : MyInt64, other : MyInt64) -> MyInt64 {
+  if other.lo == 0 {
+    { hi: self.hi - other.hi, lo: self.lo }
+  } else {
+    add_hi_lo(self, other.hi.lnot(), other.lo.lnot() + 1)
+  }
+}
+
+fn MyInt64::op_mul(self : MyInt64, other : MyInt64) -> MyInt64 {
+  let { hi: ahi, lo: alo } = self
+  let { hi: bhi, lo: blo } = other
+  let a48 = ahi.lsr(16)
+  let a32 = ahi.land(0xffff)
+  let a16 = alo.lsr(16)
+  let a00 = alo.land(0xffff)
+  let b48 = bhi.lsr(16)
+  let b32 = bhi.land(0xffff)
+  let b16 = blo.lsr(16)
+  let b00 = blo.land(0xffff)
+  let c00 = a00 * b00
+  let c16 = c00.lsr(16)
+  let c00 = c00.land(0xffff)
+  let c16 = c16 + a16 * b00
+  let c32 = c16.lsr(16)
+  let c16 = c16.land(0xffff)
+  let c16 = c16 + a00 * b16
+  let c32 = c32 + c16.lsr(16)
+  let c16 = c16.land(0xffff)
+  let c32 = c32 + a32 * b00
+  let c48 = c32.lsr(16)
+  let c32 = c32.land(0xffff)
+  let c32 = c32 + a16 * b16
+  let c48 = c48 + c32.lsr(16)
+  let c32 = c32.land(0xffff)
+  let c32 = c32 + a00 * b32
+  let c48 = c48 + c32.lsr(16)
+  let c32 = c32.land(0xffff)
+  let c48 = c48 + a48 * b00 + a32 * b16 + a16 * b32 + a00 * b48
+  let c48 = c48.land(0xffff)
+  { hi: c48.lsl(16).lor(c32), lo: c16.lsl(16).lor(c00) }
+}
+
+struct Int64WasmHelper {
+  div_s : (Int, Int, Int, Int) -> Int
+  div_u : (Int, Int, Int, Int) -> Int
+  rem_s : (Int, Int, Int, Int) -> Int
+  rem_u : (Int, Int, Int, Int) -> Int
+  get_high : () -> Int
+}
+
+extern "js" fn get_int64_wasm_helper() -> Int64WasmHelper =
+  #|function f() {
+  #|  if (f._exports) return f._exports;
+  #|  return f._exports = new WebAssembly.Instance(new WebAssembly.Module(new Uint8Array([0, 97, 115, 109, 1, 0, 0, 0, 1, 13, 2, 96, 0, 1, 127, 96, 4, 127, 127, 127, 127, 1, 127, 3, 7, 6, 0, 1, 1, 1, 1, 1, 6, 6, 1, 127, 1, 65, 0, 11, 7, 50, 6, 3, 109, 117, 108, 0, 1, 5, 100, 105, 118, 95, 115, 0, 2, 5, 100, 105, 118, 95, 117, 0, 3, 5, 114, 101, 109, 95, 115, 0, 4, 5, 114, 101, 109, 95, 117, 0, 5, 8, 103, 101, 116, 95, 104, 105, 103, 104, 0, 0, 10, 191, 1, 6, 4, 0, 35, 0, 11, 36, 1, 1, 126, 32, 0, 173, 32, 1, 173, 66, 32, 134, 132, 32, 2, 173, 32, 3, 173, 66, 32, 134, 132, 126, 34, 4, 66, 32, 135, 167, 36, 0, 32, 4, 167, 11, 36, 1, 1, 126, 32, 0, 173, 32, 1, 173, 66, 32, 134, 132, 32, 2, 173, 32, 3, 173, 66, 32, 134, 132, 127, 34, 4, 66, 32, 135, 167, 36, 0, 32, 4, 167, 11, 36, 1, 1, 126, 32, 0, 173, 32, 1, 173, 66, 32, 134, 132, 32, 2, 173, 32, 3, 173, 66, 32, 134, 132, 128, 34, 4, 66, 32, 135, 167, 36, 0, 32, 4, 167, 11, 36, 1, 1, 126, 32, 0, 173, 32, 1, 173, 66, 32, 134, 132, 32, 2, 173, 32, 3, 173, 66, 32, 134, 132, 129, 34, 4, 66, 32, 135, 167, 36, 0, 32, 4, 167, 11, 36, 1, 1, 126, 32, 0, 173, 32, 1, 173, 66, 32, 134, 132, 32, 2, 173, 32, 3, 173, 66, 32, 134, 132, 130, 34, 4, 66, 32, 135, 167, 36, 0, 32, 4, 167, 11])), {}).exports;
+  #|}
+
+fn MyInt64::op_div(self : MyInt64, other : MyInt64) -> MyInt64 {
+  let exports = get_int64_wasm_helper()
+  let { hi: ahi, lo: alo } = self
+  let { hi: bhi, lo: blo } = other
+  let lo = (exports.div_s)(alo, ahi, blo, bhi)
+  let hi = (exports.get_high)()
+  { hi, lo }
+}
+
+fn MyInt64::div_u(self : MyInt64, other : MyInt64) -> MyInt64 {
+  let exports = get_int64_wasm_helper()
+  let { hi: ahi, lo: alo } = self
+  let { hi: bhi, lo: blo } = other
+  let lo = (exports.div_u)(alo, ahi, blo, bhi)
+  let hi = (exports.get_high)()
+  { hi, lo }
+}
+
+fn MyInt64::op_mod(self : MyInt64, other : MyInt64) -> MyInt64 {
+  let exports = get_int64_wasm_helper()
+  let { hi: ahi, lo: alo } = self
+  let { hi: bhi, lo: blo } = other
+  let lo = (exports.rem_s)(alo, ahi, blo, bhi)
+  let hi = (exports.get_high)()
+  { hi, lo }
+}
+
+fn MyInt64::mod_u(self : MyInt64, other : MyInt64) -> MyInt64 {
+  let exports = get_int64_wasm_helper()
+  let { hi: ahi, lo: alo } = self
+  let { hi: bhi, lo: blo } = other
+  let lo = (exports.rem_u)(alo, ahi, blo, bhi)
+  let hi = (exports.get_high)()
+  { hi, lo }
+}
+
+fn MyInt64::lnot(self : MyInt64) -> MyInt64 {
+  { hi: self.hi.lnot(), lo: self.lo.lnot() }
+}
+
+fn MyInt64::land(self : MyInt64, other : MyInt64) -> MyInt64 {
+  { hi: self.hi.land(other.hi), lo: self.lo.land(other.lo) }
+}
+
+fn MyInt64::lor(self : MyInt64, other : MyInt64) -> MyInt64 {
+  { hi: self.hi.lor(other.hi), lo: self.lo.lor(other.lo) }
+}
+
+fn MyInt64::lxor(self : MyInt64, other : MyInt64) -> MyInt64 {
+  { hi: self.hi.lxor(other.hi), lo: self.lo.lxor(other.lo) }
+}
+
+fn MyInt64::lsl(self : MyInt64, shift : Int) -> MyInt64 {
+  let shift = shift.land(63)
+  if shift == 0 {
+    self
+  } else if shift < 32 {
+    {
+      hi: self.hi.lsl(shift).lor(self.lo.lsr(32 - shift)),
+      lo: self.lo.lsl(shift),
+    }
+  } else {
+    { hi: self.lo.lsl(shift - 32), lo: 0 }
+  }
+}
+
+fn MyInt64::lsr(self : MyInt64, shift : Int) -> MyInt64 {
+  let shift = shift.land(63)
+  if shift == 0 {
+    self
+  } else if shift < 32 {
+    {
+      hi: self.hi.lsr(shift),
+      lo: self.lo.lsr(shift).lor(self.hi.lsl(32 - shift)),
+    }
+  } else {
+    { hi: 0, lo: self.hi.lsr(shift - 32) }
+  }
+}
+
+fn MyInt64::asr(self : MyInt64, shift : Int) -> MyInt64 {
+  let shift = shift.land(63)
+  if shift == 0 {
+    self
+  } else if shift < 32 {
+    {
+      hi: self.hi.asr(shift),
+      lo: self.lo.lsr(shift).lor(self.hi.lsl(32 - shift)),
+    }
+  } else {
+    { hi: self.hi.asr(31), lo: self.hi.asr(shift - 32) }
+  }
+}
+
+fn MyInt64::clz(self : MyInt64) -> Int {
+  if self.hi != 0 {
+    self.hi.clz()
+  } else {
+    32 + self.lo.clz()
+  }
+}
+
+fn MyInt64::ctz(self : MyInt64) -> Int {
+  if self.lo != 0 {
+    self.lo.ctz()
+  } else {
+    32 + self.hi.ctz()
+  }
+}
+
+fn MyInt64::popcnt(self : MyInt64) -> Int {
+  self.hi.popcnt() + self.lo.popcnt()
+}
+
+fn MyInt64::op_equal(self : MyInt64, other : MyInt64) -> Bool {
+  self.hi == other.hi && self.lo == other.lo
+}
+
+// a.lsr(0) is compiled to `(a >>> 0 | 0)` in JavaScript
+// so we can't use moonbit to generate the code
+
+extern "js" fn MyInt64::compare(self : MyInt64, other : MyInt64) -> Int =
+  #|(a, b) => {
+  #|  const ahi = a.hi;
+  #|  const bhi = b.hi;
+  #|  if (ahi < bhi) {
+  #|    return -1;
+  #|  }
+  #|  if (ahi > bhi) {
+  #|    return 1;
+  #|  }
+  #|  const alo = a.lo >>> 0;
+  #|  const blo = b.lo >>> 0;
+  #|  if (alo < blo) {
+  #|    return -1;
+  #|  }
+  #|  if (alo > blo) {
+  #|    return 1;
+  #|  }
+  #|  return 0;
+  #|}
+
+extern "js" fn MyInt64::compare_u(self : MyInt64, other : MyInt64) -> Int =
+  #|(a, b) => {
+  #|  const ahi = a.hi >>> 0;
+  #|  const bhi = b.hi >>> 0;
+  #|  if (ahi < bhi) {
+  #|    return -1;
+  #|  }
+  #|  if (ahi > bhi) {
+  #|    return 1;
+  #|  }
+  #|  const alo = a.lo >>> 0;
+  #|  const blo = b.lo >>> 0;
+  #|  if (alo < blo) {
+  #|    return -1;
+  #|  }
+  #|  if (alo > blo) {
+  #|    return 1;
+  #|  }
+  #|  return 0;
+  #|}
+
+fn MyInt64::from_int(value : Int) -> MyInt64 {
+  { hi: value.asr(31).land(-1), lo: value.lor(0) }
+}
+
+fn MyInt64::to_int(self : MyInt64) -> Int {
+  self.lo
+}
+
+extern "js" fn MyInt64::from_double(value : Double) -> MyInt64 =
+  #|(a) => {
+  #|  let neg = false;
+  #|  if (a < 0) {
+  #|    neg = true;
+  #|    a = -a;
+  #|  }
+  #|  let hi = (a * (1 / 0x100000000)) | 0;
+  #|  let lo = a >>> 0;
+  #|  if (neg) {
+  #|    if (lo === 0) {
+  #|      hi = ~hi + 1;
+  #|    } else {
+  #|      hi = ~hi;
+  #|      lo = ~lo + 1;
+  #|    }
+  #|  }
+  #|  return { hi, lo };
+  #|}
+
+extern "js" fn MyInt64::to_double(self : MyInt64) -> Double =
+  #|(a) => a.hi * 4294967296.0 + (a.lo >>> 0)
+
+fn MyInt64::extend_i32_u(value : Int) -> MyInt64 {
+  { hi: 0, lo: value }
+}
+
+extern "js" fn MyInt64::reinterpret_as_double(self : MyInt64) -> Double =
+  #|function f(a) {
+  #|  let view = f._view;
+  #|  if (view === undefined) {
+  #|    view = f._view = new DataView(new ArrayBuffer(8));
+  #|  }
+  #|  view.setUint32(0, a.hi);
+  #|  view.setUint32(4, a.lo);
+  #|  return view.getFloat64(0);
+  #|}
+
+extern "js" fn MyInt64::reinterpret_double(value : Double) -> MyInt64 =
+  #|function f(a) {
+  #|  let view = f._view;
+  #|  if (view === undefined) {
+  #|    view = f._view = new DataView(new ArrayBuffer(8));
+  #|  }
+  #|  view.setFloat64(0, a);
+  #|  const hi = view.getInt32(0);
+  #|  const lo = view.getInt32(4);
+  #|  return { hi, lo };
+  #|}
+
+extern "js" fn MyInt64::trunc_double_u(value : Double) -> MyInt64 =
+  #|(a) => {
+  #|  let hi = (a * (1 / 0x100000000)) | 0;
+  #|  let lo = a >>> 0;
+  #|  return { hi, lo };
+  #|}
+
+extern "js" fn MyInt64::convert_to_double_u(self : MyInt64) -> Double =
+  #|(a) => (a.hi >>> 0) * 4294967296.0 + (a.lo >>> 0)
+//endregion
+
+pub fn Int64::op_neg(self : Int64) -> Int64 {
+  (-MyInt64::from_int64(self)).to_int64()
+}
+
+pub fn Int64::op_add(self : Int64, other : Int64) -> Int64 {
+  MyInt64::from_int64(self).op_add(MyInt64::from_int64(other)).to_int64()
+}
+
+pub fn Int64::op_sub(self : Int64, other : Int64) -> Int64 {
+  MyInt64::from_int64(self).op_sub(MyInt64::from_int64(other)).to_int64()
+}
+
+pub fn Int64::op_mul(self : Int64, other : Int64) -> Int64 {
+  MyInt64::from_int64(self).op_mul(MyInt64::from_int64(other)).to_int64()
+}
+
+pub fn Int64::op_div(self : Int64, other : Int64) -> Int64 {
+  MyInt64::from_int64(self).op_div(MyInt64::from_int64(other)).to_int64()
+}
+
+pub fn Int64::div_u(self : Int64, other : Int64) -> Int64 {
+  MyInt64::from_int64(self).div_u(MyInt64::from_int64(other)).to_int64()
+}
+
+pub fn Int64::op_mod(self : Int64, other : Int64) -> Int64 {
+  MyInt64::from_int64(self).op_mod(MyInt64::from_int64(other)).to_int64()
+}
+
+pub fn Int64::mod_u(self : Int64, other : Int64) -> Int64 {
+  MyInt64::from_int64(self).mod_u(MyInt64::from_int64(other)).to_int64()
+}
+
+pub fn Int64::lnot(self : Int64) -> Int64 {
+  MyInt64::from_int64(self).lnot().to_int64()
+}
+
+pub fn Int64::land(self : Int64, other : Int64) -> Int64 {
+  MyInt64::from_int64(self).land(MyInt64::from_int64(other)).to_int64()
+}
+
+pub fn Int64::lor(self : Int64, other : Int64) -> Int64 {
+  MyInt64::from_int64(self).lor(MyInt64::from_int64(other)).to_int64()
+}
+
+pub fn Int64::lxor(self : Int64, other : Int64) -> Int64 {
+  MyInt64::from_int64(self).lxor(MyInt64::from_int64(other)).to_int64()
+}
+
+pub fn Int64::lsl(self : Int64, other : Int) -> Int64 {
+  MyInt64::from_int64(self).lsl(other).to_int64()
+}
+
+pub fn Int64::lsr(self : Int64, other : Int) -> Int64 {
+  MyInt64::from_int64(self).lsr(other).to_int64()
+}
+
+pub fn Int64::asr(self : Int64, other : Int) -> Int64 {
+  MyInt64::from_int64(self).asr(other).to_int64()
+}
+
+pub fn Int64::ctz(self : Int64) -> Int {
+  MyInt64::from_int64(self).ctz()
+}
+
+pub fn Int64::clz(self : Int64) -> Int {
+  MyInt64::from_int64(self).clz()
+}
+
+pub fn Int64::popcnt(self : Int64) -> Int {
+  MyInt64::from_int64(self).popcnt()
+}
+
+pub fn Int64::op_equal(self : Int64, other : Int64) -> Bool {
+  MyInt64::from_int64(self) == MyInt64::from_int64(other)
+}
+
+pub fn Int64::compare(self : Int64, other : Int64) -> Int {
+  MyInt64::compare(MyInt64::from_int64(self), MyInt64::from_int64(other))
+}
+
+pub fn Int64::compare_u(self : Int64, other : Int64) -> Int {
+  MyInt64::compare_u(MyInt64::from_int64(self), MyInt64::from_int64(other))
+}
+
+pub fn Int64::default() -> Int64 {
+  0L
+}
+
+pub fn Int64::to_int(self : Int64) -> Int {
+  MyInt64::from_int64(self).to_int()
+}
+
+pub fn Int64::to_double(self : Int64) -> Double {
+  MyInt64::from_int64(self).to_double()
+}
+
+pub fn Int64::extend_i32_u(value : Int) -> Int64 {
+  MyInt64::extend_i32_u(value).to_int64()
+}
+
+pub fn Int64::reinterpret_as_double(self : Int64) -> Double {
+  MyInt64::reinterpret_as_double(MyInt64::from_int64(self))
+}
+
+pub fn Int64::trunc_double_u(value : Double) -> Int64 {
+  MyInt64::trunc_double_u(value).to_int64()
+}
+
+pub fn Int::to_int64(self : Int) -> Int64 {
+  MyInt64::from_int(self).to_int64()
+}
+
+pub fn Double::to_int64(self : Double) -> Int64 {
+  MyInt64::from_double(self).to_int64()
+}
+
+pub fn Double::reinterpret_as_i64(self : Double) -> Int64 {
+  MyInt64::reinterpret_double(self).to_int64()
+}
+
+pub fn Double::convert_i64_u(value : Int64) -> Double {
+  MyInt64::convert_to_double_u(MyInt64::from_int64(value))
+}
