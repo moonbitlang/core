@@ -13,22 +13,40 @@
 // limitations under the License.
 
 /// Compare two strings.
-/// String with longer length is bigger.
-/// strings of the same length are compared in lexicalgraphic order.
+/// 
+/// String are compared char-by-char by unicode code point value. 
+/// 
+/// ## Application Notes
+/// 
+/// For the char represented by UTF-16 surrogate pairs, comparation behavior may be 
+/// different from JavaScript mathematical operators (`<`, `>`). This is because current
+/// major JavaScript runtimes simply compare UTF-16 strings 16-bit-word-by-16-bit-word, 
+/// hence different from the order of Unicode code point value. 
 pub fn compare(self : String, other : String) -> Int {
-  let len = self.length()
-  match len.compare(other.length()) {
-    0 => {
-      for i = 0; i < len; i = i + 1 {
-        let order = self[i].compare(other[i])
-        if order != 0 {
-          return order
-        }
-      }
-      0
+  // NOTE: use traditional while loops, since we have no way to 
+  // poll 2 iterators (Iter[Char]) simultaneously.
+  let mut pa = 0
+  let mut pb = 0
+  let (la, lb) = (self.length(), other.length())
+  while pa < la && pa < lb {
+    let mut wa = self[pa].to_int()
+    let mut wb = other[pb].to_int()
+    if is_high_surrogate(wa) {
+      wa = char_from_surrogate_unchecked(wa, self[pa + 1].to_int()).to_int()
+      pa += 1
     }
-    order => order
+    if is_high_surrogate(wb) {
+      wb = char_from_surrogate_unchecked(wb, other[pb + 1].to_int()).to_int()
+      pb += 1
+    }
+    if not(wa == wb) {
+      return wa.compare(wb)
+    } else {
+      pa += 1
+      pb += 1
+    }
   }
+  la.compare(lb) // compare directly by length if common parts are identical
 }
 
 test "compare" {
@@ -37,8 +55,62 @@ test "compare" {
   @assertion.assert_eq(1, "abc".compare(""))?
   @assertion.assert_eq(-1, "abcd".compare("abce"))?
   @assertion.assert_eq(1, "abce".compare("abcd"))?
-  @assertion.assert_eq(-1, "c".compare("ab"))?
-  @assertion.assert_eq(1, "ab".compare("c"))?
+  @assertion.assert_eq(1, "c".compare("ab"))?
+  @assertion.assert_eq(-1, "ab".compare("c"))?
+
+  // real world examples
+  @assertion.assert_eq(-1, "Alice".compare("Bob"))?
+  @assertion.assert_eq(-1, "Bob".compare("John"))?
+  @assertion.assert_eq(-1, "Alice".compare("John"))?
+
+  // case-sensitive
+  @assertion.assert_eq(1, "alice".compare("Alice"))?
+  @assertion.assert_eq(1, "alice".compare("Bob"))?
+  @assertion.assert_eq(1, "alice".compare("Zulu"))?
+
+  // correct compare with surrogate pairs
+  // note: U+1F600 = 0xD83D 0xDE00 in UTF16
+  @assertion.assert_eq(-1, "\u{AC00}".compare("\u{FE11}"))?
+  @assertion.assert_eq(-1, "\u{FE11}".compare("\u{1F600}"))?
+  @assertion.assert_eq(-1, "\u{AC00}".compare("\u{1F600}"))?
+}
+
+/// Compare two strings case-insensitive.
+///
+/// String are compared char-by-char by unicode code point value, but ASCII letters 
+/// are compared case-insensitive. 
+pub fn compare_case_insensitive(self : String, other : String) -> Int {
+  // NOTE: use traditional while loops, since we have no way to 
+  // poll 2 iterators (Iter[Char]) simultaneously.
+  let mut pa = 0
+  let mut pb = 0
+  let (la, lb) = (self.length(), other.length())
+  while pa < la && pa < lb {
+    let mut wa = self[pa].to_int()
+    let mut wb = other[pb].to_int()
+    if is_high_surrogate(wa) {
+      wa = char_from_surrogate_unchecked(wa, self[pa + 1].to_int()).to_int()
+      pa += 1
+    }
+    if is_high_surrogate(wb) {
+      wb = char_from_surrogate_unchecked(wb, other[pb + 1].to_int()).to_int()
+      pb += 1
+    }
+    if not(wa == wb) {
+      return wa.compare(wb)
+    } else {
+      pa += 1
+      pb += 1
+    }
+  }
+  la.compare(lb) // compare directly by length if common parts are identical
+}
+
+test "compare_case_insensitive" {
+  // real world case-insensitive examples
+  @assertion.assert_eq(-1, "Alice".compare_case_insensitive("BOB"))?
+  @assertion.assert_eq(-1, "bOB".compare_case_insensitive("joHN"))?
+  @assertion.assert_eq(-1, "Alice".compare_case_insensitive("jOHn"))?
 }
 
 /// The empty string
@@ -158,11 +230,11 @@ pub fn as_iter(self : String) -> Iter[Char] {
     fn(yield) {
       let len = self.length()
       for index = 0; index < len; index = index + 1 {
-        let c = self[index].to_int()
-        if c >= 0xD800 && c <= 0xDBFF && index + 1 < len {
-          let c2 = self[index + 1].to_int()
-          if c2 >= 0xDC00 && c2 <= 0xDFFF {
-            let c = Char::from_int((c - 0xD800) * 0x400 + c2 - 0xDC00 + 0x10000)
+        let w1 = self[index].to_int()
+        if is_high_surrogate(w1) && index + 1 < len {
+          let w2 = self[index + 1].to_int()
+          if is_low_surrogate(w2) {
+            let c = char_from_surrogate_unchecked(w1, w2)
             if yield(c) {
               continue index + 2
             } else {
@@ -171,7 +243,7 @@ pub fn as_iter(self : String) -> Iter[Char] {
           }
         }
         //TODO: handle garbage input
-        if not(yield(Char::from_int(c))) {
+        if not(yield(Char::from_int(w1))) {
           break false
         }
       } else {
@@ -180,6 +252,9 @@ pub fn as_iter(self : String) -> Iter[Char] {
     },
   )
 }
+
+fn is_high_surrogate(word: Int) -> Bool { 0xD800 <= word && word <= 0xDBFF }
+fn is_low_surrogate(word: Int) -> Bool { 0xDC00 <= word && word <= 0xDFFF }
 
 test "chars" {
   let mut str = ""
@@ -200,4 +275,9 @@ test "chars" {
       #|
     ,
   )?
+}
+
+fn char_from_surrogate_unchecked(high: Int, low: Int) -> Char {
+  // NOTE: should put in `Char` if `pub(module)` accessibility level is available
+  Char::from_int((high.land(0x000003FF).lsl(10) + low.land(0x000003FF)) + 0x00010000)
 }
