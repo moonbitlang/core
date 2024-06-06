@@ -63,7 +63,7 @@ pub fn op_as_view[T](self : Array[T], ~start : Int, ~end : Int) -> ArrayView[T] 
   } else if start > end {
     abort("Slice start index greater than end index")
   }
-  ArrayView::{ buf: self.buf, start, len: end - start }
+  ArrayView::{ buf: self.buffer(), start, len: end - start }
 }
 
 pub fn op_as_view[T](
