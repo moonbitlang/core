@@ -66,7 +66,6 @@ impl Array {
   iter_rev[T](Self[T], (T) -> Unit) -> Unit
   iter_revi[T](Self[T], (Int, T) -> Unit) -> Unit
   iteri[T](Self[T], (Int, T) -> Unit) -> Unit
-  join[T](Self[Self[T]], T) -> Self[T]
   length[T](Self[T]) -> Int
   make[T](Int, T) -> Self[T]
   map[T, U](Self[T], (T) -> U) -> Self[U]

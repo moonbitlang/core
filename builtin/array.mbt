@@ -772,23 +772,6 @@ pub fn repeat[T](self : Array[T], times : Int) -> Array[T] {
   v
 }
 
-/// Flattens a vector of vectors with a given separator.
-///
-/// # Example
-/// ```
-/// Array::[Array::[3, 4], Array::[5, 6]].join(0)
-/// ```
-pub fn join[T](self : Array[Array[T]], sep : T) -> Array[T] {
-  let v = Array::new()
-  for i = 0; i < self.len; i = i + 1 {
-    v.append(self[i])
-    if i < self.len - 1 {
-      v.push(sep)
-    }
-  }
-  v
-}
-
 /// Fold out values from an array according to certain rules.
 ///
 /// # Example

@@ -327,11 +327,17 @@ test "repeat" {
   @assertion.assert_eq(vv.length(), 4)?
 }
 
-test "join" {
+test "flatten" {
   let v = [[3, 4], [5, 6]]
-  let vv = v.join(0)
-  @assertion.assert_eq(vv, [3, 4, 0, 5, 6])?
-  @assertion.assert_eq(vv.length(), 5)?
+  let vv = v.flatten()
+  inspect(vv, content="[3, 4, 5, 6]")?
+  inspect(vv.length(), content="4")?
+}
+
+test "join" {
+  let v = [3, 4, 5]
+  let s = v.join(", ")
+  @assertion.assert_eq(s, "3, 4, 5")?
 }
 
 test "fold_left" {

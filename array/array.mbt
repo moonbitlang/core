@@ -123,3 +123,27 @@ pub fn Array::shuffle[T](arr : Array[T], ~rand : (Int) -> Int) -> Array[T] {
   Array::shuffle_in_place(new_arr, ~rand)
   new_arr
 }
+
+/// Joins the elements of an array into a single string, using the specified separator.
+///
+/// # Arguments
+///
+/// * `self` - The array of strings to join.
+/// * `sep` - The separator string to insert between each element.
+///
+/// # Returns
+///
+/// The joined string.
+pub fn join[T : Show](self : Array[T], sep : String) -> String {
+  let len = self.length()
+  if len == 0 {
+    return ""
+  }
+  let buf = Buffer::make(0)
+  buf.write_string(self[0].to_string())
+  for i = 1; i < len; i = i + 1 {
+    buf.write_string(sep)
+    buf.write_string(self[i].to_string())
+  }
+  buf.to_string()
+}

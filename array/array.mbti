@@ -39,6 +39,7 @@ impl Array {
   as_iter[T](Self[T]) -> Iter[T]
   blit_to[A](Self[A], Self[A], ~len : Int, ~src_offset : Int = .., ~dst_offset : Int = ..) -> Unit
   copy[T](Self[T]) -> Self[T]
+  join[T : Show](Self[T], String) -> String
   new_with_index[T](Int, (Int) -> T) -> Self[T]
   shuffle[T](Self[T], ~rand : (Int) -> Int) -> Self[T]
   shuffle_in_place[T](Self[T], ~rand : (Int) -> Int) -> Unit
