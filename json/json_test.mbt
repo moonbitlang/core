@@ -266,6 +266,20 @@ test "deep access" {
 }
 
 test "stringify" {
+  fn temp_remove_json_chunks(json: String, chunk: String) -> String {
+    // TODO: obviously should be replaced by `String.replace(self,needle,replacement)`.
+    fn temp_compare_from_offset(haystack: String, needle: String, offset: Int) -> Bool {
+      for i = 0; i < needle.length(); i = i + 1 { if haystack[offset + i] != needle[i] { return false } }
+      return true
+    }
+    let max_offset = json.length() - chunk.length()
+    for offset = 0; offset <= max_offset; offset = offset + 1 {
+      if temp_compare_from_offset(json, chunk, offset) {
+        return json.substring(~end = offset) + json.substring(~start = offset + chunk.length())
+      }
+    }
+    return json
+  }
   let json = JsonValue::Object(
     @map.Map::[
       (
@@ -290,11 +304,18 @@ test "stringify" {
       ("obj", JsonValue::Object(@map.Map::[])),
     ],
   )
+  // NOTE: 
+  // JSON stringify doesn't have to be canonical, hence the comparasion have to be field order insensitive.
+  // This may cause troubles for our test here if not handled properly. 
   inspect(
-    json.stringify(),
-    content=
-      #|{"key":[1.0,true,null,[],{"key":"value","value":100.0}],"obj":{},"bool":false,"null":null}
-    ,
+    json.stringify()
+      |> temp_remove_json_chunks("{\"key\":\"value\",\"value\":100.0}")
+      |> temp_remove_json_chunks("{\"value\":100.0,\"key\":\"value\"}")
+      |> temp_remove_json_chunks("\"key\":[1.0,true,null,[],]")
+      |> temp_remove_json_chunks("\"obj\":{}")
+      |> temp_remove_json_chunks("\"bool\":false")
+      |> temp_remove_json_chunks("\"null\":null"),
+    content="{,,,}",
   )?
   inspect(parse(json.stringify()) == Ok(json), content="true")?
 }
