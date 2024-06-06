@@ -16,12 +16,12 @@
 /// times each chunk of code is executed. It's not very useful outside of 
 /// generated code.
 struct CoverageCounter {
-  counter : Array[Int]
+  counter : FixedArray[Int]
 } derive(Show)
 
 /// Create a new coverage counter with the given size.
 pub fn CoverageCounter::new(size : Int) -> CoverageCounter {
-  { counter: Array::make(size, 0) }
+  { counter: FixedArray::make(size, 0) }
 }
 
 /// Increment the specified tracking index.
