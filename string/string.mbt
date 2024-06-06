@@ -253,8 +253,13 @@ pub fn as_iter(self : String) -> Iter[Char] {
   )
 }
 
-fn is_high_surrogate(word: Int) -> Bool { 0xD800 <= word && word <= 0xDBFF }
-fn is_low_surrogate(word: Int) -> Bool { 0xDC00 <= word && word <= 0xDFFF }
+fn is_high_surrogate(word : Int) -> Bool {
+  0xD800 <= word && word <= 0xDBFF
+}
+
+fn is_low_surrogate(word : Int) -> Bool {
+  0xDC00 <= word && word <= 0xDFFF
+}
 
 test "chars" {
   let mut str = ""
@@ -277,7 +282,9 @@ test "chars" {
   )?
 }
 
-fn char_from_surrogate_unchecked(high: Int, low: Int) -> Char {
+fn char_from_surrogate_unchecked(high : Int, low : Int) -> Char {
   // NOTE: should put in `Char` if `pub(module)` accessibility level is available
-  Char::from_int((high.land(0x000003FF).lsl(10) + low.land(0x000003FF)) + 0x00010000)
+  Char::from_int(
+    high.land(0x000003FF).lsl(10) + low.land(0x000003FF) + 0x00010000,
+  )
 }

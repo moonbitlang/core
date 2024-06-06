@@ -81,16 +81,22 @@ pub fn hash(self : Char) -> Int {
   self.to_int()
 }
 
-fn compare_case_insensitive(self: Char, b: Char) -> Int {
-  fn is_ascii_letter(c: Char) -> Bool {
-    ('A' <= c && c <= 'Z') || ('a' <= c && c <= 'z')
+fn compare_case_insensitive(self : Char, b : Char) -> Int {
+  fn is_ascii_letter(c : Char) -> Bool {
+    'A' <= c && c <= 'Z' || 'a' <= c && c <= 'z'
   }
-  fn to_uppercase(c: Char) -> Char {
+
+  fn to_uppercase(c : Char) -> Char {
     // NOTE: 'a' - 'A' == 0x20
-    if 'a' <= c && c <= 'z' { Char::from_int(c.to_int() - 0x20) } else { c }
+    if 'a' <= c && c <= 'z' {
+      Char::from_int(c.to_int() - 0x20)
+    } else {
+      c
+    }
   }
-  if is_ascii_letter(self) && is_ascii_letter(b) { 
-    to_uppercase(self).compare(to_uppercase(b)) 
+
+  if is_ascii_letter(self) && is_ascii_letter(b) {
+    to_uppercase(self).compare(to_uppercase(b))
   } else {
     self.compare(b)
   }
@@ -98,14 +104,21 @@ fn compare_case_insensitive(self: Char, b: Char) -> Int {
 
 test "compare_case_insensitive" {
   let cases = [
-    (0, 'a', 'a'), (0, 'a', 'A'), (0, 'A', 'a'), (0, 'A', 'A'),
-    (-1, 'A', 'z'), (-1, 'a', 'Z'), (1, 'Z', 'a'), (1, 'z', 'A'),
-    (-1, 'N', '_'), (-1, '_', 'n'),
+    (0, 'a', 'a'),
+    (0, 'a', 'A'),
+    (0, 'A', 'a'),
+    (0, 'A', 'A'),
+    (-1, 'A', 'z'),
+    (-1, 'a', 'Z'),
+    (1, 'Z', 'a'),
+    (1, 'z', 'A'),
+    (-1, 'N', '_'),
+    (-1, '_', 'n'),
   ]
-  for i = 0; i < cases.length() ; i = i + 1 {
+  for i = 0; i < cases.length(); i = i + 1 {
     let (result, a, b) = cases[i]
     match @assertion.assert_eq(result, a.compare_case_insensitive(b)) {
-      Err(message) => { return Err("case \(i): \(message)") }
+      Err(message) => return Err("case \(i): \(message)")
       Ok(_) => ()
     }
   }
