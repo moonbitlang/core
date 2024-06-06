@@ -6,6 +6,7 @@ package moonbitlang/core/string
 impl String {
   as_iter(String) -> Iter[Char]
   compare(String, String) -> Int
+  compare_case_insensitive(String, String) -> Int
   default() -> String
   hash(String) -> Int
   substring(String, ~start : Int = .., ~end : Int = ..) -> String
