@@ -105,7 +105,7 @@ test "get as string" {
 
 test "get as array" {
   inspect(JsonValue::Null |> as_array, content="None")?
-  inspect(JsonValue::False |> as_array, content="None")?
+  inspect(JsonValue::True |> as_array, content="None")?
   inspect(JsonValue::False |> as_array, content="None")?
   inspect(JsonValue::Number(1.0) |> as_array, content="None")?
   inspect(JsonValue::String("Hello World") |> as_array, content="None")?
