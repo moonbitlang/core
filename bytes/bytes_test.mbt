@@ -14,7 +14,7 @@
 
 test "from_array" {
   let b = Bytes::[65, 0, 66, 0, 67, 0]
-  inspect(b.to_string(), content="ABC")?
+  inspect(b, content="ABC")?
 }
 
 test "hash" {
@@ -33,4 +33,9 @@ test "hash" {
   inspect(b1.hash() == b1.hash(), content="true")?
   inspect(b2.hash() == b2.hash(), content="true")?
   inspect(b1.hash() == b2.hash(), content="false")?
+}
+
+test "to_array" {
+  let b = Bytes::[65, 0, 66, 0, 67, 0]
+  inspect(b.to_array(), content="[65, 0, 66, 0, 67, 0]")?
 }
