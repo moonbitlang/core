@@ -29,3 +29,11 @@ pub fn Bytes::from_array(arr : Array[Int]) -> Bytes {
   }
   rv
 }
+
+pub fn to_array(self : Bytes) -> Array[Int] {
+  let rv = Array::make(self.length(), 0)
+  for i = 0; i < self.length(); i = i + 1 {
+    rv[i] = self[i].to_int()
+  }
+  rv
+}

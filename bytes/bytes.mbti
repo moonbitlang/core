@@ -6,6 +6,7 @@ package moonbitlang/core/bytes
 impl Bytes {
   from_array(Array[Int]) -> Bytes
   hash(Bytes) -> Int
+  to_array(Bytes) -> Array[Int]
 }
 
 // Traits
