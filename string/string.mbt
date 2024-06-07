@@ -100,7 +100,7 @@ pub fn to_array(self : String) -> Array[Char] {
       rv.push(c)
       rv
     },
-    Array::with_capacity(self.length()),
+    Array::new(capacity_hint=self.length()),
   )
 }
 

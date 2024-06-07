@@ -43,14 +43,21 @@ pub fn to_string[T : Show](self : Array[T]) -> String {
   }
 }
 
-/// Creates a new, empty vector.
-pub fn Array::new[T]() -> Array[T] {
-  []
+/// Creates a new, empty vector with an optional capacity hint.
+pub fn Array::new[T](~capacity_hint : Int = 0) -> Array[T] {
+  if capacity_hint == 0 {
+    []
+  } else {
+    { buf: UninitializedArray::make(capacity_hint), len: 0 }
+  }
 }
 
-/// Creates a new, empty vector with a specified initial capacity.
-pub fn Array::with_capacity[T](cap : Int) -> Array[T] {
-  { buf: UninitializedArray::make(cap), len: 0 }
+pub fn Array::make_init[T](len : Int, f : (Int) -> T) -> Array[T] {
+  let buf = UninitializedArray::make(len)
+  for i = 0; i < len; i = i + 1 {
+    buf[i] = f(i)
+  }
+  { buf, len }
 }
 
 /// Creates a new vector from an array.
@@ -74,11 +81,6 @@ pub fn Array::make[T](len : Int, elem : T) -> Array[T] {
 /// Returns the number of elements in the vector.
 pub fn length[T](self : Array[T]) -> Int {
   self.len
-}
-
-/// Returns the total number of elements the vector can hold without reallocating.
-pub fn capacity[T](self : Array[T]) -> Int {
-  self.buf.0.length()
 }
 
 /// Reallocate the vector with a new capacity.
@@ -258,7 +260,7 @@ pub fn drain[T](self : Array[T], begin : Int, end : Int) -> Array[T] {
     )
   }
   let num = end - begin
-  let v = Array::with_capacity(num)
+  let v = Array::new(capacity_hint=num)
   for i = begin; i < end; i = i + 1 {
     v.buf[i - begin] = self[i]
   }
@@ -289,7 +291,7 @@ pub fn append[T](self : Array[T], other : Array[T]) -> Unit {
 ///
 /// # Example
 /// ```
-/// let v = Array::with_capacity(3)
+/// let v = Array::new(capacity_hint=3)
 /// v.push(3)
 /// v.push(4)
 /// v.push(5)
@@ -312,7 +314,7 @@ pub fn iter_rev[T](self : Array[T], f : (T) -> Unit) -> Unit {
 ///
 /// # Example
 /// ```
-/// let v = Array::with_capacity(3)
+/// let v = Array::new(capacity_hint=3)
 /// v.push(3)
 /// v.push(4)
 /// v.push(5)
@@ -481,8 +483,8 @@ pub fn split_at[T](self : Array[T], index : Int) -> (Array[T], Array[T]) {
       "index out of bounds: the len is from 0 to \(len) but the index is \(index)",
     )
   }
-  let v1 = Array::with_capacity(index)
-  let v2 = Array::with_capacity(self.len - index)
+  let v1 = Array::new(capacity_hint=index)
+  let v2 = Array::new(capacity_hint=self.len - index)
   for i = 0; i < index; i = i + 1 {
     v1.push(self.buf[i])
   }
@@ -560,7 +562,7 @@ pub fn ends_with[T : Eq](self : Array[T], suffix : Array[T]) -> Bool {
 /// ```
 pub fn strip_prefix[T : Eq](self : Array[T], prefix : Array[T]) -> Array[T]? {
   if self.starts_with(prefix) {
-    let v = Array::with_capacity(self.len - prefix.len)
+    let v = Array::new(capacity_hint=self.len - prefix.len)
     for i = prefix.len; i < self.len; i = i + 1 {
       v.buf[i - prefix.len] = self.buf[i]
     }
@@ -582,7 +584,7 @@ pub fn strip_prefix[T : Eq](self : Array[T], prefix : Array[T]) -> Array[T]? {
 /// ```
 pub fn strip_suffix[T : Eq](self : Array[T], suffix : Array[T]) -> Array[T]? {
   if self.ends_with(suffix) {
-    let v = Array::with_capacity(self.len - suffix.len)
+    let v = Array::new(capacity_hint=self.len - suffix.len)
     for i = 0; i < self.len - suffix.len; i = i + 1 {
       v.buf[i] = self.buf[i]
     }
@@ -718,32 +720,6 @@ pub fn insert[T](self : Array[T], index : Int, value : T) -> Unit {
   self.len = self.len + 1
 }
 
-/// Fill the vector (by capacity) with a given value.
-///
-/// # Example
-/// ```
-/// Array::with_capacity(3).fill(3)
-/// ```
-pub fn fill[T](self : Array[T], value : T) -> Unit {
-  for i = 0; i < self.capacity(); i = i + 1 {
-    self.buf[i] = value
-  }
-  self.len = self.capacity()
-}
-
-/// Fill the vector by calling a function (By capacity).
-///
-/// # Example
-/// ```
-/// Array::with_capacity(3).fill_with(fn() { 3 })
-/// ```
-pub fn fill_with[T](self : Array[T], f : () -> T) -> Unit {
-  for i = 0; i < self.capacity(); i = i + 1 {
-    self.buf[i] = f()
-  }
-  self.len = self.capacity()
-}
-
 /// Flattens a vector of vectors into a vector.
 ///
 /// # Example
@@ -765,7 +741,7 @@ pub fn flatten[T](self : Array[Array[T]]) -> Array[T] {
 /// Array::[3, 4].repeat(2)
 /// ```
 pub fn repeat[T](self : Array[T], times : Int) -> Array[T] {
-  let v = Array::with_capacity(self.len * times)
+  let v = Array::new(capacity_hint=self.len * times)
   for i = 0; i < times; i = i + 1 {
     v.append(self)
   }
@@ -905,7 +881,7 @@ pub fn chunks[T](self : Array[T], size : Int) -> Array[Array[T]] {
   let chunks = Array::new()
   let mut i = 0
   while i < self.len {
-    let chunk = Array::with_capacity(size)
+    let chunk = Array::new(capacity_hint=size)
     for j = 0; j < size && i < self.len; j = j + 1 {
       chunk.push(self[i])
       i = i + 1
@@ -961,47 +937,13 @@ pub fn split[T](self : Array[T], pred : (T) -> Bool) -> Array[Array[T]] {
   chunks
 }
 
-/// Reserves capacity to ensure that it can hold at least the number of elements
-/// specified by the `capacity` argument.
-///
-/// # Example
-///
-/// ```
-/// let v = Array::[1]
-/// v.reserve_capacity(10)
-/// println(v.capacity()) // 10
-/// ```
-pub fn reserve_capacity[T](self : Array[T], capacity : Int) -> Unit {
-  if self.capacity() >= capacity {
-    return
+pub fn compact[T](self : Array[T]) -> Unit {
+  if self.buf.0.length() > self.len {
+    let len = self.len
+    let new_buf = UninitializedArray::make(len)
+    for i = 0; i < len; i = i + 1 {
+      new_buf[i] = self.buf[i]
+    }
+    self.buf = new_buf
   }
-  let new_buf : UninitializedArray[T] = UninitializedArray::make(capacity)
-  for i = 0; i < self.length(); i = i + 1 {
-    new_buf[i] = self.buf[i]
-  }
-  self.buf = new_buf
-}
-
-/// Shrinks the capacity of the vector as much as possible.
-///
-/// # Example
-///
-/// ```
-/// let v = Array::with_capacity(10)
-/// v.push(1)
-/// v.push(2)
-/// v.push(3)
-/// println(v.capacity()) // >= 10
-/// v.shrink_to_fit()
-/// println(v.capacity()) // >= 3
-/// ```
-pub fn shrink_to_fit[T](self : Array[T]) -> Unit {
-  if self.capacity() <= self.length() {
-    return
-  }
-  let new_buf : UninitializedArray[T] = UninitializedArray::make(self.length())
-  for i = 0; i < self.length(); i = i + 1 {
-    new_buf[i] = self.buf[i]
-  }
-  self.buf = new_buf
 }

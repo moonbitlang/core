@@ -30,10 +30,10 @@ priv struct ListNode[K, V] {
   mut next : Entry[K, V]?
 }
 
-/// Mutable linked hash map that maintains the order of insertion, not thread safe. 
-///  
+/// Mutable linked hash map that maintains the order of insertion, not thread safe.
+///
 /// # Example
-/// 
+///
 /// ```
 /// let map = HashMap::[(3, "three"), (8, "eight"), (1, "one")]
 /// println(map.get(2)) // output: None
@@ -66,7 +66,7 @@ fn power_2_above(x : Int, n : Int) -> Int {
     }
     let next = i.lsl(1)
     if next < 0 {
-      // overflow happend  
+      // overflow happend
       break i
     }
     continue next
@@ -184,7 +184,7 @@ pub fn op_get[K : Hash + Eq, V](self : Map[K, V], key : K) -> V? {
   self.get(key)
 }
 
-/// Get the value associated with a key, 
+/// Get the value associated with a key,
 /// returns the provided default value if the key does not exist.
 pub fn get_or_default[K : Hash + Eq, V](
   self : Map[K, V],
@@ -410,7 +410,7 @@ pub fn as_iter[K, V](self : Map[K, V]) -> Iter[(K, V)] {
 
 /// Converts the hash map to an array.
 pub fn to_array[K, V](self : Map[K, V]) -> Array[(K, V)] {
-  let arr = Array::with_capacity(self.size)
+  let arr = Array::new(capacity_hint=self.size)
   loop self.head {
     Some({ key, value, idx, .. }) => {
       arr.push((key, value))
