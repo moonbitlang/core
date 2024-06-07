@@ -95,7 +95,7 @@ test "parses true" {
 
 test "parses false" {
   let json = test_parse("false")?
-  inspect(json, content="True")?
+  inspect(json, content="False")?
 }
 //endregion
 

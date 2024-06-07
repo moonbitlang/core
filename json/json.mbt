@@ -108,8 +108,8 @@ pub fn stringify(self : JsonValue) -> String {
       buf.write_char('\"')
     }
     Number(n) => return n.to_string()
-    True => return true.to_string()
-    False => return false.to_string()
+    True => return "true"
+    False => return "false"
     Null => return "null"
   }
   buf.to_string()

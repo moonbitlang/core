@@ -42,7 +42,7 @@ fn parse_value2(
   match tok {
     Null => Ok(Null)
     True => Ok(True)
-    False => Ok(True)
+    False => Ok(False)
     Number(n) => Ok(Number(n))
     String(s) => Ok(String(s))
     LBrace => parse_object(ctx)
