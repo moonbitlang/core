@@ -25,29 +25,24 @@ test "parses empty object" {
 }
 
 test "parses object" {
+  inspect(parse("{\"a\":1}"), content="Ok(Object(Map::[{a:Number(1.0)}]))")?
   inspect(
-    parse("{\"a\":1}"),
-    content=
-      #|Ok(Object(Map::[("a", Number(1.0))]))
-    ,
+    parse("{\"a\":1,\"b\":2}"),
+    content="Ok(Object(Map::[{a:Number(1.0)}, {b:Number(2.0)}]))",
   )?
 }
 
 test "parses multiple properties" {
   inspect(
     parse("{\"abc\":1,\"def\":2}"),
-    content=
-      #|Ok(Object(Map::[("abc", Number(1.0)), ("def", Number(2.0))]))
-    ,
+    content="Ok(Object(Map::[{abc:Number(1.0)}, {def:Number(2.0)}]))",
   )?
 }
 
 test "parses nested objects" {
   inspect(
     parse("{\"a\":{\"b\":2}}"),
-    content=
-      #|Ok(Object(Map::[("a", Object(Map::[("b", Number(2.0))]))]))
-    ,
+    content="Ok(Object(Map::[{a:Object(Map::[{b:Number(2.0)}])}]))",
   )?
 }
 //endregion
@@ -95,12 +90,12 @@ test "parses nulls" {
 //region booleans
 test "parses true" {
   let json = test_parse("true")?
-  @assertion.assert_eq(json, JsonValue::Boolean(true))?
+  inspect(json, content="True")?
 }
 
 test "parses false" {
   let json = test_parse("false")?
-  @assertion.assert_eq(json, JsonValue::Boolean(false))?
+  inspect(json, content="False")?
 }
 //endregion
 
@@ -214,7 +209,7 @@ test "parses escaped characters" {
 //region whitespace
 test "parses whitespace" {
   let json = test_parse("{\t\u000b\u000c \u00A0\uFEFF\n\r\u2028\u2029\u2003}")?
-  @assertion.assert_eq(json, JsonValue::Object(@map.Map::[]))?
+  @assertion.assert_eq(json, JsonValue::Object(Map::[]))?
 }
 //endregion
 

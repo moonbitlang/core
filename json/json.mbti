@@ -1,7 +1,5 @@
 package moonbitlang/core/json
 
-alias @moonbitlang/core/immut/sorted_map as @sorted_map
-
 // Values
 fn parse(String) -> Result[JsonValue, ParseError]
 
@@ -10,18 +8,19 @@ fn valid(String) -> Bool
 // Types and methods
 pub enum JsonValue {
   Null
-  Boolean(Bool)
+  True
+  False
   Number(Double)
   String(String)
   Array(Array[JsonValue])
-  Object(@sorted_map.Map[String, JsonValue])
+  Object(Map[String, JsonValue])
 }
 impl JsonValue {
   as_array(Self) -> Option[Array[Self]]
   as_bool(Self) -> Option[Bool]
   as_null(Self) -> Option[Unit]
   as_number(Self) -> Option[Double]
-  as_object(Self) -> Option[@sorted_map.Map[String, Self]]
+  as_object(Self) -> Option[Map[String, Self]]
   as_string(Self) -> Option[String]
   debug_write(Self, Buffer) -> Unit
   item(Self, Int) -> Option[Self]

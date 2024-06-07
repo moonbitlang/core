@@ -41,8 +41,8 @@ fn parse_value2(
 ) -> Result[JsonValue, ParseError] {
   match tok {
     Null => Ok(Null)
-    True => Ok(Boolean(true))
-    False => Ok(Boolean(false))
+    True => Ok(True)
+    False => Ok(False)
     Number(n) => Ok(Number(n))
     String(s) => Ok(String(s))
     LBrace => parse_object(ctx)
@@ -52,7 +52,7 @@ fn parse_value2(
 }
 
 fn parse_object(ctx : ParseContext) -> Result[JsonValue, ParseError] {
-  let mut map = @map.empty()
+  let map = Map::new()
   for ; ; {
     let tok = lex_property_name(ctx)?
     match tok {
@@ -62,7 +62,7 @@ fn parse_object(ctx : ParseContext) -> Result[JsonValue, ParseError] {
         match tok2 {
           Colon => {
             let val = parse_value(ctx)?
-            map = map.insert(name, val)
+            map.set(name, val)
             let tok3 = lex_after_object_value(ctx)?
             match tok3 {
               Comma => continue

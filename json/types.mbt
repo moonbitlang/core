@@ -14,12 +14,13 @@
 
 pub enum JsonValue {
   Null
-  Boolean(Bool)
+  True
+  False
   Number(Double)
   String(String)
   Array(Array[JsonValue])
-  Object(@map.Map[String, JsonValue])
-} derive(Eq, Debug, Show)
+  Object(Map[String, JsonValue])
+} derive(Eq, Debug)
 
 pub struct Position {
   line : Int // 1-based
@@ -42,5 +43,17 @@ pub fn ParseError::to_string(self : ParseError) -> String {
       "Invalid number \(s) at line \(line), column \(column)"
     ParseError::InvalidIdentEscape({ line, column }) =>
       "Invalid escape sequence in identifier at line \(line), column \(column)"
+  }
+}
+
+pub fn to_string(self : JsonValue) -> String {
+  match self {
+    Null => "Null"
+    True => "True"
+    False => "False"
+    Number(n) => "Number(\(n))"
+    String(s) => "String(" + "\\\"" + s + "\\\")"
+    Array(a) => "Array(" + a.to_string() + ")"
+    Object(o) => "Object(" + o.to_string() + ")"
   }
 }

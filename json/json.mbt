@@ -23,7 +23,8 @@ pub fn as_null(self : JsonValue) -> Unit? {
 /// Try to get this element as a Boolean
 pub fn as_bool(self : JsonValue) -> Bool? {
   match self {
-    Boolean(b) => Some(b)
+    True => Some(true)
+    False => Some(false)
     _ => None
   }
 }
@@ -58,7 +59,7 @@ pub fn item(self : JsonValue, index : Int) -> JsonValue? {
 }
 
 /// Try to get this element as an Object
-pub fn as_object(self : JsonValue) -> @map.Map[String, JsonValue]? {
+pub fn as_object(self : JsonValue) -> Map[String, JsonValue]? {
   match self {
     Object(obj) => Some(obj)
     _ => None
@@ -67,7 +68,7 @@ pub fn as_object(self : JsonValue) -> @map.Map[String, JsonValue]? {
 
 /// Try to get this element as a Json Object and get the element with the `key` as a Json Value
 pub fn value(self : JsonValue, key : String) -> JsonValue? {
-  self.as_object()?.lookup(key)
+  self.as_object()?[key]
 }
 
 pub fn stringify(self : JsonValue) -> String {
@@ -107,7 +108,8 @@ pub fn stringify(self : JsonValue) -> String {
       buf.write_char('\"')
     }
     Number(n) => return n.to_string()
-    Boolean(bool) => return bool.to_string()
+    True => return "true"
+    False => return "false"
     Null => return "null"
   }
   buf.to_string()
