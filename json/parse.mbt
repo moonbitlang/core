@@ -41,8 +41,8 @@ fn parse_value2(
 ) -> Result[JsonValue, ParseError] {
   match tok {
     Null => Ok(Null)
-    True => Ok(Boolean(true))
-    False => Ok(Boolean(false))
+    True => Ok(True)
+    False => Ok(True)
     Number(n) => Ok(Number(n))
     String(s) => Ok(String(s))
     LBrace => parse_object(ctx)

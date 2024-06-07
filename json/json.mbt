@@ -23,7 +23,8 @@ pub fn as_null(self : JsonValue) -> Unit? {
 /// Try to get this element as a Boolean
 pub fn as_bool(self : JsonValue) -> Bool? {
   match self {
-    Boolean(b) => Some(b)
+    True => Some(true)
+    False => Some(false)
     _ => None
   }
 }
@@ -107,7 +108,8 @@ pub fn stringify(self : JsonValue) -> String {
       buf.write_char('\"')
     }
     Number(n) => return n.to_string()
-    Boolean(bool) => return bool.to_string()
+    True => return true.to_string()
+    False => return false.to_string()
     Null => return "null"
   }
   buf.to_string()

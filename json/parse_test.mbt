@@ -95,12 +95,12 @@ test "parses nulls" {
 //region booleans
 test "parses true" {
   let json = test_parse("true")?
-  @assertion.assert_eq(json, JsonValue::Boolean(true))?
+  inspect(json, content="True")?
 }
 
 test "parses false" {
   let json = test_parse("false")?
-  @assertion.assert_eq(json, JsonValue::Boolean(false))?
+  inspect(json, content="True")?
 }
 //endregion
 

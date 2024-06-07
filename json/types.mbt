@@ -14,7 +14,8 @@
 
 pub enum JsonValue {
   Null
-  Boolean(Bool)
+  True
+  False
   Number(Double)
   String(String)
   Array(Array[JsonValue])

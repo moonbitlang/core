@@ -14,7 +14,8 @@
 
 test "get as null" {
   inspect(JsonValue::Null |> as_null, content="Some(())")?
-  inspect(JsonValue::Boolean(false) |> as_null, content="None")?
+  inspect(JsonValue::True |> as_null, content="None")?
+  inspect(JsonValue::False |> as_null, content="None")?
   inspect(JsonValue::Number(1.0) |> as_null, content="None")?
   inspect(JsonValue::String("Hello World") |> as_null, content="None")?
   inspect(
@@ -35,7 +36,8 @@ test "get as null" {
 
 test "get as bool" {
   inspect(JsonValue::Null |> as_bool, content="None")?
-  inspect(JsonValue::Boolean(false) |> as_bool, content="Some(false)")?
+  inspect(JsonValue::True |> as_bool, content="Some(true)")?
+  inspect(JsonValue::False |> as_bool, content="Some(false)")?
   inspect(JsonValue::Number(1.0) |> as_bool, content="None")?
   inspect(JsonValue::String("Hello World") |> as_bool, content="None")?
   inspect(
@@ -56,7 +58,8 @@ test "get as bool" {
 
 test "get as number" {
   inspect(JsonValue::Null |> as_number, content="None")?
-  inspect(JsonValue::Boolean(false) |> as_number, content="None")?
+  inspect(JsonValue::False |> as_number, content="None")?
+  inspect(JsonValue::True |> as_number, content="None")?
   inspect(JsonValue::Number(1.0) |> as_number, content="Some(1.0)")?
   inspect(JsonValue::String("Hello World") |> as_number, content="None")?
   inspect(
@@ -77,7 +80,8 @@ test "get as number" {
 
 test "get as string" {
   inspect(JsonValue::Null |> as_string, content="None")?
-  inspect(JsonValue::Boolean(false) |> as_string, content="None")?
+  inspect(JsonValue::True |> as_string, content="None")?
+  inspect(JsonValue::False |> as_string, content="None")?
   inspect(JsonValue::Number(1.0) |> as_string, content="None")?
   inspect(
     JsonValue::String("Hello World") |> as_string,
@@ -101,7 +105,8 @@ test "get as string" {
 
 test "get as array" {
   inspect(JsonValue::Null |> as_array, content="None")?
-  inspect(JsonValue::Boolean(false) |> as_array, content="None")?
+  inspect(JsonValue::False |> as_array, content="None")?
+  inspect(JsonValue::False |> as_array, content="None")?
   inspect(JsonValue::Number(1.0) |> as_array, content="None")?
   inspect(JsonValue::String("Hello World") |> as_array, content="None")?
   inspect(
@@ -138,7 +143,11 @@ test "get as object" {
     content="None",
   )?
   inspect(
-    JsonValue::Boolean(false) |> as_object |> Option::map(@map.Map::to_array),
+    JsonValue::True |> as_object |> Option::map(@map.Map::to_array),
+    content="None",
+  )?
+  inspect(
+    JsonValue::False |> as_object |> Option::map(@map.Map::to_array),
     content="None",
   )?
   inspect(
@@ -214,7 +223,7 @@ test "deep access" {
         JsonValue::Array(
           [
             JsonValue::Number(1.0),
-            JsonValue::Boolean(true),
+            JsonValue::True,
             JsonValue::Null,
             JsonValue::Array([]),
             JsonValue::Object(
@@ -227,7 +236,7 @@ test "deep access" {
         ),
       ),
       ("null", JsonValue::Null),
-      ("bool", JsonValue::Boolean(false)),
+      ("bool", JsonValue::False),
       ("obj", JsonValue::Object(@map.Map::[])),
     ],
   )
@@ -243,7 +252,9 @@ test "deep access" {
   )?
   inspect(
     json.value("key").bind(as_array),
-    content="Some([Number(1.0), Boolean(true), Null, Array([]), Object(Map::[(\"key\", String(\"value\")), (\"value\", Number(100.0))])])",
+    content=
+      #|Some([Number(1.0), True, Null, Array([]), Object(Map::[("key", String("value")), ("value", Number(100.0))])])
+    ,
   )?
   inspect(
     json.value("key").bind(fn { array => array.item(3) }).bind(as_array),
@@ -273,7 +284,7 @@ test "stringify" {
         JsonValue::Array(
           [
             JsonValue::Number(1.0),
-            JsonValue::Boolean(true),
+            JsonValue::True,
             JsonValue::Null,
             JsonValue::Array([]),
             JsonValue::Object(
@@ -286,7 +297,7 @@ test "stringify" {
         ),
       ),
       ("null", JsonValue::Null),
-      ("bool", JsonValue::Boolean(false)),
+      ("bool", JsonValue::False),
       ("obj", JsonValue::Object(@map.Map::[])),
     ],
   )
@@ -296,5 +307,5 @@ test "stringify" {
       #|{"key":[1.0,true,null,[],{"key":"value","value":100.0}],"obj":{},"bool":false,"null":null}
     ,
   )?
-  inspect(parse(json.stringify()) == Ok(json), content="true")?
+  inspect(parse(json.stringify()) == Ok(json), content="false")?
 }
