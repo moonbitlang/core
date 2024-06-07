@@ -24,7 +24,7 @@ test "get as null" {
   )?
   inspect(
     JsonValue::Object(
-      @map.Map::[
+      Map::[
         ("key", JsonValue::String("key")),
         ("value", JsonValue::Number(100.0)),
       ],
@@ -46,7 +46,7 @@ test "get as bool" {
   )?
   inspect(
     JsonValue::Object(
-      @map.Map::[
+      Map::[
         ("key", JsonValue::String("key")),
         ("value", JsonValue::Number(100.0)),
       ],
@@ -68,7 +68,7 @@ test "get as number" {
   )?
   inspect(
     JsonValue::Object(
-      @map.Map::[
+      Map::[
         ("key", JsonValue::String("key")),
         ("value", JsonValue::Number(100.0)),
       ],
@@ -93,7 +93,7 @@ test "get as string" {
   )?
   inspect(
     JsonValue::Object(
-      @map.Map::[
+      Map::[
         ("key", JsonValue::String("key")),
         ("value", JsonValue::Number(100.0)),
       ],
@@ -111,7 +111,9 @@ test "get as array" {
   inspect(JsonValue::String("Hello World") |> as_array, content="None")?
   inspect(
     JsonValue::Array([JsonValue::String("Hello World")]) |> as_array,
-    content="Some([String(\"Hello World\")])",
+    content=
+      #|Some([String(\"Hello World\")])
+    ,
   )?
   inspect(
     JsonValue::Array([JsonValue::String("Hello World")]).item(0).bind(as_string),
@@ -127,7 +129,7 @@ test "get as array" {
   )?
   inspect(
     JsonValue::Object(
-      @map.Map::[
+      Map::[
         ("key", JsonValue::String("key")),
         ("value", JsonValue::Number(100.0)),
       ],
@@ -139,47 +141,47 @@ test "get as array" {
 
 test "get as object" {
   inspect(
-    JsonValue::Null |> as_object |> Option::map(@map.Map::to_array),
+    JsonValue::Null |> as_object |> Option::map(Map::to_array),
     content="None",
   )?
   inspect(
-    JsonValue::True |> as_object |> Option::map(@map.Map::to_array),
+    JsonValue::True |> as_object |> Option::map(Map::to_array),
     content="None",
   )?
   inspect(
-    JsonValue::False |> as_object |> Option::map(@map.Map::to_array),
+    JsonValue::False |> as_object |> Option::map(Map::to_array),
     content="None",
   )?
   inspect(
-    JsonValue::Number(1.0) |> as_object |> Option::map(@map.Map::to_array),
+    JsonValue::Number(1.0) |> as_object |> Option::map(Map::to_array),
     content="None",
   )?
   inspect(
-    JsonValue::String("Hello World")
-    |> as_object
-    |> Option::map(@map.Map::to_array),
+    JsonValue::String("Hello World") |> as_object |> Option::map(Map::to_array),
     content="None",
   )?
   inspect(
     JsonValue::Array([JsonValue::String("Hello World")])
     |> as_object
-    |> Option::map(@map.Map::to_array),
+    |> Option::map(Map::to_array),
     content="None",
   )?
   inspect(
     JsonValue::Object(
-      @map.Map::[
+      Map::[
         ("key", JsonValue::String("key")),
         ("value", JsonValue::Number(100.0)),
       ],
     )
     |> as_object
-    |> Option::map(@map.Map::to_array),
-    content="Some([(key, String(\"key\")), (value, Number(100.0))])",
+    |> Option::map(Map::to_array),
+    content=
+      #|Some([(key, String(\"key\")), (value, Number(100.0))])
+    ,
   )?
   inspect(
     JsonValue::Object(
-      @map.Map::[
+      Map::[
         ("key", JsonValue::String("key")),
         ("value", JsonValue::Number(100.0)),
       ],
@@ -188,7 +190,7 @@ test "get as object" {
   )?
   inspect(
     JsonValue::Object(
-      @map.Map::[
+      Map::[
         ("key", JsonValue::String("key")),
         ("value", JsonValue::Number(100.0)),
       ],
@@ -197,7 +199,7 @@ test "get as object" {
   )?
   inspect(
     JsonValue::Object(
-      @map.Map::[
+      Map::[
         ("key", JsonValue::String("key")),
         ("value", JsonValue::Number(100.0)),
       ],
@@ -206,7 +208,7 @@ test "get as object" {
   )?
   inspect(
     JsonValue::Object(
-      @map.Map::[
+      Map::[
         ("key", JsonValue::String("key")),
         ("value", JsonValue::Number(100.0)),
       ],
@@ -217,7 +219,7 @@ test "get as object" {
 
 test "deep access" {
   let json = JsonValue::Object(
-    @map.Map::[
+    Map::[
       (
         "key",
         JsonValue::Array(
@@ -227,7 +229,7 @@ test "deep access" {
             JsonValue::Null,
             JsonValue::Array([]),
             JsonValue::Object(
-              @map.Map::[
+              Map::[
                 ("key", JsonValue::String("value")),
                 ("value", JsonValue::Number(100.0)),
               ],
@@ -237,7 +239,7 @@ test "deep access" {
       ),
       ("null", JsonValue::Null),
       ("bool", JsonValue::False),
-      ("obj", JsonValue::Object(@map.Map::[])),
+      ("obj", JsonValue::Object(Map::[])),
     ],
   )
   inspect(json.value("null").bind(as_null), content="Some(())")?
@@ -253,7 +255,7 @@ test "deep access" {
   inspect(
     json.value("key").bind(as_array),
     content=
-      #|Some([Number(1.0), True, Null, Array([]), Object(Map::[("key", String("value")), ("value", Number(100.0))])])
+      #|Some([Number(1.0), True, Null, Array([]), Object(Map::[{key:String(\"value\")}, {value:Number(100.0)}])])
     ,
   )?
   inspect(
@@ -262,12 +264,14 @@ test "deep access" {
   )?
   inspect(
     json.value("key").bind(fn { array => array.item(4) }).bind(as_object).map(
-      @map.Map::to_array,
+      Map::to_array,
     ),
-    content="Some([(key, String(\"value\")), (value, Number(100.0))])",
+    content=
+      #|Some([(key, String(\"value\")), (value, Number(100.0))])
+    ,
   )?
   inspect(
-    json.value("obj").bind(as_object).map(@map.Map::to_array),
+    json.value("obj").bind(as_object).map(Map::to_array),
     content="Some([])",
   )?
   inspect(
@@ -278,7 +282,7 @@ test "deep access" {
 
 test "stringify" {
   let json = JsonValue::Object(
-    @map.Map::[
+    Map::[
       (
         "key",
         JsonValue::Array(
@@ -288,7 +292,7 @@ test "stringify" {
             JsonValue::Null,
             JsonValue::Array([]),
             JsonValue::Object(
-              @map.Map::[
+              Map::[
                 ("key", JsonValue::String("value")),
                 ("value", JsonValue::Number(100.0)),
               ],
@@ -298,13 +302,13 @@ test "stringify" {
       ),
       ("null", JsonValue::Null),
       ("bool", JsonValue::False),
-      ("obj", JsonValue::Object(@map.Map::[])),
+      ("obj", JsonValue::Object(Map::[])),
     ],
   )
   inspect(
     json.stringify(),
     content=
-      #|{"key":[1.0,true,null,[],{"key":"value","value":100.0}],"obj":{},"bool":false,"null":null}
+      #|{"key":[1.0,true,null,[],{"key":"value","value":100.0}],"null":null,"bool":false,"obj":{}}
     ,
   )?
   inspect(parse(json.stringify()) == Ok(json), content="false")?

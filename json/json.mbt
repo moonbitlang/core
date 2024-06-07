@@ -59,7 +59,7 @@ pub fn item(self : JsonValue, index : Int) -> JsonValue? {
 }
 
 /// Try to get this element as an Object
-pub fn as_object(self : JsonValue) -> @map.Map[String, JsonValue]? {
+pub fn as_object(self : JsonValue) -> Map[String, JsonValue]? {
   match self {
     Object(obj) => Some(obj)
     _ => None
@@ -68,7 +68,7 @@ pub fn as_object(self : JsonValue) -> @map.Map[String, JsonValue]? {
 
 /// Try to get this element as a Json Object and get the element with the `key` as a Json Value
 pub fn value(self : JsonValue, key : String) -> JsonValue? {
-  self.as_object()?.lookup(key)
+  self.as_object()?[key]
 }
 
 pub fn stringify(self : JsonValue) -> String {
