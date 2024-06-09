@@ -322,8 +322,8 @@ test "fixedarray_new_with_index" {
 }
 
 /// Create a new array with given values.
-pub fn FixedArray::from_array[T](array : FixedArray[T]) -> FixedArray[T] {
-  array
+pub fn FixedArray::from_array[T](array : Array[T]) -> FixedArray[T] {
+  FixedArray::new_with_index(array.length(), fn(i) { array[i] })
 }
 
 test "from_array" {
