@@ -41,7 +41,7 @@ pub fn List::debug_write[T : Debug](xs : List[T], buf : Buffer) -> Unit {
 }
 
 /// Convert array to list.
-/// 
+///
 /// # Example
 ///
 /// ```
@@ -65,9 +65,9 @@ pub fn length[T](self : List[T]) -> Int {
 }
 
 /// Iterates over the list.
-/// 
+///
 /// # Example
-/// 
+///
 /// ```
 /// List::[1, 2, 3, 4, 5].iter(print) // output: 12345
 /// ```
@@ -82,11 +82,11 @@ pub fn iter[T](self : List[T], f : (T) -> Unit) -> Unit {
 }
 
 /// Iterates over the list with index.
-/// 
+///
 /// # Example
-/// 
+///
 /// ```
-/// List::[1, 2, 3, 4, 5].iteri(fn(i, x) { print("(\(i),\(x)) ") }) 
+/// List::[1, 2, 3, 4, 5].iteri(fn(i, x) { print("(\(i),\(x)) ") })
 /// // output: (0,1) (1,2) (2,3) (3,4) (4,5)
 /// ```
 pub fn iteri[T](self : List[T], f : (Int, T) -> Unit) -> Unit {
@@ -100,9 +100,9 @@ pub fn iteri[T](self : List[T], f : (Int, T) -> Unit) -> Unit {
 }
 
 /// Maps the list.
-/// 
+///
 /// # Example
-/// 
+///
 /// ```
 /// debug(List::[1, 2, 3, 4, 5].map(fn(x){ x * 2}))
 /// // output: List::[2, 4, 6, 8, 10]
@@ -139,9 +139,9 @@ pub fn to_array[T](self : List[T]) -> Array[T] {
 }
 
 /// Filter the list.
-/// 
+///
 /// # Example
-/// 
+///
 /// ```
 /// debug(List::[1, 2, 3, 4, 5].filter(fn(x){ x % 2 == 0}))
 /// // output: from_array([2, 4])
@@ -175,9 +175,9 @@ pub fn any[T](self : List[T], f : (T) -> Bool) -> Bool {
 }
 
 /// Tail of the list.
-/// 
+///
 /// # Example
-/// 
+///
 /// ```
 /// debug(List::[1, 2, 3, 4, 5].tail())
 /// // output: from_array([2, 3, 4, 5])
@@ -190,9 +190,9 @@ pub fn tail[T](self : List[T]) -> List[T] {
 }
 
 /// Get first element of the list.
-/// 
+///
 /// # Example
-/// 
+///
 /// ```
 /// debug(List::[1, 2, 3, 4, 5].head_exn())
 /// // output: 1
@@ -206,9 +206,9 @@ pub fn head_exn[T](self : List[T]) -> T {
 }
 
 /// Get first element of the list.
-/// 
+///
 /// # Example
-/// 
+///
 /// ```
 /// debug(List::[1, 2, 3, 4, 5].head())
 /// // output: Some(1)
@@ -223,9 +223,9 @@ pub fn head[T](self : List[T]) -> T? {
 }
 
 /// Last element of the list.
-/// 
+///
 /// # Example
-/// 
+///
 /// ```
 /// debug(List::[1, 2, 3, 4, 5].last())
 /// // output: 5
@@ -240,9 +240,9 @@ pub fn last[T](self : List[T]) -> T {
 }
 
 /// Init of the list.
-/// 
+///
 /// # Example
-/// 
+///
 /// ```
 /// debug(List::[1, 2, 3, 4, 5].init_())
 /// // output: from_array([1, 2, 3, 4])
@@ -258,7 +258,7 @@ pub fn init_[T](self : List[T]) -> List[T] {
 /// Concatenate two lists.
 ///
 /// # Example
-///  
+///
 /// ```
 /// let ls = List::[1, 2, 3, 4, 5].concat(from_array([6, 7, 8, 9, 10]))
 /// debug(ls) // output: from_array([1, 2, 3, 4, 5, 6, 7, 8, 9, 10])
@@ -271,9 +271,9 @@ pub fn concat[T](self : List[T], other : List[T]) -> List[T] {
 }
 
 /// Reverse the list.
-/// 
+///
 /// # Example
-/// 
+///
 /// ```
 /// debug(List::[1, 2, 3, 4, 5].reverse())
 /// // output: from_array([5, 4, 3, 2, 1])
@@ -291,7 +291,7 @@ pub fn reverse[T](self : List[T]) -> List[T] {
 /// Fold the list from left.
 ///
 /// # Example
-/// 
+///
 /// ```
 /// let r = List::[1, 2, 3, 4, 5].fold_left(~init=0, fn(acc, x) { acc + x })
 /// debug(r) // output: 15
@@ -304,7 +304,7 @@ pub fn fold_left[T, U](self : List[T], f : (U, T) -> U, ~init : U) -> U {
 }
 
 /// Fold the list from right.
-/// 
+///
 /// # Example
 /// ```
 /// let r = List::[1, 2, 3, 4, 5].fold_right(fn(x, acc) { x + acc }, ~init=0)
@@ -343,12 +343,12 @@ pub fn fold_righti[T, U](self : List[T], f : (Int, T, U) -> U, ~init : U) -> U {
 /// Zip two lists.
 ///
 /// # Example
-/// 
+///
 /// ```
 /// let r = zip(List::[1, 2, 3, 4, 5], from_array([6, 7, 8, 9, 10]))
 /// debug(r) // output: from_array([(1, 6), (2, 7), (3, 8), (4, 9), (5, 10)]
 /// ```
-/// 
+///
 /// @alert unsafe "Panic if the two lists have different lengths."
 pub fn zip[T, U](self : List[T], other : List[U]) -> List[(T, U)] {
   match (self, other) {
@@ -363,7 +363,7 @@ pub fn zip[T, U](self : List[T], other : List[U]) -> List[(T, U)] {
 /// `concat_map(f, ls)` equal to `ls.map(f).fold(Nil, fn(acc, x) { acc.concat(x) })))`
 ///
 /// # Example
-/// 
+///
 /// ```
 /// let ls = from_array([1, 2, 3])
 /// let r = ls.concat_map(fn(x) { [x, x * 2] })
@@ -398,7 +398,7 @@ pub fn nth[T](self : List[T], n : Int) -> T? {
 /// Create a list of length n with the given value
 ///
 /// # Example
-/// 
+///
 /// ```
 /// debug(repeat(5, 1)) // output: from_array([1, 1, 1, 1, 1])
 /// ```
@@ -411,9 +411,9 @@ pub fn repeat[T](n : Int, x : T) -> List[T] {
 }
 
 /// Insert separator to the list.
-/// 
+///
 /// # Example
-/// 
+///
 /// ```
 /// let ls = from_array(["1", "2", "3", "4", "5"]).intersperse("|")
 /// debug(ls) // output: from_array(["1", "|", "2", "|", "3", "|", "4", "|", "5"])
@@ -455,9 +455,9 @@ pub fn unzip[T, U](list : List[(T, U)]) -> (List[T], List[U]) {
 }
 
 /// flatten a list of lists.
-/// 
+///
 /// # Example
-/// 
+///
 /// ```
 /// let ls = flatten(from_array([from_array([1,2,3]), from_array([4,5,6]), from_array([7,8,9])]))
 /// debug(ls) // output: from_array([1, 2, 3, 4, 5, 6, 7, 8, 9])
@@ -506,7 +506,7 @@ pub fn minimum[T : Compare](self : List[T]) -> T {
 /// Sort the list in ascending order.
 ///
 /// # Example
-/// 
+///
 /// ```
 /// let ls = sort(from_array([1,123,52,3,6,0,-6,-76]))
 /// debug(ls) // output: from_array([-76, -6, 0, 1, 3, 6, 52, 123])
@@ -543,7 +543,7 @@ pub fn contain[T : Eq](self : List[T], value : T) -> Bool {
 ///
 /// ```
 /// // from_array([0, 1, 2])
-/// unfold(0, fn { i => if i == 3 { None } else { Some(i, i + 1) } }) |> debug 
+/// unfold(0, fn { i => if i == 3 { None } else { Some(i, i + 1) } }) |> debug
 /// ```
 pub fn unfold[T, State](f : (State) -> (T, State)?, ~init : State) -> List[T] {
   match f(init) {
@@ -632,7 +632,7 @@ pub fn drop_while[T](self : List[T], p : (T) -> Bool) -> List[T] {
 ///
 /// ```
 /// let ls = List::[1, 2, 3, 4, 5]
-/// ls.scan_left(fn(acc, x) { acc + x }, ~init=0) 
+/// ls.scan_left(fn(acc, x) { acc + x }, ~init=0)
 /// ```
 pub fn scan_left[T, E](self : List[T], f : (E, T) -> E, ~init : E) -> List[E] {
   Cons(
@@ -645,9 +645,9 @@ pub fn scan_left[T, E](self : List[T], f : (E, T) -> E, ~init : E) -> List[E] {
 }
 
 /// Fold a list and return a list of successive reduced values from the right
-/// 
+///
 /// Note that the order of parameters on the accumulating function are reversed.
-/// 
+///
 /// # Example
 /// ```
 /// let ls = List::[1, 2, 3, 4, 5]
@@ -725,9 +725,9 @@ pub fn findi[T](self : List[T], f : (T, Int) -> Bool) -> T? {
 }
 
 /// Removes the element at the specified index in the list.
-/// 
+///
 /// # Example
-/// 
+///
 /// ```
 /// println(List::[1, 2, 3, 4, 5].remove_at(2))
 /// // output: from_array([1, 2, 4, 5])
@@ -742,9 +742,9 @@ pub fn remove_at[T](self : List[T], index : Int) -> List[T] {
 }
 
 /// Removes the first occurrence of the specified element from the list, if it is present.
-/// 
+///
 /// # Example
-/// 
+///
 /// ```
 /// println(List::[1, 2, 3, 4, 5].remove(3))
 /// // output: from_array([1, 2, 4, 5])
@@ -764,7 +764,7 @@ pub fn remove[T : Eq](self : List[T], elem : T) -> List[T] {
 /// Returns true if list starts with prefix.
 ///
 /// # Example
-/// 
+///
 /// ```
 /// println(List::[1, 2, 3, 4, 5].is_prefix(List::[1, 2, 3]))
 /// // output: true
@@ -806,8 +806,8 @@ pub fn is_suffix[T : Eq](self : List[T], suffix : List[T]) -> Bool {
 }
 
 /// Similar to intersperse but with a list of values.
-/// 
-/// # Example 
+///
+/// # Example
 /// ```
 /// let ls = List::[
 ///    List::[1, 2, 3],

@@ -14,12 +14,7 @@
 
 priv enum Cont[T] {
   Empty
-  Node(T, MList[Cont[T]])
-} derive(Show, Debug)
-
-priv enum MList[T] {
-  MNil
-  MCons(T, MList[T])
+  Node(T, @list.List[Cont[T]])
 } derive(Show, Debug)
 
 struct ImmutablePriorityQueue[T] {
