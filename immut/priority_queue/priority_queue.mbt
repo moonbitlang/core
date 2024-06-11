@@ -114,15 +114,12 @@ fn meld[T : Compare](l : Cont[T], r : Cont[T]) -> Cont[T] {
 }
 
 test "meld" {
-  inspect(
-    meld(Empty, ImmutablePriorityQueue::[1].body),
-  content="Node(1, )")?
-  inspect(
-    meld(ImmutablePriorityQueue::[1].body, Empty),
-  content="Node(1, )")?
+  inspect(meld(Empty, ImmutablePriorityQueue::[1].body), content="Node(1, )")?
+  inspect(meld(ImmutablePriorityQueue::[1].body, Empty), content="Node(1, )")?
   inspect(
     meld(ImmutablePriorityQueue::[1].body, ImmutablePriorityQueue::[2].body),
-  content="Node(2, Node(1, ))")?
+    content="Node(2, Node(1, ))",
+  )?
 }
 
 fn merges[T : Compare](x : @list.List[Cont[T]]) -> Cont[T] {
