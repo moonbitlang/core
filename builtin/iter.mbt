@@ -13,7 +13,12 @@
 // limitations under the License.
 
 // Types
-type Iter[T] ((T) -> Bool) -> Bool
+type Iter[T] ((T) -> IterResult) -> IterResult
+
+enum IterResult {
+  IterContinue // true
+  IterEnd // false
+} derive(Eq)
 
 // Consumers
 
@@ -33,7 +38,7 @@ pub fn iter[T](self : Iter[T], f : (T) -> Unit) -> Unit {
     fn {
       yield => {
         f(yield)
-        true
+        IterContinue
       }
     },
   )
@@ -63,7 +68,7 @@ pub fn fold[T, B](self : Iter[T], f : (B, T) -> B, init : B) -> B {
     fn {
       yield => {
         acc = f(acc, yield)
-        true
+        IterContinue
       }
     },
   )
@@ -89,9 +94,28 @@ pub fn count[T](self : Iter[T]) -> Int {
 
 // Producers
 
+fn iter_result_of_bool(b : Bool) -> IterResult {
+  if b {
+    IterContinue
+  } else {
+    IterEnd
+  }
+}
+
+fn bool_of_iter_result(r : IterResult) -> Bool {
+  match r {
+    IterContinue => true
+    IterEnd => false
+  }
+}
+
 /// Do not use this method, it is for internal use only.
 pub fn Iter::_unstable_internal_make[T](f : ((T) -> Bool) -> Bool) -> Iter[T] {
-  Iter(f)
+  Iter(
+    fn {
+      yield => iter_result_of_bool(f(fn { x => bool_of_iter_result(yield(x)) }))
+    },
+  )
 }
 
 /// Creates an empty iterator.
@@ -104,7 +128,7 @@ pub fn Iter::_unstable_internal_make[T](f : ((T) -> Bool) -> Bool) -> Iter[T] {
 ///
 /// Returns an empty iterator of type `Iter[T]`.
 pub fn Iter::empty[T]() -> Iter[T] {
-  Iter(fn { _ => true })
+  Iter(fn { _ => IterContinue })
 }
 
 /// Creates an iterator that contains a single element.
@@ -141,12 +165,9 @@ pub fn Iter::singleton[T](a : T) -> Iter[T] {
 pub fn Iter::repeat[T](a : T) -> Iter[T] {
   Iter(
     fn(yield) {
-      for ; ; {
-        if yield(a) {
-          continue
-        } else {
-          break false
-        }
+      loop yield(a) {
+        IterContinue => continue yield(a)       
+        IterEnd =>   IterEnd      
       }
     },
   )
@@ -170,7 +191,11 @@ pub fn Iter::repeat[T](a : T) -> Iter[T] {
 /// A new iterator that only contains the elements for which the predicate function returns `true`.
 /// @intrinsic %iter.filter
 pub fn filter[T](self : Iter[T], f : (T) -> Bool) -> Iter[T] {
-  Iter(fn { yield => (self.0)(fn { a => if f(a) { yield(a) } else { true } }) })
+  Iter(
+    fn {
+      yield => (self.0)(fn { a => if f(a) { yield(a) } else { IterContinue } })
+    },
+  )
 }
 
 /// Transforms the elements of the iterator using a mapping function.
@@ -252,21 +277,28 @@ pub fn take[T](self : Iter[T], n : Int) -> Iter[T] {
     fn {
       yield => {
         let mut i = 0
-        (self.0)(
+        let iter_result = (self.0)(
           fn {
             a =>
-              if i < n && yield(a) {
+              if i < n && yield(a) == IterContinue {
                 i = i + 1
-                true
+                IterContinue
               } else {
-                false
+                IterEnd
               }
           },
-        ) || i == n
-        // when the `take` operator exits, the overall return value is false only when
-        // any of the `yield(a)` return false. Otherwise, it returns true, including
-        // the case when `i` reaches the iteration count `n`.
+        )
+        if iter_result == IterContinue {
+          iter_result
+        } else if i == n {
+          IterContinue
+        } else {
+          IterEnd
+        }
       }
+      // when the `take` operator exits, the overall return value is false only when
+      // any of the `yield(a)` return false. Otherwise, it returns true, including
+      // the case when `i` reaches the iteration count `n`.
     },
   )
 }
@@ -290,19 +322,19 @@ pub fn take_while[T](self : Iter[T], f : (T) -> Bool) -> Iter[T] {
     fn {
       yield => {
         // `r` is the overall return value, which is false only when `yield(a)` returns false
-        let mut r = true
+        let mut r : IterResult = IterContinue
         (self.0)(
           fn {
             a =>
               if f(a) {
-                if yield(a) {
-                  true
+                if yield(a) == IterContinue {
+                  IterContinue
                 } else {
-                  r = false
-                  false
+                  r = IterEnd
+                  IterEnd
                 }
               } else {
-                false
+                IterEnd
               }
           },
         )
@@ -337,7 +369,7 @@ pub fn drop[T](self : Iter[T], n : Int) -> Iter[T] {
             a =>
               if i < n {
                 i = i + 1
-                true
+                IterContinue
               } else {
                 yield(a)
               }
@@ -371,7 +403,7 @@ pub fn drop_while[T](self : Iter[T], f : (T) -> Bool) -> Iter[T] {
           fn {
             a =>
               if dropping && f(a) {
-                true
+                IterContinue
               } else {
                 dropping = false
                 yield(a)
@@ -404,9 +436,9 @@ pub fn find_first[T](self : Iter[T], f : (T) -> Bool) -> T? {
       a =>
         if f(a) {
           result = Some(a)
-          false
+          IterEnd
         } else {
-          true
+          IterContinue
         }
     },
   )
@@ -428,7 +460,15 @@ pub fn find_first[T](self : Iter[T], f : (T) -> Bool) -> T? {
 ///
 /// Returns a new iterator with the element `a` prepended to the original iterator.
 pub fn prepend[T](self : Iter[T], a : T) -> Iter[T] {
-  Iter(fn(yield) { yield(a) && (self.0)(yield) })
+  Iter(
+    fn(yield) {
+      if yield(a) == IterContinue {
+        (self.0)(yield)
+      } else {
+        IterEnd
+      }
+    },
+  )
 }
 
 /// Appends a single element to the end of the iterator.
@@ -446,7 +486,15 @@ pub fn prepend[T](self : Iter[T], a : T) -> Iter[T] {
 ///
 /// Returns a new iterator with the element `a` appended to the original iterator.
 pub fn append[T](self : Iter[T], a : T) -> Iter[T] {
-  Iter(fn(yield) { (self.0)(yield) && yield(a) })
+  Iter(
+    fn(yield) {
+      if (self.0)(yield) == IterContinue {
+        yield(a)
+      } else {
+        IterEnd
+      }
+    },
+  )
 }
 
 /// Combines two iterators into one by appending the elements of the second iterator to the first.
@@ -465,7 +513,15 @@ pub fn append[T](self : Iter[T], a : T) -> Iter[T] {
 /// Returns a new iterator that contains the elements of `self` followed by the elements of `other`.
 /// @intrinsic %iter.concat
 pub fn Iter::concat[T](self : Iter[T], other : Iter[T]) -> Iter[T] {
-  Iter(fn(yield) { (self.0)(yield) && (other.0)(yield) })
+  Iter(
+    fn(yield) {
+      if (self.0)(yield) == IterContinue {
+        (other.0)(yield)
+      } else {
+        IterEnd
+      }
+    },
+  )
 }
 
 pub fn op_add[T](self : Iter[T], other : Iter[T]) -> Iter[T] {
