@@ -48,7 +48,7 @@ fn timsort[T : Compare](arr : FixedArraySlice[T]) -> Unit {
   // Short arrays get sorted in-place via insertion sort to avoid allocations.
   let len = arr.length()
   if len <= max_insertion {
-    insertion_sort(arr)
+    FixedArraySlice::insertion_sort(arr)
   }
   let mut end = 0
   let mut start = 0
@@ -79,7 +79,9 @@ fn timsort[T : Compare](arr : FixedArraySlice[T]) -> Unit {
   }
 }
 
-fn insertion_sort[T : Compare](arr : FixedArraySlice[T]) -> Unit {
+fn FixedArraySlice::insertion_sort[T : Compare](
+  arr : FixedArraySlice[T]
+) -> Unit {
   for i = 1, len = arr.length(); i < len; i = i + 1 {
     for j = i; j > 0 && arr[j] < arr[j - 1]; j = j - 1 {
       arr.swap(j, j - 1)
@@ -158,7 +160,7 @@ fn provide_sorted_batch[T : Compare](
     // the sorted region to the left, so we push up MIN_INSERTION_RUN - 1 to the right. Which is
     // more efficient that trying to push those already sorted elements to the left.
     let sort_end = minimum(len, start + min_insertion_run)
-    insertion_sort(arr.slice(start, sort_end))
+    FixedArraySlice::insertion_sort(arr.slice(start, sort_end))
     sort_end
   } else {
     end
