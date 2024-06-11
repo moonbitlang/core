@@ -149,6 +149,11 @@ impl Iter {
   to_array[T](Self[T]) -> Array[T]
 }
 
+type IterResult
+impl IterResult {
+  op_equal(Self, Self) -> Bool
+}
+
 pub type Js_string
 impl Js_string {
   log(Self) -> Unit

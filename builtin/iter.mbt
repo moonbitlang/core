@@ -170,8 +170,8 @@ pub fn Iter::repeat[T](a : T) -> Iter[T] {
   Iter(
     fn(yield) {
       loop yield(a) {
-        IterContinue => continue yield(a)       
-        IterEnd =>   IterEnd      
+        IterContinue => continue yield(a)
+        IterEnd => IterEnd
       }
     },
   )
