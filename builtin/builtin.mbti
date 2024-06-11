@@ -146,6 +146,11 @@ impl Iter {
   tap[T](Self[T], (T) -> Unit) -> Self[T]
 }
 
+type IterResult
+impl IterResult {
+  op_equal(Self, Self) -> Bool
+}
+
 pub type Js_string
 impl Js_string {
   log(Self) -> Unit
