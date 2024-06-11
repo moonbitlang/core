@@ -37,12 +37,12 @@ fn quick_sort[T : Compare](arr : ArrayView[T], pred : T?, limit : Int) -> Unit {
   let mut pred = pred
   let mut was_partitioned = true
   let mut balanced = true
-  let bubble_sort_len = 16
+  let insertion_sort_len = 16
   while true {
     let len = arr.length()
-    if len <= bubble_sort_len {
+    if len <= insertion_sort_len {
       if len >= 2 {
-        bubble_sort(arr)
+        ArrayView::insertion_sort(arr)
       }
       return
     }
@@ -129,12 +129,8 @@ fn try_bubble_sort[T : Compare](
   true
 }
 
-/// Try to sort the array with bubble sort.
-/// 
-/// It will only tolerate at most 8 unsorted elements. The time complexity is O(n).
-/// 
-/// Returns whether the array is sorted.
-fn bubble_sort[T : Compare](arr : ArrayView[T]) -> Unit {
+/// Used when the array is small enough (<=16) to avoid recursion overhead.
+fn ArrayView::insertion_sort[T : Compare](arr : ArrayView[T]) -> Unit {
   for i = 1; i < arr.length(); i = i + 1 {
     for j = i; j > 0 && arr[j - 1] > arr[j]; j = j - 1 {
       arr.swap(j, j - 1)

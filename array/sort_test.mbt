@@ -51,8 +51,12 @@ test "heap_sort" {
   test_sort(fn(arr) { heap_sort(arr.op_as_view(start=0, end=arr.length())) })?
 }
 
-test "bubble_sort" {
-  test_sort(fn(arr) { bubble_sort(arr.op_as_view(start=0, end=arr.length())) })?
+test "insertion_sort" {
+  test_sort(
+    fn(arr) {
+      ArrayView::insertion_sort(arr.op_as_view(start=0, end=arr.length()))
+    },
+  )?
 }
 
 test "sort" {
