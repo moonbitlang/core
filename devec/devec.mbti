@@ -18,8 +18,8 @@ impl Devec {
   iter_revi[T](Self[T], (Int, T) -> Unit) -> Unit
   iteri[T](Self[T], (Int, T) -> Unit) -> Unit
   length[T](Self[T]) -> Int
-  map[T](Self[T], (T) -> T) -> Unit
-  mapi[T](Self[T], (Int, T) -> T) -> Unit
+  map[T, U](Self[T], (T) -> U) -> Self[U]
+  mapi[T, U](Self[T], (Int, T) -> U) -> Self[U]
   new[T]() -> Self[T]
   op_equal[T : Eq](Self[T], Self[T]) -> Bool
   op_get[T](Self[T], Int) -> T
