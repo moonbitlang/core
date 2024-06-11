@@ -571,7 +571,7 @@ test "map" {
 /// let dv = Devec::[3, 4, 5]
 /// dv.mapi(fn (i, x) {x + i}) // Devec::[3, 5, 7]
 /// ```
-pub fn mapi[T,U](self : Devec[T], f : (Int, T) -> U) -> Devec[U] {
+pub fn mapi[T, U](self : Devec[T], f : (Int, T) -> U) -> Devec[U] {
   if self.len == 0 {
     Devec::[]
   } else {
@@ -585,7 +585,7 @@ pub fn mapi[T,U](self : Devec[T], f : (Int, T) -> U) -> Devec[U] {
 
 test "mapi" {
   let dv = Devec::[3, 4, 5]
-  let dvp=dv.mapi(fn(i, x) { x + i })
+  let dvp = dv.mapi(fn(i, x) { x + i })
   @assertion.assert_eq(dvp[0], 3)?
   @assertion.assert_eq(dvp[1], 5)?
   @assertion.assert_eq(dvp[2], 7)?
