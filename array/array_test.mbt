@@ -441,21 +441,21 @@ test "as_iter" {
 test "shuffle_in_place" {
   let arr : Array[Int] = [1, 2, 3, 4, 5, 6, 7]
   fn rand(upper : Int) -> Int {
-    let rng = @random.RandomInt::new()
-    rng.summon() % upper
+    let rng = @random.init_state(seed=37)
+    rng.gen_int() % upper
   }
 
   Array::shuffle_in_place(arr, ~rand)
-  inspect(arr, content="[2, 3, 7, 5, 6, 1, 4]")?
+  inspect(arr, content="[5, 2, 1, 6, 3, 7, 4]")?
 }
 
 test "shuffle" {
   let arr : Array[Int] = [1, 2, 3, 4, 5, 6, 7]
   fn rand(upper : Int) -> Int {
-    let rng = @random.RandomInt::new()
-    rng.summon() % upper
+    let rng = @random.init_state(seed=42)
+    rng.gen_int() % upper
   }
 
   let shuffled = Array::shuffle(arr, ~rand)
-  inspect(shuffled, content="[2, 3, 7, 5, 6, 1, 4]")?
+  inspect(shuffled, content="[2, 7, 6, 1, 5, 3, 4]")?
 }
