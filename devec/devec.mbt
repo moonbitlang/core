@@ -542,20 +542,26 @@ test "clear" {
 /// # Example
 /// ```
 /// let dv = Devec::[3, 4, 5]
-/// v.map(fn (x) {x + 1})
+/// dv.map(fn (x) {x + 1}) // Devec::[4, 5, 6]
 /// ```
-pub fn map[T](self : Devec[T], f : (T) -> T) -> Unit {
-  for i = 0; i < self.len; i = i + 1 {
-    self.buf[i] = f(self.buf[i])
+pub fn map[T, U](self : Devec[T], f : (T) -> U) -> Devec[U] {
+  if self.len == 0 {
+    Devec::[]
+  } else {
+    let buf : UninitializedArray[U] = UninitializedArray::make(self.len)
+    for i = 0; i < self.len; i = i + 1 {
+      buf[i] = f(self.buf[i])
+    }
+    Devec::{ buf, len: self.len, head: 0, tail: self.len - 1 }
   }
 }
 
 test "map" {
   let dv = Devec::[3, 4, 5]
-  dv.map(fn(x) { x + 1 })
-  @assertion.assert_eq(dv[0], 4)?
-  @assertion.assert_eq(dv[1], 5)?
-  @assertion.assert_eq(dv[2], 6)?
+  let dvp = dv.map(fn(x) { x + 1 })
+  @assertion.assert_eq(dvp[0], 4)?
+  @assertion.assert_eq(dvp[1], 5)?
+  @assertion.assert_eq(dvp[2], 6)?
 }
 
 /// Maps a function over the elements of the devec with index.
@@ -563,20 +569,26 @@ test "map" {
 /// # Example
 /// ```
 /// let dv = Devec::[3, 4, 5]
-/// v.mapi(fn (i, x) {x + i})
+/// dv.mapi(fn (i, x) {x + i}) // Devec::[3, 5, 7]
 /// ```
-pub fn mapi[T](self : Devec[T], f : (Int, T) -> T) -> Unit {
-  for i = 0; i < self.len; i = i + 1 {
-    self.buf[i] = f(i, self.buf[i])
+pub fn mapi[T, U](self : Devec[T], f : (Int, T) -> U) -> Devec[U] {
+  if self.len == 0 {
+    Devec::[]
+  } else {
+    let buf : UninitializedArray[U] = UninitializedArray::make(self.len)
+    for i = 0; i < self.len; i = i + 1 {
+      buf[i] = f(i, self.buf[i])
+    }
+    Devec::{ buf, len: self.len, head: 0, tail: self.len - 1 }
   }
 }
 
 test "mapi" {
   let dv = Devec::[3, 4, 5]
-  dv.mapi(fn(i, x) { x + i })
-  @assertion.assert_eq(dv[0], 3)?
-  @assertion.assert_eq(dv[1], 5)?
-  @assertion.assert_eq(dv[2], 7)?
+  let dvp = dv.mapi(fn(i, x) { x + i })
+  @assertion.assert_eq(dvp[0], 3)?
+  @assertion.assert_eq(dvp[1], 5)?
+  @assertion.assert_eq(dvp[2], 7)?
 }
 
 /// Test if the devec is empty.
