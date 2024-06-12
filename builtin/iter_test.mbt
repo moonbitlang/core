@@ -258,27 +258,9 @@ fn test_from_array[T](arr : Array[T]) -> Iter[T] {
   )
 }
 
-fn my_range(start : Int, end : Int) -> Iter[Int] {
-  Iter::_unstable_internal_make(
-    fn {
-      yield =>
-        for i = start; i < end; i = i + 1 {
-          if yield(i).not() {
-            break false
-          }
-        } else {
-          true
-        }
-    },
-  )
-}
-
 test "range" {
-  // inspect(range(0, 10).take(5).add(range(0,3)).collect(),)?
-  // report 2 errors : Type Unit does not implement Show
-  // Iter not implement add
   inspect(
-    my_range(0, 10).take(5).concat(my_range(0, 3)).collect(),
+    Iter::range(0, 10).take(5).concat(Iter::range(0, 3)).collect(),
     content="[0, 1, 2, 3, 4, 0, 1, 2]",
   )?
 }

@@ -152,6 +152,30 @@ pub fn Iter::repeat[T](a : T) -> Iter[T] {
   )
 }
 
+/// Creates an iterator that iterates over a range of integers.
+/// 
+/// # Arguments
+/// 
+/// * `start` - The starting value of the range (inclusive).
+/// * `end` - The ending value of the range (exclusive).
+/// 
+/// # Returns
+/// 
+/// Returns an iterator that iterates over the range of integers from `start` to `end - 1`.
+pub fn Iter::range(start : Int, end : Int) -> Iter[Int] {
+  Iter(
+    fn(yield) {
+      for i = start; i < end; i = i + 1 {
+        if not(yield(i)) {
+          break false
+        }
+      } else {
+        true
+      }
+    },
+  )
+}
+
 // operators
 
 /// Filters the elements of the iterator based on a predicate function.

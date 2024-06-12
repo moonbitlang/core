@@ -140,6 +140,7 @@ impl Iter {
   map[T, R](Self[T], (T) -> R) -> Self[R]
   op_add[T](Self[T], Self[T]) -> Self[T]
   prepend[T](Self[T], T) -> Self[T]
+  range(Int, Int) -> Self[Int]
   repeat[T](T) -> Self[T]
   singleton[T](T) -> Self[T]
   take[T](Self[T], Int) -> Self[T]
