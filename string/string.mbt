@@ -201,3 +201,35 @@ test "chars" {
     ,
   )?
 }
+
+pub fn starts_with(self : String, str : String) -> Bool {
+  if str.length() > self.length() {
+    false
+  } else {
+    self.substring(end=str.length()).compare(str) == 0
+  }
+}
+
+test "starts_with" {
+  @assertion.assert_true("abc".starts_with("a"))?
+  @assertion.assert_true("abc".starts_with("ab"))?
+  @assertion.assert_true("abc".starts_with("abc"))?
+  @assertion.assert_false("abc".starts_with("abcd"))?
+  @assertion.assert_false("abc".starts_with("b"))?
+}
+
+pub fn ends_with(self : String, str : String) -> Bool {
+  if str.length() > self.length() {
+    false
+  } else {
+    self.substring(start=self.length() - str.length()).compare(str) == 0
+  }
+}
+
+test "ends_with" {
+  @assertion.assert_true("abc".ends_with("c"))?
+  @assertion.assert_true("abc".ends_with("bc"))?
+  @assertion.assert_true("abc".ends_with("abc"))?
+  @assertion.assert_false("abc".ends_with("d"))?
+  @assertion.assert_false("abc".ends_with("ab"))?
+}
