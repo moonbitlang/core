@@ -42,12 +42,6 @@ pub fn Queue::from_array[T](arr : Array[T]) -> Queue[T] {
   queue
 }
 
-/// Creates a new queue from an array.
-///
-/// # Example
-/// ```
-/// Queue::[1, 2, 3].to_string()
-/// ```
 pub fn to_string[T : Show](self : Queue[T]) -> String {
   let mut res = "Queue::["
   self.iteri(
