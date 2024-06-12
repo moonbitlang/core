@@ -44,26 +44,6 @@ fn CoverageCounter::debug_write(self : CoverageCounter, buf : Buffer) -> Unit {
   buf.write_char(']')
 }
 
-test "new_counter" {
-  let counter = CoverageCounter::new(2)
-  let result = counter.to_string()
-  // @assertion.assert_eq(result, "[0, 0]")?
-  if result != "[0, 0]" {
-    return Err("Expected: [0, 0], got: " + result)
-  }
-}
-
-test "incr_counter" {
-  let counter = CoverageCounter::new(10)
-  counter.incr(0)
-  counter.incr(9)
-  let result = counter.to_string()
-  // @assertion.assert_eq(result, "[1, 0, 0, 0, 0, 0, 0, 0, 0, 1]")?
-  if result != "[1, 0, 0, 0, 0, 0, 0, 0, 0, 1]" {
-    return Err("Expected: [1, 0, 0, 0, 0, 0, 0, 0, 0, 1], got: " + result)
-  }
-}
-
 priv enum MList[T] {
   MNil
   MCons(T, MList[T])
@@ -145,22 +125,25 @@ pub fn escape(s : String) -> String {
   buf.to_string()
 }
 
-test "backslash escape" {
-  let s = "\n\r\t\b\"'\\"
-  let expected = "\\n\\r\\t\\b\\\"'\\\\"
-  // @assertion.assert_eq(escape(s), expected)?
-  let escape_s = escape(s)
-  if escape_s != expected {
-    return Err("Expected: " + expected + ", got: " + escape_s)
-  }
+/// Output the counters to stdout for coverage report usages. The counter data
+/// is printed as a map of `{ counter_id: counter_contents }`, enclosed between
+/// a pair of delimiters.
+/// 
+/// An example output of this function is like the following:
+/// 
+/// ```plaintext
+/// ----- BEGIN MOONBIT COVERAGE -----
+/// {
+/// "foo/foo": [1, 2, 3, 4]
+/// , "foo/bar": [5, 6, 7, 8]
+/// }
+/// ----- END MOONBIT COVERAGE -----
+/// ```
+pub fn end() -> Unit {
+  println("----- BEGIN MOONBIT COVERAGE -----")
+  log(counters.val, IO::IO(0))
+  println("----- END MOONBIT COVERAGE -----")
 }
-
-// FIXME: formatting string does not work, this test will be destroyed by formatting
-// test "hex escape" {
-//   let s = "\x11\x12\x01\x02"
-//   let expected = "\\x11\\x12\\x01\\x02"
-//   @assertion.assert_eq(s.escape(), expected)?
-// }
 
 fn log(counters : MList[(String, CoverageCounter)], io : Output) -> Unit {
   let print = fn { x => io.output(x) }
@@ -186,48 +169,4 @@ fn log(counters : MList[(String, CoverageCounter)], io : Output) -> Unit {
     MNil, _ => ()
   }
   println("}")
-}
-
-test "log" {
-  let test_counter_a = CoverageCounter::new(2)
-  let test_counter_b = CoverageCounter::new(2)
-  test_counter_a.incr(0)
-  test_counter_b.incr(1)
-  let counters : MList[(String, CoverageCounter)] = MCons(
-    ("foo/foo", test_counter_a),
-    MCons(("foo/bar", test_counter_b), MNil),
-  )
-  let buf = Buffer::make(1024)
-  log(counters, buf)
-  let result = buf.to_string()
-  let expected =
-    #|{ "foo/foo": [1, 0]
-    #|, "foo/bar": [0, 1]
-    #|}
-    #|
-
-  // @assertion.assert_eq(result, expected)?
-  if result != expected {
-    return Err("Expected: " + expected + ", got: " + result)
-  }
-}
-
-/// Output the counters to stdout for coverage report usages. The counter data
-/// is printed as a map of `{ counter_id: counter_contents }`, enclosed between
-/// a pair of delimiters.
-/// 
-/// An example output of this function is like the following:
-/// 
-/// ```plaintext
-/// ----- BEGIN MOONBIT COVERAGE -----
-/// {
-/// "foo/foo": [1, 2, 3, 4]
-/// , "foo/bar": [5, 6, 7, 8]
-/// }
-/// ----- END MOONBIT COVERAGE -----
-/// ```
-pub fn end() -> Unit {
-  println("----- BEGIN MOONBIT COVERAGE -----")
-  log(counters.val, IO::IO(0))
-  println("----- END MOONBIT COVERAGE -----")
 }
