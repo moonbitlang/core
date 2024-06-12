@@ -190,9 +190,10 @@ pub fn pop[T](self : Array[T]) -> T? {
   if self.length() == 0 {
     None
   } else {
+    let value = self.buffer()[self.length() - 1]
+    // set_length will do the cleanup
     self.set_length(self.length() - 1)
-    // TODO: should fill the element with a dummy slot to avoid memory leak?
-    Some(self.buffer()[self.length()])
+    Some(value)
   }
 }
 
@@ -208,8 +209,9 @@ pub fn pop_exn[T](self : Array[T]) -> T {
   if self.length() == 0 {
     abort("pop from an empty Array")
   }
+    let value = self.buffer()[self.length() - 1]
   self.set_length(self.length() - 1)
-  self.buffer()[self.length()]
+  value
 }
 
 /// Reallocate the vector with a new capacity.
@@ -232,8 +234,9 @@ pub fn push[T](self : Array[T], value : T) -> Unit {
   if self.length() == self.buffer().0.length() {
     self.grow()
   }
-  self.buffer()[self.length()] = value
-  self.set_length(self.length() + 1)
+  let length = self.length()
+  self.buffer()[length] = value
+  self.set_length(length + 1)
 }
 
 /// Removes the specified range from the vector and returns it.
