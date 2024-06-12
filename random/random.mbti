@@ -1,0 +1,17 @@
+package moonbitlang/core/random
+
+// Values
+fn init_state(~state : Int = ..) -> RandomState
+
+// Types and methods
+type RandomState
+impl RandomState {
+  gen_double(Self) -> Double
+  gen_int(Self) -> Int
+  gen_int64(Self) -> Int64
+}
+
+// Traits
+
+// Extension Methods
+
