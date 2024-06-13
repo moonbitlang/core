@@ -5,6 +5,7 @@ package moonbitlang/core/queue
 // Types and methods
 type Queue
 impl Queue {
+  as_iter[T](Self[T]) -> Iter[T]
   clear[T](Self[T]) -> Unit
   copy[T](Self[T]) -> Self[T]
   debug_write[T : Show](Self[T], Buffer) -> Unit
