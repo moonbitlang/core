@@ -183,3 +183,8 @@ test "length" {
   inspect(empty.length(), content="0")?
   inspect(Queue::[1, 2, 3].length(), content="3")?
 }
+
+test "as_iter" {
+  let q = Queue::[1, 2, 3, 4, 5]
+  inspect(q.as_iter().fold(fn(x, y) { x + y }, 0), content="15")?
+}
