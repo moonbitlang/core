@@ -26,17 +26,13 @@ impl Show for MyString with to_string(self) { self.0 }
 
 test "set" {
   let m : HashSet[MyString] = HashSet::new()
-  fn i(s) {
-    MyString::MyString(s)
-  }
-
-  m.insert("a" |> i)
-  m.insert("b" |> i)
-  m.insert("bc" |> i)
-  m.insert("abc" |> i)
-  m.insert("cd" |> i)
-  m.insert("c" |> i)
-  m.insert("d" |> i)
+  m.insert("a")
+  m.insert("b")
+  m.insert("bc")
+  m.insert("abc")
+  m.insert("cd")
+  m.insert("c")
+  m.insert("d")
   @assertion.assert_eq(m.size, 7)?
   @assertion.assert_eq(
     m.debug_entries(),
