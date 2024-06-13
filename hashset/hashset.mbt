@@ -32,6 +32,13 @@ pub fn HashSet::from_array[K : Hash + Eq](arr : Array[K]) -> HashSet[K] {
   m
 }
 
+pub fn HashSet::of[K:Hash+Eq](arr : FixedArray[K]) -> HashSet[K]{
+  let m = new()
+  arr.iter(fn(e) { m.insert(e) })
+  m
+
+}
+
 /// Insert a key into hash set.
 /// @alert unsafe "Panic if the hash set is full."
 pub fn insert[K : Hash + Eq](self : HashSet[K], key : K) -> Unit {
@@ -284,5 +291,12 @@ fn debug_entries[K : Show](self : HashSet[K]) -> String {
       Some({ psl, key, .. }) => s += "(\(psl),\(key))"
     }
   }
+  s
+}
+
+pub fn to_string[K : Show](self : HashSet[K]) -> String {
+  let mut s = "@hashset.of("
+  s += self.as_iter().collect().to_string()
+  s += ")"
   s
 }

@@ -52,7 +52,7 @@ test "insert" {
 }
 
 test "from_array" {
-  let m = HashSet::["a", "b", "c"]
+  let m = of(["a", "b", "c"])
   @assertion.assert_true(m.contains("a"))?
   @assertion.assert_true(m.contains("b"))?
   @assertion.assert_true(m.contains("c"))?
@@ -110,14 +110,14 @@ test "is_empty" {
 }
 
 test "iter" {
-  let m : HashSet[String] = HashSet::["a", "b", "c"]
+  let m : HashSet[String] = HashSet::of(["a", "b", "c"])
   let mut sum = ""
   m.iter(fn(k) { sum += k })
   @assertion.assert_eq(sum, "abc")?
 }
 
 test "iteri" {
-  let m : HashSet[String] = HashSet::["1", "2", "3"]
+  let m  = of(["1", "2", "3"])
   let mut s = ""
   let mut sum = 0
   m.iteri(
@@ -131,7 +131,7 @@ test "iteri" {
 }
 
 test "clear" {
-  let m : HashSet[String] = HashSet::["a", "b", "c"]
+  let m  = of(["a", "b", "c"])
   m.clear()
   @assertion.assert_eq(m.size, 0)?
   @assertion.assert_eq(m.capacity, 8)?
@@ -169,8 +169,8 @@ test "grow" {
 }
 
 test "union" {
-  let m1 : HashSet[String] = HashSet::["a", "b", "c"]
-  let m2 : HashSet[String] = HashSet::["b", "c", "d"]
+  let m1 : HashSet[String] = of(["a", "b", "c"])
+  let m2 : HashSet[String] = of(["b", "c", "d"])
   let m = m1.union(m2)
   @assertion.assert_eq(m.size, 4)?
   @assertion.assert_true(m.contains("a"))?
@@ -180,8 +180,8 @@ test "union" {
 }
 
 test "intersection" {
-  let m1 : HashSet[String] = HashSet::["a", "b", "c"]
-  let m2 : HashSet[String] = HashSet::["b", "c", "d"]
+  let m1 : HashSet[String] = of(["a", "b", "c"])
+  let m2 : HashSet[String] = of(["b", "c", "d"])
   let m = m1.intersection(m2)
   @assertion.assert_eq(m.size, 2)?
   @assertion.assert_false(m.contains("a"))?
@@ -191,8 +191,8 @@ test "intersection" {
 }
 
 test "difference" {
-  let m1 : HashSet[String] = HashSet::["a", "b", "c"]
-  let m2 : HashSet[String] = HashSet::["b", "c", "d"]
+  let m1 : HashSet[String] = of(["a", "b", "c"])
+  let m2 : HashSet[String] = of(["b", "c", "d"])
   let m = m1.difference(m2)
   @assertion.assert_eq(m.size, 1)?
   @assertion.assert_true(m.contains("a"))?
@@ -202,8 +202,8 @@ test "difference" {
 }
 
 test "symmetric_difference" {
-  let m1 : HashSet[String] = HashSet::["a", "b", "c"]
-  let m2 : HashSet[String] = HashSet::["b", "c", "d"]
+  let m1 : HashSet[String] = of(["a", "b", "c"])
+  let m2 : HashSet[String] = of(["b", "c", "d"])
   let m = m1.symmetric_difference(m2)
   @assertion.assert_eq(m.size, 2)?
   @assertion.assert_true(m.contains("a"))?
@@ -214,7 +214,7 @@ test "symmetric_difference" {
 
 test "as_iter" {
   let buf = Buffer::make(20)
-  let map = HashSet::["a", "b", "c"]
+  let map = of(["a", "b", "c"])
   map.as_iter().iter(fn(e) { buf.write_string("[\(e)]") })
   inspect(buf, content="[a][b][c]")?
   buf.reset()
