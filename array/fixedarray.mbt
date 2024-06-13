@@ -327,7 +327,7 @@ pub fn FixedArray::from_array[T](array : Array[T]) -> FixedArray[T] {
 }
 
 test "from_array" {
-  let array = FixedArray::[1, 2, 3, 4, 5]
+  let array : FixedArray[_] = [1, 2, 3, 4, 5]
   @assertion.assert_eq(array, [1, 2, 3, 4, 5])?
 }
 

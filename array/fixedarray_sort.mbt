@@ -52,7 +52,7 @@ fn timsort[T : Compare](arr : FixedArraySlice[T]) -> Unit {
   }
   let mut end = 0
   let mut start = 0
-  let runs : Array[TimSortRun] = Array::new()
+  let runs : Array[TimSortRun] = []
   while end < len {
     let (streak_end, was_reversed) = find_streak(arr.slice(start, arr.end))
     end += streak_end
