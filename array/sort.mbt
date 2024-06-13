@@ -19,9 +19,9 @@
 /// # Example
 /// 
 /// ```
-/// let arr = Array::[5, 4, 3, 2, 1]
+/// let arr = [5, 4, 3, 2, 1]
 /// arr.sort()
-/// debug(arr) //output: Array::[1, 2, 3, 4, 5]
+/// debug(arr) //output: [1, 2, 3, 4, 5]
 /// ```
 pub fn sort[T : Compare](self : Array[T]) -> Unit {
   quick_sort(
