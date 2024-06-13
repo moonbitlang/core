@@ -117,7 +117,7 @@ test "iter" {
 }
 
 test "iteri" {
-  let m  = of(["1", "2", "3"])
+  let m = of(["1", "2", "3"])
   let mut s = ""
   let mut sum = 0
   m.iteri(
@@ -131,7 +131,7 @@ test "iteri" {
 }
 
 test "clear" {
-  let m  = of(["a", "b", "c"])
+  let m = of(["a", "b", "c"])
   m.clear()
   @assertion.assert_eq(m.size, 0)?
   @assertion.assert_eq(m.capacity, 8)?

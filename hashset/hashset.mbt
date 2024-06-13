@@ -32,11 +32,10 @@ pub fn HashSet::from_array[K : Hash + Eq](arr : Array[K]) -> HashSet[K] {
   m
 }
 
-pub fn HashSet::of[K:Hash+Eq](arr : FixedArray[K]) -> HashSet[K]{
+pub fn HashSet::of[K : Hash + Eq](arr : FixedArray[K]) -> HashSet[K] {
   let m = new()
   arr.iter(fn(e) { m.insert(e) })
   m
-
 }
 
 /// Insert a key into hash set.

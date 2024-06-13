@@ -12,13 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-
 test "doc" {
-  let set= @hashset.of([3,8,1])
-
+  let set = @hashset.of([3, 8, 1])
   set.insert(3)
   set.insert(4)
   inspect(set, content="@hashset.of([3, 4, 1, 8])")?
 }
 /// 
-/// 
+///
