@@ -414,3 +414,8 @@ test "default" {
   let ls : List[Int] = List::default()
   inspect(ls, content="List::[]")?
 }
+
+test "as_iter" {
+  let ls = List::[1, 2, 3, 4, 5]
+  inspect(ls.as_iter().fold(fn(a, b) { a + b }, 0), content="15")?
+}
