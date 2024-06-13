@@ -96,7 +96,7 @@ fn realloc[T](self : Array[T]) -> Unit {
 ///
 /// # Example
 /// ```
-/// let v = Array::new()
+/// let v = []
 /// v.push(3)
 /// println(v[0]) // 3
 /// ```
@@ -115,7 +115,7 @@ pub fn op_get[T](self : Array[T], index : Int) -> T {
 ///
 /// # Example
 /// ```
-/// let v = Array::new()
+/// let v = []
 /// v.push(3)
 /// println(v.get(0)) // Some(3)
 /// ```
@@ -130,7 +130,7 @@ pub fn get[T](self : Array[T], index : Int) -> T? {
 ///
 /// # Example
 /// ```
-/// let v = Array::new()
+/// let v = []
 /// v.push(3)
 /// println(v[0]) // 3
 /// ```
@@ -194,7 +194,7 @@ pub fn op_add[T](self : Array[T], other : Array[T]) -> Array[T] {
 ///
 /// # Example
 /// ```
-/// let v = Array::[1, 2, 3]
+/// let v = [1, 2, 3]
 /// v.pop()
 /// ```
 pub fn pop[T](self : Array[T]) -> T? {
@@ -211,7 +211,7 @@ pub fn pop[T](self : Array[T]) -> T? {
 ///
 /// # Example
 /// ```
-/// let v = Array::[1, 2, 3]
+/// let v = [1, 2, 3]
 /// v.pop_exn() // 3
 /// ```
 /// @alert unsafe "Panic if the vector is empty."
@@ -229,7 +229,7 @@ pub fn pop_exn[T](self : Array[T]) -> T {
 ///
 /// # Example
 /// ```
-/// let v = Array::new()
+/// let v = []
 /// v.push(3)
 /// ```
 pub fn push[T](self : Array[T], value : T) -> Unit {
@@ -246,8 +246,8 @@ pub fn push[T](self : Array[T], value : T) -> Unit {
 ///
 /// # Example
 /// ```
-/// let v = Array::[3, 4, 5]
-/// let vv = v.drain(1, 2) // vv = Array::[4], v = Array::[3, 5]
+/// let v = [3, 4, 5]
+/// let vv = v.drain(1, 2) // vv = [4], v = [3, 5]
 /// ```
 /// @alert unsafe "Panic if index is out of bounds."
 pub fn drain[T](self : Array[T], begin : Int, end : Int) -> Array[T] {
@@ -274,8 +274,8 @@ pub fn drain[T](self : Array[T], begin : Int, end : Int) -> Array[T] {
 ///
 /// # Example
 /// ```
-/// let v1 = Array::[3, 4, 5]
-/// let v2 = Array::[6, 7, 8]
+/// let v1 = [3, 4, 5]
+/// let v2 = [6, 7, 8]
 /// v1.append(v2)
 /// ```
 /// TODO: could be made more efficient
@@ -424,7 +424,7 @@ pub fn filter[T](self : Array[T], f : (T) -> Bool) -> Array[T] {
 ///
 /// # Example
 /// ```
-/// let v = Array::new()
+/// let v = []
 /// v.is_empty()
 /// ```
 pub fn is_empty[T](self : Array[T]) -> Bool {
@@ -435,7 +435,7 @@ pub fn is_empty[T](self : Array[T]) -> Bool {
 ///
 /// # Example
 /// ```
-/// let v = Array::[3, 4, 5]
+/// let v = [3, 4, 5]
 /// v.is_sorted() // true
 /// ```
 pub fn is_sorted[T : Compare](self : Array[T]) -> Bool {
@@ -454,7 +454,7 @@ pub fn is_sorted[T : Compare](self : Array[T]) -> Bool {
 ///
 /// # Example
 /// ```
-/// let v = Array::[3, 4, 5]
+/// let v = [3, 4, 5]
 /// v.reverse()
 /// ```
 pub fn reverse[T](self : Array[T]) -> Unit {
@@ -469,7 +469,7 @@ pub fn reverse[T](self : Array[T]) -> Unit {
 ///
 /// # Example
 /// ```
-/// let v = Array::[3, 4, 5]
+/// let v = [3, 4, 5]
 /// let (v1, v2) = v.split_at(1)
 /// ```
 /// TODO: perf could be optimized
@@ -496,7 +496,7 @@ pub fn split_at[T](self : Array[T], index : Int) -> (Array[T], Array[T]) {
 ///
 /// # Example
 /// ```
-/// let v = Array::[3, 4, 5]
+/// let v = [3, 4, 5]
 /// v.contains(3)
 /// ```
 pub fn contains[T : Eq](self : Array[T], value : T) -> Bool {
@@ -513,8 +513,8 @@ pub fn contains[T : Eq](self : Array[T], value : T) -> Bool {
 ///
 /// # Example
 /// ```
-/// let v = Array::[3, 4, 5]
-/// v.starts_with(Array::[3, 4])
+/// let v = [3, 4, 5]
+/// v.starts_with([3, 4])
 /// ```
 pub fn starts_with[T : Eq](self : Array[T], prefix : Array[T]) -> Bool {
   if prefix.len > self.len {
@@ -533,8 +533,8 @@ pub fn starts_with[T : Eq](self : Array[T], prefix : Array[T]) -> Bool {
 ///
 /// # Example
 /// ```
-/// let v = Array::[3, 4, 5]
-/// v.ends_with(Array::[5])
+/// let v = [3, 4, 5]
+/// v.ends_with([5])
 /// ```
 pub fn ends_with[T : Eq](self : Array[T], suffix : Array[T]) -> Bool {
   if suffix.len > self.len {
@@ -555,8 +555,8 @@ pub fn ends_with[T : Eq](self : Array[T], suffix : Array[T]) -> Bool {
 ///
 /// # Example
 /// ```
-/// let v = Array::[3, 4, 5]
-/// v.strip_prefix(Array::[3]) // Some(Array::[4, 5])
+/// let v = [3, 4, 5]
+/// v.strip_prefix([3]) // Some([4, 5])
 /// ```
 pub fn strip_prefix[T : Eq](self : Array[T], prefix : Array[T]) -> Array[T]? {
   if self.starts_with(prefix) {
@@ -577,8 +577,8 @@ pub fn strip_prefix[T : Eq](self : Array[T], prefix : Array[T]) -> Array[T]? {
 ///
 /// # Example
 /// ```
-/// let v = Array::[3, 4, 5]
-/// v.strip_suffix(Array::[5]) // Some(Array::[3, 4])
+/// let v = [3, 4, 5]
+/// v.strip_suffix([5]) // Some([3, 4])
 /// ```
 pub fn strip_suffix[T : Eq](self : Array[T], suffix : Array[T]) -> Array[T]? {
   if self.ends_with(suffix) {
@@ -597,7 +597,7 @@ pub fn strip_suffix[T : Eq](self : Array[T], suffix : Array[T]) -> Array[T]? {
 ///
 /// # Example
 /// ```
-/// let v = Array::[3, 4, 5]
+/// let v = [3, 4, 5]
 /// v.search(3)
 /// ```
 pub fn search[T : Eq](self : Array[T], value : T) -> Int? {
@@ -614,7 +614,7 @@ pub fn search[T : Eq](self : Array[T], value : T) -> Int? {
 ///
 /// # Example
 /// ```
-/// let v = Array::[3, 4, 5]
+/// let v = [3, 4, 5]
 /// v.swap(1, 2)
 /// ```
 /// @alert unsafe "Panic if index is out of bounds."
@@ -636,7 +636,7 @@ pub fn swap[T](self : Array[T], i : Int, j : Int) -> Unit {
 ///
 /// # Example
 /// ```
-/// let v = Array::[3, 4, 5]
+/// let v = [3, 4, 5]
 /// v.remove(1)
 /// ```
 /// @alert unsafe "Panic if index is out of bounds."
@@ -659,7 +659,7 @@ pub fn remove[T](self : Array[T], index : Int) -> T {
 ///
 /// # Example
 /// ```
-/// let v = Array::[3, 4, 5]
+/// let v = [3, 4, 5]
 /// v.retain(fn(x) { x > 3 })
 /// ```
 /// TODO: perf could be improved
@@ -678,7 +678,7 @@ pub fn retain[T](self : Array[T], f : (T) -> Bool) -> Unit {
 ///
 /// # Example
 /// ```
-/// Array::[3, 4, 5].resize(1)
+/// [3, 4, 5].resize(1)
 /// ```
 /// @alert unsafe "Panic if new length is negative."
 pub fn resize[T](self : Array[T], new_len : Int, f : T) -> Unit {
@@ -698,7 +698,7 @@ pub fn resize[T](self : Array[T], new_len : Int, f : T) -> Unit {
 ///
 /// # Example
 /// ```
-/// Array::[3, 4, 5].insert(1, 6)
+/// [3, 4, 5].insert(1, 6)
 /// ```
 /// @alert unsafe "Panic if index is out of bounds."
 pub fn insert[T](self : Array[T], index : Int, value : T) -> Unit {
@@ -748,10 +748,10 @@ pub fn fill_with[T](self : Array[T], f : () -> T) -> Unit {
 ///
 /// # Example
 /// ```
-/// Array::[Array::[3, 4], Array::[5, 6]].flatten()
+/// [[3, 4], [5, 6]].flatten()
 /// ```
 pub fn flatten[T](self : Array[Array[T]]) -> Array[T] {
-  let v = Array::new()
+  let v = []
   for i = 0; i < self.len; i = i + 1 {
     v.append(self[i])
   }
@@ -762,7 +762,7 @@ pub fn flatten[T](self : Array[Array[T]]) -> Array[T] {
 ///
 /// # Example
 /// ```
-/// Array::[3, 4].repeat(2)
+/// [3, 4].repeat(2)
 /// ```
 pub fn repeat[T](self : Array[T], times : Int) -> Array[T] {
   let v = Array::with_capacity(self.len * times)
@@ -776,10 +776,10 @@ pub fn repeat[T](self : Array[T], times : Int) -> Array[T] {
 ///
 /// # Example
 /// ```
-/// Array::[Array::[3, 4], Array::[5, 6]].join(0)
+/// [[3, 4], [5, 6]].join(0)
 /// ```
 pub fn join[T](self : Array[Array[T]], sep : T) -> Array[T] {
-  let v = Array::new()
+  let v = []
   for i = 0; i < self.len; i = i + 1 {
     v.append(self[i])
     if i < self.len - 1 {
@@ -853,8 +853,8 @@ pub fn fold_righti[T, U](self : Array[T], f : (Int, U, T) -> U, ~init : U) -> U 
 ///
 /// # Example
 /// ```
-/// let v = Array::[3, 4, 4, 5, 5, 5]
-/// v.dedup() // v = Array::[3, 4, 5]
+/// let v = [3, 4, 4, 5, 5, 5]
+/// v.dedup() // v = [3, 4, 5]
 /// ```
 pub fn dedup[T : Eq](self : Array[T]) -> Unit {
   for i = 0; i < self.len; i = i + 1 {
@@ -874,12 +874,12 @@ pub fn dedup[T : Eq](self : Array[T]) -> Unit {
 /// This function will remove the elements from the original vector and return a new vector.
 /// # Example
 /// ```
-/// let v = Array::[3, 4, 5]
-/// let vv = v.extract_if(fn(x) { x > 3 }) // vv = Array::[4, 5], v = Array::[3]
+/// let v = [3, 4, 5]
+/// let vv = v.extract_if(fn(x) { x > 3 }) // vv = [4, 5], v = [3]
 /// ```
 pub fn extract_if[T](self : Array[T], f : (T) -> Bool) -> Array[T] {
-  let v = Array::new()
-  let indices = Array::new()
+  let v = []
+  let indices = []
   for i = 0; i < self.len; i = i + 1 {
     if f(self[i]) {
       v.push(self[i])
@@ -898,11 +898,11 @@ pub fn extract_if[T](self : Array[T], f : (T) -> Bool) -> Array[T] {
 ///
 /// # Example
 /// ```
-/// let v = Array::[1, 2, 3, 4, 5, 6, 7, 8, 9]
-/// let chunks = v.chunks(3) // chunks = Array::[Array::[1, 2, 3], Array::[4, 5, 6], Array::[7, 8, 9]]
+/// let v = [1, 2, 3, 4, 5, 6, 7, 8, 9]
+/// let chunks = v.chunks(3) // chunks = [[1, 2, 3], [4, 5, 6], [7, 8, 9]]
 /// ```
 pub fn chunks[T](self : Array[T], size : Int) -> Array[Array[T]] {
-  let chunks = Array::new()
+  let chunks = []
   let mut i = 0
   while i < self.len {
     let chunk = Array::with_capacity(size)
@@ -919,15 +919,15 @@ pub fn chunks[T](self : Array[T], size : Int) -> Array[Array[T]] {
 ///
 /// # Example
 /// ```
-/// let v = Array::[1, 1, 2, 3, 2, 3, 2, 3, 4]
+/// let v = [1, 1, 2, 3, 2, 3, 2, 3, 4]
 /// let chunks = v.chunk_by(fn(x, y) { x <= y })
-/// // chunks = Array::[Array::[1, 1, 2, 3], Array::[2, 3], Array::[2, 3], Array::[4]]
+/// // chunks = [[1, 1, 2, 3], [2, 3], [2, 3], [4]]
 /// ```
 pub fn chunk_by[T](self : Array[T], pred : (T, T) -> Bool) -> Array[Array[T]] {
-  let chunks = Array::new()
+  let chunks = []
   let mut i = 0
   while i < self.len {
-    let chunk = Array::new()
+    let chunk = []
     chunk.push(self[i])
     i = i + 1
     while i < self.len && pred(self[i - 1], self[i]) {
@@ -943,14 +943,14 @@ pub fn chunk_by[T](self : Array[T], pred : (T, T) -> Bool) -> Array[Array[T]] {
 ///
 /// # Example
 /// ```
-/// let v = Array::[1, 0, 2, 0, 3, 0, 4]
+/// let v = [1, 0, 2, 0, 3, 0, 4]
 /// let chunks = v.split(fn(x) { x == 0 })
 /// ```
 pub fn split[T](self : Array[T], pred : (T) -> Bool) -> Array[Array[T]] {
-  let chunks = Array::new()
+  let chunks = []
   let mut i = 0
   while i < self.len {
-    let chunk = Array::new()
+    let chunk = []
     while i < self.len && pred(self[i]).not() {
       chunk.push(self[i])
       i = i + 1
@@ -967,7 +967,7 @@ pub fn split[T](self : Array[T], pred : (T) -> Bool) -> Array[Array[T]] {
 /// # Example
 ///
 /// ```
-/// let v = Array::[1]
+/// let v = [1]
 /// v.reserve_capacity(10)
 /// println(v.capacity()) // 10
 /// ```

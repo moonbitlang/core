@@ -301,7 +301,7 @@ test "iteri" {
   let mut s = 0
   v.iteri(fn(i, e) { s = s + i * e })
   inspect(s, content="40")?
-  let vec = Array::new()
+  let vec = []
   v.iteri(fn(i, _e) { vec.push(i) })
   inspect(vec, content="[0, 1, 2, 3, 4]")?
 }
@@ -538,7 +538,7 @@ test "mix" {
   for i = 0; i < large_const; i = i + 1 {
     v = v.push(i)
   }
-  let vec = Array::new()
+  let vec = []
   v.iteri(fn(i, _e) { vec.push(i) })
   for i = 0; i < large_const; i = i + 1 {
     @assertion.assert_eq(vec[i], i)?

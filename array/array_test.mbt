@@ -49,7 +49,7 @@ test "op_equal" {
 }
 
 test "pop" {
-  let v = Array::new()
+  let v = []
   v.push(3)
   v.push(4)
   @assertion.assert_eq(v.length(), 2)?
@@ -60,7 +60,7 @@ test "pop" {
 }
 
 test "pop_exn" {
-  let v = Array::new()
+  let v = []
   v.push(3)
   v.push(4)
   @assertion.assert_eq(v.length(), 2)?
@@ -175,7 +175,7 @@ test "filter" {
 }
 
 test "is_empty" {
-  let v = Array::new()
+  let v = []
   @assertion.assert_true(v.is_empty())?
   v.push(3)
   @assertion.assert_false(v.is_empty())?
