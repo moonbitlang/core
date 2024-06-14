@@ -37,15 +37,13 @@ fn lex_decimal_point(
   ~start : Int
 ) -> Result[Double, ParseError] {
   match read_char(ctx) {
-    Some('e' | 'E') => return lex_decimal_exponent(ctx, ~start)
-    Some(c) => {
+    Some(c) =>
       if c >= '0' && c <= '9' {
         return lex_decimal_fraction(ctx, ~start)
+      } else {
+        return Err(invalid_char(ctx, shift=-1))
       }
-      ctx.offset -= 1
-      return lex_number_end(ctx, start, ctx.offset)
-    }
-    None => return lex_number_end(ctx, start, ctx.offset)
+    None => return Err(InvalidEof)
   }
 }
 

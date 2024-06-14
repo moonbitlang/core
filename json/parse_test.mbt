@@ -101,7 +101,7 @@ test "parses false" {
 
 //region numbers
 test "parses leading zeroes" {
-  let json = test_parse("[0,0.,0e0]")?
+  let json = test_parse("[0,0.0,0e0]")?
   @assertion.assert_eq(
     json,
     JsonValue::Array(
@@ -149,7 +149,7 @@ test "parses fractional numbers" {
 }
 
 test "parses exponents" {
-  let json = test_parse("[1e0,1e1,1e01,1.e0,1.1e0,1e-1,1e+1]")?
+  let json = test_parse("[1e0,1e1,1e01,1.0e0,1.1e0,1e-1,1e+1]")?
   @assertion.assert_eq(
     json,
     JsonValue::Array(
