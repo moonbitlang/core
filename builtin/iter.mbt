@@ -189,7 +189,7 @@ pub fn Iter::range(start : Int, end : Int) -> Iter[Int] {
 pub fn Iter::range_Int64(start : Int64, end : Int64) -> Iter[Int64] {
   Iter(
     fn(yield) {
-      for i = start; i < end; i = i + (1).to_int64() {
+      for i = start; i < end; i = i + 1L {
         if yield(i).not() {
           break false
         }
