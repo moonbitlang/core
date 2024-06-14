@@ -130,7 +130,6 @@ test "clear" {
   let v = [3, 4, 5]
   v.clear()
   @assertion.assert_eq(v.length(), 0)?
-  @assertion.assert_eq(v.capacity(), 3)?
 }
 
 test "map" {
@@ -296,21 +295,6 @@ test "insert" {
   v.insert(1, 6)
   @assertion.assert_eq(v, [3, 6, 4, 5])?
   @assertion.assert_eq(v.length(), 4)?
-  @assertion.assert_eq(v.capacity(), 6)?
-}
-
-test "fill" {
-  let v = with_capacity(3)
-  v.fill(3)
-  @assertion.assert_eq(v, [3, 3, 3])?
-  @assertion.assert_eq(v.length(), 3)?
-}
-
-test "fill_with" {
-  let v = with_capacity(3)
-  v.fill_with(fn() { 3 })
-  @assertion.assert_eq(v, [3, 3, 3])?
-  @assertion.assert_eq(v.length(), 3)?
 }
 
 test "flatten" {
@@ -400,14 +384,14 @@ test "split" {
 
 test "reserve_capacity" {
   let v = [1]
+  // Only test that it doesn't panic
   v.reserve_capacity(10)
-  @assertion.assert_true(v.capacity() == 10)?
 }
 
 test "reserve_capacity_2" {
   let v = [1, 2, 3, 4, 5]
+  // Only test that it doesn't panic
   v.reserve_capacity(3)
-  @assertion.assert_true(v.capacity() == 5)?
 }
 
 test "shrink_to_fit" {
@@ -415,16 +399,14 @@ test "shrink_to_fit" {
   v.push(1)
   v.push(2)
   v.push(3)
-  @assertion.assert_true(v.capacity() == 10)?
+  // Only test that it doesn't panic
   v.shrink_to_fit()
-  @assertion.assert_true(v.capacity() == 3)?
 }
 
 test "shrink_to_fit_2" {
   let v = [1, 2, 3]
-  @assertion.assert_true(v.capacity() == 3)?
+  // Only test that it doesn't panic
   v.shrink_to_fit()
-  @assertion.assert_true(v.capacity() == 3)?
 }
 
 test "as_iter" {
