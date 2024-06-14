@@ -63,10 +63,6 @@ fn lex_value(
             let n = lex_zero(ctx, start=ctx.offset - 2)?
             return Ok(Number(n))
           }
-          Some('.') => {
-            let n = lex_decimal_point_leading(ctx, start=ctx.offset - 2)?
-            return Ok(Number(n))
-          }
           Some(c2) => {
             if c2 >= '1' && c2 <= '9' {
               let n = lex_decimal_integer(ctx, start=ctx.offset - 2)?
@@ -76,10 +72,6 @@ fn lex_value(
           }
           None => return Err(InvalidEof)
         }
-      Some('.') => {
-        let n = lex_decimal_point_leading(ctx, start=ctx.offset - 1)?
-        return Ok(Number(n))
-      }
       Some('0') => {
         let n = lex_zero(ctx, start=ctx.offset - 1)?
         return Ok(Number(n))
