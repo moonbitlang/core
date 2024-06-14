@@ -32,22 +32,6 @@ fn lex_decimal_integer(
   }
 }
 
-fn lex_decimal_point_leading(
-  ctx : ParseContext,
-  ~start : Int
-) -> Result[Double, ParseError] {
-  match read_char(ctx) {
-    Some(c) => {
-      if c >= '0' && c <= '9' {
-        return lex_decimal_fraction(ctx, ~start)
-      }
-      ctx.offset -= 1
-      return Err(invalid_char(ctx))
-    }
-    None => Err(InvalidEof)
-  }
-}
-
 fn lex_decimal_point(
   ctx : ParseContext,
   ~start : Int

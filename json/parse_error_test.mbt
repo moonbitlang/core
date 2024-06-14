@@ -26,7 +26,7 @@ test "throws on invalid characters following a sign" {
 }
 
 test "throws on invalid characters following a leading decimal point" {
-  inspect(parse(".a"), content="Err(Invalid character 'a' at line 1, column 1)")?
+  inspect(parse("1.a"), content="Err(Invalid character 'a' at line 1, column 2)")?
 }
 
 test "throws on invalid characters following an exponent indicator" {
@@ -168,13 +168,13 @@ test "throws on object with extra comma" {
 test "throws on invalid number" {
   inspect(parse("+1"), content="Err(Invalid character '+' at line 1, column 0)")?
   inspect(parse("-2."), content="Ok(Number(-2.0))")?
-  inspect(parse(".2e-3"), content="Ok(Number(2.0e-4))")?
+  inspect(parse(".2e-3"), content="Err(Invalid character '.' at line 1, column 0)")?
   inspect(parse("0.e1"), content="Ok(Number(0.0))")?
   inspect(parse("2.e+3"), content="Ok(Number(2000.0))")?
   inspect(parse("2.e-3"), content="Ok(Number(0.002))")?
-  inspect(parse("-.123"), content="Ok(Number(-0.123))")?
+  inspect(parse("-.123"), content="Err(Invalid character '.' at line 1, column 1)")?
   inspect(parse("1."), content="Ok(Number(1.0))")?
-  inspect(parse(".123"), content="Ok(Number(0.123))")?
+  inspect(parse(".123"), content="Err(Invalid character '.' at line 1, column 0)")?
 }
 
 //endregion

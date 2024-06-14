@@ -126,7 +126,7 @@ test "parses integers" {
 }
 
 test "parses signed numbers" {
-  let json = test_parse("[-1,2,-.1,-0]")?
+  let json = test_parse("[-1,2,-0.1,-0]")?
   @assertion.assert_eq(
     json,
     JsonValue::Array(
@@ -137,14 +137,6 @@ test "parses signed numbers" {
         JsonValue::Number(-0.0),
       ],
     ),
-  )?
-}
-
-test "parses leading decimal points" {
-  let json = test_parse("[.1,.23]")?
-  @assertion.assert_eq(
-    json,
-    JsonValue::Array([JsonValue::Number(0.1), JsonValue::Number(0.23)]),
   )?
 }
 
