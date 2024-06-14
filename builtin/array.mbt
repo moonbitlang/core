@@ -77,7 +77,7 @@ pub fn length[T](self : Array[T]) -> Int {
 }
 
 /// Returns the total number of elements the vector can hold without reallocating.
-pub fn capacity[T](self : Array[T]) -> Int {
+fn capacity[T](self : Array[T]) -> Int {
   self.buf.0.length()
 }
 
@@ -716,32 +716,6 @@ pub fn insert[T](self : Array[T], index : Int, value : T) -> Unit {
   }
   self.buf[index] = value
   self.len = self.len + 1
-}
-
-/// Fill the vector (by capacity) with a given value.
-///
-/// # Example
-/// ```
-/// Array::with_capacity(3).fill(3)
-/// ```
-pub fn fill[T](self : Array[T], value : T) -> Unit {
-  for i = 0; i < self.capacity(); i = i + 1 {
-    self.buf[i] = value
-  }
-  self.len = self.capacity()
-}
-
-/// Fill the vector by calling a function (By capacity).
-///
-/// # Example
-/// ```
-/// Array::with_capacity(3).fill_with(fn() { 3 })
-/// ```
-pub fn fill_with[T](self : Array[T], f : () -> T) -> Unit {
-  for i = 0; i < self.capacity(); i = i + 1 {
-    self.buf[i] = f()
-  }
-  self.len = self.capacity()
 }
 
 /// Flattens a vector of vectors into a vector.

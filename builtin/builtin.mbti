@@ -39,7 +39,6 @@ impl ArgsLoc {
 type Array
 impl Array {
   append[T](Self[T], Self[T]) -> Unit
-  capacity[T](Self[T]) -> Int
   chunk_by[T](Self[T], (T, T) -> Bool) -> Self[Self[T]]
   chunks[T](Self[T], Int) -> Self[Self[T]]
   clear[T](Self[T]) -> Unit
@@ -49,8 +48,6 @@ impl Array {
   drain[T](Self[T], Int, Int) -> Self[T]
   ends_with[T : Eq](Self[T], Self[T]) -> Bool
   extract_if[T](Self[T], (T) -> Bool) -> Self[T]
-  fill[T](Self[T], T) -> Unit
-  fill_with[T](Self[T], () -> T) -> Unit
   filter[T](Self[T], (T) -> Bool) -> Self[T]
   flatten[T](Self[Self[T]]) -> Self[T]
   fold_left[T, U](Self[T], (U, T) -> U, ~init : U) -> U
