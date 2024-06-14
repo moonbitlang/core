@@ -13,6 +13,7 @@
 // limitations under the License.
 
 /// Convert Char to String
+/// @intrinsic %char.to_string
 pub fn to_string(self : Char) -> String {
   let bytes = Bytes::make(4)
   let len = bytes.set_utf16_char(0, self)
