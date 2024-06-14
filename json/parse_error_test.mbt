@@ -166,7 +166,7 @@ test "throws on object with extra comma" {
 }
 
 test "throws on invalid number" {
-  inspect(parse("+1"), content="Ok(Number(1.0))")?
+  inspect(parse("+1"), content="Err(Invalid character '+' at line 1, column 0)")?
   inspect(parse("-2."), content="Ok(Number(-2.0))")?
   inspect(parse(".2e-3"), content="Ok(Number(2.0e-4))")?
   inspect(parse("0.e1"), content="Ok(Number(0.0))")?
