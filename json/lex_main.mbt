@@ -57,7 +57,7 @@ fn lex_value(
         lex_assert_char(ctx, 'e')?
         return Ok(False)
       }
-      Some('-' | '+') =>
+      Some('-') =>
         match read_char(ctx) {
           Some('0') => {
             let n = lex_zero(ctx, start=ctx.offset - 2)?
