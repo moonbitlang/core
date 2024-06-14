@@ -159,7 +159,22 @@ test "throws on array with extra comma" {
 }
 
 test "throws on object with extra comma" {
-  inspect(parse("{\"id\":0,}"), content="Err(Invalid character '}' at line 1, column 8)")?
+  inspect(
+    parse("{\"id\":0,}"),
+    content="Err(Invalid character '}' at line 1, column 8)",
+  )?
+}
+
+test "throws on invalid number" {
+  inspect(parse("+1"), content="Ok(Number(1.0))")?
+  inspect(parse("-2."), content="Ok(Number(-2.0))")?
+  inspect(parse(".2e-3"), content="Ok(Number(2.0e-4))")?
+  inspect(parse("0.e1"), content="Ok(Number(0.0))")?
+  inspect(parse("2.e+3"), content="Ok(Number(2000.0))")?
+  inspect(parse("2.e-3"), content="Ok(Number(0.002))")?
+  inspect(parse("-.123"), content="Ok(Number(-0.123))")?
+  inspect(parse("1."), content="Ok(Number(1.0))")?
+  inspect(parse(".123"), content="Ok(Number(0.123))")?
 }
 
 //endregion
