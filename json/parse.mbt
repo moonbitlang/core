@@ -53,48 +53,40 @@ fn parse_value2(
 
 fn parse_object(ctx : ParseContext) -> Result[JsonValue, ParseError] {
   let map = Map::new()
-  for ; ; {
-    let tok = lex_property_name(ctx)?
-    match tok {
-      RBrace => break
-      String(name) => {
-        let tok2 = lex_after_property_name(ctx)?
-        match tok2 {
-          Colon => {
-            let val = parse_value(ctx)?
-            map.set(name, val)
-            let tok3 = lex_after_object_value(ctx)?
-            match tok3 {
-              Comma => continue
-              RBrace => break
-              _ => abort("unreachable")
-            }
+  loop lex_property_name(ctx)? {
+    RBrace => Ok(Object(map))
+    String(name) => {
+      let tok2 = lex_after_property_name(ctx)?
+      match tok2 {
+        Colon => {
+          let val = parse_value(ctx)?
+          map.set(name, val)
+          let tok3 = lex_after_object_value(ctx)?
+          match tok3 {
+            Comma => continue lex_property_name2(ctx)?
+            RBrace => Ok(Object(map))
+            _ => abort("unreachable")
           }
-          _ => abort("unreachable")
         }
+        _ => abort("unreachable")
       }
-      _ => abort("unreachable")
     }
+    _ => abort("unreachable")
   }
-  Ok(Object(map))
 }
 
 fn parse_array(ctx : ParseContext) -> Result[JsonValue, ParseError] {
   let vec = []
-  for ; ; {
-    let tok = lex_value(ctx, allow_rbracket=true)?
-    match tok {
-      RBracket => break
-      _ => {
-        vec.push(parse_value2(ctx, tok)?)
-        let tok2 = lex_after_array_value(ctx)?
-        match tok2 {
-          Comma => continue
-          RBracket => break
-          _ => abort("unreachable")
-        }
+  loop lex_value(ctx, allow_rbracket=true)? {
+    RBracket => Ok(Array(vec))
+    tok => {
+      vec.push(parse_value2(ctx, tok)?)
+      let tok2 = lex_after_array_value(ctx)?
+      match tok2 {
+        Comma => continue lex_value(ctx, allow_rbracket=false)?
+        RBracket => Ok(Array(vec))
+        _ => abort("unreachable")
       }
     }
   }
-  Ok(Array(vec))
 }

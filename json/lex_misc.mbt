@@ -97,3 +97,15 @@ fn lex_property_name(ctx : ParseContext) -> Result[Token, ParseError] {
     None => Err(InvalidEof)
   }
 }
+
+fn lex_property_name2(ctx : ParseContext) -> Result[Token, ParseError] {
+  lex_skip_whitespace(ctx)?
+  match read_char(ctx) {
+    Some('"') => {
+      let s = lex_string(ctx)?
+      Ok(String(s))
+    }
+    Some(_) => Err(invalid_char(ctx, shift=-1))
+    None => Err(InvalidEof)
+  }
+}
