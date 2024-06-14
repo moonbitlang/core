@@ -9,6 +9,7 @@ impl String {
   default() -> String
   ends_with(String, String) -> Bool
   hash(String) -> Int
+  index_of(String, String) -> Int
   starts_with(String, String) -> Bool
   substring(String, ~start : Int = .., ~end : Int = ..) -> String
   to_array(String) -> Array[Char]
