@@ -152,7 +152,7 @@ pub fn Iter::repeat[T](a : T) -> Iter[T] {
   )
 }
 
-/// Creates an iterator that iterates over a range of integers.
+/// Creates an iterator that iterates over a range of integers with step 1.
 /// 
 /// # Arguments
 /// 
@@ -166,6 +166,87 @@ pub fn Iter::range(start : Int, end : Int) -> Iter[Int] {
   Iter(
     fn(yield) {
       for i = start; i < end; i = i + 1 {
+        if yield(i).not() {
+          break false
+        }
+      } else {
+        true
+      }
+    },
+  )
+}
+
+/// Creates an iterator that iterates over a range of Int64 with step 1.
+/// 
+/// # Arguments
+/// 
+/// * `start` - The starting value of the range (inclusive).
+/// * `end` - The ending value of the range (exclusive).
+/// 
+/// # Returns
+/// 
+/// Returns an iterator that iterates over the range of Int64 from `start` to `end - 1`.
+pub fn Iter::range_Int64(start : Int64, end : Int64) -> Iter[Int64] {
+  Iter(
+    fn(yield) {
+      for i = start; i < end; i = i + (1).to_int64() {
+        if yield(i).not() {
+          break false
+        }
+      } else {
+        true
+      }
+    },
+  )
+}
+
+/// Creates an iterator that iterates over a range of Double with step 1.0.
+/// 
+/// # Arguments
+/// 
+/// * `start` - The starting value of the range (inclusive).
+/// * `end` - The ending value of the range (exclusive).
+/// 
+/// # Returns
+/// 
+/// Returns an iterator that iterates over the range of Double from `start` to `end - 1`.
+pub fn Iter::range_double(start : Double, end : Double) -> Iter[Double] {
+  Iter(
+    fn(yield) {
+      for i = start; i < end; i = i + 1.0 {
+        if yield(i).not() {
+          break false
+        }
+      } else {
+        true
+      }
+    },
+  )
+}
+
+pub trait Addable {
+  op_add(Self, Self) -> Self
+}
+
+/// Creates an iterator that iterates over a range of integers with a given step.
+/// 
+/// # Arguments
+/// 
+/// * `start` - The starting value of the range (inclusive).
+/// * `end` - The ending value of the range (exclusive).
+/// * `step` - The step value.
+/// 
+/// # Returns
+/// 
+/// Returns an iterator that iterates over the range of integers from `start` to `end - 1` with the given step.
+pub fn Iter::range_step[T : Compare + Addable](
+  start : T,
+  end : T,
+  step : T
+) -> Iter[T] {
+  Iter(
+    fn(yield) {
+      for i = start; i < end; i = i + step {
         if not(yield(i)) {
           break false
         }
