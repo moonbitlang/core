@@ -150,17 +150,16 @@ test "throws on invalid property names" {
 test "throws on array with extra comma" {
   inspect(
     parse("[1,]"),
-    content="Ok(Array([Number(1.0)]))",
+    content="Err(Invalid character ']' at line 1, column 3)",
   )?
   inspect(
     parse("[\"\",]"),
-    content=
-      #|Ok(Array([String(\"\")]))
+    content="Err(Invalid character ']' at line 1, column 4)",
   )?
 }
 
 test "throws on object with extra comma" {
-  inspect(parse("{\"id\":0,}"), content="Ok(Object(Map::[{id:Number(0.0)}]))")?
+  inspect(parse("{\"id\":0,}"), content="Err(Invalid character '}' at line 1, column 8)")?
 }
 
 //endregion
