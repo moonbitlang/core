@@ -1,11 +1,11 @@
 {
-    "import": [
-    ],
+    "import": [],
     "test-import": [
         "moonbitlang/core/assertion",
         "moonbitlang/core/char",
         "moonbitlang/core/string",
         "moonbitlang/core/int",
-        "moonbitlang/core/tuple"
+        "moonbitlang/core/tuple",
+        "moonbitlang/core/double"
     ]
 }

@@ -141,6 +141,9 @@ impl Iter {
   op_add[T](Self[T], Self[T]) -> Self[T]
   prepend[T](Self[T], T) -> Self[T]
   range(Int, Int) -> Self[Int]
+  range_Int64(Int64, Int64) -> Self[Int64]
+  range_double(Double, Double) -> Self[Double]
+  range_step[T : Compare + Addable + Eq](T, T, T) -> Self[T]
   repeat[T](T) -> Self[T]
   singleton[T](T) -> Self[T]
   take[T](Self[T], Int) -> Self[T]
@@ -351,6 +354,10 @@ impl Ref {
 }
 
 // Traits
+pub trait Addable {
+  op_add(Self, Self) -> Self
+}
+
 pub trait Compare : Eq {
   compare(Self, Self) -> Int
 }

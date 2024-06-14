@@ -263,4 +263,18 @@ test "range" {
     Iter::range(0, 10).take(5).concat(Iter::range(0, 3)).collect(),
     content="[0, 1, 2, 3, 4, 0, 1, 2]",
   )?
+  inspect(
+    Iter::range_Int64(0x80000000L, 0x80000000L + 10L).take(5).concat(
+      Iter::range_Int64(0x80000000L + 10L, 0x80000000L + 20L).take(3),
+    ).collect(),
+    content="[2147483648, 2147483649, 2147483650, 2147483651, 2147483652, 2147483658, 2147483659, 2147483660]",
+  )?
+  inspect(
+    Iter::range_double(0.0, 10.0).take(5).concat(Iter::range_double(0.0, 3.0)).collect(),
+    content="[0.0, 1.0, 2.0, 3.0, 4.0, 0.0, 1.0, 2.0]",
+  )?
+  inspect(
+    Iter::range_step(0.0, 1.0, 0.1).take(5).collect(),
+    content="[0.0, 0.1, 0.2, 0.30000000000000004, 0.4]",
+  )?
 }
