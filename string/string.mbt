@@ -234,6 +234,7 @@ test "ends_with" {
   @assertion.assert_false("abc".ends_with("ab"))?
 }
 
+// TODO: improve the perf later
 pub fn index_of(self : String, str : String) -> Int {
   let len = self.length()
   let sub_len = str.length()
