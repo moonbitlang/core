@@ -261,8 +261,6 @@ pub fn is_integer(self : Rational) -> Bool {
   self.denominator == 1L
 }
 
-
-
 test "op_add" {
   // 1/2 + 1/3 = 5/6
   let a = Rational::new_unchecked(1L, 2L)
