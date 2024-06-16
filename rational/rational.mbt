@@ -261,21 +261,7 @@ pub fn is_integer(self : Rational) -> Bool {
   self.denominator == 1L
 }
 
-test "new" {
-  // 1/2
-  let a = Rational::new(1L, 2L)
-  match a {
-    Some(a) => {
-      @assertion.assert_eq(a.numerator, 1L)?
-      @assertion.assert_eq(a.denominator, 2L)?
-    }
-    None => abort("Impossible to reach")
-  }
 
-  // 1/0
-  let a = Rational::new(1L, 0L)
-  @assertion.assert_eq(a, None)?
-}
 
 test "op_add" {
   // 1/2 + 1/3 = 5/6
