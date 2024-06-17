@@ -48,7 +48,12 @@ fn lex_string(ctx : ParseContext) -> Result[String, ParseError] {
         }
         start = ctx.offset
       }
-      Some(_) => continue
+      Some(ch) =>
+        if ch.to_int() < 32 {
+          return Err(invalid_char(ctx, shift=-1))
+        } else {
+          continue
+        }
       None => return Err(InvalidEof)
     }
   }

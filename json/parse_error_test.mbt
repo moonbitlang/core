@@ -203,11 +203,17 @@ test "throws on invalid number" {
 }
 
 test "throws on invalid chars" {
-  inspect(parse("[\u000c]"), content="Ok(Array([]))")?
-  inspect(parse("[\"\u0009\"]"), content="Ok(Array([String(\\\"\u0009\\\")]))")?
+  inspect(
+    parse("[\u000c]"),
+    content="Err(Invalid character '\x0c' at line 1, column 1)",
+  )?
+  inspect(
+    parse("[\"\u0009\"]"),
+    content="Err(Invalid character '\t' at line 1, column 2)",
+  )?
   inspect(
     parse("[\"a\u0000a\"]"),
-    content="Ok(Array([String(\\\"a\x00a\\\")]))",
+    content="Err(Invalid character '\x00' at line 1, column 3)",
   )?
 }
 

@@ -29,7 +29,7 @@ fn lex_value(
 ) -> Result[Token, ParseError] {
   for ; ; {
     match read_char(ctx) {
-      Some('\t' | '\u000B' | '\u000C' | ' ' | '\n' | '\r') => continue
+      Some('\t' | ' ' | '\n' | '\r') => continue
       Some('{') => return Ok(LBrace)
       Some('[') => return Ok(LBracket)
       Some(']') =>
