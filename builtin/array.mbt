@@ -652,10 +652,10 @@ pub fn insert[T](self : Array[T], index : Int, value : T) -> Unit {
   if self.length() == self.buffer().0.length() {
     self.realloc()
   }
+  let length = self.length()
   for i = self.length(); i > index; i = i - 1 {
     self.buffer()[i] = self.buffer()[i - 1]
   }
-  let length = self.length()
   self.buffer()[index] = value
   self.set_length(length + 1)
 }

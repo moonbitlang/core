@@ -24,46 +24,28 @@ fn set_null[T](self : UninitializedArray[T], index : Int) = "%array_set_null"
 
 /// An `Array` is a collection of values that supports random access and can
 /// grow in size.
-struct Array[T] {
-  mut buf : UninitializedArray[T]
-  mut len : Int
-}
+type Array[T] UninitializedArray[T]
 
 fn Array::make_uninit[T](len : Int) -> Array[T] {
-  { buf: UninitializedArray::make(len), len }
+  UninitializedArray::make(len)
 }
 
 /// Creates a new, empty vector with a specified initial capacity.
-pub fn Array::with_capacity[T](cap : Int) -> Array[T] {
-  { buf: UninitializedArray::make(cap), len: 0 }
+pub fn Array::with_capacity[T](_cap : Int) -> Array[T] {
+  UninitializedArray::make(0)
 }
+
+fn set_length[T](self : Array[T], new_len : Int) -> Unit = "%array_truncate_length"
 
 /// Returns the number of elements in the vector.
 pub fn length[T](self : Array[T]) -> Int {
-  self.len
-}
-
-fn set_length[T](self : Array[T], new_len : Int) -> Unit {
-  // assert new_len >= 0 && new_len <= self.buf.len
-  if new_len < self.len {
-    for i = new_len; i < self.len; i = i + 1 {
-      self.buf.set_null(i)
-    }
-  }
-  self.len = new_len
+  self.0.0.length()
 }
 
 fn buffer[T](self : Array[T]) -> UninitializedArray[T] {
-  self.buf
+  self.0
 }
 
-fn resize_buffer[T](self : Array[T], new_capacity : Int) -> Unit {
-  let new_buf = UninitializedArray::make(new_capacity)
-  let old_buf = self.buf
-  let old_cap = old_buf.0.length()
-  let copy_len = if old_cap < new_capacity { old_cap } else { new_capacity }
-  for i = 0; i < copy_len; i = i + 1 {
-    new_buf[i] = old_buf[i]
-  }
-  self.buf = new_buf
+fn resize_buffer[T](self : Array[T], _new_capacity : Int) -> Unit {
+  ignore(self)
 }
