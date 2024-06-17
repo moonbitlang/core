@@ -22,6 +22,18 @@ fn op_set[T](self : UninitializedArray[T], index : Int, value : T) = "%array_set
 
 fn set_null[T](self : UninitializedArray[T], index : Int) = "%array_set_null"
 
+fn UninitializedArray::from[T](self : FixedArray[T]) -> UninitializedArray[T] = "%identity"
+
+fn UninitializedArray::unsafe_blit[T](
+  dst : UninitializedArray[T],
+  dst_offset : Int,
+  src : UninitializedArray[T],
+  src_offset : Int,
+  len : Int
+) -> Unit {
+  FixedArray::unsafe_blit(dst.0, dst_offset, src.0, src_offset, len)
+}
+
 /// An `Array` is a collection of values that supports random access and can
 /// grow in size.
 struct Array[T] {
@@ -62,8 +74,6 @@ fn resize_buffer[T](self : Array[T], new_capacity : Int) -> Unit {
   let old_buf = self.buf
   let old_cap = old_buf.0.length()
   let copy_len = if old_cap < new_capacity { old_cap } else { new_capacity }
-  for i = 0; i < copy_len; i = i + 1 {
-    new_buf[i] = old_buf[i]
-  }
+  UninitializedArray::unsafe_blit(new_buf, 0, old_buf, 0, copy_len)
   self.buf = new_buf
 }
