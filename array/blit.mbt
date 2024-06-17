@@ -12,38 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-/// @intrinsic %array.copy
-fn fixed_unsafe_blit[A](
-  dst : FixedArray[A],
-  dst_offset : Int,
-  src : FixedArray[A],
-  src_offset : Int,
-  len : Int
-) -> Unit {
-  if physical_equal(dst, src) && dst_offset < src_offset {
-    for i = 0; i < len; i = i + 1 {
-      dst[dst_offset + i] = src[src_offset + i]
-    }
-  } else {
-    for i = len - 1; i >= 0; i = i - 1 {
-      dst[dst_offset + i] = src[src_offset + i]
-    }
-  }
-}
-
-pub fn blit_to[A](
-  self : FixedArray[A],
-  dst : FixedArray[A],
-  ~len : Int,
-  ~src_offset : Int = 0,
-  ~dst_offset : Int = 0
-) -> Unit {
-  if dst_offset + len > dst.length() || src_offset + len > self.length() {
-    panic()
-  }
-  fixed_unsafe_blit(dst, dst_offset, self, src_offset, len)
-}
-
 test "panic" {
   let a : FixedArray[Int] = [1, 2, 3, 4]
   let b : FixedArray[Int] = [1, 2, 3, 4]
@@ -56,7 +24,7 @@ pub fn copy[T](self : FixedArray[T]) -> FixedArray[T] {
     []
   } else {
     let arr = FixedArray::make(len, self[0])
-    fixed_unsafe_blit(arr, 0, self, 0, len)
+    FixedArray::unsafe_blit(arr, 0, self, 0, len)
     arr
   }
 }
