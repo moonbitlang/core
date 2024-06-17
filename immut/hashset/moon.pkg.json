@@ -3,7 +3,7 @@
     "moonbitlang/core/builtin",
     "moonbitlang/core/array",
     "moonbitlang/core/coverage",
-    "moonbitlang/core/immut/internal"
+    "moonbitlang/core/immut/internal/sparse_array"
   ],
   "test-import" : [
     "moonbitlang/core/assertion",
