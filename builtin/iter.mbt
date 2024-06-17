@@ -152,90 +152,18 @@ pub fn Iter::repeat[T](a : T) -> Iter[T] {
   )
 }
 
-/// Creates an iterator that iterates over a range of integers with step 1.
+/// Creates an iterator that iterates over a range of integers with default step 1.
 /// 
 /// # Arguments
 /// 
 /// * `start` - The starting value of the range (inclusive).
 /// * `end` - The ending value of the range (exclusive).
+/// * `step` - The step value for the range (default 1).
 /// 
 /// # Returns
 /// 
 /// Returns an iterator that iterates over the range of integers from `start` to `end - 1`.
-pub fn Iter::range(start : Int, end : Int) -> Iter[Int] {
-  Iter(
-    fn(yield) {
-      for i = start; i < end; i = i + 1 {
-        if yield(i).not() {
-          break false
-        }
-      } else {
-        true
-      }
-    },
-  )
-}
-
-/// Creates an iterator that iterates over a range of Int64 with step 1.
-/// 
-/// # Arguments
-/// 
-/// * `start` - The starting value of the range (inclusive).
-/// * `end` - The ending value of the range (exclusive).
-/// 
-/// # Returns
-/// 
-/// Returns an iterator that iterates over the range of Int64 from `start` to `end - 1`.
-pub fn Iter::range_Int64(start : Int64, end : Int64) -> Iter[Int64] {
-  Iter(
-    fn(yield) {
-      for i = start; i < end; i = i + 1L {
-        if yield(i).not() {
-          break false
-        }
-      } else {
-        true
-      }
-    },
-  )
-}
-
-/// Creates an iterator that iterates over a range of Double with step 1.0.
-/// 
-/// # Arguments
-/// 
-/// * `start` - The starting value of the range (inclusive).
-/// * `end` - The ending value of the range (exclusive).
-/// 
-/// # Returns
-/// 
-/// Returns an iterator that iterates over the range of Double from `start` to `end - 1`.
-pub fn Iter::range_Double(start : Double, end : Double) -> Iter[Double] {
-  Iter(
-    fn(yield) {
-      for i = start; i < end; i = i + 1.0 {
-        if yield(i).not() {
-          break false
-        }
-      } else {
-        true
-      }
-    },
-  )
-}
-
-/// Creates an iterator that iterates over a range of integers with a given step.
-/// 
-/// # Arguments
-/// 
-/// * `start` - The starting value of the range (inclusive).
-/// * `end` - The ending value of the range (exclusive).
-/// * `step` - The step value.
-/// 
-/// # Returns
-/// 
-/// Returns an iterator that iterates over the range of integers from `start` to `end - 1` with the given step.
-pub fn Iter::range_step(start : Int, end : Int, step : Int) -> Iter[Int] {
+pub fn Iter::range(start : Int, end : Int, ~step : Int = 1) -> Iter[Int] {
   Iter(
     fn(yield) {
       for i = start; i < end; i = i + step {
@@ -249,21 +177,21 @@ pub fn Iter::range_step(start : Int, end : Int, step : Int) -> Iter[Int] {
   )
 }
 
-/// Creates an iterator that iterates over a range of Int64 with a given step.
+/// Creates an iterator that iterates over a range of Int64 with default step 1.
 /// 
 /// # Arguments
 /// 
 /// * `start` - The starting value of the range (inclusive).
 /// * `end` - The ending value of the range (exclusive).
-/// * `step` - The step value.
+/// * `step` - The step value for the range (default 1L).
 /// 
 /// # Returns
 /// 
-/// Returns an iterator that iterates over the range of integers from `start` to `end - 1` with the given step.
-pub fn Iter::range_step_Int64(
+/// Returns an iterator that iterates over the range of Int64 from `start` to `end - 1`.
+pub fn Iter::range_Int64(
   start : Int64,
   end : Int64,
-  step : Int64
+  ~step : Int64 = 1L
 ) -> Iter[Int64] {
   Iter(
     fn(yield) {
@@ -278,21 +206,21 @@ pub fn Iter::range_step_Int64(
   )
 }
 
-/// Creates an iterator that iterates over a range of Double with a given step.
+/// Creates an iterator that iterates over a range of Double with default step 1.0.
 /// 
 /// # Arguments
 /// 
 /// * `start` - The starting value of the range (inclusive).
 /// * `end` - The ending value of the range (exclusive).
-/// * `step` - The step value.
+/// * `step` - The step value for the range (default 1.0).
 /// 
 /// # Returns
 /// 
-/// Returns an iterator that iterates over the range of integers from `start` to `end - 1.0` with the given step.
-pub fn Iter::range_step_Double(
+/// Returns an iterator that iterates over the range of Double from `start` to `end - 1`.
+pub fn Iter::range_Double(
   start : Double,
   end : Double,
-  step : Double
+  ~step : Double = 1.0
 ) -> Iter[Double] {
   Iter(
     fn(yield) {
