@@ -224,10 +224,6 @@ pub fn Iter::range_Double(start : Double, end : Double) -> Iter[Double] {
   )
 }
 
-pub trait Addable {
-  op_add(Self, Self) -> Self
-}
-
 /// Creates an iterator that iterates over a range of integers with a given step.
 /// 
 /// # Arguments
@@ -239,15 +235,69 @@ pub trait Addable {
 /// # Returns
 /// 
 /// Returns an iterator that iterates over the range of integers from `start` to `end - 1` with the given step.
-pub fn Iter::range_step[T : Compare + Addable](
-  start : T,
-  end : T,
-  step : T
-) -> Iter[T] {
+pub fn Iter::range_step(start : Int, end : Int, step : Int) -> Iter[Int] {
   Iter(
     fn(yield) {
       for i = start; i < end; i = i + step {
-        if not(yield(i)) {
+        if yield(i).not() {
+          break false
+        }
+      } else {
+        true
+      }
+    },
+  )
+}
+
+/// Creates an iterator that iterates over a range of Int64 with a given step.
+/// 
+/// # Arguments
+/// 
+/// * `start` - The starting value of the range (inclusive).
+/// * `end` - The ending value of the range (exclusive).
+/// * `step` - The step value.
+/// 
+/// # Returns
+/// 
+/// Returns an iterator that iterates over the range of integers from `start` to `end - 1` with the given step.
+pub fn Iter::range_step_Int64(
+  start : Int64,
+  end : Int64,
+  step : Int64
+) -> Iter[Int64] {
+  Iter(
+    fn(yield) {
+      for i = start; i < end; i = i + step {
+        if yield(i).not() {
+          break false
+        }
+      } else {
+        true
+      }
+    },
+  )
+}
+
+/// Creates an iterator that iterates over a range of Double with a given step.
+/// 
+/// # Arguments
+/// 
+/// * `start` - The starting value of the range (inclusive).
+/// * `end` - The ending value of the range (exclusive).
+/// * `step` - The step value.
+/// 
+/// # Returns
+/// 
+/// Returns an iterator that iterates over the range of integers from `start` to `end - 1.0` with the given step.
+pub fn Iter::range_step_Double(
+  start : Double,
+  end : Double,
+  step : Double
+) -> Iter[Double] {
+  Iter(
+    fn(yield) {
+      for i = start; i < end; i = i + step {
+        if yield(i).not() {
           break false
         }
       } else {
