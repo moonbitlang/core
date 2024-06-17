@@ -26,44 +26,13 @@ pub fn as_iter[T](self : Array[T]) -> Iter[T] {
   )
 }
 
-fn unsafe_blit[A](
-  dst : Array[A],
-  dst_offset : Int,
-  src : Array[A],
-  src_offset : Int,
-  len : Int
-) -> Unit {
-  if physical_equal(dst, src) && dst_offset < src_offset {
-    for i = 0; i < len; i = i + 1 {
-      dst[dst_offset + i] = src[src_offset + i]
-    }
-  } else {
-    for i = len - 1; i >= 0; i = i - 1 {
-      dst[dst_offset + i] = src[src_offset + i]
-    }
-  }
-}
-
-pub fn blit_to[A](
-  self : Array[A],
-  dst : Array[A],
-  ~len : Int,
-  ~src_offset : Int = 0,
-  ~dst_offset : Int = 0
-) -> Unit {
-  if dst_offset + len > dst.length() || src_offset + len > self.length() {
-    abort("invalid argument in blit")
-  }
-  unsafe_blit(dst, dst_offset, self, src_offset, len)
-}
-
 pub fn copy[T](self : Array[T]) -> Array[T] {
   let len = self.length()
   if len == 0 {
     []
   } else {
     let arr = Array::make(len, self[0])
-    unsafe_blit(arr, 0, self, 0, len)
+    Array::unsafe_blit(arr, 0, self, 0, len)
     arr
   }
 }

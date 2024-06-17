@@ -39,6 +39,7 @@ impl ArgsLoc {
 type Array
 impl Array {
   append[T](Self[T], Self[T]) -> Unit
+  blit_to[A](Self[A], Self[A], ~len : Int, ~src_offset : Int = .., ~dst_offset : Int = ..) -> Unit
   chunk_by[T](Self[T], (T, T) -> Bool) -> Self[Self[T]]
   chunks[T](Self[T], Int) -> Self[Self[T]]
   clear[T](Self[T]) -> Unit
@@ -94,6 +95,7 @@ impl Array {
   strip_suffix[T : Eq](Self[T], Self[T]) -> Option[Self[T]]
   swap[T](Self[T], Int, Int) -> Unit
   to_string[T : Show](Self[T]) -> String
+  unsafe_blit[A](Self[A], Int, Self[A], Int, Int) -> Unit
   with_capacity[T](Int) -> Self[T]
 }
 
@@ -314,6 +316,7 @@ impl Result {
   op_equal[T : Eq, E : Eq](Self[T, E], Self[T, E]) -> Bool
 }
 impl FixedArray {
+  blit_to[A](Self[A], Self[A], ~len : Int, ~src_offset : Int = .., ~dst_offset : Int = ..) -> Unit
   debug_write[X : Debug](Self[X], Buffer) -> Unit
   default[X]() -> Self[X]
   fill[T](Self[T], T) -> Unit
@@ -324,6 +327,7 @@ impl FixedArray {
   op_set[T](Self[T], Int, T) -> Unit
   set[T](Self[T], Int, T) -> Unit
   to_string[X : Show](Self[X]) -> String
+  unsafe_blit[A](Self[A], Int, Self[A], Int, Int) -> Unit
 }
 impl Bytes {
   blit(Bytes, Int, Bytes, Int, Int) -> Unit
