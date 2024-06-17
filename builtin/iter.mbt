@@ -210,7 +210,7 @@ pub fn Iter::range_Int64(start : Int64, end : Int64) -> Iter[Int64] {
 /// # Returns
 /// 
 /// Returns an iterator that iterates over the range of Double from `start` to `end - 1`.
-pub fn Iter::range_double(start : Double, end : Double) -> Iter[Double] {
+pub fn Iter::range_Double(start : Double, end : Double) -> Iter[Double] {
   Iter(
     fn(yield) {
       for i = start; i < end; i = i + 1.0 {
