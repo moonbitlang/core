@@ -14,21 +14,21 @@
 
 /// A sparse array with at most 32 elements, where elements are not required to have contiguous index.
 /// Empty elements don't waste any space, without losing constant-time access
-priv struct SparseArray[X] {
+pub struct SparseArray[X] {
   // record which elements are present
   elem_info : Bitset
   data : FixedArray[X]
 }
 
-fn SparseArray::singleton[X](idx : Int, value : X) -> SparseArray[X] {
+pub fn SparseArray::singleton[X](idx : Int, value : X) -> SparseArray[X] {
   { elem_info: empty_bitset.add(idx), data: [value] }
 }
 
-fn has[X](self : SparseArray[X], idx : Int) -> Bool {
+pub fn has[X](self : SparseArray[X], idx : Int) -> Bool {
   self.elem_info.has(idx)
 }
 
-fn op_get[X](self : SparseArray[X], idx : Int) -> X? {
+pub fn op_get[X](self : SparseArray[X], idx : Int) -> X? {
   if self.elem_info.has(idx) {
     Some(self.data[self.elem_info.index_of(idx)])
   } else {
@@ -40,7 +40,7 @@ fn op_get[X](self : SparseArray[X], idx : Int) -> X? {
 ///
 /// Add a new element into the sparse array.
 /// [idx] must be absent from [self]
-fn add[X](self : SparseArray[X], idx : Int, value : X) -> SparseArray[X] {
+pub fn add[X](self : SparseArray[X], idx : Int, value : X) -> SparseArray[X] {
   let old_data = self.data
   let old_len = old_data.length()
   let new_len = old_len + 1
@@ -59,7 +59,11 @@ fn add[X](self : SparseArray[X], idx : Int, value : X) -> SparseArray[X] {
 /// `replace(self: SparseArray[X], idx: Int, value: X)`
 ///
 // replace an existing element in the sparse array.
-fn replace[X](self : SparseArray[X], idx : Int, value : X) -> SparseArray[X] {
+pub fn replace[X](
+  self : SparseArray[X],
+  idx : Int,
+  value : X
+) -> SparseArray[X] {
   let new_data = self.data.copy()
   new_data[self.elem_info.index_of(idx)] = value
   { elem_info: self.elem_info, data: new_data }
@@ -68,14 +72,14 @@ fn replace[X](self : SparseArray[X], idx : Int, value : X) -> SparseArray[X] {
 /// `size(self: SparseArray[X]) -> Int`
 ///
 /// Return the size of a sparse array
-fn size[X](self : SparseArray[X]) -> Int {
+pub fn size[X](self : SparseArray[X]) -> Int {
   self.data.length()
 }
 
 /// `iter(self: SparseArray[X], f: (X) -> Unit) -> Unit`
 ///
 /// Iterate through elements in a sparse array
-fn iter[X](self : SparseArray[X], f : (X) -> Unit) -> Unit {
+pub fn iter[X](self : SparseArray[X], f : (X) -> Unit) -> Unit {
   for i = 0; i < self.elem_info.size(); i = i + 1 {
     f(self.data[i])
   }

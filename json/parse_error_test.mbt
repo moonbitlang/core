@@ -26,7 +26,10 @@ test "throws on invalid characters following a sign" {
 }
 
 test "throws on invalid characters following a leading decimal point" {
-  inspect(parse(".a"), content="Err(Invalid character 'a' at line 1, column 1)")?
+  inspect(
+    parse("1.a"),
+    content="Err(Invalid character 'a' at line 1, column 2)",
+  )?
 }
 
 test "throws on invalid characters following an exponent indicator" {
@@ -144,6 +147,73 @@ test "throws on invalid property names" {
   inspect(
     parse("{a:1}"),
     content="Err(Invalid character 'a' at line 1, column 1)",
+  )?
+}
+
+test "throws on array with extra comma" {
+  inspect(
+    parse("[1,]"),
+    content="Err(Invalid character ']' at line 1, column 3)",
+  )?
+  inspect(
+    parse("[\"\",]"),
+    content="Err(Invalid character ']' at line 1, column 4)",
+  )?
+}
+
+test "throws on object with extra comma" {
+  inspect(
+    parse("{\"id\":0,}"),
+    content="Err(Invalid character '}' at line 1, column 8)",
+  )?
+}
+
+test "throws on invalid number" {
+  inspect(parse("+1"), content="Err(Invalid character '+' at line 1, column 0)")?
+  inspect(parse("-2."), content="Err(Unexpected end of file)")?
+  inspect(
+    parse(".2e-3"),
+    content="Err(Invalid character '.' at line 1, column 0)",
+  )?
+  inspect(
+    parse("0.e1"),
+    content="Err(Invalid character 'e' at line 1, column 2)",
+  )?
+  inspect(
+    parse("2.e+3"),
+    content="Err(Invalid character 'e' at line 1, column 2)",
+  )?
+  inspect(
+    parse("2.e-3"),
+    content="Err(Invalid character 'e' at line 1, column 2)",
+  )?
+  inspect(
+    parse("-.123"),
+    content="Err(Invalid character '.' at line 1, column 1)",
+  )?
+  inspect(parse("1."), content="Err(Unexpected end of file)")?
+  inspect(
+    parse(".123"),
+    content="Err(Invalid character '.' at line 1, column 0)",
+  )?
+  inspect(
+    parse("[1.]"),
+    content="Err(Invalid character ']' at line 1, column 3)",
+  )?
+}
+
+test "throws on invalid chars" {
+  inspect(
+    parse("[\u000c]"),
+    content="Err(Invalid character '\x0c' at line 1, column 1)",
+  )?
+  inspect(
+    parse("[\"\u0009\"]"),
+    content="Err(Invalid character '\t' at line 1, column 2)",
+  )?
+  inspect(
+    parse("[\"a\u0000a\"]"),
+    content="Err(Invalid character '\x00' at line 1, column 3)",
   )?
 }
 
