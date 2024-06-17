@@ -20,11 +20,15 @@ struct CoverageCounter {
 } derive(Show)
 
 /// Create a new coverage counter with the given size.
+/// 
+/// @coverage.skip 
 pub fn CoverageCounter::new(size : Int) -> CoverageCounter {
   { counter: FixedArray::make(size, 0) }
 }
 
 /// Increment the specified tracking index.
+/// 
+/// @coverage.skip 
 pub fn CoverageCounter::incr(self : CoverageCounter, idx : Int) -> Unit {
   let counter = self.counter[idx]
   if counter < 0x7fffffff { // prevent overflow
@@ -53,6 +57,8 @@ priv enum MList[T] {
 let counters : Ref[MList[(String, CoverageCounter)]] = { val: MNil }
 
 /// Add the given counter along its ID to the tracking list.
+/// 
+/// @coverage.skip
 pub fn track(name : String, counter : CoverageCounter) -> Unit {
   counters.val = MCons((name, counter), counters.val)
 }
