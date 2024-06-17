@@ -260,30 +260,33 @@ fn test_from_array[T](arr : Array[T]) -> Iter[T] {
 
 test "range" {
   inspect(
-    Iter::range(0, 10).take(5).concat(Iter::range(0, 3)).collect(),
+    (0).upto(10).take(100).collect(),
+    content="[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]",
+  )?
+  inspect(
+    (0).upto(10).take(5).concat((0).upto(2)).collect(),
     content="[0, 1, 2, 3, 4, 0, 1, 2]",
   )?
   inspect(
-    Iter::range_Int64(0x80000000L, 0x80000000L + 10L).take(5).concat(
-      Iter::range_Int64(0x80000000L + 10L, 0x80000000L + 20L).take(3),
+    0x80000000L.upto(0x80000000L + 10L).take(5).concat(
+      (0x80000000L + 10L).upto(0x80000000L + 20L).take(3),
     ).collect(),
     content="[2147483648, 2147483649, 2147483650, 2147483651, 2147483652, 2147483658, 2147483659, 2147483660]",
   )?
   inspect(
-    Iter::range_Double(0.0, 10.0).take(5).concat(Iter::range_Double(0.0, 3.0)).collect(),
+    0.0.upto(10.0).take(5).concat(0.0.upto(2.0)).collect(),
     content="[0.0, 1.0, 2.0, 3.0, 4.0, 0.0, 1.0, 2.0]",
   )?
-  // with step
   inspect(
-    Iter::range(0, 10, step=2).take(5).collect(),
-    content="[0, 2, 4, 6, 8]",
+    (-100).upto(100, step=10).take(100).collect(),
+    content="[-100, -90, -80, -70, -60, -50, -40, -30, -20, -10, 0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100]",
   )?
   inspect(
-    Iter::range_Double(0.0, 1.0, step=0.1).take(5).collect(),
+    0.0.upto(1.0, step=0.1).take(5).collect(),
     content="[0.0, 0.1, 0.2, 0.30000000000000004, 0.4]",
   )?
   inspect(
-    Iter::range_Int64(0x80000000L, 0x80000000L + 10L, step=2L).take(5).collect(),
+    0x80000000L.upto(0x80000000L + 10L, step=2L).take(5).collect(),
     content="[2147483648, 2147483650, 2147483652, 2147483654, 2147483656]",
   )?
 }

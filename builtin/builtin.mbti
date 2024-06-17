@@ -140,9 +140,6 @@ impl Iter {
   map[T, R](Self[T], (T) -> R) -> Self[R]
   op_add[T](Self[T], Self[T]) -> Self[T]
   prepend[T](Self[T], T) -> Self[T]
-  range(Int, Int, ~step : Int = ..) -> Self[Int]
-  range_Double(Double, Double, ~step : Double = ..) -> Self[Double]
-  range_Int64(Int64, Int64, ~step : Int64 = ..) -> Self[Int64]
   repeat[T](T) -> Self[T]
   singleton[T](T) -> Self[T]
   take[T](Self[T], Int) -> Self[T]
@@ -248,6 +245,7 @@ impl Int {
   to_int64(Int) -> Int64
   to_string(Int) -> String
   trunc_double_u(Double) -> Int
+  upto(Int, Int, ~step : Int = ..) -> Iter[Int]
 }
 impl Int64 {
   asr(Int64, Int) -> Int64
@@ -280,6 +278,7 @@ impl Int64 {
   to_int(Int64) -> Int
   to_string(Int64) -> String
   trunc_double_u(Double) -> Int64
+  upto(Int64, Int64, ~step : Int64 = ..) -> Iter[Int64]
 }
 impl Double {
   compare(Double, Double) -> Int
@@ -298,6 +297,7 @@ impl Double {
   sqrt(Double) -> Double
   to_int(Double) -> Int
   to_int64(Double) -> Int64
+  upto(Double, Double, ~step : Double = ..) -> Iter[Double]
 }
 impl String {
   debug_write(String, Buffer) -> Unit
