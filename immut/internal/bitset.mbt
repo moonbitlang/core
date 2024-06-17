@@ -13,15 +13,43 @@
 // limitations under the License.
 
 /// a simple bit set to store a set of integers less than 32
-priv type Bitset Int
+pub type Bitset Int
 
 let empty_bitset : Bitset = Bitset(0)
 
 /// `has(self: Bitset, idx: Int)`
 ///
 /// Check if the given index is present in the bitset.
-fn has(self : Bitset, idx : Int) -> Bool {
+pub fn has(self : Bitset, idx : Int) -> Bool {
   self.0.land((1).lsl(idx)) != 0
+}
+
+/// `index_of(self: Bitset, idx: Int)`
+///
+/// Get the index of the bit in the bitset.
+pub fn index_of(self : Bitset, idx : Int) -> Int {
+  self.0.land((1).lsl(idx) - 1).popcnt()
+}
+
+/// `add(self: Bitset, idx: Int)`
+///
+/// Add a new index to the bitset.
+pub fn add(self : Bitset, idx : Int) -> Bitset {
+  Bitset(self.0.lor((1).lsl(idx)))
+}
+
+/// `remove(self: Bitset, idx: Int)`
+///
+/// Remove an index from the bitset.
+pub fn remove(self : Bitset, idx : Int) -> Bitset {
+  Bitset(self.0.lxor((1).lsl(idx)))
+}
+
+/// `size(self: Bitset) -> Int`
+///
+/// Calculate the size of a bitset
+pub fn size(self : Bitset) -> Int {
+  self.0.popcnt()
 }
 
 test "Bitset::has" {
@@ -33,13 +61,6 @@ test "Bitset::has" {
   inspect(b.has(2), content="true")?
 }
 
-/// `index_of(self: Bitset, idx: Int)`
-///
-/// Get the index of the bit in the bitset.
-fn index_of(self : Bitset, idx : Int) -> Int {
-  self.0.land((1).lsl(idx) - 1).popcnt()
-}
-
 test "Bitset::index_of" {
   let b = empty_bitset.add(2)
   inspect(b.index_of(2), content="0")?
@@ -47,27 +68,13 @@ test "Bitset::index_of" {
   inspect(b.index_of(2), content="1")?
   let b = b.add(5)
   inspect(b.index_of(2), content="1")?
-  // when elem is missing  
+  // when elem is missing
   inspect(b.index_of(3), content="2")?
   inspect(b.index_of(4), content="2")?
-  // 5 is 
+  // 5 is
   inspect(b.index_of(5), content="2")?
   // 6 is not
   inspect(b.index_of(6), content="3")?
-}
-
-/// `add(self: Bitset, idx: Int)`
-///
-/// Add a new index to the bitset.
-fn add(self : Bitset, idx : Int) -> Bitset {
-  Bitset(self.0.lor((1).lsl(idx)))
-}
-
-/// `remove(self: Bitset, idx: Int)`
-///
-/// Remove an index from the bitset.
-fn remove(self : Bitset, idx : Int) -> Bitset {
-  Bitset(self.0.lxor((1).lsl(idx)))
 }
 
 test "Bitset::remove" {
@@ -82,11 +89,16 @@ test "Bitset::remove" {
   inspect(b.index_of(3), content="0")?
 }
 
-/// `size(self: Bitset) -> Int`
-///
-/// Calculate the size of a bitset
-fn size(self : Bitset) -> Int {
-  self.0.popcnt()
+test "Bitset::remove" {
+  let b = empty_bitset.add(2).add(3)
+  inspect(b.has(2), content="true")?
+  inspect(b.has(3), content="true")?
+  inspect(b.index_of(2), content="0")?
+  inspect(b.index_of(3), content="1")?
+  let b = b.remove(2)
+  inspect(b.has(2), content="false")?
+  inspect(b.has(3), content="true")?
+  inspect(b.index_of(3), content="0")?
 }
 
 test "Bitset::size" {
