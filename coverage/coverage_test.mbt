@@ -59,7 +59,7 @@ test "log" {
     MCons(("foo/bar", test_counter_b), MNil),
   )
   let buf = Buffer::make(1024)
-  log(counters, buf)
+  coverage_log(counters, buf)
   let result = buf.to_string()
   let expected =
     #|{ "foo/foo": [1, 0]

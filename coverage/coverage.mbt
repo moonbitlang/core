@@ -141,11 +141,14 @@ pub fn escape(s : String) -> String {
 /// ```
 pub fn end() -> Unit {
   println("----- BEGIN MOONBIT COVERAGE -----")
-  log(counters.val, IO::IO(0))
+  coverage_log(counters.val, IO::IO(0))
   println("----- END MOONBIT COVERAGE -----")
 }
 
-fn log(counters : MList[(String, CoverageCounter)], io : Output) -> Unit {
+fn coverage_log(
+  counters : MList[(String, CoverageCounter)],
+  io : Output
+) -> Unit {
   let print = fn { x => io.output(x) }
   let println = fn {
     x => {
