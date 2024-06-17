@@ -21,9 +21,13 @@ pub fn Array::new[T]() -> Array[T] {
 pub fn Array::from_fixed_array[T](arr : FixedArray[T]) -> Array[T] {
   let len = arr.length()
   let arr2 = Array::make_uninit(len)
-  for i = 0; i < len; i = i + 1 {
-    arr2.buffer()[i] = arr[i]
-  }
+  UninitializedArray::unsafe_blit(
+    arr2.buffer(),
+    0,
+    UninitializedArray::from(arr),
+    0,
+    len,
+  )
   arr2
 }
 
@@ -119,12 +123,20 @@ pub fn op_equal[T : Eq](self : Array[T], other : Array[T]) -> Bool {
 
 pub fn op_add[T](self : Array[T], other : Array[T]) -> Array[T] {
   let result = Array::make_uninit(self.length() + other.length())
-  for i = 0; i < self.length(); i = i + 1 {
-    result.buffer()[i] = self.buffer()[i]
-  }
-  for i = 0; i < other.length(); i = i + 1 {
-    result.buffer()[i + self.length()] = other.buffer()[i]
-  }
+  UninitializedArray::unsafe_blit(
+    result.buffer(),
+    0,
+    self.buffer(),
+    0,
+    self.length(),
+  )
+  UninitializedArray::unsafe_blit(
+    result.buffer(),
+    self.length(),
+    other.buffer(),
+    0,
+    other.length(),
+  )
   result
 }
 
@@ -202,12 +214,14 @@ pub fn drain[T](self : Array[T], begin : Int, end : Int) -> Array[T] {
   }
   let num = end - begin
   let v = Array::make_uninit(num)
-  for i = begin; i < end; i = i + 1 {
-    v.buffer()[i - begin] = self.buffer()[i]
-  }
-  for i = end; i < self.length(); i = i + 1 {
-    self.buffer()[i - num] = self.buffer()[i]
-  }
+  UninitializedArray::unsafe_blit(v.buffer(), 0, self.buffer(), begin, num)
+  UninitializedArray::unsafe_blit(
+    self.buffer(),
+    begin,
+    self.buffer(),
+    end,
+    self.length() - end,
+  )
   self.set_length(self.length() - num)
   v
 }
@@ -425,12 +439,14 @@ pub fn split_at[T](self : Array[T], index : Int) -> (Array[T], Array[T]) {
   }
   let v1 = Array::make_uninit(index)
   let v2 = Array::make_uninit(self.length() - index)
-  for i = 0; i < index; i = i + 1 {
-    v1[i] = self.buffer()[i]
-  }
-  for i = index; i < self.length(); i = i + 1 {
-    v2[i - index] = self.buffer()[i]
-  }
+  UninitializedArray::unsafe_blit(v1.buffer(), 0, self.buffer(), 0, index)
+  UninitializedArray::unsafe_blit(
+    v2.buffer(),
+    0,
+    self.buffer(),
+    index,
+    self.length() - index,
+  )
   (v1, v2)
 }
 
@@ -503,9 +519,13 @@ pub fn ends_with[T : Eq](self : Array[T], suffix : Array[T]) -> Bool {
 pub fn strip_prefix[T : Eq](self : Array[T], prefix : Array[T]) -> Array[T]? {
   if self.starts_with(prefix) {
     let v = Array::make_uninit(self.length() - prefix.length())
-    for i = prefix.length(); i < self.length(); i = i + 1 {
-      v.buffer()[i - prefix.length()] = self.buffer()[i]
-    }
+    UninitializedArray::unsafe_blit(
+      v.buffer(),
+      0,
+      self.buffer(),
+      prefix.length(),
+      self.length() - prefix.length(),
+    )
     Some(v)
   } else {
     None
@@ -525,9 +545,7 @@ pub fn strip_suffix[T : Eq](self : Array[T], suffix : Array[T]) -> Array[T]? {
   if self.ends_with(suffix) {
     let v = Array::make_uninit(self.length() - suffix.length())
     let len = self.length() - suffix.length()
-    for i = 0; i < len; i = i + 1 {
-      v.buffer()[i] = self.buffer()[i]
-    }
+    UninitializedArray::unsafe_blit(v.buffer(), 0, self.buffer(), 0, len)
     Some(v)
   } else {
     None
@@ -589,9 +607,13 @@ pub fn remove[T](self : Array[T], index : Int) -> T {
     )
   }
   let value = self.buffer()[index]
-  for i = index; i < self.length() - 1; i = i + 1 {
-    self.buffer()[i] = self.buffer()[i + 1]
-  }
+  UninitializedArray::unsafe_blit(
+    self.buffer(),
+    index,
+    self.buffer(),
+    index + 1,
+    self.length() - index - 1,
+  )
   self.set_length(self.length() - 1)
   value
 }
@@ -652,9 +674,13 @@ pub fn insert[T](self : Array[T], index : Int, value : T) -> Unit {
   if self.length() == self.buffer().0.length() {
     self.realloc()
   }
-  for i = self.length(); i > index; i = i - 1 {
-    self.buffer()[i] = self.buffer()[i - 1]
-  }
+  UninitializedArray::unsafe_blit(
+    self.buffer(),
+    index + 1,
+    self.buffer(),
+    index,
+    self.length() - index,
+  )
   let length = self.length()
   self.buffer()[index] = value
   self.set_length(length + 1)
