@@ -12,7 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-// TODO: this implementation is wrong
 pub fn Array::unsafe_blit[A](
   dst : Array[A],
   dst_offset : Int,
@@ -20,15 +19,7 @@ pub fn Array::unsafe_blit[A](
   src_offset : Int,
   len : Int
 ) -> Unit {
-  if physical_equal(dst, src) && dst_offset < src_offset {
-    for i = 0; i < len; i = i + 1 {
-      dst[dst_offset + i] = src[src_offset + i]
-    }
-  } else {
-    for i = len - 1; i >= 0; i = i - 1 {
-      dst[dst_offset + i] = src[src_offset + i]
-    }
-  }
+  FixedArray::unsafe_blit(dst.buf.0, dst_offset, src.buf.0, src_offset, len)
 }
 
 pub fn Array::blit_to[A](
