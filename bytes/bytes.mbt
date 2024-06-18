@@ -30,6 +30,14 @@ pub fn Bytes::from_array(arr : Array[Int]) -> Bytes {
   rv
 }
 
+pub fn Bytes::of(arr : Array[Int]) -> Bytes {
+  let rv = Bytes::make(arr.length())
+  for i = 0; i < arr.length(); i = i + 1 {
+    rv[i] = arr[i].to_byte()
+  }
+  rv
+}
+
 pub fn to_array(self : Bytes) -> Array[Int] {
   let rv = Array::make(self.length(), 0)
   for i = 0; i < self.length(); i = i + 1 {
