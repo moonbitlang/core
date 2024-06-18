@@ -19,7 +19,7 @@
 /// # Usage
 /// 
 /// ```moonbit
-/// let b = Bytes::[65, 66, 67]
+/// let b = @bytes.of([65, 66, 67])
 /// ```
 /// 
 pub fn Bytes::from_array(arr : Array[Int]) -> Bytes {
