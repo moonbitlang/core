@@ -35,7 +35,7 @@ priv struct ListNode[K, V] {
 /// # Example
 /// 
 /// ```
-/// let map = HashMap::[(3, "three"), (8, "eight"), (1, "one")]
+/// let map = { 3: "three", 8 :  "eight", 1 :  "one"}
 /// println(map.get(2)) // output: None
 /// println(map.get(3)) // output: Some("three")
 /// map.set(3, "updated")
