@@ -99,15 +99,17 @@ pub fn parse_int64(str : String, ~base : Int = 0) -> Result[Int64, String] {
 
 /// Parse a string in the given base (0, 2 to 36), return a Int number or an error.
 /// If the `~base` argument is 0, the base will be inferred by the prefix.
-pub fn parse_int(str : String, ~base : Int = 0) -> Result[Int, String] {
+pub fn parse_int(str : String, ~base : Int = 0) -> Int!String {
   match parse_int64(str, ~base) {
     Ok(n) => {
       if n < int_min.to_int64() || n > int_max.to_int64() {
-        return Err(range_err)
+        raise range_err
       }
-      Ok(n.to_int())
+      n.to_int()
     }
-    Err(err) => Err(err)
+    Err(err) => {
+      raise err
+    }
   }
 }
 
