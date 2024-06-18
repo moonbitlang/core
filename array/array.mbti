@@ -27,7 +27,7 @@ impl FixedArray {
   op_add[T](Self[T], Self[T]) -> Self[T]
   op_equal[T : Eq](Self[T], Self[T]) -> Bool
   reverse[T](Self[T]) -> Unit
-  search[T : Eq](Self[T], T) -> Option[Int]
+  search[T : Eq](Self[T], T) -> Int?
   sort[T : Compare + Eq](Self[T]) -> Unit
   sort_by[T](Self[T], (T, T) -> Int) -> Unit
   sort_by_key[T, K : Compare + Eq](Self[T], (T) -> K) -> Unit

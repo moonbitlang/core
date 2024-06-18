@@ -20,7 +20,7 @@ impl SparseArray {
   add[X](Self[X], Int, X) -> Self[X]
   has[X](Self[X], Int) -> Bool
   iter[X](Self[X], (X) -> Unit) -> Unit
-  op_get[X](Self[X], Int) -> Option[X]
+  op_get[X](Self[X], Int) -> X?
   replace[X](Self[X], Int, X) -> Self[X]
   singleton[X](Int, X) -> Self[X]
   size[X](Self[X]) -> Int

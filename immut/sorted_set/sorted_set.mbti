@@ -22,9 +22,9 @@ impl ImmutableSet {
   iter[T : Compare + Eq](Self[T], (T) -> Unit) -> Unit
   map[T : Compare + Eq, U : Compare + Eq](Self[T], (T) -> U) -> Self[U]
   max[T : Compare + Eq](Self[T]) -> T
-  max_option[T : Compare + Eq](Self[T]) -> Option[T]
+  max_option[T : Compare + Eq](Self[T]) -> T?
   min[T : Compare + Eq](Self[T]) -> T
-  min_option[T : Compare + Eq](Self[T]) -> Option[T]
+  min_option[T : Compare + Eq](Self[T]) -> T?
   new[T]() -> Self[T]
   op_equal[T : Eq](Self[T], Self[T]) -> Bool
   remove[T : Compare + Eq](Self[T], T) -> Self[T]
