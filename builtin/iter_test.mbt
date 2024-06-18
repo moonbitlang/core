@@ -273,6 +273,11 @@ test "range" {
     0.1.to(0.4, step=0.1).take(5).collect(),
     content="[0.1, 0.2, 0.30000000000000004]",
   )?
+  inspect(0.1.to(0.3, step=0.1).collect(), content="[0.1, 0.2]")?
+  inspect(
+    0.1.to(0.4, step=0.1).take(5).collect(),
+    content="[0.1, 0.2, 0.30000000000000004]",
+  )?
   inspect(
     0x80000000L.to(0x80000000L + 10L, step=2L).collect(),
     content="[2147483648, 2147483650, 2147483652, 2147483654, 2147483656]",
