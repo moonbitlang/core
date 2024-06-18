@@ -12,8 +12,8 @@ impl PriorityQueue {
   is_empty[T](Self[T]) -> Bool
   length[T](Self[T]) -> Int
   new[T : Compare + Eq]() -> Self[T]
-  peek[T](Self[T]) -> Option[T]
-  pop[T : Compare + Eq](Self[T]) -> Option[T]
+  peek[T](Self[T]) -> T?
+  pop[T : Compare + Eq](Self[T]) -> T?
   pop_exn[T : Compare + Eq](Self[T]) -> Unit
   push[T : Compare + Eq](Self[T], T) -> Unit
   to_array[T : Compare + Eq](Self[T]) -> Array[T]

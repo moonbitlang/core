@@ -10,13 +10,13 @@ impl HashMap {
   clear[K, V](Self[K, V]) -> Unit
   contains[K : Hash + Eq, V](Self[K, V], K) -> Bool
   from_array[K : Hash + Eq, V](Array[Tuple[K, V]]) -> Self[K, V]
-  get[K : Hash + Eq, V](Self[K, V], K) -> Option[V]
+  get[K : Hash + Eq, V](Self[K, V], K) -> V?
   get_or_default[K : Hash + Eq, V](Self[K, V], K, V) -> V
   is_empty[K, V](Self[K, V]) -> Bool
   iter[K, V](Self[K, V], (K, V) -> Unit) -> Unit
   iteri[K, V](Self[K, V], (Int, K, V) -> Unit) -> Unit
   new[K, V](~capacity : Int = ..) -> Self[K, V]
-  op_get[K : Hash + Eq, V](Self[K, V], K) -> Option[V]
+  op_get[K : Hash + Eq, V](Self[K, V], K) -> V?
   op_set[K : Hash + Eq, V](Self[K, V], K, V) -> Unit
   remove[K : Hash + Eq, V](Self[K, V], K) -> Unit
   set[K : Hash + Eq, V](Self[K, V], K, V) -> Unit

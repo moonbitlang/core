@@ -1,28 +1,28 @@
 package moonbitlang/core/option
 
 // Values
-fn empty[T]() -> Option[T]
+fn empty[T]() -> T?
 
-fn some[T](T) -> Option[T]
+fn some[T](T) -> T?
 
-fn unless[T](Bool, () -> T) -> Option[T]
+fn unless[T](Bool, () -> T) -> T?
 
-fn when[T](Bool, () -> T) -> Option[T]
+fn when[T](Bool, () -> T) -> T?
 
 // Types and methods
 impl Option {
-  bind[T, U](Self[T], (T) -> Self[U]) -> Self[U]
-  compare[X : Compare + Eq](Self[X], Self[X]) -> Int
-  default[X]() -> Self[X]
-  filter[T](Self[T], (T) -> Bool) -> Self[T]
-  flatten[T](Self[Self[T]]) -> Self[T]
-  is_empty[T](Self[T]) -> Bool
-  map[T, U](Self[T], (T) -> U) -> Self[U]
-  map_or[T, U](Self[T], U, (T) -> U) -> U
-  map_or_else[T, U](Self[T], () -> U, (T) -> U) -> U
-  or[T](Self[T], T) -> T
-  or_else[T](Self[T], () -> T) -> T
-  unwrap[X](Self[X]) -> X
+  bind[T, U](T?, (T) -> U?) -> U?
+  compare[X : Compare + Eq](X?, X?) -> Int
+  default[X]() -> X?
+  filter[T](T?, (T) -> Bool) -> T?
+  flatten[T](T??) -> T?
+  is_empty[T](T?) -> Bool
+  map[T, U](T?, (T) -> U) -> U?
+  map_or[T, U](T?, U, (T) -> U) -> U
+  map_or_else[T, U](T?, () -> U, (T) -> U) -> U
+  or[T](T?, T) -> T
+  or_else[T](T?, () -> T) -> T
+  unwrap[X](X?) -> X
 }
 
 // Traits
