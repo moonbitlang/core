@@ -955,3 +955,24 @@ pub fn to_string[T : Show](self : Array[T]) -> String {
     continue i + 1, "\(init), \(cur)"
   }
 }
+
+/// Find the index of the first element that satisfies the predicate.
+//
+/// # Example
+///
+/// ```
+/// let v = [1, 2, 3, 4, 5]
+/// match v.find_index(fn(x) { x == 3 }) {
+///   Some(index) => println(index) // 2
+///   None => println("Not found")
+/// }
+/// ```
+pub fn find_index[T](self : Array[T], f : (T) -> Bool) -> Int? {
+  for i = 0; i < self.length(); i = i + 1 {
+    if f(self[i]) {
+      break Some(i)
+    }
+  } else {
+    None
+  }
+}

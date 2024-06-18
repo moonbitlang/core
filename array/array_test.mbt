@@ -441,3 +441,9 @@ test "shuffle" {
   let shuffled = Array::shuffle(arr, ~rand)
   inspect(shuffled, content="[2, 7, 6, 1, 5, 3, 4]")?
 }
+
+test "find_index" {
+  let arr : Array[Int] = [1, 2, 3, 4, 5, 6, 7]
+  let index = arr.find_index(fn(x) { x == 3 })
+  @assertion.assert_eq(index, Some(2))?
+}
