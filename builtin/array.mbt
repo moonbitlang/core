@@ -970,8 +970,9 @@ pub fn to_string[T : Show](self : Array[T]) -> String {
 pub fn find_index[T](self : Array[T], f : (T) -> Bool) -> Int? {
   for i = 0; i < self.length(); i = i + 1 {
     if f(self[i]) {
-      return Some(i)
+      break Some(i)
     }
+  } else {
+    None
   }
-  None
 }
