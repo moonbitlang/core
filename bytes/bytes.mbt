@@ -19,10 +19,18 @@
 /// # Usage
 /// 
 /// ```moonbit
-/// let b = Bytes::[65, 66, 67]
+/// let b = @bytes.of([65, 66, 67])
 /// ```
 /// 
 pub fn Bytes::from_array(arr : Array[Int]) -> Bytes {
+  let rv = Bytes::make(arr.length())
+  for i = 0; i < arr.length(); i = i + 1 {
+    rv[i] = arr[i].to_byte()
+  }
+  rv
+}
+
+pub fn Bytes::of(arr : Array[Int]) -> Bytes {
   let rv = Bytes::make(arr.length())
   for i = 0; i < arr.length(); i = i + 1 {
     rv[i] = arr[i].to_byte()
