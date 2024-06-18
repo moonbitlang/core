@@ -12,11 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-fn UninitializedArray::make[T](size : Int) -> UninitializedArray[T] = "%make_array_maybe_uninit"
+fn UninitializedArray::make[T](size : Int) -> UninitializedArray[T] = "%fixedarray.make_uninit"
 
-fn op_get[T](self : UninitializedArray[T], index : Int) -> T = "%array_get"
+fn op_get[T](self : UninitializedArray[T], index : Int) -> T = "%fixedarray.get"
 
-fn op_set[T](self : UninitializedArray[T], index : Int, value : T) = "%array_set"
+fn op_set[T](self : UninitializedArray[T], index : Int, value : T) = "%fixedarray.set"
 
 fn length[T](self : UninitializedArray[T]) -> Int {
   self.0.length()

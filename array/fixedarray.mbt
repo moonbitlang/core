@@ -24,7 +24,7 @@
 /// ```
 /// [1, 2, 3, 4, 5].iter(fn(x){ print("\(x) ") }) //output: 1 2 3 4 5
 /// ```
-/// @intrinsic %array.iter
+/// @intrinsic %fixedarray.iter
 pub fn iter[T](self : FixedArray[T], f : (T) -> Unit) -> Unit {
   for i = 0; i < self.length(); i = i + 1 {
     f(self[i])

@@ -14,13 +14,13 @@
 
 priv type UninitializedArray[T] FixedArray[UnsafeMaybeUninit[T]]
 
-fn UninitializedArray::make[T](size : Int) -> UninitializedArray[T] = "%make_array_maybe_uninit"
+fn UninitializedArray::make[T](size : Int) -> UninitializedArray[T] = "%fixedarray.make_uninit"
 
-fn op_get[T](self : UninitializedArray[T], index : Int) -> T = "%array_get"
+fn op_get[T](self : UninitializedArray[T], index : Int) -> T = "%fixedarray.get"
 
-fn op_set[T](self : UninitializedArray[T], index : Int, value : T) = "%array_set"
+fn op_set[T](self : UninitializedArray[T], index : Int, value : T) = "%fixedarray.set"
 
-fn set_null[T](self : UninitializedArray[T], index : Int) = "%array_set_null"
+fn set_null[T](self : UninitializedArray[T], index : Int) = "%fixedarray.set_null"
 
 fn UninitializedArray::unsafe_blit[T](
   dst : UninitializedArray[T],
@@ -32,7 +32,7 @@ fn UninitializedArray::unsafe_blit[T](
   FixedArray::unsafe_blit(dst.0, dst_offset, src.0, src_offset, len)
 }
 
-/// @intrinsic %array.copy
+/// @intrinsic %fixedarray.copy
 fn UninitializedArray::unsafe_blit_fixed[T](
   dst : UninitializedArray[T],
   dst_offset : Int,
