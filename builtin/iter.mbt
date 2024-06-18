@@ -158,17 +158,17 @@ pub fn Iter::repeat[T](a : T) -> Iter[T] {
 /// # Arguments
 /// 
 /// * `start` - The starting value of the range (inclusive).
-/// * `end` - The ending value of the range (inclusive).
+/// * `end` - The ending value of the range (exclusive).
 /// * `step` - The step size of the range (default 1).
 /// 
 /// # Returns
 /// 
-/// Returns an iterator that iterates over the range of Int from `start` to `end`.
+/// Returns an iterator that iterates over the range of Int from `start` to `end - 1`.
 pub fn to(self : Int, end : Int, ~step : Int = 1) -> Iter[Int] {
   if step < 0 {
     return Iter(
       fn(yield) {
-        for i = self; i >= end; i = i + step {
+        for i = self; i > end; i = i + step {
           if not(yield(i)) {
             break false
           }
@@ -181,7 +181,7 @@ pub fn to(self : Int, end : Int, ~step : Int = 1) -> Iter[Int] {
   // step >= 0
   Iter(
     fn(yield) {
-      for i = self; i <= end; i = i + step {
+      for i = self; i < end; i = i + step {
         if not(yield(i)) {
           break false
         }
@@ -198,17 +198,17 @@ pub fn to(self : Int, end : Int, ~step : Int = 1) -> Iter[Int] {
 /// # Arguments
 /// 
 /// * `start` - The starting value of the range (inclusive).
-/// * `end` - The ending value of the range (inclusive).
+/// * `end` - The ending value of the range (exclusive).
 /// * `step` - The step size of the range (default 1L).
 /// 
 /// # Returns
 /// 
-/// Returns an iterator that iterates over the range of Int64 from `start` to `end`.
+/// Returns an iterator that iterates over the range of Int64 from `start` to `end - 1`.
 pub fn to(self : Int64, end : Int64, ~step : Int64 = 1L) -> Iter[Int64] {
   if step < 0L {
     return Iter(
       fn(yield) {
-        for i = self; i >= end; i = i + step {
+        for i = self; i > end; i = i + step {
           if not(yield(i)) {
             break false
           }
@@ -220,7 +220,7 @@ pub fn to(self : Int64, end : Int64, ~step : Int64 = 1L) -> Iter[Int64] {
   }
   Iter(
     fn(yield) {
-      for i = self; i <= end; i = i + step {
+      for i = self; i < end; i = i + step {
         if not(yield(i)) {
           break false
         }
@@ -237,17 +237,17 @@ pub fn to(self : Int64, end : Int64, ~step : Int64 = 1L) -> Iter[Int64] {
 /// # Arguments
 /// 
 /// * `start` - The starting value of the range (inclusive).
-/// * `end` - The ending value of the range (inclusive).
+/// * `end` - The ending value of the range (exclusive).
 /// * `step` - The step size of the range (default 1.0).
 /// 
 /// # Returns
 /// 
-/// Returns an iterator that iterates over the range of Double from `start` to `end`.
+/// Returns an iterator that iterates over the range of Double from `start` to `end - 1`.
 pub fn to(self : Double, end : Double, ~step : Double = 1.0) -> Iter[Double] {
   if step < 0.0 {
     return Iter(
       fn(yield) {
-        for i = self; i >= end; i = i + step {
+        for i = self; i > end; i = i + step {
           if not(yield(i)) {
             break false
           }
@@ -259,7 +259,7 @@ pub fn to(self : Double, end : Double, ~step : Double = 1.0) -> Iter[Double] {
   }
   Iter(
     fn(yield) {
-      for i = self; i <= end; i = i + step {
+      for i = self; i < end; i = i + step {
         if not(yield(i)) {
           break false
         }

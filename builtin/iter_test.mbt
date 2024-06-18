@@ -246,13 +246,14 @@ test "range" {
   // edge cases
   inspect(
     (0).to(10).take(100).collect(),
-    content="[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]",
+    content="[0, 1, 2, 3, 4, 5, 6, 7, 8, 9]",
   )?
   inspect((100).to(10).take(100).collect(), content="[]")?
+  inspect((100).to(101, step=4).collect(), content="[100]")?
   // to
   inspect(
     (0).to(10).take(5).concat((0).to(2)).collect(),
-    content="[0, 1, 2, 3, 4, 0, 1, 2]",
+    content="[0, 1, 2, 3, 4, 0, 1]",
   )?
   inspect(
     0x80000000L.to(0x80000000L + 10L).take(5).concat(
@@ -262,18 +263,18 @@ test "range" {
   )?
   inspect(
     0.0.to(10.0).take(5).concat(0.0.to(2.0)).collect(),
-    content="[0.0, 1.0, 2.0, 3.0, 4.0, 0.0, 1.0, 2.0]",
+    content="[0.0, 1.0, 2.0, 3.0, 4.0, 0.0, 1.0]",
   )?
   inspect(
     (-50).to(50, step=10).take(100).collect(),
-    content="[-50, -40, -30, -20, -10, 0, 10, 20, 30, 40, 50]",
+    content="[-50, -40, -30, -20, -10, 0, 10, 20, 30, 40]",
   )?
   inspect(
-    0.0.to(1.0, step=0.1).take(5).collect(),
-    content="[0.0, 0.1, 0.2, 0.30000000000000004, 0.4]",
+    0.1.to(0.4, step=0.1).take(5).collect(),
+    content="[0.1, 0.2, 0.30000000000000004]",
   )?
   inspect(
-    0x80000000L.to(0x80000000L + 10L, step=2L).take(5).collect(),
+    0x80000000L.to(0x80000000L + 10L, step=2L).collect(),
     content="[2147483648, 2147483650, 2147483652, 2147483654, 2147483656]",
   )?
   // step < 0
