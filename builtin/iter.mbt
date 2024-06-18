@@ -153,6 +153,7 @@ pub fn Iter::repeat[T](a : T) -> Iter[T] {
 }
 
 /// Creates an iterator that iterates over a range of Int with default step 1.
+/// To grow the range downward, set the `step` parameter to a negative value.
 /// 
 /// # Arguments
 /// 
@@ -163,7 +164,21 @@ pub fn Iter::repeat[T](a : T) -> Iter[T] {
 /// # Returns
 /// 
 /// Returns an iterator that iterates over the range of Int from `start` to `end`.
-pub fn upto(self : Int, end : Int, ~step : Int = 1) -> Iter[Int] {
+pub fn to(self : Int, end : Int, ~step : Int = 1) -> Iter[Int] {
+  if step < 0 {
+    return Iter(
+      fn(yield) {
+        for i = self; i >= end; i = i + step {
+          if not(yield(i)) {
+            break false
+          }
+        } else {
+          true
+        }
+      },
+    )
+  }
+  // step >= 0
   Iter(
     fn(yield) {
       for i = self; i <= end; i = i + step {
@@ -178,6 +193,7 @@ pub fn upto(self : Int, end : Int, ~step : Int = 1) -> Iter[Int] {
 }
 
 /// Creates an iterator that iterates over a range of Int64 with default step 1L.
+/// To grow the range downward, set the `step` parameter to a negative value.
 /// 
 /// # Arguments
 /// 
@@ -187,8 +203,21 @@ pub fn upto(self : Int, end : Int, ~step : Int = 1) -> Iter[Int] {
 /// 
 /// # Returns
 /// 
-/// Returns an iterator that iterates over the range of int64 from `start` to `end`.
-pub fn upto(self : Int64, end : Int64, ~step : Int64 = 1L) -> Iter[Int64] {
+/// Returns an iterator that iterates over the range of Int64 from `start` to `end`.
+pub fn to(self : Int64, end : Int64, ~step : Int64 = 1L) -> Iter[Int64] {
+  if step < 0L {
+    return Iter(
+      fn(yield) {
+        for i = self; i >= end; i = i + step {
+          if not(yield(i)) {
+            break false
+          }
+        } else {
+          true
+        }
+      },
+    )
+  }
   Iter(
     fn(yield) {
       for i = self; i <= end; i = i + step {
@@ -203,6 +232,7 @@ pub fn upto(self : Int64, end : Int64, ~step : Int64 = 1L) -> Iter[Int64] {
 }
 
 /// Creates an iterator that iterates over a range of Double with default step 1.0 .
+/// To grow the range downward, use the `downto` method.
 /// 
 /// # Arguments
 /// 
@@ -213,7 +243,20 @@ pub fn upto(self : Int64, end : Int64, ~step : Int64 = 1L) -> Iter[Int64] {
 /// # Returns
 /// 
 /// Returns an iterator that iterates over the range of Double from `start` to `end`.
-pub fn upto(self : Double, end : Double, ~step : Double = 1.0) -> Iter[Double] {
+pub fn to(self : Double, end : Double, ~step : Double = 1.0) -> Iter[Double] {
+  if step < 0.0 {
+    return Iter(
+      fn(yield) {
+        for i = self; i >= end; i = i + step {
+          if not(yield(i)) {
+            break false
+          }
+        } else {
+          true
+        }
+      },
+    )
+  }
   Iter(
     fn(yield) {
       for i = self; i <= end; i = i + step {
