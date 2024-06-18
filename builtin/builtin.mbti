@@ -240,6 +240,7 @@ impl Int {
   op_neg(Int) -> Int
   op_sub(Int, Int) -> Int
   popcnt(Int) -> Int
+  to(Int, Int, ~step : Int = ..) -> Iter[Int]
   to_byte(Int) -> Byte
   to_double(Int) -> Double
   to_int64(Int) -> Int64
@@ -272,6 +273,7 @@ impl Int64 {
   op_sub(Int64, Int64) -> Int64
   popcnt(Int64) -> Int
   reinterpret_as_double(Int64) -> Double
+  to(Int64, Int64, ~step : Int64 = ..) -> Iter[Int64]
   to_byte(Int64) -> Byte
   to_double(Int64) -> Double
   to_int(Int64) -> Int
@@ -293,6 +295,7 @@ impl Double {
   op_sub(Double, Double) -> Double
   reinterpret_as_i64(Double) -> Int64
   sqrt(Double) -> Double
+  to(Double, Double, ~step : Double = ..) -> Iter[Double]
   to_int(Double) -> Int
   to_int64(Double) -> Int64
 }
