@@ -15,6 +15,10 @@
 // Types
 type Iter[T] ((T) -> Bool) -> Bool
 
+fn to_string[T : Show](self : Iter[T]) -> String {
+  self.to_array().to_string()
+}
+
 // Consumers
 
 /// Iterates over each element in the iterator, applying the function `f` to each element.
@@ -588,6 +592,13 @@ pub fn Iter::concat[T](self : Iter[T], other : Iter[T]) -> Iter[T] {
 
 pub fn op_add[T](self : Iter[T], other : Iter[T]) -> Iter[T] {
   Iter::concat(self, other)
+}
+
+/// Collects the elements of the iterator into an array.
+pub fn to_array[T](self : Iter[T]) -> Array[T] {
+  let result = []
+  self.iter(fn(e) { result.push(e) })
+  result
 }
 
 /// Collects the elements of the iterator into an array.
