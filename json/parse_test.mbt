@@ -21,28 +21,28 @@ fn test_parse(
 
 //region objects
 test "parses empty object" {
-  inspect(parse("{}"), content="Ok(Object(Map::[]))")?
+  inspect(parse("{}"), content="Ok(Object({}))")?
 }
 
 test "parses object" {
-  inspect(parse("{\"a\":1}"), content="Ok(Object(Map::[{a:Number(1.0)}]))")?
+  inspect(parse("{\"a\":1}"), content="Ok(Object({a:Number(1.0)}))")?
   inspect(
     parse("{\"a\":1,\"b\":2}"),
-    content="Ok(Object(Map::[{a:Number(1.0)}, {b:Number(2.0)}]))",
+    content="Ok(Object({a:Number(1.0), b:Number(2.0)}))",
   )?
 }
 
 test "parses multiple properties" {
   inspect(
     parse("{\"abc\":1,\"def\":2}"),
-    content="Ok(Object(Map::[{abc:Number(1.0)}, {def:Number(2.0)}]))",
+    content="Ok(Object({abc:Number(1.0), def:Number(2.0)}))",
   )?
 }
 
 test "parses nested objects" {
   inspect(
     parse("{\"a\":{\"b\":2}}"),
-    content="Ok(Object(Map::[{a:Object(Map::[{b:Number(2.0)}])}]))",
+    content="Ok(Object({a:Object({b:Number(2.0)})}))",
   )?
 }
 //endregion
