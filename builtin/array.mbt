@@ -21,13 +21,7 @@ pub fn Array::new[T]() -> Array[T] {
 pub fn Array::from_fixed_array[T](arr : FixedArray[T]) -> Array[T] {
   let len = arr.length()
   let arr2 = Array::make_uninit(len)
-  UninitializedArray::unsafe_blit(
-    arr2.buffer(),
-    0,
-    UninitializedArray::from(arr),
-    0,
-    len,
-  )
+  UninitializedArray::unsafe_blit_fixed(arr2.buffer(), 0, arr, 0, len)
   arr2
 }
 

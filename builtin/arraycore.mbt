@@ -22,8 +22,6 @@ fn op_set[T](self : UninitializedArray[T], index : Int, value : T) = "%array_set
 
 fn set_null[T](self : UninitializedArray[T], index : Int) = "%array_set_null"
 
-fn UninitializedArray::from[T](self : FixedArray[T]) -> UninitializedArray[T] = "%identity"
-
 fn UninitializedArray::unsafe_blit[T](
   dst : UninitializedArray[T],
   dst_offset : Int,
@@ -32,6 +30,19 @@ fn UninitializedArray::unsafe_blit[T](
   len : Int
 ) -> Unit {
   FixedArray::unsafe_blit(dst.0, dst_offset, src.0, src_offset, len)
+}
+
+/// @intrinsic %array.copy
+fn UninitializedArray::unsafe_blit_fixed[T](
+  dst : UninitializedArray[T],
+  dst_offset : Int,
+  src : FixedArray[T],
+  src_offset : Int,
+  len : Int
+) -> Unit {
+  for i = len - 1; i >= 0; i = i - 1 {
+    dst[dst_offset + i] = src[src_offset + i]
+  }
 }
 
 /// An `Array` is a collection of values that supports random access and can
