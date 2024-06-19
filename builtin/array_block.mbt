@@ -22,6 +22,22 @@ pub fn Array::unsafe_blit[A](
   FixedArray::unsafe_blit(dst.buf.0, dst_offset, src.buf.0, src_offset, len)
 }
 
+pub fn Array::unsafe_blit_fixed[A](
+  dst : Array[A],
+  dst_offset : Int,
+  src : FixedArray[A],
+  src_offset : Int,
+  len : Int
+) -> Unit {
+  UninitializedArray::unsafe_blit_fixed(
+    dst.buf,
+    dst_offset,
+    src,
+    src_offset,
+    len,
+  )
+}
+
 pub fn Array::blit_to[A](
   self : Array[A],
   dst : Array[A],

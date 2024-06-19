@@ -97,6 +97,7 @@ impl Array {
   swap[T](Self[T], Int, Int) -> Unit
   to_string[T : Show](Self[T]) -> String
   unsafe_blit[A](Self[A], Int, Self[A], Int, Int) -> Unit
+  unsafe_blit_fixed[A](Self[A], Int, FixedArray[A], Int, Int) -> Unit
   with_capacity[T](Int) -> Self[T]
 }
 
