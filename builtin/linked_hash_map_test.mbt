@@ -102,34 +102,7 @@ test "from_array" {
   @assertion.assert_eq(m.get("c"), Some(3))?
 }
 
-test "remove" {
-  let m : Map[MyString, Int] = Map::new()
-  m.set("a", 1)
-  m.set("ab", 2)
-  m.set("bc", 2)
-  m.set("cd", 2)
-  m.set("abc", 3)
-  m.set("abcdef", 6)
-  m.remove("ab")
-  @assertion.assert_eq(m.size(), 5)?
-  @assertion.assert_eq(
-    m.debug_entries(),
-    "_,(0,a,1),(0,bc,2),(1,cd,2),(1,abc,3),_,(0,abcdef,6),_",
-  )?
-}
 
-test "remove_unexist_key" {
-  let m : Map[MyString, Int] = Map::new()
-  m.set("a", 1)
-  m.set("ab", 2)
-  m.set("abc", 3)
-  m.remove("d")
-  @assertion.assert_eq(m.size(), 3)?
-  @assertion.assert_eq(
-    m.debug_entries(),
-    "_,(0,a,1),(0,ab,2),(0,abc,3),_,_,_,_",
-  )?
-}
 
 test "size" {
   let m : Map[String, Int] = Map::new()
@@ -684,7 +657,19 @@ test "to_string" {
   inspect(m.to_string(), content="{a:1, b:2, c:3}")?
 }
 
-test "hash_collision" {
+test "hash_c" {
+   let m : Map[MyString, Int] = Map::new()
+  m.set("a", 1)
+  m.set("ab", 2)
+  m.set("abc", 3)
+  inspect(m["d"], content="None")?
+}
+
+test "panic unwrap" {
+  (None : Unit?).unwrap()
+}
+
+test "remove" {
   let m : Map[MyString, Int] = Map::new()
   m.set("a", 1)
   m.set("ab", 2)
@@ -692,9 +677,23 @@ test "hash_collision" {
   m.set("cd", 2)
   m.set("abc", 3)
   m.set("abcdef", 6)
-  inspect(m["ab"], content="Some(2)")?
+  m.remove("ab")
+  @assertion.assert_eq(m.size(), 5)?
+  @assertion.assert_eq(
+    m.debug_entries(),
+    "_,(0,a,1),(0,bc,2),(1,cd,2),(1,abc,3),_,(0,abcdef,6),_",
+  )?
 }
 
-test "panic unwrap" {
-  (None : Unit?).unwrap()
+test "remove_unexist_key" {
+  let m : Map[MyString, Int] = Map::new()
+  m.set("a", 1)
+  m.set("ab", 2)
+  m.set("abc", 3)
+  m.remove("d")
+  @assertion.assert_eq(m.size(), 3)?
+  @assertion.assert_eq(
+    m.debug_entries(),
+    "_,(0,a,1),(0,ab,2),(0,abc,3),_,_,_,_",
+  )?
 }
