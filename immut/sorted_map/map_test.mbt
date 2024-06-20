@@ -49,15 +49,15 @@ test "lookup" {
   @assertion.assert_eq(m.lookup(4), None)?
 }
 
-test "member" {
+test "contains" {
   let m = Map::[(3, "three"), (8, "eight"), (1, "one"), (2, "two"), (0, "zero")]
   inspect(
     m.debug_tree(),
     content="(3,three,(1,one,(0,zero,_,_),(2,two,_,_)),(8,eight,_,_))",
   )?
-  @assertion.assert_eq(m.member(8), true)?
-  @assertion.assert_eq(m.member(2), true)?
-  @assertion.assert_eq(m.member(4), false)?
+  @assertion.assert_eq(m.contains(8), true)?
+  @assertion.assert_eq(m.contains(2), true)?
+  @assertion.assert_eq(m.contains(4), false)?
 }
 
 test "size" {
