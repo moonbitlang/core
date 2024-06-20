@@ -40,28 +40,21 @@ jobs:
   build:
     strategy:
       matrix:
-        os:
-          - name: ubuntu-latest
-            path: ubuntu_x86_64_moon_setup
-          - name: macos-latest
-            path: mac_intel_moon_setup
-          - name: macos-14
-            path: mac_m1_moon_setup
-          - name: windows-latest
+        os: [ubuntu-latest, macos-latest, macos-13, windows-latest]
 
-    runs-on: ${{ matrix.os.name }}
-    continue-on-error: ${{ matrix.os.name == 'macos-14' }}
+    runs-on: ${{ matrix.os }}
+    continue-on-error: ${{ matrix.os == 'macos-14' }}
     steps:
       - uses: actions/checkout@v4
 
       - name: install
-        if: ${{ matrix.os.name != 'windows-latest' }}
+        if: ${{ matrix.os != 'windows-latest' }}
         run: |
           curl -fsSL https://cli.moonbitlang.com/install/unix.sh | bash
           echo "$HOME/.moon/bin" >> $GITHUB_PATH
 
       - name: install on windows
-        if: ${{ matrix.os.name == 'windows-latest' }}
+        if: ${{ matrix.os == 'windows-latest' }}
         run: |
           Set-ExecutionPolicy RemoteSigned -Scope CurrentUser; irm https://cli.moonbitlang.com/install/powershell.ps1 | iex
           "C:\Users\runneradmin\.moon\bin" | Out-File -FilePath $env:GITHUB_PATH -Append
@@ -88,11 +81,11 @@ jobs:
         run: moon bundle --all
 
       - name: check core size
-        if: ${{ matrix.os.name != 'windows-latest' }}
+        if: ${{ matrix.os != 'windows-latest' }}
         run: find ./target -name '*.core' | xargs ls -lh
 
       - name: check core size on windows
-        if: ${{ matrix.os.name == 'windows-latest' }}
+        if: ${{ matrix.os == 'windows-latest' }}
         run: Get-ChildItem -Path ".\target" -Recurse -Filter "*.core" | ForEach-Object { "{0} ({1} bytes)" -f $_.FullName, $_.Length }
 
       - name: format diff
