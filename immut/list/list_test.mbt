@@ -249,11 +249,11 @@ test "sort" {
 
 test "contain" {
   let ls = List::[1, 2, 3]
-  inspect(ls.contain(1), content="true")?
-  inspect(ls.contain(2), content="true")?
-  inspect(ls.contain(3), content="true")?
-  inspect(ls.contain(0), content="false")?
-  inspect(ls.contain(4), content="false")?
+  inspect(ls.contains(1), content="true")?
+  inspect(ls.contains(2), content="true")?
+  inspect(ls.contains(3), content="true")?
+  inspect(ls.contains(0), content="false")?
+  inspect(ls.contains(4), content="false")?
 }
 
 test "unfold" {

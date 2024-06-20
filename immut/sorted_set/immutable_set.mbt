@@ -255,12 +255,12 @@ pub fn is_empty[T : Compare](self : ImmutableSet[T]) -> Bool {
 }
 
 /// Return true if value contain in ImmutableSet
-pub fn contain[T : Compare](self : ImmutableSet[T], value : T) -> Bool {
+pub fn contains[T : Compare](self : ImmutableSet[T], value : T) -> Bool {
   match self {
     Empty => false
     Node(~left, ~right, value=node_value, ..) => {
       let compare_result = value.compare(node_value)
-      compare_result == 0 || (if compare_result < 0 { left } else { right }).contain(
+      compare_result == 0 || (if compare_result < 0 { left } else { right }).contains(
         value,
       )
     }

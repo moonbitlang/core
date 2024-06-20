@@ -18,11 +18,11 @@ test "Set" {
     i, map => continue i + 1, map.add(i)
   }
   for i = 0; i < 100; i = i + 1 {
-    @assertion.assert_eq((i, map.contain(i)), (i, true))?
+    @assertion.assert_eq((i, map.contains(i)), (i, true))?
   }
-  inspect((100, map.contain(100)), content="(100, false)")?
+  inspect((100, map.contains(100)), content="(100, false)")?
   let map = map.add(100)
-  inspect((100, map.contain(100)), content="(100, true)")?
+  inspect((100, map.contains(100)), content="(100, true)")?
 }
 
 test "Set::size" {
@@ -39,15 +39,15 @@ test "Set::remove" {
     i, map => continue i + 1, map.add(i)
   }
   for i = 0; i < 100; i = i + 1 {
-    @assertion.assert_eq((i, map.contain(i)), (i, true))?
+    @assertion.assert_eq((i, map.contains(i)), (i, true))?
   }
   let map = loop 0, map {
     100, map => map.remove(100) // test for removing non-existing element
     i, map => continue i + 2, map.remove(i)
   }
   for i = 0; i < 100; i = i + 2 {
-    @assertion.assert_eq(map.contain(i), false)?
-    @assertion.assert_eq(map.contain(i + 1), true)?
+    @assertion.assert_eq(map.contains(i), false)?
+    @assertion.assert_eq(map.contains(i + 1), true)?
   }
 }
 
@@ -65,10 +65,10 @@ test "Set::to_string" {
 
 test "Set::from_array" {
   let set = Set::["1", "2", "42"]
-  inspect(set.contain("1"), content="true")?
-  inspect(set.contain("2"), content="true")?
-  inspect(set.contain("42"), content="true")?
-  inspect(set.contain("43"), content="false")?
+  inspect(set.contains("1"), content="true")?
+  inspect(set.contains("2"), content="true")?
+  inspect(set.contains("42"), content="true")?
+  inspect(set.contains("43"), content="false")?
 }
 
 test "Set::is_empty" {
