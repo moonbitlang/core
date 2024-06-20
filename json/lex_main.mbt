@@ -60,12 +60,12 @@ fn lex_value(
       Some('-') =>
         match read_char(ctx) {
           Some('0') => {
-            let n = lex_zero(ctx, start=ctx.offset - 2)?
+            let n = lex_zero(ctx, start=ctx.offset - 2)!!
             return Ok(Number(n))
           }
           Some(c2) => {
             if c2 >= '1' && c2 <= '9' {
-              let n = lex_decimal_integer(ctx, start=ctx.offset - 2)?
+              let n = lex_decimal_integer(ctx, start=ctx.offset - 2)!!
               return Ok(Number(n))
             }
             return Err(invalid_char(ctx, shift=-1))
@@ -73,11 +73,11 @@ fn lex_value(
           None => return Err(InvalidEof)
         }
       Some('0') => {
-        let n = lex_zero(ctx, start=ctx.offset - 1)?
+        let n = lex_zero(ctx, start=ctx.offset - 1)!!
         return Ok(Number(n))
       }
       Some('1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9') => {
-        let n = lex_decimal_integer(ctx, start=ctx.offset - 1)?
+        let n = lex_decimal_integer(ctx, start=ctx.offset - 1)!!
         return Ok(Number(n))
       }
       Some('"') => {

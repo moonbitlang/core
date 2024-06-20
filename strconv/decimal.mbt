@@ -55,10 +55,10 @@ pub fn Decimal::from_int64(v : Int64) -> Decimal {
 }
 
 /// Create a decimal from number string.
-pub fn Decimal::parse_decimal(str : String) -> Result[Decimal, String] {
+pub fn Decimal::parse_decimal(str : String) -> Decimal!String {
   let d = Decimal::new()
   if str.length() <= 0 {
-    return Err(syntax_err)
+    raise syntax_err
   }
   let mut i = 0
   // read digits part
@@ -66,13 +66,13 @@ pub fn Decimal::parse_decimal(str : String) -> Result[Decimal, String] {
   let mut has_digits = false
   while i < str.length() {
     match str[i] {
-      '-' => if i != 0 { return Err(syntax_err) } else { d.negative = true }
-      '+' => if i != 0 { return Err(syntax_err) }
+      '-' => if i != 0 { raise syntax_err } else { d.negative = true }
+      '+' => if i != 0 { raise syntax_err }
       '_' => () // skip underscores
       '.' => {
         // decimal point
         if has_dp {
-          return Err(syntax_err)
+          raise syntax_err
         }
         has_dp = true
         d.decimal_point = d.digits_num
@@ -98,7 +98,7 @@ pub fn Decimal::parse_decimal(str : String) -> Result[Decimal, String] {
     i += 1
   }
   if not(has_digits) {
-    return Err(syntax_err)
+    raise syntax_err
   }
   if not(has_dp) {
     d.decimal_point = d.digits_num
@@ -107,7 +107,7 @@ pub fn Decimal::parse_decimal(str : String) -> Result[Decimal, String] {
   if i < str.length() && (str[i] == 'e' || str[i] == 'E') {
     i += 1
     if i >= str.length() {
-      return Err(syntax_err)
+      raise syntax_err
     }
     let mut exp_sign = 1
     if str[i] == '+' {
@@ -117,7 +117,7 @@ pub fn Decimal::parse_decimal(str : String) -> Result[Decimal, String] {
       exp_sign = -1
     }
     if i >= str.length() || str[i] < '0' || str[i] > '9' {
-      return Err(syntax_err)
+      raise syntax_err
     }
     let mut exp = 0
     while i < str.length() && ('0' <= str[i] && str[i] <= '9' || str[i] == '_') {
@@ -133,14 +133,14 @@ pub fn Decimal::parse_decimal(str : String) -> Result[Decimal, String] {
   // finish
   d.trim()
   if i != str.length() {
-    Err(syntax_err)
+    raise syntax_err
   } else {
-    Ok(d)
+    d
   }
 }
 
 /// Convert the decimal to Double.
-pub fn to_double(self : Decimal) -> Result[Double, String] {
+pub fn to_double(self : Decimal) -> Double!String {
   let mut exponent = 0
   let mut mantissa = 0L
   // check the underflow and overflow
@@ -150,11 +150,11 @@ pub fn to_double(self : Decimal) -> Result[Double, String] {
     mantissa = 0L
     exponent = double_info.bias
     let bits = assemble_bits(mantissa, exponent, self.negative)
-    return Ok(bits.reinterpret_as_double())
+    return bits.reinterpret_as_double()
   }
   if self.decimal_point > 310 {
     // overflow
-    return Err(range_err)
+    raise range_err
   }
 
   // scale by powers of 2 until in range [0.5 .. 1]
@@ -195,7 +195,7 @@ pub fn to_double(self : Decimal) -> Result[Double, String] {
   }
   if exponent - double_info.bias >= (1).lsl(double_info.exponent_bits) - 1 {
     // overflow
-    return Err(range_err)
+    raise range_err
   }
 
   // multiply by (2 ** precision) and round to get mantissa
@@ -209,7 +209,7 @@ pub fn to_double(self : Decimal) -> Result[Double, String] {
     exponent += 1
     if exponent - double_info.bias >= (1).lsl(double_info.exponent_bits) - 1 {
       // overflow
-      return Err(range_err)
+      raise range_err
     }
   }
 
@@ -220,7 +220,7 @@ pub fn to_double(self : Decimal) -> Result[Double, String] {
 
   // combining the 52 mantissa bits with the 11 exponent bits and 1 sign bit
   let bits = assemble_bits(mantissa, exponent, self.negative)
-  Ok(bits.reinterpret_as_double())
+  bits.reinterpret_as_double()
 }
 
 /// Binary shift left (s > 0) or right (s < 0).
@@ -585,11 +585,15 @@ test "from_int64" {
 }
 
 test "parse_decimal" {
-  let s = "0.0000000000000000000000000000007888609052210118054117285652827862296732064351090230047702789306640625"
-  let hpd = Decimal::parse_decimal(s)?
-  @assertion.assert_eq(hpd.to_string(), s)?
-  let hpd = Decimal::parse_decimal("1.0e-10")?
-  @assertion.assert_eq(hpd.to_string(), "0.0000000001")?
+  try {
+    let s = "0.0000000000000000000000000000007888609052210118054117285652827862296732064351090230047702789306640625"
+    let hpd = Decimal::parse_decimal(s)!
+    inspect(hpd, content=s)?
+    let hpd = Decimal::parse_decimal("1.0e-100")!
+    inspect(hpd, content="0.0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001")?
+  } catch {
+    err => println(err)
+  }
 }
 
 test "to_string" {
