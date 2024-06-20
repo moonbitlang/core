@@ -195,10 +195,10 @@ pub fn to(self : Int, end : Int, ~step : Int = 1) -> Iter[Int] {
       fn(yield) {
         for i = self; i > end; i = i + step {
           if not(yield(i)) {
-            break false
+            break IterEnd
           }
         } else {
-          true
+          IterContinue
         }
       },
     )
@@ -208,10 +208,10 @@ pub fn to(self : Int, end : Int, ~step : Int = 1) -> Iter[Int] {
     fn(yield) {
       for i = self; i < end; i = i + step {
         if not(yield(i)) {
-          break false
+          break IterEnd
         }
       } else {
-        true
+        IterContinue
       }
     },
   )
@@ -235,10 +235,10 @@ pub fn to(self : Int64, end : Int64, ~step : Int64 = 1L) -> Iter[Int64] {
       fn(yield) {
         for i = self; i > end; i = i + step {
           if not(yield(i)) {
-            break false
+            break IterEnd
           }
         } else {
-          true
+          IterContinue
         }
       },
     )
@@ -247,10 +247,10 @@ pub fn to(self : Int64, end : Int64, ~step : Int64 = 1L) -> Iter[Int64] {
     fn(yield) {
       for i = self; i < end; i = i + step {
         if not(yield(i)) {
-          break false
+          break IterEnd
         }
       } else {
-        true
+        IterContinue
       }
     },
   )
@@ -274,10 +274,10 @@ pub fn to(self : Double, end : Double, ~step : Double = 1.0) -> Iter[Double] {
       fn(yield) {
         for i = self; i > end; i = i + step {
           if not(yield(i)) {
-            break false
+            break IterEnd
           }
         } else {
-          true
+          IterContinue
         }
       },
     )
@@ -286,10 +286,10 @@ pub fn to(self : Double, end : Double, ~step : Double = 1.0) -> Iter[Double] {
     fn(yield) {
       for i = self; i < end; i = i + step {
         if not(yield(i)) {
-          break false
+          break IterEnd
         }
       } else {
-        true
+        IterContinue
       }
     },
   )
