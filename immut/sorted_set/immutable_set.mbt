@@ -475,8 +475,7 @@ pub fn map[T : Compare, U : Compare](
 pub fn all[T : Compare](self : ImmutableSet[T], f : (T) -> Bool) -> Bool {
   match self {
     Empty => true
-    Node(~left, ~value, ~right, ..) =>
-      f(value) && left.all(f) && right.all(f)
+    Node(~left, ~value, ~right, ..) => f(value) && left.all(f) && right.all(f)
   }
 }
 
@@ -491,8 +490,7 @@ pub fn all[T : Compare](self : ImmutableSet[T], f : (T) -> Bool) -> Bool {
 pub fn any[T : Compare](self : ImmutableSet[T], f : (T) -> Bool) -> Bool {
   match self {
     Empty => false
-    Node(~left, ~value, ~right, ..) =>
-      f(value) || left.any(f) || right.any(f)
+    Node(~left, ~value, ~right, ..) => f(value) || left.any(f) || right.any(f)
   }
 }
 
