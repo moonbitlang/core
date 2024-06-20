@@ -59,6 +59,13 @@ struct Map[K, V] {
 
 // Implementations
 
+fn unwrap[X](self : X?) -> X {
+  match self {
+    None => panic()
+    Some(x) => x
+  }
+}
+
 fn power_2_above(x : Int, n : Int) -> Int {
   for i = x {
     if i >= n {
