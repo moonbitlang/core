@@ -45,7 +45,7 @@ pub fn Set::make[T]() -> Set[T] {
 }
 
 /// Lookup a value from the hash set
-pub fn contain[T : Eq + Hash](self : Set[T], key : T) -> Bool {
+pub fn contains[T : Eq + Hash](self : Set[T], key : T) -> Bool {
   loop self, key.hash() {
     Empty, _ => false
     Leaf(key1), _ => key == key1

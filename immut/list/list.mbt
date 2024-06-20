@@ -530,7 +530,7 @@ pub fn op_add[T](self : List[T], other : List[T]) -> List[T] {
 }
 
 /// Check if the list contains the value.
-pub fn contain[T : Eq](self : List[T], value : T) -> Bool {
+pub fn contains[T : Eq](self : List[T], value : T) -> Bool {
   loop self {
     Nil => false
     Cons(x, xs) => if x == value { true } else { continue xs }

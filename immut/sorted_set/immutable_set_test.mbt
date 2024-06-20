@@ -148,10 +148,10 @@ test "split" {
 
 test "contain" {
   inspect(
-    ImmutableSet::[7, 2, 9, 4, 6, 3, 8, 1].add(5).contain(5),
+    ImmutableSet::[7, 2, 9, 4, 6, 3, 8, 1].add(5).contains(5),
     content="true",
   )?
-  inspect(ImmutableSet::[7, 2, 9, 4, 6, 3, 8, 1].contain(5), content="false")?
+  inspect(ImmutableSet::[7, 2, 9, 4, 6, 3, 8, 1].contains(5), content="false")?
 }
 
 test "to_array" {
