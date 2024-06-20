@@ -116,13 +116,13 @@ ImmutableSet::[1, 2, 3, 4, 5].fold(0, fn(acc, x) { acc + x }) // 15
 ImmutableSet::[1, 2, 3].map(fn(x){ x * 2}) // ImmutableSet::[2, 4, 6]
 ```
 
-### Forall & Exists
+### All & Any
 
-`forall` and `exists` can detect whether all elements in the set match or if there are elements that match.
+`all` and `any` can detect whether all elements in the set match or if there are elements that match.
 
 ```moonbit
-ImmutableSet::[2, 4, 6].forall(fn(v) { v % 2 == 0}) // true
-ImmutableSet::[1, 4, 3].exists(fn(v) { v % 2 == 0}) // true
+ImmutableSet::[2, 4, 6].all(fn(v) { v % 2 == 0}) // true
+ImmutableSet::[1, 4, 3].any(fn(v) { v % 2 == 0}) // true
 ```
 
 ### Stringify
