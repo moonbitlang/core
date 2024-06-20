@@ -310,7 +310,7 @@ pub fn to(self : Double, end : Double, ~step : Double = 1.0) -> Iter[Double] {
 ///
 /// # Returns
 ///
-/// A new iterator that only contains the elements for which the predicate function returns `true`.
+/// A new iterator that only contains the elements for which the predicate function returns `IterContinue`.
 /// @intrinsic %iter.filter
 pub fn filter[T](self : Iter[T], f : (T) -> Bool) -> Iter[T] {
   Iter(
@@ -418,9 +418,8 @@ pub fn take[T](self : Iter[T], n : Int) -> Iter[T] {
           IterEnd
         }
       }
-      // when the `take` operator exits, the overall return value is false only when
-      // any of the `yield(a)` return false. Otherwise, it returns true, including
-      // the case when `i` reaches the iteration count `n`.
+      // The `take` operator returns `IterEnd` only when any call to `yield(a)` returns `IterEnd`.
+      // Otherwise, it returns `IterContinue`, including when `i` reaches the count `n`.
     },
   )
 }
@@ -443,7 +442,7 @@ pub fn take_while[T](self : Iter[T], f : (T) -> Bool) -> Iter[T] {
   Iter(
     fn {
       yield => {
-        // `r` is the overall return value, which is false only when `yield(a)` returns false
+        // `r` represents the overall return value. It is set to `IterEnd` only if `yield(a)` returns `IterEnd`.
         let mut r : IterResult = IterContinue
         (self.0)(
           fn {
