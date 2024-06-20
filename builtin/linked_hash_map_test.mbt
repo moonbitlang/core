@@ -145,6 +145,8 @@ test "is_empty" {
   @assertion.assert_eq(m.is_empty(), false)?
   m.remove("a")
   @assertion.assert_eq(m.is_empty(), true)?
+  m.remove("a")
+  @assertion.assert_eq(m.is_empty(), true)?
 }
 
 test "iter" {
@@ -668,7 +670,9 @@ test "op_equal" {
   m1.set("b", 2)
   m1.set("c", 3)
   let m2 = { "a": 1, "b": 2, "c": 3 }
-  @assertion.assert_eq(m1 == m2, true)?
+  inspect(m1 == m2, content="true")?
+  inspect({ "a": 1 } == {  }, content="false")?
+  inspect({ 1: 2, 2: 3 } == { 1: 3, 2: 4 }, content="false")?
 }
 
 test "to_string" {
@@ -678,4 +682,19 @@ test "to_string" {
   m.set("b", 2)
   m.set("c", 3)
   inspect(m.to_string(), content="{a:1, b:2, c:3}")?
+}
+
+test "hash_collision" {
+  let m : Map[MyString, Int] = Map::new()
+  m.set("a", 1)
+  m.set("ab", 2)
+  m.set("bc", 2)
+  m.set("cd", 2)
+  m.set("abc", 3)
+  m.set("abcdef", 6)
+  inspect(m["ab"], content="Some(2)")?
+}
+
+test "panic unwrap" {
+  (None : Unit?).unwrap()
 }
