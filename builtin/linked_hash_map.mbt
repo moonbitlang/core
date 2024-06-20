@@ -59,6 +59,13 @@ struct Map[K, V] {
 
 // Implementations
 
+fn unwrap[X](self : X?) -> X {
+  match self {
+    None => panic()
+    Some(x) => x
+  }
+}
+
 fn power_2_above(x : Int, n : Int) -> Int {
   for i = x {
     if i >= n {
@@ -119,10 +126,7 @@ pub fn set[K : Hash + Eq, V](self : Map[K, V], key : K, value : V) -> Unit {
     hash.land(self.capacity_mask),
     insert_entry,
     { prev: None, next: None } {
-    i, idx, entry, node => {
-      if i == self.capacity {
-        panic()
-      }
+    i, idx, entry, node =>
       match self.entries[idx] {
         None => {
           self.entries[idx] = Some(entry)
@@ -153,7 +157,6 @@ pub fn set[K : Hash + Eq, V](self : Map[K, V], key : K, value : V) -> Unit {
           }
         }
       }
-    }
   }
 }
 
@@ -248,13 +251,11 @@ fn remove_entry[K : Eq, V](self : Map[K, V], entry : Entry[K, V]) -> Unit {
     self.head = None
     self.tail = None
   } else {
-    match self.head {
-      Some(head) => if head == entry { self.head = node.next }
-      None => ()
+    if self.head.unwrap() == entry {
+      self.head = node.next
     }
-    match self.tail {
-      Some(tail) => if tail == entry { self.tail = node.prev }
-      None => ()
+    if self.tail.unwrap() == entry {
+      self.tail = node.prev
     }
     match node.prev {
       Some(prev) => self.list[prev.idx].next = node.next

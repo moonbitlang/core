@@ -102,35 +102,6 @@ test "from_array" {
   @assertion.assert_eq(m.get("c"), Some(3))?
 }
 
-test "remove" {
-  let m : Map[MyString, Int] = Map::new()
-  m.set("a", 1)
-  m.set("ab", 2)
-  m.set("bc", 2)
-  m.set("cd", 2)
-  m.set("abc", 3)
-  m.set("abcdef", 6)
-  m.remove("ab")
-  @assertion.assert_eq(m.size(), 5)?
-  @assertion.assert_eq(
-    m.debug_entries(),
-    "_,(0,a,1),(0,bc,2),(1,cd,2),(1,abc,3),_,(0,abcdef,6),_",
-  )?
-}
-
-test "remove_unexist_key" {
-  let m : Map[MyString, Int] = Map::new()
-  m.set("a", 1)
-  m.set("ab", 2)
-  m.set("abc", 3)
-  m.remove("d")
-  @assertion.assert_eq(m.size(), 3)?
-  @assertion.assert_eq(
-    m.debug_entries(),
-    "_,(0,a,1),(0,ab,2),(0,abc,3),_,_,_,_",
-  )?
-}
-
 test "size" {
   let m : Map[String, Int] = Map::new()
   @assertion.assert_eq(m.size(), 0)?
@@ -143,6 +114,8 @@ test "is_empty" {
   @assertion.assert_eq(m.is_empty(), true)?
   m.set("a", 1)
   @assertion.assert_eq(m.is_empty(), false)?
+  m.remove("a")
+  @assertion.assert_eq(m.is_empty(), true)?
   m.remove("a")
   @assertion.assert_eq(m.is_empty(), true)?
 }
@@ -668,7 +641,9 @@ test "op_equal" {
   m1.set("b", 2)
   m1.set("c", 3)
   let m2 = { "a": 1, "b": 2, "c": 3 }
-  @assertion.assert_eq(m1 == m2, true)?
+  inspect(m1 == m2, content="true")?
+  inspect({ "a": 1 } == {  }, content="false")?
+  inspect({ 1: 2, 2: 3 } == { 1: 3, 2: 4 }, content="false")?
 }
 
 test "to_string" {
@@ -678,4 +653,45 @@ test "to_string" {
   m.set("b", 2)
   m.set("c", 3)
   inspect(m.to_string(), content="{a:1, b:2, c:3}")?
+}
+
+test "hash collision" {
+  let m : Map[MyString, Int] = Map::new()
+  m.set("a", 1)
+  m.set("ab", 2)
+  m.set("abc", 3)
+  inspect(m["d"], content="None")?
+}
+
+test "panic unwrap" {
+  (None : Unit?).unwrap()
+}
+
+test "remove" {
+  let m : Map[MyString, Int] = Map::new()
+  m.set("a", 1)
+  m.set("ab", 2)
+  m.set("bc", 2)
+  m.set("cd", 2)
+  m.set("abc", 3)
+  m.set("abcdef", 6)
+  m.remove("ab")
+  @assertion.assert_eq(m.size(), 5)?
+  @assertion.assert_eq(
+    m.debug_entries(),
+    "_,(0,a,1),(0,bc,2),(1,cd,2),(1,abc,3),_,(0,abcdef,6),_",
+  )?
+}
+
+test "remove_unexist_key" {
+  let m : Map[MyString, Int] = Map::new()
+  m.set("a", 1)
+  m.set("ab", 2)
+  m.set("abc", 3)
+  m.remove("d")
+  @assertion.assert_eq(m.size(), 3)?
+  @assertion.assert_eq(
+    m.debug_entries(),
+    "_,(0,a,1),(0,ab,2),(0,abc,3),_,_,_,_",
+  )?
 }
