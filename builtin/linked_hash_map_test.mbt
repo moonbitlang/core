@@ -102,8 +102,6 @@ test "from_array" {
   @assertion.assert_eq(m.get("c"), Some(3))?
 }
 
-
-
 test "size" {
   let m : Map[String, Int] = Map::new()
   @assertion.assert_eq(m.size(), 0)?
@@ -657,8 +655,8 @@ test "to_string" {
   inspect(m.to_string(), content="{a:1, b:2, c:3}")?
 }
 
-test "hash_c" {
-   let m : Map[MyString, Int] = Map::new()
+test "hash collision" {
+  let m : Map[MyString, Int] = Map::new()
   m.set("a", 1)
   m.set("ab", 2)
   m.set("abc", 3)
