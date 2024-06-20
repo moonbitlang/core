@@ -38,8 +38,8 @@ Whether an element is in the set.
 
 ```moonbit
 let set = MutableSet::from_array([1, 2, 3, 4])
-set.contain(1) // true
-set.contain(5) // false
+set.contains(1) // true
+set.contains(5) // false
 ```
 
 Iterates over the elements in the set.
