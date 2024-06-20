@@ -156,17 +156,17 @@ pub fn Int64::to_byte(self : Int64) -> Byte {
 
 // FixedArray primitive ops
 
-pub fn FixedArray::op_get[T](self : FixedArray[T], idx : Int) -> T = "%array_get"
+pub fn FixedArray::op_get[T](self : FixedArray[T], idx : Int) -> T = "%fixedarray.get"
 
-pub fn FixedArray::get[T](self : FixedArray[T], idx : Int) -> T = "%array_get"
+pub fn FixedArray::get[T](self : FixedArray[T], idx : Int) -> T = "%fixedarray.get"
 
-pub fn FixedArray::op_set[T](self : FixedArray[T], idx : Int, val : T) -> Unit = "%array_set"
+pub fn FixedArray::op_set[T](self : FixedArray[T], idx : Int, val : T) -> Unit = "%fixedarray.set"
 
-pub fn FixedArray::set[T](self : FixedArray[T], idx : Int, val : T) -> Unit = "%array_set"
+pub fn FixedArray::set[T](self : FixedArray[T], idx : Int, val : T) -> Unit = "%fixedarray.set"
 
-pub fn FixedArray::length[T](self : FixedArray[T]) -> Int = "%array_length"
+pub fn FixedArray::length[T](self : FixedArray[T]) -> Int = "%fixedarray.length"
 
-pub fn FixedArray::make[T](len : Int, init : T) -> FixedArray[T] = "%array_make"
+pub fn FixedArray::make[T](len : Int, init : T) -> FixedArray[T] = "%fixedarray.make"
 
 // String primitive ops
 

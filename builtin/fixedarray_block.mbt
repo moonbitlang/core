@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-/// @intrinsic %array.copy
+/// @intrinsic %fixedarray.copy
 pub fn FixedArray::unsafe_blit[A](
   dst : FixedArray[A],
   dst_offset : Int,
