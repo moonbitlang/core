@@ -133,10 +133,6 @@ fn lex_number_end(
   end : Int
 ) -> Double!ParseError {
   let s = ctx.input.substring(~start, ~end)
-  // match @strconv.parse_double(s) {
-  //   Ok(d) => Ok(d)
-  //   Err(_) => Err(InvalidNumber(offset_to_position(ctx.input, start), s))
-  // }
   try {
     @strconv.parse_double(s)!
   } catch {
