@@ -19,9 +19,9 @@
 /// # Example
 /// 
 /// ```
-/// let arr = Array::[5, 3, 2, 4, 1]
+/// let arr = [5, 3, 2, 4, 1]
 /// arr.sort_by_key(fn (x) {-x})
-/// debug(arr) //output: Array::[5, 4, 3, 2, 1]
+/// debug(arr) //output: [5, 4, 3, 2, 1]
 /// ```
 pub fn sort_by_key[T, K : Compare](self : Array[T], map : (T) -> K) -> Unit {
   quick_sort_by(
@@ -39,9 +39,9 @@ pub fn sort_by_key[T, K : Compare](self : Array[T], map : (T) -> K) -> Unit {
 /// # Example
 /// 
 /// ```
-/// let arr = Array::[5, 3, 2, 4, 1]
+/// let arr = [5, 3, 2, 4, 1]
 /// arr.sort_by(fn (a, b) { a - b })
-/// debug(arr) //output: Array::[1, 2, 3, 4, 5]
+/// debug(arr) //output: [1, 2, 3, 4, 5]
 /// ```
 pub fn sort_by[T](self : Array[T], cmp : (T, T) -> Int) -> Unit {
   quick_sort_by(

@@ -21,28 +21,28 @@ fn test_parse(
 
 //region objects
 test "parses empty object" {
-  inspect(parse("{}"), content="Ok(Object(Map::[]))")?
+  inspect(parse("{}"), content="Ok(Object({}))")?
 }
 
 test "parses object" {
-  inspect(parse("{\"a\":1}"), content="Ok(Object(Map::[{a:Number(1.0)}]))")?
+  inspect(parse("{\"a\":1}"), content="Ok(Object({a:Number(1.0)}))")?
   inspect(
     parse("{\"a\":1,\"b\":2}"),
-    content="Ok(Object(Map::[{a:Number(1.0)}, {b:Number(2.0)}]))",
+    content="Ok(Object({a:Number(1.0), b:Number(2.0)}))",
   )?
 }
 
 test "parses multiple properties" {
   inspect(
     parse("{\"abc\":1,\"def\":2}"),
-    content="Ok(Object(Map::[{abc:Number(1.0)}, {def:Number(2.0)}]))",
+    content="Ok(Object({abc:Number(1.0), def:Number(2.0)}))",
   )?
 }
 
 test "parses nested objects" {
   inspect(
     parse("{\"a\":{\"b\":2}}"),
-    content="Ok(Object(Map::[{a:Object(Map::[{b:Number(2.0)}])}]))",
+    content="Ok(Object({a:Object({b:Number(2.0)})}))",
   )?
 }
 //endregion
@@ -101,7 +101,7 @@ test "parses false" {
 
 //region numbers
 test "parses leading zeroes" {
-  let json = test_parse("[0,0.,0e0]")?
+  let json = test_parse("[0,0.0,0e0]")?
   @assertion.assert_eq(
     json,
     JsonValue::Array(
@@ -126,7 +126,7 @@ test "parses integers" {
 }
 
 test "parses signed numbers" {
-  let json = test_parse("[-1,+2,-.1,-0]")?
+  let json = test_parse("[-1,2,-0.1,-0]")?
   @assertion.assert_eq(
     json,
     JsonValue::Array(
@@ -140,14 +140,6 @@ test "parses signed numbers" {
   )?
 }
 
-test "parses leading decimal points" {
-  let json = test_parse("[.1,.23]")?
-  @assertion.assert_eq(
-    json,
-    JsonValue::Array([JsonValue::Number(0.1), JsonValue::Number(0.23)]),
-  )?
-}
-
 test "parses fractional numbers" {
   let json = test_parse("[1.0,1.23]")?
   @assertion.assert_eq(
@@ -157,7 +149,7 @@ test "parses fractional numbers" {
 }
 
 test "parses exponents" {
-  let json = test_parse("[1e0,1e1,1e01,1.e0,1.1e0,1e-1,1e+1]")?
+  let json = test_parse("[1e0,1e1,1e01,1.0e0,1.1e0,1e-1,1e+1]")?
   @assertion.assert_eq(
     json,
     JsonValue::Array(
@@ -180,7 +172,7 @@ test "parses 1" {
 }
 
 test "parses +1.23e100" {
-  let json = test_parse("+1.23e100")?
+  let json = test_parse("1.23e100")?
   @assertion.assert_eq(json, JsonValue::Number(1.23e100))?
 }
 

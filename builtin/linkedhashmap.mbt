@@ -35,7 +35,7 @@ priv struct ListNode[K, V] {
 /// # Example
 /// 
 /// ```
-/// let map = HashMap::[(3, "three"), (8, "eight"), (1, "one")]
+/// let map = { 3: "three", 8 :  "eight", 1 :  "one"}
 /// println(map.get(2)) // output: None
 /// println(map.get(3)) // output: Some("three")
 /// map.set(3, "updated")
@@ -331,17 +331,17 @@ fn debug_entries[K : Show, V : Show](self : Map[K, V]) -> String {
 
 pub fn to_string[K : Show, V : Show](self : Map[K, V]) -> String {
   if self.size == 0 {
-    return "Map::[]"
+    return "{}"
   }
-  loop 0, self.head, "Map::[" {
-    _, None, _ as acc => return acc + "]"
+  loop 0, self.head, "{" {
+    _, None, _ as acc => return acc + "}"
     i, Some({ key, value, idx, .. }), acc => {
       let nxt = self.list[idx].next
       if i > 0 {
         // To remove the last comma
-        continue i + 1, nxt, acc + ", {\(key):\(value)}"
+        continue i + 1, nxt, acc + ", \(key):\(value)"
       }
-      continue i + 1, nxt, acc + "{\(key):\(value)}"
+      continue i + 1, nxt, acc + "\(key):\(value)"
     }
   }
 }

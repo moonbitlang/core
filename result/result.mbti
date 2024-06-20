@@ -17,7 +17,7 @@ impl Result {
   map_err[T, E, F](Self[T, E], (E) -> F) -> Self[T, F]
   or[T, E](Self[T, E], T) -> T
   or_else[T, E](Self[T, E], () -> T) -> T
-  to_option[T, E](Self[T, E]) -> Option[T]
+  to_option[T, E](Self[T, E]) -> T?
   to_string[T : Show, E : Show](Self[T, E]) -> String
   unwrap[T, E](Self[T, E]) -> T
 }

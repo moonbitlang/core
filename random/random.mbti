@@ -3,22 +3,13 @@ package moonbitlang/core/random
 // Values
 
 // Types and methods
-type RandomDouble
-impl RandomDouble {
-  new(~seed : Int = ..) -> Self
-  summon(Self) -> Double
-}
-
-type RandomInt
-impl RandomInt {
-  new(~seed : Int = ..) -> Self
-  summon(Self) -> Int
-}
-
-type RandomInt64
-impl RandomInt64 {
-  new(~seed : Int = ..) -> Self
-  summon(Self) -> Int64
+type RandomState
+impl RandomState {
+  gen_double(Self) -> Double
+  gen_int(Self) -> Int
+  gen_int64(Self) -> Int64
+  init_state(~seed : Int = ..) -> Self
+  new() -> Self
 }
 
 // Traits

@@ -3,7 +3,7 @@ package moonbitlang/core/immut/list
 // Values
 fn repeat[T](Int, T) -> List[T]
 
-fn unfold[T, State]((State) -> Option[Tuple[T, State]], ~init : State) -> List[T]
+fn unfold[T, State]((State) -> Tuple[T, State]?, ~init : State) -> List[T]
 
 fn unzip[T, U](List[Tuple[T, U]]) -> Tuple[List[T], List[U]]
 
@@ -15,6 +15,7 @@ pub enum List {
 impl List {
   all[T](Self[T], (T) -> Bool) -> Bool
   any[T](Self[T], (T) -> Bool) -> Bool
+  as_iter[T](Self[T]) -> Iter[T]
   concat[T](Self[T], Self[T]) -> Self[T]
   concat_map[T, U](Self[T], (T) -> Self[U]) -> Self[U]
   contain[T : Eq](Self[T], T) -> Bool
@@ -24,15 +25,15 @@ impl List {
   drop_while[T](Self[T], (T) -> Bool) -> Self[T]
   equal[T : Eq](Self[T], Self[T]) -> Bool
   filter[T](Self[T], (T) -> Bool) -> Self[T]
-  find[T](Self[T], (T) -> Bool) -> Option[T]
-  findi[T](Self[T], (T, Int) -> Bool) -> Option[T]
+  find[T](Self[T], (T) -> Bool) -> T?
+  findi[T](Self[T], (T, Int) -> Bool) -> T?
   flatten[T](Self[Self[T]]) -> Self[T]
   fold_left[T, U](Self[T], (U, T) -> U, ~init : U) -> U
   fold_lefti[T, U](Self[T], (Int, U, T) -> U, ~init : U) -> U
   fold_right[T, U](Self[T], (T, U) -> U, ~init : U) -> U
   fold_righti[T, U](Self[T], (Int, T, U) -> U, ~init : U) -> U
   from_array[T](Array[T]) -> Self[T]
-  head[T](Self[T]) -> Option[T]
+  head[T](Self[T]) -> T?
   head_exn[T](Self[T]) -> T
   init_[T](Self[T]) -> Self[T]
   intercalate[T](Self[Self[T]], Self[T]) -> Self[T]
@@ -44,12 +45,12 @@ impl List {
   iteri[T](Self[T], (Int, T) -> Unit) -> Unit
   last[T](Self[T]) -> T
   length[T](Self[T]) -> Int
-  lookup[T : Eq, E](Self[Tuple[T, E]], T) -> Option[E]
+  lookup[T : Eq, E](Self[Tuple[T, E]], T) -> E?
   map[T, U](Self[T], (T) -> U) -> Self[U]
   mapi[T, U](Self[T], (Int, T) -> U) -> Self[U]
   maximum[T : Compare + Eq](Self[T]) -> T
   minimum[T : Compare + Eq](Self[T]) -> T
-  nth[T](Self[T], Int) -> Option[T]
+  nth[T](Self[T], Int) -> T?
   nth_exn[T](Self[T], Int) -> T
   op_add[T](Self[T], Self[T]) -> Self[T]
   op_equal[T : Eq](Self[T], Self[T]) -> Bool

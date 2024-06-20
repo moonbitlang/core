@@ -8,11 +8,11 @@ impl Map {
   add[K : Eq + Hash, V](Self[K, V], K, V) -> Self[K, V]
   as_iter[K, V](Self[K, V]) -> Iter[Tuple[K, V]]
   debug_write[K : Debug, V : Debug](Self[K, V], Buffer) -> Unit
-  find[K : Eq + Hash, V](Self[K, V], K) -> Option[V]
+  find[K : Eq + Hash, V](Self[K, V], K) -> V?
   from_array[K : Eq + Hash, V](Array[Tuple[K, V]]) -> Self[K, V]
   iter[K, V](Self[K, V], (K, V) -> Unit) -> Unit
   make[K, V]() -> Self[K, V]
-  op_get[K : Eq + Hash, V](Self[K, V], K) -> Option[V]
+  op_get[K : Eq + Hash, V](Self[K, V], K) -> V?
   remove[K : Eq + Hash, V](Self[K, V], K) -> Self[K, V]
   size[K, V](Self[K, V]) -> Int
   to_string[K : Debug, V : Debug](Self[K, V]) -> String

@@ -16,13 +16,13 @@
 //
 // Hash-Array-Mapped-Trie (HAMT) is a persistent hash-table data structure.
 // It is a trie over the hash of keys (i.e. strings of binary digits)
-// 
+//
 // Every level in a HAMT can have up to 32 branches (5 digits),
 // so HAMT has a tree height of at most 7,
 // and is more efficient compared to most other tree data structures.
-// 
+//
 // HAMT uses bitmap-based sparse array to avoid space waste
-// 
+//
 // Some references:
 // - <https://handwiki.org/wiki/Hash%20array%20mapped%20trie>
 // - <https://lampwww.epfl.ch/papers/idealhashtrees.pdf>
@@ -32,7 +32,7 @@ enum Set[T] {
   Empty
   Leaf(T) // optimize for the case of no collision
   Collision(Bucket[T]) // use a list of buckets to resolve collision
-  Branch(SparseArray[Set[T]])
+  Branch(@sparse_array.SparseArray[Set[T]])
 }
 
 // The number of bits consumed at every [Branch] node
@@ -50,7 +50,7 @@ pub fn contain[T : Eq + Hash](self : Set[T], key : T) -> Bool {
     Empty, _ => false
     Leaf(key1), _ => key == key1
     Collision(bucket), _ => bucket.find(key)
-    // get the first segment (lower 5 bits) of the hash value      
+    // get the first segment (lower 5 bits) of the hash value
     // inline the hot path of Sparse_array::op_get
     Branch(children), hash => {
       let idx = hash.land(segment_mask)
@@ -80,7 +80,7 @@ fn add_with_hash[T : Eq](
         key,
         hash.lsr(segment_length),
       )
-      Set::Branch(singleton(idx, child))
+      Set::Branch(@sparse_array.SparseArray::singleton(idx, child))
     }
   }
 

@@ -96,7 +96,7 @@ test "contains" {
 }
 
 test "from_array" {
-  let m = Map::[("a", 1), ("b", 2), ("c", 3)]
+  let m = { "a": 1, "b": 2, "c": 3 }
   @assertion.assert_eq(m.get("a"), Some(1))?
   @assertion.assert_eq(m.get("b"), Some(2))?
   @assertion.assert_eq(m.get("c"), Some(3))?
@@ -148,14 +148,14 @@ test "is_empty" {
 }
 
 test "iter" {
-  let m : Map[String, Int] = Map::[("a", 1), ("b", 2), ("c", 3)]
+  let m = { "a": 1, "b": 2, "c": 3 }
   let mut sum = 0
   m.iter(fn(_k, v) { sum += v })
   @assertion.assert_eq(sum, 6)?
 }
 
 test "iteri" {
-  let m : Map[String, Int] = Map::[("a", 1), ("b", 2), ("c", 3)]
+  let m = { "a": 1, "b": 2, "c": 3 }
   let mut sum = 0
   let mut s = ""
   m.iteri(
@@ -169,7 +169,7 @@ test "iteri" {
 }
 
 test "clear" {
-  let m : Map[String, Int] = Map::[("a", 1), ("b", 2), ("c", 3)]
+  let m = { "a": 1, "b": 2, "c": 3 }
   m.clear()
   @assertion.assert_eq(m.size, 0)?
   @assertion.assert_eq(m.capacity, 8)?
@@ -206,7 +206,7 @@ test "grow" {
 
 test "as_iter" {
   let buf = Buffer::make(20)
-  let map = Map::[(1, "one"), (2, "two"), (3, "three")]
+  let map = { 1: "one", 2: "two", 3: "three" }
   map.as_iter().iter(
     fn(e) {
       let (k, v) = e
@@ -225,7 +225,7 @@ test "as_iter" {
 }
 
 test "iter order" {
-  let m = Map::[("one", 1)]
+  let m = { "one": 1 }
   m["three"] = 3
   m["two"] = 2
   let buf = Buffer::make(0)
@@ -234,7 +234,7 @@ test "iter order" {
 }
 
 test "linked list" {
-  let m : Map[String, Int] = Map::[]
+  let m = {  }
   let buf = Buffer::make(0)
   m.debug_write(buf)
   inspect(buf, content="end")?
@@ -322,12 +322,12 @@ test "linked list" {
 }
 
 test "to_array" {
-  let map = Map::[(1, "one"), (2, "two"), (3, "three")]
+  let map = { 1: "one", 2: "two", 3: "three" }
   inspect(map.to_array(), content="[(1, one), (2, two), (3, three)]")?
 }
 
 test "set_existing_key" {
-  let m : Map[String, Int] = Map::new()
+  let m = {  }
   m.set("a", 1)
   m.set("b", 2)
   m.set("c", 3)
@@ -667,15 +667,15 @@ test "op_equal" {
   m1.set("a", 1)
   m1.set("b", 2)
   m1.set("c", 3)
-  let m2 : Map[String, Int] = Map::[("a", 1), ("b", 2), ("c", 3)]
+  let m2 = { "a": 1, "b": 2, "c": 3 }
   @assertion.assert_eq(m1 == m2, true)?
 }
 
 test "to_string" {
-  let m : Map[String, Int] = Map::new()
-  inspect(m.to_string(), content="Map::[]")?
+  let m = {  }
+  inspect(m.to_string(), content="{}")?
   m.set("a", 1)
   m.set("b", 2)
   m.set("c", 3)
-  inspect(m.to_string(), content="Map::[{a:1}, {b:2}, {c:3}]")?
+  inspect(m.to_string(), content="{a:1, b:2, c:3}")?
 }

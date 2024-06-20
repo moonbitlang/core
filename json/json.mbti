@@ -16,18 +16,18 @@ pub enum JsonValue {
   Object(Map[String, JsonValue])
 }
 impl JsonValue {
-  as_array(Self) -> Option[Array[Self]]
-  as_bool(Self) -> Option[Bool]
-  as_null(Self) -> Option[Unit]
-  as_number(Self) -> Option[Double]
-  as_object(Self) -> Option[Map[String, Self]]
-  as_string(Self) -> Option[String]
+  as_array(Self) -> Array[Self]?
+  as_bool(Self) -> Bool?
+  as_null(Self) -> Unit?
+  as_number(Self) -> Double?
+  as_object(Self) -> Map[String, Self]?
+  as_string(Self) -> String?
   debug_write(Self, Buffer) -> Unit
-  item(Self, Int) -> Option[Self]
+  item(Self, Int) -> Self?
   op_equal(Self, Self) -> Bool
   stringify(Self) -> String
   to_string(Self) -> String
-  value(Self, String) -> Option[Self]
+  value(Self, String) -> Self?
 }
 
 pub enum ParseError {

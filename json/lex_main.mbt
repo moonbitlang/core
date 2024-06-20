@@ -29,7 +29,7 @@ fn lex_value(
 ) -> Result[Token, ParseError] {
   for ; ; {
     match read_char(ctx) {
-      Some('\t' | '\u000B' | '\u000C' | ' ' | '\n' | '\r') => continue
+      Some('\t' | ' ' | '\n' | '\r') => continue
       Some('{') => return Ok(LBrace)
       Some('[') => return Ok(LBracket)
       Some(']') =>
@@ -57,14 +57,10 @@ fn lex_value(
         lex_assert_char(ctx, 'e')?
         return Ok(False)
       }
-      Some('-' | '+') =>
+      Some('-') =>
         match read_char(ctx) {
           Some('0') => {
             let n = lex_zero(ctx, start=ctx.offset - 2)?
-            return Ok(Number(n))
-          }
-          Some('.') => {
-            let n = lex_decimal_point_leading(ctx, start=ctx.offset - 2)?
             return Ok(Number(n))
           }
           Some(c2) => {
@@ -76,10 +72,6 @@ fn lex_value(
           }
           None => return Err(InvalidEof)
         }
-      Some('.') => {
-        let n = lex_decimal_point_leading(ctx, start=ctx.offset - 1)?
-        return Ok(Number(n))
-      }
       Some('0') => {
         let n = lex_zero(ctx, start=ctx.offset - 1)?
         return Ok(Number(n))

@@ -201,3 +201,64 @@ test "chars" {
     ,
   )?
 }
+
+pub fn starts_with(self : String, str : String) -> Bool {
+  if str.length() > self.length() {
+    false
+  } else {
+    self.substring(end=str.length()).compare(str) == 0
+  }
+}
+
+test "starts_with" {
+  @assertion.assert_true("abc".starts_with("a"))?
+  @assertion.assert_true("abc".starts_with("ab"))?
+  @assertion.assert_true("abc".starts_with("abc"))?
+  @assertion.assert_false("abc".starts_with("abcd"))?
+  @assertion.assert_false("abc".starts_with("b"))?
+}
+
+pub fn ends_with(self : String, str : String) -> Bool {
+  if str.length() > self.length() {
+    false
+  } else {
+    self.substring(start=self.length() - str.length()).compare(str) == 0
+  }
+}
+
+test "ends_with" {
+  @assertion.assert_true("abc".ends_with("c"))?
+  @assertion.assert_true("abc".ends_with("bc"))?
+  @assertion.assert_true("abc".ends_with("abc"))?
+  @assertion.assert_false("abc".ends_with("d"))?
+  @assertion.assert_false("abc".ends_with("ab"))?
+}
+
+// TODO: improve the perf later
+pub fn index_of(self : String, str : String) -> Int {
+  let len = self.length()
+  let sub_len = str.length()
+  if sub_len == 0 {
+    0
+  } else if sub_len > len {
+    -1
+  } else {
+    for i = 0; i < len - sub_len + 1; i = i + 1 {
+      if self.substring(start=i, end=i + sub_len).compare(str) == 0 {
+        return i
+      }
+    }
+    -1
+  }
+}
+
+test "index_of" {
+  @assertion.assert_true("abc".index_of("a") == 0)?
+  @assertion.assert_true("abc".index_of("b") == 1)?
+  @assertion.assert_true("abc".index_of("c") == 2)?
+  @assertion.assert_true("abc".index_of("ab") == 0)?
+  @assertion.assert_true("abc".index_of("bc") == 1)?
+  @assertion.assert_true("abc".index_of("") == 0)?
+  @assertion.assert_true("abc".index_of("d") == -1)?
+  @assertion.assert_true("abc".index_of("abcd") == -1)?
+}

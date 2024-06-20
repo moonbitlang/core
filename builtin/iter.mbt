@@ -20,6 +20,10 @@ enum IterResult {
   IterEnd // false
 } derive(Eq)
 
+fn to_string[T : Show](self : Iter[T]) -> String {
+  self.to_array().to_string()
+}
+
 // Consumers
 
 /// Iterates over each element in the iterator, applying the function `f` to each element.
@@ -168,6 +172,124 @@ pub fn Iter::repeat[T](a : T) -> Iter[T] {
       loop yield(a) {
         IterContinue => continue yield(a)
         IterEnd => IterEnd
+      }
+    },
+  )
+}
+
+/// Creates an iterator that iterates over a range of Int with default step 1.
+/// To grow the range downward, set the `step` parameter to a negative value.
+/// 
+/// # Arguments
+/// 
+/// * `start` - The starting value of the range (inclusive).
+/// * `end` - The ending value of the range (exclusive).
+/// * `step` - The step size of the range (default 1).
+/// 
+/// # Returns
+/// 
+/// Returns an iterator that iterates over the range of Int from `start` to `end - 1`.
+pub fn to(self : Int, end : Int, ~step : Int = 1) -> Iter[Int] {
+  if step < 0 {
+    return Iter(
+      fn(yield) {
+        for i = self; i > end; i = i + step {
+          if not(yield(i)) {
+            break false
+          }
+        } else {
+          true
+        }
+      },
+    )
+  }
+  // step >= 0
+  Iter(
+    fn(yield) {
+      for i = self; i < end; i = i + step {
+        if not(yield(i)) {
+          break false
+        }
+      } else {
+        true
+      }
+    },
+  )
+}
+
+/// Creates an iterator that iterates over a range of Int64 with default step 1L.
+/// To grow the range downward, set the `step` parameter to a negative value.
+/// 
+/// # Arguments
+/// 
+/// * `start` - The starting value of the range (inclusive).
+/// * `end` - The ending value of the range (exclusive).
+/// * `step` - The step size of the range (default 1L).
+/// 
+/// # Returns
+/// 
+/// Returns an iterator that iterates over the range of Int64 from `start` to `end - 1`.
+pub fn to(self : Int64, end : Int64, ~step : Int64 = 1L) -> Iter[Int64] {
+  if step < 0L {
+    return Iter(
+      fn(yield) {
+        for i = self; i > end; i = i + step {
+          if not(yield(i)) {
+            break false
+          }
+        } else {
+          true
+        }
+      },
+    )
+  }
+  Iter(
+    fn(yield) {
+      for i = self; i < end; i = i + step {
+        if not(yield(i)) {
+          break false
+        }
+      } else {
+        true
+      }
+    },
+  )
+}
+
+/// Creates an iterator that iterates over a range of Double with default step 1.0 .
+/// To grow the range downward, use the `downto` method.
+/// 
+/// # Arguments
+/// 
+/// * `start` - The starting value of the range (inclusive).
+/// * `end` - The ending value of the range (exclusive).
+/// * `step` - The step size of the range (default 1.0).
+/// 
+/// # Returns
+/// 
+/// Returns an iterator that iterates over the range of Double from `start` to `end - 1`.
+pub fn to(self : Double, end : Double, ~step : Double = 1.0) -> Iter[Double] {
+  if step < 0.0 {
+    return Iter(
+      fn(yield) {
+        for i = self; i > end; i = i + step {
+          if not(yield(i)) {
+            break false
+          }
+        } else {
+          true
+        }
+      },
+    )
+  }
+  Iter(
+    fn(yield) {
+      for i = self; i < end; i = i + step {
+        if not(yield(i)) {
+          break false
+        }
+      } else {
+        true
       }
     },
   )
@@ -525,6 +647,13 @@ pub fn Iter::concat[T](self : Iter[T], other : Iter[T]) -> Iter[T] {
 
 pub fn op_add[T](self : Iter[T], other : Iter[T]) -> Iter[T] {
   Iter::concat(self, other)
+}
+
+/// Collects the elements of the iterator into an array.
+pub fn to_array[T](self : Iter[T]) -> Array[T] {
+  let result = []
+  self.iter(fn(e) { result.push(e) })
+  result
 }
 
 /// Collects the elements of the iterator into an array.

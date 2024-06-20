@@ -29,7 +29,7 @@ priv struct Entry[K] {
 /// # Example
 /// 
 /// ```
-/// let set = HashSet::[(3, "three"), (8, "eight"), (1, "one")]
+/// let set = @hashset.of([(3, "three"), (8, "eight"), (1, "one")])
 /// set.insert(3)
 /// println(set.contains(3)) // output: true
 /// ```

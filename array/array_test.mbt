@@ -49,7 +49,7 @@ test "op_equal" {
 }
 
 test "pop" {
-  let v = Array::new()
+  let v = []
   v.push(3)
   v.push(4)
   @assertion.assert_eq(v.length(), 2)?
@@ -60,7 +60,7 @@ test "pop" {
 }
 
 test "pop_exn" {
-  let v = Array::new()
+  let v = []
   v.push(3)
   v.push(4)
   @assertion.assert_eq(v.length(), 2)?
@@ -130,7 +130,6 @@ test "clear" {
   let v = [3, 4, 5]
   v.clear()
   @assertion.assert_eq(v.length(), 0)?
-  @assertion.assert_eq(v.capacity(), 3)?
 }
 
 test "map" {
@@ -175,7 +174,7 @@ test "filter" {
 }
 
 test "is_empty" {
-  let v = Array::new()
+  let v = []
   @assertion.assert_true(v.is_empty())?
   v.push(3)
   @assertion.assert_false(v.is_empty())?
@@ -296,21 +295,6 @@ test "insert" {
   v.insert(1, 6)
   @assertion.assert_eq(v, [3, 6, 4, 5])?
   @assertion.assert_eq(v.length(), 4)?
-  @assertion.assert_eq(v.capacity(), 6)?
-}
-
-test "fill" {
-  let v = with_capacity(3)
-  v.fill(3)
-  @assertion.assert_eq(v, [3, 3, 3])?
-  @assertion.assert_eq(v.length(), 3)?
-}
-
-test "fill_with" {
-  let v = with_capacity(3)
-  v.fill_with(fn() { 3 })
-  @assertion.assert_eq(v, [3, 3, 3])?
-  @assertion.assert_eq(v.length(), 3)?
 }
 
 test "flatten" {
@@ -406,14 +390,14 @@ test "split" {
 
 test "reserve_capacity" {
   let v = [1]
+  // Only test that it doesn't panic
   v.reserve_capacity(10)
-  @assertion.assert_true(v.capacity() == 10)?
 }
 
 test "reserve_capacity_2" {
   let v = [1, 2, 3, 4, 5]
+  // Only test that it doesn't panic
   v.reserve_capacity(3)
-  @assertion.assert_true(v.capacity() == 5)?
 }
 
 test "shrink_to_fit" {
@@ -421,16 +405,14 @@ test "shrink_to_fit" {
   v.push(1)
   v.push(2)
   v.push(3)
-  @assertion.assert_true(v.capacity() == 10)?
+  // Only test that it doesn't panic
   v.shrink_to_fit()
-  @assertion.assert_true(v.capacity() == 3)?
 }
 
 test "shrink_to_fit_2" {
   let v = [1, 2, 3]
-  @assertion.assert_true(v.capacity() == 3)?
+  // Only test that it doesn't panic
   v.shrink_to_fit()
-  @assertion.assert_true(v.capacity() == 3)?
 }
 
 test "as_iter" {
@@ -447,21 +429,27 @@ test "as_iter" {
 test "shuffle_in_place" {
   let arr : Array[Int] = [1, 2, 3, 4, 5, 6, 7]
   fn rand(upper : Int) -> Int {
-    let rng = @random.RandomInt::new()
-    rng.summon() % upper
+    let rng = @random.init_state(seed=37)
+    rng.gen_int() % upper
   }
 
   Array::shuffle_in_place(arr, ~rand)
-  inspect(arr, content="[2, 3, 7, 5, 6, 1, 4]")?
+  inspect(arr, content="[5, 2, 1, 6, 3, 7, 4]")?
 }
 
 test "shuffle" {
   let arr : Array[Int] = [1, 2, 3, 4, 5, 6, 7]
   fn rand(upper : Int) -> Int {
-    let rng = @random.RandomInt::new()
-    rng.summon() % upper
+    let rng = @random.init_state(seed=42)
+    rng.gen_int() % upper
   }
 
   let shuffled = Array::shuffle(arr, ~rand)
-  inspect(shuffled, content="[2, 3, 7, 5, 6, 1, 4]")?
+  inspect(shuffled, content="[2, 7, 6, 1, 5, 3, 4]")?
+}
+
+test "find_index" {
+  let arr : Array[Int] = [1, 2, 3, 4, 5, 6, 7]
+  let index = arr.find_index(fn(x) { x == 3 })
+  @assertion.assert_eq(index, Some(2))?
 }

@@ -30,7 +30,7 @@ fn print_string(String) -> Unit
 fn println[T : Show](T) -> Unit
 
 // Types and methods
-pub type ArgsLoc Array[Option[SourceLoc]]
+pub type ArgsLoc Array[SourceLoc?]
 impl ArgsLoc {
   to_json(Self) -> String
   to_string(Self) -> String
@@ -39,7 +39,7 @@ impl ArgsLoc {
 type Array
 impl Array {
   append[T](Self[T], Self[T]) -> Unit
-  capacity[T](Self[T]) -> Int
+  blit_to[A](Self[A], Self[A], ~len : Int, ~src_offset : Int = .., ~dst_offset : Int = ..) -> Unit
   chunk_by[T](Self[T], (T, T) -> Bool) -> Self[Self[T]]
   chunks[T](Self[T], Int) -> Self[Self[T]]
   clear[T](Self[T]) -> Unit
@@ -49,16 +49,15 @@ impl Array {
   drain[T](Self[T], Int, Int) -> Self[T]
   ends_with[T : Eq](Self[T], Self[T]) -> Bool
   extract_if[T](Self[T], (T) -> Bool) -> Self[T]
-  fill[T](Self[T], T) -> Unit
-  fill_with[T](Self[T], () -> T) -> Unit
   filter[T](Self[T], (T) -> Bool) -> Self[T]
+  find_index[T](Self[T], (T) -> Bool) -> Int?
   flatten[T](Self[Self[T]]) -> Self[T]
   fold_left[T, U](Self[T], (U, T) -> U, ~init : U) -> U
   fold_lefti[T, U](Self[T], (Int, U, T) -> U, ~init : U) -> U
   fold_right[T, U](Self[T], (U, T) -> U, ~init : U) -> U
   fold_righti[T, U](Self[T], (Int, U, T) -> U, ~init : U) -> U
   from_fixed_array[T](FixedArray[T]) -> Self[T]
-  get[T](Self[T], Int) -> Option[T]
+  get[T](Self[T], Int) -> T?
   insert[T](Self[T], Int, T) -> Unit
   is_empty[T](Self[T]) -> Bool
   is_sorted[T : Compare + Eq](Self[T]) -> Bool
@@ -78,7 +77,7 @@ impl Array {
   op_equal[T : Eq](Self[T], Self[T]) -> Bool
   op_get[T](Self[T], Int) -> T
   op_set[T](Self[T], Int, T) -> Unit
-  pop[T](Self[T]) -> Option[T]
+  pop[T](Self[T]) -> T?
   pop_exn[T](Self[T]) -> T
   push[T](Self[T], T) -> Unit
   remove[T](Self[T], Int) -> T
@@ -87,15 +86,17 @@ impl Array {
   resize[T](Self[T], Int, T) -> Unit
   retain[T](Self[T], (T) -> Bool) -> Unit
   reverse[T](Self[T]) -> Unit
-  search[T : Eq](Self[T], T) -> Option[Int]
+  search[T : Eq](Self[T], T) -> Int?
   shrink_to_fit[T](Self[T]) -> Unit
   split[T](Self[T], (T) -> Bool) -> Self[Self[T]]
   split_at[T](Self[T], Int) -> Tuple[Self[T], Self[T]]
   starts_with[T : Eq](Self[T], Self[T]) -> Bool
-  strip_prefix[T : Eq](Self[T], Self[T]) -> Option[Self[T]]
-  strip_suffix[T : Eq](Self[T], Self[T]) -> Option[Self[T]]
+  strip_prefix[T : Eq](Self[T], Self[T]) -> Self[T]?
+  strip_suffix[T : Eq](Self[T], Self[T]) -> Self[T]?
   swap[T](Self[T], Int, Int) -> Unit
   to_string[T : Show](Self[T]) -> String
+  unsafe_blit[A](Self[A], Int, Self[A], Int, Int) -> Unit
+  unsafe_blit_fixed[A](Self[A], Int, FixedArray[A], Int, Int) -> Unit
   with_capacity[T](Int) -> Self[T]
 }
 
@@ -132,7 +133,7 @@ impl Iter {
   drop_while[T](Self[T], (T) -> Bool) -> Self[T]
   empty[T]() -> Self[T]
   filter[T](Self[T], (T) -> Bool) -> Self[T]
-  find_first[T](Self[T], (T) -> Bool) -> Option[T]
+  find_first[T](Self[T], (T) -> Bool) -> T?
   flat_map[T, R](Self[T], (T) -> Self[R]) -> Self[R]
   fold[T, B](Self[T], (B, T) -> B, B) -> B
   iter[T](Self[T], (T) -> Unit) -> Unit
@@ -144,6 +145,7 @@ impl Iter {
   take[T](Self[T], Int) -> Self[T]
   take_while[T](Self[T], (T) -> Bool) -> Self[T]
   tap[T](Self[T], (T) -> Unit) -> Self[T]
+  to_array[T](Self[T]) -> Array[T]
 }
 
 type IterResult
@@ -166,14 +168,14 @@ impl Map {
   contains[K : Hash + Eq, V](Self[K, V], K) -> Bool
   debug_write[K : Debug, V : Debug](Self[K, V], Buffer) -> Unit
   from_array[K : Hash + Eq, V](Array[Tuple[K, V]]) -> Self[K, V]
-  get[K : Hash + Eq, V](Self[K, V], K) -> Option[V]
+  get[K : Hash + Eq, V](Self[K, V], K) -> V?
   get_or_default[K : Hash + Eq, V](Self[K, V], K, V) -> V
   is_empty[K, V](Self[K, V]) -> Bool
   iter[K, V](Self[K, V], (K, V) -> Unit) -> Unit
   iteri[K, V](Self[K, V], (Int, K, V) -> Unit) -> Unit
   new[K, V](~capacity : Int = ..) -> Self[K, V]
   op_equal[K : Eq, V : Eq](Self[K, V], Self[K, V]) -> Bool
-  op_get[K : Hash + Eq, V](Self[K, V], K) -> Option[V]
+  op_get[K : Hash + Eq, V](Self[K, V], K) -> V?
   op_set[K : Hash + Eq, V](Self[K, V], K, V) -> Unit
   remove[K : Hash + Eq, V](Self[K, V], K) -> Unit
   set[K : Hash + Eq, V](Self[K, V], K, V) -> Unit
@@ -244,6 +246,7 @@ impl Int {
   op_neg(Int) -> Int
   op_sub(Int, Int) -> Int
   popcnt(Int) -> Int
+  to(Int, Int, ~step : Int = ..) -> Iter[Int]
   to_byte(Int) -> Byte
   to_double(Int) -> Double
   to_int64(Int) -> Int64
@@ -276,6 +279,7 @@ impl Int64 {
   op_sub(Int64, Int64) -> Int64
   popcnt(Int64) -> Int
   reinterpret_as_double(Int64) -> Double
+  to(Int64, Int64, ~step : Int64 = ..) -> Iter[Int64]
   to_byte(Int64) -> Byte
   to_double(Int64) -> Double
   to_int(Int64) -> Int
@@ -297,6 +301,7 @@ impl Double {
   op_sub(Double, Double) -> Double
   reinterpret_as_i64(Double) -> Int64
   sqrt(Double) -> Double
+  to(Double, Double, ~step : Double = ..) -> Iter[Double]
   to_int(Double) -> Int
   to_int64(Double) -> Int64
 }
@@ -312,15 +317,16 @@ impl String {
   to_string(String) -> String
 }
 impl Option {
-  debug_write[X : Debug](Self[X], Buffer) -> Unit
-  op_equal[X : Eq](Self[X], Self[X]) -> Bool
-  to_string[X : Show](Self[X]) -> String
+  debug_write[X : Debug](X?, Buffer) -> Unit
+  op_equal[X : Eq](X?, X?) -> Bool
+  to_string[X : Show](X?) -> String
 }
 impl Result {
   debug_write[T : Debug, E : Debug](Self[T, E], Buffer) -> Unit
   op_equal[T : Eq, E : Eq](Self[T, E], Self[T, E]) -> Bool
 }
 impl FixedArray {
+  blit_to[A](Self[A], Self[A], ~len : Int, ~src_offset : Int = .., ~dst_offset : Int = ..) -> Unit
   debug_write[X : Debug](Self[X], Buffer) -> Unit
   default[X]() -> Self[X]
   fill[T](Self[T], T) -> Unit
@@ -331,6 +337,7 @@ impl FixedArray {
   op_set[T](Self[T], Int, T) -> Unit
   set[T](Self[T], Int, T) -> Unit
   to_string[X : Show](Self[X]) -> String
+  unsafe_blit[A](Self[A], Int, Self[A], Int, Int) -> Unit
 }
 impl Bytes {
   blit(Bytes, Int, Bytes, Int, Int) -> Unit

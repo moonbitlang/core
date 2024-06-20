@@ -6,32 +6,32 @@ package moonbitlang/core/devec
 type Devec
 impl Devec {
   as_iter[T](Self[T]) -> Iter[T]
-  back[T](Self[T]) -> Option[T]
+  back[T](Self[T]) -> T?
   capacity[T](Self[T]) -> Int
   clear[T](Self[T]) -> Unit
   contains[T : Eq](Self[T], T) -> Bool
   from_array[T](Array[T]) -> Self[T]
-  front[T](Self[T]) -> Option[T]
+  front[T](Self[T]) -> T?
   is_empty[T](Self[T]) -> Bool
   iter[T](Self[T], (T) -> Unit) -> Unit
   iter_rev[T](Self[T], (T) -> Unit) -> Unit
   iter_revi[T](Self[T], (Int, T) -> Unit) -> Unit
   iteri[T](Self[T], (Int, T) -> Unit) -> Unit
   length[T](Self[T]) -> Int
-  map[T](Self[T], (T) -> T) -> Unit
-  mapi[T](Self[T], (Int, T) -> T) -> Unit
+  map[T, U](Self[T], (T) -> U) -> Self[U]
+  mapi[T, U](Self[T], (Int, T) -> U) -> Self[U]
   new[T]() -> Self[T]
   op_equal[T : Eq](Self[T], Self[T]) -> Bool
   op_get[T](Self[T], Int) -> T
   op_set[T](Self[T], Int, T) -> Unit
-  pop_back[T](Self[T]) -> Option[T]
+  pop_back[T](Self[T]) -> T?
   pop_back_exn[T](Self[T]) -> Unit
-  pop_front[T](Self[T]) -> Option[T]
+  pop_front[T](Self[T]) -> T?
   pop_front_exn[T](Self[T]) -> Unit
   push_back[T](Self[T], T) -> Unit
   push_front[T](Self[T], T) -> Unit
   reserve_capacity[T](Self[T], Int) -> Unit
-  search[T : Eq](Self[T], T) -> Option[Int]
+  search[T : Eq](Self[T], T) -> Int?
   shrink_to_fit[T](Self[T]) -> Unit
   with_capacity[T](Int) -> Self[T]
 }

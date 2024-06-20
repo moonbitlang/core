@@ -7,7 +7,6 @@ impl FixedArray {
   all[T](Self[T], (T) -> Bool) -> Bool
   any[T](Self[T], (T) -> Bool) -> Bool
   as_iter[T](Self[T]) -> Iter[T]
-  blit_to[A](Self[A], Self[A], ~len : Int, ~src_offset : Int = .., ~dst_offset : Int = ..) -> Unit
   contains[T : Eq](Self[T], T) -> Bool
   copy[T](Self[T]) -> Self[T]
   ends_with[T : Eq](Self[T], Self[T]) -> Bool
@@ -28,7 +27,7 @@ impl FixedArray {
   op_add[T](Self[T], Self[T]) -> Self[T]
   op_equal[T : Eq](Self[T], Self[T]) -> Bool
   reverse[T](Self[T]) -> Unit
-  search[T : Eq](Self[T], T) -> Option[Int]
+  search[T : Eq](Self[T], T) -> Int?
   sort[T : Compare + Eq](Self[T]) -> Unit
   sort_by[T](Self[T], (T, T) -> Int) -> Unit
   sort_by_key[T, K : Compare + Eq](Self[T], (T) -> K) -> Unit
@@ -37,7 +36,6 @@ impl FixedArray {
 }
 impl Array {
   as_iter[T](Self[T]) -> Iter[T]
-  blit_to[A](Self[A], Self[A], ~len : Int, ~src_offset : Int = .., ~dst_offset : Int = ..) -> Unit
   copy[T](Self[T]) -> Self[T]
   join[T : Show](Self[T], String) -> String
   new_with_index[T](Int, (Int) -> T) -> Self[T]

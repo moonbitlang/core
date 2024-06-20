@@ -12,147 +12,100 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-priv type UninitializedArray[T] FixedArray[UnsafeMaybeUninit[T]]
-
-/// An `Array` is a collection of values that supports random access and can
-/// grow in size.
-struct Array[T] {
-  mut buf : UninitializedArray[T]
-  mut len : Int
-}
-
-fn UninitializedArray::make[T](size : Int) -> UninitializedArray[T] = "%make_array_maybe_uninit"
-
-fn op_get[T](self : UninitializedArray[T], index : Int) -> T = "%array_get"
-
-fn op_set[T](self : UninitializedArray[T], index : Int, value : T) = "%array_set"
-
-/// Converts the vector to a string.
-pub fn to_string[T : Show](self : Array[T]) -> String {
-  if self.len == 0 {
-    return "[]"
-  }
-  let first = self.buf[0]
-  // CR: format issues
-  for i = 1, init = "[\(first)" {
-    if i >= self.len {
-      break "\(init)]"
-    }
-    let cur = self.buf[i]
-    continue i + 1, "\(init), \(cur)"
-  }
-}
-
 /// Creates a new, empty vector.
 pub fn Array::new[T]() -> Array[T] {
   []
 }
 
-/// Creates a new, empty vector with a specified initial capacity.
-pub fn Array::with_capacity[T](cap : Int) -> Array[T] {
-  { buf: UninitializedArray::make(cap), len: 0 }
-}
-
 /// Creates a new vector from an array.
 pub fn Array::from_fixed_array[T](arr : FixedArray[T]) -> Array[T] {
   let len = arr.length()
-  let buf = UninitializedArray::make(len)
-  for i = 0; i < len; i = i + 1 {
-    buf[i] = arr[i]
-  }
-  { buf, len }
+  let arr2 = Array::make_uninit(len)
+  UninitializedArray::unsafe_blit_fixed(arr2.buffer(), 0, arr, 0, len)
+  arr2
 }
 
 pub fn Array::make[T](len : Int, elem : T) -> Array[T] {
-  let buf = UninitializedArray::make(len)
+  let arr = Array::make_uninit(len)
   for i = 0; i < len; i = i + 1 {
-    buf[i] = elem
+    arr.buffer()[i] = elem
   }
-  { buf, len }
-}
-
-/// Returns the number of elements in the vector.
-pub fn length[T](self : Array[T]) -> Int {
-  self.len
+  arr
 }
 
 /// Returns the total number of elements the vector can hold without reallocating.
-pub fn capacity[T](self : Array[T]) -> Int {
-  self.buf.0.length()
+fn capacity[T](self : Array[T]) -> Int {
+  self.buffer().0.length()
 }
 
 /// Reallocate the vector with a new capacity.
 fn realloc[T](self : Array[T]) -> Unit {
-  let old_cap = self.len
+  let old_cap = self.length()
   let new_cap = if old_cap == 0 { 8 } else { old_cap * 2 }
-  let new_buf = UninitializedArray::make(new_cap)
-  for i = 0; i < old_cap; i = i + 1 {
-    new_buf[i] = self.buf[i]
-  }
-  self.buf = new_buf
+  self.resize_buffer(new_cap)
 }
 
 /// Retrieves the element at the specified index from the vector.
 ///
 /// # Example
 /// ```
-/// let v = Array::new()
+/// let v = []
 /// v.push(3)
 /// println(v[0]) // 3
 /// ```
 /// @alert unsafe "Panic if index is out of bounds"
 pub fn op_get[T](self : Array[T], index : Int) -> T {
-  if index < 0 || index >= self.len {
-    let len = self.len
+  if index < 0 || index >= self.length() {
+    let len = self.length()
     abort(
       "index out of bounds: the len is from 0 to \(len) but the index is \(index)",
     )
   }
-  self.buf[index]
+  self.buffer()[index]
 }
 
 /// Retrieves the element at the specified index from the vector, or `None` if index is out of bounds
 ///
 /// # Example
 /// ```
-/// let v = Array::new()
+/// let v = []
 /// v.push(3)
 /// println(v.get(0)) // Some(3)
 /// ```
 pub fn get[T](self : Array[T], index : Int) -> T? {
-  if index < 0 || index >= self.len {
+  if index < 0 || index >= self.length() {
     return None
   }
-  Some(self.buf[index])
+  Some(self.buffer()[index])
 }
 
 /// Sets the value of the element at the specified index.
 ///
 /// # Example
 /// ```
-/// let v = Array::new()
+/// let v = []
 /// v.push(3)
 /// println(v[0]) // 3
 /// ```
 /// @alert unsafe "Panic if index is out of bounds."
 pub fn op_set[T](self : Array[T], index : Int, value : T) -> Unit {
-  if index < 0 || index >= self.len {
-    let len = self.len
+  if index < 0 || index >= self.length() {
+    let len = self.length()
     abort(
       "index out of bounds: the len is from 0 to \(len) but the index is \(index)",
     )
   }
-  self.buf[index] = value
+  self.buffer()[index] = value
 }
 
 /// Compares two vectors for equality.
 pub fn op_equal[T : Eq](self : Array[T], other : Array[T]) -> Bool {
-  if self.len != other.len {
+  if self.length() != other.length() {
     return false
   }
   for i = 0 {
     // CR: format issue
-    if i >= self.len {
+    if i >= self.length() {
       break true
     }
     if self[i] != other[i] {
@@ -162,48 +115,40 @@ pub fn op_equal[T : Eq](self : Array[T], other : Array[T]) -> Bool {
   }
 }
 
-fn deep_clone[T](vec : Array[T]) -> Array[T] {
-  let result = Array::{ buf: UninitializedArray::make(vec.len), len: vec.len }
-  for i = 0; i < vec.len; i = i + 1 {
-    result[i] = vec[i]
-  }
-  result
-}
-
 pub fn op_add[T](self : Array[T], other : Array[T]) -> Array[T] {
-  if self.len == 0 {
-    deep_clone(other)
-  } else if other.len == 0 {
-    deep_clone(self)
-  } else {
-    let result = Array::{
-      buf: UninitializedArray::make(self.len + other.len),
-      len: self.len + other.len,
-    }
-    for i = 0; i < self.len; i = i + 1 {
-      result[i] = self[i]
-    }
-    for i = 0; i < other.len; i = i + 1 {
-      result[i + self.len] = other[i]
-    }
-    result
-  }
+  let result = Array::make_uninit(self.length() + other.length())
+  UninitializedArray::unsafe_blit(
+    result.buffer(),
+    0,
+    self.buffer(),
+    0,
+    self.length(),
+  )
+  UninitializedArray::unsafe_blit(
+    result.buffer(),
+    self.length(),
+    other.buffer(),
+    0,
+    other.length(),
+  )
+  result
 }
 
 /// Removes the last element from a vector and returns it, or `None` if it is empty.
 ///
 /// # Example
 /// ```
-/// let v = Array::[1, 2, 3]
+/// let v = [1, 2, 3]
 /// v.pop()
 /// ```
 pub fn pop[T](self : Array[T]) -> T? {
-  if self.len == 0 {
+  if self.length() == 0 {
     None
   } else {
-    self.len -= 1
-    // TODO: should fill the element with a dummy slot to avoid memory leak?
-    Some(self.buf[self.len])
+    let index = self.length() - 1
+    let v = self.buffer()[index]
+    self.set_length(index)
+    Some(v)
   }
 }
 
@@ -211,16 +156,18 @@ pub fn pop[T](self : Array[T]) -> T? {
 ///
 /// # Example
 /// ```
-/// let v = Array::[1, 2, 3]
+/// let v = [1, 2, 3]
 /// v.pop_exn() // 3
 /// ```
 /// @alert unsafe "Panic if the vector is empty."
 pub fn pop_exn[T](self : Array[T]) -> T {
-  if self.len == 0 {
+  if self.length() == 0 {
     abort("pop from an empty Array")
   }
-  self.len -= 1
-  self.buf[self.len]
+  let index = self.length() - 1
+  let v = self.buffer()[index]
+  self.set_length(index)
+  v
 }
 
 /// Adds an element to the end of the vector.
@@ -229,15 +176,16 @@ pub fn pop_exn[T](self : Array[T]) -> T {
 ///
 /// # Example
 /// ```
-/// let v = Array::new()
+/// let v = []
 /// v.push(3)
 /// ```
 pub fn push[T](self : Array[T], value : T) -> Unit {
-  if self.len == self.buf.0.length() {
+  if self.length() == self.buffer().0.length() {
     self.realloc()
   }
-  self.buf[self.len] = value
-  self.len += 1
+  let length = self.length()
+  self.buffer()[length] = value
+  self.set_length(length + 1)
 }
 
 /// Removes the specified range from the vector and returns it.
@@ -246,27 +194,29 @@ pub fn push[T](self : Array[T], value : T) -> Unit {
 ///
 /// # Example
 /// ```
-/// let v = Array::[3, 4, 5]
-/// let vv = v.drain(1, 2) // vv = Array::[4], v = Array::[3, 5]
+/// let v = [3, 4, 5]
+/// let vv = v.drain(1, 2) // vv = [4], v = [3, 5]
 /// ```
 /// @alert unsafe "Panic if index is out of bounds."
 pub fn drain[T](self : Array[T], begin : Int, end : Int) -> Array[T] {
-  if begin < 0 || begin >= self.len || end < 0 || end > self.len || begin > end {
-    let len = self.len
+  if begin < 0 || begin >= self.length() || end < 0 || end > self.length() || begin >
+  end {
+    let len = self.length()
     abort(
       "index out of bounds: the len is \(len) but the index is (\(begin), \(end))",
     )
   }
   let num = end - begin
-  let v = Array::with_capacity(num)
-  for i = begin; i < end; i = i + 1 {
-    v.buf[i - begin] = self[i]
-  }
-  v.len = num
-  for i = end; i < self.len; i = i + 1 {
-    self.buf[i - num] = self.buf[i]
-  }
-  self.len -= num
+  let v = Array::make_uninit(num)
+  UninitializedArray::unsafe_blit(v.buffer(), 0, self.buffer(), begin, num)
+  UninitializedArray::unsafe_blit(
+    self.buffer(),
+    begin,
+    self.buffer(),
+    end,
+    self.length() - end,
+  )
+  self.set_length(self.length() - num)
   v
 }
 
@@ -274,13 +224,13 @@ pub fn drain[T](self : Array[T], begin : Int, end : Int) -> Array[T] {
 ///
 /// # Example
 /// ```
-/// let v1 = Array::[3, 4, 5]
-/// let v2 = Array::[6, 7, 8]
+/// let v1 = [3, 4, 5]
+/// let v2 = [6, 7, 8]
 /// v1.append(v2)
 /// ```
 /// TODO: could be made more efficient
 pub fn append[T](self : Array[T], other : Array[T]) -> Unit {
-  for i = 0; i < other.len; i = i + 1 {
+  for i = 0; i < other.length(); i = i + 1 {
     self.push(other[i])
   }
 }
@@ -297,7 +247,7 @@ pub fn append[T](self : Array[T], other : Array[T]) -> Unit {
 /// v.iter(fn (x) {sum = sum + x})
 /// ```
 pub fn iter[T](self : Array[T], f : (T) -> Unit) -> Unit {
-  for i = 0; i < self.len; i = i + 1 {
+  for i = 0; i < self.length(); i = i + 1 {
     f(self[i])
   }
 }
@@ -320,7 +270,7 @@ pub fn iter_rev[T](self : Array[T], f : (T) -> Unit) -> Unit {
 /// v.iteri(fn (i, x) {sum = sum + x + i})
 /// ```
 pub fn iteri[T](self : Array[T], f : (Int, T) -> Unit) -> Unit {
-  for i = 0; i < self.len; i = i + 1 {
+  for i = 0; i < self.length(); i = i + 1 {
     f(i, self[i])
   }
 }
@@ -342,7 +292,7 @@ pub fn iter_revi[T](self : Array[T], f : (Int, T) -> Unit) -> Unit {
 /// v.clear()
 /// ```
 pub fn clear[T](self : Array[T]) -> Unit {
-  self.len = 0
+  self.set_length(0)
 }
 
 /// Maps a function over the elements of the vector.
@@ -356,11 +306,11 @@ pub fn map[T, U](self : Array[T], f : (T) -> U) -> Array[U] {
   if self.length() == 0 {
     return []
   }
-  let buf : UninitializedArray[U] = UninitializedArray::make(self.length())
+  let arr = Array::make_uninit(self.length())
   for i = 0; i < self.length(); i = i + 1 {
-    buf[i] = f(self[i])
+    arr.buffer()[i] = f(self.buffer()[i])
   }
-  Array::{ buf, len: self.length() }
+  arr
 }
 
 /// Maps a function over the elements of the vector in place.
@@ -372,7 +322,7 @@ pub fn map[T, U](self : Array[T], f : (T) -> U) -> Array[U] {
 /// ```
 pub fn map_inplace[T](self : Array[T], f : (T) -> T) -> Unit {
   for i = 0; i < self.length(); i = i + 1 {
-    self[i] = f(self[i])
+    self.buffer()[i] = f(self.buffer()[i])
   }
 }
 
@@ -387,11 +337,11 @@ pub fn mapi[T, U](self : Array[T], f : (Int, T) -> U) -> Array[U] {
   if self.length() == 0 {
     return []
   }
-  let buf : UninitializedArray[U] = UninitializedArray::make(self.length())
+  let arr = Array::make_uninit(self.length())
   for i = 0; i < self.length(); i = i + 1 {
-    buf[i] = f(i, self[i])
+    arr.buffer()[i] = f(i, self.buffer()[i])
   }
-  Array::{ buf, len: self.length() }
+  arr
 }
 
 /// Maps a function over the elements of the vector with index in place.
@@ -424,23 +374,23 @@ pub fn filter[T](self : Array[T], f : (T) -> Bool) -> Array[T] {
 ///
 /// # Example
 /// ```
-/// let v = Array::new()
+/// let v = []
 /// v.is_empty()
 /// ```
 pub fn is_empty[T](self : Array[T]) -> Bool {
-  self.len == 0
+  self.length() == 0
 }
 
 /// Test if the vector is sorted.
 ///
 /// # Example
 /// ```
-/// let v = Array::[3, 4, 5]
+/// let v = [3, 4, 5]
 /// v.is_sorted() // true
 /// ```
 pub fn is_sorted[T : Compare](self : Array[T]) -> Bool {
   for i = 1 {
-    if i >= self.len {
+    if i >= self.length() {
       break true
     }
     if self[i - 1] > self[i] {
@@ -454,14 +404,14 @@ pub fn is_sorted[T : Compare](self : Array[T]) -> Bool {
 ///
 /// # Example
 /// ```
-/// let v = Array::[3, 4, 5]
+/// let v = [3, 4, 5]
 /// v.reverse()
 /// ```
 pub fn reverse[T](self : Array[T]) -> Unit {
-  for i = 0; i < self.len / 2; i = i + 1 {
-    let temp = self.buf[i]
-    self.buf[i] = self.buf[self.len - i - 1]
-    self.buf[self.len - i - 1] = temp
+  for i = 0; i < self.length() / 2; i = i + 1 {
+    let temp = self.buffer()[i]
+    self.buffer()[i] = self.buffer()[self.length() - i - 1]
+    self.buffer()[self.length() - i - 1] = temp
   }
 }
 
@@ -469,26 +419,28 @@ pub fn reverse[T](self : Array[T]) -> Unit {
 ///
 /// # Example
 /// ```
-/// let v = Array::[3, 4, 5]
+/// let v = [3, 4, 5]
 /// let (v1, v2) = v.split_at(1)
 /// ```
 /// TODO: perf could be optimized
 /// @alert unsafe "Panic if index is out of bounds."
 pub fn split_at[T](self : Array[T], index : Int) -> (Array[T], Array[T]) {
-  if index < 0 || index >= self.len {
-    let len = self.len
+  if index < 0 || index >= self.length() {
+    let len = self.length()
     abort(
       "index out of bounds: the len is from 0 to \(len) but the index is \(index)",
     )
   }
-  let v1 = Array::with_capacity(index)
-  let v2 = Array::with_capacity(self.len - index)
-  for i = 0; i < index; i = i + 1 {
-    v1.push(self.buf[i])
-  }
-  for i = index; i < self.len; i = i + 1 {
-    v2.push(self.buf[i])
-  }
+  let v1 = Array::make_uninit(index)
+  let v2 = Array::make_uninit(self.length() - index)
+  UninitializedArray::unsafe_blit(v1.buffer(), 0, self.buffer(), 0, index)
+  UninitializedArray::unsafe_blit(
+    v2.buffer(),
+    0,
+    self.buffer(),
+    index,
+    self.length() - index,
+  )
   (v1, v2)
 }
 
@@ -496,12 +448,12 @@ pub fn split_at[T](self : Array[T], index : Int) -> (Array[T], Array[T]) {
 ///
 /// # Example
 /// ```
-/// let v = Array::[3, 4, 5]
+/// let v = [3, 4, 5]
 /// v.contains(3)
 /// ```
 pub fn contains[T : Eq](self : Array[T], value : T) -> Bool {
-  for i = 0; i < self.len; i = i + 1 {
-    if self.buf[i] == value {
+  for i = 0; i < self.length(); i = i + 1 {
+    if self.buffer()[i] == value {
       break true
     }
   } else {
@@ -513,15 +465,15 @@ pub fn contains[T : Eq](self : Array[T], value : T) -> Bool {
 ///
 /// # Example
 /// ```
-/// let v = Array::[3, 4, 5]
-/// v.starts_with(Array::[3, 4])
+/// let v = [3, 4, 5]
+/// v.starts_with([3, 4])
 /// ```
 pub fn starts_with[T : Eq](self : Array[T], prefix : Array[T]) -> Bool {
-  if prefix.len > self.len {
+  if prefix.length() > self.length() {
     return false
   }
-  for i = 0; i < prefix.len; i = i + 1 {
-    if self.buf[i] != prefix.buf[i] {
+  for i = 0; i < prefix.length(); i = i + 1 {
+    if self.buffer()[i] != prefix.buffer()[i] {
       break false
     }
   } else {
@@ -533,15 +485,15 @@ pub fn starts_with[T : Eq](self : Array[T], prefix : Array[T]) -> Bool {
 ///
 /// # Example
 /// ```
-/// let v = Array::[3, 4, 5]
-/// v.ends_with(Array::[5])
+/// let v = [3, 4, 5]
+/// v.ends_with([5])
 /// ```
 pub fn ends_with[T : Eq](self : Array[T], suffix : Array[T]) -> Bool {
-  if suffix.len > self.len {
+  if suffix.length() > self.length() {
     return false
   }
-  for i = 0; i < suffix.len; i = i + 1 {
-    if self.buf[self.len - suffix.len + i] != suffix.buf[i] {
+  for i = 0; i < suffix.length(); i = i + 1 {
+    if self.buffer()[self.length() - suffix.length() + i] != suffix.buffer()[i] {
       break false
     }
   } else {
@@ -555,16 +507,19 @@ pub fn ends_with[T : Eq](self : Array[T], suffix : Array[T]) -> Bool {
 ///
 /// # Example
 /// ```
-/// let v = Array::[3, 4, 5]
-/// v.strip_prefix(Array::[3]) // Some(Array::[4, 5])
+/// let v = [3, 4, 5]
+/// v.strip_prefix([3]) // Some([4, 5])
 /// ```
 pub fn strip_prefix[T : Eq](self : Array[T], prefix : Array[T]) -> Array[T]? {
   if self.starts_with(prefix) {
-    let v = Array::with_capacity(self.len - prefix.len)
-    for i = prefix.len; i < self.len; i = i + 1 {
-      v.buf[i - prefix.len] = self.buf[i]
-    }
-    v.len = self.len - prefix.len
+    let v = Array::make_uninit(self.length() - prefix.length())
+    UninitializedArray::unsafe_blit(
+      v.buffer(),
+      0,
+      self.buffer(),
+      prefix.length(),
+      self.length() - prefix.length(),
+    )
     Some(v)
   } else {
     None
@@ -577,16 +532,14 @@ pub fn strip_prefix[T : Eq](self : Array[T], prefix : Array[T]) -> Array[T]? {
 ///
 /// # Example
 /// ```
-/// let v = Array::[3, 4, 5]
-/// v.strip_suffix(Array::[5]) // Some(Array::[3, 4])
+/// let v = [3, 4, 5]
+/// v.strip_suffix([5]) // Some([3, 4])
 /// ```
 pub fn strip_suffix[T : Eq](self : Array[T], suffix : Array[T]) -> Array[T]? {
   if self.ends_with(suffix) {
-    let v = Array::with_capacity(self.len - suffix.len)
-    for i = 0; i < self.len - suffix.len; i = i + 1 {
-      v.buf[i] = self.buf[i]
-    }
-    v.len = self.len - suffix.len
+    let v = Array::make_uninit(self.length() - suffix.length())
+    let len = self.length() - suffix.length()
+    UninitializedArray::unsafe_blit(v.buffer(), 0, self.buffer(), 0, len)
     Some(v)
   } else {
     None
@@ -597,12 +550,12 @@ pub fn strip_suffix[T : Eq](self : Array[T], suffix : Array[T]) -> Array[T]? {
 ///
 /// # Example
 /// ```
-/// let v = Array::[3, 4, 5]
+/// let v = [3, 4, 5]
 /// v.search(3)
 /// ```
 pub fn search[T : Eq](self : Array[T], value : T) -> Int? {
-  for i = 0; i < self.len; i = i + 1 {
-    if self.buf[i] == value {
+  for i = 0; i < self.length(); i = i + 1 {
+    if self.buffer()[i] == value {
       break Some(i)
     }
   } else {
@@ -614,20 +567,20 @@ pub fn search[T : Eq](self : Array[T], value : T) -> Int? {
 ///
 /// # Example
 /// ```
-/// let v = Array::[3, 4, 5]
+/// let v = [3, 4, 5]
 /// v.swap(1, 2)
 /// ```
 /// @alert unsafe "Panic if index is out of bounds."
 pub fn swap[T](self : Array[T], i : Int, j : Int) -> Unit {
-  if i >= self.len || j >= self.len || i < 0 || j < 0 {
-    let len = self.len
+  if i >= self.length() || j >= self.length() || i < 0 || j < 0 {
+    let len = self.length()
     abort(
       "index out of bounds: the len is from 0 to \(len) but the index is (\(i), \(j))",
     )
   }
-  let temp = self.buf[i]
-  self.buf[i] = self.buf[j]
-  self.buf[j] = temp
+  let temp = self.buffer()[i]
+  self.buffer()[i] = self.buffer()[j]
+  self.buffer()[j] = temp
 }
 
 /// Remove an element from the vector at a given index.
@@ -636,22 +589,26 @@ pub fn swap[T](self : Array[T], i : Int, j : Int) -> Unit {
 ///
 /// # Example
 /// ```
-/// let v = Array::[3, 4, 5]
+/// let v = [3, 4, 5]
 /// v.remove(1)
 /// ```
 /// @alert unsafe "Panic if index is out of bounds."
 pub fn remove[T](self : Array[T], index : Int) -> T {
-  if index < 0 || index >= self.len {
-    let len = self.len
+  if index < 0 || index >= self.length() {
+    let len = self.length()
     abort(
       "index out of bounds: the len is from 0 to \(len) but the index is \(index)",
     )
   }
-  let value = self.buf[index]
-  for i = index; i < self.len - 1; i = i + 1 {
-    self.buf[i] = self.buf[i + 1]
-  }
-  self.len = self.len - 1
+  let value = self.buffer()[index]
+  UninitializedArray::unsafe_blit(
+    self.buffer(),
+    index,
+    self.buffer(),
+    index + 1,
+    self.length() - index - 1,
+  )
+  self.set_length(self.length() - 1)
   value
 }
 
@@ -659,14 +616,14 @@ pub fn remove[T](self : Array[T], index : Int) -> T {
 ///
 /// # Example
 /// ```
-/// let v = Array::[3, 4, 5]
+/// let v = [3, 4, 5]
 /// v.retain(fn(x) { x > 3 })
 /// ```
 /// TODO: perf could be improved
 pub fn retain[T](self : Array[T], f : (T) -> Bool) -> Unit {
   let mut i = 0
-  while i < self.len {
-    if f(self.buf[i]).not() {
+  while i < self.length() {
+    if f(self.buffer()[i]).not() {
       self.remove(i) |> ignore
     } else {
       i = i + 1
@@ -678,17 +635,17 @@ pub fn retain[T](self : Array[T], f : (T) -> Bool) -> Unit {
 ///
 /// # Example
 /// ```
-/// Array::[3, 4, 5].resize(1)
+/// [3, 4, 5].resize(1)
 /// ```
 /// @alert unsafe "Panic if new length is negative."
 pub fn resize[T](self : Array[T], new_len : Int, f : T) -> Unit {
   if new_len < 0 {
     abort("negative new length")
   }
-  if new_len < self.len {
-    self.len = new_len
+  if new_len < self.length() {
+    self.set_length(new_len)
   } else {
-    for i = self.len; i < new_len; i = i + 1 {
+    for i = self.length(); i < new_len; i = i + 1 {
       self.push(f)
     }
   }
@@ -698,61 +655,40 @@ pub fn resize[T](self : Array[T], new_len : Int, f : T) -> Unit {
 ///
 /// # Example
 /// ```
-/// Array::[3, 4, 5].insert(1, 6)
+/// [3, 4, 5].insert(1, 6)
 /// ```
 /// @alert unsafe "Panic if index is out of bounds."
 pub fn insert[T](self : Array[T], index : Int, value : T) -> Unit {
-  if index < 0 || index > self.len {
-    let len = self.len
+  if index < 0 || index > self.length() {
+    let len = self.length()
     abort(
       "index out of bounds: the len is from 0 to \(len) but the index is \(index)",
     )
   }
-  if self.len == self.buf.0.length() {
+  if self.length() == self.buffer().0.length() {
     self.realloc()
   }
-  for i = self.len; i > index; i = i - 1 {
-    self.buf[i] = self.buf[i - 1]
-  }
-  self.buf[index] = value
-  self.len = self.len + 1
-}
-
-/// Fill the vector (by capacity) with a given value.
-///
-/// # Example
-/// ```
-/// Array::with_capacity(3).fill(3)
-/// ```
-pub fn fill[T](self : Array[T], value : T) -> Unit {
-  for i = 0; i < self.capacity(); i = i + 1 {
-    self.buf[i] = value
-  }
-  self.len = self.capacity()
-}
-
-/// Fill the vector by calling a function (By capacity).
-///
-/// # Example
-/// ```
-/// Array::with_capacity(3).fill_with(fn() { 3 })
-/// ```
-pub fn fill_with[T](self : Array[T], f : () -> T) -> Unit {
-  for i = 0; i < self.capacity(); i = i + 1 {
-    self.buf[i] = f()
-  }
-  self.len = self.capacity()
+  UninitializedArray::unsafe_blit(
+    self.buffer(),
+    index + 1,
+    self.buffer(),
+    index,
+    self.length() - index,
+  )
+  let length = self.length()
+  self.buffer()[index] = value
+  self.set_length(length + 1)
 }
 
 /// Flattens a vector of vectors into a vector.
 ///
 /// # Example
 /// ```
-/// Array::[Array::[3, 4], Array::[5, 6]].flatten()
+/// [[3, 4], [5, 6]].flatten()
 /// ```
 pub fn flatten[T](self : Array[Array[T]]) -> Array[T] {
-  let v = Array::new()
-  for i = 0; i < self.len; i = i + 1 {
+  let v = []
+  for i = 0; i < self.length(); i = i + 1 {
     v.append(self[i])
   }
   v
@@ -762,10 +698,10 @@ pub fn flatten[T](self : Array[Array[T]]) -> Array[T] {
 ///
 /// # Example
 /// ```
-/// Array::[3, 4].repeat(2)
+/// [3, 4].repeat(2)
 /// ```
 pub fn repeat[T](self : Array[T], times : Int) -> Array[T] {
-  let v = Array::with_capacity(self.len * times)
+  let v = Array::with_capacity(self.length() * times)
   for i = 0; i < times; i = i + 1 {
     v.append(self)
   }
@@ -825,8 +761,8 @@ pub fn fold_lefti[T, U](self : Array[T], f : (Int, U, T) -> U, ~init : U) -> U {
 /// sum // 10
 /// ```
 pub fn fold_righti[T, U](self : Array[T], f : (Int, U, T) -> U, ~init : U) -> U {
-  for i = self.len - 1, acc = init; i >= 0; {
-    continue i - 1, f(self.len - i - 1, acc, self[i])
+  for i = self.length() - 1, acc = init; i >= 0; {
+    continue i - 1, f(self.length() - i - 1, acc, self[i])
   } else {
     acc
   }
@@ -836,13 +772,13 @@ pub fn fold_righti[T, U](self : Array[T], f : (Int, U, T) -> U, ~init : U) -> U 
 ///
 /// # Example
 /// ```
-/// let v = Array::[3, 4, 4, 5, 5, 5]
-/// v.dedup() // v = Array::[3, 4, 5]
+/// let v = [3, 4, 4, 5, 5, 5]
+/// v.dedup() // v = [3, 4, 5]
 /// ```
 pub fn dedup[T : Eq](self : Array[T]) -> Unit {
-  for i = 0; i < self.len; i = i + 1 {
+  for i = 0; i < self.length(); i = i + 1 {
     let mut j = i + 1
-    while j < self.len {
+    while j < self.length() {
       if self[i] == self[j] {
         self.remove(j) |> ignore
       } else {
@@ -857,19 +793,19 @@ pub fn dedup[T : Eq](self : Array[T]) -> Unit {
 /// This function will remove the elements from the original vector and return a new vector.
 /// # Example
 /// ```
-/// let v = Array::[3, 4, 5]
-/// let vv = v.extract_if(fn(x) { x > 3 }) // vv = Array::[4, 5], v = Array::[3]
+/// let v = [3, 4, 5]
+/// let vv = v.extract_if(fn(x) { x > 3 }) // vv = [4, 5], v = [3]
 /// ```
 pub fn extract_if[T](self : Array[T], f : (T) -> Bool) -> Array[T] {
-  let v = Array::new()
-  let indices = Array::new()
-  for i = 0; i < self.len; i = i + 1 {
+  let v = []
+  let indices = []
+  for i = 0; i < self.length(); i = i + 1 {
     if f(self[i]) {
       v.push(self[i])
       indices.push(i)
     }
   }
-  for i = 0; i < indices.len; i = i + 1 {
+  for i = 0; i < indices.length(); i = i + 1 {
     self.remove(indices[i] - i) |> ignore
   }
   v
@@ -881,15 +817,15 @@ pub fn extract_if[T](self : Array[T], f : (T) -> Bool) -> Array[T] {
 ///
 /// # Example
 /// ```
-/// let v = Array::[1, 2, 3, 4, 5, 6, 7, 8, 9]
-/// let chunks = v.chunks(3) // chunks = Array::[Array::[1, 2, 3], Array::[4, 5, 6], Array::[7, 8, 9]]
+/// let v = [1, 2, 3, 4, 5, 6, 7, 8, 9]
+/// let chunks = v.chunks(3) // chunks = [[1, 2, 3], [4, 5, 6], [7, 8, 9]]
 /// ```
 pub fn chunks[T](self : Array[T], size : Int) -> Array[Array[T]] {
-  let chunks = Array::new()
+  let chunks = []
   let mut i = 0
-  while i < self.len {
+  while i < self.length() {
     let chunk = Array::with_capacity(size)
-    for j = 0; j < size && i < self.len; j = j + 1 {
+    for j = 0; j < size && i < self.length(); j = j + 1 {
       chunk.push(self[i])
       i = i + 1
     }
@@ -902,18 +838,18 @@ pub fn chunks[T](self : Array[T], size : Int) -> Array[Array[T]] {
 ///
 /// # Example
 /// ```
-/// let v = Array::[1, 1, 2, 3, 2, 3, 2, 3, 4]
+/// let v = [1, 1, 2, 3, 2, 3, 2, 3, 4]
 /// let chunks = v.chunk_by(fn(x, y) { x <= y })
-/// // chunks = Array::[Array::[1, 1, 2, 3], Array::[2, 3], Array::[2, 3], Array::[4]]
+/// // chunks = [[1, 1, 2, 3], [2, 3], [2, 3], [4]]
 /// ```
 pub fn chunk_by[T](self : Array[T], pred : (T, T) -> Bool) -> Array[Array[T]] {
-  let chunks = Array::new()
+  let chunks = []
   let mut i = 0
-  while i < self.len {
-    let chunk = Array::new()
+  while i < self.length() {
+    let chunk = []
     chunk.push(self[i])
     i = i + 1
-    while i < self.len && pred(self[i - 1], self[i]) {
+    while i < self.length() && pred(self[i - 1], self[i]) {
       chunk.push(self[i])
       i = i + 1
     }
@@ -926,15 +862,15 @@ pub fn chunk_by[T](self : Array[T], pred : (T, T) -> Bool) -> Array[Array[T]] {
 ///
 /// # Example
 /// ```
-/// let v = Array::[1, 0, 2, 0, 3, 0, 4]
+/// let v = [1, 0, 2, 0, 3, 0, 4]
 /// let chunks = v.split(fn(x) { x == 0 })
 /// ```
 pub fn split[T](self : Array[T], pred : (T) -> Bool) -> Array[Array[T]] {
-  let chunks = Array::new()
+  let chunks = []
   let mut i = 0
-  while i < self.len {
-    let chunk = Array::new()
-    while i < self.len && pred(self[i]).not() {
+  while i < self.length() {
+    let chunk = []
+    while i < self.length() && pred(self[i]).not() {
       chunk.push(self[i])
       i = i + 1
     }
@@ -950,7 +886,7 @@ pub fn split[T](self : Array[T], pred : (T) -> Bool) -> Array[Array[T]] {
 /// # Example
 ///
 /// ```
-/// let v = Array::[1]
+/// let v = [1]
 /// v.reserve_capacity(10)
 /// println(v.capacity()) // 10
 /// ```
@@ -958,11 +894,7 @@ pub fn reserve_capacity[T](self : Array[T], capacity : Int) -> Unit {
   if self.capacity() >= capacity {
     return
   }
-  let new_buf : UninitializedArray[T] = UninitializedArray::make(capacity)
-  for i = 0; i < self.length(); i = i + 1 {
-    new_buf[i] = self.buf[i]
-  }
-  self.buf = new_buf
+  self.resize_buffer(capacity)
 }
 
 /// Shrinks the capacity of the vector as much as possible.
@@ -982,9 +914,42 @@ pub fn shrink_to_fit[T](self : Array[T]) -> Unit {
   if self.capacity() <= self.length() {
     return
   }
-  let new_buf : UninitializedArray[T] = UninitializedArray::make(self.length())
-  for i = 0; i < self.length(); i = i + 1 {
-    new_buf[i] = self.buf[i]
+  self.resize_buffer(self.length())
+}
+
+/// Converts the vector to a string.
+pub fn to_string[T : Show](self : Array[T]) -> String {
+  if self.length() == 0 {
+    return "[]"
   }
-  self.buf = new_buf
+  let first = self.buffer()[0]
+  // CR: format issues
+  for i = 1, init = "[\(first)" {
+    if i >= self.length() {
+      break "\(init)]"
+    }
+    let cur = self.buffer()[i]
+    continue i + 1, "\(init), \(cur)"
+  }
+}
+
+/// Find the index of the first element that satisfies the predicate.
+//
+/// # Example
+///
+/// ```
+/// let v = [1, 2, 3, 4, 5]
+/// match v.find_index(fn(x) { x == 3 }) {
+///   Some(index) => println(index) // 2
+///   None => println("Not found")
+/// }
+/// ```
+pub fn find_index[T](self : Array[T], f : (T) -> Bool) -> Int? {
+  for i = 0; i < self.length(); i = i + 1 {
+    if f(self[i]) {
+      break Some(i)
+    }
+  } else {
+    None
+  }
 }

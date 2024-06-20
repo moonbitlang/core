@@ -321,3 +321,36 @@ pub fn unwrap[X](self : X?) -> X {
 pub fn Option::default[X]() -> X? {
   None
 }
+
+pub fn as_iter[T](self : T?) -> Iter[T] {
+  match self {
+    Some(v) => Iter::singleton(v)
+    None => Iter::empty()
+  }
+}
+
+test "as_iter" {
+  let x = Option::Some(42)
+  let exb = Buffer::make(0)
+  x.as_iter().iter(
+    fn(x) {
+      exb.write_string(x.to_string())
+      exb.write_char('\n')
+    },
+  )
+  exb.expect(
+    content=
+      #|42
+      #|
+    ,
+  )?
+  exb.reset()
+  let y : Int? = None
+  y.as_iter().iter(
+    fn(x) {
+      exb.write_string(x.to_string())
+      exb.write_char('\n')
+    },
+  )
+  exb.expect(content="")?
+}

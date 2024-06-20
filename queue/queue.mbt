@@ -13,7 +13,7 @@
 // limitations under the License.
 
 /// Creates a new empty queue.
-/// 
+///
 /// # Example
 /// ```
 /// let queue : Queue[Int] = Queue::new()
@@ -22,13 +22,8 @@ pub fn Queue::new[T]() -> Queue[T] {
   { length: 0, first: Nil, last: Nil }
 }
 
-test "new" {
-  let queue : Queue[Int] = new()
-  @assertion.assert_eq(queue.length, 0)?
-}
-
 /// Creates a new queue from an array.
-/// 
+///
 /// # Example
 /// ```
 /// let queue : Queue[Int] = Queue::from_array([1, 2, 3, 4])
@@ -47,27 +42,6 @@ pub fn Queue::from_array[T](arr : Array[T]) -> Queue[T] {
   queue
 }
 
-test "from_array_1" {
-  let queue : Queue[Int] = Queue::[1, 2, 3, 4]
-  let queue2 : Queue[Int] = Queue::[1]
-  @assertion.assert_eq(queue.length, 4)?
-  @assertion.assert_eq(queue.pop_exn(), 1)?
-  @assertion.assert_eq(queue.pop_exn(), 2)?
-  @assertion.assert_eq(queue.pop_exn(), 3)?
-  @assertion.assert_eq(queue.pop_exn(), 4)?
-  @assertion.assert_eq(queue2.pop_exn(), 1)?
-  @assertion.assert_eq(queue2.length, 0)?
-}
-
-test "from_array_2" {
-  let q = Queue::[1, 2, 3, 4]
-  q.push(11)
-  @assertion.assert_eq(q, Queue::[1, 2, 3, 4, 11])?
-  q.pop_exn() |> ignore
-  @assertion.assert_eq(q, Queue::[2, 3, 4, 11])?
-}
-
-/// Convert the queue to a string.
 pub fn to_string[T : Show](self : Queue[T]) -> String {
   let mut res = "Queue::["
   self.iteri(
@@ -83,15 +57,6 @@ pub fn to_string[T : Show](self : Queue[T]) -> String {
 
 pub fn debug_write[T : Show](self : Queue[T], buf : Buffer) -> Unit {
   buf.write_string(self.to_string())
-}
-
-test "to_string" {
-  let queue : Queue[Int] = Queue::[1, 2, 3, 4]
-  inspect(queue, content="Queue::[1, 2, 3, 4]")?
-  queue.push(11)
-  inspect(queue, content="Queue::[1, 2, 3, 4, 11]")?
-  queue.pop_exn() |> ignore
-  inspect(queue, content="Queue::[2, 3, 4, 11]")?
 }
 
 /// Tests if two queue cells are equal.
@@ -113,19 +78,8 @@ fn op_equal[T : Eq](self : Queue[T], other : Queue[T]) -> Bool {
   self.length == other.length && self.first == other.first
 }
 
-test "op_equal" {
-  let queue : Queue[Int] = Queue::[1, 2, 3, 4]
-  let queue2 : Queue[Int] = Queue::[1, 2, 3, 4]
-  let queue3 : Queue[Int] = Queue::[1, 2, 3, 5]
-  @assertion.assert_true(queue == queue2)?
-  @assertion.assert_false(queue == queue3)?
-  queue.pop_exn() |> ignore
-  @assertion.assert_false(queue == queue2)?
-  @assertion.assert_eq(queue, Queue::[2, 3, 4])?
-}
-
 /// Clears the queue.
-/// 
+///
 /// # Example
 /// ```
 /// let queue : Queue[Int] = Queue::[1, 2, 3, 4]
@@ -137,19 +91,18 @@ pub fn clear[T](self : Queue[T]) -> Unit {
   self.last = Nil
 }
 
-test "clear" {
-  let queue : Queue[Int] = Queue::[1, 2, 3, 4]
-  @assertion.assert_eq(queue.length, 4)?
-  queue.clear()
-  @assertion.assert_eq(queue.length, 0)?
-}
-
+/// Get the length of the queue.
+///
+/// # Example
+/// ```
+/// Queue::[1, 2, 3, 4].length()
+/// ```
 pub fn length[T](self : Queue[T]) -> Int {
   self.length
 }
 
 /// Checks if the queue is empty.
-/// 
+///
 /// # Example
 /// ```
 /// let queue : Queue[Int] = Queue::new()
@@ -159,18 +112,8 @@ pub fn is_empty[T](self : Queue[T]) -> Bool {
   self.length == 0
 }
 
-test "is_empty" {
-  let queue : Queue[Int] = new()
-  @assertion.assert_true(queue.is_empty())?
-  queue.push(1)
-  queue.push(2)
-  queue.push(3)
-  queue.push(4)
-  @assertion.assert_false(queue.is_empty())?
-}
-
 /// Adds a value to the queue.
-/// 
+///
 /// # Example
 /// ```
 /// let queue : Queue[Int] = Queue::new()
@@ -192,18 +135,8 @@ pub fn push[T](self : Queue[T], x : T) -> Unit {
   }
 }
 
-test "push" {
-  let queue : Queue[Int] = Queue::new()
-  queue.push(1)
-  queue.push(2)
-  queue.push(3)
-  queue.push(1)
-  @assertion.assert_eq(queue.length, 4)?
-  @assertion.assert_eq(queue, Queue::[1, 2, 3, 1])?
-}
-
 /// Peeks at the first value in the queue.
-/// 
+///
 /// # Example
 /// ```
 /// let queue : Queue[Int] = Queue::[1, 2, 3, 4]
@@ -217,17 +150,8 @@ pub fn peek_exn[T](self : Queue[T]) -> T {
   }
 }
 
-test "peek_exn" {
-  let queue : Queue[Int] = Queue::[1, 2, 3, 4]
-  @assertion.assert_eq(queue.peek_exn(), 1)?
-  @assertion.assert_eq(queue.length, 4)?
-  @assertion.assert_eq(queue.pop_exn(), 1)?
-  @assertion.assert_eq(queue.peek_exn(), 2)?
-  @assertion.assert_eq(queue.length, 3)?
-}
-
 /// Peeks at the first value in the queue, which returns None if the queue is empty.
-/// 
+///
 /// # Example
 /// ```
 /// let queue : Queue[Int] = Queue::[1, 2, 3, 4]
@@ -240,15 +164,8 @@ pub fn peek[T](self : Queue[T]) -> T? {
   }
 }
 
-test "peek" {
-  let queue : Queue[Int] = Queue::[1, 2, 3, 4]
-  @assertion.assert_eq(queue.peek(), Some(1))?
-  queue.clear()
-  @assertion.assert_eq(queue.peek(), None)?
-}
-
 /// Pops the first value from the queue.
-/// 
+///
 /// # Example
 /// ```
 /// let queue : Queue[Int] = Queue::[1, 2, 3, 4]
@@ -270,17 +187,8 @@ pub fn pop_exn[T](self : Queue[T]) -> T {
   }
 }
 
-test "pop_exn" {
-  let queue : Queue[Int] = Queue::[1, 2, 3, 4]
-  @assertion.assert_eq(queue.pop_exn(), 1)?
-  @assertion.assert_eq(queue.pop_exn(), 2)?
-  @assertion.assert_eq(queue.pop_exn(), 3)?
-  @assertion.assert_eq(queue.pop_exn(), 4)?
-  @assertion.assert_eq(queue.length, 0)?
-}
-
 /// Pops the first value from the queue, which returns None if the queue is empty.
-/// 
+///
 /// # Example
 /// ```
 /// let queue : Queue[Int] = Queue::[1, 2, 3, 4]
@@ -294,17 +202,8 @@ pub fn pop[T](self : Queue[T]) -> T? {
   }
 }
 
-test "pop" {
-  let queue : Queue[Int] = Queue::[1, 2, 3, 4]
-  @assertion.assert_eq(queue.pop(), Some(1))?
-  @assertion.assert_eq(queue.pop(), Some(2))?
-  @assertion.assert_eq(queue.pop(), Some(3))?
-  @assertion.assert_eq(queue.pop(), Some(4))?
-  @assertion.assert_eq(queue.pop(), None)?
-}
-
 /// Iterates over the queue.
-/// 
+///
 /// # Example
 /// ```
 /// let queue : Queue[Int] = Queue::[1, 2, 3, 4]
@@ -320,17 +219,6 @@ pub fn iter[T](self : Queue[T], f : (T) -> Unit) -> Unit {
   }
 }
 
-test "iter" {
-  let queue : Queue[Int] = new()
-  let mut sum = 0
-  queue.iter(fn(x) { sum = sum + x })
-  @assertion.assert_eq(sum, 0)?
-  Queue::[1, 2, 3, 4].transfer(queue)
-  sum = 0
-  queue.iter(fn(x) { sum = sum + x })
-  @assertion.assert_eq(sum, 10)?
-}
-
 pub fn iteri[T](self : Queue[T], f : (Int, T) -> Unit) -> Unit {
   loop self.first, 0 {
     Cons({ content, next }), index => {
@@ -341,19 +229,8 @@ pub fn iteri[T](self : Queue[T], f : (Int, T) -> Unit) -> Unit {
   }
 }
 
-test "iteri" {
-  let queue : Queue[Int] = new()
-  let mut sum = 0
-  queue.iteri(fn(x, i) { sum = sum + x * i })
-  @assertion.assert_eq(sum, 0)?
-  Queue::[1, 2, 3, 4].transfer(queue)
-  sum = 0
-  queue.iteri(fn(x, i) { sum = sum + x * i })
-  @assertion.assert_eq(sum, 20)?
-}
-
 /// Folds over the queue.
-/// 
+///
 /// # Example
 /// ```
 /// let queue : Queue[Int] = Queue::[1, 2, 3, 4]
@@ -369,19 +246,8 @@ pub fn fold[T](self : Queue[T], ~init : T, f : (T, T) -> T) -> T {
   }
 }
 
-test "fold" {
-  let queue : Queue[Int] = new()
-  let sum = queue.fold(init=0, fn(acc, x) { acc + x })
-  @assertion.assert_eq(sum, 0)?
-  Queue::[1, 2, 3, 4].transfer(queue)
-  let sum = queue.fold(init=0, fn(acc, x) { acc + x })
-  @assertion.assert_eq(sum, 10)?
-  let sum2 = Queue::[1, 2, 3, 4].fold(init=0, fn(acc, x) { acc + x })
-  @assertion.assert_eq(sum2, 10)?
-}
-
 /// Return a copy of the queue.
-/// 
+///
 /// # Example
 /// ```
 /// let queue : Queue[Int] = Queue::[1, 2, 3, 4]
@@ -410,19 +276,10 @@ pub fn copy[T](self : Queue[T]) -> Queue[T] {
   }
 }
 
-test "copy" {
-  let queue : Queue[Int] = Queue::[1, 2, 3, 4]
-  let queue2 : Queue[Int] = queue.copy()
-  @assertion.assert_eq(queue2.length, 4)?
-  @assertion.assert_eq(queue2, Queue::[1, 2, 3, 4])?
-  @assertion.assert_eq(queue.length, 4)?
-  @assertion.assert_eq(queue, Queue::[1, 2, 3, 4])?
-}
-
 /// Transfer all elements from one queue to another.
-/// 
+///
 /// Adds all of the elements of source to the end of destination, then clears source.
-/// 
+///
 /// # Example
 /// ```
 /// let queue : Queue[Int] = Queue::[1, 2, 3, 4]
@@ -448,11 +305,18 @@ pub fn transfer[T](self : Queue[T], dst : Queue[T]) -> Unit {
   }
 }
 
-test "transfer" {
-  let queue : Queue[Int] = Queue::[1, 2, 3, 4]
-  let queue2 : Queue[Int] = Queue::[5, 6, 7, 8]
-  queue.transfer(queue2)
-  @assertion.assert_eq(queue.length, 0)?
-  @assertion.assert_eq(queue2.length, 8)?
-  @assertion.assert_eq(queue2, Queue::[5, 6, 7, 8, 1, 2, 3, 4])?
+pub fn as_iter[T](self : Queue[T]) -> Iter[T] {
+  Iter::_unstable_internal_make(
+    fn(yield) {
+      loop self.first {
+        Cons({ content, next }) => {
+          if yield(content).not() {
+            break false
+          }
+          continue next
+        }
+        Nil => true
+      }
+    },
+  )
 }

@@ -5,6 +5,7 @@ package moonbitlang/core/queue
 // Types and methods
 type Queue
 impl Queue {
+  as_iter[T](Self[T]) -> Iter[T]
   clear[T](Self[T]) -> Unit
   copy[T](Self[T]) -> Self[T]
   debug_write[T : Show](Self[T], Buffer) -> Unit
@@ -15,9 +16,9 @@ impl Queue {
   iteri[T](Self[T], (Int, T) -> Unit) -> Unit
   length[T](Self[T]) -> Int
   new[T]() -> Self[T]
-  peek[T](Self[T]) -> Option[T]
+  peek[T](Self[T]) -> T?
   peek_exn[T](Self[T]) -> T
-  pop[T](Self[T]) -> Option[T]
+  pop[T](Self[T]) -> T?
   pop_exn[T](Self[T]) -> T
   push[T](Self[T], T) -> Unit
   to_string[T : Show](Self[T]) -> String

@@ -242,6 +242,52 @@ test "collect" {
   @assertion.assert_eq(vec, ['1', '2', '3', '4', '5'])?
 }
 
+test "range" {
+  // edge cases
+  inspect((0).to(10).take(100), content="[0, 1, 2, 3, 4, 5, 6, 7, 8, 9]")?
+  inspect((100).to(10).take(100), content="[]")?
+  inspect((100).to(101, step=4), content="[100]")?
+  // to
+  inspect((0).to(10).take(5).concat((0).to(2)), content="[0, 1, 2, 3, 4, 0, 1]")?
+  inspect(
+    0x80000000L.to(0x80000000L + 10L).take(5).concat(
+      (0x80000000L + 10L).to(0x80000000L + 20L).take(3),
+    ),
+    content="[2147483648, 2147483649, 2147483650, 2147483651, 2147483652, 2147483658, 2147483659, 2147483660]",
+  )?
+  inspect(
+    0.0.to(10.0).take(5).concat(0.0.to(2.0)),
+    content="[0.0, 1.0, 2.0, 3.0, 4.0, 0.0, 1.0]",
+  )?
+  inspect(
+    (-50).to(50, step=10).take(100),
+    content="[-50, -40, -30, -20, -10, 0, 10, 20, 30, 40]",
+  )?
+  inspect(
+    0.1.to(0.4, step=0.1).take(5),
+    content="[0.1, 0.2, 0.30000000000000004]",
+  )?
+  inspect(0.1.to(0.3, step=0.1), content="[0.1, 0.2]")?
+  inspect(
+    0.1.to(0.4, step=0.1).take(5),
+    content="[0.1, 0.2, 0.30000000000000004]",
+  )?
+  inspect(
+    0x80000000L.to(0x80000000L + 10L, step=2L),
+    content="[2147483648, 2147483650, 2147483652, 2147483654, 2147483656]",
+  )?
+  // step < 0
+  inspect((10).to(0, step=-1).take(5), content="[10, 9, 8, 7, 6]")?
+  inspect(
+    0x80000000L.to(0x80000000L - 10L, step=-2L).take(5),
+    content="[2147483648, 2147483646, 2147483644, 2147483642, 2147483640]",
+  )?
+  inspect(
+    0.0.to(-1.0, step=-0.1).take(5),
+    content="[0.0, -0.1, -0.2, -0.30000000000000004, -0.4]",
+  )?
+}
+
 // For testing purposes
 fn test_from_array[T](arr : Array[T]) -> Iter[T] {
   Iter::_unstable_internal_make(
