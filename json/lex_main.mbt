@@ -30,67 +30,67 @@ fn lex_value(
   for ; ; {
     match read_char(ctx) {
       Some('\t' | ' ' | '\n' | '\r') => continue
-      Some('{') => return Ok(LBrace)
-      Some('[') => return Ok(LBracket)
+      Some('{') => break Ok(LBrace)
+      Some('[') => break Ok(LBracket)
       Some(']') =>
         if allow_rbracket {
-          return Ok(RBracket)
+          break Ok(RBracket)
         } else {
-          return Err(invalid_char(ctx, shift=-1))
+          break Err(invalid_char(ctx, shift=-1))
         }
       Some('n') => {
         lex_assert_char(ctx, 'u')?
         lex_assert_char(ctx, 'l')?
         lex_assert_char(ctx, 'l')?
-        return Ok(Null)
+        break Ok(Null)
       }
       Some('t') => {
         lex_assert_char(ctx, 'r')?
         lex_assert_char(ctx, 'u')?
         lex_assert_char(ctx, 'e')?
-        return Ok(True)
+        break Ok(True)
       }
       Some('f') => {
         lex_assert_char(ctx, 'a')?
         lex_assert_char(ctx, 'l')?
         lex_assert_char(ctx, 's')?
         lex_assert_char(ctx, 'e')?
-        return Ok(False)
+        break Ok(False)
       }
       Some('-') =>
         match read_char(ctx) {
           Some('0') => {
             let n = lex_zero(ctx, start=ctx.offset - 2)!!
-            return Ok(Number(n))
+            break Ok(Number(n))
           }
           Some(c2) => {
             if c2 >= '1' && c2 <= '9' {
               let n = lex_decimal_integer(ctx, start=ctx.offset - 2)!!
-              return Ok(Number(n))
+              break Ok(Number(n))
             }
-            return Err(invalid_char(ctx, shift=-1))
+            break Err(invalid_char(ctx, shift=-1))
           }
-          None => return Err(InvalidEof)
+          None => break Err(InvalidEof)
         }
       Some('0') => {
         let n = lex_zero(ctx, start=ctx.offset - 1)!!
-        return Ok(Number(n))
+        break Ok(Number(n))
       }
       Some('1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9') => {
         let n = lex_decimal_integer(ctx, start=ctx.offset - 1)!!
-        return Ok(Number(n))
+        break Ok(Number(n))
       }
       Some('"') => {
         let s = lex_string(ctx)?
-        return Ok(String(s))
+        break Ok(String(s))
       }
       Some(c) => {
         if c > '\x7f' && non_ascii_whitespace.contains(c) {
           continue
         }
-        return Err(invalid_char(ctx, shift=-1))
+        break Err(invalid_char(ctx, shift=-1))
       }
-      None => return Err(InvalidEof)
+      None => break Err(InvalidEof)
     }
   }
 }
