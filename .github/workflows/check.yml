@@ -76,6 +76,7 @@ jobs:
         run: |
           moon test
           moon test --target js
+          moon test --target wasm
 
       - name: moon bundle
         run: moon bundle --all
