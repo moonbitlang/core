@@ -1,9 +1,9 @@
 package moonbitlang/core/strconv
 
 // Values
-fn from_string(String) -> Bool
-
 fn parse[A : FromStr](String) -> A
+
+fn parse_bool(String) -> Bool
 
 fn parse_double(String) -> Double
 

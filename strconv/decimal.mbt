@@ -590,7 +590,10 @@ test "parse_decimal" {
     let hpd = Decimal::parse_decimal(s)!
     inspect(hpd, content=s)?
     let hpd = Decimal::parse_decimal("1.0e-100")!
-    inspect(hpd, content="0.0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001")?
+    inspect(
+      hpd,
+      content="0.0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001",
+    )?
   } catch {
     err => println(err)
   }

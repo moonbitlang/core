@@ -42,6 +42,13 @@ test "parse_bool" {
   ]
   for i = 0; i < tests.length(); i = i + 1 {
     let t = tests[i]
-    @assertion.assert_eq(try { Result::Ok(parse_bool(t.0)!)} catch {err => Err(err)} , t.1)?
+    @assertion.assert_eq(
+      try {
+        Result::Ok(parse_bool(t.0)!)
+      } catch {
+        err => Err(err)
+      },
+      t.1,
+    )?
   }
 }
