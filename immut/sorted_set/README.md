@@ -45,14 +45,14 @@ You can use `remove` to remove a specific value or use `remove_min` to remove th
 (ImmutableSet::[3, 4, 5]).remove_min() // ImmutableSet::[4, 5]
 ```
 
-### Max & Min & Contain
+### Max & Min & Contains
 
-You can use `contain` to query whether an element is in the set.
+You can use `contains` to query whether an element is in the set.
 
 ```moonbit
 let set = ImmutableSet::from_array([1, 2, 3, 4])
-set.contain(1) // true
-set.contain(5) // false
+set.contains(1) // true
+set.contains(5) // false
 ```
 
 You can also use `min` and `max` to obtain the minimum or maximum value in the set. When the set is empty, an error will be reported, and they have corresponding Option versions to handle this.
@@ -116,13 +116,13 @@ ImmutableSet::[1, 2, 3, 4, 5].fold(0, fn(acc, x) { acc + x }) // 15
 ImmutableSet::[1, 2, 3].map(fn(x){ x * 2}) // ImmutableSet::[2, 4, 6]
 ```
 
-### Forall & Exists
+### All & Any
 
-`forall` and `exists` can detect whether all elements in the set match or if there are elements that match.
+`all` and `any` can detect whether all elements in the set match or if there are elements that match.
 
 ```moonbit
-ImmutableSet::[2, 4, 6].forall(fn(v) { v % 2 == 0}) // true
-ImmutableSet::[1, 4, 3].exists(fn(v) { v % 2 == 0}) // true
+ImmutableSet::[2, 4, 6].all(fn(v) { v % 2 == 0}) // true
+ImmutableSet::[1, 4, 3].any(fn(v) { v % 2 == 0}) // true
 ```
 
 ### Stringify

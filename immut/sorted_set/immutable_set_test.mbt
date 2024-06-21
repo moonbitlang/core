@@ -107,14 +107,14 @@ test "map" {
   )?
 }
 
-test "forall" {
-  inspect(ImmutableSet::[2, 4, 6].forall(fn(v) { v % 2 == 0 }), content="true")?
-  inspect(ImmutableSet::[1, 3, 5].forall(fn(v) { v % 2 == 0 }), content="false")?
+test "all" {
+  inspect(ImmutableSet::[2, 4, 6].all(fn(v) { v % 2 == 0 }), content="true")?
+  inspect(ImmutableSet::[1, 3, 5].all(fn(v) { v % 2 == 0 }), content="false")?
 }
 
-test "exists" {
-  inspect(ImmutableSet::[1, 4, 3].exists(fn(v) { v % 2 == 0 }), content="true")?
-  inspect(ImmutableSet::[1, 5, 3].exists(fn(v) { v % 2 == 0 }), content="false")?
+test "any" {
+  inspect(ImmutableSet::[1, 4, 3].any(fn(v) { v % 2 == 0 }), content="true")?
+  inspect(ImmutableSet::[1, 5, 3].any(fn(v) { v % 2 == 0 }), content="false")?
 }
 
 test "fold" {
@@ -148,10 +148,10 @@ test "split" {
 
 test "contain" {
   inspect(
-    ImmutableSet::[7, 2, 9, 4, 6, 3, 8, 1].add(5).contain(5),
+    ImmutableSet::[7, 2, 9, 4, 6, 3, 8, 1].add(5).contains(5),
     content="true",
   )?
-  inspect(ImmutableSet::[7, 2, 9, 4, 6, 3, 8, 1].contain(5), content="false")?
+  inspect(ImmutableSet::[7, 2, 9, 4, 6, 3, 8, 1].contains(5), content="false")?
 }
 
 test "to_array" {

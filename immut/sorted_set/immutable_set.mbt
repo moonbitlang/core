@@ -255,12 +255,12 @@ pub fn is_empty[T : Compare](self : ImmutableSet[T]) -> Bool {
 }
 
 /// Return true if value contain in ImmutableSet
-pub fn contain[T : Compare](self : ImmutableSet[T], value : T) -> Bool {
+pub fn contains[T : Compare](self : ImmutableSet[T], value : T) -> Bool {
   match self {
     Empty => false
     Node(~left, ~right, value=node_value, ..) => {
       let compare_result = value.compare(node_value)
-      compare_result == 0 || (if compare_result < 0 { left } else { right }).contain(
+      compare_result == 0 || (if compare_result < 0 { left } else { right }).contains(
         value,
       )
     }
@@ -469,14 +469,13 @@ pub fn map[T : Compare, U : Compare](
 /// # Example
 /// 
 /// ```
-/// println(ImmutableSet::[2, 4, 6].forall(fn(v) { v % 2 == 0}))
+/// println(ImmutableSet::[2, 4, 6].all(fn(v) { v % 2 == 0}))
 /// // output: true
 /// ```
-pub fn forall[T : Compare](self : ImmutableSet[T], f : (T) -> Bool) -> Bool {
+pub fn all[T : Compare](self : ImmutableSet[T], f : (T) -> Bool) -> Bool {
   match self {
     Empty => true
-    Node(~left, ~value, ~right, ..) =>
-      f(value) && left.forall(f) && right.forall(f)
+    Node(~left, ~value, ~right, ..) => f(value) && left.all(f) && right.all(f)
   }
 }
 
@@ -485,14 +484,13 @@ pub fn forall[T : Compare](self : ImmutableSet[T], f : (T) -> Bool) -> Bool {
 /// # Example
 /// 
 /// ```
-/// println(ImmutableSet::[1, 4, 3].exists(fn(v) { v % 2 == 0}))
+/// println(ImmutableSet::[1, 4, 3].any(fn(v) { v % 2 == 0}))
 /// // output: true
 /// ```
-pub fn exists[T : Compare](self : ImmutableSet[T], f : (T) -> Bool) -> Bool {
+pub fn any[T : Compare](self : ImmutableSet[T], f : (T) -> Bool) -> Bool {
   match self {
     Empty => false
-    Node(~left, ~value, ~right, ..) =>
-      f(value) || left.exists(f) || right.exists(f)
+    Node(~left, ~value, ~right, ..) => f(value) || left.any(f) || right.any(f)
   }
 }
 

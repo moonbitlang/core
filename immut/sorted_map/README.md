@@ -40,14 +40,14 @@ let map = Map::[("a", 1), ("b", 2), ("c", 3)]
 let map = map.remove("a")
 ```
 
-### Member
+### Contains
 
-You can use `member()` to check whether a key exists.
+You can use `contains()` to check whether a key exists.
 
 ```moonbit
 let map = Map::[("a", 1), ("b", 2), ("c", 3)]
-map.member("a") // true
-map.member("d") // false
+map.contains("a") // true
+map.contains("d") // false
 ```
 
 ### Size
