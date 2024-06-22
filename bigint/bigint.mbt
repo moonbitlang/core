@@ -249,7 +249,7 @@ fn split(self : BigInt, half : Int) -> (BigInt, BigInt) {
 /// Divide two bigint
 pub fn op_div(self : BigInt, other : BigInt) -> BigInt {
   if other == zero {
-    abort("division by zero")
+    panic()
   }
   let (quotient, _) = grade_school_div(self, other)
   quotient
@@ -258,7 +258,7 @@ pub fn op_div(self : BigInt, other : BigInt) -> BigInt {
 /// Modulo two bigint
 pub fn op_mod(self : BigInt, other : BigInt) -> BigInt {
   if other == zero {
-    abort("division by zero")
+    panic()
   }
   let (_, remainder) = grade_school_div(self, other)
   remainder
@@ -304,7 +304,7 @@ fn grade_school_div(self : BigInt, other : BigInt) -> (BigInt, BigInt) {
   if other.len == 1 {
     let number = other.limbs[0]
     if number == 0 {
-      abort("divided by zero")
+      panic()
     }
     let ret = self.deep_clone()
     if number == 1 {
@@ -414,7 +414,7 @@ fn grade_school_div(self : BigInt, other : BigInt) -> (BigInt, BigInt) {
 /// Left shift a bigint
 pub fn lsl(self : BigInt, n : Int) -> BigInt {
   if n < 0 {
-    abort("negative shift count")
+    panic()
   }
   if not(self.is_zero()) {
     let new_limbs = Array::make(
@@ -450,7 +450,7 @@ pub fn lsl(self : BigInt, n : Int) -> BigInt {
 /// Right shift a bigint
 pub fn lsr(self : BigInt, n : Int) -> BigInt {
   if n < 0 {
-    abort("negative shift count")
+    panic()
   }
   let r = n % radix_bit_len
   let lz = n / radix_bit_len
@@ -576,7 +576,7 @@ pub fn to_string(self : BigInt) -> String {
 pub fn from_string(input : String) -> BigInt {
   let len = input.length()
   if len == 0 {
-    abort("empty string")
+    panic()
   }
   let sign : Sign = if input[0] == '-' { Negative } else { Positive }
   let mut b_len = ((len.to_double() / decimal_ratio).to_int() + 1 + radix_bit_len) /
@@ -590,7 +590,7 @@ pub fn from_string(input : String) -> BigInt {
       i = i + 1 {
     let x = input[i].to_int() - 48 // ASCII value of '0'
     if x < 0 || x > 9 {
-      abort("invalid character")
+      panic()
     }
     let mut carry = x.to_int64()
     for j = 0; j < b_len; j = j + 1 {
@@ -610,7 +610,7 @@ pub fn from_hex(input : String) -> BigInt {
   // WARN: this implementation assumes that `radix` is a power of 2.
   let len = input.length()
   if len == 0 {
-    abort("empty string")
+    panic()
   }
   let sign : Sign = if input[0] == '-' { Negative } else { Positive }
   let mut b_len = (len * 4 + 1 + radix_bit_len) / radix_bit_len + 1 // TODO: 4 is hardcoded.
@@ -632,7 +632,7 @@ pub fn from_hex(input : String) -> BigInt {
       // ASCII value of 'a'
       x - 87
     } else {
-      abort("invalid character")
+      panic()
     }
     let mut carry = y
     for j = 0; j < b_len; j = j + 1 {
