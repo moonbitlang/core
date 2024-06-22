@@ -18,3 +18,17 @@ test "overflow" {
   inspect(0x7fffffffffffffffL, content="9223372036854775807")?
   inspect(-0x7fffffffffffffffL, content="-9223372036854775807")?
 }
+
+test "signum function tests" {
+  // Test for signum function
+  inspect(signum(0L), content="0")?
+  inspect(signum(1L), content="1")?
+  inspect(signum(-1L), content="-1")?
+  inspect(signum(max_val), content="1")?
+  inspect(signum(min_val), content="-1")?
+}
+
+test "Int64::min_value" {
+  let minValue = Int64::min_value()
+  @assertion.assert_eq(minValue, -9223372036854775808L)?
+}

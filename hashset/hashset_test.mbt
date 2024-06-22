@@ -221,3 +221,53 @@ test "as_iter" {
   map.as_iter().take(2).iter(fn(e) { buf.write_string("[\(e)]") })
   inspect(buf, content="[a][b]")?
 }
+
+test "from_array" {
+  let arr = ["a", "b", "c"]
+  let m = HashSet::from_array(arr)
+  @assertion.assert_true(m.contains("a"))?
+  @assertion.assert_true(m.contains("b"))?
+  @assertion.assert_true(m.contains("c"))?
+  @assertion.assert_false(m.contains("d"))?
+}
+
+test "insert_and_grow" {
+  let m : HashSet[String] = HashSet::new()
+  for i = 0; i < 10; i = i + 1 {
+    m.insert(i.to_string())
+  }
+  @assertion.assert_eq(m.size, 10)?
+  @assertion.assert_eq(m.capacity, 16)?
+}
+
+test "remove_and_shift_back" {
+  let m : HashSet[String] = HashSet::new()
+  m.insert("a")
+  m.insert("b")
+  m.insert("c")
+  m.insert("d")
+  m.remove("b")
+  @assertion.assert_false(m.contains("b"))?
+  @assertion.assert_true(m.contains("a"))?
+  @assertion.assert_true(m.contains("c"))?
+  @assertion.assert_true(m.contains("d"))?
+}
+
+test "capacity_and_size" {
+  let m : HashSet[String] = HashSet::new()
+  @assertion.assert_eq(m.capacity, default_init_capacity)?
+  @assertion.assert_eq(m.size, 0)?
+  m.insert("a")
+  @assertion.assert_eq(m.size, 1)?
+}
+
+test "clear_and_reinsert" {
+  let m : HashSet[String] = HashSet::new()
+  m.insert("a")
+  m.insert("b")
+  m.clear()
+  @assertion.assert_eq(m.size, 0)?
+  m.insert("c")
+  @assertion.assert_eq(m.size, 1)?
+  @assertion.assert_true(m.contains("c"))?
+}

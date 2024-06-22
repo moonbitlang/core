@@ -322,3 +322,58 @@ fn ieee_parts_to_double(
 ) -> Double {
   sign.to_int64().lsl(63).lor(ieeeExponent.to_int64().lsl(52)).lor(ieeeMantissa).reinterpret_as_double()
 }
+
+test "double/ryu.mbt:90" {
+  let value = 100L
+  @assertion.assert_eq(value % 25L, 0L)?
+  @assertion.assert_ne(value % 125L, 0L)?
+}
+
+test "double/ryu.mbt:205" {
+  let m = 123456789L
+  let mul0 = 987654321L
+  let (_, high0) = umul128(m, mul0)
+  let low1 = 111111111L
+  let high1 = 222222222L
+  let sum : Int64 = high0 + low1
+  let mut high1 = high1
+  if u64_lt(sum, high0) {
+    high1 = high1 + 1L
+  }
+  @assertion.assert_eq(high1, 222222222L)?
+}
+
+test "double/ryu.mbt:230" {
+  let m = 123456789L
+  let mul0 = 987654321L
+  let (_, high0) = umul128(m, mul0)
+  let low1 = 111111111L
+  let high1 = 222222222L
+  let sum = high0 + low1
+  let mut high1 = high1
+  if u64_lt(sum, high0) {
+    high1 = high1 + 1L
+  }
+  @assertion.assert_eq(high1, 222222222L)?
+}
+
+test "double/ryu.mbt:252" {
+  @assertion.assert_eq(gDOUBLE_POW5_BITCOUNT, 125)?
+}
+
+test "double/ryu.mbt:403" {
+  let acceptBounds = true
+  let mmShift = 1L
+  let mut vrIsTrailingZeros = false
+  let mut vmIsTrailingZeros = false
+  let mut vp = 10L
+  vrIsTrailingZeros = true
+  if acceptBounds {
+    vmIsTrailingZeros = mmShift.to_int() == 1
+  } else {
+    vp = vp - 1L
+  }
+  @assertion.assert_eq(vrIsTrailingZeros, true)?
+  @assertion.assert_eq(vmIsTrailingZeros, true)?
+  @assertion.assert_eq(vp, 10L)?
+}

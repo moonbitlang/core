@@ -223,3 +223,33 @@ test "to_array" {
   let map = HashMap::[(1, "one"), (2, "two"), (3, "three")]
   inspect(map.to_array(), content="[(2, two), (1, one), (3, three)]")?
 }
+
+test "get_nonexistent_key" {
+  let m : HashMap[String, Int] = HashMap::new()
+  m.set("a", 1)
+  m.set("b", 2)
+  inspect(m.get("c"), content="None")?
+}
+
+test "remove_nonexistent_key" {
+  let m : HashMap[String, Int] = HashMap::new()
+  m.set("a", 1)
+  m.set("b", 2)
+  m.remove("c")
+  @assertion.assert_eq(m.size, 2)?
+}
+
+test "get_nonexistent_key" {
+  let m : HashMap[String, Int] = HashMap::new()
+  m.set("a", 1)
+  m.set("b", 2)
+  inspect(m.get("c"), content="None")?
+}
+
+test "remove_nonexistent_key" {
+  let m : HashMap[String, Int] = HashMap::new()
+  m.set("a", 1)
+  m.set("b", 2)
+  m.remove("c")
+  @assertion.assert_eq(m.size, 2)?
+}

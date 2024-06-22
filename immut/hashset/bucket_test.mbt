@@ -66,3 +66,83 @@ test "Bucket::as_iter" {
   )
   inspect(buf.to_string(), content="0, 1, 31")?
 }
+
+test "Bucket add and remove" {
+  let b0 : Bucket[_] = Just_One(0)
+  let b1 = b0.add(1)
+  let b2 = b1.add(2)
+  let b3 = b2.remove(0).unwrap()
+  let b4 = b2.remove(1).unwrap()
+  let b5 = b2.remove(2).unwrap()
+  @assertion.assert_eq(b0.find(0), true)?
+  @assertion.assert_eq(b0.find(1), false)?
+  @assertion.assert_eq(b1.find(0), true)?
+  @assertion.assert_eq(b1.find(1), true)?
+  @assertion.assert_eq(b2.find(0), true)?
+  @assertion.assert_eq(b2.find(1), true)?
+  @assertion.assert_eq(b2.find(2), true)?
+  @assertion.assert_eq(b3.find(0), false)?
+  @assertion.assert_eq(b3.find(1), true)?
+  @assertion.assert_eq(b3.find(2), true)?
+  @assertion.assert_eq(b4.find(0), true)?
+  @assertion.assert_eq(b4.find(1), false)?
+  @assertion.assert_eq(b4.find(2), true)?
+  @assertion.assert_eq(b5.find(0), true)?
+  @assertion.assert_eq(b5.find(1), true)?
+  @assertion.assert_eq(b5.find(2), false)?
+}
+
+test "Bucket size" {
+  let b0 : Bucket[_] = Just_One(0)
+  let b1 = b0.add(1)
+  let b2 = b1.add(2)
+  let b3 = b2.remove(0).unwrap()
+  let b4 = b2.remove(1).unwrap()
+  let b5 = b2.remove(2).unwrap()
+  @assertion.assert_eq(b0.size(), 1)?
+  @assertion.assert_eq(b1.size(), 2)?
+  @assertion.assert_eq(b2.size(), 3)?
+  @assertion.assert_eq(b3.size(), 2)?
+  @assertion.assert_eq(b4.size(), 2)?
+  @assertion.assert_eq(b5.size(), 2)?
+}
+
+test "Bucket iter" {
+  let b0 : Bucket[_] = Just_One(0)
+  let b1 = b0.add(1)
+  let b2 = b1.add(2)
+  let buf = Buffer::make(0)
+  let mut is_first = true
+  b2.iter(
+    fn(k) {
+      if is_first {
+        is_first = false
+      } else {
+        buf.write_string(", ")
+      }
+      buf.write_string("\(k)")
+    },
+  )
+  inspect(buf, content="1, 2, 0")?
+}
+
+test "Bucket as_iter" {
+  let b0 : Bucket[_] = Just_One(0)
+  let b1 = b0.add(1)
+  let b2 = b1.add(2)
+  let buf = Buffer::make(0)
+  let mut is_first = true
+  b2.as_iter().iter(
+    fn {
+      k => {
+        if is_first {
+          is_first = false
+        } else {
+          buf.write_string(", ")
+        }
+        buf.write_string("\(k)")
+      }
+    },
+  )
+  inspect(buf, content="1, 2, 0")?
+}

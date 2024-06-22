@@ -211,3 +211,28 @@ test "valid" {
   inspect(valid("{a:1, b:2}"), content="false")?
   inspect(valid("{"), content="false")?
 }
+
+test "parse unexpected token in value" {
+  let result = parse("{a:1}")
+  inspect(result, content="Err(Invalid character 'a' at line 1, column 1)")?
+}
+
+test "parse unexpected token in object property name" {
+  let result = parse("{\"a\":1, b:2}")
+  inspect(result, content="Err(Invalid character 'b' at line 1, column 8)")?
+}
+
+test "parse unexpected token after object property name" {
+  let result = parse("{\"a\" b:2}")
+  inspect(result, content="Err(Invalid character 'b' at line 1, column 5)")?
+}
+
+test "parse unexpected token after object value" {
+  let result = parse("{\"a\":1 b:2}")
+  inspect(result, content="Err(Invalid character 'b' at line 1, column 7)")?
+}
+
+test "parse unexpected token in array" {
+  let result = parse("[1, 2 a]")
+  inspect(result, content="Err(Invalid character 'a' at line 1, column 6)")?
+}

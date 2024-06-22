@@ -310,7 +310,7 @@ test "split_bis" {
 //         let left_length = n / 2
 //         let (left, xs) = sub(left_length, xs)
 //         match xs {
-//           [  ] => abort("of_sorted_array: cannot constructs the left")
+//           [  ] => println("of_sorted_array: cannot constructs the left"); panic()
 //           [ mid, .. asxs ] => {
 //             let (right, xs) = sub(n - left_length - 1, xs)
 //             (create(left, mid, right), xs)
@@ -322,3 +322,26 @@ test "split_bis" {
 
 //   sub(array.length(), array[..]).0
 // }
+
+test "panic remove_min on empty set" {
+  let empty : ImmutableSet[Int] = ImmutableSet::new()
+  empty.remove_min() |> ignore
+}
+
+test "panic min on empty set" {
+  let empty : ImmutableSet[Int] = ImmutableSet::new()
+  empty.min() |> ignore
+}
+
+test "panic max on empty set" {
+  let empty : ImmutableSet[Int] = ImmutableSet::new()
+  empty.max() |> ignore
+}
+
+test "split with value not in set" {
+  let set = ImmutableSet::[1, 2, 3, 4, 5]
+  let (left, present, right) = set.split(6)
+  inspect(present, content="false")?
+  inspect(left, content="ImmutableSet::[1, 2, 3, 4, 5]")?
+  inspect(right, content="ImmutableSet::[]")?
+}

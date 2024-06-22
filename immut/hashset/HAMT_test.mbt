@@ -77,3 +77,39 @@ test "Set::is_empty" {
   let set = set.add(1)
   inspect(set.is_empty(), content="false")?
 }
+
+test "Set::size" {
+  let set = Set::make()
+  @assertion.assert_eq(set.size(), 0)?
+  let set = set.add(1)
+  @assertion.assert_eq(set.size(), 1)?
+  let set = set.add(2)
+  @assertion.assert_eq(set.size(), 2)?
+  let set = set.remove(1)
+  @assertion.assert_eq(set.size(), 1)?
+}
+
+test "Set::is_empty" {
+  let set = Set::make()
+  @assertion.assert_eq(set.is_empty(), true)?
+  let set = set.add(1)
+  @assertion.assert_eq(set.is_empty(), false)?
+  let set = set.remove(1)
+  @assertion.assert_eq(set.is_empty(), true)?
+}
+
+test "Set::iter" {
+  let set = Set::make().add(1).add(2).add(3)
+  let result = []
+  set.iter(fn { x => result.push(x) })
+  result.sort()
+  @assertion.assert_eq(result, [1, 2, 3])?
+}
+
+test "Set::as_iter" {
+  let set = Set::make().add(1).add(2).add(3)
+  let result = []
+  set.as_iter().iter(fn { x => result.push(x) })
+  result.sort()
+  @assertion.assert_eq(result, [1, 2, 3])?
+}
