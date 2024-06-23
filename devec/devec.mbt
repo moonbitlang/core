@@ -638,8 +638,6 @@ pub fn search[T : Eq](self : Devec[T], value : T) -> Int? {
   None
 }
 
-
-
 /// Checks if the vector contains an element.
 ///
 /// # Example
@@ -655,7 +653,6 @@ pub fn contains[T : Eq](self : Devec[T], value : T) -> Bool {
   }
   false
 }
-
 
 /// Reserves capacity to ensure that it can hold at least the number of elements
 /// specified by the `capacity` argument.
@@ -710,7 +707,6 @@ pub fn shrink_to_fit[T](self : Devec[T]) -> Unit {
   }
 }
 
-
 pub fn as_iter[T](self : Devec[T]) -> Iter[T] {
   Iter::_unstable_internal_make(
     fn(yield) {
@@ -724,7 +720,6 @@ pub fn as_iter[T](self : Devec[T]) -> Iter[T] {
     },
   )
 }
-
 
 test "reserve and push" {
   // capacity > 0, len = 0

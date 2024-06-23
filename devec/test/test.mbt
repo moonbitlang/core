@@ -28,7 +28,6 @@ test "contains" {
   @assertion.assert_false(dv.contains(6))?
 }
 
-
 test "reserve_capacity" {
   let dv = @devec.of([1, 2, 3, 4, 5])
   dv.pop_front() |> ignore() // 2, 3, 4, 5
@@ -49,7 +48,7 @@ test "reserve_capacity_2" {
 }
 
 test "shrink_to_fit" {
-  let dv  = @devec.of([1, 2, 3, 4, 5])
+  let dv = @devec.of([1, 2, 3, 4, 5])
   dv.pop_front() |> ignore()
   dv.push_back(1)
   dv.pop_front() |> ignore()
