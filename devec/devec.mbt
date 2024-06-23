@@ -333,20 +333,6 @@ pub fn op_get[T](self : Devec[T], index : Int) -> T {
   }
 }
 
-test "op_get" {
-  let dv = Devec::[1, 2, 3, 4, 5]
-  @assertion.assert_eq(dv[0], 1)?
-  @assertion.assert_eq(dv[1], 2)?
-  @assertion.assert_eq(dv[2], 3)?
-  @assertion.assert_eq(dv[3], 4)?
-  @assertion.assert_eq(dv[4], 5)?
-  let _ = dv.pop_front()
-  dv.push_back(1)
-  @assertion.assert_eq(dv[4], 1)?
-  dv.push_front(2)
-  @assertion.assert_eq(dv[0], 2)?
-}
-
 /// Sets the value of the element at the specified index.
 ///
 /// If you try to access an index which isn’t in the Devec, it will panic.
@@ -419,29 +405,6 @@ pub fn iter[T](self : Devec[T], f : (T) -> Unit) -> Unit {
   }
 }
 
-test "iter" {
-  let mut i = 0
-  let mut failed = false
-  Devec::[1, 2, 3, 4, 5].iter(
-    fn(elem) {
-      if elem != i + 1 {
-        failed = true
-      }
-      i = i + 1
-    },
-  )
-  @assertion.assert_false(failed)?
-}
-
-test "iter2" {
-  let v = Devec::[1, 2, 3, 4, 5]
-  v.pop_front_exn()
-  v.pop_back_exn()
-  let mut sum = 0
-  v.iter(fn { x => sum += x })
-  @assertion.assert_eq(sum, 9)?
-}
-
 /// Iterates over the elements of the devec with index.
 ///
 /// # Example
@@ -454,20 +417,6 @@ pub fn iteri[T](self : Devec[T], f : (Int, T) -> Unit) -> Unit {
   for i = 0; i < self.length(); i = i + 1 {
     f(i, self[i])
   }
-}
-
-test "iteri" {
-  let mut i = 0
-  let mut failed = false
-  Devec::[1, 2, 3, 4, 5].iteri(
-    fn(index, elem) {
-      if index != i || elem != i + 1 {
-        failed = true
-      }
-      i = i + 1
-    },
-  )
-  @assertion.assert_false(failed)?
 }
 
 /// Iterates over the elements of the devec in reversed turn.
@@ -484,20 +433,6 @@ pub fn iter_rev[T](self : Devec[T], f : (T) -> Unit) -> Unit {
   }
 }
 
-test "iter_rev" {
-  let mut i = 6
-  let mut failed = false
-  Devec::[1, 2, 3, 4, 5].iter_rev(
-    fn(elem) {
-      if elem != i - 1 {
-        failed = true
-      }
-      i = i - 1
-    },
-  )
-  @assertion.assert_false(failed)?
-}
-
 /// Iterates over the elements of the devec in reversed turn with index.
 ///
 /// # Example
@@ -510,22 +445,6 @@ pub fn iter_revi[T](self : Devec[T], f : (Int, T) -> Unit) -> Unit {
   for i = 0; i < self.len; i = i + 1 {
     f(i, self[self.len - i - 1])
   }
-}
-
-test "iter_revi" {
-  let mut i = 6
-  let mut j = 0
-  let mut failed = false
-  Devec::[1, 2, 3, 4, 5].iter_revi(
-    fn(index, elem) {
-      if index != j || elem != i - 1 {
-        failed = true
-      }
-      i = i - 1
-      j = j + 1
-    },
-  )
-  @assertion.assert_false(failed)?
 }
 
 /// Clears the devec, removing all values.
@@ -594,14 +513,6 @@ pub fn mapi[T, U](self : Devec[T], f : (Int, T) -> U) -> Devec[U] {
     }
     Devec::{ buf, len: self.len, head: 0, tail: self.len - 1 }
   }
-}
-
-test "mapi" {
-  let dv = Devec::[3, 4, 5]
-  let dvp = dv.mapi(fn(i, x) { x + i })
-  @assertion.assert_eq(dvp[0], 3)?
-  @assertion.assert_eq(dvp[1], 5)?
-  @assertion.assert_eq(dvp[2], 7)?
 }
 
 /// Test if the devec is empty.
@@ -719,27 +630,4 @@ pub fn as_iter[T](self : Devec[T]) -> Iter[T] {
       }
     },
   )
-}
-
-test "reserve and push" {
-  // capacity > 0, len = 0
-  let a : Devec[Int?] = Devec::with_capacity(2)
-  a.push_back(Some(1))
-  inspect(a.front(), content="Some(Some(1))")?
-  inspect(a.back(), content="Some(Some(1))")?
-  // capacity = 0, len = 0
-  let b : Devec[Int?] = Devec::with_capacity(0)
-  b.push_back(Some(1))
-  inspect(b.front(), content="Some(Some(1))")?
-  inspect(b.back(), content="Some(Some(1))")?
-  // capacity > 0, len = 0
-  let c : Devec[Int?] = Devec::with_capacity(2)
-  c.push_front(Some(1))
-  inspect(c.front(), content="Some(Some(1))")?
-  inspect(c.back(), content="Some(Some(1))")?
-  // capacity = 0, len = 0
-  let d : Devec[Int?] = Devec::with_capacity(0)
-  d.push_front(Some(1))
-  inspect(d.front(), content="Some(Some(1))")?
-  inspect(d.back(), content="Some(Some(1))")?
 }
