@@ -21,6 +21,7 @@ impl Devec {
   map[T, U](Self[T], (T) -> U) -> Self[U]
   mapi[T, U](Self[T], (Int, T) -> U) -> Self[U]
   new[T]() -> Self[T]
+  of[T](FixedArray[T]) -> Self[T]
   op_equal[T : Eq](Self[T], Self[T]) -> Bool
   op_get[T](Self[T], Int) -> T
   op_set[T](Self[T], Int, T) -> Unit
