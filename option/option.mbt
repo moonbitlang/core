@@ -281,6 +281,20 @@ test "or else" {
   @assertion.assert_eq((None : Int?).or_else(fn() { 5 }), 5)?
 }
 
+/// Return the contained `Some` value or the result of the `T::default()`.
+pub fn or_default[T : Default](self : T?) -> T {
+  match self {
+    None => T::default()
+    Some(t) => t
+  }
+}
+
+test "or default" {
+  let x = Option::Some(3)
+  @assertion.assert_eq(x.or_default(), 3)?
+  @assertion.assert_eq((None : Int?).or_default(), 0)?
+}
+
 pub fn compare[X : Compare](self : X?, other : X?) -> Int {
   match self {
     None =>
