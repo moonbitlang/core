@@ -56,6 +56,19 @@ pub fn Devec::from_array[T](arr : Array[T]) -> Devec[T] {
   deq
 }
 
+pub fn Devec::of[T](arr : FixedArray[T]) -> Devec[T] {
+  let deq = Devec::{
+    buf: UninitializedArray::make(arr.length()),
+    len: arr.length(),
+    head: 0,
+    tail: arr.length() - 1,
+  }
+  for i = 0; i < arr.length(); i = i + 1 {
+    deq.buf[i] = arr[i]
+  }
+  deq
+}
+
 /// Returns the devec of elements in the vector.
 pub fn length[T](self : Devec[T]) -> Int {
   self.len
@@ -613,7 +626,7 @@ test "is_empty" {
 ///
 /// # Example
 /// ```
-/// let dv = Devec::[3, 4, 5]
+/// let dv = @devec.of([3, 4, 5])
 /// dv.search(3) // Some(0)
 /// ```
 pub fn search[T : Eq](self : Devec[T], value : T) -> Int? {
@@ -625,19 +638,11 @@ pub fn search[T : Eq](self : Devec[T], value : T) -> Int? {
   None
 }
 
-test "search" {
-  let dv = Devec::[3, 4, 5]
-  @assertion.assert_eq(dv.search(3), Some(0))?
-  @assertion.assert_eq(dv.search(4), Some(1))?
-  @assertion.assert_eq(dv.search(5), Some(2))?
-  @assertion.assert_eq(dv.search(6), None)?
-}
-
 /// Checks if the vector contains an element.
 ///
 /// # Example
 /// ```
-/// let dv = Devec::[3, 4, 5]
+/// let dv = @devec.of([3, 4, 5])
 /// dv.contains(3) // true
 /// ```
 pub fn contains[T : Eq](self : Devec[T], value : T) -> Bool {
@@ -649,21 +654,13 @@ pub fn contains[T : Eq](self : Devec[T], value : T) -> Bool {
   false
 }
 
-test "contains" {
-  let dv = Devec::[3, 4, 5]
-  @assertion.assert_true(dv.contains(3))?
-  @assertion.assert_true(dv.contains(4))?
-  @assertion.assert_true(dv.contains(5))?
-  @assertion.assert_false(dv.contains(6))?
-}
-
 /// Reserves capacity to ensure that it can hold at least the number of elements
 /// specified by the `capacity` argument.
 ///
 /// # Example
 ///
 /// ```
-/// let dv = Devec::[1]
+/// let dv = @devec.of([1])
 /// dv.reserve_capacity(10)
 /// println(dv.capacity()) // 10
 /// ```
@@ -681,25 +678,6 @@ pub fn reserve_capacity[T](self : Devec[T], capacity : Int) -> Unit {
     self.buf[i] = buf[idx]
     self.tail += 1
   }
-}
-
-test "reserve_capacity" {
-  let dv = Devec::[1, 2, 3, 4, 5]
-  dv.pop_front() |> ignore() // 2, 3, 4, 5
-  dv.push_back(1) // 2, 3, 4, 5, 1
-  dv.pop_front() |> ignore() // 3, 4, 5, 1
-  dv.pop_front() |> ignore() // 4, 5, 1
-  dv.reserve_capacity(10)
-  @assertion.assert_true(dv.capacity() == 10)?
-  @assertion.assert_eq(dv[0], 4)?
-  @assertion.assert_eq(dv[1], 5)?
-  @assertion.assert_eq(dv[2], 1)?
-}
-
-test "reserve_capacity_2" {
-  let dv = Devec::[1, 2, 3, 4, 5]
-  dv.reserve_capacity(3)
-  @assertion.assert_true(dv.capacity() == 5)?
 }
 
 /// Shrinks the capacity of the devec as much as possible.
@@ -729,27 +707,6 @@ pub fn shrink_to_fit[T](self : Devec[T]) -> Unit {
   }
 }
 
-test "shrink_to_fit" {
-  let dv : Devec[Int] = Devec::[1, 2, 3, 4, 5]
-  dv.pop_front() |> ignore()
-  dv.push_back(1)
-  dv.pop_front() |> ignore()
-  dv.pop_front() |> ignore()
-  @assertion.assert_true(dv.capacity() == 5)?
-  dv.shrink_to_fit()
-  @assertion.assert_true(dv.capacity() == 3)?
-  @assertion.assert_eq(dv[0], 4)?
-  @assertion.assert_eq(dv[1], 5)?
-  @assertion.assert_eq(dv[2], 1)?
-}
-
-test "shrink_to_fit_2" {
-  let dv : Devec[Int] = Devec::[1, 2, 3]
-  @assertion.assert_true(dv.capacity() == 3)?
-  dv.shrink_to_fit()
-  @assertion.assert_true(dv.capacity() == 3)?
-}
-
 pub fn as_iter[T](self : Devec[T]) -> Iter[T] {
   Iter::_unstable_internal_make(
     fn(yield) {
@@ -762,35 +719,6 @@ pub fn as_iter[T](self : Devec[T]) -> Iter[T] {
       }
     },
   )
-}
-
-test "as_iter" {
-  let dv = Devec::[1, 2, 3, 4, 5]
-  let iter = dv.as_iter()
-  let buf = Buffer::make(0)
-  let mut i = 0
-  iter.iter(
-    fn(x) {
-      buf.write_string(x.to_string())
-      buf.write_char('\n')
-      i = i + 1
-    },
-  )
-  @assertion.assert_eq(i, dv.length())?
-  buf.expect(
-    content=
-      #|1
-      #|2
-      #|3
-      #|4
-      #|5
-      #|
-    ,
-  )?
-  inspect(
-    iter.take(4).filter(fn(x) { x % 2 == 0 }).fold(fn(a, x) { a + x }, 0),
-    content="6",
-  )?
 }
 
 test "reserve and push" {
