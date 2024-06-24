@@ -184,6 +184,7 @@ impl Map {
   op_set[K : Hash + Eq, V](Self[K, V], K, V) -> Unit
   remove[K : Hash + Eq, V](Self[K, V], K) -> Unit
   set[K : Hash + Eq, V](Self[K, V], K, V) -> Unit
+  set_default[K : Hash + Eq, V](Self[K, V], K, () -> V) -> V
   size[K, V](Self[K, V]) -> Int
   to_array[K, V](Self[K, V]) -> Array[Tuple[K, V]]
   to_string[K : Show, V : Show](Self[K, V]) -> String

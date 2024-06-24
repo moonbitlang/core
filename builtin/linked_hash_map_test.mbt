@@ -62,6 +62,15 @@ test "get_or_default" {
   @assertion.assert_eq(m.get_or_default("d", 42), 42)?
 }
 
+test "set_default" {
+  let m : Map[String, Array[Int]] = Map::new()
+  m.set_default("a", fn() { Array::new() }).push(1)
+  m.set_default("b", fn() { Array::new() }).push(2)
+  m.set_default("a", fn() { Array::new() }).push(3)
+  @assertion.assert_eq(m.get("a"), Some([1, 3]))?
+  @assertion.assert_eq(m.get("b"), Some([2]))?
+}
+
 test "op_set" {
   let m : Map[String, Int] = Map::new()
   m["a"] = 1
