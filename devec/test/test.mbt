@@ -71,7 +71,7 @@ test "shrink_to_fit_2" {
 test "as_iter" {
   let dv = @devec.of([1, 2, 3, 4, 5])
   let iter = dv.as_iter()
-  let buf = Buffer::make(0)
+  let buf = Buffer::new(size_hint=0)
   let mut i = 0
   iter.iter(
     fn(x) {
@@ -99,22 +99,22 @@ test "as_iter" {
 
 test "reserve and push" {
   // capacity > 0, len = 0
-  let a = @devec.with_capacity(2)
+  let a = @devec.new(capacity=2)
   a.push_back(Option::Some(1))
   inspect(a.front(), content="Some(Some(1))")?
   inspect(a.back(), content="Some(Some(1))")?
   // capacity = 0, len = 0
-  let b = @devec.with_capacity(0)
+  let b = @devec.new(capacity=0)
   b.push_back(Option::Some(1))
   inspect(b.front(), content="Some(Some(1))")?
   inspect(b.back(), content="Some(Some(1))")?
   // capacity > 0, len = 0
-  let c = @devec.with_capacity(2)
+  let c = @devec.new(capacity=2)
   c.push_front(Option::Some(1))
   inspect(c.front(), content="Some(Some(1))")?
   inspect(c.back(), content="Some(Some(1))")?
   // capacity = 0, len = 0
-  let d = @devec.with_capacity(0)
+  let d = @devec.new(capacity=0)
   d.push_front(Option::Some(1))
   inspect(d.front(), content="Some(Some(1))")?
   inspect(d.back(), content="Some(Some(1))")?

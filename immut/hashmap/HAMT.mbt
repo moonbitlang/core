@@ -40,7 +40,7 @@ let segment_length : Int = 5
 
 let segment_mask : Int = 0b11111
 
-pub fn Map::make[K, V]() -> Map[K, V] {
+pub fn Map::new[K, V]() -> Map[K, V] {
   Empty
 }
 
@@ -236,13 +236,13 @@ pub fn debug_write[K : Debug, V : Debug](
 }
 
 pub fn to_string[K : Debug, V : Debug](self : Map[K, V]) -> String {
-  let buf = Buffer::make(0)
+  let buf = Buffer::new(size_hint=0)
   self.debug_write(buf)
   buf.to_string()
 }
 
 pub fn Map::from_array[K : Eq + Hash, V](arr : Array[(K, V)]) -> Map[K, V] {
-  loop arr.length(), Map::make() {
+  loop arr.length(), Map::new() {
     0, map => map
     n, map => {
       let (k, v) = arr[n - 1]

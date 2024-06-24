@@ -72,7 +72,7 @@ pub fn value(self : JsonValue, key : String) -> JsonValue? {
 }
 
 pub fn stringify(self : JsonValue) -> String {
-  let buf = Buffer::make(0)
+  let buf = Buffer::new(size_hint=0)
   match self {
     Object(members) => {
       buf.write_char('{')

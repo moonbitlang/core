@@ -14,21 +14,21 @@
 
 test "empty" {
   let iter = Iter::empty()
-  let exb = Buffer::make(0)
+  let exb = Buffer::new(size_hint=0)
   iter.iter(fn { x => exb.write_char(x) })
   exb.expect()?
 }
 
 test "singleton" {
   let iter = Iter::singleton('1')
-  let exb = Buffer::make(0)
+  let exb = Buffer::new(size_hint=0)
   iter.iter(fn { x => exb.write_char(x) })
   exb.expect(content="1")?
 }
 
 test "repeat" {
   let iter = Iter::repeat('1')
-  let exb = Buffer::make(0)
+  let exb = Buffer::new(size_hint=0)
   iter.take(3).iter(fn { x => exb.write_char(x) })
   exb.expect(content="111")?
 }
@@ -40,14 +40,14 @@ test "count" {
 
 test "take" {
   let iter = test_from_array(['1', '2', '3', '4', '5'])
-  let exb = Buffer::make(0)
+  let exb = Buffer::new(size_hint=0)
   iter.take(3).iter(fn { x => exb.write_char(x) })
   exb.expect(content="123")?
 }
 
 test "take2" {
   let iter = test_from_array(['1', '2', '3', '4', '5'])
-  let exb = Buffer::make(0)
+  let exb = Buffer::new(size_hint=0)
   iter.take(10).concat(Iter::repeat('6').take(1)).iter(
     fn { x => exb.write_char(x) },
   )
@@ -56,14 +56,14 @@ test "take2" {
 
 test "take_while" {
   let iter = test_from_array(['1', '2', '3', '4', '5'])
-  let exb = Buffer::make(0)
+  let exb = Buffer::new(size_hint=0)
   iter.take_while(fn { x => x != '4' }).iter(fn { x => exb.write_char(x) })
   exb.expect(content="123")?
 }
 
 test "take_while2" {
   let iter = test_from_array(['1', '2', '3', '4', '5'])
-  let exb = Buffer::make(0)
+  let exb = Buffer::new(size_hint=0)
   iter.take_while(fn { x => x != '4' }).concat(singleton('6')).iter(
     fn { x => exb.write_char(x) },
   )
@@ -98,14 +98,14 @@ test "take_while5" {
 
 test "drop" {
   let iter = test_from_array(['1', '2', '3', '4', '5'])
-  let exb = Buffer::make(0)
+  let exb = Buffer::new(size_hint=0)
   iter.drop(3).iter(fn { x => exb.write_char(x) })
   exb.expect(content="45")?
 }
 
 test "drop_while" {
   let iter = test_from_array(['1', '2', '3', '4', '5'])
-  let exb = Buffer::make(0)
+  let exb = Buffer::new(size_hint=0)
   iter.drop_while(fn { x => x != '4' }).iter(fn { x => exb.write_char(x) })
   exb.expect(content="45")?
 }
@@ -120,7 +120,7 @@ test "drop_while2" {
 
 test "drop_while3" {
   let iter = test_from_array([1, 2, 3, 4, 5])
-  let exb = Buffer::make(0)
+  let exb = Buffer::new(size_hint=0)
   let res = iter.drop_while(fn { x => x < 3 }).concat(singleton(6)).find_first(
     fn {
       x => {
@@ -144,14 +144,14 @@ test "drop_while4" {
 
 test "filter" {
   let iter = test_from_array(['1', '2', '3', '4', '5'])
-  let exb = Buffer::make(0)
+  let exb = Buffer::new(size_hint=0)
   iter.filter(fn { x => x != '4' }).iter(fn { x => exb.write_char(x) })
   exb.expect(content="1235")?
 }
 
 test "map" {
   let iter = test_from_array(['1', '2', '3', '4', '5'])
-  let exb = Buffer::make(0)
+  let exb = Buffer::new(size_hint=0)
   iter.map(fn { x => Char::from_int(x.to_int() + 1) }).iter(
     fn { x => exb.write_char(x) },
   )
@@ -160,7 +160,7 @@ test "map" {
 
 test "flat_map" {
   let iter = test_from_array(['1', '2', '3', '4', '5'])
-  let exb = Buffer::make(0)
+  let exb = Buffer::new(size_hint=0)
   iter.flat_map(fn { x => Iter::repeat(x).take(2) }).iter(
     fn { x => exb.write_char(x) },
   )
@@ -169,7 +169,7 @@ test "flat_map" {
 
 test "flat_map2" {
   let iter = test_from_array(['1', '2', '3', '4', '5'])
-  let exb = Buffer::make(0)
+  let exb = Buffer::new(size_hint=0)
   iter.flat_map(fn { x => Iter::singleton(x) }).iter(
     fn { x => exb.write_char(x) },
   )
@@ -200,21 +200,21 @@ test "find_first2" {
 
 test "tap" {
   let iter = test_from_array(['1', '2', '3', '4', '5'])
-  let exb = Buffer::make(0)
+  let exb = Buffer::new(size_hint=0)
   iter.tap(fn { x => exb.write_char(x) }).iter(fn { x => exb.write_char(x) })
   exb.expect(content="1234512345")?
 }
 
 test "prepend" {
   let iter = test_from_array(['0', '1', '2', '3', '4', '5'])
-  let exb = Buffer::make(0)
+  let exb = Buffer::new(size_hint=0)
   iter.prepend('X').iter(fn { x => exb.write_char(x) })
   exb.expect(content="X012345")?
 }
 
 test "append" {
   let iter = test_from_array(['1', '2', '3', '4', '5'])
-  let exb = Buffer::make(0)
+  let exb = Buffer::new(size_hint=0)
   iter.append('6').iter(fn { x => exb.write_char(x) })
   exb.expect(content="123456")?
 }
@@ -223,7 +223,7 @@ test "concat" {
   let iter1 = test_from_array(['1', '2', '3'])
   let iter2 = test_from_array(['4', '5', '6'])
   let combined_iter = Iter::concat(iter1, iter2)
-  let exb = Buffer::make(0)
+  let exb = Buffer::new(size_hint=0)
   combined_iter.iter(fn { x => exb.write_char(x) })
   exb.expect(content="123456")?
 }

@@ -62,7 +62,7 @@ pub fn debug_write(self : Char, buf : Buffer) -> Unit {
 
 test "debug_write" {
   fn repr(chr) {
-    let buf = Buffer::make(0)
+    let buf = Buffer::new(size_hint=0)
     debug_write(chr, buf)
     buf.to_string()
   }

@@ -13,7 +13,7 @@
 // limitations under the License.
 
 fn debug_string[T : Debug](t : T) -> String {
-  let buf = Buffer::make(50)
+  let buf = Buffer::new(size_hint=50)
   t.debug_write(buf)
   buf.to_string()
 }

@@ -12,11 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-/// Creates a new, empty vector.
-pub fn Array::new[T]() -> Array[T] {
-  []
-}
-
 /// Creates a new vector from an array.
 pub fn Array::from_fixed_array[T](arr : FixedArray[T]) -> Array[T] {
   let len = arr.length()
@@ -239,7 +234,7 @@ pub fn append[T](self : Array[T], other : Array[T]) -> Unit {
 ///
 /// # Example
 /// ```
-/// let v = Array::with_capacity(3)
+/// let v = Array::new(3)
 /// v.push(3)
 /// v.push(4)
 /// v.push(5)
@@ -262,7 +257,7 @@ pub fn iter_rev[T](self : Array[T], f : (T) -> Unit) -> Unit {
 ///
 /// # Example
 /// ```
-/// let v = Array::with_capacity(3)
+/// let v = Array::new(3)
 /// v.push(3)
 /// v.push(4)
 /// v.push(5)
@@ -701,7 +696,7 @@ pub fn flatten[T](self : Array[Array[T]]) -> Array[T] {
 /// [3, 4].repeat(2)
 /// ```
 pub fn repeat[T](self : Array[T], times : Int) -> Array[T] {
-  let v = Array::with_capacity(self.length() * times)
+  let v = Array::new(capacity=self.length() * times)
   for i = 0; i < times; i = i + 1 {
     v.append(self)
   }
@@ -841,7 +836,7 @@ pub fn chunks[T](self : Array[T], size : Int) -> Array[Array[T]] {
   let chunks = []
   let mut i = 0
   while i < self.length() {
-    let chunk = Array::with_capacity(size)
+    let chunk = Array::new(capacity=size)
     for j = 0; j < size && i < self.length(); j = j + 1 {
       chunk.push(self[i])
       i = i + 1
@@ -919,7 +914,7 @@ pub fn reserve_capacity[T](self : Array[T], capacity : Int) -> Unit {
 /// # Example
 ///
 /// ```
-/// let v = Array::with_capacity(10)
+/// let v = Array::new(10)
 /// v.push(1)
 /// v.push(2)
 /// v.push(3)

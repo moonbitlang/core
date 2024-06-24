@@ -178,7 +178,7 @@ test "grow" {
 }
 
 test "as_iter" {
-  let buf = Buffer::make(20)
+  let buf = Buffer::new(size_hint=20)
   let map = { 1: "one", 2: "two", 3: "three" }
   map.as_iter().iter(
     fn(e) {
@@ -201,14 +201,14 @@ test "iter order" {
   let m = { "one": 1 }
   m["three"] = 3
   m["two"] = 2
-  let buf = Buffer::make(0)
+  let buf = Buffer::new(size_hint=0)
   m.iter(fn(k, v) { buf.write_string("[\(k)-\(v)]") })
   inspect(buf.to_string(), content="[one-1][three-3][two-2]")?
 }
 
 test "linked list" {
   let m = {  }
-  let buf = Buffer::make(0)
+  let buf = Buffer::new(size_hint=0)
   m.debug_write(buf)
   inspect(buf, content="end")?
   m["one"] = 1
@@ -216,7 +216,7 @@ test "linked list" {
   m["three"] = 3
   m["four"] = 4
   m["five"] = 5
-  let buf = Buffer::make(0)
+  let buf = Buffer::new(size_hint=0)
   m.debug_write(buf)
   inspect(
     buf,
@@ -230,7 +230,7 @@ test "linked list" {
     ,
   )?
   m.remove("three")
-  let buf = Buffer::make(0)
+  let buf = Buffer::new(size_hint=0)
   m.debug_write(buf)
   inspect(
     buf,
@@ -243,7 +243,7 @@ test "linked list" {
     ,
   )?
   m.set("two", 20)
-  let buf = Buffer::make(0)
+  let buf = Buffer::new(size_hint=0)
   m.debug_write(buf)
   inspect(
     buf,
@@ -256,7 +256,7 @@ test "linked list" {
     ,
   )?
   m.remove("one")
-  let buf = Buffer::make(0)
+  let buf = Buffer::new(size_hint=0)
   m.debug_write(buf)
   inspect(
     buf,
@@ -268,7 +268,7 @@ test "linked list" {
     ,
   )?
   m.remove("five")
-  let buf = Buffer::make(0)
+  let buf = Buffer::new(size_hint=0)
   m.debug_write(buf)
   inspect(
     buf,
@@ -279,7 +279,7 @@ test "linked list" {
     ,
   )?
   m.remove("two")
-  let buf = Buffer::make(0)
+  let buf = Buffer::new(size_hint=0)
   m.debug_write(buf)
   inspect(
     buf,
@@ -289,7 +289,7 @@ test "linked list" {
     ,
   )?
   m.remove("four")
-  let buf = Buffer::make(0)
+  let buf = Buffer::new(size_hint=0)
   m.debug_write(buf)
   inspect(buf, content="end")?
 }

@@ -309,7 +309,7 @@ fn calc_grow_threshold(capacity : Int) -> Int {
 // Utils
 
 fn debug_entries[K : Show, V : Show](self : Map[K, V]) -> String {
-  let buf = Buffer::make(0)
+  let buf = Buffer::new()
   for i = 0; i < self.entries.length(); i = i + 1 {
     if i > 0 {
       buf.write_char(',')
@@ -404,7 +404,7 @@ pub fn as_iter[K, V](self : Map[K, V]) -> Iter[(K, V)] {
 
 /// Converts the hash map to an array.
 pub fn to_array[K, V](self : Map[K, V]) -> Array[(K, V)] {
-  let arr = Array::with_capacity(self.size)
+  let arr = Array::new(capacity=self.size)
   loop self.head {
     Some({ key, value, idx, .. }) => {
       arr.push((key, value))

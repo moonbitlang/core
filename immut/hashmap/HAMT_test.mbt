@@ -13,7 +13,7 @@
 // limitations under the License.
 
 test "HAMT::size" {
-  for i = 0, map = Map::make(); i < 20; i = i + 1, map = map.add(i, i) {
+  for i = 0, map = Map::new(); i < 20; i = i + 1, map = map.add(i, i) {
     @assertion.assert_eq(map.size(), i)?
   } else {
     @assertion.assert_eq(map.add(0, 0).size(), 20)?
@@ -21,7 +21,7 @@ test "HAMT::size" {
 }
 
 test "HAMT" {
-  let map = loop 0, Map::make() {
+  let map = loop 0, Map::new() {
     100, map => map
     i, map => continue i + 1, map.add(i, i)
   }
@@ -43,7 +43,7 @@ test "HAMT" {
 }
 
 test "HAMT::remove" {
-  let map = loop 0, Map::make() {
+  let map = loop 0, Map::new() {
     100, map => map
     i, map => continue i + 1, map.add(i, i)
   }
@@ -68,7 +68,7 @@ test "HAMT::as_iter" {
 }
 
 test "HAMT::to_string" {
-  let map = Map::make().add(1, 1).add(3, 3).add(0x0f_ff_ff_ff, 0x0f_ff_ff_ff).add(
+  let map = Map::new().add(1, 1).add(3, 3).add(0x0f_ff_ff_ff, 0x0f_ff_ff_ff).add(
     42, 42,
   )
   inspect(

@@ -913,7 +913,7 @@ pub fn as_iter[T](self : FixedArray[T]) -> Iter[T] {
 test "as_iter" {
   let arr : FixedArray[_] = [1, 2, 3, 4, 5]
   let iter = arr.as_iter()
-  let exb = Buffer::make(0)
+  let exb = Buffer::new()
   let mut i = 0
   iter.iter(
     fn(x) {

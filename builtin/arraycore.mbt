@@ -56,9 +56,13 @@ fn Array::make_uninit[T](len : Int) -> Array[T] {
   { buf: UninitializedArray::make(len), len }
 }
 
-/// Creates a new, empty vector with a specified initial capacity.
-pub fn Array::with_capacity[T](cap : Int) -> Array[T] {
-  { buf: UninitializedArray::make(cap), len: 0 }
+/// Creates a new vector.
+pub fn Array::new[T](~capacity : Int = 0) -> Array[T] {
+  if capacity == 0 {
+    []
+  } else {
+    { buf: UninitializedArray::make(capacity), len: 0 }
+  }
 }
 
 /// Returns the number of elements in the vector.

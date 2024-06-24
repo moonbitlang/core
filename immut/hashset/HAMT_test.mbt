@@ -13,7 +13,7 @@
 // limitations under the License.
 
 test "Set" {
-  let map = loop 0, Set::make() {
+  let map = loop 0, Set::new() {
     100, map => map
     i, map => continue i + 1, map.add(i)
   }
@@ -26,7 +26,7 @@ test "Set" {
 }
 
 test "Set::size" {
-  for i = 0, set = Set::make(); i < 20; i = i + 1, set = set.add(i) {
+  for i = 0, set = Set::new(); i < 20; i = i + 1, set = set.add(i) {
     @assertion.assert_eq(set.size(), i)?
   } else {
     @assertion.assert_eq(set.add(0).size(), 20)?
@@ -34,7 +34,7 @@ test "Set::size" {
 }
 
 test "Set::remove" {
-  let map = loop 0, Set::make() {
+  let map = loop 0, Set::new() {
     100, map => map
     i, map => continue i + 1, map.add(i)
   }
@@ -59,7 +59,7 @@ test "Set::as_iter" {
 }
 
 test "Set::to_string" {
-  let set = Set::make().add(1).add(3).add(0x0f_ff_ff_ff).add(42)
+  let set = Set::new().add(1).add(3).add(0x0f_ff_ff_ff).add(42)
   inspect(set, content="@immutable_hashset.Set::[3, 42, 1, 268435455]")?
 }
 
@@ -72,7 +72,7 @@ test "Set::from_array" {
 }
 
 test "Set::is_empty" {
-  let set = Set::make()
+  let set = Set::new()
   inspect(set.is_empty(), content="true")?
   let set = set.add(1)
   inspect(set.is_empty(), content="false")?
