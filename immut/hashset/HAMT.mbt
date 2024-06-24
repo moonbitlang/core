@@ -40,7 +40,7 @@ let segment_length : Int = 5
 
 let segment_mask : Int = 0b11111
 
-pub fn Set::make[T]() -> Set[T] {
+pub fn Set::new[T]() -> Set[T] {
   Empty
 }
 
@@ -233,7 +233,7 @@ pub fn to_string[T : Debug](self : Set[T]) -> String {
 }
 
 pub fn Set::from_array[T : Eq + Hash](arr : Array[T]) -> Set[T] {
-  loop arr.length(), Set::make() {
+  loop arr.length(), Set::new() {
     0, set => set
     n, set => {
       let k = arr[n - 1]
