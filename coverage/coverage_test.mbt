@@ -58,7 +58,7 @@ test "log" {
     ("foo/foo", test_counter_a),
     MCons(("foo/bar", test_counter_b), MNil),
   )
-  let buf = Buffer::make(1024)
+  let buf = Buffer::new(size_hint=1024)
   coverage_log(counters, buf)
   let result = buf.to_string()
   let expected =

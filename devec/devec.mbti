@@ -20,7 +20,7 @@ impl Devec {
   length[T](Self[T]) -> Int
   map[T, U](Self[T], (T) -> U) -> Self[U]
   mapi[T, U](Self[T], (Int, T) -> U) -> Self[U]
-  new[T]() -> Self[T]
+  new[T](~capacity : Int = ..) -> Self[T]
   of[T](FixedArray[T]) -> Self[T]
   op_equal[T : Eq](Self[T], Self[T]) -> Bool
   op_get[T](Self[T], Int) -> T
@@ -34,7 +34,6 @@ impl Devec {
   reserve_capacity[T](Self[T], Int) -> Unit
   search[T : Eq](Self[T], T) -> Int?
   shrink_to_fit[T](Self[T]) -> Unit
-  with_capacity[T](Int) -> Self[T]
 }
 
 // Traits

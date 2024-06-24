@@ -23,22 +23,17 @@ fn length[T](self : UninitializedArray[T]) -> Int {
 }
 
 /// Creates a new, empty devec.
-pub fn Devec::new[T]() -> Devec[T] {
-  Devec::{ buf: UninitializedArray::make(0), len: 0, head: 0, tail: 0 }
+pub fn Devec::new[T](~capacity : Int = 0) -> Devec[T] {
+  Devec::{ buf: UninitializedArray::make(capacity), len: 0, head: 0, tail: 0 }
 }
 
-/// Creates a new, empty devec with a specified initial capacity.
-pub fn Devec::with_capacity[T](cap : Int) -> Devec[T] {
-  Devec::{ buf: UninitializedArray::make(cap), len: 0, head: 0, tail: 0 }
-}
-
-test "with_capacity" {
-  let d : Devec[Int] = Devec::with_capacity(0)
+test "new_with_capacity" {
+  let d : Devec[Int] = Devec::new(capacity=0)
   @assertion.assert_eq(d.buf.length(), 0)?
 }
 
-test "with_capacity_non_zero" {
-  let d : Devec[Int] = Devec::with_capacity(10)
+test "new_with_capacity_non_zero" {
+  let d : Devec[Int] = Devec::new(capacity=10)
   @assertion.assert_eq(d.buf.length(), 10)?
 }
 
@@ -299,11 +294,11 @@ test "push_and_pop" {
 }
 
 test "push_realloc" {
-  let dv : Devec[Int] = Devec::with_capacity(0)
+  let dv : Devec[Int] = Devec::new()
   dv.push_front(1)
   @assertion.assert_eq(dv.pop_front(), Some(1))?
   @assertion.assert_true(dv.capacity() > 0)?
-  let dv : Devec[Int] = Devec::with_capacity(0)
+  let dv : Devec[Int] = Devec::new()
   dv.push_back(1)
   @assertion.assert_eq(dv.pop_back(), Some(1))?
   @assertion.assert_true(dv.capacity() > 0)?
@@ -596,7 +591,7 @@ pub fn reserve_capacity[T](self : Devec[T], capacity : Int) -> Unit {
 /// # Example
 ///
 /// ```
-/// let dv = Devec::with_capacity(10)
+/// let dv = Devec::new(10)
 /// dv.push_back(1)
 /// dv.push_back(2)
 /// dv.push_back(3)
@@ -630,4 +625,27 @@ pub fn as_iter[T](self : Devec[T]) -> Iter[T] {
       }
     },
   )
+}
+
+test "reserve and push" {
+  // capacity > 0, len = 0
+  let a : Devec[Int?] = Devec::new(capacity=2)
+  a.push_back(Some(1))
+  inspect(a.front(), content="Some(Some(1))")?
+  inspect(a.back(), content="Some(Some(1))")?
+  // capacity = 0, len = 0
+  let b : Devec[Int?] = Devec::new(capacity=0)
+  b.push_back(Some(1))
+  inspect(b.front(), content="Some(Some(1))")?
+  inspect(b.back(), content="Some(Some(1))")?
+  // capacity > 0, len = 0
+  let c : Devec[Int?] = Devec::new(capacity=2)
+  c.push_front(Some(1))
+  inspect(c.front(), content="Some(Some(1))")?
+  inspect(c.back(), content="Some(Some(1))")?
+  // capacity = 0, len = 0
+  let d : Devec[Int?] = Devec::new(capacity=0)
+  d.push_front(Some(1))
+  inspect(d.front(), content="Some(Some(1))")?
+  inspect(d.back(), content="Some(Some(1))")?
 }

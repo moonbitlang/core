@@ -27,7 +27,7 @@ pub fn ArgsLoc::to_string(self : ArgsLoc) -> String {
 }
 
 pub fn ArgsLoc::to_json(self : ArgsLoc) -> String {
-  let buf = Buffer::make(10)
+  let buf = Buffer::new(size_hint=10)
   buf.write_char('[')
   for i = 0; i < self.0.length(); i = i + 1 {
     if i != 0 {

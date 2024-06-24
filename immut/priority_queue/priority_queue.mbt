@@ -91,7 +91,7 @@ pub fn as_iter[T : Compare](self : ImmutablePriorityQueue[T]) -> Iter[T] {
 }
 
 test "as_iter" {
-  let buf = Buffer::make(20)
+  let buf = Buffer::new(size_hint=20)
   let v = ImmutablePriorityQueue::[1, 2, 3]
   v.as_iter().iter(fn(e) { buf.write_string("[\(e)]") })
   inspect(buf, content="[3][2][1]")?

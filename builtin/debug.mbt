@@ -19,7 +19,7 @@ pub trait Debug {
 
 /// print a value to the console using [Debug], with a tailing newline
 pub fn debug[X : Debug](x : X) -> Unit {
-  let buf = Buffer::make(10)
+  let buf = Buffer::new()
   x.debug_write(buf)
   println(buf.to_string())
 }

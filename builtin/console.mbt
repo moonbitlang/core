@@ -41,7 +41,7 @@ pub fn to_string(self : Int64) -> String {
   // The min and max value of i64 are -9223372036854775808 and 9223372036854775807,
   // so max=20 is enough.
 
-  let buf = Buffer::make(20)
+  let buf = Buffer::new(size_hint=20)
   if self < 0L {
     buf.write_char('-')
   }
@@ -69,7 +69,7 @@ pub fn to_string(self : Int) -> String {
   // The min and max value of i32 are -2147483648 and 2147483647,
   // so max=11 is enough.
 
-  let buf = Buffer::make(11)
+  let buf = Buffer::new()
   if self < 0 {
     buf.write_char('-')
   }
@@ -148,7 +148,7 @@ pub fn inspect(
   let actual = obj.to_string()
   if actual != content {
     fn repr(s : String) -> String {
-      let buf = Buffer::make(10)
+      let buf = Buffer::new()
       s.debug_write(buf)
       buf.to_string()
     }

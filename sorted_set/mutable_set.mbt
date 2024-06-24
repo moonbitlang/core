@@ -1159,7 +1159,7 @@ test "filter" {
 
 test "iter" {
   let set = MutableSet::[7, 2, 9, 4, 5, 6, 3, 8, 1]
-  let result = Buffer::make(10)
+  let result = Buffer::new(size_hint=10)
   set.iter(fn(x) { result.write_string(x.to_string()) })
   inspect(result.to_string(), content="123456789")?
   let set : MutableSet[Int] = new()
@@ -1222,11 +1222,11 @@ test "deep_clone" {
 }
 
 test "debug_write" {
-  let buf = Buffer::make(100)
+  let buf = Buffer::new(size_hint=100)
   let set = MutableSet::[1, 2, 3, 4, 5]
   set.debug_write(buf)
   inspect(buf.to_string(), content="MutableSet::[1, 2, 3, 4, 5]")?
-  let buf = Buffer::make(100)
+  let buf = Buffer::new(size_hint=100)
   let set : MutableSet[Int] = MutableSet::[]
   set.debug_write(buf)
   inspect(buf.to_string(), content="MutableSet::[]")?

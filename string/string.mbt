@@ -69,7 +69,7 @@ pub fn hash(self : String) -> Int {
 // due to cyclic dependency issue we can only test it here
 test "debug_write" {
   fn repr(s : String) {
-    let buf = Buffer::make(0)
+    let buf = Buffer::new(size_hint=0)
     s.debug_write(buf)
     buf.to_string()
   }
@@ -88,7 +88,7 @@ test "debug_write" {
 
 // test here to avlid cyclic dependency between assertion and builtin
 test "Buffer::to_bytes" {
-  let buffer = Buffer::make(16)
+  let buffer = Buffer::new(size_hint=16)
   buffer.write_string("中文")
   @assertion.assert_eq(buffer.to_bytes().to_string(), "中文")?
 }
@@ -100,7 +100,7 @@ pub fn to_array(self : String) -> Array[Char] {
       rv.push(c)
       rv
     },
-    Array::with_capacity(self.length()),
+    Array::new(capacity=self.length()),
   )
 }
 
@@ -118,7 +118,7 @@ test "to_array" {
 /// @intrinsic %string.substring
 fn unsafe_substring(str : String, start : Int, end : Int) -> String {
   let len = end - start
-  let buf = Buffer::make(len)
+  let buf = Buffer::new(size_hint=len)
   buf.write_sub_string(str, start, len)
   buf.to_string()
 }

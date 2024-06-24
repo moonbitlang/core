@@ -71,7 +71,7 @@ impl Array {
   map_inplace[T](Self[T], (T) -> T) -> Unit
   mapi[T, U](Self[T], (Int, T) -> U) -> Self[U]
   mapi_inplace[T](Self[T], (Int, T) -> T) -> Unit
-  new[T]() -> Self[T]
+  new[T](~capacity : Int = ..) -> Self[T]
   op_add[T](Self[T], Self[T]) -> Self[T]
   op_as_view[T](Self[T], ~start : Int, ~end : Int) -> ArrayView[T]
   op_equal[T : Eq](Self[T], Self[T]) -> Bool
@@ -97,7 +97,6 @@ impl Array {
   to_string[T : Show](Self[T]) -> String
   unsafe_blit[A](Self[A], Int, Self[A], Int, Int) -> Unit
   unsafe_blit_fixed[A](Self[A], Int, FixedArray[A], Int, Int) -> Unit
-  with_capacity[T](Int) -> Self[T]
 }
 
 type ArrayView
@@ -113,6 +112,7 @@ type Buffer
 impl Buffer {
   expect(Self, ~content : String = .., ~loc : SourceLoc = _, ~args_loc : ArgsLoc = _) -> Result[Unit, String]
   make(Int) -> Self
+  new(~size_hint : Int = ..) -> Self
   reset(Self) -> Unit
   to_bytes(Self) -> Bytes
   to_string(Self) -> String
