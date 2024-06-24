@@ -234,7 +234,7 @@ pub fn append[T](self : Array[T], other : Array[T]) -> Unit {
 ///
 /// # Example
 /// ```
-/// let v = Array::with_capacity(3)
+/// let v = Array::new(3)
 /// v.push(3)
 /// v.push(4)
 /// v.push(5)
@@ -257,7 +257,7 @@ pub fn iter_rev[T](self : Array[T], f : (T) -> Unit) -> Unit {
 ///
 /// # Example
 /// ```
-/// let v = Array::with_capacity(3)
+/// let v = Array::new(3)
 /// v.push(3)
 /// v.push(4)
 /// v.push(5)
@@ -914,7 +914,7 @@ pub fn reserve_capacity[T](self : Array[T], capacity : Int) -> Unit {
 /// # Example
 ///
 /// ```
-/// let v = Array::with_capacity(10)
+/// let v = Array::new(10)
 /// v.push(1)
 /// v.push(2)
 /// v.push(3)

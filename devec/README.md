@@ -15,10 +15,10 @@ let dv : Devec[Int] = Devec::new()
 let dv = Devec::[1, 2, 3, 4, 5]
 ```
 
-If you want to set the length at creation time to minimize expansion consumption, you can use `with_capacity()`.
+If you want to set the length at creation time to minimize expansion consumption, you can add parameter `capacity` to the `new()` function.
 
 ```moonbit
-let dv = Devec::with_capacity(100);
+let dv = Devec::new(capacity=10)
 ```
 
 ### Length & Capacity
@@ -50,7 +50,7 @@ println(dv.capacity()) // 10
 Also, you can use `shrink_to_fit` to shrink the capacity of the devec.
 
 ```moonbit
-let dv = Devec::with_capacity(10)
+let dv = Devec::new(capacity=10)
 dv.push_back(1)
 dv.push_back(2)
 dv.push_back(3)

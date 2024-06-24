@@ -591,7 +591,7 @@ pub fn reserve_capacity[T](self : Devec[T], capacity : Int) -> Unit {
 /// # Example
 ///
 /// ```
-/// let dv = Devec::with_capacity(10)
+/// let dv = Devec::new(10)
 /// dv.push_back(1)
 /// dv.push_back(2)
 /// dv.push_back(3)
