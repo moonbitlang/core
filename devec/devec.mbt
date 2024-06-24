@@ -64,7 +64,14 @@ pub fn Devec::of[T](arr : FixedArray[T]) -> Devec[T] {
   deq
 }
 
-/// Returns the devec of elements in the array.
+test "of" {
+  let d = Devec::of([1, 2, 3])
+  @assertion.assert_eq(d[0], 1)?
+  @assertion.assert_eq(d[1], 2)?
+  @assertion.assert_eq(d[2], 3)?
+}
+
+/// Returns the devec of elements in the vector.
 pub fn length[T](self : Devec[T]) -> Int {
   self.len
 }
@@ -104,7 +111,7 @@ fn realloc[T](self : Devec[T]) -> Unit {
 }
 
 test "realloc" {
-  let dv = Devec::[1, 2, 3, 4, 5]
+  let dv = of([1, 2, 3, 4, 5])
   @assertion.assert_eq(dv.pop_front(), Some(1))?
   @assertion.assert_eq(dv.pop_front(), Some(2))?
   @assertion.assert_eq(dv.pop_front(), Some(3))?
@@ -128,7 +135,7 @@ test "realloc" {
 ///
 /// # Example
 /// ```
-/// let dv = Devec::[1, 2, 3, 4, 5]
+/// let dv = of([1, 2, 3, 4, 5])
 /// dv.front()
 /// ```
 pub fn front[T](self : Devec[T]) -> T? {
@@ -143,7 +150,7 @@ pub fn front[T](self : Devec[T]) -> T? {
 ///
 /// # Example
 /// ```
-/// let dv = Devec::[1, 2, 3, 4, 5]
+/// let dv = of([1, 2, 3, 4, 5])
 /// dv.back()
 /// ```
 pub fn back[T](self : Devec[T]) -> T? {
@@ -155,10 +162,10 @@ pub fn back[T](self : Devec[T]) -> T? {
 }
 
 test "front_and_back" {
-  let dv = Devec::[1, 2, 3, 4, 5]
+  let dv = of([1, 2, 3, 4, 5])
   @assertion.assert_eq(dv.back(), Some(5))?
   @assertion.assert_eq(dv.front(), Some(1))?
-  let dv : Devec[Int] = Devec::[]
+  let dv : Devec[Int] = of([])
   @assertion.assert_eq(dv.back(), None)?
   @assertion.assert_eq(dv.front(), None)?
 }
@@ -169,7 +176,7 @@ test "front_and_back" {
 ///
 /// # Example
 /// ```
-/// let dv = Devec::[1, 2, 3, 4, 5]
+/// let dv = of([1, 2, 3, 4, 5])
 /// dv.push(0)
 /// ```
 pub fn push_front[T](self : Devec[T], value : T) -> Unit {
@@ -189,7 +196,7 @@ pub fn push_front[T](self : Devec[T], value : T) -> Unit {
 ///
 /// # Example
 /// ```
-/// let dv = Devec::[1, 2, 3, 4, 5]
+/// let dv = of([1, 2, 3, 4, 5])
 /// dv.push(6)
 /// ```
 pub fn push_back[T](self : Devec[T], value : T) -> Unit {
@@ -207,7 +214,7 @@ pub fn push_back[T](self : Devec[T], value : T) -> Unit {
 ///
 /// # Example
 /// ```
-/// let dv = Devec::[1, 2, 3, 4, 5]
+/// let dv = of([1, 2, 3, 4, 5])
 /// dv.pop_front_exn()
 /// ```
 /// @alert unsafe "Panic if the devec is empty."
@@ -223,7 +230,7 @@ pub fn pop_front_exn[T](self : Devec[T]) -> Unit {
 ///
 /// # Example
 /// ```
-/// let dv = Devec::[1, 2, 3, 4, 5]
+/// let dv = of([1, 2, 3, 4, 5])
 /// dv.pop_back_exn()
 /// ```
 /// @alert unsafe "Panic if the devec is empty."
@@ -239,7 +246,7 @@ pub fn pop_back_exn[T](self : Devec[T]) -> Unit {
 ///
 /// # Example
 /// ```
-/// let dv = Devec::[1, 2, 3, 4, 5]
+/// let dv = of([1, 2, 3, 4, 5])
 /// dv.pop_front()
 /// ```
 pub fn pop_front[T](self : Devec[T]) -> T? {
@@ -256,7 +263,7 @@ pub fn pop_front[T](self : Devec[T]) -> T? {
 ///
 /// # Example
 /// ```
-/// let dv = Devec::[1, 2, 3, 4, 5]
+/// let dv = of([1, 2, 3, 4, 5])
 /// dv.pop_back()
 /// ```
 pub fn pop_back[T](self : Devec[T]) -> T? {
@@ -270,7 +277,7 @@ pub fn pop_back[T](self : Devec[T]) -> T? {
 }
 
 test "push_and_pop" {
-  let dv = Devec::[1, 2, 3, 4, 5]
+  let dv = of([1, 2, 3, 4, 5])
   @assertion.assert_eq(dv.pop_back(), Some(5))?
   @assertion.assert_eq(dv.length(), 4)?
   @assertion.assert_eq(dv.back(), Some(4))?
@@ -287,7 +294,7 @@ test "push_and_pop" {
   @assertion.assert_eq(dv.length(), 6)?
   @assertion.assert_eq(dv.pop_back(), Some(8))?
   @assertion.assert_eq(dv.back(), Some(7))?
-  let dv = Devec::[1]
+  let dv = of([1])
   @assertion.assert_eq(dv.pop_front(), Some(1))?
   @assertion.assert_eq(dv.pop_front(), None)?
   @assertion.assert_eq(dv.pop_back(), None)?
@@ -310,7 +317,7 @@ test "push_realloc" {
 ///
 /// # Example
 /// ```
-/// let dv = Devec::[1, 2, 3, 4, 5]
+/// let dv = of([1, 2, 3, 4, 5])
 /// println(dv[2]) // 3
 /// ```
 /// @alert unsafe "Panic if the index is out of bounds."
@@ -334,7 +341,7 @@ pub fn op_get[T](self : Devec[T], index : Int) -> T {
 ///
 /// # Example
 /// ```
-/// let dv = Devec::[1, 2, 3, 4, 5]
+/// let dv = of([1, 2, 3, 4, 5])
 /// dv[2] = 1
 /// println(dv[2]) // 1
 /// ```
@@ -354,7 +361,7 @@ pub fn op_set[T](self : Devec[T], index : Int, value : T) -> Unit {
 }
 
 test "op_set" {
-  let dv = Devec::[1, 2, 3, 4, 5]
+  let dv = of([1, 2, 3, 4, 5])
   dv[1] = 3
   @assertion.assert_eq(dv[1], 3)?
 }
@@ -373,15 +380,15 @@ pub fn op_equal[T : Eq](self : Devec[T], other : Devec[T]) -> Bool {
 }
 
 test "op_equal" {
-  let dv1 = Devec::[1, 2, 3]
-  let dv2 = Devec::[1, 2, 3]
+  let dv1 = of([1, 2, 3])
+  let dv2 = of([1, 2, 3])
   @assertion.assert_true(dv1 == dv2)?
-  let dv1 = Devec::[1, 2, 3]
-  let dv2 = Devec::[1, 2, 3]
+  let dv1 = of([1, 2, 3])
+  let dv2 = of([1, 2, 3])
   dv2[0] = 2
   @assertion.assert_false(dv1 == dv2)?
-  let dv1 = Devec::[1, 2, 3]
-  let dv2 = Devec::[1, 2, 3]
+  let dv1 = of([1, 2, 3])
+  let dv2 = of([1, 2, 3])
   dv2.push_front(1)
   @assertion.assert_false(dv1 == dv2)?
 }
@@ -390,7 +397,7 @@ test "op_equal" {
 ///
 /// # Example
 /// ```
-/// let dv = Devec::[1, 2, 3, 4, 5]
+/// let dv = of([1, 2, 3, 4, 5])
 /// let mut sum = 0
 /// dv.iter(fn (x) {sum = sum + x})
 /// ```
@@ -404,7 +411,7 @@ pub fn iter[T](self : Devec[T], f : (T) -> Unit) -> Unit {
 ///
 /// # Example
 /// ```
-/// let dv = Devec::[1, 2, 3, 4, 5]
+/// let dv = of([1, 2, 3, 4, 5])
 /// let mut idx_sum = 0
 /// dv.iteri(fn (i, x) {idx_sum = idx_sum + i})
 /// ```
@@ -418,7 +425,7 @@ pub fn iteri[T](self : Devec[T], f : (Int, T) -> Unit) -> Unit {
 ///
 /// # Example
 /// ```
-/// let dv = Devec::[1, 2, 3, 4, 5]
+/// let dv = of([1, 2, 3, 4, 5])
 /// let mut sum = 0
 /// dv.iter_rev(fn (x) {sum = sum + x})
 /// ```
@@ -432,7 +439,7 @@ pub fn iter_rev[T](self : Devec[T], f : (T) -> Unit) -> Unit {
 ///
 /// # Example
 /// ```
-/// let dv = Devec::[1, 2, 3, 4, 5]
+/// let dv = of([1, 2, 3, 4, 5])
 /// let mut idx_sum = 0
 /// dv.iter_revi(fn (i, x) {idx_sum = idx_sum + i})
 /// ```
@@ -458,7 +465,7 @@ pub fn clear[T](self : Devec[T]) -> Unit {
 }
 
 test "clear" {
-  let dv = Devec::[3, 4, 5]
+  let dv = of([3, 4, 5])
   dv.clear()
   @assertion.assert_eq(dv.length(), 0)?
   @assertion.assert_eq(dv.capacity(), 3)?
@@ -468,12 +475,12 @@ test "clear" {
 ///
 /// # Example
 /// ```
-/// let dv = Devec::[3, 4, 5]
-/// dv.map(fn (x) {x + 1}) // Devec::[4, 5, 6]
+/// let dv = of([3, 4, 5])
+/// dv.map(fn (x) {x + 1}) // of([4, 5, 6])
 /// ```
 pub fn map[T, U](self : Devec[T], f : (T) -> U) -> Devec[U] {
   if self.len == 0 {
-    Devec::[]
+    of([])
   } else {
     let buf : UninitializedArray[U] = UninitializedArray::make(self.len)
     for i = 0; i < self.len; i = i + 1 {
@@ -484,7 +491,7 @@ pub fn map[T, U](self : Devec[T], f : (T) -> U) -> Devec[U] {
 }
 
 test "map" {
-  let dv = Devec::[3, 4, 5]
+  let dv = of([3, 4, 5])
   let dvp = dv.map(fn(x) { x + 1 })
   @assertion.assert_eq(dvp[0], 4)?
   @assertion.assert_eq(dvp[1], 5)?
@@ -495,12 +502,12 @@ test "map" {
 ///
 /// # Example
 /// ```
-/// let dv = Devec::[3, 4, 5]
-/// dv.mapi(fn (i, x) {x + i}) // Devec::[3, 5, 7]
+/// let dv = of([3, 4, 5])
+/// dv.mapi(fn (i, x) {x + i}) // of([3, 5, 7])
 /// ```
 pub fn mapi[T, U](self : Devec[T], f : (Int, T) -> U) -> Devec[U] {
   if self.len == 0 {
-    Devec::[]
+    of([])
   } else {
     let buf : UninitializedArray[U] = UninitializedArray::make(self.len)
     for i = 0; i < self.len; i = i + 1 {
