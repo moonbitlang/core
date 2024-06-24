@@ -189,3 +189,15 @@ fn grow[K : Hash + Eq, V](self : HashMap[K, V]) -> Unit {
     }
   }
 }
+
+pub fn of[K : Eq + Hash, V](arr : FixedArray[(K, V)]) -> HashMap[K, V] {
+  let m = new(capacity=arr.length())
+  arr.iter(fn(e) { m.set(e.0, e.1) })
+  m
+}
+
+test "of" {
+  let m = of([(1, 2), (3, 4)])
+  inspect(m.get(1), content="Some(2)")?
+  inspect(m.get(3), content="Some(4)")?
+}
