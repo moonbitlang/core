@@ -26,3 +26,17 @@ pub fn to_string[X : Show](self : X?) -> String {
     Some(x) => "Some(" + x.to_string() + ")"
   }
 }
+
+/// Extract the value in `Some`.
+/// Panic if input is `None`.
+pub fn unwrap[X](self : X?) -> X {
+  match self {
+    None => panic()
+    Some(x) => x
+  }
+}
+
+test "panic" {
+  let _ : Int = Option::None.unwrap()
+
+}
