@@ -82,7 +82,12 @@ fn as_iter[T](self : Bucket[T]) -> Iter[T] {
       f =>
         loop self {
           Just_One(k) => f(k)
-          More(k, rest) => if f(k) { continue rest } else { false }
+          More(k, rest) =>
+            if f(k) == IterContinue {
+              continue rest
+            } else {
+              IterEnd
+            }
         }
     },
   )

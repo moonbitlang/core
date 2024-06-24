@@ -235,7 +235,7 @@ test "collect" {
       for i = 0, len = arr.length(); i < len; i = i + 1 {
         yield(arr[i]) |> ignore
       }
-      true
+      IterContinue
     },
   )
   let vec = iter.collect()
@@ -297,11 +297,11 @@ fn test_from_array[T](arr : Array[T]) -> Iter[T] {
     fn {
       yield =>
         for i = 0; i < arr.length(); i = i + 1 {
-          if yield(arr[i]).not() {
-            break false
+          if yield(arr[i]) == IterEnd {
+            break IterEnd
           }
         } else {
-          true
+          IterContinue
         }
     },
   )

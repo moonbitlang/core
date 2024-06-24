@@ -39,13 +39,13 @@ pub fn as_iter[K, V](self : HashMap[K, V]) -> Iter[(K, V)] {
       for i = 0; i < len; i = i + 1 {
         match self.entries[i] {
           Some({ key, value, .. }) =>
-            if yield((key, value)).not() {
-              break false
+            if yield((key, value)) == IterEnd {
+              break IterEnd
             }
           None => continue
         }
       } else {
-        true
+        IterContinue
       }
     },
   )

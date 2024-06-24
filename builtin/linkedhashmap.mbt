@@ -397,12 +397,12 @@ pub fn as_iter[K, V](self : Map[K, V]) -> Iter[(K, V)] {
     fn(yield) {
       loop self.head {
         Some({ key, value, idx, .. }) => {
-          if yield((key, value)).not() {
-            break false
+          if yield((key, value)) == IterEnd {
+            break IterEnd
           }
           continue self.list[idx].next
         }
-        None => break true
+        None => break IterContinue
       }
     },
   )
