@@ -316,6 +316,7 @@ impl Option {
   debug_write[X : Debug](X?, Buffer) -> Unit
   op_equal[X : Eq](X?, X?) -> Bool
   to_string[X : Show](X?) -> String
+  unwrap[X](X?) -> X
 }
 impl Result {
   debug_write[T : Debug, E : Debug](Self[T, E], Buffer) -> Unit
