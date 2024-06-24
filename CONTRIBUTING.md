@@ -89,4 +89,9 @@ After submitting your pull request, request a review from the project maintainer
    The core library is coupled with the compiler to some extent, it is better to communicate your ideas first if you 
    plan to make large structural changes.  
 
-  
+# Naming conventions
+
+- function names, `snake_case` is preferred.
+- type paramaters, one character starting from `A` is preferred, e.g, `fn map[A,B](self : Array[A], f : (A) -> (B)) -> Array[B]`, for some established
+  conventions, `Map[K,V]` it is also accepted.
+- type names, `CamlCase` is preferred, if one package is centered around one specific type, short name `T` is preferred, e.g, `@sorted_set.T`.
