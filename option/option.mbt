@@ -336,7 +336,7 @@ pub fn as_iter[T](self : T?) -> Iter[T] {
 
 test "as_iter" {
   let x = Option::Some(42)
-  let exb = Buffer::make(0)
+  let exb = Buffer::new(size_hint=0)
   x.as_iter().iter(
     fn(x) {
       exb.write_string(x.to_string())

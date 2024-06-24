@@ -189,7 +189,7 @@ test "debug_write" {
   let tuple3 = ("a", "b", "c")
   let tuple4 = (1, 2, 3, "hello")
   let tuple5 = ([1], "2", 3, ([4] : Array[_]), 5)
-  let buf = Buffer::make(0)
+  let buf = Buffer::new(size_hint=0)
   tuple2.debug_write(buf)
   inspect(buf, content="(1, 2)")?
   buf.reset()

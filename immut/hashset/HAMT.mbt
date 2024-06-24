@@ -227,7 +227,7 @@ pub fn debug_write[T : Debug](self : Set[T], buf : Buffer) -> Unit {
 }
 
 pub fn to_string[T : Debug](self : Set[T]) -> String {
-  let buf = Buffer::make(0)
+  let buf = Buffer::new(size_hint=0)
   self.debug_write(buf)
   buf.to_string()
 }

@@ -20,7 +20,7 @@
 /// # Usage
 ///
 /// ```
-/// let buf = Buffer::make(100)
+/// let buf = Buffer::new(size_hint=100)
 /// buf.write_string("Tes")
 /// buf.write_char("t")
 /// println(buf.to_string()) // output: Test
@@ -41,7 +41,7 @@ pub fn expect(
   self.reset()
   if current != content {
     fn repr(s : String) -> String {
-      let buf = Buffer::make(10)
+      let buf = Buffer::new()
       s.debug_write(buf)
       buf.to_string()
     }
@@ -80,9 +80,15 @@ pub fn to_string(self : Buffer) -> String {
   self.bytes.sub_string(0, self.len)
 }
 
-/// Create a buffer with initial capacity.
+/// Create a buffer with initial capacity. 
+/// This function is deprecated, use `Buffer::new` instead.
 pub fn Buffer::make(initial_capacity : Int) -> Buffer {
-  let initial = if initial_capacity < 1 { 1 } else { initial_capacity }
+  Buffer::new(size_hint=initial_capacity)
+}
+
+/// Create a buffer with initial capacity.
+pub fn Buffer::new(~size_hint : Int = 0) -> Buffer {
+  let initial = if size_hint < 1 { 1 } else { size_hint }
   let bytes = Bytes::make(initial)
   { bytes, len: 0, initial_bytes: bytes }
 }

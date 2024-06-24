@@ -126,7 +126,7 @@ fn escape_to(s : String, buf : Buffer) -> Unit {
 /// This method only escapes characters below 0x20 and the following characters:
 /// `"`, `'`, `\`.
 pub fn escape(s : String) -> String {
-  let buf = Buffer::make(s.length())
+  let buf = Buffer::new(size_hint=s.length())
   escape_to(s, buf)
   buf.to_string()
 }

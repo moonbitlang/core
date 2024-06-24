@@ -410,7 +410,7 @@ test "shrink_to_fit_2" {
 }
 
 test "as_iter" {
-  let buf = Buffer::make(5)
+  let buf = Buffer::new(size_hint=5)
   [1, 2, 3, 4, 5].as_iter().iter(fn { x => buf.write_string(x.to_string()) })
   inspect(buf, content="12345")?
   buf.reset()

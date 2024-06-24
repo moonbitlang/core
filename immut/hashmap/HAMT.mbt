@@ -236,7 +236,7 @@ pub fn debug_write[K : Debug, V : Debug](
 }
 
 pub fn to_string[K : Debug, V : Debug](self : Map[K, V]) -> String {
-  let buf = Buffer::make(0)
+  let buf = Buffer::new(size_hint=0)
   self.debug_write(buf)
   buf.to_string()
 }

@@ -71,7 +71,7 @@ test "shrink_to_fit_2" {
 test "as_iter" {
   let dv = @devec.of([1, 2, 3, 4, 5])
   let iter = dv.as_iter()
-  let buf = Buffer::make(0)
+  let buf = Buffer::new(size_hint=0)
   let mut i = 0
   iter.iter(
     fn(x) {

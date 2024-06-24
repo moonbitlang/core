@@ -213,7 +213,7 @@ test "symmetric_difference" {
 }
 
 test "as_iter" {
-  let buf = Buffer::make(20)
+  let buf = Buffer::new(size_hint=20)
   let map = of(["a", "b", "c"])
   map.as_iter().iter(fn(e) { buf.write_string("[\(e)]") })
   inspect(buf, content="[a][b][c]")?
