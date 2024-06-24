@@ -322,15 +322,6 @@ test "compare" {
   @assertion.assert_eq(1, some2.compare(none))?
 }
 
-/// Extract the value in `Some`.
-/// Panic if input is `None`.
-pub fn unwrap[X](self : X?) -> X {
-  match self {
-    None => abort("called `Option::unwrap()` on a `None` value")
-    Some(x) => x
-  }
-}
-
 /// `None`
 pub fn Option::default[X]() -> X? {
   None
