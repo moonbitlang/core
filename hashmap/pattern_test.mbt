@@ -13,7 +13,7 @@
 // limitations under the License.
 
 test "pattern" {
-  let m = HashMap::[("name", "John Doe"), ("age", "43"), ("is_human", "true")]
+  let m = of([("name", "John Doe"), ("age", "43"), ("is_human", "true")])
   let { "name": name, "age": age, "is_human": is_human } = m
   inspect(
     (name, age, is_human),
