@@ -124,7 +124,7 @@ impl Buffer {
 
 type Iter
 impl Iter {
-  _unstable_internal_make[T](((T) -> Bool) -> Bool) -> Self[T]
+  _unstable_internal_make[T](((T) -> IterResult) -> IterResult) -> Self[T]
   append[T](Self[T], T) -> Self[T]
   collect[T](Self[T]) -> Array[T]
   concat[T](Self[T], Self[T]) -> Self[T]
@@ -148,7 +148,10 @@ impl Iter {
   to_array[T](Self[T]) -> Array[T]
 }
 
-type IterResult
+pub enum IterResult {
+  IterContinue
+  IterEnd
+}
 impl IterResult {
   op_equal(Self, Self) -> Bool
 }
