@@ -15,7 +15,7 @@
 // Types
 type Iter[T] ((T) -> IterResult) -> IterResult
 
-enum IterResult {
+pub enum IterResult {
   IterContinue // true
   IterEnd // false
 } derive(Eq)
@@ -98,28 +98,11 @@ pub fn count[T](self : Iter[T]) -> Int {
 
 // Producers
 
-fn iter_result_of_bool(b : Bool) -> IterResult {
-  if b {
-    IterContinue
-  } else {
-    IterEnd
-  }
-}
-
-fn bool_of_iter_result(r : IterResult) -> Bool {
-  match r {
-    IterContinue => true
-    IterEnd => false
-  }
-}
-
 /// Do not use this method, it is for internal use only.
-pub fn Iter::_unstable_internal_make[T](f : ((T) -> Bool) -> Bool) -> Iter[T] {
-  Iter(
-    fn {
-      yield => iter_result_of_bool(f(fn { x => bool_of_iter_result(yield(x)) }))
-    },
-  )
+pub fn Iter::_unstable_internal_make[T](
+  f : ((T) -> IterResult) -> IterResult
+) -> Iter[T] {
+  Iter(fn { yield => f(fn { x => yield(x) }) })
 }
 
 /// Creates an empty iterator.
