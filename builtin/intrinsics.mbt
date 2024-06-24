@@ -18,7 +18,10 @@ pub fn physical_equal[T](a : T, b : T) -> Bool = "%refeq"
 
 pub fn print_string(s : String) -> Unit = "%print_string"
 
-pub fn abort[T](msg : String) -> T = "%abort"
+pub fn abort[T](msg : String) -> T {
+  ignore(msg)
+  panic()
+}
 
 pub fn panic[T]() -> T = "%panic"
 
