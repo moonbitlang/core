@@ -23,7 +23,7 @@ fn test_sort(f : (Array[Int]) -> Unit) -> Result[Unit, String] {
   f(arr)
   @assertion.assert_eq(arr, [1, 2, 3, 4, 5])?
   {
-    let arr = with_capacity(1000)
+    let arr = Array::new(capacity=1000)
     for i = 0; i < 1000; i = i + 1 {
       arr.push(1000 - i - 1)
     }
@@ -31,7 +31,7 @@ fn test_sort(f : (Array[Int]) -> Unit) -> Result[Unit, String] {
       arr.swap(i, i - 1)
     }
     f(arr)
-    let expected = with_capacity(1000)
+    let expected = Array::new(capacity=1000)
     for i = 0; i < 1000; i = i + 1 {
       expected.push(i)
     }

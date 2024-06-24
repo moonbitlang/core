@@ -103,7 +103,7 @@ test "iter" {
 }
 
 test "iter_rev" {
-  let v = with_capacity(3)
+  let v = Array::new(capacity=3)
   v.push(3)
   v.push(4)
   v.push(5)
@@ -395,7 +395,7 @@ test "reserve_capacity_2" {
 }
 
 test "shrink_to_fit" {
-  let v = with_capacity(10)
+  let v = Array::new(capacity=10)
   v.push(1)
   v.push(2)
   v.push(3)
