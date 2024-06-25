@@ -14,24 +14,24 @@ You can create an empty MutableSet or a MutableSet from other containers.
 let set1 : MutableSet[Int] = MutableSet::new()
 let set2 = MutableSet::singleton(1)
 let set4 = MutableSet::from_array([1])
-let set5= MutableSet::[1]
+let set5= of([1])
 ```
 ### Container Operations
 
 Add an element to the MutableSet in place.
 
 ```moonbit
-let set = MutableSet::[1, 2, 3, 4]
+let set = of([1, 2, 3, 4])
 set.add(5) // ()
-set.to_string() // MutableSet::[1, 2, 3, 4, 5]
+set.to_string() // of([1, 2, 3, 4, 5])
 ```
 
 Remove an element from the MutableSet in place.
 
 ```moonbit
-let set = MutableSet::[3, 8, 1] 
+let set = of([3, 8, 1]) 
 set.remove(8) // () 
-set.to_string() // MutableSet::[1, 3]
+set.to_string() // of([1, 3])
 ```
 
 Whether an element is in the set.
@@ -45,21 +45,21 @@ set.contains(5) // false
 Iterates over the elements in the set.
 
 ```moonbit
-MutableSet::[1, 2, 3, 4].iter(print) // output: 1234
+of([1, 2, 3, 4]).iter(print) // output: 1234
 ```
 
 Delete all elements of the set that filter returns false. It is done in place.
 
 ```moonbit
-let set = MutableSet::[1, 2, 3, 4, 5, 6]
+let set = of([1, 2, 3, 4, 5, 6])
 set.filter(fn(v) { v % 2 == 0}) // ()
-set.to_string() // MutableSet::[2, 4, 6]
+set.to_string() // of([2, 4, 6])
 ```
 
 Get the size of the set.
 
 ```moonbit
-MutableSet::[1, 2, 3, 4].size() // 4
+of([1, 2, 3, 4]).size() // 4
 ```
 
 Whether the set is empty.
@@ -73,18 +73,18 @@ MutableSet::new().is_empty() // true
 Union, intersection and difference of two sets. They return a new set that does not overlap with the original sets in memory.
 
 ```moonbit
-let set1 = MutableSet::[3, 4, 5]
-let set2 = MutableSet::[4, 5, 6]
-set1.union(set2) // MutableSet::[3, 4, 5, 6]
-set1.inter(set2) // MutableSet::[4, 5]
-set1.diff(set2) // MutableSet::[3]
+let set1 = of([3, 4, 5])
+let set2 = of([4, 5, 6])
+set1.union(set2) // of([3, 4, 5, 6])
+set1.inter(set2) // of([4, 5])
+set1.diff(set2) // of([3])
 ```
 
 Determine the inclusion and separation relationship between two sets.
 
 ```moonbit
-MutableSet::[1, 2, 3].subset(MutableSet::[7, 2, 9, 4, 5, 6, 3, 8, 1]) // true
-MutableSet::[1, 2, 3].disjoint(MutableSet::[4, 5, 6]) // true
+of([1, 2, 3]).subset(of([7, 2, 9, 4, 5, 6, 3, 8, 1])) // true
+of([1, 2, 3]).disjoint(of([4, 5, 6])) // true
 ```
 
 ### Stringify
@@ -92,8 +92,8 @@ MutableSet::[1, 2, 3].disjoint(MutableSet::[4, 5, 6]) // true
 MutableSet implements to_string (i.e. Show trait), which allows you to directly output it.
 
 ```moonbit
-println(MutableSet::[1, 2, 3]) // output MutableSet::[1, 2, 3]
-MutableSet::[1, 2, 3].to_string() // "MutableSet::[1, 2, 3]"
+println(of([1, 2, 3]) // output of([1, 2, 3]))
+of([1, 2, 3]).to_string() // "MutableSet::[1, 2, 3]"
 ```
 
 ### TODO
