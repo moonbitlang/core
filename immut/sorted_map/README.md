@@ -18,7 +18,7 @@ let map2 = singleton("a", 1)
 Also, you can construct it from an array using `from_array()`.
 
 ```moonbit
-let map = Map::[("a", 1), ("b", 2), ("c", 3)]
+let map = of([("a", 1), ("b", 2), ("c", 3)])
 ```
 
 ### Insert & Lookup
@@ -36,7 +36,7 @@ map.lookup("a") // 1
 You can use `remove()` to remove a key-value pair from the map.
 
 ```moonbit
-let map = Map::[("a", 1), ("b", 2), ("c", 3)]
+let map = of([("a", 1), ("b", 2), ("c", 3)])
 let map = map.remove("a")
 ```
 
@@ -45,7 +45,7 @@ let map = map.remove("a")
 You can use `contains()` to check whether a key exists.
 
 ```moonbit
-let map = Map::[("a", 1), ("b", 2), ("c", 3)]
+let map = of([("a", 1), ("b", 2), ("c", 3)])
 map.contains("a") // true
 map.contains("d") // false
 ```
@@ -55,7 +55,7 @@ map.contains("d") // false
 You can use `size()` to get the number of key-value pairs in the map.
 
 ```moonbit
-let map = Map::[("a", 1), ("b", 2), ("c", 3)]
+let map = of([("a", 1), ("b", 2), ("c", 3)])
 map.size() // 3
 ```
 
@@ -71,7 +71,7 @@ map.is_empty() // true
 Use `iter()` or `iteri()` to iterate through all key-value pairs.
 
 ```moonbit
-let map = Map::[("a", 1), ("b", 2), ("c", 3)]
+let map = of([("a", 1), ("b", 2), ("c", 3)])
 map.iter(fn(k, v) { println(\(k)-\(v)) })
 map.iteri(fn(i, k, v) { println(\(i)-\(k)-\(v)) })
 ```
@@ -79,7 +79,7 @@ map.iteri(fn(i, k, v) { println(\(i)-\(k)-\(v)) })
 Use `map()` or `map_with_key()` to map a function over all values.
 
 ```moonbit
-let map = Map::[("a", 1), ("b", 2), ("c", 3)]
+let map = of([("a", 1), ("b", 2), ("c", 3)])
 let map = map.map(fn(v) { v + 1 })
 let map = map.map_with_key(fn(_k, v) { v + 1 })
 ```
@@ -88,7 +88,7 @@ Use `fold()` or `foldl_with_key()` to fold the values in the map. The default or
 Similarly, you can use `foldr_with_key()` to do a Post-order fold.
 
 ```moonbit
-let map = Map::[("a", 1), ("b", 2), ("c", 3)]
+let map = of([("a", 1), ("b", 2), ("c", 3)])
 map.fold(fn (acc, v) { acc + v }, ~init=0) // 6
 map.foldl_with_key(fn (acc, k, v) { acc + k + v.to_string() }, ~init="") // "a1b2c3"
 map.foldr_with_key(fn (acc, k, v) { acc + k + v.to_string() }, ~init="") // "c3b2a1"
@@ -97,7 +97,7 @@ map.foldr_with_key(fn (acc, k, v) { acc + k + v.to_string() }, ~init="") // "c3b
 Use `filter()` or `filter_with_key()` to filter all keys/values that satisfy the predicate.
 
 ```moonbit
-let map = Map::[("a", 1), ("b", 2), ("c", 3)]
+let map = of([("a", 1), ("b", 2), ("c", 3)])
 let map = map.filter(fn (v) { v > 1 })
 let map = map.filter_with_key(fn (k, v) { k > "a" && v > 1 })
 ```
@@ -107,14 +107,14 @@ let map = map.filter_with_key(fn (k, v) { k > "a" && v > 1 })
 Use `elems()` to get all values in ascending order of their keys.
 
 ```moonbit
-let map = Map::[("a", 1), ("b", 2), ("c", 3)]
+let map = of([("a", 1), ("b", 2), ("c", 3)])
 let elems = map.elems() // [1, 2, 3]
 ```
 
 Use `keys()` to get all keys of the map in ascending order.
 
 ```moonbit
-let map = Map::[("a", 1), ("b", 2), ("c", 3)]
+let map = of([("a", 1), ("b", 2), ("c", 3)])
 let keys = map.keys() // ["a", "b", "c"]
 ```
 

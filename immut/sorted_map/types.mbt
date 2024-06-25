@@ -23,7 +23,7 @@
 /// # Example
 ///
 /// ```
-/// let map1 = Map::[(3, "three"), (8, "eight"), (1, "one")]
+/// let map1 = of([(3, "three"), (8, "eight"), (1, "one")])
 /// let map2 = map1.insert(2, "two").remove(3)
 /// println(map3.lookup(3)) // output: None
 /// println(map3.lookup(2)) // output: Some("two")
