@@ -233,3 +233,12 @@ pub fn keys[K, V](self : Map[K, V]) -> Array[K] {
 pub fn elems[K, V](self : Map[K, V]) -> Array[V] {
   self.as_iter().map(fn { (_, v) => v }).collect()
 }
+
+pub fn Map::of[K : Compare, V](array : FixedArray[(K, V)]) -> Map[K, V] {
+  for i = 0, mp = Map::Empty; i < array.length(); {
+    let (k, v) = array[i]
+    continue i + 1, mp.insert(k, v)
+  } else {
+    mp
+  }
+}
