@@ -93,6 +93,8 @@ pub fn Int::to_double(self : Int) -> Double = "%i32_to_f64"
 
 pub fn Int::trunc_double_u(val : Double) -> Int = "%f64_to_i32_u"
 
+pub fn Int::to_uint(self : Int) -> UInt = "%i32.to_u32_reinterpret"
+
 // Double primitive ops
 
 pub fn Double::op_neg(self : Double) -> Double = "%f64_neg"
@@ -196,3 +198,22 @@ pub fn Byte::to_int(self : Byte) -> Int = "%byte_to_int"
 pub fn Byte::to_int64(self : Byte) -> Int64 {
   self.to_int().to_int64()
 }
+
+// UInt primitive
+pub fn UInt::to_int(self : UInt) -> Int = "%u32.to_i32_reinterpret"
+
+pub fn UInt::op_add(self : UInt, other : UInt) -> UInt = "%u32.add"
+
+pub fn UInt::op_sub(self : UInt, other : UInt) -> UInt = "%u32.sub"
+
+pub fn UInt::op_mul(self : UInt, other : UInt) -> UInt = "%u32.mul"
+
+pub fn UInt::op_div(self : UInt, other : UInt) -> UInt = "%u32.div"
+
+pub fn UInt::op_mod(self : UInt, other : UInt) -> UInt = "%u32.mod"
+
+pub fn UInt::op_equal(self : UInt, other : UInt) -> Bool = "%u32.eq"
+
+pub fn UInt::op_neq(self : UInt, other : UInt) -> Bool = "%u32.ne"
+
+pub fn UInt::compare(self : UInt, other : UInt) -> Int = "%u32.compare"
