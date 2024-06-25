@@ -18,8 +18,8 @@ test "new" {
 }
 
 test "from_array_1" {
-  let queue : Queue[Int] = Queue::[1, 2, 3, 4]
-  let queue2 : Queue[Int] = Queue::[1]
+  let queue : Queue[Int] = of([1, 2, 3, 4])
+  let queue2 : Queue[Int] = of([1])
   @assertion.assert_eq(queue.length, 4)?
   @assertion.assert_eq(queue.pop_exn(), 1)?
   @assertion.assert_eq(queue.pop_exn(), 2)?
@@ -30,7 +30,7 @@ test "from_array_1" {
 }
 
 test "from_array_2" {
-  let q = Queue::[1, 2, 3, 4]
+  let q = of([1, 2, 3, 4])
   q.push(11)
   @assertion.assert_eq(q, Queue::[1, 2, 3, 4, 11])?
   q.pop_exn() |> ignore
@@ -38,12 +38,12 @@ test "from_array_2" {
 }
 
 test "from_array_3" {
-  let q : Queue[Int] = Queue::[]
+  let q : Queue[Int] = of([])
   inspect(q, content="Queue::[]")?
 }
 
 test "to_string" {
-  let queue : Queue[Int] = Queue::[1, 2, 3, 4]
+  let queue : Queue[Int] = of([1, 2, 3, 4])
   inspect(queue, content="Queue::[1, 2, 3, 4]")?
   queue.push(11)
   inspect(queue, content="Queue::[1, 2, 3, 4, 11]")?
@@ -52,9 +52,9 @@ test "to_string" {
 }
 
 test "op_equal" {
-  let queue : Queue[Int] = Queue::[1, 2, 3, 4]
-  let queue2 : Queue[Int] = Queue::[1, 2, 3, 4]
-  let queue3 : Queue[Int] = Queue::[1, 2, 3, 5]
+  let queue : Queue[Int] = of([1, 2, 3, 4])
+  let queue2 : Queue[Int] = of([1, 2, 3, 4])
+  let queue3 : Queue[Int] = of([1, 2, 3, 5])
   @assertion.assert_true(queue == queue2)?
   @assertion.assert_false(queue == queue3)?
   queue.pop_exn() |> ignore
@@ -63,7 +63,7 @@ test "op_equal" {
 }
 
 test "clear" {
-  let queue : Queue[Int] = Queue::[1, 2, 3, 4]
+  let queue : Queue[Int] = of([1, 2, 3, 4])
   @assertion.assert_eq(queue.length, 4)?
   queue.clear()
   @assertion.assert_eq(queue.length, 0)?
@@ -90,7 +90,7 @@ test "push" {
 }
 
 test "peek_exn" {
-  let queue : Queue[Int] = Queue::[1, 2, 3, 4]
+  let queue : Queue[Int] = of([1, 2, 3, 4])
   @assertion.assert_eq(queue.peek_exn(), 1)?
   @assertion.assert_eq(queue.length, 4)?
   @assertion.assert_eq(queue.pop_exn(), 1)?
@@ -99,14 +99,14 @@ test "peek_exn" {
 }
 
 test "peek" {
-  let queue : Queue[Int] = Queue::[1, 2, 3, 4]
+  let queue : Queue[Int] = of([1, 2, 3, 4])
   @assertion.assert_eq(queue.peek(), Some(1))?
   queue.clear()
   @assertion.assert_eq(queue.peek(), None)?
 }
 
 test "pop_exn" {
-  let queue : Queue[Int] = Queue::[1, 2, 3, 4]
+  let queue : Queue[Int] = of([1, 2, 3, 4])
   @assertion.assert_eq(queue.pop_exn(), 1)?
   @assertion.assert_eq(queue.pop_exn(), 2)?
   @assertion.assert_eq(queue.pop_exn(), 3)?
@@ -115,7 +115,7 @@ test "pop_exn" {
 }
 
 test "pop" {
-  let queue : Queue[Int] = Queue::[1, 2, 3, 4]
+  let queue : Queue[Int] = of([1, 2, 3, 4])
   @assertion.assert_eq(queue.pop(), Some(1))?
   @assertion.assert_eq(queue.pop(), Some(2))?
   @assertion.assert_eq(queue.pop(), Some(3))?
@@ -157,7 +157,7 @@ test "fold" {
 }
 
 test "copy" {
-  let queue : Queue[Int] = Queue::[1, 2, 3, 4]
+  let queue : Queue[Int] = of([1, 2, 3, 4])
   let queue2 : Queue[Int] = queue.copy()
   @assertion.assert_eq(queue2.length, 4)?
   @assertion.assert_eq(queue2, Queue::[1, 2, 3, 4])?
@@ -166,8 +166,8 @@ test "copy" {
 }
 
 test "transfer" {
-  let queue : Queue[Int] = Queue::[1, 2, 3, 4]
-  let queue2 : Queue[Int] = Queue::[5, 6, 7, 8]
+  let queue : Queue[Int] = of([1, 2, 3, 4])
+  let queue2 : Queue[Int] = of([5, 6, 7, 8])
   queue.transfer(queue2)
   @assertion.assert_eq(queue.length, 0)?
   @assertion.assert_eq(queue2.length, 8)?
@@ -179,12 +179,12 @@ test "cell_equal" {
 }
 
 test "length" {
-  let empty : Queue[Unit] = Queue::[]
+  let empty : Queue[Unit] = of([])
   inspect(empty.length(), content="0")?
   inspect(Queue::[1, 2, 3].length(), content="3")?
 }
 
 test "as_iter" {
-  let q = Queue::[1, 2, 3, 4, 5]
+  let q = of([1, 2, 3, 4, 5])
   inspect(q.as_iter().fold(fn(x, y) { x + y }, 0), content="15")?
 }

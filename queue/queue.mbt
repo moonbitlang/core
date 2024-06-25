@@ -82,7 +82,7 @@ fn op_equal[T : Eq](self : Queue[T], other : Queue[T]) -> Bool {
 ///
 /// # Example
 /// ```
-/// let queue : Queue[Int] = Queue::[1, 2, 3, 4]
+/// let queue : Queue[Int] = of([1, 2, 3, 4])
 /// queue.clear()
 /// ```
 pub fn clear[T](self : Queue[T]) -> Unit {
@@ -139,7 +139,7 @@ pub fn push[T](self : Queue[T], x : T) -> Unit {
 ///
 /// # Example
 /// ```
-/// let queue : Queue[Int] = Queue::[1, 2, 3, 4]
+/// let queue : Queue[Int] = of([1, 2, 3, 4])
 /// let first = queue.peek_exn()
 /// ```
 /// @alert unsafe "Panics if the queue is empty."
@@ -154,7 +154,7 @@ pub fn peek_exn[T](self : Queue[T]) -> T {
 ///
 /// # Example
 /// ```
-/// let queue : Queue[Int] = Queue::[1, 2, 3, 4]
+/// let queue : Queue[Int] = of([1, 2, 3, 4])
 /// let first = queue.peek()
 /// ```
 pub fn peek[T](self : Queue[T]) -> T? {
@@ -168,7 +168,7 @@ pub fn peek[T](self : Queue[T]) -> T? {
 ///
 /// # Example
 /// ```
-/// let queue : Queue[Int] = Queue::[1, 2, 3, 4]
+/// let queue : Queue[Int] = of([1, 2, 3, 4])
 /// let first = queue.pop_exn()
 /// ```
 /// @alert unsafe "Panics if the queue is empty."
@@ -191,7 +191,7 @@ pub fn pop_exn[T](self : Queue[T]) -> T {
 ///
 /// # Example
 /// ```
-/// let queue : Queue[Int] = Queue::[1, 2, 3, 4]
+/// let queue : Queue[Int] = of([1, 2, 3, 4])
 /// let first = queue.pop()
 /// ```
 pub fn pop[T](self : Queue[T]) -> T? {
@@ -206,7 +206,7 @@ pub fn pop[T](self : Queue[T]) -> T? {
 ///
 /// # Example
 /// ```
-/// let queue : Queue[Int] = Queue::[1, 2, 3, 4]
+/// let queue : Queue[Int] = of([1, 2, 3, 4])
 /// queue.iter(fn(x) { print(x) })
 /// ```
 pub fn iter[T](self : Queue[T], f : (T) -> Unit) -> Unit {
@@ -233,7 +233,7 @@ pub fn iteri[T](self : Queue[T], f : (Int, T) -> Unit) -> Unit {
 ///
 /// # Example
 /// ```
-/// let queue : Queue[Int] = Queue::[1, 2, 3, 4]
+/// let queue : Queue[Int] = of([1, 2, 3, 4])
 /// let sum = queue.fold(0, fn(acc, x) { acc + x })
 /// ```
 pub fn fold[T](self : Queue[T], ~init : T, f : (T, T) -> T) -> T {
@@ -250,7 +250,7 @@ pub fn fold[T](self : Queue[T], ~init : T, f : (T, T) -> T) -> T {
 ///
 /// # Example
 /// ```
-/// let queue : Queue[Int] = Queue::[1, 2, 3, 4]
+/// let queue : Queue[Int] = of([1, 2, 3, 4])
 /// let queue2 : Queue[Int] = queue.copy()
 /// ```
 pub fn copy[T](self : Queue[T]) -> Queue[T] {
@@ -282,8 +282,8 @@ pub fn copy[T](self : Queue[T]) -> Queue[T] {
 ///
 /// # Example
 /// ```
-/// let queue : Queue[Int] = Queue::[1, 2, 3, 4]
-/// let queue2 : Queue[Int] = Queue::[5, 6, 7, 8]
+/// let queue : Queue[Int] = of([1, 2, 3, 4])
+/// let queue2 : Queue[Int] = of([5, 6, 7, 8])
 /// queue.transfer(queue2)
 /// ```
 pub fn transfer[T](self : Queue[T], dst : Queue[T]) -> Unit {
@@ -319,4 +319,18 @@ pub fn as_iter[T](self : Queue[T]) -> Iter[T] {
       }
     },
   )
+}
+
+pub fn Queue::of[T](arr : FixedArray[T]) -> Queue[T] {
+  if arr.length() == 0 {
+    return new()
+  }
+  let queue : Queue[T] = Queue::new()
+  queue.length = arr.length()
+  queue.last = Cons({ content: arr[queue.length - 1], next: Nil })
+  queue.first = queue.last
+  for i = arr.length() - 2; i >= 0; i = i - 1 {
+    queue.first = Cons({ content: arr[i], next: queue.first })
+  }
+  queue
 }
