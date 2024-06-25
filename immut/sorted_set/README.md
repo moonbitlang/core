@@ -16,7 +16,7 @@ You can create an empty ImmutableSet with a value separately through the followi
 let set1 : ImmutableSet[Int] = ImmutableSet::new()
 let set2 = ImmutableSet::singleton(1)
 let set4 = ImmutableSet::from_array([1])
-let set5= ImmutableSet::[1]
+let set5= of([1])
 ```
 
 ### Convert
@@ -24,9 +24,9 @@ let set5= ImmutableSet::[1]
 Instead, you can convert an ImmutableSet to a Array/Vec, which will be sorted.
 
 ```moonbit
-let set = ImmutableSet::[3, 2, 1]
+let set = of([3, 2, 1])
 set.to_array() // [1, 2, 3]
-set.to_vec() // Vec::[1, 2, 3]
+set.to_vec() // of([1, 2, 3])
 ```
 
 ### Add & Remove
@@ -34,15 +34,15 @@ set.to_vec() // Vec::[1, 2, 3]
 You can use `add` to add an element to the ImmutableSet.
 
 ```moonbit
-let set = ImmutableSet::[1, 2, 3, 4]
-set.add(5) // ImmutableSet::[1, 2, 3, 4, 5]
+let set = of([1, 2, 3, 4])
+set.add(5) // of([1, 2, 3, 4, 5])
 ```
 
 You can use `remove` to remove a specific value or use `remove_min` to remove the minimum value in the set.
 
 ```moonbit
-(ImmutableSet::[3, 8, 1]).remove(8) // ImmutableSet::[1, 3]
-(ImmutableSet::[3, 4, 5]).remove_min() // ImmutableSet::[4, 5]
+(of([3, 8, 1]).remove(8) // ImmutableSet::[1, 3])
+(of([3, 4, 5]).remove_min() // ImmutableSet::[4, 5])
 ```
 
 ### Max & Min & Contains
@@ -72,29 +72,29 @@ You can provide an intermediate value to divide a set into two sets by `split`, 
 ```moonbit
 let (left, present, right) = ImmutableSet::[7, 2, 9, 4, 5, 6, 3, 8, 1].split(5)
 /// present // true
-/// left // ImmutableSet::[1, 2, 3, 4]
-/// right // ImmutableSet::[6, 7, 8, 9]
+/// left // of([1, 2, 3, 4])
+/// right // of([6, 7, 8, 9])
 ```
 
 At the same time, you can use union and inter to take the union or intersection of two sets.
 
 ```moonbit
-let set1 = ImmutableSet::[3, 4, 5]
-let set2 = ImmutableSet::[4, 5, 6]
-set1.union(set2) // ImmutableSet::[3, 4, 5, 6]
-set1.inter(set2) // ImmutableSet::[4, 5]
+let set1 = of([3, 4, 5])
+let set2 = of([4, 5, 6])
+set1.union(set2) // of([3, 4, 5, 6])
+set1.inter(set2) // of([4, 5])
 ```
 
 You can also use the `diff` function to obtain the difference between two sets.
 
 ```moonbit
-ImmutableSet::[1, 2, 3].diff(ImmutableSet::[4, 5, 1]) // ImmutableSet::[2, 3]
+of([1, 2, 3].diff(ImmutableSet::[4, 5, 1]) // ImmutableSet::[2, 3])
 ```
 
 You can use `filter` to filter the elements in the set.
 
 ```moonbit
-ImmutableSet::[1, 2, 3, 4, 5, 6].filter(fn(v) { v % 2 == 0}) // ImmutableSet::[2, 4, 6]
+of([1, 2, 3, 4, 5, 6].filter(fn(v) { v % 2 == 0}) // ImmutableSet::[2, 4, 6])
 ```
 
 ### Subset & Disjoint
@@ -113,7 +113,7 @@ Like other sequential containers, set also has iterative methods such as `iter`,
 ```moonbit
 ImmutableSet::[7, 2, 9, 4, 5, 6, 3, 8, 1].iter(print)// output: 123456789
 ImmutableSet::[1, 2, 3, 4, 5].fold(0, fn(acc, x) { acc + x }) // 15
-ImmutableSet::[1, 2, 3].map(fn(x){ x * 2}) // ImmutableSet::[2, 4, 6]
+of([1, 2, 3].map(fn(x){ x * 2}) // ImmutableSet::[2, 4, 6])
 ```
 
 ### All & Any
@@ -130,7 +130,7 @@ ImmutableSet::[1, 4, 3].any(fn(v) { v % 2 == 0}) // true
 ImmutableSet implements to_string (i.e. Show trait), which allows you to directly output it.
 
 ```moonbit
-println(ImmutableSet::[1, 2, 3]) // output ImmutableSet::[1, 2, 3]
+println(of([1, 2, 3]) // output ImmutableSet::[1, 2, 3])
 ImmutableSet::[1, 2, 3].to_string() // "ImmutableSet::[1, 2, 3]"
 ```
 
