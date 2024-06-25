@@ -72,10 +72,12 @@ jobs:
           moon info
           git diff --exit-code
 
-      - name: moon test
-        run: |
-          moon test
-          moon test --target js
+      - run: moon test --target wasm-gc
+      - run: moon test --target js
+      - run: moon test --target wasm
+      - run: moon test --release --target wasm-gc
+      - run: moon test --release --target js
+      - run: moon test --release --target wasm
 
       - name: moon bundle
         run: moon bundle --all
