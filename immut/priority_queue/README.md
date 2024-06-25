@@ -14,7 +14,7 @@ You can use `new()` or `from_array()` to create an immutable priority queue.
 
 ```moonbit
 let queue1 : ImmutablePriorityQueue[Int] = new()
-let queue2 = ImmutablePriorityQueue::[1, 2, 3]
+let queue2 = of([1, 2, 3])
 ```
 
 Note, however, that the default immutable priority queue created is greater-first; if you need to create a less-first queue, you can write a struct belongs to Compare trait to implement it.
@@ -41,7 +41,7 @@ pq.is_empty() // true
 You can use `peek()` to look at the head element of a queue, which must be either the maximum or minimum value of an element in the queue, depending on the nature of the specification. The return value of `peek()` is an Option, which means that the result will be `None` when the queue is empty.
 
 ```moonbit
-let pq = ImmutablePriorityQueue::[1, 2, 3, 4, 5]
+let pq = of([1, 2, 3, 4, 5])
 pq.peek() // Some(5)
 ```
 
@@ -59,7 +59,7 @@ pq.push(1).peek() // Some(1)
 You can use `pop()` to remove the element at the front of the priority queue and get a new immutable priority queue wrapped with Option. If the immutable priority queue is empty, then it will return None.
 
 ```moonbit
-let pq = ImmutablePriorityQueue::[5, 4, 3, 2, 1]
+let pq = of([5, 4, 3, 2, 1])
 match pq.pop(){
     Some(q) => q.peek()
     None => None
@@ -70,6 +70,6 @@ If you only want to pop an element without Option, you can use `pop_exn()`.
 This function will panic if the priority queue is empty.
 
 ```moonbit
-let pq = ImmutablePriorityQueue::[5, 4, 3, 2, 1]
+let pq = of([5, 4, 3, 2, 1])
 pq.pop_exn().peek() // Some(5)
 ```
