@@ -252,7 +252,7 @@ pub fn Map::from_array[K : Eq + Hash, V](arr : Array[(K, V)]) -> Map[K, V] {
 }
 
 pub fn Map::of[K : Eq + Hash, V](arr : FixedArray[(K, V)]) -> Map[K, V] {
-  loop arr.length(), Map::make() {
+  loop arr.length(), Map::new() {
     0, map => map
     n, map => {
       let (k, v) = arr[n - 1]
