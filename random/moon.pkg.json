@@ -5,5 +5,8 @@
     "moonbitlang/core/double",
     "moonbitlang/core/coverage",
     "moonbitlang/core/array"
+  ],
+  "test-import": [
+    "moonbitlang/core/assertion"
   ]
 }

@@ -72,3 +72,21 @@ test "log" {
     return Err("Expected: " + expected + ", got: " + result)
   }
 }
+
+test "escape_to" {
+  let buf = Buffer::make(10)
+  escape_to("\\n\\r\\t\\b\\\"'\\\\", buf)
+  let escaped_string = buf.to_string()
+  if escaped_string != "\\\\n\\\\r\\\\t\\\\b\\\\\\\"'\\\\\\\\" {
+    return Err("escaped_string: \(escaped_string)")
+  }
+}
+
+test "escape_to_unicode" {
+  let buf = Buffer::make(10)
+  escape_to("\u0010\u001f", buf)
+  let escaped_string = buf.to_string()
+  if escaped_string != "\\u0010\\u001f" {
+    return Err("escaped_string: \(escaped_string)")
+  }
+}

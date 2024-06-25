@@ -447,3 +447,25 @@ test "find_index" {
   let index = arr.find_index(fn(x) { x == 3 })
   @assertion.assert_eq(index, Some(2))?
 }
+
+test "copy" {
+  let arr = [1, 2, 3, 4, 5]
+  let copied = arr.copy()
+  @assertion.assert_eq(copied, [1, 2, 3, 4, 5])?
+  @assertion.assert_is_not(arr, copied)?
+}
+
+test "Array::new_with_index with positive length" {
+  let arr = Array::new_with_index(5, fn(i) { i * 2 })
+  @assertion.assert_eq(arr, [0, 2, 4, 6, 8])?
+}
+
+test "Array::new_with_index with zero length" {
+  let arr = Array::new_with_index(0, fn(i) { i * 2 })
+  @assertion.assert_eq(arr, [])?
+}
+
+test "Array::new_with_index with negative length" {
+  let arr = Array::new_with_index(-1, fn(i) { i * 2 })
+  @assertion.assert_eq(arr, [])?
+}
