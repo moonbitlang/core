@@ -780,9 +780,7 @@ fn to_string[T : Show](self : Node[T]) -> String {
 // Convert from other data structures to MutableSet.
 
 /// Initialize an MutableSet[T] from a FixedArray[T]
-pub fn MutableSet::from_fixed_array[T : Compare](
-  array : FixedArray[T]
-) -> MutableSet[T] {
+pub fn MutableSet::of[T : Compare](array : FixedArray[T]) -> MutableSet[T] {
   let set = MutableSet::new()
   for i = 0; i < array.length(); i = i + 1 {
     set.add(array[i])
@@ -910,10 +908,10 @@ fn same_pointer[T](x : Node[T]?, y : Node[T]?) -> Bool {
 // # Tests
 
 test "add_and_remove" {
-  let set = MutableSet::[7, 2, 9, 4, 5, 6, 3, 8, 1]
+  let set = of([7, 2, 9, 4, 5, 6, 3, 8, 1])
   set.remove(8)
   inspect(set, content="MutableSet::[1, 2, 3, 4, 5, 6, 7, 9]")?
-  let set = MutableSet::[1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+  let set = of([1, 2, 3, 4, 5, 6, 7, 8, 9, 10])
 
   // Test 1: Remove elements
   set.remove(1)
@@ -974,7 +972,7 @@ test "add_and_remove" {
   inspect(set, content="MutableSet::[1, 2, 3]")?
   set.add(4)
   inspect(set, content="MutableSet::[1, 2, 3, 4]")?
-  let set = MutableSet::[7, 2, 9, 4, 5, 6, 3, 1]
+  let set = of([7, 2, 9, 4, 5, 6, 3, 1])
   set.remove(3)
   inspect(set, content="MutableSet::[1, 2, 4, 5, 6, 7, 9]")?
   set.remove(2)
@@ -994,29 +992,29 @@ test "add_and_remove" {
 }
 
 test "join" {
-  let l = MutableSet::[13, 8, 17, 1, 11, 15, 25, 6]
-  let r = MutableSet::[27, 28, 40, 35, 33]
+  let l = of([13, 8, 17, 1, 11, 15, 25, 6])
+  let r = of([27, 28, 40, 35, 33])
   inspect(
     join(l.root, 26, r.root),
     content="Some(MutableSet::[1, 6, 8, 11, 13, 15, 17, 25, 26, 27, 28, 33, 35, 40])",
   )?
-  let l = MutableSet::[3, 2, 5, 1, 4]
-  let r = MutableSet::[7]
+  let l = of([3, 2, 5, 1, 4])
+  let r = of([7])
   inspect(
     join(l.root, 6, r.root),
     content="Some(MutableSet::[1, 2, 3, 4, 5, 6, 7])",
   )?
-  let l = MutableSet::[3, 2, 5, 1, 4]
-  let r = MutableSet::[]
+  let l = of([3, 2, 5, 1, 4])
+  let r = of([])
   inspect(
     join(l.root, 6, r.root),
     content="Some(MutableSet::[1, 2, 3, 4, 5, 6])",
   )?
-  let l = MutableSet::[]
-  let r = MutableSet::[]
+  let l = of([])
+  let r = of([])
   inspect(join(l.root, 6, r.root), content="Some(MutableSet::[6])")?
-  let l = MutableSet::[]
-  let r = MutableSet::[7, 8, 9, 10, 11, 12]
+  let l = of([])
+  let r = of([7, 8, 9, 10, 11, 12])
   inspect(
     join(l.root, 6, r.root),
     content="Some(MutableSet::[6, 7, 8, 9, 10, 11, 12])",
@@ -1062,20 +1060,20 @@ test "split" {
 
 test "union" {
   // Test 1: Union of two sets with no common elements
-  let set1 = MutableSet::[1, 2, 3]
-  let set2 = MutableSet::[4, 5, 6]
+  let set1 = of([1, 2, 3])
+  let set2 = of([4, 5, 6])
   let set3 = set1.union(set2)
   inspect(set3, content="MutableSet::[1, 2, 3, 4, 5, 6]")?
 
   // Test 2: Union of two sets with some common elements
-  let set1 = MutableSet::[1, 2, 3]
-  let set2 = MutableSet::[2, 3, 4]
+  let set1 = of([1, 2, 3])
+  let set2 = of([2, 3, 4])
   let set3 = set1.union(set2)
   inspect(set3, content="MutableSet::[1, 2, 3, 4]")?
 
   // Test 3: Union of two sets where one is a subset of the other
-  let set1 = MutableSet::[1, 2, 3]
-  let set2 = MutableSet::[2, 3]
+  let set1 = of([1, 2, 3])
+  let set2 = of([2, 3])
   let set3 = set1.union(set2)
   inspect(set3, content="MutableSet::[1, 2, 3]")?
 
@@ -1086,18 +1084,18 @@ test "union" {
   inspect(set3, content="MutableSet::[]")?
 
   // Test 5: Union of an empty set with a non-empty set
-  let set1 = MutableSet::[1, 2, 3]
-  let set2 = MutableSet::[]
+  let set1 = of([1, 2, 3])
+  let set2 = of([])
   let set3 = set1.union(set2)
   inspect(set3, content="MutableSet::[1, 2, 3]")?
-  let set1 = MutableSet::[]
-  let set2 = MutableSet::[1, 2, 3]
+  let set1 = of([])
+  let set2 = of([1, 2, 3])
   let set3 = set1.union(set2)
   inspect(set3, content="MutableSet::[1, 2, 3]")?
 
   // Test 6: Union of two large sets with no common elements
-  let set1 = MutableSet::[1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
-  let set2 = MutableSet::[11, 12, 13, 14, 15, 16, 17, 18, 19, 20]
+  let set1 = of([1, 2, 3, 4, 5, 6, 7, 8, 9, 10])
+  let set2 = of([11, 12, 13, 14, 15, 16, 17, 18, 19, 20])
   let set3 = set1.union(set2)
   inspect(
     set3,
@@ -1105,8 +1103,8 @@ test "union" {
   )?
 
   // Test 7: Union of two large sets with some common elements
-  let set1 = MutableSet::[1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
-  let set2 = MutableSet::[6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
+  let set1 = of([1, 2, 3, 4, 5, 6, 7, 8, 9, 10])
+  let set2 = of([6, 7, 8, 9, 10, 11, 12, 13, 14, 15])
   let set3 = set1.union(set2)
   inspect(
     set3,
@@ -1114,8 +1112,8 @@ test "union" {
   )?
 
   // Test 8: Union of two large sets where one is a subset of the other
-  let set1 = MutableSet::[1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
-  let set2 = MutableSet::[6, 7, 8, 9, 10]
+  let set1 = of([1, 2, 3, 4, 5, 6, 7, 8, 9, 10])
+  let set2 = of([6, 7, 8, 9, 10])
   let set3 = set1.union(set2)
   inspect(set3, content="MutableSet::[1, 2, 3, 4, 5, 6, 7, 8, 9, 10]")?
 }
@@ -1158,8 +1156,8 @@ test "filter" {
 }
 
 test "iter" {
-  let set = MutableSet::[7, 2, 9, 4, 5, 6, 3, 8, 1]
-  let result = Buffer::new(size_hint=10)
+  let set = of([7, 2, 9, 4, 5, 6, 3, 8, 1])
+  let result = Buffer::make(10)
   set.iter(fn(x) { result.write_string(x.to_string()) })
   inspect(result.to_string(), content="123456789")?
   let set : MutableSet[Int] = new()
@@ -1167,7 +1165,7 @@ test "iter" {
 }
 
 test "contains" {
-  let set = MutableSet::[7, 2, 9, 4, 6, 3, 8, 1]
+  let set = of([7, 2, 9, 4, 6, 3, 8, 1])
   inspect(set.contains(5), content="false")?
   set.add(5)
   inspect(set.contains(5), content="true")?
@@ -1213,21 +1211,21 @@ test "singleton" {
 }
 
 test "deep_clone" {
-  let set = MutableSet::[1, 2, 3, 4, 5]
+  let set = of([1, 2, 3, 4, 5])
   let clone = set.deep_clone()
   inspect(clone, content="MutableSet::[1, 2, 3, 4, 5]")?
-  let set : MutableSet[Int] = MutableSet::[]
+  let set : MutableSet[Int] = of([])
   let clone = set.deep_clone()
   inspect(clone, content="MutableSet::[]")?
 }
 
 test "debug_write" {
-  let buf = Buffer::new(size_hint=100)
-  let set = MutableSet::[1, 2, 3, 4, 5]
+  let buf = Buffer::make(100)
+  let set = of([1, 2, 3, 4, 5])
   set.debug_write(buf)
   inspect(buf.to_string(), content="MutableSet::[1, 2, 3, 4, 5]")?
-  let buf = Buffer::new(size_hint=100)
-  let set : MutableSet[Int] = MutableSet::[]
+  let buf = Buffer::make(100)
+  let set : MutableSet[Int] = of([])
   set.debug_write(buf)
   inspect(buf.to_string(), content="MutableSet::[]")?
 }
@@ -1245,16 +1243,16 @@ test "same_pointer" {
 }
 
 test "min_node" {
-  let set = MutableSet::[7, 2, 9, 4, 5, 6, 3, 8, 1]
+  let set = of([7, 2, 9, 4, 5, 6, 3, 8, 1])
   inspect(min_node(set.root).unwrap().value, content="Some(1)")?
-  let set : MutableSet[Int] = MutableSet::[]
+  let set : MutableSet[Int] = of([])
   inspect(min_node(set.root), content="None")?
 }
 
 test "mix_everything" {
   // test all functions together, including add, remove, union, diff, inter, subset, disjoint, size, is_empty, contains
-  let set1 = MutableSet::[1, 2, 3, 4, 5]
-  let set2 = MutableSet::[4, 5, 6, 7, 8]
+  let set1 = of([1, 2, 3, 4, 5])
+  let set2 = of([4, 5, 6, 7, 8])
   set1.add(6)
   inspect(set1, content="MutableSet::[1, 2, 3, 4, 5, 6]")?
   set1.remove(6)
