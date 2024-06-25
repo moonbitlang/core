@@ -45,8 +45,8 @@ pub fn List::debug_write[T : Debug](xs : List[T], buf : Buffer) -> Unit {
 /// # Example
 ///
 /// ```
-/// let ls = List::[1, 2, 3, 4, 5]
-/// println(ls) // output: List::[1, 2, 3, 4, 5]
+/// let ls = of([1, 2, 3, 4, 5])
+/// println(ls) // output: of([1, 2, 3, 4, 5])
 /// ```
 pub fn List::from_array[T](arr : Array[T]) -> List[T] {
   for i = arr.length() - 1, list = List::Nil; i >= 0; {
@@ -105,7 +105,7 @@ pub fn iteri[T](self : List[T], f : (Int, T) -> Unit) -> Unit {
 ///
 /// ```
 /// debug(List::[1, 2, 3, 4, 5].map(fn(x){ x * 2}))
-/// // output: List::[2, 4, 6, 8, 10]
+/// // output: of([2, 4, 6, 8, 10])
 /// ```
 pub fn map[T, U](self : List[T], f : (T) -> U) -> List[U] {
   match self {
@@ -631,7 +631,7 @@ pub fn drop_while[T](self : List[T], p : (T) -> Bool) -> List[T] {
 /// # Example
 ///
 /// ```
-/// let ls = List::[1, 2, 3, 4, 5]
+/// let ls = of([1, 2, 3, 4, 5])
 /// ls.scan_left(fn(acc, x) { acc + x }, ~init=0)
 /// ```
 pub fn scan_left[T, E](self : List[T], f : (E, T) -> E, ~init : E) -> List[E] {
@@ -650,7 +650,7 @@ pub fn scan_left[T, E](self : List[T], f : (E, T) -> E, ~init : E) -> List[E] {
 ///
 /// # Example
 /// ```
-/// let ls = List::[1, 2, 3, 4, 5]
+/// let ls = of([1, 2, 3, 4, 5])
 /// ls.scan_right(fn(x, acc) { acc + x }, ~init=0)
 /// ```
 pub fn scan_right[T, E](self : List[T], f : (T, E) -> E, ~init : E) -> List[E] {
@@ -839,4 +839,12 @@ pub fn as_iter[T](self : List[T]) -> Iter[T] {
       }
     },
   )
+}
+
+pub fn of[T](arr : FixedArray[T]) -> List[T] {
+  for i = arr.length() - 1, list = List::Nil; i >= 0; {
+    continue i - 1, List::Cons(arr[i], list)
+  } else {
+    list
+  }
 }
