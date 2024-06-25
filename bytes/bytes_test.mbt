@@ -19,7 +19,7 @@ test "Bytes::from_array" {
 }
 
 test "Bytes::of" {
-  let arr = [65, 00, 66, 00, 67, 00]
+  let arr : FixedArray[Int] = [65, 00, 66, 00, 67, 00]
   let b = Bytes::of(arr)
   inspect(b, content="ABC")?
 }

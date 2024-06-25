@@ -1,6 +1,8 @@
 package moonbitlang/core/immut/list
 
 // Values
+fn of[T](FixedArray[T]) -> List[T]
+
 fn repeat[T](Int, T) -> List[T]
 
 fn unfold[T, State]((State) -> Tuple[T, State]?, ~init : State) -> List[T]

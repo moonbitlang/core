@@ -1,6 +1,7 @@
 package moonbitlang/core/hashmap
 
 // Values
+fn of[K : Eq + Hash, V](FixedArray[Tuple[K, V]]) -> HashMap[K, V]
 
 // Types and methods
 type HashMap

@@ -9,6 +9,8 @@ fn is_empty[T](ImmutableVec[T]) -> Bool
 
 fn length[T](ImmutableVec[T]) -> Int
 
+fn of[T](FixedArray[T]) -> ImmutableVec[T]
+
 // Types and methods
 type ImmutableVec
 impl ImmutableVec {

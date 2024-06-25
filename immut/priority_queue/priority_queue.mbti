@@ -10,6 +10,7 @@ impl ImmutablePriorityQueue {
   is_empty[T](Self[T]) -> Bool
   length[T](Self[T]) -> Int
   new[T : Compare + Eq]() -> Self[T]
+  of[T : Compare + Eq](FixedArray[T]) -> Self[T]
   peek[T](Self[T]) -> T?
   pop[T : Compare + Eq](Self[T]) -> Self[T]?
   pop_exn[T : Compare + Eq](Self[T]) -> Self[T]

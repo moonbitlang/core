@@ -243,7 +243,7 @@ pub fn Set::from_array[T : Eq + Hash](arr : Array[T]) -> Set[T] {
 }
 
 pub fn Set::of[T : Eq + Hash](arr : FixedArray[T]) -> Set[T] {
-  loop arr.length(), Set::make() {
+  loop arr.length(), Set::new() {
     0, set => set
     n, set => {
       let k = arr[n - 1]

@@ -26,6 +26,7 @@ impl ImmutableSet {
   min[T : Compare + Eq](Self[T]) -> T
   min_option[T : Compare + Eq](Self[T]) -> T?
   new[T]() -> Self[T]
+  of[T : Compare + Eq](FixedArray[T]) -> Self[T]
   op_equal[T : Eq](Self[T], Self[T]) -> Bool
   remove[T : Compare + Eq](Self[T], T) -> Self[T]
   remove_min[T : Compare + Eq](Self[T]) -> Self[T]
