@@ -262,17 +262,17 @@ test "parse_double" {
 }
 
 test "parse_double_inf" {
-  @assertion.assert_eq(parse_double("inf"), Ok(Double::inf(1)))?
-  @assertion.assert_eq(parse_double("+Inf"), Ok(Double::inf(1)))?
-  @assertion.assert_eq(parse_double("-Inf"), Ok(Double::inf(-1)))?
-  @assertion.assert_eq(parse_double("+Infinity"), Ok(Double::inf(1)))?
-  @assertion.assert_eq(parse_double("-Infinity"), Ok(Double::inf(-1)))?
-  @assertion.assert_eq(parse_double("+INFINITY"), Ok(Double::inf(1)))?
-  @assertion.assert_eq(parse_double("-INFINITY"), Ok(Double::inf(-1)))?
+  @assertion.assert_eq(parse_double("inf")!!, (Double::inf(1)))?
+  @assertion.assert_eq(parse_double("+Inf")!!, (Double::inf(1)))?
+  @assertion.assert_eq(parse_double("-Inf")!!, (Double::inf(-1)))?
+  @assertion.assert_eq(parse_double("+Infinity")!!, (Double::inf(1)))?
+  @assertion.assert_eq(parse_double("-Infinity")!!, (Double::inf(-1)))?
+  @assertion.assert_eq(parse_double("+INFINITY")!!, (Double::inf(1)))?
+  @assertion.assert_eq(parse_double("-INFINITY")!!, (Double::inf(-1)))?
 }
 
 test "parse_double_nan" {
-  @assertion.assert_true(parse_double("nan")?.is_nan())?
-  @assertion.assert_true(parse_double("NaN")?.is_nan())?
-  @assertion.assert_true(parse_double("NAN")?.is_nan())?
+  @assertion.assert_true(parse_double("nan")!!.is_nan())?
+  @assertion.assert_true(parse_double("NaN")!!.is_nan())?
+  @assertion.assert_true(parse_double("NAN")!!.is_nan())?
 }
