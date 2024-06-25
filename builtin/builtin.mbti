@@ -125,7 +125,7 @@ impl Buffer {
 
 type Iter
 impl Iter {
-  _unstable_internal_make[T](((T) -> Bool) -> Bool) -> Self[T]
+  _unstable_internal_make[T](((T) -> IterResult) -> IterResult) -> Self[T]
   append[T](Self[T], T) -> Self[T]
   collect[T](Self[T]) -> Array[T]
   concat[T](Self[T], Self[T]) -> Self[T]
@@ -147,6 +147,14 @@ impl Iter {
   take_while[T](Self[T], (T) -> Bool) -> Self[T]
   tap[T](Self[T], (T) -> Unit) -> Self[T]
   to_array[T](Self[T]) -> Array[T]
+}
+
+pub enum IterResult {
+  IterContinue
+  IterEnd
+}
+impl IterResult {
+  op_equal(Self, Self) -> Bool
 }
 
 pub type Js_string
@@ -242,12 +250,12 @@ impl Int {
   op_neg(Int) -> Int
   op_sub(Int, Int) -> Int
   popcnt(Int) -> Int
-  to(Int, Int, ~step : Int = ..) -> Iter[Int]
   to_byte(Int) -> Byte
   to_double(Int) -> Double
   to_int64(Int) -> Int64
   to_string(Int) -> String
   trunc_double_u(Double) -> Int
+  until(Int, Int, ~step : Int = ..) -> Iter[Int]
 }
 impl Int64 {
   asr(Int64, Int) -> Int64
@@ -275,12 +283,12 @@ impl Int64 {
   op_sub(Int64, Int64) -> Int64
   popcnt(Int64) -> Int
   reinterpret_as_double(Int64) -> Double
-  to(Int64, Int64, ~step : Int64 = ..) -> Iter[Int64]
   to_byte(Int64) -> Byte
   to_double(Int64) -> Double
   to_int(Int64) -> Int
   to_string(Int64) -> String
   trunc_double_u(Double) -> Int64
+  until(Int64, Int64, ~step : Int64 = ..) -> Iter[Int64]
 }
 impl Double {
   compare(Double, Double) -> Int
@@ -297,9 +305,9 @@ impl Double {
   op_sub(Double, Double) -> Double
   reinterpret_as_i64(Double) -> Int64
   sqrt(Double) -> Double
-  to(Double, Double, ~step : Double = ..) -> Iter[Double]
   to_int(Double) -> Int
   to_int64(Double) -> Int64
+  until(Double, Double, ~step : Double = ..) -> Iter[Double]
 }
 impl String {
   debug_write(String, Buffer) -> Unit

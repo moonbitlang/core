@@ -209,11 +209,11 @@ pub fn as_iter[K](self : HashSet[K]) -> Iter[K] {
     fn(yield) {
       for i = 0, len = self.entries.length(); i < len; i = i + 1 {
         match self.entries[i] {
-          Some({ key, .. }) => if yield(key).not() { break false }
+          Some({ key, .. }) => if yield(key) == IterEnd { break IterEnd }
           None => continue
         }
       } else {
-        true
+        IterContinue
       }
     },
   )
