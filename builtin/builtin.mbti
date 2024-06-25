@@ -150,8 +150,8 @@ impl Iter {
 }
 
 pub enum IterResult {
-  IterContinue
   IterEnd
+  IterContinue
 }
 impl IterResult {
   op_equal(Self, Self) -> Bool

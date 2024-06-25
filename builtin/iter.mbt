@@ -16,8 +16,8 @@
 type Iter[T] ((T) -> IterResult) -> IterResult
 
 pub enum IterResult {
-  IterContinue // true
   IterEnd // false
+  IterContinue // true
 } derive(Eq)
 
 fn to_string[T : Show](self : Iter[T]) -> String {
@@ -162,15 +162,15 @@ pub fn Iter::repeat[T](a : T) -> Iter[T] {
 
 /// Creates an iterator that iterates over a range of Int with default step 1.
 /// To grow the range downward, set the `step` parameter to a negative value.
-/// 
+///
 /// # Arguments
-/// 
+///
 /// * `start` - The starting value of the range (inclusive).
 /// * `end` - The ending value of the range (exclusive).
 /// * `step` - The step size of the range (default 1).
-/// 
+///
 /// # Returns
-/// 
+///
 /// Returns an iterator that iterates over the range of Int from `start` to `end - 1`.
 pub fn until(self : Int, end : Int, ~step : Int = 1) -> Iter[Int] {
   if step < 0 {
@@ -202,15 +202,15 @@ pub fn until(self : Int, end : Int, ~step : Int = 1) -> Iter[Int] {
 
 /// Creates an iterator that iterates over a range of Int64 with default step 1L.
 /// To grow the range downward, set the `step` parameter to a negative value.
-/// 
+///
 /// # Arguments
-/// 
+///
 /// * `start` - The starting value of the range (inclusive).
 /// * `end` - The ending value of the range (exclusive).
 /// * `step` - The step size of the range (default 1L).
-/// 
+///
 /// # Returns
-/// 
+///
 /// Returns an iterator that iterates over the range of Int64 from `start` to `end - 1`.
 pub fn until(self : Int64, end : Int64, ~step : Int64 = 1L) -> Iter[Int64] {
   if step < 0L {
@@ -241,15 +241,15 @@ pub fn until(self : Int64, end : Int64, ~step : Int64 = 1L) -> Iter[Int64] {
 
 /// Creates an iterator that iterates over a range of Double with default step 1.0 .
 /// To grow the range downward, use the `downto` method.
-/// 
+///
 /// # Arguments
-/// 
+///
 /// * `start` - The starting value of the range (inclusive).
 /// * `end` - The ending value of the range (exclusive).
 /// * `step` - The step size of the range (default 1.0).
-/// 
+///
 /// # Returns
-/// 
+///
 /// Returns an iterator that iterates over the range of Double from `start` to `end - 1`.
 pub fn until(self : Double, end : Double, ~step : Double = 1.0) -> Iter[Double] {
   if step < 0.0 {
