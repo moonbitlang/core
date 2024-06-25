@@ -56,7 +56,7 @@ fn Array::make_uninit[T](len : Int) -> Array[T] {
   { buf: UninitializedArray::make(len), len }
 }
 
-/// Creates a new vector.
+/// Creates a new array.
 pub fn Array::new[T](~capacity : Int = 0) -> Array[T] {
   if capacity == 0 {
     []
@@ -65,7 +65,7 @@ pub fn Array::new[T](~capacity : Int = 0) -> Array[T] {
   }
 }
 
-/// Returns the number of elements in the vector.
+/// Returns the number of elements in the array.
 pub fn length[T](self : Array[T]) -> Int {
   self.len
 }

@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-/// Sorts the vector with a key extraction function.
+/// Sorts the array with a key extraction function.
 /// 
 /// It's an in-place, unstable sort(it will reorder equal elements). The time complexity is O(n log n) in the worst case.
 /// 
@@ -32,7 +32,7 @@ pub fn sort_by_key[T, K : Compare](self : Array[T], map : (T) -> K) -> Unit {
   )
 }
 
-/// Sorts the vector with a custom comparison function.
+/// Sorts the array with a custom comparison function.
 /// 
 /// It's an in-place, unstable sort(it will reorder equal elements). The time complexity is O(n log n) in the worst case.
 /// 
