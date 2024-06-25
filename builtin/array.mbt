@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-/// Creates a new vector from an array.
+/// Creates a new array from an array.
 pub fn Array::from_fixed_array[T](arr : FixedArray[T]) -> Array[T] {
   let len = arr.length()
   let arr2 = Array::make_uninit(len)
@@ -28,19 +28,19 @@ pub fn Array::make[T](len : Int, elem : T) -> Array[T] {
   arr
 }
 
-/// Returns the total number of elements the vector can hold without reallocating.
+/// Returns the total number of elements the array can hold without reallocating.
 fn capacity[T](self : Array[T]) -> Int {
   self.buffer().0.length()
 }
 
-/// Reallocate the vector with a new capacity.
+/// Reallocate the array with a new capacity.
 fn realloc[T](self : Array[T]) -> Unit {
   let old_cap = self.length()
   let new_cap = if old_cap == 0 { 8 } else { old_cap * 2 }
   self.resize_buffer(new_cap)
 }
 
-/// Retrieves the element at the specified index from the vector.
+/// Retrieves the element at the specified index from the array.
 ///
 /// # Example
 /// ```
@@ -59,7 +59,7 @@ pub fn op_get[T](self : Array[T], index : Int) -> T {
   self.buffer()[index]
 }
 
-/// Retrieves the element at the specified index from the vector, or `None` if index is out of bounds
+/// Retrieves the element at the specified index from the array, or `None` if index is out of bounds
 ///
 /// # Example
 /// ```
@@ -93,7 +93,7 @@ pub fn op_set[T](self : Array[T], index : Int, value : T) -> Unit {
   self.buffer()[index] = value
 }
 
-/// Compares two vectors for equality.
+/// Compares two arrays for equality.
 pub fn op_equal[T : Eq](self : Array[T], other : Array[T]) -> Bool {
   if self.length() != other.length() {
     return false
@@ -129,7 +129,7 @@ pub fn op_add[T](self : Array[T], other : Array[T]) -> Array[T] {
   result
 }
 
-/// Removes the last element from a vector and returns it, or `None` if it is empty.
+/// Removes the last element from a array and returns it, or `None` if it is empty.
 ///
 /// # Example
 /// ```
@@ -147,14 +147,14 @@ pub fn pop[T](self : Array[T]) -> T? {
   }
 }
 
-/// Removes the last element from a vector and returns it.
+/// Removes the last element from a array and returns it.
 ///
 /// # Example
 /// ```
 /// let v = [1, 2, 3]
 /// v.pop_exn() // 3
 /// ```
-/// @alert unsafe "Panic if the vector is empty."
+/// @alert unsafe "Panic if the array is empty."
 pub fn pop_exn[T](self : Array[T]) -> T {
   if self.length() == 0 {
     abort("pop from an empty Array")
@@ -165,9 +165,9 @@ pub fn pop_exn[T](self : Array[T]) -> T {
   v
 }
 
-/// Adds an element to the end of the vector.
+/// Adds an element to the end of the array.
 ///
-/// If the vector is at capacity, it will be reallocated.
+/// If the array is at capacity, it will be reallocated.
 ///
 /// # Example
 /// ```
@@ -183,9 +183,9 @@ pub fn push[T](self : Array[T], value : T) -> Unit {
   self.set_length(length + 1)
 }
 
-/// Removes the specified range from the vector and returns it.
+/// Removes the specified range from the array and returns it.
 ///
-/// This functions returns a vector range from `begin` to `end` `[begin, end)`
+/// This functions returns a array range from `begin` to `end` `[begin, end)`
 ///
 /// # Example
 /// ```
@@ -215,7 +215,7 @@ pub fn drain[T](self : Array[T], begin : Int, end : Int) -> Array[T] {
   v
 }
 
-/// Appends all the elements of other vector into self
+/// Appends all the elements of other array into self
 ///
 /// # Example
 /// ```
@@ -230,7 +230,7 @@ pub fn append[T](self : Array[T], other : Array[T]) -> Unit {
   }
 }
 
-/// Iterates over the elements of the vector.
+/// Iterates over the elements of the array.
 ///
 /// # Example
 /// ```
@@ -253,7 +253,7 @@ pub fn iter_rev[T](self : Array[T], f : (T) -> Unit) -> Unit {
   }
 }
 
-/// Iterates over the elements of the vector with index.
+/// Iterates over the elements of the array with index.
 ///
 /// # Example
 /// ```
@@ -277,9 +277,9 @@ pub fn iter_revi[T](self : Array[T], f : (Int, T) -> Unit) -> Unit {
   }
 }
 
-/// Clears the vector, removing all values.
+/// Clears the array, removing all values.
 ///
-/// This method has no effect on the allocated capacity of the vector, only setting the length to 0.
+/// This method has no effect on the allocated capacity of the array, only setting the length to 0.
 ///
 /// # Example
 /// ```
@@ -290,7 +290,7 @@ pub fn clear[T](self : Array[T]) -> Unit {
   self.set_length(0)
 }
 
-/// Maps a function over the elements of the vector.
+/// Maps a function over the elements of the array.
 ///
 /// # Example
 /// ```
@@ -308,7 +308,7 @@ pub fn map[T, U](self : Array[T], f : (T) -> U) -> Array[U] {
   arr
 }
 
-/// Maps a function over the elements of the vector in place.
+/// Maps a function over the elements of the array in place.
 ///
 /// # Example
 /// ```
@@ -321,7 +321,7 @@ pub fn map_inplace[T](self : Array[T], f : (T) -> T) -> Unit {
   }
 }
 
-/// Maps a function over the elements of the vector with index.
+/// Maps a function over the elements of the array with index.
 ///
 /// # Example
 /// ```
@@ -339,7 +339,7 @@ pub fn mapi[T, U](self : Array[T], f : (Int, T) -> U) -> Array[U] {
   arr
 }
 
-/// Maps a function over the elements of the vector with index in place.
+/// Maps a function over the elements of the array with index in place.
 ///
 /// # Example
 /// ```
@@ -365,7 +365,7 @@ pub fn filter[T](self : Array[T], f : (T) -> Bool) -> Array[T] {
   arr
 }
 
-/// Test if the vector is empty.
+/// Test if the array is empty.
 ///
 /// # Example
 /// ```
@@ -376,7 +376,7 @@ pub fn is_empty[T](self : Array[T]) -> Bool {
   self.length() == 0
 }
 
-/// Test if the vector is sorted.
+/// Test if the array is sorted.
 ///
 /// # Example
 /// ```
@@ -410,7 +410,7 @@ pub fn reverse[T](self : Array[T]) -> Unit {
   }
 }
 
-/// Split the vector into two at the given index.
+/// Split the array into two at the given index.
 ///
 /// # Example
 /// ```
@@ -439,7 +439,7 @@ pub fn split_at[T](self : Array[T], index : Int) -> (Array[T], Array[T]) {
   (v1, v2)
 }
 
-/// Checks if the vector contains an element.
+/// Checks if the array contains an element.
 ///
 /// # Example
 /// ```
@@ -456,7 +456,7 @@ pub fn contains[T : Eq](self : Array[T], value : T) -> Bool {
   }
 }
 
-/// Check if the vector starts with a given prefix.
+/// Check if the array starts with a given prefix.
 ///
 /// # Example
 /// ```
@@ -476,7 +476,7 @@ pub fn starts_with[T : Eq](self : Array[T], prefix : Array[T]) -> Bool {
   }
 }
 
-/// Check if the vector ends with a given suffix.
+/// Check if the array ends with a given suffix.
 ///
 /// # Example
 /// ```
@@ -496,9 +496,9 @@ pub fn ends_with[T : Eq](self : Array[T], suffix : Array[T]) -> Bool {
   }
 }
 
-/// Strip a prefix from the vector.
+/// Strip a prefix from the array.
 ///
-/// If the vector starts with the prefix, return the vector after the prefix, otherwise return None.
+/// If the array starts with the prefix, return the array after the prefix, otherwise return None.
 ///
 /// # Example
 /// ```
@@ -521,9 +521,9 @@ pub fn strip_prefix[T : Eq](self : Array[T], prefix : Array[T]) -> Array[T]? {
   }
 }
 
-/// Strip a suffix from the vector.
+/// Strip a suffix from the array.
 ///
-/// If the vector ends with the suffix, return the vector before the suffix, otherwise return None.
+/// If the array ends with the suffix, return the array before the suffix, otherwise return None.
 ///
 /// # Example
 /// ```
@@ -541,7 +541,7 @@ pub fn strip_suffix[T : Eq](self : Array[T], suffix : Array[T]) -> Array[T]? {
   }
 }
 
-/// Search the vector index for a given element.
+/// Search the array index for a given element.
 ///
 /// # Example
 /// ```
@@ -558,7 +558,7 @@ pub fn search[T : Eq](self : Array[T], value : T) -> Int? {
   }
 }
 
-/// Swap two elements in the vector.
+/// Swap two elements in the array.
 ///
 /// # Example
 /// ```
@@ -578,9 +578,9 @@ pub fn swap[T](self : Array[T], i : Int, j : Int) -> Unit {
   self.buffer()[j] = temp
 }
 
-/// Remove an element from the vector at a given index.
+/// Remove an element from the array at a given index.
 ///
-/// Removes and returns the element at position index within the vector, shifting all elements after it to the left.
+/// Removes and returns the element at position index within the array, shifting all elements after it to the left.
 ///
 /// # Example
 /// ```
@@ -626,7 +626,7 @@ pub fn retain[T](self : Array[T], f : (T) -> Bool) -> Unit {
   }
 }
 
-/// Resize the vector to a new length with a default value.
+/// Resize the array to a new length with a default value.
 ///
 /// # Example
 /// ```
@@ -646,7 +646,7 @@ pub fn resize[T](self : Array[T], new_len : Int, f : T) -> Unit {
   }
 }
 
-/// Inserts an element at a given index within the vector.
+/// Inserts an element at a given index within the array.
 ///
 /// # Example
 /// ```
@@ -675,7 +675,7 @@ pub fn insert[T](self : Array[T], index : Int, value : T) -> Unit {
   self.set_length(length + 1)
 }
 
-/// Flattens a vector of vectors into a vector.
+/// Flattens a array of arrays into a array.
 ///
 /// # Example
 /// ```
@@ -689,7 +689,7 @@ pub fn flatten[T](self : Array[Array[T]]) -> Array[T] {
   v
 }
 
-/// Create a vector by repeat a given vector for a given times.
+/// Create a array by repeat a given array for a given times.
 ///
 /// # Example
 /// ```
@@ -703,7 +703,7 @@ pub fn repeat[T](self : Array[T], times : Int) -> Array[T] {
   v
 }
 
-/// Flattens a vector of vectors with a given separator.
+/// Flattens a array of arrays with a given separator.
 ///
 /// # Example
 /// ```
@@ -780,7 +780,7 @@ pub fn fold_righti[T, U](self : Array[T], f : (Int, U, T) -> U, ~init : U) -> U 
   }
 }
 
-/// Removes consecutive repeated elements in the vector according to the Eq trait.
+/// Removes consecutive repeated elements in the array according to the Eq trait.
 ///
 /// # Example
 /// ```
@@ -800,9 +800,9 @@ pub fn dedup[T : Eq](self : Array[T]) -> Unit {
   }
 }
 
-/// Extract elements from the vector according to the given function.
+/// Extract elements from the array according to the given function.
 ///
-/// This function will remove the elements from the original vector and return a new vector.
+/// This function will remove the elements from the original array and return a new array.
 /// # Example
 /// ```
 /// let v = [3, 4, 5]
@@ -823,9 +823,9 @@ pub fn extract_if[T](self : Array[T], f : (T) -> Bool) -> Array[T] {
   v
 }
 
-/// Group the elements of the vector into sized chunks.
+/// Group the elements of the array into sized chunks.
 ///
-/// If the elements of the vector cannot be divided into equal-sized chunks, the last chunk will be smaller.
+/// If the elements of the array cannot be divided into equal-sized chunks, the last chunk will be smaller.
 ///
 /// # Example
 /// ```
@@ -846,7 +846,7 @@ pub fn chunks[T](self : Array[T], size : Int) -> Array[Array[T]] {
   chunks
 }
 
-/// Group the elements of the vector into chunks based on a predicate.
+/// Group the elements of the array into chunks based on a predicate.
 ///
 /// # Example
 /// ```
@@ -870,7 +870,7 @@ pub fn chunk_by[T](self : Array[T], pred : (T, T) -> Bool) -> Array[Array[T]] {
   chunks
 }
 
-/// Split the vector into chunks based on a predicate.
+/// Split the array into chunks based on a predicate.
 ///
 /// # Example
 /// ```
@@ -909,7 +909,7 @@ pub fn reserve_capacity[T](self : Array[T], capacity : Int) -> Unit {
   self.resize_buffer(capacity)
 }
 
-/// Shrinks the capacity of the vector as much as possible.
+/// Shrinks the capacity of the array as much as possible.
 ///
 /// # Example
 ///
@@ -929,7 +929,7 @@ pub fn shrink_to_fit[T](self : Array[T]) -> Unit {
   self.resize_buffer(self.length())
 }
 
-/// Converts the vector to a string.
+/// Converts the array to a string.
 pub fn to_string[T : Show](self : Array[T]) -> String {
   if self.length() == 0 {
     return "[]"

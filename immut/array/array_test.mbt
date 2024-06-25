@@ -24,7 +24,7 @@ test "panic set with negative index" {
   inspect(v1, content="ImmutableVec::[1, 2, 3, 4, 5]")?
 }
 
-test "panic set with empty vector" {
+test "panic set with empty array" {
   let v : ImmutableVec[Int] = ImmutableVec::empty()
   let v1 = v.set(0, 10) // This should trigger the panic in set function
   inspect(v1, content="ImmutableVec::[]")?

@@ -186,7 +186,7 @@ test "set" {
   inspect(v2, content="ImmutableVec::[1, 2, 10, 4, 5]")?
 }
 
-/// Push a value to the end of the vector.
+/// Push a value to the end of the array.
 /// 
 /// # Example
 /// ```
@@ -217,7 +217,7 @@ test "push" {
   inspect(v.push(3), content="ImmutableVec::[1, 2, 3, 3]")?
 }
 
-/// Create a persistent vector from an array.
+/// Create a persistent array from an array.
 /// 
 /// # Example
 /// ```
@@ -237,7 +237,7 @@ test "from_array" {
   )?
 }
 
-/// Iterate over the vector.
+/// Iterate over the array.
 /// 
 /// # Example
 /// ```
@@ -265,7 +265,7 @@ test "iter" {
   v.iter(fn(_e) { abort("never reach") })
 }
 
-/// Iterate over the vector with index.
+/// Iterate over the array with index.
 /// 
 /// # Example
 /// ```
@@ -328,7 +328,7 @@ test "op_equal" {
   inspect(v5 == v6, content="true")?
 }
 
-/// Fold the vector from left to right.
+/// Fold the array from left to right.
 /// 
 /// # Example
 /// ```
@@ -354,7 +354,7 @@ test "fold_left" {
   inspect(v.fold_left(fn(a, b) { a + b }, init=0), content="15")?
 }
 
-/// Fold the vector from right to left.
+/// Fold the array from right to left.
 /// 
 /// # Example
 /// ```
@@ -381,7 +381,7 @@ test "fold_right" {
   inspect(v.fold_right(fn(a, b) { a + b }, init=0), content="15")?
 }
 
-/// Map a function over the vector.
+/// Map a function over the array.
 /// 
 /// # Example
 /// ```
@@ -475,7 +475,7 @@ test "new_by_leaves" {
   )?
 }
 
-/// Create a persistent vector with a given length and value.
+/// Create a persistent array with a given length and value.
 pub fn ImmutableVec::new[T](len : Int, value : T) -> ImmutableVec[T] {
   new_by_leaves(len, fn(_s, l) { Array::make(l, value) })
 }
@@ -490,7 +490,7 @@ test "new" {
   )?
 }
 
-/// Create a persistent vector with a given length and a function to generate values.
+/// Create a persistent array with a given length and a function to generate values.
 pub fn ImmutableVec::new_with_index[T](
   len : Int,
   f : (Int) -> T
