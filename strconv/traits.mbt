@@ -13,27 +13,19 @@
 // limitations under the License.
 
 pub trait FromStr {
-  from_string(String) -> Result[Self, String]
+  from_string(String) -> Self!String
 }
 
-pub fn FromStr::from_string(str : String) -> Result[Bool, String] {
-  parse_bool(str)
-}
+impl FromStr for Bool with from_string(str) { parse_bool(str)! }
 
-pub fn FromStr::from_string(str : String) -> Result[Int, String] {
-  parse_int(str)
-}
+impl FromStr for Int with from_string(str) { parse_int(str)! }
 
-pub fn FromStr::from_string(str : String) -> Result[Int64, String] {
-  parse_int64(str)
-}
+impl FromStr for Int64 with from_string(str) { parse_int64(str)! }
 
-pub fn FromStr::from_string(str : String) -> Result[Double, String] {
-  parse_double(str)
-}
+impl FromStr for Double with from_string(str) { parse_double(str)! }
 
-pub fn parse[A : FromStr](str : String) -> Result[A, String] {
-  A::from_string(str)
+pub fn parse[A : FromStr](str : String) -> A!String {
+  A::from_string(str)!
 }
 
 test "parse" {

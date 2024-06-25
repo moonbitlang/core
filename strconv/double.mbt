@@ -40,12 +40,12 @@ let max_mantissa_fast_path : UInt64 = new_UInt64_Int(2).lsl(
   mantissa_explicit_bits,
 )
 
-pub fn parse_double(str : String) -> Result[Double, String] {
+pub fn parse_double(str : String) -> Double!String {
   if str.length() == 0 {
-    return Err(syntax_err)
+    raise syntax_err
   }
   if not(check_underscore(str)) {
-    return Err(syntax_err)
+    raise syntax_err
   }
   // validate its a number
   let (num, consumed) = match parse_number(str) {
@@ -54,23 +54,25 @@ pub fn parse_double(str : String) -> Result[Double, String] {
       match parse_inf_nan(str) {
         Some((num, consumed)) =>
           if str.length() != consumed {
-            return Err(syntax_err)
+            raise syntax_err
           } else {
-            return Ok(num)
+            return num
           }
-        None => return Err(syntax_err)
+        None => {
+          raise syntax_err
+        }
       }
   }
   if str.length() != consumed {
-    return Err(syntax_err)
+    raise syntax_err
   }
   // Clinger's fast path (How to read floating point numbers accurately)[https://doi.org/10.1145/989393.989430]
   match try_fast_path(num) {
-    Some(value) => Ok(value)
+    Some(value) => value
     None => {
       // fallback to slow path
-      let ret = parse_decimal(str)?
-      ret.to_double()
+      let ret = parse_decimal(str)!
+      ret.to_double()!
     }
   }
 }
@@ -248,7 +250,14 @@ test "parse_double" {
   ]
   for i = 0; i < tests.length(); i = i + 1 {
     let t = tests[i]
-    @assertion.assert_eq(parse_double(t.0), t.1)?
+    @assertion.assert_eq(
+      try {
+        Result::Ok(parse_double(t.0)!)
+      } catch {
+        err => Err(err)
+      },
+      t.1,
+    )?
   }
 }
 
