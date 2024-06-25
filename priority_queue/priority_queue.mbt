@@ -26,7 +26,7 @@ pub fn PriorityQueue::new[T : Compare]() -> PriorityQueue[T] {
 /// 
 /// # Example
 /// ```
-/// let queue = PriorityQueue::[1, 2, 3, 4, 5]
+/// let queue = of([1, 2, 3, 4, 5])
 /// ```
 pub fn PriorityQueue::from_array[T : Compare](
   arr : Array[T]
@@ -58,7 +58,7 @@ fn copy_node[T](x : Node[T]) -> Node[T] {
 /// 
 /// # Example
 /// ```
-/// let queue : PriorityQueue[Int] = PriorityQueue::[1, 2, 3, 4]
+/// let queue : PriorityQueue[Int] = of([1, 2, 3, 4])
 /// let queue2 : PriorityQueue[Int] = PriorityQueue.copy()
 /// ```
 pub fn copy[T](self : PriorityQueue[T]) -> PriorityQueue[T] {
@@ -139,7 +139,7 @@ pub fn length[T](self : PriorityQueue[T]) -> Int {
 /// 
 /// # Example
 /// ```
-/// let queue = PriorityQueue::[1, 2, 3, 4]
+/// let queue = of([1, 2, 3, 4])
 /// let first = queue.pop_exn() // 4
 /// ```
 /// @alert unsafe "Panic if the queue is empty."
@@ -158,7 +158,7 @@ pub fn pop_exn[T : Compare](self : PriorityQueue[T]) -> Unit {
 /// 
 /// # Example
 /// ```
-/// let queue = PriorityQueue::[1, 2, 3, 4]
+/// let queue = of([1, 2, 3, 4])
 /// let first = queue.pop() // Some(4)
 /// ```
 pub fn pop[T : Compare](self : PriorityQueue[T]) -> T? {
@@ -189,7 +189,7 @@ pub fn push[T : Compare](self : PriorityQueue[T], value : T) -> Unit {
 /// 
 /// # Example
 /// ```
-/// let queue : PriorityQueue[Int] = PriorityQueue::[1, 2, 3, 4]
+/// let queue : PriorityQueue[Int] = of([1, 2, 3, 4])
 /// let first = queue.peek() // Some(4)
 /// ```
 pub fn peek[T](self : PriorityQueue[T]) -> T? {
@@ -203,7 +203,7 @@ pub fn peek[T](self : PriorityQueue[T]) -> T? {
 /// 
 /// # Example
 /// ```
-/// let queue = PriorityQueue::[1, 2, 3, 4]
+/// let queue = of([1, 2, 3, 4])
 /// queue.clear()
 /// ```
 pub fn clear[T](self : PriorityQueue[T]) -> Unit {
@@ -220,4 +220,15 @@ pub fn clear[T](self : PriorityQueue[T]) -> Unit {
 /// ```
 pub fn is_empty[T](self : PriorityQueue[T]) -> Bool {
   self.len == 0
+}
+
+pub fn PriorityQueue::of[T : Compare](arr : FixedArray[T]) -> PriorityQueue[T] {
+  let len = arr.length()
+  for i = 0, acc = Node::Nil {
+    if i < len {
+      continue i + 1, meld(acc, Cons(content=arr[i], sibling=Nil, child=Nil))
+    } else {
+      break { len, top: acc }
+    }
+  }
 }
