@@ -9,8 +9,6 @@ fn is_empty[T](ImmutableVec[T]) -> Bool
 
 fn length[T](ImmutableVec[T]) -> Int
 
-fn of[T](FixedArray[T]) -> ImmutableVec[T]
-
 // Types and methods
 type ImmutableVec
 impl ImmutableVec {
@@ -26,6 +24,7 @@ impl ImmutableVec {
   map[T, U](Self[T], (T) -> U) -> Self[U]
   new[T](Int, T) -> Self[T]
   new_with_index[T](Int, (Int) -> T) -> Self[T]
+  of[T](FixedArray[T]) -> Self[T]
   op_equal[T : Eq](Self[T], Self[T]) -> Bool
   op_get[T](Self[T], Int) -> T
   push[T](Self[T], T) -> Self[T]

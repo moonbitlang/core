@@ -114,14 +114,8 @@ fn meld[T : Compare](l : Cont[T], r : Cont[T]) -> Cont[T] {
 }
 
 test "meld" {
-  inspect(
-    meld(Empty, of([1]).body),
-    content="Node(1, MNil)",
-  )?
-  inspect(
-    meld(of([1]).body, Empty),
-    content="Node(1, MNil)",
-  )?
+  inspect(meld(Empty, of([1]).body), content="Node(1, MNil)")?
+  inspect(meld(of([1]).body, Empty), content="Node(1, MNil)")?
   inspect(
     meld(of([1]).body, of([2]).body),
     content="Node(2, MCons(Node(1, MNil), MNil))",
@@ -279,7 +273,9 @@ pub fn length[T](self : ImmutablePriorityQueue[T]) -> Int {
   self.len
 }
 
-pub fn ImmutablePriorityQueue::of[T : Compare](arr : FixedArray[T]) -> ImmutablePriorityQueue[T] {
+pub fn ImmutablePriorityQueue::of[T : Compare](
+  arr : FixedArray[T]
+) -> ImmutablePriorityQueue[T] {
   let len = arr.length()
   for i = 0, acc = Cont::Empty {
     if i < len {
