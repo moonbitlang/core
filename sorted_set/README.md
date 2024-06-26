@@ -29,7 +29,7 @@ set.to_string() // of([1, 2, 3, 4, 5])
 Remove an element from the MutableSet in place.
 
 ```moonbit
-let set = MutableSet::[3, 8, 1] 
+let set = of([3, 8, 1]) 
 set.remove(8) // () 
 set.to_string() // of([1, 3])
 ```
@@ -45,7 +45,7 @@ set.contains(5) // false
 Iterates over the elements in the set.
 
 ```moonbit
-MutableSet::[1, 2, 3, 4].iter(print) // output: 1234
+of([1, 2, 3, 4]).iter(print) // output: 1234
 ```
 
 Delete all elements of the set that filter returns false. It is done in place.
@@ -59,7 +59,7 @@ set.to_string() // of([2, 4, 6])
 Get the size of the set.
 
 ```moonbit
-MutableSet::[1, 2, 3, 4].size() // 4
+of([1, 2, 3, 4]).size() // 4
 ```
 
 Whether the set is empty.
@@ -83,8 +83,8 @@ set1.diff(set2) // of([3])
 Determine the inclusion and separation relationship between two sets.
 
 ```moonbit
-MutableSet::[1, 2, 3].subset(MutableSet::[7, 2, 9, 4, 5, 6, 3, 8, 1]) // true
-MutableSet::[1, 2, 3].disjoint(MutableSet::[4, 5, 6]) // true
+of([1, 2, 3]).subset(of([7, 2, 9, 4, 5, 6, 3, 8, 1])) // true
+of([1, 2, 3]).disjoint(of([4, 5, 6])) // true
 ```
 
 ### Stringify
@@ -92,8 +92,8 @@ MutableSet::[1, 2, 3].disjoint(MutableSet::[4, 5, 6]) // true
 MutableSet implements to_string (i.e. Show trait), which allows you to directly output it.
 
 ```moonbit
-println(of([1, 2, 3]) // output MutableSet::[1, 2, 3])
-MutableSet::[1, 2, 3].to_string() // "MutableSet::[1, 2, 3]"
+println(of([1, 2, 3]) // output of([1, 2, 3]))
+of([1, 2, 3]).to_string() // "of([1, 2, 3])"
 ```
 
 ### TODO

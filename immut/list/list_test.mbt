@@ -15,8 +15,8 @@
 test "from_array" {
   let ls = of([1, 2, 3, 4, 5])
   let el : List[Int] = Nil
-  inspect(ls, content="List::[1, 2, 3, 4, 5]")?
-  inspect(el, content="List::[]")?
+  inspect(ls, content="List.of([1, 2, 3, 4, 5])")?
+  inspect(el, content="List.of([])")?
 }
 
 test "length" {
@@ -57,15 +57,15 @@ test "iteri" {
 test "map" {
   let ls = of([1, 2, 3, 4, 5])
   let rs : List[Int] = Nil
-  inspect(ls.map(fn(x) { x * 2 }), content="List::[2, 4, 6, 8, 10]")?
-  inspect(rs.map(fn(x) { x * 2 }), content="List::[]")?
+  inspect(ls.map(fn(x) { x * 2 }), content="List.of([2, 4, 6, 8, 10])")?
+  inspect(rs.map(fn(x) { x * 2 }), content="List.of([])")?
 }
 
 test "mapi" {
   let ls = of([1, 2, 3, 4, 5])
   let el : List[Int] = Nil
-  inspect(ls.mapi(fn(i, x) { i * x }), content="List::[0, 2, 6, 12, 20]")?
-  inspect(el.mapi(fn(i, x) { i * x }), content="List::[]")?
+  inspect(ls.mapi(fn(i, x) { i * x }), content="List.of([0, 2, 6, 12, 20])")?
+  inspect(el.mapi(fn(i, x) { i * x }), content="List.of([])")?
 }
 
 test "to_array" {
@@ -80,8 +80,8 @@ test "to_array" {
 test "filter" {
   let ls = of([1, 2, 3, 4, 5])
   let rs : List[Int] = Nil
-  inspect(ls.filter(fn(x) { x % 2 == 0 }), content="List::[2, 4]")?
-  inspect(rs.filter(fn(x) { x % 2 == 0 }), content="List::[]")?
+  inspect(ls.filter(fn(x) { x % 2 == 0 }), content="List.of([2, 4])")?
+  inspect(rs.filter(fn(x) { x % 2 == 0 }), content="List.of([])")?
 }
 
 test "all" {
@@ -99,8 +99,8 @@ test "any" {
 test "tail" {
   let ls = of([1, 2, 3, 4, 5])
   let el : List[Int] = Nil
-  inspect(ls.tail(), content="List::[2, 3, 4, 5]")?
-  inspect(el.tail(), content="List::[]")?
+  inspect(ls.tail(), content="List.of([2, 3, 4, 5])")?
+  inspect(el.tail(), content="List.of([])")?
 }
 
 test "head_exn" {
@@ -123,23 +123,23 @@ test "last" {
 test "init_" {
   let ls = of([1, 2, 3, 4, 5])
   let el : List[Int] = Nil
-  inspect(ls.init_(), content="List::[1, 2, 3, 4]")?
-  inspect(el.init_(), content="List::[]")?
+  inspect(ls.init_(), content="List.of([1, 2, 3, 4])")?
+  inspect(el.init_(), content="List.of([])")?
 }
 
 test "concat" {
   let ls = of([1, 2, 3, 4, 5])
   let rs = of([6, 7, 8, 9, 10])
-  inspect(ls.concat(Nil), content="List::[1, 2, 3, 4, 5]")?
-  inspect((Nil : List[Int]).concat(rs), content="List::[6, 7, 8, 9, 10]")?
-  inspect(ls.concat(rs), content="List::[1, 2, 3, 4, 5, 6, 7, 8, 9, 10]")?
+  inspect(ls.concat(Nil), content="List.of([1, 2, 3, 4, 5])")?
+  inspect((Nil : List[Int]).concat(rs), content="List.of([6, 7, 8, 9, 10])")?
+  inspect(ls.concat(rs), content="List.of([1, 2, 3, 4, 5, 6, 7, 8, 9, 10])")?
 }
 
 test "reverse" {
   let ls = of([1, 2, 3, 4, 5])
   let rs = of([5, 4, 3, 2, 1])
-  inspect(rs.reverse(), content="List::[1, 2, 3, 4, 5]")?
-  inspect(ls.reverse().reverse(), content="List::[1, 2, 3, 4, 5]")?
+  inspect(rs.reverse(), content="List.of([1, 2, 3, 4, 5])")?
+  inspect(ls.reverse().reverse(), content="List.of([1, 2, 3, 4, 5])")?
 }
 
 test "fold_left" {
@@ -173,16 +173,19 @@ test "fold_righti" {
 test "zip" {
   let ls = of([1, 2, 3, 4, 5])
   let rs = of([6, 7, 8, 9, 10])
-  inspect(ls.zip(rs), content="List::[(1, 6), (2, 7), (3, 8), (4, 9), (5, 10)]")?
+  inspect(
+    ls.zip(rs),
+    content="List.of([(1, 6), (2, 7), (3, 8), (4, 9), (5, 10)])",
+  )?
 }
 
 test "concat_map" {
   let ls = of([1, 2, 3])
   let rs : List[Int] = Nil
-  inspect(rs.concat_map(fn(x) { List::[x, x * 2] }), content="List::[]")?
+  inspect(rs.concat_map(fn(x) { of([x, x * 2]) }), content="List.of([])")?
   inspect(
-    ls.concat_map(fn(x) { List::[x, x * 2] }),
-    content="List::[1, 2, 2, 4, 3, 6]",
+    ls.concat_map(fn(x) { of([x, x * 2]) }),
+    content="List.of([1, 2, 2, 4, 3, 6])",
   )?
 }
 
@@ -199,15 +202,15 @@ test "nth" {
 }
 
 test "repeat" {
-  inspect(repeat(5, 1), content="List::[1, 1, 1, 1, 1]")?
-  inspect(repeat(0, 10), content="List::[]")?
+  inspect(repeat(5, 1), content="List.of([1, 1, 1, 1, 1])")?
+  inspect(repeat(0, 10), content="List.of([])")?
 }
 
 test "intersperse" {
   let ls = of(["1", "2", "3", "4", "5"])
   let el : List[String] = Nil
-  inspect(ls.intersperse("|"), content="List::[1, |, 2, |, 3, |, 4, |, 5]")?
-  inspect(el.intersperse("|"), content="List::[]")?
+  inspect(ls.intersperse("|"), content="List.of([1, |, 2, |, 3, |, 4, |, 5])")?
+  inspect(el.intersperse("|"), content="List.of([])")?
 }
 
 test "is_empty" {
@@ -219,15 +222,15 @@ test "is_empty" {
 test "unzip" {
   let ls = of([(1, 2), (3, 4), (5, 6)])
   let (a, b) = unzip(ls)
-  inspect(a, content="List::[1, 3, 5]")?
-  inspect(b, content="List::[2, 4, 6]")?
+  inspect(a, content="List.of([1, 3, 5])")?
+  inspect(b, content="List.of([2, 4, 6])")?
 }
 
 test "flatten" {
-  let ls = of([List::[1, 2, 3], List::[4, 5, 6], List::[7, 8, 9]])
+  let ls = of([of([1, 2, 3]), of([4, 5, 6]), of([7, 8, 9])])
   let el : List[List[Int]] = Nil
-  inspect(ls.flatten(), content="List::[1, 2, 3, 4, 5, 6, 7, 8, 9]")?
-  inspect(el.flatten(), content="List::[]")?
+  inspect(ls.flatten(), content="List.of([1, 2, 3, 4, 5, 6, 7, 8, 9])")?
+  inspect(el.flatten(), content="List.of([])")?
 }
 
 test "maximum" {
@@ -243,8 +246,8 @@ test "minimum" {
 test "sort" {
   let ls = of([1, 123, 52, 3, 6, 0, -6, -76])
   let el : List[Int] = Nil
-  inspect(el.sort(), content="List::[]")?
-  inspect(ls.sort(), content="List::[-76, -6, 0, 1, 3, 6, 52, 123]")?
+  inspect(el.sort(), content="List.of([])")?
+  inspect(ls.sort(), content="List.of([-76, -6, 0, 1, 3, 6, 52, 123])")?
 }
 
 test "contain" {
@@ -261,56 +264,56 @@ test "unfold" {
     init=0,
     fn { i => if i == 3 { None } else { Some((i, i + 1)) } },
   )
-  inspect(ls, content="List::[0, 1, 2]")?
+  inspect(ls, content="List.of([0, 1, 2])")?
 }
 
 test "take" {
-  let ls = List::[1, 2, 3, 4, 5].take(3)
-  inspect(ls, content="List::[1, 2, 3]")?
-  inspect(ls.take(-1), content="List::[]")?
-  inspect(ls.take(0), content="List::[]")?
-  inspect(ls, content="List::[1, 2, 3]")?
+  let ls = of([1, 2, 3, 4, 5]).take(3)
+  inspect(ls, content="List.of([1, 2, 3])")?
+  inspect(ls.take(-1), content="List.of([])")?
+  inspect(ls.take(0), content="List.of([])")?
+  inspect(ls, content="List.of([1, 2, 3])")?
 }
 
 test "drop" {
-  let ls = List::[1, 2, 3, 4, 5].drop(3)
+  let ls = of([1, 2, 3, 4, 5]).drop(3)
   let el : List[Int] = Nil
-  inspect(ls, content="List::[4, 5]")?
-  inspect(ls.drop(-10), content="List::[4, 5]")?
-  inspect(ls.drop(0), content="List::[4, 5]")?
-  inspect(el.drop(0), content="List::[]")?
+  inspect(ls, content="List.of([4, 5])")?
+  inspect(ls.drop(-10), content="List.of([4, 5])")?
+  inspect(ls.drop(0), content="List.of([4, 5])")?
+  inspect(el.drop(0), content="List.of([])")?
 }
 
 test "take_while" {
-  let ls = take_while(List::[0, 1, 2, 3, 4], fn(x) { x < 3 })
+  let ls = take_while(of([0, 1, 2, 3, 4]), fn(x) { x < 3 })
   let el : List[Int] = take_while(Nil, fn(_e) { true })
-  inspect(ls, content="List::[0, 1, 2]")?
-  inspect(el, content="List::[]")?
+  inspect(ls, content="List.of([0, 1, 2])")?
+  inspect(el, content="List.of([])")?
 }
 
 test "drop_while" {
-  let ls = drop_while(List::[0, 1, 2, 3, 4], fn(x) { x < 3 })
+  let ls = drop_while(of([0, 1, 2, 3, 4]), fn(x) { x < 3 })
   let el : List[Int] = drop_while(Nil, fn(_e) { true })
-  inspect(ls, content="List::[3, 4]")?
-  inspect(el, content="List::[]")?
+  inspect(ls, content="List.of([3, 4])")?
+  inspect(el, content="List.of([])")?
 }
 
 test "scan_left" {
-  let el = List::[].scan_left(fn(acc, x) { acc + x }, init=0)
-  let ls = List::[1, 2, 3, 4, 5].scan_left(fn(acc, x) { acc + x }, init=0)
-  let ls2 = List::[1, 2, 3, 4].scan_left(fn(acc, x) { acc - x }, init=100)
-  inspect(el, content="List::[0]")?
-  inspect(ls, content="List::[0, 1, 3, 6, 10, 15]")?
-  inspect(ls2, content="List::[100, 99, 97, 94, 90]")?
+  let el = of([]).scan_left(fn(acc, x) { acc + x }, init=0)
+  let ls = of([1, 2, 3, 4, 5]).scan_left(fn(acc, x) { acc + x }, init=0)
+  let ls2 = of([1, 2, 3, 4]).scan_left(fn(acc, x) { acc - x }, init=100)
+  inspect(el, content="List.of([0])")?
+  inspect(ls, content="List.of([0, 1, 3, 6, 10, 15])")?
+  inspect(ls2, content="List.of([100, 99, 97, 94, 90])")?
 }
 
 test "scan_right" {
-  let el = List::[].scan_right(fn(x, acc) { x + acc }, init=0)
-  let ls = List::[1, 2, 3, 4].scan_right(fn(x, acc) { x + acc }, init=0)
-  let ls2 = List::[1, 2, 3, 4].scan_right(fn(x, acc) { x - acc }, init=100)
-  inspect(el, content="List::[0]")?
-  inspect(ls, content="List::[10, 9, 7, 4, 0]")?
-  inspect(ls2, content="List::[98, -97, 99, -96, 100]")?
+  let el = of([]).scan_right(fn(x, acc) { x + acc }, init=0)
+  let ls = of([1, 2, 3, 4]).scan_right(fn(x, acc) { x + acc }, init=0)
+  let ls2 = of([1, 2, 3, 4]).scan_right(fn(x, acc) { x - acc }, init=100)
+  inspect(el, content="List.of([0])")?
+  inspect(ls, content="List.of([10, 9, 7, 4, 0])")?
+  inspect(ls2, content="List.of([98, -97, 99, -96, 100])")?
 }
 
 test "lookup" {
@@ -323,11 +326,11 @@ test "lookup" {
 
 test "find" {
   inspect(
-    List::[1, 3, 5, 8].find(fn(element) -> Bool { element % 2 == 0 }),
+    of([1, 3, 5, 8]).find(fn(element) -> Bool { element % 2 == 0 }),
     content="Some(8)",
   )?
   inspect(
-    List::[1, 3, 5, 7].find(fn(element) -> Bool { element % 2 == 0 }),
+    of([1, 3, 5, 7]).find(fn(element) -> Bool { element % 2 == 0 }),
     content="None",
   )?
   inspect(
@@ -338,13 +341,13 @@ test "find" {
 
 test "findi" {
   inspect(
-    List::[1, 3, 5, 8].findi(
+    of([1, 3, 5, 8]).findi(
       fn(element, i) -> Bool { element % 2 == 0 && i == 3 },
     ),
     content="Some(8)",
   )?
   inspect(
-    List::[1, 3, 8, 5].findi(
+    of([1, 3, 8, 5]).findi(
       fn(element, i) -> Bool { element % 2 == 0 && i == 3 },
     ),
     content="None",
@@ -359,60 +362,60 @@ test "findi" {
 
 test "remove_at" {
   let ls = of([1, 2, 3, 4, 5])
-  inspect(ls.remove_at(2), content="List::[1, 2, 4, 5]")?
-  inspect(ls.remove_at(0), content="List::[2, 3, 4, 5]")?
+  inspect(ls.remove_at(2), content="List.of([1, 2, 4, 5])")?
+  inspect(ls.remove_at(0), content="List.of([2, 3, 4, 5])")?
   inspect(
-    List::["a", "b", "c", "d", "e"].remove_at(2),
-    content="List::[a, b, d, e]",
+    of(["a", "b", "c", "d", "e"]).remove_at(2),
+    content="List.of([a, b, d, e])",
   )?
   inspect(
-    List::["a", "b", "c", "d", "e"].remove_at(5),
-    content="List::[a, b, c, d, e]",
+    of(["a", "b", "c", "d", "e"]).remove_at(5),
+    content="List.of([a, b, c, d, e])",
   )?
 }
 
 test "remove" {
-  inspect(List::[1, 2, 3, 4, 5].remove(3), content="List::[1, 2, 4, 5]")?
+  inspect(of([1, 2, 3, 4, 5]).remove(3), content="List.of([1, 2, 4, 5])")?
   inspect(
-    List::["a", "b", "c", "d", "e"].remove("c"),
-    content="List::[a, b, d, e]",
+    of(["a", "b", "c", "d", "e"]).remove("c"),
+    content="List.of([a, b, d, e])",
   )?
   inspect(
-    List::["a", "b", "c", "d", "e"].remove("f"),
-    content="List::[a, b, c, d, e]",
+    of(["a", "b", "c", "d", "e"]).remove("f"),
+    content="List.of([a, b, c, d, e])",
   )?
 }
 
 test "is_prefix" {
-  inspect(List::[1, 2, 3, 4, 5].is_prefix(List::[1, 2, 3]), content="true")?
-  inspect(List::[1, 2, 3, 4, 5].is_prefix(List::[3, 2, 3]), content="false")?
-  inspect(List::Nil.is_prefix(List::[1, 2, 3]), content="false")?
+  inspect(of([1, 2, 3, 4, 5]).is_prefix(of([1, 2, 3])), content="true")?
+  inspect(of([1, 2, 3, 4, 5]).is_prefix(of([3, 2, 3])), content="false")?
+  inspect(List::Nil.is_prefix(of([1, 2, 3])), content="false")?
 }
 
 test "equal" {
-  inspect(List::[1, 2, 3].equal(List::[1, 2, 3]), content="true")?
-  inspect(List::[1, 2, 3].equal(List::[1, 3, 3]), content="false")?
-  inspect(List::Nil.equal(List::[1]), content="false")?
+  inspect(of([1, 2, 3]).equal(of([1, 2, 3])), content="true")?
+  inspect(of([1, 2, 3]).equal(of([1, 3, 3])), content="false")?
+  inspect(List::Nil.equal(of([1])), content="false")?
 }
 
 test "is_suffix" {
-  inspect(List::[1, 2, 3, 4, 5].is_suffix(List::[3, 4, 5]), content="true")?
-  inspect(List::[1, 2, 3, 4, 5].is_suffix(List::[3, 4, 6]), content="false")?
+  inspect(of([1, 2, 3, 4, 5]).is_suffix(of([3, 4, 5])), content="true")?
+  inspect(of([1, 2, 3, 4, 5]).is_suffix(of([3, 4, 6])), content="false")?
 }
 
 test "intercalate" {
-  let ls = of([List::[1, 2, 3], List::[4, 5, 6], List::[7, 8, 9]])
+  let ls = of([of([1, 2, 3]), of([4, 5, 6]), of([7, 8, 9])])
   let el : List[List[Int]] = Nil
   inspect(
-    ls.intercalate(List::[0]),
-    content="List::[1, 2, 3, 0, 4, 5, 6, 0, 7, 8, 9]",
+    ls.intercalate(of([0])),
+    content="List.of([1, 2, 3, 0, 4, 5, 6, 0, 7, 8, 9])",
   )?
-  inspect(el.intersperse(List::[1]), content="List::[]")?
+  inspect(el.intersperse(of([1])), content="List.of([])")?
 }
 
 test "default" {
   let ls : List[Int] = List::default()
-  inspect(ls, content="List::[]")?
+  inspect(ls, content="List.of([])")?
 }
 
 test "as_iter" {
@@ -422,7 +425,7 @@ test "as_iter" {
 
 test "List::debug_write with non-empty list" {
   let buf = Buffer::make(100)
-  let list = List::[1, 2, 3, 4, 5]
+  let list = of([1, 2, 3, 4, 5])
   List::debug_write(list, buf)
   buf.expect(content="1, 2, 3, 4, 5")?
 }
@@ -435,39 +438,39 @@ test "List::debug_write with empty list" {
 }
 
 test "List::head_exn with non-empty list" {
-  let list = List::[1, 2, 3, 4, 5]
+  let list = of([1, 2, 3, 4, 5])
   let head = List::head_exn(list)
   @assertion.assert_eq(head, 1)?
 }
 
 test "List::last with non-empty list" {
-  let list = List::[1, 2, 3, 4, 5]
+  let list = of([1, 2, 3, 4, 5])
   let last = List::last(list)
   @assertion.assert_eq(last, 5)?
 }
 
 test "List::zip with lists of equal length" {
-  let list1 = List::[1, 2, 3]
-  let list2 = List::["a", "b", "c"]
+  let list1 = of([1, 2, 3])
+  let list2 = of(["a", "b", "c"])
   let zipped = List::zip(list1, list2)
-  let expected = List::[(1, "a"), (2, "b"), (3, "c")]
+  let expected = of([(1, "a"), (2, "b"), (3, "c")])
   @assertion.assert_eq(zipped, expected)?
 }
 
 test "List::nth_exn with valid index" {
-  let list = List::[1, 2, 3, 4, 5]
+  let list = of([1, 2, 3, 4, 5])
   let nth = List::nth_exn(list, 2)
   @assertion.assert_eq(nth, 3)?
 }
 
 test "List::maximum with non-empty list" {
-  let list = List::[1, 3, 5, 2, 4]
+  let list = of([1, 3, 5, 2, 4])
   let max = List::maximum(list)
   @assertion.assert_eq(max, 5)?
 }
 
 test "List::minimum with non-empty list" {
-  let list = List::[1, 3, 5, 2, 4]
+  let list = of([1, 3, 5, 2, 4])
   let min = List::minimum(list)
   @assertion.assert_eq(min, 1)?
 }

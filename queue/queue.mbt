@@ -43,7 +43,7 @@ pub fn Queue::from_array[T](arr : Array[T]) -> Queue[T] {
 }
 
 pub fn to_string[T : Show](self : Queue[T]) -> String {
-  let mut res = "Queue::["
+  let mut res = "Queue.of(["
   self.iteri(
     fn(i, t) {
       if i > 0 {
@@ -52,7 +52,7 @@ pub fn to_string[T : Show](self : Queue[T]) -> String {
       res += t.to_string()
     },
   )
-  res + "]"
+  res + "])"
 }
 
 pub fn debug_write[T : Show](self : Queue[T], buf : Buffer) -> Unit {
@@ -95,7 +95,7 @@ pub fn clear[T](self : Queue[T]) -> Unit {
 ///
 /// # Example
 /// ```
-/// Queue::[1, 2, 3, 4].length()
+/// of([1, 2, 3, 4]).length()
 /// ```
 pub fn length[T](self : Queue[T]) -> Int {
   self.length

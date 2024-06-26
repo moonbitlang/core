@@ -217,7 +217,7 @@ pub fn debug_write[K : Debug, V : Debug](
   buf : Buffer
 ) -> Unit {
   let mut is_first = true
-  buf.write_string("@immutable_hashmap.Map::[")
+  buf.write_string("@immutable_hashmap.Map.of([")
   self.iter(
     fn(k, v) {
       if is_first {
@@ -232,7 +232,7 @@ pub fn debug_write[K : Debug, V : Debug](
       buf.write_string(")")
     },
   )
-  buf.write_string("]")
+  buf.write_string("])")
 }
 
 pub fn to_string[K : Debug, V : Debug](self : Map[K, V]) -> String {

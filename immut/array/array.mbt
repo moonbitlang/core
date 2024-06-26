@@ -403,12 +403,18 @@ pub fn map[T, U](self : ImmutableVec[T], f : (T) -> U) -> ImmutableVec[U] {
 test "map" {
   let v = of([1, 2, 3, 4, 5])
   inspect(v.map(fn(e) { e * 2 }), content="ImmutableVec.of([2, 4, 6, 8, 10])")?
-  inspect(v.map(fn(e) { e.to_string() }), content="ImmutableVec.of([1, 2, 3, 4, 5])")?
+  inspect(
+    v.map(fn(e) { e.to_string() }),
+    content="ImmutableVec.of([1, 2, 3, 4, 5])",
+  )?
   inspect(
     v.map(fn(e) { e % 2 == 0 }),
     content="ImmutableVec.of([false, true, false, true, false])",
   )?
-  inspect(ImmutableVec::empty().map(fn(e : Int) { e }), content="ImmutableVec.of([])")?
+  inspect(
+    ImmutableVec::empty().map(fn(e : Int) { e }),
+    content="ImmutableVec.of([])",
+  )?
 }
 
 fn new_by_leaves[T](

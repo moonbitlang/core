@@ -238,9 +238,11 @@ test "debug_write" {
   let m = of([(3, "three"), (8, "eight"), (1, "one"), (2, "two"), (0, "zero")])
   let buffer = Buffer::make(0)
   m.debug_write(buffer)
-  @assertion.assert_eq(
-    buffer.to_string(),
-    "Map::[(0, \"zero\"), (1, \"one\"), (2, \"two\"), (3, \"three\"), (8, \"eight\")]",
+  inspect(
+    buffer,
+    content=
+      #|Map.of([(0, "zero"), (1, "one"), (2, "two"), (3, "three"), (8, "eight")])
+    ,
   )?
 }
 
@@ -324,7 +326,7 @@ test "op_equal" {
 }
 
 test "split_max with non-empty tree" {
-  let m = Map::[(3, "three"), (8, "eight"), (1, "one"), (2, "two"), (0, "zero")]
+  let m = of([(3, "three"), (8, "eight"), (1, "one"), (2, "two"), (0, "zero")])
   let (k, v, r) = m.split_max()
   inspect(k, content="8")?
   inspect(v, content="eight")?

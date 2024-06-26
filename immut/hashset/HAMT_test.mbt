@@ -60,7 +60,7 @@ test "Set::as_iter" {
 
 test "Set::to_string" {
   let set = Set::new().add(1).add(3).add(0x0f_ff_ff_ff).add(42)
-  inspect(set, content="@immutable_hashset.Set::[3, 42, 1, 268435455]")?
+  inspect(set, content="@immutable_hashset.Set.of([3, 42, 1, 268435455])")?
 }
 
 test "Set::from_array" {

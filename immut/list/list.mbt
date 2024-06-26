@@ -26,7 +26,7 @@ pub fn List::to_string[T : Show](xs : List[T]) -> String {
         init=x.to_string(),
       )
   }
-  "List::[" + elems + "]"
+  "List.of([" + elems + "])"
 }
 
 pub fn List::debug_write[T : Debug](xs : List[T], buf : Buffer) -> Unit {
@@ -69,7 +69,7 @@ pub fn length[T](self : List[T]) -> Int {
 /// # Example
 ///
 /// ```
-/// List::[1, 2, 3, 4, 5].iter(print) // output: 12345
+/// of([1, 2, 3, 4, 5]).iter(print) // output: 12345
 /// ```
 pub fn iter[T](self : List[T], f : (T) -> Unit) -> Unit {
   loop self {
@@ -86,7 +86,7 @@ pub fn iter[T](self : List[T], f : (T) -> Unit) -> Unit {
 /// # Example
 ///
 /// ```
-/// List::[1, 2, 3, 4, 5].iteri(fn(i, x) { print("(\(i),\(x)) ") })
+/// of([1, 2, 3, 4, 5]).iteri(fn(i, x) { print("(\(i),\(x)) ") })
 /// // output: (0,1) (1,2) (2,3) (3,4) (4,5)
 /// ```
 pub fn iteri[T](self : List[T], f : (Int, T) -> Unit) -> Unit {
@@ -104,7 +104,7 @@ pub fn iteri[T](self : List[T], f : (Int, T) -> Unit) -> Unit {
 /// # Example
 ///
 /// ```
-/// debug(List::[1, 2, 3, 4, 5].map(fn(x){ x * 2}))
+/// debug(of([1, 2, 3, 4, 5]).map(fn(x){ x * 2}))
 /// // output: of([2, 4, 6, 8, 10])
 /// ```
 pub fn map[T, U](self : List[T], f : (T) -> U) -> List[U] {
@@ -143,7 +143,7 @@ pub fn to_array[T](self : List[T]) -> Array[T] {
 /// # Example
 ///
 /// ```
-/// debug(List::[1, 2, 3, 4, 5].filter(fn(x){ x % 2 == 0}))
+/// debug(of([1, 2, 3, 4, 5]).filter(fn(x){ x % 2 == 0}))
 /// // output: from_array([2, 4])
 /// ```
 pub fn filter[T](self : List[T], f : (T) -> Bool) -> List[T] {
@@ -179,7 +179,7 @@ pub fn any[T](self : List[T], f : (T) -> Bool) -> Bool {
 /// # Example
 ///
 /// ```
-/// debug(List::[1, 2, 3, 4, 5].tail())
+/// debug(of([1, 2, 3, 4, 5]).tail())
 /// // output: from_array([2, 3, 4, 5])
 /// ```
 pub fn tail[T](self : List[T]) -> List[T] {
@@ -194,7 +194,7 @@ pub fn tail[T](self : List[T]) -> List[T] {
 /// # Example
 ///
 /// ```
-/// debug(List::[1, 2, 3, 4, 5].head_exn())
+/// debug(of([1, 2, 3, 4, 5]).head_exn())
 /// // output: 1
 /// ```
 /// @alert unsafe "Panic if the list is empty"
@@ -210,7 +210,7 @@ pub fn head_exn[T](self : List[T]) -> T {
 /// # Example
 ///
 /// ```
-/// debug(List::[1, 2, 3, 4, 5].head())
+/// debug(of([1, 2, 3, 4, 5]).head())
 /// // output: Some(1)
 /// debug(from_array([]).head())
 /// // output: None
@@ -227,7 +227,7 @@ pub fn head[T](self : List[T]) -> T? {
 /// # Example
 ///
 /// ```
-/// debug(List::[1, 2, 3, 4, 5].last())
+/// debug(of([1, 2, 3, 4, 5]).last())
 /// // output: 5
 /// ```
 /// @alert unsafe "Panic if the list is empty"
@@ -244,7 +244,7 @@ pub fn last[T](self : List[T]) -> T {
 /// # Example
 ///
 /// ```
-/// debug(List::[1, 2, 3, 4, 5].init_())
+/// debug(of([1, 2, 3, 4, 5]).init_())
 /// // output: from_array([1, 2, 3, 4])
 /// ```
 pub fn init_[T](self : List[T]) -> List[T] {
@@ -260,7 +260,7 @@ pub fn init_[T](self : List[T]) -> List[T] {
 /// # Example
 ///
 /// ```
-/// let ls = List::[1, 2, 3, 4, 5].concat(from_array([6, 7, 8, 9, 10]))
+/// let ls = of([1, 2, 3, 4, 5]).concat(from_array([6, 7, 8, 9, 10]))
 /// debug(ls) // output: from_array([1, 2, 3, 4, 5, 6, 7, 8, 9, 10])
 /// ```
 pub fn concat[T](self : List[T], other : List[T]) -> List[T] {
@@ -275,7 +275,7 @@ pub fn concat[T](self : List[T], other : List[T]) -> List[T] {
 /// # Example
 ///
 /// ```
-/// debug(List::[1, 2, 3, 4, 5].reverse())
+/// debug(of([1, 2, 3, 4, 5]).reverse())
 /// // output: from_array([5, 4, 3, 2, 1])
 /// ```
 pub fn reverse[T](self : List[T]) -> List[T] {
@@ -293,7 +293,7 @@ pub fn reverse[T](self : List[T]) -> List[T] {
 /// # Example
 ///
 /// ```
-/// let r = List::[1, 2, 3, 4, 5].fold_left(~init=0, fn(acc, x) { acc + x })
+/// let r = of([1, 2, 3, 4, 5]).fold_left(~init=0, fn(acc, x) { acc + x })
 /// debug(r) // output: 15
 /// ```
 pub fn fold_left[T, U](self : List[T], f : (U, T) -> U, ~init : U) -> U {
@@ -307,7 +307,7 @@ pub fn fold_left[T, U](self : List[T], f : (U, T) -> U, ~init : U) -> U {
 ///
 /// # Example
 /// ```
-/// let r = List::[1, 2, 3, 4, 5].fold_right(fn(x, acc) { x + acc }, ~init=0)
+/// let r = of([1, 2, 3, 4, 5]).fold_right(fn(x, acc) { x + acc }, ~init=0)
 /// ```
 pub fn fold_right[T, U](self : List[T], f : (T, U) -> U, ~init : U) -> U {
   match self {
@@ -345,7 +345,7 @@ pub fn fold_righti[T, U](self : List[T], f : (Int, T, U) -> U, ~init : U) -> U {
 /// # Example
 ///
 /// ```
-/// let r = zip(List::[1, 2, 3, 4, 5], from_array([6, 7, 8, 9, 10]))
+/// let r = zip(of([1, 2, 3, 4, 5]), from_array([6, 7, 8, 9, 10]))
 /// debug(r) // output: from_array([(1, 6), (2, 7), (3, 8), (4, 9), (5, 10)]
 /// ```
 ///
@@ -557,7 +557,7 @@ pub fn unfold[T, State](f : (State) -> (T, State)?, ~init : State) -> List[T] {
 /// # Example
 ///
 /// ```
-/// List::[1, 2, 3, 4, 5].take(3)
+/// of([1, 2, 3, 4, 5]).take(3)
 /// ```
 pub fn take[T](self : List[T], n : Int) -> List[T] {
   if n <= 0 {
@@ -580,7 +580,7 @@ fn unsafe_take[T](n : Int, xs : List[T]) -> List[T] {
 /// # Example
 ///
 /// ```
-/// List::[1, 2, 3, 4, 5].drop(3)
+/// of([1, 2, 3, 4, 5]).drop(3)
 /// ```
 pub fn drop[T](self : List[T], n : Int) -> List[T] {
   if n <= 0 {
@@ -683,7 +683,7 @@ pub fn lookup[T : Eq, E](self : List[(T, E)], v : T) -> E? {
 /// # Example
 ///
 /// ```
-/// println(List::[1, 3, 5, 8].find(fn(element) -> Bool { element % 2 == 0}))
+/// println(of([1, 3, 5, 8]).find(fn(element) -> Bool { element % 2 == 0}))
 /// // output: Some(8)
 /// ```
 pub fn find[T](self : List[T], f : (T) -> Bool) -> T? {
@@ -703,10 +703,10 @@ pub fn find[T](self : List[T], f : (T) -> Bool) -> T? {
 /// # Example
 ///
 /// ```
-/// println(List::[1, 3, 5, 8].findi(fn(element) -> Bool { (element % 2 == 0) && (i == 3) }))
+/// println(of([1, 3, 5, 8]).findi(fn(element) -> Bool { (element % 2 == 0) && (i == 3) }))
 /// // output: Some(8)
 ///
-/// println(List::[1, 3, 8, 5].findi(fn(element) -> Bool { (element % 2 == 0) && (i == 3) }))
+/// println(of([1, 3, 8, 5]).findi(fn(element) -> Bool { (element % 2 == 0) && (i == 3) }))
 /// // output: None
 /// ```
 pub fn findi[T](self : List[T], f : (T, Int) -> Bool) -> T? {
@@ -729,7 +729,7 @@ pub fn findi[T](self : List[T], f : (T, Int) -> Bool) -> T? {
 /// # Example
 ///
 /// ```
-/// println(List::[1, 2, 3, 4, 5].remove_at(2))
+/// println(of([1, 2, 3, 4, 5]).remove_at(2))
 /// // output: from_array([1, 2, 4, 5])
 /// ```
 pub fn remove_at[T](self : List[T], index : Int) -> List[T] {
@@ -746,7 +746,7 @@ pub fn remove_at[T](self : List[T], index : Int) -> List[T] {
 /// # Example
 ///
 /// ```
-/// println(List::[1, 2, 3, 4, 5].remove(3))
+/// println(of([1, 2, 3, 4, 5]).remove(3))
 /// // output: from_array([1, 2, 4, 5])
 /// ```
 pub fn remove[T : Eq](self : List[T], elem : T) -> List[T] {
@@ -766,7 +766,7 @@ pub fn remove[T : Eq](self : List[T], elem : T) -> List[T] {
 /// # Example
 ///
 /// ```
-/// println(List::[1, 2, 3, 4, 5].is_prefix(List::[1, 2, 3]))
+/// println(of([1, 2, 3, 4, 5]).is_prefix(of([1, 2, 3])))
 /// // output: true
 /// ```
 pub fn is_prefix[T : Eq](self : List[T], prefix : List[T]) -> Bool {
@@ -782,7 +782,7 @@ pub fn is_prefix[T : Eq](self : List[T], prefix : List[T]) -> Bool {
 /// # Example
 ///
 /// ```
-/// println(List::[1, 2, 3].equal(List::[1, 2, 3]))
+/// println(of([1, 2, 3]).equal(of([1, 2, 3])))
 /// // output: true
 /// ```
 pub fn equal[T : Eq](self : List[T], other : List[T]) -> Bool {
@@ -798,7 +798,7 @@ pub fn equal[T : Eq](self : List[T], other : List[T]) -> Bool {
 /// # Example
 ///
 /// ```
-/// println(List::[1, 2, 3, 4, 5].is_suffix(List::[3, 4, 5]))
+/// println(of([1, 2, 3, 4, 5]).is_suffix(of([3, 4, 5])))
 /// // output: true
 /// ```
 pub fn is_suffix[T : Eq](self : List[T], suffix : List[T]) -> Bool {
@@ -810,11 +810,11 @@ pub fn is_suffix[T : Eq](self : List[T], suffix : List[T]) -> Bool {
 /// # Example
 /// ```
 /// let ls = List::[
-///    List::[1, 2, 3],
-///    List::[4, 5, 6],
-///    List::[7, 8, 9],
+///    of([1, 2, 3]),
+///    of([4, 5, 6]),
+///    of([7, 8, 9]),
 /// ]
-/// ls.intercalate(List::[0])
+/// ls.intercalate(of([0]))
 /// ```
 pub fn intercalate[T](self : List[List[T]], sep : List[T]) -> List[T] {
   self.intersperse(sep).flatten()

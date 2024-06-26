@@ -212,7 +212,7 @@ pub fn as_iter[T](self : Set[T]) -> Iter[T] {
 
 pub fn debug_write[T : Debug](self : Set[T], buf : Buffer) -> Unit {
   let mut is_first = true
-  buf.write_string("@immutable_hashset.Set::[")
+  buf.write_string("@immutable_hashset.Set.of([")
   self.iter(
     fn(k) {
       if is_first {
@@ -223,7 +223,7 @@ pub fn debug_write[T : Debug](self : Set[T], buf : Buffer) -> Unit {
       k.debug_write(buf)
     },
   )
-  buf.write_string("]")
+  buf.write_string("])")
 }
 
 pub fn to_string[T : Debug](self : Set[T]) -> String {

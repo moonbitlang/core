@@ -62,8 +62,8 @@ let list4 = List::flatten([list1, list2, list3]) // of([1, 2, 3, 4, 5, 6, 7, 8, 
 
 To concatenate a list with a delimiter, `intercalate()` is useful:
 ```moonbit
-let list = of([List::[1, 2, 3], List::[4, 5, 6], List::[7, 8, 9]])
-let list1 = list.intercalate(of([0]) // List::[1, 2, 3, 0, 4, 5, 6, 0, 7, 8, 9])
+let list = of([of([1, 2, 3]), of([4, 5, 6]), of([7, 8, 9])])
+let list1 = list.intercalate(of([0]) // of([1, 2, 3, 0, 4, 5, 6, 0, 7, 8, 9]))
 ```
 
 ### Filtering / Rejecting / Selecting elements

@@ -169,7 +169,7 @@ pub fn debug_write[K : Debug, V : Debug](
   self : Map[K, V],
   buffer : Buffer
 ) -> Unit {
-  buffer.write_string("Map::[")
+  buffer.write_string("Map.of([")
   let mut first = true
   self.iter(
     fn(k, v) {
@@ -184,7 +184,7 @@ pub fn debug_write[K : Debug, V : Debug](
       buffer.write_string(")")
     },
   )
-  buffer.write_string("]")
+  buffer.write_string("])")
 }
 
 fn debug_tree[K : Show, V : Show](self : Map[K, V]) -> String {
