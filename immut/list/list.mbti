@@ -52,6 +52,7 @@ impl List {
   minimum[T : Compare + Eq](Self[T]) -> T
   nth[T](Self[T], Int) -> T?
   nth_exn[T](Self[T], Int) -> T
+  of[T](FixedArray[T]) -> Self[T]
   op_add[T](Self[T], Self[T]) -> Self[T]
   op_equal[T : Eq](Self[T], Self[T]) -> Bool
   remove[T : Eq](Self[T], T) -> Self[T]

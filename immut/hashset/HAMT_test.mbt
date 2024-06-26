@@ -52,7 +52,7 @@ test "Set::remove" {
 }
 
 test "Set::as_iter" {
-  let data = Set::["a", "b", "d", "e", "f"]
+  let data = of(["a", "b", "d", "e", "f"])
   let mut s = ""
   data.as_iter().iter(fn { k => s += " \(k)" })
   inspect(s, content=" d e b a f")?
@@ -64,7 +64,7 @@ test "Set::to_string" {
 }
 
 test "Set::from_array" {
-  let set = Set::["1", "2", "42"]
+  let set = of(["1", "2", "42"])
   inspect(set.contains("1"), content="true")?
   inspect(set.contains("2"), content="true")?
   inspect(set.contains("42"), content="true")?

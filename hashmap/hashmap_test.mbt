@@ -96,7 +96,7 @@ test "contains" {
 }
 
 test "from_array" {
-  let m = HashMap::[("a", 1), ("b", 2), ("c", 3)]
+  let m = of([("a", 1), ("b", 2), ("c", 3)])
   @assertion.assert_eq(m.get("a"), Some(1))?
   @assertion.assert_eq(m.get("b"), Some(2))?
   @assertion.assert_eq(m.get("c"), Some(3))?
@@ -145,14 +145,14 @@ test "is_empty" {
 }
 
 test "iter" {
-  let m : HashMap[String, Int] = HashMap::[("a", 1), ("b", 2), ("c", 3)]
+  let m : HashMap[String, Int] = of([("a", 1), ("b", 2), ("c", 3)])
   let mut sum = 0
   m.iter(fn(_k, v) { sum += v })
   @assertion.assert_eq(sum, 6)?
 }
 
 test "iteri" {
-  let m : HashMap[String, Int] = HashMap::[("a", 1), ("b", 2), ("c", 3)]
+  let m : HashMap[String, Int] = of([("a", 1), ("b", 2), ("c", 3)])
   let mut sum = 0
   let mut s = ""
   m.iteri(
@@ -166,7 +166,7 @@ test "iteri" {
 }
 
 test "clear" {
-  let m : HashMap[String, Int] = HashMap::[("a", 1), ("b", 2), ("c", 3)]
+  let m : HashMap[String, Int] = of([("a", 1), ("b", 2), ("c", 3)])
   m.clear()
   @assertion.assert_eq(m.size, 0)?
   @assertion.assert_eq(m.capacity, 8)?
@@ -201,7 +201,7 @@ test "grow" {
 
 test "as_iter" {
   let buf = Buffer::new(size_hint=20)
-  let map = HashMap::[(1, "one"), (2, "two"), (3, "three")]
+  let map = of([(1, "one"), (2, "two"), (3, "three")])
   map.as_iter().iter(
     fn(e) {
       let (k, v) = e
@@ -220,7 +220,7 @@ test "as_iter" {
 }
 
 test "to_array" {
-  let map = HashMap::[(1, "one"), (2, "two"), (3, "three")]
+  let map = of([(1, "one"), (2, "two"), (3, "three")])
   inspect(map.to_array(), content="[(2, two), (1, one), (3, three)]")?
 }
 

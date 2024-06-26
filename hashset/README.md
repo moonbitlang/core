@@ -12,7 +12,7 @@ You can create an empty set using `new()` or construct it using `from_array()`.
 
 ```moonbit
 let set1 : HashSet[String] = HashSet::new()
-let set2 = HashSet::[1, 2, 3, 4, 5]
+let set2 = of([1, 2, 3, 4, 5])
 ```
 
 ### Insert & Contain
@@ -30,7 +30,7 @@ set.contains("a") // true
 You can use `remove()` to remove a key.
 
 ```moonbit
-let set = HashSet::[("a"), ("b"), ("c")]
+let set = of([("a"), ("b"), ("c")])
 set.remove("a")
 set.contains("a") // false
 ```
@@ -40,7 +40,7 @@ set.contains("a") // false
 You can use `size()` to get the number of keys in the set, or `capacity()` to get the current capacity.
 
 ```moonbit
-let set = HashSet::[("a"), ("b"), ("c")]
+let set = of([("a"), ("b"), ("c")])
 set.size() // 3
 set.capacity() // 8
 ```
@@ -57,7 +57,7 @@ set.is_empty() // true
 You can use `clear` to remove all keys from the set, but the allocated memory will not change.
 
 ```moonbit
-let set = HashSet::[("a"), ("b"), ("c")]
+let set = of([("a"), ("b"), ("c")])
 set.clear()
 set.is_empty() // true
 ```
@@ -67,7 +67,7 @@ set.is_empty() // true
 You can use `iter()` or `iteri()` to iterate through all keys.
 
 ```moonbit
-let set = HashSet::[("a"), ("b"), ("c")]
+let set = of([("a"), ("b"), ("c")])
 set.iter(fn(k) { println("\(k)") })
 set.iteri(fn(i, k) { println("\(i)-\(k)") })
 ```
@@ -77,11 +77,11 @@ set.iteri(fn(i, k) { println("\(i)-\(k)") })
 You can use `union()`, `intersection()`, `difference()` and `symmetric_difference()` to perform set operations.
 
 ```moonbit
-let m1 : HashSet[String] = HashSet::["a", "b", "c"]
-let m2 : HashSet[String] = HashSet::["b", "c", "d"]
-let u = m1.union(m2) // HashSet::["a", "b", "c", "d"]
-let i = m1.intersection(m2) // HashSet::["b", "c"]
-let d = m1.difference(m2) // HashSet::["a"]
-let s = m1.symmetric_difference(m2) // HashSet::["a", "d"]
+let m1 : HashSet[String] = of(["a", "b", "c"])
+let m2 : HashSet[String] = of(["b", "c", "d"])
+let u = m1.union(m2) // of(["a", "b", "c", "d"])
+let i = m1.intersection(m2) // of(["b", "c"])
+let d = m1.difference(m2) // of(["a"])
+let s = m1.symmetric_difference(m2) // of(["a", "d"])
 ```
 

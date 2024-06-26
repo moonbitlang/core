@@ -111,7 +111,7 @@ test "Bucket iter" {
   let b0 : Bucket[_] = Just_One(0)
   let b1 = b0.add(1)
   let b2 = b1.add(2)
-  let buf = Buffer::make(0)
+  let buf = Buffer::new(size_hint=0)
   let mut is_first = true
   b2.iter(
     fn(k) {
@@ -130,7 +130,7 @@ test "Bucket as_iter" {
   let b0 : Bucket[_] = Just_One(0)
   let b1 = b0.add(1)
   let b2 = b1.add(2)
-  let buf = Buffer::make(0)
+  let buf = Buffer::new(size_hint=0)
   let mut is_first = true
   b2.as_iter().iter(
     fn {

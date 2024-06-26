@@ -239,7 +239,7 @@ test "deep access" {
       ),
       ("null", JsonValue::Null),
       ("bool", JsonValue::False),
-      ("obj", JsonValue::Object(Map::[])),
+      ("obj", JsonValue::Object(of([]))),
     ],
   )
   inspect(json.value("null").bind(as_null), content="Some(())")?
@@ -302,7 +302,7 @@ test "stringify" {
       ),
       ("null", JsonValue::Null),
       ("bool", JsonValue::False),
-      ("obj", JsonValue::Object(Map::[])),
+      ("obj", JsonValue::Object(of([]))),
     ],
   )
   inspect(

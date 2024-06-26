@@ -61,8 +61,8 @@ pub fn to_array[T : Compare](self : ImmutableSet[T]) -> Array[T] {
 /// # Example
 /// 
 /// ```
-/// println(ImmutableSet::[3, 4, 5].remove_min())
-/// // output: ImmutableSet::[4, 5]
+/// println(of([3, 4, 5]).remove_min())
+/// // output: of([4, 5])
 /// ```
 /// @alert unsafe "Panic if the ImmutableSet is empty."
 pub fn remove_min[T : Compare](self : ImmutableSet[T]) -> ImmutableSet[T] {
@@ -81,8 +81,8 @@ pub fn remove_min[T : Compare](self : ImmutableSet[T]) -> ImmutableSet[T] {
 /// # Example
 /// 
 /// ```
-/// println(ImmutableSet::[6, 3, 8, 1].add(5))
-/// // output: ImmutableSet::[1, 3, 5, 6, 8]
+/// println(of([6, 3, 8, 1]).add(5))
+/// // output: of([1, 3, 5, 6, 8])
 /// ```
 pub fn add[T : Compare](self : ImmutableSet[T], value : T) -> ImmutableSet[T] {
   match self {
@@ -115,8 +115,8 @@ pub fn add[T : Compare](self : ImmutableSet[T], value : T) -> ImmutableSet[T] {
 /// # Example
 /// 
 /// ```
-/// println(ImmutableSet::[3, 8, 1].remove(8))
-/// // output: ImmutableSet::[1, 3]
+/// println(of([3, 8, 1]).remove(8))
+/// // output: of([1, 3])
 /// ```
 pub fn remove[T : Compare](
   self : ImmutableSet[T],
@@ -152,7 +152,7 @@ pub fn remove[T : Compare](
 /// # Example
 /// 
 /// ```
-/// println(ImmutableSet::[7, 2, 9, 4, 5, 6, 3, 8, 1].min())
+/// println(of([7, 2, 9, 4, 5, 6, 3, 8, 1]).min())
 /// // output: 1
 /// ```
 /// @alert unsafe "Panic if the ImmutableSet is empty."
@@ -185,7 +185,7 @@ pub fn min_option[T : Compare](self : ImmutableSet[T]) -> T? {
 /// # Example
 /// 
 /// ```
-/// println(ImmutableSet::[7, 2, 9, 4, 5, 6, 3, 8, 1].max())
+/// println(of([7, 2, 9, 4, 5, 6, 3, 8, 1]).max())
 /// // output: 9
 /// ```
 /// @alert unsafe "Panic if the ImmutableSet is empty."
@@ -220,10 +220,10 @@ pub fn max_option[T : Compare](self : ImmutableSet[T]) -> T? {
 /// # Example
 /// 
 /// ```
-/// let (left, present, right) = ImmutableSet::[7, 2, 9, 4, 5, 6, 3, 8, 1].split(5)
+/// let (left, present, right) = of([7, 2, 9, 4, 5, 6, 3, 8, 1]).split(5)
 /// println(present) // output: true
-/// println(left) // output: ImmutableSet::[1, 2, 3, 4]
-/// println(right) // output:ImmutableSet::[6, 7, 8, 9]
+/// println(left) // output: of([1, 2, 3, 4])
+/// println(right) // output:of([6, 7, 8, 9])
 /// ```
 pub fn split[T : Compare](
   self : ImmutableSet[T],
@@ -272,8 +272,8 @@ pub fn contains[T : Compare](self : ImmutableSet[T], value : T) -> Bool {
 /// # Example
 /// 
 /// ```
-/// println(ImmutableSet::[3, 4, 5].union(ImmutableSet::[4, 5, 6]))
-/// // output: ImmutableSet::[3, 4, 5, 6]
+/// println(of([3, 4, 5]).union(of([4, 5, 6])))
+/// // output: of([3, 4, 5, 6])
 /// ```
 pub fn union[T : Compare](
   self : ImmutableSet[T],
@@ -307,8 +307,8 @@ pub fn union[T : Compare](
 /// # Example
 /// 
 /// ```
-/// println(ImmutableSet::[3, 4, 5].inter(ImmutableSet::[4, 5, 6]))
-/// // output: ImmutableSet::[4, 5]
+/// println(of([3, 4, 5]).inter(of([4, 5, 6])))
+/// // output: of([4, 5])
 /// ```
 pub fn inter[T : Compare](
   self : ImmutableSet[T],
@@ -329,8 +329,8 @@ pub fn inter[T : Compare](
 /// # Example
 /// 
 /// ```
-/// println(ImmutableSet::[1, 2, 3].diff(ImmutableSet::[4, 5, 1]))
-/// // output: ImmutableSet::[2, 3]
+/// println(of([1, 2, 3]).diff(of([4, 5, 1])))
+/// // output: of([2, 3])
 /// ```
 pub fn diff[T : Compare](
   self : ImmutableSet[T],
@@ -352,7 +352,7 @@ pub fn diff[T : Compare](
 /// # Example
 /// 
 /// ```
-/// println(ImmutableSet::[1, 2, 3].subset(ImmutableSet::[7, 2, 9, 4, 5, 6, 3, 8, 1]))
+/// println(of([1, 2, 3]).subset(of([7, 2, 9, 4, 5, 6, 3, 8, 1])))
 /// // output: true
 /// ```
 pub fn subset[T : Compare](
@@ -385,7 +385,7 @@ pub fn subset[T : Compare](
 /// # Example
 /// 
 /// ```
-/// println(ImmutableSet::[1, 2, 3].disjoint(ImmutableSet::[4, 5, 6]))
+/// println(of([1, 2, 3]).disjoint(of([4, 5, 6])))
 /// // output: true
 /// ```
 pub fn disjoint[T : Compare](
@@ -411,7 +411,7 @@ pub fn disjoint[T : Compare](
 /// # Example
 /// 
 /// ```
-/// ImmutableSet::[7, 2, 9, 4, 5, 6, 3, 8, 1].iter(print)
+/// of([7, 2, 9, 4, 5, 6, 3, 8, 1]).iter(print)
 /// // output: 123456789
 /// ```
 pub fn iter[T : Compare](self : ImmutableSet[T], f : (T) -> Unit) -> Unit {
@@ -430,7 +430,7 @@ pub fn iter[T : Compare](self : ImmutableSet[T], f : (T) -> Unit) -> Unit {
 /// # Example
 /// 
 /// ```
-/// println(ImmutableSet::[1, 2, 3, 4, 5].fold(0, fn(acc, x) { acc + x }))
+/// println(of([1, 2, 3, 4, 5]).fold(0, fn(acc, x) { acc + x }))
 /// // output: 15
 /// ```
 pub fn fold[T : Compare, U](
@@ -450,8 +450,8 @@ pub fn fold[T : Compare, U](
 /// # Example
 /// 
 /// ```
-/// println(ImmutableSet::[1, 2, 3].map(fn(x){ x * 2}))
-/// // output: ImmutableSet::[2, 4, 6]
+/// println(of([1, 2, 3]).map(fn(x){ x * 2}))
+/// // output: of([2, 4, 6])
 /// ```
 pub fn map[T : Compare, U : Compare](
   self : ImmutableSet[T],
@@ -469,7 +469,7 @@ pub fn map[T : Compare, U : Compare](
 /// # Example
 /// 
 /// ```
-/// println(ImmutableSet::[2, 4, 6].all(fn(v) { v % 2 == 0}))
+/// println(of([2, 4, 6]).all(fn(v) { v % 2 == 0}))
 /// // output: true
 /// ```
 pub fn all[T : Compare](self : ImmutableSet[T], f : (T) -> Bool) -> Bool {
@@ -484,7 +484,7 @@ pub fn all[T : Compare](self : ImmutableSet[T], f : (T) -> Bool) -> Bool {
 /// # Example
 /// 
 /// ```
-/// println(ImmutableSet::[1, 4, 3].any(fn(v) { v % 2 == 0}))
+/// println(of([1, 4, 3]).any(fn(v) { v % 2 == 0}))
 /// // output: true
 /// ```
 pub fn any[T : Compare](self : ImmutableSet[T], f : (T) -> Bool) -> Bool {
@@ -499,8 +499,8 @@ pub fn any[T : Compare](self : ImmutableSet[T], f : (T) -> Bool) -> Bool {
 /// # Example
 /// 
 /// ```
-/// println(ImmutableSet::[1, 2, 3, 4, 5, 6].filter(fn(v) { v % 2 == 0}))
-/// // output: ImmutableSet::[2, 4, 6]
+/// println(of([1, 2, 3, 4, 5, 6]).filter(fn(v) { v % 2 == 0}))
+/// // output: of([2, 4, 6])
 /// ```
 pub fn filter[T : Compare](
   self : ImmutableSet[T],
@@ -733,5 +733,13 @@ fn concat[T : Compare](
     (Empty, _) => other
     (_, Empty) => self
     _ => join(self, other.min(), other.remove_min())
+  }
+}
+
+pub fn ImmutableSet::of[T : Compare](array : FixedArray[T]) -> ImmutableSet[T] {
+  for i = array.length() - 1, set = ImmutableSet::Empty; i >= 0; {
+    continue i - 1, set.add(array[i])
+  } else {
+    set
   }
 }

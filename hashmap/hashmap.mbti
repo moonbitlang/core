@@ -16,6 +16,7 @@ impl HashMap {
   iter[K, V](Self[K, V], (K, V) -> Unit) -> Unit
   iteri[K, V](Self[K, V], (Int, K, V) -> Unit) -> Unit
   new[K, V](~capacity : Int = ..) -> Self[K, V]
+  of[K : Eq + Hash, V](FixedArray[Tuple[K, V]]) -> Self[K, V]
   op_get[K : Hash + Eq, V](Self[K, V], K) -> V?
   op_set[K : Hash + Eq, V](Self[K, V], K, V) -> Unit
   remove[K : Hash + Eq, V](Self[K, V], K) -> Unit
