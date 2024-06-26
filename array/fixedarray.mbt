@@ -117,7 +117,7 @@ test "iteri" {
 /// ```
 /// [1, 2, 3, 4, 5].each(fn(x){ print("\(x) ") }) //output: 5 4 3 2 1
 /// ```
-pub fn iter_rev[T](self : FixedArray[T], f : (T) -> Unit) -> Unit {
+pub fn each_rev[T](self : FixedArray[T], f : (T) -> Unit) -> Unit {
   for i = self.length() - 1; i >= 0; i = i - 1 {
     f(self[i])
   }
@@ -134,18 +134,18 @@ test "iter_rev" {
   }
   {
     i = 1
-    ([] : FixedArray[_]).iter_rev(f)
+    ([] : FixedArray[_]).each_rev(f)
     @assertion.assert_false(failed)?
     @assertion.assert_eq(i, 1)?
   }
   {
     i = 2
-    ([1] : FixedArray[_]).iter_rev(f)
+    ([1] : FixedArray[_]).each_rev(f)
     @assertion.assert_false(failed)?
     @assertion.assert_eq(i, 1)?
   }
   i = 6
-  ([1, 2, 3, 4, 5] : FixedArray[_]).iter_rev(f)
+  ([1, 2, 3, 4, 5] : FixedArray[_]).each_rev(f)
   @assertion.assert_false(failed)?
   @assertion.assert_eq(i, 1)?
 }

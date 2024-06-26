@@ -108,7 +108,7 @@ test "iter_rev" {
   v.push(4)
   v.push(5)
   let mut sum = 0
-  v.iter_rev(fn(x) { sum = sum + x })
+  v.each_rev(fn(x) { sum = sum + x })
   @assertion.assert_eq(sum, 12)?
 }
 

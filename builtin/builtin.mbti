@@ -62,7 +62,7 @@ impl Array {
   is_empty[T](Self[T]) -> Bool
   is_sorted[T : Compare + Eq](Self[T]) -> Bool
   each[T](Self[T], (T) -> Unit) -> Unit
-  iter_rev[T](Self[T], (T) -> Unit) -> Unit
+  each_rev[T](Self[T], (T) -> Unit) -> Unit
   eachi_rev[T](Self[T], (Int, T) -> Unit) -> Unit
   eachi[T](Self[T], (Int, T) -> Unit) -> Unit
   join[T](Self[Self[T]], T) -> Self[T]

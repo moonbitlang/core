@@ -131,7 +131,7 @@ test "mapi" {
 test "iter_rev" {
   let mut i = 6
   let mut failed = false
-  @devec.of([1, 2, 3, 4, 5]).iter_rev(
+  @devec.of([1, 2, 3, 4, 5]).each_rev(
     fn(elem) {
       if elem != i - 1 {
         failed = true

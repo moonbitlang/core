@@ -427,9 +427,9 @@ pub fn eachi[T](self : Devec[T], f : (Int, T) -> Unit) -> Unit {
 /// ```
 /// let dv = of([1, 2, 3, 4, 5])
 /// let mut sum = 0
-/// dv.iter_rev(fn (x) {sum = sum + x})
+/// dv.each_rev(fn (x) {sum = sum + x})
 /// ```
-pub fn iter_rev[T](self : Devec[T], f : (T) -> Unit) -> Unit {
+pub fn each_rev[T](self : Devec[T], f : (T) -> Unit) -> Unit {
   for i = self.length() - 1; i >= 0; i = i - 1 {
     f(self[i])
   }

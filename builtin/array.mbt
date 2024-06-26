@@ -247,7 +247,7 @@ pub fn each[T](self : Array[T], f : (T) -> Unit) -> Unit {
   }
 }
 
-pub fn iter_rev[T](self : Array[T], f : (T) -> Unit) -> Unit {
+pub fn each_rev[T](self : Array[T], f : (T) -> Unit) -> Unit {
   for i = self.length() - 1; i >= 0; i = i - 1 {
     f(self[i])
   }
