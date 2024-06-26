@@ -262,20 +262,81 @@ test "parse_double" {
 }
 
 test "parse_double_inf" {
-  @assertion.assert_eq(try {parse_double("inf")!} catch { _ => panic() }, Double::inf(1))?
-  @assertion.assert_eq(try {parse_double("+Inf")!} catch { _ => panic()}, Double::inf(1))?
-  @assertion.assert_eq(try {parse_double("-Inf")!} catch { _ => panic()}, Double::inf(-1))?
-  @assertion.assert_eq(try {parse_double("+Infinity")!} catch { _ => panic()}, Double::inf(1))?
-  @assertion.assert_eq(try {parse_double("-Infinity")!} catch { _ => panic()}, Double::inf(-1))?
-  @assertion.assert_eq(try {parse_double("+INFINITY")!} catch { _ => panic()}, Double::inf(1))?
-  @assertion.assert_eq(try {parse_double("-INFINITY")!} catch { _ => panic()}, Double::inf(-1))?
+  @assertion.assert_eq(
+    try {
+      parse_double("inf")!
+    } catch {
+      _ => panic()
+    },
+    Double::inf(1),
+  )?
+  @assertion.assert_eq(
+    try {
+      parse_double("+Inf")!
+    } catch {
+      _ => panic()
+    },
+    Double::inf(1),
+  )?
+  @assertion.assert_eq(
+    try {
+      parse_double("-Inf")!
+    } catch {
+      _ => panic()
+    },
+    Double::inf(-1),
+  )?
+  @assertion.assert_eq(
+    try {
+      parse_double("+Infinity")!
+    } catch {
+      _ => panic()
+    },
+    Double::inf(1),
+  )?
+  @assertion.assert_eq(
+    try {
+      parse_double("-Infinity")!
+    } catch {
+      _ => panic()
+    },
+    Double::inf(-1),
+  )?
+  @assertion.assert_eq(
+    try {
+      parse_double("+INFINITY")!
+    } catch {
+      _ => panic()
+    },
+    Double::inf(1),
+  )?
+  @assertion.assert_eq(
+    try {
+      parse_double("-INFINITY")!
+    } catch {
+      _ => panic()
+    },
+    Double::inf(-1),
+  )?
 }
 
 test "parse_double_nan" {
-  let nan = try {parse_double("nan")!} catch { _ => panic()}
+  let nan = try {
+    parse_double("nan")!
+  } catch {
+    _ => panic()
+  }
   @assertion.assert_true(nan.is_nan())?
-  let nan = try {parse_double("NaN")!} catch { _ => panic()}
+  let nan = try {
+    parse_double("NaN")!
+  } catch {
+    _ => panic()
+  }
   @assertion.assert_true(nan.is_nan())?
-  let nan = try {parse_double("NAN")!} catch { _ => panic()}
+  let nan = try {
+    parse_double("NAN")!
+  } catch {
+    _ => panic()
+  }
   @assertion.assert_true(nan.is_nan())?
 }
