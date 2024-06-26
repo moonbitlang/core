@@ -41,6 +41,10 @@ pub fn debug_write(self : Int64, buf : Buffer) -> Unit {
   buf.write_string(self.to_string())
 }
 
+pub fn debug_write(self : UInt, buf : Buffer) -> Unit {
+  buf.write_string(self.to_string())
+}
+
 pub fn debug_write(self : Bytes, buf : Buffer) -> Unit {
   buf.write_string(self.to_string())
 }
