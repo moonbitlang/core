@@ -337,7 +337,7 @@ pub fn as_iter[T](self : T?) -> Iter[T] {
 test "as_iter" {
   let x = Option::Some(42)
   let exb = Buffer::new(size_hint=0)
-  x.as_iter().iter(
+  x.as_iter().each(
     fn(x) {
       exb.write_string(x.to_string())
       exb.write_char('\n')
@@ -351,7 +351,7 @@ test "as_iter" {
   )?
   exb.reset()
   let y : Int? = None
-  y.as_iter().iter(
+  y.as_iter().each(
     fn(x) {
       exb.write_string(x.to_string())
       exb.write_char('\n')

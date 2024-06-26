@@ -16,7 +16,7 @@ impl FixedArray {
   fold_righti[T, U](Self[T], (Int, U, T) -> U, ~init : U) -> U
   from_array[T](Array[T]) -> Self[T]
   is_sorted[T : Compare + Eq](Self[T]) -> Bool
-  iter[T](Self[T], (T) -> Unit) -> Unit
+  each[T](Self[T], (T) -> Unit) -> Unit
   iter_rev[T](Self[T], (T) -> Unit) -> Unit
   iter_revi[T](Self[T], (Int, T) -> Unit) -> Unit
   iteri[T](Self[T], (Int, T) -> Unit) -> Unit

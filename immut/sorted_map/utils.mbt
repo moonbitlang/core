@@ -80,13 +80,13 @@ pub fn op_get[K : Compare, V](self : Map[K, V], key : K) -> V? {
 }
 
 /// Iterate over the key-value pairs in the map.
-pub fn iter[K, V](self : Map[K, V], f : (K, V) -> Unit) -> Unit {
+pub fn each[K, V](self : Map[K, V], f : (K, V) -> Unit) -> Unit {
   match self {
     Empty => ()
     Tree(k, ~value, l, r, ..) => {
-      iter(l, f)
+      each(l, f)
       f(k, value)
-      iter(r, f)
+      each(r, f)
     }
   }
 }
@@ -171,7 +171,7 @@ pub fn debug_write[K : Debug, V : Debug](
 ) -> Unit {
   buffer.write_string("Map::[")
   let mut first = true
-  self.iter(
+  self.each(
     fn(k, v) {
       if not(first) {
         buffer.write_string(", ")

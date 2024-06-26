@@ -14,7 +14,7 @@ impl HashSet {
   insert[K : Hash + Eq](Self[K], K) -> Unit
   intersection[K : Hash + Eq](Self[K], Self[K]) -> Self[K]
   is_empty[K](Self[K]) -> Bool
-  iter[K](Self[K], (K) -> Unit) -> Unit
+  each[K](Self[K], (K) -> Unit) -> Unit
   iteri[K](Self[K], (Int, K) -> Unit) -> Unit
   new[K]() -> Self[K]
   of[K : Hash + Eq](FixedArray[K]) -> Self[K]

@@ -39,7 +39,7 @@ test "SparseArray::iter" {
   let arr = singleton(0, 0).add(1, 1).add(3, 3).add(31, 31)
   let buf = Buffer::new(size_hint=0)
   let mut is_first = true
-  arr.iter(
+  arr.each(
     fn(x) {
       if is_first {
         is_first = false

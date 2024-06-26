@@ -147,7 +147,7 @@ test "is_empty" {
 test "iter" {
   let m : HashMap[String, Int] = of([("a", 1), ("b", 2), ("c", 3)])
   let mut sum = 0
-  m.iter(fn(_k, v) { sum += v })
+  m.each(fn(_k, v) { sum += v })
   @assertion.assert_eq(sum, 6)?
 }
 
@@ -202,7 +202,7 @@ test "grow" {
 test "as_iter" {
   let buf = Buffer::new(size_hint=20)
   let map = of([(1, "one"), (2, "two"), (3, "three")])
-  map.as_iter().iter(
+  map.as_iter().each(
     fn(e) {
       let (k, v) = e
       buf.write_string("[\(k)-\(v)]")
@@ -210,7 +210,7 @@ test "as_iter" {
   )
   inspect(buf, content="[2-two][1-one][3-three]")?
   buf.reset()
-  map.as_iter().take(2).iter(
+  map.as_iter().take(2).each(
     fn(e) {
       let (k, v) = e
       buf.write_string("[\(k)-\(v)]")

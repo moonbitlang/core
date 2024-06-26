@@ -126,11 +126,11 @@ test "pop" {
 test "iter" {
   let queue : Queue[Int] = new()
   let mut sum = 0
-  queue.iter(fn(x) { sum = sum + x })
+  queue.each(fn(x) { sum = sum + x })
   @assertion.assert_eq(sum, 0)?
   of([1, 2, 3, 4]).transfer(queue)
   sum = 0
-  queue.iter(fn(x) { sum = sum + x })
+  queue.each(fn(x) { sum = sum + x })
   @assertion.assert_eq(sum, 10)?
 }
 

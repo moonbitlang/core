@@ -37,7 +37,7 @@ fn to_string[T : Show](self : Iter[T]) -> String {
 /// - `self`: The iterator to consume.
 /// - `f`: A function that takes an element of type `T` and returns `Unit`. This function is applied to each element of the iterator.
 /// @intrinsic %iter.iter
-pub fn iter[T](self : Iter[T], f : (T) -> Unit) -> Unit {
+pub fn each[T](self : Iter[T], f : (T) -> Unit) -> Unit {
   (self.0)(
     fn {
       yield => {
@@ -358,7 +358,7 @@ pub fn flat_map[T, R](self : Iter[T], f : (T) -> Iter[R]) -> Iter[R] {
 ///
 /// The same iterator.
 pub fn tap[T](self : Iter[T], f : (T) -> Unit) -> Iter[T] {
-  self.iter(f)
+  self.each(f)
   self
 }
 
@@ -635,13 +635,13 @@ pub fn op_add[T](self : Iter[T], other : Iter[T]) -> Iter[T] {
 /// Collects the elements of the iterator into an array.
 pub fn to_array[T](self : Iter[T]) -> Array[T] {
   let result = []
-  self.iter(fn(e) { result.push(e) })
+  self.each(fn(e) { result.push(e) })
   result
 }
 
 /// Collects the elements of the iterator into an array.
 pub fn collect[T](self : Iter[T]) -> Array[T] {
   let result = []
-  self.iter(fn(e) { result.push(e) })
+  self.each(fn(e) { result.push(e) })
   result
 }

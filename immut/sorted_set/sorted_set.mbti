@@ -19,7 +19,7 @@ impl ImmutableSet {
   from_array[T : Compare + Eq](Array[T]) -> Self[T]
   inter[T : Compare + Eq](Self[T], Self[T]) -> Self[T]
   is_empty[T : Compare + Eq](Self[T]) -> Bool
-  iter[T : Compare + Eq](Self[T], (T) -> Unit) -> Unit
+  each[T : Compare + Eq](Self[T], (T) -> Unit) -> Unit
   map[T : Compare + Eq, U : Compare + Eq](Self[T], (T) -> U) -> Self[U]
   max[T : Compare + Eq](Self[T]) -> T
   max_option[T : Compare + Eq](Self[T]) -> T?

@@ -46,7 +46,7 @@ pub fn HashMap::from_array[K : Hash + Eq, V](
   arr : Array[(K, V)]
 ) -> HashMap[K, V] {
   let m = new(capacity=arr.length())
-  arr.iter(fn(e) { m.set(e.0, e.1) })
+  arr.each(fn(e) { m.set(e.0, e.1) })
   m
 }
 

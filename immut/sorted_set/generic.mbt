@@ -26,7 +26,7 @@ pub fn as_iter[T](self : ImmutableSet[T]) -> Iter[T] {
 
 test {
   let buf = Buffer::new(size_hint=20)
-  of([2, 7, 1, 2, 3, 4, 5]).as_iter().iter(
+  of([2, 7, 1, 2, 3, 4, 5]).as_iter().each(
     fn { x => buf.write_string(x.to_string()) },
   )
   inspect(buf, content="123457")?

@@ -76,7 +76,7 @@ fn size[K, V](self : Bucket[K, V]) -> Int {
 }
 
 /// Iterate through elements of a bucket
-fn iter[K, V](self : Bucket[K, V], f : (K, V) -> Unit) -> Unit {
+fn each[K, V](self : Bucket[K, V], f : (K, V) -> Unit) -> Unit {
   loop self {
     Just_One(k, v) => f(k, v)
     More(k, v, rest) => {

@@ -61,7 +61,7 @@ impl Array {
   insert[T](Self[T], Int, T) -> Unit
   is_empty[T](Self[T]) -> Bool
   is_sorted[T : Compare + Eq](Self[T]) -> Bool
-  iter[T](Self[T], (T) -> Unit) -> Unit
+  each[T](Self[T], (T) -> Unit) -> Unit
   iter_rev[T](Self[T], (T) -> Unit) -> Unit
   iter_revi[T](Self[T], (Int, T) -> Unit) -> Unit
   iteri[T](Self[T], (Int, T) -> Unit) -> Unit
@@ -137,7 +137,7 @@ impl Iter {
   find_first[T](Self[T], (T) -> Bool) -> T?
   flat_map[T, R](Self[T], (T) -> Self[R]) -> Self[R]
   fold[T, B](Self[T], (B, T) -> B, B) -> B
-  iter[T](Self[T], (T) -> Unit) -> Unit
+  each[T](Self[T], (T) -> Unit) -> Unit
   map[T, R](Self[T], (T) -> R) -> Self[R]
   op_add[T](Self[T], Self[T]) -> Self[T]
   prepend[T](Self[T], T) -> Self[T]
@@ -176,7 +176,7 @@ impl Map {
   get_or_default[K : Hash + Eq, V](Self[K, V], K, V) -> V
   get_or_init[K : Hash + Eq, V](Self[K, V], K, () -> V) -> V
   is_empty[K, V](Self[K, V]) -> Bool
-  iter[K, V](Self[K, V], (K, V) -> Unit) -> Unit
+  each[K, V](Self[K, V], (K, V) -> Unit) -> Unit
   iteri[K, V](Self[K, V], (Int, K, V) -> Unit) -> Unit
   new[K, V](~capacity : Int = ..) -> Self[K, V]
   of[K : Hash + Eq, V](FixedArray[Tuple[K, V]]) -> Self[K, V]

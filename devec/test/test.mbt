@@ -73,7 +73,7 @@ test "as_iter" {
   let iter = dv.as_iter()
   let buf = Buffer::new(size_hint=0)
   let mut i = 0
-  iter.iter(
+  iter.each(
     fn(x) {
       buf.write_string(x.to_string())
       buf.write_char('\n')
@@ -175,7 +175,7 @@ test "iteri" {
 test "iter" {
   let mut i = 0
   let mut failed = false
-  @devec.of([1, 2, 3, 4, 5]).iter(
+  @devec.of([1, 2, 3, 4, 5]).each(
     fn(elem) {
       if elem != i + 1 {
         failed = true
@@ -191,7 +191,7 @@ test "iter2" {
   v.pop_front_exn()
   v.pop_back_exn()
   let mut sum = 0
-  v.iter(fn { x => sum += x })
+  v.each(fn { x => sum += x })
   @assertion.assert_eq(sum, 9)?
 }
 

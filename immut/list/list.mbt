@@ -69,9 +69,9 @@ pub fn length[T](self : List[T]) -> Int {
 /// # Example
 ///
 /// ```
-/// of([1, 2, 3, 4, 5]).iter(print) // output: 12345
+/// of([1, 2, 3, 4, 5]).each(print) // output: 12345
 /// ```
-pub fn iter[T](self : List[T], f : (T) -> Unit) -> Unit {
+pub fn each[T](self : List[T], f : (T) -> Unit) -> Unit {
   loop self {
     Nil => ()
     Cons(head, tail) => {

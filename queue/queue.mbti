@@ -12,7 +12,7 @@ impl Queue {
   fold[T](Self[T], ~init : T, (T, T) -> T) -> T
   from_array[T](Array[T]) -> Self[T]
   is_empty[T](Self[T]) -> Bool
-  iter[T](Self[T], (T) -> Unit) -> Unit
+  each[T](Self[T], (T) -> Unit) -> Unit
   iteri[T](Self[T], (Int, T) -> Unit) -> Unit
   length[T](Self[T]) -> Int
   new[T]() -> Self[T]

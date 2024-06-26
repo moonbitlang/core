@@ -77,7 +77,7 @@ test "is_empty" {
 test "iter" {
   let m = of([(3, "three"), (8, "eight"), (1, "one"), (2, "two"), (0, "zero")])
   let mut s = ""
-  m.iter(fn(k, v) { s = s + "(\(k),\(v))" })
+  m.each(fn(k, v) { s = s + "(\(k),\(v))" })
   @assertion.assert_eq(s, "(0,zero)(1,one)(2,two)(3,three)(8,eight)")?
 }
 
@@ -247,7 +247,7 @@ test "debug_write" {
 test "as_iter" {
   let buf = Buffer::new(size_hint=20)
   let map = of([(1, "one"), (2, "two"), (3, "three")])
-  map.as_iter().iter(
+  map.as_iter().each(
     fn(e) {
       let (k, v) = e
       buf.write_string("[\(k)-\(v)]")
@@ -255,7 +255,7 @@ test "as_iter" {
   )
   inspect(buf, content="[1-one][2-two][3-three]")?
   buf.reset()
-  map.as_iter().take(2).iter(
+  map.as_iter().take(2).each(
     fn(e) {
       let (k, v) = e
       buf.write_string("[\(k)-\(v)]")

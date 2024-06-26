@@ -19,7 +19,7 @@ pub struct SparseArray {
 impl SparseArray {
   add[X](Self[X], Int, X) -> Self[X]
   has[X](Self[X], Int) -> Bool
-  iter[X](Self[X], (X) -> Unit) -> Unit
+  each[X](Self[X], (X) -> Unit) -> Unit
   op_get[X](Self[X], Int) -> X?
   replace[X](Self[X], Int, X) -> Self[X]
   singleton[X](Int, X) -> Self[X]

@@ -239,9 +239,9 @@ pub fn append[T](self : Array[T], other : Array[T]) -> Unit {
 /// v.push(4)
 /// v.push(5)
 /// let mut sum = 0
-/// v.iter(fn (x) {sum = sum + x})
+/// v.each(fn (x) {sum = sum + x})
 /// ```
-pub fn iter[T](self : Array[T], f : (T) -> Unit) -> Unit {
+pub fn each[T](self : Array[T], f : (T) -> Unit) -> Unit {
   for i = 0; i < self.length(); i = i + 1 {
     f(self[i])
   }
@@ -361,7 +361,7 @@ pub fn mapi_inplace[T](self : Array[T], f : (Int, T) -> T) -> Unit {
 /// ```
 pub fn filter[T](self : Array[T], f : (T) -> Bool) -> Array[T] {
   let arr = []
-  self.iter(fn(e) { if f(e) { arr.push(e) } })
+  self.each(fn(e) { if f(e) { arr.push(e) } })
   arr
 }
 

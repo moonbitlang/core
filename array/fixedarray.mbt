@@ -22,10 +22,10 @@
 /// # Example
 ///
 /// ```
-/// [1, 2, 3, 4, 5].iter(fn(x){ print("\(x) ") }) //output: 1 2 3 4 5
+/// [1, 2, 3, 4, 5].each(fn(x){ print("\(x) ") }) //output: 1 2 3 4 5
 /// ```
 /// @intrinsic %fixedarray.iter
-pub fn iter[T](self : FixedArray[T], f : (T) -> Unit) -> Unit {
+pub fn each[T](self : FixedArray[T], f : (T) -> Unit) -> Unit {
   for i = 0; i < self.length(); i = i + 1 {
     f(self[i])
   }
@@ -42,18 +42,18 @@ test "iter" {
   }
   {
     i = 0
-    ([] : FixedArray[_]).iter(f)
+    ([] : FixedArray[_]).each(f)
     @assertion.assert_false(failed)?
     @assertion.assert_eq(i, 0)?
   }
   {
     i = 0
-    ([1] : FixedArray[_]).iter(f)
+    ([1] : FixedArray[_]).each(f)
     @assertion.assert_false(failed)?
     @assertion.assert_eq(i, 1)?
   }
   i = 0
-  ([1, 2, 3, 4, 5] : FixedArray[_]).iter(f)
+  ([1, 2, 3, 4, 5] : FixedArray[_]).each(f)
   @assertion.assert_false(failed)?
   @assertion.assert_eq(i, 5)?
 }
@@ -115,7 +115,7 @@ test "iteri" {
 /// # Example
 ///
 /// ```
-/// [1, 2, 3, 4, 5].iter(fn(x){ print("\(x) ") }) //output: 5 4 3 2 1
+/// [1, 2, 3, 4, 5].each(fn(x){ print("\(x) ") }) //output: 5 4 3 2 1
 /// ```
 pub fn iter_rev[T](self : FixedArray[T], f : (T) -> Unit) -> Unit {
   for i = self.length() - 1; i >= 0; i = i - 1 {
@@ -915,7 +915,7 @@ test "as_iter" {
   let iter = arr.as_iter()
   let exb = Buffer::new()
   let mut i = 0
-  iter.iter(
+  iter.each(
     fn(x) {
       exb.write_string(x.to_string())
       exb.write_char('\n')

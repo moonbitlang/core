@@ -112,7 +112,7 @@ test "is_empty" {
 test "iter" {
   let m : HashSet[String] = HashSet::of(["a", "b", "c"])
   let mut sum = ""
-  m.iter(fn(k) { sum += k })
+  m.each(fn(k) { sum += k })
   @assertion.assert_eq(sum, "abc")?
 }
 
@@ -215,10 +215,10 @@ test "symmetric_difference" {
 test "as_iter" {
   let buf = Buffer::new(size_hint=20)
   let map = of(["a", "b", "c"])
-  map.as_iter().iter(fn(e) { buf.write_string("[\(e)]") })
+  map.as_iter().each(fn(e) { buf.write_string("[\(e)]") })
   inspect(buf, content="[a][b][c]")?
   buf.reset()
-  map.as_iter().take(2).iter(fn(e) { buf.write_string("[\(e)]") })
+  map.as_iter().take(2).each(fn(e) { buf.write_string("[\(e)]") })
   inspect(buf, content="[a][b]")?
 }
 

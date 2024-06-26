@@ -195,11 +195,11 @@ test "to_string" {
 
 test "iter" {
   let mut s = ""
-  of([7, 2, 9, 4, 5, 6, 3, 8, 1]).iter(fn(x) { s += x.to_string() })
+  of([7, 2, 9, 4, 5, 6, 3, 8, 1]).each(fn(x) { s += x.to_string() })
   inspect(s, content="123456789")?
   let empty : ImmutableSet[Int] = of([])
   s = ""
-  empty.iter(fn(x) { s += x.to_string() })
+  empty.each(fn(x) { s += x.to_string() })
   inspect(s, content="")?
 }
 

@@ -50,7 +50,7 @@ pub fn is_empty[T](v : ImmutableVec[T]) -> Bool {
 
 pub fn to_array[T](self : ImmutableVec[T]) -> Array[T] {
   let arr = []
-  self.iter(fn(v) { arr.push(v) })
+  self.each(fn(v) { arr.push(v) })
   arr
 }
 
@@ -78,10 +78,10 @@ pub fn as_iter[T](self : ImmutableVec[T]) -> Iter[T] {
 test "as_iter" {
   let buf = Buffer::new(size_hint=20)
   let v = of([1, 2, 3])
-  v.as_iter().iter(fn(e) { buf.write_string("[\(e)]") })
+  v.as_iter().each(fn(e) { buf.write_string("[\(e)]") })
   inspect(buf, content="[1][2][3]")?
   buf.reset()
-  v.as_iter().take(2).iter(fn(e) { buf.write_string("[\(e)]") })
+  v.as_iter().take(2).each(fn(e) { buf.write_string("[\(e)]") })
   inspect(buf, content="[1][2]")?
 }
 
@@ -242,14 +242,14 @@ test "from_array" {
 /// # Example
 /// ```
 /// let v = of([1, 2, 3, 4, 5])
-/// v.iter(fn(e) { print(e) })
+/// v.each(fn(e) { print(e) })
 /// ```
-pub fn iter[T](self : ImmutableVec[T], f : (T) -> Unit) -> Unit {
+pub fn each[T](self : ImmutableVec[T], f : (T) -> Unit) -> Unit {
   fn go(t : Tree[T]) -> Unit {
     match t {
       Empty => ()
-      Leaf(l) => l.iter(f)
-      Node(n) => n.iter(fn(t) { go(t) })
+      Leaf(l) => l.each(f)
+      Node(n) => n.each(fn(t) { go(t) })
     }
   }
 
@@ -259,10 +259,10 @@ pub fn iter[T](self : ImmutableVec[T], f : (T) -> Unit) -> Unit {
 test "iter" {
   let v = of([1, 2, 3, 4, 5])
   let mut s = 0
-  v.iter(fn(e) { s = s + e })
+  v.each(fn(e) { s = s + e })
   inspect(s, content="15")?
   let v : ImmutableVec[Int] = ImmutableVec::empty()
-  v.iter(fn(_e) { abort("never reach") })
+  v.each(fn(_e) { abort("never reach") })
 }
 
 /// Iterate over the array with index.
@@ -523,9 +523,9 @@ test "mix" {
     v2 = v2.set(i, i * 2)
   }
   let mut ct = 0
-  v.iter(fn(e) { ct = ct + e })
+  v.each(fn(e) { ct = ct + e })
   inspect(ct, content="4950")?
-  v2.iter(fn(e) { ct = ct + e })
+  v2.each(fn(e) { ct = ct + e })
   inspect(ct, content="14850")?
   v2 = v2.map(fn(e) { e * 2 })
   let ct1 = fold_left(v2, fn(a, b) { a + b }, init=0)

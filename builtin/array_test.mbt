@@ -121,7 +121,7 @@ test "array_append" {
 test "array_iter" {
   let arr = [1, 2, 3]
   let mut sum = 0
-  arr.iter(fn(x) { sum = sum + x })
+  arr.each(fn(x) { sum = sum + x })
   @assertion.assert_eq(sum, 6)?
 }
 

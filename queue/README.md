@@ -51,7 +51,7 @@ You can traverse the queue using the `iter` method.
 ```moonbit
 let queue = of([1,2,3])
 let mut sum = 0
-queue.iter(fn(x) { sum += x }) // sum = 6
+queue.each(fn(x) { sum += x }) // sum = 6
 ```
 
 You can fold the queue using the `fold` method.

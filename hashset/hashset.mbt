@@ -28,13 +28,13 @@ pub fn HashSet::new[K]() -> HashSet[K] {
 /// Create new hash set from array.
 pub fn HashSet::from_array[K : Hash + Eq](arr : Array[K]) -> HashSet[K] {
   let m = new()
-  arr.iter(fn(e) { m.insert(e) })
+  arr.each(fn(e) { m.insert(e) })
   m
 }
 
 pub fn HashSet::of[K : Hash + Eq](arr : FixedArray[K]) -> HashSet[K] {
   let m = new()
-  arr.iter(fn(e) { m.insert(e) })
+  arr.each(fn(e) { m.insert(e) })
   m
 }
 
@@ -135,7 +135,7 @@ pub fn is_empty[K](self : HashSet[K]) -> Bool {
 }
 
 /// Iterate over all keys of the set.
-pub fn iter[K](self : HashSet[K], f : (K) -> Unit) -> Unit {
+pub fn each[K](self : HashSet[K], f : (K) -> Unit) -> Unit {
   self.iteri(fn(_i, k) { f(k) })
 }
 
@@ -168,8 +168,8 @@ pub fn union[K : Hash + Eq](
   other : HashSet[K]
 ) -> HashSet[K] {
   let m = HashSet::new()
-  self.iter(fn(k) { m.insert(k) })
-  other.iter(fn(k) { m.insert(k) })
+  self.each(fn(k) { m.insert(k) })
+  other.each(fn(k) { m.insert(k) })
   m
 }
 
@@ -179,7 +179,7 @@ pub fn intersection[K : Hash + Eq](
   other : HashSet[K]
 ) -> HashSet[K] {
   let m = HashSet::new()
-  self.iter(fn(k) { if other.contains(k) { m.insert(k) } })
+  self.each(fn(k) { if other.contains(k) { m.insert(k) } })
   m
 }
 
@@ -189,7 +189,7 @@ pub fn difference[K : Hash + Eq](
   other : HashSet[K]
 ) -> HashSet[K] {
   let m = HashSet::new()
-  self.iter(fn(k) { if not(other.contains(k)) { m.insert(k) } })
+  self.each(fn(k) { if not(other.contains(k)) { m.insert(k) } })
   m
 }
 
@@ -199,8 +199,8 @@ pub fn symmetric_difference[K : Hash + Eq](
   other : HashSet[K]
 ) -> HashSet[K] {
   let m = HashSet::new()
-  self.iter(fn(k) { if not(other.contains(k)) { m.insert(k) } })
-  other.iter(fn(k) { if not(self.contains(k)) { m.insert(k) } })
+  self.each(fn(k) { if not(other.contains(k)) { m.insert(k) } })
+  other.each(fn(k) { if not(self.contains(k)) { m.insert(k) } })
   m
 }
 

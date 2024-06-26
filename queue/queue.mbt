@@ -207,9 +207,9 @@ pub fn pop[T](self : Queue[T]) -> T? {
 /// # Example
 /// ```
 /// let queue : Queue[Int] = of([1, 2, 3, 4])
-/// queue.iter(fn(x) { print(x) })
+/// queue.each(fn(x) { print(x) })
 /// ```
-pub fn iter[T](self : Queue[T], f : (T) -> Unit) -> Unit {
+pub fn each[T](self : Queue[T], f : (T) -> Unit) -> Unit {
   loop self.first {
     Cons({ content, next }) => {
       f(content)

@@ -68,11 +68,11 @@ map.is_empty() // true
 
 ### Traversal
 
-Use `iter()` or `iteri()` to iterate through all key-value pairs.
+Use `each()` or `iteri()` to iterate through all key-value pairs.
 
 ```moonbit
 let map = of([("a", 1), ("b", 2), ("c", 3)])
-map.iter(fn(k, v) { println(\(k)-\(v)) })
+map.each(fn(k, v) { println(\(k)-\(v)) })
 map.iteri(fn(i, k, v) { println(\(i)-\(k)-\(v)) })
 ```
 

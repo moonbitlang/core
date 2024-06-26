@@ -15,7 +15,7 @@ impl MutableSet {
   from_array[T : Compare + Eq](Array[T]) -> Self[T]
   intersect[T : Compare + Eq](Self[T], Self[T]) -> Self[T]
   is_empty[T : Compare + Eq](Self[T]) -> Bool
-  iter[T : Compare + Eq](Self[T], (T) -> Unit) -> Unit
+  each[T : Compare + Eq](Self[T], (T) -> Unit) -> Unit
   new[T]() -> Self[T]
   of[T : Compare + Eq](FixedArray[T]) -> Self[T]
   op_equal[T : Eq](Self[T], Self[T]) -> Bool

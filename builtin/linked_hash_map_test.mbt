@@ -132,7 +132,7 @@ test "is_empty" {
 test "iter" {
   let m = { "a": 1, "b": 2, "c": 3 }
   let mut sum = 0
-  m.iter(fn(_k, v) { sum += v })
+  m.each(fn(_k, v) { sum += v })
   @assertion.assert_eq(sum, 6)?
 }
 
@@ -189,7 +189,7 @@ test "grow" {
 test "as_iter" {
   let buf = Buffer::new(size_hint=20)
   let map = { 1: "one", 2: "two", 3: "three" }
-  map.as_iter().iter(
+  map.as_iter().each(
     fn(e) {
       let (k, v) = e
       buf.write_string("[\(k)-\(v)]")
@@ -197,7 +197,7 @@ test "as_iter" {
   )
   inspect(buf, content="[1-one][2-two][3-three]")?
   buf.reset()
-  map.as_iter().take(2).iter(
+  map.as_iter().take(2).each(
     fn(e) {
       let (k, v) = e
       buf.write_string("[\(k)-\(v)]")
@@ -211,7 +211,7 @@ test "iter order" {
   m["three"] = 3
   m["two"] = 2
   let buf = Buffer::new(size_hint=0)
-  m.iter(fn(k, v) { buf.write_string("[\(k)-\(v)]") })
+  m.each(fn(k, v) { buf.write_string("[\(k)-\(v)]") })
   inspect(buf.to_string(), content="[one-1][three-3][two-2]")?
 }
 
@@ -398,7 +398,7 @@ test "iter" {
   m.set("b", 2)
   m.set("c", 3)
   let mut sum = 0
-  m.iter(fn(_k, v) { sum += v })
+  m.each(fn(_k, v) { sum += v })
   @assertion.assert_eq(sum, 6)?
 }
 
@@ -489,7 +489,7 @@ test "iter" {
   m.set("b", 2)
   m.set("c", 3)
   let mut sum = 0
-  m.iter(fn(_k, v) { sum += v })
+  m.each(fn(_k, v) { sum += v })
   @assertion.assert_eq(sum, 6)?
 }
 
@@ -615,7 +615,7 @@ test "iter" {
   m.set("b", 2)
   m.set("c", 3)
   let mut sum = 0
-  m.iter(fn(_k, v) { sum += v })
+  m.each(fn(_k, v) { sum += v })
   @assertion.assert_eq(sum, 6)?
 }
 
