@@ -115,15 +115,15 @@ fn meld[T : Compare](l : Cont[T], r : Cont[T]) -> Cont[T] {
 
 test "meld" {
   inspect(
-    meld(Empty, ImmutablePriorityQueue::[1].body),
+    meld(Empty, of([1]).body),
     content="Node(1, MNil)",
   )?
   inspect(
-    meld(ImmutablePriorityQueue::[1].body, Empty),
+    meld(of([1]).body, Empty),
     content="Node(1, MNil)",
   )?
   inspect(
-    meld(ImmutablePriorityQueue::[1].body, ImmutablePriorityQueue::[2].body),
+    meld(of([1]).body, of([2]).body),
     content="Node(2, MCons(Node(1, MNil), MNil))",
   )?
 }
