@@ -9,6 +9,10 @@ impl FixedArray {
   as_iter[T](Self[T]) -> Iter[T]
   contains[T : Eq](Self[T], T) -> Bool
   copy[T](Self[T]) -> Self[T]
+  each[T](Self[T], (T) -> Unit) -> Unit
+  each_rev[T](Self[T], (T) -> Unit) -> Unit
+  eachi[T](Self[T], (Int, T) -> Unit) -> Unit
+  eachi_rev[T](Self[T], (Int, T) -> Unit) -> Unit
   ends_with[T : Eq](Self[T], Self[T]) -> Bool
   fold_left[T, U](Self[T], (U, T) -> U, ~init : U) -> U
   fold_lefti[T, U](Self[T], (Int, U, T) -> U, ~init : U) -> U
@@ -16,10 +20,6 @@ impl FixedArray {
   fold_righti[T, U](Self[T], (Int, U, T) -> U, ~init : U) -> U
   from_array[T](Array[T]) -> Self[T]
   is_sorted[T : Compare + Eq](Self[T]) -> Bool
-  each[T](Self[T], (T) -> Unit) -> Unit
-  each_rev[T](Self[T], (T) -> Unit) -> Unit
-  eachi_rev[T](Self[T], (Int, T) -> Unit) -> Unit
-  eachi[T](Self[T], (Int, T) -> Unit) -> Unit
   map[T, U](Self[T], (T) -> U) -> Self[U]
   mapi[T, U](Self[T], (Int, T) -> U) -> Self[U]
   new[T](Int, () -> T) -> Self[T]

@@ -14,12 +14,12 @@ impl ImmutableSet {
   default[T : Default]() -> Self[T]
   diff[T : Compare + Eq](Self[T], Self[T]) -> Self[T]
   disjoint[T : Compare + Eq](Self[T], Self[T]) -> Bool
+  each[T : Compare + Eq](Self[T], (T) -> Unit) -> Unit
   filter[T : Compare + Eq](Self[T], (T) -> Bool) -> Self[T]
   fold[T : Compare + Eq, U](Self[T], (U, T) -> U, ~init : U) -> U
   from_array[T : Compare + Eq](Array[T]) -> Self[T]
   inter[T : Compare + Eq](Self[T], Self[T]) -> Self[T]
   is_empty[T : Compare + Eq](Self[T]) -> Bool
-  each[T : Compare + Eq](Self[T], (T) -> Unit) -> Unit
   map[T : Compare + Eq, U : Compare + Eq](Self[T], (T) -> U) -> Self[U]
   max[T : Compare + Eq](Self[T]) -> T
   max_option[T : Compare + Eq](Self[T]) -> T?

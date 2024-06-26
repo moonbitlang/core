@@ -47,6 +47,10 @@ impl Array {
   debug_write[X : Debug](Self[X], Buffer) -> Unit
   dedup[T : Eq](Self[T]) -> Unit
   drain[T](Self[T], Int, Int) -> Self[T]
+  each[T](Self[T], (T) -> Unit) -> Unit
+  each_rev[T](Self[T], (T) -> Unit) -> Unit
+  eachi[T](Self[T], (Int, T) -> Unit) -> Unit
+  eachi_rev[T](Self[T], (Int, T) -> Unit) -> Unit
   ends_with[T : Eq](Self[T], Self[T]) -> Bool
   extract_if[T](Self[T], (T) -> Bool) -> Self[T]
   filter[T](Self[T], (T) -> Bool) -> Self[T]
@@ -61,10 +65,6 @@ impl Array {
   insert[T](Self[T], Int, T) -> Unit
   is_empty[T](Self[T]) -> Bool
   is_sorted[T : Compare + Eq](Self[T]) -> Bool
-  each[T](Self[T], (T) -> Unit) -> Unit
-  each_rev[T](Self[T], (T) -> Unit) -> Unit
-  eachi_rev[T](Self[T], (Int, T) -> Unit) -> Unit
-  eachi[T](Self[T], (Int, T) -> Unit) -> Unit
   join[T](Self[Self[T]], T) -> Self[T]
   length[T](Self[T]) -> Int
   make[T](Int, T) -> Self[T]
@@ -132,12 +132,12 @@ impl Iter {
   count[T](Self[T]) -> Int
   drop[T](Self[T], Int) -> Self[T]
   drop_while[T](Self[T], (T) -> Bool) -> Self[T]
+  each[T](Self[T], (T) -> Unit) -> Unit
   empty[T]() -> Self[T]
   filter[T](Self[T], (T) -> Bool) -> Self[T]
   find_first[T](Self[T], (T) -> Bool) -> T?
   flat_map[T, R](Self[T], (T) -> Self[R]) -> Self[R]
   fold[T, B](Self[T], (B, T) -> B, B) -> B
-  each[T](Self[T], (T) -> Unit) -> Unit
   map[T, R](Self[T], (T) -> R) -> Self[R]
   op_add[T](Self[T], Self[T]) -> Self[T]
   prepend[T](Self[T], T) -> Self[T]
@@ -171,13 +171,13 @@ impl Map {
   clear[K, V](Self[K, V]) -> Unit
   contains[K : Hash + Eq, V](Self[K, V], K) -> Bool
   debug_write[K : Debug, V : Debug](Self[K, V], Buffer) -> Unit
+  each[K, V](Self[K, V], (K, V) -> Unit) -> Unit
+  eachi[K, V](Self[K, V], (Int, K, V) -> Unit) -> Unit
   from_array[K : Hash + Eq, V](Array[Tuple[K, V]]) -> Self[K, V]
   get[K : Hash + Eq, V](Self[K, V], K) -> V?
   get_or_default[K : Hash + Eq, V](Self[K, V], K, V) -> V
   get_or_init[K : Hash + Eq, V](Self[K, V], K, () -> V) -> V
   is_empty[K, V](Self[K, V]) -> Bool
-  each[K, V](Self[K, V], (K, V) -> Unit) -> Unit
-  eachi[K, V](Self[K, V], (Int, K, V) -> Unit) -> Unit
   new[K, V](~capacity : Int = ..) -> Self[K, V]
   of[K : Hash + Eq, V](FixedArray[Tuple[K, V]]) -> Self[K, V]
   op_equal[K : Eq, V : Eq](Self[K, V], Self[K, V]) -> Bool
