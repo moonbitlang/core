@@ -18,12 +18,12 @@ test "new" {
 }
 
 test "from_array" {
-  let pq = PriorityQueue::[1, 2, 3, 4, 5]
+  let pq = of([1, 2, 3, 4, 5])
   @assertion.assert_eq(pq.peek(), Some(5))?
 }
 
 test "copy" {
-  let v = PriorityQueue::[1, 2, 3, 4]
+  let v = of([1, 2, 3, 4])
   let ve = v.copy()
   inspect(v.peek().to_string(), content="Some(4)")?
   inspect(ve.peek().to_string(), content="Some(4)")?
@@ -33,14 +33,14 @@ test "copy" {
 }
 
 test "to_array" {
-  let v = PriorityQueue::[1, 2, 3, 4]
+  let v = of([1, 2, 3, 4])
   inspect(v.to_array().to_string(), content="[4, 3, 2, 1]")?
   inspect(v.to_array().to_string(), content="[4, 3, 2, 1]")?
 }
 
 test "as_iter" {
   let buf = Buffer::new(size_hint=20)
-  let v = PriorityQueue::[1, 2, 3]
+  let v = of([1, 2, 3])
   v.as_iter().iter(fn(e) { buf.write_string("[\(e)]") })
   inspect(buf, content="[3][2][1]")?
   buf.reset()
@@ -60,7 +60,7 @@ test "length" {
 }
 
 test "pop_exn" {
-  let pq = PriorityQueue::[5, 5, 4, 3, 2, 1]
+  let pq = of([5, 5, 4, 3, 2, 1])
   @assertion.assert_eq(pq.peek(), Some(5))?
   pq.pop_exn()
   @assertion.assert_eq(pq.peek(), Some(5))?
@@ -69,14 +69,14 @@ test "pop_exn" {
 }
 
 test "pop" {
-  let pq = PriorityQueue::[1, 2, 3, 4, 5, 5]
+  let pq = of([1, 2, 3, 4, 5, 5])
   @assertion.assert_eq(pq.pop(), Some(5))?
   @assertion.assert_eq(pq.pop(), Some(5))?
   @assertion.assert_eq(pq.pop(), Some(4))?
 }
 
 test "push" {
-  let pq = PriorityQueue::[5, 4, 3, 2, 1]
+  let pq = of([5, 4, 3, 2, 1])
   pq.push(-1)
   pq.push(6)
   @assertion.assert_eq(pq.length(), 7)?
@@ -84,20 +84,20 @@ test "push" {
 }
 
 test "peek" {
-  let pq = PriorityQueue::[1, 2, 3, 4, 5]
+  let pq = of([1, 2, 3, 4, 5])
   @assertion.assert_eq(pq.peek(), Some(5))?
   pq.clear()
   @assertion.assert_eq(pq.peek(), None)?
 }
 
 test "clear" {
-  let pq = PriorityQueue::[5, 4, 3, 2, 1]
+  let pq = of([5, 4, 3, 2, 1])
   pq.clear()
   @assertion.assert_eq(pq.length(), 0)?
 }
 
 test "is_empty" {
-  let pq = PriorityQueue::[5, 4, 3, 2, 1]
+  let pq = of([5, 4, 3, 2, 1])
   @assertion.assert_eq(pq.is_empty(), false)?
   pq.clear()
   @assertion.assert_eq(pq.is_empty(), true)?
