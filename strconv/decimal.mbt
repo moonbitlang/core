@@ -585,9 +585,17 @@ test "from_int64" {
 
 test "parse_decimal" {
   let s = "0.0000000000000000000000000000007888609052210118054117285652827862296732064351090230047702789306640625"
-  let hpd = Decimal::parse_decimal(s)!!
+  let hpd = try {
+    Decimal::parse_decimal(s)!
+  } catch {
+    _ => panic()
+  }
   @assertion.assert_eq(hpd.to_string(), s)?
-  let hpd = Decimal::parse_decimal("1.0e-10")!!
+  let hpd = try {
+    Decimal::parse_decimal("1.0e-10")!
+  } catch {
+    _ => panic()
+  }
   @assertion.assert_eq(hpd.to_string(), "0.0000000001")?
 }
 
