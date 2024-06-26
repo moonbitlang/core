@@ -24,6 +24,7 @@
 /// ```
 /// [1, 2, 3, 4, 5].each(fn(x){ print("\(x) ") }) //output: 1 2 3 4 5
 /// ```
+/// TODO: change the intrinsic to match the function name
 /// @intrinsic %fixedarray.iter
 pub fn each[T](self : FixedArray[T], f : (T) -> Unit) -> Unit {
   for i = 0; i < self.length(); i = i + 1 {

@@ -36,6 +36,7 @@ fn to_string[T : Show](self : Iter[T]) -> String {
 ///
 /// - `self`: The iterator to consume.
 /// - `f`: A function that takes an element of type `T` and returns `Unit`. This function is applied to each element of the iterator.
+/// TODO: change the intrinsic to match the function name
 /// @intrinsic %iter.iter
 pub fn each[T](self : Iter[T], f : (T) -> Unit) -> Unit {
   (self.0)(
