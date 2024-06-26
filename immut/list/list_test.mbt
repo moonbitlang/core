@@ -43,7 +43,7 @@ test "iteri" {
   let mut v = 0
   let mut failed = false
   let ls = of([1, 2, 3, 4, 5])
-  ls.iteri(
+  ls.eachi(
     fn(i, x) {
       if x != v + 1 || i != v {
         failed = true

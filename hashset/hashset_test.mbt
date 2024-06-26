@@ -120,7 +120,7 @@ test "iteri" {
   let m = of(["1", "2", "3"])
   let mut s = ""
   let mut sum = 0
-  m.iteri(
+  m.eachi(
     fn(i, k) {
       s += k
       sum += i

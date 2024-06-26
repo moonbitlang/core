@@ -92,19 +92,19 @@ pub fn each[K, V](self : Map[K, V], f : (K, V) -> Unit) -> Unit {
 }
 
 /// Iterate over the key-value pairs with index.
-pub fn iteri[K, V](self : Map[K, V], f : (Int, K, V) -> Unit) -> Unit {
-  fn do_iteri(m : Map[K, V], f, i) {
+pub fn eachi[K, V](self : Map[K, V], f : (Int, K, V) -> Unit) -> Unit {
+  fn do_eachi(m : Map[K, V], f, i) {
     match m {
       Empty => ()
       Tree(k, ~value, l, r, ..) => {
-        do_iteri(l, f, i)
+        do_eachi(l, f, i)
         f(size(l) + i, k, value)
-        do_iteri(r, f, size(l) + i + 1)
+        do_eachi(r, f, size(l) + i + 1)
       }
     }
   }
 
-  do_iteri(self, f, 0)
+  do_eachi(self, f, 0)
 }
 
 /// Maps over the values in the map.

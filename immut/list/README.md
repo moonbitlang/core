@@ -37,7 +37,7 @@ match list {
 ```
 
 ### Iterating over a list
-The standard library provides a lot of tools for iterating over a list, such as `each()`, `iteri()`, etc. (For details check the API documentation)
+The standard library provides a lot of tools for iterating over a list, such as `each()`, `eachi()`, etc. (For details check the API documentation)
 ```moonbit
 let list = of([1, 2, 3, 4, 5])
 let list1 = list.each(fn (ele) { print(ele) }) 

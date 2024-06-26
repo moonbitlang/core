@@ -21,7 +21,7 @@ impl Map {
   insert[K : Compare + Eq, V](Self[K, V], K, V) -> Self[K, V]
   is_empty[K, V](Self[K, V]) -> Bool
   each[K, V](Self[K, V], (K, V) -> Unit) -> Unit
-  iteri[K, V](Self[K, V], (Int, K, V) -> Unit) -> Unit
+  eachi[K, V](Self[K, V], (Int, K, V) -> Unit) -> Unit
   keys[K, V](Self[K, V]) -> Array[K]
   lookup[K : Compare + Eq, V](Self[K, V], K) -> V?
   map[K, X, Y](Self[K, X], (X) -> Y) -> Self[K, Y]

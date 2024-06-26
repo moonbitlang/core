@@ -128,7 +128,7 @@ test "array_iter" {
 test "array_iteri" {
   let arr = [1, 2, 3]
   let mut sum = 0
-  arr.iteri(fn(i, x) { sum = sum + i + x })
+  arr.eachi(fn(i, x) { sum = sum + i + x })
   @assertion.assert_eq(sum, 9)?
 }
 

@@ -155,7 +155,7 @@ test "iteri" {
   let m : HashMap[String, Int] = of([("a", 1), ("b", 2), ("c", 3)])
   let mut sum = 0
   let mut s = ""
-  m.iteri(
+  m.eachi(
     fn(i, _k, v) {
       s += i.to_string()
       sum += v

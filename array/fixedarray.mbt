@@ -68,11 +68,11 @@ test "iter" {
 /// # Example
 ///
 /// ```
-/// [1, 2, 3, 4, 5].iteri(fn(index, elem){
+/// [1, 2, 3, 4, 5].eachi(fn(index, elem){
 ///   print("(\(index),\(elem)) ")
 /// }) //output: (0,1) (1,2) (2,3) (3,4) (4,5)
 /// ```
-pub fn iteri[T](self : FixedArray[T], f : (Int, T) -> Unit) -> Unit {
+pub fn eachi[T](self : FixedArray[T], f : (Int, T) -> Unit) -> Unit {
   for i = 0; i < self.length(); i = i + 1 {
     f(i, self[i])
   }
@@ -89,18 +89,18 @@ test "iteri" {
   }
   {
     i = 0
-    ([] : FixedArray[_]).iteri(f)
+    ([] : FixedArray[_]).eachi(f)
     @assertion.assert_false(failed)?
     @assertion.assert_eq(i, 0)?
   }
   {
     i = 0
-    ([1] : FixedArray[_]).iteri(f)
+    ([1] : FixedArray[_]).eachi(f)
     @assertion.assert_false(failed)?
     @assertion.assert_eq(i, 1)?
   }
   i = 0
-  ([1, 2, 3, 4, 5] : FixedArray[_]).iteri(f)
+  ([1, 2, 3, 4, 5] : FixedArray[_]).eachi(f)
   @assertion.assert_false(failed)?
   @assertion.assert_eq(i, 5)?
 }

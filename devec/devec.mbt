@@ -413,9 +413,9 @@ pub fn each[T](self : Devec[T], f : (T) -> Unit) -> Unit {
 /// ```
 /// let dv = of([1, 2, 3, 4, 5])
 /// let mut idx_sum = 0
-/// dv.iteri(fn (i, x) {idx_sum = idx_sum + i})
+/// dv.eachi(fn (i, x) {idx_sum = idx_sum + i})
 /// ```
-pub fn iteri[T](self : Devec[T], f : (Int, T) -> Unit) -> Unit {
+pub fn eachi[T](self : Devec[T], f : (Int, T) -> Unit) -> Unit {
   for i = 0; i < self.length(); i = i + 1 {
     f(i, self[i])
   }

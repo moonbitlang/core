@@ -84,7 +84,7 @@ test "iter" {
 test "iteri" {
   let m = of([(3, "three"), (8, "eight"), (1, "one"), (2, "two"), (0, "zero")])
   let mut s = ""
-  m.iteri(fn(i, k, v) { s = s + "(\(i),\(k),\(v))" })
+  m.eachi(fn(i, k, v) { s = s + "(\(i),\(k),\(v))" })
   @assertion.assert_eq(s, "(0,0,zero)(1,1,one)(2,2,two)(3,3,three)(4,8,eight)")?
 }
 

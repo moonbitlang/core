@@ -20,7 +20,7 @@ impl ImmutableVec {
   fold_right[T](Self[T], (T, T) -> T, ~init : T) -> T
   from_array[T](Array[T]) -> Self[T]
   each[T](Self[T], (T) -> Unit) -> Unit
-  iteri[T](Self[T], (Int, T) -> Unit) -> Unit
+  eachi[T](Self[T], (Int, T) -> Unit) -> Unit
   map[T, U](Self[T], (T) -> U) -> Self[U]
   new[T](Int, T) -> Self[T]
   new_with_index[T](Int, (Int) -> T) -> Self[T]

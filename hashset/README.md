@@ -64,12 +64,12 @@ set.is_empty() // true
 
 ### Iter
 
-You can use `each()` or `iteri()` to iterate through all keys.
+You can use `each()` or `eachi()` to iterate through all keys.
 
 ```moonbit
 let set = of([("a"), ("b"), ("c")])
 set.each(fn(k) { println("\(k)") })
-set.iteri(fn(i, k) { println("\(i)-\(k)") })
+set.eachi(fn(i, k) { println("\(i)-\(k)") })
 ```
 
 ### Set Operations

@@ -137,11 +137,11 @@ test "iter" {
 test "iteri" {
   let queue : Queue[Int] = new()
   let mut sum = 0
-  queue.iteri(fn(x, i) { sum = sum + x * i })
+  queue.eachi(fn(x, i) { sum = sum + x * i })
   @assertion.assert_eq(sum, 0)?
   of([1, 2, 3, 4]).transfer(queue)
   sum = 0
-  queue.iteri(fn(x, i) { sum = sum + x * i })
+  queue.eachi(fn(x, i) { sum = sum + x * i })
   @assertion.assert_eq(sum, 20)?
 }
 

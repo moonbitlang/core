@@ -383,7 +383,7 @@ pub fn each[K, V](self : Map[K, V], f : (K, V) -> Unit) -> Unit {
 }
 
 /// Iterate over all key-value pairs of the map in the order of insertion, with index.
-pub fn iteri[K, V](self : Map[K, V], f : (Int, K, V) -> Unit) -> Unit {
+pub fn eachi[K, V](self : Map[K, V], f : (Int, K, V) -> Unit) -> Unit {
   loop 0, self.head {
     i, Some({ key, value, idx, .. }) => {
       f(i, key, value)

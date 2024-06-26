@@ -262,9 +262,9 @@ pub fn iter_rev[T](self : Array[T], f : (T) -> Unit) -> Unit {
 /// v.push(4)
 /// v.push(5)
 /// let mut sum = 0
-/// v.iteri(fn (i, x) {sum = sum + x + i})
+/// v.eachi(fn (i, x) {sum = sum + x + i})
 /// ```
-pub fn iteri[T](self : Array[T], f : (Int, T) -> Unit) -> Unit {
+pub fn eachi[T](self : Array[T], f : (Int, T) -> Unit) -> Unit {
   for i = 0; i < self.length(); i = i + 1 {
     f(i, self[i])
   }

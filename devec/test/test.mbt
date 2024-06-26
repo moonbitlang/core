@@ -161,7 +161,7 @@ test "iter_revi" {
 test "iteri" {
   let mut i = 0
   let mut failed = false
-  @devec.of([1, 2, 3, 4, 5]).iteri(
+  @devec.of([1, 2, 3, 4, 5]).eachi(
     fn(index, elem) {
       if index != i || elem != i + 1 {
         failed = true

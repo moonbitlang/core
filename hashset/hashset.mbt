@@ -136,11 +136,11 @@ pub fn is_empty[K](self : HashSet[K]) -> Bool {
 
 /// Iterate over all keys of the set.
 pub fn each[K](self : HashSet[K], f : (K) -> Unit) -> Unit {
-  self.iteri(fn(_i, k) { f(k) })
+  self.eachi(fn(_i, k) { f(k) })
 }
 
 /// Iterate over all keys of the set, with index.
-pub fn iteri[K](self : HashSet[K], f : (Int, K) -> Unit) -> Unit {
+pub fn eachi[K](self : HashSet[K], f : (Int, K) -> Unit) -> Unit {
   let mut idx = 0
   for i = 0; i < self.capacity; i = i + 1 {
     match self.entries[i] {

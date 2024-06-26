@@ -25,7 +25,7 @@ test "is_empty" {
 
 pub fn to_string[T : Show](self : ImmutableVec[T]) -> String {
   let mut s = "ImmutableVec::[".to_string()
-  self.iteri(
+  self.eachi(
     fn(i, v) {
       s = s + v.to_string()
       if i < self.size - 1 {
@@ -270,9 +270,9 @@ test "iter" {
 /// # Example
 /// ```
 /// let v = of([1, 2, 3, 4, 5])
-/// v.iteri(fn(i, e) { print(i * e) })
+/// v.eachi(fn(i, e) { print(i * e) })
 /// ```
-pub fn iteri[T](self : ImmutableVec[T], f : (Int, T) -> Unit) -> Unit {
+pub fn eachi[T](self : ImmutableVec[T], f : (Int, T) -> Unit) -> Unit {
   fn go(t : Tree[T], shift : Int, start : Int) -> Unit {
     match t {
       Empty => ()
@@ -296,13 +296,13 @@ pub fn iteri[T](self : ImmutableVec[T], f : (Int, T) -> Unit) -> Unit {
 
 test "iteri" {
   let v : ImmutableVec[Int] = ImmutableVec::empty()
-  v.iteri(fn(_i, _e) { abort("never reach") })
+  v.eachi(fn(_i, _e) { abort("never reach") })
   let v = of([1, 2, 3, 4, 5])
   let mut s = 0
-  v.iteri(fn(i, e) { s = s + i * e })
+  v.eachi(fn(i, e) { s = s + i * e })
   inspect(s, content="40")?
   let vec = []
-  v.iteri(fn(i, _e) { vec.push(i) })
+  v.eachi(fn(i, _e) { vec.push(i) })
   inspect(vec, content="[0, 1, 2, 3, 4]")?
 }
 
@@ -539,7 +539,7 @@ test "mix" {
     v = v.push(i)
   }
   let vec = []
-  v.iteri(fn(i, _e) { vec.push(i) })
+  v.eachi(fn(i, _e) { vec.push(i) })
   for i = 0; i < large_const; i = i + 1 {
     @assertion.assert_eq(vec[i], i)?
   }
