@@ -82,7 +82,7 @@ test "uint test" {
   inspect(100U == 100U, content="true")?
   inspect(0U < 100U, content="true")?
   inspect(100U > 0U, content="true")?
-  inspect((2147483648U).to_int(), content="-2147483648")?
+  inspect(2147483648U.to_int(), content="-2147483648")?
   inspect((-2147483648).to_uint(), content="2147483648")?
   inspect(2147483647U + 1U, content="2147483648")?
   inspect(0U - 1U, content="4294967295")?
@@ -90,4 +90,3 @@ test "uint test" {
   inspect(0x80000000U / 2U, content="1073741824")?
   inspect(4294967295U % 17U, content="0")?
 }
-

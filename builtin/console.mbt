@@ -94,6 +94,7 @@ pub fn UInt::to_string(self : UInt) -> String {
     }
     buf.write_char(Char::from_int((num % 10U).to_int() + 48))
   }
+
   write_digits(self)
   buf.to_string()
 }

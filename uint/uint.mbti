@@ -1,0 +1,13 @@
+package moonbitlang/core/uint
+
+// Values
+let max : UInt
+
+let min : UInt
+
+// Types and methods
+
+// Traits
+
+// Extension Methods
+

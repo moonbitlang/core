@@ -13,5 +13,5 @@
 // limitations under the License.
 
 pub let min : UInt = 0U
-pub let max : UInt = 4294967295U
 
+pub let max : UInt = 4294967295U
