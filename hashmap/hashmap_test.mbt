@@ -200,7 +200,7 @@ test "grow" {
 }
 
 test "as_iter" {
-  let buf = Buffer::make(20)
+  let buf = Buffer::new(size_hint=20)
   let map = of([(1, "one"), (2, "two"), (3, "three")])
   map.as_iter().iter(
     fn(e) {

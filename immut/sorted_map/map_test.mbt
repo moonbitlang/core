@@ -236,7 +236,7 @@ test "op_equal" {
 
 test "debug_write" {
   let m = of([(3, "three"), (8, "eight"), (1, "one"), (2, "two"), (0, "zero")])
-  let buffer = Buffer::make(0)
+  let buffer = Buffer::new(size_hint=0)
   m.debug_write(buffer)
   @assertion.assert_eq(
     buffer.to_string(),
@@ -245,7 +245,7 @@ test "debug_write" {
 }
 
 test "as_iter" {
-  let buf = Buffer::make(20)
+  let buf = Buffer::new(size_hint=20)
   let map = of([(1, "one"), (2, "two"), (3, "three")])
   map.as_iter().iter(
     fn(e) {
