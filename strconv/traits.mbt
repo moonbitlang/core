@@ -29,12 +29,28 @@ pub fn parse[A : FromStr](str : String) -> A!String {
 }
 
 test "parse" {
-  let b : Bool = parse("true")!!
+  let b : Bool = try {
+    parse("true")!
+  } catch {
+    _ => panic()
+  }
   @assertion.assert_eq(b, true)?
-  let i : Int = parse("12345")!!
+  let i : Int = try {
+    parse("12345")!
+  } catch {
+    _ => panic()
+  }
   @assertion.assert_eq(i, 12345)?
-  let i64 : Int64 = parse("9223372036854775807")!!
+  let i64 : Int64 = try {
+    parse("9223372036854775807")!
+  } catch {
+    _ => panic()
+  }
   @assertion.assert_eq(i64, 9223372036854775807L)?
-  let d : Double = parse("1234.56789")!!
+  let d : Double = try {
+    parse("1234.56789")!
+  } catch {
+    _ => panic()
+  }
   @assertion.assert_eq(d, 1234.56789)?
 }
