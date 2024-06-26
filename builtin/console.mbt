@@ -85,6 +85,26 @@ pub fn to_string(self : Int) -> String {
   buf.to_string()
 }
 
+pub fn UInt::to_string(self : UInt) -> String {
+  let buf = Buffer::new()
+  fn write_digits(num) {
+    let num2 = num / 10U
+    if num2 != 0U {
+      write_digits(num2)
+    }
+    buf.write_char(Char::from_int((num % 10U).to_int() + 48))
+  }
+
+  write_digits(self)
+  buf.to_string()
+}
+
+test "UInt::to_string" {
+  inspect(0U, content="0")?
+  inspect(17U, content="17")?
+  inspect(4294967295U, content="4294967295")?
+}
+
 /// @coverage.skip 
 pub fn op_lt[T : Compare](self_ : T, other : T) -> Bool {
   self_.compare(other).is_neg()
