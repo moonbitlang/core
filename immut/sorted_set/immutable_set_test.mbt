@@ -29,14 +29,8 @@ test "disjoint" {
 }
 
 test "subset" {
-  inspect(
-    of([1, 2, 3]).subset(of([7, 2, 9, 4, 5, 6, 3, 8, 1])),
-    content="true",
-  )?
-  inspect(
-    of([1, 2, 3]).subset(of([10, 11, 12, 13, 14])),
-    content="false",
-  )?
+  inspect(of([1, 2, 3]).subset(of([7, 2, 9, 4, 5, 6, 3, 8, 1])), content="true")?
+  inspect(of([1, 2, 3]).subset(of([10, 11, 12, 13, 14])), content="false")?
 }
 
 test "diff" {
@@ -48,34 +42,16 @@ test "diff" {
 }
 
 test "inter" {
-  inspect(
-    of([3, 4, 5]).inter(of([4, 5, 6])),
-    content="ImmutableSet::[4, 5]",
-  )?
-  inspect(
-    of([3, 4]).inter(of([5, 6])),
-    content="ImmutableSet::[]",
-  )?
+  inspect(of([3, 4, 5]).inter(of([4, 5, 6])), content="ImmutableSet::[4, 5]")?
+  inspect(of([3, 4]).inter(of([5, 6])), content="ImmutableSet::[]")?
 }
 
 test "union" {
   let empty : ImmutableSet[Int] = ImmutableSet::new()
-  inspect(
-    empty.union(of([4, 5, 6])),
-    content="ImmutableSet::[4, 5, 6]",
-  )?
-  inspect(
-    of([4, 5, 6]).union(empty),
-    content="ImmutableSet::[4, 5, 6]",
-  )?
-  inspect(
-    of([3]).union(of([4, 5, 6])),
-    content="ImmutableSet::[3, 4, 5, 6]",
-  )?
-  inspect(
-    of([3, 4, 5]).union(of([6])),
-    content="ImmutableSet::[3, 4, 5, 6]",
-  )?
+  inspect(empty.union(of([4, 5, 6])), content="ImmutableSet::[4, 5, 6]")?
+  inspect(of([4, 5, 6]).union(empty), content="ImmutableSet::[4, 5, 6]")?
+  inspect(of([3]).union(of([4, 5, 6])), content="ImmutableSet::[3, 4, 5, 6]")?
+  inspect(of([3, 4, 5]).union(of([6])), content="ImmutableSet::[3, 4, 5, 6]")?
   inspect(
     of([3, 4, 5]).union(of([4, 5, 6])),
     content="ImmutableSet::[3, 4, 5, 6]",
@@ -114,15 +90,11 @@ test "filter" {
 }
 
 test "split" {
-  let (left, present, right) = of([7, 2, 9, 4, 5, 6, 3, 8, 1]).split(
-    5,
-  )
+  let (left, present, right) = of([7, 2, 9, 4, 5, 6, 3, 8, 1]).split(5)
   inspect(present, content="true")?
   inspect(left, content="ImmutableSet::[1, 2, 3, 4]")?
   inspect(right, content="ImmutableSet::[6, 7, 8, 9]")?
-  let (left, present, right) = of([7, 2, 9, 4, 5, 6, 3, 8, 1]).split(
-    0,
-  )
+  let (left, present, right) = of([7, 2, 9, 4, 5, 6, 3, 8, 1]).split(0)
   inspect(present, content="false")?
   inspect(left, content="ImmutableSet::[]")?
   inspect(right, content="ImmutableSet::[1, 2, 3, 4, 5, 6, 7, 8, 9]")?
@@ -198,10 +170,7 @@ test "min" {
 test "min_option" {
   let empty : ImmutableSet[Int] = ImmutableSet::new()
   inspect(empty.min_option(), content="None")?
-  inspect(
-    of([7, 2, 9, 4, 5, 6, 3, 8, 1]).min_option(),
-    content="Some(1)",
-  )?
+  inspect(of([7, 2, 9, 4, 5, 6, 3, 8, 1]).min_option(), content="Some(1)")?
 }
 
 test "max" {
@@ -211,10 +180,7 @@ test "max" {
 test "max_option" {
   let empty : ImmutableSet[Int] = ImmutableSet::new()
   inspect(empty.max_option(), content="None")?
-  inspect(
-    of([7, 2, 9, 4, 5, 6, 3, 8, 1]).max_option(),
-    content="Some(9)",
-  )?
+  inspect(of([7, 2, 9, 4, 5, 6, 3, 8, 1]).max_option(), content="Some(9)")?
 }
 
 test "is_empty" {

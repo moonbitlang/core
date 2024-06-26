@@ -1124,28 +1124,16 @@ test "disjoint" {
 }
 
 test "subset" {
-  inspect(
-    of([1, 2, 3]).subset(of([7, 2, 9, 4, 5, 6, 3, 8, 1])),
-    content="true",
-  )?
-  inspect(
-    of([1, 2, 3]).subset(of([10, 11, 12, 13, 14])),
-    content="false",
-  )?
+  inspect(of([1, 2, 3]).subset(of([7, 2, 9, 4, 5, 6, 3, 8, 1])), content="true")?
+  inspect(of([1, 2, 3]).subset(of([10, 11, 12, 13, 14])), content="false")?
 }
 
 test "diff" {
-  inspect(
-    of([1, 2, 3]).diff(of([4, 5, 1])),
-    content="MutableSet::[2, 3]",
-  )?
+  inspect(of([1, 2, 3]).diff(of([4, 5, 1])), content="MutableSet::[2, 3]")?
 }
 
 test "inter" {
-  inspect(
-    of([3, 4, 5]).intersect(of([4, 5, 6])),
-    content="MutableSet::[4, 5]",
-  )?
+  inspect(of([3, 4, 5]).intersect(of([4, 5, 6])), content="MutableSet::[4, 5]")?
 }
 
 test "filter" {
