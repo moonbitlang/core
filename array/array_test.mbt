@@ -122,7 +122,7 @@ test "iteri" {
 test "iter_revi" {
   let v = [3, 4, 5]
   let mut sum = 0
-  v.iter_revi(fn(i, x) { sum = sum + x + i })
+  v.eachi_rev(fn(i, x) { sum = sum + x + i })
   @assertion.assert_eq(sum, 15)?
 }
 

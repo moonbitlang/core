@@ -160,11 +160,11 @@ test "iter_rev" {
 /// # Example
 ///
 /// ```
-/// [1, 2, 3, 4, 5].iter_revi(fn(index, elem){
+/// [1, 2, 3, 4, 5].eachi_rev(fn(index, elem){
 ///   print("(\(index),\(elem)) ")
 /// }) //output: (4,5) (3,4) (2,3) (1,2) (0,1)
 /// ```
-pub fn iter_revi[T](self : FixedArray[T], f : (Int, T) -> Unit) -> Unit {
+pub fn eachi_rev[T](self : FixedArray[T], f : (Int, T) -> Unit) -> Unit {
   let len = self.length()
   for i = 0; i < len; i = i + 1 {
     f(i, self[len - i - 1])
@@ -185,7 +185,7 @@ test "iter_revi" {
   {
     i = 1
     j = 0
-    ([] : FixedArray[_]).iter_revi(f)
+    ([] : FixedArray[_]).eachi_rev(f)
     @assertion.assert_false(failed)?
     @assertion.assert_eq(i, 1)?
     @assertion.assert_eq(j, 0)?
@@ -193,14 +193,14 @@ test "iter_revi" {
   {
     i = 2
     j = 0
-    ([1] : FixedArray[_]).iter_revi(f)
+    ([1] : FixedArray[_]).eachi_rev(f)
     @assertion.assert_false(failed)?
     @assertion.assert_eq(i, 1)?
     @assertion.assert_eq(j, 1)?
   }
   i = 6
   j = 0
-  ([1, 2, 3, 4, 5] : FixedArray[_]).iter_revi(f)
+  ([1, 2, 3, 4, 5] : FixedArray[_]).eachi_rev(f)
   @assertion.assert_false(failed)?
   @assertion.assert_eq(i, 1)?
   @assertion.assert_eq(j, 5)?

@@ -15,7 +15,7 @@ impl Devec {
   is_empty[T](Self[T]) -> Bool
   each[T](Self[T], (T) -> Unit) -> Unit
   iter_rev[T](Self[T], (T) -> Unit) -> Unit
-  iter_revi[T](Self[T], (Int, T) -> Unit) -> Unit
+  eachi_rev[T](Self[T], (Int, T) -> Unit) -> Unit
   eachi[T](Self[T], (Int, T) -> Unit) -> Unit
   length[T](Self[T]) -> Int
   map[T, U](Self[T], (T) -> U) -> Self[U]

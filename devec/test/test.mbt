@@ -146,7 +146,7 @@ test "iter_revi" {
   let mut i = 6
   let mut j = 0
   let mut failed = false
-  @devec.of([1, 2, 3, 4, 5]).iter_revi(
+  @devec.of([1, 2, 3, 4, 5]).eachi_rev(
     fn(index, elem) {
       if index != j || elem != i - 1 {
         failed = true

@@ -18,7 +18,7 @@ impl FixedArray {
   is_sorted[T : Compare + Eq](Self[T]) -> Bool
   each[T](Self[T], (T) -> Unit) -> Unit
   iter_rev[T](Self[T], (T) -> Unit) -> Unit
-  iter_revi[T](Self[T], (Int, T) -> Unit) -> Unit
+  eachi_rev[T](Self[T], (Int, T) -> Unit) -> Unit
   eachi[T](Self[T], (Int, T) -> Unit) -> Unit
   map[T, U](Self[T], (T) -> U) -> Self[U]
   mapi[T, U](Self[T], (Int, T) -> U) -> Self[U]

@@ -270,7 +270,7 @@ pub fn eachi[T](self : Array[T], f : (Int, T) -> Unit) -> Unit {
   }
 }
 
-pub fn iter_revi[T](self : Array[T], f : (Int, T) -> Unit) -> Unit {
+pub fn eachi_rev[T](self : Array[T], f : (Int, T) -> Unit) -> Unit {
   let len = self.length()
   for i = 0; i < len; i = i + 1 {
     f(i, self[len - i - 1])
