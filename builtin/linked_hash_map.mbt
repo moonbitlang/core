@@ -194,7 +194,7 @@ pub fn get_or_default[K : Hash + Eq, V](
 }
 
 /// Returns the value for the given key, or sets and returns a default value if the key does not exist.
-pub fn set_default[K : Hash + Eq, V](
+pub fn get_or_init[K : Hash + Eq, V](
   self : Map[K, V],
   key : K,
   default : () -> V
