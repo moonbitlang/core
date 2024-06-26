@@ -431,3 +431,14 @@ pub fn op_equal[K : Eq, V : Eq](self : Map[K, V], that : Map[K, V]) -> Bool {
     _, _ => false
   }
 }
+
+pub fn Map::of[K : Hash + Eq, V](arr : FixedArray[(K, V)]) -> Map[K, V] {
+  let length = arr.length()
+  let m = Map::new(capacity=length)
+  // arr.iter(fn(e) { m.set(e.0, e.1) })
+  for i = 0; i < length; i = i + 1 {
+    let e = arr[i]
+    m.set(e.0, e.1)
+  }
+  m
+}
