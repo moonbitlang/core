@@ -310,12 +310,12 @@ pub fn as_iter[T](self : Queue[T]) -> Iter[T] {
     fn(yield) {
       loop self.first {
         Cons({ content, next }) => {
-          if yield(content).not() {
-            break false
+          if yield(content) == IterEnd {
+            break IterEnd
           }
           continue next
         }
-        Nil => true
+        Nil => IterContinue
       }
     },
   )

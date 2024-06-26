@@ -37,3 +37,12 @@ test "hash" {
   inspect(hash(0x7fffffff), content="943411498")?
   inspect(hash(0x7fffffff + 1), content="963800214")?
 }
+
+test "abs function coverage" {
+  // Test cases for abs function
+  @assertion.assert_eq(abs(5), 5)?
+  @assertion.assert_eq(abs(-5), 5)?
+  @assertion.assert_eq(abs(0), 0)?
+  @assertion.assert_eq(abs(Int::min_value()), Int::min_value().abs())?
+  @assertion.assert_eq(abs(Int::max_value()), Int::max_value())?
+}

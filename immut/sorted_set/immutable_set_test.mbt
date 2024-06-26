@@ -322,3 +322,158 @@ test "split_bis" {
 
 //   sub(array.length(), array[..]).0
 // }
+
+test "panic remove_min on empty set" {
+  let empty : ImmutableSet[Int] = ImmutableSet::new()
+  empty.remove_min() |> ignore
+}
+
+test "panic min on empty set" {
+  let empty : ImmutableSet[Int] = ImmutableSet::new()
+  empty.min() |> ignore
+}
+
+test "panic max on empty set" {
+  let empty : ImmutableSet[Int] = ImmutableSet::new()
+  empty.max() |> ignore
+}
+
+test "split with value not in set" {
+  let set = ImmutableSet::[1, 2, 3, 4, 5]
+  let (left, present, right) = set.split(6)
+  inspect(present, content="false")?
+  inspect(left, content="ImmutableSet::[1, 2, 3, 4, 5]")?
+  inspect(right, content="ImmutableSet::[]")?
+}
+
+test "remove_min on non-empty set" {
+  let set = ImmutableSet::[3, 4, 5]
+  let new_set = set.remove_min()
+  inspect(new_set, content="ImmutableSet::[4, 5]")?
+}
+
+test "min on non-empty set" {
+  let set = ImmutableSet::[7, 2, 9, 4, 5, 6, 3, 8, 1]
+  let min_value = set.min()
+  inspect(min_value, content="1")?
+}
+
+test "max on non-empty set" {
+  let set = ImmutableSet::[7, 2, 9, 4, 5, 6, 3, 8, 1]
+  let max_value = set.max()
+  inspect(max_value, content="9")?
+}
+
+test "union with different heights" {
+  let set1 = ImmutableSet::[3, 4, 5]
+  let set2 = ImmutableSet::[4, 5, 6]
+  let union_set = set1.union(set2)
+  inspect(union_set, content="ImmutableSet::[3, 4, 5, 6]")?
+}
+
+test "disjoint with different sets" {
+  let set1 = ImmutableSet::[1, 2, 3]
+  let set2 = ImmutableSet::[4, 5, 6]
+  let disjoint = set1.disjoint(set2)
+  inspect(disjoint, content="true")?
+}
+
+test "balance with left height greater" {
+  let left = ImmutableSet::[1, 2, 3]
+  let value = 4
+  let right = ImmutableSet::[5]
+  let balanced_set = balance(left, value, right)
+  inspect(balanced_set, content="ImmutableSet::[1, 2, 3, 4, 5]")?
+}
+
+test "balance with right height greater" {
+  let left = ImmutableSet::[1]
+  let value = 2
+  let right = ImmutableSet::[3, 4, 5]
+  let balanced_set = balance(left, value, right)
+  inspect(balanced_set, content="ImmutableSet::[1, 2, 3, 4, 5]")?
+}
+
+test "join with different heights" {
+  let left = ImmutableSet::[1, 2, 3]
+  let value = 4
+  let right = ImmutableSet::[5, 6, 7]
+  let joined_set = join(left, value, right)
+  inspect(joined_set, content="ImmutableSet::[1, 2, 3, 4, 5, 6, 7]")?
+}
+
+test "union with different heights" {
+  let set1 = ImmutableSet::[3, 4, 5]
+  let set2 = ImmutableSet::[4, 5, 6]
+  let union_set = set1.union(set2)
+  inspect(union_set, content="ImmutableSet::[3, 4, 5, 6]")?
+}
+
+test "disjoint with different sets" {
+  let set1 = ImmutableSet::[1, 2, 3]
+  let set2 = ImmutableSet::[4, 5, 6]
+  let disjoint = set1.disjoint(set2)
+  inspect(disjoint, content="true")?
+}
+
+test "balance with left height greater" {
+  let left = ImmutableSet::[1, 2, 3]
+  let value = 4
+  let right = ImmutableSet::[5]
+  let balanced_set = balance(left, value, right)
+  inspect(balanced_set, content="ImmutableSet::[1, 2, 3, 4, 5]")?
+}
+
+test "balance with right height greater" {
+  let left = ImmutableSet::[1]
+  let value = 2
+  let right = ImmutableSet::[3, 4, 5]
+  let balanced_set = balance(left, value, right)
+  inspect(balanced_set, content="ImmutableSet::[1, 2, 3, 4, 5]")?
+}
+
+test "join with different heights" {
+  let left = ImmutableSet::[1, 2, 3]
+  let value = 4
+  let right = ImmutableSet::[5, 6, 7]
+  let joined_set = join(left, value, right)
+  inspect(joined_set, content="ImmutableSet::[1, 2, 3, 4, 5, 6, 7]")?
+}
+
+test "union with different heights" {
+  let set1 = ImmutableSet::[3, 4, 5]
+  let set2 = ImmutableSet::[4, 5, 6]
+  let union_set = set1.union(set2)
+  inspect(union_set, content="ImmutableSet::[3, 4, 5, 6]")?
+}
+
+test "disjoint with different sets" {
+  let set1 = ImmutableSet::[1, 2, 3]
+  let set2 = ImmutableSet::[4, 5, 6]
+  let disjoint = set1.disjoint(set2)
+  inspect(disjoint, content="true")?
+}
+
+test "balance with left height greater" {
+  let left = ImmutableSet::[1, 2, 3]
+  let value = 4
+  let right = ImmutableSet::[5]
+  let balanced_set = balance(left, value, right)
+  inspect(balanced_set, content="ImmutableSet::[1, 2, 3, 4, 5]")?
+}
+
+test "balance with right height greater" {
+  let left = ImmutableSet::[1]
+  let value = 2
+  let right = ImmutableSet::[3, 4, 5]
+  let balanced_set = balance(left, value, right)
+  inspect(balanced_set, content="ImmutableSet::[1, 2, 3, 4, 5]")?
+}
+
+test "join with different heights" {
+  let left = ImmutableSet::[1, 2, 3]
+  let value = 4
+  let right = ImmutableSet::[5, 6, 7]
+  let joined_set = join(left, value, right)
+  inspect(joined_set, content="ImmutableSet::[1, 2, 3, 4, 5, 6, 7]")?
+}

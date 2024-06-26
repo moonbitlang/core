@@ -555,3 +555,65 @@ test "to_hex" {
     content="-11E3444DC1F35F057AD2CBC2791737468140A426FAC3CBA7AF8C92A8F34E",
   )?
 }
+
+test "op_add coverage for max(self_len, other_len)" {
+  let a = from_int(123456789)
+  let b = from_int(987654321)
+  let result = a + b
+  inspect(a.len, content="1")?
+  inspect(b.len, content="1")?
+  inspect(result.len, content="2")?
+}
+
+test "op_sub coverage for max(self_len, other_len)" {
+  let a = from_int(987654321)
+  let b = from_int(123456789)
+  let result = a - b
+  inspect(a.len, content="1")?
+  inspect(b.len, content="1")?
+  inspect(result.len, content="1")?
+}
+
+test "panic op_div coverage for division by zero" {
+  let a = from_int(123456789)
+  let b = from_int(0)
+  a / b |> ignore
+}
+
+test "panic op_mod coverage for modulo by zero" {
+  let a = from_int(123456789)
+  let b = from_int(0)
+  a % b |> ignore
+}
+
+test "panic grade_school_div coverage for division by zero" {
+  let a = from_int(123456789)
+  let b = from_int(0)
+  grade_school_div(a, b) |> ignore
+}
+
+test "panic lsl coverage for negative shift" {
+  let a = from_int(123456789)
+  a.lsl(-1) |> ignore
+}
+
+test "panic lsr coverage for negative shift" {
+  let a = from_int(123456789)
+  a.lsr(-1) |> ignore
+}
+
+test "panic from_string coverage for empty string" {
+  from_string("") |> ignore
+}
+
+test "panic from_string coverage for invalid character" {
+  from_string("123a56789") |> ignore
+}
+
+test "panic from_hex coverage for empty string" {
+  from_hex("") |> ignore
+}
+
+test "panic from_hex coverage for invalid character" {
+  from_hex("123g56789") |> ignore
+}

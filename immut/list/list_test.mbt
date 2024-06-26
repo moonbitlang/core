@@ -419,3 +419,55 @@ test "as_iter" {
   let ls = List::[1, 2, 3, 4, 5]
   inspect(ls.as_iter().fold(fn(a, b) { a + b }, 0), content="15")?
 }
+
+test "List::debug_write with non-empty list" {
+  let buf = Buffer::make(100)
+  let list = List::[1, 2, 3, 4, 5]
+  List::debug_write(list, buf)
+  buf.expect(content="1, 2, 3, 4, 5")?
+}
+
+test "List::debug_write with empty list" {
+  let buf = Buffer::make(100)
+  let list : List[Int] = Nil
+  List::debug_write(list, buf)
+  buf.expect(content="")?
+}
+
+test "List::head_exn with non-empty list" {
+  let list = List::[1, 2, 3, 4, 5]
+  let head = List::head_exn(list)
+  @assertion.assert_eq(head, 1)?
+}
+
+test "List::last with non-empty list" {
+  let list = List::[1, 2, 3, 4, 5]
+  let last = List::last(list)
+  @assertion.assert_eq(last, 5)?
+}
+
+test "List::zip with lists of equal length" {
+  let list1 = List::[1, 2, 3]
+  let list2 = List::["a", "b", "c"]
+  let zipped = List::zip(list1, list2)
+  let expected = List::[(1, "a"), (2, "b"), (3, "c")]
+  @assertion.assert_eq(zipped, expected)?
+}
+
+test "List::nth_exn with valid index" {
+  let list = List::[1, 2, 3, 4, 5]
+  let nth = List::nth_exn(list, 2)
+  @assertion.assert_eq(nth, 3)?
+}
+
+test "List::maximum with non-empty list" {
+  let list = List::[1, 3, 5, 2, 4]
+  let max = List::maximum(list)
+  @assertion.assert_eq(max, 5)?
+}
+
+test "List::minimum with non-empty list" {
+  let list = List::[1, 3, 5, 2, 4]
+  let min = List::minimum(list)
+  @assertion.assert_eq(min, 1)?
+}

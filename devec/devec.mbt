@@ -64,7 +64,7 @@ pub fn Devec::of[T](arr : FixedArray[T]) -> Devec[T] {
   deq
 }
 
-/// Returns the devec of elements in the vector.
+/// Returns the devec of elements in the array.
 pub fn length[T](self : Devec[T]) -> Int {
   self.len
 }
@@ -544,7 +544,7 @@ pub fn search[T : Eq](self : Devec[T], value : T) -> Int? {
   None
 }
 
-/// Checks if the vector contains an element.
+/// Checks if the array contains an element.
 ///
 /// # Example
 /// ```
@@ -617,11 +617,11 @@ pub fn as_iter[T](self : Devec[T]) -> Iter[T] {
   Iter::_unstable_internal_make(
     fn(yield) {
       for i = 0, len = self.length(); i < len; i = i + 1 {
-        if yield(self[i]).not() {
-          break false
+        if yield(self[i]) == IterEnd {
+          break IterEnd
         }
       } else {
-        true
+        IterContinue
       }
     },
   )

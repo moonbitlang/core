@@ -215,10 +215,10 @@ pub fn as_iter[K, V](self : Map[K, V]) -> Iter[(K, V)] {
       let arr = self.to_array()
       for i = 0, len = arr.length(); i < len; i = i + 1 {
         match arr[i] {
-          (key, value) => if yield((key, value)).not() { break false }
+          (key, value) => if yield((key, value)) == IterEnd { break IterEnd }
         }
       } else {
-        true
+        IterContinue
       }
     },
   )

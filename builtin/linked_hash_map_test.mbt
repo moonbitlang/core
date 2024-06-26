@@ -695,3 +695,105 @@ test "remove_unexist_key" {
     "_,(0,a,1),(0,ab,2),(0,abc,3),_,_,_,_",
   )?
 }
+
+test "insert_entry_panic" {
+  let map = Map::new(capacity=1)
+  map.set(1, 1)
+  // This should trigger the panic in insert_entry
+  map.set(2, 2)
+}
+
+test "get_entry_none" {
+  let map = Map::new(capacity=1)
+  map.set(1, 1)
+  // This should return None as the key 2 is not in the map
+  let result = map.get(2)
+  @assertion.assert_eq(result, None)?
+}
+
+test "remove_entry_head" {
+  let map = Map::new(capacity=2)
+  map.set(1, 1)
+  map.set(2, 2)
+  map.remove(1)
+  // This should ensure the head is updated correctly
+  @assertion.assert_eq(
+    map.head,
+    Some({ idx: 1, psl: 0, hash: (2).hash(), key: 2, value: 2 }),
+  )?
+}
+
+test "remove_entry_tail" {
+  let map = Map::new(capacity=2)
+  map.set(1, 1)
+  map.set(2, 2)
+  map.remove(2)
+  // This should ensure the tail is updated correctly
+  @assertion.assert_eq(
+    map.tail,
+    Some(Entry::{ idx: 0, psl: 0, hash: (1).hash(), key: 1, value: 1 }),
+  )?
+}
+
+test "op_equal_size_mismatch" {
+  let map1 = Map::new(capacity=1)
+  let map2 = Map::new(capacity=2)
+  map1.set(1, 1)
+  map2.set(1, 1)
+  map2.set(2, 2)
+  // This should return false as the sizes are different
+  @assertion.assert_eq(map1 == map2, false)?
+}
+
+test "op_equal_key_value_mismatch" {
+  let map1 = Map::new(capacity=2)
+  let map2 = Map::new(capacity=2)
+  map1.set(1, 1)
+  map1.set(2, 2)
+  map2.set(1, 1)
+  map2.set(2, 3)
+  // This should return false as the values are different
+  @assertion.assert_eq(map1 == map2, false)?
+}
+
+test "op_equal_size_mismatch" {
+  let map1 = Map::new(capacity=1)
+  let map2 = Map::new(capacity=2)
+  map1.set(1, 1)
+  map2.set(1, 1)
+  map2.set(2, 2)
+  // This should return false as the sizes are different
+  @assertion.assert_eq(map1 == map2, false)?
+}
+
+test "op_equal_key_value_mismatch" {
+  let map1 = Map::new(capacity=2)
+  let map2 = Map::new(capacity=2)
+  map1.set(1, 1)
+  map1.set(2, 2)
+  map2.set(1, 1)
+  map2.set(2, 3)
+  // This should return false as the values are different
+  @assertion.assert_eq(map1 == map2, false)?
+}
+
+test "op_equal_size_mismatch" {
+  let map1 = Map::new(capacity=1)
+  let map2 = Map::new(capacity=2)
+  map1.set(1, 1)
+  map2.set(1, 1)
+  map2.set(2, 2)
+  // This should return false as the sizes are different
+  @assertion.assert_eq(map1 == map2, false)?
+}
+
+test "op_equal_key_value_mismatch" {
+  let map1 = Map::new(capacity=2)
+  let map2 = Map::new(capacity=2)
+  map1.set(1, 1)
+  map1.set(2, 2)
+  map2.set(1, 1)
+  map2.set(2, 3)
+  // This should return false as the values are different
+  @assertion.assert_eq(map1 == map2, false)?
+}

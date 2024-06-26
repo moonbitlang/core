@@ -829,10 +829,10 @@ pub fn as_iter[T](self : List[T]) -> Iter[T] {
   Iter::_unstable_internal_make(
     fn(yield) {
       loop self {
-        Nil => true
+        Nil => IterContinue
         Cons(head, tail) => {
-          if yield(head).not() {
-            break false
+          if yield(head) == IterEnd {
+            break IterEnd
           }
           continue tail
         }

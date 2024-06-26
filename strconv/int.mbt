@@ -22,13 +22,13 @@ let int64_max = 0x7fffffffffffffffL
 
 /// Parse a string in the given base (0, 2 to 36), return a Int64 number or an error.
 /// If the `~base` argument is 0, the base will be inferred by the prefix.
-pub fn parse_int64(str : String, ~base : Int = 0) -> Result[Int64, String] {
+pub fn parse_int64(str : String, ~base : Int = 0) -> Int64!String {
   if str == "" {
-    return Err(syntax_err)
+    raise syntax_err
   }
   // check underscore
   if not(check_underscore(str)) {
-    return Err(syntax_err)
+    raise syntax_err
   }
   let mut s = str
   // check sign
@@ -48,7 +48,7 @@ pub fn parse_int64(str : String, ~base : Int = 0) -> Result[Int64, String] {
   } else if 2 <= base && base <= 36 {
     num_base = base
   } else {
-    return Err(base_err)
+    raise base_err
   }
 
   // calculate overflow threshold
@@ -69,46 +69,42 @@ pub fn parse_int64(str : String, ~base : Int = 0) -> Result[Int64, String] {
     } else if 'A' <= c && c <= 'Z' {
       d = c.to_int() - 'A'.to_int() + 10
     } else {
-      return Err(syntax_err)
+      raise syntax_err
     }
     if d >= num_base {
-      return Err(syntax_err)
+      raise syntax_err
     }
     if neg && n < overflow_threshold || not(neg) && n >= overflow_threshold {
-      return Err(range_err)
+      raise range_err
     }
     // n*base overflows
     n *= num_base.to_int64()
     if neg {
       let n1 = n - d.to_int64()
       if n1 > n {
-        return Err(range_err)
+        raise range_err
       }
       n = n1
     } else {
       let n1 = n + d.to_int64()
       if n1 < n {
         // n+d overflows
-        return Err(range_err)
+        raise range_err
       }
       n = n1
     }
   }
-  Ok(n)
+  n
 }
 
 /// Parse a string in the given base (0, 2 to 36), return a Int number or an error.
 /// If the `~base` argument is 0, the base will be inferred by the prefix.
-pub fn parse_int(str : String, ~base : Int = 0) -> Result[Int, String] {
-  match parse_int64(str, ~base) {
-    Ok(n) => {
-      if n < int_min.to_int64() || n > int_max.to_int64() {
-        return Err(range_err)
-      }
-      Ok(n.to_int())
-    }
-    Err(err) => Err(err)
+pub fn parse_int(str : String, ~base : Int = 0) -> Int!String {
+  let n = parse_int64(str, ~base)!
+  if n < int_min.to_int64() || n > int_max.to_int64() {
+    raise range_err
   }
+  n.to_int()
 }
 
 // Check whether the underscores are correct.
@@ -245,7 +241,14 @@ test "parse_int64" {
   ]
   for i = 0; i < tests.length(); i = i + 1 {
     let t = tests[i]
-    @assertion.assert_eq(parse_int64(t.0), t.1)?
+    @assertion.assert_eq(
+      try {
+        Result::Ok(parse_int64(t.0)!)
+      } catch {
+        err => Err(err)
+      },
+      t.1,
+    )?
   }
 }
 
@@ -349,7 +352,14 @@ test "parse_int64_base" {
   ]
   for i = 0; i < tests.length(); i = i + 1 {
     let t = tests[i]
-    @assertion.assert_eq(parse_int64(t.0, base=t.1), t.2)?
+    @assertion.assert_eq(
+      try {
+        Result::Ok(parse_int64(t.0, base=t.1)!)
+      } catch {
+        err => Err(err)
+      },
+      t.2,
+    )?
   }
 }
 
@@ -383,6 +393,13 @@ test "parse_int" {
   ]
   for i = 0; i < tests.length(); i = i + 1 {
     let t = tests[i]
-    @assertion.assert_eq(parse_int(t.0), t.1)?
+    @assertion.assert_eq(
+      try {
+        Result::Ok(parse_int(t.0)!)
+      } catch {
+        err => Err(err)
+      },
+      t.1,
+    )?
   }
 }

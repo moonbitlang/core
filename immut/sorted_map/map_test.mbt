@@ -322,3 +322,14 @@ test "op_equal" {
   @assertion.assert_eq(m1 == m2, true)?
   @assertion.assert_eq(m1 == m3, false)?
 }
+
+test "split_max with non-empty tree" {
+  let m = Map::[(3, "three"), (8, "eight"), (1, "one"), (2, "two"), (0, "zero")]
+  let (k, v, r) = m.split_max()
+  inspect(k, content="8")?
+  inspect(v, content="eight")?
+  inspect(
+    r.debug_tree(),
+    content="(2,two,(1,one,(0,zero,_,_),_),(3,three,_,_))",
+  )?
+}

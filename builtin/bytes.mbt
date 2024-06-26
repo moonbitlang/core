@@ -111,7 +111,7 @@ pub fn set_utf16_char(self : Bytes, offset : Int, value : Char) -> Int {
     self[offset] = code.land(0xFF).to_byte()
     self[offset + 1] = code.lsr(8).to_byte()
     2
-  } else {
+  } else if code < 0x110000 {
     let hi = code - 0x10000
     let lo = hi.lsr(10).lor(0xD800)
     let hi = hi.land(0x3FF).lor(0xDC00)
@@ -120,5 +120,7 @@ pub fn set_utf16_char(self : Bytes, offset : Int, value : Char) -> Int {
     self[offset + 2] = hi.land(0xFF).to_byte()
     self[offset + 3] = hi.lsr(8).to_byte()
     4
+  } else {
+    abort("Char out of range")
   }
 }
