@@ -262,14 +262,11 @@ test "parse_double" {
 }
 
 test "parse_double_inf" {
-  @assertion.assert_eq(
-    try {
+  @test.eq(try {
       parse_double("inf")!
     } catch {
       _ => panic()
-    },
-    Double::inf(1),
-  )?
+    }, Double::inf(1))!
   @assertion.assert_eq(
     try {
       parse_double("+Inf")!
