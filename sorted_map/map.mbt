@@ -38,11 +38,6 @@ pub fn of[K : Compare, V](entries : Array[(K, V)]) -> T[K, V] {
 
 /// Inserts a key-value pair.
 pub fn add[K : Compare, V](self : T[K, V], key : K, value : V) -> Unit {
-  if self.size == 0 {
-    self.root = Some(new_node(key, value))
-    self.size += 1
-    return
-  }
   let parent = loop self.root, self.root {
     Some(curr), _ =>
       continue if key < curr.key { curr.left } else { curr.right }, Some(curr)
@@ -247,6 +242,7 @@ fn update_height[K, V](self : Node[K, V]) -> Unit {
 fn balance[K : Compare, V](self : T[K, V], node : Node[K, V]) -> Unit {
   loop node.parent {
     Some(parent) => {
+      let pp = parent.parent
       parent.update_height()
       if height(parent.left) > height(parent.right) + 1 {
         self.rotate_right(parent)
@@ -254,7 +250,7 @@ fn balance[K : Compare, V](self : T[K, V], node : Node[K, V]) -> Unit {
       if height(parent.right) > height(parent.left) + 1 {
         self.rotate_left(parent)
       }
-      continue parent.parent
+      continue pp
     }
     None => break
   }

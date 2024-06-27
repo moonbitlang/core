@@ -41,6 +41,30 @@ test "add" {
   inspect(map.size(), content="8")?
 }
 
+test "RL rotate" {
+  let map = new()
+  map.add(5, "a")
+  map.add(1, "b")
+  map.add(3, "c")
+  map.add(2, "d")
+  inspect(
+    map.debug_tree(),
+    content="([2]3,c,([1]1,b,_,([0]2,d,_,_)),([0]5,a,_,_))",
+  )?
+}
+
+test "LR rotate" {
+  let map = new()
+  map.add(2, "a")
+  map.add(5, "b")
+  map.add(3, "c")
+  map.add(4, "d")
+  inspect(
+    map.debug_tree(),
+    content="([2]3,c,([0]2,a,_,_),([1]5,b,([0]4,d,_,_),_))",
+  )?
+}
+
 test "remove" {
   let map = of(
     [
@@ -95,6 +119,12 @@ test "remove" {
   map.remove(1)
   inspect(map.debug_tree(), content="_")?
   inspect(map.size(), content="0")?
+}
+
+test "remove unexist" {
+  let map = of([(1, "a"), (2, "b"), (3, "c")])
+  map.remove(4)
+  inspect(map.size, content="3")?
 }
 
 test "get" {
@@ -189,4 +219,5 @@ test "to_array" {
 test "iter" {
   let map = of([(3, "c"), (2, "b"), (1, "a")])
   inspect(map.iter().collect(), content="[(1, a), (2, b), (3, c)]")?
+  inspect(map.iter().take(2).collect(), content="[(1, a), (2, b)]")?
 }
