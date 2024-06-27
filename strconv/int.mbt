@@ -188,27 +188,27 @@ fn overflow_threshold(base : Int, neg : Bool) -> Int64 {
 }
 
 test "check_underscore" {
-  @assertion.assert_true(check_underscore("123"))?
-  @assertion.assert_true(check_underscore("0x123"))?
-  @assertion.assert_true(check_underscore("0o123"))?
-  @assertion.assert_true(check_underscore("0b101"))?
-  @assertion.assert_true(check_underscore("1_2_3"))?
-  @assertion.assert_true(check_underscore("0x_1_2_3_A_F"))?
-  @assertion.assert_true(check_underscore("0o_1_2_3"))?
-  @assertion.assert_true(check_underscore("0b_1_0_1"))?
-  @assertion.assert_false(check_underscore("1__2_3"))?
-  @assertion.assert_false(check_underscore("_123"))?
-  @assertion.assert_false(check_underscore("123_"))?
+  @assertion.assert_true(check_underscore("123"))!
+  @assertion.assert_true(check_underscore("0x123"))!
+  @assertion.assert_true(check_underscore("0o123"))!
+  @assertion.assert_true(check_underscore("0b101"))!
+  @assertion.assert_true(check_underscore("1_2_3"))!
+  @assertion.assert_true(check_underscore("0x_1_2_3_A_F"))!
+  @assertion.assert_true(check_underscore("0o_1_2_3"))!
+  @assertion.assert_true(check_underscore("0b_1_0_1"))!
+  @assertion.assert_false(check_underscore("1__2_3"))!
+  @assertion.assert_false(check_underscore("_123"))!
+  @assertion.assert_false(check_underscore("123_"))!
 }
 
 test "determine_base" {
-  @assertion.assert_eq(determine_base("1234"), 10)?
-  @assertion.assert_eq(determine_base("0x1234"), 16)?
-  @assertion.assert_eq(determine_base("0X1234"), 16)?
-  @assertion.assert_eq(determine_base("0o1234"), 8)?
-  @assertion.assert_eq(determine_base("0O1234"), 8)?
-  @assertion.assert_eq(determine_base("0b1010"), 2)?
-  @assertion.assert_eq(determine_base("0B1010"), 2)?
+  @assertion.assert_eq(determine_base("1234"), 10)!
+  @assertion.assert_eq(determine_base("0x1234"), 16)!
+  @assertion.assert_eq(determine_base("0X1234"), 16)!
+  @assertion.assert_eq(determine_base("0o1234"), 8)!
+  @assertion.assert_eq(determine_base("0O1234"), 8)!
+  @assertion.assert_eq(determine_base("0b1010"), 2)!
+  @assertion.assert_eq(determine_base("0B1010"), 2)!
 }
 
 test "parse_int64" {
@@ -248,7 +248,7 @@ test "parse_int64" {
         err => Err(err)
       },
       t.1,
-    )?
+    )!
   }
 }
 
@@ -359,7 +359,7 @@ test "parse_int64_base" {
         err => Err(err)
       },
       t.2,
-    )?
+    )!
   }
 }
 
@@ -400,6 +400,6 @@ test "parse_int" {
         err => Err(err)
       },
       t.1,
-    )?
+    )!
   }
 }

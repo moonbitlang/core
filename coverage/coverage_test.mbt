@@ -67,7 +67,7 @@ test "log" {
       #|, "foo/bar": [0, 1]
       #|}
     ,
-  )?
+  )!
 }
 
 test "escape_to" {

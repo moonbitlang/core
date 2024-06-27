@@ -14,18 +14,18 @@
 
 test "search" {
   let dv = @deque.of([3, 4, 5])
-  @assertion.assert_eq(dv.search(3), Some(0))?
-  @assertion.assert_eq(dv.search(4), Some(1))?
-  @assertion.assert_eq(dv.search(5), Some(2))?
-  @assertion.assert_eq(dv.search(6), None)?
+  @assertion.assert_eq(dv.search(3), Some(0))!
+  @assertion.assert_eq(dv.search(4), Some(1))!
+  @assertion.assert_eq(dv.search(5), Some(2))!
+  @assertion.assert_eq(dv.search(6), None)!
 }
 
 test "contains" {
   let dv = @deque.of([3, 4, 5])
-  @assertion.assert_true(dv.contains(3))?
-  @assertion.assert_true(dv.contains(4))?
-  @assertion.assert_true(dv.contains(5))?
-  @assertion.assert_false(dv.contains(6))?
+  @assertion.assert_true(dv.contains(3))!
+  @assertion.assert_true(dv.contains(4))!
+  @assertion.assert_true(dv.contains(5))!
+  @assertion.assert_false(dv.contains(6))!
 }
 
 test "reserve_capacity" {
@@ -35,16 +35,16 @@ test "reserve_capacity" {
   dv.pop_front() |> ignore() // 3, 4, 5, 1
   dv.pop_front() |> ignore() // 4, 5, 1
   dv.reserve_capacity(10)
-  @assertion.assert_true(dv.capacity() == 10)?
-  @assertion.assert_eq(dv[0], 4)?
-  @assertion.assert_eq(dv[1], 5)?
-  @assertion.assert_eq(dv[2], 1)?
+  @assertion.assert_true(dv.capacity() == 10)!
+  @assertion.assert_eq(dv[0], 4)!
+  @assertion.assert_eq(dv[1], 5)!
+  @assertion.assert_eq(dv[2], 1)!
 }
 
 test "reserve_capacity_2" {
   let dv = @deque.of([1, 2, 3, 4, 5])
   dv.reserve_capacity(3)
-  @assertion.assert_true(dv.capacity() == 5)?
+  @assertion.assert_true(dv.capacity() == 5)!
 }
 
 test "shrink_to_fit" {
@@ -53,19 +53,19 @@ test "shrink_to_fit" {
   dv.push_back(1)
   dv.pop_front() |> ignore()
   dv.pop_front() |> ignore()
-  @assertion.assert_true(dv.capacity() == 5)?
+  @assertion.assert_true(dv.capacity() == 5)!
   dv.shrink_to_fit()
-  @assertion.assert_true(dv.capacity() == 3)?
-  @assertion.assert_eq(dv[0], 4)?
-  @assertion.assert_eq(dv[1], 5)?
-  @assertion.assert_eq(dv[2], 1)?
+  @assertion.assert_true(dv.capacity() == 3)!
+  @assertion.assert_eq(dv[0], 4)!
+  @assertion.assert_eq(dv[1], 5)!
+  @assertion.assert_eq(dv[2], 1)!
 }
 
 test "shrink_to_fit_2" {
   let dv = @deque.of([1, 2, 3])
-  @assertion.assert_true(dv.capacity() == 3)?
+  @assertion.assert_true(dv.capacity() == 3)!
   dv.shrink_to_fit()
-  @assertion.assert_true(dv.capacity() == 3)?
+  @assertion.assert_true(dv.capacity() == 3)!
 }
 
 test "iter" {
@@ -80,7 +80,7 @@ test "iter" {
       i = i + 1
     },
   )
-  @assertion.assert_eq(i, dv.length())?
+  @assertion.assert_eq(i, dv.length())!
   buf.expect(
     content=
       #|1
@@ -90,42 +90,42 @@ test "iter" {
       #|5
       #|
     ,
-  )?
+  )!
   inspect(
     iter.take(4).filter(fn(x) { x % 2 == 0 }).fold(fn(a, x) { a + x }, 0),
     content="6",
-  )?
+  )!
 }
 
 test "reserve and push" {
   // capacity > 0, len = 0
   let a = @deque.new(capacity=2)
   a.push_back(Option::Some(1))
-  inspect(a.front(), content="Some(Some(1))")?
-  inspect(a.back(), content="Some(Some(1))")?
+  inspect(a.front(), content="Some(Some(1))")!
+  inspect(a.back(), content="Some(Some(1))")!
   // capacity = 0, len = 0
   let b = @deque.new(capacity=0)
   b.push_back(Option::Some(1))
-  inspect(b.front(), content="Some(Some(1))")?
-  inspect(b.back(), content="Some(Some(1))")?
+  inspect(b.front(), content="Some(Some(1))")!
+  inspect(b.back(), content="Some(Some(1))")!
   // capacity > 0, len = 0
   let c = @deque.new(capacity=2)
   c.push_front(Option::Some(1))
-  inspect(c.front(), content="Some(Some(1))")?
-  inspect(c.back(), content="Some(Some(1))")?
+  inspect(c.front(), content="Some(Some(1))")!
+  inspect(c.back(), content="Some(Some(1))")!
   // capacity = 0, len = 0
   let d = @deque.new(capacity=0)
   d.push_front(Option::Some(1))
-  inspect(d.front(), content="Some(Some(1))")?
-  inspect(d.back(), content="Some(Some(1))")?
+  inspect(d.front(), content="Some(Some(1))")!
+  inspect(d.back(), content="Some(Some(1))")!
 }
 
 test "mapi" {
   let dv = @deque.of([3, 4, 5])
   let dvp = dv.mapi(fn(i, x) { x + i })
-  inspect(dvp[0], content="3")?
-  inspect(dvp[1], content="5")?
-  inspect(dvp[2], content="7")?
+  inspect(dvp[0], content="3")!
+  inspect(dvp[1], content="5")!
+  inspect(dvp[2], content="7")!
 }
 
 test "iter_rev" {
@@ -139,7 +139,7 @@ test "iter_rev" {
       i = i - 1
     },
   )
-  @assertion.assert_false(failed)?
+  @assertion.assert_false(failed)!
 }
 
 test "iter_revi" {
@@ -155,7 +155,7 @@ test "iter_revi" {
       j = j + 1
     },
   )
-  @assertion.assert_false(failed)?
+  @assertion.assert_false(failed)!
 }
 
 test "iteri" {
@@ -169,7 +169,7 @@ test "iteri" {
       i = i + 1
     },
   )
-  @assertion.assert_false(failed)?
+  @assertion.assert_false(failed)!
 }
 
 test "iter" {
@@ -183,7 +183,7 @@ test "iter" {
       i = i + 1
     },
   )
-  @assertion.assert_false(failed)?
+  @assertion.assert_false(failed)!
 }
 
 test "iter2" {
@@ -192,15 +192,15 @@ test "iter2" {
   v.pop_back_exn()
   let mut sum = 0
   v.each(fn { x => sum += x })
-  inspect(sum, content="9")?
+  inspect(sum, content="9")!
 }
 
 test "op_get" {
   let dv = @deque.of([1, 2, 3, 4, 5])
-  inspect([dv[0], dv[1], dv[2], dv[3], dv[4]], content="[1, 2, 3, 4, 5]")?
+  inspect([dv[0], dv[1], dv[2], dv[3], dv[4]], content="[1, 2, 3, 4, 5]")!
   dv.pop_front() |> ignore
   dv.push_back(1)
-  inspect(dv[4], content="1")?
+  inspect(dv[4], content="1")!
   dv.push_front(2)
-  inspect(dv[0], content="2")?
+  inspect(dv[0], content="2")!
 }

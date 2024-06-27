@@ -36,14 +36,14 @@ test "sin" {
     -8.694568970959221300497e-01, 4.01956668098863248917e-01, 9.67786335404528727927e-01,
     -6.7344058693131973066e-01,
   ]
-  inspect(sin(Double::nan()), content="NaN")?
-  inspect(sin(Double::inf(1)), content="Infinity")?
-  inspect(sin(Double::inf(-1)), content="-Infinity")?
+  inspect(sin(Double::nan()), content="NaN")!
+  inspect(sin(Double::inf(1)), content="Infinity")!
+  inspect(sin(Double::inf(-1)), content="-Infinity")!
   for i = 0; i < vf.length(); i = i + 1 {
-    @assertion.assert_true(imprecise_equal(sin(vf[i]), sin_res[i]))?
+    @assertion.assert_true(imprecise_equal(sin(vf[i]), sin_res[i]))!
     @assertion.assert_true(
       imprecise_equal(sin(100000.0 * pi + vf[i]), sin_res_large[i]),
-    )?
+    )!
   }
 }
 
@@ -60,14 +60,14 @@ test "cos" {
     4.940088097314976789841e-01, -9.15658690217517835002e-01, -2.51772931436786954751e-01,
     -7.3924135157173099849e-01,
   ]
-  inspect(cos(Double::nan()), content="NaN")?
-  inspect(cos(Double::inf(1)), content="Infinity")?
-  inspect(cos(Double::inf(-1)), content="-Infinity")?
+  inspect(cos(Double::nan()), content="NaN")!
+  inspect(cos(Double::inf(1)), content="Infinity")!
+  inspect(cos(Double::inf(-1)), content="-Infinity")!
   for i = 0; i < vf.length(); i = i + 1 {
-    @assertion.assert_true(imprecise_equal(cos(vf[i]), cos_res[i]))?
+    @assertion.assert_true(imprecise_equal(cos(vf[i]), cos_res[i]))!
     @assertion.assert_true(
       imprecise_equal(cos(100000.0 * pi + vf[i]), cos_res_large[i]),
-    )?
+    )!
   }
 }
 
@@ -84,13 +84,13 @@ test "tan" {
     -1.760002817699722747043e+00, -4.38980891453536115952e-01, -3.84388555942723509071e+00,
     9.1098879344275101051e-01,
   ]
-  inspect(tan(Double::nan()), content="NaN")?
-  inspect(tan(Double::inf(1)), content="Infinity")?
-  inspect(tan(Double::inf(-1)), content="-Infinity")?
+  inspect(tan(Double::nan()), content="NaN")!
+  inspect(tan(Double::inf(1)), content="Infinity")!
+  inspect(tan(Double::inf(-1)), content="-Infinity")!
   for i = 0; i < vf.length(); i = i + 1 {
-    @assertion.assert_true(imprecise_equal(tan(vf[i]), tan_res[i]))?
+    @assertion.assert_true(imprecise_equal(tan(vf[i]), tan_res[i]))!
     @assertion.assert_true(
       imprecise_equal(tan(100000.0 * pi + vf[i]), tan_res_large[i]),
-    )?
+    )!
   }
 }

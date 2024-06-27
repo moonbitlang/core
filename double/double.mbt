@@ -51,19 +51,19 @@ pub fn trunc(self : Double) -> Double {
 }
 
 test "trunc" {
-  @assertion.assert_eq(4503599627370497.0.trunc(), 4503599627370497.0)?
-  @assertion.assert_eq(2251799813685248.5.trunc(), 2251799813685248.0)?
-  @assertion.assert_eq(4.5.trunc(), 4.0)?
-  @assertion.assert_eq(1.5.trunc(), 1.0)?
-  @assertion.assert_eq(1.0.trunc(), 1.0)?
-  @assertion.assert_eq(0.2.trunc(), 0.0)?
-  @assertion.assert_eq(0.0.trunc(), 0.0)?
-  @assertion.assert_eq((-0.0).trunc().reinterpret_as_i64(), sign_mask)?
-  @assertion.assert_eq((-0.2).trunc().reinterpret_as_i64(), sign_mask)?
-  @assertion.assert_eq((-1.0).trunc(), -1.0)?
-  @assertion.assert_eq((-1.5).trunc(), -1.0)?
-  @assertion.assert_eq((-2251799813685248.5).trunc(), -2251799813685248.0)?
-  @assertion.assert_eq((-4503599627370497.0).trunc(), -4503599627370497.0)?
+  @assertion.assert_eq(4503599627370497.0.trunc(), 4503599627370497.0)!
+  @assertion.assert_eq(2251799813685248.5.trunc(), 2251799813685248.0)!
+  @assertion.assert_eq(4.5.trunc(), 4.0)!
+  @assertion.assert_eq(1.5.trunc(), 1.0)!
+  @assertion.assert_eq(1.0.trunc(), 1.0)!
+  @assertion.assert_eq(0.2.trunc(), 0.0)!
+  @assertion.assert_eq(0.0.trunc(), 0.0)!
+  @assertion.assert_eq((-0.0).trunc().reinterpret_as_i64(), sign_mask)!
+  @assertion.assert_eq((-0.2).trunc().reinterpret_as_i64(), sign_mask)!
+  @assertion.assert_eq((-1.0).trunc(), -1.0)!
+  @assertion.assert_eq((-1.5).trunc(), -1.0)!
+  @assertion.assert_eq((-2251799813685248.5).trunc(), -2251799813685248.0)!
+  @assertion.assert_eq((-4503599627370497.0).trunc(), -4503599627370497.0)!
 }
 
 pub fn ceil(self : Double) -> Double {
@@ -76,14 +76,14 @@ pub fn ceil(self : Double) -> Double {
 }
 
 test "ceil" {
-  @assertion.assert_eq(2251799813685248.5.ceil(), 2251799813685249.0)?
-  @assertion.assert_eq(1.1.ceil(), 2.0)?
-  @assertion.assert_eq(1.0.ceil(), 1.0)?
-  @assertion.assert_eq(0.9.ceil(), 1.0)?
-  @assertion.assert_eq(0.0.ceil(), 0.0)?
-  @assertion.assert_eq((-0.0).ceil().reinterpret_as_i64(), sign_mask)?
-  @assertion.assert_eq((-0.1).ceil().reinterpret_as_i64(), sign_mask)?
-  @assertion.assert_eq((-2251799813685248.5).ceil(), -2251799813685248.0)?
+  @assertion.assert_eq(2251799813685248.5.ceil(), 2251799813685249.0)!
+  @assertion.assert_eq(1.1.ceil(), 2.0)!
+  @assertion.assert_eq(1.0.ceil(), 1.0)!
+  @assertion.assert_eq(0.9.ceil(), 1.0)!
+  @assertion.assert_eq(0.0.ceil(), 0.0)!
+  @assertion.assert_eq((-0.0).ceil().reinterpret_as_i64(), sign_mask)!
+  @assertion.assert_eq((-0.1).ceil().reinterpret_as_i64(), sign_mask)!
+  @assertion.assert_eq((-2251799813685248.5).ceil(), -2251799813685248.0)!
 }
 
 pub fn floor(self : Double) -> Double {
@@ -96,14 +96,14 @@ pub fn floor(self : Double) -> Double {
 }
 
 test "floor" {
-  @assertion.assert_eq(2251799813685248.5.floor(), 2251799813685248.0)?
-  @assertion.assert_eq(1.1.floor(), 1.0)?
-  @assertion.assert_eq(1.0.floor(), 1.0)?
-  @assertion.assert_eq(0.9.floor(), 0.0)?
-  @assertion.assert_eq(0.0.floor(), 0.0)?
-  @assertion.assert_eq((-0.0).floor().reinterpret_as_i64(), sign_mask)?
-  @assertion.assert_eq((-0.1).floor(), -1.0)?
-  @assertion.assert_eq((-2251799813685248.5).floor(), -2251799813685249.0)?
+  @assertion.assert_eq(2251799813685248.5.floor(), 2251799813685248.0)!
+  @assertion.assert_eq(1.1.floor(), 1.0)!
+  @assertion.assert_eq(1.0.floor(), 1.0)!
+  @assertion.assert_eq(0.9.floor(), 0.0)!
+  @assertion.assert_eq(0.0.floor(), 0.0)!
+  @assertion.assert_eq((-0.0).floor().reinterpret_as_i64(), sign_mask)!
+  @assertion.assert_eq((-0.1).floor(), -1.0)!
+  @assertion.assert_eq((-2251799813685248.5).floor(), -2251799813685249.0)!
 }
 
 pub fn round(self : Double) -> Double {
@@ -127,20 +127,20 @@ pub fn round(self : Double) -> Double {
 }
 
 test "round" {
-  @assertion.assert_eq(4503599627370497.5.round(), 4503599627370498.0)?
-  @assertion.assert_eq(2251799813685248.5.round(), 2251799813685249.0)?
-  @assertion.assert_eq(5.5.round(), 6.0)?
-  @assertion.assert_eq(5.2.round(), 5.0)?
-  @assertion.assert_eq(1.1.round(), 1.0)?
-  @assertion.assert_eq(1.0.round(), 1.0)?
-  @assertion.assert_eq(0.9.round(), 1.0)?
-  @assertion.assert_eq(0.5.round(), 1.0)?
-  @assertion.assert_eq(0.4.round(), 0.0)?
-  @assertion.assert_eq(0.0.round(), 0.0)?
-  @assertion.assert_eq((-0.0).round().reinterpret_as_i64(), sign_mask)?
-  @assertion.assert_eq((-0.1).round().reinterpret_as_i64(), sign_mask)?
-  @assertion.assert_eq((-0.5).round(), -1.0)?
-  @assertion.assert_eq((-2251799813685248.5).round(), -2251799813685249.0)?
+  @assertion.assert_eq(4503599627370497.5.round(), 4503599627370498.0)!
+  @assertion.assert_eq(2251799813685248.5.round(), 2251799813685249.0)!
+  @assertion.assert_eq(5.5.round(), 6.0)!
+  @assertion.assert_eq(5.2.round(), 5.0)!
+  @assertion.assert_eq(1.1.round(), 1.0)!
+  @assertion.assert_eq(1.0.round(), 1.0)!
+  @assertion.assert_eq(0.9.round(), 1.0)!
+  @assertion.assert_eq(0.5.round(), 1.0)!
+  @assertion.assert_eq(0.4.round(), 0.0)!
+  @assertion.assert_eq(0.0.round(), 0.0)!
+  @assertion.assert_eq((-0.0).round().reinterpret_as_i64(), sign_mask)!
+  @assertion.assert_eq((-0.1).round().reinterpret_as_i64(), sign_mask)!
+  @assertion.assert_eq((-0.5).round(), -1.0)!
+  @assertion.assert_eq((-2251799813685248.5).round(), -2251799813685249.0)!
 }
 
 /// Returns the sign of the double.
@@ -208,74 +208,74 @@ pub fn is_neg_inf(self : Double) -> Bool {
 }
 
 test "from_int" {
-  @assertion.assert_eq(Double::from_int(1), 1.0)?
-  @assertion.assert_eq(Double::from_int(0), 0.0)?
-  @assertion.assert_eq(Double::from_int(100000), 1.0e5)?
+  @assertion.assert_eq(Double::from_int(1), 1.0)!
+  @assertion.assert_eq(Double::from_int(0), 0.0)!
+  @assertion.assert_eq(Double::from_int(100000), 1.0e5)!
 }
 
 test "abs" {
   let d = -1.0
-  @assertion.assert_eq(d.abs(), 1.0)?
-  @assertion.assert_eq(1.0.abs(), 1.0)?
+  @assertion.assert_eq(d.abs(), 1.0)!
+  @assertion.assert_eq(1.0.abs(), 1.0)!
 }
 
 test "signum" {
   let d = -2.0
-  @assertion.assert_eq(d.signum(), -1.0)?
-  @assertion.assert_eq(1.0.signum(), 1.0)?
-  @assertion.assert_eq(0.0.signum(), 0.0)?
-  @assertion.assert_true(not_a_number.signum().is_nan())?
+  @assertion.assert_eq(d.signum(), -1.0)!
+  @assertion.assert_eq(1.0.signum(), 1.0)!
+  @assertion.assert_eq(0.0.signum(), 0.0)!
+  @assertion.assert_true(not_a_number.signum().is_nan())!
 }
 
 test "is_nan" {
-  @assertion.assert_true(is_nan(not_a_number))?
-  @assertion.assert_false(is_nan(0.0))?
-  @assertion.assert_false(is_nan(12345.678))?
-  @assertion.assert_false(is_nan(positive_infinity))?
-  @assertion.assert_false(is_nan(negative_infinity))?
+  @assertion.assert_true(is_nan(not_a_number))!
+  @assertion.assert_false(is_nan(0.0))!
+  @assertion.assert_false(is_nan(12345.678))!
+  @assertion.assert_false(is_nan(positive_infinity))!
+  @assertion.assert_false(is_nan(negative_infinity))!
 }
 
 test "is_inf" {
-  @assertion.assert_true(is_inf(positive_infinity))?
-  @assertion.assert_true(is_inf(negative_infinity))?
-  @assertion.assert_false(is_inf(0.0))?
-  @assertion.assert_false(is_inf(12345.678))?
+  @assertion.assert_true(is_inf(positive_infinity))!
+  @assertion.assert_true(is_inf(negative_infinity))!
+  @assertion.assert_false(is_inf(0.0))!
+  @assertion.assert_false(is_inf(12345.678))!
 }
 
 test "is_pos_inf" {
-  @assertion.assert_true(is_pos_inf(positive_infinity))?
-  @assertion.assert_false(is_pos_inf(negative_infinity))?
-  @assertion.assert_false(is_pos_inf(0.0))?
-  @assertion.assert_false(is_pos_inf(12345.678))?
+  @assertion.assert_true(is_pos_inf(positive_infinity))!
+  @assertion.assert_false(is_pos_inf(negative_infinity))!
+  @assertion.assert_false(is_pos_inf(0.0))!
+  @assertion.assert_false(is_pos_inf(12345.678))!
 }
 
 test "is_neg_inf" {
-  @assertion.assert_false(is_neg_inf(positive_infinity))?
-  @assertion.assert_true(is_neg_inf(negative_infinity))?
-  @assertion.assert_false(is_neg_inf(0.0))?
-  @assertion.assert_false(is_neg_inf(12345.678))?
+  @assertion.assert_false(is_neg_inf(positive_infinity))!
+  @assertion.assert_true(is_neg_inf(negative_infinity))!
+  @assertion.assert_false(is_neg_inf(0.0))!
+  @assertion.assert_false(is_neg_inf(12345.678))!
 }
 
 test "nan" {
-  @assertion.assert_true(Double::nan().is_nan())?
+  @assertion.assert_true(Double::nan().is_nan())!
 }
 
 test "inf" {
-  @assertion.assert_eq(Double::inf(1), positive_infinity)?
-  @assertion.assert_eq(Double::inf(0), positive_infinity)?
-  @assertion.assert_eq(Double::inf(-1), negative_infinity)?
+  @assertion.assert_eq(Double::inf(1), positive_infinity)!
+  @assertion.assert_eq(Double::inf(0), positive_infinity)!
+  @assertion.assert_eq(Double::inf(-1), negative_infinity)!
 }
 
 test "max_value" {
-  @assertion.assert_eq(Double::max_value(), max_val)?
+  @assertion.assert_eq(Double::max_value(), max_val)!
 }
 
 test "min_value" {
-  @assertion.assert_eq(Double::min_value(), min_val)?
+  @assertion.assert_eq(Double::min_value(), min_val)!
 }
 
 test "min_normal" {
-  @assertion.assert_eq(Double::min_normal(), min_norm)?
+  @assertion.assert_eq(Double::min_normal(), min_norm)!
 }
 
 pub fn hash(self : Double) -> Int {

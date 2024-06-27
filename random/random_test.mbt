@@ -14,30 +14,30 @@
 
 test "int64" {
   let rng = init_state(seed=42)
-  inspect(rng.gen_int64(), content="3641984065037120728")?
-  inspect(rng.gen_int64(), content="7467187585727798831")?
-  inspect(rng.gen_int64(), content="8986548099352266632")?
+  inspect(rng.gen_int64(), content="3641984065037120728")!
+  inspect(rng.gen_int64(), content="7467187585727798831")!
+  inspect(rng.gen_int64(), content="8986548099352266632")!
 }
 
 test "int32" {
   let rng = init_state(seed=37)
-  inspect(rng.gen_int(), content="547383987")?
-  inspect(rng.gen_int(), content="21026097")?
-  inspect(rng.gen_int(), content="568410047")?
+  inspect(rng.gen_int(), content="547383987")!
+  inspect(rng.gen_int(), content="21026097")!
+  inspect(rng.gen_int(), content="568410047")!
 }
 
 test "double" {
   let rng = init_state(seed=37)
-  inspect(rng.gen_double(), content="0.019582079266934716")?
-  inspect(rng.gen_double(), content="0.039164123618391444")?
-  inspect(rng.gen_double(), content="0.05874619777217056")?
+  inspect(rng.gen_double(), content="0.019582079266934716")!
+  inspect(rng.gen_double(), content="0.039164123618391444")!
+  inspect(rng.gen_double(), content="0.05874619777217056")!
 }
 
 test "FixedArray::make with zero initialization" {
   let k = 5
   let arr = FixedArray::make(k, 0)
   for i = 0; i < k; i = i + 1 {
-    @assertion.assert_eq(arr[i], 0)?
+    @assertion.assert_eq(arr[i], 0)!
   }
 }
 
@@ -46,14 +46,14 @@ test "FixedArray::make with non-zero initialization" {
   let init_value = 42
   let arr = FixedArray::make(k, init_value)
   for i = 0; i < k; i = i + 1 {
-    @assertion.assert_eq(arr[i], init_value)?
+    @assertion.assert_eq(arr[i], init_value)!
   }
 }
 
 test "RandomState::new initializes state array correctly" {
   let rs = RandomState::new()
   for i = 0; i < k; i = i + 1 {
-    @assertion.assert_eq(rs.state[i], 0)?
+    @assertion.assert_eq(rs.state[i], 0)!
   }
-  @assertion.assert_eq(rs.index, 0)?
+  @assertion.assert_eq(rs.index, 0)!
 }

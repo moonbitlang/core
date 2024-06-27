@@ -103,9 +103,9 @@ pub fn UInt::to_string(self : UInt) -> String {
 }
 
 test "UInt::to_string" {
-  inspect(0U, content="0")?
-  inspect(17U, content="17")?
-  inspect(4294967295U, content="4294967295")?
+  inspect(0U, content="0")!
+  inspect(17U, content="17")!
+  inspect(4294967295U, content="4294967295")!
 }
 
 pub fn UInt64::to_string(self : UInt64) -> String {
@@ -181,7 +181,7 @@ pub fn inspect(
   ~content : String = "",
   ~loc : SourceLoc = _,
   ~args_loc : ArgsLoc = _
-) -> Result[Unit, String] {
+) -> Unit!String {
   let actual = obj.to_string()
   if actual != content {
     fn repr(s : String) -> String {
@@ -194,9 +194,8 @@ pub fn inspect(
     let args_loc = repr(args_loc.to_json())
     let expect = repr(content)
     let actual = repr(obj.to_string())
-    return Err(
+    raise (
       "@EXPECT_FAILED {\"loc\": \(loc), \"args_loc\": \(args_loc), \"expect\": \(expect), \"actual\": \(actual)}",
     )
   }
-  Ok(())
 }

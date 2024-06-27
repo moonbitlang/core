@@ -14,7 +14,7 @@
 
 test "capacity" {
   let m : HashMap[String, Int] = HashMap::new()
-  @assertion.assert_eq(m.capacity(), 8)?
+  @assertion.assert_eq(m.capacity(), 8)!
   m.set("a", 1)
   m.set("b", 2)
   m.set("c", 3)
@@ -23,5 +23,5 @@ test "capacity" {
   m.set("f", 6)
   m.set("g", 7)
   m.set("h", 8)
-  @assertion.assert_eq(m.capacity(), 16)?
+  @assertion.assert_eq(m.capacity(), 16)!
 }

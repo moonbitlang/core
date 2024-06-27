@@ -15,27 +15,27 @@
 test {
   let unit1 = ()
   let unit2 = ()
-  @assertion.assert_eq(unit1, unit2)?
+  @assertion.assert_eq(unit1, unit2)!
 }
 
 test {
   let unit1 = ()
   let unit2 = ()
-  @assertion.assert_true(physical_equal(unit1, unit2))?
+  @assertion.assert_true(physical_equal(unit1, unit2))!
 }
 
 test {
   let unit = ()
-  @assertion.assert_eq(Unit::default(), unit)?
+  @assertion.assert_eq(Unit::default(), unit)!
 }
 
 test {
   let unit1 = ()
   let unit2 = ()
-  @assertion.assert_eq(compare(unit1, unit2), 0)?
+  @assertion.assert_eq(compare(unit1, unit2), 0)!
 }
 
 test {
   let unit = ()
-  @assertion.assert_eq(hash(unit), 0)?
+  @assertion.assert_eq(hash(unit), 0)!
 }

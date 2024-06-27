@@ -49,6 +49,6 @@ test "parse_bool" {
         err => Err(err)
       },
       t.1,
-    )?
+    )!
   }
 }

@@ -15,37 +15,37 @@
 test "new" {
   // 1/2
   let a = @rational.new(1L, 2L)
-  inspect(a, content="Some(1/2)")?
+  inspect(a, content="Some(1/2)")!
 
   // 1/0
   let a = @rational.new(1L, 0L)
-  inspect(a, content="None")?
+  inspect(a, content="None")!
 }
 
 test "addition" {
   let a = @rational.new(1L, 2L).unwrap()
   let b = @rational.new(1L, 3L).unwrap()
   let result = a + b
-  inspect(result, content="5/6")?
+  inspect(result, content="5/6")!
 }
 
 test "subtraction" {
   let a = @rational.new(3L, 4L).unwrap()
   let b = @rational.new(1L, 4L).unwrap()
   let result = a - b
-  inspect(result, content="1/2")?
+  inspect(result, content="1/2")!
 }
 
 test "multiplication" {
   let a = @rational.new(2L, 3L).unwrap()
   let b = @rational.new(3L, 4L).unwrap()
   let result = a * b
-  inspect(result, content="1/2")?
+  inspect(result, content="1/2")!
 }
 
 test "division" {
   let a = @rational.new(1L, 2L).unwrap()
   let b = @rational.new(3L, 4L).unwrap()
   let result = a / b
-  inspect(result, content="2/3")?
+  inspect(result, content="2/3")!
 }

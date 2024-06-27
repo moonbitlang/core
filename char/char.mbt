@@ -21,7 +21,7 @@ pub fn to_string(self : Char) -> String {
 }
 
 test "to_string" {
-  @assertion.assert_eq('a'.to_string(), "a")?
+  @assertion.assert_eq('a'.to_string(), "a")!
 }
 
 /// Write a valid MoonBit syntax representation of a character to a buffer,
@@ -67,15 +67,15 @@ test "debug_write" {
     buf.to_string()
   }
 
-  @assertion.assert_eq(repr('a'), "'a'")?
-  @assertion.assert_eq(repr('\''), "'\\''")?
-  @assertion.assert_eq(repr('"'), "'\"'")?
-  @assertion.assert_eq(repr('\\'), "'\\\\'")?
-  @assertion.assert_eq(repr('\n'), "'\\n'")?
-  @assertion.assert_eq(repr('\r'), "'\\r'")?
-  @assertion.assert_eq(repr('\b'), "'\\b'")?
-  @assertion.assert_eq(repr('\t'), "'\\t'")?
-  @assertion.assert_eq(repr(Char::from_int(0)), "'\\x00'")?
+  @assertion.assert_eq(repr('a'), "'a'")!
+  @assertion.assert_eq(repr('\''), "'\\''")!
+  @assertion.assert_eq(repr('"'), "'\"'")!
+  @assertion.assert_eq(repr('\\'), "'\\\\'")!
+  @assertion.assert_eq(repr('\n'), "'\\n'")!
+  @assertion.assert_eq(repr('\r'), "'\\r'")!
+  @assertion.assert_eq(repr('\b'), "'\\b'")!
+  @assertion.assert_eq(repr('\t'), "'\\t'")!
+  @assertion.assert_eq(repr(Char::from_int(0)), "'\\x00'")!
 }
 
 pub fn hash(self : Char) -> Int {

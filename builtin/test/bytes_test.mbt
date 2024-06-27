@@ -14,18 +14,18 @@
 
 test "to_string" {
   let bytes = Bytes::of_string("Hello, World!")
-  @assertion.assert_eq(bytes.to_string(), "Hello, World!")?
+  @assertion.assert_eq(bytes.to_string(), "Hello, World!")!
 }
 
 test "of_string" {
   let str = "Hello, World!"
   let bytes = Bytes::of_string(str)
-  @assertion.assert_eq(bytes.length(), str.length() * 2)?
+  @assertion.assert_eq(bytes.length(), str.length() * 2)!
 }
 
 test "sub_string" {
   let bytes = Bytes::of_string("Hello, World!")
-  @assertion.assert_eq(bytes.sub_string(0, 5 * 2), "Hello")?
+  @assertion.assert_eq(bytes.sub_string(0, 5 * 2), "Hello")!
   // @assertion.assert_eq(bytes.sub_string(10, 5 * 2), "World")?
 }
 
@@ -33,31 +33,31 @@ test "blit_from_string" {
   let bytes = Bytes::make(10)
   let str = "Hello"
   bytes.blit_from_string(0, str, 0, str.length())
-  @assertion.assert_eq(bytes.sub_string(0, str.length() * 2), str)?
+  @assertion.assert_eq(bytes.sub_string(0, str.length() * 2), str)!
 }
 
 test "copy" {
   let bytes = Bytes::of_string("Hello, World!")
   let copy_bytes = bytes.copy()
-  @assertion.assert_eq(copy_bytes.to_string(), bytes.to_string())?
+  @assertion.assert_eq(copy_bytes.to_string(), bytes.to_string())!
 }
 
 test "set_utf8_char" {
   let bytes = Bytes::make(10)
   let char = 'A'
   let len = bytes.set_utf8_char(0, char)
-  @assertion.assert_eq(len, 1)?
+  @assertion.assert_eq(len, 1)!
   // FIXME: inconsistency between wasm-gc & js
   bytes.sub_string(0, 1) |> ignore
-  inspect(bytes.sub_string(0, 2), content="A")?
+  inspect(bytes.sub_string(0, 2), content="A")!
 }
 
 test "set_utf16_char" {
   let bytes = Bytes::make(10)
   let char = 'A'
   let len = bytes.set_utf16_char(0, char)
-  @assertion.assert_eq(len, 2)?
-  @assertion.assert_eq(bytes.sub_string(0, 2), "A")?
+  @assertion.assert_eq(len, 2)!
+  @assertion.assert_eq(bytes.sub_string(0, 2), "A")!
 }
 
 test "panic sub_string with invalid byte_length" {

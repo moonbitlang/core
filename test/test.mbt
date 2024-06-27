@@ -18,14 +18,10 @@ fn debug_string[T : Debug](t : T) -> String {
   buf.to_string()
 }
 
-pub fn eq[T : Debug + Eq](
-  a : T,
-  b : T,
-  ~loc : SourceLoc = _
-) -> Unit!String {
+pub fn eq[T : Debug + Eq](a : T, b : T, ~loc : SourceLoc = _) -> Unit!String {
   if a != b {
     let a = debug_string(a)
     let b = debug_string(b)
-    raise ("FAILED: \(loc) `\(a) == \(b)`")
+    raise "FAILED: \(loc) `\(a) == \(b)`"
   }
 }

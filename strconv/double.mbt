@@ -257,16 +257,19 @@ test "parse_double" {
         err => Err(err)
       },
       t.1,
-    )?
+    )!
   }
 }
 
 test "parse_double_inf" {
-  @test.eq(try {
+  @assertion.assert_eq(
+    try {
       parse_double("inf")!
     } catch {
       _ => panic()
-    }, Double::inf(1))!
+    },
+    Double::inf(1),
+  )!
   @assertion.assert_eq(
     try {
       parse_double("+Inf")!
@@ -274,7 +277,7 @@ test "parse_double_inf" {
       _ => panic()
     },
     Double::inf(1),
-  )?
+  )!
   @assertion.assert_eq(
     try {
       parse_double("-Inf")!
@@ -282,7 +285,7 @@ test "parse_double_inf" {
       _ => panic()
     },
     Double::inf(-1),
-  )?
+  )!
   @assertion.assert_eq(
     try {
       parse_double("+Infinity")!
@@ -290,7 +293,7 @@ test "parse_double_inf" {
       _ => panic()
     },
     Double::inf(1),
-  )?
+  )!
   @assertion.assert_eq(
     try {
       parse_double("-Infinity")!
@@ -298,7 +301,7 @@ test "parse_double_inf" {
       _ => panic()
     },
     Double::inf(-1),
-  )?
+  )!
   @assertion.assert_eq(
     try {
       parse_double("+INFINITY")!
@@ -306,7 +309,7 @@ test "parse_double_inf" {
       _ => panic()
     },
     Double::inf(1),
-  )?
+  )!
   @assertion.assert_eq(
     try {
       parse_double("-INFINITY")!
@@ -314,7 +317,7 @@ test "parse_double_inf" {
       _ => panic()
     },
     Double::inf(-1),
-  )?
+  )!
 }
 
 test "parse_double_nan" {
@@ -323,17 +326,17 @@ test "parse_double_nan" {
   } catch {
     _ => panic()
   }
-  @assertion.assert_true(nan.is_nan())?
+  @assertion.assert_true(nan.is_nan())!
   let nan = try {
     parse_double("NaN")!
   } catch {
     _ => panic()
   }
-  @assertion.assert_true(nan.is_nan())?
+  @assertion.assert_true(nan.is_nan())!
   let nan = try {
     parse_double("NAN")!
   } catch {
     _ => panic()
   }
-  @assertion.assert_true(nan.is_nan())?
+  @assertion.assert_true(nan.is_nan())!
 }

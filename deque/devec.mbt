@@ -29,12 +29,12 @@ pub fn Devec::new[T](~capacity : Int = 0) -> Devec[T] {
 
 test "new_with_capacity" {
   let d : Devec[Int] = Devec::new(capacity=0)
-  @assertion.assert_eq(d.buf.length(), 0)?
+  @assertion.assert_eq(d.buf.length(), 0)!
 }
 
 test "new_with_capacity_non_zero" {
   let d : Devec[Int] = Devec::new(capacity=10)
-  @assertion.assert_eq(d.buf.length(), 10)?
+  @assertion.assert_eq(d.buf.length(), 10)!
 }
 
 /// Creates a new devec from an array.
@@ -66,9 +66,9 @@ pub fn Devec::of[T](arr : FixedArray[T]) -> Devec[T] {
 
 test "of" {
   let d = Devec::of([1, 2, 3])
-  @assertion.assert_eq(d[0], 1)?
-  @assertion.assert_eq(d[1], 2)?
-  @assertion.assert_eq(d[2], 3)?
+  @assertion.assert_eq(d[0], 1)!
+  @assertion.assert_eq(d[1], 2)!
+  @assertion.assert_eq(d[2], 3)!
 }
 
 /// Returns the devec of elements in the vector.
@@ -112,9 +112,9 @@ fn realloc[T](self : Devec[T]) -> Unit {
 
 test "realloc" {
   let dv = of([1, 2, 3, 4, 5])
-  @assertion.assert_eq(dv.pop_front(), Some(1))?
-  @assertion.assert_eq(dv.pop_front(), Some(2))?
-  @assertion.assert_eq(dv.pop_front(), Some(3))?
+  @assertion.assert_eq(dv.pop_front(), Some(1))!
+  @assertion.assert_eq(dv.pop_front(), Some(2))!
+  @assertion.assert_eq(dv.pop_front(), Some(3))!
   dv.push_back(6)
   dv.push_back(7)
   dv.push_back(8)
@@ -128,7 +128,7 @@ test "realloc" {
       i += 1
     },
   )
-  @assertion.assert_eq(result, [4, 5, 6, 7, 8, 9, 10])?
+  @assertion.assert_eq(result, [4, 5, 6, 7, 8, 9, 10])!
 }
 
 /// Return the front element from a devec, or `None` if it is empty.
@@ -163,11 +163,11 @@ pub fn back[T](self : Devec[T]) -> T? {
 
 test "front_and_back" {
   let dv = of([1, 2, 3, 4, 5])
-  @assertion.assert_eq(dv.back(), Some(5))?
-  @assertion.assert_eq(dv.front(), Some(1))?
+  @assertion.assert_eq(dv.back(), Some(5))!
+  @assertion.assert_eq(dv.front(), Some(1))!
   let dv : Devec[Int] = of([])
-  @assertion.assert_eq(dv.back(), None)?
-  @assertion.assert_eq(dv.front(), None)?
+  @assertion.assert_eq(dv.back(), None)!
+  @assertion.assert_eq(dv.front(), None)!
 }
 
 /// Adds an element to the front of the devec.
@@ -278,37 +278,37 @@ pub fn pop_back[T](self : Devec[T]) -> T? {
 
 test "push_and_pop" {
   let dv = of([1, 2, 3, 4, 5])
-  @assertion.assert_eq(dv.pop_back(), Some(5))?
-  @assertion.assert_eq(dv.length(), 4)?
-  @assertion.assert_eq(dv.back(), Some(4))?
-  @assertion.assert_eq(dv.pop_front(), Some(1))?
-  @assertion.assert_eq(dv.length(), 3)?
-  @assertion.assert_eq(dv.front(), Some(2))?
+  @assertion.assert_eq(dv.pop_back(), Some(5))!
+  @assertion.assert_eq(dv.length(), 4)!
+  @assertion.assert_eq(dv.back(), Some(4))!
+  @assertion.assert_eq(dv.pop_front(), Some(1))!
+  @assertion.assert_eq(dv.length(), 3)!
+  @assertion.assert_eq(dv.front(), Some(2))!
   dv.push_front(5)
   dv.push_front(6)
   dv.push_back(7)
   dv.push_back(8)
-  @assertion.assert_eq(dv.length(), 7)?
-  @assertion.assert_eq(dv.pop_front(), Some(6))?
-  @assertion.assert_eq(dv.front(), Some(5))?
-  @assertion.assert_eq(dv.length(), 6)?
-  @assertion.assert_eq(dv.pop_back(), Some(8))?
-  @assertion.assert_eq(dv.back(), Some(7))?
+  @assertion.assert_eq(dv.length(), 7)!
+  @assertion.assert_eq(dv.pop_front(), Some(6))!
+  @assertion.assert_eq(dv.front(), Some(5))!
+  @assertion.assert_eq(dv.length(), 6)!
+  @assertion.assert_eq(dv.pop_back(), Some(8))!
+  @assertion.assert_eq(dv.back(), Some(7))!
   let dv = of([1])
-  @assertion.assert_eq(dv.pop_front(), Some(1))?
-  @assertion.assert_eq(dv.pop_front(), None)?
-  @assertion.assert_eq(dv.pop_back(), None)?
+  @assertion.assert_eq(dv.pop_front(), Some(1))!
+  @assertion.assert_eq(dv.pop_front(), None)!
+  @assertion.assert_eq(dv.pop_back(), None)!
 }
 
 test "push_realloc" {
   let dv : Devec[Int] = Devec::new()
   dv.push_front(1)
-  @assertion.assert_eq(dv.pop_front(), Some(1))?
-  @assertion.assert_true(dv.capacity() > 0)?
+  @assertion.assert_eq(dv.pop_front(), Some(1))!
+  @assertion.assert_true(dv.capacity() > 0)!
   let dv : Devec[Int] = Devec::new()
   dv.push_back(1)
-  @assertion.assert_eq(dv.pop_back(), Some(1))?
-  @assertion.assert_true(dv.capacity() > 0)?
+  @assertion.assert_eq(dv.pop_back(), Some(1))!
+  @assertion.assert_true(dv.capacity() > 0)!
 }
 
 /// Retrieves the element at the specified index from the devec.
@@ -363,7 +363,7 @@ pub fn op_set[T](self : Devec[T], index : Int, value : T) -> Unit {
 test "op_set" {
   let dv = of([1, 2, 3, 4, 5])
   dv[1] = 3
-  @assertion.assert_eq(dv[1], 3)?
+  @assertion.assert_eq(dv[1], 3)!
 }
 
 /// Compares two devecs for equality.
@@ -382,15 +382,15 @@ pub fn op_equal[T : Eq](self : Devec[T], other : Devec[T]) -> Bool {
 test "op_equal" {
   let dv1 = of([1, 2, 3])
   let dv2 = of([1, 2, 3])
-  @assertion.assert_true(dv1 == dv2)?
+  @assertion.assert_true(dv1 == dv2)!
   let dv1 = of([1, 2, 3])
   let dv2 = of([1, 2, 3])
   dv2[0] = 2
-  @assertion.assert_false(dv1 == dv2)?
+  @assertion.assert_false(dv1 == dv2)!
   let dv1 = of([1, 2, 3])
   let dv2 = of([1, 2, 3])
   dv2.push_front(1)
-  @assertion.assert_false(dv1 == dv2)?
+  @assertion.assert_false(dv1 == dv2)!
 }
 
 /// Iterates over the elements of the devec.
@@ -467,8 +467,8 @@ pub fn clear[T](self : Devec[T]) -> Unit {
 test "clear" {
   let dv = of([3, 4, 5])
   dv.clear()
-  @assertion.assert_eq(dv.length(), 0)?
-  @assertion.assert_eq(dv.capacity(), 3)?
+  @assertion.assert_eq(dv.length(), 0)!
+  @assertion.assert_eq(dv.capacity(), 3)!
 }
 
 /// Maps a function over the elements of the devec.
@@ -493,9 +493,9 @@ pub fn map[T, U](self : Devec[T], f : (T) -> U) -> Devec[U] {
 test "map" {
   let dv = of([3, 4, 5])
   let dvp = dv.map(fn(x) { x + 1 })
-  @assertion.assert_eq(dvp[0], 4)?
-  @assertion.assert_eq(dvp[1], 5)?
-  @assertion.assert_eq(dvp[2], 6)?
+  @assertion.assert_eq(dvp[0], 4)!
+  @assertion.assert_eq(dvp[1], 5)!
+  @assertion.assert_eq(dvp[2], 6)!
 }
 
 /// Maps a function over the elements of the devec with index.
@@ -530,9 +530,9 @@ pub fn is_empty[T](self : Devec[T]) -> Bool {
 
 test "is_empty" {
   let dv = Devec::new()
-  @assertion.assert_true(dv.is_empty())?
+  @assertion.assert_true(dv.is_empty())!
   dv.push_back(3)
-  @assertion.assert_false(dv.is_empty())?
+  @assertion.assert_false(dv.is_empty())!
 }
 
 /// Search the devec index for a given element.
@@ -638,21 +638,21 @@ test "reserve and push" {
   // capacity > 0, len = 0
   let a : Devec[Int?] = Devec::new(capacity=2)
   a.push_back(Some(1))
-  inspect(a.front(), content="Some(Some(1))")?
-  inspect(a.back(), content="Some(Some(1))")?
+  inspect(a.front(), content="Some(Some(1))")!
+  inspect(a.back(), content="Some(Some(1))")!
   // capacity = 0, len = 0
   let b : Devec[Int?] = Devec::new(capacity=0)
   b.push_back(Some(1))
-  inspect(b.front(), content="Some(Some(1))")?
-  inspect(b.back(), content="Some(Some(1))")?
+  inspect(b.front(), content="Some(Some(1))")!
+  inspect(b.back(), content="Some(Some(1))")!
   // capacity > 0, len = 0
   let c : Devec[Int?] = Devec::new(capacity=2)
   c.push_front(Some(1))
-  inspect(c.front(), content="Some(Some(1))")?
-  inspect(c.back(), content="Some(Some(1))")?
+  inspect(c.front(), content="Some(Some(1))")!
+  inspect(c.back(), content="Some(Some(1))")!
   // capacity = 0, len = 0
   let d : Devec[Int?] = Devec::new(capacity=0)
   d.push_front(Some(1))
-  inspect(d.front(), content="Some(Some(1))")?
-  inspect(d.back(), content="Some(Some(1))")?
+  inspect(d.front(), content="Some(Some(1))")!
+  inspect(d.back(), content="Some(Some(1))")!
 }
