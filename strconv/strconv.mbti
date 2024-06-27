@@ -1,31 +1,31 @@
 package moonbitlang/core/strconv
 
 // Values
-fn parse[A : FromStr](String) -> A
+fn parse[A : FromStr](String) -> A!String
 
-fn parse_bool(String) -> Bool
+fn parse_bool(String) -> Bool!String
 
-fn parse_double(String) -> Double
+fn parse_double(String) -> Double!String
 
-fn parse_int(String, ~base : Int = ..) -> Int
+fn parse_int(String, ~base : Int = ..) -> Int!String
 
-fn parse_int64(String, ~base : Int = ..) -> Int64
+fn parse_int64(String, ~base : Int = ..) -> Int64!String
 
 // Types and methods
 type Decimal
 impl Decimal {
   from_int64(Int64) -> Self
   new() -> Self
-  parse_decimal(String) -> Self
+  parse_decimal(String) -> Self!String
   shift(Self, Int) -> Unit
-  to_double(Self) -> Double
+  to_double(Self) -> Double!String
 }
 
 type Number
 
 // Traits
 pub trait FromStr {
-  from_string(String) -> Self
+  from_string(String) -> Self!String
 }
 
 // Extension Methods
