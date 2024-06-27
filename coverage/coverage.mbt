@@ -13,22 +13,22 @@
 // limitations under the License.
 
 /// The `CoverageCounter` structure is used for keeping track of the number of
-/// times each chunk of code is executed. It's not very useful outside of 
+/// times each chunk of code is executed. It's not very useful outside of
 /// generated code.
 struct CoverageCounter {
   counter : FixedArray[Int]
 } derive(Show)
 
 /// Create a new coverage counter with the given size.
-/// 
-/// @coverage.skip 
+///
+/// @coverage.skip
 pub fn CoverageCounter::new(size : Int) -> CoverageCounter {
   { counter: FixedArray::make(size, 0) }
 }
 
 /// Increment the specified tracking index.
-/// 
-/// @coverage.skip 
+///
+/// @coverage.skip
 pub fn CoverageCounter::incr(self : CoverageCounter, idx : Int) -> Unit {
   let counter = self.counter[idx]
   if counter < 0x7fffffff { // prevent overflow
@@ -57,7 +57,7 @@ priv enum MList[T] {
 let counters : Ref[MList[(String, CoverageCounter)]] = { val: MNil }
 
 /// Add the given counter along its ID to the tracking list.
-/// 
+///
 /// @coverage.skip
 pub fn track(name : String, counter : CoverageCounter) -> Unit {
   counters.val = MCons((name, counter), counters.val)
@@ -66,23 +66,28 @@ pub fn track(name : String, counter : CoverageCounter) -> Unit {
 trait Output {
   output(Self, String) -> Unit
 }
+type StringBuffer Array[String]
 
-type IO Int
-
-fn output(self : IO, content : String) -> Unit {
-  ignore(self)
-  print(content)
+impl Output for StringBuffer with output(self : StringBuffer, content : String) -> Unit {
+    self.0.push(content)
 }
+
+// type IO Int
+
+// fn output(self : IO, content : String) -> Unit {
+//   ignore(self)
+//   println(content)
+// }
 
 fn Output::output(self : Buffer, content : String) -> Unit {
   self.write_string(content)
 }
 
-// TODO: This escape function should belong to the String package, but is 
+// TODO: This escape function should belong to the String package, but is
 // not mature enough, so it's left here temporarily.
 /// Escape a string using standard JSON escape sequences to the given buffer,
 /// usually for quoting uses.
-///  
+///
 /// This method only escapes characters below 0x20 and the following characters:
 /// `"`, `'`, `\`.
 fn escape_to(s : String, buf : Buffer) -> Unit {
@@ -122,7 +127,7 @@ fn escape_to(s : String, buf : Buffer) -> Unit {
 
 /// Escape a string using standard C escape sequences and return the escaped string,
 /// usually for quoting uses.
-///  
+///
 /// This method only escapes characters below 0x20 and the following characters:
 /// `"`, `'`, `\`.
 pub fn escape(s : String) -> String {
@@ -134,9 +139,9 @@ pub fn escape(s : String) -> String {
 /// Output the counters to stdout for coverage report usages. The counter data
 /// is printed as a map of `{ counter_id: counter_contents }`, enclosed between
 /// a pair of delimiters.
-/// 
+///
 /// An example output of this function is like the following:
-/// 
+///
 /// ```plaintext
 /// ----- BEGIN MOONBIT COVERAGE -----
 /// {
@@ -147,7 +152,28 @@ pub fn escape(s : String) -> String {
 /// ```
 pub fn end() -> Unit {
   println("----- BEGIN MOONBIT COVERAGE -----")
-  coverage_log(counters.val, IO::IO(0))
+  let sbuf = StringBuffer::StringBuffer([])
+  coverage_log(counters.val, sbuf)
+  let line_buf = Buffer::new()
+  for i = 0; i < sbuf.0.length(); i = i + 1 {
+    let str = sbuf.0[i]
+    let mut start = 0
+    for j = 0; j < str.length(); j = j + 1 {
+      if str[j] == '\n' {
+        line_buf.write_sub_string(str, start, j)
+        println(line_buf.to_string())
+        line_buf.reset()
+        start = j + 1
+      }
+    }
+    if start < str.length() {
+      line_buf.write_sub_string(str, start, str.length())
+    }
+  }
+  let trailing_line = line_buf.to_string()
+  if trailing_line.length() > 0 {
+    println(trailing_line)
+  }
   println("----- END MOONBIT COVERAGE -----")
 }
 
