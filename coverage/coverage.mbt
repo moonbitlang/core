@@ -19,16 +19,17 @@ struct CoverageCounter {
   counter : FixedArray[Int]
 } derive(Show)
 
+// REMARK: Fow now `@coverage.skip` must have arguments, so we pass an empty string as an workaround.
 /// Create a new coverage counter with the given size.
 ///
-/// @coverage.skip
+/// @coverage.skip ""
 pub fn CoverageCounter::new(size : Int) -> CoverageCounter {
   { counter: FixedArray::make(size, 0) }
 }
 
 /// Increment the specified tracking index.
 ///
-/// @coverage.skip
+/// @coverage.skip ""
 pub fn CoverageCounter::incr(self : CoverageCounter, idx : Int) -> Unit {
   let counter = self.counter[idx]
   if counter < 0x7fffffff { // prevent overflow
@@ -66,10 +67,11 @@ pub fn track(name : String, counter : CoverageCounter) -> Unit {
 trait Output {
   output(Self, String) -> Unit
 }
-type StringBuffer Array[String]
+
+priv type StringBuffer Array[String]
 
 impl Output for StringBuffer with output(self : StringBuffer, content : String) -> Unit {
-    self.0.push(content)
+  self.0.push(content)
 }
 
 // type IO Int

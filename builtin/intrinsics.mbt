@@ -16,8 +16,6 @@ pub fn ignore[T](t : T) -> Unit = "%ignore"
 
 pub fn physical_equal[T](a : T, b : T) -> Bool = "%refeq"
 
-
-
 pub fn abort[T](msg : String) -> T {
   ignore(msg)
   panic()

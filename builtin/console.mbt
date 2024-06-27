@@ -19,7 +19,6 @@ pub fn println[T : Show](input : T) -> Unit {
   print_string("\n")
 }
 
-
 pub fn to_string(self : Bool) -> String {
   if self {
     "true"
