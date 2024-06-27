@@ -33,7 +33,7 @@ fn read_char(ctx : ParseContext) -> Char? {
   }
 }
 
-fn lex_skip_whitespace(ctx : ParseContext) -> Result[Unit, ParseError] {
+fn lex_skip_whitespace(ctx : ParseContext) -> Unit {
   for ; ; {
     match read_char(ctx) {
       Some('\t' | '\u000B' | '\u000C' | ' ' | '\n' | '\r') => continue
@@ -42,15 +42,15 @@ fn lex_skip_whitespace(ctx : ParseContext) -> Result[Unit, ParseError] {
           continue
         }
         ctx.offset -= 1
-        return Ok(())
+        break
       }
-      None => return Ok(())
+      None => break
     }
   }
 }
 
 fn lex_after_array_value(ctx : ParseContext) -> Result[Token, ParseError] {
-  lex_skip_whitespace(ctx)?
+  lex_skip_whitespace(ctx)
   match read_char(ctx) {
     Some(']') => Ok(Token::RBracket)
     Some(',') => Ok(Token::Comma)
@@ -60,7 +60,7 @@ fn lex_after_array_value(ctx : ParseContext) -> Result[Token, ParseError] {
 }
 
 fn lex_after_property_name(ctx : ParseContext) -> Result[Token, ParseError] {
-  lex_skip_whitespace(ctx)?
+  lex_skip_whitespace(ctx)
   match read_char(ctx) {
     Some(':') => Ok(Token::Colon)
     Some(_) => Err(invalid_char(ctx, shift=-1))
@@ -69,7 +69,7 @@ fn lex_after_property_name(ctx : ParseContext) -> Result[Token, ParseError] {
 }
 
 fn lex_after_object_value(ctx : ParseContext) -> Result[Token, ParseError] {
-  lex_skip_whitespace(ctx)?
+  lex_skip_whitespace(ctx)
   match read_char(ctx) {
     Some('}') => Ok(Token::RBrace)
     Some(',') => Ok(Token::Comma)
@@ -86,7 +86,7 @@ fn lex_assert_char(ctx : ParseContext, c : Char) -> Result[Unit, ParseError] {
 }
 
 fn lex_property_name(ctx : ParseContext) -> Result[Token, ParseError] {
-  lex_skip_whitespace(ctx)?
+  lex_skip_whitespace(ctx)
   match read_char(ctx) {
     Some('}') => Ok(RBrace)
     Some('"') => {
@@ -99,7 +99,7 @@ fn lex_property_name(ctx : ParseContext) -> Result[Token, ParseError] {
 }
 
 fn lex_property_name2(ctx : ParseContext) -> Result[Token, ParseError] {
-  lex_skip_whitespace(ctx)?
+  lex_skip_whitespace(ctx)
   match read_char(ctx) {
     Some('"') => {
       let s = lex_string(ctx)?
