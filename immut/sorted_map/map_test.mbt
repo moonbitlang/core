@@ -39,14 +39,14 @@ test "remove" {
     content="(3,three,(1,one,(0,zero,_,_),(2,two,_,_)),(8,eight,_,_))",
   )!
   let m = m.remove(1).remove(3)
-  @assertion.assert_eq(m.debug_tree(), "(2,two,(0,zero,_,_),(8,eight,_,_))")!
+  @test.eq(m.debug_tree(), "(2,two,(0,zero,_,_),(8,eight,_,_))")!
 }
 
 test "lookup" {
   let m = of([(3, "three"), (8, "eight"), (1, "one"), (2, "two"), (0, "zero")])
-  @assertion.assert_eq(m.lookup(8), Some("eight"))!
-  @assertion.assert_eq(m.lookup(2), Some("two"))!
-  @assertion.assert_eq(m.lookup(4), None)!
+  @test.eq(m.lookup(8), Some("eight"))!
+  @test.eq(m.lookup(2), Some("two"))!
+  @test.eq(m.lookup(4), None)!
 }
 
 test "contains" {
@@ -55,43 +55,43 @@ test "contains" {
     m.debug_tree(),
     content="(3,three,(1,one,(0,zero,_,_),(2,two,_,_)),(8,eight,_,_))",
   )!
-  @assertion.assert_eq(m.contains(8), true)!
-  @assertion.assert_eq(m.contains(2), true)!
-  @assertion.assert_eq(m.contains(4), false)!
+  @test.eq(m.contains(8), true)!
+  @test.eq(m.contains(2), true)!
+  @test.eq(m.contains(4), false)!
 }
 
 test "size" {
   let m = of([(3, "three"), (8, "eight"), (1, "one"), (2, "two"), (0, "zero")])
-  @assertion.assert_eq(m.size(), 5)!
+  @test.eq(m.size(), 5)!
   let m = m.remove(1).remove(3)
-  @assertion.assert_eq(m.size(), 3)!
+  @test.eq(m.size(), 3)!
 }
 
 test "is_empty" {
   let m : Map[Int, Int] = empty()
-  @assertion.assert_eq(m.is_empty(), true)!
+  @test.eq(m.is_empty(), true)!
   let m = m.insert(1, 1)
-  @assertion.assert_eq(m.is_empty(), false)!
+  @test.eq(m.is_empty(), false)!
 }
 
 test "iter" {
   let m = of([(3, "three"), (8, "eight"), (1, "one"), (2, "two"), (0, "zero")])
   let mut s = ""
   m.each(fn(k, v) { s = s + "(\(k),\(v))" })
-  @assertion.assert_eq(s, "(0,zero)(1,one)(2,two)(3,three)(8,eight)")!
+  @test.eq(s, "(0,zero)(1,one)(2,two)(3,three)(8,eight)")!
 }
 
 test "iteri" {
   let m = of([(3, "three"), (8, "eight"), (1, "one"), (2, "two"), (0, "zero")])
   let mut s = ""
   m.eachi(fn(i, k, v) { s = s + "(\(i),\(k),\(v))" })
-  @assertion.assert_eq(s, "(0,0,zero)(1,1,one)(2,2,two)(3,3,three)(4,8,eight)")!
+  @test.eq(s, "(0,0,zero)(1,1,one)(2,2,two)(3,3,three)(4,8,eight)")!
 }
 
 test "map" {
   let m = of([(3, "three"), (8, "eight"), (1, "one"), (2, "two"), (0, "zero")])
   let n = m.map(fn(v) { v + "X" })
-  @assertion.assert_eq(
+  @test.eq(
     n.debug_tree(),
     "(3,threeX,(1,oneX,(0,zeroX,_,_),(2,twoX,_,_)),(8,eightX,_,_))",
   )!
@@ -100,7 +100,7 @@ test "map" {
 test "map_with_key" {
   let m = of([(3, "three"), (8, "eight"), (1, "one"), (2, "two"), (0, "zero")])
   let n = m.map_with_key(fn(k, v) { "\(k)-\(v)" })
-  @assertion.assert_eq(
+  @test.eq(
     n.debug_tree(),
     "(3,3-three,(1,1-one,(0,0-zero,_,_),(2,2-two,_,_)),(8,8-eight,_,_))",
   )!
@@ -108,12 +108,12 @@ test "map_with_key" {
 
 test "fold" {
   let m = of([("a", 1), ("b", 2), ("c", 3), ("d", 4), ("e", 5)])
-  @assertion.assert_eq(m.fold(fn(acc, v) { acc + v }, init=0), 15)!
+  @test.eq(m.fold(fn(acc, v) { acc + v }, init=0), 15)!
 }
 
 test "foldl_with_key" {
   let m = of([("a", 1), ("b", 2), ("c", 3), ("d", 4), ("e", 5)])
-  @assertion.assert_eq(
+  @test.eq(
     m.foldl_with_key(fn(acc, k, v) { acc + k + v.to_string() }, init=""),
     "a1b2c3d4e5",
   )!
@@ -121,7 +121,7 @@ test "foldl_with_key" {
 
 test "foldr_with_key" {
   let m = of([("a", 1), ("b", 2), ("c", 3), ("d", 4), ("e", 5)])
-  @assertion.assert_eq(
+  @test.eq(
     m.foldr_with_key(fn(acc, k, v) { acc + k + v.to_string() }, init=""),
     "e5d4c3b2a1",
   )!
@@ -130,18 +130,18 @@ test "foldr_with_key" {
 test "filter" {
   let m = of([(3, "three"), (8, "eight"), (1, "one"), (2, "two"), (0, "zero")])
   let fm = m.filter(fn(v) { v.length() > 3 })
-  @assertion.assert_eq(fm.debug_tree(), "(3,three,(0,zero,_,_),(8,eight,_,_))")!
+  @test.eq(fm.debug_tree(), "(3,three,(0,zero,_,_),(8,eight,_,_))")!
 }
 
 test "filter_with_key" {
   let m = of([(3, "three"), (8, "eight"), (1, "one"), (2, "two"), (0, "zero")])
   let fm = m.filter_with_key(fn(k, v) { k > 3 && v.length() > 3 })
-  @assertion.assert_eq(fm.debug_tree(), "(8,eight,_,_)")!
+  @test.eq(fm.debug_tree(), "(8,eight,_,_)")!
 }
 
 test "to_array" {
   let m = of([(1, "one"), (2, "two"), (3, "three")])
-  @assertion.assert_eq(
+  @test.eq(
     m.iter().collect(),
     [(1, "one"), (2, "two"), (3, "three")],
   )!
@@ -149,34 +149,34 @@ test "to_array" {
 
 test "keys" {
   let m = of([(1, "one"), (2, "two"), (3, "three")])
-  @assertion.assert_eq(m.keys(), [1, 2, 3])!
+  @test.eq(m.keys(), [1, 2, 3])!
 }
 
 test "elems" {
   let m = of([(1, "one"), (2, "two"), (3, "three")])
-  @assertion.assert_eq(m.elems(), ["one", "two", "three"])!
+  @test.eq(m.elems(), ["one", "two", "three"])!
 }
 
 test "singleton" {
   let m = singleton(3, "three")
-  @assertion.assert_eq(m.debug_tree(), "(3,three,_,_)")!
+  @test.eq(m.debug_tree(), "(3,three,_,_)")!
 }
 
 test "empty" {
   let m : Map[Int, Int] = empty()
-  @assertion.assert_eq(m.debug_tree(), "_")!
+  @test.eq(m.debug_tree(), "_")!
 }
 
 test "split_max" {
   let m = of([(3, "three"), (8, "eight"), (1, "one"), (2, "two"), (0, "zero")])
-  @assertion.assert_eq(
+  @test.eq(
     m.debug_tree(),
     "(3,three,(1,one,(0,zero,_,_),(2,two,_,_)),(8,eight,_,_))",
   )!
   let (k, v, r) = m.split_max()
-  @assertion.assert_eq(k, 8)!
-  @assertion.assert_eq(v, "eight")!
-  @assertion.assert_eq(
+  @test.eq(k, 8)!
+  @test.eq(v, "eight")!
+  @test.eq(
     r.debug_tree(),
     "(2,two,(1,one,(0,zero,_,_),_),(3,three,_,_))",
   )!
@@ -184,14 +184,14 @@ test "split_max" {
 
 test "split_min" {
   let m = of([(3, "three"), (8, "eight"), (2, "two"), (1, "one"), (0, "zero")])
-  @assertion.assert_eq(
+  @test.eq(
     m.debug_tree(),
     "(3,three,(1,one,(0,zero,_,_),(2,two,_,_)),(8,eight,_,_))",
   )!
   let (k, v, r) = m.split_min()
-  @assertion.assert_eq(k, 0)!
-  @assertion.assert_eq(v, "zero")!
-  @assertion.assert_eq(
+  @test.eq(k, 0)!
+  @test.eq(v, "zero")!
+  @test.eq(
     r.debug_tree(),
     "(3,three,(1,one,_,(2,two,_,_)),(8,eight,_,_))",
   )!
@@ -199,7 +199,7 @@ test "split_min" {
 
 test "glue" {
   let m = of([(3, "three"), (8, "eight"), (1, "one"), (2, "two"), (0, "zero")])
-  @assertion.assert_eq(
+  @test.eq(
     m.debug_tree(),
     "(3,three,(1,one,(0,zero,_,_),(2,two,_,_)),(8,eight,_,_))",
   )!
@@ -208,7 +208,7 @@ test "glue" {
     _ => abort("unreachable")
   }
   let m = l.glue(r)
-  @assertion.assert_eq(
+  @test.eq(
     m.debug_tree(),
     "(2,two,(1,one,(0,zero,_,_),_),(8,eight,_,_))",
   )!
@@ -230,15 +230,15 @@ test "op_equal" {
     (0, "zero"),
   ]
   let m3 = of([(3, "three"), (8, "eight"), (1, "one"), (2, "two")])
-  @assertion.assert_eq(m1 == m2, true)!
-  @assertion.assert_eq(m1 == m3, false)!
+  @test.eq(m1 == m2, true)!
+  @test.eq(m1 == m3, false)!
 }
 
 test "debug_write" {
   let m = of([(3, "three"), (8, "eight"), (1, "one"), (2, "two"), (0, "zero")])
   let buffer = Buffer::new(size_hint=0)
   m.debug_write(buffer)
-  @assertion.assert_eq(
+  @test.eq(
     buffer.to_string(),
     "Map::[(0, \"zero\"), (1, \"one\"), (2, \"two\"), (3, \"three\"), (8, \"eight\")]",
   )!
@@ -283,24 +283,24 @@ test "remove" {
     content="(3,three,(1,one,(0,zero,_,_),(2,two,_,_)),(8,eight,_,_))",
   )!
   let m = m.remove(1).remove(3)
-  @assertion.assert_eq(m.debug_tree(), "(2,two,(0,zero,_,_),(8,eight,_,_))")!
+  @test.eq(m.debug_tree(), "(2,two,(0,zero,_,_),(8,eight,_,_))")!
 }
 
 test "filter" {
   let m = of([(3, "three"), (8, "eight"), (1, "one"), (2, "two"), (0, "zero")])
   let fm = m.filter(fn(v) { v.length() > 3 })
-  @assertion.assert_eq(fm.debug_tree(), "(3,three,(0,zero,_,_),(8,eight,_,_))")!
+  @test.eq(fm.debug_tree(), "(3,three,(0,zero,_,_),(8,eight,_,_))")!
 }
 
 test "filter_with_key" {
   let m = of([(3, "three"), (8, "eight"), (1, "one"), (2, "two"), (0, "zero")])
   let fm = m.filter_with_key(fn(k, v) { k > 3 && v.length() > 3 })
-  @assertion.assert_eq(fm.debug_tree(), "(8,eight,_,_)")!
+  @test.eq(fm.debug_tree(), "(8,eight,_,_)")!
 }
 
 test "to_array" {
   let m = of([(1, "one"), (2, "two"), (3, "three")])
-  @assertion.assert_eq(m.to_array(), [(1, "one"), (2, "two"), (3, "three")])!
+  @test.eq(m.to_array(), [(1, "one"), (2, "two"), (3, "three")])!
 }
 
 test "op_equal" {
@@ -319,8 +319,8 @@ test "op_equal" {
     (0, "zero"),
   ]
   let m3 = of([(3, "three"), (8, "eight"), (1, "one"), (2, "two")])
-  @assertion.assert_eq(m1 == m2, true)!
-  @assertion.assert_eq(m1 == m3, false)!
+  @test.eq(m1 == m2, true)!
+  @test.eq(m1 == m3, false)!
 }
 
 test "split_max with non-empty tree" {

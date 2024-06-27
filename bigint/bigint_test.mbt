@@ -16,9 +16,9 @@ fn check_len(a : BigInt) -> Unit!String {
   if a.is_zero() {
     return ()
   }
-  @assertion.assert_ne(a.limbs[a.len - 1], 0)!
+  @test.ne(a.limbs[a.len - 1], 0)!
   for i = a.len; i < a.limbs.length(); i = i + 1 {
-    @assertion.assert_eq(a.limbs[i], 0)!
+    @test.eq(a.limbs[i], 0)!
   } else {
     ()
   }
@@ -383,14 +383,14 @@ test "decimal_string" {
   let a = from_string("123")
   check_len(a)!
   inspect(a.to_string(), content="123")!
-  @assertion.assert_eq(a, from_int64(123L))!
+  @test.eq(a, from_int64(123L))!
   let a = from_string("1234567890123456789")
   check_len(a)!
   inspect(a.to_string(), content="1234567890123456789")!
   let b = from_string("-1234567890")
   check_len(b)!
   inspect(b.to_string(), content="-1234567890")!
-  @assertion.assert_eq(a, from_int64(1234567890123456789L))!
+  @test.eq(a, from_int64(1234567890123456789L))!
   let str = "12345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812"
   let a = from_string(str)
   check_len(a)!
@@ -419,12 +419,12 @@ test "compare" {
   inspect(b.compare(a), content="-1")!
   let a = -a
   let b = from_int64(-1234567890123456788L)
-  @assertion.assert_true(a.compare(b) < 0)!
-  @assertion.assert_true(b.compare(a) > 0)!
+  @test.is_true(a.compare(b) < 0)!
+  @test.is_true(b.compare(a) > 0)!
   let a = from_int64(-1234567890123456789L)
   let b = from_int64(-1234569L)
-  @assertion.assert_true(a.compare(b) < 0)!
-  @assertion.assert_true(b.compare(a) > 0)!
+  @test.is_true(a.compare(b) < 0)!
+  @test.is_true(b.compare(a) > 0)!
 }
 
 test "from_hex" {

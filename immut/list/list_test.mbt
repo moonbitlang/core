@@ -437,13 +437,13 @@ test "List::debug_write with empty list" {
 test "List::head_exn with non-empty list" {
   let list = of([1, 2, 3, 4, 5])
   let head = List::head_exn(list)
-  @assertion.assert_eq(head, 1)!
+  @test.eq(head, 1)!
 }
 
 test "List::last with non-empty list" {
   let list = of([1, 2, 3, 4, 5])
   let last = List::last(list)
-  @assertion.assert_eq(last, 5)!
+  @test.eq(last, 5)!
 }
 
 test "List::zip with lists of equal length" {
@@ -451,23 +451,23 @@ test "List::zip with lists of equal length" {
   let list2 = of(["a", "b", "c"])
   let zipped = List::zip(list1, list2)
   let expected = of([(1, "a"), (2, "b"), (3, "c")])
-  @assertion.assert_eq(zipped, expected)!
+  @test.eq(zipped, expected)!
 }
 
 test "List::nth_exn with valid index" {
   let list = of([1, 2, 3, 4, 5])
   let nth = List::nth_exn(list, 2)
-  @assertion.assert_eq(nth, 3)!
+  @test.eq(nth, 3)!
 }
 
 test "List::maximum with non-empty list" {
   let list = of([1, 3, 5, 2, 4])
   let max = List::maximum(list)
-  @assertion.assert_eq(max, 5)!
+  @test.eq(max, 5)!
 }
 
 test "List::minimum with non-empty list" {
   let list = of([1, 3, 5, 2, 4])
   let min = List::minimum(list)
-  @assertion.assert_eq(min, 1)!
+  @test.eq(min, 1)!
 }

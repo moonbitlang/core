@@ -275,7 +275,7 @@ test "deep access" {
     content="Some([])",
   )!
   inspect(
-    ((fn() { json.value("key")?.item(4)?.value("value")?.as_number() })()),
+    (fn() { json.value("key")?.item(4)?.value("value")?.as_number() })(),
     content="Some(100.0)",
   )!
 }
@@ -311,5 +311,5 @@ test "stringify" {
       #|{"key":[1.0,true,null,[],{"key":"value","value":100.0}],"null":null,"bool":false,"obj":{}}
     ,
   )!
-  @assertion.assert_true(parse(json.stringify()) == Ok(json))!
+  @test.is_true(parse(json.stringify()) == Ok(json))!
 }

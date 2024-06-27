@@ -325,8 +325,8 @@ fn fixed_bubble_sort[T : Compare](arr : FixedArraySlice[T]) -> Unit {
 test "fixed_try_bubble_sort" {
   let arr : FixedArray[_] = [8, 7, 6, 5, 4, 3, 2, 1]
   let sorted = fixed_try_bubble_sort({ array: arr, start: 0, end: 8 })
-  @assertion.assert_eq(sorted, true)!
-  @assertion.assert_eq(arr, [1, 2, 3, 4, 5, 6, 7, 8])!
+  @test.eq(sorted, true)!
+  @test.eq(arr, [1, 2, 3, 4, 5, 6, 7, 8])!
 }
 
 fn fixed_partition[T : Compare](
@@ -423,28 +423,26 @@ fn fixed_sift_down[T : Compare](arr : FixedArraySlice[T], index : Int) -> Unit {
 fn fixed_test_sort(f : (FixedArray[Int]) -> Unit) -> Unit!String {
   let arr : FixedArray[_] = [5, 4, 3, 2, 1]
   f(arr)
-  @assertion.assert_eq(arr, [1, 2, 3, 4, 5])!
+  @test.eq(arr, [1, 2, 3, 4, 5])!
   let arr : FixedArray[_] = [5, 5, 5, 5, 1]
   f(arr)
-  @assertion.assert_eq(arr, [1, 5, 5, 5, 5])!
+  @test.eq(arr, [1, 5, 5, 5, 5])!
   let arr : FixedArray[_] = [1, 2, 3, 4, 5]
   f(arr)
-  @assertion.assert_eq(arr, [1, 2, 3, 4, 5])!
-  {
-    let arr = FixedArray::make(1000, 0)
-    for i = 0; i < 1000; i = i + 1 {
-      arr[i] = 1000 - i - 1
-    }
-    for i = 10; i < 1000; i = i + 10 {
-      arr.swap(i, i - 1)
-    }
-    f(arr)
-    let expected = FixedArray::make(1000, 0)
-    for i = 0; i < 1000; i = i + 1 {
-      expected[i] = i
-    }
-    @assertion.assert_eq(arr, expected)!
+  @test.eq(arr, [1, 2, 3, 4, 5])!
+  let arr = FixedArray::make(1000, 0)
+  for i = 0; i < 1000; i = i + 1 {
+    arr[i] = 1000 - i - 1
   }
+  for i = 10; i < 1000; i = i + 10 {
+    arr.swap(i, i - 1)
+  }
+  f(arr)
+  let expected = FixedArray::make(1000, 0)
+  for i = 0; i < 1000; i = i + 1 {
+    expected[i] = i
+  }
+  @test.eq(arr, expected)!
 }
 
 test "fixed_heap_sort" {
@@ -466,7 +464,7 @@ test "sort" {
 test "stable_sort" {
   let arr : FixedArray[_] = [5, 1, 3, 4, 2]
   arr.stable_sort()
-  @assertion.assert_eq(arr, [1, 2, 3, 4, 5])!
+  @test.eq(arr, [1, 2, 3, 4, 5])!
   let arr = FixedArray::make(1000, 0)
   for i = 0; i < 1000; i = i + 1 {
     arr[i] = 1000 - i - 1
@@ -479,7 +477,7 @@ test "stable_sort" {
   for i = 0; i < 1000; i = i + 1 {
     expected[i] = i
   }
-  @assertion.assert_eq(arr, expected)!
+  @test.eq(arr, expected)!
 }
 
 pub fn FixedArray::is_sorted[T : Compare](arr : FixedArray[T]) -> Bool {
@@ -503,7 +501,7 @@ test "stable_sort_complex" {
       index += 1
     }
   }
-  @assertion.assert_false(is_sorted(arr))!
+  @test.is_false(is_sorted(arr))!
   arr.stable_sort()
-  @assertion.assert_true(is_sorted(arr))!
+  @test.is_true(is_sorted(arr))!
 }

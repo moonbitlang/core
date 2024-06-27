@@ -14,18 +14,18 @@
 
 test "search" {
   let dv = @deque.of([3, 4, 5])
-  @assertion.assert_eq(dv.search(3), Some(0))!
-  @assertion.assert_eq(dv.search(4), Some(1))!
-  @assertion.assert_eq(dv.search(5), Some(2))!
-  @assertion.assert_eq(dv.search(6), None)!
+  @test.eq(dv.search(3), Some(0))!
+  @test.eq(dv.search(4), Some(1))!
+  @test.eq(dv.search(5), Some(2))!
+  @test.eq(dv.search(6), None)!
 }
 
 test "contains" {
   let dv = @deque.of([3, 4, 5])
-  @assertion.assert_true(dv.contains(3))!
-  @assertion.assert_true(dv.contains(4))!
-  @assertion.assert_true(dv.contains(5))!
-  @assertion.assert_false(dv.contains(6))!
+  @test.is_true(dv.contains(3))!
+  @test.is_true(dv.contains(4))!
+  @test.is_true(dv.contains(5))!
+  @test.is_false(dv.contains(6))!
 }
 
 test "reserve_capacity" {
@@ -35,16 +35,16 @@ test "reserve_capacity" {
   dv.pop_front() |> ignore() // 3, 4, 5, 1
   dv.pop_front() |> ignore() // 4, 5, 1
   dv.reserve_capacity(10)
-  @assertion.assert_true(dv.capacity() == 10)!
-  @assertion.assert_eq(dv[0], 4)!
-  @assertion.assert_eq(dv[1], 5)!
-  @assertion.assert_eq(dv[2], 1)!
+  @test.is_true(dv.capacity() == 10)!
+  @test.eq(dv[0], 4)!
+  @test.eq(dv[1], 5)!
+  @test.eq(dv[2], 1)!
 }
 
 test "reserve_capacity_2" {
   let dv = @deque.of([1, 2, 3, 4, 5])
   dv.reserve_capacity(3)
-  @assertion.assert_true(dv.capacity() == 5)!
+  @test.is_true(dv.capacity() == 5)!
 }
 
 test "shrink_to_fit" {
@@ -53,19 +53,19 @@ test "shrink_to_fit" {
   dv.push_back(1)
   dv.pop_front() |> ignore()
   dv.pop_front() |> ignore()
-  @assertion.assert_true(dv.capacity() == 5)!
+  @test.is_true(dv.capacity() == 5)!
   dv.shrink_to_fit()
-  @assertion.assert_true(dv.capacity() == 3)!
-  @assertion.assert_eq(dv[0], 4)!
-  @assertion.assert_eq(dv[1], 5)!
-  @assertion.assert_eq(dv[2], 1)!
+  @test.is_true(dv.capacity() == 3)!
+  @test.eq(dv[0], 4)!
+  @test.eq(dv[1], 5)!
+  @test.eq(dv[2], 1)!
 }
 
 test "shrink_to_fit_2" {
   let dv = @deque.of([1, 2, 3])
-  @assertion.assert_true(dv.capacity() == 3)!
+  @test.is_true(dv.capacity() == 3)!
   dv.shrink_to_fit()
-  @assertion.assert_true(dv.capacity() == 3)!
+  @test.is_true(dv.capacity() == 3)!
 }
 
 test "iter" {
@@ -80,7 +80,7 @@ test "iter" {
       i = i + 1
     },
   )
-  @assertion.assert_eq(i, dv.length())!
+  @test.eq(i, dv.length())!
   buf.expect(
     content=
       #|1
@@ -139,7 +139,7 @@ test "iter_rev" {
       i = i - 1
     },
   )
-  @assertion.assert_false(failed)!
+  @test.is_false(failed)!
 }
 
 test "iter_revi" {
@@ -155,7 +155,7 @@ test "iter_revi" {
       j = j + 1
     },
   )
-  @assertion.assert_false(failed)!
+  @test.is_false(failed)!
 }
 
 test "iteri" {
@@ -169,7 +169,7 @@ test "iteri" {
       i = i + 1
     },
   )
-  @assertion.assert_false(failed)!
+  @test.is_false(failed)!
 }
 
 test "iter" {
@@ -183,7 +183,7 @@ test "iter" {
       i = i + 1
     },
   )
-  @assertion.assert_false(failed)!
+  @test.is_false(failed)!
 }
 
 test "iter2" {

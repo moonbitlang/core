@@ -40,10 +40,8 @@ test "sin" {
   inspect(sin(Double::inf(1)), content="Infinity")!
   inspect(sin(Double::inf(-1)), content="-Infinity")!
   for i = 0; i < vf.length(); i = i + 1 {
-    @assertion.assert_true(imprecise_equal(sin(vf[i]), sin_res[i]))!
-    @assertion.assert_true(
-      imprecise_equal(sin(100000.0 * pi + vf[i]), sin_res_large[i]),
-    )!
+    @test.is_true(imprecise_equal(sin(vf[i]), sin_res[i]))!
+    @test.is_true(imprecise_equal(sin(100000.0 * pi + vf[i]), sin_res_large[i]))!
   }
 }
 
@@ -64,10 +62,8 @@ test "cos" {
   inspect(cos(Double::inf(1)), content="Infinity")!
   inspect(cos(Double::inf(-1)), content="-Infinity")!
   for i = 0; i < vf.length(); i = i + 1 {
-    @assertion.assert_true(imprecise_equal(cos(vf[i]), cos_res[i]))!
-    @assertion.assert_true(
-      imprecise_equal(cos(100000.0 * pi + vf[i]), cos_res_large[i]),
-    )!
+    @test.is_true(imprecise_equal(cos(vf[i]), cos_res[i]))!
+    @test.is_true(imprecise_equal(cos(100000.0 * pi + vf[i]), cos_res_large[i]))!
   }
 }
 
@@ -88,9 +84,7 @@ test "tan" {
   inspect(tan(Double::inf(1)), content="Infinity")!
   inspect(tan(Double::inf(-1)), content="-Infinity")!
   for i = 0; i < vf.length(); i = i + 1 {
-    @assertion.assert_true(imprecise_equal(tan(vf[i]), tan_res[i]))!
-    @assertion.assert_true(
-      imprecise_equal(tan(100000.0 * pi + vf[i]), tan_res_large[i]),
-    )!
+    @test.is_true(imprecise_equal(tan(vf[i]), tan_res[i]))!
+    @test.is_true(imprecise_equal(tan(100000.0 * pi + vf[i]), tan_res_large[i]))!
   }
 }

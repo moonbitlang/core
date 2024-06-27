@@ -29,7 +29,7 @@ test "grow_if_necessary method" {
   buf.write_string(
     "This is a test string that is longer than the initial capacity",
   )
-  @assertion.assert_true(buf.bytes.length() >= 60)!
+  @test.is_true(buf.bytes.length() >= 60)!
 }
 
 test "write_sub_string method" {
@@ -49,7 +49,7 @@ test "to_bytes method" {
   let buf = Buffer::make(10)
   buf.write_string("Test")
   let bytes = buf.to_bytes()
-  @assertion.assert_eq(bytes.length(), 8)! // Each character in "Test" is 2 bytes
+  @test.eq(bytes.length(), 8)! // Each character in "Test" is 2 bytes
 }
 
 test "expect method with non-matching content" {
@@ -63,7 +63,7 @@ test "grow_if_necessary method" {
   buf.write_string(
     "This is a test string that is longer than the initial capacity",
   )
-  @assertion.assert_true(buf.bytes.length() >= 60)!
+  @test.is_true(buf.bytes.length() >= 60)!
 }
 
 test "write_sub_string method" {
@@ -83,7 +83,7 @@ test "to_bytes method" {
   let buf = Buffer::make(10)
   buf.write_string("Test")
   let bytes = buf.to_bytes()
-  @assertion.assert_eq(bytes.length(), 8)! // Each character in "Test" is 2 bytes
+  @test.eq(bytes.length(), 8)! // Each character in "Test" is 2 bytes
 }
 
 test "expect method with matching content" {
@@ -103,7 +103,7 @@ test "grow_if_necessary method" {
   buf.write_string(
     "This is a test string that is longer than the initial capacity",
   )
-  @assertion.assert_true(buf.bytes.length() >= 60)!
+  @test.is_true(buf.bytes.length() >= 60)!
 }
 
 test "write_sub_string method" {
@@ -123,5 +123,5 @@ test "to_bytes method" {
   let buf = Buffer::make(10)
   buf.write_string("Test")
   let bytes = buf.to_bytes()
-  @assertion.assert_eq(bytes.length(), 8)! // Each character in "Test" is 2 bytes
+  @test.eq(bytes.length(), 8)! // Each character in "Test" is 2 bytes
 }

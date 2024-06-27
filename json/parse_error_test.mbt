@@ -48,7 +48,7 @@ test "throws on invalid characters following an exponent sign" {
 
 test "throws on invalid new lines in strings" {
   let res = parse("\"\n\"")
-  @assertion.assert_eq(res, Err(InvalidChar({ line: 1, column: 1 }, '\n')))!
+  @test.eq(res, Err(InvalidChar({ line: 1, column: 1 }, '\n')))!
 }
 
 test "throws on unterminated strings" {

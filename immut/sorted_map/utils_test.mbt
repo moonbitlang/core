@@ -20,7 +20,7 @@ test "op_get with existing key" {
     (2, "two"),
     (0, "zero"),
   ]
-  @assertion.assert_eq(map[3], Some("three"))!
+  @test.eq(map[3], Some("three"))!
 }
 
 test "op_get with non-existing key" {
@@ -31,7 +31,7 @@ test "op_get with non-existing key" {
     (2, "two"),
     (0, "zero"),
   ]
-  @assertion.assert_eq(map[4], None)!
+  @test.eq(map[4], None)!
 }
 
 test "op_get after insertion" {
@@ -43,7 +43,7 @@ test "op_get after insertion" {
     (0, "zero"),
   ]
   let map = map.insert(4, "four")
-  @assertion.assert_eq(map[4], Some("four"))!
+  @test.eq(map[4], Some("four"))!
 }
 
 test "op_get after removal" {
@@ -55,10 +55,10 @@ test "op_get after removal" {
     (0, "zero"),
   ]
   let map = map.remove(3)
-  @assertion.assert_eq(map[3], None)!
+  @test.eq(map[3], None)!
 }
 
 test "op_get with empty map" {
   let map : Map[Int, String] = empty()
-  @assertion.assert_eq(map[3], None)!
+  @test.eq(map[3], None)!
 }

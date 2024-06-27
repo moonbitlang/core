@@ -54,17 +54,17 @@ test "parses nested objects" {
 //region arrays
 test "parses empty arrays" {
   let json = test_parse("[]")!
-  @assertion.assert_eq(json, JsonValue::Array([]))!
+  @test.eq(json, JsonValue::Array([]))!
 }
 
 test "parses array values" {
   let json = test_parse("[1]")!
-  @assertion.assert_eq(json, JsonValue::Array([JsonValue::Number(1.0)]))!
+  @test.eq(json, JsonValue::Array([JsonValue::Number(1.0)]))!
 }
 
 test "parses multiple array values" {
   let json = test_parse("[1,2]")!
-  @assertion.assert_eq(
+  @test.eq(
     json,
     JsonValue::Array([JsonValue::Number(1.0), JsonValue::Number(2.0)]),
   )!
@@ -72,7 +72,7 @@ test "parses multiple array values" {
 
 test "parses nested arrays" {
   let json = test_parse("[1,[2,3]]")!
-  @assertion.assert_eq(
+  @test.eq(
     json,
     JsonValue::Array(
       [
@@ -87,7 +87,7 @@ test "parses nested arrays" {
 //region nulls
 test "parses nulls" {
   let json = test_parse("null")!
-  @assertion.assert_eq(json, JsonValue::Null)!
+  @test.eq(json, JsonValue::Null)!
 }
 //endregion
 
@@ -106,7 +106,7 @@ test "parses false" {
 //region numbers
 test "parses leading zeroes" {
   let json = test_parse("[0,0.0,0e0]")!
-  @assertion.assert_eq(
+  @test.eq(
     json,
     JsonValue::Array(
       [JsonValue::Number(0.0), JsonValue::Number(0.0), JsonValue::Number(0.0)],
@@ -116,7 +116,7 @@ test "parses leading zeroes" {
 
 test "parses integers" {
   let json = test_parse("[1,23,456,7890]")!
-  @assertion.assert_eq(
+  @test.eq(
     json,
     JsonValue::Array(
       [
@@ -131,7 +131,7 @@ test "parses integers" {
 
 test "parses signed numbers" {
   let json = test_parse("[-1,2,-0.1,-0]")!
-  @assertion.assert_eq(
+  @test.eq(
     json,
     JsonValue::Array(
       [
@@ -146,7 +146,7 @@ test "parses signed numbers" {
 
 test "parses fractional numbers" {
   let json = test_parse("[1.0,1.23]")!
-  @assertion.assert_eq(
+  @test.eq(
     json,
     JsonValue::Array([JsonValue::Number(1.0), JsonValue::Number(1.23)]),
   )!
@@ -154,7 +154,7 @@ test "parses fractional numbers" {
 
 test "parses exponents" {
   let json = test_parse("[1e0,1e1,1e01,1.0e0,1.1e0,1e-1,1e+1]")!
-  @assertion.assert_eq(
+  @test.eq(
     json,
     JsonValue::Array(
       [
@@ -172,12 +172,12 @@ test "parses exponents" {
 
 test "parses 1" {
   let json = test_parse("1")!
-  @assertion.assert_eq(json, JsonValue::Number(1.0))!
+  @test.eq(json, JsonValue::Number(1.0))!
 }
 
 test "parses +1.23e100" {
   let json = test_parse("1.23e100")!
-  @assertion.assert_eq(json, JsonValue::Number(1.23e100))!
+  @test.eq(json, JsonValue::Number(1.23e100))!
 }
 
 //endregion
@@ -185,12 +185,12 @@ test "parses +1.23e100" {
 //region strings
 test "parses string" {
   let json = test_parse("\"abc\"")!
-  @assertion.assert_eq(json, JsonValue::String("abc"))!
+  @test.eq(json, JsonValue::String("abc"))!
 }
 
 test "parses quotes in string" {
   let json = test_parse("[\"\\\"\",\"'\"]")!
-  @assertion.assert_eq(
+  @test.eq(
     json,
     JsonValue::Array([JsonValue::String("\""), JsonValue::String("'")]),
   )!
@@ -198,14 +198,14 @@ test "parses quotes in string" {
 
 test "parses escaped characters" {
   let json = test_parse("\"\\b\\f\\n\\r\\t\\u01fF\\\"\"")!
-  @assertion.assert_eq(json, JsonValue::String("\u0008\u000C\n\r\t\u01FF\""))!
+  @test.eq(json, JsonValue::String("\u0008\u000C\n\r\t\u01FF\""))!
 }
 //endregion
 
 //region whitespace
 test "parses whitespace" {
   let json = test_parse("{\t\u000b\u000c \u00A0\uFEFF\n\r\u2028\u2029\u2003}")!
-  @assertion.assert_eq(json, JsonValue::Object(of([])))!
+  @test.eq(json, JsonValue::Object(of([])))!
 }
 //endregion
 

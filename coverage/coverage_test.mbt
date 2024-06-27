@@ -15,7 +15,7 @@
 test "new_counter" {
   let counter = CoverageCounter::new(2)
   let result = counter.to_string()
-  // @assertion.assert_eq(result, "[0, 0]")?
+  // @test.eq(result, "[0, 0]")?
   if result != "[0, 0]" {
     return Err("Expected: [0, 0], got: " + result)
   }
@@ -26,7 +26,7 @@ test "incr_counter" {
   counter.incr(0)
   counter.incr(9)
   let result = counter.to_string()
-  // @assertion.assert_eq(result, "[1, 0, 0, 0, 0, 0, 0, 0, 0, 1]")?
+  // @test.eq(result, "[1, 0, 0, 0, 0, 0, 0, 0, 0, 1]")?
   if result != "[1, 0, 0, 0, 0, 0, 0, 0, 0, 1]" {
     return Err("Expected: [1, 0, 0, 0, 0, 0, 0, 0, 0, 1], got: " + result)
   }
@@ -35,7 +35,7 @@ test "incr_counter" {
 test "backslash escape" {
   let s = "\n\r\t\b\"'\\"
   let expected = "\\n\\r\\t\\b\\\"'\\\\"
-  // @assertion.assert_eq(escape(s), expected)?
+  // @test.eq(escape(s), expected)?
   let escape_s = escape(s)
   if escape_s != expected {
     return Err("Expected: " + expected + ", got: " + escape_s)
@@ -46,7 +46,7 @@ test "backslash escape" {
 // test "hex escape" {
 //   let s = "\x11\x12\x01\x02"
 //   let expected = "\\x11\\x12\\x01\\x02"
-//   @assertion.assert_eq(s.escape(), expected)?
+//   @test.eq(s.escape(), expected)?
 // }
 
 test "log" {

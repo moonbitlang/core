@@ -14,29 +14,29 @@
 
 test "pair" {
   let tuple = pair(1, 2)
-  @assertion.assert_eq(tuple, (1, 2))!
+  @test.eq(tuple, (1, 2))!
 }
 
 test "fst" {
   let tuple = (1, 2)
-  @assertion.assert_eq(fst(tuple), 1)!
+  @test.eq(fst(tuple), 1)!
 }
 
 test "snd" {
   let tuple = (1, 2)
-  @assertion.assert_eq(snd(tuple), 2)!
+  @test.eq(snd(tuple), 2)!
 }
 
 test "map_fst" {
   let tuple = (1, 2)
   let mapped = map_fst(fn(x : Int) -> Int { x + 1 }, tuple)
-  @assertion.assert_eq(mapped, (2, 2))!
+  @test.eq(mapped, (2, 2))!
 }
 
 test "map_snd" {
   let tuple = (1, 2)
   let mapped = map_snd(fn(x : Int) -> Int { x + 1 }, tuple)
-  @assertion.assert_eq(mapped, (1, 3))!
+  @test.eq(mapped, (1, 3))!
 }
 
 test "map_both" {
@@ -46,41 +46,41 @@ test "map_both" {
     fn(x : Int) -> Int { x - 1 },
     tuple,
   )
-  @assertion.assert_eq(mapped, (2, 1))!
+  @test.eq(mapped, (2, 1))!
 }
 
 test "swap" {
   let tuple = (1, 2)
   let swapped = swap(tuple)
   let swapped_2 = swap(swapped)
-  @assertion.assert_eq(swapped, (2, 1))!
-  @assertion.assert_eq(swapped_2, tuple)!
+  @test.eq(swapped, (2, 1))!
+  @test.eq(swapped_2, tuple)!
 }
 
 test "curry" {
   let add = fn(x : Int, y : Int) -> Int { x + y }
   let curried_add = curry(add)
-  @assertion.assert_eq(curried_add(1)(2), add(1, 2))!
+  @test.eq(curried_add(1)(2), add(1, 2))!
 }
 
 test "uncurry" {
   let add = fn(x : Int) -> (Int) -> Int { fn(y : Int) -> Int { x + y } }
   let uncurried_add = uncurry(add)
-  @assertion.assert_eq(uncurried_add(1, 2), add(1)(2))!
+  @test.eq(uncurried_add(1, 2), add(1)(2))!
 }
 
 test "id_1" {
   let add = fn(x : Int, y : Int) -> Int { x + y }
   let curried_add = curry(add)
   let uncurried_add = uncurry(curried_add)
-  @assertion.assert_eq(uncurried_add(1, 2), add(1, 2))!
+  @test.eq(uncurried_add(1, 2), add(1, 2))!
 }
 
 test "id_2" {
   let add = fn(x : Int) -> (Int) -> Int { fn(y : Int) -> Int { x + y } }
   let uncurried_add = uncurry(add)
   let curried_add = curry(uncurried_add)
-  @assertion.assert_eq(curried_add(1)(2), add(1)(2))!
+  @test.eq(curried_add(1)(2), add(1)(2))!
 }
 
 test "eq" {

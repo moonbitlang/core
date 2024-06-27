@@ -114,12 +114,12 @@ test "copy" {
   let vc = v.copy()
   inspect(vc, content="ImmutableVec::[1, 2, 3, 4, 5]")!
   inspect(v == vc, content="true")!
-  @assertion.assert_false(physical_equal(v, vc))!
+  @test.is_false(physical_equal(v, vc))!
   let v = ImmutableVec::empty()
   let vc : ImmutableVec[Int] = v.copy()
   inspect(vc, content="ImmutableVec::[]")!
   inspect(v == vc, content="true")!
-  @assertion.assert_false(physical_equal(v, vc))!
+  @test.is_false(physical_equal(v, vc))!
 }
 
 /// Get a value at the given index.
@@ -541,7 +541,7 @@ test "mix" {
   let vec = []
   v.eachi(fn(i, _e) { vec.push(i) })
   for i = 0; i < large_const; i = i + 1 {
-    @assertion.assert_eq(vec[i], i)!
+    @test.eq(vec[i], i)!
   }
 }
 

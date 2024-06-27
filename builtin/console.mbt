@@ -194,8 +194,6 @@ pub fn inspect(
     let args_loc = repr(args_loc.to_json())
     let expect = repr(content)
     let actual = repr(obj.to_string())
-    raise (
-      "@EXPECT_FAILED {\"loc\": \(loc), \"args_loc\": \(args_loc), \"expect\": \(expect), \"actual\": \(actual)}",
-    )
+    raise "@EXPECT_FAILED {\"loc\": \(loc), \"args_loc\": \(args_loc), \"expect\": \(expect), \"actual\": \(actual)}"
   }
 }

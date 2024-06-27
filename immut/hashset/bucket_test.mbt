@@ -74,22 +74,22 @@ test "Bucket add and remove" {
   let b3 = b2.remove(0).unwrap()
   let b4 = b2.remove(1).unwrap()
   let b5 = b2.remove(2).unwrap()
-  @assertion.assert_eq(b0.find(0), true)!
-  @assertion.assert_eq(b0.find(1), false)!
-  @assertion.assert_eq(b1.find(0), true)!
-  @assertion.assert_eq(b1.find(1), true)!
-  @assertion.assert_eq(b2.find(0), true)!
-  @assertion.assert_eq(b2.find(1), true)!
-  @assertion.assert_eq(b2.find(2), true)!
-  @assertion.assert_eq(b3.find(0), false)!
-  @assertion.assert_eq(b3.find(1), true)!
-  @assertion.assert_eq(b3.find(2), true)!
-  @assertion.assert_eq(b4.find(0), true)!
-  @assertion.assert_eq(b4.find(1), false)!
-  @assertion.assert_eq(b4.find(2), true)!
-  @assertion.assert_eq(b5.find(0), true)!
-  @assertion.assert_eq(b5.find(1), true)!
-  @assertion.assert_eq(b5.find(2), false)!
+  @test.eq(b0.find(0), true)!
+  @test.eq(b0.find(1), false)!
+  @test.eq(b1.find(0), true)!
+  @test.eq(b1.find(1), true)!
+  @test.eq(b2.find(0), true)!
+  @test.eq(b2.find(1), true)!
+  @test.eq(b2.find(2), true)!
+  @test.eq(b3.find(0), false)!
+  @test.eq(b3.find(1), true)!
+  @test.eq(b3.find(2), true)!
+  @test.eq(b4.find(0), true)!
+  @test.eq(b4.find(1), false)!
+  @test.eq(b4.find(2), true)!
+  @test.eq(b5.find(0), true)!
+  @test.eq(b5.find(1), true)!
+  @test.eq(b5.find(2), false)!
 }
 
 test "Bucket size" {
@@ -99,12 +99,12 @@ test "Bucket size" {
   let b3 = b2.remove(0).unwrap()
   let b4 = b2.remove(1).unwrap()
   let b5 = b2.remove(2).unwrap()
-  @assertion.assert_eq(b0.size(), 1)!
-  @assertion.assert_eq(b1.size(), 2)!
-  @assertion.assert_eq(b2.size(), 3)!
-  @assertion.assert_eq(b3.size(), 2)!
-  @assertion.assert_eq(b4.size(), 2)!
-  @assertion.assert_eq(b5.size(), 2)!
+  @test.eq(b0.size(), 1)!
+  @test.eq(b1.size(), 2)!
+  @test.eq(b2.size(), 3)!
+  @test.eq(b3.size(), 2)!
+  @test.eq(b4.size(), 2)!
+  @test.eq(b5.size(), 2)!
 }
 
 test "Bucket iter" {
