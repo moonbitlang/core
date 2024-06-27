@@ -1,0 +1,32 @@
+package moonbitlang/core/sorted_map
+
+// Values
+fn new[K, V]() -> T[K, V]
+
+fn of[K : Compare + Eq, V](Array[Tuple[K, V]]) -> T[K, V]
+
+// Types and methods
+type T
+impl T {
+  add[K : Compare + Eq, V](Self[K, V], K, V) -> Unit
+  clear[K, V](Self[K, V]) -> Unit
+  contains[K : Compare + Eq, V](Self[K, V], K) -> Bool
+  each[K, V](Self[K, V], (K, V) -> Unit) -> Unit
+  eachi[K, V](Self[K, V], (Int, K, V) -> Unit) -> Unit
+  get[K : Compare + Eq, V](Self[K, V], K) -> V?
+  is_empty[K, V](Self[K, V]) -> Bool
+  iter[K, V](Self[K, V]) -> Iter[Tuple[K, V]]
+  keys[K, V](Self[K, V]) -> Array[K]
+  op_equal[K : Eq, V : Eq](Self[K, V], Self[K, V]) -> Bool
+  op_get[K : Compare + Eq, V](Self[K, V], K) -> V?
+  op_set[K : Compare + Eq, V](Self[K, V], K, V) -> Unit
+  remove[K : Compare + Eq, V](Self[K, V], K) -> Unit
+  size[K, V](Self[K, V]) -> Int
+  to_array[K, V](Self[K, V]) -> Array[Tuple[K, V]]
+  values[K, V](Self[K, V]) -> Array[V]
+}
+
+// Traits
+
+// Extension Methods
+

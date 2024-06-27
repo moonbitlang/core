@@ -13,16 +13,12 @@
 // limitations under the License.
 
 priv struct Node[K, V] {
-  mut key : K
+  key : K
   mut value : V
   mut left : Node[K, V]?
   mut right : Node[K, V]?
   mut parent : Node[K, V]?
   mut height : Int
-}
-
-fn op_equal[K : Eq, V](self : Node[K, V], other : Node[K, V]) -> Bool {
-  self.key == other.key
 }
 
 struct T[K, V] {
