@@ -22,7 +22,7 @@ pub fn valid(input : String) -> Bool {
 pub fn parse(input : String) -> Result[JsonValue, ParseError] {
   let ctx = ParseContext::make(input)
   let val = parse_value(ctx)?
-  lex_skip_whitespace(ctx)?
+  lex_skip_whitespace(ctx)
   if ctx.offset >= ctx.end_offset {
     Ok(val)
   } else {
