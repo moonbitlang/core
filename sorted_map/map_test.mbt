@@ -41,6 +41,13 @@ test "add" {
   inspect(map.size(), content="8")?
 }
 
+test "add duplicate key" {
+  let map = of([(3, "c"), (2, "b"), (1, "a")])
+  inspect(map.debug_tree(), content="([1]2,b,([0]1,a,_,_),([0]3,c,_,_))")?
+  map.add(1, "x")
+  inspect(map.debug_tree(), content="([1]2,b,([0]1,x,_,_),([0]3,c,_,_))")?
+}
+
 test "RL rotate" {
   let map = new()
   map.add(5, "a")

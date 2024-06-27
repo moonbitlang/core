@@ -40,7 +40,12 @@ pub fn of[K : Compare, V](entries : Array[(K, V)]) -> T[K, V] {
 pub fn add[K : Compare, V](self : T[K, V], key : K, value : V) -> Unit {
   let parent = loop self.root, self.root {
     Some(curr), _ =>
-      continue if key < curr.key { curr.left } else { curr.right }, Some(curr)
+      if key == curr.key {
+        curr.value = value
+        return
+      } else {
+        continue if key < curr.key { curr.left } else { curr.right }, Some(curr)
+      }
     None, parent => parent
   }
   let new = new_node(key, value, ~parent)
@@ -51,7 +56,6 @@ pub fn add[K : Compare, V](self : T[K, V], key : K, value : V) -> Unit {
   } else {
     parent.unwrap().right = Some(new)
   }
-  new.parent = parent
   self.balance(new)
   self.size += 1
 }
