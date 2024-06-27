@@ -90,3 +90,16 @@ test "uint test" {
   inspect(0x80000000U / 2U, content="1073741824")?
   inspect(4294967295U % 17U, content="0")?
 }
+
+test "uint64 test" {
+  inspect(100UL == 100UL, content="true")?
+  inspect(0UL < 100UL, content="true")?
+  inspect(100UL > 0UL, content="true")?
+  inspect(9223372036854775808UL.to_int64(), content="-9223372036854775808")?
+  inspect((-9223372036854775808L).to_uint64(), content="9223372036854775808")?
+  inspect(9223372036854775808UL + 1UL, content="9223372036854775809")?
+  inspect(0UL - 1UL, content="18446744073709551615")?
+  inspect(9223372036854775808UL * 2UL, content="0")?
+  inspect(0x8000000000000000UL / 2UL, content="4611686018427387904")?
+  inspect(18446744073709551615UL % 17UL, content="0")?
+}

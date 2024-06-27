@@ -105,6 +105,20 @@ test "UInt::to_string" {
   inspect(4294967295U, content="4294967295")?
 }
 
+pub fn UInt64::to_string(self : UInt64) -> String {
+  let buf = Buffer::new()
+  fn write_digits(num : UInt64) {
+    let num2 = num / 10UL
+    if num2 != 0UL {
+      write_digits(num2)
+    }
+    buf.write_char(Char::from_int((num % 10UL).to_int64().to_int() + 48))
+  }
+
+  write_digits(self)
+  buf.to_string()
+}
+
 /// @coverage.skip 
 pub fn op_lt[T : Compare](self_ : T, other : T) -> Bool {
   self_.compare(other).is_neg()
