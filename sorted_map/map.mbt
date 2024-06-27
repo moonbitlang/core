@@ -32,7 +32,7 @@ pub fn new[K, V]() -> T[K, V] {
 /// Creates a sorted map from given entries.
 pub fn of[K : Compare, V](entries : Array[(K, V)]) -> T[K, V] {
   let map = { root: None, size: 0 }
-  entries.iter(fn(e) { map.add(e.0, e.1) })
+  entries.each(fn(e) { map.add(e.0, e.1) })
   map
 }
 
