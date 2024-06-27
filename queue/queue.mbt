@@ -44,7 +44,7 @@ pub fn Queue::from_array[T](arr : Array[T]) -> Queue[T] {
 
 pub fn to_string[T : Show](self : Queue[T]) -> String {
   let mut res = "Queue::["
-  self.iteri(
+  self.eachi(
     fn(i, t) {
       if i > 0 {
         res += ", "
@@ -207,9 +207,9 @@ pub fn pop[T](self : Queue[T]) -> T? {
 /// # Example
 /// ```
 /// let queue : Queue[Int] = of([1, 2, 3, 4])
-/// queue.iter(fn(x) { print(x) })
+/// queue.each(fn(x) { print(x) })
 /// ```
-pub fn iter[T](self : Queue[T], f : (T) -> Unit) -> Unit {
+pub fn each[T](self : Queue[T], f : (T) -> Unit) -> Unit {
   loop self.first {
     Cons({ content, next }) => {
       f(content)
@@ -219,7 +219,7 @@ pub fn iter[T](self : Queue[T], f : (T) -> Unit) -> Unit {
   }
 }
 
-pub fn iteri[T](self : Queue[T], f : (Int, T) -> Unit) -> Unit {
+pub fn eachi[T](self : Queue[T], f : (Int, T) -> Unit) -> Unit {
   loop self.first, 0 {
     Cons({ content, next }), index => {
       f(index, content)

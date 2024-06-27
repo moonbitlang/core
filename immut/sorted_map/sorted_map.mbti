@@ -11,6 +11,8 @@ impl Map {
   as_iter[K, V](Self[K, V]) -> Iter[Tuple[K, V]]
   contains[K : Compare + Eq, V](Self[K, V], K) -> Bool
   debug_write[K : Debug, V : Debug](Self[K, V], Buffer) -> Unit
+  each[K, V](Self[K, V], (K, V) -> Unit) -> Unit
+  eachi[K, V](Self[K, V], (Int, K, V) -> Unit) -> Unit
   elems[K, V](Self[K, V]) -> Array[V]
   filter[K : Compare + Eq, V](Self[K, V], (V) -> Bool) -> Self[K, V]
   filter_with_key[K : Compare + Eq, V](Self[K, V], (K, V) -> Bool) -> Self[K, V]
@@ -20,8 +22,6 @@ impl Map {
   from_array[K : Compare + Eq, V](Array[Tuple[K, V]]) -> Self[K, V]
   insert[K : Compare + Eq, V](Self[K, V], K, V) -> Self[K, V]
   is_empty[K, V](Self[K, V]) -> Bool
-  iter[K, V](Self[K, V], (K, V) -> Unit) -> Unit
-  iteri[K, V](Self[K, V], (Int, K, V) -> Unit) -> Unit
   keys[K, V](Self[K, V]) -> Array[K]
   lookup[K : Compare + Eq, V](Self[K, V], K) -> V?
   map[K, X, Y](Self[K, X], (X) -> Y) -> Self[K, Y]

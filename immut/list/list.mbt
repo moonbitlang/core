@@ -30,7 +30,7 @@ pub fn List::to_string[T : Show](xs : List[T]) -> String {
 }
 
 pub fn List::debug_write[T : Debug](xs : List[T], buf : Buffer) -> Unit {
-  xs.iteri(
+  xs.eachi(
     fn(i, x) {
       x.debug_write(buf)
       if i != xs.length() - 1 {
@@ -69,9 +69,9 @@ pub fn length[T](self : List[T]) -> Int {
 /// # Example
 ///
 /// ```
-/// of([1, 2, 3, 4, 5]).iter(print) // output: 12345
+/// of([1, 2, 3, 4, 5]).each(print) // output: 12345
 /// ```
-pub fn iter[T](self : List[T], f : (T) -> Unit) -> Unit {
+pub fn each[T](self : List[T], f : (T) -> Unit) -> Unit {
   loop self {
     Nil => ()
     Cons(head, tail) => {
@@ -86,10 +86,10 @@ pub fn iter[T](self : List[T], f : (T) -> Unit) -> Unit {
 /// # Example
 ///
 /// ```
-/// of([1, 2, 3, 4, 5]).iteri(fn(i, x) { print("(\(i),\(x)) ") })
+/// of([1, 2, 3, 4, 5]).eachi(fn(i, x) { print("(\(i),\(x)) ") })
 /// // output: (0,1) (1,2) (2,3) (3,4) (4,5)
 /// ```
-pub fn iteri[T](self : List[T], f : (Int, T) -> Unit) -> Unit {
+pub fn eachi[T](self : List[T], f : (Int, T) -> Unit) -> Unit {
   loop self, 0 {
     Nil, _ => ()
     Cons(x, xs), i => {
@@ -132,7 +132,7 @@ pub fn to_array[T](self : List[T]) -> Array[T] {
     Nil => []
     Cons(head, _) => {
       let arr = Array::make(self.length(), head)
-      self.iteri(fn(i, x) { arr[i] = x })
+      self.eachi(fn(i, x) { arr[i] = x })
       arr
     }
   }

@@ -33,7 +33,7 @@ test "Bucket::iter" {
   let b : Bucket[_] = More(0, More(1, Just_One(31)))
   let buf = Buffer::new(size_hint=0)
   let mut is_first = true
-  b.iter(
+  b.each(
     fn(k) {
       if is_first {
         is_first = false
@@ -50,7 +50,7 @@ test "Bucket::as_iter" {
   let b : Bucket[_] = More(0, More(1, Just_One(31)))
   let buf = Buffer::new(size_hint=0)
   let mut is_first = true
-  b.as_iter().iter(
+  b.as_iter().each(
     fn {
       k => {
         // weird syntax conventions that
@@ -113,7 +113,7 @@ test "Bucket iter" {
   let b2 = b1.add(2)
   let buf = Buffer::new(size_hint=0)
   let mut is_first = true
-  b2.iter(
+  b2.each(
     fn(k) {
       if is_first {
         is_first = false
@@ -132,7 +132,7 @@ test "Bucket as_iter" {
   let b2 = b1.add(2)
   let buf = Buffer::new(size_hint=0)
   let mut is_first = true
-  b2.as_iter().iter(
+  b2.as_iter().each(
     fn {
       k => {
         if is_first {

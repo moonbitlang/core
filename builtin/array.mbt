@@ -239,15 +239,15 @@ pub fn append[T](self : Array[T], other : Array[T]) -> Unit {
 /// v.push(4)
 /// v.push(5)
 /// let mut sum = 0
-/// v.iter(fn (x) {sum = sum + x})
+/// v.each(fn (x) {sum = sum + x})
 /// ```
-pub fn iter[T](self : Array[T], f : (T) -> Unit) -> Unit {
+pub fn each[T](self : Array[T], f : (T) -> Unit) -> Unit {
   for i = 0; i < self.length(); i = i + 1 {
     f(self[i])
   }
 }
 
-pub fn iter_rev[T](self : Array[T], f : (T) -> Unit) -> Unit {
+pub fn each_rev[T](self : Array[T], f : (T) -> Unit) -> Unit {
   for i = self.length() - 1; i >= 0; i = i - 1 {
     f(self[i])
   }
@@ -262,15 +262,15 @@ pub fn iter_rev[T](self : Array[T], f : (T) -> Unit) -> Unit {
 /// v.push(4)
 /// v.push(5)
 /// let mut sum = 0
-/// v.iteri(fn (i, x) {sum = sum + x + i})
+/// v.eachi(fn (i, x) {sum = sum + x + i})
 /// ```
-pub fn iteri[T](self : Array[T], f : (Int, T) -> Unit) -> Unit {
+pub fn eachi[T](self : Array[T], f : (Int, T) -> Unit) -> Unit {
   for i = 0; i < self.length(); i = i + 1 {
     f(i, self[i])
   }
 }
 
-pub fn iter_revi[T](self : Array[T], f : (Int, T) -> Unit) -> Unit {
+pub fn eachi_rev[T](self : Array[T], f : (Int, T) -> Unit) -> Unit {
   let len = self.length()
   for i = 0; i < len; i = i + 1 {
     f(i, self[len - i - 1])
@@ -361,7 +361,7 @@ pub fn mapi_inplace[T](self : Array[T], f : (Int, T) -> T) -> Unit {
 /// ```
 pub fn filter[T](self : Array[T], f : (T) -> Bool) -> Array[T] {
   let arr = []
-  self.iter(fn(e) { if f(e) { arr.push(e) } })
+  self.each(fn(e) { if f(e) { arr.push(e) } })
   arr
 }
 

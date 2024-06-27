@@ -183,7 +183,7 @@ pub fn as_iter(self : String) -> Iter[Char] {
 
 test "chars" {
   let mut str = ""
-  "A😊𠮷BA😊𠮷B".as_iter().iter(
+  "A😊𠮷BA😊𠮷B".as_iter().each(
     fn(c) { str = str + c.to_int().to_string() + "\n" },
   )
   inspect(

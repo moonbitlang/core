@@ -111,7 +111,7 @@ of([1, 2, 3]).disjoint(of([4, 5, 6])) // true
 Like other sequential containers, set also has iterative methods such as `iter`, `fold`, and `map`, and their order is based on the comparison being less than the order.
 
 ```moonbit
-of([7, 2, 9, 4, 5, 6, 3, 8, 1]).iter(print)// output: 123456789
+of([7, 2, 9, 4, 5, 6, 3, 8, 1]).each(print)// output: 123456789
 of([1, 2, 3, 4, 5]).fold(0, fn(acc, x) { acc + x }) // 15
 of([1, 2, 3].map(fn(x){ x * 2}) // of([2, 4, 6]))
 ```

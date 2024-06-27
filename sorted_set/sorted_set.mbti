@@ -11,11 +11,11 @@ impl MutableSet {
   deep_clone[T](Self[T]) -> Self[T]
   diff[T : Compare + Eq](Self[T], Self[T]) -> Self[T]
   disjoint[T : Compare + Eq](Self[T], Self[T]) -> Bool
+  each[T : Compare + Eq](Self[T], (T) -> Unit) -> Unit
   filter[T : Compare + Eq](Self[T], (T) -> Bool) -> Self[T]
   from_array[T : Compare + Eq](Array[T]) -> Self[T]
   intersect[T : Compare + Eq](Self[T], Self[T]) -> Self[T]
   is_empty[T : Compare + Eq](Self[T]) -> Bool
-  iter[T : Compare + Eq](Self[T], (T) -> Unit) -> Unit
   new[T]() -> Self[T]
   of[T : Compare + Eq](FixedArray[T]) -> Self[T]
   op_equal[T : Eq](Self[T], Self[T]) -> Bool

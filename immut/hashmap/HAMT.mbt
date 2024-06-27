@@ -192,12 +192,12 @@ pub fn size[K, V](self : Map[K, V]) -> Int {
 }
 
 /// Iterate through the elements in a hash map
-pub fn iter[K, V](self : Map[K, V], f : (K, V) -> Unit) -> Unit {
+pub fn each[K, V](self : Map[K, V], f : (K, V) -> Unit) -> Unit {
   match self {
     Empty => ()
     Leaf(k, v) => f(k, v)
-    Collision(bucket) => bucket.iter(f)
-    Branch(children) => children.iter(fn { child => child.iter(f) })
+    Collision(bucket) => bucket.each(f)
+    Branch(children) => children.each(fn { child => child.each(f) })
   }
 }
 
@@ -218,7 +218,7 @@ pub fn debug_write[K : Debug, V : Debug](
 ) -> Unit {
   let mut is_first = true
   buf.write_string("@immutable_hashmap.Map::[")
-  self.iter(
+  self.each(
     fn(k, v) {
       if is_first {
         is_first = false

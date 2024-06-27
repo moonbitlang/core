@@ -45,7 +45,7 @@ set.contains(5) // false
 Iterates over the elements in the set.
 
 ```moonbit
-of([1, 2, 3, 4]).iter(print) // output: 1234
+of([1, 2, 3, 4]).each(print) // output: 1234
 ```
 
 Delete all elements of the set that filter returns false. It is done in place.

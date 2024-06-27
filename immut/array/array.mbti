@@ -15,12 +15,12 @@ impl ImmutableVec {
   as_iter[T](Self[T]) -> Iter[T]
   copy[T](Self[T]) -> Self[T]
   debug_write[T : Debug](Self[T], Buffer) -> Unit
+  each[T](Self[T], (T) -> Unit) -> Unit
+  eachi[T](Self[T], (Int, T) -> Unit) -> Unit
   empty[T]() -> Self[T]
   fold_left[T](Self[T], (T, T) -> T, ~init : T) -> T
   fold_right[T](Self[T], (T, T) -> T, ~init : T) -> T
   from_array[T](Array[T]) -> Self[T]
-  iter[T](Self[T], (T) -> Unit) -> Unit
-  iteri[T](Self[T], (Int, T) -> Unit) -> Unit
   map[T, U](Self[T], (T) -> U) -> Self[U]
   new[T](Int, T) -> Self[T]
   new_with_index[T](Int, (Int) -> T) -> Self[T]

@@ -9,11 +9,11 @@ impl Queue {
   clear[T](Self[T]) -> Unit
   copy[T](Self[T]) -> Self[T]
   debug_write[T : Show](Self[T], Buffer) -> Unit
+  each[T](Self[T], (T) -> Unit) -> Unit
+  eachi[T](Self[T], (Int, T) -> Unit) -> Unit
   fold[T](Self[T], ~init : T, (T, T) -> T) -> T
   from_array[T](Array[T]) -> Self[T]
   is_empty[T](Self[T]) -> Bool
-  iter[T](Self[T], (T) -> Unit) -> Unit
-  iteri[T](Self[T], (Int, T) -> Unit) -> Unit
   length[T](Self[T]) -> Int
   new[T]() -> Self[T]
   of[T](FixedArray[T]) -> Self[T]

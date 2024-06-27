@@ -9,12 +9,12 @@ impl HashMap {
   capacity[K, V](Self[K, V]) -> Int
   clear[K, V](Self[K, V]) -> Unit
   contains[K : Hash + Eq, V](Self[K, V], K) -> Bool
+  each[K, V](Self[K, V], (K, V) -> Unit) -> Unit
+  eachi[K, V](Self[K, V], (Int, K, V) -> Unit) -> Unit
   from_array[K : Hash + Eq, V](Array[Tuple[K, V]]) -> Self[K, V]
   get[K : Hash + Eq, V](Self[K, V], K) -> V?
   get_or_default[K : Hash + Eq, V](Self[K, V], K, V) -> V
   is_empty[K, V](Self[K, V]) -> Bool
-  iter[K, V](Self[K, V], (K, V) -> Unit) -> Unit
-  iteri[K, V](Self[K, V], (Int, K, V) -> Unit) -> Unit
   new[K, V](~capacity : Int = ..) -> Self[K, V]
   of[K : Eq + Hash, V](FixedArray[Tuple[K, V]]) -> Self[K, V]
   op_get[K : Hash + Eq, V](Self[K, V], K) -> V?

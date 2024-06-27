@@ -112,7 +112,7 @@ pub fn filter_with_key[K : Compare, V](
 /// Convert to an array of key-value pairs.
 pub fn to_array[K, V](self : Map[K, V]) -> Array[(K, V)] {
   let arr = []
-  self.iter(fn(k, v) { arr.push((k, v)) })
+  self.each(fn(k, v) { arr.push((k, v)) })
   arr
 }
 

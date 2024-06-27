@@ -9,9 +9,9 @@ impl Set {
   as_iter[T](Self[T]) -> Iter[T]
   contains[T : Eq + Hash](Self[T], T) -> Bool
   debug_write[T : Debug](Self[T], Buffer) -> Unit
+  each[T](Self[T], (T) -> Unit) -> Unit
   from_array[T : Eq + Hash](Array[T]) -> Self[T]
   is_empty[T](Self[T]) -> Bool
-  iter[T](Self[T], (T) -> Unit) -> Unit
   new[T]() -> Self[T]
   of[T : Eq + Hash](FixedArray[T]) -> Self[T]
   remove[T : Eq + Hash](Self[T], T) -> Self[T]

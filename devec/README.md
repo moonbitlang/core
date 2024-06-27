@@ -148,8 +148,8 @@ devec supports vector-like `iter/iteri/map/mapi` functions and their inverse for
 
 ```moonbit
  let dv = of([1, 2, 3, 4, 5])
- dv.iter(fn(elem) { print(elem) })
- dv.iteri(fn(i, _elem) { print(i) })
+ dv.each(fn(elem) { print(elem) })
+ dv.eachi(fn(i, _elem) { print(i) })
  dv.map(fn(elem) { elem + 1 })
  dv.mapi(fn(i, elem) { elem + i })
 ```

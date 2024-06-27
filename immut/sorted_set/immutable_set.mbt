@@ -411,16 +411,16 @@ pub fn disjoint[T : Compare](
 /// # Example
 /// 
 /// ```
-/// of([7, 2, 9, 4, 5, 6, 3, 8, 1]).iter(print)
+/// of([7, 2, 9, 4, 5, 6, 3, 8, 1]).each(print)
 /// // output: 123456789
 /// ```
-pub fn iter[T : Compare](self : ImmutableSet[T], f : (T) -> Unit) -> Unit {
+pub fn each[T : Compare](self : ImmutableSet[T], f : (T) -> Unit) -> Unit {
   match self {
     Empty => ()
     Node(~left, ~value, ~right, ..) => {
-      left.iter(f)
+      left.each(f)
       f(value)
-      right.iter(f)
+      right.each(f)
     }
   }
 }

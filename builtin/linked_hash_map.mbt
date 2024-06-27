@@ -40,7 +40,7 @@ priv struct ListNode[K, V] {
 /// println(map.get(3)) // output: Some("three")
 /// map.set(3, "updated")
 /// println(map.get(3)) // output: Some("updated")
-/// map.iter(fn(k, v) { println("\(k)-\(v)") })
+/// map.each(fn(k, v) { println("\(k)-\(v)") })
 /// // output:
 /// // 3-three
 /// // 8-eight
@@ -102,7 +102,7 @@ pub fn Map::new[K, V](~capacity : Int = 8) -> Map[K, V] {
 /// Create a hash map from array.
 pub fn Map::from_array[K : Hash + Eq, V](arr : Array[(K, V)]) -> Map[K, V] {
   let m = Map::new(capacity=arr.length())
-  arr.iter(fn(e) { m.set(e.0, e.1) })
+  arr.each(fn(e) { m.set(e.0, e.1) })
   m
 }
 
@@ -372,7 +372,7 @@ pub fn is_empty[K, V](self : Map[K, V]) -> Bool {
 }
 
 /// Iterate over all key-value pairs of the map in the order of insertion.
-pub fn iter[K, V](self : Map[K, V], f : (K, V) -> Unit) -> Unit {
+pub fn each[K, V](self : Map[K, V], f : (K, V) -> Unit) -> Unit {
   loop self.head {
     Some({ key, value, idx, .. }) => {
       f(key, value)
@@ -383,7 +383,7 @@ pub fn iter[K, V](self : Map[K, V], f : (K, V) -> Unit) -> Unit {
 }
 
 /// Iterate over all key-value pairs of the map in the order of insertion, with index.
-pub fn iteri[K, V](self : Map[K, V], f : (Int, K, V) -> Unit) -> Unit {
+pub fn eachi[K, V](self : Map[K, V], f : (Int, K, V) -> Unit) -> Unit {
   loop 0, self.head {
     i, Some({ key, value, idx, .. }) => {
       f(i, key, value)

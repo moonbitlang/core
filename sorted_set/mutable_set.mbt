@@ -481,7 +481,7 @@ pub fn union[T : Compare](
       let mut ct = 0L
       let ret = new_set(t, 0L)
       // TODO: optimize this. Avoid counting the size of the set.
-      ret.iter(fn(_x) { ct = ct + 1L })
+      ret.each(fn(_x) { ct = ct + 1L })
       ret.size = ct
       ret
     }
@@ -517,7 +517,7 @@ pub fn diff[T : Compare](
   src : MutableSet[T]
 ) -> MutableSet[T] {
   let ret = MutableSet::new()
-  self.iter(fn(x) { if not(src.contains(x)) { ret.add(x) } })
+  self.each(fn(x) { if not(src.contains(x)) { ret.add(x) } })
   ret
 }
 
@@ -527,21 +527,21 @@ pub fn intersect[T : Compare](
   src : MutableSet[T]
 ) -> MutableSet[T] {
   let ret = MutableSet::new()
-  self.iter(fn(x) { if src.contains(x) { ret.add(x) } })
+  self.each(fn(x) { if src.contains(x) { ret.add(x) } })
   ret
 }
 
 /// Returns if a set is a subset of another set.
 pub fn subset[T : Compare](self : MutableSet[T], src : MutableSet[T]) -> Bool {
   let mut ret = true
-  self.iter(fn(x) { if not(src.contains(x)) { ret = false } })
+  self.each(fn(x) { if not(src.contains(x)) { ret = false } })
   ret
 }
 
 /// Returns if two sets are disjoint.
 pub fn disjoint[T : Compare](self : MutableSet[T], src : MutableSet[T]) -> Bool {
   let mut ret = true
-  self.iter(fn(x) { if src.contains(x) { ret = false } })
+  self.each(fn(x) { if src.contains(x) { ret = false } })
   ret
 }
 
@@ -695,7 +695,7 @@ pub fn size[T : Compare](self : MutableSet[T]) -> Int64 {
 }
 
 /// An iterator over the MutableSet, iterates over all elements in the set.
-pub fn iter[T : Compare](self : MutableSet[T], f : (T) -> Unit) -> Unit {
+pub fn each[T : Compare](self : MutableSet[T], f : (T) -> Unit) -> Unit {
   fn aux(n : Node[T]?, f : (T) -> Unit) {
     match n {
       Some(node) => {
@@ -719,7 +719,7 @@ pub fn filter[T : Compare](
   f : (T) -> Bool
 ) -> MutableSet[T] {
   let ret = MutableSet::new()
-  self.iter(fn(x) { if f(x) { ret.add(x) } })
+  self.each(fn(x) { if f(x) { ret.add(x) } })
   ret
 }
 
@@ -791,7 +791,7 @@ pub fn MutableSet::of[T : Compare](array : FixedArray[T]) -> MutableSet[T] {
 /// Initialize an MutableSet[T] from a Array[T]
 pub fn MutableSet::from_array[T : Compare](array : Array[T]) -> MutableSet[T] {
   let set = MutableSet::new()
-  array.iter(fn(x) { set.add(x) })
+  array.each(fn(x) { set.add(x) })
   set
 }
 
@@ -1146,10 +1146,10 @@ test "filter" {
 test "iter" {
   let set = of([7, 2, 9, 4, 5, 6, 3, 8, 1])
   let result = Buffer::new(size_hint=10)
-  set.iter(fn(x) { result.write_string(x.to_string()) })
+  set.each(fn(x) { result.write_string(x.to_string()) })
   inspect(result.to_string(), content="123456789")?
   let set : MutableSet[Int] = new()
-  set.iter(fn(_x) { abort("Impossible to reach") })
+  set.each(fn(_x) { abort("Impossible to reach") })
 }
 
 test "contains" {

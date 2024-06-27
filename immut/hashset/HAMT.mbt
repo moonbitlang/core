@@ -190,12 +190,12 @@ pub fn is_empty[T](self : Set[T]) -> Bool {
 }
 
 /// Iterate through the elements in a hash set
-pub fn iter[T](self : Set[T], f : (T) -> Unit) -> Unit {
+pub fn each[T](self : Set[T], f : (T) -> Unit) -> Unit {
   match self {
     Empty => ()
     Leaf(k) => f(k)
-    Collision(bucket) => bucket.iter(f)
-    Branch(children) => children.iter(fn { child => child.iter(f) })
+    Collision(bucket) => bucket.each(f)
+    Branch(children) => children.each(fn { child => child.each(f) })
   }
 }
 
@@ -213,7 +213,7 @@ pub fn as_iter[T](self : Set[T]) -> Iter[T] {
 pub fn debug_write[T : Debug](self : Set[T], buf : Buffer) -> Unit {
   let mut is_first = true
   buf.write_string("@immutable_hashset.Set::[")
-  self.iter(
+  self.each(
     fn(k) {
       if is_first {
         is_first = false

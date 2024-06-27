@@ -76,7 +76,7 @@ pub fn stringify(self : JsonValue) -> String {
   match self {
     Object(members) => {
       buf.write_char('{')
-      members.iteri(
+      members.eachi(
         fn(i, k, v) {
           if i > 0 {
             buf.write_char(',')
@@ -92,7 +92,7 @@ pub fn stringify(self : JsonValue) -> String {
     }
     Array(arr) => {
       buf.write_char('[')
-      arr.iteri(
+      arr.eachi(
         fn(i, v) {
           if i > 0 {
             buf.write_char(',')

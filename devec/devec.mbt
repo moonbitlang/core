@@ -122,7 +122,7 @@ test "realloc" {
   dv.push_back(10)
   let result = Array::make(7, 0)
   let mut i = 0
-  dv.iter(
+  dv.each(
     fn(x) {
       result[i] = x
       i += 1
@@ -399,9 +399,9 @@ test "op_equal" {
 /// ```
 /// let dv = of([1, 2, 3, 4, 5])
 /// let mut sum = 0
-/// dv.iter(fn (x) {sum = sum + x})
+/// dv.each(fn (x) {sum = sum + x})
 /// ```
-pub fn iter[T](self : Devec[T], f : (T) -> Unit) -> Unit {
+pub fn each[T](self : Devec[T], f : (T) -> Unit) -> Unit {
   for i = 0; i < self.length(); i = i + 1 {
     f(self[i])
   }
@@ -413,9 +413,9 @@ pub fn iter[T](self : Devec[T], f : (T) -> Unit) -> Unit {
 /// ```
 /// let dv = of([1, 2, 3, 4, 5])
 /// let mut idx_sum = 0
-/// dv.iteri(fn (i, x) {idx_sum = idx_sum + i})
+/// dv.eachi(fn (i, x) {idx_sum = idx_sum + i})
 /// ```
-pub fn iteri[T](self : Devec[T], f : (Int, T) -> Unit) -> Unit {
+pub fn eachi[T](self : Devec[T], f : (Int, T) -> Unit) -> Unit {
   for i = 0; i < self.length(); i = i + 1 {
     f(i, self[i])
   }
@@ -427,9 +427,9 @@ pub fn iteri[T](self : Devec[T], f : (Int, T) -> Unit) -> Unit {
 /// ```
 /// let dv = of([1, 2, 3, 4, 5])
 /// let mut sum = 0
-/// dv.iter_rev(fn (x) {sum = sum + x})
+/// dv.each_rev(fn (x) {sum = sum + x})
 /// ```
-pub fn iter_rev[T](self : Devec[T], f : (T) -> Unit) -> Unit {
+pub fn each_rev[T](self : Devec[T], f : (T) -> Unit) -> Unit {
   for i = self.length() - 1; i >= 0; i = i - 1 {
     f(self[i])
   }
@@ -441,9 +441,9 @@ pub fn iter_rev[T](self : Devec[T], f : (T) -> Unit) -> Unit {
 /// ```
 /// let dv = of([1, 2, 3, 4, 5])
 /// let mut idx_sum = 0
-/// dv.iter_revi(fn (i, x) {idx_sum = idx_sum + i})
+/// dv.eachi_rev(fn (i, x) {idx_sum = idx_sum + i})
 /// ```
-pub fn iter_revi[T](self : Devec[T], f : (Int, T) -> Unit) -> Unit {
+pub fn eachi_rev[T](self : Devec[T], f : (Int, T) -> Unit) -> Unit {
   for i = 0; i < self.len; i = i + 1 {
     f(i, self[self.len - i - 1])
   }

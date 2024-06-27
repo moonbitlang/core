@@ -80,7 +80,7 @@ pub fn is_empty[K, V](self : HashMap[K, V]) -> Bool {
 }
 
 /// Iterate over all key-value pairs of the map.
-pub fn iter[K, V](self : HashMap[K, V], f : (K, V) -> Unit) -> Unit {
+pub fn each[K, V](self : HashMap[K, V], f : (K, V) -> Unit) -> Unit {
   for i = 0; i < self.capacity; i = i + 1 {
     match self.entries[i] {
       Some({ key, value, .. }) => f(key, value)
@@ -90,7 +90,7 @@ pub fn iter[K, V](self : HashMap[K, V], f : (K, V) -> Unit) -> Unit {
 }
 
 /// Iterate over all key-value pairs of the map, with index.
-pub fn iteri[K, V](self : HashMap[K, V], f : (Int, K, V) -> Unit) -> Unit {
+pub fn eachi[K, V](self : HashMap[K, V], f : (Int, K, V) -> Unit) -> Unit {
   for i = 0, idx = 0; i < self.capacity; {
     match self.entries[i] {
       Some({ key, value, .. }) => {

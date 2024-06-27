@@ -54,7 +54,7 @@ test "Set::remove" {
 test "Set::as_iter" {
   let data = of(["a", "b", "d", "e", "f"])
   let mut s = ""
-  data.as_iter().iter(fn { k => s += " \(k)" })
+  data.as_iter().each(fn { k => s += " \(k)" })
   inspect(s, content=" d e b a f")?
 }
 
@@ -101,7 +101,7 @@ test "Set::is_empty" {
 test "Set::iter" {
   let set = Set::new().add(1).add(2).add(3)
   let result = []
-  set.iter(fn { x => result.push(x) })
+  set.each(fn { x => result.push(x) })
   result.sort()
   @assertion.assert_eq(result, [1, 2, 3])?
 }
@@ -109,7 +109,7 @@ test "Set::iter" {
 test "Set::as_iter" {
   let set = Set::new().add(1).add(2).add(3)
   let result = []
-  set.as_iter().iter(fn { x => result.push(x) })
+  set.as_iter().each(fn { x => result.push(x) })
   result.sort()
   @assertion.assert_eq(result, [1, 2, 3])?
 }

@@ -98,7 +98,7 @@ test "append" {
 test "iter" {
   let v = [3, 4, 5]
   let mut sum = 0
-  v.iter(fn(x) { sum = sum + x })
+  v.each(fn(x) { sum = sum + x })
   @assertion.assert_eq(sum, 12)?
 }
 
@@ -108,21 +108,21 @@ test "iter_rev" {
   v.push(4)
   v.push(5)
   let mut sum = 0
-  v.iter_rev(fn(x) { sum = sum + x })
+  v.each_rev(fn(x) { sum = sum + x })
   @assertion.assert_eq(sum, 12)?
 }
 
 test "iteri" {
   let v = [3, 4, 5]
   let mut sum = 0
-  v.iteri(fn(i, x) { sum = sum + x + i })
+  v.eachi(fn(i, x) { sum = sum + x + i })
   @assertion.assert_eq(sum, 15)?
 }
 
 test "iter_revi" {
   let v = [3, 4, 5]
   let mut sum = 0
-  v.iter_revi(fn(i, x) { sum = sum + x + i })
+  v.eachi_rev(fn(i, x) { sum = sum + x + i })
   @assertion.assert_eq(sum, 15)?
 }
 
@@ -411,10 +411,10 @@ test "shrink_to_fit_2" {
 
 test "as_iter" {
   let buf = Buffer::new(size_hint=5)
-  [1, 2, 3, 4, 5].as_iter().iter(fn { x => buf.write_string(x.to_string()) })
+  [1, 2, 3, 4, 5].as_iter().each(fn { x => buf.write_string(x.to_string()) })
   inspect(buf, content="12345")?
   buf.reset()
-  [1, 2, 3, 4, 5].as_iter().take(2).iter(
+  [1, 2, 3, 4, 5].as_iter().take(2).each(
     fn { x => buf.write_string(x.to_string()) },
   )
   inspect(buf, content="12")?
