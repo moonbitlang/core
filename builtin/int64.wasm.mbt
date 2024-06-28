@@ -91,4 +91,3 @@ pub fn UInt64::op_mod(self : UInt64, other : UInt64) -> UInt64 = "%u64.mod"
 pub fn UInt64::compare(self : UInt64, other : UInt64) -> Int = "%u64.compare"
 
 pub fn UInt64::op_equal(self : UInt64, other : UInt64) -> Bool = "%u64.eq"
-

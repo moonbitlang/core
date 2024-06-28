@@ -492,4 +492,3 @@ pub fn UInt64::compare(self : UInt64, other : UInt64) -> Int {
 pub fn UInt64::op_equal(self : UInt64, other : UInt64) -> Bool {
   MyInt64::from_uint64(self).op_equal(MyInt64::from_uint64(other))
 }
-
