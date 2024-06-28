@@ -20,56 +20,69 @@ test "new" {
 
 test "of" {
   let map = of([(3, "c"), (2, "b"), (1, "a")])
-  inspect(map.debug_tree(), content="([1]2,b,([0]1,a,_,_),([0]3,c,_,_))")!
+  inspect(map.debug_tree(), content="([2]2,b,([1]1,a,_,_),([1]3,c,_,_))")!
   inspect(map.size(), content="3")!
 }
 
-test "add" {
+test "add1" {
   let map = new()
-  map.add(8, "a")
-  map.add(7, "b")
-  map.add(6, "c")
-  map.add(5, "d")
-  map.add(4, "e")
-  map.add(3, "f")
-  map.add(2, "g")
-  map.add(1, "h")
+  map.add(6, "a")
+  map.add(5, "b")
+  map.add(4, "c")
+  map.add(3, "d")
+  map.add(2, "e")
+  map.add(1, "f")
   inspect(
     map.debug_tree(),
-    content="([3]5,d,([2]3,f,([1]2,g,([0]1,h,_,_),_),([0]4,e,_,_)),([1]7,b,([0]6,c,_,_),([0]8,a,_,_)))",
+    content="([3]3,d,([2]2,e,([1]1,f,_,_),_),([2]5,b,([1]4,c,_,_),([1]6,a,_,_)))",
   )!
-  inspect(map.size(), content="8")!
+  inspect(map.size(), content="6")!
 }
 
-test "add duplicate key" {
-  let map = of([(3, "c"), (2, "b"), (1, "a")])
-  inspect(map.debug_tree(), content="([1]2,b,([0]1,a,_,_),([0]3,c,_,_))")!
-  map.add(1, "x")
-  inspect(map.debug_tree(), content="([1]2,b,([0]1,x,_,_),([0]3,c,_,_))")!
-}
-
-test "RL rotate" {
+test "add2" {
   let map = new()
-  map.add(5, "a")
+  map.add(1, "a")
+  map.add(2, "b")
+  map.add(3, "c")
+  map.add(4, "d")
+  map.add(5, "e")
+  map.add(6, "f")
+  inspect(
+    map.debug_tree(),
+    content="([3]4,d,([2]2,b,([1]1,a,_,_),([1]3,c,_,_)),([2]5,e,_,([1]6,f,_,_)))",
+  )!
+  inspect(map.size(), content="6")!
+}
+
+test "add3" {
+  let map = new()
+  map.add(4, "a")
   map.add(1, "b")
   map.add(3, "c")
   map.add(2, "d")
   inspect(
     map.debug_tree(),
-    content="([2]3,c,([1]1,b,_,([0]2,d,_,_)),([0]5,a,_,_))",
+    content="([3]3,c,([2]1,b,_,([1]2,d,_,_)),([1]4,a,_,_))",
   )!
 }
 
-test "LR rotate" {
+test "add4" {
   let map = new()
-  map.add(2, "a")
-  map.add(5, "b")
-  map.add(3, "c")
-  map.add(4, "d")
+  map.add(1, "a")
+  map.add(4, "b")
+  map.add(2, "c")
+  map.add(3, "d")
   inspect(
     map.debug_tree(),
-    content="([2]3,c,([0]2,a,_,_),([1]5,b,([0]4,d,_,_),_))",
+    content="([3]2,c,([1]1,a,_,_),([2]4,b,([1]3,d,_,_),_))",
   )!
+}
+
+test "add duplicate key" {
+  let map = of([(3, "c"), (2, "b"), (1, "a")])
+  inspect(map.debug_tree(), content="([2]2,b,([1]1,a,_,_),([1]3,c,_,_))")!
+  map.add(1, "x")
+  inspect(map.debug_tree(), content="([2]2,b,([1]1,x,_,_),([1]3,c,_,_))")!
 }
 
 test "remove" {
@@ -87,51 +100,66 @@ test "remove" {
   )
   inspect(
     map.debug_tree(),
-    content="([3]4,d,([1]2,b,([0]1,a,_,_),([0]3,c,_,_)),([2]6,f,([0]5,e,_,_),([1]7,g,_,([0]8,h,_,_))))",
+    content="([4]4,d,([2]2,b,([1]1,a,_,_),([1]3,c,_,_)),([3]6,f,([1]5,e,_,_),([2]7,g,_,([1]8,h,_,_))))",
   )!
   inspect(map.size(), content="8")!
   map.remove(6)
   inspect(
     map.debug_tree(),
-    content="([2]4,d,([1]2,b,([0]1,a,_,_),([0]3,c,_,_)),([1]7,g,([0]5,e,_,_),([0]8,h,_,_)))",
+    content="([3]4,d,([2]2,b,([1]1,a,_,_),([1]3,c,_,_)),([2]7,g,([1]5,e,_,_),([1]8,h,_,_)))",
   )!
   inspect(map.size(), content="7")!
   map.remove(4)
   inspect(
     map.debug_tree(),
-    content="([2]5,e,([1]2,b,([0]1,a,_,_),([0]3,c,_,_)),([1]7,g,_,([0]8,h,_,_)))",
+    content="([3]5,e,([2]2,b,([1]1,a,_,_),([1]3,c,_,_)),([2]7,g,_,([1]8,h,_,_)))",
   )!
   inspect(map.size(), content="6")!
   map.remove(2)
   inspect(
     map.debug_tree(),
-    content="([2]5,e,([1]3,c,([0]1,a,_,_),_),([1]7,g,_,([0]8,h,_,_)))",
+    content="([3]5,e,([2]3,c,([1]1,a,_,_),_),([2]7,g,_,([1]8,h,_,_)))",
   )!
   inspect(map.size(), content="5")!
   map.remove(3)
   inspect(
     map.debug_tree(),
-    content="([2]5,e,([0]1,a,_,_),([1]7,g,_,([0]8,h,_,_)))",
+    content="([3]5,e,([1]1,a,_,_),([2]7,g,_,([1]8,h,_,_)))",
   )!
   inspect(map.size(), content="4")!
   map.remove(5)
-  inspect(map.debug_tree(), content="([1]7,g,([0]1,a,_,_),([0]8,h,_,_))")!
+  inspect(map.debug_tree(), content="([2]7,g,([1]1,a,_,_),([1]8,h,_,_))")!
   inspect(map.size(), content="3")!
   map.remove(7)
-  inspect(map.debug_tree(), content="([1]8,h,([0]1,a,_,_),_)")!
+  inspect(map.debug_tree(), content="([2]8,h,([1]1,a,_,_),_)")!
   inspect(map.size(), content="2")!
   map.remove(8)
-  inspect(map.debug_tree(), content="([0]1,a,_,_)")!
+  inspect(map.debug_tree(), content="([1]1,a,_,_)")!
   inspect(map.size(), content="1")!
   map.remove(1)
   inspect(map.debug_tree(), content="_")!
   inspect(map.size(), content="0")!
 }
 
-test "remove unexist" {
+test "remove2" {
+  let map = of([(1, "a"), (2, "b")])
+  inspect(map.size, content="2")!
+  map.remove(1)
+  inspect(map.size, content="1")!
+}
+
+test "remove3" {
   let map = of([(1, "a"), (2, "b"), (3, "c")])
+  map.remove(0)
+  inspect(map.size, content="3")!
   map.remove(4)
   inspect(map.size, content="3")!
+}
+
+test "remove on empty map" {
+  let map : T[Int, String] = new()
+  map.remove(1)
+  inspect(map.size, content="0")!
 }
 
 test "get" {
@@ -155,7 +183,7 @@ test "op_set" {
   map[1] = "a"
   map[2] = "b"
   map[3] = "c"
-  inspect(map.debug_tree(), content="([1]2,b,([0]1,a,_,_),([0]3,c,_,_))")!
+  inspect(map.debug_tree(), content="([2]2,b,([1]1,a,_,_),([1]3,c,_,_))")!
 }
 
 test "op_get" {
@@ -196,14 +224,14 @@ test "clear" {
 
 test "each" {
   let map = of([(3, "c"), (2, "b"), (1, "a")])
-  let buf = Buffer::make(0)
+  let buf = Buffer::new()
   map.each(fn(k, v) { buf.write_string("\(k)\(v)") })
   inspect(buf.to_string(), content="1a2b3c")!
 }
 
 test "eachi" {
   let map = of([(3, "c"), (2, "b"), (1, "a")])
-  let buf = Buffer::make(0)
+  let buf = Buffer::new()
   map.eachi(fn(i, k, v) { buf.write_string("[\(i)]\(k)\(v)") })
   inspect(buf.to_string(), content="[0]1a[1]2b[2]3c")!
 }
