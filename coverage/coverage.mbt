@@ -74,12 +74,6 @@ impl Output for StringBuffer with output(self : StringBuffer, content : String) 
   self.0.push(content)
 }
 
-// type IO Int
-
-// fn output(self : IO, content : String) -> Unit {
-//   ignore(self)
-//   println(content)
-// }
 
 fn Output::output(self : Buffer, content : String) -> Unit {
   self.write_string(content)
