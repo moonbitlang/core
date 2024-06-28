@@ -15,8 +15,6 @@ impl CoverageCounter {
   to_string(Self) -> String
 }
 
-type IO
-
 // Traits
 
 // Extension Methods

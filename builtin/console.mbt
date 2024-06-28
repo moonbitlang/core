@@ -12,13 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+fn print_string(s : String) -> Unit = "%print_string"
+
 pub fn println[T : Show](input : T) -> Unit {
   print_string(input.to_string())
   print_string("\n")
-}
-
-pub fn print[T : Show](input : T) -> Unit {
-  print_string(input.to_string())
 }
 
 pub fn to_string(self : Bool) -> String {

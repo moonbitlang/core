@@ -60,17 +60,14 @@ test "log" {
   )
   let buf = Buffer::new(size_hint=1024)
   coverage_log(counters, buf)
-  let result = buf.to_string()
-  let expected =
-    #|{ "foo/foo": [1, 0]
-    #|, "foo/bar": [0, 1]
-    #|}
-    #|
-
-  // @assertion.assert_eq(result, expected)?
-  if result != expected {
-    return Err("Expected: " + expected + ", got: " + result)
-  }
+  inspect(
+    buf,
+    content=
+      #|{ "foo/foo": [1, 0]
+      #|, "foo/bar": [0, 1]
+      #|}
+    ,
+  )?
 }
 
 test "escape_to" {

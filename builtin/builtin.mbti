@@ -23,10 +23,6 @@ fn panic[T]() -> T
 
 fn physical_equal[T](T, T) -> Bool
 
-fn print[T : Show](T) -> Unit
-
-fn print_string(String) -> Unit
-
 fn println[T : Show](T) -> Unit
 
 // Types and methods
