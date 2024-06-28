@@ -19,6 +19,11 @@ pub fn println[T : Show](input : T) -> Unit {
   print_string("\n")
 }
 
+/// @alert deprecate "Use `println` instead"
+pub fn print[T : Show](input : T) -> Unit {
+  println(input)
+}
+
 pub fn to_string(self : Bool) -> String {
   if self {
     "true"
