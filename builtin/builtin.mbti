@@ -290,6 +290,7 @@ impl Int64 {
   to_double(Int64) -> Double
   to_int(Int64) -> Int
   to_string(Int64) -> String
+  to_uint64(Int64) -> UInt64
   trunc_double_u(Double) -> Int64
   until(Int64, Int64, ~step : Int64 = ..) -> Iter[Int64]
 }
@@ -305,6 +306,17 @@ impl UInt {
   op_sub(UInt, UInt) -> UInt
   to_int(UInt) -> Int
   to_string(UInt) -> String
+}
+impl UInt64 {
+  compare(UInt64, UInt64) -> Int
+  op_add(UInt64, UInt64) -> UInt64
+  op_div(UInt64, UInt64) -> UInt64
+  op_equal(UInt64, UInt64) -> Bool
+  op_mod(UInt64, UInt64) -> UInt64
+  op_mul(UInt64, UInt64) -> UInt64
+  op_sub(UInt64, UInt64) -> UInt64
+  to_int64(UInt64) -> Int64
+  to_string(UInt64) -> String
 }
 impl Double {
   compare(Double, Double) -> Int

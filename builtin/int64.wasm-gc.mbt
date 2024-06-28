@@ -73,3 +73,21 @@ pub fn Double::to_int64(self : Double) -> Int64 = "%f64_to_i64"
 pub fn Double::reinterpret_as_i64(self : Double) -> Int64 = "%f64_to_i64_reinterpret"
 
 pub fn Double::convert_i64_u(val : Int64) -> Double = "%i64_to_f64_u"
+
+pub fn Int64::to_uint64(self : Int64) -> UInt64 = "%i64.to_u64_reinterpret"
+
+pub fn UInt64::to_int64(self : UInt64) -> Int64 = "%u64.to_i64_reinterpret"
+
+pub fn UInt64::op_add(self : UInt64, other : UInt64) -> UInt64 = "%u64.add"
+
+pub fn UInt64::op_sub(self : UInt64, other : UInt64) -> UInt64 = "%u64.sub"
+
+pub fn UInt64::op_mul(self : UInt64, other : UInt64) -> UInt64 = "%u64.mul"
+
+pub fn UInt64::op_div(self : UInt64, other : UInt64) -> UInt64 = "%u64.div"
+
+pub fn UInt64::op_mod(self : UInt64, other : UInt64) -> UInt64 = "%u64.mod"
+
+pub fn UInt64::compare(self : UInt64, other : UInt64) -> Int = "%u64.compare"
+
+pub fn UInt64::op_equal(self : UInt64, other : UInt64) -> Bool = "%u64.eq"

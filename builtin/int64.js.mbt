@@ -456,3 +456,39 @@ pub fn Double::reinterpret_as_i64(self : Double) -> Int64 {
 pub fn Double::convert_i64_u(value : Int64) -> Double {
   MyInt64::convert_to_double_u(MyInt64::from_int64(value))
 }
+
+fn MyInt64::to_uint64(self : MyInt64) -> UInt64 = "%identity"
+
+fn MyInt64::from_uint64(value : UInt64) -> MyInt64 = "%identity"
+
+pub fn Int64::to_uint64(self : Int64) -> UInt64 = "%identity"
+
+pub fn UInt64::op_add(self : UInt64, other : UInt64) -> UInt64 {
+  MyInt64::from_uint64(self).op_add(MyInt64::from_uint64(other)).to_uint64()
+}
+
+pub fn UInt64::op_sub(self : UInt64, other : UInt64) -> UInt64 {
+  MyInt64::from_uint64(self).op_sub(MyInt64::from_uint64(other)).to_uint64()
+}
+
+pub fn UInt64::op_mul(self : UInt64, other : UInt64) -> UInt64 {
+  MyInt64::from_uint64(self).op_mul(MyInt64::from_uint64(other)).to_uint64()
+}
+
+pub fn UInt64::op_div(self : UInt64, other : UInt64) -> UInt64 {
+  MyInt64::from_uint64(self).div_u(MyInt64::from_uint64(other)).to_uint64()
+}
+
+pub fn UInt64::op_mod(self : UInt64, other : UInt64) -> UInt64 {
+  MyInt64::from_uint64(self).mod_u(MyInt64::from_uint64(other)).to_uint64()
+}
+
+pub fn UInt64::to_int64(self : UInt64) -> Int64 = "%identity"
+
+pub fn UInt64::compare(self : UInt64, other : UInt64) -> Int {
+  MyInt64::from_uint64(self).compare_u(MyInt64::from_uint64(other))
+}
+
+pub fn UInt64::op_equal(self : UInt64, other : UInt64) -> Bool {
+  MyInt64::from_uint64(self).op_equal(MyInt64::from_uint64(other))
+}

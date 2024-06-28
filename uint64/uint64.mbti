@@ -1,0 +1,13 @@
+package moonbitlang/core/uint64
+
+// Values
+let max : UInt64
+
+let min : UInt64
+
+// Types and methods
+
+// Traits
+
+// Extension Methods
+
