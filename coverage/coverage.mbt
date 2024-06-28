@@ -28,7 +28,7 @@ pub fn CoverageCounter::new(size : Int) -> CoverageCounter {
 
 /// Increment the specified tracking index.
 ///
-/// @coverage.skip 
+/// @coverage.skip
 pub fn CoverageCounter::incr(self : CoverageCounter, idx : Int) -> Unit {
   let counter = self.counter[idx]
   if counter < 0x7fffffff { // prevent overflow
