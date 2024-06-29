@@ -58,7 +58,7 @@ pub fn expect(
 }
 
 /// Expand the buffer size if capacity smaller than required space.
-fn grow_if_necessary(self : Buffer, required : Int) -> Unit {
+pub fn grow_if_necessary(self : Buffer, required : Int) -> Unit {
   // TODO: get rid of mut
   let mut enough_space = self.bytes.length()
   if enough_space <= 0 {
