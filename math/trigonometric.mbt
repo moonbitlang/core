@@ -105,31 +105,35 @@ pub fn cos(x : Double) -> Double {
 }
 
 pub fn tan(x : Double) -> Double {
-  let mut sign = false
-  let mut x_ = x
-  if x_ < 0.0 {
-    x_ = -x_
-    sign = true
-  }
-  let mut j = (x_ * pi4).to_int64()
-  if j.land(1L) == 1L {
-    j += 1L
-  }
-  let y = j.to_double()
-  let z = x_ - y * pi4a - y * pi4b - y * pi4c
-  let mut zz = z * z
-  zz = if zz > 1.0e-14 {
-    z + z * (zz * ((tan_p[0] * zz + tan_p[1]) * zz + tan_p[2]) / ((((zz + tan_q[1]) *
-    zz + tan_q[2]) * zz + tan_q[3]) * zz + tan_q[4]))
+  if Double::is_inf(x) || Double::is_nan(x) {
+    x
   } else {
-    z
-  }
-  if j.land(2L) == 2L {
-    zz = -1.0 / zz
-  }
-  if sign {
-    -zz
-  } else {
-    zz
+    let mut sign = false
+    let mut x_ = x
+    if x_ < 0.0 {
+      x_ = -x_
+      sign = true
+    }
+    let mut j = (x_ * pi4).to_int64()
+    if j.land(1L) == 1L {
+      j += 1L
+    }
+    let y = j.to_double()
+    let z = x_ - y * pi4a - y * pi4b - y * pi4c
+    let mut zz = z * z
+    zz = if zz > 1.0e-14 {
+      z + z * (zz * ((tan_p[0] * zz + tan_p[1]) * zz + tan_p[2]) / ((((zz + tan_q[1]) *
+      zz + tan_q[2]) * zz + tan_q[3]) * zz + tan_q[4]))
+    } else {
+      z
+    }
+    if j.land(2L) == 2L {
+      zz = -1.0 / zz
+    }
+    if sign {
+      -zz
+    } else {
+      zz
+    }
   }
 }
