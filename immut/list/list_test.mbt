@@ -110,7 +110,7 @@ test "head_exn" {
 
 test "head" {
   let ls = of([1, 2, 3, 4, 5])
-  let el : List[Int] = of([])
+  let el : List[Int] = Nil
   inspect(ls.head(), content="Some(1)")?
   inspect(el.head(), content="None")?
 }
@@ -118,6 +118,10 @@ test "head" {
 test "last" {
   let ls = of([1, 2, 3, 4, 5])
   inspect(ls.last(), content="5")?
+}
+
+test "panic last" {
+  Nil.last()
 }
 
 test "init_" {
@@ -190,6 +194,10 @@ test "nth_exn" {
   let ls = of([1, 2, 3, 4, 5])
   inspect(ls.nth_exn(0), content="1")?
   inspect(ls.nth_exn(1), content="2")?
+}
+
+test "panic nth_exn" {
+  Nil.nth_exn(0)
 }
 
 test "nth" {
@@ -272,6 +280,10 @@ test "take" {
   inspect(ls, content="List::[1, 2, 3]")?
 }
 
+test "panic unsafe_take" {
+  unsafe_take(5, List::[1, 2, 3, 4]) |> ignore
+}
+
 test "drop" {
   let ls = of([1, 2, 3, 4, 5]).drop(3)
   let el : List[Int] = Nil
@@ -279,6 +291,10 @@ test "drop" {
   inspect(ls.drop(-10), content="List::[4, 5]")?
   inspect(ls.drop(0), content="List::[4, 5]")?
   inspect(el.drop(0), content="List::[]")?
+}
+
+test "panic unsafe_drop" {
+  unsafe_drop(5, List::[1, 2, 3, 4]) |> ignore
 }
 
 test "take_while" {
@@ -296,7 +312,7 @@ test "drop_while" {
 }
 
 test "scan_left" {
-  let el = of([]).scan_left(fn(acc, x) { acc + x }, init=0)
+  let el = Nil.scan_left(fn(acc, x) { acc + x }, init=0)
   let ls = of([1, 2, 3, 4, 5]).scan_left(fn(acc, x) { acc + x }, init=0)
   let ls2 = of([1, 2, 3, 4]).scan_left(fn(acc, x) { acc - x }, init=100)
   inspect(el, content="List::[0]")?
@@ -305,7 +321,7 @@ test "scan_left" {
 }
 
 test "scan_right" {
-  let el = of([]).scan_right(fn(x, acc) { x + acc }, init=0)
+  let el = Nil.scan_right(fn(x, acc) { x + acc }, init=0)
   let ls = of([1, 2, 3, 4]).scan_right(fn(x, acc) { x + acc }, init=0)
   let ls2 = of([1, 2, 3, 4]).scan_right(fn(x, acc) { x - acc }, init=100)
   inspect(el, content="List::[0]")?
@@ -417,7 +433,10 @@ test "default" {
 
 test "iter" {
   let ls = of([1, 2, 3, 4, 5])
-  inspect(ls.iter().fold(fn(a, b) { a + b }, 0), content="15")?
+  inspect(
+    ls.iter().map(fn(x) { x + 1 }).fold(fn(a, b) { a + b }, 0),
+    content="20",
+  )?
 }
 
 test "List::debug_write with non-empty list" {
@@ -440,6 +459,10 @@ test "List::head_exn with non-empty list" {
   @assertion.assert_eq(head, 1)?
 }
 
+test "panic List::exn with empty list" {
+  Nil.head_exn()
+}
+
 test "List::last with non-empty list" {
   let list = of([1, 2, 3, 4, 5])
   let last = List::last(list)
@@ -454,6 +477,10 @@ test "List::zip with lists of equal length" {
   @assertion.assert_eq(zipped, expected)?
 }
 
+test "panic List::zip with empty list" {
+  of([1]).zip((Nil : List[Int])) |> ignore
+}
+
 test "List::nth_exn with valid index" {
   let list = of([1, 2, 3, 4, 5])
   let nth = List::nth_exn(list, 2)
@@ -466,8 +493,23 @@ test "List::maximum with non-empty list" {
   @assertion.assert_eq(max, 5)?
 }
 
+test "panic List::maxium with empty list" {
+  (Nil : List[Int]).maximum() |> ignore
+}
+
 test "List::minimum with non-empty list" {
   let list = of([1, 3, 5, 2, 4])
   let min = List::minimum(list)
   @assertion.assert_eq(min, 1)?
+}
+
+test "panic List::minimum with empty list" {
+  (Nil : List[Int]).minimum() |> ignore
+}
+
+test "op_add" {
+  inspect(of([1]) + of([]), content="List::[1]")?
+  inspect(of([]) + of([1]), content="List::[1]")?
+  inspect(of([1]) + of([1]), content="List::[1, 1]")?
+  inspect((Nil : List[Int]) + (Nil : List[Int]), content="List::[]")?
 }

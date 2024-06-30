@@ -453,6 +453,7 @@ test "copy" {
   let copied = arr.copy()
   @assertion.assert_eq(copied, [1, 2, 3, 4, 5])?
   @assertion.assert_is_not(arr, copied)?
+  inspect(([] : Array[Int]).copy(), content="[]")?
 }
 
 test "Array::new_with_index with positive length" {

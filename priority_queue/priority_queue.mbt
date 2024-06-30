@@ -144,11 +144,8 @@ pub fn length[T](self : PriorityQueue[T]) -> Int {
 /// ```
 /// @alert unsafe "Panic if the queue is empty."
 pub fn pop_exn[T : Compare](self : PriorityQueue[T]) -> Unit {
-  if self.len == 0 {
-    abort("The PriorityQueue is empty!")
-  }
   self.top = match self.top {
-    Nil => Nil
+    Nil => abort("The PriorityQueue is empty!")
     Cons(~child, ..) => merges(child)
   }
   self.len -= 1
