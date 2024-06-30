@@ -192,7 +192,7 @@ test "iter2" {
   v.pop_back_exn()
   let mut sum = 0
   v.each(fn { x => sum += x })
-  inspect(sum,content="9")?
+  inspect(sum, content="9")?
 }
 
 test "op_get" {
