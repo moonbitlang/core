@@ -286,3 +286,26 @@ test "parse unexpected token in array" {
   let result = parse("[1, 2 a]")
   inspect(result, content="Err(Invalid character 'a' at line 1, column 6)")?
 }
+
+test "parse muti-lines json" {
+  let result = parse(
+    #|{
+    #|  "a":2,
+    #|  "b":3
+    #|}
+    ,
+  )
+  inspect(result, content="Ok(Object({a:Number(2.0), b:Number(3.0)}))")?
+}
+
+
+test "parse muti-lines json error" {
+  let result = parse(
+    #|{
+    #|  "a":2,
+    #|  "b":a
+    #|}
+    ,
+  )
+  inspect(result, content="Err(Invalid character 'a' at line 3, column 6)")?
+}

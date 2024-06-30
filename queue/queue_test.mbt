@@ -17,7 +17,7 @@ test "new" {
   @assertion.assert_eq(queue.length, 0)?
 }
 
-test "from_array_1" {
+test "from_fixed_array_1" {
   let queue : Queue[Int] = of([1, 2, 3, 4])
   let queue2 : Queue[Int] = of([1])
   @assertion.assert_eq(queue.length, 4)?
@@ -29,7 +29,7 @@ test "from_array_1" {
   @assertion.assert_eq(queue2.length, 0)?
 }
 
-test "from_array_2" {
+test "from_fixed_array_2" {
   let q = of([1, 2, 3, 4])
   q.push(11)
   @assertion.assert_eq(q, of([1, 2, 3, 4, 11]))?
@@ -37,8 +37,33 @@ test "from_array_2" {
   @assertion.assert_eq(q, of([2, 3, 4, 11]))?
 }
 
-test "from_array_3" {
+test "from_fixed_array_3" {
   let q : Queue[Int] = of([])
+  inspect(q, content="Queue::[]")?
+}
+
+test "from_array_1" {
+  let queue : Queue[Int] = Queue::[1, 2, 3, 4]
+  let queue2 : Queue[Int] = Queue::[1]
+  @assertion.assert_eq(queue.length, 4)?
+  @assertion.assert_eq(queue.pop_exn(), 1)?
+  @assertion.assert_eq(queue.pop_exn(), 2)?
+  @assertion.assert_eq(queue.pop_exn(), 3)?
+  @assertion.assert_eq(queue.pop_exn(), 4)?
+  @assertion.assert_eq(queue2.pop_exn(), 1)?
+  @assertion.assert_eq(queue2.length, 0)?
+}
+
+test "from_array_2" {
+  let q = Queue::[1, 2, 3, 4]
+  q.push(11)
+  @assertion.assert_eq(q, Queue::[1, 2, 3, 4, 11])?
+  q.pop_exn() |> ignore
+  @assertion.assert_eq(q, Queue::[2, 3, 4, 11])?
+}
+
+test "from_array_3" {
+  let q : Queue[Int] = Queue::[]
   inspect(q, content="Queue::[]")?
 }
 
@@ -98,6 +123,10 @@ test "peek_exn" {
   @assertion.assert_eq(queue.length, 3)?
 }
 
+test "panic peek_exn" {
+  Queue::[].peek_exn()
+}
+
 test "peek" {
   let queue : Queue[Int] = of([1, 2, 3, 4])
   @assertion.assert_eq(queue.peek(), Some(1))?
@@ -112,6 +141,10 @@ test "pop_exn" {
   @assertion.assert_eq(queue.pop_exn(), 3)?
   @assertion.assert_eq(queue.pop_exn(), 4)?
   @assertion.assert_eq(queue.length, 0)?
+}
+
+test "panic pop_exn"{
+  Queue::[].pop_exn()
 }
 
 test "pop" {
