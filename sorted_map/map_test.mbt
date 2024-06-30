@@ -140,10 +140,17 @@ test "remove" {
   inspect(map.size, content="1")!
 }
 
+test "remove2" {
+  let map = of([(1, "a"), (2, "b")])
+  inspect(map.size, content="2")?
+  map.remove(1)
+  inspect(map.size, content="1")?
+}
+
 test "remove3" {
   let map = of([(1, "a"), (2, "b"), (3, "c")])
   map.remove(0)
-  inspect(map.size, content="3")!
+  inspect(map.size, content="3")?
   map.remove(4)
   inspect(map.size, content="3")!
 }
