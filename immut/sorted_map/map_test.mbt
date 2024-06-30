@@ -41,7 +41,10 @@ test "remove" {
   let m2 = m1.remove(1).remove(3)
   inspect(m2.debug_tree(), content="(2,two,(0,zero,_,_),(8,eight,_,_))")?
   let m3 = m1.remove(8)
-  inspect(m3.debug_tree(), content="(2,two,(1,one,(0,zero,_,_),_),(3,three,_,_))")?
+  inspect(
+    m3.debug_tree(),
+    content="(2,two,(1,one,(0,zero,_,_),_),(3,three,_,_))",
+  )?
   let e : Map[Int, Int] = Empty
   inspect(e.remove(1).debug_tree(), content="_")?
 }
