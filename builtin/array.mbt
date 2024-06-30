@@ -234,7 +234,7 @@ pub fn append[T](self : Array[T], other : Array[T]) -> Unit {
 ///
 /// # Example
 /// ```
-/// let v = Array::new(3)
+/// let v = Array::new(capacity=3)
 /// v.push(3)
 /// v.push(4)
 /// v.push(5)
@@ -257,7 +257,7 @@ pub fn each_rev[T](self : Array[T], f : (T) -> Unit) -> Unit {
 ///
 /// # Example
 /// ```
-/// let v = Array::new(3)
+/// let v = Array::new(capacity=3)
 /// v.push(3)
 /// v.push(4)
 /// v.push(5)
@@ -852,7 +852,7 @@ pub fn chunks[T](self : Array[T], size : Int) -> Array[Array[T]] {
 /// ```
 /// let v = [1, 1, 2, 3, 2, 3, 2, 3, 4]
 /// let chunks = v.chunk_by(fn(x, y) { x <= y })
-/// // chunks = [[1, 1, 2, 3], [2, 3], [2, 3], [4]]
+/// // chunks = [[1, 1, 2, 3], [2, 3], [2, 3, 4]]
 /// ```
 pub fn chunk_by[T](self : Array[T], pred : (T, T) -> Bool) -> Array[Array[T]] {
   let chunks = []
@@ -914,7 +914,7 @@ pub fn reserve_capacity[T](self : Array[T], capacity : Int) -> Unit {
 /// # Example
 ///
 /// ```
-/// let v = Array::new(10)
+/// let v = Array::new(capacity=10)
 /// v.push(1)
 /// v.push(2)
 /// v.push(3)
