@@ -68,6 +68,7 @@ test "array_equal" {
   let arr3 = [1, 2, 4]
   @assertion.assert_eq(arr1, arr2)?
   @assertion.assert_ne(arr1, arr3)?
+  inspect([1, 2] == [1, 2, 3], content="false")?
 }
 
 test "array_add" {
@@ -431,6 +432,10 @@ test "chunks_by" {
 test "array_get_out_of_bounds" {
   let arr = [1, 2, 3]
   @assertion.assert_eq(arr.get(3), None)?
+}
+
+test "panic array_op_get" {
+  [1, 2, 3][5] |> ignore
 }
 
 test "panic array_set_out_of_bounds" {
