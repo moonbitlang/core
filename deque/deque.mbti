@@ -1,4 +1,4 @@
-package moonbitlang/core/devec
+package moonbitlang/core/deque
 
 // Values
 

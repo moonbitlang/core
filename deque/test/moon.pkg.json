@@ -4,7 +4,7 @@
     "moonbitlang/core/assertion",
     "moonbitlang/core/coverage",
     "moonbitlang/core/array",
-    "moonbitlang/core/devec"
+    "moonbitlang/core/deque"
   ]
 }
 
