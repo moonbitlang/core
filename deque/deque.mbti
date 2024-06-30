@@ -1,11 +1,10 @@
-package moonbitlang/core/devec
+package moonbitlang/core/deque
 
 // Values
 
 // Types and methods
 type Devec
 impl Devec {
-  as_iter[T](Self[T]) -> Iter[T]
   back[T](Self[T]) -> T?
   capacity[T](Self[T]) -> Int
   clear[T](Self[T]) -> Unit
@@ -17,6 +16,7 @@ impl Devec {
   from_array[T](Array[T]) -> Self[T]
   front[T](Self[T]) -> T?
   is_empty[T](Self[T]) -> Bool
+  iter[T](Self[T]) -> Iter[T]
   length[T](Self[T]) -> Int
   map[T, U](Self[T], (T) -> U) -> Self[U]
   mapi[T, U](Self[T], (Int, T) -> U) -> Self[U]

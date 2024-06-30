@@ -8,7 +8,6 @@ fn singleton[K, V](K, V) -> Map[K, V]
 // Types and methods
 type Map
 impl Map {
-  as_iter[K, V](Self[K, V]) -> Iter[Tuple[K, V]]
   contains[K : Compare + Eq, V](Self[K, V], K) -> Bool
   debug_write[K : Debug, V : Debug](Self[K, V], Buffer) -> Unit
   each[K, V](Self[K, V], (K, V) -> Unit) -> Unit
@@ -22,6 +21,7 @@ impl Map {
   from_array[K : Compare + Eq, V](Array[Tuple[K, V]]) -> Self[K, V]
   insert[K : Compare + Eq, V](Self[K, V], K, V) -> Self[K, V]
   is_empty[K, V](Self[K, V]) -> Bool
+  iter[K, V](Self[K, V]) -> Iter[Tuple[K, V]]
   keys[K, V](Self[K, V]) -> Array[K]
   lookup[K : Compare + Eq, V](Self[K, V], K) -> V?
   map[K, X, Y](Self[K, X], (X) -> Y) -> Self[K, Y]

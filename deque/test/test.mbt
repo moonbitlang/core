@@ -13,7 +13,7 @@
 // limitations under the License.
 
 test "search" {
-  let dv = @devec.of([3, 4, 5])
+  let dv = @deque.of([3, 4, 5])
   @assertion.assert_eq(dv.search(3), Some(0))?
   @assertion.assert_eq(dv.search(4), Some(1))?
   @assertion.assert_eq(dv.search(5), Some(2))?
@@ -21,7 +21,7 @@ test "search" {
 }
 
 test "contains" {
-  let dv = @devec.of([3, 4, 5])
+  let dv = @deque.of([3, 4, 5])
   @assertion.assert_true(dv.contains(3))?
   @assertion.assert_true(dv.contains(4))?
   @assertion.assert_true(dv.contains(5))?
@@ -29,7 +29,7 @@ test "contains" {
 }
 
 test "reserve_capacity" {
-  let dv = @devec.of([1, 2, 3, 4, 5])
+  let dv = @deque.of([1, 2, 3, 4, 5])
   dv.pop_front() |> ignore() // 2, 3, 4, 5
   dv.push_back(1) // 2, 3, 4, 5, 1
   dv.pop_front() |> ignore() // 3, 4, 5, 1
@@ -42,13 +42,13 @@ test "reserve_capacity" {
 }
 
 test "reserve_capacity_2" {
-  let dv = @devec.of([1, 2, 3, 4, 5])
+  let dv = @deque.of([1, 2, 3, 4, 5])
   dv.reserve_capacity(3)
   @assertion.assert_true(dv.capacity() == 5)?
 }
 
 test "shrink_to_fit" {
-  let dv = @devec.of([1, 2, 3, 4, 5])
+  let dv = @deque.of([1, 2, 3, 4, 5])
   dv.pop_front() |> ignore()
   dv.push_back(1)
   dv.pop_front() |> ignore()
@@ -62,15 +62,15 @@ test "shrink_to_fit" {
 }
 
 test "shrink_to_fit_2" {
-  let dv = @devec.of([1, 2, 3])
+  let dv = @deque.of([1, 2, 3])
   @assertion.assert_true(dv.capacity() == 3)?
   dv.shrink_to_fit()
   @assertion.assert_true(dv.capacity() == 3)?
 }
 
-test "as_iter" {
-  let dv = @devec.of([1, 2, 3, 4, 5])
-  let iter = dv.as_iter()
+test "iter" {
+  let dv = @deque.of([1, 2, 3, 4, 5])
+  let iter = dv.iter()
   let buf = Buffer::new(size_hint=0)
   let mut i = 0
   iter.each(
@@ -99,39 +99,39 @@ test "as_iter" {
 
 test "reserve and push" {
   // capacity > 0, len = 0
-  let a = @devec.new(capacity=2)
+  let a = @deque.new(capacity=2)
   a.push_back(Option::Some(1))
   inspect(a.front(), content="Some(Some(1))")?
   inspect(a.back(), content="Some(Some(1))")?
   // capacity = 0, len = 0
-  let b = @devec.new(capacity=0)
+  let b = @deque.new(capacity=0)
   b.push_back(Option::Some(1))
   inspect(b.front(), content="Some(Some(1))")?
   inspect(b.back(), content="Some(Some(1))")?
   // capacity > 0, len = 0
-  let c = @devec.new(capacity=2)
+  let c = @deque.new(capacity=2)
   c.push_front(Option::Some(1))
   inspect(c.front(), content="Some(Some(1))")?
   inspect(c.back(), content="Some(Some(1))")?
   // capacity = 0, len = 0
-  let d = @devec.new(capacity=0)
+  let d = @deque.new(capacity=0)
   d.push_front(Option::Some(1))
   inspect(d.front(), content="Some(Some(1))")?
   inspect(d.back(), content="Some(Some(1))")?
 }
 
 test "mapi" {
-  let dv = @devec.of([3, 4, 5])
+  let dv = @deque.of([3, 4, 5])
   let dvp = dv.mapi(fn(i, x) { x + i })
-  @assertion.assert_eq(dvp[0], 3)?
-  @assertion.assert_eq(dvp[1], 5)?
-  @assertion.assert_eq(dvp[2], 7)?
+  inspect(dvp[0], content="3")?
+  inspect(dvp[1], content="5")?
+  inspect(dvp[2], content="7")?
 }
 
 test "iter_rev" {
   let mut i = 6
   let mut failed = false
-  @devec.of([1, 2, 3, 4, 5]).each_rev(
+  @deque.of([1, 2, 3, 4, 5]).each_rev(
     fn(elem) {
       if elem != i - 1 {
         failed = true
@@ -146,7 +146,7 @@ test "iter_revi" {
   let mut i = 6
   let mut j = 0
   let mut failed = false
-  @devec.of([1, 2, 3, 4, 5]).eachi_rev(
+  @deque.of([1, 2, 3, 4, 5]).eachi_rev(
     fn(index, elem) {
       if index != j || elem != i - 1 {
         failed = true
@@ -161,7 +161,7 @@ test "iter_revi" {
 test "iteri" {
   let mut i = 0
   let mut failed = false
-  @devec.of([1, 2, 3, 4, 5]).eachi(
+  @deque.of([1, 2, 3, 4, 5]).eachi(
     fn(index, elem) {
       if index != i || elem != i + 1 {
         failed = true
@@ -175,7 +175,7 @@ test "iteri" {
 test "iter" {
   let mut i = 0
   let mut failed = false
-  @devec.of([1, 2, 3, 4, 5]).each(
+  @deque.of([1, 2, 3, 4, 5]).each(
     fn(elem) {
       if elem != i + 1 {
         failed = true
@@ -187,24 +187,20 @@ test "iter" {
 }
 
 test "iter2" {
-  let v = @devec.of([1, 2, 3, 4, 5])
+  let v = @deque.of([1, 2, 3, 4, 5])
   v.pop_front_exn()
   v.pop_back_exn()
   let mut sum = 0
   v.each(fn { x => sum += x })
-  @assertion.assert_eq(sum, 9)?
+  inspect(sum, content="9")?
 }
 
 test "op_get" {
-  let dv = @devec.of([1, 2, 3, 4, 5])
-  @assertion.assert_eq(dv[0], 1)?
-  @assertion.assert_eq(dv[1], 2)?
-  @assertion.assert_eq(dv[2], 3)?
-  @assertion.assert_eq(dv[3], 4)?
-  @assertion.assert_eq(dv[4], 5)?
-  let _ = dv.pop_front()
+  let dv = @deque.of([1, 2, 3, 4, 5])
+  inspect([dv[0], dv[1], dv[2], dv[3], dv[4]], content="[1, 2, 3, 4, 5]")?
+  dv.pop_front() |> ignore
   dv.push_back(1)
-  @assertion.assert_eq(dv[4], 1)?
+  inspect(dv[4], content="1")?
   dv.push_front(2)
-  @assertion.assert_eq(dv[0], 2)?
+  inspect(dv[0], content="2")?
 }

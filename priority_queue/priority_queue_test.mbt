@@ -54,13 +54,13 @@ test "to_array" {
   inspect(v.to_array(), content="[9, 6, 4, 3, 2, 1, 1]")?
 }
 
-test "as_iter" {
+test "iter" {
   let buf = Buffer::new(size_hint=20)
   let v = of([1, 2, 3])
-  v.as_iter().each(fn(e) { buf.write_string("[\(e)]") })
+  v.iter().each(fn(e) { buf.write_string("[\(e)]") })
   inspect(buf, content="[3][2][1]")?
   buf.reset()
-  v.as_iter().take(2).each(fn(e) { buf.write_string("[\(e)]") })
+  v.iter().take(2).each(fn(e) { buf.write_string("[\(e)]") })
   inspect(buf, content="[3][2]")?
 }
 

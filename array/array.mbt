@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-pub fn as_iter[T](self : Array[T]) -> Iter[T] {
+pub fn iter[T](self : Array[T]) -> Iter[T] {
   Iter::_unstable_internal_make(
     fn(yield) {
       for i = 0, len = self.length(); i < len; i = i + 1 {

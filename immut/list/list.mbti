@@ -15,7 +15,6 @@ pub enum List {
 impl List {
   all[T](Self[T], (T) -> Bool) -> Bool
   any[T](Self[T], (T) -> Bool) -> Bool
-  as_iter[T](Self[T]) -> Iter[T]
   concat[T](Self[T], Self[T]) -> Self[T]
   concat_map[T, U](Self[T], (T) -> Self[U]) -> Self[U]
   contains[T : Eq](Self[T], T) -> Bool
@@ -43,6 +42,7 @@ impl List {
   is_empty[T](Self[T]) -> Bool
   is_prefix[T : Eq](Self[T], Self[T]) -> Bool
   is_suffix[T : Eq](Self[T], Self[T]) -> Bool
+  iter[T](Self[T]) -> Iter[T]
   last[T](Self[T]) -> T
   length[T](Self[T]) -> Int
   lookup[T : Eq, E](Self[Tuple[T, E]], T) -> E?

@@ -84,7 +84,7 @@ pub fn to_array[T : Compare](self : PriorityQueue[T]) -> Array[T] {
   arr
 }
 
-pub fn as_iter[T : Compare](self : PriorityQueue[T]) -> Iter[T] {
+pub fn iter[T : Compare](self : PriorityQueue[T]) -> Iter[T] {
   Iter::_unstable_internal_make(
     fn(yield) {
       let arr = self.to_array()

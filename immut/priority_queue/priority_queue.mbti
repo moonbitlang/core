@@ -5,9 +5,9 @@ package moonbitlang/core/immut/priority_queue
 // Types and methods
 type ImmutablePriorityQueue
 impl ImmutablePriorityQueue {
-  as_iter[T : Compare + Eq](Self[T]) -> Iter[T]
   from_array[T : Compare + Eq](Array[T]) -> Self[T]
   is_empty[T](Self[T]) -> Bool
+  iter[T : Compare + Eq](Self[T]) -> Iter[T]
   length[T](Self[T]) -> Int
   new[T : Compare + Eq]() -> Self[T]
   of[T : Compare + Eq](FixedArray[T]) -> Self[T]

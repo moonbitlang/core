@@ -5,7 +5,6 @@ package moonbitlang/core/hashset
 // Types and methods
 type HashSet
 impl HashSet {
-  as_iter[K](Self[K]) -> Iter[K]
   capacity[K](Self[K]) -> Int
   clear[K](Self[K]) -> Unit
   contains[K : Hash + Eq](Self[K], K) -> Bool
@@ -16,6 +15,7 @@ impl HashSet {
   insert[K : Hash + Eq](Self[K], K) -> Unit
   intersection[K : Hash + Eq](Self[K], Self[K]) -> Self[K]
   is_empty[K](Self[K]) -> Bool
+  iter[K](Self[K]) -> Iter[K]
   new[K]() -> Self[K]
   of[K : Hash + Eq](FixedArray[K]) -> Self[K]
   remove[K : Hash + Eq](Self[K], K) -> Unit

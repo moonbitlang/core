@@ -327,17 +327,17 @@ pub fn Option::default[X]() -> X? {
   None
 }
 
-pub fn as_iter[T](self : T?) -> Iter[T] {
+pub fn iter[T](self : T?) -> Iter[T] {
   match self {
     Some(v) => Iter::singleton(v)
     None => Iter::empty()
   }
 }
 
-test "as_iter" {
+test "iter" {
   let x = Option::Some(42)
   let exb = Buffer::new(size_hint=0)
-  x.as_iter().each(
+  x.iter().each(
     fn(x) {
       exb.write_string(x.to_string())
       exb.write_char('\n')
@@ -351,7 +351,7 @@ test "as_iter" {
   )?
   exb.reset()
   let y : Int? = None
-  y.as_iter().each(
+  y.iter().each(
     fn(x) {
       exb.write_string(x.to_string())
       exb.write_char('\n')

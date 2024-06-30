@@ -202,13 +202,12 @@ pub fn each[K, V](self : Map[K, V], f : (K, V) -> Unit) -> Unit {
 }
 
 /// Converted to Iter
-pub fn as_iter[K, V](self : Map[K, V]) -> Iter[(K, V)] {
+pub fn iter[K, V](self : Map[K, V]) -> Iter[(K, V)] {
   match self {
     Empty => Iter::empty()
     Leaf(k, v) => Iter::singleton((k, v))
-    Collision(bucket) => bucket.as_iter()
-    Branch(children) =>
-      children.data.as_iter().flat_map(fn { map => map.as_iter() })
+    Collision(bucket) => bucket.iter()
+    Branch(children) => children.data.iter().flat_map(fn { map => map.iter() })
   }
 }
 

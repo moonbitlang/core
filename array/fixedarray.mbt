@@ -897,7 +897,7 @@ test "op_add" {
 }
 
 /// @intrinsic %iter.from_array
-pub fn as_iter[T](self : FixedArray[T]) -> Iter[T] {
+pub fn iter[T](self : FixedArray[T]) -> Iter[T] {
   Iter::_unstable_internal_make(
     fn(yield) {
       for i = 0, len = self.length(); i < len; i = i + 1 {
@@ -911,9 +911,9 @@ pub fn as_iter[T](self : FixedArray[T]) -> Iter[T] {
   )
 }
 
-test "as_iter" {
+test "iter" {
   let arr : FixedArray[_] = [1, 2, 3, 4, 5]
-  let iter = arr.as_iter()
+  let iter = arr.iter()
   let exb = Buffer::new()
   let mut i = 0
   iter.each(

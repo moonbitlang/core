@@ -431,7 +431,7 @@ test "default" {
   inspect(ls, content="List::[]")?
 }
 
-test "as_iter" {
+test "iter" {
   let ls = of([1, 2, 3, 4, 5])
   inspect(
     ls.as_iter().map(fn(x) { x + 1 }).fold(fn(a, b) { a + b }, 0),
