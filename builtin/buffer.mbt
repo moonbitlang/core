@@ -75,6 +75,11 @@ pub fn grow_if_necessary(self : Buffer, required : Int) -> Unit {
   }
 }
 
+/// Returns the total number of bytes the Buffer can hold without reallocating.
+pub fn capacity(self : Buffer) -> Int {
+  self.bytes.length()
+}
+
 /// Return a new String contains the data in buffer.
 pub fn to_string(self : Buffer) -> String {
   self.bytes.sub_string(0, self.len)

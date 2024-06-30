@@ -125,3 +125,8 @@ test "to_bytes method" {
   let bytes = buf.to_bytes()
   @assertion.assert_eq(bytes.length(), 8)? // Each character in "Test" is 2 bytes
 }
+
+test "buffer_capacity" {
+  let buf = Buffer::make(10)
+  @assertion.assert_true(buf.capacity() >= 10)?
+}

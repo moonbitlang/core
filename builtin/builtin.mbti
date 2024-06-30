@@ -109,6 +109,7 @@ impl ArrayView {
 
 type Buffer
 impl Buffer {
+  capacity(Self) -> Int
   expect(Self, ~content : String = .., ~loc : SourceLoc = _, ~args_loc : ArgsLoc = _) -> Result[Unit, String]
   grow_if_necessary(Self, Int) -> Unit
   make(Int) -> Self
