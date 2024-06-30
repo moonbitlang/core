@@ -143,7 +143,7 @@ test "pop_exn" {
   @assertion.assert_eq(queue.length, 0)?
 }
 
-test "panic pop_exn"{
+test "panic pop_exn" {
   Queue::[].pop_exn()
 }
 
