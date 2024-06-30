@@ -75,7 +75,7 @@ test "to_array" {
   inspect(v.push(0).to_array().to_string(), content="[4, 3, 2, 1, 0]")?
 }
 
-pub fn as_iter[T : Compare](self : ImmutablePriorityQueue[T]) -> Iter[T] {
+pub fn iter[T : Compare](self : ImmutablePriorityQueue[T]) -> Iter[T] {
   Iter::_unstable_internal_make(
     fn(yield) {
       let arr = self.to_array()
@@ -90,13 +90,13 @@ pub fn as_iter[T : Compare](self : ImmutablePriorityQueue[T]) -> Iter[T] {
   )
 }
 
-test "as_iter" {
+test "iter" {
   let buf = Buffer::new(size_hint=20)
   let v = of([1, 2, 3])
-  v.as_iter().each(fn(e) { buf.write_string("[\(e)]") })
+  v.iter().each(fn(e) { buf.write_string("[\(e)]") })
   inspect(buf, content="[3][2][1]")?
   buf.reset()
-  v.as_iter().take(2).each(fn(e) { buf.write_string("[\(e)]") })
+  v.iter().take(2).each(fn(e) { buf.write_string("[\(e)]") })
   inspect(buf, content="[3][2]")?
 }
 

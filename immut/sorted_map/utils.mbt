@@ -209,7 +209,7 @@ pub fn Map::from_array[K : Compare, V](array : Array[(K, V)]) -> Map[K, V] {
   }
 }
 
-pub fn as_iter[K, V](self : Map[K, V]) -> Iter[(K, V)] {
+pub fn iter[K, V](self : Map[K, V]) -> Iter[(K, V)] {
   Iter::_unstable_internal_make(
     fn(yield) {
       let arr = self.to_array()
@@ -226,12 +226,12 @@ pub fn as_iter[K, V](self : Map[K, V]) -> Iter[(K, V)] {
 
 /// Return all keys of the map in ascending order.
 pub fn keys[K, V](self : Map[K, V]) -> Array[K] {
-  self.as_iter().map(fn { (k, _) => k }).collect()
+  self.iter().map(fn { (k, _) => k }).collect()
 }
 
 /// Return all elements of the map in the ascending order of their keys.
 pub fn elems[K, V](self : Map[K, V]) -> Array[V] {
-  self.as_iter().map(fn { (_, v) => v }).collect()
+  self.iter().map(fn { (_, v) => v }).collect()
 }
 
 pub fn Map::of[K : Compare, V](array : FixedArray[(K, V)]) -> Map[K, V] {

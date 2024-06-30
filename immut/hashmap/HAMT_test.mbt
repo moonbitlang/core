@@ -60,10 +60,10 @@ test "HAMT::remove" {
   }
 }
 
-test "HAMT::as_iter" {
+test "HAMT::iter" {
   let data = of([(0, "a"), (2, "b"), (3, "d"), (5, "e"), (11111, "f")])
   let mut s = ""
-  data.as_iter().each(fn { (k, v) => s += " \(k),\(v)" })
+  data.iter().each(fn { (k, v) => s += " \(k),\(v)" })
   inspect(s, content=" 0,a 5,e 3,d 11111,f 2,b")?
 }
 

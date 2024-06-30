@@ -212,13 +212,13 @@ test "symmetric_difference" {
   @assertion.assert_true(m.contains("d"))?
 }
 
-test "as_iter" {
+test "iter" {
   let buf = Buffer::new(size_hint=20)
   let map = of(["a", "b", "c"])
-  map.as_iter().each(fn(e) { buf.write_string("[\(e)]") })
+  map.iter().each(fn(e) { buf.write_string("[\(e)]") })
   inspect(buf, content="[a][b][c]")?
   buf.reset()
-  map.as_iter().take(2).each(fn(e) { buf.write_string("[\(e)]") })
+  map.iter().take(2).each(fn(e) { buf.write_string("[\(e)]") })
   inspect(buf, content="[a][b]")?
 }
 

@@ -8,7 +8,6 @@ impl ImmutableSet {
   add[T : Compare + Eq](Self[T], T) -> Self[T]
   all[T : Compare + Eq](Self[T], (T) -> Bool) -> Bool
   any[T : Compare + Eq](Self[T], (T) -> Bool) -> Bool
-  as_iter[T](Self[T]) -> Iter[T]
   contains[T : Compare + Eq](Self[T], T) -> Bool
   debug_write[T : Debug](Self[T], Buffer) -> Unit
   default[T : Default]() -> Self[T]
@@ -20,6 +19,7 @@ impl ImmutableSet {
   from_array[T : Compare + Eq](Array[T]) -> Self[T]
   inter[T : Compare + Eq](Self[T], Self[T]) -> Self[T]
   is_empty[T : Compare + Eq](Self[T]) -> Bool
+  iter[T](Self[T]) -> Iter[T]
   map[T : Compare + Eq, U : Compare + Eq](Self[T], (T) -> U) -> Self[U]
   max[T : Compare + Eq](Self[T]) -> T
   max_option[T : Compare + Eq](Self[T]) -> T?

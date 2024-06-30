@@ -200,13 +200,12 @@ pub fn each[T](self : Set[T], f : (T) -> Unit) -> Unit {
 }
 
 /// Converted to Iter
-pub fn as_iter[T](self : Set[T]) -> Iter[T] {
+pub fn iter[T](self : Set[T]) -> Iter[T] {
   match self {
     Empty => Iter::empty()
     Leaf(k) => Iter::singleton(k)
-    Collision(bucket) => bucket.as_iter()
-    Branch(children) =>
-      children.data.as_iter().flat_map(fn { set => set.as_iter() })
+    Collision(bucket) => bucket.iter()
+    Branch(children) => children.data.iter().flat_map(fn { set => set.iter() })
   }
 }
 

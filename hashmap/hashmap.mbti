@@ -5,7 +5,6 @@ package moonbitlang/core/hashmap
 // Types and methods
 type HashMap
 impl HashMap {
-  as_iter[K, V](Self[K, V]) -> Iter[Tuple[K, V]]
   capacity[K, V](Self[K, V]) -> Int
   clear[K, V](Self[K, V]) -> Unit
   contains[K : Hash + Eq, V](Self[K, V], K) -> Bool
@@ -15,6 +14,7 @@ impl HashMap {
   get[K : Hash + Eq, V](Self[K, V], K) -> V?
   get_or_default[K : Hash + Eq, V](Self[K, V], K, V) -> V
   is_empty[K, V](Self[K, V]) -> Bool
+  iter[K, V](Self[K, V]) -> Iter[Tuple[K, V]]
   new[K, V](~capacity : Int = ..) -> Self[K, V]
   of[K : Eq + Hash, V](FixedArray[Tuple[K, V]]) -> Self[K, V]
   op_get[K : Hash + Eq, V](Self[K, V], K) -> V?

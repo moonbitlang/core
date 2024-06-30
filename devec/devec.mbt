@@ -620,7 +620,7 @@ pub fn shrink_to_fit[T](self : Devec[T]) -> Unit {
   }
 }
 
-pub fn as_iter[T](self : Devec[T]) -> Iter[T] {
+pub fn iter[T](self : Devec[T]) -> Iter[T] {
   Iter::_unstable_internal_make(
     fn(yield) {
       for i = 0, len = self.length(); i < len; i = i + 1 {

@@ -142,7 +142,7 @@ test "filter_with_key" {
 test "to_array" {
   let m = of([(1, "one"), (2, "two"), (3, "three")])
   @assertion.assert_eq(
-    m.as_iter().collect(),
+    m.iter().collect(),
     [(1, "one"), (2, "two"), (3, "three")],
   )?
 }
@@ -244,10 +244,10 @@ test "debug_write" {
   )?
 }
 
-test "as_iter" {
+test "iter" {
   let buf = Buffer::new(size_hint=20)
   let map = of([(1, "one"), (2, "two"), (3, "three")])
-  map.as_iter().each(
+  map.iter().each(
     fn(e) {
       let (k, v) = e
       buf.write_string("[\(k)-\(v)]")
@@ -255,7 +255,7 @@ test "as_iter" {
   )
   inspect(buf, content="[1-one][2-two][3-three]")?
   buf.reset()
-  map.as_iter().take(2).each(
+  map.iter().take(2).each(
     fn(e) {
       let (k, v) = e
       buf.write_string("[\(k)-\(v)]")
