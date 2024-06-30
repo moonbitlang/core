@@ -112,11 +112,15 @@ test "to_array" {
   )?
 }
 
-test "from_array" {
+test "from_fixed_array" {
   inspect(
     of([7, 2, 9, 4, 5, 6, 3, 8, 1]),
     content="ImmutableSet::[1, 2, 3, 4, 5, 6, 7, 8, 9]",
   )?
+}
+
+test "from_array" {
+  inspect(ImmutableSet::[7, 2, 9, 4, 5, 6, 3, 8, 1], content="ImmutableSet::[1, 2, 3, 4, 5, 6, 7, 8, 9]")?
 }
 
 test "remove_min" {
