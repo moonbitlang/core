@@ -68,9 +68,9 @@ test "shrink_to_fit_2" {
   @assertion.assert_true(dv.capacity() == 3)?
 }
 
-test "as_iter" {
+test "iter" {
   let dv = @devec.of([1, 2, 3, 4, 5])
-  let iter = dv.as_iter()
+  let iter = dv.iter()
   let buf = Buffer::new(size_hint=0)
   let mut i = 0
   iter.each(

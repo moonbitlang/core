@@ -4,12 +4,12 @@ package moonbitlang/core/string
 
 // Types and methods
 impl String {
-  as_iter(String) -> Iter[Char]
   compare(String, String) -> Int
   default() -> String
   ends_with(String, String) -> Bool
   hash(String) -> Int
   index_of(String, String) -> Int
+  iter(String) -> Iter[Char]
   starts_with(String, String) -> Bool
   substring(String, ~start : Int = .., ~end : Int = ..) -> String
   to_array(String) -> Array[Char]

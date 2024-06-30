@@ -6,11 +6,11 @@ package moonbitlang/core/immut/hashmap
 type Map
 impl Map {
   add[K : Eq + Hash, V](Self[K, V], K, V) -> Self[K, V]
-  as_iter[K, V](Self[K, V]) -> Iter[Tuple[K, V]]
   debug_write[K : Debug, V : Debug](Self[K, V], Buffer) -> Unit
   each[K, V](Self[K, V], (K, V) -> Unit) -> Unit
   find[K : Eq + Hash, V](Self[K, V], K) -> V?
   from_array[K : Eq + Hash, V](Array[Tuple[K, V]]) -> Self[K, V]
+  iter[K, V](Self[K, V]) -> Iter[Tuple[K, V]]
   new[K, V]() -> Self[K, V]
   of[K : Eq + Hash, V](FixedArray[Tuple[K, V]]) -> Self[K, V]
   op_get[K : Eq + Hash, V](Self[K, V], K) -> V?

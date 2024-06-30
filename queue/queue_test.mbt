@@ -184,7 +184,7 @@ test "length" {
   inspect(of([1, 2, 3]).length(), content="3")?
 }
 
-test "as_iter" {
+test "iter" {
   let q = of([1, 2, 3, 4, 5])
-  inspect(q.as_iter().fold(fn(x, y) { x + y }, 0), content="15")?
+  inspect(q.iter().fold(fn(x, y) { x + y }, 0), content="15")?
 }

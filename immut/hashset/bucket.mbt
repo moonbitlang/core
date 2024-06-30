@@ -76,7 +76,7 @@ fn each[T](self : Bucket[T], f : (T) -> Unit) -> Unit {
   }
 }
 
-fn as_iter[T](self : Bucket[T]) -> Iter[T] {
+fn iter[T](self : Bucket[T]) -> Iter[T] {
   Iter::_unstable_internal_make(
     fn {
       f =>

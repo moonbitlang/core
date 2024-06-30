@@ -825,7 +825,7 @@ pub fn List::default[X]() -> List[X] {
   Nil
 }
 
-pub fn as_iter[T](self : List[T]) -> Iter[T] {
+pub fn iter[T](self : List[T]) -> Iter[T] {
   Iter::_unstable_internal_make(
     fn(yield) {
       loop self {

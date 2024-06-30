@@ -11,13 +11,13 @@ fn when[T](Bool, () -> T) -> T?
 
 // Types and methods
 impl Option {
-  as_iter[T](T?) -> Iter[T]
   bind[T, U](T?, (T) -> U?) -> U?
   compare[X : Compare + Eq](X?, X?) -> Int
   default[X]() -> X?
   filter[T](T?, (T) -> Bool) -> T?
   flatten[T](T??) -> T?
   is_empty[T](T?) -> Bool
+  iter[T](T?) -> Iter[T]
   map[T, U](T?, (T) -> U) -> U?
   map_or[T, U](T?, U, (T) -> U) -> U
   map_or_else[T, U](T?, () -> U, (T) -> U) -> U

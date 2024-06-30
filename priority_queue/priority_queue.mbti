@@ -5,11 +5,11 @@ package moonbitlang/core/priority_queue
 // Types and methods
 type PriorityQueue
 impl PriorityQueue {
-  as_iter[T : Compare + Eq](Self[T]) -> Iter[T]
   clear[T](Self[T]) -> Unit
   copy[T](Self[T]) -> Self[T]
   from_array[T : Compare + Eq](Array[T]) -> Self[T]
   is_empty[T](Self[T]) -> Bool
+  iter[T : Compare + Eq](Self[T]) -> Iter[T]
   length[T](Self[T]) -> Int
   new[T : Compare + Eq]() -> Self[T]
   of[T : Compare + Eq](FixedArray[T]) -> Self[T]

@@ -305,7 +305,7 @@ pub fn transfer[T](self : Queue[T], dst : Queue[T]) -> Unit {
   }
 }
 
-pub fn as_iter[T](self : Queue[T]) -> Iter[T] {
+pub fn iter[T](self : Queue[T]) -> Iter[T] {
   Iter::_unstable_internal_make(
     fn(yield) {
       loop self.first {

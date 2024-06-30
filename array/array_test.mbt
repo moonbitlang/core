@@ -409,12 +409,12 @@ test "shrink_to_fit_2" {
   v.shrink_to_fit()
 }
 
-test "as_iter" {
+test "iter" {
   let buf = Buffer::new(size_hint=5)
-  [1, 2, 3, 4, 5].as_iter().each(fn { x => buf.write_string(x.to_string()) })
+  [1, 2, 3, 4, 5].iter().each(fn { x => buf.write_string(x.to_string()) })
   inspect(buf, content="12345")?
   buf.reset()
-  [1, 2, 3, 4, 5].as_iter().take(2).each(
+  [1, 2, 3, 4, 5].iter().take(2).each(
     fn { x => buf.write_string(x.to_string()) },
   )
   inspect(buf, content="12")?

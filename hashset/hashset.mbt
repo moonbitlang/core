@@ -204,7 +204,7 @@ pub fn symmetric_difference[K : Hash + Eq](
   m
 }
 
-pub fn as_iter[K](self : HashSet[K]) -> Iter[K] {
+pub fn iter[K](self : HashSet[K]) -> Iter[K] {
   Iter::_unstable_internal_make(
     fn(yield) {
       for i = 0, len = self.entries.length(); i < len; i = i + 1 {
@@ -295,7 +295,7 @@ fn debug_entries[K : Show](self : HashSet[K]) -> String {
 
 pub fn to_string[K : Show](self : HashSet[K]) -> String {
   let mut s = "@hashset.of("
-  s += self.as_iter().collect().to_string()
+  s += self.iter().collect().to_string()
   s += ")"
   s
 }

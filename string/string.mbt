@@ -95,7 +95,7 @@ test "Buffer::to_bytes" {
 
 /// Converts the String into an array of Chars.
 pub fn to_array(self : String) -> Array[Char] {
-  self.as_iter().fold(
+  self.iter().fold(
     fn(rv, c) {
       rv.push(c)
       rv
@@ -153,7 +153,7 @@ test "substring" {
   @assertion.assert_eq("abc".substring(start=1, end=2), "b")?
 }
 
-pub fn as_iter(self : String) -> Iter[Char] {
+pub fn iter(self : String) -> Iter[Char] {
   Iter::_unstable_internal_make(
     fn(yield) {
       let len = self.length()
@@ -183,7 +183,7 @@ pub fn as_iter(self : String) -> Iter[Char] {
 
 test "chars" {
   let mut str = ""
-  "A😊𠮷BA😊𠮷B".as_iter().each(
+  "A😊𠮷BA😊𠮷B".iter().each(
     fn(c) { str = str + c.to_int().to_string() + "\n" },
   )
   inspect(

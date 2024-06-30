@@ -46,11 +46,11 @@ test "Bucket::iter" {
   inspect(buf.to_string(), content="0, 1, 31")?
 }
 
-test "Bucket::as_iter" {
+test "Bucket::iter" {
   let b : Bucket[_] = More(0, More(1, Just_One(31)))
   let buf = Buffer::new(size_hint=0)
   let mut is_first = true
-  b.as_iter().each(
+  b.iter().each(
     fn {
       k => {
         // weird syntax conventions that
@@ -126,13 +126,13 @@ test "Bucket iter" {
   inspect(buf, content="1, 2, 0")?
 }
 
-test "Bucket as_iter" {
+test "Bucket iter" {
   let b0 : Bucket[_] = Just_One(0)
   let b1 = b0.add(1)
   let b2 = b1.add(2)
   let buf = Buffer::new(size_hint=0)
   let mut is_first = true
-  b2.as_iter().each(
+  b2.iter().each(
     fn {
       k => {
         if is_first {

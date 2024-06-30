@@ -16,17 +16,17 @@
 // The types stored in set need to implement the Compare trait.
 // All operations over sets are purely applicative (no side-effects).
 
-pub fn as_iter[T](self : ImmutableSet[T]) -> Iter[T] {
+pub fn iter[T](self : ImmutableSet[T]) -> Iter[T] {
   match self {
     Empty => Iter::empty()
     Node(~left, ~right, ~value, ..) =>
-      left.as_iter().append(value).concat(right.as_iter())
+      left.iter().append(value).concat(right.iter())
   }
 }
 
 test {
   let buf = Buffer::new(size_hint=20)
-  of([2, 7, 1, 2, 3, 4, 5]).as_iter().each(
+  of([2, 7, 1, 2, 3, 4, 5]).iter().each(
     fn { x => buf.write_string(x.to_string()) },
   )
   inspect(buf, content="123457")?

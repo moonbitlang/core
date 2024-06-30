@@ -164,7 +164,6 @@ impl Js_string {
 
 type Map
 impl Map {
-  as_iter[K, V](Self[K, V]) -> Iter[Tuple[K, V]]
   capacity[K, V](Self[K, V]) -> Int
   clear[K, V](Self[K, V]) -> Unit
   contains[K : Hash + Eq, V](Self[K, V], K) -> Bool
@@ -176,6 +175,7 @@ impl Map {
   get_or_default[K : Hash + Eq, V](Self[K, V], K, V) -> V
   get_or_init[K : Hash + Eq, V](Self[K, V], K, () -> V) -> V
   is_empty[K, V](Self[K, V]) -> Bool
+  iter[K, V](Self[K, V]) -> Iter[Tuple[K, V]]
   new[K, V](~capacity : Int = ..) -> Self[K, V]
   of[K : Hash + Eq, V](FixedArray[Tuple[K, V]]) -> Self[K, V]
   op_equal[K : Eq, V : Eq](Self[K, V], Self[K, V]) -> Bool
