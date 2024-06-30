@@ -298,7 +298,6 @@ test "parse muti-lines json" {
   inspect(result, content="Ok(Object({a:Number(2.0), b:Number(3.0)}))")?
 }
 
-
 test "parse muti-lines json error" {
   let result = parse(
     #|{
