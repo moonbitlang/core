@@ -126,6 +126,8 @@ test "mapi" {
   inspect(dvp[0], content="3")?
   inspect(dvp[1], content="5")?
   inspect(dvp[2], content="7")?
+  let dve = @deque.of(([] : FixedArray[Int]))
+  inspect(dve.mapi(fn(_idx, x) { x }), content="Deque::[]")?
 }
 
 test "iter_rev" {
@@ -197,10 +199,107 @@ test "iter2" {
 
 test "op_get" {
   let dv = @deque.of([1, 2, 3, 4, 5])
-  inspect([dv[0], dv[1], dv[2], dv[3], dv[4]], content="[1, 2, 3, 4, 5]")?
+  inspect(dv, content="Deque::[1, 2, 3, 4, 5]")?
   dv.pop_front() |> ignore
   dv.push_back(1)
   inspect(dv[4], content="1")?
   dv.push_front(2)
   inspect(dv[0], content="2")?
+}
+
+test "from_array" {
+  inspect(@deque.from_array(([] : Array[Int])), content="Deque::[]")?
+  inspect(@deque.Deque::[1, 2, 3], content="Deque::[1, 2, 3]")?
+}
+
+test "panic pop_front_exn" {
+  @deque.from_array(([] : Array[Int])).pop_front_exn()
+}
+
+test "panic pop_back_exn" {
+  @deque.from_array(([] : Array[Int])).pop_back_exn()
+}
+
+//Don't format heer!!! See Issue #632
+test "panic op_get" {
+  @deque.Deque::[1, 2, 3][-1] |> ignore
+}
+
+test "panic op_set" {
+  @deque.Deque::[1, 2, 3][-1] = 1
+}
+
+test "op_set" {
+  let dv = @deque.of([1, 2, 3, 4, 5])
+  dv[1] = 3
+  @assertion.assert_eq(dv[1], 3)?
+}
+
+test "op_equal" {
+  let dv1 = @deque.of([1, 2, 3])
+  let dv2 = @deque.of([1, 2, 3])
+  @assertion.assert_true(dv1 == dv2)?
+  let dv1 = @deque.of([1, 2, 3])
+  let dv2 = @deque.of([1, 2, 3])
+  dv2[0] = 2
+  @assertion.assert_false(dv1 == dv2)?
+  let dv1 = @deque.of([1, 2, 3])
+  let dv2 = @deque.of([1, 2, 3])
+  dv2.push_front(1)
+  @assertion.assert_false(dv1 == dv2)?
+}
+
+test "clear" {
+  let dv = @deque.of([3, 4, 5])
+  dv.clear()
+  @assertion.assert_eq(dv.length(), 0)?
+  @assertion.assert_eq(dv.capacity(), 3)?
+}
+
+test "map" {
+  let dv = @deque.of([3, 4, 5])
+  let dvp = dv.map(fn(x) { x + 1 })
+  @assertion.assert_eq(dvp[0], 4)?
+  @assertion.assert_eq(dvp[1], 5)?
+  @assertion.assert_eq(dvp[2], 6)?
+  let dve = @deque.of(([] : FixedArray[Int]))
+  inspect(dve.map(fn(x) { x }), content="Deque::[]")?
+}
+
+test "push_and_pop" {
+  let dv = @deque.of([1, 2, 3, 4, 5])
+  @assertion.assert_eq(dv.pop_back(), Some(5))?
+  @assertion.assert_eq(dv.length(), 4)?
+  @assertion.assert_eq(dv.back(), Some(4))?
+  @assertion.assert_eq(dv.pop_front(), Some(1))?
+  @assertion.assert_eq(dv.length(), 3)?
+  @assertion.assert_eq(dv.front(), Some(2))?
+  dv.push_front(5)
+  dv.push_front(6)
+  dv.push_back(7)
+  dv.push_back(8)
+  @assertion.assert_eq(dv.length(), 7)?
+  @assertion.assert_eq(dv.pop_front(), Some(6))?
+  @assertion.assert_eq(dv.front(), Some(5))?
+  @assertion.assert_eq(dv.length(), 6)?
+  @assertion.assert_eq(dv.pop_back(), Some(8))?
+  @assertion.assert_eq(dv.back(), Some(7))?
+  let dv = @deque.of([1])
+  @assertion.assert_eq(dv.pop_front(), Some(1))?
+  @assertion.assert_eq(dv.pop_front(), None)?
+  @assertion.assert_eq(dv.pop_back(), None)?
+}
+
+test "is_empty" {
+  let dv = @deque.Deque::new()
+  @assertion.assert_true(dv.is_empty())?
+  dv.push_back(3)
+  @assertion.assert_false(dv.is_empty())?
+}
+
+test "of" {
+  let d = @deque.Deque::of([1, 2, 3])
+  @assertion.assert_eq(d[0], 1)?
+  @assertion.assert_eq(d[1], 2)?
+  @assertion.assert_eq(d[2], 3)?
 }
