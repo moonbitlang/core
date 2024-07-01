@@ -245,7 +245,7 @@ test "op_equal" {
   let dv1 = @deque.of([1, 2, 3])
   let dv2 = @deque.of([1, 2, 3])
   dv2.push_front(1)
-   @test.is_false(dv1 == dv2)!
+  @test.is_false(dv1 == dv2)!
 }
 
 test "clear" {
@@ -258,7 +258,7 @@ test "clear" {
 test "map" {
   let dv = @deque.of([3, 4, 5])
   let dvp = dv.map(fn(x) { x + 1 })
- @test.eq(dvp[0], 4)!
+  @test.eq(dvp[0], 4)!
   @test.eq(dvp[1], 5)!
   @test.eq(dvp[2], 6)!
   let dve = @deque.of(([] : FixedArray[Int]))
