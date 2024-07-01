@@ -81,7 +81,7 @@ pub fn to_string(self : Buffer) -> String {
 }
 
 /// Create a buffer with initial capacity. 
-/// This function is deprecated, use `Buffer::new` instead.
+/// @alert deprecate "Use `Buffer::new` instead."
 pub fn Buffer::make(initial_capacity : Int) -> Buffer {
   Buffer::new(size_hint=initial_capacity)
 }
