@@ -45,26 +45,26 @@ test "from_fixed_array_3" {
 test "from_array_1" {
   let queue : Queue[Int] = Queue::[1, 2, 3, 4]
   let queue2 : Queue[Int] = Queue::[1]
-  @assertion.assert_eq(queue.length, 4)?
-  @assertion.assert_eq(queue.pop_exn(), 1)?
-  @assertion.assert_eq(queue.pop_exn(), 2)?
-  @assertion.assert_eq(queue.pop_exn(), 3)?
-  @assertion.assert_eq(queue.pop_exn(), 4)?
-  @assertion.assert_eq(queue2.pop_exn(), 1)?
-  @assertion.assert_eq(queue2.length, 0)?
+  @test.eq(queue.length, 4)!
+  @test.eq(queue.pop_exn(), 1)!
+  @test.eq(queue.pop_exn(), 2)!
+  @test.eq(queue.pop_exn(), 3)!
+  @test.eq(queue.pop_exn(), 4)!
+  @test.eq(queue2.pop_exn(), 1)!
+  @test.eq(queue2.length, 0)!
 }
 
 test "from_array_2" {
   let q = Queue::[1, 2, 3, 4]
   q.push(11)
-  @assertion.assert_eq(q, Queue::[1, 2, 3, 4, 11])?
+  @test.eq(q, Queue::[1, 2, 3, 4, 11])!
   q.pop_exn() |> ignore
-  @assertion.assert_eq(q, Queue::[2, 3, 4, 11])?
+  @test.eq(q, Queue::[2, 3, 4, 11])!
 }
 
 test "from_array_3" {
   let q : Queue[Int] = Queue::[]
-  inspect(q, content="Queue::[]")?
+  inspect(q, content="Queue::[]")!
 }
 
 test "to_string" {

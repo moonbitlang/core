@@ -297,7 +297,7 @@ test "parse muti-lines json" {
     #|}
     ,
   )
-  inspect(result, content="Ok(Object({a:Number(2.0), b:Number(3.0)}))")?
+  inspect(result, content="Ok(Object({a:Number(2.0), b:Number(3.0)}))")!
 }
 
 test "parse muti-lines json error" {
@@ -308,5 +308,5 @@ test "parse muti-lines json error" {
     #|}
     ,
   )
-  inspect(result, content="Err(Invalid character 'a' at line 3, column 6)")?
+  inspect(result, content="Err(Invalid character 'a' at line 3, column 6)")!
 }

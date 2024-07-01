@@ -13,24 +13,24 @@
 // limitations under the License.
 
 test "default" {
-  inspect(default())?
+  inspect(default())!
 }
 
 test "compare" {
-  @assertion.assert_eq(0, "".compare(""))?
-  @assertion.assert_eq(-1, "".compare("abc"))?
-  @assertion.assert_eq(1, "abc".compare(""))?
-  @assertion.assert_eq(-1, "abcd".compare("abce"))?
-  @assertion.assert_eq(1, "abce".compare("abcd"))?
-  @assertion.assert_eq(-1, "c".compare("ab"))?
-  @assertion.assert_eq(1, "ab".compare("c"))?
+  @test.eq(0, "".compare(""))!
+  @test.eq(-1, "".compare("abc"))!
+  @test.eq(1, "abc".compare(""))!
+  @test.eq(-1, "abcd".compare("abce"))!
+  @test.eq(1, "abce".compare("abcd"))!
+  @test.eq(-1, "c".compare("ab"))!
+  @test.eq(1, "ab".compare("c"))!
 }
 
 test "to_bytes" {
-  @assertion.assert_eq("中文".to_bytes().to_string(), "中文")?
-  @assertion.assert_eq("asdf".to_bytes().to_string(), "asdf")?
-  @assertion.assert_eq("🤣🤣".to_bytes().to_string(), "🤣🤣")?
-  @assertion.assert_eq("🤔".to_bytes().to_string(), "🤔")?
+  @test.eq("中文".to_bytes().to_string(), "中文")!
+  @test.eq("asdf".to_bytes().to_string(), "asdf")!
+  @test.eq("🤣🤣".to_bytes().to_string(), "🤣🤣")!
+  @test.eq("🤔".to_bytes().to_string(), "🤔")!
 }
 
 test "debug_write" {
@@ -40,34 +40,34 @@ test "debug_write" {
     buf.to_string()
   }
 
-  @assertion.assert_eq(repr("a"), "\"a\"")?
-  @assertion.assert_eq(repr("'"), "\"'\"")?
-  @assertion.assert_eq(repr("\""), "\"\\\"\"")?
-  @assertion.assert_eq(repr("\\"), "\"\\\\\"")?
-  @assertion.assert_eq(repr("\n"), "\"\\n\"")?
-  @assertion.assert_eq(repr("\r"), "\"\\r\"")?
-  @assertion.assert_eq(repr("\b"), "\"\\b\"")?
-  @assertion.assert_eq(repr("\t"), "\"\\t\"")?
-  @assertion.assert_eq(repr("\x00"), "\"\\x00\"")?
-  @assertion.assert_eq(repr("abc'\"def\\"), "\"abc'\\\"def\\\\\"")?
+  @test.eq(repr("a"), "\"a\"")!
+  @test.eq(repr("'"), "\"'\"")!
+  @test.eq(repr("\""), "\"\\\"\"")!
+  @test.eq(repr("\\"), "\"\\\\\"")!
+  @test.eq(repr("\n"), "\"\\n\"")!
+  @test.eq(repr("\r"), "\"\\r\"")!
+  @test.eq(repr("\b"), "\"\\b\"")!
+  @test.eq(repr("\t"), "\"\\t\"")!
+  @test.eq(repr("\x00"), "\"\\x00\"")!
+  @test.eq(repr("abc'\"def\\"), "\"abc'\\\"def\\\\\"")!
 }
 
 test "to_array" {
   let a = "你好！mbt😀".to_array()
-  inspect(a[0], content="你")?
-  inspect(a[1], content="好")?
-  inspect(a[2], content="！")?
-  inspect(a[3], content="m")?
-  inspect(a[4], content="b")?
-  inspect(a[5], content="t")?
-  inspect(a[6], content="😀")?
+  inspect(a[0], content="你")!
+  inspect(a[1], content="好")!
+  inspect(a[2], content="！")!
+  inspect(a[3], content="m")!
+  inspect(a[4], content="b")!
+  inspect(a[5], content="t")!
+  inspect(a[6], content="😀")!
 }
 
 test "substring" {
-  @assertion.assert_eq("abc".substring(), "abc")?
-  @assertion.assert_eq("abc".substring(start=1), "bc")?
-  @assertion.assert_eq("abc".substring(end=2), "ab")?
-  @assertion.assert_eq("abc".substring(start=1, end=2), "b")?
+  @test.eq("abc".substring(), "abc")!
+  @test.eq("abc".substring(start=1), "bc")!
+  @test.eq("abc".substring(end=2), "ab")!
+  @test.eq("abc".substring(start=1, end=2), "b")!
 }
 
 test "chars" {
@@ -88,35 +88,35 @@ test "chars" {
       #|66
       #|
     ,
-  )?
+  )!
 }
 
 test "starts_with" {
-  @assertion.assert_true("abc".starts_with("a"))?
-  @assertion.assert_true("abc".starts_with("ab"))?
-  @assertion.assert_true("abc".starts_with("abc"))?
-  @assertion.assert_false("abc".starts_with("abcd"))?
-  @assertion.assert_false("abc".starts_with("b"))?
+  @test.is_true("abc".starts_with("a"))!
+  @test.is_true("abc".starts_with("ab"))!
+  @test.is_true("abc".starts_with("abc"))!
+  @test.is_false("abc".starts_with("abcd"))!
+  @test.is_false("abc".starts_with("b"))!
 }
 
 test "ends_with" {
-  @assertion.assert_true("abc".ends_with("c"))?
-  @assertion.assert_true("abc".ends_with("bc"))?
-  @assertion.assert_true("abc".ends_with("abc"))?
-  @assertion.assert_false("abc".ends_with("d"))?
-  @assertion.assert_false("abc".ends_with("ab"))?
-  inspect("abc".ends_with("abcd"), content="false")?
+  @test.is_true("abc".ends_with("c"))!
+  @test.is_true("abc".ends_with("bc"))!
+  @test.is_true("abc".ends_with("abc"))!
+  @test.is_false("abc".ends_with("d"))!
+  @test.is_false("abc".ends_with("ab"))!
+  inspect("abc".ends_with("abcd"), content="false")!
 }
 
 test "index_of" {
-  @assertion.assert_true("abc".index_of("a") == 0)?
-  @assertion.assert_true("abc".index_of("b") == 1)?
-  @assertion.assert_true("abc".index_of("c") == 2)?
-  @assertion.assert_true("abc".index_of("ab") == 0)?
-  @assertion.assert_true("abc".index_of("bc") == 1)?
-  @assertion.assert_true("abc".index_of("") == 0)?
-  @assertion.assert_true("abc".index_of("d") == -1)?
-  @assertion.assert_true("abc".index_of("abcd") == -1)?
+    @test.is_true("abc".index_of("a") == 0)!
+    @test.is_true("abc".index_of("b") == 1)!
+    @test.is_true("abc".index_of("c") == 2)!
+    @test.is_true("abc".index_of("ab") == 0)!
+    @test.is_true("abc".index_of("bc") == 1)!
+    @test.is_true("abc".index_of("") == 0)!
+    @test.is_true("abc".index_of("d") == -1)!
+    @test.is_true("abc".index_of("abcd") == -1)!
 }
 
 // [debug_write] is in [builtin].
@@ -126,7 +126,7 @@ test "index_of" {
 test "Buffer::to_bytes" {
   let buffer = Buffer::new(size_hint=16)
   buffer.write_string("中文")
-  @assertion.assert_eq(buffer.to_bytes().to_string(), "中文")?
+  @test.eq(buffer.to_bytes().to_string(), "中文")!
 }
 
 test "panic substring_start_index_error" {
