@@ -18,6 +18,23 @@ test "new" {
 }
 
 test "from_array" {
+  let pq = PriorityQueue::[1, 3, 6, 4, 5]
+  inspect(pq.peek(), content="Some(6)")!
+  let pq_ : PriorityQueue[Int] = PriorityQueue::[]
+  inspect(pq_.peek(), content="None")!
+}
+
+test "meld_and_merges" {
+  inspect(
+    match meld(Cons(content=1, sibling=Nil, child=Nil), Nil) {
+      Nil => false
+      Cons(..) => true
+    },
+    content="true",
+  )!
+}
+
+test "from_fixed_array" {
   let pq = of([1, 2, 3, 4, 5])
   @test.eq(pq.peek(), Some(5))!
 }
@@ -33,9 +50,8 @@ test "copy" {
 }
 
 test "to_array" {
-  let v = of([1, 2, 3, 4])
-  inspect(v.to_array().to_string(), content="[4, 3, 2, 1]")!
-  inspect(v.to_array().to_string(), content="[4, 3, 2, 1]")!
+  let v = of([1, 6, 3, 4, 9, 2, 1])
+  inspect(v.to_array(), content="[9, 6, 4, 3, 2, 1, 1]")!
 }
 
 test "iter" {
@@ -61,11 +77,20 @@ test "length" {
 
 test "pop_exn" {
   let pq = of([5, 5, 4, 3, 2, 1])
+  inspect(pq.length(), content="6")!
   @test.eq(pq.peek(), Some(5))!
   pq.pop_exn()
   @test.eq(pq.peek(), Some(5))!
   pq.pop_exn()
   @test.eq(pq.peek(), Some(4))!
+  let pq_ = of([1])
+  pq_.pop_exn()
+  inspect(pq_.length(), content="0")!
+}
+
+test "panic pop_exn" {
+  let pq : PriorityQueue[Int] = PriorityQueue::[]
+  pq.pop_exn()
 }
 
 test "pop" {
@@ -73,6 +98,9 @@ test "pop" {
   @test.eq(pq.pop(), Some(5))!
   @test.eq(pq.pop(), Some(5))!
   @test.eq(pq.pop(), Some(4))!
+  let pq_ = of([1])
+  pq_.pop() |> ignore
+  inspect(pq_.length(), content="0")!
 }
 
 test "push" {

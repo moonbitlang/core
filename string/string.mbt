@@ -31,16 +31,6 @@ pub fn compare(self : String, other : String) -> Int {
   }
 }
 
-test "compare" {
-  @test.eq(0, "".compare(""))!
-  @test.eq(-1, "".compare("abc"))!
-  @test.eq(1, "abc".compare(""))!
-  @test.eq(-1, "abcd".compare("abce"))!
-  @test.eq(1, "abce".compare("abcd"))!
-  @test.eq(-1, "c".compare("ab"))!
-  @test.eq(1, "ab".compare("c"))!
-}
-
 /// The empty string
 pub fn String::default() -> String {
   ""
@@ -54,43 +44,8 @@ pub fn to_bytes(self : String) -> Bytes {
   bytes
 }
 
-test "to_bytes" {
-  @test.eq("中文".to_bytes().to_string(), "中文")!
-  @test.eq("asdf".to_bytes().to_string(), "asdf")!
-  @test.eq("🤣🤣".to_bytes().to_string(), "🤣🤣")!
-  @test.eq("🤔".to_bytes().to_string(), "🤔")!
-}
-
 pub fn hash(self : String) -> Int {
   self.to_bytes().hash()
-}
-
-// [debug_write] is in [builtin].
-// due to cyclic dependency issue we can only test it here
-test "debug_write" {
-  fn repr(s : String) {
-    let buf = Buffer::new(size_hint=0)
-    s.debug_write(buf)
-    buf.to_string()
-  }
-
-  @test.eq(repr("a"), "\"a\"")!
-  @test.eq(repr("'"), "\"'\"")!
-  @test.eq(repr("\""), "\"\\\"\"")!
-  @test.eq(repr("\\"), "\"\\\\\"")!
-  @test.eq(repr("\n"), "\"\\n\"")!
-  @test.eq(repr("\r"), "\"\\r\"")!
-  @test.eq(repr("\b"), "\"\\b\"")!
-  @test.eq(repr("\t"), "\"\\t\"")!
-  @test.eq(repr("\x00"), "\"\\x00\"")!
-  @test.eq(repr("abc'\"def\\"), "\"abc'\\\"def\\\\\"")!
-}
-
-// test here to avlid cyclic dependency between assertion and builtin
-test "Buffer::to_bytes" {
-  let buffer = Buffer::new(size_hint=16)
-  buffer.write_string("中文")
-  @test.eq(buffer.to_bytes().to_string(), "中文")!
 }
 
 /// Converts the String into an array of Chars.
@@ -102,17 +57,6 @@ pub fn to_array(self : String) -> Array[Char] {
     },
     Array::new(capacity=self.length()),
   )
-}
-
-test "to_array" {
-  let a = "你好！mbt😀".to_array()
-  inspect(a[0], content="你")!
-  inspect(a[1], content="好")!
-  inspect(a[2], content="！")!
-  inspect(a[3], content="m")!
-  inspect(a[4], content="b")!
-  inspect(a[5], content="t")!
-  inspect(a[6], content="😀")!
 }
 
 /// @intrinsic %string.substring
@@ -146,13 +90,6 @@ pub fn substring(
   unsafe_substring(self, start, end)
 }
 
-test "substring" {
-  @test.eq("abc".substring(), "abc")!
-  @test.eq("abc".substring(start=1), "bc")!
-  @test.eq("abc".substring(end=2), "ab")!
-  @test.eq("abc".substring(start=1, end=2), "b")!
-}
-
 pub fn iter(self : String) -> Iter[Char] {
   Iter::_unstable_internal_make(
     fn(yield) {
@@ -181,27 +118,6 @@ pub fn iter(self : String) -> Iter[Char] {
   )
 }
 
-test "chars" {
-  let mut str = ""
-  "A😊𠮷BA😊𠮷B".iter().each(
-    fn(c) { str = str + c.to_int().to_string() + "\n" },
-  )
-  inspect(
-    str,
-    content=
-      #|65
-      #|128522
-      #|134071
-      #|66
-      #|65
-      #|128522
-      #|134071
-      #|66
-      #|
-    ,
-  )!
-}
-
 pub fn starts_with(self : String, str : String) -> Bool {
   if str.length() > self.length() {
     false
@@ -210,28 +126,12 @@ pub fn starts_with(self : String, str : String) -> Bool {
   }
 }
 
-test "starts_with" {
-  @test.is_true("abc".starts_with("a"))!
-  @test.is_true("abc".starts_with("ab"))!
-  @test.is_true("abc".starts_with("abc"))!
-  @test.is_false("abc".starts_with("abcd"))!
-  @test.is_false("abc".starts_with("b"))!
-}
-
 pub fn ends_with(self : String, str : String) -> Bool {
   if str.length() > self.length() {
     false
   } else {
     self.substring(start=self.length() - str.length()).compare(str) == 0
   }
-}
-
-test "ends_with" {
-  @test.is_true("abc".ends_with("c"))!
-  @test.is_true("abc".ends_with("bc"))!
-  @test.is_true("abc".ends_with("abc"))!
-  @test.is_false("abc".ends_with("d"))!
-  @test.is_false("abc".ends_with("ab"))!
 }
 
 // TODO: improve the perf later
@@ -250,15 +150,4 @@ pub fn index_of(self : String, str : String) -> Int {
     }
     -1
   }
-}
-
-test "index_of" {
-  @test.is_true("abc".index_of("a") == 0)!
-  @test.is_true("abc".index_of("b") == 1)!
-  @test.is_true("abc".index_of("c") == 2)!
-  @test.is_true("abc".index_of("ab") == 0)!
-  @test.is_true("abc".index_of("bc") == 1)!
-  @test.is_true("abc".index_of("") == 0)!
-  @test.is_true("abc".index_of("d") == -1)!
-  @test.is_true("abc".index_of("abcd") == -1)!
 }
