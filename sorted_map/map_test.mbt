@@ -20,8 +20,8 @@ test "new" {
 
 test "of" {
   let map = of([(3, "c"), (2, "b"), (1, "a")])
-  inspect(map.debug_tree(), content="([2]2,b,([1]1,a,_,_),([1]3,c,_,_))")?
-  inspect(map.size(), content="3")?
+  inspect(map.debug_tree(), content="([2]2,b,([1]1,a,_,_),([1]3,c,_,_))")!
+  inspect(map.size(), content="3")!
 }
 
 test "add1" {
@@ -35,8 +35,8 @@ test "add1" {
   inspect(
     map.debug_tree(),
     content="([3]3,d,([2]2,e,([1]1,f,_,_),_),([2]5,b,([1]4,c,_,_),([1]6,a,_,_)))",
-  )?
-  inspect(map.size(), content="6")?
+  )!
+  inspect(map.size(), content="6")!
 }
 
 test "add2" {
@@ -50,8 +50,8 @@ test "add2" {
   inspect(
     map.debug_tree(),
     content="([3]4,d,([2]2,b,([1]1,a,_,_),([1]3,c,_,_)),([2]5,e,_,([1]6,f,_,_)))",
-  )?
-  inspect(map.size(), content="6")?
+  )!
+  inspect(map.size(), content="6")!
 }
 
 test "add3" {
@@ -63,7 +63,7 @@ test "add3" {
   inspect(
     map.debug_tree(),
     content="([3]3,c,([2]1,b,_,([1]2,d,_,_)),([1]4,a,_,_))",
-  )?
+  )!
 }
 
 test "add4" {
@@ -75,14 +75,14 @@ test "add4" {
   inspect(
     map.debug_tree(),
     content="([3]2,c,([1]1,a,_,_),([2]4,b,([1]3,d,_,_),_))",
-  )?
+  )!
 }
 
 test "add duplicate key" {
   let map = of([(3, "c"), (2, "b"), (1, "a")])
-  inspect(map.debug_tree(), content="([2]2,b,([1]1,a,_,_),([1]3,c,_,_))")?
+  inspect(map.debug_tree(), content="([2]2,b,([1]1,a,_,_),([1]3,c,_,_))")!
   map.add(1, "x")
-  inspect(map.debug_tree(), content="([2]2,b,([1]1,x,_,_),([1]3,c,_,_))")?
+  inspect(map.debug_tree(), content="([2]2,b,([1]1,x,_,_),([1]3,c,_,_))")!
 }
 
 test "remove" {
@@ -101,56 +101,57 @@ test "remove" {
   inspect(
     map.debug_tree(),
     content="([4]4,d,([2]2,b,([1]1,a,_,_),([1]3,c,_,_)),([3]6,f,([1]5,e,_,_),([2]7,g,_,([1]8,h,_,_))))",
-  )?
-  inspect(map.size(), content="8")?
+  )!
+  inspect(map.size(), content="8")!
   map.remove(6)
   inspect(
     map.debug_tree(),
     content="([3]4,d,([2]2,b,([1]1,a,_,_),([1]3,c,_,_)),([2]7,g,([1]5,e,_,_),([1]8,h,_,_)))",
-  )?
-  inspect(map.size(), content="7")?
+  )!
+  inspect(map.size(), content="7")!
   map.remove(4)
   inspect(
     map.debug_tree(),
     content="([3]5,e,([2]2,b,([1]1,a,_,_),([1]3,c,_,_)),([2]7,g,_,([1]8,h,_,_)))",
-  )?
-  inspect(map.size(), content="6")?
+  )!
+  inspect(map.size(), content="6")!
   map.remove(2)
   inspect(
     map.debug_tree(),
     content="([3]5,e,([2]3,c,([1]1,a,_,_),_),([2]7,g,_,([1]8,h,_,_)))",
-  )?
-  inspect(map.size(), content="5")?
+  )!
+  inspect(map.size(), content="5")!
   map.remove(3)
   inspect(
     map.debug_tree(),
     content="([3]5,e,([1]1,a,_,_),([2]7,g,_,([1]8,h,_,_)))",
-  )?
-  inspect(map.size(), content="4")?
+  )!
+  inspect(map.size(), content="4")!
   map.remove(5)
-  inspect(map.debug_tree(), content="([2]7,g,([1]1,a,_,_),([1]8,h,_,_))")?
-  inspect(map.size(), content="3")?
+  inspect(map.debug_tree(), content="([2]7,g,([1]1,a,_,_),([1]8,h,_,_))")!
+  inspect(map.size(), content="3")!
   map.remove(7)
-  inspect(map.debug_tree(), content="([2]8,h,([1]1,a,_,_),_)")?
-  inspect(map.size(), content="2")?
+  inspect(map.debug_tree(), content="([2]8,h,([1]1,a,_,_),_)")!
+  inspect(map.size(), content="2")!
   map.remove(8)
-  inspect(map.debug_tree(), content="([1]1,a,_,_)")?
-  inspect(map.size(), content="1")?
+  inspect(map.debug_tree(), content="([1]1,a,_,_)")!
+  inspect(map.size(), content="1")!
   map.remove(1)
-  inspect(map.size, content="1")!
+  inspect(map.debug_tree(), content="_")!
+  inspect(map.size, content="0")!
 }
 
 test "remove2" {
   let map = of([(1, "a"), (2, "b")])
-  inspect(map.size, content="2")?
+  inspect(map.size, content="2")!
   map.remove(1)
-  inspect(map.size, content="1")?
+  inspect(map.size, content="1")!
 }
 
 test "remove3" {
   let map = of([(1, "a"), (2, "b"), (3, "c")])
   map.remove(0)
-  inspect(map.size, content="3")?
+  inspect(map.size, content="3")!
   map.remove(4)
   inspect(map.size, content="3")!
 }
@@ -182,7 +183,7 @@ test "op_set" {
   map[1] = "a"
   map[2] = "b"
   map[3] = "c"
-  inspect(map.debug_tree(), content="([2]2,b,([1]1,a,_,_),([1]3,c,_,_))")?
+  inspect(map.debug_tree(), content="([2]2,b,([1]1,a,_,_),([1]3,c,_,_))")!
 }
 
 test "op_get" {
