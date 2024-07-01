@@ -12,12 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-fn new_node[K, V](
-  key : K,
-  value : V,
-  ~parent : Node[K, V]? = None
-) -> Node[K, V] {
-  { key, value, parent, left: None, right: None, height: 0 }
+fn new_node[K, V](key : K, value : V) -> Node[K, V] {
+  { key, value, left: None, right: None, height: 1 }
 }
 
 fn op_equal[K : Eq, V](self : Node[K, V], other : Node[K, V]) -> Bool {
@@ -34,8 +30,8 @@ fn max(x : Int, y : Int) -> Int {
 
 fn height[K, V](node : Node[K, V]?) -> Int {
   match node {
+    None => 0
     Some(n) => n.height
-    None => -1
   }
 }
 

@@ -13,11 +13,10 @@
 // limitations under the License.
 
 priv struct Node[K, V] {
-  key : K
+  mut key : K
   mut value : V
   mut left : Node[K, V]?
   mut right : Node[K, V]?
-  mut parent : Node[K, V]?
   mut height : Int
 }
 
