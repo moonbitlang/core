@@ -109,14 +109,14 @@ test "ends_with" {
 }
 
 test "index_of" {
-    @test.is_true("abc".index_of("a") == 0)!
-    @test.is_true("abc".index_of("b") == 1)!
-    @test.is_true("abc".index_of("c") == 2)!
-    @test.is_true("abc".index_of("ab") == 0)!
-    @test.is_true("abc".index_of("bc") == 1)!
-    @test.is_true("abc".index_of("") == 0)!
-    @test.is_true("abc".index_of("d") == -1)!
-    @test.is_true("abc".index_of("abcd") == -1)!
+  @test.is_true("abc".index_of("a") == 0)!
+  @test.is_true("abc".index_of("b") == 1)!
+  @test.is_true("abc".index_of("c") == 2)!
+  @test.is_true("abc".index_of("ab") == 0)!
+  @test.is_true("abc".index_of("bc") == 1)!
+  @test.is_true("abc".index_of("") == 0)!
+  @test.is_true("abc".index_of("d") == -1)!
+  @test.is_true("abc".index_of("abcd") == -1)!
 }
 
 // [debug_write] is in [builtin].
