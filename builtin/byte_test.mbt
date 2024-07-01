@@ -14,22 +14,22 @@
 
 test "panic alphabet function coverage" {
   // Test cases to cover all branches in the alphabet function
-  @assertion.assert_eq(alphabet(0), "0")?
-  @assertion.assert_eq(alphabet(1), "1")?
-  @assertion.assert_eq(alphabet(2), "2")?
-  @assertion.assert_eq(alphabet(3), "3")?
-  @assertion.assert_eq(alphabet(4), "4")?
-  @assertion.assert_eq(alphabet(5), "5")?
-  @assertion.assert_eq(alphabet(6), "6")?
-  @assertion.assert_eq(alphabet(7), "7")?
-  @assertion.assert_eq(alphabet(8), "8")?
-  @assertion.assert_eq(alphabet(9), "9")?
-  @assertion.assert_eq(alphabet(10), "A")?
-  @assertion.assert_eq(alphabet(11), "B")?
-  @assertion.assert_eq(alphabet(12), "C")?
-  @assertion.assert_eq(alphabet(13), "D")?
-  @assertion.assert_eq(alphabet(14), "E")?
-  @assertion.assert_eq(alphabet(15), "F")?
+  @test.eq(alphabet(0), "0")!
+  @test.eq(alphabet(1), "1")!
+  @test.eq(alphabet(2), "2")!
+  @test.eq(alphabet(3), "3")!
+  @test.eq(alphabet(4), "4")!
+  @test.eq(alphabet(5), "5")!
+  @test.eq(alphabet(6), "6")!
+  @test.eq(alphabet(7), "7")!
+  @test.eq(alphabet(8), "8")!
+  @test.eq(alphabet(9), "9")!
+  @test.eq(alphabet(10), "A")!
+  @test.eq(alphabet(11), "B")!
+  @test.eq(alphabet(12), "C")!
+  @test.eq(alphabet(13), "D")!
+  @test.eq(alphabet(14), "E")!
+  @test.eq(alphabet(15), "F")!
   // Test for the panic case
   alphabet(16) |> ignore
 }

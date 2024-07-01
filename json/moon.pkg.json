@@ -8,7 +8,7 @@
     "moonbitlang/core/strconv"
   ],
   "test-import": [
-    "moonbitlang/core/assertion",
+    "moonbitlang/core/test",
     "moonbitlang/core/tuple",
     "moonbitlang/core/option",
     "moonbitlang/core/result",

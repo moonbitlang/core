@@ -910,85 +910,85 @@ fn same_pointer[T](x : Node[T]?, y : Node[T]?) -> Bool {
 test "add_and_remove" {
   let set = of([7, 2, 9, 4, 5, 6, 3, 8, 1])
   set.remove(8)
-  inspect(set, content="MutableSet::[1, 2, 3, 4, 5, 6, 7, 9]")?
+  inspect(set, content="MutableSet::[1, 2, 3, 4, 5, 6, 7, 9]")!
   let set = of([1, 2, 3, 4, 5, 6, 7, 8, 9, 10])
 
   // Test 1: Remove elements
   set.remove(1)
-  inspect(set, content="MutableSet::[2, 3, 4, 5, 6, 7, 8, 9, 10]")?
+  inspect(set, content="MutableSet::[2, 3, 4, 5, 6, 7, 8, 9, 10]")!
   set.remove(5)
-  inspect(set, content="MutableSet::[2, 3, 4, 6, 7, 8, 9, 10]")?
+  inspect(set, content="MutableSet::[2, 3, 4, 6, 7, 8, 9, 10]")!
   set.remove(10)
-  inspect(set, content="MutableSet::[2, 3, 4, 6, 7, 8, 9]")?
+  inspect(set, content="MutableSet::[2, 3, 4, 6, 7, 8, 9]")!
 
   // Test 2: Add elements
   set.add(1)
-  inspect(set, content="MutableSet::[1, 2, 3, 4, 6, 7, 8, 9]")?
+  inspect(set, content="MutableSet::[1, 2, 3, 4, 6, 7, 8, 9]")!
   set.add(5)
-  inspect(set, content="MutableSet::[1, 2, 3, 4, 5, 6, 7, 8, 9]")?
+  inspect(set, content="MutableSet::[1, 2, 3, 4, 5, 6, 7, 8, 9]")!
   set.add(10)
-  inspect(set, content="MutableSet::[1, 2, 3, 4, 5, 6, 7, 8, 9, 10]")?
+  inspect(set, content="MutableSet::[1, 2, 3, 4, 5, 6, 7, 8, 9, 10]")!
 
   // Test 3: Add and remove the same element
   set.add(11)
-  inspect(set, content="MutableSet::[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]")?
+  inspect(set, content="MutableSet::[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]")!
   set.remove(11)
-  inspect(set, content="MutableSet::[1, 2, 3, 4, 5, 6, 7, 8, 9, 10]")?
+  inspect(set, content="MutableSet::[1, 2, 3, 4, 5, 6, 7, 8, 9, 10]")!
 
   // Test 4: Remove an element that doesn't exist
   set.remove(12)
-  inspect(set, content="MutableSet::[1, 2, 3, 4, 5, 6, 7, 8, 9, 10]")?
+  inspect(set, content="MutableSet::[1, 2, 3, 4, 5, 6, 7, 8, 9, 10]")!
 
   // Test 5: Add an element that already exists
   set.add(10)
-  inspect(set, content="MutableSet::[1, 2, 3, 4, 5, 6, 7, 8, 9, 10]")?
+  inspect(set, content="MutableSet::[1, 2, 3, 4, 5, 6, 7, 8, 9, 10]")!
 
   // Test 6: Remove all elements
   set.remove(1)
-  inspect(set, content="MutableSet::[2, 3, 4, 5, 6, 7, 8, 9, 10]")?
+  inspect(set, content="MutableSet::[2, 3, 4, 5, 6, 7, 8, 9, 10]")!
   set.remove(2)
-  inspect(set, content="MutableSet::[3, 4, 5, 6, 7, 8, 9, 10]")?
+  inspect(set, content="MutableSet::[3, 4, 5, 6, 7, 8, 9, 10]")!
   set.remove(3)
-  inspect(set, content="MutableSet::[4, 5, 6, 7, 8, 9, 10]")?
+  inspect(set, content="MutableSet::[4, 5, 6, 7, 8, 9, 10]")!
   set.remove(4)
-  inspect(set, content="MutableSet::[5, 6, 7, 8, 9, 10]")?
+  inspect(set, content="MutableSet::[5, 6, 7, 8, 9, 10]")!
   set.remove(5)
-  inspect(set, content="MutableSet::[6, 7, 8, 9, 10]")?
+  inspect(set, content="MutableSet::[6, 7, 8, 9, 10]")!
   set.remove(6)
-  inspect(set, content="MutableSet::[7, 8, 9, 10]")?
+  inspect(set, content="MutableSet::[7, 8, 9, 10]")!
   set.remove(7)
-  inspect(set, content="MutableSet::[8, 9, 10]")?
+  inspect(set, content="MutableSet::[8, 9, 10]")!
   set.remove(8)
-  inspect(set, content="MutableSet::[9, 10]")?
+  inspect(set, content="MutableSet::[9, 10]")!
   set.remove(9)
-  inspect(set, content="MutableSet::[10]")?
+  inspect(set, content="MutableSet::[10]")!
   set.remove(10)
-  inspect(set, content="MutableSet::[]")?
+  inspect(set, content="MutableSet::[]")!
   set.add(1)
-  inspect(set, content="MutableSet::[1]")?
+  inspect(set, content="MutableSet::[1]")!
   set.add(2)
-  inspect(set, content="MutableSet::[1, 2]")?
+  inspect(set, content="MutableSet::[1, 2]")!
   set.add(3)
-  inspect(set, content="MutableSet::[1, 2, 3]")?
+  inspect(set, content="MutableSet::[1, 2, 3]")!
   set.add(4)
-  inspect(set, content="MutableSet::[1, 2, 3, 4]")?
+  inspect(set, content="MutableSet::[1, 2, 3, 4]")!
   let set = of([7, 2, 9, 4, 5, 6, 3, 1])
   set.remove(3)
-  inspect(set, content="MutableSet::[1, 2, 4, 5, 6, 7, 9]")?
+  inspect(set, content="MutableSet::[1, 2, 4, 5, 6, 7, 9]")!
   set.remove(2)
-  inspect(set, content="MutableSet::[1, 4, 5, 6, 7, 9]")?
+  inspect(set, content="MutableSet::[1, 4, 5, 6, 7, 9]")!
   set.remove(5)
-  inspect(set, content="MutableSet::[1, 4, 6, 7, 9]")?
+  inspect(set, content="MutableSet::[1, 4, 6, 7, 9]")!
   set.remove(9)
-  inspect(set, content="MutableSet::[1, 4, 6, 7]")?
+  inspect(set, content="MutableSet::[1, 4, 6, 7]")!
   set.remove(1)
-  inspect(set, content="MutableSet::[4, 6, 7]")?
+  inspect(set, content="MutableSet::[4, 6, 7]")!
   set.remove(7)
-  inspect(set, content="MutableSet::[4, 6]")?
+  inspect(set, content="MutableSet::[4, 6]")!
   set.remove(4)
-  inspect(set, content="MutableSet::[6]")?
+  inspect(set, content="MutableSet::[6]")!
   set.remove(6)
-  inspect(set.root, content="None")?
+  inspect(set.root, content="None")!
 }
 
 test "join" {
@@ -997,46 +997,46 @@ test "join" {
   inspect(
     join(l.root, 26, r.root),
     content="Some(MutableSet::[1, 6, 8, 11, 13, 15, 17, 25, 26, 27, 28, 33, 35, 40])",
-  )?
+  )!
   let l = of([3, 2, 5, 1, 4])
   let r = of([7])
   inspect(
     join(l.root, 6, r.root),
     content="Some(MutableSet::[1, 2, 3, 4, 5, 6, 7])",
-  )?
+  )!
   let l = of([3, 2, 5, 1, 4])
   let r = of([])
   inspect(
     join(l.root, 6, r.root),
     content="Some(MutableSet::[1, 2, 3, 4, 5, 6])",
-  )?
+  )!
   let l = of([])
   let r = of([])
-  inspect(join(l.root, 6, r.root), content="Some(MutableSet::[6])")?
+  inspect(join(l.root, 6, r.root), content="Some(MutableSet::[6])")!
   let l = of([])
   let r = of([7, 8, 9, 10, 11, 12])
   inspect(
     join(l.root, 6, r.root),
     content="Some(MutableSet::[6, 7, 8, 9, 10, 11, 12])",
-  )?
+  )!
 }
 
 test "split" {
   let (l, r) = split(of([7, 2, 9, 4, 5, 6, 3, 8, 1]).root, 5)
-  inspect(l, content="Some(MutableSet::[1, 2, 3, 4])")?
-  inspect(r, content="Some(MutableSet::[6, 7, 8, 9])")?
+  inspect(l, content="Some(MutableSet::[1, 2, 3, 4])")!
+  inspect(r, content="Some(MutableSet::[6, 7, 8, 9])")!
   let (l, r) = split(of([7, 2, 9, 4, 5, 6, 3, 8, 1]).root, 0)
-  inspect(l, content="Some(MutableSet::[])")?
-  inspect(r, content="Some(MutableSet::[1, 2, 3, 4, 5, 6, 7, 8, 9])")?
+  inspect(l, content="Some(MutableSet::[])")!
+  inspect(r, content="Some(MutableSet::[1, 2, 3, 4, 5, 6, 7, 8, 9])")!
   let (l, r) = split(of([7, 2, 9, 4, 5, 6, 3, 8, 1]).root, 10)
-  inspect(l, content="Some(MutableSet::[1, 2, 3, 4, 5, 6, 7, 8, 9])")?
-  inspect(r, content="Some(MutableSet::[])")?
+  inspect(l, content="Some(MutableSet::[1, 2, 3, 4, 5, 6, 7, 8, 9])")!
+  inspect(r, content="Some(MutableSet::[])")!
   let (l, r) = split(of([7, 2, 9, 4, 5, 6, 3, 8, 1]).root, 4)
-  inspect(l, content="Some(MutableSet::[1, 2, 3])")?
-  inspect(r, content="Some(MutableSet::[5, 6, 7, 8, 9])")?
+  inspect(l, content="Some(MutableSet::[1, 2, 3])")!
+  inspect(r, content="Some(MutableSet::[5, 6, 7, 8, 9])")!
   let (l, r) = split(of([]).root, 7)
-  inspect(l, content="None")?
-  inspect(r, content="None")?
+  inspect(l, content="None")!
+  inspect(r, content="None")!
   let (l, r) = split(
     MutableSet::[
       0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21,
@@ -1051,11 +1051,11 @@ test "split" {
   inspect(
     l,
     content="Some(MutableSet::[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49])",
-  )?
+  )!
   inspect(
     r,
     content="Some(MutableSet::[51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100])",
-  )?
+  )!
 }
 
 test "union" {
@@ -1063,35 +1063,35 @@ test "union" {
   let set1 = of([1, 2, 3])
   let set2 = of([4, 5, 6])
   let set3 = set1.union(set2)
-  inspect(set3, content="MutableSet::[1, 2, 3, 4, 5, 6]")?
+  inspect(set3, content="MutableSet::[1, 2, 3, 4, 5, 6]")!
 
   // Test 2: Union of two sets with some common elements
   let set1 = of([1, 2, 3])
   let set2 = of([2, 3, 4])
   let set3 = set1.union(set2)
-  inspect(set3, content="MutableSet::[1, 2, 3, 4]")?
+  inspect(set3, content="MutableSet::[1, 2, 3, 4]")!
 
   // Test 3: Union of two sets where one is a subset of the other
   let set1 = of([1, 2, 3])
   let set2 = of([2, 3])
   let set3 = set1.union(set2)
-  inspect(set3, content="MutableSet::[1, 2, 3]")?
+  inspect(set3, content="MutableSet::[1, 2, 3]")!
 
   // Test 4: Union of two empty sets
   let set1 : MutableSet[Int] = MutableSet::new()
   let set2 = MutableSet::new()
   let set3 = set1.union(set2)
-  inspect(set3, content="MutableSet::[]")?
+  inspect(set3, content="MutableSet::[]")!
 
   // Test 5: Union of an empty set with a non-empty set
   let set1 = of([1, 2, 3])
   let set2 = of([])
   let set3 = set1.union(set2)
-  inspect(set3, content="MutableSet::[1, 2, 3]")?
+  inspect(set3, content="MutableSet::[1, 2, 3]")!
   let set1 = of([])
   let set2 = of([1, 2, 3])
   let set3 = set1.union(set2)
-  inspect(set3, content="MutableSet::[1, 2, 3]")?
+  inspect(set3, content="MutableSet::[1, 2, 3]")!
 
   // Test 6: Union of two large sets with no common elements
   let set1 = of([1, 2, 3, 4, 5, 6, 7, 8, 9, 10])
@@ -1100,7 +1100,7 @@ test "union" {
   inspect(
     set3,
     content="MutableSet::[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20]",
-  )?
+  )!
 
   // Test 7: Union of two large sets with some common elements
   let set1 = of([1, 2, 3, 4, 5, 6, 7, 8, 9, 10])
@@ -1109,132 +1109,132 @@ test "union" {
   inspect(
     set3,
     content="MutableSet::[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]",
-  )?
+  )!
 
   // Test 8: Union of two large sets where one is a subset of the other
   let set1 = of([1, 2, 3, 4, 5, 6, 7, 8, 9, 10])
   let set2 = of([6, 7, 8, 9, 10])
   let set3 = set1.union(set2)
-  inspect(set3, content="MutableSet::[1, 2, 3, 4, 5, 6, 7, 8, 9, 10]")?
+  inspect(set3, content="MutableSet::[1, 2, 3, 4, 5, 6, 7, 8, 9, 10]")!
 }
 
 test "disjoint" {
-  inspect(of([1, 2, 3]).disjoint(of([4, 5, 6])), content="true")?
-  inspect(of([1, 2, 3]).subset(of([3, 4, 5])), content="false")?
+  inspect(of([1, 2, 3]).disjoint(of([4, 5, 6])), content="true")!
+  inspect(of([1, 2, 3]).subset(of([3, 4, 5])), content="false")!
 }
 
 test "subset" {
-  inspect(of([1, 2, 3]).subset(of([7, 2, 9, 4, 5, 6, 3, 8, 1])), content="true")?
-  inspect(of([1, 2, 3]).subset(of([10, 11, 12, 13, 14])), content="false")?
+  inspect(of([1, 2, 3]).subset(of([7, 2, 9, 4, 5, 6, 3, 8, 1])), content="true")!
+  inspect(of([1, 2, 3]).subset(of([10, 11, 12, 13, 14])), content="false")!
 }
 
 test "diff" {
-  inspect(of([1, 2, 3]).diff(of([4, 5, 1])), content="MutableSet::[2, 3]")?
+  inspect(of([1, 2, 3]).diff(of([4, 5, 1])), content="MutableSet::[2, 3]")!
 }
 
 test "inter" {
-  inspect(of([3, 4, 5]).intersect(of([4, 5, 6])), content="MutableSet::[4, 5]")?
+  inspect(of([3, 4, 5]).intersect(of([4, 5, 6])), content="MutableSet::[4, 5]")!
 }
 
 test "filter" {
   inspect(
     of([1, 2, 3, 4, 5, 6]).filter(fn(v) { v % 2 == 0 }),
     content="MutableSet::[2, 4, 6]",
-  )?
+  )!
 }
 
 test "iter" {
   let set = of([7, 2, 9, 4, 5, 6, 3, 8, 1])
   let result = Buffer::new(size_hint=10)
   set.each(fn(x) { result.write_string(x.to_string()) })
-  inspect(result.to_string(), content="123456789")?
+  inspect(result.to_string(), content="123456789")!
   let set : MutableSet[Int] = new()
   set.each(fn(_x) { abort("Impossible to reach") })
 }
 
 test "contains" {
   let set = of([7, 2, 9, 4, 6, 3, 8, 1])
-  inspect(set.contains(5), content="false")?
+  inspect(set.contains(5), content="false")!
   set.add(5)
-  inspect(set.contains(5), content="true")?
-  inspect(of([7, 2, 9, 4, 6, 3, 8, 1]).contains(5), content="false")?
-  inspect(of([]).contains(1), content="false")?
+  inspect(set.contains(5), content="true")!
+  inspect(of([7, 2, 9, 4, 6, 3, 8, 1]).contains(5), content="false")!
+  inspect(of([]).contains(1), content="false")!
 }
 
 test "to_array" {
   inspect(
     of([7, 2, 9, 4, 5, 6, 3, 8, 1]).to_array(),
     content="[1, 2, 3, 4, 5, 6, 7, 8, 9]",
-  )?
-  inspect((of([]) : MutableSet[Int]).to_array(), content="[]")?
+  )!
+  inspect((of([]) : MutableSet[Int]).to_array(), content="[]")!
 }
 
 test "to_string" {
-  inspect(of([1, 2, 3, 4, 5]), content="MutableSet::[1, 2, 3, 4, 5]")?
-  inspect((of([]) : MutableSet[Int]), content="MutableSet::[]")?
+  inspect(of([1, 2, 3, 4, 5]), content="MutableSet::[1, 2, 3, 4, 5]")!
+  inspect((of([]) : MutableSet[Int]), content="MutableSet::[]")!
 }
 
 test "from_array" {
   inspect(
     of([7, 2, 9, 4, 5, 6, 3, 8, 1]),
     content="MutableSet::[1, 2, 3, 4, 5, 6, 7, 8, 9]",
-  )?
+  )!
 }
 
 test "is_empty" {
-  inspect((of([]) : MutableSet[Int]).is_empty(), content="true")?
-  inspect(of([1]).is_empty(), content="false")?
+  inspect((of([]) : MutableSet[Int]).is_empty(), content="true")!
+  inspect(of([1]).is_empty(), content="false")!
 }
 
 test "size" {
-  inspect(of([1, 2, 3, 4, 5]).size(), content="5")?
-  inspect(of([1]).size(), content="1")?
-  inspect((of([]) : MutableSet[Int]).size(), content="0")?
+  inspect(of([1, 2, 3, 4, 5]).size(), content="5")!
+  inspect(of([1]).size(), content="1")!
+  inspect((of([]) : MutableSet[Int]).size(), content="0")!
 }
 
 test "singleton" {
-  inspect(MutableSet::singleton(1).size(), content="1")?
-  inspect(MutableSet::singleton(1).contains(1), content="true")?
-  inspect(MutableSet::singleton(1).contains(2), content="false")?
+  inspect(MutableSet::singleton(1).size(), content="1")!
+  inspect(MutableSet::singleton(1).contains(1), content="true")!
+  inspect(MutableSet::singleton(1).contains(2), content="false")!
 }
 
 test "deep_clone" {
   let set = of([1, 2, 3, 4, 5])
   let clone = set.deep_clone()
-  inspect(clone, content="MutableSet::[1, 2, 3, 4, 5]")?
+  inspect(clone, content="MutableSet::[1, 2, 3, 4, 5]")!
   let set : MutableSet[Int] = of([])
   let clone = set.deep_clone()
-  inspect(clone, content="MutableSet::[]")?
+  inspect(clone, content="MutableSet::[]")!
 }
 
 test "debug_write" {
   let buf = Buffer::new(size_hint=100)
   let set = of([1, 2, 3, 4, 5])
   set.debug_write(buf)
-  inspect(buf.to_string(), content="MutableSet::[1, 2, 3, 4, 5]")?
+  inspect(buf.to_string(), content="MutableSet::[1, 2, 3, 4, 5]")!
   let buf = Buffer::new(size_hint=100)
   let set : MutableSet[Int] = of([])
   set.debug_write(buf)
-  inspect(buf.to_string(), content="MutableSet::[]")?
+  inspect(buf.to_string(), content="MutableSet::[]")!
 }
 
 test "is_nil" {
   let node : Node[Int]? = Option::None
-  inspect(is_nil(node), content="false")?
+  inspect(is_nil(node), content="false")!
 }
 
 test "same_pointer" {
   let node1 : Node[Int]? = Option::None
-  inspect(same_pointer(node1, node1), content="true")?
+  inspect(same_pointer(node1, node1), content="true")!
   let node2 : Node[Int]? = of([1]).root
-  inspect(same_pointer(node1, node2), content="false")?
+  inspect(same_pointer(node1, node2), content="false")!
 }
 
 test "min_node" {
   let set = of([7, 2, 9, 4, 5, 6, 3, 8, 1])
-  inspect(min_node(set.root).unwrap().value, content="Some(1)")?
+  inspect(min_node(set.root).unwrap().value, content="Some(1)")!
   let set : MutableSet[Int] = of([])
-  inspect(min_node(set.root), content="None")?
+  inspect(min_node(set.root), content="None")!
 }
 
 test "mix_everything" {
@@ -1242,31 +1242,31 @@ test "mix_everything" {
   let set1 = of([1, 2, 3, 4, 5])
   let set2 = of([4, 5, 6, 7, 8])
   set1.add(6)
-  inspect(set1, content="MutableSet::[1, 2, 3, 4, 5, 6]")?
+  inspect(set1, content="MutableSet::[1, 2, 3, 4, 5, 6]")!
   set1.remove(6)
-  inspect(set1, content="MutableSet::[1, 2, 3, 4, 5]")?
+  inspect(set1, content="MutableSet::[1, 2, 3, 4, 5]")!
   let set3 = set1.union(set2)
-  inspect(set3, content="MutableSet::[1, 2, 3, 4, 5, 6, 7, 8]")?
+  inspect(set3, content="MutableSet::[1, 2, 3, 4, 5, 6, 7, 8]")!
   let set4 = set1.diff(set2)
-  inspect(set4, content="MutableSet::[1, 2, 3]")?
+  inspect(set4, content="MutableSet::[1, 2, 3]")!
   let set5 = set1.intersect(set2)
-  inspect(set5, content="MutableSet::[4, 5]")?
-  inspect(set1.subset(set3), content="true")?
+  inspect(set5, content="MutableSet::[4, 5]")!
+  inspect(set1.subset(set3), content="true")!
   set3.remove(3)
-  inspect(set3, content="MutableSet::[1, 2, 4, 5, 6, 7, 8]")?
-  inspect(set3.size(), content="7")?
-  inspect(set3.is_empty(), content="false")?
-  inspect(set3.contains(1), content="true")?
-  inspect(set3.contains(3), content="false")?
-  inspect(set3.disjoint(set1), content="false")?
+  inspect(set3, content="MutableSet::[1, 2, 4, 5, 6, 7, 8]")!
+  inspect(set3.size(), content="7")!
+  inspect(set3.is_empty(), content="false")!
+  inspect(set3.contains(1), content="true")!
+  inspect(set3.contains(3), content="false")!
+  inspect(set3.disjoint(set1), content="false")!
   let set6 = set3.union(of([]))
-  inspect(set6, content="MutableSet::[1, 2, 4, 5, 6, 7, 8]")?
+  inspect(set6, content="MutableSet::[1, 2, 4, 5, 6, 7, 8]")!
   let set7 = set3.union(of([12, 13, 14, 33, 22]))
-  inspect(set7, content="MutableSet::[1, 2, 4, 5, 6, 7, 8, 12, 13, 14, 22, 33]")?
+  inspect(set7, content="MutableSet::[1, 2, 4, 5, 6, 7, 8, 12, 13, 14, 22, 33]")!
   for i = 1; i <= 5; i = i + 1 {
     set7.remove(i)
   }
-  inspect(set7, content="MutableSet::[6, 7, 8, 12, 13, 14, 22, 33]")?
+  inspect(set7, content="MutableSet::[6, 7, 8, 12, 13, 14, 22, 33]")!
   for i = 6; i <= 33; i = i + 1 {
     set7.remove(i)
   }
@@ -1277,10 +1277,10 @@ test "mix_everything" {
   inspect(
     set,
     content="MutableSet::[8, 11, 13, 35, 38, 39, 40, 44, 49, 52, 54, 58, 67, 80, 84, 90, 93, 95, 97]",
-  )?
+  )!
   set.remove(52)
   inspect(
     set,
     content="MutableSet::[8, 11, 13, 35, 38, 39, 40, 44, 49, 54, 58, 67, 80, 84, 90, 93, 95, 97]",
-  )?
+  )!
 }

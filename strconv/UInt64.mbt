@@ -110,6 +110,6 @@ fn checked_mul(self : UInt64, b : UInt64) -> UInt64? {
 }
 
 test "op_lt" {
-  @assertion.assert_true(new_UInt64_Int(1) < new_UInt64_Int(2))?
-  @assertion.assert_true(UInt64::UInt64(-1L) > UInt64(2L))?
+  @test.is_true(new_UInt64_Int(1) < new_UInt64_Int(2))!
+  @test.is_true(UInt64::UInt64(-1L) > UInt64(2L))!
 }

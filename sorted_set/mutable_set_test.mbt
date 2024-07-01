@@ -15,23 +15,23 @@
 test "add to empty set" {
   let set = MutableSet::new()
   set.add(1)
-  @assertion.assert_eq(set.contains(1), true)?
+  @test.eq(set.contains(1), true)!
 }
 
 test "add to non-empty set" {
   let set = MutableSet::new()
   set.add(1)
   set.add(2)
-  @assertion.assert_eq(set.contains(1), true)?
-  @assertion.assert_eq(set.contains(2), true)?
+  @test.eq(set.contains(1), true)!
+  @test.eq(set.contains(2), true)!
 }
 
 test "add duplicate value" {
   let set = MutableSet::new()
   set.add(1)
   set.add(1)
-  @assertion.assert_eq(set.contains(1), true)?
-  @assertion.assert_eq(set.size(), 2L)?
+  @test.eq(set.contains(1), true)!
+  @test.eq(set.size(), 2L)!
 }
 
 test "add multiple values" {
@@ -39,14 +39,14 @@ test "add multiple values" {
   set.add(1)
   set.add(2)
   set.add(3)
-  @assertion.assert_eq(set.contains(1), true)?
-  @assertion.assert_eq(set.contains(2), true)?
-  @assertion.assert_eq(set.contains(3), true)?
-  @assertion.assert_eq(set.size(), 3L)?
+  @test.eq(set.contains(1), true)!
+  @test.eq(set.contains(2), true)!
+  @test.eq(set.contains(3), true)!
+  @test.eq(set.size(), 3L)!
 }
 
 test "add and check color of root" {
   let set = MutableSet::new()
   set.add(1)
-  @assertion.assert_eq(get_color(set.root), Black)?
+  @test.eq(get_color(set.root), Black)!
 }

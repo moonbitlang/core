@@ -13,8 +13,8 @@
 // limitations under the License.
 
 test "fromint" {
-  inspect(Int::from_int(3), content="3")?
-  inspect(Int::signum(3), content="1")?
-  inspect(Int::signum(-3), content="-1")?
-  inspect(Int::signum(0), content="0")?
+  inspect(Int::from_int(3), content="3")!
+  inspect(Int::signum(3), content="1")!
+  inspect(Int::signum(-3), content="-1")!
+  inspect(Int::signum(0), content="0")!
 }

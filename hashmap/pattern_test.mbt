@@ -18,5 +18,5 @@ test "pattern" {
   inspect(
     (name, age, is_human),
     content="(Some(John Doe), Some(43), Some(true))",
-  )?
+  )!
 }

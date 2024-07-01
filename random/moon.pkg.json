@@ -7,6 +7,6 @@
     "moonbitlang/core/array"
   ],
   "test-import": [
-    "moonbitlang/core/assertion"
+    "moonbitlang/core/test"
   ]
 }

@@ -43,7 +43,7 @@ pub fn ImmutablePriorityQueue::from_array[T : Compare](
 
 test "from_array" {
   let queue = of([1, 2, 3, 4, 5])
-  inspect(queue.peek(), content="Some(5)")?
+  inspect(queue.peek(), content="Some(5)")!
 }
 
 pub fn to_array[T : Compare](self : ImmutablePriorityQueue[T]) -> Array[T] {
@@ -71,8 +71,8 @@ pub fn to_array[T : Compare](self : ImmutablePriorityQueue[T]) -> Array[T] {
 
 test "to_array" {
   let v = of([1, 2, 3, 4])
-  inspect(v.to_array().to_string(), content="[4, 3, 2, 1]")?
-  inspect(v.push(0).to_array().to_string(), content="[4, 3, 2, 1, 0]")?
+  inspect(v.to_array().to_string(), content="[4, 3, 2, 1]")!
+  inspect(v.push(0).to_array().to_string(), content="[4, 3, 2, 1, 0]")!
 }
 
 pub fn iter[T : Compare](self : ImmutablePriorityQueue[T]) -> Iter[T] {
@@ -94,10 +94,10 @@ test "iter" {
   let buf = Buffer::new(size_hint=20)
   let v = of([1, 2, 3])
   v.iter().each(fn(e) { buf.write_string("[\(e)]") })
-  inspect(buf, content="[3][2][1]")?
+  inspect(buf, content="[3][2][1]")!
   buf.reset()
   v.iter().take(2).each(fn(e) { buf.write_string("[\(e)]") })
-  inspect(buf, content="[3][2]")?
+  inspect(buf, content="[3][2]")!
 }
 
 fn meld[T : Compare](l : Cont[T], r : Cont[T]) -> Cont[T] {
@@ -114,12 +114,12 @@ fn meld[T : Compare](l : Cont[T], r : Cont[T]) -> Cont[T] {
 }
 
 test "meld" {
-  inspect(meld(Empty, of([1]).body), content="Node(1, MNil)")?
-  inspect(meld(of([1]).body, Empty), content="Node(1, MNil)")?
+  inspect(meld(Empty, of([1]).body), content="Node(1, MNil)")!
+  inspect(meld(of([1]).body, Empty), content="Node(1, MNil)")!
   inspect(
     meld(of([1]).body, of([2]).body),
     content="Node(2, MCons(Node(1, MNil), MNil))",
-  )?
+  )!
 }
 
 fn merges[T : Compare](x : MList[Cont[T]]) -> Cont[T] {
@@ -136,7 +136,7 @@ test "merges" {
       _ => false
     },
     content="true",
-  )?
+  )!
 }
 
 /// Pops the first value from the immutable priority queue, which returns None if the queue is empty.
@@ -164,7 +164,7 @@ test "pop" {
       None => None
     },
     content="Some(3)",
-  )?
+  )!
   let empty : ImmutablePriorityQueue[Int] = of([])
   inspect(
     match empty.pop() {
@@ -172,7 +172,7 @@ test "pop" {
       None => None
     },
     content="None",
-  )?
+  )!
 }
 
 /// Pops the first value from the immutable priority queue.
@@ -195,11 +195,11 @@ pub fn pop_exn[T : Compare](
 test "pop_exn" {
   let queue = of([1, 2, 3, 4])
   let first = queue.pop_exn()
-  inspect(first.peek(), content="Some(3)")?
+  inspect(first.peek(), content="Some(3)")!
   inspect(
     queue.pop_exn().push(-1).push(10).push(11).pop_exn().pop_exn().push(50).peek(),
     content="Some(50)",
-  )?
+  )!
 }
 
 /// Adds a value to the immutable priority queue.
@@ -218,7 +218,7 @@ pub fn push[T : Compare](
 
 test "push" {
   let queue = of([1, 2, 3])
-  inspect(queue.push(4).peek(), content="Some(4)")?
+  inspect(queue.push(4).peek(), content="Some(4)")!
 }
 
 /// Peeks at the first value in the immutable priority queue, which returns None if the immutable priority queue is empty.
@@ -237,8 +237,8 @@ pub fn peek[T](self : ImmutablePriorityQueue[T]) -> T? {
 
 test "peek" {
   let queue : ImmutablePriorityQueue[Int] = ImmutablePriorityQueue::new()
-  inspect(queue.peek(), content="None")?
-  inspect(queue.push(1).peek(), content="Some(1)")?
+  inspect(queue.peek(), content="None")!
+  inspect(queue.push(1).peek(), content="Some(1)")!
 }
 
 /// Checks if the immutable priority queue is empty.
@@ -257,8 +257,8 @@ pub fn is_empty[T](self : ImmutablePriorityQueue[T]) -> Bool {
 
 test "is_empty" {
   let queue : ImmutablePriorityQueue[Int] = ImmutablePriorityQueue::new()
-  inspect(queue.is_empty(), content="true")?
-  inspect(queue.push(1).is_empty(), content="false")?
+  inspect(queue.is_empty(), content="true")!
+  inspect(queue.push(1).is_empty(), content="false")!
 }
 
 /// Return the length of the immutable priority queue.

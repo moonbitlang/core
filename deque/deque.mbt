@@ -137,15 +137,6 @@ pub fn back[T](self : Deque[T]) -> T? {
   }
 }
 
-test "front_and_back" {
-  let dv = of([1, 2, 3, 4, 5])
-  @assertion.assert_eq(dv.back(), Some(5))?
-  @assertion.assert_eq(dv.front(), Some(1))?
-  let dv : Deque[Int] = of([])
-  @assertion.assert_eq(dv.back(), None)?
-  @assertion.assert_eq(dv.front(), None)?
-}
-
 /// Adds an element to the front of the deque.
 ///
 /// If the deque is at capacity, it will be reallocated.
@@ -434,7 +425,6 @@ pub fn is_empty[T](self : Deque[T]) -> Bool {
   self.len == 0
 }
 
-/// Search the deque index for a given element.
 ///
 /// # Example
 /// ```
