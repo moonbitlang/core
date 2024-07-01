@@ -1,31 +1,32 @@
 package moonbitlang/core/sorted_set
 
 // Values
+fn new[V]() -> T[V]
+
+fn of[V : Compare + Eq](Array[V]) -> T[V]
+
+fn singleton[V : Compare + Eq](V) -> T[V]
 
 // Types and methods
-type MutableSet
-impl MutableSet {
-  add[T : Compare + Eq](Self[T], T) -> Unit
-  contains[T : Compare + Eq](Self[T], T) -> Bool
-  debug_write[T : Compare + Debug + Eq](Self[T], Buffer) -> Unit
-  deep_clone[T](Self[T]) -> Self[T]
-  diff[T : Compare + Eq](Self[T], Self[T]) -> Self[T]
-  disjoint[T : Compare + Eq](Self[T], Self[T]) -> Bool
-  each[T : Compare + Eq](Self[T], (T) -> Unit) -> Unit
-  filter[T : Compare + Eq](Self[T], (T) -> Bool) -> Self[T]
-  from_array[T : Compare + Eq](Array[T]) -> Self[T]
-  intersect[T : Compare + Eq](Self[T], Self[T]) -> Self[T]
-  is_empty[T : Compare + Eq](Self[T]) -> Bool
-  new[T]() -> Self[T]
-  of[T : Compare + Eq](FixedArray[T]) -> Self[T]
-  op_equal[T : Eq](Self[T], Self[T]) -> Bool
-  remove[T : Compare + Eq](Self[T], T) -> Unit
-  singleton[T : Compare + Eq](T) -> Self[T]
-  size[T : Compare + Eq](Self[T]) -> Int64
-  subset[T : Compare + Eq](Self[T], Self[T]) -> Bool
-  to_array[T : Compare + Eq](Self[T]) -> Array[T]
-  to_string[T : Compare + Show + Eq](Self[T]) -> String
-  union[T : Compare + Eq](Self[T], Self[T]) -> Self[T]
+type T
+impl T {
+  add[V : Compare + Eq](Self[V], V) -> Unit
+  contains[V : Compare + Eq](Self[V], V) -> Bool
+  debug_write[V : Debug](Self[V], Buffer) -> Unit
+  deep_clone[V](Self[V]) -> Self[V]
+  diff[V : Compare + Eq](Self[V], Self[V]) -> Self[V]
+  disjoint[V : Compare + Eq](Self[V], Self[V]) -> Bool
+  each[V](Self[V], (V) -> Unit) -> Unit
+  eachi[V](Self[V], (Int, V) -> Unit) -> Unit
+  intersect[V : Compare + Eq](Self[V], Self[V]) -> Self[V]
+  is_empty[V : Compare + Eq](Self[V]) -> Bool
+  iter[V](Self[V]) -> Iter[V]
+  remove[V : Compare + Eq](Self[V], V) -> Unit
+  size[V : Compare + Eq](Self[V]) -> Int64
+  subset[V : Compare + Eq](Self[V], Self[V]) -> Bool
+  to_array[V](Self[V]) -> Array[V]
+  to_string[V : Show](Self[V]) -> String
+  union[V : Compare + Eq](Self[V], Self[V]) -> Self[V]
 }
 
 // Traits
