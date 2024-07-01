@@ -19,20 +19,20 @@ test "panic unwrap should panic on None" {
 
 test "unwrap should return value on Some" {
   let some : Int? = Some(42)
-  @assertion.assert_eq(some.unwrap(), 42)?
+  @test.eq(some.unwrap(), 42)!
 }
 
 test "Option::default should return None" {
   let x : Int? = Option::default()
-  @assertion.assert_eq(x, None)?
+  @test.eq(x, None)!
 }
 
 test "Option::default should return None for String" {
   let x : String? = Option::default()
-  @assertion.assert_eq(x, None)?
+  @test.eq(x, None)!
 }
 
 test "Option::default should return None for Bool" {
   let x : Bool? = Option::default()
-  @assertion.assert_eq(x, None)?
+  @test.eq(x, None)!
 }

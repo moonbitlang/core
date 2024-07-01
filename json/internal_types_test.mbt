@@ -15,7 +15,7 @@
 test "add_string method coverage" {
   let sb = StringBuilder::make()
   add_string(sb, "Hello")
-  @assertion.assert_eq(sb.buffer, "Hello")?
+  @test.eq(sb.buffer, "Hello")!
   add_string(sb, " World")
-  @assertion.assert_eq(sb.buffer, "Hello World")?
+  @test.eq(sb.buffer, "Hello World")!
 }

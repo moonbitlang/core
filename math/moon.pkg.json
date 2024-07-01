@@ -5,7 +5,7 @@
     "moonbitlang/core/coverage"
   ],
   "test-import" : [
-    "moonbitlang/core/assertion",
+    "moonbitlang/core/test",
     "moonbitlang/core/result"
   ]
 }

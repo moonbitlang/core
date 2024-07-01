@@ -7,7 +7,7 @@ fn debug[X : Debug](X) -> Unit
 
 fn ignore[T](T) -> Unit
 
-fn inspect(Show, ~content : String = .., ~loc : SourceLoc = _, ~args_loc : ArgsLoc = _) -> Result[Unit, String]
+fn inspect(Show, ~content : String = .., ~loc : SourceLoc = _, ~args_loc : ArgsLoc = _) -> Unit!String
 
 fn op_ge[T : Compare + Eq](T, T) -> Bool
 
@@ -109,7 +109,7 @@ impl ArrayView {
 
 type Buffer
 impl Buffer {
-  expect(Self, ~content : String = .., ~loc : SourceLoc = _, ~args_loc : ArgsLoc = _) -> Result[Unit, String]
+  expect(Self, ~content : String = .., ~loc : SourceLoc = _, ~args_loc : ArgsLoc = _) -> Unit!String
   make(Int) -> Self
   new(~size_hint : Int = ..) -> Self
   reset(Self) -> Unit

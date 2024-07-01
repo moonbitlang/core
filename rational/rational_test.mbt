@@ -14,56 +14,50 @@
 
 test "from_double overflow" {
   let result = Rational::from_double(10.0e200)
-  @assertion.assert_eq(result, Err("Rational::from_double: overflow"))?
+  @test.eq(result, Err("Rational::from_double: overflow"))!
 }
 
 test "from_double NaN" {
   let result = Rational::from_double(Double::nan())
-  @assertion.assert_eq(result, Err("Rational::from_double: cannot convert NaN"))?
+  @test.eq(result, Err("Rational::from_double: cannot convert NaN"))!
 }
 
 test "from_double normal case" {
   let result = Rational::from_double(0.5)
-  @assertion.assert_eq(result, Ok(Rational::new_unchecked(1L, 2L)))?
+  @test.eq(result, Ok(Rational::new_unchecked(1L, 2L)))!
 }
 
 test "from_double edge case" {
   let result = Rational::from_double(9_223_372_036_800_000_000.0)
-  @assertion.assert_eq(
-    result,
-    Ok(Rational::new_unchecked(9_223_372_036_800_000_000L, 1L)),
-  )?
+  @test.eq(result, Ok(Rational::new_unchecked(9_223_372_036_800_000_000L, 1L)))!
 }
 
 test "from_double overflow edge case" {
   let result = Rational::from_double(9_223_372_036_854_775_807.1)
-  @assertion.assert_eq(result, Err("Rational::from_double: overflow"))?
+  @test.eq(result, Err("Rational::from_double: overflow"))!
 }
 
 test "from_double overflow edge case" {
   let result = Rational::from_double(9_223_372_036_854_775_807.1)
-  @assertion.assert_eq(result, Err("Rational::from_double: overflow"))?
+  @test.eq(result, Err("Rational::from_double: overflow"))!
 }
 
 test "from_double overflow check in continued fraction algorithm" {
   let result = Rational::from_double(10.0e200)
-  @assertion.assert_eq(result, Err("Rational::from_double: overflow"))?
+  @test.eq(result, Err("Rational::from_double: overflow"))!
 }
 
 test "from_double NaN check" {
   let result = Rational::from_double(Double::nan())
-  @assertion.assert_eq(result, Err("Rational::from_double: cannot convert NaN"))?
+  @test.eq(result, Err("Rational::from_double: cannot convert NaN"))!
 }
 
 test "from_double normal case" {
   let result = Rational::from_double(0.5)
-  @assertion.assert_eq(result, Ok(Rational::new_unchecked(1L, 2L)))?
+  @test.eq(result, Ok(Rational::new_unchecked(1L, 2L)))!
 }
 
 test "from_double edge case" {
   let result = Rational::from_double(9_223_372_036_800_000_000.0)
-  @assertion.assert_eq(
-    result,
-    Ok(Rational::new_unchecked(9_223_372_036_800_000_000L, 1L)),
-  )?
+  @test.eq(result, Ok(Rational::new_unchecked(9_223_372_036_800_000_000L, 1L)))!
 }

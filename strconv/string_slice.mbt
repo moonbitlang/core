@@ -131,14 +131,14 @@ fn fold_digits[T](
 }
 
 test "eq_ignore_case" {
-  @assertion.assert_true(prefix_eq_ignore_case(full_slice("nan"), "NaN"))?
-  @assertion.assert_true(prefix_eq_ignore_case(full_slice("inf"), "inf"))?
-  @assertion.assert_true(prefix_eq_ignore_case(full_slice("inf"), "Inf"))?
+  @test.is_true(prefix_eq_ignore_case(full_slice("nan"), "NaN"))!
+  @test.is_true(prefix_eq_ignore_case(full_slice("inf"), "inf"))!
+  @test.is_true(prefix_eq_ignore_case(full_slice("inf"), "Inf"))!
 }
 
 test "lower" {
-  @assertion.assert_eq(lower('Z'), 'z')?
-  @assertion.assert_eq(lower('A'), 'a')?
-  @assertion.assert_eq(lower('a'), 'a')?
-  @assertion.assert_eq(lower('z'), 'z')?
+  @test.eq(lower('Z'), 'z')!
+  @test.eq(lower('A'), 'a')!
+  @test.eq(lower('a'), 'a')!
+  @test.eq(lower('z'), 'z')!
 }

@@ -1,7 +1,0 @@
-{
-    "import": [
-        "moonbitlang/core/builtin",
-        "moonbitlang/core/bool",
-        "moonbitlang/core/coverage"
-    ]
-}
