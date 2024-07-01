@@ -209,7 +209,7 @@ test "op_get" {
 
 test "from_array" {
   inspect(@deque.from_array(([] : Array[Int])), content="Deque::[]")?
-  inspect(@deque.Deque::[1, 2, 3], content="Deque::[1, 2, 3]")?
+  inspect(@deque.of([1, 2, 3]), content="Deque::[1, 2, 3]")?
 }
 
 test "panic pop_front_exn" {
@@ -220,13 +220,12 @@ test "panic pop_back_exn" {
   @deque.from_array(([] : Array[Int])).pop_back_exn()
 }
 
-//Don't format heer!!! See Issue #632
 test "panic op_get" {
-  @deque.Deque::[1, 2, 3][-1] |> ignore
+  @deque.of([1, 2, 3])[-1] |> ignore
 }
 
 test "panic op_set" {
-  @deque.Deque::[1, 2, 3][-1] = 1
+  @deque.of([1, 2, 3])[-1] = 1
 }
 
 test "op_set" {
@@ -291,14 +290,14 @@ test "push_and_pop" {
 }
 
 test "is_empty" {
-  let dv = @deque.Deque::new()
+  let dv = @deque.new()
   @assertion.assert_true(dv.is_empty())?
   dv.push_back(3)
   @assertion.assert_false(dv.is_empty())?
 }
 
 test "of" {
-  let d = @deque.Deque::of([1, 2, 3])
+  let d = @deque.of([1, 2, 3])
   @assertion.assert_eq(d[0], 1)?
   @assertion.assert_eq(d[1], 2)?
   @assertion.assert_eq(d[2], 3)?

@@ -13,12 +13,12 @@
 // limitations under the License.
 
 test "new_with_capacity" {
-  let d : Deque[Int] = Deque::new(capacity=0)
+  let d : Deque[Int] = new(capacity=0)
   @assertion.assert_eq(d.buf.length(), 0)?
 }
 
 test "new_with_capacity_non_zero" {
-  let d : Deque[Int] = Deque::new(capacity=10)
+  let d : Deque[Int] = new(capacity=10)
   @assertion.assert_eq(d.buf.length(), 10)?
 }
 
@@ -44,11 +44,11 @@ test "realloc" {
 }
 
 test "push_realloc" {
-  let dv : Deque[Int] = Deque::new()
+  let dv : Deque[Int] = new()
   dv.push_front(1)
   @assertion.assert_eq(dv.pop_front(), Some(1))?
   @assertion.assert_true(dv.capacity() > 0)?
-  let dv : Deque[Int] = Deque::new()
+  let dv : Deque[Int] = new()
   dv.push_back(1)
   @assertion.assert_eq(dv.pop_back(), Some(1))?
   @assertion.assert_true(dv.capacity() > 0)?
@@ -56,22 +56,22 @@ test "push_realloc" {
 
 test "reserve_and_push" {
   // capacity > 0, len = 0
-  let a : Deque[Int?] = Deque::new(capacity=2)
+  let a : Deque[Int?] = new(capacity=2)
   a.push_back(Some(1))
   inspect(a.front(), content="Some(Some(1))")?
   inspect(a.back(), content="Some(Some(1))")?
   // capacity = 0, len = 0
-  let b : Deque[Int?] = Deque::new(capacity=0)
+  let b : Deque[Int?] = new(capacity=0)
   b.push_back(Some(1))
   inspect(b.front(), content="Some(Some(1))")?
   inspect(b.back(), content="Some(Some(1))")?
   // capacity > 0, len = 0
-  let c : Deque[Int?] = Deque::new(capacity=2)
+  let c : Deque[Int?] = new(capacity=2)
   c.push_front(Some(1))
   inspect(c.front(), content="Some(Some(1))")?
   inspect(c.back(), content="Some(Some(1))")?
   // capacity = 0, len = 0
-  let d : Deque[Int?] = Deque::new(capacity=0)
+  let d : Deque[Int?] = new(capacity=0)
   d.push_front(Some(1))
   inspect(d.front(), content="Some(Some(1))")?
   inspect(d.back(), content="Some(Some(1))")?
