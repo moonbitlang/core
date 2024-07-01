@@ -36,7 +36,7 @@ pub fn expect(
   ~content : String = "",
   ~loc : SourceLoc = _,
   ~args_loc : ArgsLoc = _
-) -> Result[Unit, String] {
+) -> Unit!String {
   let current = self.to_string()
   self.reset()
   if current != content {
@@ -50,11 +50,8 @@ pub fn expect(
     let args_loc = repr(args_loc.to_json())
     let expect = repr(content)
     let actual = repr(current)
-    return Err(
-      "@EXPECT_FAILED {\"loc\": \(loc), \"args_loc\": \(args_loc), \"expect\": \(expect), \"actual\": \(actual)}",
-    )
+    raise "@EXPECT_FAILED {\"loc\": \(loc), \"args_loc\": \(args_loc), \"expect\": \(expect), \"actual\": \(actual)}"
   }
-  Ok(())
 }
 
 /// Expand the buffer size if capacity smaller than required space.
@@ -81,7 +78,7 @@ pub fn to_string(self : Buffer) -> String {
 }
 
 /// Create a buffer with initial capacity. 
-/// This function is deprecated, use `Buffer::new` instead.
+/// @alert deprecate "Use `Buffer::new` instead."
 pub fn Buffer::make(initial_capacity : Int) -> Buffer {
   Buffer::new(size_hint=initial_capacity)
 }

@@ -33,11 +33,11 @@ test "int64 hash" {
   let i4 = gPRIME4.to_int64()
   let i5 = gPRIME5.to_int64()
   let i6 = 0L
-  inspect(i0.hash().to_string(), content=i0.slow_hash().to_string())?
-  inspect(i1.hash().to_string(), content=i1.slow_hash().to_string())?
-  inspect(i2.hash().to_string(), content=i2.slow_hash().to_string())?
-  inspect(i3.hash().to_string(), content=i3.slow_hash().to_string())?
-  inspect(i4.hash().to_string(), content=i4.slow_hash().to_string())?
-  inspect(i5.hash().to_string(), content=i5.slow_hash().to_string())?
-  inspect(i6.hash().to_string(), content=i6.slow_hash().to_string())?
+  inspect(i0.hash().to_string(), content=i0.slow_hash().to_string())!
+  inspect(i1.hash().to_string(), content=i1.slow_hash().to_string())!
+  inspect(i2.hash().to_string(), content=i2.slow_hash().to_string())!
+  inspect(i3.hash().to_string(), content=i3.slow_hash().to_string())!
+  inspect(i4.hash().to_string(), content=i4.slow_hash().to_string())!
+  inspect(i5.hash().to_string(), content=i5.slow_hash().to_string())!
+  inspect(i6.hash().to_string(), content=i6.slow_hash().to_string())!
 }

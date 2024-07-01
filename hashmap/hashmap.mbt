@@ -27,12 +27,12 @@ fn power_2_above(x : Int, n : Int) -> Int {
 }
 
 test "power_2_above" {
-  inspect(power_2_above(1, 15), content="16")?
-  inspect(power_2_above(1, 16), content="16")?
-  inspect(power_2_above(1, 17), content="32")?
-  inspect(power_2_above(1, 32), content="32")?
-  inspect(power_2_above(128, 33), content="128")?
-  inspect(power_2_above(1, 2147483647), content="1073741824")?
+  inspect(power_2_above(1, 15), content="16")!
+  inspect(power_2_above(1, 16), content="16")!
+  inspect(power_2_above(1, 17), content="32")!
+  inspect(power_2_above(1, 32), content="32")!
+  inspect(power_2_above(128, 33), content="128")!
+  inspect(power_2_above(1, 2147483647), content="1073741824")!
 }
 
 /// Create new hash map.
@@ -198,6 +198,6 @@ pub fn HashMap::of[K : Eq + Hash, V](arr : FixedArray[(K, V)]) -> HashMap[K, V] 
 
 test "of" {
   let m = of([(1, 2), (3, 4)])
-  inspect(m.get(1), content="Some(2)")?
-  inspect(m.get(3), content="Some(4)")?
+  inspect(m.get(1), content="Some(2)")!
+  inspect(m.get(3), content="Some(4)")!
 }

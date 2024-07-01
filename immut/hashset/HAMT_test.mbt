@@ -18,18 +18,18 @@ test "Set" {
     i, map => continue i + 1, map.add(i)
   }
   for i = 0; i < 100; i = i + 1 {
-    @assertion.assert_eq((i, map.contains(i)), (i, true))?
+    @test.eq((i, map.contains(i)), (i, true))!
   }
-  inspect((100, map.contains(100)), content="(100, false)")?
+  inspect((100, map.contains(100)), content="(100, false)")!
   let map = map.add(100)
-  inspect((100, map.contains(100)), content="(100, true)")?
+  inspect((100, map.contains(100)), content="(100, true)")!
 }
 
 test "Set::size" {
   for i = 0, set = Set::new(); i < 20; i = i + 1, set = set.add(i) {
-    @assertion.assert_eq(set.size(), i)?
+    @test.eq(set.size(), i)!
   } else {
-    @assertion.assert_eq(set.add(0).size(), 20)?
+    @test.eq(set.add(0).size(), 20)!
   }
 }
 
@@ -39,15 +39,15 @@ test "Set::remove" {
     i, map => continue i + 1, map.add(i)
   }
   for i = 0; i < 100; i = i + 1 {
-    @assertion.assert_eq((i, map.contains(i)), (i, true))?
+    @test.eq((i, map.contains(i)), (i, true))!
   }
   let map = loop 0, map {
     100, map => map.remove(100) // test for removing non-existing element
     i, map => continue i + 2, map.remove(i)
   }
   for i = 0; i < 100; i = i + 2 {
-    @assertion.assert_eq(map.contains(i), false)?
-    @assertion.assert_eq(map.contains(i + 1), true)?
+    @test.eq(map.contains(i), false)!
+    @test.eq(map.contains(i + 1), true)!
   }
 }
 
@@ -55,47 +55,47 @@ test "Set::iter" {
   let data = of(["a", "b", "d", "e", "f"])
   let mut s = ""
   data.iter().each(fn { k => s += " \(k)" })
-  inspect(s, content=" d e b a f")?
+  inspect(s, content=" d e b a f")!
 }
 
 test "Set::to_string" {
   let set = Set::new().add(1).add(3).add(0x0f_ff_ff_ff).add(42)
-  inspect(set, content="@immutable_hashset.Set::[3, 42, 1, 268435455]")?
+  inspect(set, content="@immutable_hashset.Set::[3, 42, 1, 268435455]")!
 }
 
 test "Set::from_array" {
   let set = of(["1", "2", "42"])
-  inspect(set.contains("1"), content="true")?
-  inspect(set.contains("2"), content="true")?
-  inspect(set.contains("42"), content="true")?
-  inspect(set.contains("43"), content="false")?
+  inspect(set.contains("1"), content="true")!
+  inspect(set.contains("2"), content="true")!
+  inspect(set.contains("42"), content="true")!
+  inspect(set.contains("43"), content="false")!
 }
 
 test "Set::is_empty" {
   let set = Set::new()
-  inspect(set.is_empty(), content="true")?
+  inspect(set.is_empty(), content="true")!
   let set = set.add(1)
-  inspect(set.is_empty(), content="false")?
+  inspect(set.is_empty(), content="false")!
 }
 
 test "Set::size" {
   let set = Set::new()
-  @assertion.assert_eq(set.size(), 0)?
+  @test.eq(set.size(), 0)!
   let set = set.add(1)
-  @assertion.assert_eq(set.size(), 1)?
+  @test.eq(set.size(), 1)!
   let set = set.add(2)
-  @assertion.assert_eq(set.size(), 2)?
+  @test.eq(set.size(), 2)!
   let set = set.remove(1)
-  @assertion.assert_eq(set.size(), 1)?
+  @test.eq(set.size(), 1)!
 }
 
 test "Set::is_empty" {
   let set = Set::new()
-  @assertion.assert_eq(set.is_empty(), true)?
+  @test.eq(set.is_empty(), true)!
   let set = set.add(1)
-  @assertion.assert_eq(set.is_empty(), false)?
+  @test.eq(set.is_empty(), false)!
   let set = set.remove(1)
-  @assertion.assert_eq(set.is_empty(), true)?
+  @test.eq(set.is_empty(), true)!
 }
 
 test "Set::iter" {
@@ -103,7 +103,7 @@ test "Set::iter" {
   let result = []
   set.each(fn { x => result.push(x) })
   result.sort()
-  @assertion.assert_eq(result, [1, 2, 3])?
+  @test.eq(result, [1, 2, 3])!
 }
 
 test "Set::iter" {
@@ -111,5 +111,5 @@ test "Set::iter" {
   let result = []
   set.iter().each(fn { x => result.push(x) })
   result.sort()
-  @assertion.assert_eq(result, [1, 2, 3])?
+  @test.eq(result, [1, 2, 3])!
 }
