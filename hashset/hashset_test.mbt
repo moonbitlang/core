@@ -73,10 +73,7 @@ test "remove" {
   m.insert("abcdef" |> i)
   m.remove("ab" |> i)
   @test.eq(m.size(), 5)!
-  @test.eq(
-    m.debug_entries(),
-    "_,(0,a),(0,bc),(1,cd),(1,abc),_,(0,abcdef),_",
-  )!
+  @test.eq(m.debug_entries(), "_,(0,a),(0,bc),(1,cd),(1,abc),_,(0,abcdef),_")!
 }
 
 test "remove_unexist_key" {

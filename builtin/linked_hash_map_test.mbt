@@ -708,10 +708,7 @@ test "remove_unexist_key" {
   m.set("abc", 3)
   m.remove("d")
   @test.eq(m.size(), 3)!
-  @test.eq(
-    m.debug_entries(),
-    "_,(0,a,1),(0,ab,2),(0,abc,3),_,_,_,_",
-  )!
+  @test.eq(m.debug_entries(), "_,(0,a,1),(0,ab,2),(0,abc,3),_,_,_,_")!
 }
 
 test "insert_entry_panic" {

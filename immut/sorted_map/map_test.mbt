@@ -141,10 +141,7 @@ test "filter_with_key" {
 
 test "to_array" {
   let m = of([(1, "one"), (2, "two"), (3, "three")])
-  @test.eq(
-    m.iter().collect(),
-    [(1, "one"), (2, "two"), (3, "three")],
-  )!
+  @test.eq(m.iter().collect(), [(1, "one"), (2, "two"), (3, "three")])!
 }
 
 test "keys" {
@@ -176,10 +173,7 @@ test "split_max" {
   let (k, v, r) = m.split_max()
   @test.eq(k, 8)!
   @test.eq(v, "eight")!
-  @test.eq(
-    r.debug_tree(),
-    "(2,two,(1,one,(0,zero,_,_),_),(3,three,_,_))",
-  )!
+  @test.eq(r.debug_tree(), "(2,two,(1,one,(0,zero,_,_),_),(3,three,_,_))")!
 }
 
 test "split_min" {
@@ -191,10 +185,7 @@ test "split_min" {
   let (k, v, r) = m.split_min()
   @test.eq(k, 0)!
   @test.eq(v, "zero")!
-  @test.eq(
-    r.debug_tree(),
-    "(3,three,(1,one,_,(2,two,_,_)),(8,eight,_,_))",
-  )!
+  @test.eq(r.debug_tree(), "(3,three,(1,one,_,(2,two,_,_)),(8,eight,_,_))")!
 }
 
 test "glue" {
@@ -208,10 +199,7 @@ test "glue" {
     _ => abort("unreachable")
   }
   let m = l.glue(r)
-  @test.eq(
-    m.debug_tree(),
-    "(2,two,(1,one,(0,zero,_,_),_),(8,eight,_,_))",
-  )!
+  @test.eq(m.debug_tree(), "(2,two,(1,one,(0,zero,_,_),_),(8,eight,_,_))")!
 }
 
 test "op_equal" {
