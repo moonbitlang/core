@@ -38,46 +38,29 @@ pub fn of[K : Compare, V](entries : Array[(K, V)]) -> T[K, V] {
 
 /// Inserts a key-value pair.
 pub fn add[K : Compare, V](self : T[K, V], key : K, value : V) -> Unit {
-  let parent = loop self.root, self.root {
-    Some(curr), _ =>
-      if key == curr.key {
-        curr.value = value
-        return
-      } else {
-        continue if key < curr.key { curr.left } else { curr.right }, Some(curr)
-      }
-    None, parent => parent
+  let (new_root, inserted) = add_node(self.root, key, value)
+  if self.root != new_root {
+    self.root = new_root
   }
-  let new = new_node(key, value, ~parent)
-  if parent.is_empty() {
-    self.root = Some(new)
-  } else if key < parent.unwrap().key {
-    parent.unwrap().left = Some(new)
-  } else {
-    parent.unwrap().right = Some(new)
+  if inserted {
+    self.size += 1
   }
-  self.balance(new)
-  self.size += 1
 }
 
 /// Removes a key-value pair.
 pub fn remove[K : Compare, V](self : T[K, V], key : K) -> Unit {
-  // Find node
-  let node = loop self.root {
-    Some(node) =>
-      if key == node.key {
-        break node
-      } else if key < node.key {
-        continue node.left
-      } else {
-        continue node.right
+  match self.root {
+    None => ()
+    Some(old_root) => {
+      let (new_root, deleted) = delete_node(old_root, key)
+      if self.root != new_root {
+        self.root = new_root
       }
-    None => return
+      if deleted {
+        self.size -= 1
+      }
+    }
   }
-  self.delete_node(node)
-  self.balance(node)
-  node.parent = None
-  self.size -= 1
 }
 
 /// Gets a value by a key.
@@ -194,48 +177,23 @@ pub fn iter[K, V](self : T[K, V]) -> Iter[(K, V)] {
   )
 }
 
-// Private functions
+// AVL tree operations
 
-fn delete_node[K : Compare, V](self : T[K, V], node : Node[K, V]) -> Unit {
-  if node.left.is_empty() {
-    self.replace_node(node, node.right)
-  } else if node.right.is_empty() {
-    self.replace_node(node, node.left)
-  } else {
-    let succ = min_node(node.right.unwrap())
-    if succ.parent != Some(node) {
-      self.replace_node(succ, succ.right)
-      succ.right = node.right
-      node.right.unwrap().parent = Some(succ)
+fn replace_root_with_min[K : Compare, V](
+  root : Node[K, V],
+  node : Node[K, V]
+) -> Node[K, V]? {
+  let (l, r) = (node.left, node.right)
+  match l {
+    None => {
+      root.key = node.key
+      root.value = node.value
+      r
     }
-    self.replace_node(node, Some(succ))
-    succ.left = node.left
-    succ.left.unwrap().parent = Some(succ)
-    succ.update_height()
-  }
-}
-
-fn min_node[K, V](root : Node[K, V]) -> Node[K, V] {
-  loop root, root.left {
-    _, Some(n) => continue n, n.left
-    n, None => n
-  }
-}
-
-fn replace_node[K : Compare, V](
-  self : T[K, V],
-  u : Node[K, V],
-  v : Node[K, V]?
-) -> Unit {
-  if u.parent.is_empty() {
-    self.root = v
-  } else if u.parent.unwrap().left == Some(u) {
-    u.parent.unwrap().left = v
-  } else {
-    u.parent.unwrap().right = v
-  }
-  if v.is_empty().not() {
-    v.unwrap().parent = u.parent
+    Some(ln) => {
+      node.left = replace_root_with_min(root, ln)
+      Some(balance(node))
+    }
   }
 }
 
@@ -243,59 +201,131 @@ fn update_height[K, V](self : Node[K, V]) -> Unit {
   self.height = 1 + max(height(self.left), height(self.right))
 }
 
-fn balance[K : Compare, V](self : T[K, V], node : Node[K, V]) -> Unit {
-  loop node.parent {
-    Some(parent) => {
-      let pp = parent.parent
-      parent.update_height()
-      if height(parent.left) > height(parent.right) + 1 {
-        self.rotate_right(parent)
+fn height_ge[K, V](x1 : Node[K, V]?, x2 : Node[K, V]?) -> Bool {
+  match x2 {
+    None => true
+    Some(n2) =>
+      match x1 {
+        None => false
+        Some(n1) => n1.height >= n2.height
       }
-      if height(parent.right) > height(parent.left) + 1 {
-        self.rotate_left(parent)
-      }
-      continue pp
+  }
+}
+
+fn balance[K : Compare, V](root : Node[K, V]) -> Node[K, V] {
+  let (l, r) = (root.left, root.right)
+  let (hl, hr) = (height(l), height(r))
+  let new_root = if hl > hr + 1 {
+    let { left: ll, right: lr, .. } = l.unwrap()
+    if height_ge(ll, lr) {
+      rotate_r(root)
+    } else {
+      rotate_lr(root)
     }
-    None => break
+  } else if hr > hl + 1 {
+    let { left: rl, right: rr, .. } = r.unwrap()
+    if height_ge(rr, rl) {
+      rotate_l(root)
+    } else {
+      rotate_rl(root)
+    }
+  } else {
+    root
+  }
+  new_root.update_height()
+  new_root
+}
+
+fn rotate_l[K : Compare, V](n : Node[K, V]) -> Node[K, V] {
+  let r = n.right.unwrap()
+  n.right = r.left
+  r.left = Some(n)
+  n.update_height()
+  r.update_height()
+  r
+}
+
+fn rotate_r[K : Compare, V](n : Node[K, V]) -> Node[K, V] {
+  let l = n.left.unwrap()
+  n.left = l.right
+  l.right = Some(n)
+  n.update_height()
+  l.update_height()
+  l
+}
+
+fn rotate_lr[K : Compare, V](n : Node[K, V]) -> Node[K, V] {
+  let l = n.left.unwrap()
+  let v = rotate_l(l)
+  n.left = Some(v)
+  rotate_r(n)
+}
+
+fn rotate_rl[K : Compare, V](n : Node[K, V]) -> Node[K, V] {
+  let r = n.right.unwrap()
+  let v = rotate_r(r)
+  n.right = Some(v)
+  rotate_l(n)
+}
+
+fn add_node[K : Compare, V](
+  root : Node[K, V]?,
+  key : K,
+  value : V
+) -> (Node[K, V]?, Bool) {
+  match root {
+    None => (Some(new_node(key, value)), true)
+    Some(n) =>
+      if key == n.key {
+        n.value = value
+        (Some(n), false)
+      } else {
+        let (l, r) = (n.left, n.right)
+        if key < n.key {
+          let (nl, inserted) = add_node(l, key, value)
+          n.left = nl
+          (Some(balance(n)), inserted)
+        } else {
+          let (nr, inserted) = add_node(r, key, value)
+          n.right = nr
+          (Some(balance(n)), inserted)
+        }
+      }
   }
 }
 
-fn rotate_left[K : Compare, V](self : T[K, V], target : Node[K, V]) -> Unit {
-  let pivot = target.right.unwrap()
-  target.right = pivot.left
-  if pivot.left.is_empty().not() {
-    pivot.left.unwrap().parent = Some(target)
-  }
-  pivot.parent = target.parent
-  if target.parent.is_empty() {
-    self.root = Some(pivot)
-  } else if target.parent.unwrap().left == Some(target) {
-    target.parent.unwrap().left = Some(pivot)
+fn delete_node[K : Compare, V](
+  root : Node[K, V],
+  key : K
+) -> (Node[K, V]?, Bool) {
+  if key == root.key {
+    let (l, r) = (root.left, root.right)
+    let n = match (l, r) {
+      (Some(_), Some(nr)) => {
+        root.right = replace_root_with_min(root, nr)
+        Some(balance(root))
+      }
+      (None, Some(_)) => r
+      (Some(_), None) | (None, None) => l
+    }
+    (n, true)
+  } else if key < root.key {
+    match root.left {
+      None => (Some(root), false)
+      Some(l) => {
+        let (nl, deleted) = delete_node(l, key)
+        root.left = nl
+        (Some(balance(root)), deleted)
+      }
+    }
   } else {
-    target.parent.unwrap().right = Some(pivot)
+    match root.right {
+      None => (Some(root), false)
+      Some(r) => {
+        let (nr, deleted) = delete_node(r, key)
+        root.right = nr
+        (Some(balance(root)), deleted)
+      }
+    }
   }
-  pivot.left = Some(target)
-  target.parent = Some(pivot)
-  target.update_height()
-  pivot.update_height()
-}
-
-fn rotate_right[K : Compare, V](self : T[K, V], target : Node[K, V]) -> Unit {
-  let pivot = target.left.unwrap()
-  target.left = pivot.right
-  if pivot.right.is_empty().not() {
-    pivot.right.unwrap().parent = Some(target)
-  }
-  pivot.parent = target.parent
-  if target.parent.is_empty() {
-    self.root = Some(pivot)
-  } else if target.parent.unwrap().left == Some(target) {
-    target.parent.unwrap().left = Some(pivot)
-  } else {
-    target.parent.unwrap().right = Some(pivot)
-  }
-  pivot.right = Some(target)
-  target.parent = Some(pivot)
-  target.update_height()
-  pivot.update_height()
 }
