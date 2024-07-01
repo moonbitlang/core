@@ -1,29 +1,29 @@
-# Moonbit/Core Devec
+# Moonbit/Core Deque
 
 ## Overview
 
-Devec is a double-ended queue implemented as a round-robin queue, supporting O(1) head or tail insertion and querying, just like double-ended queues in other languages(C++ std::deque / Rust VecDeque), here devec also supports random access.
+Deque is a double-ended queue implemented as a round-robin queue, supporting O(1) head or tail insertion and querying, just like double-ended queues in other languages(C++ std::deque / Rust VecDeque), here deque also supports random access.
 
 ## Usage
 
 ### Create
 
-You can create a devec manually via the `new()` or construct it using the `from_array()`.
+You can create a deque manually via the `new()` or construct it using the `from_array()`.
 
 ```moonbit
-let dv : Devec[Int] = Devec::new()
+let dv : Deque[Int] = Deque::new()
 let dv = of([1, 2, 3, 4, 5])
 ```
 
 If you want to set the length at creation time to minimize expansion consumption, you can add parameter `capacity` to the `new()` function.
 
 ```moonbit
-let dv = Devec::new(capacity=10)
+let dv = Deque::new(capacity=10)
 ```
 
 ### Length & Capacity
 
-A devec is an indefinite-length, auto-expandable datatype. You can use `length()` to get the number of elements in the current queue, or `capacity()` to get the current capacity.
+A deque is an indefinite-length, auto-expandable datatype. You can use `length()` to get the number of elements in the current queue, or `capacity()` to get the current capacity.
 
 ```moonbit
 let dv = of([1, 2, 3, 4, 5])
@@ -34,7 +34,7 @@ dv.capacity() // 5
 Similarly, you can use the `is_empty` to determine whether the queue is empty.
 
 ```moonbit
-let dv : Devec[Int] = Devec::new()
+let dv : Deque[Int] = Deque::new()
 dv.is_empty() // true
 ```
 
@@ -47,10 +47,10 @@ dv.reserve_capacity(10)
 println(dv.capacity()) // 10
 ```
 
-Also, you can use `shrink_to_fit` to shrink the capacity of the devec.
+Also, you can use `shrink_to_fit` to shrink the capacity of the deque.
 
 ```moonbit
-let dv = Devec::new(capacity=10)
+let dv = Deque::new(capacity=10)
 dv.push_back(1)
 dv.push_back(2)
 dv.push_back(3)
@@ -124,7 +124,7 @@ dv.back() // Some(3)
 
 ### Clear
 
-You can use `clear` to clear a devec. But note that the memory it already occupies does not change.
+You can use `clear` to clear a deque. But note that the memory it already occupies does not change.
 
 ```moonbit
 let dv = of([1, 2, 3, 4, 5])
@@ -134,7 +134,7 @@ dv.is_empty() // true
 
 ### Equal
 
-devec supports comparing them directly using `op_equal`.
+deque supports comparing them directly using `op_equal`.
 
 ```moonbit
 let dqa = of([1, 2, 3, 4, 5])
@@ -144,7 +144,7 @@ dqa == dqb // true
 
 ### Iter & Map
 
-devec supports vector-like `iter/iteri/map/mapi` functions and their inverse forms.
+deque supports vector-like `iter/iteri/map/mapi` functions and their inverse forms.
 
 ```moonbit
  let dv = of([1, 2, 3, 4, 5])
@@ -156,7 +156,7 @@ devec supports vector-like `iter/iteri/map/mapi` functions and their inverse for
 
 ### Search & Contains
 
-You can use `contains()` to find out if a value is in the devec, or `search()` to find its index in the devec.
+You can use `contains()` to find out if a value is in the deque, or `search()` to find its index in the deque.
 
 ```moonbit
 let dv = of([1, 2, 3, 4, 5])

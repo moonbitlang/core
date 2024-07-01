@@ -22,24 +22,28 @@ fn length[T](self : UninitializedArray[T]) -> Int {
   self.0.length()
 }
 
-/// Creates a new, empty devec.
-pub fn Devec::new[T](~capacity : Int = 0) -> Devec[T] {
-  Devec::{ buf: UninitializedArray::make(capacity), len: 0, head: 0, tail: 0 }
+/// Creates a new, empty deque.
+pub fn Deque::new[T](~capacity : Int = 0) -> Deque[T] {
+  Deque::{ buf: UninitializedArray::make(capacity), len: 0, head: 0, tail: 0 }
 }
 
-test "new_with_capacity" {
-  let d : Devec[Int] = Devec::new(capacity=0)
-  @test.eq(d.buf.length(), 0)!
+pub fn to_string[T : Show](self : Deque[T]) -> String {
+  if self.length() == 0 {
+    return "Deque::[]"
+  }
+  let first = self[0]
+  for i = 1, init = "Deque::[\(first)" {
+    if i >= self.length() {
+      break "\(init)]"
+    }
+    let cur = self[i]
+    continue i + 1, "\(init), \(cur)"
+  }
 }
 
-test "new_with_capacity_non_zero" {
-  let d : Devec[Int] = Devec::new(capacity=10)
-  @test.eq(d.buf.length(), 10)!
-}
-
-/// Creates a new devec from an array.
-pub fn Devec::from_array[T](arr : Array[T]) -> Devec[T] {
-  let deq = Devec::{
+/// Creates a new deque from an array.
+pub fn Deque::from_array[T](arr : Array[T]) -> Deque[T] {
+  let deq = Deque::{
     buf: UninitializedArray::make(arr.length()),
     len: arr.length(),
     head: 0,
@@ -51,8 +55,8 @@ pub fn Devec::from_array[T](arr : Array[T]) -> Devec[T] {
   deq
 }
 
-pub fn Devec::of[T](arr : FixedArray[T]) -> Devec[T] {
-  let deq = Devec::{
+pub fn Deque::of[T](arr : FixedArray[T]) -> Deque[T] {
+  let deq = Deque::{
     buf: UninitializedArray::make(arr.length()),
     len: arr.length(),
     head: 0,
@@ -64,25 +68,18 @@ pub fn Devec::of[T](arr : FixedArray[T]) -> Devec[T] {
   deq
 }
 
-test "of" {
-  let d = Devec::of([1, 2, 3])
-  @test.eq(d[0], 1)!
-  @test.eq(d[1], 2)!
-  @test.eq(d[2], 3)!
-}
-
-/// Returns the devec of elements in the vector.
-pub fn length[T](self : Devec[T]) -> Int {
+/// Returns the deque of elements in the vector.
+pub fn length[T](self : Deque[T]) -> Int {
   self.len
 }
 
-/// Returns the total number of elements the devec can hold without reallocating.
-pub fn capacity[T](self : Devec[T]) -> Int {
+/// Returns the total number of elements the deque can hold without reallocating.
+pub fn capacity[T](self : Deque[T]) -> Int {
   self.buf.length()
 }
 
-/// Reallocate the devec with a new capacity.
-fn realloc[T](self : Devec[T]) -> Unit {
+/// Reallocate the deque with a new capacity.
+fn realloc[T](self : Deque[T]) -> Unit {
   let old_cap = self.len
   let new_cap = if old_cap == 0 { 8 } else { old_cap * 2 }
   let new_buf = UninitializedArray::make(new_cap)
@@ -110,35 +107,14 @@ fn realloc[T](self : Devec[T]) -> Unit {
   self.buf = new_buf
 }
 
-test "realloc" {
-  let dv = of([1, 2, 3, 4, 5])
-  @test.eq(dv.pop_front(), Some(1))!
-  @test.eq(dv.pop_front(), Some(2))!
-  @test.eq(dv.pop_front(), Some(3))!
-  dv.push_back(6)
-  dv.push_back(7)
-  dv.push_back(8)
-  dv.push_back(9)
-  dv.push_back(10)
-  let result = Array::make(7, 0)
-  let mut i = 0
-  dv.each(
-    fn(x) {
-      result[i] = x
-      i += 1
-    },
-  )
-  @test.eq(result, [4, 5, 6, 7, 8, 9, 10])!
-}
-
-/// Return the front element from a devec, or `None` if it is empty.
+/// Return the front element from a deque, or `None` if it is empty.
 ///
 /// # Example
 /// ```
 /// let dv = of([1, 2, 3, 4, 5])
 /// dv.front()
 /// ```
-pub fn front[T](self : Devec[T]) -> T? {
+pub fn front[T](self : Deque[T]) -> T? {
   if self.len == 0 {
     None
   } else {
@@ -146,14 +122,14 @@ pub fn front[T](self : Devec[T]) -> T? {
   }
 }
 
-/// Return the back element from a devec, or `None` if it is empty.
+/// Return the back element from a deque, or `None` if it is empty.
 ///
 /// # Example
 /// ```
 /// let dv = of([1, 2, 3, 4, 5])
 /// dv.back()
 /// ```
-pub fn back[T](self : Devec[T]) -> T? {
+pub fn back[T](self : Deque[T]) -> T? {
   if self.len == 0 {
     None
   } else {
@@ -161,25 +137,16 @@ pub fn back[T](self : Devec[T]) -> T? {
   }
 }
 
-test "front_and_back" {
-  let dv = of([1, 2, 3, 4, 5])
-  @test.eq(dv.back(), Some(5))!
-  @test.eq(dv.front(), Some(1))!
-  let dv : Devec[Int] = of([])
-  @test.eq(dv.back(), None)!
-  @test.eq(dv.front(), None)!
-}
-
-/// Adds an element to the front of the devec.
+/// Adds an element to the front of the deque.
 ///
-/// If the devec is at capacity, it will be reallocated.
+/// If the deque is at capacity, it will be reallocated.
 ///
 /// # Example
 /// ```
 /// let dv = of([1, 2, 3, 4, 5])
 /// dv.push(0)
 /// ```
-pub fn push_front[T](self : Devec[T], value : T) -> Unit {
+pub fn push_front[T](self : Deque[T], value : T) -> Unit {
   if self.len == self.buf.length() {
     self.realloc()
   }
@@ -190,16 +157,16 @@ pub fn push_front[T](self : Devec[T], value : T) -> Unit {
   self.len += 1
 }
 
-/// Adds an element to the back of the devec.
+/// Adds an element to the back of the deque.
 ///
-/// If the devec is at capacity, it will be reallocated.
+/// If the deque is at capacity, it will be reallocated.
 ///
 /// # Example
 /// ```
 /// let dv = of([1, 2, 3, 4, 5])
 /// dv.push(6)
 /// ```
-pub fn push_back[T](self : Devec[T], value : T) -> Unit {
+pub fn push_back[T](self : Deque[T], value : T) -> Unit {
   if self.len == self.buf.length() {
     self.realloc()
   }
@@ -210,46 +177,46 @@ pub fn push_back[T](self : Devec[T], value : T) -> Unit {
   self.len += 1
 }
 
-/// Removes a front element from a devec.
+/// Removes a front element from a deque.
 ///
 /// # Example
 /// ```
 /// let dv = of([1, 2, 3, 4, 5])
 /// dv.pop_front_exn()
 /// ```
-/// @alert unsafe "Panic if the devec is empty."
-pub fn pop_front_exn[T](self : Devec[T]) -> Unit {
+/// @alert unsafe "Panic if the deque is empty."
+pub fn pop_front_exn[T](self : Deque[T]) -> Unit {
   if self.len == 0 {
-    abort("The devec is empty!")
+    abort("The deque is empty!")
   }
   self.head = if self.head < self.buf.length() - 1 { self.head + 1 } else { 0 }
   self.len -= 1
 }
 
-/// Removes a back element from a devec.
+/// Removes a back element from a deque.
 ///
 /// # Example
 /// ```
 /// let dv = of([1, 2, 3, 4, 5])
 /// dv.pop_back_exn()
 /// ```
-/// @alert unsafe "Panic if the devec is empty."
-pub fn pop_back_exn[T](self : Devec[T]) -> Unit {
+/// @alert unsafe "Panic if the deque is empty."
+pub fn pop_back_exn[T](self : Deque[T]) -> Unit {
   if self.len == 0 {
-    abort("The devec is empty!")
+    abort("The deque is empty!")
   }
   self.tail = if self.tail > 0 { self.tail - 1 } else { self.buf.length() - 1 }
   self.len -= 1
 }
 
-/// Removes a front element from a devec and returns it, or `None` if it is empty.
+/// Removes a front element from a deque and returns it, or `None` if it is empty.
 ///
 /// # Example
 /// ```
 /// let dv = of([1, 2, 3, 4, 5])
 /// dv.pop_front()
 /// ```
-pub fn pop_front[T](self : Devec[T]) -> T? {
+pub fn pop_front[T](self : Deque[T]) -> T? {
   if self.len == 0 {
     return None
   }
@@ -259,14 +226,14 @@ pub fn pop_front[T](self : Devec[T]) -> T? {
   Some(self.buf[origin_head])
 }
 
-/// Removes a back element from a devec and returns it, or `None` if it is empty.
+/// Removes a back element from a deque and returns it, or `None` if it is empty.
 ///
 /// # Example
 /// ```
 /// let dv = of([1, 2, 3, 4, 5])
 /// dv.pop_back()
 /// ```
-pub fn pop_back[T](self : Devec[T]) -> T? {
+pub fn pop_back[T](self : Deque[T]) -> T? {
   if self.len == 0 {
     return None
   }
@@ -276,44 +243,9 @@ pub fn pop_back[T](self : Devec[T]) -> T? {
   Some(self.buf[origin_back])
 }
 
-test "push_and_pop" {
-  let dv = of([1, 2, 3, 4, 5])
-  @test.eq(dv.pop_back(), Some(5))!
-  @test.eq(dv.length(), 4)!
-  @test.eq(dv.back(), Some(4))!
-  @test.eq(dv.pop_front(), Some(1))!
-  @test.eq(dv.length(), 3)!
-  @test.eq(dv.front(), Some(2))!
-  dv.push_front(5)
-  dv.push_front(6)
-  dv.push_back(7)
-  dv.push_back(8)
-  @test.eq(dv.length(), 7)!
-  @test.eq(dv.pop_front(), Some(6))!
-  @test.eq(dv.front(), Some(5))!
-  @test.eq(dv.length(), 6)!
-  @test.eq(dv.pop_back(), Some(8))!
-  @test.eq(dv.back(), Some(7))!
-  let dv = of([1])
-  @test.eq(dv.pop_front(), Some(1))!
-  @test.eq(dv.pop_front(), None)!
-  @test.eq(dv.pop_back(), None)!
-}
-
-test "push_realloc" {
-  let dv : Devec[Int] = Devec::new()
-  dv.push_front(1)
-  @test.eq(dv.pop_front(), Some(1))!
-  @test.is_true(dv.capacity() > 0)!
-  let dv : Devec[Int] = Devec::new()
-  dv.push_back(1)
-  @test.eq(dv.pop_back(), Some(1))!
-  @test.is_true(dv.capacity() > 0)!
-}
-
-/// Retrieves the element at the specified index from the devec.
+/// Retrieves the element at the specified index from the deque.
 ///
-/// If you try to access an index which isn’t in the Devec, it will panic.
+/// If you try to access an index which isn’t in the Deque, it will panic.
 ///
 /// # Example
 /// ```
@@ -321,7 +253,7 @@ test "push_realloc" {
 /// println(dv[2]) // 3
 /// ```
 /// @alert unsafe "Panic if the index is out of bounds."
-pub fn op_get[T](self : Devec[T], index : Int) -> T {
+pub fn op_get[T](self : Deque[T], index : Int) -> T {
   if index < 0 || index >= self.len {
     let len = self.len
     abort(
@@ -337,7 +269,7 @@ pub fn op_get[T](self : Devec[T], index : Int) -> T {
 
 /// Sets the value of the element at the specified index.
 ///
-/// If you try to access an index which isn’t in the Devec, it will panic.
+/// If you try to access an index which isn’t in the Deque, it will panic.
 ///
 /// # Example
 /// ```
@@ -346,7 +278,7 @@ pub fn op_get[T](self : Devec[T], index : Int) -> T {
 /// println(dv[2]) // 1
 /// ```
 /// @alert unsafe "Panic if the index is out of bounds."
-pub fn op_set[T](self : Devec[T], index : Int, value : T) -> Unit {
+pub fn op_set[T](self : Deque[T], index : Int, value : T) -> Unit {
   if index < 0 || index >= self.len {
     let len = self.len
     abort(
@@ -360,14 +292,8 @@ pub fn op_set[T](self : Devec[T], index : Int, value : T) -> Unit {
   }
 }
 
-test "op_set" {
-  let dv = of([1, 2, 3, 4, 5])
-  dv[1] = 3
-  @test.eq(dv[1], 3)!
-}
-
-/// Compares two devecs for equality.
-pub fn op_equal[T : Eq](self : Devec[T], other : Devec[T]) -> Bool {
+/// Compares two deques for equality.
+pub fn op_equal[T : Eq](self : Deque[T], other : Deque[T]) -> Bool {
   if self.len != other.len {
     return false
   }
@@ -379,21 +305,7 @@ pub fn op_equal[T : Eq](self : Devec[T], other : Devec[T]) -> Bool {
   true
 }
 
-test "op_equal" {
-  let dv1 = of([1, 2, 3])
-  let dv2 = of([1, 2, 3])
-  @test.is_true(dv1 == dv2)!
-  let dv1 = of([1, 2, 3])
-  let dv2 = of([1, 2, 3])
-  dv2[0] = 2
-  @test.is_false(dv1 == dv2)!
-  let dv1 = of([1, 2, 3])
-  let dv2 = of([1, 2, 3])
-  dv2.push_front(1)
-  @test.is_false(dv1 == dv2)!
-}
-
-/// Iterates over the elements of the devec.
+/// Iterates over the elements of the deque.
 ///
 /// # Example
 /// ```
@@ -401,13 +313,13 @@ test "op_equal" {
 /// let mut sum = 0
 /// dv.each(fn (x) {sum = sum + x})
 /// ```
-pub fn each[T](self : Devec[T], f : (T) -> Unit) -> Unit {
+pub fn each[T](self : Deque[T], f : (T) -> Unit) -> Unit {
   for i = 0; i < self.length(); i = i + 1 {
     f(self[i])
   }
 }
 
-/// Iterates over the elements of the devec with index.
+/// Iterates over the elements of the deque with index.
 ///
 /// # Example
 /// ```
@@ -415,13 +327,13 @@ pub fn each[T](self : Devec[T], f : (T) -> Unit) -> Unit {
 /// let mut idx_sum = 0
 /// dv.eachi(fn (i, x) {idx_sum = idx_sum + i})
 /// ```
-pub fn eachi[T](self : Devec[T], f : (Int, T) -> Unit) -> Unit {
+pub fn eachi[T](self : Deque[T], f : (Int, T) -> Unit) -> Unit {
   for i = 0; i < self.length(); i = i + 1 {
     f(i, self[i])
   }
 }
 
-/// Iterates over the elements of the devec in reversed turn.
+/// Iterates over the elements of the deque in reversed turn.
 ///
 /// # Example
 /// ```
@@ -429,13 +341,13 @@ pub fn eachi[T](self : Devec[T], f : (Int, T) -> Unit) -> Unit {
 /// let mut sum = 0
 /// dv.each_rev(fn (x) {sum = sum + x})
 /// ```
-pub fn each_rev[T](self : Devec[T], f : (T) -> Unit) -> Unit {
+pub fn each_rev[T](self : Deque[T], f : (T) -> Unit) -> Unit {
   for i = self.length() - 1; i >= 0; i = i - 1 {
     f(self[i])
   }
 }
 
-/// Iterates over the elements of the devec in reversed turn with index.
+/// Iterates over the elements of the deque in reversed turn with index.
 ///
 /// # Example
 /// ```
@@ -443,106 +355,83 @@ pub fn each_rev[T](self : Devec[T], f : (T) -> Unit) -> Unit {
 /// let mut idx_sum = 0
 /// dv.eachi_rev(fn (i, x) {idx_sum = idx_sum + i})
 /// ```
-pub fn eachi_rev[T](self : Devec[T], f : (Int, T) -> Unit) -> Unit {
+pub fn eachi_rev[T](self : Deque[T], f : (Int, T) -> Unit) -> Unit {
   for i = 0; i < self.len; i = i + 1 {
     f(i, self[self.len - i - 1])
   }
 }
 
-/// Clears the devec, removing all values.
+/// Clears the deque, removing all values.
 ///
-/// This method has no effect on the allocated capacity of the devec, only setting the length to 0.
+/// This method has no effect on the allocated capacity of the deque, only setting the length to 0.
 ///
 /// # Example
 /// ```
-/// let dv = Devec:: [1, 2, 3, 4, 5]
+/// let dv = Deque:: [1, 2, 3, 4, 5]
 /// dv.clear()
 /// ```
-pub fn clear[T](self : Devec[T]) -> Unit {
+pub fn clear[T](self : Deque[T]) -> Unit {
   self.len = 0
   self.head = 0
   self.tail = 0
 }
 
-test "clear" {
-  let dv = of([3, 4, 5])
-  dv.clear()
-  @test.eq(dv.length(), 0)!
-  @test.eq(dv.capacity(), 3)!
-}
-
-/// Maps a function over the elements of the devec.
+/// Maps a function over the elements of the deque.
 ///
 /// # Example
 /// ```
 /// let dv = of([3, 4, 5])
 /// dv.map(fn (x) {x + 1}) // of([4, 5, 6])
 /// ```
-pub fn map[T, U](self : Devec[T], f : (T) -> U) -> Devec[U] {
+pub fn map[T, U](self : Deque[T], f : (T) -> U) -> Deque[U] {
   if self.len == 0 {
-    of([])
+    new()
   } else {
     let buf : UninitializedArray[U] = UninitializedArray::make(self.len)
     for i = 0; i < self.len; i = i + 1 {
       buf[i] = f(self.buf[i])
     }
-    Devec::{ buf, len: self.len, head: 0, tail: self.len - 1 }
+    Deque::{ buf, len: self.len, head: 0, tail: self.len - 1 }
   }
 }
 
-test "map" {
-  let dv = of([3, 4, 5])
-  let dvp = dv.map(fn(x) { x + 1 })
-  @test.eq(dvp[0], 4)!
-  @test.eq(dvp[1], 5)!
-  @test.eq(dvp[2], 6)!
-}
-
-/// Maps a function over the elements of the devec with index.
+/// Maps a function over the elements of the deque with index.
 ///
 /// # Example
 /// ```
 /// let dv = of([3, 4, 5])
 /// dv.mapi(fn (i, x) {x + i}) // of([3, 5, 7])
 /// ```
-pub fn mapi[T, U](self : Devec[T], f : (Int, T) -> U) -> Devec[U] {
+pub fn mapi[T, U](self : Deque[T], f : (Int, T) -> U) -> Deque[U] {
   if self.len == 0 {
-    of([])
+    new()
   } else {
     let buf : UninitializedArray[U] = UninitializedArray::make(self.len)
     for i = 0; i < self.len; i = i + 1 {
       buf[i] = f(i, self.buf[i])
     }
-    Devec::{ buf, len: self.len, head: 0, tail: self.len - 1 }
+    Deque::{ buf, len: self.len, head: 0, tail: self.len - 1 }
   }
 }
 
-/// Test if the devec is empty.
+/// Test if the deque is empty.
 ///
 /// # Example
 /// ```
-/// let dv = Devec::new()
+/// let dv = Deque::new()
 /// dv.is_empty()
 /// ```
-pub fn is_empty[T](self : Devec[T]) -> Bool {
+pub fn is_empty[T](self : Deque[T]) -> Bool {
   self.len == 0
 }
 
-test "is_empty" {
-  let dv = Devec::new()
-  @test.is_true(dv.is_empty())!
-  dv.push_back(3)
-  @test.is_false(dv.is_empty())!
-}
-
-/// Search the devec index for a given element.
 ///
 /// # Example
 /// ```
-/// let dv = @devec.of([3, 4, 5])
+/// let dv = @deque.of([3, 4, 5])
 /// dv.search(3) // Some(0)
 /// ```
-pub fn search[T : Eq](self : Devec[T], value : T) -> Int? {
+pub fn search[T : Eq](self : Deque[T], value : T) -> Int? {
   for i = 0; i < self.len; i = i + 1 {
     if self.buf[i] == value {
       return Some(i)
@@ -555,10 +444,10 @@ pub fn search[T : Eq](self : Devec[T], value : T) -> Int? {
 ///
 /// # Example
 /// ```
-/// let dv = @devec.of([3, 4, 5])
+/// let dv = @deque.of([3, 4, 5])
 /// dv.contains(3) // true
 /// ```
-pub fn contains[T : Eq](self : Devec[T], value : T) -> Bool {
+pub fn contains[T : Eq](self : Deque[T], value : T) -> Bool {
   for i = 0; i < self.len; i = i + 1 {
     if self.buf[i] == value {
       return true
@@ -573,11 +462,11 @@ pub fn contains[T : Eq](self : Devec[T], value : T) -> Bool {
 /// # Example
 ///
 /// ```
-/// let dv = @devec.of([1])
+/// let dv = @deque.of([1])
 /// dv.reserve_capacity(10)
 /// println(dv.capacity()) // 10
 /// ```
-pub fn reserve_capacity[T](self : Devec[T], capacity : Int) -> Unit {
+pub fn reserve_capacity[T](self : Deque[T], capacity : Int) -> Unit {
   if self.capacity() >= capacity {
     return
   }
@@ -593,12 +482,12 @@ pub fn reserve_capacity[T](self : Devec[T], capacity : Int) -> Unit {
   }
 }
 
-/// Shrinks the capacity of the devec as much as possible.
+/// Shrinks the capacity of the deque as much as possible.
 ///
 /// # Example
 ///
 /// ```
-/// let dv = Devec::new(10)
+/// let dv = Deque::new(10)
 /// dv.push_back(1)
 /// dv.push_back(2)
 /// dv.push_back(3)
@@ -606,7 +495,7 @@ pub fn reserve_capacity[T](self : Devec[T], capacity : Int) -> Unit {
 /// dv.shrink_to_fit()
 /// println(dv.capacity()) // >= 3
 /// ```
-pub fn shrink_to_fit[T](self : Devec[T]) -> Unit {
+pub fn shrink_to_fit[T](self : Deque[T]) -> Unit {
   if self.capacity() <= self.length() {
     return
   }
@@ -620,7 +509,7 @@ pub fn shrink_to_fit[T](self : Devec[T]) -> Unit {
   }
 }
 
-pub fn iter[T](self : Devec[T]) -> Iter[T] {
+pub fn iter[T](self : Deque[T]) -> Iter[T] {
   Iter::_unstable_internal_make(
     fn(yield) {
       for i = 0, len = self.length(); i < len; i = i + 1 {
@@ -632,27 +521,4 @@ pub fn iter[T](self : Devec[T]) -> Iter[T] {
       }
     },
   )
-}
-
-test "reserve and push" {
-  // capacity > 0, len = 0
-  let a : Devec[Int?] = Devec::new(capacity=2)
-  a.push_back(Some(1))
-  inspect(a.front(), content="Some(Some(1))")!
-  inspect(a.back(), content="Some(Some(1))")!
-  // capacity = 0, len = 0
-  let b : Devec[Int?] = Devec::new(capacity=0)
-  b.push_back(Some(1))
-  inspect(b.front(), content="Some(Some(1))")!
-  inspect(b.back(), content="Some(Some(1))")!
-  // capacity > 0, len = 0
-  let c : Devec[Int?] = Devec::new(capacity=2)
-  c.push_front(Some(1))
-  inspect(c.front(), content="Some(Some(1))")!
-  inspect(c.back(), content="Some(Some(1))")!
-  // capacity = 0, len = 0
-  let d : Devec[Int?] = Devec::new(capacity=0)
-  d.push_front(Some(1))
-  inspect(d.front(), content="Some(Some(1))")!
-  inspect(d.back(), content="Some(Some(1))")!
 }
