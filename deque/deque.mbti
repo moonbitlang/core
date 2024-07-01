@@ -3,8 +3,8 @@ package moonbitlang/core/deque
 // Values
 
 // Types and methods
-type Devec
-impl Devec {
+type Deque
+impl Deque {
   back[T](Self[T]) -> T?
   capacity[T](Self[T]) -> Int
   clear[T](Self[T]) -> Unit
@@ -34,6 +34,7 @@ impl Devec {
   reserve_capacity[T](Self[T], Int) -> Unit
   search[T : Eq](Self[T], T) -> Int?
   shrink_to_fit[T](Self[T]) -> Unit
+  to_string[T : Show](Self[T]) -> String
 }
 
 // Traits

@@ -126,6 +126,8 @@ test "mapi" {
   inspect(dvp[0], content="3")!
   inspect(dvp[1], content="5")!
   inspect(dvp[2], content="7")!
+  let dve = @deque.of(([] : FixedArray[Int]))
+  inspect(dve.mapi(fn(_idx, x) { x }), content="Deque::[]")!
 }
 
 test "iter_rev" {
@@ -197,10 +199,115 @@ test "iter2" {
 
 test "op_get" {
   let dv = @deque.of([1, 2, 3, 4, 5])
-  inspect([dv[0], dv[1], dv[2], dv[3], dv[4]], content="[1, 2, 3, 4, 5]")!
+  inspect(dv, content="Deque::[1, 2, 3, 4, 5]")!
   dv.pop_front() |> ignore
   dv.push_back(1)
   inspect(dv[4], content="1")!
   dv.push_front(2)
   inspect(dv[0], content="2")!
+}
+
+test "from_array" {
+  inspect(@deque.from_array(([] : Array[Int])), content="Deque::[]")!
+  inspect(@deque.of([1, 2, 3]), content="Deque::[1, 2, 3]")!
+}
+
+test "panic pop_front_exn" {
+  @deque.from_array(([] : Array[Int])).pop_front_exn()
+}
+
+test "panic pop_back_exn" {
+  @deque.from_array(([] : Array[Int])).pop_back_exn()
+}
+
+test "panic op_get" {
+  @deque.of([1, 2, 3])[-1] |> ignore
+}
+
+test "panic op_set" {
+  @deque.of([1, 2, 3])[-1] = 1
+}
+
+test "op_set" {
+  let dv = @deque.of([1, 2, 3, 4, 5])
+  dv[1] = 3
+  @test.eq(dv[1], 3)!
+}
+
+test "op_equal" {
+  let dv1 = @deque.of([1, 2, 3])
+  let dv2 = @deque.of([1, 2, 3])
+  @test.is_true(dv1 == dv2)!
+  let dv1 = @deque.of([1, 2, 3])
+  let dv2 = @deque.of([1, 2, 3])
+  dv2[0] = 2
+  @test.is_false(dv1 == dv2)!
+  let dv1 = @deque.of([1, 2, 3])
+  let dv2 = @deque.of([1, 2, 3])
+  dv2.push_front(1)
+  @test.is_false(dv1 == dv2)!
+}
+
+test "clear" {
+  let dv = @deque.of([3, 4, 5])
+  dv.clear()
+  @test.eq(dv.length(), 0)!
+  @test.eq(dv.capacity(), 3)!
+}
+
+test "map" {
+  let dv = @deque.of([3, 4, 5])
+  let dvp = dv.map(fn(x) { x + 1 })
+  @test.eq(dvp[0], 4)!
+  @test.eq(dvp[1], 5)!
+  @test.eq(dvp[2], 6)!
+  let dve = @deque.of(([] : FixedArray[Int]))
+  inspect(dve.map(fn(x) { x }), content="Deque::[]")!
+}
+
+test "push_and_pop" {
+  let dv = @deque.of([1, 2, 3, 4, 5])
+  @test.eq(dv.pop_back(), Some(5))!
+  @test.eq(dv.length(), 4)!
+  @test.eq(dv.back(), Some(4))!
+  @test.eq(dv.pop_front(), Some(1))!
+  @test.eq(dv.length(), 3)!
+  @test.eq(dv.front(), Some(2))!
+  dv.push_front(5)
+  dv.push_front(6)
+  dv.push_back(7)
+  dv.push_back(8)
+  @test.eq(dv.length(), 7)!
+  @test.eq(dv.pop_front(), Some(6))!
+  @test.eq(dv.front(), Some(5))!
+  @test.eq(dv.length(), 6)!
+  @test.eq(dv.pop_back(), Some(8))!
+  @test.eq(dv.back(), Some(7))!
+  let dv = @deque.of([1])
+  @test.eq(dv.pop_front(), Some(1))!
+  @test.eq(dv.pop_front(), None)!
+  @test.eq(dv.pop_back(), None)!
+}
+
+test "is_empty" {
+  let dv = @deque.new()
+  @test.is_true(dv.is_empty())!
+  dv.push_back(3)
+  @test.is_false(dv.is_empty())!
+}
+
+test "of" {
+  let d = @deque.of([1, 2, 3])
+  @test.eq(d[0], 1)!
+  @test.eq(d[1], 2)!
+  @test.eq(d[2], 3)!
+}
+
+test "front_and_back" {
+  let dv = @deque.of([1, 2, 3, 4, 5])
+  @test.eq(dv.back(), Some(5))!
+  @test.eq(dv.front(), Some(1))!
+  let dv : @deque.Deque[Int] = @deque.new()
+  @test.eq(dv.back(), None)!
+  @test.eq(dv.front(), None)!
 }
