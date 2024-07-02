@@ -24,6 +24,7 @@ impl Option {
   or[T](T?, T) -> T
   or_default[T : Default](T?) -> T
   or_else[T](T?, () -> T) -> T
+  or_error[T, Err](T?, Err) -> T!Err
 }
 
 // Traits

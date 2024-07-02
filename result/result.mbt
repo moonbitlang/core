@@ -310,3 +310,19 @@ test "show" {
   let err : Result[String, _] = Err("world")
   inspect(err, content="Err(world)")!
 }
+
+pub fn unwrap_exn[T, E](self : Result[T, E]) -> T!E {
+  match self {
+    Ok(x) => x
+    Err(e) => {
+      raise e
+    }
+  }
+}
+
+test "unwrap exn" {
+  inspect(
+    (Err("This is serious") : Result[Int, String]).unwrap_exn()!!,
+    content="Err(This is serious)",
+  )!
+}
