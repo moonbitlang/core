@@ -194,6 +194,13 @@ impl SourceLoc {
   to_string(Self) -> String
 }
 
+type StringBuilder
+impl StringBuilder {
+  add_string(Self, String) -> Unit
+  make() -> Self
+  to_string(Self) -> String
+}
+
 pub type UnsafeMaybeUninit
 impl Unit {
   debug_write(Unit, Buffer) -> Unit
@@ -415,4 +422,3 @@ pub trait Show {
 }
 
 // Extension Methods
-
