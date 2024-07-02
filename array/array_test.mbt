@@ -108,7 +108,7 @@ test "iter_rev" {
   v.push(4)
   v.push(5)
   let mut sum = 0
-  v.each_rev(fn(x) { sum = sum + x })
+  v.rev_each(fn(x) { sum = sum + x })
   @test.eq(sum, 12)!
 }
 
@@ -122,7 +122,7 @@ test "iteri" {
 test "iter_revi" {
   let v = [3, 4, 5]
   let mut sum = 0
-  v.eachi_rev(fn(i, x) { sum = sum + x + i })
+  v.rev_eachi(fn(i, x) { sum = sum + x + i })
   @test.eq(sum, 15)!
 }
 

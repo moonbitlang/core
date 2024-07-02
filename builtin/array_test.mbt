@@ -129,7 +129,7 @@ test "array_each" {
 test "array_each_rev" {
   let arr = [1, 2, 3]
   let mut sum = 0
-  arr.each_rev(fn(x) { sum = sum + x })
+  arr.rev_each(fn(x) { sum = sum + x })
   inspect(sum, content="6")!
 }
 
@@ -143,7 +143,7 @@ test "array_eachi" {
 test "array_eachi_rev" {
   let arr = [1, 2, 3]
   let mut sum = 0
-  arr.eachi_rev(fn(i, x) { sum = sum + i + x })
+  arr.rev_eachi(fn(i, x) { sum = sum + i + x })
   inspect(sum, content="9")!
 }
 
