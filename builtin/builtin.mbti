@@ -46,9 +46,7 @@ impl Array {
   dedup[T : Eq](Self[T]) -> Unit
   drain[T](Self[T], Int, Int) -> Self[T]
   each[T](Self[T], (T) -> Unit) -> Unit
-  each_rev[T](Self[T], (T) -> Unit) -> Unit
   eachi[T](Self[T], (Int, T) -> Unit) -> Unit
-  eachi_rev[T](Self[T], (Int, T) -> Unit) -> Unit
   ends_with[T : Eq](Self[T], Self[T]) -> Bool
   extract_if[T](Self[T], (T) -> Bool) -> Self[T]
   filter[T](Self[T], (T) -> Bool) -> Self[T]
@@ -84,6 +82,8 @@ impl Array {
   reserve_capacity[T](Self[T], Int) -> Unit
   resize[T](Self[T], Int, T) -> Unit
   retain[T](Self[T], (T) -> Bool) -> Unit
+  rev_each[T](Self[T], (T) -> Unit) -> Unit
+  rev_eachi[T](Self[T], (Int, T) -> Unit) -> Unit
   reverse[T](Self[T]) -> Unit
   search[T : Eq](Self[T], T) -> Int?
   shrink_to_fit[T](Self[T]) -> Unit

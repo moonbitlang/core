@@ -133,7 +133,7 @@ test "mapi" {
 test "iter_rev" {
   let mut i = 6
   let mut failed = false
-  @deque.of([1, 2, 3, 4, 5]).each_rev(
+  @deque.of([1, 2, 3, 4, 5]).rev_each(
     fn(elem) {
       if elem != i - 1 {
         failed = true
@@ -148,7 +148,7 @@ test "iter_revi" {
   let mut i = 6
   let mut j = 0
   let mut failed = false
-  @deque.of([1, 2, 3, 4, 5]).eachi_rev(
+  @deque.of([1, 2, 3, 4, 5]).rev_eachi(
     fn(index, elem) {
       if index != j || elem != i - 1 {
         failed = true

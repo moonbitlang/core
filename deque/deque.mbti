@@ -10,9 +10,7 @@ impl Deque {
   clear[T](Self[T]) -> Unit
   contains[T : Eq](Self[T], T) -> Bool
   each[T](Self[T], (T) -> Unit) -> Unit
-  each_rev[T](Self[T], (T) -> Unit) -> Unit
   eachi[T](Self[T], (Int, T) -> Unit) -> Unit
-  eachi_rev[T](Self[T], (Int, T) -> Unit) -> Unit
   from_array[T](Array[T]) -> Self[T]
   front[T](Self[T]) -> T?
   is_empty[T](Self[T]) -> Bool
@@ -32,6 +30,8 @@ impl Deque {
   push_back[T](Self[T], T) -> Unit
   push_front[T](Self[T], T) -> Unit
   reserve_capacity[T](Self[T], Int) -> Unit
+  rev_each[T](Self[T], (T) -> Unit) -> Unit
+  rev_eachi[T](Self[T], (Int, T) -> Unit) -> Unit
   search[T : Eq](Self[T], T) -> Int?
   shrink_to_fit[T](Self[T]) -> Unit
   to_string[T : Show](Self[T]) -> String
