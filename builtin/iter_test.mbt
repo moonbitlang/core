@@ -291,6 +291,20 @@ test "range" {
   )!
 }
 
+test "each" {
+  let iter = test_from_array(['1', '2', '3', '4', '5'])
+  let exb = Buffer::new(size_hint=5)
+  iter.each(fn { x => exb.write_char(x) })
+  exb.expect(content="12345")!
+}
+
+test "eachi" {
+  let iter = test_from_array([1, 2, 3, 4, 5])
+  let exb = Buffer::new(size_hint=5)
+  iter.eachi(fn { i, x => exb.write_string((x + i).to_string()) })
+  exb.expect(content="13579")!
+}
+
 // For testing purposes
 fn test_from_array[T](arr : Array[T]) -> Iter[T] {
   Iter::_unstable_internal_make(
