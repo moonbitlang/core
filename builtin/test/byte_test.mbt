@@ -25,7 +25,7 @@ test "byte_debug_write" {
   let b1 = b'\x00'
   let b2 = b'\x0F'
   let b3 = b'\xFF'
-  let buf = Buffer::make(10)
+  let buf = Buffer::new(size_hint=10)
   b1.debug_write(buf)
   @test.is_true(buf.to_string() == "b'\\x00'")!
   buf.reset()
