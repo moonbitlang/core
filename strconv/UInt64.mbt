@@ -13,7 +13,7 @@
 // limitations under the License.
 
 /// Pretend we have UInt64
-priv type UInt64 Int64 derive(Eq)
+// priv type UInt64 Int64 derive(Eq)
 
 fn new_UInt64_Int(value : Int) -> UInt64 {
   UInt64(value.to_int64())
