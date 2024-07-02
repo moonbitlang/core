@@ -367,7 +367,7 @@ pub fn eachi_rev[T](self : Deque[T], f : (Int, T) -> Unit) -> Unit {
 ///
 /// # Example
 /// ```
-/// let dv = Deque:: [1, 2, 3, 4, 5]
+/// let dv = of([1, 2, 3, 4, 5])
 /// dv.clear()
 /// ```
 pub fn clear[T](self : Deque[T]) -> Unit {
