@@ -17,7 +17,7 @@ test "new_counter" {
   let result = counter.to_string()
   // @test.eq(result, "[0, 0]")?
   if result != "[0, 0]" {
-    return Err("Expected: [0, 0], got: " + result)
+    raise "Expected: [0, 0], got: " + result
   }
 }
 
@@ -28,7 +28,7 @@ test "incr_counter" {
   let result = counter.to_string()
   // @test.eq(result, "[1, 0, 0, 0, 0, 0, 0, 0, 0, 1]")?
   if result != "[1, 0, 0, 0, 0, 0, 0, 0, 0, 1]" {
-    return Err("Expected: [1, 0, 0, 0, 0, 0, 0, 0, 0, 1], got: " + result)
+    raise "Expected: [1, 0, 0, 0, 0, 0, 0, 0, 0, 1], got: " + result
   }
 }
 
@@ -38,7 +38,7 @@ test "backslash escape" {
   // @test.eq(escape(s), expected)?
   let escape_s = escape(s)
   if escape_s != expected {
-    return Err("Expected: " + expected + ", got: " + escape_s)
+    raise "Expected: " + expected + ", got: " + escape_s
   }
 }
 
@@ -75,7 +75,7 @@ test "escape_to" {
   escape_to("\\n\\r\\t\\b\\\"'\\\\", buf)
   let escaped_string = buf.to_string()
   if escaped_string != "\\\\n\\\\r\\\\t\\\\b\\\\\\\"'\\\\\\\\" {
-    return Err("escaped_string: \(escaped_string)")
+    raise "escaped_string: \(escaped_string)"
   }
 }
 
@@ -84,6 +84,6 @@ test "escape_to_unicode" {
   escape_to("\u0010\u001f", buf)
   let escaped_string = buf.to_string()
   if escaped_string != "\\u0010\\u001f" {
-    return Err("escaped_string: \(escaped_string)")
+    raise "escaped_string: \(escaped_string)"
   }
 }

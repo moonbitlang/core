@@ -247,7 +247,7 @@ pub fn each[T](self : Array[T], f : (T) -> Unit) -> Unit {
   }
 }
 
-pub fn each_rev[T](self : Array[T], f : (T) -> Unit) -> Unit {
+pub fn rev_each[T](self : Array[T], f : (T) -> Unit) -> Unit {
   for i = self.length() - 1; i >= 0; i = i - 1 {
     f(self[i])
   }
@@ -270,7 +270,7 @@ pub fn eachi[T](self : Array[T], f : (Int, T) -> Unit) -> Unit {
   }
 }
 
-pub fn eachi_rev[T](self : Array[T], f : (Int, T) -> Unit) -> Unit {
+pub fn rev_eachi[T](self : Array[T], f : (Int, T) -> Unit) -> Unit {
   let len = self.length()
   for i = 0; i < len; i = i + 1 {
     f(i, self[len - i - 1])
@@ -699,23 +699,6 @@ pub fn repeat[T](self : Array[T], times : Int) -> Array[T] {
   let v = Array::new(capacity=self.length() * times)
   for i = 0; i < times; i = i + 1 {
     v.append(self)
-  }
-  v
-}
-
-/// Flattens a array of arrays with a given separator.
-///
-/// # Example
-/// ```
-/// [[3, 4], [5, 6]].join(0)
-/// ```
-pub fn join[T](self : Array[Array[T]], sep : T) -> Array[T] {
-  let v = []
-  for i = 0; i < self.length(); i = i + 1 {
-    v.append(self[i])
-    if i < self.length() - 1 {
-      v.push(sep)
-    }
   }
   v
 }

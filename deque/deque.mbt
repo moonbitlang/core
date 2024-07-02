@@ -339,9 +339,9 @@ pub fn eachi[T](self : Deque[T], f : (Int, T) -> Unit) -> Unit {
 /// ```
 /// let dv = of([1, 2, 3, 4, 5])
 /// let mut sum = 0
-/// dv.each_rev(fn (x) {sum = sum + x})
+/// dv.rev_each(fn (x) {sum = sum + x})
 /// ```
-pub fn each_rev[T](self : Deque[T], f : (T) -> Unit) -> Unit {
+pub fn rev_each[T](self : Deque[T], f : (T) -> Unit) -> Unit {
   for i = self.length() - 1; i >= 0; i = i - 1 {
     f(self[i])
   }
@@ -353,9 +353,9 @@ pub fn each_rev[T](self : Deque[T], f : (T) -> Unit) -> Unit {
 /// ```
 /// let dv = of([1, 2, 3, 4, 5])
 /// let mut idx_sum = 0
-/// dv.eachi_rev(fn (i, x) {idx_sum = idx_sum + i})
+/// dv.rev_eachi(fn (i, x) {idx_sum = idx_sum + i})
 /// ```
-pub fn eachi_rev[T](self : Deque[T], f : (Int, T) -> Unit) -> Unit {
+pub fn rev_eachi[T](self : Deque[T], f : (Int, T) -> Unit) -> Unit {
   for i = 0; i < self.len; i = i + 1 {
     f(i, self[self.len - i - 1])
   }
@@ -367,7 +367,7 @@ pub fn eachi_rev[T](self : Deque[T], f : (Int, T) -> Unit) -> Unit {
 ///
 /// # Example
 /// ```
-/// let dv = Deque:: [1, 2, 3, 4, 5]
+/// let dv = of([1, 2, 3, 4, 5])
 /// dv.clear()
 /// ```
 pub fn clear[T](self : Deque[T]) -> Unit {

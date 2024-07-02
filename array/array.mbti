@@ -9,9 +9,7 @@ impl FixedArray {
   contains[T : Eq](Self[T], T) -> Bool
   copy[T](Self[T]) -> Self[T]
   each[T](Self[T], (T) -> Unit) -> Unit
-  each_rev[T](Self[T], (T) -> Unit) -> Unit
   eachi[T](Self[T], (Int, T) -> Unit) -> Unit
-  eachi_rev[T](Self[T], (Int, T) -> Unit) -> Unit
   ends_with[T : Eq](Self[T], Self[T]) -> Bool
   fold_left[T, U](Self[T], (U, T) -> U, ~init : U) -> U
   fold_lefti[T, U](Self[T], (Int, U, T) -> U, ~init : U) -> U
@@ -26,6 +24,8 @@ impl FixedArray {
   new_with_index[T](Int, (Int) -> T) -> Self[T]
   op_add[T](Self[T], Self[T]) -> Self[T]
   op_equal[T : Eq](Self[T], Self[T]) -> Bool
+  rev_each[T](Self[T], (T) -> Unit) -> Unit
+  rev_eachi[T](Self[T], (Int, T) -> Unit) -> Unit
   reverse[T](Self[T]) -> Unit
   search[T : Eq](Self[T], T) -> Int?
   sort[T : Compare + Eq](Self[T]) -> Unit
@@ -37,6 +37,7 @@ impl FixedArray {
 impl Array {
   copy[T](Self[T]) -> Self[T]
   iter[T](Self[T]) -> Iter[T]
+  join[T : Show](Self[T], String) -> String
   new_with_index[T](Int, (Int) -> T) -> Self[T]
   shuffle[T](Self[T], ~rand : (Int) -> Int) -> Self[T]
   shuffle_in_place[T](Self[T], ~rand : (Int) -> Int) -> Unit

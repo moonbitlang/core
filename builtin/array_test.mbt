@@ -129,7 +129,7 @@ test "array_each" {
 test "array_each_rev" {
   let arr = [1, 2, 3]
   let mut sum = 0
-  arr.each_rev(fn(x) { sum = sum + x })
+  arr.rev_each(fn(x) { sum = sum + x })
   inspect(sum, content="6")!
 }
 
@@ -143,7 +143,7 @@ test "array_eachi" {
 test "array_eachi_rev" {
   let arr = [1, 2, 3]
   let mut sum = 0
-  arr.eachi_rev(fn(i, x) { sum = sum + i + x })
+  arr.rev_eachi(fn(i, x) { sum = sum + i + x })
   inspect(sum, content="9")!
 }
 
@@ -354,17 +354,6 @@ test "array_repeat" {
   @test.eq(repeated[3], 2)!
   @test.eq(repeated[4], 1)!
   @test.eq(repeated[5], 2)!
-}
-
-test "array_join" {
-  let arr = [[1, 2], [3, 4]]
-  let joined = arr.join(0)
-  @test.eq(joined.length(), 5)!
-  @test.eq(joined[0], 1)!
-  @test.eq(joined[1], 2)!
-  @test.eq(joined[2], 0)!
-  @test.eq(joined[3], 3)!
-  @test.eq(joined[4], 4)!
 }
 
 test "array_fold_left" {

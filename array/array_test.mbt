@@ -108,7 +108,7 @@ test "iter_rev" {
   v.push(4)
   v.push(5)
   let mut sum = 0
-  v.each_rev(fn(x) { sum = sum + x })
+  v.rev_each(fn(x) { sum = sum + x })
   @test.eq(sum, 12)!
 }
 
@@ -122,7 +122,7 @@ test "iteri" {
 test "iter_revi" {
   let v = [3, 4, 5]
   let mut sum = 0
-  v.eachi_rev(fn(i, x) { sum = sum + x + i })
+  v.rev_eachi(fn(i, x) { sum = sum + x + i })
   @test.eq(sum, 15)!
 }
 
@@ -311,11 +311,17 @@ test "repeat" {
   @test.eq(vv.length(), 4)!
 }
 
-test "join" {
+test "flatten" {
   let v = [[3, 4], [5, 6]]
-  let vv = v.join(0)
-  @test.eq(vv, [3, 4, 0, 5, 6])!
-  @test.eq(vv.length(), 5)!
+  let vv = v.flatten()
+  @test.eq(vv, [3, 4, 5, 6])!
+  @test.eq(vv.length(), 4)!
+}
+
+test "join" {
+  let v = [3, 4, 5]
+  let s = v.join(", ")
+  @test.eq(s, "3, 4, 5")!
 }
 
 test "fold_left" {

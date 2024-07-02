@@ -46,9 +46,7 @@ impl Array {
   dedup[T : Eq](Self[T]) -> Unit
   drain[T](Self[T], Int, Int) -> Self[T]
   each[T](Self[T], (T) -> Unit) -> Unit
-  each_rev[T](Self[T], (T) -> Unit) -> Unit
   eachi[T](Self[T], (Int, T) -> Unit) -> Unit
-  eachi_rev[T](Self[T], (Int, T) -> Unit) -> Unit
   ends_with[T : Eq](Self[T], Self[T]) -> Bool
   extract_if[T](Self[T], (T) -> Bool) -> Self[T]
   filter[T](Self[T], (T) -> Bool) -> Self[T]
@@ -63,7 +61,6 @@ impl Array {
   insert[T](Self[T], Int, T) -> Unit
   is_empty[T](Self[T]) -> Bool
   is_sorted[T : Compare + Eq](Self[T]) -> Bool
-  join[T](Self[Self[T]], T) -> Self[T]
   length[T](Self[T]) -> Int
   make[T](Int, T) -> Self[T]
   map[T, U](Self[T], (T) -> U) -> Self[U]
@@ -84,6 +81,8 @@ impl Array {
   reserve_capacity[T](Self[T], Int) -> Unit
   resize[T](Self[T], Int, T) -> Unit
   retain[T](Self[T], (T) -> Bool) -> Unit
+  rev_each[T](Self[T], (T) -> Unit) -> Unit
+  rev_eachi[T](Self[T], (Int, T) -> Unit) -> Unit
   reverse[T](Self[T]) -> Unit
   search[T : Eq](Self[T], T) -> Int?
   shrink_to_fit[T](Self[T]) -> Unit
@@ -131,6 +130,7 @@ impl Iter {
   drop[T](Self[T], Int) -> Self[T]
   drop_while[T](Self[T], (T) -> Bool) -> Self[T]
   each[T](Self[T], (T) -> Unit) -> Unit
+  eachi[T](Self[T], (Int, T) -> Unit) -> Unit
   empty[T]() -> Self[T]
   filter[T](Self[T], (T) -> Bool) -> Self[T]
   find_first[T](Self[T], (T) -> Bool) -> T?
