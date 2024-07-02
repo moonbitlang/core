@@ -1,6 +1,12 @@
 package moonbitlang/core/math
 
 // Values
+fn acos(Double) -> Double
+
+fn asin(Double) -> Double
+
+fn atan(Double) -> Double
+
 fn cos(Double) -> Double
 
 fn maximum[T : Compare + Eq](T, T) -> T

@@ -1,0 +1,9 @@
+{
+  "import": [
+    "moonbitlang/core/math",
+    "moonbitlang/core/test",
+    "moonbitlang/core/double",
+    "moonbitlang/core/builtin",
+    "moonbitlang/core/coverage"
+  ]
+}
