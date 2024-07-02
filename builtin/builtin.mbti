@@ -61,7 +61,6 @@ impl Array {
   insert[T](Self[T], Int, T) -> Unit
   is_empty[T](Self[T]) -> Bool
   is_sorted[T : Compare + Eq](Self[T]) -> Bool
-  join[T](Self[Self[T]], T) -> Self[T]
   length[T](Self[T]) -> Int
   make[T](Int, T) -> Self[T]
   map[T, U](Self[T], (T) -> U) -> Self[U]
@@ -131,6 +130,7 @@ impl Iter {
   drop[T](Self[T], Int) -> Self[T]
   drop_while[T](Self[T], (T) -> Bool) -> Self[T]
   each[T](Self[T], (T) -> Unit) -> Unit
+  eachi[T](Self[T], (Int, T) -> Unit) -> Unit
   empty[T]() -> Self[T]
   filter[T](Self[T], (T) -> Bool) -> Self[T]
   find_first[T](Self[T], (T) -> Bool) -> T?

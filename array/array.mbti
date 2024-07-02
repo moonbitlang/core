@@ -37,6 +37,7 @@ impl FixedArray {
 impl Array {
   copy[T](Self[T]) -> Self[T]
   iter[T](Self[T]) -> Iter[T]
+  join[T : Show](Self[T], String) -> String
   new_with_index[T](Int, (Int) -> T) -> Self[T]
   shuffle[T](Self[T], ~rand : (Int) -> Int) -> Self[T]
   shuffle_in_place[T](Self[T], ~rand : (Int) -> Int) -> Unit

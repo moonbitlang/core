@@ -311,11 +311,17 @@ test "repeat" {
   @test.eq(vv.length(), 4)!
 }
 
-test "join" {
+test "flatten" {
   let v = [[3, 4], [5, 6]]
-  let vv = v.join(0)
-  @test.eq(vv, [3, 4, 0, 5, 6])!
-  @test.eq(vv.length(), 5)!
+  let vv = v.flatten()
+  @test.eq(vv, [3, 4, 5, 6])!
+  @test.eq(vv.length(), 4)!
+}
+
+test "join" {
+  let v = [3, 4, 5]
+  let s = v.join(", ")
+  @test.eq(s, "3, 4, 5")!
 }
 
 test "fold_left" {

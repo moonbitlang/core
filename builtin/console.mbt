@@ -12,11 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-fn print_string(s : String) -> Unit = "%print_string"
+fn println_mono(s : String) -> Unit = "%println"
 
 pub fn println[T : Show](input : T) -> Unit {
-  print_string(input.to_string())
-  print_string("\n")
+  println_mono(input.to_string())
 }
 
 /// @alert deprecate "Use `println` instead"
