@@ -63,7 +63,6 @@ impl Array {
   insert[T](Self[T], Int, T) -> Unit
   is_empty[T](Self[T]) -> Bool
   is_sorted[T : Compare + Eq](Self[T]) -> Bool
-  join[T](Self[Self[T]], T) -> Self[T]
   length[T](Self[T]) -> Int
   make[T](Int, T) -> Self[T]
   map[T, U](Self[T], (T) -> U) -> Self[U]
