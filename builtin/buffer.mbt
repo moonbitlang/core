@@ -83,7 +83,7 @@ pub fn Buffer::make(initial_capacity : Int) -> Buffer {
   Buffer::new(size_hint=initial_capacity)
 }
 
-/// Create a buffer with initial capacity.
+/// Create a buffer with initial capacity (in bytes).
 pub fn Buffer::new(~size_hint : Int = 0) -> Buffer {
   let initial = if size_hint < 1 { 1 } else { size_hint }
   let bytes = Bytes::make(initial)

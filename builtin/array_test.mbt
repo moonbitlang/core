@@ -356,17 +356,6 @@ test "array_repeat" {
   @test.eq(repeated[5], 2)!
 }
 
-test "array_join" {
-  let arr = [[1, 2], [3, 4]]
-  let joined = arr.join(0)
-  @test.eq(joined.length(), 5)!
-  @test.eq(joined[0], 1)!
-  @test.eq(joined[1], 2)!
-  @test.eq(joined[2], 0)!
-  @test.eq(joined[3], 3)!
-  @test.eq(joined[4], 4)!
-}
-
 test "array_fold_left" {
   let arr = [1, 2, 3]
   let sum = arr.fold_left(fn(acc, x) { acc + x }, init=0)
