@@ -130,6 +130,7 @@ impl Iter {
   drop[T](Self[T], Int) -> Self[T]
   drop_while[T](Self[T], (T) -> Bool) -> Self[T]
   each[T](Self[T], (T) -> Unit) -> Unit
+  eachi[T](Self[T], (Int, T) -> Unit) -> Unit
   empty[T]() -> Self[T]
   filter[T](Self[T], (T) -> Bool) -> Self[T]
   find_first[T](Self[T], (T) -> Bool) -> T?

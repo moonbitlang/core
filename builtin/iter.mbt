@@ -50,6 +50,31 @@ pub fn each[T](self : Iter[T], f : (T) -> Unit) -> Unit {
   |> ignore
 }
 
+/// Iterates over each element in the iterator, applying the function `f` to each element with index.
+///
+/// # Type Parameters
+///
+/// - `T`: The type of the elements in the iterator.
+///
+/// # Arguments
+///
+/// - `self`: The iterator to consume.
+/// - `f`: A function that takes an index of type `Int` and an element of type `T` and returns `Unit`. This function is applied to each element of the iterator.
+/// TODO: Add intrinsic
+pub fn eachi[T](self : Iter[T], f : (Int, T) -> Unit) -> Unit {
+  let mut i = 0
+  (self.0)(
+    fn {
+      a => {
+        f(i, a)
+        i = i + 1
+        IterContinue
+      }
+    },
+  )
+  |> ignore
+}
+
 /// Folds the elements of the iterator using the given function, starting with the given initial value.
 ///
 /// # Type Parameters
