@@ -520,3 +520,12 @@ test "mix_everything" {
     content="{8, 11, 13, 35, 38, 39, 40, 44, 49, 54, 58, 67, 80, 84, 90, 93, 95, 97}",
   )!
 }
+
+test "op_equal" {
+  let a = of([1, 2, 3])
+  let b = of([4, 5, 6])
+  inspect(a == a, content="true")!
+  inspect(b == b, content="true")!
+  inspect(a == b, content="false")!
+  inspect(b == a, content="false")!
+}

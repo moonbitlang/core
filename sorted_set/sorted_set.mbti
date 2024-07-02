@@ -21,6 +21,7 @@ impl T {
   intersect[V : Compare + Eq](Self[V], Self[V]) -> Self[V]
   is_empty[V : Compare + Eq](Self[V]) -> Bool
   iter[V](Self[V]) -> Iter[V]
+  op_equal[V : Compare + Eq](Self[V], Self[V]) -> Bool
   remove[V : Compare + Eq](Self[V], V) -> Unit
   size[V : Compare + Eq](Self[V]) -> Int64
   subset[V : Compare + Eq](Self[V], Self[V]) -> Bool

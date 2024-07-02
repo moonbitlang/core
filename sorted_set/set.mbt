@@ -259,6 +259,10 @@ pub fn disjoint[V : Compare](self : T[V], src : T[V]) -> Bool {
 
 // General collection operations
 
+pub fn op_equal[V : Compare](self : T[V], other : T[V]) -> Bool {
+  self.to_array() == other.to_array()
+}
+
 /// Returns if MutableSet is empty.
 pub fn is_empty[V : Compare](self : T[V]) -> Bool {
   match self.root {
