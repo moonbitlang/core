@@ -12,8 +12,7 @@ It is experimental and under active development. At this early stage, our primar
 
 ### Timeline
 
-Prior to 05/01/2024, we mainly focus on adding new libs. We will go through a consistency review in May and expect basic API 
-stability before 07/01/2024
+The core is making large changes in the last few months, we are expected to reach beta-preview status in the Mid of August.
 
 ## Contributing
 
