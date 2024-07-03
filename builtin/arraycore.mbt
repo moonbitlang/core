@@ -47,48 +47,24 @@ fn UninitializedArray::unsafe_blit_fixed[T](
 
 /// An `Array` is a collection of values that supports random access and can
 /// grow in size.
-struct Array[T] {
-  mut buf : UninitializedArray[T]
-  mut len : Int
-}
+// type Array
 
-fn Array::make_uninit[T](len : Int) -> Array[T] {
-  { buf: UninitializedArray::make(len), len }
-}
+fn Array::make_uninit[T](len : Int, ~capacity: Int = len) -> Array[T] = "%array.make_uninit"
 
 /// Creates a new array.
 pub fn Array::new[T](~capacity : Int = 0) -> Array[T] {
   if capacity == 0 {
     []
   } else {
-    { buf: UninitializedArray::make(capacity), len: 0 }
+    Array::make_uninit(0, ~capacity)
   }
 }
 
 /// Returns the number of elements in the array.
-pub fn length[T](self : Array[T]) -> Int {
-  self.len
-}
+pub fn length[T](self : Array[T]) -> Int = "%array.length"
 
-fn set_length[T](self : Array[T], new_len : Int) -> Unit {
-  // assert new_len >= 0 && new_len <= self.buf.len
-  if new_len < self.len {
-    for i = new_len; i < self.len; i = i + 1 {
-      self.buf.set_null(i)
-    }
-  }
-  self.len = new_len
-}
+fn set_length[T](self : Array[T], new_len : Int) -> Unit = "%array.set_length"
 
-fn buffer[T](self : Array[T]) -> UninitializedArray[T] {
-  self.buf
-}
+fn buffer[T](self : Array[T]) -> UninitializedArray[T] = "%array.buffer"
 
-fn resize_buffer[T](self : Array[T], new_capacity : Int) -> Unit {
-  let new_buf = UninitializedArray::make(new_capacity)
-  let old_buf = self.buf
-  let old_cap = old_buf.0.length()
-  let copy_len = if old_cap < new_capacity { old_cap } else { new_capacity }
-  UninitializedArray::unsafe_blit(new_buf, 0, old_buf, 0, copy_len)
-  self.buf = new_buf
-}
+fn resize_buffer[T](self : Array[T], new_capacity : Int) -> Unit = "%array.resize_buffer"
