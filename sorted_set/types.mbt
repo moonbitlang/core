@@ -16,28 +16,14 @@
 // The types stored in set need to implement the Compare trait.
 // All operations over sets are purely applicative (no side-effects).
 
-// Red-black tree implementation of a set.
-
-// Invariant:
-// - root cannot be NIL, i.e., either get_value(root) succeeds, or root = None.
-struct MutableSet[T] {
-  mut root : Node[T]?
+struct T[V] {
+  mut root : Node[V]?
   mut size : Int64
-} derive(Eq)
+}
 
-priv enum Color {
-  Red
-  Black
-} derive(Show, Debug, Eq)
-
-// Invariants:
-// - Only root has None as its parent.
-// - Only leaves have None as their children.
-// - Only leaves have None as their value.
-priv struct Node[T] {
-  mut color : Color
-  mut left : Node[T]?
-  mut value : T?
-  mut right : Node[T]?
-  mut parent : Node[T]?
-} derive(Eq) // Don't derive Debug because it is self-referential on `parent`
+priv struct Node[V] {
+  mut value : V
+  mut left : Node[V]?
+  mut right : Node[V]?
+  mut height : Int
+}
