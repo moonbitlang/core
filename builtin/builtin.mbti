@@ -241,6 +241,8 @@ impl Int {
   lsl(Int, Int) -> Int
   lsr(Int, Int) -> Int
   lxor(Int, Int) -> Int
+  max(Int, Int) -> Int
+  min(Int, Int) -> Int
   mod_u(Int, Int) -> Int
   op_add(Int, Int) -> Int
   op_div(Int, Int) -> Int

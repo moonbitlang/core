@@ -159,7 +159,7 @@ fn provide_sorted_batch[T : Compare](
     // v[start_found..end] are elements that are already sorted in the input. We want to extend
     // the sorted region to the left, so we push up MIN_INSERTION_RUN - 1 to the right. Which is
     // more efficient that trying to push those already sorted elements to the left.
-    let sort_end = minimum(len, start + min_insertion_run)
+    let sort_end = Int::min(len, start + min_insertion_run)
     FixedArraySlice::insertion_sort(arr.slice(start, sort_end))
     sort_end
   } else {
@@ -241,7 +241,7 @@ fn fixed_quick_sort[T : Compare](
     }
     let (pivot, partitioned) = fixed_partition(arr, pivot_index)
     was_partitioned = partitioned
-    balanced = minimum(pivot, len - pivot) >= len / 8
+    balanced = Int::min(pivot, len - pivot) >= len / 8
     if not(balanced) {
       limit -= 1
     }

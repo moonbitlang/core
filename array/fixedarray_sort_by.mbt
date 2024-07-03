@@ -90,7 +90,7 @@ fn fixed_quick_sort_by[T](
     }
     let (pivot, partitioned) = fixed_partition_by(arr, cmp, pivot_index)
     was_partitioned = partitioned
-    balanced = minimum(pivot, len - pivot) >= len / 8
+    balanced = Int::min(pivot, len - pivot) >= len / 8
     if not(balanced) {
       limit -= 1
     }

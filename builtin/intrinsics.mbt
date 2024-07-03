@@ -77,6 +77,22 @@ pub fn Int::compare(self : Int, other : Int) -> Int = "%i32_compare"
 
 pub fn Int::compare_u(self : Int, other : Int) -> Int = "%i32_compare_u"
 
+pub fn Int::max(self : Int, other : Int) -> Int {
+  if self > other {
+    self
+  } else {
+    other
+  }
+}
+
+pub fn Int::min(self : Int, other : Int) -> Int {
+  if self < other {
+    self
+  } else {
+    other
+  }
+}
+
 pub fn Int::is_pos(self : Int) -> Bool = "%i32_is_pos"
 
 pub fn Int::is_neg(self : Int) -> Bool = "%i32_is_neg"

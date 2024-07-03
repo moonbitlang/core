@@ -689,11 +689,3 @@ fn deep_clone(self : BigInt) -> BigInt {
   }
   { limbs: new_limbs, sign: self.sign, len: self.len }
 }
-
-fn max[T : Compare](a : T, b : T) -> T {
-  if a > b {
-    a
-  } else {
-    b
-  }
-}
