@@ -118,7 +118,7 @@ pub fn op_add(self : BigInt, other : BigInt) -> BigInt {
   }
   let self_len = self.len
   let other_len = other.len
-  let limbs = Array::make(1 + max(self_len, other_len), 0)
+  let limbs = Array::make(1 + Int::max(self_len, other_len), 0)
   let mut carry = 0L
   let mut i = 0
   while i < self_len || i < other_len || carry != 0L {
@@ -150,7 +150,7 @@ pub fn op_sub(self : BigInt, other : BigInt) -> BigInt {
   }
   let self_len = self.len
   let other_len = other.len
-  let limbs = Array::make(max(self_len, other_len), 0)
+  let limbs = Array::make(Int::max(self_len, other_len), 0)
   let mut borrow = 0L
   let mut i = 0
   while i < self_len || i < other_len || borrow != 0L {
@@ -216,7 +216,7 @@ fn grade_school_mul(self : BigInt, other : BigInt) -> BigInt {
 
 // Karatsuba multiplication
 fn karatsuba_mul(self : BigInt, other : BigInt) -> BigInt {
-  let half = (max(self.len, other.len) + 1) / 2
+  let half = (Int::max(self.len, other.len) + 1) / 2
   let (xl, xh) = self.split(half)
   let (yl, yh) = other.split(half)
   let p1 = xh * yh

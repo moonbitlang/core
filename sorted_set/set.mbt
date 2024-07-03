@@ -70,7 +70,7 @@ fn new_node_update_height[V](
   ~left : Node[V]? = None,
   ~right : Node[V]? = None
 ) -> Node[V] {
-  { value, left, right, height: max(height(left), height(right)) + 1 }
+  { value, left, right, height: Int::max(height(left), height(right)) + 1 }
 }
 
 // Manipulations
@@ -404,7 +404,7 @@ fn replace_root_with_min[V : Compare](
 }
 
 fn update_height[V](self : Node[V]) -> Unit {
-  self.height = 1 + max(height(self.left), height(self.right))
+  self.height = 1 + Int::max(height(self.left), height(self.right))
 }
 
 fn height_ge[V](x1 : Node[V]?, x2 : Node[V]?) -> Bool {

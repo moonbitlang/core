@@ -323,6 +323,8 @@ impl Double {
   convert_i32_u(Int) -> Double
   convert_i64_u(Int64) -> Double
   default() -> Double
+  max(Double, Double) -> Double
+  min(Double, Double) -> Double
   op_add(Double, Double) -> Double
   op_div(Double, Double) -> Double
   op_equal(Double, Double) -> Bool

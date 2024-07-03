@@ -198,7 +198,7 @@ fn replace_root_with_min[K : Compare, V](
 }
 
 fn update_height[K, V](self : Node[K, V]) -> Unit {
-  self.height = 1 + max(height(self.left), height(self.right))
+  self.height = 1 + Int::max(height(self.left), height(self.right))
 }
 
 fn height_ge[K, V](x1 : Node[K, V]?, x2 : Node[K, V]?) -> Bool {

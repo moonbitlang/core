@@ -16,14 +16,6 @@ fn op_equal[V : Eq](self : Node[V], other : Node[V]) -> Bool {
   self.value == other.value
 }
 
-fn max(x : Int, y : Int) -> Int {
-  if x > y {
-    x
-  } else {
-    y
-  }
-}
-
 fn height[V](node : Node[V]?) -> Int {
   match node {
     None => 0
