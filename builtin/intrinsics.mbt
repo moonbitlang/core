@@ -137,6 +137,21 @@ pub fn Double::to_int(self : Double) -> Int = "%f64_to_i32"
 
 pub fn Double::convert_i32_u(val : Int) -> Double = "%i32_to_f64_u"
 
+pub fn Double::max(self : Double, other : Double) -> Double {
+  if self > other {
+    self
+  } else {
+    other
+  }
+}
+
+pub fn Double::min(self : Double, other : Double) -> Double {
+  if self < other {
+    self
+  } else {
+    other
+  }
+}
 // Char primitive ops
 
 pub fn Char::to_int(self : Char) -> Int = "%char_to_int"
