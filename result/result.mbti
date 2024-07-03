@@ -20,7 +20,7 @@ impl Result {
   to_option[T, E](Self[T, E]) -> T?
   to_string[T : Show, E : Show](Self[T, E]) -> String
   unwrap[T, E](Self[T, E]) -> T
-  unwrap_exn[T, E](Self[T, E]) -> T!E
+  unwrap_or_error[T, E](Self[T, E]) -> T!E
 }
 
 // Traits
