@@ -118,36 +118,248 @@ pub fn iter(self : String) -> Iter[Char] {
   )
 }
 
-pub fn starts_with(self : String, str : String) -> Bool {
-  if str.length() > self.length() {
-    false
+/// Removes the around whitespaces of this string.
+pub fn trim(self : String) -> String {
+  let len = self.length()
+  let mut start = 0
+  let mut end = len
+  while start < end && self[start] <= ' ' {
+    start += 1
+  }
+  while start < end && self[end - 1] <= ' ' {
+    end -= 1
+  }
+  if start > 0 || end < len {
+    self.substring(~start, ~end)
   } else {
-    self.substring(end=str.length()).compare(str) == 0
+    self
   }
 }
 
-pub fn ends_with(self : String, str : String) -> Bool {
-  if str.length() > self.length() {
-    false
-  } else {
-    self.substring(start=self.length() - str.length()).compare(str) == 0
-  }
+/// Returns true if this string is empty.
+pub fn is_empty(self : String) -> Bool {
+  self == ""
 }
 
-// TODO: improve the perf later
-pub fn index_of(self : String, str : String) -> Int {
+/// Returns true if this string is blank.
+pub fn is_blank(self : String) -> Bool {
+  self.trim() == ""
+}
+
+/// Returns the first index of the sub string.
+pub fn index_of(self : String, str : String, ~from : Int = 0) -> Int {
   let len = self.length()
   let sub_len = str.length()
+  let max_idx = len - sub_len
   if sub_len == 0 {
     0
   } else if sub_len > len {
     -1
   } else {
-    for i = 0; i < len - sub_len + 1; i = i + 1 {
-      if self.substring(start=i, end=i + sub_len).compare(str) == 0 {
-        return i
+    let first = str[0]
+    let mut i = from
+    while i <= max_idx {
+      // find first character
+      while i < len && self[i] != first {
+        i += 1
       }
+      // check the rest
+      if i <= max_idx {
+        let mut j = i + 1
+        let mut k = 1
+        let end = j + sub_len - 1
+        while j < end && self[j] == str[k] {
+          j += 1
+          k += 1
+        }
+        if j == end {
+          return i
+        }
+      }
+      i += 1
     }
     -1
   }
+}
+
+/// Returns the last index of the sub string.
+pub fn last_index_of(
+  self : String,
+  str : String,
+  ~from : Int = self.length()
+) -> Int {
+  let len = self.length()
+  let sub_len = str.length()
+  if from < 0 {
+    return -1
+  }
+  if sub_len == 0 {
+    return from
+  }
+  if len < sub_len {
+    return -1
+  }
+  let min = sub_len - 1
+  let last = str[sub_len - 1]
+  let mut i = from - 1
+  for ; ; {
+    // find last character
+    while i >= min && self[i] != last {
+      i -= 1
+    }
+    if i < min {
+      return -1
+    }
+    let mut j = i - 1
+    let mut k = sub_len - 2
+    let start = i - sub_len
+    let found = {
+      while j > start {
+        if self[j] != str[k] {
+          break false
+        }
+        j -= 1
+        k -= 1
+      } else {
+        true
+      }
+    }
+    if found {
+      return start + 1
+    }
+    i -= 1
+  }
+}
+
+/// Returns true if this string contains a sub string.
+pub fn contains(self : String, str : String) -> Bool {
+  self.index_of(str) > -1
+}
+
+/// Returns true if this string starts with a sub string.
+pub fn starts_with(self : String, str : String) -> Bool {
+  if str.length() > self.length() {
+    false
+  } else {
+    self.index_of(str) == 0
+  }
+}
+
+/// Returns true if this string ends with a sub string.
+pub fn ends_with(self : String, str : String) -> Bool {
+  let len = self.length()
+  let sub_len = str.length()
+  if sub_len > len {
+    false
+  } else {
+    self.last_index_of(str) == len - sub_len
+  }
+}
+
+/// Splits this string by a seperator string.
+pub fn split(self : String, seperator : String) -> Array[String] {
+  let len = self.length()
+  let sep_len = seperator.length()
+  if sep_len == 0 {
+    return self.iter().map(fn(c) { c.to_string() }).collect()
+  }
+  let subs = []
+  let mut start = 0
+  while start < len {
+    let end = self.index_of(seperator, from=start)
+    if end < 0 {
+      subs.push(self.substring(~start))
+      break
+    }
+    subs.push(self.substring(~start, ~end))
+    start = end + sep_len
+  }
+  subs
+}
+
+/// Replace the first old string in this string to new string.
+pub fn replace(self : String, old : String, new : String) -> String {
+  let old_idx = self.index_of(old)
+  if old_idx < 0 {
+    self
+  } else {
+    self.substring(end=old_idx) + new + self.substring(
+      start=old_idx + old.length(),
+    )
+  }
+}
+
+/// Replace all old string in this string to new string.
+pub fn replace_all(self : String, old : String, new : String) -> String {
+  let buf = Buffer::new()
+  let len = self.length()
+  let old_len = old.length()
+  if old_len == 0 {
+    buf.write_string(new)
+    self.iter().each(
+      fn(c) {
+        buf.write_char(c)
+        buf.write_string(new)
+      },
+    )
+  } else {
+    let mut start = 0
+    while start < len {
+      let end = self.index_of(old, from=start)
+      if end < 0 {
+        buf.write_string(self.substring(~start))
+        break
+      }
+      buf.write_string(self.substring(~start, ~end))
+      buf.write_string(new)
+      start = end + old_len
+    }
+  }
+  buf.to_string()
+}
+
+/// Converts this string to lowercase.
+pub fn to_lower(self : String) -> String {
+  // TODO: deal with non-ascii characters
+  let buf = Buffer::new(size_hint=self.length())
+  self.iter().each(
+    fn(c) {
+      if c >= 'A' && c <= 'Z' {
+        buf.write_char(Char::from_int(c.to_int() + 32))
+      } else {
+        buf.write_char(c)
+      }
+    },
+  )
+  buf.to_string()
+}
+
+/// Converts this string to uppercase.
+pub fn to_upper(self : String) -> String {
+  // TODO: deal with non-ascii characters
+  let buf = Buffer::new(size_hint=self.length())
+  self.iter().each(
+    fn(c) {
+      if c >= 'a' && c <= 'z' {
+        buf.write_char(Char::from_int(c.to_int() - 32))
+      } else {
+        buf.write_char(c)
+      }
+    },
+  )
+  buf.to_string()
+}
+
+/// Joins an array of string by a seperator.
+pub fn join(strs : Array[String], seperator : String) -> String {
+  let buf = Buffer::new()
+  strs.eachi(
+    fn(i, s) {
+      if i > 0 {
+        buf.write_string(seperator)
+      }
+      buf.write_string(s)
+    },
+  )
+  buf.to_string()
 }
