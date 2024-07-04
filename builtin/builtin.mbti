@@ -312,8 +312,8 @@ impl UInt64 {
 }
 impl Double {
   compare(Double, Double) -> Int
-  convert_i64_u(Int64) -> Double
   convert_uint(UInt) -> Double
+  convert_uint64(UInt64) -> Double
   default() -> Double
   op_add(Double, Double) -> Double
   op_div(Double, Double) -> Double
