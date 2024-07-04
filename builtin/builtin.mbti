@@ -261,7 +261,7 @@ impl Int64 {
   ctz(Int64) -> Int
   debug_write(Int64, Buffer) -> Unit
   default() -> Int64
-  extend_i32_u(Int) -> Int64
+  extend_uint(UInt) -> Int64
   land(Int64, Int64) -> Int64
   lnot(Int64) -> Int64
   lor(Int64, Int64) -> Int64
