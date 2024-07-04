@@ -37,14 +37,14 @@ pub fn ne[T : Debug + Eq](a : T, b : T, ~loc : SourceLoc = _) -> Unit!String {
 pub fn is_true(x : Bool, ~loc : SourceLoc = _) -> Unit!String {
   if not(x) {
     let x = debug_string(x)
-    raise "FAILED: \(loc) `\(x)` is not false"
+    raise "FAILED: \(loc) `\(x)` is not true"
   }
 }
 
 pub fn is_false(x : Bool, ~loc : SourceLoc = _) -> Unit!String {
   if x {
     let x = debug_string(x)
-    raise "FAILED: \(loc): `\(x)` is not true"
+    raise "FAILED: \(loc): `\(x)` is not false"
   }
 }
 
