@@ -433,10 +433,6 @@ pub fn Int64::reinterpret_as_double(self : Int64) -> Double {
   MyInt64::reinterpret_as_double(MyInt64::from_int64(self))
 }
 
-pub fn Int64::trunc_double_u(value : Double) -> Int64 {
-  MyInt64::trunc_double_u(value).to_int64()
-}
-
 pub fn Int::to_int64(self : Int) -> Int64 {
   MyInt64::from_int(self).to_int64()
 }
@@ -487,4 +483,8 @@ pub fn UInt64::compare(self : UInt64, other : UInt64) -> Int {
 
 pub fn UInt64::op_equal(self : UInt64, other : UInt64) -> Bool {
   MyInt64::from_uint64(self).op_equal(MyInt64::from_uint64(other))
+}
+
+pub fn UInt64::trunc_double(value : Double) -> UInt64 {
+  MyInt64::trunc_double_u(value).to_uint64()
 }

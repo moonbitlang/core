@@ -83,7 +83,7 @@ pub fn Int::default() -> Int = "%i32_default"
 
 pub fn Int::to_double(self : Int) -> Double = "%i32_to_f64"
 
-pub fn Int::trunc_double_u(val : Double) -> Int = "%f64_to_i32_u"
+pub fn UInt::trunc_double(val : Double) -> UInt = "%f64_to_i32_u"
 
 pub fn Int::to_uint(self : Int) -> UInt = "%i32.to_u32_reinterpret"
 
