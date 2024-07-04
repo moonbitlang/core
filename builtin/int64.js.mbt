@@ -413,10 +413,6 @@ pub fn Int64::compare(self : Int64, other : Int64) -> Int {
   MyInt64::compare(MyInt64::from_int64(self), MyInt64::from_int64(other))
 }
 
-pub fn Int64::compare_u(self : Int64, other : Int64) -> Int {
-  MyInt64::compare_u(MyInt64::from_int64(self), MyInt64::from_int64(other))
-}
-
 pub fn Int64::default() -> Int64 {
   0L
 }

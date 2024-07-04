@@ -45,11 +45,7 @@ pub fn Int::op_mul(self : Int, other : Int) -> Int = "%i32_mul"
 
 pub fn Int::op_div(self : Int, other : Int) -> Int = "%i32_div"
 
-pub fn Int::div_u(self : Int, other : Int) -> Int = "%i32_div_u"
-
 pub fn Int::op_mod(self : Int, other : Int) -> Int = "%i32_mod"
-
-pub fn Int::mod_u(self : Int, other : Int) -> Int = "%i32_mod_u"
 
 pub fn Int::lnot(self : Int) -> Int = "%i32_lnot"
 
@@ -74,8 +70,6 @@ pub fn Int::popcnt(self : Int) -> Int = "%i32_popcnt"
 pub fn Int::op_equal(self : Int, other : Int) -> Bool = "%i32_eq"
 
 pub fn Int::compare(self : Int, other : Int) -> Int = "%i32_compare"
-
-pub fn Int::compare_u(self : Int, other : Int) -> Int = "%i32_compare_u"
 
 pub fn Int::is_pos(self : Int) -> Bool = "%i32_is_pos"
 

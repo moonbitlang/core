@@ -22,11 +22,7 @@ pub fn Int64::op_mul(self : Int64, other : Int64) -> Int64 = "%i64_mul"
 
 pub fn Int64::op_div(self : Int64, other : Int64) -> Int64 = "%i64_div"
 
-pub fn Int64::div_u(self : Int64, other : Int64) -> Int64 = "%i64_div_u"
-
 pub fn Int64::op_mod(self : Int64, other : Int64) -> Int64 = "%i64_mod"
-
-pub fn Int64::mod_u(self : Int64, other : Int64) -> Int64 = "%i64_mod_u"
 
 pub fn Int64::lnot(self : Int64) -> Int64 = "%i64_lnot"
 
@@ -51,8 +47,6 @@ pub fn Int64::popcnt(self : Int64) -> Int = "%i64_popcnt"
 pub fn Int64::op_equal(self : Int64, other : Int64) -> Bool = "%i64_eq"
 
 pub fn Int64::compare(self : Int64, other : Int64) -> Int = "%i64_compare"
-
-pub fn Int64::compare_u(self : Int64, other : Int64) -> Int = "%i64_compare_u"
 
 pub fn Int64::default() -> Int64 = "%i64_default"
 

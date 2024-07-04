@@ -46,7 +46,7 @@ fn copy_special_str(sign : Bool, exponent : Bool, mantissa : Bool) -> String {
 }
 
 fn u64_lt(x : Int64, y : Int64) -> Bool {
-  x.compare_u(y) == -1
+  x.to_uint64().compare(y.to_uint64()) == -1
 }
 
 fn umul128(a : Int64, b : Int64) -> (Int64, Int64) {
