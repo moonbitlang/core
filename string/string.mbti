@@ -1,19 +1,30 @@
 package moonbitlang/core/string
 
 // Values
+fn join(Array[String], String) -> String
 
 // Types and methods
 impl String {
   compare(String, String) -> Int
+  contains(String, String) -> Bool
   default() -> String
   ends_with(String, String) -> Bool
   hash(String) -> Int
-  index_of(String, String) -> Int
+  index_of(String, String, ~from : Int = ..) -> Int
+  is_blank(String) -> Bool
+  is_empty(String) -> Bool
   iter(String) -> Iter[Char]
+  last_index_of(String, String, ~from : Int = ..) -> Int
+  replace(String, String, String) -> String
+  replace_all(String, String, String) -> String
+  split(String, String) -> Array[String]
   starts_with(String, String) -> Bool
   substring(String, ~start : Int = .., ~end : Int = ..) -> String
   to_array(String) -> Array[Char]
   to_bytes(String) -> Bytes
+  to_lower(String) -> String
+  to_upper(String) -> String
+  trim(String) -> String
 }
 
 // Traits
