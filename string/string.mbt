@@ -349,17 +349,3 @@ pub fn to_upper(self : String) -> String {
   )
   buf.to_string()
 }
-
-/// Joins an array of string by a seperator.
-pub fn join(strs : Array[String], seperator : String) -> String {
-  let buf = Buffer::new()
-  strs.eachi(
-    fn(i, s) {
-      if i > 0 {
-        buf.write_string(seperator)
-      }
-      buf.write_string(s)
-    },
-  )
-  buf.to_string()
-}

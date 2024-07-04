@@ -281,14 +281,3 @@ test "to_upper" {
   inspect(" ".to_upper(), content=" ")!
   inspect("月兔".to_upper(), content="月兔")!
 }
-
-test "join" {
-  inspect(join(["a", "b", "c"], ","), content="a,b,c")!
-  inspect(join(["a", "b", "c"], ""), content="abc")!
-  inspect(join(["你好", "月兔"], "，"), content="你好，月兔")!
-  inspect(join([], ","), content="")!
-  inspect(
-    join(["😍", "😍", "😍"], "👍👍"),
-    content="😍👍👍😍👍👍😍",
-  )!
-}

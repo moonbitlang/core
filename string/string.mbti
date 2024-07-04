@@ -1,7 +1,6 @@
 package moonbitlang/core/string
 
 // Values
-fn join(Array[String], String) -> String
 
 // Types and methods
 impl String {
