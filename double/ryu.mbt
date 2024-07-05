@@ -55,17 +55,17 @@ fn umul128(a : Int64, b : Int64) -> (Int64, Int64) {
   let bLo : Int = b.to_int()
   let bHi : Int = b.lsr(32).to_int()
   let b00 : Int64 = (UInt64::extend_uint(aLo.to_uint()) * UInt64::extend_uint(
-      bLo.to_uint(),
-    )).to_int64()
+    bLo.to_uint(),
+  )).to_int64()
   let b01 : Int64 = (UInt64::extend_uint(aLo.to_uint()) * UInt64::extend_uint(
-      bHi.to_uint(),
-    )).to_int64()
+    bHi.to_uint(),
+  )).to_int64()
   let b10 : Int64 = (UInt64::extend_uint(aHi.to_uint()) * UInt64::extend_uint(
-      bLo.to_uint(),
-    )).to_int64()
+    bLo.to_uint(),
+  )).to_int64()
   let b11 : Int64 = (UInt64::extend_uint(aHi.to_uint()) * UInt64::extend_uint(
-      bHi.to_uint(),
-    )).to_int64()
+    bHi.to_uint(),
+  )).to_int64()
   let b00Lo : Int = b00.to_int()
   let b00Hi : Int = b00.lsr(32).to_int()
   let mid1 : Int64 = b10 + UInt64::extend_uint(b00Hi.to_uint()).to_int64()
