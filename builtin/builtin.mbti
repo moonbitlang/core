@@ -261,7 +261,6 @@ impl Int64 {
   ctz(Int64) -> Int
   debug_write(Int64, Buffer) -> Unit
   default() -> Int64
-  extend_uint(UInt) -> Int64
   land(Int64, Int64) -> Int64
   lnot(Int64) -> Int64
   lor(Int64, Int64) -> Int64
@@ -300,6 +299,7 @@ impl UInt {
 }
 impl UInt64 {
   compare(UInt64, UInt64) -> Int
+  extend_uint(UInt) -> UInt64
   op_add(UInt64, UInt64) -> UInt64
   op_div(UInt64, UInt64) -> UInt64
   op_equal(UInt64, UInt64) -> Bool
