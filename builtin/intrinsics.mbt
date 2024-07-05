@@ -83,7 +83,7 @@ pub fn Int::default() -> Int = "%i32_default"
 
 pub fn Int::to_double(self : Int) -> Double = "%i32_to_f64"
 
-pub fn UInt::trunc_double(val : Double) -> UInt = "%f64_to_i32_u"
+pub fn UInt::trunc_double(val : Double) -> UInt = "%f64.to_u32"
 
 pub fn Int::to_uint(self : Int) -> UInt = "%i32.to_u32_reinterpret"
 
@@ -113,7 +113,7 @@ pub fn Double::default() -> Double = "%f64_default"
 
 pub fn Double::to_int(self : Double) -> Int = "%f64_to_i32"
 
-pub fn Double::convert_uint(val : UInt) -> Double = "%i32_to_f64_u"
+pub fn Double::convert_uint(val : UInt) -> Double = "%u32.to_f64"
 
 // Char primitive ops
 

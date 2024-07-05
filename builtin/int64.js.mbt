@@ -425,8 +425,8 @@ pub fn Int64::to_double(self : Int64) -> Double {
   MyInt64::from_int64(self).to_double()
 }
 
-pub fn Int64::extend_uint(value : UInt) -> Int64 {
-  MyInt64::extend_i32_u(value.to_int()).to_int64()
+pub fn UInt64::extend_uint(value : UInt) -> UInt64 {
+  MyInt64::extend_i32_u(value.to_int()).to_uint64()
 }
 
 pub fn Int64::reinterpret_as_double(self : Int64) -> Double {
