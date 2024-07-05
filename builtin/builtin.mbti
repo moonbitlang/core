@@ -226,11 +226,9 @@ impl Int {
   asr(Int, Int) -> Int
   clz(Int) -> Int
   compare(Int, Int) -> Int
-  compare_u(Int, Int) -> Int
   ctz(Int) -> Int
   debug_write(Int, Buffer) -> Unit
   default() -> Int
-  div_u(Int, Int) -> Int
   is_neg(Int) -> Bool
   is_non_neg(Int) -> Bool
   is_non_pos(Int) -> Bool
@@ -241,7 +239,6 @@ impl Int {
   lsl(Int, Int) -> Int
   lsr(Int, Int) -> Int
   lxor(Int, Int) -> Int
-  mod_u(Int, Int) -> Int
   op_add(Int, Int) -> Int
   op_div(Int, Int) -> Int
   op_equal(Int, Int) -> Bool
@@ -255,26 +252,22 @@ impl Int {
   to_int64(Int) -> Int64
   to_string(Int) -> String
   to_uint(Int) -> UInt
-  trunc_double_u(Double) -> Int
   until(Int, Int, ~step : Int = ..) -> Iter[Int]
 }
 impl Int64 {
   asr(Int64, Int) -> Int64
   clz(Int64) -> Int
   compare(Int64, Int64) -> Int
-  compare_u(Int64, Int64) -> Int
   ctz(Int64) -> Int
   debug_write(Int64, Buffer) -> Unit
   default() -> Int64
-  div_u(Int64, Int64) -> Int64
-  extend_i32_u(Int) -> Int64
+  extend_uint(UInt) -> Int64
   land(Int64, Int64) -> Int64
   lnot(Int64) -> Int64
   lor(Int64, Int64) -> Int64
   lsl(Int64, Int) -> Int64
   lsr(Int64, Int) -> Int64
   lxor(Int64, Int64) -> Int64
-  mod_u(Int64, Int64) -> Int64
   op_add(Int64, Int64) -> Int64
   op_div(Int64, Int64) -> Int64
   op_equal(Int64, Int64) -> Bool
@@ -289,7 +282,6 @@ impl Int64 {
   to_int(Int64) -> Int
   to_string(Int64) -> String
   to_uint64(Int64) -> UInt64
-  trunc_double_u(Double) -> Int64
   until(Int64, Int64, ~step : Int64 = ..) -> Iter[Int64]
 }
 impl UInt {
@@ -304,6 +296,7 @@ impl UInt {
   op_sub(UInt, UInt) -> UInt
   to_int(UInt) -> Int
   to_string(UInt) -> String
+  trunc_double(Double) -> UInt
 }
 impl UInt64 {
   compare(UInt64, UInt64) -> Int
@@ -315,11 +308,12 @@ impl UInt64 {
   op_sub(UInt64, UInt64) -> UInt64
   to_int64(UInt64) -> Int64
   to_string(UInt64) -> String
+  trunc_double(Double) -> UInt64
 }
 impl Double {
   compare(Double, Double) -> Int
-  convert_i32_u(Int) -> Double
-  convert_i64_u(Int64) -> Double
+  convert_uint(UInt) -> Double
+  convert_uint64(UInt64) -> Double
   default() -> Double
   op_add(Double, Double) -> Double
   op_div(Double, Double) -> Double

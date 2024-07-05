@@ -45,11 +45,7 @@ pub fn Int::op_mul(self : Int, other : Int) -> Int = "%i32_mul"
 
 pub fn Int::op_div(self : Int, other : Int) -> Int = "%i32_div"
 
-pub fn Int::div_u(self : Int, other : Int) -> Int = "%i32_div_u"
-
 pub fn Int::op_mod(self : Int, other : Int) -> Int = "%i32_mod"
-
-pub fn Int::mod_u(self : Int, other : Int) -> Int = "%i32_mod_u"
 
 pub fn Int::lnot(self : Int) -> Int = "%i32_lnot"
 
@@ -75,8 +71,6 @@ pub fn Int::op_equal(self : Int, other : Int) -> Bool = "%i32_eq"
 
 pub fn Int::compare(self : Int, other : Int) -> Int = "%i32_compare"
 
-pub fn Int::compare_u(self : Int, other : Int) -> Int = "%i32_compare_u"
-
 pub fn Int::is_pos(self : Int) -> Bool = "%i32_is_pos"
 
 pub fn Int::is_neg(self : Int) -> Bool = "%i32_is_neg"
@@ -89,7 +83,7 @@ pub fn Int::default() -> Int = "%i32_default"
 
 pub fn Int::to_double(self : Int) -> Double = "%i32_to_f64"
 
-pub fn Int::trunc_double_u(val : Double) -> Int = "%f64_to_i32_u"
+pub fn UInt::trunc_double(val : Double) -> UInt = "%f64_to_i32_u"
 
 pub fn Int::to_uint(self : Int) -> UInt = "%i32.to_u32_reinterpret"
 
@@ -119,7 +113,7 @@ pub fn Double::default() -> Double = "%f64_default"
 
 pub fn Double::to_int(self : Double) -> Int = "%f64_to_i32"
 
-pub fn Double::convert_i32_u(val : Int) -> Double = "%i32_to_f64_u"
+pub fn Double::convert_uint(val : UInt) -> Double = "%i32_to_f64_u"
 
 // Char primitive ops
 

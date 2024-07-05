@@ -46,7 +46,7 @@ fn copy_special_str(sign : Bool, exponent : Bool, mantissa : Bool) -> String {
 }
 
 fn u64_lt(x : Int64, y : Int64) -> Bool {
-  x.compare_u(y) == -1
+  x.to_uint64().compare(y.to_uint64()) == -1
 }
 
 fn umul128(a : Int64, b : Int64) -> (Int64, Int64) {
@@ -54,23 +54,31 @@ fn umul128(a : Int64, b : Int64) -> (Int64, Int64) {
   let aHi : Int = a.lsr(32).to_int()
   let bLo : Int = b.to_int()
   let bHi : Int = b.lsr(32).to_int()
-  let b00 : Int64 = Int64::extend_i32_u(aLo) * Int64::extend_i32_u(bLo)
-  let b01 : Int64 = Int64::extend_i32_u(aLo) * Int64::extend_i32_u(bHi)
-  let b10 : Int64 = Int64::extend_i32_u(aHi) * Int64::extend_i32_u(bLo)
-  let b11 : Int64 = Int64::extend_i32_u(aHi) * Int64::extend_i32_u(bHi)
+  let b00 : Int64 = Int64::extend_uint(aLo.to_uint()) * Int64::extend_uint(
+      bLo.to_uint(),
+    )
+  let b01 : Int64 = Int64::extend_uint(aLo.to_uint()) * Int64::extend_uint(
+      bHi.to_uint(),
+    )
+  let b10 : Int64 = Int64::extend_uint(aHi.to_uint()) * Int64::extend_uint(
+      bLo.to_uint(),
+    )
+  let b11 : Int64 = Int64::extend_uint(aHi.to_uint()) * Int64::extend_uint(
+      bHi.to_uint(),
+    )
   let b00Lo : Int = b00.to_int()
   let b00Hi : Int = b00.lsr(32).to_int()
-  let mid1 : Int64 = b10 + Int64::extend_i32_u(b00Hi)
+  let mid1 : Int64 = b10 + Int64::extend_uint(b00Hi.to_uint())
   let mid1Lo : Int = mid1.to_int()
   let mid1Hi : Int = mid1.lsr(32).to_int()
-  let mid2 : Int64 = b01 + Int64::extend_i32_u(mid1Lo)
+  let mid2 : Int64 = b01 + Int64::extend_uint(mid1Lo.to_uint())
   let mid2Lo : Int = mid2.to_int()
   let mid2Hi : Int = mid2.lsr(32).to_int()
-  let pHi : Int64 = b11 + Int64::extend_i32_u(mid1Hi) + Int64::extend_i32_u(
-      mid2Hi,
+  let pHi : Int64 = b11 + Int64::extend_uint(mid1Hi.to_uint()) + Int64::extend_uint(
+      mid2Hi.to_uint(),
     )
-  let pLo : Int64 = Int64::extend_i32_u(mid2Lo).lsl(32).lor(
-    Int64::extend_i32_u(b00Lo),
+  let pLo : Int64 = Int64::extend_uint(mid2Lo.to_uint()).lsl(32).lor(
+    Int64::extend_uint(b00Lo.to_uint()),
   )
   (pLo, pHi)
 }
