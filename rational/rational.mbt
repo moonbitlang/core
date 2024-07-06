@@ -140,11 +140,11 @@ let nan_error = "Rational::from_double: cannot convert NaN"
 let overflow_error = "Rational::from_double: overflow"
 
 /// Returns the approximate rational value of a double.
-pub fn Rational::from_double(value : Double) -> Result[Rational, String] {
+pub fn Rational::from_double(value : Double) -> Rational!String {
   // continued fraction algorithm
   // Ported from https://github.com/rust-num/num
   if value.is_nan() {
-    return Err(nan_error)
+    raise nan_error
   }
   let sign = if value < 0.0 { -1L } else { 1L }
   let value = value.abs()
@@ -161,7 +161,7 @@ pub fn Rational::from_double(value : Double) -> Result[Rational, String] {
 
   // Overflow
   if q > t_max_f {
-    return Err(overflow_error)
+    raise overflow_error
   }
   for i = 0; i < max_iteration; i = i + 1 {
     if not(q >= -9223372036854775808.0 && q < 9223372036854775808.0) {
@@ -202,10 +202,10 @@ pub fn Rational::from_double(value : Double) -> Result[Rational, String] {
   }
   // Overflow
   if d1 == 0L {
-    return Err(overflow_error)
+    raise overflow_error
   }
   match Rational::new(sign * n1, d1) {
-    Some(r) => Ok(r)
+    Some(r) => r
     None => abort("Impossible to reach")
   }
 }
@@ -573,35 +573,35 @@ test "compare" {
 }
 
 test "from_double" {
-  @test.eq(from_double(0.5), Ok(Rational::new_unchecked(1L, 2L)))!
-  @test.eq(from_double(5.0), Ok(Rational::new_unchecked(5L, 1L)))!
-  @test.eq(from_double(29.97), Ok(Rational::new_unchecked(2997L, 100L)))!
-  @test.eq(from_double(-29.97), Ok(Rational::new_unchecked(-2997L, 100L)))!
-  @test.eq(from_double(63.5), Ok(Rational::new_unchecked(127L, 2L)))!
-  @test.eq(from_double(126.5), Ok(Rational::new_unchecked(253L, 2L)))!
-  @test.eq(from_double(127.0), Ok(Rational::new_unchecked(127L, 1L)))!
-  @test.eq(from_double(127.5), Ok(Rational::new_unchecked(255L, 2L)))!
-  @test.eq(from_double(-63.5), Ok(Rational::new_unchecked(-127L, 2L)))!
-  @test.eq(from_double(-126.5), Ok(Rational::new_unchecked(-253L, 2L)))!
-  @test.eq(from_double(-127.0), Ok(Rational::new_unchecked(-127L, 1L)))!
-  @test.eq(from_double(-127.5), Ok(Rational::new_unchecked(-255L, 2L)))!
-  @test.eq(from_double(-10.0e200), Err(overflow_error))!
-  @test.eq(from_double(10.0e200), Err(overflow_error))!
-  @test.eq(from_double(Double::inf(1)), Err(overflow_error))!
-  @test.eq(from_double(Double::inf(-1)), Err(overflow_error))!
-  @test.eq(from_double(Double::nan()), Err(nan_error))!
+  @test.eq(from_double(0.5)!!, Ok(Rational::new_unchecked(1L, 2L)))!
+  @test.eq(from_double(5.0)!!, Ok(Rational::new_unchecked(5L, 1L)))!
+  @test.eq(from_double(29.97)!!, Ok(Rational::new_unchecked(2997L, 100L)))!
+  @test.eq(from_double(-29.97)!!, Ok(Rational::new_unchecked(-2997L, 100L)))!
+  @test.eq(from_double(63.5)!!, Ok(Rational::new_unchecked(127L, 2L)))!
+  @test.eq(from_double(126.5)!!, Ok(Rational::new_unchecked(253L, 2L)))!
+  @test.eq(from_double(127.0)!!, Ok(Rational::new_unchecked(127L, 1L)))!
+  @test.eq(from_double(127.5)!!, Ok(Rational::new_unchecked(255L, 2L)))!
+  @test.eq(from_double(-63.5)!!, Ok(Rational::new_unchecked(-127L, 2L)))!
+  @test.eq(from_double(-126.5)!!, Ok(Rational::new_unchecked(-253L, 2L)))!
+  @test.eq(from_double(-127.0)!!, Ok(Rational::new_unchecked(-127L, 1L)))!
+  @test.eq(from_double(-127.5)!!, Ok(Rational::new_unchecked(-255L, 2L)))!
+  @test.eq(from_double(-10.0e200)!!, Err(overflow_error))!
+  @test.eq(from_double(10.0e200)!!, Err(overflow_error))!
+  @test.eq(from_double(Double::inf(1))!!, Err(overflow_error))!
+  @test.eq(from_double(Double::inf(-1))!!, Err(overflow_error))!
+  @test.eq(from_double(Double::nan())!!, Err(nan_error))!
   @test.eq(
-    from_double(2.2204460492503131e-16),
+    from_double(2.2204460492503131e-16)!!,
     Ok(Rational::new_unchecked(1L, 4503599627370496L)),
   )!
-  @test.eq(from_double(0.0), Ok(Rational::new_unchecked(0L, 1L)))!
-  @test.eq(from_double(-0.0), Ok(Rational::new_unchecked(0L, 1L)))!
+  @test.eq(from_double(0.0)!!, Ok(Rational::new_unchecked(0L, 1L)))!
+  @test.eq(from_double(-0.0)!!, Ok(Rational::new_unchecked(0L, 1L)))!
   @test.eq(
-    from_double(9_223_372_036_800_000_000.0),
+    from_double(9_223_372_036_800_000_000.0)!!,
     Ok(Rational::new_unchecked(9_223_372_036_800_000_000L, 1L)),
   )!
-  @test.eq(from_double(9_223_372_036_854_775_807.1), Err(overflow_error))!
+  @test.eq(from_double(9_223_372_036_854_775_807.1)!!, Err(overflow_error))!
   // Unfortunately, the following test case is an overflow error because of the loss of precision in the double value,
   // while mathematically its result should be `Ok(Rational::new_unchecked(9_223_372_036_854_775_807L, 1L))`.
-  @test.eq(from_double(9_223_372_036_854_775_807.0), Err(overflow_error))!
+  @test.eq(from_double(9_223_372_036_854_775_807.0)!!, Err(overflow_error))!
 }
