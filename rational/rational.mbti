@@ -11,7 +11,7 @@ impl Rational {
   debug_write(Self, Buffer) -> Unit
   floor(Self) -> Int64
   fract(Self) -> Self
-  from_double(Double) -> Result[Self, String]
+  from_double(Double) -> Self!String
   is_integer(Self) -> Bool
   neg(Self) -> Self
   new(Int64, Int64) -> Self?
