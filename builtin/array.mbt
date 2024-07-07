@@ -402,12 +402,20 @@ pub fn is_sorted[T : Compare](self : Array[T]) -> Bool {
 /// let v = [3, 4, 5]
 /// v.reverse()
 /// ```
-pub fn reverse[T](self : Array[T]) -> Unit {
+pub fn rev_inplace[T](self : Array[T]) -> Unit {
   for i = 0; i < self.length() / 2; i = i + 1 {
     let temp = self.buffer()[i]
     self.buffer()[i] = self.buffer()[self.length() - i - 1]
     self.buffer()[self.length() - i - 1] = temp
   }
+}
+
+pub fn rev[T](self : Array[T]) -> Array[T] {
+  let arr = Array::make_uninit(self.length())
+  for i = 0; i < self.length(); i = i + 1 {
+    arr.buffer()[i] = self.buffer()[self.length() - i - 1]
+  }
+  arr
 }
 
 /// Split the array into two at the given index.
