@@ -189,19 +189,29 @@ test "is_sorted" {
   @test.is_false(v2.is_sorted())!
 }
 
-test "reverse" {
+test "rev_inplace" {
   let v = [3, 4, 5]
-  v.reverse()
+  v.rev_inplace()
   @test.eq(v, [5, 4, 3])!
-  v.reverse()
+  v.rev_inplace()
   @test.eq(v, [3, 4, 5])!
   let v = [3, 4]
-  v.reverse()
+  v.rev_inplace()
   @test.eq(v, [4, 3])!
-  v.reverse()
+  v.rev_inplace()
   @test.eq(v, [3, 4])!
   let empty : Array[Int] = []
   @test.eq(empty, empty)!
+}
+
+test "rev" {
+  let v = [3, 4, 5]
+  let vv = v.rev()
+  @test.eq(v, [3, 4, 5])!
+  @test.eq(vv, [5, 4, 3])!
+  let vv2 = vv.rev()
+  @test.eq(vv2, [3, 4, 5])!
+
 }
 
 test "split_at" {
