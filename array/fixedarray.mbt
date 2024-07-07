@@ -472,7 +472,7 @@ test "fold_righti" {
 /// let arr = [1, 2, 3, 4, 5]
 /// reverse(arr) // [5, 4, 3, 2, 1]
 /// ```
-pub fn reverse[T](self : FixedArray[T]) -> Unit {
+pub fn rev_inplace[T](self : FixedArray[T]) -> Unit {
   let mid_len = self.length() / 2
   for i = 0; i < mid_len; i = i + 1 {
     let j = self.length() - i - 1
@@ -482,30 +482,65 @@ pub fn reverse[T](self : FixedArray[T]) -> Unit {
   }
 }
 
-test "reverse" {
+pub fn rev[T](self : FixedArray[T]) -> FixedArray[T] {
+  match self {
+    [] => []
+    [.., first] => {
+      let res = FixedArray::make(self.length(), first)
+      let len = self.length()
+      for i = 1; i < len; i = i + 1 {
+        res[i] = self[len - 1 - i]
+      }
+      res
+    }
+  }
+}
+
+test "rev in place" {
   {
     let arr : FixedArray[Int] = []
-    arr.reverse()
+    arr.rev_inplace()
     @test.eq(arr, [])!
   }
   {
     let arr : FixedArray[_] = [1]
-    arr.reverse()
+    arr.rev_inplace()
     @test.eq(arr, [1])!
   }
   {
     let arr : FixedArray[_] = [1, 2]
-    arr.reverse()
+    arr.rev_inplace()
     @test.eq(arr, [2, 1])!
   }
   {
     let arr : FixedArray[_] = [1, 2, 3, 4, 5]
-    arr.reverse()
+    arr.rev_inplace()
     @test.eq(arr, [5, 4, 3, 2, 1])!
   }
   let arr : FixedArray[_] = [1, 2, 3, 4, 5, 6]
-  arr.reverse()
+  arr.rev_inplace()
   @test.eq(arr, [6, 5, 4, 3, 2, 1])!
+}
+
+test "rev" {
+  {
+    let arr : FixedArray[Int] = []
+    @test.eq(arr.rev(), [])!
+  }
+  {
+    let arr : FixedArray[_] = [1]
+    @test.eq(arr.rev(), [1])!
+  }
+  {
+    let arr : FixedArray[_] = [1, 2]
+    @test.eq(arr.rev(), [2, 1])!
+  }
+  {
+    let arr : FixedArray[_] = [1, 2, 3, 4, 5]
+    @test.eq(arr.rev(), [5, 4, 3, 2, 1])!
+  }
+  let arr : FixedArray[_] = [1, 2, 3, 4, 5, 6]
+  @test.eq(arr.rev(), [6, 5, 4, 3, 2, 1])!
 }
 
 /// Swap two elements in the array.
