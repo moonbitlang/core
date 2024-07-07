@@ -278,8 +278,8 @@ pub fn concat[T](self : List[T], other : List[T]) -> List[T] {
 /// debug(of([1, 2, 3, 4, 5]).reverse())
 /// // output: from_array([5, 4, 3, 2, 1])
 /// ```
-pub fn reverse[T](self : List[T]) -> List[T] {
-  loop self, (Nil : List[T]) {
+pub fn rev[A](self : List[A]) -> List[A] {
+  loop self, (Nil : List[A]) {
     xs, ys =>
       match (xs, ys) {
         (Nil, acc) => acc
@@ -802,7 +802,7 @@ pub fn equal[T : Eq](self : List[T], other : List[T]) -> Bool {
 /// // output: true
 /// ```
 pub fn is_suffix[T : Eq](self : List[T], suffix : List[T]) -> Bool {
-  self.reverse().is_prefix(suffix.reverse())
+  self.rev().is_prefix(suffix.rev())
 }
 
 /// Similar to intersperse but with a list of values.

@@ -211,7 +211,6 @@ test "rev" {
   @test.eq(vv, [5, 4, 3])!
   let vv2 = vv.rev()
   @test.eq(vv2, [3, 4, 5])!
-
 }
 
 test "split_at" {

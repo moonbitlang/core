@@ -139,11 +139,11 @@ test "concat" {
   inspect(ls.concat(rs), content="List::[1, 2, 3, 4, 5, 6, 7, 8, 9, 10]")!
 }
 
-test "reverse" {
+test "rev" {
   let ls = of([1, 2, 3, 4, 5])
   let rs = of([5, 4, 3, 2, 1])
-  inspect(rs.reverse(), content="List::[1, 2, 3, 4, 5]")!
-  inspect(ls.reverse().reverse(), content="List::[1, 2, 3, 4, 5]")!
+  inspect(rs.rev(), content="List::[1, 2, 3, 4, 5]")!
+  inspect(ls.rev().rev(), content="List::[1, 2, 3, 4, 5]")!
 }
 
 test "fold_left" {
