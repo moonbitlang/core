@@ -233,7 +233,7 @@ pub fn last_index_of(
 
 /// Returns true if this string contains a sub string.
 pub fn contains(self : String, str : String) -> Bool {
-  self.index_of(str) > -1
+  self.index_of(str) >= 0
 }
 
 /// Returns true if this string starts with a sub string.
@@ -278,7 +278,7 @@ pub fn split(self : String, seperator : String) -> Array[String] {
 }
 
 /// Replace the first old string in this string to new string.
-pub fn replace(self : String, old : String, new : String) -> String {
+pub fn replace(self : String, ~old : String, ~new : String) -> String {
   let old_idx = self.index_of(old)
   if old_idx < 0 {
     self
@@ -290,7 +290,7 @@ pub fn replace(self : String, old : String, new : String) -> String {
 }
 
 /// Replace all old string in this string to new string.
-pub fn replace_all(self : String, old : String, new : String) -> String {
+pub fn replace_all(self : String, ~old : String, ~new : String) -> String {
   let buf = Buffer::new()
   let len = self.length()
   let old_len = old.length()

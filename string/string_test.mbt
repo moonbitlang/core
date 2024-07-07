@@ -244,24 +244,24 @@ test "split" {
 }
 
 test "replace" {
-  inspect("abcabc".replace("b", "x"), content="axcabc")!
-  inspect("abcabc".replace("", ","), content=",abcabc")!
-  inspect("a b c".replace(" ", ","), content="a,b c")!
-  inspect("你好月兔".replace("月兔", "Moonbit"), content="你好Moonbit")!
-  inspect("👍😍😭".replace("😍😭", ""), content="👍")!
+  inspect("abcabc".replace(old="b", new="x"), content="axcabc")!
+  inspect("abcabc".replace(old="", new=","), content=",abcabc")!
+  inspect("a b c".replace(old=" ", new=","), content="a,b c")!
+  inspect("你好月兔".replace(old="月兔", new="Moonbit"), content="你好Moonbit")!
+  inspect("👍😍😭".replace(old="😍😭", new=""), content="👍")!
 }
 
 test "replace_all" {
-  inspect("abcabc".replace_all("b", "x"), content="axcaxc")!
-  inspect("abcabc".replace_all("", ","), content=",a,b,c,a,b,c,")!
-  inspect("a b c".replace_all(" ", ","), content="a,b,c")!
-  inspect("".replace_all("", "x"), content="x")!
+  inspect("abcabc".replace_all(old="b", new="x"), content="axcaxc")!
+  inspect("abcabc".replace_all(old="", new=","), content=",a,b,c,a,b,c,")!
+  inspect("a b c".replace_all(old=" ", new=","), content="a,b,c")!
+  inspect("".replace_all(old="", new="x"), content="x")!
   inspect(
-    "你好月兔，月兔你好".replace_all("月兔", "Moonbit"),
+    "你好月兔，月兔你好".replace_all(old="月兔", new="Moonbit"),
     content="你好Moonbit，Moonbit你好",
   )!
   inspect(
-    "👍😍😭👍😍😭👍😍😭👍".replace_all("😍😭", ""),
+    "👍😍😭👍😍😭👍😍😭👍".replace_all(old="😍😭", new=""),
     content="👍👍👍👍",
   )!
 }
