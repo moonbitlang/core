@@ -191,7 +191,7 @@ fn choose_pivot[T : Compare](arr : ArrayView[T]) -> (Int, Bool) {
     sort_3(a, b, c)
   }
   if swaps == max_swaps {
-    arr.reverse()
+    arr.rev_inplace()
     (len - b - 1, true)
   } else {
     (b, swaps == 0)

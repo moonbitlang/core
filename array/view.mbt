@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-pub fn reverse[T](self : ArrayView[T]) -> Unit {
+pub fn rev_inplace[T](self : ArrayView[T]) -> Unit {
   let mid_len = self.length() / 2
   for i = 0; i < mid_len; i = i + 1 {
     let j = self.length() - i - 1
