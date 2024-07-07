@@ -47,7 +47,7 @@ impl Array {
   sort_by_key[T, K : Compare + Eq](Self[T], (T) -> K) -> Unit
 }
 impl ArrayView {
-  reverse[T](Self[T]) -> Unit
+  rev_inplace[T](Self[T]) -> Unit
 }
 
 // Traits
