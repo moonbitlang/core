@@ -247,7 +247,10 @@ test "replace" {
   inspect("abcabc".replace(old="b", new="x"), content="axcabc")!
   inspect("abcabc".replace(old="", new=","), content=",abcabc")!
   inspect("a b c".replace(old=" ", new=","), content="a,b c")!
-  inspect("你好月兔".replace(old="月兔", new="Moonbit"), content="你好Moonbit")!
+  inspect(
+    "你好月兔".replace(old="月兔", new="Moonbit"),
+    content="你好Moonbit",
+  )!
   inspect("👍😍😭".replace(old="😍😭", new=""), content="👍")!
 }
 
@@ -261,7 +264,10 @@ test "replace_all" {
     content="你好Moonbit，Moonbit你好",
   )!
   inspect(
-    "👍😍😭👍😍😭👍😍😭👍".replace_all(old="😍😭", new=""),
+    "👍😍😭👍😍😭👍😍😭👍".replace_all(
+      old="😍😭",
+      new="",
+    ),
     content="👍👍👍👍",
   )!
 }
