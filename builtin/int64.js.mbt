@@ -413,10 +413,6 @@ pub fn Int64::compare(self : Int64, other : Int64) -> Int {
   MyInt64::compare(MyInt64::from_int64(self), MyInt64::from_int64(other))
 }
 
-pub fn Int64::compare_u(self : Int64, other : Int64) -> Int {
-  MyInt64::compare_u(MyInt64::from_int64(self), MyInt64::from_int64(other))
-}
-
 pub fn Int64::default() -> Int64 {
   0L
 }
@@ -429,16 +425,12 @@ pub fn Int64::to_double(self : Int64) -> Double {
   MyInt64::from_int64(self).to_double()
 }
 
-pub fn Int64::extend_i32_u(value : Int) -> Int64 {
-  MyInt64::extend_i32_u(value).to_int64()
+pub fn UInt64::extend_uint(value : UInt) -> UInt64 {
+  MyInt64::extend_i32_u(value.to_int()).to_uint64()
 }
 
 pub fn Int64::reinterpret_as_double(self : Int64) -> Double {
   MyInt64::reinterpret_as_double(MyInt64::from_int64(self))
-}
-
-pub fn Int64::trunc_double_u(value : Double) -> Int64 {
-  MyInt64::trunc_double_u(value).to_int64()
 }
 
 pub fn Int::to_int64(self : Int) -> Int64 {
@@ -453,8 +445,8 @@ pub fn Double::reinterpret_as_i64(self : Double) -> Int64 {
   MyInt64::reinterpret_double(self).to_int64()
 }
 
-pub fn Double::convert_i64_u(value : Int64) -> Double {
-  MyInt64::convert_to_double_u(MyInt64::from_int64(value))
+pub fn Double::convert_uint64(value : UInt64) -> Double {
+  MyInt64::convert_to_double_u(MyInt64::from_uint64(value))
 }
 
 fn MyInt64::to_uint64(self : MyInt64) -> UInt64 = "%identity"
@@ -491,4 +483,8 @@ pub fn UInt64::compare(self : UInt64, other : UInt64) -> Int {
 
 pub fn UInt64::op_equal(self : UInt64, other : UInt64) -> Bool {
   MyInt64::from_uint64(self).op_equal(MyInt64::from_uint64(other))
+}
+
+pub fn UInt64::trunc_double(value : Double) -> UInt64 {
+  MyInt64::trunc_double_u(value).to_uint64()
 }

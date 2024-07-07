@@ -1,7 +1,7 @@
 package moonbitlang/core/json
 
 // Values
-fn parse(String) -> Result[JsonValue, ParseError]
+fn parse(String) -> JsonValue!ParseError
 
 fn valid(String) -> Bool
 

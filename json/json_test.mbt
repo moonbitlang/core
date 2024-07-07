@@ -311,5 +311,5 @@ test "stringify" {
       #|{"key":[1.0,true,null,[],{"key":"value","value":100.0}],"null":null,"bool":false,"obj":{}}
     ,
   )!
-  @test.is_true(parse(json.stringify()) == Ok(json))!
+  @test.is_true(parse(json.stringify())!! == Ok(json))!
 }
