@@ -14,8 +14,8 @@ impl String {
   is_empty(String) -> Bool
   iter(String) -> Iter[Char]
   last_index_of(String, String, ~from : Int = ..) -> Int
-  replace(String, String, String) -> String
-  replace_all(String, String, String) -> String
+  replace(String, ~old : String, ~new : String) -> String
+  replace_all(String, ~old : String, ~new : String) -> String
   split(String, String) -> Array[String]
   starts_with(String, String) -> Bool
   substring(String, ~start : Int = .., ~end : Int = ..) -> String
