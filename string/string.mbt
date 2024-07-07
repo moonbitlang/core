@@ -118,21 +118,67 @@ pub fn iter(self : String) -> Iter[Char] {
   )
 }
 
-/// Removes the around whitespaces of this string.
-pub fn trim(self : String) -> String {
-  let len = self.length()
-  let mut start = 0
-  let mut end = len
-  while start < end && self[start] <= ' ' {
-    start += 1
-  }
-  while start < end && self[end - 1] <= ' ' {
-    end -= 1
-  }
-  if start > 0 || end < len {
-    self.substring(~start, ~end)
-  } else {
+/// Removes all leading and trailing spaces.
+pub fn trim_space(self : String) -> String {
+  self.trim(" \n\r\t")
+}
+
+/// Removes all leading and trailing chars contained in the given string.
+pub fn trim(self : String, trim_set : String) -> String {
+  if self == "" || trim_set == "" {
     self
+  } else {
+    self.trim_left(trim_set).trim_right(trim_set)
+  }
+}
+
+/// Removes all leading chars contained in the given string.
+pub fn trim_left(self : String, trim_set : String) -> String {
+  let len = self.length()
+  for i = 0; i < len; i = i + 1 {
+    let c = self[i].to_int()
+    // check surrogate pair
+    if c >= 0xD800 && c <= 0xDBFF && i + 1 < len {
+      let c2 = self[i + 1].to_int()
+      if c2 >= 0xDC00 && c2 <= 0xDFFF {
+        let ch = Char::from_int((c - 0xD800) * 0x400 + c2 - 0xDC00 + 0x10000)
+        if trim_set.contains(ch.to_string()).not() {
+          return self.substring(start=i)
+        } else {
+          continue i + 2
+        }
+      }
+    }
+    if trim_set.contains(self[i].to_string()).not() {
+      return self.substring(start=i)
+    }
+  } else {
+    ""
+  }
+}
+
+/// Removes all trailing chars contained in the given string.
+pub fn trim_right(self : String, trim_set : String) -> String {
+  let len = self.length()
+  for i = len - 1; i >= 0; i = i - 1 {
+    let c2 = self[i].to_int()
+    // check surrogate pair
+    if c2 >= 0xDC00 && c2 <= 0xDFFF && i - 1 >= 0 {
+      let c1 = self[i - 1].to_int()
+      if c1 >= 0xD800 && c1 <= 0xDBFF {
+        let ch = Char::from_int((c1 - 0xD800) * 0x400 + c2 - 0xDC00 + 0x10000)
+        if trim_set.contains(ch.to_string()).not() {
+          return self.substring(end=i + 1)
+        } else {
+          continue i - 2
+        }
+      }
+    }
+    if trim_set.contains(self[i].to_string()).not() {
+      return self.substring(end=i + 1)
+    }
+  } else {
+    ""
   }
 }
 
@@ -143,7 +189,7 @@ pub fn is_empty(self : String) -> Bool {
 
 /// Returns true if this string is blank.
 pub fn is_blank(self : String) -> Bool {
-  self.trim() == ""
+  self.trim_space() == ""
 }
 
 /// Returns the first index of the sub string.
@@ -231,7 +277,7 @@ pub fn last_index_of(
   }
 }
 
-/// Returns true if this string contains a sub string.
+/// Returns true if this string contains given sub string.
 pub fn contains(self : String, str : String) -> Bool {
   self.index_of(str) >= 0
 }

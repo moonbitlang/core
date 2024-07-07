@@ -117,19 +117,52 @@ test "panic substring_length_index_error" {
   "test".substring(start=0, end=5) |> ignore
 }
 
+test "trim_left" {
+  inspect("aaabcd".trim_left("a"), content="bcd")!
+  inspect("aaabcd".trim_left(" "), content="aaabcd")!
+  inspect("aaabcd".trim_left(""), content="aaabcd")!
+  inspect("  abc".trim_left(" "), content="abc")!
+  inspect(
+    "哇你好月兔你好哇".trim_left("你好哇"),
+    content="月兔你好哇",
+  )!
+  inspect("😍😍😭😡😡".trim_left("😍"), content="😭😡😡")!
+}
+
+test "trim_right" {
+  inspect("abcddd".trim_right("d"), content="abc")!
+  inspect("abcddd".trim_right(" "), content="abcddd")!
+  inspect("abcddd".trim_right(""), content="abcddd")!
+  inspect("abc  ".trim_right(" "), content="abc")!
+  inspect(
+    "哇你好月兔你好哇".trim_right("你好哇"),
+    content="哇你好月兔",
+  )!
+  inspect("😍😍😭😡😡".trim_right("😡"), content="😍😍😭")!
+}
+
 test "trim" {
-  inspect(" abc ".trim(), content="abc")!
-  inspect("abc ".trim(), content="abc")!
-  inspect(" abc".trim(), content="abc")!
-  inspect("\nabc\n".trim(), content="abc")!
-  inspect("\tabc\t".trim(), content="abc")!
-  inspect("\rabc\r".trim(), content="abc")!
-  inspect("abc".trim(), content="abc")!
-  inspect("".trim(), content="")!
-  inspect("  ".trim(), content="")!
-  inspect("\n\n".trim(), content="")!
-  inspect("\t\t".trim(), content="")!
-  inspect("\r\r".trim(), content="")!
+  inspect("xxxabcxxx".trim("x"), content="abc")!
+  inspect("xxxabcxxx".trim(""), content="xxxabcxxx")!
+  inspect("哇你好月兔你好哇".trim("你好哇"), content="月兔")!
+  inspect("\n\r\t abc \n\r\t".trim(" \n\r\t"), content="abc")!
+  inspect("=-wow-=".trim("-="), content="wow")!
+  inspect("😍😍😭😡😡".trim("😍😡"), content="😭")!
+}
+
+test "trim_space" {
+  inspect(" abc ".trim_space(), content="abc")!
+  inspect("abc ".trim_space(), content="abc")!
+  inspect(" abc".trim_space(), content="abc")!
+  inspect("\nabc\n".trim_space(), content="abc")!
+  inspect("\tabc\t".trim_space(), content="abc")!
+  inspect("\rabc\r".trim_space(), content="abc")!
+  inspect("abc".trim_space(), content="abc")!
+  inspect("".trim_space(), content="")!
+  inspect("  ".trim_space(), content="")!
+  inspect("\n\n".trim_space(), content="")!
+  inspect("\t\t".trim_space(), content="")!
+  inspect("\r\r".trim_space(), content="")!
 }
 
 test "is_empty" {

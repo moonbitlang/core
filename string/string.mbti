@@ -23,7 +23,10 @@ impl String {
   to_bytes(String) -> Bytes
   to_lower(String) -> String
   to_upper(String) -> String
-  trim(String) -> String
+  trim(String, String) -> String
+  trim_left(String, String) -> String
+  trim_right(String, String) -> String
+  trim_space(String) -> String
 }
 
 // Traits
