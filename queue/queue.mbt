@@ -28,6 +28,7 @@ pub fn Queue::new[T]() -> Queue[T] {
 /// ```
 /// let queue : Queue[Int] = Queue::from_array([1, 2, 3, 4])
 /// ```
+/// @alert FIXME "remove T::[]"
 pub fn Queue::from_array[T](arr : Array[T]) -> Queue[T] {
   if arr.length() == 0 {
     return new()

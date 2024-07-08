@@ -26,6 +26,7 @@ pub fn HashSet::new[K]() -> HashSet[K] {
 }
 
 /// Create new hash set from array.
+/// @alert FIXME "remove T::[]"
 pub fn HashSet::from_array[K : Hash + Eq](arr : Array[K]) -> HashSet[K] {
   let m = new()
   arr.each(fn(e) { m.insert(e) })

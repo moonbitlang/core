@@ -28,6 +28,7 @@ pub fn ImmutablePriorityQueue::new[T : Compare]() -> ImmutablePriorityQueue[T] {
 /// ```
 /// let queue = of([1, 2, 3, 4, 5])
 /// ```
+/// @alert FIXME "remove T::[]"
 pub fn ImmutablePriorityQueue::from_array[T : Compare](
   arr : Array[T]
 ) -> ImmutablePriorityQueue[T] {

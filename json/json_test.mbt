@@ -24,10 +24,10 @@ test "get as null" {
   )!
   inspect(
     JsonValue::Object(
-      Map::[
+      Map::of([
         ("key", JsonValue::String("key")),
         ("value", JsonValue::Number(100.0)),
-      ],
+      ]),
     )
     |> as_null,
     content="None",
@@ -46,10 +46,10 @@ test "get as bool" {
   )!
   inspect(
     JsonValue::Object(
-      Map::[
+      Map::of([
         ("key", JsonValue::String("key")),
         ("value", JsonValue::Number(100.0)),
-      ],
+      ]),
     )
     |> as_bool,
     content="None",
@@ -68,10 +68,10 @@ test "get as number" {
   )!
   inspect(
     JsonValue::Object(
-      Map::[
+      Map::of([
         ("key", JsonValue::String("key")),
         ("value", JsonValue::Number(100.0)),
-      ],
+      ]),
     )
     |> as_number,
     content="None",
@@ -93,10 +93,10 @@ test "get as string" {
   )!
   inspect(
     JsonValue::Object(
-      Map::[
+      Map::of([
         ("key", JsonValue::String("key")),
         ("value", JsonValue::Number(100.0)),
-      ],
+      ]),
     )
     |> as_string,
     content="None",
@@ -129,10 +129,10 @@ test "get as array" {
   )!
   inspect(
     JsonValue::Object(
-      Map::[
+      Map::of([
         ("key", JsonValue::String("key")),
         ("value", JsonValue::Number(100.0)),
-      ],
+      ]),
     )
     |> as_array,
     content="None",
@@ -168,10 +168,10 @@ test "get as object" {
   )!
   inspect(
     JsonValue::Object(
-      Map::[
+      Map::of([
         ("key", JsonValue::String("key")),
         ("value", JsonValue::Number(100.0)),
-      ],
+      ]),
     )
     |> as_object
     |> Option::map(Map::to_array),
@@ -181,37 +181,37 @@ test "get as object" {
   )!
   inspect(
     JsonValue::Object(
-      Map::[
+      Map::of([
         ("key", JsonValue::String("key")),
         ("value", JsonValue::Number(100.0)),
-      ],
+      ]),
     ).value("key").bind(as_string),
     content="Some(key)",
   )!
   inspect(
     JsonValue::Object(
-      Map::[
+      Map::of([
         ("key", JsonValue::String("key")),
         ("value", JsonValue::Number(100.0)),
-      ],
+      ]),
     ).value("value").bind(as_number),
     content="Some(100.0)",
   )!
   inspect(
     JsonValue::Object(
-      Map::[
+      Map::of([
         ("key", JsonValue::String("key")),
         ("value", JsonValue::Number(100.0)),
-      ],
+      ]),
     ).value("key").bind(as_number),
     content="None",
   )!
   inspect(
     JsonValue::Object(
-      Map::[
+      Map::of([
         ("key", JsonValue::String("key")),
         ("value", JsonValue::Number(100.0)),
-      ],
+      ]),
     ).value("asdf").bind(as_number),
     content="None",
   )!
@@ -219,7 +219,7 @@ test "get as object" {
 
 test "deep access" {
   let json = JsonValue::Object(
-    Map::[
+    Map::of([
       (
         "key",
         JsonValue::Array(
@@ -243,7 +243,7 @@ test "deep access" {
       ("bool", JsonValue::False),
       ("obj", JsonValue::Object({  })),
     ],
-  )
+  ))
   inspect(json.value("null").bind(as_null), content="Some(())")!
   inspect(
     json.value("key").bind(fn { array => array.item(2) }).bind(as_null),
@@ -284,7 +284,7 @@ test "deep access" {
 
 test "stringify" {
   let json = JsonValue::Object(
-    Map::[
+   Map::of([
       (
         "key",
         JsonValue::Array(
@@ -308,7 +308,7 @@ test "stringify" {
       ("bool", JsonValue::False),
       ("obj", JsonValue::Object({  })),
     ],
-  )
+  ))
   inspect(
     json.stringify(),
     content=

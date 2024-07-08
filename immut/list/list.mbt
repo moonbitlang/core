@@ -48,6 +48,7 @@ pub fn List::debug_write[T : Debug](xs : List[T], buf : Buffer) -> Unit {
 /// let ls = of([1, 2, 3, 4, 5])
 /// println(ls) // output: of([1, 2, 3, 4, 5])
 /// ```
+/// @alert FIXME "remove T::[]"
 pub fn List::from_array[T](arr : Array[T]) -> List[T] {
   for i = arr.length() - 1, list = List::Nil; i >= 0; {
     continue i - 1, List::Cons(arr[i], list)

@@ -28,6 +28,7 @@ fn CharClass::of(array : Array[(Char, Char)]) -> CharClass {
   CharClass(array)
 }
 
+/// @alert FIXME "remove T::[]"
 fn CharClass::from_array(array : Array[(Char, Char)]) -> CharClass {
   CharClass(array)
 }

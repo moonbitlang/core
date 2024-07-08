@@ -200,6 +200,7 @@ fn debug_tree[K : Show, V : Show](self : Map[K, V]) -> String {
 
 /// Build a map from an array of key-value pairs.
 /// O(n*log n).
+/// @alert FIXME "remove T::[]"
 pub fn Map::from_array[K : Compare, V](array : Array[(K, V)]) -> Map[K, V] {
   for i = 0, mp = Map::Empty; i < array.length(); {
     let (k, v) = array[i]

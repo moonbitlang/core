@@ -22,6 +22,7 @@
 /// let b = @bytes.of([65, 66, 67])
 /// ```
 /// 
+/// @alert FIXME "remove T::[]"
 pub fn Bytes::from_array(arr : Array[Int]) -> Bytes {
   let rv = Bytes::make(arr.length())
   for i = 0; i < arr.length(); i = i + 1 {

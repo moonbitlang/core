@@ -42,6 +42,7 @@ pub fn HashMap::new[K, V](~capacity : Int = 8) -> HashMap[K, V] {
 }
 
 /// Create new hash map from array.
+/// @alert FIXME "remove T::[]"
 pub fn HashMap::from_array[K : Hash + Eq, V](
   arr : Array[(K, V)]
 ) -> HashMap[K, V] {
