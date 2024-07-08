@@ -229,17 +229,19 @@ test "deep access" {
             JsonValue::Null,
             JsonValue::Array([]),
             JsonValue::Object(
-              Map::[
-                ("key", JsonValue::String("value")),
-                ("value", JsonValue::Number(100.0)),
-              ],
+              Map::of(
+                [
+                  ("key", JsonValue::String("value")),
+                  ("value", JsonValue::Number(100.0)),
+                ],
+              ),
             ),
           ],
         ),
       ),
       ("null", JsonValue::Null),
       ("bool", JsonValue::False),
-      ("obj", JsonValue::Object(of([]))),
+      ("obj", JsonValue::Object({  })),
     ],
   )
   inspect(json.value("null").bind(as_null), content="Some(())")!
@@ -292,17 +294,19 @@ test "stringify" {
             JsonValue::Null,
             JsonValue::Array([]),
             JsonValue::Object(
-              Map::[
-                ("key", JsonValue::String("value")),
-                ("value", JsonValue::Number(100.0)),
-              ],
+              Map::of(
+                [
+                  ("key", JsonValue::String("value")),
+                  ("value", JsonValue::Number(100.0)),
+                ],
+              ),
             ),
           ],
         ),
       ),
       ("null", JsonValue::Null),
       ("bool", JsonValue::False),
-      ("obj", JsonValue::Object(of([]))),
+      ("obj", JsonValue::Object({  })),
     ],
   )
   inspect(
