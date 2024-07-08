@@ -118,36 +118,280 @@ pub fn iter(self : String) -> Iter[Char] {
   )
 }
 
-pub fn starts_with(self : String, str : String) -> Bool {
-  if str.length() > self.length() {
-    false
+/// Removes all leading and trailing spaces.
+pub fn trim_space(self : String) -> String {
+  self.trim(" \n\r\t")
+}
+
+/// Removes all leading and trailing chars contained in the given string.
+pub fn trim(self : String, trim_set : String) -> String {
+  if self == "" || trim_set == "" {
+    self
   } else {
-    self.substring(end=str.length()).compare(str) == 0
+    self.trim_left(trim_set).trim_right(trim_set)
   }
 }
 
-pub fn ends_with(self : String, str : String) -> Bool {
-  if str.length() > self.length() {
-    false
+/// Removes all leading chars contained in the given string.
+pub fn trim_left(self : String, trim_set : String) -> String {
+  let len = self.length()
+  for i = 0; i < len; i = i + 1 {
+    let c = self[i].to_int()
+    // check surrogate pair
+    if c >= 0xD800 && c <= 0xDBFF && i + 1 < len {
+      let c2 = self[i + 1].to_int()
+      if c2 >= 0xDC00 && c2 <= 0xDFFF {
+        let ch = Char::from_int((c - 0xD800) * 0x400 + c2 - 0xDC00 + 0x10000)
+        if trim_set.contains(ch.to_string()).not() {
+          return self.substring(start=i)
+        } else {
+          continue i + 2
+        }
+      }
+    }
+    if trim_set.contains(self[i].to_string()).not() {
+      return self.substring(start=i)
+    }
   } else {
-    self.substring(start=self.length() - str.length()).compare(str) == 0
+    ""
   }
 }
 
-// TODO: improve the perf later
-pub fn index_of(self : String, str : String) -> Int {
+/// Removes all trailing chars contained in the given string.
+pub fn trim_right(self : String, trim_set : String) -> String {
+  let len = self.length()
+  for i = len - 1; i >= 0; i = i - 1 {
+    let c2 = self[i].to_int()
+    // check surrogate pair
+    if c2 >= 0xDC00 && c2 <= 0xDFFF && i - 1 >= 0 {
+      let c1 = self[i - 1].to_int()
+      if c1 >= 0xD800 && c1 <= 0xDBFF {
+        let ch = Char::from_int((c1 - 0xD800) * 0x400 + c2 - 0xDC00 + 0x10000)
+        if trim_set.contains(ch.to_string()).not() {
+          return self.substring(end=i + 1)
+        } else {
+          continue i - 2
+        }
+      }
+    }
+    if trim_set.contains(self[i].to_string()).not() {
+      return self.substring(end=i + 1)
+    }
+  } else {
+    ""
+  }
+}
+
+/// Returns true if this string is empty.
+pub fn is_empty(self : String) -> Bool {
+  self == ""
+}
+
+/// Returns true if this string is blank.
+pub fn is_blank(self : String) -> Bool {
+  self.trim_space() == ""
+}
+
+/// Returns the first index of the sub string.
+pub fn index_of(self : String, str : String, ~from : Int = 0) -> Int {
   let len = self.length()
   let sub_len = str.length()
+  let max_idx = len - sub_len
   if sub_len == 0 {
     0
   } else if sub_len > len {
     -1
   } else {
-    for i = 0; i < len - sub_len + 1; i = i + 1 {
-      if self.substring(start=i, end=i + sub_len).compare(str) == 0 {
-        return i
+    let first = str[0]
+    let mut i = from
+    while i <= max_idx {
+      // find first character
+      while i < len && self[i] != first {
+        i += 1
       }
+      // check the rest
+      if i <= max_idx {
+        let mut j = i + 1
+        let mut k = 1
+        let end = j + sub_len - 1
+        while j < end && self[j] == str[k] {
+          j += 1
+          k += 1
+        }
+        if j == end {
+          return i
+        }
+      }
+      i += 1
     }
     -1
   }
+}
+
+/// Returns the last index of the sub string.
+pub fn last_index_of(
+  self : String,
+  str : String,
+  ~from : Int = self.length()
+) -> Int {
+  let len = self.length()
+  let sub_len = str.length()
+  if from < 0 {
+    return -1
+  }
+  if sub_len == 0 {
+    return from
+  }
+  if len < sub_len {
+    return -1
+  }
+  let min = sub_len - 1
+  let last = str[sub_len - 1]
+  let mut i = from - 1
+  for ; ; {
+    // find last character
+    while i >= min && self[i] != last {
+      i -= 1
+    }
+    if i < min {
+      return -1
+    }
+    let mut j = i - 1
+    let mut k = sub_len - 2
+    let start = i - sub_len
+    let found = {
+      while j > start {
+        if self[j] != str[k] {
+          break false
+        }
+        j -= 1
+        k -= 1
+      } else {
+        true
+      }
+    }
+    if found {
+      return start + 1
+    }
+    i -= 1
+  }
+}
+
+/// Returns true if this string contains given sub string.
+pub fn contains(self : String, str : String) -> Bool {
+  self.index_of(str) >= 0
+}
+
+/// Returns true if this string starts with a sub string.
+pub fn starts_with(self : String, str : String) -> Bool {
+  if str.length() > self.length() {
+    false
+  } else {
+    self.index_of(str) == 0
+  }
+}
+
+/// Returns true if this string ends with a sub string.
+pub fn ends_with(self : String, str : String) -> Bool {
+  let len = self.length()
+  let sub_len = str.length()
+  if sub_len > len {
+    false
+  } else {
+    self.last_index_of(str) == len - sub_len
+  }
+}
+
+/// Splits this string by a seperator string.
+pub fn split(self : String, seperator : String) -> Array[String] {
+  let len = self.length()
+  let sep_len = seperator.length()
+  if sep_len == 0 {
+    return self.iter().map(fn(c) { c.to_string() }).collect()
+  }
+  let subs = []
+  let mut start = 0
+  while start < len {
+    let end = self.index_of(seperator, from=start)
+    if end < 0 {
+      subs.push(self.substring(~start))
+      break
+    }
+    subs.push(self.substring(~start, ~end))
+    start = end + sep_len
+  }
+  subs
+}
+
+/// Replace the first old string in this string to new string.
+pub fn replace(self : String, ~old : String, ~new : String) -> String {
+  let old_idx = self.index_of(old)
+  if old_idx < 0 {
+    self
+  } else {
+    self.substring(end=old_idx) + new + self.substring(
+      start=old_idx + old.length(),
+    )
+  }
+}
+
+/// Replace all old string in this string to new string.
+pub fn replace_all(self : String, ~old : String, ~new : String) -> String {
+  let buf = Buffer::new()
+  let len = self.length()
+  let old_len = old.length()
+  if old_len == 0 {
+    buf.write_string(new)
+    self.iter().each(
+      fn(c) {
+        buf.write_char(c)
+        buf.write_string(new)
+      },
+    )
+  } else {
+    let mut start = 0
+    while start < len {
+      let end = self.index_of(old, from=start)
+      if end < 0 {
+        buf.write_string(self.substring(~start))
+        break
+      }
+      buf.write_string(self.substring(~start, ~end))
+      buf.write_string(new)
+      start = end + old_len
+    }
+  }
+  buf.to_string()
+}
+
+/// Converts this string to lowercase.
+pub fn to_lower(self : String) -> String {
+  // TODO: deal with non-ascii characters
+  let buf = Buffer::new(size_hint=self.length())
+  self.iter().each(
+    fn(c) {
+      if c >= 'A' && c <= 'Z' {
+        buf.write_char(Char::from_int(c.to_int() + 32))
+      } else {
+        buf.write_char(c)
+      }
+    },
+  )
+  buf.to_string()
+}
+
+/// Converts this string to uppercase.
+pub fn to_upper(self : String) -> String {
+  // TODO: deal with non-ascii characters
+  let buf = Buffer::new(size_hint=self.length())
+  self.iter().each(
+    fn(c) {
+      if c >= 'a' && c <= 'z' {
+        buf.write_char(Char::from_int(c.to_int() - 32))
+      } else {
+        buf.write_char(c)
+      }
+    },
+  )
+  buf.to_string()
 }

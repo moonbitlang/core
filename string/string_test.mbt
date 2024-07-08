@@ -91,34 +91,6 @@ test "chars" {
   )!
 }
 
-test "starts_with" {
-  @test.is_true("abc".starts_with("a"))!
-  @test.is_true("abc".starts_with("ab"))!
-  @test.is_true("abc".starts_with("abc"))!
-  @test.is_false("abc".starts_with("abcd"))!
-  @test.is_false("abc".starts_with("b"))!
-}
-
-test "ends_with" {
-  @test.is_true("abc".ends_with("c"))!
-  @test.is_true("abc".ends_with("bc"))!
-  @test.is_true("abc".ends_with("abc"))!
-  @test.is_false("abc".ends_with("d"))!
-  @test.is_false("abc".ends_with("ab"))!
-  inspect("abc".ends_with("abcd"), content="false")!
-}
-
-test "index_of" {
-  @test.is_true("abc".index_of("a") == 0)!
-  @test.is_true("abc".index_of("b") == 1)!
-  @test.is_true("abc".index_of("c") == 2)!
-  @test.is_true("abc".index_of("ab") == 0)!
-  @test.is_true("abc".index_of("bc") == 1)!
-  @test.is_true("abc".index_of("") == 0)!
-  @test.is_true("abc".index_of("d") == -1)!
-  @test.is_true("abc".index_of("abcd") == -1)!
-}
-
 // [debug_write] is in [builtin].
 // due to cyclic dependency issue we can only test it here
 
@@ -143,4 +115,208 @@ test "panic substring_start_end_index_error" {
 
 test "panic substring_length_index_error" {
   "test".substring(start=0, end=5) |> ignore
+}
+
+test "trim_left" {
+  inspect("aaabcd".trim_left("a"), content="bcd")!
+  inspect("aaabcd".trim_left(" "), content="aaabcd")!
+  inspect("aaabcd".trim_left(""), content="aaabcd")!
+  inspect("  abc".trim_left(" "), content="abc")!
+  inspect(
+    "哇你好月兔你好哇".trim_left("你好哇"),
+    content="月兔你好哇",
+  )!
+  inspect("😍😍😭😡😡".trim_left("😍"), content="😭😡😡")!
+}
+
+test "trim_right" {
+  inspect("abcddd".trim_right("d"), content="abc")!
+  inspect("abcddd".trim_right(" "), content="abcddd")!
+  inspect("abcddd".trim_right(""), content="abcddd")!
+  inspect("abc  ".trim_right(" "), content="abc")!
+  inspect(
+    "哇你好月兔你好哇".trim_right("你好哇"),
+    content="哇你好月兔",
+  )!
+  inspect("😍😍😭😡😡".trim_right("😡"), content="😍😍😭")!
+}
+
+test "trim" {
+  inspect("xxxabcxxx".trim("x"), content="abc")!
+  inspect("xxxabcxxx".trim(""), content="xxxabcxxx")!
+  inspect("哇你好月兔你好哇".trim("你好哇"), content="月兔")!
+  inspect("\n\r\t abc \n\r\t".trim(" \n\r\t"), content="abc")!
+  inspect("=-wow-=".trim("-="), content="wow")!
+  inspect("😍😍😭😡😡".trim("😍😡"), content="😭")!
+}
+
+test "trim_space" {
+  inspect(" abc ".trim_space(), content="abc")!
+  inspect("abc ".trim_space(), content="abc")!
+  inspect(" abc".trim_space(), content="abc")!
+  inspect("\nabc\n".trim_space(), content="abc")!
+  inspect("\tabc\t".trim_space(), content="abc")!
+  inspect("\rabc\r".trim_space(), content="abc")!
+  inspect("abc".trim_space(), content="abc")!
+  inspect("".trim_space(), content="")!
+  inspect("  ".trim_space(), content="")!
+  inspect("\n\n".trim_space(), content="")!
+  inspect("\t\t".trim_space(), content="")!
+  inspect("\r\r".trim_space(), content="")!
+}
+
+test "is_empty" {
+  inspect("".is_empty(), content="true")!
+  inspect(" ".is_empty(), content="false")!
+  inspect("\n".is_empty(), content="false")!
+  inspect("\r".is_empty(), content="false")!
+  inspect("\t".is_empty(), content="false")!
+  inspect("a".is_empty(), content="false")!
+}
+
+test "is_blank" {
+  inspect("".is_blank(), content="true")!
+  inspect(" ".is_blank(), content="true")!
+  inspect("\n".is_blank(), content="true")!
+  inspect("\r".is_blank(), content="true")!
+  inspect("\t".is_blank(), content="true")!
+  inspect("a".is_blank(), content="false")!
+}
+
+test "index_of" {
+  inspect("abc".index_of("a"), content="0")!
+  inspect("abc".index_of("b"), content="1")!
+  inspect("abc".index_of("c"), content="2")!
+  inspect("abc".index_of("ab"), content="0")!
+  inspect("abc".index_of("bc"), content="1")!
+  inspect("abc".index_of(""), content="0")!
+  inspect("abc".index_of("d"), content="-1")!
+  inspect("abc".index_of("abcd"), content="-1")!
+  inspect("你好月兔".index_of("你"), content="0")!
+  inspect("你好月兔".index_of("好"), content="1")!
+  inspect("你好月兔".index_of("月"), content="2")!
+  inspect("你好月兔".index_of("兔"), content="3")!
+  inspect("你好月兔".index_of("日"), content="-1")!
+  inspect("😍😭😡".index_of("😍"), content="0")!
+  inspect("😍😭😡".index_of("😭"), content="2")!
+  inspect("😍😭😡".index_of("😡"), content="4")!
+  inspect("😍😭😡".index_of("😎"), content="-1")!
+  inspect("".index_of("a"), content="-1")!
+  inspect("".index_of(""), content="0")!
+}
+
+test "last_index_of" {
+  inspect("abc".last_index_of("a"), content="0")!
+  inspect("abc".last_index_of("b"), content="1")!
+  inspect("abc".last_index_of("c"), content="2")!
+  inspect("abc".last_index_of("d"), content="-1")!
+  inspect("abc".last_index_of(""), content="3")!
+  inspect("abcabc".last_index_of("ab"), content="3")!
+  inspect("abcabc".last_index_of("ca"), content="2")!
+  inspect("abcabc".last_index_of("d"), content="-1")!
+  inspect("abcabc".last_index_of(""), content="6")!
+  inspect("你好月兔你好月兔".last_index_of("你"), content="4")!
+  inspect("你好月兔你好月兔".last_index_of("好"), content="5")!
+  inspect("你好月兔你好月兔".last_index_of("月"), content="6")!
+  inspect("你好月兔你好月兔".last_index_of("兔"), content="7")!
+  inspect("你好月兔你好月兔".last_index_of("日"), content="-1")!
+  inspect("😍😭😡😍😭😡".last_index_of("😍"), content="6")!
+  inspect("😍😭😡😍😭😡".last_index_of("😭"), content="8")!
+  inspect("😍😭😡😍😭😡".last_index_of("😡"), content="10")!
+  inspect("😍😭😡😍😭😡".last_index_of("😎"), content="-1")!
+  inspect("".last_index_of("a"), content="-1")!
+  inspect("".last_index_of(""), content="0")!
+}
+
+test "starts_with" {
+  inspect("abc".starts_with("a"), content="true")!
+  inspect("abc".starts_with("ab"), content="true")!
+  inspect("abc".starts_with("abc"), content="true")!
+  inspect("abc".starts_with("abcd"), content="false")!
+  inspect("abc".starts_with("b"), content="false")!
+  inspect("abc".starts_with(""), content="true")!
+  inspect("你好月兔".starts_with("你好"), content="true")!
+  inspect("你好月兔".starts_with("月兔"), content="false")!
+  inspect("😍😭😡".starts_with("😍"), content="true")!
+  inspect("😍😭😡".starts_with("😭"), content="false")!
+  inspect("".starts_with(""), content="true")!
+  inspect("".starts_with("a"), content="false")!
+}
+
+test "ends_with" {
+  inspect("abc".ends_with("c"), content="true")!
+  inspect("abc".ends_with("bc"), content="true")!
+  inspect("abc".ends_with("abc"), content="true")!
+  inspect("abc".ends_with("d"), content="false")!
+  inspect("abc".ends_with("ab"), content="false")!
+  inspect("abc".ends_with("abcd"), content="false")!
+  inspect("abc".ends_with(""), content="true")!
+  inspect("你好月兔".ends_with("你好"), content="false")!
+  inspect("你好月兔".ends_with("月兔"), content="true")!
+  inspect("😍😭😡".ends_with("😭"), content="false")!
+  inspect("😍😭😡".ends_with("😡"), content="true")!
+  inspect("".ends_with(""), content="true")!
+  inspect("".ends_with("a"), content="false")!
+}
+
+test "split" {
+  inspect("a,b,c,d,e".split(","), content="[a, b, c, d, e]")!
+  inspect("abcde".split(""), content="[a, b, c, d, e]")!
+  inspect("a b c d e".split(" "), content="[a, b, c, d, e]")!
+  inspect("abcde".split("x"), content="[abcde]")!
+  inspect("".split(""), content="[]")!
+  inspect("".split("x"), content="[]")!
+  inspect(
+    "你 wow 好 wow 月 wow 兔".split(" wow "),
+    content="[你, 好, 月, 兔]",
+  )!
+  inspect(
+    "👍😍😭👍😍😭👍😍😭👍".split("😍😭"),
+    content="[👍, 👍, 👍, 👍]",
+  )!
+}
+
+test "replace" {
+  inspect("abcabc".replace(old="b", new="x"), content="axcabc")!
+  inspect("abcabc".replace(old="", new=","), content=",abcabc")!
+  inspect("a b c".replace(old=" ", new=","), content="a,b c")!
+  inspect(
+    "你好月兔".replace(old="月兔", new="Moonbit"),
+    content="你好Moonbit",
+  )!
+  inspect("👍😍😭".replace(old="😍😭", new=""), content="👍")!
+}
+
+test "replace_all" {
+  inspect("abcabc".replace_all(old="b", new="x"), content="axcaxc")!
+  inspect("abcabc".replace_all(old="", new=","), content=",a,b,c,a,b,c,")!
+  inspect("a b c".replace_all(old=" ", new=","), content="a,b,c")!
+  inspect("".replace_all(old="", new="x"), content="x")!
+  inspect(
+    "你好月兔，月兔你好".replace_all(old="月兔", new="Moonbit"),
+    content="你好Moonbit，Moonbit你好",
+  )!
+  inspect(
+    "👍😍😭👍😍😭👍😍😭👍".replace_all(
+      old="😍😭",
+      new="",
+    ),
+    content="👍👍👍👍",
+  )!
+}
+
+test "to_lower" {
+  inspect("ABCXYZ".to_lower(), content="abcxyz")!
+  inspect("aBcXyZ".to_lower(), content="abcxyz")!
+  inspect("".to_lower(), content="")!
+  inspect(" ".to_lower(), content=" ")!
+  inspect("月兔".to_lower(), content="月兔")!
+}
+
+test "to_upper" {
+  inspect("abcxyz".to_upper(), content="ABCXYZ")!
+  inspect("AbCxYz".to_upper(), content="ABCXYZ")!
+  inspect("".to_upper(), content="")!
+  inspect(" ".to_upper(), content=" ")!
+  inspect("月兔".to_upper(), content="月兔")!
 }
