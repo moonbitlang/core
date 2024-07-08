@@ -281,7 +281,7 @@ test "take" {
 }
 
 test "panic unsafe_take" {
-  unsafe_take(5, List::[1, 2, 3, 4]) |> ignore
+  unsafe_take(5, of([1, 2, 3, 4])) |> ignore
 }
 
 test "drop" {
@@ -294,7 +294,7 @@ test "drop" {
 }
 
 test "panic unsafe_drop" {
-  unsafe_drop(5, List::[1, 2, 3, 4]) |> ignore
+  unsafe_drop(5, of([1, 2, 3, 4])) |> ignore
 }
 
 test "take_while" {
@@ -390,11 +390,11 @@ test "remove_at" {
 test "remove" {
   inspect(of([1, 2, 3, 4, 5]).remove(3), content="List::[1, 2, 4, 5]")!
   inspect(
-    List::["a", "b", "c", "d", "e"].remove("c"),
+    of(["a", "b", "c", "d", "e"]).remove("c"),
     content="List::[a, b, d, e]",
   )!
   inspect(
-    List::["a", "b", "c", "d", "e"].remove("f"),
+    of(["a", "b", "c", "d", "e"]).remove("f"),
     content="List::[a, b, c, d, e]",
   )!
 }
