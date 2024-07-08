@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-let min_19digit_int : UInt64 = UInt64(100_0000_0000_0000_0000L)
+let min_19digit_int : UInt64 = 100_0000_0000_0000_0000UL
 
 struct Number {
   exponent : Int64
@@ -34,7 +34,9 @@ fn parse_digits(s : StringSlice, x : UInt64) -> (StringSlice, UInt64, Int) {
   fold_digits(
     s,
     x,
-    fn(digit, acc : UInt64) { acc * new_UInt64_Int(10) + new_UInt64_Int(digit) },
+    fn(digit, acc : UInt64) {
+      acc * 10UL + UInt64::extend_uint(digit.to_uint())
+    },
   )
 }
 
@@ -50,7 +52,7 @@ fn try_parse_19digits(
       s = s.step_1_unchecked()
     }
     len += 1
-    x = x * new_UInt64_Int(10) + new_UInt64_Int(to_digit(s[0])) // no overflows here
+    x = x * 10UL + UInt64::extend_uint(to_digit(s[0]).to_uint()) // no overflows here
     s = s.step_1_unchecked()
   }
   (s, x, len)
@@ -105,7 +107,7 @@ fn parse_number(s : String) -> (Number, Int)? {
   }
 
   // parse initial digits before dot
-  let (s, mantissa, consumed) = parse_digits(s, new_UInt64_Int(0))
+  let (s, mantissa, consumed) = parse_digits(s, 0UL)
   let mut mantissa = mantissa
   let mut s = s
   let mut n_digits = consumed
@@ -153,7 +155,7 @@ fn parse_number(s : String) -> (Number, Int)? {
   if n_digits > 0 {
     // at this point we have more than 19 significant digits, let's try again
     many_digits = true
-    mantissa = UInt64(0L)
+    mantissa = 0UL
     let s = start
     let (s, new_mantissa, consumed_digit) = try_parse_19digits(s, mantissa)
     mantissa = new_mantissa
@@ -205,4 +207,31 @@ fn parse_inf_nan(s : String) -> (Double, Int)? {
     }
   }
   None
+}
+
+fn lsl(a : UInt64, b : Int) -> UInt64 {
+  a.to_int64().lsl(b).to_uint64()
+}
+
+/// Returns None if the multiplication might overflow (there are some false-negative corner cases).
+/// Otherwise, returns Some(m), where m = self * b.
+fn checked_mul(a : UInt64, b : UInt64) -> UInt64? {
+  if a == 0UL || b == 0UL {
+    return Some(0UL)
+  }
+  if a == 1UL {
+    return Some(b)
+  }
+  if b == 1UL {
+    return Some(a)
+  }
+  if b < 0UL || a < 0UL {
+    return None
+  }
+  let r : UInt64 = @uint64.max / b
+  let q : UInt64 = 1UL / b
+  if r + r + q < a {
+    return None
+  }
+  Some(a * b)
 }
