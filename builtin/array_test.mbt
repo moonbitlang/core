@@ -211,7 +211,7 @@ test "array_is_sorted" {
 
 test "array_reverse" {
   let arr = [1, 2, 3]
-  arr.reverse()
+  arr.rev_inplace()
   @test.eq(arr.length(), 3)!
   @test.eq(arr[0], 3)!
   @test.eq(arr[1], 2)!

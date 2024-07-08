@@ -57,7 +57,7 @@ impl List {
   op_equal[T : Eq](Self[T], Self[T]) -> Bool
   remove[T : Eq](Self[T], T) -> Self[T]
   remove_at[T](Self[T], Int) -> Self[T]
-  reverse[T](Self[T]) -> Self[T]
+  rev[A](Self[A]) -> Self[A]
   scan_left[T, E](Self[T], (E, T) -> E, ~init : E) -> Self[E]
   scan_right[T, E](Self[T], (T, E) -> E, ~init : E) -> Self[E]
   sort[T : Compare + Eq](Self[T]) -> Self[T]
