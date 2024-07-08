@@ -28,7 +28,6 @@ pub fn PriorityQueue::new[T : Compare]() -> PriorityQueue[T] {
 /// ```
 /// let queue = of([1, 2, 3, 4, 5])
 /// ```
-/// @alert FIXME "remove T::[]"
 pub fn PriorityQueue::from_array[T : Compare](
   arr : Array[T]
 ) -> PriorityQueue[T] {

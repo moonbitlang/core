@@ -231,7 +231,6 @@ pub fn to_string[T : Debug](self : Set[T]) -> String {
   buf.to_string()
 }
 
-/// @alert FIXME "remove T::[]"
 pub fn Set::from_array[T : Eq + Hash](arr : Array[T]) -> Set[T] {
   loop arr.length(), Set::new() {
     0, set => set

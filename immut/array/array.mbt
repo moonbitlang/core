@@ -223,7 +223,6 @@ test "push" {
 /// ```
 /// let v = of([1, 2, 3])
 /// ```
-/// @alert FIXME "remove T::[]"
 pub fn ImmutableVec::from_array[T](arr : Array[T]) -> ImmutableVec[T] {
   new_with_index(arr.length(), fn(i) { arr[i] })
 }

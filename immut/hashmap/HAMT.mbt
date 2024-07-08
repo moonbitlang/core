@@ -240,7 +240,6 @@ pub fn to_string[K : Debug, V : Debug](self : Map[K, V]) -> String {
   buf.to_string()
 }
 
-/// @alert FIXME "remove T::[]"
 pub fn Map::from_array[K : Eq + Hash, V](arr : Array[(K, V)]) -> Map[K, V] {
   loop arr.length(), Map::new() {
     0, map => map

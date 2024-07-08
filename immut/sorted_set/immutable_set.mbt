@@ -27,7 +27,6 @@ pub fn ImmutableSet::singleton[T : Compare](value : T) -> ImmutableSet[T] {
 }
 
 /// Initialize an ImmutableSet[T] from a Array[T]
-/// @alert FIXME "remove T::[]"
 pub fn ImmutableSet::from_array[T : Compare](
   array : Array[T]
 ) -> ImmutableSet[T] {

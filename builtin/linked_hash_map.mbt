@@ -100,7 +100,6 @@ pub fn Map::new[K, V](~capacity : Int = 8) -> Map[K, V] {
 }
 
 /// Create a hash map from array.
-/// @alert FIXME "remove T::[]"
 pub fn Map::from_array[K : Hash + Eq, V](arr : Array[(K, V)]) -> Map[K, V] {
   let m = Map::new(capacity=arr.length())
   arr.each(fn(e) { m.set(e.0, e.1) })

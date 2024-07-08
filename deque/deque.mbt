@@ -42,7 +42,6 @@ pub fn to_string[T : Show](self : Deque[T]) -> String {
 }
 
 /// Creates a new deque from an array.
-/// @alert FIXME "remove T::[]"
 pub fn Deque::from_array[T](arr : Array[T]) -> Deque[T] {
   let deq = Deque::{
     buf: UninitializedArray::make(arr.length()),
