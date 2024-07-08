@@ -29,4 +29,11 @@ pub trait FromStr {
 }
 
 // Extension Methods
+impl FromStr for Bool
+
+impl FromStr for Int
+
+impl FromStr for Int64
+
+impl FromStr for Double
 
