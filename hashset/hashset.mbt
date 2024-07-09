@@ -205,7 +205,7 @@ pub fn symmetric_difference[K : Hash + Eq](
 }
 
 pub fn iter[K](self : HashSet[K]) -> Iter[K] {
-  Iter::_unstable_internal_make(
+  Iter::new(
     fn(yield) {
       for i = 0, len = self.entries.length(); i < len; i = i + 1 {
         match self.entries[i] {
