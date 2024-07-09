@@ -36,9 +36,7 @@ let max_exponent_fast_path : Int64 = 22L
 /// TODO: For `f32` it is 17, but we don't have `f32` yet.
 let max_exponent_disguised_fast_path : Int64 = 37L
 
-let max_mantissa_fast_path : UInt64 = new_UInt64_Int(2).lsl(
-  mantissa_explicit_bits,
-)
+let max_mantissa_fast_path : UInt64 = lsl(2UL, mantissa_explicit_bits)
 
 pub fn parse_double(str : String) -> Double!String {
   if str.length() == 0 {
@@ -95,29 +93,16 @@ fn pow10_fast_path(exponent : Int) -> Double {
 }
 
 let int_pow10 : Array[UInt64] = [
-  UInt64(1L),
-  UInt64(10L),
-  UInt64(100L),
-  UInt64(1000L),
-  UInt64(10000L),
-  UInt64(100000L),
-  UInt64(1000000L),
-  UInt64(10000000L),
-  UInt64(100000000L),
-  UInt64(1000000000L),
-  UInt64(10000000000L),
-  UInt64(100000000000L),
-  UInt64(1000000000000L),
-  UInt64(10000000000000L),
-  UInt64(100000000000000L),
-  UInt64(1000000000000000L),
+  1UL, 10UL, 100UL, 1000UL, 10000UL, 100000UL, 1000000UL, 10000000UL, 100000000UL,
+  1000000000UL, 10000000000UL, 100000000000UL, 1000000000000UL, 10000000000000UL,
+  100000000000000UL, 1000000000000000UL,
 ]
 
 fn try_fast_path(self : Number) -> Double? {
   if self.is_fast_path() {
     let mut value = if self.exponent <= max_exponent_fast_path {
       // normal fast path
-      let value = self.mantissa.to_double()
+      let value = Double::convert_uint64(self.mantissa)
       if self.exponent < 0L {
         value / pow10_fast_path(-self.exponent.to_int())
       } else {
@@ -126,11 +111,13 @@ fn try_fast_path(self : Number) -> Double? {
     } else {
       // disguised fast path
       let shift = self.exponent - max_exponent_fast_path
-      let mantissa = self.mantissa.checked_mul(int_pow10[shift.to_int()])?
+      let mantissa = checked_mul(self.mantissa, int_pow10[shift.to_int()])?
       if mantissa > max_mantissa_fast_path {
         return None
       }
-      mantissa.to_double() * pow10_fast_path(max_exponent_fast_path.to_int())
+      Double::convert_uint64(mantissa) * pow10_fast_path(
+        max_exponent_fast_path.to_int(),
+      )
     }
     if self.negative {
       value = -value
