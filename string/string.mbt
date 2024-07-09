@@ -91,7 +91,7 @@ pub fn substring(
 }
 
 pub fn iter(self : String) -> Iter[Char] {
-  Iter::_unstable_internal_make(
+  Iter::new(
     fn(yield) {
       let len = self.length()
       for index = 0; index < len; index = index + 1 {

@@ -61,7 +61,7 @@ test "to_array" {
 }
 
 pub fn iter[T](self : ImmutableVec[T]) -> Iter[T] {
-  Iter::_unstable_internal_make(
+  Iter::new(
     fn(yield) {
       let arr = self.to_array()
       for i = 0; i < self.size; i = i + 1 {

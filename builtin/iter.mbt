@@ -125,9 +125,7 @@ pub fn count[T](self : Iter[T]) -> Int {
 // Producers
 
 /// Do not use this method, it is for internal use only.
-pub fn Iter::_unstable_internal_make[T](
-  f : ((T) -> IterResult) -> IterResult
-) -> Iter[T] {
+pub fn Iter::new[T](f : ((T) -> IterResult) -> IterResult) -> Iter[T] {
   Iter(fn { yield => f(fn { x => yield(x) }) })
 }
 
