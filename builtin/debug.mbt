@@ -106,6 +106,17 @@ pub fn debug_write[X : Debug](self : Array[X], buf : Buffer) -> Unit {
   buf.write_char(']')
 }
 
+pub fn debug_write[X : Debug](self : ArrayView[X], buf : Buffer) -> Unit {
+  buf.write_char('[')
+  for i = 0; i < self.length(); i = i + 1 {
+    if i > 0 {
+      buf.write_string(", ")
+    }
+    self[i].debug_write(buf)
+  }
+  buf.write_char(']')
+}
+
 pub fn debug_write(self : String, buf : Buffer) -> Unit {
   buf.write_char('"')
   let mut segment_start = 0
