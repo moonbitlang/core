@@ -210,7 +210,7 @@ pub fn Map::from_array[K : Compare, V](array : Array[(K, V)]) -> Map[K, V] {
 }
 
 pub fn iter[K, V](self : Map[K, V]) -> Iter[(K, V)] {
-  Iter::_unstable_internal_make(
+  Iter::new(
     fn(yield) {
       let arr = self.to_array()
       for i = 0, len = arr.length(); i < len; i = i + 1 {
