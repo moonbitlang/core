@@ -209,10 +209,6 @@ fn parse_inf_nan(s : String) -> (Double, Int)? {
   None
 }
 
-fn lsl(a : UInt64, b : Int) -> UInt64 {
-  a.to_int64().lsl(b).to_uint64()
-}
-
 /// Returns None if the multiplication might overflow (there are some false-negative corner cases).
 /// Otherwise, returns Some(m), where m = self * b.
 fn checked_mul(a : UInt64, b : UInt64) -> UInt64? {
