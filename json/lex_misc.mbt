@@ -34,7 +34,7 @@ fn read_char(ctx : ParseContext) -> Char? {
 }
 
 fn lex_skip_whitespace(ctx : ParseContext) -> Unit {
-  for ; ; {
+  for {
     match read_char(ctx) {
       Some('\t' | '\u000B' | '\u000C' | ' ' | '\n' | '\r') => continue
       Some(c) => {

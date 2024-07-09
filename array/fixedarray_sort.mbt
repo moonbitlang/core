@@ -89,8 +89,8 @@ fn FixedArraySlice::insertion_sort[T : Compare](
   }
 }
 
-/// Merges non-decreasing runs `arr[..mid]` and `arr[mid..]`. Copy `arr[mid..]` to buf and merge 
-/// `buf` and `arr[..mid]` to `arr[..]`
+/// Merges non-decreasing runs `arr[:mid]` and `arr[mid:]`. Copy `arr[mid:]` to buf and merge 
+/// `buf` and `arr[:mid]` to `arr[:]`
 fn merge[T : Compare](arr : FixedArraySlice[T], mid : Int) -> Unit {
   let buf_len = arr.length() - mid
   let buf : FixedArray[T] = FixedArray::make(buf_len, arr[mid])
@@ -156,7 +156,7 @@ fn provide_sorted_batch[T : Compare](
   // merge sort on short sequences, so this significantly improves performance.
   let start_end_diff = end - start
   if start_end_diff < min_insertion_run && end < len {
-    // v[start_found..end] are elements that are already sorted in the input. We want to extend
+    // v[start_found:end] are elements that are already sorted in the input. We want to extend
     // the sorted region to the left, so we push up MIN_INSERTION_RUN - 1 to the right. Which is
     // more efficient that trying to push those already sorted elements to the left.
     let sort_end = minimum(len, start + min_insertion_run)
