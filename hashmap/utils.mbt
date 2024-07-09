@@ -33,7 +33,7 @@ pub fn clear[K, V](self : HashMap[K, V]) -> Unit {
 
 /// Returns an iterator of the map.
 pub fn iter[K, V](self : HashMap[K, V]) -> Iter[(K, V)] {
-  Iter::_unstable_internal_make(
+  Iter::new(
     fn(yield) {
       let len = self.entries.length()
       for i = 0; i < len; i = i + 1 {

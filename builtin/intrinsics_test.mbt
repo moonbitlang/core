@@ -89,6 +89,11 @@ test "uint test" {
   inspect(2147483647U * 2U, content="4294967294")!
   inspect(0x80000000U / 2U, content="1073741824")!
   inspect(4294967295U % 17U, content="0")!
+  inspect(0xFFFFFFFFU.land(0xFFFFU), content="65535")!
+  inspect(0xFF00U.lor(0xFFU), content="65535")!
+  inspect(0xFFFF00U.lxor(0xFF00FFU), content="65535")!
+  inspect(0x1U.lsl(31), content="2147483648")!
+  inspect(2147483648U.lsr(31), content="1")!
 }
 
 test "uint64 test" {
@@ -102,4 +107,9 @@ test "uint64 test" {
   inspect(9223372036854775808UL * 2UL, content="0")!
   inspect(0x8000000000000000UL / 2UL, content="4611686018427387904")!
   inspect(18446744073709551615UL % 17UL, content="0")!
+  inspect(0xFFFFFFFFUL.land(0xFFFFUL), content="65535")!
+  inspect(0xFF00UL.lor(0xFFUL), content="65535")!
+  inspect(0xFFFF00UL.lxor(0xFF00FFUL), content="65535")!
+  inspect(0x1UL.lsl(63), content="9223372036854775808")!
+  inspect(9223372036854775808UL.lsr(63), content="1")!
 }

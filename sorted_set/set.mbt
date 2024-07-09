@@ -321,7 +321,7 @@ pub fn to_array[V](self : T[V]) -> Array[V] {
 
 /// Returns a iterator.
 pub fn iter[V](self : T[V]) -> Iter[V] {
-  Iter::_unstable_internal_make(
+  Iter::new(
     fn(yield) {
       let arr = self.to_array()
       for i = 0, len = arr.length(); i < len; i = i + 1 {

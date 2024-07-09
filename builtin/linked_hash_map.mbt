@@ -403,7 +403,7 @@ pub fn clear[K, V](self : Map[K, V]) -> Unit {
 
 /// Returns the iterator of the hash map, provide elements in the order of insertion.
 pub fn iter[K, V](self : Map[K, V]) -> Iter[(K, V)] {
-  Iter::_unstable_internal_make(
+  Iter::new(
     fn(yield) {
       loop self.head {
         Some({ key, value, idx, .. }) => {

@@ -230,7 +230,7 @@ test "concat" {
 
 test "collect" {
   let arr = ['1', '2', '3', '4', '5']
-  let iter = Iter::_unstable_internal_make(
+  let iter = Iter::new(
     fn(yield) {
       for i = 0, len = arr.length(); i < len; i = i + 1 {
         yield(arr[i]) |> ignore
@@ -307,7 +307,7 @@ test "eachi" {
 
 // For testing purposes
 fn test_from_array[T](arr : Array[T]) -> Iter[T] {
-  Iter::_unstable_internal_make(
+  Iter::new(
     fn {
       yield =>
         for i = 0; i < arr.length(); i = i + 1 {
