@@ -85,3 +85,15 @@ pub fn UInt64::op_mod(self : UInt64, other : UInt64) -> UInt64 = "%u64.mod"
 pub fn UInt64::compare(self : UInt64, other : UInt64) -> Int = "%u64.compare"
 
 pub fn UInt64::op_equal(self : UInt64, other : UInt64) -> Bool = "%u64.eq"
+
+pub fn UInt64::land(self : UInt64, other : UInt64) -> UInt64 = "%u64.bitand"
+
+pub fn UInt64::lor(self : UInt64, other : UInt64) -> UInt64 = "%u64.bitor"
+
+pub fn UInt64::lxor(self : UInt64, other : UInt64) -> UInt64 = "%u64.bitxor"
+
+pub fn UInt64::lnot(self : UInt64, other : UInt64) -> UInt64 = "%u64.bitnot"
+
+pub fn UInt64::lsl(self : UInt64, shift : Int) -> UInt64 = "%u64.shl"
+
+pub fn UInt64::lsr(self : UInt64, shift : Int) -> UInt64 = "%u64.shr"

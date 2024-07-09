@@ -287,6 +287,12 @@ impl Int64 {
 impl UInt {
   compare(UInt, UInt) -> Int
   debug_write(UInt, Buffer) -> Unit
+  land(UInt, UInt) -> UInt
+  lnot(UInt) -> UInt
+  lor(UInt, UInt) -> UInt
+  lsl(UInt, Int) -> UInt
+  lsr(UInt, Int) -> UInt
+  lxor(UInt, UInt) -> UInt
   op_add(UInt, UInt) -> UInt
   op_div(UInt, UInt) -> UInt
   op_equal(UInt, UInt) -> Bool
@@ -301,6 +307,12 @@ impl UInt {
 impl UInt64 {
   compare(UInt64, UInt64) -> Int
   extend_uint(UInt) -> UInt64
+  land(UInt64, UInt64) -> UInt64
+  lnot(UInt64, UInt64) -> UInt64
+  lor(UInt64, UInt64) -> UInt64
+  lsl(UInt64, Int) -> UInt64
+  lsr(UInt64, Int) -> UInt64
+  lxor(UInt64, UInt64) -> UInt64
   op_add(UInt64, UInt64) -> UInt64
   op_div(UInt64, UInt64) -> UInt64
   op_equal(UInt64, UInt64) -> Bool
