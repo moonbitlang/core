@@ -123,7 +123,6 @@ impl Buffer {
 
 type Iter
 impl Iter {
-  _unstable_internal_make[T](((T) -> IterResult) -> IterResult) -> Self[T]
   append[T](Self[T], T) -> Self[T]
   collect[T](Self[T]) -> Array[T]
   concat[T](Self[T], Self[T]) -> Self[T]
@@ -138,6 +137,7 @@ impl Iter {
   flat_map[T, R](Self[T], (T) -> Self[R]) -> Self[R]
   fold[T, B](Self[T], (B, T) -> B, B) -> B
   map[T, R](Self[T], (T) -> R) -> Self[R]
+  new[T](((T) -> IterResult) -> IterResult) -> Self[T]
   op_add[T](Self[T], Self[T]) -> Self[T]
   prepend[T](Self[T], T) -> Self[T]
   repeat[T](T) -> Self[T]
@@ -287,6 +287,12 @@ impl Int64 {
 impl UInt {
   compare(UInt, UInt) -> Int
   debug_write(UInt, Buffer) -> Unit
+  land(UInt, UInt) -> UInt
+  lnot(UInt) -> UInt
+  lor(UInt, UInt) -> UInt
+  lsl(UInt, Int) -> UInt
+  lsr(UInt, Int) -> UInt
+  lxor(UInt, UInt) -> UInt
   op_add(UInt, UInt) -> UInt
   op_div(UInt, UInt) -> UInt
   op_equal(UInt, UInt) -> Bool
@@ -301,6 +307,12 @@ impl UInt {
 impl UInt64 {
   compare(UInt64, UInt64) -> Int
   extend_uint(UInt) -> UInt64
+  land(UInt64, UInt64) -> UInt64
+  lnot(UInt64, UInt64) -> UInt64
+  lor(UInt64, UInt64) -> UInt64
+  lsl(UInt64, Int) -> UInt64
+  lsr(UInt64, Int) -> UInt64
+  lxor(UInt64, UInt64) -> UInt64
   op_add(UInt64, UInt64) -> UInt64
   op_div(UInt64, UInt64) -> UInt64
   op_equal(UInt64, UInt64) -> Bool

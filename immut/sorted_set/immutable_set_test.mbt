@@ -269,7 +269,7 @@ test "split_bis" {
 //     }
 //   }
 
-//   sub(array.length(), array[..]).0
+//   sub(array.length(), array[:]).0
 // }
 
 test "panic remove_min on empty set" {

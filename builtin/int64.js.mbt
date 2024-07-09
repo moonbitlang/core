@@ -488,3 +488,27 @@ pub fn UInt64::op_equal(self : UInt64, other : UInt64) -> Bool {
 pub fn UInt64::trunc_double(value : Double) -> UInt64 {
   MyInt64::trunc_double_u(value).to_uint64()
 }
+
+pub fn UInt64::land(self : UInt64, other : UInt64) -> UInt64 {
+  MyInt64::land(MyInt64::from_uint64(self), MyInt64::from_uint64(other)).to_uint64()
+}
+
+pub fn UInt64::lor(self : UInt64, other : UInt64) -> UInt64 {
+  MyInt64::lor(MyInt64::from_uint64(self), MyInt64::from_uint64(other)).to_uint64()
+}
+
+pub fn UInt64::lxor(self : UInt64, other : UInt64) -> UInt64 {
+  MyInt64::lxor(MyInt64::from_uint64(self), MyInt64::from_uint64(other)).to_uint64()
+}
+
+pub fn UInt64::lnot(self : UInt64) -> UInt64 {
+  MyInt64::lnot(MyInt64::from_uint64(self)).to_uint64()
+}
+
+pub fn UInt64::lsl(self : UInt64, shift : Int) -> UInt64 {
+  MyInt64::lsl(MyInt64::from_uint64(self), shift).to_uint64()
+}
+
+pub fn UInt64::lsr(self : UInt64, shift : Int) -> UInt64 {
+  MyInt64::lsr(MyInt64::from_uint64(self), shift).to_uint64()
+}

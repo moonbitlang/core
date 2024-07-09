@@ -209,3 +209,15 @@ pub fn UInt::op_equal(self : UInt, other : UInt) -> Bool = "%u32.eq"
 pub fn UInt::op_neq(self : UInt, other : UInt) -> Bool = "%u32.ne"
 
 pub fn UInt::compare(self : UInt, other : UInt) -> Int = "%u32.compare"
+
+pub fn UInt::land(self : UInt, other : UInt) -> UInt = "%u32.bitand"
+
+pub fn UInt::lor(self : UInt, other : UInt) -> UInt = "%u32.bitor"
+
+pub fn UInt::lxor(self : UInt, other : UInt) -> UInt = "%u32.bitxor"
+
+pub fn UInt::lnot(self : UInt) -> UInt = "%u32.bitnot"
+
+pub fn UInt::lsl(self : UInt, shift : Int) -> UInt = "%u32.shl"
+
+pub fn UInt::lsr(self : UInt, shift : Int) -> UInt = "%u32.shr"

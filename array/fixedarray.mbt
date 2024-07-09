@@ -933,7 +933,7 @@ test "op_add" {
 
 /// @intrinsic %iter.from_array
 pub fn iter[T](self : FixedArray[T]) -> Iter[T] {
-  Iter::_unstable_internal_make(
+  Iter::new(
     fn(yield) {
       for i = 0, len = self.length(); i < len; i = i + 1 {
         if yield(self[i]) == IterEnd {
