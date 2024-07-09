@@ -21,7 +21,7 @@ fn lex_string(ctx : ParseContext) -> String!ParseError {
     }
   }
 
-  for ; ; {
+  for {
     match read_char(ctx) {
       Some('"') => {
         flush(ctx.offset - 1)

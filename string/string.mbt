@@ -248,7 +248,7 @@ pub fn last_index_of(
   let min = sub_len - 1
   let last = str[sub_len - 1]
   let mut i = from - 1
-  for ; ; {
+  for {
     // find last character
     while i >= min && self[i] != last {
       i -= 1

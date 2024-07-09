@@ -27,7 +27,7 @@ fn lex_value(
   ctx : ParseContext,
   ~allow_rbracket : Bool = false
 ) -> Token!ParseError {
-  for ; ; {
+  for {
     match read_char(ctx) {
       Some('\t' | ' ' | '\n' | '\r') => continue
       Some('{') => return LBrace
