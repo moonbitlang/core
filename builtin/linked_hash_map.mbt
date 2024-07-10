@@ -351,7 +351,7 @@ pub fn to_string[K : Show, V : Show](self : Map[K, V]) -> String {
         // remove the trailing comma
         continue i + 1, nxt, acc + ", \(key):\(value)"
       }
-      continue i + 1, nxt, acc + "\(key):\(value)"
+      continue i + 1, nxt, acc + "\(key): \(value)"
     }
   }
 }

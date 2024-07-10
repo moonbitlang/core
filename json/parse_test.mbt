@@ -27,24 +27,24 @@ test "parses empty object" {
 }
 
 test "parses object" {
-  inspect(parse("{\"a\":1}")!!, content="Ok(Object({a:Number(1.0)}))")!
+  inspect(parse("{\"a\":1}")!!, content="Ok(Object({a: Number(1.0)}))")!
   inspect(
     parse("{\"a\":1,\"b\":2}")!!,
-    content="Ok(Object({a:Number(1.0), b:Number(2.0)}))",
+    content="Ok(Object({a: Number(1.0), b:Number(2.0)}))",
   )!
 }
 
 test "parses multiple properties" {
   inspect(
     parse("{\"abc\":1,\"def\":2}")!!,
-    content="Ok(Object({abc:Number(1.0), def:Number(2.0)}))",
+    content="Ok(Object({abc: Number(1.0), def:Number(2.0)}))",
   )!
 }
 
 test "parses nested objects" {
   inspect(
     parse("{\"a\":{\"b\":2}}")!!,
-    content="Ok(Object({a:Object({b:Number(2.0)})}))",
+    content="Ok(Object({a: Object({b: Number(2.0)})}))",
   )!
 }
 //endregion
@@ -297,7 +297,7 @@ test "parse muti-lines json" {
     #|}
     ,
   )!!
-  inspect(result, content="Ok(Object({a:Number(2.0), b:Number(3.0)}))")!
+  inspect(result, content="Ok(Object({a: Number(2.0), b:Number(3.0)}))")!
 }
 
 test "parse muti-lines json error" {
