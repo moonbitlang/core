@@ -18,7 +18,7 @@ test "from_fixed_array" {
 }
 
 test "from_array" {
-  let queue = ImmutablePriorityQueue::[1, 6, 3, 4, 5]
+  let queue = ImmutablePriorityQueue::of([1, 6, 3, 4, 5])
   inspect(queue.peek(), content="Some(6)")!
 }
 
@@ -106,13 +106,13 @@ test "is_empty" {
 }
 
 test "length" {
-  let pq = ImmutablePriorityQueue::[1, 2]
+  let pq = ImmutablePriorityQueue::of([1, 2])
   inspect(pq.length(), content="2")!
   inspect(pq.pop_exn().length(), content="1")!
   inspect(pq.pop_exn().pop_exn().length(), content="0")!
 }
 
 test "panic pop_exn" {
-  let pq = ImmutablePriorityQueue::[1]
+  let pq = ImmutablePriorityQueue::of([1])
   pq.pop_exn().pop_exn() |> ignore
 }
