@@ -6,6 +6,7 @@ fn ref[T](T) -> Ref[T]
 // Types and methods
 impl Ref {
   map[T, R](Self[T], (T) -> R) -> Self[R]
+  new[T](T) -> Self[T]
   protect[T, R](Self[T], T, () -> R) -> R
   swap[T](Self[T], Self[T]) -> Unit
   to_string[X : Show](Self[X]) -> String
