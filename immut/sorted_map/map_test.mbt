@@ -210,20 +210,12 @@ test "glue" {
 }
 
 test "op_equal" {
-  let m1 = Map::of([
-    (3, "three"),
-    (8, "eight"),
-    (1, "one"),
-    (2, "two"),
-    (0, "zero"),
-  ])
-  let m2 = Map::of([
-    (3, "three"),
-    (8, "eight"),
-    (1, "one"),
-    (2, "two"),
-    (0, "zero"),
-  ])
+  let m1 = Map::of(
+    [(3, "three"), (8, "eight"), (1, "one"), (2, "two"), (0, "zero")],
+  )
+  let m2 = Map::of(
+    [(3, "three"), (8, "eight"), (1, "one"), (2, "two"), (0, "zero")],
+  )
   let m3 = of([(3, "three"), (8, "eight"), (1, "one"), (2, "two")])
   @test.eq(m1 == m2, true)!
   @test.eq(m1 == m3, false)!
@@ -299,20 +291,12 @@ test "to_array" {
 }
 
 test "op_equal" {
-  let m1 = Map::of([
-    (3, "three"),
-    (8, "eight"),
-    (1, "one"),
-    (2, "two"),
-    (0, "zero"),
-  ])
-  let m2 = Map::of([
-    (3, "three"),
-    (8, "eight"),
-    (1, "one"),
-    (2, "two"),
-    (0, "zero"),
-  ])
+  let m1 = Map::of(
+    [(3, "three"), (8, "eight"), (1, "one"), (2, "two"), (0, "zero")],
+  )
+  let m2 = Map::of(
+    [(3, "three"), (8, "eight"), (1, "one"), (2, "two"), (0, "zero")],
+  )
   let m3 = of([(3, "three"), (8, "eight"), (1, "one"), (2, "two")])
   @test.eq(m1 == m2, true)!
   @test.eq(m1 == m3, false)!
