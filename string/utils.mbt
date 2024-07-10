@@ -45,3 +45,10 @@ fn code_point_of_surrogate_pair(leading : Char, trailing : Char) -> Char {
     (leading.to_int() - 0xD800) * 0x400 + trailing.to_int() - 0xDC00 + 0x10000,
   )
 }
+
+test "code_point_of_surrogate_pair" {
+  let s = "😀"
+  let leading = s[0]
+  let trailing = s[1]
+  inspect(code_point_of_surrogate_pair(leading, trailing), content="😀")!
+}
