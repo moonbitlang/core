@@ -348,7 +348,7 @@ pub fn to_string[K : Show, V : Show](self : Map[K, V]) -> String {
     i, Some({ key, value, idx, .. }), acc => {
       let nxt = self.list[idx].next
       if i > 0 {
-        // To remove the last comma
+        // remove the trailing comma
         continue i + 1, nxt, acc + ", \(key):\(value)"
       }
       continue i + 1, nxt, acc + "\(key):\(value)"

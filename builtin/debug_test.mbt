@@ -146,18 +146,24 @@ test "debug function with ArrayView[Int]" {
 }
 
 test "debug function with Map[Int, String]" {
-  let map = Map::new()
-  map.set(1, "one")
-  map.set(2, "two")
+  let map = { 1: "one", 2: "two", 3: "three" }
   let buf = Buffer::new()
   map.debug_write(buf)
   inspect(
     buf,
     content=
-      #|(69681622,1,"one"),prev:_,next:-236984087)
-      #|(-236984087,2,"two"),prev:69681622,next:_)
-      #|end
+      #|{1: "one", 2: "two", 3: "three"}
     ,
   )!
+  let nested_map = { 1: { 2: "two" }, 3: { 4: "four" } }
+  let buf = Buffer::new()
+  nested_map.debug_write(buf)
+  inspect(
+    buf,
+    content=
+      #|{1: {2: "two"}, 3: {4: "four"}}
+    ,
+  )!
+
   // This should cover the line where the debug function is called with a Map[Int, String]
 }
