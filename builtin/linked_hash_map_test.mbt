@@ -651,7 +651,9 @@ test "to_string" {
   m.set("a", 1)
   m.set("b", 2)
   m.set("c", 3)
-  inspect(m.to_string(), content="{a:1, b:2, c:3}")!
+  inspect(m.to_string(), content="{a: 1, b:2, c:3}")!
+  let nested_m = { "a": { "b": 2 }, "B": { "C": 3 } }
+  inspect(nested_m.to_string(), content="{a: {b: 2}, B:{C: 3}}")!
 }
 
 test "hash collision" {
