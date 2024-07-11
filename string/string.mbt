@@ -95,11 +95,11 @@ pub fn iter(self : String) -> Iter[Char] {
     fn(yield) {
       let len = self.length()
       for index = 0; index < len; index = index + 1 {
-        let c = self[index].to_int()
-        if c >= 0xD800 && c <= 0xDBFF && index + 1 < len {
-          let c2 = self[index + 1].to_int()
-          if c2 >= 0xDC00 && c2 <= 0xDFFF {
-            let c = Char::from_int((c - 0xD800) * 0x400 + c2 - 0xDC00 + 0x10000)
+        let c1 = self[index]
+        if is_leading_surrogate(c1) && index + 1 < len {
+          let c2 = self[index + 1]
+          if is_trailing_surrogate(c2) {
+            let c = code_point_of_surrogate_pair(c1, c2)
             if yield(c) == IterContinue {
               continue index + 2
             } else {
@@ -108,7 +108,7 @@ pub fn iter(self : String) -> Iter[Char] {
           }
         }
         //TODO: handle garbage input
-        if yield(Char::from_int(c)) == IterEnd {
+        if yield(c1) == IterEnd {
           break IterEnd
         }
       } else {
@@ -136,16 +136,16 @@ pub fn trim(self : String, trim_set : String) -> String {
 pub fn trim_left(self : String, trim_set : String) -> String {
   let len = self.length()
   for i = 0; i < len; i = i + 1 {
-    let c = self[i].to_int()
+    let c1 = self[i]
     // check surrogate pair
-    if c >= 0xD800 && c <= 0xDBFF && i + 1 < len {
-      let c2 = self[i + 1].to_int()
-      if c2 >= 0xDC00 && c2 <= 0xDFFF {
-        let ch = Char::from_int((c - 0xD800) * 0x400 + c2 - 0xDC00 + 0x10000)
-        if trim_set.contains(ch.to_string()).not() {
-          return self.substring(start=i)
-        } else {
+    if is_leading_surrogate(c1) && i + 1 < len {
+      let c2 = self[i + 1]
+      if is_trailing_surrogate(c2) {
+        let ch = code_point_of_surrogate_pair(c1, c2)
+        if trim_set.contains(ch.to_string()) {
           continue i + 2
+        } else {
+          return self.substring(start=i)
         }
       }
     }
@@ -161,16 +161,16 @@ pub fn trim_left(self : String, trim_set : String) -> String {
 pub fn trim_right(self : String, trim_set : String) -> String {
   let len = self.length()
   for i = len - 1; i >= 0; i = i - 1 {
-    let c2 = self[i].to_int()
+    let c2 = self[i]
     // check surrogate pair
-    if c2 >= 0xDC00 && c2 <= 0xDFFF && i - 1 >= 0 {
-      let c1 = self[i - 1].to_int()
-      if c1 >= 0xD800 && c1 <= 0xDBFF {
-        let ch = Char::from_int((c1 - 0xD800) * 0x400 + c2 - 0xDC00 + 0x10000)
-        if trim_set.contains(ch.to_string()).not() {
-          return self.substring(end=i + 1)
-        } else {
+    if is_trailing_surrogate(c2) && i - 1 >= 0 {
+      let c1 = self[i - 1]
+      if is_leading_surrogate(c1) {
+        let ch = code_point_of_surrogate_pair(c1, c2)
+        if trim_set.contains(ch.to_string()) {
           continue i - 2
+        } else {
+          return self.substring(end=i + 1)
         }
       }
     }
@@ -194,38 +194,45 @@ pub fn is_blank(self : String) -> Bool {
 
 /// Returns the first index of the sub string.
 pub fn index_of(self : String, str : String, ~from : Int = 0) -> Int {
+  let from = if from < 0 {
+    0
+  } else if from >= self.length() {
+    self.length() - 1
+  } else {
+    from
+  }
   let len = self.length()
   let sub_len = str.length()
   let max_idx = len - sub_len
   if sub_len == 0 {
-    0
-  } else if sub_len > len {
-    -1
-  } else {
-    let first = str[0]
-    let mut i = from
-    while i <= max_idx {
-      // find first character
-      while i < len && self[i] != first {
-        i += 1
-      }
-      // check the rest
-      if i <= max_idx {
-        let mut j = i + 1
-        let mut k = 1
-        let end = j + sub_len - 1
-        while j < end && self[j] == str[k] {
-          j += 1
-          k += 1
-        }
-        if j == end {
-          return i
-        }
-      }
+    return 0
+  }
+  if sub_len > len {
+    return -1
+  }
+  let first = str[0]
+  let mut i = from
+  while i <= max_idx {
+    // find first character
+    while i < len && self[i] != first {
       i += 1
     }
-    -1
+    // check the rest
+    if i <= max_idx {
+      let mut j = i + 1
+      let mut k = 1
+      let end = j + sub_len - 1
+      while j < end && self[j] == str[k] {
+        j += 1
+        k += 1
+      }
+      if j == end {
+        return i
+      }
+    }
+    i += 1
   }
+  -1
 }
 
 /// Returns the last index of the sub string.
@@ -234,11 +241,15 @@ pub fn last_index_of(
   str : String,
   ~from : Int = self.length()
 ) -> Int {
+  let from = if from < 0 {
+    0
+  } else if from > self.length() {
+    self.length()
+  } else {
+    from
+  }
   let len = self.length()
   let sub_len = str.length()
-  if from < 0 {
-    return -1
-  }
   if sub_len == 0 {
     return from
   }
@@ -248,7 +259,7 @@ pub fn last_index_of(
   let min = sub_len - 1
   let last = str[sub_len - 1]
   let mut i = from - 1
-  for {
+  while i >= 0 {
     // find last character
     while i >= min && self[i] != last {
       i -= 1
@@ -275,6 +286,7 @@ pub fn last_index_of(
     }
     i -= 1
   }
+  -1
 }
 
 /// Returns true if this string contains given sub string.
