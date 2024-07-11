@@ -47,7 +47,7 @@ fn try_parse_19digits(
   let mut x = x
   let mut s = s
   let mut len = 0
-  while x < min_19digit_int && s.first_is_digit() || s.first_is('_') {
+  while (x < min_19digit_int && s.first_is_digit()) || s.first_is('_') {
     if s.first_is('_') {
       s = s.step_1_unchecked()
     }
