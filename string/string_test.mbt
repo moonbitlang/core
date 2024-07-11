@@ -89,6 +89,11 @@ test "chars" {
       #|
     ,
   )!
+  inspect("A😊𠮷BA😊𠮷B".iter().take(2).collect(), content="[A, 😊]")!
+  inspect(
+    "A😊𠮷BA😊𠮷B".iter().take(4).collect(),
+    content="[A, 😊, 𠮷, B]",
+  )!
 }
 
 // [debug_write] is in [builtin].
@@ -203,6 +208,12 @@ test "index_of" {
   inspect("😍😭😡".index_of("😎"), content="-1")!
   inspect("".index_of("a"), content="-1")!
   inspect("".index_of(""), content="0")!
+  inspect("abc".index_of("b", from=-1), content="1")!
+  inspect("abc".index_of("b", from=0), content="1")!
+  inspect("abc".index_of("b", from=1), content="1")!
+  inspect("abc".index_of("b", from=2), content="-1")!
+  inspect("abc".index_of("b", from=3), content="-1")!
+  inspect("abc".index_of("b", from=100), content="-1")!
 }
 
 test "last_index_of" {
@@ -213,6 +224,7 @@ test "last_index_of" {
   inspect("abc".last_index_of(""), content="3")!
   inspect("abcabc".last_index_of("ab"), content="3")!
   inspect("abcabc".last_index_of("ca"), content="2")!
+  inspect("abcabc".last_index_of("cb"), content="-1")!
   inspect("abcabc".last_index_of("d"), content="-1")!
   inspect("abcabc".last_index_of(""), content="6")!
   inspect("你好月兔你好月兔".last_index_of("你"), content="4")!
@@ -226,6 +238,12 @@ test "last_index_of" {
   inspect("😍😭😡😍😭😡".last_index_of("😎"), content="-1")!
   inspect("".last_index_of("a"), content="-1")!
   inspect("".last_index_of(""), content="0")!
+  inspect("abc".last_index_of("b", from=-1), content="-1")!
+  inspect("abc".last_index_of("b", from=0), content="-1")!
+  inspect("abc".last_index_of("b", from=1), content="-1")!
+  inspect("abc".last_index_of("b", from=2), content="1")!
+  inspect("abc".last_index_of("b", from=3), content="1")!
+  inspect("abc".last_index_of("b", from=100), content="1")!
 }
 
 test "starts_with" {
@@ -280,6 +298,7 @@ test "replace" {
   inspect("abcabc".replace(old="b", new="x"), content="axcabc")!
   inspect("abcabc".replace(old="", new=","), content=",abcabc")!
   inspect("a b c".replace(old=" ", new=","), content="a,b c")!
+  inspect("abcabc".replace(old="x", new="a"), content="abcabc")!
   inspect(
     "你好月兔".replace(old="月兔", new="Moonbit"),
     content="你好Moonbit",

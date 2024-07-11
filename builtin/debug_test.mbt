@@ -12,71 +12,158 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-// Commented due to `moon test` stdout pollution
-// test "debug function with Int" {
-//   let x = 42
-//   debug(x)
-//   // This should cover the line where the debug function is called with an Int
-// }
+test "debug function with Int" {
+  let x = 42
+  let buf = Buffer::new()
+  x.debug_write(buf)
+  inspect(
+    buf,
+    content=
+      #|42
+    ,
+  )!
+  // This should cover the line where the debug function is called with an Int
+}
 
-// test "debug function with String" {
-//   let s = "Hello, MoonBit!"
-//   debug(s)
-//   // This should cover the line where the debug function is called with a String
-// }
+test "debug function with String" {
+  let s = "Hello, MoonBit!"
+  let buf = Buffer::new()
+  s.debug_write(buf)
+  inspect(
+    buf,
+    content=
+      #|"Hello, MoonBit!"
+    ,
+  )!
+  // This should cover the line where the debug function is called with a String
+}
 
-// test "debug function with Bool" {
-//   let b = true
-//   debug(b)
-//   // This should cover the line where the debug function is called with a Bool
-// }
+test "debug function with Bool" {
+  let b = true
+  let buf = Buffer::new()
+  b.debug_write(buf)
+  inspect(
+    buf,
+    content=
+      #|true
+    ,
+  )!
+  // This should cover the line where the debug function is called with a Bool
+}
 
-// test "debug function with Int64" {
-//   let i64 = 9223372036854775807L
-//   debug(i64)
-//   // This should cover the line where the debug function is called with an Int64
-// }
+test "debug function with Int64" {
+  let i64 = 9223372036854775807L
+  let buf = Buffer::new()
+  i64.debug_write(buf)
+  inspect(
+    buf,
+    content=
+      #|9223372036854775807
+    ,
+  )!
+  // This should cover the line where the debug function is called with an Int64
+}
 
-// test "debug function with Bytes" {
-//   let bytes = Bytes::make(10)
-//   debug(bytes)
-//   // This should cover the line where the debug function is called with Bytes
-// }
+test "debug function with Bytes" {
+  let bytes = Bytes::make(10)
+  let buf = Buffer::new()
+  bytes.debug_write(buf)
+  inspect(buf, content="\x00\x00\x00\x00\x00")!
+  // This should cover the line where the debug function is called with Bytes
+}
 
-// test "debug function with Option[Int]" {
-//   let opt = Option::Some(42)
-//   debug(opt)
-//   // This should cover the line where the debug function is called with an Option[Int]
-// }
+test "debug function with Option[Int]" {
+  let opt = Option::Some(42)
+  let buf = Buffer::new()
+  opt.debug_write(buf)
+  inspect(
+    buf,
+    content=
+      #|Some(42)
+    ,
+  )!
+  // This should cover the line where the debug function is called with an Option[Int]
+}
 
-// test "debug function with Result[Int, String]" {
-//   let res : Result[Int, String] = Result::Ok(42)
-//   debug(res)
-//   // This should cover the line where the debug function is called with a Result[Int, String]
-// }
+test "debug function with Result[Int, String]" {
+  let res : Result[Int, String] = Result::Ok(42)
+  let buf = Buffer::new()
+  res.debug_write(buf)
+  inspect(
+    buf,
+    content=
+      #|Ok(42)
+    ,
+  )!
+  // This should cover the line where the debug function is called with a Result[Int, String]
+}
 
-// test "debug function with Ref[Int]" {
-//   let ref_int : Ref[Int] = { val: 42 }
-//   debug(ref_int)
-//   // This should cover the line where the debug function is called with a Ref[Int]
-// }
+test "debug function with Ref[Int]" {
+  let ref_int : Ref[Int] = { val: 42 }
+  let buf = Buffer::new()
+  ref_int.debug_write(buf)
+  inspect(buf, content="{val: 42}")!
+  // This should cover the line where the debug function is called with a Ref[Int]
+}
 
-// test "debug function with FixedArray[Int]" {
-//   let arr = [1, 2, 3, 4, 5]
-//   debug(arr)
-//   // This should cover the line where the debug function is called with a FixedArray[Int]
-// }
+test "debug function with FixedArray[Int]" {
+  let arr = [1, 2, 3, 4, 5]
+  let buf = Buffer::new()
+  arr.debug_write(buf)
+  inspect(
+    buf,
+    content=
+      #|[1, 2, 3, 4, 5]
+    ,
+  )!
+  // This should cover the line where the debug function is called with a FixedArray[Int]
+}
 
-// test "debug function with Array[Int]" {
-//   let arr = [1, 2, 3, 4, 5]
-//   debug(arr)
-//   // This should cover the line where the debug function is called with an Array[Int]
-// }
+test "debug function with Array[Int]" {
+  let arr = [1, 2, 3, 4, 5]
+  let buf = Buffer::new()
+  arr.debug_write(buf)
+  inspect(
+    buf,
+    content=
+      #|[1, 2, 3, 4, 5]
+    ,
+  )!
+  // This should cover the line where the debug function is called with an Array[Int]
+}
 
-// test "debug function with Map[Int, String]" {
-//   let map = Map::new()
-//   map.set(1, "one")
-//   map.set(2, "two")
-//   debug(map)
-//   // This should cover the line where the debug function is called with a Map[Int, String]
-// }
+test "debug function with ArrayView[Int]" {
+  let arr = [1, 2, 3, 4, 5]
+  let arrayview = arr[1:2]
+  let buf = Buffer::new()
+  arrayview.debug_write(buf)
+  inspect(
+    buf,
+    content=
+      #|[2]
+    ,
+  )!
+}
+
+test "debug function with Map[Int, String]" {
+  let map = { 1: "one", 2: "two", 3: "three" }
+  let buf = Buffer::new()
+  map.debug_write(buf)
+  inspect(
+    buf,
+    content=
+      #|{1: "one", 2: "two", 3: "three"}
+    ,
+  )!
+  let nested_map = { 1: { 2: "two" }, 3: { 4: "four" } }
+  let buf = Buffer::new()
+  nested_map.debug_write(buf)
+  inspect(
+    buf,
+    content=
+      #|{1: {2: "two"}, 3: {4: "four"}}
+    ,
+  )!
+
+  // This should cover the line where the debug function is called with a Map[Int, String]
+}

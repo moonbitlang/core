@@ -43,8 +43,8 @@ test "from_fixed_array_3" {
 }
 
 test "from_array_1" {
-  let queue : Queue[Int] = Queue::[1, 2, 3, 4]
-  let queue2 : Queue[Int] = Queue::[1]
+  let queue : Queue[Int] = Queue::of([1, 2, 3, 4])
+  let queue2 : Queue[Int] = Queue::of([1])
   @test.eq(queue.length, 4)!
   @test.eq(queue.pop_exn(), 1)!
   @test.eq(queue.pop_exn(), 2)!
@@ -55,15 +55,15 @@ test "from_array_1" {
 }
 
 test "from_array_2" {
-  let q = Queue::[1, 2, 3, 4]
+  let q = Queue::of([1, 2, 3, 4])
   q.push(11)
-  @test.eq(q, Queue::[1, 2, 3, 4, 11])!
+  @test.eq(q, Queue::of([1, 2, 3, 4, 11]))!
   q.pop_exn() |> ignore
-  @test.eq(q, Queue::[2, 3, 4, 11])!
+  @test.eq(q, Queue::of([2, 3, 4, 11]))!
 }
 
 test "from_array_3" {
-  let q : Queue[Int] = Queue::[]
+  let q : Queue[Int] = Queue::of([])
   inspect(q, content="Queue::[]")!
 }
 
@@ -124,7 +124,7 @@ test "peek_exn" {
 }
 
 test "panic peek_exn" {
-  Queue::[].peek_exn()
+  Queue::of([]).peek_exn()
 }
 
 test "peek" {
@@ -144,7 +144,7 @@ test "pop_exn" {
 }
 
 test "panic pop_exn" {
-  Queue::[].pop_exn()
+  Queue::of([]).pop_exn()
 }
 
 test "pop" {

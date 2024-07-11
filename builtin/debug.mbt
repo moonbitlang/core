@@ -179,31 +179,23 @@ pub fn debug_write[K : Debug, V : Debug](
   self : Map[K, V],
   buf : Buffer
 ) -> Unit {
-  loop self.head {
-    Some({ idx, key, value, hash, .. }) => {
-      buf.write_char('(')
-      // buf.write_string("\(hash),\(key),\(value)")
-      hash.debug_write(buf)
-      buf.write_char(',')
+  buf.write_char('{')
+  loop 0, self.head {
+    i, Some({ key, value, idx, .. }) => {
+      let nxt = self.list[idx].next
+      if i > 0 {
+        // remove the trailing comma
+        buf.write_string(", ")
+        key.debug_write(buf)
+        buf.write_string(": ")
+        value.debug_write(buf)
+        continue i + 1, nxt
+      }
       key.debug_write(buf)
-      buf.write_char(',')
+      buf.write_string(": ")
       value.debug_write(buf)
-      buf.write_char(')')
-      buf.write_string(",prev:")
-      let node = self.list[idx]
-      match node.prev {
-        Some({ hash, .. }) => buf.write_string(hash.to_string())
-        None => buf.write_char('_')
-      }
-      buf.write_string(",next:")
-      match node.next {
-        Some({ hash, .. }) => buf.write_string(hash.to_string())
-        None => buf.write_char('_')
-      }
-      buf.write_char(')')
-      buf.write_char('\n')
-      continue node.next
+      continue i + 1, nxt
     }
-    None => buf.write_string("end")
+    _, None => buf.write_char('}')
   }
 }

@@ -228,7 +228,7 @@ test "linked list" {
   let m = {  }
   let buf = Buffer::new(size_hint=0)
   m.debug_write(buf)
-  inspect(buf, content="end")!
+  inspect(buf, content="{}")!
   m["one"] = 1
   m["two"] = 2
   m["three"] = 3
@@ -239,12 +239,7 @@ test "linked list" {
   inspect(
     buf,
     content=
-      #|(-684882541,"one",1),prev:_,next:1759420741)
-      #|(1759420741,"two",2),prev:-684882541,next:957272809)
-      #|(957272809,"three",3),prev:1759420741,next:-1028260443)
-      #|(-1028260443,"four",4),prev:957272809,next:-1715605027)
-      #|(-1715605027,"five",5),prev:-1028260443,next:_)
-      #|end
+      #|{"one": 1, "two": 2, "three": 3, "four": 4, "five": 5}
     ,
   )!
   m.remove("three")
@@ -253,11 +248,7 @@ test "linked list" {
   inspect(
     buf,
     content=
-      #|(-684882541,"one",1),prev:_,next:1759420741)
-      #|(1759420741,"two",2),prev:-684882541,next:-1028260443)
-      #|(-1028260443,"four",4),prev:1759420741,next:-1715605027)
-      #|(-1715605027,"five",5),prev:-1028260443,next:_)
-      #|end
+      #|{"one": 1, "two": 2, "four": 4, "five": 5}
     ,
   )!
   m.set("two", 20)
@@ -266,11 +257,7 @@ test "linked list" {
   inspect(
     buf,
     content=
-      #|(-684882541,"one",1),prev:_,next:1759420741)
-      #|(1759420741,"two",20),prev:-684882541,next:-1028260443)
-      #|(-1028260443,"four",4),prev:1759420741,next:-1715605027)
-      #|(-1715605027,"five",5),prev:-1028260443,next:_)
-      #|end
+      #|{"one": 1, "two": 20, "four": 4, "five": 5}
     ,
   )!
   m.remove("one")
@@ -279,10 +266,7 @@ test "linked list" {
   inspect(
     buf,
     content=
-      #|(1759420741,"two",20),prev:_,next:-1028260443)
-      #|(-1028260443,"four",4),prev:1759420741,next:-1715605027)
-      #|(-1715605027,"five",5),prev:-1028260443,next:_)
-      #|end
+      #|{"two": 20, "four": 4, "five": 5}
     ,
   )!
   m.remove("five")
@@ -291,9 +275,7 @@ test "linked list" {
   inspect(
     buf,
     content=
-      #|(1759420741,"two",20),prev:_,next:-1028260443)
-      #|(-1028260443,"four",4),prev:1759420741,next:_)
-      #|end
+      #|{"two": 20, "four": 4}
     ,
   )!
   m.remove("two")
@@ -302,14 +284,13 @@ test "linked list" {
   inspect(
     buf,
     content=
-      #|(-1028260443,"four",4),prev:_,next:_)
-      #|end
+      #|{"four": 4}
     ,
   )!
   m.remove("four")
   let buf = Buffer::new(size_hint=0)
   m.debug_write(buf)
-  inspect(buf, content="end")!
+  inspect(buf, content="{}")!
 }
 
 test "to_array" {
@@ -670,7 +651,9 @@ test "to_string" {
   m.set("a", 1)
   m.set("b", 2)
   m.set("c", 3)
-  inspect(m.to_string(), content="{a:1, b:2, c:3}")!
+  inspect(m.to_string(), content="{a: 1, b:2, c:3}")!
+  let nested_m = { "a": { "b": 2 }, "B": { "C": 3 } }
+  inspect(nested_m.to_string(), content="{a: {b: 2}, B:{C: 3}}")!
 }
 
 test "hash collision" {

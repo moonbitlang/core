@@ -18,9 +18,9 @@ test "new" {
 }
 
 test "from_array" {
-  let pq = PriorityQueue::[1, 3, 6, 4, 5]
+  let pq = PriorityQueue::of([1, 3, 6, 4, 5])
   inspect(pq.peek(), content="Some(6)")!
-  let pq_ : PriorityQueue[Int] = PriorityQueue::[]
+  let pq_ : PriorityQueue[Int] = PriorityQueue::of([])
   inspect(pq_.peek(), content="None")!
 }
 
@@ -89,7 +89,7 @@ test "pop_exn" {
 }
 
 test "panic pop_exn" {
-  let pq : PriorityQueue[Int] = PriorityQueue::[]
+  let pq : PriorityQueue[Int] = PriorityQueue::of([])
   pq.pop_exn()
 }
 
