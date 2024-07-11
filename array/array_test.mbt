@@ -76,6 +76,13 @@ test "push" {
   @test.eq(v, [6, 4, 5])!
 }
 
+test "push_iter" {
+  let u = [1, 2, 3]
+  let v = [4, 5, 6]
+  u.push_iter(v.iter())
+  inspect(u, content="[1, 2, 3, 4, 5, 6]")!
+}
+
 test "drain" {
   let v = [3, 4, 5]
   let v2 = [1, 2, 3, 4, 5]

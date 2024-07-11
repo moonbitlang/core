@@ -26,6 +26,21 @@ pub fn iter[T](self : Array[T]) -> Iter[T] {
   )
 }
 
+/// Adds all elements from an iterator to the end of the array.
+///
+/// This function iterates over each element in the provided iterator
+/// and adds them to the array using the `push` method.
+///
+/// # Example
+/// ```
+/// let u = [1, 2, 3]
+/// let v = [4, 5, 6]
+/// u.push_iter(v.iter())
+/// ```
+pub fn push_iter[T](self : Array[T], iter : Iter[T]) -> Unit {
+  iter.each(fn { x => self.push(x) })
+}
+
 pub fn copy[T](self : Array[T]) -> Array[T] {
   let len = self.length()
   if len == 0 {

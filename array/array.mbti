@@ -40,6 +40,7 @@ impl Array {
   iter[T](Self[T]) -> Iter[T]
   join[T : Show](Self[T], String) -> String
   new_with_index[T](Int, (Int) -> T) -> Self[T]
+  push_iter[T](Self[T], Iter[T]) -> Unit
   shuffle[T](Self[T], ~rand : (Int) -> Int) -> Self[T]
   shuffle_in_place[T](Self[T], ~rand : (Int) -> Int) -> Unit
   sort[T : Compare + Eq](Self[T]) -> Unit
