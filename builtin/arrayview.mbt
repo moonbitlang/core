@@ -80,3 +80,17 @@ pub fn op_as_view[T](
   }
   ArrayView::{ buf: self.buf, start: self.start + start, len: end - start }
 }
+
+pub fn iter[A](self : ArrayView[A]) -> Iter[A] {
+  Iter::new(
+    fn(yield) {
+      for i = 0, len = self.length(); i < len; i = i + 1 {
+        if yield(self[i]) == IterEnd {
+          break IterEnd
+        }
+      } else {
+        IterContinue
+      }
+    },
+  )
+}
