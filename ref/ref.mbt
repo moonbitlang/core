@@ -13,7 +13,13 @@
 // limitations under the License.
 
 /// create a reference from value
+/// @alert deprecated "Use `new` instead"
 pub fn ref[T](x : T) -> Ref[T] {
+  { val: x }
+}
+
+/// create a reference from value
+pub fn Ref::new[T](x : T) -> Ref[T] {
   { val: x }
 }
 
@@ -23,7 +29,7 @@ pub fn to_string[X : Show](self : Ref[X]) -> String {
 }
 
 test "to_string" {
-  inspect(ref(3), content="{val: 3}")!
+  inspect(new(3), content="{val: 3}")!
 }
 
 /// Maps the value of a `Ref` using a given function.
@@ -87,8 +93,8 @@ pub fn swap[T](self : Ref[T], that : Ref[T]) -> Unit {
 }
 
 test "swap" {
-  let x = ref(1)
-  let y = ref(2)
+  let x = new(1)
+  let y = new(2)
   swap(x, y)
   inspect(x.val, content="2")!
   inspect(y.val, content="1")!
@@ -99,7 +105,7 @@ pub fn update[T](self : Ref[T], f : (T) -> T) -> Unit {
 }
 
 test "decr" {
-  let a = ref(1)
+  let a = new(1)
   a.val -= 1
   inspect(a.val, content="0")!
   a.val -= 5
@@ -107,7 +113,7 @@ test "decr" {
 }
 
 test "incr" {
-  let a = ref(1)
+  let a = new(1)
   a.val += 1
   inspect(a.val, content="2")!
   a.val += 5
