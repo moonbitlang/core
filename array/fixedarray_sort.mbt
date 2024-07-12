@@ -176,8 +176,8 @@ fn provide_sorted_batch[T : Compare](
 fn collapse(runs : Array[TimSortRun], stop : Int) -> Int? {
   let n : Int = runs.length()
   if n >= 2 && (runs[n - 1].start + runs[n - 1].len == stop || runs[n - 2].len <=
-  runs[n - 1].len || n >= 3 && runs[n - 3].len <= runs[n - 2].len + runs[n - 1].len ||
-  n >= 4 && runs[n - 4].len <= runs[n - 3].len + runs[n - 2].len) {
+  runs[n - 1].len || (n >= 3 && runs[n - 3].len <= runs[n - 2].len + runs[n - 1].len) ||
+  (n >= 4 && runs[n - 4].len <= runs[n - 3].len + runs[n - 2].len)) {
     if n >= 3 && runs[n - 3].len < runs[n - 1].len {
       Some(n - 3)
     } else {

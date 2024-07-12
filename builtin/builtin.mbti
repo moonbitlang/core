@@ -111,7 +111,6 @@ impl ArrayView {
 type Buffer
 impl Buffer {
   expect(Self, ~content : String = .., ~loc : SourceLoc = _, ~args_loc : ArgsLoc = _) -> Unit!String
-  make(Int) -> Self
   new(~size_hint : Int = ..) -> Self
   reset(Self) -> Unit
   to_bytes(Self) -> Bytes
