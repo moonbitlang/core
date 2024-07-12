@@ -16,7 +16,7 @@
 /// times each chunk of code is executed. It's not very useful outside of
 /// generated code.
 struct CoverageCounter {
-  counter : FixedArray[Int]
+  counter : FixedArray[UInt]
 } derive(Show)
 
 /// Create a new coverage counter with the given size.
@@ -31,9 +31,7 @@ pub fn CoverageCounter::new(size : Int) -> CoverageCounter {
 /// @coverage.skip 
 pub fn CoverageCounter::incr(self : CoverageCounter, idx : Int) -> Unit {
   let counter = self.counter[idx]
-  if counter < 0x7fffffff { // prevent overflow
-    self.counter[idx] = counter + 1
-  }
+  self.counter[idx] = counter + 1
 }
 
 /// Output the contents of this counter in JSON format.
