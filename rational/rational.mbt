@@ -36,8 +36,8 @@ pub fn Rational::new(numerator : Int64, denominator : Int64) -> Rational? {
   if denominator == 0L {
     None
   } else {
-    let sign = if numerator < 0L && denominator < 0L || numerator > 0L && denominator >
-    0L {
+    let sign = if (numerator < 0L && denominator < 0L) || (numerator > 0L && denominator >
+    0L) {
       1L
     } else {
       -1L

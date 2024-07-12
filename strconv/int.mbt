@@ -74,7 +74,7 @@ pub fn parse_int64(str : String, ~base : Int = 0) -> Int64!String {
     if d >= num_base {
       raise syntax_err
     }
-    if neg && n < overflow_threshold || not(neg) && n >= overflow_threshold {
+    if (neg && n < overflow_threshold) || (not(neg) && n >= overflow_threshold) {
       raise range_err
     }
     // n*base overflows
@@ -134,7 +134,7 @@ fn check_underscore(str : String) -> Bool {
       last_char = '0'
       continue
     }
-    if hex && 'a' <= s[i] && s[i] <= 'f' || 'A' <= s[i] && s[i] <= 'F' {
+    if (hex && 'a' <= s[i] && s[i] <= 'f') || ('A' <= s[i] && s[i] <= 'F') {
       last_char = '0'
       continue
     }

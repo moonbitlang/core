@@ -460,8 +460,8 @@ fn d2d(ieeeMantissa : Int64, ieeeExponent : Int) -> FloatingDecimal64 {
     if vrIsTrailingZeros && lastRemovedDigit == 5 && vr % 2L == 0L {
       lastRemovedDigit = 4
     }
-    output = vr + (vr == vm && (not(acceptBounds) || not(vmIsTrailingZeros)) || lastRemovedDigit >=
-      5).to_int64()
+    output = vr + ((vr == vm && (not(acceptBounds) || not(vmIsTrailingZeros))) ||
+      lastRemovedDigit >= 5).to_int64()
   } else {
     // Specialized for the common case (~99.3%). Percentages below are relative to this.
     let mut roundUp = false
@@ -638,8 +638,8 @@ fn ryu_to_string(self : Double) -> String {
   let ieeeExponent : Int = bits.lsr(gDOUBLE_MANTISSA_BITS).land(
     1L.lsl(gDOUBLE_EXPONENT_BITS) - 1L,
   ).to_int()
-  if ieeeExponent == (1).lsl(gDOUBLE_EXPONENT_BITS) - 1 || ieeeExponent == 0 && ieeeMantissa ==
-  0L {
+  if ieeeExponent == (1).lsl(gDOUBLE_EXPONENT_BITS) - 1 || (ieeeExponent == 0 &&
+  ieeeMantissa == 0L) {
     return copy_special_str(ieeeSign, ieeeExponent != 0, ieeeMantissa != 0L)
   }
   let mut v : FloatingDecimal64 = { mantissa: 0L, exponent: 0 }
