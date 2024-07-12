@@ -49,9 +49,7 @@ pub fn Decimal::new() -> Decimal {
 
 /// Create a decimal with an Int64 value.
 pub fn Decimal::from_int64(v : Int64) -> Decimal {
-  let d = Decimal::new()
-  d.assign(v)
-  d
+  Decimal::new()..assign(v)
 }
 
 /// Create a decimal from number string.
@@ -146,7 +144,7 @@ pub fn to_double(self : Decimal) -> Double!String {
   // Double: 1.79769e+308 (10^308) - 2.22507e-308 (10^-308)
   if self.digits_num == 0 || self.decimal_point < -330 {
     // zero
-    mantissa = 0L
+    mantissa = 0
     exponent = double_info.bias
     let bits = assemble_bits(mantissa, exponent, self.negative)
     return bits.reinterpret_as_double()
@@ -348,7 +346,7 @@ fn right_shift(self : Decimal, s : Int) -> Unit {
   self.decimal_point -= read_index - 1
 
   // read a digit and output a shifted digit
-  let mask = 1L.lsl(s) - 1L
+  let mask = 1L.lsl(s) - 1
   while read_index < self.digits_num {
     // output (acc >> s)
     let out = acc.lsr(s).to_int()
@@ -363,7 +361,7 @@ fn right_shift(self : Decimal, s : Int) -> Unit {
   }
 
   // output extra digits
-  while acc > 0L {
+  while acc > 0 {
     let out = acc.lsr(s).to_int()
     if write_index < self.digits.length() {
       self.digits[write_index] = out.to_byte()
