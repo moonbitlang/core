@@ -346,7 +346,7 @@ fn right_shift(self : Decimal, s : Int) -> Unit {
   self.decimal_point -= read_index - 1
 
   // read a digit and output a shifted digit
-  let mask = 1L.lsl(s) - 1L
+  let mask = 1L.lsl(s) - 1
   while read_index < self.digits_num {
     // output (acc >> s)
     let out = acc.lsr(s).to_int()
@@ -361,7 +361,7 @@ fn right_shift(self : Decimal, s : Int) -> Unit {
   }
 
   // output extra digits
-  while acc > 0L {
+  while acc > 0 {
     let out = acc.lsr(s).to_int()
     if write_index < self.digits.length() {
       self.digits[write_index] = out.to_byte()
