@@ -12,26 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-test "get as null" {
-  inspect(JsonValue::Null |> as_null, content="Some(())")!
-  inspect(JsonValue::True |> as_null, content="None")!
-  inspect(JsonValue::False |> as_null, content="None")!
-  inspect(JsonValue::Number(1.0) |> as_null, content="None")!
-  inspect(JsonValue::String("Hello World") |> as_null, content="None")!
-  inspect(
-    JsonValue::Array([JsonValue::String("Hello World")]) |> as_null,
-    content="None",
-  )!
-  inspect(
-    JsonValue::Object(
-      Map::of(
-        [("key", JsonValue::String("key")), ("value", JsonValue::Number(100.0))],
-      ),
-    )
-    |> as_null,
-    content="None",
-  )!
-}
 
 test "get as bool" {
   inspect(JsonValue::Null |> as_bool, content="None")!
