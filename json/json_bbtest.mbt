@@ -18,17 +18,9 @@ test "get as null" {
   inspect(False |> @json.as_null, content="None")!
   inspect(Number(1.0) |> @json.as_null, content="None")!
   inspect(String("Hello World") |> @json.as_null, content="None")!
+  inspect(Array([String("Hello World")]) |> @json.as_null, content="None")!
   inspect(
-    Array([@json.String("Hello World")]) |> @json.as_null,
-    content="None",
-  )!
-  inspect(
-    Object(
-      Map::of(
-        [("key", @json.String("key")), ("value", @json.Number(100.0))],
-      ),
-    )
-    |> @json.as_null,
+    Object({ "key": String("key"), "value": Number(100.0) }) |> @json.as_null,
     content="None",
   )!
 }

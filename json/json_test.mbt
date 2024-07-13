@@ -12,7 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-
 test "get as bool" {
   inspect(JsonValue::Null |> as_bool, content="None")!
   inspect(JsonValue::True |> as_bool, content="Some(true)")!
