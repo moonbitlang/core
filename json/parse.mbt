@@ -13,9 +13,11 @@
 // limitations under the License.
 
 pub fn valid(input : String) -> Bool {
-  match parse(input)!! {
-    Ok(_) => true
-    Err(_) => false
+  try {
+    parse(input)! |> ignore
+    true
+  } catch {
+    _ => return false
   }
 }
 
