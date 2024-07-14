@@ -242,6 +242,12 @@ test "collect" {
   @test.eq(vec, ['1', '2', '3', '4', '5'])!
 }
 
+test "range overflow" {
+  let v = Int::max_value() - 1  
+  inspect(v.until(Int::max_value(),step=3), content="[]")!
+}
+
+
 test "range" {
   // edge cases
   inspect((0).until(10).take(100), content="[0, 1, 2, 3, 4, 5, 6, 7, 8, 9]")!
