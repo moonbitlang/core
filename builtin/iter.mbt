@@ -219,13 +219,13 @@ pub fn until(self : Int, end : Int, ~step : Int = 1) -> Iter[Int] {
   Iter(
     fn(yield) {
       for i = self; i < end; {
-        let next_i = i + step  
+        let next_i = i + step
         if next_i < i {
-            break IterEnd
+          break IterEnd
         }
         if yield(i) == IterEnd {
           break IterEnd
-        }        
+        }
         continue next_i
       } else {
         IterContinue

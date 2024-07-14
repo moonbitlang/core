@@ -243,10 +243,9 @@ test "collect" {
 }
 
 test "range overflow" {
-  let v = Int::max_value() - 1  
-  inspect(v.until(Int::max_value(),step=3), content="[]")!
+  let v = Int::max_value() - 1
+  inspect(v.until(Int::max_value(), step=3), content="[]")!
 }
-
 
 test "range" {
   // edge cases
