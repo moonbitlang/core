@@ -450,7 +450,7 @@ test "shuffle_in_place" {
   }
 
   Array::shuffle_in_place(arr, ~rand)
-  inspect(arr, content="[5, 2, 1, 6, 3, 7, 4]")!
+  inspect(arr, content="[3, 4, 7, 1, 6, 5, 2]")!
 }
 
 test "shuffle" {
@@ -461,7 +461,7 @@ test "shuffle" {
   }
 
   let shuffled = Array::shuffle(arr, ~rand)
-  inspect(shuffled, content="[2, 7, 6, 1, 5, 3, 4]")!
+  inspect(shuffled, content="[1, 5, 3, 4, 7, 6, 2]")!
 }
 
 test "find_index" {
