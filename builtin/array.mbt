@@ -400,7 +400,7 @@ pub fn is_sorted[T : Compare](self : Array[T]) -> Bool {
 /// # Example
 /// ```
 /// let v = [3, 4, 5]
-/// v.reverse()
+/// v.rev_inplace()
 /// ```
 pub fn rev_inplace[T](self : Array[T]) -> Unit {
   for i = 0; i < self.length() / 2; i = i + 1 {

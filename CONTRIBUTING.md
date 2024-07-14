@@ -36,7 +36,7 @@
   moon new hello
   cd hello
   echo """fn main {
-    println([1, 2, 3].reverse())
+    println([1, 2, 3].rev())
   }""" > main/main.mbt
   moon run main
   # Output: [3, 2, 1]

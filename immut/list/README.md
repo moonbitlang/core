@@ -23,7 +23,7 @@ let list = Cons(1, Cons(2, Cons(3, Nil)))
 
 Build a repeated list by using the `repeat()` method:
 ```moonbit
-let list = repeat(3, 1) // of([1, 1, 1])
+let list = repeat(3, 1) // List::[1, 1, 1]
 ```
 
 ### Pattern matching
@@ -48,8 +48,8 @@ To simply concatenate two lists, you can use the `concat()` method (or `+` opera
 ```moonbit
 let list1 = of([1, 2, 3])
 let list2 = of([4, 5, 6])
-let list3 = list1.concat(list2) // of([1, 2, 3, 4, 5, 6])
-let list4 = list1 + list2 // of([1, 2, 3, 4, 5, 6])
+let list3 = list1.concat(list2) // List::[1, 2, 3, 4, 5, 6]
+let list4 = list1 + list2 // List::[1, 2, 3, 4, 5, 6]
 ```
 
 For concatenating multiple lists (especially the length is unknown), you can use the `flatten()` method:
@@ -57,13 +57,13 @@ For concatenating multiple lists (especially the length is unknown), you can use
 let list1 = of([1, 2, 3])
 let list2 = of([4, 5, 6])
 let list3 = of([7, 8, 9])
-let list4 = List::flatten([list1, list2, list3]) // of([1, 2, 3, 4, 5, 6, 7, 8, 9])
+let list4 = List::flatten([list1, list2, list3]) // List::[1, 2, 3, 4, 5, 6, 7, 8, 9]
 ```
 
 To concatenate a list with a delimiter, `intercalate()` is useful:
 ```moonbit
 let list = of([of([1, 2, 3]), of([4, 5, 6]), of([7, 8, 9])])
-let list1 = list.intercalate(of([0]) // of([1, 2, 3, 0, 4, 5, 6, 0, 7, 8, 9]))
+let list1 = list.intercalate(of([0]) // List::[1, 2, 3, 0, 4, 5, 6, 0, 7, 8, 9]
 ```
 
 ### Filtering / Rejecting / Selecting elements
@@ -74,11 +74,11 @@ There are three ways to filter / reject / select multiple elements from a list:
 
 ```moonbit
 let ls = of([1, 2, 3, 4, 5])
-ls.filter(fn (ele) { ele % 2 == 0 }) // of([2, 4])
-ls.take(2) // of([1, 2])
-ls.drop(2) // of([3, 4, 5])
-ls.take_while(fn (ele) { ele < 3 }) // of([1, 2])
-ls.drop_while(fn (ele) { ele < 3 }) // of([3, 4, 5])
+ls.filter(fn (ele) { ele % 2 == 0 }) // List::[2, 4]
+ls.take(2) // List::[1, 2]
+ls.drop(2) // List::[3, 4, 5]
+ls.take_while(fn (ele) { ele < 3 }) // List::[1, 2]
+ls.drop_while(fn (ele) { ele < 3 }) // List::[3, 4, 5]
 ```
 
 ### Accessing elements / sub-lists
@@ -102,8 +102,8 @@ list.nth(2) // Some(3)
 To get a sub-list from the list, you can use the `init_()` method for getting all elements except the last one, and `tail()` for getting all elements except the first one.
 ```moonbit
 let list = of([1, 2, 3, 4, 5])
-list.init_() // of([1, 2, 3, 4])
-list.tail() // of([2, 3, 4, 5])
+list.init_() // List::[1, 2, 3, 4]
+list.tail() // List::[2, 3, 4, 5]
 ```
 
 ### Reducing Lists
@@ -124,11 +124,11 @@ list.fold(0, fn(acc, x) { acc + x }) // 15
 To transform list elements, you can use the `map()` method.
 ```moonbit
 let list = of([1, 2, 3, 4, 5])
-list.map(fn (ele) { ele * 2 }) // of([2, 4, 6, 8, 10])
+list.map(fn (ele) { ele * 2 }) // List::[2, 4, 6, 8, 10]
 ```
 
 The `reverse` method reverses the list.
 ```moonbit
 let list = of([1, 2, 3, 4, 5])
-list.reverse() // of([5, 4, 3, 2, 1])
+list.rev() // List::[5, 4, 3, 2, 1]
 ```
