@@ -200,10 +200,15 @@ pub fn until(self : Int, end : Int, ~step : Int = 1) -> Iter[Int] {
   if step < 0 {
     return Iter(
       fn(yield) {
-        for i = self; i > end; i = i + step {
+        for i = self; i > end; {
+          let next_i = i + step
+          if next_i > i {
+            break IterEnd
+          }
           if yield(i) == IterEnd {
             break IterEnd
           }
+          continue next_i
         } else {
           IterContinue
         }
@@ -213,10 +218,15 @@ pub fn until(self : Int, end : Int, ~step : Int = 1) -> Iter[Int] {
   // step >= 0
   Iter(
     fn(yield) {
-      for i = self; i < end; i = i + step {
+      for i = self; i < end; {
+        let next_i = i + step  
+        if next_i < i {
+            break IterEnd
+        }
         if yield(i) == IterEnd {
           break IterEnd
-        }
+        }        
+        continue next_i
       } else {
         IterContinue
       }
