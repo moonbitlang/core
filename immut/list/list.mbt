@@ -12,12 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-pub enum List[T] {
+pub enum T[A] {
   Nil
-  Cons(T, List[T])
+  Cons(A, T[A])
 } derive(Eq)
 
-pub fn List::to_string[T : Show](xs : List[T]) -> String {
+pub fn T::to_string[A : Show](xs : T[A]) -> String {
   let elems = match xs {
     Nil => ""
     Cons(x, xs) =>
@@ -29,7 +29,7 @@ pub fn List::to_string[T : Show](xs : List[T]) -> String {
   "List::[" + elems + "]"
 }
 
-pub fn List::debug_write[T : Debug](xs : List[T], buf : Buffer) -> Unit {
+pub fn T::debug_write[A : Debug](xs : T[A], buf : Buffer) -> Unit {
   xs.eachi(
     fn(i, x) {
       x.debug_write(buf)
@@ -45,19 +45,19 @@ pub fn List::debug_write[T : Debug](xs : List[T], buf : Buffer) -> Unit {
 /// # Example
 ///
 /// ```
-/// let ls = of([1, 2, 3, 4, 5])
-/// println(ls) // output: of([1, 2, 3, 4, 5])
+/// let ls = @immut/list.of([1, 2, 3, 4, 5])
+/// println(ls) // output: [1, 2, 3, 4, 5]
 /// ```
-pub fn List::from_array[T](arr : Array[T]) -> List[T] {
-  for i = arr.length() - 1, list = List::Nil; i >= 0; {
-    continue i - 1, List::Cons(arr[i], list)
+pub fn T::from_array[A](arr : Array[A]) -> T[A] {
+  for i = arr.length() - 1, list = Nil; i >= 0; {
+    continue i - 1, Cons(arr[i], list)
   } else {
     list
   }
 }
 
 /// Get the length of the list.
-pub fn length[T](self : List[T]) -> Int {
+pub fn length[A](self : T[A]) -> Int {
   loop self, 0 {
     Nil, len => len
     Cons(_, rest), acc => continue rest, acc + 1
@@ -69,9 +69,9 @@ pub fn length[T](self : List[T]) -> Int {
 /// # Example
 ///
 /// ```
-/// of([1, 2, 3, 4, 5]).each(print) // output: 12345
+/// @immut/list.of([1, 2, 3, 4, 5]).each(print) 
 /// ```
-pub fn each[T](self : List[T], f : (T) -> Unit) -> Unit {
+pub fn each[A](self : T[A], f : (A) -> Unit) -> Unit {
   loop self {
     Nil => ()
     Cons(head, tail) => {
@@ -86,10 +86,10 @@ pub fn each[T](self : List[T], f : (T) -> Unit) -> Unit {
 /// # Example
 ///
 /// ```
-/// of([1, 2, 3, 4, 5]).eachi(fn(i, x) { print("(\(i),\(x)) ") })
+/// @immut/list.of([1, 2, 3, 4, 5]).eachi(fn(i, x) { print("(\(i),\(x)) ") })
 /// // output: (0,1) (1,2) (2,3) (3,4) (4,5)
 /// ```
-pub fn eachi[T](self : List[T], f : (Int, T) -> Unit) -> Unit {
+pub fn eachi[A](self : T[A], f : (Int, A) -> Unit) -> Unit {
   loop self, 0 {
     Nil, _ => ()
     Cons(x, xs), i => {
@@ -104,10 +104,10 @@ pub fn eachi[T](self : List[T], f : (Int, T) -> Unit) -> Unit {
 /// # Example
 ///
 /// ```
-/// debug(of([1, 2, 3, 4, 5]).map(fn(x){ x * 2}))
+/// debug(@immut/list.of([1, 2, 3, 4, 5]).map(fn(x){ x * 2}))
 /// // output: of([2, 4, 6, 8, 10])
 /// ```
-pub fn map[T, U](self : List[T], f : (T) -> U) -> List[U] {
+pub fn map[A, B](self : T[A], f : (A) -> B) -> T[B] {
   match self {
     Nil => Nil
     Cons(head, tail) => Cons(f(head), map(tail, f))
@@ -115,8 +115,8 @@ pub fn map[T, U](self : List[T], f : (T) -> U) -> List[U] {
 }
 
 /// Maps the list with index.
-pub fn mapi[T, U](self : List[T], f : (Int, T) -> U) -> List[U] {
-  fn go(xs : List[T], i : Int, f : (Int, T) -> U) -> List[U] {
+pub fn mapi[A, B](self : T[A], f : (Int, A) -> B) -> T[B] {
+  fn go(xs : T[A], i : Int, f : (Int, A) -> B) -> T[B] {
     match xs {
       Nil => Nil
       Cons(x, xs) => Cons(f(i, x), go(xs, i + 1, f))
@@ -127,7 +127,7 @@ pub fn mapi[T, U](self : List[T], f : (Int, T) -> U) -> List[U] {
 }
 
 /// Convert list to array.
-pub fn to_array[T](self : List[T]) -> Array[T] {
+pub fn to_array[A](self : T[A]) -> Array[A] {
   match self {
     Nil => []
     Cons(head, _) => {
@@ -146,7 +146,7 @@ pub fn to_array[T](self : List[T]) -> Array[T] {
 /// debug(of([1, 2, 3, 4, 5]).filter(fn(x){ x % 2 == 0}))
 /// // output: from_array([2, 4])
 /// ```
-pub fn filter[T](self : List[T], f : (T) -> Bool) -> List[T] {
+pub fn filter[A](self : T[A], f : (A) -> Bool) -> T[A] {
   match self {
     Nil => Nil
     Cons(head, tail) =>
@@ -159,7 +159,7 @@ pub fn filter[T](self : List[T], f : (T) -> Bool) -> List[T] {
 }
 
 /// Test if all elements of the list satisfy the predicate.
-pub fn all[T](self : List[T], f : (T) -> Bool) -> Bool {
+pub fn all[A](self : T[A], f : (A) -> Bool) -> Bool {
   match self {
     Nil => true
     Cons(head, tail) => f(head) && all(tail, f)
@@ -167,7 +167,7 @@ pub fn all[T](self : List[T], f : (T) -> Bool) -> Bool {
 }
 
 /// Test if any element of the list satisfies the predicate.
-pub fn any[T](self : List[T], f : (T) -> Bool) -> Bool {
+pub fn any[A](self : T[A], f : (A) -> Bool) -> Bool {
   match self {
     Nil => false
     Cons(head, tail) => f(head) || any(tail, f)
@@ -182,7 +182,7 @@ pub fn any[T](self : List[T], f : (T) -> Bool) -> Bool {
 /// debug(of([1, 2, 3, 4, 5]).tail())
 /// // output: from_array([2, 3, 4, 5])
 /// ```
-pub fn tail[T](self : List[T]) -> List[T] {
+pub fn tail[A](self : T[A]) -> T[A] {
   match self {
     Nil => Nil
     Cons(_, tail) => tail
@@ -198,7 +198,7 @@ pub fn tail[T](self : List[T]) -> List[T] {
 /// // output: 1
 /// ```
 /// @alert unsafe "Panic if the list is empty"
-pub fn head_exn[T](self : List[T]) -> T {
+pub fn head_exn[A](self : T[A]) -> A {
   match self {
     Nil => abort("head of empty list")
     Cons(head, _) => head
@@ -215,7 +215,7 @@ pub fn head_exn[T](self : List[T]) -> T {
 /// debug(from_array([]).head())
 /// // output: None
 /// ```
-pub fn head[T](self : List[T]) -> T? {
+pub fn head[A](self : T[A]) -> A? {
   match self {
     Nil => None
     Cons(head, _) => Some(head)
@@ -231,7 +231,7 @@ pub fn head[T](self : List[T]) -> T? {
 /// // output: 5
 /// ```
 /// @alert unsafe "Panic if the list is empty"
-pub fn last[T](self : List[T]) -> T {
+pub fn last[A](self : T[A]) -> A {
   loop self {
     Nil => abort("last of empty list")
     Cons(head, Nil) => head
@@ -247,7 +247,7 @@ pub fn last[T](self : List[T]) -> T {
 /// debug(of([1, 2, 3, 4, 5]).init_())
 /// // output: from_array([1, 2, 3, 4])
 /// ```
-pub fn init_[T](self : List[T]) -> List[T] {
+pub fn init_[A](self : T[A]) -> T[A] {
   match self {
     Nil => Nil
     Cons(_, Nil) => Nil
@@ -263,7 +263,7 @@ pub fn init_[T](self : List[T]) -> List[T] {
 /// let ls = of([1, 2, 3, 4, 5]).concat(from_array([6, 7, 8, 9, 10]))
 /// debug(ls) // output: from_array([1, 2, 3, 4, 5, 6, 7, 8, 9, 10])
 /// ```
-pub fn concat[T](self : List[T], other : List[T]) -> List[T] {
+pub fn concat[A](self : T[A], other : T[A]) -> T[A] {
   match self {
     Nil => other
     Cons(head, tail) => Cons(head, concat(tail, other))
@@ -278,8 +278,8 @@ pub fn concat[T](self : List[T], other : List[T]) -> List[T] {
 /// debug(of([1, 2, 3, 4, 5]).reverse())
 /// // output: from_array([5, 4, 3, 2, 1])
 /// ```
-pub fn rev[A](self : List[A]) -> List[A] {
-  loop self, (Nil : List[A]) {
+pub fn rev[A](self : T[A]) -> T[A] {
+  loop self, (Nil : T[A]) {
     xs, ys =>
       match (xs, ys) {
         (Nil, acc) => acc
@@ -296,7 +296,7 @@ pub fn rev[A](self : List[A]) -> List[A] {
 /// let r = of([1, 2, 3, 4, 5]).fold_left(~init=0, fn(acc, x) { acc + x })
 /// debug(r) // output: 15
 /// ```
-pub fn fold_left[T, U](self : List[T], f : (U, T) -> U, ~init : U) -> U {
+pub fn fold_left[A, B](self : T[A], f : (B, A) -> B, ~init : B) -> B {
   match self {
     Nil => init
     Cons(head, tail) => tail.fold_left(f, init=f(init, head))
@@ -309,7 +309,7 @@ pub fn fold_left[T, U](self : List[T], f : (U, T) -> U, ~init : U) -> U {
 /// ```
 /// let r = of([1, 2, 3, 4, 5]).fold_right(fn(x, acc) { x + acc }, ~init=0)
 /// ```
-pub fn fold_right[T, U](self : List[T], f : (T, U) -> U, ~init : U) -> U {
+pub fn fold_right[A, B](self : T[A], f : (A, B) -> B, ~init : B) -> B {
   match self {
     Nil => init
     Cons(head, tail) => f(head, tail.fold_right(f, ~init))
@@ -317,8 +317,8 @@ pub fn fold_right[T, U](self : List[T], f : (T, U) -> U, ~init : U) -> U {
 }
 
 /// Fold the list from left with index.
-pub fn fold_lefti[T, U](self : List[T], f : (Int, U, T) -> U, ~init : U) -> U {
-  fn go(xs : List[T], i : Int, f : (Int, U, T) -> U, acc : U) -> U {
+pub fn fold_lefti[A, B](self : T[A], f : (Int, B, A) -> B, ~init : B) -> B {
+  fn go(xs : T[A], i : Int, f : (Int, B, A) -> B, acc : B) -> B {
     match xs {
       Nil => acc
       Cons(x, xs) => go(xs, i + 1, f, f(i, acc, x))
@@ -329,8 +329,8 @@ pub fn fold_lefti[T, U](self : List[T], f : (Int, U, T) -> U, ~init : U) -> U {
 }
 
 /// Fold the list from right with index.
-pub fn fold_righti[T, U](self : List[T], f : (Int, T, U) -> U, ~init : U) -> U {
-  fn go(xs : List[T], i : Int, f : (Int, T, U) -> U, acc : U) -> U {
+pub fn fold_righti[A, B](self : T[A], f : (Int, A, B) -> B, ~init : B) -> B {
+  fn go(xs : T[A], i : Int, f : (Int, A, B) -> B, acc : B) -> B {
     match xs {
       Nil => acc
       Cons(x, xs) => f(i, x, go(xs, i + 1, f, acc))
@@ -350,7 +350,7 @@ pub fn fold_righti[T, U](self : List[T], f : (Int, T, U) -> U, ~init : U) -> U {
 /// ```
 ///
 /// @alert unsafe "Panic if the two lists have different lengths."
-pub fn zip[T, U](self : List[T], other : List[U]) -> List[(T, U)] {
+pub fn zip[A, B](self : T[A], other : T[B]) -> T[(A, B)] {
   match (self, other) {
     (Nil, Nil) => Nil
     (Cons(x, xs), Cons(y, ys)) => Cons((x, y), zip(xs, ys))
@@ -369,7 +369,7 @@ pub fn zip[T, U](self : List[T], other : List[U]) -> List[(T, U)] {
 /// let r = ls.concat_map(fn(x) { [x, x * 2] })
 /// debug(r) // output: from_array([1, 2, 2, 4, 3, 6])
 /// ```
-pub fn concat_map[T, U](self : List[T], f : (T) -> List[U]) -> List[U] {
+pub fn concat_map[A, B](self : T[A], f : (A) -> T[B]) -> T[B] {
   match self {
     Nil => Nil
     Cons(head, tail) => concat(f(head), concat_map(tail, f))
@@ -378,7 +378,7 @@ pub fn concat_map[T, U](self : List[T], f : (T) -> List[U]) -> List[U] {
 
 /// Get nth element of the list
 /// @alert unsafe "Panic if the index is out of bounds"
-pub fn nth_exn[T](self : List[T], n : Int) -> T {
+pub fn nth_exn[A](self : T[A], n : Int) -> A {
   loop self, n {
     Nil, _ => abort("nth: index out of bounds")
     Cons(head, _), 0 => head
@@ -387,7 +387,7 @@ pub fn nth_exn[T](self : List[T], n : Int) -> T {
 }
 
 /// Get nth element of the list or None if the index is out of bounds
-pub fn nth[T](self : List[T], n : Int) -> T? {
+pub fn nth[A](self : T[A], n : Int) -> A? {
   loop self, n {
     Nil, _ => None
     Cons(head, _), 0 => Some(head)
@@ -402,7 +402,7 @@ pub fn nth[T](self : List[T], n : Int) -> T? {
 /// ```
 /// debug(repeat(5, 1)) // output: from_array([1, 1, 1, 1, 1])
 /// ```
-pub fn repeat[T](n : Int, x : T) -> List[T] {
+pub fn repeat[A](n : Int, x : A) -> T[A] {
   if n == 0 {
     Nil
   } else {
@@ -418,7 +418,7 @@ pub fn repeat[T](n : Int, x : T) -> List[T] {
 /// let ls = from_array(["1", "2", "3", "4", "5"]).intersperse("|")
 /// debug(ls) // output: from_array(["1", "|", "2", "|", "3", "|", "4", "|", "5"])
 /// ```
-pub fn intersperse[T](self : List[T], separator : T) -> List[T] {
+pub fn intersperse[A](self : T[A], separator : A) -> T[A] {
   match self {
     Nil => Nil
     Cons(head, Nil) => Cons(head, Nil)
@@ -428,7 +428,7 @@ pub fn intersperse[T](self : List[T], separator : T) -> List[T] {
 }
 
 /// Check if the list is empty.
-pub fn is_empty[T](self : List[T]) -> Bool {
+pub fn is_empty[A](self : T[A]) -> Bool {
   match self {
     Nil => true
     _ => false
@@ -444,7 +444,7 @@ pub fn is_empty[T](self : List[T]) -> Bool {
 /// debug(a) // output: from_array([1, 3, 5])
 /// debug(b) // output: from_array([2, 4, 6])
 /// ```
-pub fn unzip[T, U](list : List[(T, U)]) -> (List[T], List[U]) {
+pub fn unzip[A, B](list : T[(A, B)]) -> (T[A], T[B]) {
   match list {
     Nil => (Nil, Nil)
     Cons((x, y), xs) => {
@@ -462,7 +462,7 @@ pub fn unzip[T, U](list : List[(T, U)]) -> (List[T], List[U]) {
 /// let ls = flatten(from_array([from_array([1,2,3]), from_array([4,5,6]), from_array([7,8,9])]))
 /// debug(ls) // output: from_array([1, 2, 3, 4, 5, 6, 7, 8, 9])
 /// ```
-pub fn flatten[T](self : List[List[T]]) -> List[T] {
+pub fn flatten[A](self : T[T[A]]) -> T[A] {
   match self {
     Nil => Nil
     Cons(head, tail) => concat(head, flatten(tail))
@@ -471,7 +471,7 @@ pub fn flatten[T](self : List[List[T]]) -> List[T] {
 
 /// Get maximum element of the list.
 /// @alert unsafe "Panic if the list is empty"
-pub fn maximum[T : Compare](self : List[T]) -> T {
+pub fn maximum[A : Compare](self : T[A]) -> A {
   match self {
     Nil => abort("maximum: empty list")
     Cons(x, Nil) => x
@@ -488,7 +488,7 @@ pub fn maximum[T : Compare](self : List[T]) -> T {
 
 /// Get minimum element of the list.
 /// @alert unsafe "Panic if the list is empty"
-pub fn minimum[T : Compare](self : List[T]) -> T {
+pub fn minimum[A : Compare](self : T[A]) -> A {
   match self {
     Nil => abort("minimum: empty list")
     Cons(x, Nil) => x
@@ -511,7 +511,7 @@ pub fn minimum[T : Compare](self : List[T]) -> T {
 /// let ls = sort(from_array([1,123,52,3,6,0,-6,-76]))
 /// debug(ls) // output: from_array([-76, -6, 0, 1, 3, 6, 52, 123])
 /// ```
-pub fn sort[T : Compare](self : List[T]) -> List[T] {
+pub fn sort[A : Compare](self : T[A]) -> T[A] {
   match self {
     Nil => Nil
     Cons(x, xs) => {
@@ -525,12 +525,12 @@ pub fn sort[T : Compare](self : List[T]) -> List[T] {
 /// Concatenate two lists.
 ///
 /// `a + b` equal to `a.concat(b)`
-pub fn op_add[T](self : List[T], other : List[T]) -> List[T] {
+pub fn op_add[A](self : T[A], other : T[A]) -> T[A] {
   self.concat(other)
 }
 
 /// Check if the list contains the value.
-pub fn contains[T : Eq](self : List[T], value : T) -> Bool {
+pub fn contains[A : Eq](self : T[A], value : A) -> Bool {
   loop self {
     Nil => false
     Cons(x, xs) => if x == value { true } else { continue xs }
@@ -545,7 +545,7 @@ pub fn contains[T : Eq](self : List[T], value : T) -> Bool {
 /// // from_array([0, 1, 2])
 /// unfold(0, fn { i => if i == 3 { None } else { Some(i, i + 1) } }) |> debug
 /// ```
-pub fn unfold[T, State](f : (State) -> (T, State)?, ~init : State) -> List[T] {
+pub fn unfold[A, S](f : (S) -> (A, S)?, ~init : S) -> T[A] {
   match f(init) {
     Some((element, new_state)) => Cons(element, unfold(init=new_state, f))
     None => Nil
@@ -559,7 +559,7 @@ pub fn unfold[T, State](f : (State) -> (T, State)?, ~init : State) -> List[T] {
 /// ```
 /// of([1, 2, 3, 4, 5]).take(3)
 /// ```
-pub fn take[T](self : List[T], n : Int) -> List[T] {
+pub fn take[A](self : T[A], n : Int) -> T[A] {
   if n <= 0 {
     Nil
   } else {
@@ -567,7 +567,7 @@ pub fn take[T](self : List[T], n : Int) -> List[T] {
   }
 }
 
-fn unsafe_take[T](n : Int, xs : List[T]) -> List[T] {
+fn unsafe_take[A](n : Int, xs : T[A]) -> T[A] {
   match (n, xs) {
     (1, Cons(x, _)) => Cons(x, Nil)
     (_, Cons(x, xs)) => Cons(x, unsafe_take(n - 1, xs))
@@ -582,7 +582,7 @@ fn unsafe_take[T](n : Int, xs : List[T]) -> List[T] {
 /// ```
 /// of([1, 2, 3, 4, 5]).drop(3)
 /// ```
-pub fn drop[T](self : List[T], n : Int) -> List[T] {
+pub fn drop[A](self : T[A], n : Int) -> T[A] {
   if n <= 0 {
     self
   } else {
@@ -590,7 +590,7 @@ pub fn drop[T](self : List[T], n : Int) -> List[T] {
   }
 }
 
-fn unsafe_drop[T](n : Int, xs : List[T]) -> List[T] {
+fn unsafe_drop[A](n : Int, xs : T[A]) -> T[A] {
   match (n, xs) {
     (1, Cons(_, xs)) => xs
     (_, Cons(_, xs)) => unsafe_drop(n - 1, xs)
@@ -605,7 +605,7 @@ fn unsafe_drop[T](n : Int, xs : List[T]) -> List[T] {
 /// ```
 /// from_array([1, 2, 3, 4]).take_while(fn(x) { x < 3 })
 /// ```
-pub fn take_while[T](self : List[T], p : (T) -> Bool) -> List[T] {
+pub fn take_while[A](self : T[A], p : (A) -> Bool) -> T[A] {
   match self {
     Nil => Nil
     Cons(x, xs) => if p(x) { Cons(x, xs.take_while(p)) } else { Nil }
@@ -619,7 +619,7 @@ pub fn take_while[T](self : List[T], p : (T) -> Bool) -> List[T] {
 /// ```
 /// from_array([1, 2, 3, 4]).drop_while(fn(x) { x < 3 })
 /// ```
-pub fn drop_while[T](self : List[T], p : (T) -> Bool) -> List[T] {
+pub fn drop_while[A](self : T[A], p : (A) -> Bool) -> T[A] {
   loop self {
     Nil => Nil
     Cons(x, xs) => if p(x) { continue xs } else { Cons(x, xs) }
@@ -634,7 +634,7 @@ pub fn drop_while[T](self : List[T], p : (T) -> Bool) -> List[T] {
 /// let ls = of([1, 2, 3, 4, 5])
 /// ls.scan_left(fn(acc, x) { acc + x }, ~init=0)
 /// ```
-pub fn scan_left[T, E](self : List[T], f : (E, T) -> E, ~init : E) -> List[E] {
+pub fn scan_left[A, E](self : T[A], f : (E, A) -> E, ~init : E) -> T[E] {
   Cons(
     init,
     match self {
@@ -653,7 +653,7 @@ pub fn scan_left[T, E](self : List[T], f : (E, T) -> E, ~init : E) -> List[E] {
 /// let ls = of([1, 2, 3, 4, 5])
 /// ls.scan_right(fn(x, acc) { acc + x }, ~init=0)
 /// ```
-pub fn scan_right[T, E](self : List[T], f : (T, E) -> E, ~init : E) -> List[E] {
+pub fn scan_right[A, B](self : T[A], f : (A, B) -> B, ~init : B) -> T[B] {
   match self {
     Nil => Cons(init, Nil)
     Cons(x, xs) => {
@@ -671,7 +671,7 @@ pub fn scan_right[T, E](self : List[T], f : (T, E) -> E, ~init : E) -> List[E] {
 /// let ls = from_array([(1, "a"), (2, "b"), (3, "c")])
 /// ls.lookup(3) // output: Some("c")
 /// ```
-pub fn lookup[T : Eq, E](self : List[(T, E)], v : T) -> E? {
+pub fn lookup[A : Eq, B](self : T[(A, B)], v : A) -> B? {
   loop self {
     Nil => None
     Cons((x, y), xs) => if x == v { Some(y) } else { continue xs }
@@ -686,7 +686,7 @@ pub fn lookup[T : Eq, E](self : List[(T, E)], v : T) -> E? {
 /// println(of([1, 3, 5, 8]).find(fn(element) -> Bool { element % 2 == 0}))
 /// // output: Some(8)
 /// ```
-pub fn find[T](self : List[T], f : (T) -> Bool) -> T? {
+pub fn find[A](self : T[A], f : (A) -> Bool) -> A? {
   loop self {
     Nil => None
     Cons(element, list) =>
@@ -709,7 +709,7 @@ pub fn find[T](self : List[T], f : (T) -> Bool) -> T? {
 /// println(of([1, 3, 8, 5]).findi(fn(element) -> Bool { (element % 2 == 0) && (i == 3) }))
 /// // output: None
 /// ```
-pub fn findi[T](self : List[T], f : (T, Int) -> Bool) -> T? {
+pub fn findi[A](self : T[A], f : (A, Int) -> Bool) -> A? {
   loop self, 0 {
     list, index =>
       match list {
@@ -732,7 +732,7 @@ pub fn findi[T](self : List[T], f : (T, Int) -> Bool) -> T? {
 /// println(of([1, 2, 3, 4, 5]).remove_at(2))
 /// // output: from_array([1, 2, 4, 5])
 /// ```
-pub fn remove_at[T](self : List[T], index : Int) -> List[T] {
+pub fn remove_at[A](self : T[A], index : Int) -> T[A] {
   match (index, self) {
     (0, Cons(_, tail)) => tail
     (_, Cons(head, tail)) => Cons(head, remove_at(tail, index - 1))
@@ -749,7 +749,7 @@ pub fn remove_at[T](self : List[T], index : Int) -> List[T] {
 /// println(of([1, 2, 3, 4, 5]).remove(3))
 /// // output: from_array([1, 2, 4, 5])
 /// ```
-pub fn remove[T : Eq](self : List[T], elem : T) -> List[T] {
+pub fn remove[A : Eq](self : T[A], elem : A) -> T[A] {
   match self {
     Nil => Nil
     Cons(head, tail) =>
@@ -769,7 +769,7 @@ pub fn remove[T : Eq](self : List[T], elem : T) -> List[T] {
 /// println(of([1, 2, 3, 4, 5]).is_prefix(of([1, 2, 3])))
 /// // output: true
 /// ```
-pub fn is_prefix[T : Eq](self : List[T], prefix : List[T]) -> Bool {
+pub fn is_prefix[A : Eq](self : T[A], prefix : T[A]) -> Bool {
   match (self, prefix) {
     (_, Nil) => true
     (Nil, Cons(_)) => false
@@ -785,7 +785,7 @@ pub fn is_prefix[T : Eq](self : List[T], prefix : List[T]) -> Bool {
 /// println(of([1, 2, 3]).equal(of([1, 2, 3])))
 /// // output: true
 /// ```
-pub fn equal[T : Eq](self : List[T], other : List[T]) -> Bool {
+pub fn equal[A : Eq](self : T[A], other : T[A]) -> Bool {
   match (self, other) {
     (Nil, Nil) => true
     (Cons(h, t), Cons(h1, t1)) => h == h1 && t.equal(t1)
@@ -801,7 +801,7 @@ pub fn equal[T : Eq](self : List[T], other : List[T]) -> Bool {
 /// println(of([1, 2, 3, 4, 5]).is_suffix(of([3, 4, 5])))
 /// // output: true
 /// ```
-pub fn is_suffix[T : Eq](self : List[T], suffix : List[T]) -> Bool {
+pub fn is_suffix[A : Eq](self : T[A], suffix : T[A]) -> Bool {
   self.rev().is_prefix(suffix.rev())
 }
 
@@ -816,16 +816,16 @@ pub fn is_suffix[T : Eq](self : List[T], suffix : List[T]) -> Bool {
 /// ]
 /// ls.intercalate(of([0]))
 /// ```
-pub fn intercalate[T](self : List[List[T]], sep : List[T]) -> List[T] {
+pub fn intercalate[A](self : T[T[A]], sep : T[A]) -> T[A] {
   self.intersperse(sep).flatten()
 }
 
 /// The empty list
-pub fn List::default[X]() -> List[X] {
+pub fn T::default[X]() -> T[X] {
   Nil
 }
 
-pub fn iter[T](self : List[T]) -> Iter[T] {
+pub fn iter[A](self : T[A]) -> Iter[A] {
   Iter::new(
     fn(yield) {
       loop self {
@@ -841,9 +841,9 @@ pub fn iter[T](self : List[T]) -> Iter[T] {
   )
 }
 
-pub fn List::of[T](arr : FixedArray[T]) -> List[T] {
-  for i = arr.length() - 1, list = List::Nil; i >= 0; {
-    continue i - 1, List::Cons(arr[i], list)
+pub fn T::of[A](arr : FixedArray[A]) -> T[A] {
+  for i = arr.length() - 1, list = Nil; i >= 0; {
+    continue i - 1, Cons(arr[i], list)
   } else {
     list
   }
