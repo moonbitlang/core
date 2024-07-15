@@ -28,11 +28,11 @@
 // - <https://lampwww.epfl.ch/papers/idealhashtrees.pdf>
 
 /// An immutable hash-map data structure
-enum Map[K, V] {
+enum T[K, V] {
   Empty
   Leaf(K, V) // optimize for the case of no collision
   Collision(Bucket[K, V]) // use a list of buckets to resolve collision
-  Branch(@sparse_array.SparseArray[Map[K, V]])
+  Branch(@sparse_array.SparseArray[T[K, V]])
 }
 
 // The number of bits consumed at every [Branch] node
@@ -40,12 +40,12 @@ let segment_length : Int = 5
 
 let segment_mask : Int = 0b11111
 
-pub fn Map::new[K, V]() -> Map[K, V] {
+pub fn T::new[K, V]() -> T[K, V] {
   Empty
 }
 
 /// Lookup a key from a hash map
-pub fn find[K : Eq + Hash, V](self : Map[K, V], key : K) -> V? {
+pub fn find[K : Eq + Hash, V](self : T[K, V], key : K) -> V? {
   loop self, key.hash() {
     Empty, _ => None
     Leaf(key1, value), _ => if key == key1 { Some(value) } else { None }
@@ -63,21 +63,21 @@ pub fn find[K : Eq + Hash, V](self : Map[K, V], key : K) -> V? {
   }
 }
 
-pub fn op_get[K : Eq + Hash, V](self : Map[K, V], key : K) -> V? {
+pub fn op_get[K : Eq + Hash, V](self : T[K, V], key : K) -> V? {
   self.find(key)
 }
 
 fn add_with_hash[K : Eq, V](
-  self : Map[K, V],
+  self : T[K, V],
   key : K,
   depth : Int,
   hash : Int,
   value : V
-) -> Map[K, V] {
+) -> T[K, V] {
   // make sure leaf nodes always appear at the bottom of the tree
   fn make_leaf(depth : Int, key : K, hash : Int, value : V) {
     if depth >= 32 {
-      Map::Leaf(key, value)
+      T::Leaf(key, value)
     } else {
       let idx = hash.land(segment_mask)
       let child = make_leaf(
@@ -86,7 +86,7 @@ fn add_with_hash[K : Eq, V](
         hash.lsr(segment_length),
         value,
       )
-      Map::Branch(@sparse_array.SparseArray::singleton(idx, child))
+      T::Branch(@sparse_array.SparseArray::singleton(idx, child))
     }
   }
 
@@ -128,21 +128,21 @@ fn add_with_hash[K : Eq, V](
 /// Add a key-value pair to the hashmap.
 ///
 /// If a pair with the same key already exists, the old one is replaced
-pub fn add[K : Eq + Hash, V](self : Map[K, V], key : K, value : V) -> Map[K, V] {
+pub fn add[K : Eq + Hash, V](self : T[K, V], key : K, value : V) -> T[K, V] {
   self.add_with_hash(key, 0, key.hash(), value)
 }
 
 /// Remove an element from a map
-pub fn remove[K : Eq + Hash, V](self : Map[K, V], key : K) -> Map[K, V] {
+pub fn remove[K : Eq + Hash, V](self : T[K, V], key : K) -> T[K, V] {
   self.remove_with_hash(key, 0, key.hash())
 }
 
 fn remove_with_hash[K : Eq, V](
-  self : Map[K, V],
+  self : T[K, V],
   key : K,
   depth : Int,
   hash : Int
-) -> Map[K, V] {
+) -> T[K, V] {
   match self {
     Empty => self
     Leaf(old_key, _) => if key == old_key { Empty } else { self }
@@ -175,7 +175,7 @@ fn remove_with_hash[K : Eq, V](
 /// Calculate the size of a map.
 ///
 /// WARNING: this operation is `O(N)` in map size
-pub fn size[K, V](self : Map[K, V]) -> Int {
+pub fn size[K, V](self : T[K, V]) -> Int {
   match self {
     Empty => 0
     Leaf(_) => 1
@@ -192,7 +192,7 @@ pub fn size[K, V](self : Map[K, V]) -> Int {
 }
 
 /// Iterate through the elements in a hash map
-pub fn each[K, V](self : Map[K, V], f : (K, V) -> Unit) -> Unit {
+pub fn each[K, V](self : T[K, V], f : (K, V) -> Unit) -> Unit {
   match self {
     Empty => ()
     Leaf(k, v) => f(k, v)
@@ -202,7 +202,7 @@ pub fn each[K, V](self : Map[K, V], f : (K, V) -> Unit) -> Unit {
 }
 
 /// Converted to Iter
-pub fn iter[K, V](self : Map[K, V]) -> Iter[(K, V)] {
+pub fn iter[K, V](self : T[K, V]) -> Iter[(K, V)] {
   match self {
     Empty => Iter::empty()
     Leaf(k, v) => Iter::singleton((k, v))
@@ -212,7 +212,7 @@ pub fn iter[K, V](self : Map[K, V]) -> Iter[(K, V)] {
 }
 
 pub fn debug_write[K : Debug, V : Debug](
-  self : Map[K, V],
+  self : T[K, V],
   buf : Buffer
 ) -> Unit {
   let mut is_first = true
@@ -234,7 +234,7 @@ pub fn debug_write[K : Debug, V : Debug](
   buf.write_string("]")
 }
 
-pub impl[K : Show, V : Show] Show for Map[K, V] with output(self, logger) {
+pub impl[K : Show, V : Show] Show for T[K, V] with output(self, logger) {
   let mut is_first = true
   logger.write_string("@immut/hashmap.of([")
   self.each(
@@ -254,12 +254,12 @@ pub impl[K : Show, V : Show] Show for Map[K, V] with output(self, logger) {
   logger.write_string("])")
 }
 
-pub fn to_string[K : Show, V : Show](self : Map[K, V]) -> String {
+pub fn to_string[K : Show, V : Show](self : T[K, V]) -> String {
   Show::to_string(self)
 }
 
-pub fn Map::from_array[K : Eq + Hash, V](arr : Array[(K, V)]) -> Map[K, V] {
-  loop arr.length(), Map::new() {
+pub fn T::from_array[K : Eq + Hash, V](arr : Array[(K, V)]) -> T[K, V] {
+  loop arr.length(), T::new() {
     0, map => map
     n, map => {
       let (k, v) = arr[n - 1]
@@ -268,8 +268,8 @@ pub fn Map::from_array[K : Eq + Hash, V](arr : Array[(K, V)]) -> Map[K, V] {
   }
 }
 
-pub fn Map::of[K : Eq + Hash, V](arr : FixedArray[(K, V)]) -> Map[K, V] {
-  loop arr.length(), Map::new() {
+pub fn T::of[K : Eq + Hash, V](arr : FixedArray[(K, V)]) -> T[K, V] {
+  loop arr.length(), T::new() {
     0, map => map
     n, map => {
       let (k, v) = arr[n - 1]
