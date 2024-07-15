@@ -1,19 +1,19 @@
 package moonbitlang/core/bigint
 
 // Values
-fn from_hex(String) -> BigInt
+fn from_hex(String) -> T
 
-fn from_int(Int) -> BigInt
+fn from_int(Int) -> T
 
-fn from_int64(Int64) -> BigInt
+fn from_int64(Int64) -> T
 
-fn from_string(String) -> BigInt
+fn from_string(String) -> T
 
-fn make_zero() -> BigInt
+fn make_zero() -> T
 
 // Types and methods
-type BigInt
-impl BigInt {
+type T
+impl T {
   compare(Self, Self) -> Int
   debug_write(Self, Buffer) -> Unit
   is_zero(Self) -> Bool

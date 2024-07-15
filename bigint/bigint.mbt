@@ -34,14 +34,14 @@ let karatsuba_threshold = 50
 
 // Useful bigints
 
-let zero : BigInt = from_int64(0L)
+let zero : T = from_int64(0L)
 
-let one : BigInt = from_int64(1L)
+let one : T = from_int64(1L)
 
 // Conversion Functions
 
 /// Convert an Int to a BigInt.
-pub fn from_int(n : Int) -> BigInt {
+pub fn from_int(n : Int) -> T {
   if n < 0 {
     { limbs: Array::make(1, -n), sign: Negative, len: 1 }
   } else {
@@ -50,7 +50,7 @@ pub fn from_int(n : Int) -> BigInt {
 }
 
 /// Convert an Int64 to a BigInt.
-pub fn from_int64(n : Int64) -> BigInt {
+pub fn from_int64(n : Int64) -> T {
   if n == 0L {
     return { limbs: Array::make(1, 0), sign: Positive, len: 1 }
   }
@@ -68,14 +68,14 @@ pub fn from_int64(n : Int64) -> BigInt {
 /// Construct a zero
 /// 
 /// TODO: modify function name after literal syntax is supported
-pub fn make_zero() -> BigInt {
+pub fn make_zero() -> T {
   { limbs: Array::make(1, 0), sign: Positive, len: 1 }
 }
 
 // Arithmetic Operations
 
 /// Negate a bigint
-pub fn op_neg(self : BigInt) -> BigInt {
+pub fn op_neg(self : T) -> T {
   // copy limbs
   let limbs = Array::make(self.len, 0)
   for i = 0; i < self.len; i = i + 1 {
@@ -93,7 +93,7 @@ pub fn op_neg(self : BigInt) -> BigInt {
 }
 
 /// Negate a bigint without copying limbs, for internal use.
-fn neg(self : BigInt) -> BigInt {
+fn neg(self : T) -> T {
   {
     limbs: self.limbs,
     sign: if self.sign == Positive {
@@ -106,7 +106,7 @@ fn neg(self : BigInt) -> BigInt {
 }
 
 /// Add two bigint.
-pub fn op_add(self : BigInt, other : BigInt) -> BigInt {
+pub fn op_add(self : T, other : T) -> T {
   if self.sign == Negative {
     if other.sign == Negative {
       return neg(neg(other) + neg(self))
@@ -133,7 +133,7 @@ pub fn op_add(self : BigInt, other : BigInt) -> BigInt {
 }
 
 /// Subtract two bigint
-pub fn op_sub(self : BigInt, other : BigInt) -> BigInt {
+pub fn op_sub(self : T, other : T) -> T {
   // first make sure self and other > 0
   if self.sign == Negative {
     if other.sign == Negative {
@@ -173,7 +173,7 @@ pub fn op_sub(self : BigInt, other : BigInt) -> BigInt {
 }
 
 /// Multiply two bigint 
-pub fn op_mul(self : BigInt, other : BigInt) -> BigInt {
+pub fn op_mul(self : T, other : T) -> T {
   if self.is_zero() || other.is_zero() {
     return make_zero()
   }
@@ -187,7 +187,7 @@ pub fn op_mul(self : BigInt, other : BigInt) -> BigInt {
 }
 
 // Simplest way to multiply two BigInts.
-fn grade_school_mul(self : BigInt, other : BigInt) -> BigInt {
+fn grade_school_mul(self : T, other : T) -> T {
   let self_len = self.len
   let other_len = other.len
   let mut len = self_len + other_len
@@ -215,7 +215,7 @@ fn grade_school_mul(self : BigInt, other : BigInt) -> BigInt {
 }
 
 // Karatsuba multiplication
-fn karatsuba_mul(self : BigInt, other : BigInt) -> BigInt {
+fn karatsuba_mul(self : T, other : T) -> T {
   let half = (max(self.len, other.len) + 1) / 2
   let (xl, xh) = self.split(half)
   let (yl, yh) = other.split(half)
@@ -226,7 +226,7 @@ fn karatsuba_mul(self : BigInt, other : BigInt) -> BigInt {
 }
 
 // Get the lower half of the number.
-fn split(self : BigInt, half : Int) -> (BigInt, BigInt) {
+fn split(self : T, half : Int) -> (T, T) {
   if self.len <= half {
     let ret = self.deep_clone()
     ret.sign = Positive
@@ -247,7 +247,7 @@ fn split(self : BigInt, half : Int) -> (BigInt, BigInt) {
 }
 
 /// Divide two bigint
-pub fn op_div(self : BigInt, other : BigInt) -> BigInt {
+pub fn op_div(self : T, other : T) -> T {
   if other == zero {
     abort("division by zero")
   }
@@ -256,7 +256,7 @@ pub fn op_div(self : BigInt, other : BigInt) -> BigInt {
 }
 
 /// Modulo two bigint
-pub fn op_mod(self : BigInt, other : BigInt) -> BigInt {
+pub fn op_mod(self : T, other : T) -> T {
   if other == zero {
     abort("division by zero")
   }
@@ -266,8 +266,8 @@ pub fn op_mod(self : BigInt, other : BigInt) -> BigInt {
 
 // Simplest way to divide two BigInts.
 // Assumption: other != zero.
-fn grade_school_div(self : BigInt, other : BigInt) -> (BigInt, BigInt) {
-  fn fix(a : (BigInt, BigInt), divisor : BigInt) -> (BigInt, BigInt) {
+fn grade_school_div(self : T, other : T) -> (T, T) {
+  fn fix(a : (T, T), divisor : T) -> (T, T) {
     let (res, remain) = a
     if remain == zero {
       res.sign = Negative
@@ -412,7 +412,7 @@ fn grade_school_div(self : BigInt, other : BigInt) -> (BigInt, BigInt) {
 // Bitwise Operations
 
 /// Left shift a bigint
-pub fn lsl(self : BigInt, n : Int) -> BigInt {
+pub fn lsl(self : T, n : Int) -> T {
   if n < 0 {
     abort("negative shift count")
   }
@@ -448,7 +448,7 @@ pub fn lsl(self : BigInt, n : Int) -> BigInt {
 }
 
 /// Right shift a bigint
-pub fn lsr(self : BigInt, n : Int) -> BigInt {
+pub fn lsr(self : T, n : Int) -> T {
   if n < 0 {
     abort("negative shift count")
   }
@@ -483,12 +483,12 @@ pub fn lsr(self : BigInt, n : Int) -> BigInt {
 // Comparison Operations
 
 /// Check if a bigint is zero
-pub fn is_zero(self : BigInt) -> Bool {
+pub fn is_zero(self : T) -> Bool {
   self.len == 1 && self.limbs[0] == 0
 }
 
 /// Implements the compare trait for BigInt
-pub fn compare(self : BigInt, other : BigInt) -> Int {
+pub fn compare(self : T, other : T) -> Int {
   if self.sign != other.sign {
     return if self.sign == Positive { 1 } else { -1 }
   }
@@ -514,7 +514,7 @@ pub fn compare(self : BigInt, other : BigInt) -> Int {
 }
 
 /// Implements the Eq trait for BigInt
-pub fn op_equal(self : BigInt, other : BigInt) -> Bool {
+pub fn op_equal(self : T, other : T) -> Bool {
   if self.sign != other.sign || self.len != other.len {
     return false
   }
@@ -527,7 +527,7 @@ pub fn op_equal(self : BigInt, other : BigInt) -> Bool {
 }
 
 /// Returns the decimal string representation of the BigInt.
-pub fn to_string(self : BigInt) -> String {
+pub fn to_string(self : T) -> String {
   // This function first converts the BigInt to a decimal representation, with a radix of 2^(`decimal_radix_bit_len`).
   // Then it converts the decimal representation to a string slot by slot.
   if self.is_zero() {
@@ -573,7 +573,7 @@ pub fn to_string(self : BigInt) -> String {
 }
 
 /// Converts decimal string to a BigInt.
-pub fn from_string(input : String) -> BigInt {
+pub fn from_string(input : String) -> T {
   let len = input.length()
   if len == 0 {
     abort("empty string")
@@ -606,7 +606,7 @@ pub fn from_string(input : String) -> BigInt {
 }
 
 /// Converts a hex string to a BigInt.
-pub fn from_hex(input : String) -> BigInt {
+pub fn from_hex(input : String) -> T {
   // WARN: this implementation assumes that `radix` is a power of 2.
   let len = input.length()
   if len == 0 {
@@ -648,7 +648,7 @@ pub fn from_hex(input : String) -> BigInt {
 }
 
 /// Converts a BigInt to a hex string.
-pub fn to_hex(self : BigInt) -> String {
+pub fn to_hex(self : T) -> String {
   // WARN: this implementation assumes that `radix_bit_len` is a multiple of 4.
   let mut result = ""
   for i = self.len - 1; i >= 0; i = i - 1 { // TODO: reverse iteration would be a bit faster.
@@ -682,7 +682,7 @@ pub fn to_hex(self : BigInt) -> String {
   }
 }
 
-fn deep_clone(self : BigInt) -> BigInt {
+fn deep_clone(self : T) -> T {
   let new_limbs = Array::make(self.len, 0)
   for i = 0; i < self.len; i = i + 1 {
     new_limbs[i] = self.limbs[i]

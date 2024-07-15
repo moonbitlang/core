@@ -29,7 +29,7 @@
 /// - forall i in 0..len-1, 0 <= limbs[i] < radix
 /// - limbs[len-1] > 0
 /// - forall i in len..limbs.length(), limbs[i] == 0
-struct BigInt {
+struct T {
   mut limbs : Array[Int] // Note: do not use limbs.length(), use len instead because of leading zeros
   mut sign : Sign // true for positive, false for negative
   mut len : Int
