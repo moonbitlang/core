@@ -349,15 +349,15 @@ test "div" {
 }
 
 test "lsl" {
-  let a = from_int64(1234567890123456789L)
-  let b = a.lsl(1)
+  let a = from_int64(1234567890123456789)
+  let b = a << 1
   check_len(b)!
   inspect(b.to_string(), content="2469135780246913578")!
-  let c = a.lsl(64)
+  let c = a << 64
   check_len(c)!
   inspect(c.to_string(), content="22773757910726981402256170801141121024")!
   let a = make_zero()
-  let b = a.lsl(1)
+  let b = a << 1
   check_len(b)!
   inspect(b.to_string(), content="0")!
 }
