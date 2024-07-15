@@ -13,7 +13,7 @@
 // limitations under the License.
 
 test "Set" {
-  let map = loop 0, Set::new() {
+  let map = loop 0, T::new() {
     100, map => map
     i, map => continue i + 1, map.add(i)
   }
@@ -26,7 +26,7 @@ test "Set" {
 }
 
 test "Set::size" {
-  for i = 0, set = Set::new(); i < 20; i = i + 1, set = set.add(i) {
+  for i = 0, set = T::new(); i < 20; i = i + 1, set = set.add(i) {
     @test.eq(set.size(), i)!
   } else {
     @test.eq(set.add(0).size(), 20)!
@@ -34,7 +34,7 @@ test "Set::size" {
 }
 
 test "Set::remove" {
-  let map = loop 0, Set::new() {
+  let map = loop 0, T::new() {
     100, map => map
     i, map => continue i + 1, map.add(i)
   }
@@ -59,7 +59,7 @@ test "Set::iter" {
 }
 
 test "Set::to_string" {
-  let set = Set::new().add(1).add(3).add(0x0f_ff_ff_ff).add(42)
+  let set = T::new().add(1).add(3).add(0x0f_ff_ff_ff).add(42)
   inspect(set, content="@immutable_hashset.Set::[3, 42, 1, 268435455]")!
 }
 
@@ -72,14 +72,14 @@ test "Set::from_array" {
 }
 
 test "Set::is_empty" {
-  let set = Set::new()
+  let set = T::new()
   inspect(set.is_empty(), content="true")!
   let set = set.add(1)
   inspect(set.is_empty(), content="false")!
 }
 
 test "Set::size" {
-  let set = Set::new()
+  let set = T::new()
   @test.eq(set.size(), 0)!
   let set = set.add(1)
   @test.eq(set.size(), 1)!
@@ -90,7 +90,7 @@ test "Set::size" {
 }
 
 test "Set::is_empty" {
-  let set = Set::new()
+  let set = T::new()
   @test.eq(set.is_empty(), true)!
   let set = set.add(1)
   @test.eq(set.is_empty(), false)!
@@ -99,7 +99,7 @@ test "Set::is_empty" {
 }
 
 test "Set::iter" {
-  let set = Set::new().add(1).add(2).add(3)
+  let set = T::new().add(1).add(2).add(3)
   let result = []
   set.each(fn { x => result.push(x) })
   result.sort()
@@ -107,7 +107,7 @@ test "Set::iter" {
 }
 
 test "Set::iter" {
-  let set = Set::new().add(1).add(2).add(3)
+  let set = T::new().add(1).add(2).add(3)
   let result = []
   set.iter().each(fn { x => result.push(x) })
   result.sort()

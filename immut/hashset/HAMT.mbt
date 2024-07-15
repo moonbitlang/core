@@ -28,11 +28,11 @@
 // - <https://lampwww.epfl.ch/papers/idealhashtrees.pdf>
 
 /// An immutable hash set data structure
-enum Set[T] {
+enum T[A] {
   Empty
-  Leaf(T) // optimize for the case of no collision
-  Collision(Bucket[T]) // use a list of buckets to resolve collision
-  Branch(@sparse_array.SparseArray[Set[T]])
+  Leaf(A) // optimize for the case of no collision
+  Collision(Bucket[A]) // use a list of buckets to resolve collision
+  Branch(@sparse_array.SparseArray[T[A]])
 }
 
 // The number of bits consumed at every [Branch] node
@@ -40,12 +40,12 @@ let segment_length : Int = 5
 
 let segment_mask : Int = 0b11111
 
-pub fn Set::new[T]() -> Set[T] {
+pub fn T::new[A]() -> T[A] {
   Empty
 }
 
 /// Lookup a value from the hash set
-pub fn contains[T : Eq + Hash](self : Set[T], key : T) -> Bool {
+pub fn contains[A : Eq + Hash](self : T[A], key : A) -> Bool {
   loop self, key.hash() {
     Empty, _ => false
     Leaf(key1), _ => key == key1
@@ -63,16 +63,16 @@ pub fn contains[T : Eq + Hash](self : Set[T], key : T) -> Bool {
   }
 }
 
-fn add_with_hash[T : Eq](
-  self : Set[T],
-  key : T,
+fn add_with_hash[A : Eq](
+  self : T[A],
+  key : A,
   depth : Int,
   hash : Int
-) -> Set[T] {
-  fn make_leaf(depth : Int, key : T, hash : Int) {
+) -> T[A] {
+  fn make_leaf(depth : Int, key : A, hash : Int) {
     // make sure leaf nodes always appear at the bottom of the tree
     if depth >= 32 {
-      Set::Leaf(key)
+      Leaf(key)
     } else {
       let idx = hash.land(segment_mask)
       let child = make_leaf(
@@ -80,7 +80,7 @@ fn add_with_hash[T : Eq](
         key,
         hash.lsr(segment_length),
       )
-      Set::Branch(@sparse_array.SparseArray::singleton(idx, child))
+      Branch(@sparse_array.SparseArray::singleton(idx, child))
     }
   }
 
@@ -118,21 +118,21 @@ fn add_with_hash[T : Eq](
 }
 
 /// Add a key to the hashset.
-pub fn add[T : Eq + Hash](self : Set[T], key : T) -> Set[T] {
+pub fn add[A : Eq + Hash](self : T[A], key : A) -> T[A] {
   self.add_with_hash(key, 0, key.hash())
 }
 
 /// Remove an element from a set
-pub fn remove[T : Eq + Hash](self : Set[T], key : T) -> Set[T] {
+pub fn remove[A : Eq + Hash](self : T[A], key : A) -> T[A] {
   self.remove_with_hash(key, 0, key.hash())
 }
 
-fn remove_with_hash[T : Eq](
-  self : Set[T],
-  key : T,
+fn remove_with_hash[A : Eq](
+  self : T[A],
+  key : A,
   depth : Int,
   hash : Int
-) -> Set[T] {
+) -> T[A] {
   match self {
     Empty => self
     Leaf(old_key) => if key == old_key { Empty } else { self }
@@ -165,7 +165,7 @@ fn remove_with_hash[T : Eq](
 /// Calculate the size of a set.
 ///
 /// WARNING: this operation is `O(N)` in set size
-pub fn size[T](self : Set[T]) -> Int {
+pub fn size[A](self : T[A]) -> Int {
   match self {
     Empty => 0
     Leaf(_) => 1
@@ -182,7 +182,7 @@ pub fn size[T](self : Set[T]) -> Int {
 }
 
 /// Returns true if the hash set is empty.
-pub fn is_empty[T](self : Set[T]) -> Bool {
+pub fn is_empty[A](self : T[A]) -> Bool {
   match self {
     Empty => true
     _ => false
@@ -190,7 +190,7 @@ pub fn is_empty[T](self : Set[T]) -> Bool {
 }
 
 /// Iterate through the elements in a hash set
-pub fn each[T](self : Set[T], f : (T) -> Unit) -> Unit {
+pub fn each[A](self : T[A], f : (A) -> Unit) -> Unit {
   match self {
     Empty => ()
     Leaf(k) => f(k)
@@ -200,7 +200,7 @@ pub fn each[T](self : Set[T], f : (T) -> Unit) -> Unit {
 }
 
 /// Converted to Iter
-pub fn iter[T](self : Set[T]) -> Iter[T] {
+pub fn iter[A](self : T[A]) -> Iter[A] {
   match self {
     Empty => Iter::empty()
     Leaf(k) => Iter::singleton(k)
@@ -209,7 +209,7 @@ pub fn iter[T](self : Set[T]) -> Iter[T] {
   }
 }
 
-pub fn debug_write[T : Debug](self : Set[T], buf : Buffer) -> Unit {
+pub fn debug_write[A : Debug](self : T[A], buf : Buffer) -> Unit {
   let mut is_first = true
   buf.write_string("@immutable_hashset.Set::[")
   self.each(
@@ -225,14 +225,14 @@ pub fn debug_write[T : Debug](self : Set[T], buf : Buffer) -> Unit {
   buf.write_string("]")
 }
 
-pub fn to_string[T : Debug](self : Set[T]) -> String {
+pub fn to_string[A : Debug](self : T[A]) -> String {
   let buf = Buffer::new(size_hint=0)
   self.debug_write(buf)
   buf.to_string()
 }
 
-pub fn Set::from_array[T : Eq + Hash](arr : Array[T]) -> Set[T] {
-  loop arr.length(), Set::new() {
+pub fn T::from_array[A : Eq + Hash](arr : Array[A]) -> T[A] {
+  loop arr.length(), T::new() {
     0, set => set
     n, set => {
       let k = arr[n - 1]
@@ -241,8 +241,8 @@ pub fn Set::from_array[T : Eq + Hash](arr : Array[T]) -> Set[T] {
   }
 }
 
-pub fn Set::of[T : Eq + Hash](arr : FixedArray[T]) -> Set[T] {
-  loop arr.length(), Set::new() {
+pub fn T::of[A : Eq + Hash](arr : FixedArray[A]) -> T[A] {
+  loop arr.length(), T::new() {
     0, set => set
     n, set => {
       let k = arr[n - 1]
@@ -250,3 +250,4 @@ pub fn Set::of[T : Eq + Hash](arr : FixedArray[T]) -> Set[T] {
     }
   }
 }
+
