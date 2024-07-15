@@ -12,18 +12,18 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-pub fn ImmutableVec::empty[T]() -> ImmutableVec[T] {
+pub fn T::empty[A]() -> T[A] {
   { tree: Tree::empty(), size: 0, shift: 0 }
 }
 
 test "is_empty" {
   let v = of([1, 2, 3, 4, 5])
-  let ve : ImmutableVec[Int] = ImmutableVec::empty()
+  let ve : T[Int] = T::empty()
   inspect!(is_empty(v), content="false")
   inspect!(is_empty(ve), content="true")
 }
 
-pub impl[T : Show] Show for ImmutableVec[T] with output(self, logger) {
+pub impl[A : Show] Show for T[A] with output(self, logger) {
   logger.write_string("@immut/array.of([")
   self.eachi(
     fn(i, v) {
@@ -36,22 +36,22 @@ pub impl[T : Show] Show for ImmutableVec[T] with output(self, logger) {
   logger.write_string("])")
 }
 
-pub fn to_string[T : Show](self : ImmutableVec[T]) -> String {
+pub fn to_string[A : Show](self : T[A]) -> String {
   Show::to_string(self)
 }
 
 test "to_string" {
   let v = of([1, 2, 3, 4, 5])
-  let ve : ImmutableVec[Int] = ImmutableVec::empty()
+  let ve : T[Int] = T::empty()
   inspect!(v, content="@immut/array.of([1, 2, 3, 4, 5])")
   inspect!(ve, content="@immut/array.of([])")
 }
 
-pub fn is_empty[T](v : ImmutableVec[T]) -> Bool {
+pub fn is_empty[A](v : T[A]) -> Bool {
   v.size == 0
 }
 
-pub fn to_array[T](self : ImmutableVec[T]) -> Array[T] {
+pub fn to_array[A](self : T[A]) -> Array[A] {
   let arr = []
   self.each(fn(v) { arr.push(v) })
   arr
@@ -63,7 +63,7 @@ test "to_array" {
   inspect!(v.push(5).to_array().to_string(), content="[1, 2, 3, 4, 5]")
 }
 
-pub fn iter[T](self : ImmutableVec[T]) -> Iter[T] {
+pub fn iter[A](self : T[A]) -> Iter[A] {
   Iter::new(
     fn(yield) {
       let arr = self.to_array()
@@ -88,19 +88,19 @@ test "iter" {
   inspect!(buf, content="[1][2]")
 }
 
-pub fn length[T](v : ImmutableVec[T]) -> Int {
+pub fn length[A](v : T[A]) -> Int {
   v.size
 }
 
 test "length" {
   let v = of([1, 2, 3, 4, 5])
-  let ve : ImmutableVec[Int] = ImmutableVec::empty()
+  let ve : T[Int] = T::empty()
   inspect!(length(v), content="5")
   inspect!(length(ve), content="0")
 }
 
-pub fn copy[T](self : ImmutableVec[T]) -> ImmutableVec[T] {
-  fn copy(t : Tree[T]) -> Tree[T] {
+pub fn copy[A](self : T[A]) -> T[A] {
+  fn copy(t : Tree[A]) -> Tree[A] {
     match t {
       Leaf(l) => Leaf(l.copy())
       Empty => Empty
@@ -118,8 +118,8 @@ test "copy" {
   inspect!(vc, content="@immut/array.of([1, 2, 3, 4, 5])")
   inspect!(v == vc, content="true")
   @test.is_false!(physical_equal(v, vc))
-  let v = ImmutableVec::empty()
-  let vc : ImmutableVec[Int] = v.copy()
+  let v = T::empty()
+  let vc : T[Int] = v.copy()
   inspect!(vc, content="@immut/array.of([])")
   inspect!(v == vc, content="true")
   @test.is_false!(physical_equal(v, vc))
@@ -129,10 +129,10 @@ test "copy" {
 /// 
 /// # Examples
 /// ```
-/// let v = of([1, 2, 3, 4, 5])
+/// let v = @immut/array.of([1, 2, 3, 4, 5])
 /// v[0]
 /// ```
-pub fn op_get[T](self : ImmutableVec[T], index : Int) -> T {
+pub fn op_get[A](self : T[A], index : Int) -> A {
   if index == 0 {
     self.tree.get_first()
   } else if index == self.size - 1 {
@@ -155,15 +155,15 @@ test "op_get" {
 /// 
 /// # Example
 /// ```
-/// let v = of([1, 2, 3, 4, 5])
+/// let v = @immut/array.of([1, 2, 3, 4, 5])
 /// v.set(1, 10)
 /// ```
-pub fn set[T](
-  self : ImmutableVec[T],
+pub fn set[A](
+  self : T[A],
   index : Int,
-  value : T
-) -> ImmutableVec[T] {
-  fn set(i : Int, e, s, t : Tree[T]) -> Tree[T] {
+  value : A
+) -> T[A] {
+  fn set(i : Int, e, s, t : Tree[A]) -> Tree[A] {
     match t {
       Leaf(l) => Leaf(immutable_set(l, i.land(bitmask), e))
       Node(node) => {
@@ -193,10 +193,10 @@ test "set" {
 /// 
 /// # Example
 /// ```
-/// let v = of([1, 2, 3])
+/// let v = @immut/array.of([1, 2, 3])
 /// v.push(4)
 /// ```
-pub fn push[T](self : ImmutableVec[T], value : T) -> ImmutableVec[T] {
+pub fn push[A](self : T[A], value : A) -> T[A] {
   if self.size == branching_factor.lsl(self.shift) {
     {
       tree: Node([self.tree, new_branch([value], self.shift)]),
@@ -213,7 +213,7 @@ pub fn push[T](self : ImmutableVec[T], value : T) -> ImmutableVec[T] {
 }
 
 test "push" {
-  let v = ImmutableVec::empty().push(1).push(2).push(3)
+  let v = T::empty().push(1).push(2).push(3)
   inspect!(v, content="@immut/array.of([1, 2, 3])")
   inspect!(v.push(1), content="@immut/array.of([1, 2, 3, 1])")
   inspect!(v.push(2), content="@immut/array.of([1, 2, 3, 2])")
@@ -224,15 +224,15 @@ test "push" {
 /// 
 /// # Example
 /// ```
-/// let v = of([1, 2, 3])
+/// let v = @immut/array.of([1, 2, 3])
 /// ```
-pub fn ImmutableVec::from_array[T](arr : Array[T]) -> ImmutableVec[T] {
+pub fn T::from_array[A](arr : Array[A]) -> T[A] {
   new_with_index(arr.length(), fn(i) { arr[i] })
 }
 
 test "from_array" {
   let v = of([1, 1, 4, 5, 1, 4])
-  let vv = ImmutableVec::from_array(Array::make(30, 1))
+  let vv = T::from_array(Array::make(30, 1))
   inspect!(v, content="@immut/array.of([1, 1, 4, 5, 1, 4])")
   inspect!(
     vv,
@@ -244,11 +244,11 @@ test "from_array" {
 /// 
 /// # Example
 /// ```
-/// let v = of([1, 2, 3, 4, 5])
-/// v.each(fn(e) { print(e) })
+/// let v = @immut/array.of([1, 2, 3, 4, 5])
+/// v.each(fn(e) { println(e) })
 /// ```
-pub fn each[T](self : ImmutableVec[T], f : (T) -> Unit) -> Unit {
-  fn go(t : Tree[T]) -> Unit {
+pub fn each[A](self : T[A], f : (A) -> Unit) -> Unit {
+  fn go(t : Tree[A]) -> Unit {
     match t {
       Empty => ()
       Leaf(l) => l.each(f)
@@ -264,7 +264,7 @@ test "iter" {
   let mut s = 0
   v.each(fn(e) { s = s + e })
   inspect!(s, content="15")
-  let v : ImmutableVec[Int] = ImmutableVec::empty()
+  let v : T[Int] = T::empty()
   v.each(fn(_e) { abort("never reach") })
 }
 
@@ -272,11 +272,11 @@ test "iter" {
 /// 
 /// # Example
 /// ```
-/// let v = of([1, 2, 3, 4, 5])
-/// v.eachi(fn(i, e) { print(i * e) })
+/// let v = @immut/array.of([1, 2, 3, 4, 5])
+/// v.eachi(fn(i, e) { println(i * e) })
 /// ```
-pub fn eachi[T](self : ImmutableVec[T], f : (Int, T) -> Unit) -> Unit {
-  fn go(t : Tree[T], shift : Int, start : Int) -> Unit {
+pub fn eachi[A](self : T[A], f : (Int, A) -> Unit) -> Unit {
+  fn go(t : Tree[A], shift : Int, start : Int) -> Unit {
     match t {
       Empty => ()
       Leaf(l) =>
@@ -298,7 +298,7 @@ pub fn eachi[T](self : ImmutableVec[T], f : (Int, T) -> Unit) -> Unit {
 }
 
 test "iteri" {
-  let v : ImmutableVec[Int] = ImmutableVec::empty()
+  let v : T[Int] = T::empty()
   v.eachi(fn(_i, _e) { abort("never reach") })
   let v = of([1, 2, 3, 4, 5])
   let mut s = 0
@@ -309,22 +309,22 @@ test "iteri" {
   inspect!(vec, content="[0, 1, 2, 3, 4]")
 }
 
-pub fn op_equal[T : Eq](
-  self : ImmutableVec[T],
-  other : ImmutableVec[T]
+pub fn op_equal[A : Eq](
+  self : T[A],
+  other : T[A]
 ) -> Bool {
   self.size == other.size && self.tree == other.tree
 }
 
 test "op_equal" {
-  let v0 : ImmutableVec[Int] = of([])
+  let v0 : T[Int] = of([])
   let v1 = of([1, 2, 3, 4, 5])
   let v2 = of([1, 2, 3, 4, 5])
   let v3 = of([1, 2, 3, 4, 6])
   let v4 = of([1, 2, 3, 4])
-  let v5 = ImmutableVec::new(5, 1)
+  let v5 = T::new(5, 1)
   let v6 = of([1, 1, 1, 1, 1])
-  inspect!(v0 == ImmutableVec::empty(), content="true")
+  inspect!(v0 == T::empty(), content="true")
   inspect!(v1 == v2, content="true")
   inspect!(v1 == v3, content="false")
   inspect!(v1 == v4, content="false")
@@ -335,11 +335,11 @@ test "op_equal" {
 /// 
 /// # Example
 /// ```
-/// let v = of([1, 2, 3, 4, 5])
+/// let v = @immut/array.of([1, 2, 3, 4, 5])
 /// v.fold_left(fn(a, b) { a + b }, init=0)
 /// ```
-pub fn fold_left[T](self : ImmutableVec[T], f : (T, T) -> T, ~init : T) -> T {
-  fn go(t : Tree[T], acc : T) -> T {
+pub fn fold_left[A](self : T[A], f : (A, A) -> A, ~init : A) -> A {
+  fn go(t : Tree[A], acc : A) -> A {
     match t {
       Empty => acc
       Leaf(l) => l.fold_left(f, init=acc)
@@ -351,7 +351,7 @@ pub fn fold_left[T](self : ImmutableVec[T], f : (T, T) -> T, ~init : T) -> T {
 }
 
 test "fold_left" {
-  let e = ImmutableVec::empty()
+  let e = T::empty()
   let v = of([1, 2, 3, 4, 5])
   inspect!(e.fold_left(fn(a, b) { a + b }, init=0), content="0")
   inspect!(v.fold_left(fn(a, b) { a + b }, init=0), content="15")
@@ -361,11 +361,11 @@ test "fold_left" {
 /// 
 /// # Example
 /// ```
-/// let v = of([1, 2, 3, 4, 5])
+/// let v = @immut/array.of([1, 2, 3, 4, 5])
 /// v.fold_right(fn(a, b) { a + b }, init=0)
 /// ```
-pub fn fold_right[T](self : ImmutableVec[T], f : (T, T) -> T, ~init : T) -> T {
-  fn go(t : Tree[T], acc : T) -> T {
+pub fn fold_right[A](self : T[A], f : (A, A) -> A, ~init : A) -> A {
+  fn go(t : Tree[A], acc : A) -> A {
     match t {
       Empty => acc
       Leaf(l) => l.fold_right(f, init=acc)
@@ -377,7 +377,7 @@ pub fn fold_right[T](self : ImmutableVec[T], f : (T, T) -> T, ~init : T) -> T {
 }
 
 test "fold_right" {
-  let e = ImmutableVec::empty()
+  let e = T::empty()
   inspect!(e.fold_right(fn(a, b) { a + b }, init=0), content="0")
   let v = of([1, 2, 3, 4, 5])
   inspect!(e.fold_left(fn(a, b) { a + b }, init=0), content="0")
@@ -388,11 +388,11 @@ test "fold_right" {
 /// 
 /// # Example
 /// ```
-/// let v = of([1, 2, 3, 4, 5])
+/// let v = @immut/array.of([1, 2, 3, 4, 5])
 /// v.map(fn(e) { e * 2 })
 /// ```
-pub fn map[T, U](self : ImmutableVec[T], f : (T) -> U) -> ImmutableVec[U] {
-  fn go(t : Tree[T]) -> Tree[U] {
+pub fn map[A, B](self : T[A], f : (A) -> B) -> T[B] {
+  fn go(t : Tree[A]) -> Tree[B] {
     match t {
       Empty => Empty
       Leaf(l) => Leaf(l.map(f))
@@ -417,16 +417,16 @@ test "map" {
     content="@immut/array.of([false, true, false, true, false])",
   )
   inspect!(
-    ImmutableVec::empty().map(fn(e : Int) { e }),
+    T::empty().map(fn(e : Int) { e }),
     content="@immut/array.of([])",
   )
 }
 
-fn new_by_leaves[T](
+fn new_by_leaves[A](
   len : Int,
-  gen_leaf : (Int, Int) -> Array[T]
-) -> ImmutableVec[T] {
-  fn tree(cap, len, s) -> Tree[T] {
+  gen_leaf : (Int, Int) -> Array[A]
+) -> T[A] {
+  fn tree(cap, len, s) -> Tree[A] {
     if cap == branching_factor {
       Leaf(gen_leaf(s, len))
     } else {
@@ -447,7 +447,7 @@ fn new_by_leaves[T](
   }
 
   if len == 0 {
-    ImmutableVec::empty()
+    T::empty()
   } else {
     let (cap, shift) = loop len, branching_factor, 1 {
       len, m_pow, depth =>
@@ -461,7 +461,7 @@ fn new_by_leaves[T](
 }
 
 test "new_by_leaves" {
-  let e : ImmutableVec[Int] = new_by_leaves(
+  let e : T[Int] = new_by_leaves(
     0,
     fn(_s, _l) { abort("never reach") },
   )
@@ -481,13 +481,13 @@ test "new_by_leaves" {
 }
 
 /// Create a persistent array with a given length and value.
-pub fn ImmutableVec::new[T](len : Int, value : T) -> ImmutableVec[T] {
+pub fn T::new[A](len : Int, value : A) -> T[A] {
   new_by_leaves(len, fn(_s, l) { Array::make(l, value) })
 }
 
 test "new" {
-  let v = ImmutableVec::new(5, 1)
-  let v2 = ImmutableVec::new(33, 10)
+  let v = T::new(5, 1)
+  let v2 = T::new(33, 10)
   inspect!(v, content="@immut/array.of([1, 1, 1, 1, 1])")
   inspect!(
     v2,
@@ -496,10 +496,10 @@ test "new" {
 }
 
 /// Create a persistent array with a given length and a function to generate values.
-pub fn ImmutableVec::new_with_index[T](
+pub fn T::new_with_index[A](
   len : Int,
-  f : (Int) -> T
-) -> ImmutableVec[T] {
+  f : (Int) -> A
+) -> T[A] {
   new_by_leaves(len, fn(s, l) { Array::new_with_index(l, fn(i) { f(s + i) }) })
 }
 
@@ -514,7 +514,7 @@ test "new_with" {
 }
 
 test "mix" {
-  let mut v = ImmutableVec::empty()
+  let mut v = T::empty()
   inspect!(v.tree.is_empty_tree(), content="true")
   for i = 0; i < 100; i = i + 1 {
     v = v.push(i)
@@ -539,7 +539,7 @@ test "mix" {
   inspect!(ct2, content="19800")
   inspect!(v.tree.is_empty_tree(), content="false")
   let large_const = branching_factor * branching_factor + 1
-  let mut v = ImmutableVec::empty()
+  let mut v = T::empty()
   for i = 0; i < large_const; i = i + 1 {
     v = v.push(i)
   }
@@ -550,6 +550,6 @@ test "mix" {
   }
 }
 
-pub fn ImmutableVec::of[T](arr : FixedArray[T]) -> ImmutableVec[T] {
+pub fn T::of[A](arr : FixedArray[A]) -> T[A] {
   new_with_index(arr.length(), fn(i) { arr[i] })
 }
