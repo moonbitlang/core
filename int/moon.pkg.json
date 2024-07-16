@@ -3,7 +3,7 @@
     "moonbitlang/core/builtin",
     "moonbitlang/core/coverage"
   ],
-  "test-import": [
+  "wbtest-import": [
     "moonbitlang/core/test"
   ],
   "bbtest_import": [

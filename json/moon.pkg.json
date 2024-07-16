@@ -7,7 +7,7 @@
     "moonbitlang/core/coverage",
     "moonbitlang/core/strconv"
   ],
-  "test-import": [
+  "wbtest-import": [
     "moonbitlang/core/test",
     "moonbitlang/core/tuple",
     "moonbitlang/core/option",

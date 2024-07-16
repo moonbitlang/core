@@ -1,6 +1,6 @@
 {
   "import": [],
-  "test-import": [
+  "wbtest-import": [
     "moonbitlang/core/test",
     "moonbitlang/core/char",
     "moonbitlang/core/string",
