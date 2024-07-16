@@ -278,10 +278,7 @@ test "max_option" {
 }
 
 test "is_empty" {
-  inspect!(
-    (@sorted_set.of([]) : @sorted_set.T[Int]).is_empty(),
-    content="true",
-  )
+  inspect!((@sorted_set.of([]) : @sorted_set.T[Int]).is_empty(), content="true")
   inspect!(@sorted_set.of([1]).is_empty(), content="false")
 }
 

@@ -211,10 +211,7 @@ pub fn iter[K, V](self : T[K, V]) -> Iter[(K, V)] {
   }
 }
 
-pub fn debug_write[K : Debug, V : Debug](
-  self : T[K, V],
-  buf : Buffer
-) -> Unit {
+pub fn debug_write[K : Debug, V : Debug](self : T[K, V], buf : Buffer) -> Unit {
   let mut is_first = true
   buf.write_string("@immutable_hashmap.Map::[")
   self.each(

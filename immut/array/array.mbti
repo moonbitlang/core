@@ -36,5 +36,5 @@ impl T {
 // Traits
 
 // Extension Methods
-impl Show for ImmutableVec
+impl Show for T
 

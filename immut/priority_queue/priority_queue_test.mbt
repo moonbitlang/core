@@ -52,9 +52,7 @@ test "pop" {
     },
     content="Some(3)",
   )
-  let empty : @priority_queue.T[Int] = @priority_queue.of(
-    [],
-  )
+  let empty : @priority_queue.T[Int] = @priority_queue.of([])
   inspect!(
     match empty.pop() {
       Some(q) => q.peek()
