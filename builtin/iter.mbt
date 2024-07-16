@@ -669,3 +669,9 @@ pub fn collect[T](self : Iter[T]) -> Array[T] {
   self.each(fn(e) { result.push(e) })
   result
 }
+
+/// Iter itself is an iterator.
+/// so that it works with array spread operator. e.g, `[..iter]`
+pub fn iter[T](self : Iter[T]) -> Iter[T] {
+  self
+}
