@@ -28,9 +28,7 @@ pub fn T::new[A : Compare]() -> T[A] {
 /// ```
 /// let queue = of([1, 2, 3, 4, 5])
 /// ```
-pub fn T::from_array[A : Compare](
-  arr : Array[A]
-) -> T[A] {
+pub fn T::from_array[A : Compare](arr : Array[A]) -> T[A] {
   let len = arr.length()
   for i = 0, acc = Cont::Empty {
     if i < len {
@@ -106,9 +104,7 @@ fn merges[A : Compare](x : @list.T[Cont[A]]) -> Cont[A] {
 /// let queue = of([1, 2, 3, 4])
 /// let first = queue.pop()
 /// ```
-pub fn pop[A : Compare](
-  self : T[A]
-) -> T[A]? {
+pub fn pop[A : Compare](self : T[A]) -> T[A]? {
   match self.body {
     Empty => None
     Node(_, ts) => Some({ body: merges(ts), len: self.len - 1 })
@@ -123,9 +119,7 @@ pub fn pop[A : Compare](
 /// let queue = of([1, 2, 3, 4])
 /// let first = queue.pop()
 /// ```
-pub fn pop_exn[A : Compare](
-  self : T[A]
-) -> T[A] {
+pub fn pop_exn[A : Compare](self : T[A]) -> T[A] {
   match self.body {
     Empty => abort("The ImmutablePriorityQueue is empty!")
     Node(_, ts) => { body: merges(ts), len: self.len - 1 }
@@ -139,10 +133,7 @@ pub fn pop_exn[A : Compare](
 /// let queue : ImmutablePriorityQueue[Int] = ImmutablePriorityQueue::new()
 /// queue.add(1)
 /// ```
-pub fn push[A : Compare](
-  self : T[A],
-  value : A
-) -> T[A] {
+pub fn push[A : Compare](self : T[A], value : A) -> T[A] {
   { body: meld(self.body, Node(value, Nil)), len: self.len + 1 }
 }
 
@@ -186,9 +177,7 @@ pub fn length[A](self : T[A]) -> Int {
   self.len
 }
 
-pub fn T::of[A : Compare](
-  arr : FixedArray[A]
-) -> T[A] {
+pub fn T::of[A : Compare](arr : FixedArray[A]) -> T[A] {
   let len = arr.length()
   for i = 0, acc = Cont::Empty {
     if i < len {

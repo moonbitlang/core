@@ -42,10 +42,7 @@ test "as_iter" {
 test "meld" {
   inspect(meld(Empty, of([1]).body), content="Node(1, )")!
   inspect(meld(of([1]).body, Empty), content="Node(1, )")!
-  inspect(
-    meld(of([1]).body, of([2]).body),
-    content="Node(2, Node(1, ))",
-  )!
+  inspect(meld(of([1]).body, of([2]).body), content="Node(2, Node(1, ))")!
 }
 
 test "merges" {

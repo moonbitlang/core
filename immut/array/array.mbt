@@ -155,11 +155,7 @@ test "op_get" {
 /// let v = @immut/array.of([1, 2, 3, 4, 5])
 /// v.set(1, 10)
 /// ```
-pub fn set[A](
-  self : T[A],
-  index : Int,
-  value : A
-) -> T[A] {
+pub fn set[A](self : T[A], index : Int, value : A) -> T[A] {
   fn set(i : Int, e, s, t : Tree[A]) -> Tree[A] {
     match t {
       Leaf(l) => Leaf(immutable_set(l, i.land(bitmask), e))
@@ -306,10 +302,7 @@ test "iteri" {
   inspect(vec, content="[0, 1, 2, 3, 4]")!
 }
 
-pub fn op_equal[A : Eq](
-  self : T[A],
-  other : T[A]
-) -> Bool {
+pub fn op_equal[A : Eq](self : T[A], other : T[A]) -> Bool {
   self.size == other.size && self.tree == other.tree
 }
 
@@ -411,16 +404,10 @@ test "map" {
     v.map(fn(e) { e % 2 == 0 }),
     content="ImmutableVec::[false, true, false, true, false]",
   )!
-  inspect(
-    T::empty().map(fn(e : Int) { e }),
-    content="ImmutableVec::[]",
-  )!
+  inspect(T::empty().map(fn(e : Int) { e }), content="ImmutableVec::[]")!
 }
 
-fn new_by_leaves[A](
-  len : Int,
-  gen_leaf : (Int, Int) -> Array[A]
-) -> T[A] {
+fn new_by_leaves[A](len : Int, gen_leaf : (Int, Int) -> Array[A]) -> T[A] {
   fn tree(cap, len, s) -> Tree[A] {
     if cap == branching_factor {
       Leaf(gen_leaf(s, len))
@@ -456,10 +443,7 @@ fn new_by_leaves[A](
 }
 
 test "new_by_leaves" {
-  let e : T[Int] = new_by_leaves(
-    0,
-    fn(_s, _l) { abort("never reach") },
-  )
+  let e : T[Int] = new_by_leaves(0, fn(_s, _l) { abort("never reach") })
   let v = new_by_leaves(5, fn(_s, l) { Array::make(l, 1) })
   let v2 = new_by_leaves(33, fn(_s, l) { Array::make(l, 10) })
   inspect(e, content="ImmutableVec::[]")!
@@ -491,10 +475,7 @@ test "new" {
 }
 
 /// Create a persistent array with a given length and a function to generate values.
-pub fn T::new_with_index[A](
-  len : Int,
-  f : (Int) -> A
-) -> T[A] {
+pub fn T::new_with_index[A](len : Int, f : (Int) -> A) -> T[A] {
   new_by_leaves(len, fn(s, l) { Array::new_with_index(l, fn(i) { f(s + i) }) })
 }
 

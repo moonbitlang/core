@@ -14,11 +14,7 @@
 
 /// Create a new map with a key-value pair inserted.
 /// O(log n).
-pub fn insert[K : Compare, V](
-  self : T[K, V],
-  key : K,
-  value : V
-) -> T[K, V] {
+pub fn insert[K : Compare, V](self : T[K, V], key : K, value : V) -> T[K, V] {
   match self {
     Empty => singleton(key, value)
     Tree(k, value=v, l, r, ..) =>
@@ -86,10 +82,7 @@ pub fn remove[K : Compare, V](self : T[K, V], key : K) -> T[K, V] {
 }
 
 /// Filter values that satisfy the predicate
-pub fn filter[K : Compare, V](
-  self : T[K, V],
-  pred : (V) -> Bool
-) -> T[K, V] {
+pub fn filter[K : Compare, V](self : T[K, V], pred : (V) -> Bool) -> T[K, V] {
   filter_with_key(self, fn(_k, v) { pred(v) })
 }
 
@@ -135,14 +128,12 @@ fn balance[K : Compare, V](
   //        / \             / \
   //       y   z           x   y
   fn single_l {
-    k1, v1, x, Tree(k2, value=v2, y, z, ..) =>
-      new(k2, v2, new(k1, v1, x, y), z)
+    k1, v1, x, Tree(k2, value=v2, y, z, ..) => new(k2, v2, new(k1, v1, x, y), z)
     _, _, _, _ => abort("single_l error")
   }
 
   fn single_r {
-    k2, v2, Tree(k1, value=v1, x, y, ..), z =>
-      new(k1, v1, x, new(k2, v2, y, z))
+    k2, v2, Tree(k1, value=v1, x, y, ..), z => new(k1, v1, x, new(k2, v2, y, z))
     _, _, _, _ => abort("single_r error")
   }
 

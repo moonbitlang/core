@@ -366,9 +366,7 @@ test "findi" {
     content="None",
   )!
   inspect(
-    (Nil : T[Int]).findi(
-      fn(element, i) -> Bool { element % 2 == 0 && i == 3 },
-    ),
+    (Nil : T[Int]).findi(fn(element, i) -> Bool { element % 2 == 0 && i == 3 }),
     content="None",
   )!
 }

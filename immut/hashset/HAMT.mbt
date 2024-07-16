@@ -63,12 +63,7 @@ pub fn contains[A : Eq + Hash](self : T[A], key : A) -> Bool {
   }
 }
 
-fn add_with_hash[A : Eq](
-  self : T[A],
-  key : A,
-  depth : Int,
-  hash : Int
-) -> T[A] {
+fn add_with_hash[A : Eq](self : T[A], key : A, depth : Int, hash : Int) -> T[A] {
   fn make_leaf(depth : Int, key : A, hash : Int) {
     // make sure leaf nodes always appear at the bottom of the tree
     if depth >= 32 {
@@ -250,4 +245,3 @@ pub fn T::of[A : Eq + Hash](arr : FixedArray[A]) -> T[A] {
     }
   }
 }
-
