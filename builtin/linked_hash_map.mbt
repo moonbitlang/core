@@ -418,6 +418,36 @@ pub fn iter[K, V](self : Map[K, V]) -> Iter[(K, V)] {
   )
 }
 
+pub fn keys[K, V](self : Map[K, V]) -> Iter[K] {
+  Iter::new(
+    fn(yield) {
+      loop self.head {
+        Some({ key, idx, .. }) =>
+          match yield(key) {
+            IterEnd => IterEnd
+            IterContinue => continue self.list[idx].next
+          }
+        None => IterContinue
+      }
+    },
+  )
+}
+
+pub fn values[K, V](self : Map[K, V]) -> Iter[V] {
+  Iter::new(
+    fn(yield) {
+      loop self.head {
+        Some({ value, idx, .. }) =>
+          match yield(value) {
+            IterEnd => IterEnd
+            IterContinue => continue self.list[idx].next
+          }
+        None => IterContinue
+      }
+    },
+  )
+}
+
 /// Converts the hash map to an array.
 pub fn to_array[K, V](self : Map[K, V]) -> Array[(K, V)] {
   let arr = Array::new(capacity=self.size)
