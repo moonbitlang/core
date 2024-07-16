@@ -288,5 +288,13 @@ test "stringify" {
       #|{"key":[1.0,true,null,[],{"key":"value","value":100.0}],"null":null,"bool":false,"obj":{}}
     ,
   )!
-  @test.is_true(parse(json.stringify())!! == Ok(json))!
+
+  // not mut once we have `try except else` syntax
+  // we do come across issues like ParseError not unified with String
+  let newjson = try {
+    parse(json.stringify())!
+  } catch {
+    _ => @test.fail("Failed to parse the stringified JSON")!
+  }
+  @test.eq(newjson, json)!
 }
