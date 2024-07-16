@@ -17,12 +17,12 @@
 // All operations over sets are purely applicative (no side-effects).
 
 /// ImmutableSets are represented by balanced binary trees (the heights of the children differ by at most 2).
-enum ImmutableSet[T] {
+enum T[A] {
   Empty
   Node(
-    ~left : ImmutableSet[T],
-    ~right : ImmutableSet[T],
+    ~left : T[A],
+    ~right : T[A],
     ~height : Int,
-    ~value : T
+    ~value : A
   )
 } derive(Default, Debug, Eq)
