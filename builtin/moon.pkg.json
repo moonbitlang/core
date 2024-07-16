@@ -1,11 +1,19 @@
 {
-    "import": [],
-    "test-import": [
-        "moonbitlang/core/test",
-        "moonbitlang/core/char",
-        "moonbitlang/core/string",
-        "moonbitlang/core/int",
-        "moonbitlang/core/tuple",
-        "moonbitlang/core/double"
-    ]
+  "import": [],
+  "test-import": [
+    "moonbitlang/core/test",
+    "moonbitlang/core/char",
+    "moonbitlang/core/string",
+    "moonbitlang/core/int",
+    "moonbitlang/core/tuple",
+    "moonbitlang/core/double"
+  ],
+  "bbtest-import": [
+    "moonbitlang/core/test",
+    "moonbitlang/core/char",
+    "moonbitlang/core/string",
+    "moonbitlang/core/int",
+    "moonbitlang/core/tuple",
+    "moonbitlang/core/double"
+  ]
 }

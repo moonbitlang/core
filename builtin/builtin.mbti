@@ -137,6 +137,7 @@ impl Iter {
   find_first[T](Self[T], (T) -> Bool) -> T?
   flat_map[T, R](Self[T], (T) -> Self[R]) -> Self[R]
   fold[T, B](Self[T], (B, T) -> B, B) -> B
+  iter[T](Self[T]) -> Self[T]
   map[T, R](Self[T], (T) -> R) -> Self[R]
   new[T](((T) -> IterResult) -> IterResult) -> Self[T]
   op_add[T](Self[T], Self[T]) -> Self[T]
@@ -178,6 +179,7 @@ impl Map {
   get_or_init[K : Hash + Eq, V](Self[K, V], K, () -> V) -> V
   is_empty[K, V](Self[K, V]) -> Bool
   iter[K, V](Self[K, V]) -> Iter[Tuple[K, V]]
+  keys[K, V](Self[K, V]) -> Iter[K]
   new[K, V](~capacity : Int = ..) -> Self[K, V]
   of[K : Hash + Eq, V](FixedArray[Tuple[K, V]]) -> Self[K, V]
   op_equal[K : Eq, V : Eq](Self[K, V], Self[K, V]) -> Bool
@@ -188,6 +190,7 @@ impl Map {
   size[K, V](Self[K, V]) -> Int
   to_array[K, V](Self[K, V]) -> Array[Tuple[K, V]]
   to_string[K : Show, V : Show](Self[K, V]) -> String
+  values[K, V](Self[K, V]) -> Iter[V]
 }
 
 pub type SourceLoc
