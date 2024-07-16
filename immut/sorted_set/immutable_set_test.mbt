@@ -17,7 +17,7 @@
 // All operations over sets are purely applicative (no side-effects).
 
 test "new" {
-  let empty : ImmutableSet[Int] = ImmutableSet::new()
+  let empty : T[Int] = T::new()
   inspect(empty, content="ImmutableSet::[]")!
 }
 
@@ -34,7 +34,7 @@ test "subset" {
 }
 
 test "diff" {
-  let empty : ImmutableSet[Int] = ImmutableSet::new()
+  let empty : T[Int] = T::new()
   inspect(empty.diff(of([1, 2, 3])), content="ImmutableSet::[]")!
   inspect(of([1, 2, 3]).diff(empty), content="ImmutableSet::[1, 2, 3]")!
   inspect(of([1, 2, 3]).diff(of([4, 5, 1])), content="ImmutableSet::[2, 3]")!
@@ -47,7 +47,7 @@ test "inter" {
 }
 
 test "union" {
-  let empty : ImmutableSet[Int] = ImmutableSet::new()
+  let empty : T[Int] = T::new()
   inspect(empty.union(of([4, 5, 6])), content="ImmutableSet::[4, 5, 6]")!
   inspect(of([4, 5, 6]).union(empty), content="ImmutableSet::[4, 5, 6]")!
   inspect(of([3]).union(of([4, 5, 6])), content="ImmutableSet::[3, 4, 5, 6]")!
@@ -121,7 +121,7 @@ test "from_fixed_array" {
 
 test "from_array" {
   inspect(
-    ImmutableSet::of([7, 2, 9, 4, 5, 6, 3, 8, 1]),
+    T::of([7, 2, 9, 4, 5, 6, 3, 8, 1]),
     content="ImmutableSet::[1, 2, 3, 4, 5, 6, 7, 8, 9]",
   )!
 }
@@ -146,7 +146,7 @@ test "add" {
 }
 
 test "remove" {
-  let empty : ImmutableSet[Int] = ImmutableSet::new()
+  let empty : T[Int] = T::new()
   inspect(empty.remove(1), content="ImmutableSet::[]")!
   inspect(
     of([7, 2, 9, 4, 5, 6, 3, 8, 1]).remove(1),
@@ -175,7 +175,7 @@ test "min" {
 }
 
 test "min_option" {
-  let empty : ImmutableSet[Int] = ImmutableSet::new()
+  let empty : T[Int] = T::new()
   inspect(empty.min_option(), content="None")!
   inspect(of([7, 2, 9, 4, 5, 6, 3, 8, 1]).min_option(), content="Some(1)")!
 }
@@ -185,26 +185,26 @@ test "max" {
 }
 
 test "max_option" {
-  let empty : ImmutableSet[Int] = ImmutableSet::new()
+  let empty : T[Int] = T::new()
   inspect(empty.max_option(), content="None")!
   inspect(of([7, 2, 9, 4, 5, 6, 3, 8, 1]).max_option(), content="Some(9)")!
 }
 
 test "is_empty" {
-  inspect((of([]) : ImmutableSet[Int]).is_empty(), content="true")!
+  inspect((of([]) : T[Int]).is_empty(), content="true")!
   inspect(of([1]).is_empty(), content="false")!
 }
 
 test "to_string" {
   inspect(of([1, 2, 3, 4, 5]), content="ImmutableSet::[1, 2, 3, 4, 5]")!
-  inspect((of([]) : ImmutableSet[Int]), content="ImmutableSet::[]")!
+  inspect((of([]) : T[Int]), content="ImmutableSet::[]")!
 }
 
 test "iter" {
   let mut s = ""
   of([7, 2, 9, 4, 5, 6, 3, 8, 1]).each(fn(x) { s += x.to_string() })
   inspect(s, content="123456789")!
-  let empty : ImmutableSet[Int] = of([])
+  let empty : T[Int] = of([])
   s = ""
   empty.each(fn(x) { s += x.to_string() })
   inspect(s, content="")!
@@ -273,17 +273,17 @@ test "split_bis" {
 // }
 
 test "panic remove_min on empty set" {
-  let empty : ImmutableSet[Int] = ImmutableSet::new()
+  let empty : T[Int] = T::new()
   empty.remove_min() |> ignore
 }
 
 test "panic min on empty set" {
-  let empty : ImmutableSet[Int] = ImmutableSet::new()
+  let empty : T[Int] = T::new()
   empty.min() |> ignore
 }
 
 test "panic max on empty set" {
-  let empty : ImmutableSet[Int] = ImmutableSet::new()
+  let empty : T[Int] = T::new()
   empty.max() |> ignore
 }
 

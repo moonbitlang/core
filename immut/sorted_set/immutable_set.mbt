@@ -17,20 +17,20 @@
 // All operations over sets are purely applicative (no side-effects).
 
 // Construct a empty ImmutableSet.
-pub fn ImmutableSet::new[T]() -> ImmutableSet[T] {
+pub fn T::new[A]() -> T[A] {
   Empty
 }
 
 /// Returns the one-value ImmutableSet containing only `value`.
-pub fn ImmutableSet::singleton[T : Compare](value : T) -> ImmutableSet[T] {
+pub fn T::singleton[A : Compare](value : A) -> T[A] {
   Node(left=Empty, ~value, right=Empty, height=1)
 }
 
 /// Initialize an ImmutableSet[T] from a Array[T]
-pub fn ImmutableSet::from_array[T : Compare](
-  array : Array[T]
-) -> ImmutableSet[T] {
-  for i = array.length() - 1, set = ImmutableSet::Empty; i >= 0; {
+pub fn T::from_array[A : Compare](
+  array : Array[A]
+) -> T[A] {
+  for i = array.length() - 1, set = Empty; i >= 0; {
     continue i - 1, set.add(array[i])
   } else {
     set
@@ -38,9 +38,9 @@ pub fn ImmutableSet::from_array[T : Compare](
 }
 
 /// Convert ImmutableSet[T] to Array[T], the result must be ordered.
-pub fn to_array[T : Compare](self : ImmutableSet[T]) -> Array[T] {
+pub fn to_array[A : Compare](self : T[A]) -> Array[A] {
   let arr = []
-  fn aux(set : ImmutableSet[T]) {
+  fn aux(set : T[A]) {
     match set {
       Empty => ()
       Node(~left, ~value, ~right, ..) => {
@@ -65,7 +65,7 @@ pub fn to_array[T : Compare](self : ImmutableSet[T]) -> Array[T] {
 /// // output: of([4, 5])
 /// ```
 /// @alert unsafe "Panic if the ImmutableSet is empty."
-pub fn remove_min[T : Compare](self : ImmutableSet[T]) -> ImmutableSet[T] {
+pub fn remove_min[A : Compare](self : T[A]) -> T[A] {
   match self {
     Empty => abort("remove_min: empty ImmutableSet")
     Node(~left, ~right, ~value, ..) =>
@@ -84,7 +84,7 @@ pub fn remove_min[T : Compare](self : ImmutableSet[T]) -> ImmutableSet[T] {
 /// println(of([6, 3, 8, 1]).add(5))
 /// // output: of([1, 3, 5, 6, 8])
 /// ```
-pub fn add[T : Compare](self : ImmutableSet[T], value : T) -> ImmutableSet[T] {
+pub fn add[A : Compare](self : T[A], value : A) -> T[A] {
   match self {
     Empty => Node(left=Empty, ~value, right=Empty, height=1)
     Node(~left, ~right, value=node_value, ..) => {
@@ -118,10 +118,10 @@ pub fn add[T : Compare](self : ImmutableSet[T], value : T) -> ImmutableSet[T] {
 /// println(of([3, 8, 1]).remove(8))
 /// // output: of([1, 3])
 /// ```
-pub fn remove[T : Compare](
-  self : ImmutableSet[T],
-  value : T
-) -> ImmutableSet[T] {
+pub fn remove[A : Compare](
+  self : T[A],
+  value : A
+) -> T[A] {
   match self {
     Empty => Empty
     Node(~left, ~right, value=node_value, ..) => {
@@ -147,7 +147,7 @@ pub fn remove[T : Compare](
   }
 }
 
-/// Returns the smallest value in the ImmutableSet.
+/// Returns the smallest value in the sorted_set.
 /// 
 /// # Example
 /// 
@@ -155,10 +155,10 @@ pub fn remove[T : Compare](
 /// println(of([7, 2, 9, 4, 5, 6, 3, 8, 1]).min())
 /// // output: 1
 /// ```
-/// @alert unsafe "Panic if the ImmutableSet is empty."
-pub fn min[T : Compare](self : ImmutableSet[T]) -> T {
+/// @alert unsafe "Panic if the sorted_set is empty."
+pub fn min[A : Compare](self : T[A]) -> A {
   match self {
-    Empty => abort("min: there are no values in ImmutableSet.")
+    Empty => abort("min: there are no values in sorted_set.")
     Node(~left, ~value, ..) =>
       match left {
         Empty => value
@@ -167,9 +167,9 @@ pub fn min[T : Compare](self : ImmutableSet[T]) -> T {
   }
 }
 
-/// Returns the smallest value in the ImmutableSet.
+/// Returns the smallest value in the sorted_set.
 /// But returns None when the value does not exist.
-pub fn min_option[T : Compare](self : ImmutableSet[T]) -> T? {
+pub fn min_option[A : Compare](self : T[A]) -> A? {
   match self {
     Empty => None
     Node(~left, ~value, ..) =>
@@ -180,7 +180,7 @@ pub fn min_option[T : Compare](self : ImmutableSet[T]) -> T? {
   }
 }
 
-/// Returns the largest value in the ImmutableSet.
+/// Returns the largest value in the sorted_set.
 /// 
 /// # Example
 /// 
@@ -188,8 +188,8 @@ pub fn min_option[T : Compare](self : ImmutableSet[T]) -> T? {
 /// println(of([7, 2, 9, 4, 5, 6, 3, 8, 1]).max())
 /// // output: 9
 /// ```
-/// @alert unsafe "Panic if the ImmutableSet is empty."
-pub fn max[T : Compare](self : ImmutableSet[T]) -> T {
+/// @alert unsafe "Panic if the sorted_set is empty."
+pub fn max[A : Compare](self : T[A]) -> A {
   match self {
     Empty => abort("max: there are no values in ImmutableSet.")
     Node(~right, ~value, ..) =>
@@ -202,7 +202,7 @@ pub fn max[T : Compare](self : ImmutableSet[T]) -> T {
 
 /// Returns the largest value in the ImmutableSet.
 /// But returns None when the value does not exist.
-pub fn max_option[T : Compare](self : ImmutableSet[T]) -> T? {
+pub fn max_option[A : Compare](self : T[A]) -> A? {
   match self {
     Empty => None
     Node(~right, ~value, ..) =>
@@ -225,10 +225,10 @@ pub fn max_option[T : Compare](self : ImmutableSet[T]) -> T? {
 /// println(left) // output: of([1, 2, 3, 4])
 /// println(right) // output:of([6, 7, 8, 9])
 /// ```
-pub fn split[T : Compare](
-  self : ImmutableSet[T],
-  divide : T
-) -> (ImmutableSet[T], Bool, ImmutableSet[T]) {
+pub fn split[A : Compare](
+  self : T[A],
+  divide : A
+) -> (T[A], Bool, T[A]) {
   match self {
     Empty => (Empty, false, Empty)
     Node(~left, ~right, ~value, ..) => {
@@ -246,16 +246,16 @@ pub fn split[T : Compare](
   }
 }
 
-/// Returns true if ImmutableSet is empty
-pub fn is_empty[T : Compare](self : ImmutableSet[T]) -> Bool {
+/// Returns true if sorted_set is empty
+pub fn is_empty[A : Compare](self : T[A]) -> Bool {
   match self {
     Empty => true
     _ => false
   }
 }
 
-/// Return true if value contain in ImmutableSet
-pub fn contains[T : Compare](self : ImmutableSet[T], value : T) -> Bool {
+/// Return true if value contain in sorted_set
+pub fn contains[A : Compare](self : T[A], value : A) -> Bool {
   match self {
     Empty => false
     Node(~left, ~right, value=node_value, ..) => {
@@ -275,10 +275,10 @@ pub fn contains[T : Compare](self : ImmutableSet[T], value : T) -> Bool {
 /// println(of([3, 4, 5]).union(of([4, 5, 6])))
 /// // output: of([3, 4, 5, 6])
 /// ```
-pub fn union[T : Compare](
-  self : ImmutableSet[T],
-  other : ImmutableSet[T]
-) -> ImmutableSet[T] {
+pub fn union[A : Compare](
+  self : T[A],
+  other : T[A]
+) -> T[A] {
   match (self, other) {
     (Empty, _) => other
     (_, Empty) => self
@@ -310,10 +310,10 @@ pub fn union[T : Compare](
 /// println(of([3, 4, 5]).inter(of([4, 5, 6])))
 /// // output: of([4, 5])
 /// ```
-pub fn inter[T : Compare](
-  self : ImmutableSet[T],
-  other : ImmutableSet[T]
-) -> ImmutableSet[T] {
+pub fn inter[A : Compare](
+  self : T[A],
+  other : T[A]
+) -> T[A] {
   match (self, other) {
     (Empty, _) | (_, Empty) => Empty
     (Node(left=l1, value=v1, right=r1, ..), _) =>
@@ -332,10 +332,10 @@ pub fn inter[T : Compare](
 /// println(of([1, 2, 3]).diff(of([4, 5, 1])))
 /// // output: of([2, 3])
 /// ```
-pub fn diff[T : Compare](
-  self : ImmutableSet[T],
-  other : ImmutableSet[T]
-) -> ImmutableSet[T] {
+pub fn diff[A : Compare](
+  self : T[A],
+  other : T[A]
+) -> T[A] {
   match (self, other) {
     (Empty, _) => Empty
     (_, Empty) => self
@@ -355,9 +355,9 @@ pub fn diff[T : Compare](
 /// println(of([1, 2, 3]).subset(of([7, 2, 9, 4, 5, 6, 3, 8, 1])))
 /// // output: true
 /// ```
-pub fn subset[T : Compare](
-  self : ImmutableSet[T],
-  other : ImmutableSet[T]
+pub fn subset[A : Compare](
+  self : T[A],
+  other : T[A]
 ) -> Bool {
   match (self, other) {
     (Empty, _) => true
@@ -370,10 +370,10 @@ pub fn subset[T : Compare](
       if compare_result == 0 {
         l1.subset(l2) && r1.subset(r2)
       } else if compare_result < 0 {
-        ImmutableSet::Node(left=l1, value=v1, right=Empty, height=0).subset(l2) &&
+        Node(left=l1, value=v1, right=Empty, height=0).subset(l2) &&
         r1.subset(self)
       } else {
-        ImmutableSet::Node(left=Empty, value=v1, right=r1, height=0).subset(r2) &&
+        Node(left=Empty, value=v1, right=r1, height=0).subset(r2) &&
         l1.subset(self)
       }
     }
@@ -388,9 +388,9 @@ pub fn subset[T : Compare](
 /// println(of([1, 2, 3]).disjoint(of([4, 5, 6])))
 /// // output: true
 /// ```
-pub fn disjoint[T : Compare](
-  self : ImmutableSet[T],
-  other : ImmutableSet[T]
+pub fn disjoint[A : Compare](
+  self : T[A],
+  other : T[A]
 ) -> Bool {
   match (self, other) {
     (Empty, _) | (_, Empty) => true
@@ -414,7 +414,7 @@ pub fn disjoint[T : Compare](
 /// of([7, 2, 9, 4, 5, 6, 3, 8, 1]).each(print)
 /// // output: 123456789
 /// ```
-pub fn each[T : Compare](self : ImmutableSet[T], f : (T) -> Unit) -> Unit {
+pub fn each[A : Compare](self : T[A], f : (A) -> Unit) -> Unit {
   match self {
     Empty => ()
     Node(~left, ~value, ~right, ..) => {
@@ -433,11 +433,11 @@ pub fn each[T : Compare](self : ImmutableSet[T], f : (T) -> Unit) -> Unit {
 /// println(of([1, 2, 3, 4, 5]).fold(0, fn(acc, x) { acc + x }))
 /// // output: 15
 /// ```
-pub fn fold[T : Compare, U](
-  self : ImmutableSet[T],
-  f : (U, T) -> U,
-  ~init : U
-) -> U {
+pub fn fold[A : Compare, B](
+  self : T[A],
+  f : (B, A) -> B,
+  ~init : B
+) -> B {
   match self {
     Empty => init
     Node(~left, ~value, ~right, ..) =>
@@ -453,10 +453,10 @@ pub fn fold[T : Compare, U](
 /// println(of([1, 2, 3]).map(fn(x){ x * 2}))
 /// // output: of([2, 4, 6])
 /// ```
-pub fn map[T : Compare, U : Compare](
-  self : ImmutableSet[T],
-  f : (T) -> U
-) -> ImmutableSet[U] {
+pub fn map[A : Compare, B : Compare](
+  self : T[A],
+  f : (A) -> B
+) -> T[B] {
   match self {
     Empty => Empty
     Node(~left, ~value, ~right, ..) =>
@@ -472,7 +472,7 @@ pub fn map[T : Compare, U : Compare](
 /// println(of([2, 4, 6]).all(fn(v) { v % 2 == 0}))
 /// // output: true
 /// ```
-pub fn all[T : Compare](self : ImmutableSet[T], f : (T) -> Bool) -> Bool {
+pub fn all[A : Compare](self : T[A], f : (A) -> Bool) -> Bool {
   match self {
     Empty => true
     Node(~left, ~value, ~right, ..) => f(value) && left.all(f) && right.all(f)
@@ -487,7 +487,7 @@ pub fn all[T : Compare](self : ImmutableSet[T], f : (T) -> Bool) -> Bool {
 /// println(of([1, 4, 3]).any(fn(v) { v % 2 == 0}))
 /// // output: true
 /// ```
-pub fn any[T : Compare](self : ImmutableSet[T], f : (T) -> Bool) -> Bool {
+pub fn any[A : Compare](self : T[A], f : (A) -> Bool) -> Bool {
   match self {
     Empty => false
     Node(~left, ~value, ~right, ..) => f(value) || left.any(f) || right.any(f)
@@ -502,10 +502,10 @@ pub fn any[T : Compare](self : ImmutableSet[T], f : (T) -> Bool) -> Bool {
 /// println(of([1, 2, 3, 4, 5, 6]).filter(fn(v) { v % 2 == 0}))
 /// // output: of([2, 4, 6])
 /// ```
-pub fn filter[T : Compare](
-  self : ImmutableSet[T],
-  f : (T) -> Bool
-) -> ImmutableSet[T] {
+pub fn filter[A : Compare](
+  self : T[A],
+  f : (A) -> Bool
+) -> T[A] {
   match self {
     Empty => Empty
     Node(~left, ~value, ~right, ..) => {
@@ -525,7 +525,7 @@ pub fn filter[T : Compare](
   }
 }
 
-pub fn to_string[T : Show + Compare](self : ImmutableSet[T]) -> String {
+pub fn to_string[A : Show + Compare](self : T[A]) -> String {
   match self {
     Empty => "ImmutableSet::[]"
     _ => {
@@ -542,9 +542,9 @@ pub fn to_string[T : Show + Compare](self : ImmutableSet[T]) -> String {
 
 // The following are the helper functions or types used by the internal implementation of ImmutableSet
 
-priv enum SplitBis[T] {
+priv enum SplitBis[A] {
   Found
-  NotFound(ImmutableSet[T], () -> ImmutableSet[T])
+  NotFound(T[A], () -> T[A])
 }
 
 fn to_string[T : Show](self : SplitBis[T]) -> String {
@@ -556,9 +556,9 @@ fn to_string[T : Show](self : SplitBis[T]) -> String {
 
 /// Same as split, but compute the left and right only if the pivot value is not in the ImmutableSet.
 /// The right is computed on demand.
-fn split_bis[T : Compare](self : ImmutableSet[T], value : T) -> SplitBis[T] {
+fn split_bis[A : Compare](self : T[A], value : A) -> SplitBis[A] {
   match self {
-    Empty => NotFound(Empty, fn() -> ImmutableSet[T] { Empty })
+    Empty => NotFound(Empty, fn() -> T[A] { Empty })
     Node(~left, value=node_value, ~right, ..) => {
       let compare_result = value.compare(node_value)
       if compare_result == 0 {
@@ -569,7 +569,7 @@ fn split_bis[T : Compare](self : ImmutableSet[T], value : T) -> SplitBis[T] {
           NotFound(ll, rl) =>
             NotFound(
               ll,
-              fn() -> ImmutableSet[T] { join(rl(), node_value, right) },
+              fn() -> T[A] { join(rl(), node_value, right) },
             )
         }
       } else {
@@ -583,7 +583,7 @@ fn split_bis[T : Compare](self : ImmutableSet[T], value : T) -> SplitBis[T] {
 }
 
 /// Get the height of set.
-fn height[T : Compare](self : ImmutableSet[T]) -> Int {
+fn height[A : Compare](self : T[A]) -> Int {
   match self {
     Empty => 0
     Node(~height, ..) => height
@@ -591,11 +591,11 @@ fn height[T : Compare](self : ImmutableSet[T]) -> Int {
 }
 
 /// Creates a new node.
-fn create[T : Compare](
-  left : ImmutableSet[T],
-  value : T,
-  right : ImmutableSet[T]
-) -> ImmutableSet[T] {
+fn create[A : Compare](
+  left : T[A],
+  value : A,
+  right : T[A]
+) -> T[A] {
   let left_height = left.height()
   let right_height = right.height()
   let height = if left_height >= right_height {
@@ -607,11 +607,11 @@ fn create[T : Compare](
 }
 
 /// Same as create, but performs one step of rebalancing if necessary.
-fn balance[T : Compare](
-  left : ImmutableSet[T],
-  value : T,
-  right : ImmutableSet[T]
-) -> ImmutableSet[T] {
+fn balance[A : Compare](
+  left : T[A],
+  value : A,
+  right : T[A]
+) -> T[A] {
   let left_height = left.height()
   let right_height = right.height()
   if left_height > right_height + 2 {
@@ -652,10 +652,10 @@ fn balance[T : Compare](
   }
 }
 
-fn add_min_value[T : Compare](
-  self : ImmutableSet[T],
-  value : T
-) -> ImmutableSet[T] {
+fn add_min_value[A : Compare](
+  self : T[A],
+  value : A
+) -> T[A] {
   match self {
     Empty => singleton(value)
     Node(~left, value=node_value, ~right, ..) =>
@@ -663,10 +663,10 @@ fn add_min_value[T : Compare](
   }
 }
 
-fn add_max_value[T : Compare](
-  self : ImmutableSet[T],
-  value : T
-) -> ImmutableSet[T] {
+fn add_max_value[A : Compare](
+  self : T[A],
+  value : A
+) -> T[A] {
   match self {
     Empty => singleton(value)
     Node(~left, value=node_value, ~right, ..) =>
@@ -675,11 +675,11 @@ fn add_max_value[T : Compare](
 }
 
 /// Same as create and balance, but no assumptions are made on the relative heights of left and right.
-fn join[T : Compare](
-  left : ImmutableSet[T],
-  value : T,
-  right : ImmutableSet[T]
-) -> ImmutableSet[T] {
+fn join[A : Compare](
+  left : T[A],
+  value : A,
+  right : T[A]
+) -> T[A] {
   match (left, right) {
     (Empty, _) => right.add_min_value(value)
     (_, Empty) => left.add_max_value(value)
@@ -697,11 +697,11 @@ fn join[T : Compare](
   }
 }
 
-fn try_join[T : Compare](
-  left : ImmutableSet[T],
-  value : T,
-  right : ImmutableSet[T]
-) -> ImmutableSet[T] {
+fn try_join[A : Compare](
+  left : T[A],
+  value : A,
+  right : T[A]
+) -> T[A] {
   if (left == Empty || left.max().compare(value) < 0) && (right == Empty || value.compare(
     right.min(),
   ) < 0) {
@@ -713,10 +713,10 @@ fn try_join[T : Compare](
 
 /// Merge two ImmutableSet[T] into one. 
 /// All values of left must precede the values of r.
-fn merge[T : Compare](
-  self : ImmutableSet[T],
-  other : ImmutableSet[T]
-) -> ImmutableSet[T] {
+fn merge[A : Compare](
+  self : T[A],
+  other : T[A]
+) -> T[A] {
   match (self, other) {
     (Empty, _) => other
     (_, Empty) => self
@@ -725,10 +725,10 @@ fn merge[T : Compare](
 }
 
 /// Same as merge, but no assumption on the heights of self and other.
-fn concat[T : Compare](
-  self : ImmutableSet[T],
-  other : ImmutableSet[T]
-) -> ImmutableSet[T] {
+fn concat[A : Compare](
+  self : T[A],
+  other : T[A]
+) -> T[A] {
   match (self, other) {
     (Empty, _) => other
     (_, Empty) => self
@@ -736,8 +736,8 @@ fn concat[T : Compare](
   }
 }
 
-pub fn ImmutableSet::of[T : Compare](array : FixedArray[T]) -> ImmutableSet[T] {
-  for i = array.length() - 1, set = ImmutableSet::Empty; i >= 0; {
+pub fn T::of[A : Compare](array : FixedArray[A]) -> T[A] {
+  for i = array.length() - 1, set = Empty; i >= 0; {
     continue i - 1, set.add(array[i])
   } else {
     set
