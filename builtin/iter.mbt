@@ -20,7 +20,7 @@ pub enum IterResult {
   IterContinue // true
 } derive(Eq)
 
-fn to_string[T : Show](self : Iter[T]) -> String {
+pub fn to_string[T : Show](self : Iter[T]) -> String {
   self.to_array().to_string()
 }
 

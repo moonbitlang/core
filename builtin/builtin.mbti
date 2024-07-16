@@ -148,6 +148,7 @@ impl Iter {
   take_while[T](Self[T], (T) -> Bool) -> Self[T]
   tap[T](Self[T], (T) -> Unit) -> Self[T]
   to_array[T](Self[T]) -> Array[T]
+  to_string[T : Show](Self[T]) -> String
 }
 
 pub enum IterResult {
