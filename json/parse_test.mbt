@@ -13,7 +13,7 @@
 // limitations under the License.
 
 fn test_parse(input : String, ~loc : SourceLoc = _) -> JsonValue!String {
-  match parse(input)!! {
+  match parse_as_result(input) {
     Ok(json) => json
     Err(err) => {
       raise "Parse failed, \(loc), \(err)"
@@ -23,27 +23,27 @@ fn test_parse(input : String, ~loc : SourceLoc = _) -> JsonValue!String {
 
 //region objects
 test "parses empty object" {
-  inspect(parse("{}")!!, content="Ok(Object({}))")!
+  inspect(parse_as_result("{}"), content="Ok(Object({}))")!
 }
 
 test "parses object" {
-  inspect(parse("{\"a\":1}")!!, content="Ok(Object({a: Number(1.0)}))")!
+  inspect(parse_as_result("{\"a\":1}"), content="Ok(Object({a: Number(1.0)}))")!
   inspect(
-    parse("{\"a\":1,\"b\":2}")!!,
+    parse_as_result("{\"a\":1,\"b\":2}"),
     content="Ok(Object({a: Number(1.0), b:Number(2.0)}))",
   )!
 }
 
 test "parses multiple properties" {
   inspect(
-    parse("{\"abc\":1,\"def\":2}")!!,
+    parse_as_result("{\"abc\":1,\"def\":2}"),
     content="Ok(Object({abc: Number(1.0), def:Number(2.0)}))",
   )!
 }
 
 test "parses nested objects" {
   inspect(
-    parse("{\"a\":{\"b\":2}}")!!,
+    parse_as_result("{\"a\":{\"b\":2}}"),
     content="Ok(Object({a: Object({b: Number(2.0)})}))",
   )!
 }
@@ -215,98 +215,98 @@ test "valid" {
 }
 
 test "parse unexpected token in value" {
-  let result = parse("{a:1}")!!
+  let result = parse_as_result("{a:1}")
   inspect(result, content="Err(Invalid character 'a' at line 1, column 1)")!
 }
 
 test "parse unexpected token in object property name" {
-  let result = parse("{\"a\":1, b:2}")!!
+  let result = parse_as_result("{\"a\":1, b:2}")
   inspect(result, content="Err(Invalid character 'b' at line 1, column 8)")!
 }
 
 test "parse unexpected token after object property name" {
-  let result = parse("{\"a\" b:2}")!!
+  let result = parse_as_result("{\"a\" b:2}")
   inspect(result, content="Err(Invalid character 'b' at line 1, column 5)")!
 }
 
 test "parse unexpected token after object value" {
-  let result = parse("{\"a\":1 b:2}")!!
+  let result = parse_as_result("{\"a\":1 b:2}")
   inspect(result, content="Err(Invalid character 'b' at line 1, column 7)")!
 }
 
 test "parse unexpected token in array" {
-  let result = parse("[1, 2 a]")!!
+  let result = parse_as_result("[1, 2 a]")
   inspect(result, content="Err(Invalid character 'a' at line 1, column 6)")!
 }
 
 test "parse unexpected token in value" {
-  let result = parse("{a:1}")!!
+  let result = parse_as_result("{a:1}")
   inspect(result, content="Err(Invalid character 'a' at line 1, column 1)")!
 }
 
 test "parse unexpected token in object property name" {
-  let result = parse("{\"a\":1, b:2}")!!
+  let result = parse_as_result("{\"a\":1, b:2}")
   inspect(result, content="Err(Invalid character 'b' at line 1, column 8)")!
 }
 
 test "parse unexpected token after object property name" {
-  let result = parse("{\"a\" b:2}")!!
+  let result = parse_as_result("{\"a\" b:2}")
   inspect(result, content="Err(Invalid character 'b' at line 1, column 5)")!
 }
 
 test "parse unexpected token after object value" {
-  let result = parse("{\"a\":1 b:2}")!!
+  let result = parse_as_result("{\"a\":1 b:2}")
   inspect(result, content="Err(Invalid character 'b' at line 1, column 7)")!
 }
 
 test "parse unexpected token in array" {
-  let result = parse("[1, 2 a]")!!
+  let result = parse_as_result("[1, 2 a]")
   inspect(result, content="Err(Invalid character 'a' at line 1, column 6)")!
 }
 
 test "parse unexpected token in value" {
-  let result = parse("{a:1}")!!
+  let result = parse_as_result("{a:1}")
   inspect(result, content="Err(Invalid character 'a' at line 1, column 1)")!
 }
 
 test "parse unexpected token in object property name" {
-  let result = parse("{\"a\":1, b:2}")!!
+  let result = parse_as_result("{\"a\":1, b:2}")
   inspect(result, content="Err(Invalid character 'b' at line 1, column 8)")!
 }
 
 test "parse unexpected token after object property name" {
-  let result = parse("{\"a\" b:2}")!!
+  let result = parse_as_result("{\"a\" b:2}")
   inspect(result, content="Err(Invalid character 'b' at line 1, column 5)")!
 }
 
 test "parse unexpected token after object value" {
-  let result = parse("{\"a\":1 b:2}")!!
+  let result = parse_as_result("{\"a\":1 b:2}")
   inspect(result, content="Err(Invalid character 'b' at line 1, column 7)")!
 }
 
 test "parse unexpected token in array" {
-  let result = parse("[1, 2 a]")!!
+  let result = parse_as_result("[1, 2 a]")
   inspect(result, content="Err(Invalid character 'a' at line 1, column 6)")!
 }
 
 test "parse muti-lines json" {
-  let result = parse(
+  let result = parse_as_result(
     #|{
     #|  "a":2,
     #|  "b":3
     #|}
     ,
-  )!!
+  )
   inspect(result, content="Ok(Object({a: Number(2.0), b:Number(3.0)}))")!
 }
 
 test "parse muti-lines json error" {
-  let result = parse(
+  let result = parse_as_result(
     #|{
     #|  "a":2,
     #|  "b":a
     #|}
     ,
-  )!!
+  )
   inspect(result, content="Err(Invalid character 'a' at line 3, column 6)")!
 }
