@@ -43,6 +43,6 @@ test "op_get after removal" {
 }
 
 test "op_get with empty map" {
-  let map : @sorted_map.Map[Int, String] = @sorted_map.empty()
+  let map : @sorted_map.T[Int, String] = @sorted_map.empty()
   @test.eq!(map[3], None)
 }
