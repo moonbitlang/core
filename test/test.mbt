@@ -93,3 +93,7 @@ pub fn is_not[T : Debug](a : T, b : T, ~loc : SourceLoc = _) -> Unit!String {
     raise "FAILED: \(loc) `not(\(a) is \(b))`"
   }
 }
+
+pub fn fail[T](msg : String, ~loc : SourceLoc = _) -> T!String {
+  raise "FAILED: \(loc) \(msg)"
+}

@@ -3,6 +3,8 @@ package moonbitlang/core/test
 // Values
 fn eq[T : Debug + Eq](T, T, ~loc : SourceLoc = _) -> Unit!String
 
+fn fail[T](String, ~loc : SourceLoc = _) -> T!String
+
 fn is[T : Debug](T, T, ~loc : SourceLoc = _) -> Unit!String
 
 fn is_false(Bool, ~loc : SourceLoc = _) -> Unit!String
