@@ -5,6 +5,12 @@ fn err[T, E](E) -> Result[T, E]
 
 fn ok[T, E](T) -> Result[T, E]
 
+fn wrap0[T, E](~f : () -> T!E) -> Result[T, E]
+
+fn wrap1[T, A, E](~f : (A) -> T!E, A) -> Result[T, E]
+
+fn wrap2[T, A, B, E](~f : (A, B) -> T!E, A, B) -> Result[T, E]
+
 // Types and methods
 impl Result {
   bind[T, E, U](Self[T, E], (T) -> Self[U, E]) -> Self[U, E]

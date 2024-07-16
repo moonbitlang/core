@@ -13,11 +13,7 @@
 // limitations under the License.
 
 fn parse_as_result(input : String) -> Result[JsonValue, ParseError] {
-  try {
-    parse(input)! |> Ok
-  } catch {
-    err => Err(err)
-  }
+  input |> @result.wrap1(f=parse)
 }
 
 //region errors

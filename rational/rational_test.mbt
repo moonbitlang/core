@@ -13,51 +13,55 @@
 // limitations under the License.
 
 test "from_double overflow" {
-  let result = Rational::from_double(10.0e200)!!
+  let result = 10.0e200 |> @result.wrap1(f=Rational::from_double)
   @test.eq(result, Err("Rational::from_double: overflow"))!
 }
 
 test "from_double NaN" {
-  let result = Rational::from_double(Double::nan())!!
+  let result = Double::nan() |> @result.wrap1(f=Rational::from_double)
   @test.eq(result, Err("Rational::from_double: cannot convert NaN"))!
 }
 
 test "from_double normal case" {
-  let result = Rational::from_double(0.5)!!
+  let result = 0.5 |> @result.wrap1(f=Rational::from_double)
   @test.eq(result, Ok(Rational::new_unchecked(1L, 2L)))!
 }
 
 test "from_double edge case" {
-  let result = Rational::from_double(9_223_372_036_800_000_000.0)!!
+  let result = 9_223_372_036_800_000_000.0
+    |> @result.wrap1(f=Rational::from_double)
   @test.eq(result, Ok(Rational::new_unchecked(9_223_372_036_800_000_000L, 1L)))!
 }
 
 test "from_double overflow edge case" {
-  let result = Rational::from_double(9_223_372_036_854_775_807.1)!!
+  let result = 9_223_372_036_854_775_807.1
+    |> @result.wrap1(f=Rational::from_double)
   @test.eq(result, Err("Rational::from_double: overflow"))!
 }
 
 test "from_double overflow edge case" {
-  let result = Rational::from_double(9_223_372_036_854_775_807.1)!!
+  let result = 9_223_372_036_854_775_807.1
+    |> @result.wrap1(f=Rational::from_double)
   @test.eq(result, Err("Rational::from_double: overflow"))!
 }
 
 test "from_double overflow check in continued fraction algorithm" {
-  let result = Rational::from_double(10.0e200)!!
+  let result = 10.0e200 |> @result.wrap1(f=Rational::from_double)
   @test.eq(result, Err("Rational::from_double: overflow"))!
 }
 
 test "from_double NaN check" {
-  let result = Rational::from_double(Double::nan())!!
+  let result = Double::nan() |> @result.wrap1(f=Rational::from_double)
   @test.eq(result, Err("Rational::from_double: cannot convert NaN"))!
 }
 
 test "from_double normal case" {
-  let result = Rational::from_double(0.5)!!
+  let result = 0.5 |> @result.wrap1(f=Rational::from_double)
   @test.eq(result, Ok(Rational::new_unchecked(1L, 2L)))!
 }
 
 test "from_double edge case" {
-  let result = Rational::from_double(9_223_372_036_800_000_000.0)!!
+  let result = 9_223_372_036_800_000_000.0
+    |> @result.wrap1(f=Rational::from_double)
   @test.eq(result, Ok(Rational::new_unchecked(9_223_372_036_800_000_000L, 1L)))!
 }
