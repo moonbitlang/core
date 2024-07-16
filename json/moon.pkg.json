@@ -14,5 +14,5 @@
     "moonbitlang/core/result",
     "moonbitlang/core/unit"
   ],
-  "bbtest-import": ["moonbitlang/core/builtin", "moonbitlang/core/coverage", "moonbitlang/core/unit", "moonbitlang/core/string"]
+  "test-import": ["moonbitlang/core/builtin", "moonbitlang/core/coverage", "moonbitlang/core/unit", "moonbitlang/core/string"]
 }

@@ -8,7 +8,7 @@
     "moonbitlang/core/tuple",
     "moonbitlang/core/double"
   ],
-  "bbtest-import": [
+  "test-import": [
     "moonbitlang/core/test",
     "moonbitlang/core/char",
     "moonbitlang/core/string",
