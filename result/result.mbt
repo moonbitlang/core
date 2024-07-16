@@ -326,3 +326,27 @@ test "unwrap exn" {
     content="Err(This is serious)",
   )!
 }
+
+pub fn wrap0[T, E](~f : () -> T!E) -> Result[T, E] {
+  try {
+    f()! |> Ok
+  } catch {
+    e => Err(e)
+  }
+}
+
+pub fn wrap1[T, A, E](~f : (A) -> T!E, a : A) -> Result[T, E] {
+  try {
+    f(a)! |> Ok
+  } catch {
+    e => Err(e)
+  }
+}
+
+pub fn wrap2[T, A, B, E](~f : (A, B) -> T!E, a : A, b : B) -> Result[T, E] {
+  try {
+    f(a, b)! |> Ok
+  } catch {
+    e => Err(e)
+  }
+}

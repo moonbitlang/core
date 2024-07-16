@@ -573,35 +573,83 @@ test "compare" {
 }
 
 test "from_double" {
-  @test.eq(from_double(0.5)!!, Ok(Rational::new_unchecked(1L, 2L)))!
-  @test.eq(from_double(5.0)!!, Ok(Rational::new_unchecked(5L, 1L)))!
-  @test.eq(from_double(29.97)!!, Ok(Rational::new_unchecked(2997L, 100L)))!
-  @test.eq(from_double(-29.97)!!, Ok(Rational::new_unchecked(-2997L, 100L)))!
-  @test.eq(from_double(63.5)!!, Ok(Rational::new_unchecked(127L, 2L)))!
-  @test.eq(from_double(126.5)!!, Ok(Rational::new_unchecked(253L, 2L)))!
-  @test.eq(from_double(127.0)!!, Ok(Rational::new_unchecked(127L, 1L)))!
-  @test.eq(from_double(127.5)!!, Ok(Rational::new_unchecked(255L, 2L)))!
-  @test.eq(from_double(-63.5)!!, Ok(Rational::new_unchecked(-127L, 2L)))!
-  @test.eq(from_double(-126.5)!!, Ok(Rational::new_unchecked(-253L, 2L)))!
-  @test.eq(from_double(-127.0)!!, Ok(Rational::new_unchecked(-127L, 1L)))!
-  @test.eq(from_double(-127.5)!!, Ok(Rational::new_unchecked(-255L, 2L)))!
-  @test.eq(from_double(-10.0e200)!!, Err(overflow_error))!
-  @test.eq(from_double(10.0e200)!!, Err(overflow_error))!
-  @test.eq(from_double(Double::inf(1))!!, Err(overflow_error))!
-  @test.eq(from_double(Double::inf(-1))!!, Err(overflow_error))!
-  @test.eq(from_double(Double::nan())!!, Err(nan_error))!
   @test.eq(
-    from_double(2.2204460492503131e-16)!!,
+    0.5 |> @result.wrap1(f=from_double),
+    Ok(Rational::new_unchecked(1L, 2L)),
+  )!
+  @test.eq(
+    5.0 |> @result.wrap1(f=from_double),
+    Ok(Rational::new_unchecked(5L, 1L)),
+  )!
+  @test.eq(
+    29.97 |> @result.wrap1(f=from_double),
+    Ok(Rational::new_unchecked(2997L, 100L)),
+  )!
+  @test.eq(
+    -29.97 |> @result.wrap1(f=from_double),
+    Ok(Rational::new_unchecked(-2997L, 100L)),
+  )!
+  @test.eq(
+    63.5 |> @result.wrap1(f=from_double),
+    Ok(Rational::new_unchecked(127L, 2L)),
+  )!
+  @test.eq(
+    126.5 |> @result.wrap1(f=from_double),
+    Ok(Rational::new_unchecked(253L, 2L)),
+  )!
+  @test.eq(
+    127.0 |> @result.wrap1(f=from_double),
+    Ok(Rational::new_unchecked(127L, 1L)),
+  )!
+  @test.eq(
+    127.5 |> @result.wrap1(f=from_double),
+    Ok(Rational::new_unchecked(255L, 2L)),
+  )!
+  @test.eq(
+    -63.5 |> @result.wrap1(f=from_double),
+    Ok(Rational::new_unchecked(-127L, 2L)),
+  )!
+  @test.eq(
+    -126.5 |> @result.wrap1(f=from_double),
+    Ok(Rational::new_unchecked(-253L, 2L)),
+  )!
+  @test.eq(
+    -127.0 |> @result.wrap1(f=from_double),
+    Ok(Rational::new_unchecked(-127L, 1L)),
+  )!
+  @test.eq(
+    -127.5 |> @result.wrap1(f=from_double),
+    Ok(Rational::new_unchecked(-255L, 2L)),
+  )!
+  @test.eq(-10.0e200 |> @result.wrap1(f=from_double), Err(overflow_error))!
+  @test.eq(10.0e200 |> @result.wrap1(f=from_double), Err(overflow_error))!
+  @test.eq(Double::inf(1) |> @result.wrap1(f=from_double), Err(overflow_error))!
+  @test.eq(Double::inf(-1) |> @result.wrap1(f=from_double), Err(overflow_error))!
+  @test.eq(Double::nan() |> @result.wrap1(f=from_double), Err(nan_error))!
+  @test.eq(
+    2.2204460492503131e-16 |> @result.wrap1(f=from_double),
     Ok(Rational::new_unchecked(1L, 4503599627370496L)),
   )!
-  @test.eq(from_double(0.0)!!, Ok(Rational::new_unchecked(0L, 1L)))!
-  @test.eq(from_double(-0.0)!!, Ok(Rational::new_unchecked(0L, 1L)))!
   @test.eq(
-    from_double(9_223_372_036_800_000_000.0)!!,
+    0.0 |> @result.wrap1(f=from_double),
+    Ok(Rational::new_unchecked(0L, 1L)),
+  )!
+  @test.eq(
+    -0.0 |> @result.wrap1(f=from_double),
+    Ok(Rational::new_unchecked(0L, 1L)),
+  )!
+  @test.eq(
+    9_223_372_036_800_000_000.0 |> @result.wrap1(f=from_double),
     Ok(Rational::new_unchecked(9_223_372_036_800_000_000L, 1L)),
   )!
-  @test.eq(from_double(9_223_372_036_854_775_807.1)!!, Err(overflow_error))!
+  @test.eq(
+    9_223_372_036_854_775_807.1 |> @result.wrap1(f=from_double),
+    Err(overflow_error),
+  )!
   // Unfortunately, the following test case is an overflow error because of the loss of precision in the double value,
   // while mathematically its result should be `Ok(Rational::new_unchecked(9_223_372_036_854_775_807L, 1L))`.
-  @test.eq(from_double(9_223_372_036_854_775_807.0)!!, Err(overflow_error))!
+  @test.eq(
+    9_223_372_036_854_775_807.0 |> @result.wrap1(f=from_double),
+    Err(overflow_error),
+  )!
 }
