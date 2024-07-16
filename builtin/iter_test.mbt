@@ -245,6 +245,12 @@ test "collect" {
 test "range overflow" {
   let v = Int::max_value() - 1
   inspect(v.until(Int::max_value(), step=3), content="[]")!
+  let v = Int::max_value() - 1
+  inspect(v, content="2147483646")!
+  inspect(v.until(Int::max_value()), content="[2147483646]")!
+
+  let v = Int::max_value() - 1
+  inspect(v.until(Int::max_value() + 1), content="[]")!
 }
 
 test "range" {
