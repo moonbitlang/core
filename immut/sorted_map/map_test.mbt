@@ -45,7 +45,7 @@ test "remove" {
     m3.debug_tree(),
     content="(2,two,(1,one,(0,zero,_,_),_),(3,three,_,_))",
   )!
-  let e : Map[Int, Int] = Empty
+  let e : T[Int, Int] = Empty
   inspect(e.remove(1).debug_tree(), content="_")!
 }
 
@@ -75,7 +75,7 @@ test "size" {
 }
 
 test "is_empty" {
-  let m : Map[Int, Int] = empty()
+  let m : T[Int, Int] = empty()
   @test.eq(m.is_empty(), true)!
   let m = m.insert(1, 1)
   @test.eq(m.is_empty(), false)!
@@ -167,7 +167,7 @@ test "singleton" {
 }
 
 test "empty" {
-  let m : Map[Int, Int] = empty()
+  let m : T[Int, Int] = empty()
   @test.eq(m.debug_tree(), "_")!
 }
 
@@ -210,10 +210,10 @@ test "glue" {
 }
 
 test "op_equal" {
-  let m1 = Map::of(
+  let m1 = T::of(
     [(3, "three"), (8, "eight"), (1, "one"), (2, "two"), (0, "zero")],
   )
-  let m2 = Map::of(
+  let m2 = T::of(
     [(3, "three"), (8, "eight"), (1, "one"), (2, "two"), (0, "zero")],
   )
   let m3 = of([(3, "three"), (8, "eight"), (1, "one"), (2, "two")])
@@ -291,10 +291,10 @@ test "to_array" {
 }
 
 test "op_equal" {
-  let m1 = Map::of(
+  let m1 = T::of(
     [(3, "three"), (8, "eight"), (1, "one"), (2, "two"), (0, "zero")],
   )
-  let m2 = Map::of(
+  let m2 = T::of(
     [(3, "three"), (8, "eight"), (1, "one"), (2, "two"), (0, "zero")],
   )
   let m3 = of([(3, "three"), (8, "eight"), (1, "one"), (2, "two")])
@@ -314,9 +314,9 @@ test "split_max with non-empty tree" {
 }
 
 test "panic split_max with empty tree" {
-  (Empty : Map[Int, Int]).split_max() |> ignore
+  (Empty : T[Int, Int]).split_max() |> ignore
 }
 
 test "panic split_min with empty tree" {
-  (Empty : Map[Int, Int]).split_min() |> ignore
+  (Empty : T[Int, Int]).split_min() |> ignore
 }

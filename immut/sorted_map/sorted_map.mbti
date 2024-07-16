@@ -1,23 +1,21 @@
 package moonbitlang/core/immut/sorted_map
 
 // Values
-fn empty[K, V]() -> Map[K, V]
-
-fn singleton[K, V](K, V) -> Map[K, V]
 
 // Types and methods
-type Map
-impl Map {
+type T
+impl T {
   contains[K : Compare + Eq, V](Self[K, V], K) -> Bool
   debug_write[K : Debug, V : Debug](Self[K, V], Buffer) -> Unit
   each[K, V](Self[K, V], (K, V) -> Unit) -> Unit
   eachi[K, V](Self[K, V], (Int, K, V) -> Unit) -> Unit
   elems[K, V](Self[K, V]) -> Array[V]
+  empty[K, V]() -> Self[K, V]
   filter[K : Compare + Eq, V](Self[K, V], (V) -> Bool) -> Self[K, V]
   filter_with_key[K : Compare + Eq, V](Self[K, V], (K, V) -> Bool) -> Self[K, V]
-  fold[K, V, T](Self[K, V], (T, V) -> T, ~init : T) -> T
-  foldl_with_key[K, V, T](Self[K, V], (T, K, V) -> T, ~init : T) -> T
-  foldr_with_key[K, V, T](Self[K, V], (T, K, V) -> T, ~init : T) -> T
+  fold[K, V, A](Self[K, V], (A, V) -> A, ~init : A) -> A
+  foldl_with_key[K, V, A](Self[K, V], (A, K, V) -> A, ~init : A) -> A
+  foldr_with_key[K, V, A](Self[K, V], (A, K, V) -> A, ~init : A) -> A
   from_array[K : Compare + Eq, V](Array[Tuple[K, V]]) -> Self[K, V]
   insert[K : Compare + Eq, V](Self[K, V], K, V) -> Self[K, V]
   is_empty[K, V](Self[K, V]) -> Bool
@@ -30,6 +28,7 @@ impl Map {
   op_equal[K : Eq, V : Eq](Self[K, V], Self[K, V]) -> Bool
   op_get[K : Compare + Eq, V](Self[K, V], K) -> V?
   remove[K : Compare + Eq, V](Self[K, V], K) -> Self[K, V]
+  singleton[K, V](K, V) -> Self[K, V]
   size[K, V](Self[K, V]) -> Int
   to_array[K, V](Self[K, V]) -> Array[Tuple[K, V]]
 }
