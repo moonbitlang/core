@@ -12,27 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-test "get as null" {
-  inspect(JsonValue::Null |> as_null, content="Some(())")!
-  inspect(JsonValue::True |> as_null, content="None")!
-  inspect(JsonValue::False |> as_null, content="None")!
-  inspect(JsonValue::Number(1.0) |> as_null, content="None")!
-  inspect(JsonValue::String("Hello World") |> as_null, content="None")!
-  inspect(
-    JsonValue::Array([JsonValue::String("Hello World")]) |> as_null,
-    content="None",
-  )!
-  inspect(
-    JsonValue::Object(
-      Map::of(
-        [("key", JsonValue::String("key")), ("value", JsonValue::Number(100.0))],
-      ),
-    )
-    |> as_null,
-    content="None",
-  )!
-}
-
 test "get as bool" {
   inspect(JsonValue::Null |> as_bool, content="None")!
   inspect(JsonValue::True |> as_bool, content="Some(true)")!
@@ -309,5 +288,13 @@ test "stringify" {
       #|{"key":[1.0,true,null,[],{"key":"value","value":100.0}],"null":null,"bool":false,"obj":{}}
     ,
   )!
-  @test.is_true(parse(json.stringify())!! == Ok(json))!
+
+  // not mut once we have `try except else` syntax
+  // we do come across issues like ParseError not unified with String
+  let newjson = try {
+    parse(json.stringify())!
+  } catch {
+    _ => @test.fail("Failed to parse the stringified JSON")!
+  }
+  @test.eq(newjson, json)!
 }

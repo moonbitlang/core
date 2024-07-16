@@ -20,7 +20,7 @@ pub enum IterResult {
   IterContinue // true
 } derive(Eq)
 
-fn to_string[T : Show](self : Iter[T]) -> String {
+pub fn to_string[T : Show](self : Iter[T]) -> String {
   self.to_array().to_string()
 }
 
@@ -668,4 +668,10 @@ pub fn collect[T](self : Iter[T]) -> Array[T] {
   let result = []
   self.each(fn(e) { result.push(e) })
   result
+}
+
+/// Iter itself is an iterator.
+/// so that it works with array spread operator. e.g, `[..iter]`
+pub fn iter[T](self : Iter[T]) -> Iter[T] {
+  self
 }
