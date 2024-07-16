@@ -7,5 +7,11 @@
   "test-import" : [
     "moonbitlang/core/test",
     "moonbitlang/core/result"
+  ],
+  "bbtest_import": [
+    "moonbitlang/core/test",
+    "moonbitlang/core/double",
+    "moonbitlang/core/builtin",
+    "moonbitlang/core/coverage"
   ]
 }

@@ -7,5 +7,11 @@
     "moonbitlang/core/int64",
     "moonbitlang/core/string",
     "moonbitlang/core/coverage"
+  ],
+  "bbtest_import" : [
+    "moonbitlang/core/builtin",
+    "moonbitlang/core/test",
+    "moonbitlang/core/coverage",
+    "moonbitlang/core/option"
   ]
 }
