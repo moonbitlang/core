@@ -12,17 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-priv enum Cont[T] {
+priv enum Cont[A] {
   Empty
-  Node(T, MList[Cont[T]])
+  Node(A, @list.T[Cont[A]])
 } derive(Show, Debug)
 
-priv enum MList[T] {
-  MNil
-  MCons(T, MList[T])
-} derive(Show, Debug)
-
-struct ImmutablePriorityQueue[T] {
+struct T[A] {
   len : Int
-  body : Cont[T]
+  body : Cont[A]
 }

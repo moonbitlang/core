@@ -18,7 +18,7 @@ test "from_fixed_array" {
 }
 
 test "from_array" {
-  let queue = ImmutablePriorityQueue::of([1, 6, 3, 4, 5])
+  let queue = T::of([1, 6, 3, 4, 5])
   inspect(queue.peek(), content="Some(6)")!
 }
 
@@ -26,7 +26,7 @@ test "to_array" {
   let v = of([1, 2, 3, 4])
   inspect(v.to_array(), content="[4, 3, 2, 1]")!
   inspect(v.push(0).to_array(), content="[4, 3, 2, 1, 0]")!
-  inspect((new() : ImmutablePriorityQueue[Int]).to_array(), content="[]")!
+  inspect((new() : T[Int]).to_array(), content="[]")!
 }
 
 test "as_iter" {
@@ -40,17 +40,17 @@ test "as_iter" {
 }
 
 test "meld" {
-  inspect(meld(Empty, of([1]).body), content="Node(1, MNil)")!
-  inspect(meld(of([1]).body, Empty), content="Node(1, MNil)")!
+  inspect(meld(Empty, of([1]).body), content="Node(1, )")!
+  inspect(meld(of([1]).body, Empty), content="Node(1, )")!
   inspect(
     meld(of([1]).body, of([2]).body),
-    content="Node(2, MCons(Node(1, MNil), MNil))",
+    content="Node(2, Node(1, ))",
   )!
 }
 
 test "merges" {
   inspect(
-    match merges((MNil : MList[Cont[Int]])) {
+    match merges((Nil : @list.T[Cont[Int]])) {
       Empty => true
       _ => false
     },
@@ -68,7 +68,7 @@ test "pop" {
     },
     content="Some(3)",
   )!
-  let empty : ImmutablePriorityQueue[Int] = of([])
+  let empty : T[Int] = of([])
   inspect(
     match empty.pop() {
       Some(q) => q.peek()
@@ -94,25 +94,25 @@ test "push" {
 }
 
 test "peek" {
-  let queue : ImmutablePriorityQueue[Int] = ImmutablePriorityQueue::new()
+  let queue : T[Int] = T::new()
   inspect(queue.peek(), content="None")!
   inspect(queue.push(1).peek(), content="Some(1)")!
 }
 
 test "is_empty" {
-  let queue : ImmutablePriorityQueue[Int] = ImmutablePriorityQueue::new()
+  let queue : T[Int] = T::new()
   inspect(queue.is_empty(), content="true")!
   inspect(queue.push(1).is_empty(), content="false")!
 }
 
 test "length" {
-  let pq = ImmutablePriorityQueue::of([1, 2])
+  let pq = T::of([1, 2])
   inspect(pq.length(), content="2")!
   inspect(pq.pop_exn().length(), content="1")!
   inspect(pq.pop_exn().pop_exn().length(), content="0")!
 }
 
 test "panic pop_exn" {
-  let pq = ImmutablePriorityQueue::of([1])
+  let pq = T::of([1])
   pq.pop_exn().pop_exn() |> ignore
 }
