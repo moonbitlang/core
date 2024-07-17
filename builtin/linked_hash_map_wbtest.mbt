@@ -204,7 +204,7 @@ test "iter" {
       buf.write_string("[\(k)-\(v)]")
     },
   )
-  inspect(buf, content="[1-one][2-two][3-three]")!
+  inspect!(buf, content="[1-one][2-two][3-three]")
   buf.reset()
   map.iter().take(2).each(
     fn(e) {
@@ -212,7 +212,7 @@ test "iter" {
       buf.write_string("[\(k)-\(v)]")
     },
   )
-  inspect(buf, content="[1-one][2-two]")!
+  inspect!(buf, content="[1-one][2-two]")
 }
 
 test "iter order" {
@@ -221,14 +221,14 @@ test "iter order" {
   m["two"] = 2
   let buf = Buffer::new(size_hint=0)
   m.each(fn(k, v) { buf.write_string("[\(k)-\(v)]") })
-  inspect(buf.to_string(), content="[one-1][three-3][two-2]")!
+  inspect!(buf.to_string(), content="[one-1][three-3][two-2]")
 }
 
 test "linked list" {
   let m = {  }
   let buf = Buffer::new(size_hint=0)
   m.debug_write(buf)
-  inspect(buf, content="{}")!
+  inspect!(buf, content="{}")
   m["one"] = 1
   m["two"] = 2
   m["three"] = 3
@@ -290,12 +290,12 @@ test "linked list" {
   m.remove("four")
   let buf = Buffer::new(size_hint=0)
   m.debug_write(buf)
-  inspect(buf, content="{}")!
+  inspect!(buf, content="{}")
 }
 
 test "to_array" {
   let map = { 1: "one", 2: "two", 3: "three" }
-  inspect(map.to_array(), content="[(1, one), (2, two), (3, three)]")!
+  inspect!(map.to_array(), content="[(1, one), (2, two), (3, three)]")
 }
 
 test "set_existing_key" {
@@ -640,20 +640,20 @@ test "op_equal" {
   m1.set("b", 2)
   m1.set("c", 3)
   let m2 = { "a": 1, "b": 2, "c": 3 }
-  inspect(m1 == m2, content="true")!
-  inspect({ "a": 1 } == {  }, content="false")!
-  inspect({ 1: 2, 2: 3 } == { 1: 3, 2: 4 }, content="false")!
+  inspect!(m1 == m2, content="true")
+  inspect!({ "a": 1 } == {  }, content="false")
+  inspect!({ 1: 2, 2: 3 } == { 1: 3, 2: 4 }, content="false")
 }
 
 test "to_string" {
   let m = {  }
-  inspect(m.to_string(), content="{}")!
+  inspect!(m.to_string(), content="{}")
   m.set("a", 1)
   m.set("b", 2)
   m.set("c", 3)
-  inspect(m.to_string(), content="{a: 1, b:2, c:3}")!
+  inspect!(m.to_string(), content="{a: 1, b:2, c:3}")
   let nested_m = { "a": { "b": 2 }, "B": { "C": 3 } }
-  inspect(nested_m.to_string(), content="{a: {b: 2}, B:{C: 3}}")!
+  inspect!(nested_m.to_string(), content="{a: {b: 2}, B:{C: 3}}")
 }
 
 test "hash collision" {
@@ -661,7 +661,7 @@ test "hash collision" {
   m.set("a", 1)
   m.set("ab", 2)
   m.set("abc", 3)
-  inspect(m["d"], content="None")!
+  inspect!(m["d"], content="None")
 }
 
 test "panic unwrap" {

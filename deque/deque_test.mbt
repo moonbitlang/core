@@ -101,33 +101,33 @@ test "reserve and push" {
   // capacity > 0, len = 0
   let a = @deque.new(capacity=2)
   a.push_back(Option::Some(1))
-  inspect(a.front(), content="Some(Some(1))")!
-  inspect(a.back(), content="Some(Some(1))")!
+  inspect!(a.front(), content="Some(Some(1))")
+  inspect!(a.back(), content="Some(Some(1))")
   // capacity = 0, len = 0
   let b = @deque.new(capacity=0)
   b.push_back(Option::Some(1))
-  inspect(b.front(), content="Some(Some(1))")!
-  inspect(b.back(), content="Some(Some(1))")!
+  inspect!(b.front(), content="Some(Some(1))")
+  inspect!(b.back(), content="Some(Some(1))")
   // capacity > 0, len = 0
   let c = @deque.new(capacity=2)
   c.push_front(Option::Some(1))
-  inspect(c.front(), content="Some(Some(1))")!
-  inspect(c.back(), content="Some(Some(1))")!
+  inspect!(c.front(), content="Some(Some(1))")
+  inspect!(c.back(), content="Some(Some(1))")
   // capacity = 0, len = 0
   let d = @deque.new(capacity=0)
   d.push_front(Option::Some(1))
-  inspect(d.front(), content="Some(Some(1))")!
-  inspect(d.back(), content="Some(Some(1))")!
+  inspect!(d.front(), content="Some(Some(1))")
+  inspect!(d.back(), content="Some(Some(1))")
 }
 
 test "mapi" {
   let dv = @deque.of([3, 4, 5])
   let dvp = dv.mapi(fn(i, x) { x + i })
-  inspect(dvp[0], content="3")!
-  inspect(dvp[1], content="5")!
-  inspect(dvp[2], content="7")!
+  inspect!(dvp[0], content="3")
+  inspect!(dvp[1], content="5")
+  inspect!(dvp[2], content="7")
   let dve = @deque.of(([] : FixedArray[Int]))
-  inspect(dve.mapi(fn(_idx, x) { x }), content="Deque::[]")!
+  inspect!(dve.mapi(fn(_idx, x) { x }), content="Deque::[]")
 }
 
 test "iter_rev" {
@@ -194,22 +194,22 @@ test "iter2" {
   v.pop_back_exn()
   let mut sum = 0
   v.each(fn { x => sum += x })
-  inspect(sum, content="9")!
+  inspect!(sum, content="9")
 }
 
 test "op_get" {
   let dv = @deque.of([1, 2, 3, 4, 5])
-  inspect(dv, content="Deque::[1, 2, 3, 4, 5]")!
+  inspect!(dv, content="Deque::[1, 2, 3, 4, 5]")
   dv.pop_front() |> ignore
   dv.push_back(1)
-  inspect(dv[4], content="1")!
+  inspect!(dv[4], content="1")
   dv.push_front(2)
-  inspect(dv[0], content="2")!
+  inspect!(dv[0], content="2")
 }
 
 test "from_array" {
-  inspect(@deque.from_array(([] : Array[Int])), content="Deque::[]")!
-  inspect(@deque.of([1, 2, 3]), content="Deque::[1, 2, 3]")!
+  inspect!(@deque.from_array(([] : Array[Int])), content="Deque::[]")
+  inspect!(@deque.of([1, 2, 3]), content="Deque::[1, 2, 3]")
 }
 
 test "panic pop_front_exn" {
@@ -262,7 +262,7 @@ test "map" {
   @test.eq(dvp[1], 5)!
   @test.eq(dvp[2], 6)!
   let dve = @deque.of(([] : FixedArray[Int]))
-  inspect(dve.map(fn(x) { x }), content="Deque::[]")!
+  inspect!(dve.map(fn(x) { x }), content="Deque::[]")
 }
 
 test "push_and_pop" {

@@ -14,19 +14,19 @@
 
 test "Bucket" {
   let b0 : Bucket[_] = Just_One(0, 0)
-  inspect((b0.find(0), b0.find(1), b0.size()), content="(Some(0), None, 1)")!
+  inspect!((b0.find(0), b0.find(1), b0.size()), content="(Some(0), None, 1)")
   let b1 = b0.add(1, 1)
-  inspect((b1.find(0), b1.find(1), b1.size()), content="(Some(0), Some(1), 2)")!
+  inspect!((b1.find(0), b1.find(1), b1.size()), content="(Some(0), Some(1), 2)")
   let b2 = b1.add(0, 2)
-  inspect((b2.find(0), b2.find(1), b2.size()), content="(Some(2), Some(1), 2)")!
+  inspect!((b2.find(0), b2.find(1), b2.size()), content="(Some(2), Some(1), 2)")
   let b3 = b2.remove(0)
   {
     let b1 = b3.unwrap()
-    inspect((b1.find(0), b1.find(1)), content="(None, Some(1))")!
+    inspect!((b1.find(0), b1.find(1)), content="(None, Some(1))")
   }
   let b4 = b2.remove(1)
   let b1 = b4.unwrap() // b4 ? --> return Option instead of Result
-  inspect((b1.find(0), b1.find(1)), content="(Some(2), None)")!
+  inspect!((b1.find(0), b1.find(1)), content="(Some(2), None)")
 }
 
 test "Bucket::iter" {
@@ -43,7 +43,7 @@ test "Bucket::iter" {
       buf.write_string("\(k) => \(v)")
     },
   )
-  inspect(buf.to_string(), content="0 => 0, 1 => 1, 31 => 31")!
+  inspect!(buf.to_string(), content="0 => 0, 1 => 1, 31 => 31")
 }
 
 test "Bucket::iter" {
@@ -64,5 +64,5 @@ test "Bucket::iter" {
       }
     },
   )
-  inspect(buf.to_string(), content="0 => 0, 1 => 1, 31 => 31")!
+  inspect!(buf.to_string(), content="0 => 0, 1 => 1, 31 => 31")
 }

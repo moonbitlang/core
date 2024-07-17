@@ -306,9 +306,9 @@ pub fn to_string[T : Show, E : Show](self : Result[T, E]) -> String {
 
 test "show" {
   let ok : Result[_, String] = Ok("hello")
-  inspect(ok, content="Ok(hello)")!
+  inspect!(ok, content="Ok(hello)")
   let err : Result[String, _] = Err("world")
-  inspect(err, content="Err(world)")!
+  inspect!(err, content="Err(world)")
 }
 
 pub fn unwrap_or_error[T, E](self : Result[T, E]) -> T!E {

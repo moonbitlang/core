@@ -16,7 +16,7 @@ test "add to empty set" {
   let set = new()
   set.add(1)
   @test.eq(set.contains(1), true)!
-  inspect(set.debug_tree(), content="([1]1,_,_)")!
+  inspect!(set.debug_tree(), content="([1]1,_,_)")
 }
 
 test "add to non-empty set" {
@@ -25,7 +25,7 @@ test "add to non-empty set" {
   set.add(2)
   @test.eq(set.contains(1), true)!
   @test.eq(set.contains(2), true)!
-  inspect(set.debug_tree(), content="([2]1,_,([1]2,_,_))")!
+  inspect!(set.debug_tree(), content="([2]1,_,([1]2,_,_))")
 }
 
 test "add duplicate value" {
@@ -34,7 +34,7 @@ test "add duplicate value" {
   set.add(1)
   @test.eq(set.contains(1), true)!
   @test.eq(set.size(), 1L)!
-  inspect(set.debug_tree(), content="([1]1,_,_)")!
+  inspect!(set.debug_tree(), content="([1]1,_,_)")
 }
 
 test "add multiple values" {
@@ -46,13 +46,13 @@ test "add multiple values" {
   @test.eq(set.contains(2), true)!
   @test.eq(set.contains(3), true)!
   @test.eq(set.size(), 3L)!
-  inspect(set.debug_tree(), content="([2]2,([1]1,_,_),([1]3,_,_))")!
+  inspect!(set.debug_tree(), content="([2]2,([1]1,_,_),([1]3,_,_))")
 }
 
 test "add_and_remove" {
   let set = of([7, 2, 9, 4, 5, 6, 3, 8, 1])
   set.remove(8)
-  inspect(set, content="{1, 2, 3, 4, 5, 6, 7, 9}")!
+  inspect!(set, content="{1, 2, 3, 4, 5, 6, 7, 9}")
   inspect(
     set.debug_tree(),
     content="([4]5,([3]3,([2]2,([1]1,_,_),_),([1]4,_,_)),([2]7,([1]6,_,_),([1]9,_,_)))",
@@ -61,25 +61,25 @@ test "add_and_remove" {
 
   // Test 1: Remove elements
   set.remove(1)
-  inspect(set, content="{2, 3, 4, 5, 6, 7, 8, 9, 10}")!
+  inspect!(set, content="{2, 3, 4, 5, 6, 7, 8, 9, 10}")
   inspect(
     set.debug_tree(),
     content="([4]4,([2]2,_,([1]3,_,_)),([3]8,([2]6,([1]5,_,_),([1]7,_,_)),([2]9,_,([1]10,_,_))))",
   )!
   set.remove(5)
-  inspect(set, content="{2, 3, 4, 6, 7, 8, 9, 10}")!
+  inspect!(set, content="{2, 3, 4, 6, 7, 8, 9, 10}")
   inspect(
     set.debug_tree(),
     content="([4]4,([2]2,_,([1]3,_,_)),([3]8,([2]6,_,([1]7,_,_)),([2]9,_,([1]10,_,_))))",
   )!
   set.remove(10)
-  inspect(set, content="{2, 3, 4, 6, 7, 8, 9}")!
+  inspect!(set, content="{2, 3, 4, 6, 7, 8, 9}")
   inspect(
     set.debug_tree(),
     content="([4]4,([2]2,_,([1]3,_,_)),([3]8,([2]6,_,([1]7,_,_)),([1]9,_,_)))",
   )!
   set.remove(4)
-  inspect(set, content="{2, 3, 6, 7, 8, 9}")!
+  inspect!(set, content="{2, 3, 6, 7, 8, 9}")
   inspect(
     set.debug_tree(),
     content="([3]6,([2]2,_,([1]3,_,_)),([2]8,([1]7,_,_),([1]9,_,_)))",
@@ -87,25 +87,25 @@ test "add_and_remove" {
 
   // Test 2: Add elements
   set.add(1)
-  inspect(set, content="{1, 2, 3, 6, 7, 8, 9}")!
+  inspect!(set, content="{1, 2, 3, 6, 7, 8, 9}")
   inspect(
     set.debug_tree(),
     content="([3]6,([2]2,([1]1,_,_),([1]3,_,_)),([2]8,([1]7,_,_),([1]9,_,_)))",
   )!
   set.add(5)
-  inspect(set, content="{1, 2, 3, 5, 6, 7, 8, 9}")!
+  inspect!(set, content="{1, 2, 3, 5, 6, 7, 8, 9}")
   inspect(
     set.debug_tree(),
     content="([4]6,([3]2,([1]1,_,_),([2]3,_,([1]5,_,_))),([2]8,([1]7,_,_),([1]9,_,_)))",
   )!
   set.add(10)
-  inspect(set, content="{1, 2, 3, 5, 6, 7, 8, 9, 10}")!
+  inspect!(set, content="{1, 2, 3, 5, 6, 7, 8, 9, 10}")
   inspect(
     set.debug_tree(),
     content="([4]6,([3]2,([1]1,_,_),([2]3,_,([1]5,_,_))),([3]8,([1]7,_,_),([2]9,_,([1]10,_,_))))",
   )!
   set.add(4)
-  inspect(set, content="{1, 2, 3, 4, 5, 6, 7, 8, 9, 10}")!
+  inspect!(set, content="{1, 2, 3, 4, 5, 6, 7, 8, 9, 10}")
   inspect(
     set.debug_tree(),
     content="([4]6,([3]2,([1]1,_,_),([2]4,([1]3,_,_),([1]5,_,_))),([3]8,([1]7,_,_),([2]9,_,([1]10,_,_))))",
@@ -113,13 +113,13 @@ test "add_and_remove" {
 
   // Test 3: Add and remove the same element
   set.add(11)
-  inspect(set, content="{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11}")!
+  inspect!(set, content="{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11}")
   inspect(
     set.debug_tree(),
     content="([4]6,([3]2,([1]1,_,_),([2]4,([1]3,_,_),([1]5,_,_))),([3]8,([1]7,_,_),([2]10,([1]9,_,_),([1]11,_,_))))",
   )!
   set.remove(11)
-  inspect(set, content="{1, 2, 3, 4, 5, 6, 7, 8, 9, 10}")!
+  inspect!(set, content="{1, 2, 3, 4, 5, 6, 7, 8, 9, 10}")
   inspect(
     set.debug_tree(),
     content="([4]6,([3]2,([1]1,_,_),([2]4,([1]3,_,_),([1]5,_,_))),([3]8,([1]7,_,_),([2]10,([1]9,_,_),_)))",
@@ -127,98 +127,98 @@ test "add_and_remove" {
 
   // Test 4: Remove an element that doesn't exist
   set.remove(12)
-  inspect(set, content="{1, 2, 3, 4, 5, 6, 7, 8, 9, 10}")!
+  inspect!(set, content="{1, 2, 3, 4, 5, 6, 7, 8, 9, 10}")
 
   // Test 5: Add an element that already exists
   set.add(10)
-  inspect(set, content="{1, 2, 3, 4, 5, 6, 7, 8, 9, 10}")!
+  inspect!(set, content="{1, 2, 3, 4, 5, 6, 7, 8, 9, 10}")
 
   // Test 6: Remove all elements
   set.remove(1)
-  inspect(set, content="{2, 3, 4, 5, 6, 7, 8, 9, 10}")!
+  inspect!(set, content="{2, 3, 4, 5, 6, 7, 8, 9, 10}")
   inspect(
     set.debug_tree(),
     content="([4]6,([3]4,([2]2,_,([1]3,_,_)),([1]5,_,_)),([3]8,([1]7,_,_),([2]10,([1]9,_,_),_)))",
   )!
   set.remove(2)
-  inspect(set, content="{3, 4, 5, 6, 7, 8, 9, 10}")!
+  inspect!(set, content="{3, 4, 5, 6, 7, 8, 9, 10}")
   inspect(
     set.debug_tree(),
     content="([4]6,([2]4,([1]3,_,_),([1]5,_,_)),([3]8,([1]7,_,_),([2]10,([1]9,_,_),_)))",
   )!
   set.remove(3)
-  inspect(set, content="{4, 5, 6, 7, 8, 9, 10}")!
+  inspect!(set, content="{4, 5, 6, 7, 8, 9, 10}")
   inspect(
     set.debug_tree(),
     content="([4]6,([2]4,_,([1]5,_,_)),([3]8,([1]7,_,_),([2]10,([1]9,_,_),_)))",
   )!
   set.remove(4)
-  inspect(set, content="{5, 6, 7, 8, 9, 10}")!
+  inspect!(set, content="{5, 6, 7, 8, 9, 10}")
   inspect(
     set.debug_tree(),
     content="([3]8,([2]6,([1]5,_,_),([1]7,_,_)),([2]10,([1]9,_,_),_))",
   )!
   set.remove(5)
-  inspect(set, content="{6, 7, 8, 9, 10}")!
+  inspect!(set, content="{6, 7, 8, 9, 10}")
   inspect(
     set.debug_tree(),
     content="([3]8,([2]6,_,([1]7,_,_)),([2]10,([1]9,_,_),_))",
   )!
   set.remove(6)
-  inspect(set, content="{7, 8, 9, 10}")!
-  inspect(set.debug_tree(), content="([3]8,([1]7,_,_),([2]10,([1]9,_,_),_))")!
+  inspect!(set, content="{7, 8, 9, 10}")
+  inspect!(set.debug_tree(), content="([3]8,([1]7,_,_),([2]10,([1]9,_,_),_))")
   set.remove(7)
-  inspect(set, content="{8, 9, 10}")!
-  inspect(set.debug_tree(), content="([2]9,([1]8,_,_),([1]10,_,_))")!
+  inspect!(set, content="{8, 9, 10}")
+  inspect!(set.debug_tree(), content="([2]9,([1]8,_,_),([1]10,_,_))")
   set.remove(8)
-  inspect(set, content="{9, 10}")!
-  inspect(set.debug_tree(), content="([2]9,_,([1]10,_,_))")!
+  inspect!(set, content="{9, 10}")
+  inspect!(set.debug_tree(), content="([2]9,_,([1]10,_,_))")
   set.remove(9)
-  inspect(set, content="{10}")!
-  inspect(set.debug_tree(), content="([1]10,_,_)")!
+  inspect!(set, content="{10}")
+  inspect!(set.debug_tree(), content="([1]10,_,_)")
   set.remove(10)
-  inspect(set, content="{}")!
-  inspect(set.debug_tree(), content="_")!
+  inspect!(set, content="{}")
+  inspect!(set.debug_tree(), content="_")
   let set = of([7, 2, 9, 4, 5, 6, 3, 1])
   set.remove(3)
-  inspect(set, content="{1, 2, 4, 5, 6, 7, 9}")!
+  inspect!(set, content="{1, 2, 4, 5, 6, 7, 9}")
   inspect(
     set.debug_tree(),
     content="([3]5,([2]2,([1]1,_,_),([1]4,_,_)),([2]7,([1]6,_,_),([1]9,_,_)))",
   )!
   set.remove(2)
-  inspect(set, content="{1, 4, 5, 6, 7, 9}")!
+  inspect!(set, content="{1, 4, 5, 6, 7, 9}")
   inspect(
     set.debug_tree(),
     content="([3]5,([2]4,([1]1,_,_),_),([2]7,([1]6,_,_),([1]9,_,_)))",
   )!
   set.remove(5)
-  inspect(set, content="{1, 4, 6, 7, 9}")!
+  inspect!(set, content="{1, 4, 6, 7, 9}")
   inspect(
     set.debug_tree(),
     content="([3]6,([2]4,([1]1,_,_),_),([2]7,_,([1]9,_,_)))",
   )!
   set.remove(9)
-  inspect(set, content="{1, 4, 6, 7}")!
-  inspect(set.debug_tree(), content="([3]6,([2]4,([1]1,_,_),_),([1]7,_,_))")!
+  inspect!(set, content="{1, 4, 6, 7}")
+  inspect!(set.debug_tree(), content="([3]6,([2]4,([1]1,_,_),_),([1]7,_,_))")
   set.remove(1)
-  inspect(set, content="{4, 6, 7}")!
-  inspect(set.debug_tree(), content="([2]6,([1]4,_,_),([1]7,_,_))")!
+  inspect!(set, content="{4, 6, 7}")
+  inspect!(set.debug_tree(), content="([2]6,([1]4,_,_),([1]7,_,_))")
   set.remove(7)
-  inspect(set, content="{4, 6}")!
-  inspect(set.debug_tree(), content="([2]6,([1]4,_,_),_)")!
+  inspect!(set, content="{4, 6}")
+  inspect!(set.debug_tree(), content="([2]6,([1]4,_,_),_)")
   set.remove(4)
-  inspect(set, content="{6}")!
-  inspect(set.debug_tree(), content="([1]6,_,_)")!
+  inspect!(set, content="{6}")
+  inspect!(set.debug_tree(), content="([1]6,_,_)")
   set.remove(6)
-  inspect(set, content="{}")!
-  inspect(set.debug_tree(), content="_")!
+  inspect!(set, content="{}")
+  inspect!(set.debug_tree(), content="_")
 }
 
 test "remove on empty set" {
   let set : T[Int] = new()
   set.remove(0)
-  inspect(set.size, content="0")!
+  inspect!(set.size, content="0")
 }
 
 test "join" {
@@ -230,34 +230,34 @@ test "join" {
   )!
   let l = of([3, 2, 5, 1, 4])
   let r = of([7])
-  inspect(join(l.root, 6, r.root), content="{1, 2, 3, 4, 5, 6, 7}")!
+  inspect!(join(l.root, 6, r.root), content="{1, 2, 3, 4, 5, 6, 7}")
   let l = of([3, 2, 5, 1, 4])
   let r = of([])
-  inspect(join(l.root, 6, r.root), content="{1, 2, 3, 4, 5, 6}")!
+  inspect!(join(l.root, 6, r.root), content="{1, 2, 3, 4, 5, 6}")
   let l = of([])
   let r = of([])
-  inspect(join(l.root, 6, r.root), content="{6}")!
+  inspect!(join(l.root, 6, r.root), content="{6}")
   let l = of([])
   let r = of([7, 8, 9, 10, 11, 12])
-  inspect(join(l.root, 6, r.root), content="{6, 7, 8, 9, 10, 11, 12}")!
+  inspect!(join(l.root, 6, r.root), content="{6, 7, 8, 9, 10, 11, 12}")
 }
 
 test "split" {
   let (l, r) = split(of([7, 2, 9, 4, 5, 6, 3, 8, 1]).root, 5)
-  inspect(l, content="Some({1, 2, 3, 4})")!
-  inspect(r, content="Some({6, 7, 8, 9})")!
+  inspect!(l, content="Some({1, 2, 3, 4})")
+  inspect!(r, content="Some({6, 7, 8, 9})")
   let (l, r) = split(of([7, 2, 9, 4, 5, 6, 3, 8, 1]).root, 0)
-  inspect(l, content="None")!
-  inspect(r, content="Some({1, 2, 3, 4, 5, 6, 7, 8, 9})")!
+  inspect!(l, content="None")
+  inspect!(r, content="Some({1, 2, 3, 4, 5, 6, 7, 8, 9})")
   let (l, r) = split(of([7, 2, 9, 4, 5, 6, 3, 8, 1]).root, 10)
-  inspect(l, content="Some({1, 2, 3, 4, 5, 6, 7, 8, 9})")!
-  inspect(r, content="None")!
+  inspect!(l, content="Some({1, 2, 3, 4, 5, 6, 7, 8, 9})")
+  inspect!(r, content="None")
   let (l, r) = split(of([7, 2, 9, 4, 5, 6, 3, 8, 1]).root, 4)
-  inspect(l, content="Some({1, 2, 3})")!
-  inspect(r, content="Some({5, 6, 7, 8, 9})")!
+  inspect!(l, content="Some({1, 2, 3})")
+  inspect!(r, content="Some({5, 6, 7, 8, 9})")
   let (l, r) = split(of([]).root, 7)
-  inspect(l, content="None")!
-  inspect(r, content="None")!
+  inspect!(l, content="None")
+  inspect!(r, content="None")
   let (l, r) = split(
     of(
       [
@@ -286,7 +286,7 @@ test "union" {
   let set1 = of([1, 2, 3])
   let set2 = of([4, 5, 6])
   let set3 = set1.union(set2)
-  inspect(set3, content="{1, 2, 3, 4, 5, 6}")!
+  inspect!(set3, content="{1, 2, 3, 4, 5, 6}")
   inspect(
     set3.debug_tree(),
     content="([3]3,([2]2,([1]1,_,_),_),([2]5,([1]4,_,_),([1]6,_,_)))",
@@ -296,34 +296,34 @@ test "union" {
   let set1 = of([1, 2, 3])
   let set2 = of([2, 3, 4])
   let set3 = set1.union(set2)
-  inspect(set3, content="{1, 2, 3, 4}")!
-  inspect(set3.debug_tree(), content="([3]2,([1]1,_,_),([2]3,_,([1]4,_,_)))")!
+  inspect!(set3, content="{1, 2, 3, 4}")
+  inspect!(set3.debug_tree(), content="([3]2,([1]1,_,_),([2]3,_,([1]4,_,_)))")
 
   // Test 3: Union of two sets where one is a subset of the other
   let set1 = of([1, 2, 3])
   let set2 = of([2, 3])
   let set3 = set1.union(set2)
-  inspect(set3, content="{1, 2, 3}")!
-  inspect(set3.debug_tree(), content="([2]2,([1]1,_,_),([1]3,_,_))")!
+  inspect!(set3, content="{1, 2, 3}")
+  inspect!(set3.debug_tree(), content="([2]2,([1]1,_,_),([1]3,_,_))")
 
   // Test 4: Union of two empty sets
   let set1 : T[Int] = new()
   let set2 = new()
   let set3 = set1.union(set2)
-  inspect(set3, content="{}")!
-  inspect(set3.debug_tree(), content="_")!
+  inspect!(set3, content="{}")
+  inspect!(set3.debug_tree(), content="_")
 
   // Test 5: Union of an empty set with a non-empty set
   let set1 = of([1, 2, 3])
   let set2 = of([])
   let set3 = set1.union(set2)
-  inspect(set3, content="{1, 2, 3}")!
-  inspect(set3.debug_tree(), content="([2]2,([1]1,_,_),([1]3,_,_))")!
+  inspect!(set3, content="{1, 2, 3}")
+  inspect!(set3.debug_tree(), content="([2]2,([1]1,_,_),([1]3,_,_))")
   let set1 = of([])
   let set2 = of([1, 2, 3])
   let set3 = set1.union(set2)
-  inspect(set3, content="{1, 2, 3}")!
-  inspect(set3.debug_tree(), content="([2]2,([1]1,_,_),([1]3,_,_))")!
+  inspect!(set3, content="{1, 2, 3}")
+  inspect!(set3.debug_tree(), content="([2]2,([1]1,_,_),([1]3,_,_))")
 
   // Test 6: Union of two large sets with no common elements
   let set1 = of([1, 2, 3, 4, 5, 6, 7, 8, 9, 10])
@@ -342,7 +342,7 @@ test "union" {
   let set1 = of([1, 2, 3, 4, 5, 6, 7, 8, 9, 10])
   let set2 = of([6, 7, 8, 9, 10, 11, 12, 13, 14, 15])
   let set3 = set1.union(set2)
-  inspect(set3, content="{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15}")!
+  inspect!(set3, content="{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15}")
   inspect(
     set3.debug_tree(),
     content="([5]11,([4]4,([2]2,([1]1,_,_),([1]3,_,_)),([3]8,([2]6,([1]5,_,_),([1]7,_,_)),([2]9,_,([1]10,_,_)))),([3]13,([1]12,_,_),([2]14,_,([1]15,_,_))))",
@@ -352,7 +352,7 @@ test "union" {
   let set1 = of([1, 2, 3, 4, 5, 6, 7, 8, 9, 10])
   let set2 = of([6, 7, 8, 9, 10])
   let set3 = set1.union(set2)
-  inspect(set3, content="{1, 2, 3, 4, 5, 6, 7, 8, 9, 10}")!
+  inspect!(set3, content="{1, 2, 3, 4, 5, 6, 7, 8, 9, 10}")
   inspect(
     set3.debug_tree(),
     content="([4]4,([2]2,([1]1,_,_),([1]3,_,_)),([3]8,([2]6,([1]5,_,_),([1]7,_,_)),([2]9,_,([1]10,_,_))))",
@@ -360,28 +360,31 @@ test "union" {
 }
 
 test "disjoint" {
-  inspect(of([1, 2, 3]).disjoint(of([4, 5, 6])), content="true")!
-  inspect(of([1, 2, 3]).subset(of([3, 4, 5])), content="false")!
+  inspect!(of([1, 2, 3]).disjoint(of([4, 5, 6])), content="true")
+  inspect!(of([1, 2, 3]).subset(of([3, 4, 5])), content="false")
 }
 
 test "subset" {
-  inspect(of([1, 2, 3]).subset(of([7, 2, 9, 4, 5, 6, 3, 8, 1])), content="true")!
-  inspect(of([1, 2, 3]).subset(of([10, 11, 12, 13, 14])), content="false")!
+  inspect!(
+    of([1, 2, 3]).subset(of([7, 2, 9, 4, 5, 6, 3, 8, 1])),
+    content="true",
+  )
+  inspect!(of([1, 2, 3]).subset(of([10, 11, 12, 13, 14])), content="false")
 }
 
 test "diff" {
-  inspect(of([1, 2, 3]).diff(of([4, 5, 1])), content="{2, 3}")!
+  inspect!(of([1, 2, 3]).diff(of([4, 5, 1])), content="{2, 3}")
 }
 
 test "intersect" {
-  inspect(of([3, 4, 5]).intersect(of([4, 5, 6])), content="{4, 5}")!
+  inspect!(of([3, 4, 5]).intersect(of([4, 5, 6])), content="{4, 5}")
 }
 
 test "each" {
   let set = of([7, 2, 9, 4, 5, 6, 3, 8, 1])
   let result = Buffer::new(size_hint=10)
   set.each(fn(x) { result.write_string(x.to_string()) })
-  inspect(result.to_string(), content="123456789")!
+  inspect!(result.to_string(), content="123456789")
   let set : T[Int] = new()
   set.each(fn(_x) { abort("Impossible to reach") })
 }
@@ -398,17 +401,17 @@ test "eachi" {
 
 test "iter" {
   let set = of([3, 2, 1])
-  inspect(set.iter().collect(), content="[1, 2, 3]")!
-  inspect(set.iter().take(2).collect(), content="[1, 2]")!
+  inspect!(set.iter().collect(), content="[1, 2, 3]")
+  inspect!(set.iter().take(2).collect(), content="[1, 2]")
 }
 
 test "contains" {
   let set = of([7, 2, 9, 4, 6, 3, 8, 1])
-  inspect(set.contains(5), content="false")!
+  inspect!(set.contains(5), content="false")
   set.add(5)
-  inspect(set.contains(5), content="true")!
-  inspect(of([7, 2, 9, 4, 6, 3, 8, 1]).contains(5), content="false")!
-  inspect(of([]).contains(1), content="false")!
+  inspect!(set.contains(5), content="true")
+  inspect!(of([7, 2, 9, 4, 6, 3, 8, 1]).contains(5), content="false")
+  inspect!(of([]).contains(1), content="false")
 }
 
 test "to_array" {
@@ -416,12 +419,12 @@ test "to_array" {
     of([7, 2, 9, 4, 5, 6, 3, 8, 1]).to_array(),
     content="[1, 2, 3, 4, 5, 6, 7, 8, 9]",
   )!
-  inspect((of([]) : T[Int]).to_array(), content="[]")!
+  inspect!((of([]) : T[Int]).to_array(), content="[]")
 }
 
 test "to_string" {
-  inspect(of([1, 2, 3, 4, 5]), content="{1, 2, 3, 4, 5}")!
-  inspect((of([]) : T[Int]), content="{}")!
+  inspect!(of([1, 2, 3, 4, 5]), content="{1, 2, 3, 4, 5}")
+  inspect!((of([]) : T[Int]), content="{}")
 }
 
 test "from_array" {
@@ -432,42 +435,42 @@ test "from_array" {
 }
 
 test "is_empty" {
-  inspect((of([]) : T[Int]).is_empty(), content="true")!
-  inspect(of([1]).is_empty(), content="false")!
+  inspect!((of([]) : T[Int]).is_empty(), content="true")
+  inspect!(of([1]).is_empty(), content="false")
 }
 
 test "size" {
-  inspect(of([1, 2, 3, 4, 5]).size(), content="5")!
-  inspect(of([1]).size(), content="1")!
-  inspect((of([]) : T[Int]).size(), content="0")!
+  inspect!(of([1, 2, 3, 4, 5]).size(), content="5")
+  inspect!(of([1]).size(), content="1")
+  inspect!((of([]) : T[Int]).size(), content="0")
 }
 
 test "singleton" {
-  inspect(singleton(1).size(), content="1")!
-  inspect(singleton(1).contains(1), content="true")!
-  inspect(singleton(1).contains(2), content="false")!
+  inspect!(singleton(1).size(), content="1")
+  inspect!(singleton(1).contains(1), content="true")
+  inspect!(singleton(1).contains(2), content="false")
 }
 
 test "deep_clone" {
   let set = of([1, 2, 3, 4, 5])
   let clone = set.deep_clone()
-  inspect(clone, content="{1, 2, 3, 4, 5}")!
-  inspect(set.debug_tree() == clone.debug_tree(), content="true")!
+  inspect!(clone, content="{1, 2, 3, 4, 5}")
+  inspect!(set.debug_tree() == clone.debug_tree(), content="true")
   let set : T[Int] = of([])
   let clone = set.deep_clone()
-  inspect(clone, content="{}")!
-  inspect(set.debug_tree() == clone.debug_tree(), content="true")!
+  inspect!(clone, content="{}")
+  inspect!(set.debug_tree() == clone.debug_tree(), content="true")
 }
 
 test "debug_write" {
   let buf = Buffer::new(size_hint=100)
   let set = of([1, 2, 3, 4, 5])
   set.debug_write(buf)
-  inspect(buf.to_string(), content="{1, 2, 3, 4, 5}")!
+  inspect!(buf.to_string(), content="{1, 2, 3, 4, 5}")
   let buf = Buffer::new(size_hint=100)
   let set : T[Int] = of([])
   set.debug_write(buf)
-  inspect(buf.to_string(), content="{}")!
+  inspect!(buf.to_string(), content="{}")
 }
 
 test "mix_everything" {
@@ -475,31 +478,31 @@ test "mix_everything" {
   let set1 = of([1, 2, 3, 4, 5])
   let set2 = of([4, 5, 6, 7, 8])
   set1.add(6)
-  inspect(set1, content="{1, 2, 3, 4, 5, 6}")!
+  inspect!(set1, content="{1, 2, 3, 4, 5, 6}")
   set1.remove(6)
-  inspect(set1, content="{1, 2, 3, 4, 5}")!
+  inspect!(set1, content="{1, 2, 3, 4, 5}")
   let set3 = set1.union(set2)
-  inspect(set3, content="{1, 2, 3, 4, 5, 6, 7, 8}")!
+  inspect!(set3, content="{1, 2, 3, 4, 5, 6, 7, 8}")
   let set4 = set1.diff(set2)
-  inspect(set4, content="{1, 2, 3}")!
+  inspect!(set4, content="{1, 2, 3}")
   let set5 = set1.intersect(set2)
-  inspect(set5, content="{4, 5}")!
-  inspect(set1.subset(set3), content="true")!
+  inspect!(set5, content="{4, 5}")
+  inspect!(set1.subset(set3), content="true")
   set3.remove(3)
-  inspect(set3, content="{1, 2, 4, 5, 6, 7, 8}")!
-  inspect(set3.size(), content="7")!
-  inspect(set3.is_empty(), content="false")!
-  inspect(set3.contains(1), content="true")!
-  inspect(set3.contains(3), content="false")!
-  inspect(set3.disjoint(set1), content="false")!
+  inspect!(set3, content="{1, 2, 4, 5, 6, 7, 8}")
+  inspect!(set3.size(), content="7")
+  inspect!(set3.is_empty(), content="false")
+  inspect!(set3.contains(1), content="true")
+  inspect!(set3.contains(3), content="false")
+  inspect!(set3.disjoint(set1), content="false")
   let set6 = set3.union(of([]))
-  inspect(set6, content="{1, 2, 4, 5, 6, 7, 8}")!
+  inspect!(set6, content="{1, 2, 4, 5, 6, 7, 8}")
   let set7 = set3.union(of([12, 13, 14, 33, 22]))
-  inspect(set7, content="{1, 2, 4, 5, 6, 7, 8, 12, 13, 14, 22, 33}")!
+  inspect!(set7, content="{1, 2, 4, 5, 6, 7, 8, 12, 13, 14, 22, 33}")
   for i = 1; i <= 5; i = i + 1 {
     set7.remove(i)
   }
-  inspect(set7, content="{6, 7, 8, 12, 13, 14, 22, 33}")!
+  inspect!(set7, content="{6, 7, 8, 12, 13, 14, 22, 33}")
   for i = 6; i <= 33; i = i + 1 {
     set7.remove(i)
   }
@@ -524,8 +527,8 @@ test "mix_everything" {
 test "op_equal" {
   let a = of([1, 2, 3])
   let b = of([4, 5, 6])
-  inspect(a == a, content="true")!
-  inspect(b == b, content="true")!
-  inspect(a == b, content="false")!
-  inspect(b == a, content="false")!
+  inspect!(a == a, content="true")
+  inspect!(b == b, content="true")
+  inspect!(a == b, content="false")
+  inspect!(b == a, content="false")
 }

@@ -49,5 +49,5 @@ test "SparseArray::iter" {
       buf.write_string(x.to_string())
     },
   )
-  inspect(buf, content="0, 1, 3, 31")!
+  inspect!(buf, content="0, 1, 3, 31")
 }

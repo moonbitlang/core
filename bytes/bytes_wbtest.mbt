@@ -15,11 +15,11 @@
 test "Bytes::from_array" {
   let arr = [65, 00, 66, 00, 67, 00]
   let b = Bytes::from_array(arr)
-  inspect(b, content="ABC")!
+  inspect!(b, content="ABC")
 }
 
 test "Bytes::of" {
   let arr : FixedArray[Int] = [65, 00, 66, 00, 67, 00]
   let b = Bytes::of(arr)
-  inspect(b, content="ABC")!
+  inspect!(b, content="ABC")
 }

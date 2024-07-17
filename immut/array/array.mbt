@@ -19,8 +19,8 @@ pub fn ImmutableVec::empty[T]() -> ImmutableVec[T] {
 test "is_empty" {
   let v = of([1, 2, 3, 4, 5])
   let ve : ImmutableVec[Int] = ImmutableVec::empty()
-  inspect(is_empty(v), content="false")!
-  inspect(is_empty(ve), content="true")!
+  inspect!(is_empty(v), content="false")
+  inspect!(is_empty(ve), content="true")
 }
 
 pub fn to_string[T : Show](self : ImmutableVec[T]) -> String {
@@ -40,8 +40,8 @@ pub fn to_string[T : Show](self : ImmutableVec[T]) -> String {
 test "to_string" {
   let v = of([1, 2, 3, 4, 5])
   let ve : ImmutableVec[Int] = ImmutableVec::empty()
-  inspect(v, content="ImmutableVec::[1, 2, 3, 4, 5]")!
-  inspect(ve, content="ImmutableVec::[]")!
+  inspect!(v, content="ImmutableVec::[1, 2, 3, 4, 5]")
+  inspect!(ve, content="ImmutableVec::[]")
 }
 
 pub fn is_empty[T](v : ImmutableVec[T]) -> Bool {
@@ -56,8 +56,8 @@ pub fn to_array[T](self : ImmutableVec[T]) -> Array[T] {
 
 test "to_array" {
   let v = of([1, 2, 3, 4])
-  inspect(v.to_array().to_string(), content="[1, 2, 3, 4]")!
-  inspect(v.push(5).to_array().to_string(), content="[1, 2, 3, 4, 5]")!
+  inspect!(v.to_array().to_string(), content="[1, 2, 3, 4]")
+  inspect!(v.push(5).to_array().to_string(), content="[1, 2, 3, 4, 5]")
 }
 
 pub fn iter[T](self : ImmutableVec[T]) -> Iter[T] {
@@ -79,10 +79,10 @@ test "iter" {
   let buf = Buffer::new(size_hint=20)
   let v = of([1, 2, 3])
   v.iter().each(fn(e) { buf.write_string("[\(e)]") })
-  inspect(buf, content="[1][2][3]")!
+  inspect!(buf, content="[1][2][3]")
   buf.reset()
   v.iter().take(2).each(fn(e) { buf.write_string("[\(e)]") })
-  inspect(buf, content="[1][2]")!
+  inspect!(buf, content="[1][2]")
 }
 
 pub fn length[T](v : ImmutableVec[T]) -> Int {
@@ -92,8 +92,8 @@ pub fn length[T](v : ImmutableVec[T]) -> Int {
 test "length" {
   let v = of([1, 2, 3, 4, 5])
   let ve : ImmutableVec[Int] = ImmutableVec::empty()
-  inspect(length(v), content="5")!
-  inspect(length(ve), content="0")!
+  inspect!(length(v), content="5")
+  inspect!(length(ve), content="0")
 }
 
 pub fn copy[T](self : ImmutableVec[T]) -> ImmutableVec[T] {
@@ -112,13 +112,13 @@ pub fn copy[T](self : ImmutableVec[T]) -> ImmutableVec[T] {
 test "copy" {
   let v = of([1, 2, 3, 4, 5])
   let vc = v.copy()
-  inspect(vc, content="ImmutableVec::[1, 2, 3, 4, 5]")!
-  inspect(v == vc, content="true")!
+  inspect!(vc, content="ImmutableVec::[1, 2, 3, 4, 5]")
+  inspect!(v == vc, content="true")
   @test.is_false(physical_equal(v, vc))!
   let v = ImmutableVec::empty()
   let vc : ImmutableVec[Int] = v.copy()
-  inspect(vc, content="ImmutableVec::[]")!
-  inspect(v == vc, content="true")!
+  inspect!(vc, content="ImmutableVec::[]")
+  inspect!(v == vc, content="true")
   @test.is_false(physical_equal(v, vc))!
 }
 
@@ -141,11 +141,11 @@ pub fn op_get[T](self : ImmutableVec[T], index : Int) -> T {
 
 test "op_get" {
   let v = of([1, 2, 3, 4, 5])
-  inspect(v[0], content="1")!
-  inspect(v[1], content="2")!
-  inspect(v[2], content="3")!
-  inspect(v[3], content="4")!
-  inspect(v[4], content="5")!
+  inspect!(v[0], content="1")
+  inspect!(v[1], content="2")
+  inspect!(v[2], content="3")
+  inspect!(v[3], content="4")
+  inspect!(v[4], content="5")
 }
 
 /// Set a value at the given index (immutable).
@@ -182,8 +182,8 @@ test "set" {
   let v = of([1, 2, 3, 4, 5])
   let v1 = v.set(1, 10)
   let v2 = v.set(2, 10)
-  inspect(v1, content="ImmutableVec::[1, 10, 3, 4, 5]")!
-  inspect(v2, content="ImmutableVec::[1, 2, 10, 4, 5]")!
+  inspect!(v1, content="ImmutableVec::[1, 10, 3, 4, 5]")
+  inspect!(v2, content="ImmutableVec::[1, 2, 10, 4, 5]")
 }
 
 /// Push a value to the end of the array.
@@ -211,10 +211,10 @@ pub fn push[T](self : ImmutableVec[T], value : T) -> ImmutableVec[T] {
 
 test "push" {
   let v = ImmutableVec::empty().push(1).push(2).push(3)
-  inspect(v, content="ImmutableVec::[1, 2, 3]")!
-  inspect(v.push(1), content="ImmutableVec::[1, 2, 3, 1]")!
-  inspect(v.push(2), content="ImmutableVec::[1, 2, 3, 2]")!
-  inspect(v.push(3), content="ImmutableVec::[1, 2, 3, 3]")!
+  inspect!(v, content="ImmutableVec::[1, 2, 3]")
+  inspect!(v.push(1), content="ImmutableVec::[1, 2, 3, 1]")
+  inspect!(v.push(2), content="ImmutableVec::[1, 2, 3, 2]")
+  inspect!(v.push(3), content="ImmutableVec::[1, 2, 3, 3]")
 }
 
 /// Create a persistent array from an array.
@@ -230,7 +230,7 @@ pub fn ImmutableVec::from_array[T](arr : Array[T]) -> ImmutableVec[T] {
 test "from_array" {
   let v = of([1, 1, 4, 5, 1, 4])
   let vv = ImmutableVec::from_array(Array::make(30, 1))
-  inspect(v, content="ImmutableVec::[1, 1, 4, 5, 1, 4]")!
+  inspect!(v, content="ImmutableVec::[1, 1, 4, 5, 1, 4]")
   inspect(
     vv,
     content="ImmutableVec::[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]",
@@ -260,7 +260,7 @@ test "iter" {
   let v = of([1, 2, 3, 4, 5])
   let mut s = 0
   v.each(fn(e) { s = s + e })
-  inspect(s, content="15")!
+  inspect!(s, content="15")
   let v : ImmutableVec[Int] = ImmutableVec::empty()
   v.each(fn(_e) { abort("never reach") })
 }
@@ -300,10 +300,10 @@ test "iteri" {
   let v = of([1, 2, 3, 4, 5])
   let mut s = 0
   v.eachi(fn(i, e) { s = s + i * e })
-  inspect(s, content="40")!
+  inspect!(s, content="40")
   let vec = []
   v.eachi(fn(i, _e) { vec.push(i) })
-  inspect(vec, content="[0, 1, 2, 3, 4]")!
+  inspect!(vec, content="[0, 1, 2, 3, 4]")
 }
 
 pub fn op_equal[T : Eq](
@@ -321,11 +321,11 @@ test "op_equal" {
   let v4 = of([1, 2, 3, 4])
   let v5 = ImmutableVec::new(5, 1)
   let v6 = of([1, 1, 1, 1, 1])
-  inspect(v0 == ImmutableVec::empty(), content="true")!
-  inspect(v1 == v2, content="true")!
-  inspect(v1 == v3, content="false")!
-  inspect(v1 == v4, content="false")!
-  inspect(v5 == v6, content="true")!
+  inspect!(v0 == ImmutableVec::empty(), content="true")
+  inspect!(v1 == v2, content="true")
+  inspect!(v1 == v3, content="false")
+  inspect!(v1 == v4, content="false")
+  inspect!(v5 == v6, content="true")
 }
 
 /// Fold the array from left to right.
@@ -350,8 +350,8 @@ pub fn fold_left[T](self : ImmutableVec[T], f : (T, T) -> T, ~init : T) -> T {
 test "fold_left" {
   let e = ImmutableVec::empty()
   let v = of([1, 2, 3, 4, 5])
-  inspect(e.fold_left(fn(a, b) { a + b }, init=0), content="0")!
-  inspect(v.fold_left(fn(a, b) { a + b }, init=0), content="15")!
+  inspect!(e.fold_left(fn(a, b) { a + b }, init=0), content="0")
+  inspect!(v.fold_left(fn(a, b) { a + b }, init=0), content="15")
 }
 
 /// Fold the array from right to left.
@@ -375,10 +375,10 @@ pub fn fold_right[T](self : ImmutableVec[T], f : (T, T) -> T, ~init : T) -> T {
 
 test "fold_right" {
   let e = ImmutableVec::empty()
-  inspect(e.fold_right(fn(a, b) { a + b }, init=0), content="0")!
+  inspect!(e.fold_right(fn(a, b) { a + b }, init=0), content="0")
   let v = of([1, 2, 3, 4, 5])
-  inspect(e.fold_left(fn(a, b) { a + b }, init=0), content="0")!
-  inspect(v.fold_right(fn(a, b) { a + b }, init=0), content="15")!
+  inspect!(e.fold_left(fn(a, b) { a + b }, init=0), content="0")
+  inspect!(v.fold_right(fn(a, b) { a + b }, init=0), content="15")
 }
 
 /// Map a function over the array.
@@ -402,7 +402,7 @@ pub fn map[T, U](self : ImmutableVec[T], f : (T) -> U) -> ImmutableVec[U] {
 
 test "map" {
   let v = of([1, 2, 3, 4, 5])
-  inspect(v.map(fn(e) { e * 2 }), content="ImmutableVec::[2, 4, 6, 8, 10]")!
+  inspect!(v.map(fn(e) { e * 2 }), content="ImmutableVec::[2, 4, 6, 8, 10]")
   inspect(
     v.map(fn(e) { e.to_string() }),
     content="ImmutableVec::[1, 2, 3, 4, 5]",
@@ -462,8 +462,8 @@ test "new_by_leaves" {
   )
   let v = new_by_leaves(5, fn(_s, l) { Array::make(l, 1) })
   let v2 = new_by_leaves(33, fn(_s, l) { Array::make(l, 10) })
-  inspect(e, content="ImmutableVec::[]")!
-  inspect(v, content="ImmutableVec::[1, 1, 1, 1, 1]")!
+  inspect!(e, content="ImmutableVec::[]")
+  inspect!(v, content="ImmutableVec::[1, 1, 1, 1, 1]")
   inspect(
     v2,
     content="ImmutableVec::[10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10]",
@@ -483,7 +483,7 @@ pub fn ImmutableVec::new[T](len : Int, value : T) -> ImmutableVec[T] {
 test "new" {
   let v = ImmutableVec::new(5, 1)
   let v2 = ImmutableVec::new(33, 10)
-  inspect(v, content="ImmutableVec::[1, 1, 1, 1, 1]")!
+  inspect!(v, content="ImmutableVec::[1, 1, 1, 1, 1]")
   inspect(
     v2,
     content="ImmutableVec::[10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10]",
@@ -501,7 +501,7 @@ pub fn ImmutableVec::new_with_index[T](
 test "new_with" {
   let v = new_with_index(5, fn(i) { i })
   let v2 = new_with_index(33, fn(i) { i * 10 })
-  inspect(v, content="ImmutableVec::[0, 1, 2, 3, 4]")!
+  inspect!(v, content="ImmutableVec::[0, 1, 2, 3, 4]")
   inspect(
     v2,
     content="ImmutableVec::[0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 110, 120, 130, 140, 150, 160, 170, 180, 190, 200, 210, 220, 230, 240, 250, 260, 270, 280, 290, 300, 310, 320]",
@@ -510,7 +510,7 @@ test "new_with" {
 
 test "mix" {
   let mut v = ImmutableVec::empty()
-  inspect(v.tree.is_empty_tree(), content="true")!
+  inspect!(v.tree.is_empty_tree(), content="true")
   for i = 0; i < 100; i = i + 1 {
     v = v.push(i)
   }
@@ -524,15 +524,15 @@ test "mix" {
   }
   let mut ct = 0
   v.each(fn(e) { ct = ct + e })
-  inspect(ct, content="4950")!
+  inspect!(ct, content="4950")
   v2.each(fn(e) { ct = ct + e })
-  inspect(ct, content="14850")!
+  inspect!(ct, content="14850")
   v2 = v2.map(fn(e) { e * 2 })
   let ct1 = fold_left(v2, fn(a, b) { a + b }, init=0)
   let ct2 = fold_right(v2, fn(a, b) { a + b }, init=0)
-  inspect(ct1, content="19800")!
-  inspect(ct2, content="19800")!
-  inspect(v.tree.is_empty_tree(), content="false")!
+  inspect!(ct1, content="19800")
+  inspect!(ct2, content="19800")
+  inspect!(v.tree.is_empty_tree(), content="false")
   let large_const = branching_factor * branching_factor + 1
   let mut v = ImmutableVec::empty()
   for i = 0; i < large_const; i = i + 1 {

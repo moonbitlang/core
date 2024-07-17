@@ -13,12 +13,12 @@
 // limitations under the License.
 
 test "get as null" {
-  inspect(Null |> @json.as_null, content="Some(())")!
-  inspect(True |> @json.as_null, content="None")!
-  inspect(False |> @json.as_null, content="None")!
-  inspect(Number(1.0) |> @json.as_null, content="None")!
-  inspect(String("Hello World") |> @json.as_null, content="None")!
-  inspect(Array([String("Hello World")]) |> @json.as_null, content="None")!
+  inspect!(Null |> @json.as_null, content="Some(())")
+  inspect!(True |> @json.as_null, content="None")
+  inspect!(False |> @json.as_null, content="None")
+  inspect!(Number(1.0) |> @json.as_null, content="None")
+  inspect!(String("Hello World") |> @json.as_null, content="None")
+  inspect!(Array([String("Hello World")]) |> @json.as_null, content="None")
   inspect(
     Object({ "key": String("key"), "value": Number(100.0) }) |> @json.as_null,
     content="None",

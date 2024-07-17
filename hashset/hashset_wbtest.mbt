@@ -213,10 +213,10 @@ test "iter" {
   let buf = Buffer::new(size_hint=20)
   let map = of(["a", "b", "c"])
   map.iter().each(fn(e) { buf.write_string("[\(e)]") })
-  inspect(buf, content="[a][b][c]")!
+  inspect!(buf, content="[a][b][c]")
   buf.reset()
   map.iter().take(2).each(fn(e) { buf.write_string("[\(e)]") })
-  inspect(buf, content="[a][b]")!
+  inspect!(buf, content="[a][b]")
 }
 
 test "from_array" {

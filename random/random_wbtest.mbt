@@ -14,23 +14,23 @@
 
 test "int64" {
   let rng = init_state(seed=42)
-  inspect(rng.gen_int64(), content="8084403149060065107")!
-  inspect(rng.gen_int64(), content="2279609739787318250")!
-  inspect(rng.gen_int64(), content="2226638563751653351")!
+  inspect!(rng.gen_int64(), content="8084403149060065107")
+  inspect!(rng.gen_int64(), content="2279609739787318250")
+  inspect!(rng.gen_int64(), content="2226638563751653351")
 }
 
 test "int32" {
   let rng = init_state(seed=37)
-  inspect(rng.gen_int(), content="1686431524")!
-  inspect(rng.gen_int(), content="1962882487")!
-  inspect(rng.gen_int(), content="1104074260")!
+  inspect!(rng.gen_int(), content="1686431524")
+  inspect!(rng.gen_int(), content="1962882487")
+  inspect!(rng.gen_int(), content="1104074260")
 }
 
 test "double" {
   let rng = init_state(seed=37)
-  inspect(rng.gen_double(), content="1.8280767729232197")!
-  inspect(rng.gen_double(), content="0.21014593823649855")!
-  inspect(rng.gen_double(), content="1.9690294691898182")!
+  inspect!(rng.gen_double(), content="1.8280767729232197")
+  inspect!(rng.gen_double(), content="0.21014593823649855")
+  inspect!(rng.gen_double(), content="1.9690294691898182")
 }
 
 test "FixedArray::make with zero initialization" {

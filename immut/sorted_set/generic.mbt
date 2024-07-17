@@ -29,5 +29,5 @@ test {
   of([2, 7, 1, 2, 3, 4, 5]).iter().each(
     fn { x => buf.write_string(x.to_string()) },
   )
-  inspect(buf, content="123457")!
+  inspect!(buf, content="123457")
 }

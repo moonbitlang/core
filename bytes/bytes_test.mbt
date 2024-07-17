@@ -14,7 +14,7 @@
 
 test "from_array" {
   let b = @bytes.of([65, 0, 66, 0, 67, 0])
-  inspect(b, content="ABC")!
+  inspect!(b, content="ABC")
 }
 
 test "hash" {
@@ -26,16 +26,16 @@ test "hash" {
   )
   let b3 = @bytes.of([128, 0, 0, 0, 0, 0, 0, 0])
   let b4 = @bytes.of([127, 255, 255, 255, 255, 255, 255, 255])
-  inspect(b1.hash(), content="273427599")!
-  inspect(b2.hash(), content="2013728637")!
-  inspect(b3.hash(), content="-983520567")!
-  inspect(b4.hash(), content="-1652773543")!
-  inspect(b1.hash() == b1.hash(), content="true")!
-  inspect(b2.hash() == b2.hash(), content="true")!
-  inspect(b1.hash() == b2.hash(), content="false")!
+  inspect!(b1.hash(), content="273427599")
+  inspect!(b2.hash(), content="2013728637")
+  inspect!(b3.hash(), content="-983520567")
+  inspect!(b4.hash(), content="-1652773543")
+  inspect!(b1.hash() == b1.hash(), content="true")
+  inspect!(b2.hash() == b2.hash(), content="true")
+  inspect!(b1.hash() == b2.hash(), content="false")
 }
 
 test "to_array" {
   let b = @bytes.of([65, 0, 66, 0, 67, 0])
-  inspect(b.to_array(), content="[65, 0, 66, 0, 67, 0]")!
+  inspect!(b.to_array(), content="[65, 0, 66, 0, 67, 0]")
 }

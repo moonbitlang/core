@@ -58,21 +58,21 @@ test "reserve_and_push" {
   // capacity > 0, len = 0
   let a : Deque[Int?] = new(capacity=2)
   a.push_back(Some(1))
-  inspect(a.front(), content="Some(Some(1))")!
-  inspect(a.back(), content="Some(Some(1))")!
+  inspect!(a.front(), content="Some(Some(1))")
+  inspect!(a.back(), content="Some(Some(1))")
   // capacity = 0, len = 0
   let b : Deque[Int?] = new(capacity=0)
   b.push_back(Some(1))
-  inspect(b.front(), content="Some(Some(1))")!
-  inspect(b.back(), content="Some(Some(1))")!
+  inspect!(b.front(), content="Some(Some(1))")
+  inspect!(b.back(), content="Some(Some(1))")
   // capacity > 0, len = 0
   let c : Deque[Int?] = new(capacity=2)
   c.push_front(Some(1))
-  inspect(c.front(), content="Some(Some(1))")!
-  inspect(c.back(), content="Some(Some(1))")!
+  inspect!(c.front(), content="Some(Some(1))")
+  inspect!(c.back(), content="Some(Some(1))")
   // capacity = 0, len = 0
   let d : Deque[Int?] = new(capacity=0)
   d.push_front(Some(1))
-  inspect(d.front(), content="Some(Some(1))")!
-  inspect(d.back(), content="Some(Some(1))")!
+  inspect!(d.front(), content="Some(Some(1))")
+  inspect!(d.back(), content="Some(Some(1))")
 }

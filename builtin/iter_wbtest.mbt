@@ -75,7 +75,7 @@ test "take_while3" {
   let res = iter.take_while(fn { x => x != 4 }).concat(singleton(4)).find_first(
     fn { x => x % 2 == 0 },
   )
-  inspect(res, content="Some(2)")!
+  inspect!(res, content="Some(2)")
 }
 
 test "take_while4" {
@@ -84,7 +84,7 @@ test "take_while4" {
     fn(x, y) { x + y },
     0,
   )
-  inspect(res, content="10")!
+  inspect!(res, content="10")
 }
 
 test "take_while5" {
@@ -93,7 +93,7 @@ test "take_while5" {
     fn(x, y) { x + y },
     0,
   )
-  inspect(res, content="0")!
+  inspect!(res, content="0")
 }
 
 test "drop" {
@@ -115,7 +115,7 @@ test "drop_while2" {
   let res = iter.drop_while(fn { x => x <= 3 }).concat(singleton(6)).find_first(
     fn { x => x % 3 == 0 },
   )
-  inspect(res, content="Some(6)")!
+  inspect!(res, content="Some(6)")
 }
 
 test "drop_while3" {
@@ -131,7 +131,7 @@ test "drop_while3" {
   )
   // make sure the predicate in find_first is called only once
   exb.expect(content="x")!
-  inspect(res, content="Some(3)")!
+  inspect!(res, content="Some(3)")
 }
 
 test "drop_while4" {
@@ -139,7 +139,7 @@ test "drop_while4" {
   let res = iter.drop_while(fn { x => x <= 3 }).concat(singleton(6)).drop(3).find_first(
     fn { x => x % 3 == 0 },
   )
-  inspect(res, content="None")!
+  inspect!(res, content="None")
 }
 
 test "filter" {
@@ -195,7 +195,7 @@ test "find_first" {
 test "find_first2" {
   let iter = test_from_array([1, 2, 3]).concat(test_from_array([4, 5, 6]))
   let result = iter.find_first(fn { x => x % 2 == 0 })
-  inspect(result, content="Some(2)")!
+  inspect!(result, content="Some(2)")
 }
 
 test "tap" {
@@ -244,9 +244,9 @@ test "collect" {
 
 test "range" {
   // edge cases
-  inspect((0).until(10).take(100), content="[0, 1, 2, 3, 4, 5, 6, 7, 8, 9]")!
-  inspect((100).until(10).take(100), content="[]")!
-  inspect((100).until(101, step=4), content="[100]")!
+  inspect!((0).until(10).take(100), content="[0, 1, 2, 3, 4, 5, 6, 7, 8, 9]")
+  inspect!((100).until(10).take(100), content="[]")
+  inspect!((100).until(101, step=4), content="[100]")
   // until
   inspect(
     (0).until(10).take(5).concat((0).until(2)),
@@ -270,7 +270,7 @@ test "range" {
     0.1.until(0.4, step=0.1).take(5),
     content="[0.1, 0.2, 0.30000000000000004]",
   )!
-  inspect(0.1.until(0.3, step=0.1), content="[0.1, 0.2]")!
+  inspect!(0.1.until(0.3, step=0.1), content="[0.1, 0.2]")
   inspect(
     0.1.until(0.4, step=0.1).take(5),
     content="[0.1, 0.2, 0.30000000000000004]",
@@ -280,7 +280,7 @@ test "range" {
     content="[2147483648, 2147483650, 2147483652, 2147483654, 2147483656]",
   )!
   // step < 0
-  inspect((10).until(0, step=-1).take(5), content="[10, 9, 8, 7, 6]")!
+  inspect!((10).until(0, step=-1).take(5), content="[10, 9, 8, 7, 6]")
   inspect(
     0x80000000L.until(0x80000000L - 10L, step=-2L).take(5),
     content="[2147483648, 2147483646, 2147483644, 2147483642, 2147483640]",

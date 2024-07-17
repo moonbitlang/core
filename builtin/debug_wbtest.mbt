@@ -68,7 +68,7 @@ test "debug function with Bytes" {
   let bytes = Bytes::new(10)
   let buf = Buffer::new()
   bytes.debug_write(buf)
-  inspect(buf, content="\x00\x00\x00\x00\x00")!
+  inspect!(buf, content="\x00\x00\x00\x00\x00")
   // This should cover the line where the debug function is called with Bytes
 }
 
@@ -102,7 +102,7 @@ test "debug function with Ref[Int]" {
   let ref_int : Ref[Int] = { val: 42 }
   let buf = Buffer::new()
   ref_int.debug_write(buf)
-  inspect(buf, content="{val: 42}")!
+  inspect!(buf, content="{val: 42}")
   // This should cover the line where the debug function is called with a Ref[Int]
 }
 

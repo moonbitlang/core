@@ -68,7 +68,7 @@ test "array_equal" {
   let arr3 = [1, 2, 4]
   @test.eq(arr1, arr2)!
   @test.ne(arr1, arr3)!
-  inspect([1, 2] == [1, 2, 3], content="false")!
+  inspect!([1, 2] == [1, 2, 3], content="false")
 }
 
 test "array_add" {
@@ -130,7 +130,7 @@ test "array_each_rev" {
   let arr = [1, 2, 3]
   let mut sum = 0
   arr.rev_each(fn(x) { sum = sum + x })
-  inspect(sum, content="6")!
+  inspect!(sum, content="6")
 }
 
 test "array_eachi" {
@@ -144,7 +144,7 @@ test "array_eachi_rev" {
   let arr = [1, 2, 3]
   let mut sum = 0
   arr.rev_eachi(fn(i, x) { sum = sum + i + x })
-  inspect(sum, content="9")!
+  inspect!(sum, content="9")
 }
 
 test "array_clear" {
@@ -160,7 +160,7 @@ test "array_map" {
   @test.eq(mapped[0], 2)!
   @test.eq(mapped[1], 4)!
   @test.eq(mapped[2], 6)!
-  inspect(([] : Array[Int]).map(fn(x) { x }), content="[]")!
+  inspect!(([] : Array[Int]).map(fn(x) { x }), content="[]")
 }
 
 test "array_map_inplace" {
@@ -179,7 +179,7 @@ test "array_mapi" {
   @test.eq(mapped[0], 1)!
   @test.eq(mapped[1], 3)!
   @test.eq(mapped[2], 5)!
-  inspect(([] : Array[Int]).mapi(fn(_idx, x) { x }), content="[]")!
+  inspect!(([] : Array[Int]).mapi(fn(_idx, x) { x }), content="[]")
 }
 
 test "array_mapi_inplace" {
@@ -205,8 +205,8 @@ test "array_is_empty" {
 }
 
 test "array_is_sorted" {
-  inspect([1, 2, 3].is_sorted(), content="true")!
-  inspect([1, 3, 2].is_sorted(), content="false")!
+  inspect!([1, 2, 3].is_sorted(), content="true")
+  inspect!([1, 3, 2].is_sorted(), content="false")
 }
 
 test "array_reverse" {
@@ -248,14 +248,14 @@ test "array_starts_with" {
   let arr = [1, 2, 3]
   @test.is_true(arr.starts_with([1, 2]))!
   @test.is_false(arr.starts_with([2, 3]))!
-  inspect(arr.starts_with([1, 2, 3, 4]), content="false")!
+  inspect!(arr.starts_with([1, 2, 3, 4]), content="false")
 }
 
 test "array_ends_with" {
   let arr = [1, 2, 3]
   @test.is_true(arr.ends_with([2, 3]))!
   @test.is_false(arr.ends_with([1, 2]))!
-  inspect(arr.ends_with([1, 2, 3, 4]), content="false")!
+  inspect!(arr.ends_with([1, 2, 3, 4]), content="false")
 }
 
 test "array_strip_prefix" {
@@ -319,9 +319,9 @@ test "array_resize" {
   @test.eq(arr[3], 42)!
   @test.eq(arr[4], 42)!
   arr.resize(3, 0)
-  inspect(arr.length(), content="3")!
-  inspect(arr[0], content="1")!
-  inspect(arr[1], content="2")!
+  inspect!(arr.length(), content="3")
+  inspect!(arr[0], content="1")
+  inspect!(arr[1], content="2")
 }
 
 test "array_insert" {
@@ -485,9 +485,9 @@ test "panic array_resize_negative" {
 test "array_reserve" {
   let a = [1, 2, 3]
   a.reserve_capacity(2)
-  inspect(a, content="[1, 2, 3]")!
+  inspect!(a, content="[1, 2, 3]")
   a.reserve_capacity(4)
-  inspect(a, content="[1, 2, 3]")!
+  inspect!(a, content="[1, 2, 3]")
 }
 
 test "array_split" {
@@ -498,8 +498,8 @@ test "array_split" {
 }
 
 test "array_find_index" {
-  inspect([1, 2, 3, 4, 5].find_index(fn(x) { x % 2 == 0 }), content="Some(1)")!
-  inspect([1, 2, 3, 4, 5].find_index(fn(x) { x > 5 }), content="None")!
+  inspect!([1, 2, 3, 4, 5].find_index(fn(x) { x % 2 == 0 }), content="Some(1)")
+  inspect!([1, 2, 3, 4, 5].find_index(fn(x) { x > 5 }), content="None")
 }
 
 test "shrink_to_fit" {
@@ -507,9 +507,9 @@ test "shrink_to_fit" {
   v.push(1)
   v.push(2)
   v.push(3)
-  inspect(v.capacity(), content="10")!
+  inspect!(v.capacity(), content="10")
   v.shrink_to_fit()
-  inspect(v.capacity(), content="3")!
+  inspect!(v.capacity(), content="3")
   v.shrink_to_fit()
-  inspect(v.capacity(), content="3")!
+  inspect!(v.capacity(), content="3")
 }
