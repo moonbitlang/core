@@ -12,9 +12,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-test "fromint" {
-  inspect(@int.from_int(3), content="3")!
-  inspect(@int.signum(3), content="1")!
-  inspect(@int.signum(-3), content="-1")!
-  inspect(@int.signum(0), content="0")!
+test "Bytes::from_array" {
+  let arr = [65, 00, 66, 00, 67, 00]
+  let b = Bytes::from_array(arr)
+  inspect(b, content="ABC")!
+}
+
+test "Bytes::of" {
+  let arr : FixedArray[Int] = [65, 00, 66, 00, 67, 00]
+  let b = Bytes::of(arr)
+  inspect(b, content="ABC")!
 }
