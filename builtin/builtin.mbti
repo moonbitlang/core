@@ -122,6 +122,20 @@ impl Buffer {
   write_sub_string(Self, String, Int, Int) -> Unit
 }
 
+type Hasher
+impl Hasher {
+  combine_byte(Self, Byte) -> Unit
+  combine_bytes(Self, Bytes) -> Unit
+  combine_double(Self, Double) -> Unit
+  combine_int(Self, Int) -> Unit
+  combine_int64(Self, Int64) -> Unit
+  combine_string(Self, String) -> Unit
+  combine_uint(Self, UInt) -> Unit
+  combine_uint64(Self, UInt64) -> Unit
+  finalize(Self) -> Int
+  new(~seed : Int = ..) -> Self
+}
+
 type Iter
 impl Iter {
   append[T](Self[T], T) -> Self[T]
