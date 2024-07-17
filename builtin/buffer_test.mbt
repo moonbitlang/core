@@ -29,7 +29,7 @@ test "grow_if_necessary method" {
   buf.write_string(
     "This is a test string that is longer than the initial capacity",
   )
-  @test.is_true(buf.bytes.length() >= 60)!
+  @test.is_true(buf.to_bytes().length() >= 60)!
 }
 
 test "write_sub_string method" {
@@ -63,7 +63,7 @@ test "grow_if_necessary method" {
   buf.write_string(
     "This is a test string that is longer than the initial capacity",
   )
-  @test.is_true(buf.bytes.length() >= 60)!
+  @test.is_true(buf.to_bytes().length() >= 60)!
 }
 
 test "write_sub_string method" {
@@ -103,7 +103,7 @@ test "grow_if_necessary method" {
   buf.write_string(
     "This is a test string that is longer than the initial capacity",
   )
-  @test.is_true(buf.bytes.length() >= 60)!
+  @test.is_true(buf.to_bytes().length() >= 60)!
 }
 
 test "write_sub_string method" {
