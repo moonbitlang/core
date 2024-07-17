@@ -222,3 +222,7 @@ pub fn UInt::lnot(self : UInt) -> UInt = "%u32.bitnot"
 pub fn UInt::lsl(self : UInt, shift : Int) -> UInt = "%u32.shl"
 
 pub fn UInt::lsr(self : UInt, shift : Int) -> UInt = "%u32.shr"
+
+pub fn UInt::to_uint64(self : UInt) -> UInt64 {
+  UInt64::extend_uint(self)
+}
