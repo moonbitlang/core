@@ -321,6 +321,7 @@ impl UInt {
   op_sub(UInt, UInt) -> UInt
   to_int(UInt) -> Int
   to_string(UInt) -> String
+  to_uint64(UInt) -> UInt64
   trunc_double(Double) -> UInt
 }
 impl UInt64 {
