@@ -135,10 +135,11 @@ pub fn Bytes::op_set(self : Bytes, idx : Int, val : Byte) -> Unit = "%bytes_set"
 
 pub fn Bytes::length(self : Bytes) -> Int = "%bytes_length"
 
-fn byte_make(len : Int, init : Byte) -> Bytes = "%bytes_make"
+pub fn Bytes::make(len : Int, init : Byte) -> Bytes = "%bytes_make"
 
-pub fn Bytes::make(len : Int, ~init : Byte = b'\x00') -> Bytes {
-  byte_make(len, init)
+/// The init value of Bytes is 0.
+pub fn Bytes::new(len : Int) -> Bytes {
+  Bytes::make(len, b'\x00')
 }
 
 fn identity[A, B](x : A) -> B = "%identity"
