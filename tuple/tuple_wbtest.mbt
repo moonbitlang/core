@@ -84,20 +84,23 @@ test "id_2" {
 }
 
 test "eq" {
-  inspect((1, 2) == (1, 2), content="true")!
-  inspect((1, 2) == (2, 1), content="false")!
-  inspect((1, 2, 3) == (1, 2, 3), content="true")!
-  inspect((1, 2, 3) == (1, 2, 4), content="false")!
-  inspect((1, 2, 3, 4) == (1, 2, 3, 4), content="true")!
-  inspect((1, 2, 3, 4) == (1, 2, 3, 5), content="false")!
-  inspect((1, 2, 3, 4, 5) == (1, 2, 3, 4, 5), content="true")!
-  inspect((1, 2, 3, 4, 5) == (1, 2, 3, 4, 6), content="false")!
-  inspect((1, 2, 3, 4, 5, 6) == (1, 2, 3, 4, 5, 6), content="true")!
-  inspect((1, 2, 3, 4, 5, 6) == (1, 2, 3, 4, 6, 7), content="false")!
-  inspect((1, 2, 3, 4, 5, 6, 7) == (1, 2, 3, 4, 5, 6, 7), content="true")!
-  inspect((1, 2, 3, 4, 5, 6, 7) == (1, 2, 3, 4, 5, 6, 8), content="false")!
-  inspect((1, 2, 3, 4, 5, 6, 7, 8) == (1, 2, 3, 4, 5, 6, 7, 8), content="true")!
-  inspect((1, 2, 3, 4, 5, 6, 7, 8) == (1, 2, 3, 4, 5, 6, 7, 9), content="false")!
+  inspect!((1, 2) == (1, 2), content="true")
+  inspect!((1, 2) == (2, 1), content="false")
+  inspect!((1, 2, 3) == (1, 2, 3), content="true")
+  inspect!((1, 2, 3) == (1, 2, 4), content="false")
+  inspect!((1, 2, 3, 4) == (1, 2, 3, 4), content="true")
+  inspect!((1, 2, 3, 4) == (1, 2, 3, 5), content="false")
+  inspect!((1, 2, 3, 4, 5) == (1, 2, 3, 4, 5), content="true")
+  inspect!((1, 2, 3, 4, 5) == (1, 2, 3, 4, 6), content="false")
+  inspect!((1, 2, 3, 4, 5, 6) == (1, 2, 3, 4, 5, 6), content="true")
+  inspect!((1, 2, 3, 4, 5, 6) == (1, 2, 3, 4, 6, 7), content="false")
+  inspect!((1, 2, 3, 4, 5, 6, 7) == (1, 2, 3, 4, 5, 6, 7), content="true")
+  inspect!((1, 2, 3, 4, 5, 6, 7) == (1, 2, 3, 4, 5, 6, 8), content="false")
+  inspect!((1, 2, 3, 4, 5, 6, 7, 8) == (1, 2, 3, 4, 5, 6, 7, 8), content="true")
+  inspect!(
+    (1, 2, 3, 4, 5, 6, 7, 8) == (1, 2, 3, 4, 5, 6, 7, 9),
+    content="false",
+  )
   inspect(
     (1, 2, 3, 4, 5, 6, 7, 8, 9) == (1, 2, 3, 4, 5, 6, 7, 8, 9),
     content="true",
@@ -191,13 +194,13 @@ test "debug_write" {
   let tuple5 = ([1], "2", 3, ([4] : Array[_]), 5)
   let buf = Buffer::new(size_hint=0)
   tuple2.debug_write(buf)
-  inspect(buf, content="(1, 2)")!
+  inspect!(buf, content="(1, 2)")
   buf.reset()
   tuple3.debug_write(buf)
-  inspect(buf, content="(\"a\", \"b\", \"c\")")!
+  inspect!(buf, content="(\"a\", \"b\", \"c\")")
   buf.reset()
   tuple4.debug_write(buf)
-  inspect(buf, content="(1, 2, 3, \"hello\")")!
+  inspect!(buf, content="(1, 2, 3, \"hello\")")
   buf.reset()
   tuple5.debug_write(buf)
   inspect(
@@ -213,10 +216,10 @@ test "to_string" {
   let tuple3 = ("a", "b", "c")
   let tuple4 = (1, 2, 3, "hello")
   let tuple5 = ([1], "2", 3, ([4] : Array[_]), 5)
-  inspect(tuple2, content="(1, 2)")!
-  inspect(tuple3, content="(a, b, c)")!
-  inspect(tuple4, content="(1, 2, 3, hello)")!
-  inspect(tuple5, content="([1], 2, 3, [4], 5)")!
-  inspect((1, 2, 3, 4, 5, 6), content="(1, 2, 3, 4, 5, 6)")!
-  inspect((1, 2, 3, 4, 5, 6, 7), content="(1, 2, 3, 4, 5, 6, 7)")!
+  inspect!(tuple2, content="(1, 2)")
+  inspect!(tuple3, content="(a, b, c)")
+  inspect!(tuple4, content="(1, 2, 3, hello)")
+  inspect!(tuple5, content="([1], 2, 3, [4], 5)")
+  inspect!((1, 2, 3, 4, 5, 6), content="(1, 2, 3, 4, 5, 6)")
+  inspect!((1, 2, 3, 4, 5, 6, 7), content="(1, 2, 3, 4, 5, 6, 7)")
 }

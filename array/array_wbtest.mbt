@@ -14,26 +14,26 @@
 
 test "to_string" {
   let empty : Array[Int] = []
-  inspect(empty, content="[]")!
+  inspect!(empty, content="[]")
   let a0 = [0]
-  inspect(a0, content="[0]")!
+  inspect!(a0, content="[0]")
   a0.push(1)
-  inspect(a0, content="[0, 1]")!
+  inspect!(a0, content="[0, 1]")
   a0.push(2)
-  inspect(a0, content="[0, 1, 2]")!
+  inspect!(a0, content="[0, 1, 2]")
 }
 
 test "get" {
   let v = [3]
-  inspect(v.get(-1), content="None")!
-  inspect(v.get(0), content="Some(3)")!
-  inspect(v.get(1), content="None")!
+  inspect!(v.get(-1), content="None")
+  inspect!(v.get(0), content="Some(3)")
+  inspect!(v.get(1), content="None")
 }
 
 test "op_add" {
-  inspect(([] : Array[Int]) + [], content="[]")!
-  inspect(([] : Array[Int]) + [1, 2, 3, 4, 5], content="[1, 2, 3, 4, 5]")!
-  inspect([1, 2, 3, 4, 5] + [], content="[1, 2, 3, 4, 5]")!
+  inspect!(([] : Array[Int]) + [], content="[]")
+  inspect!(([] : Array[Int]) + [1, 2, 3, 4, 5], content="[1, 2, 3, 4, 5]")
+  inspect!([1, 2, 3, 4, 5] + [], content="[1, 2, 3, 4, 5]")
   inspect(
     [1, 2, 3, 4, 5] + [6, 7, 8, 9, 10],
     content="[1, 2, 3, 4, 5, 6, 7, 8, 9, 10]",
@@ -80,7 +80,7 @@ test "push_iter" {
   let u = [1, 2, 3]
   let v = [4, 5, 6]
   u.push_iter(v.iter())
-  inspect(u, content="[1, 2, 3, 4, 5, 6]")!
+  inspect!(u, content="[1, 2, 3, 4, 5, 6]")
 }
 
 test "drain" {
@@ -142,11 +142,11 @@ test "clear" {
 test "map" {
   let v = [3, 4, 5]
   let e : Array[Int] = []
-  inspect(v.map(fn(x) { x + 1 }), content="[4, 5, 6]")!
-  inspect(v.map(fn(x) { x.to_string() }), content="[3, 4, 5]")!
-  inspect(e.map(fn(x) { x + 1 }), content="[]")!
+  inspect!(v.map(fn(x) { x + 1 }), content="[4, 5, 6]")
+  inspect!(v.map(fn(x) { x.to_string() }), content="[3, 4, 5]")
+  inspect!(e.map(fn(x) { x + 1 }), content="[]")
   // Is it correct?
-  inspect(["a", "b", "c"], content="[a, b, c]")!
+  inspect!(["a", "b", "c"], content="[a, b, c]")
 }
 
 test "map_inplace" {
@@ -154,16 +154,16 @@ test "map_inplace" {
   let e : Array[Int] = []
   v.map_inplace(fn(x) { x + 1 })
   e.map_inplace(fn(x) { x + 1 })
-  inspect(v, content="[4, 5, 6]")!
-  inspect(e, content="[]")!
+  inspect!(v, content="[4, 5, 6]")
+  inspect!(e, content="[]")
 }
 
 test "mapi" {
   let v = [3, 4, 5]
   let e : Array[Int] = []
-  inspect(v.mapi(fn(i, x) { x + i }), content="[3, 5, 7]")!
-  inspect(v.mapi(fn(i, x) { (x + i).to_string() }), content="[3, 5, 7]")!
-  inspect(e.mapi(fn(_i, x) { x + 1 }), content="[]")!
+  inspect!(v.mapi(fn(i, x) { x + i }), content="[3, 5, 7]")
+  inspect!(v.mapi(fn(i, x) { (x + i).to_string() }), content="[3, 5, 7]")
+  inspect!(e.mapi(fn(_i, x) { x + 1 }), content="[]")
 }
 
 test "mapi_inplace" {
@@ -171,13 +171,13 @@ test "mapi_inplace" {
   let e : Array[Int] = []
   v.mapi_inplace(fn(i, x) { x + i })
   e.mapi_inplace(fn(_i, x) { x + 1 })
-  inspect(v, content="[3, 5, 7]")!
-  inspect(e, content="[]")!
+  inspect!(v, content="[3, 5, 7]")
+  inspect!(e, content="[]")
 }
 
 test "filter" {
   let arr = [1, 2, 3, 4, 5, 6]
-  inspect(arr.filter(fn(x) { x % 2 == 0 }), content="[2, 4, 6]")!
+  inspect!(arr.filter(fn(x) { x % 2 == 0 }), content="[2, 4, 6]")
 }
 
 test "is_empty" {
@@ -434,12 +434,12 @@ test "shrink_to_fit_2" {
 test "iter" {
   let buf = Buffer::new(size_hint=5)
   [1, 2, 3, 4, 5].iter().each(fn { x => buf.write_string(x.to_string()) })
-  inspect(buf, content="12345")!
+  inspect!(buf, content="12345")
   buf.reset()
   [1, 2, 3, 4, 5].iter().take(2).each(
     fn { x => buf.write_string(x.to_string()) },
   )
-  inspect(buf, content="12")!
+  inspect!(buf, content="12")
 }
 
 test "shuffle_in_place" {
@@ -450,7 +450,7 @@ test "shuffle_in_place" {
   }
 
   Array::shuffle_in_place(arr, ~rand)
-  inspect(arr, content="[3, 4, 7, 1, 6, 5, 2]")!
+  inspect!(arr, content="[3, 4, 7, 1, 6, 5, 2]")
 }
 
 test "shuffle" {
@@ -461,7 +461,7 @@ test "shuffle" {
   }
 
   let shuffled = Array::shuffle(arr, ~rand)
-  inspect(shuffled, content="[1, 5, 3, 4, 7, 6, 2]")!
+  inspect!(shuffled, content="[1, 5, 3, 4, 7, 6, 2]")
 }
 
 test "find_index" {
@@ -475,7 +475,7 @@ test "copy" {
   let copied = arr.copy()
   @test.eq(copied, [1, 2, 3, 4, 5])!
   @test.is_not(arr, copied)!
-  inspect(([] : Array[Int]).copy(), content="[]")!
+  inspect!(([] : Array[Int]).copy(), content="[]")
 }
 
 test "Array::new_with_index with positive length" {

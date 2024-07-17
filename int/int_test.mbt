@@ -13,8 +13,8 @@
 // limitations under the License.
 
 test "fromint" {
-  inspect(@int.from_int(3), content="3")!
-  inspect(@int.signum(3), content="1")!
-  inspect(@int.signum(-3), content="-1")!
-  inspect(@int.signum(0), content="0")!
+  inspect!(@int.from_int(3), content="3")
+  inspect!(@int.signum(3), content="1")
+  inspect!(@int.signum(-3), content="-1")
+  inspect!(@int.signum(0), content="0")
 }

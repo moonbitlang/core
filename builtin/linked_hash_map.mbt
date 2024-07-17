@@ -74,12 +74,12 @@ fn power_2_above(x : Int, n : Int) -> Int {
 }
 
 test "power_2_above" {
-  inspect(power_2_above(1, 15), content="16")!
-  inspect(power_2_above(1, 16), content="16")!
-  inspect(power_2_above(1, 17), content="32")!
-  inspect(power_2_above(1, 32), content="32")!
-  inspect(power_2_above(128, 33), content="128")!
-  inspect(power_2_above(1, 2147483647), content="1073741824")!
+  inspect!(power_2_above(1, 15), content="16")
+  inspect!(power_2_above(1, 16), content="16")
+  inspect!(power_2_above(1, 17), content="32")
+  inspect!(power_2_above(1, 32), content="32")
+  inspect!(power_2_above(128, 33), content="128")
+  inspect!(power_2_above(1, 2147483647), content="1073741824")
 }
 
 /// Create a hash map.

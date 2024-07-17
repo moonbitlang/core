@@ -22,7 +22,7 @@ test "from_array" {
 
 test "insert" {
   let m = of([(3, "three"), (8, "eight"), (1, "one")])
-  inspect(m.debug_tree(), content="(3,three,(1,one,_,_),(8,eight,_,_))")!
+  inspect!(m.debug_tree(), content="(3,three,(1,one,_,_),(8,eight,_,_))")
   let m = m.insert(5, "five").insert(2, "two").insert(0, "zero").insert(
     1, "one_updated",
   )
@@ -39,14 +39,14 @@ test "remove" {
     content="(3,three,(1,one,(0,zero,_,_),(2,two,_,_)),(8,eight,_,_))",
   )!
   let m2 = m1.remove(1).remove(3)
-  inspect(m2.debug_tree(), content="(2,two,(0,zero,_,_),(8,eight,_,_))")!
+  inspect!(m2.debug_tree(), content="(2,two,(0,zero,_,_),(8,eight,_,_))")
   let m3 = m1.remove(8)
   inspect(
     m3.debug_tree(),
     content="(2,two,(1,one,(0,zero,_,_),_),(3,three,_,_))",
   )!
   let e : Map[Int, Int] = Empty
-  inspect(e.remove(1).debug_tree(), content="_")!
+  inspect!(e.remove(1).debug_tree(), content="_")
 }
 
 test "lookup" {
@@ -240,7 +240,7 @@ test "iter" {
       buf.write_string("[\(k)-\(v)]")
     },
   )
-  inspect(buf, content="[1-one][2-two][3-three]")!
+  inspect!(buf, content="[1-one][2-two][3-three]")
   buf.reset()
   map.iter().take(2).each(
     fn(e) {
@@ -248,12 +248,12 @@ test "iter" {
       buf.write_string("[\(k)-\(v)]")
     },
   )
-  inspect(buf, content="[1-one][2-two]")!
+  inspect!(buf, content="[1-one][2-two]")
 }
 
 test "insert" {
   let m = of([(3, "three"), (8, "eight"), (1, "one")])
-  inspect(m.debug_tree(), content="(3,three,(1,one,_,_),(8,eight,_,_))")!
+  inspect!(m.debug_tree(), content="(3,three,(1,one,_,_),(8,eight,_,_))")
   let m = m.insert(5, "five").insert(2, "two").insert(0, "zero").insert(
     1, "one_updated",
   )
@@ -305,8 +305,8 @@ test "op_equal" {
 test "split_max with non-empty tree" {
   let m = of([(3, "three"), (8, "eight"), (1, "one"), (2, "two"), (0, "zero")])
   let (k, v, r) = m.split_max()
-  inspect(k, content="8")!
-  inspect(v, content="eight")!
+  inspect!(k, content="8")
+  inspect!(v, content="eight")
   inspect(
     r.debug_tree(),
     content="(2,two,(1,one,(0,zero,_,_),_),(3,three,_,_))",

@@ -27,7 +27,7 @@ fn check_len(a : BigInt) -> Unit!String {
 test "neg" {
   let a = from_int64(123456789012345678L)
   let b = -a
-  inspect(b.to_string(), content="-123456789012345678")!
+  inspect!(b.to_string(), content="-123456789012345678")
   check_len(b)!
   let a = from_string(
     "123456789012345678123456789012345678123456789012345678123456789012345678",
@@ -53,13 +53,13 @@ test "add" {
   let a = from_int64(123456789012345678L)
   let b = from_int64(987654321098765432L)
   let c = a + b
-  inspect(c.to_string(), content="1111111110111111110")!
+  inspect!(c.to_string(), content="1111111110111111110")
   check_len(c)!
   let a = from_string("123456789012345678123456789012345678")
   let b = from_string("9876543210987654329876543210987654321241243")
   let c = a + b
   check_len(c)!
-  inspect(c.to_string(), content="9876543334444443342222221334444443333586921")!
+  inspect!(c.to_string(), content="9876543334444443342222221334444443333586921")
   let a = from_string(
     "-345678987654356798765467898765456789098764567890987655678",
   )
@@ -114,7 +114,7 @@ test "add" {
   let b = from_string("1")
   let c = a + b
   check_len(c)!
-  inspect(c.to_string(), content="2")!
+  inspect!(c.to_string(), content="2")
 }
 
 test "sub" {
@@ -122,41 +122,41 @@ test "sub" {
   let b = from_int64(123456789012345678L)
   let c = a - b
   check_len(c)!
-  inspect(c.to_string(), content="864197532086419754")!
+  inspect!(c.to_string(), content="864197532086419754")
   let c = b - a
   check_len(c)!
-  inspect(c.to_string(), content="-864197532086419754")!
+  inspect!(c.to_string(), content="-864197532086419754")
   let a = from_string("987654321098765432987654321098765432")
   let b = from_string("123456789012345678123456789012345678")
   let c = a - b
   check_len(c)!
-  inspect(c.to_string(), content="864197532086419754864197532086419754")!
+  inspect!(c.to_string(), content="864197532086419754864197532086419754")
   let c = b - a
   check_len(c)!
-  inspect(c.to_string(), content="-864197532086419754864197532086419754")!
+  inspect!(c.to_string(), content="-864197532086419754864197532086419754")
   let a = from_string("-123456789012345678123456789012345678")
   let b = from_string("-987654321098765432987654321098765432")
   let c = a - b
   check_len(c)!
-  inspect(c.to_string(), content="864197532086419754864197532086419754")!
+  inspect!(c.to_string(), content="864197532086419754864197532086419754")
   let c = b - a
   check_len(c)!
-  inspect(c.to_string(), content="-864197532086419754864197532086419754")!
+  inspect!(c.to_string(), content="-864197532086419754864197532086419754")
   let a = from_string("123456789012345678123456789012345678233")
   let b = from_string("-987654321098765432987654321098765432")
   let c = a - b
   check_len(c)!
-  inspect(c.to_string(), content="124444443333444443556444443333444443665")!
+  inspect!(c.to_string(), content="124444443333444443556444443333444443665")
   let a = from_string("-123456789012345678123456789012345678233")
   let b = from_string("987654321098765432987654321098765432")
   let c = a - b
   check_len(c)!
-  inspect(c.to_string(), content="-124444443333444443556444443333444443665")!
+  inspect!(c.to_string(), content="-124444443333444443556444443333444443665")
   let a = from_string("123456789012345678123456789012345678233")
   let b = from_string("987")
   let c = a - b
   check_len(c)!
-  inspect(c.to_string(), content="123456789012345678123456789012345677246")!
+  inspect!(c.to_string(), content="123456789012345678123456789012345677246")
   let a = from_int64(
     2L * radix + 3L * radix * radix + 3L * radix * radix * radix,
   )
@@ -165,7 +165,7 @@ test "sub" {
   )
   let c = a - b
   check_len(c)!
-  inspect(c.to_string(), content="4295032832")!
+  inspect!(c.to_string(), content="4295032832")
 }
 
 test "mul" {
@@ -173,11 +173,11 @@ test "mul" {
   let b = from_int64(123456789012345678L)
   let c = a * b
   check_len(c)!
-  inspect(c.to_string(), content="121932631137021794322511812221002896")!
+  inspect!(c.to_string(), content="121932631137021794322511812221002896")
   let b = from_int(0)
   let c = a * b
   check_len(c)!
-  inspect(c.to_string(), content="0")!
+  inspect!(c.to_string(), content="0")
   let a = from_string("987654321098765432987654321098765432")
   let b = from_string("123456789012345678123456789012345678")
   let c = a * b
@@ -229,18 +229,18 @@ test "div" {
   let b = from_int64(123456789012345678L)
   let c = a / b
   check_len(c)!
-  inspect(c.to_string(), content="8")!
+  inspect!(c.to_string(), content="8")
   let c = a % b
   check_len(c)!
-  inspect(c.to_string(), content="9000000008")!
+  inspect!(c.to_string(), content="9000000008")
   let a = from_string("987654321098765432987654321098765432")
   let b = from_string("123456789012345678123456789012345678")
   let c = a / b
   check_len(c)!
-  inspect(c.to_string(), content="8")!
+  inspect!(c.to_string(), content="8")
   let c = a % b
   check_len(c)!
-  inspect(c.to_string(), content="9000000008000000009000000008")!
+  inspect!(c.to_string(), content="9000000008000000009000000008")
   let a = from_string(
     "-123456789012345678123456789012345678123456789012345678123456789012345678",
   )
@@ -249,7 +249,7 @@ test "div" {
   )
   let c = a / b
   check_len(c)!
-  inspect(c.to_string(), content="22578502")!
+  inspect!(c.to_string(), content="22578502")
   let c = a % b
   check_len(c)!
   inspect(
@@ -264,7 +264,7 @@ test "div" {
   )
   let c = a / b
   check_len(c)!
-  inspect(c.to_string(), content="-2272")!
+  inspect!(c.to_string(), content="-2272")
   let c = a % b
   check_len(c)!
   inspect(
@@ -279,13 +279,13 @@ test "div" {
   )
   let c = a / b
   check_len(c)!
-  inspect(c.to_string(), content="102321")!
+  inspect!(c.to_string(), content="102321")
   let c = a % b
   check_len(c)!
-  inspect(c.to_string(), content="0")!
+  inspect!(c.to_string(), content="0")
   let c = b / a
   check_len(c)!
-  inspect(c.to_string(), content="0")!
+  inspect!(c.to_string(), content="0")
   let a = from_string(
     "-123456789012345678123456789012345678123456789012345678123456789012345678",
   )
@@ -294,7 +294,7 @@ test "div" {
   )
   let c = a / b
   check_len(c)!
-  inspect(c.to_string(), content="-1249999989")!
+  inspect!(c.to_string(), content="-1249999989")
   let c = a % b
   check_len(c)!
   inspect(
@@ -306,10 +306,10 @@ test "div" {
   )
   let c = a / b
   check_len(c)!
-  inspect(c.to_string(), content="-1")!
+  inspect!(c.to_string(), content="-1")
   let c = a % b
   check_len(c)!
-  inspect(c.to_string(), content="0")!
+  inspect!(c.to_string(), content="0")
   let b = from_int(42)
   let c = a / b
   check_len(c)!
@@ -319,15 +319,15 @@ test "div" {
   )!
   let c = a % b
   check_len(c)!
-  inspect(c.to_string(), content="24")!
+  inspect!(c.to_string(), content="24")
   let a = from_int64(radix * 2L)
   let b = from_int(3)
   let c = a / b
   check_len(c)!
-  inspect(c.to_string(), content="43690")!
+  inspect!(c.to_string(), content="43690")
   let c = a % b
   check_len(c)!
-  inspect(c.to_string(), content="2")!
+  inspect!(c.to_string(), content="2")
   let a = from_string(
     "192840512535448761530339373212972361809285001825938158026158292411480026580386667968523131569543343891463401449181505398836",
   )
@@ -342,81 +342,81 @@ test "div" {
   let b = from_string("1")
   let c = a / b
   check_len(c)!
-  inspect(c.to_string(), content="65535232222222222222222222222")!
+  inspect!(c.to_string(), content="65535232222222222222222222222")
   let c = a % b
   check_len(c)!
-  inspect(c.to_string(), content="0")!
+  inspect!(c.to_string(), content="0")
 }
 
 test "lsl" {
   let a = from_int64(1234567890123456789)
   let b = a << 1
   check_len(b)!
-  inspect(b.to_string(), content="2469135780246913578")!
+  inspect!(b.to_string(), content="2469135780246913578")
   let c = a << 64
   check_len(c)!
-  inspect(c.to_string(), content="22773757910726981402256170801141121024")!
+  inspect!(c.to_string(), content="22773757910726981402256170801141121024")
   let a = make_zero()
   let b = a << 1
   check_len(b)!
-  inspect(b.to_string(), content="0")!
+  inspect!(b.to_string(), content="0")
 }
 
 test "lsr" {
   let a = from_int64(1234567890123456789L)
   let b = a.lsr(1)
   check_len(b)!
-  inspect(b.to_string(), content="617283945061728394")!
+  inspect!(b.to_string(), content="617283945061728394")
   let c = a.lsr(64)
   check_len(c)!
-  inspect(c.to_string(), content="0")!
+  inspect!(c.to_string(), content="0")
   let a = from_int64(radix * radix / 2L)
   let b = a.lsr(radix_bit_len * 2)
   check_len(b)!
-  inspect(b.to_string(), content="0")!
+  inspect!(b.to_string(), content="0")
 }
 
 test "decimal_string" {
   let a = from_string("0")
   check_len(a)!
-  inspect(a.to_string(), content="0")!
+  inspect!(a.to_string(), content="0")
   let a = from_string("123")
   check_len(a)!
-  inspect(a.to_string(), content="123")!
+  inspect!(a.to_string(), content="123")
   @test.eq(a, from_int64(123L))!
   let a = from_string("1234567890123456789")
   check_len(a)!
-  inspect(a.to_string(), content="1234567890123456789")!
+  inspect!(a.to_string(), content="1234567890123456789")
   let b = from_string("-1234567890")
   check_len(b)!
-  inspect(b.to_string(), content="-1234567890")!
+  inspect!(b.to_string(), content="-1234567890")
   @test.eq(a, from_int64(1234567890123456789L))!
   let str = "12345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812"
   let a = from_string(str)
   check_len(a)!
-  inspect(a.to_string(), content=str)!
+  inspect!(a.to_string(), content=str)
   let a = from_int64(1234567890123456789L)
   check_len(a)!
-  inspect(a.to_string(), content="1234567890123456789")!
+  inspect!(a.to_string(), content="1234567890123456789")
   let b = from_int64(-1234567890L)
   check_len(b)!
-  inspect(b.to_string(), content="-1234567890")!
+  inspect!(b.to_string(), content="-1234567890")
 }
 
 test "from_int" {
   let a = from_int(1234567899)
   check_len(a)!
-  inspect(a.to_string(), content="1234567899")!
+  inspect!(a.to_string(), content="1234567899")
   let b = from_int(-1234567890)
   check_len(b)!
-  inspect(b.to_string(), content="-1234567890")!
+  inspect!(b.to_string(), content="-1234567890")
 }
 
 test "compare" {
   let a = from_int64(1234567890123456789L)
   let b = from_int64(-1234567890123456789L)
-  inspect(a.compare(b), content="1")!
-  inspect(b.compare(a), content="-1")!
+  inspect!(a.compare(b), content="1")
+  inspect!(b.compare(a), content="-1")
   let a = -a
   let b = from_int64(-1234567890123456788L)
   @test.is_true(a.compare(b) < 0)!
@@ -431,25 +431,25 @@ test "from_hex" {
   // Check zero
   let a = from_hex("0")
   check_len(a)!
-  inspect(a.to_string(), content="0")!
+  inspect!(a.to_string(), content="0")
 
   // Test positive number
   let a = from_hex("1")
   check_len(a)!
-  inspect(a.to_string(), content="1")!
+  inspect!(a.to_string(), content="1")
 
   // Test negative number
   let a = from_hex("-F")
   check_len(a)!
-  inspect(a.to_string(), content="-15")!
+  inspect!(a.to_string(), content="-15")
   let a = from_hex("-a")
   check_len(a)!
-  inspect(a.to_string(), content="-10")!
+  inspect!(a.to_string(), content="-10")
 
   // Test large positive number
   let a = from_hex("112210F47DE98115")
   check_len(a)!
-  inspect(a.to_string(), content="1234567890123456789")!
+  inspect!(a.to_string(), content="1234567890123456789")
 
   // Test very large positive number
   let a = from_hex(
@@ -492,33 +492,33 @@ test "to_hex" {
   // Check zero
   let a = from_hex("00")
   check_len(a)!
-  inspect(a.to_hex(), content="0")!
+  inspect!(a.to_hex(), content="0")
 
   // Test negative number
   let a = from_hex("-F")
   check_len(a)!
-  inspect(a.to_hex(), content="-F")!
+  inspect!(a.to_hex(), content="-F")
 
   // Test positive number
   let a = from_hex("F")
   check_len(a)!
-  inspect(a.to_hex(), content="F")!
+  inspect!(a.to_hex(), content="F")
 
   // Test positive number with leading zero
   let a = from_hex("10")
   check_len(a)!
-  inspect(a.to_hex(), content="10")!
+  inspect!(a.to_hex(), content="10")
 
   // Test large positive number
   let a = from_hex("01234567890123456789")
   check_len(a)!
-  inspect(a.to_hex(), content="1234567890123456789")!
+  inspect!(a.to_hex(), content="1234567890123456789")
 
   // Check padding
   let a = from_hex("100000")
   check_len(a)!
-  inspect(a.to_string(), content="1048576")!
-  inspect(a.to_hex(), content="100000")!
+  inspect!(a.to_string(), content="1048576")
+  inspect!(a.to_hex(), content="100000")
 
   // Test very large positive number
   let a = from_string(
@@ -560,18 +560,18 @@ test "op_add coverage for max(self_len, other_len)" {
   let a = from_int(123456789)
   let b = from_int(987654321)
   let result = a + b
-  inspect(a.len, content="1")!
-  inspect(b.len, content="1")!
-  inspect(result.len, content="2")!
+  inspect!(a.len, content="1")
+  inspect!(b.len, content="1")
+  inspect!(result.len, content="2")
 }
 
 test "op_sub coverage for max(self_len, other_len)" {
   let a = from_int(987654321)
   let b = from_int(123456789)
   let result = a - b
-  inspect(a.len, content="1")!
-  inspect(b.len, content="1")!
-  inspect(result.len, content="1")!
+  inspect!(a.len, content="1")
+  inspect!(b.len, content="1")
+  inspect!(result.len, content="1")
 }
 
 test "panic op_div coverage for division by zero" {

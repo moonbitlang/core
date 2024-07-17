@@ -28,9 +28,9 @@ test "HAMT" {
   for i = 0; i < 100; i = i + 1 {
     @test.eq((i, map.find(i)), (i, Some(i)))!
   }
-  inspect((100, map.find(100)), content="(100, None)")!
+  inspect!((100, map.find(100)), content="(100, None)")
   let map = map.add(100, 100)
-  inspect((100, map.find(100)), content="(100, Some(100))")!
+  inspect!((100, map.find(100)), content="(100, Some(100))")
   // test for replacement
   let map = loop 0, map {
     100, map => map
@@ -64,7 +64,7 @@ test "HAMT::iter" {
   let data = of([(0, "a"), (2, "b"), (3, "d"), (5, "e"), (11111, "f")])
   let mut s = ""
   data.iter().each(fn { (k, v) => s += " \(k),\(v)" })
-  inspect(s, content=" 0,a 5,e 3,d 11111,f 2,b")!
+  inspect!(s, content=" 0,a 5,e 3,d 11111,f 2,b")
 }
 
 test "HAMT::to_string" {
@@ -79,8 +79,8 @@ test "HAMT::to_string" {
 
 test "HAMT::from_array" {
   let map = of([(1, "1"), (2, "2"), (42, "42")])
-  inspect((1, map.find(1)), content="(1, Some(1))")!
-  inspect((2, map.find(2)), content="(2, Some(2))")!
-  inspect((42, map.find(42)), content="(42, Some(42))")!
-  inspect((43, map.find(43)), content="(43, None)")!
+  inspect!((1, map.find(1)), content="(1, Some(1))")
+  inspect!((2, map.find(2)), content="(2, Some(2))")
+  inspect!((42, map.find(42)), content="(42, Some(42))")
+  inspect!((43, map.find(43)), content="(43, None)")
 }

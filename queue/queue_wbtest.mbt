@@ -39,7 +39,7 @@ test "from_fixed_array_2" {
 
 test "from_fixed_array_3" {
   let q : Queue[Int] = of([])
-  inspect(q, content="Queue::[]")!
+  inspect!(q, content="Queue::[]")
 }
 
 test "from_array_1" {
@@ -64,16 +64,16 @@ test "from_array_2" {
 
 test "from_array_3" {
   let q : Queue[Int] = Queue::of([])
-  inspect(q, content="Queue::[]")!
+  inspect!(q, content="Queue::[]")
 }
 
 test "to_string" {
   let queue : Queue[Int] = of([1, 2, 3, 4])
-  inspect(queue, content="Queue::[1, 2, 3, 4]")!
+  inspect!(queue, content="Queue::[1, 2, 3, 4]")
   queue.push(11)
-  inspect(queue, content="Queue::[1, 2, 3, 4, 11]")!
+  inspect!(queue, content="Queue::[1, 2, 3, 4, 11]")
   queue.pop_exn() |> ignore
-  inspect(queue, content="Queue::[2, 3, 4, 11]")!
+  inspect!(queue, content="Queue::[2, 3, 4, 11]")
 }
 
 test "op_equal" {
@@ -213,11 +213,11 @@ test "cell_equal" {
 
 test "length" {
   let empty : Queue[Unit] = of([])
-  inspect(empty.length(), content="0")!
-  inspect(of([1, 2, 3]).length(), content="3")!
+  inspect!(empty.length(), content="0")
+  inspect!(of([1, 2, 3]).length(), content="3")
 }
 
 test "iter" {
   let q = of([1, 2, 3, 4, 5])
-  inspect(q.iter().fold(fn(x, y) { x + y }, 0), content="15")!
+  inspect!(q.iter().fold(fn(x, y) { x + y }, 0), content="15")
 }

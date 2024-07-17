@@ -29,7 +29,7 @@ pub fn to_string[X : Show](self : Ref[X]) -> String {
 }
 
 test "to_string" {
-  inspect(new(3), content="{val: 3}")!
+  inspect!(new(3), content="{val: 3}")
 }
 
 /// Maps the value of a `Ref` using a given function.
@@ -96,8 +96,8 @@ test "swap" {
   let x = new(1)
   let y = new(2)
   swap(x, y)
-  inspect(x.val, content="2")!
-  inspect(y.val, content="1")!
+  inspect!(x.val, content="2")
+  inspect!(y.val, content="1")
 }
 
 pub fn update[T](self : Ref[T], f : (T) -> T) -> Unit {
@@ -107,15 +107,15 @@ pub fn update[T](self : Ref[T], f : (T) -> T) -> Unit {
 test "decr" {
   let a = new(1)
   a.val -= 1
-  inspect(a.val, content="0")!
+  inspect!(a.val, content="0")
   a.val -= 5
-  inspect(a.val, content="-5")!
+  inspect!(a.val, content="-5")
 }
 
 test "incr" {
   let a = new(1)
   a.val += 1
-  inspect(a.val, content="2")!
+  inspect!(a.val, content="2")
   a.val += 5
-  inspect(a.val, content="7")!
+  inspect!(a.val, content="7")
 }

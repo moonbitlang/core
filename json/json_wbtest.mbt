@@ -13,11 +13,11 @@
 // limitations under the License.
 
 test "get as bool" {
-  inspect(JsonValue::Null |> as_bool, content="None")!
-  inspect(JsonValue::True |> as_bool, content="Some(true)")!
-  inspect(JsonValue::False |> as_bool, content="Some(false)")!
-  inspect(JsonValue::Number(1.0) |> as_bool, content="None")!
-  inspect(JsonValue::String("Hello World") |> as_bool, content="None")!
+  inspect!(JsonValue::Null |> as_bool, content="None")
+  inspect!(JsonValue::True |> as_bool, content="Some(true)")
+  inspect!(JsonValue::False |> as_bool, content="Some(false)")
+  inspect!(JsonValue::Number(1.0) |> as_bool, content="None")
+  inspect!(JsonValue::String("Hello World") |> as_bool, content="None")
   inspect(
     JsonValue::Array([JsonValue::String("Hello World")]) |> as_bool,
     content="None",
@@ -34,11 +34,11 @@ test "get as bool" {
 }
 
 test "get as number" {
-  inspect(JsonValue::Null |> as_number, content="None")!
-  inspect(JsonValue::False |> as_number, content="None")!
-  inspect(JsonValue::True |> as_number, content="None")!
-  inspect(JsonValue::Number(1.0) |> as_number, content="Some(1.0)")!
-  inspect(JsonValue::String("Hello World") |> as_number, content="None")!
+  inspect!(JsonValue::Null |> as_number, content="None")
+  inspect!(JsonValue::False |> as_number, content="None")
+  inspect!(JsonValue::True |> as_number, content="None")
+  inspect!(JsonValue::Number(1.0) |> as_number, content="Some(1.0)")
+  inspect!(JsonValue::String("Hello World") |> as_number, content="None")
   inspect(
     JsonValue::Array([JsonValue::String("Hello World")]) |> as_number,
     content="None",
@@ -55,10 +55,10 @@ test "get as number" {
 }
 
 test "get as string" {
-  inspect(JsonValue::Null |> as_string, content="None")!
-  inspect(JsonValue::True |> as_string, content="None")!
-  inspect(JsonValue::False |> as_string, content="None")!
-  inspect(JsonValue::Number(1.0) |> as_string, content="None")!
+  inspect!(JsonValue::Null |> as_string, content="None")
+  inspect!(JsonValue::True |> as_string, content="None")
+  inspect!(JsonValue::False |> as_string, content="None")
+  inspect!(JsonValue::Number(1.0) |> as_string, content="None")
   inspect(
     JsonValue::String("Hello World") |> as_string,
     content="Some(Hello World)",
@@ -79,11 +79,11 @@ test "get as string" {
 }
 
 test "get as array" {
-  inspect(JsonValue::Null |> as_array, content="None")!
-  inspect(JsonValue::True |> as_array, content="None")!
-  inspect(JsonValue::False |> as_array, content="None")!
-  inspect(JsonValue::Number(1.0) |> as_array, content="None")!
-  inspect(JsonValue::String("Hello World") |> as_array, content="None")!
+  inspect!(JsonValue::Null |> as_array, content="None")
+  inspect!(JsonValue::True |> as_array, content="None")
+  inspect!(JsonValue::False |> as_array, content="None")
+  inspect!(JsonValue::Number(1.0) |> as_array, content="None")
+  inspect!(JsonValue::String("Hello World") |> as_array, content="None")
   inspect(
     JsonValue::Array([JsonValue::String("Hello World")]) |> as_array,
     content=
@@ -215,12 +215,12 @@ test "deep access" {
       ],
     ),
   )
-  inspect(json.value("null").bind(as_null), content="Some(())")!
+  inspect!(json.value("null").bind(as_null), content="Some(())")
   inspect(
     json.value("key").bind(fn { array => array.item(2) }).bind(as_null),
     content="Some(())",
   )!
-  inspect(json.value("bool").bind(as_bool), content="Some(false)")!
+  inspect!(json.value("bool").bind(as_bool), content="Some(false)")
   inspect(
     json.value("key").bind(fn { array => array.item(1) }).bind(as_bool),
     content="Some(true)",

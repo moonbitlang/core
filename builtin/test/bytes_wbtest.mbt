@@ -49,7 +49,7 @@ test "set_utf8_char" {
   @test.eq(len, 1)!
   // FIXME: inconsistency between wasm-gc & js
   bytes.sub_string(0, 1) |> ignore
-  inspect(bytes.sub_string(0, 2), content="A")!
+  inspect!(bytes.sub_string(0, 2), content="A")
 }
 
 test "set_utf16_char" {

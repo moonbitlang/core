@@ -102,9 +102,9 @@ pub fn UInt::to_string(self : UInt) -> String {
 }
 
 test "UInt::to_string" {
-  inspect(0U, content="0")!
-  inspect(17U, content="17")!
-  inspect(4294967295U, content="4294967295")!
+  inspect!(0U, content="0")
+  inspect!(17U, content="17")
+  inspect!(4294967295U, content="4294967295")
 }
 
 pub fn UInt64::to_string(self : UInt64) -> String {

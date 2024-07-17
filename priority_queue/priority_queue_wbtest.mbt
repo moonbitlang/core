@@ -19,9 +19,9 @@ test "new" {
 
 test "from_array" {
   let pq = PriorityQueue::of([1, 3, 6, 4, 5])
-  inspect(pq.peek(), content="Some(6)")!
+  inspect!(pq.peek(), content="Some(6)")
   let pq_ : PriorityQueue[Int] = PriorityQueue::of([])
-  inspect(pq_.peek(), content="None")!
+  inspect!(pq_.peek(), content="None")
 }
 
 test "meld_and_merges" {
@@ -42,26 +42,26 @@ test "from_fixed_array" {
 test "copy" {
   let v = of([1, 2, 3, 4])
   let ve = v.copy()
-  inspect(v.peek().to_string(), content="Some(4)")!
-  inspect(ve.peek().to_string(), content="Some(4)")!
+  inspect!(v.peek().to_string(), content="Some(4)")
+  inspect!(ve.peek().to_string(), content="Some(4)")
   v.pop() |> ignore
-  inspect(v.peek().to_string(), content="Some(3)")!
-  inspect(ve.peek().to_string(), content="Some(4)")!
+  inspect!(v.peek().to_string(), content="Some(3)")
+  inspect!(ve.peek().to_string(), content="Some(4)")
 }
 
 test "to_array" {
   let v = of([1, 6, 3, 4, 9, 2, 1])
-  inspect(v.to_array(), content="[9, 6, 4, 3, 2, 1, 1]")!
+  inspect!(v.to_array(), content="[9, 6, 4, 3, 2, 1, 1]")
 }
 
 test "iter" {
   let buf = Buffer::new(size_hint=20)
   let v = of([1, 2, 3])
   v.iter().each(fn(e) { buf.write_string("[\(e)]") })
-  inspect(buf, content="[3][2][1]")!
+  inspect!(buf, content="[3][2][1]")
   buf.reset()
   v.iter().take(2).each(fn(e) { buf.write_string("[\(e)]") })
-  inspect(buf, content="[3][2]")!
+  inspect!(buf, content="[3][2]")
 }
 
 test "length" {
@@ -77,7 +77,7 @@ test "length" {
 
 test "pop_exn" {
   let pq = of([5, 5, 4, 3, 2, 1])
-  inspect(pq.length(), content="6")!
+  inspect!(pq.length(), content="6")
   @test.eq(pq.peek(), Some(5))!
   pq.pop_exn()
   @test.eq(pq.peek(), Some(5))!
@@ -85,7 +85,7 @@ test "pop_exn" {
   @test.eq(pq.peek(), Some(4))!
   let pq_ = of([1])
   pq_.pop_exn()
-  inspect(pq_.length(), content="0")!
+  inspect!(pq_.length(), content="0")
 }
 
 test "panic pop_exn" {
@@ -100,7 +100,7 @@ test "pop" {
   @test.eq(pq.pop(), Some(4))!
   let pq_ = of([1])
   pq_.pop() |> ignore
-  inspect(pq_.length(), content="0")!
+  inspect!(pq_.length(), content="0")
 }
 
 test "push" {

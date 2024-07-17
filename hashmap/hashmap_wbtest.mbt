@@ -14,7 +14,7 @@
 
 test "new" {
   let m : HashMap[Int, Int] = HashMap::new()
-  inspect(m.capacity, content="8")!
+  inspect!(m.capacity, content="8")
   @test.eq(m.size, 0)!
 }
 
@@ -45,10 +45,10 @@ test "get" {
   m.set("a", 1)
   m.set("b", 2)
   m.set("c", 3)
-  inspect(m.get("a"), content="Some(1)")!
-  inspect(m.get("b"), content="Some(2)")!
-  inspect(m.get("c"), content="Some(3)")!
-  inspect(m.get("d"), content="None")!
+  inspect!(m.get("a"), content="Some(1)")
+  inspect!(m.get("b"), content="Some(2)")
+  inspect!(m.get("c"), content="Some(3)")
+  inspect!(m.get("d"), content="None")
 }
 
 test "get_or_default" {
@@ -125,7 +125,7 @@ test "remove_unexist_key" {
   m.set("abc", 3)
   m.remove("d")
   @test.eq(m.size(), 3)!
-  inspect(m.debug_entries(), content="_,(0,a,1),(0,ab,2),(0,abc,3),_,_,_,_")!
+  inspect!(m.debug_entries(), content="_,(0,a,1),(0,ab,2),(0,abc,3),_,_,_,_")
 }
 
 test "size" {
@@ -184,15 +184,15 @@ test "grow" {
   m.set("Scala", 5)
   m.set("Julia", 5)
   @test.eq(m.size, 6)!
-  inspect(m.capacity, content="16")!
+  inspect!(m.capacity, content="16")
   m.set("Cobol", 5)
   @test.eq(m.size, 7)!
-  inspect(m.capacity, content="16")!
+  inspect!(m.capacity, content="16")
   m.set("Python", 6)
   m.set("Haskell", 7)
   m.set("Rescript", 8)
   @test.eq(m.size, 10)!
-  inspect(m.capacity, content="32")!
+  inspect!(m.capacity, content="32")
   inspect(
     m.debug_entries(),
     content="_,(0,C,1),(0,Go,2),(0,C++,3),(0,Java,4),(0,Scala,5),(1,Julia,5),(2,Cobol,5),(2,Python,6),(2,Haskell,7),(2,Rescript,8),_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_",
@@ -208,7 +208,7 @@ test "iter" {
       buf.write_string("[\(k)-\(v)]")
     },
   )
-  inspect(buf, content="[2-two][1-one][3-three]")!
+  inspect!(buf, content="[2-two][1-one][3-three]")
   buf.reset()
   map.iter().take(2).each(
     fn(e) {
@@ -216,19 +216,19 @@ test "iter" {
       buf.write_string("[\(k)-\(v)]")
     },
   )
-  inspect(buf, content="[2-two][1-one]")!
+  inspect!(buf, content="[2-two][1-one]")
 }
 
 test "to_array" {
   let map = of([(1, "one"), (2, "two"), (3, "three")])
-  inspect(map.to_array(), content="[(2, two), (1, one), (3, three)]")!
+  inspect!(map.to_array(), content="[(2, two), (1, one), (3, three)]")
 }
 
 test "get_nonexistent_key" {
   let m : HashMap[String, Int] = HashMap::new()
   m.set("a", 1)
   m.set("b", 2)
-  inspect(m.get("c"), content="None")!
+  inspect!(m.get("c"), content="None")
 }
 
 test "remove_nonexistent_key" {
@@ -243,7 +243,7 @@ test "get_nonexistent_key" {
   let m : HashMap[String, Int] = HashMap::new()
   m.set("a", 1)
   m.set("b", 2)
-  inspect(m.get("c"), content="None")!
+  inspect!(m.get("c"), content="None")
 }
 
 test "remove_nonexistent_key" {
@@ -258,7 +258,7 @@ test "get_nonexistent_key" {
   let m : HashMap[String, Int] = HashMap::new()
   m.set("a", 1)
   m.set("b", 2)
-  inspect(m.get("c"), content="None")!
+  inspect!(m.get("c"), content="None")
 }
 
 test "remove_nonexistent_key" {
@@ -273,7 +273,7 @@ test "get_nonexistent_key" {
   let m : HashMap[String, Int] = HashMap::new()
   m.set("a", 1)
   m.set("b", 2)
-  inspect(m.get("c"), content="None")!
+  inspect!(m.get("c"), content="None")
 }
 
 test "remove_nonexistent_key" {
@@ -312,30 +312,30 @@ test "get_nonexistent_key_with_psl" {
   m.set("x", 24)
   m.set("y", 25)
   m.set("z", 26)
-  inspect(m.get("A"), content="None")!
-  inspect(m.get("B"), content="None")!
-  inspect(m.get("C"), content="None")!
-  inspect(m.get("D"), content="None")!
-  inspect(m.get("E"), content="None")!
-  inspect(m.get("F"), content="None")!
-  inspect(m.get("G"), content="None")!
-  inspect(m.get("H"), content="None")!
-  inspect(m.get("I"), content="None")!
-  inspect(m.get("J"), content="None")!
-  inspect(m.get("K"), content="None")!
-  inspect(m.get("L"), content="None")!
-  inspect(m.get("M"), content="None")!
-  inspect(m.get("N"), content="None")!
-  inspect(m.get("O"), content="None")!
-  inspect(m.get("P"), content="None")!
-  inspect(m.get("Q"), content="None")!
-  inspect(m.get("R"), content="None")!
-  inspect(m.get("S"), content="None")!
-  inspect(m.get("T"), content="None")!
-  inspect(m.get("U"), content="None")!
-  inspect(m.get("V"), content="None")!
-  inspect(m.get("W"), content="None")!
-  inspect(m.get("X"), content="None")!
-  inspect(m.get("Y"), content="None")!
-  inspect(m.get("Z"), content="None")!
+  inspect!(m.get("A"), content="None")
+  inspect!(m.get("B"), content="None")
+  inspect!(m.get("C"), content="None")
+  inspect!(m.get("D"), content="None")
+  inspect!(m.get("E"), content="None")
+  inspect!(m.get("F"), content="None")
+  inspect!(m.get("G"), content="None")
+  inspect!(m.get("H"), content="None")
+  inspect!(m.get("I"), content="None")
+  inspect!(m.get("J"), content="None")
+  inspect!(m.get("K"), content="None")
+  inspect!(m.get("L"), content="None")
+  inspect!(m.get("M"), content="None")
+  inspect!(m.get("N"), content="None")
+  inspect!(m.get("O"), content="None")
+  inspect!(m.get("P"), content="None")
+  inspect!(m.get("Q"), content="None")
+  inspect!(m.get("R"), content="None")
+  inspect!(m.get("S"), content="None")
+  inspect!(m.get("T"), content="None")
+  inspect!(m.get("U"), content="None")
+  inspect!(m.get("V"), content="None")
+  inspect!(m.get("W"), content="None")
+  inspect!(m.get("X"), content="None")
+  inspect!(m.get("Y"), content="None")
+  inspect!(m.get("Z"), content="None")
 }

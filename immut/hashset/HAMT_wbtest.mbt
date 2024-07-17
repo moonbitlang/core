@@ -20,9 +20,9 @@ test "Set" {
   for i = 0; i < 100; i = i + 1 {
     @test.eq((i, map.contains(i)), (i, true))!
   }
-  inspect((100, map.contains(100)), content="(100, false)")!
+  inspect!((100, map.contains(100)), content="(100, false)")
   let map = map.add(100)
-  inspect((100, map.contains(100)), content="(100, true)")!
+  inspect!((100, map.contains(100)), content="(100, true)")
 }
 
 test "Set::size" {
@@ -55,27 +55,27 @@ test "Set::iter" {
   let data = of(["a", "b", "d", "e", "f"])
   let mut s = ""
   data.iter().each(fn { k => s += " \(k)" })
-  inspect(s, content=" d e b a f")!
+  inspect!(s, content=" d e b a f")
 }
 
 test "Set::to_string" {
   let set = Set::new().add(1).add(3).add(0x0f_ff_ff_ff).add(42)
-  inspect(set, content="@immutable_hashset.Set::[3, 42, 1, 268435455]")!
+  inspect!(set, content="@immutable_hashset.Set::[3, 42, 1, 268435455]")
 }
 
 test "Set::from_array" {
   let set = of(["1", "2", "42"])
-  inspect(set.contains("1"), content="true")!
-  inspect(set.contains("2"), content="true")!
-  inspect(set.contains("42"), content="true")!
-  inspect(set.contains("43"), content="false")!
+  inspect!(set.contains("1"), content="true")
+  inspect!(set.contains("2"), content="true")
+  inspect!(set.contains("42"), content="true")
+  inspect!(set.contains("43"), content="false")
 }
 
 test "Set::is_empty" {
   let set = Set::new()
-  inspect(set.is_empty(), content="true")!
+  inspect!(set.is_empty(), content="true")
   let set = set.add(1)
-  inspect(set.is_empty(), content="false")!
+  inspect!(set.is_empty(), content="false")
 }
 
 test "Set::size" {

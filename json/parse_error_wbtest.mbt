@@ -18,7 +18,7 @@ fn parse_as_result(input : String) -> Result[JsonValue, ParseError] {
 
 //region errors
 test "throws on empty documents" {
-  inspect(parse_as_result(""), content="Err(Unexpected end of file)")!
+  inspect!(parse_as_result(""), content="Err(Unexpected end of file)")
 }
 
 test "throws on invalid characters in values" {
@@ -62,7 +62,7 @@ test "throws on invalid new lines in strings" {
 }
 
 test "throws on unterminated strings" {
-  inspect(parse_as_result("\""), content="Err(Unexpected end of file)")!
+  inspect!(parse_as_result("\""), content="Err(Unexpected end of file)")
 }
 
 test "throws on invalid identifier start characters in property names" {
@@ -101,7 +101,7 @@ test "throws on invalid characters in literals" {
 }
 
 test "throws on unterminated escapes" {
-  inspect(parse_as_result("\"\\"), content="Err(Unexpected end of file)")!
+  inspect!(parse_as_result("\"\\"), content="Err(Unexpected end of file)")
 }
 
 test "throws on invalid unicode escapes" {
@@ -130,27 +130,27 @@ test "throws on multiple values" {
 }
 
 test "throws on unclosed objects before property names" {
-  inspect(parse_as_result("{"), content="Err(Unexpected end of file)")!
+  inspect!(parse_as_result("{"), content="Err(Unexpected end of file)")
 }
 
 test "throws on unclosed objects after property names" {
-  inspect(parse_as_result("{\"a\""), content="Err(Unexpected end of file)")!
+  inspect!(parse_as_result("{\"a\""), content="Err(Unexpected end of file)")
 }
 
 test "throws on unclosed objects before property values" {
-  inspect(parse_as_result("{\"a\":"), content="Err(Unexpected end of file)")!
+  inspect!(parse_as_result("{\"a\":"), content="Err(Unexpected end of file)")
 }
 
 test "throws on unclosed objects after property values" {
-  inspect(parse_as_result("{\"a\":1"), content="Err(Unexpected end of file)")!
+  inspect!(parse_as_result("{\"a\":1"), content="Err(Unexpected end of file)")
 }
 
 test "throws on unclosed arrays before values" {
-  inspect(parse_as_result("["), content="Err(Unexpected end of file)")!
+  inspect!(parse_as_result("["), content="Err(Unexpected end of file)")
 }
 
 test "throws on unclosed arrays after values" {
-  inspect(parse_as_result("[1"), content="Err(Unexpected end of file)")!
+  inspect!(parse_as_result("[1"), content="Err(Unexpected end of file)")
 }
 
 test "throws on invalid property names" {
@@ -183,7 +183,7 @@ test "throws on invalid number" {
     parse_as_result("+1"),
     content="Err(Invalid character '+' at line 1, column 0)",
   )!
-  inspect(parse_as_result("-2."), content="Err(Unexpected end of file)")!
+  inspect!(parse_as_result("-2."), content="Err(Unexpected end of file)")
   inspect(
     parse_as_result(".2e-3"),
     content="Err(Invalid character '.' at line 1, column 0)",
@@ -204,7 +204,7 @@ test "throws on invalid number" {
     parse_as_result("-.123"),
     content="Err(Invalid character '.' at line 1, column 1)",
   )!
-  inspect(parse_as_result("1."), content="Err(Unexpected end of file)")!
+  inspect!(parse_as_result("1."), content="Err(Unexpected end of file)")
   inspect(
     parse_as_result(".123"),
     content="Err(Invalid character '.' at line 1, column 0)",

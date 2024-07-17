@@ -839,22 +839,31 @@ pub fn op_equal[T : Eq](self : FixedArray[T], that : FixedArray[T]) -> Bool {
 
 test "op_equal" {
   {
-    inspect(([] : FixedArray[Int]) == [], content="true")!
-    inspect(([] : FixedArray[_]) == [1], content="false")!
-    inspect(([1, 2] : FixedArray[_]) == [], content="false")!
+    inspect!(([] : FixedArray[Int]) == [], content="true")
+    inspect!(([] : FixedArray[_]) == [1], content="false")
+    inspect!(([1, 2] : FixedArray[_]) == [], content="false")
   }
   {
-    inspect(([1] : FixedArray[_]) == [1], content="true")!
-    inspect(([1] : FixedArray[_]) == [2], content="false")!
-    inspect(([1, 2] : FixedArray[_]) == [1], content="false")!
-    inspect(([1] : FixedArray[_]) == [1, 2], content="false")!
+    inspect!(([1] : FixedArray[_]) == [1], content="true")
+    inspect!(([1] : FixedArray[_]) == [2], content="false")
+    inspect!(([1, 2] : FixedArray[_]) == [1], content="false")
+    inspect!(([1] : FixedArray[_]) == [1, 2], content="false")
   }
-  inspect(([1, 2, 3, 4, 5] : FixedArray[_]) == [1, 2, 3, 4, 5], content="true")!
-  inspect(([1, 2, 3, 4, 5] : FixedArray[_]) == [1, 2, 3, 4], content="false")!
-  inspect(([1, 2, 3, 4] : FixedArray[_]) == [1, 2, 3, 4, 5], content="false")!
-  inspect(([1, 2, 3, 4, 5] : FixedArray[_]) == [6, 2, 3, 4, 5], content="false")!
-  inspect(([1, 2, 3, 4, 5] : FixedArray[_]) == [1, 2, 6, 4, 5], content="false")!
-  inspect(([1, 2, 3, 4, 5] : FixedArray[_]) == [1, 2, 3, 4, 6], content="false")!
+  inspect!(([1, 2, 3, 4, 5] : FixedArray[_]) == [1, 2, 3, 4, 5], content="true")
+  inspect!(([1, 2, 3, 4, 5] : FixedArray[_]) == [1, 2, 3, 4], content="false")
+  inspect!(([1, 2, 3, 4] : FixedArray[_]) == [1, 2, 3, 4, 5], content="false")
+  inspect!(
+    ([1, 2, 3, 4, 5] : FixedArray[_]) == [6, 2, 3, 4, 5],
+    content="false",
+  )
+  inspect!(
+    ([1, 2, 3, 4, 5] : FixedArray[_]) == [1, 2, 6, 4, 5],
+    content="false",
+  )
+  inspect!(
+    ([1, 2, 3, 4, 5] : FixedArray[_]) == [1, 2, 3, 4, 6],
+    content="false",
+  )
 }
 
 fn deep_clone[T](arr : FixedArray[T]) -> FixedArray[T] {
@@ -910,12 +919,12 @@ pub fn op_add[T](self : FixedArray[T], other : FixedArray[T]) -> FixedArray[T] {
 
 test "op_add" {
   {
-    inspect(([] : FixedArray[Int]) + [], content="[]")!
-    inspect(([] : FixedArray[_]) + [1, 2, 3, 4, 5], content="[1, 2, 3, 4, 5]")!
-    inspect(([1, 2, 3, 4, 5] : FixedArray[_]) + [], content="[1, 2, 3, 4, 5]")!
+    inspect!(([] : FixedArray[Int]) + [], content="[]")
+    inspect!(([] : FixedArray[_]) + [1, 2, 3, 4, 5], content="[1, 2, 3, 4, 5]")
+    inspect!(([1, 2, 3, 4, 5] : FixedArray[_]) + [], content="[1, 2, 3, 4, 5]")
   }
   {
-    inspect(([1] : FixedArray[_]) + [2], content="[1, 2]")!
+    inspect!(([1] : FixedArray[_]) + [2], content="[1, 2]")
     inspect(
       ([1] : FixedArray[_]) + [1, 2, 3, 4, 5],
       content="[1, 1, 2, 3, 4, 5]",
