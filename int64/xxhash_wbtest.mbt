@@ -13,7 +13,7 @@
 // limitations under the License.
 
 fn slow_hash(self : Int64) -> Int {
-  let b = Bytes::make(8)
+  let b = Bytes::new(8)
   b[7] = self.lsr(56).to_byte()
   b[6] = self.lsr(48).land(0xFFL).to_byte()
   b[5] = self.lsr(40).land(0xFFL).to_byte()

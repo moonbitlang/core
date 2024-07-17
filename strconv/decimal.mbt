@@ -39,7 +39,7 @@ let powtab = [
 /// Create a zero decimal.
 pub fn Decimal::new() -> Decimal {
   {
-    digits: Bytes::make(800),
+    digits: Bytes::new(800),
     digits_num: 0,
     decimal_point: 0,
     negative: false,
@@ -302,7 +302,7 @@ fn should_round_up(self : Decimal, d : Int) -> Bool {
 
 /// Assign a Int64 value to decimal.
 fn assign(self : Decimal, v : Int64) -> Unit {
-  let buf = Bytes::make(24)
+  let buf = Bytes::new(24)
 
   // write value to buf
   let mut n = 0
