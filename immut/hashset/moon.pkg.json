@@ -5,7 +5,7 @@
     "moonbitlang/core/coverage",
     "moonbitlang/core/immut/internal/sparse_array"
   ],
-  "test-import" : [
+  "wbtest-import": [
     "moonbitlang/core/test",
     "moonbitlang/core/string",
     "moonbitlang/core/int",

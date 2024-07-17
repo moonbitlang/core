@@ -65,7 +65,7 @@ test "debug function with Int64" {
 }
 
 test "debug function with Bytes" {
-  let bytes = Bytes::make(10)
+  let bytes = Bytes::new(10)
   let buf = Buffer::new()
   bytes.debug_write(buf)
   inspect(buf, content="\x00\x00\x00\x00\x00")!

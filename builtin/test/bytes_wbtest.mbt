@@ -30,7 +30,7 @@ test "sub_string" {
 }
 
 test "blit_from_string" {
-  let bytes = Bytes::make(10)
+  let bytes = Bytes::new(10)
   let str = "Hello"
   bytes.blit_from_string(0, str, 0, str.length())
   @test.eq(bytes.sub_string(0, str.length() * 2), str)!
@@ -43,7 +43,7 @@ test "copy" {
 }
 
 test "set_utf8_char" {
-  let bytes = Bytes::make(10)
+  let bytes = Bytes::new(10)
   let char = 'A'
   let len = bytes.set_utf8_char(0, char)
   @test.eq(len, 1)!
@@ -53,7 +53,7 @@ test "set_utf8_char" {
 }
 
 test "set_utf16_char" {
-  let bytes = Bytes::make(10)
+  let bytes = Bytes::new(10)
   let char = 'A'
   let len = bytes.set_utf16_char(0, char)
   @test.eq(len, 2)!
@@ -76,43 +76,43 @@ test "panic sub_string with invalid byte_offset + byte_length" {
 }
 
 test "panic blit_from_string with invalid length" {
-  let bytes = Bytes::make(10)
+  let bytes = Bytes::new(10)
   let str = "Hello"
   bytes.blit_from_string(0, str, 0, -1) |> ignore
 }
 
 test "panic blit_from_string with invalid bytes_offset" {
-  let bytes = Bytes::make(10)
+  let bytes = Bytes::new(10)
   let str = "Hello"
   bytes.blit_from_string(-1, str, 0, str.length()) |> ignore
 }
 
 test "panic blit_from_string with invalid str_offset" {
-  let bytes = Bytes::make(10)
+  let bytes = Bytes::new(10)
   let str = "Hello"
   bytes.blit_from_string(0, str, -1, str.length()) |> ignore
 }
 
 test "panic blit_from_string with invalid bytes_offset + length" {
-  let bytes = Bytes::make(10)
+  let bytes = Bytes::new(10)
   let str = "Hello"
   bytes.blit_from_string(0, str, 0, bytes.length() + 1) |> ignore
 }
 
 test "panic blit_from_string with invalid str_offset + length" {
-  let bytes = Bytes::make(10)
+  let bytes = Bytes::new(10)
   let str = "Hello"
   bytes.blit_from_string(0, str, 0, str.length() + 1) |> ignore
 }
 
 test "panic set_utf8_char with invalid code point" {
-  let bytes = Bytes::make(10)
+  let bytes = Bytes::new(10)
   let char = Char::from_int(0x110000)
   bytes.set_utf8_char(0, char) |> ignore
 }
 
 test "panic set_utf16_char with invalid code point" {
-  let bytes = Bytes::make(10)
+  let bytes = Bytes::new(10)
   let char = Char::from_int(0x110000)
   bytes.set_utf16_char(0, char) |> ignore
 }

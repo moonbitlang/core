@@ -4,11 +4,11 @@
     "moonbitlang/core/double",    
     "moonbitlang/core/coverage"
   ],
-  "test-import" : [
+  "wbtest-import": [
     "moonbitlang/core/test",
     "moonbitlang/core/result"
   ],
-  "bbtest_import": [
+  "test-import": [
     "moonbitlang/core/test",
     "moonbitlang/core/double",
     "moonbitlang/core/builtin",

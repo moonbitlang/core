@@ -402,7 +402,8 @@ impl Bytes {
   copy(Bytes) -> Bytes
   debug_write(Bytes, Buffer) -> Unit
   length(Bytes) -> Int
-  make(Int, ~init : Byte = ..) -> Bytes
+  make(Int, Byte) -> Bytes
+  new(Int) -> Bytes
   of_string(String) -> Bytes
   op_get(Bytes, Int) -> Byte
   op_set(Bytes, Int, Byte) -> Unit

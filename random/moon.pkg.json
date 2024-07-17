@@ -6,7 +6,7 @@
     "moonbitlang/core/coverage",
     "moonbitlang/core/array"
   ],
-  "test-import": [
+  "wbtest-import": [
     "moonbitlang/core/test"
   ]
 }
