@@ -102,7 +102,7 @@ test "combine string" {
 
 test "combine bytes" {
   fn bytes_of(arr : Array[Int]) {
-    let rv = Bytes::make(arr.length())
+    let rv = Bytes::new(arr.length())
     for i = 0; i < arr.length(); i = i + 1 {
       rv[i] = arr[i].to_byte()
     }
@@ -148,7 +148,7 @@ test "combine all" {
   hasher..combine_int(1)..combine_int64(2147483648)..combine_uint(2)..combine_uint64(
     4294967296,
   )..combine_double(1.234)..combine_string("Moonbit").combine_bytes(
-    Bytes::make(10, init=b'1'),
+    Bytes::make(10, b'1'),
   )
   inspect(hasher.finalize(), content="1982681228")!
   inspect(hasher.finalize() == hasher.finalize(), content="true")!
