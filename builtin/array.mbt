@@ -29,7 +29,7 @@ pub fn Array::make[T](len : Int, elem : T) -> Array[T] {
 }
 
 /// Returns the total number of elements the array can hold without reallocating.
-fn capacity[T](self : Array[T]) -> Int {
+pub fn capacity[T](self : Array[T]) -> Int {
   self.buffer().0.length()
 }
 
