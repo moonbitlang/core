@@ -20,6 +20,10 @@ pub enum IterResult {
   IterContinue // true
 } derive(Eq)
 
+pub impl[T : Show] Show for Iter[T] with output(self, logger) {
+  Show::output(self.to_array(), logger)
+}
+
 pub fn to_string[T : Show](self : Iter[T]) -> String {
   self.to_array().to_string()
 }

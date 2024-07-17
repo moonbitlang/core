@@ -20,7 +20,7 @@ impl Hash for MyString with hash_combine(self, hasher) {
   hasher.combine_string(self.0)
 }
 
-impl Show for MyString with to_string(self) { self.0 }
+impl Show for MyString with output(self, logger) { logger.write_string(self.0) }
 
 test "new" {
   let m : Map[Int, Int] = Map::new()
@@ -299,7 +299,12 @@ test "linked list" {
 
 test "to_array" {
   let map = { 1: "one", 2: "two", 3: "three" }
-  inspect!(map.to_array(), content="[(1, one), (2, two), (3, three)]")
+  inspect!(
+    map.to_array(),
+    content=
+      #|[(1, "one"), (2, "two"), (3, "three")]
+    ,
+  )
 }
 
 test "set_existing_key" {
@@ -655,9 +660,19 @@ test "to_string" {
   m.set("a", 1)
   m.set("b", 2)
   m.set("c", 3)
-  inspect!(m.to_string(), content="{a: 1, b:2, c:3}")
+  inspect!(
+    m.to_string(),
+    content=
+      #|"a": 1, "b": 2, "c": 3}
+    ,
+  )
   let nested_m = { "a": { "b": 2 }, "B": { "C": 3 } }
-  inspect!(nested_m.to_string(), content="{a: {b: 2}, B:{C: 3}}")
+  inspect!(
+    nested_m.to_string(),
+    content=
+      #|"a": "b": 2}, "B": "C": 3}}
+    ,
+  )
 }
 
 test "hash collision" {

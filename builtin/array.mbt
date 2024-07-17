@@ -922,18 +922,7 @@ pub fn shrink_to_fit[T](self : Array[T]) -> Unit {
 
 /// Converts the array to a string.
 pub fn to_string[T : Show](self : Array[T]) -> String {
-  if self.length() == 0 {
-    return "[]"
-  }
-  let first = self.buffer()[0]
-  // CR: format issues
-  for i = 1, init = "[\(first)" {
-    if i >= self.length() {
-      break "\(init)]"
-    }
-    let cur = self.buffer()[i]
-    continue i + 1, "\(init), \(cur)"
-  }
+  Show::to_string(self)
 }
 
 /// Find the index of the first element that satisfies the predicate.

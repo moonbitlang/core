@@ -17,7 +17,12 @@ test "Map keys iter" {
   let v = {
       [..map.keys()]
     }
-  inspect!(v, content="[a, b, c]")
+  inspect!(
+    v,
+    content=
+      #|["a", "b", "c"]
+    ,
+  )
   inspect!(
     {
       [..map.values()]

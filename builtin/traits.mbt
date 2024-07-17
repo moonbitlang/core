@@ -38,7 +38,22 @@ pub trait Default {
   default() -> Self
 }
 
+/// Trait for a logger, where debug logs can be written into
+pub trait Logger {
+  write_string(Self, String) -> Unit
+  write_sub_string(Self, String, Int, Int) -> Unit
+  write_char(Self, Char) -> Unit
+}
+
 /// Trait for types that can be converted to `String`
 pub trait Show {
+  output(Self, Logger) -> Unit
   to_string(Self) -> String
+}
+
+// Default implementation for `Show::to_string`, uses a `Buffer`
+impl Show with to_string(self) {
+  let logger = Buffer::new()
+  self.output(logger)
+  logger.to_string()
 }

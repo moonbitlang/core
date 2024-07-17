@@ -79,8 +79,23 @@ test "HAMT::to_string" {
 
 test "HAMT::from_array" {
   let map = of([(1, "1"), (2, "2"), (42, "42")])
-  inspect!((1, map.find(1)), content="(1, Some(1))")
-  inspect!((2, map.find(2)), content="(2, Some(2))")
-  inspect!((42, map.find(42)), content="(42, Some(42))")
+  inspect!(
+    (1, map.find(1)),
+    content=
+      #|(1, Some("1"))
+    ,
+  )
+  inspect!(
+    (2, map.find(2)),
+    content=
+      #|(2, Some("2"))
+    ,
+  )
+  inspect!(
+    (42, map.find(42)),
+    content=
+      #|(42, Some("42"))
+    ,
+  )
   inspect!((43, map.find(43)), content="(43, None)")
 }

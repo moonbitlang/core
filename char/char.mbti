@@ -13,4 +13,5 @@ impl Char {
 // Traits
 
 // Extension Methods
+impl Show for Char
 

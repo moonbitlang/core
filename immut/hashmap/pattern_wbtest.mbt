@@ -17,6 +17,8 @@ test "pattern" {
   let { "name": name, "age": age, "is_human": is_human } = m
   inspect!(
     (name, age, is_human),
-    content="(Some(John Doe), Some(43), Some(true))",
+    content=
+      #|(Some("John Doe"), Some("43"), Some("true"))
+    ,
   )
 }

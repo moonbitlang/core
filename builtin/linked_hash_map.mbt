@@ -343,21 +343,27 @@ fn debug_entries[K : Show, V : Show](self : Map[K, V]) -> String {
   buf.to_string()
 }
 
-pub fn to_string[K : Show, V : Show](self : Map[K, V]) -> String {
+pub impl[K : Show, V : Show] Show for Map[K, V] with output(self, logger) {
   if self.size == 0 {
-    return "{}"
+    logger.write_string("{}")
+    return
   }
-  loop 0, self.head, "{" {
-    _, None, _ as acc => return acc + "}"
-    i, Some({ key, value, idx, .. }), acc => {
-      let nxt = self.list[idx].next
+  loop 0, self.head {
+    _, None => logger.write_string("}")
+    i, Some({ key, value, idx, .. }) => {
       if i > 0 {
-        // remove the trailing comma
-        continue i + 1, nxt, acc + ", \(key):\(value)"
+        logger.write_string(", ")
       }
-      continue i + 1, nxt, acc + "\(key): \(value)"
+      key.output(logger)
+      logger.write_string(": ")
+      value.output(logger)
+      continue i + 1, self.list[idx].next
     }
   }
+}
+
+pub fn to_string[K : Show, V : Show](self : Map[K, V]) -> String {
+  Show::to_string(self)
 }
 
 /// Get the number of key-value pairs in the map.

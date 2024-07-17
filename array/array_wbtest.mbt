@@ -143,10 +143,20 @@ test "map" {
   let v = [3, 4, 5]
   let e : Array[Int] = []
   inspect!(v.map(fn(x) { x + 1 }), content="[4, 5, 6]")
-  inspect!(v.map(fn(x) { x.to_string() }), content="[3, 4, 5]")
+  inspect!(
+    v.map(fn(x) { x.to_string() }),
+    content=
+      #|["3", "4", "5"]
+    ,
+  )
   inspect!(e.map(fn(x) { x + 1 }), content="[]")
   // Is it correct?
-  inspect!(["a", "b", "c"], content="[a, b, c]")
+  inspect!(
+    ["a", "b", "c"],
+    content=
+      #|["a", "b", "c"]
+    ,
+  )
 }
 
 test "map_inplace" {
@@ -162,7 +172,12 @@ test "mapi" {
   let v = [3, 4, 5]
   let e : Array[Int] = []
   inspect!(v.mapi(fn(i, x) { x + i }), content="[3, 5, 7]")
-  inspect!(v.mapi(fn(i, x) { (x + i).to_string() }), content="[3, 5, 7]")
+  inspect!(
+    v.mapi(fn(i, x) { (x + i).to_string() }),
+    content=
+      #|["3", "5", "7"]
+    ,
+  )
   inspect!(e.mapi(fn(_i, x) { x + 1 }), content="[]")
 }
 

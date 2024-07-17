@@ -525,19 +525,26 @@ pub fn filter[T : Compare](
   }
 }
 
-pub fn to_string[T : Show + Compare](self : ImmutableSet[T]) -> String {
+pub impl[T : Show + Compare] Show for ImmutableSet[T] with output(self, logger) {
   match self {
-    Empty => "ImmutableSet::[]"
+    Empty => logger.write_string("ImmutableSet::[]")
     _ => {
       let linear = self.to_array()
       let len = linear.length()
-      for i = 0, str = "ImmutableSet::["; i < len - 1; {
-        continue i + 1, str + linear[i].to_string() + ", "
-      } else {
-        str + linear[len - 1].to_string() + "]"
+      logger.write_string("ImmutableSet::[")
+      for i = 0; i < len; i = i + 1 {
+        if i > 0 {
+          logger.write_string(", ")
+        }
+        linear[i].output(logger)
       }
+      logger.write_string("]")
     }
   }
+}
+
+pub fn to_string[T : Show + Compare](self : ImmutableSet[T]) -> String {
+  Show::to_string(self)
 }
 
 // The following are the helper functions or types used by the internal implementation of ImmutableSet
@@ -547,10 +554,10 @@ priv enum SplitBis[T] {
   NotFound(ImmutableSet[T], () -> ImmutableSet[T])
 }
 
-fn to_string[T : Show](self : SplitBis[T]) -> String {
+impl[T : Show] Show for SplitBis[T] with output(self, logger) {
   match self {
-    Found => "Found"
-    NotFound(_) => "NotFound"
+    Found => logger.write_string("Found")
+    NotFound(_) => logger.write_string("NotFound")
   }
 }
 

@@ -130,3 +130,7 @@ pub fn to_bytes(self : Buffer) -> Bytes {
   bytes.blit(0, self.bytes, 0, self.len)
   bytes
 }
+
+pub impl Show for Buffer with output(self, logger) {
+  logger.write_string(self.to_string())
+}

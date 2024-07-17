@@ -16,10 +16,11 @@ impl Map {
   op_get[K : Eq + Hash, V](Self[K, V], K) -> V?
   remove[K : Eq + Hash, V](Self[K, V], K) -> Self[K, V]
   size[K, V](Self[K, V]) -> Int
-  to_string[K : Debug, V : Debug](Self[K, V]) -> String
+  to_string[K : Show, V : Show](Self[K, V]) -> String
 }
 
 // Traits
 
 // Extension Methods
+impl Show for Map
 

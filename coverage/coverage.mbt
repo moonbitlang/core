@@ -17,7 +17,7 @@
 /// generated code.
 struct CoverageCounter {
   counter : FixedArray[UInt]
-} derive(Show)
+}
 
 /// Create a new coverage counter with the given size.
 ///
@@ -32,6 +32,21 @@ pub fn CoverageCounter::new(size : Int) -> CoverageCounter {
 pub fn CoverageCounter::incr(self : CoverageCounter, idx : Int) -> Unit {
   let counter = self.counter[idx]
   self.counter[idx] = counter + 1
+}
+
+pub impl Show for CoverageCounter with output(self, logger) {
+  logger.write_char('[')
+  for i = 0; i < self.counter.length(); i = i + 1 {
+    if i != 0 {
+      logger.write_string(", ")
+    }
+    Show::output(self.counter[i], logger)
+  }
+  logger.write_char(']')
+}
+
+pub fn to_string(self : CoverageCounter) -> String {
+  Show::to_string(self)
 }
 
 /// Output the contents of this counter in JSON format.

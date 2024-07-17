@@ -28,4 +28,5 @@ impl HashSet {
 // Traits
 
 // Extension Methods
+impl Show for HashSet
 

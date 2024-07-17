@@ -20,6 +20,40 @@ pub fn to_string(self : Char) -> String {
   bytes.sub_string(0, len)
 }
 
+pub impl Show for Char with output(self, logger) {
+  fn to_hex_digit(i : Int) -> Char {
+    if i < 10 {
+      Char::from_int('0'.to_int() + i)
+    } else {
+      Char::from_int('a'.to_int() + (i - 10))
+    }
+  }
+
+  logger.write_char('\'')
+  match self {
+    '\'' | '\\' => {
+      logger.write_char('\\')
+      logger.write_char(self)
+    }
+    '\n' => logger.write_string("\\n")
+    '\r' => logger.write_string("\\r")
+    '\b' => logger.write_string("\\b")
+    '\t' => logger.write_string("\\t")
+    _ => {
+      let code = self.to_int()
+      if code < 0x20 {
+        logger.write_char('\\')
+        logger.write_char('x')
+        logger.write_char(to_hex_digit(code / 16))
+        logger.write_char(to_hex_digit(code % 16))
+      } else {
+        logger.write_char(self)
+      }
+    }
+  }
+  logger.write_char('\'')
+}
+
 test "to_string" {
   @test.eq!('a'.to_string(), "a")
 }

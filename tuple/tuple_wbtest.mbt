@@ -217,9 +217,24 @@ test "to_string" {
   let tuple4 = (1, 2, 3, "hello")
   let tuple5 = ([1], "2", 3, ([4] : Array[_]), 5)
   inspect!(tuple2, content="(1, 2)")
-  inspect!(tuple3, content="(a, b, c)")
-  inspect!(tuple4, content="(1, 2, 3, hello)")
-  inspect!(tuple5, content="([1], 2, 3, [4], 5)")
+  inspect!(
+    tuple3,
+    content=
+      #|("a", "b", "c")
+    ,
+  )
+  inspect!(
+    tuple4,
+    content=
+      #|(1, 2, 3, "hello")
+    ,
+  )
+  inspect!(
+    tuple5,
+    content=
+      #|([1], "2", 3, [4], 5)
+    ,
+  )
   inspect!((1, 2, 3, 4, 5, 6), content="(1, 2, 3, 4, 5, 6)")
   inspect!((1, 2, 3, 4, 5, 6, 7), content="(1, 2, 3, 4, 5, 6, 7)")
 }

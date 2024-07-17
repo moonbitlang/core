@@ -225,10 +225,24 @@ pub fn debug_write[T : Debug](self : Set[T], buf : Buffer) -> Unit {
   buf.write_string("]")
 }
 
-pub fn to_string[T : Debug](self : Set[T]) -> String {
-  let buf = Buffer::new(size_hint=0)
-  self.debug_write(buf)
-  buf.to_string()
+pub impl[T : Show] Show for Set[T] with output(self, logger) {
+  let mut is_first = true
+  logger.write_string("@immutable_hashset.Set::[")
+  self.each(
+    fn(k) {
+      if is_first {
+        is_first = false
+      } else {
+        logger.write_string(", ")
+      }
+      k.output(logger)
+    },
+  )
+  logger.write_string("]")
+}
+
+pub fn to_string[T : Show](self : Set[T]) -> String {
+  Show::to_string(self)
 }
 
 pub fn Set::from_array[T : Eq + Hash](arr : Array[T]) -> Set[T] {
