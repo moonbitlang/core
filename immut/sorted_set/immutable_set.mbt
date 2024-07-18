@@ -743,3 +743,34 @@ pub fn ImmutableSet::of[T : Compare](array : FixedArray[T]) -> ImmutableSet[T] {
     set
   }
 }
+
+test "split_bis" {
+  inspect!(of([1, 2, 3]).split_bis(1), content="Found")
+  inspect!(of([1, 2, 3]).split_bis(3), content="Found")
+  inspect!(of([1, 2, 3]).split_bis(0), content="NotFound")
+  inspect!(of([1, 2, 3]).split_bis(4), content="NotFound")
+}
+
+test "balance with left height greater" {
+  let left = of([1, 2, 3])
+  let value = 4
+  let right = of([5])
+  let balanced_set = balance(left, value, right)
+  inspect!(balanced_set, content="ImmutableSet::[1, 2, 3, 4, 5]")
+}
+
+test "balance with right height greater" {
+  let left = of([1])
+  let value = 2
+  let right = of([3, 4, 5])
+  let balanced_set = balance(left, value, right)
+  inspect!(balanced_set, content="ImmutableSet::[1, 2, 3, 4, 5]")
+}
+
+test "join with different heights" {
+  let left = of([1, 2, 3])
+  let value = 4
+  let right = of([5, 6, 7])
+  let joined_set = join(left, value, right)
+  inspect!(joined_set, content="ImmutableSet::[1, 2, 3, 4, 5, 6, 7]")
+}
