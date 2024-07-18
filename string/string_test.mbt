@@ -13,7 +13,7 @@
 // limitations under the License.
 
 test "default" {
-  inspect!(default())
+  inspect!(@string.default())
 }
 
 test "compare" {
