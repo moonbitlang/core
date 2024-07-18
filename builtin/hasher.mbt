@@ -91,6 +91,11 @@ pub fn combine_string(self : Hasher, value : String) -> Unit {
   }
 }
 
+
+pub impl Hash for String with hash_combine(self, hasher) {
+  hasher.combine_string(self)
+}
+
 pub fn combine_char(self : Hasher, value : Char) -> Unit {
   self.combine_int(value.to_int())
 }

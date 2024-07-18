@@ -44,15 +44,6 @@ pub fn to_bytes(self : String) -> Bytes {
   bytes
 }
 
-pub fn hash(self : String) -> Int {
-  let hasher = Hasher::new()
-  hasher.combine(self)
-  hasher.finalize()
-}
-
-pub fn hash_combine(self : String, hasher : Hasher) -> Unit {
-  hasher.combine_string(self)
-}
 
 /// Converts the String into an array of Chars.
 pub fn to_array(self : String) -> Array[Char] {

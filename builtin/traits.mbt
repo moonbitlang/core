@@ -33,6 +33,12 @@ pub trait Hash {
   hash(Self) -> Int
 }
 
+impl Hash with hash(self) {
+  let hasher = Hasher::new()
+  hasher.combine(self)
+  hasher.finalize()
+}
+
 /// Trait for types with a default value
 pub trait Default {
   default() -> Self
