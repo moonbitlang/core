@@ -21,11 +21,11 @@ test "overflow" {
 
 test "signum function tests" {
   // Test for signum function
-  inspect!(signum(0L), content="0")
-  inspect!(signum(1L), content="1")
-  inspect!(signum(-1L), content="-1")
-  inspect!(signum(max_val), content="1")
-  inspect!(signum(min_val), content="-1")
+  inspect!(@int64.signum(0L), content="0")
+  inspect!(@int64.signum(1L), content="1")
+  inspect!(@int64.signum(-1L), content="-1")
+  inspect!(@int64.signum(Int64::max_value()), content="1")
+  inspect!(@int64.signum(Int64::min_value()), content="-1")
 }
 
 test "Int64::min_value" {
