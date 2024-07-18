@@ -13,35 +13,35 @@
 // limitations under the License.
 
 test "pair" {
-  let tuple = pair(1, 2)
+  let tuple = @tuple.pair(1, 2)
   @test.eq(tuple, (1, 2))!
 }
 
 test "fst" {
   let tuple = (1, 2)
-  @test.eq(fst(tuple), 1)!
+  @test.eq(@tuple.fst(tuple), 1)!
 }
 
 test "snd" {
   let tuple = (1, 2)
-  @test.eq(snd(tuple), 2)!
+  @test.eq(@tuple.snd(tuple), 2)!
 }
 
-test "map_fst" {
+test "@tuple.map_fst" {
   let tuple = (1, 2)
-  let mapped = map_fst(fn(x : Int) -> Int { x + 1 }, tuple)
+  let mapped = @tuple.map_fst(fn(x : Int) -> Int { x + 1 }, tuple)
   @test.eq(mapped, (2, 2))!
 }
 
-test "map_snd" {
+test "@tuple.map_snd" {
   let tuple = (1, 2)
-  let mapped = map_snd(fn(x : Int) -> Int { x + 1 }, tuple)
+  let mapped = @tuple.map_snd(fn(x : Int) -> Int { x + 1 }, tuple)
   @test.eq(mapped, (1, 3))!
 }
 
-test "map_both" {
+test "@tuple.map_both" {
   let tuple = (1, 2)
-  let mapped = map_both(
+  let mapped = @tuple.map_both(
     fn(x : Int) -> Int { x + 1 },
     fn(x : Int) -> Int { x - 1 },
     tuple,
@@ -51,35 +51,35 @@ test "map_both" {
 
 test "swap" {
   let tuple = (1, 2)
-  let swapped = swap(tuple)
-  let swapped_2 = swap(swapped)
+  let swapped = @tuple.swap(tuple)
+  let swapped_2 = @tuple.swap(swapped)
   @test.eq(swapped, (2, 1))!
   @test.eq(swapped_2, tuple)!
 }
 
 test "curry" {
   let add = fn(x : Int, y : Int) -> Int { x + y }
-  let curried_add = curry(add)
+  let curried_add = @tuple.curry(add)
   @test.eq(curried_add(1)(2), add(1, 2))!
 }
 
 test "uncurry" {
   let add = fn(x : Int) -> (Int) -> Int { fn(y : Int) -> Int { x + y } }
-  let uncurried_add = uncurry(add)
+  let uncurried_add = @tuple.uncurry(add)
   @test.eq(uncurried_add(1, 2), add(1)(2))!
 }
 
 test "id_1" {
   let add = fn(x : Int, y : Int) -> Int { x + y }
-  let curried_add = curry(add)
-  let uncurried_add = uncurry(curried_add)
+  let curried_add = @tuple.curry(add)
+  let uncurried_add = @tuple.uncurry(curried_add)
   @test.eq(uncurried_add(1, 2), add(1, 2))!
 }
 
 test "id_2" {
   let add = fn(x : Int) -> (Int) -> Int { fn(y : Int) -> Int { x + y } }
-  let uncurried_add = uncurry(add)
-  let curried_add = curry(uncurried_add)
+  let uncurried_add = @tuple.uncurry(add)
+  let curried_add = @tuple.curry(uncurried_add)
   @test.eq(curried_add(1)(2), add(1)(2))!
 }
 
