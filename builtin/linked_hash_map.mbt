@@ -225,9 +225,9 @@ pub fn remove[K : Hash + Eq, V](self : Map[K, V], key : K) -> Unit {
       Some(entry) => {
         if entry.hash == hash && entry.key == key {
           self.entries[idx] = None
+          self.remove_entry(entry)
           self.shift_back(idx)
           self.size -= 1
-          self.remove_entry(entry)
           break
         }
         if i > entry.psl {
@@ -281,8 +281,8 @@ fn remove_entry[K : Eq, V](self : Map[K, V], entry : Entry[K, V]) -> Unit {
 
 fn shift_back[K : Hash, V](self : Map[K, V], start_index : Int) -> Unit {
   for prev = start_index, curr = (start_index + 1).land(self.capacity_mask) {
-    match self.entries[curr] {
-      Some(entry) => {
+    match (self.entries[curr], self.list[curr]) {
+      (Some(entry), currNode) => {
         if entry.psl == 0 {
           break
         }
@@ -290,9 +290,13 @@ fn shift_back[K : Hash, V](self : Map[K, V], start_index : Int) -> Unit {
         entry.idx = prev
         self.entries[prev] = Some(entry)
         self.entries[curr] = None
+        self.list[prev].prev = currNode.prev
+        self.list[prev].next = currNode.next
+        currNode.prev = None
+        currNode.next = None
         continue curr, (curr + 1).land(self.capacity_mask)
       }
-      None => break
+      (None, _) => break
     }
   }
 }
