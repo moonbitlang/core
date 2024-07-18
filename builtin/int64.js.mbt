@@ -272,6 +272,10 @@ fn MyInt64::to_int(self : MyInt64) -> Int {
   self.lo
 }
 
+fn MyInt64::to_uint(self : MyInt64) -> UInt {
+  self.lo.to_uint()
+}
+
 extern "js" fn MyInt64::from_double(value : Double) -> MyInt64 =
   #|(a) => {
   #|  let neg = false;
@@ -421,6 +425,10 @@ pub fn Int64::to_int(self : Int64) -> Int {
   MyInt64::from_int64(self).to_int()
 }
 
+pub fn Int64::to_uint(self : Int64) -> UInt {
+  MyInt64::from_int64(self).to_uint()
+}
+
 pub fn Int64::to_double(self : Int64) -> Double {
   MyInt64::from_int64(self).to_double()
 }
@@ -477,9 +485,8 @@ pub fn UInt64::op_mod(self : UInt64, other : UInt64) -> UInt64 {
 
 pub fn UInt64::to_int64(self : UInt64) -> Int64 = "%identity"
 
-// TODO: make it intrinsic
 pub fn UInt64::to_uint(self : UInt64) -> UInt {
-  self.land(0xFFFF_FFFFUL).to_int64().to_int().to_uint()
+  MyInt64::from_uint64(self).to_uint()
 }
 
 pub fn UInt64::compare(self : UInt64, other : UInt64) -> Int {
