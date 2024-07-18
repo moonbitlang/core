@@ -25,7 +25,7 @@ test "panic set with negative index" {
 }
 
 test "panic set with empty array" {
-  let v  =  @array.empty()
+  let v = @array.empty()
   let v1 = v.set(0, 10) // This should trigger the panic in set function
   inspect!(v1, content="ImmutableVec::[]")
 }
