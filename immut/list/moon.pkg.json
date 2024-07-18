@@ -5,5 +5,11 @@
     "moonbitlang/core/array",
     "moonbitlang/core/coverage"
   ],
-  "wbtest-import": ["moonbitlang/core/tuple"]
+  "test-import": [
+    "moonbitlang/core/builtin",
+    "moonbitlang/core/test",
+    "moonbitlang/core/array",
+    "moonbitlang/core/coverage",
+    "moonbitlang/core/tuple"
+  ]
 }
