@@ -15,11 +15,11 @@
 test {
   let unit1 = ()
   let unit2 = ()
-  @test.eq(unit1, unit2)!
+  @core_test.eq(unit1, unit2)!
 }
 
 test {
   let unit1 = ()
   let unit2 = ()
-  @test.is_true(physical_equal(unit1, unit2))!
+  @core_test.is_true(physical_equal(unit1, unit2))!
 }
