@@ -10,6 +10,7 @@
     "moonbitlang/core/builtin",
     "moonbitlang/core/test",
     "moonbitlang/core/int64",
+    "moonbitlang/core/bool",
     "moonbitlang/core/coverage"
   ]
 }
