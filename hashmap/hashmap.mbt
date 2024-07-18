@@ -202,7 +202,7 @@ test "of" {
   inspect!(m.get(3), content="Some(4)")
 }
 
-type MyString String derive(Eq)
+priv type MyString String derive(Eq)
 
 impl Hash for MyString with hash(self) { self.0.length() }
 

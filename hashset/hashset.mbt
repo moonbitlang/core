@@ -300,7 +300,7 @@ pub fn to_string[K : Show](self : HashSet[K]) -> String {
   s
 }
 
-type MyString String derive(Eq)
+priv type MyString String derive(Eq)
 
 impl Hash for MyString with hash(self) { self.0.length() }
 
