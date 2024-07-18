@@ -7,6 +7,7 @@ impl Int64 {
   abs(Int64) -> Int64
   from_int(Int) -> Int64
   hash(Int64) -> Int
+  hash_combine(Int64, Hasher) -> Unit
   max_value() -> Int64
   min_value() -> Int64
   signum(Int64) -> Int64
