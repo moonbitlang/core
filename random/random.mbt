@@ -76,3 +76,11 @@ pub fn gen_double(self : RandomState) -> Double {
   let r2 = Double::from_int(self.gen_int())
   (r1 / scale + r2) / scale
 }
+
+test "RandomState::new initializes state array correctly" {
+  let rs = RandomState::new()
+  for i = 0; i < n32; i = i + 1 {
+    @test.eq(rs.state[i], 0)!
+  }
+  @test.eq(rs.index, 0)!
+}

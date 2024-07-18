@@ -13,21 +13,21 @@
 // limitations under the License.
 
 test "int64" {
-  let rng = init_state(seed=42)
+  let rng = @random.init_state(seed=42)
   inspect!(rng.gen_int64(), content="8084403149060065107")
   inspect!(rng.gen_int64(), content="2279609739787318250")
   inspect!(rng.gen_int64(), content="2226638563751653351")
 }
 
 test "int32" {
-  let rng = init_state(seed=37)
+  let rng = @random.init_state(seed=37)
   inspect!(rng.gen_int(), content="1686431524")
   inspect!(rng.gen_int(), content="1962882487")
   inspect!(rng.gen_int(), content="1104074260")
 }
 
 test "double" {
-  let rng = init_state(seed=37)
+  let rng = @random.init_state(seed=37)
   inspect!(rng.gen_double(), content="1.8280767729232197")
   inspect!(rng.gen_double(), content="0.21014593823649855")
   inspect!(rng.gen_double(), content="1.9690294691898182")
@@ -48,12 +48,4 @@ test "FixedArray::make with non-zero initialization" {
   for i = 0; i < k; i = i + 1 {
     @test.eq(arr[i], init_value)!
   }
-}
-
-test "RandomState::new initializes state array correctly" {
-  let rs = RandomState::new()
-  for i = 0; i < n32; i = i + 1 {
-    @test.eq(rs.state[i], 0)!
-  }
-  @test.eq(rs.index, 0)!
 }
