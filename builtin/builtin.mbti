@@ -451,4 +451,7 @@ pub trait Show {
 }
 
 // Extension Methods
+impl Hash for String
+
+impl Hash for Hash
 
