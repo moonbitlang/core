@@ -3,9 +3,18 @@
     "moonbitlang/core/builtin",
     "moonbitlang/core/coverage",
     "moonbitlang/core/int",
+    "moonbitlang/core/test",
     "moonbitlang/core/array"
   ],
   "wbtest-import": [
+    "moonbitlang/core/string",
+    "moonbitlang/core/test",
+    "moonbitlang/core/tuple"
+  ],
+  "test-import": [
+    "moonbitlang/core/builtin",
+    "moonbitlang/core/int",
+    "moonbitlang/core/coverage",
     "moonbitlang/core/string",
     "moonbitlang/core/test",
     "moonbitlang/core/tuple"
