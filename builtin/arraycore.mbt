@@ -92,3 +92,84 @@ fn resize_buffer[T](self : Array[T], new_capacity : Int) -> Unit {
   UninitializedArray::unsafe_blit(new_buf, 0, old_buf, 0, copy_len)
   self.buf = new_buf
 }
+
+test "array_unsafe_blit_fixed" {
+  let src = FixedArray::make(5, 0)
+  let dst = UninitializedArray::make(5)
+  for i = 0; i < 5; i = i + 1 {
+    src[i] = i + 1
+  }
+  UninitializedArray::unsafe_blit_fixed(dst, 0, src, 0, 5)
+  for i = 0; i < 5; i = i + 1 {
+    test_eq(dst[i], src[i])!
+  }
+}
+
+test "array_resize_buffer" {
+  let arr = Array::new(capacity=2)
+  arr.push(1)
+  arr.push(2)
+  arr.resize_buffer(4)
+  test_is_true(arr.buffer().0.length() >= 4)!
+  arr.push(3)
+  arr.push(4)
+  test_eq(arr.length(), 4)!
+  test_eq(arr[0], 1)!
+  test_eq(arr[1], 2)!
+  test_eq(arr[2], 3)!
+  test_eq(arr[3], 4)!
+}
+
+test "UninitializedArray::unsafe_blit_fixed" {
+  let src = FixedArray::make(5, 0)
+  let dst = UninitializedArray::make(5)
+  for i = 0; i < 5; i = i + 1 {
+    src[i] = i + 1
+  }
+  UninitializedArray::unsafe_blit_fixed(dst, 0, src, 0, 5)
+  for i = 0; i < 5; i = i + 1 {
+    test_eq(dst[i], src[i])!
+  }
+}
+
+test "Array::resize_buffer" {
+  let arr = Array::new(capacity=2)
+  arr.push(1)
+  arr.push(2)
+  arr.resize_buffer(4)
+  test_is_true(arr.buffer().0.length() >= 4)!
+  arr.push(3)
+  arr.push(4)
+  test_eq(arr.length(), 4)!
+  test_eq(arr[0], 1)!
+  test_eq(arr[1], 2)!
+  test_eq(arr[2], 3)!
+  test_eq(arr[3], 4)!
+}
+
+test "UninitializedArray::unsafe_blit_fixed" {
+  let src = FixedArray::make(5, 0)
+  let dst = UninitializedArray::make(5)
+  for i = 0; i < 5; i = i + 1 {
+    src[i] = i + 1
+  }
+  UninitializedArray::unsafe_blit_fixed(dst, 0, src, 0, 5)
+  for i = 0; i < 5; i = i + 1 {
+    test_eq(dst[i], src[i])!
+  }
+}
+
+test "Array::resize_buffer" {
+  let arr = Array::new(capacity=2)
+  arr.push(1)
+  arr.push(2)
+  arr.resize_buffer(4)
+  test_is_true(arr.buffer().0.length() >= 4)!
+  arr.push(3)
+  arr.push(4)
+  test_eq(arr.length(), 4)!
+  test_eq(arr[0], 1)!
+  test_eq(arr[1], 2)!
+  test_eq(arr[2], 3)!
+  test_eq(arr[3], 4)!
+}

@@ -69,22 +69,22 @@ pub fn hash_combine(self : Byte, hasher : Hasher) -> Unit {
 
 test "panic alphabet function coverage" {
   // Test cases to cover all branches in the alphabet function
-  eq(alphabet(0), "0")!
-  eq(alphabet(1), "1")!
-  eq(alphabet(2), "2")!
-  eq(alphabet(3), "3")!
-  eq(alphabet(4), "4")!
-  eq(alphabet(5), "5")!
-  eq(alphabet(6), "6")!
-  eq(alphabet(7), "7")!
-  eq(alphabet(8), "8")!
-  eq(alphabet(9), "9")!
-  eq(alphabet(10), "A")!
-  eq(alphabet(11), "B")!
-  eq(alphabet(12), "C")!
-  eq(alphabet(13), "D")!
-  eq(alphabet(14), "E")!
-  eq(alphabet(15), "F")!
+  test_eq(alphabet(0), "0")!
+  test_eq(alphabet(1), "1")!
+  test_eq(alphabet(2), "2")!
+  test_eq(alphabet(3), "3")!
+  test_eq(alphabet(4), "4")!
+  test_eq(alphabet(5), "5")!
+  test_eq(alphabet(6), "6")!
+  test_eq(alphabet(7), "7")!
+  test_eq(alphabet(8), "8")!
+  test_eq(alphabet(9), "9")!
+  test_eq(alphabet(10), "A")!
+  test_eq(alphabet(11), "B")!
+  test_eq(alphabet(12), "C")!
+  test_eq(alphabet(13), "D")!
+  test_eq(alphabet(14), "E")!
+  test_eq(alphabet(15), "F")!
   // Test for the panic case
   alphabet(16) |> ignore
 }
@@ -95,10 +95,17 @@ fn debug_string[T : Debug](t : T) -> String {
   buf.to_string()
 }
 
-fn eq[T : Debug + Eq](a : T, b : T, ~loc : SourceLoc = _) -> Unit!String {
+fn test_eq[T : Debug + Eq](a : T, b : T, ~loc : SourceLoc = _) -> Unit!String {
   if a != b {
     let a = debug_string(a)
     let b = debug_string(b)
     raise "FAILED: \(loc) `\(a) == \(b)`"
+  }
+}
+
+fn test_is_true(x : Bool, ~loc : SourceLoc = _) -> Unit!String {
+  if not(x) {
+    let x = debug_string(x)
+    raise "FAILED: \(loc) `\(x)` is not true"
   }
 }
