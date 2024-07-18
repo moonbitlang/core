@@ -13,7 +13,7 @@
 // limitations under the License.
 
 test "SparseArray" {
-  let arr0 = singleton(1, 1)
+  let arr0 = @sparse_array.singleton(1, 1)
   inspect(
     (arr0.has(0), arr0[0], arr0.has(1), arr0[1], arr0.has(2), arr0[2]),
     content="(false, None, true, Some(1), false, None)",
@@ -36,7 +36,7 @@ test "SparseArray" {
 }
 
 test "SparseArray::iter" {
-  let arr = singleton(0, 0).add(1, 1).add(3, 3).add(31, 31)
+  let arr = @sparse_array.singleton(0, 0).add(1, 1).add(3, 3).add(31, 31)
   let buf = Buffer::new(size_hint=0)
   let mut is_first = true
   arr.each(
