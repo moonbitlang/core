@@ -206,6 +206,10 @@ type MyString String derive(Eq)
 
 impl Hash for MyString with hash(self) { self.0.length() }
 
+impl Hash for MyString with hash_combine(self, hasher) {
+  hasher.combine_string(self.0)
+}
+
 impl Show for MyString with to_string(self) { self.0 }
 
 impl Debug for MyString with debug_write(self, b : Buffer) {
