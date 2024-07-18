@@ -92,3 +92,138 @@ fn iter[T](self : Bucket[T]) -> Iter[T] {
     },
   )
 }
+
+test "Bucket" {
+  let b0 : Bucket[_] = Just_One(0)
+  inspect!((b0.find(0), b0.find(1), b0.size()), content="(true, false, 1)")
+  let b1 = b0.add(1)
+  inspect!((b1.find(0), b1.find(1), b1.size()), content="(true, true, 2)")
+  let b2 = b1.add(2)
+  inspect!((b2.find(0), b2.find(1), b2.size()), content="(true, true, 3)")
+  let b3 = b2.remove(0)
+  {
+    let b1 = b3.unwrap()
+    inspect!((b1.find(0), b1.find(1)), content="(false, true)")
+  }
+  let b4 = b2.remove(1)
+  let b1 = b4.unwrap() // b4 ? --> return Option instead of Result
+  inspect!((b1.find(0), b1.find(1)), content="(true, false)")
+}
+
+test "Bucket::iter" {
+  let b : Bucket[_] = More(0, More(1, Just_One(31)))
+  let buf = Buffer::new(size_hint=0)
+  let mut is_first = true
+  b.each(
+    fn(k) {
+      if is_first {
+        is_first = false
+      } else {
+        buf.write_string(", ")
+      }
+      buf.write_string("\(k)")
+    },
+  )
+  inspect!(buf.to_string(), content="0, 1, 31")
+}
+
+test "Bucket::iter" {
+  let b : Bucket[_] = More(0, More(1, Just_One(31)))
+  let buf = Buffer::new(size_hint=0)
+  let mut is_first = true
+  b.iter().each(
+    fn {
+      k => {
+        // weird syntax conventions that
+        // braces needed here
+        if is_first {
+          is_first = false
+        } else {
+          buf.write_string(", ")
+        }
+        buf.write_string("\(k)")
+      }
+    },
+  )
+  inspect!(buf.to_string(), content="0, 1, 31")
+}
+
+test "Bucket add and remove" {
+  let b0 : Bucket[_] = Just_One(0)
+  let b1 = b0.add(1)
+  let b2 = b1.add(2)
+  let b3 = b2.remove(0).unwrap()
+  let b4 = b2.remove(1).unwrap()
+  let b5 = b2.remove(2).unwrap()
+  @test.eq(b0.find(0), true)!
+  @test.eq(b0.find(1), false)!
+  @test.eq(b1.find(0), true)!
+  @test.eq(b1.find(1), true)!
+  @test.eq(b2.find(0), true)!
+  @test.eq(b2.find(1), true)!
+  @test.eq(b2.find(2), true)!
+  @test.eq(b3.find(0), false)!
+  @test.eq(b3.find(1), true)!
+  @test.eq(b3.find(2), true)!
+  @test.eq(b4.find(0), true)!
+  @test.eq(b4.find(1), false)!
+  @test.eq(b4.find(2), true)!
+  @test.eq(b5.find(0), true)!
+  @test.eq(b5.find(1), true)!
+  @test.eq(b5.find(2), false)!
+}
+
+test "Bucket size" {
+  let b0 : Bucket[_] = Just_One(0)
+  let b1 = b0.add(1)
+  let b2 = b1.add(2)
+  let b3 = b2.remove(0).unwrap()
+  let b4 = b2.remove(1).unwrap()
+  let b5 = b2.remove(2).unwrap()
+  @test.eq(b0.size(), 1)!
+  @test.eq(b1.size(), 2)!
+  @test.eq(b2.size(), 3)!
+  @test.eq(b3.size(), 2)!
+  @test.eq(b4.size(), 2)!
+  @test.eq(b5.size(), 2)!
+}
+
+test "Bucket iter" {
+  let b0 : Bucket[_] = Just_One(0)
+  let b1 = b0.add(1)
+  let b2 = b1.add(2)
+  let buf = Buffer::new(size_hint=0)
+  let mut is_first = true
+  b2.each(
+    fn(k) {
+      if is_first {
+        is_first = false
+      } else {
+        buf.write_string(", ")
+      }
+      buf.write_string("\(k)")
+    },
+  )
+  inspect!(buf, content="1, 2, 0")
+}
+
+test "Bucket iter" {
+  let b0 : Bucket[_] = Just_One(0)
+  let b1 = b0.add(1)
+  let b2 = b1.add(2)
+  let buf = Buffer::new(size_hint=0)
+  let mut is_first = true
+  b2.iter().each(
+    fn {
+      k => {
+        if is_first {
+          is_first = false
+        } else {
+          buf.write_string(", ")
+        }
+        buf.write_string("\(k)")
+      }
+    },
+  )
+  inspect!(buf, content="1, 2, 0")
+}
