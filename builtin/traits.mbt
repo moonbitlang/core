@@ -29,6 +29,7 @@ pub trait Compare: Eq {
 
 /// Trait for types that can be hashed
 pub trait Hash {
+  hash_combine(Self, Hasher) -> Unit
   hash(Self) -> Int
 }
 

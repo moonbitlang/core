@@ -22,6 +22,10 @@ type MyString String derive(Eq)
 
 impl Hash for MyString with hash(self) { self.0.length() }
 
+impl Hash for MyString with hash_combine(self, hasher) {
+  hasher.combine_string(self.0)
+}
+
 impl Show for MyString with to_string(self) { self.0 }
 
 test "set" {
@@ -110,7 +114,7 @@ test "iter" {
   let m : HashSet[String] = HashSet::of(["a", "b", "c"])
   let mut sum = ""
   m.each(fn(k) { sum += k })
-  @test.eq(sum, "abc")!
+  inspect!(sum, content="cab")
 }
 
 test "iteri" {
@@ -123,8 +127,8 @@ test "iteri" {
       sum += i
     },
   )
-  @test.eq(s, "213")!
-  @test.eq(sum, 3)!
+  inspect!(s, content="231")
+  inspect!(sum, content="3")
 }
 
 test "clear" {
@@ -213,10 +217,10 @@ test "iter" {
   let buf = Buffer::new(size_hint=20)
   let map = of(["a", "b", "c"])
   map.iter().each(fn(e) { buf.write_string("[\(e)]") })
-  inspect!(buf, content="[a][b][c]")
+  inspect!(buf, content="[c][a][b]")
   buf.reset()
   map.iter().take(2).each(fn(e) { buf.write_string("[\(e)]") })
-  inspect!(buf, content="[a][b]")
+  inspect!(buf, content="[c][a]")
 }
 
 test "from_array" {

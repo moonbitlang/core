@@ -281,3 +281,7 @@ test "min_normal" {
 pub fn hash(self : Double) -> Int {
   self.reinterpret_as_i64().hash()
 }
+
+pub fn hash_combine(self : Double, hasher : Hasher) -> Unit {
+  hasher.combine_double(self)
+}

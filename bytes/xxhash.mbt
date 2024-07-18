@@ -35,6 +35,10 @@ pub fn hash(self : Bytes) -> Int {
   xxhash32(self, 0)
 }
 
+pub fn hash_combine(self : Bytes, hasher : Hasher) -> Unit {
+  hasher.combine_bytes(self)
+}
+
 fn rotl(x : Int, r : Int) -> Int {
   x.lsl(r).lor(x.lsr(32 - r))
 }
