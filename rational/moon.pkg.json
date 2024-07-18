@@ -10,7 +10,9 @@
   ],
   "test-import": [
     "moonbitlang/core/builtin",
+    "moonbitlang/core/double",
     "moonbitlang/core/test",
+    "moonbitlang/core/result",
     "moonbitlang/core/coverage",
     "moonbitlang/core/option"
   ]
