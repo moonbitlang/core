@@ -32,10 +32,10 @@ test {
 test {
   let unit1 = ()
   let unit2 = ()
-  @test.eq(compare(unit1, unit2), 0)!
+  @test.eq(@unit.compare(unit1, unit2), 0)!
 }
 
 test {
   let unit = ()
-  @test.eq(hash(unit), 0)!
+  @test.eq(@unit.hash(unit), 0)!
 }
