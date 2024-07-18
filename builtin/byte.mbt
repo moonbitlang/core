@@ -66,3 +66,39 @@ pub fn hash(self : Byte) -> Int {
 pub fn hash_combine(self : Byte, hasher : Hasher) -> Unit {
   hasher.combine_byte(self)
 }
+
+test "panic alphabet function coverage" {
+  // Test cases to cover all branches in the alphabet function
+  eq(alphabet(0), "0")!
+  eq(alphabet(1), "1")!
+  eq(alphabet(2), "2")!
+  eq(alphabet(3), "3")!
+  eq(alphabet(4), "4")!
+  eq(alphabet(5), "5")!
+  eq(alphabet(6), "6")!
+  eq(alphabet(7), "7")!
+  eq(alphabet(8), "8")!
+  eq(alphabet(9), "9")!
+  eq(alphabet(10), "A")!
+  eq(alphabet(11), "B")!
+  eq(alphabet(12), "C")!
+  eq(alphabet(13), "D")!
+  eq(alphabet(14), "E")!
+  eq(alphabet(15), "F")!
+  // Test for the panic case
+  alphabet(16) |> ignore
+}
+
+fn debug_string[T : Debug](t : T) -> String {
+  let buf = Buffer::new(size_hint=50)
+  t.debug_write(buf)
+  buf.to_string()
+}
+
+fn eq[T : Debug + Eq](a : T, b : T, ~loc : SourceLoc = _) -> Unit!String {
+  if a != b {
+    let a = debug_string(a)
+    let b = debug_string(b)
+    raise "FAILED: \(loc) `\(a) == \(b)`"
+  }
+}
