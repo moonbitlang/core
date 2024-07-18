@@ -59,3 +59,7 @@ pub fn hash(self : Int) -> Int {
   x = x.lxor(x.lsr(14))
   x
 }
+
+pub fn hash_combine(self : Int, hasher : Hasher) -> Unit {
+  hasher.combine_int(self)
+}

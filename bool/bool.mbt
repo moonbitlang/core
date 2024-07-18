@@ -39,3 +39,7 @@ pub fn to_int64(self : Bool) -> Int64 {
 pub fn hash(self : Bool) -> Int {
   self.to_int()
 }
+
+pub fn hash_combine(self : Bool, hasher : Hasher) -> Unit {
+  hasher.combine_bool(self)
+}

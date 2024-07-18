@@ -6,6 +6,7 @@ package moonbitlang/core/char
 impl Char {
   debug_write(Char, Buffer) -> Unit
   hash(Char) -> Int
+  hash_combine(Char, Hasher) -> Unit
   to_string(Char) -> String
 }
 

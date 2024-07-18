@@ -124,14 +124,18 @@ impl Buffer {
 
 type Hasher
 impl Hasher {
+  combine[T : Hash](Self, T) -> Unit
+  combine_bool(Self, Bool) -> Unit
   combine_byte(Self, Byte) -> Unit
   combine_bytes(Self, Bytes) -> Unit
+  combine_char(Self, Char) -> Unit
   combine_double(Self, Double) -> Unit
   combine_int(Self, Int) -> Unit
   combine_int64(Self, Int64) -> Unit
   combine_string(Self, String) -> Unit
   combine_uint(Self, UInt) -> Unit
   combine_uint64(Self, UInt64) -> Unit
+  combine_unit(Self) -> Unit
   finalize(Self) -> Int
   new(~seed : Int = ..) -> Self
 }
@@ -230,6 +234,8 @@ impl Bool {
 impl Byte {
   compare(Byte, Byte) -> Int
   debug_write(Byte, Buffer) -> Unit
+  hash(Byte) -> Int
+  hash_combine(Byte, Hasher) -> Unit
   op_equal(Byte, Byte) -> Bool
   to_int(Byte) -> Int
   to_int64(Byte) -> Int64
@@ -436,6 +442,7 @@ pub trait Eq {
 }
 
 pub trait Hash {
+  hash_combine(Self, Hasher) -> Unit
   hash(Self) -> Int
 }
 

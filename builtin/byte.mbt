@@ -58,3 +58,11 @@ pub fn debug_write(self : Byte, buf : Buffer) -> Unit {
   buf.write_string(lo)
   buf.write_string("'")
 }
+
+pub fn hash(self : Byte) -> Int {
+  self.to_int()
+}
+
+pub fn hash_combine(self : Byte, hasher : Hasher) -> Unit {
+  hasher.combine_byte(self)
+}

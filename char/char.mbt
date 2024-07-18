@@ -81,3 +81,7 @@ test "debug_write" {
 pub fn hash(self : Char) -> Int {
   self.to_int()
 }
+
+pub fn hash_combine(self : Char, hasher : Hasher) -> Unit {
+  hasher.combine_char(self)
+}

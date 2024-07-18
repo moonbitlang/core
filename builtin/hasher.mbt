@@ -31,6 +31,18 @@ pub fn Hasher::new(~seed : Int = 0) -> Hasher {
   { acc: seed + gPRIME5 }
 }
 
+pub fn combine[T : Hash](self : Hasher, value : T) -> Unit {
+  value.hash_combine(self)
+}
+
+pub fn combine_unit(self : Hasher) -> Unit {
+  self.combine_int(0)
+}
+
+pub fn combine_bool(self : Hasher, value : Bool) -> Unit {
+  self.combine_int(if value { 1 } else { 0 })
+}
+
 pub fn combine_int(self : Hasher, value : Int) -> Unit {
   self.acc += 4
   self.consume4(value)
@@ -77,6 +89,10 @@ pub fn combine_string(self : Hasher, value : String) -> Unit {
   for i = 0; i < value.length(); i = i + 1 {
     self.combine_int(value[i].to_int())
   }
+}
+
+pub fn combine_char(self : Hasher, value : Char) -> Unit {
+  self.combine_int(value.to_int())
 }
 
 pub fn finalize(self : Hasher) -> Int {

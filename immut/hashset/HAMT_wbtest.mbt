@@ -55,7 +55,7 @@ test "Set::iter" {
   let data = of(["a", "b", "d", "e", "f"])
   let mut s = ""
   data.iter().each(fn { k => s += " \(k)" })
-  inspect!(s, content=" d e b a f")
+  inspect!(s, content=" e f b a d")
 }
 
 test "Set::to_string" {

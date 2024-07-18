@@ -98,6 +98,7 @@ test "combine string" {
   inspect!(hash("abc") == hash("abc"), content="true")
   inspect!(hash("a") == hash("a"), content="true")
   inspect!(hash("a") == hash("abc"), content="false")
+  inspect!(hash("five") == hash("five"), content="true")
 }
 
 test "combine bytes" {

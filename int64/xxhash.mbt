@@ -43,3 +43,7 @@ pub fn hash(self : Int64) -> Int {
   acc = acc.lxor(acc.lsr(16))
   acc
 }
+
+pub fn hash_combine(self : Int64, hasher : Hasher) -> Unit {
+  hasher.combine_int64(self)
+}
