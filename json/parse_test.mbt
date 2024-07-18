@@ -12,7 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-fn test_parse(input : String, ~loc : SourceLoc = _) -> JsonValue!String {
+// fn parse_as_result(input : String) -> Result[@json.JsonValue, @json.ParseError] {
+//   input |> @result.wrap1(f=@json.parse)
+// }
+
+fn test_parse(input : String, ~loc : SourceLoc = _) -> @json.JsonValue!String {
   match parse_as_result(input) {
     Ok(json) => json
     Err(err) => {
@@ -52,19 +56,21 @@ test "parses nested objects" {
 //region arrays
 test "parses empty arrays" {
   let json = test_parse("[]")!
-  @test.eq(json, JsonValue::Array([]))!
+  @test.eq(json, @json.JsonValue::Array([]))!
 }
 
 test "parses array values" {
   let json = test_parse("[1]")!
-  @test.eq(json, JsonValue::Array([JsonValue::Number(1.0)]))!
+  @test.eq(json, @json.JsonValue::Array([@json.JsonValue::Number(1.0)]))!
 }
 
 test "parses multiple array values" {
   let json = test_parse("[1,2]")!
   @test.eq(
     json,
-    JsonValue::Array([JsonValue::Number(1.0), JsonValue::Number(2.0)]),
+    @json.JsonValue::Array(
+      [@json.JsonValue::Number(1.0), @json.JsonValue::Number(2.0)],
+    ),
   )!
 }
 
@@ -72,10 +78,12 @@ test "parses nested arrays" {
   let json = test_parse("[1,[2,3]]")!
   @test.eq(
     json,
-    JsonValue::Array(
+    @json.JsonValue::Array(
       [
-        JsonValue::Number(1.0),
-        JsonValue::Array([JsonValue::Number(2.0), JsonValue::Number(3.0)]),
+        @json.JsonValue::Number(1.0),
+        @json.JsonValue::Array(
+          [@json.JsonValue::Number(2.0), @json.JsonValue::Number(3.0)],
+        ),
       ],
     ),
   )!
@@ -85,7 +93,7 @@ test "parses nested arrays" {
 //region nulls
 test "parses nulls" {
   let json = test_parse("null")!
-  @test.eq(json, JsonValue::Null)!
+  @test.eq(json, @json.JsonValue::Null)!
 }
 //endregion
 
@@ -106,8 +114,12 @@ test "parses leading zeroes" {
   let json = test_parse("[0,0.0,0e0]")!
   @test.eq(
     json,
-    JsonValue::Array(
-      [JsonValue::Number(0.0), JsonValue::Number(0.0), JsonValue::Number(0.0)],
+    @json.JsonValue::Array(
+      [
+        @json.JsonValue::Number(0.0),
+        @json.JsonValue::Number(0.0),
+        @json.JsonValue::Number(0.0),
+      ],
     ),
   )!
 }
@@ -116,12 +128,12 @@ test "parses integers" {
   let json = test_parse("[1,23,456,7890]")!
   @test.eq(
     json,
-    JsonValue::Array(
+    @json.JsonValue::Array(
       [
-        JsonValue::Number(1.0),
-        JsonValue::Number(23.0),
-        JsonValue::Number(456.0),
-        JsonValue::Number(7890.0),
+        @json.JsonValue::Number(1.0),
+        @json.JsonValue::Number(23.0),
+        @json.JsonValue::Number(456.0),
+        @json.JsonValue::Number(7890.0),
       ],
     ),
   )!
@@ -131,12 +143,12 @@ test "parses signed numbers" {
   let json = test_parse("[-1,2,-0.1,-0]")!
   @test.eq(
     json,
-    JsonValue::Array(
+    @json.JsonValue::Array(
       [
-        JsonValue::Number(-1.0),
-        JsonValue::Number(2.0),
-        JsonValue::Number(-0.1),
-        JsonValue::Number(-0.0),
+        @json.JsonValue::Number(-1.0),
+        @json.JsonValue::Number(2.0),
+        @json.JsonValue::Number(-0.1),
+        @json.JsonValue::Number(-0.0),
       ],
     ),
   )!
@@ -146,7 +158,9 @@ test "parses fractional numbers" {
   let json = test_parse("[1.0,1.23]")!
   @test.eq(
     json,
-    JsonValue::Array([JsonValue::Number(1.0), JsonValue::Number(1.23)]),
+    @json.JsonValue::Array(
+      [@json.JsonValue::Number(1.0), @json.JsonValue::Number(1.23)],
+    ),
   )!
 }
 
@@ -154,15 +168,15 @@ test "parses exponents" {
   let json = test_parse("[1e0,1e1,1e01,1.0e0,1.1e0,1e-1,1e+1]")!
   @test.eq(
     json,
-    JsonValue::Array(
+    @json.JsonValue::Array(
       [
-        JsonValue::Number(1.0),
-        JsonValue::Number(10.0),
-        JsonValue::Number(10.0),
-        JsonValue::Number(1.0),
-        JsonValue::Number(1.1),
-        JsonValue::Number(0.1),
-        JsonValue::Number(10.0),
+        @json.JsonValue::Number(1.0),
+        @json.JsonValue::Number(10.0),
+        @json.JsonValue::Number(10.0),
+        @json.JsonValue::Number(1.0),
+        @json.JsonValue::Number(1.1),
+        @json.JsonValue::Number(0.1),
+        @json.JsonValue::Number(10.0),
       ],
     ),
   )!
@@ -170,12 +184,12 @@ test "parses exponents" {
 
 test "parses 1" {
   let json = test_parse("1")!
-  @test.eq(json, JsonValue::Number(1.0))!
+  @test.eq(json, @json.JsonValue::Number(1.0))!
 }
 
 test "parses +1.23e100" {
   let json = test_parse("1.23e100")!
-  @test.eq(json, JsonValue::Number(1.23e100))!
+  @test.eq(json, @json.JsonValue::Number(1.23e100))!
 }
 
 //endregion
@@ -183,35 +197,37 @@ test "parses +1.23e100" {
 //region strings
 test "parses string" {
   let json = test_parse("\"abc\"")!
-  @test.eq(json, JsonValue::String("abc"))!
+  @test.eq(json, @json.JsonValue::String("abc"))!
 }
 
 test "parses quotes in string" {
   let json = test_parse("[\"\\\"\",\"'\"]")!
   @test.eq(
     json,
-    JsonValue::Array([JsonValue::String("\""), JsonValue::String("'")]),
+    @json.JsonValue::Array(
+      [@json.JsonValue::String("\""), @json.JsonValue::String("'")],
+    ),
   )!
 }
 
 test "parses escaped characters" {
   let json = test_parse("\"\\b\\f\\n\\r\\t\\u01fF\\\"\"")!
-  @test.eq(json, JsonValue::String("\u0008\u000C\n\r\t\u01FF\""))!
+  @test.eq(json, @json.JsonValue::String("\u0008\u000C\n\r\t\u01FF\""))!
 }
 //endregion
 
 //region whitespace
 test "parses whitespace" {
   let json = test_parse("{\t\u000b\u000c \u00A0\uFEFF\n\r\u2028\u2029\u2003}")!
-  @test.eq(json, JsonValue::Object({  }))!
+  @test.eq(json, @json.JsonValue::Object({  }))!
 }
 //endregion
 
 test "valid" {
-  inspect!(valid("{\"a\": 1, \"b\":2}"), content="true")
-  inspect!(valid("{}"), content="true")
-  inspect!(valid("{a:1, b:2}"), content="false")
-  inspect!(valid("{"), content="false")
+  inspect!(@json.valid("{\"a\": 1, \"b\":2}"), content="true")
+  inspect!(@json.valid("{}"), content="true")
+  inspect!(@json.valid("{a:1, b:2}"), content="false")
+  inspect!(@json.valid("{"), content="false")
 }
 
 test "parse unexpected token in value" {

@@ -13,17 +13,17 @@
 // limitations under the License.
 
 test "ParseError::to_string coverage" {
-  let invalidCharError = ParseError::InvalidChar(
-    Position::{ line: 1, column: 0 },
+  let invalidCharError = @json.InvalidChar(
+    @json.Position::{ line: 1, column: 0 },
     'a',
   )
-  let invalidEofError = ParseError::InvalidEof
-  let invalidNumberError = ParseError::InvalidNumber(
-    Position::{ line: 1, column: 0 },
+  let invalidEofError = @json.InvalidEof
+  let invalidNumberError = @json.InvalidNumber(
+    @json.Position::{ line: 1, column: 0 },
     "123abc",
   )
-  let invalidIdentEscapeError = ParseError::InvalidIdentEscape(
-    Position::{ line: 1, column: 0 },
+  let invalidIdentEscapeError = @json.InvalidIdentEscape(
+    @json.Position::{ line: 1, column: 0 },
   )
   @test.eq(
     invalidCharError.to_string(),

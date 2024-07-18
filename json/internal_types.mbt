@@ -90,3 +90,11 @@ fn add_char(self : StringBuilder, c : Char) -> Unit {
 fn to_string(self : StringBuilder) -> String {
   self.buffer
 }
+
+test "add_string method coverage" {
+  let sb = StringBuilder::make()
+  add_string(sb, "Hello")
+  @test.eq(sb.buffer, "Hello")!
+  add_string(sb, " World")
+  @test.eq(sb.buffer, "Hello World")!
+}

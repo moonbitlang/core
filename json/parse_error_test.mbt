@@ -12,8 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-fn parse_as_result(input : String) -> Result[JsonValue, ParseError] {
-  input |> @result.wrap1(f=parse)
+fn parse_as_result(input : String) -> Result[@json.JsonValue, @json.ParseError] {
+  input |> @result.wrap1(f=@json.parse)
 }
 
 //region errors
