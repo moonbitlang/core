@@ -4,7 +4,10 @@
     "moonbitlang/core/coverage",
     "moonbitlang/core/test"
   ],
-  "wbtest-import": [
+  "test-import": [
+    "moonbitlang/core/builtin",
+    "moonbitlang/core/coverage",
+    "moonbitlang/core/test",
     "moonbitlang/core/random"
   ]
 }
