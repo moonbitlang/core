@@ -24,8 +24,8 @@ impl Show for MyString with output(self, logger) { logger.write_string(self.0) }
 
 test "new" {
   let m : Map[Int, Int] = Map::new()
-  @test.eq!(m.capacity, 8)
-  @test.eq!(m.size, 0)
+  assert_eq!(m.capacity, 8)
+  assert_eq!(m.size, 0)
 }
 
 test "set" {
@@ -37,8 +37,8 @@ test "set" {
   m.set("cd", 2)
   m.set("c", 1)
   m.set("d", 1)
-  @test.eq!(m.size, 7)
-  @test.eq!(
+  assert_eq!(m.size, 7)
+  assert_eq!(
     m.debug_entries(),
     "_,(0,a,1),(1,b,1),(2,c,1),(3,d,1),(3,bc,2),(4,cd,2),(4,abc,3),_,_,_,_,_,_,_,_",
   )
@@ -49,10 +49,10 @@ test "get" {
   m.set("a", 1)
   m.set("b", 2)
   m.set("c", 3)
-  @test.eq!(m.get("a"), Some(1))
-  @test.eq!(m.get("b"), Some(2))
-  @test.eq!(m.get("c"), Some(3))
-  @test.eq!(m.get("d"), None)
+  assert_eq!(m.get("a"), Some(1))
+  assert_eq!(m.get("b"), Some(2))
+  assert_eq!(m.get("c"), Some(3))
+  assert_eq!(m.get("d"), None)
 }
 
 test "get_or_default" {
@@ -60,10 +60,10 @@ test "get_or_default" {
   m.set("a", 1)
   m.set("b", 2)
   m.set("c", 3)
-  @test.eq!(m.get_or_default("a", 42), 1)
-  @test.eq!(m.get_or_default("b", 42), 2)
-  @test.eq!(m.get_or_default("c", 42), 3)
-  @test.eq!(m.get_or_default("d", 42), 42)
+  assert_eq!(m.get_or_default("a", 42), 1)
+  assert_eq!(m.get_or_default("b", 42), 2)
+  assert_eq!(m.get_or_default("c", 42), 3)
+  assert_eq!(m.get_or_default("d", 42), 42)
 }
 
 test "get_or_init" {
@@ -71,8 +71,8 @@ test "get_or_init" {
   m.get_or_init("a", fn() { Array::new() }).push(1)
   m.get_or_init("b", fn() { Array::new() }).push(2)
   m.get_or_init("a", fn() { Array::new() }).push(3)
-  @test.eq!(m.get("a"), Some([1, 3]))
-  @test.eq!(m.get("b"), Some([2]))
+  assert_eq!(m.get("a"), Some([1, 3]))
+  assert_eq!(m.get("b"), Some([2]))
 }
 
 test "get_or_init" {
@@ -80,73 +80,73 @@ test "get_or_init" {
   m.get_or_init("a", fn() { Array::new() }).push(1)
   m.get_or_init("b", fn() { Array::new() }).push(2)
   m.get_or_init("a", fn() { Array::new() }).push(3)
-  @test.eq!(m.get("a"), Some([1, 3]))
-  @test.eq!(m.get("b"), Some([2]))
+  assert_eq!(m.get("a"), Some([1, 3]))
+  assert_eq!(m.get("b"), Some([2]))
 }
 
 test "op_set" {
   let m : Map[String, Int] = Map::new()
   m["a"] = 1
   m["b"] = 2
-  @test.eq!(m.get("a"), Some(1))
-  @test.eq!(m.get("b"), Some(2))
+  assert_eq!(m.get("a"), Some(1))
+  assert_eq!(m.get("b"), Some(2))
 }
 
 test "op_get" {
   let m : Map[String, Int] = Map::new()
   m.set("a", 1)
   m.set("b", 2)
-  @test.eq!(m["a"], Some(1))
-  @test.eq!(m["b"], Some(2))
-  @test.eq!(m["c"], None)
+  assert_eq!(m["a"], Some(1))
+  assert_eq!(m["b"], Some(2))
+  assert_eq!(m["c"], None)
 }
 
 test "set_update" {
   let m : Map[String, Int] = Map::new()
   m.set("a", 1)
   m.set("b", 2)
-  @test.eq!(m.get("a"), Some(1))
+  assert_eq!(m.get("a"), Some(1))
   m.set("a", 2)
-  @test.eq!(m.get("a"), Some(2))
+  assert_eq!(m.get("a"), Some(2))
 }
 
 test "contains" {
   let m : Map[String, Int] = Map::new()
   m.set("a", 1)
-  @test.eq!(m.contains("a"), true)
-  @test.eq!(m.contains("b"), false)
+  assert_eq!(m.contains("a"), true)
+  assert_eq!(m.contains("b"), false)
 }
 
 test "from_array" {
   let m = { "a": 1, "b": 2, "c": 3 }
-  @test.eq!(m.get("a"), Some(1))
-  @test.eq!(m.get("b"), Some(2))
-  @test.eq!(m.get("c"), Some(3))
+  assert_eq!(m.get("a"), Some(1))
+  assert_eq!(m.get("b"), Some(2))
+  assert_eq!(m.get("c"), Some(3))
 }
 
 test "size" {
   let m : Map[String, Int] = Map::new()
-  @test.eq!(m.size(), 0)
+  assert_eq!(m.size(), 0)
   m.set("a", 1)
-  @test.eq!(m.size(), 1)
+  assert_eq!(m.size(), 1)
 }
 
 test "is_empty" {
   let m : Map[String, Int] = Map::new()
-  @test.eq!(m.is_empty(), true)
+  assert_eq!(m.is_empty(), true)
   m.set("a", 1)
-  @test.eq!(m.is_empty(), false)
+  assert_eq!(m.is_empty(), false)
   m.remove("a")
-  @test.eq!(m.is_empty(), true)
+  assert_eq!(m.is_empty(), true)
   m.remove("a")
-  @test.eq!(m.is_empty(), true)
+  assert_eq!(m.is_empty(), true)
 }
 
 test "iter" {
   let m = { "a": 1, "b": 2, "c": 3 }
   let mut sum = 0
   m.each(fn(_k, v) { sum += v })
-  @test.eq!(sum, 6)
+  assert_eq!(sum, 6)
 }
 
 test "iteri" {
@@ -159,19 +159,19 @@ test "iteri" {
       sum += v
     },
   )
-  @test.eq!(s, "012")
-  @test.eq!(sum, 6)
+  assert_eq!(s, "012")
+  assert_eq!(sum, 6)
 }
 
 test "clear" {
   let m = { "a": 1, "b": 2, "c": 3 }
   m.clear()
-  @test.eq!(m.size, 0)
-  @test.eq!(m.capacity, 8)
-  @test.eq!(m.head, None)
-  @test.eq!(m.tail, None)
+  assert_eq!(m.size, 0)
+  assert_eq!(m.capacity, 8)
+  assert_eq!(m.head, None)
+  assert_eq!(m.tail, None)
   for i = 0; i < m.capacity; i = i + 1 {
-    @test.is!(m.entries[i], None)
+    assert_eq!(m.entries[i], None)
   }
 }
 
@@ -183,17 +183,17 @@ test "grow" {
   m.set("Java", 4)
   m.set("Scala", 5)
   m.set("Julia", 5)
-  @test.eq!(m.size(), 6)
-  @test.eq!(m.capacity(), 8)
+  assert_eq!(m.size(), 6)
+  assert_eq!(m.capacity(), 8)
   m.set("Cobol", 5)
-  @test.eq!(m.size(), 7)
-  @test.eq!(m.capacity(), 16)
+  assert_eq!(m.size(), 7)
+  assert_eq!(m.capacity(), 16)
   m.set("Python", 6)
   m.set("Haskell", 7)
   m.set("Rescript", 8)
-  @test.eq!(m.size(), 10)
-  @test.eq!(m.capacity(), 16)
-  @test.eq!(
+  assert_eq!(m.size(), 10)
+  assert_eq!(m.capacity(), 16)
+  assert_eq!(
     m.debug_entries(),
     "_,(0,C,1),(0,Go,2),(0,C++,3),(0,Java,4),(0,Scala,5),(1,Julia,5),(2,Cobol,5),(2,Python,6),(2,Haskell,7),(2,Rescript,8),_,_,_,_,_",
   )
@@ -313,8 +313,8 @@ test "set_existing_key" {
   m.set("b", 2)
   m.set("c", 3)
   m.set("a", 4)
-  @test.eq!(m.size, 3)
-  @test.eq!(m.get("a"), Some(4))
+  assert_eq!(m.size, 3)
+  assert_eq!(m.get("a"), Some(4))
 }
 
 test "get_nonexistent_key" {
@@ -322,7 +322,7 @@ test "get_nonexistent_key" {
   m.set("a", 1)
   m.set("b", 2)
   m.set("c", 3)
-  @test.eq!(m.get("d"), None)
+  assert_eq!(m.get("d"), None)
 }
 
 test "get_or_default_existing_key" {
@@ -330,7 +330,7 @@ test "get_or_default_existing_key" {
   m.set("a", 1)
   m.set("b", 2)
   m.set("c", 3)
-  @test.eq!(m.get_or_default("a", 42), 1)
+  assert_eq!(m.get_or_default("a", 42), 1)
 }
 
 test "get_or_default_nonexistent_key" {
@@ -338,7 +338,7 @@ test "get_or_default_nonexistent_key" {
   m.set("a", 1)
   m.set("b", 2)
   m.set("c", 3)
-  @test.eq!(m.get_or_default("d", 42), 42)
+  assert_eq!(m.get_or_default("d", 42), 42)
 }
 
 test "remove_existing_key" {
@@ -347,8 +347,8 @@ test "remove_existing_key" {
   m.set("b", 2)
   m.set("c", 3)
   m.remove("b")
-  @test.eq!(m.size(), 2)
-  @test.eq!(m.get("b"), None)
+  assert_eq!(m.size(), 2)
+  assert_eq!(m.get("b"), None)
 }
 
 test "remove_nonexistent_key" {
@@ -357,7 +357,7 @@ test "remove_nonexistent_key" {
   m.set("b", 2)
   m.set("c", 3)
   m.remove("d")
-  @test.eq!(m.size(), 3)
+  assert_eq!(m.size(), 3)
 }
 
 test "contains_existing_key" {
@@ -365,7 +365,7 @@ test "contains_existing_key" {
   m.set("a", 1)
   m.set("b", 2)
   m.set("c", 3)
-  @test.eq!(m.contains("b"), true)
+  assert_eq!(m.contains("b"), true)
 }
 
 test "contains_nonexistent_key" {
@@ -373,7 +373,7 @@ test "contains_nonexistent_key" {
   m.set("a", 1)
   m.set("b", 2)
   m.set("c", 3)
-  @test.eq!(m.contains("d"), false)
+  assert_eq!(m.contains("d"), false)
 }
 
 test "clear" {
@@ -382,12 +382,12 @@ test "clear" {
   m.set("b", 2)
   m.set("c", 3)
   m.clear()
-  @test.eq!(m.size, 0)
-  @test.eq!(m.capacity, 8)
-  @test.eq!(m.head, None)
-  @test.eq!(m.tail, None)
+  assert_eq!(m.size, 0)
+  assert_eq!(m.capacity, 8)
+  assert_eq!(m.head, None)
+  assert_eq!(m.tail, None)
   for i = 0; i < m.capacity; i = i + 1 {
-    @test.is!(m.entries[i], None)
+    assert_eq!(m.entries[i], None)
   }
 }
 
@@ -398,7 +398,7 @@ test "iter" {
   m.set("c", 3)
   let mut sum = 0
   m.each(fn(_k, v) { sum += v })
-  @test.eq!(sum, 6)
+  assert_eq!(sum, 6)
 }
 
 test "iteri" {
@@ -414,8 +414,8 @@ test "iteri" {
       sum += v
     },
   )
-  @test.eq!(s, "012")
-  @test.eq!(sum, 6)
+  assert_eq!(s, "012")
+  assert_eq!(sum, 6)
 }
 
 test "to_array" {
@@ -423,17 +423,17 @@ test "to_array" {
   m.set("a", 1)
   m.set("b", 2)
   m.set("c", 3)
-  @test.eq!(m.to_array(), [("a", 1), ("b", 2), ("c", 3)])
+  assert_eq!(m.to_array(), [("a", 1), ("b", 2), ("c", 3)])
 }
 
 test "new" {
   let m : Map[String, Int] = Map::new()
-  @test.eq!(m.size, 0)
-  @test.eq!(m.capacity, 8)
-  @test.eq!(m.head, None)
-  @test.eq!(m.tail, None)
+  assert_eq!(m.size, 0)
+  assert_eq!(m.capacity, 8)
+  assert_eq!(m.head, None)
+  assert_eq!(m.tail, None)
   for i = 0; i < m.capacity; i = i + 1 {
-    @test.is!(m.entries[i], None)
+    assert_eq!(m.entries[i], None)
   }
 }
 
@@ -442,10 +442,10 @@ test "get" {
   m.set("a", 1)
   m.set("b", 2)
   m.set("c", 3)
-  @test.eq!(m.get("a"), Some(1))
-  @test.eq!(m.get("b"), Some(2))
-  @test.eq!(m.get("c"), Some(3))
-  @test.eq!(m.get("d"), None)
+  assert_eq!(m.get("a"), Some(1))
+  assert_eq!(m.get("b"), Some(2))
+  assert_eq!(m.get("c"), Some(3))
+  assert_eq!(m.get("d"), None)
 }
 
 test "get_or_default" {
@@ -453,33 +453,33 @@ test "get_or_default" {
   m.set("a", 1)
   m.set("b", 2)
   m.set("c", 3)
-  @test.eq!(m.get_or_default("a", 42), 1)
-  @test.eq!(m.get_or_default("b", 42), 2)
-  @test.eq!(m.get_or_default("c", 42), 3)
-  @test.eq!(m.get_or_default("d", 42), 42)
+  assert_eq!(m.get_or_default("a", 42), 1)
+  assert_eq!(m.get_or_default("b", 42), 2)
+  assert_eq!(m.get_or_default("c", 42), 3)
+  assert_eq!(m.get_or_default("d", 42), 42)
 }
 
 test "contains" {
   let m : Map[String, Int] = Map::new()
   m.set("a", 1)
-  @test.eq!(m.contains("a"), true)
-  @test.eq!(m.contains("b"), false)
+  assert_eq!(m.contains("a"), true)
+  assert_eq!(m.contains("b"), false)
 }
 
 test "size" {
   let m : Map[String, Int] = Map::new()
-  @test.eq!(m.size, 0)
+  assert_eq!(m.size, 0)
   m.set("a", 1)
-  @test.eq!(m.size, 1)
+  assert_eq!(m.size, 1)
 }
 
 test "is_empty" {
   let m : Map[String, Int] = Map::new()
-  @test.eq!(m.is_empty(), true)
+  assert_eq!(m.is_empty(), true)
   m.set("a", 1)
-  @test.eq!(m.is_empty(), false)
+  assert_eq!(m.is_empty(), false)
   m.remove("a")
-  @test.eq!(m.is_empty(), true)
+  assert_eq!(m.is_empty(), true)
 }
 
 test "iter" {
@@ -489,7 +489,7 @@ test "iter" {
   m.set("c", 3)
   let mut sum = 0
   m.each(fn(_k, v) { sum += v })
-  @test.eq!(sum, 6)
+  assert_eq!(sum, 6)
 }
 
 test "iteri" {
@@ -505,8 +505,8 @@ test "iteri" {
       sum += v
     },
   )
-  @test.eq!(s, "012")
-  @test.eq!(sum, 6)
+  assert_eq!(s, "012")
+  assert_eq!(sum, 6)
 }
 
 test "clear" {
@@ -515,12 +515,12 @@ test "clear" {
   m.set("b", 2)
   m.set("c", 3)
   m.clear()
-  @test.eq!(m.size, 0)
-  @test.eq!(m.capacity, 8)
-  @test.eq!(m.head, None)
-  @test.eq!(m.tail, None)
+  assert_eq!(m.size, 0)
+  assert_eq!(m.capacity, 8)
+  assert_eq!(m.head, None)
+  assert_eq!(m.tail, None)
   for i = 0; i < m.capacity; i = i + 1 {
-    @test.is!(m.entries[i], None)
+    assert_eq!(m.entries[i], None)
   }
 }
 
@@ -530,8 +530,8 @@ test "set_existing_key" {
   m.set("b", 2)
   m.set("c", 3)
   m.set("a", 4)
-  @test.eq!(m.size, 3)
-  @test.eq!(m.get("a"), Some(4))
+  assert_eq!(m.size, 3)
+  assert_eq!(m.get("a"), Some(4))
 }
 
 test "get_nonexistent_key" {
@@ -539,7 +539,7 @@ test "get_nonexistent_key" {
   m.set("a", 1)
   m.set("b", 2)
   m.set("c", 3)
-  @test.eq!(m.get("d"), None)
+  assert_eq!(m.get("d"), None)
 }
 
 test "get_or_default_existing_key" {
@@ -547,7 +547,7 @@ test "get_or_default_existing_key" {
   m.set("a", 1)
   m.set("b", 2)
   m.set("c", 3)
-  @test.eq!(m.get_or_default("a", 42), 1)
+  assert_eq!(m.get_or_default("a", 42), 1)
 }
 
 test "get_or_default_nonexistent_key" {
@@ -555,7 +555,7 @@ test "get_or_default_nonexistent_key" {
   m.set("a", 1)
   m.set("b", 2)
   m.set("c", 3)
-  @test.eq!(m.get_or_default("d", 42), 42)
+  assert_eq!(m.get_or_default("d", 42), 42)
 }
 
 test "remove_existing_key" {
@@ -564,8 +564,8 @@ test "remove_existing_key" {
   m.set("b", 2)
   m.set("c", 3)
   m.remove("b")
-  @test.eq!(m.size(), 2)
-  @test.eq!(m.get("b"), None)
+  assert_eq!(m.size(), 2)
+  assert_eq!(m.get("b"), None)
 }
 
 test "remove_nonexistent_key" {
@@ -574,7 +574,7 @@ test "remove_nonexistent_key" {
   m.set("b", 2)
   m.set("c", 3)
   m.remove("d")
-  @test.eq!(m.size(), 3)
+  assert_eq!(m.size(), 3)
 }
 
 test "contains_existing_key" {
@@ -582,7 +582,7 @@ test "contains_existing_key" {
   m.set("a", 1)
   m.set("b", 2)
   m.set("c", 3)
-  @test.eq!(m.contains("b"), true)
+  assert_eq!(m.contains("b"), true)
 }
 
 test "contains_nonexistent_key" {
@@ -590,7 +590,7 @@ test "contains_nonexistent_key" {
   m.set("a", 1)
   m.set("b", 2)
   m.set("c", 3)
-  @test.eq!(m.contains("d"), false)
+  assert_eq!(m.contains("d"), false)
 }
 
 test "clear" {
@@ -599,12 +599,12 @@ test "clear" {
   m.set("b", 2)
   m.set("c", 3)
   m.clear()
-  @test.eq!(m.size, 0)
-  @test.eq!(m.capacity, 8)
-  @test.eq!(m.head, None)
-  @test.eq!(m.tail, None)
+  assert_eq!(m.size, 0)
+  assert_eq!(m.capacity, 8)
+  assert_eq!(m.head, None)
+  assert_eq!(m.tail, None)
   for i = 0; i < m.capacity; i = i + 1 {
-    @test.is!(m.entries[i], None)
+    assert_eq!(m.entries[i], None)
   }
 }
 
@@ -615,7 +615,7 @@ test "iter" {
   m.set("c", 3)
   let mut sum = 0
   m.each(fn(_k, v) { sum += v })
-  @test.eq!(sum, 6)
+  assert_eq!(sum, 6)
 }
 
 test "iteri" {
@@ -631,8 +631,8 @@ test "iteri" {
       sum += v
     },
   )
-  @test.eq!(s, "012")
-  @test.eq!(sum, 6)
+  assert_eq!(s, "012")
+  assert_eq!(sum, 6)
 }
 
 test "to_array" {
@@ -640,7 +640,7 @@ test "to_array" {
   m.set("a", 1)
   m.set("b", 2)
   m.set("c", 3)
-  @test.eq!(m.to_array(), [("a", 1), ("b", 2), ("c", 3)])
+  assert_eq!(m.to_array(), [("a", 1), ("b", 2), ("c", 3)])
 }
 
 test "op_equal" {
@@ -696,8 +696,8 @@ test "remove" {
   m.set("abc", 3)
   m.set("abcdef", 6)
   m.remove("ab")
-  @test.eq!(m.size(), 5)
-  @test.eq!(
+  assert_eq!(m.size(), 5)
+  assert_eq!(
     m.debug_entries(),
     "_,(0,a,1),(0,bc,2),(1,cd,2),(1,abc,3),_,(0,abcdef,6),_",
   )
@@ -709,8 +709,8 @@ test "remove_unexist_key" {
   m.set("ab", 2)
   m.set("abc", 3)
   m.remove("d")
-  @test.eq!(m.size(), 3)
-  @test.eq!(m.debug_entries(), "_,(0,a,1),(0,ab,2),(0,abc,3),_,_,_,_")
+  assert_eq!(m.size(), 3)
+  assert_eq!(m.debug_entries(), "_,(0,a,1),(0,ab,2),(0,abc,3),_,_,_,_")
 }
 
 test "insert_entry_panic" {
@@ -725,7 +725,7 @@ test "get_entry_none" {
   map.set(1, 1)
   // This should return None as the key 2 is not in the map
   let result = map.get(2)
-  @test.eq!(result, None)
+  assert_eq!(result, None)
 }
 
 test "remove_entry_head" {
@@ -734,7 +734,7 @@ test "remove_entry_head" {
   map.set(2, 2)
   map.remove(1)
   // This should ensure the head is updated correctly
-  @test.eq!(
+  assert_eq!(
     map.head,
     Some({ idx: 1, psl: 0, hash: (2).hash(), key: 2, value: 2 }),
   )
@@ -746,7 +746,7 @@ test "remove_entry_tail" {
   map.set(2, 2)
   map.remove(2)
   // This should ensure the tail is updated correctly
-  @test.eq!(
+  assert_eq!(
     map.tail,
     Some(Entry::{ idx: 0, psl: 0, hash: (1).hash(), key: 1, value: 1 }),
   )
@@ -759,7 +759,7 @@ test "op_equal_size_mismatch" {
   map2.set(1, 1)
   map2.set(2, 2)
   // This should return false as the sizes are different
-  @test.eq!(map1 == map2, false)
+  assert_eq!(map1 == map2, false)
 }
 
 test "op_equal_key_value_mismatch" {
@@ -770,7 +770,7 @@ test "op_equal_key_value_mismatch" {
   map2.set(1, 1)
   map2.set(2, 3)
   // This should return false as the values are different
-  @test.eq!(map1 == map2, false)
+  assert_eq!(map1 == map2, false)
 }
 
 test "op_equal_size_mismatch" {
@@ -780,7 +780,7 @@ test "op_equal_size_mismatch" {
   map2.set(1, 1)
   map2.set(2, 2)
   // This should return false as the sizes are different
-  @test.eq!(map1 == map2, false)
+  assert_eq!(map1 == map2, false)
 }
 
 test "op_equal_key_value_mismatch" {
@@ -791,7 +791,7 @@ test "op_equal_key_value_mismatch" {
   map2.set(1, 1)
   map2.set(2, 3)
   // This should return false as the values are different
-  @test.eq!(map1 == map2, false)
+  assert_eq!(map1 == map2, false)
 }
 
 test "op_equal_size_mismatch" {
@@ -801,7 +801,7 @@ test "op_equal_size_mismatch" {
   map2.set(1, 1)
   map2.set(2, 2)
   // This should return false as the sizes are different
-  @test.eq!(map1 == map2, false)
+  assert_eq!(map1 == map2, false)
 }
 
 test "op_equal_key_value_mismatch" {
@@ -812,5 +812,5 @@ test "op_equal_key_value_mismatch" {
   map2.set(1, 1)
   map2.set(2, 3)
   // This should return false as the values are different
-  @test.eq!(map1 == map2, false)
+  assert_eq!(map1 == map2, false)
 }

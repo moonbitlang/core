@@ -20,7 +20,7 @@ test "array_unsafe_blit_fixed" {
   }
   UninitializedArray::unsafe_blit_fixed(dst, 0, src, 0, 5)
   for i = 0; i < 5; i = i + 1 {
-    @test.eq!(dst[i], src[i])
+    assert_eq!(dst[i], src[i])
   }
 }
 
@@ -29,14 +29,14 @@ test "array_resize_buffer" {
   arr.push(1)
   arr.push(2)
   arr.resize_buffer(4)
-  @test.is_true!(arr.buffer().0.length() >= 4)
+  assert_eq!(arr.buffer().0.length() >= 4, true)
   arr.push(3)
   arr.push(4)
-  @test.eq!(arr.length(), 4)
-  @test.eq!(arr[0], 1)
-  @test.eq!(arr[1], 2)
-  @test.eq!(arr[2], 3)
-  @test.eq!(arr[3], 4)
+  assert_eq!(arr.length(), 4)
+  assert_eq!(arr[0], 1)
+  assert_eq!(arr[1], 2)
+  assert_eq!(arr[2], 3)
+  assert_eq!(arr[3], 4)
 }
 
 test "UninitializedArray::unsafe_blit_fixed" {
@@ -47,7 +47,7 @@ test "UninitializedArray::unsafe_blit_fixed" {
   }
   UninitializedArray::unsafe_blit_fixed(dst, 0, src, 0, 5)
   for i = 0; i < 5; i = i + 1 {
-    @test.eq!(dst[i], src[i])
+    assert_eq!(dst[i], src[i])
   }
 }
 
@@ -56,14 +56,14 @@ test "Array::resize_buffer" {
   arr.push(1)
   arr.push(2)
   arr.resize_buffer(4)
-  @test.is_true!(arr.buffer().0.length() >= 4)
+  assert_eq!(arr.buffer().0.length() >= 4, true)
   arr.push(3)
   arr.push(4)
-  @test.eq!(arr.length(), 4)
-  @test.eq!(arr[0], 1)
-  @test.eq!(arr[1], 2)
-  @test.eq!(arr[2], 3)
-  @test.eq!(arr[3], 4)
+  assert_eq!(arr.length(), 4)
+  assert_eq!(arr[0], 1)
+  assert_eq!(arr[1], 2)
+  assert_eq!(arr[2], 3)
+  assert_eq!(arr[3], 4)
 }
 
 test "UninitializedArray::unsafe_blit_fixed" {
@@ -74,7 +74,7 @@ test "UninitializedArray::unsafe_blit_fixed" {
   }
   UninitializedArray::unsafe_blit_fixed(dst, 0, src, 0, 5)
   for i = 0; i < 5; i = i + 1 {
-    @test.eq!(dst[i], src[i])
+    assert_eq!(dst[i], src[i])
   }
 }
 
@@ -83,12 +83,12 @@ test "Array::resize_buffer" {
   arr.push(1)
   arr.push(2)
   arr.resize_buffer(4)
-  @test.is_true!(arr.buffer().0.length() >= 4)
+  assert_eq!(arr.buffer().0.length() >= 4, true)
   arr.push(3)
   arr.push(4)
-  @test.eq!(arr.length(), 4)
-  @test.eq!(arr[0], 1)
-  @test.eq!(arr[1], 2)
-  @test.eq!(arr[2], 3)
-  @test.eq!(arr[3], 4)
+  assert_eq!(arr.length(), 4)
+  assert_eq!(arr[0], 1)
+  assert_eq!(arr[1], 2)
+  assert_eq!(arr[2], 3)
+  assert_eq!(arr[3], 4)
 }
