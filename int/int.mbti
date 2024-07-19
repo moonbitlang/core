@@ -6,8 +6,6 @@ package moonbitlang/core/int
 impl Int {
   abs(Int) -> Int
   from_int(Int) -> Int
-  hash(Int) -> Int
-  hash_combine(Int, Hasher) -> Unit
   max_value() -> Int
   min_value() -> Int
   signum(Int) -> Int

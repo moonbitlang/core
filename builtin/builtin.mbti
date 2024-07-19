@@ -256,6 +256,8 @@ impl Int {
   ctz(Int) -> Int
   debug_write(Int, Buffer) -> Unit
   default() -> Int
+  hash(Int) -> Int
+  hash_combine(Int, Hasher) -> Unit
   is_neg(Int) -> Bool
   is_non_neg(Int) -> Bool
   is_non_pos(Int) -> Bool
@@ -373,6 +375,8 @@ impl Double {
 impl String {
   debug_write(String, Buffer) -> Unit
   get(String, Int) -> Char
+  hash(String) -> Int
+  hash_combine(String, Hasher) -> Unit
   length(String) -> Int
   make(Int, Char) -> String
   op_add(String, String) -> String
