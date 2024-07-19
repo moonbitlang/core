@@ -5,5 +5,11 @@
         "moonbitlang/core/coverage",
         "moonbitlang/core/bytes",
         "moonbitlang/core/char"
+    ],
+    "test-import": [
+        "moonbitlang/core/builtin",
+        "moonbitlang/core/test",
+        "moonbitlang/core/coverage",
+        "moonbitlang/core/char"
     ]
 }

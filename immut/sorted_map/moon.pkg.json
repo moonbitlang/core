@@ -6,5 +6,12 @@
     "moonbitlang/core/string",
     "moonbitlang/core/array",
     "moonbitlang/core/coverage"
+  ],
+  "test-import": [
+    "moonbitlang/core/builtin",
+    "moonbitlang/core/test",
+    "moonbitlang/core/tuple",
+    "moonbitlang/core/string",
+    "moonbitlang/core/coverage"
   ]
 }

@@ -853,3 +853,11 @@ pub fn List::of[T](arr : FixedArray[T]) -> List[T] {
     list
   }
 }
+
+test "panic unsafe_drop" {
+  unsafe_drop(5, of([1, 2, 3, 4])) |> ignore
+}
+
+test "panic unsafe_take" {
+  unsafe_take(5, of([1, 2, 3, 4])) |> ignore
+}

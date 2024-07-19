@@ -201,3 +201,93 @@ test "of" {
   inspect!(m.get(1), content="Some(2)")
   inspect!(m.get(3), content="Some(4)")
 }
+
+priv type MyString String derive(Eq)
+
+impl Hash for MyString with hash(self) { self.0.length() }
+
+impl Hash for MyString with hash_combine(self, hasher) {
+  hasher.combine_string(self.0)
+}
+
+impl Show for MyString with output(self, logger) { logger.write_string(self.0) }
+
+impl Debug for MyString with debug_write(self, b : Buffer) {
+  self.0.debug_write(b)
+}
+
+test "set" {
+  let m : HashMap[MyString, Int] = new()
+  m.set("a", 1)
+  m.set("b", 1)
+  m.set("bc", 2)
+  m.set("abc", 3)
+  m.set("cd", 2)
+  m.set("c", 1)
+  m.set("d", 1)
+  @test.eq!(m.size(), 7)
+  inspect!(
+    m.debug_entries(),
+    content="_,(0,a,1),(1,b,1),(2,c,1),(3,d,1),(3,bc,2),(4,cd,2),(4,abc,3),_,_,_,_,_,_,_,_",
+  )
+}
+
+test "remove" {
+  let m : HashMap[MyString, Int] = new()
+  m.set("a", 1)
+  m.set("ab", 2)
+  m.set("bc", 2)
+  m.set("cd", 2)
+  m.set("abc", 3)
+  m.set("abcdef", 6)
+  m.remove("ab")
+  @test.eq!(m.size(), 5)
+  inspect!(
+    m.debug_entries(),
+    content="_,(0,a,1),(0,bc,2),(1,cd,2),(1,abc,3),_,(0,abcdef,6),_,_,_,_,_,_,_,_,_",
+  )
+}
+
+test "remove_unexist_key" {
+  let m : HashMap[MyString, Int] = new()
+  m.set("a", 1)
+  m.set("ab", 2)
+  m.set("abc", 3)
+  m.remove("d")
+  @test.eq!(m.size(), 3)
+  inspect!(m.debug_entries(), content="_,(0,a,1),(0,ab,2),(0,abc,3),_,_,_,_")
+}
+
+test "clear" {
+  let m : HashMap[MyString, Int] = of([("a", 1), ("b", 2), ("c", 3)])
+  m.clear()
+  @test.eq!(m.size(), 0)
+  @test.eq!(m.capacity(), 8)
+  for i = 0; i < m.capacity(); i = i + 1 {
+    @test.is!(m.entries[i], None)
+  }
+}
+
+test "grow" {
+  let m : HashMap[MyString, Int] = new()
+  m.set("C", 1)
+  m.set("Go", 2)
+  m.set("C++", 3)
+  m.set("Java", 4)
+  m.set("Scala", 5)
+  m.set("Julia", 5)
+  @test.eq!(m.size(), 6)
+  inspect!(m.capacity(), content="16")
+  m.set("Cobol", 5)
+  @test.eq!(m.size(), 7)
+  inspect!(m.capacity(), content="16")
+  m.set("Python", 6)
+  m.set("Haskell", 7)
+  m.set("Rescript", 8)
+  @test.eq!(m.size(), 10)
+  inspect!(m.capacity(), content="32")
+  inspect!(
+    m.debug_entries(),
+    content="_,(0,C,1),(0,Go,2),(0,C++,3),(0,Java,4),(0,Scala,5),(1,Julia,5),(2,Cobol,5),(2,Python,6),(2,Haskell,7),(2,Rescript,8),_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_",
+  )
+}

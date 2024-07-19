@@ -198,3 +198,22 @@ pub fn ImmutablePriorityQueue::of[T : Compare](
     }
   }
 }
+
+test "meld" {
+  inspect!(meld(Empty, of([1]).body), content="Node(1, MNil)")
+  inspect!(meld(of([1]).body, Empty), content="Node(1, MNil)")
+  inspect!(
+    meld(of([1]).body, of([2]).body),
+    content="Node(2, MCons(Node(1, MNil), MNil))",
+  )
+}
+
+test "merges" {
+  inspect!(
+    match merges((MNil : MList[Cont[Int]])) {
+      Empty => true
+      _ => false
+    },
+    content="true",
+  )
+}

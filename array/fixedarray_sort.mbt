@@ -505,3 +505,49 @@ test "stable_sort_complex" {
   arr.stable_sort()
   @test.is_true!(is_sorted(arr))
 }
+
+test "find_streak with empty array" {
+  let arr : FixedArray[Int] = []
+  let (streak_end, was_reversed) = find_streak({ array: arr, start: 0, end: 0 })
+  @test.eq!(streak_end, 0)
+  @test.eq!(was_reversed, false)
+}
+
+test "find_streak with single element array" {
+  let arr : FixedArray[_] = [1]
+  let (streak_end, was_reversed) = find_streak({ array: arr, start: 0, end: 1 })
+  @test.eq!(streak_end, 1)
+  @test.eq!(was_reversed, false)
+}
+
+test "find_streak with increasing elements" {
+  let arr : FixedArray[_] = [1, 2, 3, 4, 5]
+  let (streak_end, was_reversed) = find_streak({ array: arr, start: 0, end: 5 })
+  @test.eq!(streak_end, 5)
+  @test.eq!(was_reversed, false)
+}
+
+test "find_streak with decreasing elements" {
+  let arr : FixedArray[_] = [5, 4, 3, 2, 1]
+  let (streak_end, was_reversed) = find_streak({ array: arr, start: 0, end: 5 })
+  @test.eq!(streak_end, 5)
+  @test.eq!(was_reversed, true)
+}
+
+test "provide_sorted_batch with long run" {
+  let arr : FixedArray[_] = [1, 2, 3, 4, 5]
+  let end = provide_sorted_batch({ array: arr, start: 0, end: 5 }, 0, 5)
+  @test.eq!(end, 5)
+}
+
+test "fixed_quick_sort with limit reached" {
+  let arr : FixedArray[_] = [5, 4, 3, 2, 1]
+  fixed_quick_sort({ array: arr, start: 0, end: 5 }, None, 0)
+  @test.is_true!(FixedArray::is_sorted(arr))
+}
+
+test "fixed_quick_sort with balanced partitions" {
+  let arr : FixedArray[_] = [5, 4, 3, 2, 1]
+  fixed_quick_sort({ array: arr, start: 0, end: 5 }, None, 10)
+  @test.is_true!(FixedArray::is_sorted(arr))
+}
