@@ -662,3 +662,23 @@ test "from_double" {
     Err(overflow_error),
   )
 }
+
+test "from_double normal case" {
+  let result = 0.5 |> @result.wrap1(f=from_double)
+  @test.eq!(result, Ok(new_unchecked(1L, 2L)))
+}
+
+test "from_double edge case" {
+  let result = 9_223_372_036_800_000_000.0 |> @result.wrap1(f=from_double)
+  @test.eq!(result, Ok(new_unchecked(9_223_372_036_800_000_000L, 1L)))
+}
+
+test "from_double normal case" {
+  let result = 0.5 |> @result.wrap1(f=from_double)
+  @test.eq!(result, Ok(new_unchecked(1L, 2L)))
+}
+
+test "from_double edge case" {
+  let result = 9_223_372_036_800_000_000.0 |> @result.wrap1(f=from_double)
+  @test.eq!(result, Ok(new_unchecked(9_223_372_036_800_000_000L, 1L)))
+}

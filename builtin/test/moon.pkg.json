@@ -1,7 +1,11 @@
 {
-    "import" : [
-        "moonbitlang/core/builtin",
-        "moonbitlang/core/coverage"
-    ],
-  "wbtest-import": ["moonbitlang/core/test"]
+  "import": [
+    "moonbitlang/core/builtin",
+    "moonbitlang/core/coverage"
+  ],
+  "test-import": [
+    "moonbitlang/core/builtin",
+    "moonbitlang/core/coverage",
+    "moonbitlang/core/test"
+  ]
 }

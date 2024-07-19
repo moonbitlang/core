@@ -3,11 +3,9 @@
     "moonbitlang/core/builtin",
     "moonbitlang/core/coverage"
   ],
-  "wbtest-import": [
-    "moonbitlang/core/test"
-  ],
   "test-import": [
     "moonbitlang/core/builtin",
-    "moonbitlang/core/coverage"
+    "moonbitlang/core/coverage",
+    "moonbitlang/core/test"
   ]
 }

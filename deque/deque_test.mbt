@@ -311,3 +311,68 @@ test "front_and_back" {
   @test.eq!(dv.back(), None)
   @test.eq!(dv.front(), None)
 }
+
+test "new_with_capacity" {
+  let d : @deque.Deque[Int] = @deque.new(capacity=0)
+  @test.eq!(d.capacity(), 0)
+}
+
+test "new_with_capacity_non_zero" {
+  let d : @deque.Deque[Int] = @deque.new(capacity=10)
+  @test.eq!(d.capacity(), 10)
+}
+
+test "realloc" {
+  let dv = @deque.of([1, 2, 3, 4, 5])
+  @test.eq!(dv.pop_front(), Some(1))
+  @test.eq!(dv.pop_front(), Some(2))
+  @test.eq!(dv.pop_front(), Some(3))
+  dv.push_back(6)
+  dv.push_back(7)
+  dv.push_back(8)
+  dv.push_back(9)
+  dv.push_back(10)
+  let result = Array::make(7, 0)
+  let mut i = 0
+  dv.each(
+    fn(x) {
+      result[i] = x
+      i += 1
+    },
+  )
+  @test.eq!(result, [4, 5, 6, 7, 8, 9, 10])
+}
+
+test "push_realloc" {
+  let dv = @deque.new()
+  dv.push_front(1)
+  @test.eq!(dv.pop_front(), Some(1))
+  @test.is_true!(dv.capacity() > 0)
+  let dv = @deque.new()
+  dv.push_back(1)
+  @test.eq!(dv.pop_back(), Some(1))
+  @test.is_true!(dv.capacity() > 0)
+}
+
+test "reserve_and_push" {
+  // capacity > 0, len = 0
+  let a = @deque.new(capacity=2)
+  a.push_back(Some(1))
+  inspect!(a.front(), content="Some(Some(1))")
+  inspect!(a.back(), content="Some(Some(1))")
+  // capacity = 0, len = 0
+  let b = @deque.new(capacity=0)
+  b.push_back(Some(1))
+  inspect!(b.front(), content="Some(Some(1))")
+  inspect!(b.back(), content="Some(Some(1))")
+  // capacity > 0, len = 0
+  let c = @deque.new(capacity=2)
+  c.push_front(Some(1))
+  inspect!(c.front(), content="Some(Some(1))")
+  inspect!(c.back(), content="Some(Some(1))")
+  // capacity = 0, len = 0
+  let d = @deque.new(capacity=0)
+  d.push_front(Some(1))
+  inspect!(d.front(), content="Some(Some(1))")
+  inspect!(d.back(), content="Some(Some(1))")
+}
