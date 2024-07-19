@@ -187,10 +187,10 @@ test "concat_map" {
   let ls = of([1, 2, 3])
   let rs : List[Int] = Nil
   inspect!(rs.concat_map(fn(x) { of([x, x * 2]) }), content="List::[]")
-  inspect(
+  inspect!(
     ls.concat_map(fn(x) { of([x, x * 2]) }),
     content="List::[1, 2, 2, 4, 3, 6]",
-  )!
+  )
 }
 
 test "nth_exn" {
@@ -341,65 +341,65 @@ test "lookup" {
 }
 
 test "find" {
-  inspect(
+  inspect!(
     of([1, 3, 5, 8]).find(fn(element) -> Bool { element % 2 == 0 }),
     content="Some(8)",
-  )!
-  inspect(
+  )
+  inspect!(
     of([1, 3, 5, 7]).find(fn(element) -> Bool { element % 2 == 0 }),
     content="None",
-  )!
-  inspect(
+  )
+  inspect!(
     (Nil : List[Int]).find(fn(element) -> Bool { element % 2 == 0 }),
     content="None",
-  )!
+  )
 }
 
 test "findi" {
-  inspect(
+  inspect!(
     of([1, 3, 5, 8]).findi(
       fn(element, i) -> Bool { element % 2 == 0 && i == 3 },
     ),
     content="Some(8)",
-  )!
-  inspect(
+  )
+  inspect!(
     of([1, 3, 8, 5]).findi(
       fn(element, i) -> Bool { element % 2 == 0 && i == 3 },
     ),
     content="None",
-  )!
-  inspect(
+  )
+  inspect!(
     (Nil : List[Int]).findi(
       fn(element, i) -> Bool { element % 2 == 0 && i == 3 },
     ),
     content="None",
-  )!
+  )
 }
 
 test "remove_at" {
   let ls = of([1, 2, 3, 4, 5])
   inspect!(ls.remove_at(2), content="List::[1, 2, 4, 5]")
   inspect!(ls.remove_at(0), content="List::[2, 3, 4, 5]")
-  inspect(
+  inspect!(
     of(["a", "b", "c", "d", "e"]).remove_at(2),
     content="List::[a, b, d, e]",
-  )!
-  inspect(
+  )
+  inspect!(
     of(["a", "b", "c", "d", "e"]).remove_at(5),
     content="List::[a, b, c, d, e]",
-  )!
+  )
 }
 
 test "remove" {
   inspect!(of([1, 2, 3, 4, 5]).remove(3), content="List::[1, 2, 4, 5]")
-  inspect(
+  inspect!(
     of(["a", "b", "c", "d", "e"]).remove("c"),
     content="List::[a, b, d, e]",
-  )!
-  inspect(
+  )
+  inspect!(
     of(["a", "b", "c", "d", "e"]).remove("f"),
     content="List::[a, b, c, d, e]",
-  )!
+  )
 }
 
 test "is_prefix" {
@@ -422,10 +422,10 @@ test "is_suffix" {
 test "intercalate" {
   let ls = of([of([1, 2, 3]), of([4, 5, 6]), of([7, 8, 9])])
   let el : List[List[Int]] = Nil
-  inspect(
+  inspect!(
     ls.intercalate(of([0])),
     content="List::[1, 2, 3, 0, 4, 5, 6, 0, 7, 8, 9]",
-  )!
+  )
   inspect!(el.intersperse(of([1])), content="List::[]")
 }
 
@@ -436,30 +436,30 @@ test "default" {
 
 test "iter" {
   let ls = of([1, 2, 3, 4, 5])
-  inspect(
+  inspect!(
     ls.iter().map(fn(x) { x + 1 }).fold(fn(a, b) { a + b }, 0),
     content="20",
-  )!
+  )
 }
 
 test "List::debug_write with non-empty list" {
   let buf = Buffer::new(size_hint=100)
   let list = of([1, 2, 3, 4, 5])
   List::debug_write(list, buf)
-  buf.expect(content="1, 2, 3, 4, 5")!
+  buf.expect!(content="1, 2, 3, 4, 5")
 }
 
 test "List::debug_write with empty list" {
   let buf = Buffer::new(size_hint=100)
   let list : List[Int] = Nil
   List::debug_write(list, buf)
-  buf.expect(content="")!
+  buf.expect!(content="")
 }
 
 test "List::head_exn with non-empty list" {
   let list = of([1, 2, 3, 4, 5])
   let head = List::head_exn(list)
-  @test.eq(head, 1)!
+  @test.eq!(head, 1)
 }
 
 test "panic List::exn with empty list" {
@@ -469,7 +469,7 @@ test "panic List::exn with empty list" {
 test "List::last with non-empty list" {
   let list = of([1, 2, 3, 4, 5])
   let last = List::last(list)
-  @test.eq(last, 5)!
+  @test.eq!(last, 5)
 }
 
 test "List::zip with lists of equal length" {
@@ -477,7 +477,7 @@ test "List::zip with lists of equal length" {
   let list2 = of(["a", "b", "c"])
   let zipped = List::zip(list1, list2)
   let expected = of([(1, "a"), (2, "b"), (3, "c")])
-  @test.eq(zipped, expected)!
+  @test.eq!(zipped, expected)
 }
 
 test "panic List::zip with empty list" {
@@ -487,13 +487,13 @@ test "panic List::zip with empty list" {
 test "List::nth_exn with valid index" {
   let list = of([1, 2, 3, 4, 5])
   let nth = List::nth_exn(list, 2)
-  @test.eq(nth, 3)!
+  @test.eq!(nth, 3)
 }
 
 test "List::maximum with non-empty list" {
   let list = of([1, 3, 5, 2, 4])
   let max = List::maximum(list)
-  @test.eq(max, 5)!
+  @test.eq!(max, 5)
 }
 
 test "panic List::maxium with empty list" {
@@ -503,7 +503,7 @@ test "panic List::maxium with empty list" {
 test "List::minimum with non-empty list" {
   let list = of([1, 3, 5, 2, 4])
   let min = List::minimum(list)
-  @test.eq(min, 1)!
+  @test.eq!(min, 1)
 }
 
 test "panic List::minimum with empty list" {

@@ -15,8 +15,8 @@
 test "pattern" {
   let m = of([("name", "John Doe"), ("age", "43"), ("is_human", "true")])
   let { "name": name, "age": age, "is_human": is_human } = m
-  inspect(
+  inspect!(
     (name, age, is_human),
     content="(Some(John Doe), Some(43), Some(true))",
-  )!
+  )
 }

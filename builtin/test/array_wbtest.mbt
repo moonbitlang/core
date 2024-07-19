@@ -14,10 +14,10 @@
 
 test {
   inspect!(Array::from_fixed_array([1, 2, 3, 4]), content="[1, 2, 3, 4]")
-  inspect(
+  inspect!(
     Array::from_fixed_array([{ x: 1 }, { x: 2 }, { x: 3 }, { x: 4 }]),
     content="[{x: 1}, {x: 2}, {x: 3}, {x: 4}]",
-  )!
+  )
 }
 
 // For testing purposes

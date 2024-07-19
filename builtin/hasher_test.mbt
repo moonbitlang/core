@@ -90,10 +90,10 @@ test "combine string" {
 
   inspect!(hash(""), content="46947589")
   inspect!(hash("abc"), content="-771846975")
-  inspect(
+  inspect!(
     hash("a quick brown fox jumps over the lazy dog"),
     content="432119934",
-  )!
+  )
   inspect!(hash("") == hash(""), content="true")
   inspect!(hash("abc") == hash("abc"), content="true")
   inspect!(hash("a") == hash("a"), content="true")

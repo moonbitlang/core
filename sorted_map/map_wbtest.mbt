@@ -32,10 +32,10 @@ test "add1" {
   map.add(3, "d")
   map.add(2, "e")
   map.add(1, "f")
-  inspect(
+  inspect!(
     map.debug_tree(),
     content="([3]3,d,([2]2,e,([1]1,f,_,_),_),([2]5,b,([1]4,c,_,_),([1]6,a,_,_)))",
-  )!
+  )
   inspect!(map.size(), content="6")
 }
 
@@ -47,10 +47,10 @@ test "add2" {
   map.add(4, "d")
   map.add(5, "e")
   map.add(6, "f")
-  inspect(
+  inspect!(
     map.debug_tree(),
     content="([3]4,d,([2]2,b,([1]1,a,_,_),([1]3,c,_,_)),([2]5,e,_,([1]6,f,_,_)))",
-  )!
+  )
   inspect!(map.size(), content="6")
 }
 
@@ -60,10 +60,10 @@ test "add3" {
   map.add(1, "b")
   map.add(3, "c")
   map.add(2, "d")
-  inspect(
+  inspect!(
     map.debug_tree(),
     content="([3]3,c,([2]1,b,_,([1]2,d,_,_)),([1]4,a,_,_))",
-  )!
+  )
 }
 
 test "add4" {
@@ -72,10 +72,10 @@ test "add4" {
   map.add(4, "b")
   map.add(2, "c")
   map.add(3, "d")
-  inspect(
+  inspect!(
     map.debug_tree(),
     content="([3]2,c,([1]1,a,_,_),([2]4,b,([1]3,d,_,_),_))",
-  )!
+  )
 }
 
 test "add duplicate key" {
@@ -98,34 +98,34 @@ test "remove" {
       (8, "h"),
     ],
   )
-  inspect(
+  inspect!(
     map.debug_tree(),
     content="([4]4,d,([2]2,b,([1]1,a,_,_),([1]3,c,_,_)),([3]6,f,([1]5,e,_,_),([2]7,g,_,([1]8,h,_,_))))",
-  )!
+  )
   inspect!(map.size(), content="8")
   map.remove(6)
-  inspect(
+  inspect!(
     map.debug_tree(),
     content="([3]4,d,([2]2,b,([1]1,a,_,_),([1]3,c,_,_)),([2]7,g,([1]5,e,_,_),([1]8,h,_,_)))",
-  )!
+  )
   inspect!(map.size(), content="7")
   map.remove(4)
-  inspect(
+  inspect!(
     map.debug_tree(),
     content="([3]5,e,([2]2,b,([1]1,a,_,_),([1]3,c,_,_)),([2]7,g,_,([1]8,h,_,_)))",
-  )!
+  )
   inspect!(map.size(), content="6")
   map.remove(2)
-  inspect(
+  inspect!(
     map.debug_tree(),
     content="([3]5,e,([2]3,c,([1]1,a,_,_),_),([2]7,g,_,([1]8,h,_,_)))",
-  )!
+  )
   inspect!(map.size(), content="5")
   map.remove(3)
-  inspect(
+  inspect!(
     map.debug_tree(),
     content="([3]5,e,([1]1,a,_,_),([2]7,g,_,([1]8,h,_,_)))",
-  )!
+  )
   inspect!(map.size(), content="4")
   map.remove(5)
   inspect!(map.debug_tree(), content="([2]7,g,([1]1,a,_,_),([1]8,h,_,_))")

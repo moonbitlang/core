@@ -16,12 +16,12 @@ test "debug function with Int" {
   let x = 42
   let buf = Buffer::new()
   x.debug_write(buf)
-  inspect(
+  inspect!(
     buf,
     content=
       #|42
     ,
-  )!
+  )
   // This should cover the line where the debug function is called with an Int
 }
 
@@ -29,12 +29,12 @@ test "debug function with String" {
   let s = "Hello, MoonBit!"
   let buf = Buffer::new()
   s.debug_write(buf)
-  inspect(
+  inspect!(
     buf,
     content=
       #|"Hello, MoonBit!"
     ,
-  )!
+  )
   // This should cover the line where the debug function is called with a String
 }
 
@@ -42,12 +42,12 @@ test "debug function with Bool" {
   let b = true
   let buf = Buffer::new()
   b.debug_write(buf)
-  inspect(
+  inspect!(
     buf,
     content=
       #|true
     ,
-  )!
+  )
   // This should cover the line where the debug function is called with a Bool
 }
 
@@ -55,12 +55,12 @@ test "debug function with Int64" {
   let i64 = 9223372036854775807L
   let buf = Buffer::new()
   i64.debug_write(buf)
-  inspect(
+  inspect!(
     buf,
     content=
       #|9223372036854775807
     ,
-  )!
+  )
   // This should cover the line where the debug function is called with an Int64
 }
 
@@ -76,12 +76,12 @@ test "debug function with Option[Int]" {
   let opt = Option::Some(42)
   let buf = Buffer::new()
   opt.debug_write(buf)
-  inspect(
+  inspect!(
     buf,
     content=
       #|Some(42)
     ,
-  )!
+  )
   // This should cover the line where the debug function is called with an Option[Int]
 }
 
@@ -89,12 +89,12 @@ test "debug function with Result[Int, String]" {
   let res : Result[Int, String] = Result::Ok(42)
   let buf = Buffer::new()
   res.debug_write(buf)
-  inspect(
+  inspect!(
     buf,
     content=
       #|Ok(42)
     ,
-  )!
+  )
   // This should cover the line where the debug function is called with a Result[Int, String]
 }
 
@@ -110,12 +110,12 @@ test "debug function with FixedArray[Int]" {
   let arr = [1, 2, 3, 4, 5]
   let buf = Buffer::new()
   arr.debug_write(buf)
-  inspect(
+  inspect!(
     buf,
     content=
       #|[1, 2, 3, 4, 5]
     ,
-  )!
+  )
   // This should cover the line where the debug function is called with a FixedArray[Int]
 }
 
@@ -123,12 +123,12 @@ test "debug function with Array[Int]" {
   let arr = [1, 2, 3, 4, 5]
   let buf = Buffer::new()
   arr.debug_write(buf)
-  inspect(
+  inspect!(
     buf,
     content=
       #|[1, 2, 3, 4, 5]
     ,
-  )!
+  )
   // This should cover the line where the debug function is called with an Array[Int]
 }
 
@@ -137,33 +137,33 @@ test "debug function with ArrayView[Int]" {
   let arrayview = arr[1:2]
   let buf = Buffer::new()
   arrayview.debug_write(buf)
-  inspect(
+  inspect!(
     buf,
     content=
       #|[2]
     ,
-  )!
+  )
 }
 
 test "debug function with Map[Int, String]" {
   let map = { 1: "one", 2: "two", 3: "three" }
   let buf = Buffer::new()
   map.debug_write(buf)
-  inspect(
+  inspect!(
     buf,
     content=
       #|{1: "one", 2: "two", 3: "three"}
     ,
-  )!
+  )
   let nested_map = { 1: { 2: "two" }, 3: { 4: "four" } }
   let buf = Buffer::new()
   nested_map.debug_write(buf)
-  inspect(
+  inspect!(
     buf,
     content=
       #|{1: {2: "two"}, 3: {4: "four"}}
     ,
-  )!
+  )
 
   // This should cover the line where the debug function is called with a Map[Int, String]
 }

@@ -569,44 +569,44 @@ fn to_string(self : Decimal) -> String {
 
 test "new" {
   let hpd = Decimal::from_int64(1L)
-  @test.eq(hpd.digits.length(), 800)!
-  @test.eq(hpd.digits_num, 1)!
-  @test.eq(hpd.decimal_point, 1)!
-  @test.eq(hpd.negative, false)!
-  @test.eq(hpd.truncated, false)!
+  @test.eq!(hpd.digits.length(), 800)
+  @test.eq!(hpd.digits_num, 1)
+  @test.eq!(hpd.decimal_point, 1)
+  @test.eq!(hpd.negative, false)
+  @test.eq!(hpd.truncated, false)
 }
 
 test "from_int64" {
   let hpd = Decimal::from_int64(123456789L)
-  @test.eq(hpd.to_string(), "123456789")!
+  @test.eq!(hpd.to_string(), "123456789")
 }
 
 test "parse_decimal" {
   let s = "0.0000000000000000000000000000007888609052210118054117285652827862296732064351090230047702789306640625"
   let hpd = try {
-    Decimal::parse_decimal(s)!
+    Decimal::parse_decimal!(s)
   } catch {
     _ => panic()
   }
-  @test.eq(hpd.to_string(), s)!
+  @test.eq!(hpd.to_string(), s)
   let hpd = try {
-    Decimal::parse_decimal("1.0e-10")!
+    Decimal::parse_decimal!("1.0e-10")
   } catch {
     _ => panic()
   }
-  @test.eq(hpd.to_string(), "0.0000000001")!
+  @test.eq!(hpd.to_string(), "0.0000000001")
 }
 
 test "to_string" {
   let hpd = Decimal::from_int64(123456789L)
   hpd.decimal_point = 1
-  @test.eq(hpd.to_string(), "1.23456789")!
+  @test.eq!(hpd.to_string(), "1.23456789")
   hpd.decimal_point = 0
-  @test.eq(hpd.to_string(), "0.123456789")!
+  @test.eq!(hpd.to_string(), "0.123456789")
   hpd.decimal_point = -1
-  @test.eq(hpd.to_string(), "0.0123456789")!
+  @test.eq!(hpd.to_string(), "0.0123456789")
   hpd.decimal_point = 10
-  @test.eq(hpd.to_string(), "1234567890")!
+  @test.eq!(hpd.to_string(), "1234567890")
 }
 
 test "shift" {
@@ -626,6 +626,6 @@ test "shift" {
     let t = tests[i]
     let d = Decimal::from_int64(t.0)
     d.shift(t.1)
-    @test.eq(d.to_string(), t.2)!
+    @test.eq!(d.to_string(), t.2)
   }
 }

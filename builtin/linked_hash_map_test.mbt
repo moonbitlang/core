@@ -18,22 +18,22 @@ test "Map keys iter" {
       [..map.keys()]
     }
   inspect!(v, content="[a, b, c]")
-  inspect(
+  inspect!(
     {
       [..map.values()]
     },
     content="[1, 2, 3]",
-  )!
-  inspect(
+  )
+  inspect!(
     {
       [..({  } : Map[String, Int]).keys()]
     },
     content="[]",
-  )!
-  inspect(
+  )
+  inspect!(
     {
       [..({  } : Map[String, Int]).values()]
     },
     content="[]",
-  )!
+  )
 }

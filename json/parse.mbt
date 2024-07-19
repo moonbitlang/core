@@ -14,7 +14,7 @@
 
 pub fn valid(input : String) -> Bool {
   try {
-    parse(input)! |> ignore
+    parse!(input) |> ignore
     true
   } catch {
     _ => return false
@@ -23,7 +23,7 @@ pub fn valid(input : String) -> Bool {
 
 pub fn parse(input : String) -> JsonValue!ParseError {
   let ctx = ParseContext::make(input)
-  let val = parse_value(ctx)!
+  let val = parse_value!(ctx)
   lex_skip_whitespace(ctx)
   if ctx.offset >= ctx.end_offset {
     val
@@ -33,8 +33,8 @@ pub fn parse(input : String) -> JsonValue!ParseError {
 }
 
 fn parse_value(ctx : ParseContext) -> JsonValue!ParseError {
-  let tok = lex_value(ctx)!
-  parse_value2(ctx, tok)!
+  let tok = lex_value!(ctx)
+  parse_value2!(ctx, tok)
 }
 
 fn parse_value2(ctx : ParseContext, tok : Token) -> JsonValue!ParseError {
@@ -44,25 +44,25 @@ fn parse_value2(ctx : ParseContext, tok : Token) -> JsonValue!ParseError {
     False => False
     Number(n) => Number(n)
     String(s) => String(s)
-    LBrace => parse_object(ctx)!
-    LBracket => parse_array(ctx)!
+    LBrace => parse_object!(ctx)
+    LBracket => parse_array!(ctx)
     _ => abort("unreachable")
   }
 }
 
 fn parse_object(ctx : ParseContext) -> JsonValue!ParseError {
   let map = Map::new()
-  loop lex_property_name(ctx)! {
+  loop lex_property_name!(ctx) {
     RBrace => Object(map)
     String(name) => {
-      let tok2 = lex_after_property_name(ctx)!
+      let tok2 = lex_after_property_name!(ctx)
       match tok2 {
         Colon => {
-          let val = parse_value(ctx)!
+          let val = parse_value!(ctx)
           map.set(name, val)
-          let tok3 = lex_after_object_value(ctx)!
+          let tok3 = lex_after_object_value!(ctx)
           match tok3 {
-            Comma => continue lex_property_name2(ctx)!
+            Comma => continue lex_property_name2!(ctx)
             RBrace => Object(map)
             _ => abort("unreachable")
           }
@@ -76,13 +76,13 @@ fn parse_object(ctx : ParseContext) -> JsonValue!ParseError {
 
 fn parse_array(ctx : ParseContext) -> JsonValue!ParseError {
   let vec = []
-  loop lex_value(ctx, allow_rbracket=true)! {
+  loop lex_value!(ctx, allow_rbracket=true) {
     RBracket => Array(vec)
     tok => {
-      vec.push(parse_value2(ctx, tok)!)
-      let tok2 = lex_after_array_value(ctx)!
+      vec.push(parse_value2!(ctx, tok))
+      let tok2 = lex_after_array_value!(ctx)
       match tok2 {
-        Comma => continue lex_value(ctx, allow_rbracket=false)!
+        Comma => continue lex_value!(ctx, allow_rbracket=false)
         RBracket => Array(vec)
         _ => abort("unreachable")
       }

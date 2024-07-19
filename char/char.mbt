@@ -21,7 +21,7 @@ pub fn to_string(self : Char) -> String {
 }
 
 test "to_string" {
-  @test.eq('a'.to_string(), "a")!
+  @test.eq!('a'.to_string(), "a")
 }
 
 /// Write a valid MoonBit syntax representation of a character to a buffer,
@@ -67,15 +67,15 @@ test "debug_write" {
     buf.to_string()
   }
 
-  @test.eq(repr('a'), "'a'")!
-  @test.eq(repr('\''), "'\\''")!
-  @test.eq(repr('"'), "'\"'")!
-  @test.eq(repr('\\'), "'\\\\'")!
-  @test.eq(repr('\n'), "'\\n'")!
-  @test.eq(repr('\r'), "'\\r'")!
-  @test.eq(repr('\b'), "'\\b'")!
-  @test.eq(repr('\t'), "'\\t'")!
-  @test.eq(repr(Char::from_int(0)), "'\\x00'")!
+  @test.eq!(repr('a'), "'a'")
+  @test.eq!(repr('\''), "'\\''")
+  @test.eq!(repr('"'), "'\"'")
+  @test.eq!(repr('\\'), "'\\\\'")
+  @test.eq!(repr('\n'), "'\\n'")
+  @test.eq!(repr('\r'), "'\\r'")
+  @test.eq!(repr('\b'), "'\\b'")
+  @test.eq!(repr('\t'), "'\\t'")
+  @test.eq!(repr(Char::from_int(0)), "'\\x00'")
 }
 
 pub fn hash(self : Char) -> Int {

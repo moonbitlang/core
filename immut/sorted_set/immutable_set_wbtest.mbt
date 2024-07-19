@@ -55,17 +55,17 @@ test "union" {
   inspect!(of([4, 5, 6]).union(empty), content="ImmutableSet::[4, 5, 6]")
   inspect!(of([3]).union(of([4, 5, 6])), content="ImmutableSet::[3, 4, 5, 6]")
   inspect!(of([3, 4, 5]).union(of([6])), content="ImmutableSet::[3, 4, 5, 6]")
-  inspect(
+  inspect!(
     of([3, 4, 5]).union(of([4, 5, 6])),
     content="ImmutableSet::[3, 4, 5, 6]",
-  )!
+  )
 }
 
 test "map" {
-  inspect(
+  inspect!(
     of([1, 2, 3, 4, 5]).map(fn(x) { x * 2 }),
     content="ImmutableSet::[2, 4, 6, 8, 10]",
-  )!
+  )
 }
 
 test "all" {
@@ -79,17 +79,17 @@ test "any" {
 }
 
 test "fold" {
-  inspect(
+  inspect!(
     of([1, 2, 3, 4, 5]).fold(init=0, fn(acc, x) { acc + x }),
     content="15",
-  )!
+  )
 }
 
 test "filter" {
-  inspect(
+  inspect!(
     of([1, 2, 3, 4, 5, 6]).filter(fn(v) { v % 2 == 0 }),
     content="ImmutableSet::[2, 4, 6]",
-  )!
+  )
 }
 
 test "split" {
@@ -109,24 +109,24 @@ test "contain" {
 }
 
 test "to_array" {
-  inspect(
+  inspect!(
     of([7, 2, 9, 4, 5, 6, 3, 8, 1]).to_array(),
     content="[1, 2, 3, 4, 5, 6, 7, 8, 9]",
-  )!
+  )
 }
 
 test "from_fixed_array" {
-  inspect(
+  inspect!(
     of([7, 2, 9, 4, 5, 6, 3, 8, 1]),
     content="ImmutableSet::[1, 2, 3, 4, 5, 6, 7, 8, 9]",
-  )!
+  )
 }
 
 test "from_array" {
-  inspect(
+  inspect!(
     ImmutableSet::of([7, 2, 9, 4, 5, 6, 3, 8, 1]),
     content="ImmutableSet::[1, 2, 3, 4, 5, 6, 7, 8, 9]",
-  )!
+  )
 }
 
 test "remove_min" {
@@ -134,10 +134,10 @@ test "remove_min" {
 }
 
 test "add" {
-  inspect(
+  inspect!(
     of([7, 2, 9, 4, 6, 3, 8, 1]).add(5),
     content="ImmutableSet::[1, 2, 3, 4, 5, 6, 7, 8, 9]",
-  )!
+  )
   inspect!(of([2]).add(1), content="ImmutableSet::[1, 2]")
   inspect!(of([2]).add(3), content="ImmutableSet::[2, 3]")
   inspect!(of([2]).add(1).add(3), content="ImmutableSet::[1, 2, 3]")
@@ -151,26 +151,26 @@ test "add" {
 test "remove" {
   let empty : ImmutableSet[Int] = ImmutableSet::new()
   inspect!(empty.remove(1), content="ImmutableSet::[]")
-  inspect(
+  inspect!(
     of([7, 2, 9, 4, 5, 6, 3, 8, 1]).remove(1),
     content="ImmutableSet::[2, 3, 4, 5, 6, 7, 8, 9]",
-  )!
-  inspect(
+  )
+  inspect!(
     of([7, 2, 9, 4, 5, 6, 3, 8, 1]).remove(9),
     content="ImmutableSet::[1, 2, 3, 4, 5, 6, 7, 8]",
-  )!
-  inspect(
+  )
+  inspect!(
     of([7, 2, 9, 4, 5, 6, 3, 8, 1]).remove(8),
     content="ImmutableSet::[1, 2, 3, 4, 5, 6, 7, 9]",
-  )!
-  inspect(
+  )
+  inspect!(
     of([7, 2, 9, 4, 5, 6, 3, 8, 1]).remove(0),
     content="ImmutableSet::[1, 2, 3, 4, 5, 6, 7, 8, 9]",
-  )!
-  inspect(
+  )
+  inspect!(
     of([7, 2, 9, 4, 5, 6, 3, 8, 1]).remove(10),
     content="ImmutableSet::[1, 2, 3, 4, 5, 6, 7, 8, 9]",
-  )!
+  )
 }
 
 test "min" {

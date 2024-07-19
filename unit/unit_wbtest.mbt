@@ -15,27 +15,27 @@
 test {
   let unit1 = ()
   let unit2 = ()
-  @test.eq(unit1, unit2)!
+  @test.eq!(unit1, unit2)
 }
 
 test {
   let unit1 = ()
   let unit2 = ()
-  @test.is_true(physical_equal(unit1, unit2))!
+  @test.is_true!(physical_equal(unit1, unit2))
 }
 
 test {
   let unit = ()
-  @test.eq(Unit::default(), unit)!
+  @test.eq!(Unit::default(), unit)
 }
 
 test {
   let unit1 = ()
   let unit2 = ()
-  @test.eq(compare(unit1, unit2), 0)!
+  @test.eq!(compare(unit1, unit2), 0)
 }
 
 test {
   let unit = ()
-  @test.eq(hash(unit), 0)!
+  @test.eq!(hash(unit), 0)
 }

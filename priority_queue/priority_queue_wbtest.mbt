@@ -14,7 +14,7 @@
 
 test "new" {
   let queue : PriorityQueue[Int] = new()
-  @test.eq(queue.len, 0)!
+  @test.eq!(queue.len, 0)
 }
 
 test "from_array" {
@@ -25,18 +25,18 @@ test "from_array" {
 }
 
 test "meld_and_merges" {
-  inspect(
+  inspect!(
     match meld(Cons(content=1, sibling=Nil, child=Nil), Nil) {
       Nil => false
       Cons(..) => true
     },
     content="true",
-  )!
+  )
 }
 
 test "from_fixed_array" {
   let pq = of([1, 2, 3, 4, 5])
-  @test.eq(pq.peek(), Some(5))!
+  @test.eq!(pq.peek(), Some(5))
 }
 
 test "copy" {
@@ -66,23 +66,23 @@ test "iter" {
 
 test "length" {
   let pq : PriorityQueue[Int] = PriorityQueue::new()
-  @test.eq(pq.length(), 0)!
+  @test.eq!(pq.length(), 0)
   pq.push(1)
-  @test.eq(pq.length(), 1)!
+  @test.eq!(pq.length(), 1)
   pq.push(2)
-  @test.eq(pq.length(), 2)!
+  @test.eq!(pq.length(), 2)
   pq.pop_exn()
-  @test.eq(pq.length(), 1)!
+  @test.eq!(pq.length(), 1)
 }
 
 test "pop_exn" {
   let pq = of([5, 5, 4, 3, 2, 1])
   inspect!(pq.length(), content="6")
-  @test.eq(pq.peek(), Some(5))!
+  @test.eq!(pq.peek(), Some(5))
   pq.pop_exn()
-  @test.eq(pq.peek(), Some(5))!
+  @test.eq!(pq.peek(), Some(5))
   pq.pop_exn()
-  @test.eq(pq.peek(), Some(4))!
+  @test.eq!(pq.peek(), Some(4))
   let pq_ = of([1])
   pq_.pop_exn()
   inspect!(pq_.length(), content="0")
@@ -95,9 +95,9 @@ test "panic pop_exn" {
 
 test "pop" {
   let pq = of([1, 2, 3, 4, 5, 5])
-  @test.eq(pq.pop(), Some(5))!
-  @test.eq(pq.pop(), Some(5))!
-  @test.eq(pq.pop(), Some(4))!
+  @test.eq!(pq.pop(), Some(5))
+  @test.eq!(pq.pop(), Some(5))
+  @test.eq!(pq.pop(), Some(4))
   let pq_ = of([1])
   pq_.pop() |> ignore
   inspect!(pq_.length(), content="0")
@@ -107,26 +107,26 @@ test "push" {
   let pq = of([5, 4, 3, 2, 1])
   pq.push(-1)
   pq.push(6)
-  @test.eq(pq.length(), 7)!
-  @test.eq(pq.peek(), Some(6))!
+  @test.eq!(pq.length(), 7)
+  @test.eq!(pq.peek(), Some(6))
 }
 
 test "peek" {
   let pq = of([1, 2, 3, 4, 5])
-  @test.eq(pq.peek(), Some(5))!
+  @test.eq!(pq.peek(), Some(5))
   pq.clear()
-  @test.eq(pq.peek(), None)!
+  @test.eq!(pq.peek(), None)
 }
 
 test "clear" {
   let pq = of([5, 4, 3, 2, 1])
   pq.clear()
-  @test.eq(pq.length(), 0)!
+  @test.eq!(pq.length(), 0)
 }
 
 test "is_empty" {
   let pq = of([5, 4, 3, 2, 1])
-  @test.eq(pq.is_empty(), false)!
+  @test.eq!(pq.is_empty(), false)
   pq.clear()
-  @test.eq(pq.is_empty(), true)!
+  @test.eq!(pq.is_empty(), true)
 }

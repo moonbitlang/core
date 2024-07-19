@@ -14,9 +14,9 @@
 
 test "HAMT::size" {
   for i = 0, map = Map::new(); i < 20; i = i + 1, map = map.add(i, i) {
-    @test.eq(map.size(), i)!
+    @test.eq!(map.size(), i)
   } else {
-    @test.eq(map.add(0, 0).size(), 20)!
+    @test.eq!(map.add(0, 0).size(), 20)
   }
 }
 
@@ -26,7 +26,7 @@ test "HAMT" {
     i, map => continue i + 1, map.add(i, i)
   }
   for i = 0; i < 100; i = i + 1 {
-    @test.eq((i, map.find(i)), (i, Some(i)))!
+    @test.eq!((i, map.find(i)), (i, Some(i)))
   }
   inspect!((100, map.find(100)), content="(100, None)")
   let map = map.add(100, 100)
@@ -37,8 +37,8 @@ test "HAMT" {
     i, map => continue i + 2, map.add(i, i + 1)
   }
   for i = 0; i < 100; i = i + 2 {
-    @test.eq((i, map.find(i)), (i, Some(i + 1)))!
-    @test.eq((i + 1, map.find(i + 1)), (i + 1, Some(i + 1)))!
+    @test.eq!((i, map.find(i)), (i, Some(i + 1)))
+    @test.eq!((i + 1, map.find(i + 1)), (i + 1, Some(i + 1)))
   }
 }
 
@@ -48,15 +48,15 @@ test "HAMT::remove" {
     i, map => continue i + 1, map.add(i, i)
   }
   for i = 0; i < 100; i = i + 1 {
-    @test.eq((i, map.find(i)), (i, Some(i)))!
+    @test.eq!((i, map.find(i)), (i, Some(i)))
   }
   let map = loop 0, map {
     100, map => map.remove(100) // test for removing non-existing element
     i, map => continue i + 2, map.remove(i)
   }
   for i = 0; i < 100; i = i + 2 {
-    @test.eq(map.find(i), None)!
-    @test.eq(map.find(i + 1), Some(i + 1))!
+    @test.eq!(map.find(i), None)
+    @test.eq!(map.find(i + 1), Some(i + 1))
   }
 }
 
@@ -71,10 +71,10 @@ test "HAMT::to_string" {
   let map = Map::new().add(1, 1).add(3, 3).add(0x0f_ff_ff_ff, 0x0f_ff_ff_ff).add(
     42, 42,
   )
-  inspect(
+  inspect!(
     map,
     content="@immutable_hashmap.Map::[(3, 3), (42, 42), (1, 1), (268435455, 268435455)]",
-  )!
+  )
 }
 
 test "HAMT::from_array" {

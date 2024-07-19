@@ -18,11 +18,11 @@ test "get as bool" {
   inspect!(JsonValue::False |> as_bool, content="Some(false)")
   inspect!(JsonValue::Number(1.0) |> as_bool, content="None")
   inspect!(JsonValue::String("Hello World") |> as_bool, content="None")
-  inspect(
+  inspect!(
     JsonValue::Array([JsonValue::String("Hello World")]) |> as_bool,
     content="None",
-  )!
-  inspect(
+  )
+  inspect!(
     JsonValue::Object(
       Map::of(
         [("key", JsonValue::String("key")), ("value", JsonValue::Number(100.0))],
@@ -30,7 +30,7 @@ test "get as bool" {
     )
     |> as_bool,
     content="None",
-  )!
+  )
 }
 
 test "get as number" {
@@ -39,11 +39,11 @@ test "get as number" {
   inspect!(JsonValue::True |> as_number, content="None")
   inspect!(JsonValue::Number(1.0) |> as_number, content="Some(1.0)")
   inspect!(JsonValue::String("Hello World") |> as_number, content="None")
-  inspect(
+  inspect!(
     JsonValue::Array([JsonValue::String("Hello World")]) |> as_number,
     content="None",
-  )!
-  inspect(
+  )
+  inspect!(
     JsonValue::Object(
       Map::of(
         [("key", JsonValue::String("key")), ("value", JsonValue::Number(100.0))],
@@ -51,7 +51,7 @@ test "get as number" {
     )
     |> as_number,
     content="None",
-  )!
+  )
 }
 
 test "get as string" {
@@ -59,15 +59,15 @@ test "get as string" {
   inspect!(JsonValue::True |> as_string, content="None")
   inspect!(JsonValue::False |> as_string, content="None")
   inspect!(JsonValue::Number(1.0) |> as_string, content="None")
-  inspect(
+  inspect!(
     JsonValue::String("Hello World") |> as_string,
     content="Some(Hello World)",
-  )!
-  inspect(
+  )
+  inspect!(
     JsonValue::Array([JsonValue::String("Hello World")]) |> as_string,
     content="None",
-  )!
-  inspect(
+  )
+  inspect!(
     JsonValue::Object(
       Map::of(
         [("key", JsonValue::String("key")), ("value", JsonValue::Number(100.0))],
@@ -75,7 +75,7 @@ test "get as string" {
     )
     |> as_string,
     content="None",
-  )!
+  )
 }
 
 test "get as array" {
@@ -84,25 +84,25 @@ test "get as array" {
   inspect!(JsonValue::False |> as_array, content="None")
   inspect!(JsonValue::Number(1.0) |> as_array, content="None")
   inspect!(JsonValue::String("Hello World") |> as_array, content="None")
-  inspect(
+  inspect!(
     JsonValue::Array([JsonValue::String("Hello World")]) |> as_array,
     content=
       #|Some([String(\"Hello World\")])
     ,
-  )!
-  inspect(
+  )
+  inspect!(
     JsonValue::Array([JsonValue::String("Hello World")]).item(0).bind(as_string),
     content="Some(Hello World)",
-  )!
-  inspect(
+  )
+  inspect!(
     JsonValue::Array([JsonValue::String("Hello World")]).item(1).bind(as_string),
     content="None",
-  )!
-  inspect(
+  )
+  inspect!(
     JsonValue::Array([JsonValue::String("Hello World")]).item(0).bind(as_number),
     content="None",
-  )!
-  inspect(
+  )
+  inspect!(
     JsonValue::Object(
       Map::of(
         [("key", JsonValue::String("key")), ("value", JsonValue::Number(100.0))],
@@ -110,37 +110,37 @@ test "get as array" {
     )
     |> as_array,
     content="None",
-  )!
+  )
 }
 
 test "get as object" {
-  inspect(
+  inspect!(
     JsonValue::Null |> as_object |> Option::map(Map::to_array),
     content="None",
-  )!
-  inspect(
+  )
+  inspect!(
     JsonValue::True |> as_object |> Option::map(Map::to_array),
     content="None",
-  )!
-  inspect(
+  )
+  inspect!(
     JsonValue::False |> as_object |> Option::map(Map::to_array),
     content="None",
-  )!
-  inspect(
+  )
+  inspect!(
     JsonValue::Number(1.0) |> as_object |> Option::map(Map::to_array),
     content="None",
-  )!
-  inspect(
+  )
+  inspect!(
     JsonValue::String("Hello World") |> as_object |> Option::map(Map::to_array),
     content="None",
-  )!
-  inspect(
+  )
+  inspect!(
     JsonValue::Array([JsonValue::String("Hello World")])
     |> as_object
     |> Option::map(Map::to_array),
     content="None",
-  )!
-  inspect(
+  )
+  inspect!(
     JsonValue::Object(
       Map::of(
         [("key", JsonValue::String("key")), ("value", JsonValue::Number(100.0))],
@@ -151,39 +151,39 @@ test "get as object" {
     content=
       #|Some([(key, String(\"key\")), (value, Number(100.0))])
     ,
-  )!
-  inspect(
+  )
+  inspect!(
     JsonValue::Object(
       Map::of(
         [("key", JsonValue::String("key")), ("value", JsonValue::Number(100.0))],
       ),
     ).value("key").bind(as_string),
     content="Some(key)",
-  )!
-  inspect(
+  )
+  inspect!(
     JsonValue::Object(
       Map::of(
         [("key", JsonValue::String("key")), ("value", JsonValue::Number(100.0))],
       ),
     ).value("value").bind(as_number),
     content="Some(100.0)",
-  )!
-  inspect(
+  )
+  inspect!(
     JsonValue::Object(
       Map::of(
         [("key", JsonValue::String("key")), ("value", JsonValue::Number(100.0))],
       ),
     ).value("key").bind(as_number),
     content="None",
-  )!
-  inspect(
+  )
+  inspect!(
     JsonValue::Object(
       Map::of(
         [("key", JsonValue::String("key")), ("value", JsonValue::Number(100.0))],
       ),
     ).value("asdf").bind(as_number),
     content="None",
-  )!
+  )
 }
 
 test "deep access" {
@@ -216,41 +216,41 @@ test "deep access" {
     ),
   )
   inspect!(json.value("null").bind(as_null), content="Some(())")
-  inspect(
+  inspect!(
     json.value("key").bind(fn { array => array.item(2) }).bind(as_null),
     content="Some(())",
-  )!
+  )
   inspect!(json.value("bool").bind(as_bool), content="Some(false)")
-  inspect(
+  inspect!(
     json.value("key").bind(fn { array => array.item(1) }).bind(as_bool),
     content="Some(true)",
-  )!
-  inspect(
+  )
+  inspect!(
     json.value("key").bind(as_array),
     content=
       #|Some([Number(1.0), True, Null, Array([]), Object({key: String(\"value\"), value:Number(100.0)})])
     ,
-  )!
-  inspect(
+  )
+  inspect!(
     json.value("key").bind(fn { array => array.item(3) }).bind(as_array),
     content="Some([])",
-  )!
-  inspect(
+  )
+  inspect!(
     json.value("key").bind(fn { array => array.item(4) }).bind(as_object).map(
       Map::to_array,
     ),
     content=
       #|Some([(key, String(\"value\")), (value, Number(100.0))])
     ,
-  )!
-  inspect(
+  )
+  inspect!(
     json.value("obj").bind(as_object).map(Map::to_array),
     content="Some([])",
-  )!
-  inspect(
+  )
+  inspect!(
     (fn() { json.value("key")?.item(4)?.value("value")?.as_number() })(),
     content="Some(100.0)",
-  )!
+  )
 }
 
 test "stringify" {
@@ -282,19 +282,19 @@ test "stringify" {
       ],
     ),
   )
-  inspect(
+  inspect!(
     json.stringify(),
     content=
       #|{"key":[1.0,true,null,[],{"key":"value","value":100.0}],"null":null,"bool":false,"obj":{}}
     ,
-  )!
+  )
 
   // not mut once we have `try except else` syntax
   // we do come across issues like ParseError not unified with String
   let newjson = try {
-    parse(json.stringify())!
+    parse!(json.stringify())
   } catch {
-    _ => @test.fail("Failed to parse the stringified JSON")!
+    _ => @test.fail!("Failed to parse the stringified JSON")
   }
-  @test.eq(newjson, json)!
+  @test.eq!(newjson, json)
 }

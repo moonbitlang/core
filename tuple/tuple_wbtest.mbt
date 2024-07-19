@@ -14,29 +14,29 @@
 
 test "pair" {
   let tuple = pair(1, 2)
-  @test.eq(tuple, (1, 2))!
+  @test.eq!(tuple, (1, 2))
 }
 
 test "fst" {
   let tuple = (1, 2)
-  @test.eq(fst(tuple), 1)!
+  @test.eq!(fst(tuple), 1)
 }
 
 test "snd" {
   let tuple = (1, 2)
-  @test.eq(snd(tuple), 2)!
+  @test.eq!(snd(tuple), 2)
 }
 
 test "map_fst" {
   let tuple = (1, 2)
   let mapped = map_fst(fn(x : Int) -> Int { x + 1 }, tuple)
-  @test.eq(mapped, (2, 2))!
+  @test.eq!(mapped, (2, 2))
 }
 
 test "map_snd" {
   let tuple = (1, 2)
   let mapped = map_snd(fn(x : Int) -> Int { x + 1 }, tuple)
-  @test.eq(mapped, (1, 3))!
+  @test.eq!(mapped, (1, 3))
 }
 
 test "map_both" {
@@ -46,41 +46,41 @@ test "map_both" {
     fn(x : Int) -> Int { x - 1 },
     tuple,
   )
-  @test.eq(mapped, (2, 1))!
+  @test.eq!(mapped, (2, 1))
 }
 
 test "swap" {
   let tuple = (1, 2)
   let swapped = swap(tuple)
   let swapped_2 = swap(swapped)
-  @test.eq(swapped, (2, 1))!
-  @test.eq(swapped_2, tuple)!
+  @test.eq!(swapped, (2, 1))
+  @test.eq!(swapped_2, tuple)
 }
 
 test "curry" {
   let add = fn(x : Int, y : Int) -> Int { x + y }
   let curried_add = curry(add)
-  @test.eq(curried_add(1)(2), add(1, 2))!
+  @test.eq!(curried_add(1)(2), add(1, 2))
 }
 
 test "uncurry" {
   let add = fn(x : Int) -> (Int) -> Int { fn(y : Int) -> Int { x + y } }
   let uncurried_add = uncurry(add)
-  @test.eq(uncurried_add(1, 2), add(1)(2))!
+  @test.eq!(uncurried_add(1, 2), add(1)(2))
 }
 
 test "id_1" {
   let add = fn(x : Int, y : Int) -> Int { x + y }
   let curried_add = curry(add)
   let uncurried_add = uncurry(curried_add)
-  @test.eq(uncurried_add(1, 2), add(1, 2))!
+  @test.eq!(uncurried_add(1, 2), add(1, 2))
 }
 
 test "id_2" {
   let add = fn(x : Int) -> (Int) -> Int { fn(y : Int) -> Int { x + y } }
   let uncurried_add = uncurry(add)
   let curried_add = curry(uncurried_add)
-  @test.eq(curried_add(1)(2), add(1)(2))!
+  @test.eq!(curried_add(1)(2), add(1)(2))
 }
 
 test "eq" {
@@ -101,90 +101,90 @@ test "eq" {
     (1, 2, 3, 4, 5, 6, 7, 8) == (1, 2, 3, 4, 5, 6, 7, 9),
     content="false",
   )
-  inspect(
+  inspect!(
     (1, 2, 3, 4, 5, 6, 7, 8, 9) == (1, 2, 3, 4, 5, 6, 7, 8, 9),
     content="true",
-  )!
-  inspect(
+  )
+  inspect!(
     (1, 2, 3, 4, 5, 6, 7, 8, 9) == (1, 2, 3, 4, 5, 6, 7, 8, 10),
     content="false",
-  )!
-  inspect(
+  )
+  inspect!(
     (1, 2, 3, 4, 5, 6, 7, 8, 9, 10) == (1, 2, 3, 4, 5, 6, 7, 8, 9, 10),
     content="true",
-  )!
-  inspect(
+  )
+  inspect!(
     (1, 2, 3, 4, 5, 6, 7, 8, 9, 10) == (1, 2, 3, 4, 5, 6, 7, 8, 9, 11),
     content="false",
-  )!
-  inspect(
+  )
+  inspect!(
     (1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11) == (1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11),
     content="true",
-  )!
-  inspect(
+  )
+  inspect!(
     (1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11) == (1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 12),
     content="false",
-  )!
-  inspect(
+  )
+  inspect!(
     (1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12) == (
       1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12,
     ),
     content="true",
-  )!
-  inspect(
+  )
+  inspect!(
     (1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12) == (
       1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 13,
     ),
     content="false",
-  )!
-  inspect(
+  )
+  inspect!(
     (1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13) == (
       1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13,
     ),
     content="true",
-  )!
-  inspect(
+  )
+  inspect!(
     (1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13) == (
       1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 14,
     ),
     content="false",
-  )!
-  inspect(
+  )
+  inspect!(
     (1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14) == (
       1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14,
     ),
     content="true",
-  )!
-  inspect(
+  )
+  inspect!(
     (1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14) == (
       1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 15,
     ),
     content="false",
-  )!
-  inspect(
+  )
+  inspect!(
     (1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15) == (
       1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15,
     ),
     content="true",
-  )!
-  inspect(
+  )
+  inspect!(
     (1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15) == (
       1, 2, 3, 4, 5, 6, 7, 8, 9, 11, 11, 12, 13, 14, 16,
     ),
     content="false",
-  )!
-  inspect(
+  )
+  inspect!(
     (1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16) == (
       1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16,
     ),
     content="true",
-  )!
-  inspect(
+  )
+  inspect!(
     (1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16) == (
       1, 2, 3, 4, 5, 6, 7, 8, 9, 11, 11, 12, 13, 14, 15, 17,
     ),
     content="false",
-  )!
+  )
 }
 
 test "debug_write" {
@@ -203,12 +203,12 @@ test "debug_write" {
   inspect!(buf, content="(1, 2, 3, \"hello\")")
   buf.reset()
   tuple5.debug_write(buf)
-  inspect(
+  inspect!(
     buf,
     content=
       #|([1], "2", 3, [4], 5)
     ,
-  )!
+  )
 }
 
 test "to_string" {
