@@ -19,7 +19,7 @@ priv struct Entry[K, V] {
   hash : Int
   key : K
   mut value : V
-} derive(Debug)
+} derive(Show)
 
 fn op_equal[K : Eq, V](self : Entry[K, V], other : Entry[K, V]) -> Bool {
   self.hash == other.hash && self.key == other.key

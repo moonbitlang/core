@@ -1,9 +1,5 @@
 {
   "import": [],
-  "wbtest-import": [
-    "moonbitlang/core/test",
-    "moonbitlang/core/tuple"
-  ],
   "test-import": [
     "moonbitlang/core/test",
     "moonbitlang/core/char",
