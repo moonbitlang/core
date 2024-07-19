@@ -663,14 +663,14 @@ test "to_string" {
   inspect!(
     m.to_string(),
     content=
-      #|"a": 1, "b": 2, "c": 3}
+      #|{"a": 1, "b": 2, "c": 3}
     ,
   )
   let nested_m = { "a": { "b": 2 }, "B": { "C": 3 } }
   inspect!(
     nested_m.to_string(),
     content=
-      #|"a": "b": 2}, "B": "C": 3}}
+      #|{"a": {"b": 2}, "B": {"C": 3}}
     ,
   )
 }

@@ -73,7 +73,7 @@ test "HAMT::to_string" {
   )
   inspect!(
     map,
-    content="@immutable_hashmap.Map::[(3, 3), (42, 42), (1, 1), (268435455, 268435455)]",
+    content="@immut/hashmap.of([(3, 3), (42, 42), (1, 1), (268435455, 268435455)])",
   )
 }
 

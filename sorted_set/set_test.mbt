@@ -45,14 +45,14 @@ test "subset" {
 test "diff" {
   inspect!(
     @sorted_set.of([1, 2, 3]).diff(@sorted_set.of([4, 5, 1])),
-    content="{2, 3}",
+    content="@sorted_set.of([2, 3])",
   )
 }
 
 test "intersect" {
   inspect!(
     @sorted_set.of([3, 4, 5]).intersect(@sorted_set.of([4, 5, 6])),
-    content="{4, 5}",
+    content="@sorted_set.of([4, 5])",
   )
 }
 
@@ -102,14 +102,20 @@ test "to_array" {
 }
 
 test "to_string" {
-  inspect!(@sorted_set.of([1, 2, 3, 4, 5]), content="{1, 2, 3, 4, 5}")
-  inspect!((@sorted_set.of([]) : @sorted_set.T[Int]), content="{}")
+  inspect!(
+    @sorted_set.of([1, 2, 3, 4, 5]),
+    content="@sorted_set.of([1, 2, 3, 4, 5])",
+  )
+  inspect!(
+    (@sorted_set.of([]) : @sorted_set.T[Int]),
+    content="@sorted_set.of([])",
+  )
 }
 
 test "from_array" {
   inspect!(
     @sorted_set.of([7, 2, 9, 4, 5, 6, 3, 8, 1]),
-    content="{1, 2, 3, 4, 5, 6, 7, 8, 9}",
+    content="@sorted_set.of([1, 2, 3, 4, 5, 6, 7, 8, 9])",
   )
 }
 
@@ -146,31 +152,34 @@ test "mix_everything" {
   let set1 = @sorted_set.of([1, 2, 3, 4, 5])
   let set2 = @sorted_set.of([4, 5, 6, 7, 8])
   set1.add(6)
-  inspect!(set1, content="{1, 2, 3, 4, 5, 6}")
+  inspect!(set1, content="@sorted_set.of([1, 2, 3, 4, 5, 6])")
   set1.remove(6)
-  inspect!(set1, content="{1, 2, 3, 4, 5}")
+  inspect!(set1, content="@sorted_set.of([1, 2, 3, 4, 5])")
   let set3 = set1.union(set2)
-  inspect!(set3, content="{1, 2, 3, 4, 5, 6, 7, 8}")
+  inspect!(set3, content="@sorted_set.of([1, 2, 3, 4, 5, 6, 7, 8])")
   let set4 = set1.diff(set2)
-  inspect!(set4, content="{1, 2, 3}")
+  inspect!(set4, content="@sorted_set.of([1, 2, 3])")
   let set5 = set1.intersect(set2)
-  inspect!(set5, content="{4, 5}")
+  inspect!(set5, content="@sorted_set.of([4, 5])")
   inspect!(set1.subset(set3), content="true")
   set3.remove(3)
-  inspect!(set3, content="{1, 2, 4, 5, 6, 7, 8}")
+  inspect!(set3, content="@sorted_set.of([1, 2, 4, 5, 6, 7, 8])")
   inspect!(set3.size(), content="7")
   inspect!(set3.is_empty(), content="false")
   inspect!(set3.contains(1), content="true")
   inspect!(set3.contains(3), content="false")
   inspect!(set3.disjoint(set1), content="false")
   let set6 = set3.union(@sorted_set.of([]))
-  inspect!(set6, content="{1, 2, 4, 5, 6, 7, 8}")
+  inspect!(set6, content="@sorted_set.of([1, 2, 4, 5, 6, 7, 8])")
   let set7 = set3.union(@sorted_set.of([12, 13, 14, 33, 22]))
-  inspect!(set7, content="{1, 2, 4, 5, 6, 7, 8, 12, 13, 14, 22, 33}")
+  inspect!(
+    set7,
+    content="@sorted_set.of([1, 2, 4, 5, 6, 7, 8, 12, 13, 14, 22, 33])",
+  )
   for i = 1; i <= 5; i = i + 1 {
     set7.remove(i)
   }
-  inspect!(set7, content="{6, 7, 8, 12, 13, 14, 22, 33}")
+  inspect!(set7, content="@sorted_set.of([6, 7, 8, 12, 13, 14, 22, 33])")
   for i = 6; i <= 33; i = i + 1 {
     set7.remove(i)
   }
@@ -183,12 +192,12 @@ test "mix_everything" {
   set.remove(70)
   inspect!(
     set,
-    content="{8, 11, 13, 35, 38, 39, 40, 44, 49, 52, 54, 58, 67, 80, 84, 90, 93, 95, 97}",
+    content="@sorted_set.of([8, 11, 13, 35, 38, 39, 40, 44, 49, 52, 54, 58, 67, 80, 84, 90, 93, 95, 97])",
   )
   set.remove(52)
   inspect!(
     set,
-    content="{8, 11, 13, 35, 38, 39, 40, 44, 49, 54, 58, 67, 80, 84, 90, 93, 95, 97}",
+    content="@sorted_set.of([8, 11, 13, 35, 38, 39, 40, 44, 49, 54, 58, 67, 80, 84, 90, 93, 95, 97])",
   )
 }
 

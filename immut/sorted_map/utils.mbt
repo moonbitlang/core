@@ -242,3 +242,24 @@ pub fn Map::of[K : Compare, V](array : FixedArray[(K, V)]) -> Map[K, V] {
     mp
   }
 }
+
+pub impl[K : Show, V : Show] Show for Map[K, V] with output(self, logger) {
+  logger.write_string("@immut/sorted_map.of([")
+  self.eachi(
+    fn(i, k, v) {
+      if i > 0 {
+        logger.write_string(", ")
+      }
+      logger.write_string("(")
+      Show::output(k, logger)
+      logger.write_string(", ")
+      Show::output(v, logger)
+      logger.write_string(")")
+    },
+  )
+  logger.write_string("])")
+}
+
+pub fn to_string[K : Show, V : Show](self : Map[K, V]) -> String {
+  Show::to_string(self)
+}

@@ -33,11 +33,11 @@ test "panic set with empty array" {
 test "set with valid index" {
   let v = @array.of([1, 2, 3, 4, 5])
   let v1 = v.set(2, 10) // This should not trigger the panic
-  inspect!(v1, content="ImmutableVec::[1, 2, 10, 4, 5]")
+  inspect!(v1, content="@immut/array.of([1, 2, 10, 4, 5])")
 }
 
 test "set with valid index at end" {
   let v = @array.of([1, 2, 3, 4, 5])
   let v1 = v.set(4, 10) // This should not trigger the panic
-  inspect!(v1, content="ImmutableVec::[1, 2, 3, 4, 10]")
+  inspect!(v1, content="@immut/array.of([1, 2, 3, 4, 10])")
 }

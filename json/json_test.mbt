@@ -297,7 +297,7 @@ test "deep access" {
   inspect!(
     json.value("key").bind(@json.as_array),
     content=
-      #|Some([Number(1.0), True, Null, Array([]), Object("key": String("value"), "value": Number(100.0)})])
+      #|Some([Number(1.0), True, Null, Array([]), Object({"key": String("value"), "value": Number(100.0)})])
     ,
   )
   inspect!(

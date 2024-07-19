@@ -344,19 +344,16 @@ fn debug_entries[K : Show, V : Show](self : Map[K, V]) -> String {
 }
 
 pub impl[K : Show, V : Show] Show for Map[K, V] with output(self, logger) {
-  if self.size == 0 {
-    logger.write_string("{}")
-    return
-  }
+  logger.write_string("{")
   loop 0, self.head {
     _, None => logger.write_string("}")
     i, Some({ key, value, idx, .. }) => {
       if i > 0 {
         logger.write_string(", ")
       }
-      key.output(logger)
+      Show::output(key, logger)
       logger.write_string(": ")
-      value.output(logger)
+      Show::output(value, logger)
       continue i + 1, self.list[idx].next
     }
   }

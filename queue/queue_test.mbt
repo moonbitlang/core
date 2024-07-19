@@ -31,7 +31,7 @@ test "from_fixed_array_1" {
 
 test "from_fixed_array_3" {
   let q : @queue.Queue[Int] = @queue.of([])
-  inspect!(q, content="Queue::[]")
+  inspect!(q, content="@queue.of([])")
 }
 
 test "from_array_1" {
@@ -48,16 +48,16 @@ test "from_array_1" {
 
 test "from_array_3" {
   let q : @queue.Queue[Int] = @queue.of([])
-  inspect!(q, content="Queue::[]")
+  inspect!(q, content="@queue.of([])")
 }
 
 test "to_string" {
   let queue : @queue.Queue[Int] = @queue.of([1, 2, 3, 4])
-  inspect!(queue, content="Queue::[1, 2, 3, 4]")
+  inspect!(queue, content="@queue.of([1, 2, 3, 4])")
   queue.push(11)
-  inspect!(queue, content="Queue::[1, 2, 3, 4, 11]")
+  inspect!(queue, content="@queue.of([1, 2, 3, 4, 11])")
   queue.pop_exn() |> ignore
-  inspect!(queue, content="Queue::[2, 3, 4, 11]")
+  inspect!(queue, content="@queue.of([2, 3, 4, 11])")
 }
 
 test "clear" {

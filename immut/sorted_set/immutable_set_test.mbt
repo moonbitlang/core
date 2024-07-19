@@ -18,7 +18,7 @@
 
 test "new" {
   let empty : @sorted_set.ImmutableSet[Int] = @sorted_set.new()
-  inspect!(empty, content="ImmutableSet::[]")
+  inspect!(empty, content="@immut/sorted_set.of([])")
 }
 
 test "disjoint" {
@@ -55,29 +55,32 @@ test "subset" {
 
 test "diff" {
   let empty = @sorted_set.new()
-  inspect!(empty.diff(@sorted_set.of([1, 2, 3])), content="ImmutableSet::[]")
+  inspect!(
+    empty.diff(@sorted_set.of([1, 2, 3])),
+    content="@immut/sorted_set.of([])",
+  )
   inspect!(
     @sorted_set.of([1, 2, 3]).diff(empty),
-    content="ImmutableSet::[1, 2, 3]",
+    content="@immut/sorted_set.of([1, 2, 3])",
   )
   inspect!(
     @sorted_set.of([1, 2, 3]).diff(@sorted_set.of([4, 5, 1])),
-    content="ImmutableSet::[2, 3]",
+    content="@immut/sorted_set.of([2, 3])",
   )
   inspect!(
     @sorted_set.of([1, 2, 3]).diff(@sorted_set.of([1, 2, 3])),
-    content="ImmutableSet::[]",
+    content="@immut/sorted_set.of([])",
   )
 }
 
 test "inter" {
   inspect!(
     @sorted_set.of([3, 4, 5]).inter(@sorted_set.of([4, 5, 6])),
-    content="ImmutableSet::[4, 5]",
+    content="@immut/sorted_set.of([4, 5])",
   )
   inspect!(
     @sorted_set.of([3, 4]).inter(@sorted_set.of([5, 6])),
-    content="ImmutableSet::[]",
+    content="@immut/sorted_set.of([])",
   )
 }
 
@@ -85,30 +88,30 @@ test "union" {
   let empty = @sorted_set.new()
   inspect!(
     empty.union(@sorted_set.of([4, 5, 6])),
-    content="ImmutableSet::[4, 5, 6]",
+    content="@immut/sorted_set.of([4, 5, 6])",
   )
   inspect!(
     @sorted_set.of([4, 5, 6]).union(empty),
-    content="ImmutableSet::[4, 5, 6]",
+    content="@immut/sorted_set.of([4, 5, 6])",
   )
   inspect!(
     @sorted_set.of([3]).union(@sorted_set.of([4, 5, 6])),
-    content="ImmutableSet::[3, 4, 5, 6]",
+    content="@immut/sorted_set.of([3, 4, 5, 6])",
   )
   inspect!(
     @sorted_set.of([3, 4, 5]).union(@sorted_set.of([6])),
-    content="ImmutableSet::[3, 4, 5, 6]",
+    content="@immut/sorted_set.of([3, 4, 5, 6])",
   )
   inspect!(
     @sorted_set.of([3, 4, 5]).union(@sorted_set.of([4, 5, 6])),
-    content="ImmutableSet::[3, 4, 5, 6]",
+    content="@immut/sorted_set.of([3, 4, 5, 6])",
   )
 }
 
 test "map" {
   inspect!(
     @sorted_set.of([1, 2, 3, 4, 5]).map(fn(x) { x * 2 }),
-    content="ImmutableSet::[2, 4, 6, 8, 10]",
+    content="@immut/sorted_set.of([2, 4, 6, 8, 10])",
   )
 }
 
@@ -132,7 +135,7 @@ test "fold" {
 test "filter" {
   inspect!(
     @sorted_set.of([1, 2, 3, 4, 5, 6]).filter(fn(v) { v % 2 == 0 }),
-    content="ImmutableSet::[2, 4, 6]",
+    content="@immut/sorted_set.of([2, 4, 6])",
   )
 }
 
@@ -141,14 +144,14 @@ test "split" {
     5,
   )
   inspect!(present, content="true")
-  inspect!(left, content="ImmutableSet::[1, 2, 3, 4]")
-  inspect!(right, content="ImmutableSet::[6, 7, 8, 9]")
+  inspect!(left, content="@immut/sorted_set.of([1, 2, 3, 4])")
+  inspect!(right, content="@immut/sorted_set.of([6, 7, 8, 9])")
   let (left, present, right) = @sorted_set.of([7, 2, 9, 4, 5, 6, 3, 8, 1]).split(
     0,
   )
   inspect!(present, content="false")
-  inspect!(left, content="ImmutableSet::[]")
-  inspect!(right, content="ImmutableSet::[1, 2, 3, 4, 5, 6, 7, 8, 9]")
+  inspect!(left, content="@immut/sorted_set.of([])")
+  inspect!(right, content="@immut/sorted_set.of([1, 2, 3, 4, 5, 6, 7, 8, 9])")
 }
 
 test "contain" {
@@ -172,61 +175,79 @@ test "to_array" {
 test "from_fixed_array" {
   inspect!(
     @sorted_set.of([7, 2, 9, 4, 5, 6, 3, 8, 1]),
-    content="ImmutableSet::[1, 2, 3, 4, 5, 6, 7, 8, 9]",
+    content="@immut/sorted_set.of([1, 2, 3, 4, 5, 6, 7, 8, 9])",
   )
 }
 
 test "from_array" {
   inspect!(
     @sorted_set.of([7, 2, 9, 4, 5, 6, 3, 8, 1]),
-    content="ImmutableSet::[1, 2, 3, 4, 5, 6, 7, 8, 9]",
+    content="@immut/sorted_set.of([1, 2, 3, 4, 5, 6, 7, 8, 9])",
   )
 }
 
 test "remove_min" {
   inspect!(
     @sorted_set.of([3, 4, 5]).remove_min(),
-    content="ImmutableSet::[4, 5]",
+    content="@immut/sorted_set.of([4, 5])",
   )
 }
 
 test "add" {
   inspect!(
     @sorted_set.of([7, 2, 9, 4, 6, 3, 8, 1]).add(5),
-    content="ImmutableSet::[1, 2, 3, 4, 5, 6, 7, 8, 9]",
+    content="@immut/sorted_set.of([1, 2, 3, 4, 5, 6, 7, 8, 9])",
   )
-  inspect!(@sorted_set.of([2]).add(1), content="ImmutableSet::[1, 2]")
-  inspect!(@sorted_set.of([2]).add(3), content="ImmutableSet::[2, 3]")
-  inspect!(@sorted_set.of([2]).add(1).add(3), content="ImmutableSet::[1, 2, 3]")
-  inspect!(@sorted_set.of([1, 2]).add(1), content="ImmutableSet::[1, 2]")
-  inspect!(@sorted_set.of([2, 3]).add(3), content="ImmutableSet::[2, 3]")
-  inspect!(@sorted_set.of([1, 2, 3]).add(1), content="ImmutableSet::[1, 2, 3]")
-  inspect!(@sorted_set.of([1, 2, 3]).add(3), content="ImmutableSet::[1, 2, 3]")
-  inspect!(@sorted_set.of([1]).add(2).add(2), content="ImmutableSet::[1, 2]")
+  inspect!(@sorted_set.of([2]).add(1), content="@immut/sorted_set.of([1, 2])")
+  inspect!(@sorted_set.of([2]).add(3), content="@immut/sorted_set.of([2, 3])")
+  inspect!(
+    @sorted_set.of([2]).add(1).add(3),
+    content="@immut/sorted_set.of([1, 2, 3])",
+  )
+  inspect!(
+    @sorted_set.of([1, 2]).add(1),
+    content="@immut/sorted_set.of([1, 2])",
+  )
+  inspect!(
+    @sorted_set.of([2, 3]).add(3),
+    content="@immut/sorted_set.of([2, 3])",
+  )
+  inspect!(
+    @sorted_set.of([1, 2, 3]).add(1),
+    content="@immut/sorted_set.of([1, 2, 3])",
+  )
+  inspect!(
+    @sorted_set.of([1, 2, 3]).add(3),
+    content="@immut/sorted_set.of([1, 2, 3])",
+  )
+  inspect!(
+    @sorted_set.of([1]).add(2).add(2),
+    content="@immut/sorted_set.of([1, 2])",
+  )
 }
 
 test "remove" {
   let empty = @sorted_set.new()
-  inspect!(empty.remove(1), content="ImmutableSet::[]")
+  inspect!(empty.remove(1), content="@immut/sorted_set.of([])")
   inspect!(
     @sorted_set.of([7, 2, 9, 4, 5, 6, 3, 8, 1]).remove(1),
-    content="ImmutableSet::[2, 3, 4, 5, 6, 7, 8, 9]",
+    content="@immut/sorted_set.of([2, 3, 4, 5, 6, 7, 8, 9])",
   )
   inspect!(
     @sorted_set.of([7, 2, 9, 4, 5, 6, 3, 8, 1]).remove(9),
-    content="ImmutableSet::[1, 2, 3, 4, 5, 6, 7, 8]",
+    content="@immut/sorted_set.of([1, 2, 3, 4, 5, 6, 7, 8])",
   )
   inspect!(
     @sorted_set.of([7, 2, 9, 4, 5, 6, 3, 8, 1]).remove(8),
-    content="ImmutableSet::[1, 2, 3, 4, 5, 6, 7, 9]",
+    content="@immut/sorted_set.of([1, 2, 3, 4, 5, 6, 7, 9])",
   )
   inspect!(
     @sorted_set.of([7, 2, 9, 4, 5, 6, 3, 8, 1]).remove(0),
-    content="ImmutableSet::[1, 2, 3, 4, 5, 6, 7, 8, 9]",
+    content="@immut/sorted_set.of([1, 2, 3, 4, 5, 6, 7, 8, 9])",
   )
   inspect!(
     @sorted_set.of([7, 2, 9, 4, 5, 6, 3, 8, 1]).remove(10),
-    content="ImmutableSet::[1, 2, 3, 4, 5, 6, 7, 8, 9]",
+    content="@immut/sorted_set.of([1, 2, 3, 4, 5, 6, 7, 8, 9])",
   )
 }
 
@@ -267,11 +288,11 @@ test "is_empty" {
 test "to_string" {
   inspect!(
     @sorted_set.of([1, 2, 3, 4, 5]),
-    content="ImmutableSet::[1, 2, 3, 4, 5]",
+    content="@immut/sorted_set.of([1, 2, 3, 4, 5])",
   )
   inspect!(
     (@sorted_set.of([]) : @sorted_set.ImmutableSet[Int]),
-    content="ImmutableSet::[]",
+    content="@immut/sorted_set.of([])",
   )
 }
 
@@ -359,14 +380,14 @@ test "split with value not in set" {
   let set = @sorted_set.of([1, 2, 3, 4, 5])
   let (left, present, right) = set.split(6)
   inspect!(present, content="false")
-  inspect!(left, content="ImmutableSet::[1, 2, 3, 4, 5]")
-  inspect!(right, content="ImmutableSet::[]")
+  inspect!(left, content="@immut/sorted_set.of([1, 2, 3, 4, 5])")
+  inspect!(right, content="@immut/sorted_set.of([])")
 }
 
 test "remove_min on non-empty set" {
   let set = @sorted_set.of([3, 4, 5])
   let new_set = set.remove_min()
-  inspect!(new_set, content="ImmutableSet::[4, 5]")
+  inspect!(new_set, content="@immut/sorted_set.of([4, 5])")
 }
 
 test "min on non-empty set" {
@@ -385,7 +406,7 @@ test "union with different heights" {
   let set1 = @sorted_set.of([3, 4, 5])
   let set2 = @sorted_set.of([4, 5, 6])
   let union_set = set1.union(set2)
-  inspect!(union_set, content="ImmutableSet::[3, 4, 5, 6]")
+  inspect!(union_set, content="@immut/sorted_set.of([3, 4, 5, 6])")
 }
 
 test "disjoint with different sets" {
@@ -399,7 +420,7 @@ test "union with different heights" {
   let set1 = @sorted_set.of([3, 4, 5])
   let set2 = @sorted_set.of([4, 5, 6])
   let union_set = set1.union(set2)
-  inspect!(union_set, content="ImmutableSet::[3, 4, 5, 6]")
+  inspect!(union_set, content="@immut/sorted_set.of([3, 4, 5, 6])")
 }
 
 test "disjoint with different sets" {
@@ -413,7 +434,7 @@ test "union with different heights" {
   let set1 = @sorted_set.of([3, 4, 5])
   let set2 = @sorted_set.of([4, 5, 6])
   let union_set = set1.union(set2)
-  inspect!(union_set, content="ImmutableSet::[3, 4, 5, 6]")
+  inspect!(union_set, content="@immut/sorted_set.of([3, 4, 5, 6])")
 }
 
 test "disjoint with different sets" {
