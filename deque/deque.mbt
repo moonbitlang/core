@@ -28,16 +28,12 @@ pub fn Deque::new[T](~capacity : Int = 0) -> Deque[T] {
 }
 
 pub impl[T : Show] Show for Deque[T] with output(self, logger) {
-  if self.length() == 0 {
-    logger.write_string("Deque::[]")
-    return
-  }
   logger.write_string("Deque::[")
   for i = 0; i < self.length(); i = i + 1 {
     if i > 0 {
       logger.write_string(", ")
     }
-    self[i].output(logger)
+    Show::output(self[i], logger)
   }
   logger.write_string("]")
 }

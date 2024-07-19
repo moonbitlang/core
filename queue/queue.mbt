@@ -43,7 +43,7 @@ pub fn Queue::from_array[T](arr : Array[T]) -> Queue[T] {
 }
 
 pub impl[T : Show] Show for Queue[T] with output(self, logger) {
-  logger.write_string("Queue::[")
+  logger.write_string("@queue.of([")
   self.eachi(
     fn(i, t) {
       if i > 0 {
@@ -52,7 +52,7 @@ pub impl[T : Show] Show for Queue[T] with output(self, logger) {
       t.output(logger)
     },
   )
-  logger.write_string("]")
+  logger.write_string("])")
 }
 
 // Reuse the default implementation of [Show::to_string] here

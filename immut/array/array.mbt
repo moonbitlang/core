@@ -24,7 +24,7 @@ test "is_empty" {
 }
 
 pub impl[T : Show] Show for ImmutableVec[T] with output(self, logger) {
-  logger.write_string("ImmutableVec::[")
+  logger.write_string("@immut/array.of([")
   self.eachi(
     fn(i, v) {
       if i > 0 {
@@ -33,7 +33,7 @@ pub impl[T : Show] Show for ImmutableVec[T] with output(self, logger) {
       v.output(logger)
     },
   )
-  logger.write_string("]")
+  logger.write_string("])")
 }
 
 pub fn to_string[T : Show](self : ImmutableVec[T]) -> String {
@@ -43,8 +43,8 @@ pub fn to_string[T : Show](self : ImmutableVec[T]) -> String {
 test "to_string" {
   let v = of([1, 2, 3, 4, 5])
   let ve : ImmutableVec[Int] = ImmutableVec::empty()
-  inspect!(v, content="ImmutableVec::[1, 2, 3, 4, 5]")
-  inspect!(ve, content="ImmutableVec::[]")
+  inspect!(v, content="@immut/array.of([1, 2, 3, 4, 5])")
+  inspect!(ve, content="@immut/array.of([])")
 }
 
 pub fn is_empty[T](v : ImmutableVec[T]) -> Bool {
@@ -115,12 +115,12 @@ pub fn copy[T](self : ImmutableVec[T]) -> ImmutableVec[T] {
 test "copy" {
   let v = of([1, 2, 3, 4, 5])
   let vc = v.copy()
-  inspect!(vc, content="ImmutableVec::[1, 2, 3, 4, 5]")
+  inspect!(vc, content="@immut/array.of([1, 2, 3, 4, 5])")
   inspect!(v == vc, content="true")
   @test.is_false!(physical_equal(v, vc))
   let v = ImmutableVec::empty()
   let vc : ImmutableVec[Int] = v.copy()
-  inspect!(vc, content="ImmutableVec::[]")
+  inspect!(vc, content="@immut/array.of([])")
   inspect!(v == vc, content="true")
   @test.is_false!(physical_equal(v, vc))
 }
@@ -185,8 +185,8 @@ test "set" {
   let v = of([1, 2, 3, 4, 5])
   let v1 = v.set(1, 10)
   let v2 = v.set(2, 10)
-  inspect!(v1, content="ImmutableVec::[1, 10, 3, 4, 5]")
-  inspect!(v2, content="ImmutableVec::[1, 2, 10, 4, 5]")
+  inspect!(v1, content="@immut/array.of([1, 10, 3, 4, 5])")
+  inspect!(v2, content="@immut/array.of([1, 2, 10, 4, 5])")
 }
 
 /// Push a value to the end of the array.
@@ -214,10 +214,10 @@ pub fn push[T](self : ImmutableVec[T], value : T) -> ImmutableVec[T] {
 
 test "push" {
   let v = ImmutableVec::empty().push(1).push(2).push(3)
-  inspect!(v, content="ImmutableVec::[1, 2, 3]")
-  inspect!(v.push(1), content="ImmutableVec::[1, 2, 3, 1]")
-  inspect!(v.push(2), content="ImmutableVec::[1, 2, 3, 2]")
-  inspect!(v.push(3), content="ImmutableVec::[1, 2, 3, 3]")
+  inspect!(v, content="@immut/array.of([1, 2, 3])")
+  inspect!(v.push(1), content="@immut/array.of([1, 2, 3, 1])")
+  inspect!(v.push(2), content="@immut/array.of([1, 2, 3, 2])")
+  inspect!(v.push(3), content="@immut/array.of([1, 2, 3, 3])")
 }
 
 /// Create a persistent array from an array.
@@ -233,10 +233,10 @@ pub fn ImmutableVec::from_array[T](arr : Array[T]) -> ImmutableVec[T] {
 test "from_array" {
   let v = of([1, 1, 4, 5, 1, 4])
   let vv = ImmutableVec::from_array(Array::make(30, 1))
-  inspect!(v, content="ImmutableVec::[1, 1, 4, 5, 1, 4]")
+  inspect!(v, content="@immut/array.of([1, 1, 4, 5, 1, 4])")
   inspect!(
     vv,
-    content="ImmutableVec::[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]",
+    content="@immut/array.of([1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1])",
   )
 }
 
@@ -405,20 +405,20 @@ pub fn map[T, U](self : ImmutableVec[T], f : (T) -> U) -> ImmutableVec[U] {
 
 test "map" {
   let v = of([1, 2, 3, 4, 5])
-  inspect!(v.map(fn(e) { e * 2 }), content="ImmutableVec::[2, 4, 6, 8, 10]")
+  inspect!(v.map(fn(e) { e * 2 }), content="@immut/array.of([2, 4, 6, 8, 10])")
   inspect!(
     v.map(fn(e) { e.to_string() }),
     content=
-      #|ImmutableVec::["1", "2", "3", "4", "5"]
+      #|@immut/array.of(["1", "2", "3", "4", "5"])
     ,
   )
   inspect!(
     v.map(fn(e) { e % 2 == 0 }),
-    content="ImmutableVec::[false, true, false, true, false]",
+    content="@immut/array.of([false, true, false, true, false])",
   )
   inspect!(
     ImmutableVec::empty().map(fn(e : Int) { e }),
-    content="ImmutableVec::[]",
+    content="@immut/array.of([])",
   )
 }
 
@@ -467,16 +467,16 @@ test "new_by_leaves" {
   )
   let v = new_by_leaves(5, fn(_s, l) { Array::make(l, 1) })
   let v2 = new_by_leaves(33, fn(_s, l) { Array::make(l, 10) })
-  inspect!(e, content="ImmutableVec::[]")
-  inspect!(v, content="ImmutableVec::[1, 1, 1, 1, 1]")
+  inspect!(e, content="@immut/array.of([])")
+  inspect!(v, content="@immut/array.of([1, 1, 1, 1, 1])")
   inspect!(
     v2,
-    content="ImmutableVec::[10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10]",
+    content="@immut/array.of([10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10])",
   )
   let v3 = new_by_leaves(32, fn(_s, l) { Array::make(l, 10) })
   inspect!(
     v3,
-    content="ImmutableVec::[10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10]",
+    content="@immut/array.of([10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10])",
   )
 }
 
@@ -488,10 +488,10 @@ pub fn ImmutableVec::new[T](len : Int, value : T) -> ImmutableVec[T] {
 test "new" {
   let v = ImmutableVec::new(5, 1)
   let v2 = ImmutableVec::new(33, 10)
-  inspect!(v, content="ImmutableVec::[1, 1, 1, 1, 1]")
+  inspect!(v, content="@immut/array.of([1, 1, 1, 1, 1])")
   inspect!(
     v2,
-    content="ImmutableVec::[10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10]",
+    content="@immut/array.of([10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10])",
   )
 }
 
@@ -506,10 +506,10 @@ pub fn ImmutableVec::new_with_index[T](
 test "new_with" {
   let v = new_with_index(5, fn(i) { i })
   let v2 = new_with_index(33, fn(i) { i * 10 })
-  inspect!(v, content="ImmutableVec::[0, 1, 2, 3, 4]")
+  inspect!(v, content="@immut/array.of([0, 1, 2, 3, 4])")
   inspect!(
     v2,
-    content="ImmutableVec::[0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 110, 120, 130, 140, 150, 160, 170, 180, 190, 200, 210, 220, 230, 240, 250, 260, 270, 280, 290, 300, 310, 320]",
+    content="@immut/array.of([0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 110, 120, 130, 140, 150, 160, 170, 180, 190, 200, 210, 220, 230, 240, 250, 260, 270, 280, 290, 300, 310, 320])",
   )
 }
 
@@ -521,7 +521,7 @@ test "mix" {
   }
   inspect!(
     v,
-    content="ImmutableVec::[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99]",
+    content="@immut/array.of([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99])",
   )
   let mut v2 = v.copy()
   for i = 0; i < 100; i = i + 1 {

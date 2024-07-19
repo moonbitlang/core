@@ -60,7 +60,7 @@ test "@hashset.iter" {
 
 test "@hashset.to_string" {
   let set = @hashset.new().add(1).add(3).add(0x0f_ff_ff_ff).add(42)
-  inspect!(set, content="@immutable_hashset.Set::[3, 42, 1, 268435455]")
+  inspect!(set, content="@immut/hashset.of([3, 42, 1, 268435455])")
 }
 
 test "@hashset.from_array" {

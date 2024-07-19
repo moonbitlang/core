@@ -414,7 +414,7 @@ pub fn disjoint[T : Compare](
 /// of([7, 2, 9, 4, 5, 6, 3, 8, 1]).each(print)
 /// // output: 123456789
 /// ```
-pub fn each[T : Compare](self : ImmutableSet[T], f : (T) -> Unit) -> Unit {
+pub fn each[T](self : ImmutableSet[T], f : (T) -> Unit) -> Unit {
   match self {
     Empty => ()
     Node(~left, ~value, ~right, ..) => {
@@ -525,25 +525,23 @@ pub fn filter[T : Compare](
   }
 }
 
-pub impl[T : Show + Compare] Show for ImmutableSet[T] with output(self, logger) {
-  match self {
-    Empty => logger.write_string("ImmutableSet::[]")
-    _ => {
-      let linear = self.to_array()
-      let len = linear.length()
-      logger.write_string("ImmutableSet::[")
-      for i = 0; i < len; i = i + 1 {
-        if i > 0 {
-          logger.write_string(", ")
-        }
-        linear[i].output(logger)
+pub impl[T : Show] Show for ImmutableSet[T] with output(self, logger) {
+  logger.write_string("@immut/sorted_set.of([")
+  let mut is_first = true
+  self.each(
+    fn(x) {
+      if is_first {
+        is_first = false
+      } else {
+        logger.write_string(", ")
       }
-      logger.write_string("]")
-    }
-  }
+      Show::output(x, logger)
+    },
+  )
+  logger.write_string("])")
 }
 
-pub fn to_string[T : Show + Compare](self : ImmutableSet[T]) -> String {
+pub fn to_string[T : Show](self : ImmutableSet[T]) -> String {
   Show::to_string(self)
 }
 
@@ -763,7 +761,7 @@ test "balance with left height greater" {
   let value = 4
   let right = of([5])
   let balanced_set = balance(left, value, right)
-  inspect!(balanced_set, content="ImmutableSet::[1, 2, 3, 4, 5]")
+  inspect!(balanced_set, content="@immut/sorted_set.of([1, 2, 3, 4, 5])")
 }
 
 test "balance with right height greater" {
@@ -771,7 +769,7 @@ test "balance with right height greater" {
   let value = 2
   let right = of([3, 4, 5])
   let balanced_set = balance(left, value, right)
-  inspect!(balanced_set, content="ImmutableSet::[1, 2, 3, 4, 5]")
+  inspect!(balanced_set, content="@immut/sorted_set.of([1, 2, 3, 4, 5])")
 }
 
 test "join with different heights" {
@@ -779,5 +777,5 @@ test "join with different heights" {
   let value = 4
   let right = of([5, 6, 7])
   let joined_set = join(left, value, right)
-  inspect!(joined_set, content="ImmutableSet::[1, 2, 3, 4, 5, 6, 7]")
+  inspect!(joined_set, content="@immut/sorted_set.of([1, 2, 3, 4, 5, 6, 7])")
 }

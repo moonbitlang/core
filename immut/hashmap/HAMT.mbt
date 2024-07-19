@@ -236,7 +236,7 @@ pub fn debug_write[K : Debug, V : Debug](
 
 pub impl[K : Show, V : Show] Show for Map[K, V] with output(self, logger) {
   let mut is_first = true
-  logger.write_string("@immutable_hashmap.Map::[")
+  logger.write_string("@immut/hashmap.of([")
   self.each(
     fn(k, v) {
       if is_first {
@@ -251,7 +251,7 @@ pub impl[K : Show, V : Show] Show for Map[K, V] with output(self, logger) {
       logger.write_string(")")
     },
   )
-  logger.write_string("]")
+  logger.write_string("])")
 }
 
 pub fn to_string[K : Show, V : Show](self : Map[K, V]) -> String {

@@ -227,7 +227,7 @@ pub fn debug_write[T : Debug](self : Set[T], buf : Buffer) -> Unit {
 
 pub impl[T : Show] Show for Set[T] with output(self, logger) {
   let mut is_first = true
-  logger.write_string("@immutable_hashset.Set::[")
+  logger.write_string("@immut/hashset.of([")
   self.each(
     fn(k) {
       if is_first {
@@ -238,7 +238,7 @@ pub impl[T : Show] Show for Set[T] with output(self, logger) {
       k.output(logger)
     },
   )
-  logger.write_string("]")
+  logger.write_string("])")
 }
 
 pub fn to_string[T : Show](self : Set[T]) -> String {
