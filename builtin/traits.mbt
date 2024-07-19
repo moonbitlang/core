@@ -47,7 +47,22 @@ pub trait Logger {
 
 /// Trait for types that can be converted to `String`
 pub trait Show {
+  // `output` is used for composition of aggregate structure.
+  // `output` writes a string representation of `self` to a logger.
+  // `output` should produce a valid MoonBit-syntax representation if possible.
+  // For example, `Show::output` for `String` should be quoted
   output(Self, Logger) -> Unit
+  // `to_string` should be used by end users of `Show`,
+  // for printing, interpolation, etc. only, and should not be used for composition.
+  // By default `to_string` is implemented using `output` and a buffer,
+  // but some types, such as `String`, may override `to_string`,
+  // for different (unescaped) behavior when interpolated/printed directly
+  //
+  // By default, `to_string` cannot be called via dot directly.
+  // If implementors of `Show` wants to allow `.to_string()` usage,
+  // they should create a method wrapper manually:
+  //
+  //    fn to_string(self : T) -> String { Show::to_string(self) }
   to_string(Self) -> String
 }
 
