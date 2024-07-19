@@ -27,18 +27,23 @@ pub fn Deque::new[T](~capacity : Int = 0) -> Deque[T] {
   Deque::{ buf: UninitializedArray::make(capacity), len: 0, head: 0, tail: 0 }
 }
 
-pub fn to_string[T : Show](self : Deque[T]) -> String {
+pub impl[T : Show] Show for Deque[T] with output(self, logger) {
   if self.length() == 0 {
-    return "Deque::[]"
+    logger.write_string("Deque::[]")
+    return
   }
-  let first = self[0]
-  for i = 1, init = "Deque::[\(first)" {
-    if i >= self.length() {
-      break "\(init)]"
+  logger.write_string("Deque::[")
+  for i = 0; i < self.length(); i = i + 1 {
+    if i > 0 {
+      logger.write_string(", ")
     }
-    let cur = self[i]
-    continue i + 1, "\(init), \(cur)"
+    self[i].output(logger)
   }
+  logger.write_string("]")
+}
+
+pub fn to_string[T : Show](self : Deque[T]) -> String {
+  Show::to_string(self)
 }
 
 /// Creates a new deque from an array.

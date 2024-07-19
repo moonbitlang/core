@@ -42,17 +42,22 @@ pub fn Queue::from_array[T](arr : Array[T]) -> Queue[T] {
   queue
 }
 
-pub fn to_string[T : Show](self : Queue[T]) -> String {
-  let mut res = "Queue::["
+pub impl[T : Show] Show for Queue[T] with output(self, logger) {
+  logger.write_string("Queue::[")
   self.eachi(
     fn(i, t) {
       if i > 0 {
-        res += ", "
+        logger.write_string(", ")
       }
-      res += t.to_string()
+      t.output(logger)
     },
   )
-  res + "]"
+  logger.write_string("]")
+}
+
+// Reuse the default implementation of [Show::to_string] here
+pub fn to_string[T : Show](self : Queue[T]) -> String {
+  Show::to_string(self)
 }
 
 pub fn debug_write[T : Show](self : Queue[T], buf : Buffer) -> Unit {

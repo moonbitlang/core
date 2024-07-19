@@ -247,14 +247,20 @@ pub fn fract(self : Rational) -> Rational {
   new_unchecked(self.numerator % self.denominator, self.denominator)
 }
 
-pub fn to_string(self : Rational) -> String {
+pub impl Show for Rational with output(self, logger) {
   if self.numerator == 0L {
-    "0".to_string()
+    logger.write_string("0")
   } else if self.denominator == 1L {
-    self.numerator.to_string()
+    logger.write_string(self.numerator.to_string())
   } else {
-    self.numerator.to_string() + "/" + self.denominator.to_string()
+    logger..write_string(self.numerator.to_string())..write_string("/").write_string(
+      self.denominator.to_string(),
+    )
   }
+}
+
+pub fn to_string(self : Rational) -> String {
+  Show::to_string(self)
 }
 
 pub fn is_integer(self : Rational) -> Bool {

@@ -32,4 +32,5 @@ impl Double {
 // Traits
 
 // Extension Methods
+impl Show for Double
 

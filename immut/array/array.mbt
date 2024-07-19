@@ -23,18 +23,21 @@ test "is_empty" {
   inspect!(is_empty(ve), content="true")
 }
 
-pub fn to_string[T : Show](self : ImmutableVec[T]) -> String {
-  let mut s = "ImmutableVec::[".to_string()
+pub impl[T : Show] Show for ImmutableVec[T] with output(self, logger) {
+  logger.write_string("ImmutableVec::[")
   self.eachi(
     fn(i, v) {
-      s = s + v.to_string()
-      if i < self.size - 1 {
-        s = s + ", "
+      if i > 0 {
+        logger.write_string(", ")
       }
+      v.output(logger)
     },
   )
-  s = s + "]"
-  s
+  logger.write_string("]")
+}
+
+pub fn to_string[T : Show](self : ImmutableVec[T]) -> String {
+  Show::to_string(self)
 }
 
 test "to_string" {
@@ -405,7 +408,9 @@ test "map" {
   inspect!(v.map(fn(e) { e * 2 }), content="ImmutableVec::[2, 4, 6, 8, 10]")
   inspect!(
     v.map(fn(e) { e.to_string() }),
-    content="ImmutableVec::[1, 2, 3, 4, 5]",
+    content=
+      #|ImmutableVec::["1", "2", "3", "4", "5"]
+    ,
   )
   inspect!(
     v.map(fn(e) { e % 2 == 0 }),

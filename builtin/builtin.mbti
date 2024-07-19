@@ -446,9 +446,55 @@ pub trait Hash {
   hash(Self) -> Int
 }
 
+pub trait Logger {
+  write_string(Self, String) -> Unit
+  write_sub_string(Self, String, Int, Int) -> Unit
+  write_char(Self, Char) -> Unit
+}
+
 pub trait Show {
+  output(Self, Logger) -> Unit
   to_string(Self) -> String
 }
 
 // Extension Methods
+impl Show for Unit
+
+impl Show for Bool
+
+impl Show for Byte
+
+impl Show for Int
+
+impl Show for Int64
+
+impl Show for UInt
+
+impl Show for UInt64
+
+impl Show for String
+
+impl Show for Option
+
+impl Show for Result
+
+impl Show for FixedArray
+
+impl Show for Bytes
+
+impl Show for Ref
+
+impl Show for Array
+
+impl Show for ArrayView
+
+impl Show for Buffer
+
+impl Show for Iter
+
+impl Show for Map
+
+impl Show for Show
+
+impl Show for SourceLoc
 

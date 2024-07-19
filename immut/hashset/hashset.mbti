@@ -16,10 +16,11 @@ impl Set {
   of[T : Eq + Hash](FixedArray[T]) -> Self[T]
   remove[T : Eq + Hash](Self[T], T) -> Self[T]
   size[T](Self[T]) -> Int
-  to_string[T : Debug](Self[T]) -> String
+  to_string[T : Show](Self[T]) -> String
 }
 
 // Traits
 
 // Extension Methods
+impl Show for Set
 

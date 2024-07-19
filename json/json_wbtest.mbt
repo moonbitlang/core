@@ -61,7 +61,9 @@ test "get as string" {
   inspect!(JsonValue::Number(1.0) |> as_string, content="None")
   inspect!(
     JsonValue::String("Hello World") |> as_string,
-    content="Some(Hello World)",
+    content=
+      #|Some("Hello World")
+    ,
   )
   inspect!(
     JsonValue::Array([JsonValue::String("Hello World")]) |> as_string,
@@ -87,12 +89,14 @@ test "get as array" {
   inspect!(
     JsonValue::Array([JsonValue::String("Hello World")]) |> as_array,
     content=
-      #|Some([String(\"Hello World\")])
+      #|Some([String("Hello World")])
     ,
   )
   inspect!(
     JsonValue::Array([JsonValue::String("Hello World")]).item(0).bind(as_string),
-    content="Some(Hello World)",
+    content=
+      #|Some("Hello World")
+    ,
   )
   inspect!(
     JsonValue::Array([JsonValue::String("Hello World")]).item(1).bind(as_string),
@@ -149,7 +153,7 @@ test "get as object" {
     |> as_object
     |> Option::map(Map::to_array),
     content=
-      #|Some([(key, String(\"key\")), (value, Number(100.0))])
+      #|Some([("key", String("key")), ("value", Number(100.0))])
     ,
   )
   inspect!(
@@ -158,7 +162,9 @@ test "get as object" {
         [("key", JsonValue::String("key")), ("value", JsonValue::Number(100.0))],
       ),
     ).value("key").bind(as_string),
-    content="Some(key)",
+    content=
+      #|Some("key")
+    ,
   )
   inspect!(
     JsonValue::Object(
@@ -228,7 +234,7 @@ test "deep access" {
   inspect!(
     json.value("key").bind(as_array),
     content=
-      #|Some([Number(1.0), True, Null, Array([]), Object({key: String(\"value\"), value:Number(100.0)})])
+      #|Some([Number(1.0), True, Null, Array([]), Object("key": String("value"), "value": Number(100.0)})])
     ,
   )
   inspect!(
@@ -240,7 +246,7 @@ test "deep access" {
       Map::to_array,
     ),
     content=
-      #|Some([(key, String(\"value\")), (value, Number(100.0))])
+      #|Some([("key", String("value")), ("value", Number(100.0))])
     ,
   )
   inspect!(

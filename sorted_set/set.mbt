@@ -353,24 +353,32 @@ pub fn debug_write[V : Debug](self : T[V], buf : Buffer) -> Unit {
 }
 
 /// Converts the set to string.
-pub fn to_string[V : Show](self : T[V]) -> String {
+pub impl[V : Show] Show for T[V] with output(self, logger) {
   match self.root {
-    None => "{}"
-    Some(node) => node.to_string()
+    None => logger.write_string("{}")
+    Some(node) => Show::output(node, logger)
   }
 }
 
-fn to_string[T : Show](self : Node[T]) -> String {
+pub fn to_string[V : Show](self : T[V]) -> String {
+  Show::to_string(self)
+}
+
+impl[T : Show] Show for Node[T] with output(self, logger) {
   let linear = self.to_array()
   let len = linear.length()
   if len == 0 {
-    return "{}"
+    logger.write_string("{}")
+    return
   }
-  for i = 0, str = "{"; i < len - 1; {
-    continue i + 1, str + linear[i].to_string() + ", "
-  } else {
-    str + linear[len - 1].to_string() + "}"
+  logger.write_string("{")
+  for i = 0; i < len; i = i + 1 {
+    if i > 0 {
+      logger.write_string(", ")
+    }
+    linear[i].output(logger)
   }
+  logger.write_string("}")
 }
 
 fn to_array[T](self : Node[T]) -> Array[T] {

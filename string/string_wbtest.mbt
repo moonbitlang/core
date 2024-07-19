@@ -54,13 +54,13 @@ test "debug_write" {
 
 test "to_array" {
   let a = "你好！mbt😀".to_array()
-  inspect!(a[0], content="你")
-  inspect!(a[1], content="好")
-  inspect!(a[2], content="！")
-  inspect!(a[3], content="m")
-  inspect!(a[4], content="b")
-  inspect!(a[5], content="t")
-  inspect!(a[6], content="😀")
+  inspect!(a[0], content="'你'")
+  inspect!(a[1], content="'好'")
+  inspect!(a[2], content="'！'")
+  inspect!(a[3], content="'m'")
+  inspect!(a[4], content="'b'")
+  inspect!(a[5], content="'t'")
+  inspect!(a[6], content="'😀'")
 }
 
 test "substring" {
@@ -89,10 +89,13 @@ test "chars" {
       #|
     ,
   )
-  inspect!("A😊𠮷BA😊𠮷B".iter().take(2).collect(), content="[A, 😊]")
+  inspect!(
+    "A😊𠮷BA😊𠮷B".iter().take(2).collect(),
+    content="['A', '😊']",
+  )
   inspect!(
     "A😊𠮷BA😊𠮷B".iter().take(4).collect(),
-    content="[A, 😊, 𠮷, B]",
+    content="['A', '😊', '𠮷', 'B']",
   )
 }
 
@@ -278,19 +281,43 @@ test "ends_with" {
 }
 
 test "split" {
-  inspect!("a,b,c,d,e".split(","), content="[a, b, c, d, e]")
-  inspect!("abcde".split(""), content="[a, b, c, d, e]")
-  inspect!("a b c d e".split(" "), content="[a, b, c, d, e]")
-  inspect!("abcde".split("x"), content="[abcde]")
+  inspect!(
+    "a,b,c,d,e".split(","),
+    content=
+      #|["a", "b", "c", "d", "e"]
+    ,
+  )
+  inspect!(
+    "abcde".split(""),
+    content=
+      #|["a", "b", "c", "d", "e"]
+    ,
+  )
+  inspect!(
+    "a b c d e".split(" "),
+    content=
+      #|["a", "b", "c", "d", "e"]
+    ,
+  )
+  inspect!(
+    "abcde".split("x"),
+    content=
+      #|["abcde"]
+    ,
+  )
   inspect!("".split(""), content="[]")
   inspect!("".split("x"), content="[]")
   inspect!(
     "你 wow 好 wow 月 wow 兔".split(" wow "),
-    content="[你, 好, 月, 兔]",
+    content=
+      #|["你", "好", "月", "兔"]
+    ,
   )
   inspect!(
     "👍😍😭👍😍😭👍😍😭👍".split("😍😭"),
-    content="[👍, 👍, 👍, 👍]",
+    content=
+      #|["👍", "👍", "👍", "👍"]
+    ,
   )
 }
 

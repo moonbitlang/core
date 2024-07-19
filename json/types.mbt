@@ -46,14 +46,38 @@ pub fn ParseError::to_string(self : ParseError) -> String {
   }
 }
 
-pub fn to_string(self : JsonValue) -> String {
+pub impl Show for ParseError with output(self, logger) {
+  logger.write_string(self.to_string())
+}
+
+pub impl Show for JsonValue with output(self, logger) {
   match self {
-    Null => "Null"
-    True => "True"
-    False => "False"
-    Number(n) => "Number(\(n))"
-    String(s) => "String(" + "\\\"" + s + "\\\")"
-    Array(a) => "Array(" + a.to_string() + ")"
-    Object(o) => "Object(" + o.to_string() + ")"
+    Null => logger.write_string("Null")
+    True => logger.write_string("True")
+    False => logger.write_string("False")
+    Number(n) => {
+      logger.write_string("Number(")
+      Show::output(n, logger)
+      logger.write_string(")")
+    }
+    String(s) => {
+      logger.write_string("String(")
+      Show::output(s, logger)
+      logger.write_string(")")
+    }
+    Array(a) => {
+      logger.write_string("Array(")
+      Show::output(a, logger)
+      logger.write_string(")")
+    }
+    Object(o) => {
+      logger.write_string("Object(")
+      Show::output(o, logger)
+      logger.write_string(")")
+    }
   }
+}
+
+pub fn to_string(self : JsonValue) -> String {
+  Show::to_string(self)
 }

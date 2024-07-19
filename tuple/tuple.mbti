@@ -79,4 +79,15 @@ impl Tuple {
 // Traits
 
 // Extension Methods
+impl Show for Tuple
+
+impl Show for Tuple
+
+impl Show for Tuple
+
+impl Show for Tuple
+
+impl Show for Tuple
+
+impl Show for Tuple
 

@@ -41,4 +41,5 @@ impl ImmutableSet {
 // Traits
 
 // Extension Methods
+impl Show for ImmutableSet
 

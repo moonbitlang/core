@@ -217,7 +217,12 @@ test "repeat" {
 test "intersperse" {
   let ls = of(["1", "2", "3", "4", "5"])
   let el : List[String] = Nil
-  inspect!(ls.intersperse("|"), content="List::[1, |, 2, |, 3, |, 4, |, 5]")
+  inspect!(
+    ls.intersperse("|"),
+    content=
+      #|List::["1", "|", "2", "|", "3", "|", "4", "|", "5"]
+    ,
+  )
   inspect!(el.intersperse("|"), content="List::[]")
 }
 
@@ -336,7 +341,12 @@ test "lookup" {
   let ls = of([(1, "a"), (2, "b"), (3, "c")])
   let el : List[(Int, Int)] = Nil
   inspect!(el.lookup(1), content="None")
-  inspect!(ls.lookup(3), content="Some(c)")
+  inspect!(
+    ls.lookup(3),
+    content=
+      #|Some("c")
+    ,
+  )
   inspect!(ls.lookup(4), content="None")
 }
 
@@ -382,11 +392,15 @@ test "remove_at" {
   inspect!(ls.remove_at(0), content="List::[2, 3, 4, 5]")
   inspect!(
     of(["a", "b", "c", "d", "e"]).remove_at(2),
-    content="List::[a, b, d, e]",
+    content=
+      #|List::["a", "b", "d", "e"]
+    ,
   )
   inspect!(
     of(["a", "b", "c", "d", "e"]).remove_at(5),
-    content="List::[a, b, c, d, e]",
+    content=
+      #|List::["a", "b", "c", "d", "e"]
+    ,
   )
 }
 
@@ -394,11 +408,15 @@ test "remove" {
   inspect!(of([1, 2, 3, 4, 5]).remove(3), content="List::[1, 2, 4, 5]")
   inspect!(
     of(["a", "b", "c", "d", "e"]).remove("c"),
-    content="List::[a, b, d, e]",
+    content=
+      #|List::["a", "b", "d", "e"]
+    ,
   )
   inspect!(
     of(["a", "b", "c", "d", "e"]).remove("f"),
-    content="List::[a, b, c, d, e]",
+    content=
+      #|List::["a", "b", "c", "d", "e"]
+    ,
   )
 }
 

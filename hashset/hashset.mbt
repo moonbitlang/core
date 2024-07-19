@@ -293,9 +293,13 @@ fn debug_entries[K : Show](self : HashSet[K]) -> String {
   s
 }
 
+pub impl[K : Show] Show for HashSet[K] with output(self, logger) {
+  logger.write_string("@hashset.of(")
+  Show::output(self.iter().collect(), logger)
+  logger.write_string(")")
+}
+
+// Reuse the default implementation of [Show::to_string] here
 pub fn to_string[K : Show](self : HashSet[K]) -> String {
-  let mut s = "@hashset.of("
-  s += self.iter().collect().to_string()
-  s += ")"
-  s
+  Show::to_string(self)
 }

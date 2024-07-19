@@ -164,9 +164,24 @@ test "remove on empty map" {
 
 test "get" {
   let map = of([(3, "c"), (2, "b"), (1, "a")])
-  inspect!(map.get(1), content="Some(a)")
-  inspect!(map.get(2), content="Some(b)")
-  inspect!(map.get(3), content="Some(c)")
+  inspect!(
+    map.get(1),
+    content=
+      #|Some("a")
+    ,
+  )
+  inspect!(
+    map.get(2),
+    content=
+      #|Some("b")
+    ,
+  )
+  inspect!(
+    map.get(3),
+    content=
+      #|Some("c")
+    ,
+  )
   inspect!(map.get(4), content="None")
 }
 
@@ -188,9 +203,24 @@ test "op_set" {
 
 test "op_get" {
   let map = of([(3, "c"), (2, "b"), (1, "a")])
-  inspect!(map[1], content="Some(a)")
-  inspect!(map[2], content="Some(b)")
-  inspect!(map[3], content="Some(c)")
+  inspect!(
+    map[1],
+    content=
+      #|Some("a")
+    ,
+  )
+  inspect!(
+    map[2],
+    content=
+      #|Some("b")
+    ,
+  )
+  inspect!(
+    map[3],
+    content=
+      #|Some("c")
+    ,
+  )
   inspect!(map[4], content="None")
 }
 
@@ -243,16 +273,36 @@ test "keys" {
 
 test "values" {
   let map = of([(3, "c"), (2, "b"), (1, "a")])
-  inspect!(map.values(), content="[a, b, c]")
+  inspect!(
+    map.values(),
+    content=
+      #|["a", "b", "c"]
+    ,
+  )
 }
 
 test "to_array" {
   let map = of([(3, "c"), (2, "b"), (1, "a")])
-  inspect!(map.to_array(), content="[(1, a), (2, b), (3, c)]")
+  inspect!(
+    map.to_array(),
+    content=
+      #|[(1, "a"), (2, "b"), (3, "c")]
+    ,
+  )
 }
 
 test "iter" {
   let map = of([(3, "c"), (2, "b"), (1, "a")])
-  inspect!(map.iter().collect(), content="[(1, a), (2, b), (3, c)]")
-  inspect!(map.iter().take(2).collect(), content="[(1, a), (2, b)]")
+  inspect!(
+    map.iter().collect(),
+    content=
+      #|[(1, "a"), (2, "b"), (3, "c")]
+    ,
+  )
+  inspect!(
+    map.iter().take(2).collect(),
+    content=
+      #|[(1, "a"), (2, "b")]
+    ,
+  )
 }
