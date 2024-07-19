@@ -17,20 +17,20 @@ test "default" {
 }
 
 test "compare" {
-  @test.eq(0, "".compare(""))!
-  @test.eq(-1, "".compare("abc"))!
-  @test.eq(1, "abc".compare(""))!
-  @test.eq(-1, "abcd".compare("abce"))!
-  @test.eq(1, "abce".compare("abcd"))!
-  @test.eq(-1, "c".compare("ab"))!
-  @test.eq(1, "ab".compare("c"))!
+  @test.eq!(0, "".compare(""))
+  @test.eq!(-1, "".compare("abc"))
+  @test.eq!(1, "abc".compare(""))
+  @test.eq!(-1, "abcd".compare("abce"))
+  @test.eq!(1, "abce".compare("abcd"))
+  @test.eq!(-1, "c".compare("ab"))
+  @test.eq!(1, "ab".compare("c"))
 }
 
 test "to_bytes" {
-  @test.eq("中文".to_bytes().to_string(), "中文")!
-  @test.eq("asdf".to_bytes().to_string(), "asdf")!
-  @test.eq("🤣🤣".to_bytes().to_string(), "🤣🤣")!
-  @test.eq("🤔".to_bytes().to_string(), "🤔")!
+  @test.eq!("中文".to_bytes().to_string(), "中文")
+  @test.eq!("asdf".to_bytes().to_string(), "asdf")
+  @test.eq!("🤣🤣".to_bytes().to_string(), "🤣🤣")
+  @test.eq!("🤔".to_bytes().to_string(), "🤔")
 }
 
 test "debug_write" {
@@ -40,16 +40,16 @@ test "debug_write" {
     buf.to_string()
   }
 
-  @test.eq(repr("a"), "\"a\"")!
-  @test.eq(repr("'"), "\"'\"")!
-  @test.eq(repr("\""), "\"\\\"\"")!
-  @test.eq(repr("\\"), "\"\\\\\"")!
-  @test.eq(repr("\n"), "\"\\n\"")!
-  @test.eq(repr("\r"), "\"\\r\"")!
-  @test.eq(repr("\b"), "\"\\b\"")!
-  @test.eq(repr("\t"), "\"\\t\"")!
-  @test.eq(repr("\x00"), "\"\\x00\"")!
-  @test.eq(repr("abc'\"def\\"), "\"abc'\\\"def\\\\\"")!
+  @test.eq!(repr("a"), "\"a\"")
+  @test.eq!(repr("'"), "\"'\"")
+  @test.eq!(repr("\""), "\"\\\"\"")
+  @test.eq!(repr("\\"), "\"\\\\\"")
+  @test.eq!(repr("\n"), "\"\\n\"")
+  @test.eq!(repr("\r"), "\"\\r\"")
+  @test.eq!(repr("\b"), "\"\\b\"")
+  @test.eq!(repr("\t"), "\"\\t\"")
+  @test.eq!(repr("\x00"), "\"\\x00\"")
+  @test.eq!(repr("abc'\"def\\"), "\"abc'\\\"def\\\\\"")
 }
 
 test "to_array" {
@@ -64,10 +64,10 @@ test "to_array" {
 }
 
 test "substring" {
-  @test.eq("abc".substring(), "abc")!
-  @test.eq("abc".substring(start=1), "bc")!
-  @test.eq("abc".substring(end=2), "ab")!
-  @test.eq("abc".substring(start=1, end=2), "b")!
+  @test.eq!("abc".substring(), "abc")
+  @test.eq!("abc".substring(start=1), "bc")
+  @test.eq!("abc".substring(end=2), "ab")
+  @test.eq!("abc".substring(start=1, end=2), "b")
 }
 
 test "chars" {
@@ -75,7 +75,7 @@ test "chars" {
   "A😊𠮷BA😊𠮷B".iter().each(
     fn(c) { str = str + c.to_int().to_string() + "\n" },
   )
-  inspect(
+  inspect!(
     str,
     content=
       #|65
@@ -88,12 +88,12 @@ test "chars" {
       #|66
       #|
     ,
-  )!
+  )
   inspect!("A😊𠮷BA😊𠮷B".iter().take(2).collect(), content="[A, 😊]")
-  inspect(
+  inspect!(
     "A😊𠮷BA😊𠮷B".iter().take(4).collect(),
     content="[A, 😊, 𠮷, B]",
-  )!
+  )
 }
 
 // [debug_write] is in [builtin].
@@ -103,7 +103,7 @@ test "chars" {
 test "Buffer::to_bytes" {
   let buffer = Buffer::new(size_hint=16)
   buffer.write_string("中文")
-  @test.eq(buffer.to_bytes().to_string(), "中文")!
+  @test.eq!(buffer.to_bytes().to_string(), "中文")
 }
 
 test "panic substring_start_index_error" {
@@ -127,10 +127,10 @@ test "trim_left" {
   inspect!("aaabcd".trim_left(" "), content="aaabcd")
   inspect!("aaabcd".trim_left(""), content="aaabcd")
   inspect!("  abc".trim_left(" "), content="abc")
-  inspect(
+  inspect!(
     "哇你好月兔你好哇".trim_left("你好哇"),
     content="月兔你好哇",
-  )!
+  )
   inspect!("😍😍😭😡😡".trim_left("😍"), content="😭😡😡")
 }
 
@@ -139,10 +139,10 @@ test "trim_right" {
   inspect!("abcddd".trim_right(" "), content="abcddd")
   inspect!("abcddd".trim_right(""), content="abcddd")
   inspect!("abc  ".trim_right(" "), content="abc")
-  inspect(
+  inspect!(
     "哇你好月兔你好哇".trim_right("你好哇"),
     content="哇你好月兔",
-  )!
+  )
   inspect!("😍😍😭😡😡".trim_right("😡"), content="😍😍😭")
 }
 
@@ -284,14 +284,14 @@ test "split" {
   inspect!("abcde".split("x"), content="[abcde]")
   inspect!("".split(""), content="[]")
   inspect!("".split("x"), content="[]")
-  inspect(
+  inspect!(
     "你 wow 好 wow 月 wow 兔".split(" wow "),
     content="[你, 好, 月, 兔]",
-  )!
-  inspect(
+  )
+  inspect!(
     "👍😍😭👍😍😭👍😍😭👍".split("😍😭"),
     content="[👍, 👍, 👍, 👍]",
-  )!
+  )
 }
 
 test "replace" {
@@ -299,10 +299,10 @@ test "replace" {
   inspect!("abcabc".replace(old="", new=","), content=",abcabc")
   inspect!("a b c".replace(old=" ", new=","), content="a,b c")
   inspect!("abcabc".replace(old="x", new="a"), content="abcabc")
-  inspect(
+  inspect!(
     "你好月兔".replace(old="月兔", new="Moonbit"),
     content="你好Moonbit",
-  )!
+  )
   inspect!("👍😍😭".replace(old="😍😭", new=""), content="👍")
 }
 
@@ -311,17 +311,17 @@ test "replace_all" {
   inspect!("abcabc".replace_all(old="", new=","), content=",a,b,c,a,b,c,")
   inspect!("a b c".replace_all(old=" ", new=","), content="a,b,c")
   inspect!("".replace_all(old="", new="x"), content="x")
-  inspect(
+  inspect!(
     "你好月兔，月兔你好".replace_all(old="月兔", new="Moonbit"),
     content="你好Moonbit，Moonbit你好",
-  )!
-  inspect(
+  )
+  inspect!(
     "👍😍😭👍😍😭👍😍😭👍".replace_all(
       old="😍😭",
       new="",
     ),
     content="👍👍👍👍",
-  )!
+  )
 }
 
 test "to_lower" {

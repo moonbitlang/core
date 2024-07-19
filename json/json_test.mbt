@@ -19,8 +19,8 @@ test "get as null" {
   inspect!(Number(1.0) |> @json.as_null, content="None")
   inspect!(String("Hello World") |> @json.as_null, content="None")
   inspect!(Array([String("Hello World")]) |> @json.as_null, content="None")
-  inspect(
+  inspect!(
     Object({ "key": String("key"), "value": Number(100.0) }) |> @json.as_null,
     content="None",
-  )!
+  )
 }

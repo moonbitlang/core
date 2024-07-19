@@ -60,14 +60,14 @@ test "log" {
   )
   let buf = Buffer::new(size_hint=1024)
   coverage_log(counters, buf)
-  inspect(
+  inspect!(
     buf,
     content=
       #|{ "foo/foo": [1, 0]
       #|, "foo/bar": [0, 1]
       #|}
     ,
-  )!
+  )
 }
 
 test "escape_to" {

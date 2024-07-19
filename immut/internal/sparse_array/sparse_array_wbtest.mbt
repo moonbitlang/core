@@ -14,25 +14,25 @@
 
 test "SparseArray" {
   let arr0 = singleton(1, 1)
-  inspect(
+  inspect!(
     (arr0.has(0), arr0[0], arr0.has(1), arr0[1], arr0.has(2), arr0[2]),
     content="(false, None, true, Some(1), false, None)",
-  )!
+  )
   let arr1 = arr0.add(2, 2)
-  inspect(
+  inspect!(
     (arr1.has(0), arr1[0], arr1.has(1), arr1[1], arr1.has(2), arr1[2]),
     content="(false, None, true, Some(1), true, Some(2))",
-  )!
+  )
   let arr2 = arr1.add(0, 0)
-  inspect(
+  inspect!(
     (arr2.has(0), arr2[0], arr2.has(1), arr2[1], arr2.has(2), arr2[2]),
     content="(true, Some(0), true, Some(1), true, Some(2))",
-  )!
+  )
   let arr3 = arr2.replace(1, 42)
-  inspect(
+  inspect!(
     (arr3.has(0), arr3[0], arr3.has(1), arr3[1], arr3.has(2), arr3[2]),
     content="(true, Some(0), true, Some(42), true, Some(2))",
-  )!
+  )
 }
 
 test "SparseArray::iter" {

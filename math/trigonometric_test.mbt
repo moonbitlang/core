@@ -43,10 +43,10 @@ test "sin" {
   inspect!(@math.sin(Double::inf(-1)), content="-Infinity")
   for i = 0; i < vf.length(); i = i + 1 {
     inspect!(imprecise_equal(@math.sin(vf[i]), sin_res[i]), content="true")
-    inspect(
+    inspect!(
       imprecise_equal(@math.sin(100000.0 * pi + vf[i]), sin_res_large[i]),
       content="true",
-    )!
+    )
   }
 }
 
@@ -68,10 +68,10 @@ test "cos" {
   inspect!(@math.cos(Double::inf(-1)), content="-Infinity")
   for i = 0; i < vf.length(); i = i + 1 {
     inspect!(imprecise_equal(@math.cos(vf[i]), cos_res[i]), content="true")
-    inspect(
+    inspect!(
       imprecise_equal(@math.cos(100000.0 * pi + vf[i]), cos_res_large[i]),
       content="true",
-    )!
+    )
   }
 }
 
@@ -93,10 +93,10 @@ test "tan" {
   inspect!(@math.tan(Double::inf(-1)), content="-Infinity")
   for i = 0; i < vf.length(); i = i + 1 {
     inspect!(imprecise_equal(@math.tan(vf[i]), tan_res[i]), content="true")
-    inspect(
+    inspect!(
       imprecise_equal(@math.tan(100000.0 * pi + vf[i]), tan_res_large[i]),
       content="true",
-    )!
+    )
   }
 }
 
@@ -126,10 +126,10 @@ test "asin" {
   inspect!(@math.asin(Double::inf(1)), content="Infinity")
   inspect!(@math.asin(Double::inf(-1)), content="-Infinity")
   for i = 0; i < vf.length(); i = i + 1 {
-    inspect(
+    inspect!(
       imprecise_equal(@math.asin(vf[i] / 10.0), asin_res[i]),
       content="true",
-    )!
+    )
   }
 }
 
@@ -144,9 +144,9 @@ test "acos" {
   inspect!(@math.acos(Double::inf(1)), content="Infinity")
   inspect!(@math.acos(Double::inf(-1)), content="-Infinity")
   for i = 0; i < vf.length(); i = i + 1 {
-    inspect(
+    inspect!(
       imprecise_equal(@math.acos(vf[i] / 10.0), acos_res[i]),
       content="true",
-    )!
+    )
   }
 }

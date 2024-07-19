@@ -14,18 +14,18 @@
 
 test "to_string" {
   let bytes = Bytes::of_string("Hello, World!")
-  @test.eq(bytes.to_string(), "Hello, World!")!
+  @test.eq!(bytes.to_string(), "Hello, World!")
 }
 
 test "of_string" {
   let str = "Hello, World!"
   let bytes = Bytes::of_string(str)
-  @test.eq(bytes.length(), str.length() * 2)!
+  @test.eq!(bytes.length(), str.length() * 2)
 }
 
 test "sub_string" {
   let bytes = Bytes::of_string("Hello, World!")
-  @test.eq(bytes.sub_string(0, 5 * 2), "Hello")!
+  @test.eq!(bytes.sub_string(0, 5 * 2), "Hello")
   // @test.eq(bytes.sub_string(10, 5 * 2), "World")?
 }
 
@@ -33,20 +33,20 @@ test "blit_from_string" {
   let bytes = Bytes::new(10)
   let str = "Hello"
   bytes.blit_from_string(0, str, 0, str.length())
-  @test.eq(bytes.sub_string(0, str.length() * 2), str)!
+  @test.eq!(bytes.sub_string(0, str.length() * 2), str)
 }
 
 test "copy" {
   let bytes = Bytes::of_string("Hello, World!")
   let copy_bytes = bytes.copy()
-  @test.eq(copy_bytes.to_string(), bytes.to_string())!
+  @test.eq!(copy_bytes.to_string(), bytes.to_string())
 }
 
 test "set_utf8_char" {
   let bytes = Bytes::new(10)
   let char = 'A'
   let len = bytes.set_utf8_char(0, char)
-  @test.eq(len, 1)!
+  @test.eq!(len, 1)
   // FIXME: inconsistency between wasm-gc & js
   bytes.sub_string(0, 1) |> ignore
   inspect!(bytes.sub_string(0, 2), content="A")
@@ -56,8 +56,8 @@ test "set_utf16_char" {
   let bytes = Bytes::new(10)
   let char = 'A'
   let len = bytes.set_utf16_char(0, char)
-  @test.eq(len, 2)!
-  @test.eq(bytes.sub_string(0, 2), "A")!
+  @test.eq!(len, 2)
+  @test.eq!(bytes.sub_string(0, 2), "A")
 }
 
 test "panic sub_string with invalid byte_length" {

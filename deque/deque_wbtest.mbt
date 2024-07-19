@@ -14,19 +14,19 @@
 
 test "new_with_capacity" {
   let d : Deque[Int] = new(capacity=0)
-  @test.eq(d.buf.length(), 0)!
+  @test.eq!(d.buf.length(), 0)
 }
 
 test "new_with_capacity_non_zero" {
   let d : Deque[Int] = new(capacity=10)
-  @test.eq(d.buf.length(), 10)!
+  @test.eq!(d.buf.length(), 10)
 }
 
 test "realloc" {
   let dv = of([1, 2, 3, 4, 5])
-  @test.eq(dv.pop_front(), Some(1))!
-  @test.eq(dv.pop_front(), Some(2))!
-  @test.eq(dv.pop_front(), Some(3))!
+  @test.eq!(dv.pop_front(), Some(1))
+  @test.eq!(dv.pop_front(), Some(2))
+  @test.eq!(dv.pop_front(), Some(3))
   dv.push_back(6)
   dv.push_back(7)
   dv.push_back(8)
@@ -40,18 +40,18 @@ test "realloc" {
       i += 1
     },
   )
-  @test.eq(result, [4, 5, 6, 7, 8, 9, 10])!
+  @test.eq!(result, [4, 5, 6, 7, 8, 9, 10])
 }
 
 test "push_realloc" {
   let dv : Deque[Int] = new()
   dv.push_front(1)
-  @test.eq(dv.pop_front(), Some(1))!
-  @test.is_true(dv.capacity() > 0)!
+  @test.eq!(dv.pop_front(), Some(1))
+  @test.is_true!(dv.capacity() > 0)
   let dv : Deque[Int] = new()
   dv.push_back(1)
-  @test.eq(dv.pop_back(), Some(1))!
-  @test.is_true(dv.capacity() > 0)!
+  @test.eq!(dv.pop_back(), Some(1))
+  @test.is_true!(dv.capacity() > 0)
 }
 
 test "reserve_and_push" {

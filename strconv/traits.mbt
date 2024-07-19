@@ -16,41 +16,41 @@ pub trait FromStr {
   from_string(String) -> Self!String
 }
 
-pub impl FromStr for Bool with from_string(str) { parse_bool(str)! }
+pub impl FromStr for Bool with from_string(str) { parse_bool!(str) }
 
-pub impl FromStr for Int with from_string(str) { parse_int(str)! }
+pub impl FromStr for Int with from_string(str) { parse_int!(str) }
 
-pub impl FromStr for Int64 with from_string(str) { parse_int64(str)! }
+pub impl FromStr for Int64 with from_string(str) { parse_int64!(str) }
 
-pub impl FromStr for Double with from_string(str) { parse_double(str)! }
+pub impl FromStr for Double with from_string(str) { parse_double!(str) }
 
 pub fn parse[A : FromStr](str : String) -> A!String {
-  A::from_string(str)!
+  A::from_string!(str)
 }
 
 test "parse" {
   let b : Bool = try {
-    parse("true")!
+    parse!("true")
   } catch {
     _ => panic()
   }
-  @test.eq(b, true)!
+  @test.eq!(b, true)
   let i : Int = try {
-    parse("12345")!
+    parse!("12345")
   } catch {
     _ => panic()
   }
-  @test.eq(i, 12345)!
+  @test.eq!(i, 12345)
   let i64 : Int64 = try {
-    parse("9223372036854775807")!
+    parse!("9223372036854775807")
   } catch {
     _ => panic()
   }
-  @test.eq(i64, 9223372036854775807L)!
+  @test.eq!(i64, 9223372036854775807L)
   let d : Double = try {
-    parse("1234.56789")!
+    parse!("1234.56789")
   } catch {
     _ => panic()
   }
-  @test.eq(d, 1234.56789)!
+  @test.eq!(d, 1234.56789)
 }

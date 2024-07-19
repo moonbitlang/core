@@ -15,7 +15,7 @@
 test "new" {
   let m : HashMap[Int, Int] = HashMap::new()
   inspect!(m.capacity, content="8")
-  @test.eq(m.size, 0)!
+  @test.eq!(m.size, 0)
 }
 
 type MyString String derive(Eq)
@@ -37,11 +37,11 @@ test "set" {
   m.set("cd", 2)
   m.set("c", 1)
   m.set("d", 1)
-  @test.eq(m.size, 7)!
-  inspect(
+  @test.eq!(m.size, 7)
+  inspect!(
     m.debug_entries(),
     content="_,(0,a,1),(1,b,1),(2,c,1),(3,d,1),(3,bc,2),(4,cd,2),(4,abc,3),_,_,_,_,_,_,_,_",
-  )!
+  )
 }
 
 test "get" {
@@ -60,50 +60,50 @@ test "get_or_default" {
   m.set("a", 1)
   m.set("b", 2)
   m.set("c", 3)
-  @test.eq(m.get_or_default("a", 42), 1)!
-  @test.eq(m.get_or_default("b", 42), 2)!
-  @test.eq(m.get_or_default("c", 42), 3)!
-  @test.eq(m.get_or_default("d", 42), 42)!
+  @test.eq!(m.get_or_default("a", 42), 1)
+  @test.eq!(m.get_or_default("b", 42), 2)
+  @test.eq!(m.get_or_default("c", 42), 3)
+  @test.eq!(m.get_or_default("d", 42), 42)
 }
 
 test "op_set" {
   let m : HashMap[String, Int] = HashMap::new()
   m["a"] = 1
   m["b"] = 2
-  @test.eq(m.get("a"), Some(1))!
-  @test.eq(m.get("b"), Some(2))!
+  @test.eq!(m.get("a"), Some(1))
+  @test.eq!(m.get("b"), Some(2))
 }
 
 test "op_get" {
   let m : HashMap[String, Int] = HashMap::new()
   m.set("a", 1)
   m.set("b", 2)
-  @test.eq(m["a"], Some(1))!
-  @test.eq(m["b"], Some(2))!
-  @test.eq(m["c"], None)!
+  @test.eq!(m["a"], Some(1))
+  @test.eq!(m["b"], Some(2))
+  @test.eq!(m["c"], None)
 }
 
 test "set_update" {
   let m : HashMap[String, Int] = HashMap::new()
   m.set("a", 1)
   m.set("b", 2)
-  @test.eq(m.get("a"), Some(1))!
+  @test.eq!(m.get("a"), Some(1))
   m.set("a", 2)
-  @test.eq(m.get("a"), Some(2))!
+  @test.eq!(m.get("a"), Some(2))
 }
 
 test "contains" {
   let m : HashMap[String, Int] = HashMap::new()
   m.set("a", 1)
-  @test.eq(m.contains("a"), true)!
-  @test.eq(m.contains("b"), false)!
+  @test.eq!(m.contains("a"), true)
+  @test.eq!(m.contains("b"), false)
 }
 
 test "from_array" {
   let m = of([("a", 1), ("b", 2), ("c", 3)])
-  @test.eq(m.get("a"), Some(1))!
-  @test.eq(m.get("b"), Some(2))!
-  @test.eq(m.get("c"), Some(3))!
+  @test.eq!(m.get("a"), Some(1))
+  @test.eq!(m.get("b"), Some(2))
+  @test.eq!(m.get("c"), Some(3))
 }
 
 test "remove" {
@@ -115,11 +115,11 @@ test "remove" {
   m.set("abc", 3)
   m.set("abcdef", 6)
   m.remove("ab")
-  @test.eq(m.size(), 5)!
-  inspect(
+  @test.eq!(m.size(), 5)
+  inspect!(
     m.debug_entries(),
     content="_,(0,a,1),(0,bc,2),(1,cd,2),(1,abc,3),_,(0,abcdef,6),_,_,_,_,_,_,_,_,_",
-  )!
+  )
 }
 
 test "remove_unexist_key" {
@@ -128,31 +128,31 @@ test "remove_unexist_key" {
   m.set("ab", 2)
   m.set("abc", 3)
   m.remove("d")
-  @test.eq(m.size(), 3)!
+  @test.eq!(m.size(), 3)
   inspect!(m.debug_entries(), content="_,(0,a,1),(0,ab,2),(0,abc,3),_,_,_,_")
 }
 
 test "size" {
   let m : HashMap[String, Int] = HashMap::new()
-  @test.eq(m.size(), 0)!
+  @test.eq!(m.size(), 0)
   m.set("a", 1)
-  @test.eq(m.size(), 1)!
+  @test.eq!(m.size(), 1)
 }
 
 test "is_empty" {
   let m : HashMap[String, Int] = HashMap::new()
-  @test.eq(m.is_empty(), true)!
+  @test.eq!(m.is_empty(), true)
   m.set("a", 1)
-  @test.eq(m.is_empty(), false)!
+  @test.eq!(m.is_empty(), false)
   m.remove("a")
-  @test.eq(m.is_empty(), true)!
+  @test.eq!(m.is_empty(), true)
 }
 
 test "iter" {
   let m : HashMap[String, Int] = of([("a", 1), ("b", 2), ("c", 3)])
   let mut sum = 0
   m.each(fn(_k, v) { sum += v })
-  @test.eq(sum, 6)!
+  @test.eq!(sum, 6)
 }
 
 test "iteri" {
@@ -165,17 +165,17 @@ test "iteri" {
       sum += v
     },
   )
-  @test.eq(s, "012")!
-  @test.eq(sum, 6)!
+  @test.eq!(s, "012")
+  @test.eq!(sum, 6)
 }
 
 test "clear" {
   let m : HashMap[String, Int] = of([("a", 1), ("b", 2), ("c", 3)])
   m.clear()
-  @test.eq(m.size, 0)!
-  @test.eq(m.capacity, 8)!
+  @test.eq!(m.size, 0)
+  @test.eq!(m.capacity, 8)
   for i = 0; i < m.capacity; i = i + 1 {
-    @test.is(m.entries[i], None)!
+    @test.is!(m.entries[i], None)
   }
 }
 
@@ -187,20 +187,20 @@ test "grow" {
   m.set("Java", 4)
   m.set("Scala", 5)
   m.set("Julia", 5)
-  @test.eq(m.size, 6)!
+  @test.eq!(m.size, 6)
   inspect!(m.capacity, content="16")
   m.set("Cobol", 5)
-  @test.eq(m.size, 7)!
+  @test.eq!(m.size, 7)
   inspect!(m.capacity, content="16")
   m.set("Python", 6)
   m.set("Haskell", 7)
   m.set("Rescript", 8)
-  @test.eq(m.size, 10)!
+  @test.eq!(m.size, 10)
   inspect!(m.capacity, content="32")
-  inspect(
+  inspect!(
     m.debug_entries(),
     content="_,(0,C,1),(0,Go,2),(0,C++,3),(0,Java,4),(0,Scala,5),(1,Julia,5),(2,Cobol,5),(2,Python,6),(2,Haskell,7),(2,Rescript,8),_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_",
-  )!
+  )
 }
 
 test "iter" {
@@ -240,7 +240,7 @@ test "remove_nonexistent_key" {
   m.set("a", 1)
   m.set("b", 2)
   m.remove("c")
-  @test.eq(m.size, 2)!
+  @test.eq!(m.size, 2)
 }
 
 test "get_nonexistent_key" {
@@ -255,7 +255,7 @@ test "remove_nonexistent_key" {
   m.set("a", 1)
   m.set("b", 2)
   m.remove("c")
-  @test.eq(m.size, 2)!
+  @test.eq!(m.size, 2)
 }
 
 test "get_nonexistent_key" {
@@ -270,7 +270,7 @@ test "remove_nonexistent_key" {
   m.set("a", 1)
   m.set("b", 2)
   m.remove("c")
-  @test.eq(m.size, 2)!
+  @test.eq!(m.size, 2)
 }
 
 test "get_nonexistent_key" {
@@ -285,7 +285,7 @@ test "remove_nonexistent_key" {
   m.set("a", 1)
   m.set("b", 2)
   m.remove("c")
-  @test.eq(m.size, 2)!
+  @test.eq!(m.size, 2)
 }
 
 test "get_nonexistent_key_with_psl" {

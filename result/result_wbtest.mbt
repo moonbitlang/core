@@ -19,5 +19,5 @@ test "panic Result unwrap should panic on Err" {
 
 test "Result unwrap should return Ok value" {
   let ok_result : Result[Int, String] = Ok(42)
-  @test.eq(ok_result.unwrap(), 42)!
+  @test.eq!(ok_result.unwrap(), 42)
 }

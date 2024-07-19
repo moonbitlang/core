@@ -41,33 +41,33 @@ fn lex_value(
           raise invalid_char(ctx, shift=-1)
         }
       Some('n') => {
-        lex_assert_char(ctx, 'u')!
-        lex_assert_char(ctx, 'l')!
-        lex_assert_char(ctx, 'l')!
+        lex_assert_char!(ctx, 'u')
+        lex_assert_char!(ctx, 'l')
+        lex_assert_char!(ctx, 'l')
         return Null
       }
       Some('t') => {
-        lex_assert_char(ctx, 'r')!
-        lex_assert_char(ctx, 'u')!
-        lex_assert_char(ctx, 'e')!
+        lex_assert_char!(ctx, 'r')
+        lex_assert_char!(ctx, 'u')
+        lex_assert_char!(ctx, 'e')
         return True
       }
       Some('f') => {
-        lex_assert_char(ctx, 'a')!
-        lex_assert_char(ctx, 'l')!
-        lex_assert_char(ctx, 's')!
-        lex_assert_char(ctx, 'e')!
+        lex_assert_char!(ctx, 'a')
+        lex_assert_char!(ctx, 'l')
+        lex_assert_char!(ctx, 's')
+        lex_assert_char!(ctx, 'e')
         return False
       }
       Some('-') =>
         match read_char(ctx) {
           Some('0') => {
-            let n = lex_zero(ctx, start=ctx.offset - 2)!
+            let n = lex_zero!(ctx, start=ctx.offset - 2)
             return Number(n)
           }
           Some(c2) => {
             if c2 >= '1' && c2 <= '9' {
-              let n = lex_decimal_integer(ctx, start=ctx.offset - 2)!
+              let n = lex_decimal_integer!(ctx, start=ctx.offset - 2)
               return Number(n)
             }
             raise invalid_char(ctx, shift=-1)
@@ -77,15 +77,15 @@ fn lex_value(
           }
         }
       Some('0') => {
-        let n = lex_zero(ctx, start=ctx.offset - 1)!
+        let n = lex_zero!(ctx, start=ctx.offset - 1)
         return Number(n)
       }
       Some('1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9') => {
-        let n = lex_decimal_integer(ctx, start=ctx.offset - 1)!
+        let n = lex_decimal_integer!(ctx, start=ctx.offset - 1)
         return Number(n)
       }
       Some('"') => {
-        let s = lex_string(ctx)!
+        let s = lex_string!(ctx)
         return String(s)
       }
       Some(c) => {

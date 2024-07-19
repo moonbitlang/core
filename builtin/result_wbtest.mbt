@@ -16,20 +16,20 @@ test "Result equality with Ok" {
   let result1 : Result[Int, String] = Result::Ok(1)
   let result2 = Result::Ok(1)
   let result3 = Result::Ok(2)
-  @test.eq(result1, result2)!
-  @test.ne(result1, result3)!
+  @test.eq!(result1, result2)
+  @test.ne!(result1, result3)
 }
 
 test "Result equality with Err" {
   let result1 : Result[Int, String] = Result::Err("error")
   let result2 = Result::Err("error")
   let result3 = Result::Err("different error")
-  @test.eq(result1, result2)!
-  @test.ne(result1, result3)!
+  @test.eq!(result1, result2)
+  @test.ne!(result1, result3)
 }
 
 test "Result equality mixed" {
   let okResult = Result::Ok(1)
   let errResult = Result::Err("error")
-  @test.ne(okResult, errResult)!
+  @test.ne!(okResult, errResult)
 }

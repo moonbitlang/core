@@ -14,17 +14,17 @@
 
 fn parse_as_result(s : String, ~base : Int) -> Result[Int64, String] {
   try {
-    parse_int64(s, ~base)! |> Ok
+    parse_int64!(s, ~base) |> Ok
   } catch {
     err => Err(err)
   }
 }
 
 test "parse_int64_invalid_base" {
-  @test.eq(parse_as_result("12345", base=1), Err(base_err))!
-  @test.eq(parse_as_result("12345", base=37), Err(base_err))!
-  @test.eq(parse_as_result("12345", base=-1), Err(base_err))!
-  @test.eq(parse_as_result("12345", base=100), Err(base_err))!
+  @test.eq!(parse_as_result("12345", base=1), Err(base_err))
+  @test.eq!(parse_as_result("12345", base=37), Err(base_err))
+  @test.eq!(parse_as_result("12345", base=-1), Err(base_err))
+  @test.eq!(parse_as_result("12345", base=100), Err(base_err))
 }
 
 test "parse_int64_uncovered_lines" {
@@ -43,6 +43,6 @@ test "parse_int64_uncovered_lines" {
   ]
   for i = 0; i < tests.length(); i = i + 1 {
     let t = tests[i]
-    @test.eq(parse_as_result(t.0, base=t.1), t.2)!
+    @test.eq!(parse_as_result(t.0, base=t.1), t.2)
   }
 }

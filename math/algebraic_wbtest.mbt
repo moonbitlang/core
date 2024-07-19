@@ -13,9 +13,9 @@
 // limitations under the License.
 
 test "maximum.value" {
-  @test.eq(maximum(1, 2), 2)!
-  @test.eq(maximum(2, 1), 2)!
-  @test.eq(maximum(2, 2), 2)!
+  @test.eq!(maximum(1, 2), 2)
+  @test.eq!(maximum(2, 1), 2)
+  @test.eq!(maximum(2, 2), 2)
 }
 
 test "maximum.ref" {
@@ -26,17 +26,17 @@ test "maximum.ref" {
 
   // We need another value that equals to x2 by value but not reference
   let x2t = T::{ x: v2 }
-  @test.is_not(x2, x2t)!
-  @test.is(maximum(x1, x2), x2)!
-  @test.is(maximum(x2, x1), x2)!
-  @test.is(maximum(x2, x2t), x2t)!
-  @test.is(maximum(x2t, x2), x2)!
+  @test.is_not!(x2, x2t)
+  @test.is!(maximum(x1, x2), x2)
+  @test.is!(maximum(x2, x1), x2)
+  @test.is!(maximum(x2, x2t), x2t)
+  @test.is!(maximum(x2t, x2), x2)
 }
 
 test "minimum.value" {
-  @test.eq(minimum(1, 2), 1)!
-  @test.eq(minimum(2, 1), 1)!
-  @test.eq(minimum(2, 2), 2)!
+  @test.eq!(minimum(1, 2), 1)
+  @test.eq!(minimum(2, 1), 1)
+  @test.eq!(minimum(2, 2), 2)
 }
 
 test "minimum.ref" {
@@ -47,11 +47,11 @@ test "minimum.ref" {
 
   // We need another value that equals to x2 by value but not reference
   let x2t = T::{ x: v2 }
-  @test.is_not(x2, x2t)!
-  @test.is(minimum(x1, x2), x1)!
-  @test.is(minimum(x2, x1), x1)!
-  @test.is(minimum(x2, x2t), x2)!
-  @test.is(minimum(x2t, x2), x2t)!
+  @test.is_not!(x2, x2t)
+  @test.is!(minimum(x1, x2), x1)
+  @test.is!(minimum(x2, x1), x1)
+  @test.is!(minimum(x2, x2t), x2)
+  @test.is!(minimum(x2t, x2), x2t)
 }
 
 // For testing purposes

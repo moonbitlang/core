@@ -42,50 +42,50 @@ test "as_iter" {
 test "meld" {
   inspect!(meld(Empty, of([1]).body), content="Node(1, MNil)")
   inspect!(meld(of([1]).body, Empty), content="Node(1, MNil)")
-  inspect(
+  inspect!(
     meld(of([1]).body, of([2]).body),
     content="Node(2, MCons(Node(1, MNil), MNil))",
-  )!
+  )
 }
 
 test "merges" {
-  inspect(
+  inspect!(
     match merges((MNil : MList[Cont[Int]])) {
       Empty => true
       _ => false
     },
     content="true",
-  )!
+  )
 }
 
 test "pop" {
   let queue = of([1, 2, 3, 4])
   let first = queue.pop()
-  inspect(
+  inspect!(
     match first {
       Some(q) => q.peek()
       None => None
     },
     content="Some(3)",
-  )!
+  )
   let empty : ImmutablePriorityQueue[Int] = of([])
-  inspect(
+  inspect!(
     match empty.pop() {
       Some(q) => q.peek()
       None => None
     },
     content="None",
-  )!
+  )
 }
 
 test "pop_exn" {
   let queue = of([1, 2, 3, 4])
   let first = queue.pop_exn()
   inspect!(first.peek(), content="Some(3)")
-  inspect(
+  inspect!(
     queue.pop_exn().push(-1).push(10).push(11).pop_exn().pop_exn().push(50).peek(),
     content="Some(50)",
-  )!
+  )
 }
 
 test "push" {

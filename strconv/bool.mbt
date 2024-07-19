@@ -42,13 +42,13 @@ test "parse_bool" {
   ]
   for i = 0; i < tests.length(); i = i + 1 {
     let t = tests[i]
-    @test.eq(
+    @test.eq!(
       try {
-        Result::Ok(parse_bool(t.0)!)
+        Result::Ok(parse_bool!(t.0))
       } catch {
         err => Err(err)
       },
       t.1,
-    )!
+    )
   }
 }
