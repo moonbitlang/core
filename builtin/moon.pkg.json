@@ -2,11 +2,7 @@
   "import": [],
   "wbtest-import": [
     "moonbitlang/core/test",
-    "moonbitlang/core/char",
-    "moonbitlang/core/string",
-    "moonbitlang/core/int",
-    "moonbitlang/core/tuple",
-    "moonbitlang/core/double"
+    "moonbitlang/core/tuple"
   ],
   "test-import": [
     "moonbitlang/core/test",
