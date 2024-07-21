@@ -18,7 +18,7 @@ pub enum List[T] {
 } derive(Eq)
 
 pub impl[T : Show] Show for List[T] with output(xs, logger) {
-  logger.write_string("List::[")
+  logger.write_string("@list.of([")
   xs.eachi(
     fn(i, x) {
       if i > 0 {
@@ -27,7 +27,7 @@ pub impl[T : Show] Show for List[T] with output(xs, logger) {
       x.output(logger)
     },
   )
-  logger.write_string("]")
+  logger.write_string("])")
 }
 
 pub fn List::to_string[T : Show](xs : List[T]) -> String {
