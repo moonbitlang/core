@@ -127,8 +127,8 @@ let list = of([1, 2, 3, 4, 5])
 list.map(fn (ele) { ele * 2 }) // of([2, 4, 6, 8, 10])
 ```
 
-The `reverse` method reverses the list.
+The `rev` method reverses the list.
 ```moonbit
 let list = of([1, 2, 3, 4, 5])
-list.reverse() // of([5, 4, 3, 2, 1])
+list.rev() // of([5, 4, 3, 2, 1])
 ```

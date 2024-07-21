@@ -280,7 +280,7 @@ pub fn concat[T](self : List[T], other : List[T]) -> List[T] {
 /// # Example
 ///
 /// ```
-/// debug(of([1, 2, 3, 4, 5]).reverse())
+/// debug(@list.of([1, 2, 3, 4, 5]).rev())
 /// // output: from_array([5, 4, 3, 2, 1])
 /// ```
 pub fn rev[A](self : List[A]) -> List[A] {

@@ -307,9 +307,9 @@ fn assign(self : Decimal, v : Int64) -> Unit {
   // write value to buf
   let mut n = 0
   let mut v = v
-  while v > 0L {
-    let v1 = v / 10L
-    buf[n] = (v - 10L * v1).to_byte()
+  while v > 0 {
+    let v1 = v / 10
+    buf[n] = (v - v1 * 10).to_byte()
     n += 1
     v = v1
   }
@@ -334,13 +334,13 @@ fn right_shift(self : Decimal, s : Int) -> Unit {
   while acc.lsr(s) == 0L {
     if read_index >= self.digits_num {
       while acc.lsr(s) == 0L {
-        acc *= 10L
+        acc *= 10
         read_index += 1
       }
       break
     }
     let d = self.digits[read_index]
-    acc = acc * 10L + d.to_int64()
+    acc = acc * 10 + d.to_int64()
     read_index += 1
   }
   self.decimal_point -= read_index - 1
