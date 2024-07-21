@@ -102,14 +102,14 @@ test "append" {
   @test.eq!(v1.length(), 6)
 }
 
-test "iter" {
+test "each" {
   let v = [3, 4, 5]
   let mut sum = 0
   v.each(fn(x) { sum = sum + x })
   @test.eq!(sum, 12)
 }
 
-test "iter_rev" {
+test "each_rev" {
   let v = Array::new(capacity=3)
   v.push(3)
   v.push(4)
@@ -119,14 +119,14 @@ test "iter_rev" {
   @test.eq!(sum, 12)
 }
 
-test "iteri" {
+test "eachi" {
   let v = [3, 4, 5]
   let mut sum = 0
   v.eachi(fn(i, x) { sum = sum + x + i })
   @test.eq!(sum, 15)
 }
 
-test "iter_revi" {
+test "each_revi" {
   let v = [3, 4, 5]
   let mut sum = 0
   v.rev_eachi(fn(i, x) { sum = sum + x + i })

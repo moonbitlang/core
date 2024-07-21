@@ -49,6 +49,7 @@ impl Array {
 }
 impl ArrayView {
   rev_inplace[T](Self[T]) -> Unit
+  each[T](Self[T], (T) -> Unit) -> Unit
 }
 
 // Traits
