@@ -189,7 +189,10 @@ test "zip" {
 test "concat_map" {
   let ls = @list.of([1, 2, 3])
   let rs : @list.List[Int] = @list.Nil
-  inspect!(rs.concat_map(fn(x) { @list.of([x, x * 2]) }), content="@list.of([])")
+  inspect!(
+    rs.concat_map(fn(x) { @list.of([x, x * 2]) }),
+    content="@list.of([])",
+  )
   inspect!(
     ls.concat_map(fn(x) { @list.of([x, x * 2]) }),
     content="@list.of([1, 2, 2, 4, 3, 6])",
@@ -402,7 +405,10 @@ test "remove_at" {
 }
 
 test "remove" {
-  inspect!(@list.of([1, 2, 3, 4, 5]).remove(3), content="@list.of([1, 2, 4, 5])")
+  inspect!(
+    @list.of([1, 2, 3, 4, 5]).remove(3),
+    content="@list.of([1, 2, 4, 5])",
+  )
   inspect!(
     @list.of(["a", "b", "c", "d", "e"]).remove("c"),
     content=
