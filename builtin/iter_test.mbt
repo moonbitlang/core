@@ -81,8 +81,8 @@ test "take_while3" {
 test "take_while4" {
   let iter = test_from_array([1, 2, 3, 4, 5, 6])
   let res = iter.take_while(fn { x => x <= 5 }).take(4).fold(
+    init=0,
     fn(x, y) { x + y },
-    0,
   )
   inspect!(res, content="10")
 }
@@ -91,7 +91,7 @@ test "take_while5" {
   let iter = test_from_array([1, 2, 3, 4, 5, 6])
   let res = iter.take(4).take_while(fn { x => x >= 5 }).fold(
     fn(x, y) { x + y },
-    0,
+    init=0,
   )
   inspect!(res, content="0")
 }
@@ -179,7 +179,7 @@ test "flat_map2" {
 test "fold" {
   let iter = test_from_array(['1', '2', '3', '4', '5'])
   let result = Char::from_int(
-    iter.fold(fn { acc, x => acc + x.to_int() }, 0) / 5,
+    iter.fold(fn { acc, x => acc + x.to_int() }, init=0) / 5,
   )
   @test.eq!(result, '3')
 }

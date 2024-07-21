@@ -13,7 +13,7 @@ impl T {
   empty[K, V]() -> Self[K, V]
   filter[K : Compare + Eq, V](Self[K, V], (V) -> Bool) -> Self[K, V]
   filter_with_key[K : Compare + Eq, V](Self[K, V], (K, V) -> Bool) -> Self[K, V]
-  fold[K, V, A](Self[K, V], (A, V) -> A, ~init : A) -> A
+  fold[K, V, A](Self[K, V], ~init : A, (A, V) -> A) -> A
   foldl_with_key[K, V, A](Self[K, V], (A, K, V) -> A, ~init : A) -> A
   foldr_with_key[K, V, A](Self[K, V], (A, K, V) -> A, ~init : A) -> A
   from_array[K : Compare + Eq, V](Array[Tuple[K, V]]) -> Self[K, V]

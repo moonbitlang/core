@@ -96,7 +96,7 @@ pub fn eachi[T](self : Iter[T], f : (Int, T) -> Unit) -> Unit {
 ///
 /// Returns the final accumulator value after folding all elements of the iterator.
 /// @intrinsic %iter.reduce
-pub fn fold[T, B](self : Iter[T], f : (B, T) -> B, init : B) -> B {
+pub fn fold[T, B](self : Iter[T], ~init : B, f : (B, T) -> B) -> B {
   let mut acc = init
   let _ = (self.0)(
     fn {
@@ -123,7 +123,7 @@ pub fn fold[T, B](self : Iter[T], f : (B, T) -> B, init : B) -> B {
 ///
 /// Returns the number of elements in the iterator.
 pub fn count[T](self : Iter[T]) -> Int {
-  self.fold(fn { acc, _ => acc + 1 }, 0)
+  self.fold(fn { acc, _ => acc + 1 }, init=0)
 }
 
 // Producers

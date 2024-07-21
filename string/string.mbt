@@ -47,11 +47,11 @@ pub fn to_bytes(self : String) -> Bytes {
 /// Converts the String into an array of Chars.
 pub fn to_array(self : String) -> Array[Char] {
   self.iter().fold(
+    init=Array::new(capacity=self.length()),
     fn(rv, c) {
       rv.push(c)
       rv
     },
-    Array::new(capacity=self.length()),
   )
 }
 
