@@ -465,13 +465,6 @@ test "fold_righti" {
   @test.eq!(sum, 25)
 }
 
-/// Reverses the order of elements in the slice, in place.
-///
-/// # Example
-/// ```
-/// let arr = [1, 2, 3, 4, 5]
-/// reverse(arr) // [5, 4, 3, 2, 1]
-/// ```
 pub fn rev_inplace[T](self : FixedArray[T]) -> Unit {
   let mid_len = self.length() / 2
   for i = 0; i < mid_len; i = i + 1 {

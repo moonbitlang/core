@@ -34,7 +34,7 @@ fn swap[T](self : FixedArraySlice[T], a : Int, b : Int) -> Unit {
   self.array.swap(self.start + a, self.start + b)
 }
 
-fn reverse[T](self : FixedArraySlice[T]) -> Unit {
+fn rev_inplace[T](self : FixedArraySlice[T]) -> Unit {
   let mid_len = self.length() / 2
   for i = 0; i < mid_len; i = i + 1 {
     let j = self.length() - i - 1

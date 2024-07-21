@@ -235,7 +235,7 @@ fn fixed_choose_pivot_by[T](
     sort_3(a, b, c)
   }
   if swaps == max_swaps {
-    arr.reverse()
+    arr.rev_inplace()
     (len - b - 1, true)
   } else {
     (b, swaps == 0)
