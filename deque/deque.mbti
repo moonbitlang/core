@@ -40,4 +40,5 @@ impl Deque {
 // Traits
 
 // Extension Methods
+impl Show for Deque
 

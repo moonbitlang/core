@@ -9,5 +9,10 @@
     "moonbitlang/core/string",
     "moonbitlang/core/int64",
     "moonbitlang/core/uint64"
+  ],
+  "test-import": [
+    "moonbitlang/core/test",
+    "moonbitlang/core/coverage",
+    "moonbitlang/core/builtin"
   ]
 }

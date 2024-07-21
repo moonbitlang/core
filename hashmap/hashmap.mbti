@@ -23,9 +23,11 @@ impl HashMap {
   set[K : Hash + Eq, V](Self[K, V], K, V) -> Unit
   size[K, V](Self[K, V]) -> Int
   to_array[K, V](Self[K, V]) -> Array[Tuple[K, V]]
+  to_string[K : Show, V : Show](Self[K, V]) -> String
 }
 
 // Traits
 
 // Extension Methods
+impl Show for HashMap
 

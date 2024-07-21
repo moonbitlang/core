@@ -503,7 +503,7 @@ fn d2d(ieeeMantissa : Int64, ieeeExponent : Int) -> FloatingDecimal64 {
 
 fn to_chars(v : FloatingDecimal64, sign : Bool) -> String {
   // Step 5: Print the decimal representation.
-  let result = Bytes::make(24)
+  let result = Bytes::new(24)
   let mut index : Int = 0
   if sign {
     result[index] = '-'.to_int().to_byte()
@@ -669,4 +669,72 @@ pub fn to_string(self : Double) -> String {
 
 pub fn debug_write(self : Double, buf : Buffer) -> Unit {
   buf.write_string(self.to_string())
+}
+
+pub impl Show for Double with output(self, logger) {
+  logger.write_string(self.to_string())
+}
+
+test "double/ryu.mbt:205" {
+  let m = 123456789L
+  let mul0 = 987654321L
+  let (_, high0) = umul128(m, mul0)
+  let low1 = 111111111L
+  let high1 = 222222222L
+  let sum : Int64 = high0 + low1
+  let mut high1 = high1
+  if u64_lt(sum, high0) {
+    high1 = high1 + 1L
+  }
+  @test.eq!(high1, 222222222L)
+}
+
+test "double/ryu.mbt:230" {
+  let m = 123456789L
+  let mul0 = 987654321L
+  let (_, high0) = umul128(m, mul0)
+  let low1 = 111111111L
+  let high1 = 222222222L
+  let sum = high0 + low1
+  let mut high1 = high1
+  if u64_lt(sum, high0) {
+    high1 = high1 + 1L
+  }
+  @test.eq!(high1, 222222222L)
+}
+
+test "double/ryu.mbt:252" {
+  @test.eq!(gDOUBLE_POW5_BITCOUNT, 125)
+}
+
+test "double/ryu.mbt:205" {
+  let m = 123456789L
+  let mul0 = 987654321L
+  let (_, high0) = umul128(m, mul0)
+  let low1 = 111111111L
+  let high1 = 222222222L
+  let sum : Int64 = high0 + low1
+  let mut high1 = high1
+  if u64_lt(sum, high0) {
+    high1 = high1 + 1L
+  }
+  @test.eq!(high1, 222222222L)
+}
+
+test "double/ryu.mbt:230" {
+  let m = 123456789L
+  let mul0 = 987654321L
+  let (_, high0) = umul128(m, mul0)
+  let low1 = 111111111L
+  let high1 = 222222222L
+  let sum = high0 + low1
+  let mut high1 = high1
+  if u64_lt(sum, high0) {
+    high1 = high1 + 1L
+  }
+  @test.eq!(high1, 222222222L)
+}
+
+test "double/ryu.mbt:252" {
+  @test.eq!(gDOUBLE_POW5_BITCOUNT, 125)
 }

@@ -12,52 +12,72 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+test "new" {
+  // 1/2
+  let a = @rational.new(1L, 2L)
+  inspect!(a, content="Some(1/2)")
+
+  // 1/0
+  let a = @rational.new(1L, 0L)
+  inspect!(a, content="None")
+}
+
+test "addition" {
+  let a = @rational.new(1L, 2L).unwrap()
+  let b = @rational.new(1L, 3L).unwrap()
+  let result = a + b
+  inspect!(result, content="5/6")
+}
+
+test "subtraction" {
+  let a = @rational.new(3L, 4L).unwrap()
+  let b = @rational.new(1L, 4L).unwrap()
+  let result = a - b
+  inspect!(result, content="1/2")
+}
+
+test "multiplication" {
+  let a = @rational.new(2L, 3L).unwrap()
+  let b = @rational.new(3L, 4L).unwrap()
+  let result = a * b
+  inspect!(result, content="1/2")
+}
+
+test "division" {
+  let a = @rational.new(1L, 2L).unwrap()
+  let b = @rational.new(3L, 4L).unwrap()
+  let result = a / b
+  inspect!(result, content="2/3")
+}
+
 test "from_double overflow" {
-  let result = Rational::from_double(10.0e200)!!
-  @test.eq(result, Err("Rational::from_double: overflow"))!
+  let result = 10.0e200 |> @result.wrap1(f=@rational.from_double)
+  @test.eq!(result, Err("Rational::from_double: overflow"))
 }
 
 test "from_double NaN" {
-  let result = Rational::from_double(Double::nan())!!
-  @test.eq(result, Err("Rational::from_double: cannot convert NaN"))!
-}
-
-test "from_double normal case" {
-  let result = Rational::from_double(0.5)!!
-  @test.eq(result, Ok(Rational::new_unchecked(1L, 2L)))!
-}
-
-test "from_double edge case" {
-  let result = Rational::from_double(9_223_372_036_800_000_000.0)!!
-  @test.eq(result, Ok(Rational::new_unchecked(9_223_372_036_800_000_000L, 1L)))!
+  let result = Double::nan() |> @result.wrap1(f=@rational.from_double)
+  @test.eq!(result, Err("Rational::from_double: cannot convert NaN"))
 }
 
 test "from_double overflow edge case" {
-  let result = Rational::from_double(9_223_372_036_854_775_807.1)!!
-  @test.eq(result, Err("Rational::from_double: overflow"))!
+  let result = 9_223_372_036_854_775_807.1
+    |> @result.wrap1(f=@rational.from_double)
+  @test.eq!(result, Err("Rational::from_double: overflow"))
 }
 
 test "from_double overflow edge case" {
-  let result = Rational::from_double(9_223_372_036_854_775_807.1)!!
-  @test.eq(result, Err("Rational::from_double: overflow"))!
+  let result = 9_223_372_036_854_775_807.1
+    |> @result.wrap1(f=@rational.from_double)
+  @test.eq!(result, Err("Rational::from_double: overflow"))
 }
 
 test "from_double overflow check in continued fraction algorithm" {
-  let result = Rational::from_double(10.0e200)!!
-  @test.eq(result, Err("Rational::from_double: overflow"))!
+  let result = 10.0e200 |> @result.wrap1(f=@rational.from_double)
+  @test.eq!(result, Err("Rational::from_double: overflow"))
 }
 
 test "from_double NaN check" {
-  let result = Rational::from_double(Double::nan())!!
-  @test.eq(result, Err("Rational::from_double: cannot convert NaN"))!
-}
-
-test "from_double normal case" {
-  let result = Rational::from_double(0.5)!!
-  @test.eq(result, Ok(Rational::new_unchecked(1L, 2L)))!
-}
-
-test "from_double edge case" {
-  let result = Rational::from_double(9_223_372_036_800_000_000.0)!!
-  @test.eq(result, Ok(Rational::new_unchecked(9_223_372_036_800_000_000L, 1L)))!
+  let result = Double::nan() |> @result.wrap1(f=@rational.from_double)
+  @test.eq!(result, Err("Rational::from_double: cannot convert NaN"))
 }

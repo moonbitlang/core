@@ -29,4 +29,5 @@ impl Rational {
 // Traits
 
 // Extension Methods
+impl Show for Rational
 

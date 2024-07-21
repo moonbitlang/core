@@ -36,4 +36,5 @@ impl ImmutableVec {
 // Traits
 
 // Extension Methods
+impl Show for ImmutableVec
 

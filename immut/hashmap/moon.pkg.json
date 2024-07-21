@@ -3,10 +3,13 @@
     "moonbitlang/core/builtin",
     "moonbitlang/core/array",
     "moonbitlang/core/coverage",
+    "moonbitlang/core/tuple",
     "moonbitlang/core/immut/internal/sparse_array"
   ],
-  "test-import" : [
+  "test-import": [
+    "moonbitlang/core/coverage",
     "moonbitlang/core/test",
+    "moonbitlang/core/builtin",
     "moonbitlang/core/tuple",
     "moonbitlang/core/int",
     "moonbitlang/core/string",

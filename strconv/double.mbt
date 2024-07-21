@@ -69,8 +69,8 @@ pub fn parse_double(str : String) -> Double!String {
     Some(value) => value
     None => {
       // fallback to slow path
-      let ret = parse_decimal(str)!
-      ret.to_double()!
+      let ret = parse_decimal!(str)
+      ret.to_double!()
     }
   }
 }
@@ -237,93 +237,93 @@ test "parse_double" {
   ]
   for i = 0; i < tests.length(); i = i + 1 {
     let t = tests[i]
-    @test.eq(
+    @test.eq!(
       try {
-        Result::Ok(parse_double(t.0)!)
+        Result::Ok(parse_double!(t.0))
       } catch {
         err => Err(err)
       },
       t.1,
-    )!
+    )
   }
 }
 
 test "parse_double_inf" {
-  @test.eq(
+  @test.eq!(
     try {
-      parse_double("inf")!
+      parse_double!("inf")
     } catch {
       _ => panic()
     },
     Double::inf(1),
-  )!
-  @test.eq(
+  )
+  @test.eq!(
     try {
-      parse_double("+Inf")!
+      parse_double!("+Inf")
     } catch {
       _ => panic()
     },
     Double::inf(1),
-  )!
-  @test.eq(
+  )
+  @test.eq!(
     try {
-      parse_double("-Inf")!
+      parse_double!("-Inf")
     } catch {
       _ => panic()
     },
     Double::inf(-1),
-  )!
-  @test.eq(
+  )
+  @test.eq!(
     try {
-      parse_double("+Infinity")!
+      parse_double!("+Infinity")
     } catch {
       _ => panic()
     },
     Double::inf(1),
-  )!
-  @test.eq(
+  )
+  @test.eq!(
     try {
-      parse_double("-Infinity")!
+      parse_double!("-Infinity")
     } catch {
       _ => panic()
     },
     Double::inf(-1),
-  )!
-  @test.eq(
+  )
+  @test.eq!(
     try {
-      parse_double("+INFINITY")!
+      parse_double!("+INFINITY")
     } catch {
       _ => panic()
     },
     Double::inf(1),
-  )!
-  @test.eq(
+  )
+  @test.eq!(
     try {
-      parse_double("-INFINITY")!
+      parse_double!("-INFINITY")
     } catch {
       _ => panic()
     },
     Double::inf(-1),
-  )!
+  )
 }
 
 test "parse_double_nan" {
   let nan = try {
-    parse_double("nan")!
+    parse_double!("nan")
   } catch {
     _ => panic()
   }
-  @test.is_true(nan.is_nan())!
+  @test.is_true!(nan.is_nan())
   let nan = try {
-    parse_double("NaN")!
+    parse_double!("NaN")
   } catch {
     _ => panic()
   }
-  @test.is_true(nan.is_nan())!
+  @test.is_true!(nan.is_nan())
   let nan = try {
-    parse_double("NAN")!
+    parse_double!("NAN")
   } catch {
     _ => panic()
   }
-  @test.is_true(nan.is_nan())!
+  @test.is_true!(nan.is_nan())
 }

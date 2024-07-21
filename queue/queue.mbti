@@ -29,4 +29,5 @@ impl Queue {
 // Traits
 
 // Extension Methods
+impl Show for Queue
 

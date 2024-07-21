@@ -1,17 +1,15 @@
 {
   "import": [
     "moonbitlang/core/builtin",
+    "moonbitlang/core/test",
     "moonbitlang/core/array",
     "moonbitlang/core/coverage"
   ],
   "test-import": [
     "moonbitlang/core/string",
-    "moonbitlang/core/test"
-  ],
-  "bbtest_import": [
+    "moonbitlang/core/test",
     "moonbitlang/core/builtin",
     "moonbitlang/core/int",
-    "moonbitlang/core/array",
     "moonbitlang/core/coverage"
   ]
 }

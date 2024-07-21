@@ -13,7 +13,7 @@ impl ImmutableSet {
   default[T : Default]() -> Self[T]
   diff[T : Compare + Eq](Self[T], Self[T]) -> Self[T]
   disjoint[T : Compare + Eq](Self[T], Self[T]) -> Bool
-  each[T : Compare + Eq](Self[T], (T) -> Unit) -> Unit
+  each[T](Self[T], (T) -> Unit) -> Unit
   filter[T : Compare + Eq](Self[T], (T) -> Bool) -> Self[T]
   fold[T : Compare + Eq, U](Self[T], (U, T) -> U, ~init : U) -> U
   from_array[T : Compare + Eq](Array[T]) -> Self[T]
@@ -34,11 +34,12 @@ impl ImmutableSet {
   split[T : Compare + Eq](Self[T], T) -> Tuple[Self[T], Bool, Self[T]]
   subset[T : Compare + Eq](Self[T], Self[T]) -> Bool
   to_array[T : Compare + Eq](Self[T]) -> Array[T]
-  to_string[T : Show + Compare + Eq](Self[T]) -> String
+  to_string[T : Show](Self[T]) -> String
   union[T : Compare + Eq](Self[T], Self[T]) -> Self[T]
 }
 
 // Traits
 
 // Extension Methods
+impl Show for ImmutableSet
 

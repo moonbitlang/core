@@ -104,7 +104,7 @@ fn lex_property_name(ctx : ParseContext) -> Token!ParseError {
   match read_char(ctx) {
     Some('}') => RBrace
     Some('"') => {
-      let s = lex_string(ctx)!
+      let s = lex_string!(ctx)
       String(s)
     }
     Some(_) => {
@@ -120,7 +120,7 @@ fn lex_property_name2(ctx : ParseContext) -> Token!ParseError {
   lex_skip_whitespace(ctx)
   match read_char(ctx) {
     Some('"') => {
-      let s = lex_string(ctx)!
+      let s = lex_string!(ctx)
       String(s)
     }
     Some(_) => {

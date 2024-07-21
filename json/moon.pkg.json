@@ -4,15 +4,19 @@
     "moonbitlang/core/double",
     "moonbitlang/core/string",
     "moonbitlang/core/char",
+    "moonbitlang/core/test",
     "moonbitlang/core/coverage",
     "moonbitlang/core/strconv"
   ],
   "test-import": [
-    "moonbitlang/core/test",
+    "moonbitlang/core/double",
     "moonbitlang/core/tuple",
-    "moonbitlang/core/option",
+    "moonbitlang/core/builtin",
     "moonbitlang/core/result",
-    "moonbitlang/core/unit"
-  ],
-  "bbtest-import": ["moonbitlang/core/builtin", "moonbitlang/core/coverage", "moonbitlang/core/unit", "moonbitlang/core/string"]
+    "moonbitlang/core/test",
+    "moonbitlang/core/coverage",
+    "moonbitlang/core/unit",
+    "moonbitlang/core/string",
+    "moonbitlang/core/option"
+  ]
 }

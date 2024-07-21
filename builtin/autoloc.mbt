@@ -20,6 +20,10 @@ pub fn SourceLoc::debug_write(self : SourceLoc, buf : Buffer) -> Unit {
   buf.write_string(self.to_string())
 }
 
+pub impl Show for SourceLoc with output(self, logger) {
+  logger.write_string(self.to_string())
+}
+
 pub type ArgsLoc Array[SourceLoc?]
 
 pub fn ArgsLoc::to_string(self : ArgsLoc) -> String {

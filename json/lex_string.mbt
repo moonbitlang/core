@@ -42,7 +42,7 @@ fn lex_string(ctx : ParseContext) -> String!ParseError {
           Some('\\') => buf.add_char('\\')
           Some('/') => buf.add_char('/')
           Some('u') => {
-            let c = lex_hex_digits(ctx, 4)!
+            let c = lex_hex_digits!(ctx, 4)
             buf.add_char(Char::from_int(c))
           }
           Some(_) => {

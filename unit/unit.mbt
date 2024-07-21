@@ -22,6 +22,11 @@ pub fn hash(self : Unit) -> Int {
   0
 }
 
+pub fn hash_combine(self : Unit, hasher : Hasher) -> Unit {
+  let _ = self
+  hasher.combine_unit()
+}
+
 pub fn Unit::default() -> Unit {
   ()
 }

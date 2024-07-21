@@ -325,8 +325,8 @@ fn fixed_bubble_sort[T : Compare](arr : FixedArraySlice[T]) -> Unit {
 test "fixed_try_bubble_sort" {
   let arr : FixedArray[_] = [8, 7, 6, 5, 4, 3, 2, 1]
   let sorted = fixed_try_bubble_sort({ array: arr, start: 0, end: 8 })
-  @test.eq(sorted, true)!
-  @test.eq(arr, [1, 2, 3, 4, 5, 6, 7, 8])!
+  @test.eq!(sorted, true)
+  @test.eq!(arr, [1, 2, 3, 4, 5, 6, 7, 8])
 }
 
 fn fixed_partition[T : Compare](
@@ -423,13 +423,13 @@ fn fixed_sift_down[T : Compare](arr : FixedArraySlice[T], index : Int) -> Unit {
 fn fixed_test_sort(f : (FixedArray[Int]) -> Unit) -> Unit!String {
   let arr : FixedArray[_] = [5, 4, 3, 2, 1]
   f(arr)
-  @test.eq(arr, [1, 2, 3, 4, 5])!
+  @test.eq!(arr, [1, 2, 3, 4, 5])
   let arr : FixedArray[_] = [5, 5, 5, 5, 1]
   f(arr)
-  @test.eq(arr, [1, 5, 5, 5, 5])!
+  @test.eq!(arr, [1, 5, 5, 5, 5])
   let arr : FixedArray[_] = [1, 2, 3, 4, 5]
   f(arr)
-  @test.eq(arr, [1, 2, 3, 4, 5])!
+  @test.eq!(arr, [1, 2, 3, 4, 5])
   let arr = FixedArray::make(1000, 0)
   for i = 0; i < 1000; i = i + 1 {
     arr[i] = 1000 - i - 1
@@ -442,29 +442,29 @@ fn fixed_test_sort(f : (FixedArray[Int]) -> Unit) -> Unit!String {
   for i = 0; i < 1000; i = i + 1 {
     expected[i] = i
   }
-  @test.eq(arr, expected)!
+  @test.eq!(arr, expected)
 }
 
 test "fixed_heap_sort" {
-  fixed_test_sort(
+  fixed_test_sort!(
     fn(arr) { fixed_heap_sort({ array: arr, start: 0, end: arr.length() }) },
-  )!
+  )
 }
 
 test "fixed_bubble_sort" {
-  fixed_test_sort(
+  fixed_test_sort!(
     fn(arr) { fixed_bubble_sort({ array: arr, start: 0, end: arr.length() }) },
-  )!
+  )
 }
 
 test "sort" {
-  fixed_test_sort(fn(arr) { arr.sort() })!
+  fixed_test_sort!(fn(arr) { arr.sort() })
 }
 
 test "stable_sort" {
   let arr : FixedArray[_] = [5, 1, 3, 4, 2]
   arr.stable_sort()
-  @test.eq(arr, [1, 2, 3, 4, 5])!
+  @test.eq!(arr, [1, 2, 3, 4, 5])
   let arr = FixedArray::make(1000, 0)
   for i = 0; i < 1000; i = i + 1 {
     arr[i] = 1000 - i - 1
@@ -477,7 +477,7 @@ test "stable_sort" {
   for i = 0; i < 1000; i = i + 1 {
     expected[i] = i
   }
-  @test.eq(arr, expected)!
+  @test.eq!(arr, expected)
 }
 
 pub fn FixedArray::is_sorted[T : Compare](arr : FixedArray[T]) -> Bool {
@@ -501,7 +501,53 @@ test "stable_sort_complex" {
       index += 1
     }
   }
-  @test.is_false(is_sorted(arr))!
+  @test.is_false!(is_sorted(arr))
   arr.stable_sort()
-  @test.is_true(is_sorted(arr))!
+  @test.is_true!(is_sorted(arr))
+}
+
+test "find_streak with empty array" {
+  let arr : FixedArray[Int] = []
+  let (streak_end, was_reversed) = find_streak({ array: arr, start: 0, end: 0 })
+  @test.eq!(streak_end, 0)
+  @test.eq!(was_reversed, false)
+}
+
+test "find_streak with single element array" {
+  let arr : FixedArray[_] = [1]
+  let (streak_end, was_reversed) = find_streak({ array: arr, start: 0, end: 1 })
+  @test.eq!(streak_end, 1)
+  @test.eq!(was_reversed, false)
+}
+
+test "find_streak with increasing elements" {
+  let arr : FixedArray[_] = [1, 2, 3, 4, 5]
+  let (streak_end, was_reversed) = find_streak({ array: arr, start: 0, end: 5 })
+  @test.eq!(streak_end, 5)
+  @test.eq!(was_reversed, false)
+}
+
+test "find_streak with decreasing elements" {
+  let arr : FixedArray[_] = [5, 4, 3, 2, 1]
+  let (streak_end, was_reversed) = find_streak({ array: arr, start: 0, end: 5 })
+  @test.eq!(streak_end, 5)
+  @test.eq!(was_reversed, true)
+}
+
+test "provide_sorted_batch with long run" {
+  let arr : FixedArray[_] = [1, 2, 3, 4, 5]
+  let end = provide_sorted_batch({ array: arr, start: 0, end: 5 }, 0, 5)
+  @test.eq!(end, 5)
+}
+
+test "fixed_quick_sort with limit reached" {
+  let arr : FixedArray[_] = [5, 4, 3, 2, 1]
+  fixed_quick_sort({ array: arr, start: 0, end: 5 }, None, 0)
+  @test.is_true!(FixedArray::is_sorted(arr))
+}
+
+test "fixed_quick_sort with balanced partitions" {
+  let arr : FixedArray[_] = [5, 4, 3, 2, 1]
+  fixed_quick_sort({ array: arr, start: 0, end: 5 }, None, 10)
+  @test.is_true!(FixedArray::is_sorted(arr))
 }

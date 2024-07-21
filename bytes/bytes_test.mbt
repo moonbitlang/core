@@ -12,14 +12,30 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-test "Bytes::from_array" {
-  let arr = [65, 00, 66, 00, 67, 00]
-  let b = Bytes::from_array(arr)
-  inspect(b, content="ABC")!
+test "from_array" {
+  let b = @bytes.of([65, 0, 66, 0, 67, 0])
+  inspect!(b, content="ABC")
 }
 
-test "Bytes::of" {
-  let arr : FixedArray[Int] = [65, 00, 66, 00, 67, 00]
-  let b = Bytes::of(arr)
-  inspect(b, content="ABC")!
+test "hash" {
+  let b1 = @bytes.of(
+    [65, 0, 66, 0, 67, 0, 68, 0, 69, 0, 70, 0, 71, 0, 72, 0, 73, 0],
+  )
+  let b2 = @bytes.of(
+    [65, 0, 66, 0, 67, 0, 68, 0, 69, 0, 70, 0, 71, 0, 72, 0, 74, 0],
+  )
+  let b3 = @bytes.of([128, 0, 0, 0, 0, 0, 0, 0])
+  let b4 = @bytes.of([127, 255, 255, 255, 255, 255, 255, 255])
+  inspect!(b1.hash(), content="273427599")
+  inspect!(b2.hash(), content="2013728637")
+  inspect!(b3.hash(), content="-983520567")
+  inspect!(b4.hash(), content="-1652773543")
+  inspect!(b1.hash() == b1.hash(), content="true")
+  inspect!(b2.hash() == b2.hash(), content="true")
+  inspect!(b1.hash() == b2.hash(), content="false")
+}
+
+test "to_array" {
+  let b = @bytes.of([65, 0, 66, 0, 67, 0])
+  inspect!(b.to_array(), content="[65, 0, 66, 0, 67, 0]")
 }

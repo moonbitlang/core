@@ -5,6 +5,9 @@
     "moonbitlang/core/test"
   ],
   "test-import": [
+    "moonbitlang/core/builtin",
+    "moonbitlang/core/coverage",
+    "moonbitlang/core/test",
     "moonbitlang/core/random"
   ]
 }

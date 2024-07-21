@@ -414,7 +414,7 @@ pub fn disjoint[T : Compare](
 /// of([7, 2, 9, 4, 5, 6, 3, 8, 1]).each(print)
 /// // output: 123456789
 /// ```
-pub fn each[T : Compare](self : ImmutableSet[T], f : (T) -> Unit) -> Unit {
+pub fn each[T](self : ImmutableSet[T], f : (T) -> Unit) -> Unit {
   match self {
     Empty => ()
     Node(~left, ~value, ~right, ..) => {
@@ -525,19 +525,24 @@ pub fn filter[T : Compare](
   }
 }
 
-pub fn to_string[T : Show + Compare](self : ImmutableSet[T]) -> String {
-  match self {
-    Empty => "ImmutableSet::[]"
-    _ => {
-      let linear = self.to_array()
-      let len = linear.length()
-      for i = 0, str = "ImmutableSet::["; i < len - 1; {
-        continue i + 1, str + linear[i].to_string() + ", "
+pub impl[T : Show] Show for ImmutableSet[T] with output(self, logger) {
+  logger.write_string("@immut/sorted_set.of([")
+  let mut is_first = true
+  self.each(
+    fn(x) {
+      if is_first {
+        is_first = false
       } else {
-        str + linear[len - 1].to_string() + "]"
+        logger.write_string(", ")
       }
-    }
-  }
+      Show::output(x, logger)
+    },
+  )
+  logger.write_string("])")
+}
+
+pub fn to_string[T : Show](self : ImmutableSet[T]) -> String {
+  Show::to_string(self)
 }
 
 // The following are the helper functions or types used by the internal implementation of ImmutableSet
@@ -547,10 +552,10 @@ priv enum SplitBis[T] {
   NotFound(ImmutableSet[T], () -> ImmutableSet[T])
 }
 
-fn to_string[T : Show](self : SplitBis[T]) -> String {
+impl[T : Show] Show for SplitBis[T] with output(self, logger) {
   match self {
-    Found => "Found"
-    NotFound(_) => "NotFound"
+    Found => logger.write_string("Found")
+    NotFound(_) => logger.write_string("NotFound")
   }
 }
 
@@ -742,4 +747,35 @@ pub fn ImmutableSet::of[T : Compare](array : FixedArray[T]) -> ImmutableSet[T] {
   } else {
     set
   }
+}
+
+test "split_bis" {
+  inspect!(of([1, 2, 3]).split_bis(1), content="Found")
+  inspect!(of([1, 2, 3]).split_bis(3), content="Found")
+  inspect!(of([1, 2, 3]).split_bis(0), content="NotFound")
+  inspect!(of([1, 2, 3]).split_bis(4), content="NotFound")
+}
+
+test "balance with left height greater" {
+  let left = of([1, 2, 3])
+  let value = 4
+  let right = of([5])
+  let balanced_set = balance(left, value, right)
+  inspect!(balanced_set, content="@immut/sorted_set.of([1, 2, 3, 4, 5])")
+}
+
+test "balance with right height greater" {
+  let left = of([1])
+  let value = 2
+  let right = of([3, 4, 5])
+  let balanced_set = balance(left, value, right)
+  inspect!(balanced_set, content="@immut/sorted_set.of([1, 2, 3, 4, 5])")
+}
+
+test "join with different heights" {
+  let left = of([1, 2, 3])
+  let value = 4
+  let right = of([5, 6, 7])
+  let joined_set = join(left, value, right)
+  inspect!(joined_set, content="@immut/sorted_set.of([1, 2, 3, 4, 5, 6, 7])")
 }

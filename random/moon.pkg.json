@@ -3,10 +3,14 @@
     "moonbitlang/core/builtin",
     "moonbitlang/core/int64",
     "moonbitlang/core/double",
+    "moonbitlang/core/test",
     "moonbitlang/core/coverage",
     "moonbitlang/core/array"
   ],
   "test-import": [
+    "moonbitlang/core/coverage",
+    "moonbitlang/core/double",
+    "moonbitlang/core/builtin",
     "moonbitlang/core/test"
   ]
 }

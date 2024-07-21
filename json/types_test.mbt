@@ -13,29 +13,29 @@
 // limitations under the License.
 
 test "ParseError::to_string coverage" {
-  let invalidCharError = ParseError::InvalidChar(
-    Position::{ line: 1, column: 0 },
+  let invalidCharError = @json.InvalidChar(
+    @json.Position::{ line: 1, column: 0 },
     'a',
   )
-  let invalidEofError = ParseError::InvalidEof
-  let invalidNumberError = ParseError::InvalidNumber(
-    Position::{ line: 1, column: 0 },
+  let invalidEofError = @json.InvalidEof
+  let invalidNumberError = @json.InvalidNumber(
+    @json.Position::{ line: 1, column: 0 },
     "123abc",
   )
-  let invalidIdentEscapeError = ParseError::InvalidIdentEscape(
-    Position::{ line: 1, column: 0 },
+  let invalidIdentEscapeError = @json.InvalidIdentEscape(
+    @json.Position::{ line: 1, column: 0 },
   )
-  @test.eq(
+  @test.eq!(
     invalidCharError.to_string(),
     "Invalid character 'a' at line 1, column 0",
-  )!
-  @test.eq(invalidEofError.to_string(), "Unexpected end of file")!
-  @test.eq(
+  )
+  @test.eq!(invalidEofError.to_string(), "Unexpected end of file")
+  @test.eq!(
     invalidNumberError.to_string(),
     "Invalid number 123abc at line 1, column 0",
-  )!
-  @test.eq(
+  )
+  @test.eq!(
     invalidIdentEscapeError.to_string(),
     "Invalid escape sequence in identifier at line 1, column 0",
-  )!
+  )
 }

@@ -66,7 +66,7 @@ fn grow_if_necessary(self : Buffer, required : Int) -> Unit {
     enough_space = enough_space * 2
   }
   if enough_space != self.bytes.length() {
-    let new_bytes = Bytes::make(enough_space)
+    let new_bytes = Bytes::new(enough_space)
     blit(new_bytes, 0, self.bytes, 0, self.len)
     self.bytes = new_bytes
   }
@@ -80,7 +80,7 @@ pub fn to_string(self : Buffer) -> String {
 /// Create a buffer with initial capacity (in bytes).
 pub fn Buffer::new(~size_hint : Int = 0) -> Buffer {
   let initial = if size_hint < 1 { 1 } else { size_hint }
-  let bytes = Bytes::make(initial)
+  let bytes = Bytes::new(initial)
   { bytes, len: 0, initial_bytes: bytes }
 }
 
@@ -126,7 +126,11 @@ pub fn reset(self : Buffer) -> Unit {
 }
 
 pub fn to_bytes(self : Buffer) -> Bytes {
-  let bytes = Bytes::make(self.len)
+  let bytes = Bytes::new(self.len)
   bytes.blit(0, self.bytes, 0, self.len)
   bytes
+}
+
+pub impl Show for Buffer with output(self, logger) {
+  logger.write_string(self.to_string())
 }

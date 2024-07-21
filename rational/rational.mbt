@@ -247,14 +247,20 @@ pub fn fract(self : Rational) -> Rational {
   new_unchecked(self.numerator % self.denominator, self.denominator)
 }
 
-pub fn to_string(self : Rational) -> String {
+pub impl Show for Rational with output(self, logger) {
   if self.numerator == 0L {
-    "0".to_string()
+    logger.write_string("0")
   } else if self.denominator == 1L {
-    self.numerator.to_string()
+    logger.write_string(self.numerator.to_string())
   } else {
-    self.numerator.to_string() + "/" + self.denominator.to_string()
+    logger..write_string(self.numerator.to_string())..write_string("/").write_string(
+      self.denominator.to_string(),
+    )
   }
+}
+
+pub fn to_string(self : Rational) -> String {
+  Show::to_string(self)
 }
 
 pub fn is_integer(self : Rational) -> Bool {
@@ -266,34 +272,34 @@ test "op_add" {
   let a = Rational::new_unchecked(1L, 2L)
   let b = Rational::new_unchecked(1L, 3L)
   let c = a + b
-  @test.eq(c.numerator, 5L)!
-  @test.eq(c.denominator, 6L)!
+  @test.eq!(c.numerator, 5L)
+  @test.eq!(c.denominator, 6L)
 
   // 1/2 + 1/2 = 1
   let a = Rational::new_unchecked(1L, 2L)
   let b = Rational::new_unchecked(1L, 2L)
   let c = a + b
-  @test.eq(c.numerator, 1L)!
-  @test.eq(c.denominator, 1L)!
+  @test.eq!(c.numerator, 1L)
+  @test.eq!(c.denominator, 1L)
 
   // 1/2 + 1/6 = 2/3
   let a = Rational::new_unchecked(1L, 2L)
   let b = Rational::new_unchecked(1L, 6L)
   let c = a + b
-  @test.eq(c.numerator, 2L)!
+  @test.eq!(c.numerator, 2L)
 
   // -1/2 + 1/2 = 0
   let a = Rational::new_unchecked(-1L, 2L)
   let b = Rational::new_unchecked(1L, 2L)
   let c = a + b
-  @test.eq(c.numerator, 0L)!
+  @test.eq!(c.numerator, 0L)
 
   // -1/2 + -1/2 = -1
   let a = Rational::new_unchecked(-1L, 2L)
   let b = Rational::new_unchecked(-1L, 2L)
   let c = a + b
-  @test.eq(c.numerator, -1L)!
-  @test.eq(c.denominator, 1L)!
+  @test.eq!(c.numerator, -1L)
+  @test.eq!(c.denominator, 1L)
 }
 
 test "op_sub" {
@@ -301,34 +307,34 @@ test "op_sub" {
   let a = Rational::new_unchecked(1L, 2L)
   let b = Rational::new_unchecked(1L, 3L)
   let c = a - b
-  @test.eq(c.numerator, 1L)!
-  @test.eq(c.denominator, 6L)!
+  @test.eq!(c.numerator, 1L)
+  @test.eq!(c.denominator, 6L)
 
   // 1/2 - 1/2 = 0
   let a = Rational::new_unchecked(1L, 2L)
   let b = Rational::new_unchecked(1L, 2L)
   let c = a - b
-  @test.eq(c.numerator, 0L)!
+  @test.eq!(c.numerator, 0L)
 
   // 1/2 - 1/6 = 1/3
   let a = Rational::new_unchecked(1L, 2L)
   let b = Rational::new_unchecked(1L, 6L)
   let c = a - b
-  @test.eq(c.numerator, 1L)!
-  @test.eq(c.denominator, 3L)!
+  @test.eq!(c.numerator, 1L)
+  @test.eq!(c.denominator, 3L)
 
   // -1/2 - 1/2 = -1
   let a = Rational::new_unchecked(-1L, 2L)
   let b = Rational::new_unchecked(1L, 2L)
   let c = a - b
-  @test.eq(c.numerator, -1L)!
-  @test.eq(c.denominator, 1L)!
+  @test.eq!(c.numerator, -1L)
+  @test.eq!(c.denominator, 1L)
 
   // -1/2 - -1/2 = 0
   let a = Rational::new_unchecked(-1L, 2L)
   let b = Rational::new_unchecked(-1L, 2L)
   let c = a - b
-  @test.eq(c.numerator, 0L)!
+  @test.eq!(c.numerator, 0L)
 }
 
 test "op_mul" {
@@ -336,22 +342,22 @@ test "op_mul" {
   let a = Rational::new_unchecked(1L, 2L)
   let b = Rational::new_unchecked(2L, 3L)
   let c = a * b
-  @test.eq(c.numerator, 1L)!
-  @test.eq(c.denominator, 3L)!
+  @test.eq!(c.numerator, 1L)
+  @test.eq!(c.denominator, 3L)
 
   // -4/3 * 3/4 = -1
   let a = Rational::new_unchecked(-4L, 3L)
   let b = Rational::new_unchecked(3L, 4L)
   let c = a * b
-  @test.eq(c.numerator, -1L)!
-  @test.eq(c.denominator, 1L)!
+  @test.eq!(c.numerator, -1L)
+  @test.eq!(c.denominator, 1L)
 
   // 1024/42 * 0 = 0
   let a = Rational::new_unchecked(1024L, 42L)
   let b = Rational::new_unchecked(0L, 1L)
   let c = a * b
-  @test.eq(c.numerator, 0L)!
-  @test.eq(c.denominator, 1L)!
+  @test.eq!(c.numerator, 0L)
+  @test.eq!(c.denominator, 1L)
 }
 
 test "op_div" {
@@ -359,249 +365,320 @@ test "op_div" {
   let a = Rational::new_unchecked(1L, 2L)
   let b = Rational::new_unchecked(2L, 3L)
   let c = a / b
-  @test.eq(c.numerator, 3L)!
-  @test.eq(c.denominator, 4L)!
+  @test.eq!(c.numerator, 3L)
+  @test.eq!(c.denominator, 4L)
 
   // 1/2 / -2/3 = -3/4
   let a = Rational::new_unchecked(1L, 2L)
   let b = Rational::new_unchecked(-2L, 3L)
   let c = a / b
-  @test.eq(c.numerator, -3L)!
-  @test.eq(c.denominator, 4L)!
+  @test.eq!(c.numerator, -3L)
+  @test.eq!(c.denominator, 4L)
 
   // 0 / 1 = 0
   let a = Rational::new_unchecked(0L, 1L)
   let b = Rational::new_unchecked(1L, 1L)
   let c = a / b
-  @test.eq(c.numerator, 0L)!
-  @test.eq(c.denominator, 1L)!
+  @test.eq!(c.numerator, 0L)
+  @test.eq!(c.denominator, 1L)
 }
 
 test "reciprocal" {
   // 1/2 -> 2/1
   let a = Rational::new_unchecked(1L, 2L)
   let b = reciprocal(a)
-  @test.eq(b.numerator, 2L)!
-  @test.eq(b.denominator, 1L)!
+  @test.eq!(b.numerator, 2L)
+  @test.eq!(b.denominator, 1L)
 
   // -1/2 -> -2/1
   let a = Rational::new_unchecked(-1L, 2L)
   let b = reciprocal(a)
-  @test.eq(b.numerator, -2L)!
-  @test.eq(b.denominator, 1L)!
+  @test.eq!(b.numerator, -2L)
+  @test.eq!(b.denominator, 1L)
 }
 
 test "neg" {
   // 1/2 -> -1/2
   let a = Rational::new_unchecked(1L, 2L)
   let b = neg(a)
-  @test.eq(b.numerator, -1L)!
-  @test.eq(b.denominator, 2L)!
+  @test.eq!(b.numerator, -1L)
+  @test.eq!(b.denominator, 2L)
 
   // -1/2 -> 1/2
   let a = Rational::new_unchecked(-1L, 2L)
   let b = neg(a)
-  @test.eq(b.numerator, 1L)!
-  @test.eq(b.denominator, 2L)!
+  @test.eq!(b.numerator, 1L)
+  @test.eq!(b.denominator, 2L)
 }
 
 test "abs" {
   // 1/2 -> 1/2
   let a = Rational::new_unchecked(1L, 2L)
   let b = abs(a)
-  @test.eq(b.numerator, 1L)!
-  @test.eq(b.denominator, 2L)!
+  @test.eq!(b.numerator, 1L)
+  @test.eq!(b.denominator, 2L)
 
   // -1/2 -> 1/2
   let a = Rational::new_unchecked(-1L, 2L)
   let b = abs(a)
-  @test.eq(b.numerator, 1L)!
-  @test.eq(b.denominator, 2L)!
+  @test.eq!(b.numerator, 1L)
+  @test.eq!(b.denominator, 2L)
 }
 
 test "to_double" {
   // 1/2 -> 0.5
   let a = Rational::new_unchecked(1L, 2L)
   let b = a.to_double()
-  @test.eq(b, 0.5)!
+  @test.eq!(b, 0.5)
 
   // -1/2 -> -0.5
   let a = Rational::new_unchecked(-1L, 2L)
   let b = a.to_double()
-  @test.eq(b, -0.5)!
+  @test.eq!(b, -0.5)
 }
 
 test "ceil" {
   // 1/2 -> 1
   let a = Rational::new_unchecked(1L, 2L)
   let b = ceil(a)
-  @test.eq(b, 1L)!
+  @test.eq!(b, 1L)
 
   // -1/2 -> 0
   let a = Rational::new_unchecked(-1L, 2L)
   let b = ceil(a)
-  @test.eq(b, 0L)!
+  @test.eq!(b, 0L)
 
   // -2/2 -> -1
   let a = Rational::new_unchecked(-2L, 2L)
   let b = ceil(a)
-  @test.eq(b, -1L)!
+  @test.eq!(b, -1L)
 
   // 2/2 -> 1
   let a = Rational::new_unchecked(2L, 2L)
   let b = ceil(a)
-  @test.eq(b, 1L)!
+  @test.eq!(b, 1L)
 }
 
 test "floor" {
   // 1/2 -> 0
   let a = Rational::new_unchecked(1L, 2L)
   let b = floor(a)
-  @test.eq(b, 0L)!
+  @test.eq!(b, 0L)
 
   // -1/2 -> -1
   let a = Rational::new_unchecked(-1L, 2L)
   let b = floor(a)
-  @test.eq(b, -1L)!
+  @test.eq!(b, -1L)
 
   // -2/2 -> -1
   let a = Rational::new_unchecked(-2L, 2L)
   let b = floor(a)
-  @test.eq(b, -1L)!
+  @test.eq!(b, -1L)
 
   // 2/2 -> 1
   let a = Rational::new_unchecked(2L, 2L)
   let b = floor(a)
-  @test.eq(b, 1L)!
+  @test.eq!(b, 1L)
 }
 
 test "trunc" {
   // 1/2 -> 0
   let a = Rational::new_unchecked(1L, 2L)
   let b = trunc(a)
-  @test.eq(b, 0L)!
+  @test.eq!(b, 0L)
 
   // -1/2 -> 0
   let a = Rational::new_unchecked(-1L, 2L)
   let b = trunc(a)
-  @test.eq(b, 0L)!
+  @test.eq!(b, 0L)
 }
 
 test "fract" {
   // 1/2 -> 1/2
   let a = Rational::new_unchecked(1L, 2L)
   let b = fract(a)
-  @test.eq(b.numerator, 1L)!
-  @test.eq(b.denominator, 2L)!
+  @test.eq!(b.numerator, 1L)
+  @test.eq!(b.denominator, 2L)
 
   // -1/2 -> -1/2
   let a = Rational::new_unchecked(-1L, 2L)
   let b = fract(a)
-  @test.eq(b.numerator, -1L)!
-  @test.eq(b.denominator, 2L)!
+  @test.eq!(b.numerator, -1L)
+  @test.eq!(b.denominator, 2L)
 
   // 3/2 -> 1/2
   let a = Rational::new_unchecked(3L, 2L)
   let b = fract(a)
-  @test.eq(b.numerator, 1L)!
-  @test.eq(b.denominator, 2L)!
+  @test.eq!(b.numerator, 1L)
+  @test.eq!(b.denominator, 2L)
 
   // -3/2 -> -1/2
   let a = Rational::new_unchecked(-3L, 2L)
   let b = fract(a)
-  @test.eq(b.numerator, -1L)!
-  @test.eq(b.denominator, 2L)!
+  @test.eq!(b.numerator, -1L)
+  @test.eq!(b.denominator, 2L)
 }
 
 test "to_string" {
   // 1/2 -> "1/2"
   let a = Rational::new_unchecked(1L, 2L)
   let b = to_string(a)
-  @test.eq(b, "1/2")!
+  @test.eq!(b, "1/2")
 
   // 4/4 -> "1"
   let a = Rational::new_unchecked(4L, 4L)
   let b = to_string(a)
-  @test.eq(b, "1")!
+  @test.eq!(b, "1")
 
   // 0/1 -> "0"
   let a = Rational::new_unchecked(0L, 1L)
   let b = to_string(a)
-  @test.eq(b, "0")!
+  @test.eq!(b, "0")
 }
 
 test "is_integer" {
   // 1/2 is not an integer
   let a = Rational::new_unchecked(1L, 2L)
-  @test.is_false(a.is_integer())!
+  @test.is_false!(a.is_integer())
 
   // 1 is an integer
   let a = Rational::new_unchecked(1L, 1L)
-  @test.is_true(a.is_integer())!
+  @test.is_true!(a.is_integer())
 
   // 0 is an integer
   let a = Rational::new_unchecked(0L, 1L)
-  @test.is_true(a.is_integer())!
+  @test.is_true!(a.is_integer())
 
   // -1 is an integer
   let a = Rational::new_unchecked(-1L, 1L)
-  @test.is_true(a.is_integer())!
+  @test.is_true!(a.is_integer())
 }
 
 test "compare" {
   // 1/2 < 2/3
   let a = Rational::new_unchecked(1L, 2L)
   let b = Rational::new_unchecked(2L, 3L)
-  @test.eq(a.compare(b), -1)!
-  @test.is_true(a < b)!
-  @test.is_true(a <= b)!
-  @test.is_true(a != b)!
+  @test.eq!(a.compare(b), -1)
+  @test.is_true!(a < b)
+  @test.is_true!(a <= b)
+  @test.is_true!(a != b)
 
   // -1/2 > -2/3
   let a = Rational::new_unchecked(-1L, 2L)
   let b = Rational::new_unchecked(-2L, 3L)
-  @test.eq(a.compare(b), 1)!
-  @test.is_true(a > b)!
-  @test.is_true(a >= b)!
-  @test.is_true(a != b)!
+  @test.eq!(a.compare(b), 1)
+  @test.is_true!(a > b)
+  @test.is_true!(a >= b)
+  @test.is_true!(a != b)
 
   // 1/2 == 1/2
   let a = Rational::new_unchecked(1L, 2L)
   let b = Rational::new_unchecked(1L, 2L)
-  @test.eq(a.compare(b), 0)!
-  @test.is_true(a == b)!
+  @test.eq!(a.compare(b), 0)
+  @test.is_true!(a == b)
 }
 
 test "from_double" {
-  @test.eq(from_double(0.5)!!, Ok(Rational::new_unchecked(1L, 2L)))!
-  @test.eq(from_double(5.0)!!, Ok(Rational::new_unchecked(5L, 1L)))!
-  @test.eq(from_double(29.97)!!, Ok(Rational::new_unchecked(2997L, 100L)))!
-  @test.eq(from_double(-29.97)!!, Ok(Rational::new_unchecked(-2997L, 100L)))!
-  @test.eq(from_double(63.5)!!, Ok(Rational::new_unchecked(127L, 2L)))!
-  @test.eq(from_double(126.5)!!, Ok(Rational::new_unchecked(253L, 2L)))!
-  @test.eq(from_double(127.0)!!, Ok(Rational::new_unchecked(127L, 1L)))!
-  @test.eq(from_double(127.5)!!, Ok(Rational::new_unchecked(255L, 2L)))!
-  @test.eq(from_double(-63.5)!!, Ok(Rational::new_unchecked(-127L, 2L)))!
-  @test.eq(from_double(-126.5)!!, Ok(Rational::new_unchecked(-253L, 2L)))!
-  @test.eq(from_double(-127.0)!!, Ok(Rational::new_unchecked(-127L, 1L)))!
-  @test.eq(from_double(-127.5)!!, Ok(Rational::new_unchecked(-255L, 2L)))!
-  @test.eq(from_double(-10.0e200)!!, Err(overflow_error))!
-  @test.eq(from_double(10.0e200)!!, Err(overflow_error))!
-  @test.eq(from_double(Double::inf(1))!!, Err(overflow_error))!
-  @test.eq(from_double(Double::inf(-1))!!, Err(overflow_error))!
-  @test.eq(from_double(Double::nan())!!, Err(nan_error))!
-  @test.eq(
-    from_double(2.2204460492503131e-16)!!,
+  @test.eq!(
+    0.5 |> @result.wrap1(f=from_double),
+    Ok(Rational::new_unchecked(1L, 2L)),
+  )
+  @test.eq!(
+    5.0 |> @result.wrap1(f=from_double),
+    Ok(Rational::new_unchecked(5L, 1L)),
+  )
+  @test.eq!(
+    29.97 |> @result.wrap1(f=from_double),
+    Ok(Rational::new_unchecked(2997L, 100L)),
+  )
+  @test.eq!(
+    -29.97 |> @result.wrap1(f=from_double),
+    Ok(Rational::new_unchecked(-2997L, 100L)),
+  )
+  @test.eq!(
+    63.5 |> @result.wrap1(f=from_double),
+    Ok(Rational::new_unchecked(127L, 2L)),
+  )
+  @test.eq!(
+    126.5 |> @result.wrap1(f=from_double),
+    Ok(Rational::new_unchecked(253L, 2L)),
+  )
+  @test.eq!(
+    127.0 |> @result.wrap1(f=from_double),
+    Ok(Rational::new_unchecked(127L, 1L)),
+  )
+  @test.eq!(
+    127.5 |> @result.wrap1(f=from_double),
+    Ok(Rational::new_unchecked(255L, 2L)),
+  )
+  @test.eq!(
+    -63.5 |> @result.wrap1(f=from_double),
+    Ok(Rational::new_unchecked(-127L, 2L)),
+  )
+  @test.eq!(
+    -126.5 |> @result.wrap1(f=from_double),
+    Ok(Rational::new_unchecked(-253L, 2L)),
+  )
+  @test.eq!(
+    -127.0 |> @result.wrap1(f=from_double),
+    Ok(Rational::new_unchecked(-127L, 1L)),
+  )
+  @test.eq!(
+    -127.5 |> @result.wrap1(f=from_double),
+    Ok(Rational::new_unchecked(-255L, 2L)),
+  )
+  @test.eq!(-10.0e200 |> @result.wrap1(f=from_double), Err(overflow_error))
+  @test.eq!(10.0e200 |> @result.wrap1(f=from_double), Err(overflow_error))
+  @test.eq!(Double::inf(1) |> @result.wrap1(f=from_double), Err(overflow_error))
+  @test.eq!(
+    Double::inf(-1) |> @result.wrap1(f=from_double),
+    Err(overflow_error),
+  )
+  @test.eq!(Double::nan() |> @result.wrap1(f=from_double), Err(nan_error))
+  @test.eq!(
+    2.2204460492503131e-16 |> @result.wrap1(f=from_double),
     Ok(Rational::new_unchecked(1L, 4503599627370496L)),
-  )!
-  @test.eq(from_double(0.0)!!, Ok(Rational::new_unchecked(0L, 1L)))!
-  @test.eq(from_double(-0.0)!!, Ok(Rational::new_unchecked(0L, 1L)))!
-  @test.eq(
-    from_double(9_223_372_036_800_000_000.0)!!,
+  )
+  @test.eq!(
+    0.0 |> @result.wrap1(f=from_double),
+    Ok(Rational::new_unchecked(0L, 1L)),
+  )
+  @test.eq!(
+    -0.0 |> @result.wrap1(f=from_double),
+    Ok(Rational::new_unchecked(0L, 1L)),
+  )
+  @test.eq!(
+    9_223_372_036_800_000_000.0 |> @result.wrap1(f=from_double),
     Ok(Rational::new_unchecked(9_223_372_036_800_000_000L, 1L)),
-  )!
-  @test.eq(from_double(9_223_372_036_854_775_807.1)!!, Err(overflow_error))!
+  )
+  @test.eq!(
+    9_223_372_036_854_775_807.1 |> @result.wrap1(f=from_double),
+    Err(overflow_error),
+  )
   // Unfortunately, the following test case is an overflow error because of the loss of precision in the double value,
   // while mathematically its result should be `Ok(Rational::new_unchecked(9_223_372_036_854_775_807L, 1L))`.
-  @test.eq(from_double(9_223_372_036_854_775_807.0)!!, Err(overflow_error))!
+  @test.eq!(
+    9_223_372_036_854_775_807.0 |> @result.wrap1(f=from_double),
+    Err(overflow_error),
+  )
+}
+
+test "from_double normal case" {
+  let result = 0.5 |> @result.wrap1(f=from_double)
+  @test.eq!(result, Ok(new_unchecked(1L, 2L)))
+}
+
+test "from_double edge case" {
+  let result = 9_223_372_036_800_000_000.0 |> @result.wrap1(f=from_double)
+  @test.eq!(result, Ok(new_unchecked(9_223_372_036_800_000_000L, 1L)))
+}
+
+test "from_double normal case" {
+  let result = 0.5 |> @result.wrap1(f=from_double)
+  @test.eq!(result, Ok(new_unchecked(1L, 2L)))
+}
+
+test "from_double edge case" {
+  let result = 9_223_372_036_800_000_000.0 |> @result.wrap1(f=from_double)
+  @test.eq!(result, Ok(new_unchecked(9_223_372_036_800_000_000L, 1L)))
 }

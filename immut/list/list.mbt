@@ -17,16 +17,21 @@ pub enum List[T] {
   Cons(T, List[T])
 } derive(Eq)
 
+pub impl[T : Show] Show for List[T] with output(xs, logger) {
+  logger.write_string("List::[")
+  xs.eachi(
+    fn(i, x) {
+      if i > 0 {
+        logger.write_string(", ")
+      }
+      x.output(logger)
+    },
+  )
+  logger.write_string("]")
+}
+
 pub fn List::to_string[T : Show](xs : List[T]) -> String {
-  let elems = match xs {
-    Nil => ""
-    Cons(x, xs) =>
-      xs.fold_left(
-        fn(acc, x) { acc + ", " + x.to_string() },
-        init=x.to_string(),
-      )
-  }
-  "List::[" + elems + "]"
+  Show::to_string(xs)
 }
 
 pub fn List::debug_write[T : Debug](xs : List[T], buf : Buffer) -> Unit {
@@ -848,4 +853,12 @@ pub fn List::of[T](arr : FixedArray[T]) -> List[T] {
   } else {
     list
   }
+}
+
+test "panic unsafe_drop" {
+  unsafe_drop(5, of([1, 2, 3, 4])) |> ignore
+}
+
+test "panic unsafe_take" {
+  unsafe_take(5, of([1, 2, 3, 4])) |> ignore
 }

@@ -29,8 +29,8 @@ test "map" {
   let y = x.map(fn(v : Int) { v * 7 })
   let z : Result[Int, Int] = Err(3)
   let w = z.map(fn(v : Int) { v * 7 })
-  @test.eq(y, Ok(42))!
-  @test.eq(w, Err(3))!
+  @test.eq!(y, Ok(42))
+  @test.eq!(w, Err(3))
 }
 
 /// Maps the value of a Result if it is `Err` into another, otherwise returns the `Ok` value unchanged.
@@ -53,8 +53,8 @@ test "map_err" {
   let y = x.map_err(fn(v : String) { v + "!" })
   let z : Result[Int, Int] = Ok(6)
   let w = z.map_err(fn(v : Int) { v + 6 })
-  @test.eq(y, Err("error!"))!
-  @test.eq(w, Ok(6))!
+  @test.eq!(y, Err("error!"))
+  @test.eq!(w, Ok(6))
 }
 
 /// Create an `Err` of type `E`.
@@ -70,7 +70,7 @@ pub fn err[T, E](value : E) -> Result[T, E] {
 
 test "err" {
   let x : Result[Int, String] = err("error")
-  @test.eq(x, Err("error"))!
+  @test.eq!(x, Err("error"))
 }
 
 /// Create an `Ok` of type `T`.
@@ -86,7 +86,7 @@ pub fn ok[T, E](value : T) -> Result[T, E] {
 
 test "ok" {
   let x : Result[String, Unit] = ok("yes")
-  @test.eq(x, Ok("yes"))!
+  @test.eq!(x, Ok("yes"))
 }
 
 /// Check if a `Result` is an `Ok`.
@@ -100,8 +100,8 @@ pub fn is_ok[T, E](self : Result[T, E]) -> Bool {
 test "is_ok" {
   let x : Result[Int, String] = Ok(6)
   let y : Result[Int, String] = Err("error")
-  @test.eq(is_ok(x), true)!
-  @test.eq(is_ok(y), false)!
+  @test.eq!(is_ok(x), true)
+  @test.eq!(is_ok(y), false)
 }
 
 /// Check if a `Result` is an `Err`.
@@ -115,8 +115,8 @@ pub fn is_err[T, E](self : Result[T, E]) -> Bool {
 test "is_err" {
   let x : Result[Int, String] = Ok(6)
   let y : Result[Int, String] = Err("error")
-  @test.eq(is_err(x), false)!
-  @test.eq(is_err(y), true)!
+  @test.eq!(is_err(x), false)
+  @test.eq!(is_err(y), true)
 }
 
 /// Return the inner `Ok` value, if it exists, otherwise return the provided default.
@@ -139,8 +139,8 @@ test "or" {
   let y : Result[Int, String] = Err("error")
   let z = x.or(0)
   let w = y.or(0)
-  @test.eq(z, 6)!
-  @test.eq(w, 0)!
+  @test.eq!(z, 6)
+  @test.eq!(w, 0)
 }
 
 /// Return the inner `Ok` value, if it exists, otherwise return the provided default.
@@ -164,8 +164,8 @@ test "or_else" {
   let y : Result[Int, String] = Err("error")
   let z = or_else(x, fn() { 0 })
   let w = or_else(y, fn() { 0 })
-  @test.eq(z, 6)!
-  @test.eq(w, 0)!
+  @test.eq!(z, 6)
+  @test.eq!(w, 0)
 }
 
 /// Flatten a `Result` of `Result` into a single `Result`.
@@ -187,8 +187,8 @@ test "flatten" {
   let y = x.flatten()
   let z : Result[Result[Int, String], String] = Err("error")
   let w = z.flatten()
-  @test.eq(y, Ok(6))!
-  @test.eq(w, Err("error"))!
+  @test.eq!(y, Ok(6))
+  @test.eq!(w, Err("error"))
 }
 
 /// Binds a result to a function that returns another result.
@@ -209,7 +209,7 @@ pub fn bind[T, E, U](
 test "bind" {
   let x : Result[Int, String] = Ok(6)
   let y = bind(x, fn(v : Int) { Ok(v * 7) })
-  @test.eq(y, Ok(42))!
+  @test.eq!(y, Ok(42))
 }
 
 /// Folds a `Result` into a single value.
@@ -233,8 +233,8 @@ test "fold" {
   let y = fold(x, fn(v : Int) -> Int { v * 7 }, fn(_e : String) -> Int { 0 })
   let z : Result[Int, String] = Err("error")
   let w = fold(z, fn(v : Int) -> Int { v * 7 }, fn(_e : String) -> Int { 0 })
-  @test.eq(y, 42)!
-  @test.eq(w, 0)!
+  @test.eq!(y, 42)
+  @test.eq!(w, 0)
 }
 
 /// Converts a `Result` to an `Option`.
@@ -259,8 +259,8 @@ test "to_option" {
   let y : Result[Int, String] = Err("error")
   let z = to_option(x)
   let w = to_option(y)
-  @test.eq(z, Some(6))!
-  @test.eq(w, None)!
+  @test.eq!(z, Some(6))
+  @test.eq!(w, None)
 }
 
 pub fn compare[T : Compare, E : Compare](
@@ -280,14 +280,14 @@ test "compare" {
   let ok2 = Result::Ok(2)
   let err1 = Result::Err(1)
   let err2 = Result::Err(2)
-  @test.eq(0, ok1.compare(ok1))!
-  @test.eq(0, err2.compare(Result::Err(2)))!
-  @test.eq(-1, ok1.compare(ok2))!
-  @test.eq(1, ok2.compare(ok1))!
-  @test.eq(-1, err1.compare(err2))!
-  @test.eq(1, err2.compare(err1))!
-  @test.eq(-1, ok2.compare(err1))!
-  @test.eq(1, err1.compare(ok2))!
+  @test.eq!(0, ok1.compare(ok1))
+  @test.eq!(0, err2.compare(Result::Err(2)))
+  @test.eq!(-1, ok1.compare(ok2))
+  @test.eq!(1, ok2.compare(ok1))
+  @test.eq!(-1, err1.compare(err2))
+  @test.eq!(1, err2.compare(err1))
+  @test.eq!(-1, ok2.compare(err1))
+  @test.eq!(1, err1.compare(ok2))
 }
 
 pub fn unwrap[T, E](self : Result[T, E]) -> T {
@@ -306,9 +306,19 @@ pub fn to_string[T : Show, E : Show](self : Result[T, E]) -> String {
 
 test "show" {
   let ok : Result[_, String] = Ok("hello")
-  inspect(ok, content="Ok(hello)")!
+  inspect!(
+    ok,
+    content=
+      #|Ok("hello")
+    ,
+  )
   let err : Result[String, _] = Err("world")
-  inspect(err, content="Err(world)")!
+  inspect!(
+    err,
+    content=
+      #|Err("world")
+    ,
+  )
 }
 
 pub fn unwrap_or_error[T, E](self : Result[T, E]) -> T!E {
@@ -321,8 +331,34 @@ pub fn unwrap_or_error[T, E](self : Result[T, E]) -> T!E {
 }
 
 test "unwrap exn" {
-  inspect(
+  inspect!(
     (Err("This is serious") : Result[Int, String]).unwrap_or_error()!!,
-    content="Err(This is serious)",
-  )!
+    content=
+      #|Err("This is serious")
+    ,
+  )
+}
+
+pub fn wrap0[T, E](~f : () -> T!E) -> Result[T, E] {
+  try {
+    f!() |> Ok
+  } catch {
+    e => Err(e)
+  }
+}
+
+pub fn wrap1[T, A, E](~f : (A) -> T!E, a : A) -> Result[T, E] {
+  try {
+    f!(a) |> Ok
+  } catch {
+    e => Err(e)
+  }
+}
+
+pub fn wrap2[T, A, B, E](~f : (A, B) -> T!E, a : A, b : B) -> Result[T, E] {
+  try {
+    f!(a, b) |> Ok
+  } catch {
+    e => Err(e)
+  }
 }

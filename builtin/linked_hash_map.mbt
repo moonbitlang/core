@@ -19,7 +19,7 @@ priv struct Entry[K, V] {
   hash : Int
   key : K
   mut value : V
-} derive(Debug)
+} derive(Show)
 
 fn op_equal[K : Eq, V](self : Entry[K, V], other : Entry[K, V]) -> Bool {
   self.hash == other.hash && self.key == other.key
@@ -74,12 +74,12 @@ fn power_2_above(x : Int, n : Int) -> Int {
 }
 
 test "power_2_above" {
-  inspect(power_2_above(1, 15), content="16")!
-  inspect(power_2_above(1, 16), content="16")!
-  inspect(power_2_above(1, 17), content="32")!
-  inspect(power_2_above(1, 32), content="32")!
-  inspect(power_2_above(128, 33), content="128")!
-  inspect(power_2_above(1, 2147483647), content="1073741824")!
+  inspect!(power_2_above(1, 15), content="16")
+  inspect!(power_2_above(1, 16), content="16")
+  inspect!(power_2_above(1, 17), content="32")
+  inspect!(power_2_above(1, 32), content="32")
+  inspect!(power_2_above(128, 33), content="128")
+  inspect!(power_2_above(1, 2147483647), content="1073741824")
 }
 
 /// Create a hash map.
@@ -225,9 +225,9 @@ pub fn remove[K : Hash + Eq, V](self : Map[K, V], key : K) -> Unit {
       Some(entry) => {
         if entry.hash == hash && entry.key == key {
           self.entries[idx] = None
+          self.remove_entry(entry)
           self.shift_back(idx)
           self.size -= 1
-          self.remove_entry(entry)
           break
         }
         if i > entry.psl {
@@ -281,8 +281,8 @@ fn remove_entry[K : Eq, V](self : Map[K, V], entry : Entry[K, V]) -> Unit {
 
 fn shift_back[K : Hash, V](self : Map[K, V], start_index : Int) -> Unit {
   for prev = start_index, curr = (start_index + 1).land(self.capacity_mask) {
-    match self.entries[curr] {
-      Some(entry) => {
+    match (self.entries[curr], self.list[curr]) {
+      (Some(entry), currNode) => {
         if entry.psl == 0 {
           break
         }
@@ -290,9 +290,13 @@ fn shift_back[K : Hash, V](self : Map[K, V], start_index : Int) -> Unit {
         entry.idx = prev
         self.entries[prev] = Some(entry)
         self.entries[curr] = None
+        self.list[prev].prev = currNode.prev
+        self.list[prev].next = currNode.next
+        currNode.prev = None
+        currNode.next = None
         continue curr, (curr + 1).land(self.capacity_mask)
       }
-      None => break
+      (None, _) => break
     }
   }
 }
@@ -339,21 +343,24 @@ fn debug_entries[K : Show, V : Show](self : Map[K, V]) -> String {
   buf.to_string()
 }
 
-pub fn to_string[K : Show, V : Show](self : Map[K, V]) -> String {
-  if self.size == 0 {
-    return "{}"
-  }
-  loop 0, self.head, "{" {
-    _, None, _ as acc => return acc + "}"
-    i, Some({ key, value, idx, .. }), acc => {
-      let nxt = self.list[idx].next
+pub impl[K : Show, V : Show] Show for Map[K, V] with output(self, logger) {
+  logger.write_string("{")
+  loop 0, self.head {
+    _, None => logger.write_string("}")
+    i, Some({ key, value, idx, .. }) => {
       if i > 0 {
-        // remove the trailing comma
-        continue i + 1, nxt, acc + ", \(key):\(value)"
+        logger.write_string(", ")
       }
-      continue i + 1, nxt, acc + "\(key): \(value)"
+      Show::output(key, logger)
+      logger.write_string(": ")
+      Show::output(value, logger)
+      continue i + 1, self.list[idx].next
     }
   }
+}
+
+pub fn to_string[K : Show, V : Show](self : Map[K, V]) -> String {
+  Show::to_string(self)
 }
 
 /// Get the number of key-value pairs in the map.

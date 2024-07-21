@@ -12,10 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-test "add_string method coverage" {
-  let sb = StringBuilder::make()
-  add_string(sb, "Hello")
-  @test.eq(sb.buffer, "Hello")!
-  add_string(sb, " World")
-  @test.eq(sb.buffer, "Hello World")!
+pub fn assert_eq[T : Eq + Show](
+  a : T,
+  b : T,
+  ~loc : SourceLoc = _
+) -> Unit!String {
+  if a != b {
+    raise "FAILED: \(loc) `\(a) == \(b)`"
+  }
 }

@@ -477,6 +477,11 @@ pub fn UInt64::op_mod(self : UInt64, other : UInt64) -> UInt64 {
 
 pub fn UInt64::to_int64(self : UInt64) -> Int64 = "%identity"
 
+// TODO: make it intrinsic
+pub fn UInt64::to_uint(self : UInt64) -> UInt {
+  self.land(0xFFFF_FFFFUL).to_int64().to_int().to_uint()
+}
+
 pub fn UInt64::compare(self : UInt64, other : UInt64) -> Int {
   MyInt64::from_uint64(self).compare_u(MyInt64::from_uint64(other))
 }

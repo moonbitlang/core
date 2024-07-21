@@ -3,5 +3,9 @@
     "moonbitlang/core/builtin",
     "moonbitlang/core/array",
     "moonbitlang/core/coverage"
+  ],
+  "test-import": [
+    "moonbitlang/core/builtin",
+    "moonbitlang/core/coverage"
   ]
 }

@@ -12,226 +12,218 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-fn parse_as_result(input : String) -> Result[JsonValue, ParseError] {
-  try {
-    parse(input)! |> Ok
-  } catch {
-    err => Err(err)
-  }
-}
-
 //region errors
 test "throws on empty documents" {
-  inspect(parse_as_result(""), content="Err(Unexpected end of file)")!
+  inspect!(parse_as_result(""), content="Err(Unexpected end of file)")
 }
 
 test "throws on invalid characters in values" {
-  inspect(
+  inspect!(
     parse_as_result("a"),
     content="Err(Invalid character 'a' at line 1, column 0)",
-  )!
+  )
 }
 
 test "throws on invalid characters following a sign" {
-  inspect(
+  inspect!(
     parse_as_result("-a"),
     content="Err(Invalid character 'a' at line 1, column 1)",
-  )!
+  )
 }
 
 test "throws on invalid characters following a leading decimal point" {
-  inspect(
+  inspect!(
     parse_as_result("1.a"),
     content="Err(Invalid character 'a' at line 1, column 2)",
-  )!
+  )
 }
 
 test "throws on invalid characters following an exponent indicator" {
-  inspect(
+  inspect!(
     parse_as_result("1ea"),
     content="Err(Invalid character 'a' at line 1, column 2)",
-  )!
+  )
 }
 
 test "throws on invalid characters following an exponent sign" {
-  inspect(
+  inspect!(
     parse_as_result("1e-a"),
     content="Err(Invalid character 'a' at line 1, column 3)",
-  )!
+  )
 }
 
 test "throws on invalid new lines in strings" {
   let res = parse_as_result("\"\n\"")
-  @test.eq(res, Err(InvalidChar({ line: 1, column: 1 }, '\n')))!
+  @test.eq!(res, Err(InvalidChar({ line: 1, column: 1 }, '\n')))
 }
 
 test "throws on unterminated strings" {
-  inspect(parse_as_result("\""), content="Err(Unexpected end of file)")!
+  inspect!(parse_as_result("\""), content="Err(Unexpected end of file)")
 }
 
 test "throws on invalid identifier start characters in property names" {
-  inspect(
+  inspect!(
     parse_as_result("{!:1}"),
     content="Err(Invalid character '!' at line 1, column 1)",
-  )!
+  )
 }
 
 test "throws on invalid characters following a property name" {
-  inspect(
+  inspect!(
     parse_as_result("{\"a\"!1}"),
     content="Err(Invalid character '!' at line 1, column 4)",
-  )!
+  )
 }
 
 test "throws on invalid characters following a property value" {
-  inspect(
+  inspect!(
     parse_as_result("{\"a\":1!}"),
     content="Err(Invalid character '!' at line 1, column 6)",
-  )!
+  )
 }
 
 test "throws on invalid characters following an array value" {
-  inspect(
+  inspect!(
     parse_as_result("[1!]"),
     content="Err(Invalid character '!' at line 1, column 2)",
-  )!
+  )
 }
 
 test "throws on invalid characters in literals" {
-  inspect(
+  inspect!(
     parse_as_result("tru!"),
     content="Err(Invalid character '!' at line 1, column 3)",
-  )!
+  )
 }
 
 test "throws on unterminated escapes" {
-  inspect(parse_as_result("\"\\"), content="Err(Unexpected end of file)")!
+  inspect!(parse_as_result("\"\\"), content="Err(Unexpected end of file)")
 }
 
 test "throws on invalid unicode escapes" {
-  inspect(
+  inspect!(
     parse_as_result("\"\\u000g\""),
     content="Err(Invalid character 'g' at line 1, column 6)",
-  )!
+  )
 }
 
 test "throws on escaped digits" {
-  inspect(
+  inspect!(
     parse_as_result("\"\\0\""),
     content="Err(Invalid character '0' at line 1, column 2)",
-  )!
-  inspect(
+  )
+  inspect!(
     parse_as_result("\"\\1\""),
     content="Err(Invalid character '1' at line 1, column 2)",
-  )!
+  )
 }
 
 test "throws on multiple values" {
-  inspect(
+  inspect!(
     parse_as_result("1 2"),
     content="Err(Invalid character '2' at line 1, column 2)",
-  )!
+  )
 }
 
 test "throws on unclosed objects before property names" {
-  inspect(parse_as_result("{"), content="Err(Unexpected end of file)")!
+  inspect!(parse_as_result("{"), content="Err(Unexpected end of file)")
 }
 
 test "throws on unclosed objects after property names" {
-  inspect(parse_as_result("{\"a\""), content="Err(Unexpected end of file)")!
+  inspect!(parse_as_result("{\"a\""), content="Err(Unexpected end of file)")
 }
 
 test "throws on unclosed objects before property values" {
-  inspect(parse_as_result("{\"a\":"), content="Err(Unexpected end of file)")!
+  inspect!(parse_as_result("{\"a\":"), content="Err(Unexpected end of file)")
 }
 
 test "throws on unclosed objects after property values" {
-  inspect(parse_as_result("{\"a\":1"), content="Err(Unexpected end of file)")!
+  inspect!(parse_as_result("{\"a\":1"), content="Err(Unexpected end of file)")
 }
 
 test "throws on unclosed arrays before values" {
-  inspect(parse_as_result("["), content="Err(Unexpected end of file)")!
+  inspect!(parse_as_result("["), content="Err(Unexpected end of file)")
 }
 
 test "throws on unclosed arrays after values" {
-  inspect(parse_as_result("[1"), content="Err(Unexpected end of file)")!
+  inspect!(parse_as_result("[1"), content="Err(Unexpected end of file)")
 }
 
 test "throws on invalid property names" {
-  inspect(
+  inspect!(
     parse_as_result("{a:1}"),
     content="Err(Invalid character 'a' at line 1, column 1)",
-  )!
+  )
 }
 
 test "throws on array with extra comma" {
-  inspect(
+  inspect!(
     parse_as_result("[1,]"),
     content="Err(Invalid character ']' at line 1, column 3)",
-  )!
-  inspect(
+  )
+  inspect!(
     parse_as_result("[\"\",]"),
     content="Err(Invalid character ']' at line 1, column 4)",
-  )!
+  )
 }
 
 test "throws on object with extra comma" {
-  inspect(
+  inspect!(
     parse_as_result("{\"id\":0,}"),
     content="Err(Invalid character '}' at line 1, column 8)",
-  )!
+  )
 }
 
 test "throws on invalid number" {
-  inspect(
+  inspect!(
     parse_as_result("+1"),
     content="Err(Invalid character '+' at line 1, column 0)",
-  )!
-  inspect(parse_as_result("-2."), content="Err(Unexpected end of file)")!
-  inspect(
+  )
+  inspect!(parse_as_result("-2."), content="Err(Unexpected end of file)")
+  inspect!(
     parse_as_result(".2e-3"),
     content="Err(Invalid character '.' at line 1, column 0)",
-  )!
-  inspect(
+  )
+  inspect!(
     parse_as_result("0.e1"),
     content="Err(Invalid character 'e' at line 1, column 2)",
-  )!
-  inspect(
+  )
+  inspect!(
     parse_as_result("2.e+3"),
     content="Err(Invalid character 'e' at line 1, column 2)",
-  )!
-  inspect(
+  )
+  inspect!(
     parse_as_result("2.e-3"),
     content="Err(Invalid character 'e' at line 1, column 2)",
-  )!
-  inspect(
+  )
+  inspect!(
     parse_as_result("-.123"),
     content="Err(Invalid character '.' at line 1, column 1)",
-  )!
-  inspect(parse_as_result("1."), content="Err(Unexpected end of file)")!
-  inspect(
+  )
+  inspect!(parse_as_result("1."), content="Err(Unexpected end of file)")
+  inspect!(
     parse_as_result(".123"),
     content="Err(Invalid character '.' at line 1, column 0)",
-  )!
-  inspect(
+  )
+  inspect!(
     parse_as_result("[1.]"),
     content="Err(Invalid character ']' at line 1, column 3)",
-  )!
+  )
 }
 
 test "throws on invalid chars" {
-  inspect(
+  inspect!(
     parse_as_result("[\u000c]"),
     content="Err(Invalid character '\x0c' at line 1, column 1)",
-  )!
-  inspect(
+  )
+  inspect!(
     parse_as_result("[\"\u0009\"]"),
     content="Err(Invalid character '\t' at line 1, column 2)",
-  )!
-  inspect(
+  )
+  inspect!(
     parse_as_result("[\"a\u0000a\"]"),
     content="Err(Invalid character '\x00' at line 1, column 3)",
-  )!
+  )
 }
 
 //endregion

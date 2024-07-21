@@ -23,10 +23,12 @@ impl T {
   remove[K : Compare + Eq, V](Self[K, V], K) -> Unit
   size[K, V](Self[K, V]) -> Int
   to_array[K, V](Self[K, V]) -> Array[Tuple[K, V]]
+  to_string[K : Show, V : Show](Self[K, V]) -> String
   values[K, V](Self[K, V]) -> Array[V]
 }
 
 // Traits
 
 // Extension Methods
+impl Show for T
 

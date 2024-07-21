@@ -18,4 +18,5 @@ impl CoverageCounter {
 // Traits
 
 // Extension Methods
+impl Show for CoverageCounter
 

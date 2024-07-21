@@ -234,10 +234,28 @@ pub fn debug_write[K : Debug, V : Debug](
   buf.write_string("]")
 }
 
-pub fn to_string[K : Debug, V : Debug](self : Map[K, V]) -> String {
-  let buf = Buffer::new(size_hint=0)
-  self.debug_write(buf)
-  buf.to_string()
+pub impl[K : Show, V : Show] Show for Map[K, V] with output(self, logger) {
+  let mut is_first = true
+  logger.write_string("@immut/hashmap.of([")
+  self.each(
+    fn(k, v) {
+      if is_first {
+        is_first = false
+      } else {
+        logger.write_string(", ")
+      }
+      logger.write_string("(")
+      k.output(logger)
+      logger.write_string(", ")
+      v.output(logger)
+      logger.write_string(")")
+    },
+  )
+  logger.write_string("])")
+}
+
+pub fn to_string[K : Show, V : Show](self : Map[K, V]) -> String {
+  Show::to_string(self)
 }
 
 pub fn Map::from_array[K : Eq + Hash, V](arr : Array[(K, V)]) -> Map[K, V] {

@@ -54,67 +54,67 @@ pub fn size(self : Bitset) -> Int {
 
 test "Bitset::has" {
   let b = empty_bitset.add(2)
-  inspect(b.has(0), content="false")!
-  inspect(b.has(2), content="true")!
+  inspect!(b.has(0), content="false")
+  inspect!(b.has(2), content="true")
   let b = b.add(0)
-  inspect(b.has(0), content="true")!
-  inspect(b.has(2), content="true")!
+  inspect!(b.has(0), content="true")
+  inspect!(b.has(2), content="true")
 }
 
 test "Bitset::index_of" {
   let b = empty_bitset.add(2)
-  inspect(b.index_of(2), content="0")!
+  inspect!(b.index_of(2), content="0")
   let b = b.add(0)
-  inspect(b.index_of(2), content="1")!
+  inspect!(b.index_of(2), content="1")
   let b = b.add(5)
-  inspect(b.index_of(2), content="1")!
+  inspect!(b.index_of(2), content="1")
   // when elem is missing
-  inspect(b.index_of(3), content="2")!
-  inspect(b.index_of(4), content="2")!
+  inspect!(b.index_of(3), content="2")
+  inspect!(b.index_of(4), content="2")
   // 5 is
-  inspect(b.index_of(5), content="2")!
+  inspect!(b.index_of(5), content="2")
   // 6 is not
-  inspect(b.index_of(6), content="3")!
+  inspect!(b.index_of(6), content="3")
 }
 
 test "Bitset::remove" {
   let b = empty_bitset.add(2).add(3)
-  inspect(b.has(2), content="true")!
-  inspect(b.has(3), content="true")!
-  inspect(b.index_of(2), content="0")!
-  inspect(b.index_of(3), content="1")!
+  inspect!(b.has(2), content="true")
+  inspect!(b.has(3), content="true")
+  inspect!(b.index_of(2), content="0")
+  inspect!(b.index_of(3), content="1")
   let b = b.remove(2)
-  inspect(b.has(2), content="false")!
-  inspect(b.has(3), content="true")!
-  inspect(b.index_of(3), content="0")!
+  inspect!(b.has(2), content="false")
+  inspect!(b.has(3), content="true")
+  inspect!(b.index_of(3), content="0")
 }
 
 test "Bitset::remove" {
   let b = empty_bitset.add(2).add(3)
-  inspect(b.has(2), content="true")!
-  inspect(b.has(3), content="true")!
-  inspect(b.index_of(2), content="0")!
-  inspect(b.index_of(3), content="1")!
+  inspect!(b.has(2), content="true")
+  inspect!(b.has(3), content="true")
+  inspect!(b.index_of(2), content="0")
+  inspect!(b.index_of(3), content="1")
   let b = b.remove(2)
-  inspect(b.has(2), content="false")!
-  inspect(b.has(3), content="true")!
-  inspect(b.index_of(3), content="0")!
+  inspect!(b.has(2), content="false")
+  inspect!(b.has(3), content="true")
+  inspect!(b.index_of(3), content="0")
 }
 
 test "Bitset::size" {
   let b = empty_bitset
-  inspect(b.size(), content="0")!
+  inspect!(b.size(), content="0")
   let b = b.add(0)
-  inspect(b.size(), content="1")!
+  inspect!(b.size(), content="1")
   let b = b.add(1)
-  inspect(b.size(), content="2")!
+  inspect!(b.size(), content="2")
   let b = b.add(1)
-  inspect(b.size(), content="2")!
+  inspect!(b.size(), content="2")
 }
 
 test "Bitset::ctpop" {
-  inspect(
+  inspect!(
     ([0, 0xf0f0f0f0, 0x3c3c0ff0] : Array[_]).map(fn { x => x.popcnt() }),
     content="[0, 16, 16]",
-  )!
+  )
 }

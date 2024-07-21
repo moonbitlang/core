@@ -8,7 +8,6 @@ impl String {
   contains(String, String) -> Bool
   default() -> String
   ends_with(String, String) -> Bool
-  hash(String) -> Int
   index_of(String, String, ~from : Int = ..) -> Int
   is_blank(String) -> Bool
   is_empty(String) -> Bool

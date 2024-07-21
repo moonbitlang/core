@@ -293,9 +293,119 @@ fn debug_entries[K : Show](self : HashSet[K]) -> String {
   s
 }
 
+pub impl[K : Show] Show for HashSet[K] with output(self, logger) {
+  logger.write_string("@hashset.of([")
+  self.eachi(
+    fn(i, x) {
+      if i > 0 {
+        logger.write_string(", ")
+      }
+      Show::output(x, logger)
+    },
+  )
+  logger.write_string("])")
+}
+
+// Reuse the default implementation of [Show::to_string] here
 pub fn to_string[K : Show](self : HashSet[K]) -> String {
-  let mut s = "@hashset.of("
-  s += self.iter().collect().to_string()
-  s += ")"
-  s
+  Show::to_string(self)
+}
+
+priv type MyString String derive(Eq)
+
+impl Hash for MyString with hash(self) { self.0.length() }
+
+impl Hash for MyString with hash_combine(self, hasher) {
+  hasher.combine_string(self.0)
+}
+
+impl Show for MyString with output(self, logger) { logger.write_string(self.0) }
+
+impl Debug for MyString with debug_write(self, b : Buffer) {
+  self.0.debug_write(b)
+}
+
+test "set" {
+  let m : HashSet[MyString] = HashSet::new()
+  m.insert("a")
+  m.insert("b")
+  m.insert("bc")
+  m.insert("abc")
+  m.insert("cd")
+  m.insert("c")
+  m.insert("d")
+  @test.eq!(m.size, 7)
+  @test.eq!(
+    m.debug_entries(),
+    "_,(0,a),(1,b),(2,c),(3,d),(3,bc),(4,cd),(4,abc),_,_,_,_,_,_,_,_",
+  )
+}
+
+test "remove" {
+  let m : HashSet[MyString] = HashSet::new()
+  fn i(s) {
+    MyString::MyString(s)
+  }
+
+  m.insert("a" |> i)
+  m.insert("ab" |> i)
+  m.insert("bc" |> i)
+  m.insert("cd" |> i)
+  m.insert("abc" |> i)
+  m.insert("abcdef" |> i)
+  m.remove("ab" |> i)
+  @test.eq!(m.size(), 5)
+  @test.eq!(m.debug_entries(), "_,(0,a),(0,bc),(1,cd),(1,abc),_,(0,abcdef),_")
+}
+
+test "remove_unexist_key" {
+  let m : HashSet[MyString] = HashSet::new()
+  fn i(s) {
+    MyString::MyString(s)
+  }
+
+  m.insert("a" |> i)
+  m.insert("ab" |> i)
+  m.insert("abc" |> i)
+  m.remove("d" |> i)
+  @test.eq!(m.size(), 3)
+  @test.eq!(m.debug_entries(), "_,(0,a),(0,ab),(0,abc),_,_,_,_")
+}
+
+test "grow" {
+  let m : HashSet[MyString] = HashSet::new()
+  fn i(s) {
+    MyString::MyString(s)
+  }
+
+  m.insert("C" |> i)
+  m.insert("Go" |> i)
+  m.insert("C++" |> i)
+  m.insert("Java" |> i)
+  m.insert("Scala" |> i)
+  m.insert("Julia" |> i)
+  @test.eq!(m.size, 6)
+  @test.eq!(m.capacity, 8)
+  m.insert("Cobol" |> i)
+  @test.eq!(m.size, 7)
+  @test.eq!(m.capacity, 16)
+  m.insert("Python" |> i)
+  m.insert("Haskell" |> i)
+  m.insert("Rescript" |> i)
+  @test.eq!(m.size, 10)
+  @test.eq!(m.capacity, 16)
+  @test.eq!(
+    m.debug_entries(),
+    "_,(0,C),(0,Go),(0,C++),(0,Java),(0,Scala),(1,Julia),(2,Cobol),(2,Python),(2,Haskell),(2,Rescript),_,_,_,_,_",
+  )
+}
+
+test "clear" {
+  let m : HashSet[MyString] = HashSet::new()
+  m.clear()
+  @test.eq!(m.size(), 0)
+  @test.eq!(m.capacity(), 8)
+  for i = 0; i < m.capacity(); i = i + 1 {
+    @test.is!(m.entries[i], None)
+  }
 }

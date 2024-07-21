@@ -3,6 +3,8 @@ package moonbitlang/core/builtin
 // Values
 fn abort[T](String) -> T
 
+fn assert_eq[T : Eq + Show](T, T, ~loc : SourceLoc = _) -> Unit!String
+
 fn debug[X : Debug](X) -> Unit
 
 fn ignore[T](T) -> Unit
@@ -38,6 +40,7 @@ type Array
 impl Array {
   append[T](Self[T], Self[T]) -> Unit
   blit_to[A](Self[A], Self[A], ~len : Int, ~src_offset : Int = .., ~dst_offset : Int = ..) -> Unit
+  capacity[T](Self[T]) -> Int
   chunk_by[T](Self[T], (T, T) -> Bool) -> Self[Self[T]]
   chunks[T](Self[T], Int) -> Self[Self[T]]
   clear[T](Self[T]) -> Unit
@@ -120,6 +123,24 @@ impl Buffer {
   write_char(Self, Char) -> Unit
   write_string(Self, String) -> Unit
   write_sub_string(Self, String, Int, Int) -> Unit
+}
+
+type Hasher
+impl Hasher {
+  combine[T : Hash](Self, T) -> Unit
+  combine_bool(Self, Bool) -> Unit
+  combine_byte(Self, Byte) -> Unit
+  combine_bytes(Self, Bytes) -> Unit
+  combine_char(Self, Char) -> Unit
+  combine_double(Self, Double) -> Unit
+  combine_int(Self, Int) -> Unit
+  combine_int64(Self, Int64) -> Unit
+  combine_string(Self, String) -> Unit
+  combine_uint(Self, UInt) -> Unit
+  combine_uint64(Self, UInt64) -> Unit
+  combine_unit(Self) -> Unit
+  finalize(Self) -> Int
+  new(~seed : Int = ..) -> Self
 }
 
 type Iter
@@ -216,6 +237,8 @@ impl Bool {
 impl Byte {
   compare(Byte, Byte) -> Int
   debug_write(Byte, Buffer) -> Unit
+  hash(Byte) -> Int
+  hash_combine(Byte, Hasher) -> Unit
   op_equal(Byte, Byte) -> Bool
   to_int(Byte) -> Int
   to_int64(Byte) -> Int64
@@ -235,6 +258,8 @@ impl Int {
   ctz(Int) -> Int
   debug_write(Int, Buffer) -> Unit
   default() -> Int
+  hash(Int) -> Int
+  hash_combine(Int, Hasher) -> Unit
   is_neg(Int) -> Bool
   is_non_neg(Int) -> Bool
   is_non_pos(Int) -> Bool
@@ -307,6 +332,7 @@ impl UInt {
   op_sub(UInt, UInt) -> UInt
   to_int(UInt) -> Int
   to_string(UInt) -> String
+  to_uint64(UInt) -> UInt64
   trunc_double(Double) -> UInt
 }
 impl UInt64 {
@@ -326,6 +352,7 @@ impl UInt64 {
   op_sub(UInt64, UInt64) -> UInt64
   to_int64(UInt64) -> Int64
   to_string(UInt64) -> String
+  to_uint(UInt64) -> UInt
   trunc_double(Double) -> UInt64
 }
 impl Double {
@@ -350,6 +377,8 @@ impl Double {
 impl String {
   debug_write(String, Buffer) -> Unit
   get(String, Int) -> Char
+  hash(String) -> Int
+  hash_combine(String, Hasher) -> Unit
   length(String) -> Int
   make(Int, Char) -> String
   op_add(String, String) -> String
@@ -388,7 +417,8 @@ impl Bytes {
   copy(Bytes) -> Bytes
   debug_write(Bytes, Buffer) -> Unit
   length(Bytes) -> Int
-  make(Int, ~init : Byte = ..) -> Bytes
+  make(Int, Byte) -> Bytes
+  new(Int) -> Bytes
   of_string(String) -> Bytes
   op_get(Bytes, Int) -> Byte
   op_set(Bytes, Int, Byte) -> Unit
@@ -399,6 +429,61 @@ impl Bytes {
 }
 impl Ref {
   debug_write[X : Debug](Self[X], Buffer) -> Unit
+}
+impl Tuple {
+  debug_write[X : Debug, Y : Debug](Self[X, Y], Buffer) -> Unit
+  op_equal[T0 : Eq, T1 : Eq](Self[T0, T1], Self[T0, T1]) -> Bool
+  to_string[A : Show, B : Show](Self[A, B]) -> String
+}
+impl Tuple {
+  debug_write[X : Debug, Y : Debug, Z : Debug](Self[X, Y, Z], Buffer) -> Unit
+  op_equal[T0 : Eq, T1 : Eq, T2 : Eq](Self[T0, T1, T2], Self[T0, T1, T2]) -> Bool
+  to_string[A : Show, B : Show, C : Show](Self[A, B, C]) -> String
+}
+impl Tuple {
+  debug_write[X : Debug, Y : Debug, Z : Debug, W : Debug](Self[X, Y, Z, W], Buffer) -> Unit
+  op_equal[T0 : Eq, T1 : Eq, T2 : Eq, T3 : Eq](Self[T0, T1, T2, T3], Self[T0, T1, T2, T3]) -> Bool
+  to_string[A : Show, B : Show, C : Show, D : Show](Self[A, B, C, D]) -> String
+}
+impl Tuple {
+  debug_write[X1 : Debug, X2 : Debug, X3 : Debug, X4 : Debug, X5 : Debug](Self[X1, X2, X3, X4, X5], Buffer) -> Unit
+  op_equal[T0 : Eq, T1 : Eq, T2 : Eq, T3 : Eq, T4 : Eq](Self[T0, T1, T2, T3, T4], Self[T0, T1, T2, T3, T4]) -> Bool
+  to_string[A : Show, B : Show, C : Show, D : Show, E : Show](Self[A, B, C, D, E]) -> String
+}
+impl Tuple {
+  op_equal[T0 : Eq, T1 : Eq, T2 : Eq, T3 : Eq, T4 : Eq, T5 : Eq](Self[T0, T1, T2, T3, T4, T5], Self[T0, T1, T2, T3, T4, T5]) -> Bool
+  to_string[A : Show, B : Show, C : Show, D : Show, E : Show, F : Show](Self[A, B, C, D, E, F]) -> String
+}
+impl Tuple {
+  op_equal[T0 : Eq, T1 : Eq, T2 : Eq, T3 : Eq, T4 : Eq, T5 : Eq, T6 : Eq](Self[T0, T1, T2, T3, T4, T5, T6], Self[T0, T1, T2, T3, T4, T5, T6]) -> Bool
+  to_string[A : Show, B : Show, C : Show, D : Show, E : Show, F : Show, G : Show](Self[A, B, C, D, E, F, G]) -> String
+}
+impl Tuple {
+  op_equal[T0 : Eq, T1 : Eq, T2 : Eq, T3 : Eq, T4 : Eq, T5 : Eq, T6 : Eq, T7 : Eq](Self[T0, T1, T2, T3, T4, T5, T6, T7], Self[T0, T1, T2, T3, T4, T5, T6, T7]) -> Bool
+}
+impl Tuple {
+  op_equal[T0 : Eq, T1 : Eq, T2 : Eq, T3 : Eq, T4 : Eq, T5 : Eq, T6 : Eq, T7 : Eq, T8 : Eq](Self[T0, T1, T2, T3, T4, T5, T6, T7, T8], Self[T0, T1, T2, T3, T4, T5, T6, T7, T8]) -> Bool
+}
+impl Tuple {
+  op_equal[T0 : Eq, T1 : Eq, T2 : Eq, T3 : Eq, T4 : Eq, T5 : Eq, T6 : Eq, T7 : Eq, T8 : Eq, T9 : Eq](Self[T0, T1, T2, T3, T4, T5, T6, T7, T8, T9], Self[T0, T1, T2, T3, T4, T5, T6, T7, T8, T9]) -> Bool
+}
+impl Tuple {
+  op_equal[T0 : Eq, T1 : Eq, T2 : Eq, T3 : Eq, T4 : Eq, T5 : Eq, T6 : Eq, T7 : Eq, T8 : Eq, T9 : Eq, T10 : Eq](Self[T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10], Self[T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10]) -> Bool
+}
+impl Tuple {
+  op_equal[T0 : Eq, T1 : Eq, T2 : Eq, T3 : Eq, T4 : Eq, T5 : Eq, T6 : Eq, T7 : Eq, T8 : Eq, T9 : Eq, T10 : Eq, T11 : Eq](Self[T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11], Self[T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11]) -> Bool
+}
+impl Tuple {
+  op_equal[T0 : Eq, T1 : Eq, T2 : Eq, T3 : Eq, T4 : Eq, T5 : Eq, T6 : Eq, T7 : Eq, T8 : Eq, T9 : Eq, T10 : Eq, T11 : Eq, T12 : Eq](Self[T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12], Self[T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12]) -> Bool
+}
+impl Tuple {
+  op_equal[T0 : Eq, T1 : Eq, T2 : Eq, T3 : Eq, T4 : Eq, T5 : Eq, T6 : Eq, T7 : Eq, T8 : Eq, T9 : Eq, T10 : Eq, T11 : Eq, T12 : Eq, T13 : Eq](Self[T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13], Self[T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13]) -> Bool
+}
+impl Tuple {
+  op_equal[T0 : Eq, T1 : Eq, T2 : Eq, T3 : Eq, T4 : Eq, T5 : Eq, T6 : Eq, T7 : Eq, T8 : Eq, T9 : Eq, T10 : Eq, T11 : Eq, T12 : Eq, T13 : Eq, T14 : Eq](Self[T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14], Self[T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14]) -> Bool
+}
+impl Tuple {
+  op_equal[T0 : Eq, T1 : Eq, T2 : Eq, T3 : Eq, T4 : Eq, T5 : Eq, T6 : Eq, T7 : Eq, T8 : Eq, T9 : Eq, T10 : Eq, T11 : Eq, T12 : Eq, T13 : Eq, T14 : Eq, T15 : Eq](Self[T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15], Self[T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15]) -> Bool
 }
 
 // Traits
@@ -419,12 +504,71 @@ pub trait Eq {
 }
 
 pub trait Hash {
+  hash_combine(Self, Hasher) -> Unit
   hash(Self) -> Int
 }
 
+pub trait Logger {
+  write_string(Self, String) -> Unit
+  write_sub_string(Self, String, Int, Int) -> Unit
+  write_char(Self, Char) -> Unit
+}
+
 pub trait Show {
+  output(Self, Logger) -> Unit
   to_string(Self) -> String
 }
 
 // Extension Methods
+impl Show for Unit
+
+impl Show for Bool
+
+impl Show for Byte
+
+impl Show for Int
+
+impl Show for Int64
+
+impl Show for UInt
+
+impl Show for UInt64
+
+impl Show for String
+
+impl Show for Option
+
+impl Show for Result
+
+impl Show for FixedArray
+
+impl Show for Bytes
+
+impl Show for Ref
+
+impl Show for Array
+
+impl Show for ArrayView
+
+impl Show for Buffer
+
+impl Show for Iter
+
+impl Show for Map
+
+impl Show for Show
+
+impl Show for SourceLoc
+
+impl Show for Tuple
+
+impl Show for Tuple
+
+impl Show for Tuple
+
+impl Show for Tuple
+
+impl Show for Tuple
+
+impl Show for Tuple
 

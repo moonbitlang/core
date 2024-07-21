@@ -42,17 +42,22 @@ pub fn Queue::from_array[T](arr : Array[T]) -> Queue[T] {
   queue
 }
 
-pub fn to_string[T : Show](self : Queue[T]) -> String {
-  let mut res = "Queue::["
+pub impl[T : Show] Show for Queue[T] with output(self, logger) {
+  logger.write_string("@queue.of([")
   self.eachi(
     fn(i, t) {
       if i > 0 {
-        res += ", "
+        logger.write_string(", ")
       }
-      res += t.to_string()
+      t.output(logger)
     },
   )
-  res + "]"
+  logger.write_string("])")
+}
+
+// Reuse the default implementation of [Show::to_string] here
+pub fn to_string[T : Show](self : Queue[T]) -> String {
+  Show::to_string(self)
 }
 
 pub fn debug_write[T : Show](self : Queue[T], buf : Buffer) -> Unit {
@@ -333,4 +338,63 @@ pub fn Queue::of[T](arr : FixedArray[T]) -> Queue[T] {
     queue.first = Cons({ content: arr[i], next: queue.first })
   }
   queue
+}
+
+test "from_fixed_array_2" {
+  let q = of([1, 2, 3, 4])
+  q.push(11)
+  @test.eq!(q, of([1, 2, 3, 4, 11]))
+  q.pop_exn() |> ignore
+  @test.eq!(q, of([2, 3, 4, 11]))
+}
+
+test "from_array_2" {
+  let q = of([1, 2, 3, 4])
+  q.push(11)
+  @test.eq!(q, of([1, 2, 3, 4, 11]))
+  q.pop_exn() |> ignore
+  @test.eq!(q, of([2, 3, 4, 11]))
+}
+
+test "op_equal" {
+  let queue = of([1, 2, 3, 4])
+  let queue2 = of([1, 2, 3, 4])
+  let queue3 = of([1, 2, 3, 5])
+  @test.is_true!(queue == queue2)
+  @test.is_false!(queue == queue3)
+  queue.pop_exn() |> ignore
+  @test.is_false!(queue == queue2)
+  @test.eq!(queue, of([2, 3, 4]))
+}
+
+test "push" {
+  let queue : Queue[Int] = new()
+  queue.push(1)
+  queue.push(2)
+  queue.push(3)
+  queue.push(1)
+  @test.eq!(queue.length(), 4)
+  @test.eq!(queue, of([1, 2, 3, 1]))
+}
+
+test "copy" {
+  let queue : Queue[Int] = of([1, 2, 3, 4])
+  let queue2 : Queue[Int] = queue.copy()
+  @test.eq!(queue2.length(), 4)
+  @test.eq!(queue2, of([1, 2, 3, 4]))
+  @test.eq!(queue.length(), 4)
+  @test.eq!(queue, of([1, 2, 3, 4]))
+}
+
+test "transfer" {
+  let queue : Queue[Int] = of([1, 2, 3, 4])
+  let queue2 : Queue[Int] = of([5, 6, 7, 8])
+  queue.transfer(queue2)
+  @test.eq!(queue.length(), 0)
+  @test.eq!(queue2.length(), 8)
+  @test.eq!(queue2, of([5, 6, 7, 8, 1, 2, 3, 4]))
+}
+
+test "cell_equal" {
+  @test.is_false!(of([]).first == of([1]).first)
 }

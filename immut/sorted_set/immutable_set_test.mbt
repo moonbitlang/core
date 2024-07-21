@@ -17,204 +17,293 @@
 // All operations over sets are purely applicative (no side-effects).
 
 test "new" {
-  let empty : ImmutableSet[Int] = ImmutableSet::new()
-  inspect(empty, content="ImmutableSet::[]")!
+  let empty : @sorted_set.ImmutableSet[Int] = @sorted_set.new()
+  inspect!(empty, content="@immut/sorted_set.of([])")
 }
 
 test "disjoint" {
-  inspect(of([1]).disjoint(of([1, 2, 3])), content="false")!
-  inspect(of([1, 2, 3]).disjoint(of([1, 2, 3])), content="false")!
-  inspect(of([1, 2, 3]).disjoint(of([4, 5, 6])), content="true")!
-  inspect(of([1, 2, 3]).subset(of([3, 4, 5])), content="false")!
+  inspect!(
+    @sorted_set.of([1]).disjoint(@sorted_set.of([1, 2, 3])),
+    content="false",
+  )
+  inspect!(
+    @sorted_set.of([1, 2, 3]).disjoint(@sorted_set.of([1, 2, 3])),
+    content="false",
+  )
+  inspect!(
+    @sorted_set.of([1, 2, 3]).disjoint(@sorted_set.of([4, 5, 6])),
+    content="true",
+  )
+  inspect!(
+    @sorted_set.of([1, 2, 3]).subset(@sorted_set.of([3, 4, 5])),
+    content="false",
+  )
 }
 
 test "subset" {
-  inspect(of([1, 2, 3]).subset(of([7, 2, 9, 4, 5, 6, 3, 8, 1])), content="true")!
-  inspect(of([1, 2, 3]).subset(of([10, 11, 12, 13, 14])), content="false")!
+  inspect!(
+    @sorted_set.of([1, 2, 3]).subset(
+      @sorted_set.of([7, 2, 9, 4, 5, 6, 3, 8, 1]),
+    ),
+    content="true",
+  )
+  inspect!(
+    @sorted_set.of([1, 2, 3]).subset(@sorted_set.of([10, 11, 12, 13, 14])),
+    content="false",
+  )
 }
 
 test "diff" {
-  let empty : ImmutableSet[Int] = ImmutableSet::new()
-  inspect(empty.diff(of([1, 2, 3])), content="ImmutableSet::[]")!
-  inspect(of([1, 2, 3]).diff(empty), content="ImmutableSet::[1, 2, 3]")!
-  inspect(of([1, 2, 3]).diff(of([4, 5, 1])), content="ImmutableSet::[2, 3]")!
-  inspect(of([1, 2, 3]).diff(of([1, 2, 3])), content="ImmutableSet::[]")!
+  let empty = @sorted_set.new()
+  inspect!(
+    empty.diff(@sorted_set.of([1, 2, 3])),
+    content="@immut/sorted_set.of([])",
+  )
+  inspect!(
+    @sorted_set.of([1, 2, 3]).diff(empty),
+    content="@immut/sorted_set.of([1, 2, 3])",
+  )
+  inspect!(
+    @sorted_set.of([1, 2, 3]).diff(@sorted_set.of([4, 5, 1])),
+    content="@immut/sorted_set.of([2, 3])",
+  )
+  inspect!(
+    @sorted_set.of([1, 2, 3]).diff(@sorted_set.of([1, 2, 3])),
+    content="@immut/sorted_set.of([])",
+  )
 }
 
 test "inter" {
-  inspect(of([3, 4, 5]).inter(of([4, 5, 6])), content="ImmutableSet::[4, 5]")!
-  inspect(of([3, 4]).inter(of([5, 6])), content="ImmutableSet::[]")!
+  inspect!(
+    @sorted_set.of([3, 4, 5]).inter(@sorted_set.of([4, 5, 6])),
+    content="@immut/sorted_set.of([4, 5])",
+  )
+  inspect!(
+    @sorted_set.of([3, 4]).inter(@sorted_set.of([5, 6])),
+    content="@immut/sorted_set.of([])",
+  )
 }
 
 test "union" {
-  let empty : ImmutableSet[Int] = ImmutableSet::new()
-  inspect(empty.union(of([4, 5, 6])), content="ImmutableSet::[4, 5, 6]")!
-  inspect(of([4, 5, 6]).union(empty), content="ImmutableSet::[4, 5, 6]")!
-  inspect(of([3]).union(of([4, 5, 6])), content="ImmutableSet::[3, 4, 5, 6]")!
-  inspect(of([3, 4, 5]).union(of([6])), content="ImmutableSet::[3, 4, 5, 6]")!
-  inspect(
-    of([3, 4, 5]).union(of([4, 5, 6])),
-    content="ImmutableSet::[3, 4, 5, 6]",
-  )!
+  let empty = @sorted_set.new()
+  inspect!(
+    empty.union(@sorted_set.of([4, 5, 6])),
+    content="@immut/sorted_set.of([4, 5, 6])",
+  )
+  inspect!(
+    @sorted_set.of([4, 5, 6]).union(empty),
+    content="@immut/sorted_set.of([4, 5, 6])",
+  )
+  inspect!(
+    @sorted_set.of([3]).union(@sorted_set.of([4, 5, 6])),
+    content="@immut/sorted_set.of([3, 4, 5, 6])",
+  )
+  inspect!(
+    @sorted_set.of([3, 4, 5]).union(@sorted_set.of([6])),
+    content="@immut/sorted_set.of([3, 4, 5, 6])",
+  )
+  inspect!(
+    @sorted_set.of([3, 4, 5]).union(@sorted_set.of([4, 5, 6])),
+    content="@immut/sorted_set.of([3, 4, 5, 6])",
+  )
 }
 
 test "map" {
-  inspect(
-    of([1, 2, 3, 4, 5]).map(fn(x) { x * 2 }),
-    content="ImmutableSet::[2, 4, 6, 8, 10]",
-  )!
+  inspect!(
+    @sorted_set.of([1, 2, 3, 4, 5]).map(fn(x) { x * 2 }),
+    content="@immut/sorted_set.of([2, 4, 6, 8, 10])",
+  )
 }
 
 test "all" {
-  inspect(of([2, 4, 6]).all(fn(v) { v % 2 == 0 }), content="true")!
-  inspect(of([1, 3, 5]).all(fn(v) { v % 2 == 0 }), content="false")!
+  inspect!(@sorted_set.of([2, 4, 6]).all(fn(v) { v % 2 == 0 }), content="true")
+  inspect!(@sorted_set.of([1, 3, 5]).all(fn(v) { v % 2 == 0 }), content="false")
 }
 
 test "any" {
-  inspect(of([1, 4, 3]).any(fn(v) { v % 2 == 0 }), content="true")!
-  inspect(of([1, 5, 3]).any(fn(v) { v % 2 == 0 }), content="false")!
+  inspect!(@sorted_set.of([1, 4, 3]).any(fn(v) { v % 2 == 0 }), content="true")
+  inspect!(@sorted_set.of([1, 5, 3]).any(fn(v) { v % 2 == 0 }), content="false")
 }
 
 test "fold" {
-  inspect(
-    of([1, 2, 3, 4, 5]).fold(init=0, fn(acc, x) { acc + x }),
+  inspect!(
+    @sorted_set.of([1, 2, 3, 4, 5]).fold(init=0, fn(acc, x) { acc + x }),
     content="15",
-  )!
+  )
 }
 
 test "filter" {
-  inspect(
-    of([1, 2, 3, 4, 5, 6]).filter(fn(v) { v % 2 == 0 }),
-    content="ImmutableSet::[2, 4, 6]",
-  )!
+  inspect!(
+    @sorted_set.of([1, 2, 3, 4, 5, 6]).filter(fn(v) { v % 2 == 0 }),
+    content="@immut/sorted_set.of([2, 4, 6])",
+  )
 }
 
 test "split" {
-  let (left, present, right) = of([7, 2, 9, 4, 5, 6, 3, 8, 1]).split(5)
-  inspect(present, content="true")!
-  inspect(left, content="ImmutableSet::[1, 2, 3, 4]")!
-  inspect(right, content="ImmutableSet::[6, 7, 8, 9]")!
-  let (left, present, right) = of([7, 2, 9, 4, 5, 6, 3, 8, 1]).split(0)
-  inspect(present, content="false")!
-  inspect(left, content="ImmutableSet::[]")!
-  inspect(right, content="ImmutableSet::[1, 2, 3, 4, 5, 6, 7, 8, 9]")!
+  let (left, present, right) = @sorted_set.of([7, 2, 9, 4, 5, 6, 3, 8, 1]).split(
+    5,
+  )
+  inspect!(present, content="true")
+  inspect!(left, content="@immut/sorted_set.of([1, 2, 3, 4])")
+  inspect!(right, content="@immut/sorted_set.of([6, 7, 8, 9])")
+  let (left, present, right) = @sorted_set.of([7, 2, 9, 4, 5, 6, 3, 8, 1]).split(
+    0,
+  )
+  inspect!(present, content="false")
+  inspect!(left, content="@immut/sorted_set.of([])")
+  inspect!(right, content="@immut/sorted_set.of([1, 2, 3, 4, 5, 6, 7, 8, 9])")
 }
 
 test "contain" {
-  inspect(of([7, 2, 9, 4, 6, 3, 8, 1]).add(5).contains(5), content="true")!
-  inspect(of([7, 2, 9, 4, 6, 3, 8, 1]).contains(5), content="false")!
+  inspect!(
+    @sorted_set.of([7, 2, 9, 4, 6, 3, 8, 1]).add(5).contains(5),
+    content="true",
+  )
+  inspect!(
+    @sorted_set.of([7, 2, 9, 4, 6, 3, 8, 1]).contains(5),
+    content="false",
+  )
 }
 
 test "to_array" {
-  inspect(
-    of([7, 2, 9, 4, 5, 6, 3, 8, 1]).to_array(),
+  inspect!(
+    @sorted_set.of([7, 2, 9, 4, 5, 6, 3, 8, 1]).to_array(),
     content="[1, 2, 3, 4, 5, 6, 7, 8, 9]",
-  )!
+  )
 }
 
 test "from_fixed_array" {
-  inspect(
-    of([7, 2, 9, 4, 5, 6, 3, 8, 1]),
-    content="ImmutableSet::[1, 2, 3, 4, 5, 6, 7, 8, 9]",
-  )!
+  inspect!(
+    @sorted_set.of([7, 2, 9, 4, 5, 6, 3, 8, 1]),
+    content="@immut/sorted_set.of([1, 2, 3, 4, 5, 6, 7, 8, 9])",
+  )
 }
 
 test "from_array" {
-  inspect(
-    ImmutableSet::of([7, 2, 9, 4, 5, 6, 3, 8, 1]),
-    content="ImmutableSet::[1, 2, 3, 4, 5, 6, 7, 8, 9]",
-  )!
+  inspect!(
+    @sorted_set.of([7, 2, 9, 4, 5, 6, 3, 8, 1]),
+    content="@immut/sorted_set.of([1, 2, 3, 4, 5, 6, 7, 8, 9])",
+  )
 }
 
 test "remove_min" {
-  inspect(of([3, 4, 5]).remove_min(), content="ImmutableSet::[4, 5]")!
+  inspect!(
+    @sorted_set.of([3, 4, 5]).remove_min(),
+    content="@immut/sorted_set.of([4, 5])",
+  )
 }
 
 test "add" {
-  inspect(
-    of([7, 2, 9, 4, 6, 3, 8, 1]).add(5),
-    content="ImmutableSet::[1, 2, 3, 4, 5, 6, 7, 8, 9]",
-  )!
-  inspect(of([2]).add(1), content="ImmutableSet::[1, 2]")!
-  inspect(of([2]).add(3), content="ImmutableSet::[2, 3]")!
-  inspect(of([2]).add(1).add(3), content="ImmutableSet::[1, 2, 3]")!
-  inspect(of([1, 2]).add(1), content="ImmutableSet::[1, 2]")!
-  inspect(of([2, 3]).add(3), content="ImmutableSet::[2, 3]")!
-  inspect(of([1, 2, 3]).add(1), content="ImmutableSet::[1, 2, 3]")!
-  inspect(of([1, 2, 3]).add(3), content="ImmutableSet::[1, 2, 3]")!
-  inspect(of([1]).add(2).add(2), content="ImmutableSet::[1, 2]")!
+  inspect!(
+    @sorted_set.of([7, 2, 9, 4, 6, 3, 8, 1]).add(5),
+    content="@immut/sorted_set.of([1, 2, 3, 4, 5, 6, 7, 8, 9])",
+  )
+  inspect!(@sorted_set.of([2]).add(1), content="@immut/sorted_set.of([1, 2])")
+  inspect!(@sorted_set.of([2]).add(3), content="@immut/sorted_set.of([2, 3])")
+  inspect!(
+    @sorted_set.of([2]).add(1).add(3),
+    content="@immut/sorted_set.of([1, 2, 3])",
+  )
+  inspect!(
+    @sorted_set.of([1, 2]).add(1),
+    content="@immut/sorted_set.of([1, 2])",
+  )
+  inspect!(
+    @sorted_set.of([2, 3]).add(3),
+    content="@immut/sorted_set.of([2, 3])",
+  )
+  inspect!(
+    @sorted_set.of([1, 2, 3]).add(1),
+    content="@immut/sorted_set.of([1, 2, 3])",
+  )
+  inspect!(
+    @sorted_set.of([1, 2, 3]).add(3),
+    content="@immut/sorted_set.of([1, 2, 3])",
+  )
+  inspect!(
+    @sorted_set.of([1]).add(2).add(2),
+    content="@immut/sorted_set.of([1, 2])",
+  )
 }
 
 test "remove" {
-  let empty : ImmutableSet[Int] = ImmutableSet::new()
-  inspect(empty.remove(1), content="ImmutableSet::[]")!
-  inspect(
-    of([7, 2, 9, 4, 5, 6, 3, 8, 1]).remove(1),
-    content="ImmutableSet::[2, 3, 4, 5, 6, 7, 8, 9]",
-  )!
-  inspect(
-    of([7, 2, 9, 4, 5, 6, 3, 8, 1]).remove(9),
-    content="ImmutableSet::[1, 2, 3, 4, 5, 6, 7, 8]",
-  )!
-  inspect(
-    of([7, 2, 9, 4, 5, 6, 3, 8, 1]).remove(8),
-    content="ImmutableSet::[1, 2, 3, 4, 5, 6, 7, 9]",
-  )!
-  inspect(
-    of([7, 2, 9, 4, 5, 6, 3, 8, 1]).remove(0),
-    content="ImmutableSet::[1, 2, 3, 4, 5, 6, 7, 8, 9]",
-  )!
-  inspect(
-    of([7, 2, 9, 4, 5, 6, 3, 8, 1]).remove(10),
-    content="ImmutableSet::[1, 2, 3, 4, 5, 6, 7, 8, 9]",
-  )!
+  let empty = @sorted_set.new()
+  inspect!(empty.remove(1), content="@immut/sorted_set.of([])")
+  inspect!(
+    @sorted_set.of([7, 2, 9, 4, 5, 6, 3, 8, 1]).remove(1),
+    content="@immut/sorted_set.of([2, 3, 4, 5, 6, 7, 8, 9])",
+  )
+  inspect!(
+    @sorted_set.of([7, 2, 9, 4, 5, 6, 3, 8, 1]).remove(9),
+    content="@immut/sorted_set.of([1, 2, 3, 4, 5, 6, 7, 8])",
+  )
+  inspect!(
+    @sorted_set.of([7, 2, 9, 4, 5, 6, 3, 8, 1]).remove(8),
+    content="@immut/sorted_set.of([1, 2, 3, 4, 5, 6, 7, 9])",
+  )
+  inspect!(
+    @sorted_set.of([7, 2, 9, 4, 5, 6, 3, 8, 1]).remove(0),
+    content="@immut/sorted_set.of([1, 2, 3, 4, 5, 6, 7, 8, 9])",
+  )
+  inspect!(
+    @sorted_set.of([7, 2, 9, 4, 5, 6, 3, 8, 1]).remove(10),
+    content="@immut/sorted_set.of([1, 2, 3, 4, 5, 6, 7, 8, 9])",
+  )
 }
 
 test "min" {
-  inspect(of([7, 2, 9, 4, 5, 6, 3, 8, 1]).min(), content="1")!
+  inspect!(@sorted_set.of([7, 2, 9, 4, 5, 6, 3, 8, 1]).min(), content="1")
 }
 
 test "min_option" {
-  let empty : ImmutableSet[Int] = ImmutableSet::new()
-  inspect(empty.min_option(), content="None")!
-  inspect(of([7, 2, 9, 4, 5, 6, 3, 8, 1]).min_option(), content="Some(1)")!
+  let empty : @sorted_set.ImmutableSet[Int] = @sorted_set.new()
+  inspect!(empty.min_option(), content="None")
+  inspect!(
+    @sorted_set.of([7, 2, 9, 4, 5, 6, 3, 8, 1]).min_option(),
+    content="Some(1)",
+  )
 }
 
 test "max" {
-  inspect(of([7, 2, 9, 4, 5, 6, 3, 8, 1]).max(), content="9")!
+  inspect!(@sorted_set.of([7, 2, 9, 4, 5, 6, 3, 8, 1]).max(), content="9")
 }
 
 test "max_option" {
-  let empty : ImmutableSet[Int] = ImmutableSet::new()
-  inspect(empty.max_option(), content="None")!
-  inspect(of([7, 2, 9, 4, 5, 6, 3, 8, 1]).max_option(), content="Some(9)")!
+  let empty : @sorted_set.ImmutableSet[Int] = @sorted_set.new()
+  inspect!(empty.max_option(), content="None")
+  inspect!(
+    @sorted_set.of([7, 2, 9, 4, 5, 6, 3, 8, 1]).max_option(),
+    content="Some(9)",
+  )
 }
 
 test "is_empty" {
-  inspect((of([]) : ImmutableSet[Int]).is_empty(), content="true")!
-  inspect(of([1]).is_empty(), content="false")!
+  inspect!(
+    (@sorted_set.of([]) : @sorted_set.ImmutableSet[Int]).is_empty(),
+    content="true",
+  )
+  inspect!(@sorted_set.of([1]).is_empty(), content="false")
 }
 
 test "to_string" {
-  inspect(of([1, 2, 3, 4, 5]), content="ImmutableSet::[1, 2, 3, 4, 5]")!
-  inspect((of([]) : ImmutableSet[Int]), content="ImmutableSet::[]")!
+  inspect!(
+    @sorted_set.of([1, 2, 3, 4, 5]),
+    content="@immut/sorted_set.of([1, 2, 3, 4, 5])",
+  )
+  inspect!(
+    (@sorted_set.of([]) : @sorted_set.ImmutableSet[Int]),
+    content="@immut/sorted_set.of([])",
+  )
 }
 
 test "iter" {
   let mut s = ""
-  of([7, 2, 9, 4, 5, 6, 3, 8, 1]).each(fn(x) { s += x.to_string() })
-  inspect(s, content="123456789")!
-  let empty : ImmutableSet[Int] = of([])
+  @sorted_set.of([7, 2, 9, 4, 5, 6, 3, 8, 1]).each(fn(x) { s += x.to_string() })
+  inspect!(s, content="123456789")
+  let empty : @sorted_set.ImmutableSet[Int] = @sorted_set.of([])
   s = ""
   empty.each(fn(x) { s += x.to_string() })
-  inspect(s, content="")!
-}
-
-test "split_bis" {
-  inspect(of([1, 2, 3]).split_bis(1), content="Found")!
-  inspect(of([1, 2, 3]).split_bis(3), content="Found")!
-  inspect(of([1, 2, 3]).split_bis(0), content="NotFound")!
-  inspect(of([1, 2, 3]).split_bis(4), content="NotFound")!
+  inspect!(s, content="")
 }
 
 // test "of_sorted_array" {
@@ -273,156 +362,84 @@ test "split_bis" {
 // }
 
 test "panic remove_min on empty set" {
-  let empty : ImmutableSet[Int] = ImmutableSet::new()
+  let empty : @sorted_set.ImmutableSet[Int] = @sorted_set.new()
   empty.remove_min() |> ignore
 }
 
 test "panic min on empty set" {
-  let empty : ImmutableSet[Int] = ImmutableSet::new()
+  let empty : @sorted_set.ImmutableSet[Int] = @sorted_set.new()
   empty.min() |> ignore
 }
 
 test "panic max on empty set" {
-  let empty : ImmutableSet[Int] = ImmutableSet::new()
+  let empty : @sorted_set.ImmutableSet[Int] = @sorted_set.new()
   empty.max() |> ignore
 }
 
 test "split with value not in set" {
-  let set = of([1, 2, 3, 4, 5])
+  let set = @sorted_set.of([1, 2, 3, 4, 5])
   let (left, present, right) = set.split(6)
-  inspect(present, content="false")!
-  inspect(left, content="ImmutableSet::[1, 2, 3, 4, 5]")!
-  inspect(right, content="ImmutableSet::[]")!
+  inspect!(present, content="false")
+  inspect!(left, content="@immut/sorted_set.of([1, 2, 3, 4, 5])")
+  inspect!(right, content="@immut/sorted_set.of([])")
 }
 
 test "remove_min on non-empty set" {
-  let set = of([3, 4, 5])
+  let set = @sorted_set.of([3, 4, 5])
   let new_set = set.remove_min()
-  inspect(new_set, content="ImmutableSet::[4, 5]")!
+  inspect!(new_set, content="@immut/sorted_set.of([4, 5])")
 }
 
 test "min on non-empty set" {
-  let set = of([7, 2, 9, 4, 5, 6, 3, 8, 1])
+  let set = @sorted_set.of([7, 2, 9, 4, 5, 6, 3, 8, 1])
   let min_value = set.min()
-  inspect(min_value, content="1")!
+  inspect!(min_value, content="1")
 }
 
 test "max on non-empty set" {
-  let set = of([7, 2, 9, 4, 5, 6, 3, 8, 1])
+  let set = @sorted_set.of([7, 2, 9, 4, 5, 6, 3, 8, 1])
   let max_value = set.max()
-  inspect(max_value, content="9")!
+  inspect!(max_value, content="9")
 }
 
 test "union with different heights" {
-  let set1 = of([3, 4, 5])
-  let set2 = of([4, 5, 6])
+  let set1 = @sorted_set.of([3, 4, 5])
+  let set2 = @sorted_set.of([4, 5, 6])
   let union_set = set1.union(set2)
-  inspect(union_set, content="ImmutableSet::[3, 4, 5, 6]")!
+  inspect!(union_set, content="@immut/sorted_set.of([3, 4, 5, 6])")
 }
 
 test "disjoint with different sets" {
-  let set1 = of([1, 2, 3])
-  let set2 = of([4, 5, 6])
+  let set1 = @sorted_set.of([1, 2, 3])
+  let set2 = @sorted_set.of([4, 5, 6])
   let disjoint = set1.disjoint(set2)
-  inspect(disjoint, content="true")!
-}
-
-test "balance with left height greater" {
-  let left = of([1, 2, 3])
-  let value = 4
-  let right = of([5])
-  let balanced_set = balance(left, value, right)
-  inspect(balanced_set, content="ImmutableSet::[1, 2, 3, 4, 5]")!
-}
-
-test "balance with right height greater" {
-  let left = of([1])
-  let value = 2
-  let right = of([3, 4, 5])
-  let balanced_set = balance(left, value, right)
-  inspect(balanced_set, content="ImmutableSet::[1, 2, 3, 4, 5]")!
-}
-
-test "join with different heights" {
-  let left = of([1, 2, 3])
-  let value = 4
-  let right = of([5, 6, 7])
-  let joined_set = join(left, value, right)
-  inspect(joined_set, content="ImmutableSet::[1, 2, 3, 4, 5, 6, 7]")!
+  inspect!(disjoint, content="true")
 }
 
 test "union with different heights" {
-  let set1 = of([3, 4, 5])
-  let set2 = of([4, 5, 6])
+  let set1 = @sorted_set.of([3, 4, 5])
+  let set2 = @sorted_set.of([4, 5, 6])
   let union_set = set1.union(set2)
-  inspect(union_set, content="ImmutableSet::[3, 4, 5, 6]")!
+  inspect!(union_set, content="@immut/sorted_set.of([3, 4, 5, 6])")
 }
 
 test "disjoint with different sets" {
-  let set1 = of([1, 2, 3])
-  let set2 = of([4, 5, 6])
+  let set1 = @sorted_set.of([1, 2, 3])
+  let set2 = @sorted_set.of([4, 5, 6])
   let disjoint = set1.disjoint(set2)
-  inspect(disjoint, content="true")!
-}
-
-test "balance with left height greater" {
-  let left = of([1, 2, 3])
-  let value = 4
-  let right = of([5])
-  let balanced_set = balance(left, value, right)
-  inspect(balanced_set, content="ImmutableSet::[1, 2, 3, 4, 5]")!
-}
-
-test "balance with right height greater" {
-  let left = of([1])
-  let value = 2
-  let right = of([3, 4, 5])
-  let balanced_set = balance(left, value, right)
-  inspect(balanced_set, content="ImmutableSet::[1, 2, 3, 4, 5]")!
-}
-
-test "join with different heights" {
-  let left = of([1, 2, 3])
-  let value = 4
-  let right = of([5, 6, 7])
-  let joined_set = join(left, value, right)
-  inspect(joined_set, content="ImmutableSet::[1, 2, 3, 4, 5, 6, 7]")!
+  inspect!(disjoint, content="true")
 }
 
 test "union with different heights" {
-  let set1 = of([3, 4, 5])
-  let set2 = of([4, 5, 6])
+  let set1 = @sorted_set.of([3, 4, 5])
+  let set2 = @sorted_set.of([4, 5, 6])
   let union_set = set1.union(set2)
-  inspect(union_set, content="ImmutableSet::[3, 4, 5, 6]")!
+  inspect!(union_set, content="@immut/sorted_set.of([3, 4, 5, 6])")
 }
 
 test "disjoint with different sets" {
-  let set1 = of([1, 2, 3])
-  let set2 = of([4, 5, 6])
+  let set1 = @sorted_set.of([1, 2, 3])
+  let set2 = @sorted_set.of([4, 5, 6])
   let disjoint = set1.disjoint(set2)
-  inspect(disjoint, content="true")!
-}
-
-test "balance with left height greater" {
-  let left = of([1, 2, 3])
-  let value = 4
-  let right = of([5])
-  let balanced_set = balance(left, value, right)
-  inspect(balanced_set, content="ImmutableSet::[1, 2, 3, 4, 5]")!
-}
-
-test "balance with right height greater" {
-  let left = of([1])
-  let value = 2
-  let right = of([3, 4, 5])
-  let balanced_set = balance(left, value, right)
-  inspect(balanced_set, content="ImmutableSet::[1, 2, 3, 4, 5]")!
-}
-
-test "join with different heights" {
-  let left = of([1, 2, 3])
-  let value = 4
-  let right = of([5, 6, 7])
-  let joined_set = join(left, value, right)
-  inspect(joined_set, content="ImmutableSet::[1, 2, 3, 4, 5, 6, 7]")!
+  inspect!(disjoint, content="true")
 }

@@ -13,36 +13,36 @@
 // limitations under the License.
 
 test "op_get with existing key" {
-  let map = Map::of(
+  let map = @sorted_map.of(
     [(3, "three"), (8, "eight"), (1, "one"), (2, "two"), (0, "zero")],
   )
-  @test.eq(map[3], Some("three"))!
+  @test.eq!(map[3], Some("three"))
 }
 
 test "op_get with non-existing key" {
-  let map = Map::of(
+  let map = @sorted_map.of(
     [(3, "three"), (8, "eight"), (1, "one"), (2, "two"), (0, "zero")],
   )
-  @test.eq(map[4], None)!
+  @test.eq!(map[4], None)
 }
 
 test "op_get after insertion" {
-  let map = Map::of(
+  let map = @sorted_map.of(
     [(3, "three"), (8, "eight"), (1, "one"), (2, "two"), (0, "zero")],
   )
   let map = map.insert(4, "four")
-  @test.eq(map[4], Some("four"))!
+  @test.eq!(map[4], Some("four"))
 }
 
 test "op_get after removal" {
-  let map = Map::of(
+  let map = @sorted_map.of(
     [(3, "three"), (8, "eight"), (1, "one"), (2, "two"), (0, "zero")],
   )
   let map = map.remove(3)
-  @test.eq(map[3], None)!
+  @test.eq!(map[3], None)
 }
 
 test "op_get with empty map" {
-  let map : Map[Int, String] = empty()
-  @test.eq(map[3], None)!
+  let map : @sorted_map.Map[Int, String] = @sorted_map.empty()
+  @test.eq!(map[3], None)
 }

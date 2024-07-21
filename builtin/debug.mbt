@@ -21,7 +21,7 @@ pub trait Debug {
 pub fn debug[X : Debug](x : X) -> Unit {
   let buf = Buffer::new()
   x.debug_write(buf)
-  println(buf.to_string())
+  println_mono(buf.to_string())
 }
 
 pub fn debug_write(self : Unit, buf : Buffer) -> Unit {

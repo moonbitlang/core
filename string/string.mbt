@@ -39,13 +39,9 @@ pub fn String::default() -> String {
 /// `String` holds a sequence of UTF-16 code units encoded in little endian format
 pub fn to_bytes(self : String) -> Bytes {
   let len = self.length()
-  let bytes = Bytes::make(len * 2)
+  let bytes = Bytes::new(len * 2)
   bytes.blit_from_string(0, self, 0, len)
   bytes
-}
-
-pub fn hash(self : String) -> Int {
-  self.to_bytes().hash()
 }
 
 /// Converts the String into an array of Chars.

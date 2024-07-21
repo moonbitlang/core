@@ -230,3 +230,13 @@ pub fn PriorityQueue::of[T : Compare](arr : FixedArray[T]) -> PriorityQueue[T] {
     }
   }
 }
+
+test "meld_and_merges" {
+  inspect!(
+    match meld(Cons(content=1, sibling=Nil, child=Nil), Nil) {
+      Nil => false
+      Cons(..) => true
+    },
+    content="true",
+  )
+}
