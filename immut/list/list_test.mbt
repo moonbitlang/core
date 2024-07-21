@@ -15,8 +15,8 @@
 test "from_array" {
   let ls = @list.of([1, 2, 3, 4, 5])
   let el : @list.List[Int] = @list.Nil
-  inspect!(ls, content="List::[1, 2, 3, 4, 5]")
-  inspect!(el, content="List::[]")
+  inspect!(ls, content="@list.of([1, 2, 3, 4, 5])")
+  inspect!(el, content="@list.of([])")
 }
 
 test "length" {
@@ -57,15 +57,15 @@ test "iteri" {
 test "map" {
   let ls = @list.of([1, 2, 3, 4, 5])
   let rs : @list.List[Int] = @list.Nil
-  inspect!(ls.map(fn(x) { x * 2 }), content="List::[2, 4, 6, 8, 10]")
-  inspect!(rs.map(fn(x) { x * 2 }), content="List::[]")
+  inspect!(ls.map(fn(x) { x * 2 }), content="@list.of([2, 4, 6, 8, 10])")
+  inspect!(rs.map(fn(x) { x * 2 }), content="@list.of([])")
 }
 
 test "mapi" {
   let ls = @list.of([1, 2, 3, 4, 5])
   let el : @list.List[Int] = @list.Nil
-  inspect!(ls.mapi(fn(i, x) { i * x }), content="List::[0, 2, 6, 12, 20]")
-  inspect!(el.mapi(fn(i, x) { i * x }), content="List::[]")
+  inspect!(ls.mapi(fn(i, x) { i * x }), content="@list.of([0, 2, 6, 12, 20])")
+  inspect!(el.mapi(fn(i, x) { i * x }), content="@list.of([])")
 }
 
 test "to_array" {
@@ -80,8 +80,8 @@ test "to_array" {
 test "filter" {
   let ls = @list.of([1, 2, 3, 4, 5])
   let rs : @list.List[Int] = @list.Nil
-  inspect!(ls.filter(fn(x) { x % 2 == 0 }), content="List::[2, 4]")
-  inspect!(rs.filter(fn(x) { x % 2 == 0 }), content="List::[]")
+  inspect!(ls.filter(fn(x) { x % 2 == 0 }), content="@list.of([2, 4])")
+  inspect!(rs.filter(fn(x) { x % 2 == 0 }), content="@list.of([])")
 }
 
 test "all" {
@@ -99,8 +99,8 @@ test "any" {
 test "tail" {
   let ls = @list.of([1, 2, 3, 4, 5])
   let el : @list.List[Int] = @list.Nil
-  inspect!(ls.tail(), content="List::[2, 3, 4, 5]")
-  inspect!(el.tail(), content="List::[]")
+  inspect!(ls.tail(), content="@list.of([2, 3, 4, 5])")
+  inspect!(el.tail(), content="@list.of([])")
 }
 
 test "head_exn" {
@@ -127,26 +127,26 @@ test "panic last" {
 test "init_" {
   let ls = @list.of([1, 2, 3, 4, 5])
   let el : @list.List[Int] = @list.Nil
-  inspect!(ls.init_(), content="List::[1, 2, 3, 4]")
-  inspect!(el.init_(), content="List::[]")
+  inspect!(ls.init_(), content="@list.of([1, 2, 3, 4])")
+  inspect!(el.init_(), content="@list.of([])")
 }
 
 test "concat" {
   let ls = @list.of([1, 2, 3, 4, 5])
   let rs = @list.of([6, 7, 8, 9, 10])
-  inspect!(ls.concat(@list.Nil), content="List::[1, 2, 3, 4, 5]")
+  inspect!(ls.concat(@list.Nil), content="@list.of([1, 2, 3, 4, 5])")
   inspect!(
     (@list.Nil : @list.List[Int]).concat(rs),
-    content="List::[6, 7, 8, 9, 10]",
+    content="@list.of([6, 7, 8, 9, 10])",
   )
-  inspect!(ls.concat(rs), content="List::[1, 2, 3, 4, 5, 6, 7, 8, 9, 10]")
+  inspect!(ls.concat(rs), content="@list.of([1, 2, 3, 4, 5, 6, 7, 8, 9, 10])")
 }
 
 test "rev" {
   let ls = @list.of([1, 2, 3, 4, 5])
   let rs = @list.of([5, 4, 3, 2, 1])
-  inspect!(rs.rev(), content="List::[1, 2, 3, 4, 5]")
-  inspect!(ls.rev().rev(), content="List::[1, 2, 3, 4, 5]")
+  inspect!(rs.rev(), content="@list.of([1, 2, 3, 4, 5])")
+  inspect!(ls.rev().rev(), content="@list.of([1, 2, 3, 4, 5])")
 }
 
 test "fold_left" {
@@ -182,17 +182,17 @@ test "zip" {
   let rs = @list.of([6, 7, 8, 9, 10])
   inspect!(
     ls.zip(rs),
-    content="List::[(1, 6), (2, 7), (3, 8), (4, 9), (5, 10)]",
+    content="@list.of([(1, 6), (2, 7), (3, 8), (4, 9), (5, 10)])",
   )
 }
 
 test "concat_map" {
   let ls = @list.of([1, 2, 3])
   let rs : @list.List[Int] = @list.Nil
-  inspect!(rs.concat_map(fn(x) { @list.of([x, x * 2]) }), content="List::[]")
+  inspect!(rs.concat_map(fn(x) { @list.of([x, x * 2]) }), content="@list.of([])")
   inspect!(
     ls.concat_map(fn(x) { @list.of([x, x * 2]) }),
-    content="List::[1, 2, 2, 4, 3, 6]",
+    content="@list.of([1, 2, 2, 4, 3, 6])",
   )
 }
 
@@ -213,8 +213,8 @@ test "nth" {
 }
 
 test "repeat" {
-  inspect!(@list.repeat(5, 1), content="List::[1, 1, 1, 1, 1]")
-  inspect!(@list.repeat(0, 10), content="List::[]")
+  inspect!(@list.repeat(5, 1), content="@list.of([1, 1, 1, 1, 1])")
+  inspect!(@list.repeat(0, 10), content="@list.of([])")
 }
 
 test "intersperse" {
@@ -223,10 +223,10 @@ test "intersperse" {
   inspect!(
     ls.intersperse("|"),
     content=
-      #|List::["1", "|", "2", "|", "3", "|", "4", "|", "5"]
+      #|@list.of(["1", "|", "2", "|", "3", "|", "4", "|", "5"])
     ,
   )
-  inspect!(el.intersperse("|"), content="List::[]")
+  inspect!(el.intersperse("|"), content="@list.of([])")
 }
 
 test "is_empty" {
@@ -238,8 +238,8 @@ test "is_empty" {
 test "unzip" {
   let ls = @list.of([(1, 2), (3, 4), (5, 6)])
   let (a, b) = @list.unzip(ls)
-  inspect!(a, content="List::[1, 3, 5]")
-  inspect!(b, content="List::[2, 4, 6]")
+  inspect!(a, content="@list.of([1, 3, 5])")
+  inspect!(b, content="@list.of([2, 4, 6])")
 }
 
 test "flatten" {
@@ -247,8 +247,8 @@ test "flatten" {
     [@list.of([1, 2, 3]), @list.of([4, 5, 6]), @list.of([7, 8, 9])],
   )
   let el : @list.List[@list.List[Int]] = @list.Nil
-  inspect!(ls.flatten(), content="List::[1, 2, 3, 4, 5, 6, 7, 8, 9]")
-  inspect!(el.flatten(), content="List::[]")
+  inspect!(ls.flatten(), content="@list.of([1, 2, 3, 4, 5, 6, 7, 8, 9])")
+  inspect!(el.flatten(), content="@list.of([])")
 }
 
 test "maximum" {
@@ -264,8 +264,8 @@ test "minimum" {
 test "sort" {
   let ls = @list.of([1, 123, 52, 3, 6, 0, -6, -76])
   let el : @list.List[Int] = @list.Nil
-  inspect!(el.sort(), content="List::[]")
-  inspect!(ls.sort(), content="List::[-76, -6, 0, 1, 3, 6, 52, 123]")
+  inspect!(el.sort(), content="@list.of([])")
+  inspect!(ls.sort(), content="@list.of([-76, -6, 0, 1, 3, 6, 52, 123])")
 }
 
 test "contain" {
@@ -282,56 +282,56 @@ test "unfold" {
     init=0,
     fn { i => if i == 3 { None } else { Some((i, i + 1)) } },
   )
-  inspect!(ls, content="List::[0, 1, 2]")
+  inspect!(ls, content="@list.of([0, 1, 2])")
 }
 
 test "take" {
   let ls = @list.of([1, 2, 3, 4, 5]).take(3)
-  inspect!(ls, content="List::[1, 2, 3]")
-  inspect!(ls.take(-1), content="List::[]")
-  inspect!(ls.take(0), content="List::[]")
-  inspect!(ls, content="List::[1, 2, 3]")
+  inspect!(ls, content="@list.of([1, 2, 3])")
+  inspect!(ls.take(-1), content="@list.of([])")
+  inspect!(ls.take(0), content="@list.of([])")
+  inspect!(ls, content="@list.of([1, 2, 3])")
 }
 
 test "drop" {
   let ls = @list.of([1, 2, 3, 4, 5]).drop(3)
   let el : @list.List[Int] = @list.Nil
-  inspect!(ls, content="List::[4, 5]")
-  inspect!(ls.drop(-10), content="List::[4, 5]")
-  inspect!(ls.drop(0), content="List::[4, 5]")
-  inspect!(el.drop(0), content="List::[]")
+  inspect!(ls, content="@list.of([4, 5])")
+  inspect!(ls.drop(-10), content="@list.of([4, 5])")
+  inspect!(ls.drop(0), content="@list.of([4, 5])")
+  inspect!(el.drop(0), content="@list.of([])")
 }
 
 test "take_while" {
   let ls = @list.take_while(@list.of([0, 1, 2, 3, 4]), fn(x) { x < 3 })
   let el : @list.List[Int] = @list.take_while(@list.Nil, fn(_e) { true })
-  inspect!(ls, content="List::[0, 1, 2]")
-  inspect!(el, content="List::[]")
+  inspect!(ls, content="@list.of([0, 1, 2])")
+  inspect!(el, content="@list.of([])")
 }
 
 test "drop_while" {
   let ls = @list.drop_while(@list.of([0, 1, 2, 3, 4]), fn(x) { x < 3 })
   let el : @list.List[Int] = @list.drop_while(@list.Nil, fn(_e) { true })
-  inspect!(ls, content="List::[3, 4]")
-  inspect!(el, content="List::[]")
+  inspect!(ls, content="@list.of([3, 4])")
+  inspect!(el, content="@list.of([])")
 }
 
 test "scan_left" {
   let el = @list.Nil.scan_left(fn(acc, x) { acc + x }, init=0)
   let ls = @list.of([1, 2, 3, 4, 5]).scan_left(fn(acc, x) { acc + x }, init=0)
   let ls2 = @list.of([1, 2, 3, 4]).scan_left(fn(acc, x) { acc - x }, init=100)
-  inspect!(el, content="List::[0]")
-  inspect!(ls, content="List::[0, 1, 3, 6, 10, 15]")
-  inspect!(ls2, content="List::[100, 99, 97, 94, 90]")
+  inspect!(el, content="@list.of([0])")
+  inspect!(ls, content="@list.of([0, 1, 3, 6, 10, 15])")
+  inspect!(ls2, content="@list.of([100, 99, 97, 94, 90])")
 }
 
 test "scan_right" {
   let el = @list.Nil.scan_right(fn(x, acc) { x + acc }, init=0)
   let ls = @list.of([1, 2, 3, 4]).scan_right(fn(x, acc) { x + acc }, init=0)
   let ls2 = @list.of([1, 2, 3, 4]).scan_right(fn(x, acc) { x - acc }, init=100)
-  inspect!(el, content="List::[0]")
-  inspect!(ls, content="List::[10, 9, 7, 4, 0]")
-  inspect!(ls2, content="List::[98, -97, 99, -96, 100]")
+  inspect!(el, content="@list.of([0])")
+  inspect!(ls, content="@list.of([10, 9, 7, 4, 0])")
+  inspect!(ls2, content="@list.of([98, -97, 99, -96, 100])")
 }
 
 test "lookup" {
@@ -385,34 +385,34 @@ test "findi" {
 
 test "remove_at" {
   let ls = @list.of([1, 2, 3, 4, 5])
-  inspect!(ls.remove_at(2), content="List::[1, 2, 4, 5]")
-  inspect!(ls.remove_at(0), content="List::[2, 3, 4, 5]")
+  inspect!(ls.remove_at(2), content="@list.of([1, 2, 4, 5])")
+  inspect!(ls.remove_at(0), content="@list.of([2, 3, 4, 5])")
   inspect!(
     @list.of(["a", "b", "c", "d", "e"]).remove_at(2),
     content=
-      #|List::["a", "b", "d", "e"]
+      #|@list.of(["a", "b", "d", "e"])
     ,
   )
   inspect!(
     @list.of(["a", "b", "c", "d", "e"]).remove_at(5),
     content=
-      #|List::["a", "b", "c", "d", "e"]
+      #|@list.of(["a", "b", "c", "d", "e"])
     ,
   )
 }
 
 test "remove" {
-  inspect!(@list.of([1, 2, 3, 4, 5]).remove(3), content="List::[1, 2, 4, 5]")
+  inspect!(@list.of([1, 2, 3, 4, 5]).remove(3), content="@list.of([1, 2, 4, 5])")
   inspect!(
     @list.of(["a", "b", "c", "d", "e"]).remove("c"),
     content=
-      #|List::["a", "b", "d", "e"]
+      #|@list.of(["a", "b", "d", "e"])
     ,
   )
   inspect!(
     @list.of(["a", "b", "c", "d", "e"]).remove("f"),
     content=
-      #|List::["a", "b", "c", "d", "e"]
+      #|@list.of(["a", "b", "c", "d", "e"])
     ,
   )
 }
@@ -453,14 +453,14 @@ test "intercalate" {
   let el : @list.List[@list.List[Int]] = @list.Nil
   inspect!(
     ls.intercalate(@list.of([0])),
-    content="List::[1, 2, 3, 0, 4, 5, 6, 0, 7, 8, 9]",
+    content="@list.of([1, 2, 3, 0, 4, 5, 6, 0, 7, 8, 9])",
   )
-  inspect!(el.intersperse(@list.of([1])), content="List::[]")
+  inspect!(el.intersperse(@list.of([1])), content="@list.of([])")
 }
 
 test "default" {
   let ls : @list.List[Int] = @list.default()
-  inspect!(ls, content="List::[]")
+  inspect!(ls, content="@list.of([])")
 }
 
 test "iter" {
@@ -540,11 +540,11 @@ test "panic @list.minimum with empty list" {
 }
 
 test "op_add" {
-  inspect!(@list.of([1]) + @list.of([]), content="List::[1]")
-  inspect!(@list.of([]) + @list.of([1]), content="List::[1]")
-  inspect!(@list.of([1]) + @list.of([1]), content="List::[1, 1]")
+  inspect!(@list.of([1]) + @list.of([]), content="@list.of([1])")
+  inspect!(@list.of([]) + @list.of([1]), content="@list.of([1])")
+  inspect!(@list.of([1]) + @list.of([1]), content="@list.of([1, 1])")
   inspect!(
     (@list.Nil : @list.List[Int]) + (@list.Nil : @list.List[Int]),
-    content="List::[]",
+    content="@list.of([])",
   )
 }
