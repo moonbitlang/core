@@ -18,7 +18,7 @@
 /// ```
 /// let queue : PriorityQueue[Int] = PriorityQueue::new()
 /// ```
-pub fn PriorityQueue::new[T : Compare]() -> PriorityQueue[T] {
+pub fn T::new[A : Compare]() -> T[A] {
   { len: 0, top: Nil }
 }
 
@@ -28,9 +28,7 @@ pub fn PriorityQueue::new[T : Compare]() -> PriorityQueue[T] {
 /// ```
 /// let queue = of([1, 2, 3, 4, 5])
 /// ```
-pub fn PriorityQueue::from_array[T : Compare](
-  arr : Array[T]
-) -> PriorityQueue[T] {
+pub fn T::from_array[A : Compare](arr : Array[A]) -> T[A] {
   // CR: bad formatting  
   let len = arr.length()
   for i = 0, acc = Node::Nil {
@@ -42,7 +40,7 @@ pub fn PriorityQueue::from_array[T : Compare](
   }
 }
 
-fn copy_node[T](x : Node[T]) -> Node[T] {
+fn copy_node[A](x : Node[A]) -> Node[A] {
   match x {
     Nil => Nil
     Cons(_) as node =>
@@ -61,14 +59,14 @@ fn copy_node[T](x : Node[T]) -> Node[T] {
 /// let queue : PriorityQueue[Int] = of([1, 2, 3, 4])
 /// let queue2 : PriorityQueue[Int] = PriorityQueue.copy()
 /// ```
-pub fn copy[T](self : PriorityQueue[T]) -> PriorityQueue[T] {
-  let new_que : PriorityQueue[T] = { len: self.len, top: copy_node(self.top) }
+pub fn copy[A](self : T[A]) -> T[A] {
+  let new_que : T[A] = { len: self.len, top: copy_node(self.top) }
   new_que
 }
 
-pub fn to_array[T : Compare](self : PriorityQueue[T]) -> Array[T] {
-  let arr : Array[T] = []
-  fn go(x : Node[T]) {
+pub fn to_array[A : Compare](self : T[A]) -> Array[A] {
+  let arr : Array[A] = []
+  fn go(x : Node[A]) {
     match x {
       Cons(_) as node => {
         arr.push(node.content)
@@ -84,7 +82,7 @@ pub fn to_array[T : Compare](self : PriorityQueue[T]) -> Array[T] {
   arr
 }
 
-pub fn iter[T : Compare](self : PriorityQueue[T]) -> Iter[T] {
+pub fn iter[A : Compare](self : T[A]) -> Iter[A] {
   Iter::new(
     fn(yield) {
       let arr = self.to_array()
@@ -99,7 +97,7 @@ pub fn iter[T : Compare](self : PriorityQueue[T]) -> Iter[T] {
   )
 }
 
-fn meld[T : Compare](x : Node[T], y : Node[T]) -> Node[T] {
+fn meld[A : Compare](x : Node[A], y : Node[A]) -> Node[A] {
   match (x, y) {
     (Nil, _) => y
     (_, Nil) => x
@@ -116,7 +114,7 @@ fn meld[T : Compare](x : Node[T], y : Node[T]) -> Node[T] {
   }
 }
 
-fn merges[T : Compare](x : Node[T]) -> Node[T] {
+fn merges[A : Compare](x : Node[A]) -> Node[A] {
   match x {
     Nil => Nil
     Cons(~sibling, ..) =>
@@ -131,7 +129,7 @@ fn merges[T : Compare](x : Node[T]) -> Node[T] {
   }
 }
 
-pub fn length[T](self : PriorityQueue[T]) -> Int {
+pub fn length[A](self : T[A]) -> Int {
   self.len
 }
 
@@ -143,7 +141,7 @@ pub fn length[T](self : PriorityQueue[T]) -> Int {
 /// let first = queue.pop_exn() // 4
 /// ```
 /// @alert unsafe "Panic if the queue is empty."
-pub fn pop_exn[T : Compare](self : PriorityQueue[T]) -> Unit {
+pub fn pop_exn[A : Compare](self : T[A]) -> Unit {
   self.top = match self.top {
     Nil => abort("The PriorityQueue is empty!")
     Cons(~child, ..) => merges(child)
@@ -158,7 +156,7 @@ pub fn pop_exn[T : Compare](self : PriorityQueue[T]) -> Unit {
 /// let queue = of([1, 2, 3, 4])
 /// let first = queue.pop() // Some(4)
 /// ```
-pub fn pop[T : Compare](self : PriorityQueue[T]) -> T? {
+pub fn pop[A : Compare](self : T[A]) -> A? {
   let result = self.peek()
   self.top = match self.top {
     Nil => Nil
@@ -177,7 +175,7 @@ pub fn pop[T : Compare](self : PriorityQueue[T]) -> T? {
 /// let queue : PriorityQueue[Int] = PriorityQueue::new()
 /// queue.add(1)
 /// ```
-pub fn push[T : Compare](self : PriorityQueue[T], value : T) -> Unit {
+pub fn push[A : Compare](self : T[A], value : A) -> Unit {
   self.top = meld(self.top, Cons(content=value, sibling=Nil, child=Nil))
   self.len += 1
 }
@@ -189,7 +187,7 @@ pub fn push[T : Compare](self : PriorityQueue[T], value : T) -> Unit {
 /// let queue : PriorityQueue[Int] = of([1, 2, 3, 4])
 /// let first = queue.peek() // Some(4)
 /// ```
-pub fn peek[T](self : PriorityQueue[T]) -> T? {
+pub fn peek[A](self : T[A]) -> A? {
   match self.top {
     Nil => None
     Cons(~content, ..) => Some(content)
@@ -203,7 +201,7 @@ pub fn peek[T](self : PriorityQueue[T]) -> T? {
 /// let queue = of([1, 2, 3, 4])
 /// queue.clear()
 /// ```
-pub fn clear[T](self : PriorityQueue[T]) -> Unit {
+pub fn clear[A](self : T[A]) -> Unit {
   self.top = Nil
   self.len = 0
 }
@@ -215,11 +213,11 @@ pub fn clear[T](self : PriorityQueue[T]) -> Unit {
 /// let queue : Priorityt[Int] = Priority::new()
 /// let is_empty = queue.is_empty() // true
 /// ```
-pub fn is_empty[T](self : PriorityQueue[T]) -> Bool {
+pub fn is_empty[A](self : T[A]) -> Bool {
   self.len == 0
 }
 
-pub fn PriorityQueue::of[T : Compare](arr : FixedArray[T]) -> PriorityQueue[T] {
+pub fn T::of[A : Compare](arr : FixedArray[A]) -> T[A] {
   // CR: bad formatting  
   let len = arr.length()
   for i = 0, acc = Node::Nil {
