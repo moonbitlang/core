@@ -27,7 +27,7 @@ test "to_array" {
   inspect!(v.to_array(), content="[4, 3, 2, 1]")
   inspect!(v.push(0).to_array(), content="[4, 3, 2, 1, 0]")
   inspect!(
-    (@priority_queue.new() : @priority_queue.ImmutablePriorityQueue[Int]).to_array(),
+    (@priority_queue.new() : @priority_queue.T[Int]).to_array(),
     content="[]",
   )
 }
@@ -52,9 +52,7 @@ test "pop" {
     },
     content="Some(3)",
   )
-  let empty : @priority_queue.ImmutablePriorityQueue[Int] = @priority_queue.of(
-    [],
-  )
+  let empty : @priority_queue.T[Int] = @priority_queue.of([])
   inspect!(
     match empty.pop() {
       Some(q) => q.peek()
