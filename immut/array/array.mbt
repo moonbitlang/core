@@ -200,11 +200,9 @@ pub fn eachi[A](self : T[A], f : (Int, A) -> Unit) -> Unit {
   go(self.tree, self.shift, 0)
 }
 
-
 pub fn op_equal[A : Eq](self : T[A], other : T[A]) -> Bool {
   self.size == other.size && self.tree == other.tree
 }
-
 
 /// Fold the array from left to right.
 /// 

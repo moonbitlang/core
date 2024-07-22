@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-/// [Debug] indicates a type can be printed for debugging
+/// **`Debug` trait is deprecated, use `Show` instead.**
 pub trait Debug {
   debug_write(Self, Buffer) -> Unit
 }
