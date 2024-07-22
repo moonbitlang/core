@@ -86,7 +86,7 @@ impl Output for StringBuffer with output(self : StringBuffer, content : String) 
   self.0.push(content)
 }
 
-fn Output::output(self : Buffer, content : String) -> Unit {
+impl Output for Buffer with output(self, content) -> Unit {
   self.write_string(content)
 }
 
