@@ -14,11 +14,7 @@
 
 /// Create a new map with a key-value pair inserted.
 /// O(log n).
-pub fn insert[K : Compare, V](
-  self : Map[K, V],
-  key : K,
-  value : V
-) -> Map[K, V] {
+pub fn insert[K : Compare, V](self : T[K, V], key : K, value : V) -> T[K, V] {
   match self {
     Empty => singleton(key, value)
     Tree(k, value=v, l, r, ..) =>
@@ -30,7 +26,7 @@ pub fn insert[K : Compare, V](
   }
 }
 
-fn split_max[K : Compare, V](self : Map[K, V]) -> (K, V, Map[K, V]) {
+fn split_max[K : Compare, V](self : T[K, V]) -> (K, V, T[K, V]) {
   match self {
     Tree(k, value=v, l, Empty, ..) => (k, v, l)
     Tree(k, value=v, l, r, ..) => {
@@ -41,7 +37,7 @@ fn split_max[K : Compare, V](self : Map[K, V]) -> (K, V, Map[K, V]) {
   }
 }
 
-fn split_min[K : Compare, V](self : Map[K, V]) -> (K, V, Map[K, V]) {
+fn split_min[K : Compare, V](self : T[K, V]) -> (K, V, T[K, V]) {
   match self {
     Tree(k, value=v, Empty, r, ..) => (k, v, r)
     Tree(k, value=v, l, r, ..) => {
@@ -52,7 +48,7 @@ fn split_min[K : Compare, V](self : Map[K, V]) -> (K, V, Map[K, V]) {
   }
 }
 
-fn glue[K : Compare, V](self : Map[K, V], other : Map[K, V]) -> Map[K, V] {
+fn glue[K : Compare, V](self : T[K, V], other : T[K, V]) -> T[K, V] {
   match (self, other) {
     (Empty, r) => r
     (l, Empty) => l
@@ -69,7 +65,7 @@ fn glue[K : Compare, V](self : Map[K, V], other : Map[K, V]) -> Map[K, V] {
 
 /// Create a new map with a key-value pair removed. O(log n).
 /// If the key is not a member or map, the original map is returned.
-pub fn remove[K : Compare, V](self : Map[K, V], key : K) -> Map[K, V] {
+pub fn remove[K : Compare, V](self : T[K, V], key : K) -> T[K, V] {
   match self {
     Empty => Empty
     Tree(k, value=v, l, r, ..) => {
@@ -86,18 +82,15 @@ pub fn remove[K : Compare, V](self : Map[K, V], key : K) -> Map[K, V] {
 }
 
 /// Filter values that satisfy the predicate
-pub fn filter[K : Compare, V](
-  self : Map[K, V],
-  pred : (V) -> Bool
-) -> Map[K, V] {
+pub fn filter[K : Compare, V](self : T[K, V], pred : (V) -> Bool) -> T[K, V] {
   filter_with_key(self, fn(_k, v) { pred(v) })
 }
 
 /// Filter key-value pairs that satisfy the predicate
 pub fn filter_with_key[K : Compare, V](
-  self : Map[K, V],
+  self : T[K, V],
   pred : (K, V) -> Bool
-) -> Map[K, V] {
+) -> T[K, V] {
   match self {
     Empty => Empty
     Tree(k, value=v, l, r, ..) =>
@@ -110,13 +103,13 @@ pub fn filter_with_key[K : Compare, V](
 }
 
 /// Convert to an array of key-value pairs.
-pub fn to_array[K, V](self : Map[K, V]) -> Array[(K, V)] {
+pub fn to_array[K, V](self : T[K, V]) -> Array[(K, V)] {
   let arr = []
   self.each(fn(k, v) { arr.push((k, v)) })
   arr
 }
 
-pub fn op_equal[K : Eq, V : Eq](self : Map[K, V], other : Map[K, V]) -> Bool {
+pub fn op_equal[K : Eq, V : Eq](self : T[K, V], other : T[K, V]) -> Bool {
   self.to_array() == other.to_array()
 }
 
@@ -126,23 +119,21 @@ let ratio = 5
 fn balance[K : Compare, V](
   key : K,
   value : V,
-  l : Map[K, V],
-  r : Map[K, V]
-) -> Map[K, V] {
+  l : T[K, V],
+  r : T[K, V]
+) -> T[K, V] {
   //       1                   2
   //      / \                 / \
   //     x   2       --->    1   z
   //        / \             / \
   //       y   z           x   y
   fn single_l {
-    k1, v1, x, Map::Tree(k2, value=v2, y, z, ..) =>
-      new(k2, v2, new(k1, v1, x, y), z)
+    k1, v1, x, Tree(k2, value=v2, y, z, ..) => new(k2, v2, new(k1, v1, x, y), z)
     _, _, _, _ => abort("single_l error")
   }
 
   fn single_r {
-    k2, v2, Map::Tree(k1, value=v1, x, y, ..), z =>
-      new(k1, v1, x, new(k2, v2, y, z))
+    k2, v2, Tree(k1, value=v1, x, y, ..), z => new(k1, v1, x, new(k2, v2, y, z))
     _, _, _, _ => abort("single_r error")
   }
 
@@ -154,7 +145,7 @@ fn balance[K : Compare, V](
   //     / \
   //    y1 y2
   fn double_l {
-    k1, v1, x, Map::Tree(k3, value=v3, Tree(k2, value=v2, y1, y2, ..), z, ..) =>
+    k1, v1, x, Tree(k3, value=v3, Tree(k2, value=v2, y1, y2, ..), z, ..) =>
       new(k2, v2, new(k1, v1, x, y1), new(k3, v3, y2, z))
     _, _, _, _ => abort("double_l error")
   }
@@ -167,7 +158,7 @@ fn balance[K : Compare, V](
   //    / \
   //   y1 y2
   fn double_r {
-    k3, v3, Map::Tree(k1, value=v1, x, Tree(k2, value=v2, y1, y2, ..), ..), z =>
+    k3, v3, Tree(k1, value=v1, x, Tree(k2, value=v2, y1, y2, ..), ..), z =>
       new(k2, v2, new(k1, v1, x, y1), new(k3, v3, y2, z))
     _, _, _, _ => abort("double_r error")
   }
@@ -240,7 +231,7 @@ test "remove" {
     m3.debug_tree(),
     content="(2,two,(1,one,(0,zero,_,_),_),(3,three,_,_))",
   )
-  let e : Map[Int, Int] = Empty
+  let e : T[Int, Int] = Empty
   inspect!(e.remove(1).debug_tree(), content="_")
 }
 
@@ -325,7 +316,7 @@ test "filter_with_key" {
 }
 
 test "empty" {
-  let m : Map[Int, Int] = empty()
+  let m : T[Int, Int] = empty()
   @test.eq!(m.debug_tree(), "_")
 }
 
@@ -379,9 +370,9 @@ test "split_max with non-empty tree" {
 }
 
 test "panic split_max with empty tree" {
-  (Empty : Map[Int, Int]).split_max() |> ignore
+  (Empty : T[Int, Int]).split_max() |> ignore
 }
 
 test "panic split_min with empty tree" {
-  (Empty : Map[Int, Int]).split_min() |> ignore
+  (Empty : T[Int, Int]).split_min() |> ignore
 }

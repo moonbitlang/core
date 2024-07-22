@@ -3,43 +3,43 @@ package moonbitlang/core/immut/sorted_set
 // Values
 
 // Types and methods
-type ImmutableSet
-impl ImmutableSet {
-  add[T : Compare + Eq](Self[T], T) -> Self[T]
-  all[T : Compare + Eq](Self[T], (T) -> Bool) -> Bool
-  any[T : Compare + Eq](Self[T], (T) -> Bool) -> Bool
-  contains[T : Compare + Eq](Self[T], T) -> Bool
-  debug_write[T : Debug](Self[T], Buffer) -> Unit
-  default[T : Default]() -> Self[T]
-  diff[T : Compare + Eq](Self[T], Self[T]) -> Self[T]
-  disjoint[T : Compare + Eq](Self[T], Self[T]) -> Bool
-  each[T](Self[T], (T) -> Unit) -> Unit
-  filter[T : Compare + Eq](Self[T], (T) -> Bool) -> Self[T]
-  fold[T : Compare + Eq, U](Self[T], (U, T) -> U, ~init : U) -> U
-  from_array[T : Compare + Eq](Array[T]) -> Self[T]
-  inter[T : Compare + Eq](Self[T], Self[T]) -> Self[T]
-  is_empty[T : Compare + Eq](Self[T]) -> Bool
-  iter[T](Self[T]) -> Iter[T]
-  map[T : Compare + Eq, U : Compare + Eq](Self[T], (T) -> U) -> Self[U]
-  max[T : Compare + Eq](Self[T]) -> T
-  max_option[T : Compare + Eq](Self[T]) -> T?
-  min[T : Compare + Eq](Self[T]) -> T
-  min_option[T : Compare + Eq](Self[T]) -> T?
-  new[T]() -> Self[T]
-  of[T : Compare + Eq](FixedArray[T]) -> Self[T]
-  op_equal[T : Eq](Self[T], Self[T]) -> Bool
-  remove[T : Compare + Eq](Self[T], T) -> Self[T]
-  remove_min[T : Compare + Eq](Self[T]) -> Self[T]
-  singleton[T : Compare + Eq](T) -> Self[T]
-  split[T : Compare + Eq](Self[T], T) -> Tuple[Self[T], Bool, Self[T]]
-  subset[T : Compare + Eq](Self[T], Self[T]) -> Bool
-  to_array[T : Compare + Eq](Self[T]) -> Array[T]
-  to_string[T : Show](Self[T]) -> String
-  union[T : Compare + Eq](Self[T], Self[T]) -> Self[T]
+type T
+impl T {
+  add[A : Compare + Eq](Self[A], A) -> Self[A]
+  all[A : Compare + Eq](Self[A], (A) -> Bool) -> Bool
+  any[A : Compare + Eq](Self[A], (A) -> Bool) -> Bool
+  contains[A : Compare + Eq](Self[A], A) -> Bool
+  debug_write[A : Debug](Self[A], Buffer) -> Unit
+  default[A : Default]() -> Self[A]
+  diff[A : Compare + Eq](Self[A], Self[A]) -> Self[A]
+  disjoint[A : Compare + Eq](Self[A], Self[A]) -> Bool
+  each[A](Self[A], (A) -> Unit) -> Unit
+  filter[A : Compare + Eq](Self[A], (A) -> Bool) -> Self[A]
+  fold[A : Compare + Eq, B](Self[A], (B, A) -> B, ~init : B) -> B
+  from_array[A : Compare + Eq](Array[A]) -> Self[A]
+  inter[A : Compare + Eq](Self[A], Self[A]) -> Self[A]
+  is_empty[A : Compare + Eq](Self[A]) -> Bool
+  iter[A](Self[A]) -> Iter[A]
+  map[A : Compare + Eq, B : Compare + Eq](Self[A], (A) -> B) -> Self[B]
+  max[A : Compare + Eq](Self[A]) -> A
+  max_option[A : Compare + Eq](Self[A]) -> A?
+  min[A : Compare + Eq](Self[A]) -> A
+  min_option[A : Compare + Eq](Self[A]) -> A?
+  new[A]() -> Self[A]
+  of[A : Compare + Eq](FixedArray[A]) -> Self[A]
+  op_equal[A : Eq](Self[A], Self[A]) -> Bool
+  remove[A : Compare + Eq](Self[A], A) -> Self[A]
+  remove_min[A : Compare + Eq](Self[A]) -> Self[A]
+  singleton[A : Compare + Eq](A) -> Self[A]
+  split[A : Compare + Eq](Self[A], A) -> Tuple[Self[A], Bool, Self[A]]
+  subset[A : Compare + Eq](Self[A], Self[A]) -> Bool
+  to_array[A : Compare + Eq](Self[A]) -> Array[A]
+  to_string[A : Show](Self[A]) -> String
+  union[A : Compare + Eq](Self[A], Self[A]) -> Self[A]
 }
 
 // Traits
 
 // Extension Methods
-impl Show for ImmutableSet
+impl Show for T
 

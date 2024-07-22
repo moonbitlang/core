@@ -17,7 +17,7 @@
 // All operations over sets are purely applicative (no side-effects).
 
 test "new" {
-  let empty : @sorted_set.ImmutableSet[Int] = @sorted_set.new()
+  let empty : @sorted_set.T[Int] = @sorted_set.new()
   inspect!(empty, content="@immut/sorted_set.of([])")
 }
 
@@ -256,7 +256,7 @@ test "min" {
 }
 
 test "min_option" {
-  let empty : @sorted_set.ImmutableSet[Int] = @sorted_set.new()
+  let empty : @sorted_set.T[Int] = @sorted_set.new()
   inspect!(empty.min_option(), content="None")
   inspect!(
     @sorted_set.of([7, 2, 9, 4, 5, 6, 3, 8, 1]).min_option(),
@@ -269,7 +269,7 @@ test "max" {
 }
 
 test "max_option" {
-  let empty : @sorted_set.ImmutableSet[Int] = @sorted_set.new()
+  let empty : @sorted_set.T[Int] = @sorted_set.new()
   inspect!(empty.max_option(), content="None")
   inspect!(
     @sorted_set.of([7, 2, 9, 4, 5, 6, 3, 8, 1]).max_option(),
@@ -278,10 +278,7 @@ test "max_option" {
 }
 
 test "is_empty" {
-  inspect!(
-    (@sorted_set.of([]) : @sorted_set.ImmutableSet[Int]).is_empty(),
-    content="true",
-  )
+  inspect!((@sorted_set.of([]) : @sorted_set.T[Int]).is_empty(), content="true")
   inspect!(@sorted_set.of([1]).is_empty(), content="false")
 }
 
@@ -291,7 +288,7 @@ test "to_string" {
     content="@immut/sorted_set.of([1, 2, 3, 4, 5])",
   )
   inspect!(
-    (@sorted_set.of([]) : @sorted_set.ImmutableSet[Int]),
+    (@sorted_set.of([]) : @sorted_set.T[Int]),
     content="@immut/sorted_set.of([])",
   )
 }
@@ -300,7 +297,7 @@ test "iter" {
   let mut s = ""
   @sorted_set.of([7, 2, 9, 4, 5, 6, 3, 8, 1]).each(fn(x) { s += x.to_string() })
   inspect!(s, content="123456789")
-  let empty : @sorted_set.ImmutableSet[Int] = @sorted_set.of([])
+  let empty : @sorted_set.T[Int] = @sorted_set.of([])
   s = ""
   empty.each(fn(x) { s += x.to_string() })
   inspect!(s, content="")
@@ -362,17 +359,17 @@ test "iter" {
 // }
 
 test "panic remove_min on empty set" {
-  let empty : @sorted_set.ImmutableSet[Int] = @sorted_set.new()
+  let empty : @sorted_set.T[Int] = @sorted_set.new()
   empty.remove_min() |> ignore
 }
 
 test "panic min on empty set" {
-  let empty : @sorted_set.ImmutableSet[Int] = @sorted_set.new()
+  let empty : @sorted_set.T[Int] = @sorted_set.new()
   empty.min() |> ignore
 }
 
 test "panic max on empty set" {
-  let empty : @sorted_set.ImmutableSet[Int] = @sorted_set.new()
+  let empty : @sorted_set.T[Int] = @sorted_set.new()
   empty.max() |> ignore
 }
 

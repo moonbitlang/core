@@ -14,7 +14,7 @@
 
 test "from_array" {
   let ls = @list.of([1, 2, 3, 4, 5])
-  let el : @list.List[Int] = @list.Nil
+  let el : @list.T[Int] = @list.Nil
   inspect!(ls, content="@list.of([1, 2, 3, 4, 5])")
   inspect!(el, content="@list.of([])")
 }
@@ -56,21 +56,21 @@ test "iteri" {
 
 test "map" {
   let ls = @list.of([1, 2, 3, 4, 5])
-  let rs : @list.List[Int] = @list.Nil
+  let rs : @list.T[Int] = @list.Nil
   inspect!(ls.map(fn(x) { x * 2 }), content="@list.of([2, 4, 6, 8, 10])")
   inspect!(rs.map(fn(x) { x * 2 }), content="@list.of([])")
 }
 
 test "mapi" {
   let ls = @list.of([1, 2, 3, 4, 5])
-  let el : @list.List[Int] = @list.Nil
+  let el : @list.T[Int] = @list.Nil
   inspect!(ls.mapi(fn(i, x) { i * x }), content="@list.of([0, 2, 6, 12, 20])")
   inspect!(el.mapi(fn(i, x) { i * x }), content="@list.of([])")
 }
 
 test "to_array" {
   let list = @list.of([1, 2, 3, 4, 5])
-  let empty : @list.List[Int] = @list.Nil
+  let empty : @list.T[Int] = @list.Nil
   let array = @list.to_array(list)
   let earray = @list.to_array(empty)
   inspect!(array, content="[1, 2, 3, 4, 5]")
@@ -79,7 +79,7 @@ test "to_array" {
 
 test "filter" {
   let ls = @list.of([1, 2, 3, 4, 5])
-  let rs : @list.List[Int] = @list.Nil
+  let rs : @list.T[Int] = @list.Nil
   inspect!(ls.filter(fn(x) { x % 2 == 0 }), content="@list.of([2, 4])")
   inspect!(rs.filter(fn(x) { x % 2 == 0 }), content="@list.of([])")
 }
@@ -98,7 +98,7 @@ test "any" {
 
 test "tail" {
   let ls = @list.of([1, 2, 3, 4, 5])
-  let el : @list.List[Int] = @list.Nil
+  let el : @list.T[Int] = @list.Nil
   inspect!(ls.tail(), content="@list.of([2, 3, 4, 5])")
   inspect!(el.tail(), content="@list.of([])")
 }
@@ -110,7 +110,7 @@ test "head_exn" {
 
 test "head" {
   let ls = @list.of([1, 2, 3, 4, 5])
-  let el : @list.List[Int] = @list.of([])
+  let el : @list.T[Int] = @list.of([])
   inspect!(ls.head(), content="Some(1)")
   inspect!(el.head(), content="None")
 }
@@ -126,7 +126,7 @@ test "panic last" {
 
 test "init_" {
   let ls = @list.of([1, 2, 3, 4, 5])
-  let el : @list.List[Int] = @list.Nil
+  let el : @list.T[Int] = @list.Nil
   inspect!(ls.init_(), content="@list.of([1, 2, 3, 4])")
   inspect!(el.init_(), content="@list.of([])")
 }
@@ -136,7 +136,7 @@ test "concat" {
   let rs = @list.of([6, 7, 8, 9, 10])
   inspect!(ls.concat(@list.Nil), content="@list.of([1, 2, 3, 4, 5])")
   inspect!(
-    (@list.Nil : @list.List[Int]).concat(rs),
+    (@list.Nil : @list.T[Int]).concat(rs),
     content="@list.of([6, 7, 8, 9, 10])",
   )
   inspect!(ls.concat(rs), content="@list.of([1, 2, 3, 4, 5, 6, 7, 8, 9, 10])")
@@ -151,28 +151,28 @@ test "rev" {
 
 test "fold_left" {
   let ls = @list.of([1, 2, 3, 4, 5])
-  let el : @list.List[Int] = @list.Nil
+  let el : @list.T[Int] = @list.Nil
   inspect!(el.fold_left(fn(acc, x) { acc + x }, init=0), content="0")
   inspect!(ls.fold_left(fn(acc, x) { acc + x }, init=0), content="15")
 }
 
 test "fold_right" {
   let ls = @list.of(["1", "2", "3", "4", "5"])
-  let el : @list.List[String] = @list.Nil
+  let el : @list.T[String] = @list.Nil
   inspect!(ls.fold_right(fn(x, acc) { x + acc }, init=""), content="12345")
   inspect!(el.fold_right(fn(x, acc) { x + acc }, init="init"), content="init")
 }
 
 test "fold_lefti" {
   let ls = @list.of([1, 2, 3, 4, 5])
-  let el : @list.List[Int] = @list.Nil
+  let el : @list.T[Int] = @list.Nil
   inspect!(ls.fold_lefti(fn(i, acc, x) { acc + i * x }, init=0), content="40")
   inspect!(el.fold_lefti(fn(i, acc, x) { acc + i * x }, init=0), content="0")
 }
 
 test "fold_righti" {
   let ls = @list.of([1, 2, 3, 4, 5])
-  let el : @list.List[Int] = @list.Nil
+  let el : @list.T[Int] = @list.Nil
   inspect!(ls.fold_righti(fn(i, x, acc) { x * i + acc }, init=0), content="40")
   inspect!(el.fold_righti(fn(i, x, acc) { x * i + acc }, init=0), content="0")
 }
@@ -188,7 +188,7 @@ test "zip" {
 
 test "concat_map" {
   let ls = @list.of([1, 2, 3])
-  let rs : @list.List[Int] = @list.Nil
+  let rs : @list.T[Int] = @list.Nil
   inspect!(
     rs.concat_map(fn(x) { @list.of([x, x * 2]) }),
     content="@list.of([])",
@@ -222,7 +222,7 @@ test "repeat" {
 
 test "intersperse" {
   let ls = @list.of(["1", "2", "3", "4", "5"])
-  let el : @list.List[String] = Nil
+  let el : @list.T[String] = Nil
   inspect!(
     ls.intersperse("|"),
     content=
@@ -235,7 +235,7 @@ test "intersperse" {
 test "is_empty" {
   let ls = @list.of([1, 2, 3, 4, 5])
   inspect!(ls.is_empty(), content="false")
-  inspect!((@list.Nil : @list.List[Unit]).is_empty(), content="true")
+  inspect!((@list.Nil : @list.T[Unit]).is_empty(), content="true")
 }
 
 test "unzip" {
@@ -249,7 +249,7 @@ test "flatten" {
   let ls = @list.of(
     [@list.of([1, 2, 3]), @list.of([4, 5, 6]), @list.of([7, 8, 9])],
   )
-  let el : @list.List[@list.List[Int]] = @list.Nil
+  let el : @list.T[@list.T[Int]] = @list.Nil
   inspect!(ls.flatten(), content="@list.of([1, 2, 3, 4, 5, 6, 7, 8, 9])")
   inspect!(el.flatten(), content="@list.of([])")
 }
@@ -266,7 +266,7 @@ test "minimum" {
 
 test "sort" {
   let ls = @list.of([1, 123, 52, 3, 6, 0, -6, -76])
-  let el : @list.List[Int] = @list.Nil
+  let el : @list.T[Int] = @list.Nil
   inspect!(el.sort(), content="@list.of([])")
   inspect!(ls.sort(), content="@list.of([-76, -6, 0, 1, 3, 6, 52, 123])")
 }
@@ -298,7 +298,7 @@ test "take" {
 
 test "drop" {
   let ls = @list.of([1, 2, 3, 4, 5]).drop(3)
-  let el : @list.List[Int] = @list.Nil
+  let el : @list.T[Int] = @list.Nil
   inspect!(ls, content="@list.of([4, 5])")
   inspect!(ls.drop(-10), content="@list.of([4, 5])")
   inspect!(ls.drop(0), content="@list.of([4, 5])")
@@ -307,14 +307,14 @@ test "drop" {
 
 test "take_while" {
   let ls = @list.take_while(@list.of([0, 1, 2, 3, 4]), fn(x) { x < 3 })
-  let el : @list.List[Int] = @list.take_while(@list.Nil, fn(_e) { true })
+  let el : @list.T[Int] = @list.take_while(@list.Nil, fn(_e) { true })
   inspect!(ls, content="@list.of([0, 1, 2])")
   inspect!(el, content="@list.of([])")
 }
 
 test "drop_while" {
   let ls = @list.drop_while(@list.of([0, 1, 2, 3, 4]), fn(x) { x < 3 })
-  let el : @list.List[Int] = @list.drop_while(@list.Nil, fn(_e) { true })
+  let el : @list.T[Int] = @list.drop_while(@list.Nil, fn(_e) { true })
   inspect!(ls, content="@list.of([3, 4])")
   inspect!(el, content="@list.of([])")
 }
@@ -339,7 +339,7 @@ test "scan_right" {
 
 test "lookup" {
   let ls = @list.of([(1, "a"), (2, "b"), (3, "c")])
-  let el : @list.List[(Int, Int)] = @list.Nil
+  let el : @list.T[(Int, Int)] = @list.Nil
   inspect!(el.lookup(1), content="None")
   inspect!(
     ls.lookup(3),
@@ -360,7 +360,7 @@ test "find" {
     content="None",
   )
   inspect!(
-    (@list.Nil : @list.List[Int]).find(fn(element) -> Bool { element % 2 == 0 }),
+    (@list.Nil : @list.T[Int]).find(fn(element) -> Bool { element % 2 == 0 }),
     content="None",
   )
 }
@@ -379,7 +379,7 @@ test "findi" {
     content="None",
   )
   inspect!(
-    (@list.Nil : @list.List[Int]).findi(
+    (@list.Nil : @list.T[Int]).findi(
       fn(element, i) -> Bool { element % 2 == 0 && i == 3 },
     ),
     content="None",
@@ -456,7 +456,7 @@ test "intercalate" {
   let ls = @list.of(
     [@list.of([1, 2, 3]), @list.of([4, 5, 6]), @list.of([7, 8, 9])],
   )
-  let el : @list.List[@list.List[Int]] = @list.Nil
+  let el : @list.T[@list.T[Int]] = @list.Nil
   inspect!(
     ls.intercalate(@list.of([0])),
     content="@list.of([1, 2, 3, 0, 4, 5, 6, 0, 7, 8, 9])",
@@ -465,7 +465,7 @@ test "intercalate" {
 }
 
 test "default" {
-  let ls : @list.List[Int] = @list.default()
+  let ls : @list.T[Int] = @list.default()
   inspect!(ls, content="@list.of([])")
 }
 
@@ -486,7 +486,7 @@ test "List::debug_write with non-empty list" {
 
 test "List::debug_write with empty list" {
   let buf = Buffer::new(size_hint=100)
-  let list : @list.List[Int] = @list.Nil
+  let list : @list.T[Int] = @list.Nil
   @list.debug_write(list, buf)
   buf.expect!(content="")
 }
@@ -516,7 +516,7 @@ test "List::zip with lists of equal length" {
 }
 
 test "panic @list.zip with empty list" {
-  @list.of([1]).zip((@list.Nil : @list.List[Int])) |> ignore
+  @list.of([1]).zip((@list.Nil : @list.T[Int])) |> ignore
 }
 
 test "List::nth_exn with valid index" {
@@ -532,7 +532,7 @@ test "List::maximum with non-empty list" {
 }
 
 test "panic @list.maxium with empty list" {
-  (@list.Nil : @list.List[Int]).maximum() |> ignore
+  (@list.Nil : @list.T[Int]).maximum() |> ignore
 }
 
 test "List::minimum with non-empty list" {
@@ -542,7 +542,7 @@ test "List::minimum with non-empty list" {
 }
 
 test "panic @list.minimum with empty list" {
-  (@list.Nil : @list.List[Int]).minimum() |> ignore
+  (@list.Nil : @list.T[Int]).minimum() |> ignore
 }
 
 test "op_add" {
@@ -550,7 +550,7 @@ test "op_add" {
   inspect!(@list.of([]) + @list.of([1]), content="@list.of([1])")
   inspect!(@list.of([1]) + @list.of([1]), content="@list.of([1, 1])")
   inspect!(
-    (@list.Nil : @list.List[Int]) + (@list.Nil : @list.List[Int]),
+    (@list.Nil : @list.T[Int]) + (@list.Nil : @list.T[Int]),
     content="@list.of([])",
   )
 }
