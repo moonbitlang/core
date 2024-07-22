@@ -247,6 +247,9 @@ test "range" {
   inspect!((0).until(10).take(100), content="[0, 1, 2, 3, 4, 5, 6, 7, 8, 9]")
   inspect!((100).until(10).take(100), content="[]")
   inspect!((100).until(101, step=4), content="[100]")
+  inspect!((1).until(2, step=0), content="[]")
+  inspect!(1.0.until(2.0, step=0), content="[]")
+  inspect!(0L.until(10, step=0), content="[]")
   // until
   inspect!(
     (0).until(10).take(5).concat((0).until(2)),
