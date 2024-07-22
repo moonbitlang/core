@@ -25,6 +25,32 @@ test "debug function with Int" {
   // This should cover the line where the debug function is called with an Int
 }
 
+test "debug function with UInt" {
+  let x = 42U
+  let buf = Buffer::new()
+  x.debug_write(buf)
+  inspect!(
+    buf,
+    content=
+      #|42
+    ,
+  )
+  // This should cover the line where the debug function is called with a UInt
+}
+
+test "debug function with UInt64" {
+  let x = 42UL
+  let buf = Buffer::new()
+  x.debug_write(buf)
+  inspect!(
+    buf,
+    content=
+      #|42
+    ,
+  )
+  // This should cover the line where the debug function is called with a UInt64
+}
+
 test "debug function with String" {
   let s = "Hello, MoonBit!"
   let buf = Buffer::new()
