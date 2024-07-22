@@ -17,7 +17,7 @@
 /// Invariants:
 /// - The denominator is always positive.
 /// - The numerator and denominator are always coprime.
-struct T{
+struct T {
   numerator : Int64
   denominator : Int64
 } derive(Debug)
@@ -579,14 +579,8 @@ test "compare" {
 }
 
 test "from_double" {
-  @test.eq!(
-    0.5 |> @result.wrap1(f=from_double),
-    Ok(T::new_unchecked(1L, 2L)),
-  )
-  @test.eq!(
-    5.0 |> @result.wrap1(f=from_double),
-    Ok(T::new_unchecked(5L, 1L)),
-  )
+  @test.eq!(0.5 |> @result.wrap1(f=from_double), Ok(T::new_unchecked(1L, 2L)))
+  @test.eq!(5.0 |> @result.wrap1(f=from_double), Ok(T::new_unchecked(5L, 1L)))
   @test.eq!(
     29.97 |> @result.wrap1(f=from_double),
     Ok(T::new_unchecked(2997L, 100L)),
@@ -639,14 +633,8 @@ test "from_double" {
     2.2204460492503131e-16 |> @result.wrap1(f=from_double),
     Ok(T::new_unchecked(1L, 4503599627370496L)),
   )
-  @test.eq!(
-    0.0 |> @result.wrap1(f=from_double),
-    Ok(T::new_unchecked(0L, 1L)),
-  )
-  @test.eq!(
-    -0.0 |> @result.wrap1(f=from_double),
-    Ok(T::new_unchecked(0L, 1L)),
-  )
+  @test.eq!(0.0 |> @result.wrap1(f=from_double), Ok(T::new_unchecked(0L, 1L)))
+  @test.eq!(-0.0 |> @result.wrap1(f=from_double), Ok(T::new_unchecked(0L, 1L)))
   @test.eq!(
     9_223_372_036_800_000_000.0 |> @result.wrap1(f=from_double),
     Ok(T::new_unchecked(9_223_372_036_800_000_000L, 1L)),

@@ -28,9 +28,7 @@ pub fn T::new[A : Compare]() -> T[A] {
 /// ```
 /// let queue = of([1, 2, 3, 4, 5])
 /// ```
-pub fn T::from_array[A : Compare](
-  arr : Array[A]
-) -> T[A] {
+pub fn T::from_array[A : Compare](arr : Array[A]) -> T[A] {
   // CR: bad formatting  
   let len = arr.length()
   for i = 0, acc = Node::Nil {
