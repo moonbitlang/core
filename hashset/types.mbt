@@ -33,7 +33,7 @@ priv struct Entry[K] {
 /// set.insert(3)
 /// println(set.contains(3)) // output: true
 /// ```
-struct HashSet[K] {
+struct T[K] {
   mut entries : FixedArray[Entry[K]?]
   mut size : Int // active key count
   mut capacity : Int // current capacity 

@@ -3,8 +3,8 @@ package moonbitlang/core/hashset
 // Values
 
 // Types and methods
-type HashSet
-impl HashSet {
+type T
+impl T {
   capacity[K](Self[K]) -> Int
   clear[K](Self[K]) -> Unit
   contains[K : Hash + Eq](Self[K], K) -> Bool
@@ -28,5 +28,5 @@ impl HashSet {
 // Traits
 
 // Extension Methods
-impl Show for HashSet
+impl Show for T
 
