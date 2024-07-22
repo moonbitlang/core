@@ -16,7 +16,7 @@ struct T[A] {
   tree : Tree[A]
   size : Int
   shift : Int
-} 
+}
 
 priv enum Tree[A] {
   Empty

@@ -20,7 +20,7 @@
 struct T {
   numerator : Int64
   denominator : Int64
-} 
+}
 
 fn gcd(a : Int64, b : Int64) -> Int64 {
   for a = a, b = b {

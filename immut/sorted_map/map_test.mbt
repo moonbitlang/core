@@ -142,5 +142,8 @@ test "op_equal" {
 
 test "show" {
   let m = @sorted_map.of([(1, "one"), (2, "two"), (3, "three")])
-  inspect!(m, content="@immut/sorted_map.of([(1, \"one\"), (2, \"two\"), (3, \"three\")])")
+  inspect!(
+    m,
+    content="@immut/sorted_map.of([(1, \"one\"), (2, \"two\"), (3, \"three\")])",
+  )
 }

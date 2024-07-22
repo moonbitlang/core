@@ -351,7 +351,7 @@ pub fn iter[V](self : T[V]) -> Iter[V] {
 
 /// Converts the set to string.
 pub impl[V : Show] Show for T[V] with output(self, logger) {
-    match self.root {
+  match self.root {
     None => logger.write_string("@sorted_set.of([])")
     Some(node) => Show::output(node, logger)
   }
