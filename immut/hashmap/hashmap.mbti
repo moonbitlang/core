@@ -22,5 +22,5 @@ impl T {
 // Traits
 
 // Extension Methods
-impl Show for Map
+impl Show for T
 

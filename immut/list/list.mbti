@@ -72,5 +72,5 @@ impl T {
 // Traits
 
 // Extension Methods
-impl Show for List
+impl Show for T
 
