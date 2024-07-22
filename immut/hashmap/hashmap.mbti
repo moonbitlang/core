@@ -6,7 +6,6 @@ package moonbitlang/core/immut/hashmap
 type T
 impl T {
   add[K : Eq + Hash, V](Self[K, V], K, V) -> Self[K, V]
-  debug_write[K : Debug, V : Debug](Self[K, V], Buffer) -> Unit
   each[K, V](Self[K, V], (K, V) -> Unit) -> Unit
   find[K : Eq + Hash, V](Self[K, V], K) -> V?
   from_array[K : Eq + Hash, V](Array[Tuple[K, V]]) -> Self[K, V]

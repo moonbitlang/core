@@ -34,17 +34,6 @@ pub fn T::to_string[A : Show](xs : T[A]) -> String {
   Show::to_string(xs)
 }
 
-pub fn T::debug_write[A : Debug](xs : T[A], buf : Buffer) -> Unit {
-  xs.eachi(
-    fn(i, x) {
-      x.debug_write(buf)
-      if i != xs.length() - 1 {
-        buf.write_string(", ")
-      }
-    },
-  )
-}
-
 /// Convert array to list.
 ///
 /// # Example

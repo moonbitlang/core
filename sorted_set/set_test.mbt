@@ -136,15 +136,11 @@ test "singleton" {
   inspect!(@sorted_set.singleton(1).contains(2), content="false")
 }
 
-test "debug_write" {
-  let buf = Buffer::new(size_hint=100)
+test "show" {
   let set = @sorted_set.of([1, 2, 3, 4, 5])
-  set.debug_write(buf)
-  inspect!(buf.to_string(), content="{1, 2, 3, 4, 5}")
-  let buf = Buffer::new(size_hint=100)
+  inspect!(set, content="@sorted_set.of([1, 2, 3, 4, 5])")
   let set : @sorted_set.T[Int] = @sorted_set.of([])
-  set.debug_write(buf)
-  inspect!(buf.to_string(), content="{}")
+  inspect!(set, content="@sorted_set.of([])")
 }
 
 test "mix_everything" {

@@ -12,13 +12,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-fn debug_string[T : Debug](t : T) -> String {
+fn debug_string[T : Show](t : T) -> String {
   let buf = Buffer::new(size_hint=50)
-  t.debug_write(buf)
+  t.output(buf)
   buf.to_string()
 }
 
-pub fn eq[T : Debug + Eq](a : T, b : T, ~loc : SourceLoc = _) -> Unit!String {
+pub fn eq[T : Show + Eq](a : T, b : T, ~loc : SourceLoc = _) -> Unit!String {
   if a != b {
     let a = debug_string(a)
     let b = debug_string(b)
@@ -26,7 +26,7 @@ pub fn eq[T : Debug + Eq](a : T, b : T, ~loc : SourceLoc = _) -> Unit!String {
   }
 }
 
-pub fn ne[T : Debug + Eq](a : T, b : T, ~loc : SourceLoc = _) -> Unit!String {
+pub fn ne[T : Show + Eq](a : T, b : T, ~loc : SourceLoc = _) -> Unit!String {
   if not(a != b) {
     let a = debug_string(a)
     let b = debug_string(b)
@@ -63,7 +63,7 @@ pub fn is_false(x : Bool, ~loc : SourceLoc = _) -> Unit!String {
 /// is(a, a)!  // this is okay
 /// is(a, b)!  // yields an error
 /// ```
-pub fn is[T : Debug](a : T, b : T, ~loc : SourceLoc = _) -> Unit!String {
+pub fn is[T : Show](a : T, b : T, ~loc : SourceLoc = _) -> Unit!String {
   if not(physical_equal(a, b)) {
     let a = debug_string(a)
     let b = debug_string(b)
@@ -86,7 +86,7 @@ pub fn is[T : Debug](a : T, b : T, ~loc : SourceLoc = _) -> Unit!String {
 /// is_not(a, b)!  // this is okay
 /// is_not(a, a)!  // yields an error
 /// ```
-pub fn is_not[T : Debug](a : T, b : T, ~loc : SourceLoc = _) -> Unit!String {
+pub fn is_not[T : Show](a : T, b : T, ~loc : SourceLoc = _) -> Unit!String {
   if physical_equal(a, b) {
     let a = debug_string(a)
     let b = debug_string(b)

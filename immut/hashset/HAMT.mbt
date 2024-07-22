@@ -204,22 +204,6 @@ pub fn iter[A](self : T[A]) -> Iter[A] {
   }
 }
 
-pub fn debug_write[A : Debug](self : T[A], buf : Buffer) -> Unit {
-  let mut is_first = true
-  buf.write_string("@immutable_hashset.Set::[")
-  self.each(
-    fn(k) {
-      if is_first {
-        is_first = false
-      } else {
-        buf.write_string(", ")
-      }
-      k.debug_write(buf)
-    },
-  )
-  buf.write_string("]")
-}
-
 pub impl[A : Show] Show for T[A] with output(self, logger) {
   let mut is_first = true
   logger.write_string("@immut/hashset.of([")

@@ -60,7 +60,7 @@ priv enum Token {
   RBracket
   Comma
   Colon
-} derive(Eq, Debug, Show)
+} derive(Eq, Show)
 
 priv struct StringBuilder {
   mut buffer : String

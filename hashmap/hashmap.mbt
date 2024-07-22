@@ -206,10 +206,6 @@ impl Hash for MyString with hash_combine(self, hasher) {
 
 impl Show for MyString with output(self, logger) { logger.write_string(self.0) }
 
-impl Debug for MyString with debug_write(self, b : Buffer) {
-  self.0.debug_write(b)
-}
-
 test "set" {
   let m : T[MyString, Int] = new()
   m.set("a", 1)

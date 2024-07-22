@@ -16,10 +16,10 @@ struct T[A] {
   tree : Tree[A]
   size : Int
   shift : Int
-} derive(Debug)
+} 
 
 priv enum Tree[A] {
   Empty
   Node(Array[Tree[A]])
   Leaf(Array[A])
-} derive(Eq, Debug)
+} derive(Eq, Show)

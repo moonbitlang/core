@@ -15,7 +15,6 @@ fn make_zero() -> BigInt
 type BigInt
 impl BigInt {
   compare(Self, Self) -> Int
-  debug_write(Self, Buffer) -> Unit
   is_zero(Self) -> Bool
   lsl(Self, Int) -> Self
   lsr(Self, Int) -> Self
@@ -33,4 +32,5 @@ impl BigInt {
 // Traits
 
 // Extension Methods
+impl Show for BigInt
 

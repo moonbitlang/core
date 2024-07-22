@@ -6,7 +6,6 @@ package moonbitlang/core/immut/sorted_map
 type T
 impl T {
   contains[K : Compare + Eq, V](Self[K, V], K) -> Bool
-  debug_write[K : Debug, V : Debug](Self[K, V], Buffer) -> Unit
   each[K, V](Self[K, V], (K, V) -> Unit) -> Unit
   eachi[K, V](Self[K, V], (Int, K, V) -> Unit) -> Unit
   elems[K, V](Self[K, V]) -> Array[V]

@@ -33,9 +33,9 @@ struct BigInt {
   mut limbs : Array[Int] // Note: do not use limbs.length(), use len instead because of leading zeros
   mut sign : Sign // true for positive, false for negative
   mut len : Int
-} derive(Debug)
+} 
 
 priv enum Sign {
   Positive
   Negative
-} derive(Show, Debug, Eq)
+} derive(Show, Eq)
