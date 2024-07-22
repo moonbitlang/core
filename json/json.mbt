@@ -114,3 +114,8 @@ pub fn stringify(self : JsonValue) -> String {
   }
   buf.to_string()
 }
+
+/// Useful for json interpolation
+pub fn to_json(self : JsonValue) -> JsonValue {
+  self
+}
