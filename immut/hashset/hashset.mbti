@@ -3,24 +3,24 @@ package moonbitlang/core/immut/hashset
 // Values
 
 // Types and methods
-type Set
-impl Set {
-  add[T : Eq + Hash](Self[T], T) -> Self[T]
-  contains[T : Eq + Hash](Self[T], T) -> Bool
-  debug_write[T : Debug](Self[T], Buffer) -> Unit
-  each[T](Self[T], (T) -> Unit) -> Unit
-  from_array[T : Eq + Hash](Array[T]) -> Self[T]
-  is_empty[T](Self[T]) -> Bool
-  iter[T](Self[T]) -> Iter[T]
-  new[T]() -> Self[T]
-  of[T : Eq + Hash](FixedArray[T]) -> Self[T]
-  remove[T : Eq + Hash](Self[T], T) -> Self[T]
-  size[T](Self[T]) -> Int
-  to_string[T : Show](Self[T]) -> String
+type T
+impl T {
+  add[A : Eq + Hash](Self[A], A) -> Self[A]
+  contains[A : Eq + Hash](Self[A], A) -> Bool
+  debug_write[A : Debug](Self[A], Buffer) -> Unit
+  each[A](Self[A], (A) -> Unit) -> Unit
+  from_array[A : Eq + Hash](Array[A]) -> Self[A]
+  is_empty[A](Self[A]) -> Bool
+  iter[A](Self[A]) -> Iter[A]
+  new[A]() -> Self[A]
+  of[A : Eq + Hash](FixedArray[A]) -> Self[A]
+  remove[A : Eq + Hash](Self[A], A) -> Self[A]
+  size[A](Self[A]) -> Int
+  to_string[A : Show](Self[A]) -> String
 }
 
 // Traits
 
 // Extension Methods
-impl Show for Set
+impl Show for T
 

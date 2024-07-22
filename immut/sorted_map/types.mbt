@@ -30,7 +30,7 @@
 /// let map3 = map2.insert(2, "updated")
 /// println(map3.lookup(2)) // output: Some("updated")
 /// ```
-enum Map[K, V] {
+enum T[K, V] {
   Empty
-  Tree(K, ~value : V, ~size : Int, Map[K, V], Map[K, V])
+  Tree(K, ~value : V, ~size : Int, T[K, V], T[K, V])
 }

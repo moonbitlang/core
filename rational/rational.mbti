@@ -3,8 +3,8 @@ package moonbitlang/core/rational
 // Values
 
 // Types and methods
-type Rational
-impl Rational {
+type T
+impl T {
   abs(Self) -> Self
   ceil(Self) -> Int64
   compare(Self, Self) -> Int
@@ -29,5 +29,5 @@ impl Rational {
 // Traits
 
 // Extension Methods
-impl Show for Rational
+impl Show for T
 

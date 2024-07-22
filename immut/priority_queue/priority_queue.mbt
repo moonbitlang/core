@@ -18,7 +18,7 @@
 /// ```
 /// let queue : ImmutablePriorityQueue[Int] = ImmutablePriorityQueue::new()
 /// ```
-pub fn ImmutablePriorityQueue::new[T : Compare]() -> ImmutablePriorityQueue[T] {
+pub fn T::new[A : Compare]() -> T[A] {
   { body: Empty, len: 0 }
 }
 
@@ -28,28 +28,26 @@ pub fn ImmutablePriorityQueue::new[T : Compare]() -> ImmutablePriorityQueue[T] {
 /// ```
 /// let queue = of([1, 2, 3, 4, 5])
 /// ```
-pub fn ImmutablePriorityQueue::from_array[T : Compare](
-  arr : Array[T]
-) -> ImmutablePriorityQueue[T] {
+pub fn T::from_array[A : Compare](arr : Array[A]) -> T[A] {
   let len = arr.length()
   for i = 0, acc = Cont::Empty {
     if i < len {
-      continue i + 1, meld(acc, Node(arr[i], MNil))
+      continue i + 1, meld(acc, Node(arr[i], Nil))
     } else {
       break { body: acc, len: arr.length() }
     }
   }
 }
 
-pub fn to_array[T : Compare](self : ImmutablePriorityQueue[T]) -> Array[T] {
-  let arr : Array[T] = []
-  fn go(x : Cont[T]) {
+pub fn to_array[A : Compare](self : T[A]) -> Array[A] {
+  let arr : Array[A] = []
+  fn go(x : Cont[A]) {
     match x {
       Node(v, child) => {
         arr.push(v)
         loop child {
-          MNil => ()
-          MCons(x, xs) => {
+          Nil => ()
+          Cons(x, xs) => {
             go(x)
             continue xs
           }
@@ -64,7 +62,7 @@ pub fn to_array[T : Compare](self : ImmutablePriorityQueue[T]) -> Array[T] {
   arr
 }
 
-pub fn iter[T : Compare](self : ImmutablePriorityQueue[T]) -> Iter[T] {
+pub fn iter[A : Compare](self : T[A]) -> Iter[A] {
   Iter::new(
     fn(yield) {
       let arr = self.to_array()
@@ -79,23 +77,23 @@ pub fn iter[T : Compare](self : ImmutablePriorityQueue[T]) -> Iter[T] {
   )
 }
 
-fn meld[T : Compare](l : Cont[T], r : Cont[T]) -> Cont[T] {
+fn meld[A : Compare](l : Cont[A], r : Cont[A]) -> Cont[A] {
   match (l, r) {
     (Empty, _) => r
     (_, Empty) => l
     (Node(x, left), Node(y, right)) =>
       if x > y {
-        Node(x, MList::MCons(r, left))
+        Node(x, Cons(r, left))
       } else {
-        Node(y, MList::MCons(l, right))
+        Node(y, Cons(l, right))
       }
   }
 }
 
-fn merges[T : Compare](x : MList[Cont[T]]) -> Cont[T] {
-  loop x, Cont::Empty {
-    MNil, acc => acc
-    MCons(t, rest), acc => continue rest, meld(t, acc)
+fn merges[A : Compare](x : @list.T[Cont[A]]) -> Cont[A] {
+  loop x, Empty {
+    Nil, acc => acc
+    Cons(t, rest), acc => continue rest, meld(t, acc)
   }
 }
 
@@ -106,9 +104,7 @@ fn merges[T : Compare](x : MList[Cont[T]]) -> Cont[T] {
 /// let queue = of([1, 2, 3, 4])
 /// let first = queue.pop()
 /// ```
-pub fn pop[T : Compare](
-  self : ImmutablePriorityQueue[T]
-) -> ImmutablePriorityQueue[T]? {
+pub fn pop[A : Compare](self : T[A]) -> T[A]? {
   match self.body {
     Empty => None
     Node(_, ts) => Some({ body: merges(ts), len: self.len - 1 })
@@ -123,9 +119,7 @@ pub fn pop[T : Compare](
 /// let queue = of([1, 2, 3, 4])
 /// let first = queue.pop()
 /// ```
-pub fn pop_exn[T : Compare](
-  self : ImmutablePriorityQueue[T]
-) -> ImmutablePriorityQueue[T] {
+pub fn pop_exn[A : Compare](self : T[A]) -> T[A] {
   match self.body {
     Empty => abort("The ImmutablePriorityQueue is empty!")
     Node(_, ts) => { body: merges(ts), len: self.len - 1 }
@@ -139,11 +133,8 @@ pub fn pop_exn[T : Compare](
 /// let queue : ImmutablePriorityQueue[Int] = ImmutablePriorityQueue::new()
 /// queue.add(1)
 /// ```
-pub fn push[T : Compare](
-  self : ImmutablePriorityQueue[T],
-  value : T
-) -> ImmutablePriorityQueue[T] {
-  { body: meld(self.body, Node(value, MNil)), len: self.len + 1 }
+pub fn push[A : Compare](self : T[A], value : A) -> T[A] {
+  { body: meld(self.body, Node(value, Nil)), len: self.len + 1 }
 }
 
 /// Peeks at the first value in the immutable priority queue, which returns None if the immutable priority queue is empty.
@@ -153,7 +144,7 @@ pub fn push[T : Compare](
 /// let queue : ImmutablePriorityQueue[Int] = of([1, 2, 3, 4])
 /// queue.peek() // Some(4)
 /// ```
-pub fn peek[T](self : ImmutablePriorityQueue[T]) -> T? {
+pub fn peek[A](self : T[A]) -> A? {
   match self.body {
     Empty => None
     Node(v, _) => Some(v)
@@ -167,7 +158,7 @@ pub fn peek[T](self : ImmutablePriorityQueue[T]) -> T? {
 /// let queue : ImmutablePriorityt[Int] = ImmutablePriority::new()
 /// queue.is_empty() // true
 /// ```
-pub fn is_empty[T](self : ImmutablePriorityQueue[T]) -> Bool {
+pub fn is_empty[A](self : T[A]) -> Bool {
   match self.body {
     Empty => true
     _ => false
@@ -182,17 +173,15 @@ pub fn is_empty[T](self : ImmutablePriorityQueue[T]) -> Bool {
 /// queue.length() // 0
 /// queue.push(1).length() // 1
 /// ```
-pub fn length[T](self : ImmutablePriorityQueue[T]) -> Int {
+pub fn length[A](self : T[A]) -> Int {
   self.len
 }
 
-pub fn ImmutablePriorityQueue::of[T : Compare](
-  arr : FixedArray[T]
-) -> ImmutablePriorityQueue[T] {
+pub fn T::of[A : Compare](arr : FixedArray[A]) -> T[A] {
   let len = arr.length()
   for i = 0, acc = Cont::Empty {
     if i < len {
-      continue i + 1, meld(acc, Node(arr[i], MNil))
+      continue i + 1, meld(acc, Node(arr[i], Nil))
     } else {
       break { body: acc, len: arr.length() }
     }
@@ -200,17 +189,17 @@ pub fn ImmutablePriorityQueue::of[T : Compare](
 }
 
 test "meld" {
-  inspect!(meld(Empty, of([1]).body), content="Node(1, MNil)")
-  inspect!(meld(of([1]).body, Empty), content="Node(1, MNil)")
+  inspect!(meld(Empty, of([1]).body), content="Node(1, @list.of([]))")
+  inspect!(meld(of([1]).body, Empty), content="Node(1, @list.of([]))")
   inspect!(
     meld(of([1]).body, of([2]).body),
-    content="Node(2, MCons(Node(1, MNil), MNil))",
+    content="Node(2, @list.of([Node(1, @list.of([]))]))",
   )
 }
 
 test "merges" {
   inspect!(
-    match merges((MNil : MList[Cont[Int]])) {
+    match merges((Nil : @list.T[Cont[Int]])) {
       Empty => true
       _ => false
     },

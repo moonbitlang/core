@@ -12,11 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-priv type UninitializedArray[T] FixedArray[UnsafeMaybeUninit[T]]
+priv type UninitializedArray[A] FixedArray[UnsafeMaybeUninit[A]]
 
 // head and tail point to non-empty slots. When the buffer is empty, head and tail points to the same slot.
-struct Deque[T] {
-  mut buf : UninitializedArray[T]
+struct T[A] {
+  mut buf : UninitializedArray[A]
   mut len : Int
   mut head : Int
   mut tail : Int

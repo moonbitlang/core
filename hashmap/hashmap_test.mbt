@@ -13,7 +13,7 @@
 // limitations under the License.
 
 test "new" {
-  let m : @hashmap.HashMap[Int, Int] = @hashmap.new()
+  let m : @hashmap.T[Int, Int] = @hashmap.new()
   inspect!(m.capacity(), content="8")
   @test.eq!(m.size(), 0)
 }

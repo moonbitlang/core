@@ -12,14 +12,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-struct ImmutableVec[T] {
-  tree : Tree[T]
+struct T[A] {
+  tree : Tree[A]
   size : Int
   shift : Int
 } derive(Debug)
 
-priv enum Tree[T] {
+priv enum Tree[A] {
   Empty
-  Node(Array[Tree[T]])
-  Leaf(Array[T])
+  Node(Array[Tree[A]])
+  Leaf(Array[A])
 } derive(Eq, Debug)
