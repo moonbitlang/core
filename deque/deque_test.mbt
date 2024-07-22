@@ -92,7 +92,7 @@ test "iter" {
     ,
   )
   inspect!(
-    iter.take(4).filter(fn(x) { x % 2 == 0 }).fold(fn(a, x) { a + x }, 0),
+    iter.take(4).filter(fn(x) { x % 2 == 0 }).fold(fn(a, x) { a + x }, init=0),
     content="6",
   )
 }

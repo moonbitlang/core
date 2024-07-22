@@ -127,7 +127,7 @@ pub fn map_with_key[K, X, Y](self : T[K, X], f : (K, X) -> Y) -> T[K, Y] {
 
 /// Fold the values in the map.
 /// O(n).
-pub fn fold[K, V, A](self : T[K, V], f : (A, V) -> A, ~init : A) -> A {
+pub fn fold[K, V, A](self : T[K, V], ~init : A, f : (A, V) -> A) -> A {
   foldl_with_key(self, fn(acc, _k, v) { f(acc, v) }, ~init)
 }
 

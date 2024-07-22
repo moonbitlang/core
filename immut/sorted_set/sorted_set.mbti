@@ -15,7 +15,7 @@ impl T {
   disjoint[A : Compare + Eq](Self[A], Self[A]) -> Bool
   each[A](Self[A], (A) -> Unit) -> Unit
   filter[A : Compare + Eq](Self[A], (A) -> Bool) -> Self[A]
-  fold[A : Compare + Eq, B](Self[A], (B, A) -> B, ~init : B) -> B
+  fold[A : Compare + Eq, B](Self[A], ~init : B, (B, A) -> B) -> B
   from_array[A : Compare + Eq](Array[A]) -> Self[A]
   inter[A : Compare + Eq](Self[A], Self[A]) -> Self[A]
   is_empty[A : Compare + Eq](Self[A]) -> Bool

@@ -160,5 +160,5 @@ test "length" {
 
 test "iter" {
   let q = @queue.of([1, 2, 3, 4, 5])
-  inspect!(q.iter().fold(fn(x, y) { x + y }, 0), content="15")
+  inspect!(q.iter().fold(fn(x, y) { x + y }, init=0), content="15")
 }
