@@ -40,7 +40,7 @@ pub fn ArgsLoc::to_json(self : ArgsLoc) -> String {
     let item = self.0[i]
     match item {
       None => buf.write_string("null")
-      Some(loc) => loc.to_string().debug_write(buf)
+      Some(loc) => loc.to_string() |> Show::output(buf)
     }
   }
   buf.write_char(']')

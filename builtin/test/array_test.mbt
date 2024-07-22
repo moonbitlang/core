@@ -23,4 +23,4 @@ test {
 // For testing purposes
 priv struct T {
   mut x : Int
-} derive(Eq, Show, Debug)
+} derive(Eq, Show)

@@ -56,7 +56,7 @@ fn CoverageCounter::debug_write(self : CoverageCounter, buf : Buffer) -> Unit {
     if i != 0 {
       buf.write_string(", ")
     }
-    self.counter[i].debug_write(buf)
+    self.counter[i] |> Show::output(buf)
   }
   buf.write_char(']')
 }

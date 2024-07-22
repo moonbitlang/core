@@ -36,7 +36,7 @@ test "to_bytes" {
 test "debug_write" {
   fn repr(s : String) {
     let buf = Buffer::new(size_hint=0)
-    s.debug_write(buf)
+    s |> Show::output(buf)
     buf.to_string()
   }
 

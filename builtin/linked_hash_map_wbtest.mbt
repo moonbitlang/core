@@ -230,71 +230,55 @@ test "iter order" {
 
 test "linked list" {
   let m = {  }
-  let buf = Buffer::new(size_hint=0)
-  m.debug_write(buf)
-  inspect!(buf, content="{}")
+  inspect!(m, content="{}")
   m["one"] = 1
   m["two"] = 2
   m["three"] = 3
   m["four"] = 4
   m["five"] = 5
-  let buf = Buffer::new(size_hint=0)
-  m.debug_write(buf)
   inspect!(
-    buf,
+    m,
     content=
       #|{"one": 1, "two": 2, "three": 3, "four": 4, "five": 5}
     ,
   )
   m.remove("three")
-  let buf = Buffer::new(size_hint=0)
-  m.debug_write(buf)
   inspect!(
-    buf,
+    m,
     content=
       #|{"one": 1, "two": 2, "four": 4, "five": 5}
     ,
   )
   m.set("two", 20)
-  let buf = Buffer::new(size_hint=0)
-  m.debug_write(buf)
   inspect!(
-    buf,
+    m,
     content=
       #|{"one": 1, "two": 20, "four": 4, "five": 5}
     ,
   )
   m.remove("one")
-  let buf = Buffer::new(size_hint=0)
-  m.debug_write(buf)
   inspect!(
-    buf,
+    m,
     content=
       #|{"two": 20, "four": 4, "five": 5}
     ,
   )
   m.remove("five")
-  let buf = Buffer::new(size_hint=0)
-  m.debug_write(buf)
   inspect!(
-    buf,
+    m,
     content=
       #|{"two": 20, "four": 4}
     ,
   )
   m.remove("two")
-  let buf = Buffer::new(size_hint=0)
-  m.debug_write(buf)
   inspect!(
-    buf,
+    m,
     content=
       #|{"four": 4}
     ,
   )
   m.remove("four")
-  let buf = Buffer::new(size_hint=0)
-  m.debug_write(buf)
-  inspect!(buf, content="{}")
+  inspect!(m, content="{}")
 }
 
 test "to_array" {
