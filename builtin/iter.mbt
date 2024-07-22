@@ -201,6 +201,9 @@ pub fn Iter::repeat[T](a : T) -> Iter[T] {
 ///
 /// Returns an iterator that iterates over the range of Int from `start` to `end - 1`.
 pub fn until(self : Int, end : Int, ~step : Int = 1) -> Iter[Int] {
+  if step == 0 {
+    return Iter::empty()
+  }
   if step < 0 {
     return Iter(
       fn(yield) {
@@ -214,7 +217,7 @@ pub fn until(self : Int, end : Int, ~step : Int = 1) -> Iter[Int] {
       },
     )
   }
-  // step >= 0
+  // step > 0
   Iter(
     fn(yield) {
       for i = self; i < end; i = i + step {
@@ -241,6 +244,9 @@ pub fn until(self : Int, end : Int, ~step : Int = 1) -> Iter[Int] {
 ///
 /// Returns an iterator that iterates over the range of Int64 from `start` to `end - 1`.
 pub fn until(self : Int64, end : Int64, ~step : Int64 = 1L) -> Iter[Int64] {
+  if step == 0 {
+    return Iter::empty()
+  }
   if step < 0L {
     return Iter(
       fn(yield) {
@@ -280,6 +286,9 @@ pub fn until(self : Int64, end : Int64, ~step : Int64 = 1L) -> Iter[Int64] {
 ///
 /// Returns an iterator that iterates over the range of Double from `start` to `end - 1`.
 pub fn until(self : Double, end : Double, ~step : Double = 1.0) -> Iter[Double] {
+  if step == 0.0 {
+    return Iter::empty()
+  }
   if step < 0.0 {
     return Iter(
       fn(yield) {

@@ -1,13 +1,6 @@
 package moonbitlang/core/immut/array
 
 // Values
-fn immutable_push[T](Array[T], T) -> Array[T]
-
-fn immutable_set[T](Array[T], Int, T) -> Array[T]
-
-fn is_empty[A](T[A]) -> Bool
-
-fn length[A](T[A]) -> Int
 
 // Types and methods
 type T
@@ -20,7 +13,9 @@ impl T {
   fold_left[A](Self[A], (A, A) -> A, ~init : A) -> A
   fold_right[A](Self[A], (A, A) -> A, ~init : A) -> A
   from_array[A](Array[A]) -> Self[A]
+  is_empty[A](Self[A]) -> Bool
   iter[A](Self[A]) -> Iter[A]
+  length[A](Self[A]) -> Int
   map[A, B](Self[A], (A) -> B) -> Self[B]
   new[A](Int, A) -> Self[A]
   new_with_index[A](Int, (Int) -> A) -> Self[A]

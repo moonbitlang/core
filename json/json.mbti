@@ -26,6 +26,7 @@ impl JsonValue {
   item(Self, Int) -> Self?
   op_equal(Self, Self) -> Bool
   stringify(Self) -> String
+  to_json(Self) -> Self
   to_string(Self) -> String
   value(Self, String) -> Self?
 }

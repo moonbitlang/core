@@ -19,3 +19,9 @@ pub fn rev_inplace[T](self : ArrayView[T]) -> Unit {
     self.swap(i, j)
   }
 }
+
+pub fn each[T](self : ArrayView[T], f : (T) -> Unit) -> Unit {
+  for i = 0; i < self.length(); i = i + 1 {
+    f(self[i])
+  }
+}

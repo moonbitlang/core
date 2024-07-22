@@ -12,6 +12,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+test "is_empty" {
+  let v = @array.of([1, 2, 3, 4, 5])
+  let ve : @array.T[Int] = @array.empty()
+  inspect!(v.is_empty(), content="false")
+  inspect!(ve.is_empty(), content="true")
+}
+
 test "panic set with out-of-bounds index" {
   let v = @array.of([1, 2, 3, 4, 5])
   let v1 = v.set(10, 10) // This should trigger the panic in set function
@@ -40,4 +47,169 @@ test "set with valid index at end" {
   let v = @array.of([1, 2, 3, 4, 5])
   let v1 = v.set(4, 10) // This should not trigger the panic
   inspect!(v1, content="@immut/array.of([1, 2, 3, 4, 10])")
+}
+
+test "to_string" {
+  let v = @array.of([1, 2, 3, 4, 5])
+  let ve : @array.T[Int] = @array.empty()
+  inspect!(v, content="@immut/array.of([1, 2, 3, 4, 5])")
+  inspect!(ve, content="@immut/array.of([])")
+}
+
+test "to_array" {
+  let v = @array.of([1, 2, 3, 4])
+  inspect!(v.to_array().to_string(), content="[1, 2, 3, 4]")
+  inspect!(v.push(5).to_array().to_string(), content="[1, 2, 3, 4, 5]")
+}
+
+test "iter" {
+  let buf = Buffer::new(size_hint=20)
+  let v = @array.of([1, 2, 3])
+  v.iter().each(fn(e) { buf.write_string("[\(e)]") })
+  inspect!(buf, content="[1][2][3]")
+  buf.reset()
+  v.iter().take(2).each(fn(e) { buf.write_string("[\(e)]") })
+  inspect!(buf, content="[1][2]")
+}
+
+test "length" {
+  let v = @array.of([1, 2, 3, 4, 5])
+  let ve : @array.T[Int] = @array.empty()
+  inspect!(v.length(), content="5")
+  inspect!(ve.length(), content="0")
+}
+
+test "copy" {
+  let v = @array.of([1, 2, 3, 4, 5])
+  let vc = v.copy()
+  inspect!(vc, content="@immut/array.of([1, 2, 3, 4, 5])")
+  inspect!(v == vc, content="true")
+  @test.is_false!(physical_equal(v, vc))
+  let v = @array.empty()
+  let vc : @array.T[Int] = v.copy()
+  inspect!(vc, content="@immut/array.of([])")
+  inspect!(v == vc, content="true")
+  @test.is_false!(physical_equal(v, vc))
+}
+
+test "op_get" {
+  let v = @array.of([1, 2, 3, 4, 5])
+  inspect!(v[0], content="1")
+  inspect!(v[1], content="2")
+  inspect!(v[2], content="3")
+  inspect!(v[3], content="4")
+  inspect!(v[4], content="5")
+}
+
+test "set" {
+  let v = @array.of([1, 2, 3, 4, 5])
+  let v1 = v.set(1, 10)
+  let v2 = v.set(2, 10)
+  inspect!(v1, content="@immut/array.of([1, 10, 3, 4, 5])")
+  inspect!(v2, content="@immut/array.of([1, 2, 10, 4, 5])")
+}
+
+test "push" {
+  let v = @array.empty().push(1).push(2).push(3)
+  inspect!(v, content="@immut/array.of([1, 2, 3])")
+  inspect!(v.push(1), content="@immut/array.of([1, 2, 3, 1])")
+  inspect!(v.push(2), content="@immut/array.of([1, 2, 3, 2])")
+  inspect!(v.push(3), content="@immut/array.of([1, 2, 3, 3])")
+}
+
+test "from_array" {
+  let v = @array.of([1, 1, 4, 5, 1, 4])
+  let vv = @array.from_array(Array::make(30, 1))
+  inspect!(v, content="@immut/array.of([1, 1, 4, 5, 1, 4])")
+  inspect!(
+    vv,
+    content="@immut/array.of([1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1])",
+  )
+}
+
+test "iter" {
+  let v = @array.of([1, 2, 3, 4, 5])
+  let mut s = 0
+  v.each(fn(e) { s = s + e })
+  inspect!(s, content="15")
+  let v : @array.T[Int] = @array.empty()
+  v.each(fn(_e) { abort("never reach") })
+}
+
+test "iteri" {
+  let v : @array.T[Int] = @array.empty()
+  v.eachi(fn(_i, _e) { abort("never reach") })
+  let v = @array.of([1, 2, 3, 4, 5])
+  let mut s = 0
+  v.eachi(fn(i, e) { s = s + i * e })
+  inspect!(s, content="40")
+  let vec = []
+  v.eachi(fn(i, _e) { vec.push(i) })
+  inspect!(vec, content="[0, 1, 2, 3, 4]")
+}
+
+test "op_equal" {
+  let v0 : @array.T[Int] = @array.of([])
+  let v1 = @array.of([1, 2, 3, 4, 5])
+  let v2 = @array.of([1, 2, 3, 4, 5])
+  let v3 = @array.of([1, 2, 3, 4, 6])
+  let v4 = @array.of([1, 2, 3, 4])
+  let v5 = @array.new(5, 1)
+  let v6 = @array.of([1, 1, 1, 1, 1])
+  inspect!(v0 == @array.empty(), content="true")
+  inspect!(v1 == v2, content="true")
+  inspect!(v1 == v3, content="false")
+  inspect!(v1 == v4, content="false")
+  inspect!(v5 == v6, content="true")
+}
+
+test "fold_left" {
+  let e = @array.empty()
+  let v = @array.of([1, 2, 3, 4, 5])
+  inspect!(e.fold_left(fn(a, b) { a + b }, init=0), content="0")
+  inspect!(v.fold_left(fn(a, b) { a + b }, init=0), content="15")
+}
+
+test "fold_right" {
+  let e = @array.empty()
+  inspect!(e.fold_right(fn(a, b) { a + b }, init=0), content="0")
+  let v = @array.of([1, 2, 3, 4, 5])
+  inspect!(e.fold_left(fn(a, b) { a + b }, init=0), content="0")
+  inspect!(v.fold_right(fn(a, b) { a + b }, init=0), content="15")
+}
+
+test "map" {
+  let v = @array.of([1, 2, 3, 4, 5])
+  inspect!(v.map(fn(e) { e * 2 }), content="@immut/array.of([2, 4, 6, 8, 10])")
+  inspect!(
+    v.map(fn(e) { e.to_string() }),
+    content=
+      #|@immut/array.of(["1", "2", "3", "4", "5"])
+    ,
+  )
+  inspect!(
+    v.map(fn(e) { e % 2 == 0 }),
+    content="@immut/array.of([false, true, false, true, false])",
+  )
+  inspect!(@array.empty().map(fn(e : Int) { e }), content="@immut/array.of([])")
+}
+
+test "new" {
+  let v = @array.new(5, 1)
+  let v2 = @array.new(33, 10)
+  inspect!(v, content="@immut/array.of([1, 1, 1, 1, 1])")
+  inspect!(
+    v2,
+    content="@immut/array.of([10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10])",
+  )
+}
+
+test "new_with" {
+  let v = @array.new_with_index(5, fn(i) { i })
+  let v2 = @array.new_with_index(33, fn(i) { i * 10 })
+  inspect!(v, content="@immut/array.of([0, 1, 2, 3, 4])")
+  inspect!(
+    v2,
+    content="@immut/array.of([0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 110, 120, 130, 140, 150, 160, 170, 180, 190, 200, 210, 220, 230, 240, 250, 260, 270, 280, 290, 300, 310, 320])",
+  )
 }

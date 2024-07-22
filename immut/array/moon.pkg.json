@@ -2,8 +2,11 @@
   "import": [
     "moonbitlang/core/builtin",
     "moonbitlang/core/coverage",
-    "moonbitlang/core/array",
-    "moonbitlang/core/test"
+    "moonbitlang/core/test",
+    {
+      "path": "moonbitlang/core/array",
+      "alias": "core/array"
+    }
   ],
   "test-import": [
     "moonbitlang/core/builtin",

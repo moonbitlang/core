@@ -19,3 +19,11 @@ test "slice" {
   @test.eq!(s[0], 2)
   @test.eq!(s[1], 3)
 }
+
+test "each" {
+  let v = [1, 2, 3, 4, 5]
+  let s = v[2:5]
+  let mut sum = 0
+  s.each(fn(x) { sum = sum + x })
+  @test.eq!(sum, 12)
+}

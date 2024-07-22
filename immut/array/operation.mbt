@@ -12,13 +12,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-pub fn immutable_set[T](arr : Array[T], i : Int, v : T) -> Array[T] {
+fn immutable_set[T](arr : Array[T], i : Int, v : T) -> Array[T] {
   let arr = arr.copy()
   arr[i] = v
   arr
 }
 
-pub fn immutable_push[T](arr : Array[T], val : T) -> Array[T] {
+fn immutable_push[T](arr : Array[T], val : T) -> Array[T] {
   let len = arr.length()
   let new_arr = Array::make(len + 1, val)
   arr.blit_to(new_arr, ~len)
