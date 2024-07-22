@@ -3,8 +3,8 @@ package moonbitlang/core/hashmap
 // Values
 
 // Types and methods
-type HashMap
-impl HashMap {
+type T
+impl T {
   capacity[K, V](Self[K, V]) -> Int
   clear[K, V](Self[K, V]) -> Unit
   contains[K : Hash + Eq, V](Self[K, V], K) -> Bool
@@ -29,5 +29,5 @@ impl HashMap {
 // Traits
 
 // Extension Methods
-impl Show for HashMap
+impl Show for T
 
