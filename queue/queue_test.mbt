@@ -13,7 +13,7 @@
 // limitations under the License.
 
 test "new" {
-  let queue : @queue.Queue[Int] = @queue.new()
+  let queue : @queue.T[Int] = @queue.new()
   @test.eq!(queue.length(), 0)
 }
 
@@ -30,7 +30,7 @@ test "from_fixed_array_1" {
 }
 
 test "from_fixed_array_3" {
-  let q : @queue.Queue[Int] = @queue.of([])
+  let q : @queue.T[Int] = @queue.of([])
   inspect!(q, content="@queue.of([])")
 }
 
@@ -47,12 +47,12 @@ test "from_array_1" {
 }
 
 test "from_array_3" {
-  let q : @queue.Queue[Int] = @queue.of([])
+  let q : @queue.T[Int] = @queue.of([])
   inspect!(q, content="@queue.of([])")
 }
 
 test "to_string" {
-  let queue : @queue.Queue[Int] = @queue.of([1, 2, 3, 4])
+  let queue : @queue.T[Int] = @queue.of([1, 2, 3, 4])
   inspect!(queue, content="@queue.of([1, 2, 3, 4])")
   queue.push(11)
   inspect!(queue, content="@queue.of([1, 2, 3, 4, 11])")
@@ -61,14 +61,14 @@ test "to_string" {
 }
 
 test "clear" {
-  let queue : @queue.Queue[Int] = @queue.of([1, 2, 3, 4])
+  let queue : @queue.T[Int] = @queue.of([1, 2, 3, 4])
   @test.eq!(queue.length(), 4)
   queue.clear()
   @test.eq!(queue.length(), 0)
 }
 
 test "is_empty" {
-  let queue : @queue.Queue[Int] = @queue.new()
+  let queue : @queue.T[Int] = @queue.new()
   @test.is_true!(queue.is_empty())
   queue.push(1)
   queue.push(2)
@@ -78,7 +78,7 @@ test "is_empty" {
 }
 
 test "peek_exn" {
-  let queue : @queue.Queue[Int] = @queue.of([1, 2, 3, 4])
+  let queue : @queue.T[Int] = @queue.of([1, 2, 3, 4])
   @test.eq!(queue.peek_exn(), 1)
   @test.eq!(queue.length(), 4)
   @test.eq!(queue.pop_exn(), 1)
@@ -91,14 +91,14 @@ test "panic peek_exn" {
 }
 
 test "peek" {
-  let queue : @queue.Queue[Int] = @queue.of([1, 2, 3, 4])
+  let queue : @queue.T[Int] = @queue.of([1, 2, 3, 4])
   @test.eq!(queue.peek(), Some(1))
   queue.clear()
   @test.eq!(queue.peek(), None)
 }
 
 test "pop_exn" {
-  let queue : @queue.Queue[Int] = @queue.of([1, 2, 3, 4])
+  let queue : @queue.T[Int] = @queue.of([1, 2, 3, 4])
   @test.eq!(queue.pop_exn(), 1)
   @test.eq!(queue.pop_exn(), 2)
   @test.eq!(queue.pop_exn(), 3)
@@ -111,7 +111,7 @@ test "panic pop_exn" {
 }
 
 test "pop" {
-  let queue : @queue.Queue[Int] = @queue.of([1, 2, 3, 4])
+  let queue : @queue.T[Int] = @queue.of([1, 2, 3, 4])
   @test.eq!(queue.pop(), Some(1))
   @test.eq!(queue.pop(), Some(2))
   @test.eq!(queue.pop(), Some(3))
@@ -120,7 +120,7 @@ test "pop" {
 }
 
 test "iter" {
-  let queue : @queue.Queue[Int] = @queue.new()
+  let queue : @queue.T[Int] = @queue.new()
   let mut sum = 0
   queue.each(fn(x) { sum = sum + x })
   @test.eq!(sum, 0)
@@ -131,7 +131,7 @@ test "iter" {
 }
 
 test "iteri" {
-  let queue : @queue.Queue[Int] = @queue.new()
+  let queue : @queue.T[Int] = @queue.new()
   let mut sum = 0
   queue.eachi(fn(x, i) { sum = sum + x * i })
   @test.eq!(sum, 0)
@@ -142,7 +142,7 @@ test "iteri" {
 }
 
 test "fold" {
-  let queue : @queue.Queue[Int] = @queue.new()
+  let queue : @queue.T[Int] = @queue.new()
   let sum = queue.fold(init=0, fn(acc, x) { acc + x })
   @test.eq!(sum, 0)
   @queue.of([1, 2, 3, 4]).transfer(queue)
@@ -153,7 +153,7 @@ test "fold" {
 }
 
 test "length" {
-  let empty : @queue.Queue[Unit] = @queue.of([])
+  let empty : @queue.T[Unit] = @queue.of([])
   inspect!(empty.length(), content="0")
   inspect!(@queue.of([1, 2, 3]).length(), content="3")
 }
