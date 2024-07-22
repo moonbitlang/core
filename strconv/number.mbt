@@ -60,7 +60,10 @@ fn try_parse_19digits(
 
 fn parse_scientific(s : StringSlice) -> (StringSlice, Int64)? {
   // the first character is 'e'/'E' and scientific mode is enabled
-  let mut s = s.step(1)?
+  let mut s = match s.step(1) {
+    Some(s) => s
+    None => return None
+  }
   let exp_num = 0L
   let mut neg_exp = false
   if s.first_is_either('-', '+') {
@@ -134,7 +137,10 @@ fn parse_number(s : String) -> (Number, Int)? {
   // handle scientific format
   let exp_number = 0L
   if s.first_is_either('e', 'E') {
-    let (new_s, exp_number) = parse_scientific(s)?
+    let (new_s, exp_number) = match parse_scientific(s) {
+      Some(res) => res
+      None => return None
+    }
     s = new_s
     exponent += exp_number
   }
@@ -162,7 +168,10 @@ fn parse_number(s : String) -> (Number, Int)? {
     exponent = (if mantissa >= min_19digit_int {
       consumed_digit // big int
     } else {
-      let s = s.step(1)? // fractional component, skip the '.'
+      let s = match s.step(1) {
+        Some(s) => s
+        None => return None
+      } // fractional component, skip the '.'
       let (_, new_mantissa, consumed_digit) = try_parse_19digits(s, mantissa)
       mantissa = new_mantissa
       consumed_digit
