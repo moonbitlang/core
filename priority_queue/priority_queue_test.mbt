@@ -13,14 +13,14 @@
 // limitations under the License.
 
 test "new" {
-  let queue : @priority_queue.PriorityQueue[Int] = @priority_queue.new()
+  let queue : @priority_queue.T[Int] = @priority_queue.new()
   @test.eq!(queue.length(), 0)
 }
 
 test "from_array" {
   let pq = @priority_queue.of([1, 3, 6, 4, 5])
   inspect!(pq.peek(), content="Some(6)")
-  let pq_ : @priority_queue.PriorityQueue[Int] = @priority_queue.of([])
+  let pq_ : @priority_queue.T[Int] = @priority_queue.of([])
   inspect!(pq_.peek(), content="None")
 }
 
@@ -79,7 +79,7 @@ test "pop_exn" {
 }
 
 test "panic pop_exn" {
-  let pq : @priority_queue.PriorityQueue[Int] = @priority_queue.of([])
+  let pq : @priority_queue.T[Int] = @priority_queue.of([])
   pq.pop_exn()
 }
 

@@ -12,18 +12,18 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-priv struct Cont[T] {
-  content : T
-  mut next : Cell[T]
+priv struct Cont[A] {
+  content : A
+  mut next : Cell[A]
 }
 
-priv enum Cell[T] {
+priv enum Cell[A] {
   Nil
-  Cons(Cont[T])
+  Cons(Cont[A])
 }
 
-struct Queue[T] {
+struct T[A] {
   mut length : Int
-  mut first : Cell[T]
-  mut last : Cell[T]
+  mut first : Cell[A]
+  mut last : Cell[A]
 }

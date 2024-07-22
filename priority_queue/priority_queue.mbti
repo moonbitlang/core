@@ -3,21 +3,21 @@ package moonbitlang/core/priority_queue
 // Values
 
 // Types and methods
-type PriorityQueue
-impl PriorityQueue {
-  clear[T](Self[T]) -> Unit
-  copy[T](Self[T]) -> Self[T]
-  from_array[T : Compare + Eq](Array[T]) -> Self[T]
-  is_empty[T](Self[T]) -> Bool
-  iter[T : Compare + Eq](Self[T]) -> Iter[T]
-  length[T](Self[T]) -> Int
-  new[T : Compare + Eq]() -> Self[T]
-  of[T : Compare + Eq](FixedArray[T]) -> Self[T]
-  peek[T](Self[T]) -> T?
-  pop[T : Compare + Eq](Self[T]) -> T?
-  pop_exn[T : Compare + Eq](Self[T]) -> Unit
-  push[T : Compare + Eq](Self[T], T) -> Unit
-  to_array[T : Compare + Eq](Self[T]) -> Array[T]
+type T
+impl T {
+  clear[A](Self[A]) -> Unit
+  copy[A](Self[A]) -> Self[A]
+  from_array[A : Compare + Eq](Array[A]) -> Self[A]
+  is_empty[A](Self[A]) -> Bool
+  iter[A : Compare + Eq](Self[A]) -> Iter[A]
+  length[A](Self[A]) -> Int
+  new[A : Compare + Eq]() -> Self[A]
+  of[A : Compare + Eq](FixedArray[A]) -> Self[A]
+  peek[A](Self[A]) -> A?
+  pop[A : Compare + Eq](Self[A]) -> A?
+  pop_exn[A : Compare + Eq](Self[A]) -> Unit
+  push[A : Compare + Eq](Self[A], A) -> Unit
+  to_array[A : Compare + Eq](Self[A]) -> Array[A]
 }
 
 // Traits
