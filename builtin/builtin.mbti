@@ -327,7 +327,6 @@ impl UInt {
 }
 impl UInt64 {
   compare(UInt64, UInt64) -> Int
-  debug_write(UInt64, Buffer) -> Unit
   extend_uint(UInt) -> UInt64
   land(UInt64, UInt64) -> UInt64
   lnot(UInt64, UInt64) -> UInt64
