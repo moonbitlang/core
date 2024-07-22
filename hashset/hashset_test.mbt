@@ -22,7 +22,7 @@ test "doc" {
 }
 
 test "new" {
-  let m : @hashset.HashSet[Int] = @hashset.new()
+  let m : @hashset.T[Int] = @hashset.new()
   @test.eq!(m.capacity(), default_init_capacity)
   @test.eq!(m.size(), 0)
 }

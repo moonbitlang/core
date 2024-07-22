@@ -36,7 +36,7 @@ priv struct Entry[K, V] {
 /// map.set(3, "updated")
 /// println(map.get(3)) // output: Some("updated")
 /// ```
-struct HashMap[K, V] {
+struct T[K, V] {
   mut entries : FixedArray[Entry[K, V]?]
   mut capacity : Int
   // size of field `entries`, it is redundant but useful for performance

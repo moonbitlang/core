@@ -36,15 +36,13 @@ test "power_2_above" {
 }
 
 /// Create new hash map.
-pub fn HashMap::new[K, V](~capacity : Int = 8) -> HashMap[K, V] {
+pub fn T::new[K, V](~capacity : Int = 8) -> T[K, V] {
   let capacity = power_2_above(8, capacity)
   { size: 0, capacity, entries: FixedArray::make(capacity, None) }
 }
 
 /// Create new hash map from array.
-pub fn HashMap::from_array[K : Hash + Eq, V](
-  arr : Array[(K, V)]
-) -> HashMap[K, V] {
+pub fn T::from_array[K : Hash + Eq, V](arr : Array[(K, V)]) -> T[K, V] {
   let m = new(capacity=arr.length())
   arr.each(fn(e) { m.set(e.0, e.1) })
   m
@@ -52,7 +50,7 @@ pub fn HashMap::from_array[K : Hash + Eq, V](
 
 /// Set a key-value pair into hash map.
 /// @alert unsafe "Panic if the hash map is full."
-pub fn set[K : Hash + Eq, V](self : HashMap[K, V], key : K, value : V) -> Unit {
+pub fn set[K : Hash + Eq, V](self : T[K, V], key : K, value : V) -> Unit {
   if self.size >= self.capacity.lsr(1) {
     self.grow()
   }
@@ -82,16 +80,12 @@ pub fn set[K : Hash + Eq, V](self : HashMap[K, V], key : K, value : V) -> Unit {
   }
 }
 
-pub fn op_set[K : Hash + Eq, V](
-  self : HashMap[K, V],
-  key : K,
-  value : V
-) -> Unit {
+pub fn op_set[K : Hash + Eq, V](self : T[K, V], key : K, value : V) -> Unit {
   self.set(key, value)
 }
 
 /// Get the value associated with a key.
-pub fn get[K : Hash + Eq, V](self : HashMap[K, V], key : K) -> V? {
+pub fn get[K : Hash + Eq, V](self : T[K, V], key : K) -> V? {
   let hash = key.hash()
   for i = 0, idx = hash.land(self.capacity - 1) {
     // if i == self.capacity {
@@ -112,14 +106,14 @@ pub fn get[K : Hash + Eq, V](self : HashMap[K, V], key : K) -> V? {
   }
 }
 
-pub fn op_get[K : Hash + Eq, V](self : HashMap[K, V], key : K) -> V? {
+pub fn op_get[K : Hash + Eq, V](self : T[K, V], key : K) -> V? {
   self.get(key)
 }
 
 /// Get the value associated with a key, 
 /// returns the provided default value if the key does not exist.
 pub fn get_or_default[K : Hash + Eq, V](
-  self : HashMap[K, V],
+  self : T[K, V],
   key : K,
   default : V
 ) -> V {
@@ -130,7 +124,7 @@ pub fn get_or_default[K : Hash + Eq, V](
 }
 
 /// Check if the hash map contains a key.
-pub fn contains[K : Hash + Eq, V](self : HashMap[K, V], key : K) -> Bool {
+pub fn contains[K : Hash + Eq, V](self : T[K, V], key : K) -> Bool {
   match self.get(key) {
     Some(_) => true
     None => false
@@ -138,7 +132,7 @@ pub fn contains[K : Hash + Eq, V](self : HashMap[K, V], key : K) -> Bool {
 }
 
 /// Remove a key-value pair from hash map.
-pub fn remove[K : Hash + Eq, V](self : HashMap[K, V], key : K) -> Unit {
+pub fn remove[K : Hash + Eq, V](self : T[K, V], key : K) -> Unit {
   let hash = key.hash()
   for i = 0, idx = hash.land(self.capacity - 1) {
     match self.entries[idx] {
@@ -159,7 +153,7 @@ pub fn remove[K : Hash + Eq, V](self : HashMap[K, V], key : K) -> Unit {
   }
 }
 
-fn shift_back[K : Hash, V](self : HashMap[K, V], start_index : Int) -> Unit {
+fn shift_back[K : Hash, V](self : T[K, V], start_index : Int) -> Unit {
   for prev = start_index, curr = (start_index + 1).land(self.capacity - 1) {
     match self.entries[curr] {
       Some({ psl, hash, key, value, .. }) => {
@@ -176,7 +170,7 @@ fn shift_back[K : Hash, V](self : HashMap[K, V], start_index : Int) -> Unit {
 }
 
 // TODO: this could be further optimized
-fn grow[K : Hash + Eq, V](self : HashMap[K, V]) -> Unit {
+fn grow[K : Hash + Eq, V](self : T[K, V]) -> Unit {
   let old_entries = self.entries
   let new_capacity = self.capacity.lsl(1)
   self.entries = FixedArray::make(new_capacity, None)
@@ -190,7 +184,7 @@ fn grow[K : Hash + Eq, V](self : HashMap[K, V]) -> Unit {
   }
 }
 
-pub fn HashMap::of[K : Eq + Hash, V](arr : FixedArray[(K, V)]) -> HashMap[K, V] {
+pub fn T::of[K : Eq + Hash, V](arr : FixedArray[(K, V)]) -> T[K, V] {
   let m = new(capacity=arr.length())
   arr.each(fn(e) { m.set(e.0, e.1) })
   m
@@ -217,7 +211,7 @@ impl Debug for MyString with debug_write(self, b : Buffer) {
 }
 
 test "set" {
-  let m : HashMap[MyString, Int] = new()
+  let m : T[MyString, Int] = new()
   m.set("a", 1)
   m.set("b", 1)
   m.set("bc", 2)
@@ -233,7 +227,7 @@ test "set" {
 }
 
 test "remove" {
-  let m : HashMap[MyString, Int] = new()
+  let m : T[MyString, Int] = new()
   m.set("a", 1)
   m.set("ab", 2)
   m.set("bc", 2)
@@ -249,7 +243,7 @@ test "remove" {
 }
 
 test "remove_unexist_key" {
-  let m : HashMap[MyString, Int] = new()
+  let m : T[MyString, Int] = new()
   m.set("a", 1)
   m.set("ab", 2)
   m.set("abc", 3)
@@ -259,7 +253,7 @@ test "remove_unexist_key" {
 }
 
 test "clear" {
-  let m : HashMap[MyString, Int] = of([("a", 1), ("b", 2), ("c", 3)])
+  let m : T[MyString, Int] = of([("a", 1), ("b", 2), ("c", 3)])
   m.clear()
   @test.eq!(m.size(), 0)
   @test.eq!(m.capacity(), 8)
@@ -269,7 +263,7 @@ test "clear" {
 }
 
 test "grow" {
-  let m : HashMap[MyString, Int] = new()
+  let m : T[MyString, Int] = new()
   m.set("C", 1)
   m.set("Go", 2)
   m.set("C++", 3)

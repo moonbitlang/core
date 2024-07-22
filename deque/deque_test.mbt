@@ -307,18 +307,18 @@ test "front_and_back" {
   let dv = @deque.of([1, 2, 3, 4, 5])
   @test.eq!(dv.back(), Some(5))
   @test.eq!(dv.front(), Some(1))
-  let dv : @deque.Deque[Int] = @deque.new()
+  let dv : @deque.T[Int] = @deque.new()
   @test.eq!(dv.back(), None)
   @test.eq!(dv.front(), None)
 }
 
 test "new_with_capacity" {
-  let d : @deque.Deque[Int] = @deque.new(capacity=0)
+  let d : @deque.T[Int] = @deque.new(capacity=0)
   @test.eq!(d.capacity(), 0)
 }
 
 test "new_with_capacity_non_zero" {
-  let d : @deque.Deque[Int] = @deque.new(capacity=10)
+  let d : @deque.T[Int] = @deque.new(capacity=10)
   @test.eq!(d.capacity(), 10)
 }
 
