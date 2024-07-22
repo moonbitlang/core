@@ -5,36 +5,36 @@ package moonbitlang/core/deque
 // Types and methods
 type Deque
 impl Deque {
-  back[T](Self[T]) -> T?
-  capacity[T](Self[T]) -> Int
-  clear[T](Self[T]) -> Unit
-  contains[T : Eq](Self[T], T) -> Bool
-  each[T](Self[T], (T) -> Unit) -> Unit
-  eachi[T](Self[T], (Int, T) -> Unit) -> Unit
-  from_array[T](Array[T]) -> Self[T]
-  front[T](Self[T]) -> T?
-  is_empty[T](Self[T]) -> Bool
-  iter[T](Self[T]) -> Iter[T]
-  length[T](Self[T]) -> Int
-  map[T, U](Self[T], (T) -> U) -> Self[U]
-  mapi[T, U](Self[T], (Int, T) -> U) -> Self[U]
-  new[T](~capacity : Int = ..) -> Self[T]
-  of[T](FixedArray[T]) -> Self[T]
-  op_equal[T : Eq](Self[T], Self[T]) -> Bool
-  op_get[T](Self[T], Int) -> T
-  op_set[T](Self[T], Int, T) -> Unit
-  pop_back[T](Self[T]) -> T?
-  pop_back_exn[T](Self[T]) -> Unit
-  pop_front[T](Self[T]) -> T?
-  pop_front_exn[T](Self[T]) -> Unit
-  push_back[T](Self[T], T) -> Unit
-  push_front[T](Self[T], T) -> Unit
-  reserve_capacity[T](Self[T], Int) -> Unit
-  rev_each[T](Self[T], (T) -> Unit) -> Unit
-  rev_eachi[T](Self[T], (Int, T) -> Unit) -> Unit
-  search[T : Eq](Self[T], T) -> Int?
-  shrink_to_fit[T](Self[T]) -> Unit
-  to_string[T : Show](Self[T]) -> String
+  back[A](Self[A]) -> A?
+  capacity[A](Self[A]) -> Int
+  clear[A](Self[A]) -> Unit
+  contains[A : Eq](Self[A], A) -> Bool
+  each[A](Self[A], (A) -> Unit) -> Unit
+  eachi[A](Self[A], (Int, A) -> Unit) -> Unit
+  from_array[A](Array[A]) -> Self[A]
+  front[A](Self[A]) -> A?
+  is_empty[A](Self[A]) -> Bool
+  iter[A](Self[A]) -> Iter[A]
+  length[A](Self[A]) -> Int
+  map[A, U](Self[A], (A) -> U) -> Self[U]
+  mapi[A, U](Self[A], (Int, A) -> U) -> Self[U]
+  new[A](~capacity : Int = ..) -> Self[A]
+  of[A](FixedArray[A]) -> Self[A]
+  op_equal[A : Eq](Self[A], Self[A]) -> Bool
+  op_get[A](Self[A], Int) -> A
+  op_set[A](Self[A], Int, A) -> Unit
+  pop_back[A](Self[A]) -> A?
+  pop_back_exn[A](Self[A]) -> Unit
+  pop_front[A](Self[A]) -> A?
+  pop_front_exn[A](Self[A]) -> Unit
+  push_back[A](Self[A], A) -> Unit
+  push_front[A](Self[A], A) -> Unit
+  reserve_capacity[A](Self[A], Int) -> Unit
+  rev_each[A](Self[A], (A) -> Unit) -> Unit
+  rev_eachi[A](Self[A], (Int, A) -> Unit) -> Unit
+  search[A : Eq](Self[A], A) -> Int?
+  shrink_to_fit[A](Self[A]) -> Unit
+  to_string[A : Show](Self[A]) -> String
 }
 
 // Traits
