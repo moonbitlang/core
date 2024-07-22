@@ -16,10 +16,6 @@ pub type SourceLoc
 
 pub fn SourceLoc::to_string(self : SourceLoc) -> String = "%loc_to_string"
 
-pub fn SourceLoc::debug_write(self : SourceLoc, buf : Buffer) -> Unit {
-  buf.write_string(self.to_string())
-}
-
 pub impl Show for SourceLoc with output(self, logger) {
   logger.write_string(self.to_string())
 }

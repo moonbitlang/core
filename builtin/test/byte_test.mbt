@@ -12,28 +12,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-test "byte_to_string" {
+test "byte.to_string" {
   let b1 = b'\x00'
   let b2 = b'\x0F'
   let b3 = b'\xFF'
-  @test.is_true!(b1.to_string() == "b'\\x00'")
-  @test.is_true!(b2.to_string() == "b'\\x0F'")
-  @test.is_true!(b3.to_string() == "b'\\xFF'")
-}
-
-test "byte_debug_write" {
-  let b1 = b'\x00'
-  let b2 = b'\x0F'
-  let b3 = b'\xFF'
-  let buf = Buffer::new(size_hint=10)
-  b1.debug_write(buf)
-  @test.is_true!(buf.to_string() == "b'\\x00'")
-  buf.reset()
-  b2.debug_write(buf)
-  @test.is_true!(buf.to_string() == "b'\\x0F'")
-  buf.reset()
-  b3.debug_write(buf)
-  @test.is_true!(buf.to_string() == "b'\\xFF'")
+  inspect!(b1, content="b'\\x00'")
+  inspect!(b2, content="b'\\x0F'")
+  inspect!(b3, content="b'\\xFF'")
 }
 
 test "byte_compare" {

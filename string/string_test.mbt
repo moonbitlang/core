@@ -33,7 +33,7 @@ test "to_bytes" {
   @test.eq!("🤔".to_bytes().to_string(), "🤔")
 }
 
-test "debug_write" {
+test "Show::output" {
   fn repr(s : String) {
     let buf = Buffer::new(size_hint=0)
     s |> Show::output(buf)
@@ -98,9 +98,6 @@ test "chars" {
     content="['A', '😊', '𠮷', 'B']",
   )
 }
-
-// [debug_write] is in [builtin].
-// due to cyclic dependency issue we can only test it here
 
 // test here to avlid cyclic dependency between assertion and builtin
 test "Buffer::to_bytes" {

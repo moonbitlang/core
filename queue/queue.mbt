@@ -60,10 +60,6 @@ pub fn to_string[A : Show](self : T[A]) -> String {
   Show::to_string(self)
 }
 
-pub fn debug_write[A : Show](self : T[A], buf : Buffer) -> Unit {
-  buf.write_string(self.to_string())
-}
-
 /// Tests if two queue cells are equal.
 fn op_equal[T : Eq](self : Cell[T], other : Cell[T]) -> Bool {
   loop self, other {

@@ -212,7 +212,6 @@ impl Map {
 
 pub type SourceLoc
 impl SourceLoc {
-  debug_write(Self, Buffer) -> Unit
   to_string(Self) -> String
 }
 
@@ -229,7 +228,6 @@ impl Bool {
 }
 impl Byte {
   compare(Byte, Byte) -> Int
-  debug_write(Byte, Buffer) -> Unit
   hash(Byte) -> Int
   hash_combine(Byte, Hasher) -> Unit
   op_equal(Byte, Byte) -> Bool
