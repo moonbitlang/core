@@ -15,3 +15,11 @@
 pub let min : UInt = 0U
 
 pub let max : UInt = 4294967295U
+
+pub fn to_byte(self : UInt) -> Byte {
+  self.to_int().to_byte()
+}
+
+pub fn to_int64(self : UInt) -> Int64 {
+  self.to_uint64().to_int64()
+}
