@@ -72,9 +72,7 @@ fn lex_value(
             }
             raise invalid_char(ctx, shift=-1)
           }
-          None => {
-            raise InvalidEof
-          }
+          None => raise InvalidEof
         }
       Some('0') => {
         let n = lex_zero!(ctx, start=ctx.offset - 1)
@@ -94,9 +92,7 @@ fn lex_value(
         }
         raise invalid_char(ctx, shift=-1)
       }
-      None => {
-        raise InvalidEof
-      }
+      None => raise InvalidEof
     }
   }
 }

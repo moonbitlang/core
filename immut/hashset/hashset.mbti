@@ -7,7 +7,6 @@ type T
 impl T {
   add[A : Eq + Hash](Self[A], A) -> Self[A]
   contains[A : Eq + Hash](Self[A], A) -> Bool
-  debug_write[A : Debug](Self[A], Buffer) -> Unit
   each[A](Self[A], (A) -> Unit) -> Unit
   from_array[A : Eq + Hash](Array[A]) -> Self[A]
   is_empty[A](Self[A]) -> Bool

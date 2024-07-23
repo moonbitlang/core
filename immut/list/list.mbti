@@ -18,7 +18,6 @@ impl T {
   concat[A](Self[A], Self[A]) -> Self[A]
   concat_map[A, B](Self[A], (A) -> Self[B]) -> Self[B]
   contains[A : Eq](Self[A], A) -> Bool
-  debug_write[A : Debug](Self[A], Buffer) -> Unit
   default[X]() -> Self[X]
   drop[A](Self[A], Int) -> Self[A]
   drop_while[A](Self[A], (A) -> Bool) -> Self[A]

@@ -55,7 +55,10 @@ pub fn as_array(self : JsonValue) -> Array[JsonValue]? {
 
 /// Try to get this element as a Json Array and get the element at the `index` as a Json Value
 pub fn item(self : JsonValue, index : Int) -> JsonValue? {
-  self.as_array()?.get(index)
+  match self.as_array() {
+    Some(arr) => arr.get(index)
+    None => None
+  }
 }
 
 /// Try to get this element as an Object
@@ -68,7 +71,10 @@ pub fn as_object(self : JsonValue) -> Map[String, JsonValue]? {
 
 /// Try to get this element as a Json Object and get the element with the `key` as a Json Value
 pub fn value(self : JsonValue, key : String) -> JsonValue? {
-  self.as_object()?[key]
+  match self.as_object() {
+    Some(obj) => obj[key]
+    None => None
+  }
 }
 
 pub fn stringify(self : JsonValue) -> String {

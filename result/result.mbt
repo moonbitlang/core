@@ -21,7 +21,10 @@
 /// let y = x.map(fn (v : Int) { v * 7 })
 /// ```
 pub fn map[T, E, U](self : Result[T, E], f : (T) -> U) -> Result[U, E] {
-  Ok(f(self?))
+  match self {
+    Ok(value) => Ok(f(value))
+    Err(err) => Err(err)
+  }
 }
 
 test "map" {
@@ -179,7 +182,10 @@ test "or_else" {
 /// let y = x.flatten()
 /// ```
 pub fn flatten[T, E](self : Result[Result[T, E], E]) -> Result[T, E] {
-  self?
+  match self {
+    Ok(value) => value
+    Err(err) => Err(err)
+  }
 }
 
 test "flatten" {
@@ -203,7 +209,10 @@ pub fn bind[T, E, U](
   self : Result[T, E],
   g : (T) -> Result[U, E]
 ) -> Result[U, E] {
-  g(self?)
+  match self {
+    Ok(value) => g(value)
+    Err(err) => Err(err)
+  }
 }
 
 test "bind" {
@@ -324,15 +333,13 @@ test "show" {
 pub fn unwrap_or_error[T, E](self : Result[T, E]) -> T!E {
   match self {
     Ok(x) => x
-    Err(e) => {
-      raise e
-    }
+    Err(e) => raise e
   }
 }
 
 test "unwrap exn" {
   inspect!(
-    (Err("This is serious") : Result[Int, String]).unwrap_or_error()!!,
+    wrap1(f=unwrap_or_error, (Err("This is serious") : Result[Unit, String])),
     content=
       #|Err("This is serious")
     ,

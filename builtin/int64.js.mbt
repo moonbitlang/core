@@ -453,6 +453,10 @@ pub fn Double::reinterpret_as_i64(self : Double) -> Int64 {
   MyInt64::reinterpret_double(self).to_int64()
 }
 
+pub fn Double::reinterpret_as_u64(self : Double) -> UInt64 {
+  MyInt64::reinterpret_double(self).to_uint64()
+}
+
 pub fn Double::convert_uint64(value : UInt64) -> Double {
   MyInt64::convert_to_double_u(MyInt64::from_uint64(value))
 }
@@ -487,6 +491,10 @@ pub fn UInt64::to_int64(self : UInt64) -> Int64 = "%identity"
 
 pub fn UInt64::to_uint(self : UInt64) -> UInt {
   MyInt64::from_uint64(self).to_uint()
+}
+
+pub fn UInt64::to_int(self : UInt64) -> Int {
+  MyInt64::from_uint64(self).to_int()
 }
 
 pub fn UInt64::compare(self : UInt64, other : UInt64) -> Int {

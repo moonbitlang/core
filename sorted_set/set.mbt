@@ -349,23 +349,6 @@ pub fn iter[V](self : T[V]) -> Iter[V] {
   )
 }
 
-pub fn debug_write[V : Debug](self : T[V], buf : Buffer) -> Unit {
-  let linear = self.to_array()
-  let len = linear.length()
-  if len == 0 {
-    buf.write_string("{}")
-    return
-  }
-  buf.write_string("{")
-  for i = 0; i < len - 1; i = i + 1 {
-    linear[i].debug_write(buf)
-    buf.write_string(", ")
-  } else {
-    linear[len - 1].debug_write(buf)
-    buf.write_string("}")
-  }
-}
-
 /// Converts the set to string.
 pub impl[V : Show] Show for T[V] with output(self, logger) {
   match self.root {

@@ -1,19 +1,19 @@
 package moonbitlang/core/test
 
 // Values
-fn eq[T : Debug + Eq](T, T, ~loc : SourceLoc = _) -> Unit!String
+fn eq[T : Show + Eq](T, T, ~loc : SourceLoc = _) -> Unit!String
 
 fn fail[T](String, ~loc : SourceLoc = _) -> T!String
 
-fn is[T : Debug](T, T, ~loc : SourceLoc = _) -> Unit!String
+fn is[T : Show](T, T, ~loc : SourceLoc = _) -> Unit!String
 
 fn is_false(Bool, ~loc : SourceLoc = _) -> Unit!String
 
-fn is_not[T : Debug](T, T, ~loc : SourceLoc = _) -> Unit!String
+fn is_not[T : Show](T, T, ~loc : SourceLoc = _) -> Unit!String
 
 fn is_true(Bool, ~loc : SourceLoc = _) -> Unit!String
 
-fn ne[T : Debug + Eq](T, T, ~loc : SourceLoc = _) -> Unit!String
+fn ne[T : Show + Eq](T, T, ~loc : SourceLoc = _) -> Unit!String
 
 // Types and methods
 

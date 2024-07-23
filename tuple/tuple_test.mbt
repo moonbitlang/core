@@ -187,24 +187,16 @@ test "eq" {
   )
 }
 
-test "debug_write" {
+test "show" {
   let tuple2 = (1, 2)
   let tuple3 = ("a", "b", "c")
   let tuple4 = (1, 2, 3, "hello")
   let tuple5 = ([1], "2", 3, ([4] : Array[_]), 5)
-  let buf = Buffer::new(size_hint=0)
-  tuple2.debug_write(buf)
-  inspect!(buf, content="(1, 2)")
-  buf.reset()
-  tuple3.debug_write(buf)
-  inspect!(buf, content="(\"a\", \"b\", \"c\")")
-  buf.reset()
-  tuple4.debug_write(buf)
-  inspect!(buf, content="(1, 2, 3, \"hello\")")
-  buf.reset()
-  tuple5.debug_write(buf)
+  inspect!(tuple2, content="(1, 2)")
+  inspect!(tuple3, content="(\"a\", \"b\", \"c\")")
+  inspect!(tuple4, content="(1, 2, 3, \"hello\")")
   inspect!(
-    buf,
+    tuple5,
     content=
       #|([1], "2", 3, [4], 5)
     ,

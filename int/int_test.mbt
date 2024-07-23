@@ -31,18 +31,18 @@ test "overflow" {
 }
 
 test "hash" {
-  inspect!(Int::hash(0), content="0")
-  inspect!(Int::hash(1), content="69681622")
-  inspect!(Int::hash(2), content="-236984087")
-  inspect!(Int::hash(3), content="-1057966777")
-  inspect!(Int::hash(4), content="-744398955")
-  inspect!(Int::hash(5), content="-482482911")
-  inspect!(Int::hash(6), content="-1506254959")
-  inspect!(Int::hash(7), content="1327878809")
-  inspect!(Int::hash(8), content="1120898975")
-  inspect!(Int::hash(9), content="1567958539")
-  inspect!(Int::hash(0x7fffffff), content="943411498")
-  inspect!(Int::hash(0x7fffffff + 1), content="963800214")
+  inspect!(Hash::hash(0), content="0")
+  inspect!(Hash::hash(1), content="69681622")
+  inspect!(Hash::hash(2), content="-236984087")
+  inspect!(Hash::hash(3), content="-1057966777")
+  inspect!(Hash::hash(4), content="-744398955")
+  inspect!(Hash::hash(5), content="-482482911")
+  inspect!(Hash::hash(6), content="-1506254959")
+  inspect!(Hash::hash(7), content="1327878809")
+  inspect!(Hash::hash(8), content="1120898975")
+  inspect!(Hash::hash(9), content="1567958539")
+  inspect!(Hash::hash(0x7fffffff), content="943411498")
+  inspect!(Hash::hash(0x7fffffff + 1), content="963800214")
 }
 
 test "abs function coverage" {

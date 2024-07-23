@@ -49,21 +49,9 @@ pub fn to_string(self : Byte) -> String {
   "b'\\x\(hi)\(lo)'"
 }
 
-pub fn debug_write(self : Byte, buf : Buffer) -> Unit {
-  let i = self.to_int()
-  let hi = alphabet(i / 16)
-  let lo = alphabet(i % 16)
-  buf.write_string("b'\\x")
-  buf.write_string(hi)
-  buf.write_string(lo)
-  buf.write_string("'")
-}
+pub impl Hash for Byte with hash(self) { self.to_int() }
 
-pub fn hash(self : Byte) -> Int {
-  self.to_int()
-}
-
-pub fn hash_combine(self : Byte, hasher : Hasher) -> Unit {
+pub impl Hash for Byte with hash_combine(self, hasher) {
   hasher.combine_byte(self)
 }
 
@@ -87,4 +75,32 @@ test "panic alphabet function coverage" {
   inspect!(alphabet(15), content="F")
   // Test for the panic case
   alphabet(16) |> ignore
+}
+
+pub fn Byte::default() -> Byte {
+  b'\x00'
+}
+
+pub fn Byte::lnot(self : Byte) -> Byte {
+  self.to_int().lnot().to_byte()
+}
+
+pub fn Byte::land(self : Byte, that : Byte) -> Byte {
+  self.to_int().land(that.to_int()).to_byte()
+}
+
+pub fn Byte::lor(self : Byte, that : Byte) -> Byte {
+  self.to_int().lor(that.to_int()).to_byte()
+}
+
+pub fn Byte::lxor(self : Byte, that : Byte) -> Byte {
+  self.to_int().lxor(that.to_int()).to_byte()
+}
+
+pub fn Byte::lsl(self : Byte, count : Int) -> Byte {
+  self.to_int().lsl(count).to_byte()
+}
+
+pub fn Byte::lsr(self : Byte, count : Int) -> Byte {
+  self.to_int().lsr(count).to_byte()
 }

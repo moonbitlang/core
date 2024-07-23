@@ -12,28 +12,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-test "byte_to_string" {
+test "byte.to_string" {
   let b1 = b'\x00'
   let b2 = b'\x0F'
   let b3 = b'\xFF'
-  @test.is_true!(b1.to_string() == "b'\\x00'")
-  @test.is_true!(b2.to_string() == "b'\\x0F'")
-  @test.is_true!(b3.to_string() == "b'\\xFF'")
-}
-
-test "byte_debug_write" {
-  let b1 = b'\x00'
-  let b2 = b'\x0F'
-  let b3 = b'\xFF'
-  let buf = Buffer::new(size_hint=10)
-  b1.debug_write(buf)
-  @test.is_true!(buf.to_string() == "b'\\x00'")
-  buf.reset()
-  b2.debug_write(buf)
-  @test.is_true!(buf.to_string() == "b'\\x0F'")
-  buf.reset()
-  b3.debug_write(buf)
-  @test.is_true!(buf.to_string() == "b'\\xFF'")
+  inspect!(b1, content="b'\\x00'")
+  inspect!(b2, content="b'\\x0F'")
+  inspect!(b3, content="b'\\xFF'")
 }
 
 test "byte_compare" {
@@ -59,4 +44,32 @@ test "byte_op_equal" {
   @test.is_true!(b2.op_equal(b3) |> not)
   @test.is_true!(b3.op_equal(b2) |> not)
   @test.is_true!(b3.op_equal(b3))
+}
+
+test "byte_lsl" {
+  @test.eq!(b'\xFF'.lsl(8), b'\x00')
+  @test.eq!(b'\xFF'.lsl(8).to_int(), 0)
+}
+
+test "byte_lsr" {
+  @test.eq!(b'\xFF'.lsr(8), b'\x00')
+  @test.eq!((0xFFF).to_byte().lsr(8), b'\x00')
+}
+
+test "byte_lxor" {
+  @test.eq!(b'\xFF'.lxor(b'\xFF'), b'\x00')
+  @test.eq!(b'\xFF'.lxor(b'\x0F'), b'\xF0')
+  @test.eq!(b'\x0F'.lxor(b'\xFF'), b'\xF0')
+}
+
+test "byte_lor" {
+  @test.eq!(b'\xFF'.lor(b'\xFF'), b'\xFF')
+  @test.eq!(b'\xFF'.lor(b'\x0F'), b'\xFF')
+  @test.eq!(b'\x0F'.lor(b'\xFF'), b'\xFF')
+}
+
+test "byte_land" {
+  @test.eq!(b'\xFF'.land(b'\xFF'), b'\xFF')
+  @test.eq!(b'\xFF'.land(b'\x0F'), b'\x0F')
+  @test.eq!(b'\x0F'.land(b'\xFF'), b'\x0F')
 }

@@ -102,7 +102,10 @@ test "some" {
 /// debug(b.map(fn(x){ x * 2 })) //output: None
 /// ```
 pub fn map[T, U](self : T?, f : (T) -> U) -> U? {
-  Some(f(self?))
+  match self {
+    Some(t) => Some(f(t))
+    None => None
+  }
 }
 
 test "map" {
@@ -178,7 +181,10 @@ test "map_or_else" {
 /// debug(r2) //output: None
 /// ```
 pub fn bind[T, U](self : T?, f : (T) -> U?) -> U? {
-  f(self?)
+  match self {
+    Some(t) => f(t)
+    None => None
+  }
 }
 
 test "bind" {
@@ -201,7 +207,10 @@ test "bind" {
 /// debug(flatten(b)) //output: None
 /// ```
 pub fn flatten[T](self : T??) -> T? {
-  self?
+  match self {
+    Some(inner) => inner
+    None => None
+  }
 }
 
 test "flatten" {
@@ -238,10 +247,9 @@ test "is_empty" {
 /// debug(x.filter(fn(x){ x < 5 })) //output: Some(3)
 /// ```
 pub fn filter[T](self : T?, f : (T) -> Bool) -> T? {
-  if f(self?) {
-    self
-  } else {
-    None
+  match self {
+    Some(t) => if f(t) { self } else { None }
+    None => None
   }
 }
 
@@ -363,9 +371,7 @@ test "iter" {
 pub fn or_error[T, Err](self : T?, err : Err) -> T!Err {
   match self {
     Some(v) => v
-    None => {
-      raise err
-    }
+    None => raise err
   }
 }
 

@@ -58,46 +58,10 @@ test "to_string" {
   @test.eq!('a'.to_string(), "a")
 }
 
-/// Write a valid MoonBit syntax representation of a character to a buffer,
-/// with quotes added and special characters escaped.
-pub fn debug_write(self : Char, buf : Buffer) -> Unit {
-  fn to_hex_digit(i : Int) -> Char {
-    if i < 10 {
-      Char::from_int('0'.to_int() + i)
-    } else {
-      Char::from_int('a'.to_int() + (i - 10))
-    }
-  }
-
-  buf.write_char('\'')
-  match self {
-    '\'' | '\\' => {
-      buf.write_char('\\')
-      buf.write_char(self)
-    }
-    '\n' => buf.write_string("\\n")
-    '\r' => buf.write_string("\\r")
-    '\b' => buf.write_string("\\b")
-    '\t' => buf.write_string("\\t")
-    _ => {
-      let code = self.to_int()
-      if code < 0x20 {
-        buf.write_char('\\')
-        buf.write_char('x')
-        buf.write_char(to_hex_digit(code / 16))
-        buf.write_char(to_hex_digit(code % 16))
-      } else {
-        buf.write_char(self)
-      }
-    }
-  }
-  buf.write_char('\'')
-}
-
-test "debug_write" {
+test "show output" {
   fn repr(chr) {
     let buf = Buffer::new(size_hint=0)
-    debug_write(chr, buf)
+    Show::output(chr, buf)
     buf.to_string()
   }
 
@@ -112,10 +76,8 @@ test "debug_write" {
   @test.eq!(repr(Char::from_int(0)), "'\\x00'")
 }
 
-pub fn hash(self : Char) -> Int {
-  self.to_int()
-}
+pub impl Hash for Char with hash(self) { self.to_int() }
 
-pub fn hash_combine(self : Char, hasher : Hasher) -> Unit {
+pub impl Hash for Char with hash_combine(self, hasher) -> Unit {
   hasher.combine_char(self)
 }

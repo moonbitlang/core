@@ -16,7 +16,7 @@ priv struct Entry[K] {
   mut psl : Int
   hash : Int
   key : K
-} derive(Debug)
+} derive(Show)
 
 /// A mutable hash set implements with Robin Hood hashing.
 /// 

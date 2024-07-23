@@ -56,9 +56,7 @@ pub fn parse_double(str : String) -> Double!String {
           } else {
             return num
           }
-        None => {
-          raise syntax_err
-        }
+        None => raise syntax_err
       }
   }
   if str.length() != consumed {
@@ -111,7 +109,11 @@ fn try_fast_path(self : Number) -> Double? {
     } else {
       // disguised fast path
       let shift = self.exponent - max_exponent_fast_path
-      let mantissa = checked_mul(self.mantissa, int_pow10[shift.to_int()])?
+      let mantissa = match
+        checked_mul(self.mantissa, int_pow10[shift.to_int()]) {
+        Some(m) => m
+        None => return None
+      }
       if mantissa > max_mantissa_fast_path {
         return None
       }

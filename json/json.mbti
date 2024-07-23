@@ -22,7 +22,6 @@ impl JsonValue {
   as_number(Self) -> Double?
   as_object(Self) -> Map[String, Self]?
   as_string(Self) -> String?
-  debug_write(Self, Buffer) -> Unit
   item(Self, Int) -> Self?
   op_equal(Self, Self) -> Bool
   stringify(Self) -> String
@@ -38,7 +37,6 @@ pub enum ParseError {
   InvalidIdentEscape(Position)
 }
 impl ParseError {
-  debug_write(Self, Buffer) -> Unit
   op_equal(Self, Self) -> Bool
   to_string(Self) -> String
 }
@@ -48,7 +46,6 @@ pub struct Position {
   pub column : Int
 }
 impl Position {
-  debug_write(Self, Buffer) -> Unit
   op_equal(Self, Self) -> Bool
 }
 

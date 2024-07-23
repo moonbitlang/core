@@ -6,11 +6,8 @@ package moonbitlang/core/double
 impl Double {
   abs(Double) -> Double
   ceil(Double) -> Double
-  debug_write(Double, Buffer) -> Unit
   floor(Double) -> Double
   from_int(Int) -> Double
-  hash(Double) -> Int
-  hash_combine(Double, Hasher) -> Unit
   inf(Int) -> Double
   is_inf(Double) -> Bool
   is_nan(Double) -> Bool
@@ -32,5 +29,7 @@ impl Double {
 // Traits
 
 // Extension Methods
+impl Hash for Double
+
 impl Show for Double
 

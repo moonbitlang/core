@@ -129,18 +129,18 @@ fn endian32(input : Bytes, cur : Int) -> Int {
   )
 }
 
-pub fn hash(self : String) -> Int {
-  let hasher = Hasher::new()
-  hasher.combine(self)
-  hasher.finalize()
-}
+// pub impl Hash for String with hash(self) {
+//   let hasher = Hasher::new()
+//   hasher.combine(self)
+//   hasher.finalize()
+// }
 
-pub fn hash_combine(self : String, hasher : Hasher) -> Unit {
+pub impl Hash for String with hash_combine(self, hasher) {
   hasher.combine_string(self)
 }
 
 // https://github.com/skeeto/hash-prospector
-pub fn hash(self : Int) -> Int {
+pub impl Hash for Int with hash(self) {
   let mut x = self.lxor(self.lsr(17))
   x = x * 0xed5ad4bb
   x = x.lxor(x.lsr(11))
@@ -151,6 +151,6 @@ pub fn hash(self : Int) -> Int {
   x
 }
 
-pub fn hash_combine(self : Int, hasher : Hasher) -> Unit {
+pub impl Hash for Int with hash_combine(self, hasher) {
   hasher.combine_int(self)
 }

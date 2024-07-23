@@ -9,7 +9,6 @@ impl T {
   all[A : Compare + Eq](Self[A], (A) -> Bool) -> Bool
   any[A : Compare + Eq](Self[A], (A) -> Bool) -> Bool
   contains[A : Compare + Eq](Self[A], A) -> Bool
-  debug_write[A : Debug](Self[A], Buffer) -> Unit
   default[A : Default]() -> Self[A]
   diff[A : Compare + Eq](Self[A], Self[A]) -> Self[A]
   disjoint[A : Compare + Eq](Self[A], Self[A]) -> Bool

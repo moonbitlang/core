@@ -14,31 +14,14 @@
 
 test "Map keys iter" {
   let map = { "a": 1, "b": 2, "c": 3 }
-  let v = {
-      [..map.keys()]
-    }
+  let v = map.keys()
   inspect!(
     v,
     content=
       #|["a", "b", "c"]
     ,
   )
-  inspect!(
-    {
-      [..map.values()]
-    },
-    content="[1, 2, 3]",
-  )
-  inspect!(
-    {
-      [..({  } : Map[String, Int]).keys()]
-    },
-    content="[]",
-  )
-  inspect!(
-    {
-      [..({  } : Map[String, Int]).values()]
-    },
-    content="[]",
-  )
+  inspect!(map.values(), content="[1, 2, 3]")
+  inspect!(({  } : Map[String, Int]).keys(), content="[]")
+  inspect!(({  } : Map[String, Int]).values(), content="[]")
 }

@@ -15,7 +15,7 @@
 priv enum Cont[A] {
   Empty
   Node(A, @list.T[Cont[A]])
-} derive(Show, Debug)
+} derive(Show)
 
 struct T[A] {
   len : Int

@@ -42,7 +42,7 @@ pub fn expect(
   if current != content {
     fn repr(s : String) -> String {
       let buf = Buffer::new()
-      s.debug_write(buf)
+      Show::output(s, buf)
       buf.to_string()
     }
 

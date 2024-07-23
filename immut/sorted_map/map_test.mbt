@@ -103,18 +103,6 @@ test "op_equal" {
   @test.eq!(m1 == m3, false)
 }
 
-test "debug_write" {
-  let m = @sorted_map.of(
-    [(3, "three"), (8, "eight"), (1, "one"), (2, "two"), (0, "zero")],
-  )
-  let buffer = Buffer::new(size_hint=0)
-  m.debug_write(buffer)
-  @test.eq!(
-    buffer.to_string(),
-    "Map::[(0, \"zero\"), (1, \"one\"), (2, \"two\"), (3, \"three\"), (8, \"eight\")]",
-  )
-}
-
 test "iter" {
   let buf = Buffer::new(size_hint=20)
   let map = @sorted_map.of([(1, "one"), (2, "two"), (3, "three")])
@@ -150,4 +138,12 @@ test "op_equal" {
   let m3 = @sorted_map.of([(3, "three"), (8, "eight"), (1, "one"), (2, "two")])
   @test.eq!(m1 == m2, true)
   @test.eq!(m1 == m3, false)
+}
+
+test "show" {
+  let m = @sorted_map.of([(1, "one"), (2, "two"), (3, "three")])
+  inspect!(
+    m,
+    content="@immut/sorted_map.of([(1, \"one\"), (2, \"two\"), (3, \"three\")])",
+  )
 }

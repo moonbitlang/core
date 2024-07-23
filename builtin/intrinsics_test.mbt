@@ -12,25 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-// fn debug_string[T : Debug](t : T) -> String {
-//   let buf = Buffer::new(size_hint=50)
-//   t.debug_write(buf)
-//   buf.to_string()
-// }
-// fn assert_eq[T : Debug + Eq](
-//   a : T,
-//   b : T,
-//   ~loc : SourceLoc = _
-// ) -> Result[Unit, String] {
-//   if a == b {
-//     Ok(())
-//   } else {
-//     let a = debug_string(a)
-//     let b = debug_string(b)
-//     Err("FAILED:\(loc) `\(a) == \(b)`")
-//   }
-// }
-
 /// test Int::land
 test "Int::land should perform bitwise AND operation" {
   let a = 0b101
@@ -95,6 +76,25 @@ test "uint test" {
   inspect!(0xFFFF00U.lxor(0xFF00FFU), content="65535")
   inspect!(0x1U.lsl(31), content="2147483648")
   inspect!(2147483648U.lsr(31), content="1")
+  // to_byte
+  let u = 0xDEADBEEFU
+  let b = u.to_byte()
+  inspect!(b, content="b'\\xEF'")
+  let u = 0x87654321U
+  let b = u.to_byte()
+  inspect!(b, content="b'\\x21'")
+  let u = 0xFFFFU
+  let b = u.to_byte()
+  inspect!(b, content="b'\\xFF'")
+  let u = 0xFFU
+  let b = u.to_byte()
+  inspect!(b, content="b'\\xFF'")
+  let u = 0x12345678U
+  let b = u.to_byte()
+  inspect!(b, content="b'\\x78'")
+  let u = 0U
+  let b = u.to_byte()
+  inspect!(b, content="b'\\x00'")
 }
 
 test "uint64 test" {
@@ -114,4 +114,11 @@ test "uint64 test" {
   inspect!(0xFFFF00UL.lxor(0xFF00FFUL), content="65535")
   inspect!(0x1UL.lsl(63), content="9223372036854775808")
   inspect!(9223372036854775808UL.lsr(63), content="1")
+}
+
+test "to double" {
+  inspect!(10.0.reinterpret_as_i64(), content="4621819117588971520")
+  inspect!(10.0.reinterpret_as_u64(), content="4621819117588971520")
+  inspect!(20.0.reinterpret_as_i64(), content="4626322717216342016")
+  inspect!(20.0.reinterpret_as_u64(), content="4626322717216342016")
 }
