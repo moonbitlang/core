@@ -343,6 +343,7 @@ impl UInt64 {
   op_mul(UInt64, UInt64) -> UInt64
   op_sub(UInt64, UInt64) -> UInt64
   to_byte(UInt64) -> Byte
+  to_int(UInt64) -> Int
   to_int64(UInt64) -> Int64
   to_string(UInt64) -> String
   to_uint(UInt64) -> UInt
