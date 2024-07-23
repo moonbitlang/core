@@ -282,13 +282,13 @@ pub fn FixedArray::new[T](length : Int, value : () -> T) -> FixedArray[T] {
   }
 }
 
-test "new" {
-  let empty = new(0, fn() { { val: 3 } })
+test "makei" {
+  let empty = FixedArray::makei(0, fn(_i) { { val: 3 } })
   @test.eq!(empty.length(), 0)
-  let simple_arr = new(1, fn() { { val: 2 } })
+  let simple_arr = FixedArray::makei(1, fn(_i) { { val: 2 } })
   @test.eq!(simple_arr.length(), 1)
   @test.eq!(simple_arr[0].val, 2)
-  let arr = new(2, fn() { { val: 1 } })
+  let arr = FixedArray::makei(2, fn(_i) { { val: 1 } })
   @test.eq!(arr.length(), 2)
   @test.is_not!(arr[0], arr[1])
   @test.eq!(arr[0].val, 1)
