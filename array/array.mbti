@@ -18,7 +18,7 @@ impl FixedArray {
   from_array[T](Array[T]) -> Self[T]
   is_sorted[T : Compare + Eq](Self[T]) -> Bool
   iter[T](Self[T]) -> Iter[T]
-  make_with_index[T](Int, (Int) -> T) -> Self[T]
+  makei[T](Int, (Int) -> T) -> Self[T]
   map[T, U](Self[T], (T) -> U) -> Self[U]
   mapi[T, U](Self[T], (Int, T) -> U) -> Self[U]
   new[T](Int, () -> T) -> Self[T]
@@ -40,7 +40,7 @@ impl Array {
   copy[T](Self[T]) -> Self[T]
   iter[T](Self[T]) -> Iter[T]
   join[T : Show](Self[T], String) -> String
-  make_with_index[T](Int, (Int) -> T) -> Self[T]
+  makei[T](Int, (Int) -> T) -> Self[T]
   new_with_index[T](Int, (Int) -> T) -> Self[T]
   push_iter[T](Self[T], Iter[T]) -> Unit
   shuffle[T](Self[T], ~rand : (Int) -> Int) -> Self[T]

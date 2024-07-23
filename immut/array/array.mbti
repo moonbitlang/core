@@ -15,7 +15,7 @@ impl T {
   iter[A](Self[A]) -> Iter[A]
   length[A](Self[A]) -> Int
   make[A](Int, A) -> Self[A]
-  make_with_index[A](Int, (Int) -> A) -> Self[A]
+  makei[A](Int, (Int) -> A) -> Self[A]
   map[A, B](Self[A], (A) -> B) -> Self[B]
   new[A]() -> Self[A]
   of[A](FixedArray[A]) -> Self[A]

@@ -205,8 +205,8 @@ test "new" {
 }
 
 test "new_with" {
-  let v = @array.make_with_index(5, fn(i) { i })
-  let v2 = @array.make_with_index(33, fn(i) { i * 10 })
+  let v = @array.makei(5, fn(i) { i })
+  let v2 = @array.makei(33, fn(i) { i * 10 })
   inspect!(v, content="@immut/array.of([0, 1, 2, 3, 4])")
   inspect!(
     v2,
