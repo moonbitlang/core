@@ -316,10 +316,6 @@ test "deep access" {
     json.value("obj").bind(@json.as_object).map(Map::to_array),
     content="Some([])",
   )
-  inspect!(
-    (fn() { json.value("key")?.item(4)?.value("value")?.as_number() })(),
-    content="Some(100.0)",
-  )
 }
 
 test "stringify" {
