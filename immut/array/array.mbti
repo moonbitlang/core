@@ -8,16 +8,16 @@ impl T {
   copy[A](Self[A]) -> Self[A]
   each[A](Self[A], (A) -> Unit) -> Unit
   eachi[A](Self[A], (Int, A) -> Unit) -> Unit
-  empty[A]() -> Self[A]
   fold_left[A](Self[A], (A, A) -> A, ~init : A) -> A
   fold_right[A](Self[A], (A, A) -> A, ~init : A) -> A
   from_array[A](Array[A]) -> Self[A]
   is_empty[A](Self[A]) -> Bool
   iter[A](Self[A]) -> Iter[A]
   length[A](Self[A]) -> Int
+  make[A](Int, A) -> Self[A]
+  make_with_index[A](Int, (Int) -> A) -> Self[A]
   map[A, B](Self[A], (A) -> B) -> Self[B]
-  new[A](Int, A) -> Self[A]
-  new_with_index[A](Int, (Int) -> A) -> Self[A]
+  new[A]() -> Self[A]
   of[A](FixedArray[A]) -> Self[A]
   op_equal[A : Eq](Self[A], Self[A]) -> Bool
   op_get[A](Self[A], Int) -> A

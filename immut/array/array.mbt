@@ -13,7 +13,7 @@
 // limitations under the License.
 
 /// Return a new empty array
-pub fn T::empty[A]() -> T[A] {
+pub fn T::new[A]() -> T[A] {
   { tree: Tree::empty(), size: 0, shift: 0 }
 }
 
@@ -149,7 +149,7 @@ pub fn push[A](self : T[A], value : A) -> T[A] {
 /// let v = @immut/array.of([1, 2, 3])
 /// ```
 pub fn T::from_array[A](arr : Array[A]) -> T[A] {
-  new_with_index(arr.length(), fn(i) { arr[i] })
+  make_with_index(arr.length(), fn(i) { arr[i] })
 }
 
 /// Iterate over the array.
@@ -283,7 +283,7 @@ fn new_by_leaves[A](len : Int, gen_leaf : (Int, Int) -> Array[A]) -> T[A] {
   }
 
   if len == 0 {
-    T::empty()
+    T::new()
   } else {
     let (cap, shift) = loop len, branching_factor, 1 {
       len, m_pow, depth =>
@@ -314,21 +314,21 @@ test "new_by_leaves" {
 }
 
 /// Create a persistent array with a given length and value.
-pub fn T::new[A](len : Int, value : A) -> T[A] {
+pub fn T::make[A](len : Int, value : A) -> T[A] {
   new_by_leaves(len, fn(_s, l) { Array::make(l, value) })
 }
 
 /// Create a persistent array with a given length and a function to generate values.
-pub fn T::new_with_index[A](len : Int, f : (Int) -> A) -> T[A] {
+pub fn T::make_with_index[A](len : Int, f : (Int) -> A) -> T[A] {
   new_by_leaves(len, fn(s, l) { Array::new_with_index(l, fn(i) { f(s + i) }) })
 }
 
 pub fn T::of[A](arr : FixedArray[A]) -> T[A] {
-  new_with_index(arr.length(), fn(i) { arr[i] })
+  make_with_index(arr.length(), fn(i) { arr[i] })
 }
 
 test "mix" {
-  let mut v = T::empty()
+  let mut v = T::new()
   inspect!(v.tree.is_empty_tree(), content="true")
   for i = 0; i < 100; i = i + 1 {
     v = v.push(i)
@@ -353,7 +353,7 @@ test "mix" {
   inspect!(ct2, content="19800")
   inspect!(v.tree.is_empty_tree(), content="false")
   let large_const = branching_factor * branching_factor + 1
-  let mut v = T::empty()
+  let mut v = T::new()
   for i = 0; i < large_const; i = i + 1 {
     v = v.push(i)
   }
