@@ -16,10 +16,6 @@ pub type SourceLoc
 
 pub fn SourceLoc::to_string(self : SourceLoc) -> String = "%loc_to_string"
 
-pub fn SourceLoc::debug_write(self : SourceLoc, buf : Buffer) -> Unit {
-  buf.write_string(self.to_string())
-}
-
 pub impl Show for SourceLoc with output(self, logger) {
   logger.write_string(self.to_string())
 }
@@ -40,7 +36,7 @@ pub fn ArgsLoc::to_json(self : ArgsLoc) -> String {
     let item = self.0[i]
     match item {
       None => buf.write_string("null")
-      Some(loc) => loc.to_string().debug_write(buf)
+      Some(loc) => loc.to_string() |> Show::output(buf)
     }
   }
   buf.write_char(']')

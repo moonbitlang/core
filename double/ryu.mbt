@@ -667,10 +667,6 @@ pub fn to_string(self : Double) -> String {
   ryu_to_string(self)
 }
 
-pub fn debug_write(self : Double, buf : Buffer) -> Unit {
-  buf.write_string(self.to_string())
-}
-
 pub impl Show for Double with output(self, logger) {
   logger.write_string(self.to_string())
 }

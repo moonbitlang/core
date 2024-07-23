@@ -20,19 +20,19 @@ pub enum JsonValue {
   String(String)
   Array(Array[JsonValue])
   Object(Map[String, JsonValue])
-} derive(Eq, Debug)
+} derive(Eq)
 
 pub struct Position {
   line : Int // 1-based
   column : Int // 0-based
-} derive(Eq, Debug)
+} derive(Eq)
 
 pub enum ParseError {
   InvalidChar(Position, Char)
   InvalidEof
   InvalidNumber(Position, String)
   InvalidIdentEscape(Position)
-} derive(Eq, Debug)
+} derive(Eq)
 
 pub fn ParseError::to_string(self : ParseError) -> String {
   match self {

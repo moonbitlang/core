@@ -5,8 +5,6 @@ fn abort[T](String) -> T
 
 fn assert_eq[T : Eq + Show](T, T, ~loc : SourceLoc = _) -> Unit!String
 
-fn debug[X : Debug](X) -> Unit
-
 fn ignore[T](T) -> Unit
 
 fn inspect(Show, ~content : String = .., ~loc : SourceLoc = _, ~args_loc : ArgsLoc = _) -> Unit!String
@@ -45,7 +43,6 @@ impl Array {
   chunks[T](Self[T], Int) -> Self[Self[T]]
   clear[T](Self[T]) -> Unit
   contains[T : Eq](Self[T], T) -> Bool
-  debug_write[X : Debug](Self[X], Buffer) -> Unit
   dedup[T : Eq](Self[T]) -> Unit
   drain[T](Self[T], Int, Int) -> Self[T]
   each[T](Self[T], (T) -> Unit) -> Unit
@@ -103,7 +100,6 @@ impl Array {
 
 type ArrayView
 impl ArrayView {
-  debug_write[X : Debug](Self[X], Buffer) -> Unit
   iter[A](Self[A]) -> Iter[A]
   length[T](Self[T]) -> Int
   op_as_view[T](Self[T], ~start : Int, ~end : Int) -> Self[T]
@@ -192,7 +188,6 @@ impl Map {
   capacity[K, V](Self[K, V]) -> Int
   clear[K, V](Self[K, V]) -> Unit
   contains[K : Hash + Eq, V](Self[K, V], K) -> Bool
-  debug_write[K : Debug, V : Debug](Self[K, V], Buffer) -> Unit
   each[K, V](Self[K, V], (K, V) -> Unit) -> Unit
   eachi[K, V](Self[K, V], (Int, K, V) -> Unit) -> Unit
   from_array[K : Hash + Eq, V](Array[Tuple[K, V]]) -> Self[K, V]
@@ -217,17 +212,14 @@ impl Map {
 
 pub type SourceLoc
 impl SourceLoc {
-  debug_write(Self, Buffer) -> Unit
   to_string(Self) -> String
 }
 
 pub type UnsafeMaybeUninit
 impl Unit {
-  debug_write(Unit, Buffer) -> Unit
   op_equal(Unit, Unit) -> Bool
 }
 impl Bool {
-  debug_write(Bool, Buffer) -> Unit
   default() -> Bool
   not(Bool) -> Bool
   op_compare(Bool, Bool) -> Int
@@ -236,7 +228,6 @@ impl Bool {
 }
 impl Byte {
   compare(Byte, Byte) -> Int
-  debug_write(Byte, Buffer) -> Unit
   hash(Byte) -> Int
   hash_combine(Byte, Hasher) -> Unit
   op_equal(Byte, Byte) -> Bool
@@ -256,7 +247,6 @@ impl Int {
   clz(Int) -> Int
   compare(Int, Int) -> Int
   ctz(Int) -> Int
-  debug_write(Int, Buffer) -> Unit
   default() -> Int
   hash(Int) -> Int
   hash_combine(Int, Hasher) -> Unit
@@ -290,7 +280,6 @@ impl Int64 {
   clz(Int64) -> Int
   compare(Int64, Int64) -> Int
   ctz(Int64) -> Int
-  debug_write(Int64, Buffer) -> Unit
   default() -> Int64
   land(Int64, Int64) -> Int64
   lnot(Int64) -> Int64
@@ -316,7 +305,6 @@ impl Int64 {
 }
 impl UInt {
   compare(UInt, UInt) -> Int
-  debug_write(UInt, Buffer) -> Unit
   land(UInt, UInt) -> UInt
   lnot(UInt) -> UInt
   lor(UInt, UInt) -> UInt
@@ -337,7 +325,6 @@ impl UInt {
 }
 impl UInt64 {
   compare(UInt64, UInt64) -> Int
-  debug_write(UInt64, Buffer) -> Unit
   extend_uint(UInt) -> UInt64
   land(UInt64, UInt64) -> UInt64
   lnot(UInt64, UInt64) -> UInt64
@@ -376,7 +363,6 @@ impl Double {
   until(Double, Double, ~step : Double = ..) -> Iter[Double]
 }
 impl String {
-  debug_write(String, Buffer) -> Unit
   get(String, Int) -> Char
   hash(String) -> Int
   hash_combine(String, Hasher) -> Unit
@@ -389,18 +375,15 @@ impl String {
   to_string(String) -> String
 }
 impl Option {
-  debug_write[X : Debug](X?, Buffer) -> Unit
   op_equal[X : Eq](X?, X?) -> Bool
   to_string[X : Show](X?) -> String
   unwrap[X](X?) -> X
 }
 impl Result {
-  debug_write[T : Debug, E : Debug](Self[T, E], Buffer) -> Unit
   op_equal[T : Eq, E : Eq](Self[T, E], Self[T, E]) -> Bool
 }
 impl FixedArray {
   blit_to[A](Self[A], Self[A], ~len : Int, ~src_offset : Int = .., ~dst_offset : Int = ..) -> Unit
-  debug_write[X : Debug](Self[X], Buffer) -> Unit
   default[X]() -> Self[X]
   fill[T](Self[T], T) -> Unit
   get[T](Self[T], Int) -> T
@@ -416,7 +399,6 @@ impl Bytes {
   blit(Bytes, Int, Bytes, Int, Int) -> Unit
   blit_from_string(Bytes, Int, String, Int, Int) -> Unit
   copy(Bytes) -> Bytes
-  debug_write(Bytes, Buffer) -> Unit
   length(Bytes) -> Int
   make(Int, Byte) -> Bytes
   new(Int) -> Bytes
@@ -428,26 +410,19 @@ impl Bytes {
   sub_string(Bytes, Int, Int) -> String
   to_string(Bytes) -> String
 }
-impl Ref {
-  debug_write[X : Debug](Self[X], Buffer) -> Unit
-}
 impl Tuple {
-  debug_write[X : Debug, Y : Debug](Self[X, Y], Buffer) -> Unit
   op_equal[T0 : Eq, T1 : Eq](Self[T0, T1], Self[T0, T1]) -> Bool
   to_string[A : Show, B : Show](Self[A, B]) -> String
 }
 impl Tuple {
-  debug_write[X : Debug, Y : Debug, Z : Debug](Self[X, Y, Z], Buffer) -> Unit
   op_equal[T0 : Eq, T1 : Eq, T2 : Eq](Self[T0, T1, T2], Self[T0, T1, T2]) -> Bool
   to_string[A : Show, B : Show, C : Show](Self[A, B, C]) -> String
 }
 impl Tuple {
-  debug_write[X : Debug, Y : Debug, Z : Debug, W : Debug](Self[X, Y, Z, W], Buffer) -> Unit
   op_equal[T0 : Eq, T1 : Eq, T2 : Eq, T3 : Eq](Self[T0, T1, T2, T3], Self[T0, T1, T2, T3]) -> Bool
   to_string[A : Show, B : Show, C : Show, D : Show](Self[A, B, C, D]) -> String
 }
 impl Tuple {
-  debug_write[X1 : Debug, X2 : Debug, X3 : Debug, X4 : Debug, X5 : Debug](Self[X1, X2, X3, X4, X5], Buffer) -> Unit
   op_equal[T0 : Eq, T1 : Eq, T2 : Eq, T3 : Eq, T4 : Eq](Self[T0, T1, T2, T3, T4], Self[T0, T1, T2, T3, T4]) -> Bool
   to_string[A : Show, B : Show, C : Show, D : Show, E : Show](Self[A, B, C, D, E]) -> String
 }
@@ -490,10 +465,6 @@ impl Tuple {
 // Traits
 pub trait Compare : Eq {
   compare(Self, Self) -> Int
-}
-
-pub trait Debug {
-  debug_write(Self, Buffer) -> Unit
 }
 
 pub trait Default {

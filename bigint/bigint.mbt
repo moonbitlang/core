@@ -572,6 +572,10 @@ pub fn to_string(self : BigInt) -> String {
   s + ret
 }
 
+pub impl Show for BigInt with output(self, logger) {
+  logger.write_string(self.to_string())
+}
+
 /// Converts decimal string to a BigInt.
 pub fn from_string(input : String) -> BigInt {
   let len = input.length()

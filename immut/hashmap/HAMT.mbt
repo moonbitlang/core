@@ -211,26 +211,6 @@ pub fn iter[K, V](self : T[K, V]) -> Iter[(K, V)] {
   }
 }
 
-pub fn debug_write[K : Debug, V : Debug](self : T[K, V], buf : Buffer) -> Unit {
-  let mut is_first = true
-  buf.write_string("@immutable_hashmap.Map::[")
-  self.each(
-    fn(k, v) {
-      if is_first {
-        is_first = false
-      } else {
-        buf.write_string(", ")
-      }
-      buf.write_string("(")
-      k.debug_write(buf)
-      buf.write_string(", ")
-      v.debug_write(buf)
-      buf.write_string(")")
-    },
-  )
-  buf.write_string("]")
-}
-
 pub impl[K : Show, V : Show] Show for T[K, V] with output(self, logger) {
   let mut is_first = true
   logger.write_string("@immut/hashmap.of([")

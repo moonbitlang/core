@@ -12,25 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-// fn debug_string[T : Debug](t : T) -> String {
-//   let buf = Buffer::new(size_hint=50)
-//   t.debug_write(buf)
-//   buf.to_string()
-// }
-// fn assert_eq[T : Debug + Eq](
-//   a : T,
-//   b : T,
-//   ~loc : SourceLoc = _
-// ) -> Result[Unit, String] {
-//   if a == b {
-//     Ok(())
-//   } else {
-//     let a = debug_string(a)
-//     let b = debug_string(b)
-//     Err("FAILED:\(loc) `\(a) == \(b)`")
-//   }
-// }
-
 /// test Int::land
 test "Int::land should perform bitwise AND operation" {
   let a = 0b101

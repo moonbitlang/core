@@ -12,7 +12,6 @@ type T
 impl T {
   add[V : Compare + Eq](Self[V], V) -> Unit
   contains[V : Compare + Eq](Self[V], V) -> Bool
-  debug_write[V : Debug](Self[V], Buffer) -> Unit
   deep_clone[V](Self[V]) -> Self[V]
   diff[V : Compare + Eq](Self[V], Self[V]) -> Self[V]
   disjoint[V : Compare + Eq](Self[V], Self[V]) -> Bool

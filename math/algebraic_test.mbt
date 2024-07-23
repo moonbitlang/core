@@ -57,4 +57,4 @@ test "minimum.ref" {
 // For testing purposes
 priv struct T {
   mut x : Int
-} derive(Debug, Eq, Compare)
+} derive(Show, Eq, Compare)

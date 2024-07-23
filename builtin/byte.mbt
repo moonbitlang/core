@@ -49,16 +49,6 @@ pub fn to_string(self : Byte) -> String {
   "b'\\x\(hi)\(lo)'"
 }
 
-pub fn debug_write(self : Byte, buf : Buffer) -> Unit {
-  let i = self.to_int()
-  let hi = alphabet(i / 16)
-  let lo = alphabet(i % 16)
-  buf.write_string("b'\\x")
-  buf.write_string(hi)
-  buf.write_string(lo)
-  buf.write_string("'")
-}
-
 pub fn hash(self : Byte) -> Int {
   self.to_int()
 }

@@ -49,18 +49,6 @@ pub fn to_string(self : CoverageCounter) -> String {
   Show::to_string(self)
 }
 
-/// Output the contents of this counter in JSON format.
-fn CoverageCounter::debug_write(self : CoverageCounter, buf : Buffer) -> Unit {
-  buf.write_char('[')
-  for i = 0; i < self.counter.length(); i = i + 1 {
-    if i != 0 {
-      buf.write_string(", ")
-    }
-    self.counter[i].debug_write(buf)
-  }
-  buf.write_char(']')
-}
-
 priv enum MList[T] {
   MNil
   MCons(T, MList[T])

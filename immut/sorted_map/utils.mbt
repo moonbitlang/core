@@ -165,28 +165,6 @@ pub fn foldl_with_key[K, V, A](
   go(self, init)
 }
 
-pub fn debug_write[K : Debug, V : Debug](
-  self : T[K, V],
-  buffer : Buffer
-) -> Unit {
-  buffer.write_string("Map::[")
-  let mut first = true
-  self.each(
-    fn(k, v) {
-      if not(first) {
-        buffer.write_string(", ")
-      }
-      first = false
-      buffer.write_string("(")
-      k.debug_write(buffer)
-      buffer.write_string(", ")
-      v.debug_write(buffer)
-      buffer.write_string(")")
-    },
-  )
-  buffer.write_string("]")
-}
-
 fn debug_tree[K : Show, V : Show](self : T[K, V]) -> String {
   match self {
     Empty => "_"

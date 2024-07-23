@@ -6,7 +6,6 @@ package moonbitlang/core/immut/array
 type T
 impl T {
   copy[A](Self[A]) -> Self[A]
-  debug_write[A : Debug](Self[A], Buffer) -> Unit
   each[A](Self[A], (A) -> Unit) -> Unit
   eachi[A](Self[A], (Int, A) -> Unit) -> Unit
   empty[A]() -> Self[A]

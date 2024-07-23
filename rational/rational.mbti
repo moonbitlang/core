@@ -8,7 +8,6 @@ impl T {
   abs(Self) -> Self
   ceil(Self) -> Int64
   compare(Self, Self) -> Int
-  debug_write(Self, Buffer) -> Unit
   floor(Self) -> Int64
   fract(Self) -> Self
   from_double(Double) -> Self!String
