@@ -69,7 +69,7 @@ pub fn copy[A](self : T[A]) -> T[A] {
       Leaf(l) => Leaf(l.copy())
       Empty => Empty
       Node(node) =>
-        Node(Array::new_with_index(node.length(), fn(i) { copy(node[i]) }))
+        Node(Array::make_with_index(node.length(), fn(i) { copy(node[i]) }))
     }
   }
 
@@ -254,7 +254,7 @@ pub fn map[A, B](self : T[A], f : (A) -> B) -> T[B] {
     match t {
       Empty => Empty
       Leaf(l) => Leaf(l.map(f))
-      Node(n) => Node(Array::new_with_index(n.length(), fn(i) { go(n[i]) }))
+      Node(n) => Node(Array::make_with_index(n.length(), fn(i) { go(n[i]) }))
     }
   }
 
@@ -278,7 +278,7 @@ fn new_by_leaves[A](len : Int, gen_leaf : (Int, Int) -> Array[A]) -> T[A] {
         tree(cap / branching_factor, len, i)
       }
 
-      Node(Array::new_with_index(child_count, child))
+      Node(Array::make_with_index(child_count, child))
     }
   }
 
@@ -320,7 +320,7 @@ pub fn T::make[A](len : Int, value : A) -> T[A] {
 
 /// Create a persistent array with a given length and a function to generate values.
 pub fn T::make_with_index[A](len : Int, f : (Int) -> A) -> T[A] {
-  new_by_leaves(len, fn(s, l) { Array::new_with_index(l, fn(i) { f(s + i) }) })
+  new_by_leaves(len, fn(s, l) { Array::make_with_index(l, fn(i) { f(s + i) }) })
 }
 
 pub fn T::of[A](arr : FixedArray[A]) -> T[A] {

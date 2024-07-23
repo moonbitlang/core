@@ -269,6 +269,7 @@ test "mapi" {
 }
 
 /// Create a new array. Values are lazily built.
+/// @alert deprecated "Use FixedArray::make_with_index instead"
 pub fn FixedArray::new[T](length : Int, value : () -> T) -> FixedArray[T] {
   if length <= 0 {
     []
@@ -295,7 +296,16 @@ test "new" {
 }
 
 /// Create a new array. Values are built from indexes.
+/// @alert deprecated "Use FixedArray::make_with_index instead"
 pub fn FixedArray::new_with_index[T](
+  length : Int,
+  value : (Int) -> T
+) -> FixedArray[T] {
+  FixedArray::make_with_index(length, value)
+}
+
+/// Create a new array. Values are built from indexes.
+pub fn FixedArray::make_with_index[T](
   length : Int,
   value : (Int) -> T
 ) -> FixedArray[T] {
@@ -311,12 +321,12 @@ pub fn FixedArray::new_with_index[T](
 }
 
 test "fixedarray_new_with_index" {
-  let empty = FixedArray::new_with_index(0, fn { i => i })
+  let empty = FixedArray::make_with_index(0, fn { i => i })
   @test.eq!(empty.length(), 0)
-  let simple_arr = FixedArray::new_with_index(1, fn { i => i })
+  let simple_arr = FixedArray::make_with_index(1, fn { i => i })
   @test.eq!(simple_arr.length(), 1)
   @test.eq!(simple_arr[0], 0)
-  let arr = FixedArray::new_with_index(2, fn { i => i })
+  let arr = FixedArray::make_with_index(2, fn { i => i })
   @test.eq!(arr.length(), 2)
   @test.eq!(arr[0], 0)
   @test.eq!(arr[1], 1)
@@ -324,7 +334,7 @@ test "fixedarray_new_with_index" {
 
 /// Create a new array with given values.
 pub fn FixedArray::from_array[T](array : Array[T]) -> FixedArray[T] {
-  FixedArray::new_with_index(array.length(), fn(i) { array[i] })
+  FixedArray::make_with_index(array.length(), fn(i) { array[i] })
 }
 
 test "from_array" {

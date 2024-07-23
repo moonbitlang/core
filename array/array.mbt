@@ -52,7 +52,20 @@ pub fn copy[T](self : Array[T]) -> Array[T] {
   }
 }
 
+/// @alert deprecated "Use Array::make_with_index instead"
 pub fn Array::new_with_index[T](length : Int, value : (Int) -> T) -> Array[T] {
+  if length <= 0 {
+    []
+  } else {
+    let array = Array::make(length, value(0))
+    for i = 1; i < length; i = i + 1 {
+      array[i] = value(i)
+    }
+    array
+  }
+}
+
+pub fn Array::make_with_index[T](length : Int, value : (Int) -> T) -> Array[T] {
   if length <= 0 {
     []
   } else {
