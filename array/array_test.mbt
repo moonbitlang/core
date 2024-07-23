@@ -493,17 +493,17 @@ test "copy" {
   inspect!(([] : Array[Int]).copy(), content="[]")
 }
 
-test "Array::new_with_index with positive length" {
-  let arr = Array::new_with_index(5, fn(i) { i * 2 })
+test "Array::makei with positive length" {
+  let arr = Array::makei(5, fn(i) { i * 2 })
   @test.eq!(arr, [0, 2, 4, 6, 8])
 }
 
-test "Array::new_with_index with zero length" {
-  let arr = Array::new_with_index(0, fn(i) { i * 2 })
+test "Array::makei with zero length" {
+  let arr = Array::makei(0, fn(i) { i * 2 })
   @test.eq!(arr, [])
 }
 
-test "Array::new_with_index with negative length" {
-  let arr = Array::new_with_index(-1, fn(i) { i * 2 })
+test "Array::makei with negative length" {
+  let arr = Array::makei(-1, fn(i) { i * 2 })
   @test.eq!(arr, [])
 }

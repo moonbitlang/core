@@ -14,7 +14,7 @@
 
 test "is_empty" {
   let v = @array.of([1, 2, 3, 4, 5])
-  let ve : @array.T[Int] = @array.empty()
+  let ve : @array.T[Int] = @array.new()
   inspect!(v.is_empty(), content="false")
   inspect!(ve.is_empty(), content="true")
 }
@@ -32,7 +32,7 @@ test "panic set with negative index" {
 }
 
 test "panic set with empty array" {
-  let v = @array.empty()
+  let v = @array.new()
   let v1 = v.set(0, 10) // This should trigger the panic in set function
   inspect!(v1, content="ImmutableVec::[]")
 }
@@ -51,7 +51,7 @@ test "set with valid index at end" {
 
 test "to_string" {
   let v = @array.of([1, 2, 3, 4, 5])
-  let ve : @array.T[Int] = @array.empty()
+  let ve : @array.T[Int] = @array.new()
   inspect!(v, content="@immut/array.of([1, 2, 3, 4, 5])")
   inspect!(ve, content="@immut/array.of([])")
 }
@@ -74,7 +74,7 @@ test "iter" {
 
 test "length" {
   let v = @array.of([1, 2, 3, 4, 5])
-  let ve : @array.T[Int] = @array.empty()
+  let ve : @array.T[Int] = @array.new()
   inspect!(v.length(), content="5")
   inspect!(ve.length(), content="0")
 }
@@ -85,7 +85,7 @@ test "copy" {
   inspect!(vc, content="@immut/array.of([1, 2, 3, 4, 5])")
   inspect!(v == vc, content="true")
   @test.is_false!(physical_equal(v, vc))
-  let v = @array.empty()
+  let v = @array.new()
   let vc : @array.T[Int] = v.copy()
   inspect!(vc, content="@immut/array.of([])")
   inspect!(v == vc, content="true")
@@ -110,7 +110,7 @@ test "set" {
 }
 
 test "push" {
-  let v = @array.empty().push(1).push(2).push(3)
+  let v = @array.new().push(1).push(2).push(3)
   inspect!(v, content="@immut/array.of([1, 2, 3])")
   inspect!(v.push(1), content="@immut/array.of([1, 2, 3, 1])")
   inspect!(v.push(2), content="@immut/array.of([1, 2, 3, 2])")
@@ -132,12 +132,12 @@ test "iter" {
   let mut s = 0
   v.each(fn(e) { s = s + e })
   inspect!(s, content="15")
-  let v : @array.T[Int] = @array.empty()
+  let v : @array.T[Int] = @array.new()
   v.each(fn(_e) { abort("never reach") })
 }
 
 test "iteri" {
-  let v : @array.T[Int] = @array.empty()
+  let v : @array.T[Int] = @array.new()
   v.eachi(fn(_i, _e) { abort("never reach") })
   let v = @array.of([1, 2, 3, 4, 5])
   let mut s = 0
@@ -154,9 +154,9 @@ test "op_equal" {
   let v2 = @array.of([1, 2, 3, 4, 5])
   let v3 = @array.of([1, 2, 3, 4, 6])
   let v4 = @array.of([1, 2, 3, 4])
-  let v5 = @array.new(5, 1)
+  let v5 = @array.make(5, 1)
   let v6 = @array.of([1, 1, 1, 1, 1])
-  inspect!(v0 == @array.empty(), content="true")
+  inspect!(v0 == @array.new(), content="true")
   inspect!(v1 == v2, content="true")
   inspect!(v1 == v3, content="false")
   inspect!(v1 == v4, content="false")
@@ -164,14 +164,14 @@ test "op_equal" {
 }
 
 test "fold_left" {
-  let e = @array.empty()
+  let e = @array.new()
   let v = @array.of([1, 2, 3, 4, 5])
   inspect!(e.fold_left(fn(a, b) { a + b }, init=0), content="0")
   inspect!(v.fold_left(fn(a, b) { a + b }, init=0), content="15")
 }
 
 test "fold_right" {
-  let e = @array.empty()
+  let e = @array.new()
   inspect!(e.fold_right(fn(a, b) { a + b }, init=0), content="0")
   let v = @array.of([1, 2, 3, 4, 5])
   inspect!(e.fold_left(fn(a, b) { a + b }, init=0), content="0")
@@ -191,12 +191,12 @@ test "map" {
     v.map(fn(e) { e % 2 == 0 }),
     content="@immut/array.of([false, true, false, true, false])",
   )
-  inspect!(@array.empty().map(fn(e : Int) { e }), content="@immut/array.of([])")
+  inspect!(@array.new().map(fn(e : Int) { e }), content="@immut/array.of([])")
 }
 
 test "new" {
-  let v = @array.new(5, 1)
-  let v2 = @array.new(33, 10)
+  let v = @array.make(5, 1)
+  let v2 = @array.make(33, 10)
   inspect!(v, content="@immut/array.of([1, 1, 1, 1, 1])")
   inspect!(
     v2,
@@ -205,8 +205,8 @@ test "new" {
 }
 
 test "new_with" {
-  let v = @array.new_with_index(5, fn(i) { i })
-  let v2 = @array.new_with_index(33, fn(i) { i * 10 })
+  let v = @array.makei(5, fn(i) { i })
+  let v2 = @array.makei(33, fn(i) { i * 10 })
   inspect!(v, content="@immut/array.of([0, 1, 2, 3, 4])")
   inspect!(
     v2,

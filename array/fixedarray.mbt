@@ -269,6 +269,7 @@ test "mapi" {
 }
 
 /// Create a new array. Values are lazily built.
+/// @alert deprecated "Use `FixedArray::makei` instead"
 pub fn FixedArray::new[T](length : Int, value : () -> T) -> FixedArray[T] {
   if length <= 0 {
     []
@@ -281,13 +282,13 @@ pub fn FixedArray::new[T](length : Int, value : () -> T) -> FixedArray[T] {
   }
 }
 
-test "new" {
-  let empty = new(0, fn() { { val: 3 } })
+test "makei" {
+  let empty = FixedArray::makei(0, fn(_i) { { val: 3 } })
   @test.eq!(empty.length(), 0)
-  let simple_arr = new(1, fn() { { val: 2 } })
+  let simple_arr = FixedArray::makei(1, fn(_i) { { val: 2 } })
   @test.eq!(simple_arr.length(), 1)
   @test.eq!(simple_arr[0].val, 2)
-  let arr = new(2, fn() { { val: 1 } })
+  let arr = FixedArray::makei(2, fn(_i) { { val: 1 } })
   @test.eq!(arr.length(), 2)
   @test.is_not!(arr[0], arr[1])
   @test.eq!(arr[0].val, 1)
@@ -295,10 +296,16 @@ test "new" {
 }
 
 /// Create a new array. Values are built from indexes.
+/// @alert deprecated "Use `FixedArray::makei` instead"
 pub fn FixedArray::new_with_index[T](
   length : Int,
   value : (Int) -> T
 ) -> FixedArray[T] {
+  FixedArray::makei(length, value)
+}
+
+/// Create a new array. Values are built from indexes.
+pub fn FixedArray::makei[T](length : Int, value : (Int) -> T) -> FixedArray[T] {
   if length <= 0 {
     []
   } else {
@@ -311,12 +318,12 @@ pub fn FixedArray::new_with_index[T](
 }
 
 test "fixedarray_new_with_index" {
-  let empty = FixedArray::new_with_index(0, fn { i => i })
+  let empty = FixedArray::makei(0, fn { i => i })
   @test.eq!(empty.length(), 0)
-  let simple_arr = FixedArray::new_with_index(1, fn { i => i })
+  let simple_arr = FixedArray::makei(1, fn { i => i })
   @test.eq!(simple_arr.length(), 1)
   @test.eq!(simple_arr[0], 0)
-  let arr = FixedArray::new_with_index(2, fn { i => i })
+  let arr = FixedArray::makei(2, fn { i => i })
   @test.eq!(arr.length(), 2)
   @test.eq!(arr[0], 0)
   @test.eq!(arr[1], 1)
@@ -324,7 +331,7 @@ test "fixedarray_new_with_index" {
 
 /// Create a new array with given values.
 pub fn FixedArray::from_array[T](array : Array[T]) -> FixedArray[T] {
-  FixedArray::new_with_index(array.length(), fn(i) { array[i] })
+  FixedArray::makei(array.length(), fn(i) { array[i] })
 }
 
 test "from_array" {
