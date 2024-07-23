@@ -78,3 +78,31 @@ test "panic alphabet function coverage" {
   // Test for the panic case
   alphabet(16) |> ignore
 }
+
+pub fn Byte::default() -> Byte {
+  b'\x00'
+}
+
+pub fn Byte::lnot(self : Byte) -> Byte {
+  self.to_int().lnot().to_byte()
+}
+
+pub fn Byte::land(self : Byte, that : Byte) -> Byte {
+  self.to_int().land(that.to_int()).to_byte()
+}
+
+pub fn Byte::lor(self : Byte, that : Byte) -> Byte {
+  self.to_int().lor(that.to_int()).to_byte()
+}
+
+pub fn Byte::lxor(self : Byte, that : Byte) -> Byte {
+  self.to_int().lxor(that.to_int()).to_byte()
+}
+
+pub fn Byte::lsl(self : Byte, count : Int) -> Byte {
+  self.to_int().lsl(count).to_byte()
+}
+
+pub fn Byte::lsr(self : Byte, count : Int) -> Byte {
+  self.to_int().lsr(count).to_byte()
+}
