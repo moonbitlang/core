@@ -9,14 +9,7 @@
     "moonbitlang/core/strconv"
   ],
   "test-import": [
-    "moonbitlang/core/double",
-    "moonbitlang/core/tuple",
-    "moonbitlang/core/builtin",
     "moonbitlang/core/result",
-    "moonbitlang/core/test",
-    "moonbitlang/core/coverage",
-    "moonbitlang/core/unit",
-    "moonbitlang/core/string",
     "moonbitlang/core/option"
   ]
 }

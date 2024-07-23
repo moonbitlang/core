@@ -7,10 +7,7 @@
     "moonbitlang/core/immut/internal/sparse_array"
   ],
   "test-import": [
-    "moonbitlang/core/coverage",
     "moonbitlang/core/test",
-    "moonbitlang/core/builtin",
-    "moonbitlang/core/tuple",
     "moonbitlang/core/int",
     "moonbitlang/core/string",
     "moonbitlang/core/option"
