@@ -229,8 +229,6 @@ impl Bool {
 impl Byte {
   compare(Byte, Byte) -> Int
   default() -> Byte
-  hash(Byte) -> Int
-  hash_combine(Byte, Hasher) -> Unit
   land(Byte, Byte) -> Byte
   lnot(Byte) -> Byte
   lor(Byte, Byte) -> Byte
@@ -255,8 +253,6 @@ impl Int {
   compare(Int, Int) -> Int
   ctz(Int) -> Int
   default() -> Int
-  hash(Int) -> Int
-  hash_combine(Int, Hasher) -> Unit
   is_neg(Int) -> Bool
   is_non_neg(Int) -> Bool
   is_non_pos(Int) -> Bool
@@ -371,8 +367,6 @@ impl Double {
 }
 impl String {
   get(String, Int) -> Char
-  hash(String) -> Int
-  hash_combine(String, Hasher) -> Unit
   length(String) -> Int
   make(Int, Char) -> String
   op_add(String, String) -> String
@@ -499,6 +493,14 @@ pub trait Show {
 }
 
 // Extension Methods
+impl Hash for Byte
+
+impl Hash for Int
+
+impl Hash for String
+
+impl Hash for Hash
+
 impl Show for Unit
 
 impl Show for Bool

@@ -5,8 +5,6 @@ package moonbitlang/core/bytes
 // Types and methods
 impl Bytes {
   from_array(Array[Int]) -> Bytes
-  hash(Bytes) -> Int
-  hash_combine(Bytes, Hasher) -> Unit
   of(FixedArray[Int]) -> Bytes
   to_array(Bytes) -> Array[Int]
 }
@@ -14,4 +12,5 @@ impl Bytes {
 // Traits
 
 // Extension Methods
+impl Hash for Bytes
 

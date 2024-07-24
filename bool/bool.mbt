@@ -36,11 +36,8 @@ pub fn to_int64(self : Bool) -> Int64 {
   }
 }
 
-pub impl Hash for Bool with hash(self){
-  self.to_int()
-}
+pub impl Hash for Bool with hash(self) { self.to_int() }
 
-pub impl Hash for Bool with hash_combine(self, hasher){
+pub impl Hash for Bool with hash_combine(self, hasher) {
   hasher.combine_bool(self)
 }
-

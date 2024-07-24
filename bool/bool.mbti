@@ -4,8 +4,6 @@ package moonbitlang/core/bool
 
 // Types and methods
 impl Bool {
-  hash(Bool) -> Int
-  hash_combine(Bool, Hasher) -> Unit
   to_bool(Bool) -> Bool
   to_int(Bool) -> Int
   to_int64(Bool) -> Int64
@@ -17,4 +15,5 @@ pub trait Boolean {
 }
 
 // Extension Methods
+impl Hash for Bool
 

@@ -284,4 +284,4 @@ pub impl Hash for Double with hash(self) {
 
 pub impl Hash for Double with hash_combine(self, hasher) {
   hasher.combine_double(self)
-} 
+}

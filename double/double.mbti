@@ -8,8 +8,6 @@ impl Double {
   ceil(Double) -> Double
   floor(Double) -> Double
   from_int(Int) -> Double
-  hash(Double) -> Int
-  hash_combine(Double, Hasher) -> Unit
   inf(Int) -> Double
   is_inf(Double) -> Bool
   is_nan(Double) -> Bool
@@ -31,5 +29,7 @@ impl Double {
 // Traits
 
 // Extension Methods
+impl Hash for Double
+
 impl Show for Double
 

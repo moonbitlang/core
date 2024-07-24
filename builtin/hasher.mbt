@@ -137,7 +137,7 @@ pub impl Hash for String with hash(self) {
 
 pub impl Hash for String with hash_combine(self, hasher) {
   hasher.combine_string(self)
-} 
+}
 
 // https://github.com/skeeto/hash-prospector
 pub impl Hash for Int with hash(self) {
