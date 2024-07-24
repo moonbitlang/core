@@ -702,4 +702,3 @@ fn max[T : Compare](a : T, b : T) -> T {
     b
   }
 }
-
