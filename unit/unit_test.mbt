@@ -37,5 +37,5 @@ test {
 
 test {
   let unit = ()
-  @test.eq!(@unit.hash(unit), 0)
+  @test.eq!(Hash::hash(unit), 0)
 }

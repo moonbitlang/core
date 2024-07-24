@@ -31,11 +31,12 @@ fn xxhash32(input : Bytes, seed : Int) -> Int {
   finalize(h, input, len.land(-16), len.land(0xF))
 }
 
-pub fn hash(self : Bytes) -> Int {
+
+pub impl Hash for Bytes with hash(self) {
   xxhash32(self, 0)
 }
 
-pub fn hash_combine(self : Bytes, hasher : Hasher) -> Unit {
+pub impl Hash for Bytes with hash_combine(self, hasher) {
   hasher.combine_bytes(self)
 }
 

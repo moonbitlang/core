@@ -25,7 +25,7 @@ let gPRIME5 = 0x165667B1
 
 // https://github.com/Cyan4973/xxHash/blob/dev/doc/xxhash_spec.md#xxh32-algorithm-description
 // For a more readable version, see bytes/xxhash.mbt
-pub fn hash(self : Int64) -> Int {
+pub impl Hash for Int64 with hash(self) -> Int {
   let mut input = self
   let seed = 0
   let mut acc = seed + gPRIME5 + 8
@@ -44,7 +44,7 @@ pub fn hash(self : Int64) -> Int {
   acc
 }
 
-pub fn hash_combine(self : Int64, hasher : Hasher) -> Unit {
+pub impl Hash for Int64 with hash_combine(self, hasher) {
   hasher.combine_int64(self)
 }
 
@@ -58,7 +58,7 @@ fn slow_hash(self : Int64) -> Int {
   b[2] = self.lsr(16).land(0xFFL).to_byte()
   b[1] = self.lsr(8).land(0xFFL).to_byte()
   b[0] = self.land(0xFFL).to_byte()
-  b.hash()
+  Hash::hash(b)
 }
 
 test "int64 hash" {
@@ -69,11 +69,11 @@ test "int64 hash" {
   let i4 = gPRIME4.to_int64()
   let i5 = gPRIME5.to_int64()
   let i6 = 0L
-  inspect!(i0.hash().to_string(), content=i0.slow_hash().to_string())
-  inspect!(i1.hash().to_string(), content=i1.slow_hash().to_string())
-  inspect!(i2.hash().to_string(), content=i2.slow_hash().to_string())
-  inspect!(i3.hash().to_string(), content=i3.slow_hash().to_string())
-  inspect!(i4.hash().to_string(), content=i4.slow_hash().to_string())
-  inspect!(i5.hash().to_string(), content=i5.slow_hash().to_string())
-  inspect!(i6.hash().to_string(), content=i6.slow_hash().to_string())
+  inspect!(Hash::hash(i0).to_string(), content=i0.slow_hash().to_string())
+  inspect!(Hash::hash(i1).to_string(), content=i1.slow_hash().to_string())
+  inspect!(Hash::hash(i2).to_string(), content=i2.slow_hash().to_string())
+  inspect!(Hash::hash(i3).to_string(), content=i3.slow_hash().to_string())
+  inspect!(Hash::hash(i4).to_string(), content=i4.slow_hash().to_string())
+  inspect!(Hash::hash(i5).to_string(), content=i5.slow_hash().to_string())
+  inspect!(Hash::hash(i6).to_string(), content=i6.slow_hash().to_string())
 }
