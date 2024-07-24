@@ -228,8 +228,15 @@ impl Bool {
 }
 impl Byte {
   compare(Byte, Byte) -> Int
+  default() -> Byte
   hash(Byte) -> Int
   hash_combine(Byte, Hasher) -> Unit
+  land(Byte, Byte) -> Byte
+  lnot(Byte) -> Byte
+  lor(Byte, Byte) -> Byte
+  lsl(Byte, Int) -> Byte
+  lsr(Byte, Int) -> Byte
+  lxor(Byte, Byte) -> Byte
   op_equal(Byte, Byte) -> Bool
   to_int(Byte) -> Int
   to_int64(Byte) -> Int64

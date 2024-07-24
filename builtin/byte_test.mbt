@@ -45,3 +45,31 @@ test "byte_op_equal" {
   @test.is_true!(b3.op_equal(b2) |> not)
   @test.is_true!(b3.op_equal(b3))
 }
+
+test "byte_lsl" {
+  @test.eq!(b'\xFF'.lsl(8), b'\x00')
+  @test.eq!(b'\xFF'.lsl(8).to_int(), 0)
+}
+
+test "byte_lsr" {
+  @test.eq!(b'\xFF'.lsr(8), b'\x00')
+  @test.eq!((0xFFF).to_byte().lsr(8), b'\x00')
+}
+
+test "byte_lxor" {
+  @test.eq!(b'\xFF'.lxor(b'\xFF'), b'\x00')
+  @test.eq!(b'\xFF'.lxor(b'\x0F'), b'\xF0')
+  @test.eq!(b'\x0F'.lxor(b'\xFF'), b'\xF0')
+}
+
+test "byte_lor" {
+  @test.eq!(b'\xFF'.lor(b'\xFF'), b'\xFF')
+  @test.eq!(b'\xFF'.lor(b'\x0F'), b'\xFF')
+  @test.eq!(b'\x0F'.lor(b'\xFF'), b'\xFF')
+}
+
+test "byte_land" {
+  @test.eq!(b'\xFF'.land(b'\xFF'), b'\xFF')
+  @test.eq!(b'\xFF'.land(b'\x0F'), b'\x0F')
+  @test.eq!(b'\x0F'.land(b'\xFF'), b'\x0F')
+}

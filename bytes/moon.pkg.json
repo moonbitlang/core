@@ -2,9 +2,5 @@
   "import": [
     "moonbitlang/core/builtin",
     "moonbitlang/core/coverage"
-  ],
-  "test-import": [
-    "moonbitlang/core/builtin",
-    "moonbitlang/core/coverage"
   ]
 }
