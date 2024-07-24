@@ -7,10 +7,5 @@
       "path": "moonbitlang/core/array",
       "alias": "core/array"
     }
-  ],
-  "test-import": [
-    "moonbitlang/core/builtin",
-    "moonbitlang/core/coverage",
-    "moonbitlang/core/test"
   ]
 }

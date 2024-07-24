@@ -6,8 +6,6 @@
         "moonbitlang/core/bytes"
     ],
     "test-import": [
-        "moonbitlang/core/builtin",
-        "moonbitlang/core/test",
-        "moonbitlang/core/coverage"
+        "moonbitlang/core/test"
     ]
 }
