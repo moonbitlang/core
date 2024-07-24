@@ -333,9 +333,7 @@ test "show" {
 pub fn unwrap_or_error[T, E](self : Result[T, E]) -> T!E {
   match self {
     Ok(x) => x
-    Err(e) => {
-      raise e
-    }
+    Err(e) => raise e
   }
 }
 
