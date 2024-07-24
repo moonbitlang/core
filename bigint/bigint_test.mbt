@@ -1,0 +1,98 @@
+// Copyright 2024 International Digital Economy Academy
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+test "neg" {
+  let a = @bigint.from_int64(123456789012345678)
+  inspect!(-a, content="-123456789012345678")
+  let a = @bigint.from_string(
+    "123456789012345678123456789012345678123456789012345678123456789012345678",
+  )
+  inspect!(
+    -a,
+    content="-123456789012345678123456789012345678123456789012345678123456789012345678",
+  )
+  let a = @bigint.from_string(
+    "-123456789012345678123456789012345678123456789012345678123456789012345678",
+  )
+  inspect!(
+    -a,
+    content="123456789012345678123456789012345678123456789012345678123456789012345678",
+  )
+}
+
+test "add" {
+  let a = @bigint.from_int64(123456789012345678)
+  let b = @bigint.from_int64(876543210987654321)
+  inspect!(a + b, content="999999999999999999")
+  let a = @bigint.from_string(
+    "123456789012345678123456789012345678123456789012345678123456789012345678",
+  )
+  let b = @bigint.from_string(
+    "876543210987654321876543210987654321876543210987654321876543210987654321",
+  )
+  inspect!(
+    a + b,
+    content="999999999999999999999999999999999999999999999999999999999999999999999999",
+  )
+}
+
+test "sub" {
+  let a = @bigint.from_int64(123456789012345678)
+  let b = @bigint.from_int64(876543210987654321)
+  inspect!(a - b, content="-753086421975308643")
+  let a = @bigint.from_string(
+    "123456789012345678123456789012345678123456789012345678123456789012345678",
+  )
+  let b = @bigint.from_string(
+    "876543210987654321876543210987654321876543210987654321876543210987654321",
+  )
+  inspect!(
+    a - b,
+    content="-753086421975308643753086421975308643753086421975308643753086421975308643",
+  )
+}
+
+test "mul" {
+  let a = @bigint.from_int64(123456789012345678)
+  let b = @bigint.from_int64(876543210987654321)
+  inspect!(a * b, content="108215210259106841348574911222374638")
+  let a = @bigint.from_string(
+    "123456789012345678123456789012345678123456789012345678123456789012345678",
+  )
+  let b = @bigint.from_string(
+    "876543210987654321876543210987654321876543210987654321876543210987654321",
+  )
+  inspect!(
+    a * b,
+    content="108215210259106841565005331740588321021795453222069800478585574703551279718945275666819076262155154185337596805365032703856117348574911222374638",
+  )
+}
+
+test "div" {
+  let a = @bigint.from_int64(123456789012345678)
+  let b = @bigint.from_int64(876543210987654321)
+  inspect!(a / b, content="0")
+  inspect!(a % b, content="123456789012345678")
+  let a = @bigint.from_string(
+    "123456789012345678123456789012345678123456789012345678123456789012345678",
+  )
+  let b = @bigint.from_string(
+    "876543210987654321876543210987654321876543210987654321876543210987654321",
+  )
+  inspect!(a / b, content="0")
+  inspect!(
+    a % b,
+    content="123456789012345678123456789012345678123456789012345678123456789012345678",
+  )
+}

@@ -248,11 +248,12 @@ fn split(self : BigInt, half : Int) -> (BigInt, BigInt) {
 
 /// Divide two bigint
 pub fn op_div(self : BigInt, other : BigInt) -> BigInt {
+  // TODO: 
+  // guard (other != zero, "division by zero")  
   if other == zero {
     abort("division by zero")
   }
-  let (quotient, _) = grade_school_div(self, other)
-  quotient
+  grade_school_div(self, other).0
 }
 
 /// Modulo two bigint
