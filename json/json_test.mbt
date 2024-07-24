@@ -362,9 +362,9 @@ test "stringify" {
     _ => @test.fail!("Failed to parse the stringified JSON")
   }
   match json {
-    Object({"key" : Array ([_,_,_,Object ({"value" : Number (i)}),..])}) =>
-      inspect!(i)
-    _ => @test.fail!("Failed to match the JSON")  
+    Object({ "key": Array([_, _, _, _, Object({ "value": Number(i) }), ..]) }) =>
+      inspect!(i, content="100.0")
+    _ => @test.fail!("Failed to match the JSON")
   }
   @test.eq!(newjson, json)
 }
