@@ -76,6 +76,25 @@ test "uint test" {
   inspect!(0xFFFF00U.lxor(0xFF00FFU), content="65535")
   inspect!(0x1U.lsl(31), content="2147483648")
   inspect!(2147483648U.lsr(31), content="1")
+  // to_byte
+  let u = 0xDEADBEEFU
+  let b = u.to_byte()
+  inspect!(b, content="b'\\xEF'")
+  let u = 0x87654321U
+  let b = u.to_byte()
+  inspect!(b, content="b'\\x21'")
+  let u = 0xFFFFU
+  let b = u.to_byte()
+  inspect!(b, content="b'\\xFF'")
+  let u = 0xFFU
+  let b = u.to_byte()
+  inspect!(b, content="b'\\xFF'")
+  let u = 0x12345678U
+  let b = u.to_byte()
+  inspect!(b, content="b'\\x78'")
+  let u = 0U
+  let b = u.to_byte()
+  inspect!(b, content="b'\\x00'")
 }
 
 test "uint64 test" {
