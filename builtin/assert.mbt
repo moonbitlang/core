@@ -12,11 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-pub fn assert_eq[T : Eq + Show](
-  a : T,
-  b : T,
-  ~loc : SourceLoc = _
-) -> Unit!String {
+fn assert_eq[T : Eq + Show](a : T, b : T, ~loc : SourceLoc = _) -> Unit!String {
   if a != b {
     raise "FAILED: \(loc) `\(a) == \(b)`"
   }
