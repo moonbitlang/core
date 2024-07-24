@@ -56,9 +56,7 @@ pub fn parse_double(str : String) -> Double!String {
           } else {
             return num
           }
-        None => {
-          raise syntax_err
-        }
+        None => raise syntax_err
       }
   }
   if str.length() != consumed {
