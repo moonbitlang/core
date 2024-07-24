@@ -371,9 +371,7 @@ test "iter" {
 pub fn or_error[T, Err](self : T?, err : Err) -> T!Err {
   match self {
     Some(v) => v
-    None => {
-      raise err
-    }
+    None => raise err
   }
 }
 

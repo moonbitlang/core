@@ -37,9 +37,7 @@ fn lex_decimal_point(ctx : ParseContext, ~start : Int) -> Double!ParseError {
       } else {
         raise invalid_char(ctx, shift=-1)
       }
-    None => {
-      raise InvalidEof
-    }
+    None => raise InvalidEof
   }
 }
 
@@ -69,9 +67,7 @@ fn lex_decimal_exponent(ctx : ParseContext, ~start : Int) -> Double!ParseError {
       ctx.offset -= 1
       raise invalid_char(ctx)
     }
-    None => {
-      raise InvalidEof
-    }
+    None => raise InvalidEof
   }
 }
 
@@ -87,9 +83,7 @@ fn lex_decimal_exponent_sign(
       ctx.offset -= 1
       raise invalid_char(ctx)
     }
-    None => {
-      raise InvalidEof
-    }
+    None => raise InvalidEof
   }
 }
 
@@ -136,8 +130,6 @@ fn lex_number_end(
   try {
     @strconv.parse_double!(s)
   } catch {
-    _ => {
-      raise InvalidNumber(offset_to_position(ctx.input, start), s)
-    }
+    _ => raise InvalidNumber(offset_to_position(ctx.input, start), s)
   }
 }
