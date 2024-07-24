@@ -8,13 +8,8 @@
     "moonbitlang/core/tuple"
   ],
   "test-import": [
-    "moonbitlang/core/test",
-    "moonbitlang/core/coverage",
-    "moonbitlang/core/array",
-    "moonbitlang/core/builtin",
     "moonbitlang/core/string",
     "moonbitlang/core/int",
-    "moonbitlang/core/option",
-    "moonbitlang/core/tuple"
+    "moonbitlang/core/option"
   ]
 }

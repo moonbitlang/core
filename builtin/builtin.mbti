@@ -153,7 +153,7 @@ impl Iter {
   filter[T](Self[T], (T) -> Bool) -> Self[T]
   find_first[T](Self[T], (T) -> Bool) -> T?
   flat_map[T, R](Self[T], (T) -> Self[R]) -> Self[R]
-  fold[T, B](Self[T], (B, T) -> B, ~init : B) -> B
+  fold[T, B](Self[T], ~init : B, (B, T) -> B) -> B
   iter[T](Self[T]) -> Self[T]
   map[T, R](Self[T], (T) -> R) -> Self[R]
   new[T](((T) -> IterResult) -> IterResult) -> Self[T]
