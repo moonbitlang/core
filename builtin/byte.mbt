@@ -49,11 +49,9 @@ pub fn to_string(self : Byte) -> String {
   "b'\\x\(hi)\(lo)'"
 }
 
-pub fn hash(self : Byte) -> Int {
-  self.to_int()
-}
+pub impl Hash for Byte with hash(self) { self.to_int() }
 
-pub fn hash_combine(self : Byte, hasher : Hasher) -> Unit {
+pub impl Hash for Byte with hash_combine(self, hasher) {
   hasher.combine_byte(self)
 }
 

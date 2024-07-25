@@ -4,13 +4,13 @@ package moonbitlang/core/char
 
 // Types and methods
 impl Char {
-  hash(Char) -> Int
-  hash_combine(Char, Hasher) -> Unit
   to_string(Char) -> String
 }
 
 // Traits
 
 // Extension Methods
+impl Hash for Char
+
 impl Show for Char
 

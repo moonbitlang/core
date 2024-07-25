@@ -720,7 +720,7 @@ test "remove_entry_head" {
   // This should ensure the head is updated correctly
   assert_eq!(
     map.head,
-    Some({ idx: 1, psl: 0, hash: (2).hash(), key: 2, value: 2 }),
+    Some({ idx: 1, psl: 0, hash: Hash::hash(2), key: 2, value: 2 }),
   )
 }
 
@@ -732,7 +732,7 @@ test "remove_entry_tail" {
   // This should ensure the tail is updated correctly
   assert_eq!(
     map.tail,
-    Some(Entry::{ idx: 0, psl: 0, hash: (1).hash(), key: 1, value: 1 }),
+    Some(Entry::{ idx: 0, psl: 0, hash: Hash::hash(1), key: 1, value: 1 }),
   )
 }
 

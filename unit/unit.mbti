@@ -6,12 +6,11 @@ package moonbitlang/core/unit
 impl Unit {
   compare(Unit, Unit) -> Int
   default() -> Unit
-  hash(Unit) -> Int
-  hash_combine(Unit, Hasher) -> Unit
   to_string(Unit) -> String
 }
 
 // Traits
 
 // Extension Methods
+impl Hash for Unit
 

@@ -13,6 +13,6 @@
 // limitations under the License.
 
 test "Bool hash function" {
-  @test.eq!(@bool.hash(true), 1)
-  @test.eq!(@bool.hash(false), 0)
+  @test.eq!(Hash::hash(true), 1)
+  @test.eq!(Hash::hash(false), 0)
 }

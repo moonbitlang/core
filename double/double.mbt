@@ -278,10 +278,10 @@ test "min_normal" {
   @test.eq!(Double::min_normal(), min_norm)
 }
 
-pub fn hash(self : Double) -> Int {
-  self.reinterpret_as_i64().hash()
+pub impl Hash for Double with hash(self) {
+  self.reinterpret_as_i64() |> Hash::hash()
 }
 
-pub fn hash_combine(self : Double, hasher : Hasher) -> Unit {
+pub impl Hash for Double with hash_combine(self, hasher) {
   hasher.combine_double(self)
 }

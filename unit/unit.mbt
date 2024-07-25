@@ -17,12 +17,12 @@ pub fn to_string(self : Unit) -> String {
   "()"
 }
 
-pub fn hash(self : Unit) -> Int {
+pub impl Hash for Unit with hash(self) {
   let _ = self
   0
 }
 
-pub fn hash_combine(self : Unit, hasher : Hasher) -> Unit {
+pub impl Hash for Unit with hash_combine(self, hasher) -> Unit {
   let _ = self
   hasher.combine_unit()
 }

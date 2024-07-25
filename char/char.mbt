@@ -76,10 +76,8 @@ test "show output" {
   @test.eq!(repr(Char::from_int(0)), "'\\x00'")
 }
 
-pub fn hash(self : Char) -> Int {
-  self.to_int()
-}
+pub impl Hash for Char with hash(self) { self.to_int() }
 
-pub fn hash_combine(self : Char, hasher : Hasher) -> Unit {
+pub impl Hash for Char with hash_combine(self, hasher) -> Unit {
   hasher.combine_char(self)
 }
