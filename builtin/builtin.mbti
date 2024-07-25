@@ -362,6 +362,7 @@ impl Double {
   op_neq(Double, Double) -> Bool
   op_sub(Double, Double) -> Double
   reinterpret_as_i64(Double) -> Int64
+  reinterpret_as_u64(Double) -> UInt64
   sqrt(Double) -> Double
   to_int(Double) -> Int
   to_int64(Double) -> Int64
