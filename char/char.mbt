@@ -15,6 +15,10 @@
 /// Convert Char to String
 /// @intrinsic %char.to_string
 pub fn to_string(self : Char) -> String {
+  Show::to_string(self)
+}
+
+pub impl Show for Char with to_string(self) {
   let bytes = Bytes::new(4)
   let len = bytes.set_utf16_char(0, self)
   bytes.sub_string(0, len)
