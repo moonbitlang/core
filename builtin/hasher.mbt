@@ -129,11 +129,11 @@ fn endian32(input : Bytes, cur : Int) -> Int {
   )
 }
 
-pub impl Hash for String with hash(self) {
-  let hasher = Hasher::new()
-  hasher.combine(self)
-  hasher.finalize()
-}
+// pub impl Hash for String with hash(self) {
+//   let hasher = Hasher::new()
+//   hasher.combine(self)
+//   hasher.finalize()
+// }
 
 pub impl Hash for String with hash_combine(self, hasher) {
   hasher.combine_string(self)
