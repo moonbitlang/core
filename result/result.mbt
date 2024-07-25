@@ -339,7 +339,7 @@ pub fn unwrap_or_error[T, E](self : Result[T, E]) -> T!E {
 
 test "unwrap exn" {
   inspect!(
-    (Err("This is serious") : Result[Int, String]).unwrap_or_error()!!,
+    wrap1(f=unwrap_or_error, (Err("This is serious") : Result[Unit, String])),
     content=
       #|Err("This is serious")
     ,
