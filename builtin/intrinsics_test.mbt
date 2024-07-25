@@ -115,3 +115,10 @@ test "uint64 test" {
   inspect!(0x1UL.lsl(63), content="9223372036854775808")
   inspect!(9223372036854775808UL.lsr(63), content="1")
 }
+
+test "to double" {
+  inspect!(10.0.reinterpret_as_i64(), content="4621819117588971520")
+  inspect!(10.0.reinterpret_as_u64(), content="4621819117588971520")
+  inspect!(20.0.reinterpret_as_i64(), content="4626322717216342016")
+  inspect!(20.0.reinterpret_as_u64(), content="4626322717216342016")
+}
