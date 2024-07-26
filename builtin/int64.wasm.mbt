@@ -98,7 +98,7 @@ pub fn UInt64::lor(self : UInt64, other : UInt64) -> UInt64 = "%u64.bitor"
 
 pub fn UInt64::lxor(self : UInt64, other : UInt64) -> UInt64 = "%u64.bitxor"
 
-pub fn UInt64::lnot(self : UInt64, other : UInt64) -> UInt64 = "%u64.bitnot"
+pub fn UInt64::lnot(self : UInt64) -> UInt64 = "%u64.bitnot"
 
 pub fn UInt64::lsl(self : UInt64, shift : Int) -> UInt64 = "%u64.shl"
 
