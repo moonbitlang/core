@@ -331,7 +331,7 @@ impl UInt64 {
   compare(UInt64, UInt64) -> Int
   extend_uint(UInt) -> UInt64
   land(UInt64, UInt64) -> UInt64
-  lnot(UInt64, UInt64) -> UInt64
+  lnot(UInt64) -> UInt64
   lor(UInt64, UInt64) -> UInt64
   lsl(UInt64, Int) -> UInt64
   lsr(UInt64, Int) -> UInt64

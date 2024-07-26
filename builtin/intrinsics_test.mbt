@@ -123,3 +123,29 @@ test "to double" {
   inspect!(20.0.reinterpret_as_i64(), content="4626322717216342016")
   inspect!(20.0.reinterpret_as_u64(), content="4626322717216342016")
 }
+
+test "UInt64::lnot test cases" {
+  // Test case 1: Boundary case, testing the behavior with the maximum value of UInt64
+  inspect!(UInt64::lnot(@uint64.max), content="0")
+
+  // Test case 2: Boundary case, testing the behavior with the minimum value of UInt64
+  inspect!(UInt64::lnot(@uint64.min), content="18446744073709551615")
+
+  // Test case 3: Random case, testing with a random large value
+  inspect!(UInt64::lnot(12345678901234567890UL), content="6101065172474983725")
+
+  // Test case 4: Random case, testing with a random small value
+  inspect!(UInt64::lnot(42UL), content="18446744073709551573")
+
+  // Test case 5: Random case, testing with a value that has 1s in some bits
+  inspect!(UInt64::lnot(0xAAAAAAAAAAAAAAAAUL), content="6148914691236517205")
+
+  // Test case 6: Random case, testing with a value that has 0s in some bits
+  inspect!(UInt64::lnot(0x5555555555555555UL), content="12297829382473034410")
+
+  // Test case 7: Random case, testing with a value that has a mix of 1s and 0s
+  inspect!(UInt64::lnot(0x123456789ABCDEF0UL), content="17134975606245761295")
+
+  // Test case 8: Random case, testing with a value that has all 1s
+  inspect!(UInt64::lnot(0xFFFFFFFFFFFFFFFFUL), content="0")
+}
