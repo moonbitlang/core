@@ -148,12 +148,14 @@ impl Iter {
   drop[T](Self[T], Int) -> Self[T]
   drop_while[T](Self[T], (T) -> Bool) -> Self[T]
   each[T](Self[T], (T) -> Unit) -> Unit
+  each_err[T, Err](Self[T], (T) -> Unit!Err) -> Unit!Err
   eachi[T](Self[T], (Int, T) -> Unit) -> Unit
   empty[T]() -> Self[T]
   filter[T](Self[T], (T) -> Bool) -> Self[T]
   find_first[T](Self[T], (T) -> Bool) -> T?
   flat_map[T, R](Self[T], (T) -> Self[R]) -> Self[R]
   fold[T, B](Self[T], ~init : B, (B, T) -> B) -> B
+  fold_err[T, B, Err](Self[T], ~init : B, (B, T) -> B!Err) -> B!Err
   iter[T](Self[T]) -> Self[T]
   map[T, R](Self[T], (T) -> R) -> Self[R]
   new[T](((T) -> IterResult) -> IterResult) -> Self[T]

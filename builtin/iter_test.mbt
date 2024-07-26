@@ -323,3 +323,61 @@ fn test_from_array[T](arr : Array[T]) -> Iter[T] {
     },
   )
 }
+
+test "each_err.no_error" {
+  let mut result = 0
+  let iter = test_from_array([1, 2, 3, 4, 5])
+  iter.each_err!(
+    fn(x) {
+      if x > 6 {
+        raise "Oops!"
+      }
+      result += x
+    },
+  )
+  inspect!(result, content="15")
+}
+
+test "each_err.error" {
+  let iter = test_from_array([1, 2, 3, 42, 5])
+  try {
+    iter.each_err!(fn(x) { if x == 42 { raise "answer" } })
+  } catch {
+    _ => ()
+  } else {
+    _ => raise "test failed"
+  }
+}
+
+test "fold_err.no_error" {
+  let iter = test_from_array([1, 2, 3, 4, 5])
+  let result = iter.fold_err!(
+    init=0,
+    fn(acc, x) {
+      if x > 6 {
+        raise "Oops!"
+      }
+      acc + x
+    },
+  )
+  inspect!(result, content="15")
+}
+
+test "fold_err.error" {
+  let iter = test_from_array([1, 2, 3, 42, 5])
+  try {
+    iter.fold_err!(
+      init=0,
+      fn(acc, x) {
+        if x == 42 {
+          raise "answer"
+        }
+        acc + x
+      },
+    )
+  } catch {
+    _ => ()
+  } else {
+    _ => raise "test failed"
+  }
+}
