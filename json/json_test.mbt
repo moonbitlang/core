@@ -319,34 +319,12 @@ test "deep access" {
 }
 
 test "stringify" {
-  let json = @json.JsonValue::Object(
-    Map::of(
-      [
-        (
-          "key",
-          @json.JsonValue::Array(
-            [
-              @json.JsonValue::Number(1.0),
-              @json.JsonValue::True,
-              @json.JsonValue::Null,
-              @json.JsonValue::Array([]),
-              @json.JsonValue::Object(
-                Map::of(
-                  [
-                    ("key", @json.JsonValue::String("value")),
-                    ("value", @json.JsonValue::Number(100.0)),
-                  ],
-                ),
-              ),
-            ],
-          ),
-        ),
-        ("null", @json.JsonValue::Null),
-        ("bool", @json.JsonValue::False),
-        ("obj", @json.JsonValue::Object({  })),
-      ],
-    ),
-  )
+  let json : @json.JsonValue = {
+    "key": [1.0, true, Null, [], { "key": "value", "value": 100.0 }],
+    "null": Null,
+    "bool": false,
+    "obj": {  },
+  }
   inspect!(
     json.stringify(),
     content=
@@ -362,7 +340,7 @@ test "stringify" {
     _ => @test.fail!("Failed to parse the stringified JSON")
   }
   match json {
-    Object({ "key": Array([_, _, _, _, Object({ "value": Number(i) }), ..]) }) =>
+    { "key": [_, _, _, _, { "value": Number(i) }, ..] } =>
       inspect!(i, content="100.0")
     _ => @test.fail!("Failed to match the JSON")
   }
