@@ -201,7 +201,7 @@ test "find_first2" {
 test "tap" {
   let iter = test_from_array(['1', '2', '3', '4', '5'])
   let exb = Buffer::new(size_hint=0)
-  iter.tap(fn { x => exb.write_char(x) }).each(fn { x => exb.write_char(x) })
+  iter..each(fn { x => exb.write_char(x) }).each(fn { x => exb.write_char(x) })
   exb.expect!(content="1234512345")
 }
 
