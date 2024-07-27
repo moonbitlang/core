@@ -507,3 +507,9 @@ test "Array::makei with negative length" {
   let arr = Array::makei(-1, fn(i) { i * 2 })
   @test.eq!(arr, [])
 }
+
+test "map_option" {
+  let arr = [1, 2, 3, 4, 5]
+  let mapped = arr.map_option(fn(x) { if x % 2 == 0 { Some(x) } else { None } })
+  inspect!(mapped, content="[2, 4]")
+}

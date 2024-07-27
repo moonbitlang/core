@@ -147,3 +147,26 @@ pub fn join[T : Show](self : Array[T], sep : String) -> String {
   }
   buf.to_string()
 }
+
+/// Returns a new array containing the elements of the original array that satisfy the given predicate.
+/// 
+/// # Arguments
+/// 
+/// * `self` - The array to filter.
+/// * `f` - The predicate function.
+/// 
+/// # Returns
+/// 
+pub fn map_option[A, B](self : Array[A], f : (A) -> B?) -> Array[B] {
+  let result = []
+  self.each(
+    fn {
+      x =>
+        match f(x) {
+          None => ()
+          Some(x) => result.push(x)
+        }
+    },
+  )
+  result
+}
