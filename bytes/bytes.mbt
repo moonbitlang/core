@@ -22,26 +22,30 @@
 /// let b = @bytes.of([65, 66, 67])
 /// ```
 /// 
-pub fn Bytes::from_array(arr : Array[Int]) -> Bytes {
+pub fn Bytes::from_array(arr : Array[Byte]) -> Bytes {
   let rv = Bytes::new(arr.length())
   for i = 0; i < arr.length(); i = i + 1 {
-    rv[i] = arr[i].to_byte()
+    rv[i] = arr[i]
   }
   rv
 }
 
-pub fn Bytes::of(arr : FixedArray[Int]) -> Bytes {
+pub fn Bytes::from_iter(iter : Iter[Byte]) -> Bytes {
+  Bytes::from_array(iter.collect())
+}
+
+pub fn Bytes::of(arr : FixedArray[Byte]) -> Bytes {
   let rv = Bytes::new(arr.length())
   for i = 0; i < arr.length(); i = i + 1 {
-    rv[i] = arr[i].to_byte()
+    rv[i] = arr[i]
   }
   rv
 }
 
-pub fn to_array(self : Bytes) -> Array[Int] {
-  let rv = Array::make(self.length(), 0)
+pub fn to_array(self : Bytes) -> Array[Byte] {
+  let rv = Array::make(self.length(), b'0')
   for i = 0; i < self.length(); i = i + 1 {
-    rv[i] = self[i].to_int()
+    rv[i] = self[i]
   }
   rv
 }

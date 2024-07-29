@@ -120,3 +120,19 @@ test "is_empty" {
   pq.clear()
   @test.eq!(pq.is_empty(), true)
 }
+
+test "from_iter multiple elements iter" {
+  inspect!(
+    @priority_queue.T::from_iter([1, 2, 3].iter()),
+    content="[3, 2, 1]",
+  )
+}
+
+test "from_iter single element iter" {
+  inspect!(@priority_queue.T::from_iter([1].iter()), content="[1]")
+}
+
+test "from_iter empty iter" {
+  let pq : @priority_queue.T[Int] = @priority_queue.T::from_iter(Iter::empty())
+  inspect!(pq, content="[]")
+}

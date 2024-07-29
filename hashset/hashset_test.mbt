@@ -237,3 +237,19 @@ test "clear_and_reinsert" {
   @test.eq!(m.size(), 1)
   @test.is_true!(m.contains("c"))
 }
+
+test "from_iter multiple elements iter" {
+  inspect!(
+    @hashset.T::from_iter([1, 2, 3].iter()),
+    content="@hashset.of([3, 1, 2])",
+  )
+}
+
+test "from_iter single element iter" {
+  inspect!(@hashset.T::from_iter([1].iter()), content="@hashset.of([1])")
+}
+
+test "from_iter empty iter" {
+  let map : @hashset.T[Int] = @hashset.T::from_iter(Iter::empty())
+  inspect!(map, content="@hashset.of([])")
+}

@@ -513,3 +513,10 @@ test "map_option" {
   let mapped = arr.map_option(fn(x) { if x % 2 == 0 { Some(x) } else { None } })
   inspect!(mapped, content="[2, 4]")
 }
+
+test "from_iter" {
+  let arr : Array[Int] = []
+  inspect!(Array::from_iter(arr.iter()), content="[]")
+  let arr = [1, 2, 3, 4, 5]
+  inspect!(Array::from_iter(arr.iter()), content="[1, 2, 3, 4, 5]")
+}

@@ -272,3 +272,19 @@ test "get_nonexistent_key_with_psl" {
   inspect!(m.get("Y"), content="None")
   inspect!(m.get("Z"), content="None")
 }
+
+test "from_iter multiple elements iter" {
+  inspect!(
+    @hashmap.T::from_iter([(1, 1), (2, 2), (3, 3)].iter()),
+    content="HashMap::of([(2, 2), (1, 1), (3, 3)])",
+  )
+}
+
+test "from_iter single element iter" {
+  inspect!(@hashmap.T::from_iter([(1, 1)].iter()), content="HashMap::of([(1, 1)])")
+}
+
+test "from_iter empty iter" {
+  let map : @hashmap.T[Int, Int] = @hashmap.T::from_iter(Iter::empty())
+  inspect!(map, content="HashMap::of([])")
+}

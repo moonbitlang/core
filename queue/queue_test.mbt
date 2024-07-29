@@ -162,3 +162,16 @@ test "iter" {
   let q = @queue.of([1, 2, 3, 4, 5])
   inspect!(q.iter().fold(fn(x, y) { x + y }, init=0), content="15")
 }
+
+test "from_iter multiple elements iter" {
+  inspect!(@queue.T::from_iter([1, 2, 3].iter()), content="@queue.of([1, 2, 3])")
+}
+
+test "from_iter single element iter" {
+  inspect!(@queue.T::from_iter([1].iter()), content="@queue.of([1])")
+}
+
+test "from_iter empty iter" {
+  let pq : @queue.T[Int] = @queue.T::from_iter(Iter::empty())
+  inspect!(pq, content="@queue.of([])")
+}
