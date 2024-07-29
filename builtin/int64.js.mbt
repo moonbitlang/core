@@ -335,6 +335,9 @@ extern "js" fn MyInt64::trunc_double_u(value : Double) -> MyInt64 =
 
 extern "js" fn MyInt64::convert_to_double_u(self : MyInt64) -> Double =
   #|(a) => (a.hi >>> 0) * 4294967296.0 + (a.lo >>> 0)
+
+extern "js" fn MyInt64::convert_to_double(self : MyInt64) -> Double =
+  #|(a) => a.hi * 4294967296.0 + (a.lo >>> 0)
 //endregion
 
 pub fn Int64::op_neg(self : Int64) -> Int64 {
@@ -446,7 +449,7 @@ pub fn Int64::to_uint(self : Int64) -> UInt {
 }
 
 pub fn Int64::to_double(self : Int64) -> Double {
-  MyInt64::from_int64(self).to_double()
+  Double::convert_int64(self)
 }
 
 pub fn Int64::to_byte(self : Int64) -> Byte {
@@ -479,6 +482,10 @@ pub fn Double::reinterpret_as_u64(self : Double) -> UInt64 {
 
 pub fn Double::convert_uint64(value : UInt64) -> Double {
   MyInt64::convert_to_double_u(MyInt64::from_uint64(value))
+}
+
+pub fn Double::convert_int64(value : Int64) -> Double {
+  MyInt64::convert_to_double(MyInt64::from_int64(value))
 }
 
 fn MyInt64::to_uint64(self : MyInt64) -> UInt64 = "%identity"
@@ -515,6 +522,10 @@ pub fn UInt64::to_uint(self : UInt64) -> UInt {
 
 pub fn UInt64::to_int(self : UInt64) -> Int {
   MyInt64::from_uint64(self).to_int()
+}
+
+pub fn UInt64::to_double(self : UInt64) -> Double {
+  Double::convert_uint64(self)
 }
 
 pub fn UInt64::compare(self : UInt64, other : UInt64) -> Int {

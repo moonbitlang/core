@@ -98,11 +98,27 @@ test "uint64 test" {
   inspect!(9223372036854775808UL.lsr(63), content="1")
 }
 
-test "to double" {
+test "from double to" {
   inspect!(10.0.reinterpret_as_i64(), content="4621819117588971520")
   inspect!(10.0.reinterpret_as_u64(), content="4621819117588971520")
   inspect!(20.0.reinterpret_as_i64(), content="4626322717216342016")
   inspect!(20.0.reinterpret_as_u64(), content="4626322717216342016")
+}
+
+test "u64 to double" {
+  inspect!(10UL.to_double(), content="10.0")
+  inspect!(20UL.to_double(), content="20.0")
+  inspect!(0UL.to_double(), content="0.0")
+  inspect!(10L.to_double(), content="10.0")
+  inspect!(20L.to_double(), content="20.0")
+  inspect!(0L.to_double(), content="0.0")
+  inspect!(18446744073709551615UL.to_double(), content="1.8446744073709552e19")
+  inspect!(8446744073709551615UL.to_double(), content="8.446744073709552e18")
+  inspect!(8446744073709551615L.to_double(), content="8.446744073709552e18")
+  inspect!(-8446744073709551615L.to_double(), content="-8.446744073709552e18")
+  inspect!(844674400955615UL.to_double(), content="8.44674400955615e14")
+  inspect!(844674400955615L.to_double(), content="8.44674400955615e14")
+  inspect!(-844674400955615L.to_double(), content="-8.44674400955615e14")
 }
 
 test "UInt64::lnot test cases" {
