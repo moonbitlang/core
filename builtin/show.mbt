@@ -208,4 +208,3 @@ pub impl Show for Char with output(self, logger) {
   }
   logger.write_char('\'')
 }
-

@@ -12,7 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-
 /// A big integer represented as an array of Int.
 /// 
 /// Design explained: 
