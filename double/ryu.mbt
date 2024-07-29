@@ -47,28 +47,28 @@ fn copy_special_str(sign : Bool, exponent : Bool, mantissa : Bool) -> String {
 
 fn umul128(a : UInt64, b : UInt64) -> (UInt64, UInt64) {
   let aLo = a.to_uint()
-  let aHi = a.lsr(32).to_uint()
+  let aHi = a.shr(32).to_uint()
   let bLo = b.to_uint()
-  let bHi = b.lsr(32).to_uint()
+  let bHi = b.shr(32).to_uint()
   let b00 = aLo.to_uint64() * bLo.to_uint64()
   let b01 = aLo.to_uint64() * bHi.to_uint64()
   let b10 = aHi.to_uint64() * bLo.to_uint64()
   let b11 = aHi.to_uint64() * bHi.to_uint64()
   let b00Lo = b00.to_uint()
-  let b00Hi = b00.lsr(32).to_uint()
+  let b00Hi = b00.shr(32).to_uint()
   let mid1 = b10 + b00Hi.to_uint64()
   let mid1Lo = mid1.to_uint()
-  let mid1Hi = mid1.lsr(32).to_uint()
+  let mid1Hi = mid1.shr(32).to_uint()
   let mid2 = b01 + mid1Lo.to_uint64()
   let mid2Lo = mid2.to_uint()
-  let mid2Hi = mid2.lsr(32).to_uint()
+  let mid2Hi = mid2.shr(32).to_uint()
   let pHi : UInt64 = b11 + mid1Hi.to_uint64() + mid2Hi.to_uint64()
-  let pLo : UInt64 = mid2Lo.to_uint64().lsl(32).lor(b00Lo.to_uint64())
+  let pLo : UInt64 = mid2Lo.to_uint64().shl(32).lor(b00Lo.to_uint64())
   (pLo, pHi)
 }
 
 fn shiftright128(lo : UInt64, hi : UInt64, dist : Int) -> UInt64 {
-  hi.lsl(64 - dist).lor(lo.lsr(dist))
+  hi.shl(64 - dist).lor(lo.shr(dist))
 }
 
 fn pow5Factor(value : UInt64) -> Int {
@@ -102,7 +102,7 @@ fn multipleOfPowerOf5(value : UInt64, p : Int) -> Bool {
 }
 
 fn multipleOfPowerOf2(value : UInt64, p : Int) -> Bool {
-  value.land(1UL.lsl(p) - 1UL) == 0UL
+  value.land(1UL.shl(p) - 1UL) == 0UL
 }
 
 fn mulShiftAll64(
@@ -111,7 +111,7 @@ fn mulShiftAll64(
   j : Int,
   mmShift : Bool
 ) -> (UInt64, UInt64, UInt64) {
-  let m = m.lsl(1)
+  let m = m.shl(1)
   let (lo, tmp) = umul128(m, mul.0)
   let (lo2, hi2) = umul128(m, mul.1)
   let mid = tmp + lo2
@@ -198,8 +198,8 @@ fn double_computePow5(i : Int) -> (UInt64, UInt64) {
     high1 = high1 + 1UL
   }
   let delta : Int = pow5bits(i) - pow5bits(base2)
-  let a = shiftright128(low0, sum, delta) + gPOW5_OFFSETS[i / 16].lsr(
-      (i % 16).lsl(1),
+  let a = shiftright128(low0, sum, delta) + gPOW5_OFFSETS[i / 16].shr(
+      (i % 16).shl(1),
     ).land(3).to_int64().to_uint64()
   let b = shiftright128(sum, high1, delta)
   (a, b)
@@ -223,8 +223,8 @@ fn double_computeInvPow5(i : Int) -> (UInt64, UInt64) {
     high1 = high1 + 1
   }
   let delta : Int = pow5bits(base2) - pow5bits(i)
-  let a = shiftright128(low0, sum, delta) + 1 + gPOW5_INV_OFFSETS[i / 16].lsr(
-      (i % 16).lsl(1),
+  let a = shiftright128(low0, sum, delta) + 1 + gPOW5_INV_OFFSETS[i / 16].shr(
+      (i % 16).shl(1),
     ).land(3).to_uint64()
   let b = shiftright128(sum, high1, delta)
   (a, b)
@@ -325,7 +325,7 @@ fn d2d(ieeeMantissa : UInt64, ieeeExponent : Int) -> FloatingDecimal64 {
     m2 = ieeeMantissa
   } else {
     e2 = ieeeExponent - gDOUBLE_BIAS - gDOUBLE_MANTISSA_BITS - 2
-    m2 = 1UL.lsl(gDOUBLE_MANTISSA_BITS).lor(ieeeMantissa)
+    m2 = 1UL.shl(gDOUBLE_MANTISSA_BITS).lor(ieeeMantissa)
   }
   let even = m2.land(1UL) == 0UL
   let acceptBounds = even
@@ -597,7 +597,7 @@ fn d2d_small_int(
   ieeeMantissa : UInt64,
   ieeeExponent : Int
 ) -> FloatingDecimal64? {
-  let m2 : UInt64 = 1UL.lsl(gDOUBLE_MANTISSA_BITS).lor(ieeeMantissa)
+  let m2 : UInt64 = 1UL.shl(gDOUBLE_MANTISSA_BITS).lor(ieeeMantissa)
   let e2 : Int = ieeeExponent - gDOUBLE_BIAS - gDOUBLE_MANTISSA_BITS
   if e2 > 0 {
     return None
@@ -605,7 +605,7 @@ fn d2d_small_int(
   if e2 < -52 {
     return None
   }
-  let mask : UInt64 = 1UL.lsl(-e2) - 1UL
+  let mask : UInt64 = 1UL.shl(-e2) - 1UL
   let fraction : UInt64 = m2.land(mask)
   if fraction != 0UL {
     return None
@@ -618,14 +618,14 @@ fn ryu_to_string(self : Double) -> String {
   let bits : UInt64 = self.reinterpret_as_u64()
 
   // Decode bits into sign, mantissa, and exponent.
-  let ieeeSign = bits.lsr(gDOUBLE_MANTISSA_BITS + gDOUBLE_EXPONENT_BITS).land(
+  let ieeeSign = bits.shr(gDOUBLE_MANTISSA_BITS + gDOUBLE_EXPONENT_BITS).land(
       1UL,
     ) != 0UL
-  let ieeeMantissa : UInt64 = bits.land(1UL.lsl(gDOUBLE_MANTISSA_BITS) - 1UL)
-  let ieeeExponent : Int = bits.lsr(gDOUBLE_MANTISSA_BITS).land(
-    1UL.lsl(gDOUBLE_EXPONENT_BITS) - 1UL,
+  let ieeeMantissa : UInt64 = bits.land(1UL.shl(gDOUBLE_MANTISSA_BITS) - 1UL)
+  let ieeeExponent : Int = bits.shr(gDOUBLE_MANTISSA_BITS).land(
+    1UL.shl(gDOUBLE_EXPONENT_BITS) - 1UL,
   ).to_int()
-  if ieeeExponent == (1).lsl(gDOUBLE_EXPONENT_BITS) - 1 || (ieeeExponent == 0 &&
+  if ieeeExponent == (1).shl(gDOUBLE_EXPONENT_BITS) - 1 || (ieeeExponent == 0 &&
   ieeeMantissa == 0UL) {
     return copy_special_str(ieeeSign, ieeeExponent != 0, ieeeMantissa != 0UL)
   }
