@@ -62,9 +62,9 @@ let karatsuba_threshold = 50
 
 // Useful bigints
 
-let zero : BigInt = from_int64(0L)
+let zero : BigInt = BigInt::from_int64(0L)
 
-let one : BigInt = from_int64(1L)
+let one : BigInt = BigInt::from_int64(1L)
 
 // Conversion Functions
 
@@ -351,7 +351,7 @@ fn grade_school_div(self : BigInt, other : BigInt) -> (BigInt, BigInt) {
     if ret.limbs[ret.len - 1] == 0 {
       ret.len -= 1
     }
-    return (ret, from_int64(y.land(radix_mask)))
+    return (ret, BigInt::from_int64(y.land(radix_mask)))
   }
 
   // Cite: TAOCP Vol. 2, 4.3.1

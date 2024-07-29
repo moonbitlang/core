@@ -25,7 +25,7 @@ fn check_len(a : BigInt) -> Unit!String {
 }
 
 test "neg" {
-  let a = from_int64(123456789012345678L)
+  let a = BigInt::from_int64(123456789012345678L)
   let b = -a
   inspect!(b.to_string(), content="-123456789012345678")
   check_len!(b)
@@ -50,8 +50,8 @@ test "neg" {
 }
 
 test "add" {
-  let a = from_int64(123456789012345678L)
-  let b = from_int64(987654321098765432L)
+  let a = BigInt::from_int64(123456789012345678L)
+  let b = BigInt::from_int64(987654321098765432L)
   let c = a + b
   inspect!(c.to_string(), content="1111111110111111110")
   check_len!(c)
@@ -118,49 +118,49 @@ test "add" {
 }
 
 test "sub" {
-  let a = from_int64(987654321098765432L)
-  let b = from_int64(123456789012345678L)
+  let a = BigInt::from_int64(987654321098765432L)
+  let b = BigInt::from_int64(123456789012345678L)
   let c = a - b
   check_len!(c)
   inspect!(c.to_string(), content="864197532086419754")
   let c = b - a
   check_len!(c)
   inspect!(c.to_string(), content="-864197532086419754")
-  let a = from_string("987654321098765432987654321098765432")
-  let b = from_string("123456789012345678123456789012345678")
+  let a = BigInt::from_string("987654321098765432987654321098765432")
+  let b = BigInt::from_string("123456789012345678123456789012345678")
   let c = a - b
   check_len!(c)
   inspect!(c.to_string(), content="864197532086419754864197532086419754")
   let c = b - a
   check_len!(c)
   inspect!(c.to_string(), content="-864197532086419754864197532086419754")
-  let a = from_string("-123456789012345678123456789012345678")
-  let b = from_string("-987654321098765432987654321098765432")
+  let a = BigInt::from_string("-123456789012345678123456789012345678")
+  let b = BigInt::from_string("-987654321098765432987654321098765432")
   let c = a - b
   check_len!(c)
   inspect!(c.to_string(), content="864197532086419754864197532086419754")
   let c = b - a
   check_len!(c)
   inspect!(c.to_string(), content="-864197532086419754864197532086419754")
-  let a = from_string("123456789012345678123456789012345678233")
-  let b = from_string("-987654321098765432987654321098765432")
+  let a = BigInt::from_string("123456789012345678123456789012345678233")
+  let b = BigInt::from_string("-987654321098765432987654321098765432")
   let c = a - b
   check_len!(c)
   inspect!(c.to_string(), content="124444443333444443556444443333444443665")
-  let a = from_string("-123456789012345678123456789012345678233")
-  let b = from_string("987654321098765432987654321098765432")
+  let a = BigInt::from_string("-123456789012345678123456789012345678233")
+  let b = BigInt::from_string("987654321098765432987654321098765432")
   let c = a - b
   check_len!(c)
   inspect!(c.to_string(), content="-124444443333444443556444443333444443665")
-  let a = from_string("123456789012345678123456789012345678233")
-  let b = from_string("987")
+  let a = BigInt::from_string("123456789012345678123456789012345678233")
+  let b = BigInt::from_string("987")
   let c = a - b
   check_len!(c)
   inspect!(c.to_string(), content="123456789012345678123456789012345677246")
-  let a = from_int64(
+  let a = BigInt::from_int64(
     2L * radix + 3L * radix * radix + 3L * radix * radix * radix,
   )
-  let b = from_int64(
+  let b = BigInt::from_int64(
     1L * radix + 2L * radix * radix + 3L * radix * radix * radix,
   )
   let c = a - b
@@ -169,8 +169,8 @@ test "sub" {
 }
 
 test "mul" {
-  let a = from_int64(987654321098765432L)
-  let b = from_int64(123456789012345678L)
+  let a = BigInt::from_int64(987654321098765432L)
+  let b = BigInt::from_int64(123456789012345678L)
   let c = a * b
   check_len!(c)
   inspect!(c.to_string(), content="121932631137021794322511812221002896")
@@ -225,26 +225,26 @@ test "mul" {
 }
 
 test "div" {
-  let a = from_int64(987654321098765432L)
-  let b = from_int64(123456789012345678L)
+  let a = BigInt::from_int64(987654321098765432L)
+  let b = BigInt::from_int64(123456789012345678L)
   let c = a / b
   check_len!(c)
   inspect!(c.to_string(), content="8")
   let c = a % b
   check_len!(c)
   inspect!(c.to_string(), content="9000000008")
-  let a = from_string("987654321098765432987654321098765432")
-  let b = from_string("123456789012345678123456789012345678")
+  let a = BigInt::from_string("987654321098765432987654321098765432")
+  let b = BigInt::from_string("123456789012345678123456789012345678")
   let c = a / b
   check_len!(c)
   inspect!(c.to_string(), content="8")
   let c = a % b
   check_len!(c)
   inspect!(c.to_string(), content="9000000008000000009000000008")
-  let a = from_string(
+  let a = BigInt::from_string(
     "-123456789012345678123456789012345678123456789012345678123456789012345678",
   )
-  let b = from_string(
+  let b = BigInt::from_string(
     "-5467890987656789098765678909876789098767098767890987657890987689",
   )
   let c = a / b
@@ -349,7 +349,7 @@ test "div" {
 }
 
 test "lsl" {
-  let a = from_int64(1234567890123456789)
+  let a = BigInt::from_int64(1234567890123456789)
   let b = a << 1
   check_len!(b)
   inspect!(b.to_string(), content="2469135780246913578")
@@ -363,42 +363,42 @@ test "lsl" {
 }
 
 test "lsr" {
-  let a = from_int64(1234567890123456789L)
+  let a = BigInt::from_int64(1234567890123456789L)
   let b = a.lsr(1)
   check_len!(b)
   inspect!(b.to_string(), content="617283945061728394")
   let c = a.lsr(64)
   check_len!(c)
   inspect!(c.to_string(), content="0")
-  let a = from_int64(radix * radix / 2L)
+  let a = BigInt::from_int64(radix * radix / 2L)
   let b = a.lsr(radix_bit_len * 2)
   check_len!(b)
   inspect!(b.to_string(), content="0")
 }
 
 test "decimal_string" {
-  let a = from_string("0")
+  let a = BigInt::from_string("0")
   check_len!(a)
   inspect!(a.to_string(), content="0")
-  let a = from_string("123")
+  let a = BigInt::from_string("123")
   check_len!(a)
   inspect!(a.to_string(), content="123")
-  assert_eq!(a, from_int64(123L))
+  assert_eq!(a, BigInt::from_int64(123L))
   let a = from_string("1234567890123456789")
   check_len!(a)
   inspect!(a.to_string(), content="1234567890123456789")
   let b = from_string("-1234567890")
   check_len!(b)
   inspect!(b.to_string(), content="-1234567890")
-  assert_eq!(a, from_int64(1234567890123456789L))
+  assert_eq!(a, BigInt::from_int64(1234567890123456789L))
   let str = "12345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812"
   let a = from_string(str)
   check_len!(a)
   inspect!(a.to_string(), content=str)
-  let a = from_int64(1234567890123456789L)
+  let a = BigInt::from_int64(1234567890123456789L)
   check_len!(a)
   inspect!(a.to_string(), content="1234567890123456789")
-  let b = from_int64(-1234567890L)
+  let b = BigInt::from_int64(-1234567890L)
   check_len!(b)
   inspect!(b.to_string(), content="-1234567890")
 }
@@ -413,16 +413,16 @@ test "from_int" {
 }
 
 test "compare" {
-  let a = from_int64(1234567890123456789L)
-  let b = from_int64(-1234567890123456789L)
+  let a = BigInt::from_int64(1234567890123456789L)
+  let b = BigInt::from_int64(-1234567890123456789L)
   inspect!(a.compare(b), content="1")
   inspect!(b.compare(a), content="-1")
   let a = -a
-  let b = from_int64(-1234567890123456788L)
+  let b = BigInt::from_int64(-1234567890123456788L)
   assert_eq!(a.compare(b) < 0, true)
   assert_eq!(b.compare(a) > 0, true)
-  let a = from_int64(-1234567890123456789L)
-  let b = from_int64(-1234569L)
+  let a = BigInt::from_int64(-1234567890123456789L)
+  let b = BigInt::from_int64(-1234569L)
   assert_eq!(a.compare(b) < 0, true)
   assert_eq!(b.compare(a) > 0, true)
 }
