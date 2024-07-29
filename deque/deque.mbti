@@ -12,6 +12,7 @@ impl T {
   each[A](Self[A], (A) -> Unit) -> Unit
   eachi[A](Self[A], (Int, A) -> Unit) -> Unit
   from_array[A](Array[A]) -> Self[A]
+  from_iter[A](Iter[A]) -> Self[A]
   front[A](Self[A]) -> A?
   is_empty[A](Self[A]) -> Bool
   iter[A](Self[A]) -> Iter[A]

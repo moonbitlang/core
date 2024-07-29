@@ -8,6 +8,7 @@ impl T {
   clear[A](Self[A]) -> Unit
   copy[A](Self[A]) -> Self[A]
   from_array[A : Compare + Eq](Array[A]) -> Self[A]
+  from_iter[K : Compare + Eq](Iter[K]) -> Self[K]
   is_empty[A](Self[A]) -> Bool
   iter[A : Compare + Eq](Self[A]) -> Iter[A]
   length[A](Self[A]) -> Int
@@ -18,9 +19,11 @@ impl T {
   pop_exn[A : Compare + Eq](Self[A]) -> Unit
   push[A : Compare + Eq](Self[A], A) -> Unit
   to_array[A : Compare + Eq](Self[A]) -> Array[A]
+  to_string[A : Show + Compare + Eq](Self[A]) -> String
 }
 
 // Traits
 
 // Extension Methods
+impl Show for T
 

@@ -16,6 +16,7 @@ impl T {
   foldl_with_key[K, V, A](Self[K, V], (A, K, V) -> A, ~init : A) -> A
   foldr_with_key[K, V, A](Self[K, V], (A, K, V) -> A, ~init : A) -> A
   from_array[K : Compare + Eq, V](Array[Tuple[K, V]]) -> Self[K, V]
+  from_iter[K : Compare + Eq, V](Iter[Tuple[K, V]]) -> Self[K, V]
   insert[K : Compare + Eq, V](Self[K, V], K, V) -> Self[K, V]
   is_empty[K, V](Self[K, V]) -> Bool
   iter[K, V](Self[K, V]) -> Iter[Tuple[K, V]]

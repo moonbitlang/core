@@ -33,6 +33,7 @@ impl T {
   fold_right[A, B](Self[A], (A, B) -> B, ~init : B) -> B
   fold_righti[A, B](Self[A], (Int, A, B) -> B, ~init : B) -> B
   from_array[A](Array[A]) -> Self[A]
+  from_iter[A](Iter[A]) -> Self[A]
   head[A](Self[A]) -> A?
   head_exn[A](Self[A]) -> A
   init_[A](Self[A]) -> Self[A]
