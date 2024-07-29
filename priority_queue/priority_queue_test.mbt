@@ -129,7 +129,10 @@ test "from_iter multiple elements iter" {
 }
 
 test "from_iter single element iter" {
-  inspect!(@priority_queue.T::from_iter([1].iter()), content="@priority_queue.of([1])")
+  inspect!(
+    @priority_queue.T::from_iter([1].iter()),
+    content="@priority_queue.of([1])",
+  )
 }
 
 test "from_iter empty iter" {

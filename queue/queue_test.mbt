@@ -164,7 +164,10 @@ test "iter" {
 }
 
 test "from_iter multiple elements iter" {
-  inspect!(@queue.T::from_iter([1, 2, 3].iter()), content="@queue.of([1, 2, 3])")
+  inspect!(
+    @queue.T::from_iter([1, 2, 3].iter()),
+    content="@queue.of([1, 2, 3])",
+  )
 }
 
 test "from_iter single element iter" {

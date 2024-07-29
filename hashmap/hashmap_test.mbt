@@ -281,7 +281,10 @@ test "from_iter multiple elements iter" {
 }
 
 test "from_iter single element iter" {
-  inspect!(@hashmap.T::from_iter([(1, 1)].iter()), content="HashMap::of([(1, 1)])")
+  inspect!(
+    @hashmap.T::from_iter([(1, 1)].iter()),
+    content="HashMap::of([(1, 1)])",
+  )
 }
 
 test "from_iter empty iter" {

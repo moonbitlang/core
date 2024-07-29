@@ -449,7 +449,10 @@ test "from_iter multiple elements iter" {
 }
 
 test "from_iter single element iter" {
-  inspect!(@sorted_set.T::from_iter([1].iter()), content="@immut/sorted_set.of([1])")
+  inspect!(
+    @sorted_set.T::from_iter([1].iter()),
+    content="@immut/sorted_set.of([1])",
+  )
 }
 
 test "from_iter empty iter" {
