@@ -70,13 +70,13 @@ fn lex_hex_digits(ctx : ParseContext, n : Int) -> Int!ParseError {
           if d > 15 {
             raise invalid_char(ctx, shift=-1)
           }
-          r = r.lsl(4).lor(d)
+          r = r.shl(4).lor(d)
         } else if c >= '0' {
           let d = c.to_int() - '0'.to_int()
           if d > 9 {
             raise invalid_char(ctx, shift=-1)
           }
-          r = r.lsl(4).lor(d)
+          r = r.shl(4).lor(d)
         } else {
           raise invalid_char(ctx, shift=-1)
         }

@@ -272,7 +272,7 @@ fn ieee_parts_to_double(
   ieeeExponent : Int,
   ieeeMantissa : Int64
 ) -> Double {
-  sign.to_int64().lsl(63).lor(ieeeExponent.to_int64().lsl(52)).lor(ieeeMantissa).reinterpret_as_double()
+  sign.to_int64().shl(63).lor(ieeeExponent.to_int64().shl(52)).lor(ieeeMantissa).reinterpret_as_double()
 }
 
 test "double/ryu.mbt:90" {

@@ -55,11 +55,9 @@ pub fn Int::lor(self : Int, other : Int) -> Int = "%i32_lor"
 
 pub fn Int::lxor(self : Int, other : Int) -> Int = "%i32_lxor"
 
-pub fn Int::lsl(self : Int, other : Int) -> Int = "%i32_lsl"
+pub fn Int::shl(self : Int, other : Int) -> Int = "%i32_shl"
 
-pub fn Int::lsr(self : Int, other : Int) -> Int = "%i32_lsr"
-
-pub fn Int::asr(self : Int, other : Int) -> Int = "%i32_asr"
+pub fn Int::shr(self : Int, other : Int) -> Int = "%i32_shr"
 
 pub fn Int::ctz(self : Int) -> Int = "%i32_ctz"
 
@@ -227,9 +225,9 @@ pub fn UInt::lxor(self : UInt, other : UInt) -> UInt = "%u32.bitxor"
 
 pub fn UInt::lnot(self : UInt) -> UInt = "%u32.bitnot"
 
-pub fn UInt::lsl(self : UInt, shift : Int) -> UInt = "%u32.shl"
+pub fn UInt::shl(self : UInt, shift : Int) -> UInt = "%u32.shl"
 
-pub fn UInt::lsr(self : UInt, shift : Int) -> UInt = "%u32.shr"
+pub fn UInt::shr(self : UInt, shift : Int) -> UInt = "%u32.shr"
 
 pub fn UInt::to_uint64(self : UInt) -> UInt64 {
   UInt64::extend_uint(self)

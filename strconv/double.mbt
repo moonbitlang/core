@@ -36,7 +36,7 @@ let max_exponent_fast_path : Int64 = 22L
 /// TODO: For `f32` it is 17, but we don't have `f32` yet.
 let max_exponent_disguised_fast_path : Int64 = 37L
 
-let max_mantissa_fast_path : UInt64 = 2UL.lsl(mantissa_explicit_bits)
+let max_mantissa_fast_path : UInt64 = 2UL.shl(mantissa_explicit_bits)
 
 pub fn parse_double(str : String) -> Double!String {
   if str.length() == 0 {

@@ -97,10 +97,10 @@ pub fn Byte::lxor(self : Byte, that : Byte) -> Byte {
   self.to_int().lxor(that.to_int()).to_byte()
 }
 
-pub fn Byte::lsl(self : Byte, count : Int) -> Byte {
-  self.to_int().lsl(count).to_byte()
+pub fn Byte::shl(self : Byte, count : Int) -> Byte {
+  self.to_int().shl(count).to_byte()
 }
 
-pub fn Byte::lsr(self : Byte, count : Int) -> Byte {
-  self.to_int().lsr(count).to_byte()
+pub fn Byte::shr(self : Byte, count : Int) -> Byte {
+  self.to_int().shr(count).to_byte()
 }

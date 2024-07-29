@@ -15,15 +15,15 @@
 // MoonBit implementation of Ryu, https://github.com/ulfjack/ryu
 
 fn log10Pow5(e : Int) -> Int {
-  (e * 732923).lsr(20)
+  (e * 732923).shr(20)
 }
 
 fn pow5bits(e : Int) -> Int {
-  (e * 1217359).lsr(19) + 1
+  (e * 1217359).shr(19) + 1
 }
 
 fn log10Pow2(e : Int) -> Int {
-  (e * 78913).lsr(18)
+  (e * 78913).shr(18)
 }
 
 fn string_from_bytes(bytes : Bytes, from : Int, to : Int) -> String {
@@ -51,9 +51,9 @@ fn u64_lt(x : Int64, y : Int64) -> Bool {
 
 fn umul128(a : Int64, b : Int64) -> (Int64, Int64) {
   let aLo : Int = a.to_int()
-  let aHi : Int = a.lsr(32).to_int()
+  let aHi : Int = a.shr(32).to_int()
   let bLo : Int = b.to_int()
-  let bHi : Int = b.lsr(32).to_int()
+  let bHi : Int = b.shr(32).to_int()
   let b00 : Int64 = (UInt64::extend_uint(aLo.to_uint()) * UInt64::extend_uint(
     bLo.to_uint(),
   )).to_int64()
@@ -67,24 +67,24 @@ fn umul128(a : Int64, b : Int64) -> (Int64, Int64) {
     bHi.to_uint(),
   )).to_int64()
   let b00Lo : Int = b00.to_int()
-  let b00Hi : Int = b00.lsr(32).to_int()
+  let b00Hi : Int = b00.shr(32).to_int()
   let mid1 : Int64 = b10 + UInt64::extend_uint(b00Hi.to_uint()).to_int64()
   let mid1Lo : Int = mid1.to_int()
-  let mid1Hi : Int = mid1.lsr(32).to_int()
+  let mid1Hi : Int = mid1.shr(32).to_int()
   let mid2 : Int64 = b01 + UInt64::extend_uint(mid1Lo.to_uint()).to_int64()
   let mid2Lo : Int = mid2.to_int()
-  let mid2Hi : Int = mid2.lsr(32).to_int()
+  let mid2Hi : Int = mid2.shr(32).to_int()
   let pHi : Int64 = b11 + UInt64::extend_uint(mid1Hi.to_uint()).to_int64() + UInt64::extend_uint(
       mid2Hi.to_uint(),
     ).to_int64()
-  let pLo : Int64 = UInt64::extend_uint(mid2Lo.to_uint()).to_int64().lsl(32).lor(
+  let pLo : Int64 = UInt64::extend_uint(mid2Lo.to_uint()).to_int64().shl(32).lor(
     UInt64::extend_uint(b00Lo.to_uint()).to_int64(),
   )
   (pLo, pHi)
 }
 
 fn shiftright128(lo : Int64, hi : Int64, dist : Int) -> Int64 {
-  hi.lsl(64 - dist).lor(lo.lsr(dist))
+  hi.shl(64 - dist).lor(lo.shr(dist))
 }
 
 fn pow5Factor(value : Int64) -> Int {
@@ -118,7 +118,7 @@ fn multipleOfPowerOf5(value : Int64, p : Int) -> Bool {
 }
 
 fn multipleOfPowerOf2(value : Int64, p : Int) -> Bool {
-  value.land(1L.lsl(p) - 1L) == 0L
+  value.land(1L.shl(p) - 1L) == 0L
 }
 
 fn mulShiftAll64(
@@ -127,7 +127,7 @@ fn mulShiftAll64(
   j : Int,
   mmShift : Bool
 ) -> (Int64, Int64, Int64) {
-  let m = m.lsl(1)
+  let m = m.shl(1)
   let (lo, tmp) = umul128(m, mul.0)
   let (lo2, hi2) = umul128(m, mul.1)
   let mid = tmp + lo2
@@ -214,8 +214,8 @@ fn double_computePow5(i : Int) -> (Int64, Int64) {
     high1 = high1 + 1L
   }
   let delta : Int = pow5bits(i) - pow5bits(base2)
-  let a = shiftright128(low0, sum, delta) + gPOW5_OFFSETS[i / 16].lsr(
-      (i % 16).lsl(1),
+  let a = shiftright128(low0, sum, delta) + gPOW5_OFFSETS[i / 16].shr(
+      (i % 16).shl(1),
     ).land(3).to_int64()
   let b = shiftright128(sum, high1, delta)
   (a, b)
@@ -239,8 +239,8 @@ fn double_computeInvPow5(i : Int) -> (Int64, Int64) {
     high1 = high1 + 1L
   }
   let delta : Int = pow5bits(base2) - pow5bits(i)
-  let a = shiftright128(low0, sum, delta) + 1L + gPOW5_INV_OFFSETS[i / 16].lsr(
-      (i % 16).lsl(1),
+  let a = shiftright128(low0, sum, delta) + 1L + gPOW5_INV_OFFSETS[i / 16].shr(
+      (i % 16).shl(1),
     ).land(3).to_int64()
   let b = shiftright128(sum, high1, delta)
   (a, b)
@@ -341,7 +341,7 @@ fn d2d(ieeeMantissa : Int64, ieeeExponent : Int) -> FloatingDecimal64 {
     m2 = ieeeMantissa
   } else {
     e2 = ieeeExponent - gDOUBLE_BIAS - gDOUBLE_MANTISSA_BITS - 2
-    m2 = 1L.lsl(gDOUBLE_MANTISSA_BITS).lor(ieeeMantissa)
+    m2 = 1L.shl(gDOUBLE_MANTISSA_BITS).lor(ieeeMantissa)
   }
   let even = m2.land(1L) == 0L
   let acceptBounds = even
@@ -610,7 +610,7 @@ fn d2d_small_int(
   ieeeMantissa : Int64,
   ieeeExponent : Int
 ) -> FloatingDecimal64? {
-  let m2 : Int64 = 1L.lsl(gDOUBLE_MANTISSA_BITS).lor(ieeeMantissa)
+  let m2 : Int64 = 1L.shl(gDOUBLE_MANTISSA_BITS).lor(ieeeMantissa)
   let e2 : Int = ieeeExponent - gDOUBLE_BIAS - gDOUBLE_MANTISSA_BITS
   if e2 > 0 {
     return None
@@ -618,12 +618,12 @@ fn d2d_small_int(
   if e2 < -52 {
     return None
   }
-  let mask : Int64 = 1L.lsl(-e2) - 1L
+  let mask : Int64 = 1L.shl(-e2) - 1L
   let fraction : Int64 = m2.land(mask)
   if fraction != 0L {
     return None
   }
-  Some({ mantissa: m2.lsr(-e2), exponent: 0 })
+  Some({ mantissa: m2.shr(-e2), exponent: 0 })
 }
 
 fn ryu_to_string(self : Double) -> String {
@@ -631,14 +631,14 @@ fn ryu_to_string(self : Double) -> String {
   let bits : Int64 = self.reinterpret_as_i64()
 
   // Decode bits into sign, mantissa, and exponent.
-  let ieeeSign = bits.lsr(gDOUBLE_MANTISSA_BITS + gDOUBLE_EXPONENT_BITS).land(
+  let ieeeSign = bits.shr(gDOUBLE_MANTISSA_BITS + gDOUBLE_EXPONENT_BITS).land(
       1L,
     ) != 0L
-  let ieeeMantissa : Int64 = bits.land(1L.lsl(gDOUBLE_MANTISSA_BITS) - 1L)
-  let ieeeExponent : Int = bits.lsr(gDOUBLE_MANTISSA_BITS).land(
-    1L.lsl(gDOUBLE_EXPONENT_BITS) - 1L,
+  let ieeeMantissa : Int64 = bits.land(1L.shl(gDOUBLE_MANTISSA_BITS) - 1L)
+  let ieeeExponent : Int = bits.shr(gDOUBLE_MANTISSA_BITS).land(
+    1L.shl(gDOUBLE_EXPONENT_BITS) - 1L,
   ).to_int()
-  if ieeeExponent == (1).lsl(gDOUBLE_EXPONENT_BITS) - 1 || (ieeeExponent == 0 &&
+  if ieeeExponent == (1).shl(gDOUBLE_EXPONENT_BITS) - 1 || (ieeeExponent == 0 &&
   ieeeMantissa == 0L) {
     return copy_special_str(ieeeSign, ieeeExponent != 0, ieeeMantissa != 0L)
   }

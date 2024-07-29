@@ -56,7 +56,7 @@ pub fn find[K : Eq + Hash, V](self : T[K, V], key : K) -> V? {
       let idx = hash.land(segment_mask)
       if children.elem_info.has(idx) {
         let child = children.data[children.elem_info.index_of(idx)]
-        continue child, hash.lsr(segment_length)
+        continue child, hash.shr(segment_length)
       }
       None
     }
@@ -83,7 +83,7 @@ fn add_with_hash[K : Eq, V](
       let child = make_leaf(
         depth + segment_length,
         key,
-        hash.lsr(segment_length),
+        hash.shr(segment_length),
         value,
       )
       T::Branch(@sparse_array.SparseArray::singleton(idx, child))
@@ -106,7 +106,7 @@ fn add_with_hash[K : Eq, V](
           let child = child.add_with_hash(
             key,
             depth + segment_length,
-            hash.lsr(segment_length),
+            hash.shr(segment_length),
             value,
           )
           Branch(children.replace(idx, child))
@@ -115,7 +115,7 @@ fn add_with_hash[K : Eq, V](
           let child = make_leaf(
             depth + segment_length,
             key,
-            hash.lsr(segment_length),
+            hash.shr(segment_length),
             value,
           )
           Branch(children.add(idx, child))
@@ -160,7 +160,7 @@ fn remove_with_hash[K : Eq, V](
           let new_child = child.remove_with_hash(
             key,
             depth + segment_length,
-            hash.lsr(segment_length),
+            hash.shr(segment_length),
           )
           match (children.size(), new_child) {
             (1, Empty) => Empty

@@ -232,8 +232,8 @@ impl Byte {
   land(Byte, Byte) -> Byte
   lnot(Byte) -> Byte
   lor(Byte, Byte) -> Byte
-  lsl(Byte, Int) -> Byte
-  lsr(Byte, Int) -> Byte
+  shl(Byte, Int) -> Byte
+  shr(Byte, Int) -> Byte
   lxor(Byte, Byte) -> Byte
   op_equal(Byte, Byte) -> Bool
   to_int(Byte) -> Int
@@ -248,7 +248,7 @@ impl Char {
   to_int(Char) -> Int
 }
 impl Int {
-  asr(Int, Int) -> Int
+  shr(Int, Int) -> Int
   clz(Int) -> Int
   compare(Int, Int) -> Int
   ctz(Int) -> Int
@@ -260,8 +260,8 @@ impl Int {
   land(Int, Int) -> Int
   lnot(Int) -> Int
   lor(Int, Int) -> Int
-  lsl(Int, Int) -> Int
-  lsr(Int, Int) -> Int
+  shl(Int, Int) -> Int
+  shr(Int, Int) -> Int
   lxor(Int, Int) -> Int
   op_add(Int, Int) -> Int
   op_div(Int, Int) -> Int
@@ -279,7 +279,7 @@ impl Int {
   until(Int, Int, ~step : Int = ..) -> Iter[Int]
 }
 impl Int64 {
-  asr(Int64, Int) -> Int64
+  shr(Int64, Int) -> Int64
   clz(Int64) -> Int
   compare(Int64, Int64) -> Int
   ctz(Int64) -> Int
@@ -287,8 +287,8 @@ impl Int64 {
   land(Int64, Int64) -> Int64
   lnot(Int64) -> Int64
   lor(Int64, Int64) -> Int64
-  lsl(Int64, Int) -> Int64
-  lsr(Int64, Int) -> Int64
+  shl(Int64, Int) -> Int64
+  shr(Int64, Int) -> Int64
   lxor(Int64, Int64) -> Int64
   op_add(Int64, Int64) -> Int64
   op_div(Int64, Int64) -> Int64
@@ -311,8 +311,8 @@ impl UInt {
   land(UInt, UInt) -> UInt
   lnot(UInt) -> UInt
   lor(UInt, UInt) -> UInt
-  lsl(UInt, Int) -> UInt
-  lsr(UInt, Int) -> UInt
+  shl(UInt, Int) -> UInt
+  shr(UInt, Int) -> UInt
   lxor(UInt, UInt) -> UInt
   op_add(UInt, UInt) -> UInt
   op_div(UInt, UInt) -> UInt
@@ -333,8 +333,8 @@ impl UInt64 {
   land(UInt64, UInt64) -> UInt64
   lnot(UInt64) -> UInt64
   lor(UInt64, UInt64) -> UInt64
-  lsl(UInt64, Int) -> UInt64
-  lsr(UInt64, Int) -> UInt64
+  shl(UInt64, Int) -> UInt64
+  shr(UInt64, Int) -> UInt64
   lxor(UInt64, UInt64) -> UInt64
   op_add(UInt64, UInt64) -> UInt64
   op_div(UInt64, UInt64) -> UInt64

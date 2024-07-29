@@ -14,7 +14,7 @@
 
 let num_bits = 5
 
-let branching_factor : Int = (1).lsl(num_bits)
+let branching_factor : Int = (1).shl(num_bits)
 
 let bitmask : Int = branching_factor - 1
 
@@ -42,7 +42,7 @@ fn get[T](self : Tree[T], index : Int, shift : Int) -> T {
   match self {
     Leaf(leaf) => leaf[index.land(bitmask)]
     Node(node) =>
-      get(node[index.lsr(shift).land(bitmask)], index, shift - num_bits)
+      get(node[index.shr(shift).land(bitmask)], index, shift - num_bits)
     Empty => abort("Index out of bounds")
   }
 }
@@ -65,7 +65,7 @@ fn add[T](self : Tree[T], index : Int, shift : Int, value : T) -> Tree[T] {
   match self {
     Leaf(l) => Leaf(immutable_push(l, value))
     Node(n) => {
-      let idx = index.lsr(shift).land(bitmask)
+      let idx = index.shr(shift).land(bitmask)
       if idx < n.length() {
         Node(immutable_set(n, idx, n[idx].add(index, shift - num_bits, value)))
       } else {

@@ -46,14 +46,14 @@ test "byte_op_equal" {
   @test.is_true!(b3.op_equal(b3))
 }
 
-test "byte_lsl" {
-  @test.eq!(b'\xFF'.lsl(8), b'\x00')
-  @test.eq!(b'\xFF'.lsl(8).to_int(), 0)
+test "byte_shl" {
+  @test.eq!(b'\xFF'.shl(8), b'\x00')
+  @test.eq!(b'\xFF'.shl(8).to_int(), 0)
 }
 
-test "byte_lsr" {
-  @test.eq!(b'\xFF'.lsr(8), b'\x00')
-  @test.eq!((0xFFF).to_byte().lsr(8), b'\x00')
+test "byte_shr" {
+  @test.eq!(b'\xFF'.shr(8), b'\x00')
+  @test.eq!((0xFFF).to_byte().shr(8), b'\x00')
 }
 
 test "byte_lxor" {

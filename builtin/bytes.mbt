@@ -64,7 +64,7 @@ pub fn blit_from_string(
         i = i + 1, j = j + 2 {
       let c = str[i].to_int()
       self[j] = c.land(0xff).to_byte()
-      self[j + 1] = c.lsr(8).to_byte()
+      self[j + 1] = c.shr(8).to_byte()
     }
   }
 }
@@ -84,18 +84,18 @@ pub fn set_utf8_char(self : Bytes, offset : Int, value : Char) -> Int {
     self[offset] = code.land(0x7F).lor(0x00).to_byte()
     1
   } else if code < 0x0800 {
-    self[offset] = code.lsr(6).land(0x1F).lor(0xC0).to_byte()
+    self[offset] = code.shr(6).land(0x1F).lor(0xC0).to_byte()
     self[offset + 1] = code.land(0x3F).lor(0x80).to_byte()
     2
   } else if code < 0x010000 {
-    self[offset] = code.lsr(12).land(0x0F).lor(0xE0).to_byte()
-    self[offset + 1] = code.lsr(6).land(0x3F).lor(0x80).to_byte()
+    self[offset] = code.shr(12).land(0x0F).lor(0xE0).to_byte()
+    self[offset + 1] = code.shr(6).land(0x3F).lor(0x80).to_byte()
     self[offset + 2] = code.land(0x3F).lor(0x80).to_byte()
     3
   } else if code < 0x110000 {
-    self[offset] = code.lsr(18).land(0x07).lor(0xF0).to_byte()
-    self[offset + 1] = code.lsr(12).land(0x3F).lor(0x80).to_byte()
-    self[offset + 2] = code.lsr(6).land(0x3F).lor(0x80).to_byte()
+    self[offset] = code.shr(18).land(0x07).lor(0xF0).to_byte()
+    self[offset + 1] = code.shr(12).land(0x3F).lor(0x80).to_byte()
+    self[offset + 2] = code.shr(6).land(0x3F).lor(0x80).to_byte()
     self[offset + 3] = code.land(0x3F).lor(0x80).to_byte()
     4
   } else {
@@ -109,16 +109,16 @@ pub fn set_utf16_char(self : Bytes, offset : Int, value : Char) -> Int {
   let code = value.to_int()
   if code < 0x10000 {
     self[offset] = code.land(0xFF).to_byte()
-    self[offset + 1] = code.lsr(8).to_byte()
+    self[offset + 1] = code.shr(8).to_byte()
     2
   } else if code < 0x110000 {
     let hi = code - 0x10000
-    let lo = hi.lsr(10).lor(0xD800)
+    let lo = hi.shr(10).lor(0xD800)
     let hi = hi.land(0x3FF).lor(0xDC00)
     self[offset] = lo.land(0xFF).to_byte()
-    self[offset + 1] = lo.lsr(8).to_byte()
+    self[offset + 1] = lo.shr(8).to_byte()
     self[offset + 2] = hi.land(0xFF).to_byte()
-    self[offset + 3] = hi.lsr(8).to_byte()
+    self[offset + 3] = hi.shr(8).to_byte()
     4
   } else {
     abort("Char out of range")

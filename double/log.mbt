@@ -40,7 +40,7 @@ let l7 = 1.479819860511658591e-01 // 3FC2F112 DF3E5244
 
 fn normalize(f : Double) -> (Double, Int) {
   if f.abs() < Double::min_normal() {
-    return (f * 1L.lsl(52).to_double(), -52)
+    return (f * 1L.shl(52).to_double(), -52)
   }
   (f, 0)
 }
@@ -51,8 +51,8 @@ fn frexp(f : Double) -> (Double, Int) {
   }
   let (norm_f, exp) = normalize(f)
   let u = norm_f.reinterpret_as_i64()
-  let exp = exp + u.lsr(52).land(0x7FFL).to_int() - 1022
-  let frac = u.land(0x7FFL.lsl(52).lnot()).lor(1022L.lsl(52)).reinterpret_as_double()
+  let exp = exp + u.shr(52).land(0x7FFL).to_int() - 1022
+  let frac = u.land(0x7FFL.shl(52).lnot()).lor(1022L.shl(52)).reinterpret_as_double()
   return (frac, exp)
 }
 

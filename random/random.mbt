@@ -30,7 +30,7 @@ pub fn RandomState::init_state(~seed : Int = 0) -> RandomState {
   let state = FixedArray::make(n32, 0)
   state[0] = seed
   for i = 1; i < n32; i = i + 1 {
-    state[i] = (1812433253 * state[i - 1].lxor(state[i - 1].asr(30)) + i).land(
+    state[i] = (1812433253 * state[i - 1].lxor(state[i - 1].shr(30)) + i).land(
       0xffffffff,
     )
   }
@@ -42,7 +42,7 @@ fn twist(self : RandomState) -> Unit {
     let x = self.state[i].land(upper_mask_32).lor(
       self.state[(i + 1) % n32].land(lower_mask_32),
     )
-    self.state[i] = self.state[(i + m32) % m32].lxor(x.asr(1))
+    self.state[i] = self.state[(i + m32) % m32].lxor(x.shr(1))
     if x % 2 != 0 {
       self.state[i] = self.state[i].lxor(matrix_a_32)
     }
@@ -55,18 +55,18 @@ pub fn gen_int(self : RandomState) -> Int {
     self.twist()
   }
   let mut y = self.state[self.index]
-  y = y.lxor(y.asr(11))
-  y = y.lxor(y.lsl(7).land(0x9d2c5680))
-  y = y.lxor(y.lsl(15).land(0xefc60000))
-  y = y.lxor(y.asr(18))
+  y = y.lxor(y.shr(11))
+  y = y.lxor(y.shl(7).land(0x9d2c5680))
+  y = y.lxor(y.shl(15).land(0xefc60000))
+  y = y.lxor(y.shr(18))
   self.index += 1
   y
 }
 
 pub fn gen_int64(self : RandomState) -> Int64 {
   let b1 = Int64::from_int(self.gen_int())
-  let b2 = b1.lsl(30)
-  let b3 = Int64::from_int(self.gen_int().land(7)).lsl(60)
+  let b2 = b1.shl(30)
+  let b3 = Int64::from_int(self.gen_int().land(7)).shl(60)
   b1.lor(b2.lor(b3))
 }
 

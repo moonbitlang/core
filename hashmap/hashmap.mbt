@@ -17,7 +17,7 @@ fn power_2_above(x : Int, n : Int) -> Int {
     if i >= n {
       break i
     }
-    let next = i.lsl(1)
+    let next = i.shl(1)
     if next < 0 {
       // overflow happend  
       break i
@@ -51,7 +51,7 @@ pub fn T::from_array[K : Hash + Eq, V](arr : Array[(K, V)]) -> T[K, V] {
 /// Set a key-value pair into hash map.
 /// @alert unsafe "Panic if the hash map is full."
 pub fn set[K : Hash + Eq, V](self : T[K, V], key : K, value : V) -> Unit {
-  if self.size >= self.capacity.lsr(1) {
+  if self.size >= self.capacity.shr(1) {
     self.grow()
   }
   let hash = key.hash()
@@ -172,7 +172,7 @@ fn shift_back[K : Hash, V](self : T[K, V], start_index : Int) -> Unit {
 // TODO: this could be further optimized
 fn grow[K : Hash + Eq, V](self : T[K, V]) -> Unit {
   let old_entries = self.entries
-  let new_capacity = self.capacity.lsl(1)
+  let new_capacity = self.capacity.shl(1)
   self.entries = FixedArray::make(new_capacity, None)
   self.capacity = new_capacity
   self.size = 0

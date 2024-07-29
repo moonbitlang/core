@@ -31,16 +31,16 @@ pub impl Hash for Int64 with hash(self) -> Int {
   let mut acc = seed + gPRIME5 + 8
   let mut x = acc + input.to_int() * gPRIME3
   let r = 17
-  acc = x.lsl(r).lor(x.lsr(32 - r)) * gPRIME4
-  input = input.lsr(32)
+  acc = x.shl(r).lor(x.shr(32 - r)) * gPRIME4
+  input = input.shr(32)
   x = acc + input.to_int() * gPRIME3
-  acc = x.lsl(r).lor(x.lsr(32 - r)) * gPRIME4
-  input = input.lsr(32)
-  acc = acc.lxor(acc.lsr(15))
+  acc = x.shl(r).lor(x.shr(32 - r)) * gPRIME4
+  input = input.shr(32)
+  acc = acc.lxor(acc.shr(15))
   acc *= gPRIME2
-  acc = acc.lxor(acc.lsr(13))
+  acc = acc.lxor(acc.shr(13))
   acc *= gPRIME3
-  acc = acc.lxor(acc.lsr(16))
+  acc = acc.lxor(acc.shr(16))
   acc
 }
 
@@ -50,13 +50,13 @@ pub impl Hash for Int64 with hash_combine(self, hasher) {
 
 fn slow_hash(self : Int64) -> Int {
   let b = Bytes::new(8)
-  b[7] = self.lsr(56).to_byte()
-  b[6] = self.lsr(48).land(0xFFL).to_byte()
-  b[5] = self.lsr(40).land(0xFFL).to_byte()
-  b[4] = self.lsr(32).land(0xFFL).to_byte()
-  b[3] = self.lsr(24).land(0xFFL).to_byte()
-  b[2] = self.lsr(16).land(0xFFL).to_byte()
-  b[1] = self.lsr(8).land(0xFFL).to_byte()
+  b[7] = self.shr(56).to_byte()
+  b[6] = self.shr(48).land(0xFFL).to_byte()
+  b[5] = self.shr(40).land(0xFFL).to_byte()
+  b[4] = self.shr(32).land(0xFFL).to_byte()
+  b[3] = self.shr(24).land(0xFFL).to_byte()
+  b[2] = self.shr(16).land(0xFFL).to_byte()
+  b[1] = self.shr(8).land(0xFFL).to_byte()
   b[0] = self.land(0xFFL).to_byte()
   Hash::hash(b)
 }

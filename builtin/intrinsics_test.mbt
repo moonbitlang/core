@@ -38,25 +38,25 @@ test "Int::lxor should perform bitwise XOR operation" {
   inspect!((0xffff_ffff).lxor(0xffff_ffff) == 0, content="true")
 }
 
-/// test Int::lsl
-test "Int::lsl should perform left shift operation" {
-  inspect!((7).lsl(1), content="14")
-  inspect!((0b101).lsl(1) == 0b1010, content="true")
-  inspect!((0xffff_ffff).lsl(1) == 0xffff_fffe, content="true")
-  inspect!((0xffff_ffff).lsl(0) == 0xffff_ffff, content="true")
-  inspect!((0xffff_ffff).lsl(3), content="-8")
+/// test Int::shl
+test "Int::shl should perform left shift operation" {
+  inspect!((7).shl(1), content="14")
+  inspect!((0b101).shl(1) == 0b1010, content="true")
+  inspect!((0xffff_ffff).shl(1) == 0xffff_fffe, content="true")
+  inspect!((0xffff_ffff).shl(0) == 0xffff_ffff, content="true")
+  inspect!((0xffff_ffff).shl(3), content="-8")
   let arr = Array::make(33, 0).mapi(fn { i, _ => i })
   inspect!(
     arr,
     content="[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32]",
   )
-  let r = arr.map(fn { i => (0xffff_ffff).lsl(i) })
+  let r = arr.map(fn { i => (0xffff_ffff).shl(i) })
   // note when shifting 32 bits or more, it returns the original value
   inspect!(
     r,
     content="[-1, -2, -4, -8, -16, -32, -64, -128, -256, -512, -1024, -2048, -4096, -8192, -16384, -32768, -65536, -131072, -262144, -524288, -1048576, -2097152, -4194304, -8388608, -16777216, -33554432, -67108864, -134217728, -268435456, -536870912, -1073741824, -2147483648, -1]",
   )
-  inspect!((7).lsl(32), content="7")
+  inspect!((7).shl(32), content="7")
 }
 
 test "uint test" {
@@ -74,8 +74,8 @@ test "uint test" {
   inspect!(0xFFFFFFFFU.land(0xFFFFU), content="65535")
   inspect!(0xFF00U.lor(0xFFU), content="65535")
   inspect!(0xFFFF00U.lxor(0xFF00FFU), content="65535")
-  inspect!(0x1U.lsl(31), content="2147483648")
-  inspect!(2147483648U.lsr(31), content="1")
+  inspect!(0x1U.shl(31), content="2147483648")
+  inspect!(2147483648U.shr(31), content="1")
   // to_byte
   let u = 0xDEADBEEFU
   let b = u.to_byte()
@@ -113,8 +113,8 @@ test "uint64 test" {
   inspect!(0xFFFFFFFFUL.land(0xFFFFUL), content="65535")
   inspect!(0xFF00UL.lor(0xFFUL), content="65535")
   inspect!(0xFFFF00UL.lxor(0xFF00FFUL), content="65535")
-  inspect!(0x1UL.lsl(63), content="9223372036854775808")
-  inspect!(9223372036854775808UL.lsr(63), content="1")
+  inspect!(0x1UL.shl(63), content="9223372036854775808")
+  inspect!(9223372036854775808UL.shr(63), content="1")
 }
 
 test "to double" {

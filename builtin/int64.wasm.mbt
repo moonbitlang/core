@@ -32,11 +32,9 @@ pub fn Int64::lor(self : Int64, other : Int64) -> Int64 = "%i64_lor"
 
 pub fn Int64::lxor(self : Int64, other : Int64) -> Int64 = "%i64_lxor"
 
-pub fn Int64::lsl(self : Int64, other : Int) -> Int64 = "%i64_lsl"
+pub fn Int64::shl(self : Int64, other : Int) -> Int64 = "%i64_shl"
 
-pub fn Int64::lsr(self : Int64, other : Int) -> Int64 = "%i64_lsr"
-
-pub fn Int64::asr(self : Int64, other : Int) -> Int64 = "%i64_asr"
+pub fn Int64::shr(self : Int64, other : Int) -> Int64 = "%i64_shr"
 
 pub fn Int64::ctz(self : Int64) -> Int = "%i64_ctz"
 
@@ -100,6 +98,6 @@ pub fn UInt64::lxor(self : UInt64, other : UInt64) -> UInt64 = "%u64.bitxor"
 
 pub fn UInt64::lnot(self : UInt64) -> UInt64 = "%u64.bitnot"
 
-pub fn UInt64::lsl(self : UInt64, shift : Int) -> UInt64 = "%u64.shl"
+pub fn UInt64::shl(self : UInt64, shift : Int) -> UInt64 = "%u64.shl"
 
-pub fn UInt64::lsr(self : UInt64, shift : Int) -> UInt64 = "%u64.shr"
+pub fn UInt64::shr(self : UInt64, shift : Int) -> UInt64 = "%u64.shr"

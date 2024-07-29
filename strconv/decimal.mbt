@@ -190,7 +190,7 @@ pub fn to_double(self : Decimal) -> Double!String {
     self.shift(-n)
     exponent += n
   }
-  if exponent - double_info.bias >= (1).lsl(double_info.exponent_bits) - 1 {
+  if exponent - double_info.bias >= (1).shl(double_info.exponent_bits) - 1 {
     // overflow
     raise range_err
   }
@@ -201,17 +201,17 @@ pub fn to_double(self : Decimal) -> Double!String {
   mantissa = self.rounded_integer()
 
   // rounding might have added a bit, shift down.
-  if mantissa == 2L.lsl(double_info.mantissa_bits) {
-    mantissa = mantissa.lsr(1)
+  if mantissa == 2L.shl(double_info.mantissa_bits) {
+    mantissa = mantissa.shr(1)
     exponent += 1
-    if exponent - double_info.bias >= (1).lsl(double_info.exponent_bits) - 1 {
+    if exponent - double_info.bias >= (1).shl(double_info.exponent_bits) - 1 {
       // overflow
       raise range_err
     }
   }
 
   // denormalized
-  if mantissa.land(1L.lsl(double_info.mantissa_bits)) == 0L {
+  if mantissa.land(1L.shl(double_info.mantissa_bits)) == 0L {
     exponent = double_info.bias
   }
 
@@ -246,14 +246,14 @@ pub fn shift(self : Decimal, s : Int) -> Unit {
 fn assemble_bits(mantissa : Int64, exponent : Int, negative : Bool) -> Int64 {
   let biased_exp = exponent - double_info.bias
   // set the mantissa bits
-  let mut bits = mantissa.land(1L.lsl(double_info.mantissa_bits) - 1L)
+  let mut bits = mantissa.land(1L.shl(double_info.mantissa_bits) - 1L)
   // set the exponent bits
-  let exp_bits = biased_exp.land((1).lsl(double_info.exponent_bits) - 1).to_int64()
-  bits = bits.lor(exp_bits.lsl(double_info.mantissa_bits))
+  let exp_bits = biased_exp.land((1).shl(double_info.exponent_bits) - 1).to_int64()
+  bits = bits.lor(exp_bits.shl(double_info.mantissa_bits))
   // set the sign bit
   if negative {
     bits = bits.lor(
-      1L.lsl(double_info.mantissa_bits).lsl(double_info.exponent_bits),
+      1L.shl(double_info.mantissa_bits).shl(double_info.exponent_bits),
     )
   }
   bits
@@ -331,9 +331,9 @@ fn right_shift(self : Decimal, s : Int) -> Unit {
 
   // read enough leading digits to start a shift
   let mut acc = 0L
-  while acc.lsr(s) == 0L {
+  while acc.shr(s) == 0L {
     if read_index >= self.digits_num {
-      while acc.lsr(s) == 0L {
+      while acc.shr(s) == 0L {
         acc *= 10
         read_index += 1
       }
@@ -346,10 +346,10 @@ fn right_shift(self : Decimal, s : Int) -> Unit {
   self.decimal_point -= read_index - 1
 
   // read a digit and output a shifted digit
-  let mask = 1L.lsl(s) - 1
+  let mask = 1L.shl(s) - 1
   while read_index < self.digits_num {
     // output (acc >> s)
-    let out = acc.lsr(s).to_int()
+    let out = acc.shr(s).to_int()
     self.digits[write_index] = out.to_byte()
     write_index += 1
     // contract
@@ -362,7 +362,7 @@ fn right_shift(self : Decimal, s : Int) -> Unit {
 
   // output extra digits
   while acc > 0 {
-    let out = acc.lsr(s).to_int()
+    let out = acc.shr(s).to_int()
     if write_index < self.digits.length() {
       self.digits[write_index] = out.to_byte()
       write_index += 1
@@ -481,7 +481,7 @@ fn left_shift(self : Decimal, s : Int) -> Unit {
   read_index -= 1
   while read_index >= 0 {
     let d = self.digits[read_index].to_int64()
-    acc += d.lsl(s)
+    acc += d.shl(s)
     let quo = acc / 10L
     let rem = (acc - quo * 10L).to_int()
     write_index -= 1

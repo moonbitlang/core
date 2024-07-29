@@ -21,7 +21,7 @@
 let radix_bit_len = 16
 
 /// The base of the number system.
-let radix : Int64 = 1L.lsl(radix_bit_len) // TODO: This can be generalized once we have const generics
+let radix : Int64 = 1L.shl(radix_bit_len) // TODO: This can be generalized once we have const generics
 
 /// The mask to extract the lower `radix_bit_len` bits.
 let radix_mask : Int64 = radix - 1L
@@ -222,7 +222,7 @@ fn karatsuba_mul(self : BigInt, other : BigInt) -> BigInt {
   let p1 = xh * yh
   let p2 = xl * yl
   let p3 = (xh + xl) * (yh + yl)
-  p1.lsl(radix_bit_len * 2 * half) + (p3 - p1 - p2).lsl(radix_bit_len * half) + p2
+  p1.shl(radix_bit_len * 2 * half) + (p3 - p1 - p2).shl(radix_bit_len * half) + p2
 }
 
 // Get the lower half of the number.
@@ -315,7 +315,7 @@ fn grade_school_div(self : BigInt, other : BigInt) -> (BigInt, BigInt) {
     let x = number.to_int64()
     let mut y = 0L
     for i = self.len - 1; i >= 0; i = i - 1 {
-      y = y.lsl(radix_bit_len)
+      y = y.shl(radix_bit_len)
       y += a[i].to_int64()
       a[i] = (y / x).land(radix_mask).to_int()
       y %= x
@@ -334,11 +334,11 @@ fn grade_school_div(self : BigInt, other : BigInt) -> (BigInt, BigInt) {
   let mut lshift = 0
   let mut back = divisor.limbs[divisor.len - 1].to_int64()
   while back < radix / 2L {
-    back = back.lsl(1)
+    back = back.shl(1)
     lshift += 1
   }
-  let dividend = dividend.lsl(lshift)
-  let divisor = divisor.lsl(lshift)
+  let dividend = dividend.shl(lshift)
+  let divisor = divisor.shl(lshift)
   let a_len = dividend.len
   let b_len = divisor.len
   let b = Array::make(b_len, 0L)
@@ -367,24 +367,24 @@ fn grade_school_div(self : BigInt, other : BigInt) -> (BigInt, BigInt) {
       borrow += a[i + j]
       borrow -= carry.land(radix_mask)
       a[i + j] = borrow.land(radix_mask)
-      borrow = borrow.asr(radix_bit_len)
-      carry = carry.asr(radix_bit_len)
+      borrow = borrow.shr(radix_bit_len)
+      carry = carry.shr(radix_bit_len)
     }
     borrow = borrow + a[i + b_len]
     borrow -= carry
     a[i + b_len] = borrow.land(radix_mask)
-    borrow = borrow.asr(radix_bit_len)
+    borrow = borrow.shr(radix_bit_len)
     while borrow < 0L {
       carry = 0L
       for j = 0; j < b_len; j = j + 1 {
         carry += a[i + j]
         carry += b[j]
         a[i + j] = carry.land(radix_mask)
-        carry = carry.asr(radix_bit_len)
+        carry = carry.shr(radix_bit_len)
       }
       carry += a[i + b_len]
       a[i + b_len] = carry.land(radix_mask)
-      carry = carry.asr(radix_bit_len)
+      carry = carry.shr(radix_bit_len)
       borrow += carry
       qh -= 1L
     }
@@ -407,13 +407,13 @@ fn grade_school_div(self : BigInt, other : BigInt) -> (BigInt, BigInt) {
     modulo[j] = a[j].to_int()
   }
   let modulo = { limbs: modulo, sign: Positive, len: i }
-  ({ limbs: q, sign: Positive, len }, modulo.lsr(lshift))
+  ({ limbs: q, sign: Positive, len }, modulo.shr(lshift))
 }
 
 // Bitwise Operations
 
 /// Left shift a bigint
-pub fn lsl(self : BigInt, n : Int) -> BigInt {
+pub fn shl(self : BigInt, n : Int) -> BigInt {
   if n < 0 {
     abort("negative shift count")
   }
@@ -429,9 +429,9 @@ pub fn lsl(self : BigInt, n : Int) -> BigInt {
     if r != 0 {
       let mut carry = 0L
       for i = 0; i < self.len; i = i + 1 {
-        carry = carry.lor(a[i].to_int64().lsl(r))
+        carry = carry.lor(a[i].to_int64().shl(r))
         new_limbs[i + lz] = (carry % radix).to_int()
-        carry = carry.lsr(radix_bit_len)
+        carry = carry.shr(radix_bit_len)
       }
       if carry > 0L {
         new_limbs[self.len + lz] = carry.to_int()
@@ -449,7 +449,7 @@ pub fn lsl(self : BigInt, n : Int) -> BigInt {
 }
 
 /// Right shift a bigint
-pub fn lsr(self : BigInt, n : Int) -> BigInt {
+pub fn shr(self : BigInt, n : Int) -> BigInt {
   if n < 0 {
     abort("negative shift count")
   }
@@ -471,8 +471,8 @@ pub fn lsr(self : BigInt, n : Int) -> BigInt {
     let mut carry = 0L
     for i = self.len - 1; i >= lz; i = i - 1 {
       let x = a[i].to_int64()
-      new_limbs[i - lz] = x.lsr(r).lor(carry).to_int()
-      carry = x.lsl(radix_bit_len - r) % radix
+      new_limbs[i - lz] = x.shr(r).lor(carry).to_int()
+      carry = x.shl(radix_bit_len - r) % radix
     }
     if new_len > 1 && new_limbs[new_len - 1] == 0 {
       new_len -= 1
@@ -546,7 +546,7 @@ pub fn to_string(self : BigInt) -> String {
   for i = self.len - 1; i >= 0; i = i - 1 {
     let mut x = self.limbs[i].to_int64()
     for j = 0; j < v_idx; j = j + 1 {
-      let y = v[j].lsl(radix_bit_len).lor(x)
+      let y = v[j].shl(radix_bit_len).lor(x)
       x = y / decimal_mask
       v[j] = y % decimal_mask
     }
