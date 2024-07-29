@@ -520,13 +520,43 @@ pub trait Show {
 }
 
 // Extension Methods
+impl Hash for Unit
+
+impl Hash for Bool
+
 impl Hash for Byte
 
 impl Hash for Int
 
+impl Hash for Int64
+
+impl Hash for UInt
+
+impl Hash for UInt64
+
+impl Hash for Double
+
 impl Hash for String
 
+impl Hash for Option
+
+impl Hash for Result
+
+impl Hash for Bytes
+
 impl Hash for Hash
+
+impl Hash for Tuple
+
+impl Hash for Tuple
+
+impl Hash for Tuple
+
+impl Hash for Tuple
+
+impl Hash for Tuple
+
+impl Hash for Tuple
 
 impl Show for Unit
 
