@@ -211,6 +211,10 @@ pub fn iter[K, V](self : T[K, V]) -> Iter[(K, V)] {
   }
 }
 
+pub fn T::from_iter[K : Eq + Hash, V](iter : Iter[(K, V)]) -> T[K, V] {
+  iter.fold(init=T::new(), fn(m, e) { m.add(e.0, e.1) })
+}
+
 pub impl[K : Show, V : Show] Show for T[K, V] with output(self, logger) {
   let mut is_first = true
   logger.write_string("@immut/hashmap.of([")

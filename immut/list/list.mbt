@@ -835,6 +835,10 @@ pub fn iter[A](self : T[A]) -> Iter[A] {
   )
 }
 
+pub fn T::from_iter[A](iter : Iter[A]) -> T[A] {
+  iter.fold(init=Nil, fn(acc, e) { Cons(e, acc) })
+}
+
 pub fn T::of[A](arr : FixedArray[A]) -> T[A] {
   for i = arr.length() - 1, list = Nil; i >= 0; {
     continue i - 1, Cons(arr[i], list)

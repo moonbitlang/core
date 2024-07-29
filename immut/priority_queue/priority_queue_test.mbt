@@ -100,3 +100,22 @@ test "panic pop_exn" {
   let pq = @priority_queue.of([1])
   pq.pop_exn().pop_exn() |> ignore
 }
+
+test "from_iter multiple elements iter" {
+  inspect!(
+    @priority_queue.T::from_iter([1, 2, 3].iter()),
+    content="@immut/priority_queue.of([3, 2, 1])",
+  )
+}
+
+test "from_iter single element iter" {
+  inspect!(
+    @priority_queue.T::from_iter([1].iter()),
+    content="@immut/priority_queue.of([1])",
+  )
+}
+
+test "from_iter empty iter" {
+  let pq : @priority_queue.T[Int] = @priority_queue.T::from_iter(Iter::empty())
+  inspect!(pq, content="@immut/priority_queue.of([])")
+}

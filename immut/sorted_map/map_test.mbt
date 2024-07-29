@@ -147,3 +147,19 @@ test "show" {
     content="@immut/sorted_map.of([(1, \"one\"), (2, \"two\"), (3, \"three\")])",
   )
 }
+
+test "from_iter multiple elements iter" {
+  inspect!(
+    @sorted_map.T::from_iter([(1, 1), (2, 2), (3, 3)].iter()),
+    content="@immut/sorted_map.of([(1, 1), (2, 2), (3, 3)])",
+  )
+}
+
+test "from_iter single element iter" {
+  inspect!(@sorted_map.T::from_iter([(1, 1)].iter()), content="@immut/sorted_map.of([(1, 1)])")
+}
+
+test "from_iter empty iter" {
+  let pq : @sorted_map.T[Int, Int] = @sorted_map.T::from_iter(Iter::empty())
+  inspect!(pq, content="@immut/sorted_map.of([])")
+}

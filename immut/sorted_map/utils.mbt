@@ -202,6 +202,10 @@ pub fn iter[K, V](self : T[K, V]) -> Iter[(K, V)] {
   )
 }
 
+pub fn T::from_iter[K : Compare, V](iter : Iter[(K, V)]) -> T[K, V] {
+  iter.fold(init=T::empty(), fn(m, e) { m.insert(e.0, e.1) })
+}
+
 /// Return all keys of the map in ascending order.
 pub fn keys[K, V](self : T[K, V]) -> Array[K] {
   self.iter().map(fn { (k, _) => k }).collect()

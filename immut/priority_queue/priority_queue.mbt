@@ -77,6 +77,10 @@ pub fn iter[A : Compare](self : T[A]) -> Iter[A] {
   )
 }
 
+pub fn T::from_iter[A : Compare](iter : Iter[A]) -> T[A] {
+  iter.fold(init=T::new(), fn(s, e) { s.push(e) })
+}
+
 fn meld[A : Compare](l : Cont[A], r : Cont[A]) -> Cont[A] {
   match (l, r) {
     (Empty, _) => r
@@ -186,6 +190,16 @@ pub fn T::of[A : Compare](arr : FixedArray[A]) -> T[A] {
       break { body: acc, len: arr.length() }
     }
   }
+}
+
+pub impl[A : Show + Compare] Show for T[A] with output(self, logger) {
+  logger.write_string("@immut/priority_queue.of(")
+  Show::output(self.to_array(), logger)
+  logger.write_char(')')
+}
+
+pub fn to_string[A : Show + Compare](self : T[A]) -> String {
+  Show::to_string(self)
 }
 
 test "meld" {

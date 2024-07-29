@@ -24,6 +24,10 @@ pub fn iter[A](self : T[A]) -> Iter[A] {
   }
 }
 
+pub fn T::from_iter[A : Compare](iter : Iter[A]) -> T[A] {
+  iter.fold(init=T::new(), fn(s, e) { s.add(e) })
+}
+
 test {
   let buf = Buffer::new(size_hint=20)
   of([2, 7, 1, 2, 3, 4, 5]).iter().each(
