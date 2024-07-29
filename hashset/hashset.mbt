@@ -207,6 +207,12 @@ pub fn iter[K](self : T[K]) -> Iter[K] {
   )
 }
 
+pub fn T::from_iter[K : Hash + Eq](iter : Iter[K]) -> T[K] {
+  let s = T::new()
+  iter.each(fn(e) { s.insert(e) })
+  s
+}
+
 fn shift_back[K : Hash](self : T[K], start_index : Int) -> Unit {
   for i = 0, prev = start_index, curr = self.next_index(start_index)
       i < self.entries.length()

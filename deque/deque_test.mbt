@@ -376,3 +376,16 @@ test "reserve_and_push" {
   inspect!(d.front(), content="Some(Some(1))")
   inspect!(d.back(), content="Some(Some(1))")
 }
+
+test "from_iter multiple elements iter" {
+  inspect!(@deque.T::from_iter([1, 2, 3].iter()), content="Deque::[1, 2, 3]")
+}
+
+test "from_iter single element iter" {
+  inspect!(@deque.T::from_iter([1].iter()), content="Deque::[1]")
+}
+
+test "from_iter empty iter" {
+  let dq : @deque.T[Int] = @deque.T::from_iter(Iter::empty())
+  inspect!(dq, content="Deque::[]")
+}

@@ -17,6 +17,7 @@ impl T {
   disjoint[V : Compare + Eq](Self[V], Self[V]) -> Bool
   each[V](Self[V], (V) -> Unit) -> Unit
   eachi[V](Self[V], (Int, V) -> Unit) -> Unit
+  from_iter[V : Compare + Eq](Iter[V]) -> Self[V]
   intersect[V : Compare + Eq](Self[V], Self[V]) -> Self[V]
   is_empty[V : Compare + Eq](Self[V]) -> Bool
   iter[V](Self[V]) -> Iter[V]

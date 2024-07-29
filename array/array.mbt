@@ -26,6 +26,10 @@ pub fn iter[T](self : Array[T]) -> Iter[T] {
   )
 }
 
+pub fn Array::from_iter[T](iter : Iter[T]) -> Array[T] {
+  iter.collect()
+}
+
 /// Adds all elements from an iterator to the end of the array.
 ///
 /// This function iterates over each element in the provided iterator

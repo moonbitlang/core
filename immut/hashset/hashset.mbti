@@ -9,6 +9,7 @@ impl T {
   contains[A : Eq + Hash](Self[A], A) -> Bool
   each[A](Self[A], (A) -> Unit) -> Unit
   from_array[A : Eq + Hash](Array[A]) -> Self[A]
+  from_iter[A : Eq + Hash](Iter[A]) -> Self[A]
   is_empty[A](Self[A]) -> Bool
   iter[A](Self[A]) -> Iter[A]
   new[A]() -> Self[A]

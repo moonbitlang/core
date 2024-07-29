@@ -322,6 +322,12 @@ pub fn iter[A](self : T[A]) -> Iter[A] {
   )
 }
 
+pub fn T::from_iter[A](iter : Iter[A]) -> T[A] {
+  let q = T::new()
+  iter.each(fn(e) { q.push(e) })
+  q
+}
+
 pub fn T::of[A](arr : FixedArray[A]) -> T[A] {
   if arr.length() == 0 {
     return new()

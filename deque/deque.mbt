@@ -523,3 +523,9 @@ pub fn iter[A](self : T[A]) -> Iter[A] {
     },
   )
 }
+
+pub fn T::from_iter[A](iter : Iter[A]) -> T[A] {
+  let dq = T::new()
+  iter.each(fn(e) { dq.push_back(e) })
+  dq
+}

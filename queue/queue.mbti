@@ -11,6 +11,7 @@ impl T {
   eachi[A](Self[A], (Int, A) -> Unit) -> Unit
   fold[A](Self[A], ~init : A, (A, A) -> A) -> A
   from_array[A](Array[A]) -> Self[A]
+  from_iter[A](Iter[A]) -> Self[A]
   is_empty[A](Self[A]) -> Bool
   iter[A](Self[A]) -> Iter[A]
   length[A](Self[A]) -> Int

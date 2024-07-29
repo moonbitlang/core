@@ -35,3 +35,21 @@ test "FixedArray::from_array with array of different type" {
     @test.eq!(fixedArray[i], array[i])
   }
 }
+
+test "FixedArray::from_iter with multiple elements iterator" {
+  let iter = [1, 2, 3, 4, 5].iter()
+  let result = FixedArray::from_iter(iter)
+  @test.eq!(result, [1, 2, 3, 4, 5])
+}
+
+test "FixedArray::from_iter with single element iterator" {
+  let iter = [1].iter()
+  let result = FixedArray::from_iter(iter)
+  @test.eq!(result, [1])
+}
+
+test "FixedArray::from_iter with empty iterator" {
+  let iter : Iter[Int] = Iter::empty()
+  let result = FixedArray::from_iter(iter)
+  @test.eq!(result, [])
+}

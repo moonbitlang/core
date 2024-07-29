@@ -13,6 +13,7 @@ impl T {
   contains[K : Compare + Eq, V](Self[K, V], K) -> Bool
   each[K, V](Self[K, V], (K, V) -> Unit) -> Unit
   eachi[K, V](Self[K, V], (Int, K, V) -> Unit) -> Unit
+  from_iter[K : Compare + Eq, V](Iter[Tuple[K, V]]) -> Self[K, V]
   get[K : Compare + Eq, V](Self[K, V], K) -> V?
   is_empty[K, V](Self[K, V]) -> Bool
   iter[K, V](Self[K, V]) -> Iter[Tuple[K, V]]

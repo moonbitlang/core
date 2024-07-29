@@ -99,3 +99,22 @@ test "HAMT::from_array" {
   )
   inspect!((43, map.find(43)), content="(43, None)")
 }
+
+test "from_iter multiple elements iter" {
+  inspect!(
+    @hashmap.T::from_iter([(1, 1), (2, 2), (3, 3)].iter()),
+    content="@immut/hashmap.of([(3, 3), (2, 2), (1, 1)])",
+  )
+}
+
+test "from_iter single element iter" {
+  inspect!(
+    @hashmap.T::from_iter([(1, 1)].iter()),
+    content="@immut/hashmap.of([(1, 1)])",
+  )
+}
+
+test "from_iter empty iter" {
+  let pq : @hashmap.T[Int, Int] = @hashmap.T::from_iter(Iter::empty())
+  inspect!(pq, content="@immut/hashmap.of([])")
+}

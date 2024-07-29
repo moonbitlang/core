@@ -349,6 +349,12 @@ pub fn iter[V](self : T[V]) -> Iter[V] {
   )
 }
 
+pub fn T::from_iter[V : Compare](iter : Iter[V]) -> T[V] {
+  let s = new()
+  iter.each(fn(e) { s.add(e) })
+  s
+}
+
 /// Converts the set to string.
 pub impl[V : Show] Show for T[V] with output(self, logger) {
   match self.root {
