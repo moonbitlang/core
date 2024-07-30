@@ -6,6 +6,7 @@ package moonbitlang/core/string
 impl String {
   compare(String, String) -> Int
   contains(String, String) -> Bool
+  contains_char(String, Char) -> Bool
   default() -> String
   ends_with(String, String) -> Bool
   index_of(String, String, ~from : Int = ..) -> Int

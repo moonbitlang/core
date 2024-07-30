@@ -163,6 +163,8 @@ impl Hasher {
 
 type Iter
 impl Iter {
+  all[T](Self[T], (T) -> Bool) -> Bool
+  any[T](Self[T], (T) -> Bool) -> Bool
   append[T](Self[T], T) -> Self[T]
   collect[T](Self[T]) -> Array[T]
   concat[T](Self[T], Self[T]) -> Self[T]
