@@ -27,27 +27,45 @@ pub struct Position {
   column : Int // 0-based
 } derive(Eq)
 
-pub enum ParseError {
+pub enum JsonParseError {
   InvalidChar(Position, Char)
   InvalidEof
   InvalidNumber(Position, String)
   InvalidIdentEscape(Position)
 } derive(Eq)
 
+pub type! ParseError JsonParseError
+
+pub fn JsonParseError::to_string(self : JsonParseError) -> String {
+  match self {
+    JsonParseError::InvalidChar({ line, column }, c) =>
+      "Invalid character '\(c)' at line \(line), column \(column)"
+    JsonParseError::InvalidEof => "Unexpected end of file"
+    JsonParseError::InvalidNumber({ line, column }, s) =>
+      "Invalid number \(s) at line \(line), column \(column)"
+    JsonParseError::InvalidIdentEscape({ line, column }) =>
+      "Invalid escape sequence in identifier at line \(line), column \(column)"
+  }
+}
+
+pub impl Show for JsonParseError with output(self, logger) {
+  logger.write_string(self.to_string())
+}
+
 pub fn ParseError::to_string(self : ParseError) -> String {
   match self {
-    ParseError::InvalidChar({ line, column }, c) =>
-      "Invalid character '\(c)' at line \(line), column \(column)"
-    ParseError::InvalidEof => "Unexpected end of file"
-    ParseError::InvalidNumber({ line, column }, s) =>
-      "Invalid number \(s) at line \(line), column \(column)"
-    ParseError::InvalidIdentEscape({ line, column }) =>
-      "Invalid escape sequence in identifier at line \(line), column \(column)"
+    ParseError(e) => e.to_string()
   }
 }
 
 pub impl Show for ParseError with output(self, logger) {
   logger.write_string(self.to_string())
+}
+
+pub fn op_equal(self: ParseError, other: ParseError) -> Bool {
+  match (self, other) {
+    (ParseError(e1), ParseError(e2)) => e1 == e2
+  }
 }
 
 pub impl Show for JsonValue with output(self, logger) {

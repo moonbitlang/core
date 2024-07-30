@@ -53,8 +53,10 @@ test "throws on invalid characters following an exponent sign" {
 }
 
 test "throws on invalid new lines in strings" {
-  let res = parse_as_result("\"\n\"")
-  @test.eq!(res, Err(InvalidChar({ line: 1, column: 1 }, '\n')))
+  inspect!(parse_as_result("\"\n\""), content=
+    #|Err(Invalid character '
+    #|' at line 1, column 1)
+  )
 }
 
 test "throws on unterminated strings" {
