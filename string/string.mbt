@@ -128,6 +128,10 @@ pub fn trim(self : String, trim_set : String) -> String {
   }
 }
 
+pub fn contains_char(self : String, c : Char) -> Bool {
+  self.iter().any(fn(ch) { ch == c })
+}
+
 /// Removes all leading chars contained in the given string.
 pub fn trim_left(self : String, trim_set : String) -> String {
   let len = self.length()
@@ -138,14 +142,14 @@ pub fn trim_left(self : String, trim_set : String) -> String {
       let c2 = self[i + 1]
       if is_trailing_surrogate(c2) {
         let ch = code_point_of_surrogate_pair(c1, c2)
-        if trim_set.contains(ch.to_string()) {
+        if trim_set.contains_char(ch) {
           continue i + 2
         } else {
           return self.substring(start=i)
         }
       }
     }
-    if trim_set.contains(self[i].to_string()).not() {
+    if trim_set.contains_char(self[i]).not() {
       return self.substring(start=i)
     }
   } else {
