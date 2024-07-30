@@ -75,6 +75,40 @@ pub fn eachi[T](self : Iter[T], f : (Int, T) -> Unit) -> Unit {
   |> ignore
 }
 
+/// Iterates over each element in the iterator, applying the function `f` to each element.
+/// If `f` raises any error, `each_err` will terminate immediately and raise the same error.
+///
+/// # Type Parameters
+///
+/// - `T`: The type of the elements in the iterator.
+/// - `Err`: The type of the error that `f` may raise.
+///
+/// # Arguments
+///
+/// - `self`: The iterator to consume.
+/// - `f`: A function that takes an element of type `T` and returns `Unit`.
+///    This function is applied to each element of the iterator and may raise error of type `Err`.
+pub fn each_err[T, Err](self : Iter[T], f : (T) -> Unit!Err) -> Unit!Err {
+  let mut err = None
+  fn action(elem) {
+    try {
+      f!(elem)
+      IterContinue
+    } catch {
+      error => {
+        err = Some(error)
+        IterEnd
+      }
+    }
+  }
+
+  let _ = (self.0)(action)
+  match err {
+    None => ()
+    Some(err) => raise err
+  }
+}
+
 /// Folds the elements of the iterator using the given function, starting with the given initial value.
 ///
 /// # Type Parameters
@@ -101,6 +135,51 @@ pub fn fold[T, B](self : Iter[T], ~init : B, f : (B, T) -> B) -> B {
     },
   )
   acc
+}
+
+/// Folds the elements of the iterator using the given function, starting with the given initial value.
+/// If the function `f` raises any error, `fold_err` will terminate immediately and raise the same error.
+///
+/// # Type Parameters
+///
+/// - `T`: The type of the elements in the iterator.
+/// - `B`: The type of the accumulator value.
+/// - `Err`: The type of error that `f` may raise.
+///
+/// # Arguments
+///
+/// - `self`: The iterator to consume.
+/// - `f`: A function that takes an accumulator of type `B` and an element of type `T`, and returns a new accumulator value.
+/// - `init`: The initial value for the fold operation.
+///
+/// # Returns
+///
+/// If `f` raises any error, `fold_err` raises the same error.
+/// Otherwise, it returns the final accumulator value after folding all elements of the iterator.
+pub fn fold_err[T, B, Err](
+  self : Iter[T],
+  ~init : B,
+  f : (B, T) -> B!Err
+) -> B!Err {
+  let mut err = None
+  let mut acc = init
+  fn action(elem) {
+    try {
+      acc = f!(acc, elem)
+      IterContinue
+    } catch {
+      error => {
+        err = Some(error)
+        IterEnd
+      }
+    }
+  }
+
+  let _ = (self.0)(action)
+  match err {
+    None => acc
+    Some(err) => raise err
+  }
 }
 
 /// Counts the number of elements in the iterator.
