@@ -250,7 +250,7 @@ fn karatsuba_mul(self : BigInt, other : BigInt) -> BigInt {
   let p1 = xh * yh
   let p2 = xl * yl
   let p3 = (xh + xl) * (yh + yl)
-  p1.lsl(radix_bit_len * 2 * half) + (p3 - p1 - p2).lsl(radix_bit_len * half) + p2
+  p1.shl(radix_bit_len * 2 * half) + (p3 - p1 - p2).shl(radix_bit_len * half) + p2
 }
 
 // Get the lower half of the number.
@@ -365,8 +365,8 @@ fn grade_school_div(self : BigInt, other : BigInt) -> (BigInt, BigInt) {
     back = back.lsl(1)
     lshift += 1
   }
-  let dividend = dividend.lsl(lshift)
-  let divisor = divisor.lsl(lshift)
+  let dividend = dividend.shl(lshift)
+  let divisor = divisor.shl(lshift)
   let a_len = dividend.len
   let b_len = divisor.len
   let b = Array::make(b_len, 0L)
@@ -435,7 +435,7 @@ fn grade_school_div(self : BigInt, other : BigInt) -> (BigInt, BigInt) {
     modulo[j] = a[j].to_int()
   }
   let modulo = { limbs: modulo, sign: Positive, len: i }
-  ({ limbs: q, sign: Positive, len }, modulo.lsr(lshift))
+  ({ limbs: q, sign: Positive, len }, modulo.shr(lshift))
 }
 
 // Bitwise Operations
