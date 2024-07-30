@@ -12,14 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-/// Makes a new Bytes with the given integer array.
-/// 
-/// Each integer in the array must be a 0~255 (inclusive) number.
+/// Makes a new Bytes with the given byte array.
 /// 
 /// # Usage
 /// 
 /// ```moonbit
-/// let b = @bytes.of([65, 66, 67])
+/// let b = @bytes.from_array([b'\x41', b'\x00', b'\x42'])
 /// ```
 /// 
 pub fn Bytes::from_array(arr : Array[Byte]) -> Bytes {
@@ -34,6 +32,14 @@ pub fn Bytes::from_iter(iter : Iter[Byte]) -> Bytes {
   Bytes::from_array(iter.collect())
 }
 
+/// Makes a new Bytes with the given byte fixedarray.
+/// 
+/// # Usage
+/// 
+/// ```moonbit
+/// let b = @bytes.of([b'\x41', b'\x00', b'\x42'])
+/// ```
+/// 
 pub fn Bytes::of(arr : FixedArray[Byte]) -> Bytes {
   let rv = Bytes::new(arr.length())
   for i = 0; i < arr.length(); i = i + 1 {
