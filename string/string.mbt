@@ -167,14 +167,14 @@ pub fn trim_right(self : String, trim_set : String) -> String {
       let c1 = self[i - 1]
       if is_leading_surrogate(c1) {
         let ch = code_point_of_surrogate_pair(c1, c2)
-        if trim_set.contains(ch.to_string()) {
+        if trim_set.contains_char(ch) {
           continue i - 2
         } else {
           return self.substring(end=i + 1)
         }
       }
     }
-    if trim_set.contains(self[i].to_string()).not() {
+    if trim_set.contains_char(self[i]).not() {
       return self.substring(end=i + 1)
     }
   } else {
