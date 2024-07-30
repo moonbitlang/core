@@ -59,6 +59,10 @@ pub fn iter[A](self : T[A]) -> Iter[A] {
   )
 }
 
+pub fn T::from_iter[A](iter : Iter[A]) -> T[A] {
+  iter.fold(init=new(), fn(arr, e) { arr.push(e) })
+}
+
 pub fn length[A](self : T[A]) -> Int {
   self.size
 }

@@ -97,6 +97,12 @@ pub fn iter[A : Compare](self : T[A]) -> Iter[A] {
   )
 }
 
+pub fn T::from_iter[K : Compare](iter : Iter[K]) -> T[K] {
+  let s = T::new()
+  iter.each(fn(e) { s.push(e) })
+  s
+}
+
 fn meld[A : Compare](x : Node[A], y : Node[A]) -> Node[A] {
   match (x, y) {
     (Nil, _) => y
@@ -237,4 +243,14 @@ test "meld_and_merges" {
     },
     content="true",
   )
+}
+
+pub impl[A : Show + Compare] Show for T[A] with output(self, logger) {
+  logger.write_string("@priority_queue.of(")
+  Show::output(self.to_array(), logger)
+  logger.write_char(')')
+}
+
+pub fn to_string[A : Show + Compare](self : T[A]) -> String {
+  Show::to_string(self)
 }

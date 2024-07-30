@@ -51,6 +51,12 @@ pub fn iter[K, V](self : T[K, V]) -> Iter[(K, V)] {
   )
 }
 
+pub fn T::from_iter[K : Hash + Eq, V](iter : Iter[(K, V)]) -> T[K, V] {
+  let m = T::new()
+  iter.each(fn(e) { m[e.0] = e.1 })
+  m
+}
+
 /// Converts the map to an array.
 pub fn to_array[K, V](self : T[K, V]) -> Array[(K, V)] {
   let arr = []

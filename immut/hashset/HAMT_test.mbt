@@ -113,3 +113,19 @@ test "@hashset.iter" {
   result.sort()
   @test.eq!(result, [1, 2, 3])
 }
+
+test "from_iter multiple elements iter" {
+  inspect!(
+    @hashset.T::from_iter([1, 2, 3].iter()),
+    content="@immut/hashset.of([3, 2, 1])",
+  )
+}
+
+test "from_iter single element iter" {
+  inspect!(@hashset.T::from_iter([1].iter()), content="@immut/hashset.of([1])")
+}
+
+test "from_iter empty iter" {
+  let pq : @hashset.T[Int] = @hashset.T::from_iter(Iter::empty())
+  inspect!(pq, content="@immut/hashset.of([])")
+}

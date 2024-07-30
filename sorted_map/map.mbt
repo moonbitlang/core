@@ -177,6 +177,12 @@ pub fn iter[K, V](self : T[K, V]) -> Iter[(K, V)] {
   )
 }
 
+pub fn T::from_iter[K : Compare, V](iter : Iter[(K, V)]) -> T[K, V] {
+  let m = new()
+  iter.each(fn(e) { m[e.0] = e.1 })
+  m
+}
+
 // AVL tree operations
 
 fn replace_root_with_min[K : Compare, V](

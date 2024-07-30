@@ -4,9 +4,10 @@ package moonbitlang/core/bytes
 
 // Types and methods
 impl Bytes {
-  from_array(Array[Int]) -> Bytes
-  of(FixedArray[Int]) -> Bytes
-  to_array(Bytes) -> Array[Int]
+  from_array(Array[Byte]) -> Bytes
+  from_iter(Iter[Byte]) -> Bytes
+  of(FixedArray[Byte]) -> Bytes
+  to_array(Bytes) -> Array[Byte]
 }
 
 // Traits

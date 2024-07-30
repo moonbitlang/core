@@ -32,7 +32,7 @@ pub fn each[T](self : FixedArray[T], f : (T) -> Unit) -> Unit {
   }
 }
 
-test "iter" {
+test "each" {
   let mut i = 0
   let mut failed = false
   let f = fn(elem) {
@@ -79,7 +79,7 @@ pub fn eachi[T](self : FixedArray[T], f : (Int, T) -> Unit) -> Unit {
   }
 }
 
-test "iteri" {
+test "eachi" {
   let mut i = 0
   let mut failed = false
   let f = fn(index, elem) {
@@ -124,7 +124,7 @@ pub fn rev_each[T](self : FixedArray[T], f : (T) -> Unit) -> Unit {
   }
 }
 
-test "iter_rev" {
+test "rev_each" {
   let mut i = 6
   let mut failed = false
   let f = fn(elem) {
@@ -172,7 +172,7 @@ pub fn rev_eachi[T](self : FixedArray[T], f : (Int, T) -> Unit) -> Unit {
   }
 }
 
-test "iter_revi" {
+test "rev_eachi" {
   let mut i = 6
   let mut j = 0
   let mut failed = false
@@ -978,4 +978,8 @@ test "iter" {
       #|
     ,
   )
+}
+
+pub fn FixedArray::from_iter[T](iter : Iter[T]) -> FixedArray[T] {
+  FixedArray::from_array(iter.collect())
 }

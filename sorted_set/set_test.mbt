@@ -205,3 +205,23 @@ test "op_equal" {
   inspect!(a == b, content="false")
   inspect!(b == a, content="false")
 }
+
+test "from_iter multiple elements iter" {
+  inspect!(
+    @sorted_set.T::from_iter([1, 2, 3].iter()),
+    content="@sorted_set.of([1, 2, 3])",
+  )
+  inspect!(
+    @sorted_set.T::from_iter([1, 1, 1].iter()),
+    content="@sorted_set.of([1])",
+  )
+}
+
+test "from_iter single element iter" {
+  inspect!(@sorted_set.T::from_iter([1].iter()), content="@sorted_set.of([1])")
+}
+
+test "from_iter empty iter" {
+  let pq : @sorted_set.T[Int] = @sorted_set.T::from_iter(Iter::empty())
+  inspect!(pq, content="@sorted_set.of([])")
+}

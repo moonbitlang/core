@@ -6,6 +6,7 @@ package moonbitlang/core/immut/priority_queue
 type T
 impl T {
   from_array[A : Compare + Eq](Array[A]) -> Self[A]
+  from_iter[A : Compare + Eq](Iter[A]) -> Self[A]
   is_empty[A](Self[A]) -> Bool
   iter[A : Compare + Eq](Self[A]) -> Iter[A]
   length[A](Self[A]) -> Int
@@ -16,9 +17,11 @@ impl T {
   pop_exn[A : Compare + Eq](Self[A]) -> Self[A]
   push[A : Compare + Eq](Self[A], A) -> Self[A]
   to_array[A : Compare + Eq](Self[A]) -> Array[A]
+  to_string[A : Show + Compare + Eq](Self[A]) -> String
 }
 
 // Traits
 
 // Extension Methods
+impl Show for T
 

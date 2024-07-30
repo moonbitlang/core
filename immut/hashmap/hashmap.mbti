@@ -9,6 +9,7 @@ impl T {
   each[K, V](Self[K, V], (K, V) -> Unit) -> Unit
   find[K : Eq + Hash, V](Self[K, V], K) -> V?
   from_array[K : Eq + Hash, V](Array[Tuple[K, V]]) -> Self[K, V]
+  from_iter[K : Eq + Hash, V](Iter[Tuple[K, V]]) -> Self[K, V]
   iter[K, V](Self[K, V]) -> Iter[Tuple[K, V]]
   new[K, V]() -> Self[K, V]
   of[K : Eq + Hash, V](FixedArray[Tuple[K, V]]) -> Self[K, V]

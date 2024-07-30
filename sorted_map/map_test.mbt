@@ -162,3 +162,22 @@ test "iter" {
     ,
   )
 }
+
+test "from_iter multiple elements iter" {
+  inspect!(
+    @sorted_map.T::from_iter([(1, 1), (2, 2), (3, 3)].iter()),
+    content="@sorted_map.of([(1, 1), (2, 2), (3, 3)])",
+  )
+}
+
+test "from_iter single element iter" {
+  inspect!(
+    @sorted_map.T::from_iter([(1, 1)].iter()),
+    content="@sorted_map.of([(1, 1)])",
+  )
+}
+
+test "from_iter empty iter" {
+  let pq : @sorted_map.T[Int, Int] = @sorted_map.T::from_iter(Iter::empty())
+  inspect!(pq, content="@sorted_map.of([])")
+}

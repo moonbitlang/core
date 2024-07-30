@@ -204,6 +204,10 @@ pub fn iter[A](self : T[A]) -> Iter[A] {
   }
 }
 
+pub fn T::from_iter[A : Eq + Hash](iter : Iter[A]) -> T[A] {
+  iter.fold(init=new(), fn(s, e) { s.add(e) })
+}
+
 pub impl[A : Show] Show for T[A] with output(self, logger) {
   let mut is_first = true
   logger.write_string("@immut/hashset.of([")

@@ -16,6 +16,7 @@ impl T {
   filter[A : Compare + Eq](Self[A], (A) -> Bool) -> Self[A]
   fold[A : Compare + Eq, B](Self[A], ~init : B, (B, A) -> B) -> B
   from_array[A : Compare + Eq](Array[A]) -> Self[A]
+  from_iter[A : Compare + Eq](Iter[A]) -> Self[A]
   inter[A : Compare + Eq](Self[A], Self[A]) -> Self[A]
   is_empty[A : Compare + Eq](Self[A]) -> Bool
   iter[A](Self[A]) -> Iter[A]
