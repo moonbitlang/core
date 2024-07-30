@@ -333,3 +333,11 @@ test "any" {
   assert_eq!(iter.all(fn { x => x < 4 }), false)
   assert_eq!(iter.take(8).all(fn { x => x < 7 }), true)
 }
+
+test "all" {
+  let iter = [1, 2, 3, 4, 5, 6] |> test_from_array
+  assert_eq!(iter.take(3).all(fn { x => x < 4 }), true)
+  assert_eq!(iter.take(3).all(fn { x => x < 2 }), false)
+  assert_eq!(iter.take(8).all(fn { x => x < 7 }), true)
+  assert_eq!(iter.take(6).all(fn { x => x < 7 }), true)
+}
