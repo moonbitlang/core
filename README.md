@@ -1,6 +1,6 @@
 # moonbitlang/core
 
-[![check](https://github.com/moonbitlang/core/actions/workflows/check.yml/badge.svg)](https://github.com/moonbitlang/core/actions/workflows/check.yml) [![Coverage Status](https://coveralls.io/repos/github/moonbitlang/core/badge.svg?branch=HEAD)](https://coveralls.io/github/moonbitlang/core?branch=main)
+[![check](https://github.com/moonbitlang/core/actions/workflows/check.yml/badge.svg)](https://github.com/moonbitlang/core/actions/workflows/check.yml) [![Coverage Status](https://coveralls.io/repos/github/moonbitlang/core/badge.svg?branch=main)](https://coveralls.io/github/moonbitlang/core?branch=main)
 
 moonbitlang/core is the standard library of the [MoonBit language](https://www.moonbitlang.com/). It is released alongside the compiler. You can view the documentation for the latest official release at <https://mooncakes.io/docs/#/moonbitlang/core/>. This repository serves as the development repository.
 
@@ -8,7 +8,7 @@ moonbitlang/core is the standard library of the [MoonBit language](https://www.m
 
 It is experimental and under active development. At this early stage, our primary focus is on enhancing the functionality of `moonbitlang/core`.
 
-⚠️**The API is subject to change.** 
+⚠️**The API is subject to change.**
 
 ### Timeline
 
