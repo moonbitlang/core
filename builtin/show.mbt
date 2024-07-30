@@ -170,9 +170,10 @@ pub impl[X : Show] Show for ArrayView[X] with output(self, logger) {
 /// Convert Char to String
 /// @intrinsic %char.to_string
 pub fn to_string(self : Char) -> String {
-  let bytes = Bytes::new(4)
-  let len = bytes.set_utf16_char(0, self)
-  bytes.sub_string(0, len)
+  // let bytes = Bytes::new(4)
+  // let len = bytes.set_utf16_char(0, self)
+  // bytes.sub_string(0, len)
+  Show::to_string(self)
 }
 
 pub impl Show for Char with output(self, logger) {
