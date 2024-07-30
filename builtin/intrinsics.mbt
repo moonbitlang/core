@@ -148,10 +148,6 @@ pub fn Int::to_byte(self : Int) -> Byte {
   identity(self.land(0xFF))
 }
 
-pub fn UInt::to_byte(self : UInt) -> Byte {
-  identity(self.land(0xFF))
-}
-
 pub fn Int64::to_byte(self : Int64) -> Byte {
   identity(self.to_int().land(0xFF))
 }

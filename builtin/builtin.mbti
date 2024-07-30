@@ -344,7 +344,6 @@ impl UInt {
   op_mul(UInt, UInt) -> UInt
   op_neq(UInt, UInt) -> Bool
   op_sub(UInt, UInt) -> UInt
-  to_byte(UInt) -> Byte
   to_int(UInt) -> Int
   to_string(UInt) -> String
   to_uint64(UInt) -> UInt64
