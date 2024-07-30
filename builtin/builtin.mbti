@@ -112,7 +112,6 @@ impl ArrayView {
 
 type BigInt
 impl BigInt {
-  asr(Self, Int) -> Self
   compare(Self, Self) -> Int
   from_hex(String) -> Self
   from_int(Int) -> Self
