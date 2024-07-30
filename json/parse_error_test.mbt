@@ -53,9 +53,12 @@ test "throws on invalid characters following an exponent sign" {
 }
 
 test "throws on invalid new lines in strings" {
-  inspect!(parse_as_result("\"\n\""), content=
-    #|Err(Invalid character '
-    #|' at line 1, column 1)
+  inspect!(
+    parse_as_result("\"\n\""),
+    content=
+      #|Err(Invalid character '
+      #|' at line 1, column 1)
+    ,
   )
 }
 

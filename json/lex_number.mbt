@@ -130,6 +130,7 @@ fn lex_number_end(
   try {
     @strconv.parse_double!(s)
   } catch {
-    _ => raise ParseError(InvalidNumber(offset_to_position(ctx.input, start), s))
+    _ =>
+      raise ParseError(InvalidNumber(offset_to_position(ctx.input, start), s))
   }
 }

@@ -62,7 +62,7 @@ pub impl Show for ParseError with output(self, logger) {
   logger.write_string(self.to_string())
 }
 
-pub fn op_equal(self: ParseError, other: ParseError) -> Bool {
+pub fn op_equal(self : ParseError, other : ParseError) -> Bool {
   match (self, other) {
     (ParseError(e1), ParseError(e2)) => e1 == e2
   }
