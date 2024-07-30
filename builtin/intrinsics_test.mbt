@@ -149,3 +149,20 @@ test "UInt64::lnot test cases" {
   // Test case 8: Random case, testing with a value that has all 1s
   inspect!(UInt64::lnot(0xFFFFFFFFFFFFFFFFUL), content="0")
 }
+
+test "UInt to byte" {
+  let a = 10U.to_byte()
+  inspect!(a, content="b'\\x0A'")
+  let b = 255U.to_byte()
+  inspect!(b, content="b'\\xFF'")
+  let c = 10UL.to_byte()
+  inspect!(c, content="b'\\x0A'")
+  let d = 255UL.to_byte()
+  inspect!(d, content="b'\\xFF'")
+  let f = 24U.lsr(16)
+  let e = f.to_byte()
+  inspect!(e, content="b'\\x00'")
+  let f = 24U.lsr(64)
+  let e = f.to_byte()
+  inspect!(e, content="b'\\x18'")
+}
