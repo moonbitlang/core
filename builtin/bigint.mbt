@@ -12,6 +12,34 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+/// A big integer represented as an array of Int.
+/// 
+/// Design explained: 
+/// - Why use an array of Int with a len field instead of a Vec[Int]? 
+///   - It follows the principle of least dependency in MoonBit's core.
+///   - At the moment (04/30/2024), @vec is implemented as a resizable array. 
+///     In our case, we always do one-off array allocation for each BigInt.
+/// - Why keep a separate len field instead of using limbs.length()?
+///   - Since we always do only once array allocation for each BigInt, we
+///     often need to estimate the number of limbs needed before allocating.
+///     Using len allows us to accommodate leading zeros.
+///
+/// Invariants:
+/// - len > 0
+/// - forall i in 0..len-1, 0 <= limbs[i] < radix
+/// - limbs[len-1] > 0
+/// - forall i in len..limbs.length(), limbs[i] == 0
+struct BigInt {
+  mut limbs : Array[Int] // Note: do not use limbs.length(), use len instead because of leading zeros
+  mut sign : Sign // true for positive, false for negative
+  mut len : Int
+}
+
+priv enum Sign {
+  Positive
+  Negative
+} derive(Show, Eq)
+
 // Hyper Params
 
 /// Invariants:
@@ -34,14 +62,14 @@ let karatsuba_threshold = 50
 
 // Useful bigints
 
-let zero : BigInt = from_int64(0L)
+let zero : BigInt = BigInt::from_int64(0L)
 
-let one : BigInt = from_int64(1L)
+let one : BigInt = BigInt::from_int64(1L)
 
 // Conversion Functions
 
 /// Convert an Int to a BigInt.
-pub fn from_int(n : Int) -> BigInt {
+pub fn BigInt::from_int(n : Int) -> BigInt {
   if n < 0 {
     { limbs: Array::make(1, -n), sign: Negative, len: 1 }
   } else {
@@ -50,7 +78,7 @@ pub fn from_int(n : Int) -> BigInt {
 }
 
 /// Convert an Int64 to a BigInt.
-pub fn from_int64(n : Int64) -> BigInt {
+pub fn BigInt::from_int64(n : Int64) -> BigInt {
   if n == 0L {
     return { limbs: Array::make(1, 0), sign: Positive, len: 1 }
   }
@@ -68,7 +96,7 @@ pub fn from_int64(n : Int64) -> BigInt {
 /// Construct a zero
 /// 
 /// TODO: modify function name after literal syntax is supported
-pub fn make_zero() -> BigInt {
+pub fn BigInt::make_zero() -> BigInt {
   { limbs: Array::make(1, 0), sign: Positive, len: 1 }
 }
 
@@ -300,7 +328,7 @@ fn grade_school_div(self : BigInt, other : BigInt) -> (BigInt, BigInt) {
   if self < other {
     return (make_zero(), self)
   } else if self == other {
-    return (from_int(1), make_zero())
+    return (BigInt::from_int(1), make_zero())
   }
   if other.len == 1 {
     let number = other.limbs[0]
@@ -323,7 +351,7 @@ fn grade_school_div(self : BigInt, other : BigInt) -> (BigInt, BigInt) {
     if ret.limbs[ret.len - 1] == 0 {
       ret.len -= 1
     }
-    return (ret, from_int64(y.land(radix_mask)))
+    return (ret, BigInt::from_int64(y.land(radix_mask)))
   }
 
   // Cite: TAOCP Vol. 2, 4.3.1
@@ -578,7 +606,7 @@ pub impl Show for BigInt with output(self, logger) {
 }
 
 /// Converts decimal string to a BigInt.
-pub fn from_string(input : String) -> BigInt {
+pub fn BigInt::from_string(input : String) -> BigInt {
   let len = input.length()
   if len == 0 {
     abort("empty string")
@@ -611,7 +639,7 @@ pub fn from_string(input : String) -> BigInt {
 }
 
 /// Converts a hex string to a BigInt.
-pub fn from_hex(input : String) -> BigInt {
+pub fn BigInt::from_hex(input : String) -> BigInt {
   // WARN: this implementation assumes that `radix` is a power of 2.
   let len = input.length()
   if len == 0 {

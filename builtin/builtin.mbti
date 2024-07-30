@@ -108,6 +108,28 @@ impl ArrayView {
   swap[T](Self[T], Int, Int) -> Unit
 }
 
+type BigInt
+impl BigInt {
+  compare(Self, Self) -> Int
+  from_hex(String) -> Self
+  from_int(Int) -> Self
+  from_int64(Int64) -> Self
+  from_string(String) -> Self
+  is_zero(Self) -> Bool
+  lsl(Self, Int) -> Self
+  lsr(Self, Int) -> Self
+  make_zero() -> Self
+  op_add(Self, Self) -> Self
+  op_div(Self, Self) -> Self
+  op_equal(Self, Self) -> Bool
+  op_mod(Self, Self) -> Self
+  op_mul(Self, Self) -> Self
+  op_neg(Self) -> Self
+  op_sub(Self, Self) -> Self
+  to_hex(Self) -> String
+  to_string(Self) -> String
+}
+
 type Buffer
 impl Buffer {
   expect(Self, ~content : String = .., ~loc : SourceLoc = _, ~args_loc : ArgsLoc = _) -> Unit!String
@@ -246,6 +268,7 @@ impl Char {
   from_int(Int) -> Char
   op_equal(Char, Char) -> Bool
   to_int(Char) -> Int
+  to_string(Char) -> String
 }
 impl Int {
   asr(Int, Int) -> Int
@@ -541,6 +564,8 @@ impl Show for Bool
 
 impl Show for Byte
 
+impl Show for Char
+
 impl Show for Int
 
 impl Show for Int64
@@ -564,6 +589,8 @@ impl Show for Ref
 impl Show for Array
 
 impl Show for ArrayView
+
+impl Show for BigInt
 
 impl Show for Buffer
 

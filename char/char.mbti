@@ -3,14 +3,9 @@ package moonbitlang/core/char
 // Values
 
 // Types and methods
-impl Char {
-  to_string(Char) -> String
-}
 
 // Traits
 
 // Extension Methods
 impl Hash for Char
-
-impl Show for Char
 
