@@ -38,7 +38,7 @@ fn lex_value(
         if allow_rbracket {
           return RBracket
         } else {
-          raise invalid_char(ctx, shift=-1)
+          invalid_char!(ctx, shift=-1)
         }
       Some('n') => {
         lex_assert_char!(ctx, 'u')
@@ -70,9 +70,9 @@ fn lex_value(
               let n = lex_decimal_integer!(ctx, start=ctx.offset - 2)
               return Number(n)
             }
-            raise invalid_char(ctx, shift=-1)
+            invalid_char!(ctx, shift=-1)
           }
-          None => raise InvalidEof
+          None => raise ParseError(InvalidEof)
         }
       Some('0') => {
         let n = lex_zero!(ctx, start=ctx.offset - 1)
@@ -90,9 +90,9 @@ fn lex_value(
         if c > '\x7f' && non_ascii_whitespace.contains(c) {
           continue
         }
-        raise invalid_char(ctx, shift=-1)
+        invalid_char!(ctx, shift=-1)
       }
-      None => raise InvalidEof
+      None => raise ParseError(InvalidEof)
     }
   }
 }
