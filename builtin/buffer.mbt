@@ -50,7 +50,9 @@ pub fn expect(
     let args_loc = repr(args_loc.to_json())
     let expect = repr(content)
     let actual = repr(current)
-    fail!("@EXPECT_FAILED {\"loc\": \(loc), \"args_loc\": \(args_loc), \"expect\": \(expect), \"actual\": \(actual)}")
+    fail!(
+      "@EXPECT_FAILED {\"loc\": \(loc), \"args_loc\": \(args_loc), \"expect\": \(expect), \"actual\": \(actual)}",
+    )
   }
 }
 

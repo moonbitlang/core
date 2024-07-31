@@ -189,6 +189,8 @@ pub fn inspect(
     let args_loc = args_loc.to_json().escape()
     let expect = content.escape()
     let actual = obj.to_string().escape()
-    raise InspectError("@EXPECT_FAILED {\"loc\": \(loc), \"args_loc\": \(args_loc), \"expect\": \(expect), \"actual\": \(actual)}")
+    raise InspectError(
+      "@EXPECT_FAILED {\"loc\": \(loc), \"args_loc\": \(args_loc), \"expect\": \(expect), \"actual\": \(actual)}",
+    )
   }
 }

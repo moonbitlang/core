@@ -22,7 +22,7 @@ pub fn eq[T : Show + Eq](a : T, b : T, ~loc : SourceLoc = _) -> Unit!Error {
   if a != b {
     let a = debug_string(a)
     let b = debug_string(b)
-    fail!( "FAILED: \(loc) `\(a) == \(b)`")
+    fail!("FAILED: \(loc) `\(a) == \(b)`")
   }
 }
 
@@ -30,21 +30,21 @@ pub fn ne[T : Show + Eq](a : T, b : T, ~loc : SourceLoc = _) -> Unit!Error {
   if not(a != b) {
     let a = debug_string(a)
     let b = debug_string(b)
-    fail!( "FAILED: \(loc) `\(a) != \(b)`")
+    fail!("FAILED: \(loc) `\(a) != \(b)`")
   }
 }
 
 pub fn is_true(x : Bool, ~loc : SourceLoc = _) -> Unit!Error {
   if not(x) {
     let x = debug_string(x)
-    fail!( "FAILED: \(loc) `\(x)` is not true")
+    fail!("FAILED: \(loc) `\(x)` is not true")
   }
 }
 
 pub fn is_false(x : Bool, ~loc : SourceLoc = _) -> Unit!Error {
   if x {
     let x = debug_string(x)
-    fail!( "FAILED: \(loc): `\(x)` is not false")
+    fail!("FAILED: \(loc): `\(x)` is not false")
   }
 }
 
@@ -67,7 +67,7 @@ pub fn is[T : Show](a : T, b : T, ~loc : SourceLoc = _) -> Unit!Error {
   if not(physical_equal(a, b)) {
     let a = debug_string(a)
     let b = debug_string(b)
-    fail!( "FAILED: \(loc) `\(a) is \(b)`")
+    fail!("FAILED: \(loc) `\(a) is \(b)`")
   }
 }
 
@@ -90,10 +90,10 @@ pub fn is_not[T : Show](a : T, b : T, ~loc : SourceLoc = _) -> Unit!Error {
   if physical_equal(a, b) {
     let a = debug_string(a)
     let b = debug_string(b)
-    fail!( "FAILED: \(loc) `not(\(a) is \(b))`")
+    fail!("FAILED: \(loc) `not(\(a) is \(b))`")
   }
 }
 
 pub fn fail[T](msg : String, ~loc : SourceLoc = _) -> T!Error {
-  fail!( "FAILED: \(loc) \(msg)")
+  @builtin.fail!(msg, ~loc)
 }
