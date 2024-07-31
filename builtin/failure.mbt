@@ -14,6 +14,6 @@
 
 pub type! Failure String
 
-pub fn fail[T](s : String) -> T!Failure {
-  raise Failure(s)
+pub fn fail[T](msg : String, ~loc : SourceLoc = _) -> T!Failure {
+  raise Failure("FAILED: \(loc) \(msg)")
 }

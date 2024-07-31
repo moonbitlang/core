@@ -206,7 +206,7 @@ test "new_counter" {
   let result = counter.to_string()
   // @test.eq(result, "[0, 0]")?
   if result != "[0, 0]" {
-    raise "Expected: [0, 0], got: " + result
+    fail!("Expected: [0, 0], got: " + result)
   }
 }
 
@@ -217,7 +217,7 @@ test "incr_counter" {
   let result = counter.to_string()
   // @test.eq(result, "[1, 0, 0, 0, 0, 0, 0, 0, 0, 1]")?
   if result != "[1, 0, 0, 0, 0, 0, 0, 0, 0, 1]" {
-    raise "Expected: [1, 0, 0, 0, 0, 0, 0, 0, 0, 1], got: " + result
+    fail!("Expected: [1, 0, 0, 0, 0, 0, 0, 0, 0, 1], got: " + result)
   }
 }
 
@@ -226,7 +226,7 @@ test "escape_to" {
   escape_to("\\n\\r\\t\\b\\\"'\\\\", buf)
   let escaped_string = buf.to_string()
   if escaped_string != "\\\\n\\\\r\\\\t\\\\b\\\\\\\"'\\\\\\\\" {
-    raise "escaped_string: \(escaped_string)"
+    fail!("escaped_string: \(escaped_string)")
   }
 }
 
@@ -235,7 +235,7 @@ test "escape_to_unicode" {
   escape_to("\u0010\u001f", buf)
   let escaped_string = buf.to_string()
   if escaped_string != "\\u0010\\u001f" {
-    raise "escaped_string: \(escaped_string)"
+    fail!("escaped_string: \(escaped_string)")
   }
 }
 
@@ -266,7 +266,7 @@ test "backslash escape" {
   // @test.eq(@coverage.escape(s), expected)?
   let escape_s = escape(s)
   if escape_s != expected {
-    raise "Expected: " + expected + ", got: " + escape_s
+    fail!("Expected: " + expected + ", got: " + escape_s)
   }
 }
 

@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-fn check_len(a : BigInt) -> Unit!String {
+fn check_len(a : BigInt) -> Unit!Error {
   if a.is_zero() {
     return ()
   }
