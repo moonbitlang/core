@@ -38,12 +38,12 @@ let max_exponent_disguised_fast_path : Int64 = 37L
 
 let max_mantissa_fast_path : UInt64 = 2UL.lsl(mantissa_explicit_bits)
 
-pub fn parse_double(str : String) -> Double!String {
+pub fn parse_double(str : String) -> Double!StrConvError {
   if str.length() == 0 {
-    raise syntax_err
+    syntax_err!()
   }
   if not(check_underscore(str)) {
-    raise syntax_err
+    syntax_err!()
   }
   // validate its a number
   let (num, consumed) = match parse_number(str) {
@@ -52,15 +52,15 @@ pub fn parse_double(str : String) -> Double!String {
       match parse_inf_nan(str) {
         Some((num, consumed)) =>
           if str.length() != consumed {
-            raise syntax_err
+            syntax_err!()
           } else {
             return num
           }
-        None => raise syntax_err
+        None => syntax_err!()
       }
   }
   if str.length() != consumed {
-    raise syntax_err
+    syntax_err!()
   }
   // Clinger's fast path (How to read floating point numbers accurately)[https://doi.org/10.1145/989393.989430]
   match try_fast_path(num) {
@@ -132,12 +132,12 @@ fn try_fast_path(self : Number) -> Double? {
 
 test "parse_double" {
   let tests : Array[(String, Result[Double, String])] = [
-    ("", Err(syntax_err)),
-    ("1x", Err(syntax_err)),
-    ("1.1.", Err(syntax_err)),
-    ("1e", Err(syntax_err)),
-    ("1e-", Err(syntax_err)),
-    (".e-1", Err(syntax_err)),
+    ("", Err(syntax_err_str)),
+    ("1x", Err(syntax_err_str)),
+    ("1.1.", Err(syntax_err_str)),
+    ("1e", Err(syntax_err_str)),
+    ("1e-", Err(syntax_err_str)),
+    (".e-1", Err(syntax_err_str)),
     ("1", Ok(1.0)),
     ("+1", Ok(1.0)),
     ("1e23", Ok(1.0e23)),
@@ -189,21 +189,21 @@ test "parse_double" {
       Err(
         // zeros
         // large double
-        range_err,
+        range_err_str,
       ),
     ),
     (
       "-1.7976931348623159e308",
       Err(
         // overflow
-        range_err,
+        range_err_str,
       ),
     ),
-    ("2e308", Err(range_err)),
-    ("1e309", Err(range_err)),
-    ("1e310", Err(range_err)),
-    ("1e400", Err(range_err)),
-    ("1e40000", Err(range_err)),
+    ("2e308", Err(range_err_str)),
+    ("1e309", Err(range_err_str)),
+    ("1e310", Err(range_err_str)),
+    ("1e400", Err(range_err_str)),
+    ("1e40000", Err(range_err_str)),
     // denormalized
     ("1e-305", Ok(1.0e-305)),
     ("1e-306", Ok(1.0e-306)),
@@ -222,20 +222,20 @@ test "parse_double" {
     ("1e-400000", Ok(0.0)),
     // underscores
     ("1_23.50_0_0e+1_2", Ok(1.235e+14)),
-    ("-_123.5e+12", Err(syntax_err)),
-    ("+_123.5e+12", Err(syntax_err)),
-    ("_123.5e+12", Err(syntax_err)),
-    ("1__23.5e+12", Err(syntax_err)),
-    ("123_.5e+12", Err(syntax_err)),
-    ("123._5e+12", Err(syntax_err)),
-    ("123.5_e+12", Err(syntax_err)),
-    ("123.5__0e+12", Err(syntax_err)),
-    ("123.5e_+12", Err(syntax_err)),
-    ("123.5e+_12", Err(syntax_err)),
-    ("123.5e_-12", Err(syntax_err)),
-    ("123.5e-_12", Err(syntax_err)),
-    ("123.5e+1__2", Err(syntax_err)),
-    ("123.5e+12_", Err(syntax_err)),
+    ("-_123.5e+12", Err(syntax_err_str)),
+    ("+_123.5e+12", Err(syntax_err_str)),
+    ("_123.5e+12", Err(syntax_err_str)),
+    ("1__23.5e+12", Err(syntax_err_str)),
+    ("123_.5e+12", Err(syntax_err_str)),
+    ("123._5e+12", Err(syntax_err_str)),
+    ("123.5_e+12", Err(syntax_err_str)),
+    ("123.5__0e+12", Err(syntax_err_str)),
+    ("123.5e_+12", Err(syntax_err_str)),
+    ("123.5e+_12", Err(syntax_err_str)),
+    ("123.5e_-12", Err(syntax_err_str)),
+    ("123.5e-_12", Err(syntax_err_str)),
+    ("123.5e+1__2", Err(syntax_err_str)),
+    ("123.5e+12_", Err(syntax_err_str)),
   ]
   for i = 0; i < tests.length(); i = i + 1 {
     let t = tests[i]
@@ -243,7 +243,7 @@ test "parse_double" {
       try {
         Result::Ok(parse_double!(t.0))
       } catch {
-        err => Err(err)
+        StrConvError(err) => Err(err)
       },
       t.1,
     )

@@ -13,18 +13,18 @@
 // limitations under the License.
 
 /// Parse a string and return the represented boolean value or an error.
-pub fn parse_bool(str : String) -> Bool!String {
+pub fn parse_bool(str : String) -> Bool!StrConvError {
   match str {
     "1" | "t" | "T" | "true" | "TRUE" | "True" => true
     "0" | "f" | "F" | "false" | "FALSE" | "False" => false
-    _ => raise syntax_err
+    _ => syntax_err!()
   }
 }
 
 test "parse_bool" {
   let tests : Array[(String, Result[Bool, String])] = [
-    ("", Err(syntax_err)),
-    ("zutomayo", Err(syntax_err)),
+    ("", Err(syntax_err_str)),
+    ("zutomayo", Err(syntax_err_str)),
     ("0", Ok(false)),
     ("f", Ok(false)),
     ("F", Ok(false)),
@@ -44,7 +44,7 @@ test "parse_bool" {
       try {
         Result::Ok(parse_bool!(t.0))
       } catch {
-        err => Err(err)
+        StrConvError(err) => Err(err)
       },
       t.1,
     )

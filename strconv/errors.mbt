@@ -12,8 +12,22 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-let range_err = "value out of range"
+pub type! StrConvError String
 
-let syntax_err = "invalid syntax"
+let range_err_str = "value out of range"
 
-let base_err = "invalid base"
+let syntax_err_str = "invalid syntax"
+
+let base_err_str = "invalid base"
+
+fn range_err[T]() -> T!StrConvError {
+  raise StrConvError(range_err_str)
+}
+
+fn syntax_err[T]() -> T!StrConvError {
+  raise StrConvError(syntax_err_str)
+}
+
+fn base_err[T]() -> T!StrConvError {
+  raise StrConvError(base_err_str)
+}
