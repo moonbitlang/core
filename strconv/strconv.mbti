@@ -31,6 +31,8 @@ pub trait FromStr {
 }
 
 // Extension Methods
+impl Show for StrConvError
+
 impl FromStr for Bool
 
 impl FromStr for Int

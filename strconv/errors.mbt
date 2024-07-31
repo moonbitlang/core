@@ -14,6 +14,12 @@
 
 pub type! StrConvError String
 
+pub impl Show for StrConvError with output(self, logger) {
+  match self {
+    StrConvError(err) => logger.write_string(err)
+  }
+}
+
 let range_err_str = "value out of range"
 
 let syntax_err_str = "invalid syntax"
