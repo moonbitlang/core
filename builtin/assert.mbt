@@ -16,8 +16,8 @@ pub fn assert_eq[T : Eq + Show](
   a : T,
   b : T,
   ~loc : SourceLoc = _
-) -> Unit!String {
+) -> Unit!Failure {
   if a != b {
-    raise "FAILED: \(loc) `\(a) == \(b)`"
+    fail!("FAILED: \(loc) `\(a) == \(b)`")
   }
 }
