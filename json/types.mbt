@@ -27,28 +27,28 @@ pub struct Position {
   column : Int // 0-based
 } derive(Eq)
 
-pub enum JsonParseError {
+pub enum ErrorData {
   InvalidChar(Position, Char)
   InvalidEof
   InvalidNumber(Position, String)
   InvalidIdentEscape(Position)
 } derive(Eq)
 
-pub type! ParseError JsonParseError
+pub type! ParseError ErrorData
 
-pub fn JsonParseError::to_string(self : JsonParseError) -> String {
+pub fn ErrorData::to_string(self : ErrorData) -> String {
   match self {
-    JsonParseError::InvalidChar({ line, column }, c) =>
+    ErrorData::InvalidChar({ line, column }, c) =>
       "Invalid character '\(c)' at line \(line), column \(column)"
-    JsonParseError::InvalidEof => "Unexpected end of file"
-    JsonParseError::InvalidNumber({ line, column }, s) =>
+    ErrorData::InvalidEof => "Unexpected end of file"
+    ErrorData::InvalidNumber({ line, column }, s) =>
       "Invalid number \(s) at line \(line), column \(column)"
-    JsonParseError::InvalidIdentEscape({ line, column }) =>
+    ErrorData::InvalidIdentEscape({ line, column }) =>
       "Invalid escape sequence in identifier at line \(line), column \(column)"
   }
 }
 
-pub impl Show for JsonParseError with output(self, logger) {
+pub impl Show for ErrorData with output(self, logger) {
   logger.write_string(self.to_string())
 }
 
