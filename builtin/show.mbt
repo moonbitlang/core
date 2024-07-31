@@ -102,6 +102,14 @@ pub impl Show for String with output(self, logger) {
 
 pub impl Show for String with to_string(self) { self }
 
+/// Returns a valid MoonBit string literal representation of a string,
+/// add quotes and escape special characters.
+pub fn escape(self : String) -> String {
+  let buf = Buffer::new()
+  Show::output(self, buf)
+  buf.to_string()
+}
+
 pub impl[X : Show] Show for X? with output(self, logger) {
   match self {
     None => logger.write_string("None")
