@@ -22,13 +22,13 @@ let int64_max = 0x7fffffffffffffffL
 
 /// Parse a string in the given base (0, 2 to 36), return a Int64 number or an error.
 /// If the `~base` argument is 0, the base will be inferred by the prefix.
-pub fn parse_int64(str : String, ~base : Int = 0) -> Int64!String {
+pub fn parse_int64(str : String, ~base : Int = 0) -> Int64!StrConvError {
   if str == "" {
-    raise syntax_err
+    syntax_err!()
   }
   // check underscore
   if not(check_underscore(str)) {
-    raise syntax_err
+    syntax_err!()
   }
   let mut s = str
   // check sign
@@ -48,7 +48,7 @@ pub fn parse_int64(str : String, ~base : Int = 0) -> Int64!String {
   } else if 2 <= base && base <= 36 {
     num_base = base
   } else {
-    raise base_err
+    base_err!()
   }
 
   // calculate overflow threshold
@@ -69,27 +69,27 @@ pub fn parse_int64(str : String, ~base : Int = 0) -> Int64!String {
     } else if 'A' <= c && c <= 'Z' {
       d = c.to_int() - 'A'.to_int() + 10
     } else {
-      raise syntax_err
+      syntax_err!()
     }
     if d >= num_base {
-      raise syntax_err
+      syntax_err!()
     }
     if (neg && n < overflow_threshold) || (not(neg) && n >= overflow_threshold) {
-      raise range_err
+      range_err!()
     }
     // n*base overflows
     n *= num_base.to_int64()
     if neg {
       let n1 = n - d.to_int64()
       if n1 > n {
-        raise range_err
+        range_err!()
       }
       n = n1
     } else {
       let n1 = n + d.to_int64()
       if n1 < n {
         // n+d overflows
-        raise range_err
+        range_err!()
       }
       n = n1
     }
@@ -99,10 +99,10 @@ pub fn parse_int64(str : String, ~base : Int = 0) -> Int64!String {
 
 /// Parse a string in the given base (0, 2 to 36), return a Int number or an error.
 /// If the `~base` argument is 0, the base will be inferred by the prefix.
-pub fn parse_int(str : String, ~base : Int = 0) -> Int!String {
+pub fn parse_int(str : String, ~base : Int = 0) -> Int!StrConvError {
   let n = parse_int64!(str, ~base)
   if n < int_min.to_int64() || n > int_max.to_int64() {
-    raise range_err
+    range_err!()
   }
   n.to_int()
 }
@@ -213,7 +213,7 @@ test "determine_base" {
 
 test "parse_int64" {
   let tests : Array[(String, Result[Int64, String])] = [
-    ("", Err(syntax_err)),
+    ("", Err(syntax_err_str)),
     ("0", Ok(0L)),
     ("-0", Ok(0L)),
     ("+0", Ok(0L)),
@@ -228,16 +228,16 @@ test "parse_int64" {
     ("-9876543210", Ok(-9876543210L)),
     ("9223372036854775807", Ok(9223372036854775807L)),
     ("-9223372036854775807", Ok(-9223372036854775807L)),
-    ("9223372036854775808", Err(range_err)),
+    ("9223372036854775808", Err(range_err_str)),
     ("-9223372036854775808", Ok(-9223372036854775808L)),
-    ("9223372036854775809", Err(range_err)),
-    ("-9223372036854775809", Err(range_err)),
+    ("9223372036854775809", Err(range_err_str)),
+    ("-9223372036854775809", Err(range_err_str)),
     ("-1_2_3_4_5", Ok(-12345L)),
-    ("-_12345", Err(syntax_err)),
-    ("_12345", Err(syntax_err)),
-    ("1__2345", Err(syntax_err)),
-    ("12345_", Err(syntax_err)),
-    ("12345%", Err(syntax_err)),
+    ("-_12345", Err(syntax_err_str)),
+    ("_12345", Err(syntax_err_str)),
+    ("1__2345", Err(syntax_err_str)),
+    ("12345_", Err(syntax_err_str)),
+    ("12345%", Err(syntax_err_str)),
   ]
   for i = 0; i < tests.length(); i = i + 1 {
     let t = tests[i]
@@ -245,7 +245,7 @@ test "parse_int64" {
       try {
         Result::Ok(parse_int64!(t.0))
       } catch {
-        err => Err(err)
+        StrConvError(err) => Err(err)
       },
       t.1,
     )
@@ -254,7 +254,7 @@ test "parse_int64" {
 
 test "parse_int64_base" {
   let tests : Array[(String, Int, Result[Int64, String])] = [
-    ("", 0, Err(syntax_err)),
+    ("", 0, Err(syntax_err_str)),
     ("0", 0, Ok(0L)),
     ("-0", 0, Ok(0L)),
     ("1", 0, Ok(1L)),
@@ -269,12 +269,12 @@ test "parse_int64_base" {
     ("-9876543210", 0, Ok(-9876543210L)),
     ("9223372036854775807", 0, Ok(9223372036854775807L)),
     ("-9223372036854775807", 0, Ok(-9223372036854775807L)),
-    ("9223372036854775808", 0, Err(range_err)),
-    ("12345x", 0, Err(syntax_err)),
-    ("-12345x", 0, Err(syntax_err)),
+    ("9223372036854775808", 0, Err(range_err_str)),
+    ("12345x", 0, Err(syntax_err_str)),
+    ("-12345x", 0, Err(syntax_err_str)),
     ("-9223372036854775808", 0, Ok(-9223372036854775808L)),
-    ("9223372036854775809", 0, Err(range_err)),
-    ("-9223372036854775809", 0, Err(range_err)),
+    ("9223372036854775809", 0, Err(range_err_str)),
+    ("-9223372036854775809", 0, Err(range_err_str)),
     // other bases
     ("h", 18, Ok(17L)),
     ("10", 25, Ok(25L)),
@@ -307,7 +307,7 @@ test "parse_int64_base" {
     (
       "1000000000000000000000000000000000000000000000000000000000000000",
       2,
-      Err(range_err),
+      Err(range_err_str),
     ),
     (
       "-1000000000000000000000000000000000000000000000000000000000000000",
@@ -317,7 +317,7 @@ test "parse_int64_base" {
     (
       "-1000000000000000000000000000000000000000000000000000000000000001",
       2,
-      Err(range_err),
+      Err(range_err_str),
     ),
     // base 8
     ("-10", 8, Ok(-8L)),
@@ -330,25 +330,25 @@ test "parse_int64_base" {
     // underscores
     ("-0x_1_2_3_4_5", 0, Ok(-0x12345L)),
     ("0x_1_2_3_4_5", 0, Ok(0x12345L)),
-    ("-_0x12345", 0, Err(syntax_err)),
-    ("_-0x12345", 0, Err(syntax_err)),
-    ("_0x12345", 0, Err(syntax_err)),
-    ("0x__12345", 0, Err(syntax_err)),
-    ("0x1__2345", 0, Err(syntax_err)),
-    ("0x1234__5", 0, Err(syntax_err)),
-    ("0x12345_", 0, Err(syntax_err)),
+    ("-_0x12345", 0, Err(syntax_err_str)),
+    ("_-0x12345", 0, Err(syntax_err_str)),
+    ("_0x12345", 0, Err(syntax_err_str)),
+    ("0x__12345", 0, Err(syntax_err_str)),
+    ("0x1__2345", 0, Err(syntax_err_str)),
+    ("0x1234__5", 0, Err(syntax_err_str)),
+    ("0x12345_", 0, Err(syntax_err_str)),
     ("-0_1_2_3_4_5", 0, Ok(-12345L)),
     ("0_1_2_3_4_5", 0, Ok(12345L)),
-    ("-_012345", 0, Err(syntax_err)),
-    ("_-012345", 0, Err(syntax_err)),
-    ("_012345", 0, Err(syntax_err)),
-    ("0__12345", 0, Err(syntax_err)),
-    ("01234__5", 0, Err(syntax_err)),
-    ("012345_", 0, Err(syntax_err)),
+    ("-_012345", 0, Err(syntax_err_str)),
+    ("_-012345", 0, Err(syntax_err_str)),
+    ("_012345", 0, Err(syntax_err_str)),
+    ("0__12345", 0, Err(syntax_err_str)),
+    ("01234__5", 0, Err(syntax_err_str)),
+    ("012345_", 0, Err(syntax_err_str)),
     ("+0xf", 0, Ok(0xfL)),
     ("-0xf", 0, Ok(-0xfL)),
-    ("0x+f", 0, Err(syntax_err)),
-    ("0x-f", 0, Err(syntax_err)),
+    ("0x+f", 0, Err(syntax_err_str)),
+    ("0x-f", 0, Err(syntax_err_str)),
   ]
   for i = 0; i < tests.length(); i = i + 1 {
     let t = tests[i]
@@ -356,7 +356,7 @@ test "parse_int64_base" {
       try {
         Result::Ok(parse_int64!(t.0, base=t.1))
       } catch {
-        err => Err(err)
+        StrConvError(err) => Err(err)
       },
       t.2,
     )
@@ -365,7 +365,7 @@ test "parse_int64_base" {
 
 test "parse_int" {
   let tests : Array[(String, Result[Int, String])] = [
-    ("", Err(syntax_err)),
+    ("", Err(syntax_err_str)),
     ("0", Ok(0)),
     ("-0", Ok(0)),
     ("1", Ok(1)),
@@ -374,22 +374,22 @@ test "parse_int" {
     ("-12345", Ok(-12345)),
     ("012345", Ok(12345)),
     ("-012345", Ok(-12345)),
-    ("12345x", Err(syntax_err)),
-    ("-12345x", Err(syntax_err)),
+    ("12345x", Err(syntax_err_str)),
+    ("-12345x", Err(syntax_err_str)),
     ("987654321", Ok(987654321)),
     ("-987654321", Ok(-987654321)),
     ("2147483647", Ok((1).lsl(31) - 1)),
     ("-2147483647", Ok(-((1).lsl(31) - 1))),
-    ("2147483648", Err(range_err)),
+    ("2147483648", Err(range_err_str)),
     ("-2147483648", Ok((-1).lsl(31))),
-    ("2147483649", Err(range_err)),
-    ("-2147483649", Err(range_err)),
+    ("2147483649", Err(range_err_str)),
+    ("-2147483649", Err(range_err_str)),
     ("-1_2_3_4_5", Ok(-12345)),
-    ("-_12345", Err(syntax_err)),
-    ("_12345", Err(syntax_err)),
-    ("1__2345", Err(syntax_err)),
-    ("12345_", Err(syntax_err)),
-    ("123%45", Err(syntax_err)),
+    ("-_12345", Err(syntax_err_str)),
+    ("_12345", Err(syntax_err_str)),
+    ("1__2345", Err(syntax_err_str)),
+    ("12345_", Err(syntax_err_str)),
+    ("123%45", Err(syntax_err_str)),
   ]
   for i = 0; i < tests.length(); i = i + 1 {
     let t = tests[i]
@@ -397,7 +397,7 @@ test "parse_int" {
       try {
         Result::Ok(parse_int!(t.0))
       } catch {
-        err => Err(err)
+        StrConvError(err) => Err(err)
       },
       t.1,
     )

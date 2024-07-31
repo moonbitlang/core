@@ -13,7 +13,7 @@
 // limitations under the License.
 
 pub trait FromStr {
-  from_string(String) -> Self!String
+  from_string(String) -> Self!StrConvError
 }
 
 pub impl FromStr for Bool with from_string(str) { parse_bool!(str) }
@@ -24,7 +24,7 @@ pub impl FromStr for Int64 with from_string(str) { parse_int64!(str) }
 
 pub impl FromStr for Double with from_string(str) { parse_double!(str) }
 
-pub fn parse[A : FromStr](str : String) -> A!String {
+pub fn parse[A : FromStr](str : String) -> A!StrConvError {
   A::from_string!(str)
 }
 

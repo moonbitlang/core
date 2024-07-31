@@ -53,10 +53,10 @@ pub fn Decimal::from_int64(v : Int64) -> Decimal {
 }
 
 /// Create a decimal from number string.
-pub fn Decimal::parse_decimal(str : String) -> Decimal!String {
+pub fn Decimal::parse_decimal(str : String) -> Decimal!StrConvError {
   let d = Decimal::new()
   if str.length() <= 0 {
-    raise syntax_err
+    syntax_err!()
   }
   let mut i = 0
   // read digits part
@@ -64,13 +64,13 @@ pub fn Decimal::parse_decimal(str : String) -> Decimal!String {
   let mut has_digits = false
   while i < str.length() {
     match str[i] {
-      '-' => if i != 0 { raise syntax_err } else { d.negative = true }
-      '+' => if i != 0 { raise syntax_err }
+      '-' => if i != 0 { syntax_err!() } else { d.negative = true }
+      '+' => if i != 0 { syntax_err!() }
       '_' => () // skip underscores
       '.' => {
         // decimal point
         if has_dp {
-          raise syntax_err
+          syntax_err!()
         }
         has_dp = true
         d.decimal_point = d.digits_num
@@ -96,7 +96,7 @@ pub fn Decimal::parse_decimal(str : String) -> Decimal!String {
     i += 1
   }
   if not(has_digits) {
-    raise syntax_err
+    syntax_err!()
   }
   if not(has_dp) {
     d.decimal_point = d.digits_num
@@ -105,7 +105,7 @@ pub fn Decimal::parse_decimal(str : String) -> Decimal!String {
   if i < str.length() && (str[i] == 'e' || str[i] == 'E') {
     i += 1
     if i >= str.length() {
-      raise syntax_err
+      syntax_err!()
     }
     let mut exp_sign = 1
     if str[i] == '+' {
@@ -115,7 +115,7 @@ pub fn Decimal::parse_decimal(str : String) -> Decimal!String {
       exp_sign = -1
     }
     if i >= str.length() || str[i] < '0' || str[i] > '9' {
-      raise syntax_err
+      syntax_err!()
     }
     let mut exp = 0
     while i < str.length() && (('0' <= str[i] && str[i] <= '9') || str[i] == '_') {
@@ -131,13 +131,13 @@ pub fn Decimal::parse_decimal(str : String) -> Decimal!String {
   // finish
   d.trim()
   if i != str.length() {
-    raise syntax_err
+    syntax_err!()
   }
   d
 }
 
 /// Convert the decimal to Double.
-pub fn to_double(self : Decimal) -> Double!String {
+pub fn to_double(self : Decimal) -> Double!StrConvError {
   let mut exponent = 0
   let mut mantissa = 0L
   // check the underflow and overflow
@@ -151,7 +151,7 @@ pub fn to_double(self : Decimal) -> Double!String {
   }
   if self.decimal_point > 310 {
     // overflow
-    raise range_err
+    range_err!()
   }
 
   // scale by powers of 2 until in range [0.5 .. 1]
@@ -192,7 +192,7 @@ pub fn to_double(self : Decimal) -> Double!String {
   }
   if exponent - double_info.bias >= (1).lsl(double_info.exponent_bits) - 1 {
     // overflow
-    raise range_err
+    range_err!()
   }
 
   // multiply by (2 ** precision) and round to get mantissa
@@ -206,7 +206,7 @@ pub fn to_double(self : Decimal) -> Double!String {
     exponent += 1
     if exponent - double_info.bias >= (1).lsl(double_info.exponent_bits) - 1 {
       // overflow
-      raise range_err
+      range_err!()
     }
   }
 

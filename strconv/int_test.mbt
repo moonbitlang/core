@@ -20,7 +20,7 @@ fn parse_as_result(s : String, ~base : Int) -> Result[Int64, String] {
   try {
     @strconv.parse_int64!(s, ~base) |> Ok
   } catch {
-    err => Err(err)
+    StrConvError(err) => Err(err)
   }
 }
 
