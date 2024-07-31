@@ -164,14 +164,10 @@ pub fn to_array[K, V](self : T[K, V]) -> Array[(K, V)] {
 /// Returns a iterator.
 pub fn iter[K, V](self : T[K, V]) -> Iter[(K, V)] {
   Iter::new(
-    fn(yield) {
+    fn!(yield) {
       let arr = self.to_array()
       for i = 0, len = arr.length(); i < len; i = i + 1 {
-        match arr[i] {
-          (key, value) => if yield((key, value)) == IterEnd { break IterEnd }
-        }
-      } else {
-        IterContinue
+        yield!(arr[i])
       }
     },
   )

@@ -311,12 +311,10 @@ pub fn iter[A](self : T[A]) -> Iter[A] {
     fn(yield) {
       loop self.first {
         Cons({ content, next }) => {
-          if yield(content) == IterEnd {
-            break IterEnd
-          }
+          yield!(content)
           continue next
         }
-        Nil => IterContinue
+        Nil => ()
       }
     },
   )

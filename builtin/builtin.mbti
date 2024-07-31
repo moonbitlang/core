@@ -186,25 +186,17 @@ impl Iter {
   fold[T, B](Self[T], ~init : B, (B, T) -> B) -> B
   iter[T](Self[T]) -> Self[T]
   map[T, R](Self[T], (T) -> R) -> Self[R]
-  new[T](((T) -> IterResult) -> IterResult) -> Self[T]
+  new[T](((T) -> Unit!Error) -> Unit!Error) -> Self[T]
   op_add[T](Self[T], Self[T]) -> Self[T]
   prepend[T](Self[T], T) -> Self[T]
   repeat[T](T) -> Self[T]
-  run[T](Self[T], (T) -> IterResult) -> IterResult
+  run[T](Self[T], (T) -> Unit!Error) -> Unit!Error
   singleton[T](T) -> Self[T]
   take[T](Self[T], Int) -> Self[T]
   take_while[T](Self[T], (T) -> Bool) -> Self[T]
   tap[T](Self[T], (T) -> Unit) -> Self[T]
   to_array[T](Self[T]) -> Array[T]
   to_string[T : Show](Self[T]) -> String
-}
-
-pub enum IterResult {
-  IterEnd
-  IterContinue
-}
-impl IterResult {
-  op_equal(Self, Self) -> Bool
 }
 
 pub type Js_string

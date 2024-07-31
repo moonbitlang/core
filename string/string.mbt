@@ -96,19 +96,12 @@ pub fn iter(self : String) -> Iter[Char] {
           let c2 = self[index + 1]
           if is_trailing_surrogate(c2) {
             let c = code_point_of_surrogate_pair(c1, c2)
-            if yield(c) == IterContinue {
-              continue index + 2
-            } else {
-              break IterEnd
-            }
+            yield!(c)
+            continue index + 2
           }
         }
         //TODO: handle garbage input
-        if yield(c1) == IterEnd {
-          break IterEnd
-        }
-      } else {
-        IterContinue
+        yield!(c1)
       }
     },
   )

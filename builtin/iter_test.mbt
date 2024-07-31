@@ -233,9 +233,8 @@ test "collect" {
   let iter = Iter::new(
     fn(yield) {
       for i = 0, len = arr.length(); i < len; i = i + 1 {
-        yield(arr[i]) |> ignore
+        yield!(arr[i])
       }
-      IterContinue
     },
   )
   let vec = iter.collect()
@@ -311,15 +310,10 @@ test "eachi" {
 // For testing purposes
 fn test_from_array[T](arr : Array[T]) -> Iter[T] {
   Iter::new(
-    fn {
-      yield =>
-        for i = 0; i < arr.length(); i = i + 1 {
-          if yield(arr[i]) == IterEnd {
-            break IterEnd
-          }
-        } else {
-          IterContinue
-        }
+    fn(yield) {
+      for i = 0; i < arr.length(); i = i + 1 {
+        yield!(arr[i])
+      }
     },
   )
 }

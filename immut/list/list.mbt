@@ -823,11 +823,9 @@ pub fn iter[A](self : T[A]) -> Iter[A] {
   Iter::new(
     fn(yield) {
       loop self {
-        Nil => IterContinue
+        Nil => ()
         Cons(head, tail) => {
-          if yield(head) == IterEnd {
-            break IterEnd
-          }
+          yield!(head)
           continue tail
         }
       }

@@ -78,17 +78,14 @@ fn each[T](self : Bucket[T], f : (T) -> Unit) -> Unit {
 
 fn iter[T](self : Bucket[T]) -> Iter[T] {
   Iter::new(
-    fn {
-      f =>
-        loop self {
-          Just_One(k) => f(k)
-          More(k, rest) =>
-            if f(k) == IterContinue {
-              continue rest
-            } else {
-              IterEnd
-            }
+    fn(yield) {
+      loop self {
+        Just_One(k) => yield!(k)
+        More(k, rest) => {
+          yield!(k)
+          continue rest
         }
+      }
     },
   )
 }

@@ -945,11 +945,7 @@ pub fn iter[T](self : FixedArray[T]) -> Iter[T] {
   Iter::new(
     fn(yield) {
       for i = 0, len = self.length(); i < len; i = i + 1 {
-        if yield(self[i]) == IterEnd {
-          break IterEnd
-        }
-      } else {
-        IterContinue
+        yield!(self[i])
       }
     },
   )

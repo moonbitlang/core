@@ -197,11 +197,9 @@ pub fn iter[K](self : T[K]) -> Iter[K] {
     fn(yield) {
       for i = 0, len = self.entries.length(); i < len; i = i + 1 {
         match self.entries[i] {
-          Some({ key, .. }) => if yield(key) == IterEnd { break IterEnd }
+          Some({ key, .. }) => yield!(key)
           None => continue
         }
-      } else {
-        IterContinue
       }
     },
   )

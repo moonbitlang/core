@@ -49,11 +49,7 @@ pub fn iter[A](self : T[A]) -> Iter[A] {
     fn(yield) {
       let arr = self.to_array()
       for i = 0; i < self.size; i = i + 1 {
-        if yield(arr[i]) == IterEnd {
-          break IterEnd
-        }
-      } else {
-        IterContinue
+        yield!(arr[i])
       }
     },
   )

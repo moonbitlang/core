@@ -38,14 +38,9 @@ pub fn iter[K, V](self : T[K, V]) -> Iter[(K, V)] {
       let len = self.entries.length()
       for i = 0; i < len; i = i + 1 {
         match self.entries[i] {
-          Some({ key, value, .. }) =>
-            if yield((key, value)) == IterEnd {
-              break IterEnd
-            }
+          Some({ key, value, .. }) => yield!((key, value))
           None => continue
         }
-      } else {
-        IterContinue
       }
     },
   )

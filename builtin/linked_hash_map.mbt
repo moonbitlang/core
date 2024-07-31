@@ -410,49 +410,39 @@ pub fn clear[K, V](self : Map[K, V]) -> Unit {
 
 /// Returns the iterator of the hash map, provide elements in the order of insertion.
 pub fn iter[K, V](self : Map[K, V]) -> Iter[(K, V)] {
-  Iter::new(
-    fn(yield) {
-      loop self.head {
-        Some({ key, value, idx, .. }) => {
-          if yield((key, value)) == IterEnd {
-            break IterEnd
-          }
-          continue self.list[idx].next
-        }
-        None => break IterContinue
+  fn!(yield) {
+    loop self.head {
+      Some({ key, value, idx, .. }) => {
+        yield!((key, value))
+        continue self.list[idx].next
       }
-    },
-  )
+      None => ()
+    }
+  }
 }
 
 pub fn keys[K, V](self : Map[K, V]) -> Iter[K] {
-  Iter::new(
-    fn(yield) {
-      loop self.head {
-        Some({ key, idx, .. }) =>
-          match yield(key) {
-            IterEnd => IterEnd
-            IterContinue => continue self.list[idx].next
-          }
-        None => IterContinue
+  fn!(yield) {
+    loop self.head {
+      Some({ key, idx, .. }) => {
+        yield!(key)
+        continue self.list[idx].next
       }
-    },
-  )
+      None => ()
+    }
+  }
 }
 
 pub fn values[K, V](self : Map[K, V]) -> Iter[V] {
-  Iter::new(
-    fn(yield) {
-      loop self.head {
-        Some({ value, idx, .. }) =>
-          match yield(value) {
-            IterEnd => IterEnd
-            IterContinue => continue self.list[idx].next
-          }
-        None => IterContinue
+  fn!(yield) {
+    loop self.head {
+      Some({ value, idx, .. }) => {
+        yield!(value)
+        continue self.list[idx].next
       }
-    },
-  )
+      None => ()
+    }
+  }
 }
 
 /// Converts the hash map to an array.

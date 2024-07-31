@@ -13,17 +13,14 @@
 // limitations under the License.
 
 // Types
-type Iter[T] ((T) -> IterResult) -> IterResult
+type Iter[T] ((T) -> Unit!Error) -> Unit!Error
 
 //TODO: Add intrinsic for Iter::run
-pub fn run[T](self : Iter[T], f : (T) -> IterResult) -> IterResult {
-  (self.0)(f)
+pub fn run[T](self : Iter[T], f : (T) -> Unit!Error) -> Unit!Error {
+  (self.0)!(f)
 }
 
-pub enum IterResult {
-  IterEnd // false
-  IterContinue // true
-} derive(Eq)
+priv type! IterBreak Unit
 
 pub impl[T : Show] Show for Iter[T] with output(self, logger) {
   Show::output(self.to_array(), logger)
@@ -48,21 +45,33 @@ pub fn to_string[T : Show](self : Iter[T]) -> String {
 /// TODO: change the intrinsic to match the function name
 /// @intrinsic %iter.iter
 pub fn each[T](self : Iter[T], f : (T) -> Unit) -> Unit {
-  self.run(
-    fn(yield) {
-      f(yield)
-      IterContinue
-    },
-  )
-  |> ignore
+  try {
+    self.run!(fn { x => f(x) })
+  } catch {
+    _ => abort("unhandled error in iter")
+  }
 }
 
 pub fn any[T](self : Iter[T], f : (T) -> Bool) -> Bool {
-  self.run(fn(k) { if f(k) { IterEnd } else { IterContinue } }) != IterContinue
+  try {
+    self.run!(fn(x) { if f(x) { raise IterBreak(()) } })
+  } catch {
+    IterBreak(_) => true
+    _ => abort("unhandled error in iter")
+  } else {
+    _ => false
+  }
 }
 
 pub fn all[T](self : Iter[T], f : (T) -> Bool) -> Bool {
-  self.run(fn(k) { if not(f(k)) { IterEnd } else { IterContinue } }) == IterContinue
+  try {
+    self.run!(fn(x) { if not(f(x)) { raise IterBreak(()) } })
+  } catch {
+    IterBreak(_) => false
+    _ => abort("unhandled error in iter")
+  } else {
+    _ => true
+  }
 }
 
 /// Iterates over each element in the iterator, applying the function `f` to each element with index.
@@ -78,14 +87,16 @@ pub fn all[T](self : Iter[T], f : (T) -> Bool) -> Bool {
 /// TODO: Add intrinsic
 pub fn eachi[T](self : Iter[T], f : (Int, T) -> Unit) -> Unit {
   let mut i = 0
-  self.run(
-    fn(a) {
-      f(i, a)
-      i = i + 1
-      IterContinue
-    },
-  )
-  |> ignore
+  try {
+    self.run!(
+      fn(a) {
+        f(i, a)
+        i = i + 1
+      },
+    )
+  } catch {
+    _ => abort("unhandled error in iter")
+  }
 }
 
 /// Folds the elements of the iterator using the given function, starting with the given initial value.
@@ -107,13 +118,13 @@ pub fn eachi[T](self : Iter[T], f : (Int, T) -> Unit) -> Unit {
 /// @intrinsic %iter.reduce
 pub fn fold[T, B](self : Iter[T], ~init : B, f : (B, T) -> B) -> B {
   let mut acc = init
-  let _ = self.run(
-    fn(yield) {
-      acc = f(acc, yield)
-      IterContinue
-    },
-  )
-  acc
+  try {
+    self.run!(fn { x => acc = f(acc, x) })
+  } catch {
+    _ => abort("unhandled error in iter")
+  } else {
+    _ => acc
+  }
 }
 
 /// Counts the number of elements in the iterator.
@@ -136,7 +147,7 @@ pub fn count[T](self : Iter[T]) -> Int {
 // Producers
 
 /// Do not use this method, it is for internal use only.
-pub fn Iter::new[T](f : ((T) -> IterResult) -> IterResult) -> Iter[T] {
+pub fn Iter::new[T](f : ((T) -> Unit!Error) -> Unit!Error) -> Iter[T] {
   Iter(f)
 }
 
@@ -150,7 +161,7 @@ pub fn Iter::new[T](f : ((T) -> IterResult) -> IterResult) -> Iter[T] {
 ///
 /// Returns an empty iterator of type `Iter[T]`.
 pub fn Iter::empty[T]() -> Iter[T] {
-  fn { _ => IterContinue }
+  fn! { _ => () }
 }
 
 /// Creates an iterator that contains a single element.
@@ -167,7 +178,7 @@ pub fn Iter::empty[T]() -> Iter[T] {
 ///
 /// Returns an iterator of type `Iter[T]` that contains the single element `a`.
 pub fn Iter::singleton[T](a : T) -> Iter[T] {
-  fn { yield => yield(a) }
+  fn! { yield => yield!(a) }
 }
 
 /// Creates an iterator that repeats the given element indefinitely.
@@ -185,10 +196,9 @@ pub fn Iter::singleton[T](a : T) -> Iter[T] {
 /// Returns an iterator of type `Iter[T]` that repeats the element `a` indefinitely.
 /// @intrinsic %iter.repeat
 pub fn Iter::repeat[T](a : T) -> Iter[T] {
-  fn(yield) {
-    loop yield(a) {
-      IterContinue => continue yield(a)
-      IterEnd => IterEnd
+  fn!(yield) {
+    for {
+      yield!(a)
     }
   }
 }
@@ -210,24 +220,16 @@ pub fn until(self : Int, end : Int, ~step : Int = 1) -> Iter[Int] {
     return Iter::empty()
   }
   if step < 0 {
-    return fn(yield) {
+    return fn!(yield) {
       for i = self; i > end; i = i + step {
-        if yield(i) == IterEnd {
-          break IterEnd
-        }
-      } else {
-        IterContinue
+        yield!(i)
       }
     }
   }
   // step > 0
-  fn(yield) {
+  fn!(yield) {
     for i = self; i < end; i = i + step {
-      if yield(i) == IterEnd {
-        break IterEnd
-      }
-    } else {
-      IterContinue
+      yield!(i)
     }
   }
 }
@@ -249,23 +251,15 @@ pub fn until(self : Int64, end : Int64, ~step : Int64 = 1L) -> Iter[Int64] {
     return Iter::empty()
   }
   if step < 0L {
-    return fn(yield) {
+    return fn!(yield) {
       for i = self; i > end; i = i + step {
-        if yield(i) == IterEnd {
-          break IterEnd
-        }
-      } else {
-        IterContinue
+        yield!(i)
       }
     }
   }
-  fn(yield) {
+  fn!(yield) {
     for i = self; i < end; i = i + step {
-      if yield(i) == IterEnd {
-        break IterEnd
-      }
-    } else {
-      IterContinue
+      yield!(i)
     }
   }
 }
@@ -287,23 +281,15 @@ pub fn until(self : Double, end : Double, ~step : Double = 1.0) -> Iter[Double] 
     return Iter::empty()
   }
   if step < 0.0 {
-    return fn(yield) {
+    return fn!(yield) {
       for i = self; i > end; i = i + step {
-        if yield(i) == IterEnd {
-          break IterEnd
-        }
-      } else {
-        IterContinue
+        yield!(i)
       }
     }
   }
-  fn(yield) {
+  fn!(yield) {
     for i = self; i < end; i = i + step {
-      if yield(i) == IterEnd {
-        break IterEnd
-      }
-    } else {
-      IterContinue
+      yield!(i)
     }
   }
 }
@@ -326,7 +312,7 @@ pub fn until(self : Double, end : Double, ~step : Double = 1.0) -> Iter[Double] 
 /// A new iterator that only contains the elements for which the predicate function returns `IterContinue`.
 /// @intrinsic %iter.filter
 pub fn filter[T](self : Iter[T], f : (T) -> Bool) -> Iter[T] {
-  fn(yield) { self.run(fn { a => if f(a) { yield(a) } else { IterContinue } }) }
+  fn!(yield) { self.run!(fn { a => if f(a) { yield!(a) } }) }
 }
 
 /// Transforms the elements of the iterator using a mapping function.
@@ -346,7 +332,7 @@ pub fn filter[T](self : Iter[T], f : (T) -> Bool) -> Iter[T] {
 /// A new iterator that contains the transformed elements.
 /// @intrinsic %iter.map
 pub fn map[T, R](self : Iter[T], f : (T) -> R) -> Iter[R] {
-  fn { yield => self.run(fn { a => yield(f(a)) }) }
+  fn! { yield => self.run!(fn { a => yield!(f(a)) }) }
 }
 
 /// Transforms each element of the iterator into an iterator and flattens the resulting iterators into a single iterator.
@@ -366,7 +352,7 @@ pub fn map[T, R](self : Iter[T], f : (T) -> R) -> Iter[R] {
 /// A new iterator that contains the flattened elements.
 /// @intrinsic %iter.flat_map
 pub fn flat_map[T, R](self : Iter[T], f : (T) -> Iter[R]) -> Iter[R] {
-  fn { yield => self.run(fn { x => f(x).run(yield) }) }
+  fn! { yield => self.run!(fn { x => f(x).run!(yield) }) }
 }
 
 /// Applies a function to each element of the iterator without modifying the iterator.
@@ -390,6 +376,8 @@ pub fn tap[T](self : Iter[T], f : (T) -> Unit) -> Iter[T] {
   self
 }
 
+priv type! IterTake Unit
+
 /// Takes the first `n` elements from the iterator.
 ///
 /// # Type Parameters
@@ -406,27 +394,21 @@ pub fn tap[T](self : Iter[T], f : (T) -> Unit) -> Iter[T] {
 /// A new iterator that contains the first `n` elements.
 /// @intrinsic %iter.take
 pub fn take[T](self : Iter[T], n : Int) -> Iter[T] {
-  fn(yield) {
+  fn!(yield) {
     let mut i = 0
-    let iter_result = self.run(
-      fn {
-        a =>
-          if i < n && yield(a) == IterContinue {
-            i = i + 1
-            IterContinue
-          } else {
-            IterEnd
+    try {
+      self.run!(
+        fn(a) {
+          if i >= n {
+            raise IterTake(())
           }
-      },
-    )
-    // The `take` operator returns `IterEnd` only when any call to `yield(a)` returns `IterEnd`.
-    // Otherwise, it returns `IterContinue`, including when `i` reaches the count `n`.
-    if iter_result == IterContinue {
-      iter_result
-    } else if i == n {
-      IterContinue
-    } else {
-      IterEnd
+          i = i + 1
+          yield!(a)
+        },
+      )
+    } catch {
+      IterTake(_) => ()
+      err => raise err
     }
   }
 }
@@ -446,25 +428,13 @@ pub fn take[T](self : Iter[T], n : Int) -> Iter[T] {
 ///
 /// A new iterator that contains the elements as long as the predicate function returns `true`.
 pub fn take_while[T](self : Iter[T], f : (T) -> Bool) -> Iter[T] {
-  fn(yield) {
-    // `r` represents the overall return value. It is set to `IterEnd` only if `yield(a)` returns `IterEnd`.
-    let mut r : IterResult = IterContinue
-    self.run(
-      fn(a) {
-        if f(a) {
-          if yield(a) == IterContinue {
-            IterContinue
-          } else {
-            r = IterEnd
-            IterEnd
-          }
-        } else {
-          IterEnd
-        }
-      },
-    )
-    |> ignore
-    r
+  fn!(yield) {
+    try {
+      self.run!(fn(a) { if f(a) { yield!(a) } else { raise IterTake(()) } })
+    } catch {
+      IterTake(_) => ()
+      err => raise err
+    }
   }
 }
 
@@ -483,18 +453,9 @@ pub fn take_while[T](self : Iter[T], f : (T) -> Bool) -> Iter[T] {
 ///
 /// A new iterator that starts after skipping the first `n` elements.
 pub fn drop[T](self : Iter[T], n : Int) -> Iter[T] {
-  fn(yield) {
+  fn!(yield) {
     let mut i = 0
-    self.run(
-      fn(a) {
-        if i < n {
-          i = i + 1
-          IterContinue
-        } else {
-          yield(a)
-        }
-      },
-    )
+    self.run!(fn(a) { if i < n { i = i + 1 } else { yield!(a) } })
   }
 }
 
@@ -513,15 +474,13 @@ pub fn drop[T](self : Iter[T], n : Int) -> Iter[T] {
 ///
 /// A new iterator that starts after skipping the elements as long as the predicate function returns `true`.
 pub fn drop_while[T](self : Iter[T], f : (T) -> Bool) -> Iter[T] {
-  fn(yield) {
+  fn!(yield) {
     let mut dropping = true
-    self.run(
+    self.run!(
       fn(a) {
-        if dropping && f(a) {
-          IterContinue
-        } else {
+        if not(dropping && f(a)) {
           dropping = false
-          yield(a)
+          yield!(a)
         }
       },
     )
@@ -544,16 +503,19 @@ pub fn drop_while[T](self : Iter[T], f : (T) -> Bool) -> Iter[T] {
 /// An `Option` that contains the first element that satisfies the predicate function, or `None` if no such element is found.
 pub fn find_first[T](self : Iter[T], f : (T) -> Bool) -> T? {
   let mut result : T? = None
-  let _ = self.run(
-    fn(a) {
-      if f(a) {
-        result = Some(a)
-        IterEnd
-      } else {
-        IterContinue
-      }
-    },
-  )
+  try {
+    self.run!(
+      fn(a) {
+        if f(a) {
+          result = Some(a)
+          raise IterBreak(())
+        }
+      },
+    )
+  } catch {
+    IterBreak(_) => ()
+    _ => abort("unhandled error in iter")
+  }
   result
 }
 
@@ -572,7 +534,10 @@ pub fn find_first[T](self : Iter[T], f : (T) -> Bool) -> T? {
 ///
 /// Returns a new iterator with the element `a` prepended to the original iterator.
 pub fn prepend[T](self : Iter[T], a : T) -> Iter[T] {
-  fn(yield) { if yield(a) == IterContinue { self.run(yield) } else { IterEnd } }
+  fn!(yield) {
+    yield!(a)
+    self.run!(yield)
+  }
 }
 
 /// Appends a single element to the end of the iterator.
@@ -590,7 +555,10 @@ pub fn prepend[T](self : Iter[T], a : T) -> Iter[T] {
 ///
 /// Returns a new iterator with the element `a` appended to the original iterator.
 pub fn append[T](self : Iter[T], a : T) -> Iter[T] {
-  fn(yield) { if self.run(yield) == IterContinue { yield(a) } else { IterEnd } }
+  fn!(yield) {
+    self.run!(yield)
+    yield!(a)
+  }
 }
 
 /// Combines two iterators into one by appending the elements of the second iterator to the first.
@@ -609,12 +577,9 @@ pub fn append[T](self : Iter[T], a : T) -> Iter[T] {
 /// Returns a new iterator that contains the elements of `self` followed by the elements of `other`.
 /// @intrinsic %iter.concat
 pub fn Iter::concat[T](self : Iter[T], other : Iter[T]) -> Iter[T] {
-  fn(yield) {
-    if self.run(yield) == IterContinue {
-      other.run(yield)
-    } else {
-      IterEnd
-    }
+  fn!(yield) {
+    self.run!(yield)
+    other.run!(yield)
   }
 }
 
