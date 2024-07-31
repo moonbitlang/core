@@ -175,6 +175,8 @@ pub fn String::make(length : Int, value : Char) -> String {
   }
 }
 
+pub type! InspectError String
+
 pub fn inspect(
   obj : Show,
   ~content : String = "",
