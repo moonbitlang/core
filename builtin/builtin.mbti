@@ -5,6 +5,8 @@ fn abort[T](String) -> T
 
 fn assert_eq[T : Eq + Show](T, T, ~loc : SourceLoc = _) -> Unit!String
 
+fn fail[T](String) -> T!Failure
+
 fn ignore[T](T) -> Unit
 
 fn inspect(Show, ~content : String = .., ~loc : SourceLoc = _, ~args_loc : ArgsLoc = _) -> Unit!String
@@ -143,6 +145,8 @@ impl Buffer {
   write_sub_string(Self, String, Int, Int) -> Unit
 }
 
+pub type! Failure String
+
 type Hasher
 impl Hasher {
   combine[T : Hash](Self, T) -> Unit
@@ -160,6 +164,8 @@ impl Hasher {
   finalize(Self) -> Int
   new(~seed : Int = ..) -> Self
 }
+
+pub type! InspectError String
 
 type Iter
 impl Iter {
