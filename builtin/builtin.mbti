@@ -394,6 +394,7 @@ impl Double {
   until(Double, Double, ~step : Double = ..) -> Iter[Double]
 }
 impl String {
+  escape(String) -> String
   get(String, Int) -> Char
   length(String) -> Int
   make(Int, Char) -> String
