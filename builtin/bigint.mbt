@@ -441,7 +441,7 @@ fn grade_school_div(self : BigInt, other : BigInt) -> (BigInt, BigInt) {
 // Bitwise Operations
 
 /// Left shift a bigint
-/// @alert deprecate "Use shl instead"
+/// /// @alert deprecate "Use shl instead"
 pub fn lsl(self : BigInt, n : Int) -> BigInt {
   if n < 0 {
     abort("negative shift count")
@@ -517,7 +517,7 @@ pub fn shl(self : BigInt, n : Int) -> BigInt {
 
 /// Right shift a bigint
 /// it fills the vacated bits on the left with zeros.
-/// @alert deprecate "Use shr instead"
+/// /// @alert deprecate "Use shr instead"
 pub fn lsr(self : BigInt, n : Int) -> BigInt {
   if n < 0 {
     abort("negative shift count")
