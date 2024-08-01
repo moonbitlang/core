@@ -16,6 +16,10 @@ fn is_true(Bool, ~loc : SourceLoc = _) -> Unit!Error
 fn ne[T : Show + Eq](T, T, ~loc : SourceLoc = _) -> Unit!Error
 
 // Types and methods
+pub struct T {
+  pub name : String
+  pub buffer : Buffer
+}
 
 // Traits
 
