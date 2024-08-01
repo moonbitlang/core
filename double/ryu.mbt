@@ -45,110 +45,94 @@ fn copy_special_str(sign : Bool, exponent : Bool, mantissa : Bool) -> String {
   return s + "0.0"
 }
 
-fn u64_lt(x : Int64, y : Int64) -> Bool {
-  x.to_uint64().compare(y.to_uint64()) == -1
-}
-
-fn umul128(a : Int64, b : Int64) -> (Int64, Int64) {
-  let aLo : Int = a.to_int()
-  let aHi : Int = a.lsr(32).to_int()
-  let bLo : Int = b.to_int()
-  let bHi : Int = b.lsr(32).to_int()
-  let b00 : Int64 = (UInt64::extend_uint(aLo.to_uint()) * UInt64::extend_uint(
-    bLo.to_uint(),
-  )).to_int64()
-  let b01 : Int64 = (UInt64::extend_uint(aLo.to_uint()) * UInt64::extend_uint(
-    bHi.to_uint(),
-  )).to_int64()
-  let b10 : Int64 = (UInt64::extend_uint(aHi.to_uint()) * UInt64::extend_uint(
-    bLo.to_uint(),
-  )).to_int64()
-  let b11 : Int64 = (UInt64::extend_uint(aHi.to_uint()) * UInt64::extend_uint(
-    bHi.to_uint(),
-  )).to_int64()
-  let b00Lo : Int = b00.to_int()
-  let b00Hi : Int = b00.lsr(32).to_int()
-  let mid1 : Int64 = b10 + UInt64::extend_uint(b00Hi.to_uint()).to_int64()
-  let mid1Lo : Int = mid1.to_int()
-  let mid1Hi : Int = mid1.lsr(32).to_int()
-  let mid2 : Int64 = b01 + UInt64::extend_uint(mid1Lo.to_uint()).to_int64()
-  let mid2Lo : Int = mid2.to_int()
-  let mid2Hi : Int = mid2.lsr(32).to_int()
-  let pHi : Int64 = b11 + UInt64::extend_uint(mid1Hi.to_uint()).to_int64() + UInt64::extend_uint(
-      mid2Hi.to_uint(),
-    ).to_int64()
-  let pLo : Int64 = UInt64::extend_uint(mid2Lo.to_uint()).to_int64().lsl(32).lor(
-    UInt64::extend_uint(b00Lo.to_uint()).to_int64(),
-  )
+fn umul128(a : UInt64, b : UInt64) -> (UInt64, UInt64) {
+  let aLo = a.to_uint()
+  let aHi = a.lsr(32).to_uint()
+  let bLo = b.to_uint()
+  let bHi = b.lsr(32).to_uint()
+  let b00 = aLo.to_uint64() * bLo.to_uint64()
+  let b01 = aLo.to_uint64() * bHi.to_uint64()
+  let b10 = aHi.to_uint64() * bLo.to_uint64()
+  let b11 = aHi.to_uint64() * bHi.to_uint64()
+  let b00Lo = b00.to_uint()
+  let b00Hi = b00.lsr(32).to_uint()
+  let mid1 = b10 + b00Hi.to_uint64()
+  let mid1Lo = mid1.to_uint()
+  let mid1Hi = mid1.lsr(32).to_uint()
+  let mid2 = b01 + mid1Lo.to_uint64()
+  let mid2Lo = mid2.to_uint()
+  let mid2Hi = mid2.lsr(32).to_uint()
+  let pHi : UInt64 = b11 + mid1Hi.to_uint64() + mid2Hi.to_uint64()
+  let pLo : UInt64 = mid2Lo.to_uint64().lsl(32).lor(b00Lo.to_uint64())
   (pLo, pHi)
 }
 
-fn shiftright128(lo : Int64, hi : Int64, dist : Int) -> Int64 {
+fn shiftright128(lo : UInt64, hi : UInt64, dist : Int) -> UInt64 {
   hi.lsl(64 - dist).lor(lo.lsr(dist))
 }
 
-fn pow5Factor(value : Int64) -> Int {
+fn pow5Factor(value : UInt64) -> Int {
   // We want to find the largest power of 5 that divides value.
-  if value % 5L != 0L {
+  if value % 5UL != 0UL {
     return 0
   }
-  if value % 25L != 0L {
+  if value % 25UL != 0UL {
     return 1
   }
-  if value % 125L != 0L {
+  if value % 125UL != 0UL {
     return 2
   }
-  if value % 625L != 0L {
+  if value % 625UL != 0UL {
     return 3
   }
   let mut count = 4
-  let mut value = value / 625L
-  while value > 0L {
-    if value % 5L != 0L {
+  let mut value = value / 625UL
+  while value > 0UL {
+    if value % 5UL != 0UL {
       return count
     }
-    value = value / 5L
+    value = value / 5UL
     count = count + 1
   }
   abort("IllegalArgumentException \(value)")
 }
 
-fn multipleOfPowerOf5(value : Int64, p : Int) -> Bool {
+fn multipleOfPowerOf5(value : UInt64, p : Int) -> Bool {
   pow5Factor(value) >= p
 }
 
-fn multipleOfPowerOf2(value : Int64, p : Int) -> Bool {
-  value.land(1L.lsl(p) - 1L) == 0L
+fn multipleOfPowerOf2(value : UInt64, p : Int) -> Bool {
+  value.land(1UL.lsl(p) - 1UL) == 0UL
 }
 
 fn mulShiftAll64(
-  m : Int64,
-  mul : (Int64, Int64),
+  m : UInt64,
+  mul : (UInt64, UInt64),
   j : Int,
   mmShift : Bool
-) -> (Int64, Int64, Int64) {
+) -> (UInt64, UInt64, UInt64) {
   let m = m.lsl(1)
   let (lo, tmp) = umul128(m, mul.0)
   let (lo2, hi2) = umul128(m, mul.1)
   let mid = tmp + lo2
-  let hi = hi2 + u64_lt(mid, tmp).to_int64()
+  let hi = hi2 + if mid < tmp { 1 } else { 0 }
   let lo2 = lo + mul.0
-  let mid2 = mid + mul.1 + u64_lt(lo2, lo).to_int64()
-  let hi2 = hi + u64_lt(mid2, mid).to_int64()
+  let mid2 = mid + mul.1 + if lo2 < lo { 1 } else { 0 }
+  let hi2 = hi + if mid2 < mid { 1 } else { 0 }
   let vp = shiftright128(mid2, hi2, j - 64 - 1)
-  let mut vm : Int64 = 0L
+  let mut vm : UInt64 = 0UL
   if mmShift {
     let lo3 = lo - mul.0
-    let mid3 = mid - mul.1 - u64_lt(lo, lo3).to_int64()
-    let hi3 = hi - u64_lt(mid, mid3).to_int64()
+    let mid3 = mid - mul.1 - if lo < lo3 { 1 } else { 0 }
+    let hi3 = hi - if mid < mid3 { 1 } else { 0 }
     vm = shiftright128(mid3, hi3, j - 64 - 1)
   } else {
-    let lo3 : Int64 = lo + lo
-    let mid3 : Int64 = mid + mid + u64_lt(lo3, lo).to_int64()
-    let hi3 : Int64 = hi + hi + u64_lt(mid3, mid).to_int64()
-    let lo4 : Int64 = lo3 - mul.0
-    let mid4 : Int64 = mid3 - mul.1 - u64_lt(lo3, lo4).to_int64()
-    let hi4 : Int64 = hi3 - u64_lt(mid3, mid4).to_int64()
+    let lo3 : UInt64 = lo + lo
+    let mid3 : UInt64 = mid + mid + if lo3 < lo { 1 } else { 0 }
+    let hi3 : UInt64 = hi + hi + if mid3 < mid { 1 } else { 0 }
+    let lo4 : UInt64 = lo3 - mul.0
+    let mid4 : UInt64 = mid3 - mul.1 - if lo3 < lo4 { 1 } else { 0 }
+    let hi4 : UInt64 = hi3 - if mid3 < mid4 { 1 } else { 0 }
     vm = shiftright128(mid4, hi4, j - 64)
   }
   let vr = shiftright128(mid, hi, j - 64 - 1)
@@ -157,30 +141,30 @@ fn mulShiftAll64(
 
 let gPOW5_TABLE_SIZE = 26
 
-let gDOUBLE_POW5_INV_SPLIT2 : Array[Int64] = [
-  1L, 2305843009213693952L, 5955668970331000884L, 1784059615882449851L, 8982663654677661702L,
-  1380349269358112757L, 7286864317269821294L, 2135987035920910082L, 7005857020398200553L,
-  1652639921975621497L, -481418970354774919L, 1278668206209430417L, 8928596168509315048L,
-  1978643211784836272L, -8371072500651252758L, 1530901034580419511L, 597001226353042382L,
-  1184477304306571148L, 1527430471115325346L, 1832889850782397517L, -5913534206540532074L,
-  1418129833677084982L, 5577825024675947042L, 2194449627517475473L, -7439769533505684065L,
-  1697873161311732311L, -8133250842069730034L, 1313665730009899186L, -5745727253942878843L,
-  2032799256770390445L,
+let gDOUBLE_POW5_INV_SPLIT2 : Array[UInt64] = [
+  1, 2305843009213693952, 5955668970331000884, 1784059615882449851, 8982663654677661702,
+  1380349269358112757, 7286864317269821294, 2135987035920910082, 7005857020398200553,
+  1652639921975621497, 17965325103354776697, 1278668206209430417, 8928596168509315048,
+  1978643211784836272, 10075671573058298858, 1530901034580419511, 597001226353042382,
+  1184477304306571148, 1527430471115325346, 1832889850782397517, 12533209867169019542,
+  1418129833677084982, 5577825024675947042, 2194449627517475473, 11006974540203867551,
+  1697873161311732311, 10313493231639821582, 1313665730009899186, 12701016819766672773,
+  2032799256770390445,
 ]
 
-let gPOW5_INV_OFFSETS : Array[Int] = [
+let gPOW5_INV_OFFSETS : Array[UInt] = [
   0x54544554, 0x04055545, 0x10041000, 0x00400414, 0x40010000, 0x41155555, 0x00000454,
   0x00010044, 0x40000000, 0x44000041, 0x50454450, 0x55550054, 0x51655554, 0x40004000,
   0x01000001, 0x00010500, 0x51515411, 0x05555554, 0x00000000,
 ]
 
-let gDOUBLE_POW5_SPLIT2 : Array[Int64] = [
-  0L, 1152921504606846976L, 0L, 1490116119384765625L, 1032610780636961552L, 1925929944387235853L,
-  7910200175544436838L, 1244603055572228341L, -1504838264676837686L, 1608611746708759036L,
-  -5421850118411349444L, 2079081953128979843L, 6607496772837067824L, 1343575221513417750L,
-  -1113817083813899013L, 1736530273035216783L, -5409364890226003632L, 2244412773384604712L,
-  1605989338741628675L, 1450417759929778918L, -8816519005292960336L, 1874621017369538693L,
-  665883850346957067L, 1211445438634777304L, -3514853404985837908L, 1565756531257009982L,
+let gDOUBLE_POW5_SPLIT2 : Array[UInt64] = [
+  0, 1152921504606846976, 0, 1490116119384765625, 1032610780636961552, 1925929944387235853,
+  7910200175544436838, 1244603055572228341, 16941905809032713930, 1608611746708759036,
+  13024893955298202172, 2079081953128979843, 6607496772837067824, 1343575221513417750,
+  17332926989895652603, 1736530273035216783, 13037379183483547984, 2244412773384604712,
+  1605989338741628675, 1450417759929778918, 9630225068416591280, 1874621017369538693,
+  665883850346957067, 1211445438634777304, 14931890668723713708, 1565756531257009982,
 ]
 
 let gPOW5_OFFSETS : Array[Int] = [
@@ -189,14 +173,14 @@ let gPOW5_OFFSETS : Array[Int] = [
   0x96440440, 0x55565565, 0x54454045, 0x40154151, 0x55559155, 0x51405555, 0x00000105,
 ]
 
-let gDOUBLE_POW5_TABLE : Array[Int64] = [
-  1L, 5L, 25L, 125L, 625L, 3125L, 15625L, 78125L, 390625L, 1953125L, 9765625L, 48828125L,
-  244140625L, 1220703125L, 6103515625L, 30517578125L, 152587890625L, 762939453125L,
-  3814697265625L, 19073486328125L, 95367431640625L, 476837158203125L, 2384185791015625L,
-  11920928955078125L, 59604644775390625L, 298023223876953125L,
+let gDOUBLE_POW5_TABLE : Array[UInt64] = [
+  1, 5, 25, 125, 625, 3125, 15625, 78125, 390625, 1953125, 9765625, 48828125, 244140625,
+  1220703125, 6103515625, 30517578125, 152587890625, 762939453125, 3814697265625,
+  19073486328125, 95367431640625, 476837158203125, 2384185791015625, 11920928955078125,
+  59604644775390625, 298023223876953125,
 ]
 
-fn double_computePow5(i : Int) -> (Int64, Int64) {
+fn double_computePow5(i : Int) -> (UInt64, UInt64) {
   let base : Int = i / gPOW5_TABLE_SIZE
   let base2 : Int = base * gPOW5_TABLE_SIZE
   let offset : Int = i - base2
@@ -205,43 +189,43 @@ fn double_computePow5(i : Int) -> (Int64, Int64) {
   if offset == 0 {
     return (mul0, mul1)
   }
-  let m : Int64 = gDOUBLE_POW5_TABLE[offset]
+  let m : UInt64 = gDOUBLE_POW5_TABLE[offset]
   let (low1, high1) = umul128(m, mul1)
   let (low0, high0) = umul128(m, mul0)
-  let sum : Int64 = high0 + low1
+  let sum : UInt64 = high0 + low1
   let mut high1 = high1
-  if u64_lt(sum, high0) {
-    high1 = high1 + 1L
+  if sum < high0 {
+    high1 = high1 + 1UL
   }
   let delta : Int = pow5bits(i) - pow5bits(base2)
   let a = shiftright128(low0, sum, delta) + gPOW5_OFFSETS[i / 16].lsr(
       (i % 16).lsl(1),
-    ).land(3).to_int64()
+    ).land(3).to_int64().to_uint64()
   let b = shiftright128(sum, high1, delta)
   (a, b)
 }
 
-fn double_computeInvPow5(i : Int) -> (Int64, Int64) {
-  let base : Int = (i + gPOW5_TABLE_SIZE - 1) / gPOW5_TABLE_SIZE
-  let base2 : Int = base * gPOW5_TABLE_SIZE
-  let offset : Int = base2 - i
+fn double_computeInvPow5(i : Int) -> (UInt64, UInt64) {
+  let base = (i + gPOW5_TABLE_SIZE - 1) / gPOW5_TABLE_SIZE
+  let base2 = base * gPOW5_TABLE_SIZE
+  let offset = base2 - i
   let mul0 = gDOUBLE_POW5_INV_SPLIT2[base * 2]
   let mul1 = gDOUBLE_POW5_INV_SPLIT2[base * 2 + 1]
   if offset == 0 {
     return (mul0, mul1)
   }
-  let m : Int64 = gDOUBLE_POW5_TABLE[offset]
+  let m = gDOUBLE_POW5_TABLE[offset]
   let (low1, high1) = umul128(m, mul1)
   let (low0, high0) = umul128(m, mul0)
   let sum = high0 + low1
   let mut high1 = high1
-  if u64_lt(sum, high0) {
-    high1 = high1 + 1L
+  if sum < high0 {
+    high1 = high1 + 1
   }
   let delta : Int = pow5bits(base2) - pow5bits(i)
-  let a = shiftright128(low0, sum, delta) + 1L + gPOW5_INV_OFFSETS[i / 16].lsr(
+  let a = shiftright128(low0, sum, delta) + 1 + gPOW5_INV_OFFSETS[i / 16].lsr(
       (i % 16).lsl(1),
-    ).land(3).to_int64()
+    ).land(3).to_uint64()
   let b = shiftright128(sum, high1, delta)
   (a, b)
 }
@@ -321,7 +305,7 @@ fn decimalLength17(v : Int64) -> Int {
 
 // A floating decimal representing m * 10^e.
 priv struct FloatingDecimal64 {
-  mantissa : Int64
+  mantissa : UInt64
   // Decimal exponent's range is -324 to 308
   // inclusive, and can fit in a short if needed.
   exponent : Int
@@ -333,31 +317,31 @@ fn to_string(self : FloatingDecimal64) -> String {
   "{ mantissa: \(m), exponent: \(e) }"
 }
 
-fn d2d(ieeeMantissa : Int64, ieeeExponent : Int) -> FloatingDecimal64 {
+fn d2d(ieeeMantissa : UInt64, ieeeExponent : Int) -> FloatingDecimal64 {
   let mut e2 : Int = 0
-  let mut m2 : Int64 = 0L
+  let mut m2 : UInt64 = 0
   if ieeeExponent == 0 {
     e2 = 1 - gDOUBLE_BIAS - gDOUBLE_MANTISSA_BITS - 2
     m2 = ieeeMantissa
   } else {
     e2 = ieeeExponent - gDOUBLE_BIAS - gDOUBLE_MANTISSA_BITS - 2
-    m2 = 1L.lsl(gDOUBLE_MANTISSA_BITS).lor(ieeeMantissa)
+    m2 = 1UL.lsl(gDOUBLE_MANTISSA_BITS).lor(ieeeMantissa)
   }
-  let even = m2.land(1L) == 0L
+  let even = m2.land(1UL) == 0UL
   let acceptBounds = even
 
   // Step 2: Determine the interval of valid decimal representations.
-  let mv = 4L * m2
+  let mv = 4UL * m2
   // Implicit bool -> int conversion. True is 1, false is 0.
-  let mmShift = ieeeMantissa != 0L || ieeeExponent <= 1
+  let mmShift = ieeeMantissa != 0UL || ieeeExponent <= 1
   // We would compute mp and mm like this:
   // uint64_t mp = 4 * m2 + 2;
   // uint64_t mm = mv - 1 - mmShift;
 
   // Step 3: Convert to a decimal power base using 128-bit arithmetic.
-  let mut vr : Int64 = 0L
-  let mut vp : Int64 = 0L
-  let mut vm : Int64 = 0L
+  let mut vr = 0UL
+  let mut vp = 0UL
+  let mut vm = 0UL
   let mut e10 : Int = 0
   let mut vmIsTrailingZeros = false
   let mut vrIsTrailingZeros = false
@@ -377,16 +361,19 @@ fn d2d(ieeeMantissa : Int64, ieeeExponent : Int) -> FloatingDecimal64 {
       // This should use q <= 22, but I think 21 is also safe. Smaller values
       // may still be safe, but it's more difficult to reason about them.
       // Only one of mp, mv, and mm can be a multiple of 5, if any.
-      let mvMod5 : Int = mv.to_int() - 5 * (mv / 5L).to_int()
+      let mvMod5 : Int = mv.to_int() - 5 * (mv / 5UL).to_int()
       if mvMod5 == 0 {
         vrIsTrailingZeros = multipleOfPowerOf5(mv, q)
       } else if acceptBounds {
         // Same as min(e2 + (~mm & 1), pow5Factor(mm)) >= q
         // <=> e2 + (~mm & 1) >= q && pow5Factor(mm) >= q
         // <=> true && pow5Factor(mm) >= q, since e2 >= q.
-        vmIsTrailingZeros = multipleOfPowerOf5(mv - 1L - mmShift.to_int64(), q)
+        vmIsTrailingZeros = multipleOfPowerOf5(
+          mv - 1UL - mmShift.to_int64().to_uint64(),
+          q,
+        )
       } else {
-        vp = vp - multipleOfPowerOf5(mv + 2L, q).to_int64()
+        vp = vp - multipleOfPowerOf5(mv + 2UL, q).to_int64().to_uint64()
       }
     }
   } else {
@@ -408,7 +395,7 @@ fn d2d(ieeeMantissa : Int64, ieeeExponent : Int) -> FloatingDecimal64 {
       if acceptBounds {
         vmIsTrailingZeros = mmShift.to_int() == 1
       } else {
-        vp = vp - 1L
+        vp = vp - 1
       }
     } else if q < 63 {
       vrIsTrailingZeros = multipleOfPowerOf2(mv, q)
@@ -418,18 +405,18 @@ fn d2d(ieeeMantissa : Int64, ieeeExponent : Int) -> FloatingDecimal64 {
   // Step 4: Find the shortest decimal representation in the interval of valid representations.
   let mut removed : Int = 0
   let mut lastRemovedDigit : Int = 0
-  let mut output : Int64 = 0L
+  let mut output : UInt64 = 0UL
   // On average, we remove ~2 digits.
   if vmIsTrailingZeros || vrIsTrailingZeros {
     // General case, which happens rarely (~0.7%).
     while true {
-      let vpDiv10 : Int64 = vp / 10L
-      let vmDiv10 : Int64 = vm / 10L
+      let vpDiv10 = vp / 10
+      let vmDiv10 = vm / 10
       if vpDiv10 <= vmDiv10 {
         break
       }
       let vmMod10 : Int = vm.to_int() - 10 * vmDiv10.to_int()
-      let vrDiv10 : Int64 = vr / 10L
+      let vrDiv10 = vr / 10
       let vrMod10 : Int = vr.to_int() - 10 * vrDiv10.to_int()
       vmIsTrailingZeros = vmIsTrailingZeros && vmMod10 == 0
       vrIsTrailingZeros = vrIsTrailingZeros && lastRemovedDigit == 0
@@ -441,13 +428,13 @@ fn d2d(ieeeMantissa : Int64, ieeeExponent : Int) -> FloatingDecimal64 {
     }
     if vmIsTrailingZeros {
       while true {
-        let vmDiv10 : Int64 = vm / 10L
+        let vmDiv10 = vm / 10
         let vmMod10 : Int = vm.to_int() - 10 * vmDiv10.to_int()
         if vmMod10 != 0 {
           break
         }
-        let vpDiv10 : Int64 = vp / 10L
-        let vrDiv10 : Int64 = vr / 10L
+        let vpDiv10 = vp / 10
+        let vrDiv10 = vr / 10
         let vrMod10 : Int = vr.to_int() - 10 * vrDiv10.to_int()
         vrIsTrailingZeros = vrIsTrailingZeros && lastRemovedDigit == 0
         lastRemovedDigit = vrMod10
@@ -457,18 +444,18 @@ fn d2d(ieeeMantissa : Int64, ieeeExponent : Int) -> FloatingDecimal64 {
         removed = removed + 1
       }
     }
-    if vrIsTrailingZeros && lastRemovedDigit == 5 && vr % 2L == 0L {
+    if vrIsTrailingZeros && lastRemovedDigit == 5 && vr % 2 == 0 {
       lastRemovedDigit = 4
     }
     output = vr + ((vr == vm && (not(acceptBounds) || not(vmIsTrailingZeros))) ||
-      lastRemovedDigit >= 5).to_int64()
+      lastRemovedDigit >= 5).to_int64().to_uint64()
   } else {
     // Specialized for the common case (~99.3%). Percentages below are relative to this.
     let mut roundUp = false
-    let vpDiv100 : Int64 = vp / 100L
-    let vmDiv100 : Int64 = vm / 100L
+    let vpDiv100 = vp / 100
+    let vmDiv100 = vm / 100
     if vpDiv100 > vmDiv100 {
-      let vrDiv100 : Int64 = vr / 100L
+      let vrDiv100 = vr / 100
       let vrMod100 : Int = vr.to_int() - 100 * vrDiv100.to_int()
       roundUp = vrMod100 >= 50
       vr = vrDiv100
@@ -481,12 +468,12 @@ fn d2d(ieeeMantissa : Int64, ieeeExponent : Int) -> FloatingDecimal64 {
     // Loop iterations below (approximately), with optimization above:
     // 0: 70.6%, 1: 27.8%, 2: 1.40%, 3: 0.14%, 4+: 0.02%
     while true {
-      let vpDiv10 : Int64 = vp / 10L
-      let vmDiv10 : Int64 = vm / 10L
+      let vpDiv10 = vp / 10
+      let vmDiv10 = vm / 10
       if vpDiv10 <= vmDiv10 {
         break
       }
-      let vrDiv10 : Int64 = vr / 10L
+      let vrDiv10 = vr / 10
       let vrMod10 : Int = vr.to_int() - 10 * vrDiv10.to_int()
       roundUp = vrMod10 >= 5
       vr = vrDiv10
@@ -494,7 +481,7 @@ fn d2d(ieeeMantissa : Int64, ieeeExponent : Int) -> FloatingDecimal64 {
       vm = vmDiv10
       removed = removed + 1
     }
-    output = vr + (vr == vm || roundUp).to_int64()
+    output = vr + (vr == vm || roundUp).to_int64().to_uint64()
   }
   let exp : Int = e10 + removed
   let fd = { mantissa: output, exponent: exp }
@@ -509,15 +496,15 @@ fn to_chars(v : FloatingDecimal64, sign : Bool) -> String {
     result[index] = '-'.to_int().to_byte()
     index = index + 1
   }
-  let mut output : Int64 = v.mantissa
-  let olength : Int = decimalLength17(output)
+  let mut output = v.mantissa
+  let olength = decimalLength17(output.to_int64())
   let mut exp : Int = v.exponent + olength - 1
   let scientificNotation = not(exp >= -3 && exp < 7)
   if scientificNotation {
     // Print the decimal digits.
     for i = 0; i < olength - 1; i = i + 1 {
-      let c = output % 10L
-      output = output / 10L
+      let c = output % 10
+      output = output / 10
       result[index + olength - i] = ('0'.to_int() + c.to_int()).to_byte()
     }
     result[index] = ('0'.to_int() + output.to_int() % 10).to_byte()
@@ -570,15 +557,15 @@ fn to_chars(v : FloatingDecimal64, sign : Bool) -> String {
       }
       let current = index
       for i = 0; i < olength; i = i + 1 {
-        result[current + olength - i - 1] = ('0'.to_int() + (output % 10L).to_int()).to_byte()
-        output = output / 10L
+        result[current + olength - i - 1] = ('0'.to_int() + (output % 10).to_int()).to_byte()
+        output = output / 10
         index = index + 1
       }
     } else if exp + 1 >= olength {
       // Decimal dot is after any of the digits.
       for i = 0; i < olength; i = i + 1 {
-        result[index + olength - i - 1] = ('0'.to_int() + (output % 10L).to_int()).to_byte()
-        output = output / 10L
+        result[index + olength - i - 1] = ('0'.to_int() + (output % 10).to_int()).to_byte()
+        output = output / 10
       }
       index = index + olength
       for i = olength; i < exp + 1; i = i + 1 {
@@ -597,8 +584,8 @@ fn to_chars(v : FloatingDecimal64, sign : Bool) -> String {
           result[current + olength - i - 1] = '.'.to_int().to_byte()
           current = current - 1
         }
-        result[current + olength - i - 1] = ('0'.to_int() + (output % 10L).to_int()).to_byte()
-        output = output / 10L
+        result[current + olength - i - 1] = ('0'.to_int() + (output % 10).to_int()).to_byte()
+        output = output / 10
       }
       index = index + olength + 1
     }
@@ -607,10 +594,10 @@ fn to_chars(v : FloatingDecimal64, sign : Bool) -> String {
 }
 
 fn d2d_small_int(
-  ieeeMantissa : Int64,
+  ieeeMantissa : UInt64,
   ieeeExponent : Int
 ) -> FloatingDecimal64? {
-  let m2 : Int64 = 1L.lsl(gDOUBLE_MANTISSA_BITS).lor(ieeeMantissa)
+  let m2 : UInt64 = 1UL.lsl(gDOUBLE_MANTISSA_BITS).lor(ieeeMantissa)
   let e2 : Int = ieeeExponent - gDOUBLE_BIAS - gDOUBLE_MANTISSA_BITS
   if e2 > 0 {
     return None
@@ -618,9 +605,9 @@ fn d2d_small_int(
   if e2 < -52 {
     return None
   }
-  let mask : Int64 = 1L.lsl(-e2) - 1L
-  let fraction : Int64 = m2.land(mask)
-  if fraction != 0L {
+  let mask : UInt64 = 1UL.lsl(-e2) - 1UL
+  let fraction : UInt64 = m2.land(mask)
+  if fraction != 0UL {
     return None
   }
   Some({ mantissa: m2.lsr(-e2), exponent: 0 })
@@ -628,28 +615,28 @@ fn d2d_small_int(
 
 fn ryu_to_string(self : Double) -> String {
   // Step 1: Decode the floating-point number, and unify normalized and subnormal cases.
-  let bits : Int64 = self.reinterpret_as_i64()
+  let bits : UInt64 = self.reinterpret_as_u64()
 
   // Decode bits into sign, mantissa, and exponent.
   let ieeeSign = bits.lsr(gDOUBLE_MANTISSA_BITS + gDOUBLE_EXPONENT_BITS).land(
-      1L,
-    ) != 0L
-  let ieeeMantissa : Int64 = bits.land(1L.lsl(gDOUBLE_MANTISSA_BITS) - 1L)
+      1UL,
+    ) != 0UL
+  let ieeeMantissa : UInt64 = bits.land(1UL.lsl(gDOUBLE_MANTISSA_BITS) - 1UL)
   let ieeeExponent : Int = bits.lsr(gDOUBLE_MANTISSA_BITS).land(
-    1L.lsl(gDOUBLE_EXPONENT_BITS) - 1L,
+    1UL.lsl(gDOUBLE_EXPONENT_BITS) - 1UL,
   ).to_int()
   if ieeeExponent == (1).lsl(gDOUBLE_EXPONENT_BITS) - 1 || (ieeeExponent == 0 &&
-  ieeeMantissa == 0L) {
-    return copy_special_str(ieeeSign, ieeeExponent != 0, ieeeMantissa != 0L)
+  ieeeMantissa == 0UL) {
+    return copy_special_str(ieeeSign, ieeeExponent != 0, ieeeMantissa != 0UL)
   }
-  let mut v : FloatingDecimal64 = { mantissa: 0L, exponent: 0 }
+  let mut v : FloatingDecimal64 = { mantissa: 0UL, exponent: 0 }
   let small = d2d_small_int(ieeeMantissa, ieeeExponent)
   match small {
     Some(f) => {
       let mut x = f
       while true {
-        let q : Int64 = x.mantissa / 10L
-        let r = x.mantissa.to_int() - 10 * q.to_int()
+        let q : UInt64 = x.mantissa / 10
+        let r = x.mantissa - 10UL * q
         if r != 0 {
           break
         }
@@ -672,31 +659,31 @@ pub impl Show for Double with output(self, logger) {
 }
 
 test "double/ryu.mbt:205" {
-  let m = 123456789L
-  let mul0 = 987654321L
+  let m = 123456789UL
+  let mul0 = 987654321UL
   let (_, high0) = umul128(m, mul0)
-  let low1 = 111111111L
-  let high1 = 222222222L
-  let sum : Int64 = high0 + low1
+  let low1 = 111111111UL
+  let high1 = 222222222UL
+  let sum = high0 + low1
   let mut high1 = high1
-  if u64_lt(sum, high0) {
-    high1 = high1 + 1L
+  if sum < high0 {
+    high1 = high1 + 1
   }
-  @test.eq!(high1, 222222222L)
+  @test.eq!(high1, 222222222)
 }
 
 test "double/ryu.mbt:230" {
-  let m = 123456789L
-  let mul0 = 987654321L
+  let m = 123456789UL
+  let mul0 = 987654321UL
   let (_, high0) = umul128(m, mul0)
-  let low1 = 111111111L
-  let high1 = 222222222L
+  let low1 = 111111111UL
+  let high1 = 222222222UL
   let sum = high0 + low1
   let mut high1 = high1
-  if u64_lt(sum, high0) {
-    high1 = high1 + 1L
+  if sum < high0 {
+    high1 = high1 + 1UL
   }
-  @test.eq!(high1, 222222222L)
+  @test.eq!(high1, 222222222UL)
 }
 
 test "double/ryu.mbt:252" {
@@ -704,31 +691,31 @@ test "double/ryu.mbt:252" {
 }
 
 test "double/ryu.mbt:205" {
-  let m = 123456789L
-  let mul0 = 987654321L
+  let m = 123456789UL
+  let mul0 = 987654321UL
   let (_, high0) = umul128(m, mul0)
-  let low1 = 111111111L
-  let high1 = 222222222L
-  let sum : Int64 = high0 + low1
+  let low1 = 111111111UL
+  let high1 = 222222222UL
+  let sum = high0 + low1
   let mut high1 = high1
-  if u64_lt(sum, high0) {
-    high1 = high1 + 1L
+  if sum < high0 {
+    high1 = high1 + 1UL
   }
-  @test.eq!(high1, 222222222L)
+  @test.eq!(high1, 222222222UL)
 }
 
 test "double/ryu.mbt:230" {
-  let m = 123456789L
-  let mul0 = 987654321L
+  let m = 123456789UL
+  let mul0 = 987654321UL
   let (_, high0) = umul128(m, mul0)
-  let low1 = 111111111L
-  let high1 = 222222222L
+  let low1 = 111111111UL
+  let high1 = 222222222UL
   let sum = high0 + low1
   let mut high1 = high1
-  if u64_lt(sum, high0) {
-    high1 = high1 + 1L
+  if sum < high0 {
+    high1 = high1 + 1UL
   }
-  @test.eq!(high1, 222222222L)
+  @test.eq!(high1, 222222222UL)
 }
 
 test "double/ryu.mbt:252" {
