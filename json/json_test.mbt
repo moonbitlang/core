@@ -334,15 +334,11 @@ test "stringify" {
 
   // not mut once we have `try except else` syntax
   // we do come across issues like ParseError not unified with String
-  let newjson = try {
-    @json.parse!(json.stringify())
-  } catch {
-    _ => @test.fail!("Failed to parse the stringified JSON")
-  }
+  let newjson = @json.parse!(json.stringify())
   match json {
     { "key": [_, _, _, _, { "value": Number(i) }, ..] } =>
       inspect!(i, content="100.0")
-    _ => @test.fail!("Failed to match the JSON")
+    _ => fail!("Failed to match the JSON")
   }
   @test.eq!(newjson, json)
 }
