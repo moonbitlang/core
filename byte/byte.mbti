@@ -1,0 +1,16 @@
+package moonbitlang/core/byte
+
+// Values
+let max_value : Byte
+
+let min_value : Byte
+
+// Types and methods
+impl Byte {
+  to_uint(Byte) -> UInt
+}
+
+// Traits
+
+// Extension Methods
+
