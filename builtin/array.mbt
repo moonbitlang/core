@@ -20,6 +20,7 @@ pub fn Array::from_fixed_array[T](arr : FixedArray[T]) -> Array[T] {
   arr2
 }
 
+/// Creates a new array, with the specified length [len] and element [elem].
 pub fn Array::make[T](len : Int, elem : T) -> Array[T] {
   let arr = Array::make_uninit(len)
   for i = 0; i < len; i = i + 1 {
@@ -257,10 +258,7 @@ pub fn rev_each[T](self : Array[T], f : (T) -> Unit) -> Unit {
 ///
 /// # Example
 /// ```
-/// let v = Array::new(capacity=3)
-/// v.push(3)
-/// v.push(4)
-/// v.push(5)
+/// let v = [3, 4, 5]
 /// let mut sum = 0
 /// v.eachi(fn (i, x) {sum = sum + x + i})
 /// ```
@@ -270,6 +268,15 @@ pub fn eachi[T](self : Array[T], f : (Int, T) -> Unit) -> Unit {
   }
 }
 
+/// Iterates over the elements of the array with index in reversed order.
+/// 
+/// # Example
+/// ```
+/// let v = [3, 4, 5]
+/// let mut sum = 0
+/// v.rev_eachi(fn(i, x) { sum = sum + x + i })
+/// @test.eq!(sum, 15)
+/// ```
 pub fn rev_eachi[T](self : Array[T], f : (Int, T) -> Unit) -> Unit {
   let len = self.length()
   for i = 0; i < len; i = i + 1 {
@@ -395,7 +402,7 @@ pub fn is_sorted[T : Compare](self : Array[T]) -> Bool {
   }
 }
 
-/// Reverses the order of elements in the slice, in place.
+/// Reverses the order of elements in the Array, in place.
 ///
 /// # Example
 /// ```
@@ -410,6 +417,7 @@ pub fn rev_inplace[T](self : Array[T]) -> Unit {
   }
 }
 
+/// Reverses the order of elements in the Array and returns a new Array.
 pub fn rev[T](self : Array[T]) -> Array[T] {
   let arr = Array::make_uninit(self.length())
   for i = 0; i < self.length(); i = i + 1 {

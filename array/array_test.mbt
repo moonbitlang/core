@@ -126,7 +126,7 @@ test "eachi" {
   @test.eq!(sum, 15)
 }
 
-test "each_revi" {
+test "rev_eachi" {
   let v = [3, 4, 5]
   let mut sum = 0
   v.rev_eachi(fn(i, x) { sum = sum + x + i })
