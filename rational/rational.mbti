@@ -3,6 +3,8 @@ package moonbitlang/core/rational
 // Values
 
 // Types and methods
+pub type! RationalError String
+
 type T
 impl T {
   abs(Self) -> Self
@@ -10,7 +12,7 @@ impl T {
   compare(Self, Self) -> Int
   floor(Self) -> Int64
   fract(Self) -> Self
-  from_double(Double) -> Self!String
+  from_double(Double) -> Self!RationalError
   is_integer(Self) -> Bool
   neg(Self) -> Self
   new(Int64, Int64) -> Self?
@@ -28,5 +30,9 @@ impl T {
 // Traits
 
 // Extension Methods
+impl Eq for RationalError
+
+impl Show for RationalError
+
 impl Show for T
 
