@@ -16,3 +16,12 @@ test "byte to uint" {
   @test.eq!(b'\xFF'.to_uint(), 255)
   @test.eq!(b'\x00'.to_uint(), 0)
 }
+
+test "int to byte" {
+  inspect!((-255).to_byte(), content="b'\\x01'")
+  inspect!((-0).to_byte(), content="b'\\x00'")
+  inspect!((-1).to_byte(), content="b'\\xFF'")
+  inspect!((-256).to_byte(), content="b'\\x00'")
+  inspect!((-257).to_byte(), content="b'\\xFF'")
+  inspect!((-65535).to_byte(), content="b'\\x01'")
+}
