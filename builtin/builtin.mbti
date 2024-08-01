@@ -190,6 +190,7 @@ impl Iter {
   op_add[T](Self[T], Self[T]) -> Self[T]
   prepend[T](Self[T], T) -> Self[T]
   repeat[T](T) -> Self[T]
+  run[T](Self[T], (T) -> IterResult) -> IterResult
   singleton[T](T) -> Self[T]
   take[T](Self[T], Int) -> Self[T]
   take_while[T](Self[T], (T) -> Bool) -> Self[T]
