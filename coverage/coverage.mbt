@@ -78,59 +78,6 @@ impl Output for Buffer with output(self, content) -> Unit {
   self.write_string(content)
 }
 
-// TODO: This escape function should belong to the String package, but is
-// not mature enough, so it's left here temporarily.
-/// Escape a string using standard JSON escape sequences to the given buffer,
-/// usually for quoting uses.
-///
-/// This method only escapes characters below 0x20 and the following characters:
-/// `"`, `'`, `\`.
-fn escape_to(s : String, buf : Buffer) -> Unit {
-  fn write_escaped_ch(ch : Char) -> Unit {
-    buf.write_char('\\')
-    buf.write_char(ch)
-  }
-
-  fn to_hex_digit(i : Int) -> Char {
-    if i < 10 {
-      Char::from_int('0'.to_int() + i)
-    } else {
-      Char::from_int('a'.to_int() + (i - 10))
-    }
-  }
-
-  for ix = 0; ix < s.length(); ix = ix + 1 {
-    let ch = s[ix]
-    match ch {
-      '"' | '\\' => write_escaped_ch(ch)
-      '\n' => write_escaped_ch('n')
-      '\r' => write_escaped_ch('r')
-      '\b' => write_escaped_ch('b')
-      '\t' => write_escaped_ch('t')
-      _ =>
-        if ch.to_int() < 0x20 {
-          buf.write_string("\\u00")
-          let ich = ch.to_int()
-          buf.write_char(to_hex_digit(ich / 16))
-          buf.write_char(to_hex_digit(ich % 16))
-        } else {
-          buf.write_char(ch)
-        }
-    }
-  }
-}
-
-/// Escape a string using standard C escape sequences and return the escaped string,
-/// usually for quoting uses.
-///
-/// This method only escapes characters below 0x20 and the following characters:
-/// `"`, `'`, `\`.
-pub fn escape(s : String) -> String {
-  let buf = Buffer::new(size_hint=s.length())
-  escape_to(s, buf)
-  buf.to_string()
-}
-
 /// Output the counters to stdout for coverage report usages. The counter data
 /// is printed as a map of `{ counter_id: counter_contents }`, enclosed between
 /// a pair of delimiters.
@@ -189,9 +136,8 @@ fn coverage_log(
       if ix != 0 {
         print(", ")
       }
-      print("\"")
       print(escape(name))
-      print("\": ")
+      print(": ")
       let counter_dump = counter.to_string()
       println(counter_dump)
       continue xs, ix + 1
@@ -203,40 +149,14 @@ fn coverage_log(
 
 test "new_counter" {
   let counter = CoverageCounter::new(2)
-  let result = counter.to_string()
-  // @test.eq(result, "[0, 0]")?
-  if result != "[0, 0]" {
-    fail!("Expected: [0, 0], got: " + result)
-  }
+  inspect!(counter.to_string(), content="[0, 0]")
 }
 
 test "incr_counter" {
   let counter = CoverageCounter::new(10)
   counter.incr(0)
   counter.incr(9)
-  let result = counter.to_string()
-  // @test.eq(result, "[1, 0, 0, 0, 0, 0, 0, 0, 0, 1]")?
-  if result != "[1, 0, 0, 0, 0, 0, 0, 0, 0, 1]" {
-    fail!("Expected: [1, 0, 0, 0, 0, 0, 0, 0, 0, 1], got: " + result)
-  }
-}
-
-test "escape_to" {
-  let buf = Buffer::new(size_hint=10)
-  escape_to("\\n\\r\\t\\b\\\"'\\\\", buf)
-  let escaped_string = buf.to_string()
-  if escaped_string != "\\\\n\\\\r\\\\t\\\\b\\\\\\\"'\\\\\\\\" {
-    fail!("escaped_string: \(escaped_string)")
-  }
-}
-
-test "escape_to_unicode" {
-  let buf = Buffer::new(size_hint=10)
-  escape_to("\u0010\u001f", buf)
-  let escaped_string = buf.to_string()
-  if escaped_string != "\\u0010\\u001f" {
-    fail!("escaped_string: \(escaped_string)")
-  }
+  inspect!(counter.to_string(), content="[1, 0, 0, 0, 0, 0, 0, 0, 0, 1]")
 }
 
 test "log" {
@@ -262,12 +182,7 @@ test "log" {
 
 test "backslash escape" {
   let s = "\n\r\t\b\"'\\"
-  let expected = "\\n\\r\\t\\b\\\"'\\\\"
-  // @test.eq(@coverage.escape(s), expected)?
-  let escape_s = escape(s)
-  if escape_s != expected {
-    fail!("Expected: " + expected + ", got: " + escape_s)
-  }
+  inspect!(s.escape(), content="\"\\n\\r\\t\\b\\\"'\\\\\"")
 }
 
 // FIXME: formatting string does not work, this test will be destroyed by formatting

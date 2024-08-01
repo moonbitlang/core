@@ -3,8 +3,6 @@ package moonbitlang/core/coverage
 // Values
 fn end() -> Unit
 
-fn escape(String) -> String
-
 fn track(String, CoverageCounter) -> Unit
 
 // Types and methods
