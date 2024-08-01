@@ -15,6 +15,11 @@
 // Types
 type Iter[T] ((T) -> IterResult) -> IterResult
 
+//TODO: Add intrinsic for Iter::run
+pub fn run[T](self : Iter[T], f : (T) -> IterResult) -> IterResult {
+  (self.0)(f)
+}
+
 pub enum IterResult {
   IterEnd // false
   IterContinue // true
@@ -43,7 +48,7 @@ pub fn to_string[T : Show](self : Iter[T]) -> String {
 /// TODO: change the intrinsic to match the function name
 /// @intrinsic %iter.iter
 pub fn each[T](self : Iter[T], f : (T) -> Unit) -> Unit {
-  (self.0)(
+  self.run(
     fn(yield) {
       f(yield)
       IterContinue
@@ -53,11 +58,11 @@ pub fn each[T](self : Iter[T], f : (T) -> Unit) -> Unit {
 }
 
 pub fn any[T](self : Iter[T], f : (T) -> Bool) -> Bool {
-  (self.0)(fn(k) { if f(k) { IterEnd } else { IterContinue } }) != IterContinue
+  self.run(fn(k) { if f(k) { IterEnd } else { IterContinue } }) != IterContinue
 }
 
 pub fn all[T](self : Iter[T], f : (T) -> Bool) -> Bool {
-  (self.0)(fn(k) { if not(f(k)) { IterEnd } else { IterContinue } }) == IterContinue
+  self.run(fn(k) { if not(f(k)) { IterEnd } else { IterContinue } }) == IterContinue
 }
 
 /// Iterates over each element in the iterator, applying the function `f` to each element with index.
@@ -73,7 +78,7 @@ pub fn all[T](self : Iter[T], f : (T) -> Bool) -> Bool {
 /// TODO: Add intrinsic
 pub fn eachi[T](self : Iter[T], f : (Int, T) -> Unit) -> Unit {
   let mut i = 0
-  (self.0)(
+  self.run(
     fn(a) {
       f(i, a)
       i = i + 1
@@ -102,7 +107,7 @@ pub fn eachi[T](self : Iter[T], f : (Int, T) -> Unit) -> Unit {
 /// @intrinsic %iter.reduce
 pub fn fold[T, B](self : Iter[T], ~init : B, f : (B, T) -> B) -> B {
   let mut acc = init
-  let _ = (self.0)(
+  let _ = self.run(
     fn(yield) {
       acc = f(acc, yield)
       IterContinue
@@ -321,7 +326,7 @@ pub fn until(self : Double, end : Double, ~step : Double = 1.0) -> Iter[Double] 
 /// A new iterator that only contains the elements for which the predicate function returns `IterContinue`.
 /// @intrinsic %iter.filter
 pub fn filter[T](self : Iter[T], f : (T) -> Bool) -> Iter[T] {
-  fn(yield) { (self.0)(fn { a => if f(a) { yield(a) } else { IterContinue } }) }
+  fn(yield) { self.run(fn { a => if f(a) { yield(a) } else { IterContinue } }) }
 }
 
 /// Transforms the elements of the iterator using a mapping function.
@@ -341,7 +346,7 @@ pub fn filter[T](self : Iter[T], f : (T) -> Bool) -> Iter[T] {
 /// A new iterator that contains the transformed elements.
 /// @intrinsic %iter.map
 pub fn map[T, R](self : Iter[T], f : (T) -> R) -> Iter[R] {
-  fn { yield => (self.0)(fn { a => yield(f(a)) }) }
+  fn { yield => self.run(fn { a => yield(f(a)) }) }
 }
 
 /// Transforms each element of the iterator into an iterator and flattens the resulting iterators into a single iterator.
@@ -361,7 +366,7 @@ pub fn map[T, R](self : Iter[T], f : (T) -> R) -> Iter[R] {
 /// A new iterator that contains the flattened elements.
 /// @intrinsic %iter.flat_map
 pub fn flat_map[T, R](self : Iter[T], f : (T) -> Iter[R]) -> Iter[R] {
-  fn { yield => (self.0)(fn { x => (f(x).0)(yield) }) }
+  fn { yield => self.run(fn { x => f(x).run(yield) }) }
 }
 
 /// Applies a function to each element of the iterator without modifying the iterator.
@@ -403,7 +408,7 @@ pub fn tap[T](self : Iter[T], f : (T) -> Unit) -> Iter[T] {
 pub fn take[T](self : Iter[T], n : Int) -> Iter[T] {
   fn(yield) {
     let mut i = 0
-    let iter_result = (self.0)(
+    let iter_result = self.run(
       fn {
         a =>
           if i < n && yield(a) == IterContinue {
@@ -444,7 +449,7 @@ pub fn take_while[T](self : Iter[T], f : (T) -> Bool) -> Iter[T] {
   fn(yield) {
     // `r` represents the overall return value. It is set to `IterEnd` only if `yield(a)` returns `IterEnd`.
     let mut r : IterResult = IterContinue
-    (self.0)(
+    self.run(
       fn(a) {
         if f(a) {
           if yield(a) == IterContinue {
@@ -480,7 +485,7 @@ pub fn take_while[T](self : Iter[T], f : (T) -> Bool) -> Iter[T] {
 pub fn drop[T](self : Iter[T], n : Int) -> Iter[T] {
   fn(yield) {
     let mut i = 0
-    (self.0)(
+    self.run(
       fn(a) {
         if i < n {
           i = i + 1
@@ -510,7 +515,7 @@ pub fn drop[T](self : Iter[T], n : Int) -> Iter[T] {
 pub fn drop_while[T](self : Iter[T], f : (T) -> Bool) -> Iter[T] {
   fn(yield) {
     let mut dropping = true
-    (self.0)(
+    self.run(
       fn(a) {
         if dropping && f(a) {
           IterContinue
@@ -539,7 +544,7 @@ pub fn drop_while[T](self : Iter[T], f : (T) -> Bool) -> Iter[T] {
 /// An `Option` that contains the first element that satisfies the predicate function, or `None` if no such element is found.
 pub fn find_first[T](self : Iter[T], f : (T) -> Bool) -> T? {
   let mut result : T? = None
-  let _ = (self.0)(
+  let _ = self.run(
     fn(a) {
       if f(a) {
         result = Some(a)
@@ -567,7 +572,7 @@ pub fn find_first[T](self : Iter[T], f : (T) -> Bool) -> T? {
 ///
 /// Returns a new iterator with the element `a` prepended to the original iterator.
 pub fn prepend[T](self : Iter[T], a : T) -> Iter[T] {
-  fn(yield) { if yield(a) == IterContinue { (self.0)(yield) } else { IterEnd } }
+  fn(yield) { if yield(a) == IterContinue { self.run(yield) } else { IterEnd } }
 }
 
 /// Appends a single element to the end of the iterator.
@@ -585,7 +590,7 @@ pub fn prepend[T](self : Iter[T], a : T) -> Iter[T] {
 ///
 /// Returns a new iterator with the element `a` appended to the original iterator.
 pub fn append[T](self : Iter[T], a : T) -> Iter[T] {
-  fn(yield) { if (self.0)(yield) == IterContinue { yield(a) } else { IterEnd } }
+  fn(yield) { if self.run(yield) == IterContinue { yield(a) } else { IterEnd } }
 }
 
 /// Combines two iterators into one by appending the elements of the second iterator to the first.
@@ -605,8 +610,8 @@ pub fn append[T](self : Iter[T], a : T) -> Iter[T] {
 /// @intrinsic %iter.concat
 pub fn Iter::concat[T](self : Iter[T], other : Iter[T]) -> Iter[T] {
   fn(yield) {
-    if (self.0)(yield) == IterContinue {
-      (other.0)(yield)
+    if self.run(yield) == IterContinue {
+      other.run(yield)
     } else {
       IterEnd
     }
