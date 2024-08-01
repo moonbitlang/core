@@ -335,3 +335,35 @@ test "all" {
   assert_eq!(iter.take(8).all(fn { x => x < 7 }), true)
   assert_eq!(iter.take(6).all(fn { x => x < 7 }), true)
 }
+
+enum Tree {
+  Leaf(Int)
+  Node(Tree, Int, Tree)
+}
+
+fn iter(self : Tree) -> Iter[Int] {
+  Iter::new(
+    fn(yield) {
+      match self {
+        Leaf(x) => yield(x)
+        Node(l, v, r) =>
+          // ([ .. l, v , .. r]).apply(f)
+          if l.iter().run(yield) == IterEnd {
+            IterEnd
+          } else if yield(v) == IterEnd {
+            IterEnd
+          } else {
+            r.iter().run(yield)
+          }
+      }
+    },
+  )
+}
+
+test {
+  // let tree = Node(Node(Leaf(1), Leaf(2)), Node(Leaf(3), Leaf(4)))
+  let tree = Node(Node(Leaf(1), 2, Leaf(3)), 4, Leaf(5))
+  let exb = Buffer::new(size_hint=0)
+  tree.iter().each(fn { x => exb.write_string(x.to_string()) })
+  exb.expect!(content="12345")
+}

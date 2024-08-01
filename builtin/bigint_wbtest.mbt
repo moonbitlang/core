@@ -348,7 +348,7 @@ test "div" {
   inspect!(c.to_string(), content="0")
 }
 
-test "lsl" {
+test "shl" {
   let a = BigInt::from_int64(1234567890123456789)
   let b = a << 1
   check_len!(b)
@@ -362,16 +362,16 @@ test "lsl" {
   inspect!(b.to_string(), content="0")
 }
 
-test "lsr" {
+test "shr" {
   let a = BigInt::from_int64(1234567890123456789L)
-  let b = a.lsr(1)
+  let b = a.shr(1)
   check_len!(b)
   inspect!(b.to_string(), content="617283945061728394")
-  let c = a.lsr(64)
+  let c = a.shr(64)
   check_len!(c)
   inspect!(c.to_string(), content="0")
   let a = BigInt::from_int64(radix * radix / 2L)
-  let b = a.lsr(radix_bit_len * 2)
+  let b = a.shr(radix_bit_len * 2)
   check_len!(b)
   inspect!(b.to_string(), content="0")
 }
@@ -592,14 +592,14 @@ test "panic grade_school_div coverage for division by zero" {
   grade_school_div(a, b) |> ignore
 }
 
-test "panic lsl coverage for negative shift" {
+test "panic shl coverage for negative shift" {
   let a = BigInt::from_int(123456789)
-  a.lsl(-1) |> ignore
+  a.shl(-1) |> ignore
 }
 
-test "panic lsr coverage for negative shift" {
+test "panic shr coverage for negative shift" {
   let a = BigInt::from_int(123456789)
-  a.lsr(-1) |> ignore
+  a.shr(-1) |> ignore
 }
 
 test "panic from_string coverage for empty string" {

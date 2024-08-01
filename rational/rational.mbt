@@ -135,16 +135,37 @@ pub fn to_double(self : T) -> Double {
   self.numerator.to_double() / self.denominator.to_double()
 }
 
-let nan_error = "Rational::from_double: cannot convert NaN"
+fn nan_error[T]() -> T!RationalError {
+  raise RationalError("Rational::from_double: cannot convert NaN")
+}
 
-let overflow_error = "Rational::from_double: overflow"
+fn overflow_error[T]() -> T!RationalError {
+  raise RationalError("Rational::from_double: overflow")
+}
+
+pub type! RationalError String
+
+pub impl Show for RationalError with output(self, logger) {
+  match self {
+    RationalError(e) => Show::output(e, logger)
+  }
+}
+
+pub impl Eq for RationalError with op_equal(
+  self : RationalError,
+  other : RationalError
+) -> Bool {
+  match (self, other) {
+    (RationalError(e1), RationalError(e2)) => e1 == e2
+  }
+}
 
 /// Returns the approximate rational value of a double.
-pub fn T::from_double(value : Double) -> T!String {
+pub fn T::from_double(value : Double) -> T!RationalError {
   // continued fraction algorithm
   // Ported from https://github.com/rust-num/num
   if value.is_nan() {
-    raise nan_error
+    nan_error!()
   }
   let sign = if value < 0.0 { -1L } else { 1L }
   let value = value.abs()
@@ -161,7 +182,7 @@ pub fn T::from_double(value : Double) -> T!String {
 
   // Overflow
   if q > t_max_f {
-    raise overflow_error
+    overflow_error!()
   }
   for i = 0; i < max_iteration; i = i + 1 {
     if not(q >= -9223372036854775808.0 && q < 9223372036854775808.0) {
@@ -202,7 +223,7 @@ pub fn T::from_double(value : Double) -> T!String {
   }
   // Overflow
   if d1 == 0L {
-    raise overflow_error
+    overflow_error!()
   }
   match T::new(sign * n1, d1) {
     Some(r) => r
