@@ -34,9 +34,17 @@ fn to_json(self : AllThree) -> @json.JsonValue {
   }
 }
 
-struct DecodeError {
+struct DecodeErrorData {
   message : String
 } derive(Eq, Show)
+
+type! DecodeError DecodeErrorData
+
+pub impl Show for DecodeError with output(self, logger) {
+  match self {
+    DecodeError(e) => Show::output(e, logger)
+  }
+}
 
 fn of_json(jv : @json.JsonValue) -> AllThree!DecodeError {
   match jv {
@@ -65,9 +73,11 @@ fn of_json(jv : @json.JsonValue) -> AllThree!DecodeError {
       { ints: ints_result, floats: floats_result, strings: strings_result }
     }
     _ =>
-      raise DecodeError::{
-        message: "Expected an object of ints, floats, and strings",
-      }
+      raise DecodeError(
+        DecodeErrorData::{
+          message: "Expected an object of ints, floats, and strings",
+        },
+      )
   }
 }
 

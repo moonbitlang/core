@@ -371,12 +371,23 @@ test "lsl" {
   inspect!(b.to_string(), content="0")
 }
 
-test "lsr" {
+test "shr" {
   let a = BigInt::from_int64(1234567890123456789L)
-  let b = a.lsr(1)
+  let b = a.shr(1)
   inspect!(b.to_string(), content="617283945061728394")
-  let c = a.lsr(64)
+  let c = a.shr(64)
   inspect!(c.to_string(), content="0")
+  let a = BigInt::from_int64(-1234567890123456789L)
+  let b = a.shr(1)
+  inspect!(b.to_string(), content="-617283945061728394")
+  let c = a.shr(64)
+  inspect!(c.to_string(), content="-1")
+  assert_eq!(
+    BigInt::from_int64(0b1111_1111L).shr(4),
+    BigInt::from_int64(0b1111L),
+  )
+  assert_eq!(BigInt::from_int64(0b1111_1111L).shr(24), BigInt::from_int64(0))
+  assert_eq!(BigInt::from_int64(0b1111_1111L).shr(44), BigInt::from_int64(0))
 }
 
 test "decimal_string" {
@@ -550,14 +561,14 @@ test "panic op_mod coverage for modulo by zero" {
   a % b |> ignore
 }
 
-test "panic lsl coverage for negative shift" {
+test "panic shl coverage for negative shift" {
   let a = BigInt::from_int(123456789)
-  a.lsl(-1) |> ignore
+  a.shl(-1) |> ignore
 }
 
 test "panic lsr coverage for negative shift" {
   let a = BigInt::from_int(123456789)
-  a.lsr(-1) |> ignore
+  a.shl(-1) |> ignore
 }
 
 test "panic from_string coverage for empty string" {
