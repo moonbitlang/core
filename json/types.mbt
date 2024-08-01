@@ -12,14 +12,16 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-pub enum JsonValue {
+pub type JsonValue = T
+
+pub enum T {
   Null
   True
   False
   Number(Double)
   String(String)
-  Array(Array[JsonValue])
-  Object(Map[String, JsonValue])
+  Array(Array[T])
+  Object(Map[String, T])
 } derive(Eq)
 
 pub struct Position {

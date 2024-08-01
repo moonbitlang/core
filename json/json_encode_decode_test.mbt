@@ -20,12 +20,12 @@ pub struct AllThree {
 
 fn array_to_json[T](
   arr : Array[T],
-  ~f : (T) -> @json.JsonValue
-) -> @json.JsonValue {
+  ~f : (T) -> @json.T
+) -> @json.T {
   Array(arr.map(f))
 }
 
-fn to_json(self : AllThree) -> @json.JsonValue {
+fn to_json(self : AllThree) -> @json.T {
   let { ints, floats, strings } = self
   {
     "ints": ints |> array_to_json(f=fn { x => Number(x.to_double()) }),
@@ -38,7 +38,7 @@ struct DecodeError {
   message : String
 } derive(Eq, Show)
 
-fn of_json(jv : @json.JsonValue) -> AllThree!DecodeError {
+fn of_json(jv : @json.T) -> AllThree!DecodeError {
   match jv {
     { "ints": Array(ints), "floats": Array(floats), "strings": Array(strings) } => {
       let ints_result = []
