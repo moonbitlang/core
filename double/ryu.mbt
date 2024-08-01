@@ -15,15 +15,15 @@
 // MoonBit implementation of Ryu, https://github.com/ulfjack/ryu
 
 fn log10Pow5(e : Int) -> Int {
-  (e * 732923).asr(20)
+  (e * 732923).lsr(20)
 }
 
 fn pow5bits(e : Int) -> Int {
-  (e * 1217359).asr(19) + 1
+  (e * 1217359).lsr(19) + 1
 }
 
 fn log10Pow2(e : Int) -> Int {
-  (e * 78913).asr(18)
+  (e * 78913).lsr(18)
 }
 
 fn string_from_bytes(bytes : Bytes, from : Int, to : Int) -> String {
