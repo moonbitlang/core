@@ -250,7 +250,7 @@ fn karatsuba_mul(self : BigInt, other : BigInt) -> BigInt {
   let p1 = xh * yh
   let p2 = xl * yl
   let p3 = (xh + xl) * (yh + yl)
-  p1.lsl(radix_bit_len * 2 * half) + (p3 - p1 - p2).lsl(radix_bit_len * half) + p2
+  p1.shl(radix_bit_len * 2 * half) + (p3 - p1 - p2).shl(radix_bit_len * half) + p2
 }
 
 // Get the lower half of the number.
@@ -365,8 +365,8 @@ fn grade_school_div(self : BigInt, other : BigInt) -> (BigInt, BigInt) {
     back = back.lsl(1)
     lshift += 1
   }
-  let dividend = dividend.lsl(lshift)
-  let divisor = divisor.lsl(lshift)
+  let dividend = dividend.shl(lshift)
+  let divisor = divisor.shl(lshift)
   let a_len = dividend.len
   let b_len = divisor.len
   let b = Array::make(b_len, 0L)
@@ -435,12 +435,13 @@ fn grade_school_div(self : BigInt, other : BigInt) -> (BigInt, BigInt) {
     modulo[j] = a[j].to_int()
   }
   let modulo = { limbs: modulo, sign: Positive, len: i }
-  ({ limbs: q, sign: Positive, len }, modulo.lsr(lshift))
+  ({ limbs: q, sign: Positive, len }, modulo.shr(lshift))
 }
 
 // Bitwise Operations
 
 /// Left shift a bigint
+/// @alert deprecate "Use shl instead"
 pub fn lsl(self : BigInt, n : Int) -> BigInt {
   if n < 0 {
     abort("negative shift count")
@@ -476,7 +477,47 @@ pub fn lsl(self : BigInt, n : Int) -> BigInt {
   }
 }
 
+/// Left shift a bigint
+/// The sign of the result is the same as the sign of the input.
+/// Only the absolute value is shifted.
+pub fn shl(self : BigInt, n : Int) -> BigInt {
+  if n < 0 {
+    abort("negative shift count")
+  }
+  if not(self.is_zero()) {
+    let new_limbs = Array::make(
+      self.len + (n + radix_bit_len - 1) / radix_bit_len, // ceiling(n / radix_bit_len)
+      0,
+    )
+    let a = self.limbs
+    let r = n % radix_bit_len
+    let lz = n / radix_bit_len // number of leading zeros
+    let mut len = self.len + lz
+    if r != 0 {
+      let mut carry = 0L
+      for i = 0; i < self.len; i = i + 1 {
+        carry = carry.lor(a[i].to_int64().lsl(r))
+        new_limbs[i + lz] = (carry % radix).to_int()
+        carry = carry.lsr(radix_bit_len)
+      }
+      if carry > 0L {
+        new_limbs[self.len + lz] = carry.to_int()
+        len += 1
+      }
+    } else {
+      for i = 0; i < self.len; i = i + 1 {
+        new_limbs[i + lz] = a[i]
+      }
+    }
+    { limbs: new_limbs, sign: self.sign, len }
+  } else {
+    make_zero()
+  }
+}
+
 /// Right shift a bigint
+/// it fills the vacated bits on the left with zeros.
+/// @alert deprecate "Use shr instead"
 pub fn lsr(self : BigInt, n : Int) -> BigInt {
   if n < 0 {
     abort("negative shift count")
@@ -485,6 +526,44 @@ pub fn lsr(self : BigInt, n : Int) -> BigInt {
   let lz = n / radix_bit_len
   if lz >= self.len {
     return make_zero()
+  }
+  let mut new_len = self.len - lz
+  if r == 0 {
+    let new_limbs = Array::make(new_len, 0)
+    for i = lz; i < self.len; i = i + 1 {
+      new_limbs[i - lz] = self.limbs[i]
+    }
+    { limbs: new_limbs, sign: self.sign, len: new_len }
+  } else {
+    let new_limbs = Array::make(new_len, 0)
+    let a = self.limbs
+    let mut carry = 0L
+    for i = self.len - 1; i >= lz; i = i - 1 {
+      let x = a[i].to_int64()
+      new_limbs[i - lz] = x.lsr(r).lor(carry).to_int()
+      carry = x.lsl(radix_bit_len - r) % radix
+    }
+    if new_len > 1 && new_limbs[new_len - 1] == 0 {
+      new_len -= 1
+    }
+    { limbs: new_limbs, sign: self.sign, len: new_len }
+  }
+}
+
+/// Right shift a bigint
+/// The sign of the result is the same as the sign of the input.
+/// Only the absolute value is shifted.
+pub fn shr(self : BigInt, n : Int) -> BigInt {
+  if n < 0 {
+    abort("negative shift count")
+  }
+  let r = n % radix_bit_len
+  let lz = n / radix_bit_len
+  if lz >= self.len {
+    match self.sign {
+      Positive => return make_zero()
+      Negative => return { limbs: Array::make(1, 1), sign: Negative, len: 1 }
+    }
   }
   let mut new_len = self.len - lz
   if r == 0 {

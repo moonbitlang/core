@@ -128,6 +128,8 @@ impl BigInt {
   op_mul(Self, Self) -> Self
   op_neg(Self) -> Self
   op_sub(Self, Self) -> Self
+  shl(Self, Int) -> Self
+  shr(Self, Int) -> Self
   to_hex(Self) -> String
   to_string(Self) -> String
 }
