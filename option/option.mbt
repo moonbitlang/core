@@ -368,7 +368,7 @@ test "iter" {
   exb.expect!(content="")
 }
 
-pub fn or_error[T, Err](self : T?, err : Err) -> T!Err {
+pub fn or_error[T, Err : Error](self : T?, err : Err) -> T!Err {
   match self {
     Some(v) => v
     None => raise err
@@ -378,17 +378,17 @@ pub fn or_error[T, Err](self : T?, err : Err) -> T!Err {
 test "or error" {
   @test.eq!(
     try {
-      (None : String?).or_error!("This is serious")
+      (None : String?).or_error!(Failure("This is serious"))
     } catch {
-      err => err
+      Failure(err) => err
     },
     "This is serious",
   )
   @test.eq!(
     try {
-      Some("This is ok").or_error!("This is serious")
+      Some("This is ok").or_error!(Failure("This is serious"))
     } catch {
-      err => err
+      Failure(err) => err
     },
     "This is ok",
   )

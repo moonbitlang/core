@@ -330,7 +330,7 @@ test "show" {
   )
 }
 
-pub fn unwrap_or_error[T, E](self : Result[T, E]) -> T!E {
+pub fn unwrap_or_error[T, E : Error](self : Result[T, E]) -> T!E {
   match self {
     Ok(x) => x
     Err(e) => raise e
@@ -338,15 +338,20 @@ pub fn unwrap_or_error[T, E](self : Result[T, E]) -> T!E {
 }
 
 test "unwrap exn" {
-  inspect!(
-    wrap1(f=unwrap_or_error, (Err("This is serious") : Result[Unit, String])),
+  try {
+    (Err(Failure("This is serious")) : Result[Unit, Failure]).unwrap_or_error!()
+    |> Ok
+  } catch {
+    Failure(msg) => Err(msg)
+  }
+  |> inspect!(
     content=
       #|Err("This is serious")
     ,
   )
 }
 
-pub fn wrap0[T, E](~f : () -> T!E) -> Result[T, E] {
+pub fn wrap0[T, E : Error](~f : () -> T!E) -> Result[T, E] {
   try {
     f!() |> Ok
   } catch {
@@ -354,7 +359,7 @@ pub fn wrap0[T, E](~f : () -> T!E) -> Result[T, E] {
   }
 }
 
-pub fn wrap1[T, A, E](~f : (A) -> T!E, a : A) -> Result[T, E] {
+pub fn wrap1[T, A, E : Error](~f : (A) -> T!E, a : A) -> Result[T, E] {
   try {
     f!(a) |> Ok
   } catch {
@@ -362,7 +367,11 @@ pub fn wrap1[T, A, E](~f : (A) -> T!E, a : A) -> Result[T, E] {
   }
 }
 
-pub fn wrap2[T, A, B, E](~f : (A, B) -> T!E, a : A, b : B) -> Result[T, E] {
+pub fn wrap2[T, A, B, E : Error](
+  ~f : (A, B) -> T!E,
+  a : A,
+  b : B
+) -> Result[T, E] {
   try {
     f!(a, b) |> Ok
   } catch {

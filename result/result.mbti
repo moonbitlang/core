@@ -5,11 +5,11 @@ fn err[T, E](E) -> Result[T, E]
 
 fn ok[T, E](T) -> Result[T, E]
 
-fn wrap0[T, E](~f : () -> T!E) -> Result[T, E]
+fn wrap0[T, E : Error](~f : () -> T!E) -> Result[T, E]
 
-fn wrap1[T, A, E](~f : (A) -> T!E, A) -> Result[T, E]
+fn wrap1[T, A, E : Error](~f : (A) -> T!E, A) -> Result[T, E]
 
-fn wrap2[T, A, B, E](~f : (A, B) -> T!E, A, B) -> Result[T, E]
+fn wrap2[T, A, B, E : Error](~f : (A, B) -> T!E, A, B) -> Result[T, E]
 
 // Types and methods
 impl Result {
@@ -26,7 +26,7 @@ impl Result {
   to_option[T, E](Self[T, E]) -> T?
   to_string[T : Show, E : Show](Self[T, E]) -> String
   unwrap[T, E](Self[T, E]) -> T
-  unwrap_or_error[T, E](Self[T, E]) -> T!E
+  unwrap_or_error[T, E : Error](Self[T, E]) -> T!E
 }
 
 // Traits
