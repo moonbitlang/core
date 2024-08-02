@@ -144,9 +144,7 @@ pub fn Bytes::new(len : Int) -> Bytes {
 
 fn identity[A, B](x : A) -> B = "%identity"
 
-pub fn Int::to_byte(self : Int) -> Byte {
-  identity(self.land(0xFF))
-}
+pub fn Int::to_byte(self : Int) -> Byte = "%i32_to_byte"
 
 pub fn Int64::to_byte(self : Int64) -> Byte {
   identity(self.to_int().land(0xFF))
