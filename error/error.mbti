@@ -1,0 +1,11 @@
+package moonbitlang/core/error
+
+// Values
+
+// Types and methods
+
+// Traits
+
+// Extension Methods
+impl Show for Error
+
