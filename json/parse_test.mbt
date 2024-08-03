@@ -13,14 +13,13 @@
 // limitations under the License.
 
 fn parse_as_result(input : String) -> Result[@json.JsonValue, @json.ParseError] {
-  input |> @result.wrap1(f=@json.parse)
+  @json.parse?(input)
 }
 
-fn test_parse(input : String, ~loc : SourceLoc = _) -> @json.JsonValue!Error {
-  match parse_as_result(input) {
-    Ok(json) => json
-    Err(err) => fail!("Parse failed, \(loc), \(err)")
-  }
+fn test_parse(input : String, ~loc : SourceLoc = _) -> @json.JsonValue! {
+  // @json.parse?(input).unwrap_or_error!()  
+  // The subtyping does not work here, so we have to use the following workaround
+  @json.parse!(input)
 }
 
 //region objects
