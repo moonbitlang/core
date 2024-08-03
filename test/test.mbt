@@ -18,7 +18,7 @@ fn debug_string[T : Show](t : T) -> String {
   buf.to_string()
 }
 
-pub fn eq[T : Show + Eq](a : T, b : T, ~loc : SourceLoc = _) -> Unit!Error {
+pub fn eq[T : Show + Eq](a : T, b : T, ~loc : SourceLoc = _) -> Unit! {
   if a != b {
     let a = debug_string(a)
     let b = debug_string(b)
@@ -26,7 +26,7 @@ pub fn eq[T : Show + Eq](a : T, b : T, ~loc : SourceLoc = _) -> Unit!Error {
   }
 }
 
-pub fn ne[T : Show + Eq](a : T, b : T, ~loc : SourceLoc = _) -> Unit!Error {
+pub fn ne[T : Show + Eq](a : T, b : T, ~loc : SourceLoc = _) -> Unit! {
   if not(a != b) {
     let a = debug_string(a)
     let b = debug_string(b)
@@ -34,14 +34,14 @@ pub fn ne[T : Show + Eq](a : T, b : T, ~loc : SourceLoc = _) -> Unit!Error {
   }
 }
 
-pub fn is_true(x : Bool, ~loc : SourceLoc = _) -> Unit!Error {
+pub fn is_true(x : Bool, ~loc : SourceLoc = _) -> Unit! {
   if not(x) {
     let x = debug_string(x)
     fail!("FAILED: \(loc) `\(x)` is not true")
   }
 }
 
-pub fn is_false(x : Bool, ~loc : SourceLoc = _) -> Unit!Error {
+pub fn is_false(x : Bool, ~loc : SourceLoc = _) -> Unit! {
   if x {
     let x = debug_string(x)
     fail!("FAILED: \(loc): `\(x)` is not false")
@@ -63,7 +63,7 @@ pub fn is_false(x : Bool, ~loc : SourceLoc = _) -> Unit!Error {
 /// is(a, a)!  // this is okay
 /// is(a, b)!  // yields an error
 /// ```
-pub fn is[T : Show](a : T, b : T, ~loc : SourceLoc = _) -> Unit!Error {
+pub fn is[T : Show](a : T, b : T, ~loc : SourceLoc = _) -> Unit! {
   if not(physical_equal(a, b)) {
     let a = debug_string(a)
     let b = debug_string(b)
@@ -86,7 +86,7 @@ pub fn is[T : Show](a : T, b : T, ~loc : SourceLoc = _) -> Unit!Error {
 /// is_not(a, b)!  // this is okay
 /// is_not(a, a)!  // yields an error
 /// ```
-pub fn is_not[T : Show](a : T, b : T, ~loc : SourceLoc = _) -> Unit!Error {
+pub fn is_not[T : Show](a : T, b : T, ~loc : SourceLoc = _) -> Unit! {
   if physical_equal(a, b) {
     let a = debug_string(a)
     let b = debug_string(b)
@@ -94,6 +94,6 @@ pub fn is_not[T : Show](a : T, b : T, ~loc : SourceLoc = _) -> Unit!Error {
   }
 }
 
-pub fn fail[T](msg : String, ~loc : SourceLoc = _) -> T!Error {
+pub fn fail[T](msg : String, ~loc : SourceLoc = _) -> T! {
   @builtin.fail!(msg, ~loc)
 }

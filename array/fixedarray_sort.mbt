@@ -420,7 +420,7 @@ fn fixed_sift_down[T : Compare](arr : FixedArraySlice[T], index : Int) -> Unit {
   }
 }
 
-fn fixed_test_sort(f : (FixedArray[Int]) -> Unit) -> Unit!Error {
+fn fixed_test_sort(f : (FixedArray[Int]) -> Unit) -> Unit! {
   let arr : FixedArray[_] = [5, 4, 3, 2, 1]
   f(arr)
   @test.eq!(arr, [1, 2, 3, 4, 5])

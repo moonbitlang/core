@@ -226,7 +226,7 @@ fn sift_down[T : Compare](arr : ArrayView[T], index : Int) -> Unit {
   }
 }
 
-fn test_sort(f : (Array[Int]) -> Unit) -> Unit!Error {
+fn test_sort(f : (Array[Int]) -> Unit) -> Unit! {
   let arr = [5, 4, 3, 2, 1]
   f(arr)
   @test.eq!(arr, [1, 2, 3, 4, 5])
