@@ -94,7 +94,7 @@ fn inspect_double_array(
   ~content : String = "",
   ~loc : SourceLoc = _,
   ~args_loc : ArgsLoc = _
-) -> Unit!Error {
+) -> Unit! {
   inspect!(
     a.map(fn { x => @rational.from_double?(x) }),
     ~content,

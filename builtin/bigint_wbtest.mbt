@@ -12,15 +12,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-fn check_len(a : BigInt) -> Unit!Error {
+fn check_len(a : BigInt) -> Unit! {
   if a.is_zero() {
     return ()
   }
   assert_eq!(a.limbs[a.len - 1] != 0, true)
   for i = a.len; i < a.limbs.length(); i = i + 1 {
     assert_eq!(a.limbs[i], 0)
-  } else {
-    ()
   }
 }
 
