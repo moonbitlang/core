@@ -443,6 +443,7 @@ impl Bytes {
   make(Int, Byte) -> Bytes
   new(Int) -> Bytes
   of_string(String) -> Bytes
+  op_equal(Bytes, Bytes) -> Bool
   op_get(Bytes, Int) -> Byte
   op_set(Bytes, Int, Byte) -> Unit
   set_utf16_char(Bytes, Int, Char) -> Int
