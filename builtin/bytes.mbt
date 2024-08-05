@@ -124,3 +124,18 @@ pub fn set_utf16_char(self : Bytes, offset : Int, value : Char) -> Int {
     abort("Char out of range")
   }
 }
+
+pub fn op_equal(self : Bytes, other : Bytes) -> Bool {
+  if self.length() != other.length() {
+    false
+  } else {
+    let len = self.length()
+    for i = 0; i < len; i = i + 1 {
+      if self[i] != other[i] {
+        break false
+      }
+    } else {
+      true
+    }
+  }
+}

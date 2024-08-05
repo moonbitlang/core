@@ -116,3 +116,10 @@ test "panic set_utf16_char with invalid code point" {
   let char = Char::from_int(0x110000)
   bytes.set_utf16_char(0, char) |> ignore
 }
+
+test "op_equal" {
+  let bytes = Bytes::of_string("Hello, World!")
+  let copy_bytes = bytes.copy()
+  @test.eq!(bytes, copy_bytes)
+  @test.ne!(bytes, Bytes::new(10))
+}
