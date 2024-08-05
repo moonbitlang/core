@@ -25,3 +25,14 @@ test "Map keys iter" {
   inspect!(({  } : Map[String, Int]).keys(), content="[]")
   inspect!(({  } : Map[String, Int]).values(), content="[]")
 }
+
+test "Map::from_iter" {
+  let iter = [("a", 1), ("b", 2), ("c", 3)].iter()
+  let map = Map::from_iter(iter)
+  inspect!(
+    map,
+    content=
+      #|{"a": 1, "b": 2, "c": 3}
+    ,
+  )
+}

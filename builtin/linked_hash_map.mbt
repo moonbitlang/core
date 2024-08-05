@@ -495,3 +495,9 @@ pub fn Map::of[K : Hash + Eq, V](arr : FixedArray[(K, V)]) -> Map[K, V] {
   }
   m
 }
+
+pub fn Map::from_iter[K : Hash + Eq, V](iter : Iter[(K, V)]) -> Map[K, V] {
+  let m = Map::new()
+  iter.each(fn(e) { m.set(e.0, e.1) })
+  m
+}
