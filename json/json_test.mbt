@@ -342,3 +342,17 @@ test "stringify" {
   }
   @test.eq!(newjson, json)
 }
+
+test "stringify escape" {
+  let json : @json.JsonValue = { "\b": "\"hello\"", "\n": "\n\r\t", "\\": "/" }
+  inspect!(
+    json.stringify(),
+    content=
+      #|{"\b":"\"hello\"","\n":"\n\r\t","\\":"\/"}
+    ,
+  )
+  match parse_as_result(json.stringify()) {
+    Err(e) => raise e
+    Ok(newjson) => @test.eq!(newjson, json)
+  }
+}

@@ -88,7 +88,7 @@ pub fn stringify(self : JsonValue) -> String {
             buf.write_char(',')
           }
           buf.write_char('\"')
-          buf.write_string(k)
+          buf.write_string(escape(k))
           buf.write_char('\"')
           buf.write_char(':')
           buf.write_string(v.stringify())
@@ -110,13 +110,32 @@ pub fn stringify(self : JsonValue) -> String {
     }
     String(s) => {
       buf.write_char('\"')
-      buf.write_string(s)
+      buf.write_string(escape(s))
       buf.write_char('\"')
     }
     Number(n) => return n.to_string()
     True => return "true"
     False => return "false"
     Null => return "null"
+  }
+  buf.to_string()
+}
+
+fn escape(str : String) -> String {
+  let buf = Buffer::new()
+  for i = 0; i < str.length(); i = i + 1 {
+    let c = str[i]
+    match c {
+      '"' | '\\' | '/' => {
+        buf.write_char('\\')
+        buf.write_char(c)
+      }
+      '\n' => buf.write_string("\\n")
+      '\r' => buf.write_string("\\r")
+      '\b' => buf.write_string("\\b")
+      '\t' => buf.write_string("\\t")
+      _ => buf.write_char(c)
+    }
   }
   buf.to_string()
 }
