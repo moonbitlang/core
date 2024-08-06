@@ -93,7 +93,7 @@ pub fn write_string(self : Buffer, value : String) -> Unit {
   self.len = self.len + value.length() * 2
 }
 
-pub fn write_bytes(self : Buffer, value: Bytes) -> Unit {
+pub fn write_bytes(self : Buffer, value : Bytes) -> Unit {
   self.grow_if_necessary(self.len + value.length())
   self.bytes.blit(self.len, value, 0, value.length())
   self.len = self.len + value.length()
