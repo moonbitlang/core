@@ -1,19 +1,19 @@
 package moonbitlang/core/test
 
 // Values
-fn eq[T : Show + Eq](T, T, ~loc : SourceLoc = _) -> Unit!Error
+fn eq[T : Show + Eq](T, T, ~loc : SourceLoc = _) -> Unit!
 
-fn fail[T](String, ~loc : SourceLoc = _) -> T!Error
+fn fail[T](String, ~loc : SourceLoc = _) -> T!
 
-fn is[T : Show](T, T, ~loc : SourceLoc = _) -> Unit!Error
+fn is[T : Show](T, T, ~loc : SourceLoc = _) -> Unit!
 
-fn is_false(Bool, ~loc : SourceLoc = _) -> Unit!Error
+fn is_false(Bool, ~loc : SourceLoc = _) -> Unit!
 
-fn is_not[T : Show](T, T, ~loc : SourceLoc = _) -> Unit!Error
+fn is_not[T : Show](T, T, ~loc : SourceLoc = _) -> Unit!
 
-fn is_true(Bool, ~loc : SourceLoc = _) -> Unit!Error
+fn is_true(Bool, ~loc : SourceLoc = _) -> Unit!
 
-fn ne[T : Show + Eq](T, T, ~loc : SourceLoc = _) -> Unit!Error
+fn ne[T : Show + Eq](T, T, ~loc : SourceLoc = _) -> Unit!
 
 // Types and methods
 pub struct T {
