@@ -337,13 +337,31 @@ pub fn to_array[V](self : T[V]) -> Array[V] {
 pub fn iter[V](self : T[V]) -> Iter[V] {
   Iter::new(
     fn(yield) {
-      let arr = self.to_array()
-      for i = 0, len = arr.length(); i < len; i = i + 1 {
-        if yield(arr[i]) == IterEnd {
-          break IterEnd
-        }
+      match self.root {
+        None => IterContinue
+        Some(root) => root.iter().run(yield)
+      }
+    },
+  )
+}
+
+fn iter[A](self : Node[A]) -> Iter[A] {
+  Iter::new(
+    fn(yield) {
+      let { left, value, right, .. } = self
+      let res = match left {
+        None => IterContinue
+        Some(l) => l.iter().run(yield)
+      }
+      if res == IterEnd {
+        IterEnd
+      } else if yield(value) == IterEnd {
+        IterEnd
       } else {
-        IterContinue
+        match right {
+          None => IterContinue
+          Some(r) => r.iter().run(yield)
+        }
       }
     },
   )
