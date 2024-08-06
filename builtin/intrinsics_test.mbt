@@ -130,3 +130,14 @@ test "UInt64::lnot test cases" {
   // Test case 8: Random case, testing with a value that has all 1s
   inspect!(UInt64::lnot(0xFFFFFFFFFFFFFFFFUL), content="0")
 }
+
+test "shift" {
+  inspect!(1 << 2, content="4")
+  inspect!(1UL << 2, content="4")
+  // right shift
+  inspect!(4 >> 2, content="1")
+  inspect!(4UL >> 2, content="1")
+  inspect!(2 >> 2, content="0")
+  inspect!(-2 >> 2, content="-1")
+  inspect!(2UL >> 2, content="0")
+}

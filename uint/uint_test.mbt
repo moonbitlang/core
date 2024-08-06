@@ -47,3 +47,9 @@ test "UInt to byte" {
   let b = u.to_byte()
   inspect!(b, content="b'\\x00'")
 }
+
+test "shift" {
+  inspect!(1U << 2, content="4")
+  inspect!(4U >> 2, content="1")
+  inspect!(2U >> 2, content="0")
+}

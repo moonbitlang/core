@@ -304,8 +304,12 @@ impl Int {
   op_mod(Int, Int) -> Int
   op_mul(Int, Int) -> Int
   op_neg(Int) -> Int
+  op_shl(Int, Int) -> Int
+  op_shr(Int, Int) -> Int
   op_sub(Int, Int) -> Int
   popcnt(Int) -> Int
+  shl(Int, Int) -> Int
+  shr(Int, Int) -> Int
   to_byte(Int) -> Byte
   to_double(Int) -> Double
   to_int64(Int) -> Int64
@@ -331,9 +335,13 @@ impl Int64 {
   op_mod(Int64, Int64) -> Int64
   op_mul(Int64, Int64) -> Int64
   op_neg(Int64) -> Int64
+  op_shl(Int64, Int) -> Int64
+  op_shr(Int64, Int) -> Int64
   op_sub(Int64, Int64) -> Int64
   popcnt(Int64) -> Int
   reinterpret_as_double(Int64) -> Double
+  shl(Int64, Int) -> Int64
+  shr(Int64, Int) -> Int64
   to_byte(Int64) -> Byte
   to_double(Int64) -> Double
   to_int(Int64) -> Int
@@ -355,7 +363,11 @@ impl UInt {
   op_mod(UInt, UInt) -> UInt
   op_mul(UInt, UInt) -> UInt
   op_neq(UInt, UInt) -> Bool
+  op_shl(UInt, Int) -> UInt
+  op_shr(UInt, Int) -> UInt
   op_sub(UInt, UInt) -> UInt
+  shl(UInt, Int) -> UInt
+  shr(UInt, Int) -> UInt
   to_int(UInt) -> Int
   to_string(UInt) -> String
   to_uint64(UInt) -> UInt64
@@ -375,7 +387,11 @@ impl UInt64 {
   op_equal(UInt64, UInt64) -> Bool
   op_mod(UInt64, UInt64) -> UInt64
   op_mul(UInt64, UInt64) -> UInt64
+  op_shl(UInt64, Int) -> UInt64
+  op_shr(UInt64, Int) -> UInt64
   op_sub(UInt64, UInt64) -> UInt64
+  shl(UInt64, Int) -> UInt64
+  shr(UInt64, Int) -> UInt64
   to_byte(UInt64) -> Byte
   to_int(UInt64) -> Int
   to_int64(UInt64) -> Int64

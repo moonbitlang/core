@@ -32,3 +32,10 @@ test "Int64::min_value" {
   let min_value = Int64::min_value()
   @test.eq!(min_value, -9223372036854775808L)
 }
+
+test "shift" {
+  inspect!(1L << 2, content="4")
+  inspect!(4L >> 2, content="1")
+  inspect!(-2L >> 2, content="-1")
+  inspect!(2L >> 2, content="0")
+}
