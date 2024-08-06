@@ -9,6 +9,8 @@ impl Unit {
   to_string(Unit) -> String
 }
 
+// Type aliases
+
 // Traits
 
 // Extension Methods

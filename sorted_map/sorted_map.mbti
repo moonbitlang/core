@@ -28,6 +28,8 @@ impl T {
   values[K, V](Self[K, V]) -> Array[V]
 }
 
+// Type aliases
+
 // Traits
 
 // Extension Methods

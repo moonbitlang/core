@@ -69,6 +69,8 @@ impl T {
   zip[A, B](Self[A], Self[B]) -> Self[Tuple[A, B]]
 }
 
+// Type aliases
+
 // Traits
 
 // Extension Methods

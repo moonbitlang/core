@@ -9,6 +9,8 @@ impl Bool {
   to_int64(Bool) -> Int64
 }
 
+// Type aliases
+
 // Traits
 pub trait Boolean {
   to_bool(Self) -> Bool

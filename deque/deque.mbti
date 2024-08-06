@@ -38,6 +38,8 @@ impl T {
   to_string[A : Show](Self[A]) -> String
 }
 
+// Type aliases
+
 // Traits
 
 // Extension Methods

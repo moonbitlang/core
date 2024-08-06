@@ -12,6 +12,8 @@ impl RandomState {
   new() -> Self
 }
 
+// Type aliases
+
 // Traits
 
 // Extension Methods

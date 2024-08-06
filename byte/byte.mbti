@@ -10,6 +10,8 @@ impl Byte {
   to_uint(Byte) -> UInt
 }
 
+// Type aliases
+
 // Traits
 
 // Extension Methods

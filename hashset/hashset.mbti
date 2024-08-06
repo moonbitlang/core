@@ -26,6 +26,8 @@ impl T {
   union[K : Hash + Eq](Self[K], Self[K]) -> Self[K]
 }
 
+// Type aliases
+
 // Traits
 
 // Extension Methods

@@ -26,6 +26,8 @@ impl Double {
   trunc(Double) -> Double
 }
 
+// Type aliases
+
 // Traits
 
 // Extension Methods

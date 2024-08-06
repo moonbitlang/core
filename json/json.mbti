@@ -55,6 +55,8 @@ impl Position {
   op_equal(Self, Self) -> Bool
 }
 
+// Type aliases
+
 // Traits
 
 // Extension Methods

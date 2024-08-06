@@ -26,6 +26,8 @@ impl SparseArray {
   size[X](Self[X]) -> Int
 }
 
+// Type aliases
+
 // Traits
 
 // Extension Methods

@@ -13,6 +13,8 @@ impl CoverageCounter {
   to_string(Self) -> String
 }
 
+// Type aliases
+
 // Traits
 
 // Extension Methods

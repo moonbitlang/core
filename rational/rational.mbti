@@ -27,6 +27,8 @@ impl T {
   trunc(Self) -> Int64
 }
 
+// Type aliases
+
 // Traits
 
 // Extension Methods

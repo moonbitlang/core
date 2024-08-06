@@ -29,6 +29,8 @@ impl Result {
   unwrap_or_error[T, E : Error](Self[T, E]) -> T!E
 }
 
+// Type aliases
+
 // Traits
 
 // Extension Methods

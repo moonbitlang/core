@@ -11,6 +11,8 @@ impl Int64 {
   signum(Int64) -> Int64
 }
 
+// Type aliases
+
 // Traits
 
 // Extension Methods
