@@ -38,9 +38,9 @@ pub fn Int64::shl(self : Int64, other : Int) -> Int64 = "%i64_shl"
 
 pub fn Int64::op_shl(self : Int64, other : Int) -> Int64 = "%i64_shl"
 
-pub fn Int64::lsr(self : Int64, other : Int) -> Int64 = "%i64_lsr"
+pub fn Int64::lsr(self : Int64, other : Int) -> Int64 = "%u64.shr"
 
-pub fn Int64::asr(self : Int64, other : Int) -> Int64 = "%i64_asr"
+pub fn Int64::asr(self : Int64, other : Int) -> Int64 = "%i64_shr"
 
 pub fn Int64::op_shr(self : Int64, other : Int) -> Int64 = "%i64_shr"
 
