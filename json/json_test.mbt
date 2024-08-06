@@ -342,3 +342,18 @@ test "stringify" {
   }
   @test.eq!(newjson, json)
 }
+
+test "bug in @json.stringify" {
+  let json : @json.JsonValue = { "\"": "\n" }
+  inspect!(
+    json.stringify(),
+    content=
+      #|{""":"
+      #|"}
+    ,
+  )
+  match parse_as_result(json.stringify()) {
+    Err(e) => raise e
+    Ok(newjson) => @test.eq!(newjson, json)
+  }
+}
