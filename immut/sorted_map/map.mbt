@@ -257,7 +257,7 @@ test "map" {
 
 test "map_with_key" {
   let m = of([(3, "three"), (8, "eight"), (1, "one"), (2, "two"), (0, "zero")])
-  let n = m.map_with_key(fn(k, v) { "\(k)-\(v)" })
+  let n = m.map_with_key(fn(k, v) { "\{k}-\{v}" })
   @test.eq!(
     n.debug_tree(),
     "(3,3-three,(1,1-one,(0,0-zero,_,_),(2,2-two,_,_)),(8,8-eight,_,_))",

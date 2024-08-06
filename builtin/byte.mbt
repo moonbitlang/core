@@ -46,7 +46,7 @@ pub fn to_string(self : Byte) -> String {
   let i = self.to_int()
   let hi = alphabet(i / 16)
   let lo = alphabet(i % 16)
-  "b'\\x\(hi)\(lo)'"
+  "b'\\x\{hi}\{lo}'"
 }
 
 pub impl Hash for Byte with hash(self) { self.to_int() }

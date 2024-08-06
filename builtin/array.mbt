@@ -54,7 +54,7 @@ pub fn op_get[T](self : Array[T], index : Int) -> T {
   if index < 0 || index >= self.length() {
     let len = self.length()
     abort(
-      "index out of bounds: the len is from 0 to \(len) but the index is \(index)",
+      "index out of bounds: the len is from 0 to \{len} but the index is \{index}",
     )
   }
   self.buffer()[index]
@@ -88,7 +88,7 @@ pub fn op_set[T](self : Array[T], index : Int, value : T) -> Unit {
   if index < 0 || index >= self.length() {
     let len = self.length()
     abort(
-      "index out of bounds: the len is from 0 to \(len) but the index is \(index)",
+      "index out of bounds: the len is from 0 to \{len} but the index is \{index}",
     )
   }
   self.buffer()[index] = value
@@ -199,7 +199,7 @@ pub fn drain[T](self : Array[T], begin : Int, end : Int) -> Array[T] {
   end {
     let len = self.length()
     abort(
-      "index out of bounds: the len is \(len) but the index is (\(begin), \(end))",
+      "index out of bounds: the len is \{len} but the index is (\{begin}, \{end})",
     )
   }
   let num = end - begin
@@ -439,7 +439,7 @@ pub fn split_at[T](self : Array[T], index : Int) -> (Array[T], Array[T]) {
   if index < 0 || index >= self.length() {
     let len = self.length()
     abort(
-      "index out of bounds: the len is from 0 to \(len) but the index is \(index)",
+      "index out of bounds: the len is from 0 to \{len} but the index is \{index}",
     )
   }
   let v1 = Array::make_uninit(index)
@@ -586,7 +586,7 @@ pub fn swap[T](self : Array[T], i : Int, j : Int) -> Unit {
   if i >= self.length() || j >= self.length() || i < 0 || j < 0 {
     let len = self.length()
     abort(
-      "index out of bounds: the len is from 0 to \(len) but the index is (\(i), \(j))",
+      "index out of bounds: the len is from 0 to \{len} but the index is (\{i}, \{j})",
     )
   }
   let temp = self.buffer()[i]
@@ -608,7 +608,7 @@ pub fn remove[T](self : Array[T], index : Int) -> T {
   if index < 0 || index >= self.length() {
     let len = self.length()
     abort(
-      "index out of bounds: the len is from 0 to \(len) but the index is \(index)",
+      "index out of bounds: the len is from 0 to \{len} but the index is \{index}",
     )
   }
   let value = self.buffer()[index]
@@ -673,7 +673,7 @@ pub fn insert[T](self : Array[T], index : Int, value : T) -> Unit {
   if index < 0 || index > self.length() {
     let len = self.length()
     abort(
-      "index out of bounds: the len is from 0 to \(len) but the index is \(index)",
+      "index out of bounds: the len is from 0 to \{len} but the index is \{index}",
     )
   }
   if self.length() == self.buffer().0.length() {

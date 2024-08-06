@@ -308,8 +308,8 @@ pub fn unwrap[T, E](self : Result[T, E]) -> T {
 
 pub fn to_string[T : Show, E : Show](self : Result[T, E]) -> String {
   match self {
-    Ok(x) => "Ok(\(x))"
-    Err(e) => "Err(\(e))"
+    Ok(x) => "Ok(\{x})"
+    Err(e) => "Err(\{e})"
   }
 }
 

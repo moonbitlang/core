@@ -51,7 +51,7 @@ pub fn expect(
     let expect = repr(content)
     let actual = repr(current)
     raise InspectError(
-      "@EXPECT_FAILED {\"loc\": \(loc), \"args_loc\": \(args_loc), \"expect\": \(expect), \"actual\": \(actual)}",
+      "@EXPECT_FAILED {\"loc\": \{loc}, \"args_loc\": \{args_loc}, \"expect\": \{expect}, \"actual\": \{actual}}",
     )
   }
 }

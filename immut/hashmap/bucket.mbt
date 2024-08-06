@@ -131,7 +131,7 @@ test "Bucket::iter" {
       } else {
         buf.write_string(", ")
       }
-      buf.write_string("\(k) => \(v)")
+      buf.write_string("\{k} => \{v}")
     },
   )
   inspect!(buf.to_string(), content="0 => 0, 1 => 1, 31 => 31")
@@ -151,7 +151,7 @@ test "Bucket::iter" {
         } else {
           buf.write_string(", ")
         }
-        buf.write_string("\(k) => \(v)")
+        buf.write_string("\{k} => \{v}")
       }
     },
   )

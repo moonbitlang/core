@@ -133,7 +133,7 @@ test "iter" {
   map.iter().each(
     fn(e) {
       let (k, v) = e
-      buf.write_string("[\(k)-\(v)]")
+      buf.write_string("[\{k}-\{v}]")
     },
   )
   inspect!(buf, content="[2-two][1-one][3-three]")
@@ -141,7 +141,7 @@ test "iter" {
   map.iter().take(2).each(
     fn(e) {
       let (k, v) = e
-      buf.write_string("[\(k)-\(v)]")
+      buf.write_string("[\{k}-\{v}]")
     },
   )
   inspect!(buf, content="[2-two][1-one]")

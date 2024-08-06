@@ -337,7 +337,7 @@ fn debug_entries[K : Show, V : Show](self : Map[K, V]) -> String {
     match self.entries[i] {
       None => buf.write_char('_')
       Some({ psl, key, value, .. }) =>
-        buf.write_string("(\(psl),\(key),\(value))")
+        buf.write_string("(\{psl},\{key},\{value})")
     }
   }
   buf.to_string()

@@ -47,10 +47,10 @@ test "to_array" {
 test "iter" {
   let buf = Buffer::new(size_hint=20)
   let v = @priority_queue.of([1, 2, 3])
-  v.iter().each(fn(e) { buf.write_string("[\(e)]") })
+  v.iter().each(fn(e) { buf.write_string("[\{e}]") })
   inspect!(buf, content="[3][2][1]")
   buf.reset()
-  v.iter().take(2).each(fn(e) { buf.write_string("[\(e)]") })
+  v.iter().take(2).each(fn(e) { buf.write_string("[\{e}]") })
   inspect!(buf, content="[3][2]")
 }
 

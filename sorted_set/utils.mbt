@@ -42,7 +42,7 @@ fn debug_node[V : Show](self : Node[V]) -> String {
   }
   let value = self.value
   let height = self.height
-  "([\(height)]\(value),\(l),\(r))"
+  "([\{height}]\{value},\{l},\{r})"
 }
 
 fn debug_tree[V : Show](self : T[V]) -> String {
