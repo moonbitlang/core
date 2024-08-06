@@ -142,6 +142,7 @@ impl Buffer {
   to_bytes(Self) -> Bytes
   to_string(Self) -> String
   write_byte(Self, Byte) -> Unit
+  write_bytes(Self, Bytes) -> Unit
   write_char(Self, Char) -> Unit
   write_string(Self, String) -> Unit
   write_sub_string(Self, String, Int, Int) -> Unit

@@ -93,6 +93,13 @@ pub fn write_string(self : Buffer, value : String) -> Unit {
   self.len = self.len + value.length() * 2
 }
 
+pub fn write_bytes(self : Buffer, value : Bytes) -> Unit {
+  let val_len = value.length()
+  self.grow_if_necessary(self.len + val_len)
+  self.bytes.blit(self.len, value, 0, val_len)
+  self.len = self.len + val_len
+}
+
 /// Write a sub-string into buffer.
 pub fn write_sub_string(
   self : Buffer,
