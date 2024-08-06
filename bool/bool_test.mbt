@@ -17,10 +17,6 @@ test "Bool hash function" {
   @test.eq!(Hash::hash(false), 0)
 }
 
-fn unused1() -> Unit {
-
-}
-
 struct TestHash {
   flag : Bool
   x : Int
