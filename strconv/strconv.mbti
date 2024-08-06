@@ -25,6 +25,8 @@ type Number
 
 pub type! StrConvError String
 
+// Type aliases
+
 // Traits
 pub trait FromStr {
   from_string(String) -> Self!StrConvError

@@ -281,7 +281,7 @@ fn debug_entries[K : Show](self : T[K]) -> String {
     }
     match self.entries[i] {
       None => s += "_"
-      Some({ psl, key, .. }) => s += "(\(psl),\(key))"
+      Some({ psl, key, .. }) => s += "(\{psl},\{key})"
     }
   }
   s

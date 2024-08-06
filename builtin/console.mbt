@@ -190,7 +190,7 @@ pub fn inspect(
     let expect = content.escape()
     let actual = obj.to_string().escape()
     raise InspectError(
-      "@EXPECT_FAILED {\"loc\": \(loc), \"args_loc\": \(args_loc), \"expect\": \(expect), \"actual\": \(actual)}",
+      "@EXPECT_FAILED {\"loc\": \{loc}, \"args_loc\": \{args_loc}, \"expect\": \{expect}, \"actual\": \{actual}}",
     )
   }
 }

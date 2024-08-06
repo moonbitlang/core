@@ -18,7 +18,7 @@ fn debug_entries[K : Show, V : Show](self : T[K, V]) -> String {
     match self.entries[i] {
       None => continue s + "_", i + 1
       Some({ psl, key, value, .. }) =>
-        continue s + "(\(psl),\(key),\(value))", i + 1
+        continue s + "(\{psl},\{key},\{value})", i + 1
     }
   } else {
     s

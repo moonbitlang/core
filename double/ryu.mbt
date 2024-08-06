@@ -94,7 +94,7 @@ fn pow5Factor(value : UInt64) -> Int {
     value = value / 5UL
     count = count + 1
   }
-  abort("IllegalArgumentException \(value)")
+  abort("IllegalArgumentException \{value}")
 }
 
 fn multipleOfPowerOf5(value : UInt64, p : Int) -> Bool {
@@ -242,7 +242,7 @@ let gDOUBLE_POW5_BITCOUNT : Int = 125
 
 fn assert(b : Bool, msg : String) -> Unit {
   if not(b) {
-    abort("assert failed: \(msg)\n")
+    abort("assert failed: \{msg}\n")
   }
 }
 
@@ -314,7 +314,7 @@ priv struct FloatingDecimal64 {
 fn to_string(self : FloatingDecimal64) -> String {
   let m = self.mantissa
   let e = self.exponent
-  "{ mantissa: \(m), exponent: \(e) }"
+  "{ mantissa: \{m}, exponent: \{e} }"
 }
 
 fn d2d(ieeeMantissa : UInt64, ieeeExponent : Int) -> FloatingDecimal64 {

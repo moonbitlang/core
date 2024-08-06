@@ -27,6 +27,8 @@ impl Option {
   or_error[T, Err : Error](T?, Err) -> T!Err
 }
 
+// Type aliases
+
 // Traits
 
 // Extension Methods

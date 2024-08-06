@@ -25,7 +25,7 @@ pub fn Ref::new[T](x : T) -> Ref[T] {
 
 pub fn to_string[X : Show](self : Ref[X]) -> String {
   let v = self.val
-  "{val: \(v)}"
+  "{val: \{v}}"
 }
 
 test "to_string" {

@@ -121,7 +121,7 @@ test "Bucket::iter" {
       } else {
         buf.write_string(", ")
       }
-      buf.write_string("\(k)")
+      buf.write_string("\{k}")
     },
   )
   inspect!(buf.to_string(), content="0, 1, 31")
@@ -141,7 +141,7 @@ test "Bucket::iter" {
         } else {
           buf.write_string(", ")
         }
-        buf.write_string("\(k)")
+        buf.write_string("\{k}")
       }
     },
   )
@@ -201,7 +201,7 @@ test "Bucket iter" {
       } else {
         buf.write_string(", ")
       }
-      buf.write_string("\(k)")
+      buf.write_string("\{k}")
     },
   )
   inspect!(buf, content="1, 2, 0")
@@ -221,7 +221,7 @@ test "Bucket iter" {
         } else {
           buf.write_string(", ")
         }
-        buf.write_string("\(k)")
+        buf.write_string("\{k}")
       }
     },
   )

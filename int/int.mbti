@@ -11,6 +11,8 @@ impl Int {
   signum(Int) -> Int
 }
 
+// Type aliases
+
 // Traits
 
 // Extension Methods

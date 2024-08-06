@@ -68,7 +68,7 @@ test "each" {
 test "eachi" {
   let set = @sorted_set.of([7, 2, 9, 4, 5, 6, 3, 8, 1])
   let result = Buffer::new(size_hint=10)
-  set.eachi(fn(i, x) { result.write_string("[\(i)-\(x)]") })
+  set.eachi(fn(i, x) { result.write_string("[\{i}-\{x}]") })
   inspect!(
     result.to_string(),
     content="[0-1][1-2][2-3][3-4][4-5][5-6][6-7][7-8][8-9]",

@@ -26,6 +26,8 @@ impl T {
   transfer[A](Self[A], Self[A]) -> Unit
 }
 
+// Type aliases
+
 // Traits
 
 // Extension Methods

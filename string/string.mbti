@@ -29,6 +29,8 @@ impl String {
   trim_space(String) -> String
 }
 
+// Type aliases
+
 // Traits
 
 // Extension Methods

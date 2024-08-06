@@ -10,6 +10,8 @@ impl Bytes {
   to_array(Bytes) -> Array[Byte]
 }
 
+// Type aliases
+
 // Traits
 
 // Extension Methods

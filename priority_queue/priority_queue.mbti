@@ -22,6 +22,8 @@ impl T {
   to_string[A : Show + Compare + Eq](Self[A]) -> String
 }
 
+// Type aliases
+
 // Traits
 
 // Extension Methods

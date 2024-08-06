@@ -57,6 +57,8 @@ impl ArrayView {
   rev_inplace[T](Self[T]) -> Unit
 }
 
+// Type aliases
+
 // Traits
 
 // Extension Methods

@@ -11,6 +11,8 @@ impl UInt {
   to_int64(UInt) -> Int64
 }
 
+// Type aliases
+
 // Traits
 
 // Extension Methods

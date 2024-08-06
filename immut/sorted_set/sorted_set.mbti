@@ -38,6 +38,8 @@ impl T {
   union[A : Compare + Eq](Self[A], Self[A]) -> Self[A]
 }
 
+// Type aliases
+
 // Traits
 
 // Extension Methods

@@ -21,6 +21,8 @@ pub struct T {
   pub buffer : Buffer
 }
 
+// Type aliases
+
 // Traits
 
 // Extension Methods

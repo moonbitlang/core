@@ -42,7 +42,7 @@ test "iter" {
     [(3, "three"), (8, "eight"), (1, "one"), (2, "two"), (0, "zero")],
   )
   let mut s = ""
-  m.each(fn(k, v) { s = s + "(\(k),\(v))" })
+  m.each(fn(k, v) { s = s + "(\{k},\{v})" })
   @test.eq!(s, "(0,zero)(1,one)(2,two)(3,three)(8,eight)")
 }
 
@@ -51,7 +51,7 @@ test "iteri" {
     [(3, "three"), (8, "eight"), (1, "one"), (2, "two"), (0, "zero")],
   )
   let mut s = ""
-  m.eachi(fn(i, k, v) { s = s + "(\(i),\(k),\(v))" })
+  m.eachi(fn(i, k, v) { s = s + "(\{i},\{k},\{v})" })
   @test.eq!(s, "(0,0,zero)(1,1,one)(2,2,two)(3,3,three)(4,8,eight)")
 }
 
@@ -109,7 +109,7 @@ test "iter" {
   map.iter().each(
     fn(e) {
       let (k, v) = e
-      buf.write_string("[\(k)-\(v)]")
+      buf.write_string("[\{k}-\{v}]")
     },
   )
   inspect!(buf, content="[1-one][2-two][3-three]")
@@ -117,7 +117,7 @@ test "iter" {
   map.iter().take(2).each(
     fn(e) {
       let (k, v) = e
-      buf.write_string("[\(k)-\(v)]")
+      buf.write_string("[\{k}-\{v}]")
     },
   )
   inspect!(buf, content="[1-one][2-two]")

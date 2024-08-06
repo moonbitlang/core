@@ -171,7 +171,7 @@ fn debug_tree[K : Show, V : Show](self : T[K, V]) -> String {
     Tree(k, ~value, l, r, ..) => {
       let l = debug_tree(l)
       let r = debug_tree(r)
-      "(\(k),\(value),\(l),\(r))"
+      "(\{k},\{value},\{l},\{r})"
     }
   }
 }

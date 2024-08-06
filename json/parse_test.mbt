@@ -19,7 +19,7 @@ fn parse_as_result(input : String) -> Result[@json.JsonValue, @json.ParseError] 
 fn test_parse(input : String, ~loc : SourceLoc = _) -> @json.JsonValue!Error {
   match parse_as_result(input) {
     Ok(json) => json
-    Err(err) => fail!("Parse failed, \(loc), \(err)")
+    Err(err) => fail!("Parse failed, \{loc}, \{err}")
   }
 }
 

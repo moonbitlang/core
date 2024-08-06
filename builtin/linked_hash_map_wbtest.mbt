@@ -205,7 +205,7 @@ test "iter" {
   map.iter().each(
     fn(e) {
       let (k, v) = e
-      buf.write_string("[\(k)-\(v)]")
+      buf.write_string("[\{k}-\{v}]")
     },
   )
   inspect!(buf, content="[1-one][2-two][3-three]")
@@ -213,7 +213,7 @@ test "iter" {
   map.iter().take(2).each(
     fn(e) {
       let (k, v) = e
-      buf.write_string("[\(k)-\(v)]")
+      buf.write_string("[\{k}-\{v}]")
     },
   )
   inspect!(buf, content="[1-one][2-two]")
@@ -224,7 +224,7 @@ test "iter order" {
   m["three"] = 3
   m["two"] = 2
   let buf = Buffer::new(size_hint=0)
-  m.each(fn(k, v) { buf.write_string("[\(k)-\(v)]") })
+  m.each(fn(k, v) { buf.write_string("[\{k}-\{v}]") })
   inspect!(buf.to_string(), content="[one-1][three-3][two-2]")
 }
 
