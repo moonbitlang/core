@@ -125,3 +125,10 @@ test "to_bytes method" {
   let bytes = buf.to_bytes()
   @test.eq!(bytes.length(), 8) // Each character in "Test" is 2 bytes
 }
+
+test "write_bytes" {
+  let buf = Buffer::new(size_hint=4)
+  buf.write_bytes(b"1\x002\x003\x004\x00")
+  buf.write_bytes(b"5\x006\x007\x008\x00")
+  buf.expect!(content="12345678")
+}
