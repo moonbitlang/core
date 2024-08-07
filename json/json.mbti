@@ -1,7 +1,7 @@
 package moonbitlang/core/json
 
 // Values
-fn parse(String) -> JsonValue!ParseError
+fn parse(String) -> Json!ParseError
 
 fn valid(String) -> Bool
 
@@ -17,30 +17,6 @@ impl ErrorData {
   to_string(Self) -> String
 }
 
-pub enum JsonValue {
-  Null
-  True
-  False
-  Number(Double)
-  String(String)
-  Array(Array[JsonValue])
-  Object(Map[String, JsonValue])
-}
-impl JsonValue {
-  as_array(Self) -> Array[Self]?
-  as_bool(Self) -> Bool?
-  as_null(Self) -> Unit?
-  as_number(Self) -> Double?
-  as_object(Self) -> Map[String, Self]?
-  as_string(Self) -> String?
-  item(Self, Int) -> Self?
-  op_equal(Self, Self) -> Bool
-  stringify(Self) -> String
-  to_json(Self) -> Self
-  to_string(Self) -> String
-  value(Self, String) -> Self?
-}
-
 pub type! ParseError ErrorData
 impl ParseError {
   op_equal(Self, Self) -> Bool
@@ -54,15 +30,29 @@ pub struct Position {
 impl Position {
   op_equal(Self, Self) -> Bool
 }
+impl Json {
+  as_array(Self) -> Array[Self]?
+  as_bool(Self) -> Bool?
+  as_null(Self) -> Unit?
+  as_number(Self) -> Double?
+  as_object(Self) -> Map[String, Self]?
+  as_string(Self) -> String?
+  item(Self, Int) -> Self?
+  stringify(Self) -> String
+  to_json(Self) -> Self
+  to_string(Self) -> String
+  value(Self, String) -> Self?
+}
 
 // Type aliases
+pub typealias JsonValue = Json
 
 // Traits
 
 // Extension Methods
-impl Show for ErrorData
+impl Show for Json
 
-impl Show for JsonValue
+impl Show for ErrorData
 
 impl Show for ParseError
 

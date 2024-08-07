@@ -225,6 +225,19 @@ impl Js_string {
   op_add(Self, Self) -> Self
 }
 
+pub enum Json {
+  Null
+  True
+  False
+  Number(Double)
+  String(String)
+  Array(Array[Json])
+  Object(Map[String, Json])
+}
+impl Json {
+  op_equal(Self, Self) -> Bool
+}
+
 type Map
 impl Map {
   capacity[K, V](Self[K, V]) -> Int
