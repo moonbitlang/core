@@ -202,6 +202,14 @@ impl Iter {
   to_string[T : Show](Self[T]) -> String
 }
 
+type Iter2
+impl Iter2 {
+  each[A, B](Self[A, B], (A, B) -> Unit) -> Unit
+  new[A, B](((A, B) -> IterResult) -> IterResult) -> Self[A, B]
+  run[A, B](Self[A, B], (A, B) -> IterResult) -> IterResult
+  zip[A, B](Self[A, B]) -> Iter[Tuple[A, B]]
+}
+
 pub enum IterResult {
   IterEnd
   IterContinue
@@ -231,6 +239,7 @@ impl Map {
   get_or_init[K : Hash + Eq, V](Self[K, V], K, () -> V) -> V
   is_empty[K, V](Self[K, V]) -> Bool
   iter[K, V](Self[K, V]) -> Iter[Tuple[K, V]]
+  iter2[K, V](Self[K, V]) -> Iter2[K, V]
   keys[K, V](Self[K, V]) -> Iter[K]
   new[K, V](~capacity : Int = ..) -> Self[K, V]
   of[K : Hash + Eq, V](FixedArray[Tuple[K, V]]) -> Self[K, V]

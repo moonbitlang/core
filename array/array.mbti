@@ -41,6 +41,7 @@ impl Array {
   copy[T](Self[T]) -> Self[T]
   from_iter[T](Iter[T]) -> Self[T]
   iter[T](Self[T]) -> Iter[T]
+  iter2[A](Self[A]) -> Iter2[Int, A]
   join[T : Show](Self[T], String) -> String
   makei[T](Int, (Int) -> T) -> Self[T]
   map_option[A, B](Self[A], (A) -> B?) -> Self[B]
