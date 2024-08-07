@@ -122,19 +122,35 @@ pub fn stringify(self : JsonValue) -> String {
 }
 
 fn escape(str : String) -> String {
-  let buf = Buffer::new()
+  fn to_hex_digit(i : Int) -> Char {
+    if i < 10 {
+      Char::from_int('0'.to_int() + i)
+    } else {
+      Char::from_int('a'.to_int() + (i - 10))
+    }
+  }
+
+  let buf = Buffer::new(size_hint=str.length())
   for i = 0; i < str.length(); i = i + 1 {
     let c = str[i]
     match c {
-      '"' | '\\' | '/' => {
-        buf.write_char('\\')
-        buf.write_char(c)
-      }
+      '"' | '\\' | '/' => buf.write_string("\\\{c}")
       '\n' => buf.write_string("\\n")
       '\r' => buf.write_string("\\r")
       '\b' => buf.write_string("\\b")
       '\t' => buf.write_string("\\t")
-      _ => buf.write_char(c)
+      _ => {
+        let code = c.to_int()
+        if code == 0x0C {
+          buf.write_string("\\f")
+        } else if code < 0x20 {
+          buf.write_string("\\u00")
+          buf.write_char(to_hex_digit(code / 16))
+          buf.write_char(to_hex_digit(code % 16))
+        } else {
+          buf.write_char(c)
+        }
+      }
     }
   }
   buf.to_string()
