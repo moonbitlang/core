@@ -131,7 +131,9 @@ test "Bucket::iter" {
   let b : Bucket[_] = More(0, More(1, Just_One(31)))
   let buf = Buffer::new(size_hint=0)
   let mut is_first = true
-  b.iter().each(
+  b
+  .iter()
+  .each(
     fn {
       k => {
         // weird syntax conventions that
@@ -213,7 +215,9 @@ test "Bucket iter" {
   let b2 = b1.add(2)
   let buf = Buffer::new(size_hint=0)
   let mut is_first = true
-  b2.iter().each(
+  b2
+  .iter()
+  .each(
     fn {
       k => {
         if is_first {

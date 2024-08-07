@@ -248,7 +248,9 @@ fn assemble_bits(mantissa : Int64, exponent : Int, negative : Bool) -> Int64 {
   // set the mantissa bits
   let mut bits = mantissa.land(1L.lsl(double_info.mantissa_bits) - 1L)
   // set the exponent bits
-  let exp_bits = biased_exp.land((1).lsl(double_info.exponent_bits) - 1).to_int64()
+  let exp_bits = biased_exp
+    .land((1).lsl(double_info.exponent_bits) - 1)
+    .to_int64()
   bits = bits.lor(exp_bits.lsl(double_info.mantissa_bits))
   // set the sign bit
   if negative {

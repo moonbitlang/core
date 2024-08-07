@@ -141,7 +141,9 @@ test "Bucket::iter" {
   let b : Bucket[_] = More(0, 0, More(1, 1, Just_One(31, 31)))
   let buf = Buffer::new(size_hint=0)
   let mut is_first = true
-  b.iter().each(
+  b
+  .iter()
+  .each(
     fn {
       (k, v) => {
         // weird syntax conventions that

@@ -72,9 +72,9 @@ test "substring" {
 
 test "chars" {
   let mut str = ""
-  "A😊𠮷BA😊𠮷B".iter().each(
-    fn(c) { str = str + c.to_int().to_string() + "\n" },
-  )
+  "A😊𠮷BA😊𠮷B"
+  .iter()
+  .each(fn(c) { str = str + c.to_int().to_string() + "\n" })
   inspect!(
     str,
     content=

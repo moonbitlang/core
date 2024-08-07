@@ -48,9 +48,10 @@ test "take" {
 test "take2" {
   let iter = test_from_array(['1', '2', '3', '4', '5'])
   let exb = Buffer::new(size_hint=0)
-  iter.take(10).concat(Iter::repeat('6').take(1)).each(
-    fn { x => exb.write_char(x) },
-  )
+  iter
+  .take(10)
+  .concat(Iter::repeat('6').take(1))
+  .each(fn { x => exb.write_char(x) })
   exb.expect!(content="123456")
 }
 
@@ -64,35 +65,37 @@ test "take_while" {
 test "take_while2" {
   let iter = test_from_array(['1', '2', '3', '4', '5'])
   let exb = Buffer::new(size_hint=0)
-  iter.take_while(fn { x => x != '4' }).concat(singleton('6')).each(
-    fn { x => exb.write_char(x) },
-  )
+  iter
+  .take_while(fn { x => x != '4' })
+  .concat(singleton('6'))
+  .each(fn { x => exb.write_char(x) })
   exb.expect!(content="1236")
 }
 
 test "take_while3" {
   let iter = test_from_array([1, 2, 3])
-  let res = iter.take_while(fn { x => x != 4 }).concat(singleton(4)).find_first(
-    fn { x => x % 2 == 0 },
-  )
+  let res = iter
+    .take_while(fn { x => x != 4 })
+    .concat(singleton(4))
+    .find_first(fn { x => x % 2 == 0 })
   inspect!(res, content="Some(2)")
 }
 
 test "take_while4" {
   let iter = test_from_array([1, 2, 3, 4, 5, 6])
-  let res = iter.take_while(fn { x => x <= 5 }).take(4).fold(
-    init=0,
-    fn(x, y) { x + y },
-  )
+  let res = iter
+    .take_while(fn { x => x <= 5 })
+    .take(4)
+    .fold(init=0, fn(x, y) { x + y })
   inspect!(res, content="10")
 }
 
 test "take_while5" {
   let iter = test_from_array([1, 2, 3, 4, 5, 6])
-  let res = iter.take(4).take_while(fn { x => x >= 5 }).fold(
-    fn(x, y) { x + y },
-    init=0,
-  )
+  let res = iter
+    .take(4)
+    .take_while(fn { x => x >= 5 })
+    .fold(fn(x, y) { x + y }, init=0)
   inspect!(res, content="0")
 }
 
@@ -112,23 +115,27 @@ test "drop_while" {
 
 test "drop_while2" {
   let iter = test_from_array([1, 2, 3, 4, 5])
-  let res = iter.drop_while(fn { x => x <= 3 }).concat(singleton(6)).find_first(
-    fn { x => x % 3 == 0 },
-  )
+  let res = iter
+    .drop_while(fn { x => x <= 3 })
+    .concat(singleton(6))
+    .find_first(fn { x => x % 3 == 0 })
   inspect!(res, content="Some(6)")
 }
 
 test "drop_while3" {
   let iter = test_from_array([1, 2, 3, 4, 5])
   let exb = Buffer::new(size_hint=0)
-  let res = iter.drop_while(fn { x => x < 3 }).concat(singleton(6)).find_first(
-    fn {
-      x => {
-        exb.write_char('x')
-        x % 3 == 0
-      }
-    },
-  )
+  let res = iter
+    .drop_while(fn { x => x < 3 })
+    .concat(singleton(6))
+    .find_first(
+      fn {
+        x => {
+          exb.write_char('x')
+          x % 3 == 0
+        }
+      },
+    )
   // make sure the predicate in find_first is called only once
   exb.expect!(content="x")
   inspect!(res, content="Some(3)")
@@ -136,9 +143,11 @@ test "drop_while3" {
 
 test "drop_while4" {
   let iter = test_from_array([1, 2, 3, 4, 5])
-  let res = iter.drop_while(fn { x => x <= 3 }).concat(singleton(6)).drop(3).find_first(
-    fn { x => x % 3 == 0 },
-  )
+  let res = iter
+    .drop_while(fn { x => x <= 3 })
+    .concat(singleton(6))
+    .drop(3)
+    .find_first(fn { x => x % 3 == 0 })
   inspect!(res, content="None")
 }
 
@@ -152,27 +161,27 @@ test "filter" {
 test "map" {
   let iter = test_from_array(['1', '2', '3', '4', '5'])
   let exb = Buffer::new(size_hint=0)
-  iter.map(fn { x => Char::from_int(x.to_int() + 1) }).each(
-    fn { x => exb.write_char(x) },
-  )
+  iter
+  .map(fn { x => Char::from_int(x.to_int() + 1) })
+  .each(fn { x => exb.write_char(x) })
   exb.expect!(content="23456")
 }
 
 test "flat_map" {
   let iter = test_from_array(['1', '2', '3', '4', '5'])
   let exb = Buffer::new(size_hint=0)
-  iter.flat_map(fn { x => Iter::repeat(x).take(2) }).each(
-    fn { x => exb.write_char(x) },
-  )
+  iter
+  .flat_map(fn { x => Iter::repeat(x).take(2) })
+  .each(fn { x => exb.write_char(x) })
   exb.expect!(content="1122334455")
 }
 
 test "flat_map2" {
   let iter = test_from_array(['1', '2', '3', '4', '5'])
   let exb = Buffer::new(size_hint=0)
-  iter.flat_map(fn { x => Iter::singleton(x) }).each(
-    fn { x => exb.write_char(x) },
-  )
+  iter
+  .flat_map(fn { x => Iter::singleton(x) })
+  .each(fn { x => exb.write_char(x) })
   exb.expect!(content="12345")
 }
 
@@ -256,9 +265,10 @@ test "range" {
     content="[0, 1, 2, 3, 4, 0, 1]",
   )
   inspect!(
-    0x80000000L.until(0x80000000L + 10L).take(5).concat(
-      (0x80000000L + 10L).until(0x80000000L + 20L).take(3),
-    ),
+    0x80000000L
+    .until(0x80000000L + 10L)
+    .take(5)
+    .concat((0x80000000L + 10L).until(0x80000000L + 20L).take(3)),
     content="[2147483648, 2147483649, 2147483650, 2147483651, 2147483652, 2147483658, 2147483659, 2147483660]",
   )
   inspect!(

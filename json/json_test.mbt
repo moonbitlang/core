@@ -128,23 +128,23 @@ test "get as array" {
     ,
   )
   inspect!(
-    @json.JsonValue::Array([@json.JsonValue::String("Hello World")]).item(0).bind(
-      @json.as_string,
-    ),
+    @json.JsonValue::Array([@json.JsonValue::String("Hello World")])
+    .item(0)
+    .bind(@json.as_string),
     content=
       #|Some("Hello World")
     ,
   )
   inspect!(
-    @json.JsonValue::Array([@json.JsonValue::String("Hello World")]).item(1).bind(
-      @json.as_string,
-    ),
+    @json.JsonValue::Array([@json.JsonValue::String("Hello World")])
+    .item(1)
+    .bind(@json.as_string),
     content="None",
   )
   inspect!(
-    @json.JsonValue::Array([@json.JsonValue::String("Hello World")]).item(0).bind(
-      @json.as_number,
-    ),
+    @json.JsonValue::Array([@json.JsonValue::String("Hello World")])
+    .item(0)
+    .bind(@json.as_number),
     content="None",
   )
   inspect!(
@@ -215,7 +215,9 @@ test "get as object" {
           ("value", @json.JsonValue::Number(100.0)),
         ],
       ),
-    ).value("key").bind(@json.as_string),
+    )
+    .value("key")
+    .bind(@json.as_string),
     content=
       #|Some("key")
     ,
@@ -228,7 +230,9 @@ test "get as object" {
           ("value", @json.JsonValue::Number(100.0)),
         ],
       ),
-    ).value("value").bind(@json.as_number),
+    )
+    .value("value")
+    .bind(@json.as_number),
     content="Some(100.0)",
   )
   inspect!(
@@ -239,7 +243,9 @@ test "get as object" {
           ("value", @json.JsonValue::Number(100.0)),
         ],
       ),
-    ).value("key").bind(@json.as_number),
+    )
+    .value("key")
+    .bind(@json.as_number),
     content="None",
   )
   inspect!(
@@ -250,7 +256,9 @@ test "get as object" {
           ("value", @json.JsonValue::Number(100.0)),
         ],
       ),
-    ).value("asdf").bind(@json.as_number),
+    )
+    .value("asdf")
+    .bind(@json.as_number),
     content="None",
   )
 }
@@ -305,9 +313,11 @@ test "deep access" {
     content="Some([])",
   )
   inspect!(
-    json.value("key").bind(fn { array => array.item(4) }).bind(@json.as_object).map(
-      Map::to_array,
-    ),
+    json
+    .value("key")
+    .bind(fn { array => array.item(4) })
+    .bind(@json.as_object)
+    .map(Map::to_array),
     content=
       #|Some([("key", String("value")), ("value", Number(100.0))])
     ,

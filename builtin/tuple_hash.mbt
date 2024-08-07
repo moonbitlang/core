@@ -66,7 +66,12 @@ pub impl[A : Hash, B : Hash, C : Hash, D : Hash, E : Hash, F : Hash, G : Hash] H
   G,
 ) with hash_combine(self, hasher) {
   let (a, b, c, d, e, f, g) = self
-  hasher..combine(a)..combine(b)..combine(c)..combine(d)..combine(e)..combine(f).combine(
-    g,
-  )
+  hasher
+  ..combine(a)
+  ..combine(b)
+  ..combine(c)
+  ..combine(d)
+  ..combine(e)
+  ..combine(f)
+  .combine(g)
 }
