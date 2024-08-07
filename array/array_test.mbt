@@ -520,3 +520,14 @@ test "from_iter" {
   let arr = [1, 2, 3, 4, 5]
   inspect!(Array::from_iter(arr.iter()), content="[1, 2, 3, 4, 5]")
 }
+
+test "Array::iter2" {
+  let arr = [1, 2, 3]
+  let v = arr.iter2()
+  let mut res = ""
+  v.each(fn(k, v) { res = res + k.to_string() + v.to_string() })
+  inspect!(res, content="011223")
+  res = ""
+  arr.iter2().zip().each(fn(x) { res = res + x.to_string() })
+  inspect!(res, content="(0, 1)(1, 2)(2, 3)")
+}
