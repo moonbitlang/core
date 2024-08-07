@@ -12,15 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-pub enum JsonValue {
-  Null
-  True
-  False
-  Number(Double)
-  String(String)
-  Array(Array[JsonValue])
-  Object(Map[String, JsonValue])
-} derive(Eq)
+/// @alert deprecated "Definition of json is moved to builtin package, use `Json` instead"
+pub typealias JsonValue = Json
 
 pub struct Position {
   line : Int // 1-based
