@@ -344,7 +344,12 @@ test "stringify" {
 }
 
 test "stringify escape" {
-  let json : @json.JsonValue = { "\b": "\"hello\"", "\n": "\n\r\t\x0C", "\\": "/", "\x1F": "\x01" }
+  let json : @json.JsonValue = {
+    "\b": "\"hello\"",
+    "\n": "\n\r\t\x0C",
+    "\\": "/",
+    "\x1F": "\x01",
+  }
   inspect!(
     json.stringify(),
     content=
