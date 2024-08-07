@@ -38,7 +38,6 @@ pub fn expect(
   ~args_loc : ArgsLoc = _
 ) -> Unit!InspectError {
   let current = self.to_string()
-  self.reset()
   if current != content {
     fn repr(s : String) -> String {
       let buf = Buffer::new()
@@ -93,11 +92,19 @@ pub fn write_string(self : Buffer, value : String) -> Unit {
   self.len = self.len + value.length() * 2
 }
 
+/// Write a bytes into buffer.
 pub fn write_bytes(self : Buffer, value : Bytes) -> Unit {
   let val_len = value.length()
   self.grow_if_necessary(self.len + val_len)
   self.bytes.blit(self.len, value, 0, val_len)
   self.len = self.len + val_len
+}
+
+/// Write a buffer into buffer.
+pub fn write_buffer(self : Buffer, value : Buffer) -> Unit {
+  self.grow_if_necessary(self.len + value.len)
+  self.bytes.blit(self.len, value.bytes, 0, value.len)
+  self.len += value.len
 }
 
 /// Write a sub-string into buffer.
