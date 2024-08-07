@@ -27,7 +27,7 @@
 ///
 /// ```
 /// let result = when(true, fn(){ "Hello, World!" })
-/// debug(result) //output: Some("Hello, World!"
+/// println(result) //output: Some("Hello, World!"
 /// ```
 pub fn when[T](condition : Bool, value : () -> T) -> T? {
   if condition {
@@ -96,10 +96,10 @@ test "some" {
 ///
 /// ```
 /// let a = Some(5)
-/// debug(a.map(fn(x){ x * 2 })) //output: Some(10)
+/// println(a.map(fn(x){ x * 2 })) //output: Some(10)
 ///
 /// let b = None
-/// debug(b.map(fn(x){ x * 2 })) //output: None
+/// println(b.map(fn(x){ x * 2 })) //output: None
 /// ```
 pub fn map[T, U](self : T?, f : (T) -> U) -> U? {
   match self {
@@ -122,10 +122,10 @@ test "map" {
 ///
 /// ```
 /// let a = Some(5)
-/// debug(a.map_or(3, fn(x){ x * 2 })) //output: 10
+/// println(a.map_or(3, fn(x){ x * 2 })) //output: 10
 ///
 /// let b: Option[Int] = None
-/// debug(b.map(3, fn(x){ x * 2 })) //output: 3
+/// println(b.map(3, fn(x){ x * 2 })) //output: 3
 /// ```
 pub fn map_or[T, U](self : T?, default : U, f : (T) -> U) -> U {
   match self {
@@ -147,10 +147,10 @@ test "map_or" {
 ///
 /// ```
 /// let a = Some(5)
-/// debug(a.map_or_else(() => 3, fn(x){ x * 2 })) //output: 10
+/// println(a.map_or_else(fn(){ 3 }, fn(x){ x * 2 })) //output: 10
 ///
 /// let b: Option[Int] = None
-/// debug(b.map(() => 5, fn(x){ x * 2 })) //output: 3
+/// println(b.map(fn(){ 5 }, fn(x){ x * 2 })) //output: 3
 /// ```
 pub fn map_or_else[T, U](self : T?, default : () -> U, f : (T) -> U) -> U {
   match self {
@@ -174,11 +174,11 @@ test "map_or_else" {
 /// ```
 /// let a = Option::Some(5)
 /// let r1 = a.bind(fn(x){ Some(x * 2) })
-/// debug(r1) //output: Some(10)
+/// println(r1) //output: Some(10)
 ///
 /// let b : Option[Int] = None
 /// let r2 = b.bind(fn(x){ Some(x * 2) })
-/// debug(r2) //output: None
+/// println(r2) //output: None
 /// ```
 pub fn bind[T, U](self : T?, f : (T) -> U?) -> U? {
   match self {
@@ -202,9 +202,9 @@ test "bind" {
 ///
 /// ```
 /// let a = Some(Some(42));
-/// debug(flatten(a)) //output: Some(42)
+/// println(flatten(a)) //output: Some(42)
 /// let b = Some(None)
-/// debug(flatten(b)) //output: None
+/// println(flatten(b)) //output: None
 /// ```
 pub fn flatten[T](self : T??) -> T? {
   match self {
@@ -243,8 +243,8 @@ test "is_empty" {
 /// # Example
 /// ```
 /// let x = Some(3)
-/// debug(x.filter(fn(x){ x > 5 })) //output: None
-/// debug(x.filter(fn(x){ x < 5 })) //output: Some(3)
+/// println(x.filter(fn(x){ x > 5 })) //output: None
+/// println(x.filter(fn(x){ x < 5 })) //output: Some(3)
 /// ```
 pub fn filter[T](self : T?, f : (T) -> Bool) -> T? {
   match self {

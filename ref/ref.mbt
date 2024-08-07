@@ -37,7 +37,7 @@ test "to_string" {
 /// # Example
 ///
 /// ```
-/// debug(ref(1).map(fn(a){ a + 1 })) //output: ref(2)
+/// println(ref(1).map(fn(a){ a + 1 })) //output: ref(2)
 /// ```
 pub fn map[T, R](self : Ref[T], f : (T) -> R) -> Ref[R] {
   { val: f(self.val) }
@@ -61,11 +61,11 @@ pub fn map[T, R](self : Ref[T], f : (T) -> R) -> Ref[R] {
 /// ```
 /// let x = ref(1)
 /// x.protect(2, fn(){
-///  debug(x) //output: ref(2)
+///  println(x) //output: ref(2)
 ///  x.val = 3
-///  debug(x) //output: ref(3)  
+///  println(x) //output: ref(3)  
 /// })
-/// debug(x) //output: ref(1)
+/// println(x) //output: ref(1)
 /// ```
 pub fn protect[T, R](self : Ref[T], a : T, f : () -> R) -> R {
   let old = self.val
@@ -83,8 +83,8 @@ pub fn protect[T, R](self : Ref[T], a : T, f : () -> R) -> R {
 /// let x = ref(1)
 /// let y = ref(2)
 /// swap(x, y)
-/// debug(x) //output: ref(2)
-/// debug(y) //output: ref(1)
+/// println(x) //output: ref(2)
+/// println(y) //output: ref(1)
 /// ```
 pub fn swap[T](self : Ref[T], that : Ref[T]) -> Unit {
   let tmp = self.val
