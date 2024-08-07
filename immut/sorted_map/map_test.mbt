@@ -106,7 +106,9 @@ test "op_equal" {
 test "iter" {
   let buf = Buffer::new(size_hint=20)
   let map = @sorted_map.of([(1, "one"), (2, "two"), (3, "three")])
-  map.iter().each(
+  map
+  .iter()
+  .each(
     fn(e) {
       let (k, v) = e
       buf.write_string("[\{k}-\{v}]")
@@ -114,7 +116,10 @@ test "iter" {
   )
   inspect!(buf, content="[1-one][2-two][3-three]")
   buf.reset()
-  map.iter().take(2).each(
+  map
+  .iter()
+  .take(2)
+  .each(
     fn(e) {
       let (k, v) = e
       buf.write_string("[\{k}-\{v}]")

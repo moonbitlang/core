@@ -52,7 +52,10 @@ fn frexp(f : Double) -> (Double, Int) {
   let (norm_f, exp) = normalize(f)
   let u = norm_f.reinterpret_as_i64()
   let exp = exp + u.lsr(52).land(0x7FFL).to_int() - 1022
-  let frac = u.land(0x7FFL.lsl(52).lnot()).lor(1022L.lsl(52)).reinterpret_as_double()
+  let frac = u
+    .land(0x7FFL.lsl(52).lnot())
+    .lor(1022L.lsl(52))
+    .reinterpret_as_double()
   return (frac, exp)
 }
 

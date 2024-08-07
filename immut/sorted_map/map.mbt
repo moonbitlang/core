@@ -209,9 +209,11 @@ test "from_array" {
 test "insert" {
   let m = of([(3, "three"), (8, "eight"), (1, "one")])
   inspect!(m.debug_tree(), content="(3,three,(1,one,_,_),(8,eight,_,_))")
-  let m = m.insert(5, "five").insert(2, "two").insert(0, "zero").insert(
-    1, "one_updated",
-  )
+  let m = m
+    .insert(5, "five")
+    .insert(2, "two")
+    .insert(0, "zero")
+    .insert(1, "one_updated")
   inspect!(
     m.debug_tree(),
     content="(3,three,(1,one_updated,(0,zero,_,_),(2,two,_,_)),(8,eight,(5,five,_,_),_))",
@@ -284,9 +286,11 @@ test "singleton" {
 test "insert" {
   let m = of([(3, "three"), (8, "eight"), (1, "one")])
   inspect!(m.debug_tree(), content="(3,three,(1,one,_,_),(8,eight,_,_))")
-  let m = m.insert(5, "five").insert(2, "two").insert(0, "zero").insert(
-    1, "one_updated",
-  )
+  let m = m
+    .insert(5, "five")
+    .insert(2, "two")
+    .insert(0, "zero")
+    .insert(1, "one_updated")
   inspect!(
     m.debug_tree(),
     content="(3,three,(1,one_updated,(0,zero,_,_),(2,two,_,_)),(8,eight,(5,five,_,_),_))",
