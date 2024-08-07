@@ -122,10 +122,13 @@ fn rotl(x : Int, r : Int) -> Int {
 }
 
 fn endian32(input : Bytes, cur : Int) -> Int {
-  input[cur + 0].to_int().lor(
-    input[cur + 1].to_int().lsl(8).lor(
-      input[cur + 2].to_int().lsl(16).lor(input[cur + 3].to_int().lsl(24)),
-    ),
+  input[cur + 0]
+  .to_int()
+  .lor(
+    input[cur + 1]
+    .to_int()
+    .lsl(8)
+    .lor(input[cur + 2].to_int().lsl(16).lor(input[cur + 3].to_int().lsl(24))),
   )
 }
 

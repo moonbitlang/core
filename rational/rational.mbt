@@ -274,9 +274,10 @@ pub impl Show for T with output(self, logger) {
   } else if self.denominator == 1L {
     logger.write_string(self.numerator.to_string())
   } else {
-    logger..write_string(self.numerator.to_string())..write_string("/").write_string(
-      self.denominator.to_string(),
-    )
+    logger
+    ..write_string(self.numerator.to_string())
+    ..write_string("/")
+    .write_string(self.denominator.to_string())
   }
 }
 

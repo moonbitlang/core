@@ -68,9 +68,11 @@ test "HAMT::iter" {
 }
 
 test "HAMT::to_string" {
-  let map = @hashmap.new().add(1, 1).add(3, 3).add(0x0f_ff_ff_ff, 0x0f_ff_ff_ff).add(
-    42, 42,
-  )
+  let map = @hashmap.new()
+    .add(1, 1)
+    .add(3, 3)
+    .add(0x0f_ff_ff_ff, 0x0f_ff_ff_ff)
+    .add(42, 42)
   inspect!(
     map,
     content="@immut/hashmap.of([(3, 3), (42, 42), (1, 1), (268435455, 268435455)])",

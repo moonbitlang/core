@@ -46,7 +46,9 @@ pub fn to_bytes(self : String) -> Bytes {
 
 /// Converts the String into an array of Chars.
 pub fn to_array(self : String) -> Array[Char] {
-  self.iter().fold(
+  self
+  .iter()
+  .fold(
     init=Array::new(capacity=self.length()),
     fn(rv, c) {
       rv.push(c)
@@ -354,7 +356,9 @@ pub fn replace_all(self : String, ~old : String, ~new : String) -> String {
   let old_len = old.length()
   if old_len == 0 {
     buf.write_string(new)
-    self.iter().each(
+    self
+    .iter()
+    .each(
       fn(c) {
         buf.write_char(c)
         buf.write_string(new)
@@ -380,7 +384,9 @@ pub fn replace_all(self : String, ~old : String, ~new : String) -> String {
 pub fn to_lower(self : String) -> String {
   // TODO: deal with non-ascii characters
   let buf = Buffer::new(size_hint=self.length())
-  self.iter().each(
+  self
+  .iter()
+  .each(
     fn(c) {
       if c >= 'A' && c <= 'Z' {
         buf.write_char(Char::from_int(c.to_int() + 32))
@@ -396,7 +402,9 @@ pub fn to_lower(self : String) -> String {
 pub fn to_upper(self : String) -> String {
   // TODO: deal with non-ascii characters
   let buf = Buffer::new(size_hint=self.length())
-  self.iter().each(
+  self
+  .iter()
+  .each(
     fn(c) {
       if c >= 'a' && c <= 'z' {
         buf.write_char(Char::from_int(c.to_int() - 32))

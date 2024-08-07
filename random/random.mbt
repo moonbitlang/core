@@ -39,9 +39,9 @@ pub fn RandomState::init_state(~seed : Int = 0) -> RandomState {
 
 fn twist(self : RandomState) -> Unit {
   for i = 0; i < n32; i = i + 1 {
-    let x = self.state[i].land(upper_mask_32).lor(
-      self.state[(i + 1) % n32].land(lower_mask_32),
-    )
+    let x = self.state[i]
+      .land(upper_mask_32)
+      .lor(self.state[(i + 1) % n32].land(lower_mask_32))
     self.state[i] = self.state[(i + m32) % m32].lxor(x.asr(1))
     if x % 2 != 0 {
       self.state[i] = self.state[i].lxor(matrix_a_32)

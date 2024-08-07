@@ -67,7 +67,15 @@ test "pop_exn" {
   let first = queue.pop_exn()
   inspect!(first.peek(), content="Some(3)")
   inspect!(
-    queue.pop_exn().push(-1).push(10).push(11).pop_exn().pop_exn().push(50).peek(),
+    queue
+    .pop_exn()
+    .push(-1)
+    .push(10)
+    .push(11)
+    .pop_exn()
+    .pop_exn()
+    .push(50)
+    .peek(),
     content="Some(50)",
   )
 }
