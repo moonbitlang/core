@@ -425,6 +425,22 @@ pub fn iter[K, V](self : Map[K, V]) -> Iter[(K, V)] {
   )
 }
 
+pub fn iter2[K, V](self : Map[K, V]) -> Iter2[K, V] {
+  Iter2::new(
+    fn(yield) {
+      loop self.head {
+        Some({ key, value, idx, .. }) =>
+          if yield(key, value) == IterEnd {
+            IterEnd
+          } else {
+            continue self.list[idx].next
+          }
+        None => IterContinue
+      }
+    },
+  )
+}
+
 pub fn keys[K, V](self : Map[K, V]) -> Iter[K] {
   Iter::new(
     fn(yield) {

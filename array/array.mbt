@@ -26,6 +26,20 @@ pub fn iter[T](self : Array[T]) -> Iter[T] {
   )
 }
 
+pub fn iter2[A](self : Array[A]) -> Iter2[Int, A] {
+  Iter2::new(
+    fn(yield) {
+      for i = 0, len = self.length(); i < len; i = i + 1 {
+        if yield(i, self[i]) == IterEnd {
+          break IterEnd
+        }
+      } else {
+        IterContinue
+      }
+    },
+  )
+}
+
 pub fn Array::from_iter[T](iter : Iter[T]) -> Array[T] {
   iter.collect()
 }

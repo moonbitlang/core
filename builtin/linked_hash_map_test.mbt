@@ -36,3 +36,11 @@ test "Map::from_iter" {
     ,
   )
 }
+
+test "Map:: iter2" {
+  let map = { "a": 1, "b": 2, "c": 3 }
+  let v = map.iter2()
+  let mut res = ""
+  v.each(fn(k, v) { res = res + k + v.to_string() })
+  inspect!(res, content="a1b2c3")
+}
