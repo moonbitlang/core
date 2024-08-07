@@ -147,6 +147,21 @@ pub fn to_bytes(self : Buffer) -> Bytes {
   bytes
 }
 
+pub fn iter(self : Buffer) -> Iter[Byte] {
+  Iter::new(
+    fn(f) {
+      for i = 0; i < self.len; i = i + 1 {
+        match f(self.bytes[i]) {
+          IterEnd as end => break end
+          IterContinue => continue
+        }
+      } else {
+        IterContinue
+      }
+    },
+  )
+}
+
 pub impl Show for Buffer with output(self, logger) {
   logger.write_string(self.to_string())
 }

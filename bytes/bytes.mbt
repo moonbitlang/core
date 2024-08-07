@@ -55,3 +55,18 @@ pub fn to_array(self : Bytes) -> Array[Byte] {
   }
   rv
 }
+
+pub fn iter(self : Bytes) -> Iter[Byte] {
+  Iter::new(
+    fn(f) {
+      for i = 0; i < self.length(); i = i + 1 {
+        match f(self[i]) {
+          IterEnd as result => break result
+          IterContinue => continue
+        }
+      } else {
+        IterEnd
+      }
+    },
+  )
+}

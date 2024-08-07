@@ -137,10 +137,12 @@ impl BigInt {
 type Buffer
 impl Buffer {
   expect(Self, ~content : String = .., ~loc : SourceLoc = _, ~args_loc : ArgsLoc = _) -> Unit!InspectError
+  iter(Self) -> Iter[Byte]
   new(~size_hint : Int = ..) -> Self
   reset(Self) -> Unit
   to_bytes(Self) -> Bytes
   to_string(Self) -> String
+  write_buffer(Self, Self) -> Unit
   write_byte(Self, Byte) -> Unit
   write_bytes(Self, Bytes) -> Unit
   write_char(Self, Char) -> Unit

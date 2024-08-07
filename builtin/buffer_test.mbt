@@ -144,3 +144,12 @@ test "write_buffer" {
   buf.expect!(content="123123")
   @test.eq!(buf.to_bytes().length(), 12)
 }
+
+test "iter" {
+  let buf = Buffer::new(size_hint=100)
+  buf.write_bytes(b"0123456789")
+  let array = buf.iter().collect()
+  for i = 0; i < array.length(); i = i + 1 {
+    @test.eq!(array[i], (0x30 + i).to_byte())
+  }
+}

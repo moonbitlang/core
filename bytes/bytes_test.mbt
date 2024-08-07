@@ -50,6 +50,11 @@ test "to_array" {
   inspect!(b.to_array(), content="[b'\\x41', b'\\x42', b'\\x43']")
 }
 
+test "iter" {
+  let b = b"ABC"
+  inspect!(b.iter(), content="[b'\\x41', b'\\x42', b'\\x43']")
+}
+
 test "from_iter multiple elements" {
   inspect!(
     Bytes::from_iter([b'\x00', b'\x01', b'\x02'].iter()).to_array(),
