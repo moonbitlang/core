@@ -26,25 +26,25 @@ test "get as null" {
 }
 
 test "get as bool" {
-  inspect!(@json.JsonValue::Null |> @json.as_bool, content="None")
-  inspect!(@json.JsonValue::True |> @json.as_bool, content="Some(true)")
-  inspect!(@json.JsonValue::False |> @json.as_bool, content="Some(false)")
-  inspect!(@json.JsonValue::Number(1.0) |> @json.as_bool, content="None")
+  inspect!(Json::Null |> @json.as_bool, content="None")
+  inspect!(Json::True |> @json.as_bool, content="Some(true)")
+  inspect!(Json::False |> @json.as_bool, content="Some(false)")
+  inspect!(Json::Number(1.0) |> @json.as_bool, content="None")
   inspect!(
-    @json.JsonValue::String("Hello World") |> @json.as_bool,
+    Json::String("Hello World") |> @json.as_bool,
     content="None",
   )
   inspect!(
-    @json.JsonValue::Array([@json.JsonValue::String("Hello World")])
+    Json::Array([Json::String("Hello World")])
     |> @json.as_bool,
     content="None",
   )
   inspect!(
-    @json.JsonValue::Object(
+    Json::Object(
       Map::of(
         [
-          ("key", @json.JsonValue::String("key")),
-          ("value", @json.JsonValue::Number(100.0)),
+          ("key", Json::String("key")),
+          ("value", Json::Number(100.0)),
         ],
       ),
     )
@@ -54,25 +54,25 @@ test "get as bool" {
 }
 
 test "get as number" {
-  inspect!(@json.JsonValue::Null |> @json.as_number, content="None")
-  inspect!(@json.JsonValue::False |> @json.as_number, content="None")
-  inspect!(@json.JsonValue::True |> @json.as_number, content="None")
-  inspect!(@json.JsonValue::Number(1.0) |> @json.as_number, content="Some(1.0)")
+  inspect!(Json::Null |> @json.as_number, content="None")
+  inspect!(Json::False |> @json.as_number, content="None")
+  inspect!(Json::True |> @json.as_number, content="None")
+  inspect!(Json::Number(1.0) |> @json.as_number, content="Some(1.0)")
   inspect!(
-    @json.JsonValue::String("Hello World") |> @json.as_number,
+    Json::String("Hello World") |> @json.as_number,
     content="None",
   )
   inspect!(
-    @json.JsonValue::Array([@json.JsonValue::String("Hello World")])
+    Json::Array([Json::String("Hello World")])
     |> @json.as_number,
     content="None",
   )
   inspect!(
-    @json.JsonValue::Object(
+    Json::Object(
       Map::of(
         [
-          ("key", @json.JsonValue::String("key")),
-          ("value", @json.JsonValue::Number(100.0)),
+          ("key", Json::String("key")),
+          ("value", Json::Number(100.0)),
         ],
       ),
     )
@@ -82,27 +82,27 @@ test "get as number" {
 }
 
 test "get as string" {
-  inspect!(@json.JsonValue::Null |> @json.as_string, content="None")
-  inspect!(@json.JsonValue::True |> @json.as_string, content="None")
-  inspect!(@json.JsonValue::False |> @json.as_string, content="None")
-  inspect!(@json.JsonValue::Number(1.0) |> @json.as_string, content="None")
+  inspect!(Json::Null |> @json.as_string, content="None")
+  inspect!(Json::True |> @json.as_string, content="None")
+  inspect!(Json::False |> @json.as_string, content="None")
+  inspect!(Json::Number(1.0) |> @json.as_string, content="None")
   inspect!(
-    @json.JsonValue::String("Hello World") |> @json.as_string,
+    Json::String("Hello World") |> @json.as_string,
     content=
       #|Some("Hello World")
     ,
   )
   inspect!(
-    @json.JsonValue::Array([@json.JsonValue::String("Hello World")])
+    Json::Array([Json::String("Hello World")])
     |> @json.as_string,
     content="None",
   )
   inspect!(
-    @json.JsonValue::Object(
+    Json::Object(
       Map::of(
         [
-          ("key", @json.JsonValue::String("key")),
-          ("value", @json.JsonValue::Number(100.0)),
+          ("key", Json::String("key")),
+          ("value", Json::Number(100.0)),
         ],
       ),
     )
@@ -112,23 +112,23 @@ test "get as string" {
 }
 
 test "get as array" {
-  inspect!(@json.JsonValue::Null |> @json.as_array, content="None")
-  inspect!(@json.JsonValue::True |> @json.as_array, content="None")
-  inspect!(@json.JsonValue::False |> @json.as_array, content="None")
-  inspect!(@json.JsonValue::Number(1.0) |> @json.as_array, content="None")
+  inspect!(Json::Null |> @json.as_array, content="None")
+  inspect!(Json::True |> @json.as_array, content="None")
+  inspect!(Json::False |> @json.as_array, content="None")
+  inspect!(Json::Number(1.0) |> @json.as_array, content="None")
   inspect!(
-    @json.JsonValue::String("Hello World") |> @json.as_array,
+    Json::String("Hello World") |> @json.as_array,
     content="None",
   )
   inspect!(
-    @json.JsonValue::Array([@json.JsonValue::String("Hello World")])
+    Json::Array([Json::String("Hello World")])
     |> @json.as_array,
     content=
       #|Some([String("Hello World")])
     ,
   )
   inspect!(
-    @json.JsonValue::Array([@json.JsonValue::String("Hello World")])
+    Json::Array([Json::String("Hello World")])
     .item(0)
     .bind(@json.as_string),
     content=
@@ -136,23 +136,23 @@ test "get as array" {
     ,
   )
   inspect!(
-    @json.JsonValue::Array([@json.JsonValue::String("Hello World")])
+    Json::Array([Json::String("Hello World")])
     .item(1)
     .bind(@json.as_string),
     content="None",
   )
   inspect!(
-    @json.JsonValue::Array([@json.JsonValue::String("Hello World")])
+    Json::Array([Json::String("Hello World")])
     .item(0)
     .bind(@json.as_number),
     content="None",
   )
   inspect!(
-    @json.JsonValue::Object(
+    Json::Object(
       Map::of(
         [
-          ("key", @json.JsonValue::String("key")),
-          ("value", @json.JsonValue::Number(100.0)),
+          ("key", Json::String("key")),
+          ("value", Json::Number(100.0)),
         ],
       ),
     )
@@ -163,41 +163,41 @@ test "get as array" {
 
 test "get as object" {
   inspect!(
-    @json.JsonValue::Null |> @json.as_object |> @option.map(Map::to_array),
+    Json::Null |> @json.as_object |> @option.map(Map::to_array),
     content="None",
   )
   inspect!(
-    @json.JsonValue::True |> @json.as_object |> @option.map(Map::to_array),
+    Json::True |> @json.as_object |> @option.map(Map::to_array),
     content="None",
   )
   inspect!(
-    @json.JsonValue::False |> @json.as_object |> @option.map(Map::to_array),
+    Json::False |> @json.as_object |> @option.map(Map::to_array),
     content="None",
   )
   inspect!(
-    @json.JsonValue::Number(1.0)
+    Json::Number(1.0)
     |> @json.as_object
     |> @option.map(Map::to_array),
     content="None",
   )
   inspect!(
-    @json.JsonValue::String("Hello World")
+    Json::String("Hello World")
     |> @json.as_object
     |> @option.map(Map::to_array),
     content="None",
   )
   inspect!(
-    @json.JsonValue::Array([@json.JsonValue::String("Hello World")])
+    Json::Array([Json::String("Hello World")])
     |> @json.as_object
     |> @option.map(Map::to_array),
     content="None",
   )
   inspect!(
-    @json.JsonValue::Object(
+    Json::Object(
       Map::of(
         [
-          ("key", @json.JsonValue::String("key")),
-          ("value", @json.JsonValue::Number(100.0)),
+          ("key", Json::String("key")),
+          ("value", Json::Number(100.0)),
         ],
       ),
     )
@@ -208,11 +208,11 @@ test "get as object" {
     ,
   )
   inspect!(
-    @json.JsonValue::Object(
+    Json::Object(
       Map::of(
         [
-          ("key", @json.JsonValue::String("key")),
-          ("value", @json.JsonValue::Number(100.0)),
+          ("key", Json::String("key")),
+          ("value", Json::Number(100.0)),
         ],
       ),
     )
@@ -223,11 +223,11 @@ test "get as object" {
     ,
   )
   inspect!(
-    @json.JsonValue::Object(
+    Json::Object(
       Map::of(
         [
-          ("key", @json.JsonValue::String("key")),
-          ("value", @json.JsonValue::Number(100.0)),
+          ("key", Json::String("key")),
+          ("value", Json::Number(100.0)),
         ],
       ),
     )
@@ -236,11 +236,11 @@ test "get as object" {
     content="Some(100.0)",
   )
   inspect!(
-    @json.JsonValue::Object(
+    Json::Object(
       Map::of(
         [
-          ("key", @json.JsonValue::String("key")),
-          ("value", @json.JsonValue::Number(100.0)),
+          ("key", Json::String("key")),
+          ("value", Json::Number(100.0)),
         ],
       ),
     )
@@ -249,11 +249,11 @@ test "get as object" {
     content="None",
   )
   inspect!(
-    @json.JsonValue::Object(
+    Json::Object(
       Map::of(
         [
-          ("key", @json.JsonValue::String("key")),
-          ("value", @json.JsonValue::Number(100.0)),
+          ("key", Json::String("key")),
+          ("value", Json::Number(100.0)),
         ],
       ),
     )
@@ -264,31 +264,31 @@ test "get as object" {
 }
 
 test "deep access" {
-  let json = @json.JsonValue::Object(
+  let json = Json::Object(
     Map::of(
       [
         (
           "key",
-          @json.JsonValue::Array(
+          Json::Array(
             [
-              @json.JsonValue::Number(1.0),
-              @json.JsonValue::True,
-              @json.JsonValue::Null,
-              @json.JsonValue::Array([]),
-              @json.JsonValue::Object(
+              Json::Number(1.0),
+              Json::True,
+              Json::Null,
+              Json::Array([]),
+              Json::Object(
                 Map::of(
                   [
-                    ("key", @json.JsonValue::String("value")),
-                    ("value", @json.JsonValue::Number(100.0)),
+                    ("key", Json::String("value")),
+                    ("value", Json::Number(100.0)),
                   ],
                 ),
               ),
             ],
           ),
         ),
-        ("null", @json.JsonValue::Null),
-        ("bool", @json.JsonValue::False),
-        ("obj", @json.JsonValue::Object({  })),
+        ("null", Json::Null),
+        ("bool", Json::False),
+        ("obj", Json::Object({  })),
       ],
     ),
   )
@@ -329,7 +329,7 @@ test "deep access" {
 }
 
 test "stringify" {
-  let json : @json.JsonValue = {
+  let json : Json = {
     "key": [1.0, true, Null, [], { "key": "value", "value": 100.0 }],
     "null": Null,
     "bool": false,
@@ -354,7 +354,7 @@ test "stringify" {
 }
 
 test "stringify escape" {
-  let json : @json.JsonValue = {
+  let json : Json = {
     "\b": "\"hello\"",
     "\n": "\n\r\t\x0C",
     "\\": "/",
