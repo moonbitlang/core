@@ -32,7 +32,7 @@ pub fn Int64::lor(self : Int64, other : Int64) -> Int64 = "%i64_lor"
 
 pub fn Int64::lxor(self : Int64, other : Int64) -> Int64 = "%i64_lxor"
 
-pub fn Int64::lsl(self : Int64, other : Int) -> Int64 = "%i64_lsl"
+pub fn Int64::lsl(self : Int64, other : Int) -> Int64 = "%i64_shl"
 
 pub fn Int64::shl(self : Int64, other : Int) -> Int64 = "%i64_shl"
 
