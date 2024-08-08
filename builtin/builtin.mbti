@@ -127,6 +127,8 @@ impl BigInt {
   op_mod(Self, Self) -> Self
   op_mul(Self, Self) -> Self
   op_neg(Self) -> Self
+  op_shl(Self, Int) -> Self
+  op_shr(Self, Int) -> Self
   op_sub(Self, Self) -> Self
   shl(Self, Int) -> Self
   shr(Self, Int) -> Self
