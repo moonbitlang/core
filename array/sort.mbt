@@ -21,7 +21,7 @@
 /// ```
 /// let arr = [5, 4, 3, 2, 1]
 /// arr.sort()
-/// debug(arr) //output: [1, 2, 3, 4, 5]
+/// println(arr) //output: [1, 2, 3, 4, 5]
 /// ```
 pub fn sort[T : Compare](self : Array[T]) -> Unit {
   quick_sort(

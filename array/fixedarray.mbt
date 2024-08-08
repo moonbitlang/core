@@ -214,7 +214,7 @@ test "rev_eachi" {
 /// ```
 /// let arr = [1, 2, 3, 4, 5]
 /// let doubled = arr.map(fn(x){ x * 2 })
-/// debug(doubled) //output: [2, 4, 6, 8, 10]
+/// println(doubled) //output: [2, 4, 6, 8, 10]
 /// ```
 pub fn map[T, U](self : FixedArray[T], f : (T) -> U) -> FixedArray[U] {
   if self.length() == 0 {
@@ -244,7 +244,7 @@ test "map" {
 /// ```
 /// let arr = [3, 4, 5]
 /// let added = arr.mapi(fn (i, x) { x + i })
-/// debug(added) //output: [3, 5, 7]
+/// println(added) //output: [3, 5, 7]
 /// ```
 pub fn mapi[T, U](self : FixedArray[T], f : (Int, T) -> U) -> FixedArray[U] {
   if self.length() == 0 {
@@ -550,7 +550,7 @@ test "rev" {
 /// ```
 /// let arr = [1, 2, 3, 4, 5]
 /// arr.swap(0, 1)
-/// debug(arr) //output: [2, 1, 3, 4, 5]
+/// println(arr) //output: [2, 1, 3, 4, 5]
 /// ```
 fn swap[T](self : FixedArray[T], i : Int, j : Int) -> Unit {
   let temp = self[i]
