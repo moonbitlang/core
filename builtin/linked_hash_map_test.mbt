@@ -44,3 +44,18 @@ test "Map:: iter2" {
   v.each(fn(k, v) { res = res + k + v.to_string() })
   inspect!(res, content="a1b2c3")
 }
+
+test "foreach" {
+  let map = { "a": 1, "b": 2, "c": 3 }
+  let mut res = "" // note foreach does not have an acc state so it is more impreative than functional loop
+  foreach (k, v) <- map {
+    res += "\{k}\{v}"
+  }
+  inspect!(res, content="a1b2c3")
+  inspect!(
+    map.iter().fold(init="", fn(acc, kv) { acc + kv.0 + kv.1.to_string() }),
+  )
+
+  // map.iter().fold(init="", fn(acc,k,v) { acc + k + v.to_string() })
+  // weird error message
+}
