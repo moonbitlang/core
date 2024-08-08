@@ -150,16 +150,10 @@ pub fn Bytes::new(len : Int) -> Bytes {
   Bytes::make(len, b'\x00')
 }
 
-fn identity[A, B](x : A) -> B = "%identity"
-
 pub fn Int::to_byte(self : Int) -> Byte = "%i32_to_byte"
 
-pub fn Int64::to_byte(self : Int64) -> Byte {
-  identity(self.to_int().land(0xFF))
-}
-
 pub fn UInt64::to_byte(self : UInt64) -> Byte {
-  identity(self.to_int().land(0xFF))
+  self.to_int().to_byte()
 }
 
 // FixedArray primitive ops

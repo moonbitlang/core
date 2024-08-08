@@ -64,6 +64,8 @@ pub fn Int64::to_double(self : Int64) -> Double = "%i64_to_f64"
 
 pub fn Int64::reinterpret_as_double(self : Int64) -> Double = "%i64_to_f64_reinterpret"
 
+pub fn Int64::to_byte(self : Int64) -> Byte = "%i64_to_byte"
+
 pub fn UInt64::extend_uint(val : UInt) -> UInt64 = "%u32.to_u64"
 
 pub fn UInt64::trunc_double(val : Double) -> UInt64 = "%f64.to_u64"

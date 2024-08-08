@@ -449,6 +449,10 @@ pub fn Int64::to_double(self : Int64) -> Double {
   MyInt64::from_int64(self).to_double()
 }
 
+pub fn Int64::to_byte(self : Int64) -> Byte {
+  MyInt64::from_int64(self).to_int().to_byte()
+}
+
 pub fn UInt64::extend_uint(value : UInt) -> UInt64 {
   MyInt64::extend_i32_u(value.to_int()).to_uint64()
 }
