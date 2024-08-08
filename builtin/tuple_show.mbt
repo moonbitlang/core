@@ -14,11 +14,12 @@
 
 pub impl[A : Show, B : Show] Show for (A, B) with output(self, logger) {
   let (a, b) = self
-  logger.write_string("(")
-  a.output(logger)
-  logger.write_string(", ")
-  b.output(logger)
-  logger.write_string(")")
+  logger
+  ..write_string("(")
+  ..write_object(a)
+  ..write_string(", ")
+  ..write_object(b)
+  .write_string(")")
 }
 
 pub fn to_string[A : Show, B : Show](self : (A, B)) -> String {
@@ -30,13 +31,14 @@ pub impl[A : Show, B : Show, C : Show] Show for (A, B, C) with output(
   logger
 ) {
   let (a, b, c) = self
-  logger.write_string("(")
-  a.output(logger)
-  logger.write_string(", ")
-  b.output(logger)
-  logger.write_string(", ")
-  c.output(logger)
-  logger.write_string(")")
+  logger
+  ..write_string("(")
+  ..write_object(a)
+  ..write_string(", ")
+  ..write_object(b)
+  ..write_string(", ")
+  ..write_object(c)
+  .write_string(")")
 }
 
 pub fn to_string[A : Show, B : Show, C : Show](self : (A, B, C)) -> String {
@@ -48,15 +50,16 @@ pub impl[A : Show, B : Show, C : Show, D : Show] Show for (A, B, C, D) with outp
   logger
 ) {
   let (a, b, c, d) = self
-  logger.write_string("(")
-  a.output(logger)
-  logger.write_string(", ")
-  b.output(logger)
-  logger.write_string(", ")
-  c.output(logger)
-  logger.write_string(", ")
-  d.output(logger)
-  logger.write_string(")")
+  logger
+  ..write_string("(")
+  ..write_object(a)
+  ..write_string(", ")
+  ..write_object(b)
+  ..write_string(", ")
+  ..write_object(c)
+  ..write_string(", ")
+  ..write_object(d)
+  .write_string(")")
 }
 
 pub fn to_string[A : Show, B : Show, C : Show, D : Show](
@@ -73,17 +76,18 @@ pub impl[A : Show, B : Show, C : Show, D : Show, E : Show] Show for (
   E,
 ) with output(self, logger) {
   let (a, b, c, d, e) = self
-  logger.write_string("(")
-  a.output(logger)
-  logger.write_string(", ")
-  b.output(logger)
-  logger.write_string(", ")
-  c.output(logger)
-  logger.write_string(", ")
-  d.output(logger)
-  logger.write_string(", ")
-  e.output(logger)
-  logger.write_string(")")
+  logger
+  ..write_string("(")
+  ..write_object(a)
+  ..write_string(", ")
+  ..write_object(b)
+  ..write_string(", ")
+  ..write_object(c)
+  ..write_string(", ")
+  ..write_object(d)
+  ..write_string(", ")
+  ..write_object(e)
+  .write_string(")")
 }
 
 pub fn to_string[A : Show, B : Show, C : Show, D : Show, E : Show](
@@ -101,19 +105,20 @@ pub impl[A : Show, B : Show, C : Show, D : Show, E : Show, F : Show] Show for (
   F,
 ) with output(self, logger) {
   let (a, b, c, d, e, f) = self
-  logger.write_string("(")
-  a.output(logger)
-  logger.write_string(", ")
-  b.output(logger)
-  logger.write_string(", ")
-  c.output(logger)
-  logger.write_string(", ")
-  d.output(logger)
-  logger.write_string(", ")
-  e.output(logger)
-  logger.write_string(", ")
-  f.output(logger)
-  logger.write_string(")")
+  logger
+  ..write_string("(")
+  ..write_object(a)
+  ..write_string(", ")
+  ..write_object(b)
+  ..write_string(", ")
+  ..write_object(c)
+  ..write_string(", ")
+  ..write_object(d)
+  ..write_string(", ")
+  ..write_object(e)
+  ..write_string(", ")
+  ..write_object(f)
+  .write_string(")")
 }
 
 pub fn to_string[A : Show, B : Show, C : Show, D : Show, E : Show, F : Show](
@@ -132,21 +137,22 @@ pub impl[A : Show, B : Show, C : Show, D : Show, E : Show, F : Show, G : Show] S
   G,
 ) with output(self, logger) {
   let (a, b, c, d, e, f, g) = self
-  logger.write_string("(")
-  a.output(logger)
-  logger.write_string(", ")
-  b.output(logger)
-  logger.write_string(", ")
-  c.output(logger)
-  logger.write_string(", ")
-  d.output(logger)
-  logger.write_string(", ")
-  e.output(logger)
-  logger.write_string(", ")
-  f.output(logger)
-  logger.write_string(", ")
-  g.output(logger)
-  logger.write_string(")")
+  logger
+  ..write_string("(")
+  ..write_object(a)
+  ..write_string(", ")
+  ..write_object(b)
+  ..write_string(", ")
+  ..write_object(c)
+  ..write_string(", ")
+  ..write_object(d)
+  ..write_string(", ")
+  ..write_object(e)
+  ..write_string(", ")
+  ..write_object(f)
+  ..write_string(", ")
+  ..write_object(g)
+  .write_string(")")
 }
 
 pub fn to_string[A : Show, B : Show, C : Show, D : Show, E : Show, F : Show, G : Show](

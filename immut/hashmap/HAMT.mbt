@@ -225,11 +225,12 @@ pub impl[K : Show, V : Show] Show for T[K, V] with output(self, logger) {
       } else {
         logger.write_string(", ")
       }
-      logger.write_string("(")
-      k.output(logger)
-      logger.write_string(", ")
-      v.output(logger)
-      logger.write_string(")")
+      logger
+      ..write_string("(")
+      ..write_object(k)
+      ..write_string(", ")
+      ..write_object(v)
+      .write_string(")")
     },
   )
   logger.write_string("])")

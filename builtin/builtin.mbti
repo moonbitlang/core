@@ -492,6 +492,9 @@ impl Bytes {
   sub_string(Bytes, Int, Int) -> String
   to_string(Bytes) -> String
 }
+impl Logger {
+  write_object[Obj : Show](Self, Obj) -> Unit
+}
 impl Tuple {
   op_equal[T0 : Eq, T1 : Eq](Self[T0, T1], Self[T0, T1]) -> Bool
   to_string[A : Show, B : Show](Self[A, B]) -> String
