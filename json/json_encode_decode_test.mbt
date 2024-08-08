@@ -18,10 +18,7 @@ pub struct AllThree {
   strings : Array[String]
 } derive(Eq, Show)
 
-fn array_to_json[T](
-  arr : Array[T],
-  ~f : (T) -> Json
-) -> Json {
+fn array_to_json[T](arr : Array[T], ~f : (T) -> Json) -> Json {
   Array(arr.map(f))
 }
 

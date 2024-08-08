@@ -75,12 +75,7 @@ test "parses array values" {
 
 test "parses multiple array values" {
   let json = test_parse!("[1,2]")
-  @test.eq!(
-    json,
-    Json::Array(
-      [Json::Number(1.0), Json::Number(2.0)],
-    ),
-  )
+  @test.eq!(json, Json::Array([Json::Number(1.0), Json::Number(2.0)]))
 }
 
 test "parses nested arrays" {
@@ -88,12 +83,7 @@ test "parses nested arrays" {
   @test.eq!(
     json,
     Json::Array(
-      [
-        Json::Number(1.0),
-        Json::Array(
-          [Json::Number(2.0), Json::Number(3.0)],
-        ),
-      ],
+      [Json::Number(1.0), Json::Array([Json::Number(2.0), Json::Number(3.0)])],
     ),
   )
 }
@@ -123,13 +113,7 @@ test "parses leading zeroes" {
   let json = test_parse!("[0,0.0,0e0]")
   @test.eq!(
     json,
-    Json::Array(
-      [
-        Json::Number(0.0),
-        Json::Number(0.0),
-        Json::Number(0.0),
-      ],
-    ),
+    Json::Array([Json::Number(0.0), Json::Number(0.0), Json::Number(0.0)]),
   )
 }
 
@@ -165,12 +149,7 @@ test "parses signed numbers" {
 
 test "parses fractional numbers" {
   let json = test_parse!("[1.0,1.23]")
-  @test.eq!(
-    json,
-    Json::Array(
-      [Json::Number(1.0), Json::Number(1.23)],
-    ),
-  )
+  @test.eq!(json, Json::Array([Json::Number(1.0), Json::Number(1.23)]))
 }
 
 test "parses exponents" {
@@ -211,12 +190,7 @@ test "parses string" {
 
 test "parses quotes in string" {
   let json = test_parse!("[\"\\\"\",\"'\"]")
-  @test.eq!(
-    json,
-    Json::Array(
-      [Json::String("\""), Json::String("'")],
-    ),
-  )
+  @test.eq!(json, Json::Array([Json::String("\""), Json::String("'")]))
 }
 
 test "parses escaped characters" {
