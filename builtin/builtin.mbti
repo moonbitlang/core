@@ -293,6 +293,7 @@ impl Byte {
   lsr(Byte, Int) -> Byte
   lxor(Byte, Byte) -> Byte
   op_equal(Byte, Byte) -> Bool
+  to_float(Byte) -> Float
   to_int(Byte) -> Int
   to_int64(Byte) -> Int64
   to_string(Byte) -> String
@@ -331,10 +332,12 @@ impl Int {
   op_shr(Int, Int) -> Int
   op_sub(Int, Int) -> Int
   popcnt(Int) -> Int
+  reinterpret_as_float(Int) -> Float
   shl(Int, Int) -> Int
   shr(Int, Int) -> Int
   to_byte(Int) -> Byte
   to_double(Int) -> Double
+  to_float(Int) -> Float
   to_int64(Int) -> Int64
   to_string(Int) -> String
   to_uint(Int) -> UInt
@@ -367,6 +370,7 @@ impl Int64 {
   shr(Int64, Int) -> Int64
   to_byte(Int64) -> Byte
   to_double(Int64) -> Double
+  to_float(Int64) -> Float
   to_int(Int64) -> Int
   to_string(Int64) -> String
   to_uint64(Int64) -> UInt64
@@ -391,6 +395,7 @@ impl UInt {
   op_sub(UInt, UInt) -> UInt
   shl(UInt, Int) -> UInt
   shr(UInt, Int) -> UInt
+  to_float(UInt) -> Float
   to_int(UInt) -> Int
   to_string(UInt) -> String
   to_uint64(UInt) -> UInt64
@@ -416,11 +421,26 @@ impl UInt64 {
   shl(UInt64, Int) -> UInt64
   shr(UInt64, Int) -> UInt64
   to_byte(UInt64) -> Byte
+  to_float(UInt64) -> Float
   to_int(UInt64) -> Int
   to_int64(UInt64) -> Int64
   to_string(UInt64) -> String
   to_uint(UInt64) -> UInt
   trunc_double(Double) -> UInt64
+}
+impl Float {
+  compare(Float, Float) -> Int
+  op_add(Float, Float) -> Float
+  op_div(Float, Float) -> Float
+  op_equal(Float, Float) -> Bool
+  op_mod(Float, Float) -> Float
+  op_mul(Float, Float) -> Float
+  op_neg(Float) -> Float
+  op_neq(Float, Float) -> Bool
+  op_sub(Float, Float) -> Float
+  reinterpret_as_int(Float) -> Int
+  sqrt(Float) -> Float
+  to_double(Float) -> Double
 }
 impl Double {
   compare(Double, Double) -> Int
@@ -438,6 +458,7 @@ impl Double {
   reinterpret_as_i64(Double) -> Int64
   reinterpret_as_u64(Double) -> UInt64
   sqrt(Double) -> Double
+  to_float(Double) -> Float
   to_int(Double) -> Int
   to_int64(Double) -> Int64
   until(Double, Double, ~step : Double = ..) -> Iter[Double]

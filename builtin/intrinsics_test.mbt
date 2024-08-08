@@ -141,3 +141,19 @@ test "shift" {
   inspect!(-2 >> 2, content="-1")
   inspect!(2UL >> 2, content="0")
 }
+
+test "float" {
+  let a : Float = 5.3
+  let b : Float = 2.0
+  inspect!(a == b, content="false")
+  inspect!(a + b == 7.3, content="true")
+  inspect!((a - b).to_double(), content="3.3000001907348633")
+  inspect!(a * b == 10.6, content="true")
+  inspect!(a / b == 2.65, content="true")
+  inspect!((3.6 : Float) != 0.6, content="true")
+  inspect!((3.6 : Float).compare(0.6), content="1")
+  inspect!((0.3 : Float).compare(0.6), content="-1")
+  inspect!((0.3 : Float).to_double() == 0.3, content="false")
+  inspect!((0.3 : Float).reinterpret_as_int(), content="1050253722")
+  // inspect!((0.36 : Float).sqrt().to_double(), content="0.6000000238418579")
+}
