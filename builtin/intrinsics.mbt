@@ -152,8 +152,6 @@ pub fn Bytes::new(len : Int) -> Bytes {
 
 pub fn Int::to_byte(self : Int) -> Byte = "%i32_to_byte"
 
-pub fn Int64::to_byte(self : Int64) -> Byte = "%i64_to_byte"
-
 pub fn UInt64::to_byte(self : UInt64) -> Byte {
   self.to_int().to_byte()
 }
