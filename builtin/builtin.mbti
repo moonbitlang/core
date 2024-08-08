@@ -95,6 +95,7 @@ impl Array {
   strip_prefix[T : Eq](Self[T], Self[T]) -> Self[T]?
   strip_suffix[T : Eq](Self[T], Self[T]) -> Self[T]?
   swap[T](Self[T], Int, Int) -> Unit
+  to_json[X : ToJson](Self[X]) -> Json
   to_string[T : Show](Self[T]) -> String
   unsafe_blit[A](Self[A], Int, Self[A], Int, Int) -> Unit
   unsafe_blit_fixed[A](Self[A], Int, FixedArray[A], Int, Int) -> Unit
@@ -266,6 +267,7 @@ impl Map {
   set[K : Hash + Eq, V](Self[K, V], K, V) -> Unit
   size[K, V](Self[K, V]) -> Int
   to_array[K, V](Self[K, V]) -> Array[Tuple[K, V]]
+  to_json[V : ToJson](Self[String, V]) -> Json
   to_string[K : Show, V : Show](Self[K, V]) -> String
   values[K, V](Self[K, V]) -> Iter[V]
 }
@@ -284,6 +286,7 @@ impl Bool {
   not(Bool) -> Bool
   op_compare(Bool, Bool) -> Int
   op_equal(Bool, Bool) -> Bool
+  to_json(Bool) -> Json
   to_string(Bool) -> String
 }
 impl Byte {
@@ -306,6 +309,7 @@ impl Char {
   from_int(Int) -> Char
   op_equal(Char, Char) -> Bool
   to_int(Char) -> Int
+  to_json(Char) -> Json
   to_string(Char) -> String
 }
 impl Int {
@@ -339,6 +343,7 @@ impl Int {
   to_byte(Int) -> Byte
   to_double(Int) -> Double
   to_int64(Int) -> Int64
+  to_json(Int) -> Json
   to_string(Int) -> String
   to_uint(Int) -> UInt
   until(Int, Int, ~step : Int = ..) -> Iter[Int]
@@ -371,6 +376,7 @@ impl Int64 {
   to_byte(Int64) -> Byte
   to_double(Int64) -> Double
   to_int(Int64) -> Int
+  to_json(Int64) -> Json
   to_string(Int64) -> String
   to_uint64(Int64) -> UInt64
   until(Int64, Int64, ~step : Int64 = ..) -> Iter[Int64]
@@ -443,6 +449,7 @@ impl Double {
   sqrt(Double) -> Double
   to_int(Double) -> Int
   to_int64(Double) -> Int64
+  to_json(Double) -> Json
   until(Double, Double, ~step : Double = ..) -> Iter[Double]
 }
 impl String {
@@ -454,6 +461,7 @@ impl String {
   op_equal(String, String) -> Bool
   op_get(String, Int) -> Char
   to_js_string(String) -> Js_string
+  to_json(String) -> Json
   to_string(String) -> String
 }
 impl Option {
@@ -577,6 +585,10 @@ pub trait Logger {
 pub trait Show {
   output(Self, Logger) -> Unit
   to_string(Self) -> String
+}
+
+pub trait ToJson {
+  to_json(Self) -> Json
 }
 
 // Extension Methods
