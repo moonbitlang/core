@@ -13,77 +13,44 @@
 // limitations under the License.
 
 // Float primitive
-pub fn Float::op_neg(self : Float) -> Float {
-  abort("Unimplemented function Float::op_neg in js backend")
-}
+pub fn Float::op_neg(self : Float) -> Float = "%f32.neg"
 
-pub fn Float::op_add(self : Float, other : Float) -> Float {
- abort("Unimplemented function Float::op_add in js backend")
-}
+pub fn Float::op_add(self : Float, other : Float) -> Float = "%f32.add"
 
-pub fn Float::op_sub(self : Float, other : Float) -> Float {
-  abort("Unimplemented function Float::op_sub in js backend")
-}
+pub fn Float::op_sub(self : Float, other : Float) -> Float = "%f32.sub"
 
-pub fn Float::op_mul(self : Float, other : Float) -> Float {
-  abort("Unimplemented function Float::op_mul in js backend")
-}
+pub fn Float::op_mul(self : Float, other : Float) -> Float = "%f32.mul"
 
-pub fn Float::op_div(self : Float, other : Float) -> Float {
-  abort("Unimplemented function Float::op_div in js backend")
-} 
+pub fn Float::op_div(self : Float, other : Float) -> Float = "%f32.div"
 
-pub fn Float::op_mod(self : Float, other : Float) -> Float {
-  abort("Unimplemented function Float::op_mod in js backend")
-}
+pub fn Float::op_mod(self : Float, other : Float) -> Float = "%f32.mod"
 
-pub fn Float::sqrt(self : Float) -> Float {
-  abort("Unimplemented function Float::sqrt in js backend")
-}
+pub fn Float::sqrt(self : Float) -> Float = "%f32.sqrt"
 
-pub fn Float::op_equal(self : Float, other : Float) -> Bool {
-  abort("Unimplemented function Float::op_equal in js backend")
-}
+pub fn Float::op_equal(self : Float, other : Float) -> Bool = "%f32.eq"
 
-pub fn Float::op_neq(self : Float, other : Float) -> Bool {
-  abort("Unimplemented function Float::op_neq in js backend")
-}
+pub fn Float::op_neq(self : Float, other : Float) -> Bool = "%f32.ne"
 
-pub fn Float::compare(self : Float, other : Float) -> Int {
-  abort("Unimplemented function Float::compare in js backend")
-}
+pub fn Float::compare(self : Float, other : Float) -> Int = "%f32.compare"
 
-pub fn Float::to_double(self : Float) -> Double {
-  abort("Unimplemented function Float::to_double in js backend")
-}
+pub fn Float::to_double(self : Float) -> Double = "%identity"
 
-pub fn Float::reinterpret_as_int(self : Float) -> Int {
-  abort("Unimplemented function Float::reinterpret_as_int in js backend")
-}
-pub fn Int::to_float(self : Int) -> Float {
-  abort("Unimplemented function Int::to_float in js backend")
-}
+pub fn Float::reinterpret_as_int(self : Float) -> Int = "%f32.to_i32_reinterpret"
 
-pub fn Int::reinterpret_as_float(self : Int) -> Float {
-  abort("Unimplemented function Int::reinterpret_as_float in js backend")
-}
+pub fn Int::to_float(self : Int) -> Float = "%i32.to_f32"
 
-pub fn Byte::to_float(self : Byte) -> Float {
-  abort("Unimplemented function Byte::to_float in js backend")
-} 
+pub fn Int::reinterpret_as_float(self : Int) -> Float = "%i32.to_f32_reinterpret"
 
-pub fn Double::to_float(self : Double) -> Float {
-  abort("Unimplemented function Double::to_float in js backend")
-}
+pub fn Byte::to_float(self : Byte) -> Float = "%byte.to_f32"
 
-pub fn UInt::to_float(self : UInt) -> Float {
-  abort("Unimplemented function UInt::to_float in js backend")
-}
+pub fn Double::to_float(self : Double) -> Float = "%f64.to_f32"
+
+pub fn UInt::to_float(self : UInt) -> Float = "%u32.to_f32"
 
 pub fn Int64::to_float(self : Int64) -> Float {
-  abort("Unimplemented function Int64::to_float in js backend")
+  self.to_double().to_float()
 }
 
 pub fn UInt64::to_float(self : UInt64) -> Float {
-  abort("Unimplemented function UInt64::to_float in js backend")
+  Double::convert_uint64(self).to_float()
 }
