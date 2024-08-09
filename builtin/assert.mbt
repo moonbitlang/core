@@ -40,19 +40,15 @@ pub fn assert_ne[T : Eq + Show](
   }
 }
 
-pub fn assert_true(
-  x : Bool,
-  ~loc : SourceLoc = _
-) -> Unit!Failure {
+pub fn assert_true(x : Bool, ~loc : SourceLoc = _) -> Unit!Failure {
   if not(x) {
     fail!("FAILED: \{loc} `\{x}` is not true")
   }
 }
 
-pub fn assert_false(x : Bool, ~loc : SourceLoc = _) -> Unit! {
+pub fn assert_false(x : Bool, ~loc : SourceLoc = _) -> Unit!Failure {
   if x {
     let x = debug_string(x)
     fail!("FAILED: \{loc}: `\{x}` is not false")
   }
 }
-
