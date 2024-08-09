@@ -42,8 +42,18 @@ jobs:
           moon info
           git diff --exit-code
 
-      - run: moon test --target all
-      - run: moon test --release --target all
+      - name: Set ulimit and run moon test
+        if: ${{ matrix.os != 'windows-latest' }}
+        run: |
+          ulimit -s 8176
+          moon test --target all
+          moon test --release --target all
+
+      - name: Run moon test on Windows
+        if: ${{ matrix.os == 'windows-latest' }}
+        run: |
+          moon test --target all
+          moon test --release --target all
 
       - name: moon bundle
         run: moon bundle --all
