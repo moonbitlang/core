@@ -240,7 +240,7 @@ test "parse_double" {
   ]
   for i = 0; i < tests.length(); i = i + 1 {
     let t = tests[i]
-    @test.eq!(
+    assert_eq!(
       try {
         Result::Ok(parse_double!(t.0))
       } catch {
@@ -252,7 +252,7 @@ test "parse_double" {
 }
 
 test "parse_double_inf" {
-  @test.eq!(
+  assert_eq!(
     try {
       parse_double!("inf")
     } catch {
@@ -260,7 +260,7 @@ test "parse_double_inf" {
     },
     Double::inf(1),
   )
-  @test.eq!(
+  assert_eq!(
     try {
       parse_double!("+Inf")
     } catch {
@@ -268,7 +268,7 @@ test "parse_double_inf" {
     },
     Double::inf(1),
   )
-  @test.eq!(
+  assert_eq!(
     try {
       parse_double!("-Inf")
     } catch {
@@ -276,7 +276,7 @@ test "parse_double_inf" {
     },
     Double::inf(-1),
   )
-  @test.eq!(
+  assert_eq!(
     try {
       parse_double!("+Infinity")
     } catch {
@@ -284,7 +284,7 @@ test "parse_double_inf" {
     },
     Double::inf(1),
   )
-  @test.eq!(
+  assert_eq!(
     try {
       parse_double!("-Infinity")
     } catch {
@@ -292,7 +292,7 @@ test "parse_double_inf" {
     },
     Double::inf(-1),
   )
-  @test.eq!(
+  assert_eq!(
     try {
       parse_double!("+INFINITY")
     } catch {
@@ -300,7 +300,7 @@ test "parse_double_inf" {
     },
     Double::inf(1),
   )
-  @test.eq!(
+  assert_eq!(
     try {
       parse_double!("-INFINITY")
     } catch {
@@ -316,17 +316,17 @@ test "parse_double_nan" {
   } catch {
     _ => panic()
   }
-  @test.is_true!(nan.is_nan())
+  assert_true!(nan.is_nan())
   let nan = try {
     parse_double!("NaN")
   } catch {
     _ => panic()
   }
-  @test.is_true!(nan.is_nan())
+  assert_true!(nan.is_nan())
   let nan = try {
     parse_double!("NAN")
   } catch {
     _ => panic()
   }
-  @test.is_true!(nan.is_nan())
+  assert_true!(nan.is_nan())
 }

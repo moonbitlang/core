@@ -13,8 +13,8 @@
 // limitations under the License.
 
 test "Bool hash function" {
-  @test.eq!(Hash::hash(true), 1)
-  @test.eq!(Hash::hash(false), 0)
+  assert_eq!(Hash::hash(true), 1)
+  assert_eq!(Hash::hash(false), 0)
 }
 
 struct TestHash {

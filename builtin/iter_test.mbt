@@ -35,7 +35,7 @@ test "repeat" {
 
 test "count" {
   let iter = test_from_array(['1', '2', '3', '4', '5'])
-  @test.eq!(iter.count(), 5)
+  assert_eq!(iter.count(), 5)
 }
 
 test "take" {
@@ -236,15 +236,15 @@ test "fold" {
   let result = Char::from_int(
     iter.fold(fn { acc, x => acc + x.to_int() }, init=0) / 5,
   )
-  @test.eq!(result, '3')
+  assert_eq!(result, '3')
 }
 
 test "find_first" {
   let iter = test_from_array(['1', '2', '3', '4', '5'])
   let result = iter.find_first(fn { x => x > '3' })
-  @test.eq!(result, Some('4'))
+  assert_eq!(result, Some('4'))
   let result2 = iter.find_first(fn { x => x > '5' })
-  @test.eq!(result2, None)
+  assert_eq!(result2, None)
 }
 
 test "find_first2" {
@@ -294,7 +294,7 @@ test "collect" {
     },
   )
   let vec = iter.collect()
-  @test.eq!(vec, ['1', '2', '3', '4', '5'])
+  assert_eq!(vec, ['1', '2', '3', '4', '5'])
 }
 
 test "range" {

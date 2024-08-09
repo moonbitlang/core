@@ -30,7 +30,7 @@ test "signum function tests" {
 
 test "Int64::min_value" {
   let min_value = Int64::min_value()
-  @test.eq!(min_value, -9223372036854775808L)
+  assert_eq!(min_value, -9223372036854775808L)
 }
 
 test "shift" {

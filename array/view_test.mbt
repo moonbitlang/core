@@ -15,9 +15,9 @@
 test "slice" {
   let v = [1, 2, 3, 4, 5]
   let s = v[1:4]
-  @test.eq!(s.length(), 3)
-  @test.eq!(s[0], 2)
-  @test.eq!(s[1], 3)
+  assert_eq!(s.length(), 3)
+  assert_eq!(s[0], 2)
+  assert_eq!(s[1], 3)
 }
 
 test "each" {
@@ -25,5 +25,5 @@ test "each" {
   let s = v[2:5]
   let mut sum = 0
   s.each(fn(x) { sum = sum + x })
-  @test.eq!(sum, 12)
+  assert_eq!(sum, 12)
 }

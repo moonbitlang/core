@@ -15,41 +15,41 @@
 test "FixedArray::from_array with empty array" {
   let array : Array[Int] = []
   let fixedArray = FixedArray::from_array(array)
-  @test.eq!(fixedArray.length(), 0)
+  assert_eq!(fixedArray.length(), 0)
 }
 
 test "FixedArray::from_array with non-empty array" {
   let array : Array[Int] = [1, 2, 3, 4, 5]
   let fixedArray = FixedArray::from_array(array)
-  @test.eq!(fixedArray.length(), 5)
+  assert_eq!(fixedArray.length(), 5)
   for i = 0; i < 5; i = i + 1 {
-    @test.eq!(fixedArray[i], array[i])
+    assert_eq!(fixedArray[i], array[i])
   }
 }
 
 test "FixedArray::from_array with array of different type" {
   let array : Array[String] = ["a", "b", "c"]
   let fixedArray = FixedArray::from_array(array)
-  @test.eq!(fixedArray.length(), 3)
+  assert_eq!(fixedArray.length(), 3)
   for i = 0; i < 3; i = i + 1 {
-    @test.eq!(fixedArray[i], array[i])
+    assert_eq!(fixedArray[i], array[i])
   }
 }
 
 test "FixedArray::from_iter with multiple elements iterator" {
   let iter = [1, 2, 3, 4, 5].iter()
   let result = FixedArray::from_iter(iter)
-  @test.eq!(result, [1, 2, 3, 4, 5])
+  assert_eq!(result, [1, 2, 3, 4, 5])
 }
 
 test "FixedArray::from_iter with single element iterator" {
   let iter = [1].iter()
   let result = FixedArray::from_iter(iter)
-  @test.eq!(result, [1])
+  assert_eq!(result, [1])
 }
 
 test "FixedArray::from_iter with empty iterator" {
   let iter : Iter[Int] = Iter::empty()
   let result = FixedArray::from_iter(iter)
-  @test.eq!(result, [])
+  assert_eq!(result, [])
 }

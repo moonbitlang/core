@@ -44,19 +44,19 @@ test "each" {
   {
     i = 0
     ([] : FixedArray[_]).each(f)
-    @test.is_false!(failed)
-    @test.eq!(i, 0)
+    assert_false!(failed)
+    assert_eq!(i, 0)
   }
   {
     i = 0
     ([1] : FixedArray[_]).each(f)
-    @test.is_false!(failed)
-    @test.eq!(i, 1)
+    assert_false!(failed)
+    assert_eq!(i, 1)
   }
   i = 0
   ([1, 2, 3, 4, 5] : FixedArray[_]).each(f)
-  @test.is_false!(failed)
-  @test.eq!(i, 5)
+  assert_false!(failed)
+  assert_eq!(i, 5)
 }
 
 /// Iterates over the array with index.
@@ -91,19 +91,19 @@ test "eachi" {
   {
     i = 0
     ([] : FixedArray[_]).eachi(f)
-    @test.is_false!(failed)
-    @test.eq!(i, 0)
+    assert_false!(failed)
+    assert_eq!(i, 0)
   }
   {
     i = 0
     ([1] : FixedArray[_]).eachi(f)
-    @test.is_false!(failed)
-    @test.eq!(i, 1)
+    assert_false!(failed)
+    assert_eq!(i, 1)
   }
   i = 0
   ([1, 2, 3, 4, 5] : FixedArray[_]).eachi(f)
-  @test.is_false!(failed)
-  @test.eq!(i, 5)
+  assert_false!(failed)
+  assert_eq!(i, 5)
 }
 
 /// Iterates over each element in reversed turn.
@@ -136,19 +136,19 @@ test "rev_each" {
   {
     i = 1
     ([] : FixedArray[_]).rev_each(f)
-    @test.is_false!(failed)
-    @test.eq!(i, 1)
+    assert_false!(failed)
+    assert_eq!(i, 1)
   }
   {
     i = 2
     ([1] : FixedArray[_]).rev_each(f)
-    @test.is_false!(failed)
-    @test.eq!(i, 1)
+    assert_false!(failed)
+    assert_eq!(i, 1)
   }
   i = 6
   ([1, 2, 3, 4, 5] : FixedArray[_]).rev_each(f)
-  @test.is_false!(failed)
-  @test.eq!(i, 1)
+  assert_false!(failed)
+  assert_eq!(i, 1)
 }
 
 /// Iterates over the array with index in reversed turn.
@@ -187,24 +187,24 @@ test "rev_eachi" {
     i = 1
     j = 0
     ([] : FixedArray[_]).rev_eachi(f)
-    @test.is_false!(failed)
-    @test.eq!(i, 1)
-    @test.eq!(j, 0)
+    assert_false!(failed)
+    assert_eq!(i, 1)
+    assert_eq!(j, 0)
   }
   {
     i = 2
     j = 0
     ([1] : FixedArray[_]).rev_eachi(f)
-    @test.is_false!(failed)
-    @test.eq!(i, 1)
-    @test.eq!(j, 1)
+    assert_false!(failed)
+    assert_eq!(i, 1)
+    assert_eq!(j, 1)
   }
   i = 6
   j = 0
   ([1, 2, 3, 4, 5] : FixedArray[_]).rev_eachi(f)
-  @test.is_false!(failed)
-  @test.eq!(i, 1)
-  @test.eq!(j, 5)
+  assert_false!(failed)
+  assert_eq!(i, 1)
+  assert_eq!(j, 5)
 }
 
 /// Applies a function to each element of the array and returns a new array with the results.
@@ -229,13 +229,13 @@ pub fn map[T, U](self : FixedArray[T], f : (T) -> U) -> FixedArray[U] {
 
 test "map" {
   let empty : FixedArray[Unit] = FixedArray::default().map(fn(x) { x })
-  @test.eq!(empty, [])
+  assert_eq!(empty, [])
   let simple_arr : FixedArray[_] = [6]
   let simple_doubled = simple_arr.map(fn(x) { x * 2 })
-  @test.eq!(simple_doubled, [12])
+  assert_eq!(simple_doubled, [12])
   let arr : FixedArray[_] = [1, 2, 3, 4, 5]
   let doubled = arr.map(fn(x) { x * 2 })
-  @test.eq!(doubled, [2, 4, 6, 8, 10])
+  assert_eq!(doubled, [2, 4, 6, 8, 10])
 }
 
 /// Maps a function over the elements of the arr with index.
@@ -259,13 +259,13 @@ pub fn mapi[T, U](self : FixedArray[T], f : (Int, T) -> U) -> FixedArray[U] {
 
 test "mapi" {
   let empty : FixedArray[Int] = FixedArray::default().mapi(fn(i, x) { x + i })
-  @test.eq!(empty, [])
+  assert_eq!(empty, [])
   let simple_arr : FixedArray[_] = [6]
   let simple_doubled = simple_arr.mapi(fn(i, x) { x * 2 + i })
-  @test.eq!(simple_doubled, [12])
+  assert_eq!(simple_doubled, [12])
   let arr : FixedArray[_] = [1, 2, 3, 4, 5]
   let doubled = arr.mapi(fn(i, x) { x * 2 + i })
-  @test.eq!(doubled, [2, 5, 8, 11, 14])
+  assert_eq!(doubled, [2, 5, 8, 11, 14])
 }
 
 /// Create a new array. Values are lazily built.
@@ -284,15 +284,15 @@ pub fn FixedArray::new[T](length : Int, value : () -> T) -> FixedArray[T] {
 
 test "makei" {
   let empty = FixedArray::makei(0, fn(_i) { { val: 3 } })
-  @test.eq!(empty.length(), 0)
+  assert_eq!(empty.length(), 0)
   let simple_arr = FixedArray::makei(1, fn(_i) { { val: 2 } })
-  @test.eq!(simple_arr.length(), 1)
-  @test.eq!(simple_arr[0].val, 2)
+  assert_eq!(simple_arr.length(), 1)
+  assert_eq!(simple_arr[0].val, 2)
   let arr = FixedArray::makei(2, fn(_i) { { val: 1 } })
-  @test.eq!(arr.length(), 2)
+  assert_eq!(arr.length(), 2)
   @test.is_not!(arr[0], arr[1])
-  @test.eq!(arr[0].val, 1)
-  @test.eq!(arr[1].val, 1)
+  assert_eq!(arr[0].val, 1)
+  assert_eq!(arr[1].val, 1)
 }
 
 /// Create a new array. Values are built from indexes.
@@ -319,14 +319,14 @@ pub fn FixedArray::makei[T](length : Int, value : (Int) -> T) -> FixedArray[T] {
 
 test "fixedarray_new_with_index" {
   let empty = FixedArray::makei(0, fn { i => i })
-  @test.eq!(empty.length(), 0)
+  assert_eq!(empty.length(), 0)
   let simple_arr = FixedArray::makei(1, fn { i => i })
-  @test.eq!(simple_arr.length(), 1)
-  @test.eq!(simple_arr[0], 0)
+  assert_eq!(simple_arr.length(), 1)
+  assert_eq!(simple_arr[0], 0)
   let arr = FixedArray::makei(2, fn { i => i })
-  @test.eq!(arr.length(), 2)
-  @test.eq!(arr[0], 0)
-  @test.eq!(arr[1], 1)
+  assert_eq!(arr.length(), 2)
+  assert_eq!(arr[0], 0)
+  assert_eq!(arr[1], 1)
 }
 
 /// Create a new array with given values.
@@ -336,7 +336,7 @@ pub fn FixedArray::from_array[T](array : Array[T]) -> FixedArray[T] {
 
 test "from_array" {
   let array : FixedArray[_] = [1, 2, 3, 4, 5]
-  @test.eq!(array, [1, 2, 3, 4, 5])
+  assert_eq!(array, [1, 2, 3, 4, 5])
 }
 
 /// Fold out values from an array according to certain rules.
@@ -359,17 +359,17 @@ test "fold_left" {
     init=1,
     fn { sum, elem => sum + elem },
   )
-  @test.eq!(sum, 1)
+  assert_eq!(sum, 1)
   let sum = ([1] : FixedArray[_]).fold_left(
     init=2,
     fn { sum, elem => sum + elem },
   )
-  @test.eq!(sum, 3)
+  assert_eq!(sum, 3)
   let sum = ([1, 2, 3, 4, 5] : FixedArray[_]).fold_left(
     init=0,
     fn { sum, elem => sum + elem },
   )
-  @test.eq!(sum, 15)
+  assert_eq!(sum, 15)
 }
 
 /// Fold out values from an array according to certain rules in reversed turn.
@@ -392,17 +392,17 @@ test "fold_right" {
     init=1,
     fn { sum, elem => sum + elem },
   )
-  @test.eq!(sum, 1)
+  assert_eq!(sum, 1)
   let sum = ([1] : FixedArray[_]).fold_right(
     init=2,
     fn { sum, elem => sum + elem },
   )
-  @test.eq!(sum, 3)
+  assert_eq!(sum, 3)
   let sum = ([1, 2, 3, 4, 5] : FixedArray[_]).fold_right(
     init=0,
     fn { sum, elem => sum + elem },
   )
-  @test.eq!(sum, 15)
+  assert_eq!(sum, 15)
 }
 
 /// Fold out values from an array according to certain rules with index.
@@ -428,14 +428,14 @@ test "fold_lefti" {
   let f = fn { index, sum, elem => index + sum + elem }
   {
     let sum = ([] : FixedArray[_]).fold_lefti(init=1, f)
-    @test.eq!(sum, 1)
+    assert_eq!(sum, 1)
   }
   {
     let sum = ([1] : FixedArray[_]).fold_lefti(init=2, f)
-    @test.eq!(sum, 3)
+    assert_eq!(sum, 3)
   }
   let sum = ([1, 2, 3, 4, 5] : FixedArray[_]).fold_lefti(init=0, f)
-  @test.eq!(sum, 25)
+  assert_eq!(sum, 25)
 }
 
 /// Fold out values from an array according to certain rules in reversed turn with index.
@@ -462,14 +462,14 @@ test "fold_righti" {
   let f = fn { index, sum, elem => index + sum + elem }
   {
     let sum = ([] : FixedArray[_]).fold_lefti(init=1, f)
-    @test.eq!(sum, 1)
+    assert_eq!(sum, 1)
   }
   {
     let sum = ([1] : FixedArray[_]).fold_lefti(init=2, f)
-    @test.eq!(sum, 3)
+    assert_eq!(sum, 3)
   }
   let sum = ([1, 2, 3, 4, 5] : FixedArray[_]).fold_righti(init=0, f)
-  @test.eq!(sum, 25)
+  assert_eq!(sum, 25)
 }
 
 pub fn rev_inplace[T](self : FixedArray[T]) -> Unit {
@@ -500,47 +500,47 @@ test "rev in place" {
   {
     let arr : FixedArray[Int] = []
     arr.rev_inplace()
-    @test.eq!(arr, [])
+    assert_eq!(arr, [])
   }
   {
     let arr : FixedArray[_] = [1]
     arr.rev_inplace()
-    @test.eq!(arr, [1])
+    assert_eq!(arr, [1])
   }
   {
     let arr : FixedArray[_] = [1, 2]
     arr.rev_inplace()
-    @test.eq!(arr, [2, 1])
+    assert_eq!(arr, [2, 1])
   }
   {
     let arr : FixedArray[_] = [1, 2, 3, 4, 5]
     arr.rev_inplace()
-    @test.eq!(arr, [5, 4, 3, 2, 1])
+    assert_eq!(arr, [5, 4, 3, 2, 1])
   }
   let arr : FixedArray[_] = [1, 2, 3, 4, 5, 6]
   arr.rev_inplace()
-  @test.eq!(arr, [6, 5, 4, 3, 2, 1])
+  assert_eq!(arr, [6, 5, 4, 3, 2, 1])
 }
 
 test "rev" {
   {
     let arr : FixedArray[Int] = []
-    @test.eq!(arr.rev(), [])
+    assert_eq!(arr.rev(), [])
   }
   {
     let arr : FixedArray[_] = [1]
-    @test.eq!(arr.rev(), [1])
+    assert_eq!(arr.rev(), [1])
   }
   {
     let arr : FixedArray[_] = [1, 2]
-    @test.eq!(arr.rev(), [2, 1])
+    assert_eq!(arr.rev(), [2, 1])
   }
   {
     let arr : FixedArray[_] = [1, 2, 3, 4, 5]
-    @test.eq!(arr.rev(), [5, 4, 3, 2, 1])
+    assert_eq!(arr.rev(), [5, 4, 3, 2, 1])
   }
   let arr : FixedArray[_] = [1, 2, 3, 4, 5, 6]
-  @test.eq!(arr.rev(), [6, 5, 4, 3, 2, 1])
+  assert_eq!(arr.rev(), [6, 5, 4, 3, 2, 1])
 }
 
 /// Swap two elements in the array.
@@ -562,20 +562,20 @@ test "swap" {
   {
     let arr : FixedArray[Int] = [1]
     arr.swap(0, 0)
-    @test.eq!(arr, [1])
+    assert_eq!(arr, [1])
   }
   {
     let arr : FixedArray[_] = [1, 2]
     arr.swap(0, 0)
-    @test.eq!(arr, [1, 2])
+    assert_eq!(arr, [1, 2])
     arr.swap(0, 1)
-    @test.eq!(arr, [2, 1])
+    assert_eq!(arr, [2, 1])
   }
   let arr : FixedArray[_] = [1, 2, 3, 4, 5]
   arr.swap(3, 3)
-  @test.eq!(arr, [1, 2, 3, 4, 5])
+  assert_eq!(arr, [1, 2, 3, 4, 5])
   arr.swap(1, 3)
-  @test.eq!(arr, [1, 4, 3, 2, 5])
+  assert_eq!(arr, [1, 4, 3, 2, 5])
 }
 
 /// Check if all the elements in the array match the condition.
@@ -599,17 +599,17 @@ pub fn all[T](self : FixedArray[T], f : (T) -> Bool) -> Bool {
 test "all" {
   {
     let arr : FixedArray[Int] = []
-    @test.is_true!(arr.all(fn(ele) { ele < 6 }))
-    @test.is_true!(arr.all(fn(ele) { ele < 5 }))
+    assert_true!(arr.all(fn(ele) { ele < 6 }))
+    assert_true!(arr.all(fn(ele) { ele < 5 }))
   }
   {
     let arr : FixedArray[_] = [5]
-    @test.is_true!(arr.all(fn(ele) { ele < 6 }))
-    @test.is_false!(arr.all(fn(ele) { ele < 5 }))
+    assert_true!(arr.all(fn(ele) { ele < 6 }))
+    assert_false!(arr.all(fn(ele) { ele < 5 }))
   }
   let arr : FixedArray[_] = [1, 2, 3, 4, 5]
-  @test.is_true!(arr.all(fn(ele) { ele < 6 }))
-  @test.is_false!(arr.all(fn(ele) { ele < 5 }))
+  assert_true!(arr.all(fn(ele) { ele < 6 }))
+  assert_false!(arr.all(fn(ele) { ele < 5 }))
 }
 
 /// Check if any of the elements in the array match the condition.
@@ -633,33 +633,33 @@ pub fn any[T](self : FixedArray[T], f : (T) -> Bool) -> Bool {
 test "any" {
   {
     let arr : FixedArray[Int] = []
-    @test.is_false!(arr.any(fn(ele) { ele < 6 }))
-    @test.is_false!(arr.any(fn(ele) { ele < 5 }))
+    assert_false!(arr.any(fn(ele) { ele < 6 }))
+    assert_false!(arr.any(fn(ele) { ele < 5 }))
   }
   {
     let arr : FixedArray[_] = [5]
-    @test.is_true!(arr.any(fn(ele) { ele < 6 }))
-    @test.is_false!(arr.any(fn(ele) { ele < 5 }))
+    assert_true!(arr.any(fn(ele) { ele < 6 }))
+    assert_false!(arr.any(fn(ele) { ele < 5 }))
   }
   let arr : FixedArray[_] = [1, 2, 3, 4, 5]
-  @test.is_true!(arr.any(fn(ele) { ele < 6 }))
-  @test.is_true!(arr.any(fn(ele) { ele < 5 }))
+  assert_true!(arr.any(fn(ele) { ele < 6 }))
+  assert_true!(arr.any(fn(ele) { ele < 5 }))
 }
 
 test "fill" {
   {
     let arr : FixedArray[Int] = []
     arr.fill(3)
-    @test.eq!(arr, [])
+    assert_eq!(arr, [])
   }
   {
     let arr : FixedArray[_] = [6]
     arr.fill(5)
-    @test.eq!(arr, [5])
+    assert_eq!(arr, [5])
   }
   let arr : FixedArray[_] = [0, 0, 0, 0, 0]
   arr.fill(3)
-  @test.eq!(arr, [3, 3, 3, 3, 3])
+  assert_eq!(arr, [3, 3, 3, 3, 3])
 }
 
 /// Search the array index for a given element.
@@ -681,19 +681,19 @@ pub fn search[T : Eq](self : FixedArray[T], value : T) -> Int? {
 test "search" {
   {
     let arr : FixedArray[Int] = []
-    @test.eq!(arr.search(3), None)
-    @test.eq!(arr.search(-1), None)
+    assert_eq!(arr.search(3), None)
+    assert_eq!(arr.search(-1), None)
   }
   {
     let arr : FixedArray[_] = [3]
-    @test.eq!(arr.search(3), Some(0))
-    @test.eq!(arr.search(-1), None)
+    assert_eq!(arr.search(3), Some(0))
+    assert_eq!(arr.search(-1), None)
   }
   let arr : FixedArray[_] = [1, 2, 3, 4, 5]
-  @test.eq!(arr.search(1), Some(0))
-  @test.eq!(arr.search(5), Some(4))
-  @test.eq!(arr.search(3), Some(2))
-  @test.eq!(arr.search(-1), None)
+  assert_eq!(arr.search(1), Some(0))
+  assert_eq!(arr.search(5), Some(4))
+  assert_eq!(arr.search(3), Some(2))
+  assert_eq!(arr.search(-1), None)
 }
 
 /// Checks if the array contains an element.
@@ -715,19 +715,19 @@ pub fn contains[T : Eq](self : FixedArray[T], value : T) -> Bool {
 test "contains" {
   {
     let arr : FixedArray[Int] = []
-    @test.is_false!(arr.contains(3))
-    @test.is_false!(arr.contains(-1))
+    assert_false!(arr.contains(3))
+    assert_false!(arr.contains(-1))
   }
   {
     let arr : FixedArray[_] = [3]
-    @test.is_true!(arr.contains(3))
-    @test.is_false!(arr.contains(-1))
+    assert_true!(arr.contains(3))
+    assert_false!(arr.contains(-1))
   }
   let arr : FixedArray[_] = [3, 4, 5]
-  @test.is_true!(arr.contains(3))
-  @test.is_true!(arr.contains(4))
-  @test.is_true!(arr.contains(5))
-  @test.is_false!(arr.contains(6))
+  assert_true!(arr.contains(3))
+  assert_true!(arr.contains(4))
+  assert_true!(arr.contains(5))
+  assert_false!(arr.contains(6))
 }
 
 /// Check if the array starts with a given prefix.
@@ -755,25 +755,25 @@ pub fn starts_with[T : Eq](
 test "starts_with" {
   {
     let arr : FixedArray[Int] = []
-    @test.is_true!(arr.starts_with([]))
-    @test.is_false!(arr.starts_with([1]))
+    assert_true!(arr.starts_with([]))
+    assert_false!(arr.starts_with([1]))
   }
   {
     let arr : FixedArray[_] = [3]
-    @test.is_true!(arr.starts_with([]))
-    @test.is_true!(arr.starts_with([3]))
-    @test.is_false!(arr.starts_with([2]))
-    @test.is_false!(arr.starts_with([3, 1]))
+    assert_true!(arr.starts_with([]))
+    assert_true!(arr.starts_with([3]))
+    assert_false!(arr.starts_with([2]))
+    assert_false!(arr.starts_with([3, 1]))
   }
   let arr : FixedArray[_] = [3, 4, 5]
-  @test.is_true!(arr.starts_with([]))
-  @test.is_true!(arr.starts_with([3]))
-  @test.is_false!(arr.starts_with([2]))
-  @test.is_true!(arr.starts_with([3, 4]))
-  @test.is_false!(arr.starts_with([3, 2]))
-  @test.is_true!(arr.starts_with([3, 4, 5]))
-  @test.is_false!(arr.starts_with([3, 4, 2]))
-  @test.is_false!(arr.starts_with([3, 4, 5, 6]))
+  assert_true!(arr.starts_with([]))
+  assert_true!(arr.starts_with([3]))
+  assert_false!(arr.starts_with([2]))
+  assert_true!(arr.starts_with([3, 4]))
+  assert_false!(arr.starts_with([3, 2]))
+  assert_true!(arr.starts_with([3, 4, 5]))
+  assert_false!(arr.starts_with([3, 4, 2]))
+  assert_false!(arr.starts_with([3, 4, 5, 6]))
 }
 
 /// Check if the array ends with a given suffix.
@@ -800,29 +800,29 @@ pub fn ends_with[T : Eq](self : FixedArray[T], suffix : FixedArray[T]) -> Bool {
 test "ends_with" {
   {
     let arr : FixedArray[Int] = []
-    @test.is_true!(arr.ends_with([]))
-    @test.is_false!(arr.ends_with([1]))
+    assert_true!(arr.ends_with([]))
+    assert_false!(arr.ends_with([1]))
   }
   {
     let arr : FixedArray[_] = [3]
-    @test.is_true!(arr.ends_with([]))
-    @test.is_true!(arr.ends_with([3]))
-    @test.is_false!(arr.ends_with([2]))
-    @test.is_false!(arr.ends_with([3, 1]))
+    assert_true!(arr.ends_with([]))
+    assert_true!(arr.ends_with([3]))
+    assert_false!(arr.ends_with([2]))
+    assert_false!(arr.ends_with([3, 1]))
   }
   let arr : FixedArray[_] = [3, 4, 5]
-  @test.is_true!(arr.ends_with([]))
-  @test.is_true!(arr.ends_with([5]))
-  @test.is_false!(arr.ends_with([2]))
-  @test.is_true!(arr.ends_with([4, 5]))
-  @test.is_false!(arr.ends_with([4, 2]))
-  @test.is_false!(arr.ends_with([2, 5]))
-  @test.is_true!(arr.ends_with([3, 4, 5]))
-  @test.is_false!(arr.ends_with([3, 4, 2]))
-  @test.is_false!(arr.ends_with([3, 2, 5]))
-  @test.is_false!(arr.ends_with([2, 4, 5]))
-  @test.is_false!(arr.ends_with([3, 4, 5, 6]))
-  @test.is_false!(arr.ends_with([2, 3, 4, 5]))
+  assert_true!(arr.ends_with([]))
+  assert_true!(arr.ends_with([5]))
+  assert_false!(arr.ends_with([2]))
+  assert_true!(arr.ends_with([4, 5]))
+  assert_false!(arr.ends_with([4, 2]))
+  assert_false!(arr.ends_with([2, 5]))
+  assert_true!(arr.ends_with([3, 4, 5]))
+  assert_false!(arr.ends_with([3, 4, 2]))
+  assert_false!(arr.ends_with([3, 2, 5]))
+  assert_false!(arr.ends_with([2, 4, 5]))
+  assert_false!(arr.ends_with([3, 4, 5, 6]))
+  assert_false!(arr.ends_with([2, 3, 4, 5]))
 }
 
 pub fn op_equal[T : Eq](self : FixedArray[T], that : FixedArray[T]) -> Bool {
@@ -884,18 +884,18 @@ test "deep_clone" {
     let pre : FixedArray[Int] = []
     let arr = deep_clone(pre)
     @test.is_not!(arr, pre)
-    @test.eq!(arr, [])
+    assert_eq!(arr, [])
   }
   {
     let pre : FixedArray[_] = [3]
     let arr = deep_clone(pre)
     @test.is_not!(arr, pre)
-    @test.eq!(arr, [3])
+    assert_eq!(arr, [3])
   }
   let pre : FixedArray[_] = [1, 2, 3, 4, 5]
   let arr = deep_clone(pre)
   @test.is_not!(arr, pre)
-  @test.eq!(arr, [1, 2, 3, 4, 5])
+  assert_eq!(arr, [1, 2, 3, 4, 5])
 }
 
 pub fn op_add[T](self : FixedArray[T], other : FixedArray[T]) -> FixedArray[T] {
@@ -967,7 +967,7 @@ test "iter" {
       i = i + 1
     },
   )
-  @test.eq!(i, arr.length())
+  assert_eq!(i, arr.length())
   exb.expect!(
     content=
       #|1

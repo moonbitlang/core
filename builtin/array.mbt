@@ -278,7 +278,7 @@ pub fn eachi[T](self : Array[T], f : (Int, T) -> Unit) -> Unit {
 /// let v = [3, 4, 5]
 /// let mut sum = 0
 /// v.rev_eachi(fn(i, x) { sum = sum + x + i })
-/// @test.eq!(sum, 15)
+/// assert_eq!(sum, 15)
 /// ```
 pub fn rev_eachi[T](self : Array[T], f : (Int, T) -> Unit) -> Unit {
   let len = self.length()

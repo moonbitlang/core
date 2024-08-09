@@ -345,28 +345,28 @@ pub fn T::of[A](arr : FixedArray[A]) -> T[A] {
 test "from_fixed_array_2" {
   let q = of([1, 2, 3, 4])
   q.push(11)
-  @test.eq!(q, of([1, 2, 3, 4, 11]))
+  assert_eq!(q, of([1, 2, 3, 4, 11]))
   q.pop_exn() |> ignore
-  @test.eq!(q, of([2, 3, 4, 11]))
+  assert_eq!(q, of([2, 3, 4, 11]))
 }
 
 test "from_array_2" {
   let q = of([1, 2, 3, 4])
   q.push(11)
-  @test.eq!(q, of([1, 2, 3, 4, 11]))
+  assert_eq!(q, of([1, 2, 3, 4, 11]))
   q.pop_exn() |> ignore
-  @test.eq!(q, of([2, 3, 4, 11]))
+  assert_eq!(q, of([2, 3, 4, 11]))
 }
 
 test "op_equal" {
   let queue = of([1, 2, 3, 4])
   let queue2 = of([1, 2, 3, 4])
   let queue3 = of([1, 2, 3, 5])
-  @test.is_true!(queue == queue2)
-  @test.is_false!(queue == queue3)
+  assert_true!(queue == queue2)
+  assert_false!(queue == queue3)
   queue.pop_exn() |> ignore
-  @test.is_false!(queue == queue2)
-  @test.eq!(queue, of([2, 3, 4]))
+  assert_false!(queue == queue2)
+  assert_eq!(queue, of([2, 3, 4]))
 }
 
 test "push" {
@@ -375,28 +375,28 @@ test "push" {
   queue.push(2)
   queue.push(3)
   queue.push(1)
-  @test.eq!(queue.length(), 4)
-  @test.eq!(queue, of([1, 2, 3, 1]))
+  assert_eq!(queue.length(), 4)
+  assert_eq!(queue, of([1, 2, 3, 1]))
 }
 
 test "copy" {
   let queue : T[Int] = of([1, 2, 3, 4])
   let queue2 : T[Int] = queue.copy()
-  @test.eq!(queue2.length(), 4)
-  @test.eq!(queue2, of([1, 2, 3, 4]))
-  @test.eq!(queue.length(), 4)
-  @test.eq!(queue, of([1, 2, 3, 4]))
+  assert_eq!(queue2.length(), 4)
+  assert_eq!(queue2, of([1, 2, 3, 4]))
+  assert_eq!(queue.length(), 4)
+  assert_eq!(queue, of([1, 2, 3, 4]))
 }
 
 test "transfer" {
   let queue : T[Int] = of([1, 2, 3, 4])
   let queue2 : T[Int] = of([5, 6, 7, 8])
   queue.transfer(queue2)
-  @test.eq!(queue.length(), 0)
-  @test.eq!(queue2.length(), 8)
-  @test.eq!(queue2, of([5, 6, 7, 8, 1, 2, 3, 4]))
+  assert_eq!(queue.length(), 0)
+  assert_eq!(queue2.length(), 8)
+  assert_eq!(queue2, of([5, 6, 7, 8, 1, 2, 3, 4]))
 }
 
 test "cell_equal" {
-  @test.is_false!(of([]).first == of([1]).first)
+  assert_false!(of([]).first == of([1]).first)
 }

@@ -13,8 +13,8 @@
 // limitations under the License.
 
 test "byte to uint" {
-  @test.eq!(b'\xFF'.to_uint(), 255)
-  @test.eq!(b'\x00'.to_uint(), 0)
+  assert_eq!(b'\xFF'.to_uint(), 255)
+  assert_eq!(b'\x00'.to_uint(), 0)
 }
 
 test "int to byte" {

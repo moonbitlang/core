@@ -14,19 +14,19 @@
 
 test "new" {
   let queue : @queue.T[Int] = @queue.new()
-  @test.eq!(queue.length(), 0)
+  assert_eq!(queue.length(), 0)
 }
 
 test "from_fixed_array_1" {
   let queue = @queue.of([1, 2, 3, 4])
   let queue2 = @queue.of([1])
-  @test.eq!(queue.length(), 4)
-  @test.eq!(queue.pop_exn(), 1)
-  @test.eq!(queue.pop_exn(), 2)
-  @test.eq!(queue.pop_exn(), 3)
-  @test.eq!(queue.pop_exn(), 4)
-  @test.eq!(queue2.pop_exn(), 1)
-  @test.eq!(queue2.length(), 0)
+  assert_eq!(queue.length(), 4)
+  assert_eq!(queue.pop_exn(), 1)
+  assert_eq!(queue.pop_exn(), 2)
+  assert_eq!(queue.pop_exn(), 3)
+  assert_eq!(queue.pop_exn(), 4)
+  assert_eq!(queue2.pop_exn(), 1)
+  assert_eq!(queue2.length(), 0)
 }
 
 test "from_fixed_array_3" {
@@ -37,13 +37,13 @@ test "from_fixed_array_3" {
 test "from_array_1" {
   let queue = @queue.of([1, 2, 3, 4])
   let queue2 = @queue.of([1])
-  @test.eq!(queue.length(), 4)
-  @test.eq!(queue.pop_exn(), 1)
-  @test.eq!(queue.pop_exn(), 2)
-  @test.eq!(queue.pop_exn(), 3)
-  @test.eq!(queue.pop_exn(), 4)
-  @test.eq!(queue2.pop_exn(), 1)
-  @test.eq!(queue2.length(), 0)
+  assert_eq!(queue.length(), 4)
+  assert_eq!(queue.pop_exn(), 1)
+  assert_eq!(queue.pop_exn(), 2)
+  assert_eq!(queue.pop_exn(), 3)
+  assert_eq!(queue.pop_exn(), 4)
+  assert_eq!(queue2.pop_exn(), 1)
+  assert_eq!(queue2.length(), 0)
 }
 
 test "from_array_3" {
@@ -62,28 +62,28 @@ test "to_string" {
 
 test "clear" {
   let queue : @queue.T[Int] = @queue.of([1, 2, 3, 4])
-  @test.eq!(queue.length(), 4)
+  assert_eq!(queue.length(), 4)
   queue.clear()
-  @test.eq!(queue.length(), 0)
+  assert_eq!(queue.length(), 0)
 }
 
 test "is_empty" {
   let queue : @queue.T[Int] = @queue.new()
-  @test.is_true!(queue.is_empty())
+  assert_true!(queue.is_empty())
   queue.push(1)
   queue.push(2)
   queue.push(3)
   queue.push(4)
-  @test.is_false!(queue.is_empty())
+  assert_false!(queue.is_empty())
 }
 
 test "peek_exn" {
   let queue : @queue.T[Int] = @queue.of([1, 2, 3, 4])
-  @test.eq!(queue.peek_exn(), 1)
-  @test.eq!(queue.length(), 4)
-  @test.eq!(queue.pop_exn(), 1)
-  @test.eq!(queue.peek_exn(), 2)
-  @test.eq!(queue.length(), 3)
+  assert_eq!(queue.peek_exn(), 1)
+  assert_eq!(queue.length(), 4)
+  assert_eq!(queue.pop_exn(), 1)
+  assert_eq!(queue.peek_exn(), 2)
+  assert_eq!(queue.length(), 3)
 }
 
 test "panic peek_exn" {
@@ -92,18 +92,18 @@ test "panic peek_exn" {
 
 test "peek" {
   let queue : @queue.T[Int] = @queue.of([1, 2, 3, 4])
-  @test.eq!(queue.peek(), Some(1))
+  assert_eq!(queue.peek(), Some(1))
   queue.clear()
-  @test.eq!(queue.peek(), None)
+  assert_eq!(queue.peek(), None)
 }
 
 test "pop_exn" {
   let queue : @queue.T[Int] = @queue.of([1, 2, 3, 4])
-  @test.eq!(queue.pop_exn(), 1)
-  @test.eq!(queue.pop_exn(), 2)
-  @test.eq!(queue.pop_exn(), 3)
-  @test.eq!(queue.pop_exn(), 4)
-  @test.eq!(queue.length(), 0)
+  assert_eq!(queue.pop_exn(), 1)
+  assert_eq!(queue.pop_exn(), 2)
+  assert_eq!(queue.pop_exn(), 3)
+  assert_eq!(queue.pop_exn(), 4)
+  assert_eq!(queue.length(), 0)
 }
 
 test "panic pop_exn" {
@@ -112,44 +112,44 @@ test "panic pop_exn" {
 
 test "pop" {
   let queue : @queue.T[Int] = @queue.of([1, 2, 3, 4])
-  @test.eq!(queue.pop(), Some(1))
-  @test.eq!(queue.pop(), Some(2))
-  @test.eq!(queue.pop(), Some(3))
-  @test.eq!(queue.pop(), Some(4))
-  @test.eq!(queue.pop(), None)
+  assert_eq!(queue.pop(), Some(1))
+  assert_eq!(queue.pop(), Some(2))
+  assert_eq!(queue.pop(), Some(3))
+  assert_eq!(queue.pop(), Some(4))
+  assert_eq!(queue.pop(), None)
 }
 
 test "iter" {
   let queue : @queue.T[Int] = @queue.new()
   let mut sum = 0
   queue.each(fn(x) { sum = sum + x })
-  @test.eq!(sum, 0)
+  assert_eq!(sum, 0)
   @queue.of([1, 2, 3, 4]).transfer(queue)
   sum = 0
   queue.each(fn(x) { sum = sum + x })
-  @test.eq!(sum, 10)
+  assert_eq!(sum, 10)
 }
 
 test "iteri" {
   let queue : @queue.T[Int] = @queue.new()
   let mut sum = 0
   queue.eachi(fn(x, i) { sum = sum + x * i })
-  @test.eq!(sum, 0)
+  assert_eq!(sum, 0)
   @queue.of([1, 2, 3, 4]).transfer(queue)
   sum = 0
   queue.eachi(fn(x, i) { sum = sum + x * i })
-  @test.eq!(sum, 20)
+  assert_eq!(sum, 20)
 }
 
 test "fold" {
   let queue : @queue.T[Int] = @queue.new()
   let sum = queue.fold(init=0, fn(acc, x) { acc + x })
-  @test.eq!(sum, 0)
+  assert_eq!(sum, 0)
   @queue.of([1, 2, 3, 4]).transfer(queue)
   let sum = queue.fold(init=0, fn(acc, x) { acc + x })
-  @test.eq!(sum, 10)
+  assert_eq!(sum, 10)
   let sum2 = @queue.of([1, 2, 3, 4]).fold(init=0, fn(acc, x) { acc + x })
-  @test.eq!(sum2, 10)
+  assert_eq!(sum2, 10)
 }
 
 test "length" {

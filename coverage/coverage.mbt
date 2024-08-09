@@ -189,5 +189,5 @@ test "backslash escape" {
 // test "hex escape" {
 //   let s = "\x11\x12\x01\x02"
 //   let expected = "\\x11\\x12\\x01\\x02"
-//   @test.eq(s.@coverage.escape(), expected)?
+//   assert_eq(s.@coverage.escape(), expected)?
 // }

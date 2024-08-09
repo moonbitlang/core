@@ -80,7 +80,7 @@ pub fn gen_double(self : RandomState) -> Double {
 test "RandomState::new initializes state array correctly" {
   let rs = RandomState::new()
   for i = 0; i < n32; i = i + 1 {
-    @test.eq!(rs.state[i], 0)
+    assert_eq!(rs.state[i], 0)
   }
-  @test.eq!(rs.index, 0)
+  assert_eq!(rs.index, 0)
 }
