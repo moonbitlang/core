@@ -143,17 +143,33 @@ test "shift" {
 }
 
 test "float" {
-  let a : Float = 5.3
-  let b : Float = 2.0
-  inspect!(a == b, content="false")
-  inspect!(a + b == 7.3, content="true")
-  inspect!((a - b).to_double(), content="3.3000001907348633")
-  inspect!(a * b == 10.6, content="true")
-  inspect!(a / b == 2.65, content="true")
+  fn f(x : Float) -> Float {
+    x
+  }
+
+  inspect!(f(5.3) == 2.0, content="false")
+  inspect!(f(5.3) + 2.0 == 7.3, content="true")
+  inspect!((f(3.14) + 2.17).to_double(), content="5.310000419616699")
+  inspect!((f(5.3) - 2.0).to_double(), content="3.3000001907348633")
+  inspect!((f(2.0) - 5.3).to_double(), content="-3.3000001907348633")
+  inspect!((f(5.3) - 5.3).to_double(), content="0.0")
+  inspect!((f(5.3) * 2.0).to_double(), content="10.600000381469727")
+  inspect!((f(-5.3) * 2.0).to_double(), content="-10.600000381469727")
+  inspect!((f(-5.3) * -2.0).to_double(), content="10.600000381469727")
+  inspect!((f(5.3) * -2.0).to_double(), content="-10.600000381469727")
+  inspect!((f(5.3) / 2.0).to_double(), content="2.6500000953674316")
+  inspect!((f(2.0) / 5.3).to_double(), content="0.37735846638679504")
+  inspect!((f(2.12345) / 2.12345).to_double(), content="1.0")
+  inspect!((f(2.12345) / -2.12345).to_double(), content="-1.0")
+  inspect!((f(0) / 2.12345).to_double(), content="0.0")
   inspect!((3.6 : Float) != 0.6, content="true")
   inspect!((3.6 : Float).compare(0.6), content="1")
   inspect!((0.3 : Float).compare(0.6), content="-1")
+  inspect!((0.3 : Float).compare(-0.6), content="1")
+  inspect!((-0.3 : Float).compare(-0.6), content="1")
   inspect!((0.3 : Float).to_double() == 0.3, content="false")
   inspect!((0.3 : Float).reinterpret_as_int(), content="1050253722")
+  inspect!(b'5'.to_float().to_double(), content="53.0")
+  inspect!((123456).to_float().to_double(), content="123456.0")
   // inspect!((0.36 : Float).sqrt().to_double(), content="0.6000000238418579")
 }
