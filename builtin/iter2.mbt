@@ -42,6 +42,13 @@ pub fn each[A, B](self : Iter2[A, B], f : (A, B) -> Unit) -> Unit {
   |> ignore
 }
 
-pub fn zip[A, B](self : Iter2[A, B]) -> Iter[(A, B)] {
+pub fn iter[A, B](self : Iter2[A, B]) -> Iter[(A, B)] {
   Iter::new(fn(yield) { self.run(fn(a, b) { yield((a, b)) }) })
+}
+
+pub fn iter2[A, B](self : Iter2[A, B]) -> Iter2[A, B] {
+  // This is a no-op to make sure
+  // `for k,v in map.iter2() { ... }` 
+  // still work    
+  self
 }

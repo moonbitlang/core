@@ -529,6 +529,6 @@ test "Array::iter2" {
   v.each(fn(k, v) { res = res + k.to_string() + v.to_string() })
   inspect!(res, content="011223")
   res = ""
-  arr.iter2().zip().each(fn(x) { res = res + x.to_string() })
+  arr.iter2().iter().each(fn(x) { res = res + x.to_string() })
   inspect!(res, content="(0, 1)(1, 2)(2, 3)")
 }
