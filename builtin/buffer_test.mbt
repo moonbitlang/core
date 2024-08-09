@@ -132,3 +132,24 @@ test "write_bytes" {
   buf.write_bytes(b"5\x006\x007\x008\x00")
   buf.expect!(content="12345678")
 }
+
+test "write_buffer" {
+  let buf = Buffer::new()
+  let other = Buffer::new()
+  let empty = Buffer::new(size_hint=100)
+  other.write_bytes(b"1\x002\x003\x00")
+  buf.write_buffer(other)
+  buf.write_buffer(other)
+  buf.write_buffer(empty)
+  buf.expect!(content="123123")
+  @test.eq!(buf.to_bytes().length(), 12)
+}
+
+test "iter" {
+  let buf = Buffer::new(size_hint=100)
+  buf.write_bytes(b"0123456789")
+  let array = buf.iter().collect()
+  for i = 0; i < array.length(); i = i + 1 {
+    @test.eq!(array[i], (0x30 + i).to_byte())
+  }
+}
