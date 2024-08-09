@@ -56,7 +56,9 @@ pub fn Array::from_iter[T](iter : Iter[T]) -> Array[T] {
 /// u.push_iter(v.iter())
 /// ```
 pub fn push_iter[T](self : Array[T], iter : Iter[T]) -> Unit {
-  iter.each(fn { x => self.push(x) })
+  for x in iter {
+    self.push(x)
+  }
 }
 
 pub fn copy[T](self : Array[T]) -> Array[T] {

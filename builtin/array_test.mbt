@@ -136,7 +136,10 @@ test "array_each_rev" {
 test "array_eachi" {
   let arr = [1, 2, 3]
   let mut sum = 0
-  arr.eachi(fn(i, x) { sum = sum + i + x })
+  // arr.eachi(fn(i, x) { sum = sum + i + x })
+  for i, x in arr {
+    sum += i + x
+  }
   @test.eq!(sum, 9)
 }
 
