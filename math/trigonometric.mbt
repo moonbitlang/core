@@ -50,12 +50,32 @@ pub fn sin(x : Double) -> Double {
     let z = x_ - y * pi4a - y * pi4b - y * pi4c
     let zz = z * z
     if j == 1L || j == 2L {
-      1.0 - 0.5 * zz + zz * zz * (((((cos_[0] * zz + cos_[1]) * zz + cos_[2]) * zz +
-      cos_[3]) * zz + cos_[4]) * zz + cos_[5])
+      1.0 -
+      0.5 * zz +
+      zz *
+      zz *
+      (
+        (
+          (((cos_[0] * zz + cos_[1]) * zz + cos_[2]) * zz + cos_[3]) * zz +
+          cos_[4]
+        ) *
+        zz +
+        cos_[5]
+      )
     } else {
-      z + z * zz * (((((sin_[0] * zz + sin_[1]) * zz + sin_[2]) * zz + sin_[3]) *
-      zz + sin_[4]) * zz + sin_[5])
-    } * if sign { -1.0 } else { 1.0 }
+      z +
+      z *
+      zz *
+      (
+        (
+          (((sin_[0] * zz + sin_[1]) * zz + sin_[2]) * zz + sin_[3]) * zz +
+          sin_[4]
+        ) *
+        zz +
+        sin_[5]
+      )
+    } *
+    if sign { -1.0 } else { 1.0 }
   }
 }
 
@@ -86,12 +106,32 @@ pub fn cos(x : Double) -> Double {
     }
     let zz = z * z
     if j == 1L || j == 2L {
-      z + z * zz * (((((sin_[0] * zz + sin_[1]) * zz + sin_[2]) * zz + sin_[3]) *
-      zz + sin_[4]) * zz + sin_[5])
+      z +
+      z *
+      zz *
+      (
+        (
+          (((sin_[0] * zz + sin_[1]) * zz + sin_[2]) * zz + sin_[3]) * zz +
+          sin_[4]
+        ) *
+        zz +
+        sin_[5]
+      )
     } else {
-      1.0 - 0.5 * zz + zz * zz * (((((cos_[0] * zz + cos_[1]) * zz + cos_[2]) * zz +
-      cos_[3]) * zz + cos_[4]) * zz + cos_[5])
-    } * if sign { -1.0 } else { 1.0 }
+      1.0 -
+      0.5 * zz +
+      zz *
+      zz *
+      (
+        (
+          (((cos_[0] * zz + cos_[1]) * zz + cos_[2]) * zz + cos_[3]) * zz +
+          cos_[4]
+        ) *
+        zz +
+        cos_[5]
+      )
+    } *
+    if sign { -1.0 } else { 1.0 }
   }
 }
 
@@ -117,8 +157,13 @@ pub fn tan(x : Double) -> Double {
     let z = x_ - y * pi4a - y * pi4b - y * pi4c
     let mut zz = z * z
     zz = if zz > 1.0e-14 {
-      z + z * (zz * ((tan_p[0] * zz + tan_p[1]) * zz + tan_p[2]) / ((((zz + tan_q[1]) *
-      zz + tan_q[2]) * zz + tan_q[3]) * zz + tan_q[4]))
+      z +
+      z *
+      (
+        zz *
+        ((tan_p[0] * zz + tan_p[1]) * zz + tan_p[2]) /
+        ((((zz + tan_q[1]) * zz + tan_q[2]) * zz + tan_q[3]) * zz + tan_q[4])
+      )
     } else {
       z
     }
@@ -149,9 +194,19 @@ let tan3pio8 = 2.41421356237309504880
 
 fn xatan(x : Double) -> Double {
   let z = x * x
-  x * (z * ((((atan_p[0] * z + atan_p[1]) * z + atan_p[2]) * z + atan_p[3]) * z +
-  atan_p[4]) / (((((z + atan_q[0]) * z + atan_q[1]) * z + atan_q[2]) * z + atan_q[3]) *
-  z + atan_q[4])) + x
+  x *
+  (
+    z *
+    (
+      (((atan_p[0] * z + atan_p[1]) * z + atan_p[2]) * z + atan_p[3]) * z +
+      atan_p[4]
+    ) /
+    (
+      ((((z + atan_q[0]) * z + atan_q[1]) * z + atan_q[2]) * z + atan_q[3]) * z +
+      atan_q[4]
+    )
+  ) +
+  x
 }
 
 fn satan(x : Double) -> Double {
@@ -183,7 +238,8 @@ pub fn asin(x : Double) -> Double {
       Double::nan()
     } else {
       let temp = (1.0 - x_ * x_).sqrt()
-      if x > 0.7 { pi / 2.0 - satan(temp / x_) } else { satan(x_ / temp) } * x.signum()
+      if x > 0.7 { pi / 2.0 - satan(temp / x_) } else { satan(x_ / temp) } *
+      x.signum()
     }
   }
 }

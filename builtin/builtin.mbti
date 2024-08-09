@@ -152,7 +152,6 @@ impl Buffer {
 }
 
 pub type! Failure String
-
 type Hasher
 impl Hasher {
   combine[T : Hash](Self, T) -> Unit
@@ -172,7 +171,6 @@ impl Hasher {
 }
 
 pub type! InspectError String
-
 type Iter
 impl Iter {
   all[T](Self[T], (T) -> Bool) -> Bool

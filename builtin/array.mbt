@@ -195,8 +195,11 @@ pub fn push[T](self : Array[T], value : T) -> Unit {
 /// ```
 /// @alert unsafe "Panic if index is out of bounds."
 pub fn drain[T](self : Array[T], begin : Int, end : Int) -> Array[T] {
-  if begin < 0 || begin >= self.length() || end < 0 || end > self.length() || begin >
-  end {
+  if begin < 0 ||
+    begin >= self.length() ||
+    end < 0 ||
+    end > self.length() ||
+    begin > end {
     let len = self.length()
     abort(
       "index out of bounds: the len is \{len} but the index is (\{begin}, \{end})",

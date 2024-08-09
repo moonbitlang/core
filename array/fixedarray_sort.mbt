@@ -99,7 +99,8 @@ fn merge[T : Compare](arr : FixedArraySlice[T], mid : Int) -> Unit {
   }
   let buf = { array: buf, start: 0, end: buf_len }
   let buf_remaining = for p1 = mid - 1, p2 = buf_len - 1, p = mid + buf_len - 1; p1 >=
-                         0 && p2 >= 0; {
+                         0 &&
+                         p2 >= 0; {
     if arr[p1] > buf[p2] {
       arr[p] = arr[p1]
       continue p1 - 1, p2, p - 1
@@ -175,9 +176,13 @@ fn provide_sorted_batch[T : Compare](
 // collapsed, in order to complete the sort.
 fn collapse(runs : Array[TimSortRun], stop : Int) -> Int? {
   let n : Int = runs.length()
-  if n >= 2 && (runs[n - 1].start + runs[n - 1].len == stop || runs[n - 2].len <=
-  runs[n - 1].len || (n >= 3 && runs[n - 3].len <= runs[n - 2].len + runs[n - 1].len) ||
-  (n >= 4 && runs[n - 4].len <= runs[n - 3].len + runs[n - 2].len)) {
+  if n >= 2 &&
+    (
+      runs[n - 1].start + runs[n - 1].len == stop ||
+      runs[n - 2].len <= runs[n - 1].len ||
+      (n >= 3 && runs[n - 3].len <= runs[n - 2].len + runs[n - 1].len) ||
+      (n >= 4 && runs[n - 4].len <= runs[n - 3].len + runs[n - 2].len)
+    ) {
     if n >= 3 && runs[n - 3].len < runs[n - 1].len {
       Some(n - 3)
     } else {

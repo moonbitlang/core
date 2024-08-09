@@ -118,7 +118,8 @@ pub fn Decimal::parse_decimal(str : String) -> Decimal!StrConvError {
       syntax_err!()
     }
     let mut exp = 0
-    while i < str.length() && (('0' <= str[i] && str[i] <= '9') || str[i] == '_') {
+    while i < str.length() &&
+          (('0' <= str[i] && str[i] <= '9') || str[i] == '_') {
       if str[i] == '_' {
         i += 1
         continue
@@ -167,8 +168,8 @@ pub fn to_double(self : Decimal) -> Double!StrConvError {
     exponent += n
   }
   // left shift
-  while self.decimal_point < 0 || (self.decimal_point == 0 && self.digits[0].to_int() <
-        5) {
+  while self.decimal_point < 0 ||
+        (self.decimal_point == 0 && self.digits[0].to_int() < 5) {
     let mut n = 0
     if -self.decimal_point >= powtab.length() {
       n = 60

@@ -36,8 +36,8 @@ pub fn T::new(numerator : Int64, denominator : Int64) -> T? {
   if denominator == 0L {
     None
   } else {
-    let sign = if (numerator < 0L && denominator < 0L) || (numerator > 0L && denominator >
-    0L) {
+    let sign = if (numerator < 0L && denominator < 0L) ||
+      (numerator > 0L && denominator > 0L) {
       1L
     } else {
       -1L
@@ -193,8 +193,13 @@ pub fn T::from_double(value : Double) -> T!RationalError {
     let f = q - a_f
 
     // Prevent overflow
-    if not(a == 0L) && (n1 > t_max / a || d1 > t_max / a || a * n1 > t_max - n0 ||
-    a * d1 > t_max - d0) {
+    if not(a == 0L) &&
+      (
+        n1 > t_max / a ||
+        d1 > t_max / a ||
+        a * n1 > t_max - n0 ||
+        a * d1 > t_max - d0
+      ) {
       break
     }
     let n = a * n1 + n0
