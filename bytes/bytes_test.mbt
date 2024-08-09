@@ -64,3 +64,12 @@ test "from_iter single element" {
 test "from_iter empty iterator" {
   inspect!(Bytes::from_iter(Iter::empty()).to_array(), content="[]")
 }
+
+test "iter" {
+  let buf = Buffer::new(size_hint=5)
+  b"abcde".iter().each(fn { x => buf.write_string(x.to_string()) })
+  inspect!(buf, content="b'\\x61'b'\\x62'b'\\x63'b'\\x64'b'\\x65'")
+  buf.reset()
+  b"abcde".iter().take(2).each(fn { x => buf.write_string(x.to_string()) })
+  inspect!(buf, content="b'\\x61'b'\\x62'")
+}
