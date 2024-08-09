@@ -17,8 +17,7 @@ impl ErrorData {
   to_string(Self) -> String
 }
 
-pub type! ParseError ErrorData
-impl ParseError {
+pub type! ParseError ErrorDataimpl ParseError {
   op_equal(Self, Self) -> Bool
   to_string(Self) -> String
 }
