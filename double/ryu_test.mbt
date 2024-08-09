@@ -58,7 +58,10 @@ test "Regression" {
   assert_eq!(@double.to_string(1.8531501765868567e21), "1.8531501765868567e21")
   assert_eq!(@double.to_string(-3.347727380279489e33), "-3.347727380279489e33")
   assert_eq!(@double.to_string(1.9430376160308388e16), "1.9430376160308388e16")
-  assert_eq!(@double.to_string(-6.9741824662760956e19), "-6.9741824662760956e19")
+  assert_eq!(
+    @double.to_string(-6.9741824662760956e19),
+    "-6.9741824662760956e19",
+  )
   assert_eq!(@double.to_string(4.3816050601147837e18), "4.3816050601147837e18")
 }
 
