@@ -44,7 +44,7 @@ fn lex_string(ctx : ParseContext) -> String!ParseError {
             buf.add_char(Char::from_int(c))
           }
           Some(_) => invalid_char!(ctx, shift=-1)
-          None => raise ParseError(InvalidEof)
+          None => raise InvalidEof
         }
         start = ctx.offset
       }
@@ -54,7 +54,7 @@ fn lex_string(ctx : ParseContext) -> String!ParseError {
         } else {
           continue
         }
-      None => raise ParseError(InvalidEof)
+      None => raise InvalidEof
     }
   }
   buf.to_string()
@@ -80,7 +80,7 @@ fn lex_hex_digits(ctx : ParseContext, n : Int) -> Int!ParseError {
         } else {
           invalid_char!(ctx, shift=-1)
         }
-      None => raise ParseError(InvalidEof)
+      None => raise InvalidEof
     }
   }
   r

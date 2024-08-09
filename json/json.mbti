@@ -6,18 +6,13 @@ fn parse(String) -> Json!ParseError
 fn valid(String) -> Bool
 
 // Types and methods
-pub enum ErrorData {
+pub type! ParseError {
   InvalidChar(Position, Char)
   InvalidEof
   InvalidNumber(Position, String)
   InvalidIdentEscape(Position)
 }
-impl ErrorData {
-  op_equal(Self, Self) -> Bool
-  to_string(Self) -> String
-}
-
-pub type! ParseError ErrorDataimpl ParseError {
+impl ParseError {
   op_equal(Self, Self) -> Bool
   to_string(Self) -> String
 }
@@ -50,8 +45,6 @@ pub typealias JsonValue = Json
 
 // Extension Methods
 impl Show for Json
-
-impl Show for ErrorData
 
 impl Show for ParseError
 
