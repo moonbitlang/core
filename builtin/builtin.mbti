@@ -207,9 +207,10 @@ impl Iter {
 type Iter2
 impl Iter2 {
   each[A, B](Self[A, B], (A, B) -> Unit) -> Unit
+  iter[A, B](Self[A, B]) -> Iter[Tuple[A, B]]
+  iter2[A, B](Self[A, B]) -> Self[A, B]
   new[A, B](((A, B) -> IterResult) -> IterResult) -> Self[A, B]
   run[A, B](Self[A, B], (A, B) -> IterResult) -> IterResult
-  zip[A, B](Self[A, B]) -> Iter[Tuple[A, B]]
 }
 
 pub enum IterResult {
