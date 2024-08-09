@@ -33,7 +33,9 @@ pub fn Bytes::of_string(str : String) -> Bytes {
 /// Return a new String, containing the subsequence of `self` that
 /// starts at `byte_offset` and has length `byte_length`.
 pub fn sub_string(self : Bytes, byte_offset : Int, byte_length : Int) -> String {
-  if byte_length < 0 || byte_offset < 0 || byte_offset + byte_length > self.length() {
+  if byte_length < 0 ||
+    byte_offset < 0 ||
+    byte_offset + byte_length > self.length() {
     abort("sub_string out of bound")
   } else {
     unsafe_sub_string(self, byte_offset, byte_length)

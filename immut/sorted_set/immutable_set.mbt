@@ -252,9 +252,8 @@ pub fn contains[A : Compare](self : T[A], value : A) -> Bool {
     Empty => false
     Node(~left, ~right, value=node_value, ..) => {
       let compare_result = value.compare(node_value)
-      compare_result == 0 || (if compare_result < 0 { left } else { right }).contains(
-        value,
-      )
+      compare_result == 0 ||
+      (if compare_result < 0 { left } else { right }).contains(value)
     }
   }
 }
@@ -350,13 +349,11 @@ pub fn subset[A : Compare](self : T[A], other : T[A]) -> Bool {
       if compare_result == 0 {
         l1.subset(l2) && r1.subset(r2)
       } else if compare_result < 0 {
-        Node(left=l1, value=v1, right=Empty, height=0).subset(l2) && r1.subset(
-          self,
-        )
+        Node(left=l1, value=v1, right=Empty, height=0).subset(l2) &&
+        r1.subset(self)
       } else {
-        Node(left=Empty, value=v1, right=r1, height=0).subset(r2) && l1.subset(
-          self,
-        )
+        Node(left=Empty, value=v1, right=r1, height=0).subset(r2) &&
+        l1.subset(self)
       }
     }
   }
@@ -651,9 +648,8 @@ fn join[A : Compare](left : T[A], value : A, right : T[A]) -> T[A] {
 }
 
 fn try_join[A : Compare](left : T[A], value : A, right : T[A]) -> T[A] {
-  if (left == Empty || left.max().compare(value) < 0) && (right == Empty || value.compare(
-    right.min(),
-  ) < 0) {
+  if (left == Empty || left.max().compare(value) < 0) &&
+    (right == Empty || value.compare(right.min()) < 0) {
     join(left, value, right)
   } else {
     left.union(right.add(value))

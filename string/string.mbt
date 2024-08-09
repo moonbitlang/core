@@ -343,9 +343,9 @@ pub fn replace(self : String, ~old : String, ~new : String) -> String {
   if old_idx < 0 {
     self
   } else {
-    self.substring(end=old_idx) + new + self.substring(
-      start=old_idx + old.length(),
-    )
+    self.substring(end=old_idx) +
+    new +
+    self.substring(start=old_idx + old.length())
   }
 }
 

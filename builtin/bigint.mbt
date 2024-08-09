@@ -225,11 +225,10 @@ fn grade_school_mul(self : BigInt, other : BigInt) -> BigInt {
     let mut j = 0
     let mut carry = 0L
     while j < other_len || carry != 0L {
-      let product = limbs[i + j].to_int64() + self.limbs[i].to_int64() * if j < other_len {
-          other.limbs[j].to_int64()
-        } else {
-          0L
-        } + carry
+      let product = limbs[i + j].to_int64() +
+        self.limbs[i].to_int64() *
+        if j < other_len { other.limbs[j].to_int64() } else { 0L } +
+        carry
       limbs[i + j] = (product % radix).to_int()
       carry = product / radix
       j += 1
@@ -250,7 +249,9 @@ fn karatsuba_mul(self : BigInt, other : BigInt) -> BigInt {
   let p1 = xh * yh
   let p2 = xl * yl
   let p3 = (xh + xl) * (yh + yl)
-  p1.shl(radix_bit_len * 2 * half) + (p3 - p1 - p2).shl(radix_bit_len * half) + p2
+  p1.shl(radix_bit_len * 2 * half) +
+  (p3 - p1 - p2).shl(radix_bit_len * half) +
+  p2
 }
 
 // Get the lower half of the number.
@@ -659,7 +660,9 @@ pub fn to_string(self : BigInt) -> String {
   let decimal_mask = 10000000000000L // 10^(decimal_radix_bit_len). TODO: compute it when we have power function.
   // The following value should fit well into an Int without precision loss.
   // This is an approximation of the number of slots needed to represent the decimal value.
-  let decimal_len = ((self.len * radix_bit_len).to_double() * decimal_ratio / decimal_radix_bit_len.to_double()).to_int() +
+  let decimal_len = ((self.len * radix_bit_len).to_double() *
+    decimal_ratio /
+    decimal_radix_bit_len.to_double()).to_int() +
     1
   let s = if self.sign == Negative { "-" } else { "" }
   let v = Array::make(decimal_len, 0L)
@@ -705,8 +708,11 @@ pub fn BigInt::from_string(input : String) -> BigInt {
     abort("empty string")
   }
   let sign : Sign = if input[0] == '-' { Negative } else { Positive }
-  let mut b_len = ((len.to_double() / decimal_ratio).to_int() + 1 + radix_bit_len) /
-    radix_bit_len + 1
+  let mut b_len = (
+      (len.to_double() / decimal_ratio).to_int() + 1 + radix_bit_len
+    ) /
+    radix_bit_len +
+    1
   let b = Array::make(b_len, 0)
   for i = match sign {
           Negative => 1
@@ -788,7 +794,8 @@ pub fn to_hex(self : BigInt) -> String {
           Char::from_int(y + 48).to_string()
         } else {
           Char::from_int(y + 55).to_string()
-        } + tmp
+        } +
+        tmp
     }
     if i != self.len - 1 && tmp.length() < 4 {
       let pad = 4 - tmp.length()

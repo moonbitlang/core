@@ -198,11 +198,8 @@ fn double_computePow5(i : Int) -> (UInt64, UInt64) {
     high1 = high1 + 1UL
   }
   let delta : Int = pow5bits(i) - pow5bits(base2)
-  let a = shiftright128(low0, sum, delta) + gPOW5_OFFSETS[i / 16]
-    .lsr((i % 16).lsl(1))
-    .land(3)
-    .to_int64()
-    .to_uint64()
+  let a = shiftright128(low0, sum, delta) +
+    gPOW5_OFFSETS[i / 16].lsr((i % 16).lsl(1)).land(3).to_int64().to_uint64()
   let b = shiftright128(sum, high1, delta)
   (a, b)
 }
@@ -225,10 +222,9 @@ fn double_computeInvPow5(i : Int) -> (UInt64, UInt64) {
     high1 = high1 + 1
   }
   let delta : Int = pow5bits(base2) - pow5bits(i)
-  let a = shiftright128(low0, sum, delta) + 1 + gPOW5_INV_OFFSETS[i / 16]
-    .lsr((i % 16).lsl(1))
-    .land(3)
-    .to_uint64()
+  let a = shiftright128(low0, sum, delta) +
+    1 +
+    gPOW5_INV_OFFSETS[i / 16].lsr((i % 16).lsl(1)).land(3).to_uint64()
   let b = shiftright128(sum, high1, delta)
   (a, b)
 }
@@ -450,7 +446,8 @@ fn d2d(ieeeMantissa : UInt64, ieeeExponent : Int) -> FloatingDecimal64 {
     if vrIsTrailingZeros && lastRemovedDigit == 5 && vr % 2 == 0 {
       lastRemovedDigit = 4
     }
-    output = vr + ((vr == vm && (not(acceptBounds) || not(vmIsTrailingZeros))) ||
+    output = vr +
+      ((vr == vm && (not(acceptBounds) || not(vmIsTrailingZeros))) ||
       lastRemovedDigit >= 5)
       .to_int64()
       .to_uint64()
@@ -562,7 +559,8 @@ fn to_chars(v : FloatingDecimal64, sign : Bool) -> String {
       }
       let current = index
       for i = 0; i < olength; i = i + 1 {
-        result[current + olength - i - 1] = ('0'.to_int() + (output % 10).to_int()).to_byte()
+        result[current + olength - i - 1] = ('0'.to_int() +
+        (output % 10).to_int()).to_byte()
         output = output / 10
         index = index + 1
       }
@@ -589,7 +587,8 @@ fn to_chars(v : FloatingDecimal64, sign : Bool) -> String {
           result[current + olength - i - 1] = '.'.to_int().to_byte()
           current = current - 1
         }
-        result[current + olength - i - 1] = ('0'.to_int() + (output % 10).to_int()).to_byte()
+        result[current + olength - i - 1] = ('0'.to_int() +
+        (output % 10).to_int()).to_byte()
         output = output / 10
       }
       index = index + olength + 1
@@ -625,14 +624,15 @@ fn ryu_to_string(self : Double) -> String {
   // Decode bits into sign, mantissa, and exponent.
   let ieeeSign = bits
     .lsr(gDOUBLE_MANTISSA_BITS + gDOUBLE_EXPONENT_BITS)
-    .land(1UL) != 0UL
+    .land(1UL) !=
+    0UL
   let ieeeMantissa : UInt64 = bits.land(1UL.lsl(gDOUBLE_MANTISSA_BITS) - 1UL)
   let ieeeExponent : Int = bits
     .lsr(gDOUBLE_MANTISSA_BITS)
     .land(1UL.lsl(gDOUBLE_EXPONENT_BITS) - 1UL)
     .to_int()
-  if ieeeExponent == (1).lsl(gDOUBLE_EXPONENT_BITS) - 1 || (ieeeExponent == 0 &&
-  ieeeMantissa == 0UL) {
+  if ieeeExponent == (1).lsl(gDOUBLE_EXPONENT_BITS) - 1 ||
+    (ieeeExponent == 0 && ieeeMantissa == 0UL) {
     return copy_special_str(ieeeSign, ieeeExponent != 0, ieeeMantissa != 0UL)
   }
   let mut v : FloatingDecimal64 = { mantissa: 0UL, exponent: 0 }

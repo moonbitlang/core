@@ -74,8 +74,10 @@ pub fn parse_double(str : String) -> Double!StrConvError {
 }
 
 fn is_fast_path(self : Number) -> Bool {
-  min_exponent_fast_path <= self.exponent && self.exponent <= max_exponent_disguised_fast_path &&
-  self.mantissa <= max_mantissa_fast_path && not(self.many_digits)
+  min_exponent_fast_path <= self.exponent &&
+  self.exponent <= max_exponent_disguised_fast_path &&
+  self.mantissa <= max_mantissa_fast_path &&
+  not(self.many_digits)
 }
 
 let table = [
@@ -117,9 +119,8 @@ fn try_fast_path(self : Number) -> Double? {
       if mantissa > max_mantissa_fast_path {
         return None
       }
-      Double::convert_uint64(mantissa) * pow10_fast_path(
-        max_exponent_fast_path.to_int(),
-      )
+      Double::convert_uint64(mantissa) *
+      pow10_fast_path(max_exponent_fast_path.to_int())
     }
     if self.negative {
       value = -value
