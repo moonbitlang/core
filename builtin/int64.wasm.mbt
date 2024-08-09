@@ -66,6 +66,8 @@ pub fn Int64::reinterpret_as_double(self : Int64) -> Double = "%i64_to_f64_reint
 
 pub fn Int64::to_byte(self : Int64) -> Byte = "%i64_to_byte"
 
+pub fn Int64::to_float(self : Int64) -> Float = "%i64.to_f32"
+
 pub fn UInt64::extend_uint(val : UInt) -> UInt64 = "%u32.to_u64"
 
 pub fn UInt64::trunc_double(val : Double) -> UInt64 = "%f64.to_u64"
@@ -121,3 +123,5 @@ pub fn UInt64::lsr(self : UInt64, shift : Int) -> UInt64 = "%u64.shr"
 pub fn UInt64::op_shr(self : UInt64, shift : Int) -> UInt64 = "%u64.shr"
 
 pub fn UInt64::shr(self : UInt64, shift : Int) -> UInt64 = "%u64.shr"
+
+pub fn UInt64::to_float(self : UInt64) -> Float = "%u64.to_f32"

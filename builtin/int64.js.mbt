@@ -568,3 +568,11 @@ pub fn UInt64::shr(self : UInt64, shift : Int) -> UInt64 {
 pub fn UInt64::op_shr(self : UInt64, shift : Int) -> UInt64 {
   MyInt64::lsr(MyInt64::from_uint64(self), shift).to_uint64()
 }
+
+pub fn Int64::to_float(self : Int64) -> Float {
+  self.to_double().to_float()
+}
+
+pub fn UInt64::to_float(self : UInt64) -> Float {
+  Double::convert_uint64(self).to_float()
+}
