@@ -105,7 +105,9 @@ test "append" {
 test "each" {
   let v = [3, 4, 5]
   let mut sum = 0
-  v.each(fn(x) { sum = sum + x })
+  for x in v {
+    sum = sum + x
+  }
   @test.eq!(sum, 12)
 }
 
@@ -122,7 +124,10 @@ test "each_rev" {
 test "eachi" {
   let v = [3, 4, 5]
   let mut sum = 0
-  v.eachi(fn(i, x) { sum = sum + x + i })
+  for i, x in v {
+    // todo: maybe support (i,x)   
+    sum = sum + x + i
+  }
   @test.eq!(sum, 15)
 }
 
