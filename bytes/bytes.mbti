@@ -6,6 +6,7 @@ package moonbitlang/core/bytes
 impl Bytes {
   from_array(Array[Byte]) -> Bytes
   from_iter(Iter[Byte]) -> Bytes
+  iter(Bytes) -> Iter[Byte]
   of(FixedArray[Byte]) -> Bytes
   to_array(Bytes) -> Array[Byte]
 }
