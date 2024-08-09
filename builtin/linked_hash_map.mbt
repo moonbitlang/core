@@ -351,9 +351,7 @@ pub impl[K : Show, V : Show] Show for Map[K, V] with output(self, logger) {
       if i > 0 {
         logger.write_string(", ")
       }
-      Show::output(key, logger)
-      logger.write_string(": ")
-      Show::output(value, logger)
+      logger..write_object(key)..write_string(": ").write_object(value)
       continue i + 1, self.list[idx].next
     }
   }

@@ -65,8 +65,7 @@ pub impl Show for String with output(self, logger) {
     match c {
       '"' | '\\' => {
         flush_segment(i)
-        logger.write_char('\\')
-        logger.write_char(c)
+        logger..write_char('\\').write_char(c)
       }
       '\n' => {
         flush_segment(i)
@@ -88,10 +87,11 @@ pub impl Show for String with output(self, logger) {
         let code = c.to_int()
         if code < 0x20 {
           flush_segment(i)
-          logger.write_char('\\')
-          logger.write_char('x')
-          logger.write_char(to_hex_digit(code / 16))
-          logger.write_char(to_hex_digit(code % 16))
+          logger
+          ..write_char('\\')
+          ..write_char('x')
+          ..write_char(to_hex_digit(code / 16))
+          .write_char(to_hex_digit(code % 16))
         }
       }
     }
@@ -113,33 +113,20 @@ pub fn escape(self : String) -> String {
 pub impl[X : Show] Show for X? with output(self, logger) {
   match self {
     None => logger.write_string("None")
-    Some(arg) => {
-      logger.write_string("Some(")
-      arg.output(logger)
-      logger.write_string(")")
-    }
+    Some(arg) =>
+      logger..write_string("Some(")..write_object(arg).write_string(")")
   }
 }
 
 pub impl[T : Show, E : Show] Show for Result[T, E] with output(self, logger) {
   match self {
-    Ok(x) => {
-      logger.write_string("Ok(")
-      x.output(logger)
-      logger.write_string(")")
-    }
-    Err(e) => {
-      logger.write_string("Err(")
-      e.output(logger)
-      logger.write_string(")")
-    }
+    Ok(x) => logger..write_string("Ok(")..write_object(x).write_string(")")
+    Err(e) => logger..write_string("Err(")..write_object(e).write_string(")")
   }
 }
 
 pub impl[X : Show] Show for Ref[X] with output(self, logger) {
-  logger.write_string("{val: ")
-  self.val.output(logger)
-  logger.write_string("}")
+  logger..write_string("{val: ")..write_object(self.val).write_string("}")
 }
 
 pub impl[X : Show] Show for FixedArray[X] with output(self, logger) {
@@ -194,10 +181,7 @@ pub impl Show for Char with output(self, logger) {
 
   logger.write_char('\'')
   match self {
-    '\'' | '\\' => {
-      logger.write_char('\\')
-      logger.write_char(self)
-    }
+    '\'' | '\\' => logger..write_char('\\').write_char(self)
     '\n' => logger.write_string("\\n")
     '\r' => logger.write_string("\\r")
     '\b' => logger.write_string("\\b")
@@ -205,10 +189,11 @@ pub impl Show for Char with output(self, logger) {
     _ => {
       let code = self.to_int()
       if code < 0x20 {
-        logger.write_char('\\')
-        logger.write_char('x')
-        logger.write_char(to_hex_digit(code / 16))
-        logger.write_char(to_hex_digit(code % 16))
+        logger
+        ..write_char('\\')
+        ..write_char('x')
+        ..write_char(to_hex_digit(code / 16))
+        .write_char(to_hex_digit(code % 16))
       } else {
         logger.write_char(self)
       }

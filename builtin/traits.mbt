@@ -78,3 +78,7 @@ impl Show with to_string(self) {
   self.output(logger)
   logger.to_string()
 }
+
+pub fn Logger::write_object[Obj : Show](self : Logger, obj : Obj) -> Unit {
+  obj.output(self)
+}
