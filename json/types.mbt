@@ -20,34 +20,22 @@ pub struct Position {
   column : Int // 0-based
 } derive(Eq)
 
-pub enum ErrorData {
+pub type! ParseError {
   InvalidChar(Position, Char)
   InvalidEof
   InvalidNumber(Position, String)
   InvalidIdentEscape(Position)
 } derive(Eq)
 
-pub type! ParseError ErrorData
-
-pub fn ErrorData::to_string(self : ErrorData) -> String {
+pub fn to_string(self : ParseError) -> String {
   match self {
-    ErrorData::InvalidChar({ line, column }, c) =>
+    InvalidChar({ line, column }, c) =>
       "Invalid character '\{c}' at line \{line}, column \{column}"
-    ErrorData::InvalidEof => "Unexpected end of file"
-    ErrorData::InvalidNumber({ line, column }, s) =>
+    InvalidEof => "Unexpected end of file"
+    InvalidNumber({ line, column }, s) =>
       "Invalid number \{s} at line \{line}, column \{column}"
-    ErrorData::InvalidIdentEscape({ line, column }) =>
+    InvalidIdentEscape({ line, column }) =>
       "Invalid escape sequence in identifier at line \{line}, column \{column}"
-  }
-}
-
-pub impl Show for ErrorData with output(self, logger) {
-  logger.write_string(self.to_string())
-}
-
-pub fn ParseError::to_string(self : ParseError) -> String {
-  match self {
-    ParseError(e) => e.to_string()
   }
 }
 
@@ -55,11 +43,15 @@ pub impl Show for ParseError with output(self, logger) {
   logger.write_string(self.to_string())
 }
 
-pub fn op_equal(self : ParseError, other : ParseError) -> Bool {
-  match (self, other) {
-    (ParseError(e1), ParseError(e2)) => e1 == e2
-  }
-}
+// pub fn ParseError::to_string(self : ParseError) -> String {
+//   match self {
+//     ParseError(e) => e.to_string()
+//   }
+// }
+
+// pub impl Show for ParseError with output(self, logger) {
+//   logger.write_string(self.to_string())
+// }
 
 pub impl Show for JsonValue with output(self, logger) {
   match self {
