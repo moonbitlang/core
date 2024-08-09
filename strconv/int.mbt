@@ -121,8 +121,16 @@ fn check_underscore(str : String) -> Bool {
   }
   // base prefix
   let mut hex = false
-  if s.length() >= 2 && s[0] == '0' && (s[1] == 'b' || s[1] == 'B' || s[1] == 'o' ||
-  s[1] == 'O' || s[1] == 'x' || s[1] == 'X') {
+  if s.length() >= 2 &&
+    s[0] == '0' &&
+    (
+      s[1] == 'b' ||
+      s[1] == 'B' ||
+      s[1] == 'o' ||
+      s[1] == 'O' ||
+      s[1] == 'x' ||
+      s[1] == 'X'
+    ) {
     last_char = '0'
     hex = s[1] == 'x' || s[1] == 'X'
     s = s.substring(start=2)
@@ -282,16 +290,24 @@ test "parse_int64_base" {
       "moonbit",
       35,
       Ok(
-        (((((22L * 35L + 24L) * 35L + 24L) * 35L + 23L) * 35L + 11L) * 35L + 18L) *
-        35L + 29L,
+        (
+          ((((22L * 35L + 24L) * 35L + 24L) * 35L + 23L) * 35L + 11L) * 35L +
+          18L
+        ) *
+        35L +
+        29L,
       ),
     ),
     (
       "moonbit",
       36,
       Ok(
-        (((((22L * 36L + 24L) * 36L + 24L) * 36L + 23L) * 36L + 11L) * 36L + 18L) *
-        36L + 29L,
+        (
+          ((((22L * 36L + 24L) * 36L + 24L) * 36L + 23L) * 36L + 11L) * 36L +
+          18L
+        ) *
+        36L +
+        29L,
       ),
     ),
     // base 2

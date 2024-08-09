@@ -62,7 +62,8 @@ pub fn any[T](self : Iter[T], f : (T) -> Bool) -> Bool {
 }
 
 pub fn all[T](self : Iter[T], f : (T) -> Bool) -> Bool {
-  self.run(fn(k) { if not(f(k)) { IterEnd } else { IterContinue } }) == IterContinue
+  self.run(fn(k) { if not(f(k)) { IterEnd } else { IterContinue } }) ==
+  IterContinue
 }
 
 /// Iterates over each element in the iterator, applying the function `f` to each element with index.
