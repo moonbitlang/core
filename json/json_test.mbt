@@ -292,7 +292,7 @@ test "stringify escape" {
       #|{"\b":"\"hello\"","\n":"\n\r\t\f","\\":"\/","\u001f":"\u0001"}
     ,
   )
-  match parse_as_result(json.stringify()) {
+  match @json.parse?(json.stringify()) {
     Err(e) => raise e
     Ok(newjson) => @test.eq!(newjson, json)
   }
