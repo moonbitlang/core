@@ -363,3 +363,63 @@ test "to_upper" {
   inspect!(" ".to_upper(), content=" ")
   inspect!("月兔".to_upper(), content="月兔")
 }
+
+test "split" {
+  inspect!(
+    "a b c d e".split(" "),
+    content=
+      #|["a", "b", "c", "d", "e"]
+    ,
+  )
+  inspect!(
+    "abcde".split("x"),
+    content=
+      #|["abcde"]
+    ,
+  )
+  inspect!("".split(""), content="[]")
+  inspect!("".split("x"), content="[]")
+  inspect!(
+    "你 wow 好 wow 月 wow 兔".split(" wow "),
+    content=
+      #|["你", "好", "月", "兔"]
+    ,
+  )
+  inspect!(
+    "👍😍😭👍😍😭👍😍😭👍".split("😍😭"),
+    content=
+      #|["👍", "👍", "👍", "👍"]
+    ,
+  )
+  // Additional test cases
+  inspect!(
+    "a,b,c,d,e".split(","),
+    content=
+      #|["a", "b", "c", "d", "e"]
+    ,
+  )
+  inspect!(
+    "a,,b,,c".split(","),
+    content=
+      #|["a", "", "b", "", "c"]
+    ,
+  )
+  inspect!(
+    "a,,b,,c".split(",,"),
+    content=
+      #|["a", "b", "c"]
+    ,
+  )
+  inspect!(
+    "a b c d e".split(""),
+    content=
+      #|["a", " ", "b", " ", "c", " ", "d", " ", "e"]
+    ,
+  )
+  inspect!(
+    "a b c d e".split(" "),
+    content=
+      #|["a", "b", "c", "d", "e"]
+    ,
+  )
+}

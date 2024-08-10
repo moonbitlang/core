@@ -317,24 +317,32 @@ pub fn ends_with(self : String, str : String) -> Bool {
 }
 
 /// Splits this string by a seperator string.
-pub fn split(self : String, seperator : String) -> Array[String] {
+pub fn split(self : String, seperator : String) -> Iter[String] {
   let len = self.length()
   let sep_len = seperator.length()
   if sep_len == 0 {
-    return self.iter().map(fn(c) { c.to_string() }).collect()
+    return self.iter().map(fn(c) { c.to_string() })
   }
-  let subs = []
-  let mut start = 0
-  while start < len {
-    let end = self.index_of(seperator, from=start)
-    if end < 0 {
-      subs.push(self.substring(~start))
-      break
-    }
-    subs.push(self.substring(~start, ~end))
-    start = end + sep_len
-  }
-  subs
+  Iter::new(
+    fn(yield) {
+      let mut start = 0
+      while start < len {
+        let end = self.index_of(seperator, from=start)
+        if end < 0 {
+          if yield(self.substring(~start)) == IterEnd {
+            break IterEnd
+          }
+          break IterContinue
+        }
+        if yield(self.substring(~start, ~end)) == IterEnd {
+          break IterEnd
+        }
+        start = end + sep_len
+      } else {
+        IterContinue
+      }
+    },
+  )
 }
 
 /// Replace the first old string in this string to new string.
