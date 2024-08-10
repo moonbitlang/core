@@ -316,7 +316,33 @@ pub fn ends_with(self : String, str : String) -> Bool {
   }
 }
 
-/// Splits this string by a seperator string.
+/// Splits the input `String` into an `Iter` of `String` using the specified `separator`.
+/// 
+/// # Parameters
+/// 
+/// - `self` : The input `String` to be split.
+/// - `separator` : The `String` used as the delimiter for splitting.
+/// 
+/// # Returns
+/// 
+/// - An `Iter` of `String` where each element is a substring of the original string, separated by the `separator`.
+/// 
+/// # Behavior
+/// 
+/// - If the `separator` is an empty string (`""`), the function returns an `Iter` where each element is a single character from the input string converted to a `String`.
+/// - If the `separator` is not empty, the function searches for occurrences of the `separator` in the input string and yields substrings between these occurrences.
+/// - If no more occurrences of the `separator` are found, the remaining part of the string is yielded as the last element of the `Iter`.
+/// 
+/// # Examples
+/// 
+/// ```moonbit
+/// test {
+///   let input = "a,b,c,d"
+///   let separator = ","
+///   let result = split(input, separator).collect()
+///   inspect!(result, content="[\"a\", \"b\", \"c\", \"d\"]")
+/// }
+/// ```
 pub fn split(self : String, seperator : String) -> Iter[String] {
   let len = self.length()
   let sep_len = seperator.length()
