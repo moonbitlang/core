@@ -469,6 +469,29 @@ pub fn take_while[T](self : Iter[T], f : (T) -> Bool) -> Iter[T] {
   }
 }
 
+/// Transforms the elements of the iterator using a mapping function until the function returns `None`.
+pub fn map_while[A, B](self : Iter[A], f : (A) -> B?) -> Iter[B] {
+  fn(yield) {
+    let mut r : IterResult = IterContinue
+    self.run(
+      fn(a) {
+        match f(a) {
+          Some(b) =>
+            if yield(b) == IterContinue {
+              IterContinue
+            } else {
+              r = IterEnd
+              IterEnd
+            }
+          None => IterEnd
+        }
+      },
+    )
+    |> ignore
+    r
+  }
+}
+
 /// Skips the first `n` elements from the iterator.
 ///
 /// # Type Parameters
