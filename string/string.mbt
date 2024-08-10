@@ -418,17 +418,13 @@ pub fn replace_all(self : String, ~old : String, ~new : String) -> String {
 pub fn to_lower(self : String) -> String {
   // TODO: deal with non-ascii characters
   let buf = Buffer::new(size_hint=self.length())
-  self
-  .iter()
-  .each(
-    fn(c) {
-      if c >= 'A' && c <= 'Z' {
-        buf.write_char(Char::from_int(c.to_int() + 32))
-      } else {
-        buf.write_char(c)
-      }
-    },
-  )
+  for c in self {
+    if c >= 'A' && c <= 'Z' {
+      buf.write_char(Char::from_int(c.to_int() + 32))
+    } else {
+      buf.write_char(c)
+    }
+  }
   buf.to_string()
 }
 
@@ -436,16 +432,12 @@ pub fn to_lower(self : String) -> String {
 pub fn to_upper(self : String) -> String {
   // TODO: deal with non-ascii characters
   let buf = Buffer::new(size_hint=self.length())
-  self
-  .iter()
-  .each(
-    fn(c) {
-      if c >= 'a' && c <= 'z' {
-        buf.write_char(Char::from_int(c.to_int() - 32))
-      } else {
-        buf.write_char(c)
-      }
-    },
-  )
+  for c in self {
+    if c >= 'a' && c <= 'z' {
+      buf.write_char(Char::from_int(c.to_int() - 32))
+    } else {
+      buf.write_char(c)
+    }
+  }
   buf.to_string()
 }
