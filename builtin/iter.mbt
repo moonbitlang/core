@@ -20,6 +20,10 @@ pub fn run[T](self : Iter[T], f : (T) -> IterResult) -> IterResult {
   (self.0)(f)
 }
 
+pub fn just_run[T](self : Iter[T], f : (T) -> IterResult) -> Unit {
+  (self.0)(f) |> ignore
+}
+
 pub enum IterResult {
   IterEnd // false
   IterContinue // true
@@ -409,10 +413,12 @@ pub fn tap[T](self : Iter[T], f : (T) -> Unit) -> Iter[T] {
 pub fn take[T](self : Iter[T], n : Int) -> Iter[T] {
   // [..take(10,seq), next] would continue
   // even if seq has less than 10 elements
+  // but `for x in [..take(10,seq), next ] { break }` would stop
+  //
   fn(yield) {
     let mut i = 0
     let mut r = IterContinue
-    self.run(
+    self.just_run(
       fn {
         a =>
           if i < n {
@@ -428,9 +434,6 @@ pub fn take[T](self : Iter[T], n : Int) -> Iter[T] {
           }
       },
     )
-    |> ignore
-    // The `take` operator returns `IterEnd` only when any call to `yield(a)` returns `IterEnd`.
-    // Otherwise, it returns `IterContinue`, including when `i` reaches the count `n`.
     r
   }
 }
@@ -458,7 +461,7 @@ pub fn take_while[T](self : Iter[T], f : (T) -> Bool) -> Iter[T] {
     // but [.. take_while(..), next] would continue
     // See test "take_while2"
     let mut r : IterResult = IterContinue
-    self.run(
+    self.just_run(
       fn(a) {
         if f(a) {
           if yield(a) == IterContinue {
@@ -472,7 +475,6 @@ pub fn take_while[T](self : Iter[T], f : (T) -> Bool) -> Iter[T] {
         }
       },
     )
-    |> ignore
     r
   }
 }
@@ -481,7 +483,7 @@ pub fn take_while[T](self : Iter[T], f : (T) -> Bool) -> Iter[T] {
 pub fn map_while[A, B](self : Iter[A], f : (A) -> B?) -> Iter[B] {
   fn(yield) {
     let mut r : IterResult = IterContinue
-    self.run(
+    self.just_run(
       fn(a) {
         match f(a) {
           Some(b) =>
@@ -495,7 +497,6 @@ pub fn map_while[A, B](self : Iter[A], f : (A) -> B?) -> Iter[B] {
         }
       },
     )
-    |> ignore
     r
   }
 }
@@ -576,7 +577,7 @@ pub fn drop_while[T](self : Iter[T], f : (T) -> Bool) -> Iter[T] {
 /// An `Option` that contains the first element that satisfies the predicate function, or `None` if no such element is found.
 pub fn find_first[T](self : Iter[T], f : (T) -> Bool) -> T? {
   let mut result : T? = None
-  let _ = self.run(
+  self.just_run(
     fn(a) {
       if f(a) {
         result = Some(a)
