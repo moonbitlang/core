@@ -190,6 +190,7 @@ impl Iter {
   fold[T, B](Self[T], ~init : B, (B, T) -> B) -> B
   iter[T](Self[T]) -> Self[T]
   map[T, R](Self[T], (T) -> R) -> Self[R]
+  map_while[A, B](Self[A], (A) -> B?) -> Self[B]
   new[T](((T) -> IterResult) -> IterResult) -> Self[T]
   op_add[T](Self[T], Self[T]) -> Self[T]
   prepend[T](Self[T], T) -> Self[T]

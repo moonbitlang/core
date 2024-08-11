@@ -99,6 +99,52 @@ test "take_while5" {
   inspect!(res, content="0")
 }
 
+test "map_while1" {
+  let iter = test_from_array([1, 2, 3, 4, 5])
+  let exb = Buffer::new(size_hint=0)
+  iter
+  .map_while(fn { x => if x != 4 { Some(x) } else { None } })
+  .each(fn { x => exb.write_string("\{x}\n") })
+  exb.expect!(content="1\n2\n3\n")
+}
+
+test "map_while2" {
+  let iter = test_from_array([1, 2, 3, 4, 5])
+  let exb = Buffer::new(size_hint=0)
+  iter
+  .map_while(fn { x => if x != 4 { Some(x) } else { None } })
+  .concat(singleton(6))
+  .each(fn { x => exb.write_string("\{x}\n") })
+  exb.expect!(content="1\n2\n3\n6\n")
+}
+
+test "map_while3" {
+  let iter = test_from_array([1, 2, 3])
+  let res = iter
+    .map_while(fn { x => if x != 4 { Some(x) } else { None } })
+    .concat(singleton(4))
+    .find_first(fn { x => x % 2 == 0 })
+  inspect!(res, content="Some(2)")
+}
+
+test "map_while4" {
+  let iter = test_from_array([1, 2, 3, 4, 5, 6])
+  let res = iter
+    .map_while(fn { x => if x <= 5 { Some(x) } else { None } })
+    .take(4)
+    .fold(init=0, fn(x, y) { x + y })
+  inspect!(res, content="10")
+}
+
+test "map_while5" {
+  let iter = test_from_array([1, 2, 3, 4, 5, 6])
+  let res = iter
+    .take(4)
+    .map_while(fn { x => if x >= 5 { Some(x) } else { None } })
+    .fold(fn(x, y) { x + y }, init=0)
+  inspect!(res, content="0")
+}
+
 test "drop" {
   let iter = test_from_array(['1', '2', '3', '4', '5'])
   let exb = Buffer::new(size_hint=0)
