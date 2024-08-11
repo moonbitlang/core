@@ -20,6 +20,10 @@ pub fn run[T](self : Iter[T], f : (T) -> IterResult) -> IterResult {
   (self.0)(f)
 }
 
+pub fn just_run[T](self : Iter[T], f : (T) -> IterResult) -> Unit {
+  (self.0)(f) |> ignore
+}
+
 pub enum IterResult {
   IterEnd // false
   IterContinue // true
@@ -407,28 +411,30 @@ pub fn tap[T](self : Iter[T], f : (T) -> Unit) -> Iter[T] {
 /// A new iterator that contains the first `n` elements.
 /// @intrinsic %iter.take
 pub fn take[T](self : Iter[T], n : Int) -> Iter[T] {
+  // [..take(10,seq), next] would continue
+  // even if seq has less than 10 elements
+  // but `for x in [..take(10,seq), next ] { break }` would stop
+  //
   fn(yield) {
     let mut i = 0
-    let iter_result = self.run(
+    let mut r = IterContinue
+    self.just_run(
       fn {
         a =>
-          if i < n && yield(a) == IterContinue {
-            i = i + 1
-            IterContinue
+          if i < n {
+            if yield(a) == IterContinue {
+              i = i + 1
+              IterContinue
+            } else {
+              r = IterEnd
+              IterEnd
+            }
           } else {
             IterEnd
           }
       },
     )
-    // The `take` operator returns `IterEnd` only when any call to `yield(a)` returns `IterEnd`.
-    // Otherwise, it returns `IterContinue`, including when `i` reaches the count `n`.
-    if iter_result == IterContinue {
-      iter_result
-    } else if i == n {
-      IterContinue
-    } else {
-      IterEnd
-    }
+    r
   }
 }
 
@@ -448,9 +454,14 @@ pub fn take[T](self : Iter[T], n : Int) -> Iter[T] {
 /// A new iterator that contains the elements as long as the predicate function returns `true`.
 pub fn take_while[T](self : Iter[T], f : (T) -> Bool) -> Iter[T] {
   fn(yield) {
-    // `r` represents the overall return value. It is set to `IterEnd` only if `yield(a)` returns `IterEnd`.
+    // `r` represents the overall return value. 
+    // It is set to `IterEnd` only if `yield(a)` returns `IterEnd`.
+    // so if `f(a)` returns `false`, it will return `IterEnd`
+    // immediately the iteration of current seq is terminated
+    // but [.. take_while(..), next] would continue
+    // See test "take_while2"
     let mut r : IterResult = IterContinue
-    self.run(
+    self.just_run(
       fn(a) {
         if f(a) {
           if yield(a) == IterContinue {
@@ -464,7 +475,6 @@ pub fn take_while[T](self : Iter[T], f : (T) -> Bool) -> Iter[T] {
         }
       },
     )
-    |> ignore
     r
   }
 }
@@ -473,7 +483,7 @@ pub fn take_while[T](self : Iter[T], f : (T) -> Bool) -> Iter[T] {
 pub fn map_while[A, B](self : Iter[A], f : (A) -> B?) -> Iter[B] {
   fn(yield) {
     let mut r : IterResult = IterContinue
-    self.run(
+    self.just_run(
       fn(a) {
         match f(a) {
           Some(b) =>
@@ -487,7 +497,6 @@ pub fn map_while[A, B](self : Iter[A], f : (A) -> B?) -> Iter[B] {
         }
       },
     )
-    |> ignore
     r
   }
 }
@@ -568,7 +577,7 @@ pub fn drop_while[T](self : Iter[T], f : (T) -> Bool) -> Iter[T] {
 /// An `Option` that contains the first element that satisfies the predicate function, or `None` if no such element is found.
 pub fn find_first[T](self : Iter[T], f : (T) -> Bool) -> T? {
   let mut result : T? = None
-  let _ = self.run(
+  self.just_run(
     fn(a) {
       if f(a) {
         result = Some(a)
