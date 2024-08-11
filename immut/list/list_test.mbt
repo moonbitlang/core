@@ -26,16 +26,12 @@ test "length" {
 
 test "iter" {
   let ls = @list.of([1, 2, 3, 4, 5])
-  let mut i = 0
   let mut failed = false
-  ls.each(
-    fn(x) {
-      i = i + 1
-      if x != i {
-        failed = true
-      }
-    },
-  )
+  for i, x in ls {
+    if x != i + 1 {
+      failed = true
+    }
+  }
   inspect!(failed, content="false")
 }
 
@@ -43,14 +39,12 @@ test "iteri" {
   let mut v = 0
   let mut failed = false
   let ls = @list.of([1, 2, 3, 4, 5])
-  ls.eachi(
-    fn(i, x) {
-      if x != v + 1 || i != v {
-        failed = true
-      }
-      v = v + 1
-    },
-  )
+  for i, x in ls {
+    if x != i + 1 || i != v {
+      failed = true
+    }
+    v = v + 1
+  }
   inspect!(failed, content="false")
 }
 
