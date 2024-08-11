@@ -407,6 +407,8 @@ pub fn tap[T](self : Iter[T], f : (T) -> Unit) -> Iter[T] {
 /// A new iterator that contains the first `n` elements.
 /// @intrinsic %iter.take
 pub fn take[T](self : Iter[T], n : Int) -> Iter[T] {
+  // [..take(10,seq), next] would continue
+  // even if seq has less than 10 elements
   fn(yield) {
     let mut i = 0
     let iter_result = self.run(
@@ -448,7 +450,12 @@ pub fn take[T](self : Iter[T], n : Int) -> Iter[T] {
 /// A new iterator that contains the elements as long as the predicate function returns `true`.
 pub fn take_while[T](self : Iter[T], f : (T) -> Bool) -> Iter[T] {
   fn(yield) {
-    // `r` represents the overall return value. It is set to `IterEnd` only if `yield(a)` returns `IterEnd`.
+    // `r` represents the overall return value. 
+    // It is set to `IterEnd` only if `yield(a)` returns `IterEnd`.
+    // so if `f(a)` returns `false`, it will return `IterEnd`
+    // immediately the iteration of current seq is terminated
+    // but [.. take_while(..), next] would continue
+    // See test "take_while2"
     let mut r : IterResult = IterContinue
     self.run(
       fn(a) {
