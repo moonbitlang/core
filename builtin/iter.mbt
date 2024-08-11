@@ -411,26 +411,27 @@ pub fn take[T](self : Iter[T], n : Int) -> Iter[T] {
   // even if seq has less than 10 elements
   fn(yield) {
     let mut i = 0
-    let iter_result = self.run(
+    let mut r = IterContinue
+    self.run(
       fn {
         a =>
-          if i < n && yield(a) == IterContinue {
-            i = i + 1
-            IterContinue
+          if i < n {
+            if yield(a) == IterContinue {
+              i = i + 1
+              IterContinue
+            } else {
+              r = IterEnd
+              IterEnd
+            }
           } else {
             IterEnd
           }
       },
     )
+    |> ignore
     // The `take` operator returns `IterEnd` only when any call to `yield(a)` returns `IterEnd`.
     // Otherwise, it returns `IterContinue`, including when `i` reaches the count `n`.
-    if iter_result == IterContinue {
-      iter_result
-    } else if i == n {
-      IterContinue
-    } else {
-      IterEnd
-    }
+    r
   }
 }
 
