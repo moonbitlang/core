@@ -4,6 +4,7 @@ package moonbitlang/core/rational
 
 // Types and methods
 pub type! RationalError String
+
 type T
 impl T {
   abs(Self) -> Self

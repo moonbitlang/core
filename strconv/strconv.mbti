@@ -24,6 +24,7 @@ impl Decimal {
 type Number
 
 pub type! StrConvError String
+
 // Type aliases
 
 // Traits

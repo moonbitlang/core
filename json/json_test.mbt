@@ -38,7 +38,17 @@ test "get as bool" {
   inspect!({ "key": "key", "value": 100.0 } |> @json.as_bool, content="None")
 }
 
+fn check!(x : String) -> Json {
+  @json.parse!(x)
+}
+
+fn check2!(x : String) -> Json!@json.ParseError {
+  @json.parse!(x)
+}
+
 test "get as number" {
+  let _ = check
+  let _ = check2
   inspect!(Json::Null |> @json.as_number, content="None")
   inspect!(Json::False |> @json.as_number, content="None")
   inspect!(Json::True |> @json.as_number, content="None")
