@@ -107,8 +107,6 @@ pub fn Double::op_mul(self : Double, other : Double) -> Double = "%f64_mul"
 
 pub fn Double::op_div(self : Double, other : Double) -> Double = "%f64_div"
 
-pub fn Double::op_mod(self : Double, other : Double) -> Double = "%f64_mod"
-
 pub fn Double::sqrt(self : Double) -> Double = "%f64_sqrt"
 
 pub fn Double::op_equal(self : Double, other : Double) -> Bool = "%f64_eq"
@@ -249,8 +247,6 @@ pub fn Float::op_sub(self : Float, other : Float) -> Float = "%f32.sub"
 pub fn Float::op_mul(self : Float, other : Float) -> Float = "%f32.mul"
 
 pub fn Float::op_div(self : Float, other : Float) -> Float = "%f32.div"
-
-pub fn Float::op_mod(self : Float, other : Float) -> Float = "%f32.mod"
 
 pub fn Float::sqrt(self : Float) -> Float = "%f32.sqrt"
 
