@@ -49,24 +49,24 @@ fn of_json(jv : Json) -> AllThree!DecodeError {
       let ints_result = []
       let floats_result = []
       let strings_result = []
-      ints.each(
-        fn {
+      for n in ints {
+        match n {
           Number(n) => ints_result.push(n.to_int())
           _ => () // error handling here 
-        },
-      )
-      floats.each(
-        fn {
+        }
+      }
+      for n in floats {
+        match n {
           Number(n) => floats_result.push(n)
           _ => () // error handling here 
-        },
-      )
-      strings.each(
-        fn {
+        }
+      }
+      for s in strings {
+        match s {
           String(s) => strings_result.push(s)
           _ => () // error handling here 
-        },
-      )
+        }
+      }
       { ints: ints_result, floats: floats_result, strings: strings_result }
     }
     _ =>
