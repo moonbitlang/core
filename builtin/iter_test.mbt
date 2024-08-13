@@ -429,3 +429,25 @@ test {
   tree.iter().each(fn { x => exb.write_string(x.to_string()) })
   exb.expect!(content="12345")
 }
+
+test "Iter::intersperse" {
+  inspect!([1, 2, 3].iter().intersperse(0), content="[1, 0, 2, 0, 3]")
+  inspect!(
+    [1, 2, 3, 4, 5, 6, 7, 8, 9].iter().intersperse(0),
+    content="[1, 0, 2, 0, 3, 0, 4, 0, 5, 0, 6, 0, 7, 0, 8, 0, 9]",
+  )
+  inspect!(([] : Array[Int]).iter().intersperse(0), content="[]")
+  inspect!([1].iter().intersperse(0), content="[1]")
+}
+
+test "Iter::last" {
+  inspect!([1, 2, 3].iter().last(), content="Some(3)")
+  inspect!([1].iter().last(), content="Some(1)")
+  inspect!(([] : Array[Int]).iter().last(), content="None")
+}
+
+test "Iter::head" {
+  inspect!([1, 2, 3].iter().head(), content="Some(1)")
+  inspect!([1].iter().head(), content="Some(1)")
+  inspect!(([] : Array[Int]).iter().head(), content="None")
+}
