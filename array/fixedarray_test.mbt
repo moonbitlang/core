@@ -53,3 +53,20 @@ test "FixedArray::from_iter with empty iterator" {
   let result = FixedArray::from_iter(iter)
   assert_eq!(result, [])
 }
+
+test "FixedArray::last" {
+  inspect!(FixedArray::last([1, 2, 3]), content="Some(3)")
+  inspect!(
+    FixedArray::last(["a", "b", "c"]),
+    content=
+      #|Some("c")
+    ,
+  )
+  inspect!(FixedArray::last([1]), content="Some(1)")
+  inspect!(
+    FixedArray::last(["single"]),
+    content=
+      #|Some("single")
+    ,
+  )
+}

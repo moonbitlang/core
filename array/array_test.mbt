@@ -537,3 +537,21 @@ test "Array::iter2" {
   arr.iter2().iter().each(fn(x) { res = res + x.to_string() })
   inspect!(res, content="(0, 1)(1, 2)(2, 3)")
 }
+
+test "Array::last" {
+  // Test with a random array of integers
+  inspect!([1, 2, 3, 4, 5].last(), content="Some(5)")
+
+  // Test with a random array of strings
+  inspect!(["a", "b", "c"].last(), content="Some(\"c\")")
+
+  // Test with a large array
+  let large_array = Array::make(10, 0)
+  inspect!(large_array.last(), content="Some(0)")
+
+  // Test with an empty array
+  inspect!(([] : Array[Unit]).last(), content="None")
+
+  // Test with a single-element array
+  inspect!([1].last(), content="Some(1)")
+}
