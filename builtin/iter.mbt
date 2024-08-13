@@ -674,3 +674,56 @@ pub fn collect[T](self : Iter[T]) -> Array[T] {
 pub fn iter[T](self : Iter[T]) -> Iter[T] {
   self
 }
+
+/// Returns the last element of the iterator, or `None` if the iterator is empty.
+pub fn last[A](self : Iter[A]) -> A? {
+  fn f(_a : A?, b : A) {
+    Some(b)
+  }
+
+  self.fold(init=None, f)
+}
+
+/// Returns the first element of the iterator, or `None` if the iterator is empty.
+pub fn head[A](self : Iter[A]) -> A? {
+  fn f(a : A?, b : A) {
+    match a {
+      Some(_) => a
+      None => Some(b)
+    }
+  }
+
+  self.fold(init=None, f)
+}
+
+/// Inserts a separator element `sep` between each element of the iterator.
+/// 
+/// # Parameters
+/// 
+/// - `self` : The iterator to intersperse the separator into.
+/// - `sep` : The separator element to insert between each element of the iterator.
+/// 
+/// # Examples
+/// 
+/// ```moonbit
+/// test {
+///   inspect!([1, 2, 3].iter().intersperse(0), content="[1, 0, 2, 0, 3]")
+/// }
+/// ```
+pub fn intersperse[A](self : Iter[A], sep : A) -> Iter[A] {
+  fn(yield) {
+    let mut first = true
+    self.run(
+      fn(x) {
+        if first {
+          first = false
+          yield(x)
+        } else if yield(sep) == IterEnd {
+          IterEnd
+        } else {
+          yield(x)
+        }
+      },
+    )
+  }
+}
