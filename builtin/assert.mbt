@@ -18,11 +18,7 @@ fn debug_string[T : Show](t : T) -> String {
   buf.to_string()
 }
 
-pub fn assert_eq[T : Eq + Show](
-  a : T,
-  b : T,
-  ~loc : SourceLoc = _
-) -> Unit! {
+pub fn assert_eq[T : Eq + Show](a : T, b : T, ~loc : SourceLoc = _) -> Unit! {
   if a != b {
     fail!("FAILED: \{loc} `\{a} == \{b}`")
   }
