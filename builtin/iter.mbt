@@ -565,18 +565,13 @@ pub fn drop_while[T](self : Iter[T], f : (T) -> Bool) -> Iter[T] {
 ///
 /// An `Option` that contains the first element that satisfies the predicate function, or `None` if no such element is found.
 pub fn find_first[T](self : Iter[T], f : (T) -> Bool) -> T? {
-  let mut result : T? = None
-  self.just_run(
-    fn(a) {
-      if f(a) {
-        result = Some(a)
-        IterEnd
-      } else {
-        IterContinue
-      }
-    },
-  )
-  result
+  for a in self {
+    if f(a) {
+      break Some(a)
+    }
+  } else {
+    None
+  }
 }
 
 /// Prepends a single element to the beginning of the iterator.
@@ -647,7 +642,9 @@ pub fn op_add[T](self : Iter[T], other : Iter[T]) -> Iter[T] {
 /// Collects the elements of the iterator into an array.
 pub fn to_array[T](self : Iter[T]) -> Array[T] {
   let result = []
-  self.each(fn(e) { result.push(e) })
+  for e in self {
+    result.push(e)
+  }
   result
 }
 
