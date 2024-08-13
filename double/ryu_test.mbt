@@ -286,7 +286,7 @@ fn ieee_parts_to_double(
 test "double/ryu.mbt:90" {
   let value = 100L
   assert_eq!(value % 25L, 0L)
-  assert_ne!(value % 125L, 0L)
+  assert_not_eq!(value % 125L, 0L)
 }
 
 test "double/ryu.mbt:403" {
@@ -309,7 +309,7 @@ test "double/ryu.mbt:403" {
 test "double/ryu.mbt:90" {
   let value = 100L
   assert_eq!(value % 25L, 0L)
-  assert_ne!(value % 125L, 0L)
+  assert_not_eq!(value % 125L, 0L)
 }
 
 test "double/ryu.mbt:403" {

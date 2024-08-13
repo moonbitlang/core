@@ -67,7 +67,7 @@ test "array_equal" {
   let arr2 = [1, 2, 3]
   let arr3 = [1, 2, 4]
   assert_eq!(arr1, arr2)
-  assert_ne!(arr1, arr3)
+  assert_not_eq!(arr1, arr3)
   inspect!([1, 2] == [1, 2, 3], content="false")
 }
 

@@ -121,5 +121,5 @@ test "op_equal" {
   let bytes = Bytes::of_string("Hello, World!")
   let copy_bytes = bytes.copy()
   assert_eq!(bytes, copy_bytes)
-  assert_ne!(bytes, Bytes::new(10))
+  assert_not_eq!(bytes, Bytes::new(10))
 }

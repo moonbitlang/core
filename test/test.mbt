@@ -27,7 +27,7 @@ pub fn eq[T : Show + Eq](a : T, b : T, ~loc : SourceLoc = _) -> Unit! {
   }
 }
 
-/// @alert deprecated "Use built-in `assert_ne` instead"
+/// @alert deprecated "Use built-in `assert_not_eq` instead"
 pub fn ne[T : Show + Eq](a : T, b : T, ~loc : SourceLoc = _) -> Unit! {
   if not(a != b) {
     let a = debug_string(a)

@@ -28,7 +28,7 @@ pub fn assert_eq[T : Eq + Show](
   }
 }
 
-pub fn assert_ne[T : Eq + Show](
+pub fn assert_not_eq[T : Eq + Show](
   a : T,
   b : T,
   ~loc : SourceLoc = _

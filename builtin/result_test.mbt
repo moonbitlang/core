@@ -17,7 +17,7 @@ test "Result equality with Ok" {
   let result2 = Result::Ok(1)
   let result3 = Result::Ok(2)
   assert_eq!(result1, result2)
-  assert_ne!(result1, result3)
+  assert_not_eq!(result1, result3)
 }
 
 test "Result equality with Err" {
@@ -25,11 +25,11 @@ test "Result equality with Err" {
   let result2 = Result::Err("error")
   let result3 = Result::Err("different error")
   assert_eq!(result1, result2)
-  assert_ne!(result1, result3)
+  assert_not_eq!(result1, result3)
 }
 
 test "Result equality mixed" {
   let okResult = Result::Ok(1)
   let errResult = Result::Err("error")
-  assert_ne!(okResult, errResult)
+  assert_not_eq!(okResult, errResult)
 }
