@@ -444,7 +444,6 @@ impl Float {
   op_add(Float, Float) -> Float
   op_div(Float, Float) -> Float
   op_equal(Float, Float) -> Bool
-  op_mod(Float, Float) -> Float
   op_mul(Float, Float) -> Float
   op_neg(Float) -> Float
   op_neq(Float, Float) -> Bool
@@ -461,7 +460,6 @@ impl Double {
   op_add(Double, Double) -> Double
   op_div(Double, Double) -> Double
   op_equal(Double, Double) -> Bool
-  op_mod(Double, Double) -> Double
   op_mul(Double, Double) -> Double
   op_neg(Double) -> Double
   op_neq(Double, Double) -> Bool
