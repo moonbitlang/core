@@ -19,6 +19,7 @@ impl FixedArray {
   from_iter[T](Iter[T]) -> Self[T]
   is_sorted[T : Compare + Eq](Self[T]) -> Bool
   iter[T](Self[T]) -> Iter[T]
+  last[A](Self[A]) -> A?
   makei[T](Int, (Int) -> T) -> Self[T]
   map[T, U](Self[T], (T) -> U) -> Self[U]
   mapi[T, U](Self[T], (Int, T) -> U) -> Self[U]
@@ -43,6 +44,7 @@ impl Array {
   iter[T](Self[T]) -> Iter[T]
   iter2[A](Self[A]) -> Iter2[Int, A]
   join[T : Show](Self[T], String) -> String
+  last[A](Self[A]) -> A?
   makei[T](Int, (Int) -> T) -> Self[T]
   map_option[A, B](Self[A], (A) -> B?) -> Self[B]
   new_with_index[T](Int, (Int) -> T) -> Self[T]

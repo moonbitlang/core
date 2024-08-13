@@ -983,3 +983,11 @@ test "iter" {
 pub fn FixedArray::from_iter[T](iter : Iter[T]) -> FixedArray[T] {
   FixedArray::from_array(iter.collect())
 }
+
+/// Returns the last element of the fixed array.
+pub fn FixedArray::last[A](self : FixedArray[A]) -> A? {
+  match self {
+    [] => None
+    [.., last] => Some(last)
+  }
+}
