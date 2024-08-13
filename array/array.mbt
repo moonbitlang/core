@@ -190,3 +190,11 @@ pub fn map_option[A, B](self : Array[A], f : (A) -> B?) -> Array[B] {
   )
   result
 }
+
+/// Returns the last element of the array.
+pub fn last[A](self : Array[A]) -> A? {
+  match self {
+    [] => None
+    [.., last] => Some(last)
+  }
+}
