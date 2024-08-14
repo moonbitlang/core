@@ -438,6 +438,7 @@ impl UInt64 {
   shl(UInt64, Int) -> UInt64
   shr(UInt64, Int) -> UInt64
   to_byte(UInt64) -> Byte
+  to_double(UInt64) -> Double
   to_float(UInt64) -> Float
   to_int(UInt64) -> Int
   to_int64(UInt64) -> Int64
