@@ -3,7 +3,13 @@ package moonbitlang/core/builtin
 // Values
 fn abort[T](String) -> T
 
-fn assert_eq[T : Eq + Show](T, T, ~loc : SourceLoc = _) -> Unit!Failure
+fn assert_eq[T : Eq + Show](T, T, ~loc : SourceLoc = _) -> Unit!
+
+fn assert_false(Bool, ~loc : SourceLoc = _) -> Unit!
+
+fn assert_not_eq[T : Eq + Show](T, T, ~loc : SourceLoc = _) -> Unit!
+
+fn assert_true(Bool, ~loc : SourceLoc = _) -> Unit!
 
 fn fail[T](String, ~loc : SourceLoc = _) -> T!Failure
 
@@ -435,6 +441,7 @@ impl UInt64 {
   shl(UInt64, Int) -> UInt64
   shr(UInt64, Int) -> UInt64
   to_byte(UInt64) -> Byte
+  to_double(UInt64) -> Double
   to_float(UInt64) -> Float
   to_int(UInt64) -> Int
   to_int64(UInt64) -> Int64
@@ -447,7 +454,6 @@ impl Float {
   op_add(Float, Float) -> Float
   op_div(Float, Float) -> Float
   op_equal(Float, Float) -> Bool
-  op_mod(Float, Float) -> Float
   op_mul(Float, Float) -> Float
   op_neg(Float) -> Float
   op_neq(Float, Float) -> Bool
@@ -464,7 +470,6 @@ impl Double {
   op_add(Double, Double) -> Double
   op_div(Double, Double) -> Double
   op_equal(Double, Double) -> Bool
-  op_mod(Double, Double) -> Double
   op_mul(Double, Double) -> Double
   op_neg(Double) -> Double
   op_neq(Double, Double) -> Bool

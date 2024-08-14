@@ -47,9 +47,9 @@ test "hash" {
 
 test "abs function coverage" {
   // Test cases for abs function
-  @test.eq!(Int::abs(5), 5)
-  @test.eq!(Int::abs(-5), 5)
-  @test.eq!(Int::abs(0), 0)
-  @test.eq!(Int::abs(Int::min_value()), Int::min_value().abs())
-  @test.eq!(Int::abs(Int::max_value()), Int::max_value())
+  assert_eq!(Int::abs(5), 5)
+  assert_eq!(Int::abs(-5), 5)
+  assert_eq!(Int::abs(0), 0)
+  assert_eq!(Int::abs(Int::min_value()), Int::min_value().abs())
+  assert_eq!(Int::abs(Int::max_value()), Int::max_value())
 }

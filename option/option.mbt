@@ -40,8 +40,8 @@ pub fn when[T](condition : Bool, value : () -> T) -> T? {
 test "when" {
   let result = when(true, fn() { "Hello, World!" })
   let result2 = when(false, fn() { "Hello, World!" })
-  @test.eq!(result, Some("Hello, World!"))
-  @test.eq!(result2, None)
+  assert_eq!(result, Some("Hello, World!"))
+  assert_eq!(result2, None)
 }
 
 /// The `unless` function returns an `Option` value based on a condition.
@@ -64,8 +64,8 @@ pub fn unless[T](condition : Bool, value : () -> T) -> T? {
 test "unless" {
   let result = unless(true, fn() { "Hello, World!" })
   let result2 = unless(false, fn() { "Hello, World!" })
-  @test.eq!(result, None)
-  @test.eq!(result2, Some("Hello, World!"))
+  assert_eq!(result, None)
+  assert_eq!(result2, Some("Hello, World!"))
 }
 
 /// Creates an empty `Option` of type `T`.
@@ -76,7 +76,7 @@ pub fn empty[T]() -> T? {
 test "empty" {
   let x : Int? = None
   let y : Int? = empty()
-  @test.eq!(x, y)
+  assert_eq!(x, y)
 }
 
 /// Creates an `Option` that contains a value.
@@ -87,7 +87,7 @@ pub fn some[T](value : T) -> T? {
 test "some" {
   let x : Int? = Some(5)
   let y : Int? = some(5)
-  @test.eq!(x, y)
+  assert_eq!(x, y)
 }
 
 /// Maps the value of an `Option` using a provided function.
@@ -111,8 +111,8 @@ pub fn map[T, U](self : T?, f : (T) -> U) -> U? {
 test "map" {
   let a = Option::Some(5)
   let b : Int? = None
-  @test.eq!(a.map(fn(x) { x * 2 }), Some(10))
-  @test.eq!(b.map(fn(x) { x * 2 }), None)
+  assert_eq!(a.map(fn(x) { x * 2 }), Some(10))
+  assert_eq!(b.map(fn(x) { x * 2 }), None)
 }
 
 /// Returns the provided default result (if none), or applies a function to the contained value (if any).
@@ -137,8 +137,8 @@ pub fn map_or[T, U](self : T?, default : U, f : (T) -> U) -> U {
 test "map_or" {
   let a = Option::Some("foo")
   let b : String? = Option::None
-  @test.eq!(a.map_or(42, fn(x) { x.length() }), 3)
-  @test.eq!(b.map_or(42, fn(x) { x.length() }), 42)
+  assert_eq!(a.map_or(42, fn(x) { x.length() }), 3)
+  assert_eq!(b.map_or(42, fn(x) { x.length() }), 42)
 }
 
 /// Computes a default function result (if none), or applies a different function to the contained value (if any).
@@ -163,8 +163,8 @@ test "map_or_else" {
   let k = 21
   let a = Option::Some("foo")
   let b : String? = Option::None
-  @test.eq!(a.map_or_else(fn() { 2 * k }, fn(x) { x.length() }), 3)
-  @test.eq!(b.map_or_else(fn() { 2 * k }, fn(x) { x.length() }), 42)
+  assert_eq!(a.map_or_else(fn() { 2 * k }, fn(x) { x.length() }), 3)
+  assert_eq!(b.map_or_else(fn() { 2 * k }, fn(x) { x.length() }), 42)
 }
 
 /// Binds an option to a function that returns another option.
@@ -190,8 +190,8 @@ pub fn bind[T, U](self : T?, f : (T) -> U?) -> U? {
 test "bind" {
   let a = Option::Some(5)
   let b : Int? = None
-  @test.eq!(a.bind(fn(x) { Some(x * 2) }), Some(10))
-  @test.eq!(b.bind(fn(x) { Some(x * 2) }), None)
+  assert_eq!(a.bind(fn(x) { Some(x * 2) }), Some(10))
+  assert_eq!(b.bind(fn(x) { Some(x * 2) }), None)
 }
 
 /// Flattens an `Option` of `Option` into a single `Option`.
@@ -215,9 +215,9 @@ pub fn flatten[T](self : T??) -> T? {
 
 test "flatten" {
   let a : Int?? = Some(Some(42))
-  @test.eq!(flatten(a), Some(42))
+  assert_eq!(flatten(a), Some(42))
   let b : Int?? = Some(None)
-  @test.eq!(flatten(b), None)
+  assert_eq!(flatten(b), None)
 }
 
 /// Checks if the option is empty.
@@ -231,8 +231,8 @@ pub fn is_empty[T](self : T?) -> Bool {
 test "is_empty" {
   let x = Option::Some(3)
   let y : Int? = None
-  @test.is_false!(x.is_empty())
-  @test.is_true!(y.is_empty())
+  assert_false!(x.is_empty())
+  assert_true!(y.is_empty())
 }
 
 /// Filters the option by applying the given predicate function `f`.
@@ -255,8 +255,8 @@ pub fn filter[T](self : T?, f : (T) -> Bool) -> T? {
 
 test "filter" {
   let x = Option::Some(3)
-  @test.eq!(x.filter(fn(x) { x > 5 }), None)
-  @test.eq!(x.filter(fn(x) { x < 5 }), Some(3))
+  assert_eq!(x.filter(fn(x) { x > 5 }), None)
+  assert_eq!(x.filter(fn(x) { x < 5 }), Some(3))
 }
 
 /// Return the contained `Some` value or the provided default.
@@ -269,8 +269,8 @@ pub fn or[T](self : T?, default : T) -> T {
 
 test "or" {
   let x = Option::Some(3)
-  @test.eq!(x.or(5), 3)
-  @test.eq!((None : Int?).or(5), 5)
+  assert_eq!(x.or(5), 3)
+  assert_eq!((None : Int?).or(5), 5)
 }
 
 /// Return the contained `Some` value or the provided default.
@@ -285,8 +285,8 @@ pub fn or_else[T](self : T?, default : () -> T) -> T {
 
 test "or else" {
   let x = Option::Some(3)
-  @test.eq!(x.or_else(fn() { 5 }), 3)
-  @test.eq!((None : Int?).or_else(fn() { 5 }), 5)
+  assert_eq!(x.or_else(fn() { 5 }), 3)
+  assert_eq!((None : Int?).or_else(fn() { 5 }), 5)
 }
 
 /// Return the contained `Some` value or the result of the `T::default()`.
@@ -299,8 +299,8 @@ pub fn or_default[T : Default](self : T?) -> T {
 
 test "or default" {
   let x = Option::Some(3)
-  @test.eq!(x.or_default(), 3)
-  @test.eq!((None : Int?).or_default(), 0)
+  assert_eq!(x.or_default(), 3)
+  assert_eq!((None : Int?).or_default(), 0)
 }
 
 pub fn compare[X : Compare](self : X?, other : X?) -> Int {
@@ -322,12 +322,12 @@ test "compare" {
   let some1 = Option::Some(1)
   let some2 = Option::Some(2)
   let none = Option::None
-  @test.eq!(0, some1.compare(Option::Some(1)))
-  @test.eq!(-1, some1.compare(some2))
-  @test.eq!(1, some2.compare(some1))
-  @test.eq!(0, none.compare(none))
-  @test.eq!(-1, none.compare(some1))
-  @test.eq!(1, some2.compare(none))
+  assert_eq!(0, some1.compare(Option::Some(1)))
+  assert_eq!(-1, some1.compare(some2))
+  assert_eq!(1, some2.compare(some1))
+  assert_eq!(0, none.compare(none))
+  assert_eq!(-1, none.compare(some1))
+  assert_eq!(1, some2.compare(none))
 }
 
 /// `None`
@@ -380,7 +380,7 @@ pub fn or_error[T, Err : Error](self : T?, err : Err) -> T!Err {
 }
 
 test "or error" {
-  @test.eq!(
+  assert_eq!(
     try {
       (None : String?).or_error!(Failure("This is serious"))
     } catch {
@@ -388,7 +388,7 @@ test "or error" {
     },
     "This is serious",
   )
-  @test.eq!(
+  assert_eq!(
     try {
       Some("This is ok").or_error!(Failure("This is serious"))
     } catch {

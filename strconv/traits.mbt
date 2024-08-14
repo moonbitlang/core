@@ -34,23 +34,23 @@ test "parse" {
   } catch {
     _ => panic()
   }
-  @test.eq!(b, true)
+  assert_eq!(b, true)
   let i : Int = try {
     parse!("12345")
   } catch {
     _ => panic()
   }
-  @test.eq!(i, 12345)
+  assert_eq!(i, 12345)
   let i64 : Int64 = try {
     parse!("9223372036854775807")
   } catch {
     _ => panic()
   }
-  @test.eq!(i64, 9223372036854775807L)
+  assert_eq!(i64, 9223372036854775807L)
   let d : Double = try {
     parse!("1234.56789")
   } catch {
     _ => panic()
   }
-  @test.eq!(d, 1234.56789)
+  assert_eq!(d, 1234.56789)
 }

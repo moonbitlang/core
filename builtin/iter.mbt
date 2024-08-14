@@ -52,13 +52,9 @@ pub fn to_string[T : Show](self : Iter[T]) -> String {
 /// TODO: change the intrinsic to match the function name
 /// @intrinsic %iter.iter
 pub fn each[T](self : Iter[T], f : (T) -> Unit) -> Unit {
-  self.run(
-    fn(yield) {
-      f(yield)
-      IterContinue
-    },
-  )
-  |> ignore
+  for a in self {
+    f(a)
+  }
 }
 
 pub fn any[T](self : Iter[T], f : (T) -> Bool) -> Bool {
@@ -83,14 +79,10 @@ pub fn all[T](self : Iter[T], f : (T) -> Bool) -> Bool {
 /// TODO: Add intrinsic
 pub fn eachi[T](self : Iter[T], f : (Int, T) -> Unit) -> Unit {
   let mut i = 0
-  self.run(
-    fn(a) {
-      f(i, a)
-      i = i + 1
-      IterContinue
-    },
-  )
-  |> ignore
+  for a in self {
+    f(i, a)
+    i += 1
+  }
 }
 
 /// Folds the elements of the iterator using the given function, starting with the given initial value.
@@ -112,12 +104,9 @@ pub fn eachi[T](self : Iter[T], f : (Int, T) -> Unit) -> Unit {
 /// @intrinsic %iter.reduce
 pub fn fold[T, B](self : Iter[T], ~init : B, f : (B, T) -> B) -> B {
   let mut acc = init
-  let _ = self.run(
-    fn(yield) {
-      acc = f(acc, yield)
-      IterContinue
-    },
-  )
+  for a in self {
+    acc = f(acc, a)
+  }
   acc
 }
 
@@ -576,18 +565,13 @@ pub fn drop_while[T](self : Iter[T], f : (T) -> Bool) -> Iter[T] {
 ///
 /// An `Option` that contains the first element that satisfies the predicate function, or `None` if no such element is found.
 pub fn find_first[T](self : Iter[T], f : (T) -> Bool) -> T? {
-  let mut result : T? = None
-  self.just_run(
-    fn(a) {
-      if f(a) {
-        result = Some(a)
-        IterEnd
-      } else {
-        IterContinue
-      }
-    },
-  )
-  result
+  for a in self {
+    if f(a) {
+      break Some(a)
+    }
+  } else {
+    None
+  }
 }
 
 /// Prepends a single element to the beginning of the iterator.
@@ -658,7 +642,9 @@ pub fn op_add[T](self : Iter[T], other : Iter[T]) -> Iter[T] {
 /// Collects the elements of the iterator into an array.
 pub fn to_array[T](self : Iter[T]) -> Array[T] {
   let result = []
-  self.each(fn(e) { result.push(e) })
+  for e in self {
+    result.push(e)
+  }
   result
 }
 

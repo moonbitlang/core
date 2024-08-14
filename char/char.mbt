@@ -13,7 +13,7 @@
 // limitations under the License.
 
 test "to_string" {
-  @test.eq!('a'.to_string(), "a")
+  assert_eq!('a'.to_string(), "a")
 }
 
 test "show output" {
@@ -23,15 +23,15 @@ test "show output" {
     buf.to_string()
   }
 
-  @test.eq!(repr('a'), "'a'")
-  @test.eq!(repr('\''), "'\\''")
-  @test.eq!(repr('"'), "'\"'")
-  @test.eq!(repr('\\'), "'\\\\'")
-  @test.eq!(repr('\n'), "'\\n'")
-  @test.eq!(repr('\r'), "'\\r'")
-  @test.eq!(repr('\b'), "'\\b'")
-  @test.eq!(repr('\t'), "'\\t'")
-  @test.eq!(repr(Char::from_int(0)), "'\\x00'")
+  assert_eq!(repr('a'), "'a'")
+  assert_eq!(repr('\''), "'\\''")
+  assert_eq!(repr('"'), "'\"'")
+  assert_eq!(repr('\\'), "'\\\\'")
+  assert_eq!(repr('\n'), "'\\n'")
+  assert_eq!(repr('\r'), "'\\r'")
+  assert_eq!(repr('\b'), "'\\b'")
+  assert_eq!(repr('\t'), "'\\t'")
+  assert_eq!(repr(Char::from_int(0)), "'\\x00'")
 }
 
 pub impl Hash for Char with hash(self) { self.to_int() }

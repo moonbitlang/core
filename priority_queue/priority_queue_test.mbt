@@ -14,7 +14,7 @@
 
 test "new" {
   let queue : @priority_queue.T[Int] = @priority_queue.new()
-  @test.eq!(queue.length(), 0)
+  assert_eq!(queue.length(), 0)
 }
 
 test "from_array" {
@@ -26,7 +26,7 @@ test "from_array" {
 
 test "from_fixed_array" {
   let pq = @priority_queue.of([1, 2, 3, 4, 5])
-  @test.eq!(pq.peek(), Some(5))
+  assert_eq!(pq.peek(), Some(5))
 }
 
 test "copy" {
@@ -56,23 +56,23 @@ test "iter" {
 
 test "length" {
   let pq = @priority_queue.new()
-  @test.eq!(pq.length(), 0)
+  assert_eq!(pq.length(), 0)
   pq.push(1)
-  @test.eq!(pq.length(), 1)
+  assert_eq!(pq.length(), 1)
   pq.push(2)
-  @test.eq!(pq.length(), 2)
+  assert_eq!(pq.length(), 2)
   pq.pop_exn()
-  @test.eq!(pq.length(), 1)
+  assert_eq!(pq.length(), 1)
 }
 
 test "pop_exn" {
   let pq = @priority_queue.of([5, 5, 4, 3, 2, 1])
   inspect!(pq.length(), content="6")
-  @test.eq!(pq.peek(), Some(5))
+  assert_eq!(pq.peek(), Some(5))
   pq.pop_exn()
-  @test.eq!(pq.peek(), Some(5))
+  assert_eq!(pq.peek(), Some(5))
   pq.pop_exn()
-  @test.eq!(pq.peek(), Some(4))
+  assert_eq!(pq.peek(), Some(4))
   let pq_ = @priority_queue.of([1])
   pq_.pop_exn()
   inspect!(pq_.length(), content="0")
@@ -85,9 +85,9 @@ test "panic pop_exn" {
 
 test "pop" {
   let pq = @priority_queue.of([1, 2, 3, 4, 5, 5])
-  @test.eq!(pq.pop(), Some(5))
-  @test.eq!(pq.pop(), Some(5))
-  @test.eq!(pq.pop(), Some(4))
+  assert_eq!(pq.pop(), Some(5))
+  assert_eq!(pq.pop(), Some(5))
+  assert_eq!(pq.pop(), Some(4))
   let pq_ = @priority_queue.of([1])
   pq_.pop() |> ignore
   inspect!(pq_.length(), content="0")
@@ -97,28 +97,28 @@ test "push" {
   let pq = @priority_queue.of([5, 4, 3, 2, 1])
   pq.push(-1)
   pq.push(6)
-  @test.eq!(pq.length(), 7)
-  @test.eq!(pq.peek(), Some(6))
+  assert_eq!(pq.length(), 7)
+  assert_eq!(pq.peek(), Some(6))
 }
 
 test "peek" {
   let pq = @priority_queue.of([1, 2, 3, 4, 5])
-  @test.eq!(pq.peek(), Some(5))
+  assert_eq!(pq.peek(), Some(5))
   pq.clear()
-  @test.eq!(pq.peek(), None)
+  assert_eq!(pq.peek(), None)
 }
 
 test "clear" {
   let pq = @priority_queue.of([5, 4, 3, 2, 1])
   pq.clear()
-  @test.eq!(pq.length(), 0)
+  assert_eq!(pq.length(), 0)
 }
 
 test "is_empty" {
   let pq = @priority_queue.of([5, 4, 3, 2, 1])
-  @test.eq!(pq.is_empty(), false)
+  assert_eq!(pq.is_empty(), false)
   pq.clear()
-  @test.eq!(pq.is_empty(), true)
+  assert_eq!(pq.is_empty(), true)
 }
 
 test "from_iter multiple elements iter" {

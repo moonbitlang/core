@@ -25,16 +25,16 @@ test "ParseError::to_string coverage" {
   let invalidIdentEscapeError = @json.InvalidIdentEscape(
     @json.Position::{ line: 1, column: 0 },
   )
-  @test.eq!(
+  assert_eq!(
     invalidCharError.to_string(),
     "Invalid character 'a' at line 1, column 0",
   )
-  @test.eq!(invalidEofError.to_string(), "Unexpected end of file")
-  @test.eq!(
+  assert_eq!(invalidEofError.to_string(), "Unexpected end of file")
+  assert_eq!(
     invalidNumberError.to_string(),
     "Invalid number 123abc at line 1, column 0",
   )
-  @test.eq!(
+  assert_eq!(
     invalidIdentEscapeError.to_string(),
     "Invalid escape sequence in identifier at line 1, column 0",
   )

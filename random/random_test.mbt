@@ -37,7 +37,7 @@ test "FixedArray::make with zero initialization" {
   let k = 5
   let arr = FixedArray::make(k, 0)
   for i = 0; i < k; i = i + 1 {
-    @test.eq!(arr[i], 0)
+    assert_eq!(arr[i], 0)
   }
 }
 
@@ -46,6 +46,6 @@ test "FixedArray::make with non-zero initialization" {
   let init_value = 42
   let arr = FixedArray::make(k, init_value)
   for i = 0; i < k; i = i + 1 {
-    @test.eq!(arr[i], init_value)
+    assert_eq!(arr[i], init_value)
   }
 }

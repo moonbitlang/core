@@ -215,7 +215,7 @@ test "set" {
   m.set("cd", 2)
   m.set("c", 1)
   m.set("d", 1)
-  @test.eq!(m.size(), 7)
+  assert_eq!(m.size(), 7)
   inspect!(
     m.debug_entries(),
     content="_,(0,a,1),(1,b,1),(2,c,1),(3,d,1),(3,bc,2),(4,cd,2),(4,abc,3),_,_,_,_,_,_,_,_",
@@ -231,7 +231,7 @@ test "remove" {
   m.set("abc", 3)
   m.set("abcdef", 6)
   m.remove("ab")
-  @test.eq!(m.size(), 5)
+  assert_eq!(m.size(), 5)
   inspect!(
     m.debug_entries(),
     content="_,(0,a,1),(0,bc,2),(1,cd,2),(1,abc,3),_,(0,abcdef,6),_,_,_,_,_,_,_,_,_",
@@ -244,15 +244,15 @@ test "remove_unexist_key" {
   m.set("ab", 2)
   m.set("abc", 3)
   m.remove("d")
-  @test.eq!(m.size(), 3)
+  assert_eq!(m.size(), 3)
   inspect!(m.debug_entries(), content="_,(0,a,1),(0,ab,2),(0,abc,3),_,_,_,_")
 }
 
 test "clear" {
   let m : T[MyString, Int] = of([("a", 1), ("b", 2), ("c", 3)])
   m.clear()
-  @test.eq!(m.size(), 0)
-  @test.eq!(m.capacity(), 8)
+  assert_eq!(m.size(), 0)
+  assert_eq!(m.capacity(), 8)
   for i = 0; i < m.capacity(); i = i + 1 {
     @test.is!(m.entries[i], None)
   }
@@ -266,15 +266,15 @@ test "grow" {
   m.set("Java", 4)
   m.set("Scala", 5)
   m.set("Julia", 5)
-  @test.eq!(m.size(), 6)
+  assert_eq!(m.size(), 6)
   inspect!(m.capacity(), content="16")
   m.set("Cobol", 5)
-  @test.eq!(m.size(), 7)
+  assert_eq!(m.size(), 7)
   inspect!(m.capacity(), content="16")
   m.set("Python", 6)
   m.set("Haskell", 7)
   m.set("Rescript", 8)
-  @test.eq!(m.size(), 10)
+  assert_eq!(m.size(), 10)
   inspect!(m.capacity(), content="32")
   inspect!(
     m.debug_entries(),

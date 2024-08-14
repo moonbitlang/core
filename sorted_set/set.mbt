@@ -718,7 +718,7 @@ test "join" {
 test "add to empty set" {
   let set = new()
   set.add(1)
-  @test.eq!(set.contains(1), true)
+  assert_eq!(set.contains(1), true)
   inspect!(set.debug_tree(), content="([1]1,_,_)")
 }
 
@@ -726,8 +726,8 @@ test "add to non-empty set" {
   let set = new()
   set.add(1)
   set.add(2)
-  @test.eq!(set.contains(1), true)
-  @test.eq!(set.contains(2), true)
+  assert_eq!(set.contains(1), true)
+  assert_eq!(set.contains(2), true)
   inspect!(set.debug_tree(), content="([2]1,_,([1]2,_,_))")
 }
 
@@ -735,8 +735,8 @@ test "add duplicate value" {
   let set = new()
   set.add(1)
   set.add(1)
-  @test.eq!(set.contains(1), true)
-  @test.eq!(set.size(), 1L)
+  assert_eq!(set.contains(1), true)
+  assert_eq!(set.size(), 1L)
   inspect!(set.debug_tree(), content="([1]1,_,_)")
 }
 
@@ -745,10 +745,10 @@ test "add multiple values" {
   set.add(1)
   set.add(2)
   set.add(3)
-  @test.eq!(set.contains(1), true)
-  @test.eq!(set.contains(2), true)
-  @test.eq!(set.contains(3), true)
-  @test.eq!(set.size(), 3L)
+  assert_eq!(set.contains(1), true)
+  assert_eq!(set.contains(2), true)
+  assert_eq!(set.contains(3), true)
+  assert_eq!(set.size(), 3L)
   inspect!(set.debug_tree(), content="([2]2,([1]1,_,_),([1]3,_,_))")
 }
 

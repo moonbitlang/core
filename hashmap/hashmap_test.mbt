@@ -15,7 +15,7 @@
 test "new" {
   let m : @hashmap.T[Int, Int] = @hashmap.new()
   inspect!(m.capacity(), content="8")
-  @test.eq!(m.size(), 0)
+  assert_eq!(m.size(), 0)
 }
 
 type MyString String derive(Eq)
@@ -44,73 +44,73 @@ test "get_or_default" {
   m.set("a", 1)
   m.set("b", 2)
   m.set("c", 3)
-  @test.eq!(m.get_or_default("a", 42), 1)
-  @test.eq!(m.get_or_default("b", 42), 2)
-  @test.eq!(m.get_or_default("c", 42), 3)
-  @test.eq!(m.get_or_default("d", 42), 42)
+  assert_eq!(m.get_or_default("a", 42), 1)
+  assert_eq!(m.get_or_default("b", 42), 2)
+  assert_eq!(m.get_or_default("c", 42), 3)
+  assert_eq!(m.get_or_default("d", 42), 42)
 }
 
 test "op_set" {
   let m = @hashmap.new()
   m["a"] = 1
   m["b"] = 2
-  @test.eq!(m.get("a"), Some(1))
-  @test.eq!(m.get("b"), Some(2))
+  assert_eq!(m.get("a"), Some(1))
+  assert_eq!(m.get("b"), Some(2))
 }
 
 test "op_get" {
   let m = @hashmap.new()
   m.set("a", 1)
   m.set("b", 2)
-  @test.eq!(m["a"], Some(1))
-  @test.eq!(m["b"], Some(2))
-  @test.eq!(m["c"], None)
+  assert_eq!(m["a"], Some(1))
+  assert_eq!(m["b"], Some(2))
+  assert_eq!(m["c"], None)
 }
 
 test "set_update" {
   let m = @hashmap.new()
   m.set("a", 1)
   m.set("b", 2)
-  @test.eq!(m.get("a"), Some(1))
+  assert_eq!(m.get("a"), Some(1))
   m.set("a", 2)
-  @test.eq!(m.get("a"), Some(2))
+  assert_eq!(m.get("a"), Some(2))
 }
 
 test "contains" {
   let m = @hashmap.new()
   m.set("a", 1)
-  @test.eq!(m.contains("a"), true)
-  @test.eq!(m.contains("b"), false)
+  assert_eq!(m.contains("a"), true)
+  assert_eq!(m.contains("b"), false)
 }
 
 test "from_array" {
   let m = @hashmap.of([("a", 1), ("b", 2), ("c", 3)])
-  @test.eq!(m.get("a"), Some(1))
-  @test.eq!(m.get("b"), Some(2))
-  @test.eq!(m.get("c"), Some(3))
+  assert_eq!(m.get("a"), Some(1))
+  assert_eq!(m.get("b"), Some(2))
+  assert_eq!(m.get("c"), Some(3))
 }
 
 test "size" {
   let m = @hashmap.new()
-  @test.eq!(m.size(), 0)
+  assert_eq!(m.size(), 0)
   m.set("a", 1)
-  @test.eq!(m.size(), 1)
+  assert_eq!(m.size(), 1)
 }
 
 test "is_empty" {
   let m = @hashmap.new()
-  @test.eq!(m.is_empty(), true)
+  assert_eq!(m.is_empty(), true)
   m.set("a", 1)
-  @test.eq!(m.is_empty(), false)
+  assert_eq!(m.is_empty(), false)
   m.remove("a")
-  @test.eq!(m.is_empty(), true)
+  assert_eq!(m.is_empty(), true)
 }
 
 test "iter" {
   let m = @hashmap.of([("a", 1), ("b", 2), ("c", 3)])
   let mut sum = 0
   m.each(fn(_k, v) { sum += v })
-  @test.eq!(sum, 6)
+  assert_eq!(sum, 6)
 }
 
 test "iteri" {
@@ -123,8 +123,8 @@ test "iteri" {
       sum += v
     },
   )
-  @test.eq!(s, "012")
-  @test.eq!(sum, 6)
+  assert_eq!(s, "012")
+  assert_eq!(sum, 6)
 }
 
 test "iter" {
@@ -174,7 +174,7 @@ test "remove_nonexistent_key" {
   m.set("a", 1)
   m.set("b", 2)
   m.remove("c")
-  @test.eq!(m.size(), 2)
+  assert_eq!(m.size(), 2)
 }
 
 test "get_nonexistent_key" {
@@ -189,7 +189,7 @@ test "remove_nonexistent_key" {
   m.set("a", 1)
   m.set("b", 2)
   m.remove("c")
-  @test.eq!(m.size(), 2)
+  assert_eq!(m.size(), 2)
 }
 
 test "get_nonexistent_key" {
@@ -204,7 +204,7 @@ test "remove_nonexistent_key" {
   m.set("a", 1)
   m.set("b", 2)
   m.remove("c")
-  @test.eq!(m.size(), 2)
+  assert_eq!(m.size(), 2)
 }
 
 test "get_nonexistent_key" {
@@ -219,7 +219,7 @@ test "remove_nonexistent_key" {
   m.set("a", 1)
   m.set("b", 2)
   m.remove("c")
-  @test.eq!(m.size(), 2)
+  assert_eq!(m.size(), 2)
 }
 
 test "get_nonexistent_key_with_psl" {

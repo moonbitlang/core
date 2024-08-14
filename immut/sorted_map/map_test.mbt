@@ -16,25 +16,25 @@ test "lookup" {
   let m = @sorted_map.of(
     [(3, "three"), (8, "eight"), (1, "one"), (2, "two"), (0, "zero")],
   )
-  @test.eq!(m.lookup(8), Some("eight"))
-  @test.eq!(m.lookup(2), Some("two"))
-  @test.eq!(m.lookup(4), None)
+  assert_eq!(m.lookup(8), Some("eight"))
+  assert_eq!(m.lookup(2), Some("two"))
+  assert_eq!(m.lookup(4), None)
 }
 
 test "size" {
   let m = @sorted_map.of(
     [(3, "three"), (8, "eight"), (1, "one"), (2, "two"), (0, "zero")],
   )
-  @test.eq!(m.size(), 5)
+  assert_eq!(m.size(), 5)
   let m = m.remove(1).remove(3)
-  @test.eq!(m.size(), 3)
+  assert_eq!(m.size(), 3)
 }
 
 test "is_empty" {
   let m : @sorted_map.T[Int, Int] = @sorted_map.empty()
-  @test.eq!(m.is_empty(), true)
+  assert_eq!(m.is_empty(), true)
   let m = m.insert(1, 1)
-  @test.eq!(m.is_empty(), false)
+  assert_eq!(m.is_empty(), false)
 }
 
 test "iter" {
@@ -43,7 +43,7 @@ test "iter" {
   )
   let mut s = ""
   m.each(fn(k, v) { s = s + "(\{k},\{v})" })
-  @test.eq!(s, "(0,zero)(1,one)(2,two)(3,three)(8,eight)")
+  assert_eq!(s, "(0,zero)(1,one)(2,two)(3,three)(8,eight)")
 }
 
 test "iteri" {
@@ -52,17 +52,17 @@ test "iteri" {
   )
   let mut s = ""
   m.eachi(fn(i, k, v) { s = s + "(\{i},\{k},\{v})" })
-  @test.eq!(s, "(0,0,zero)(1,1,one)(2,2,two)(3,3,three)(4,8,eight)")
+  assert_eq!(s, "(0,0,zero)(1,1,one)(2,2,two)(3,3,three)(4,8,eight)")
 }
 
 test "fold" {
   let m = @sorted_map.of([("a", 1), ("b", 2), ("c", 3), ("d", 4), ("e", 5)])
-  @test.eq!(m.fold(fn(acc, v) { acc + v }, init=0), 15)
+  assert_eq!(m.fold(fn(acc, v) { acc + v }, init=0), 15)
 }
 
 test "foldl_with_key" {
   let m = @sorted_map.of([("a", 1), ("b", 2), ("c", 3), ("d", 4), ("e", 5)])
-  @test.eq!(
+  assert_eq!(
     m.foldl_with_key(fn(acc, k, v) { acc + k + v.to_string() }, init=""),
     "a1b2c3d4e5",
   )
@@ -70,7 +70,7 @@ test "foldl_with_key" {
 
 test "foldr_with_key" {
   let m = @sorted_map.of([("a", 1), ("b", 2), ("c", 3), ("d", 4), ("e", 5)])
-  @test.eq!(
+  assert_eq!(
     m.foldr_with_key(fn(acc, k, v) { acc + k + v.to_string() }, init=""),
     "e5d4c3b2a1",
   )
@@ -78,17 +78,17 @@ test "foldr_with_key" {
 
 test "to_array" {
   let m = @sorted_map.of([(1, "one"), (2, "two"), (3, "three")])
-  @test.eq!(m.iter().collect(), [(1, "one"), (2, "two"), (3, "three")])
+  assert_eq!(m.iter().collect(), [(1, "one"), (2, "two"), (3, "three")])
 }
 
 test "keys" {
   let m = @sorted_map.of([(1, "one"), (2, "two"), (3, "three")])
-  @test.eq!(m.keys(), [1, 2, 3])
+  assert_eq!(m.keys(), [1, 2, 3])
 }
 
 test "elems" {
   let m = @sorted_map.of([(1, "one"), (2, "two"), (3, "three")])
-  @test.eq!(m.elems(), ["one", "two", "three"])
+  assert_eq!(m.elems(), ["one", "two", "three"])
 }
 
 test "op_equal" {
@@ -99,8 +99,8 @@ test "op_equal" {
     [(3, "three"), (8, "eight"), (1, "one"), (2, "two"), (0, "zero")],
   )
   let m3 = @sorted_map.of([(3, "three"), (8, "eight"), (1, "one"), (2, "two")])
-  @test.eq!(m1 == m2, true)
-  @test.eq!(m1 == m3, false)
+  assert_eq!(m1 == m2, true)
+  assert_eq!(m1 == m3, false)
 }
 
 test "iter" {
@@ -130,7 +130,7 @@ test "iter" {
 
 test "to_array" {
   let m = @sorted_map.of([(1, "one"), (2, "two"), (3, "three")])
-  @test.eq!(m.to_array(), [(1, "one"), (2, "two"), (3, "three")])
+  assert_eq!(m.to_array(), [(1, "one"), (2, "two"), (3, "three")])
 }
 
 test "op_equal" {
@@ -141,8 +141,8 @@ test "op_equal" {
     [(3, "three"), (8, "eight"), (1, "one"), (2, "two"), (0, "zero")],
   )
   let m3 = @sorted_map.of([(3, "three"), (8, "eight"), (1, "one"), (2, "two")])
-  @test.eq!(m1 == m2, true)
-  @test.eq!(m1 == m3, false)
+  assert_eq!(m1 == m2, true)
+  assert_eq!(m1 == m3, false)
 }
 
 test "show" {

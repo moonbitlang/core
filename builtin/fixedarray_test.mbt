@@ -14,10 +14,10 @@
 
 test "to_string with empty FixedArray" {
   let emptyArray : FixedArray[Int] = FixedArray::default()
-  @test.eq!(emptyArray.to_string(), "[]")
+  assert_eq!(emptyArray.to_string(), "[]")
 }
 
 test "to_string with non-empty FixedArray" {
   let array : FixedArray[Int] = [1, 2, 3]
-  @test.eq!(array.to_string(), "[1, 2, 3]")
+  assert_eq!(array.to_string(), "[1, 2, 3]")
 }
