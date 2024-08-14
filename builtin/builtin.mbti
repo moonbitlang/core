@@ -365,6 +365,7 @@ impl Int {
   to_string(Int) -> String
   to_uint(Int) -> UInt
   until(Int, Int, ~step : Int = ..) -> Iter[Int]
+  until_inclusive(Int, Int, ~step : Int = ..) -> Iter[Int]
 }
 impl Int64 {
   asr(Int64, Int) -> Int64
@@ -399,6 +400,7 @@ impl Int64 {
   to_string(Int64) -> String
   to_uint64(Int64) -> UInt64
   until(Int64, Int64, ~step : Int64 = ..) -> Iter[Int64]
+  until_inclusive(Int64, Int64, ~step : Int64 = ..) -> Iter[Int64]
 }
 impl UInt {
   compare(UInt, UInt) -> Int
@@ -465,6 +467,8 @@ impl Float {
   reinterpret_as_int(Float) -> Int
   sqrt(Float) -> Float
   to_double(Float) -> Double
+  until(Float, Float, ~step : Float = ..) -> Iter[Float]
+  until_inclusive(Float, Float, ~step : Float = ..) -> Iter[Float]
 }
 impl Double {
   compare(Double, Double) -> Int
@@ -486,6 +490,7 @@ impl Double {
   to_int64(Double) -> Int64
   to_json(Double) -> Json
   until(Double, Double, ~step : Double = ..) -> Iter[Double]
+  until_inclusive(Double, Double, ~step : Double = ..) -> Iter[Double]
 }
 impl String {
   escape(String) -> String

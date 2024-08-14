@@ -305,6 +305,47 @@ test "range" {
   inspect!((1).until(2, step=0), content="[]")
   inspect!(1.0.until(2.0, step=0), content="[]")
   inspect!(0L.until(10, step=0), content="[]")
+  // inclusive
+  inspect!(
+    (@int.max_value() - 2).until(@int.max_value() - 1),
+    content="[2147483645]",
+  )
+  inspect!(
+    (@int.max_value() - 2).until_inclusive(@int.max_value() - 1),
+    content="[2147483645, 2147483646]",
+  )
+  inspect!(
+    (@int.max_value() - 1).until(@int.max_value()),
+    content="[2147483646]",
+  )
+  inspect!(
+    (@int.max_value() - 1).until_inclusive(@int.max_value()),
+    content="[2147483646, 2147483647]",
+  )
+  inspect!(
+    (@int64.max_value() - 2).until_inclusive(@int64.max_value() - 1L),
+    content="[9223372036854775805, 9223372036854775806]",
+  )
+  inspect!(
+    (@int64.max_value() - 1).until_inclusive(@int64.max_value()),
+    content="[9223372036854775806, 9223372036854775807]",
+  )
+  inspect!(
+    0.0.until_inclusive(1.0, step=0.1),
+    content="[0.0, 0.1, 0.2, 0.30000000000000004, 0.4, 0.5, 0.6, 0.7, 0.7999999999999999, 0.8999999999999999, 0.9999999999999999]",
+  )
+  inspect!(
+    0.0.until(1.0, step=0.1),
+    content="[0.0, 0.1, 0.2, 0.30000000000000004, 0.4, 0.5, 0.6, 0.7, 0.7999999999999999, 0.8999999999999999, 0.9999999999999999]",
+  )
+  inspect!(
+    0.0.until(10.0),
+    content="[0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0]",
+  )
+  inspect!(
+    0.0.until_inclusive(10.0),
+    content="[0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0]",
+  )
   // until
   inspect!(
     (0).until(10).take(5).concat((0).until(2)),
@@ -422,7 +463,7 @@ fn iter(self : Tree) -> Iter[Int] {
   )
 }
 
-test {
+test "tree" {
   // let tree = Node(Node(Leaf(1), Leaf(2)), Node(Leaf(3), Leaf(4)))
   let tree = Node(Node(Leaf(1), 2, Leaf(3)), 4, Leaf(5))
   let exb = Buffer::new(size_hint=0)
