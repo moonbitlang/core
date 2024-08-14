@@ -18,7 +18,7 @@ test "Set" {
     i, map => continue i + 1, map.add(i)
   }
   for i = 0; i < 100; i = i + 1 {
-    @test.eq!((i, map.contains(i)), (i, true))
+    assert_eq!((i, map.contains(i)), (i, true))
   }
   inspect!((100, map.contains(100)), content="(100, false)")
   let map = map.add(100)
@@ -27,9 +27,9 @@ test "Set" {
 
 test "@hashset.size" {
   for i = 0, set = @hashset.new(); i < 20; i = i + 1, set = set.add(i) {
-    @test.eq!(set.size(), i)
+    assert_eq!(set.size(), i)
   } else {
-    @test.eq!(set.add(0).size(), 20)
+    assert_eq!(set.add(0).size(), 20)
   }
 }
 
@@ -39,15 +39,15 @@ test "@hashset.remove" {
     i, map => continue i + 1, map.add(i)
   }
   for i = 0; i < 100; i = i + 1 {
-    @test.eq!((i, map.contains(i)), (i, true))
+    assert_eq!((i, map.contains(i)), (i, true))
   }
   let map = loop 0, map {
     100, map => map.remove(100) // test for removing non-existing element
     i, map => continue i + 2, map.remove(i)
   }
   for i = 0; i < 100; i = i + 2 {
-    @test.eq!(map.contains(i), false)
-    @test.eq!(map.contains(i + 1), true)
+    assert_eq!(map.contains(i), false)
+    assert_eq!(map.contains(i + 1), true)
   }
 }
 
@@ -80,22 +80,22 @@ test "@hashset.is_empty" {
 
 test "@hashset.size" {
   let set = @hashset.new()
-  @test.eq!(set.size(), 0)
+  assert_eq!(set.size(), 0)
   let set = set.add(1)
-  @test.eq!(set.size(), 1)
+  assert_eq!(set.size(), 1)
   let set = set.add(2)
-  @test.eq!(set.size(), 2)
+  assert_eq!(set.size(), 2)
   let set = set.remove(1)
-  @test.eq!(set.size(), 1)
+  assert_eq!(set.size(), 1)
 }
 
 test "@hashset.is_empty" {
   let set = @hashset.new()
-  @test.eq!(set.is_empty(), true)
+  assert_eq!(set.is_empty(), true)
   let set = set.add(1)
-  @test.eq!(set.is_empty(), false)
+  assert_eq!(set.is_empty(), false)
   let set = set.remove(1)
-  @test.eq!(set.is_empty(), true)
+  assert_eq!(set.is_empty(), true)
 }
 
 test "@hashset.iter" {
@@ -103,7 +103,7 @@ test "@hashset.iter" {
   let result = []
   set.each(fn { x => result.push(x) })
   result.sort()
-  @test.eq!(result, [1, 2, 3])
+  assert_eq!(result, [1, 2, 3])
 }
 
 test "@hashset.iter" {
@@ -111,7 +111,7 @@ test "@hashset.iter" {
   let result = []
   set.iter().each(fn { x => result.push(x) })
   result.sort()
-  @test.eq!(result, [1, 2, 3])
+  assert_eq!(result, [1, 2, 3])
 }
 
 test "from_iter multiple elements iter" {

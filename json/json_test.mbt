@@ -286,7 +286,7 @@ test "stringify" {
       inspect!(i, content="100.0")
     _ => fail!("Failed to match the JSON")
   }
-  @test.eq!(newjson, json)
+  assert_eq!(newjson, json)
 }
 
 test "stringify escape" {
@@ -304,6 +304,6 @@ test "stringify escape" {
   )
   match @json.parse?(json.stringify()) {
     Err(e) => raise e
-    Ok(newjson) => @test.eq!(newjson, json)
+    Ok(newjson) => assert_eq!(newjson, json)
   }
 }

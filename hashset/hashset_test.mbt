@@ -23,8 +23,8 @@ test "doc" {
 
 test "new" {
   let m : @hashset.T[Int] = @hashset.new()
-  @test.eq!(m.capacity(), default_init_capacity)
-  @test.eq!(m.size(), 0)
+  assert_eq!(m.capacity(), default_init_capacity)
+  assert_eq!(m.size(), 0)
 }
 
 type MyString String derive(Eq)
@@ -42,34 +42,34 @@ test "insert" {
   m.insert("a")
   m.insert("b")
   m.insert("c")
-  @test.is_true!(m.contains("a"))
-  @test.is_true!(m.contains("b"))
-  @test.is_true!(m.contains("c"))
-  @test.is_false!(m.contains("d"))
+  assert_true!(m.contains("a"))
+  assert_true!(m.contains("b"))
+  assert_true!(m.contains("c"))
+  assert_false!(m.contains("d"))
 }
 
 test "from_array" {
   let m = @hashset.of(["a", "b", "c"])
-  @test.is_true!(m.contains("a"))
-  @test.is_true!(m.contains("b"))
-  @test.is_true!(m.contains("c"))
-  @test.is_false!(m.contains("d"))
+  assert_true!(m.contains("a"))
+  assert_true!(m.contains("b"))
+  assert_true!(m.contains("c"))
+  assert_false!(m.contains("d"))
 }
 
 test "size" {
   let m = @hashset.new()
-  @test.eq!(m.size(), 0)
+  assert_eq!(m.size(), 0)
   m.insert("a")
-  @test.eq!(m.size(), 1)
+  assert_eq!(m.size(), 1)
 }
 
 test "is_empty" {
   let m = @hashset.new()
-  @test.eq!(m.is_empty(), true)
+  assert_eq!(m.is_empty(), true)
   m.insert("a")
-  @test.eq!(m.is_empty(), false)
+  assert_eq!(m.is_empty(), false)
   m.remove("a")
-  @test.eq!(m.is_empty(), true)
+  assert_eq!(m.is_empty(), true)
 }
 
 test "iter" {
@@ -97,44 +97,44 @@ test "union" {
   let m1 = @hashset.of(["a", "b", "c"])
   let m2 = @hashset.of(["b", "c", "d"])
   let m = m1.union(m2)
-  @test.eq!(m.size(), 4)
-  @test.is_true!(m.contains("a"))
-  @test.is_true!(m.contains("b"))
-  @test.is_true!(m.contains("c"))
-  @test.is_true!(m.contains("d"))
+  assert_eq!(m.size(), 4)
+  assert_true!(m.contains("a"))
+  assert_true!(m.contains("b"))
+  assert_true!(m.contains("c"))
+  assert_true!(m.contains("d"))
 }
 
 test "intersection" {
   let m1 = @hashset.of(["a", "b", "c"])
   let m2 = @hashset.of(["b", "c", "d"])
   let m = m1.intersection(m2)
-  @test.eq!(m.size(), 2)
-  @test.is_false!(m.contains("a"))
-  @test.is_true!(m.contains("b"))
-  @test.is_true!(m.contains("c"))
-  @test.is_false!(m.contains("d"))
+  assert_eq!(m.size(), 2)
+  assert_false!(m.contains("a"))
+  assert_true!(m.contains("b"))
+  assert_true!(m.contains("c"))
+  assert_false!(m.contains("d"))
 }
 
 test "difference" {
   let m1 = @hashset.of(["a", "b", "c"])
   let m2 = @hashset.of(["b", "c", "d"])
   let m = m1.difference(m2)
-  @test.eq!(m.size(), 1)
-  @test.is_true!(m.contains("a"))
-  @test.is_false!(m.contains("b"))
-  @test.is_false!(m.contains("c"))
-  @test.is_false!(m.contains("d"))
+  assert_eq!(m.size(), 1)
+  assert_true!(m.contains("a"))
+  assert_false!(m.contains("b"))
+  assert_false!(m.contains("c"))
+  assert_false!(m.contains("d"))
 }
 
 test "symmetric_difference" {
   let m1 = @hashset.of(["a", "b", "c"])
   let m2 = @hashset.of(["b", "c", "d"])
   let m = m1.symmetric_difference(m2)
-  @test.eq!(m.size(), 2)
-  @test.is_true!(m.contains("a"))
-  @test.is_false!(m.contains("b"))
-  @test.is_false!(m.contains("c"))
-  @test.is_true!(m.contains("d"))
+  assert_eq!(m.size(), 2)
+  assert_true!(m.contains("a"))
+  assert_false!(m.contains("b"))
+  assert_false!(m.contains("c"))
+  assert_true!(m.contains("d"))
 }
 
 test "iter" {
@@ -150,10 +150,10 @@ test "iter" {
 test "from_array" {
   let arr = ["a", "b", "c"]
   let m = @hashset.from_array(arr)
-  @test.is_true!(m.contains("a"))
-  @test.is_true!(m.contains("b"))
-  @test.is_true!(m.contains("c"))
-  @test.is_false!(m.contains("d"))
+  assert_true!(m.contains("a"))
+  assert_true!(m.contains("b"))
+  assert_true!(m.contains("c"))
+  assert_false!(m.contains("d"))
 }
 
 test "insert_and_grow" {
@@ -161,8 +161,8 @@ test "insert_and_grow" {
   for i = 0; i < 10; i = i + 1 {
     m.insert(i.to_string())
   }
-  @test.eq!(m.size(), 10)
-  @test.eq!(m.capacity(), 16)
+  assert_eq!(m.size(), 10)
+  assert_eq!(m.capacity(), 16)
 }
 
 test "remove_and_shift_back" {
@@ -172,18 +172,18 @@ test "remove_and_shift_back" {
   m.insert("c")
   m.insert("d")
   m.remove("b")
-  @test.is_false!(m.contains("b"))
-  @test.is_true!(m.contains("a"))
-  @test.is_true!(m.contains("c"))
-  @test.is_true!(m.contains("d"))
+  assert_false!(m.contains("b"))
+  assert_true!(m.contains("a"))
+  assert_true!(m.contains("c"))
+  assert_true!(m.contains("d"))
 }
 
 test "capacity_and_size" {
   let m = @hashset.new()
-  @test.eq!(m.capacity(), default_init_capacity)
-  @test.eq!(m.size(), 0)
+  assert_eq!(m.capacity(), default_init_capacity)
+  assert_eq!(m.size(), 0)
   m.insert("a")
-  @test.eq!(m.size(), 1)
+  assert_eq!(m.size(), 1)
 }
 
 test "clear_and_reinsert" {
@@ -191,10 +191,10 @@ test "clear_and_reinsert" {
   m.insert("a")
   m.insert("b")
   m.clear()
-  @test.eq!(m.size(), 0)
+  assert_eq!(m.size(), 0)
   m.insert("c")
-  @test.eq!(m.size(), 1)
-  @test.is_true!(m.contains("c"))
+  assert_eq!(m.size(), 1)
+  assert_true!(m.contains("c"))
 }
 
 test "insert_and_grow" {
@@ -202,8 +202,8 @@ test "insert_and_grow" {
   for i = 0; i < 10; i = i + 1 {
     m.insert(i.to_string())
   }
-  @test.eq!(m.size(), 10)
-  @test.eq!(m.capacity(), 16)
+  assert_eq!(m.size(), 10)
+  assert_eq!(m.capacity(), 16)
 }
 
 test "remove_and_shift_back" {
@@ -213,18 +213,18 @@ test "remove_and_shift_back" {
   m.insert("c")
   m.insert("d")
   m.remove("b")
-  @test.is_false!(m.contains("b"))
-  @test.is_true!(m.contains("a"))
-  @test.is_true!(m.contains("c"))
-  @test.is_true!(m.contains("d"))
+  assert_false!(m.contains("b"))
+  assert_true!(m.contains("a"))
+  assert_true!(m.contains("c"))
+  assert_true!(m.contains("d"))
 }
 
 test "capacity_and_size" {
   let m = @hashset.new()
-  @test.eq!(m.capacity(), default_init_capacity)
-  @test.eq!(m.size(), 0)
+  assert_eq!(m.capacity(), default_init_capacity)
+  assert_eq!(m.size(), 0)
   m.insert("a")
-  @test.eq!(m.size(), 1)
+  assert_eq!(m.size(), 1)
 }
 
 test "clear_and_reinsert" {
@@ -232,10 +232,10 @@ test "clear_and_reinsert" {
   m.insert("a")
   m.insert("b")
   m.clear()
-  @test.eq!(m.size(), 0)
+  assert_eq!(m.size(), 0)
   m.insert("c")
-  @test.eq!(m.size(), 1)
-  @test.is_true!(m.contains("c"))
+  assert_eq!(m.size(), 1)
+  assert_true!(m.contains("c"))
 }
 
 test "from_iter multiple elements iter" {

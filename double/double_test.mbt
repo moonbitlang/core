@@ -16,7 +16,7 @@ test "hash" {
   let d1 = 123.456
   let d2 = 789.012
   let d3 = 123.456
-  @test.eq!(Hash::hash(d1), d1.reinterpret_as_i64() |> Hash::hash())
-  @test.ne!(Hash::hash(d1), Hash::hash(d2))
-  @test.eq!(Hash::hash(d1), Hash::hash(d3))
+  assert_eq!(Hash::hash(d1), d1.reinterpret_as_i64() |> Hash::hash())
+  assert_not_eq!(Hash::hash(d1), Hash::hash(d2))
+  assert_eq!(Hash::hash(d1), Hash::hash(d3))
 }

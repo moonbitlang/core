@@ -52,12 +52,12 @@ test "division" {
 
 test "from_double overflow" {
   let result = 10.0e200 |> @result.wrap1(f=@rational.from_double)
-  @test.eq!(result, Err(RationalError("Rational::from_double: overflow")))
+  assert_eq!(result, Err(RationalError("Rational::from_double: overflow")))
 }
 
 test "from_double NaN" {
   let result = Double::nan() |> @result.wrap1(f=@rational.from_double)
-  @test.eq!(
+  assert_eq!(
     result,
     Err(RationalError("Rational::from_double: cannot convert NaN")),
   )
@@ -66,23 +66,23 @@ test "from_double NaN" {
 test "from_double overflow edge case" {
   let result = 9_223_372_036_854_775_807.1
     |> @result.wrap1(f=@rational.from_double)
-  @test.eq!(result, Err(RationalError("Rational::from_double: overflow")))
+  assert_eq!(result, Err(RationalError("Rational::from_double: overflow")))
 }
 
 test "from_double overflow edge case" {
   let result = 9_223_372_036_854_775_807.1
     |> @result.wrap1(f=@rational.from_double)
-  @test.eq!(result, Err(RationalError("Rational::from_double: overflow")))
+  assert_eq!(result, Err(RationalError("Rational::from_double: overflow")))
 }
 
 test "from_double overflow check in continued fraction algorithm" {
   let result = 10.0e200 |> @result.wrap1(f=@rational.from_double)
-  @test.eq!(result, Err(RationalError("Rational::from_double: overflow")))
+  assert_eq!(result, Err(RationalError("Rational::from_double: overflow")))
 }
 
 test "from_double NaN check" {
   let result = Double::nan() |> @result.wrap1(f=@rational.from_double)
-  @test.eq!(
+  assert_eq!(
     result,
     Err(RationalError("Rational::from_double: cannot convert NaN")),
   )

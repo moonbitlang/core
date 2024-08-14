@@ -84,12 +84,12 @@ test "copy" {
   let vc = v.copy()
   inspect!(vc, content="@immut/array.of([1, 2, 3, 4, 5])")
   inspect!(v == vc, content="true")
-  @test.is_false!(physical_equal(v, vc))
+  assert_false!(physical_equal(v, vc))
   let v = @array.new()
   let vc : @array.T[Int] = v.copy()
   inspect!(vc, content="@immut/array.of([])")
   inspect!(v == vc, content="true")
-  @test.is_false!(physical_equal(v, vc))
+  assert_false!(physical_equal(v, vc))
 }
 
 test "op_get" {

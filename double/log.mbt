@@ -97,42 +97,42 @@ pub fn log10(self : Double) -> Double {
 
 test "log2 log10" {
   // log2
-  @test.eq!(3.0.log2(), 1.584962500721156)
-  @test.eq!(2.0.log2(), 1.0)
-  @test.eq!(1.0.log2(), 0.0)
-  @test.eq!(0.5.log2(), -1.0)
-  @test.eq!(0.25.log2(), -2.0)
-  @test.eq!(0.1.log2(), -3.321928094887362)
+  assert_eq!(3.0.log2(), 1.584962500721156)
+  assert_eq!(2.0.log2(), 1.0)
+  assert_eq!(1.0.log2(), 0.0)
+  assert_eq!(0.5.log2(), -1.0)
+  assert_eq!(0.25.log2(), -2.0)
+  assert_eq!(0.1.log2(), -3.321928094887362)
 
   // log10
-  @test.eq!(0.2.log10(), -0.6989700043360187)
-  @test.eq!(15.0.log10(), 1.1760912590556811)
+  assert_eq!(0.2.log10(), -0.6989700043360187)
+  assert_eq!(15.0.log10(), 1.1760912590556811)
 }
 
 test "ln" {
-  @test.is_true!(Double::nan().ln().is_nan())
-  @test.is_true!(Double::inf(1).ln().is_pos_inf())
-  @test.is_true!(Double::inf(-1).ln().is_neg_inf())
-  @test.is_true!((-1.0).ln().is_nan())
-  @test.is_true!(0.0.ln().is_neg_inf())
-  @test.is_true!((-0.0).ln().is_neg_inf())
-  @test.eq!(50.0.ln(), 3.912023005428146)
-  @test.eq!(2.0.ln(), 0.6931471805599453)
-  @test.eq!(1.1125369292536007e-308.ln(), -709.0895657128241)
-  @test.eq!(5.562684646268003e-309.ln(), -709.782712893384)
-  @test.is_true!(
+  assert_true!(Double::nan().ln().is_nan())
+  assert_true!(Double::inf(1).ln().is_pos_inf())
+  assert_true!(Double::inf(-1).ln().is_neg_inf())
+  assert_true!((-1.0).ln().is_nan())
+  assert_true!(0.0.ln().is_neg_inf())
+  assert_true!((-0.0).ln().is_neg_inf())
+  assert_eq!(50.0.ln(), 3.912023005428146)
+  assert_eq!(2.0.ln(), 0.6931471805599453)
+  assert_eq!(1.1125369292536007e-308.ln(), -709.0895657128241)
+  assert_eq!(5.562684646268003e-309.ln(), -709.782712893384)
+  assert_true!(
     match frexp(0.0) {
       (0.0, 0) => true
       _ => false
     },
   )
-  @test.is_true!(
+  assert_true!(
     match frexp(Double::inf(1)) {
       (f, 0) => if f.is_pos_inf() { true } else { false }
       _ => false
     },
   )
-  @test.is_true!(
+  assert_true!(
     match frexp(Double::nan()) {
       (f, 0) => if f.is_nan() { true } else { false }
       _ => false

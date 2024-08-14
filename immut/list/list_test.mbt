@@ -488,7 +488,7 @@ test "List::output with empty list" {
 test "List::head_exn with non-empty list" {
   let list = @list.of([1, 2, 3, 4, 5])
   let head = @list.head_exn(list)
-  @test.eq!(head, 1)
+  assert_eq!(head, 1)
 }
 
 test "panic @list.exn with empty list" {
@@ -498,7 +498,7 @@ test "panic @list.exn with empty list" {
 test "List::last with non-empty list" {
   let list = @list.of([1, 2, 3, 4, 5])
   let last = @list.last(list)
-  @test.eq!(last, 5)
+  assert_eq!(last, 5)
 }
 
 test "List::zip with lists of equal length" {
@@ -506,7 +506,7 @@ test "List::zip with lists of equal length" {
   let list2 = @list.of(["a", "b", "c"])
   let zipped = @list.zip(list1, list2)
   let expected = @list.of([(1, "a"), (2, "b"), (3, "c")])
-  @test.eq!(zipped, expected)
+  assert_eq!(zipped, expected)
 }
 
 test "panic @list.zip with empty list" {
@@ -516,13 +516,13 @@ test "panic @list.zip with empty list" {
 test "List::nth_exn with valid index" {
   let list = @list.of([1, 2, 3, 4, 5])
   let nth = @list.nth_exn(list, 2)
-  @test.eq!(nth, 3)
+  assert_eq!(nth, 3)
 }
 
 test "List::maximum with non-empty list" {
   let list = @list.of([1, 3, 5, 2, 4])
   let max = @list.maximum(list)
-  @test.eq!(max, 5)
+  assert_eq!(max, 5)
 }
 
 test "panic @list.maxium with empty list" {
@@ -532,7 +532,7 @@ test "panic @list.maxium with empty list" {
 test "List::minimum with non-empty list" {
   let list = @list.of([1, 3, 5, 2, 4])
   let min = @list.minimum(list)
-  @test.eq!(min, 1)
+  assert_eq!(min, 1)
 }
 
 test "panic @list.minimum with empty list" {

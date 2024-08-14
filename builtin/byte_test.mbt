@@ -25,51 +25,51 @@ test "byte_compare" {
   let b1 = b'\x00'
   let b2 = b'\x0F'
   let b3 = b'\xFF'
-  @test.is_true!(b1.compare(b1) == 0)
-  @test.is_true!(b1.compare(b2) < 0)
-  @test.is_true!(b2.compare(b1) > 0)
-  @test.is_true!(b2.compare(b3) < 0)
-  @test.is_true!(b3.compare(b2) > 0)
-  @test.is_true!(b3.compare(b3) == 0)
+  assert_true!(b1.compare(b1) == 0)
+  assert_true!(b1.compare(b2) < 0)
+  assert_true!(b2.compare(b1) > 0)
+  assert_true!(b2.compare(b3) < 0)
+  assert_true!(b3.compare(b2) > 0)
+  assert_true!(b3.compare(b3) == 0)
 }
 
 test "byte_op_equal" {
   let b1 = b'\x00'
   let b2 = b'\x0F'
   let b3 = b'\xFF'
-  @test.is_true!(b1.op_equal(b1))
-  @test.is_true!(b1.op_equal(b2) |> not)
-  @test.is_true!(b2.op_equal(b1) |> not)
-  @test.is_true!(b2.op_equal(b2))
-  @test.is_true!(b2.op_equal(b3) |> not)
-  @test.is_true!(b3.op_equal(b2) |> not)
-  @test.is_true!(b3.op_equal(b3))
+  assert_true!(b1.op_equal(b1))
+  assert_true!(b1.op_equal(b2) |> not)
+  assert_true!(b2.op_equal(b1) |> not)
+  assert_true!(b2.op_equal(b2))
+  assert_true!(b2.op_equal(b3) |> not)
+  assert_true!(b3.op_equal(b2) |> not)
+  assert_true!(b3.op_equal(b3))
 }
 
 test "byte_lsl" {
-  @test.eq!(b'\xFF'.lsl(8), b'\x00')
-  @test.eq!(b'\xFF'.lsl(8).to_int(), 0)
+  assert_eq!(b'\xFF'.lsl(8), b'\x00')
+  assert_eq!(b'\xFF'.lsl(8).to_int(), 0)
 }
 
 test "byte_lsr" {
-  @test.eq!(b'\xFF'.lsr(8), b'\x00')
-  @test.eq!((0xFFF).to_byte().lsr(8), b'\x00')
+  assert_eq!(b'\xFF'.lsr(8), b'\x00')
+  assert_eq!((0xFFF).to_byte().lsr(8), b'\x00')
 }
 
 test "byte_lxor" {
-  @test.eq!(b'\xFF'.lxor(b'\xFF'), b'\x00')
-  @test.eq!(b'\xFF'.lxor(b'\x0F'), b'\xF0')
-  @test.eq!(b'\x0F'.lxor(b'\xFF'), b'\xF0')
+  assert_eq!(b'\xFF'.lxor(b'\xFF'), b'\x00')
+  assert_eq!(b'\xFF'.lxor(b'\x0F'), b'\xF0')
+  assert_eq!(b'\x0F'.lxor(b'\xFF'), b'\xF0')
 }
 
 test "byte_lor" {
-  @test.eq!(b'\xFF'.lor(b'\xFF'), b'\xFF')
-  @test.eq!(b'\xFF'.lor(b'\x0F'), b'\xFF')
-  @test.eq!(b'\x0F'.lor(b'\xFF'), b'\xFF')
+  assert_eq!(b'\xFF'.lor(b'\xFF'), b'\xFF')
+  assert_eq!(b'\xFF'.lor(b'\x0F'), b'\xFF')
+  assert_eq!(b'\x0F'.lor(b'\xFF'), b'\xFF')
 }
 
 test "byte_land" {
-  @test.eq!(b'\xFF'.land(b'\xFF'), b'\xFF')
-  @test.eq!(b'\xFF'.land(b'\x0F'), b'\x0F')
-  @test.eq!(b'\x0F'.land(b'\xFF'), b'\x0F')
+  assert_eq!(b'\xFF'.land(b'\xFF'), b'\xFF')
+  assert_eq!(b'\xFF'.land(b'\x0F'), b'\x0F')
+  assert_eq!(b'\x0F'.land(b'\xFF'), b'\x0F')
 }

@@ -17,20 +17,20 @@ test "default" {
 }
 
 test "compare" {
-  @test.eq!(0, "".compare(""))
-  @test.eq!(-1, "".compare("abc"))
-  @test.eq!(1, "abc".compare(""))
-  @test.eq!(-1, "abcd".compare("abce"))
-  @test.eq!(1, "abce".compare("abcd"))
-  @test.eq!(-1, "c".compare("ab"))
-  @test.eq!(1, "ab".compare("c"))
+  assert_eq!(0, "".compare(""))
+  assert_eq!(-1, "".compare("abc"))
+  assert_eq!(1, "abc".compare(""))
+  assert_eq!(-1, "abcd".compare("abce"))
+  assert_eq!(1, "abce".compare("abcd"))
+  assert_eq!(-1, "c".compare("ab"))
+  assert_eq!(1, "ab".compare("c"))
 }
 
 test "to_bytes" {
-  @test.eq!("中文".to_bytes().to_string(), "中文")
-  @test.eq!("asdf".to_bytes().to_string(), "asdf")
-  @test.eq!("🤣🤣".to_bytes().to_string(), "🤣🤣")
-  @test.eq!("🤔".to_bytes().to_string(), "🤔")
+  assert_eq!("中文".to_bytes().to_string(), "中文")
+  assert_eq!("asdf".to_bytes().to_string(), "asdf")
+  assert_eq!("🤣🤣".to_bytes().to_string(), "🤣🤣")
+  assert_eq!("🤔".to_bytes().to_string(), "🤔")
 }
 
 test "Show::output" {
@@ -40,16 +40,16 @@ test "Show::output" {
     buf.to_string()
   }
 
-  @test.eq!(repr("a"), "\"a\"")
-  @test.eq!(repr("'"), "\"'\"")
-  @test.eq!(repr("\""), "\"\\\"\"")
-  @test.eq!(repr("\\"), "\"\\\\\"")
-  @test.eq!(repr("\n"), "\"\\n\"")
-  @test.eq!(repr("\r"), "\"\\r\"")
-  @test.eq!(repr("\b"), "\"\\b\"")
-  @test.eq!(repr("\t"), "\"\\t\"")
-  @test.eq!(repr("\x00"), "\"\\x00\"")
-  @test.eq!(repr("abc'\"def\\"), "\"abc'\\\"def\\\\\"")
+  assert_eq!(repr("a"), "\"a\"")
+  assert_eq!(repr("'"), "\"'\"")
+  assert_eq!(repr("\""), "\"\\\"\"")
+  assert_eq!(repr("\\"), "\"\\\\\"")
+  assert_eq!(repr("\n"), "\"\\n\"")
+  assert_eq!(repr("\r"), "\"\\r\"")
+  assert_eq!(repr("\b"), "\"\\b\"")
+  assert_eq!(repr("\t"), "\"\\t\"")
+  assert_eq!(repr("\x00"), "\"\\x00\"")
+  assert_eq!(repr("abc'\"def\\"), "\"abc'\\\"def\\\\\"")
 }
 
 test "to_array" {
@@ -64,10 +64,10 @@ test "to_array" {
 }
 
 test "substring" {
-  @test.eq!("abc".substring(), "abc")
-  @test.eq!("abc".substring(start=1), "bc")
-  @test.eq!("abc".substring(end=2), "ab")
-  @test.eq!("abc".substring(start=1, end=2), "b")
+  assert_eq!("abc".substring(), "abc")
+  assert_eq!("abc".substring(start=1), "bc")
+  assert_eq!("abc".substring(end=2), "ab")
+  assert_eq!("abc".substring(start=1, end=2), "b")
 }
 
 test "chars" {
@@ -103,7 +103,7 @@ test "chars" {
 test "Buffer::to_bytes" {
   let buffer = Buffer::new(size_hint=16)
   buffer.write_string("中文")
-  @test.eq!(buffer.to_bytes().to_string(), "中文")
+  assert_eq!(buffer.to_bytes().to_string(), "中文")
 }
 
 test "panic substring_start_index_error" {

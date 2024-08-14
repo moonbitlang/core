@@ -13,9 +13,9 @@
 // limitations under the License.
 
 test {
-  @test.eq!((Option::None : Unit?), Option::None)
-  @test.eq!(Option::Some(1), Option::Some(1))
-  @test.ne!(Option::Some(1), Option::Some(2))
-  @test.ne!(Option::None, Option::Some(1))
-  @test.ne!(Option::Some(1), Option::None)
+  assert_eq!((Option::None : Unit?), Option::None)
+  assert_eq!(Option::Some(1), Option::Some(1))
+  assert_not_eq!(Option::Some(1), Option::Some(2))
+  assert_not_eq!(Option::None, Option::Some(1))
+  assert_not_eq!(Option::Some(1), Option::None)
 }

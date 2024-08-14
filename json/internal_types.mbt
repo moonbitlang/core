@@ -94,7 +94,7 @@ fn to_string(self : StringBuilder) -> String {
 test "add_string method coverage" {
   let sb = StringBuilder::make()
   add_string(sb, "Hello")
-  @test.eq!(sb.buffer, "Hello")
+  assert_eq!(sb.buffer, "Hello")
   add_string(sb, " World")
-  @test.eq!(sb.buffer, "Hello World")
+  assert_eq!(sb.buffer, "Hello World")
 }

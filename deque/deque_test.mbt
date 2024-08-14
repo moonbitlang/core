@@ -14,18 +14,18 @@
 
 test "search" {
   let dv = @deque.of([3, 4, 5])
-  @test.eq!(dv.search(3), Some(0))
-  @test.eq!(dv.search(4), Some(1))
-  @test.eq!(dv.search(5), Some(2))
-  @test.eq!(dv.search(6), None)
+  assert_eq!(dv.search(3), Some(0))
+  assert_eq!(dv.search(4), Some(1))
+  assert_eq!(dv.search(5), Some(2))
+  assert_eq!(dv.search(6), None)
 }
 
 test "contains" {
   let dv = @deque.of([3, 4, 5])
-  @test.is_true!(dv.contains(3))
-  @test.is_true!(dv.contains(4))
-  @test.is_true!(dv.contains(5))
-  @test.is_false!(dv.contains(6))
+  assert_true!(dv.contains(3))
+  assert_true!(dv.contains(4))
+  assert_true!(dv.contains(5))
+  assert_false!(dv.contains(6))
 }
 
 test "reserve_capacity" {
@@ -35,16 +35,16 @@ test "reserve_capacity" {
   dv.pop_front() |> ignore() // 3, 4, 5, 1
   dv.pop_front() |> ignore() // 4, 5, 1
   dv.reserve_capacity(10)
-  @test.is_true!(dv.capacity() == 10)
-  @test.eq!(dv[0], 4)
-  @test.eq!(dv[1], 5)
-  @test.eq!(dv[2], 1)
+  assert_true!(dv.capacity() == 10)
+  assert_eq!(dv[0], 4)
+  assert_eq!(dv[1], 5)
+  assert_eq!(dv[2], 1)
 }
 
 test "reserve_capacity_2" {
   let dv = @deque.of([1, 2, 3, 4, 5])
   dv.reserve_capacity(3)
-  @test.is_true!(dv.capacity() == 5)
+  assert_true!(dv.capacity() == 5)
 }
 
 test "shrink_to_fit" {
@@ -53,19 +53,19 @@ test "shrink_to_fit" {
   dv.push_back(1)
   dv.pop_front() |> ignore()
   dv.pop_front() |> ignore()
-  @test.is_true!(dv.capacity() == 5)
+  assert_true!(dv.capacity() == 5)
   dv.shrink_to_fit()
-  @test.is_true!(dv.capacity() == 3)
-  @test.eq!(dv[0], 4)
-  @test.eq!(dv[1], 5)
-  @test.eq!(dv[2], 1)
+  assert_true!(dv.capacity() == 3)
+  assert_eq!(dv[0], 4)
+  assert_eq!(dv[1], 5)
+  assert_eq!(dv[2], 1)
 }
 
 test "shrink_to_fit_2" {
   let dv = @deque.of([1, 2, 3])
-  @test.is_true!(dv.capacity() == 3)
+  assert_true!(dv.capacity() == 3)
   dv.shrink_to_fit()
-  @test.is_true!(dv.capacity() == 3)
+  assert_true!(dv.capacity() == 3)
 }
 
 test "iter" {
@@ -80,7 +80,7 @@ test "iter" {
       i = i + 1
     },
   )
-  @test.eq!(i, dv.length())
+  assert_eq!(i, dv.length())
   buf.expect!(
     content=
       #|1
@@ -141,7 +141,7 @@ test "iter_rev" {
       i = i - 1
     },
   )
-  @test.is_false!(failed)
+  assert_false!(failed)
 }
 
 test "iter_revi" {
@@ -157,7 +157,7 @@ test "iter_revi" {
       j = j + 1
     },
   )
-  @test.is_false!(failed)
+  assert_false!(failed)
 }
 
 test "iteri" {
@@ -171,7 +171,7 @@ test "iteri" {
       i = i + 1
     },
   )
-  @test.is_false!(failed)
+  assert_false!(failed)
 }
 
 test "iter" {
@@ -185,7 +185,7 @@ test "iter" {
       i = i + 1
     },
   )
-  @test.is_false!(failed)
+  assert_false!(failed)
 }
 
 test "iter2" {
@@ -231,102 +231,102 @@ test "panic op_set" {
 test "op_set" {
   let dv = @deque.of([1, 2, 3, 4, 5])
   dv[1] = 3
-  @test.eq!(dv[1], 3)
+  assert_eq!(dv[1], 3)
 }
 
 test "op_equal" {
   let dv1 = @deque.of([1, 2, 3])
   let dv2 = @deque.of([1, 2, 3])
-  @test.is_true!(dv1 == dv2)
+  assert_true!(dv1 == dv2)
   let dv1 = @deque.of([1, 2, 3])
   let dv2 = @deque.of([1, 2, 3])
   dv2[0] = 2
-  @test.is_false!(dv1 == dv2)
+  assert_false!(dv1 == dv2)
   let dv1 = @deque.of([1, 2, 3])
   let dv2 = @deque.of([1, 2, 3])
   dv2.push_front(1)
-  @test.is_false!(dv1 == dv2)
+  assert_false!(dv1 == dv2)
 }
 
 test "clear" {
   let dv = @deque.of([3, 4, 5])
   dv.clear()
-  @test.eq!(dv.length(), 0)
-  @test.eq!(dv.capacity(), 3)
+  assert_eq!(dv.length(), 0)
+  assert_eq!(dv.capacity(), 3)
 }
 
 test "map" {
   let dv = @deque.of([3, 4, 5])
   let dvp = dv.map(fn(x) { x + 1 })
-  @test.eq!(dvp[0], 4)
-  @test.eq!(dvp[1], 5)
-  @test.eq!(dvp[2], 6)
+  assert_eq!(dvp[0], 4)
+  assert_eq!(dvp[1], 5)
+  assert_eq!(dvp[2], 6)
   let dve = @deque.of(([] : FixedArray[Int]))
   inspect!(dve.map(fn(x) { x }), content="Deque::[]")
 }
 
 test "push_and_pop" {
   let dv = @deque.of([1, 2, 3, 4, 5])
-  @test.eq!(dv.pop_back(), Some(5))
-  @test.eq!(dv.length(), 4)
-  @test.eq!(dv.back(), Some(4))
-  @test.eq!(dv.pop_front(), Some(1))
-  @test.eq!(dv.length(), 3)
-  @test.eq!(dv.front(), Some(2))
+  assert_eq!(dv.pop_back(), Some(5))
+  assert_eq!(dv.length(), 4)
+  assert_eq!(dv.back(), Some(4))
+  assert_eq!(dv.pop_front(), Some(1))
+  assert_eq!(dv.length(), 3)
+  assert_eq!(dv.front(), Some(2))
   dv.push_front(5)
   dv.push_front(6)
   dv.push_back(7)
   dv.push_back(8)
-  @test.eq!(dv.length(), 7)
-  @test.eq!(dv.pop_front(), Some(6))
-  @test.eq!(dv.front(), Some(5))
-  @test.eq!(dv.length(), 6)
-  @test.eq!(dv.pop_back(), Some(8))
-  @test.eq!(dv.back(), Some(7))
+  assert_eq!(dv.length(), 7)
+  assert_eq!(dv.pop_front(), Some(6))
+  assert_eq!(dv.front(), Some(5))
+  assert_eq!(dv.length(), 6)
+  assert_eq!(dv.pop_back(), Some(8))
+  assert_eq!(dv.back(), Some(7))
   let dv = @deque.of([1])
-  @test.eq!(dv.pop_front(), Some(1))
-  @test.eq!(dv.pop_front(), None)
-  @test.eq!(dv.pop_back(), None)
+  assert_eq!(dv.pop_front(), Some(1))
+  assert_eq!(dv.pop_front(), None)
+  assert_eq!(dv.pop_back(), None)
 }
 
 test "is_empty" {
   let dv = @deque.new()
-  @test.is_true!(dv.is_empty())
+  assert_true!(dv.is_empty())
   dv.push_back(3)
-  @test.is_false!(dv.is_empty())
+  assert_false!(dv.is_empty())
 }
 
 test "of" {
   let d = @deque.of([1, 2, 3])
-  @test.eq!(d[0], 1)
-  @test.eq!(d[1], 2)
-  @test.eq!(d[2], 3)
+  assert_eq!(d[0], 1)
+  assert_eq!(d[1], 2)
+  assert_eq!(d[2], 3)
 }
 
 test "front_and_back" {
   let dv = @deque.of([1, 2, 3, 4, 5])
-  @test.eq!(dv.back(), Some(5))
-  @test.eq!(dv.front(), Some(1))
+  assert_eq!(dv.back(), Some(5))
+  assert_eq!(dv.front(), Some(1))
   let dv : @deque.T[Int] = @deque.new()
-  @test.eq!(dv.back(), None)
-  @test.eq!(dv.front(), None)
+  assert_eq!(dv.back(), None)
+  assert_eq!(dv.front(), None)
 }
 
 test "new_with_capacity" {
   let d : @deque.T[Int] = @deque.new(capacity=0)
-  @test.eq!(d.capacity(), 0)
+  assert_eq!(d.capacity(), 0)
 }
 
 test "new_with_capacity_non_zero" {
   let d : @deque.T[Int] = @deque.new(capacity=10)
-  @test.eq!(d.capacity(), 10)
+  assert_eq!(d.capacity(), 10)
 }
 
 test "realloc" {
   let dv = @deque.of([1, 2, 3, 4, 5])
-  @test.eq!(dv.pop_front(), Some(1))
-  @test.eq!(dv.pop_front(), Some(2))
-  @test.eq!(dv.pop_front(), Some(3))
+  assert_eq!(dv.pop_front(), Some(1))
+  assert_eq!(dv.pop_front(), Some(2))
+  assert_eq!(dv.pop_front(), Some(3))
   dv.push_back(6)
   dv.push_back(7)
   dv.push_back(8)
@@ -340,18 +340,18 @@ test "realloc" {
       i += 1
     },
   )
-  @test.eq!(result, [4, 5, 6, 7, 8, 9, 10])
+  assert_eq!(result, [4, 5, 6, 7, 8, 9, 10])
 }
 
 test "push_realloc" {
   let dv = @deque.new()
   dv.push_front(1)
-  @test.eq!(dv.pop_front(), Some(1))
-  @test.is_true!(dv.capacity() > 0)
+  assert_eq!(dv.pop_front(), Some(1))
+  assert_true!(dv.capacity() > 0)
   let dv = @deque.new()
   dv.push_back(1)
-  @test.eq!(dv.pop_back(), Some(1))
-  @test.is_true!(dv.capacity() > 0)
+  assert_eq!(dv.pop_back(), Some(1))
+  assert_true!(dv.capacity() > 0)
 }
 
 test "reserve_and_push" {

@@ -13,9 +13,9 @@
 // limitations under the License.
 
 test "maximum.value" {
-  @test.eq!(@math.maximum(1, 2), 2)
-  @test.eq!(@math.maximum(2, 1), 2)
-  @test.eq!(@math.maximum(2, 2), 2)
+  assert_eq!(@math.maximum(1, 2), 2)
+  assert_eq!(@math.maximum(2, 1), 2)
+  assert_eq!(@math.maximum(2, 2), 2)
 }
 
 test "maximum.ref" {
@@ -34,9 +34,9 @@ test "maximum.ref" {
 }
 
 test "minimum.value" {
-  @test.eq!(@math.minimum(1, 2), 1)
-  @test.eq!(@math.minimum(2, 1), 1)
-  @test.eq!(@math.minimum(2, 2), 2)
+  assert_eq!(@math.minimum(1, 2), 1)
+  assert_eq!(@math.minimum(2, 1), 1)
+  assert_eq!(@math.minimum(2, 2), 2)
 }
 
 test "minimum.ref" {
