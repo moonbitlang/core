@@ -101,3 +101,28 @@ pub fn is_not[T : Show](a : T, b : T, ~loc : SourceLoc = _) -> Unit! {
 pub fn fail[T](msg : String, ~loc : SourceLoc = _) -> T! {
   @builtin.fail!(msg, ~loc)
 }
+
+pub fn write(self : T, obj : Show) -> Unit {
+  self.buffer.write_string(obj.to_string())
+}
+
+pub fn writeln(self : T, obj : Show) -> Unit {
+  self.write(obj)
+  self.buffer.write_char('\n')
+}
+
+pub fn snapshot(
+  self : T,
+  ~loc : SourceLoc = _,
+  ~args_loc : ArgsLoc = _
+) -> Unit {
+  let loc = loc.to_string().escape()
+  let args_loc = args_loc.to_json().escape()
+  let actual = self.buffer.to_string().escape()
+  let expect = self.name.escape()
+  println("----- BEGIN MOONBIT SNAPSHOT TESTING -----")
+  println(
+    "@SNAPSHOT_TESTING {\"loc\": \{loc}, \"args_loc\": \{args_loc}, \"expect\": \{expect}, \"actual\": \{actual}, \"snapshot\": true}",
+  )
+  println("----- END MOONBIT SNAPSHOT TESTING -----")
+}
