@@ -27,6 +27,13 @@ pub trait ToJson {
   to_json(Self) -> Json
 }
 
+pub type! JsonTypeError String derive(Eq, Show)
+
+/// Trait for types that can be converted from `Json`
+pub trait FromJson {
+  from_json(Json) -> Self!JsonTypeError
+}
+
 pub fn Bool::to_json(self : Bool) -> Json {
   if self {
     True
@@ -97,4 +104,78 @@ pub fn Map::to_json[V : ToJson](self : Map[String, V]) -> Json {
   let object = {  }
   self.each(fn(k, v) { object[k] = v.to_json() })
   Object(object)
+}
+
+pub impl FromJson for Bool with from_json(json) {
+  match json {
+    True => true
+    False => false
+    _ => raise JsonTypeError("Bool::from_json: expected boolean")
+  }
+}
+
+pub impl FromJson for Int with from_json(json) {
+  match json {
+    Number(n) => n.to_int()
+    _ => raise JsonTypeError("Int::from_json: expected number")
+  }
+}
+
+pub impl FromJson for Int64 with from_json(json) {
+  match json {
+    Number(n) => n.to_int64()
+    _ => raise JsonTypeError("Int64::from_json: expected number")
+  }
+}
+
+pub impl FromJson for Double with from_json(json) {
+  match json {
+    Number(n) => n
+    _ => raise JsonTypeError("Double::from_json: expected number")
+  }
+}
+
+pub impl FromJson for String with from_json(json) {
+  match json {
+    String(a) => a
+    _ => raise JsonTypeError("String::from_json: expected string")
+  }
+}
+
+pub impl FromJson for Char with from_json(json) {
+  match json {
+    String(a) =>
+      if a.length() != 1 {
+        raise JsonTypeError("Char::from_json: expected single character")
+      } else {
+        a[0]
+      }
+    _ => raise JsonTypeError("Char::from_json: expected string")
+  }
+}
+
+pub impl[X : FromJson] FromJson for Array[X] with from_json(json) {
+  match json {
+    Array(a) => {
+      let res : Array[X] = Array::new(capacity=a.length())
+      for i = 0; i < a.length(); i = i + 1 {
+        res.push(FromJson::from_json!(a[i]))
+      }
+      res
+    }
+    _ => raise JsonTypeError("Array::from_json: expected array")
+  }
+}
+
+pub impl[V : FromJson] FromJson for Map[String, V] with from_json(json) {
+  match json {
+    Object(obj) => {
+      let res : Map[String, V] = Map::new()
+      for kv in obj.iter() {
+        res[kv.0] = FromJson::from_json!(kv.1)
+      }
+      res
+    }
+    _ => raise JsonTypeError("Map::from_json: expected object")
+  }
 }
