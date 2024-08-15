@@ -20,6 +20,11 @@ pub struct T {
   pub name : String
   pub buffer : Buffer
 }
+impl T {
+  snapshot(Self, ~loc : SourceLoc = _, ~args_loc : ArgsLoc = _) -> Unit
+  write(Self, Show) -> Unit
+  writeln(Self, Show) -> Unit
+}
 
 // Type aliases
 
