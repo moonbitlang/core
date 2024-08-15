@@ -27,11 +27,34 @@ pub trait ToJson {
   to_json(Self) -> Json
 }
 
-pub type! JsonTypeError String derive(Eq, Show)
+pub enum JsonPath {
+  Root
+  Key(JsonPath, String)
+  Index(JsonPath, Int)
+}
+
+pub fn to_string(self : JsonPath) -> String {
+  match self {
+    Root => "$".to_string()
+    Key(p, k) => p.to_string() + "." + k
+    Index(p, i) => p.to_string() + "[" + i.to_string() + "]"
+  }
+}
+
+pub fn output(self : JsonPath, logger : Logger) -> Unit {
+  logger.write_string(self.to_string())
+}
+
+test "show JsonPath" {
+  let path = Key(Index(Root, 0), "foo")
+  inspect!(path, content="$[0].foo")
+}
+
+pub type! JsonParseError String derive(Eq, Show)
 
 /// Trait for types that can be converted from `Json`
 pub trait FromJson {
-  from_json(Json) -> Self!JsonTypeError
+  from_json(Json, JsonPath) -> Self!JsonParseError
 }
 
 pub fn Bool::to_json(self : Bool) -> Json {
@@ -106,76 +129,78 @@ pub fn Map::to_json[V : ToJson](self : Map[String, V]) -> Json {
   Object(object)
 }
 
-pub impl FromJson for Bool with from_json(json) {
+pub impl FromJson for Bool with from_json(json, path) {
   match json {
     True => true
     False => false
-    _ => raise JsonTypeError("Bool::from_json: expected boolean")
+    _ => raise JsonParseError("Bool::from_json: expected boolean at \{path} ")
   }
 }
 
-pub impl FromJson for Int with from_json(json) {
+pub impl FromJson for Int with from_json(json, path) {
   match json {
     Number(n) => n.to_int()
-    _ => raise JsonTypeError("Int::from_json: expected number")
+    _ => raise JsonParseError("Int::from_json: expected number at \{path} ")
   }
 }
 
-pub impl FromJson for Int64 with from_json(json) {
+pub impl FromJson for Int64 with from_json(json, path) {
   match json {
     Number(n) => n.to_int64()
-    _ => raise JsonTypeError("Int64::from_json: expected number")
+    _ => raise JsonParseError("Int64::from_json: expected number at \{path} ")
   }
 }
 
-pub impl FromJson for Double with from_json(json) {
+pub impl FromJson for Double with from_json(json, path) {
   match json {
     Number(n) => n
-    _ => raise JsonTypeError("Double::from_json: expected number")
+    _ => raise JsonParseError("Double::from_json: expected number at \{path}")
   }
 }
 
-pub impl FromJson for String with from_json(json) {
+pub impl FromJson for String with from_json(json, path) {
   match json {
     String(a) => a
-    _ => raise JsonTypeError("String::from_json: expected string")
+    _ => raise JsonParseError("String::from_json: expected string at \{path}")
   }
 }
 
-pub impl FromJson for Char with from_json(json) {
+pub impl FromJson for Char with from_json(json, path) {
   match json {
     String(a) =>
       if a.length() != 1 {
-        raise JsonTypeError("Char::from_json: expected single character")
+        raise JsonParseError(
+          "Char::from_json: expected single character at \{path}",
+        )
       } else {
         a[0]
       }
-    _ => raise JsonTypeError("Char::from_json: expected string")
+    _ => raise JsonParseError("Char::from_json: expected string at \{path}")
   }
 }
 
-pub impl[X : FromJson] FromJson for Array[X] with from_json(json) {
+pub impl[X : FromJson] FromJson for Array[X] with from_json(json, path) {
   match json {
     Array(a) => {
       let res : Array[X] = Array::new(capacity=a.length())
       for i = 0; i < a.length(); i = i + 1 {
-        res.push(FromJson::from_json!(a[i]))
+        res.push(FromJson::from_json!(a[i], Index(path, i)))
       }
       res
     }
-    _ => raise JsonTypeError("Array::from_json: expected array")
+    _ => raise JsonParseError("Array::from_json: expected array at \{path}")
   }
 }
 
-pub impl[V : FromJson] FromJson for Map[String, V] with from_json(json) {
+pub impl[V : FromJson] FromJson for Map[String, V] with from_json(json, path) {
   match json {
     Object(obj) => {
       let res : Map[String, V] = Map::new()
       for kv in obj.iter() {
-        res[kv.0] = FromJson::from_json!(kv.1)
+        res[kv.0] = FromJson::from_json!(kv.1, Key(path, kv.0))
       }
       res
     }
-    _ => raise JsonTypeError("Map::from_json: expected object")
+    _ => raise JsonParseError("Map::from_json: expected object at \{path}")
   }
 }

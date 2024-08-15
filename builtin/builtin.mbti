@@ -250,9 +250,19 @@ impl Json {
   op_equal(Self, Self) -> Bool
 }
 
-pub type! JsonTypeError String
-impl JsonTypeError {
+pub type! JsonParseError String
+impl JsonParseError {
   op_equal(Self, Self) -> Bool
+  to_string(Self) -> String
+}
+
+pub enum JsonPath {
+  Root
+  Key(JsonPath, String)
+  Index(JsonPath, Int)
+}
+impl JsonPath {
+  output(Self, Logger) -> Unit
   to_string(Self) -> String
 }
 
@@ -606,7 +616,7 @@ pub trait Eq {
 }
 
 pub trait FromJson {
-  from_json(Json) -> Self!JsonTypeError
+  from_json(Json, JsonPath) -> Self!JsonParseError
 }
 
 pub trait Hash {
@@ -722,7 +732,7 @@ impl Show for Buffer
 
 impl Show for Iter
 
-impl Show for JsonTypeError
+impl Show for JsonParseError
 
 impl Show for Map
 
