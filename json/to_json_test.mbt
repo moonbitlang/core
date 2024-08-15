@@ -42,6 +42,30 @@ test "String::to_json" {
       #|String("a,\"b\",c")
     ,
   )
+  inspect!(
+    "\"".to_json(),
+    content=
+      #|String("\"")
+    ,
+  )
+  inspect!(
+    "\x00".to_json(),
+    content=
+      #|String("\\u0000")
+    ,
+  )
+  inspect!(
+    "\n".to_json(),
+    content=
+      #|String("\\n")
+    ,
+  )
+  inspect!(
+    "\\".to_json(),
+    content=
+      #|String("\\")
+    ,
+  )
 }
 
 test "Char::to_json" {
