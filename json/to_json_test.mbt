@@ -55,15 +55,15 @@ test "String::to_json" {
     ,
   )
   inspect!(
-    "\n".to_json(),
+    "\n\r\b\t\\".to_json(),
     content=
-      #|String("\\n")
+      #|String("\\n\\r\\b\\t\\")
     ,
   )
   inspect!(
-    "\\".to_json(),
+    "\x0c".to_json(),
     content=
-      #|String("\\")
+      #|String("\\f")
     ,
   )
 }
