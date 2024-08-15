@@ -1,6 +1,6 @@
 package moonbitlang/core/tuple
 
-alias @moonbitlang/core/arbitrary as @arbitrary
+alias @moonbitlang/core/quickcheck as @quickcheck
 
 // Values
 fn curry[T, U, V]((T, U) -> V) -> (T) -> (U) -> V
@@ -28,15 +28,15 @@ fn uncurry[T, U, V]((T) -> (U) -> V) -> (T, U) -> V
 // Traits
 
 // Extension Methods
-impl @arbitrary.Arbitrary for Tuple
+impl @quickcheck.Arbitrary for Tuple
 
-impl @arbitrary.Arbitrary for Tuple
+impl @quickcheck.Arbitrary for Tuple
 
-impl @arbitrary.Arbitrary for Tuple
+impl @quickcheck.Arbitrary for Tuple
 
-impl @arbitrary.Arbitrary for Tuple
+impl @quickcheck.Arbitrary for Tuple
 
-impl @arbitrary.Arbitrary for Tuple
+impl @quickcheck.Arbitrary for Tuple
 
-impl @arbitrary.Arbitrary for Tuple
+impl @quickcheck.Arbitrary for Tuple
 

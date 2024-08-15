@@ -2,7 +2,7 @@
   "import": [
     "moonbitlang/core/builtin",
     "moonbitlang/core/coverage",
-    "moonbitlang/core/arbitrary",
+    "moonbitlang/core/quickcheck",
     "moonbitlang/core/random/splitmix"
   ],
   "test-import": [

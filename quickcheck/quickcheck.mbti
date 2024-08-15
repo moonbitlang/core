@@ -1,0 +1,30 @@
+package moonbitlang/core/quickcheck
+
+alias @moonbitlang/core/random/splitmix as @splitmix
+
+// Values
+
+// Types and methods
+
+// Type aliases
+
+// Traits
+pub trait Arbitrary {
+  arbitrary(Int, @splitmix.RandomState) -> Self
+}
+
+// Extension Methods
+impl Arbitrary for Unit
+
+impl Arbitrary for Bool
+
+impl Arbitrary for Int
+
+impl Arbitrary for Int64
+
+impl Arbitrary for UInt
+
+impl Arbitrary for UInt64
+
+impl Arbitrary for Double
+

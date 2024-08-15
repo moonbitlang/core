@@ -20,11 +20,11 @@ pub trait Arbitrary {
   arbitrary(Int, @splitmix.RandomState) -> Self
 }
 
-impl Arbitrary for Unit with arbitrary(_i, _rs) { () }
+pub impl Arbitrary for Unit with arbitrary(_i, _rs) { () }
 
-impl Arbitrary for Bool with arbitrary(_i, rs) { rs.next_double() < 0.5 }
+pub impl Arbitrary for Bool with arbitrary(_i, rs) { rs.next_double() < 0.5 }
 
-impl Arbitrary for UInt with arbitrary(size, rs) {
+pub impl Arbitrary for UInt with arbitrary(size, rs) {
   if size == 0 {
     0
   } else {
@@ -32,7 +32,7 @@ impl Arbitrary for UInt with arbitrary(size, rs) {
   }
 }
 
-impl Arbitrary for Int with arbitrary(size, rs) {
+pub impl Arbitrary for Int with arbitrary(size, rs) {
   if size == 0 {
     0
   } else {
@@ -40,7 +40,7 @@ impl Arbitrary for Int with arbitrary(size, rs) {
   }
 }
 
-impl Arbitrary for Int64 with arbitrary(size, rs) {
+pub impl Arbitrary for Int64 with arbitrary(size, rs) {
   if size == 0 {
     0
   } else {
@@ -48,9 +48,9 @@ impl Arbitrary for Int64 with arbitrary(size, rs) {
   }
 }
 
-impl Arbitrary for Double with arbitrary(_i, rs) { rs.next_double() }
+pub impl Arbitrary for Double with arbitrary(_i, rs) { rs.next_double() }
 
-impl Arbitrary for UInt64 with arbitrary(size, rs) {
+pub impl Arbitrary for UInt64 with arbitrary(size, rs) {
   if size == 0 {
     0
   } else {
