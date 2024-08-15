@@ -131,8 +131,7 @@ fn escape(str : String) -> String {
   }
 
   let buf = Buffer::new(size_hint=str.length())
-  for i = 0; i < str.length(); i = i + 1 {
-    let c = str[i]
+  for c in str {
     match c {
       '"' | '\\' | '/' => buf.write_string("\\\{c}")
       '\n' => buf.write_string("\\n")
