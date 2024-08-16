@@ -113,13 +113,14 @@ pub fn writeln(self : T, obj : Show) -> Unit {
 
 pub fn snapshot(
   self : T,
+  ~filename : String,
   ~loc : SourceLoc = _,
   ~args_loc : ArgsLoc = _
 ) -> Unit {
   let loc = loc.to_string().escape()
   let args_loc = args_loc.to_json().escape()
   let actual = self.buffer.to_string().escape()
-  let expect = self.name.escape()
+  let expect = filename.escape()
   println("----- BEGIN MOONBIT SNAPSHOT TESTING -----")
   println(
     "@SNAPSHOT_TESTING {\"loc\": \{loc}, \"args_loc\": \{args_loc}, \"expect\": \{expect}, \"actual\": \{actual}, \"snapshot\": true}",
