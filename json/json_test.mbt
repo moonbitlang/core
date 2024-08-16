@@ -295,11 +295,14 @@ test "stringify escape" {
     "\n": "\n\r\t\x0C",
     "\\": "/",
     "\x1F": "\x01",
+    "actual": "\x00",
+    "escpae": "\x00",
+    "actual": "a,\"b\",c",
   }
   inspect!(
     json.stringify(),
     content=
-      #|{"\b":"\"hello\"","\n":"\n\r\t\f","\\":"\/","\u001f":"\u0001"}
+      #|{"\b":"\"hello\"","\n":"\n\r\t\f","\\":"\/","\u001f":"\u0001","actual":"a,\"b\",c","escpae":"\u0000"}
     ,
   )
   match @json.parse?(json.stringify()) {

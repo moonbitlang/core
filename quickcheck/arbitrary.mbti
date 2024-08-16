@@ -1,0 +1,17 @@
+package moonbitlang/core/arbitrary
+
+alias @moonbitlang/core/random/splitmix as @splitmix
+
+// Values
+
+// Types and methods
+
+// Type aliases
+
+// Traits
+pub trait Arbitrary {
+  arbitrary(Int, @splitmix.RandomState) -> Self
+}
+
+// Extension Methods
+

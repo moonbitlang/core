@@ -1,0 +1,7 @@
+{
+  "import": [
+    "moonbitlang/core/random/splitmix",
+    "moonbitlang/core/builtin",
+    "moonbitlang/core/coverage"
+  ]
+}

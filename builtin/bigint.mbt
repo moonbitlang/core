@@ -194,7 +194,8 @@ pub fn op_sub(self : BigInt, other : BigInt) -> BigInt {
     }
     i += 1
   }
-  if limbs[i - 1] == 0 {
+  // Ensure the result has at least one limb with a value of zero if the result is zero
+  while i > 1 && limbs[i - 1] == 0 {
     i -= 1
   }
   { limbs, sign: Positive, len: i }
