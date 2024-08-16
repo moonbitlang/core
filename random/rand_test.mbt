@@ -13,7 +13,7 @@
 // limitations under the License.
 
 test "prng" {
-  let r = @rand.Rand::new()
+  let r = @random.new()
   assert_eq!(r.uintN(10), 7)
   assert_eq!(r.uintN(10), 0)
   assert_eq!(r.uintN(10), 5)
