@@ -45,6 +45,10 @@ test "add" {
     a + b,
     content="999999999999999999999999999999999999999999999999999999999999999999999999",
   )
+  inspect!(-1N + 1N, content="0")
+  inspect!(1N + -1N, content="0")
+  inspect!(-11N + 11N, content="0")
+  inspect!(11N + -11N, content="0")
 }
 
 test "sub" {
