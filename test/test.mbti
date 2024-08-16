@@ -21,7 +21,7 @@ pub struct T {
   pub buffer : Buffer
 }
 impl T {
-  snapshot(Self, ~loc : SourceLoc = _, ~args_loc : ArgsLoc = _) -> Unit
+  snapshot(Self, ~filename : String, ~loc : SourceLoc = _, ~args_loc : ArgsLoc = _) -> Unit
   write(Self, Show) -> Unit
   writeln(Self, Show) -> Unit
 }
