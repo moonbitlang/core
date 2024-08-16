@@ -671,15 +671,33 @@ pub fn last[A](self : Iter[A]) -> A? {
 }
 
 /// Returns the first element of the iterator, or `None` if the iterator is empty.
+/// 
+/// # Type Parameters
+/// 
+/// - `A` : The type of the elements in the iterator.
+/// 
+/// # Parameters
+/// 
+/// - `self` : The iterator to retrieve the first element from.
+/// 
+/// # Returns
+/// 
+/// - An `Option` containing the first element of the iterator if it exists, otherwise `None`.
+/// 
+/// # Examples
+/// 
+/// ```moonbit
+/// test {
+///   let iter = Iter::singleton(42)
+///   inspect!(head(iter), content="Some(42)")
+/// }
+/// ```
 pub fn head[A](self : Iter[A]) -> A? {
-  fn f(a : A?, b : A) {
-    match a {
-      Some(_) => a
-      None => Some(b)
-    }
+  for i in self {
+    break Some(i)
+  } else {
+    None
   }
-
-  self.fold(init=None, f)
 }
 
 /// Inserts a separator element `sep` between each element of the iterator.
