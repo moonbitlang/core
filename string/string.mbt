@@ -441,3 +441,14 @@ pub fn to_upper(self : String) -> String {
   }
   buf.to_string()
 }
+
+/// Reverse string
+pub fn reverse(self : String) -> String {
+  // TODO: deal with non-ascii characters
+  let mut result : String = ""
+  let len = self.length()
+  for i = len - 1; i >= 0; i = i - 1 {
+    result = result + self[i].to_string()
+  }
+  result
+}

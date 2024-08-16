@@ -348,6 +348,12 @@ test "replace_all" {
   )
 }
 
+test "reverse" {
+  inspect!("hello".reverse(), content="olleh")
+  inspect!("Nothing".reverse(), content="gnihtoN")
+  inspect!("< >".reverse(), content="> <")
+}
+
 test "to_lower" {
   inspect!("ABCXYZ".to_lower(), content="abcxyz")
   inspect!("aBcXyZ".to_lower(), content="abcxyz")
