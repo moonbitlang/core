@@ -74,11 +74,7 @@ test "bytesToUInt64" {
 }
 
 /// [seed] must be 32 bytes long.
-/// @alert unsafe "Panic if seed is not 32 bytes long"
 fn State::init(self : State, seed : Bytes) -> Unit {
-  if seed.length() != 32 {
-    abort("seed must be 32 bytes long")
-  }
   let seed0 = Bytes::new(8)
   let seed1 = Bytes::new(8)
   let seed2 = Bytes::new(8)
