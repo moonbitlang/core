@@ -1,0 +1,28 @@
+package moonbitlang/x/rand
+
+// Values
+
+// Types and methods
+type ChaCha8
+
+type Rand
+impl Rand {
+  double64(Self) -> Double
+  int(Self) -> Int
+  int64(Self) -> Int64
+  int64N(Self, Int64) -> Int64
+  intN(Self, Int) -> Int
+  new(~seed : Bytes = ..) -> Self
+  shuffle(Self, Int, (Int, Int) -> Unit) -> Unit
+  uint(Self) -> UInt
+  uint64(Self) -> UInt64
+  uint64N(Self, UInt64) -> UInt64
+  uintN(Self, UInt) -> UInt
+}
+
+// Type aliases
+
+// Traits
+
+// Extension Methods
+
