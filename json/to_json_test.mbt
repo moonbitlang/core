@@ -33,37 +33,37 @@ test "String::to_json" {
   inspect!(
     "abc".to_json(),
     content=
-      #|String("abc")
+      #|String("\"abc\"")
     ,
   )
   inspect!(
     "a,\"b\",c".to_json(),
     content=
-      #|String("a,\"b\",c")
+      #|String("\"a,\\\"b\\\",c\"")
     ,
   )
   inspect!(
     "\"".to_json(),
     content=
-      #|String("\"")
+      #|String("\"\\\"\"")
     ,
   )
   inspect!(
     "\x00".to_json(),
     content=
-      #|String("\\u0000")
+      #|String("\"\\x00\"")
     ,
   )
   inspect!(
     "\n\r\b\t\\".to_json(),
     content=
-      #|String("\\n\\r\\b\\t\\")
+      #|String("\"\\n\\r\\b\\t\\\\\"")
     ,
   )
   inspect!(
     "\x0c".to_json(),
     content=
-      #|String("\\f")
+      #|String("\"\\x0c\"")
     ,
   )
 }
@@ -91,7 +91,7 @@ test "Array::to_json" {
   inspect!(
     [[], ["1"], ["1", "2"]].to_json(),
     content=
-      #|Array([Array([]), Array([String("1")]), Array([String("1"), String("2")])])
+      #|Array([Array([]), Array([String("\"1\"")]), Array([String("\"1\""), String("\"2\"")])])
     ,
   )
 }
