@@ -1,14 +1,15 @@
 package moonbitlang/core/int
 
 // Values
+let max : Int
+
+let min : Int
 
 // Types and methods
 impl Int {
   abs(Int) -> Int
-  from_int(Int) -> Int
   max_value() -> Int
   min_value() -> Int
-  signum(Int) -> Int
 }
 
 // Type aliases
