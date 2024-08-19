@@ -60,10 +60,12 @@ impl Array {
   filter[T](Self[T], (T) -> Bool) -> Self[T]
   find_index[T](Self[T], (T) -> Bool) -> Int?
   flatten[T](Self[Self[T]]) -> Self[T]
+  fold[A, B](Self[A], ~init : B, (B, A) -> B) -> B
   fold_left[T, U](Self[T], (U, T) -> U, ~init : U) -> U
   fold_lefti[T, U](Self[T], (Int, U, T) -> U, ~init : U) -> U
   fold_right[T, U](Self[T], (U, T) -> U, ~init : U) -> U
   fold_righti[T, U](Self[T], (Int, U, T) -> U, ~init : U) -> U
+  foldi[A, B](Self[A], ~init : B, (Int, B, A) -> B) -> B
   from_fixed_array[T](FixedArray[T]) -> Self[T]
   get[T](Self[T], Int) -> T?
   insert[T](Self[T], Int, T) -> Unit
@@ -92,6 +94,8 @@ impl Array {
   rev[T](Self[T]) -> Self[T]
   rev_each[T](Self[T], (T) -> Unit) -> Unit
   rev_eachi[T](Self[T], (Int, T) -> Unit) -> Unit
+  rev_fold[A, B](Self[A], ~init : B, (B, A) -> B) -> B
+  rev_foldi[A, B](Self[A], ~init : B, (Int, B, A) -> B) -> B
   rev_inplace[T](Self[T]) -> Unit
   search[T : Eq](Self[T], T) -> Int?
   shrink_to_fit[T](Self[T]) -> Unit

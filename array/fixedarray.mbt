@@ -343,10 +343,10 @@ test "from_array" {
 ///
 /// # Example
 /// ```
-/// let sum = [1, 2, 3, 4, 5].fold_left(init=0, fn { sum, elem => sum + elem })
+/// let sum = [1, 2, 3, 4, 5].fold(init=0, fn { sum, elem => sum + elem })
 /// sum // 15
 /// ```
-pub fn fold_left[T, U](self : FixedArray[T], f : (U, T) -> U, ~init : U) -> U {
+pub fn fold[A, B](self : FixedArray[A], ~init : B, f : (B, A) -> B) -> B {
   for i = 0, acc = init; i < self.length(); {
     continue i + 1, f(acc, self[i])
   } else {
@@ -354,18 +354,30 @@ pub fn fold_left[T, U](self : FixedArray[T], f : (U, T) -> U, ~init : U) -> U {
   }
 }
 
-test "fold_left" {
-  let sum = ([] : FixedArray[_]).fold_left(
+/// Fold out values from an array according to certain rules.
+///
+/// # Example
+/// ```
+/// let sum = [1, 2, 3, 4, 5].fold_left(init=0, fn { sum, elem => sum + elem })
+/// sum // 15
+/// ```
+/// @alert deprecated "Use `fold` instead"
+pub fn fold_left[T, U](self : FixedArray[T], f : (U, T) -> U, ~init : U) -> U {
+  self.fold(~init,f)
+}
+
+test "fold" {
+  let sum = ([] : FixedArray[_]).fold(
     init=1,
     fn { sum, elem => sum + elem },
   )
   assert_eq!(sum, 1)
-  let sum = ([1] : FixedArray[_]).fold_left(
+  let sum = ([1] : FixedArray[_]).fold(
     init=2,
     fn { sum, elem => sum + elem },
   )
   assert_eq!(sum, 3)
-  let sum = ([1, 2, 3, 4, 5] : FixedArray[_]).fold_left(
+  let sum = ([1, 2, 3, 4, 5] : FixedArray[_]).fold(
     init=0,
     fn { sum, elem => sum + elem },
   )
@@ -376,10 +388,10 @@ test "fold_left" {
 ///
 /// # Example
 /// ```
-/// let sum = [1, 2, 3, 4, 5].fold_right(init=0, fn { sum, elem => sum + elem })
+/// let sum = [1, 2, 3, 4, 5].fold_rev(init=0, fn { sum, elem => sum + elem })
 /// sum // 15
 /// ```
-pub fn fold_right[T, U](self : FixedArray[T], f : (U, T) -> U, ~init : U) -> U {
+pub fn rev_fold[A, B](self : FixedArray[A], ~init : B, f : (B, A) -> B) -> B {
   for i = self.length() - 1, acc = init; i >= 0; {
     continue i - 1, f(acc, self[i])
   } else {
@@ -387,18 +399,30 @@ pub fn fold_right[T, U](self : FixedArray[T], f : (U, T) -> U, ~init : U) -> U {
   }
 }
 
-test "fold_right" {
-  let sum = ([] : FixedArray[_]).fold_right(
+/// Fold out values from an array according to certain rules in reversed turn.
+///
+/// # Example
+/// ```
+/// let sum = [1, 2, 3, 4, 5].fold_right(init=0, fn { sum, elem => sum + elem })
+/// sum // 15
+/// ```
+/// @alert deprecated "Use `rev_fold` instead"
+pub fn fold_right[T, U](self : FixedArray[T], f : (U, T) -> U, ~init : U) -> U {
+  self.rev_fold(~init, f)
+}
+
+test "rev_fold" {
+  let sum = ([] : FixedArray[_]).rev_fold(
     init=1,
     fn { sum, elem => sum + elem },
   )
   assert_eq!(sum, 1)
-  let sum = ([1] : FixedArray[_]).fold_right(
+  let sum = ([1] : FixedArray[_]).rev_fold(
     init=2,
     fn { sum, elem => sum + elem },
   )
   assert_eq!(sum, 3)
-  let sum = ([1, 2, 3, 4, 5] : FixedArray[_]).fold_right(
+  let sum = ([1, 2, 3, 4, 5] : FixedArray[_]).rev_fold(
     init=0,
     fn { sum, elem => sum + elem },
   )
@@ -409,14 +433,14 @@ test "fold_right" {
 ///
 /// # Example
 /// ```
-/// let sum = [1, 2, 3, 4, 5].fold_lefti(init=0, fn { index, sum, elem => sum + index })
+/// let sum = [1, 2, 3, 4, 5].foldi(init=0, fn { index, sum, elem => sum + index })
 /// sum // 10
 /// ```
-pub fn fold_lefti[T, U](
-  self : FixedArray[T],
-  f : (Int, U, T) -> U,
-  ~init : U
-) -> U {
+pub fn foldi[A, B](
+  self : FixedArray[A],
+  ~init : B,
+  f : (Int, B, A) -> B
+) -> B {
   for i = 0, acc = init; i < self.length(); {
     continue i + 1, f(i, acc, self[i])
   } else {
@@ -424,18 +448,54 @@ pub fn fold_lefti[T, U](
   }
 }
 
+/// Fold out values from an array according to certain rules with index.
+///
+/// # Example
+/// ```
+/// let sum = [1, 2, 3, 4, 5].fold_lefti(init=0, fn { index, sum, elem => sum + index })
+/// sum // 10
+/// ```
+/// @alert deprecated "Use `foldi` instead"
+pub fn fold_lefti[T, U](
+  self : FixedArray[T],
+  f : (Int, U, T) -> U,
+  ~init : U
+) -> U {
+  self.foldi(~init, f)
+}
+
 test "fold_lefti" {
   let f = fn { index, sum, elem => index + sum + elem }
   {
-    let sum = ([] : FixedArray[_]).fold_lefti(init=1, f)
+    let sum = ([] : FixedArray[_]).foldi(init=1, f)
     assert_eq!(sum, 1)
   }
   {
-    let sum = ([1] : FixedArray[_]).fold_lefti(init=2, f)
+    let sum = ([1] : FixedArray[_]).foldi(init=2, f)
     assert_eq!(sum, 3)
   }
-  let sum = ([1, 2, 3, 4, 5] : FixedArray[_]).fold_lefti(init=0, f)
+  let sum = ([1, 2, 3, 4, 5] : FixedArray[_]).foldi(init=0, f)
   assert_eq!(sum, 25)
+}
+
+/// Fold out values from an array according to certain rules in reversed turn with index.
+///
+/// # Example
+/// ```
+/// let sum = [1, 2, 3, 4, 5].rev_foldi(init=0, fn { index, sum, elem => sum + index })
+/// sum // 10
+/// ```
+pub fn rev_foldi[A, B](
+  self : FixedArray[A],
+  ~init : B,
+  f : (Int, B, A) -> B
+) -> B {
+  let len = self.length()
+  for i = len - 1, acc = init; i >= 0; {
+    continue i - 1, f(len - i - 1, acc, self[i])
+  } else {
+    acc
+  }
 }
 
 /// Fold out values from an array according to certain rules in reversed turn with index.
@@ -445,6 +505,7 @@ test "fold_lefti" {
 /// let sum = [1, 2, 3, 4, 5].fold_righti(init=0, fn { index, sum, elem => sum + index })
 /// sum // 10
 /// ```
+/// @alert deprecated "Use `rev_foldi` instead"
 pub fn fold_righti[T, U](
   self : FixedArray[T],
   f : (Int, U, T) -> U,
@@ -458,17 +519,17 @@ pub fn fold_righti[T, U](
   }
 }
 
-test "fold_righti" {
+test "rev_foldi" {
   let f = fn { index, sum, elem => index + sum + elem }
   {
-    let sum = ([] : FixedArray[_]).fold_lefti(init=1, f)
+    let sum = ([] : FixedArray[_]).rev_foldi(init=1, f)
     assert_eq!(sum, 1)
   }
   {
-    let sum = ([1] : FixedArray[_]).fold_lefti(init=2, f)
+    let sum = ([1] : FixedArray[_]).rev_foldi(init=2, f)
     assert_eq!(sum, 3)
   }
-  let sum = ([1, 2, 3, 4, 5] : FixedArray[_]).fold_righti(init=0, f)
+  let sum = ([1, 2, 3, 4, 5] : FixedArray[_]).rev_foldi(init=0, f)
   assert_eq!(sum, 25)
 }
 

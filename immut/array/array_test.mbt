@@ -163,19 +163,19 @@ test "op_equal" {
   inspect!(v5 == v6, content="true")
 }
 
-test "fold_left" {
+test "fold" {
   let e = @array.new()
   let v = @array.of([1, 2, 3, 4, 5])
-  inspect!(e.fold_left(fn(a, b) { a + b }, init=0), content="0")
-  inspect!(v.fold_left(fn(a, b) { a + b }, init=0), content="15")
+  inspect!(e.fold(fn(a, b) { a + b }, init=0), content="0")
+  inspect!(v.fold(fn(a, b) { a + b }, init=0), content="15")
 }
 
-test "fold_right" {
+test "rev_fold" {
   let e = @array.new()
-  inspect!(e.fold_right(fn(a, b) { a + b }, init=0), content="0")
+  inspect!(e.rev_fold(fn(a, b) { a + b }, init=0), content="0")
   let v = @array.of([1, 2, 3, 4, 5])
-  inspect!(e.fold_left(fn(a, b) { a + b }, init=0), content="0")
-  inspect!(v.fold_right(fn(a, b) { a + b }, init=0), content="15")
+  inspect!(e.fold(fn(a, b) { a + b }, init=0), content="0")
+  inspect!(v.rev_fold(fn(a, b) { a + b }, init=0), content="15")
 }
 
 test "map" {

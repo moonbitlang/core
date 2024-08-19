@@ -8,6 +8,7 @@ impl T {
   copy[A](Self[A]) -> Self[A]
   each[A](Self[A], (A) -> Unit) -> Unit
   eachi[A](Self[A], (Int, A) -> Unit) -> Unit
+  fold[A, B](Self[A], ~init : B, (B, A) -> B) -> B
   fold_left[A](Self[A], (A, A) -> A, ~init : A) -> A
   fold_right[A](Self[A], (A, A) -> A, ~init : A) -> A
   from_array[A](Array[A]) -> Self[A]
@@ -23,6 +24,7 @@ impl T {
   op_equal[A : Eq](Self[A], Self[A]) -> Bool
   op_get[A](Self[A], Int) -> A
   push[A](Self[A], A) -> Self[A]
+  rev_fold[A, B](Self[A], ~init : B, (B, A) -> B) -> B
   set[A](Self[A], Int, A) -> Self[A]
   to_array[A](Self[A]) -> Array[A]
   to_string[A : Show](Self[A]) -> String

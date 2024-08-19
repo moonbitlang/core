@@ -143,32 +143,32 @@ test "rev" {
   inspect!(ls.rev().rev(), content="@list.of([1, 2, 3, 4, 5])")
 }
 
-test "fold_left" {
+test "fold" {
   let ls = @list.of([1, 2, 3, 4, 5])
   let el : @list.T[Int] = @list.Nil
-  inspect!(el.fold_left(fn(acc, x) { acc + x }, init=0), content="0")
-  inspect!(ls.fold_left(fn(acc, x) { acc + x }, init=0), content="15")
+  inspect!(el.fold(fn(acc, x) { acc + x }, init=0), content="0")
+  inspect!(ls.fold(fn(acc, x) { acc + x }, init=0), content="15")
 }
 
-test "fold_right" {
+test "rev_fold" {
   let ls = @list.of(["1", "2", "3", "4", "5"])
   let el : @list.T[String] = @list.Nil
-  inspect!(ls.fold_right(fn(x, acc) { x + acc }, init=""), content="12345")
-  inspect!(el.fold_right(fn(x, acc) { x + acc }, init="init"), content="init")
+  inspect!(ls.rev_fold(fn(x, acc) { x + acc }, init=""), content="12345")
+  inspect!(el.rev_fold(fn(x, acc) { x + acc }, init="init"), content="init")
 }
 
-test "fold_lefti" {
+test "foldi" {
   let ls = @list.of([1, 2, 3, 4, 5])
   let el : @list.T[Int] = @list.Nil
-  inspect!(ls.fold_lefti(fn(i, acc, x) { acc + i * x }, init=0), content="40")
-  inspect!(el.fold_lefti(fn(i, acc, x) { acc + i * x }, init=0), content="0")
+  inspect!(ls.foldi(fn(i, acc, x) { acc + i * x }, init=0), content="40")
+  inspect!(el.foldi(fn(i, acc, x) { acc + i * x }, init=0), content="0")
 }
 
-test "fold_righti" {
+test "rev_foldi" {
   let ls = @list.of([1, 2, 3, 4, 5])
   let el : @list.T[Int] = @list.Nil
-  inspect!(ls.fold_righti(fn(i, x, acc) { x * i + acc }, init=0), content="40")
-  inspect!(el.fold_righti(fn(i, x, acc) { x * i + acc }, init=0), content="0")
+  inspect!(ls.rev_foldi(fn(i, x, acc) { x * i + acc }, init=0), content="40")
+  inspect!(el.rev_foldi(fn(i, x, acc) { x * i + acc }, init=0), content="0")
 }
 
 test "zip" {

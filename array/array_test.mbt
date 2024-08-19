@@ -360,26 +360,26 @@ test "join" {
   assert_eq!(s, "3, 4, 5")
 }
 
-test "fold_left" {
-  let sum = [1, 2, 3, 4, 5].fold_left(init=0, fn { sum, elem => sum + elem })
+test "fold" {
+  let sum = [1, 2, 3, 4, 5].fold(init=0, fn { sum, elem => sum + elem })
   assert_eq!(sum, 15)
 }
 
-test "fold_right" {
-  let sum = [1, 2, 3, 4, 5].fold_right(init=0, fn { sum, elem => sum + elem })
+test "rev_fold" {
+  let sum = [1, 2, 3, 4, 5].rev_fold(init=0, fn { sum, elem => sum + elem })
   assert_eq!(sum, 15)
 }
 
-test "fold_lefti" {
-  let sum = [1, 2, 3, 4, 5].fold_lefti(
+test "foldi" {
+  let sum = [1, 2, 3, 4, 5].foldi(
     init=0,
     fn { index, sum, _elem => sum + index },
   )
   assert_eq!(sum, 10)
 }
 
-test "fold_righti" {
-  let sum = [1, 2, 3, 4, 5].fold_righti(
+test "rev_foldi" {
+  let sum = [1, 2, 3, 4, 5].rev_foldi(
     init=0,
     fn { index, sum, _elem => sum + index },
   )

@@ -287,14 +287,40 @@ pub fn rev[A](self : T[A]) -> T[A] {
 /// # Example
 ///
 /// ```
+/// let r = of([1, 2, 3, 4, 5]).fold(~init=0, fn(acc, x) { acc + x })
+/// println(r) // output: 15
+/// ```
+pub fn fold[A, B](self : T[A], ~init : B, f : (B, A) -> B) -> B {
+  match self {
+    Nil => init
+    Cons(head, tail) => tail.fold(f, init=f(init, head))
+  }
+}
+
+/// Fold the list from right.
+///
+/// # Example
+/// ```
+/// let r = of([1, 2, 3, 4, 5]).rev_fold(fn(x, acc) { x + acc }, ~init=0)
+/// ```
+pub fn rev_fold[A, B](self : T[A], ~init : B, f : (A, B) -> B) -> B {
+  match self {
+    Nil => init
+    Cons(head, tail) => f(head, tail.rev_fold(f, ~init))
+  }
+}
+
+/// Fold the list from left.
+///
+/// # Example
+///
+/// ```
 /// let r = of([1, 2, 3, 4, 5]).fold_left(~init=0, fn(acc, x) { acc + x })
 /// println(r) // output: 15
 /// ```
+/// @alert deprecated "Use `fold` instead"
 pub fn fold_left[A, B](self : T[A], f : (B, A) -> B, ~init : B) -> B {
-  match self {
-    Nil => init
-    Cons(head, tail) => tail.fold_left(f, init=f(init, head))
-  }
+  self.fold(~init, f)
 }
 
 /// Fold the list from right.
@@ -303,14 +329,40 @@ pub fn fold_left[A, B](self : T[A], f : (B, A) -> B, ~init : B) -> B {
 /// ```
 /// let r = of([1, 2, 3, 4, 5]).fold_right(fn(x, acc) { x + acc }, ~init=0)
 /// ```
+/// @alert deprecated "Use `rev_fold` instead"
 pub fn fold_right[A, B](self : T[A], f : (A, B) -> B, ~init : B) -> B {
   match self {
     Nil => init
-    Cons(head, tail) => f(head, tail.fold_right(f, ~init))
+    Cons(head, tail) => f(head, tail.rev_fold(f, ~init))
   }
 }
 
 /// Fold the list from left with index.
+pub fn foldi[A, B](self : T[A], ~init : B, f : (Int, B, A) -> B) -> B {
+  fn go(xs : T[A], i : Int, f : (Int, B, A) -> B, acc : B) -> B {
+    match xs {
+      Nil => acc
+      Cons(x, xs) => go(xs, i + 1, f, f(i, acc, x))
+    }
+  }
+
+  go(self, 0, f, init)
+}
+
+/// Fold the list from right with index.
+pub fn rev_foldi[A, B](self : T[A], ~init : B, f : (Int, A, B) -> B) -> B {
+  fn go(xs : T[A], i : Int, f : (Int, A, B) -> B, acc : B) -> B {
+    match xs {
+      Nil => acc
+      Cons(x, xs) => f(i, x, go(xs, i + 1, f, acc))
+    }
+  }
+
+  go(self, 0, f, init)
+}
+
+/// Fold the list from left with index.
+/// @alert deprecated "Use `foldi` instead"
 pub fn fold_lefti[A, B](self : T[A], f : (Int, B, A) -> B, ~init : B) -> B {
   fn go(xs : T[A], i : Int, f : (Int, B, A) -> B, acc : B) -> B {
     match xs {
@@ -323,6 +375,7 @@ pub fn fold_lefti[A, B](self : T[A], f : (Int, B, A) -> B, ~init : B) -> B {
 }
 
 /// Fold the list from right with index.
+/// @alert deprecated "Use `rev_foldi` instead"
 pub fn fold_righti[A, B](self : T[A], f : (Int, A, B) -> B, ~init : B) -> B {
   fn go(xs : T[A], i : Int, f : (Int, A, B) -> B, acc : B) -> B {
     match xs {

@@ -207,6 +207,44 @@ pub fn op_equal[A : Eq](self : T[A], other : T[A]) -> Bool {
   self.size == other.size && self.tree == other.tree
 }
 
+/// Fold the array.
+/// 
+/// # Example
+/// ```
+/// let v = @immut/array.of([1, 2, 3, 4, 5])
+/// v.fold(fn(a, b) { a + b }, init=0)
+/// ```
+pub fn fold[A,B](self : T[A], ~init : B, f : (B, A) -> B) -> B {
+  fn go(t : Tree[A], acc : B) -> B {
+    match t {
+      Empty => acc
+      Leaf(l) => l.fold(f, init=acc)
+      Node(n) => n.fold(fn(t, acc) { go(acc, t) }, init=acc)
+    }
+  }
+
+  go(self.tree, init)
+}
+
+/// Fold the array in reverse order.
+/// 
+/// # Example
+/// ```
+/// let v = @immut/array.of([1, 2, 3, 4, 5])
+/// v.rev_fold(fn(a, b) { a + b }, init=0)
+/// ```
+pub fn rev_fold[A,B](self : T[A], ~init : B, f : (B, A) -> B) -> B {
+  fn go(t : Tree[A], acc : B) -> B {
+    match t {
+      Empty => acc
+      Leaf(l) => l.rev_fold(f, init=acc)
+      Node(n) => n.rev_fold(fn(t, acc) { go(acc, t) }, init=acc)
+    }
+  }
+
+  go(self.tree, init)
+}
+
 /// Fold the array from left to right.
 /// 
 /// # Example
@@ -214,16 +252,9 @@ pub fn op_equal[A : Eq](self : T[A], other : T[A]) -> Bool {
 /// let v = @immut/array.of([1, 2, 3, 4, 5])
 /// v.fold_left(fn(a, b) { a + b }, init=0)
 /// ```
+/// @alert deprecated "Use `fold` instead"
 pub fn fold_left[A](self : T[A], f : (A, A) -> A, ~init : A) -> A {
-  fn go(t : Tree[A], acc : A) -> A {
-    match t {
-      Empty => acc
-      Leaf(l) => l.fold_left(f, init=acc)
-      Node(n) => n.fold_left(fn(t, acc) { go(acc, t) }, init=acc)
-    }
-  }
-
-  go(self.tree, init)
+  self.fold(~init, f)
 }
 
 /// Fold the array from right to left.
@@ -233,16 +264,9 @@ pub fn fold_left[A](self : T[A], f : (A, A) -> A, ~init : A) -> A {
 /// let v = @immut/array.of([1, 2, 3, 4, 5])
 /// v.fold_right(fn(a, b) { a + b }, init=0)
 /// ```
+/// @alert deprecated "Use `rev_fold` instead"
 pub fn fold_right[A](self : T[A], f : (A, A) -> A, ~init : A) -> A {
-  fn go(t : Tree[A], acc : A) -> A {
-    match t {
-      Empty => acc
-      Leaf(l) => l.fold_right(f, init=acc)
-      Node(n) => n.fold_right(fn(t, acc) { go(acc, t) }, init=acc)
-    }
-  }
-
-  go(self.tree, init)
+  self.rev_fold(~init, f)
 }
 
 /// Map a function over the array.
@@ -350,8 +374,8 @@ test "mix" {
   v2.each(fn(e) { ct = ct + e })
   inspect!(ct, content="14850")
   v2 = v2.map(fn(e) { e * 2 })
-  let ct1 = fold_left(v2, fn(a, b) { a + b }, init=0)
-  let ct2 = fold_right(v2, fn(a, b) { a + b }, init=0)
+  let ct1 = fold(v2, fn(a, b) { a + b }, init=0)
+  let ct2 = rev_fold(v2, fn(a, b) { a + b }, init=0)
   inspect!(ct1, content="19800")
   inspect!(ct2, content="19800")
   inspect!(v.tree.is_empty_tree(), content="false")
