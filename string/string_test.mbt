@@ -349,9 +349,9 @@ test "replace_all" {
 }
 
 test "reverse" {
-  inspect!("hello".reverse(), content="olleh")
-  inspect!("Nothing".reverse(), content="gnihtoN")
-  inspect!("< >".reverse(), content="> <")
+  inspect!("hello".rev(), content="olleh")
+  inspect!("Nothing".rev(), content="gnihtoN")
+  inspect!("< >".rev(), content="> <")
 }
 
 test "to_lower" {

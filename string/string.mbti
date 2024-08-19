@@ -16,7 +16,7 @@ impl String {
   last_index_of(String, String, ~from : Int = ..) -> Int
   replace(String, ~old : String, ~new : String) -> String
   replace_all(String, ~old : String, ~new : String) -> String
-  reverse(String) -> String
+  rev(String) -> String
   split(String, String) -> Iter[String]
   starts_with(String, String) -> Bool
   substring(String, ~start : Int = .., ~end : Int = ..) -> String

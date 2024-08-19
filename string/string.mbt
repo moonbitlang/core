@@ -443,7 +443,7 @@ pub fn to_upper(self : String) -> String {
 }
 
 /// Reverse string
-pub fn reverse(self : String) -> String {
+pub fn rev(self : String) -> String {
   // TODO: deal with non-ascii characters
   let mut result : String = ""
   let len = self.length()
