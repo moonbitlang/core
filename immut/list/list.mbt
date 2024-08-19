@@ -365,10 +365,7 @@ pub fn zip[A, B](self : T[A], other : T[B]) -> T[(A, B)] {
 /// ```
 /// @alert deprecated "Use `flat_map` instead"
 pub fn concat_map[A, B](self : T[A], f : (A) -> T[B]) -> T[B] {
-  match self {
-    Nil => Nil
-    Cons(head, tail) => concat(f(head), concat_map(tail, f))
-  }
+  flat_map(self, f)
 }
 
 /// map over the list and concat all results.
