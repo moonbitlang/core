@@ -1,6 +1,9 @@
 package moonbitlang/core/int
 
 // Values
+let max : Int
+
+let min : Int
 
 // Types and methods
 impl Int {

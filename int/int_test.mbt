@@ -43,6 +43,6 @@ test "abs function coverage" {
   assert_eq!(Int::abs(5), 5)
   assert_eq!(Int::abs(-5), 5)
   assert_eq!(Int::abs(0), 0)
-  assert_eq!(Int::abs(Int::min_value()), Int::min_value().abs())
-  assert_eq!(Int::abs(Int::max_value()), Int::max_value())
+  assert_eq!(Int::abs(@int.min), @int.min.abs())
+  assert_eq!(Int::abs(@int.max), @int.max)
 }

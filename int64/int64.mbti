@@ -1,6 +1,9 @@
 package moonbitlang/core/int64
 
 // Values
+let max : Int64
+
+let min : Int64
 
 // Types and methods
 impl Int64 {
