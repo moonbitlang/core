@@ -351,18 +351,9 @@ fn setup(
   b32[15][3] = 0
 }
 
-fn string_to_bytes(s : String) -> Bytes {
-  let bytes = Bytes::new(s.length())
-  for i = 0; i < s.length(); i = i + 1 {
-    bytes[i] = s[i].to_int().to_byte()
-  }
-  bytes
-}
-
 test "output" {
   let s = State::new()
-  let seed_string = "ABCDEFGHIJKLMNOPQRSTUVWXYZ123456"
-  let seed = string_to_bytes(seed_string)
+  let seed = b"ABCDEFGHIJKLMNOPQRSTUVWXYZ123456"
   let res = Array::new(capacity=372)
   s.init(seed)
   fn uint64(s : State) -> UInt64 {
