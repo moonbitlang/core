@@ -25,7 +25,7 @@
 /// ```
 pub fn sort_by_key[T, K : Compare](self : Array[T], map : (T) -> K) -> Unit {
   quick_sort_by(
-    self.op_as_view(start=0, end=self.length()),
+    self[:],
     fn(a, b) { map(a).compare(map(b)) },
     None,
     get_limit(self.length()),
@@ -44,12 +44,7 @@ pub fn sort_by_key[T, K : Compare](self : Array[T], map : (T) -> K) -> Unit {
 /// println(arr) //output: [1, 2, 3, 4, 5]
 /// ```
 pub fn sort_by[T](self : Array[T], cmp : (T, T) -> Int) -> Unit {
-  quick_sort_by(
-    self.op_as_view(start=0, end=self.length()),
-    cmp,
-    None,
-    get_limit(self.length()),
-  )
+  quick_sort_by(self[:], cmp, None, get_limit(self.length()))
 }
 
 fn quick_sort_by[T](
@@ -100,13 +95,13 @@ fn quick_sort_by[T](
           while i < len && cmp(pred, arr[i]) == 0 {
             i = i + 1
           }
-          arr = arr.op_as_view(start=i, end=len)
+          arr = arr[i:len]
           continue
         }
       _ => ()
     }
-    let left = arr.op_as_view(start=0, end=pivot)
-    let right = arr.op_as_view(start=pivot + 1, end=len)
+    let left = arr[0:pivot]
+    let right = arr[pivot + 1:len]
     // Reduce the stack depth by only call quick_sort on the smaller partition.
     if left.length() < right.length() {
       quick_sort_by(left, cmp, pred, limit)
@@ -230,7 +225,7 @@ fn heap_sort_by[T](arr : ArrayView[T], cmp : (T, T) -> Int) -> Unit {
   }
   for i = len - 1; i > 0; i = i - 1 {
     arr.swap(0, i)
-    sift_down_by(arr.op_as_view(start=0, end=i), 0, cmp)
+    sift_down_by(arr[0:i], 0, cmp)
   }
 }
 
@@ -257,34 +252,17 @@ fn sift_down_by[T](
 
 test "try_bubble_sort" {
   let arr = [8, 7, 6, 5, 4, 3, 2, 1]
-  let sorted = try_bubble_sort_by(
-    arr.op_as_view(start=0, end=8),
-    fn(a, b) { a - b },
-  )
+  let sorted = try_bubble_sort_by(arr[0:8], fn(a, b) { a - b })
   assert_eq!(sorted, true)
   assert_eq!(arr, [1, 2, 3, 4, 5, 6, 7, 8])
 }
 
 test "heap_sort" {
-  test_sort!(
-    fn(arr) {
-      heap_sort_by(
-        arr.op_as_view(start=0, end=arr.length()),
-        fn(a, b) { a - b },
-      )
-    },
-  )
+  test_sort!(fn(arr) { heap_sort_by(arr[:], fn(a, b) { a - b }) })
 }
 
 test "bubble_sort" {
-  test_sort!(
-    fn(arr) {
-      bubble_sort_by(
-        arr.op_as_view(start=0, end=arr.length()),
-        fn(a, b) { a - b },
-      )
-    },
-  )
+  test_sort!(fn(arr) { bubble_sort_by(arr[:], fn(a, b) { a - b }) })
 }
 
 test "sort_by_key" {

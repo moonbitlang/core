@@ -12,14 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-pub trait Boolean {
-  to_bool(Self) -> Bool
-}
-
-pub fn Bool::to_bool(self : Bool) -> Bool {
-  self
-}
-
 pub fn to_int(self : Bool) -> Int {
   if self {
     1

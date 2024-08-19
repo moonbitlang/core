@@ -363,10 +363,26 @@ pub fn zip[A, B](self : T[A], other : T[B]) -> T[(A, B)] {
 /// let r = ls.concat_map(fn(x) { [x, x * 2] })
 /// println(r) // output: from_array([1, 2, 2, 4, 3, 6])
 /// ```
+/// @alert deprecated "Use `flat_map` instead"
 pub fn concat_map[A, B](self : T[A], f : (A) -> T[B]) -> T[B] {
+  flat_map(self, f)
+}
+
+/// map over the list and concat all results.
+///
+/// `flat_map(f, ls)` equal to `ls.map(f).fold(Nil, fn(acc, x) { acc.concat(x) })))`
+///
+/// # Example
+///
+/// ```
+/// let ls = from_array([1, 2, 3])
+/// let r = ls.flat_map(fn(x) { [x, x * 2] })
+/// println(r) // output: from_array([1, 2, 2, 4, 3, 6])
+/// ```
+pub fn flat_map[A, B](self : T[A], f : (A) -> T[B]) -> T[B] {
   match self {
     Nil => Nil
-    Cons(head, tail) => concat(f(head), concat_map(tail, f))
+    Cons(head, tail) => concat(f(head), flat_map(tail, f))
   }
 }
 

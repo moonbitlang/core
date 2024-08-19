@@ -24,11 +24,8 @@
 /// println(arr) //output: [1, 2, 3, 4, 5]
 /// ```
 pub fn sort[T : Compare](self : Array[T]) -> Unit {
-  quick_sort(
-    self.op_as_view(start=0, end=self.length()),
-    None,
-    get_limit(self.length()),
-  )
+  let len = self.length()
+  quick_sort(self[:len], None, get_limit(len))
 }
 
 fn quick_sort[T : Compare](arr : ArrayView[T], pred : T?, limit : Int) -> Unit {
@@ -74,13 +71,13 @@ fn quick_sort[T : Compare](arr : ArrayView[T], pred : T?, limit : Int) -> Unit {
           while i < len && pred == arr[i] {
             i = i + 1
           }
-          arr = arr.op_as_view(start=i, end=len)
+          arr = arr[i:len]
           continue
         }
       _ => ()
     }
-    let left = arr.op_as_view(start=0, end=pivot)
-    let right = arr.op_as_view(start=pivot + 1, end=len)
+    let left = arr[0:pivot]
+    let right = arr[pivot + 1:len]
     // Reduce the stack depth by only call quick_sort on the smaller partition.
     if left.length() < right.length() {
       quick_sort(left, pred, limit)
@@ -205,7 +202,7 @@ fn heap_sort[T : Compare](arr : ArrayView[T]) -> Unit {
   }
   for i = len - 1; i > 0; i = i - 1 {
     arr.swap(0, i)
-    sift_down(arr.op_as_view(start=0, end=i), 0)
+    sift_down(arr[0:i], 0)
   }
 }
 
@@ -253,21 +250,17 @@ fn test_sort(f : (Array[Int]) -> Unit) -> Unit! {
 
 test "try_bubble_sort" {
   let arr = [8, 7, 6, 5, 4, 3, 2, 1]
-  let sorted = try_bubble_sort(arr.op_as_view(start=0, end=8))
+  let sorted = try_bubble_sort(arr[0:8])
   assert_eq!(sorted, true)
   assert_eq!(arr, [1, 2, 3, 4, 5, 6, 7, 8])
 }
 
 test "heap_sort" {
-  test_sort!(fn(arr) { heap_sort(arr.op_as_view(start=0, end=arr.length())) })
+  test_sort!(fn(arr) { heap_sort(arr[:]) })
 }
 
 test "insertion_sort" {
-  test_sort!(
-    fn(arr) {
-      ArrayView::insertion_sort(arr.op_as_view(start=0, end=arr.length()))
-    },
-  )
+  test_sort!(fn(arr) { ArrayView::insertion_sort(arr[:]) })
 }
 
 test "sort" {
@@ -276,69 +269,69 @@ test "sort" {
 
 test "heap_sort coverage" {
   let arr = [5, 4, 3, 2, 1]
-  heap_sort(arr.op_as_view(start=0, end=arr.length()))
+  heap_sort(arr[:])
   assert_eq!(arr, [1, 2, 3, 4, 5])
   let arr2 = [1, 2, 3, 4, 5]
-  heap_sort(arr2.op_as_view(start=0, end=arr2.length()))
+  heap_sort(arr2[:])
   assert_eq!(arr2, [1, 2, 3, 4, 5])
   let arr2 = [1, 2, 3, 4, 5]
-  heap_sort(arr2.op_as_view(start=0, end=arr2.length()))
+  heap_sort(arr2[:])
   assert_eq!(arr2, [1, 2, 3, 4, 5])
   let arr3 = [5, 5, 5, 5, 1]
-  heap_sort(arr3.op_as_view(start=0, end=arr3.length()))
+  heap_sort(arr3[:])
   assert_eq!(arr3, [1, 5, 5, 5, 5])
 }
 
 test "quick_sort limit check" {
   let arr = [5, 4, 3, 2, 1]
-  quick_sort(arr.op_as_view(start=0, end=arr.length()), None, 0)
+  quick_sort(arr[:], None, 0)
   assert_eq!(arr, [1, 2, 3, 4, 5])
   let arr2 = [1, 2, 3, 4, 5]
-  quick_sort(arr2.op_as_view(start=0, end=arr2.length()), None, 0)
+  quick_sort(arr2[:], None, 0)
   assert_eq!(arr2, [1, 2, 3, 4, 5])
   let arr3 = [5, 5, 5, 5, 1]
-  quick_sort(arr3.op_as_view(start=0, end=arr3.length()), None, 0)
+  quick_sort(arr3[:], None, 0)
   assert_eq!(arr3, [1, 5, 5, 5, 5])
 }
 
 test "quick_sort with pred check" {
   let arr = [5, 4, 3, 2, 1]
-  quick_sort(arr.op_as_view(start=0, end=arr.length()), Some(3), 0)
+  quick_sort(arr[:], Some(3), 0)
   assert_eq!(arr, [1, 2, 3, 4, 5])
   let arr2 = [1, 2, 3, 4, 5]
-  quick_sort(arr2.op_as_view(start=0, end=arr2.length()), Some(3), 0)
+  quick_sort(arr2[:], Some(3), 0)
   assert_eq!(arr2, [1, 2, 3, 4, 5])
   let arr3 = [5, 5, 5, 5, 1]
-  quick_sort(arr3.op_as_view(start=0, end=arr3.length()), Some(3), 0)
+  quick_sort(arr3[:], Some(3), 0)
   assert_eq!(arr3, [1, 5, 5, 5, 5])
 }
 
 test "quick_sort with unbalanced partitions" {
   let arr = [5, 4, 3, 2, 1]
-  quick_sort(arr.op_as_view(start=0, end=arr.length()), None, 1)
+  quick_sort(arr[:], None, 1)
   assert_eq!(arr, [1, 2, 3, 4, 5])
   let arr2 = [1, 2, 3, 4, 5]
-  quick_sort(arr2.op_as_view(start=0, end=arr2.length()), None, 1)
+  quick_sort(arr2[:], None, 1)
   assert_eq!(arr2, [1, 2, 3, 4, 5])
   let arr3 = [5, 5, 5, 5, 1]
-  quick_sort(arr3.op_as_view(start=0, end=arr3.length()), None, 1)
+  quick_sort(arr3[:], None, 1)
   assert_eq!(arr3, [1, 5, 5, 5, 5])
 }
 
 test "quick_sort with pivot equal to pred" {
   let arr = [5, 4, 3, 2, 1]
-  quick_sort(arr.op_as_view(start=0, end=arr.length()), Some(3), 0)
+  quick_sort(arr[:], Some(3), 0)
   assert_eq!(arr, [1, 2, 3, 4, 5])
 }
 
 test "quick_sort with pred less than all elements" {
   let arr = [5, 4, 3, 2, 1]
-  quick_sort(arr.op_as_view(start=0, end=arr.length()), Some(0), 0)
+  quick_sort(arr[:], Some(0), 0)
   assert_eq!(arr, [1, 2, 3, 4, 5])
 }
 
 test "quick_sort with pred greater than all elements" {
   let arr = [5, 4, 3, 2, 1]
-  quick_sort(arr.op_as_view(start=0, end=arr.length()), Some(6), 0)
+  quick_sort(arr[:], Some(6), 0)
   assert_eq!(arr, [1, 2, 3, 4, 5])
 }
