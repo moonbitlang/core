@@ -35,4 +35,3 @@ pub fn Int::max_value() -> Int {
 pub fn Int::min_value() -> Int {
   min
 }
-

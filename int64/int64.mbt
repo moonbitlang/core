@@ -39,4 +39,3 @@ pub fn Int64::max_value() -> Int64 {
 pub fn Int64::min_value() -> Int64 {
   min
 }
-
