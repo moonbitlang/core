@@ -18,21 +18,30 @@ fn unsafe_sub_string(
   byte_length : Int
 ) -> String = "$moonbit.unsafe_bytes_sub_string"
 
-/// Create a new String from byte sequence.
-pub fn to_string(self : Bytes) -> String {
-  self.sub_string(0, self.length())
-}
-
-/// Create byte sequence from String.
-pub fn Bytes::of_string(str : String) -> Bytes {
-  let bytes = Bytes::new(str.length() * 2)
-  bytes.blit_from_string(0, str, 0, str.length())
-  bytes
+/// Create a new String with the given bytes.
+/// 
+/// This function will reinterpret the contents of bytes as a UTF16 string 
+/// and copy them into the returned new string. It does not check whether the 
+/// subsequence is a valid UTF16 sequence.
+/// 
+/// @alert unsafe "This function does not check whether the input bytes are valid utf16 encoded sequences."
+pub fn to_unchecked_string(self : Bytes) -> String {
+  self.sub_unchecked_string(0, self.length())
 }
 
 /// Return a new String, containing the subsequence of `self` that
 /// starts at `byte_offset` and has length `byte_length`.
-pub fn sub_string(self : Bytes, byte_offset : Int, byte_length : Int) -> String {
+/// 
+/// This function will reinterpret the subsequence of bytes as a UTF16 string 
+/// and copy them into the returned new string. It does not check whether the 
+/// subsequence is a valid UTF16 sequence.
+/// 
+/// @alert unsafe "This function does not check whether the input bytes are valid utf16 encoded sequences."
+pub fn sub_unchecked_string(
+  self : Bytes,
+  byte_offset : Int,
+  byte_length : Int
+) -> String {
   if byte_length < 0 ||
     byte_offset < 0 ||
     byte_offset + byte_length > self.length() {
@@ -40,6 +49,40 @@ pub fn sub_string(self : Bytes, byte_offset : Int, byte_length : Int) -> String 
   } else {
     unsafe_sub_string(self, byte_offset, byte_length)
   }
+}
+
+/// Create a new String with the given bytes.
+/// 
+/// This function will reinterpret the contents of bytes as a UTF16 string 
+/// and copy them into the returned new string. It does not check whether the 
+/// subsequence is a valid UTF16 sequence.
+/// 
+/// @alert unsafe "This function does not check whether the input bytes are valid utf16 encoded sequences."
+/// 
+/// @alert deprecated "Use `to_unchecked_string` instead"
+pub fn to_string(self : Bytes) -> String {
+  self.to_unchecked_string()
+}
+
+/// Return a new String, containing the subsequence of `self` that
+/// starts at `byte_offset` and has length `byte_length`.
+/// 
+/// This function will reinterpret the subsequence of bytes as a UTF16 string 
+/// and copy them into the returned new string. It does not check whether the 
+/// subsequence is a valid UTF16 sequence.
+/// 
+/// @alert unsafe "This function does not check whether the input bytes are valid utf16 encoded sequences."
+/// 
+/// @alert deprecated "Use `sub_unchecked_string` instead"
+pub fn sub_string(self : Bytes, byte_offset : Int, byte_length : Int) -> String {
+  self.sub_unchecked_string(byte_offset, byte_length)
+}
+
+/// Create byte sequence from String.
+pub fn Bytes::of_string(str : String) -> Bytes {
+  let bytes = Bytes::new(str.length() * 2)
+  bytes.blit_from_string(0, str, 0, str.length())
+  bytes
 }
 
 /// Copy `length` chars from string `str`, starting at `str_offset`,

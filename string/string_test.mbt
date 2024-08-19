@@ -27,10 +27,10 @@ test "compare" {
 }
 
 test "to_bytes" {
-  assert_eq!("中文".to_bytes().to_string(), "中文")
-  assert_eq!("asdf".to_bytes().to_string(), "asdf")
-  assert_eq!("🤣🤣".to_bytes().to_string(), "🤣🤣")
-  assert_eq!("🤔".to_bytes().to_string(), "🤔")
+  assert_eq!("中文".to_bytes().to_unchecked_string(), "中文")
+  assert_eq!("asdf".to_bytes().to_unchecked_string(), "asdf")
+  assert_eq!("🤣🤣".to_bytes().to_unchecked_string(), "🤣🤣")
+  assert_eq!("🤔".to_bytes().to_unchecked_string(), "🤔")
 }
 
 test "Show::output" {
@@ -103,7 +103,7 @@ test "chars" {
 test "Buffer::to_bytes" {
   let buffer = Buffer::new(size_hint=16)
   buffer.write_string("中文")
-  assert_eq!(buffer.to_bytes().to_string(), "中文")
+  assert_eq!(buffer.to_bytes().to_unchecked_string(), "中文")
 }
 
 test "panic substring_start_index_error" {

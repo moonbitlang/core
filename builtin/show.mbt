@@ -39,7 +39,29 @@ pub impl Show for Byte with output(self, logger) {
 }
 
 pub impl Show for Bytes with output(self, logger) {
-  logger.write_string(self.to_string())
+  fn to_hex_digit(i : Int) -> Char {
+    if i < 10 {
+      Char::from_int('0'.to_int() + i)
+    } else {
+      Char::from_int('a'.to_int() + (i - 10))
+    }
+  }
+
+  logger.write_string("b\"")
+  for i = 0; i < self.length(); i = i + 1 {
+    let byte = self[i].to_int()
+    logger
+    ..write_string("\\x")
+    ..write_char(to_hex_digit(byte / 16))
+    .write_char(to_hex_digit(byte % 16))
+  }
+  logger.write_string("\"")
+}
+
+pub impl Show for Bytes with to_string(self) {
+  let buf = Buffer::new()
+  Show::output(self, buf)
+  buf.to_string()
 }
 
 pub impl Show for String with output(self, logger) {
@@ -167,7 +189,7 @@ pub impl[X : Show] Show for ArrayView[X] with output(self, logger) {
 pub fn to_string(self : Char) -> String {
   let bytes = Bytes::new(4)
   let len = bytes.set_utf16_char(0, self)
-  bytes.sub_string(0, len)
+  bytes.sub_unchecked_string(0, len)
 }
 
 pub impl Show for Char with output(self, logger) {

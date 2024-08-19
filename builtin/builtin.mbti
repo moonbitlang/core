@@ -530,7 +530,9 @@ impl Bytes {
   set_utf16_char(Bytes, Int, Char) -> Int
   set_utf8_char(Bytes, Int, Char) -> Int
   sub_string(Bytes, Int, Int) -> String
+  sub_unchecked_string(Bytes, Int, Int) -> String
   to_string(Bytes) -> String
+  to_unchecked_string(Bytes) -> String
 }
 impl Logger {
   write_object[Obj : Show](Self, Obj) -> Unit

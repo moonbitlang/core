@@ -76,7 +76,7 @@ fn grow_if_necessary(self : Buffer, required : Int) -> Unit {
 
 /// Return a new String contains the data in buffer.
 pub fn to_string(self : Buffer) -> String {
-  self.bytes.sub_string(0, self.len)
+  self.bytes.sub_unchecked_string(0, self.len)
 }
 
 /// Create a buffer with initial capacity (in bytes).
