@@ -214,7 +214,7 @@ pub fn op_equal[A : Eq](self : T[A], other : T[A]) -> Bool {
 /// let v = @immut/array.of([1, 2, 3, 4, 5])
 /// v.fold(fn(a, b) { a + b }, init=0)
 /// ```
-pub fn fold[A,B](self : T[A], ~init : B, f : (B, A) -> B) -> B {
+pub fn fold[A, B](self : T[A], ~init : B, f : (B, A) -> B) -> B {
   fn go(t : Tree[A], acc : B) -> B {
     match t {
       Empty => acc
@@ -233,7 +233,7 @@ pub fn fold[A,B](self : T[A], ~init : B, f : (B, A) -> B) -> B {
 /// let v = @immut/array.of([1, 2, 3, 4, 5])
 /// v.rev_fold(fn(a, b) { a + b }, init=0)
 /// ```
-pub fn rev_fold[A,B](self : T[A], ~init : B, f : (B, A) -> B) -> B {
+pub fn rev_fold[A, B](self : T[A], ~init : B, f : (B, A) -> B) -> B {
   fn go(t : Tree[A], acc : B) -> B {
     match t {
       Empty => acc
