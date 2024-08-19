@@ -5,10 +5,8 @@ package moonbitlang/core/int
 // Types and methods
 impl Int {
   abs(Int) -> Int
-  from_int(Int) -> Int
   max_value() -> Int
   min_value() -> Int
-  signum(Int) -> Int
 }
 
 // Type aliases

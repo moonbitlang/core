@@ -28,16 +28,6 @@ pub fn abs(self : Int64) -> Int64 {
   }
 }
 
-pub fn signum(self : Int64) -> Int64 {
-  if self < 0L {
-    -1L
-  } else if self > 0L {
-    1L
-  } else {
-    0L
-  }
-}
-
 // Returns the largest positive finite value of Int64
 pub fn Int64::max_value() -> Int64 {
   max_val

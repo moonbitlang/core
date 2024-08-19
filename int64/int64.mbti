@@ -8,7 +8,6 @@ impl Int64 {
   from_int(Int) -> Int64
   max_value() -> Int64
   min_value() -> Int64
-  signum(Int64) -> Int64
 }
 
 // Type aliases

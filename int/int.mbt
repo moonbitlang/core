@@ -16,25 +16,11 @@ let max_val = 2147483647
 
 let min_val = -2147483648
 
-pub fn Int::from_int(i : Int) -> Int {
-  i
-}
-
 pub fn abs(self : Int) -> Int {
   if self < 0 {
     -self
   } else {
     self
-  }
-}
-
-pub fn signum(self : Int) -> Int {
-  if self < 0 {
-    -1
-  } else if self > 0 {
-    1
-  } else {
-    0
   }
 }
 

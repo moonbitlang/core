@@ -12,13 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-test "fromint" {
-  inspect!(@int.from_int(3), content="3")
-  inspect!(@int.signum(3), content="1")
-  inspect!(@int.signum(-3), content="-1")
-  inspect!(@int.signum(0), content="0")
-}
-
 test "overflow" {
   // signed integer expected to be negative
   inspect!(0xC2B2AE3D, content="-1028477379")
