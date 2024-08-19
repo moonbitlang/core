@@ -27,6 +27,7 @@ impl T {
   filter[A](Self[A], (A) -> Bool) -> Self[A]
   find[A](Self[A], (A) -> Bool) -> A?
   findi[A](Self[A], (A, Int) -> Bool) -> A?
+  flat_map[A, B](Self[A], (A) -> Self[B]) -> Self[B]
   flatten[A](Self[Self[A]]) -> Self[A]
   fold_left[A, B](Self[A], (B, A) -> B, ~init : B) -> B
   fold_lefti[A, B](Self[A], (Int, B, A) -> B, ~init : B) -> B
