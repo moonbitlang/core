@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-fn get_hide_word(x : Double) -> UInt {
+fn get_high_word(x : Double) -> UInt {
   (x.reinterpret_as_u64() >> 32).to_uint()
 }
 
@@ -48,7 +48,7 @@ pub fn exp(self : Double) -> Double {
   let twom1000 = 9.33263618503218878990e-302
   let two1023 = 8.988465674311579539e307
   let mut k : Int = 0
-  let mut hx : UInt = get_hide_word(self)
+  let mut hx : UInt = get_high_word(self)
   let xsb : Int = ((hx >> 31) & 1).to_int()
   hx = hx & 0x7FFFFFFF
   if hx >= 0x40862E42 {
