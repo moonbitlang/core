@@ -39,7 +39,29 @@ pub impl Show for Byte with output(self, logger) {
 }
 
 pub impl Show for Bytes with output(self, logger) {
-  logger.write_string(self.to_string())
+  fn to_hex_digit(i : Int) -> Char {
+    if i < 10 {
+      Char::from_int('0'.to_int() + i)
+    } else {
+      Char::from_int('a'.to_int() + (i - 10))
+    }
+  }
+
+  logger.write_string("b\"")
+  for i = 0; i < self.length(); i = i + 1 {
+    let byte = self[i].to_int()
+    logger
+    ..write_string("\\x")
+    ..write_char(to_hex_digit(byte / 16))
+    .write_char(to_hex_digit(byte % 16))
+  }
+  logger.write_string("\"")
+}
+
+pub impl Show for Bytes with to_string(self) {
+  let buf = Buffer::new()
+  Show::output(self, buf)
+  buf.to_string()
 }
 
 pub impl Show for String with output(self, logger) {
