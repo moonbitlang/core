@@ -40,43 +40,43 @@ test "swap" {
 }
 
 test "panic array_as_view_start_index_error" {
-  [1, 2, 3].op_as_view(start=-1, end=0) |> ignore
+  [1, 2, 3][-1:0] |> ignore
 }
 
 test "panic array_as_view_start_index_error" {
-  [1, 2, 3].op_as_view(start=-1, end=0) |> ignore
+  [1, 2, 3][-1:0] |> ignore
 }
 
 test "panic array_as_view_end_index_error" {
-  [1, 2, 3].op_as_view(start=0, end=-1) |> ignore
+  [1, 2, 3][0:-1] |> ignore
 }
 
 test "panic array_as_view_end_index_error" {
-  [1, 2, 3].op_as_view(start=0, end=-1) |> ignore
+  [1, 2, 3][0:-1] |> ignore
 }
 
 test "panic array_as_view_length_index_error" {
-  [1, 2, 3].op_as_view(start=0, end=4) |> ignore
+  [1, 2, 3][0:4] |> ignore
 }
 
 test "panic view_as_view_start_index_error" {
-  [1, 2, 3][:].op_as_view(start=-1, end=0) |> ignore
+  [1, 2, 3][:][-1:0] |> ignore
 }
 
 test "panic view_as_view_start_index_error" {
-  [1, 2, 3][:].op_as_view(start=-1, end=0) |> ignore
+  [1, 2, 3][:][-1:0] |> ignore
 }
 
 test "panic view_as_view_end_index_error" {
-  [1, 2, 3][:].op_as_view(start=0, end=-1) |> ignore
+  [1, 2, 3][:][0:-1] |> ignore
 }
 
 test "panic view_as_view_end_index_error" {
-  [1, 2, 3][:].op_as_view(start=0, end=-1) |> ignore
+  [1, 2, 3][:][0:-1] |> ignore
 }
 
 test "panic view_as_view_length_index_error" {
-  [1, 2, 3][:].op_as_view(start=0, end=4) |> ignore
+  [1, 2, 3][:][0:4] |> ignore
 }
 
 test "panic array_as_view_get_index_error" {

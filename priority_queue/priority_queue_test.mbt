@@ -32,11 +32,11 @@ test "from_fixed_array" {
 test "copy" {
   let v = @priority_queue.of([1, 2, 3, 4])
   let ve = v.copy()
-  inspect!(v.peek().to_string(), content="Some(4)")
-  inspect!(ve.peek().to_string(), content="Some(4)")
+  inspect!(v.peek(), content="Some(4)")
+  inspect!(ve.peek(), content="Some(4)")
   v.pop() |> ignore
-  inspect!(v.peek().to_string(), content="Some(3)")
-  inspect!(ve.peek().to_string(), content="Some(4)")
+  inspect!(v.peek(), content="Some(3)")
+  inspect!(ve.peek(), content="Some(4)")
 }
 
 test "to_array" {
@@ -47,10 +47,14 @@ test "to_array" {
 test "iter" {
   let buf = Buffer::new(size_hint=20)
   let v = @priority_queue.of([1, 2, 3])
-  v.iter().each(fn(e) { buf.write_string("[\{e}]") })
+  for e in v {
+    buf.write_string("[\{e}]")
+  }
   inspect!(buf, content="[3][2][1]")
   buf.reset()
-  v.iter().take(2).each(fn(e) { buf.write_string("[\{e}]") })
+  for e in v.iter().take(2) {
+    buf.write_string("[\{e}]")
+  }
   inspect!(buf, content="[3][2]")
 }
 
