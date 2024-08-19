@@ -29,9 +29,14 @@ test "exp" {
   inspect!(@double.exp(-100.0), content="3.720075976020836e-44")
 }
 
-test "exp - edge case" {
+test "exp - special values" {
   inspect!(@double.exp(Double::inf(-1)), content="0.0")
   inspect!(@double.exp(Double::inf(1)), content="Infinity")
   inspect!(@double.exp(Double::nan()), content="NaN")
   inspect!(@double.exp(0.0), content="1.0")
+}
+
+test "exp - overflow & underflow" {
+  inspect!(@double.exp(710.0), content="Infinity")
+  inspect!(@double.exp(-745.14), content="0.0")
 }
