@@ -3,6 +3,7 @@ package moonbitlang/core/quickcheck
 alias @moonbitlang/core/random/splitmix as @splitmix
 
 // Values
+fn samples[X : Arbitrary](Int) -> Array[X]
 
 // Types and methods
 
@@ -18,6 +19,8 @@ impl Arbitrary for Unit
 
 impl Arbitrary for Bool
 
+impl Arbitrary for Char
+
 impl Arbitrary for Int
 
 impl Arbitrary for Int64
@@ -27,4 +30,10 @@ impl Arbitrary for UInt
 impl Arbitrary for UInt64
 
 impl Arbitrary for Double
+
+impl Arbitrary for String
+
+impl Arbitrary for BigInt
+
+impl Arbitrary for Iter
 

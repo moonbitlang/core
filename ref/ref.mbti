@@ -1,5 +1,7 @@
 package moonbitlang/core/ref
 
+alias @moonbitlang/core/quickcheck as @quickcheck
+
 // Values
 fn ref[T](T) -> Ref[T]
 
@@ -18,4 +20,5 @@ impl Ref {
 // Traits
 
 // Extension Methods
+impl @quickcheck.Arbitrary for Ref
 

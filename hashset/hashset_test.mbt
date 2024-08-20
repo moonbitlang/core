@@ -255,7 +255,7 @@ test "from_iter empty iter" {
 }
 
 test "hashset arbitrary" {
-  let samples: Array[@hashset.T[Int]] = @quickcheck.samples(20)
+  let samples : Array[@hashset.T[Int]] = @quickcheck.samples(20)
   inspect!(
     samples[5:10],
     content="[@hashset.of([0]), @hashset.of([0]), @hashset.of([0]), @hashset.of([0]), @hashset.of([0, 3])]",

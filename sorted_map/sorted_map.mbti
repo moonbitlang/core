@@ -1,5 +1,7 @@
 package moonbitlang/core/sorted_map
 
+alias @moonbitlang/core/quickcheck as @quickcheck
+
 // Values
 fn new[K, V]() -> T[K, V]
 
@@ -34,4 +36,6 @@ impl T {
 
 // Extension Methods
 impl Show for T
+
+impl @quickcheck.Arbitrary for T
 
