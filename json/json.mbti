@@ -1,12 +1,14 @@
 package moonbitlang/core/json
 
 // Values
+fn from_json[T : FromJson](Json, ~path : JsonPath = ..) -> T!JsonParseError
+
 fn parse(String) -> Json!ParseError
 
 fn valid(String) -> Bool
 
 // Types and methods
-pub type! JsonParseError String
+pub type! JsonParseError Tuple[JsonPath, String]
 impl JsonParseError {
   op_equal(Self, Self) -> Bool
   to_string(Self) -> String
@@ -18,8 +20,8 @@ pub enum JsonPath {
   Index(JsonPath, Int)
 }
 impl JsonPath {
+  op_equal(Self, Self) -> Bool
   output(Self, Logger) -> Unit
-  to_string(Self) -> String
 }
 
 pub type! ParseError {
