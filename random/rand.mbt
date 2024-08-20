@@ -44,24 +44,24 @@ test "next" {
   assert_eq!(n, exp)
 }
 
-/// [int] Return a non-negative pseudo-random 31-bit integer as an Int.
+/// [int] Return a non-negative pseudo-random 31-bit integer as an Int in the range [0, 2^31)
 pub fn Rand::int(self : Rand) -> Int {
   self.next().lsr(33).to_int()
 }
 
-/// [int64] returns a non-negative pseudo-random 63-bit integer as an Int64
+/// [int64] returns a non-negative pseudo-random 63-bit integer as an Int64 in the range [0, 2^63)
 pub fn Rand::int64(self : Rand) -> Int64 {
   // Create a mask that has all bits set to 1 except the highest bit
   let mask : UInt64 = 1UL << 63
   return (self.next() & mask).to_int64()
 }
 
-/// [uint] returns a non-negative pseudo-random 32-bit integer as a Uint
+/// [uint] returns a non-negative pseudo-random 32-bit integer as a Uint in the range [0, 2^32)
 pub fn Rand::uint(self : Rand) -> UInt {
   self.next().to_uint()
 }
 
-/// [uint64] returns a non-negative pseudo-random 64-bit integer as a Uint64
+/// [uint64] returns a non-negative pseudo-random 64-bit integer as a Uint64 in the range [0, 2^64)
 pub fn Rand::uint64(self : Rand) -> UInt64 {
   self.next()
 }
