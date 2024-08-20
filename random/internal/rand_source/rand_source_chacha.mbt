@@ -12,17 +12,17 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-priv struct ChaCha8 {
+pub struct ChaCha8 {
   state : State
 }
 
-fn ChaCha8::new(seed : Bytes) -> ChaCha8 {
+pub fn ChaCha8::new(seed : Bytes) -> ChaCha8 {
   let c = { state: State::new() }
   c.state.init(seed)
   c
 }
 
-priv struct State {
+pub struct State {
   mut buffer : FixedArray[UInt64] // size=[32]
   mut seed : FixedArray[UInt64] // size=[4]
   mut i : UInt
@@ -48,7 +48,7 @@ let chunk = 32U
 
 let chachaReseed = 4
 
-fn State::next(self : State) -> (UInt64, Bool) {
+pub fn State::next(self : State) -> (UInt64, Bool) {
   let i = self.i
   if i >= self.n {
     return (0, false)
@@ -122,7 +122,7 @@ fn State::init64(self : State, seed : FixedArray[UInt64]) -> Unit {
   self.n = chunk
 }
 
-fn State::refill(self : State) -> Unit {
+pub fn State::refill(self : State) -> Unit {
   self.c = self.c + ctrInc
   if self.c == ctrMax {
     // reseed

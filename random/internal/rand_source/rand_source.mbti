@@ -1,0 +1,30 @@
+package moonbitlang/core/random/internal/rand_source
+
+// Values
+
+// Types and methods
+pub struct ChaCha8 {
+  pub state : State
+}
+impl ChaCha8 {
+  new(Bytes) -> Self
+}
+
+pub struct State {
+  pub buffer : FixedArray[UInt64]
+  pub seed : FixedArray[UInt64]
+  pub i : UInt
+  pub n : UInt
+  pub c : UInt
+}
+impl State {
+  next(Self) -> Tuple[UInt64, Bool]
+  refill(Self) -> Unit
+}
+
+// Type aliases
+
+// Traits
+
+// Extension Methods
+

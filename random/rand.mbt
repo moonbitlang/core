@@ -14,7 +14,7 @@
 
 /// Currently we only support [chacha8] as the source of randomness.
 struct Rand {
-  src : ChaCha8
+  src : @rand_source.ChaCha8
 }
 
 /// Create a new random number generator with [seed].
@@ -23,7 +23,7 @@ pub fn Rand::new(~seed : Bytes = b"ABCDEFGHIJKLMNOPQRSTUVWXYZ123456") -> Rand {
   if seed.length() != 32 {
     abort("seed must be 32 bytes long")
   }
-  let src = ChaCha8::new(seed)
+  let src = @rand_source.ChaCha8::new(seed)
   { src, }
 }
 
