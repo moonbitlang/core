@@ -3,8 +3,6 @@ package moonbitlang/core/random
 // Values
 
 // Types and methods
-type ChaCha8
-
 type Rand
 impl Rand {
   double64(Self) -> Double

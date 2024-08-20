@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-struct ChaCha8 {
+priv struct ChaCha8 {
   state : State
 }
 
