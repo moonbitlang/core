@@ -28,8 +28,3 @@ test {
   m[{ flag: false, x: 1 }] = '3'
   inspect!(m, content="{{flag: true, x: 1}: '3', {flag: false, x: 1}: '3'}")
 }
-
-test "to_bool" {
-  inspect!(true.to_bool(), content="true")
-  inspect!(false.to_bool(), content="false")
-}

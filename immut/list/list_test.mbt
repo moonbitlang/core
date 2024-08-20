@@ -180,15 +180,12 @@ test "zip" {
   )
 }
 
-test "concat_map" {
+test "flat_map" {
   let ls = @list.of([1, 2, 3])
   let rs : @list.T[Int] = @list.Nil
+  inspect!(rs.flat_map(fn(x) { @list.of([x, x * 2]) }), content="@list.of([])")
   inspect!(
-    rs.concat_map(fn(x) { @list.of([x, x * 2]) }),
-    content="@list.of([])",
-  )
-  inspect!(
-    ls.concat_map(fn(x) { @list.of([x, x * 2]) }),
+    ls.flat_map(fn(x) { @list.of([x, x * 2]) }),
     content="@list.of([1, 2, 2, 4, 3, 6])",
   )
 }

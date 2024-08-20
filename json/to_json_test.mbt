@@ -61,9 +61,9 @@ test "String::to_json" {
     ,
   )
   inspect!(
-    "\x0c".to_json(),
+    "\x0c\x0d\x0f".to_json(),
     content=
-      #|String("\\f")
+      #|String("\\f\\r\\u000f")
     ,
   )
 }

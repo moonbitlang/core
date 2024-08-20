@@ -12,9 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-let max_val = 9223372036854775807L
+pub let max = 9223372036854775807L
 
-let min_val = -9223372036854775808L
+pub let min = -9223372036854775808L
 
 pub fn Int64::from_int(i : Int) -> Int64 {
   i.to_int64()
@@ -28,22 +28,14 @@ pub fn abs(self : Int64) -> Int64 {
   }
 }
 
-pub fn signum(self : Int64) -> Int64 {
-  if self < 0L {
-    -1L
-  } else if self > 0L {
-    1L
-  } else {
-    0L
-  }
-}
-
-// Returns the largest positive finite value of Int64
+/// Returns the largest positive finite value of Int64
+/// @alert deprecated "Use `@int64.max` instead"
 pub fn Int64::max_value() -> Int64 {
-  max_val
+  max
 }
 
-// Returns the smallest positive nonzero value of Int64
+/// Returns the smallest positive nonzero value of Int64
+/// @alert deprecated "Use `@int64.min` instead"
 pub fn Int64::min_value() -> Int64 {
-  min_val
+  min
 }
