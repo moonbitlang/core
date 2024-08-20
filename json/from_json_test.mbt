@@ -12,24 +12,21 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-pub fn to_int(self : Bool) -> Int {
-  if self {
-    1
-  } else {
-    0
-  }
-}
+typealias TestX = Map[String, Int]
 
-pub fn to_int64(self : Bool) -> Int64 {
-  if self {
-    1L
-  } else {
-    0L
-  }
-}
+// enum MyType {
+//   A
+//   B(Int)
+// } derive(ToJson,Show)
 
-pub impl Hash for Bool with hash(self) { self.to_int() }
-
-pub impl Hash for Bool with hash_combine(self, hasher) {
-  hasher.combine_bool(self)
+test {
+  let u = { "x": 3 }
+  let j = u.to_json()
+  let h : TestX = @json.from_json!(j)
+  inspect!(
+    (j, h),
+    content=
+      #|(Object({"x": Number(3.0)}), {"x": 3})
+    ,
+  )
 }

@@ -12,24 +12,26 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-pub fn to_int(self : Bool) -> Int {
-  if self {
-    1
-  } else {
-    0
+enum JsonPath {
+  Root
+  Key(JsonPath, String)
+  Index(JsonPath, Int)
+} derive(Eq)
+
+pub fn output(self : JsonPath, logger : Logger) -> Unit {
+  match self {
+    Root => logger.write_string("$")
+    Key(p, k) => logger..write_object(p)..write_string(".").write_string(k)
+    Index(p, i) =>
+      logger
+      ..write_object(p)
+      ..write_string("[")
+      ..write_object(i)
+      .write_string("]")
   }
 }
 
-pub fn to_int64(self : Bool) -> Int64 {
-  if self {
-    1L
-  } else {
-    0L
-  }
-}
-
-pub impl Hash for Bool with hash(self) { self.to_int() }
-
-pub impl Hash for Bool with hash_combine(self, hasher) {
-  hasher.combine_bool(self)
+test "show JsonPath" {
+  let path = Key(Index(Root, 0), "foo")
+  inspect!(path, content="$[0].foo")
 }

@@ -12,9 +12,29 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+test "bytes literal" {
+  inspect!(
+    b"ABC",
+    content=
+      #|b"\x41\x42\x43"
+    ,
+  )
+  inspect!(
+    b"\x41\x42\x43",
+    content=
+      #|b"\x41\x42\x43"
+    ,
+  )
+}
+
 test "from_array" {
   let b = @bytes.of([b'\x41', b'\x00', b'\x42', b'\x00', b'\x43', b'\x00'])
-  inspect!(b, content="ABC")
+  inspect!(
+    b,
+    content=
+      #|b"\x41\x00\x42\x00\x43\x00"
+    ,
+  )
 }
 
 test "hash" {

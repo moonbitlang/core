@@ -12,13 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-let max_val = 2147483647
+pub let max = 2147483647
 
-let min_val = -2147483648
-
-pub fn Int::from_int(i : Int) -> Int {
-  i
-}
+pub let min = -2147483648
 
 pub fn abs(self : Int) -> Int {
   if self < 0 {
@@ -28,22 +24,14 @@ pub fn abs(self : Int) -> Int {
   }
 }
 
-pub fn signum(self : Int) -> Int {
-  if self < 0 {
-    -1
-  } else if self > 0 {
-    1
-  } else {
-    0
-  }
-}
-
-// Returns the largest positive finite value of Int
+/// Returns the largest positive finite value of Int
+/// @alert deprecated "Use `@int.max` instead"
 pub fn Int::max_value() -> Int {
-  max_val
+  max
 }
 
-// Returns the smallest positive nonzero value of Int
+/// Returns the smallest positive nonzero value of Int
+/// @alert deprecated "Use `@int.min` instead"
 pub fn Int::min_value() -> Int {
-  min_val
+  min
 }

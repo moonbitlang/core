@@ -1,11 +1,25 @@
 package moonbitlang/core/json
 
 // Values
+fn from_json[T : FromJson](Json, ~path : JsonPath = ..) -> T!JsonDecodeError
+
 fn parse(String) -> Json!ParseError
 
 fn valid(String) -> Bool
 
 // Types and methods
+pub type! JsonDecodeError Tuple[JsonPath, String]
+impl JsonDecodeError {
+  op_equal(Self, Self) -> Bool
+  to_string(Self) -> String
+}
+
+type JsonPath
+impl JsonPath {
+  op_equal(Self, Self) -> Bool
+  output(Self, Logger) -> Unit
+}
+
 pub type! ParseError {
   InvalidChar(Position, Char)
   InvalidEof
@@ -42,9 +56,30 @@ impl Json {
 pub typealias JsonValue = Json
 
 // Traits
+pub trait FromJson {
+  from_json(Json, JsonPath) -> Self!JsonDecodeError
+}
 
 // Extension Methods
 impl Show for Json
 
+impl Show for JsonDecodeError
+
 impl Show for ParseError
+
+impl FromJson for Bool
+
+impl FromJson for Char
+
+impl FromJson for Int
+
+impl FromJson for Int64
+
+impl FromJson for Double
+
+impl FromJson for String
+
+impl FromJson for Array
+
+impl FromJson for Map
 
