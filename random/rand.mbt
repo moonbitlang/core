@@ -207,6 +207,22 @@ pub fn Rand::intN(self : Rand, n : Int) -> Int {
   self.uintN(n.to_uint()).to_int()
 }
 
+/// [shuffle] shuffles the first n elements of an array using the Fisher-Yates shuffle algorithm.
+/// @alert unsafe "Panics if n is negative"
+/// 
+/// # Example
+/// ```
+/// let r = Rand::new()
+/// let a = [1, 2, 3, 4, 5]
+/// r.shuffle(
+///   a.length(),
+///   fn(i : Int, j : Int) {
+///     let t = a[i]
+///     a[i] = a[j]
+///     a[j] = t
+///   },
+/// )
+/// ```
 pub fn Rand::shuffle(self : Rand, n : Int, swap : (Int, Int) -> Unit) -> Unit {
   if n < 0 {
     abort("Rand::shuffle: invalid argument n")
