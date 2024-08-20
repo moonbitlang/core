@@ -14,19 +14,41 @@
 
 typealias TestX = Map[String, Int]
 
-// enum MyType {
-//   A
-//   B(Int)
-// } derive(ToJson,Show)
-
 test {
-  let u = { "x": 3 }
+  let u = { "x": 3, "y": 4 }
   let j = u.to_json()
   let h : TestX = @json.from_json!(j)
   inspect!(
     (j, h),
     content=
-      #|(Object({"x": Number(3.0)}), {"x": 3})
+      #|(Object({"x": Number(3.0), "y": Number(4.0)}), {"x": 3, "y": 4})
+    ,
+  )
+}
+
+test {
+  let u = Json::Array([Json::Number(1), Json::String("str")])
+  let v : Result[Array[Int], _] = @json.from_json?(u)
+  inspect!(
+    v,
+    content=
+      #|Err(JsonDecodeError(($[1], "Int::from_json: expected number")))
+    ,
+  )
+}
+
+test {
+  let u = Json::Object(
+    {
+      "x": Json::Object({ "xx": Json::Number(1) }),
+      "y": Json::Object({ "yy": Json::String("str") }),
+    },
+  )
+  let v : Result[Map[String, Map[String, Double]], _] = @json.from_json?(u)
+  inspect!(
+    v,
+    content=
+      #|Err(JsonDecodeError(($.y.yy, "Double::from_json: expected number")))
     ,
   )
 }
