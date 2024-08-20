@@ -247,3 +247,10 @@ pub fn T::of[A : Eq + Hash](arr : FixedArray[A]) -> T[A] {
     }
   }
 }
+
+pub impl[K : Eq + Hash + @quickcheck.Arbitrary] @quickcheck.Arbitrary for T[K] with arbitrary(
+  size,
+  rs
+) {
+  @quickcheck.Arbitrary::arbitrary(size, rs) |> from_array
+}

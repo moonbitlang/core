@@ -879,6 +879,13 @@ pub fn T::of[A](arr : FixedArray[A]) -> T[A] {
   }
 }
 
+pub impl[X : @quickcheck.Arbitrary] @quickcheck.Arbitrary for T[X] with arbitrary(
+  size,
+  rs
+) {
+  @quickcheck.Arbitrary::arbitrary(size, rs) |> from_array
+}
+
 test "panic unsafe_drop" {
   unsafe_drop(5, of([1, 2, 3, 4])) |> ignore
 }
