@@ -31,14 +31,14 @@ pub fn output(self : JsonPath, logger : Logger) -> Unit {
   }
 }
 
-pub fn update_key(self : JsonPath, key : String) -> Unit {
+fn update_key(self : JsonPath, key : String) -> Unit {
   match self {
     Key(_) as k => k.key = key
     _ => abort("the variant is not Key")
   }
 }
 
-pub fn update_index(self : JsonPath, index : Int) -> Unit {
+fn update_index(self : JsonPath, index : Int) -> Unit {
   match self {
     Index(_) as i => i.index = index
     _ => abort("the variant is not Index")

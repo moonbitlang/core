@@ -18,8 +18,6 @@ type JsonPath
 impl JsonPath {
   op_equal(Self, Self) -> Bool
   output(Self, Logger) -> Unit
-  update_index(Self, Int) -> Unit
-  update_key(Self, String) -> Unit
 }
 
 pub type! ParseError {
