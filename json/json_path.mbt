@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-pub enum JsonPath {
+enum JsonPath {
   Root
   Key(JsonPath, String)
   Index(JsonPath, Int)
