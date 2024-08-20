@@ -6,6 +6,7 @@ package moonbitlang/core/double
 impl Double {
   abs(Double) -> Double
   ceil(Double) -> Double
+  exp(Double) -> Double
   floor(Double) -> Double
   from_int(Int) -> Double
   inf(Int) -> Double
