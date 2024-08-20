@@ -6,6 +6,22 @@ fn parse(String) -> Json!ParseError
 fn valid(String) -> Bool
 
 // Types and methods
+pub type! JsonParseError String
+impl JsonParseError {
+  op_equal(Self, Self) -> Bool
+  to_string(Self) -> String
+}
+
+pub enum JsonPath {
+  Root
+  Key(JsonPath, String)
+  Index(JsonPath, Int)
+}
+impl JsonPath {
+  output(Self, Logger) -> Unit
+  to_string(Self) -> String
+}
+
 pub type! ParseError {
   InvalidChar(Position, Char)
   InvalidEof
@@ -42,9 +58,30 @@ impl Json {
 pub typealias JsonValue = Json
 
 // Traits
+pub trait FromJson {
+  from_json(Json, JsonPath) -> Self!JsonParseError
+}
 
 // Extension Methods
 impl Show for Json
 
+impl Show for JsonParseError
+
 impl Show for ParseError
+
+impl FromJson for Bool
+
+impl FromJson for Char
+
+impl FromJson for Int
+
+impl FromJson for Int64
+
+impl FromJson for Double
+
+impl FromJson for String
+
+impl FromJson for Array
+
+impl FromJson for Map
 

@@ -253,22 +253,6 @@ impl Json {
   op_equal(Self, Self) -> Bool
 }
 
-pub type! JsonParseError String
-impl JsonParseError {
-  op_equal(Self, Self) -> Bool
-  to_string(Self) -> String
-}
-
-pub enum JsonPath {
-  Root
-  Key(JsonPath, String)
-  Index(JsonPath, Int)
-}
-impl JsonPath {
-  output(Self, Logger) -> Unit
-  to_string(Self) -> String
-}
-
 type Map
 impl Map {
   capacity[K, V](Self[K, V]) -> Int
@@ -618,10 +602,6 @@ pub trait Eq {
   op_equal(Self, Self) -> Bool
 }
 
-pub trait FromJson {
-  from_json(Json, JsonPath) -> Self!JsonParseError
-}
-
 pub trait Hash {
   hash_combine(Self, Hasher) -> Unit
   hash(Self) -> Int
@@ -643,22 +623,6 @@ pub trait ToJson {
 }
 
 // Extension Methods
-impl FromJson for Bool
-
-impl FromJson for Char
-
-impl FromJson for Int
-
-impl FromJson for Int64
-
-impl FromJson for Double
-
-impl FromJson for String
-
-impl FromJson for Array
-
-impl FromJson for Map
-
 impl Hash for Unit
 
 impl Hash for Bool
@@ -734,8 +698,6 @@ impl Show for BigInt
 impl Show for Buffer
 
 impl Show for Iter
-
-impl Show for JsonParseError
 
 impl Show for Map
 

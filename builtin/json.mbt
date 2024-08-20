@@ -27,36 +27,6 @@ pub trait ToJson {
   to_json(Self) -> Json
 }
 
-pub enum JsonPath {
-  Root
-  Key(JsonPath, String)
-  Index(JsonPath, Int)
-}
-
-pub fn to_string(self : JsonPath) -> String {
-  match self {
-    Root => "$".to_string()
-    Key(p, k) => p.to_string() + "." + k
-    Index(p, i) => p.to_string() + "[" + i.to_string() + "]"
-  }
-}
-
-pub fn output(self : JsonPath, logger : Logger) -> Unit {
-  logger.write_string(self.to_string())
-}
-
-test "show JsonPath" {
-  let path = Key(Index(Root, 0), "foo")
-  inspect!(path, content="$[0].foo")
-}
-
-pub type! JsonParseError String derive(Eq, Show)
-
-/// Trait for types that can be converted from `Json`
-pub trait FromJson {
-  from_json(Json, JsonPath) -> Self!JsonParseError
-}
-
 pub fn Bool::to_json(self : Bool) -> Json {
   if self {
     True
@@ -127,80 +97,4 @@ pub fn Map::to_json[V : ToJson](self : Map[String, V]) -> Json {
   let object = {  }
   self.each(fn(k, v) { object[k] = v.to_json() })
   Object(object)
-}
-
-pub impl FromJson for Bool with from_json(json, path) {
-  match json {
-    True => true
-    False => false
-    _ => raise JsonParseError("Bool::from_json: expected boolean at \{path} ")
-  }
-}
-
-pub impl FromJson for Int with from_json(json, path) {
-  match json {
-    Number(n) => n.to_int()
-    _ => raise JsonParseError("Int::from_json: expected number at \{path} ")
-  }
-}
-
-pub impl FromJson for Int64 with from_json(json, path) {
-  match json {
-    Number(n) => n.to_int64()
-    _ => raise JsonParseError("Int64::from_json: expected number at \{path} ")
-  }
-}
-
-pub impl FromJson for Double with from_json(json, path) {
-  match json {
-    Number(n) => n
-    _ => raise JsonParseError("Double::from_json: expected number at \{path}")
-  }
-}
-
-pub impl FromJson for String with from_json(json, path) {
-  match json {
-    String(a) => a
-    _ => raise JsonParseError("String::from_json: expected string at \{path}")
-  }
-}
-
-pub impl FromJson for Char with from_json(json, path) {
-  match json {
-    String(a) =>
-      if a.length() != 1 {
-        raise JsonParseError(
-          "Char::from_json: expected single character at \{path}",
-        )
-      } else {
-        a[0]
-      }
-    _ => raise JsonParseError("Char::from_json: expected string at \{path}")
-  }
-}
-
-pub impl[X : FromJson] FromJson for Array[X] with from_json(json, path) {
-  match json {
-    Array(a) => {
-      let res : Array[X] = Array::new(capacity=a.length())
-      for i = 0; i < a.length(); i = i + 1 {
-        res.push(FromJson::from_json!(a[i], Index(path, i)))
-      }
-      res
-    }
-    _ => raise JsonParseError("Array::from_json: expected array at \{path}")
-  }
-}
-
-pub impl[V : FromJson] FromJson for Map[String, V] with from_json(json, path) {
-  match json {
-    Object(obj) => {
-      let res : Map[String, V] = Map::new()
-      for kv in obj.iter() {
-        res[kv.0] = FromJson::from_json!(kv.1, Key(path, kv.0))
-      }
-      res
-    }
-    _ => raise JsonParseError("Map::from_json: expected object at \{path}")
-  }
 }
