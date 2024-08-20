@@ -56,6 +56,15 @@ pub fn next_int(self : RandomState) -> Int {
   self.next_uint().to_int()
 }
 
+pub fn next_positive_int(self : RandomState) -> Int {
+  let r = self.next_int()
+  if r < 0 {
+    -r
+  } else {
+    r + 1
+  }
+}
+
 pub fn next_double(self : RandomState) -> Double {
   let u = self.next_uint64()
   u.lsr(11).to_int64().to_double() * double_ulp

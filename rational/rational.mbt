@@ -286,6 +286,19 @@ pub impl Show for T with output(self, logger) {
   }
 }
 
+pub impl @quickcheck.Arbitrary for T with arbitrary(size, rs) {
+  let numerator : Int64 = @quickcheck.Arbitrary::arbitrary(size, rs)
+  let denominator : Int64 = {
+    let d : Int64 = @quickcheck.Arbitrary::arbitrary(size, rs)
+    if d == 0 {
+      1
+    } else {
+      d
+    }
+  }
+  new_unchecked(numerator, denominator)
+}
+
 pub fn to_string(self : T) -> String {
   Show::to_string(self)
 }

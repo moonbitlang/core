@@ -6,6 +6,7 @@
     "moonbitlang/core/double",
     "moonbitlang/core/int64",
     "moonbitlang/core/string",
+    "moonbitlang/core/quickcheck",
     "moonbitlang/core/coverage"
   ]
 }

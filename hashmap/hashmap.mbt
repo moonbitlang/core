@@ -196,6 +196,17 @@ test "of" {
   inspect!(m.get(3), content="Some(4)")
 }
 
+pub impl[K : @quickcheck.Arbitrary + Hash + Eq, V : @quickcheck.Arbitrary] @quickcheck.Arbitrary for T[
+  K,
+  V,
+] with arbitrary(size, rs) {
+  let m = new()
+  (@quickcheck.Arbitrary::arbitrary(size, rs) : Iter[(K, V)]).each(
+    fn { (k, v) => m.set(k, v) },
+  )
+  m
+}
+
 priv type MyString String derive(Eq)
 
 impl Hash for MyString with hash(self) { self.0.length() }
@@ -205,6 +216,22 @@ impl Hash for MyString with hash_combine(self, hasher) {
 }
 
 impl Show for MyString with output(self, logger) { logger.write_string(self.0) }
+
+test "arbitrary" {
+  let samples : Array[T[String, Int]] = @quickcheck.samples(20)
+  inspect!(
+    samples[5:10],
+    content=
+      #|[HashMap::of([("", -1)]), HashMap::of([("E9", 0), ("", 0), ("h", 1)]), HashMap::of([("\x07", -1), ("", 0)]), HashMap::of([("", 0)]), HashMap::of([("", 0), ("\x02", 1)])]
+    ,
+  )
+  inspect!(
+    samples[11:15],
+    content=
+      #|[HashMap::of([("4j", -2), ("v\x05", -1), ("", 0)]), HashMap::of([("", 0)]), HashMap::of([("Vw\b", 4), ("T", 0), ("m", 5), ("", 4)]), HashMap::of([])]
+    ,
+  )
+}
 
 test "set" {
   let m : T[MyString, Int] = new()

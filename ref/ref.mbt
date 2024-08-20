@@ -119,3 +119,10 @@ test "incr" {
   a.val += 5
   inspect!(a.val, content="7")
 }
+
+pub impl[X : @quickcheck.Arbitrary] @quickcheck.Arbitrary for Ref[X] with arbitrary(
+  size,
+  rs
+) {
+  Ref::new(X::arbitrary(size, rs))
+}

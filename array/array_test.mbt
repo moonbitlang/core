@@ -555,3 +555,12 @@ test "Array::last" {
   // Test with a single-element array
   inspect!([1].last(), content="Some(1)")
 }
+
+test "arbitrary" {
+  let arr : Array[Array[Int]] = @quickcheck.samples(20)
+  inspect!(arr[5:9], content="[[0], [0], [0], [0, 0, 0]]")
+  inspect!(
+    arr[10:15],
+    content="[[0, 0, 0, 1, 0, -1, 0, -1], [0, 0, 0, 1], [0, 0, 0, -1, -1, -1, 4], [0, 0], [0, 0, -1, 2]]",
+  )
+}

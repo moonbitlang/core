@@ -378,3 +378,14 @@ pub fn wrap2[T, A, B, E : Error](
     e => Err(e)
   }
 }
+
+pub impl[T : @quickcheck.Arbitrary, E : @quickcheck.Arbitrary] @quickcheck.Arbitrary for Result[
+  T,
+  E,
+] with arbitrary(size, rs) {
+  if @quickcheck.Arbitrary::arbitrary(size, rs) {
+    Ok(T::arbitrary(size, rs))
+  } else {
+    Err(E::arbitrary(size, rs))
+  }
+}

@@ -70,3 +70,9 @@ test "FixedArray::last" {
     ,
   )
 }
+
+test "FixedArray::arbitrary" {
+  let samples : Array[FixedArray[Int]] = @quickcheck.samples(15)
+  inspect!(samples[0:10], content="[[], [], [0], [0], [0], [0], [0], [0], [0, 0, 0], [0, 0, 0, 0, 3]]")
+  inspect!(samples[10:15], content="[[0, 0, 0, 1, 0, -1, 0, -1], [0, 0, 0, 1], [0, 0, 0, -1, -1, -1, 4], [0, 0], [0, 0, -1, 2]]")
+}

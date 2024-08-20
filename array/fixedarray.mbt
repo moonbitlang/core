@@ -991,3 +991,11 @@ pub fn FixedArray::last[A](self : FixedArray[A]) -> A? {
     [.., last] => Some(last)
   }
 }
+
+pub impl[X : @quickcheck.Arbitrary] @quickcheck.Arbitrary for FixedArray[X] with arbitrary(
+  size,
+  rs
+) {
+  let len = if size == 0 { 0 } else { rs.next_positive_int() % size }
+  FixedArray::makei(len, fn(x) { X::arbitrary(x, rs) })
+}
