@@ -14,7 +14,7 @@
 
 /// Currently we only support [chacha8] as the source of randomness.
 struct Rand {
-  src : @rand_source.ChaCha8
+  src : @random_source.ChaCha8
 }
 
 /// Create a new random number generator with [seed].
@@ -23,7 +23,7 @@ pub fn Rand::new(~seed : Bytes = b"ABCDEFGHIJKLMNOPQRSTUVWXYZ123456") -> Rand {
   if seed.length() != 32 {
     abort("seed must be 32 bytes long")
   }
-  let src = @rand_source.ChaCha8::new(seed)
+  let src = @random_source.ChaCha8::new(seed)
   { src, }
 }
 
@@ -83,6 +83,11 @@ test "double64" {
   let r = Rand::new()
   let n = r.double64()
   inspect!(n, content="0.615969772029264")
+}
+
+/// [float32] returns a pseudo-random 32-bit Float in the range [0.0, 1.0)
+pub fn Rand::float32(self : Rand) -> Float {
+  ((self.uint() << 8 >> 8) / (1U << 24)).to_float()
 }
 
 /// [umul128] returns the 128-bit product of x and y: (hi, lo) = x * y
