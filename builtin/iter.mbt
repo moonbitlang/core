@@ -200,7 +200,7 @@ pub fn Iter::repeat[T](a : T) -> Iter[T] {
 /// # Returns
 ///
 /// Returns an iterator that iterates over the range of Int from `start` to `end - 1`.
-pub fn until(
+pub fn upto(
   self : Int,
   end : Int,
   ~step : Int = 1,
@@ -242,7 +242,7 @@ pub fn until(
 /// # Returns
 ///
 /// Returns an iterator that iterates over the range of Int64 from `start` to `end - 1`.
-pub fn until(
+pub fn upto(
   self : Int64,
   end : Int64,
   ~step : Int64 = 1L,
@@ -284,7 +284,7 @@ pub fn until(
 /// # Returns
 ///
 /// Returns an iterator that iterates over the range of Float from `start` to `end - 1`.
-pub fn until(
+pub fn upto(
   self : Float,
   end : Float,
   ~step : Float = 1.0,
@@ -326,7 +326,7 @@ pub fn until(
 /// # Returns
 ///
 /// Returns an iterator that iterates over the range of Double from `start` to `end - 1`.
-pub fn until(
+pub fn upto(
   self : Double,
   end : Double,
   ~step : Double = 1.0,
@@ -521,7 +521,7 @@ pub fn take_while[T](self : Iter[T], f : (T) -> Bool) -> Iter[T] {
   }
 }
 
-/// Transforms the elements of the iterator using a mapping function until the function returns `None`.
+/// Transforms the elements of the iterator using a mapping function upto the function returns `None`.
 pub fn map_while[A, B](self : Iter[A], f : (A) -> B?) -> Iter[B] {
   fn(yield) {
     let mut r : IterResult = IterContinue
