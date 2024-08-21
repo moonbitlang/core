@@ -188,12 +188,11 @@ pub fn Iter::repeat[T](a : T) -> Iter[T] {
 }
 
 /// Creates an iterator that iterates over a range of Int with default step 1.
-/// To grow the range downward, set the `step` parameter to a negative value.
 ///
 /// # Arguments
 ///
 /// * `start` - The starting value of the range (inclusive).
-/// * `end` - The ending value of the range (exclusive by default).
+/// * `end` - The ending value of the range (exclusive).
 /// * `inclusive` - Whether the ending value is inclusive (default false).
 ///
 /// # Returns
@@ -218,13 +217,76 @@ pub fn upto(self : Int, end : Int, ~inclusive : Bool = false) -> Iter[Int] {
   }
 }
 
+/// Creates an iterator that iterates over a range of UInt with default step 1U.
+/// 
+/// # Arguments
+/// 
+/// * `start` - The starting value of the range (inclusive).
+/// * `end` - The ending value of the range (exclusive).
+/// * `inclusive` - Whether the ending value is inclusive (default false).
+///
+/// # Returns
+/// 
+/// Returns an iterator that iterates over the range of UInt from `start` to `end - 1`.
+pub fn upto(self : UInt, end : UInt, ~inclusive : Bool = false) -> Iter[UInt] {
+  fn(yield) {
+    let mut i = self
+    while i < end || (inclusive && i == end) {
+      if yield(i) == IterEnd {
+        break IterEnd
+      }
+      let next = i + 1U
+      if next > i {
+        i = next
+      } else {
+        break IterEnd
+      }
+    } else {
+      IterContinue
+    }
+  }
+}
+
+/// Creates an iterator that iterates over a range of UInt64 with default step 1UL.
+/// 
+/// # Arguments
+/// 
+/// * `start` - The starting value of the range (inclusive).
+/// * `end` - The ending value of the range (exclusive).
+/// * `inclusive` - Whether the ending value is inclusive (default false).
+/// 
+/// # Returns
+/// 
+/// Returns an iterator that iterates over the range of UInt64 from `start` to `end - 1`.
+pub fn upto(
+  self : UInt64,
+  end : UInt64,
+  ~inclusive : Bool = false
+) -> Iter[UInt64] {
+  fn(yield) {
+    let mut i = self
+    while i < end || (inclusive && i == end) {
+      if yield(i) == IterEnd {
+        break IterEnd
+      }
+      let next = i + 1UL
+      if next > i {
+        i = next
+      } else {
+        break IterEnd
+      }
+    } else {
+      IterContinue
+    }
+  }
+}
+
 /// Creates an iterator that iterates over a range of Int64 with default step 1L.
-/// To grow the range downward, set the `step` parameter to a negative value.
 ///
 /// # Arguments
 ///
 /// * `start` - The starting value of the range (inclusive).
-/// * `end` - The ending value of the range (exclusive by default).
+/// * `end` - The ending value of the range (exclusive).
 /// * `inclusive` - Whether the ending value is inclusive (default false).
 ///
 /// # Returns
@@ -254,12 +316,11 @@ pub fn upto(
 }
 
 /// Creates an iterator that iterates over a range of Float with default step 1.0 .
-/// To grow the range downward, use the `downto` method.
 ///
 /// # Arguments
 ///
 /// * `start` - The starting value of the range (inclusive).
-/// * `end` - The ending value of the range (exclusive by default).
+/// * `end` - The ending value of the range (exclusive).
 /// * `inclusive` - Whether the ending value is inclusive (default false).
 ///
 /// # Returns
@@ -289,12 +350,11 @@ pub fn upto(
 }
 
 /// Creates an iterator that iterates over a range of Double with default step 1.0 .
-/// To grow the range downward, use the `downto` method.
 ///
 /// # Arguments
 ///
 /// * `start` - The starting value of the range (inclusive).
-/// * `end` - The ending value of the range (exclusive by default).
+/// * `end` - The ending value of the range (exclusive).
 /// * `inclusive` - Whether the ending value is inclusive (default false).
 ///
 /// # Returns
@@ -408,7 +468,7 @@ pub fn until(
 }
 
 /// Creates an iterator that iterates over a range of Float with default step 1.0 .
-/// To grow the range downward, use the `downto` method.
+/// To grow the range downward, set the `step` parameter to a negative value.
 ///
 /// # Arguments
 ///
@@ -450,7 +510,7 @@ pub fn until(
 }
 
 /// Creates an iterator that iterates over a range of Double with default step 1.0 .
-/// To grow the range downward, use the `downto` method.
+/// To grow the range downward, set the `step` parameter to a negative value.
 ///
 /// # Arguments
 ///

@@ -426,6 +426,7 @@ impl UInt {
   to_string(UInt) -> String
   to_uint64(UInt) -> UInt64
   trunc_double(Double) -> UInt
+  upto(UInt, UInt, ~inclusive : Bool = ..) -> Iter[UInt]
 }
 impl UInt64 {
   compare(UInt64, UInt64) -> Int
@@ -454,6 +455,7 @@ impl UInt64 {
   to_string(UInt64) -> String
   to_uint(UInt64) -> UInt
   trunc_double(Double) -> UInt64
+  upto(UInt64, UInt64, ~inclusive : Bool = ..) -> Iter[UInt64]
 }
 impl Float {
   compare(Float, Float) -> Int
