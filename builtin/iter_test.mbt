@@ -306,36 +306,30 @@ test "range" {
   inspect!(1.0.until(2.0, step=0), content="[]")
   inspect!(0L.until(10, step=0), content="[]")
   // inclusive
+  inspect!((@int.max - 2).until(@int.max - 1), content="[2147483645]")
   inspect!(
-    (@int.max_value() - 2).until(@int.max_value() - 1),
-    content="[2147483645]",
-  )
-  inspect!(
-    (@int.max_value() - 2).until_inclusive(@int.max_value() - 1),
+    (@int.max - 2).until(@int.max - 1, inclusive=true),
     content="[2147483645, 2147483646]",
   )
+  inspect!((@int.max - 1).until(@int.max), content="[2147483646]")
   inspect!(
-    (@int.max_value() - 1).until(@int.max_value()),
-    content="[2147483646]",
-  )
-  inspect!(
-    (@int.max_value() - 1).until_inclusive(@int.max_value()),
+    (@int.max - 1).until(@int.max, inclusive=true),
     content="[2147483646, 2147483647]",
   )
   inspect!(
-    (@int64.max_value() - 2).until_inclusive(@int64.max_value() - 1L),
+    (@int64.max - 2).until(@int64.max - 1L, inclusive=true),
     content="[9223372036854775805, 9223372036854775806]",
   )
   inspect!(
-    (@int64.max_value() - 1).until_inclusive(@int64.max_value()),
+    (@int64.max - 1).until(@int64.max, inclusive=true),
     content="[9223372036854775806, 9223372036854775807]",
   )
   inspect!(
-    0.0.until_inclusive(1.0, step=0.1),
+    0.0.until(1.0, step=0.1, inclusive=true),
     content="[0.0, 0.1, 0.2, 0.30000000000000004, 0.4, 0.5, 0.6, 0.7, 0.7999999999999999, 0.8999999999999999, 0.9999999999999999]",
   )
   inspect!(
-    0.0.until(1.0, step=0.1),
+    0.0.until(1.0, step=0.1, inclusive=false),
     content="[0.0, 0.1, 0.2, 0.30000000000000004, 0.4, 0.5, 0.6, 0.7, 0.7999999999999999, 0.8999999999999999, 0.9999999999999999]",
   )
   inspect!(
@@ -343,7 +337,7 @@ test "range" {
     content="[0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0]",
   )
   inspect!(
-    0.0.until_inclusive(10.0),
+    0.0.until(10.0, inclusive=true),
     content="[0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0]",
   )
   // until
