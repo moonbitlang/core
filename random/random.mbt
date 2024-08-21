@@ -44,26 +44,84 @@ test "next" {
   assert_eq!(n, exp)
 }
 
-/// [int] Return a non-negative pseudo-random 31-bit integer as an Int in the range [0, 2^31)
-pub fn Rand::int(self : Rand) -> Int {
-  self.next().lsr(33).to_int()
+/// [int] Return a non-negative pseudo-random 31-bit integer as an Int in the range [0, 2^31) or [0, limit) if limit is provided.
+/// 
+/// # Arguments
+/// 
+/// * `limit` - The upper bound (exclusive) of the random number to be generated (Optional).
+///             When limit is 0, the range is [0, 2^31).
+pub fn Rand::int(self : Rand, ~limit : Int = 0) -> Int {
+  if limit == 0 {
+    // Range [0, 2^31)
+    self.next().lsr(33).to_int()
+  } else {
+    self.uint(limit=limit.to_uint()).to_int()
+  }
 }
 
 /// [int64] returns a non-negative pseudo-random 63-bit integer as an Int64 in the range [0, 2^63)
-pub fn Rand::int64(self : Rand) -> Int64 {
-  // Create a mask that has all bits set to 1 except the highest bit
-  let mask : UInt64 = 1UL << 63
-  return (self.next() & mask).to_int64()
+/// 
+/// # Arguments
+/// 
+/// * `limit` - The upper bound (exclusive) of the random number to be generated (Optional).
+///            When limit is 0, the range is [0, 2^63).
+pub fn Rand::int64(self : Rand, ~limit : Int64 = 0) -> Int64 {
+  if limit == 0 {
+    // range [0, 2^63)
+    // Create a mask that has all bits set to 1 except the highest bit
+    let mask : UInt64 = 1UL << 63
+    return (self.next() & mask).to_int64()
+  } else {
+    self.uint64(limit=limit.to_uint64()).to_int64()
+  }
 }
 
-/// [uint] returns a non-negative pseudo-random 32-bit integer as a Uint in the range [0, 2^32)
-pub fn Rand::uint(self : Rand) -> UInt {
-  self.next().to_uint()
+/// [uint] returns a non-negative pseudo-random 32-bit integer as a Uint in the range [0, 2^32) or [0, limit) if limit is provided.
+/// 
+/// # Arguments
+/// 
+/// * `limit` - The upper bound (exclusive) of the random number to be generated (Optional).
+///            When limit is 0, the range is [0, 2^32).
+pub fn Rand::uint(self : Rand, ~limit : UInt = 0) -> UInt {
+  if limit == 0 {
+    // Range: [0, 2^32)
+    return self.next().to_uint()
+  }
+  self.uint64(limit=limit.to_uint64()).to_uint()
 }
 
-/// [uint64] returns a non-negative pseudo-random 64-bit integer as a Uint64 in the range [0, 2^64)
-pub fn Rand::uint64(self : Rand) -> UInt64 {
-  self.next()
+test "uint" {
+  let r = Rand::new()
+  let n = r.uint(limit=10U)
+  inspect!(n, content="7")
+  let n = r.uint(limit=10U)
+  inspect!(n, content="0")
+  let n = r.uint(limit=10U)
+  inspect!(n, content="5")
+}
+
+/// [uint64] returns a non-negative pseudo-random 64-bit integer as a Uint64 in the range [0, 2^64) or [0, limit) if limit is provided.
+/// 
+/// # Arguments
+/// 
+/// * `limit` - The upper bound (exclusive) of the random number to be generated (Optional).
+///           When limit is 0, the range is [0, 2^64).
+pub fn Rand::uint64(self : Rand, ~limit : UInt64 = 0) -> UInt64 {
+  if limit == 0 {
+    // Range: [0, 2^64)
+    return self.next()
+  } else if (limit & (limit - 1)) == 0 {
+    // limit is a power of 2, mask to get the unbiased result.
+    return self.next() & (limit - 1)
+  }
+  umul128(self.next(), limit)
+  if gUInt128.lo < limit {
+    let thresh = limit.lnot() % limit
+    while gUInt128.lo < thresh {
+      umul128(self.next(), limit)
+    }
+  }
+  gUInt128.hi
 }
 
 test "UInt64" {
@@ -71,6 +129,13 @@ test "UInt64" {
   let n = r.uint64()
   let exp = 13219109469176600229UL
   assert_eq!(n, exp)
+  let r = Rand::new()
+  let n = r.uint64(limit=10UL)
+  inspect!(n, content="7")
+  let n = r.uint64(limit=10UL)
+  inspect!(n, content="0")
+  let n = r.uint64(limit=10UL)
+  inspect!(n, content="5")
 }
 
 /// [double] returns a pseudo-random 64-bit Double in the range [0.0, 1.0)
@@ -79,7 +144,7 @@ pub fn Rand::double(self : Rand) -> Double {
   Double::convert_uint64(1UL << 53)
 }
 
-test "double64" {
+test "double" {
   let r = Rand::new()
   let n = r.double()
   inspect!(n, content="0.615969772029264")
@@ -90,130 +155,57 @@ pub fn Rand::float(self : Rand) -> Float {
   ((self.uint() << 8 >> 8) / (1U << 24)).to_float()
 }
 
+priv struct UInt128 {
+  mut hi : UInt64
+  mut lo : UInt64
+} derive(Eq)
+
+let gUInt128 : UInt128 = { hi: 0UL, lo: 0UL }
+
 /// [umul128] returns the 128-bit product of x and y: (hi, lo) = x * y
 /// with the product bits' upper half returned in hi and the lower
 /// half returned in lo.
 ///
 /// This function's execution time does not depend on the inputs.
-fn umul128(a : UInt64, b : UInt64) -> (UInt64, UInt64) {
-  let aLo = a.to_uint()
-  let aHi = a.lsr(32).to_uint()
-  let bLo = b.to_uint()
-  let bHi = b.lsr(32).to_uint()
-  let b00 = aLo.to_uint64() * bLo.to_uint64()
-  let b01 = aLo.to_uint64() * bHi.to_uint64()
-  let b10 = aHi.to_uint64() * bLo.to_uint64()
-  let b11 = aHi.to_uint64() * bHi.to_uint64()
-  let b00Lo = b00.to_uint()
-  let b00Hi = b00.lsr(32).to_uint()
-  let mid1 = b10 + b00Hi.to_uint64()
-  let mid1Lo = mid1.to_uint()
-  let mid1Hi = mid1.lsr(32).to_uint()
-  let mid2 = b01 + mid1Lo.to_uint64()
-  let mid2Lo = mid2.to_uint()
-  let mid2Hi = mid2.lsr(32).to_uint()
-  let pHi : UInt64 = b11 + mid1Hi.to_uint64() + mid2Hi.to_uint64()
-  let pLo : UInt64 = mid2Lo.to_uint64().lsl(32).lor(b00Lo.to_uint64())
-  (pHi, pLo)
+fn umul128(a : UInt64, b : UInt64) -> Unit {
+  let aLo = a & 0xffffffff
+  let aHi = a >> 32
+  let bLo = b & 0xffffffff
+  let bHi = b >> 32
+  let x = aLo * bLo
+  let y = aHi * bLo + (x >> 32)
+  let z = aLo * bHi + (y & 0xffffffff)
+  let w = aHi * bHi + (y >> 32) + (z >> 32)
+  gUInt128.hi = w
+  gUInt128.lo = a * b
 }
 
 test "umul128" {
-  // let (hi, lo) = umul128(1UL << 32, 1UL << 32)
-  // assert_eq!(hi, 1UL)
-  // assert_eq!(lo, 0UL)
-  let (hi, lo) = umul128(0x123456789ABCDEF0, 0xFEDCBA9876543210)
-  assert_eq!(hi, 1305938385386173474UL)
-  assert_eq!(lo, 2552847189736476416UL)
+  umul128(0x123456789ABCDEF0, 0xFEDCBA9876543210)
+  assert_eq!(gUInt128.hi, 1305938385386173474UL)
+  assert_eq!(gUInt128.lo, 2552847189736476416UL)
 }
 
 test "umul128: handles small numbers correctly" {
-  let (hi, lo) = umul128(1UL, 1UL)
-  assert_eq!(hi, 0UL)
-  assert_eq!(lo, 1UL)
+  umul128(1UL, 1UL)
+  assert_eq!(gUInt128.hi, 0UL)
+  assert_eq!(gUInt128.lo, 1UL)
 }
 
 test "umul128: handles large numbers correctly" {
-  let (hi, lo) = umul128(1UL, 0xFFFFFFFFFFFFFFFFUL)
-  assert_eq!(hi, 0UL)
-  assert_eq!(lo, 0xFFFFFFFFFFFFFFFFUL)
+  umul128(1UL, 0xFFFFFFFFFFFFFFFFUL)
+  assert_eq!(gUInt128.hi, 0UL)
+  assert_eq!(gUInt128.lo, 0xFFFFFFFFFFFFFFFFUL)
 }
 
 test "umul128: handles zero correctly" {
-  let (hi, lo) = umul128(0UL, 0UL)
-  assert_eq!(hi, 0UL)
-  assert_eq!(lo, 0UL)
-}
-
-/// [uint64N] returns, as a Uint64, a pseudo-random number in the half-open interval [0,n)
-/// @alert unsafe "Panics if n is 0"
-pub fn Rand::uint64N(self : Rand, n : UInt64) -> UInt64 {
-  if n == 0 {
-    abort("Rand::uint64N: n must > 0")
-  }
-  // n is a power of 2, mask to get the unbiased result.
-  if (n & (n - 1)) == 0 {
-    return self.next() & (n - 1)
-  }
-  let mut t = (0UL, 0UL)
-  t = umul128(self.next(), n)
-  if t.1 < n {
-    let thresh = n.lnot() % n
-    while t.1 < thresh {
-      t = umul128(self.next(), n)
-    }
-  }
-  t.0
-}
-
-test "uint64N" {
-  let r = Rand::new()
-  let n = r.uint64N(10UL)
-  inspect!(n, content="7")
-  let n = r.uint64N(10UL)
-  inspect!(n, content="0")
-  let n = r.uint64N(10UL)
-  inspect!(n, content="5")
-}
-
-/// [uintN] returns a non-negative pseudo-random 32-bit integer in the range [0, n)
-/// @alert unsafe "Panics if n is 0"
-pub fn Rand::uintN(self : Rand, n : UInt) -> UInt {
-  if n == 0 {
-    abort("Rand::uintN: n must > 0")
-  }
-  self.uint64N(n.to_uint64()).to_uint()
-}
-
-test "uintN" {
-  let r = Rand::new()
-  let n = r.uintN(10U)
-  inspect!(n, content="7")
-  let n = r.uintN(10U)
-  inspect!(n, content="0")
-  let n = r.uintN(10U)
-  inspect!(n, content="5")
-}
-
-/// [int64N] returns a non-negative pseudo-random 63-bit integer in the range [0, n)
-/// @alert unsafe "Panics if n is 0"
-pub fn Rand::int64N(self : Rand, n : Int64) -> Int64 {
-  if n <= 0 {
-    abort("Rand::int64N: n must be positive")
-  }
-  self.uint64N(n.to_uint64()).to_int64()
-}
-
-/// [intN] returns a non-negative pseudo-random 31-bit integer in the range [0, n)
-/// @alert unsafe "Panics if n is 0"
-pub fn Rand::intN(self : Rand, n : Int) -> Int {
-  if n <= 0 {
-    abort("Rand::intN: n must be positive")
-  }
-  self.uintN(n.to_uint()).to_int()
+  umul128(0UL, 0UL)
+  assert_eq!(gUInt128.hi, 0UL)
+  assert_eq!(gUInt128.lo, 0UL)
 }
 
 /// [shuffle] shuffles the first n elements of an array using the Fisher-Yates shuffle algorithm.
-/// @alert unsafe "Panics if n is negative"
+/// @alert unsafe "Panics if limit is negative"
 /// 
 /// # Example
 /// ```
@@ -228,12 +220,16 @@ pub fn Rand::intN(self : Rand, n : Int) -> Int {
 ///   },
 /// )
 /// ```
-pub fn Rand::shuffle(self : Rand, n : Int, swap : (Int, Int) -> Unit) -> Unit {
-  if n < 0 {
-    abort("Rand::shuffle: invalid argument n")
+pub fn Rand::shuffle(
+  self : Rand,
+  limit : Int,
+  swap : (Int, Int) -> Unit
+) -> Unit {
+  if limit < 0 {
+    abort("Rand::shuffle: invalid argument limit")
   }
-  for i = n - 1; i > 0; i = i - 1 {
-    let j = self.intN(i + 1)
+  for i = limit - 1; i > 0; i = i - 1 {
+    let j = self.int(limit=i + 1)
     swap(i, j)
   }
 }
