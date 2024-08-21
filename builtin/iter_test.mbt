@@ -301,10 +301,6 @@ test "range" {
   // edge cases
   inspect!((0).upto(10).take(100), content="[0, 1, 2, 3, 4, 5, 6, 7, 8, 9]")
   inspect!((100).upto(10).take(100), content="[]")
-  inspect!((100).upto(101, step=4), content="[100]")
-  inspect!((1).upto(2, step=0), content="[]")
-  inspect!(1.0.upto(2.0, step=0), content="[]")
-  inspect!(0L.upto(10, step=0), content="[]")
   // inclusive
   inspect!((@int.max - 2).upto(@int.max - 1), content="[2147483645]")
   inspect!(
@@ -323,14 +319,6 @@ test "range" {
   inspect!(
     (@int64.max - 1).upto(@int64.max, inclusive=true),
     content="[9223372036854775806, 9223372036854775807]",
-  )
-  inspect!(
-    0.0.upto(1.0, step=0.1, inclusive=true),
-    content="[0.0, 0.1, 0.2, 0.30000000000000004, 0.4, 0.5, 0.6, 0.7, 0.7999999999999999, 0.8999999999999999, 0.9999999999999999]",
-  )
-  inspect!(
-    0.0.upto(1.0, step=0.1, inclusive=false),
-    content="[0.0, 0.1, 0.2, 0.30000000000000004, 0.4, 0.5, 0.6, 0.7, 0.7999999999999999, 0.8999999999999999, 0.9999999999999999]",
   )
   inspect!(
     0.0.upto(10.0),
@@ -355,33 +343,6 @@ test "range" {
   inspect!(
     0.0.upto(10.0).take(5).concat(0.0.upto(2.0)),
     content="[0.0, 1.0, 2.0, 3.0, 4.0, 0.0, 1.0]",
-  )
-  inspect!(
-    (-50).upto(50, step=10).take(100),
-    content="[-50, -40, -30, -20, -10, 0, 10, 20, 30, 40]",
-  )
-  inspect!(
-    0.1.upto(0.4, step=0.1).take(5),
-    content="[0.1, 0.2, 0.30000000000000004]",
-  )
-  inspect!(0.1.upto(0.3, step=0.1), content="[0.1, 0.2]")
-  inspect!(
-    0.1.upto(0.4, step=0.1).take(5),
-    content="[0.1, 0.2, 0.30000000000000004]",
-  )
-  inspect!(
-    0x80000000L.upto(0x80000000L + 10L, step=2L),
-    content="[2147483648, 2147483650, 2147483652, 2147483654, 2147483656]",
-  )
-  // step < 0
-  inspect!((10).upto(0, step=-1).take(5), content="[10, 9, 8, 7, 6]")
-  inspect!(
-    0x80000000L.upto(0x80000000L - 10L, step=-2L).take(5),
-    content="[2147483648, 2147483646, 2147483644, 2147483642, 2147483640]",
-  )
-  inspect!(
-    0.0.upto(-1.0, step=-0.1).take(5),
-    content="[0.0, -0.1, -0.2, -0.30000000000000004, -0.4]",
   )
 }
 

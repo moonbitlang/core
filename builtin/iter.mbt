@@ -194,31 +194,20 @@ pub fn Iter::repeat[T](a : T) -> Iter[T] {
 ///
 /// * `start` - The starting value of the range (inclusive).
 /// * `end` - The ending value of the range (exclusive by default).
-/// * `step` - The step size of the range (default 1).
 /// * `inclusive` - Whether the ending value is inclusive (default false).
 ///
 /// # Returns
 ///
 /// Returns an iterator that iterates over the range of Int from `start` to `end - 1`.
-pub fn upto(
-  self : Int,
-  end : Int,
-  ~step : Int = 1,
-  ~inclusive : Bool = false
-) -> Iter[Int] {
-  if step == 0 {
-    return Iter::empty()
-  }
+pub fn upto(self : Int, end : Int, ~inclusive : Bool = false) -> Iter[Int] {
   fn(yield) {
     let mut i = self
-    while (step > 0 && i < end) ||
-          (step < 0 && i > end) ||
-          (inclusive && i == end) {
+    while i < end || (inclusive && i == end) {
       if yield(i) == IterEnd {
         break IterEnd
       }
-      let next = i + step
-      if (step > 0 && next >= i) || (step < 0 && next <= i) {
+      let next = i + 1
+      if next > i {
         i = next
       } else {
         break IterEnd
@@ -236,7 +225,6 @@ pub fn upto(
 ///
 /// * `start` - The starting value of the range (inclusive).
 /// * `end` - The ending value of the range (exclusive by default).
-/// * `step` - The step size of the range (default 1L).
 /// * `inclusive` - Whether the ending value is inclusive (default false).
 ///
 /// # Returns
@@ -245,22 +233,16 @@ pub fn upto(
 pub fn upto(
   self : Int64,
   end : Int64,
-  ~step : Int64 = 1L,
   ~inclusive : Bool = false
 ) -> Iter[Int64] {
-  if step == 0 {
-    return Iter::empty()
-  }
   fn(yield) {
     let mut i = self
-    while (step > 0 && i < end) ||
-          (step < 0 && i > end) ||
-          (inclusive && i == end) {
+    while i < end || (inclusive && i == end) {
       if yield(i) == IterEnd {
         break IterEnd
       }
-      let next = i + step
-      if (step > 0 && next >= i) || (step < 0 && next <= i) {
+      let next = i + 1
+      if next > i {
         i = next
       } else {
         break IterEnd
@@ -278,7 +260,6 @@ pub fn upto(
 ///
 /// * `start` - The starting value of the range (inclusive).
 /// * `end` - The ending value of the range (exclusive by default).
-/// * `step` - The step size of the range (default 1.0).
 /// * `inclusive` - Whether the ending value is inclusive (default false).
 ///
 /// # Returns
@@ -287,22 +268,16 @@ pub fn upto(
 pub fn upto(
   self : Float,
   end : Float,
-  ~step : Float = 1.0,
   ~inclusive : Bool = false
 ) -> Iter[Float] {
-  if step == 0.0 {
-    return Iter::empty()
-  }
   fn(yield) {
     let mut i = self
-    while (step > 0.0 && i < end) ||
-          (step < 0.0 && i > end) ||
-          (inclusive && i == end) {
+    while i < end || (inclusive && i == end) {
       if yield(i) == IterEnd {
         break IterEnd
       }
-      let next = i + step
-      if (step > 0.0 && next >= i) || (step < 0.0 && next <= i) {
+      let next = i + 1
+      if next > i {
         i = next
       } else {
         break IterEnd
@@ -320,7 +295,6 @@ pub fn upto(
 ///
 /// * `start` - The starting value of the range (inclusive).
 /// * `end` - The ending value of the range (exclusive by default).
-/// * `step` - The step size of the range (default 1.0).
 /// * `inclusive` - Whether the ending value is inclusive (default false).
 ///
 /// # Returns
@@ -329,22 +303,16 @@ pub fn upto(
 pub fn upto(
   self : Double,
   end : Double,
-  ~step : Double = 1.0,
   ~inclusive : Bool = false
 ) -> Iter[Double] {
-  if step == 0.0 {
-    return Iter::empty()
-  }
   fn(yield) {
     let mut i = self
-    while (step > 0.0 && i < end) ||
-          (step < 0.0 && i > end) ||
-          (inclusive && i == end) {
+    while i < end || (inclusive && i == end) {
       if yield(i) == IterEnd {
         break IterEnd
       }
-      let next = i + step
-      if (step > 0.0 && next >= i) || (step < 0.0 && next <= i) {
+      let next = i + 1
+      if next > i {
         i = next
       } else {
         break IterEnd
