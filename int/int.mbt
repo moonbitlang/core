@@ -16,6 +16,23 @@ pub let max = 2147483647
 
 pub let min = -2147483648
 
+/// Returns the absolute value of an integer.
+/// 
+/// # Parameters
+/// 
+/// - `self` : The integer whose absolute value is to be determined.
+/// 
+/// # Returns
+/// 
+/// - The absolute value of the input integer.
+/// 
+/// # Examples
+/// 
+/// ```moonbit
+/// test {
+///   inspect!(abs(-10), content="10")
+/// }
+/// ```
 pub fn abs(self : Int) -> Int {
   if self < 0 {
     -self
