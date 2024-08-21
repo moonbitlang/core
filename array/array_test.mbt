@@ -466,23 +466,14 @@ test "iter" {
 test "shuffle_in_place" {
   let arr : Array[Int] = [1, 2, 3, 4, 5, 6, 7]
   fn rand(upper : Int) -> Int {
-    let rng = @random.init_state(seed=37)
-    rng.gen_int() % upper
-  }
-
-  Array::shuffle_in_place(arr, ~rand)
-  inspect!(arr, content="[3, 4, 7, 1, 6, 5, 2]")
-}
-
-test "shuffle" {
-  let arr : Array[Int] = [1, 2, 3, 4, 5, 6, 7]
-  fn rand(upper : Int) -> Int {
-    let rng = @random.init_state(seed=42)
-    rng.gen_int() % upper
+    let rng = @random.new()
+    rng.int() % upper
   }
 
   let shuffled = Array::shuffle(arr, ~rand)
-  inspect!(shuffled, content="[1, 5, 3, 4, 7, 6, 2]")
+  Array::shuffle_in_place(arr, ~rand)
+  assert_eq!(shuffled, arr)
+  inspect!(arr, content="[3, 2, 1, 5, 6, 7, 4]")
 }
 
 test "find_index" {

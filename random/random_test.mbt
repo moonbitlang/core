@@ -12,40 +12,26 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-test "int64" {
-  let rng = @random.init_state(seed=42)
-  inspect!(rng.gen_int64(), content="8084403149060065107")
-  inspect!(rng.gen_int64(), content="2279609739787318250")
-  inspect!(rng.gen_int64(), content="2226638563751653351")
-}
-
-test "int32" {
-  let rng = @random.init_state(seed=37)
-  inspect!(rng.gen_int(), content="1686431524")
-  inspect!(rng.gen_int(), content="1962882487")
-  inspect!(rng.gen_int(), content="1104074260")
-}
-
-test "double" {
-  let rng = @random.init_state(seed=37)
-  inspect!(rng.gen_double(), content="1.8280767729232197")
-  inspect!(rng.gen_double(), content="0.21014593823649855")
-  inspect!(rng.gen_double(), content="1.9690294691898182")
-}
-
-test "FixedArray::make with zero initialization" {
-  let k = 5
-  let arr = FixedArray::make(k, 0)
-  for i = 0; i < k; i = i + 1 {
-    assert_eq!(arr[i], 0)
-  }
-}
-
-test "FixedArray::make with non-zero initialization" {
-  let k = 5
-  let init_value = 42
-  let arr = FixedArray::make(k, init_value)
-  for i = 0; i < k; i = i + 1 {
-    assert_eq!(arr[i], init_value)
-  }
+test "prng" {
+  let r = @random.new()
+  assert_eq!(r.uint(limit=10), 7)
+  assert_eq!(r.uint(limit=10), 0)
+  assert_eq!(r.uint(limit=10), 5)
+  assert_eq!(r.int(), 1064320769)
+  assert_eq!(r.double(), 0.3318940049218405)
+  assert_eq!(r.int(limit=10), 0)
+  assert_eq!(r.uint(), 311122750)
+  assert_eq!(r.int64(), -9223372036854775808)
+  assert_eq!(r.int64(limit=10), 8)
+  assert_eq!(r.uint64(), 3951155890335085418)
+  let a = [1, 2, 3, 4, 5]
+  r.shuffle(
+    a.length(),
+    fn(i : Int, j : Int) {
+      let t = a[i]
+      a[i] = a[j]
+      a[j] = t
+    },
+  )
+  assert_eq!(a, [2, 1, 4, 3, 5])
 }
