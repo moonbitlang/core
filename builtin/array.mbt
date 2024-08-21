@@ -577,6 +577,66 @@ pub fn search[T : Eq](self : Array[T], value : T) -> Int? {
   }
 }
 
+/// Binary search the array index for a given element in a sorted array.
+/// 
+/// If the element is found then Ok is returned, containing the matching array index. 
+/// If there are multiple matches, then the leftmost match could be returned. 
+/// If the element is not found then Err is returned, containing the array index where a matching element cloud be inserted while maintaining sorted order.
+/// 
+/// The array must be sorted in increaing order. If not, the returned result is meaningless.
+///
+/// # Example
+/// ```
+/// let v = [3, 4, 5]
+/// v.binary_search(3)
+/// ```
+pub fn binary_search[T : Compare](
+  self : Array[T],
+  value : T
+) -> Result[Int, Int] {
+  return self.binary_search_by(
+    fn(v : T) { if v < value { -1 } else if v == value { 0 } else { 1 } },
+  )
+}
+
+/// Binary search the array index for a given element in a sorted array with a custom comparator function.
+/// 
+/// The comparator function should return an Int that indicates whether its argument is less(-1), equal(0), or greater(1) the element.
+/// 
+/// If the element is found then Ok is returned, containing the matching array index. 
+/// If there are multiple matches, then the leftmost match could be returned. 
+/// If the element is not found then Err is returned, containing the array index where a matching element cloud be inserted while maintaining sorted order.
+/// 
+/// If the array is not sorted or if the comparator function is not consistent with the sorted order of array, the returned result is meaningless.
+/// 
+/// # Example
+/// ```
+/// let v = [3, 4, 5]
+/// v.binary_search_by(
+///   fn(v : T) { if v < 3 { -1 } else if v == 3 { 0 } else { 1 } },
+/// )
+/// ```
+pub fn binary_search_by[T : Compare](
+  self : Array[T],
+  cmp : (T) -> Int
+) -> Result[Int, Int] {
+  let mut i = 0
+  let mut j = self.length()
+  while i < j {
+    let h = (i + j) / 2
+    if cmp(self.buffer()[h]) == -1 {
+      i = h + 1
+    } else {
+      j = h
+    }
+  }
+  if i < self.length() && cmp(self.buffer()[i]) == 0 {
+    Ok(i)
+  } else {
+    Err(i)
+  }
+}
+
 /// Swap two elements in the array.
 ///
 /// # Example
