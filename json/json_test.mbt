@@ -312,3 +312,30 @@ test "stringify escape" {
     Ok(newjson) => assert_eq!(newjson, json)
   }
 }
+
+test "stringify number" {
+  let nums : Array[Json] = [
+    0.0,
+    -0.0,
+    12345,
+    123.45,
+    9223372036854775807,
+    9223372036854775808,
+    @double.min_value().to_json(),
+    @double.max_value().to_json(),
+  ]
+  inspect!(nums[0].stringify(), content="0")
+  inspect!(nums[1].stringify(), content="0")
+  inspect!(nums[2].stringify(), content="12345")
+  inspect!(nums[3].stringify(), content="123.45")
+  inspect!(nums[4].stringify(), content="9.223372036854776e18")
+  inspect!(nums[5].stringify(), content="9.223372036854776e18")
+  inspect!(nums[6].stringify(), content="5.0e-324")
+  inspect!(nums[7].stringify(), content="1.7976931348623157e308")
+  for json in nums {
+    match @json.parse?(json.stringify()) {
+      Err(e) => raise e
+      Ok(newjson) => assert_eq!(newjson, json)
+    }
+  }
+}

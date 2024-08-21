@@ -114,11 +114,14 @@ pub fn stringify(self : JsonValue) -> String {
       buf.write_char('\"')
     }
     Number(n) => {
-      let int_n = n.to_int64()
-      return if n == int_n.to_double() {
-        int_n.to_string()
+      if n == 0 {
+        return "0"
+      }
+      let s = n.to_string()
+      return if n.trunc() == n && s.ends_with(".0") {
+        s.substring(end=s.length() - 2)
       } else {
-        n.to_string()
+        s
       }
     }
     True => return "true"
