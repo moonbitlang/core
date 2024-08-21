@@ -18,7 +18,7 @@ test "prng" {
   assert_eq!(r.uintN(10), 0)
   assert_eq!(r.uintN(10), 5)
   assert_eq!(r.int(), 1064320769)
-  assert_eq!(r.double64(), 0.3318940049218405)
+  assert_eq!(r.double(), 0.3318940049218405)
   assert_eq!(r.intN(10), 0)
   assert_eq!(r.uint(), 311122750)
   assert_eq!(r.int64(), -9223372036854775808)

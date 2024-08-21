@@ -73,20 +73,20 @@ test "UInt64" {
   assert_eq!(n, exp)
 }
 
-/// [double64] returns a pseudo-random 64-bit Double in the range [0.0, 1.0)
-pub fn Rand::double64(self : Rand) -> Double {
+/// [double] returns a pseudo-random 64-bit Double in the range [0.0, 1.0)
+pub fn Rand::double(self : Rand) -> Double {
   Double::convert_uint64((self.next() << 11).lsr(11)) /
   Double::convert_uint64(1UL << 53)
 }
 
 test "double64" {
   let r = Rand::new()
-  let n = r.double64()
+  let n = r.double()
   inspect!(n, content="0.615969772029264")
 }
 
-/// [float32] returns a pseudo-random 32-bit Float in the range [0.0, 1.0)
-pub fn Rand::float32(self : Rand) -> Float {
+/// [float] returns a pseudo-random 32-bit Float in the range [0.0, 1.0)
+pub fn Rand::float(self : Rand) -> Float {
   ((self.uint() << 8 >> 8) / (1U << 24)).to_float()
 }
 
