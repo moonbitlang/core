@@ -36,3 +36,16 @@ test "Option::default should return None for Bool" {
   let x : Bool? = Option::default()
   assert_eq!(x, None)
 }
+
+fn test_option_arg(~x? : Int, ~y? : Int) -> Int {
+  let x = x.or(3)
+  let y = y.or(4)
+  x + y
+}
+
+test {
+  inspect!(test_option_arg(), content="7")
+  inspect!(test_option_arg(x=1), content="5")
+  inspect!(test_option_arg(y=2), content="5")
+  inspect!(test_option_arg(x=1, y=2), content="3")
+}
