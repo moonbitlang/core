@@ -267,6 +267,8 @@ test "deep access" {
 test "stringify" {
   let json : Json = {
     "key": [1.0, true, Null, [], { "key": "value", "value": 100.0 }],
+    "int": 12345,
+    "double": 123.45,
     "null": Null,
     "bool": false,
     "obj": {  },
@@ -274,7 +276,7 @@ test "stringify" {
   inspect!(
     json.stringify(),
     content=
-      #|{"key":[1.0,true,null,[],{"key":"value","value":100.0}],"null":null,"bool":false,"obj":{}}
+      #|{"key":[1,true,null,[],{"key":"value","value":100}],"int":12345,"double":123.45,"null":null,"bool":false,"obj":{}}
     ,
   )
 
