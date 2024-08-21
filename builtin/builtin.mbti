@@ -364,6 +364,7 @@ impl Int {
   to_json(Int) -> Json
   to_string(Int) -> String
   to_uint(Int) -> UInt
+  until(Int, Int, ~step : Int = .., ~inclusive : Bool = ..) -> Iter[Int]
   upto(Int, Int, ~inclusive : Bool = ..) -> Iter[Int]
 }
 impl Int64 {
@@ -398,6 +399,7 @@ impl Int64 {
   to_json(Int64) -> Json
   to_string(Int64) -> String
   to_uint64(Int64) -> UInt64
+  until(Int64, Int64, ~step : Int64 = .., ~inclusive : Bool = ..) -> Iter[Int64]
   upto(Int64, Int64, ~inclusive : Bool = ..) -> Iter[Int64]
 }
 impl UInt {
@@ -465,6 +467,7 @@ impl Float {
   reinterpret_as_int(Float) -> Int
   sqrt(Float) -> Float
   to_double(Float) -> Double
+  until(Float, Float, ~step : Float = .., ~inclusive : Bool = ..) -> Iter[Float]
   upto(Float, Float, ~inclusive : Bool = ..) -> Iter[Float]
 }
 impl Double {
@@ -486,6 +489,7 @@ impl Double {
   to_int(Double) -> Int
   to_int64(Double) -> Int64
   to_json(Double) -> Json
+  until(Double, Double, ~step : Double = .., ~inclusive : Bool = ..) -> Iter[Double]
   upto(Double, Double, ~inclusive : Bool = ..) -> Iter[Double]
 }
 impl String {

@@ -323,6 +323,174 @@ pub fn upto(
   }
 }
 
+/// Creates an iterator that iterates over a range of Int with default step 1.
+/// To grow the range downward, set the `step` parameter to a negative value.
+///
+/// # Arguments
+///
+/// * `start` - The starting value of the range (inclusive).
+/// * `end` - The ending value of the range (exclusive by default).
+/// * `step` - The step size of the range (default 1).
+/// * `inclusive` - Whether the ending value is inclusive (default false).
+///
+/// # Returns
+///
+/// Returns an iterator that iterates over the range of Int from `start` to `end - 1`.
+pub fn until(
+  self : Int,
+  end : Int,
+  ~step : Int = 1,
+  ~inclusive : Bool = false
+) -> Iter[Int] {
+  if step == 0 {
+    return Iter::empty()
+  }
+  fn(yield) {
+    let mut i = self
+    while (step > 0 && i < end) ||
+          (step < 0 && i > end) ||
+          (inclusive && i == end) {
+      if yield(i) == IterEnd {
+        break IterEnd
+      }
+      let next = i + step
+      if (step > 0 && next >= i) || (step < 0 && next <= i) {
+        i = next
+      } else {
+        break IterEnd
+      }
+    } else {
+      IterContinue
+    }
+  }
+}
+
+/// Creates an iterator that iterates over a range of Int64 with default step 1L.
+/// To grow the range downward, set the `step` parameter to a negative value.
+///
+/// # Arguments
+///
+/// * `start` - The starting value of the range (inclusive).
+/// * `end` - The ending value of the range (exclusive by default).
+/// * `step` - The step size of the range (default 1L).
+/// * `inclusive` - Whether the ending value is inclusive (default false).
+///
+/// # Returns
+///
+/// Returns an iterator that iterates over the range of Int64 from `start` to `end - 1`.
+pub fn until(
+  self : Int64,
+  end : Int64,
+  ~step : Int64 = 1L,
+  ~inclusive : Bool = false
+) -> Iter[Int64] {
+  if step == 0 {
+    return Iter::empty()
+  }
+  fn(yield) {
+    let mut i = self
+    while (step > 0 && i < end) ||
+          (step < 0 && i > end) ||
+          (inclusive && i == end) {
+      if yield(i) == IterEnd {
+        break IterEnd
+      }
+      let next = i + step
+      if (step > 0 && next >= i) || (step < 0 && next <= i) {
+        i = next
+      } else {
+        break IterEnd
+      }
+    } else {
+      IterContinue
+    }
+  }
+}
+
+/// Creates an iterator that iterates over a range of Float with default step 1.0 .
+/// To grow the range downward, use the `downto` method.
+///
+/// # Arguments
+///
+/// * `start` - The starting value of the range (inclusive).
+/// * `end` - The ending value of the range (exclusive by default).
+/// * `step` - The step size of the range (default 1.0).
+/// * `inclusive` - Whether the ending value is inclusive (default false).
+///
+/// # Returns
+///
+/// Returns an iterator that iterates over the range of Float from `start` to `end - 1`.
+pub fn until(
+  self : Float,
+  end : Float,
+  ~step : Float = 1.0,
+  ~inclusive : Bool = false
+) -> Iter[Float] {
+  if step == 0.0 {
+    return Iter::empty()
+  }
+  fn(yield) {
+    let mut i = self
+    while (step > 0.0 && i < end) ||
+          (step < 0.0 && i > end) ||
+          (inclusive && i == end) {
+      if yield(i) == IterEnd {
+        break IterEnd
+      }
+      let next = i + step
+      if (step > 0.0 && next >= i) || (step < 0.0 && next <= i) {
+        i = next
+      } else {
+        break IterEnd
+      }
+    } else {
+      IterContinue
+    }
+  }
+}
+
+/// Creates an iterator that iterates over a range of Double with default step 1.0 .
+/// To grow the range downward, use the `downto` method.
+///
+/// # Arguments
+///
+/// * `start` - The starting value of the range (inclusive).
+/// * `end` - The ending value of the range (exclusive by default).
+/// * `step` - The step size of the range (default 1.0).
+/// * `inclusive` - Whether the ending value is inclusive (default false).
+///
+/// # Returns
+///
+/// Returns an iterator that iterates over the range of Double from `start` to `end - 1`.
+pub fn until(
+  self : Double,
+  end : Double,
+  ~step : Double = 1.0,
+  ~inclusive : Bool = false
+) -> Iter[Double] {
+  if step == 0.0 {
+    return Iter::empty()
+  }
+  fn(yield) {
+    let mut i = self
+    while (step > 0.0 && i < end) ||
+          (step < 0.0 && i > end) ||
+          (inclusive && i == end) {
+      if yield(i) == IterEnd {
+        break IterEnd
+      }
+      let next = i + step
+      if (step > 0.0 && next >= i) || (step < 0.0 && next <= i) {
+        i = next
+      } else {
+        break IterEnd
+      }
+    } else {
+      IterContinue
+    }
+  }
+}
+
 // operators
 
 /// Filters the elements of the iterator based on a predicate function.
