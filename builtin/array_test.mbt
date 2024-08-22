@@ -529,7 +529,7 @@ test "array_binary_search_int_test" {
 }
 
 test "array_binary_search_int_test1" {
-  let arr =  [0, 1, 1, 1, 1, 2, 3, 5, 8, 13, 21, 34, 55]
+  let arr = [0, 1, 1, 1, 1, 2, 3, 5, 8, 13, 21, 34, 55]
   assert_eq!(arr.binary_search(1), Ok(1))
 }
 
