@@ -12,17 +12,17 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-pub let not_a_number : Double = 0.0 / 0.0
+pub let not_a_number : Double = 0x7FF8000000000001L.reinterpret_as_double()
 
-pub let infinity : Double = 1.0 / 0.0
+pub let infinity : Double = 0x7FF0000000000000L.reinterpret_as_double()
 
-pub let neg_infinity : Double = -1.0 / 0.0
+pub let neg_infinity : Double = 0xFFF0000000000000L.reinterpret_as_double()
 
-pub let max : Double = 1.7976931348623157e+308
+pub let max : Double = 0x7FEFFFFFFFFFFFFFL.reinterpret_as_double()
 
-pub let min : Double = -1.7976931348623157e+308
+pub let min : Double = 0xFFEFFFFFFFFFFFFFL.reinterpret_as_double()
 
-pub let min_positive : Double = 2.2250738585072014e-308
+pub let min_positive : Double = 0x0010000000000000L.reinterpret_as_double()
 
 let sign_mask : Int64 = 0x8000_0000_0000_0000L
 
@@ -264,6 +264,10 @@ test "is_neg_inf" {
   assert_true!(is_neg_inf(neg_infinity))
   assert_false!(is_neg_inf(0.0))
   assert_false!(is_neg_inf(12345.678))
+}
+
+test "min equal to neg max" {
+  assert_true!(min == -max)
 }
 
 pub impl Hash for Double with hash(self) {
