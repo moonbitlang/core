@@ -116,14 +116,13 @@ pub fn snapshot(
   ~filename : String,
   ~loc : SourceLoc = _,
   ~args_loc : ArgsLoc = _
-) -> Unit {
+) -> Unit!SnapshotError {
   let loc = loc.to_string().escape()
   let args_loc = args_loc.to_json().escape()
   let actual = self.buffer.to_string().escape()
   let expect = filename.escape()
-  println("----- BEGIN MOONBIT SNAPSHOT TESTING -----")
-  println(
+  // always raise SnapshotError, moon will handle this
+  raise SnapshotError(
     "@SNAPSHOT_TESTING {\"loc\": \{loc}, \"args_loc\": \{args_loc}, \"expect\": \{expect}, \"actual\": \{actual}, \"snapshot\": true}",
   )
-  println("----- END MOONBIT SNAPSHOT TESTING -----")
 }

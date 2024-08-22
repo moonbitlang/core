@@ -235,7 +235,7 @@ pub fn asin(x : Double) -> Double {
   } else {
     let x_ = x.abs()
     if x_ > 1.0 {
-      Double::nan()
+      @double.not_a_number
     } else {
       let temp = (1.0 - x_ * x_).sqrt()
       if x > 0.7 { pi / 2.0 - satan(temp / x_) } else { satan(x_ / temp) } *

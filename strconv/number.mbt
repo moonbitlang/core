@@ -194,23 +194,23 @@ fn parse_inf_nan(s : String) -> (Double, Int)? {
   let s = full_slice(s)
   if s.length() >= 3 {
     if s.prefix_eq_ignore_case("nan") {
-      return Some((Double::nan(), 3))
+      return Some((@double.not_a_number, 3))
     } else if s.prefix_eq_ignore_case("inf") {
-      return Some((Double::inf(1), parse_inf_rest(s)))
+      return Some((@double.infinity, parse_inf_rest(s)))
     } else if s.length() >= 4 {
       if s.first_is('+') {
         let s = s.step_1_unchecked()
         if s.prefix_eq_ignore_case("nan") {
-          return Some((Double::nan(), 4))
+          return Some((@double.not_a_number, 4))
         } else if s.prefix_eq_ignore_case("inf") {
-          return Some((Double::inf(1), 1 + parse_inf_rest(s)))
+          return Some((@double.infinity, 1 + parse_inf_rest(s)))
         }
       } else if s.first_is('-') {
         let s = s.step_1_unchecked()
         if s.prefix_eq_ignore_case("nan") {
-          return Some((Double::nan(), 4))
+          return Some((@double.not_a_number, 4))
         } else if s.prefix_eq_ignore_case("inf") {
-          return Some((Double::inf(-1), 1 + parse_inf_rest(s)))
+          return Some((@double.neg_infinity, 1 + parse_inf_rest(s)))
         }
       }
     }
