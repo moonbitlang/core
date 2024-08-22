@@ -359,27 +359,27 @@ test "array_repeat" {
   assert_eq!(repeated[5], 2)
 }
 
-test "array_fold_left" {
+test "array_fold" {
   let arr = [1, 2, 3]
-  let sum = arr.fold_left(fn(acc, x) { acc + x }, init=0)
+  let sum = arr.fold(fn(acc, x) { acc + x }, init=0)
   assert_eq!(sum, 6)
 }
 
-test "array_fold_right" {
+test "array_rev_fold" {
   let arr = [1, 2, 3]
-  let sum = arr.fold_right(fn(acc, x) { acc + x }, init=0)
+  let sum = arr.rev_fold(fn(acc, x) { acc + x }, init=0)
   assert_eq!(sum, 6)
 }
 
-test "array_fold_lefti" {
+test "array_foldi" {
   let arr = [1, 2, 3]
-  let sum = arr.fold_lefti(fn(i, acc, x) { acc + i + x }, init=0)
+  let sum = arr.foldi(fn(i, acc, x) { acc + i + x }, init=0)
   assert_eq!(sum, 9)
 }
 
-test "array_fold_righti" {
+test "array_rev_foldi" {
   let arr = [1, 2, 3]
-  let sum = arr.fold_righti(fn(i, acc, x) { acc + i + x }, init=0)
+  let sum = arr.rev_foldi(fn(i, acc, x) { acc + i + x }, init=0)
   assert_eq!(sum, 9)
 }
 
