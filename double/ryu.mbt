@@ -46,25 +46,17 @@ fn copy_special_str(sign : Bool, exponent : Bool, mantissa : Bool) -> String {
 }
 
 fn umul128(a : UInt64, b : UInt64) -> (UInt64, UInt64) {
-  let aLo = a.to_uint()
-  let aHi = a.lsr(32).to_uint()
-  let bLo = b.to_uint()
-  let bHi = b.lsr(32).to_uint()
-  let b00 = aLo.to_uint64() * bLo.to_uint64()
-  let b01 = aLo.to_uint64() * bHi.to_uint64()
-  let b10 = aHi.to_uint64() * bLo.to_uint64()
-  let b11 = aHi.to_uint64() * bHi.to_uint64()
-  let b00Lo = b00.to_uint()
-  let b00Hi = b00.lsr(32).to_uint()
-  let mid1 = b10 + b00Hi.to_uint64()
-  let mid1Lo = mid1.to_uint()
-  let mid1Hi = mid1.lsr(32).to_uint()
-  let mid2 = b01 + mid1Lo.to_uint64()
-  let mid2Lo = mid2.to_uint()
-  let mid2Hi = mid2.lsr(32).to_uint()
-  let pHi : UInt64 = b11 + mid1Hi.to_uint64() + mid2Hi.to_uint64()
-  let pLo : UInt64 = mid2Lo.to_uint64().lsl(32).lor(b00Lo.to_uint64())
-  (pLo, pHi)
+  let aLo = a & 0xffffffff
+  let aHi = a >> 32
+  let bLo = b & 0xffffffff
+  let bHi = b >> 32
+  let x = aLo * bLo
+  let y = aHi * bLo + (x >> 32)
+  let z = aLo * bHi + (y & 0xffffffff)
+  let w = aHi * bHi + (y >> 32) + (z >> 32)
+  let lo = a * b
+  let hi = w
+  (lo, hi)
 }
 
 fn shiftright128(lo : UInt64, hi : UInt64, dist : Int) -> UInt64 {

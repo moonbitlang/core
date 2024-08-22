@@ -80,8 +80,10 @@ pub impl[X : FromJson] FromJson for Array[X] with from_json(json, path) {
   match json {
     Array(a) => {
       let res : Array[X] = Array::new(capacity=a.length())
+      let idx = Index(path, index=0)
       for i = 0; i < a.length(); i = i + 1 {
-        res.push(FromJson::from_json!(a[i], Index(path, i)))
+        idx.update_index(i)
+        res.push(FromJson::from_json!(a[i], idx))
       }
       res
     }
@@ -93,8 +95,10 @@ pub impl[V : FromJson] FromJson for Map[String, V] with from_json(json, path) {
   match json {
     Object(obj) => {
       let res = {  }
+      let key = Key(path, key="")
       for k, v in obj {
-        res[k] = FromJson::from_json!(v, Key(path, k))
+        key.update_key(k)
+        res[k] = FromJson::from_json!(v, key)
       }
       res
     }

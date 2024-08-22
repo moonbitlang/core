@@ -1,10 +1,9 @@
 {
-  "import": [
-    "moonbitlang/core/builtin",
-    "moonbitlang/core/int64",
-    "moonbitlang/core/double",
-    "moonbitlang/core/test",
-    "moonbitlang/core/coverage",
-    "moonbitlang/core/array"
-  ]
+    "import": [
+      "moonbitlang/core/builtin",
+      "moonbitlang/core/array",
+      "moonbitlang/core/double",
+      "moonbitlang/core/coverage",
+      "moonbitlang/core/random/internal/random_source"
+    ]
 }
