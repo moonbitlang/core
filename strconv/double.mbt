@@ -258,7 +258,7 @@ test "parse_double_inf" {
     } catch {
       _ => panic()
     },
-    Double::inf(1),
+    @double.infinity,
   )
   assert_eq!(
     try {
@@ -266,7 +266,7 @@ test "parse_double_inf" {
     } catch {
       _ => panic()
     },
-    Double::inf(1),
+    @double.infinity,
   )
   assert_eq!(
     try {
@@ -274,7 +274,7 @@ test "parse_double_inf" {
     } catch {
       _ => panic()
     },
-    Double::inf(-1),
+    @double.neg_infinity,
   )
   assert_eq!(
     try {
@@ -282,7 +282,7 @@ test "parse_double_inf" {
     } catch {
       _ => panic()
     },
-    Double::inf(1),
+    @double.infinity,
   )
   assert_eq!(
     try {
@@ -290,7 +290,7 @@ test "parse_double_inf" {
     } catch {
       _ => panic()
     },
-    Double::inf(-1),
+    @double.neg_infinity,
   )
   assert_eq!(
     try {
@@ -298,7 +298,7 @@ test "parse_double_inf" {
     } catch {
       _ => panic()
     },
-    Double::inf(1),
+    @double.infinity,
   )
   assert_eq!(
     try {
@@ -306,7 +306,7 @@ test "parse_double_inf" {
     } catch {
       _ => panic()
     },
-    Double::inf(-1),
+    @double.neg_infinity,
   )
 }
 

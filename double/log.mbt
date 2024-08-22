@@ -39,7 +39,7 @@ let l6 = 1.531383769920937332e-01 // 3FC39A09 D078C69F
 let l7 = 1.479819860511658591e-01 // 3FC2F112 DF3E5244
 
 fn normalize(f : Double) -> (Double, Int) {
-  if f.abs() < Double::min_normal() {
+  if f.abs() < min_positive {
     return (f * 1L.lsl(52).to_double(), -52)
   }
   (f, 0)
@@ -63,9 +63,9 @@ pub fn ln(self : Double) -> Double {
   if self.is_nan() || self.is_inf() {
     return self
   } else if self < 0.0 {
-    return Double::nan()
+    return not_a_number
   } else if self == 0.0 {
-    return Double::inf(-1)
+    return neg_infinity
   }
   let (f1, ki) = frexp(self)
   let (f, k) = if f1 < sqrt2 / 2.0 {
@@ -110,9 +110,9 @@ test "log2 log10" {
 }
 
 test "ln" {
-  assert_true!(Double::nan().ln().is_nan())
-  assert_true!(Double::inf(1).ln().is_pos_inf())
-  assert_true!(Double::inf(-1).ln().is_neg_inf())
+  assert_true!(not_a_number.ln().is_nan())
+  assert_true!(infinity.ln().is_pos_inf())
+  assert_true!(neg_infinity.ln().is_neg_inf())
   assert_true!((-1.0).ln().is_nan())
   assert_true!(0.0.ln().is_neg_inf())
   assert_true!((-0.0).ln().is_neg_inf())
@@ -127,13 +127,13 @@ test "ln" {
     },
   )
   assert_true!(
-    match frexp(Double::inf(1)) {
+    match frexp(infinity) {
       (f, 0) => if f.is_pos_inf() { true } else { false }
       _ => false
     },
   )
   assert_true!(
-    match frexp(Double::nan()) {
+    match frexp(not_a_number) {
       (f, 0) => if f.is_nan() { true } else { false }
       _ => false
     },

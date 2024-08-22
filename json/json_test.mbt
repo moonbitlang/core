@@ -323,11 +323,11 @@ test "stringify number" {
     9223372036854775807,
     9223372036854775808,
     999999999999223372036854775808,
-    @double.min_value().to_json(),
-    @double.max_value().to_json(),
-    @double.nan().to_json(),
-    @double.inf(1).to_json(),
-    @double.inf(-1).to_json(),
+    @double.min.to_json(),
+    @double.max.to_json(),
+    @double.not_a_number.to_json(),
+    @double.infinity.to_json(),
+    @double.neg_infinity.to_json(),
   ]
   inspect!(nums[0].stringify(), content="0")
   inspect!(nums[1].stringify(), content="0")
@@ -337,7 +337,7 @@ test "stringify number" {
   inspect!(nums[5].stringify(), content="9.223372036854776e18")
   inspect!(nums[6].stringify(), content="9.223372036854776e18")
   inspect!(nums[7].stringify(), content="9.999999999992234e29")
-  inspect!(nums[8].stringify(), content="5.0e-324")
+  inspect!(nums[8].stringify(), content="-1.7976931348623157e308")
   inspect!(nums[9].stringify(), content="1.7976931348623157e308")
   inspect!(nums[10].stringify(), content="NaN")
   inspect!(nums[11].stringify(), content="Infinity")

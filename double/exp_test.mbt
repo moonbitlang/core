@@ -30,9 +30,9 @@ test "exp" {
 }
 
 test "exp - special values" {
-  inspect!(@double.exp(Double::inf(-1)), content="0.0")
-  inspect!(@double.exp(Double::inf(1)), content="Infinity")
-  inspect!(@double.exp(Double::nan()), content="NaN")
+  inspect!(@double.exp(@double.neg_infinity), content="0.0")
+  inspect!(@double.exp(@double.infinity), content="Infinity")
+  inspect!(@double.exp(@double.not_a_number), content="NaN")
   inspect!(@double.exp(0.0), content="1.0")
 }
 

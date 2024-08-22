@@ -1,6 +1,17 @@
 package moonbitlang/core/double
 
 // Values
+let infinity : Double
+
+let max : Double
+
+let min : Double
+
+let min_positive : Double
+
+let neg_infinity : Double
+
+let not_a_number : Double
 
 // Types and methods
 impl Double {
