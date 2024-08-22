@@ -267,6 +267,8 @@ test "deep access" {
 test "stringify" {
   let json : Json = {
     "key": [1.0, true, Null, [], { "key": "value", "value": 100.0 }],
+    "int": 12345,
+    "double": 123.45,
     "null": Null,
     "bool": false,
     "obj": {  },
@@ -274,7 +276,7 @@ test "stringify" {
   inspect!(
     json.stringify(),
     content=
-      #|{"key":[1.0,true,null,[],{"key":"value","value":100.0}],"null":null,"bool":false,"obj":{}}
+      #|{"key":[1,true,null,[],{"key":"value","value":100}],"int":12345,"double":123.45,"null":null,"bool":false,"obj":{}}
     ,
   )
 
@@ -309,4 +311,48 @@ test "stringify escape" {
     Err(e) => raise e
     Ok(newjson) => assert_eq!(newjson, json)
   }
+}
+
+test "stringify number" {
+  let nums : Array[Json] = [
+    0.0,
+    -0.0,
+    1.0,
+    12345,
+    123.45,
+    9223372036854775807,
+    9223372036854775808,
+    999999999999223372036854775808,
+    @double.min_value().to_json(),
+    @double.max_value().to_json(),
+    @double.nan().to_json(),
+    @double.inf(1).to_json(),
+    @double.inf(-1).to_json(),
+  ]
+  inspect!(nums[0].stringify(), content="0")
+  inspect!(nums[1].stringify(), content="0")
+  inspect!(nums[2].stringify(), content="1")
+  inspect!(nums[3].stringify(), content="12345")
+  inspect!(nums[4].stringify(), content="123.45")
+  inspect!(nums[5].stringify(), content="9.223372036854776e18")
+  inspect!(nums[6].stringify(), content="9.223372036854776e18")
+  inspect!(nums[7].stringify(), content="9.999999999992234e29")
+  inspect!(nums[8].stringify(), content="5.0e-324")
+  inspect!(nums[9].stringify(), content="1.7976931348623157e308")
+  inspect!(nums[10].stringify(), content="NaN")
+  inspect!(nums[11].stringify(), content="Infinity")
+  inspect!(nums[12].stringify(), content="-Infinity")
+  let err : Array[String] = []
+  for json in nums {
+    match @json.parse?(json.stringify()) {
+      Err(e) => err.push(e.to_string())
+      Ok(newjson) => assert_eq!(newjson, json)
+    }
+  }
+  inspect!(
+    err,
+    content=
+      #|["Invalid character 'N' at line 1, column 0", "Invalid character 'I' at line 1, column 0", "Invalid character 'I' at line 1, column 1"]
+    ,
+  )
 }
