@@ -347,7 +347,10 @@ test "stringify number" {
       Ok(newjson) => assert_eq!(newjson, json)
     }
   }
-  inspect!(err, content=
-    #|["Invalid character 'N' at line 1, column 0", "Invalid character 'I' at line 1, column 0", "Invalid character 'I' at line 1, column 1"]
+  inspect!(
+    err,
+    content=
+      #|["Invalid character 'N' at line 1, column 0", "Invalid character 'I' at line 1, column 0", "Invalid character 'I' at line 1, column 1"]
+    ,
   )
 }
