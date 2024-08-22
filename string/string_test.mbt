@@ -99,6 +99,35 @@ test "chars" {
   )
 }
 
+test "rev_iter" {
+  let mut str = ""
+  "A😊𠮷BA😊𠮷B"
+  .rev_iter()
+  .each(fn(c) { str = str + c.to_int().to_string() + "\n" })
+  inspect!(
+    str,
+    content=
+      #|66
+      #|134071
+      #|128522
+      #|65
+      #|66
+      #|134071
+      #|128522
+      #|65
+      #|
+    ,
+  )
+  inspect!(
+    "A😊𠮷BA😊𠮷B".rev_iter().take(2).collect(),
+    content="['B', '𠮷']",
+  )
+  inspect!(
+    "A😊𠮷BA😊𠮷B".rev_iter().take(4).collect(),
+    content="['B', '𠮷', '😊', 'A']",
+  )
+}
+
 // test here to avlid cyclic dependency between assertion and builtin
 test "Buffer::to_bytes" {
   let buffer = Buffer::new(size_hint=16)
