@@ -368,6 +368,11 @@ test "fold" {
 test "rev_fold" {
   let sum = [1, 2, 3, 4, 5].rev_fold(init=0, fn { sum, elem => sum + elem })
   assert_eq!(sum, 15)
+  let op = fn { sum, elem => sum - elem }
+  let data = [1, 2, 3, 4, 5]
+  let ss0 = data.rev_fold(init=0, op)
+  let ss1 = data.rev().fold(init=0, op)
+  assert_eq!(ss0, ss1)
 }
 
 test "foldi" {
@@ -384,6 +389,11 @@ test "rev_foldi" {
     fn { index, sum, _elem => sum + index },
   )
   assert_eq!(sum, 10)
+  let op = fn { index, sum, elem => index - sum - elem }
+  let data = [1, 2, 3, 4, 5, 10]
+  let v0 = data.rev_foldi(init=0, op)
+  let v1 = data.rev().foldi(init=0, op)
+  assert_eq!(v0, v1)
 }
 
 test "dedup" {
