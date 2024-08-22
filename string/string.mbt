@@ -116,6 +116,62 @@ pub fn iter(self : String) -> Iter[Char] {
   )
 }
 
+
+/// Returns an iterator that yields characters from the end to the start of the string. This function handles 
+/// Unicode surrogate pairs correctly, ensuring that characters are not split across surrogate pairs.
+/// 
+/// # Parameters
+/// 
+/// - `self` : The input `String` to be iterated in reverse.
+/// 
+/// # Returns
+/// 
+/// - An `Iter[Char]` that yields characters from the end to the start of the string.
+/// 
+/// # Behavior
+/// 
+/// - The function iterates over the string in reverse order.
+/// - If a trailing surrogate is encountered, it checks for a preceding leading surrogate to form a complete Unicode code point.
+/// - Yields each character or combined code point to the iterator.
+/// - Stops iteration if the `yield` function returns `IterEnd`.
+/// 
+/// # Examples
+/// 
+/// ```moonbit
+/// test {
+///   let input = "Hello, World!"
+///   let reversed = rev_iter(input).collect()
+///   inspect!(reversed, content="[\"!\", \"d\", \"l\", \"r\", \"o\", \"W\", \" \", \",\", \"o\", \"l\", \"l\", \"e\", \"H\"]")
+/// }
+/// ```
+pub fn rev_iter(self : String) -> Iter[Char]{
+  Iter::new(
+    fn(yield) {
+      let len = self.length()
+      for index = len - 1; index >= 0; index = index - 1 {
+        let c1 = self[index]
+        if is_trailing_surrogate(c1) && index - 1 >= 0 {
+          let c2 = self[index - 1]
+          if is_leading_surrogate(c2) {
+            let c = code_point_of_surrogate_pair(c2, c1)
+            if yield(c) == IterContinue {
+              continue index - 2
+            } else {
+              break IterEnd
+            }
+          }
+        }
+        // TODO: handle garbage input
+        if yield(c1) == IterEnd {
+          break IterEnd
+        }
+      } else {
+        IterContinue  
+      }
+    }
+  )
+}
+
 /// Removes all leading and trailing spaces.
 pub fn trim_space(self : String) -> String {
   self.trim(" \n\r\t")
