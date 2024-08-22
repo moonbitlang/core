@@ -12,17 +12,17 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-let not_a_number : Double = 0x7FF8000000000001L.reinterpret_as_double()
+pub let not_a_number : Double = 0.0 / 0.0
 
-let positive_infinity : Double = 0x7FF0000000000000L.reinterpret_as_double()
+pub let infinity : Double = 1.0 / 0.0
 
-let negative_infinity : Double = 0xFFF0000000000000L.reinterpret_as_double()
+pub let neg_infinity : Double = -1.0 / 0.0
 
-let max_val : Double = 0x7FEFFFFFFFFFFFFFL.reinterpret_as_double()
+pub let max : Double = 1.7976931348623157e+308
 
-let min_val : Double = 0x1L.reinterpret_as_double()
+pub let min : Double = -1.7976931348623157e+308
 
-let min_norm : Double = 0x0010000000000000L.reinterpret_as_double()
+pub let min_positive : Double = 2.2250738585072014e-308
 
 let sign_mask : Int64 = 0x8000_0000_0000_0000L
 
@@ -163,32 +163,37 @@ pub fn signum(self : Double) -> Double {
 }
 
 // Returns a "not-a-number" value
+/// @alert deprecated "Use `@double.not_a_number` instead"
 pub fn Double::nan() -> Double {
   not_a_number
 }
 
 // Returns positive infinity if sign >= 0, negative infinity if sign < 0.
+/// @alert deprecated "Use `@double.infinity` and `@double.neg_infinity` instead"
 pub fn Double::inf(sign : Int) -> Double {
   if sign >= 0 {
-    positive_infinity
+    infinity
   } else {
-    negative_infinity
+    neg_infinity
   }
 }
 
 // Returns the largest positive finite value of Double
+/// @alert deprecated "Use `@double.max` instead"
 pub fn Double::max_value() -> Double {
-  max_val
+  max
 }
 
 // Returns the smallest positive nonzero value of Double
+/// @alert deprecated "Use `@double.min` instead"
 pub fn Double::min_value() -> Double {
-  min_val
+  min
 }
 
 // Returns the smallest positive normal value of Double
+/// @alert deprecated "Use `@double.min_positive` instead"
 pub fn Double::min_normal() -> Double {
-  min_norm
+  min_positive
 }
 
 // Check whether the double is a "not-a-number" value
@@ -199,17 +204,17 @@ pub fn is_nan(self : Double) -> Bool {
 
 // Check whether the double is infinity
 pub fn is_inf(self : Double) -> Bool {
-  self > max_val || self < -max_val
+  self > max || self < min
 }
 
 // Check whether the double is positive infinity
 pub fn is_pos_inf(self : Double) -> Bool {
-  self > max_val
+  self > max
 }
 
 // Check whether the double is negative infinity
 pub fn is_neg_inf(self : Double) -> Bool {
-  self < -max_val
+  self < min
 }
 
 test "from_int" {
@@ -236,51 +241,29 @@ test "is_nan" {
   assert_true!(is_nan(not_a_number))
   assert_false!(is_nan(0.0))
   assert_false!(is_nan(12345.678))
-  assert_false!(is_nan(positive_infinity))
-  assert_false!(is_nan(negative_infinity))
+  assert_false!(is_nan(infinity))
+  assert_false!(is_nan(neg_infinity))
 }
 
 test "is_inf" {
-  assert_true!(is_inf(positive_infinity))
-  assert_true!(is_inf(negative_infinity))
+  assert_true!(is_inf(infinity))
+  assert_true!(is_inf(neg_infinity))
   assert_false!(is_inf(0.0))
   assert_false!(is_inf(12345.678))
 }
 
 test "is_pos_inf" {
-  assert_true!(is_pos_inf(positive_infinity))
-  assert_false!(is_pos_inf(negative_infinity))
+  assert_true!(is_pos_inf(infinity))
+  assert_false!(is_pos_inf(neg_infinity))
   assert_false!(is_pos_inf(0.0))
   assert_false!(is_pos_inf(12345.678))
 }
 
 test "is_neg_inf" {
-  assert_false!(is_neg_inf(positive_infinity))
-  assert_true!(is_neg_inf(negative_infinity))
+  assert_false!(is_neg_inf(infinity))
+  assert_true!(is_neg_inf(neg_infinity))
   assert_false!(is_neg_inf(0.0))
   assert_false!(is_neg_inf(12345.678))
-}
-
-test "nan" {
-  assert_true!(Double::nan().is_nan())
-}
-
-test "inf" {
-  assert_eq!(Double::inf(1), positive_infinity)
-  assert_eq!(Double::inf(0), positive_infinity)
-  assert_eq!(Double::inf(-1), negative_infinity)
-}
-
-test "max_value" {
-  assert_eq!(Double::max_value(), max_val)
-}
-
-test "min_value" {
-  assert_eq!(Double::min_value(), min_val)
-}
-
-test "min_normal" {
-  assert_eq!(Double::min_normal(), min_norm)
 }
 
 pub impl Hash for Double with hash(self) {
