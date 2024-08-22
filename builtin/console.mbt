@@ -194,3 +194,6 @@ pub fn inspect(
     )
   }
 }
+
+// Used by test driver
+pub type! SnapshotError String
