@@ -287,6 +287,8 @@ impl Map {
   values[K, V](Self[K, V]) -> Iter[V]
 }
 
+pub type! SnapshotError String
+
 pub type SourceLoc
 impl SourceLoc {
   to_string(Self) -> String
