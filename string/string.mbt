@@ -116,7 +116,6 @@ pub fn iter(self : String) -> Iter[Char] {
   )
 }
 
-
 /// Returns an iterator that yields characters from the end to the start of the string. This function handles 
 /// Unicode surrogate pairs correctly, ensuring that characters are not split across surrogate pairs.
 /// 
@@ -144,7 +143,7 @@ pub fn iter(self : String) -> Iter[Char] {
 ///   inspect!(reversed, content="[\"!\", \"d\", \"l\", \"r\", \"o\", \"W\", \" \", \",\", \"o\", \"l\", \"l\", \"e\", \"H\"]")
 /// }
 /// ```
-pub fn rev_iter(self : String) -> Iter[Char]{
+pub fn rev_iter(self : String) -> Iter[Char] {
   Iter::new(
     fn(yield) {
       let len = self.length()
@@ -166,9 +165,9 @@ pub fn rev_iter(self : String) -> Iter[Char]{
           break IterEnd
         }
       } else {
-        IterContinue  
+        IterContinue
       }
-    }
+    },
   )
 }
 

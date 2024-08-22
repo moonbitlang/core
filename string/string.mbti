@@ -17,6 +17,7 @@ impl String {
   replace(String, ~old : String, ~new : String) -> String
   replace_all(String, ~old : String, ~new : String) -> String
   rev(String) -> String
+  rev_iter(String) -> Iter[Char]
   split(String, String) -> Iter[String]
   starts_with(String, String) -> Bool
   substring(String, ~start : Int = .., ~end : Int = ..) -> String
