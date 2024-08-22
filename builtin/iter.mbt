@@ -188,36 +188,235 @@ pub fn Iter::repeat[T](a : T) -> Iter[T] {
 }
 
 /// Creates an iterator that iterates over a range of Int with default step 1.
-/// To grow the range downward, set the `step` parameter to a negative value.
 ///
 /// # Arguments
 ///
 /// * `start` - The starting value of the range (inclusive).
 /// * `end` - The ending value of the range (exclusive).
-/// * `step` - The step size of the range (default 1).
+/// * `inclusive` - Whether the ending value is inclusive (default false).
 ///
 /// # Returns
 ///
 /// Returns an iterator that iterates over the range of Int from `start` to `end - 1`.
-pub fn until(self : Int, end : Int, ~step : Int = 1) -> Iter[Int] {
+pub fn upto(self : Int, end : Int, ~inclusive : Bool = false) -> Iter[Int] {
+  fn(yield) {
+    let mut i = self
+    while i < end || (inclusive && i == end) {
+      if yield(i) == IterEnd {
+        break IterEnd
+      }
+      let next = i + 1
+      if next > i {
+        i = next
+      } else {
+        break IterEnd
+      }
+    } else {
+      IterContinue
+    }
+  }
+}
+
+/// Creates an iterator that iterates over a range of UInt with default step 1U.
+/// 
+/// # Arguments
+/// 
+/// * `start` - The starting value of the range (inclusive).
+/// * `end` - The ending value of the range (exclusive).
+/// * `inclusive` - Whether the ending value is inclusive (default false).
+///
+/// # Returns
+/// 
+/// Returns an iterator that iterates over the range of UInt from `start` to `end - 1`.
+pub fn upto(self : UInt, end : UInt, ~inclusive : Bool = false) -> Iter[UInt] {
+  fn(yield) {
+    let mut i = self
+    while i < end || (inclusive && i == end) {
+      if yield(i) == IterEnd {
+        break IterEnd
+      }
+      let next = i + 1U
+      if next > i {
+        i = next
+      } else {
+        break IterEnd
+      }
+    } else {
+      IterContinue
+    }
+  }
+}
+
+/// Creates an iterator that iterates over a range of UInt64 with default step 1UL.
+/// 
+/// # Arguments
+/// 
+/// * `start` - The starting value of the range (inclusive).
+/// * `end` - The ending value of the range (exclusive).
+/// * `inclusive` - Whether the ending value is inclusive (default false).
+/// 
+/// # Returns
+/// 
+/// Returns an iterator that iterates over the range of UInt64 from `start` to `end - 1`.
+pub fn upto(
+  self : UInt64,
+  end : UInt64,
+  ~inclusive : Bool = false
+) -> Iter[UInt64] {
+  fn(yield) {
+    let mut i = self
+    while i < end || (inclusive && i == end) {
+      if yield(i) == IterEnd {
+        break IterEnd
+      }
+      let next = i + 1UL
+      if next > i {
+        i = next
+      } else {
+        break IterEnd
+      }
+    } else {
+      IterContinue
+    }
+  }
+}
+
+/// Creates an iterator that iterates over a range of Int64 with default step 1L.
+///
+/// # Arguments
+///
+/// * `start` - The starting value of the range (inclusive).
+/// * `end` - The ending value of the range (exclusive).
+/// * `inclusive` - Whether the ending value is inclusive (default false).
+///
+/// # Returns
+///
+/// Returns an iterator that iterates over the range of Int64 from `start` to `end - 1`.
+pub fn upto(
+  self : Int64,
+  end : Int64,
+  ~inclusive : Bool = false
+) -> Iter[Int64] {
+  fn(yield) {
+    let mut i = self
+    while i < end || (inclusive && i == end) {
+      if yield(i) == IterEnd {
+        break IterEnd
+      }
+      let next = i + 1
+      if next > i {
+        i = next
+      } else {
+        break IterEnd
+      }
+    } else {
+      IterContinue
+    }
+  }
+}
+
+/// Creates an iterator that iterates over a range of Float with default step 1.0 .
+///
+/// # Arguments
+///
+/// * `start` - The starting value of the range (inclusive).
+/// * `end` - The ending value of the range (exclusive).
+/// * `inclusive` - Whether the ending value is inclusive (default false).
+///
+/// # Returns
+///
+/// Returns an iterator that iterates over the range of Float from `start` to `end - 1`.
+pub fn upto(
+  self : Float,
+  end : Float,
+  ~inclusive : Bool = false
+) -> Iter[Float] {
+  fn(yield) {
+    let mut i = self
+    while i < end || (inclusive && i == end) {
+      if yield(i) == IterEnd {
+        break IterEnd
+      }
+      let next = i + 1
+      if next > i {
+        i = next
+      } else {
+        break IterEnd
+      }
+    } else {
+      IterContinue
+    }
+  }
+}
+
+/// Creates an iterator that iterates over a range of Double with default step 1.0 .
+///
+/// # Arguments
+///
+/// * `start` - The starting value of the range (inclusive).
+/// * `end` - The ending value of the range (exclusive).
+/// * `inclusive` - Whether the ending value is inclusive (default false).
+///
+/// # Returns
+///
+/// Returns an iterator that iterates over the range of Double from `start` to `end - 1`.
+pub fn upto(
+  self : Double,
+  end : Double,
+  ~inclusive : Bool = false
+) -> Iter[Double] {
+  fn(yield) {
+    let mut i = self
+    while i < end || (inclusive && i == end) {
+      if yield(i) == IterEnd {
+        break IterEnd
+      }
+      let next = i + 1
+      if next > i {
+        i = next
+      } else {
+        break IterEnd
+      }
+    } else {
+      IterContinue
+    }
+  }
+}
+
+/// Creates an iterator that iterates over a range of Int with default step 1.
+/// To grow the range downward, set the `step` parameter to a negative value.
+///
+/// # Arguments
+///
+/// * `start` - The starting value of the range (inclusive).
+/// * `end` - The ending value of the range (exclusive by default).
+/// * `step` - The step size of the range (default 1).
+/// * `inclusive` - Whether the ending value is inclusive (default false).
+///
+/// # Returns
+///
+/// Returns an iterator that iterates over the range of Int from `start` to `end - 1`.
+pub fn until(
+  self : Int,
+  end : Int,
+  ~step : Int = 1,
+  ~inclusive : Bool = false
+) -> Iter[Int] {
   if step == 0 {
     return Iter::empty()
   }
-  if step < 0 {
-    return fn(yield) {
-      for i = self; i > end; i = i + step {
-        if yield(i) == IterEnd {
-          break IterEnd
-        }
-      } else {
-        IterContinue
-      }
-    }
-  }
-  // step > 0
   fn(yield) {
-    for i = self; i < end; i = i + step {
+    let mut i = self
+    while (step > 0 && i < end) ||
+          (step < 0 && i > end) ||
+          (inclusive && i == end) {
       if yield(i) == IterEnd {
+        break IterEnd
+      }
+      let next = i + step
+      if (step > 0 && next >= i) || (step < 0 && next <= i) {
+        i = next
+      } else {
         break IterEnd
       }
     } else {
@@ -232,30 +431,76 @@ pub fn until(self : Int, end : Int, ~step : Int = 1) -> Iter[Int] {
 /// # Arguments
 ///
 /// * `start` - The starting value of the range (inclusive).
-/// * `end` - The ending value of the range (exclusive).
+/// * `end` - The ending value of the range (exclusive by default).
 /// * `step` - The step size of the range (default 1L).
+/// * `inclusive` - Whether the ending value is inclusive (default false).
 ///
 /// # Returns
 ///
 /// Returns an iterator that iterates over the range of Int64 from `start` to `end - 1`.
-pub fn until(self : Int64, end : Int64, ~step : Int64 = 1L) -> Iter[Int64] {
+pub fn until(
+  self : Int64,
+  end : Int64,
+  ~step : Int64 = 1L,
+  ~inclusive : Bool = false
+) -> Iter[Int64] {
   if step == 0 {
     return Iter::empty()
   }
-  if step < 0L {
-    return fn(yield) {
-      for i = self; i > end; i = i + step {
-        if yield(i) == IterEnd {
-          break IterEnd
-        }
-      } else {
-        IterContinue
+  fn(yield) {
+    let mut i = self
+    while (step > 0 && i < end) ||
+          (step < 0 && i > end) ||
+          (inclusive && i == end) {
+      if yield(i) == IterEnd {
+        break IterEnd
       }
+      let next = i + step
+      if (step > 0 && next >= i) || (step < 0 && next <= i) {
+        i = next
+      } else {
+        break IterEnd
+      }
+    } else {
+      IterContinue
     }
   }
+}
+
+/// Creates an iterator that iterates over a range of Float with default step 1.0 .
+/// To grow the range downward, set the `step` parameter to a negative value.
+///
+/// # Arguments
+///
+/// * `start` - The starting value of the range (inclusive).
+/// * `end` - The ending value of the range (exclusive by default).
+/// * `step` - The step size of the range (default 1.0).
+/// * `inclusive` - Whether the ending value is inclusive (default false).
+///
+/// # Returns
+///
+/// Returns an iterator that iterates over the range of Float from `start` to `end - 1`.
+pub fn until(
+  self : Float,
+  end : Float,
+  ~step : Float = 1.0,
+  ~inclusive : Bool = false
+) -> Iter[Float] {
+  if step == 0.0 {
+    return Iter::empty()
+  }
   fn(yield) {
-    for i = self; i < end; i = i + step {
+    let mut i = self
+    while (step > 0.0 && i < end) ||
+          (step < 0.0 && i > end) ||
+          (inclusive && i == end) {
       if yield(i) == IterEnd {
+        break IterEnd
+      }
+      let next = i + step
+      if (step > 0.0 && next >= i) || (step < 0.0 && next <= i) {
+        i = next
+      } else {
         break IterEnd
       }
     } else {
@@ -265,35 +510,39 @@ pub fn until(self : Int64, end : Int64, ~step : Int64 = 1L) -> Iter[Int64] {
 }
 
 /// Creates an iterator that iterates over a range of Double with default step 1.0 .
-/// To grow the range downward, use the `downto` method.
+/// To grow the range downward, set the `step` parameter to a negative value.
 ///
 /// # Arguments
 ///
 /// * `start` - The starting value of the range (inclusive).
-/// * `end` - The ending value of the range (exclusive).
+/// * `end` - The ending value of the range (exclusive by default).
 /// * `step` - The step size of the range (default 1.0).
+/// * `inclusive` - Whether the ending value is inclusive (default false).
 ///
 /// # Returns
 ///
 /// Returns an iterator that iterates over the range of Double from `start` to `end - 1`.
-pub fn until(self : Double, end : Double, ~step : Double = 1.0) -> Iter[Double] {
+pub fn until(
+  self : Double,
+  end : Double,
+  ~step : Double = 1.0,
+  ~inclusive : Bool = false
+) -> Iter[Double] {
   if step == 0.0 {
     return Iter::empty()
   }
-  if step < 0.0 {
-    return fn(yield) {
-      for i = self; i > end; i = i + step {
-        if yield(i) == IterEnd {
-          break IterEnd
-        }
-      } else {
-        IterContinue
-      }
-    }
-  }
   fn(yield) {
-    for i = self; i < end; i = i + step {
+    let mut i = self
+    while (step > 0.0 && i < end) ||
+          (step < 0.0 && i > end) ||
+          (inclusive && i == end) {
       if yield(i) == IterEnd {
+        break IterEnd
+      }
+      let next = i + step
+      if (step > 0.0 && next >= i) || (step < 0.0 && next <= i) {
+        i = next
+      } else {
         break IterEnd
       }
     } else {
@@ -468,7 +717,7 @@ pub fn take_while[T](self : Iter[T], f : (T) -> Bool) -> Iter[T] {
   }
 }
 
-/// Transforms the elements of the iterator using a mapping function until the function returns `None`.
+/// Transforms the elements of the iterator using a mapping function upto the function returns `None`.
 pub fn map_while[A, B](self : Iter[A], f : (A) -> B?) -> Iter[B] {
   fn(yield) {
     let mut r : IterResult = IterContinue

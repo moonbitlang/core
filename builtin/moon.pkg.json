@@ -9,6 +9,7 @@
     "moonbitlang/core/double",
     "moonbitlang/core/coverage",
     "moonbitlang/core/uint64",
-    "moonbitlang/core/array"
+    "moonbitlang/core/array",
+    "moonbitlang/core/int64"
   ]
 }
