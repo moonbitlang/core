@@ -1,9 +1,9 @@
 package moonbitlang/core/uint
 
 // Values
-let max : UInt
+let max_value : UInt
 
-let min : UInt
+let min_value : UInt
 
 // Types and methods
 impl UInt {

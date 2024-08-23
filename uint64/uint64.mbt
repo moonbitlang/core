@@ -12,6 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-pub let min : UInt64 = 0UL
+pub let min_value : UInt64 = 0UL
 
-pub let max : UInt64 = 18446744073709551615UL
+pub let max_value : UInt64 = 18446744073709551615UL

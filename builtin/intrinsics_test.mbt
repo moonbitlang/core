@@ -123,10 +123,10 @@ test "u64 to double" {
 
 test "UInt64::lnot test cases" {
   // Test case 1: Boundary case, testing the behavior with the maximum value of UInt64
-  inspect!(UInt64::lnot(@uint64.max), content="0")
+  inspect!(UInt64::lnot(@uint64.max_value), content="0")
 
   // Test case 2: Boundary case, testing the behavior with the minimum value of UInt64
-  inspect!(UInt64::lnot(@uint64.min), content="18446744073709551615")
+  inspect!(UInt64::lnot(@uint64.min_value), content="18446744073709551615")
 
   // Test case 3: Random case, testing with a random large value
   inspect!(UInt64::lnot(12345678901234567890UL), content="6101065172474983725")
