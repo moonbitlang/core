@@ -125,6 +125,7 @@ impl ArrayView {
 
 type BigInt
 impl BigInt {
+  asr(Self, Int) -> Self
   compare(Self, Self) -> Int
   from_hex(String) -> Self
   from_int(Int) -> Self
@@ -132,7 +133,6 @@ impl BigInt {
   from_string(String) -> Self
   is_zero(Self) -> Bool
   lsl(Self, Int) -> Self
-  lsr(Self, Int) -> Self
   make_zero() -> Self
   op_add(Self, Self) -> Self
   op_div(Self, Self) -> Self
