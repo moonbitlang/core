@@ -61,9 +61,9 @@ let karatsuba_threshold = 50
 
 // Useful bigints
 
-let zero : BigInt = BigInt::from_int64(0L)
+let zero : BigInt = 0N
 
-let one : BigInt = BigInt::from_int64(1L)
+let one : BigInt = 1N
 
 // Conversion Functions
 
@@ -96,7 +96,7 @@ pub fn BigInt::from_int64(n : Int64) -> BigInt {
 /// 
 /// TODO: modify function name after literal syntax is supported
 pub fn BigInt::make_zero() -> BigInt {
-  { limbs: FixedArray::make(1, 0), sign: Positive, len: 1 }
+  zero
 }
 
 // Arithmetic Operations
@@ -105,9 +105,7 @@ pub fn BigInt::make_zero() -> BigInt {
 pub fn op_neg(self : BigInt) -> BigInt {
   // copy limbs
   let limbs = FixedArray::make(self.len, 0)
-  for i = 0; i < self.len; i = i + 1 {
-    limbs[i] = self.limbs[i]
-  }
+  limbs.unsafe_blit(0, self.limbs, 0, self.len)
   {
     limbs,
     sign: if self.sign == Positive {
@@ -203,7 +201,7 @@ pub fn op_sub(self : BigInt, other : BigInt) -> BigInt {
 /// Multiply two bigint 
 pub fn op_mul(self : BigInt, other : BigInt) -> BigInt {
   if self.is_zero() || other.is_zero() {
-    return make_zero()
+    return zero
   }
   let ret = if self.len < karatsuba_threshold || other.len < karatsuba_threshold {
     grade_school_mul(self, other)
@@ -259,16 +257,12 @@ fn split(self : BigInt, half : Int) -> (BigInt, BigInt) {
   if self.len <= half {
     let ret = self.deep_clone()
     ret.sign = Positive
-    return (ret, make_zero())
+    return (ret, zero)
   }
   let lower = FixedArray::make(half, 0)
-  for i = 0; i < half; i = i + 1 {
-    lower[i] = self.limbs[i]
-  }
+  lower.unsafe_blit(0, self.limbs, 0, half)
   let upper = FixedArray::make(self.len - half, 0)
-  for i = half; i < self.len; i = i + 1 {
-    upper[i - half] = self.limbs[i]
-  }
+  upper.unsafe_blit(0, self.limbs, half, self.len - half)
   (
     { limbs: lower, sign: Positive, len: half },
     { limbs: upper, sign: Positive, len: self.len - half },
@@ -325,9 +319,9 @@ fn grade_school_div(self : BigInt, other : BigInt) -> (BigInt, BigInt) {
 
   // Handle edge cases
   if self < other {
-    return (make_zero(), self)
+    return (zero, self)
   } else if self == other {
-    return (one, make_zero())
+    return (one, zero)
   }
   if other.len == 1 {
     let number = other.limbs[0]
@@ -336,7 +330,7 @@ fn grade_school_div(self : BigInt, other : BigInt) -> (BigInt, BigInt) {
     }
     let ret = self.deep_clone()
     if number == 1 {
-      return (ret, make_zero())
+      return (ret, zero)
     }
     let a = ret.limbs
     let x = number.to_int64()
@@ -472,7 +466,7 @@ pub fn lsl(self : BigInt, n : Int) -> BigInt {
     }
     { limbs: new_limbs, sign: self.sign, len }
   } else {
-    make_zero()
+    zero
   }
 }
 
@@ -511,48 +505,11 @@ pub fn shl(self : BigInt, n : Int) -> BigInt {
         len += 1
       }
     } else {
-      for i = 0; i < self.len; i = i + 1 {
-        new_limbs[i + lz] = a[i]
-      }
+      new_limbs.unsafe_blit(lz, self.limbs, 0, self.len)
     }
     { limbs: new_limbs, sign: self.sign, len }
   } else {
-    make_zero()
-  }
-}
-
-/// Right shift a bigint
-/// it fills the vacated bits on the left with zeros.
-/// /// @alert deprecate "Use shr instead"
-pub fn lsr(self : BigInt, n : Int) -> BigInt {
-  if n < 0 {
-    abort("negative shift count")
-  }
-  let r = n % radix_bit_len
-  let lz = n / radix_bit_len
-  if lz >= self.len {
-    return make_zero()
-  }
-  let mut new_len = self.len - lz
-  if r == 0 {
-    let new_limbs = FixedArray::make(new_len, 0)
-    for i = lz; i < self.len; i = i + 1 {
-      new_limbs[i - lz] = self.limbs[i]
-    }
-    { limbs: new_limbs, sign: self.sign, len: new_len }
-  } else {
-    let new_limbs = FixedArray::make(new_len, 0)
-    let a = self.limbs
-    let mut carry = 0L
-    for i = self.len - 1; i >= lz; i = i - 1 {
-      let x = a[i].to_int64()
-      new_limbs[i - lz] = x.lsr(r).lor(carry).to_int()
-      carry = x.lsl(radix_bit_len - r) % radix
-    }
-    if new_len > 1 && new_limbs[new_len - 1] == 0 {
-      new_len -= 1
-    }
-    { limbs: new_limbs, sign: self.sign, len: new_len }
+    zero
   }
 }
 
@@ -574,7 +531,7 @@ pub fn shr(self : BigInt, n : Int) -> BigInt {
   let lz = n / radix_bit_len
   if lz >= self.len {
     match self.sign {
-      Positive => return make_zero()
+      Positive => return zero
       Negative =>
         return { limbs: FixedArray::make(1, 1), sign: Negative, len: 1 }
     }
@@ -582,9 +539,7 @@ pub fn shr(self : BigInt, n : Int) -> BigInt {
   let mut new_len = self.len - lz
   if r == 0 {
     let new_limbs = FixedArray::make(new_len, 0)
-    for i = lz; i < self.len; i = i + 1 {
-      new_limbs[i - lz] = self.limbs[i]
-    }
+    new_limbs.unsafe_blit(0, self.limbs, lz, new_len)
     { limbs: new_limbs, sign: self.sign, len: new_len }
   } else {
     let new_limbs = FixedArray::make(new_len, 0)
@@ -604,6 +559,10 @@ pub fn shr(self : BigInt, n : Int) -> BigInt {
       { limbs: new_limbs, sign: self.sign, len: new_len }
     }
   }
+}
+
+pub fn asr(self : BigInt, n : Int) -> BigInt {
+  self >> n
 }
 
 // Comparison Operations
@@ -820,9 +779,7 @@ pub fn to_hex(self : BigInt) -> String {
 
 fn deep_clone(self : BigInt) -> BigInt {
   let new_limbs = FixedArray::make(self.len, 0)
-  for i = 0; i < self.len; i = i + 1 {
-    new_limbs[i] = self.limbs[i]
-  }
+  new_limbs.unsafe_blit(0, self.limbs, 0, self.len)
   { limbs: new_limbs, sign: self.sign, len: self.len }
 }
 
