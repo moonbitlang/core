@@ -577,19 +577,28 @@ pub fn search[T : Eq](self : Array[T], value : T) -> Int? {
   }
 }
 
-/// Binary search the array index for a given element in a sorted array.
+/// Performs a binary search on a sorted array to find the index of a given element.
 /// 
-/// If the element is found then Ok is returned, containing the matching array index. 
-/// If there are multiple matches, then the leftmost match could be returned. 
-/// If the element is not found then Err is returned, containing the array index where a matching element cloud be inserted while maintaining sorted order.
-/// 
-/// The array must be sorted in increaing order. If not, the returned result is meaningless.
-///
 /// # Example
 /// ```
 /// let v = [3, 4, 5]
-/// v.binary_search(3)
+/// let result = v.binary_search(3)
+/// assert_eq!(result, Ok(0)) // The element 3 is found at index 0
 /// ```
+/// 
+/// # Arguments
+/// - `self`: The array in which to perform the search.
+/// - `value`: The element to search for in the array.
+/// 
+/// # Returns
+/// - `Result<Int, Int>`:
+/// If the element is found, an `Ok` variant is returned, containing the index of the matching element in the array. 
+/// If there are multiple matches, the leftmost match will be returned. 
+/// If the element is not found, an `Err` variant is returned, containing the index where the element could be inserted to maintain the sorted order.
+/// 
+/// # Notes
+/// - Ensure that the array is sorted in increasing order before calling this function. 
+/// - If the array is not sorted, the returned result is undefined and should not be relied on.
 pub fn binary_search[T : Compare](
   self : Array[T],
   value : T
@@ -599,31 +608,41 @@ pub fn binary_search[T : Compare](
   )
 }
 
-/// Binary search the array index for a given element in a sorted array with a custom comparator function.
+/// Performs a binary search on a sorted array using a custom comparator function, and returns the index of the given element.
 /// 
-/// The comparator function should return an Int that indicates whether its argument is less(-1), equal(0), or greater(1) the element.
-/// 
-/// If the element is found then Ok is returned, containing the matching array index. 
-/// If there are multiple matches, then the leftmost match could be returned. 
-/// If the element is not found then Err is returned, containing the array index where a matching element cloud be inserted while maintaining sorted order.
-/// 
-/// If the array is not sorted or if the comparator function is not consistent with the sorted order of array, the returned result is meaningless.
+/// The comparator function should return an `Int` that indicates whether the argument is less than `(-1)`, equal to `(0)`, or greater than `(1)` 
+/// the target element.
 /// 
 /// # Example
 /// ```
 /// let v = [3, 4, 5]
-/// v.binary_search_by(
+/// let result = v.binary_search_by(
 ///   fn(v : T) { if v < 3 { -1 } else if v == 3 { 0 } else { 1 } },
 /// )
+/// assert_eq!(result, Ok(0)) // The element 3 is found at index 0
 /// ```
-pub fn binary_search_by[T : Compare](
+/// # Type Parameters
+/// - `T`: The type of elements in the array. It must implement the `Eq` trait.
+/// 
+/// # Arguments
+/// - `self`: The array in which to perform the search.
+/// - `cmp`: A closure that defines the comparator function, taking an element of type `T` and returning an `Int`.
+/// 
+/// # Returns
+/// - `Result[Int, Int]`: If the element is found, `Ok` is returned with the index of the element.
+/// If the element is not found, `Err` is returned with the index where the element could be inserted to maintain sorted order.
+/// 
+/// # Notes
+/// - The array must be sorted, and the comparator function should be consistent with the sorted order of the array.
+/// - If not, the returned result is undefined and should not be relied on.
+pub fn binary_search_by[T : Eq](
   self : Array[T],
   cmp : (T) -> Int
 ) -> Result[Int, Int] {
   let mut i = 0
   let mut j = self.length()
   while i < j {
-    let h = (i + j) / 2
+    let h = i + (j - i) / 2
     if cmp(self.buffer()[h]) == -1 {
       i = h + 1
     } else {
