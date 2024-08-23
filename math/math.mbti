@@ -9,9 +9,9 @@ fn atan(Double) -> Double
 
 fn cos(Double) -> Double
 
-fn maximum[T : Compare + Eq](T, T) -> T
+fn max[T : Compare + Eq](T, T) -> T
 
-fn minimum[T : Compare + Eq](T, T) -> T
+fn min[T : Compare + Eq](T, T) -> T
 
 fn sin(Double) -> Double
 
