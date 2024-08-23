@@ -1,16 +1,14 @@
 package moonbitlang/core/int64
 
 // Values
-let max : Int64
+let max_value : Int64
 
-let min : Int64
+let min_value : Int64
 
 // Types and methods
 impl Int64 {
   abs(Int64) -> Int64
   from_int(Int) -> Int64
-  max_value() -> Int64
-  min_value() -> Int64
 }
 
 // Type aliases

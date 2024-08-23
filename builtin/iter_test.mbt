@@ -302,22 +302,25 @@ test "upto" {
   inspect!((0).upto(10).take(100), content="[0, 1, 2, 3, 4, 5, 6, 7, 8, 9]")
   inspect!((100).upto(10).take(100), content="[]")
   // inclusive
-  inspect!((@int.max - 2).upto(@int.max - 1), content="[2147483645]")
   inspect!(
-    (@int.max - 2).upto(@int.max - 1, inclusive=true),
+    (@int.max_value - 2).upto(@int.max_value - 1),
+    content="[2147483645]",
+  )
+  inspect!(
+    (@int.max_value - 2).upto(@int.max_value - 1, inclusive=true),
     content="[2147483645, 2147483646]",
   )
-  inspect!((@int.max - 1).upto(@int.max), content="[2147483646]")
+  inspect!((@int.max_value - 1).upto(@int.max_value), content="[2147483646]")
   inspect!(
-    (@int.max - 1).upto(@int.max, inclusive=true),
+    (@int.max_value - 1).upto(@int.max_value, inclusive=true),
     content="[2147483646, 2147483647]",
   )
   inspect!(
-    (@int64.max - 2).upto(@int64.max - 1L, inclusive=true),
+    (@int64.max_value - 2).upto(@int64.max_value - 1L, inclusive=true),
     content="[9223372036854775805, 9223372036854775806]",
   )
   inspect!(
-    (@int64.max - 1).upto(@int64.max, inclusive=true),
+    (@int64.max_value - 1).upto(@int64.max_value, inclusive=true),
     content="[9223372036854775806, 9223372036854775807]",
   )
   inspect!(
@@ -355,22 +358,25 @@ test "until" {
   inspect!(1.0.until(2.0, step=0), content="[]")
   inspect!(0L.until(10, step=0), content="[]")
   // inclusive
-  inspect!((@int.max - 2).until(@int.max - 1), content="[2147483645]")
   inspect!(
-    (@int.max - 2).until(@int.max - 1, inclusive=true),
+    (@int.max_value - 2).until(@int.max_value - 1),
+    content="[2147483645]",
+  )
+  inspect!(
+    (@int.max_value - 2).until(@int.max_value - 1, inclusive=true),
     content="[2147483645, 2147483646]",
   )
-  inspect!((@int.max - 1).until(@int.max), content="[2147483646]")
+  inspect!((@int.max_value - 1).until(@int.max_value), content="[2147483646]")
   inspect!(
-    (@int.max - 1).until(@int.max, inclusive=true),
+    (@int.max_value - 1).until(@int.max_value, inclusive=true),
     content="[2147483646, 2147483647]",
   )
   inspect!(
-    (@int64.max - 2).until(@int64.max - 1L, inclusive=true),
+    (@int64.max_value - 2).until(@int64.max_value - 1L, inclusive=true),
     content="[9223372036854775805, 9223372036854775806]",
   )
   inspect!(
-    (@int64.max - 1).until(@int64.max, inclusive=true),
+    (@int64.max_value - 1).until(@int64.max_value, inclusive=true),
     content="[9223372036854775806, 9223372036854775807]",
   )
   inspect!(

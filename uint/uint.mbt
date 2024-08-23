@@ -12,9 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-pub let min : UInt = 0U
+pub let min_value : UInt = 0U
 
-pub let max : UInt = 4294967295U
+pub let max_value : UInt = 4294967295U
 
 pub fn to_byte(self : UInt) -> Byte {
   self.to_int().to_byte()
