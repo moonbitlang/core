@@ -44,10 +44,7 @@ fn debug_node[K : Show, V : Show](self : Node[K, V]) -> String {
     Some(right) => right.debug_node()
     None => "_"
   }
-  let key = self.key
-  let value = self.value
-  let height = self.height
-  "([\{height}]\{key},\{value},\{l},\{r})"
+  "([\{self.height}]\{self.key},\{self.value},\{l},\{r})"
 }
 
 fn debug_tree[K : Show, V : Show](self : T[K, V]) -> String {
