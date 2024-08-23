@@ -239,11 +239,8 @@ pub fn eachi[A](self : T[A], f : (Int, A) -> Unit) -> Unit {
 /// ```
 pub fn fold[A, B](self : T[A], ~init : B, f : (B, A) -> B) -> B {
   loop self.first, init {
-    cell, acc =>
-      match cell {
-        Nil => acc
-        Cons({ content, next }) => continue next, f(acc, content)
-      }
+    Nil, acc => acc
+    Cons({ content, next }), acc => continue next, f(acc, content)
   }
 }
 
