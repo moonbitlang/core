@@ -21,10 +21,8 @@ impl T {
   is_empty[A : Compare + Eq](Self[A]) -> Bool
   iter[A](Self[A]) -> Iter[A]
   map[A : Compare + Eq, B : Compare + Eq](Self[A], (A) -> B) -> Self[B]
-  max[A : Compare + Eq](Self[A]) -> A
-  max_option[A : Compare + Eq](Self[A]) -> A?
-  min[A : Compare + Eq](Self[A]) -> A
-  min_option[A : Compare + Eq](Self[A]) -> A?
+  maximum[A : Compare + Eq](Self[A]) -> A?
+  minimum[A : Compare + Eq](Self[A]) -> A?
   new[A]() -> Self[A]
   of[A : Compare + Eq](FixedArray[A]) -> Self[A]
   op_equal[A : Eq](Self[A], Self[A]) -> Bool

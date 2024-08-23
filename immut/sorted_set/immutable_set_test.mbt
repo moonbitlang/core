@@ -252,27 +252,27 @@ test "remove" {
 }
 
 test "min" {
-  inspect!(@sorted_set.of([7, 2, 9, 4, 5, 6, 3, 8, 1]).min(), content="1")
+  inspect!(@sorted_set.of([7, 2, 9, 4, 5, 6, 3, 8, 1]).minimum(), content="1")
 }
 
 test "min_option" {
   let empty : @sorted_set.T[Int] = @sorted_set.new()
-  inspect!(empty.min_option(), content="None")
+  inspect!(empty.minimum(), content="None")
   inspect!(
-    @sorted_set.of([7, 2, 9, 4, 5, 6, 3, 8, 1]).min_option(),
+    @sorted_set.of([7, 2, 9, 4, 5, 6, 3, 8, 1]).minimum(),
     content="Some(1)",
   )
 }
 
 test "max" {
-  inspect!(@sorted_set.of([7, 2, 9, 4, 5, 6, 3, 8, 1]).max(), content="9")
+  inspect!(@sorted_set.of([7, 2, 9, 4, 5, 6, 3, 8, 1]).maximum(), content="9")
 }
 
 test "max_option" {
   let empty : @sorted_set.T[Int] = @sorted_set.new()
-  inspect!(empty.max_option(), content="None")
+  inspect!(empty.maximum(), content="None")
   inspect!(
-    @sorted_set.of([7, 2, 9, 4, 5, 6, 3, 8, 1]).max_option(),
+    @sorted_set.of([7, 2, 9, 4, 5, 6, 3, 8, 1]).maximum(),
     content="Some(9)",
   )
 }
@@ -365,12 +365,12 @@ test "panic remove_min on empty set" {
 
 test "panic min on empty set" {
   let empty : @sorted_set.T[Int] = @sorted_set.new()
-  empty.min() |> ignore
+  empty.minimum() |> ignore
 }
 
 test "panic max on empty set" {
   let empty : @sorted_set.T[Int] = @sorted_set.new()
-  empty.max() |> ignore
+  empty.maximum() |> ignore
 }
 
 test "split with value not in set" {
@@ -389,13 +389,13 @@ test "remove_min on non-empty set" {
 
 test "min on non-empty set" {
   let set = @sorted_set.of([7, 2, 9, 4, 5, 6, 3, 8, 1])
-  let min_value = set.min()
+  let min_value = set.minimum()
   inspect!(min_value, content="1")
 }
 
 test "max on non-empty set" {
   let set = @sorted_set.of([7, 2, 9, 4, 5, 6, 3, 8, 1])
-  let max_value = set.max()
+  let max_value = set.maximum()
   inspect!(max_value, content="9")
 }
 

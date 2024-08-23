@@ -147,63 +147,36 @@ pub fn remove[A : Compare](self : T[A], value : A) -> T[A] {
 /// # Example
 /// 
 /// ```
-/// println(of([7, 2, 9, 4, 5, 6, 3, 8, 1]).min())
+/// println(of([7, 2, 9, 4, 5, 6, 3, 8, 1]).minimum())
 /// // output: 1
 /// ```
-/// @alert unsafe "Panic if the sorted_set is empty."
-pub fn min[A : Compare](self : T[A]) -> A {
-  match self {
-    Empty => abort("min: there are no values in sorted_set.")
-    Node(~left, ~value, ..) =>
-      match left {
-        Empty => value
-        _ => left.min()
-      }
-  }
-}
-
-/// Returns the smallest value in the sorted_set.
-/// But returns None when the value does not exist.
-pub fn min_option[A : Compare](self : T[A]) -> A? {
+pub fn minimum[A : Compare](self : T[A]) -> A? {
   match self {
     Empty => None
     Node(~left, ~value, ..) =>
       match left {
         Empty => Some(value)
-        _ => left.min_option()
+        _ => left.minimum()
       }
   }
 }
 
-/// Returns the largest value in the sorted_set.
+/// Returns the largest value in the Sorted_set.
+/// But returns None when the value does not exist.
 /// 
 /// # Example
 /// 
 /// ```
-/// println(of([7, 2, 9, 4, 5, 6, 3, 8, 1]).max())
+/// println(of([7, 2, 9, 4, 5, 6, 3, 8, 1]).maximum())
 /// // output: 9
 /// ```
-/// @alert unsafe "Panic if the sorted_set is empty."
-pub fn max[A : Compare](self : T[A]) -> A {
-  match self {
-    Empty => abort("max: there are no values in ImmutableSet.")
-    Node(~right, ~value, ..) =>
-      match right {
-        Empty => value
-        _ => right.max()
-      }
-  }
-}
-
-/// Returns the largest value in the ImmutableSet.
-/// But returns None when the value does not exist.
-pub fn max_option[A : Compare](self : T[A]) -> A? {
+pub fn maximum[A : Compare](self : T[A]) -> A? {
   match self {
     Empty => None
     Node(~right, ~value, ..) =>
       match right {
         Empty => Some(value)
-        _ => right.max_option()
+        _ => right.maximum()
       }
   }
 }
@@ -648,8 +621,8 @@ fn join[A : Compare](left : T[A], value : A, right : T[A]) -> T[A] {
 }
 
 fn try_join[A : Compare](left : T[A], value : A, right : T[A]) -> T[A] {
-  if (left == Empty || left.max().compare(value) < 0) &&
-    (right == Empty || value.compare(right.min()) < 0) {
+  if (left == Empty || left.maximum().unwrap().compare(value) < 0) &&
+    (right == Empty || value.compare(right.minimum().unwrap()) < 0) {
     join(left, value, right)
   } else {
     left.union(right.add(value))
@@ -662,7 +635,7 @@ fn merge[A : Compare](self : T[A], other : T[A]) -> T[A] {
   match (self, other) {
     (Empty, _) => other
     (_, Empty) => self
-    _ => balance(self, other.min(), other.remove_min())
+    _ => balance(self, other.minimum().unwrap(), other.remove_min())
   }
 }
 
@@ -671,7 +644,7 @@ fn concat[A : Compare](self : T[A], other : T[A]) -> T[A] {
   match (self, other) {
     (Empty, _) => other
     (_, Empty) => self
-    _ => join(self, other.min(), other.remove_min())
+    _ => join(self, other.minimum().unwrap(), other.remove_min())
   }
 }
 
