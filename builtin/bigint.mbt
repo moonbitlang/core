@@ -330,7 +330,7 @@ fn grade_school_div(self : BigInt, other : BigInt) -> (BigInt, BigInt) {
   if self < other {
     return (make_zero(), self)
   } else if self == other {
-    return (BigInt::from_int(1), make_zero())
+    return (one, make_zero())
   }
   if other.len == 1 {
     let number = other.limbs[0]
