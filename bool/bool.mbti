@@ -6,6 +6,8 @@ package moonbitlang/core/bool
 impl Bool {
   to_int(Bool) -> Int
   to_int64(Bool) -> Int64
+  to_uint(Bool) -> UInt
+  to_uint64(Bool) -> UInt64
 }
 
 // Type aliases
