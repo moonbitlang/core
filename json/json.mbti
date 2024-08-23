@@ -46,7 +46,7 @@ impl Json {
   as_object(Self) -> Map[String, Self]?
   as_string(Self) -> String?
   item(Self, Int) -> Self?
-  stringify(Self) -> String
+  stringify(Self, ~escape_slash : Bool = ..) -> String
   to_json(Self) -> Self
   to_string(Self) -> String
   value(Self, String) -> Self?
