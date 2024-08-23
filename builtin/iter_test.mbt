@@ -320,8 +320,28 @@ test "upto" {
     content="[9223372036854775805, 9223372036854775806]",
   )
   inspect!(
+    (@int.max_value - 1).upto(@int.max_value, inclusive=true).concat([0].iter()),
+    content="[2147483646, 2147483647, 0]",
+  )
+  inspect!(
+    (@uint.max_value - 1)
+    .upto(@uint.max_value, inclusive=true)
+    .concat([0U].iter()),
+    content="[4294967294, 4294967295, 0]",
+  )
+  inspect!(
+    (@int64.max_value - 2).upto(@int64.max_value - 1L, inclusive=true),
+    content="[9223372036854775805, 9223372036854775806]",
+  )
+  inspect!(
     (@int64.max_value - 1).upto(@int64.max_value, inclusive=true),
     content="[9223372036854775806, 9223372036854775807]",
+  )
+  inspect!(
+    (@int64.max_value - 1)
+    .upto(@int64.max_value, inclusive=true)
+    .concat([0L].iter()),
+    content="[9223372036854775806, 9223372036854775807, 0]",
   )
   inspect!(
     0.0.upto(10.0),
@@ -347,6 +367,12 @@ test "upto" {
     0.0.upto(10.0).take(5).concat(0.0.upto(2.0)),
     content="[0.0, 1.0, 2.0, 3.0, 4.0, 0.0, 1.0]",
   )
+  inspect!(
+    (@double.infinity - 1.0)
+    .upto(@double.infinity, inclusive=true)
+    .concat([0.0].iter()),
+    content="[Infinity, 0.0]",
+  )
 }
 
 test "until" {
@@ -365,6 +391,13 @@ test "until" {
   inspect!(
     (@int.max_value - 2).until(@int.max_value - 1, inclusive=true),
     content="[2147483645, 2147483646]",
+  )
+  inspect!((@int.max_value - 1).until(@int.max_value), content="[2147483646]")
+  inspect!(
+    (@int.max_value - 1)
+    .until(@int.max_value, inclusive=true)
+    .concat([0].iter()),
+    content="[2147483646, 2147483647, 0]",
   )
   inspect!((@int.max_value - 1).until(@int.max_value), content="[2147483646]")
   inspect!(

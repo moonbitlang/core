@@ -205,12 +205,10 @@ pub fn upto(self : Int, end : Int, ~inclusive : Bool = false) -> Iter[Int] {
       if yield(i) == IterEnd {
         break IterEnd
       }
-      let next = i + 1
-      if next > i {
-        i = next
-      } else {
-        break IterEnd
+      if i == end {
+        break IterContinue
       }
+      i = i + 1
     } else {
       IterContinue
     }
@@ -235,12 +233,10 @@ pub fn upto(self : UInt, end : UInt, ~inclusive : Bool = false) -> Iter[UInt] {
       if yield(i) == IterEnd {
         break IterEnd
       }
-      let next = i + 1U
-      if next > i {
-        i = next
-      } else {
-        break IterEnd
+      if i == end {
+        break IterContinue
       }
+      i = i + 1U
     } else {
       IterContinue
     }
@@ -269,12 +265,10 @@ pub fn upto(
       if yield(i) == IterEnd {
         break IterEnd
       }
-      let next = i + 1UL
-      if next > i {
-        i = next
-      } else {
-        break IterEnd
+      if i == end {
+        break IterContinue
       }
+      i = i + 1UL
     } else {
       IterContinue
     }
@@ -303,12 +297,10 @@ pub fn upto(
       if yield(i) == IterEnd {
         break IterEnd
       }
-      let next = i + 1
-      if next > i {
-        i = next
-      } else {
-        break IterEnd
+      if i == end {
+        break IterContinue
       }
+      i = i + 1L
     } else {
       IterContinue
     }
@@ -337,12 +329,10 @@ pub fn upto(
       if yield(i) == IterEnd {
         break IterEnd
       }
-      let next = i + 1
-      if next > i {
-        i = next
-      } else {
-        break IterEnd
+      if i == end {
+        break IterContinue
       }
+      i = i + 1.0
     } else {
       IterContinue
     }
@@ -371,12 +361,10 @@ pub fn upto(
       if yield(i) == IterEnd {
         break IterEnd
       }
-      let next = i + 1
-      if next > i {
-        i = next
-      } else {
-        break IterEnd
+      if i == end {
+        break IterContinue
       }
+      i = i + 1.0
     } else {
       IterContinue
     }
@@ -417,7 +405,7 @@ pub fn until(
       if (step > 0 && next >= i) || (step < 0 && next <= i) {
         i = next
       } else {
-        break IterEnd
+        break IterContinue
       }
     } else {
       IterContinue
@@ -459,7 +447,7 @@ pub fn until(
       if (step > 0 && next >= i) || (step < 0 && next <= i) {
         i = next
       } else {
-        break IterEnd
+        break IterContinue
       }
     } else {
       IterContinue
@@ -501,7 +489,7 @@ pub fn until(
       if (step > 0.0 && next >= i) || (step < 0.0 && next <= i) {
         i = next
       } else {
-        break IterEnd
+        break IterContinue
       }
     } else {
       IterContinue
@@ -543,7 +531,7 @@ pub fn until(
       if (step > 0.0 && next >= i) || (step < 0.0 && next <= i) {
         i = next
       } else {
-        break IterEnd
+        break IterContinue
       }
     } else {
       IterContinue
