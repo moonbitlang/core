@@ -237,7 +237,7 @@ pub fn eachi[A](self : T[A], f : (Int, A) -> Unit) -> Unit {
 /// let queue : Queue[Int] = of([1, 2, 3, 4])
 /// let sum = queue.fold(0, fn(acc, x) { acc + x })
 /// ```
-pub fn fold[A,B](self : T[A], ~init : B, f : (B, A) -> B) -> B {
+pub fn fold[A, B](self : T[A], ~init : B, f : (B, A) -> B) -> B {
   loop self.first, init {
     cell, acc =>
       match cell {
