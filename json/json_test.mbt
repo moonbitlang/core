@@ -304,7 +304,7 @@ test "stringify escape" {
   inspect!(
     json.stringify(),
     content=
-      #|{"\b":"\"hello\"","\n":"\n\r\t\f","\\":"\/","\u001f":"\u0001","actual":"a,\"b\",c","escpae":"\u0000"}
+      #|{"\b":"\"hello\"","\n":"\n\r\t\f","\\":"/","\u001f":"\u0001","actual":"a,\"b\",c","escpae":"\u0000"}
     ,
   )
   match @json.parse?(json.stringify()) {

@@ -143,7 +143,7 @@ fn escape(str : String) -> String {
   let buf = Buffer::new(size_hint=str.length())
   for c in str {
     match c {
-      '"' | '\\' | '/' => buf.write_string("\\\{c}")
+      '"' | '\\' => buf.write_string("\\\{c}")
       '\n' => buf.write_string("\\n")
       '\r' => buf.write_string("\\r")
       '\b' => buf.write_string("\\b")
