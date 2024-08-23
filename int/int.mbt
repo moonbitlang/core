@@ -12,9 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-pub let max = 2147483647
+pub let max_value = 2147483647
 
-pub let min = -2147483648
+pub let min_value = -2147483648
 
 /// Returns the absolute value of an integer.
 /// 
@@ -39,16 +39,4 @@ pub fn abs(self : Int) -> Int {
   } else {
     self
   }
-}
-
-/// Returns the largest positive finite value of Int
-/// @alert deprecated "Use `@int.max` instead"
-pub fn Int::max_value() -> Int {
-  max
-}
-
-/// Returns the smallest positive nonzero value of Int
-/// @alert deprecated "Use `@int.min` instead"
-pub fn Int::min_value() -> Int {
-  min
 }

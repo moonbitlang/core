@@ -18,9 +18,9 @@ pub let infinity : Double = 0x7FF0000000000000L.reinterpret_as_double()
 
 pub let neg_infinity : Double = 0xFFF0000000000000L.reinterpret_as_double()
 
-pub let max : Double = 0x7FEFFFFFFFFFFFFFL.reinterpret_as_double()
+pub let max_value : Double = 0x7FEFFFFFFFFFFFFFL.reinterpret_as_double()
 
-pub let min : Double = 0xFFEFFFFFFFFFFFFFL.reinterpret_as_double()
+pub let min_value : Double = 0xFFEFFFFFFFFFFFFFL.reinterpret_as_double()
 
 pub let min_positive : Double = 0x0010000000000000L.reinterpret_as_double()
 
@@ -178,18 +178,6 @@ pub fn Double::inf(sign : Int) -> Double {
   }
 }
 
-// Returns the largest positive finite value of Double
-/// @alert deprecated "Use `@double.max` instead"
-pub fn Double::max_value() -> Double {
-  max
-}
-
-// Returns the smallest positive nonzero value of Double
-/// @alert deprecated "Use `@double.min` instead"
-pub fn Double::min_value() -> Double {
-  min
-}
-
 // Returns the smallest positive normal value of Double
 /// @alert deprecated "Use `@double.min_positive` instead"
 pub fn Double::min_normal() -> Double {
@@ -204,17 +192,17 @@ pub fn is_nan(self : Double) -> Bool {
 
 // Check whether the double is infinity
 pub fn is_inf(self : Double) -> Bool {
-  self > max || self < min
+  self > max_value || self < min_value
 }
 
 // Check whether the double is positive infinity
 pub fn is_pos_inf(self : Double) -> Bool {
-  self > max
+  self > max_value
 }
 
 // Check whether the double is negative infinity
 pub fn is_neg_inf(self : Double) -> Bool {
-  self < min
+  self < min_value
 }
 
 test "from_int" {
@@ -267,7 +255,7 @@ test "is_neg_inf" {
 }
 
 test "min equal to neg max" {
-  assert_true!(min == -max)
+  assert_true!(min_value == -max_value)
 }
 
 pub impl Hash for Double with hash(self) {
