@@ -150,6 +150,10 @@ test "fold" {
   assert_eq!(sum, 10)
   let sum2 = @queue.of([1, 2, 3, 4]).fold(init=0, fn(acc, x) { acc + x })
   assert_eq!(sum2, 10)
+  inspect!(
+    @queue.of([1, 2, 3, 4]).fold(init=0L, fn(acc, x) { acc + x.to_int64() }),
+    content="10",
+  )
 }
 
 test "length" {
