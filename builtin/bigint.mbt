@@ -13,24 +13,23 @@
 // limitations under the License.
 
 /// A big integer represented as an array of Int.
-/// 
-/// Design explained: 
-/// - Why use an array of Int with a len field instead of a Vec[Int]? 
-///   - It follows the principle of least dependency in MoonBit's core.
-///   - At the moment (04/30/2024), @vec is implemented as a resizable array. 
-///     In our case, we always do one-off array allocation for each BigInt.
-/// - Why keep a separate len field instead of using limbs.length()?
-///   - Since we always do only once array allocation for each BigInt, we
-///     often need to estimate the number of limbs needed before allocating.
-///     Using len allows us to accommodate leading zeros.
-///
-/// Invariants:
-/// - len > 0
-/// - forall i in 0..len-1, 0 <= limbs[i] < radix
-/// - limbs[len-1] > 0
-/// - forall i in len..limbs.length(), limbs[i] == 0
+// 
+// Design explained: 
+// - Why use an FixedArray of Int with a len field instead of a Array[Int]? 
+//   - It follows the principle of least dependency in MoonBit's core.
+//   - In our case, we always do one-off array allocation for each BigInt.
+// - Why keep a separate len field instead of using limbs.length()?
+//   - Since we always do only once array allocation for each BigInt, we
+//     often need to estimate the number of limbs needed before allocating.
+//     Using len allows us to accommodate leading zeros.
+//
+// Invariants:
+// - len > 0
+// - forall i in 0..len-1, 0 <= limbs[i] < radix
+// - limbs[len-1] > 0
+// - forall i in len..limbs.length(), limbs[i] == 0
 struct BigInt {
-  mut limbs : Array[Int] // Note: do not use limbs.length(), use len instead because of leading zeros
+  mut limbs : FixedArray[Int] // Note: do not use limbs.length(), use len instead because of leading zeros
   mut sign : Sign // true for positive, false for negative
   mut len : Int
 }
@@ -71,18 +70,18 @@ let one : BigInt = BigInt::from_int64(1L)
 /// Convert an Int to a BigInt.
 pub fn BigInt::from_int(n : Int) -> BigInt {
   if n < 0 {
-    { limbs: Array::make(1, -n), sign: Negative, len: 1 }
+    { limbs: FixedArray::make(1, -n), sign: Negative, len: 1 }
   } else {
-    { limbs: Array::make(1, n), sign: Positive, len: 1 }
+    { limbs: FixedArray::make(1, n), sign: Positive, len: 1 }
   }
 }
 
 /// Convert an Int64 to a BigInt.
 pub fn BigInt::from_int64(n : Int64) -> BigInt {
   if n == 0L {
-    return { limbs: Array::make(1, 0), sign: Positive, len: 1 }
+    return { limbs: FixedArray::make(1, 0), sign: Positive, len: 1 }
   }
-  let limbs = Array::make(64 / radix_bit_len, 0)
+  let limbs = FixedArray::make(64 / radix_bit_len, 0)
   let mut m = if n < 0L { -n } else { n }
   let mut i = 0
   while m > 0L {
@@ -97,7 +96,7 @@ pub fn BigInt::from_int64(n : Int64) -> BigInt {
 /// 
 /// TODO: modify function name after literal syntax is supported
 pub fn BigInt::make_zero() -> BigInt {
-  { limbs: Array::make(1, 0), sign: Positive, len: 1 }
+  { limbs: FixedArray::make(1, 0), sign: Positive, len: 1 }
 }
 
 // Arithmetic Operations
@@ -105,7 +104,7 @@ pub fn BigInt::make_zero() -> BigInt {
 /// Negate a bigint
 pub fn op_neg(self : BigInt) -> BigInt {
   // copy limbs
-  let limbs = Array::make(self.len, 0)
+  let limbs = FixedArray::make(self.len, 0)
   for i = 0; i < self.len; i = i + 1 {
     limbs[i] = self.limbs[i]
   }
@@ -146,7 +145,7 @@ pub fn op_add(self : BigInt, other : BigInt) -> BigInt {
   }
   let self_len = self.len
   let other_len = other.len
-  let limbs = Array::make(1 + max(self_len, other_len), 0)
+  let limbs = FixedArray::make(1 + max(self_len, other_len), 0)
   let mut carry = 0L
   let mut i = 0
   while i < self_len || i < other_len || carry != 0L {
@@ -178,7 +177,7 @@ pub fn op_sub(self : BigInt, other : BigInt) -> BigInt {
   }
   let self_len = self.len
   let other_len = other.len
-  let limbs = Array::make(max(self_len, other_len), 0)
+  let limbs = FixedArray::make(max(self_len, other_len), 0)
   let mut borrow = 0L
   let mut i = 0
   while i < self_len || i < other_len || borrow != 0L {
@@ -220,7 +219,7 @@ fn grade_school_mul(self : BigInt, other : BigInt) -> BigInt {
   let self_len = self.len
   let other_len = other.len
   let mut len = self_len + other_len
-  let limbs = Array::make(len, 0)
+  let limbs = FixedArray::make(len, 0)
   let mut i = 0
   while i < self_len {
     let mut j = 0
@@ -262,11 +261,11 @@ fn split(self : BigInt, half : Int) -> (BigInt, BigInt) {
     ret.sign = Positive
     return (ret, make_zero())
   }
-  let lower = Array::make(half, 0)
+  let lower = FixedArray::make(half, 0)
   for i = 0; i < half; i = i + 1 {
     lower[i] = self.limbs[i]
   }
-  let upper = Array::make(self.len - half, 0)
+  let upper = FixedArray::make(self.len - half, 0)
   for i = half; i < self.len; i = i + 1 {
     upper[i - half] = self.limbs[i]
   }
@@ -369,17 +368,17 @@ fn grade_school_div(self : BigInt, other : BigInt) -> (BigInt, BigInt) {
   let divisor = divisor.shl(lshift)
   let a_len = dividend.len
   let b_len = divisor.len
-  let b = Array::make(b_len, 0L)
+  let b = FixedArray::make(b_len, 0L)
   for i = 0; i < b_len; i = i + 1 {
     b[i] = divisor.limbs[i].to_int64()
   }
-  let a = Array::make(a_len, 0L)
+  let a = FixedArray::make(a_len, 0L)
   for i = 0; i < a_len; i = i + 1 {
     a[i] = dividend.limbs[i].to_int64()
   }
   let v1 = b[b_len - 1]
   let v2 = b[b_len - 2]
-  let q = Array::make(a_len - b_len, 0)
+  let q = FixedArray::make(a_len - b_len, 0)
   for i = q.length() - 1; i >= 0; i = i - 1 {
     let u0 = a[i + b_len]
     let u1 = a[i + b_len - 1]
@@ -430,7 +429,7 @@ fn grade_school_div(self : BigInt, other : BigInt) -> (BigInt, BigInt) {
   } else {
     i += 1
   }
-  let modulo = Array::make(i, 0)
+  let modulo = FixedArray::make(i, 0)
   for j = 0; j < i; j = j + 1 {
     modulo[j] = a[j].to_int()
   }
@@ -447,7 +446,7 @@ pub fn lsl(self : BigInt, n : Int) -> BigInt {
     abort("negative shift count")
   }
   if not(self.is_zero()) {
-    let new_limbs = Array::make(
+    let new_limbs = FixedArray::make(
       self.len + (n + radix_bit_len - 1) / radix_bit_len, // ceiling(n / radix_bit_len)
       0,
     )
@@ -492,7 +491,7 @@ pub fn shl(self : BigInt, n : Int) -> BigInt {
     abort("negative shift count")
   }
   if not(self.is_zero()) {
-    let new_limbs = Array::make(
+    let new_limbs = FixedArray::make(
       self.len + (n + radix_bit_len - 1) / radix_bit_len, // ceiling(n / radix_bit_len)
       0,
     )
@@ -536,13 +535,13 @@ pub fn lsr(self : BigInt, n : Int) -> BigInt {
   }
   let mut new_len = self.len - lz
   if r == 0 {
-    let new_limbs = Array::make(new_len, 0)
+    let new_limbs = FixedArray::make(new_len, 0)
     for i = lz; i < self.len; i = i + 1 {
       new_limbs[i - lz] = self.limbs[i]
     }
     { limbs: new_limbs, sign: self.sign, len: new_len }
   } else {
-    let new_limbs = Array::make(new_len, 0)
+    let new_limbs = FixedArray::make(new_len, 0)
     let a = self.limbs
     let mut carry = 0L
     for i = self.len - 1; i >= lz; i = i - 1 {
@@ -576,18 +575,19 @@ pub fn shr(self : BigInt, n : Int) -> BigInt {
   if lz >= self.len {
     match self.sign {
       Positive => return make_zero()
-      Negative => return { limbs: Array::make(1, 1), sign: Negative, len: 1 }
+      Negative =>
+        return { limbs: FixedArray::make(1, 1), sign: Negative, len: 1 }
     }
   }
   let mut new_len = self.len - lz
   if r == 0 {
-    let new_limbs = Array::make(new_len, 0)
+    let new_limbs = FixedArray::make(new_len, 0)
     for i = lz; i < self.len; i = i + 1 {
       new_limbs[i - lz] = self.limbs[i]
     }
     { limbs: new_limbs, sign: self.sign, len: new_len }
   } else {
-    let new_limbs = Array::make(new_len, 0)
+    let new_limbs = FixedArray::make(new_len, 0)
     let a = self.limbs
     let mut carry = 0L
     for i = self.len - 1; i >= lz; i = i - 1 {
@@ -716,7 +716,7 @@ pub fn BigInt::from_string(input : String) -> BigInt {
     ) /
     radix_bit_len +
     1
-  let b = Array::make(b_len, 0)
+  let b = FixedArray::make(b_len, 0)
   for i = match sign {
           Negative => 1
           Positive => 0
@@ -749,7 +749,7 @@ pub fn BigInt::from_hex(input : String) -> BigInt {
   }
   let sign : Sign = if input[0] == '-' { Negative } else { Positive }
   let mut b_len = (len * 4 + 1 + radix_bit_len) / radix_bit_len + 1 // TODO: 4 is hardcoded.
-  let b = Array::make(b_len, 0)
+  let b = FixedArray::make(b_len, 0)
   for i = match sign {
           Negative => 1
           Positive => 0
@@ -819,7 +819,7 @@ pub fn to_hex(self : BigInt) -> String {
 }
 
 fn deep_clone(self : BigInt) -> BigInt {
-  let new_limbs = Array::make(self.len, 0)
+  let new_limbs = FixedArray::make(self.len, 0)
   for i = 0; i < self.len; i = i + 1 {
     new_limbs[i] = self.limbs[i]
   }
