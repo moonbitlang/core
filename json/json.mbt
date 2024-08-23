@@ -77,7 +77,7 @@ pub fn value(self : JsonValue, key : String) -> JsonValue? {
   }
 }
 
-pub fn stringify(self : JsonValue) -> String {
+pub fn stringify(self : JsonValue, ~escape_slash : Bool = true) -> String {
   let buf = Buffer::new(size_hint=0)
   match self {
     Object(members) => {
@@ -88,10 +88,10 @@ pub fn stringify(self : JsonValue) -> String {
             buf.write_char(',')
           }
           buf.write_char('\"')
-          buf.write_string(escape(k))
+          buf.write_string(escape(k, ~escape_slash))
           buf.write_char('\"')
           buf.write_char(':')
-          buf.write_string(v.stringify())
+          buf.write_string(v.stringify(~escape_slash))
         },
       )
       buf.write_char('}')
@@ -103,14 +103,14 @@ pub fn stringify(self : JsonValue) -> String {
           if i > 0 {
             buf.write_char(',')
           }
-          buf.write_string(v.stringify())
+          buf.write_string(v.stringify(~escape_slash))
         },
       )
       buf.write_char(']')
     }
     String(s) => {
       buf.write_char('\"')
-      buf.write_string(escape(s))
+      buf.write_string(escape(s, ~escape_slash))
       buf.write_char('\"')
     }
     Number(n) => {
@@ -131,7 +131,7 @@ pub fn stringify(self : JsonValue) -> String {
   buf.to_string()
 }
 
-fn escape(str : String) -> String {
+fn escape(str : String, ~escape_slash : Bool) -> String {
   fn to_hex_digit(i : Int) -> Char {
     if i < 10 {
       Char::from_int('0'.to_int() + i)
@@ -144,6 +144,12 @@ fn escape(str : String) -> String {
   for c in str {
     match c {
       '"' | '\\' => buf.write_string("\\\{c}")
+      '/' =>
+        if escape_slash {
+          buf.write_string("\\/")
+        } else {
+          buf.write_char(c)
+        }
       '\n' => buf.write_string("\\n")
       '\r' => buf.write_string("\\r")
       '\b' => buf.write_string("\\b")

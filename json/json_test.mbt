@@ -304,6 +304,12 @@ test "stringify escape" {
   inspect!(
     json.stringify(),
     content=
+      #|{"\b":"\"hello\"","\n":"\n\r\t\f","\\":"\/","\u001f":"\u0001","actual":"a,\"b\",c","escpae":"\u0000"}
+    ,
+  )
+  inspect!(
+    json.stringify(escape_slash=false),
+    content=
       #|{"\b":"\"hello\"","\n":"\n\r\t\f","\\":"/","\u001f":"\u0001","actual":"a,\"b\",c","escpae":"\u0000"}
     ,
   )
@@ -311,6 +317,22 @@ test "stringify escape" {
     Err(e) => raise e
     Ok(newjson) => assert_eq!(newjson, json)
   }
+}
+
+test "escape" {
+  let s = "http://example.com/"
+  inspect!(
+    @json.stringify(String(s)),
+    content=
+      #|"http:\/\/example.com\/"
+    ,
+  )
+  inspect!(
+    @json.stringify(String(s), escape_slash=false),
+    content=
+      #|"http://example.com/"
+    ,
+  )
 }
 
 test "stringify number" {
