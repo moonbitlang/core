@@ -172,10 +172,11 @@ let gDOUBLE_POW5_TABLE : Array[UInt64] = [
   59604644775390625, 298023223876953125,
 ]
 
+/// Computes 5^i in the form required by Ryū.
 fn double_computePow5(i : Int) -> (UInt64, UInt64) {
-  let base : Int = i / gPOW5_TABLE_SIZE
-  let base2 : Int = base * gPOW5_TABLE_SIZE
-  let offset : Int = i - base2
+  let base = i / gPOW5_TABLE_SIZE
+  let base2 = base * gPOW5_TABLE_SIZE
+  let offset = i - base2
   let mul0 = gDOUBLE_POW5_SPLIT2[base * 2]
   let mul1 = gDOUBLE_POW5_SPLIT2[base * 2 + 1]
   if offset == 0 {
@@ -196,6 +197,7 @@ fn double_computePow5(i : Int) -> (UInt64, UInt64) {
   (a, b)
 }
 
+/// Computes 5^-i in the form required by Ryū.
 fn double_computeInvPow5(i : Int) -> (UInt64, UInt64) {
   let base = (i + gPOW5_TABLE_SIZE - 1) / gPOW5_TABLE_SIZE
   let base2 = base * gPOW5_TABLE_SIZE
@@ -231,18 +233,11 @@ let gDOUBLE_POW5_INV_BITCOUNT : Int = 125
 
 let gDOUBLE_POW5_BITCOUNT : Int = 125
 
-fn assert(b : Bool, msg : String) -> Unit {
-  if not(b) {
-    abort("assert failed: \{msg}\n")
-  }
-}
-
 fn decimalLength17(v : Int64) -> Int {
   // This is slightly faster than a loop.
   // The average output length is 16.38 digits, so we check high-to-low.
   // Function precondition: v is not an 18, 19, or 20-digit number.
   // (17 digits are sufficient for round-tripping.)
-  assert(v < 100000000000000000L, "v < 100000000000000000L")
   if v >= 10000000000000000L {
     return 17
   }
@@ -478,7 +473,7 @@ fn d2d(ieeeMantissa : UInt64, ieeeExponent : Int) -> FloatingDecimal64 {
     output = vr + (vr == vm || roundUp).to_int64().to_uint64()
   }
   let exp : Int = e10 + removed
-  let fd = { mantissa: output, exponent: exp }
+  let fd : FloatingDecimal64 = { mantissa: output, exponent: exp }
   fd
 }
 
@@ -487,7 +482,7 @@ fn to_chars(v : FloatingDecimal64, sign : Bool) -> String {
   let result = Bytes::new(24)
   let mut index : Int = 0
   if sign {
-    result[index] = '-'.to_int().to_byte()
+    result[index] = b'-'
     index = index + 1
   }
   let mut output = v.mantissa
@@ -499,23 +494,24 @@ fn to_chars(v : FloatingDecimal64, sign : Bool) -> String {
     for i = 0; i < olength - 1; i = i + 1 {
       let c = output % 10
       output = output / 10
-      result[index + olength - i] = ('0'.to_int() + c.to_int()).to_byte()
+      // 48 is ASCII '0', the same applies below.
+      result[index + olength - i] = (48 + c.to_int()).to_byte()
     }
-    result[index] = ('0'.to_int() + output.to_int() % 10).to_byte()
+    result[index] = (48 + output.to_int() % 10).to_byte()
 
     // Always print point
-    result[index + 1] = '.'.to_int().to_byte()
+    result[index + 1] = b'.'
     index = index + olength + 1
     if olength == 1 {
-      result[index] = '0'.to_int().to_byte()
+      result[index] = b'0'
       index = index + 1
     }
 
     // Print the exponent.
-    result[index] = 'e'.to_int().to_byte()
+    result[index] = b'e'
     index = index + 1
     if exp < 0 {
-      result[index] = '-'.to_int().to_byte()
+      result[index] = b'-'
       index = index + 1
       exp = -exp
     }
@@ -523,64 +519,62 @@ fn to_chars(v : FloatingDecimal64, sign : Bool) -> String {
       let a = exp / 100
       let b = exp / 10 % 10
       let c = exp % 10
-      result[index + 0] = ('0'.to_int() + a).to_byte()
-      result[index + 1] = ('0'.to_int() + b).to_byte()
-      result[index + 2] = ('0'.to_int() + c).to_byte()
+      result[index + 0] = (48 + a).to_byte()
+      result[index + 1] = (48 + b).to_byte()
+      result[index + 2] = (48 + c).to_byte()
       index = index + 3
     } else if exp >= 10 {
       let a = exp / 10
       let b = exp % 10
-      result[index + 0] = ('0'.to_int() + a).to_byte()
-      result[index + 1] = ('0'.to_int() + b).to_byte()
+      result[index + 0] = (48 + a).to_byte()
+      result[index + 1] = (48 + b).to_byte()
       index = index + 2
     } else {
-      result[index] = ('0'.to_int() + exp).to_byte()
+      result[index] = (48 + exp).to_byte()
       index = index + 1
     }
     string_from_bytes(result, 0, index)
   } else {
     if exp < 0 {
       // Decimal dot is before any of the digits.
-      result[index] = '0'.to_int().to_byte()
+      result[index] = b'0'
       index = index + 1
-      result[index] = '.'.to_int().to_byte()
+      result[index] = b'.'
       index = index + 1
       for i = -1; i > exp; i = i - 1 {
-        result[index] = '0'.to_int().to_byte()
+        result[index] = b'0'
         index = index + 1
       }
       let current = index
       for i = 0; i < olength; i = i + 1 {
-        result[current + olength - i - 1] = ('0'.to_int() +
-        (output % 10).to_int()).to_byte()
+        result[current + olength - i - 1] = (48 + (output % 10).to_int()).to_byte()
         output = output / 10
         index = index + 1
       }
     } else if exp + 1 >= olength {
       // Decimal dot is after any of the digits.
       for i = 0; i < olength; i = i + 1 {
-        result[index + olength - i - 1] = ('0'.to_int() + (output % 10).to_int()).to_byte()
+        result[index + olength - i - 1] = (48 + (output % 10).to_int()).to_byte()
         output = output / 10
       }
       index = index + olength
       for i = olength; i < exp + 1; i = i + 1 {
-        result[index] = '0'.to_int().to_byte()
+        result[index] = b'0'
         index = index + 1
       }
-      result[index] = '.'.to_int().to_byte()
+      result[index] = b'.'
       index = index + 1
-      result[index] = '0'.to_int().to_byte()
+      result[index] = b'0'
       index = index + 1
     } else {
       // Decimal dot is somewhere between the digits.
       let mut current = index + 1
       for i = 0; i < olength; i = i + 1 {
         if olength - i - 1 == exp {
-          result[current + olength - i - 1] = '.'.to_int().to_byte()
+          result[current + olength - i - 1] = b'.'
           current = current - 1
         }
-        result[current + olength - i - 1] = ('0'.to_int() +
-        (output % 10).to_int()).to_byte()
+        result[current + olength - i - 1] = (48 + (output % 10).to_int()).to_byte()
         output = output / 10
       }
       index = index + olength + 1
