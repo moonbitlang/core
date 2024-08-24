@@ -185,6 +185,30 @@ fn iter_aux[K, V](node : Node[K, V]?) -> Iter[(K, V)] {
   )
 }
 
+pub fn iter2[K, V](self : T[K, V]) -> Iter2[K, V] {
+  iter_aux2(self.root)
+}
+
+fn iter_aux2[K, V](node : Node[K, V]?) -> Iter2[K, V] {
+  Iter2::new(
+    fn(yield) {
+      match node {
+        None => IterContinue
+        Some(node) =>
+          if iter_aux2(node.left).run(yield) == IterEnd {
+            return IterEnd
+          } else if yield(node.key, node.value) == IterEnd {
+            return IterEnd
+          } else if iter_aux2(node.right).run(yield) == IterEnd {
+            return IterEnd
+          } else {
+            IterContinue
+          }
+      }
+    },
+  )
+}
+
 pub fn T::from_iter[K : Compare, V](iter : Iter[(K, V)]) -> T[K, V] {
   let m = new()
   iter.each(fn(e) { m[e.0] = e.1 })
