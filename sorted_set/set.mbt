@@ -349,20 +349,28 @@ fn iter[A](self : Node[A]) -> Iter[A] {
   Iter::new(
     fn(yield) {
       let { left, value, right, .. } = self
-      let res = match left {
-        None => IterContinue
-        Some(l) => l.iter().run(yield)
+      match left {
+        None => ()
+        Some(l) =>
+          for a in l {
+            if yield(a) == IterEnd {
+              return IterEnd
+            }
+          }
       }
-      if res == IterEnd {
-        IterEnd
-      } else if yield(value) == IterEnd {
-        IterEnd
-      } else {
-        match right {
-          None => IterContinue
-          Some(r) => r.iter().run(yield)
-        }
+      if yield(value) == IterEnd {
+        return IterEnd
       }
+      match right {
+        None => ()
+        Some(r) =>
+          for a in r {
+            if yield(a) == IterEnd {
+              return IterEnd
+            }
+          }
+      }
+      IterContinue
     },
   )
 }
