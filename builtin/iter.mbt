@@ -373,7 +373,16 @@ pub fn until(
 /// A new iterator that only contains the elements for which the predicate function returns `IterContinue`.
 /// @intrinsic %iter.filter
 pub fn filter[T](self : Iter[T], f : (T) -> Bool) -> Iter[T] {
-  fn(yield) { self.run(fn { a => if f(a) { yield(a) } else { IterContinue } }) }
+  fn(yield) {
+    for a in self {
+      if f(a) {
+        if yield(a) == IterEnd {
+          return IterEnd
+        }
+      }
+    }
+    IterContinue
+  }
 }
 
 /// Transforms the elements of the iterator using a mapping function.
@@ -393,7 +402,16 @@ pub fn filter[T](self : Iter[T], f : (T) -> Bool) -> Iter[T] {
 /// A new iterator that contains the transformed elements.
 /// @intrinsic %iter.map
 pub fn map[T, R](self : Iter[T], f : (T) -> R) -> Iter[R] {
-  fn { yield => self.run(fn { a => yield(f(a)) }) }
+  fn {
+    yield => {
+      for a in self {
+        if yield(f(a)) == IterEnd {
+          return IterEnd
+        }
+      }
+      IterContinue
+    }
+  }
 }
 
 /// Transforms each element of the iterator into an iterator and flattens the resulting iterators into a single iterator.
@@ -413,7 +431,18 @@ pub fn map[T, R](self : Iter[T], f : (T) -> R) -> Iter[R] {
 /// A new iterator that contains the flattened elements.
 /// @intrinsic %iter.flat_map
 pub fn flat_map[T, R](self : Iter[T], f : (T) -> Iter[R]) -> Iter[R] {
-  fn { yield => self.run(fn { x => f(x).run(yield) }) }
+  fn {
+    yield => {
+      for x in self {
+        for y in f(x) {
+          if yield(y) == IterEnd {
+            return IterEnd
+          }
+        }
+      }
+      IterContinue
+    }
+  }
 }
 
 /// Applies a function to each element of the iterator without modifying the iterator.
@@ -459,24 +488,17 @@ pub fn take[T](self : Iter[T], n : Int) -> Iter[T] {
   //
   fn(yield) {
     let mut i = 0
-    let mut r = IterContinue
-    self.just_run(
-      fn {
-        a =>
-          if i < n {
-            if yield(a) == IterContinue {
-              i = i + 1
-              IterContinue
-            } else {
-              r = IterEnd
-              IterEnd
-            }
-          } else {
-            IterEnd
-          }
-      },
-    )
-    r
+    for a in self {
+      if i < n {
+        if yield(a) == IterEnd {
+          return IterEnd
+        }
+        i = i + 1
+      } else {
+        break
+      }
+    }
+    IterContinue
   }
 }
 
@@ -502,44 +524,29 @@ pub fn take_while[T](self : Iter[T], f : (T) -> Bool) -> Iter[T] {
     // immediately the iteration of current seq is terminated
     // but [.. take_while(..), next] would continue
     // See test "take_while2"
-    let mut r : IterResult = IterContinue
-    self.just_run(
-      fn(a) {
-        if f(a) {
-          if yield(a) == IterContinue {
-            IterContinue
-          } else {
-            r = IterEnd
-            IterEnd
-          }
-        } else {
-          IterEnd
+    for a in self {
+      if f(a) {
+        if yield(a) == IterEnd {
+          return IterEnd
         }
-      },
-    )
-    r
+      } else {
+        break
+      }
+    }
+    IterContinue
   }
 }
 
 /// Transforms the elements of the iterator using a mapping function upto the function returns `None`.
 pub fn map_while[A, B](self : Iter[A], f : (A) -> B?) -> Iter[B] {
   fn(yield) {
-    let mut r : IterResult = IterContinue
-    self.just_run(
-      fn(a) {
-        match f(a) {
-          Some(b) =>
-            if yield(b) == IterContinue {
-              IterContinue
-            } else {
-              r = IterEnd
-              IterEnd
-            }
-          None => IterEnd
-        }
-      },
-    )
-    r
+    for a in self {
+      match f(a) {
+        Some(b) => if yield(b) == IterEnd { return IterEnd }
+        None => break
+      }
+    }
+    IterContinue
   }
 }
 
@@ -560,16 +567,15 @@ pub fn map_while[A, B](self : Iter[A], f : (A) -> B?) -> Iter[B] {
 pub fn drop[T](self : Iter[T], n : Int) -> Iter[T] {
   fn(yield) {
     let mut i = 0
-    self.run(
-      fn(a) {
-        if i < n {
-          i = i + 1
-          IterContinue
-        } else {
-          yield(a)
-        }
-      },
-    )
+    for a in self {
+      if i < n {
+        i = i + 1
+        continue
+      } else if yield(a) == IterEnd {
+        return IterEnd
+      }
+    }
+    IterContinue
   }
 }
 
@@ -590,16 +596,17 @@ pub fn drop[T](self : Iter[T], n : Int) -> Iter[T] {
 pub fn drop_while[T](self : Iter[T], f : (T) -> Bool) -> Iter[T] {
   fn(yield) {
     let mut dropping = true
-    self.run(
-      fn(a) {
-        if dropping && f(a) {
-          IterContinue
-        } else {
-          dropping = false
-          yield(a)
+    for a in self {
+      if dropping && f(a) {
+        continue
+      } else {
+        dropping = false
+        if yield(a) == IterEnd {
+          return IterEnd
         }
-      },
-    )
+      }
+    }
+    IterContinue
   }
 }
 
@@ -642,7 +649,17 @@ pub fn find_first[T](self : Iter[T], f : (T) -> Bool) -> T? {
 ///
 /// Returns a new iterator with the element `a` prepended to the original iterator.
 pub fn prepend[T](self : Iter[T], a : T) -> Iter[T] {
-  fn(yield) { if yield(a) == IterContinue { self.run(yield) } else { IterEnd } }
+  fn(yield) {
+    if yield(a) == IterEnd {
+      return IterEnd
+    }
+    for t in self {
+      if yield(t) == IterEnd {
+        return IterEnd
+      }
+    }
+    IterContinue
+  }
 }
 
 /// Appends a single element to the end of the iterator.
@@ -660,7 +677,17 @@ pub fn prepend[T](self : Iter[T], a : T) -> Iter[T] {
 ///
 /// Returns a new iterator with the element `a` appended to the original iterator.
 pub fn append[T](self : Iter[T], a : T) -> Iter[T] {
-  fn(yield) { if self.run(yield) == IterContinue { yield(a) } else { IterEnd } }
+  fn(yield) {
+    for t in self {
+      if yield(t) == IterEnd {
+        return IterEnd
+      }
+    }
+    if yield(a) == IterEnd {
+      return IterEnd
+    }
+    IterContinue
+  }
 }
 
 /// Combines two iterators into one by appending the elements of the second iterator to the first.
@@ -680,11 +707,17 @@ pub fn append[T](self : Iter[T], a : T) -> Iter[T] {
 /// @intrinsic %iter.concat
 pub fn Iter::concat[T](self : Iter[T], other : Iter[T]) -> Iter[T] {
   fn(yield) {
-    if self.run(yield) == IterContinue {
-      other.run(yield)
-    } else {
-      IterEnd
+    for t in self {
+      if yield(t) == IterEnd {
+        return IterEnd
+      }
     }
+    for t in other {
+      if yield(t) == IterEnd {
+        return IterEnd
+      }
+    }
+    IterContinue
   }
 }
 
