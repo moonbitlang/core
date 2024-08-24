@@ -161,17 +161,25 @@ pub fn to_array[K, V](self : T[K, V]) -> Array[(K, V)] {
   arr
 }
 
-/// Returns a iterator.
 pub fn iter[K, V](self : T[K, V]) -> Iter[(K, V)] {
+  iter_aux(self.root)
+}
+
+fn iter_aux[K, V](node : Node[K, V]?) -> Iter[(K, V)] {
   Iter::new(
     fn(yield) {
-      let arr = self.to_array()
-      for i = 0, len = arr.length(); i < len; i = i + 1 {
-        match arr[i] {
-          (key, value) => if yield((key, value)) == IterEnd { break IterEnd }
-        }
-      } else {
-        IterContinue
+      match node {
+        None => IterContinue
+        Some(node) =>
+          if iter_aux(node.left).run(yield) == IterEnd {
+            return IterEnd
+          } else if yield((node.key, node.value)) == IterEnd {
+            return IterEnd
+          } else if iter_aux(node.right).run(yield) == IterEnd {
+            return IterEnd
+          } else {
+            IterContinue
+          }
       }
     },
   )
