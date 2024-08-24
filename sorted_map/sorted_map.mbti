@@ -17,6 +17,7 @@ impl T {
   get[K : Compare + Eq, V](Self[K, V], K) -> V?
   is_empty[K, V](Self[K, V]) -> Bool
   iter[K, V](Self[K, V]) -> Iter[Tuple[K, V]]
+  iter2[K, V](Self[K, V]) -> Iter2[K, V]
   keys[K, V](Self[K, V]) -> Array[K]
   op_equal[K : Eq, V : Eq](Self[K, V], Self[K, V]) -> Bool
   op_get[K : Compare + Eq, V](Self[K, V], K) -> V?
