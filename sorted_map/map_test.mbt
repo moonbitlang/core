@@ -181,3 +181,21 @@ test "from_iter empty iter" {
   let pq : @sorted_map.T[Int, Int] = @sorted_map.T::from_iter(Iter::empty())
   inspect!(pq, content="@sorted_map.of([])")
 }
+
+test "iter2" {
+  let map = @sorted_map.of([(3, "c"), (2, "b"), (1, "a")])
+  let buf = Buffer::new()
+  for k, v in map {
+    buf.write_string("[\{k}\{v}]")
+  }
+  inspect!(buf, content="[1a][2b][3c]")
+}
+
+test "iter" {
+  let map = @sorted_map.of([(3, "c"), (2, "b"), (1, "a")])
+  let buf = Buffer::new()
+  for kv in map {
+    buf.write_string("[\{kv.0}\{kv.1}]")
+  }
+  inspect!(buf, content="[1a][2b][3c]")
+}
