@@ -190,13 +190,38 @@ pub fn T::from_array[K : Compare, V](array : Array[(K, V)]) -> T[K, V] {
 pub fn iter[K, V](self : T[K, V]) -> Iter[(K, V)] {
   Iter::new(
     fn(yield) {
-      let arr = self.to_array()
-      for i = 0, len = arr.length(); i < len; i = i + 1 {
-        match arr[i] {
-          (key, value) => if yield((key, value)) == IterEnd { break IterEnd }
-        }
-      } else {
-        IterContinue
+      match self {
+        Empty => IterContinue
+        Tree(k, ~value, l, r, ..) =>
+          if l.iter().run(yield) == IterEnd {
+            IterEnd
+          } else if yield((k, value)) == IterEnd {
+            IterEnd
+          } else if r.iter().run(yield) == IterEnd {
+            IterEnd
+          } else {
+            IterContinue
+          }
+      }
+    },
+  )
+}
+
+pub fn iter2[K, V](self : T[K, V]) -> Iter2[K, V] {
+  Iter2::new(
+    fn(yield) {
+      match self {
+        Empty => IterContinue
+        Tree(k, ~value, l, r, ..) =>
+          if l.iter2().run(yield) == IterEnd {
+            IterEnd
+          } else if yield(k, value) == IterEnd {
+            IterEnd
+          } else if r.iter2().run(yield) == IterEnd {
+            IterEnd
+          } else {
+            IterContinue
+          }
       }
     },
   )
