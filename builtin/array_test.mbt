@@ -516,3 +516,66 @@ test "shrink_to_fit" {
   v.shrink_to_fit()
   inspect!(v.capacity(), content="3")
 }
+
+test "array_binary_search_int_test" {
+  let arr = [1, 2, 3, 4]
+  assert_eq!(arr.binary_search(-100), Err(0))
+  assert_eq!(arr.binary_search(-1), Err(0))
+  assert_eq!(arr.binary_search(1), Ok(0))
+  assert_eq!(arr.binary_search(3), Ok(2))
+  assert_eq!(arr.binary_search(4), Ok(3))
+  assert_eq!(arr.binary_search(5), Err(4))
+  assert_eq!(arr.binary_search(60), Err(4))
+}
+
+test "array_binary_search_duplicate_int_test" {
+  let arr = [1, 2, 3, 3, 4, 4, 4, 5]
+  assert_eq!(arr.binary_search(3), Ok(2))
+  assert_eq!(arr.binary_search(4), Ok(4))
+  assert_eq!(arr.binary_search(5), Ok(7))
+  let arr = [0, 1, 1, 1, 1, 2, 3, 5, 8, 13, 21, 34, 55]
+  assert_eq!(arr.binary_search(1), Ok(1))
+}
+
+test "array_binary_search_float_test" {
+  let arr = [-0.25, 0.0, 1.5]
+  assert_eq!(arr.binary_search(-0.25), Ok(0))
+  assert_eq!(arr.binary_search(0.0), Ok(1))
+  assert_eq!(arr.binary_search(1.5), Ok(2))
+  assert_eq!(arr.binary_search(1.6), Err(3))
+}
+
+test "array_binary_search_str_test" {
+  let arr = ["hello", "world", "moon", "bit"]
+  arr.sort()
+  assert_eq!(arr.binary_search("bit"), Ok(0))
+  assert_eq!(arr.binary_search("moon"), Ok(1))
+  assert_eq!(arr.binary_search("hello"), Ok(2))
+  assert_eq!(arr.binary_search("world"), Ok(3))
+}
+
+struct TestStruct {
+  num : Int
+} derive(Eq)
+
+test "array_binary_search_by_test" {
+  let arr = [{ num: 10 }, { num: 22 }, { num: 35 }, { num: 48 }]
+  let mut target = { num: 22 }
+  fn cmp(val : TestStruct) {
+    if val.num < target.num {
+      -1
+    } else if val.num == target.num {
+      0
+    } else {
+      1
+    }
+  }
+
+  assert_eq!(arr.binary_search_by(cmp), Ok(1))
+  target = { num: 48 }
+  assert_eq!(arr.binary_search_by(cmp), Ok(3))
+  target = { num: -8 }
+  assert_eq!(arr.binary_search_by(cmp), Err(0))
+  target = { num: 49 }
+  assert_eq!(arr.binary_search_by(cmp), Err(4))
+}
