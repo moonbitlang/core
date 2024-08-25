@@ -3,7 +3,6 @@
     "moonbitlang/core/builtin",
     "moonbitlang/core/bool",
     "moonbitlang/core/int64",
-    "moonbitlang/core/coverage",
-    "moonbitlang/core/double/internal/ryu"
+    "moonbitlang/core/coverage"
   ]
 }
