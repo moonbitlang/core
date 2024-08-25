@@ -13,6 +13,8 @@ fn maximum[T : Compare + Eq](T, T) -> T
 
 fn minimum[T : Compare + Eq](T, T) -> T
 
+let pi : Double
+
 fn sin(Double) -> Double
 
 fn tan(Double) -> Double
