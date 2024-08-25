@@ -46,7 +46,7 @@ type Array
 impl Array {
   append[T](Self[T], Self[T]) -> Unit
   binary_search[T : Compare + Eq](Self[T], T) -> Result[Int, Int]
-  binary_search_by[T : Eq](Self[T], (T) -> Int) -> Result[Int, Int]
+  binary_search_by[T](Self[T], (T) -> Int) -> Result[Int, Int]
   blit_to[A](Self[A], Self[A], ~len : Int, ~src_offset : Int = .., ~dst_offset : Int = ..) -> Unit
   capacity[T](Self[T]) -> Int
   chunk_by[T](Self[T], (T, T) -> Bool) -> Self[Self[T]]

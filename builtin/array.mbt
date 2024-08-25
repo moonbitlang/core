@@ -649,7 +649,7 @@ pub fn binary_search[T : Compare](
 /// # Notes
 /// - The array must be sorted, and the comparator function should be consistent with the sorted order of the array.
 /// - If not, the returned result is undefined and should not be relied on.
-pub fn binary_search_by[T : Eq](
+pub fn binary_search_by[T](
   self : Array[T],
   cmp : (T) -> Int
 ) -> Result[Int, Int] {
