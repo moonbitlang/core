@@ -603,9 +603,9 @@ fn d2d_small_int(
   Some({ mantissa: m2.lsr(-e2), exponent: 0 })
 }
 
-fn ryu_to_string(self : Double) -> String {
+pub fn ryu_to_string(val : Double) -> String {
   // Step 1: Decode the floating-point number, and unify normalized and subnormal cases.
-  let bits : UInt64 = self.reinterpret_as_u64()
+  let bits : UInt64 = val.reinterpret_as_u64()
 
   // Decode bits into sign, mantissa, and exponent.
   let ieeeSign = bits
@@ -639,15 +639,6 @@ fn ryu_to_string(self : Double) -> String {
     None => v = d2d(ieeeMantissa, ieeeExponent)
   }
   to_chars(v, ieeeSign)
-}
-
-/// @intrinsic %f64.to_string
-pub fn to_string(self : Double) -> String {
-  ryu_to_string(self)
-}
-
-pub impl Show for Double with output(self, logger) {
-  logger.write_string(self.to_string())
 }
 
 test "double/ryu.mbt:205" {

@@ -265,3 +265,12 @@ pub impl Hash for Double with hash(self) {
 pub impl Hash for Double with hash_combine(self, hasher) {
   hasher.combine_double(self)
 }
+
+/// @intrinsic %f64.to_string
+pub fn to_string(self : Double) -> String {
+  @ryu.ryu_to_string(self)
+}
+
+pub impl Show for Double with output(self, logger) {
+  logger.write_string(self.to_string())
+}
