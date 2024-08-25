@@ -42,6 +42,38 @@ test "op_get after removal" {
   assert_eq!(map[3], None)
 }
 
+test "iter" {
+  let map = [(3, "three"), (8, "eight"), (1, "one"), (2, "two"), (0, "zero")]
+    |> @sorted_map.of
+  let buf = Buffer::new()
+  for k, v in map {
+    buf.write_object(k)
+    buf.write_string(": ")
+    buf.write_object(v)
+    buf.write_string("\n")
+  }
+  for kv in map {
+    buf.write_object(kv)
+    buf.write_string("\n")
+  }
+  inspect!(
+    buf,
+    content=
+      #|0: zero
+      #|1: one
+      #|2: two
+      #|3: three
+      #|8: eight
+      #|(0, "zero")
+      #|(1, "one")
+      #|(2, "two")
+      #|(3, "three")
+      #|(8, "eight")
+      #|
+    ,
+  )
+}
+
 test "op_get with empty map" {
   let map : @sorted_map.T[Int, String] = @sorted_map.empty()
   assert_eq!(map[3], None)

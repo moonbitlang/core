@@ -93,8 +93,10 @@ pub fn Array::to_json[X : ToJson](self : Array[X]) -> Json {
   Array(self.map(ToJson::to_json))
 }
 
-pub fn Map::to_json[V : ToJson](self : Map[String, V]) -> Json {
+pub fn Map::to_json[K : Show, V : ToJson](self : Map[K, V]) -> Json {
   let object = {  }
-  self.each(fn(k, v) { object[k] = v.to_json() })
+  for k, v in self {
+    object[k.to_string()] = v.to_json()
+  }
   Object(object)
 }

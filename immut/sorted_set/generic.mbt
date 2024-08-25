@@ -17,11 +17,23 @@
 // All operations over sets are purely applicative (no side-effects).
 
 pub fn iter[A](self : T[A]) -> Iter[A] {
-  match self {
-    Empty => Iter::empty()
-    Node(~left, ~right, ~value, ..) =>
-      left.iter().append(value).concat(right.iter())
-  }
+  Iter::new(
+    fn(yield) {
+      match self {
+        Empty => IterContinue
+        Node(~left, ~right, ~value, ..) =>
+          if left.iter().run(yield) == IterEnd {
+            return IterEnd
+          } else if yield(value) == IterEnd {
+            return IterEnd
+          } else if right.iter().run(yield) == IterEnd {
+            return IterEnd
+          } else {
+            return IterContinue
+          }
+      }
+    },
+  )
 }
 
 pub fn T::from_iter[A : Compare](iter : Iter[A]) -> T[A] {

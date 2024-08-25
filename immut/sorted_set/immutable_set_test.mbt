@@ -459,3 +459,12 @@ test "from_iter empty iter" {
   let pq : @sorted_set.T[Int] = @sorted_set.T::from_iter(Iter::empty())
   inspect!(pq, content="@immut/sorted_set.of([])")
 }
+
+test "iter" {
+  let buf = Buffer::new(size_hint=20)
+  let set = [2, 7, 1, 2, 3, 4, 5] |> @sorted_set.of
+  for x in set {
+    buf.write_object(x)
+  }
+  inspect!(buf, content="123457")
+}
