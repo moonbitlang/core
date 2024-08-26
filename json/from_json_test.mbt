@@ -21,7 +21,7 @@ test {
   inspect!(
     (j, h),
     content=
-      #|(Object({"x": Number(3.0), "y": Number(4.0)}), {"x": 3, "y": 4})
+      #|(Object({"x": Number(3), "y": Number(4)}), {"x": 3, "y": 4})
     ,
   )
 }

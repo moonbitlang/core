@@ -52,7 +52,7 @@ test "get as number" {
   inspect!(Json::Null |> @json.as_number, content="None")
   inspect!(Json::False |> @json.as_number, content="None")
   inspect!(Json::True |> @json.as_number, content="None")
-  inspect!(Json::Number(1.0) |> @json.as_number, content="Some(1.0)")
+  inspect!(Json::Number(1.0) |> @json.as_number, content="Some(1)")
   inspect!(Json::String("Hello World") |> @json.as_number, content="None")
   inspect!(
     Json::Array([Json::String("Hello World")]) |> @json.as_number,
@@ -160,7 +160,7 @@ test "get as object" {
     |> @json.as_object
     |> @option.map(Map::to_array),
     content=
-      #|Some([("key", String("key")), ("value", Number(100.0))])
+      #|Some([("key", String("key")), ("value", Number(100))])
     ,
   )
   inspect!(
@@ -179,7 +179,7 @@ test "get as object" {
     )
     .value("value")
     .bind(@json.as_number),
-    content="Some(100.0)",
+    content="Some(100)",
   )
   inspect!(
     Json::Object(
@@ -241,7 +241,7 @@ test "deep access" {
   inspect!(
     json.value("key").bind(@json.as_array),
     content=
-      #|Some([Number(1.0), True, Null, Array([]), Object({"key": String("value"), "value": Number(100.0)})])
+      #|Some([Number(1), True, Null, Array([]), Object({"key": String("value"), "value": Number(100)})])
     ,
   )
   inspect!(
@@ -255,7 +255,7 @@ test "deep access" {
     .bind(@json.as_object)
     .map(Map::to_array),
     content=
-      #|Some([("key", String("value")), ("value", Number(100.0))])
+      #|Some([("key", String("value")), ("value", Number(100))])
     ,
   )
   inspect!(
@@ -285,7 +285,7 @@ test "stringify" {
   let newjson = @json.parse!(json.stringify())
   match json {
     { "key": [_, _, _, _, { "value": Number(i) }, ..] } =>
-      inspect!(i, content="100.0")
+      inspect!(i, content="100")
     _ => fail!("Failed to match the JSON")
   }
   assert_eq!(newjson, json)
@@ -356,11 +356,11 @@ test "stringify number" {
   inspect!(nums[2].stringify(), content="1")
   inspect!(nums[3].stringify(), content="12345")
   inspect!(nums[4].stringify(), content="123.45")
-  inspect!(nums[5].stringify(), content="9.223372036854776e18")
-  inspect!(nums[6].stringify(), content="9.223372036854776e18")
-  inspect!(nums[7].stringify(), content="9.999999999992234e29")
-  inspect!(nums[8].stringify(), content="-1.7976931348623157e308")
-  inspect!(nums[9].stringify(), content="1.7976931348623157e308")
+  inspect!(nums[5].stringify(), content="9223372036854776000")
+  inspect!(nums[6].stringify(), content="9223372036854776000")
+  inspect!(nums[7].stringify(), content="9.999999999992234e+29")
+  inspect!(nums[8].stringify(), content="-1.7976931348623157e+308")
+  inspect!(nums[9].stringify(), content="1.7976931348623157e+308")
   inspect!(nums[10].stringify(), content="NaN")
   inspect!(nums[11].stringify(), content="Infinity")
   inspect!(nums[12].stringify(), content="-Infinity")
