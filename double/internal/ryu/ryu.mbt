@@ -288,7 +288,6 @@ fn d2d(ieeeMantissa : UInt64, ieeeExponent : UInt) -> FloatingDecimal64 {
     m2 = 1UL.lsl(gDOUBLE_MANTISSA_BITS).lor(ieeeMantissa)
   }
   let even = m2.land(1UL) == 0UL
-  let acceptBounds = even
 
   // Step 2: Determine the interval of valid decimal representations.
   let mv = 4UL * m2
@@ -324,7 +323,7 @@ fn d2d(ieeeMantissa : UInt64, ieeeExponent : UInt) -> FloatingDecimal64 {
       let mvMod5 : Int = mv.to_int() - 5 * (mv / 5UL).to_int()
       if mvMod5 == 0 {
         vrIsTrailingZeros = multipleOfPowerOf5(mv, q)
-      } else if acceptBounds {
+      } else if even {
         // Same as min(e2 + (~mm & 1), pow5Factor(mm)) >= q
         // <=> e2 + (~mm & 1) >= q && pow5Factor(mm) >= q
         // <=> true && pow5Factor(mm) >= q, since e2 >= q.
@@ -352,7 +351,7 @@ fn d2d(ieeeMantissa : UInt64, ieeeExponent : UInt) -> FloatingDecimal64 {
       // {vr,vp,vm} is trailing zeros if {mv,mp,mm} has at least q trailing 0 bits.
       // mv = 4 * m2, so it always has at least two trailing 0 bits.
       vrIsTrailingZeros = true
-      if acceptBounds {
+      if even {
         vmIsTrailingZeros = mmShift.to_int() == 1
       } else {
         vp = vp - 1
@@ -408,7 +407,7 @@ fn d2d(ieeeMantissa : UInt64, ieeeExponent : UInt) -> FloatingDecimal64 {
       lastRemovedDigit = 4
     }
     output = vr +
-      ((vr == vm && (not(acceptBounds) || not(vmIsTrailingZeros))) ||
+      ((vr == vm && (not(even) || not(vmIsTrailingZeros))) ||
       lastRemovedDigit >= 5)
       .to_int64()
       .to_uint64()
@@ -457,37 +456,39 @@ fn to_chars(v : FloatingDecimal64, sign : Bool) -> String {
   let mut index : Int = 0
   if sign {
     result[index] = b'-'
-    index = index + 1
+    index += 1
   }
   let mut output = v.mantissa
   let olength = decimal_length17(output)
   let mut exp : Int = v.exponent + olength - 1
-  let scientificNotation = not(exp >= -3 && exp < 7)
+  let scientificNotation = not(exp >= -6 && exp < 21)
   if scientificNotation {
     // Print the decimal digits.
     for i = 0; i < olength - 1; i = i + 1 {
       let c = output % 10
-      output = output / 10
+      output /= 10
       // 48 is ASCII '0', the same applies below.
       result[index + olength - i] = (48 + c.to_int()).to_byte()
     }
     result[index] = (48 + output.to_int() % 10).to_byte()
-
-    // Always print point
-    result[index + 1] = b'.'
-    index = index + olength + 1
-    if olength == 1 {
-      result[index] = b'0'
-      index = index + 1
+    if olength > 1 {
+      result[index + 1] = b'.'
+    } else {
+      // If there are no decimals, suppress .0
+      index -= 1
     }
+    index += olength + 1
 
     // Print the exponent.
     result[index] = b'e'
-    index = index + 1
+    index += 1
     if exp < 0 {
       result[index] = b'-'
-      index = index + 1
+      index += 1
       exp = -exp
+    } else {
+      result[index] = b'+'
+      index += 1
     }
     if exp >= 100 {
       let a = exp / 100
@@ -496,62 +497,59 @@ fn to_chars(v : FloatingDecimal64, sign : Bool) -> String {
       result[index + 0] = (48 + a).to_byte()
       result[index + 1] = (48 + b).to_byte()
       result[index + 2] = (48 + c).to_byte()
-      index = index + 3
+      index += 3
     } else if exp >= 10 {
       let a = exp / 10
       let b = exp % 10
       result[index + 0] = (48 + a).to_byte()
       result[index + 1] = (48 + b).to_byte()
-      index = index + 2
+      index += 2
     } else {
       result[index] = (48 + exp).to_byte()
-      index = index + 1
+      index += 1
     }
     string_from_bytes(result, 0, index)
   } else {
+    // Otherwise follow the ECMAScript spec.
     if exp < 0 {
       // Decimal dot is before any of the digits.
       result[index] = b'0'
-      index = index + 1
+      index += 1
       result[index] = b'.'
-      index = index + 1
+      index += 1
       for i = -1; i > exp; i = i - 1 {
         result[index] = b'0'
-        index = index + 1
+        index += 1
       }
       let current = index
       for i = 0; i < olength; i = i + 1 {
         result[current + olength - i - 1] = (48 + (output % 10).to_int()).to_byte()
-        output = output / 10
-        index = index + 1
+        output /= 10
+        index += 1
       }
     } else if exp + 1 >= olength {
       // Decimal dot is after any of the digits.
       for i = 0; i < olength; i = i + 1 {
         result[index + olength - i - 1] = (48 + (output % 10).to_int()).to_byte()
-        output = output / 10
+        output /= 10
       }
-      index = index + olength
+      index += olength
       for i = olength; i < exp + 1; i = i + 1 {
         result[index] = b'0'
-        index = index + 1
+        index += 1
       }
-      result[index] = b'.'
-      index = index + 1
-      result[index] = b'0'
-      index = index + 1
     } else {
       // Decimal dot is somewhere between the digits.
       let mut current = index + 1
       for i = 0; i < olength; i = i + 1 {
         if olength - i - 1 == exp {
           result[current + olength - i - 1] = b'.'
-          current = current - 1
+          current -= 1
         }
         result[current + olength - i - 1] = (48 + (output % 10).to_int()).to_byte()
-        output = output / 10
+        output /= 10
       }
-      index = index + olength + 1
+      index += olength + 1
     }
     return string_from_bytes(result, 0, index)
   }
@@ -578,6 +576,9 @@ fn d2d_small_int(
 }
 
 pub fn ryu_to_string(val : Double) -> String {
+  if val == 0.0 {
+    return "0"
+  }
   // Step 1: Decode the floating-point number, and unify normalized and subnormal cases.
   let bits : UInt64 = val.reinterpret_as_u64()
 
