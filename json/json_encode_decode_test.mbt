@@ -88,7 +88,7 @@ test {
   inspect!(
     of_json?(json),
     content=
-      #|Ok({ints: [1, 2, 3], floats: [1.0, 2.0, 3.0], strings: ["a", "b", "c"]})
+      #|Ok({ints: [1, 2, 3], floats: [1, 2, 3], strings: ["a", "b", "c"]})
     ,
   )
 }

@@ -113,17 +113,7 @@ pub fn stringify(self : JsonValue, ~escape_slash : Bool = true) -> String {
       buf.write_string(escape(s, ~escape_slash))
       buf.write_char('\"')
     }
-    Number(n) => {
-      if n == 0 {
-        return "0"
-      }
-      let s = n.to_string()
-      return if n.trunc() == n && s.ends_with(".0") {
-        s.substring(end=s.length() - 2)
-      } else {
-        s
-      }
-    }
+    Number(n) => return n.to_string()
     True => return "true"
     False => return "false"
     Null => return "null"

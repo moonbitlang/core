@@ -24,19 +24,19 @@ test "exp" {
   inspect!(@double.exp(5.0), content="148.4131591025766")
   inspect!(@double.exp(-5.0), content="0.006737946999085467")
   inspect!(@double.exp(10.0), content="22026.465794806718")
-  inspect!(@double.exp(-10.0), content="4.539992976248485e-5")
-  inspect!(@double.exp(100.0), content="2.6881171418161356e43")
+  inspect!(@double.exp(-10.0), content="0.00004539992976248485")
+  inspect!(@double.exp(100.0), content="2.6881171418161356e+43")
   inspect!(@double.exp(-100.0), content="3.720075976020836e-44")
 }
 
 test "exp - special values" {
-  inspect!(@double.exp(@double.neg_infinity), content="0.0")
+  inspect!(@double.exp(@double.neg_infinity), content="0")
   inspect!(@double.exp(@double.infinity), content="Infinity")
   inspect!(@double.exp(@double.not_a_number), content="NaN")
-  inspect!(@double.exp(0.0), content="1.0")
+  inspect!(@double.exp(0.0), content="1")
 }
 
 test "exp - overflow & underflow" {
   inspect!(@double.exp(710.0), content="Infinity")
-  inspect!(@double.exp(-745.14), content="0.0")
+  inspect!(@double.exp(-745.14), content="0")
 }

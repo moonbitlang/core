@@ -18,15 +18,15 @@ test "Bool::to_json" {
 }
 
 test "Int::to_json" {
-  inspect!((42).to_json(), content="Number(42.0)")
+  inspect!((42).to_json(), content="Number(42)")
 }
 
 test "Int64::to_json" {
-  inspect!(42L.to_json(), content="Number(42.0)")
+  inspect!(42L.to_json(), content="Number(42)")
 }
 
 test "Double::to_json" {
-  inspect!(42.0.to_json(), content="Number(42.0)")
+  inspect!(42.0.to_json(), content="Number(42)")
 }
 
 test "String::to_json" {
@@ -86,7 +86,7 @@ test "Char::to_json" {
 test "Array::to_json" {
   inspect!(
     [1, 2, 3].to_json(),
-    content="Array([Number(1.0), Number(2.0), Number(3.0)])",
+    content="Array([Number(1), Number(2), Number(3)])",
   )
   inspect!(
     [[], ["1"], ["1", "2"]].to_json(),
@@ -100,7 +100,7 @@ test "Map::to_json" {
   inspect!(
     { "x": [1], "y": [2] }.to_json(),
     content=
-      #|Object({"x": Array([Number(1.0)]), "y": Array([Number(2.0)])})
+      #|Object({"x": Array([Number(1)]), "y": Array([Number(2)])})
     ,
   )
 }
