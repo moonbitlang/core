@@ -38,7 +38,7 @@ test {
   inspect!(
     j,
     content=
-      #|Object({"fieldA": Number(1.0), "fieldB": String("hello"), "data": Object({"a": Number(1.0), "b": Number(2.0)})})
+      #|Object({"fieldA": Number(1), "fieldB": String("hello"), "data": Object({"a": Number(1), "b": Number(2)})})
     ,
   )
   let h3 = Hello3::{ fieldA: 1, fieldB: "hello", data: { 1: 1, 2: 2 } }
@@ -46,7 +46,7 @@ test {
   inspect!(
     j3,
     content=
-      #|Object({"fieldA": Number(1.0), "fieldB": String("hello"), "data": Object({"1": Number(1.0), "2": Number(2.0)})})
+      #|Object({"fieldA": Number(1), "fieldB": String("hello"), "data": Object({"1": Number(1), "2": Number(2)})})
     ,
   )
 }
