@@ -13,18 +13,7 @@
 // limitations under the License.
 
 // MoonBit implementation of Ryu, https://github.com/ulfjack/ryu
-
-fn log10Pow5(e : Int) -> Int {
-  (e * 732923).lsr(20)
-}
-
-fn pow5bits(e : Int) -> Int {
-  (e * 1217359).lsr(19) + 1
-}
-
-fn log10Pow2(e : Int) -> Int {
-  (e * 78913).lsr(18)
-}
+// This is a fork of the ryu crate adjusted to comply to the ECMAScript number-to-string algorithm,
 
 fn string_from_bytes(bytes : Bytes, from : Int, to : Int) -> String {
   let buf = Buffer::new(size_hint=bytes.length())
@@ -32,17 +21,6 @@ fn string_from_bytes(bytes : Bytes, from : Int, to : Int) -> String {
     buf.write_char(Char::from_int(bytes[i].to_int()))
   }
   buf.to_string()
-}
-
-fn copy_special_str(sign : Bool, exponent : Bool, mantissa : Bool) -> String {
-  if mantissa {
-    return "NaN"
-  }
-  let s = if sign { "-" } else { "" }
-  if exponent {
-    return s + "Infinity"
-  }
-  return s + "0.0"
 }
 
 fn umul128(a : UInt64, b : UInt64) -> (UInt64, UInt64) {
@@ -233,57 +211,57 @@ let gDOUBLE_POW5_INV_BITCOUNT : Int = 125
 
 let gDOUBLE_POW5_BITCOUNT : Int = 125
 
-fn decimalLength17(v : Int64) -> Int {
+fn decimal_length17(v : UInt64) -> Int {
   // This is slightly faster than a loop.
   // The average output length is 16.38 digits, so we check high-to-low.
   // Function precondition: v is not an 18, 19, or 20-digit number.
   // (17 digits are sufficient for round-tripping.)
-  if v >= 10000000000000000L {
+  if v >= 10000000000000000 {
     return 17
   }
-  if v >= 1000000000000000L {
+  if v >= 1000000000000000 {
     return 16
   }
-  if v >= 100000000000000L {
+  if v >= 100000000000000 {
     return 15
   }
-  if v >= 10000000000000L {
+  if v >= 10000000000000 {
     return 14
   }
-  if v >= 1000000000000L {
+  if v >= 1000000000000 {
     return 13
   }
-  if v >= 100000000000L {
+  if v >= 100000000000 {
     return 12
   }
-  if v >= 10000000000L {
+  if v >= 10000000000 {
     return 11
   }
-  if v >= 1000000000L {
+  if v >= 1000000000 {
     return 10
   }
-  if v >= 100000000L {
+  if v >= 100000000 {
     return 9
   }
-  if v >= 10000000L {
+  if v >= 10000000 {
     return 8
   }
-  if v >= 1000000L {
+  if v >= 1000000 {
     return 7
   }
-  if v >= 100000L {
+  if v >= 100000 {
     return 6
   }
-  if v >= 10000L {
+  if v >= 10000 {
     return 5
   }
-  if v >= 1000L {
+  if v >= 1000 {
     return 4
   }
-  if v >= 100L {
+  if v >= 100 {
     return 3
   }
-  if v >= 10L {
+  if v >= 10 {
     return 2
   }
   return 1
@@ -297,20 +275,16 @@ priv struct FloatingDecimal64 {
   exponent : Int
 }
 
-fn to_string(self : FloatingDecimal64) -> String {
-  let m = self.mantissa
-  let e = self.exponent
-  "{ mantissa: \{m}, exponent: \{e} }"
-}
-
-fn d2d(ieeeMantissa : UInt64, ieeeExponent : Int) -> FloatingDecimal64 {
+fn d2d(ieeeMantissa : UInt64, ieeeExponent : UInt) -> FloatingDecimal64 {
   let mut e2 : Int = 0
   let mut m2 : UInt64 = 0
   if ieeeExponent == 0 {
+    // Denormal number - no implicit leading 1, and the exponent is 1, not 0.
     e2 = 1 - gDOUBLE_BIAS - gDOUBLE_MANTISSA_BITS - 2
     m2 = ieeeMantissa
   } else {
-    e2 = ieeeExponent - gDOUBLE_BIAS - gDOUBLE_MANTISSA_BITS - 2
+    // Add implicit leading 1.
+    e2 = ieeeExponent.to_int() - gDOUBLE_BIAS - gDOUBLE_MANTISSA_BITS - 2
     m2 = 1UL.lsl(gDOUBLE_MANTISSA_BITS).lor(ieeeMantissa)
   }
   let even = m2.land(1UL) == 0UL
@@ -479,14 +453,14 @@ fn d2d(ieeeMantissa : UInt64, ieeeExponent : Int) -> FloatingDecimal64 {
 
 fn to_chars(v : FloatingDecimal64, sign : Bool) -> String {
   // Step 5: Print the decimal representation.
-  let result = Bytes::new(24)
+  let result = Bytes::new(25)
   let mut index : Int = 0
   if sign {
     result[index] = b'-'
     index = index + 1
   }
   let mut output = v.mantissa
-  let olength = decimalLength17(output.to_int64())
+  let olength = decimal_length17(output)
   let mut exp : Int = v.exponent + olength - 1
   let scientificNotation = not(exp >= -3 && exp < 7)
   if scientificNotation {
@@ -636,7 +610,7 @@ pub fn ryu_to_string(val : Double) -> String {
       }
       v = x
     }
-    None => v = d2d(ieeeMantissa, ieeeExponent)
+    None => v = d2d(ieeeMantissa, ieeeExponent.to_uint())
   }
   to_chars(v, ieeeSign)
 }
