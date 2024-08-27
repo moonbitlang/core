@@ -298,39 +298,37 @@ pub fn op_mod(self : BigInt, other : BigInt) -> BigInt {
 // Simplest way to divide two BigInts.
 // Assumption: other != zero.
 fn grade_school_div(self : BigInt, other : BigInt) -> (BigInt, BigInt) {
-  fn fix(a : (BigInt, BigInt), divisor : BigInt) -> (BigInt, BigInt) {
-    let (res, remain) = a
-    if remain == zero {
-      res.sign = Negative
-      return (res, make_zero())
-    }
-    let remain = match divisor.sign {
-      Positive => divisor - remain
-      Negative => neg(divisor) - remain
-    }
-    remain.sign = divisor.sign
-    let res = res + one
-    res.sign = Negative
-    (res, remain)
-  }
-
   // Handle negative numbers
-
   if self.sign == Negative {
     if other.sign == Negative {
-      return grade_school_div(neg(self), neg(other))
+      let (quotient, remainder) = grade_school_div(neg(self), neg(other))
+      if remainder == zero {
+        return (quotient, zero)
+      } else {
+        return (quotient, neg(remainder))
+      }
     } else {
-      return fix(grade_school_div(neg(self), other), other)
+      let (quotient, remainder) = grade_school_div(neg(self), other)
+      if remainder == zero {
+        return (neg(quotient), zero)
+      } else {
+        return (neg(quotient), neg(remainder))
+      }
     }
   } else if other.sign == Negative {
-    return fix(grade_school_div(self, neg(other)), other)
+    let (quotient, remainder) = grade_school_div(self, neg(other))
+    if remainder == zero {
+      return (neg(quotient), zero)
+    } else {
+      return (neg(quotient), remainder)
+    }
   }
 
   // Handle edge cases
   if self < other {
     return (make_zero(), self)
   } else if self == other {
-    return (BigInt::from_int(1), make_zero())
+    return (one, make_zero())
   }
   if other.len == 1 {
     let number = other.limbs[0]
@@ -600,7 +598,11 @@ pub fn shr(self : BigInt, n : Int) -> BigInt {
     if new_len > 1 && new_limbs[new_len - 1] == 0 {
       new_len -= 1
     }
-    { limbs: new_limbs, sign: self.sign, len: new_len }
+    if self.sign == Negative && (carry & 1L.lsl(r)) != carry {
+      { limbs: new_limbs, sign: self.sign, len: new_len } - 1
+    } else {
+      { limbs: new_limbs, sign: self.sign, len: new_len }
+    }
   }
 }
 

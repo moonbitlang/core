@@ -252,7 +252,7 @@ test "div" {
   check_len!(c)
   inspect!(
     c.to_string(),
-    content="1411754890143397710214334775703365651947321477507789807694283800",
+    content="-1411754890143397710214334775703365651947321477507789807694283800",
   )
   let a = from_string(
     "12421645375698213532453474567345623538756734578959876125298763582362",
@@ -262,12 +262,12 @@ test "div" {
   )
   let c = a / b
   check_len!(c)
-  inspect!(c.to_string(), content="-2272")
+  inspect!(c.to_string(), content="-2271")
   let c = a % b
   check_len!(c)
   inspect!(
     c.to_string(),
-    content="-1402948258011299942147915894441293642113821688447833429560447046",
+    content="4064942729645489156617763015435495456653277079443154228330540643",
   )
   let a = from_string(
     "559480073748030317374803031737502937374948313029373748143063751326169",
@@ -292,12 +292,12 @@ test "div" {
   )
   let c = a / b
   check_len!(c)
-  inspect!(c.to_string(), content="-1249999989")
+  inspect!(c.to_string(), content="-1249999988")
   let c = a % b
   check_len!(c)
   inspect!(
     c.to_string(),
-    content="38580247791358024838580247791358024841661120157195963893277947",
+    content="-60185184318518518460185184318518518457104311955145277319847178",
   )
   let b = from_string(
     "123456789012345678123456789012345678123456789012345678123456789012345678",
@@ -313,11 +313,11 @@ test "div" {
   check_len!(c)
   inspect!(
     c.to_string(),
-    content="-2939447357436801860082304500293944717225161643151087574368018786008231",
+    content="-2939447357436801860082304500293944717225161643151087574368018786008230",
   )
   let c = a % b
   check_len!(c)
-  inspect!(c.to_string(), content="24")
+  inspect!(c.to_string(), content="-18")
   let a = BigInt::from_int64(radix * 2L)
   let b = BigInt::from_int(3)
   let c = a / b
