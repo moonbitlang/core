@@ -26,39 +26,43 @@ pub fn from_json[T : FromJson](
   FromJson::from_json!(json, path)
 }
 
+fn decode_error[T](path : JsonPath, msg : String) -> T!JsonDecodeError {
+  raise JsonDecodeError((path, msg))
+}
+
 pub impl FromJson for Bool with from_json(json, path) {
   match json {
     True => true
     False => false
-    _ => raise JsonDecodeError((path, "Bool::from_json: expected boolean "))
+    _ => decode_error!(path, "Bool::from_json: expected boolean")
   }
 }
 
 pub impl FromJson for Int with from_json(json, path) {
   match json {
     Number(n) => n.to_int()
-    _ => raise JsonDecodeError((path, "Int::from_json: expected number"))
+    _ => decode_error!(path, "Int::from_json: expected number")
   }
 }
 
 pub impl FromJson for Int64 with from_json(json, path) {
   match json {
     Number(n) => n.to_int64()
-    _ => raise JsonDecodeError((path, "Int64::from_json: expected number"))
+    _ => decode_error!(path, "Int64::from_json: expected number")
   }
 }
 
 pub impl FromJson for Double with from_json(json, path) {
   match json {
     Number(n) => n
-    _ => raise JsonDecodeError((path, "Double::from_json: expected number"))
+    _ => decode_error!(path, "Double::from_json: expected number")
   }
 }
 
 pub impl FromJson for String with from_json(json, path) {
   match json {
     String(a) => a
-    _ => raise JsonDecodeError((path, "String::from_json: expected string"))
+    _ => decode_error!(path, "String::from_json: expected string")
   }
 }
 
@@ -66,13 +70,11 @@ pub impl FromJson for Char with from_json(json, path) {
   match json {
     String(a) =>
       if a.length() != 1 {
-        raise JsonDecodeError(
-          (path, "Char::from_json: expected single character"),
-        )
+        decode_error!(path, "Char::from_json: expected single character")
       } else {
         a[0]
       }
-    _ => raise JsonDecodeError((path, "Char::from_json: expected string"))
+    _ => decode_error!(path, "Char::from_json: expected string")
   }
 }
 
@@ -87,7 +89,7 @@ pub impl[X : FromJson] FromJson for Array[X] with from_json(json, path) {
       }
       res
     }
-    _ => raise JsonDecodeError((path, "Array::from_json: expected array"))
+    _ => decode_error!(path, "Array::from_json: expected array")
   }
 }
 
@@ -102,6 +104,6 @@ pub impl[V : FromJson] FromJson for Map[String, V] with from_json(json, path) {
       }
       res
     }
-    _ => raise JsonDecodeError((path, "Map::from_json: expected object"))
+    _ => decode_error!(path, "Map::from_json: expected object")
   }
 }
