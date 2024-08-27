@@ -301,26 +301,26 @@ fn grade_school_div(self : BigInt, other : BigInt) -> (BigInt, BigInt) {
   // Handle negative numbers
   if self.sign == Negative {
     if other.sign == Negative {
-      let (res, remain) = grade_school_div(neg(self), neg(other))
-      if remain == zero {
-        return (res, zero)
+      let (quotient, remainder) = grade_school_div(neg(self), neg(other))
+      if remainder == zero {
+        return (quotient, zero)
       } else {
-        return (res, neg(remain))
+        return (quotient, neg(remainder))
       }
     } else {
-      let (res, remain) = grade_school_div(neg(self), other)
-      if remain == zero {
-        return (neg(res), zero)
+      let (quotient, remainder) = grade_school_div(neg(self), other)
+      if remainder == zero {
+        return (neg(quotient), zero)
       } else {
-        return (neg(res), neg(remain))
+        return (neg(quotient), neg(remainder))
       }
     }
   } else if other.sign == Negative {
-    let (res, remain) = grade_school_div(self, neg(other))
-    if remain == zero {
-      return (neg(res), zero)
+    let (quotient, remainder) = grade_school_div(self, neg(other))
+    if remainder == zero {
+      return (neg(quotient), zero)
     } else {
-      return (neg(res), remain)
+      return (neg(quotient), remainder)
     }
   }
 
