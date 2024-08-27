@@ -12,6 +12,16 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+fn debug_string(selfx : BigInt) -> String {
+  "BigInt{ limbs : \{selfx.limbs}, sign : \{selfx.sign}, len : \{selfx.len} }"
+}
+
+test "debug_string" {
+  0N
+  |> debug_string
+  |> inspect!(content="BigInt{ limbs : \{0}, sign : \{Positive}, len : \{1} }")
+}
+
 fn check_len(a : BigInt) -> Unit! {
   if a.is_zero() {
     return ()
