@@ -148,15 +148,15 @@ pub fn pop[T](self : Array[T]) -> T? {
   }
 }
 
-/// Removes the last element from a array and returns it.
-///
-/// # Example
-/// ```
-/// let v = [1, 2, 3]
-/// v.pop_exn() // 3
-/// ```
-/// @alert unsafe "Panic if the array is empty."
+/// @alert deprecated "Use `unsafe_pop` instead"
 pub fn pop_exn[T](self : Array[T]) -> T {
+  self.unsafe_pop()
+}
+
+/// Removes the last element from a array and returns it.
+/// 
+/// @alert unsafe "Panic if the array is empty."
+pub fn unsafe_pop[T](self : Array[T]) -> T {
   if self.length() == 0 {
     abort("pop from an empty Array")
   }

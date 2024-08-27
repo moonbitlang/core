@@ -141,14 +141,19 @@ pub fn push[A](self : T[A], x : A) -> Unit {
 /// # Example
 /// ```
 /// let queue : Queue[Int] = of([1, 2, 3, 4])
-/// let first = queue.peek_exn()
+/// let first = queue.unsafe_peek()
 /// ```
 /// @alert unsafe "Panics if the queue is empty."
-pub fn peek_exn[A](self : T[A]) -> A {
+pub fn unsafe_peek[A](self : T[A]) -> A {
   match self.first {
     Nil => abort("Queue is empty")
     Cons(first) => first.content
   }
+}
+
+/// @alert deprecated "Use `unsafe_peek` instead"
+pub fn peek_exn[A](self : T[A]) -> A {
+  unsafe_peek(self)
 }
 
 /// Peeks at the first value in the queue, which returns None if the queue is empty.
@@ -170,10 +175,10 @@ pub fn peek[A](self : T[A]) -> A? {
 /// # Example
 /// ```
 /// let queue : Queue[Int] = of([1, 2, 3, 4])
-/// let first = queue.pop_exn()
+/// let first = queue.unsafe_pop()
 /// ```
 /// @alert unsafe "Panics if the queue is empty."
-pub fn pop_exn[A](self : T[A]) -> A {
+pub fn unsafe_pop[A](self : T[A]) -> A {
   match self.first {
     Nil => abort("Queue is empty")
     Cons({ content, next: Nil }) => {
@@ -188,6 +193,11 @@ pub fn pop_exn[A](self : T[A]) -> A {
   }
 }
 
+/// @alert deprecated "Use `unsafe_pop` instead"
+pub fn pop_exn[A](self : T[A]) -> A {
+  unsafe_pop(self)
+}
+
 /// Pops the first value from the queue, which returns None if the queue is empty.
 ///
 /// # Example
@@ -199,7 +209,7 @@ pub fn pop[A](self : T[A]) -> A? {
   if self.length == 0 {
     None
   } else {
-    Some(self.pop_exn())
+    Some(self.unsafe_pop())
   }
 }
 
@@ -343,7 +353,7 @@ test "from_fixed_array_2" {
   let q = of([1, 2, 3, 4])
   q.push(11)
   assert_eq!(q, of([1, 2, 3, 4, 11]))
-  q.pop_exn() |> ignore
+  q.unsafe_pop() |> ignore
   assert_eq!(q, of([2, 3, 4, 11]))
 }
 
@@ -351,7 +361,7 @@ test "from_array_2" {
   let q = of([1, 2, 3, 4])
   q.push(11)
   assert_eq!(q, of([1, 2, 3, 4, 11]))
-  q.pop_exn() |> ignore
+  q.unsafe_pop() |> ignore
   assert_eq!(q, of([2, 3, 4, 11]))
 }
 
@@ -361,7 +371,7 @@ test "op_equal" {
   let queue3 = of([1, 2, 3, 5])
   assert_true!(queue == queue2)
   assert_false!(queue == queue3)
-  queue.pop_exn() |> ignore
+  queue.unsafe_pop() |> ignore
   assert_false!(queue == queue2)
   assert_eq!(queue, of([2, 3, 4]))
 }

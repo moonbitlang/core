@@ -65,26 +65,26 @@ test "length" {
   assert_eq!(pq.length(), 1)
   pq.push(2)
   assert_eq!(pq.length(), 2)
-  pq.pop_exn()
+  pq.unsafe_pop()
   assert_eq!(pq.length(), 1)
 }
 
-test "pop_exn" {
+test "unsafe_pop" {
   let pq = @priority_queue.of([5, 5, 4, 3, 2, 1])
   inspect!(pq.length(), content="6")
   assert_eq!(pq.peek(), Some(5))
-  pq.pop_exn()
+  pq.unsafe_pop()
   assert_eq!(pq.peek(), Some(5))
-  pq.pop_exn()
+  pq.unsafe_pop()
   assert_eq!(pq.peek(), Some(4))
   let pq_ = @priority_queue.of([1])
-  pq_.pop_exn()
+  pq_.unsafe_pop()
   inspect!(pq_.length(), content="0")
 }
 
-test "panic pop_exn" {
+test "panic unsafe_pop" {
   let pq : @priority_queue.T[Int] = @priority_queue.of([])
-  pq.pop_exn()
+  pq.unsafe_pop()
 }
 
 test "pop" {

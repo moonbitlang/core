@@ -184,19 +184,17 @@ pub fn tail[A](self : T[A]) -> T[A] {
 }
 
 /// Get first element of the list.
-///
-/// # Example
-///
-/// ```
-/// println(of([1, 2, 3, 4, 5]).head_exn())
-/// // output: 1
-/// ```
 /// @alert unsafe "Panic if the list is empty"
-pub fn head_exn[A](self : T[A]) -> A {
+pub fn unsafe_head[A](self : T[A]) -> A {
   match self {
     Nil => abort("head of empty list")
     Cons(head, _) => head
   }
+}
+
+/// @alert deprecated "Use `unsafe_head` instead"
+pub fn head_exn[A](self : T[A]) -> A {
+  unsafe_head(self)
 }
 
 /// Get first element of the list.
@@ -206,13 +204,20 @@ pub fn head_exn[A](self : T[A]) -> A {
 /// ```
 /// println(of([1, 2, 3, 4, 5]).head())
 /// // output: Some(1)
-/// println(from_array([]).head())
-/// // output: None
 /// ```
 pub fn head[A](self : T[A]) -> A? {
   match self {
     Nil => None
     Cons(head, _) => Some(head)
+  }
+}
+
+/// @alert unsafe "Panic if the list is empty"
+pub fn unsafe_last[A](self : T[A]) -> A {
+  loop self {
+    Nil => abort("last of empty list")
+    Cons(head, Nil) => head
+    Cons(_, tail) => continue tail
   }
 }
 
@@ -222,9 +227,8 @@ pub fn head[A](self : T[A]) -> A? {
 ///
 /// ```
 /// println(of([1, 2, 3, 4, 5]).last())
-/// // output: 5
+/// // output: Some(5)
 /// ```
-/// @alert unsafe "Panic if the list is empty"
 pub fn last[A](self : T[A]) -> A {
   loop self {
     Nil => abort("last of empty list")
@@ -254,8 +258,8 @@ pub fn init_[A](self : T[A]) -> T[A] {
 /// # Example
 ///
 /// ```
-/// let ls = of([1, 2, 3, 4, 5]).concat(from_array([6, 7, 8, 9, 10]))
-/// println(ls) // output: from_array([1, 2, 3, 4, 5, 6, 7, 8, 9, 10])
+/// let ls = of([1, 2, 3, 4, 5]).concat(of([6, 7, 8, 9, 10]))
+/// println(ls) // output: @list.of([1, 2, 3, 4, 5, 6, 7, 8, 9, 10])
 /// ```
 pub fn concat[A](self : T[A], other : T[A]) -> T[A] {
   match self {
@@ -388,20 +392,23 @@ pub fn fold_righti[A, B](self : T[A], f : (Int, A, B) -> B, ~init : B) -> B {
 }
 
 /// Zip two lists.
+/// If the lists have different lengths, it will return None.
 ///
 /// # Example
 ///
 /// ```
-/// let r = zip(of([1, 2, 3, 4, 5]), from_array([6, 7, 8, 9, 10]))
-/// println(r) // output: from_array([(1, 6), (2, 7), (3, 8), (4, 9), (5, 10)]
+/// let r = zip(of[1, 2, 3, 4, 5]), of([6, 7, 8, 9, 10]))
+/// println(r) // output: Some(of([(1, 6), (2, 7), (3, 8), (4, 9), (5, 10)])
 /// ```
-///
-/// @alert unsafe "Panic if the two lists have different lengths."
-pub fn zip[A, B](self : T[A], other : T[B]) -> T[(A, B)] {
+pub fn zip[A, B](self : T[A], other : T[B]) -> T[(A, B)]? {
   match (self, other) {
-    (Nil, Nil) => Nil
-    (Cons(x, xs), Cons(y, ys)) => Cons((x, y), zip(xs, ys))
-    _ => abort("zip: lists have different lengths")
+    (Nil, Nil) => Some(Nil)
+    (Cons(x, xs), Cons(y, ys)) =>
+      match zip(xs, ys) {
+        None => None
+        Some(ls) => Some(Cons((x, y), ls))
+      }
+    _ => None
   }
 }
 
@@ -439,14 +446,18 @@ pub fn flat_map[A, B](self : T[A], f : (A) -> T[B]) -> T[B] {
   }
 }
 
-/// Get nth element of the list
 /// @alert unsafe "Panic if the index is out of bounds"
-pub fn nth_exn[A](self : T[A], n : Int) -> A {
+pub fn unsafe_nth[A](self : T[A], n : Int) -> A {
   loop self, n {
     Nil, _ => abort("nth: index out of bounds")
     Cons(head, _), 0 => head
     Cons(_, tail), n => continue tail, n - 1
   }
+}
+
+/// @alert deprecated "Use `unsafe_nth` instead"
+pub fn nth_exn[A](self : T[A], n : Int) -> A {
+  unsafe_nth(self, n)
 }
 
 /// Get nth element of the list or None if the index is out of bounds
@@ -532,14 +543,13 @@ pub fn flatten[A](self : T[T[A]]) -> T[A] {
   }
 }
 
-/// Get maximum element of the list.
 /// @alert unsafe "Panic if the list is empty"
-pub fn maximum[A : Compare](self : T[A]) -> A {
+pub fn unsafe_maximum[A : Compare](self : T[A]) -> A {
   match self {
     Nil => abort("maximum: empty list")
     Cons(x, Nil) => x
     Cons(x, xs) => {
-      let y = maximum(xs)
+      let y = unsafe_maximum(xs)
       if x > y {
         x
       } else {
@@ -549,20 +559,46 @@ pub fn maximum[A : Compare](self : T[A]) -> A {
   }
 }
 
-/// Get minimum element of the list.
+/// Get maximum element of the list.
+/// Returns None if the list is empty.
+pub fn maximum[A : Compare](self : T[A]) -> A? {
+  match self {
+    Nil => None
+    Cons(x, Nil) => Some(x)
+    Cons(x, xs) =>
+      match maximum(xs) {
+        None => Some(x)
+        Some(y) => Some(if x > y { x } else { y })
+      }
+  }
+}
+
 /// @alert unsafe "Panic if the list is empty"
-pub fn minimum[A : Compare](self : T[A]) -> A {
+pub fn unsafe_minimum[A : Compare](self : T[A]) -> A {
   match self {
     Nil => abort("minimum: empty list")
     Cons(x, Nil) => x
     Cons(x, xs) => {
-      let y = minimum(xs)
+      let y = unsafe_minimum(xs)
       if x < y {
         x
       } else {
         y
       }
     }
+  }
+}
+
+/// Get minimum element of the list.
+pub fn minimum[A : Compare](self : T[A]) -> A? {
+  match self {
+    Nil => None
+    Cons(x, Nil) => Some(x)
+    Cons(x, xs) =>
+      match minimum(xs) {
+        None => Some(x)
+        Some(y) => Some(if x < y { x } else { y })
+      }
   }
 }
 
@@ -616,6 +652,7 @@ pub fn unfold[A, S](f : (S) -> (A, S)?, ~init : S) -> T[A] {
 }
 
 /// Take first n elements of the list.
+/// If the list is shorter than n, return the whole list.
 ///
 /// # Example
 ///
@@ -623,22 +660,21 @@ pub fn unfold[A, S](f : (S) -> (A, S)?, ~init : S) -> T[A] {
 /// of([1, 2, 3, 4, 5]).take(3)
 /// ```
 pub fn take[A](self : T[A], n : Int) -> T[A] {
+  fn go {
+    _, Nil => Nil
+    1, Cons(x, _) => Cons(x, Nil)
+    n, Cons(x, xs) => Cons(x, go(n - 1, xs))
+  }
+
   if n <= 0 {
     Nil
   } else {
-    unsafe_take(n, self)
-  }
-}
-
-fn unsafe_take[A](n : Int, xs : T[A]) -> T[A] {
-  match (n, xs) {
-    (1, Cons(x, _)) => Cons(x, Nil)
-    (_, Cons(x, xs)) => Cons(x, unsafe_take(n - 1, xs))
-    _ => abort("take: index out of bounds")
+    go(n, self)
   }
 }
 
 /// Drop first n elements of the list.
+/// If the list is shorter than n, return an empty list.
 ///
 /// # Example
 ///
@@ -646,18 +682,16 @@ fn unsafe_take[A](n : Int, xs : T[A]) -> T[A] {
 /// of([1, 2, 3, 4, 5]).drop(3)
 /// ```
 pub fn drop[A](self : T[A], n : Int) -> T[A] {
+  fn go {
+    _, Nil => Nil
+    1, Cons(_, xs) => xs
+    n, Cons(_, xs) => go(n - 1, xs)
+  }
+
   if n <= 0 {
     self
   } else {
-    unsafe_drop(n, self)
-  }
-}
-
-fn unsafe_drop[A](n : Int, xs : T[A]) -> T[A] {
-  match (n, xs) {
-    (1, Cons(_, xs)) => xs
-    (_, Cons(_, xs)) => unsafe_drop(n - 1, xs)
-    (x, _) => abort("drop: index out of bounds" + x.to_string())
+    go(n, self)
   }
 }
 
@@ -721,7 +755,7 @@ pub fn scan_right[A, B](self : T[A], f : (A, B) -> B, ~init : B) -> T[B] {
     Nil => Cons(init, Nil)
     Cons(x, xs) => {
       let qs = xs.scan_right(f, ~init)
-      Cons(f(x, qs.head_exn()), qs)
+      Cons(f(x, qs.unsafe_head()), qs)
     }
   }
 }
@@ -930,12 +964,4 @@ pub fn T::of[A](arr : FixedArray[A]) -> T[A] {
   } else {
     list
   }
-}
-
-test "panic unsafe_drop" {
-  unsafe_drop(5, of([1, 2, 3, 4])) |> ignore
-}
-
-test "panic unsafe_take" {
-  unsafe_take(5, of([1, 2, 3, 4])) |> ignore
 }
