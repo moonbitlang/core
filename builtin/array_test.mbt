@@ -88,7 +88,7 @@ test "array_pop" {
 
 test "array_pop_exn" {
   let arr = [1, 2, 3]
-  assert_eq!(arr.pop_exn(), 3)
+  assert_eq!(arr.unsafe_pop(), 3)
   assert_eq!(arr.length(), 2)
 }
 
@@ -462,7 +462,7 @@ test "array_pop_empty" {
 
 test "panic array_pop_exn_empty" {
   let arr : Array[Int] = Array::new()
-  arr.pop_exn() |> ignore // This should panic
+  arr.unsafe_pop() |> ignore // This should panic
 }
 
 test "panic array_drain_out_of_bounds" {
