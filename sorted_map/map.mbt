@@ -114,7 +114,7 @@ pub fn each[K, V](self : T[K, V], f : (K, V) -> Unit) -> Unit {
       p = p.unwrap().left
     }
     if s.is_empty().not() {
-      p = s.pop_exn()
+      p = s.unsafe_pop()
       f(p.unwrap().key, p.unwrap().value)
       p = p.unwrap().right
     }
@@ -132,7 +132,7 @@ pub fn eachi[K, V](self : T[K, V], f : (Int, K, V) -> Unit) -> Unit {
       p = p.unwrap().left
     }
     if s.is_empty().not() {
-      p = s.pop_exn()
+      p = s.unsafe_pop()
       f(i, p.unwrap().key, p.unwrap().value)
       p = p.unwrap().right
       i += 1

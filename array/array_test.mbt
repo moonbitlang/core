@@ -59,13 +59,13 @@ test "pop" {
   assert_eq!(v.pop(), None)
 }
 
-test "pop_exn" {
+test "unsafe_pop" {
   let v = []
   v.push(3)
   v.push(4)
   assert_eq!(v.length(), 2)
-  assert_eq!(v.pop_exn(), 4)
-  assert_eq!(v.pop_exn(), 3)
+  assert_eq!(v.unsafe_pop(), 4)
+  assert_eq!(v.unsafe_pop(), 3)
   assert_eq!(v.length(), 0)
 }
 

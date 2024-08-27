@@ -99,7 +99,7 @@ test "tail" {
 
 test "head_exn" {
   let ls = @list.of([1, 2, 3, 4, 5])
-  inspect!(ls.head_exn(), content="1")
+  inspect!(ls.head(), content="Some(1)")
 }
 
 test "head" {
@@ -176,7 +176,7 @@ test "zip" {
   let rs = @list.of([6, 7, 8, 9, 10])
   inspect!(
     ls.zip(rs),
-    content="@list.of([(1, 6), (2, 7), (3, 8), (4, 9), (5, 10)])",
+    content="Some(@list.of([(1, 6), (2, 7), (3, 8), (4, 9), (5, 10)]))",
   )
 }
 
@@ -190,14 +190,14 @@ test "flat_map" {
   )
 }
 
-test "nth_exn" {
+test "nth" {
   let ls = @list.of([1, 2, 3, 4, 5])
-  inspect!(ls.nth_exn(0), content="1")
-  inspect!(ls.nth_exn(1), content="2")
+  inspect!(ls.nth(0), content="Some(1)")
+  inspect!(ls.nth(1), content="Some(2)")
 }
 
 test "panic nth_exn" {
-  @list.Nil.nth_exn(0)
+  @list.Nil.unsafe_nth(0)
 }
 
 test "nth" {
@@ -247,12 +247,12 @@ test "flatten" {
 
 test "maximum" {
   let ls = @list.of([1, 123, 52, 3, 6, 0, -6, -76])
-  inspect!(ls.maximum(), content="123")
+  inspect!(ls.maximum(), content="Some(123)")
 }
 
 test "minimum" {
   let ls = @list.of([1, 123, 52, 3, 6, 0, -6, -76])
-  inspect!(ls.minimum(), content="-76")
+  inspect!(ls.minimum(), content="Some(-76)")
 }
 
 test "sort" {
@@ -280,11 +280,12 @@ test "unfold" {
 }
 
 test "take" {
-  let ls = @list.of([1, 2, 3, 4, 5]).take(3)
-  inspect!(ls, content="@list.of([1, 2, 3])")
+  let ls = @list.of([1, 2, 3, 4, 5])
+  inspect!(ls.take(3), content="@list.of([1, 2, 3])")
   inspect!(ls.take(-1), content="@list.of([])")
+  inspect!(ls.take(7), content="@list.of([1, 2, 3, 4, 5])")
   inspect!(ls.take(0), content="@list.of([])")
-  inspect!(ls, content="@list.of([1, 2, 3])")
+  inspect!(ls.take(5), content="@list.of([1, 2, 3, 4, 5])")
 }
 
 test "drop" {
@@ -292,6 +293,8 @@ test "drop" {
   let el : @list.T[Int] = @list.Nil
   inspect!(ls, content="@list.of([4, 5])")
   inspect!(ls.drop(-10), content="@list.of([4, 5])")
+  inspect!(ls.drop(10), content="@list.of([])")
+  inspect!(ls.drop(2), content="@list.of([])")
   inspect!(ls.drop(0), content="@list.of([4, 5])")
   inspect!(el.drop(0), content="@list.of([])")
 }
@@ -484,12 +487,12 @@ test "List::output with empty list" {
 
 test "List::head_exn with non-empty list" {
   let list = @list.of([1, 2, 3, 4, 5])
-  let head = @list.head_exn(list)
-  assert_eq!(head, 1)
+  let head = @list.head(list)
+  assert_eq!(head, Some(1))
 }
 
 test "panic @list.exn with empty list" {
-  @list.Nil.head_exn()
+  @list.Nil.unsafe_head()
 }
 
 test "List::last with non-empty list" {
@@ -501,39 +504,47 @@ test "List::last with non-empty list" {
 test "List::zip with lists of equal length" {
   let list1 = @list.of([1, 2, 3])
   let list2 = @list.of(["a", "b", "c"])
-  let zipped = @list.zip(list1, list2)
-  let expected = @list.of([(1, "a"), (2, "b"), (3, "c")])
+  let zipped = list1.zip(list2)
+  let expected = Some(@list.of([(1, "a"), (2, "b"), (3, "c")]))
   assert_eq!(zipped, expected)
 }
 
-test "panic @list.zip with empty list" {
-  @list.of([1]).zip((@list.Nil : @list.T[Int])) |> ignore
+test "@list.zip with empty list" {
+  inspect!(@list.of([1]).zip((@list.Nil : @list.T[Int])), content="None")
 }
 
 test "List::nth_exn with valid index" {
   let list = @list.of([1, 2, 3, 4, 5])
-  let nth = @list.nth_exn(list, 2)
-  assert_eq!(nth, 3)
+  let nth = @list.nth(list, 2)
+  assert_eq!(nth, Some(3))
 }
 
 test "List::maximum with non-empty list" {
   let list = @list.of([1, 3, 5, 2, 4])
   let max = @list.maximum(list)
-  assert_eq!(max, 5)
+  assert_eq!(max, Some(5))
 }
 
-test "panic @list.maxium with empty list" {
-  (@list.Nil : @list.T[Int]).maximum() |> ignore
+test "@list.maximum with empty list" {
+  inspect!((@list.Nil : @list.T[Int]).maximum(), content="None")
+}
+
+test "panic @list.unsafe_maximum with empty list" {
+  inspect!((@list.Nil : @list.T[Int]).unsafe_maximum())
 }
 
 test "List::minimum with non-empty list" {
   let list = @list.of([1, 3, 5, 2, 4])
   let min = @list.minimum(list)
-  assert_eq!(min, 1)
+  assert_eq!(min, Some(1))
 }
 
-test "panic @list.minimum with empty list" {
+test "@list.minimum with empty list" {
   (@list.Nil : @list.T[Int]).minimum() |> ignore
+}
+
+test "panic @list.unsafe_minimum with empty list" {
+  inspect!((@list.Nil : @list.T[Int]).unsafe_minimum())
 }
 
 test "op_add" {

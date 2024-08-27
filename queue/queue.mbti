@@ -24,6 +24,8 @@ impl T {
   push[A](Self[A], A) -> Unit
   to_string[A : Show](Self[A]) -> String
   transfer[A](Self[A], Self[A]) -> Unit
+  unsafe_peek[A](Self[A]) -> A
+  unsafe_pop[A](Self[A]) -> A
 }
 
 // Type aliases
