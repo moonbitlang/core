@@ -29,7 +29,7 @@
 // - limbs[len-1] > 0
 // - forall i in len..limbs.length(), limbs[i] == 0
 struct BigInt {
-  mut limbs : FixedArray[Int] // Note: do not use limbs.length(), use len instead because of leading zeros
+  limbs : FixedArray[Int] // Note: do not use limbs.length(), use len instead because of leading zeros
   mut sign : Sign // true for positive, false for negative
   mut len : Int
 }

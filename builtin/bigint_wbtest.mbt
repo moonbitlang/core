@@ -12,6 +12,38 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+type MyBigInt BigInt
+
+impl Show for MyBigInt with output(self, logger) {
+  logger.write_string(
+    "{limbs : \{self.0.limbs}, sign : \{self.0.sign}, len : \{self.0.len} }",
+  )
+}
+
+test "debug_string" {
+  let buf = Buffer::new()
+  let v : Array[MyBigInt] = [0, 1, 2, 3, 4, -0, -1, -2, -3]
+  for i in v {
+    buf.write_object(i)
+    buf.write_string("\n")
+  }
+  inspect!(
+    buf,
+    content=
+      #|{limbs : [0, 0], sign : Positive, len : 1 }
+      #|{limbs : [1, 0], sign : Positive, len : 1 }
+      #|{limbs : [2, 0], sign : Positive, len : 1 }
+      #|{limbs : [3, 0], sign : Positive, len : 1 }
+      #|{limbs : [4, 0], sign : Positive, len : 1 }
+      #|{limbs : [0, 0], sign : Positive, len : 1 }
+      #|{limbs : [1, 0], sign : Negative, len : 1 }
+      #|{limbs : [2, 0], sign : Negative, len : 1 }
+      #|{limbs : [3, 0], sign : Negative, len : 1 }
+      #|
+    ,
+  )
+}
+
 fn check_len(a : BigInt) -> Unit! {
   if a.is_zero() {
     return ()
