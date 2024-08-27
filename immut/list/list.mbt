@@ -400,13 +400,13 @@ pub fn fold_righti[A, B](self : T[A], f : (Int, A, B) -> B, ~init : B) -> B {
 /// let r = zip(of[1, 2, 3, 4, 5]), of([6, 7, 8, 9, 10]))
 /// println(r) // output: Some(of([(1, 6), (2, 7), (3, 8), (4, 9), (5, 10)])
 /// ```
-pub fn zip[A, B](self : T[A], other : T[B]) -> T[(A, B)]?{
+pub fn zip[A, B](self : T[A], other : T[B]) -> T[(A, B)]? {
   match (self, other) {
     (Nil, Nil) => Some(Nil)
-    (Cons(x, xs), Cons(y, ys)) => 
-      match zip(xs,ys) {
+    (Cons(x, xs), Cons(y, ys)) =>
+      match zip(xs, ys) {
         None => None
-        Some(ls) => Some(Cons((x,y), ls))
+        Some(ls) => Some(Cons((x, y), ls))
       }
     _ => None
   }
@@ -663,7 +663,7 @@ pub fn take[A](self : T[A], n : Int) -> T[A] {
   fn go {
     _, Nil => Nil
     1, Cons(x, _) => Cons(x, Nil)
-    n, Cons(x,xs) => Cons(x, go(n - 1, xs))
+    n, Cons(x, xs) => Cons(x, go(n - 1, xs))
   }
 
   if n <= 0 {
@@ -672,6 +672,7 @@ pub fn take[A](self : T[A], n : Int) -> T[A] {
     go(n, self)
   }
 }
+
 /// Drop first n elements of the list.
 /// If the list is shorter than n, return an empty list.
 ///
@@ -686,14 +687,13 @@ pub fn drop[A](self : T[A], n : Int) -> T[A] {
     1, Cons(_, xs) => xs
     n, Cons(_, xs) => go(n - 1, xs)
   }
-  
+
   if n <= 0 {
     self
   } else {
-    go(n,self)
+    go(n, self)
   }
 }
-
 
 /// Take the longest prefix of a list of elements that satisfies a given predicate.
 ///
@@ -965,4 +965,3 @@ pub fn T::of[A](arr : FixedArray[A]) -> T[A] {
     list
   }
 }
-

@@ -52,8 +52,8 @@ impl T {
   lookup[A : Eq, B](Self[Tuple[A, B]], A) -> B?
   map[A, B](Self[A], (A) -> B) -> Self[B]
   mapi[A, B](Self[A], (Int, A) -> B) -> Self[B]
-  maximum[A : Compare + Eq](Self[A]) -> A
-  minimum[A : Compare + Eq](Self[A]) -> A
+  maximum[A : Compare + Eq](Self[A]) -> A?
+  minimum[A : Compare + Eq](Self[A]) -> A?
   nth[A](Self[A], Int) -> A?
   nth_exn[A](Self[A], Int) -> A
   of[A](FixedArray[A]) -> Self[A]
@@ -72,7 +72,12 @@ impl T {
   take_while[A](Self[A], (A) -> Bool) -> Self[A]
   to_array[A](Self[A]) -> Array[A]
   to_string[A : Show](Self[A]) -> String
-  zip[A, B](Self[A], Self[B]) -> Self[Tuple[A, B]]
+  unsafe_head[A](Self[A]) -> A
+  unsafe_last[A](Self[A]) -> A
+  unsafe_maximum[A : Compare + Eq](Self[A]) -> A
+  unsafe_minimum[A : Compare + Eq](Self[A]) -> A
+  unsafe_nth[A](Self[A], Int) -> A
+  zip[A, B](Self[A], Self[B]) -> Self[Tuple[A, B]]?
 }
 
 // Type aliases

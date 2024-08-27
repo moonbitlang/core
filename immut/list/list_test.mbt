@@ -510,8 +510,7 @@ test "List::zip with lists of equal length" {
 }
 
 test "@list.zip with empty list" {
-  inspect!(@list.of([1]).zip((@list.Nil : @list.T[Int])), content="None"
-  )
+  inspect!(@list.of([1]).zip((@list.Nil : @list.T[Int])), content="None")
 }
 
 test "List::nth_exn with valid index" {
@@ -527,11 +526,11 @@ test "List::maximum with non-empty list" {
 }
 
 test "@list.maximum with empty list" {
-  inspect!((@list.Nil : @list.T[Int]).maximum(), content="None") 
+  inspect!((@list.Nil : @list.T[Int]).maximum(), content="None")
 }
 
 test "panic @list.unsafe_maximum with empty list" {
-  inspect!((@list.Nil : @list.T[Int]).unsafe_maximum()) 
+  inspect!((@list.Nil : @list.T[Int]).unsafe_maximum())
 }
 
 test "List::minimum with non-empty list" {
@@ -543,6 +542,7 @@ test "List::minimum with non-empty list" {
 test "@list.minimum with empty list" {
   (@list.Nil : @list.T[Int]).minimum() |> ignore
 }
+
 test "panic @list.unsafe_minimum with empty list" {
   inspect!((@list.Nil : @list.T[Int]).unsafe_minimum())
 }
