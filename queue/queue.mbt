@@ -193,6 +193,7 @@ pub fn unsafe_pop[A](self : T[A]) -> A {
   }
 }
 
+/// @alert deprecated "Use `unsafe_pop` instead"
 pub fn pop_exn[A](self : T[A]) -> A {
   unsafe_pop(self)
 }

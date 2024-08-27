@@ -21,11 +21,11 @@ test "from_fixed_array_1" {
   let queue = @queue.of([1, 2, 3, 4])
   let queue2 = @queue.of([1])
   assert_eq!(queue.length(), 4)
-  assert_eq!(queue.pop_exn(), 1)
-  assert_eq!(queue.pop_exn(), 2)
-  assert_eq!(queue.pop_exn(), 3)
-  assert_eq!(queue.pop_exn(), 4)
-  assert_eq!(queue2.pop_exn(), 1)
+  assert_eq!(queue.unsafe_pop(), 1)
+  assert_eq!(queue.unsafe_pop(), 2)
+  assert_eq!(queue.unsafe_pop(), 3)
+  assert_eq!(queue.unsafe_pop(), 4)
+  assert_eq!(queue2.unsafe_pop(), 1)
   assert_eq!(queue2.length(), 0)
 }
 
@@ -38,11 +38,11 @@ test "from_array_1" {
   let queue = @queue.of([1, 2, 3, 4])
   let queue2 = @queue.of([1])
   assert_eq!(queue.length(), 4)
-  assert_eq!(queue.pop_exn(), 1)
-  assert_eq!(queue.pop_exn(), 2)
-  assert_eq!(queue.pop_exn(), 3)
-  assert_eq!(queue.pop_exn(), 4)
-  assert_eq!(queue2.pop_exn(), 1)
+  assert_eq!(queue.unsafe_pop(), 1)
+  assert_eq!(queue.unsafe_pop(), 2)
+  assert_eq!(queue.unsafe_pop(), 3)
+  assert_eq!(queue.unsafe_pop(), 4)
+  assert_eq!(queue2.unsafe_pop(), 1)
   assert_eq!(queue2.length(), 0)
 }
 
@@ -56,7 +56,7 @@ test "to_string" {
   inspect!(queue, content="@queue.of([1, 2, 3, 4])")
   queue.push(11)
   inspect!(queue, content="@queue.of([1, 2, 3, 4, 11])")
-  queue.pop_exn() |> ignore
+  queue.unsafe_pop() |> ignore
   inspect!(queue, content="@queue.of([2, 3, 4, 11])")
 }
 
@@ -77,17 +77,17 @@ test "is_empty" {
   assert_false!(queue.is_empty())
 }
 
-test "peek_exn" {
+test "unsafe_peek" {
   let queue : @queue.T[Int] = @queue.of([1, 2, 3, 4])
-  assert_eq!(queue.peek_exn(), 1)
+  assert_eq!(queue.unsafe_peek(), 1)
   assert_eq!(queue.length(), 4)
-  assert_eq!(queue.pop_exn(), 1)
-  assert_eq!(queue.peek_exn(), 2)
+  assert_eq!(queue.unsafe_pop(), 1)
+  assert_eq!(queue.unsafe_peek(), 2)
   assert_eq!(queue.length(), 3)
 }
 
-test "panic peek_exn" {
-  @queue.of([]).peek_exn()
+test "panic unsafe_peek" {
+  @queue.of([]).unsafe_peek()
 }
 
 test "peek" {
@@ -97,17 +97,17 @@ test "peek" {
   assert_eq!(queue.peek(), None)
 }
 
-test "pop_exn" {
+test "unsafe_pop" {
   let queue : @queue.T[Int] = @queue.of([1, 2, 3, 4])
-  assert_eq!(queue.pop_exn(), 1)
-  assert_eq!(queue.pop_exn(), 2)
-  assert_eq!(queue.pop_exn(), 3)
-  assert_eq!(queue.pop_exn(), 4)
+  assert_eq!(queue.unsafe_pop(), 1)
+  assert_eq!(queue.unsafe_pop(), 2)
+  assert_eq!(queue.unsafe_pop(), 3)
+  assert_eq!(queue.unsafe_pop(), 4)
   assert_eq!(queue.length(), 0)
 }
 
-test "panic pop_exn" {
-  @queue.of([]).pop_exn()
+test "panic unsafe_pop" {
+  @queue.of([]).unsafe_pop()
 }
 
 test "pop" {
