@@ -92,13 +92,6 @@ pub fn BigInt::from_int64(n : Int64) -> BigInt {
   { limbs, sign: if n < 0L { Negative } else { Positive }, len: i }
 }
 
-/// Construct a zero
-/// 
-/// TODO: modify function name after literal syntax is supported
-pub fn BigInt::make_zero() -> BigInt {
-  zero
-}
-
 // Arithmetic Operations
 
 /// Negate a bigint

@@ -370,7 +370,7 @@ test "lsl" {
   inspect!(b.to_string(), content="2469135780246913578")
   let c = a << 64
   inspect!(c.to_string(), content="22773757910726981402256170801141121024")
-  let a = BigInt::make_zero()
+  let a = 0N
   let b = a << 1
   inspect!(b.to_string(), content="0")
 }

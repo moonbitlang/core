@@ -354,7 +354,7 @@ test "shl" {
   let c = a << 64
   check_len!(c)
   inspect!(c.to_string(), content="22773757910726981402256170801141121024")
-  let a = make_zero()
+  let a = 0N
   let b = a << 1
   check_len!(b)
   inspect!(b.to_string(), content="0")

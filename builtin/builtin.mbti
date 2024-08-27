@@ -133,7 +133,6 @@ impl BigInt {
   from_string(String) -> Self
   is_zero(Self) -> Bool
   lsl(Self, Int) -> Self
-  make_zero() -> Self
   op_add(Self, Self) -> Self
   op_div(Self, Self) -> Self
   op_equal(Self, Self) -> Bool
