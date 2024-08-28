@@ -599,8 +599,8 @@ test "op_add coverage for max(self_len, other_len)" {
   let a = BigInt::from_int(123456789)
   let b = BigInt::from_int(987654321)
   let result = a + b
-  inspect!(a.len, content="1")
-  inspect!(b.len, content="1")
+  inspect!(a.len, content="2")
+  inspect!(b.len, content="2")
   inspect!(result.len, content="2")
 }
 
@@ -608,9 +608,9 @@ test "op_sub coverage for max(self_len, other_len)" {
   let a = BigInt::from_int(987654321)
   let b = BigInt::from_int(123456789)
   let result = a - b
-  inspect!(a.len, content="1")
-  inspect!(b.len, content="1")
-  inspect!(result.len, content="1")
+  inspect!(a.len, content="2")
+  inspect!(b.len, content="2")
+  inspect!(result.len, content="2")
 }
 
 test "panic op_div coverage for division by zero" {

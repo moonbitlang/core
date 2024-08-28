@@ -69,11 +69,7 @@ let one : BigInt = 1N
 
 /// Convert an Int to a BigInt.
 pub fn BigInt::from_int(n : Int) -> BigInt {
-  if n < 0 {
-    { limbs: FixedArray::make(1, -n), sign: Negative, len: 1 }
-  } else {
-    { limbs: FixedArray::make(1, n), sign: Positive, len: 1 }
-  }
+  BigInt::from_int64(n.to_int64())
 }
 
 /// Convert an Int64 to a BigInt.
