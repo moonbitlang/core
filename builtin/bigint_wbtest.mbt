@@ -61,6 +61,9 @@ test "trivial property" {
   let a = BigInt::from_int(65537)
   let b = BigInt::from_int64(65537)
   assert_eq!(a, b)
+  let a = BigInt::from_int(65537)
+  let b = BigInt::from_int(65536)
+  inspect!(a / b)
 }
 
 test "neg" {
