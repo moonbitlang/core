@@ -54,6 +54,15 @@ fn check_len(a : BigInt) -> Unit! {
   }
 }
 
+test "trivial property" {
+  let a = BigInt::from_int64(0L)
+  let b = -a
+  assert_eq!(a, b)
+  let a = BigInt::from_int(65537)
+  let b = BigInt::from_int64(65537)
+  assert_eq!(a, b)
+}
+
 test "neg" {
   let a = BigInt::from_int64(123456789012345678L)
   let b = -a
@@ -590,8 +599,8 @@ test "op_add coverage for max(self_len, other_len)" {
   let a = BigInt::from_int(123456789)
   let b = BigInt::from_int(987654321)
   let result = a + b
-  inspect!(a.len, content="1")
-  inspect!(b.len, content="1")
+  inspect!(a.len, content="2")
+  inspect!(b.len, content="2")
   inspect!(result.len, content="2")
 }
 
@@ -599,9 +608,9 @@ test "op_sub coverage for max(self_len, other_len)" {
   let a = BigInt::from_int(987654321)
   let b = BigInt::from_int(123456789)
   let result = a - b
-  inspect!(a.len, content="1")
-  inspect!(b.len, content="1")
-  inspect!(result.len, content="1")
+  inspect!(a.len, content="2")
+  inspect!(b.len, content="2")
+  inspect!(result.len, content="2")
 }
 
 test "panic op_div coverage for division by zero" {

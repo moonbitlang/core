@@ -69,11 +69,7 @@ let one : BigInt = 1N
 
 /// Convert an Int to a BigInt.
 pub fn BigInt::from_int(n : Int) -> BigInt {
-  if n < 0 {
-    { limbs: FixedArray::make(1, -n), sign: Negative, len: 1 }
-  } else {
-    { limbs: FixedArray::make(1, n), sign: Positive, len: 1 }
-  }
+  BigInt::from_int64(n.to_int64())
 }
 
 /// Convert an Int64 to a BigInt.
@@ -96,6 +92,9 @@ pub fn BigInt::from_int64(n : Int64) -> BigInt {
 
 /// Negate a bigint
 pub fn op_neg(self : BigInt) -> BigInt {
+  if self.is_zero() {
+    return zero
+  }
   // copy limbs
   let limbs = FixedArray::make(self.len, 0)
   limbs.unsafe_blit(0, self.limbs, 0, self.len)
