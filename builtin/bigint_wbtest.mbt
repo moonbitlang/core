@@ -54,6 +54,15 @@ fn check_len(a : BigInt) -> Unit! {
   }
 }
 
+test "trivial property" {
+  let a = BigInt::from_int64(0L)
+  let b = -a
+  assert_eq!(a, b)
+  let a = BigInt::from_int(65537)
+  let b = BigInt::from_int64(65537)
+  assert_eq!(a, b)
+}
+
 test "neg" {
   let a = BigInt::from_int64(123456789012345678L)
   let b = -a
