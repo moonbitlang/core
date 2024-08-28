@@ -784,3 +784,10 @@ pub fn intersperse[A](self : Iter[A], sep : A) -> Iter[A] {
     )
   }
 }
+
+pub fn op_as_view[A](self : Iter[A], ~start : Int, ~end? : Int) -> Iter[A] {
+  match end {
+    Some(end) => self.drop(start).take(end - start)
+    None => self.drop(start)
+  }
+}

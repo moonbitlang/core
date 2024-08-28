@@ -212,6 +212,7 @@ impl Iter {
   map_while[A, B](Self[A], (A) -> B?) -> Self[B]
   new[T](((T) -> IterResult) -> IterResult) -> Self[T]
   op_add[T](Self[T], Self[T]) -> Self[T]
+  op_as_view[A](Self[A], ~start : Int, ~end? : Int) -> Self[A]
   prepend[T](Self[T], T) -> Self[T]
   repeat[T](T) -> Self[T]
   run[T](Self[T], (T) -> IterResult) -> IterResult

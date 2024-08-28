@@ -29,7 +29,9 @@ test "singleton" {
 test "repeat" {
   let iter = Iter::repeat('1')
   let exb = Buffer::new(size_hint=0)
-  iter.take(3).each(fn { x => exb.write_char(x) })
+  for n in iter[:3] {
+    exb.write_char(n)
+  }
   exb.expect!(content="111")
 }
 
@@ -567,4 +569,11 @@ test "Iter::head" {
   inspect!([1, 2, 3].iter().head(), content="Some(1)")
   inspect!([1].iter().head(), content="Some(1)")
   inspect!(([] : Array[Int]).iter().head(), content="None")
+}
+
+test "Iter::as_view" {
+  inspect!([1, 2, 3].iter()[1:2], content="[2]")
+  inspect!([1, 2, 3].iter()[1:], content="[2, 3]")
+  inspect!([1, 2, 3].iter()[1:], content="[2, 3]")
+  inspect!([1, 2, 3].iter()[:], content="[1, 2, 3]")
 }
