@@ -96,6 +96,9 @@ pub fn BigInt::from_int64(n : Int64) -> BigInt {
 
 /// Negate a bigint
 pub fn op_neg(self : BigInt) -> BigInt {
+  if self.is_zero() {
+    return zero
+  }
   // copy limbs
   let limbs = FixedArray::make(self.len, 0)
   limbs.unsafe_blit(0, self.limbs, 0, self.len)
