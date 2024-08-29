@@ -319,7 +319,7 @@ fn grade_school_div(self : BigInt, other : BigInt) -> (BigInt, BigInt) {
   // - divident.limbs.length() = self.limbs.length() + 1
   let lshift = max(
     0,
-    64 - 1 - divisor.limbs[divisor.len - 1].to_int64().clz() - radix_bit_len,
+    radix_bit_len - (64 - divisor.limbs[divisor.len - 1].to_int64().clz()),
   )
   let a_len = dividend.len
   let dividend = dividend.shl(lshift)
@@ -337,6 +337,10 @@ fn grade_school_div(self : BigInt, other : BigInt) -> (BigInt, BigInt) {
       a[i] = dividend.limbs[i].to_int64()
     }
   }
+  // invariant : divisor.limbs.last() >= radix / 2
+  // if b[b_len - 1] < radix / 2 {
+  //   panic()
+  // }
   let a_len = a_len + 1
   // a is the adjusted dividend and b is the adjusted divisor
   let v1 = b[b_len - 1]
