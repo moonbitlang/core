@@ -199,15 +199,6 @@ test "sub" {
   let c = a - b
   check_len!(c)
   inspect!(c.to_string(), content="123456789012345678123456789012345677246")
-  let a = BigInt::from_int64(
-    2L * radix + 3L * radix * radix + 3L * radix * radix * radix,
-  )
-  let b = BigInt::from_int64(
-    1L * radix + 2L * radix * radix + 3L * radix * radix * radix,
-  )
-  let c = a - b
-  check_len!(c)
-  inspect!(c.to_string(), content="4295032832")
 }
 
 test "mul" {
@@ -362,7 +353,7 @@ test "div" {
   let c = a % b
   check_len!(c)
   inspect!(c.to_string(), content="-18")
-  let a = BigInt::from_int64(radix * 2L)
+  let a = BigInt::from_int64(1L << 17)
   let b = BigInt::from_int(3)
   let c = a / b
   check_len!(c)
@@ -412,7 +403,7 @@ test "shr" {
   let c = a.shr(64)
   check_len!(c)
   inspect!(c.to_string(), content="0")
-  let a = BigInt::from_int64(radix * radix / 2L)
+  let a = BigInt::from_int64((radix * radix / 2).to_int64())
   let b = a.shr(radix_bit_len * 2)
   check_len!(b)
   inspect!(b.to_string(), content="0")
@@ -602,18 +593,18 @@ test "op_add coverage for max(self_len, other_len)" {
   let a = BigInt::from_int(123456789)
   let b = BigInt::from_int(987654321)
   let result = a + b
-  inspect!(a.len, content="2")
-  inspect!(b.len, content="2")
-  inspect!(result.len, content="2")
+  inspect!(a.len, content="1")
+  inspect!(b.len, content="1")
+  inspect!(result.len, content="1")
 }
 
 test "op_sub coverage for max(self_len, other_len)" {
   let a = BigInt::from_int(987654321)
   let b = BigInt::from_int(123456789)
   let result = a - b
-  inspect!(a.len, content="2")
-  inspect!(b.len, content="2")
-  inspect!(result.len, content="2")
+  inspect!(a.len, content="1")
+  inspect!(b.len, content="1")
+  inspect!(result.len, content="1")
 }
 
 test "panic op_div coverage for division by zero" {
