@@ -591,7 +591,7 @@ pub fn search[T : Eq](self : Array[T], value : T) -> Int? {
 /// - `value`: The element to search for in the array.
 /// 
 /// # Returns
-/// - `Result<Int, Int>`:
+/// - `Result[Int, Int]`:
 /// If the element is found, an `Ok` variant is returned, containing the index of the matching element in the array. 
 /// If there are multiple matches, the leftmost match will be returned. 
 /// If the element is not found, an `Err` variant is returned, containing the index where the element could be inserted to maintain the sorted order.
