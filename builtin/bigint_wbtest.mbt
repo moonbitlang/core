@@ -628,12 +628,6 @@ test "panic op_mod coverage for modulo by zero" {
   a % b |> ignore
 }
 
-test "panic grade_school_div coverage for division by zero" {
-  let a = BigInt::from_int(123456789)
-  let b = BigInt::from_int(0)
-  grade_school_div(a, b) |> ignore
-}
-
 test "panic shl coverage for negative shift" {
   let a = BigInt::from_int(123456789)
   a.shl(-1) |> ignore

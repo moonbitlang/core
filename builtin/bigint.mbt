@@ -241,7 +241,18 @@ pub fn op_div(self : BigInt, other : BigInt) -> BigInt {
   if other == zero {
     abort("division by zero")
   }
-  grade_school_div(self, other).0
+  // Handle negative numbers
+  if self.sign == Negative {
+    if other.sign == Negative {
+      grade_school_div(-self, -other).0
+    } else {
+      -grade_school_div(-self, other).0
+    }
+  } else if other.sign == Negative {
+    -grade_school_div(self, -other).0
+  } else {
+    return grade_school_div(self, other).0
+  }
 }
 
 /// Modulo two bigint
@@ -249,41 +260,23 @@ pub fn op_mod(self : BigInt, other : BigInt) -> BigInt {
   if other == zero {
     abort("division by zero")
   }
-  let (_, remainder) = grade_school_div(self, other)
-  remainder
+  // Handle negative numbers
+  if self.sign == Negative {
+    if other.sign == Negative {
+      -grade_school_div(-self, -other).1
+    } else {
+      -grade_school_div(-self, other).1
+    }
+  } else if other.sign == Negative {
+    grade_school_div(self, -other).1
+  } else {
+    grade_school_div(self, other).1
+  }
 }
 
 // Simplest way to divide two BigInts.
 // Assumption: other != zero.
 fn grade_school_div(self : BigInt, other : BigInt) -> (BigInt, BigInt) {
-  if other.is_zero() {
-    abort("division by zero")
-  }
-  // Handle negative numbers
-  if self.sign == Negative {
-    if other.sign == Negative {
-      let (quotient, remainder) = grade_school_div(-self, -other)
-      if remainder == zero {
-        return (quotient, zero)
-      } else {
-        return (quotient, -remainder)
-      }
-    } else {
-      let (quotient, remainder) = grade_school_div(-self, other)
-      if remainder == zero {
-        return (-quotient, zero)
-      } else {
-        return (-quotient, -remainder)
-      }
-    }
-  } else if other.sign == Negative {
-    let (quotient, remainder) = grade_school_div(self, -other)
-    if remainder == zero {
-      return (-quotient, zero)
-    } else {
-      return (-quotient, remainder)
-    }
-  }
 
   // Handle edge cases
   if self < other {
