@@ -13,6 +13,7 @@ pub enum T {
   Cons(A, T[A])
 }
 impl T {
+  add[A](Self[A], A) -> Self[A]
   all[A](Self[A], (A) -> Bool) -> Bool
   any[A](Self[A], (A) -> Bool) -> Bool
   concat[A](Self[A], Self[A]) -> Self[A]
