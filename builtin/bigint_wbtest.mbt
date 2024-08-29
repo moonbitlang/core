@@ -45,7 +45,7 @@ test "equal_int64" {
   assert_eq!(BigInt::from_int64(1).equal_int64(1), true)
   assert_eq!(BigInt::from_int64(0xffff_ffff).equal_int64(0xffff_ffff), true)
   inspect!(BigInt::from_int64(0xffff_ffff_ffff_ffff), content="-1")
-  inspect!((0xffff_ffff_ffff_ffffN), content="18446744073709551615")
+  inspect!(0xffff_ffff_ffff_ffffN, content="18446744073709551615")
   assert_eq!(
     BigInt::from_int64(0xffff_ffff_ffff_ffff).equal_int64(0xffff_ffff_ffff_ffff),
     true,
