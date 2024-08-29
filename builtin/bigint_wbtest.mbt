@@ -63,7 +63,7 @@ test "trivial property" {
   assert_eq!(a, b)
   let a = BigInt::from_int(65537)
   let b = BigInt::from_int(65536)
-  inspect!(a / b)
+  inspect!(a / b, content="1")
 }
 
 test "neg" {
