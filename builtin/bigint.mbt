@@ -72,6 +72,75 @@ pub fn BigInt::from_int(n : Int) -> BigInt {
   BigInt::from_int64(n.to_int64())
 }
 
+pub fn BigInt::equal_int64(self : BigInt, n : Int64) -> Bool {
+  // Check if the sign of BigInt matches the sign of n
+  if (self.sign == Negative && n >= 0) || (self.sign == Positive && n < 0) {
+    return false
+  }
+
+  // Handle zero case
+  if n == 0L {
+    return self.is_zero()
+  }
+
+  // Convert n to positive for comparison
+  let mut m = if n < 0L { -n } else { n }
+  let mut i = 0
+
+  // Compare limbs
+  while m > 0L {
+    if i >= self.len || self.limbs[i] != (m % radix).to_int() {
+      return false
+    }
+    m /= radix
+    i += 1
+  }
+
+  // Ensure all remaining limbs in BigInt are zero
+  while i < self.len {
+    if self.limbs[i] != 0 {
+      return false
+    }
+    i += 1
+  }
+  true
+}
+
+pub fn BigInt::equal_int(self : BigInt, other : Int) -> Bool {
+  // Check if the sign of BigInt matches the sign of other
+  if (self.sign == Negative && other >= 0) ||
+    (self.sign == Positive && other < 0) {
+    return false
+  }
+
+  // Handle zero case
+  if other == 0 {
+    return self.is_zero()
+  }
+
+  // Convert other to positive for comparison
+  let mut m = if other < 0 { -other } else { other }
+  let mut i = 0
+
+  // Compare limbs
+  while m > 0 {
+    if i >= self.len || self.limbs[i] != m % radix.to_int() {
+      return false
+    }
+    m /= radix.to_int()
+    i += 1
+  }
+
+  // Ensure all remaining limbs in BigInt are zero
+  while i < self.len {
+    if self.limbs[i] != 0 {
+      return false
+    }
+    i += 1
+  }
+  true
+}
+
 /// Convert an Int64 to a BigInt.
 pub fn BigInt::from_int64(n : Int64) -> BigInt {
   if n == 0L {
