@@ -20,6 +20,47 @@ impl Show for MyBigInt with output(self, logger) {
   )
 }
 
+test {
+  inspect!(
+    MyBigInt(BigInt::from_int64(0)),
+    content="{limbs : [0], sign : Positive, len : 1 }",
+  )
+  inspect!(
+    MyBigInt(BigInt::from_int64(1)),
+    content="{limbs : [1, 0, 0, 0], sign : Positive, len : 1 }",
+  )
+  inspect!(MyBigInt(1), content="{limbs : [1, 0], sign : Positive, len : 1 }")
+  inspect!(
+    MyBigInt(0xffff_ffff),
+    content="{limbs : [65535, 65535, 0, 0], sign : Positive, len : 2 }",
+  )
+  inspect!(
+    MyBigInt(0xffff_ffff_ffff_ffff),
+    content="{limbs : [65535, 65535, 65535, 65535, 0, 0], sign : Positive, len : 4 }",
+  )
+}
+
+test "equal_int64" {
+  assert_eq!(BigInt::from_int64(0).equal_int64(0), true)
+  assert_eq!(BigInt::from_int64(1).equal_int64(1), true)
+  assert_eq!(BigInt::from_int64(0xffff_ffff).equal_int64(0xffff_ffff), true)
+  inspect!(BigInt::from_int64(0xffff_ffff_ffff_ffff), content="-1")
+  inspect!((0xffff_ffff_ffff_ffffN), content="18446744073709551615")
+  assert_eq!(
+    BigInt::from_int64(0xffff_ffff_ffff_ffff).equal_int64(0xffff_ffff_ffff_ffff),
+    true,
+  )
+}
+
+test "equal_int" {
+  assert_eq!(BigInt::from_int64(0).equal_int(0), true)
+  assert_eq!(BigInt::from_int64(1).equal_int(1), true)
+  // overflow
+  assert_eq!(BigInt::from_int64(0xffff_ffff).equal_int(0xffff_ffff), false)
+  assert_eq!(BigInt::from_int64(0x7fff_ffff).equal_int(0x7fff_ffff), true)
+  assert_eq!(BigInt::from_int64(0x8fff_ffff).equal_int(0x8fff_ffff), false)
+}
+
 test "debug_string" {
   let buf = Buffer::new()
   let v : Array[MyBigInt] = [0, 1, 2, 3, 4, -0, -1, -2, -3]
