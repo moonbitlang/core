@@ -116,6 +116,22 @@ pub fn iter(self : String) -> Iter[Char] {
   )
 }
 
+pub fn fold[A](self : String, ~init : A, f : (A, Char) -> A) -> A {
+  let mut rv = init
+  for c in self {
+    rv = f(rv, c)
+  }
+  rv
+}
+
+pub fn rev_fold[A](self : String, ~init : A, f : (A, Char) -> A) -> A {
+  let mut rv = init
+  for c in self.rev_iter() {
+    rv = f(rv, c)
+  }
+  rv
+}
+
 /// Returns an iterator that yields characters from the end to the start of the string. This function handles 
 /// Unicode surrogate pairs correctly, ensuring that characters are not split across surrogate pairs.
 /// 

@@ -17,6 +17,10 @@ pub enum T[A] {
   Cons(A, T[A])
 } derive(Eq)
 
+pub fn add[A](self : T[A], head : A) -> T[A] {
+  Cons(head, self)
+}
+
 pub impl[A : Show] Show for T[A] with output(xs, logger) {
   logger.write_string("@list.of([")
   xs.eachi(

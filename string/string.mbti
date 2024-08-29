@@ -9,6 +9,7 @@ impl String {
   contains_char(String, Char) -> Bool
   default() -> String
   ends_with(String, String) -> Bool
+  fold[A](String, ~init : A, (A, Char) -> A) -> A
   index_of(String, String, ~from : Int = ..) -> Int
   is_blank(String) -> Bool
   is_empty(String) -> Bool
@@ -17,6 +18,7 @@ impl String {
   replace(String, ~old : String, ~new : String) -> String
   replace_all(String, ~old : String, ~new : String) -> String
   rev(String) -> String
+  rev_fold[A](String, ~init : A, (A, Char) -> A) -> A
   rev_iter(String) -> Iter[Char]
   split(String, String) -> Iter[String]
   starts_with(String, String) -> Bool
