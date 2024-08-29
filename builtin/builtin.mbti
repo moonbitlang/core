@@ -128,6 +128,8 @@ type BigInt
 impl BigInt {
   asr(Self, Int) -> Self
   compare(Self, Self) -> Int
+  equal_int(Self, Int) -> Bool
+  equal_int64(Self, Int64) -> Bool
   from_hex(String) -> Self
   from_int(Int) -> Self
   from_int64(Int64) -> Self
