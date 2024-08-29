@@ -30,8 +30,8 @@
 // - forall i in len..limbs.length(), limbs[i] == 0
 struct BigInt {
   limbs : FixedArray[Int] // Note: do not use limbs.length(), use len instead because of leading zeros
-  mut sign : Sign // true for positive, false for negative
-  mut len : Int
+  sign : Sign // true for positive, false for negative
+  len : Int
 }
 
 priv enum Sign {
@@ -69,11 +69,7 @@ let one : BigInt = 1N
 
 /// Convert an Int to a BigInt.
 pub fn BigInt::from_int(n : Int) -> BigInt {
-  if n < 0 {
-    { limbs: FixedArray::make(1, -n), sign: Negative, len: 1 }
-  } else {
-    { limbs: FixedArray::make(1, n), sign: Positive, len: 1 }
-  }
+  BigInt::from_int64(n.to_int64())
 }
 
 /// Convert an Int64 to a BigInt.
@@ -96,43 +92,22 @@ pub fn BigInt::from_int64(n : Int64) -> BigInt {
 
 /// Negate a bigint
 pub fn op_neg(self : BigInt) -> BigInt {
-  // copy limbs
-  let limbs = FixedArray::make(self.len, 0)
-  limbs.unsafe_blit(0, self.limbs, 0, self.len)
-  {
-    limbs,
-    sign: if self.sign == Positive {
-      Negative
-    } else {
-      Positive
-    },
-    len: self.len,
+  if self.is_zero() {
+    return zero
   }
-}
-
-/// Negate a bigint without copying limbs, for internal use.
-fn neg(self : BigInt) -> BigInt {
-  {
-    limbs: self.limbs,
-    sign: if self.sign == Positive {
-      Negative
-    } else {
-      Positive
-    },
-    len: self.len,
-  }
+  { ..self, sign: if self.sign == Positive { Negative } else { Positive } }
 }
 
 /// Add two bigint.
 pub fn op_add(self : BigInt, other : BigInt) -> BigInt {
   if self.sign == Negative {
     if other.sign == Negative {
-      return neg(neg(other) + neg(self))
+      return -(-other + -self)
     } else {
-      return other - neg(self)
+      return other - -self
     }
   } else if other.sign == Negative {
-    return self - neg(other)
+    return self - -other
   }
   let self_len = self.len
   let other_len = other.len
@@ -155,16 +130,16 @@ pub fn op_sub(self : BigInt, other : BigInt) -> BigInt {
   // first make sure self and other > 0
   if self.sign == Negative {
     if other.sign == Negative {
-      return neg(other) - neg(self)
+      return -other - -self
     } else {
-      return neg(other + neg(self))
+      return -(other + -self)
     }
   } else if other.sign == Negative {
-    return self + neg(other)
+    return self + -other
   }
   // then make sure self >= other
   if self < other {
-    return neg(other - self)
+    return -(other - self)
   }
   let self_len = self.len
   let other_len = other.len
@@ -201,8 +176,7 @@ pub fn op_mul(self : BigInt, other : BigInt) -> BigInt {
   } else {
     karatsuba_mul(self, other)
   }
-  ret.sign = if self.sign == other.sign { Positive } else { Negative }
-  ret
+  { ..ret, sign: if self.sign == other.sign { Positive } else { Negative } }
 }
 
 // Simplest way to multiply two BigInts.
@@ -248,9 +222,7 @@ fn karatsuba_mul(self : BigInt, other : BigInt) -> BigInt {
 // Get the lower half of the number.
 fn split(self : BigInt, half : Int) -> (BigInt, BigInt) {
   if self.len <= half {
-    let ret = self.deep_clone()
-    ret.sign = Positive
-    return (ret, zero)
+    return ({ ..self, sign: Positive }, zero)
   }
   let lower = FixedArray::make(half, 0)
   lower.unsafe_blit(0, self.limbs, 0, half)
@@ -287,26 +259,26 @@ fn grade_school_div(self : BigInt, other : BigInt) -> (BigInt, BigInt) {
   // Handle negative numbers
   if self.sign == Negative {
     if other.sign == Negative {
-      let (quotient, remainder) = grade_school_div(neg(self), neg(other))
+      let (quotient, remainder) = grade_school_div(-self, -other)
       if remainder == zero {
         return (quotient, zero)
       } else {
-        return (quotient, neg(remainder))
+        return (quotient, -remainder)
       }
     } else {
-      let (quotient, remainder) = grade_school_div(neg(self), other)
+      let (quotient, remainder) = grade_school_div(-self, other)
       if remainder == zero {
-        return (neg(quotient), zero)
+        return (-quotient, zero)
       } else {
-        return (neg(quotient), neg(remainder))
+        return (-quotient, -remainder)
       }
     }
   } else if other.sign == Negative {
-    let (quotient, remainder) = grade_school_div(self, neg(other))
+    let (quotient, remainder) = grade_school_div(self, -other)
     if remainder == zero {
-      return (neg(quotient), zero)
+      return (-quotient, zero)
     } else {
-      return (neg(quotient), remainder)
+      return (-quotient, remainder)
     }
   }
 
@@ -335,7 +307,10 @@ fn grade_school_div(self : BigInt, other : BigInt) -> (BigInt, BigInt) {
       y %= x
     }
     if ret.limbs[ret.len - 1] == 0 {
-      ret.len -= 1
+      return (
+        { ..ret, len: ret.len - 1 },
+        BigInt::from_int64(y.land(radix_mask)),
+      )
     }
     return (ret, BigInt::from_int64(y.land(radix_mask)))
   }
