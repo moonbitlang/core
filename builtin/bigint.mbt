@@ -61,9 +61,9 @@ let karatsuba_threshold = 50
 
 // Useful bigints
 
-let zero : BigInt = 0N
+let zero : BigInt = { limbs: [0], sign: Positive, len: 1 }
 
-let one : BigInt = 1N
+let one : BigInt = { limbs: [1], sign: Positive, len: 1 }
 
 // Conversion Functions
 
@@ -75,7 +75,7 @@ pub fn BigInt::from_int(n : Int) -> BigInt {
 /// Convert an Int64 to a BigInt.
 pub fn BigInt::from_int64(n : Int64) -> BigInt {
   if n == 0L {
-    return { limbs: FixedArray::make(1, 0), sign: Positive, len: 1 }
+    return zero
   }
   let limbs = FixedArray::make(64 / radix_bit_len, 0)
   let mut m = if n < 0L { -n } else { n }
