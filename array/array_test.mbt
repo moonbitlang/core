@@ -488,7 +488,7 @@ test "shuffle_in_place" {
 
 test "find_index" {
   let arr : Array[Int] = [1, 2, 3, 4, 5, 6, 7]
-  let index = arr.find_index(fn(x) { x == 3 })
+  let index = arr.search_by(fn(x) { x == 3 })
   assert_eq!(index, Some(2))
 }
 

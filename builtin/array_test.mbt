@@ -309,8 +309,10 @@ test "array_remove" {
 
 test "array_retain" {
   let arr = [1, 2, 3, 4, 5]
+  assert_eq!(arr.capacity(), 5)
   arr.retain(fn(x) { x % 2 == 0 })
   assert_eq!(arr.length(), 2)
+  assert_eq!(arr.capacity(), 5)
   assert_eq!(arr[0], 2)
   assert_eq!(arr[1], 4)
 }
@@ -500,9 +502,9 @@ test "array_split" {
   )
 }
 
-test "array_find_index" {
-  inspect!([1, 2, 3, 4, 5].find_index(fn(x) { x % 2 == 0 }), content="Some(1)")
-  inspect!([1, 2, 3, 4, 5].find_index(fn(x) { x > 5 }), content="None")
+test "array_search_by" {
+  inspect!([1, 2, 3, 4, 5].search_by(fn(x) { x % 2 == 0 }), content="Some(1)")
+  inspect!([1, 2, 3, 4, 5].search_by(fn(x) { x > 5 }), content="None")
 }
 
 test "shrink_to_fit" {
@@ -556,7 +558,7 @@ test "array_binary_search_str_test" {
 
 struct TestStruct {
   num : Int
-} derive(Eq)
+}
 
 test "array_binary_search_by_test" {
   let arr = [{ num: 10 }, { num: 22 }, { num: 35 }, { num: 48 }]
