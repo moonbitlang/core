@@ -591,7 +591,7 @@ pub fn search[T : Eq](self : Array[T], value : T) -> Int? {
 /// - `value`: The element to search for in the array.
 /// 
 /// # Returns
-/// - `Result<Int, Int>`:
+/// - `Result[Int, Int]`:
 /// If the element is found, an `Ok` variant is returned, containing the index of the matching element in the array. 
 /// If there are multiple matches, the leftmost match will be returned. 
 /// If the element is not found, an `Err` variant is returned, containing the index where the element could be inserted to maintain the sorted order.
@@ -603,9 +603,23 @@ pub fn binary_search[T : Compare](
   self : Array[T],
   value : T
 ) -> Result[Int, Int] {
-  return self.binary_search_by(
-    fn(v : T) { if v < value { -1 } else if v == value { 0 } else { 1 } },
-  )
+  let len = self.length()
+  for i = 0, j = len; i < j; {
+    let h = i + (j - i) / 2
+    // Note even if self.buffer()[h] == value, we still continue the search
+    // because we want to find the leftmost match
+    if self.buffer()[h] < value {
+      continue h + 1, j
+    } else {
+      continue i, h
+    }
+  } else {
+    if i < len && self.buffer()[i] == value {
+      Ok(i)
+    } else {
+      Err(i)
+    }
+  }
 }
 
 /// Performs a binary search on a sorted array using a custom comparator function, and returns the index of the given element.
@@ -639,20 +653,22 @@ pub fn binary_search_by[T](
   self : Array[T],
   cmp : (T) -> Int
 ) -> Result[Int, Int] {
-  let mut i = 0
-  let mut j = self.length()
-  while i < j {
+  let len = self.length()
+  for i = 0, j = len; i < j; {
     let h = i + (j - i) / 2
-    if cmp(self.buffer()[h]) == -1 {
-      i = h + 1
+    // Note even if self.buffer()[h] == value, we still continue the search
+    // because we want to find the leftmost match
+    if cmp(self.buffer()[h]) < 0 {
+      continue h + 1, j
     } else {
-      j = h
+      continue i, h
     }
-  }
-  if i < self.length() && cmp(self.buffer()[i]) == 0 {
-    Ok(i)
   } else {
-    Err(i)
+    if i < len && cmp(self.buffer()[i]) == 0 {
+      Ok(i)
+    } else {
+      Err(i)
+    }
   }
 }
 
