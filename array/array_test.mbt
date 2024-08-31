@@ -486,7 +486,7 @@ test "shuffle_in_place" {
   inspect!(arr, content="[3, 2, 1, 5, 6, 7, 4]")
 }
 
-test "find_index" {
+test "search_by" {
   let arr : Array[Int] = [1, 2, 3, 4, 5, 6, 7]
   let index = arr.search_by(fn(x) { x == 3 })
   assert_eq!(index, Some(2))
