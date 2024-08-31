@@ -29,7 +29,7 @@
 // - limbs[len-1] > 0
 // - forall i in len..limbs.length(), limbs[i] == 0
 struct BigInt {
-  limbs : FixedArray[Int] // Note: do not use limbs.length(), use len instead because of leading zeros
+  limbs : FixedArray[UInt] // Note: do not use limbs.length(), use len instead because of leading zeros
   sign : Sign // true for positive, false for negative
   len : Int
 }
@@ -44,14 +44,14 @@ priv enum Sign {
 /// Invariants:
 /// - ((radix - 1) ^ 2) must fit in an Int64
 /// - radix can only be a power of 2
-/// - radix_bit_len < 32 (TODO: change this to <= 32 once we have unsigned integers)
-let radix_bit_len = 16
+/// - radix_bit_len <= 32
+let radix_bit_len = 32
 
 /// The base of the number system.
-let radix : Int64 = 1L.lsl(radix_bit_len) // TODO: This can be generalized once we have const generics
+let radix : UInt64 = 1UL.lsl(radix_bit_len) // TODO: This can be generalized once we have const generics
 
 /// The mask to extract the lower `radix_bit_len` bits.
-let radix_mask : Int64 = radix - 1L
+let radix_mask : UInt64 = radix - 1
 
 /// The ratio of the number of decimal digits to the number of radix digits.
 let decimal_ratio = 0.302 // log10(2)
@@ -146,11 +146,11 @@ pub fn BigInt::from_int64(n : Int64) -> BigInt {
   if n == 0L {
     return zero
   }
-  let limbs = FixedArray::make(64 / radix_bit_len, 0)
-  let mut m = if n < 0L { -n } else { n }
+  let limbs = FixedArray::make(64 / radix_bit_len, 0U)
+  let mut m = (if n < 0L { -n } else { n }).to_uint64()
   let mut i = 0
-  while m > 0L {
-    limbs[i] = (m % radix).to_int()
+  while m > 0 {
+    limbs[i] = (m % radix).to_uint()
     m /= radix
     i += 1
   }
@@ -180,14 +180,14 @@ pub fn op_add(self : BigInt, other : BigInt) -> BigInt {
   }
   let self_len = self.len
   let other_len = other.len
-  let limbs = FixedArray::make(1 + max(self_len, other_len), 0)
-  let mut carry = 0L
+  let limbs = FixedArray::make(1 + max(self_len, other_len), 0U)
+  let mut carry = 0UL
   let mut i = 0
-  while i < self_len || i < other_len || carry != 0L {
-    let a = if i < self_len { self.limbs[i].to_int64() } else { 0L }
-    let b = if i < other_len { other.limbs[i].to_int64() } else { 0L }
+  while i < self_len || i < other_len || carry != 0 {
+    let a = if i < self_len { self.limbs[i].to_uint64() } else { 0 }
+    let b = if i < other_len { other.limbs[i].to_uint64() } else { 0 }
     let sum = a + b + carry
-    limbs[i] = (sum % radix).to_int()
+    limbs[i] = (sum % radix).to_uint()
     carry = sum / radix
     i += 1
   }
@@ -212,18 +212,22 @@ pub fn op_sub(self : BigInt, other : BigInt) -> BigInt {
   }
   let self_len = self.len
   let other_len = other.len
-  let limbs = FixedArray::make(max(self_len, other_len), 0)
+  let limbs = FixedArray::make(max(self_len, other_len), 0U)
   let mut borrow = 0L
   let mut i = 0
   while i < self_len || i < other_len || borrow != 0L {
-    let a = if i < self_len { self.limbs[i].to_int64() } else { 0L }
-    let b = if i < other_len { other.limbs[i].to_int64() } else { 0L }
+    let a = if i < self_len { self.limbs[i].to_uint64().to_int64() } else { 0 }
+    let b = if i < other_len {
+      other.limbs[i].to_uint64().to_int64()
+    } else {
+      0
+    }
     let diff = a - b - borrow // 0 <= a < radix, 0 <= b < radix, 0 <= borrow <= 1 => -radix <= diff < radix
     if diff < 0L {
-      limbs[i] = (diff + radix).to_int() // -radix <= diff < 0, so we don't need to mod by radix
+      limbs[i] = (diff + radix.to_int64()).to_uint64().to_uint() // -radix <= diff < 0, so we don't need to mod by radix
       borrow = 1L
     } else {
-      limbs[i] = diff.to_int() // 0 <= diff < radix, so we don't need to mod by radix
+      limbs[i] = diff.to_uint64().to_uint() // 0 <= diff < radix, so we don't need to mod by radix
       borrow = 0L
     }
     i += 1
@@ -253,21 +257,17 @@ fn grade_school_mul(self : BigInt, other : BigInt) -> BigInt {
   let self_len = self.len
   let other_len = other.len
   let mut len = self_len + other_len
-  let limbs = FixedArray::make(len, 0)
-  let mut i = 0
-  while i < self_len {
-    let mut j = 0
-    let mut carry = 0L
-    while j < other_len || carry != 0L {
-      let product = limbs[i + j].to_int64() +
-        self.limbs[i].to_int64() *
-        if j < other_len { other.limbs[j].to_int64() } else { 0L } +
+  let limbs = FixedArray::make(len, 0U)
+  for i = 0; i < self_len; i = i + 1 {
+    let mut carry = 0UL
+    for j = 0; j < other_len || carry != 0; j = j + 1 {
+      let product = limbs[i + j].to_uint64() +
+        self.limbs[i].to_uint64() *
+        if j < other_len { other.limbs[j].to_uint64() } else { 0 } +
         carry
-      limbs[i + j] = (product % radix).to_int()
+      limbs[i + j] = (product % radix).to_uint()
       carry = product / radix
-      j += 1
     }
-    i += 1
   }
   if limbs[self_len + other_len - 1] == 0 {
     len -= 1
@@ -293,9 +293,9 @@ fn split(self : BigInt, half : Int) -> (BigInt, BigInt) {
   if self.len <= half {
     return ({ ..self, sign: Positive }, zero)
   }
-  let lower = FixedArray::make(half, 0)
+  let lower = FixedArray::make(half, 0U)
   lower.unsafe_blit(0, self.limbs, 0, half)
-  let upper = FixedArray::make(self.len - half, 0)
+  let upper = FixedArray::make(self.len - half, 0U)
   upper.unsafe_blit(0, self.limbs, half, self.len - half)
   (
     { limbs: lower, sign: Positive, len: half },
@@ -310,7 +310,18 @@ pub fn op_div(self : BigInt, other : BigInt) -> BigInt {
   if other == zero {
     abort("division by zero")
   }
-  grade_school_div(self, other).0
+  // Handle negative numbers
+  if self.sign == Negative {
+    if other.sign == Negative {
+      grade_school_div(-self, -other).0
+    } else {
+      -grade_school_div(-self, other).0
+    }
+  } else if other.sign == Negative {
+    -grade_school_div(self, -other).0
+  } else {
+    return grade_school_div(self, other).0
+  }
 }
 
 /// Modulo two bigint
@@ -318,39 +329,23 @@ pub fn op_mod(self : BigInt, other : BigInt) -> BigInt {
   if other == zero {
     abort("division by zero")
   }
-  let (_, remainder) = grade_school_div(self, other)
-  remainder
+  // Handle negative numbers
+  if self.sign == Negative {
+    if other.sign == Negative {
+      -grade_school_div(-self, -other).1
+    } else {
+      -grade_school_div(-self, other).1
+    }
+  } else if other.sign == Negative {
+    grade_school_div(self, -other).1
+  } else {
+    grade_school_div(self, other).1
+  }
 }
 
 // Simplest way to divide two BigInts.
 // Assumption: other != zero.
 fn grade_school_div(self : BigInt, other : BigInt) -> (BigInt, BigInt) {
-  // Handle negative numbers
-  if self.sign == Negative {
-    if other.sign == Negative {
-      let (quotient, remainder) = grade_school_div(-self, -other)
-      if remainder == zero {
-        return (quotient, zero)
-      } else {
-        return (quotient, -remainder)
-      }
-    } else {
-      let (quotient, remainder) = grade_school_div(-self, other)
-      if remainder == zero {
-        return (-quotient, zero)
-      } else {
-        return (-quotient, -remainder)
-      }
-    }
-  } else if other.sign == Negative {
-    let (quotient, remainder) = grade_school_div(self, -other)
-    if remainder == zero {
-      return (-quotient, zero)
-    } else {
-      return (-quotient, remainder)
-    }
-  }
-
   // Handle edge cases
   if self < other {
     return (zero, self)
@@ -359,100 +354,116 @@ fn grade_school_div(self : BigInt, other : BigInt) -> (BigInt, BigInt) {
   }
   if other.len == 1 {
     let number = other.limbs[0]
-    if number == 0 {
-      abort("divided by zero")
-    }
     let ret = self.deep_clone()
     if number == 1 {
       return (ret, zero)
     }
     let a = ret.limbs
-    let x = number.to_int64()
-    let mut y = 0L
+    let x = number.to_uint64()
+    let mut y = 0UL
     for i = self.len - 1; i >= 0; i = i - 1 {
       y = y.lsl(radix_bit_len)
-      y += a[i].to_int64()
-      a[i] = (y / x).land(radix_mask).to_int()
+      y += a[i].to_uint64()
+      a[i] = (y / x).land(radix_mask).to_uint()
       y %= x
     }
     if ret.limbs[ret.len - 1] == 0 {
       return (
         { ..ret, len: ret.len - 1 },
-        BigInt::from_int64(y.land(radix_mask)),
+        { limbs: FixedArray::make(1, y.to_uint()), sign: Positive, len: 1 },
       )
     }
-    return (ret, BigInt::from_int64(y.land(radix_mask)))
+    return (
+      ret,
+      { limbs: FixedArray::make(1, y.to_uint()), sign: Positive, len: 1 },
+    )
   }
 
   // Cite: TAOCP Vol. 2, 4.3.1
   let dividend = self
   let divisor = other
 
-  // normalize 
-  let mut lshift = 0
-  let mut back = divisor.limbs[divisor.len - 1].to_int64()
-  while back < radix / 2L {
-    back = back.lsl(1)
-    lshift += 1
-  }
+  // D1. normalize
+  // m = divident.limbs.length() - divisor.limbs.length()
+  // left shift divident & divisor such that 
+  // - divisor.limbs.last() >= radix / 2
+  // - divident.limbs.length() = self.limbs.length() + 1
+  let lshift = max(
+    0,
+    radix_bit_len -
+    (64 - divisor.limbs[divisor.len - 1].to_uint64().to_int64().clz()),
+  )
+  let a_len = dividend.len
   let dividend = dividend.shl(lshift)
   let divisor = divisor.shl(lshift)
-  let a_len = dividend.len
   let b_len = divisor.len
-  let b = FixedArray::make(b_len, 0L)
+  let b = FixedArray::make(b_len, 0UL)
   for i = 0; i < b_len; i = i + 1 {
-    b[i] = divisor.limbs[i].to_int64()
+    b[i] = divisor.limbs[i].to_uint64()
   }
-  let a = FixedArray::make(a_len, 0L)
+  let a = FixedArray::make(a_len + 1, 0UL)
   for i = 0; i < a_len; i = i + 1 {
-    a[i] = dividend.limbs[i].to_int64()
+    a[i] = dividend.limbs[i].to_uint64()
+  } else {
+    if dividend.limbs.length() > i {
+      a[i] = dividend.limbs[i].to_uint64()
+    }
   }
+  // invariant : divisor.limbs.last() >= radix / 2
+  // if b[b_len - 1] < radix / 2 {
+  //   panic()
+  // }
+  let a_len = a_len + 1
+  // a is the adjusted dividend and b is the adjusted divisor
   let v1 = b[b_len - 1]
   let v2 = b[b_len - 2]
-  let q = FixedArray::make(a_len - b_len, 0)
+  let q = FixedArray::make(a_len - b_len, 0U)
+  // D2 - D7 loop through m to 0
   for i = q.length() - 1; i >= 0; i = i - 1 {
     let u0 = a[i + b_len]
     let u1 = a[i + b_len - 1]
     let u2 = a[i + b_len - 2]
+    // D3 compute qh
     let mut qh = (u0 * radix + u1) / v1
     if qh * v2 > radix * (u0 * radix + u1 - qh * v1) + u2 {
-      qh -= 1L
+      qh -= 1
     }
+    // D4 divident = divident - qh * divisor
     let mut borrow = 0L
-    let mut carry = 0L
+    let mut carry = 0UL
     for j = 0; j < b_len; j = j + 1 {
       carry += qh * b[j]
-      borrow += a[i + j]
-      borrow -= carry.land(radix_mask)
-      a[i + j] = borrow.land(radix_mask)
+      borrow += a[i + j].to_int64()
+      borrow -= carry.land(radix_mask).to_int64()
+      a[i + j] = borrow.land(radix_mask.to_int64()).to_uint64()
       borrow = borrow.asr(radix_bit_len)
-      carry = carry.asr(radix_bit_len)
+      carry = carry.lsr(radix_bit_len)
     }
-    borrow = borrow + a[i + b_len]
-    borrow -= carry
-    a[i + b_len] = borrow.land(radix_mask)
+    borrow = borrow + a[i + b_len].to_int64()
+    borrow -= carry.to_int64()
+    a[i + b_len] = borrow.land(radix_mask.to_int64()).to_uint64()
     borrow = borrow.asr(radix_bit_len)
-    while borrow < 0L {
-      carry = 0L
+    if borrow < 0L {
+      carry = 0UL
       for j = 0; j < b_len; j = j + 1 {
         carry += a[i + j]
         carry += b[j]
         a[i + j] = carry.land(radix_mask)
-        carry = carry.asr(radix_bit_len)
+        carry = carry.shr(radix_bit_len)
       }
       carry += a[i + b_len]
       a[i + b_len] = carry.land(radix_mask)
-      carry = carry.asr(radix_bit_len)
-      borrow += carry
-      qh -= 1L
+      carry = carry.shr(radix_bit_len)
+      borrow += carry.to_int64()
+      qh -= 1
     }
-    q[i] = qh.to_int()
+    q[i] = qh.to_uint()
   }
   let len = if q[q.length() - 1] == 0 { q.length() - 1 } else { q.length() }
 
   // strip leading zeros
   let mut i = a.length() - 1
-  while i >= 0 && a[i] == 0L {
+  while i >= 0 && a[i] == 0 {
     i -= 1
   }
   if i < 0 {
@@ -460,9 +471,9 @@ fn grade_school_div(self : BigInt, other : BigInt) -> (BigInt, BigInt) {
   } else {
     i += 1
   }
-  let modulo = FixedArray::make(i, 0)
+  let modulo = FixedArray::make(i, 0U)
   for j = 0; j < i; j = j + 1 {
-    modulo[j] = a[j].to_int()
+    modulo[j] = a[j].to_uint()
   }
   let modulo = { limbs: modulo, sign: Positive, len: i }
   ({ limbs: q, sign: Positive, len }, modulo.shr(lshift))
@@ -479,21 +490,21 @@ pub fn lsl(self : BigInt, n : Int) -> BigInt {
   if not(self.is_zero()) {
     let new_limbs = FixedArray::make(
       self.len + (n + radix_bit_len - 1) / radix_bit_len, // ceiling(n / radix_bit_len)
-      0,
+      0U,
     )
     let a = self.limbs
     let r = n % radix_bit_len
     let lz = n / radix_bit_len // number of leading zeros
     let mut len = self.len + lz
     if r != 0 {
-      let mut carry = 0L
+      let mut carry = 0UL
       for i = 0; i < self.len; i = i + 1 {
-        carry = carry.lor(a[i].to_int64().lsl(r))
-        new_limbs[i + lz] = (carry % radix).to_int()
+        carry = carry.lor(a[i].to_uint64().lsl(r))
+        new_limbs[i + lz] = (carry % radix).to_uint()
         carry = carry.lsr(radix_bit_len)
       }
-      if carry > 0L {
-        new_limbs[self.len + lz] = carry.to_int()
+      if carry != 0 {
+        new_limbs[self.len + lz] = carry.to_uint()
         len += 1
       }
     } else {
@@ -524,21 +535,21 @@ pub fn shl(self : BigInt, n : Int) -> BigInt {
   if not(self.is_zero()) {
     let new_limbs = FixedArray::make(
       self.len + (n + radix_bit_len - 1) / radix_bit_len, // ceiling(n / radix_bit_len)
-      0,
+      0U,
     )
     let a = self.limbs
     let r = n % radix_bit_len
     let lz = n / radix_bit_len // number of leading zeros
     let mut len = self.len + lz
     if r != 0 {
-      let mut carry = 0L
+      let mut carry = 0UL
       for i = 0; i < self.len; i = i + 1 {
-        carry = carry.lor(a[i].to_int64().lsl(r))
-        new_limbs[i + lz] = (carry % radix).to_int()
+        carry = carry.lor(a[i].to_uint64().lsl(r))
+        new_limbs[i + lz] = (carry % radix).to_uint()
         carry = carry.lsr(radix_bit_len)
       }
-      if carry > 0L {
-        new_limbs[self.len + lz] = carry.to_int()
+      if carry != 0 {
+        new_limbs[self.len + lz] = carry.to_uint()
         len += 1
       }
     } else {
@@ -575,22 +586,22 @@ pub fn shr(self : BigInt, n : Int) -> BigInt {
   }
   let mut new_len = self.len - lz
   if r == 0 {
-    let new_limbs = FixedArray::make(new_len, 0)
+    let new_limbs = FixedArray::make(new_len, 0U)
     new_limbs.unsafe_blit(0, self.limbs, lz, new_len)
     { limbs: new_limbs, sign: self.sign, len: new_len }
   } else {
-    let new_limbs = FixedArray::make(new_len, 0)
+    let new_limbs = FixedArray::make(new_len, 0U)
     let a = self.limbs
-    let mut carry = 0L
+    let mut carry = 0UL
     for i = self.len - 1; i >= lz; i = i - 1 {
-      let x = a[i].to_int64()
-      new_limbs[i - lz] = x.lsr(r).lor(carry).to_int()
+      let x = a[i].to_uint64()
+      new_limbs[i - lz] = x.lsr(r).lor(carry).to_uint()
       carry = x.lsl(radix_bit_len - r) % radix
     }
     if new_len > 1 && new_limbs[new_len - 1] == 0 {
       new_len -= 1
     }
-    if self.sign == Negative && (carry & 1L.lsl(r)) != carry {
+    if self.sign == Negative && (carry & 1UL.lsl(r)) != carry {
       { limbs: new_limbs, sign: self.sign, len: new_len } - 1
     } else {
       { limbs: new_limbs, sign: self.sign, len: new_len }
@@ -656,7 +667,7 @@ pub fn to_string(self : BigInt) -> String {
     return "0"
   }
   let decimal_radix_bit_len = 19 - 1 - (1 + radix_bit_len) / 3 // < len(9,223,372,036,854,775,807) - len(2^radix_bit_len). len means the number of digits in decimal.
-  let decimal_mask = 10000000000000L // 10^(decimal_radix_bit_len). TODO: compute it when we have power function.
+  let decimal_mask = 10_000_000L // 10^(decimal_radix_bit_len). TODO: compute it when we have power function.
   // The following value should fit well into an Int without precision loss.
   // This is an approximation of the number of slots needed to represent the decimal value.
   let decimal_len = ((self.len * radix_bit_len).to_double() *
@@ -667,7 +678,7 @@ pub fn to_string(self : BigInt) -> String {
   let v = Array::make(decimal_len, 0L)
   let mut v_idx = 0
   for i = self.len - 1; i >= 0; i = i - 1 {
-    let mut x = self.limbs[i].to_int64()
+    let mut x = self.limbs[i].to_uint64().to_int64()
     for j = 0; j < v_idx; j = j + 1 {
       let y = v[j].lsl(radix_bit_len).lor(x)
       x = y / decimal_mask
@@ -712,7 +723,7 @@ pub fn BigInt::from_string(input : String) -> BigInt {
     ) /
     radix_bit_len +
     1
-  let b = FixedArray::make(b_len, 0)
+  let b = FixedArray::make(b_len, 0U)
   for i = match sign {
           Negative => 1
           Positive => 0
@@ -723,10 +734,10 @@ pub fn BigInt::from_string(input : String) -> BigInt {
     if x < 0 || x > 9 {
       abort("invalid character")
     }
-    let mut carry = x.to_int64()
+    let mut carry = x.to_uint().to_uint64()
     for j = 0; j < b_len; j = j + 1 {
-      carry += (b[j] * 10).to_int64()
-      b[j] = (carry % radix).to_int()
+      carry += b[j].to_uint64() * 10
+      b[j] = (carry % radix).to_uint()
       carry /= radix
     }
   }
@@ -745,14 +756,14 @@ pub fn BigInt::from_hex(input : String) -> BigInt {
   }
   let sign : Sign = if input[0] == '-' { Negative } else { Positive }
   let mut b_len = (len * 4 + 1 + radix_bit_len) / radix_bit_len + 1 // TODO: 4 is hardcoded.
-  let b = FixedArray::make(b_len, 0)
+  let b = FixedArray::make(b_len, 0U)
   for i = match sign {
           Negative => 1
           Positive => 0
         }
       i < input.length()
       i = i + 1 {
-    let x = input[i].to_int()
+    let x = input[i].to_int().to_int64()
     let y = if x >= 48 && x <= 57 {
       // ASCII value of '0'
       x - 48
@@ -765,11 +776,11 @@ pub fn BigInt::from_hex(input : String) -> BigInt {
     } else {
       abort("invalid character")
     }
-    let mut carry = y
+    let mut carry = y.to_uint64()
     for j = 0; j < b_len; j = j + 1 {
-      carry += b[j] * 16
-      b[j] = carry % radix.to_int()
-      carry /= radix.to_int()
+      carry += b[j].to_uint64() * 16
+      b[j] = (carry % radix).to_uint()
+      carry /= radix
     }
   }
   while b[b_len - 1] == 0 && b_len > 1 {
@@ -790,14 +801,14 @@ pub fn to_hex(self : BigInt) -> String {
       let y = x % 16
       x /= 16
       tmp = if y < 10 {
-          Char::from_int(y + 48).to_string()
+          Char::from_int(y.to_int() + 48).to_string()
         } else {
-          Char::from_int(y + 55).to_string()
+          Char::from_int(y.to_int() + 55).to_string()
         } +
         tmp
     }
-    if i != self.len - 1 && tmp.length() < 4 {
-      let pad = 4 - tmp.length()
+    if i != self.len - 1 && tmp.length() < radix_bit_len / 4 {
+      let pad = radix_bit_len / 4 - tmp.length()
       // pad with zeros if not the last limb(the front of the BigInt)
       for j = 0; j < pad; j = j + 1 {
         tmp = "0" + tmp
@@ -815,7 +826,7 @@ pub fn to_hex(self : BigInt) -> String {
 }
 
 fn deep_clone(self : BigInt) -> BigInt {
-  let new_limbs = FixedArray::make(self.len, 0)
+  let new_limbs = FixedArray::make(self.len, 0U)
   new_limbs.unsafe_blit(0, self.limbs, 0, self.len)
   { limbs: new_limbs, sign: self.sign, len: self.len }
 }

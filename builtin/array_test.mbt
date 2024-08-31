@@ -29,7 +29,7 @@ test "array_from_fixed_array" {
 test "array_make" {
   let arr = Array::make(5, 42)
   assert_eq!(arr.length(), 5)
-  for i = 0; i < 5; i = i + 1 {
+  for i in 0..<5 {
     assert_eq!(arr[i], 42)
   }
 }
@@ -116,7 +116,16 @@ test "array_append" {
   let arr2 = [4, 5, 6]
   arr1.append(arr2)
   assert_eq!(arr1.length(), 6)
+  // assert_eq!(arr1.capacity(), 6)
   assert_eq!(arr1[3], 4)
+  let cap = 20
+  let arr3 = Array::new(capacity=cap)
+  arr3.resize(cap, 10)
+  arr1.append(arr3)
+  assert_eq!(arr1.length(), 6 + cap)
+  // assert_eq!(arr1.capacity(), arr1.length())
+  // Not testing capacity as it may be platform/algorithm 
+  // dependent and not guaranteed to be equal to length
 }
 
 test "array_each" {
@@ -309,8 +318,10 @@ test "array_remove" {
 
 test "array_retain" {
   let arr = [1, 2, 3, 4, 5]
+  assert_eq!(arr.capacity(), 5)
   arr.retain(fn(x) { x % 2 == 0 })
   assert_eq!(arr.length(), 2)
+  assert_eq!(arr.capacity(), 5)
   assert_eq!(arr[0], 2)
   assert_eq!(arr[1], 4)
 }
@@ -500,9 +511,9 @@ test "array_split" {
   )
 }
 
-test "array_find_index" {
-  inspect!([1, 2, 3, 4, 5].find_index(fn(x) { x % 2 == 0 }), content="Some(1)")
-  inspect!([1, 2, 3, 4, 5].find_index(fn(x) { x > 5 }), content="None")
+test "array_search_by" {
+  inspect!([1, 2, 3, 4, 5].search_by(fn(x) { x % 2 == 0 }), content="Some(1)")
+  inspect!([1, 2, 3, 4, 5].search_by(fn(x) { x > 5 }), content="None")
 }
 
 test "shrink_to_fit" {
@@ -556,7 +567,7 @@ test "array_binary_search_str_test" {
 
 struct TestStruct {
   num : Int
-} derive(Eq)
+}
 
 test "array_binary_search_by_test" {
   let arr = [{ num: 10 }, { num: 22 }, { num: 35 }, { num: 48 }]

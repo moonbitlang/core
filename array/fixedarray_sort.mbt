@@ -436,7 +436,7 @@ fn fixed_test_sort(f : (FixedArray[Int]) -> Unit) -> Unit! {
   f(arr)
   assert_eq!(arr, [1, 2, 3, 4, 5])
   let arr = FixedArray::make(1000, 0)
-  for i = 0; i < 1000; i = i + 1 {
+  for i in 0..<1000 {
     arr[i] = 1000 - i - 1
   }
   for i = 10; i < 1000; i = i + 10 {
@@ -444,7 +444,7 @@ fn fixed_test_sort(f : (FixedArray[Int]) -> Unit) -> Unit! {
   }
   f(arr)
   let expected = FixedArray::make(1000, 0)
-  for i = 0; i < 1000; i = i + 1 {
+  for i in 0..<1000 {
     expected[i] = i
   }
   assert_eq!(arr, expected)
@@ -471,7 +471,7 @@ test "stable_sort" {
   arr.stable_sort()
   assert_eq!(arr, [1, 2, 3, 4, 5])
   let arr = FixedArray::make(1000, 0)
-  for i = 0; i < 1000; i = i + 1 {
+  for i in 0..<1000 {
     arr[i] = 1000 - i - 1
   }
   for i = 10; i < 1000; i = i + 10 {
@@ -479,7 +479,7 @@ test "stable_sort" {
   }
   arr.stable_sort()
   let expected = FixedArray::make(1000, 0)
-  for i = 0; i < 1000; i = i + 1 {
+  for i in 0..<1000 {
     expected[i] = i
   }
   assert_eq!(arr, expected)
