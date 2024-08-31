@@ -227,10 +227,11 @@ pub fn drain[T](self : Array[T], begin : Int, end : Int) -> Array[T] {
 /// let v2 = [6, 7, 8]
 /// v1.append(v2)
 /// ```
-/// TODO: could be made more efficient
+/// TODO: could be made more efficient doing direct mem.copy
 pub fn append[T](self : Array[T], other : Array[T]) -> Unit {
-  for i = 0; i < other.length(); i = i + 1 {
-    self.push(other[i])
+  self.reserve_capacity(self.length() + other.length())
+  for v in other {
+    self.push(v)
   }
 }
 
@@ -568,8 +569,34 @@ pub fn strip_suffix[T : Eq](self : Array[T], suffix : Array[T]) -> Array[T]? {
 /// v.search(3)
 /// ```
 pub fn search[T : Eq](self : Array[T], value : T) -> Int? {
-  for i = 0; i < self.length(); i = i + 1 {
-    if self.buffer()[i] == value {
+  for i, v in self {
+    if v == value {
+      break Some(i)
+    }
+  } else {
+    None
+  }
+}
+
+/// @alert deprecated "Use `search_by` instead."
+pub fn find_index[T](self : Array[T], f : (T) -> Bool) -> Int? {
+  search_by(self, f)
+}
+
+/// Search the index of the first element that satisfies the predicate.
+//
+/// # Example
+/// 
+/// ```
+/// let v = [1, 2, 3, 4, 5]
+/// match v.search_by(fn(x) { x == 3 }) {
+///   Some(index) => println(index) // 2
+///   None => println("Not found")
+/// }
+/// ```
+pub fn search_by[T](self : Array[T], f : (T) -> Bool) -> Int? {
+  for i, v in self {
+    if f(v) {
       break Some(i)
     }
   } else {
@@ -636,7 +663,7 @@ pub fn binary_search[T : Compare](
 /// assert_eq!(result, Ok(0)) // The element 3 is found at index 0
 /// ```
 /// # Type Parameters
-/// - `T`: The type of elements in the array. It must implement the `Eq` trait.
+/// - `T`: The type of elements in the array.
 /// 
 /// # Arguments
 /// - `self`: The array in which to perform the search.
@@ -730,13 +757,14 @@ pub fn remove[T](self : Array[T], index : Int) -> T {
 /// ```
 /// TODO: perf could be improved
 pub fn retain[T](self : Array[T], f : (T) -> Bool) -> Unit {
-  let mut i = 0
-  while i < self.length() {
-    if f(self.buffer()[i]).not() {
-      self.remove(i) |> ignore
-    } else {
-      i = i + 1
+  for i = 0, j = 0; i < self.length(); {
+    if f(self.buffer()[i]) {
+      self.buffer()[j] = self.buffer()[i]
+      continue i + 1, j + 1
     }
+    continue i + 1, j
+  } else {
+    self.set_length(j)
   }
 }
 
@@ -1077,25 +1105,4 @@ pub fn shrink_to_fit[T](self : Array[T]) -> Unit {
 /// Converts the array to a string.
 pub fn to_string[T : Show](self : Array[T]) -> String {
   Show::to_string(self)
-}
-
-/// Find the index of the first element that satisfies the predicate.
-//
-/// # Example
-///
-/// ```
-/// let v = [1, 2, 3, 4, 5]
-/// match v.find_index(fn(x) { x == 3 }) {
-///   Some(index) => println(index) // 2
-///   None => println("Not found")
-/// }
-/// ```
-pub fn find_index[T](self : Array[T], f : (T) -> Bool) -> Int? {
-  for i = 0; i < self.length(); i = i + 1 {
-    if f(self[i]) {
-      break Some(i)
-    }
-  } else {
-    None
-  }
 }
