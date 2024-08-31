@@ -29,7 +29,7 @@ test "array_from_fixed_array" {
 test "array_make" {
   let arr = Array::make(5, 42)
   assert_eq!(arr.length(), 5)
-  for i = 0; i < 5; i = i + 1 {
+  for i in 0..<5 {
     assert_eq!(arr[i], 42)
   }
 }

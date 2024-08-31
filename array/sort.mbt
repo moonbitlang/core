@@ -234,7 +234,7 @@ fn test_sort(f : (Array[Int]) -> Unit) -> Unit! {
   f(arr)
   assert_eq!(arr, [1, 2, 3, 4, 5])
   let arr = Array::new(capacity=1000)
-  for i = 0; i < 1000; i = i + 1 {
+  for i in 0..<1000 {
     arr.push(1000 - i - 1)
   }
   for i = 10; i < 1000; i = i + 10 {
@@ -242,7 +242,7 @@ fn test_sort(f : (Array[Int]) -> Unit) -> Unit! {
   }
   f(arr)
   let expected = Array::new(capacity=1000)
-  for i = 0; i < 1000; i = i + 1 {
+  for i in 0..<1000 {
     expected.push(i)
   }
   assert_eq!(arr, expected)
