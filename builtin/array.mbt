@@ -761,14 +761,15 @@ pub fn remove[T](self : Array[T], index : Int) -> T {
 /// ```
 /// TODO: perf could be improved
 pub fn retain[T](self : Array[T], f : (T) -> Bool) -> Unit {
-  let mut j = 0
-  for i = 0; i < self.length(); i = i + 1 {
+  for i = 0, j = 0; i < self.length(); {
     if f(self.buffer()[i]) {
       self.buffer()[j] = self.buffer()[i]
-      j = j + 1
+      continue i + 1, j + 1
     }
+    continue i + 1, j
+  } else {
+    self.set_length(j)
   }
-  self.set_length(j)
 }
 
 /// Resize the array to a new length with a default value.
