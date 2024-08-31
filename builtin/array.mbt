@@ -227,20 +227,11 @@ pub fn drain[T](self : Array[T], begin : Int, end : Int) -> Array[T] {
 /// let v2 = [6, 7, 8]
 /// v1.append(v2)
 /// ```
-/// TODO: could be made more efficient
+/// TODO: could be made more efficient doing direct mem.copy
 pub fn append[T](self : Array[T], other : Array[T]) -> Unit {
-  let capacity = {
-    let want = self.length() + other.length()
-    let now = self.capacity()
-    if want > now {
-      want
-    } else {
-      now
-    }
-  }
-  self.reserve_capacity(capacity)
-  for i = 0; i < other.length(); i = i + 1 {
-    self.push(other[i])
+  self.reserve_capacity(self.length() + other.length())
+  for v in other {
+    self.push(v)
   }
 }
 
@@ -578,8 +569,8 @@ pub fn strip_suffix[T : Eq](self : Array[T], suffix : Array[T]) -> Array[T]? {
 /// v.search(3)
 /// ```
 pub fn search[T : Eq](self : Array[T], value : T) -> Int? {
-  for i = 0; i < self.length(); i = i + 1 {
-    if self.buffer()[i] == value {
+  for i, v in self {
+    if v == value {
       break Some(i)
     }
   } else {
