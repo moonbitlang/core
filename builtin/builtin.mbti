@@ -100,6 +100,7 @@ impl Array {
   rev_foldi[A, B](Self[A], ~init : B, (Int, B, A) -> B) -> B
   rev_inplace[T](Self[T]) -> Unit
   search[T : Eq](Self[T], T) -> Int?
+  search_by[T](Self[T], (T) -> Bool) -> Int?
   shrink_to_fit[T](Self[T]) -> Unit
   split[T](Self[T], (T) -> Bool) -> Self[Self[T]]
   split_at[T](Self[T], Int) -> Tuple[Self[T], Self[T]]
