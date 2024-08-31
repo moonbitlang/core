@@ -60,6 +60,7 @@ impl Array {
   ends_with[T : Eq](Self[T], Self[T]) -> Bool
   extract_if[T](Self[T], (T) -> Bool) -> Self[T]
   filter[T](Self[T], (T) -> Bool) -> Self[T]
+  find_index[T](Self[T], (T) -> Bool) -> Int?
   flatten[T](Self[Self[T]]) -> Self[T]
   fold[A, B](Self[A], ~init : B, (B, A) -> B) -> B
   fold_left[T, U](Self[T], (U, T) -> U, ~init : U) -> U

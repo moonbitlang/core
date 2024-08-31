@@ -587,6 +587,11 @@ pub fn search[T : Eq](self : Array[T], value : T) -> Int? {
   }
 }
 
+/// @alert deprecated "Use `search_by` instead."
+pub fn find_index[T](self : Array[T], f : (T) -> Bool) -> Int? {
+  search_by(self, f)
+}
+
 /// Search the index of the first element that satisfies the predicate.
 //
 /// # Example
@@ -599,8 +604,8 @@ pub fn search[T : Eq](self : Array[T], value : T) -> Int? {
 /// }
 /// ```
 pub fn search_by[T](self : Array[T], f : (T) -> Bool) -> Int? {
-  for i = 0; i < self.length(); i = i + 1 {
-    if f(self[i]) {
+  for i, v in self {
+    if f(v) {
       break Some(i)
     }
   } else {
