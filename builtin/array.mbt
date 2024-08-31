@@ -247,8 +247,8 @@ pub fn append[T](self : Array[T], other : Array[T]) -> Unit {
 /// v.each(fn (x) {sum = sum + x})
 /// ```
 pub fn each[T](self : Array[T], f : (T) -> Unit) -> Unit {
-  for i = 0; i < self.length(); i = i + 1 {
-    f(self[i])
+  for v in self {
+    f(v)
   }
 }
 
@@ -267,8 +267,8 @@ pub fn rev_each[T](self : Array[T], f : (T) -> Unit) -> Unit {
 /// v.eachi(fn (i, x) {sum = sum + x + i})
 /// ```
 pub fn eachi[T](self : Array[T], f : (Int, T) -> Unit) -> Unit {
-  for i = 0; i < self.length(); i = i + 1 {
-    f(i, self[i])
+  for i, v in self {
+    f(i, v)
   }
 }
 
@@ -313,8 +313,8 @@ pub fn map[T, U](self : Array[T], f : (T) -> U) -> Array[U] {
     return []
   }
   let arr = Array::make_uninit(self.length())
-  for i = 0; i < self.length(); i = i + 1 {
-    arr.buffer()[i] = f(self.buffer()[i])
+  for i, v in self {
+    arr.buffer()[i] = f(v)
   }
   arr
 }
@@ -327,8 +327,8 @@ pub fn map[T, U](self : Array[T], f : (T) -> U) -> Array[U] {
 /// v.map_inplace(fn (x) {x + 1})
 /// ```
 pub fn map_inplace[T](self : Array[T], f : (T) -> T) -> Unit {
-  for i = 0; i < self.length(); i = i + 1 {
-    self.buffer()[i] = f(self.buffer()[i])
+  for i, v in self {
+    self[i] = f(v)
   }
 }
 
@@ -344,8 +344,8 @@ pub fn mapi[T, U](self : Array[T], f : (Int, T) -> U) -> Array[U] {
     return []
   }
   let arr = Array::make_uninit(self.length())
-  for i = 0; i < self.length(); i = i + 1 {
-    arr.buffer()[i] = f(i, self.buffer()[i])
+  for i, v in self {
+    arr.buffer()[i] = f(i, v)
   }
   arr
 }
@@ -358,8 +358,8 @@ pub fn mapi[T, U](self : Array[T], f : (Int, T) -> U) -> Array[U] {
 /// v.mapi_inplace(fn (i, x) {x + i})
 /// ```
 pub fn mapi_inplace[T](self : Array[T], f : (Int, T) -> T) -> Unit {
-  for i = 0; i < self.length(); i = i + 1 {
-    self[i] = f(i, self[i])
+  for i, v in self {
+    self[i] = f(i, v)
   }
 }
 
@@ -372,7 +372,11 @@ pub fn mapi_inplace[T](self : Array[T], f : (Int, T) -> T) -> Unit {
 /// ```
 pub fn filter[T](self : Array[T], f : (T) -> Bool) -> Array[T] {
   let arr = []
-  self.each(fn(e) { if f(e) { arr.push(e) } })
+  for v in self {
+    if f(v) {
+      arr.push(v)
+    }
+  }
   arr
 }
 
@@ -467,8 +471,8 @@ pub fn split_at[T](self : Array[T], index : Int) -> (Array[T], Array[T]) {
 /// v.contains(3)
 /// ```
 pub fn contains[T : Eq](self : Array[T], value : T) -> Bool {
-  for i = 0; i < self.length(); i = i + 1 {
-    if self.buffer()[i] == value {
+  for v in self {
+    if v == value {
       break true
     }
   } else {
@@ -823,10 +827,11 @@ pub fn insert[T](self : Array[T], index : Int, value : T) -> Unit {
 /// ```
 /// [[3, 4], [5, 6]].flatten()
 /// ```
+/// TODO: perf could be improved by pre-allocated
 pub fn flatten[T](self : Array[Array[T]]) -> Array[T] {
   let v = []
-  for i = 0; i < self.length(); i = i + 1 {
-    v.append(self[i])
+  for arr in self {
+    v.append(arr)
   }
   v
 }
