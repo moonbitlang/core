@@ -94,13 +94,16 @@ pub fn exp(self : Double) -> Double {
   let t = x * x
   let twopk = if k >= -1021 {
     insert_words(
-      (0x3FF00000 + (k.to_uint() << 20).reinterpret_as_int())
+      (0x3FF00000 + (k.reinterpret_as_uint() << 20).reinterpret_as_int())
       .to_int64()
       .to_uint64(),
       0,
     )
   } else {
-    insert_words(0x3FF00000UL + ((k + 1000).to_uint() << 20).to_uint64(), 0)
+    insert_words(
+      0x3FF00000UL + ((k + 1000).reinterpret_as_uint() << 20).to_uint64(),
+      0,
+    )
   }
   let c = x - t * (p1 + t * (p2 + t * (p3 + t * (p4 + t * p5))))
   if k == 0 {

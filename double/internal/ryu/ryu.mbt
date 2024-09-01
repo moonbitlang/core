@@ -614,7 +614,7 @@ pub fn ryu_to_string(val : Double) -> String {
       }
       v = x
     }
-    None => v = d2d(ieeeMantissa, ieeeExponent.to_uint())
+    None => v = d2d(ieeeMantissa, ieeeExponent.reinterpret_as_uint())
   }
   to_chars(v, ieeeSign)
 }

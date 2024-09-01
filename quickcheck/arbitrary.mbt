@@ -28,7 +28,7 @@ pub impl Arbitrary for UInt with arbitrary(size, rs) {
   if size == 0 {
     0
   } else {
-    rs.next_uint() % size.to_uint()
+    rs.next_uint() % size.reinterpret_as_uint()
   }
 }
 
@@ -54,6 +54,6 @@ pub impl Arbitrary for UInt64 with arbitrary(size, rs) {
   if size == 0 {
     0
   } else {
-    rs.next_uint64() % size.to_uint().to_uint64()
+    rs.next_uint64() % size.reinterpret_as_uint().to_uint64()
   }
 }

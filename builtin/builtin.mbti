@@ -362,6 +362,7 @@ impl Int {
   op_sub(Int, Int) -> Int
   popcnt(Int) -> Int
   reinterpret_as_float(Int) -> Float
+  reinterpret_as_uint(Int) -> UInt
   shl(Int, Int) -> Int
   shr(Int, Int) -> Int
   to_byte(Int) -> Byte
