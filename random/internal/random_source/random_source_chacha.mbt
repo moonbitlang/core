@@ -155,9 +155,9 @@ pub fn State::refill(self : State) -> Unit {
     }
   }
   self.i = 0
-  self.n = self.buffer.length().to_uint()
+  self.n = self.buffer.length().reinterpret_as_uint()
   if self.c == ctrMax - ctrInc {
-    self.n = (self.buffer.length() - chachaReseed).to_uint()
+    self.n = (self.buffer.length() - chachaReseed).reinterpret_as_uint()
   }
 }
 

@@ -665,7 +665,7 @@ pub fn BigInt::from_string(input : String) -> BigInt {
     if x < 0 || x > 9 {
       abort("invalid character")
     }
-    let mut carry = x.to_uint().to_uint64()
+    let mut carry = x.reinterpret_as_uint().to_uint64()
     for j = 0; j < b_len; j = j + 1 {
       carry += b[j].to_uint64() * 10
       b[j] = (carry % radix).to_uint()
