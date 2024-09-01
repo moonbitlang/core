@@ -194,7 +194,13 @@ pub fn Byte::to_int64(self : Byte) -> Int64 {
   self.to_int().to_int64()
 }
 
-// UInt primitive
+/// reinterpret the unsigned int as signed int
+/// For number within the range of 0..=2^31-1, 
+/// the value is the same. For number within the range of 2^31..=2^32-1,
+/// the value is negative
+pub fn UInt::reinterpret_as_int(self : UInt) -> Int = "%u32.to_i32_reinterpret"
+
+/// @alert deprecated "Use `reinterpret_as_int` instead"
 pub fn UInt::to_int(self : UInt) -> Int = "%u32.to_i32_reinterpret"
 
 pub fn UInt::op_add(self : UInt, other : UInt) -> UInt = "%u32.add"

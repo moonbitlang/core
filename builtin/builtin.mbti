@@ -426,6 +426,7 @@ impl UInt {
   op_shl(UInt, Int) -> UInt
   op_shr(UInt, Int) -> UInt
   op_sub(UInt, UInt) -> UInt
+  reinterpret_as_int(UInt) -> Int
   shl(UInt, Int) -> UInt
   shr(UInt, Int) -> UInt
   to_float(UInt) -> Float

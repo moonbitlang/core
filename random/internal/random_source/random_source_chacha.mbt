@@ -54,7 +54,7 @@ pub fn State::next(self : State) -> (UInt64, Bool) {
     return (0, false)
   }
   self.i = i + 1
-  (self.buffer[i.to_int() & 31], true)
+  (self.buffer[i.reinterpret_as_int() & 31], true)
 }
 
 fn bytesToUInt64(b : Bytes) -> UInt64 {
