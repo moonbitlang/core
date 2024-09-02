@@ -322,7 +322,8 @@ fn grade_school_div(self : BigInt, other : BigInt) -> (BigInt, BigInt) {
   // - divident.limbs.length() = self.limbs.length() + 1
   let lshift = max(
     0,
-    radix_bit_len - (64 - divisor.limbs[divisor.len - 1].to_int64().clz()),
+    radix_bit_len -
+    (64 - divisor.limbs[divisor.len - 1].to_uint64().to_int64().clz()),
   )
   let a_len = dividend.len
   let dividend = dividend.shl(lshift)
@@ -332,12 +333,12 @@ fn grade_school_div(self : BigInt, other : BigInt) -> (BigInt, BigInt) {
   for i = 0; i < b_len; i = i + 1 {
     b[i] = divisor.limbs[i].to_uint64()
   }
-  let a = FixedArray::make(a_len + 1, 0L)
+  let a = FixedArray::make(a_len + 1, 0UL)
   for i = 0; i < a_len; i = i + 1 {
-    a[i] = dividend.limbs[i].to_int64()
+    a[i] = dividend.limbs[i].to_uint64()
   } else {
     if dividend.limbs.length() > i {
-      a[i] = dividend.limbs[i].to_int64()
+      a[i] = dividend.limbs[i].to_uint64()
     }
   }
   // invariant : divisor.limbs.last() >= radix / 2
@@ -348,7 +349,7 @@ fn grade_school_div(self : BigInt, other : BigInt) -> (BigInt, BigInt) {
   // a is the adjusted dividend and b is the adjusted divisor
   let v1 = b[b_len - 1]
   let v2 = b[b_len - 2]
-  let q = FixedArray::make(a_len - b_len, 0)
+  let q = FixedArray::make(a_len - b_len, 0U)
   // D2 - D7 loop through m to 0
   for i = q.length() - 1; i >= 0; i = i - 1 {
     let u0 = a[i + b_len]
