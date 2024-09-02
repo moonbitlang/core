@@ -821,14 +821,16 @@ pub fn BigInt::from_octets(input : Bytes, ~signum : Int = 1) -> BigInt {
   for i = 0; i < mod / 8; i = i + 1 {
     limbs[limbs_len - 1] = limbs[limbs_len - 1]
       .lsl(8)
-      .lor(input[i].to_int().to_uint())
+      .lor(input[i].to_int().reinterpret_as_uint())
   }
   let byte_per_limb = radix_bit_len / 8
   // tail
   for i = 0; i < div; i = i + 1 {
     for j = 0; j < byte_per_limb; j = j + 1 {
       let bytes_idx = len - byte_per_limb - i * byte_per_limb + j
-      limbs[i] = limbs[i].lsl(8).lor(input[bytes_idx].to_int().to_uint())
+      limbs[i] = limbs[i]
+        .lsl(8)
+        .lor(input[bytes_idx].to_int().reinterpret_as_uint())
     }
   }
   if limbs[limbs_len - 1] == 0 {
@@ -861,14 +863,14 @@ pub fn BigInt::to_octets(self : BigInt, ~length? : Int) -> Bytes {
   if self.sign == Negative {
     abort("negative BigInt")
   }
-  let head_bits = 32 - self.limbs[self.len - 1].to_int().clz()
+  let head_bits = 32 - self.limbs[self.len - 1].reinterpret_as_int().clz()
   let tail_len = self.len - 1
   let len = (head_bits + 7) / 8 + tail_len * (radix_bit_len / 8)
   let len = max(length, len)
   let result = Bytes::new(len)
   for i = 0; i < len && i / 4 < self.len; i = i + 1 {
     result[len - 1 - i] = (self.limbs[i / 4].shr(i % 4 * 8) & 0xffU)
-      .to_int()
+      .reinterpret_as_int()
       .to_byte()
   }
   result
