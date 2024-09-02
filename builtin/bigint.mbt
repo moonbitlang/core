@@ -45,6 +45,7 @@ priv enum Sign {
 /// Invariants:
 /// - ((radix - 1) ^ 2) must fit in an Int64
 /// - radix can only be a power of 2
+/// - radix_bit_len is multiple of 4
 /// - radix_bit_len <= 32
 let radix_bit_len = 32
 
@@ -680,43 +681,51 @@ pub fn BigInt::from_string(input : String) -> BigInt {
 }
 
 /// Converts a hex string to a BigInt.
+/// 
+/// The input string must be a valid hex string with no extra `0x` prefix.
 pub fn BigInt::from_hex(input : String) -> BigInt {
-  // WARN: this implementation assumes that `radix` is a power of 2.
+  // WARN: this implementation assumes that `radix_bit_len` is a multiple of 4.
+  fn char_from_hex(c : Char) -> UInt {
+    let x = c.to_int()
+    if x >= 48 && x <= 57 {
+      // ASCII value of '0'
+      (x - 48).reinterpret_as_uint()
+    } else if x >= 65 && x <= 70 {
+      // ASCII value of 'A'
+      (x - 55).reinterpret_as_uint()
+    } else if x >= 97 && x <= 102 {
+      // ASCII value of 'a'
+      (x - 87).reinterpret_as_uint()
+    } else {
+      abort("invalid character")
+    }
+  }
+
   let len = input.length()
   if len == 0 {
     abort("empty string")
   }
-  let sign : Sign = if input[0] == '-' { Negative } else { Positive }
-  let mut b_len = (len * 4 + 1 + radix_bit_len) / radix_bit_len + 1 // TODO: 4 is hardcoded.
+  let (sign, number_len) = if input[0] == '-' {
+    (Negative, len - 1)
+  } else {
+    (Positive, len)
+  }
+  let nb_char = radix_bit_len / 4 // number of char per limb
+  let quotient = number_len / nb_char
+  let mod = number_len % nb_char
+  let b_len = if mod == 0 { quotient } else { quotient + 1 }
   let b = FixedArray::make(b_len, 0U)
-  for i = match sign {
-          Negative => 1
-          Positive => 0
-        }
-      i < input.length()
-      i = i + 1 {
-    let x = input[i].to_int().to_int64()
-    let y = if x >= 48 && x <= 57 {
-      // ASCII value of '0'
-      x - 48
-    } else if x >= 65 && x <= 70 {
-      // ASCII value of 'A'
-      x - 55
-    } else if x >= 97 && x <= 102 {
-      // ASCII value of 'a'
-      x - 87
-    } else {
-      abort("invalid character")
-    }
-    let mut carry = y.to_uint64()
-    for j = 0; j < b_len; j = j + 1 {
-      carry += b[j].to_uint64() * 16
-      b[j] = (carry % radix).to_uint()
-      carry /= radix
+  if mod != 0 {
+    let start = len - quotient * nb_char - mod
+    for i = 0; i < mod; i = i + 1 {
+      b[b_len - 1] = (b[b_len - 1] << 4) | char_from_hex(input[start + i])
     }
   }
-  while b[b_len - 1] == 0 && b_len > 1 {
-    b_len -= 1
+  for i = 0; i < quotient; i = i + 1 {
+    let start = len - (i + 1) * nb_char
+    for j = 0; j < nb_char; j = j + 1 {
+      b[i] = (b[i] << 4) | char_from_hex(input[start + j])
+    }
   }
   { limbs: b, sign, len: b_len }
 }
