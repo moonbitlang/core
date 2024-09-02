@@ -55,7 +55,7 @@ pub fn Rand::int(self : Rand, ~limit : Int = 0) -> Int {
     // Range [0, 2^31)
     self.next().lsr(33).to_int()
   } else {
-    self.uint(limit=limit.to_uint()).to_int()
+    self.uint(limit=limit.reinterpret_as_uint()).reinterpret_as_int()
   }
 }
 

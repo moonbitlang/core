@@ -100,6 +100,7 @@ impl Array {
   rev_foldi[A, B](Self[A], ~init : B, (Int, B, A) -> B) -> B
   rev_inplace[T](Self[T]) -> Unit
   search[T : Eq](Self[T], T) -> Int?
+  search_by[T](Self[T], (T) -> Bool) -> Int?
   shrink_to_fit[T](Self[T]) -> Unit
   split[T](Self[T], (T) -> Bool) -> Self[Self[T]]
   split_at[T](Self[T], Int) -> Tuple[Self[T], Self[T]]
@@ -361,6 +362,7 @@ impl Int {
   op_sub(Int, Int) -> Int
   popcnt(Int) -> Int
   reinterpret_as_float(Int) -> Float
+  reinterpret_as_uint(Int) -> UInt
   shl(Int, Int) -> Int
   shr(Int, Int) -> Int
   to_byte(Int) -> Byte
@@ -425,6 +427,7 @@ impl UInt {
   op_shl(UInt, Int) -> UInt
   op_shr(UInt, Int) -> UInt
   op_sub(UInt, UInt) -> UInt
+  reinterpret_as_int(UInt) -> Int
   shl(UInt, Int) -> UInt
   shr(UInt, Int) -> UInt
   to_float(UInt) -> Float

@@ -54,7 +54,7 @@ pub fn State::next(self : State) -> (UInt64, Bool) {
     return (0, false)
   }
   self.i = i + 1
-  (self.buffer[i.to_int() & 31], true)
+  (self.buffer[i.reinterpret_as_int() & 31], true)
 }
 
 fn bytesToUInt64(b : Bytes) -> UInt64 {
@@ -155,9 +155,9 @@ pub fn State::refill(self : State) -> Unit {
     }
   }
   self.i = 0
-  self.n = self.buffer.length().to_uint()
+  self.n = self.buffer.length().reinterpret_as_uint()
   if self.c == ctrMax - ctrInc {
-    self.n = (self.buffer.length() - chachaReseed).to_uint()
+    self.n = (self.buffer.length() - chachaReseed).reinterpret_as_uint()
   }
 }
 

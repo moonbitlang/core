@@ -93,8 +93,14 @@ pub fn Int::to_double(self : Int) -> Double = "%i32_to_f64"
 
 pub fn UInt::trunc_double(val : Double) -> UInt = "%f64.to_u32"
 
-pub fn Int::to_uint(self : Int) -> UInt = "%i32.to_u32_reinterpret"
+/// reinterpret the signed int as unsigned int, when the value is 
+/// non-negative, i.e, 0..=2^31-1, the value is the same. When the 
+/// value is negative, it turns into a large number, 
+/// for example, -1 turns into 2^32-1
+pub fn Int::reinterpret_as_uint(self : Int) -> UInt = "%i32.to_u32_reinterpret"
 
+/// @alert deprecated "Use `reinterpret_as_uint` instead"
+pub fn Int::to_uint(self : Int) -> UInt = "%i32.to_u32_reinterpret"
 // Double primitive ops
 
 pub fn Double::op_neg(self : Double) -> Double = "%f64_neg"
@@ -194,7 +200,13 @@ pub fn Byte::to_int64(self : Byte) -> Int64 {
   self.to_int().to_int64()
 }
 
-// UInt primitive
+/// reinterpret the unsigned int as signed int
+/// For number within the range of 0..=2^31-1, 
+/// the value is the same. For number within the range of 2^31..=2^32-1,
+/// the value is negative
+pub fn UInt::reinterpret_as_int(self : UInt) -> Int = "%u32.to_i32_reinterpret"
+
+/// @alert deprecated "Use `reinterpret_as_int` instead"
 pub fn UInt::to_int(self : UInt) -> Int = "%u32.to_i32_reinterpret"
 
 pub fn UInt::op_add(self : UInt, other : UInt) -> UInt = "%u32.add"

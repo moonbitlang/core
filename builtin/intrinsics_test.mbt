@@ -59,12 +59,28 @@ test "Int::lsl should perform left shift operation" {
   inspect!((7).lsl(32), content="7")
 }
 
+test "reinterpret: UInt <-> Int" {
+  inspect!(0U.reinterpret_as_int(), content="0")
+  inspect!(1U.reinterpret_as_int(), content="1")
+  inspect!((0x7fff_ffff : UInt).reinterpret_as_int(), content="2147483647")
+  inspect!((0x7fff_ffff : UInt), content="2147483647")
+  inspect!((0x8000_0000 : UInt).reinterpret_as_int(), content="-2147483648")
+  inspect!((0x8000_0000 : UInt), content="2147483648")
+  inspect!((0xffff_ffff : UInt).reinterpret_as_int(), content="-1")
+  inspect!((0xffff_ffff : UInt), content="4294967295")
+  inspect!((0).reinterpret_as_uint(), content="0")
+  inspect!((1).reinterpret_as_uint(), content="1")
+  inspect!((2147483647).reinterpret_as_uint(), content="2147483647")
+  inspect!((-2147483648).reinterpret_as_uint(), content="2147483648")
+  inspect!((-1).reinterpret_as_uint(), content="4294967295")
+}
+
 test "uint test" {
   inspect!(100U == 100U, content="true")
   inspect!(0U < 100U, content="true")
   inspect!(100U > 0U, content="true")
-  inspect!(2147483648U.to_int(), content="-2147483648")
-  inspect!((-2147483648).to_uint(), content="2147483648")
+  inspect!(2147483648U.reinterpret_as_int(), content="-2147483648")
+  inspect!((-2147483648).reinterpret_as_uint(), content="2147483648")
   inspect!((2147483648U + 1000000000U).to_uint64(), content="3147483648")
   inspect!(2147483647U + 1U, content="2147483648")
   inspect!(0U - 1U, content="4294967295")
@@ -188,4 +204,9 @@ test "float" {
   inspect!(b'5'.to_float().to_double(), content="53")
   inspect!((123456).to_float().to_double(), content="123456")
   // inspect!((0.36 : Float).sqrt().to_double(), content="0.6000000238418579")
+}
+
+test "Int::to_double" {
+  inspect!((10).to_double(), content="10")
+  inspect!((20).to_double(), content="20")
 }

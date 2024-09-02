@@ -284,7 +284,10 @@ fn d2d(ieeeMantissa : UInt64, ieeeExponent : UInt) -> FloatingDecimal64 {
     m2 = ieeeMantissa
   } else {
     // Add implicit leading 1.
-    e2 = ieeeExponent.to_int() - gDOUBLE_BIAS - gDOUBLE_MANTISSA_BITS - 2
+    e2 = ieeeExponent.reinterpret_as_int() -
+      gDOUBLE_BIAS -
+      gDOUBLE_MANTISSA_BITS -
+      2
     m2 = 1UL.lsl(gDOUBLE_MANTISSA_BITS).lor(ieeeMantissa)
   }
   let even = m2.land(1UL) == 0UL
@@ -611,7 +614,7 @@ pub fn ryu_to_string(val : Double) -> String {
       }
       v = x
     }
-    None => v = d2d(ieeeMantissa, ieeeExponent.to_uint())
+    None => v = d2d(ieeeMantissa, ieeeExponent.reinterpret_as_uint())
   }
   to_chars(v, ieeeSign)
 }

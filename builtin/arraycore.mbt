@@ -96,11 +96,11 @@ fn resize_buffer[T](self : Array[T], new_capacity : Int) -> Unit {
 test "array_unsafe_blit_fixed" {
   let src = FixedArray::make(5, 0)
   let dst = UninitializedArray::make(5)
-  for i = 0; i < 5; i = i + 1 {
+  for i in 0..<5 {
     src[i] = i + 1
   }
   UninitializedArray::unsafe_blit_fixed(dst, 0, src, 0, 5)
-  for i = 0; i < 5; i = i + 1 {
+  for i in 0..<5 {
     assert_eq!(dst[i], src[i])
   }
 }
@@ -123,11 +123,11 @@ test "array_resize_buffer" {
 test "UninitializedArray::unsafe_blit_fixed" {
   let src = FixedArray::make(5, 0)
   let dst = UninitializedArray::make(5)
-  for i = 0; i < 5; i = i + 1 {
+  for i in 0..<5 {
     src[i] = i + 1
   }
   UninitializedArray::unsafe_blit_fixed(dst, 0, src, 0, 5)
-  for i = 0; i < 5; i = i + 1 {
+  for i in 0..<5 {
     assert_eq!(dst[i], src[i])
   }
 }
@@ -150,11 +150,11 @@ test "Array::resize_buffer" {
 test "UninitializedArray::unsafe_blit_fixed" {
   let src = FixedArray::make(5, 0)
   let dst = UninitializedArray::make(5)
-  for i = 0; i < 5; i = i + 1 {
+  for i in 0..<5 {
     src[i] = i + 1
   }
   UninitializedArray::unsafe_blit_fixed(dst, 0, src, 0, 5)
-  for i = 0; i < 5; i = i + 1 {
+  for i in 0..<5 {
     assert_eq!(dst[i], src[i])
   }
 }
