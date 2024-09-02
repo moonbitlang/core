@@ -273,7 +273,7 @@ fn MyInt64::to_int(self : MyInt64) -> Int {
 }
 
 fn MyInt64::to_uint(self : MyInt64) -> UInt {
-  self.lo.to_uint()
+  self.lo.reinterpret_as_uint()
 }
 
 extern "js" fn MyInt64::from_double(value : Double) -> MyInt64 =
@@ -457,7 +457,7 @@ pub fn Int64::to_byte(self : Int64) -> Byte {
 }
 
 pub fn UInt64::extend_uint(value : UInt) -> UInt64 {
-  MyInt64::extend_i32_u(value.to_int()).to_uint64()
+  MyInt64::extend_i32_u(value.reinterpret_as_int()).to_uint64()
 }
 
 pub fn Int64::reinterpret_as_double(self : Int64) -> Double {

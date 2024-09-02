@@ -14,13 +14,13 @@
 
 type MyString String derive(Eq)
 
-impl Hash for MyString with hash(self) { self.0.length() }
+impl Hash for MyString with hash(self) { self._.length() }
 
 impl Hash for MyString with hash_combine(self, hasher) {
-  hasher.combine_string(self.0)
+  hasher.combine_string(self._)
 }
 
-impl Show for MyString with output(self, logger) { logger.write_string(self.0) }
+impl Show for MyString with output(self, logger) { logger.write_string(self._) }
 
 test "new" {
   let m : Map[Int, Int] = Map::new()

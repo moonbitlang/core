@@ -31,7 +31,7 @@ pub fn Array::make[T](len : Int, elem : T) -> Array[T] {
 
 /// Returns the total number of elements the array can hold without reallocating.
 pub fn capacity[T](self : Array[T]) -> Int {
-  self.buffer().0.length()
+  self.buffer()._.length()
 }
 
 /// Reallocate the array with a new capacity.
@@ -176,7 +176,7 @@ pub fn unsafe_pop[T](self : Array[T]) -> T {
 /// v.push(3)
 /// ```
 pub fn push[T](self : Array[T], value : T) -> Unit {
-  if self.length() == self.buffer().0.length() {
+  if self.length() == self.buffer()._.length() {
     self.realloc()
   }
   let length = self.length()
@@ -806,7 +806,7 @@ pub fn insert[T](self : Array[T], index : Int, value : T) -> Unit {
       "index out of bounds: the len is from 0 to \{len} but the index is \{index}",
     )
   }
-  if self.length() == self.buffer().0.length() {
+  if self.length() == self.buffer()._.length() {
     self.realloc()
   }
   UninitializedArray::unsafe_blit(
