@@ -49,11 +49,9 @@ test "from_array_1" {
 test "from_array_2" {
   let q : @queue.T[Int] = @queue.from_array([])
   inspect!(q, content="@queue.of([])")
-
   let array = Array::makei(3, fn(idx) { idx + 1 })
   let q : @queue.T[Int] = @queue.from_array(array)
   inspect!(q, content="@queue.of([1, 2, 3])")
-
   let q : @queue.T[Int] = @queue.from_array(Array::new(capacity=10))
   inspect!(q, content="@queue.of([])")
 }
