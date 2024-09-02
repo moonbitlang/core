@@ -25,9 +25,10 @@
 //
 // Invariants:
 // - len > 0
-// - forall i in 0..len-1, 0 <= limbs[i] < radix
-// - limbs[len-1] > 0
-// - forall i in len..limbs.length(), limbs[i] == 0
+// - forall 0 <= i < len. 0 <= limbs[i] < radix
+// - (exists 0 <= i < len. limbs[i] > 0) => limbs[len-1] > 0
+// - (forall 0 <= i < len. limbs[i] == 0) => limbs[0] == 0 and len == 1
+// - forall len <= i < limbs.length(). limbs[i] == 0
 struct BigInt {
   limbs : FixedArray[UInt] // Note: do not use limbs.length(), use len instead because of leading zeros
   sign : Sign // true for positive, false for negative
