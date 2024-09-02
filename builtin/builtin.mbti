@@ -132,6 +132,7 @@ impl BigInt {
   from_hex(String) -> Self
   from_int(Int) -> Self
   from_int64(Int64) -> Self
+  from_octets(Bytes, ~signum : Int = ..) -> Self
   from_string(String) -> Self
   is_zero(Self) -> Bool
   lsl(Self, Int) -> Self
@@ -144,9 +145,11 @@ impl BigInt {
   op_shl(Self, Int) -> Self
   op_shr(Self, Int) -> Self
   op_sub(Self, Self) -> Self
+  pow(Self, Self, ~modulus : Self = ..) -> Self
   shl(Self, Int) -> Self
   shr(Self, Int) -> Self
   to_hex(Self) -> String
+  to_octets(Self, ~length? : Int) -> Bytes
   to_string(Self) -> String
 }
 

@@ -770,3 +770,108 @@ fn max[T : Compare](a : T, b : T) -> T {
     b
   }
 }
+
+/// Compute the power of a BigInt to another BigInt.
+/// 
+/// Optionally takes a modulus BigInt.
+/// 
+/// The exponent must be non-negative, and modulus must be positive.
+pub fn pow(self : BigInt, exp : BigInt, ~modulus : BigInt = one) -> BigInt {
+  if exp.sign == Negative {
+    abort("negative exponent")
+  }
+  if modulus.is_zero() || modulus.sign == Negative {
+    abort("modulus non-positive")
+  }
+  let mut result = 1N
+  let mut base = self
+  let mut exp = exp
+  while exp > 0N {
+    if exp % 2N == 1N {
+      result = result * base % modulus
+    }
+    base = base * base % modulus
+    exp = exp / 2N
+  }
+  result
+}
+
+/// Convert an octet string to a BigInt.
+/// 
+/// The input is treated as a big-endian octet array.
+/// 
+/// Example: `from_octets(b"\xab\xcd\xef") == from_hex("abcdef")`
+/// 
+/// The input must not be empty, unless signum is zero
+pub fn BigInt::from_octets(input : Bytes, ~signum : Int = 1) -> BigInt {
+  let len = input.length() // number of bytes
+  if signum == 0 {
+    return zero
+  } else if signum < 0 {
+    return -from_octets(input)
+  }
+  if len == 0 {
+    abort("empty octet string")
+  }
+  let div = len * 8 / radix_bit_len
+  let mod = len * 8 % radix_bit_len // number of bits in the first limb
+  let limbs_len = if mod == 0 { div } else { div + 1 }
+  let limbs = FixedArray::make(limbs_len, 0U)
+  // head at most significant limb
+  for i = 0; i < mod / 8; i = i + 1 {
+    limbs[limbs_len - 1] = limbs[limbs_len - 1]
+      .lsl(8)
+      .lor(input[i].to_int().reinterpret_as_uint())
+  }
+  let byte_per_limb = radix_bit_len / 8
+  // tail
+  for i = 0; i < div; i = i + 1 {
+    for j = 0; j < byte_per_limb; j = j + 1 {
+      let bytes_idx = len - byte_per_limb - i * byte_per_limb + j
+      limbs[i] = limbs[i]
+        .lsl(8)
+        .lor(input[bytes_idx].to_int().reinterpret_as_uint())
+    }
+  }
+  if limbs[limbs_len - 1] == 0 {
+    { limbs, sign: Positive, len: max(1, limbs_len - 1) }
+  } else {
+    { limbs, sign: Positive, len: limbs_len }
+  }
+}
+
+/// Convert a BigInt to an octet string.
+/// 
+/// The output is a big-endian octet array.
+/// 
+/// The output may be padded with leading zeros to meet the length requirement 
+/// if and only if the actual length is less than the expected.
+/// 
+/// The value should be non-negative and the padding should be positive.
+/// 
+/// Example: 
+/// - `to_octets(from_hex("abcdef"), length=3) == b"\xab\xcd\xef"`
+/// - `to_octets(from_hex("1abcdef"), length=3) == b"\x01\xab\xcd\xef"`
+pub fn BigInt::to_octets(self : BigInt, ~length? : Int) -> Bytes {
+  let length = match length {
+    None => 1
+    Some(l) => if l <= 0 { abort("negative length") } else { l }
+  }
+  if self.is_zero() {
+    return Bytes::new(max(1, length))
+  }
+  if self.sign == Negative {
+    abort("negative BigInt")
+  }
+  let head_bits = 32 - self.limbs[self.len - 1].reinterpret_as_int().clz()
+  let tail_len = self.len - 1
+  let len = (head_bits + 7) / 8 + tail_len * (radix_bit_len / 8)
+  let len = max(length, len)
+  let result = Bytes::new(len)
+  for i = 0; i < len && i / 4 < self.len; i = i + 1 {
+    result[len - 1 - i] = (self.limbs[i / 4].shr(i % 4 * 8) & 0xffU)
+      .reinterpret_as_int()
+      .to_byte()
+  }
+  result
+}
