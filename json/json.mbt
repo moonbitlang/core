@@ -78,47 +78,50 @@ pub fn value(self : JsonValue, key : String) -> JsonValue? {
 }
 
 pub fn stringify(self : JsonValue, ~escape_slash : Bool = true) -> String {
-  let buf = Buffer::new(size_hint=0)
   match self {
     Object(members) => {
+      let buf = Buffer::new(size_hint=0)
       buf.write_char('{')
-      members.eachi(
-        fn(i, k, v) {
-          if i > 0 {
-            buf.write_char(',')
-          }
-          buf.write_char('\"')
-          buf.write_string(escape(k, ~escape_slash))
-          buf.write_char('\"')
-          buf.write_char(':')
-          buf.write_string(v.stringify(~escape_slash))
-        },
-      )
-      buf.write_char('}')
+      let mut first = true
+      for k, v in members {
+        if first {
+          first = false
+        } else {
+          buf.write_char(',')
+        }
+        buf
+        ..write_char('\"')
+        ..write_string(escape(k, ~escape_slash))
+        ..write_char('\"')
+        ..write_char(':')
+        .write_string(v.stringify(~escape_slash))
+      }
+      buf..write_char('}').to_string()
     }
     Array(arr) => {
+      let buf = Buffer::new(size_hint=0)
       buf.write_char('[')
-      arr.eachi(
-        fn(i, v) {
-          if i > 0 {
-            buf.write_char(',')
-          }
-          buf.write_string(v.stringify(~escape_slash))
-        },
-      )
-      buf.write_char(']')
+      for i, v in arr {
+        if i > 0 {
+          buf.write_char(',')
+        }
+        buf.write_string(v.stringify(~escape_slash))
+      }
+      buf..write_char(']').to_string()
     }
     String(s) => {
-      buf.write_char('\"')
-      buf.write_string(escape(s, ~escape_slash))
-      buf.write_char('\"')
+      let buf = Buffer::new(size_hint=0)
+      buf
+      ..write_char('\"')
+      ..write_string(escape(s, ~escape_slash))
+      ..write_char('\"')
+      .to_string()
     }
-    Number(n) => return n.to_string()
-    True => return "true"
-    False => return "false"
-    Null => return "null"
+    Number(n) => n.to_string()
+    True => "true"
+    False => "false"
+    Null => "null"
   }
-  buf.to_string()
 }
 
 fn escape(str : String, ~escape_slash : Bool) -> String {
