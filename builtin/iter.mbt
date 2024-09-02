@@ -17,11 +17,11 @@ type Iter[T] ((T) -> IterResult) -> IterResult
 
 //TODO: Add intrinsic for Iter::run
 pub fn run[T](self : Iter[T], f : (T) -> IterResult) -> IterResult {
-  (self.0)(f)
+  (self._)(f)
 }
 
 pub fn just_run[T](self : Iter[T], f : (T) -> IterResult) -> Unit {
-  (self.0)(f) |> ignore
+  (self._)(f) |> ignore
 }
 
 pub enum IterResult {

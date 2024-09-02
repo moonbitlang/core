@@ -16,7 +16,7 @@ type MyBigInt BigInt
 
 impl Show for MyBigInt with output(self, logger) {
   logger.write_string(
-    "{limbs : \{self.0.limbs}, sign : \{self.0.sign}, len : \{self.0.len} }",
+    "{limbs : \{self._.limbs}, sign : \{self._.sign}, len : \{self._.len} }",
   )
 }
 

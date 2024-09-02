@@ -29,7 +29,7 @@ fn UninitializedArray::unsafe_blit[T](
   src_offset : Int,
   len : Int
 ) -> Unit {
-  FixedArray::unsafe_blit(dst.0, dst_offset, src.0, src_offset, len)
+  FixedArray::unsafe_blit(dst._, dst_offset, src._, src_offset, len)
 }
 
 /// @intrinsic %fixedarray.copy
@@ -87,7 +87,7 @@ fn buffer[T](self : Array[T]) -> UninitializedArray[T] {
 fn resize_buffer[T](self : Array[T], new_capacity : Int) -> Unit {
   let new_buf = UninitializedArray::make(new_capacity)
   let old_buf = self.buf
-  let old_cap = old_buf.0.length()
+  let old_cap = old_buf._.length()
   let copy_len = if old_cap < new_capacity { old_cap } else { new_capacity }
   UninitializedArray::unsafe_blit(new_buf, 0, old_buf, 0, copy_len)
   self.buf = new_buf
@@ -110,7 +110,7 @@ test "array_resize_buffer" {
   arr.push(1)
   arr.push(2)
   arr.resize_buffer(4)
-  assert_eq!(arr.buffer().0.length() >= 4, true)
+  assert_eq!(arr.buffer()._.length() >= 4, true)
   arr.push(3)
   arr.push(4)
   assert_eq!(arr.length(), 4)
@@ -137,7 +137,7 @@ test "Array::resize_buffer" {
   arr.push(1)
   arr.push(2)
   arr.resize_buffer(4)
-  assert_eq!(arr.buffer().0.length() >= 4, true)
+  assert_eq!(arr.buffer()._.length() >= 4, true)
   arr.push(3)
   arr.push(4)
   assert_eq!(arr.length(), 4)
@@ -164,7 +164,7 @@ test "Array::resize_buffer" {
   arr.push(1)
   arr.push(2)
   arr.resize_buffer(4)
-  assert_eq!(arr.buffer().0.length() >= 4, true)
+  assert_eq!(arr.buffer()._.length() >= 4, true)
   arr.push(3)
   arr.push(4)
   assert_eq!(arr.length(), 4)
