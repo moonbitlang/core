@@ -15,8 +15,8 @@
 pub fn iter[T](self : Array[T]) -> Iter[T] {
   Iter::new(
     fn(yield) {
-      for i = 0, len = self.length(); i < len; i = i + 1 {
-        if yield(self[i]) == IterEnd {
+      for v in self {
+        if yield(v) == IterEnd {
           break IterEnd
         }
       } else {
@@ -29,8 +29,8 @@ pub fn iter[T](self : Array[T]) -> Iter[T] {
 pub fn iter2[A](self : Array[A]) -> Iter2[Int, A] {
   Iter2::new(
     fn(yield) {
-      for i = 0, len = self.length(); i < len; i = i + 1 {
-        if yield(i, self[i]) == IterEnd {
+      for i, v in self {
+        if yield(i, v) == IterEnd {
           break IterEnd
         }
       } else {
