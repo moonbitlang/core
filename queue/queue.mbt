@@ -16,7 +16,7 @@
 ///
 /// # Example
 /// ```
-/// let queue : Queue[Int] = Queue::new()
+/// let queue : @queue.T[Int] = @queue.new()
 /// ```
 pub fn T::new[A]() -> T[A] {
   { length: 0, first: Nil, last: Nil }
@@ -26,7 +26,8 @@ pub fn T::new[A]() -> T[A] {
 ///
 /// # Example
 /// ```
-/// let queue : Queue[Int] = Queue::from_array([1, 2, 3, 4])
+/// let array = Array::makei(3, fn(idx) { idx + 1 })
+/// let queue : @queue.T[Int] = @queue.from_array(array)
 /// ```
 pub fn T::from_array[A](arr : Array[A]) -> T[A] {
   if arr.length() == 0 {
@@ -83,7 +84,7 @@ fn op_equal[A : Eq](self : T[A], other : T[A]) -> Bool {
 ///
 /// # Example
 /// ```
-/// let queue : Queue[Int] = of([1, 2, 3, 4])
+/// let queue : @queue.T[Int] = @queue.of([1, 2, 3, 4])
 /// queue.clear()
 /// ```
 pub fn clear[A](self : T[A]) -> Unit {
@@ -96,7 +97,8 @@ pub fn clear[A](self : T[A]) -> Unit {
 ///
 /// # Example
 /// ```
-/// of([1, 2, 3, 4]).length()
+/// let queue : @queue.T[Int] = @queue.new()
+/// let len = queue.length()
 /// ```
 pub fn length[A](self : T[A]) -> Int {
   self.length
@@ -106,7 +108,7 @@ pub fn length[A](self : T[A]) -> Int {
 ///
 /// # Example
 /// ```
-/// let queue : Queue[Int] = Queue::new()
+/// let queue : @queue.T[Int] = @queue.new()
 /// let is_empty = queue.is_empty()
 /// ```
 pub fn is_empty[A](self : T[A]) -> Bool {
@@ -117,8 +119,8 @@ pub fn is_empty[A](self : T[A]) -> Bool {
 ///
 /// # Example
 /// ```
-/// let queue : Queue[Int] = Queue::new()
-/// queue.add(1)
+/// let queue : @queue.T[Int] = @queue.new()
+/// queue.push(1)
 /// ```
 pub fn push[A](self : T[A], x : A) -> Unit {
   let cell : Cell[A] = Cons({ content: x, next: Nil })
@@ -140,7 +142,7 @@ pub fn push[A](self : T[A], x : A) -> Unit {
 ///
 /// # Example
 /// ```
-/// let queue : Queue[Int] = of([1, 2, 3, 4])
+/// let queue : @queue.T[Int] = @queue.of([1, 2, 3, 4])
 /// let first = queue.unsafe_peek()
 /// ```
 /// @alert unsafe "Panics if the queue is empty."
@@ -160,7 +162,7 @@ pub fn peek_exn[A](self : T[A]) -> A {
 ///
 /// # Example
 /// ```
-/// let queue : Queue[Int] = of([1, 2, 3, 4])
+/// let queue : @queue.T[Int] = @queue.of([1, 2, 3, 4])
 /// let first = queue.peek()
 /// ```
 pub fn peek[A](self : T[A]) -> A? {
@@ -174,7 +176,7 @@ pub fn peek[A](self : T[A]) -> A? {
 ///
 /// # Example
 /// ```
-/// let queue : Queue[Int] = of([1, 2, 3, 4])
+/// let queue : @queue.T[Int] = @queue.of([1, 2, 3, 4])
 /// let first = queue.unsafe_pop()
 /// ```
 /// @alert unsafe "Panics if the queue is empty."
@@ -202,7 +204,7 @@ pub fn pop_exn[A](self : T[A]) -> A {
 ///
 /// # Example
 /// ```
-/// let queue : Queue[Int] = of([1, 2, 3, 4])
+/// let queue : @queue.T[Int] = @queue.of([1, 2, 3, 4])
 /// let first = queue.pop()
 /// ```
 pub fn pop[A](self : T[A]) -> A? {
@@ -217,8 +219,9 @@ pub fn pop[A](self : T[A]) -> A? {
 ///
 /// # Example
 /// ```
-/// let queue : Queue[Int] = of([1, 2, 3, 4])
-/// queue.each(fn(x) { print(x) })
+/// let queue : @queue.T[Int] = @queue.of([1, 2, 3, 4])
+/// let mut sum = 0
+/// queue.each(fn(x) { sum = sum + x })
 /// ```
 pub fn each[A](self : T[A], f : (A) -> Unit) -> Unit {
   loop self.first {
@@ -230,6 +233,14 @@ pub fn each[A](self : T[A], f : (A) -> Unit) -> Unit {
   }
 }
 
+/// Iterates over the queue with index.
+///
+/// # Example
+/// ```
+/// let queue : @queue.T[Int] = @queue.of([1, 2, 3, 4])
+/// let mut sum = 0
+/// queue.eachi(fn(x, i) { sum = sum + x * i })
+/// ```
 pub fn eachi[A](self : T[A], f : (Int, A) -> Unit) -> Unit {
   loop self.first, 0 {
     Cons({ content, next }), index => {
@@ -244,8 +255,8 @@ pub fn eachi[A](self : T[A], f : (Int, A) -> Unit) -> Unit {
 ///
 /// # Example
 /// ```
-/// let queue : Queue[Int] = of([1, 2, 3, 4])
-/// let sum = queue.fold(0, fn(acc, x) { acc + x })
+/// let queue : @queue.T[Int] = @queue.new()
+/// let sum = queue.fold(init=0, fn(acc, x) { acc + x })
 /// ```
 pub fn fold[A, B](self : T[A], ~init : B, f : (B, A) -> B) -> B {
   loop self.first, init {
@@ -254,12 +265,12 @@ pub fn fold[A, B](self : T[A], ~init : B, f : (B, A) -> B) -> B {
   }
 }
 
-/// Return a copy of the queue.
+/// Returns a copy of the queue.
 ///
 /// # Example
 /// ```
-/// let queue : Queue[Int] = of([1, 2, 3, 4])
-/// let queue2 : Queue[Int] = queue.copy()
+/// let queue : @queue.T[Int] = @queue.of([1, 2, 3, 4])
+/// let queue2 : @queue.T[Int] = queue.copy()
 /// ```
 pub fn copy[A](self : T[A]) -> T[A] {
   loop
@@ -284,15 +295,15 @@ pub fn copy[A](self : T[A]) -> T[A] {
   }
 }
 
-/// Transfer all elements from one queue to another.
+/// Transfers all elements from one queue to another.
 ///
 /// Adds all of the elements of source to the end of destination, then clears source.
 ///
 /// # Example
 /// ```
-/// let queue : Queue[Int] = of([1, 2, 3, 4])
-/// let queue2 : Queue[Int] = of([5, 6, 7, 8])
-/// queue.transfer(queue2)
+/// let dst : @queue.T[Int] = @queue.new()
+/// let src : @queue.T[Int] = @queue.of([5, 6, 7, 8])
+/// src.transfer(dst)
 /// ```
 pub fn transfer[A](self : T[A], dst : T[A]) -> Unit {
   if self.length > 0 {
@@ -313,6 +324,13 @@ pub fn transfer[A](self : T[A], dst : T[A]) -> Unit {
   }
 }
 
+/// Creates an iter from the queue.
+///
+/// # Example
+/// ```
+/// let queue : @queue.T[Int] = @queue.of([5, 6, 7, 8])
+/// let sum = queue.iter().fold(fn(x, y) { x + y }, init=0)
+/// ```
 pub fn iter[A](self : T[A]) -> Iter[A] {
   Iter::new(
     fn(yield) {
@@ -329,12 +347,24 @@ pub fn iter[A](self : T[A]) -> Iter[A] {
   )
 }
 
+/// Creates a new queue from an iter.
+///
+/// # Example
+/// ```
+/// let queue : @queue.T[Int] = @queue.T::from_iter(Iter::empty())
+/// ```
 pub fn T::from_iter[A](iter : Iter[A]) -> T[A] {
   let q = T::new()
   iter.each(fn(e) { q.push(e) })
   q
 }
 
+/// Creates a new queue from a FixedArray.
+///
+/// # Example
+/// ```
+/// let queue : @queue.T[Int] = @queue.of([1, 2, 3, 4])
+/// ```
 pub fn T::of[A](arr : FixedArray[A]) -> T[A] {
   if arr.length() == 0 {
     return new()

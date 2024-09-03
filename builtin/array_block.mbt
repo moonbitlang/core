@@ -19,7 +19,7 @@ pub fn Array::unsafe_blit[A](
   src_offset : Int,
   len : Int
 ) -> Unit {
-  FixedArray::unsafe_blit(dst.buf.0, dst_offset, src.buf.0, src_offset, len)
+  FixedArray::unsafe_blit(dst.buf._, dst_offset, src.buf._, src_offset, len)
 }
 
 pub fn Array::unsafe_blit_fixed[A](

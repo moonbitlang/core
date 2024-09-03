@@ -23,7 +23,7 @@ type Iter2[A, B] ((A, B) -> IterResult) -> IterResult
 
 //TODO: Add intrinsic for Iter::run
 pub fn run[A, B](self : Iter2[A, B], f : (A, B) -> IterResult) -> IterResult {
-  (self.0)(f)
+  (self._)(f)
 }
 
 pub fn Iter2::new[A, B](

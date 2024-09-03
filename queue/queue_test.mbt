@@ -29,14 +29,14 @@ test "from_fixed_array_1" {
   assert_eq!(queue2.length(), 0)
 }
 
-test "from_fixed_array_3" {
+test "from_fixed_array_2" {
   let q : @queue.T[Int] = @queue.of([])
   inspect!(q, content="@queue.of([])")
 }
 
 test "from_array_1" {
-  let queue = @queue.of([1, 2, 3, 4])
-  let queue2 = @queue.of([1])
+  let queue = @queue.from_array([1, 2, 3, 4])
+  let queue2 = @queue.from_array([1])
   assert_eq!(queue.length(), 4)
   assert_eq!(queue.unsafe_pop(), 1)
   assert_eq!(queue.unsafe_pop(), 2)
@@ -46,8 +46,13 @@ test "from_array_1" {
   assert_eq!(queue2.length(), 0)
 }
 
-test "from_array_3" {
-  let q : @queue.T[Int] = @queue.of([])
+test "from_array_2" {
+  let q : @queue.T[Int] = @queue.from_array([])
+  inspect!(q, content="@queue.of([])")
+  let array = Array::makei(3, fn(idx) { idx + 1 })
+  let q : @queue.T[Int] = @queue.from_array(array)
+  inspect!(q, content="@queue.of([1, 2, 3])")
+  let q : @queue.T[Int] = @queue.from_array(Array::new(capacity=10))
   inspect!(q, content="@queue.of([])")
 }
 
@@ -181,4 +186,11 @@ test "from_iter single element iter" {
 test "from_iter empty iter" {
   let pq : @queue.T[Int] = @queue.T::from_iter(Iter::empty())
   inspect!(pq, content="@queue.of([])")
+}
+
+test "to_string" {
+  let queue : @queue.T[Int] = @queue.T::from_array([])
+  assert_eq!(queue.to_string(), "@queue.of([])")
+  let queue : @queue.T[Int] = @queue.T::from_array([9, 8, 7, 5])
+  assert_eq!(queue.to_string(), "@queue.of([9, 8, 7, 5])")
 }
