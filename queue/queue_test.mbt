@@ -187,3 +187,10 @@ test "from_iter empty iter" {
   let pq : @queue.T[Int] = @queue.T::from_iter(Iter::empty())
   inspect!(pq, content="@queue.of([])")
 }
+
+test "to_string" {
+  let queue : @queue.T[Int] = @queue.T::from_array([])
+  assert_eq!(queue.to_string(), "@queue.of([])")
+  let queue : @queue.T[Int] = @queue.T::from_array([9, 8, 7, 5])
+  assert_eq!(queue.to_string(), "@queue.of([9, 8, 7, 5])")
+}
