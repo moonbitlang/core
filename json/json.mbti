@@ -14,7 +14,11 @@ impl JsonDecodeError {
   to_string(Self) -> String
 }
 
-type JsonPath
+pub enum JsonPath {
+  Root
+  Key(JsonPath, String)
+  Index(JsonPath, Int)
+}
 impl JsonPath {
   op_equal(Self, Self) -> Bool
   output(Self, Logger) -> Unit
