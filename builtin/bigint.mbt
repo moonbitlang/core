@@ -317,10 +317,11 @@ fn grade_school_div(self : BigInt, other : BigInt) -> (BigInt, BigInt) {
   let divisor = other
 
   // D1. normalize
-  // m = divident.limbs.length() - divisor.limbs.length()
-  // left shift divident & divisor such that 
-  // - divisor.limbs.last() >= radix / 2
-  // - divident.limbs.length() = self.limbs.length() + 1
+  // m = dividend.len - divisor.len
+  // left shift dividend & divisor such that 
+  // - b[b.length() - 1] >= radix / 2
+  // - a.length() == self.len + 1 
+  // where a and b represent the limbs of the adjusted dividend and divisor
   let lshift = max(
     0,
     radix_bit_len -
