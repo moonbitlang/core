@@ -21,35 +21,35 @@ let empty_bitset : Bitset = Bitset(0)
 ///
 /// Check if the given index is present in the bitset.
 pub fn has(self : Bitset, idx : Int) -> Bool {
-  self.0.land((1).lsl(idx)) != 0
+  self._.land((1).lsl(idx)) != 0
 }
 
 /// `index_of(self: Bitset, idx: Int)`
 ///
 /// Get the index of the bit in the bitset.
 pub fn index_of(self : Bitset, idx : Int) -> Int {
-  self.0.land((1).lsl(idx) - 1).popcnt()
+  self._.land((1).lsl(idx) - 1).popcnt()
 }
 
 /// `add(self: Bitset, idx: Int)`
 ///
 /// Add a new index to the bitset.
 pub fn add(self : Bitset, idx : Int) -> Bitset {
-  Bitset(self.0.lor((1).lsl(idx)))
+  Bitset(self._.lor((1).lsl(idx)))
 }
 
 /// `remove(self: Bitset, idx: Int)`
 ///
 /// Remove an index from the bitset.
 pub fn remove(self : Bitset, idx : Int) -> Bitset {
-  Bitset(self.0.lxor((1).lsl(idx)))
+  Bitset(self._.lxor((1).lsl(idx)))
 }
 
 /// `size(self: Bitset) -> Int`
 ///
 /// Calculate the size of a bitset
 pub fn size(self : Bitset) -> Int {
-  self.0.popcnt()
+  self._.popcnt()
 }
 
 test "Bitset::has" {
