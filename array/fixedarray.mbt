@@ -27,8 +27,8 @@
 /// TODO: change the intrinsic to match the function name
 /// @intrinsic %fixedarray.iter
 pub fn each[T](self : FixedArray[T], f : (T) -> Unit) -> Unit {
-  for i = 0; i < self.length(); i = i + 1 {
-    f(self[i])
+  for v in self {
+    f(v)
   }
 }
 
@@ -74,8 +74,8 @@ test "each" {
 /// }) //output: (0,1) (1,2) (2,3) (3,4) (4,5)
 /// ```
 pub fn eachi[T](self : FixedArray[T], f : (Int, T) -> Unit) -> Unit {
-  for i = 0; i < self.length(); i = i + 1 {
-    f(i, self[i])
+  for i, v in self {
+    f(i, v)
   }
 }
 

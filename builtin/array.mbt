@@ -253,8 +253,9 @@ pub fn each[T](self : Array[T], f : (T) -> Unit) -> Unit {
 }
 
 pub fn rev_each[T](self : Array[T], f : (T) -> Unit) -> Unit {
-  for i = self.length() - 1; i >= 0; i = i - 1 {
-    f(self[i])
+  let len = self.length()
+  for i in 0..<len {
+    f(self[len - i - 1])
   }
 }
 
@@ -283,8 +284,8 @@ pub fn eachi[T](self : Array[T], f : (Int, T) -> Unit) -> Unit {
 /// ```
 pub fn rev_eachi[T](self : Array[T], f : (Int, T) -> Unit) -> Unit {
   let len = self.length()
-  for i = 0; i < len; i = i + 1 {
-    f(i, self[len - i - 1])
+  for i in 0..<len {
+    f(len - i - 1, self[i])
   }
 }
 
