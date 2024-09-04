@@ -94,7 +94,7 @@ fn FixedArraySlice::insertion_sort[T : Compare](
 fn merge[T : Compare](arr : FixedArraySlice[T], mid : Int) -> Unit {
   let buf_len = arr.length() - mid
   let buf : FixedArray[T] = FixedArray::make(buf_len, arr[mid])
-  for i = 0; i < buf.length(); i = i + 1 {
+  for i in 0..<buf.length() {
     buf[i] = arr[mid + i]
   }
   let buf = { array: buf, start: 0, end: buf_len }
@@ -486,7 +486,7 @@ test "stable_sort" {
 }
 
 pub fn FixedArray::is_sorted[T : Compare](arr : FixedArray[T]) -> Bool {
-  for i = 1; i < arr.length(); i = i + 1 {
+  for i in 1..<arr.length() {
     if arr[i] < arr[i - 1] {
       break false
     }
