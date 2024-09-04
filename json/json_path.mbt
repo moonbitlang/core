@@ -31,17 +31,33 @@ pub fn output(self : JsonPath, logger : Logger) -> Unit {
   }
 }
 
-fn update_key(self : JsonPath, key : String) -> Unit {
+fn update_key_inplace(self : JsonPath, key : String) -> Unit {
   match self {
     Key(_) as k => k.key = key
     _ => abort("the variant is not Key")
   }
 }
 
-fn update_index(self : JsonPath, index : Int) -> Unit {
+fn update_index_inplace(self : JsonPath, index : Int) -> Unit {
   match self {
     Index(_) as i => i.index = index
     _ => abort("the variant is not Index")
+  }
+}
+
+pub fn push_index(self : JsonPath, index : Int) -> JsonPath {
+  match self {
+    Root => Index(self, ~index)
+    Index(p, ~index) => Index(p.push_index(index), ~index)
+    Key(p, ~key) => Index(p.push_key(key), ~index)
+  }
+}
+
+pub fn push_key(self : JsonPath, key : String) -> JsonPath {
+  match self {
+    Root => Key(self, ~key)
+    Key(p, ~key) => Key(p.push_key(key), ~key)
+    Index(p, ~index) => Key(p.push_index(index), ~key)
   }
 }
 
