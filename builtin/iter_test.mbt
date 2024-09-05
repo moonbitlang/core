@@ -577,3 +577,10 @@ test "Iter::as_view" {
   inspect!([1, 2, 3].iter()[1:], content="[2, 3]")
   inspect!([1, 2, 3].iter()[:], content="[1, 2, 3]")
 }
+
+test "Iter::enumerate" {
+  inspect!([1, 2, 3].iter2(), content="[(0, 1), (1, 2), (2, 3)]")
+  inspect!([1, 2, 3].iter2().to_string(), content="[(0, 1), (1, 2), (2, 3)]")
+  inspect!([1, 2, 3].iter().enumerate(), content="[(0, 1), (1, 2), (2, 3)]")
+  inspect!([10].iter().enumerate().to_string(), content="[(0, 10)]")
+}

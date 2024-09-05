@@ -26,6 +26,14 @@ pub fn run[A, B](self : Iter2[A, B], f : (A, B) -> IterResult) -> IterResult {
   (self._)(f)
 }
 
+pub impl[A : Show, B : Show] Show for Iter2[A, B] with output(self, logger) {
+  Show::output(self.iter().to_array(), logger)
+}
+
+pub fn to_string[A : Show, B : Show](self : Iter2[A, B]) -> String {
+  self.iter().to_array().to_string()
+}
+
 pub fn Iter2::new[A, B](
   f : ((A, B) -> IterResult) -> IterResult
 ) -> Iter2[A, B] {
@@ -51,4 +59,8 @@ pub fn iter2[A, B](self : Iter2[A, B]) -> Iter2[A, B] {
   // `for k,v in map.iter2() { ... }` 
   // still work    
   self
+}
+
+pub fn to_array[A, B](self : Iter2[A, B]) -> Array[(A, B)] {
+  self.iter().to_array()
 }
