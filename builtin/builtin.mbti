@@ -203,6 +203,7 @@ impl Iter {
   each[T](Self[T], (T) -> Unit) -> Unit
   eachi[T](Self[T], (Int, T) -> Unit) -> Unit
   empty[T]() -> Self[T]
+  enumerate[T](Self[T]) -> Iter2[Int, T]
   filter[T](Self[T], (T) -> Bool) -> Self[T]
   find_first[T](Self[T], (T) -> Bool) -> T?
   flat_map[T, R](Self[T], (T) -> Self[R]) -> Self[R]
@@ -235,6 +236,8 @@ impl Iter2 {
   iter2[A, B](Self[A, B]) -> Self[A, B]
   new[A, B](((A, B) -> IterResult) -> IterResult) -> Self[A, B]
   run[A, B](Self[A, B], (A, B) -> IterResult) -> IterResult
+  to_array[A, B](Self[A, B]) -> Array[Tuple[A, B]]
+  to_string[A : Show, B : Show](Self[A, B]) -> String
 }
 
 pub enum IterResult {
@@ -721,6 +724,8 @@ impl Show for BigInt
 impl Show for Buffer
 
 impl Show for Iter
+
+impl Show for Iter2
 
 impl Show for Map
 
