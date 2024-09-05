@@ -171,11 +171,14 @@ test "array_eachi_rev_2" {
       .write_string("\n")
     },
   )
-  inspect!(buf.to_string(), content=
-    #|0: 'c'
-    #|1: 'b'
-    #|2: 'a'
-    #|
+  inspect!(
+    buf.to_string(),
+    content=
+      #|0: 'c'
+      #|1: 'b'
+      #|2: 'a'
+      #|
+    ,
   )
 }
 

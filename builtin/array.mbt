@@ -259,20 +259,6 @@ pub fn rev_each[T](self : Array[T], f : (T) -> Unit) -> Unit {
   }
 }
 
-/// Iterates over the elements of the array with index.
-///
-/// # Example
-/// ```
-/// let v = [3, 4, 5]
-/// let mut sum = 0
-/// v.eachi(fn (i, x) {sum = sum + x + i})
-/// ```
-pub fn eachi[T](self : Array[T], f : (Int, T) -> Unit) -> Unit {
-  for i, v in self {
-    f(i, v)
-  }
-}
-
 /// Iterates over the elements of the array with index in reversed order.
 /// 
 /// # Example
@@ -286,6 +272,20 @@ pub fn rev_eachi[T](self : Array[T], f : (Int, T) -> Unit) -> Unit {
   let len = self.length()
   for i in 0..<len {
     f(i, self[len - i - 1])
+  }
+}
+
+/// Iterates over the elements of the array with index.
+///
+/// # Example
+/// ```
+/// let v = [3, 4, 5]
+/// let mut sum = 0
+/// v.eachi(fn (i, x) {sum = sum + x + i})
+/// ```
+pub fn eachi[T](self : Array[T], f : (Int, T) -> Unit) -> Unit {
+  for i, v in self {
+    f(i, v)
   }
 }
 
