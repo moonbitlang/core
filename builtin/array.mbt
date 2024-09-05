@@ -285,7 +285,7 @@ pub fn eachi[T](self : Array[T], f : (Int, T) -> Unit) -> Unit {
 pub fn rev_eachi[T](self : Array[T], f : (Int, T) -> Unit) -> Unit {
   let len = self.length()
   for i in 0..<len {
-    f(len - i - 1, self[i])
+    f(i, self[len - i - 1])
   }
 }
 

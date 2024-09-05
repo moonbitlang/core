@@ -159,6 +159,26 @@ test "array_eachi_rev" {
   inspect!(sum, content="9")
 }
 
+test "array_eachi_rev_2" {
+  let arr = ['a', 'b', 'c']
+  let buf = Buffer::new()
+  arr.rev_eachi(
+    fn(i, x) {
+      buf
+      ..write_object(i)
+      ..write_string(": ")
+      ..write_object(x)
+      .write_string("\n")
+    },
+  )
+  inspect!(buf.to_string(), content=
+    #|0: 'c'
+    #|1: 'b'
+    #|2: 'a'
+    #|
+  )
+}
+
 test "array_clear" {
   let arr = [1, 2, 3]
   arr.clear()
