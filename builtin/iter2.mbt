@@ -27,11 +27,11 @@ pub fn run[A, B](self : Iter2[A, B], f : (A, B) -> IterResult) -> IterResult {
 }
 
 pub impl[A : Show, B : Show] Show for Iter2[A, B] with output(self, logger) {
-  Show::output(self.iter().to_array(), logger)
+  Show::output(self.to_array(), logger)
 }
 
 pub fn to_string[A : Show, B : Show](self : Iter2[A, B]) -> String {
-  self.iter().to_array().to_string()
+  self.to_array().to_string()
 }
 
 pub fn Iter2::new[A, B](
