@@ -274,3 +274,21 @@ pub fn to_string(self : Double) -> String {
 pub impl Show for Double with output(self, logger) {
   logger.write_string(self.to_string())
 }
+
+fn max(a : Double, b : Double) -> Double {
+  if a > b {
+    a
+  } else {
+    b
+  }
+}
+
+pub fn is_close(
+  self : Double,
+  other : Double,
+  ~relative_tolerance : Double = 1.0e-09,
+  ~absolute_tolerance : Double = 0.0
+) -> Bool {
+  return (self - other).abs() <=
+    max(absolute_tolerance, relative_tolerance * max(self.abs(), other.abs()))
+}
