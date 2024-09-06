@@ -48,7 +48,7 @@ fn update_index_inplace(self : JsonPath, index : Int) -> Unit {
 pub fn add_index(self : JsonPath, index : Int) -> JsonPath {
   match self {
     Root => Index(self, ~index)
-    Index(p, ~index) => Index(p.add_index(index), ~index)
+    Index(p, ~index=index1) => Index(p.add_index(index1), ~index)
     Key(p, ~key) => Index(p.add_key(key), ~index)
   }
 }
@@ -78,5 +78,13 @@ test "show JsonPath" {
   inspect!(
     Root.add_key("foo").add_key("foo1").add_index(2).add_key("bar").add_index(3),
     content="$.foo.foo1[2].bar[3]",
+  )
+  inspect!(
+    Root.add_key("foo").add_key("foo1").add_index(2).add_key("bar").add_index(3).add_key("baz"),
+    content="$.foo.foo1[2].bar[3].baz",
+  )
+  inspect!(
+    Root.add_key("foo").add_key("foo1").add_index(2).add_index(3).add_index(4),
+    content="$.foo.foo1[2][3][4]",
   )
 }
