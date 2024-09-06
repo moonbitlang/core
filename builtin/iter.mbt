@@ -66,40 +66,6 @@ pub fn all[T](self : Iter[T], f : (T) -> Bool) -> Bool {
   IterContinue
 }
 
-/// Enumerates the elements of an iterator, pairing each element with its index.
-///
-/// # Returns
-///
-/// An iterator of pairs, where the first element of each pair is the index
-/// (starting from 0) and the second element is the corresponding element from
-/// the input iterator.
-///
-/// # Examples
-///
-/// ```
-/// let array = [5, 6, 7]
-/// for id, item in array.iter().enumerate() {
-///   println("\{id}, \{item}")
-/// }
-/// ```
-pub fn enumerate[T](self : Iter[T]) -> Iter2[Int, T] {
-  Iter2::new(
-    fn(yield) {
-      let mut index = 0
-      self.run(
-        fn(element) {
-          if yield(index, element) == IterEnd {
-            IterEnd
-          } else {
-            index = index + 1
-            IterContinue
-          }
-        },
-      )
-    },
-  )
-}
-
 /// Iterates over each element in the iterator, applying the function `f` to each element with index.
 ///
 /// # Type Parameters
