@@ -13,7 +13,7 @@
 // limitations under the License.
 
 pub fn op_set[K : Compare, V](self : T[K, V], key : K, value : V) -> Unit {
-  self.add(key, value)
+  self.insert(key, value)
 }
 
 pub fn op_get[K : Compare, V](self : T[K, V], key : K) -> V? {
@@ -32,12 +32,12 @@ pub fn new[K, V]() -> T[K, V] {
 /// Creates a sorted map from given entries.
 pub fn of[K : Compare, V](entries : Array[(K, V)]) -> T[K, V] {
   let map = { root: None, size: 0 }
-  entries.each(fn(e) { map.add(e.0, e.1) })
+  entries.each(fn(e) { map.insert(e.0, e.1) })
   map
 }
 
 /// Inserts a key-value pair.
-pub fn add[K : Compare, V](self : T[K, V], key : K, value : V) -> Unit {
+pub fn insert[K : Compare, V](self : T[K, V], key : K, value : V) -> Unit {
   let (new_root, inserted) = add_node(self.root, key, value)
   if self.root != new_root {
     self.root = new_root
@@ -382,12 +382,12 @@ test "of" {
 
 test "add1" {
   let map = new()
-  map.add(6, "a")
-  map.add(5, "b")
-  map.add(4, "c")
-  map.add(3, "d")
-  map.add(2, "e")
-  map.add(1, "f")
+  map.insert(6, "a")
+  map.insert(5, "b")
+  map.insert(4, "c")
+  map.insert(3, "d")
+  map.insert(2, "e")
+  map.insert(1, "f")
   inspect!(
     map.debug_tree(),
     content="([3]3,d,([2]2,e,([1]1,f,_,_),_),([2]5,b,([1]4,c,_,_),([1]6,a,_,_)))",
@@ -397,12 +397,12 @@ test "add1" {
 
 test "add2" {
   let map = new()
-  map.add(1, "a")
-  map.add(2, "b")
-  map.add(3, "c")
-  map.add(4, "d")
-  map.add(5, "e")
-  map.add(6, "f")
+  map.insert(1, "a")
+  map.insert(2, "b")
+  map.insert(3, "c")
+  map.insert(4, "d")
+  map.insert(5, "e")
+  map.insert(6, "f")
   inspect!(
     map.debug_tree(),
     content="([3]4,d,([2]2,b,([1]1,a,_,_),([1]3,c,_,_)),([2]5,e,_,([1]6,f,_,_)))",
@@ -412,10 +412,10 @@ test "add2" {
 
 test "add3" {
   let map = new()
-  map.add(4, "a")
-  map.add(1, "b")
-  map.add(3, "c")
-  map.add(2, "d")
+  map.insert(4, "a")
+  map.insert(1, "b")
+  map.insert(3, "c")
+  map.insert(2, "d")
   inspect!(
     map.debug_tree(),
     content="([3]3,c,([2]1,b,_,([1]2,d,_,_)),([1]4,a,_,_))",
@@ -424,10 +424,10 @@ test "add3" {
 
 test "add4" {
   let map = new()
-  map.add(1, "a")
-  map.add(4, "b")
-  map.add(2, "c")
-  map.add(3, "d")
+  map.insert(1, "a")
+  map.insert(4, "b")
+  map.insert(2, "c")
+  map.insert(3, "d")
   inspect!(
     map.debug_tree(),
     content="([3]2,c,([1]1,a,_,_),([2]4,b,([1]3,d,_,_),_))",
@@ -437,7 +437,7 @@ test "add4" {
 test "add duplicate key" {
   let map = of([(3, "c"), (2, "b"), (1, "a")])
   inspect!(map.debug_tree(), content="([2]2,b,([1]1,a,_,_),([1]3,c,_,_))")
-  map.add(1, "x")
+  map.insert(1, "x")
   inspect!(map.debug_tree(), content="([2]2,b,([1]1,x,_,_),([1]3,c,_,_))")
 }
 

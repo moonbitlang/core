@@ -45,7 +45,7 @@ pub fn T::new[K, V]() -> T[K, V] {
 }
 
 /// Lookup a key from a hash map
-pub fn find[K : Eq + Hash, V](self : T[K, V], key : K) -> V? {
+pub fn get[K : Eq + Hash, V](self : T[K, V], key : K) -> V? {
   loop self, key.hash() {
     Empty, _ => None
     Leaf(key1, value), _ => if key == key1 { Some(value) } else { None }
@@ -64,7 +64,7 @@ pub fn find[K : Eq + Hash, V](self : T[K, V], key : K) -> V? {
 }
 
 pub fn op_get[K : Eq + Hash, V](self : T[K, V], key : K) -> V? {
-  self.find(key)
+  self.get(key)
 }
 
 fn add_with_hash[K : Eq, V](
@@ -128,7 +128,7 @@ fn add_with_hash[K : Eq, V](
 /// Add a key-value pair to the hashmap.
 ///
 /// If a pair with the same key already exists, the old one is replaced
-pub fn add[K : Eq + Hash, V](self : T[K, V], key : K, value : V) -> T[K, V] {
+pub fn insert[K : Eq + Hash, V](self : T[K, V], key : K, value : V) -> T[K, V] {
   self.add_with_hash(key, 0, key.hash(), value)
 }
 
@@ -212,7 +212,7 @@ pub fn iter[K, V](self : T[K, V]) -> Iter[(K, V)] {
 }
 
 pub fn T::from_iter[K : Eq + Hash, V](iter : Iter[(K, V)]) -> T[K, V] {
-  iter.fold(init=T::new(), fn(m, e) { m.add(e.0, e.1) })
+  iter.fold(init=T::new(), fn(m, e) { m.insert(e.0, e.1) })
 }
 
 pub impl[K : Show, V : Show] Show for T[K, V] with output(self, logger) {
@@ -245,7 +245,7 @@ pub fn T::from_array[K : Eq + Hash, V](arr : Array[(K, V)]) -> T[K, V] {
     0, map => map
     n, map => {
       let (k, v) = arr[n - 1]
-      continue n - 1, map.add(k, v)
+      continue n - 1, map.insert(k, v)
     }
   }
 }
@@ -255,7 +255,7 @@ pub fn T::of[K : Eq + Hash, V](arr : FixedArray[(K, V)]) -> T[K, V] {
     0, map => map
     n, map => {
       let (k, v) = arr[n - 1]
-      continue n - 1, map.add(k, v)
+      continue n - 1, map.insert(k, v)
     }
   }
 }

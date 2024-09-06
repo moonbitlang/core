@@ -15,28 +15,28 @@
 test "Set" {
   let map = loop 0, @hashset.new() {
     100, map => map
-    i, map => continue i + 1, map.add(i)
+    i, map => continue i + 1, map.insert(i)
   }
   for i = 0; i < 100; i = i + 1 {
     assert_eq!((i, map.contains(i)), (i, true))
   }
   inspect!((100, map.contains(100)), content="(100, false)")
-  let map = map.add(100)
+  let map = map.insert(100)
   inspect!((100, map.contains(100)), content="(100, true)")
 }
 
 test "@hashset.size" {
-  for i = 0, set = @hashset.new(); i < 20; i = i + 1, set = set.add(i) {
+  for i = 0, set = @hashset.new(); i < 20; i = i + 1, set = set.insert(i) {
     assert_eq!(set.size(), i)
   } else {
-    assert_eq!(set.add(0).size(), 20)
+    assert_eq!(set.insert(0).size(), 20)
   }
 }
 
 test "@hashset.remove" {
   let map = loop 0, @hashset.new() {
     100, map => map
-    i, map => continue i + 1, map.add(i)
+    i, map => continue i + 1, map.insert(i)
   }
   for i = 0; i < 100; i = i + 1 {
     assert_eq!((i, map.contains(i)), (i, true))
@@ -59,7 +59,7 @@ test "@hashset.iter" {
 }
 
 test "@hashset.to_string" {
-  let set = @hashset.new().add(1).add(3).add(0x0f_ff_ff_ff).add(42)
+  let set = @hashset.new().insert(1).insert(3).insert(0x0f_ff_ff_ff).insert(42)
   inspect!(set, content="@immut/hashset.of([3, 42, 1, 268435455])")
 }
 
@@ -74,16 +74,16 @@ test "@hashset.from_array" {
 test "@hashset.is_empty" {
   let set = @hashset.new()
   inspect!(set.is_empty(), content="true")
-  let set = set.add(1)
+  let set = set.insert(1)
   inspect!(set.is_empty(), content="false")
 }
 
 test "@hashset.size" {
   let set = @hashset.new()
   assert_eq!(set.size(), 0)
-  let set = set.add(1)
+  let set = set.insert(1)
   assert_eq!(set.size(), 1)
-  let set = set.add(2)
+  let set = set.insert(2)
   assert_eq!(set.size(), 2)
   let set = set.remove(1)
   assert_eq!(set.size(), 1)
@@ -92,14 +92,14 @@ test "@hashset.size" {
 test "@hashset.is_empty" {
   let set = @hashset.new()
   assert_eq!(set.is_empty(), true)
-  let set = set.add(1)
+  let set = set.insert(1)
   assert_eq!(set.is_empty(), false)
   let set = set.remove(1)
   assert_eq!(set.is_empty(), true)
 }
 
 test "@hashset.iter" {
-  let set = @hashset.new().add(1).add(2).add(3)
+  let set = @hashset.new().insert(1).insert(2).insert(3)
   let result = []
   set.each(fn { x => result.push(x) })
   result.sort()
@@ -107,7 +107,7 @@ test "@hashset.iter" {
 }
 
 test "@hashset.iter" {
-  let set = @hashset.new().add(1).add(2).add(3)
+  let set = @hashset.new().insert(1).insert(2).insert(3)
   let result = []
   set.iter().each(fn { x => result.push(x) })
   result.sort()
