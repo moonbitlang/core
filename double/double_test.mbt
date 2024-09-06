@@ -20,3 +20,9 @@ test "hash" {
   assert_not_eq!(Hash::hash(d1), Hash::hash(d2))
   assert_eq!(Hash::hash(d1), Hash::hash(d3))
 }
+
+test "is_close" {
+  assert_true!(123.1.is_close(123.0, absolute_tolerance=0.1))
+  assert_true!(123.1.is_close(123.0, relative_tolerance=0.1))
+  assert_false!(123.1.is_close(100.0, relative_tolerance=0.1))
+}
