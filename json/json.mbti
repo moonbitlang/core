@@ -16,10 +16,10 @@ impl JsonDecodeError {
 
 type JsonPath
 impl JsonPath {
+  add_index(Self, Int) -> Self
+  add_key(Self, String) -> Self
   op_equal(Self, Self) -> Bool
   output(Self, Logger) -> Unit
-  push_index(Self, Int) -> Self
-  push_key(Self, String) -> Self
 }
 
 pub type! ParseError {
