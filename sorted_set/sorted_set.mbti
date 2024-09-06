@@ -10,7 +10,6 @@ fn singleton[V : Compare + Eq](V) -> T[V]
 // Types and methods
 type T
 impl T {
-  add[V : Compare + Eq](Self[V], V) -> Unit
   contains[V : Compare + Eq](Self[V], V) -> Bool
   deep_clone[V](Self[V]) -> Self[V]
   diff[V : Compare + Eq](Self[V], Self[V]) -> Self[V]
@@ -18,6 +17,7 @@ impl T {
   each[V](Self[V], (V) -> Unit) -> Unit
   eachi[V](Self[V], (Int, V) -> Unit) -> Unit
   from_iter[V : Compare + Eq](Iter[V]) -> Self[V]
+  insert[V : Compare + Eq](Self[V], V) -> Unit
   intersect[V : Compare + Eq](Self[V], Self[V]) -> Self[V]
   is_empty[V : Compare + Eq](Self[V]) -> Bool
   iter[V](Self[V]) -> Iter[V]

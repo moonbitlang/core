@@ -17,12 +17,12 @@ impl T {
   foldr_with_key[K, V, A](Self[K, V], (A, K, V) -> A, ~init : A) -> A
   from_array[K : Compare + Eq, V](Array[Tuple[K, V]]) -> Self[K, V]
   from_iter[K : Compare + Eq, V](Iter[Tuple[K, V]]) -> Self[K, V]
+  get[K : Compare + Eq, V](Self[K, V], K) -> V?
   insert[K : Compare + Eq, V](Self[K, V], K, V) -> Self[K, V]
   is_empty[K, V](Self[K, V]) -> Bool
   iter[K, V](Self[K, V]) -> Iter[Tuple[K, V]]
   iter2[K, V](Self[K, V]) -> Iter2[K, V]
   keys[K, V](Self[K, V]) -> Array[K]
-  lookup[K : Compare + Eq, V](Self[K, V], K) -> V?
   map[K, X, Y](Self[K, X], (X) -> Y) -> Self[K, Y]
   map_with_key[K, X, Y](Self[K, X], (K, X) -> Y) -> Self[K, Y]
   of[K : Compare + Eq, V](FixedArray[Tuple[K, V]]) -> Self[K, V]
