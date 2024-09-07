@@ -52,3 +52,62 @@ test {
     ,
   )
 }
+
+test "tuple" {
+  
+  let u : Json = [1,2]
+  let v : (Int, Int) = @json.from_json!(u)
+  inspect!(
+    v,
+    content=
+      "(1, 2)"
+    ,
+  )
+
+  let u : Json = [1,2,3]
+  let v : (Int, Int, Int) = @json.from_json!(u)
+  inspect!(
+    v,
+    content=
+      "(1, 2, 3)"
+    ,
+  )
+
+  let u : Json = [1,2,3,4]
+  let v : (Int, Int, Int, Int) = @json.from_json!(u)
+  inspect!(
+    v,
+    content=
+      "(1, 2, 3, 4)"
+    ,
+  )
+  
+  let u : Json = [1,2,3,4,5]
+  let v : (Int, Int, Int, Int, Int) = @json.from_json!(u)
+  inspect!(
+    v,
+    content=
+      "(1, 2, 3, 4, 5)"
+    ,
+  )
+
+  let u : Json = [1,2,3,4,5,6]
+  let v : (Int, Int, Int, Int, Int, Int) = @json.from_json!(u)
+  inspect!(
+    v,
+    content=
+      "(1, 2, 3, 4, 5, 6)"
+    ,
+  )
+
+  let u : Json = [1,2,3,4,5,6,7]
+  let v : (Int, Int, Int, Int, Int, Int, Int) = @json.from_json!(u)
+  inspect!(
+    v,
+    content=
+      "(1, 2, 3, 4, 5, 6, 7)"
+    ,
+  )
+  
+
+}
