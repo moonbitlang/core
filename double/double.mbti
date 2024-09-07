@@ -21,6 +21,7 @@ impl Double {
   floor(Double) -> Double
   from_int(Int) -> Double
   inf(Int) -> Double
+  is_close(Double, Double, ~relative_tolerance : Double = .., ~absolute_tolerance : Double = ..) -> Bool
   is_inf(Double) -> Bool
   is_nan(Double) -> Bool
   is_neg_inf(Double) -> Bool
