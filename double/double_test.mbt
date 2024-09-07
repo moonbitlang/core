@@ -20,3 +20,21 @@ test "hash" {
   assert_not_eq!(Hash::hash(d1), Hash::hash(d2))
   assert_eq!(Hash::hash(d1), Hash::hash(d3))
 }
+
+test "is_close" {
+  inspect!(123.1.is_close(123.0, absolute_tolerance=0.1), content="true")
+  inspect!(123.1.is_close(123.0, relative_tolerance=0.1), content="true")
+  inspect!(123.1.is_close(100.0, relative_tolerance=0.1), content="false")
+  inspect!(@double.infinity.is_close(@double.infinity), content="true")
+  inspect!(@double.infinity.is_close(@double.neg_infinity), content="false")
+  inspect!(@double.neg_infinity.is_close(@double.infinity), content="false")
+  inspect!(@double.neg_infinity.is_close(@double.neg_infinity), content="true")
+  inspect!(@double.not_a_number.is_close(@double.infinity), content="false")
+  inspect!(@double.not_a_number.is_close(@double.neg_infinity), content="false")
+  inspect!(@double.not_a_number.is_close(@double.not_a_number), content="false")
+  inspect!(@double.not_a_number.is_close(123.0), content="false")
+  inspect!(123.1.is_close(@double.not_a_number), content="false")
+  inspect!(@double.infinity.is_close(@double.not_a_number), content="false")
+  inspect!(@double.neg_infinity.is_close(@double.not_a_number), content="false")
+  inspect!(0.0.is_close(@double.neg_infinity), content="false")
+}
