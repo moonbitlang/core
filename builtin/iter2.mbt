@@ -27,11 +27,26 @@ pub fn run[A, B](self : Iter2[A, B], f : (A, B) -> IterResult) -> IterResult {
 }
 
 pub impl[A : Show, B : Show] Show for Iter2[A, B] with output(self, logger) {
-  Show::output(self.to_array(), logger)
+  logger.write_string("[")
+  let mut first = true
+  for k, v in self {
+    if not(first) {
+      // AI: support !first ?
+      logger.write_string(", ")
+    } else {
+      first = false
+    }
+    logger.write_string("(")
+    logger.write_object(k)
+    logger.write_string(", ")
+    logger.write_object(v)
+    logger.write_string(")")
+  }
+  logger.write_string("]")
 }
 
 pub fn to_string[A : Show, B : Show](self : Iter2[A, B]) -> String {
-  self.to_array().to_string()
+  Show::to_string(self)
 }
 
 pub fn Iter2::new[A, B](
@@ -62,5 +77,9 @@ pub fn iter2[A, B](self : Iter2[A, B]) -> Iter2[A, B] {
 }
 
 pub fn to_array[A, B](self : Iter2[A, B]) -> Array[(A, B)] {
-  self.iter().to_array()
+  let arr = []
+  for k, v in self {
+    arr.push((k, v))
+  }
+  arr
 }
