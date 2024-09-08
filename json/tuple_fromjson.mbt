@@ -18,11 +18,11 @@ pub impl[A : FromJson, B : FromJson] FromJson for (A, B) with from_json!(
 ) {
   match json {
     [a, b] => {
-      let a : A = FromJson::from_json!(a, path)
-      let b : B = FromJson::from_json!(b, path)
+      let a : A = FromJson::from_json!(a, path.add_index(0))
+      let b : B = FromJson::from_json!(b, path.add_index(1))
       (a, b)
     }
-    _ => raise JsonDecodeError((path, "expected tuple of size 2"))
+    _ => decode_error!(path, "expected tuple of size 2")
   }
 }
 
@@ -32,14 +32,12 @@ pub impl[A : FromJson, B : FromJson, C : FromJson] FromJson for (A, B, C) with f
 ) {
   match json {
     [a, b, c] => {
-      let a : A = FromJson::from_json!(a, path)
-      let b : B = FromJson::from_json!(b, path)
-      let c : C = FromJson::from_json!(c, path)
+      let a : A = FromJson::from_json!(a, path.add_index(0))
+      let b : B = FromJson::from_json!(b, path.add_index(1))
+      let c : C = FromJson::from_json!(c, path.add_index(2))
       (a, b, c)
     }
-    _ =>
-      // raise ("Invalid json format {path}")
-      raise JsonDecodeError((path, "expected tuple of size 3"))
+    _ => decode_error!(path, "expected tuple of size 3")
   }
 }
 
@@ -51,13 +49,13 @@ pub impl[A : FromJson, B : FromJson, C : FromJson, D : FromJson] FromJson for (
 ) with from_json!(json, path) {
   match json {
     [a, b, c, d] => {
-      let a : A = FromJson::from_json!(a, path)
-      let b : B = FromJson::from_json!(b, path)
-      let c : C = FromJson::from_json!(c, path)
-      let d : D = FromJson::from_json!(d, path)
+      let a : A = FromJson::from_json!(a, path.add_index(0))
+      let b : B = FromJson::from_json!(b, path.add_index(1))
+      let c : C = FromJson::from_json!(c, path.add_index(2))
+      let d : D = FromJson::from_json!(d, path.add_index(3))
       (a, b, c, d)
     }
-    _ => raise JsonDecodeError((path, "expected tuple of size 4"))
+    _ => decode_error!(path, "expected tuple of size 4")
   }
 }
 
@@ -70,14 +68,14 @@ pub impl[A : FromJson, B : FromJson, C : FromJson, D : FromJson, E : FromJson] F
 ) with from_json!(json, path) {
   match json {
     [a, b, c, d, e] => {
-      let a : A = FromJson::from_json!(a, path)
-      let b : B = FromJson::from_json!(b, path)
-      let c : C = FromJson::from_json!(c, path)
-      let d : D = FromJson::from_json!(d, path)
-      let e : E = FromJson::from_json!(e, path)
+      let a : A = FromJson::from_json!(a, path.add_index(0))
+      let b : B = FromJson::from_json!(b, path.add_index(1))
+      let c : C = FromJson::from_json!(c, path.add_index(2))
+      let d : D = FromJson::from_json!(d, path.add_index(3))
+      let e : E = FromJson::from_json!(e, path.add_index(4))
       (a, b, c, d, e)
     }
-    _ => raise JsonDecodeError((path, "expected tuple of size 5"))
+    _ => decode_error!(path, "expected tuple of size 5")
   }
 }
 
@@ -91,15 +89,15 @@ pub impl[A : FromJson, B : FromJson, C : FromJson, D : FromJson, E : FromJson, F
 ) with from_json!(json, path) {
   match json {
     [a, b, c, d, e, f] => {
-      let a : A = FromJson::from_json!(a, path)
-      let b : B = FromJson::from_json!(b, path)
-      let c : C = FromJson::from_json!(c, path)
-      let d : D = FromJson::from_json!(d, path)
-      let e : E = FromJson::from_json!(e, path)
-      let f : F = FromJson::from_json!(f, path)
+      let a : A = FromJson::from_json!(a, path.add_index(0))
+      let b : B = FromJson::from_json!(b, path.add_index(1))
+      let c : C = FromJson::from_json!(c, path.add_index(2))
+      let d : D = FromJson::from_json!(d, path.add_index(3))
+      let e : E = FromJson::from_json!(e, path.add_index(4))
+      let f : F = FromJson::from_json!(f, path.add_index(5))
       (a, b, c, d, e, f)
     }
-    _ => raise JsonDecodeError((path, "expected tuple of size 6"))
+    _ => decode_error!(path, "expected tuple of size 6")
   }
 }
 
@@ -114,15 +112,15 @@ pub impl[A : FromJson, B : FromJson, C : FromJson, D : FromJson, E : FromJson, F
 ) with from_json!(json, path) {
   match json {
     [a, b, c, d, e, f, g] => {
-      let a : A = FromJson::from_json!(a, path)
-      let b : B = FromJson::from_json!(b, path)
-      let c : C = FromJson::from_json!(c, path)
-      let d : D = FromJson::from_json!(d, path)
-      let e : E = FromJson::from_json!(e, path)
-      let f : F = FromJson::from_json!(f, path)
-      let g : G = FromJson::from_json!(g, path)
+      let a : A = FromJson::from_json!(a, path.add_index(0))
+      let b : B = FromJson::from_json!(b, path.add_index(1))
+      let c : C = FromJson::from_json!(c, path.add_index(2))
+      let d : D = FromJson::from_json!(d, path.add_index(3))
+      let e : E = FromJson::from_json!(e, path.add_index(4))
+      let f : F = FromJson::from_json!(f, path.add_index(5))
+      let g : G = FromJson::from_json!(g, path.add_index(6))
       (a, b, c, d, e, f, g)
     }
-    _ => raise JsonDecodeError((path, "expected tuple of size 7"))
+    _ => decode_error!(path, "expected tuple of size 7")
   }
 }
