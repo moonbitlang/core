@@ -744,3 +744,17 @@ impl Show for Tuple
 
 impl Show for Tuple
 
+impl ToJson for Tuple
+
+impl ToJson for Tuple
+
+impl ToJson for Tuple
+
+impl ToJson for Tuple
+
+impl ToJson for Tuple
+
+impl ToJson for Tuple
+
+impl ToJson for Tuple
+

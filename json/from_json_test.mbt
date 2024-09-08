@@ -52,3 +52,73 @@ test {
     ,
   )
 }
+
+test "tuple" {
+  let u : Json = [1, 2]
+  let v : (Int, Int) = @json.from_json!(u)
+  inspect!(v, content="(1, 2)")
+  let u : Json = [1, 2, 3]
+  let v : (Int, Int, Int) = @json.from_json!(u)
+  inspect!(v, content="(1, 2, 3)")
+  let u : Json = [1, 2, 3, 4]
+  let v : (Int, Int, Int, Int) = @json.from_json!(u)
+  inspect!(v, content="(1, 2, 3, 4)")
+  let u : Json = [1, 2, 3, 4, 5]
+  let v : (Int, Int, Int, Int, Int) = @json.from_json!(u)
+  inspect!(v, content="(1, 2, 3, 4, 5)")
+  let u : Json = [1, 2, 3, 4, 5, 6]
+  let v : (Int, Int, Int, Int, Int, Int) = @json.from_json!(u)
+  inspect!(v, content="(1, 2, 3, 4, 5, 6)")
+  let u : Json = [1, 2, 3, 4, 5, 6, 7]
+  let v : (Int, Int, Int, Int, Int, Int, Int) = @json.from_json!(u)
+  inspect!(v, content="(1, 2, 3, 4, 5, 6, 7)")
+}
+
+test "tuple roundtrip" {
+  let u = [1, 2]
+  inspect!((@json.from_json!(u.to_json()) : (Int, Int)), content="(1, 2)")
+  let u = [1, 2, 3]
+  inspect!(
+    (@json.from_json!(u.to_json()) : (Int, Int, Int)),
+    content="(1, 2, 3)",
+  )
+  let u = [1, 2, 3, 4]
+  inspect!(
+    (@json.from_json!(u.to_json()) : (Int, Int, Int, Int)),
+    content="(1, 2, 3, 4)",
+  )
+  let u = [1, 2, 3, 4, 5]
+  inspect!(
+    (@json.from_json!(u.to_json()) : (Int, Int, Int, Int, Int)),
+    content="(1, 2, 3, 4, 5)",
+  )
+  let u = [1, 2, 3, 4, 5, 6]
+  inspect!(
+    (@json.from_json!(u.to_json()) : (Int, Int, Int, Int, Int, Int)),
+    content="(1, 2, 3, 4, 5, 6)",
+  )
+  let u = [1, 2, 3, 4, 5, 6, 7]
+  inspect!(
+    (@json.from_json!(u.to_json()) : (Int, Int, Int, Int, Int, Int, Int)),
+    content="(1, 2, 3, 4, 5, 6, 7)",
+  )
+}
+
+test "tuple failure" {
+  let u = [1, 2]
+  let v : Result[(Int, Int, Int), _] = @json.from_json?(u.to_json())
+  inspect!(
+    v,
+    content=
+      #|Err(JsonDecodeError(($, "expected tuple of size 3")))
+    ,
+  )
+  let u = ((1, 2), (3, 4))
+  let v : Result[((Int, Int), Int), _] = @json.from_json?(ToJson::to_json(u))
+  inspect!(
+    v,
+    content=
+      #|Err(JsonDecodeError(($[1], "Int::from_json: expected number")))
+    ,
+  )
+}

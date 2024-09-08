@@ -85,3 +85,15 @@ impl FromJson for Array
 
 impl FromJson for Map
 
+impl FromJson for Tuple
+
+impl FromJson for Tuple
+
+impl FromJson for Tuple
+
+impl FromJson for Tuple
+
+impl FromJson for Tuple
+
+impl FromJson for Tuple
+
