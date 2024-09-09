@@ -113,7 +113,7 @@ fn add_with_hash[A : Eq](self : T[A], key : A, depth : Int, hash : Int) -> T[A] 
 }
 
 /// Add a key to the hashset.
-pub fn add[A : Eq + Hash](self : T[A], key : A) -> T[A] {
+pub fn insert[A : Eq + Hash](self : T[A], key : A) -> T[A] {
   self.add_with_hash(key, 0, key.hash())
 }
 
@@ -205,7 +205,7 @@ pub fn iter[A](self : T[A]) -> Iter[A] {
 }
 
 pub fn T::from_iter[A : Eq + Hash](iter : Iter[A]) -> T[A] {
-  iter.fold(init=new(), fn(s, e) { s.add(e) })
+  iter.fold(init=new(), fn(s, e) { s.insert(e) })
 }
 
 pub impl[A : Show] Show for T[A] with output(self, logger) {
@@ -233,7 +233,7 @@ pub fn T::from_array[A : Eq + Hash](arr : Array[A]) -> T[A] {
     0, set => set
     n, set => {
       let k = arr[n - 1]
-      continue n - 1, set.add(k)
+      continue n - 1, set.insert(k)
     }
   }
 }
@@ -243,7 +243,7 @@ pub fn T::of[A : Eq + Hash](arr : FixedArray[A]) -> T[A] {
     0, set => set
     n, set => {
       let k = arr[n - 1]
-      continue n - 1, set.add(k)
+      continue n - 1, set.insert(k)
     }
   }
 }

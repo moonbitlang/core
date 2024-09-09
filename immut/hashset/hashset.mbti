@@ -5,11 +5,11 @@ package moonbitlang/core/immut/hashset
 // Types and methods
 type T
 impl T {
-  add[A : Eq + Hash](Self[A], A) -> Self[A]
   contains[A : Eq + Hash](Self[A], A) -> Bool
   each[A](Self[A], (A) -> Unit) -> Unit
   from_array[A : Eq + Hash](Array[A]) -> Self[A]
   from_iter[A : Eq + Hash](Iter[A]) -> Self[A]
+  insert[A : Eq + Hash](Self[A], A) -> Self[A]
   is_empty[A](Self[A]) -> Bool
   iter[A](Self[A]) -> Iter[A]
   new[A]() -> Self[A]

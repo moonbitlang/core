@@ -13,50 +13,50 @@
 // limitations under the License.
 
 test "HAMT::size" {
-  for i = 0, map = @hashmap.new(); i < 20; i = i + 1, map = map.add(i, i) {
+  for i = 0, map = @hashmap.new(); i < 20; i = i + 1, map = map.insert(i, i) {
     assert_eq!(map.size(), i)
   } else {
-    assert_eq!(map.add(0, 0).size(), 20)
+    assert_eq!(map.insert(0, 0).size(), 20)
   }
 }
 
 test "HAMT" {
   let map = loop 0, @hashmap.new() {
     100, map => map
-    i, map => continue i + 1, map.add(i, i)
+    i, map => continue i + 1, map.insert(i, i)
   }
   for i = 0; i < 100; i = i + 1 {
-    assert_eq!((i, map.find(i)), (i, Some(i)))
+    assert_eq!((i, map.get(i)), (i, Some(i)))
   }
-  inspect!((100, map.find(100)), content="(100, None)")
-  let map = map.add(100, 100)
-  inspect!((100, map.find(100)), content="(100, Some(100))")
+  inspect!((100, map.get(100)), content="(100, None)")
+  let map = map.insert(100, 100)
+  inspect!((100, map.get(100)), content="(100, Some(100))")
   // test for replacement
   let map = loop 0, map {
     100, map => map
-    i, map => continue i + 2, map.add(i, i + 1)
+    i, map => continue i + 2, map.insert(i, i + 1)
   }
   for i = 0; i < 100; i = i + 2 {
-    assert_eq!((i, map.find(i)), (i, Some(i + 1)))
-    assert_eq!((i + 1, map.find(i + 1)), (i + 1, Some(i + 1)))
+    assert_eq!((i, map.get(i)), (i, Some(i + 1)))
+    assert_eq!((i + 1, map.get(i + 1)), (i + 1, Some(i + 1)))
   }
 }
 
 test "HAMT::remove" {
   let map = loop 0, @hashmap.new() {
     100, map => map
-    i, map => continue i + 1, map.add(i, i)
+    i, map => continue i + 1, map.insert(i, i)
   }
   for i = 0; i < 100; i = i + 1 {
-    assert_eq!((i, map.find(i)), (i, Some(i)))
+    assert_eq!((i, map.get(i)), (i, Some(i)))
   }
   let map = loop 0, map {
     100, map => map.remove(100) // test for removing non-existing element
     i, map => continue i + 2, map.remove(i)
   }
   for i = 0; i < 100; i = i + 2 {
-    assert_eq!(map.find(i), None)
-    assert_eq!(map.find(i + 1), Some(i + 1))
+    assert_eq!(map.get(i), None)
+    assert_eq!(map.get(i + 1), Some(i + 1))
   }
 }
 
@@ -69,10 +69,10 @@ test "HAMT::iter" {
 
 test "HAMT::to_string" {
   let map = @hashmap.new()
-    .add(1, 1)
-    .add(3, 3)
-    .add(0x0f_ff_ff_ff, 0x0f_ff_ff_ff)
-    .add(42, 42)
+    .insert(1, 1)
+    .insert(3, 3)
+    .insert(0x0f_ff_ff_ff, 0x0f_ff_ff_ff)
+    .insert(42, 42)
   inspect!(
     map,
     content="@immut/hashmap.of([(3, 3), (42, 42), (1, 1), (268435455, 268435455)])",
@@ -82,24 +82,24 @@ test "HAMT::to_string" {
 test "HAMT::from_array" {
   let map = @hashmap.of([(1, "1"), (2, "2"), (42, "42")])
   inspect!(
-    (1, map.find(1)),
+    (1, map.get(1)),
     content=
       #|(1, Some("1"))
     ,
   )
   inspect!(
-    (2, map.find(2)),
+    (2, map.get(2)),
     content=
       #|(2, Some("2"))
     ,
   )
   inspect!(
-    (42, map.find(42)),
+    (42, map.get(42)),
     content=
       #|(42, Some("42"))
     ,
   )
-  inspect!((43, map.find(43)), content="(43, None)")
+  inspect!((43, map.get(43)), content="(43, None)")
 }
 
 test "from_iter multiple elements iter" {

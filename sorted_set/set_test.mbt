@@ -84,7 +84,7 @@ test "iter" {
 test "contains" {
   let set = @sorted_set.of([7, 2, 9, 4, 6, 3, 8, 1])
   inspect!(set.contains(5), content="false")
-  set.add(5)
+  set.insert(5)
   inspect!(set.contains(5), content="true")
   inspect!(
     @sorted_set.of([7, 2, 9, 4, 6, 3, 8, 1]).contains(5),
@@ -147,7 +147,7 @@ test "mix_everything" {
   // test all functions together, including add, remove, union, diff, inter, subset, disjoint, size, is_empty, contains
   let set1 = @sorted_set.of([1, 2, 3, 4, 5])
   let set2 = @sorted_set.of([4, 5, 6, 7, 8])
-  set1.add(6)
+  set1.insert(6)
   inspect!(set1, content="@sorted_set.of([1, 2, 3, 4, 5, 6])")
   set1.remove(6)
   inspect!(set1, content="@sorted_set.of([1, 2, 3, 4, 5])")

@@ -8,13 +8,13 @@ fn of[K : Compare + Eq, V](Array[Tuple[K, V]]) -> T[K, V]
 // Types and methods
 type T
 impl T {
-  add[K : Compare + Eq, V](Self[K, V], K, V) -> Unit
   clear[K, V](Self[K, V]) -> Unit
   contains[K : Compare + Eq, V](Self[K, V], K) -> Bool
   each[K, V](Self[K, V], (K, V) -> Unit) -> Unit
   eachi[K, V](Self[K, V], (Int, K, V) -> Unit) -> Unit
   from_iter[K : Compare + Eq, V](Iter[Tuple[K, V]]) -> Self[K, V]
   get[K : Compare + Eq, V](Self[K, V], K) -> V?
+  insert[K : Compare + Eq, V](Self[K, V], K, V) -> Unit
   is_empty[K, V](Self[K, V]) -> Bool
   iter[K, V](Self[K, V]) -> Iter[Tuple[K, V]]
   iter2[K, V](Self[K, V]) -> Iter2[K, V]

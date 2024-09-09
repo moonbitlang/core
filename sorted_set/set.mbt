@@ -28,7 +28,7 @@ pub fn singleton[V : Compare](value : V) -> T[V] {
 pub fn of[V : Compare](array : Array[V]) -> T[V] {
   let set = new()
   for i = 0; i < array.length(); i = i + 1 {
-    set.add(array[i])
+    set.insert(array[i])
   }
   set
 }
@@ -75,7 +75,7 @@ fn new_node_update_height[V](
 
 // Manipulations
 
-pub fn add[V : Compare](self : T[V], value : V) -> Unit {
+pub fn insert[V : Compare](self : T[V], value : V) -> Unit {
   let (new_root, inserted) = add_node(self.root, value)
   if self.root != new_root {
     self.root = new_root
@@ -232,14 +232,14 @@ fn join_right[V : Compare](l : Node[V]?, v : V, r : Node[V]?) -> Node[V] {
 /// Returns the difference of two sets.
 pub fn diff[V : Compare](self : T[V], src : T[V]) -> T[V] {
   let ret = new()
-  self.each(fn(x) { if not(src.contains(x)) { ret.add(x) } })
+  self.each(fn(x) { if not(src.contains(x)) { ret.insert(x) } })
   ret
 }
 
 /// Returns the intersection of two sets.
 pub fn intersect[V : Compare](self : T[V], src : T[V]) -> T[V] {
   let ret = new()
-  self.each(fn(x) { if src.contains(x) { ret.add(x) } })
+  self.each(fn(x) { if src.contains(x) { ret.insert(x) } })
   ret
 }
 
@@ -369,7 +369,7 @@ fn iter[A](self : Node[A]) -> Iter[A] {
 
 pub fn T::from_iter[V : Compare](iter : Iter[V]) -> T[V] {
   let s = new()
-  iter.each(fn(e) { s.add(e) })
+  iter.each(fn(e) { s.insert(e) })
   s
 }
 
@@ -717,15 +717,15 @@ test "join" {
 
 test "add to empty set" {
   let set = new()
-  set.add(1)
+  set.insert(1)
   assert_eq!(set.contains(1), true)
   inspect!(set.debug_tree(), content="([1]1,_,_)")
 }
 
 test "add to non-empty set" {
   let set = new()
-  set.add(1)
-  set.add(2)
+  set.insert(1)
+  set.insert(2)
   assert_eq!(set.contains(1), true)
   assert_eq!(set.contains(2), true)
   inspect!(set.debug_tree(), content="([2]1,_,([1]2,_,_))")
@@ -733,8 +733,8 @@ test "add to non-empty set" {
 
 test "add duplicate value" {
   let set = new()
-  set.add(1)
-  set.add(1)
+  set.insert(1)
+  set.insert(1)
   assert_eq!(set.contains(1), true)
   assert_eq!(set.size(), 1L)
   inspect!(set.debug_tree(), content="([1]1,_,_)")
@@ -742,9 +742,9 @@ test "add duplicate value" {
 
 test "add multiple values" {
   let set = new()
-  set.add(1)
-  set.add(2)
-  set.add(3)
+  set.insert(1)
+  set.insert(2)
+  set.insert(3)
   assert_eq!(set.contains(1), true)
   assert_eq!(set.contains(2), true)
   assert_eq!(set.contains(3), true)
@@ -789,25 +789,25 @@ test "add_and_remove" {
   )
 
   // Test 2: Add elements
-  set.add(1)
+  set.insert(1)
   inspect!(set, content="@sorted_set.of([1, 2, 3, 6, 7, 8, 9])")
   inspect!(
     set.debug_tree(),
     content="([3]6,([2]2,([1]1,_,_),([1]3,_,_)),([2]8,([1]7,_,_),([1]9,_,_)))",
   )
-  set.add(5)
+  set.insert(5)
   inspect!(set, content="@sorted_set.of([1, 2, 3, 5, 6, 7, 8, 9])")
   inspect!(
     set.debug_tree(),
     content="([4]6,([3]2,([1]1,_,_),([2]3,_,([1]5,_,_))),([2]8,([1]7,_,_),([1]9,_,_)))",
   )
-  set.add(10)
+  set.insert(10)
   inspect!(set, content="@sorted_set.of([1, 2, 3, 5, 6, 7, 8, 9, 10])")
   inspect!(
     set.debug_tree(),
     content="([4]6,([3]2,([1]1,_,_),([2]3,_,([1]5,_,_))),([3]8,([1]7,_,_),([2]9,_,([1]10,_,_))))",
   )
-  set.add(4)
+  set.insert(4)
   inspect!(set, content="@sorted_set.of([1, 2, 3, 4, 5, 6, 7, 8, 9, 10])")
   inspect!(
     set.debug_tree(),
@@ -815,7 +815,7 @@ test "add_and_remove" {
   )
 
   // Test 3: Add and remove the same element
-  set.add(11)
+  set.insert(11)
   inspect!(set, content="@sorted_set.of([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11])")
   inspect!(
     set.debug_tree(),
@@ -833,7 +833,7 @@ test "add_and_remove" {
   inspect!(set, content="@sorted_set.of([1, 2, 3, 4, 5, 6, 7, 8, 9, 10])")
 
   // Test 5: Add an element that already exists
-  set.add(10)
+  set.insert(10)
   inspect!(set, content="@sorted_set.of([1, 2, 3, 4, 5, 6, 7, 8, 9, 10])")
 
   // Test 6: Remove all elements
