@@ -123,6 +123,7 @@ impl ArrayView {
   op_get[T](Self[T], Int) -> T
   op_set[T](Self[T], Int, T) -> Unit
   swap[T](Self[T], Int, Int) -> Unit
+  to_string[X : Show](Self[X]) -> String
 }
 
 type BigInt
