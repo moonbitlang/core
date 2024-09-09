@@ -18,6 +18,14 @@ enum JsonPath {
   Index(JsonPath, mut ~index : Int)
 } derive(Eq)
 
+pub fn add_index(self : JsonPath, index : Int) -> JsonPath {
+  Index(self, ~index)
+}
+
+pub fn add_key(self : JsonPath, key : String) -> JsonPath {
+  Key(self, ~key)
+}
+
 pub fn output(self : JsonPath, logger : Logger) -> Unit {
   match self {
     Root => logger.write_string("$")
@@ -42,22 +50,6 @@ fn update_index_inplace(self : JsonPath, index : Int) -> Unit {
   match self {
     Index(_) as i => i.index = index
     _ => abort("the variant is not Index")
-  }
-}
-
-pub fn add_index(self : JsonPath, index : Int) -> JsonPath {
-  match self {
-    Root => Index(self, ~index)
-    Index(p, index=index1) => Index(p.add_index(index1), ~index)
-    Key(p, ~key) => Index(p.add_key(key), ~index)
-  }
-}
-
-pub fn add_key(self : JsonPath, key : String) -> JsonPath {
-  match self {
-    Root => Key(self, ~key)
-    Key(p, key=key1) => Key(p.add_key(key1), ~key)
-    Index(p, ~index) => Key(p.add_index(index), ~key)
   }
 }
 
