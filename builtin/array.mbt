@@ -51,12 +51,8 @@ fn realloc[T](self : Array[T]) -> Unit {
 /// ```
 /// @alert unsafe "Panic if index is out of bounds"
 pub fn op_get[T](self : Array[T], index : Int) -> T {
-  if index < 0 || index >= self.length() {
-    let len = self.length()
-    abort(
-      "index out of bounds: the len is from 0 to \{len} but the index is \{index}",
-    )
-  }
+  let len = self.length()
+  guard index >= 0 && index < len
   self.buffer()[index]
 }
 
@@ -69,9 +65,8 @@ pub fn op_get[T](self : Array[T], index : Int) -> T {
 /// println(v.get(0)) // Some(3)
 /// ```
 pub fn get[T](self : Array[T], index : Int) -> T? {
-  if index < 0 || index >= self.length() {
-    return None
-  }
+  let len = self.length()
+  guard index >= 0 && index < len else { None }
   Some(self.buffer()[index])
 }
 
@@ -85,20 +80,14 @@ pub fn get[T](self : Array[T], index : Int) -> T? {
 /// ```
 /// @alert unsafe "Panic if index is out of bounds."
 pub fn op_set[T](self : Array[T], index : Int, value : T) -> Unit {
-  if index < 0 || index >= self.length() {
-    let len = self.length()
-    abort(
-      "index out of bounds: the len is from 0 to \{len} but the index is \{index}",
-    )
-  }
+  let len = self.length()
+  guard index >= 0 && index < len
   self.buffer()[index] = value
 }
 
 /// Compares two arrays for equality.
 pub fn op_equal[T : Eq](self : Array[T], other : Array[T]) -> Bool {
-  if self.length() != other.length() {
-    return false
-  }
+  guard self.length() == other.length() else { return false }
   for i = 0 {
     // CR: format issue
     if i >= self.length() {
@@ -157,9 +146,7 @@ pub fn pop_exn[T](self : Array[T]) -> T {
 /// 
 /// @alert unsafe "Panic if the array is empty."
 pub fn unsafe_pop[T](self : Array[T]) -> T {
-  if self.length() == 0 {
-    abort("pop from an empty Array")
-  }
+  guard self.length() != 0
   let index = self.length() - 1
   let v = self.buffer()[index]
   self.set_length(index)
