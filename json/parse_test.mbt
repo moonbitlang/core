@@ -198,7 +198,7 @@ test "parses escaped characters" {
 //region whitespace
 test "parses whitespace" {
   let json = test_parse!("{\t\u000b\u000c \u00A0\uFEFF\n\r\u2028\u2029\u2003}")
-  assert_eq!(json, Json::Object({  }))
+  assert_eq!(json, Json::Object({}))
 }
 //endregion
 

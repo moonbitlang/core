@@ -31,7 +31,7 @@ impl T {
   remove[A : Compare + Eq](Self[A], A) -> Self[A]
   remove_min[A : Compare + Eq](Self[A]) -> Self[A]
   singleton[A : Compare + Eq](A) -> Self[A]
-  split[A : Compare + Eq](Self[A], A) -> Tuple[Self[A], Bool, Self[A]]
+  split[A : Compare + Eq](Self[A], A) -> (Self[A], Bool, Self[A])
   subset[A : Compare + Eq](Self[A], Self[A]) -> Bool
   to_array[A : Compare + Eq](Self[A]) -> Array[A]
   to_string[A : Show](Self[A]) -> String

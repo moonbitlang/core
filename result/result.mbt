@@ -338,12 +338,12 @@ pub fn unwrap_or_error[T, E : Error](self : Result[T, E]) -> T!E {
 }
 
 test "unwrap exn" {
-  try {
+  (try {
     (Err(Failure("This is serious")) : Result[Unit, Failure]).unwrap_or_error!()
     |> Ok
   } catch {
     Failure(msg) => Err(msg)
-  }
+  })
   |> inspect!(
     content=
       #|Err("This is serious")

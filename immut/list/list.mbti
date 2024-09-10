@@ -3,9 +3,9 @@ package moonbitlang/core/immut/list
 // Values
 fn repeat[A](Int, A) -> T[A]
 
-fn unfold[A, S]((S) -> Tuple[A, S]?, ~init : S) -> T[A]
+fn unfold[A, S]((S) -> (A, S)?, ~init : S) -> T[A]
 
-fn unzip[A, B](T[Tuple[A, B]]) -> Tuple[T[A], T[B]]
+fn unzip[A, B](T[(A, B)]) -> (T[A], T[B])
 
 // Types and methods
 pub enum T {
@@ -50,7 +50,7 @@ impl T {
   iter2[A](Self[A]) -> Iter2[Int, A]
   last[A](Self[A]) -> A
   length[A](Self[A]) -> Int
-  lookup[A : Eq, B](Self[Tuple[A, B]], A) -> B?
+  lookup[A : Eq, B](Self[(A, B)], A) -> B?
   map[A, B](Self[A], (A) -> B) -> Self[B]
   mapi[A, B](Self[A], (Int, A) -> B) -> Self[B]
   maximum[A : Compare + Eq](Self[A]) -> A?
@@ -78,7 +78,7 @@ impl T {
   unsafe_maximum[A : Compare + Eq](Self[A]) -> A
   unsafe_minimum[A : Compare + Eq](Self[A]) -> A
   unsafe_nth[A](Self[A], Int) -> A
-  zip[A, B](Self[A], Self[B]) -> Self[Tuple[A, B]]?
+  zip[A, B](Self[A], Self[B]) -> Self[(A, B)]?
 }
 
 // Type aliases

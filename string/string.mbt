@@ -343,16 +343,14 @@ pub fn last_index_of(
     let mut j = i - 1
     let mut k = sub_len - 2
     let start = i - sub_len
-    let found = {
-      while j > start {
-        if self[j] != str[k] {
-          break false
-        }
-        j -= 1
-        k -= 1
-      } else {
-        true
+    let found = while j > start {
+      if self[j] != str[k] {
+        break false
       }
+      j -= 1
+      k -= 1
+    } else {
+      true
     }
     if found {
       return start + 1

@@ -8,7 +8,7 @@ fn parse(String) -> Json!ParseError
 fn valid(String) -> Bool
 
 // Types and methods
-pub type! JsonDecodeError Tuple[JsonPath, String]
+pub type! JsonDecodeError (JsonPath, String)
 impl JsonDecodeError {
   op_equal(Self, Self) -> Bool
   to_string(Self) -> String
@@ -85,15 +85,15 @@ impl FromJson for Array
 
 impl FromJson for Map
 
-impl FromJson for Tuple
+impl FromJson for Tuple(2)
 
-impl FromJson for Tuple
+impl FromJson for Tuple(3)
 
-impl FromJson for Tuple
+impl FromJson for Tuple(4)
 
-impl FromJson for Tuple
+impl FromJson for Tuple(5)
 
-impl FromJson for Tuple
+impl FromJson for Tuple(6)
 
-impl FromJson for Tuple
+impl FromJson for Tuple(7)
 

@@ -11,7 +11,7 @@ impl RandomState {
   next_double(Self) -> Double
   next_int(Self) -> Int
   next_int64(Self) -> Int64
-  next_two_uint(Self) -> Tuple[UInt, UInt]
+  next_two_uint(Self) -> (UInt, UInt)
   next_uint(Self) -> UInt
   next_uint64(Self) -> UInt64
   split(Self) -> Self
