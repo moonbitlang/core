@@ -104,10 +104,9 @@ pub fn op_as_view[T](
 pub fn iter[A](self : ArrayView[A]) -> Iter[A] {
   Iter::new(
     fn(yield) {
-      for i = 0, len = self.length(); i < len; i = i + 1 {
-        if yield(self[i]) == IterEnd {
-          break IterEnd
-        }
+      for v in self {
+        guard let IterContinue = yield(v) else { x => break x }
+
       } else {
         IterContinue
       }
