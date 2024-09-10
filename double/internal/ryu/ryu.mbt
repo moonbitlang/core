@@ -85,24 +85,24 @@ fn mulShiftAll64(
   let (lo, tmp) = umul128(m, mul.0)
   let (lo2, hi2) = umul128(m, mul.1)
   let mid = tmp + lo2
-  let hi = hi2 + if mid < tmp { 1 } else { 0 }
+  let hi = hi2 + (if mid < tmp { 1 } else { 0 })
   let lo2 = lo + mul.0
-  let mid2 = mid + mul.1 + if lo2 < lo { 1 } else { 0 }
-  let hi2 = hi + if mid2 < mid { 1 } else { 0 }
+  let mid2 = mid + mul.1 + (if lo2 < lo { 1 } else { 0 })
+  let hi2 = hi + (if mid2 < mid { 1 } else { 0 })
   let vp = shiftright128(mid2, hi2, j - 64 - 1)
   let mut vm : UInt64 = 0UL
   if mmShift {
     let lo3 = lo - mul.0
-    let mid3 = mid - mul.1 - if lo < lo3 { 1 } else { 0 }
-    let hi3 = hi - if mid < mid3 { 1 } else { 0 }
+    let mid3 = mid - mul.1 - (if lo < lo3 { 1 } else { 0 })
+    let hi3 = hi - (if mid < mid3 { 1 } else { 0 })
     vm = shiftright128(mid3, hi3, j - 64 - 1)
   } else {
     let lo3 : UInt64 = lo + lo
-    let mid3 : UInt64 = mid + mid + if lo3 < lo { 1 } else { 0 }
-    let hi3 : UInt64 = hi + hi + if mid3 < mid { 1 } else { 0 }
+    let mid3 : UInt64 = mid + mid + (if lo3 < lo { 1 } else { 0 })
+    let hi3 : UInt64 = hi + hi + (if mid3 < mid { 1 } else { 0 })
     let lo4 : UInt64 = lo3 - mul.0
-    let mid4 : UInt64 = mid3 - mul.1 - if lo3 < lo4 { 1 } else { 0 }
-    let hi4 : UInt64 = hi3 - if mid3 < mid4 { 1 } else { 0 }
+    let mid4 : UInt64 = mid3 - mul.1 - (if lo3 < lo4 { 1 } else { 0 })
+    let hi4 : UInt64 = hi3 - (if mid3 < mid4 { 1 } else { 0 })
     vm = shiftright128(mid4, hi4, j - 64)
   }
   let vr = shiftright128(mid, hi, j - 64 - 1)

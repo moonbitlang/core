@@ -224,7 +224,7 @@ test "deep access" {
         ),
         ("null", Json::Null),
         ("bool", Json::False),
-        ("obj", Json::Object({  })),
+        ("obj", Json::Object({})),
       ],
     ),
   )
@@ -271,7 +271,7 @@ test "stringify" {
     "double": 123.45,
     "null": Null,
     "bool": false,
-    "obj": {  },
+    "obj": {},
   }
   inspect!(
     json.stringify(),

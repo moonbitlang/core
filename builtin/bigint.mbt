@@ -196,7 +196,7 @@ fn grade_school_mul(self : BigInt, other : BigInt) -> BigInt {
     for j = 0; j < other_len || carry != 0; j = j + 1 {
       let product = limbs[i + j].to_uint64() +
         self.limbs[i].to_uint64() *
-        if j < other_len { other.limbs[j].to_uint64() } else { 0 } +
+        (if j < other_len { other.limbs[j].to_uint64() } else { 0 }) +
         carry
       limbs[i + j] = (product % radix).to_uint()
       carry = product / radix
@@ -658,10 +658,10 @@ pub fn BigInt::from_string(input : String) -> BigInt {
     radix_bit_len +
     1
   let b = FixedArray::make(b_len, 0U)
-  for i = match sign {
+  for i = (match sign {
           Negative => 1
           Positive => 0
-        }
+        })
       i < input.length()
       i = i + 1 {
     let x = input[i].to_int() - 48 // ASCII value of '0'
@@ -742,11 +742,11 @@ pub fn to_hex(self : BigInt) -> String {
     while x > 0 {
       let y = x % 16
       x /= 16
-      tmp = if y < 10 {
+      tmp = (if y < 10 {
           Char::from_int(y.reinterpret_as_int() + 48).to_string()
         } else {
           Char::from_int(y.reinterpret_as_int() + 55).to_string()
-        } +
+        }) +
         tmp
     }
     if i != self.len - 1 && tmp.length() < radix_bit_len / 4 {

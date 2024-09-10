@@ -22,8 +22,8 @@ test "Map keys iter" {
     ,
   )
   inspect!(map.values(), content="[1, 2, 3]")
-  inspect!(({  } : Map[String, Int]).keys(), content="[]")
-  inspect!(({  } : Map[String, Int]).values(), content="[]")
+  inspect!(({} : Map[String, Int]).keys(), content="[]")
+  inspect!(({} : Map[String, Int]).values(), content="[]")
 }
 
 test "Map::from_iter" {

@@ -96,7 +96,7 @@ pub impl[X : FromJson] FromJson for Array[X] with from_json(json, path) {
 pub impl[V : FromJson] FromJson for Map[String, V] with from_json(json, path) {
   match json {
     Object(obj) => {
-      let res = {  }
+      let res = {}
       let key = Key(path, key="")
       for k, v in obj {
         key.update_key_inplace(k)

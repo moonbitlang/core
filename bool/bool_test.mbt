@@ -23,7 +23,7 @@ struct TestHash {
 } derive(Hash, Eq, Show)
 
 test "Bool hash function with struct" {
-  let m = {  }
+  let m = {}
   m[{ flag: true, x: 1 }] = '3'
   m[{ flag: false, x: 1 }] = '3'
   inspect!(m, content="{{flag: true, x: 1}: '3', {flag: false, x: 1}: '3'}")

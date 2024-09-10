@@ -49,7 +49,7 @@ pub fn sin(x : Double) -> Double {
     }
     let z = x_ - y * pi4a - y * pi4b - y * pi4c
     let zz = z * z
-    if j == 1L || j == 2L {
+    (if j == 1L || j == 2L {
       1.0 -
       0.5 * zz +
       zz *
@@ -74,8 +74,8 @@ pub fn sin(x : Double) -> Double {
         zz +
         sin_[5]
       )
-    } *
-    if sign { -1.0 } else { 1.0 }
+    }) *
+    (if sign { -1.0 } else { 1.0 })
   }
 }
 
@@ -105,7 +105,7 @@ pub fn cos(x : Double) -> Double {
       sign = sign.not()
     }
     let zz = z * z
-    if j == 1L || j == 2L {
+    (if j == 1L || j == 2L {
       z +
       z *
       zz *
@@ -130,8 +130,8 @@ pub fn cos(x : Double) -> Double {
         zz +
         cos_[5]
       )
-    } *
-    if sign { -1.0 } else { 1.0 }
+    }) *
+    (if sign { -1.0 } else { 1.0 })
   }
 }
 
@@ -238,7 +238,7 @@ pub fn asin(x : Double) -> Double {
       @double.not_a_number
     } else {
       let temp = (1.0 - x_ * x_).sqrt()
-      if x > 0.7 { pi / 2.0 - satan(temp / x_) } else { satan(x_ / temp) } *
+      (if x > 0.7 { pi / 2.0 - satan(temp / x_) } else { satan(x_ / temp) }) *
       x.signum()
     }
   }
