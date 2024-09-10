@@ -3,7 +3,7 @@ package moonbitlang/core/sorted_map
 // Values
 fn new[K, V]() -> T[K, V]
 
-fn of[K : Compare + Eq, V](Array[Tuple[K, V]]) -> T[K, V]
+fn of[K : Compare + Eq, V](Array[(K, V)]) -> T[K, V]
 
 // Types and methods
 type T
@@ -13,10 +13,10 @@ impl T {
   contains[K : Compare + Eq, V](Self[K, V], K) -> Bool
   each[K, V](Self[K, V], (K, V) -> Unit) -> Unit
   eachi[K, V](Self[K, V], (Int, K, V) -> Unit) -> Unit
-  from_iter[K : Compare + Eq, V](Iter[Tuple[K, V]]) -> Self[K, V]
+  from_iter[K : Compare + Eq, V](Iter[(K, V)]) -> Self[K, V]
   get[K : Compare + Eq, V](Self[K, V], K) -> V?
   is_empty[K, V](Self[K, V]) -> Bool
-  iter[K, V](Self[K, V]) -> Iter[Tuple[K, V]]
+  iter[K, V](Self[K, V]) -> Iter[(K, V)]
   iter2[K, V](Self[K, V]) -> Iter2[K, V]
   keys[K, V](Self[K, V]) -> Array[K]
   op_equal[K : Eq, V : Eq](Self[K, V], Self[K, V]) -> Bool
@@ -24,7 +24,7 @@ impl T {
   op_set[K : Compare + Eq, V](Self[K, V], K, V) -> Unit
   remove[K : Compare + Eq, V](Self[K, V], K) -> Unit
   size[K, V](Self[K, V]) -> Int
-  to_array[K, V](Self[K, V]) -> Array[Tuple[K, V]]
+  to_array[K, V](Self[K, V]) -> Array[(K, V)]
   to_string[K : Show, V : Show](Self[K, V]) -> String
   values[K, V](Self[K, V]) -> Array[V]
 }

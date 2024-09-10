@@ -10,20 +10,20 @@ impl T {
   contains[K : Hash + Eq, V](Self[K, V], K) -> Bool
   each[K, V](Self[K, V], (K, V) -> Unit) -> Unit
   eachi[K, V](Self[K, V], (Int, K, V) -> Unit) -> Unit
-  from_array[K : Hash + Eq, V](Array[Tuple[K, V]]) -> Self[K, V]
-  from_iter[K : Hash + Eq, V](Iter[Tuple[K, V]]) -> Self[K, V]
+  from_array[K : Hash + Eq, V](Array[(K, V)]) -> Self[K, V]
+  from_iter[K : Hash + Eq, V](Iter[(K, V)]) -> Self[K, V]
   get[K : Hash + Eq, V](Self[K, V], K) -> V?
   get_or_default[K : Hash + Eq, V](Self[K, V], K, V) -> V
   is_empty[K, V](Self[K, V]) -> Bool
-  iter[K, V](Self[K, V]) -> Iter[Tuple[K, V]]
+  iter[K, V](Self[K, V]) -> Iter[(K, V)]
   new[K, V](~capacity : Int = ..) -> Self[K, V]
-  of[K : Eq + Hash, V](FixedArray[Tuple[K, V]]) -> Self[K, V]
+  of[K : Eq + Hash, V](FixedArray[(K, V)]) -> Self[K, V]
   op_get[K : Hash + Eq, V](Self[K, V], K) -> V?
   op_set[K : Hash + Eq, V](Self[K, V], K, V) -> Unit
   remove[K : Hash + Eq, V](Self[K, V], K) -> Unit
   set[K : Hash + Eq, V](Self[K, V], K, V) -> Unit
   size[K, V](Self[K, V]) -> Int
-  to_array[K, V](Self[K, V]) -> Array[Tuple[K, V]]
+  to_array[K, V](Self[K, V]) -> Array[(K, V)]
   to_string[K : Show, V : Show](Self[K, V]) -> String
 }
 

@@ -18,7 +18,7 @@ pub struct State {
   pub c : UInt
 }
 impl State {
-  next(Self) -> Tuple[UInt64, Bool]
+  next(Self) -> (UInt64, Bool)
   refill(Self) -> Unit
 }
 
