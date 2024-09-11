@@ -60,20 +60,13 @@ pub fn op_as_view[T](
   ~start : Int,
   ~end? : Int
 ) -> ArrayView[T] {
+  let len = self.length()
   let end = match end {
-    None => self.length()
-    Some(end) =>
-      if end > self.length() {
-        abort("View end index out of bounds")
-      } else {
-        end
-      }
+    None => len
+    Some(end) => end
   }
-  if start < 0 {
+  guard start >= 0 && start <= end && end <= len else {
     abort("View start index out of bounds")
-  }
-  if start > end {
-    abort("View start index greater than end index")
   }
   ArrayView::{ buf: self.buffer(), start, len: end - start }
 }

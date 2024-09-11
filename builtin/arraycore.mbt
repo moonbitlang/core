@@ -72,8 +72,9 @@ pub fn length[T](self : Array[T]) -> Int {
 
 fn set_length[T](self : Array[T], new_len : Int) -> Unit {
   // assert new_len >= 0 && new_len <= self.buf.len
-  if new_len < self.len {
-    for i = new_len; i < self.len; i = i + 1 {
+  let len = self.len
+  if new_len < len {
+    for i in new_len..<len {
       self.buf.set_null(i)
     }
   }
