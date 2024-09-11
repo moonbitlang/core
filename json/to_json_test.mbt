@@ -128,3 +128,8 @@ test "Map::to_json" {
     ,
   )
 }
+
+test "Option::to_json" {
+  inspect!((Some(42) : Int?).to_json(), content="Number(42)")
+  inspect!((None : Int?).to_json(), content="Null")
+}

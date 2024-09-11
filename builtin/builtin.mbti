@@ -525,6 +525,7 @@ impl String {
 }
 impl Option {
   op_equal[X : Eq](X?, X?) -> Bool
+  to_json[T : ToJson](T?) -> Json
   to_string[X : Show](X?) -> String
   unwrap[X](X?) -> X
 }

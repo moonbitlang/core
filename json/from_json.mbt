@@ -132,3 +132,10 @@ pub impl[V : FromJson] FromJson for Map[String, V] with from_json(json, path) {
     _ => decode_error!(path, "Map::from_json: expected object")
   }
 }
+
+pub impl[T : FromJson] FromJson for T? with from_json(json, path) {
+  match json {
+    Null => None
+    _ => Some(FromJson::from_json!(json, path))
+  }
+}
