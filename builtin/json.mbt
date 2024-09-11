@@ -97,6 +97,17 @@ pub fn Array::to_json[X : ToJson](self : Array[X]) -> Json {
   Array(self.map(ToJson::to_json))
 }
 
+pub fn FixedArray::to_json[X : ToJson](self : FixedArray[X]) -> Json {
+  if self.length() == 0 {
+    return Array([])
+  }
+  let res = FixedArray::make(self.length(), ToJson::to_json(self[0]))
+  for i in 1..<self.length() {
+    res[i] = ToJson::to_json(self[i])
+  }
+  Array(Array::from_fixed_array(res))
+}
+
 pub fn Map::to_json[K : Show, V : ToJson](self : Map[K, V]) -> Json {
   let object = {}
   for k, v in self {

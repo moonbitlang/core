@@ -81,6 +81,12 @@ impl FromJson for Double
 
 impl FromJson for String
 
+impl FromJson for Option
+
+impl FromJson for Result
+
+impl FromJson for FixedArray
+
 impl FromJson for Array
 
 impl FromJson for Map

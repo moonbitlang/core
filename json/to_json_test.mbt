@@ -100,6 +100,19 @@ test "Array::to_json" {
   )
 }
 
+test "FixedArray::to_json" {
+  inspect!(
+    ([1, 2, 3] : FixedArray[_]).to_json(),
+    content="Array([Number(1), Number(2), Number(3)])",
+  )
+  inspect!(
+    [[], ["1"], ["1", "2"]].to_json(),
+    content=
+      #|Array([Array([]), Array([String("1")]), Array([String("1"), String("2")])])
+    ,
+  )
+}
+
 test "Map::to_json" {
   inspect!(
     { "x": [1], "y": [2] }.to_json(),

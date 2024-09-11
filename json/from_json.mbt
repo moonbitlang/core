@@ -93,6 +93,24 @@ pub impl[X : FromJson] FromJson for Array[X] with from_json(json, path) {
   }
 }
 
+pub impl[X : FromJson] FromJson for FixedArray[X] with from_json(json, path) {
+  match json {
+    Array(a) => {
+      let idx = Index(path, index=0)
+      let res : FixedArray[X] = FixedArray::make(
+        a.length(),
+        FromJson::from_json!(a[0], idx),
+      )
+      for i = 1; i < a.length(); i = i + 1 {
+        idx.update_index_inplace(i)
+        res[i] = FromJson::from_json!(a[i], idx)
+      }
+      res
+    }
+    _ => decode_error!(path, "FixedArray::from_json: expected array")
+  }
+}
+
 pub impl[V : FromJson] FromJson for Map[String, V] with from_json(json, path) {
   match json {
     Object(obj) => {
