@@ -126,3 +126,12 @@ pub fn Option::to_json[T : ToJson](self : T?) -> Json {
     Some(value) => value.to_json()
   }
 }
+
+pub fn Result::to_json[Ok : ToJson, Err : ToJson](
+  self : Result[Ok, Err]
+) -> Json {
+  match self {
+    Ok(ok) => Object({ "Ok": ok.to_json() })
+    Err(err) => Object({ "Err": err.to_json() })
+  }
+}

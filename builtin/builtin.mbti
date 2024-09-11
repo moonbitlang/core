@@ -531,6 +531,7 @@ impl Option {
 }
 impl Result {
   op_equal[T : Eq, E : Eq](Self[T, E], Self[T, E]) -> Bool
+  to_json[Ok : ToJson, Err : ToJson](Self[Ok, Err]) -> Json
 }
 impl FixedArray {
   blit_to[A](Self[A], Self[A], ~len : Int, ~src_offset : Int = .., ~dst_offset : Int = ..) -> Unit

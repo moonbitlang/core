@@ -139,3 +139,26 @@ pub impl[T : FromJson] FromJson for T? with from_json(json, path) {
     _ => Some(FromJson::from_json!(json, path))
   }
 }
+
+pub impl[Ok : FromJson, Err : FromJson] FromJson for Result[Ok, Err] with from_json(
+  json,
+  path
+) {
+  match json {
+    Object(obj) => {
+      if obj.size() != 1 {
+        decode_error!(path, "Result::from_json: expected object with one field")
+      }
+      if obj.contains("Ok") {
+        Ok(FromJson::from_json!(obj["Ok"].unwrap(), path.add_key("Ok")))
+      } else if obj.contains("Err") {
+        Err(FromJson::from_json!(obj["Err"].unwrap(), path.add_key("Err")))
+      } else {
+        decode_error!(
+          path, "Result::from_json: expected object with Ok or Err field",
+        )
+      }
+    }
+    _ => decode_error!(path, "Result::from_json: expected object")
+  }
+}
