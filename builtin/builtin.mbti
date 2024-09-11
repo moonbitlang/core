@@ -484,6 +484,7 @@ impl Float {
   reinterpret_as_int(Float) -> Int
   sqrt(Float) -> Float
   to_double(Float) -> Double
+  to_json(Float) -> Json
   until(Float, Float, ~step : Float = .., ~inclusive : Bool = ..) -> Iter[Float]
   upto(Float, Float, ~inclusive : Bool = ..) -> Iter[Float]
 }

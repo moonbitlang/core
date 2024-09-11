@@ -29,6 +29,10 @@ test "Double::to_json" {
   inspect!(42.0.to_json(), content="Number(42)")
 }
 
+test "Float::to_json" {
+  inspect!((42.0 : Float).to_json(), content="Number(42)")
+}
+
 test "String::to_json" {
   inspect!(
     "abc".to_json(),

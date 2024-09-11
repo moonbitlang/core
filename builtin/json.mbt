@@ -47,6 +47,10 @@ pub fn Double::to_json(self : Double) -> Json {
   Number(self)
 }
 
+pub fn Float::to_json(self : Float) -> Json {
+  Number(self.to_double())
+}
+
 fn escape_json_string(str : String) -> String {
   fn to_hex_digit(i : Int) -> Char {
     if i < 10 {
