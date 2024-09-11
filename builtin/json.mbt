@@ -93,6 +93,10 @@ pub fn Char::to_json(self : Char) -> Json {
   String(self.to_string())
 }
 
+pub fn BigInt::to_json(self : BigInt) -> Json {
+  String(self.to_string())
+}
+
 pub fn Array::to_json[X : ToJson](self : Array[X]) -> Json {
   Array(self.map(ToJson::to_json))
 }

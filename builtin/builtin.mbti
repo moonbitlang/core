@@ -150,6 +150,7 @@ impl BigInt {
   shl(Self, Int) -> Self
   shr(Self, Int) -> Self
   to_hex(Self) -> String
+  to_json(Self) -> Json
   to_octets(Self, ~length? : Int) -> Bytes
   to_string(Self) -> String
 }

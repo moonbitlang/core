@@ -87,6 +87,13 @@ test "Char::to_json" {
   )
 }
 
+test "BigInt::to_json" {
+  inspect!(
+    BigInt::from_string("123456789012345678901234567890").to_json(),
+    content="String(\"123456789012345678901234567890\")",
+  )
+}
+
 test "Array::to_json" {
   inspect!(
     [1, 2, 3].to_json(),

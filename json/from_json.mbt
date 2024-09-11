@@ -78,6 +78,13 @@ pub impl FromJson for Char with from_json(json, path) {
   }
 }
 
+pub impl FromJson for BigInt with from_json(json, path) {
+  match json {
+    String(s) => BigInt::from_string(s)
+    _ => decode_error!(path, "BigInt::from_json: expected number")
+  }
+}
+
 pub impl[X : FromJson] FromJson for Array[X] with from_json(json, path) {
   match json {
     Array(a) => {
