@@ -83,20 +83,13 @@ pub fn op_as_view[T](
   ~start : Int,
   ~end? : Int
 ) -> ArrayView[T] {
+  let len = self.length()
   let end = match end {
-    None => self.length()
-    Some(end) =>
-      if end > self.length() {
-        abort("View end index out of bounds")
-      } else {
-        end
-      }
+    None => len
+    Some(end) => end
   }
-  if start < 0 {
+  guard start >= 0 && start <= end && end <= len else {
     abort("View start index out of bounds")
-  }
-  if start > end {
-    abort("View start index greater than end index")
   }
   ArrayView::{ buf: self.buf, start: self.start + start, len: end - start }
 }
@@ -104,10 +97,9 @@ pub fn op_as_view[T](
 pub fn iter[A](self : ArrayView[A]) -> Iter[A] {
   Iter::new(
     fn(yield) {
-      for i = 0, len = self.length(); i < len; i = i + 1 {
-        if yield(self[i]) == IterEnd {
-          break IterEnd
-        }
+      for v in self {
+        guard let IterContinue = yield(v) else { x => break x }
+
       } else {
         IterContinue
       }
