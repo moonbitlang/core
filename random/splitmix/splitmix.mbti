@@ -6,6 +6,7 @@ package moonbitlang/core/random/splitmix
 type RandomState
 impl RandomState {
   clone(Self) -> Self
+  default() -> Self
   new(~seed : UInt64 = ..) -> Self
   next(Self) -> Unit
   next_double(Self) -> Double

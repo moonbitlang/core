@@ -57,3 +57,15 @@ pub impl Arbitrary for UInt64 with arbitrary(size, rs) {
     rs.next_uint64() % size.reinterpret_as_uint().to_uint64()
   }
 }
+
+pub fn gen[T : Arbitrary](~size? : Int, ~state? : @splitmix.RandomState) -> T {
+  let size = match size {
+    None => 0
+    Some(x) => x
+  }
+  let state = match state {
+    None => @splitmix.RandomState::default()
+    Some(x) => x
+  }
+  Arbitrary::arbitrary(size, state)
+}
