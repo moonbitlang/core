@@ -1,0 +1,26 @@
+package moonbitlang/core/float
+
+// Values
+let infinity : Float
+
+let max_value : Float
+
+let min_positive : Float
+
+let min_value : Float
+
+let neg_infinity : Float
+
+let not_a_number : Float
+
+// Types and methods
+impl Float {
+  abs(Float) -> Float
+}
+
+// Type aliases
+
+// Traits
+
+// Extension Methods
+
