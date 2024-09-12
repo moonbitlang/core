@@ -16,6 +16,7 @@ let not_a_number : Float
 // Types and methods
 impl Float {
   abs(Float) -> Float
+  to_string(Float) -> String
 }
 
 // Type aliases
@@ -23,4 +24,5 @@ impl Float {
 // Traits
 
 // Extension Methods
+impl Show for Float
 
