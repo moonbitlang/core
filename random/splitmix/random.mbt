@@ -87,16 +87,9 @@ fn mix64variant13(z0 : UInt64) -> UInt64 {
   shift_xor(31, z2)
 }
 
-fn pop_count(c : UInt64) -> Int {
-  loop 0, c {
-    x, 0 => x
-    c, w => continue c + 1, w & (w - 1)
-  }
-}
-
 fn mix_gamma(z0 : UInt64) -> UInt64 {
   let z1 = mix64variant13(z0.lor(1))
-  let n = pop_count(z1.lxor(z1.lsr(1)))
+  let n = z1.lxor(z1.lsr(1)).popcnt()
   if n >= 24 {
     z1
   } else {

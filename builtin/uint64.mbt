@@ -15,3 +15,14 @@
 pub fn UInt64::default() -> UInt64 {
   0
 }
+
+pub fn UInt64::popcnt(self : UInt64) -> Int {
+  // note we can not simply write it 
+  // as %i64_popcnt
+  // since under js backend it is not primitive  
+  self.to_int64().popcnt()
+}
+
+test {
+  inspect!(0x7000_0001_1F00_100FUL.popcnt(), content="14")
+}
