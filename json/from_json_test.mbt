@@ -161,3 +161,9 @@ test "Result" {
   inspect!(v, content="Err(\"error\")")
 }
 
+test "Unit" {
+  let u = ().to_json()
+  let v : Unit = @json.from_json!(u)
+  inspect!(v, content="()")
+}
+
