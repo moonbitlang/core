@@ -103,6 +103,9 @@ pub impl[X : FromJson] FromJson for Array[X] with from_json(json, path) {
 pub impl[X : FromJson] FromJson for FixedArray[X] with from_json(json, path) {
   match json {
     Array(a) => {
+      if a.length() == 0 {
+        return []
+      }
       let idx = Index(path, index=0)
       let res : FixedArray[X] = FixedArray::make(
         a.length(),

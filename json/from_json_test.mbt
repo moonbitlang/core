@@ -122,3 +122,23 @@ test "tuple failure" {
     ,
   )
 }
+
+test "fixedarray" {
+  let u = ([1, 2] : FixedArray[_])
+  let v : FixedArray[Int] = @json.from_json!(u.to_json())
+  inspect!(v, content="[1, 2]")
+  let u = (["123", "456"] : FixedArray[_])
+  let v : FixedArray[String] = @json.from_json!(u.to_json())
+  inspect!(
+    v,
+    content=
+      #|["123", "456"]
+    ,
+  )
+  let u = ([(), ()] : FixedArray[Unit])
+  let v : FixedArray[Unit] = @json.from_json!(u.to_json())
+  inspect!(v, content="[(), ()]")
+  let u = ([] : FixedArray[Unit])
+  let v : Result[FixedArray[Unit], _] = @json.from_json?(u.to_json())
+  inspect!(v, content="Ok([])")
+}

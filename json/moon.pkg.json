@@ -11,6 +11,7 @@
   "test-import": [
     "moonbitlang/core/result",
     "moonbitlang/core/option",
+    "moonbitlang/core/unit",
     "moonbitlang/core/array"
   ]
 }
