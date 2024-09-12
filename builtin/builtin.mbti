@@ -447,6 +447,7 @@ impl UInt {
 }
 impl UInt64 {
   compare(UInt64, UInt64) -> Int
+  default() -> UInt64
   extend_uint(UInt) -> UInt64
   land(UInt64, UInt64) -> UInt64
   lnot(UInt64) -> UInt64
@@ -462,6 +463,7 @@ impl UInt64 {
   op_shl(UInt64, Int) -> UInt64
   op_shr(UInt64, Int) -> UInt64
   op_sub(UInt64, UInt64) -> UInt64
+  popcnt(UInt64) -> Int
   shl(UInt64, Int) -> UInt64
   shr(UInt64, Int) -> UInt64
   to_byte(UInt64) -> Byte
