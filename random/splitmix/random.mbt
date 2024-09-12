@@ -90,6 +90,9 @@ fn mix64variant13(z0 : UInt64) -> UInt64 {
 fn pop_count(c : UInt64) -> Int {
   c.to_int64().popcnt()
 }
+
+test {
+  inspect!(pop_count(0x7000_0001_1F00_100FUL), content="14")
 }
 
 fn mix_gamma(z0 : UInt64) -> UInt64 {
