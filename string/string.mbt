@@ -116,6 +116,34 @@ pub fn iter(self : String) -> Iter[Char] {
   )
 }
 
+pub fn iter2(self : String) -> Iter2[Int, Char] {
+  Iter2::new(
+    fn(yield) {
+      let len = self.length()
+      for index = 0, n = 0; index < len; index = index + 1, n = n + 1 {
+        let c1 = self[index]
+        if is_leading_surrogate(c1) && index + 1 < len {
+          let c2 = self[index + 1]
+          if is_trailing_surrogate(c2) {
+            let c = code_point_of_surrogate_pair(c1, c2)
+            if yield(n, c) == IterContinue {
+              continue index + 2, n + 1
+            } else {
+              break IterEnd
+            }
+          }
+        }
+        //TODO: handle garbage input
+        if yield(n, c1) == IterEnd {
+          break IterEnd
+        }
+      } else {
+        IterContinue
+      }
+    },
+  )
+}
+
 pub fn fold[A](self : String, ~init : A, f : (A, Char) -> A) -> A {
   let mut rv = init
   for c in self {

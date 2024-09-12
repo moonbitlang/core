@@ -128,6 +128,27 @@ test "rev_iter" {
   )
 }
 
+test "iter2" {
+  let mut str = ""
+  "A😊𠮷BA😊𠮷B"
+  .iter2()
+  .each(fn(i, c) { str = str + "\{i}: \{c.to_int()} \n" })
+  inspect!(
+    str,
+    content=
+      #|0: 65 
+      #|1: 128522 
+      #|2: 134071 
+      #|3: 66 
+      #|4: 65 
+      #|5: 128522 
+      #|6: 134071 
+      #|7: 66 
+      #|
+    ,
+  )
+}
+
 // test here to avlid cyclic dependency between assertion and builtin
 test "Buffer::to_bytes" {
   let buffer = Buffer::new(size_hint=16)
