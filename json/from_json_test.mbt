@@ -152,3 +152,12 @@ test "Option" {
   inspect!(v, content="Some(1)")
 }
 
+test "Result" {
+  let u : Json = (Ok(1) : Result[Int, String]).to_json()
+  let v : Result[Int, String] = @json.from_json!(u)
+  inspect!(v, content="Ok(1)")
+  let u = (Err("error") : Result[Int, String]).to_json()
+  let v : Result[Int, String] = @json.from_json!(u)
+  inspect!(v, content="Err(\"error\")")
+}
+
