@@ -98,17 +98,37 @@ pub fn iter(self : String) -> Iter[Char] {
           let c2 = self[index + 1]
           if is_trailing_surrogate(c2) {
             let c = code_point_of_surrogate_pair(c1, c2)
-            if yield(c) == IterContinue {
-              continue index + 2
-            } else {
-              break IterEnd
-            }
+            guard let IterContinue = yield(c) else { x => break x }
+            continue index + 2
           }
         }
         //TODO: handle garbage input
-        if yield(c1) == IterEnd {
-          break IterEnd
+        guard let IterContinue = yield(c1) else { x => break x }
+
+      } else {
+        IterContinue
+      }
+    },
+  )
+}
+
+pub fn iter2(self : String) -> Iter2[Int, Char] {
+  Iter2::new(
+    fn(yield) {
+      let len = self.length()
+      for index = 0, n = 0; index < len; index = index + 1, n = n + 1 {
+        let c1 = self[index]
+        if is_leading_surrogate(c1) && index + 1 < len {
+          let c2 = self[index + 1]
+          if is_trailing_surrogate(c2) {
+            let c = code_point_of_surrogate_pair(c1, c2)
+            guard let IterContinue = yield(n, c) else { x => break x }
+            continue index + 2, n + 1
+          }
         }
+        //TODO: handle garbage input
+        guard let IterContinue = yield(n, c1) else { x => break x }
+
       } else {
         IterContinue
       }
@@ -169,17 +189,13 @@ pub fn rev_iter(self : String) -> Iter[Char] {
           let c2 = self[index - 1]
           if is_leading_surrogate(c2) {
             let c = code_point_of_surrogate_pair(c2, c1)
-            if yield(c) == IterContinue {
-              continue index - 2
-            } else {
-              break IterEnd
-            }
+            guard let IterContinue = yield(c) else { x => break x }
+            continue index - 2
           }
         }
         // TODO: handle garbage input
-        if yield(c1) == IterEnd {
-          break IterEnd
-        }
+        guard let IterContinue = yield(c1) else { x => break x }
+
       } else {
         IterContinue
       }
