@@ -88,10 +88,8 @@ fn mix64variant13(z0 : UInt64) -> UInt64 {
 }
 
 fn pop_count(c : UInt64) -> Int {
-  loop 0, c {
-    x, 0 => x
-    c, w => continue c + 1, w & (w - 1)
-  }
+  c.to_int64().popcnt()
+}
 }
 
 fn mix_gamma(z0 : UInt64) -> UInt64 {
