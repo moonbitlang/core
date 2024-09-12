@@ -29,6 +29,10 @@ test "Double::to_json" {
   inspect!(42.0.to_json(), content="Number(42)")
 }
 
+test "Float::to_json" {
+  inspect!((42.0 : Float).to_json(), content="Number(42)")
+}
+
 test "String::to_json" {
   inspect!(
     "abc".to_json(),
@@ -83,9 +87,29 @@ test "Char::to_json" {
   )
 }
 
+test "BigInt::to_json" {
+  inspect!(
+    BigInt::from_string("123456789012345678901234567890").to_json(),
+    content="String(\"123456789012345678901234567890\")",
+  )
+}
+
 test "Array::to_json" {
   inspect!(
     [1, 2, 3].to_json(),
+    content="Array([Number(1), Number(2), Number(3)])",
+  )
+  inspect!(
+    [[], ["1"], ["1", "2"]].to_json(),
+    content=
+      #|Array([Array([]), Array([String("1")]), Array([String("1"), String("2")])])
+    ,
+  )
+}
+
+test "FixedArray::to_json" {
+  inspect!(
+    ([1, 2, 3] : FixedArray[_]).to_json(),
     content="Array([Number(1), Number(2), Number(3)])",
   )
   inspect!(
@@ -103,4 +127,9 @@ test "Map::to_json" {
       #|Object({"x": Array([Number(1)]), "y": Array([Number(2)])})
     ,
   )
+}
+
+test "Option::to_json" {
+  inspect!((Some(42) : Int?).to_json(), content="Number(42)")
+  inspect!((None : Int?).to_json(), content="Null")
 }

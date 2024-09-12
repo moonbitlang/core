@@ -78,6 +78,13 @@ pub impl FromJson for Char with from_json(json, path) {
   }
 }
 
+pub impl FromJson for BigInt with from_json(json, path) {
+  match json {
+    String(s) => BigInt::from_string(s)
+    _ => decode_error!(path, "BigInt::from_json: expected number")
+  }
+}
+
 pub impl[X : FromJson] FromJson for Array[X] with from_json(json, path) {
   match json {
     Array(a) => {
@@ -93,6 +100,27 @@ pub impl[X : FromJson] FromJson for Array[X] with from_json(json, path) {
   }
 }
 
+pub impl[X : FromJson] FromJson for FixedArray[X] with from_json(json, path) {
+  match json {
+    Array(a) => {
+      if a.length() == 0 {
+        return []
+      }
+      let idx = Index(path, index=0)
+      let res : FixedArray[X] = FixedArray::make(
+        a.length(),
+        FromJson::from_json!(a[0], idx),
+      )
+      for i = 1; i < a.length(); i = i + 1 {
+        idx.update_index_inplace(i)
+        res[i] = FromJson::from_json!(a[i], idx)
+      }
+      res
+    }
+    _ => decode_error!(path, "FixedArray::from_json: expected array")
+  }
+}
+
 pub impl[V : FromJson] FromJson for Map[String, V] with from_json(json, path) {
   match json {
     Object(obj) => {
@@ -105,5 +133,43 @@ pub impl[V : FromJson] FromJson for Map[String, V] with from_json(json, path) {
       res
     }
     _ => decode_error!(path, "Map::from_json: expected object")
+  }
+}
+
+pub impl[T : FromJson] FromJson for T? with from_json(json, path) {
+  match json {
+    Null => None
+    _ => Some(FromJson::from_json!(json, path))
+  }
+}
+
+pub impl[Ok : FromJson, Err : FromJson] FromJson for Result[Ok, Err] with from_json(
+  json,
+  path
+) {
+  match json {
+    Object(obj) => {
+      if obj.size() != 1 {
+        decode_error!(path, "Result::from_json: expected object with one field")
+      }
+      if obj.contains("Ok") {
+        Ok(FromJson::from_json!(obj["Ok"].unwrap(), path.add_key("Ok")))
+      } else if obj.contains("Err") {
+        Err(FromJson::from_json!(obj["Err"].unwrap(), path.add_key("Err")))
+      } else {
+        decode_error!(
+          path, "Result::from_json: expected object with Ok or Err field",
+        )
+      }
+    }
+    _ => decode_error!(path, "Result::from_json: expected object")
+  }
+}
+
+// unit
+pub impl FromJson for Unit with from_json(json, path) {
+  match json {
+    Null => ()
+    _ => decode_error!(path, "Unit::from_json: expected null")
   }
 }

@@ -150,6 +150,7 @@ impl BigInt {
   shl(Self, Int) -> Self
   shr(Self, Int) -> Self
   to_hex(Self) -> String
+  to_json(Self) -> Json
   to_octets(Self, ~length? : Int) -> Bytes
   to_string(Self) -> String
 }
@@ -308,6 +309,7 @@ impl SourceLoc {
 pub type UnsafeMaybeUninit
 impl Unit {
   op_equal(Unit, Unit) -> Bool
+  to_json(Unit) -> Json
 }
 impl Bool {
   default() -> Bool
@@ -486,6 +488,7 @@ impl Float {
   reinterpret_as_int(Float) -> Int
   sqrt(Float) -> Float
   to_double(Float) -> Double
+  to_json(Float) -> Json
   until(Float, Float, ~step : Float = .., ~inclusive : Bool = ..) -> Iter[Float]
   upto(Float, Float, ~inclusive : Bool = ..) -> Iter[Float]
 }
@@ -525,11 +528,13 @@ impl String {
 }
 impl Option {
   op_equal[X : Eq](X?, X?) -> Bool
+  to_json[T : ToJson](T?) -> Json
   to_string[X : Show](X?) -> String
   unwrap[X](X?) -> X
 }
 impl Result {
   op_equal[T : Eq, E : Eq](Self[T, E], Self[T, E]) -> Bool
+  to_json[Ok : ToJson, Err : ToJson](Self[Ok, Err]) -> Json
 }
 impl FixedArray {
   blit_to[A](Self[A], Self[A], ~len : Int, ~src_offset : Int = .., ~dst_offset : Int = ..) -> Unit
@@ -541,6 +546,7 @@ impl FixedArray {
   op_get[T](Self[T], Int) -> T
   op_set[T](Self[T], Int, T) -> Unit
   set[T](Self[T], Int, T) -> Unit
+  to_json[X : ToJson](Self[X]) -> Json
   to_string[X : Show](Self[X]) -> String
   unsafe_blit[A](Self[A], Int, Self[A], Int, Int) -> Unit
 }
