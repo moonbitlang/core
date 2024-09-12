@@ -142,3 +142,13 @@ test "fixedarray" {
   let v : Result[FixedArray[Unit], _] = @json.from_json?(u.to_json())
   inspect!(v, content="Ok([])")
 }
+
+test "Option" {
+  let u : Json = (None : Int?).to_json()
+  let v : Int? = @json.from_json!(u)
+  inspect!(v, content="None")
+  let u = Some(1).to_json()
+  let v : Int? = @json.from_json!(u)
+  inspect!(v, content="Some(1)")
+}
+
