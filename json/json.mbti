@@ -69,6 +69,8 @@ impl Show for JsonDecodeError
 
 impl Show for ParseError
 
+impl FromJson for Unit
+
 impl FromJson for Bool
 
 impl FromJson for Char

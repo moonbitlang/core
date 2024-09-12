@@ -135,3 +135,8 @@ pub fn Result::to_json[Ok : ToJson, Err : ToJson](
     Err(err) => Object({ "Err": err.to_json() })
   }
 }
+
+// unit
+pub fn Unit::to_json(_self : Unit) -> Json {
+  Null
+}

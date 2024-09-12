@@ -309,6 +309,7 @@ impl SourceLoc {
 pub type UnsafeMaybeUninit
 impl Unit {
   op_equal(Unit, Unit) -> Bool
+  to_json(Unit) -> Json
 }
 impl Bool {
   default() -> Bool
