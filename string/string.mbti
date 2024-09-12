@@ -14,6 +14,7 @@ impl String {
   is_blank(String) -> Bool
   is_empty(String) -> Bool
   iter(String) -> Iter[Char]
+  iter2(String) -> Iter2[Int, Char]
   last_index_of(String, String, ~from : Int = ..) -> Int
   replace(String, ~old : String, ~new : String) -> String
   replace_all(String, ~old : String, ~new : String) -> String
