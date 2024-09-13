@@ -40,6 +40,7 @@ pub fn Int64::op_shl(self : Int64, other : Int) -> Int64 = "%i64_shl"
 
 pub fn Int64::lsr(self : Int64, other : Int) -> Int64 = "%u64.shr"
 
+/// @alert deprecated "Use shr instead"
 pub fn Int64::asr(self : Int64, other : Int) -> Int64 = "%i64_shr"
 
 pub fn Int64::shr(self : Int64, other : Int) -> Int64 = "%i64_shr"
