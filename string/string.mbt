@@ -43,6 +43,25 @@ pub fn String::concat(strings : Array[String]) -> String {
   buf.to_string()
 }
 
+/// Join strings with a separator.
+/// 
+/// ```
+/// String::join(["Hello", "world!"], separator=", ") // "Hello, world!"
+/// ```
+pub fn String::join(strings : Array[String], ~separator : String) -> String {
+  let buf = Buffer::new()
+  let mut first = true
+  for s in strings {
+    if first {
+      first = false
+    } else {
+      buf.write_string(separator)
+    }
+    buf.write_string(s)
+  }
+  buf.to_string()
+}
+
 /// Compare two strings.
 /// String with longer length is bigger.
 /// strings of the same length are compared in lexicalgraphic order.

@@ -5,6 +5,7 @@ package moonbitlang/core/string
 // Types and methods
 impl String {
   compare(String, String) -> Int
+  concat(Array[String]) -> String
   contains(String, String) -> Bool
   contains_char(String, Char) -> Bool
   default() -> String
@@ -16,7 +17,7 @@ impl String {
   is_empty(String) -> Bool
   iter(String) -> Iter[Char]
   iter2(String) -> Iter2[Int, Char]
-  join(Array[String]) -> String
+  join(Array[String], ~separator : String) -> String
   last_index_of(String, String, ~from : Int = ..) -> Int
   pad_end(String, Int, Char) -> String
   pad_start(String, Int, Char) -> String

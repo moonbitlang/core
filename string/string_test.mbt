@@ -20,6 +20,14 @@ test "String::concat" {
   inspect!(String::concat(["123", "456"]), content="123456")
 }
 
+test "String::join" {
+  inspect!(
+    String::join(["aaa", "bbb", "ccc"], separator=" "),
+    content="aaa bbb ccc",
+  )
+  inspect!(String::join([], separator=" "), content="")
+}
+
 test "default" {
   inspect!(@string.default())
 }
