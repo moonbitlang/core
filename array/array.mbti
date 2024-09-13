@@ -46,7 +46,6 @@ impl FixedArray {
 impl Array {
   copy[T](Self[T]) -> Self[T]
   from_iter[T](Iter[T]) -> Self[T]
-  join[T : Show](Self[T], String) -> String
   last[A](Self[A]) -> A?
   makei[T](Int, (Int) -> T) -> Self[T]
   map_option[A, B](Self[A], (A) -> B?) -> Self[B]

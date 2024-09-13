@@ -354,12 +354,6 @@ test "flatten" {
   assert_eq!(vv.length(), 4)
 }
 
-test "join" {
-  let v = [3, 4, 5]
-  let s = v.join(", ")
-  assert_eq!(s, "3, 4, 5")
-}
-
 test "fold" {
   let sum = [1, 2, 3, 4, 5].fold(init=0, fn { sum, elem => sum + elem })
   assert_eq!(sum, 15)
