@@ -370,13 +370,13 @@ fn grade_school_div(self : BigInt, other : BigInt) -> (BigInt, BigInt) {
       borrow += a[i + j].to_int64()
       borrow -= carry.land(radix_mask).to_int64()
       a[i + j] = borrow.land(radix_mask.to_int64()).to_uint64()
-      borrow = borrow.asr(radix_bit_len)
+      borrow = borrow.shr(radix_bit_len)
       carry = carry.lsr(radix_bit_len)
     }
     borrow = borrow + a[i + b_len].to_int64()
     borrow -= carry.to_int64()
     a[i + b_len] = borrow.land(radix_mask.to_int64()).to_uint64()
-    borrow = borrow.asr(radix_bit_len)
+    borrow = borrow.shr(radix_bit_len)
     if borrow < 0L {
       carry = 0UL
       for j = 0; j < b_len; j = j + 1 {
