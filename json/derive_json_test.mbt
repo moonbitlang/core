@@ -16,9 +16,20 @@ struct Hello[A, B] {
   fieldA : A
   fieldB : B
   data : Map[String, A]
-} derive(ToJson)
+} derive(ToJson, @json.FromJson, Show, Eq)
 
-// Test arbitrary
+test {
+  let v = Hello::{ fieldA: 3, fieldB: 2, data: { "a": 3 } }
+  let vj = v.to_json()
+  let v0 : Hello[Int, Int] = @json.from_json!(vj)
+  inspect!(
+    v0,
+    content=
+      #|{fieldA: 3, fieldB: 2, data: {"a": 3}}
+    ,
+  )
+  assert_eq!(v0, v)
+}
 
 // struct Hello2 [A, B] {
 //   fieldA : A 
@@ -27,7 +38,7 @@ struct Hello[A, B] {
 // }derive(ToJson)
 // Should the deriver generate constraints that [B: Show]
 struct Hello3[A, B] {
-  fieldA : A
+  fieldAX : A
   fieldB : B
   data : Map[Int, A]
 } derive(ToJson)
@@ -41,12 +52,12 @@ test {
       #|Object({"fieldA": Number(1), "fieldB": String("hello"), "data": Object({"a": Number(1), "b": Number(2)})})
     ,
   )
-  let h3 = Hello3::{ fieldA: 1, fieldB: "hello", data: { 1: 1, 2: 2 } }
+  let h3 = Hello3::{ fieldAX: 1, fieldB: "hello", data: { 1: 1, 2: 2 } }
   let j3 = h3.to_json()
   inspect!(
     j3,
     content=
-      #|Object({"fieldA": Number(1), "fieldB": String("hello"), "data": Object({"1": Number(1), "2": Number(2)})})
+      #|Object({"fieldAX": Number(1), "fieldB": String("hello"), "data": Object({"1": Number(1), "2": Number(2)})})
     ,
   )
 }

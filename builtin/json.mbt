@@ -60,8 +60,9 @@ fn escape_json_string(str : String) -> String {
     }
   }
 
-  let buf = Buffer::new(size_hint=str.length())
-  for i = 0; i < str.length(); i = i + 1 {
+  let len = str.length()
+  let buf = Buffer::new(size_hint=len)
+  for i in 0..<len {
     let c = str[i]
     match c {
       '\n' => buf.write_string("\\n")
@@ -102,11 +103,12 @@ pub fn Array::to_json[X : ToJson](self : Array[X]) -> Json {
 }
 
 pub fn FixedArray::to_json[X : ToJson](self : FixedArray[X]) -> Json {
-  if self.length() == 0 {
-    return Array([])
+  let len = self.length()
+  if len == 0 {
+    return []
   }
   let res = FixedArray::make(self.length(), ToJson::to_json(self[0]))
-  for i in 1..<self.length() {
+  for i in 1..<len {
     res[i] = ToJson::to_json(self[i])
   }
   Array(Array::from_fixed_array(res))
@@ -131,8 +133,8 @@ pub fn Result::to_json[Ok : ToJson, Err : ToJson](
   self : Result[Ok, Err]
 ) -> Json {
   match self {
-    Ok(ok) => Object({ "Ok": ok.to_json() })
-    Err(err) => Object({ "Err": err.to_json() })
+    Ok(ok) => { "Ok": ok.to_json() }
+    Err(err) => { "Err": err.to_json() }
   }
 }
 

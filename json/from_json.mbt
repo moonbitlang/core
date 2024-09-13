@@ -32,8 +32,8 @@ fn decode_error[T](path : JsonPath, msg : String) -> T!JsonDecodeError {
 
 pub impl FromJson for Bool with from_json(json, path) {
   match json {
-    True => true
-    False => false
+    true => true
+    false => false
     _ => decode_error!(path, "Bool::from_json: expected boolean")
   }
 }
@@ -103,15 +103,16 @@ pub impl[X : FromJson] FromJson for Array[X] with from_json(json, path) {
 pub impl[X : FromJson] FromJson for FixedArray[X] with from_json(json, path) {
   match json {
     Array(a) => {
-      if a.length() == 0 {
+      let len = a.length()
+      if len == 0 {
         return []
       }
       let idx = Index(path, index=0)
       let res : FixedArray[X] = FixedArray::make(
-        a.length(),
+        len,
         FromJson::from_json!(a[0], idx),
       )
-      for i = 1; i < a.length(); i = i + 1 {
+      for i in 1..<len {
         idx.update_index_inplace(i)
         res[i] = FromJson::from_json!(a[i], idx)
       }
@@ -122,6 +123,11 @@ pub impl[X : FromJson] FromJson for FixedArray[X] with from_json(json, path) {
 }
 
 pub impl[V : FromJson] FromJson for Map[String, V] with from_json(json, path) {
+  // Note in theory, we can make it more general like
+  // Map[K : FromString, V : FromJson]
+  // but currently we don't have FromString 
+  // Here ToJSON we have 
+  // Map[K : Show, V : ToJson]
   match json {
     Object(obj) => {
       let res = {}
@@ -152,14 +158,13 @@ pub impl[Ok : FromJson, Err : FromJson] FromJson for Result[Ok, Err] with from_j
       if obj.size() != 1 {
         decode_error!(path, "Result::from_json: expected object with one field")
       }
-      if obj.contains("Ok") {
-        Ok(FromJson::from_json!(obj["Ok"].unwrap(), path.add_key("Ok")))
-      } else if obj.contains("Err") {
-        Err(FromJson::from_json!(obj["Err"].unwrap(), path.add_key("Err")))
-      } else {
-        decode_error!(
-          path, "Result::from_json: expected object with Ok or Err field",
-        )
+      match obj {
+        { "Ok": ok } => Ok(FromJson::from_json!(ok, path.add_key("Ok")))
+        { "Err": err } => Err(FromJson::from_json!(err, path.add_key("Err")))
+        _ =>
+          decode_error!(
+            path, "Result::from_json: expected object with Ok or Err field",
+          )
       }
     }
     _ => decode_error!(path, "Result::from_json: expected object")
