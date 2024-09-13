@@ -122,3 +122,53 @@ test "tuple failure" {
     ,
   )
 }
+
+test "fixedarray" {
+  let u = ([1, 2] : FixedArray[_])
+  let v : FixedArray[Int] = @json.from_json!(u.to_json())
+  inspect!(v, content="[1, 2]")
+  let u = (["123", "456"] : FixedArray[_])
+  let v : FixedArray[String] = @json.from_json!(u.to_json())
+  inspect!(
+    v,
+    content=
+      #|["123", "456"]
+    ,
+  )
+  let u = ([(), ()] : FixedArray[Unit])
+  let v : FixedArray[Unit] = @json.from_json!(u.to_json())
+  inspect!(v, content="[(), ()]")
+  let u = ([] : FixedArray[Unit])
+  let v : Result[FixedArray[Unit], _] = @json.from_json?(u.to_json())
+  inspect!(v, content="Ok([])")
+}
+
+test "Option" {
+  let u : Json = (None : Int?).to_json()
+  let v : Int? = @json.from_json!(u)
+  inspect!(v, content="None")
+  let u = Some(1).to_json()
+  let v : Int? = @json.from_json!(u)
+  inspect!(v, content="Some(1)")
+}
+
+test "Result" {
+  let u : Json = (Ok(1) : Result[Int, String]).to_json()
+  let v : Result[Int, String] = @json.from_json!(u)
+  inspect!(v, content="Ok(1)")
+  let u = (Err("error") : Result[Int, String]).to_json()
+  let v : Result[Int, String] = @json.from_json!(u)
+  inspect!(v, content="Err(\"error\")")
+}
+
+test "Unit" {
+  let u = ().to_json()
+  let v : Unit = @json.from_json!(u)
+  inspect!(v, content="()")
+}
+
+test "bigint" {
+  let u = BigInt::from_string("10238490123489120893478175871203124819").to_json()
+  let v : BigInt = @json.from_json!(u)
+  inspect!(v, content="10238490123489120893478175871203124819")
+}

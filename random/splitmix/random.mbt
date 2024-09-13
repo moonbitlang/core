@@ -88,11 +88,11 @@ fn mix64variant13(z0 : UInt64) -> UInt64 {
 }
 
 fn mix_gamma(z0 : UInt64) -> UInt64 {
-  let z1 = mix64variant13(z0.lor(1))
-  let n = z1.lxor(z1.lsr(1)).popcnt()
+  let z1 = mix64variant13(z0 | 1)
+  let n = (z1 | (z1 >> 1)).popcnt()
   if n >= 24 {
     z1
   } else {
-    z1.lxor(0xaaaaaaaaaaaaaaaa)
+    z1 ^ 0xaaaaaaaaaaaaaaaa
   }
 }
