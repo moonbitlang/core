@@ -57,7 +57,7 @@ test {
   inspect!(
     j3,
     content=
-      #|Object({"fieldA": Number(1), "fieldB": String("hello"), "data": Object({"1": Number(1), "2": Number(2)})})
+      #|Object({"fieldAX": Number(1), "fieldB": String("hello"), "data": Object({"1": Number(1), "2": Number(2)})})
     ,
   )
 }
