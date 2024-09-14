@@ -36,7 +36,7 @@ fn MyInt64::add_hi_lo(self : MyInt64, bhi : Int, blo : Int) -> MyInt64 {
   let s = lo.asr(31)
   let as_ = alo.asr(31)
   let bs = blo.asr(31)
-  let c = as_.land(bs).lor(s.lnot().land(as_.lxor(bs))).land(1)
+  let c = ((as_ & bs) | (s.lnot() & (as_ ^ bs))) & 1
   let hi = ahi + bhi + c
   { hi, lo }
 }
@@ -57,34 +57,34 @@ fn MyInt64::op_mul(self : MyInt64, other : MyInt64) -> MyInt64 {
   let { hi: ahi, lo: alo } = self
   let { hi: bhi, lo: blo } = other
   let a48 = ahi.lsr(16)
-  let a32 = ahi.land(0xffff)
+  let a32 = ahi & 0xffff
   let a16 = alo.lsr(16)
-  let a00 = alo.land(0xffff)
+  let a00 = alo & 0xffff
   let b48 = bhi.lsr(16)
-  let b32 = bhi.land(0xffff)
+  let b32 = bhi & 0xffff
   let b16 = blo.lsr(16)
-  let b00 = blo.land(0xffff)
+  let b00 = blo & 0xffff
   let c00 = a00 * b00
   let c16 = c00.lsr(16)
-  let c00 = c00.land(0xffff)
+  let c00 = c00 & 0xffff
   let c16 = c16 + a16 * b00
   let c32 = c16.lsr(16)
-  let c16 = c16.land(0xffff)
+  let c16 = c16 & 0xffff
   let c16 = c16 + a00 * b16
   let c32 = c32 + c16.lsr(16)
-  let c16 = c16.land(0xffff)
+  let c16 = c16 & 0xffff
   let c32 = c32 + a32 * b00
   let c48 = c32.lsr(16)
-  let c32 = c32.land(0xffff)
+  let c32 = c32 & 0xffff
   let c32 = c32 + a16 * b16
   let c48 = c48 + c32.lsr(16)
-  let c32 = c32.land(0xffff)
+  let c32 = c32 & 0xffff
   let c32 = c32 + a00 * b32
   let c48 = c48 + c32.lsr(16)
-  let c32 = c32.land(0xffff)
+  let c32 = c32 & 0xffff
   let c48 = c48 + a48 * b00 + a32 * b16 + a16 * b32 + a00 * b48
-  let c48 = c48.land(0xffff)
-  { hi: c48.lsl(16).lor(c32), lo: c16.lsl(16).lor(c00) }
+  let c48 = c48 & 0xffff
+  { hi: c48.lsl(16) | c32, lo: c16.lsl(16) | c00 }
 }
 
 struct Int64WasmHelper {
@@ -142,54 +142,45 @@ fn MyInt64::lnot(self : MyInt64) -> MyInt64 {
 }
 
 fn MyInt64::land(self : MyInt64, other : MyInt64) -> MyInt64 {
-  { hi: self.hi.land(other.hi), lo: self.lo.land(other.lo) }
+  { hi: self.hi & other.hi, lo: self.lo & other.lo }
 }
 
 fn MyInt64::lor(self : MyInt64, other : MyInt64) -> MyInt64 {
-  { hi: self.hi.lor(other.hi), lo: self.lo.lor(other.lo) }
+  { hi: self.hi | other.hi, lo: self.lo | other.lo }
 }
 
 fn MyInt64::lxor(self : MyInt64, other : MyInt64) -> MyInt64 {
-  { hi: self.hi.lxor(other.hi), lo: self.lo.lxor(other.lo) }
+  { hi: self.hi ^ other.hi, lo: self.lo ^ other.lo }
 }
 
 fn MyInt64::lsl(self : MyInt64, shift : Int) -> MyInt64 {
-  let shift = shift.land(63)
+  let shift = shift & 63
   if shift == 0 {
     self
   } else if shift < 32 {
-    {
-      hi: self.hi.lsl(shift).lor(self.lo.lsr(32 - shift)),
-      lo: self.lo.lsl(shift),
-    }
+    { hi: self.hi.lsl(shift) | self.lo.lsr(32 - shift), lo: self.lo.lsl(shift) }
   } else {
     { hi: self.lo.lsl(shift - 32), lo: 0 }
   }
 }
 
 fn MyInt64::lsr(self : MyInt64, shift : Int) -> MyInt64 {
-  let shift = shift.land(63)
+  let shift = shift & 63
   if shift == 0 {
     self
   } else if shift < 32 {
-    {
-      hi: self.hi.lsr(shift),
-      lo: self.lo.lsr(shift).lor(self.hi.lsl(32 - shift)),
-    }
+    { hi: self.hi.lsr(shift), lo: self.lo.lsr(shift) | self.hi.lsl(32 - shift) }
   } else {
     { hi: 0, lo: self.hi.lsr(shift - 32) }
   }
 }
 
 fn MyInt64::asr(self : MyInt64, shift : Int) -> MyInt64 {
-  let shift = shift.land(63)
+  let shift = shift & 63
   if shift == 0 {
     self
   } else if shift < 32 {
-    {
-      hi: self.hi.asr(shift),
-      lo: self.lo.lsr(shift).lor(self.hi.lsl(32 - shift)),
-    }
+    { hi: self.hi.asr(shift), lo: self.lo.lsr(shift) | self.hi.lsl(32 - shift) }
   } else {
     { hi: self.hi.asr(31), lo: self.hi.asr(shift - 32) }
   }
@@ -265,7 +256,7 @@ extern "js" fn MyInt64::compare_u(self : MyInt64, other : MyInt64) -> Int =
   #|}
 
 fn MyInt64::from_int(value : Int) -> MyInt64 {
-  { hi: value.asr(31).land(-1), lo: value.lor(0) }
+  { hi: value.asr(31) & -1, lo: value | 0 }
 }
 
 fn MyInt64::to_int(self : MyInt64) -> Int {

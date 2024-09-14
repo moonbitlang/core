@@ -212,7 +212,7 @@ pub fn to_double(self : Decimal) -> Double!StrConvError {
   }
 
   // denormalized
-  if mantissa.land(1L.lsl(double_info.mantissa_bits)) == 0L {
+  if (mantissa & 1L.lsl(double_info.mantissa_bits)) == 0L {
     exponent = double_info.bias
   }
 
@@ -247,17 +247,16 @@ pub fn shift(self : Decimal, s : Int) -> Unit {
 fn assemble_bits(mantissa : Int64, exponent : Int, negative : Bool) -> Int64 {
   let biased_exp = exponent - double_info.bias
   // set the mantissa bits
-  let mut bits = mantissa.land(1L.lsl(double_info.mantissa_bits) - 1L)
+  let mut bits = mantissa & (1L.lsl(double_info.mantissa_bits) - 1L)
   // set the exponent bits
   let exp_bits = biased_exp
     .land((1).lsl(double_info.exponent_bits) - 1)
     .to_int64()
-  bits = bits.lor(exp_bits.lsl(double_info.mantissa_bits))
+  bits = bits | exp_bits.lsl(double_info.mantissa_bits)
   // set the sign bit
   if negative {
-    bits = bits.lor(
-      1L.lsl(double_info.mantissa_bits).lsl(double_info.exponent_bits),
-    )
+    bits = bits |
+    1L.lsl(double_info.mantissa_bits).lsl(double_info.exponent_bits)
   }
   bits
 }
@@ -356,7 +355,7 @@ fn right_shift(self : Decimal, s : Int) -> Unit {
     self.digits[write_index] = out.to_byte()
     write_index += 1
     // contract
-    acc = acc.land(mask)
+    acc = acc & mask
     // expand
     let d = self.digits[read_index]
     acc = acc * 10L + d.to_int64()
@@ -372,7 +371,7 @@ fn right_shift(self : Decimal, s : Int) -> Unit {
     } else if out > 0 {
       self.truncated = true
     }
-    acc = acc.land(mask)
+    acc = acc & mask
     acc = acc * 10L
   }
 

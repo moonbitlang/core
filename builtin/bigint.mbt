@@ -216,8 +216,8 @@ fn karatsuba_mul(self : BigInt, other : BigInt) -> BigInt {
   let p1 = xh * yh
   let p2 = xl * yl
   let p3 = (xh + xl) * (yh + yl)
-  p1.shl(radix_bit_len * 2 * half) +
-  (p3 - p1 - p2).shl(radix_bit_len * half) +
+  (p1 << (radix_bit_len * 2 * half)) +
+  ((p3 - p1 - p2) << (radix_bit_len * half)) +
   p2
 }
 
@@ -328,8 +328,8 @@ fn grade_school_div(self : BigInt, other : BigInt) -> (BigInt, BigInt) {
     (64 - divisor.limbs[divisor.len - 1].to_uint64().to_int64().clz()),
   )
   let a_len = dividend.len
-  let dividend = dividend.shl(lshift)
-  let divisor = divisor.shl(lshift)
+  let dividend = dividend << lshift
+  let divisor = divisor << lshift
   let b_len = divisor.len
   let b = FixedArray::make(b_len, 0UL)
   for i = 0; i < b_len; i = i + 1 {
@@ -370,24 +370,24 @@ fn grade_school_div(self : BigInt, other : BigInt) -> (BigInt, BigInt) {
       borrow += a[i + j].to_int64()
       borrow -= carry.land(radix_mask).to_int64()
       a[i + j] = borrow.land(radix_mask.to_int64()).to_uint64()
-      borrow = borrow.shr(radix_bit_len)
+      borrow = borrow >> radix_bit_len
       carry = carry.lsr(radix_bit_len)
     }
     borrow = borrow + a[i + b_len].to_int64()
     borrow -= carry.to_int64()
     a[i + b_len] = borrow.land(radix_mask.to_int64()).to_uint64()
-    borrow = borrow.shr(radix_bit_len)
+    borrow = borrow >> radix_bit_len
     if borrow < 0L {
       carry = 0UL
       for j = 0; j < b_len; j = j + 1 {
         carry += a[i + j]
         carry += b[j]
-        a[i + j] = carry.land(radix_mask)
-        carry = carry.shr(radix_bit_len)
+        a[i + j] = carry & radix_mask
+        carry = carry >> radix_bit_len
       }
       carry += a[i + b_len]
-      a[i + b_len] = carry.land(radix_mask)
-      carry = carry.shr(radix_bit_len)
+      a[i + b_len] = carry & radix_mask
+      carry = carry >> radix_bit_len
       borrow += carry.to_int64()
       qh -= 1
     }
@@ -410,7 +410,7 @@ fn grade_school_div(self : BigInt, other : BigInt) -> (BigInt, BigInt) {
     modulo[j] = a[j].to_uint()
   }
   let modulo = { limbs: modulo, sign: Positive, len: i }
-  ({ limbs: q, sign: Positive, len }, modulo.shr(lshift))
+  ({ limbs: q, sign: Positive, len }, modulo >> lshift)
 }
 
 // Bitwise Operations
@@ -433,7 +433,7 @@ pub fn lsl(self : BigInt, n : Int) -> BigInt {
     if r != 0 {
       let mut carry = 0UL
       for i = 0; i < self.len; i = i + 1 {
-        carry = carry.lor(a[i].to_uint64().lsl(r))
+        carry = carry | a[i].to_uint64().lsl(r)
         new_limbs[i + lz] = (carry % radix).to_uint()
         carry = carry.lsr(radix_bit_len)
       }
@@ -456,7 +456,7 @@ pub fn lsl(self : BigInt, n : Int) -> BigInt {
 /// The sign of the result is the same as the sign of the input.
 /// Only the absolute value is shifted.
 pub fn op_shl(self : BigInt, n : Int) -> BigInt {
-  self.shl(n)
+  self << n
 }
 
 /// Left shift a bigint
@@ -478,7 +478,7 @@ pub fn shl(self : BigInt, n : Int) -> BigInt {
     if r != 0 {
       let mut carry = 0UL
       for i = 0; i < self.len; i = i + 1 {
-        carry = carry.lor(a[i].to_uint64().lsl(r))
+        carry = carry | a[i].to_uint64().lsl(r)
         new_limbs[i + lz] = (carry % radix).to_uint()
         carry = carry.lsr(radix_bit_len)
       }
@@ -499,7 +499,7 @@ pub fn shl(self : BigInt, n : Int) -> BigInt {
 /// The sign of the result is the same as the sign of the input.
 /// Only the absolute value is shifted.
 pub fn op_shr(self : BigInt, n : Int) -> BigInt {
-  self.shr(n)
+  self >> n
 }
 
 /// Right shift a bigint
@@ -614,7 +614,7 @@ pub fn to_string(self : BigInt) -> String {
   for i = self.len - 1; i >= 0; i = i - 1 {
     let mut x = self.limbs[i].to_uint64().to_int64()
     for j = 0; j < v_idx; j = j + 1 {
-      let y = v[j].lsl(radix_bit_len).lor(x)
+      let y = v[j].lsl(radix_bit_len) | x
       x = y / decimal_mask
       v[j] = y % decimal_mask
     }
@@ -829,18 +829,16 @@ pub fn BigInt::from_octets(input : Bytes, ~signum : Int = 1) -> BigInt {
   let limbs = FixedArray::make(limbs_len, 0U)
   // head at most significant limb
   for i = 0; i < mod / 8; i = i + 1 {
-    limbs[limbs_len - 1] = limbs[limbs_len - 1]
-      .lsl(8)
-      .lor(input[i].to_int().reinterpret_as_uint())
+    limbs[limbs_len - 1] = limbs[limbs_len - 1].lsl(8) |
+      input[i].to_int().reinterpret_as_uint()
   }
   let byte_per_limb = radix_bit_len / 8
   // tail
   for i = 0; i < div; i = i + 1 {
     for j = 0; j < byte_per_limb; j = j + 1 {
       let bytes_idx = len - byte_per_limb - i * byte_per_limb + j
-      limbs[i] = limbs[i]
-        .lsl(8)
-        .lor(input[bytes_idx].to_int().reinterpret_as_uint())
+      limbs[i] = limbs[i].lsl(8) |
+        input[bytes_idx].to_int().reinterpret_as_uint()
     }
   }
   if limbs[limbs_len - 1] == 0 {
@@ -879,7 +877,7 @@ pub fn BigInt::to_octets(self : BigInt, ~length? : Int) -> Bytes {
   let len = max(length, len)
   let result = Bytes::new(len)
   for i = 0; i < len && i / 4 < self.len; i = i + 1 {
-    result[len - 1 - i] = (self.limbs[i / 4].shr(i % 4 * 8) & 0xffU)
+    result[len - 1 - i] = ((self.limbs[i / 4] >> (i % 4 * 8)) & 0xffU)
       .reinterpret_as_int()
       .to_byte()
   }
