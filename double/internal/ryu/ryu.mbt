@@ -38,7 +38,7 @@ fn umul128(a : UInt64, b : UInt64) -> (UInt64, UInt64) {
 }
 
 fn shiftright128(lo : UInt64, hi : UInt64, dist : Int) -> UInt64 {
-  hi.lsl(64 - dist).lor(lo.lsr(dist))
+  hi.lsl(64 - dist) | lo.lsr(dist)
 }
 
 fn pow5Factor(value : UInt64) -> Int {
@@ -72,7 +72,7 @@ fn multipleOfPowerOf5(value : UInt64, p : Int) -> Bool {
 }
 
 fn multipleOfPowerOf2(value : UInt64, p : Int) -> Bool {
-  value.land(1UL.lsl(p) - 1UL) == 0UL
+  (value & (1UL.lsl(p) - 1UL)) == 0UL
 }
 
 fn mulShiftAll64(
@@ -288,12 +288,13 @@ fn d2d(ieeeMantissa : UInt64, ieeeExponent : UInt) -> FloatingDecimal64 {
       gDOUBLE_BIAS -
       gDOUBLE_MANTISSA_BITS -
       2
-    m2 = 1UL.lsl(gDOUBLE_MANTISSA_BITS).lor(ieeeMantissa)
+    m2 = 1UL.lsl(gDOUBLE_MANTISSA_BITS) | ieeeMantissa
   }
-  let even = m2.land(1UL) == 0UL
+  let even = (m2 & 1UL) == 0UL
+  let mv = 4UL *
 
-  // Step 2: Determine the interval of valid decimal representations.
-  let mv = 4UL * m2
+    // Step 2: Determine the interval of valid decimal representations.
+    m2
   // Implicit bool -> int conversion. True is 1, false is 0.
   let mmShift = ieeeMantissa != 0UL || ieeeExponent <= 1
   // We would compute mp and mm like this:
@@ -562,7 +563,7 @@ fn d2d_small_int(
   ieeeMantissa : UInt64,
   ieeeExponent : Int
 ) -> FloatingDecimal64? {
-  let m2 : UInt64 = 1UL.lsl(gDOUBLE_MANTISSA_BITS).lor(ieeeMantissa)
+  let m2 : UInt64 = 1UL.lsl(gDOUBLE_MANTISSA_BITS) | ieeeMantissa
   let e2 : Int = ieeeExponent - gDOUBLE_BIAS - gDOUBLE_MANTISSA_BITS
   if e2 > 0 {
     return None
@@ -571,7 +572,7 @@ fn d2d_small_int(
     return None
   }
   let mask : UInt64 = 1UL.lsl(-e2) - 1UL
-  let fraction : UInt64 = m2.land(mask)
+  let fraction : UInt64 = m2 & mask
   if fraction != 0UL {
     return None
   }
@@ -586,11 +587,9 @@ pub fn ryu_to_string(val : Double) -> String {
   let bits : UInt64 = val.reinterpret_as_u64()
 
   // Decode bits into sign, mantissa, and exponent.
-  let ieeeSign = bits
-    .lsr(gDOUBLE_MANTISSA_BITS + gDOUBLE_EXPONENT_BITS)
-    .land(1UL) !=
+  let ieeeSign = (bits.lsr(gDOUBLE_MANTISSA_BITS + gDOUBLE_EXPONENT_BITS) & 1UL) !=
     0UL
-  let ieeeMantissa : UInt64 = bits.land(1UL.lsl(gDOUBLE_MANTISSA_BITS) - 1UL)
+  let ieeeMantissa : UInt64 = bits & (1UL.lsl(gDOUBLE_MANTISSA_BITS) - 1UL)
   let ieeeExponent : Int = bits
     .lsr(gDOUBLE_MANTISSA_BITS)
     .land(1UL.lsl(gDOUBLE_EXPONENT_BITS) - 1UL)
