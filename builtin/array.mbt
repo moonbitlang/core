@@ -137,11 +137,6 @@ pub fn pop[T](self : Array[T]) -> T? {
   }
 }
 
-/// @alert deprecated "Use `unsafe_pop` instead"
-pub fn pop_exn[T](self : Array[T]) -> T {
-  self.unsafe_pop()
-}
-
 /// Removes the last element from a array and returns it.
 /// 
 /// @alert unsafe "Panic if the array is empty."
@@ -570,11 +565,6 @@ pub fn search[T : Eq](self : Array[T], value : T) -> Int? {
   }
 }
 
-/// @alert deprecated "Use `search_by` instead."
-pub fn find_index[T](self : Array[T], f : (T) -> Bool) -> Int? {
-  search_by(self, f)
-}
-
 /// Search the index of the first element that satisfies the predicate.
 //
 /// # Example
@@ -896,54 +886,6 @@ pub fn rev_foldi[A, B](self : Array[A], ~init : B, f : (Int, B, A) -> B) -> B {
   } else {
     acc
   }
-}
-
-/// Fold out values from an array according to certain rules.
-///
-/// # Example
-/// ```
-/// let sum = [1, 2, 3, 4, 5].fold_left(~init=0, fn { sum, elem => sum + elem })
-/// sum // 15
-/// ```
-/// @alert deprecated "Use `fold` instead."
-pub fn fold_left[T, U](self : Array[T], f : (U, T) -> U, ~init : U) -> U {
-  self.fold(~init, f)
-}
-
-/// Fold out values from an array according to certain rules in reversed turn.
-///
-/// # Example
-/// ```
-/// let sum = [1, 2, 3, 4, 5].fold_right(~init=0, fn { sum, elem => sum + elem })
-/// sum // 15
-/// ```
-/// @alert deprecated "Use `rev_fold` instead."
-pub fn fold_right[T, U](self : Array[T], f : (U, T) -> U, ~init : U) -> U {
-  self.rev_fold(~init, f)
-}
-
-/// Fold out values from an array according to certain rules with index.
-///
-/// # Example
-/// ```
-/// let sum = [1, 2, 3, 4, 5].fold_lefti(~init=0, fn { index, sum, elem => sum + index })
-/// sum // 10
-/// ```
-/// @alert deprecated "Use `foldi` instead."
-pub fn fold_lefti[T, U](self : Array[T], f : (Int, U, T) -> U, ~init : U) -> U {
-  self.foldi(~init, f)
-}
-
-/// Fold out values from an array according to certain rules in reversed turn with index.
-///
-/// # Example
-/// ```
-/// let sum = [1, 2, 3, 4, 5].fold_righti(~init=0, fn { index, sum, elem => sum + index })
-/// sum // 10
-/// ```
-/// @alert deprecated "Use `rev_foldi` instead."
-pub fn fold_righti[T, U](self : Array[T], f : (Int, U, T) -> U, ~init : U) -> U {
-  self.rev_foldi(~init, f)
 }
 
 /// Removes consecutive repeated elements in the array according to the Eq trait.

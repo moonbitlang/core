@@ -70,19 +70,6 @@ pub fn copy[T](self : Array[T]) -> Array[T] {
   }
 }
 
-/// @alert deprecated "Use `Array::makei` instead"
-pub fn Array::new_with_index[T](length : Int, value : (Int) -> T) -> Array[T] {
-  if length <= 0 {
-    []
-  } else {
-    let array = Array::make(length, value(0))
-    for i in 1..<length {
-      array[i] = value(i)
-    }
-    array
-  }
-}
-
 pub fn Array::makei[T](length : Int, value : (Int) -> T) -> Array[T] {
   if length <= 0 {
     []

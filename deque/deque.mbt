@@ -194,11 +194,6 @@ pub fn unsafe_pop_front[A](self : T[A]) -> Unit {
   self.len -= 1
 }
 
-/// @alert deprecated "Use `unsafe_pop_front` instead"
-pub fn pop_front_exn[A](self : T[A]) -> Unit {
-  unsafe_pop_front(self)
-}
-
 /// Removes a back element from a deque.
 ///
 /// # Example
@@ -213,11 +208,6 @@ pub fn unsafe_pop_back[A](self : T[A]) -> Unit {
   }
   self.tail = if self.tail > 0 { self.tail - 1 } else { self.buf.length() - 1 }
   self.len -= 1
-}
-
-/// @alert deprecated "Use `unsafe_pop_back` instead"
-pub fn pop_back_exn[A](self : T[A]) -> Unit {
-  unsafe_pop_back(self)
 }
 
 /// Removes a front element from a deque and returns it, or `None` if it is empty.

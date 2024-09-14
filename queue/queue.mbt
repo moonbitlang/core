@@ -153,11 +153,6 @@ pub fn unsafe_peek[A](self : T[A]) -> A {
   }
 }
 
-/// @alert deprecated "Use `unsafe_peek` instead"
-pub fn peek_exn[A](self : T[A]) -> A {
-  unsafe_peek(self)
-}
-
 /// Peeks at the first value in the queue, which returns None if the queue is empty.
 ///
 /// # Example
@@ -193,11 +188,6 @@ pub fn unsafe_pop[A](self : T[A]) -> A {
       content
     }
   }
-}
-
-/// @alert deprecated "Use `unsafe_pop` instead"
-pub fn pop_exn[A](self : T[A]) -> A {
-  unsafe_pop(self)
 }
 
 /// Pops the first value from the queue, which returns None if the queue is empty.

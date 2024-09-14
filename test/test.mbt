@@ -18,40 +18,6 @@ fn debug_string[T : Show](t : T) -> String {
   buf.to_string()
 }
 
-/// @alert deprecated "Use built-in `assert_eq` instead"
-pub fn eq[T : Show + Eq](a : T, b : T, ~loc : SourceLoc = _) -> Unit! {
-  if a != b {
-    let a = debug_string(a)
-    let b = debug_string(b)
-    fail!("FAILED: \{loc} `\{a} == \{b}`")
-  }
-}
-
-/// @alert deprecated "Use built-in `assert_not_eq` instead"
-pub fn ne[T : Show + Eq](a : T, b : T, ~loc : SourceLoc = _) -> Unit! {
-  if not(a != b) {
-    let a = debug_string(a)
-    let b = debug_string(b)
-    fail!("FAILED: \{loc} `\{a} != \{b}`")
-  }
-}
-
-/// @alert deprecated "Use built-in `assert_true` instead"
-pub fn is_true(x : Bool, ~loc : SourceLoc = _) -> Unit! {
-  if not(x) {
-    let x = debug_string(x)
-    fail!("FAILED: \{loc} `\{x}` is not true")
-  }
-}
-
-/// @alert deprecated "Use built-in `assert_false` instead"
-pub fn is_false(x : Bool, ~loc : SourceLoc = _) -> Unit! {
-  if x {
-    let x = debug_string(x)
-    fail!("FAILED: \{loc}: `\{x}` is not false")
-  }
-}
-
 /// Assert referential equality of two values.
 ///
 /// Returns Ok if the two arguments are the same object by reference, using

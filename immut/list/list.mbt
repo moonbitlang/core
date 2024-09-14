@@ -196,11 +196,6 @@ pub fn unsafe_head[A](self : T[A]) -> A {
   }
 }
 
-/// @alert deprecated "Use `unsafe_head` instead"
-pub fn head_exn[A](self : T[A]) -> A {
-  unsafe_head(self)
-}
-
 /// Get first element of the list.
 ///
 /// # Example
@@ -318,33 +313,6 @@ pub fn rev_fold[A, B](self : T[A], ~init : B, f : (A, B) -> B) -> B {
   }
 }
 
-/// Fold the list from left.
-///
-/// # Example
-///
-/// ```
-/// let r = of([1, 2, 3, 4, 5]).fold_left(~init=0, fn(acc, x) { acc + x })
-/// println(r) // output: 15
-/// ```
-/// @alert deprecated "Use `fold` instead"
-pub fn fold_left[A, B](self : T[A], f : (B, A) -> B, ~init : B) -> B {
-  self.fold(~init, f)
-}
-
-/// Fold the list from right.
-///
-/// # Example
-/// ```
-/// let r = of([1, 2, 3, 4, 5]).fold_right(fn(x, acc) { x + acc }, ~init=0)
-/// ```
-/// @alert deprecated "Use `rev_fold` instead"
-pub fn fold_right[A, B](self : T[A], f : (A, B) -> B, ~init : B) -> B {
-  match self {
-    Nil => init
-    Cons(head, tail) => f(head, tail.rev_fold(f, ~init))
-  }
-}
-
 /// Fold the list from left with index.
 pub fn foldi[A, B](self : T[A], ~init : B, f : (Int, B, A) -> B) -> B {
   fn go(xs : T[A], i : Int, f : (Int, B, A) -> B, acc : B) -> B {
@@ -359,32 +327,6 @@ pub fn foldi[A, B](self : T[A], ~init : B, f : (Int, B, A) -> B) -> B {
 
 /// Fold the list from right with index.
 pub fn rev_foldi[A, B](self : T[A], ~init : B, f : (Int, A, B) -> B) -> B {
-  fn go(xs : T[A], i : Int, f : (Int, A, B) -> B, acc : B) -> B {
-    match xs {
-      Nil => acc
-      Cons(x, xs) => f(i, x, go(xs, i + 1, f, acc))
-    }
-  }
-
-  go(self, 0, f, init)
-}
-
-/// Fold the list from left with index.
-/// @alert deprecated "Use `foldi` instead"
-pub fn fold_lefti[A, B](self : T[A], f : (Int, B, A) -> B, ~init : B) -> B {
-  fn go(xs : T[A], i : Int, f : (Int, B, A) -> B, acc : B) -> B {
-    match xs {
-      Nil => acc
-      Cons(x, xs) => go(xs, i + 1, f, f(i, acc, x))
-    }
-  }
-
-  go(self, 0, f, init)
-}
-
-/// Fold the list from right with index.
-/// @alert deprecated "Use `rev_foldi` instead"
-pub fn fold_righti[A, B](self : T[A], f : (Int, A, B) -> B, ~init : B) -> B {
   fn go(xs : T[A], i : Int, f : (Int, A, B) -> B, acc : B) -> B {
     match xs {
       Nil => acc
@@ -418,22 +360,6 @@ pub fn zip[A, B](self : T[A], other : T[B]) -> T[(A, B)]? {
 
 /// map over the list and concat all results.
 ///
-/// `concat_map(f, ls)` equal to `ls.map(f).fold(Nil, fn(acc, x) { acc.concat(x) })))`
-///
-/// # Example
-///
-/// ```
-/// let ls = from_array([1, 2, 3])
-/// let r = ls.concat_map(fn(x) { [x, x * 2] })
-/// println(r) // output: from_array([1, 2, 2, 4, 3, 6])
-/// ```
-/// @alert deprecated "Use `flat_map` instead"
-pub fn concat_map[A, B](self : T[A], f : (A) -> T[B]) -> T[B] {
-  flat_map(self, f)
-}
-
-/// map over the list and concat all results.
-///
 /// `flat_map(f, ls)` equal to `ls.map(f).fold(Nil, fn(acc, x) { acc.concat(x) })))`
 ///
 /// # Example
@@ -457,11 +383,6 @@ pub fn unsafe_nth[A](self : T[A], n : Int) -> A {
     Cons(head, _), 0 => head
     Cons(_, tail), n => continue tail, n - 1
   }
-}
-
-/// @alert deprecated "Use `unsafe_nth` instead"
-pub fn nth_exn[A](self : T[A], n : Int) -> A {
-  unsafe_nth(self, n)
 }
 
 /// Get nth element of the list or None if the index is out of bounds

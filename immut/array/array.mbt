@@ -245,30 +245,6 @@ pub fn rev_fold[A, B](self : T[A], ~init : B, f : (B, A) -> B) -> B {
   go(self.tree, init)
 }
 
-/// Fold the array from left to right.
-/// 
-/// # Example
-/// ```
-/// let v = @immut/array.of([1, 2, 3, 4, 5])
-/// v.fold_left(fn(a, b) { a + b }, init=0)
-/// ```
-/// @alert deprecated "Use `fold` instead"
-pub fn fold_left[A](self : T[A], f : (A, A) -> A, ~init : A) -> A {
-  self.fold(~init, f)
-}
-
-/// Fold the array from right to left.
-/// 
-/// # Example
-/// ```
-/// let v = @immut/array.of([1, 2, 3, 4, 5])
-/// v.fold_right(fn(a, b) { a + b }, init=0)
-/// ```
-/// @alert deprecated "Use `rev_fold` instead"
-pub fn fold_right[A](self : T[A], f : (A, A) -> A, ~init : A) -> A {
-  self.rev_fold(~init, f)
-}
-
 /// Map a function over the array.
 /// 
 /// # Example

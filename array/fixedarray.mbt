@@ -296,15 +296,6 @@ test "makei" {
 }
 
 /// Create a new array. Values are built from indexes.
-/// @alert deprecated "Use `FixedArray::makei` instead"
-pub fn FixedArray::new_with_index[T](
-  length : Int,
-  value : (Int) -> T
-) -> FixedArray[T] {
-  FixedArray::makei(length, value)
-}
-
-/// Create a new array. Values are built from indexes.
 pub fn FixedArray::makei[T](length : Int, value : (Int) -> T) -> FixedArray[T] {
   if length <= 0 {
     []
@@ -354,18 +345,6 @@ pub fn fold[A, B](self : FixedArray[A], ~init : B, f : (B, A) -> B) -> B {
   }
 }
 
-/// Fold out values from an array according to certain rules.
-///
-/// # Example
-/// ```
-/// let sum = [1, 2, 3, 4, 5].fold_left(init=0, fn { sum, elem => sum + elem })
-/// sum // 15
-/// ```
-/// @alert deprecated "Use `fold` instead"
-pub fn fold_left[T, U](self : FixedArray[T], f : (U, T) -> U, ~init : U) -> U {
-  self.fold(~init, f)
-}
-
 test "fold" {
   let sum = ([] : FixedArray[_]).fold(init=1, fn { sum, elem => sum + elem })
   assert_eq!(sum, 1)
@@ -391,18 +370,6 @@ pub fn rev_fold[A, B](self : FixedArray[A], ~init : B, f : (B, A) -> B) -> B {
   } else {
     acc
   }
-}
-
-/// Fold out values from an array according to certain rules in reversed turn.
-///
-/// # Example
-/// ```
-/// let sum = [1, 2, 3, 4, 5].fold_right(init=0, fn { sum, elem => sum + elem })
-/// sum // 15
-/// ```
-/// @alert deprecated "Use `rev_fold` instead"
-pub fn fold_right[T, U](self : FixedArray[T], f : (U, T) -> U, ~init : U) -> U {
-  self.rev_fold(~init, f)
 }
 
 test "rev_fold" {
@@ -438,22 +405,6 @@ pub fn foldi[A, B](self : FixedArray[A], ~init : B, f : (Int, B, A) -> B) -> B {
   }
 }
 
-/// Fold out values from an array according to certain rules with index.
-///
-/// # Example
-/// ```
-/// let sum = [1, 2, 3, 4, 5].fold_lefti(init=0, fn { index, sum, elem => sum + index })
-/// sum // 10
-/// ```
-/// @alert deprecated "Use `foldi` instead"
-pub fn fold_lefti[T, U](
-  self : FixedArray[T],
-  f : (Int, U, T) -> U,
-  ~init : U
-) -> U {
-  self.foldi(~init, f)
-}
-
 test "fold_lefti" {
   let f = fn { index, sum, elem => index + sum + elem }
   {
@@ -480,27 +431,6 @@ pub fn rev_foldi[A, B](
   ~init : B,
   f : (Int, B, A) -> B
 ) -> B {
-  let len = self.length()
-  for i = len - 1, acc = init; i >= 0; {
-    continue i - 1, f(len - i - 1, acc, self[i])
-  } else {
-    acc
-  }
-}
-
-/// Fold out values from an array according to certain rules in reversed turn with index.
-///
-/// # Example
-/// ```
-/// let sum = [1, 2, 3, 4, 5].fold_righti(init=0, fn { index, sum, elem => sum + index })
-/// sum // 10
-/// ```
-/// @alert deprecated "Use `rev_foldi` instead"
-pub fn fold_righti[T, U](
-  self : FixedArray[T],
-  f : (Int, U, T) -> U,
-  ~init : U
-) -> U {
   let len = self.length()
   for i = len - 1, acc = init; i >= 0; {
     continue i - 1, f(len - i - 1, acc, self[i])

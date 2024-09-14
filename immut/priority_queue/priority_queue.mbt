@@ -130,11 +130,6 @@ pub fn unsafe_pop[A : Compare](self : T[A]) -> T[A] {
   }
 }
 
-/// @alert deprecated "Use `unsafe_pop` instead"
-pub fn pop_exn[A : Compare](self : T[A]) -> T[A] {
-  unsafe_pop(self)
-}
-
 /// Adds a value to the immutable priority queue.
 /// 
 /// # Example
