@@ -456,13 +456,6 @@ pub fn lsl(self : BigInt, n : Int) -> BigInt {
 /// The sign of the result is the same as the sign of the input.
 /// Only the absolute value is shifted.
 pub fn op_shl(self : BigInt, n : Int) -> BigInt {
-  self << n
-}
-
-/// Left shift a bigint
-/// The sign of the result is the same as the sign of the input.
-/// Only the absolute value is shifted.
-pub fn shl(self : BigInt, n : Int) -> BigInt {
   if n < 0 {
     abort("negative shift count")
   }
@@ -495,17 +488,17 @@ pub fn shl(self : BigInt, n : Int) -> BigInt {
   }
 }
 
-/// Right shift a bigint
+/// Left shift a bigint
 /// The sign of the result is the same as the sign of the input.
 /// Only the absolute value is shifted.
-pub fn op_shr(self : BigInt, n : Int) -> BigInt {
-  self >> n
+pub fn shl(self : BigInt, n : Int) -> BigInt {
+  self << n
 }
 
 /// Right shift a bigint
 /// The sign of the result is the same as the sign of the input.
 /// Only the absolute value is shifted.
-pub fn shr(self : BigInt, n : Int) -> BigInt {
+pub fn op_shr(self : BigInt, n : Int) -> BigInt {
   if n < 0 {
     abort("negative shift count")
   }
@@ -541,6 +534,13 @@ pub fn shr(self : BigInt, n : Int) -> BigInt {
       { limbs: new_limbs, sign: self.sign, len: new_len }
     }
   }
+}
+
+/// Right shift a bigint
+/// The sign of the result is the same as the sign of the input.
+/// Only the absolute value is shifted.
+pub fn shr(self : BigInt, n : Int) -> BigInt {
+  self >> n
 }
 
 pub fn asr(self : BigInt, n : Int) -> BigInt {
