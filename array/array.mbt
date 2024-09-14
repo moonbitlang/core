@@ -57,6 +57,35 @@ pub fn Array::new_with_index[T](length : Int, value : (Int) -> T) -> Array[T] {
   }
 }
 
+/// Joins the elements of an array into a single string, using the specified separator.
+///
+/// # Arguments
+///
+/// * `self` - The array of strings to join.
+/// * `sep` - The separator string to insert between each element.
+///
+/// # Returns
+///
+/// The joined string.
+/// 
+/// @alert deprecated "Use `String::join` instead"
+pub fn join[T : Show](self : Array[T], sep : String) -> String {
+  let len = self.length()
+  if len == 0 {
+    return ""
+  }
+  let sep_size = sep.length() * (len - 1)
+  let self_size = self[0].to_string().length() * (len + 1) // + 1 to avoid allocation in buffer
+  let size = sep_size + self_size
+  let buf = Buffer::new(size_hint=size + 1) // + 1 to avoid allocation in buffer
+  buf.write_string(self[0].to_string())
+  for i in 1..<len {
+    buf.write_string(sep)
+    buf.write_string(self[i].to_string())
+  }
+  buf.to_string()
+}
+
 pub fn Array::makei[T](length : Int, value : (Int) -> T) -> Array[T] {
   if length <= 0 {
     []
