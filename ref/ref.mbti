@@ -1,7 +1,6 @@
 package moonbitlang/core/ref
 
 // Values
-fn ref[T](T) -> Ref[T]
 
 // Types and methods
 impl Ref {

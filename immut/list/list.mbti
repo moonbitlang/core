@@ -17,7 +17,6 @@ impl T {
   all[A](Self[A], (A) -> Bool) -> Bool
   any[A](Self[A], (A) -> Bool) -> Bool
   concat[A](Self[A], Self[A]) -> Self[A]
-  concat_map[A, B](Self[A], (A) -> Self[B]) -> Self[B]
   contains[A : Eq](Self[A], A) -> Bool
   default[X]() -> Self[X]
   drop[A](Self[A], Int) -> Self[A]
@@ -31,15 +30,10 @@ impl T {
   flat_map[A, B](Self[A], (A) -> Self[B]) -> Self[B]
   flatten[A](Self[Self[A]]) -> Self[A]
   fold[A, B](Self[A], ~init : B, (B, A) -> B) -> B
-  fold_left[A, B](Self[A], (B, A) -> B, ~init : B) -> B
-  fold_lefti[A, B](Self[A], (Int, B, A) -> B, ~init : B) -> B
-  fold_right[A, B](Self[A], (A, B) -> B, ~init : B) -> B
-  fold_righti[A, B](Self[A], (Int, A, B) -> B, ~init : B) -> B
   foldi[A, B](Self[A], ~init : B, (Int, B, A) -> B) -> B
   from_array[A](Array[A]) -> Self[A]
   from_iter[A](Iter[A]) -> Self[A]
   head[A](Self[A]) -> A?
-  head_exn[A](Self[A]) -> A
   init_[A](Self[A]) -> Self[A]
   intercalate[A](Self[Self[A]], Self[A]) -> Self[A]
   intersperse[A](Self[A], A) -> Self[A]
@@ -56,7 +50,6 @@ impl T {
   maximum[A : Compare + Eq](Self[A]) -> A?
   minimum[A : Compare + Eq](Self[A]) -> A?
   nth[A](Self[A], Int) -> A?
-  nth_exn[A](Self[A], Int) -> A
   of[A](FixedArray[A]) -> Self[A]
   op_add[A](Self[A], Self[A]) -> Self[A]
   op_equal[A : Eq](Self[A], Self[A]) -> Bool

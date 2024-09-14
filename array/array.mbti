@@ -12,10 +12,6 @@ impl FixedArray {
   eachi[T](Self[T], (Int, T) -> Unit) -> Unit
   ends_with[T : Eq](Self[T], Self[T]) -> Bool
   fold[A, B](Self[A], ~init : B, (B, A) -> B) -> B
-  fold_left[T, U](Self[T], (U, T) -> U, ~init : U) -> U
-  fold_lefti[T, U](Self[T], (Int, U, T) -> U, ~init : U) -> U
-  fold_right[T, U](Self[T], (U, T) -> U, ~init : U) -> U
-  fold_righti[T, U](Self[T], (Int, U, T) -> U, ~init : U) -> U
   foldi[A, B](Self[A], ~init : B, (Int, B, A) -> B) -> B
   from_array[T](Array[T]) -> Self[T]
   from_iter[T](Iter[T]) -> Self[T]
@@ -26,7 +22,6 @@ impl FixedArray {
   map[T, U](Self[T], (T) -> U) -> Self[U]
   mapi[T, U](Self[T], (Int, T) -> U) -> Self[U]
   new[T](Int, () -> T) -> Self[T]
-  new_with_index[T](Int, (Int) -> T) -> Self[T]
   op_add[T](Self[T], Self[T]) -> Self[T]
   op_equal[T : Eq](Self[T], Self[T]) -> Bool
   rev[T](Self[T]) -> Self[T]
@@ -51,7 +46,6 @@ impl Array {
   last[A](Self[A]) -> A?
   makei[T](Int, (Int) -> T) -> Self[T]
   map_option[A, B](Self[A], (A) -> B?) -> Self[B]
-  new_with_index[T](Int, (Int) -> T) -> Self[T]
   push_iter[T](Self[T], Iter[T]) -> Unit
   shuffle[T](Self[T], ~rand : (Int) -> Int) -> Self[T]
   shuffle_in_place[T](Self[T], ~rand : (Int) -> Int) -> Unit
