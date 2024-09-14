@@ -61,7 +61,7 @@ pub impl Arbitrary for UInt64 with arbitrary(size, rs) {
 
 pub impl Arbitrary for Char with arbitrary(_i, rs) {
   // Choose only ASCII characters
-  rs.next_uint() % 128 |> UInt::to_int |> Char::from_int
+  rs.next_uint() % 128 |> UInt::reinterpret_as_int |> Char::from_int
 }
 
 pub impl Arbitrary for String with arbitrary(size, rs) {
