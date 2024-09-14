@@ -256,7 +256,7 @@ fn assemble_bits(mantissa : Int64, exponent : Int, negative : Bool) -> Int64 {
   // set the sign bit
   if negative {
     bits = bits |
-    1L.lsl(double_info.mantissa_bits).lsl(double_info.exponent_bits)
+      1L.lsl(double_info.mantissa_bits).lsl(double_info.exponent_bits)
   }
   bits
 }
