@@ -544,6 +544,8 @@ impl FixedArray {
   default[X]() -> Self[X]
   fill[T](Self[T], T) -> Unit
   get[T](Self[T], Int) -> T
+  iter[T](Self[T]) -> Iter[T]
+  iter2[T](Self[T]) -> Iter2[Int, T]
   length[T](Self[T]) -> Int
   make[T](Int, T) -> Self[T]
   op_get[T](Self[T], Int) -> T
