@@ -30,7 +30,17 @@ pub enum IterResult {
 } derive(Eq)
 
 pub impl[T : Show] Show for Iter[T] with output(self, logger) {
-  Show::output(self.to_array(), logger)
+  logger.write_char('[')
+  let mut first = true
+  for v in self {
+    if first {
+      first = false
+    } else {
+      logger.write_string(", ")
+    }
+    Show::output(v, logger)
+  }
+  logger.write_char(']')
 }
 
 pub fn to_string[T : Show](self : Iter[T]) -> String {
