@@ -453,12 +453,7 @@ pub fn search[A : Eq](self : T[A], value : A) -> Int? {
 /// dv.contains(3) // true
 /// ```
 pub fn contains[A : Eq](self : T[A], value : A) -> Bool {
-  for i = 0; i < self.len; i = i + 1 {
-    if self.buf[i] == value {
-      return true
-    }
-  }
-  false
+  self.iter().contains(value)
 }
 
 /// Reserves capacity to ensure that it can hold at least the number of elements
@@ -517,10 +512,9 @@ pub fn shrink_to_fit[A](self : T[A]) -> Unit {
 pub fn iter[A](self : T[A]) -> Iter[A] {
   Iter::new(
     fn(yield) {
-      for i = 0, len = self.length(); i < len; i = i + 1 {
-        if yield(self[i]) == IterEnd {
-          break IterEnd
-        }
+      for i in 0..<self.length() {
+        guard let IterContinue = yield(self[i]) else { x => break x }
+
       } else {
         IterContinue
       }

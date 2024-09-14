@@ -801,3 +801,12 @@ pub fn op_as_view[A](self : Iter[A], ~start : Int, ~end? : Int) -> Iter[A] {
     None => self.drop(start)
   }
 }
+
+pub fn contains[A : Eq](self : Iter[A], value : A) -> Bool {
+  for v in self {
+    if v == value {
+      return true
+    }
+  }
+  false
+}
