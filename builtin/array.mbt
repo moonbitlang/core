@@ -1099,3 +1099,29 @@ pub fn shrink_to_fit[T](self : Array[T]) -> Unit {
 pub fn to_string[T : Show](self : Array[T]) -> String {
   Show::to_string(self)
 }
+
+pub fn iter[T](self : Array[T]) -> Iter[T] {
+  Iter::new(
+    fn(yield) {
+      for v in self {
+        guard let IterContinue = yield(v) else { x => break x }
+
+      } else {
+        IterContinue
+      }
+    },
+  )
+}
+
+pub fn iter2[A](self : Array[A]) -> Iter2[Int, A] {
+  Iter2::new(
+    fn(yield) {
+      for i, v in self {
+        guard let IterContinue = yield(i, v) else { x => break x }
+
+      } else {
+        IterContinue
+      }
+    },
+  )
+}
