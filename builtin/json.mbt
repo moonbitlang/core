@@ -47,6 +47,10 @@ pub fn Double::to_json(self : Double) -> Json {
   Number(self)
 }
 
+pub fn Float::to_json(self : Float) -> Json {
+  Number(self.to_double())
+}
+
 fn escape_json_string(str : String) -> String {
   fn to_hex_digit(i : Int) -> Char {
     if i < 10 {
@@ -56,8 +60,9 @@ fn escape_json_string(str : String) -> String {
     }
   }
 
-  let buf = Buffer::new(size_hint=str.length())
-  for i = 0; i < str.length(); i = i + 1 {
+  let len = str.length()
+  let buf = Buffer::new(size_hint=len)
+  for i in 0..<len {
     let c = str[i]
     match c {
       '\n' => buf.write_string("\\n")
@@ -89,12 +94,51 @@ pub fn Char::to_json(self : Char) -> Json {
   String(self.to_string())
 }
 
+pub fn BigInt::to_json(self : BigInt) -> Json {
+  String(self.to_string())
+}
+
 pub fn Array::to_json[X : ToJson](self : Array[X]) -> Json {
   Array(self.map(ToJson::to_json))
 }
 
-pub fn Map::to_json[V : ToJson](self : Map[String, V]) -> Json {
-  let object = {  }
-  self.each(fn(k, v) { object[k] = v.to_json() })
+pub fn FixedArray::to_json[X : ToJson](self : FixedArray[X]) -> Json {
+  let len = self.length()
+  if len == 0 {
+    return []
+  }
+  let res = FixedArray::make(self.length(), ToJson::to_json(self[0]))
+  for i in 1..<len {
+    res[i] = ToJson::to_json(self[i])
+  }
+  Array(Array::from_fixed_array(res))
+}
+
+pub fn Map::to_json[K : Show, V : ToJson](self : Map[K, V]) -> Json {
+  let object = {}
+  for k, v in self {
+    object[k.to_string()] = v.to_json()
+  }
   Object(object)
+}
+
+pub fn Option::to_json[T : ToJson](self : T?) -> Json {
+  match self {
+    None => Null
+    Some(value) => value.to_json()
+  }
+}
+
+pub fn Result::to_json[Ok : ToJson, Err : ToJson](
+  self : Result[Ok, Err]
+) -> Json {
+  match self {
+    Ok(ok) => { "Ok": ok.to_json() }
+    Err(err) => { "Err": err.to_json() }
+  }
+}
+
+// unit
+pub fn Unit::to_json(_self : Unit) -> Json {
+  Null
 }

@@ -28,13 +28,13 @@ test "parses object" {
   inspect!(
     @json.parse?("{\"a\":1}"),
     content=
-      #|Ok(Object({"a": Number(1.0)}))
+      #|Ok(Object({"a": Number(1)}))
     ,
   )
   inspect!(
     @json.parse?("{\"a\":1,\"b\":2}"),
     content=
-      #|Ok(Object({"a": Number(1.0), "b": Number(2.0)}))
+      #|Ok(Object({"a": Number(1), "b": Number(2)}))
     ,
   )
 }
@@ -43,7 +43,7 @@ test "parses multiple properties" {
   inspect!(
     @json.parse?("{\"abc\":1,\"def\":2}"),
     content=
-      #|Ok(Object({"abc": Number(1.0), "def": Number(2.0)}))
+      #|Ok(Object({"abc": Number(1), "def": Number(2)}))
     ,
   )
 }
@@ -52,7 +52,7 @@ test "parses nested objects" {
   inspect!(
     @json.parse?("{\"a\":{\"b\":2}}"),
     content=
-      #|Ok(Object({"a": Object({"b": Number(2.0)})}))
+      #|Ok(Object({"a": Object({"b": Number(2)})}))
     ,
   )
 }
@@ -198,7 +198,7 @@ test "parses escaped characters" {
 //region whitespace
 test "parses whitespace" {
   let json = test_parse!("{\t\u000b\u000c \u00A0\uFEFF\n\r\u2028\u2029\u2003}")
-  assert_eq!(json, Json::Object({  }))
+  assert_eq!(json, Json::Object({}))
 }
 //endregion
 
@@ -295,7 +295,7 @@ test "parse muti-lines json" {
   inspect!(
     result,
     content=
-      #|Ok(Object({"a": Number(2.0), "b": Number(3.0)}))
+      #|Ok(Object({"a": Number(2), "b": Number(3)}))
     ,
   )
 }

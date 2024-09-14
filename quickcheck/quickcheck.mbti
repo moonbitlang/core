@@ -3,6 +3,8 @@ package moonbitlang/core/quickcheck
 alias @moonbitlang/core/random/splitmix as @splitmix
 
 // Values
+fn gen[T : Arbitrary](~size? : Int, ~state? : @splitmix.RandomState) -> T
+
 fn samples[X : Arbitrary](Int) -> Array[X]
 
 // Types and methods

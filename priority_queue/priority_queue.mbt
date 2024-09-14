@@ -144,15 +144,20 @@ pub fn length[A](self : T[A]) -> Int {
 /// # Example
 /// ```
 /// let queue = of([1, 2, 3, 4])
-/// let first = queue.pop_exn() // 4
+/// let first = queue.unsafe_pop() // 4
 /// ```
 /// @alert unsafe "Panic if the queue is empty."
-pub fn pop_exn[A : Compare](self : T[A]) -> Unit {
+pub fn unsafe_pop[A : Compare](self : T[A]) -> Unit {
   self.top = match self.top {
     Nil => abort("The PriorityQueue is empty!")
     Cons(~child, ..) => merges(child)
   }
   self.len -= 1
+}
+
+/// @alert deprecated "Use `unsafe_pop` instead"
+pub fn pop_exn[A : Compare](self : T[A]) -> Unit {
+  unsafe_pop(self)
 }
 
 /// Pops the first value from the priority queue, which returns None if the queue is empty.

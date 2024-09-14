@@ -193,3 +193,21 @@ test "arbitrary" {
     content="[@sorted_map.of([(0, 0)]), @sorted_map.of([(-1, 2), (0, 2)]), @sorted_map.of([(-4, 1), (-3, 2), (-1, 2), (0, 2), (1, 4), (3, 2), (6, 1)]), @sorted_map.of([(0, 0)])]",
   )
 }
+
+test "iter2" {
+  let map = @sorted_map.of([(3, "c"), (2, "b"), (1, "a")])
+  let buf = Buffer::new()
+  for k, v in map {
+    buf.write_string("[\{k}\{v}]")
+  }
+  inspect!(buf, content="[1a][2b][3c]")
+}
+
+test "iter" {
+  let map = @sorted_map.of([(3, "c"), (2, "b"), (1, "a")])
+  let buf = Buffer::new()
+  for kv in map {
+    buf.write_string("[\{kv.0}\{kv.1}]")
+  }
+  inspect!(buf, content="[1a][2b][3c]")
+}

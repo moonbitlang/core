@@ -314,13 +314,13 @@ pub fn to_string[K : Show](self : T[K]) -> String {
 
 priv type MyString String derive(Eq)
 
-impl Hash for MyString with hash(self) { self.0.length() }
+impl Hash for MyString with hash(self) { self._.length() }
 
 impl Hash for MyString with hash_combine(self, hasher) {
-  hasher.combine_string(self.0)
+  hasher.combine_string(self._)
 }
 
-impl Show for MyString with output(self, logger) { logger.write_string(self.0) }
+impl Show for MyString with output(self, logger) { logger.write_string(self._) }
 
 test "set" {
   let m : T[MyString] = T::new()

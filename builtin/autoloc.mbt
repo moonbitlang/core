@@ -23,17 +23,17 @@ pub impl Show for SourceLoc with output(self, logger) {
 pub type ArgsLoc Array[SourceLoc?]
 
 pub fn ArgsLoc::to_string(self : ArgsLoc) -> String {
-  self.0.to_string()
+  self._.to_string()
 }
 
 pub fn ArgsLoc::to_json(self : ArgsLoc) -> String {
   let buf = Buffer::new(size_hint=10)
   buf.write_char('[')
-  for i = 0; i < self.0.length(); i = i + 1 {
+  for i = 0; i < self._.length(); i = i + 1 {
     if i != 0 {
       buf.write_string(", ")
     }
-    let item = self.0[i]
+    let item = self._[i]
     match item {
       None => buf.write_string("null")
       Some(loc) => loc.to_string() |> Show::output(buf)

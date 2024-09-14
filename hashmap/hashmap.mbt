@@ -74,7 +74,7 @@ pub fn set[K : Hash + Eq, V](self : T[K, V], key : K, value : V) -> Unit {
           entry
         }
         curr_entry.psl += 1
-        continue (idx + 1).land(self.capacity - 1), curr_entry
+        continue (idx + 1) & (self.capacity - 1), curr_entry
       }
     }
   }
@@ -87,7 +87,7 @@ pub fn op_set[K : Hash + Eq, V](self : T[K, V], key : K, value : V) -> Unit {
 /// Get the value associated with a key.
 pub fn get[K : Hash + Eq, V](self : T[K, V], key : K) -> V? {
   let hash = key.hash()
-  for i = 0, idx = hash.land(self.capacity - 1) {
+  for i = 0, idx = hash & (self.capacity - 1) {
     // if i == self.capacity {
     //   panic()
     // }
@@ -99,7 +99,7 @@ pub fn get[K : Hash + Eq, V](self : T[K, V], key : K) -> V? {
         if i > entry.psl {
           break None
         }
-        continue i + 1, (idx + 1).land(self.capacity - 1)
+        continue i + 1, (idx + 1) & (self.capacity - 1)
       }
       None => break None
     }
@@ -209,13 +209,13 @@ pub impl[K : @quickcheck.Arbitrary + Hash + Eq, V : @quickcheck.Arbitrary] @quic
 
 priv type MyString String derive(Eq)
 
-impl Hash for MyString with hash(self) { self.0.length() }
+impl Hash for MyString with hash(self) { self._.length() }
 
 impl Hash for MyString with hash_combine(self, hasher) {
-  hasher.combine_string(self.0)
+  hasher.combine_string(self._)
 }
 
-impl Show for MyString with output(self, logger) { logger.write_string(self.0) }
+impl Show for MyString with output(self, logger) { logger.write_string(self._) }
 
 test "arbitrary" {
   let samples : Array[T[String, Int]] = @quickcheck.samples(20)

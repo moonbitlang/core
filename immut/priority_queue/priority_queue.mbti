@@ -20,6 +20,7 @@ impl T {
   push[A : Compare + Eq](Self[A], A) -> Self[A]
   to_array[A : Compare + Eq](Self[A]) -> Array[A]
   to_string[A : Show + Compare + Eq](Self[A]) -> String
+  unsafe_pop[A : Compare + Eq](Self[A]) -> Self[A]
 }
 
 // Type aliases

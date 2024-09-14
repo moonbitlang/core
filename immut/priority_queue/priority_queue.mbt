@@ -123,11 +123,16 @@ pub fn pop[A : Compare](self : T[A]) -> T[A]? {
 /// let queue = of([1, 2, 3, 4])
 /// let first = queue.pop()
 /// ```
-pub fn pop_exn[A : Compare](self : T[A]) -> T[A] {
+pub fn unsafe_pop[A : Compare](self : T[A]) -> T[A] {
   match self.body {
     Empty => abort("The ImmutablePriorityQueue is empty!")
     Node(_, ts) => { body: merges(ts), len: self.len - 1 }
   }
+}
+
+/// @alert deprecated "Use `unsafe_pop` instead"
+pub fn pop_exn[A : Compare](self : T[A]) -> T[A] {
+  unsafe_pop(self)
 }
 
 /// Adds a value to the immutable priority queue.

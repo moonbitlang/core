@@ -20,7 +20,7 @@ test "overflow" {
 }
 
 test "Int64::min_value" {
-  let min_value = @int64.min
+  let min_value = @int64.min_value
   assert_eq!(min_value, -9223372036854775808L)
 }
 

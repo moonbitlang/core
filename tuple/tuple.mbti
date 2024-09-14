@@ -5,19 +5,19 @@ alias @moonbitlang/core/quickcheck as @quickcheck
 // Values
 fn curry[T, U, V]((T, U) -> V) -> (T) -> (U) -> V
 
-fn fst[T, U](Tuple[T, U]) -> T
+fn fst[T, U]((T, U)) -> T
 
-fn map_both[T, U, V, W]((T) -> U, (V) -> W, Tuple[T, V]) -> Tuple[U, W]
+fn map_both[T, U, V, W]((T) -> U, (V) -> W, (T, V)) -> (U, W)
 
-fn map_fst[T, U, V]((T) -> U, Tuple[T, V]) -> Tuple[U, V]
+fn map_fst[T, U, V]((T) -> U, (T, V)) -> (U, V)
 
-fn map_snd[T, U, V]((T) -> U, Tuple[V, T]) -> Tuple[V, U]
+fn map_snd[T, U, V]((T) -> U, (V, T)) -> (V, U)
 
-fn pair[T, U](T, U) -> Tuple[T, U]
+fn pair[T, U](T, U) -> (T, U)
 
-fn snd[T, U](Tuple[T, U]) -> U
+fn snd[T, U]((T, U)) -> U
 
-fn swap[T, U](Tuple[T, U]) -> Tuple[U, T]
+fn swap[T, U]((T, U)) -> (U, T)
 
 fn uncurry[T, U, V]((T) -> (U) -> V) -> (T, U) -> V
 
@@ -28,15 +28,15 @@ fn uncurry[T, U, V]((T) -> (U) -> V) -> (T, U) -> V
 // Traits
 
 // Extension Methods
-impl @quickcheck.Arbitrary for Tuple
+impl @quickcheck.Arbitrary for Tuple(2)
 
-impl @quickcheck.Arbitrary for Tuple
+impl @quickcheck.Arbitrary for Tuple(3)
 
-impl @quickcheck.Arbitrary for Tuple
+impl @quickcheck.Arbitrary for Tuple(4)
 
-impl @quickcheck.Arbitrary for Tuple
+impl @quickcheck.Arbitrary for Tuple(5)
 
-impl @quickcheck.Arbitrary for Tuple
+impl @quickcheck.Arbitrary for Tuple(6)
 
-impl @quickcheck.Arbitrary for Tuple
+impl @quickcheck.Arbitrary for Tuple(7)
 

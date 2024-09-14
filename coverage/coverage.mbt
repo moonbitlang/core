@@ -71,7 +71,7 @@ trait Output {
 priv type StringBuffer Array[String]
 
 impl Output for StringBuffer with output(self : StringBuffer, content : String) -> Unit {
-  self.0.push(content)
+  self._.push(content)
 }
 
 impl Output for Buffer with output(self, content) -> Unit {
@@ -97,8 +97,8 @@ pub fn end() -> Unit {
   let sbuf = StringBuffer::StringBuffer([])
   coverage_log(counters.val, sbuf)
   let line_buf = Buffer::new()
-  for i = 0; i < sbuf.0.length(); i = i + 1 {
-    let str = sbuf.0[i]
+  for i = 0; i < sbuf._.length(); i = i + 1 {
+    let str = sbuf._[i]
     let mut start = 0
     for j = 0; j < str.length(); j = j + 1 {
       if str[j] == '\n' {

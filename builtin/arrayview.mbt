@@ -55,13 +55,18 @@ pub fn swap[T](self : ArrayView[T], i : Int, j : Int) -> Unit {
   self.buf[self.start + j] = temp
 }
 
-pub fn op_as_view[T](self : Array[T], ~start : Int, ~end : Int) -> ArrayView[T] {
-  if start < 0 {
-    abort("Slice start index out of bounds")
-  } else if end > self.length() {
-    abort("Slice end index out of bounds")
-  } else if start > end {
-    abort("Slice start index greater than end index")
+pub fn op_as_view[T](
+  self : Array[T],
+  ~start : Int,
+  ~end? : Int
+) -> ArrayView[T] {
+  let len = self.length()
+  let end = match end {
+    None => len
+    Some(end) => end
+  }
+  guard start >= 0 && start <= end && end <= len else {
+    abort("View start index out of bounds")
   }
   ArrayView::{ buf: self.buffer(), start, len: end - start }
 }
@@ -69,14 +74,15 @@ pub fn op_as_view[T](self : Array[T], ~start : Int, ~end : Int) -> ArrayView[T] 
 pub fn op_as_view[T](
   self : ArrayView[T],
   ~start : Int,
-  ~end : Int
+  ~end? : Int
 ) -> ArrayView[T] {
-  if start < 0 {
-    abort("Slice start index out of bounds")
-  } else if end > self.length() {
-    abort("Slice end index out of bounds")
-  } else if start > end {
-    abort("Slice start index greater than end index")
+  let len = self.length()
+  let end = match end {
+    None => len
+    Some(end) => end
+  }
+  guard start >= 0 && start <= end && end <= len else {
+    abort("View start index out of bounds")
   }
   ArrayView::{ buf: self.buf, start: self.start + start, len: end - start }
 }
@@ -84,10 +90,9 @@ pub fn op_as_view[T](
 pub fn iter[A](self : ArrayView[A]) -> Iter[A] {
   Iter::new(
     fn(yield) {
-      for i = 0, len = self.length(); i < len; i = i + 1 {
-        if yield(self[i]) == IterEnd {
-          break IterEnd
-        }
+      for v in self {
+        guard let IterContinue = yield(v) else { x => break x }
+
       } else {
         IterContinue
       }

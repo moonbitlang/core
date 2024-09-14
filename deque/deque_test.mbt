@@ -190,8 +190,8 @@ test "iter" {
 
 test "iter2" {
   let v = @deque.of([1, 2, 3, 4, 5])
-  v.pop_front_exn()
-  v.pop_back_exn()
+  v.unsafe_pop_front()
+  v.unsafe_pop_back()
   let mut sum = 0
   v.each(fn { x => sum += x })
   inspect!(sum, content="9")
@@ -212,12 +212,12 @@ test "from_array" {
   inspect!(@deque.of([1, 2, 3]), content="Deque::[1, 2, 3]")
 }
 
-test "panic pop_front_exn" {
-  @deque.from_array(([] : Array[Int])).pop_front_exn()
+test "panic unsafe_pop_front" {
+  @deque.from_array(([] : Array[Int])).unsafe_pop_front()
 }
 
-test "panic pop_back_exn" {
-  @deque.from_array(([] : Array[Int])).pop_back_exn()
+test "panic unsafe_pop_back" {
+  @deque.from_array(([] : Array[Int])).unsafe_pop_back()
 }
 
 test "panic op_get" {

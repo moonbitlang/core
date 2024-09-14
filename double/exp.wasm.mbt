@@ -49,7 +49,7 @@ pub fn exp(self : Double) -> Double {
   let two1023 = 8.988465674311579539e307
   let mut k : Int = 0
   let mut hx : UInt = get_high_word(self)
-  let xsb : Int = ((hx >> 31) & 1).to_int()
+  let xsb : Int = ((hx >> 31) & 1).reinterpret_as_int()
   hx = hx & 0x7FFFFFFF
   if hx >= 0x40862E42 {
     if hx >= 0x7FF00000 {
@@ -94,11 +94,16 @@ pub fn exp(self : Double) -> Double {
   let t = x * x
   let twopk = if k >= -1021 {
     insert_words(
-      (0x3FF00000 + (k.to_uint() << 20).to_int()).to_int64().to_uint64(),
+      (0x3FF00000 + (k.reinterpret_as_uint() << 20).reinterpret_as_int())
+      .to_int64()
+      .to_uint64(),
       0,
     )
   } else {
-    insert_words(0x3FF00000UL + ((k + 1000).to_uint() << 20).to_uint64(), 0)
+    insert_words(
+      0x3FF00000UL + ((k + 1000).reinterpret_as_uint() << 20).to_uint64(),
+      0,
+    )
   }
   let c = x - t * (p1 + t * (p2 + t * (p3 + t * (p4 + t * p5))))
   if k == 0 {

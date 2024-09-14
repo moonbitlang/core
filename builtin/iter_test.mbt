@@ -29,7 +29,9 @@ test "singleton" {
 test "repeat" {
   let iter = Iter::repeat('1')
   let exb = Buffer::new(size_hint=0)
-  iter.take(3).each(fn { x => exb.write_char(x) })
+  for n in iter[:3] {
+    exb.write_char(n)
+  }
   exb.expect!(content="111")
 }
 
@@ -297,7 +299,82 @@ test "collect" {
   assert_eq!(vec, ['1', '2', '3', '4', '5'])
 }
 
-test "range" {
+test "upto" {
+  // edge cases
+  inspect!((0).upto(10).take(100), content="[0, 1, 2, 3, 4, 5, 6, 7, 8, 9]")
+  inspect!((100).upto(10).take(100), content="[]")
+  // inclusive
+  inspect!(
+    (@int.max_value - 2).upto(@int.max_value - 1),
+    content="[2147483645]",
+  )
+  inspect!(
+    (@int.max_value - 2).upto(@int.max_value - 1, inclusive=true),
+    content="[2147483645, 2147483646]",
+  )
+  inspect!((@int.max_value - 1).upto(@int.max_value), content="[2147483646]")
+  inspect!(
+    (@int.max_value - 1).upto(@int.max_value, inclusive=true),
+    content="[2147483646, 2147483647]",
+  )
+  inspect!(
+    (@int64.max_value - 2).upto(@int64.max_value - 1L, inclusive=true),
+    content="[9223372036854775805, 9223372036854775806]",
+  )
+  inspect!(
+    (@int.max_value - 1).upto(@int.max_value, inclusive=true).concat([0].iter()),
+    content="[2147483646, 2147483647, 0]",
+  )
+  inspect!(
+    (@uint.max_value - 1)
+    .upto(@uint.max_value, inclusive=true)
+    .concat([0U].iter()),
+    content="[4294967294, 4294967295, 0]",
+  )
+  inspect!(
+    (@int64.max_value - 2).upto(@int64.max_value - 1L, inclusive=true),
+    content="[9223372036854775805, 9223372036854775806]",
+  )
+  inspect!(
+    (@int64.max_value - 1).upto(@int64.max_value, inclusive=true),
+    content="[9223372036854775806, 9223372036854775807]",
+  )
+  inspect!(
+    (@int64.max_value - 1)
+    .upto(@int64.max_value, inclusive=true)
+    .concat([0L].iter()),
+    content="[9223372036854775806, 9223372036854775807, 0]",
+  )
+  inspect!(0.0.upto(10.0), content="[0, 1, 2, 3, 4, 5, 6, 7, 8, 9]")
+  inspect!(
+    0.0.upto(10.0, inclusive=true),
+    content="[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]",
+  )
+  // upto
+  inspect!(
+    (0).upto(10).take(5).concat((0).upto(2)),
+    content="[0, 1, 2, 3, 4, 0, 1]",
+  )
+  inspect!(
+    0x80000000L
+    .upto(0x80000000L + 10L)
+    .take(5)
+    .concat((0x80000000L + 10L).upto(0x80000000L + 20L).take(3)),
+    content="[2147483648, 2147483649, 2147483650, 2147483651, 2147483652, 2147483658, 2147483659, 2147483660]",
+  )
+  inspect!(
+    0.0.upto(10.0).take(5).concat(0.0.upto(2.0)),
+    content="[0, 1, 2, 3, 4, 0, 1]",
+  )
+  inspect!(
+    (@double.infinity - 1.0)
+    .upto(@double.infinity, inclusive=true)
+    .concat([0.0].iter()),
+    content="[Infinity, 0]",
+  )
+}
+
+test "until" {
   // edge cases
   inspect!((0).until(10).take(100), content="[0, 1, 2, 3, 4, 5, 6, 7, 8, 9]")
   inspect!((100).until(10).take(100), content="[]")
@@ -305,6 +382,48 @@ test "range" {
   inspect!((1).until(2, step=0), content="[]")
   inspect!(1.0.until(2.0, step=0), content="[]")
   inspect!(0L.until(10, step=0), content="[]")
+  // inclusive
+  inspect!(
+    (@int.max_value - 2).until(@int.max_value - 1),
+    content="[2147483645]",
+  )
+  inspect!(
+    (@int.max_value - 2).until(@int.max_value - 1, inclusive=true),
+    content="[2147483645, 2147483646]",
+  )
+  inspect!((@int.max_value - 1).until(@int.max_value), content="[2147483646]")
+  inspect!(
+    (@int.max_value - 1)
+    .until(@int.max_value, inclusive=true)
+    .concat([0].iter()),
+    content="[2147483646, 2147483647, 0]",
+  )
+  inspect!((@int.max_value - 1).until(@int.max_value), content="[2147483646]")
+  inspect!(
+    (@int.max_value - 1).until(@int.max_value, inclusive=true),
+    content="[2147483646, 2147483647]",
+  )
+  inspect!(
+    (@int64.max_value - 2).until(@int64.max_value - 1L, inclusive=true),
+    content="[9223372036854775805, 9223372036854775806]",
+  )
+  inspect!(
+    (@int64.max_value - 1).until(@int64.max_value, inclusive=true),
+    content="[9223372036854775806, 9223372036854775807]",
+  )
+  inspect!(
+    0.0.until(1.0, step=0.1, inclusive=true),
+    content="[0, 0.1, 0.2, 0.30000000000000004, 0.4, 0.5, 0.6, 0.7, 0.7999999999999999, 0.8999999999999999, 0.9999999999999999]",
+  )
+  inspect!(
+    0.0.until(1.0, step=0.1, inclusive=false),
+    content="[0, 0.1, 0.2, 0.30000000000000004, 0.4, 0.5, 0.6, 0.7, 0.7999999999999999, 0.8999999999999999, 0.9999999999999999]",
+  )
+  inspect!(0.0.until(10.0), content="[0, 1, 2, 3, 4, 5, 6, 7, 8, 9]")
+  inspect!(
+    0.0.until(10.0, inclusive=true),
+    content="[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]",
+  )
   // until
   inspect!(
     (0).until(10).take(5).concat((0).until(2)),
@@ -319,7 +438,7 @@ test "range" {
   )
   inspect!(
     0.0.until(10.0).take(5).concat(0.0.until(2.0)),
-    content="[0.0, 1.0, 2.0, 3.0, 4.0, 0.0, 1.0]",
+    content="[0, 1, 2, 3, 4, 0, 1]",
   )
   inspect!(
     (-50).until(50, step=10).take(100),
@@ -346,7 +465,7 @@ test "range" {
   )
   inspect!(
     0.0.until(-1.0, step=-0.1).take(5),
-    content="[0.0, -0.1, -0.2, -0.30000000000000004, -0.4]",
+    content="[0, -0.1, -0.2, -0.30000000000000004, -0.4]",
   )
 }
 
@@ -422,7 +541,7 @@ fn iter(self : Tree) -> Iter[Int] {
   )
 }
 
-test {
+test "tree" {
   // let tree = Node(Node(Leaf(1), Leaf(2)), Node(Leaf(3), Leaf(4)))
   let tree = Node(Node(Leaf(1), 2, Leaf(3)), 4, Leaf(5))
   let exb = Buffer::new(size_hint=0)
@@ -450,4 +569,16 @@ test "Iter::head" {
   inspect!([1, 2, 3].iter().head(), content="Some(1)")
   inspect!([1].iter().head(), content="Some(1)")
   inspect!(([] : Array[Int]).iter().head(), content="None")
+}
+
+test "Iter::as_view" {
+  inspect!([1, 2, 3].iter()[1:2], content="[2]")
+  inspect!([1, 2, 3].iter()[1:], content="[2, 3]")
+  inspect!([1, 2, 3].iter()[1:], content="[2, 3]")
+  inspect!([1, 2, 3].iter()[:], content="[1, 2, 3]")
+}
+
+test "Iter::enumerate" {
+  inspect!([1, 2, 3].iter2(), content="[(0, 1), (1, 2), (2, 3)]")
+  inspect!([1, 2, 3].iter2().to_string(), content="[(0, 1), (1, 2), (2, 3)]")
 }

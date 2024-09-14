@@ -5,9 +5,9 @@ alias @moonbitlang/core/quickcheck as @quickcheck
 // Values
 fn repeat[A](Int, A) -> T[A]
 
-fn unfold[A, S]((S) -> Tuple[A, S]?, ~init : S) -> T[A]
+fn unfold[A, S]((S) -> (A, S)?, ~init : S) -> T[A]
 
-fn unzip[A, B](T[Tuple[A, B]]) -> Tuple[T[A], T[B]]
+fn unzip[A, B](T[(A, B)]) -> (T[A], T[B])
 
 // Types and methods
 pub enum T {
@@ -15,6 +15,7 @@ pub enum T {
   Cons(A, T[A])
 }
 impl T {
+  add[A](Self[A], A) -> Self[A]
   all[A](Self[A], (A) -> Bool) -> Bool
   any[A](Self[A], (A) -> Bool) -> Bool
   concat[A](Self[A], Self[A]) -> Self[A]
@@ -31,10 +32,12 @@ impl T {
   findi[A](Self[A], (A, Int) -> Bool) -> A?
   flat_map[A, B](Self[A], (A) -> Self[B]) -> Self[B]
   flatten[A](Self[Self[A]]) -> Self[A]
+  fold[A, B](Self[A], ~init : B, (B, A) -> B) -> B
   fold_left[A, B](Self[A], (B, A) -> B, ~init : B) -> B
   fold_lefti[A, B](Self[A], (Int, B, A) -> B, ~init : B) -> B
   fold_right[A, B](Self[A], (A, B) -> B, ~init : B) -> B
   fold_righti[A, B](Self[A], (Int, A, B) -> B, ~init : B) -> B
+  foldi[A, B](Self[A], ~init : B, (Int, B, A) -> B) -> B
   from_array[A](Array[A]) -> Self[A]
   from_iter[A](Iter[A]) -> Self[A]
   head[A](Self[A]) -> A?
@@ -49,11 +52,11 @@ impl T {
   iter2[A](Self[A]) -> Iter2[Int, A]
   last[A](Self[A]) -> A
   length[A](Self[A]) -> Int
-  lookup[A : Eq, B](Self[Tuple[A, B]], A) -> B?
+  lookup[A : Eq, B](Self[(A, B)], A) -> B?
   map[A, B](Self[A], (A) -> B) -> Self[B]
   mapi[A, B](Self[A], (Int, A) -> B) -> Self[B]
-  maximum[A : Compare + Eq](Self[A]) -> A
-  minimum[A : Compare + Eq](Self[A]) -> A
+  maximum[A : Compare + Eq](Self[A]) -> A?
+  minimum[A : Compare + Eq](Self[A]) -> A?
   nth[A](Self[A], Int) -> A?
   nth_exn[A](Self[A], Int) -> A
   of[A](FixedArray[A]) -> Self[A]
@@ -62,6 +65,8 @@ impl T {
   remove[A : Eq](Self[A], A) -> Self[A]
   remove_at[A](Self[A], Int) -> Self[A]
   rev[A](Self[A]) -> Self[A]
+  rev_fold[A, B](Self[A], ~init : B, (A, B) -> B) -> B
+  rev_foldi[A, B](Self[A], ~init : B, (Int, A, B) -> B) -> B
   scan_left[A, E](Self[A], (E, A) -> E, ~init : E) -> Self[E]
   scan_right[A, B](Self[A], (A, B) -> B, ~init : B) -> Self[B]
   sort[A : Compare + Eq](Self[A]) -> Self[A]
@@ -70,7 +75,12 @@ impl T {
   take_while[A](Self[A], (A) -> Bool) -> Self[A]
   to_array[A](Self[A]) -> Array[A]
   to_string[A : Show](Self[A]) -> String
-  zip[A, B](Self[A], Self[B]) -> Self[Tuple[A, B]]
+  unsafe_head[A](Self[A]) -> A
+  unsafe_last[A](Self[A]) -> A
+  unsafe_maximum[A : Compare + Eq](Self[A]) -> A
+  unsafe_minimum[A : Compare + Eq](Self[A]) -> A
+  unsafe_nth[A](Self[A], Int) -> A
+  zip[A, B](Self[A], Self[B]) -> Self[(A, B)]?
 }
 
 // Type aliases

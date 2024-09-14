@@ -99,6 +99,56 @@ test "chars" {
   )
 }
 
+test "rev_iter" {
+  let mut str = ""
+  "A😊𠮷BA😊𠮷B"
+  .rev_iter()
+  .each(fn(c) { str = str + c.to_int().to_string() + "\n" })
+  inspect!(
+    str,
+    content=
+      #|66
+      #|134071
+      #|128522
+      #|65
+      #|66
+      #|134071
+      #|128522
+      #|65
+      #|
+    ,
+  )
+  inspect!(
+    "A😊𠮷BA😊𠮷B".rev_iter().take(2).collect(),
+    content="['B', '𠮷']",
+  )
+  inspect!(
+    "A😊𠮷BA😊𠮷B".rev_iter().take(4).collect(),
+    content="['B', '𠮷', '😊', 'A']",
+  )
+}
+
+test "iter2" {
+  let mut str = ""
+  "A😊𠮷BA😊𠮷B"
+  .iter2()
+  .each(fn(i, c) { str = str + "\{i}: \{c.to_int()} \n" })
+  inspect!(
+    str,
+    content=
+      #|0: 65 
+      #|1: 128522 
+      #|2: 134071 
+      #|3: 66 
+      #|4: 65 
+      #|5: 128522 
+      #|6: 134071 
+      #|7: 66 
+      #|
+    ,
+  )
+}
+
 // test here to avlid cyclic dependency between assertion and builtin
 test "Buffer::to_bytes" {
   let buffer = Buffer::new(size_hint=16)
@@ -427,5 +477,18 @@ test "split" {
     content=
       #|["a", "b", "c", "d", "e"]
     ,
+  )
+}
+
+test "String::fold" {
+  let s = "this is a long string"
+  inspect!(s.fold(init=0, fn(acc, c) { acc + c.to_int() }), content="1980")
+  inspect!(
+    s.fold(init=@list.Nil, @list.add) |> @list.rev(),
+    content="@list.of(['t', 'h', 'i', 's', ' ', 'i', 's', ' ', 'a', ' ', 'l', 'o', 'n', 'g', ' ', 's', 't', 'r', 'i', 'n', 'g'])",
+  )
+  inspect!(
+    s.rev_fold(init=@list.Nil, @list.add),
+    content="@list.of(['t', 'h', 'i', 's', ' ', 'i', 's', ' ', 'a', ' ', 'l', 'o', 'n', 'g', ' ', 's', 't', 'r', 'i', 'n', 'g'])",
   )
 }

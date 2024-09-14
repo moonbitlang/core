@@ -23,7 +23,30 @@ type Iter2[A, B] ((A, B) -> IterResult) -> IterResult
 
 //TODO: Add intrinsic for Iter::run
 pub fn run[A, B](self : Iter2[A, B], f : (A, B) -> IterResult) -> IterResult {
-  (self.0)(f)
+  (self._)(f)
+}
+
+pub impl[A : Show, B : Show] Show for Iter2[A, B] with output(self, logger) {
+  logger.write_string("[")
+  let mut first = true
+  for k, v in self {
+    if not(first) {
+      // AI: support !first ?
+      logger.write_string(", ")
+    } else {
+      first = false
+    }
+    logger.write_string("(")
+    logger.write_object(k)
+    logger.write_string(", ")
+    logger.write_object(v)
+    logger.write_string(")")
+  }
+  logger.write_string("]")
+}
+
+pub fn to_string[A : Show, B : Show](self : Iter2[A, B]) -> String {
+  Show::to_string(self)
 }
 
 pub fn Iter2::new[A, B](
@@ -51,4 +74,12 @@ pub fn iter2[A, B](self : Iter2[A, B]) -> Iter2[A, B] {
   // `for k,v in map.iter2() { ... }` 
   // still work    
   self
+}
+
+pub fn to_array[A, B](self : Iter2[A, B]) -> Array[(A, B)] {
+  let arr = []
+  for k, v in self {
+    arr.push((k, v))
+  }
+  arr
 }

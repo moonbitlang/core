@@ -22,7 +22,7 @@ test "FixedArray::from_array with non-empty array" {
   let array : Array[Int] = [1, 2, 3, 4, 5]
   let fixedArray = FixedArray::from_array(array)
   assert_eq!(fixedArray.length(), 5)
-  for i = 0; i < 5; i = i + 1 {
+  for i in 0..<5 {
     assert_eq!(fixedArray[i], array[i])
   }
 }
@@ -31,7 +31,7 @@ test "FixedArray::from_array with array of different type" {
   let array : Array[String] = ["a", "b", "c"]
   let fixedArray = FixedArray::from_array(array)
   assert_eq!(fixedArray.length(), 3)
-  for i = 0; i < 3; i = i + 1 {
+  for i in 0..<3 {
     assert_eq!(fixedArray[i], array[i])
   }
 }

@@ -31,7 +31,7 @@ pub fn Array::make[T](len : Int, elem : T) -> Array[T] {
 
 /// Returns the total number of elements the array can hold without reallocating.
 pub fn capacity[T](self : Array[T]) -> Int {
-  self.buffer().0.length()
+  self.buffer()._.length()
 }
 
 /// Reallocate the array with a new capacity.
@@ -51,12 +51,8 @@ fn realloc[T](self : Array[T]) -> Unit {
 /// ```
 /// @alert unsafe "Panic if index is out of bounds"
 pub fn op_get[T](self : Array[T], index : Int) -> T {
-  if index < 0 || index >= self.length() {
-    let len = self.length()
-    abort(
-      "index out of bounds: the len is from 0 to \{len} but the index is \{index}",
-    )
-  }
+  let len = self.length()
+  guard index >= 0 && index < len
   self.buffer()[index]
 }
 
@@ -69,9 +65,8 @@ pub fn op_get[T](self : Array[T], index : Int) -> T {
 /// println(v.get(0)) // Some(3)
 /// ```
 pub fn get[T](self : Array[T], index : Int) -> T? {
-  if index < 0 || index >= self.length() {
-    return None
-  }
+  let len = self.length()
+  guard index >= 0 && index < len else { None }
   Some(self.buffer()[index])
 }
 
@@ -85,20 +80,14 @@ pub fn get[T](self : Array[T], index : Int) -> T? {
 /// ```
 /// @alert unsafe "Panic if index is out of bounds."
 pub fn op_set[T](self : Array[T], index : Int, value : T) -> Unit {
-  if index < 0 || index >= self.length() {
-    let len = self.length()
-    abort(
-      "index out of bounds: the len is from 0 to \{len} but the index is \{index}",
-    )
-  }
+  let len = self.length()
+  guard index >= 0 && index < len
   self.buffer()[index] = value
 }
 
 /// Compares two arrays for equality.
 pub fn op_equal[T : Eq](self : Array[T], other : Array[T]) -> Bool {
-  if self.length() != other.length() {
-    return false
-  }
+  guard self.length() == other.length() else { return false }
   for i = 0 {
     // CR: format issue
     if i >= self.length() {
@@ -148,18 +137,16 @@ pub fn pop[T](self : Array[T]) -> T? {
   }
 }
 
-/// Removes the last element from a array and returns it.
-///
-/// # Example
-/// ```
-/// let v = [1, 2, 3]
-/// v.pop_exn() // 3
-/// ```
-/// @alert unsafe "Panic if the array is empty."
+/// @alert deprecated "Use `unsafe_pop` instead"
 pub fn pop_exn[T](self : Array[T]) -> T {
-  if self.length() == 0 {
-    abort("pop from an empty Array")
-  }
+  self.unsafe_pop()
+}
+
+/// Removes the last element from a array and returns it.
+/// 
+/// @alert unsafe "Panic if the array is empty."
+pub fn unsafe_pop[T](self : Array[T]) -> T {
+  guard self.length() != 0
   let index = self.length() - 1
   let v = self.buffer()[index]
   self.set_length(index)
@@ -176,7 +163,7 @@ pub fn pop_exn[T](self : Array[T]) -> T {
 /// v.push(3)
 /// ```
 pub fn push[T](self : Array[T], value : T) -> Unit {
-  if self.length() == self.buffer().0.length() {
+  if self.length() == self.buffer()._.length() {
     self.realloc()
   }
   let length = self.length()
@@ -227,10 +214,11 @@ pub fn drain[T](self : Array[T], begin : Int, end : Int) -> Array[T] {
 /// let v2 = [6, 7, 8]
 /// v1.append(v2)
 /// ```
-/// TODO: could be made more efficient
+/// TODO: could be made more efficient doing direct mem.copy
 pub fn append[T](self : Array[T], other : Array[T]) -> Unit {
-  for i = 0; i < other.length(); i = i + 1 {
-    self.push(other[i])
+  self.reserve_capacity(self.length() + other.length())
+  for v in other {
+    self.push(v)
   }
 }
 
@@ -246,28 +234,15 @@ pub fn append[T](self : Array[T], other : Array[T]) -> Unit {
 /// v.each(fn (x) {sum = sum + x})
 /// ```
 pub fn each[T](self : Array[T], f : (T) -> Unit) -> Unit {
-  for i = 0; i < self.length(); i = i + 1 {
-    f(self[i])
+  for v in self {
+    f(v)
   }
 }
 
 pub fn rev_each[T](self : Array[T], f : (T) -> Unit) -> Unit {
-  for i = self.length() - 1; i >= 0; i = i - 1 {
-    f(self[i])
-  }
-}
-
-/// Iterates over the elements of the array with index.
-///
-/// # Example
-/// ```
-/// let v = [3, 4, 5]
-/// let mut sum = 0
-/// v.eachi(fn (i, x) {sum = sum + x + i})
-/// ```
-pub fn eachi[T](self : Array[T], f : (Int, T) -> Unit) -> Unit {
-  for i = 0; i < self.length(); i = i + 1 {
-    f(i, self[i])
+  let len = self.length()
+  for i in 0..<len {
+    f(self[len - i - 1])
   }
 }
 
@@ -282,8 +257,22 @@ pub fn eachi[T](self : Array[T], f : (Int, T) -> Unit) -> Unit {
 /// ```
 pub fn rev_eachi[T](self : Array[T], f : (Int, T) -> Unit) -> Unit {
   let len = self.length()
-  for i = 0; i < len; i = i + 1 {
+  for i in 0..<len {
     f(i, self[len - i - 1])
+  }
+}
+
+/// Iterates over the elements of the array with index.
+///
+/// # Example
+/// ```
+/// let v = [3, 4, 5]
+/// let mut sum = 0
+/// v.eachi(fn (i, x) {sum = sum + x + i})
+/// ```
+pub fn eachi[T](self : Array[T], f : (Int, T) -> Unit) -> Unit {
+  for i, v in self {
+    f(i, v)
   }
 }
 
@@ -312,8 +301,8 @@ pub fn map[T, U](self : Array[T], f : (T) -> U) -> Array[U] {
     return []
   }
   let arr = Array::make_uninit(self.length())
-  for i = 0; i < self.length(); i = i + 1 {
-    arr.buffer()[i] = f(self.buffer()[i])
+  for i, v in self {
+    arr.buffer()[i] = f(v)
   }
   arr
 }
@@ -326,8 +315,8 @@ pub fn map[T, U](self : Array[T], f : (T) -> U) -> Array[U] {
 /// v.map_inplace(fn (x) {x + 1})
 /// ```
 pub fn map_inplace[T](self : Array[T], f : (T) -> T) -> Unit {
-  for i = 0; i < self.length(); i = i + 1 {
-    self.buffer()[i] = f(self.buffer()[i])
+  for i, v in self {
+    self[i] = f(v)
   }
 }
 
@@ -343,8 +332,8 @@ pub fn mapi[T, U](self : Array[T], f : (Int, T) -> U) -> Array[U] {
     return []
   }
   let arr = Array::make_uninit(self.length())
-  for i = 0; i < self.length(); i = i + 1 {
-    arr.buffer()[i] = f(i, self.buffer()[i])
+  for i, v in self {
+    arr.buffer()[i] = f(i, v)
   }
   arr
 }
@@ -357,8 +346,8 @@ pub fn mapi[T, U](self : Array[T], f : (Int, T) -> U) -> Array[U] {
 /// v.mapi_inplace(fn (i, x) {x + i})
 /// ```
 pub fn mapi_inplace[T](self : Array[T], f : (Int, T) -> T) -> Unit {
-  for i = 0; i < self.length(); i = i + 1 {
-    self[i] = f(i, self[i])
+  for i, v in self {
+    self[i] = f(i, v)
   }
 }
 
@@ -371,7 +360,11 @@ pub fn mapi_inplace[T](self : Array[T], f : (Int, T) -> T) -> Unit {
 /// ```
 pub fn filter[T](self : Array[T], f : (T) -> Bool) -> Array[T] {
   let arr = []
-  self.each(fn(e) { if f(e) { arr.push(e) } })
+  for v in self {
+    if f(v) {
+      arr.push(v)
+    }
+  }
   arr
 }
 
@@ -466,8 +459,8 @@ pub fn split_at[T](self : Array[T], index : Int) -> (Array[T], Array[T]) {
 /// v.contains(3)
 /// ```
 pub fn contains[T : Eq](self : Array[T], value : T) -> Bool {
-  for i = 0; i < self.length(); i = i + 1 {
-    if self.buffer()[i] == value {
+  for v in self {
+    if v == value {
       break true
     }
   } else {
@@ -568,12 +561,133 @@ pub fn strip_suffix[T : Eq](self : Array[T], suffix : Array[T]) -> Array[T]? {
 /// v.search(3)
 /// ```
 pub fn search[T : Eq](self : Array[T], value : T) -> Int? {
-  for i = 0; i < self.length(); i = i + 1 {
-    if self.buffer()[i] == value {
+  for i, v in self {
+    if v == value {
       break Some(i)
     }
   } else {
     None
+  }
+}
+
+/// @alert deprecated "Use `search_by` instead."
+pub fn find_index[T](self : Array[T], f : (T) -> Bool) -> Int? {
+  search_by(self, f)
+}
+
+/// Search the index of the first element that satisfies the predicate.
+//
+/// # Example
+/// 
+/// ```
+/// let v = [1, 2, 3, 4, 5]
+/// match v.search_by(fn(x) { x == 3 }) {
+///   Some(index) => println(index) // 2
+///   None => println("Not found")
+/// }
+/// ```
+pub fn search_by[T](self : Array[T], f : (T) -> Bool) -> Int? {
+  for i, v in self {
+    if f(v) {
+      break Some(i)
+    }
+  } else {
+    None
+  }
+}
+
+/// Performs a binary search on a sorted array to find the index of a given element.
+/// 
+/// # Example
+/// ```
+/// let v = [3, 4, 5]
+/// let result = v.binary_search(3)
+/// assert_eq!(result, Ok(0)) // The element 3 is found at index 0
+/// ```
+/// 
+/// # Arguments
+/// - `self`: The array in which to perform the search.
+/// - `value`: The element to search for in the array.
+/// 
+/// # Returns
+/// - `Result[Int, Int]`:
+/// If the element is found, an `Ok` variant is returned, containing the index of the matching element in the array. 
+/// If there are multiple matches, the leftmost match will be returned. 
+/// If the element is not found, an `Err` variant is returned, containing the index where the element could be inserted to maintain the sorted order.
+/// 
+/// # Notes
+/// - Ensure that the array is sorted in increasing order before calling this function. 
+/// - If the array is not sorted, the returned result is undefined and should not be relied on.
+pub fn binary_search[T : Compare](
+  self : Array[T],
+  value : T
+) -> Result[Int, Int] {
+  let len = self.length()
+  for i = 0, j = len; i < j; {
+    let h = i + (j - i) / 2
+    // Note even if self.buffer()[h] == value, we still continue the search
+    // because we want to find the leftmost match
+    if self.buffer()[h] < value {
+      continue h + 1, j
+    } else {
+      continue i, h
+    }
+  } else {
+    if i < len && self.buffer()[i] == value {
+      Ok(i)
+    } else {
+      Err(i)
+    }
+  }
+}
+
+/// Performs a binary search on a sorted array using a custom comparator function, and returns the index of the given element.
+/// 
+/// The comparator function should return an `Int` that indicates whether the argument is less than `(-1)`, equal to `(0)`, or greater than `(1)` 
+/// the target element.
+/// 
+/// # Example
+/// ```
+/// let v = [3, 4, 5]
+/// let result = v.binary_search_by(
+///   fn(v : T) { if v < 3 { -1 } else if v == 3 { 0 } else { 1 } },
+/// )
+/// assert_eq!(result, Ok(0)) // The element 3 is found at index 0
+/// ```
+/// # Type Parameters
+/// - `T`: The type of elements in the array.
+/// 
+/// # Arguments
+/// - `self`: The array in which to perform the search.
+/// - `cmp`: A closure that defines the comparator function, taking an element of type `T` and returning an `Int`.
+/// 
+/// # Returns
+/// - `Result[Int, Int]`: If the element is found, `Ok` is returned with the index of the element.
+/// If the element is not found, `Err` is returned with the index where the element could be inserted to maintain sorted order.
+/// 
+/// # Notes
+/// - The array must be sorted, and the comparator function should be consistent with the sorted order of the array.
+/// - If not, the returned result is undefined and should not be relied on.
+pub fn binary_search_by[T](
+  self : Array[T],
+  cmp : (T) -> Int
+) -> Result[Int, Int] {
+  let len = self.length()
+  for i = 0, j = len; i < j; {
+    let h = i + (j - i) / 2
+    // Note even if self.buffer()[h] == value, we still continue the search
+    // because we want to find the leftmost match
+    if cmp(self.buffer()[h]) < 0 {
+      continue h + 1, j
+    } else {
+      continue i, h
+    }
+  } else {
+    if i < len && cmp(self.buffer()[i]) == 0 {
+      Ok(i)
+    } else {
+      Err(i)
+    }
   }
 }
 
@@ -635,13 +749,14 @@ pub fn remove[T](self : Array[T], index : Int) -> T {
 /// ```
 /// TODO: perf could be improved
 pub fn retain[T](self : Array[T], f : (T) -> Bool) -> Unit {
-  let mut i = 0
-  while i < self.length() {
-    if f(self.buffer()[i]).not() {
-      self.remove(i) |> ignore
-    } else {
-      i = i + 1
+  for i = 0, j = 0; i < self.length(); {
+    if f(self.buffer()[i]) {
+      self.buffer()[j] = self.buffer()[i]
+      continue i + 1, j + 1
     }
+    continue i + 1, j
+  } else {
+    self.set_length(j)
   }
 }
 
@@ -679,7 +794,7 @@ pub fn insert[T](self : Array[T], index : Int, value : T) -> Unit {
       "index out of bounds: the len is from 0 to \{len} but the index is \{index}",
     )
   }
-  if self.length() == self.buffer().0.length() {
+  if self.length() == self.buffer()._.length() {
     self.realloc()
   }
   UninitializedArray::unsafe_blit(
@@ -700,10 +815,11 @@ pub fn insert[T](self : Array[T], index : Int, value : T) -> Unit {
 /// ```
 /// [[3, 4], [5, 6]].flatten()
 /// ```
+/// TODO: perf could be improved by pre-allocated
 pub fn flatten[T](self : Array[Array[T]]) -> Array[T] {
   let v = []
-  for i = 0; i < self.length(); i = i + 1 {
-    v.append(self[i])
+  for arr in self {
+    v.append(arr)
   }
   v
 }
@@ -726,10 +842,10 @@ pub fn repeat[T](self : Array[T], times : Int) -> Array[T] {
 ///
 /// # Example
 /// ```
-/// let sum = [1, 2, 3, 4, 5].fold_left(~init=0, fn { sum, elem => sum + elem })
+/// let sum = [1, 2, 3, 4, 5].fold(~init=0, fn { sum, elem => sum + elem })
 /// sum // 15
 /// ```
-pub fn fold_left[T, U](self : Array[T], f : (U, T) -> U, ~init : U) -> U {
+pub fn fold[A, B](self : Array[A], ~init : B, f : (B, A) -> B) -> B {
   for i = 0, acc = init; i < self.length(); {
     continue i + 1, f(acc, self[i])
   } else {
@@ -741,10 +857,10 @@ pub fn fold_left[T, U](self : Array[T], f : (U, T) -> U, ~init : U) -> U {
 ///
 /// # Example
 /// ```
-/// let sum = [1, 2, 3, 4, 5].fold_right(~init=0, fn { sum, elem => sum + elem })
+/// let sum = [1, 2, 3, 4, 5].rev_fold(~init=0, fn { sum, elem => sum + elem })
 /// sum // 15
 /// ```
-pub fn fold_right[T, U](self : Array[T], f : (U, T) -> U, ~init : U) -> U {
+pub fn rev_fold[A, B](self : Array[A], ~init : B, f : (B, A) -> B) -> B {
   for i = self.length() - 1, acc = init; i >= 0; {
     continue i - 1, f(acc, self[i])
   } else {
@@ -756,10 +872,10 @@ pub fn fold_right[T, U](self : Array[T], f : (U, T) -> U, ~init : U) -> U {
 ///
 /// # Example
 /// ```
-/// let sum = [1, 2, 3, 4, 5].fold_lefti(~init=0, fn { index, sum, elem => sum + index })
+/// let sum = [1, 2, 3, 4, 5].foldi(~init=0, fn { index, sum, elem => sum + index })
 /// sum // 10
 /// ```
-pub fn fold_lefti[T, U](self : Array[T], f : (Int, U, T) -> U, ~init : U) -> U {
+pub fn foldi[A, B](self : Array[A], ~init : B, f : (Int, B, A) -> B) -> B {
   for i = 0, acc = init; i < self.length(); {
     continue i + 1, f(i, acc, self[i])
   } else {
@@ -771,15 +887,63 @@ pub fn fold_lefti[T, U](self : Array[T], f : (Int, U, T) -> U, ~init : U) -> U {
 ///
 /// # Example
 /// ```
-/// let sum = [1, 2, 3, 4, 5].fold_righti(~init=0, fn { index, sum, elem => sum + index })
+/// let sum = [1, 2, 3, 4, 5].rev_foldi(~init=0, fn { index, sum, elem => sum + index })
 /// sum // 10
 /// ```
-pub fn fold_righti[T, U](self : Array[T], f : (Int, U, T) -> U, ~init : U) -> U {
+pub fn rev_foldi[A, B](self : Array[A], ~init : B, f : (Int, B, A) -> B) -> B {
   for i = self.length() - 1, acc = init; i >= 0; {
     continue i - 1, f(self.length() - i - 1, acc, self[i])
   } else {
     acc
   }
+}
+
+/// Fold out values from an array according to certain rules.
+///
+/// # Example
+/// ```
+/// let sum = [1, 2, 3, 4, 5].fold_left(~init=0, fn { sum, elem => sum + elem })
+/// sum // 15
+/// ```
+/// @alert deprecated "Use `fold` instead."
+pub fn fold_left[T, U](self : Array[T], f : (U, T) -> U, ~init : U) -> U {
+  self.fold(~init, f)
+}
+
+/// Fold out values from an array according to certain rules in reversed turn.
+///
+/// # Example
+/// ```
+/// let sum = [1, 2, 3, 4, 5].fold_right(~init=0, fn { sum, elem => sum + elem })
+/// sum // 15
+/// ```
+/// @alert deprecated "Use `rev_fold` instead."
+pub fn fold_right[T, U](self : Array[T], f : (U, T) -> U, ~init : U) -> U {
+  self.rev_fold(~init, f)
+}
+
+/// Fold out values from an array according to certain rules with index.
+///
+/// # Example
+/// ```
+/// let sum = [1, 2, 3, 4, 5].fold_lefti(~init=0, fn { index, sum, elem => sum + index })
+/// sum // 10
+/// ```
+/// @alert deprecated "Use `foldi` instead."
+pub fn fold_lefti[T, U](self : Array[T], f : (Int, U, T) -> U, ~init : U) -> U {
+  self.foldi(~init, f)
+}
+
+/// Fold out values from an array according to certain rules in reversed turn with index.
+///
+/// # Example
+/// ```
+/// let sum = [1, 2, 3, 4, 5].fold_righti(~init=0, fn { index, sum, elem => sum + index })
+/// sum // 10
+/// ```
+/// @alert deprecated "Use `rev_foldi` instead."
+pub fn fold_righti[T, U](self : Array[T], f : (Int, U, T) -> U, ~init : U) -> U {
+  self.rev_foldi(~init, f)
 }
 
 /// Removes consecutive repeated elements in the array according to the Eq trait.
@@ -934,25 +1098,4 @@ pub fn shrink_to_fit[T](self : Array[T]) -> Unit {
 /// Converts the array to a string.
 pub fn to_string[T : Show](self : Array[T]) -> String {
   Show::to_string(self)
-}
-
-/// Find the index of the first element that satisfies the predicate.
-//
-/// # Example
-///
-/// ```
-/// let v = [1, 2, 3, 4, 5]
-/// match v.find_index(fn(x) { x == 3 }) {
-///   Some(index) => println(index) // 2
-///   None => println("Not found")
-/// }
-/// ```
-pub fn find_index[T](self : Array[T], f : (T) -> Bool) -> Int? {
-  for i = 0; i < self.length(); i = i + 1 {
-    if f(self[i]) {
-      break Some(i)
-    }
-  } else {
-    None
-  }
 }

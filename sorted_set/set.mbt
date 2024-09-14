@@ -293,7 +293,7 @@ fn each[V](self : Node[V], f : (V) -> Unit) -> Unit {
       p = p.unwrap().left
     }
     if s.is_empty().not() {
-      p = s.pop_exn()
+      p = s.unsafe_pop()
       f(p.unwrap().value)
       p = p.unwrap().right
     }
@@ -318,7 +318,7 @@ fn eachi[V](self : Node[V], f : (Int, V) -> Unit) -> Unit {
       p = p.unwrap().left
     }
     if s.is_empty().not() {
-      p = s.pop_exn()
+      p = s.unsafe_pop()
       f(i, p.unwrap().value)
       p = p.unwrap().right
       i += 1

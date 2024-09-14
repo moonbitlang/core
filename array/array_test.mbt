@@ -59,13 +59,13 @@ test "pop" {
   assert_eq!(v.pop(), None)
 }
 
-test "pop_exn" {
+test "unsafe_pop" {
   let v = []
   v.push(3)
   v.push(4)
   assert_eq!(v.length(), 2)
-  assert_eq!(v.pop_exn(), 4)
-  assert_eq!(v.pop_exn(), 3)
+  assert_eq!(v.unsafe_pop(), 4)
+  assert_eq!(v.unsafe_pop(), 3)
   assert_eq!(v.length(), 0)
 }
 
@@ -360,30 +360,40 @@ test "join" {
   assert_eq!(s, "3, 4, 5")
 }
 
-test "fold_left" {
-  let sum = [1, 2, 3, 4, 5].fold_left(init=0, fn { sum, elem => sum + elem })
+test "fold" {
+  let sum = [1, 2, 3, 4, 5].fold(init=0, fn { sum, elem => sum + elem })
   assert_eq!(sum, 15)
 }
 
-test "fold_right" {
-  let sum = [1, 2, 3, 4, 5].fold_right(init=0, fn { sum, elem => sum + elem })
+test "rev_fold" {
+  let sum = [1, 2, 3, 4, 5].rev_fold(init=0, fn { sum, elem => sum + elem })
   assert_eq!(sum, 15)
+  let op = fn { sum, elem => sum - elem }
+  let data = [1, 2, 3, 4, 5]
+  let ss0 = data.rev_fold(init=0, op)
+  let ss1 = data.rev().fold(init=0, op)
+  assert_eq!(ss0, ss1)
 }
 
-test "fold_lefti" {
-  let sum = [1, 2, 3, 4, 5].fold_lefti(
+test "foldi" {
+  let sum = [1, 2, 3, 4, 5].foldi(
     init=0,
     fn { index, sum, _elem => sum + index },
   )
   assert_eq!(sum, 10)
 }
 
-test "fold_righti" {
-  let sum = [1, 2, 3, 4, 5].fold_righti(
+test "rev_foldi" {
+  let sum = [1, 2, 3, 4, 5].rev_foldi(
     init=0,
     fn { index, sum, _elem => sum + index },
   )
   assert_eq!(sum, 10)
+  let op = fn { index, sum, elem => index - sum - elem }
+  let data = [1, 2, 3, 4, 5, 10]
+  let v0 = data.rev_foldi(init=0, op)
+  let v1 = data.rev().foldi(init=0, op)
+  assert_eq!(v0, v1)
 }
 
 test "dedup" {
@@ -466,28 +476,19 @@ test "iter" {
 test "shuffle_in_place" {
   let arr : Array[Int] = [1, 2, 3, 4, 5, 6, 7]
   fn rand(upper : Int) -> Int {
-    let rng = @random.init_state(seed=37)
-    rng.gen_int() % upper
-  }
-
-  Array::shuffle_in_place(arr, ~rand)
-  inspect!(arr, content="[3, 4, 7, 1, 6, 5, 2]")
-}
-
-test "shuffle" {
-  let arr : Array[Int] = [1, 2, 3, 4, 5, 6, 7]
-  fn rand(upper : Int) -> Int {
-    let rng = @random.init_state(seed=42)
-    rng.gen_int() % upper
+    let rng = @random.new()
+    rng.int() % upper
   }
 
   let shuffled = Array::shuffle(arr, ~rand)
-  inspect!(shuffled, content="[1, 5, 3, 4, 7, 6, 2]")
+  Array::shuffle_in_place(arr, ~rand)
+  assert_eq!(shuffled, arr)
+  inspect!(arr, content="[3, 2, 1, 5, 6, 7, 4]")
 }
 
-test "find_index" {
+test "search_by" {
   let arr : Array[Int] = [1, 2, 3, 4, 5, 6, 7]
-  let index = arr.find_index(fn(x) { x == 3 })
+  let index = arr.search_by(fn(x) { x == 3 })
   assert_eq!(index, Some(2))
 }
 

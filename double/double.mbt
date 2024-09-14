@@ -12,17 +12,17 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-let not_a_number : Double = 0x7FF8000000000001L.reinterpret_as_double()
+pub let not_a_number : Double = 0x7FF8000000000001L.reinterpret_as_double()
 
-let positive_infinity : Double = 0x7FF0000000000000L.reinterpret_as_double()
+pub let infinity : Double = 0x7FF0000000000000L.reinterpret_as_double()
 
-let negative_infinity : Double = 0xFFF0000000000000L.reinterpret_as_double()
+pub let neg_infinity : Double = 0xFFF0000000000000L.reinterpret_as_double()
 
-let max_val : Double = 0x7FEFFFFFFFFFFFFFL.reinterpret_as_double()
+pub let max_value : Double = 0x7FEFFFFFFFFFFFFFL.reinterpret_as_double()
 
-let min_val : Double = 0x1L.reinterpret_as_double()
+pub let min_value : Double = 0xFFEFFFFFFFFFFFFFL.reinterpret_as_double()
 
-let min_norm : Double = 0x0010000000000000L.reinterpret_as_double()
+pub let min_positive : Double = 0x0010000000000000L.reinterpret_as_double()
 
 let sign_mask : Int64 = 0x8000_0000_0000_0000L
 
@@ -47,7 +47,7 @@ pub fn trunc(self : Double) -> Double {
   if biased_exp >= 1075 {
     return self
   }
-  u64.land(sign_mask.asr(biased_exp - 1012)).reinterpret_as_double()
+  u64.land(sign_mask.shr(biased_exp - 1012)).reinterpret_as_double()
 }
 
 test "trunc" {
@@ -120,7 +120,7 @@ pub fn round(self : Double) -> Double {
       .reinterpret_as_double()
   }
   let trunced = u64
-    .land(sign_mask.asr(biased_exp - 1012))
+    .land(sign_mask.shr(biased_exp - 1012))
     .reinterpret_as_double()
   if u64.land(sign_mask.lsr(biased_exp - 1011)) == 0L {
     return trunced
@@ -163,32 +163,25 @@ pub fn signum(self : Double) -> Double {
 }
 
 // Returns a "not-a-number" value
+/// @alert deprecated "Use `@double.not_a_number` instead"
 pub fn Double::nan() -> Double {
   not_a_number
 }
 
 // Returns positive infinity if sign >= 0, negative infinity if sign < 0.
+/// @alert deprecated "Use `@double.infinity` and `@double.neg_infinity` instead"
 pub fn Double::inf(sign : Int) -> Double {
   if sign >= 0 {
-    positive_infinity
+    infinity
   } else {
-    negative_infinity
+    neg_infinity
   }
 }
 
-// Returns the largest positive finite value of Double
-pub fn Double::max_value() -> Double {
-  max_val
-}
-
-// Returns the smallest positive nonzero value of Double
-pub fn Double::min_value() -> Double {
-  min_val
-}
-
 // Returns the smallest positive normal value of Double
+/// @alert deprecated "Use `@double.min_positive` instead"
 pub fn Double::min_normal() -> Double {
-  min_norm
+  min_positive
 }
 
 // Check whether the double is a "not-a-number" value
@@ -199,17 +192,17 @@ pub fn is_nan(self : Double) -> Bool {
 
 // Check whether the double is infinity
 pub fn is_inf(self : Double) -> Bool {
-  self > max_val || self < -max_val
+  self > max_value || self < min_value
 }
 
 // Check whether the double is positive infinity
 pub fn is_pos_inf(self : Double) -> Bool {
-  self > max_val
+  self > max_value
 }
 
 // Check whether the double is negative infinity
 pub fn is_neg_inf(self : Double) -> Bool {
-  self < -max_val
+  self < min_value
 }
 
 test "from_int" {
@@ -236,51 +229,33 @@ test "is_nan" {
   assert_true!(is_nan(not_a_number))
   assert_false!(is_nan(0.0))
   assert_false!(is_nan(12345.678))
-  assert_false!(is_nan(positive_infinity))
-  assert_false!(is_nan(negative_infinity))
+  assert_false!(is_nan(infinity))
+  assert_false!(is_nan(neg_infinity))
 }
 
 test "is_inf" {
-  assert_true!(is_inf(positive_infinity))
-  assert_true!(is_inf(negative_infinity))
+  assert_true!(is_inf(infinity))
+  assert_true!(is_inf(neg_infinity))
   assert_false!(is_inf(0.0))
   assert_false!(is_inf(12345.678))
 }
 
 test "is_pos_inf" {
-  assert_true!(is_pos_inf(positive_infinity))
-  assert_false!(is_pos_inf(negative_infinity))
+  assert_true!(is_pos_inf(infinity))
+  assert_false!(is_pos_inf(neg_infinity))
   assert_false!(is_pos_inf(0.0))
   assert_false!(is_pos_inf(12345.678))
 }
 
 test "is_neg_inf" {
-  assert_false!(is_neg_inf(positive_infinity))
-  assert_true!(is_neg_inf(negative_infinity))
+  assert_false!(is_neg_inf(infinity))
+  assert_true!(is_neg_inf(neg_infinity))
   assert_false!(is_neg_inf(0.0))
   assert_false!(is_neg_inf(12345.678))
 }
 
-test "nan" {
-  assert_true!(Double::nan().is_nan())
-}
-
-test "inf" {
-  assert_eq!(Double::inf(1), positive_infinity)
-  assert_eq!(Double::inf(0), positive_infinity)
-  assert_eq!(Double::inf(-1), negative_infinity)
-}
-
-test "max_value" {
-  assert_eq!(Double::max_value(), max_val)
-}
-
-test "min_value" {
-  assert_eq!(Double::min_value(), min_val)
-}
-
-test "min_normal" {
-  assert_eq!(Double::min_normal(), min_norm)
+test "min equal to neg max" {
+  assert_true!(min_value == -max_value)
 }
 
 pub impl Hash for Double with hash(self) {
@@ -289,4 +264,36 @@ pub impl Hash for Double with hash(self) {
 
 pub impl Hash for Double with hash_combine(self, hasher) {
   hasher.combine_double(self)
+}
+
+/// @intrinsic %f64.to_string
+pub fn to_string(self : Double) -> String {
+  @ryu.ryu_to_string(self)
+}
+
+pub impl Show for Double with output(self, logger) {
+  logger.write_string(self.to_string())
+}
+
+pub fn is_close(
+  self : Double,
+  other : Double,
+  ~relative_tolerance : Double = 1.0e-09,
+  ~absolute_tolerance : Double = 0.0
+) -> Bool {
+  if relative_tolerance < 0.0 || absolute_tolerance < 0.0 {
+    abort("Tolerances must be non-negative")
+  }
+  if self == other {
+    return true
+  }
+  if self.is_inf() || other.is_inf() {
+    return false
+  }
+  let diff = (other - self).abs()
+  return (
+      diff <= (relative_tolerance * other).abs() ||
+      diff <= (relative_tolerance * self).abs()
+    ) ||
+    diff <= absolute_tolerance
 }

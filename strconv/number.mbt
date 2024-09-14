@@ -35,7 +35,7 @@ fn parse_digits(s : StringSlice, x : UInt64) -> (StringSlice, UInt64, Int) {
     s,
     x,
     fn(digit, acc : UInt64) {
-      acc * 10UL + UInt64::extend_uint(digit.to_uint())
+      acc * 10UL + UInt64::extend_uint(digit.reinterpret_as_uint())
     },
   )
 }
@@ -52,7 +52,7 @@ fn try_parse_19digits(
       s = s.step_1_unchecked()
     }
     len += 1
-    x = x * 10UL + UInt64::extend_uint(to_digit(s[0]).to_uint()) // no overflows here
+    x = x * 10UL + UInt64::extend_uint(to_digit(s[0]).reinterpret_as_uint()) // no overflows here
     s = s.step_1_unchecked()
   }
   (s, x, len)
@@ -194,23 +194,23 @@ fn parse_inf_nan(s : String) -> (Double, Int)? {
   let s = full_slice(s)
   if s.length() >= 3 {
     if s.prefix_eq_ignore_case("nan") {
-      return Some((Double::nan(), 3))
+      return Some((@double.not_a_number, 3))
     } else if s.prefix_eq_ignore_case("inf") {
-      return Some((Double::inf(1), parse_inf_rest(s)))
+      return Some((@double.infinity, parse_inf_rest(s)))
     } else if s.length() >= 4 {
       if s.first_is('+') {
         let s = s.step_1_unchecked()
         if s.prefix_eq_ignore_case("nan") {
-          return Some((Double::nan(), 4))
+          return Some((@double.not_a_number, 4))
         } else if s.prefix_eq_ignore_case("inf") {
-          return Some((Double::inf(1), 1 + parse_inf_rest(s)))
+          return Some((@double.infinity, 1 + parse_inf_rest(s)))
         }
       } else if s.first_is('-') {
         let s = s.step_1_unchecked()
         if s.prefix_eq_ignore_case("nan") {
-          return Some((Double::nan(), 4))
+          return Some((@double.not_a_number, 4))
         } else if s.prefix_eq_ignore_case("inf") {
-          return Some((Double::inf(-1), 1 + parse_inf_rest(s)))
+          return Some((@double.neg_infinity, 1 + parse_inf_rest(s)))
         }
       }
     }
@@ -233,7 +233,7 @@ fn checked_mul(a : UInt64, b : UInt64) -> UInt64? {
   if b < 0UL || a < 0UL {
     return None
   }
-  let r : UInt64 = @uint64.max / b
+  let r : UInt64 = @uint64.max_value / b
   let q : UInt64 = 1UL / b
   if r + r + q < a {
     return None

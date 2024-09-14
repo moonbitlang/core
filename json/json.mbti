@@ -1,11 +1,27 @@
 package moonbitlang/core/json
 
 // Values
+fn from_json[T : FromJson](Json, ~path : JsonPath = ..) -> T!JsonDecodeError
+
 fn parse(String) -> Json!ParseError
 
 fn valid(String) -> Bool
 
 // Types and methods
+pub type! JsonDecodeError (JsonPath, String)
+impl JsonDecodeError {
+  op_equal(Self, Self) -> Bool
+  to_string(Self) -> String
+}
+
+type JsonPath
+impl JsonPath {
+  add_index(Self, Int) -> Self
+  add_key(Self, String) -> Self
+  op_equal(Self, Self) -> Bool
+  output(Self, Logger) -> Unit
+}
+
 pub type! ParseError {
   InvalidChar(Position, Char)
   InvalidEof
@@ -32,7 +48,7 @@ impl Json {
   as_object(Self) -> Map[String, Self]?
   as_string(Self) -> String?
   item(Self, Int) -> Self?
-  stringify(Self) -> String
+  stringify(Self, ~escape_slash : Bool = ..) -> String
   to_json(Self) -> Self
   to_string(Self) -> String
   value(Self, String) -> Self?
@@ -42,9 +58,52 @@ impl Json {
 pub typealias JsonValue = Json
 
 // Traits
+pub trait FromJson {
+  from_json(Json, JsonPath) -> Self!JsonDecodeError
+}
 
 // Extension Methods
 impl Show for Json
 
+impl Show for JsonDecodeError
+
 impl Show for ParseError
+
+impl FromJson for Unit
+
+impl FromJson for Bool
+
+impl FromJson for Char
+
+impl FromJson for Int
+
+impl FromJson for Int64
+
+impl FromJson for Double
+
+impl FromJson for String
+
+impl FromJson for Option
+
+impl FromJson for Result
+
+impl FromJson for FixedArray
+
+impl FromJson for Array
+
+impl FromJson for BigInt
+
+impl FromJson for Map
+
+impl FromJson for Tuple(2)
+
+impl FromJson for Tuple(3)
+
+impl FromJson for Tuple(4)
+
+impl FromJson for Tuple(5)
+
+impl FromJson for Tuple(6)
+
+impl FromJson for Tuple(7)
 

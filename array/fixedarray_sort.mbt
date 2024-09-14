@@ -94,7 +94,7 @@ fn FixedArraySlice::insertion_sort[T : Compare](
 fn merge[T : Compare](arr : FixedArraySlice[T], mid : Int) -> Unit {
   let buf_len = arr.length() - mid
   let buf : FixedArray[T] = FixedArray::make(buf_len, arr[mid])
-  for i = 0; i < buf.length(); i = i + 1 {
+  for i in 0..<buf.length() {
     buf[i] = arr[mid + i]
   }
   let buf = { array: buf, start: 0, end: buf_len }
@@ -436,7 +436,7 @@ fn fixed_test_sort(f : (FixedArray[Int]) -> Unit) -> Unit! {
   f(arr)
   assert_eq!(arr, [1, 2, 3, 4, 5])
   let arr = FixedArray::make(1000, 0)
-  for i = 0; i < 1000; i = i + 1 {
+  for i in 0..<1000 {
     arr[i] = 1000 - i - 1
   }
   for i = 10; i < 1000; i = i + 10 {
@@ -444,7 +444,7 @@ fn fixed_test_sort(f : (FixedArray[Int]) -> Unit) -> Unit! {
   }
   f(arr)
   let expected = FixedArray::make(1000, 0)
-  for i = 0; i < 1000; i = i + 1 {
+  for i in 0..<1000 {
     expected[i] = i
   }
   assert_eq!(arr, expected)
@@ -471,7 +471,7 @@ test "stable_sort" {
   arr.stable_sort()
   assert_eq!(arr, [1, 2, 3, 4, 5])
   let arr = FixedArray::make(1000, 0)
-  for i = 0; i < 1000; i = i + 1 {
+  for i in 0..<1000 {
     arr[i] = 1000 - i - 1
   }
   for i = 10; i < 1000; i = i + 10 {
@@ -479,14 +479,14 @@ test "stable_sort" {
   }
   arr.stable_sort()
   let expected = FixedArray::make(1000, 0)
-  for i = 0; i < 1000; i = i + 1 {
+  for i in 0..<1000 {
     expected[i] = i
   }
   assert_eq!(arr, expected)
 }
 
 pub fn FixedArray::is_sorted[T : Compare](arr : FixedArray[T]) -> Bool {
-  for i = 1; i < arr.length(); i = i + 1 {
+  for i in 1..<arr.length() {
     if arr[i] < arr[i - 1] {
       break false
     }
@@ -497,7 +497,7 @@ pub fn FixedArray::is_sorted[T : Compare](arr : FixedArray[T]) -> Bool {
 
 test "stable_sort_complex" {
   let run_lens = [86, 64, 21, 20, 22]
-  let total_len = run_lens.fold_left(init=0, fn { acc, x => acc + x })
+  let total_len = run_lens.fold(init=0, fn { acc, x => acc + x })
   let arr = FixedArray::make(total_len, 0)
   let mut index = 0
   for i = 0, len = run_lens.length(); i < len; i = i + 1 {

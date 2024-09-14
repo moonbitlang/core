@@ -17,22 +17,23 @@ impl T {
   fold[K, V, A](Self[K, V], ~init : A, (A, V) -> A) -> A
   foldl_with_key[K, V, A](Self[K, V], (A, K, V) -> A, ~init : A) -> A
   foldr_with_key[K, V, A](Self[K, V], (A, K, V) -> A, ~init : A) -> A
-  from_array[K : Compare + Eq, V](Array[Tuple[K, V]]) -> Self[K, V]
-  from_iter[K : Compare + Eq, V](Iter[Tuple[K, V]]) -> Self[K, V]
+  from_array[K : Compare + Eq, V](Array[(K, V)]) -> Self[K, V]
+  from_iter[K : Compare + Eq, V](Iter[(K, V)]) -> Self[K, V]
   insert[K : Compare + Eq, V](Self[K, V], K, V) -> Self[K, V]
   is_empty[K, V](Self[K, V]) -> Bool
-  iter[K, V](Self[K, V]) -> Iter[Tuple[K, V]]
+  iter[K, V](Self[K, V]) -> Iter[(K, V)]
+  iter2[K, V](Self[K, V]) -> Iter2[K, V]
   keys[K, V](Self[K, V]) -> Array[K]
   lookup[K : Compare + Eq, V](Self[K, V], K) -> V?
   map[K, X, Y](Self[K, X], (X) -> Y) -> Self[K, Y]
   map_with_key[K, X, Y](Self[K, X], (K, X) -> Y) -> Self[K, Y]
-  of[K : Compare + Eq, V](FixedArray[Tuple[K, V]]) -> Self[K, V]
+  of[K : Compare + Eq, V](FixedArray[(K, V)]) -> Self[K, V]
   op_equal[K : Eq, V : Eq](Self[K, V], Self[K, V]) -> Bool
   op_get[K : Compare + Eq, V](Self[K, V], K) -> V?
   remove[K : Compare + Eq, V](Self[K, V], K) -> Self[K, V]
   singleton[K, V](K, V) -> Self[K, V]
   size[K, V](Self[K, V]) -> Int
-  to_array[K, V](Self[K, V]) -> Array[Tuple[K, V]]
+  to_array[K, V](Self[K, V]) -> Array[(K, V)]
   to_string[K : Show, V : Show](Self[K, V]) -> String
 }
 

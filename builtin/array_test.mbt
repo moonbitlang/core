@@ -29,7 +29,7 @@ test "array_from_fixed_array" {
 test "array_make" {
   let arr = Array::make(5, 42)
   assert_eq!(arr.length(), 5)
-  for i = 0; i < 5; i = i + 1 {
+  for i in 0..<5 {
     assert_eq!(arr[i], 42)
   }
 }
@@ -88,7 +88,7 @@ test "array_pop" {
 
 test "array_pop_exn" {
   let arr = [1, 2, 3]
-  assert_eq!(arr.pop_exn(), 3)
+  assert_eq!(arr.unsafe_pop(), 3)
   assert_eq!(arr.length(), 2)
 }
 
@@ -116,7 +116,16 @@ test "array_append" {
   let arr2 = [4, 5, 6]
   arr1.append(arr2)
   assert_eq!(arr1.length(), 6)
+  // assert_eq!(arr1.capacity(), 6)
   assert_eq!(arr1[3], 4)
+  let cap = 20
+  let arr3 = Array::new(capacity=cap)
+  arr3.resize(cap, 10)
+  arr1.append(arr3)
+  assert_eq!(arr1.length(), 6 + cap)
+  // assert_eq!(arr1.capacity(), arr1.length())
+  // Not testing capacity as it may be platform/algorithm 
+  // dependent and not guaranteed to be equal to length
 }
 
 test "array_each" {
@@ -148,6 +157,29 @@ test "array_eachi_rev" {
   let mut sum = 0
   arr.rev_eachi(fn(i, x) { sum = sum + i + x })
   inspect!(sum, content="9")
+}
+
+test "array_eachi_rev_2" {
+  let arr = ['a', 'b', 'c']
+  let buf = Buffer::new()
+  arr.rev_eachi(
+    fn(i, x) {
+      buf
+      ..write_object(i)
+      ..write_string(": ")
+      ..write_object(x)
+      .write_string("\n")
+    },
+  )
+  inspect!(
+    buf.to_string(),
+    content=
+      #|0: 'c'
+      #|1: 'b'
+      #|2: 'a'
+      #|
+    ,
+  )
 }
 
 test "array_clear" {
@@ -309,8 +341,10 @@ test "array_remove" {
 
 test "array_retain" {
   let arr = [1, 2, 3, 4, 5]
+  assert_eq!(arr.capacity(), 5)
   arr.retain(fn(x) { x % 2 == 0 })
   assert_eq!(arr.length(), 2)
+  assert_eq!(arr.capacity(), 5)
   assert_eq!(arr[0], 2)
   assert_eq!(arr[1], 4)
 }
@@ -359,27 +393,27 @@ test "array_repeat" {
   assert_eq!(repeated[5], 2)
 }
 
-test "array_fold_left" {
+test "array_fold" {
   let arr = [1, 2, 3]
-  let sum = arr.fold_left(fn(acc, x) { acc + x }, init=0)
+  let sum = arr.fold(fn(acc, x) { acc + x }, init=0)
   assert_eq!(sum, 6)
 }
 
-test "array_fold_right" {
+test "array_rev_fold" {
   let arr = [1, 2, 3]
-  let sum = arr.fold_right(fn(acc, x) { acc + x }, init=0)
+  let sum = arr.rev_fold(fn(acc, x) { acc + x }, init=0)
   assert_eq!(sum, 6)
 }
 
-test "array_fold_lefti" {
+test "array_foldi" {
   let arr = [1, 2, 3]
-  let sum = arr.fold_lefti(fn(i, acc, x) { acc + i + x }, init=0)
+  let sum = arr.foldi(fn(i, acc, x) { acc + i + x }, init=0)
   assert_eq!(sum, 9)
 }
 
-test "array_fold_righti" {
+test "array_rev_foldi" {
   let arr = [1, 2, 3]
-  let sum = arr.fold_righti(fn(i, acc, x) { acc + i + x }, init=0)
+  let sum = arr.rev_foldi(fn(i, acc, x) { acc + i + x }, init=0)
   assert_eq!(sum, 9)
 }
 
@@ -462,7 +496,7 @@ test "array_pop_empty" {
 
 test "panic array_pop_exn_empty" {
   let arr : Array[Int] = Array::new()
-  arr.pop_exn() |> ignore // This should panic
+  arr.unsafe_pop() |> ignore // This should panic
 }
 
 test "panic array_drain_out_of_bounds" {
@@ -500,9 +534,9 @@ test "array_split" {
   )
 }
 
-test "array_find_index" {
-  inspect!([1, 2, 3, 4, 5].find_index(fn(x) { x % 2 == 0 }), content="Some(1)")
-  inspect!([1, 2, 3, 4, 5].find_index(fn(x) { x > 5 }), content="None")
+test "array_search_by" {
+  inspect!([1, 2, 3, 4, 5].search_by(fn(x) { x % 2 == 0 }), content="Some(1)")
+  inspect!([1, 2, 3, 4, 5].search_by(fn(x) { x > 5 }), content="None")
 }
 
 test "shrink_to_fit" {
@@ -515,4 +549,67 @@ test "shrink_to_fit" {
   inspect!(v.capacity(), content="3")
   v.shrink_to_fit()
   inspect!(v.capacity(), content="3")
+}
+
+test "array_binary_search_int_test" {
+  let arr = [1, 2, 3, 4]
+  assert_eq!(arr.binary_search(-100), Err(0))
+  assert_eq!(arr.binary_search(-1), Err(0))
+  assert_eq!(arr.binary_search(1), Ok(0))
+  assert_eq!(arr.binary_search(3), Ok(2))
+  assert_eq!(arr.binary_search(4), Ok(3))
+  assert_eq!(arr.binary_search(5), Err(4))
+  assert_eq!(arr.binary_search(60), Err(4))
+}
+
+test "array_binary_search_duplicate_int_test" {
+  let arr = [1, 2, 3, 3, 4, 4, 4, 5]
+  assert_eq!(arr.binary_search(3), Ok(2))
+  assert_eq!(arr.binary_search(4), Ok(4))
+  assert_eq!(arr.binary_search(5), Ok(7))
+  let arr = [0, 1, 1, 1, 1, 2, 3, 5, 8, 13, 21, 34, 55]
+  assert_eq!(arr.binary_search(1), Ok(1))
+}
+
+test "array_binary_search_float_test" {
+  let arr = [-0.25, 0.0, 1.5]
+  assert_eq!(arr.binary_search(-0.25), Ok(0))
+  assert_eq!(arr.binary_search(0.0), Ok(1))
+  assert_eq!(arr.binary_search(1.5), Ok(2))
+  assert_eq!(arr.binary_search(1.6), Err(3))
+}
+
+test "array_binary_search_str_test" {
+  let arr = ["hello", "world", "moon", "bit"]
+  arr.sort()
+  assert_eq!(arr.binary_search("bit"), Ok(0))
+  assert_eq!(arr.binary_search("moon"), Ok(1))
+  assert_eq!(arr.binary_search("hello"), Ok(2))
+  assert_eq!(arr.binary_search("world"), Ok(3))
+}
+
+struct TestStruct {
+  num : Int
+}
+
+test "array_binary_search_by_test" {
+  let arr = [{ num: 10 }, { num: 22 }, { num: 35 }, { num: 48 }]
+  let mut target = { num: 22 }
+  fn cmp(val : TestStruct) {
+    if val.num < target.num {
+      -1
+    } else if val.num == target.num {
+      0
+    } else {
+      1
+    }
+  }
+
+  assert_eq!(arr.binary_search_by(cmp), Ok(1))
+  target = { num: 48 }
+  assert_eq!(arr.binary_search_by(cmp), Ok(3))
+  target = { num: -8 }
+  assert_eq!(arr.binary_search_by(cmp), Err(0))
+  target = { num: 49 }
+  assert_eq!(arr.binary_search_by(cmp), Err(4))
 }

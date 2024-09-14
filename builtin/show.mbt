@@ -184,6 +184,10 @@ pub impl[X : Show] Show for ArrayView[X] with output(self, logger) {
   logger.write_char(']')
 }
 
+pub fn ArrayView::to_string[X : Show](self : ArrayView[X]) -> String {
+  Show::to_string(self)
+}
+
 /// Convert Char to String
 /// @intrinsic %char.to_string
 pub fn to_string(self : Char) -> String {

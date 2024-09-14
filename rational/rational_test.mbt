@@ -56,7 +56,7 @@ test "from_double overflow" {
 }
 
 test "from_double NaN" {
-  let result = Double::nan() |> @result.wrap1(f=@rational.from_double)
+  let result = @double.not_a_number |> @result.wrap1(f=@rational.from_double)
   assert_eq!(
     result,
     Err(RationalError("Rational::from_double: cannot convert NaN")),
@@ -81,7 +81,7 @@ test "from_double overflow check in continued fraction algorithm" {
 }
 
 test "from_double NaN check" {
-  let result = Double::nan() |> @result.wrap1(f=@rational.from_double)
+  let result = @double.not_a_number |> @result.wrap1(f=@rational.from_double)
   assert_eq!(
     result,
     Err(RationalError("Rational::from_double: cannot convert NaN")),
@@ -111,7 +111,9 @@ test "from_double array" {
     a,
     content="[Ok(1/2), Ok(5), Ok(2997/100), Ok(-2997/100), Ok(127/2), Ok(253/2), Ok(127), Ok(255/2), Ok(-127/2), Ok(-253/2), Ok(-127), Ok(-255/2)]",
   )
-  let a = [-10.0e200, 10.0e200, Double::inf(1), Double::inf(-1), Double::nan()]
+  let a = [
+    -10.0e200, 10.0e200, @double.infinity, @double.neg_infinity, @double.not_a_number,
+  ]
   a
   |> inspect_double_array!(
     content=

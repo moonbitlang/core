@@ -3,13 +3,16 @@ package moonbitlang/core/random
 // Values
 
 // Types and methods
-type RandomState
-impl RandomState {
-  gen_double(Self) -> Double
-  gen_int(Self) -> Int
-  gen_int64(Self) -> Int64
-  init_state(~seed : Int = ..) -> Self
-  new() -> Self
+type Rand
+impl Rand {
+  double(Self) -> Double
+  float(Self) -> Float
+  int(Self, ~limit : Int = ..) -> Int
+  int64(Self, ~limit : Int64 = ..) -> Int64
+  new(~seed : Bytes = ..) -> Self
+  shuffle(Self, Int, (Int, Int) -> Unit) -> Unit
+  uint(Self, ~limit : UInt = ..) -> UInt
+  uint64(Self, ~limit : UInt64 = ..) -> UInt64
 }
 
 // Type aliases

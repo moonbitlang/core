@@ -98,17 +98,104 @@ pub fn iter(self : String) -> Iter[Char] {
           let c2 = self[index + 1]
           if is_trailing_surrogate(c2) {
             let c = code_point_of_surrogate_pair(c1, c2)
-            if yield(c) == IterContinue {
-              continue index + 2
-            } else {
-              break IterEnd
-            }
+            guard let IterContinue = yield(c) else { x => break x }
+            continue index + 2
           }
         }
         //TODO: handle garbage input
-        if yield(c1) == IterEnd {
-          break IterEnd
+        guard let IterContinue = yield(c1) else { x => break x }
+
+      } else {
+        IterContinue
+      }
+    },
+  )
+}
+
+pub fn iter2(self : String) -> Iter2[Int, Char] {
+  Iter2::new(
+    fn(yield) {
+      let len = self.length()
+      for index = 0, n = 0; index < len; index = index + 1, n = n + 1 {
+        let c1 = self[index]
+        if is_leading_surrogate(c1) && index + 1 < len {
+          let c2 = self[index + 1]
+          if is_trailing_surrogate(c2) {
+            let c = code_point_of_surrogate_pair(c1, c2)
+            guard let IterContinue = yield(n, c) else { x => break x }
+            continue index + 2, n + 1
+          }
         }
+        //TODO: handle garbage input
+        guard let IterContinue = yield(n, c1) else { x => break x }
+
+      } else {
+        IterContinue
+      }
+    },
+  )
+}
+
+pub fn fold[A](self : String, ~init : A, f : (A, Char) -> A) -> A {
+  let mut rv = init
+  for c in self {
+    rv = f(rv, c)
+  }
+  rv
+}
+
+pub fn rev_fold[A](self : String, ~init : A, f : (A, Char) -> A) -> A {
+  let mut rv = init
+  for c in self.rev_iter() {
+    rv = f(rv, c)
+  }
+  rv
+}
+
+/// Returns an iterator that yields characters from the end to the start of the string. This function handles 
+/// Unicode surrogate pairs correctly, ensuring that characters are not split across surrogate pairs.
+/// 
+/// # Parameters
+/// 
+/// - `self` : The input `String` to be iterated in reverse.
+/// 
+/// # Returns
+/// 
+/// - An `Iter[Char]` that yields characters from the end to the start of the string.
+/// 
+/// # Behavior
+/// 
+/// - The function iterates over the string in reverse order.
+/// - If a trailing surrogate is encountered, it checks for a preceding leading surrogate to form a complete Unicode code point.
+/// - Yields each character or combined code point to the iterator.
+/// - Stops iteration if the `yield` function returns `IterEnd`.
+/// 
+/// # Examples
+/// 
+/// ```moonbit
+/// test {
+///   let input = "Hello, World!"
+///   let reversed = rev_iter(input).collect()
+///   inspect!(reversed, content="[\"!\", \"d\", \"l\", \"r\", \"o\", \"W\", \" \", \",\", \"o\", \"l\", \"l\", \"e\", \"H\"]")
+/// }
+/// ```
+pub fn rev_iter(self : String) -> Iter[Char] {
+  Iter::new(
+    fn(yield) {
+      let len = self.length()
+      for index = len - 1; index >= 0; index = index - 1 {
+        let c1 = self[index]
+        if is_trailing_surrogate(c1) && index - 1 >= 0 {
+          let c2 = self[index - 1]
+          if is_leading_surrogate(c2) {
+            let c = code_point_of_surrogate_pair(c2, c1)
+            guard let IterContinue = yield(c) else { x => break x }
+            continue index - 2
+          }
+        }
+        // TODO: handle garbage input
+        guard let IterContinue = yield(c1) else { x => break x }
+
       } else {
         IterContinue
       }
@@ -272,16 +359,14 @@ pub fn last_index_of(
     let mut j = i - 1
     let mut k = sub_len - 2
     let start = i - sub_len
-    let found = {
-      while j > start {
-        if self[j] != str[k] {
-          break false
-        }
-        j -= 1
-        k -= 1
-      } else {
-        true
+    let found = while j > start {
+      if self[j] != str[k] {
+        break false
       }
+      j -= 1
+      k -= 1
+    } else {
+      true
     }
     if found {
       return start + 1

@@ -28,6 +28,22 @@ pub fn to_int64(self : Bool) -> Int64 {
   }
 }
 
+pub fn to_uint(self : Bool) -> UInt {
+  if self {
+    1U
+  } else {
+    0U
+  }
+}
+
+pub fn to_uint64(self : Bool) -> UInt64 {
+  if self {
+    1UL
+  } else {
+    0UL
+  }
+}
+
 pub impl Hash for Bool with hash(self) { self.to_int() }
 
 pub impl Hash for Bool with hash_combine(self, hasher) {

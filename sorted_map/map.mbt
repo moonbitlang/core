@@ -114,7 +114,7 @@ pub fn each[K, V](self : T[K, V], f : (K, V) -> Unit) -> Unit {
       p = p.unwrap().left
     }
     if s.is_empty().not() {
-      p = s.pop_exn()
+      p = s.unsafe_pop()
       f(p.unwrap().key, p.unwrap().value)
       p = p.unwrap().right
     }
@@ -132,7 +132,7 @@ pub fn eachi[K, V](self : T[K, V], f : (Int, K, V) -> Unit) -> Unit {
       p = p.unwrap().left
     }
     if s.is_empty().not() {
-      p = s.pop_exn()
+      p = s.unsafe_pop()
       f(i, p.unwrap().key, p.unwrap().value)
       p = p.unwrap().right
       i += 1
@@ -161,17 +161,49 @@ pub fn to_array[K, V](self : T[K, V]) -> Array[(K, V)] {
   arr
 }
 
-/// Returns a iterator.
 pub fn iter[K, V](self : T[K, V]) -> Iter[(K, V)] {
+  iter_aux(self.root)
+}
+
+fn iter_aux[K, V](node : Node[K, V]?) -> Iter[(K, V)] {
   Iter::new(
     fn(yield) {
-      let arr = self.to_array()
-      for i = 0, len = arr.length(); i < len; i = i + 1 {
-        match arr[i] {
-          (key, value) => if yield((key, value)) == IterEnd { break IterEnd }
-        }
-      } else {
-        IterContinue
+      match node {
+        None => IterContinue
+        Some(node) =>
+          if iter_aux(node.left).run(yield) == IterEnd {
+            return IterEnd
+          } else if yield((node.key, node.value)) == IterEnd {
+            return IterEnd
+          } else if iter_aux(node.right).run(yield) == IterEnd {
+            return IterEnd
+          } else {
+            IterContinue
+          }
+      }
+    },
+  )
+}
+
+pub fn iter2[K, V](self : T[K, V]) -> Iter2[K, V] {
+  iter_aux2(self.root)
+}
+
+fn iter_aux2[K, V](node : Node[K, V]?) -> Iter2[K, V] {
+  Iter2::new(
+    fn(yield) {
+      match node {
+        None => IterContinue
+        Some(node) =>
+          if iter_aux2(node.left).run(yield) == IterEnd {
+            return IterEnd
+          } else if yield(node.key, node.value) == IterEnd {
+            return IterEnd
+          } else if iter_aux2(node.right).run(yield) == IterEnd {
+            return IterEnd
+          } else {
+            IterContinue
+          }
       }
     },
   )

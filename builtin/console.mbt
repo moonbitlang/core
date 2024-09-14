@@ -94,7 +94,7 @@ pub fn UInt::to_string(self : UInt) -> String {
     if num2 != 0U {
       write_digits(num2)
     }
-    buf.write_char(Char::from_int((num % 10U).to_int() + 48))
+    buf.write_char(Char::from_int((num % 10U).reinterpret_as_int() + 48))
   }
 
   write_digits(self)
@@ -194,3 +194,6 @@ pub fn inspect(
     )
   }
 }
+
+// Used by test driver
+pub type! SnapshotError String

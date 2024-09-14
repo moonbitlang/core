@@ -59,12 +59,28 @@ test "Int::lsl should perform left shift operation" {
   inspect!((7).lsl(32), content="7")
 }
 
+test "reinterpret: UInt <-> Int" {
+  inspect!(0U.reinterpret_as_int(), content="0")
+  inspect!(1U.reinterpret_as_int(), content="1")
+  inspect!((0x7fff_ffff : UInt).reinterpret_as_int(), content="2147483647")
+  inspect!((0x7fff_ffff : UInt), content="2147483647")
+  inspect!((0x8000_0000 : UInt).reinterpret_as_int(), content="-2147483648")
+  inspect!((0x8000_0000 : UInt), content="2147483648")
+  inspect!((0xffff_ffff : UInt).reinterpret_as_int(), content="-1")
+  inspect!((0xffff_ffff : UInt), content="4294967295")
+  inspect!((0).reinterpret_as_uint(), content="0")
+  inspect!((1).reinterpret_as_uint(), content="1")
+  inspect!((2147483647).reinterpret_as_uint(), content="2147483647")
+  inspect!((-2147483648).reinterpret_as_uint(), content="2147483648")
+  inspect!((-1).reinterpret_as_uint(), content="4294967295")
+}
+
 test "uint test" {
   inspect!(100U == 100U, content="true")
   inspect!(0U < 100U, content="true")
   inspect!(100U > 0U, content="true")
-  inspect!(2147483648U.to_int(), content="-2147483648")
-  inspect!((-2147483648).to_uint(), content="2147483648")
+  inspect!(2147483648U.reinterpret_as_int(), content="-2147483648")
+  inspect!((-2147483648).reinterpret_as_uint(), content="2147483648")
   inspect!((2147483648U + 1000000000U).to_uint64(), content="3147483648")
   inspect!(2147483647U + 1U, content="2147483648")
   inspect!(0U - 1U, content="4294967295")
@@ -106,27 +122,27 @@ test "from double to" {
 }
 
 test "u64 to double" {
-  inspect!(10UL.to_double(), content="10.0")
-  inspect!(20UL.to_double(), content="20.0")
-  inspect!(0UL.to_double(), content="0.0")
-  inspect!(10L.to_double(), content="10.0")
-  inspect!(20L.to_double(), content="20.0")
-  inspect!(0L.to_double(), content="0.0")
-  inspect!(18446744073709551615UL.to_double(), content="1.8446744073709552e19")
-  inspect!(8446744073709551615UL.to_double(), content="8.446744073709552e18")
-  inspect!(8446744073709551615L.to_double(), content="8.446744073709552e18")
-  inspect!(-8446744073709551615L.to_double(), content="-8.446744073709552e18")
-  inspect!(844674400955615UL.to_double(), content="8.44674400955615e14")
-  inspect!(844674400955615L.to_double(), content="8.44674400955615e14")
-  inspect!(-844674400955615L.to_double(), content="-8.44674400955615e14")
+  inspect!(10UL.to_double(), content="10")
+  inspect!(20UL.to_double(), content="20")
+  inspect!(0UL.to_double(), content="0")
+  inspect!(10L.to_double(), content="10")
+  inspect!(20L.to_double(), content="20")
+  inspect!(0L.to_double(), content="0")
+  inspect!(18446744073709551615UL.to_double(), content="18446744073709552000")
+  inspect!(8446744073709551615UL.to_double(), content="8446744073709552000")
+  inspect!(8446744073709551615L.to_double(), content="8446744073709552000")
+  inspect!(-8446744073709551615L.to_double(), content="-8446744073709552000")
+  inspect!(844674400955615UL.to_double(), content="844674400955615")
+  inspect!(844674400955615L.to_double(), content="844674400955615")
+  inspect!(-844674400955615L.to_double(), content="-844674400955615")
 }
 
 test "UInt64::lnot test cases" {
   // Test case 1: Boundary case, testing the behavior with the maximum value of UInt64
-  inspect!(UInt64::lnot(@uint64.max), content="0")
+  inspect!(UInt64::lnot(@uint64.max_value), content="0")
 
   // Test case 2: Boundary case, testing the behavior with the minimum value of UInt64
-  inspect!(UInt64::lnot(@uint64.min), content="18446744073709551615")
+  inspect!(UInt64::lnot(@uint64.min_value), content="18446744073709551615")
 
   // Test case 3: Random case, testing with a random large value
   inspect!(UInt64::lnot(12345678901234567890UL), content="6101065172474983725")
@@ -168,16 +184,16 @@ test "float" {
   inspect!((f(3.14) + 2.17).to_double(), content="5.310000419616699")
   inspect!((f(5.3) - 2.0).to_double(), content="3.3000001907348633")
   inspect!((f(2.0) - 5.3).to_double(), content="-3.3000001907348633")
-  inspect!((f(5.3) - 5.3).to_double(), content="0.0")
+  inspect!((f(5.3) - 5.3).to_double(), content="0")
   inspect!((f(5.3) * 2.0).to_double(), content="10.600000381469727")
   inspect!((f(-5.3) * 2.0).to_double(), content="-10.600000381469727")
   inspect!((f(-5.3) * -2.0).to_double(), content="10.600000381469727")
   inspect!((f(5.3) * -2.0).to_double(), content="-10.600000381469727")
   inspect!((f(5.3) / 2.0).to_double(), content="2.6500000953674316")
   inspect!((f(2.0) / 5.3).to_double(), content="0.37735846638679504")
-  inspect!((f(2.12345) / 2.12345).to_double(), content="1.0")
-  inspect!((f(2.12345) / -2.12345).to_double(), content="-1.0")
-  inspect!((f(0) / 2.12345).to_double(), content="0.0")
+  inspect!((f(2.12345) / 2.12345).to_double(), content="1")
+  inspect!((f(2.12345) / -2.12345).to_double(), content="-1")
+  inspect!((f(0) / 2.12345).to_double(), content="0")
   inspect!((3.6 : Float) != 0.6, content="true")
   inspect!((3.6 : Float).compare(0.6), content="1")
   inspect!((0.3 : Float).compare(0.6), content="-1")
@@ -185,7 +201,12 @@ test "float" {
   inspect!((-0.3 : Float).compare(-0.6), content="1")
   inspect!((0.3 : Float).to_double() == 0.3, content="false")
   inspect!((0.3 : Float).reinterpret_as_int(), content="1050253722")
-  inspect!(b'5'.to_float().to_double(), content="53.0")
-  inspect!((123456).to_float().to_double(), content="123456.0")
+  inspect!(b'5'.to_float().to_double(), content="53")
+  inspect!((123456).to_float().to_double(), content="123456")
   // inspect!((0.36 : Float).sqrt().to_double(), content="0.6000000238418579")
+}
+
+test "Int::to_double" {
+  inspect!((10).to_double(), content="10")
+  inspect!((20).to_double(), content="20")
 }

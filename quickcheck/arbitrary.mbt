@@ -28,7 +28,7 @@ pub impl Arbitrary for UInt with arbitrary(size, rs) {
   if size == 0 {
     0
   } else {
-    rs.next_uint() % size.to_uint()
+    rs.next_uint() % size.reinterpret_as_uint()
   }
 }
 
@@ -54,9 +54,10 @@ pub impl Arbitrary for UInt64 with arbitrary(size, rs) {
   if size == 0 {
     0
   } else {
-    rs.next_uint64() % size.to_uint().to_uint64()
+    rs.next_uint64() % size.reinterpret_as_uint().to_uint64()
   }
 }
+
 
 pub impl Arbitrary for Char with arbitrary(_i, rs) {
   // Choose only ASCII characters
@@ -101,4 +102,16 @@ test "iter arbitrary" {
   inspect!(samples[1:5], content="[[], [0], [0], [0]]")
   // inspect!(samples[9], content="[0, 0, 0, 1, 2, -2]") (Cause infinite loop?)
   inspect!(samples[10], content="[0, 0, 0]")
+}
+
+pub fn gen[T : Arbitrary](~size? : Int, ~state? : @splitmix.RandomState) -> T {
+  let size = match size {
+    None => 0
+    Some(x) => x
+  }
+  let state = match state {
+    None => @splitmix.RandomState::default()
+    Some(x) => x
+  }
+  Arbitrary::arbitrary(size, state)
 }

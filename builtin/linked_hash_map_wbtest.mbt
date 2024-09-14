@@ -14,13 +14,13 @@
 
 type MyString String derive(Eq)
 
-impl Hash for MyString with hash(self) { self.0.length() }
+impl Hash for MyString with hash(self) { self._.length() }
 
 impl Hash for MyString with hash_combine(self, hasher) {
-  hasher.combine_string(self.0)
+  hasher.combine_string(self._)
 }
 
-impl Show for MyString with output(self, logger) { logger.write_string(self.0) }
+impl Show for MyString with output(self, logger) { logger.write_string(self._) }
 
 test "new" {
   let m : Map[Int, Int] = Map::new()
@@ -234,7 +234,7 @@ test "iter order" {
 }
 
 test "linked list" {
-  let m = {  }
+  let m = {}
   inspect!(m, content="{}")
   m["one"] = 1
   m["two"] = 2
@@ -297,7 +297,7 @@ test "to_array" {
 }
 
 test "set_existing_key" {
-  let m = {  }
+  let m = {}
   m.set("a", 1)
   m.set("b", 2)
   m.set("c", 3)
@@ -639,12 +639,12 @@ test "op_equal" {
   m1.set("c", 3)
   let m2 = { "a": 1, "b": 2, "c": 3 }
   inspect!(m1 == m2, content="true")
-  inspect!({ "a": 1 } == {  }, content="false")
+  inspect!({ "a": 1 } == {}, content="false")
   inspect!({ 1: 2, 2: 3 } == { 1: 3, 2: 4 }, content="false")
 }
 
 test "to_string" {
-  let m = {  }
+  let m = {}
   inspect!(m.to_string(), content="{}")
   m.set("a", 1)
   m.set("b", 2)

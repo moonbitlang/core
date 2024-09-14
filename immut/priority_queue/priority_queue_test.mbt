@@ -64,16 +64,16 @@ test "pop" {
 
 test "pop_exn" {
   let queue = @priority_queue.of([1, 2, 3, 4])
-  let first = queue.pop_exn()
+  let first = queue.unsafe_pop()
   inspect!(first.peek(), content="Some(3)")
   inspect!(
     queue
-    .pop_exn()
+    .unsafe_pop()
     .push(-1)
     .push(10)
     .push(11)
-    .pop_exn()
-    .pop_exn()
+    .unsafe_pop()
+    .unsafe_pop()
     .push(50)
     .peek(),
     content="Some(50)",
@@ -100,13 +100,13 @@ test "is_empty" {
 test "length" {
   let pq = @priority_queue.of([1, 2])
   inspect!(pq.length(), content="2")
-  inspect!(pq.pop_exn().length(), content="1")
-  inspect!(pq.pop_exn().pop_exn().length(), content="0")
+  inspect!(pq.unsafe_pop().length(), content="1")
+  inspect!(pq.unsafe_pop().unsafe_pop().length(), content="0")
 }
 
-test "panic pop_exn" {
+test "panic unsafe_pop" {
   let pq = @priority_queue.of([1])
-  pq.pop_exn().pop_exn() |> ignore
+  pq.unsafe_pop().unsafe_pop() |> ignore
 }
 
 test "from_iter multiple elements iter" {

@@ -1,9 +1,9 @@
 package moonbitlang/core/uint64
 
 // Values
-let max : UInt64
+let max_value : UInt64
 
-let min : UInt64
+let min_value : UInt64
 
 // Types and methods
 

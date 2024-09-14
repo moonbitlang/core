@@ -77,51 +77,54 @@ pub fn value(self : JsonValue, key : String) -> JsonValue? {
   }
 }
 
-pub fn stringify(self : JsonValue) -> String {
-  let buf = Buffer::new(size_hint=0)
+pub fn stringify(self : JsonValue, ~escape_slash : Bool = true) -> String {
   match self {
     Object(members) => {
+      let buf = Buffer::new(size_hint=0)
       buf.write_char('{')
-      members.eachi(
-        fn(i, k, v) {
-          if i > 0 {
-            buf.write_char(',')
-          }
-          buf.write_char('\"')
-          buf.write_string(escape(k))
-          buf.write_char('\"')
-          buf.write_char(':')
-          buf.write_string(v.stringify())
-        },
-      )
-      buf.write_char('}')
+      let mut first = true
+      for k, v in members {
+        if first {
+          first = false
+        } else {
+          buf.write_char(',')
+        }
+        buf
+        ..write_char('\"')
+        ..write_string(escape(k, ~escape_slash))
+        ..write_char('\"')
+        ..write_char(':')
+        .write_string(v.stringify(~escape_slash))
+      }
+      buf..write_char('}').to_string()
     }
     Array(arr) => {
+      let buf = Buffer::new(size_hint=0)
       buf.write_char('[')
-      arr.eachi(
-        fn(i, v) {
-          if i > 0 {
-            buf.write_char(',')
-          }
-          buf.write_string(v.stringify())
-        },
-      )
-      buf.write_char(']')
+      for i, v in arr {
+        if i > 0 {
+          buf.write_char(',')
+        }
+        buf.write_string(v.stringify(~escape_slash))
+      }
+      buf..write_char(']').to_string()
     }
     String(s) => {
-      buf.write_char('\"')
-      buf.write_string(escape(s))
-      buf.write_char('\"')
+      let buf = Buffer::new(size_hint=0)
+      buf
+      ..write_char('\"')
+      ..write_string(escape(s, ~escape_slash))
+      ..write_char('\"')
+      .to_string()
     }
-    Number(n) => return n.to_string()
-    True => return "true"
-    False => return "false"
-    Null => return "null"
+    Number(n) => n.to_string()
+    True => "true"
+    False => "false"
+    Null => "null"
   }
-  buf.to_string()
 }
 
-fn escape(str : String) -> String {
+fn escape(str : String, ~escape_slash : Bool) -> String {
   fn to_hex_digit(i : Int) -> Char {
     if i < 10 {
       Char::from_int('0'.to_int() + i)
@@ -133,7 +136,13 @@ fn escape(str : String) -> String {
   let buf = Buffer::new(size_hint=str.length())
   for c in str {
     match c {
-      '"' | '\\' | '/' => buf.write_string("\\\{c}")
+      '"' | '\\' => buf.write_string("\\\{c}")
+      '/' =>
+        if escape_slash {
+          buf.write_string("\\/")
+        } else {
+          buf.write_char(c)
+        }
       '\n' => buf.write_string("\\n")
       '\r' => buf.write_string("\\r")
       '\b' => buf.write_string("\\b")
