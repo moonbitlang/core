@@ -228,7 +228,7 @@ test "arbitrary" {
   inspect!(
     samples[11:15],
     content=
-      #|[HashMap::of([("4j", -2), ("v\x05", -1), ("", 0)]), HashMap::of([("", 0)]), HashMap::of([("Vw\b", 4), ("T", 0), ("m", 5), ("", 4)]), HashMap::of([])]
+      #|[HashMap::of([("4j", -2), ("v\x05", 0), ("", 0)]), HashMap::of([("", 0)]), HashMap::of([("Vw\b", 6), ("T", 0), ("m", 5), ("", 4)]), HashMap::of([])]
     ,
   )
 }
