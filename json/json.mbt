@@ -77,19 +77,19 @@ pub fn value(self : JsonValue, key : String) -> JsonValue? {
   }
 }
 
+fn indent_str(level : Int, indent : Int) -> String {
+  if indent == 0 {
+    ""
+  } else {
+    "\n" + " ".repeat(indent * level)
+  }
+}
+
 pub fn stringify(
   self : JsonValue,
   ~escape_slash : Bool = true,
   ~indent : Int = 0
 ) -> String {
-  fn indent_str(level : Int) -> String {
-    if indent == 0 {
-      ""
-    } else {
-      "\n" + " ".repeat(indent * level)
-    }
-  }
-
   fn stringify_inner(value : JsonValue, level : Int) -> String {
     match value {
       Object(members) => {
@@ -98,14 +98,14 @@ pub fn stringify(
         }
         let buf = Buffer::new(size_hint=0)
         buf.write_char('{')
-        buf.write_string(indent_str(level + 1))
+        buf.write_string(indent_str(level + 1, indent))
         let mut first = true
         for k, v in members {
           if first {
             first = false
           } else {
             buf.write_char(',')
-            buf.write_string(indent_str(level + 1))
+            buf.write_string(indent_str(level + 1, indent))
           }
           buf
           ..write_char('\"')
@@ -118,7 +118,7 @@ pub fn stringify(
           }
           buf.write_string(stringify_inner(v, level + 1))
         }
-        buf.write_string(indent_str(level))
+        buf.write_string(indent_str(level, indent))
         buf..write_char('}').to_string()
       }
       Array(arr) => {
@@ -127,15 +127,15 @@ pub fn stringify(
         }
         let buf = Buffer::new(size_hint=0)
         buf.write_char('[')
-        buf.write_string(indent_str(level + 1))
+        buf.write_string(indent_str(level + 1, indent))
         for i, v in arr {
           if i > 0 {
             buf.write_char(',')
-            buf.write_string(indent_str(level + 1))
+            buf.write_string(indent_str(level + 1, indent))
           }
           buf.write_string(stringify_inner(v, level + 1))
         }
-        buf.write_string(indent_str(level))
+        buf.write_string(indent_str(level, indent))
         buf..write_char(']').to_string()
       }
       String(s) => {
