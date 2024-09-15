@@ -493,6 +493,17 @@ test "String::fold" {
   )
 }
 
+test "String::repeat" {
+  inspect!("abc".repeat(3), content="abcabcabc")
+  inspect!("".repeat(3), content="")
+  inspect!("a".repeat(0), content="")
+  inspect!("a".repeat(1), content="a")
+  inspect!("a".repeat(2), content="aa")
+  inspect!("a".repeat(3), content="aaa")
+  inspect!("a".repeat(4), content="aaaa")
+  inspect!("a".repeat(5), content="aaaaa")
+}
+
 test "pad_left" {
   inspect!("2".pad_start(3, '0'), content="002")
   inspect!("22".pad_start(2, '0'), content="22")
