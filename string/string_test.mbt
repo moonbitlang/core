@@ -492,3 +492,14 @@ test "String::fold" {
     content="@list.of(['t', 'h', 'i', 's', ' ', 'i', 's', ' ', 'a', ' ', 'l', 'o', 'n', 'g', ' ', 's', 't', 'r', 'i', 'n', 'g'])",
   )
 }
+
+test "String::repeat" {
+  inspect!("abc".repeat(3), content="abcabcabc")
+  inspect!("".repeat(3), content="")
+  inspect!("a".repeat(0), content="")
+  inspect!("a".repeat(1), content="a")
+  inspect!("a".repeat(2), content="aa")
+  inspect!("a".repeat(3), content="aaa")
+  inspect!("a".repeat(4), content="aaaa")
+  inspect!("a".repeat(5), content="aaaaa")
+}
