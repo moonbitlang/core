@@ -87,6 +87,7 @@ jobs:
 
       - name: coverage report
         run: |
+          moon coverage report -f summary summary
           moon coverage report -f summary summary > coverage_summary.txt
           # Put the coverage report in the pipline output
           cat coverage_summary.txt >> "$GITHUB_STEP_SUMMARY"

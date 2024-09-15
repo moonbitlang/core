@@ -194,6 +194,7 @@ test "log" {
 }
 
 test "backslash escape" {
+  println("222")
   let s = "\n\r\t\b\"'\\"
   inspect!(s.escape(), content="\"\\n\\r\\t\\b\\\"'\\\\\"")
 }
