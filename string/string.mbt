@@ -548,6 +548,22 @@ pub fn rev(self : String) -> String {
   result
 }
 
+/// Repeats the string `n` times.
+pub fn repeat(self : String, n : Int) -> String {
+  if n <= 0 {
+    return ""
+  }
+  if n == 1 {
+    return self
+  }
+  let len = self.length()
+  let buf = Buffer::new(size_hint=len * n)
+  for _ in 0..<n {
+    buf.write_string(self)
+  }
+  buf.to_string()
+}
+
 /// `pad_left` is a new string with `padding_char`s prefixed to `self` if `self.length() < total_width`. The length of the
 /// returned string is `total_width`.
 /// 
