@@ -106,9 +106,9 @@ pub fn op_get[A](self : T[A], index : Int) -> A {
 pub fn set[A](self : T[A], index : Int, value : A) -> T[A] {
   fn set(i : Int, e, s, t : Tree[A]) -> Tree[A] {
     match t {
-      Leaf(l) => Leaf(immutable_set(l, i.land(bitmask), e))
+      Leaf(l) => Leaf(immutable_set(l, i & bitmask, e))
       Node(node) => {
-        let idx = i.lsr(s).land(bitmask)
+        let idx = i.lsr(s) & bitmask
         Node(immutable_set(node, idx, set(i, e, s - num_bits, node[idx])))
       }
       Empty => abort("Index out of bounds")

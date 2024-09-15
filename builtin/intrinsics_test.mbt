@@ -16,26 +16,26 @@
 test "Int::land should perform bitwise AND operation" {
   let a = 0b101
   let b = 0b011
-  inspect!(a.land(b), content="1")
-  inspect!((0xffff_ffff).land(0xa000_0000) == 0xa000_0000, content="true")
-  inspect!((0xffff_ffff).land(0x0) == 0, content="true")
-  inspect!((0xffff_ffff).land(0xffff_ffff) == 0xffff_ffff, content="true")
+  inspect!(a & b, content="1")
+  inspect!((0xffff_ffff & 0xa000_0000) == 0xa000_0000, content="true")
+  inspect!((0xffff_ffff & 0x0) == 0, content="true")
+  inspect!((0xffff_ffff & 0xffff_ffff) == 0xffff_ffff, content="true")
 }
 
 /// test Int::lor
 test "Int::lor should perform bitwise OR operation" {
-  inspect!((0b101).lor(0b011) == 0b111, content="true")
-  inspect!((0xffff_ffff).lor(0xa000_0000) == 0xffff_ffff, content="true")
-  inspect!((0xffff_ffff).lor(0x0) == 0xffff_ffff, content="true")
-  inspect!((0xffff_ffff).lor(0xffff_ffff) == 0xffff_ffff, content="true")
+  inspect!((0b101 | 0b011) == 0b111, content="true")
+  inspect!((0xffff_ffff | 0xa000_0000) == 0xffff_ffff, content="true")
+  inspect!((0xffff_ffff | 0x0) == 0xffff_ffff, content="true")
+  inspect!((0xffff_ffff | 0xffff_ffff) == 0xffff_ffff, content="true")
 }
 
 /// test Int::lxor
 test "Int::lxor should perform bitwise XOR operation" {
-  inspect!((0b101).lxor(0b011) == 0b110, content="true")
-  inspect!((0xffff_ffff).lxor(0xa000_0000) == 0x5fff_ffff, content="true")
-  inspect!((0xffff_ffff).lxor(0x0) == 0xffff_ffff, content="true")
-  inspect!((0xffff_ffff).lxor(0xffff_ffff) == 0, content="true")
+  inspect!((0b101 ^ 0b011) == 0b110, content="true")
+  inspect!((0xffff_ffff ^ 0xa000_0000) == 0x5fff_ffff, content="true")
+  inspect!((0xffff_ffff ^ 0x0) == 0xffff_ffff, content="true")
+  inspect!((0xffff_ffff ^ 0xffff_ffff) == 0, content="true")
 }
 
 /// test Int::lsl
@@ -87,9 +87,9 @@ test "uint test" {
   inspect!(2147483647U * 2U, content="4294967294")
   inspect!(0x80000000U / 2U, content="1073741824")
   inspect!(4294967295U % 17U, content="0")
-  inspect!(0xFFFFFFFFU.land(0xFFFFU), content="65535")
-  inspect!(0xFF00U.lor(0xFFU), content="65535")
-  inspect!(0xFFFF00U.lxor(0xFF00FFU), content="65535")
+  inspect!(0xFFFFFFFFU & 0xFFFFU, content="65535")
+  inspect!(0xFF00U | 0xFFU, content="65535")
+  inspect!(0xFFFF00U ^ 0xFF00FFU, content="65535")
   inspect!(0x1U.lsl(31), content="2147483648")
   inspect!(2147483648U.lsr(31), content="1")
 }
@@ -107,9 +107,9 @@ test "uint64 test" {
   inspect!(9223372036854775808UL * 2UL, content="0")
   inspect!(0x8000000000000000UL / 2UL, content="4611686018427387904")
   inspect!(18446744073709551615UL % 17UL, content="0")
-  inspect!(0xFFFFFFFFUL.land(0xFFFFUL), content="65535")
-  inspect!(0xFF00UL.lor(0xFFUL), content="65535")
-  inspect!(0xFFFF00UL.lxor(0xFF00FFUL), content="65535")
+  inspect!(0xFFFFFFFFUL & 0xFFFFUL, content="65535")
+  inspect!(0xFF00UL | 0xFFUL, content="65535")
+  inspect!(0xFFFF00UL ^ 0xFF00FFUL, content="65535")
   inspect!(0x1UL.lsl(63), content="9223372036854775808")
   inspect!(9223372036854775808UL.lsr(63), content="1")
 }
