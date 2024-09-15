@@ -498,3 +498,9 @@ test "pad_left" {
   inspect!("22".pad_left(2, '0'), content="22")
   inspect!("5".pad_left(4, 'x'), content="xxx5")
 }
+
+test "pad_right" {
+  inspect!("2".pad_right(3, 'x'), content="2xx")
+  inspect!("22".pad_right(2, '0'), content="22")
+  inspect!("5".pad_right(4, 'x'), content="5xxx")
+}

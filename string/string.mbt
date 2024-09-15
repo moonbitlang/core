@@ -538,8 +538,8 @@ pub fn rev(self : String) -> String {
   result
 }
 
-/// Returns a new string with length `total_width` and `padding_char` prefixed 
-/// if `self.length() < total_width`.
+/// `pad_left` is a new string with `padding_char`s prefixed to `self` if `self.length() < total_width`. The length of the
+/// returned string is `total_width`.
 /// 
 /// Example:
 /// 
@@ -558,6 +558,30 @@ pub fn pad_left(
       buf.write_char(padding_char)
     }
     buf.write_string(self)
+    buf.to_string()
+  }
+}
+
+/// `pad_right` is a new String with `padding_char`s suffixed to `self` if `self.length() < total_width`. The length of the
+/// returned string is `total_width`.
+/// 
+/// Example:
+/// 
+/// ```"2".pad_right(3, 'x') == "2xx"```
+pub fn pad_right(
+  self : String,
+  total_width : Int,
+  padding_char : Char
+) -> String {
+  let len = self.length()
+  if len >= total_width {
+    self
+  } else {
+    let buf = Buffer::new(size_hint=total_width)
+    buf.write_string(self)
+    for i = 0; i < total_width - len; i = i + 1 {
+      buf.write_char(padding_char)
+    }
     buf.to_string()
   }
 }
