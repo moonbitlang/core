@@ -110,8 +110,13 @@ pub fn stringify(
           buf
           ..write_char('\"')
           ..write_string(escape(k, ~escape_slash))
-          ..write_string("\": ")
-          .write_string(stringify_inner(v, level + 1))
+          .write_char('\"')
+          if indent == 0 {
+            buf.write_char(':')
+          } else {
+            buf.write_string(": ")
+          }
+          buf.write_string(stringify_inner(v, level + 1))
         }
         buf.write_string(indent_str(level))
         buf..write_char('}').to_string()
