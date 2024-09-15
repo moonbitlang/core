@@ -261,7 +261,7 @@ fn grow[K : Hash + Eq](self : T[K]) -> Unit {
 }
 
 fn index[K : Hash](self : T[K], hash : Int) -> Int {
-  abs(hash).land(self.capacity - 1)
+  abs(hash) & (self.capacity - 1)
 }
 
 fn abs(n : Int) -> Int {
@@ -273,7 +273,7 @@ fn abs(n : Int) -> Int {
 }
 
 fn next_index[K : Hash](self : T[K], index : Int) -> Int {
-  (index + 1).land(self.capacity - 1)
+  (index + 1) & (self.capacity - 1)
 }
 
 fn calc_grow_threshold(capacity : Int) -> Int {

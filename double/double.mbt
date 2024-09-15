@@ -47,7 +47,7 @@ pub fn trunc(self : Double) -> Double {
   if biased_exp >= 1075 {
     return self
   }
-  u64.land(sign_mask.shr(biased_exp - 1012)).reinterpret_as_double()
+  u64.land(sign_mask >> (biased_exp - 1012)).reinterpret_as_double()
 }
 
 test "trunc" {
@@ -120,9 +120,9 @@ pub fn round(self : Double) -> Double {
       .reinterpret_as_double()
   }
   let trunced = u64
-    .land(sign_mask.shr(biased_exp - 1012))
+    .land(sign_mask >> (biased_exp - 1012))
     .reinterpret_as_double()
-  if u64.land(sign_mask.lsr(biased_exp - 1011)) == 0L {
+  if (u64 & sign_mask.lsr(biased_exp - 1011)) == 0L {
     return trunced
   } else if self > 0.0 {
     return trunced + 1.0

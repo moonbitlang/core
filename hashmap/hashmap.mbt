@@ -55,7 +55,7 @@ pub fn set[K : Hash + Eq, V](self : T[K, V], key : K, value : V) -> Unit {
     self.grow()
   }
   let hash = key.hash()
-  for idx = hash.land(self.capacity - 1), entry = { psl: 0, hash, key, value } {
+  for idx = hash & (self.capacity - 1), entry = { psl: 0, hash, key, value } {
     match self.entries[idx] {
       None => {
         self.entries[idx] = Some(entry)
@@ -134,7 +134,7 @@ pub fn contains[K : Hash + Eq, V](self : T[K, V], key : K) -> Bool {
 /// Remove a key-value pair from hash map.
 pub fn remove[K : Hash + Eq, V](self : T[K, V], key : K) -> Unit {
   let hash = key.hash()
-  for i = 0, idx = hash.land(self.capacity - 1) {
+  for i = 0, idx = hash & (self.capacity - 1) {
     match self.entries[idx] {
       Some(entry) => {
         if entry.hash == hash && entry.key == key {
@@ -146,7 +146,7 @@ pub fn remove[K : Hash + Eq, V](self : T[K, V], key : K) -> Unit {
         if i > entry.psl {
           break
         }
-        continue i + 1, (idx + 1).land(self.capacity - 1)
+        continue i + 1, (idx + 1) & (self.capacity - 1)
       }
       None => break
     }
@@ -154,7 +154,7 @@ pub fn remove[K : Hash + Eq, V](self : T[K, V], key : K) -> Unit {
 }
 
 fn shift_back[K : Hash, V](self : T[K, V], start_index : Int) -> Unit {
-  for prev = start_index, curr = (start_index + 1).land(self.capacity - 1) {
+  for prev = start_index, curr = (start_index + 1) & (self.capacity - 1) {
     match self.entries[curr] {
       Some({ psl, hash, key, value, .. }) => {
         if psl == 0 {
@@ -162,7 +162,7 @@ fn shift_back[K : Hash, V](self : T[K, V], start_index : Int) -> Unit {
         }
         self.entries[prev] = Some({ psl: psl - 1, hash, key, value })
         self.entries[curr] = None
-        continue curr, (curr + 1).land(self.capacity - 1)
+        continue curr, (curr + 1) & (self.capacity - 1)
       }
       None => break
     }

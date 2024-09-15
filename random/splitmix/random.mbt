@@ -77,7 +77,7 @@ pub fn split(self : RandomState) -> RandomState {
 }
 
 fn shift_xor(n : Int, w : UInt64) -> UInt64 {
-  w.lxor(w.lsr(n))
+  w ^ w.lsr(n)
 }
 
 fn shift_xor_mul(n : Int, k : UInt64, w : UInt64) -> UInt64 {

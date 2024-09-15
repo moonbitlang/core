@@ -16,7 +16,7 @@ type MyBigInt BigInt
 
 impl Show for MyBigInt with output(self, logger) {
   logger.write_string(
-    "{limbs : \{self._.limbs}, sign : \{self._.sign}, len : \{self._.len} }",
+    "{limbs : \{self.limbs}, sign : \{self.sign}, len : \{self.len} }",
   )
 }
 
@@ -397,14 +397,14 @@ test "shl" {
 
 test "shr" {
   let a = BigInt::from_int64(1234567890123456789L)
-  let b = a.shr(1)
+  let b = a >> 1
   check_len!(b)
   inspect!(b.to_string(), content="617283945061728394")
-  let c = a.shr(64)
+  let c = a >> 64
   check_len!(c)
   inspect!(c.to_string(), content="0")
   let a = BigInt::from_int64((radix * radix / 2).to_int64())
-  let b = a.shr(radix_bit_len * 2)
+  let b = a >> (radix_bit_len * 2)
   check_len!(b)
   inspect!(b.to_string(), content="0")
 }
@@ -813,12 +813,12 @@ test "panic op_mod coverage for modulo by zero" {
 
 test "panic shl coverage for negative shift" {
   let a = BigInt::from_int(123456789)
-  a.shl(-1) |> ignore
+  a << -1 |> ignore
 }
 
 test "panic shr coverage for negative shift" {
   let a = BigInt::from_int(123456789)
-  a.shr(-1) |> ignore
+  a >> -1 |> ignore
 }
 
 test "panic from_string coverage for empty string" {

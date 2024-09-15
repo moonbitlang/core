@@ -115,8 +115,8 @@ pub fn set_utf16_char(self : Bytes, offset : Int, value : Char) -> Int {
     2
   } else if code < 0x110000 {
     let hi = code - 0x10000
-    let lo = hi.lsr(10).lor(0xD800)
-    let hi = hi.land(0x3FF).lor(0xDC00)
+    let lo = hi.lsr(10) | 0xD800
+    let hi = (hi & 0x3FF) | 0xDC00
     self[offset] = lo.land(0xFF).to_byte()
     self[offset + 1] = lo.lsr(8).to_byte()
     self[offset + 2] = hi.land(0xFF).to_byte()

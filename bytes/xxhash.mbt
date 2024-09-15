@@ -32,7 +32,7 @@ fn xxhash32(input : Bytes, seed : Int) -> Int {
       seed + gPRIME5
     }) +
     len
-  finalize(h, input, len.land(-16), len.land(0xF))
+  finalize(h, input, len & -16, len & 0xF)
 }
 
 pub impl Hash for Bytes with hash(self) { xxhash32(self, 0) }
@@ -42,7 +42,7 @@ pub impl Hash for Bytes with hash_combine(self, hasher) {
 }
 
 fn rotl(x : Int, r : Int) -> Int {
-  x.lsl(r).lor(x.lsr(32 - r))
+  x.lsl(r) | x.lsr(32 - r)
 }
 
 fn round(acc : Int, input : Int) -> Int {
@@ -50,7 +50,7 @@ fn round(acc : Int, input : Int) -> Int {
 }
 
 fn avalanche_step(h : Int, rshift : Int, prime : Int) -> Int {
-  h.lxor(h.lsr(rshift)) * prime
+  (h ^ h.lsr(rshift)) * prime
 }
 
 fn avalanche(h : Int) -> Int {
@@ -62,13 +62,10 @@ fn avalanche(h : Int) -> Int {
 }
 
 fn endian32(input : Bytes, cur : Int) -> Int {
-  input[cur + 0]
-  .to_int()
-  .lor(
-    input[cur + 1]
-    .to_int()
-    .lsl(8)
-    .lor(input[cur + 2].to_int().lsl(16).lor(input[cur + 3].to_int().lsl(24))),
+  input[cur + 0].to_int() |
+  (
+    input[cur + 1].to_int().lsl(8) |
+    (input[cur + 2].to_int().lsl(16) | input[cur + 3].to_int().lsl(24))
   )
 }
 

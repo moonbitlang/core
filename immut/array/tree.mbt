@@ -40,9 +40,8 @@ fn get_last[T](self : Tree[T]) -> T {
 
 fn get[T](self : Tree[T], index : Int, shift : Int) -> T {
   match self {
-    Leaf(leaf) => leaf[index.land(bitmask)]
-    Node(node) =>
-      get(node[index.lsr(shift).land(bitmask)], index, shift - num_bits)
+    Leaf(leaf) => leaf[index & bitmask]
+    Node(node) => get(node[index.lsr(shift) & bitmask], index, shift - num_bits)
     Empty => abort("Index out of bounds")
   }
 }
@@ -65,7 +64,7 @@ fn add[T](self : Tree[T], index : Int, shift : Int, value : T) -> Tree[T] {
   match self {
     Leaf(l) => Leaf(immutable_push(l, value))
     Node(n) => {
-      let idx = index.lsr(shift).land(bitmask)
+      let idx = index.lsr(shift) & bitmask
       if idx < n.length() {
         Node(immutable_set(n, idx, n[idx].add(index, shift - num_bits, value)))
       } else {

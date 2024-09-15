@@ -114,11 +114,7 @@ pub fn set[K : Hash + Eq, V](self : Map[K, V], key : K, value : V) -> Unit {
   }
   let hash = key.hash()
   let insert_entry = { idx: -1, psl: 0, hash, key, value }
-  loop
-    0,
-    hash.land(self.capacity_mask),
-    insert_entry,
-    { prev: None, next: None } {
+  loop 0, hash & self.capacity_mask, insert_entry, { prev: None, next: None } {
     i, idx, entry, node =>
       match self.entries[idx] {
         None => {
@@ -141,12 +137,12 @@ pub fn set[K : Hash + Eq, V](self : Map[K, V], key : K, value : V) -> Unit {
             entry.idx = idx
             curr_entry.psl += 1
             continue i + 1,
-              (idx + 1).land(self.capacity_mask),
+              (idx + 1) & self.capacity_mask,
               curr_entry,
               curr_node
           } else {
             entry.psl += 1
-            continue i + 1, (idx + 1).land(self.capacity_mask), entry, node
+            continue i + 1, (idx + 1) & self.capacity_mask, entry, node
           }
         }
       }
@@ -160,7 +156,7 @@ pub fn op_set[K : Hash + Eq, V](self : Map[K, V], key : K, value : V) -> Unit {
 /// Get the value associated with a key.
 pub fn get[K : Hash + Eq, V](self : Map[K, V], key : K) -> V? {
   let hash = key.hash()
-  for i = 0, idx = hash.land(self.capacity_mask) {
+  for i = 0, idx = hash & self.capacity_mask {
     match self.entries[idx] {
       Some(entry) => {
         if entry.hash == hash && entry.key == key {
@@ -169,7 +165,7 @@ pub fn get[K : Hash + Eq, V](self : Map[K, V], key : K) -> V? {
         if i > entry.psl {
           break None
         }
-        continue i + 1, (idx + 1).land(self.capacity_mask)
+        continue i + 1, (idx + 1) & self.capacity_mask
       }
       None => break None
     }
@@ -220,7 +216,7 @@ pub fn contains[K : Hash + Eq, V](self : Map[K, V], key : K) -> Bool {
 /// Remove a key-value pair from hash map.
 pub fn remove[K : Hash + Eq, V](self : Map[K, V], key : K) -> Unit {
   let hash = key.hash()
-  for i = 0, idx = hash.land(self.capacity_mask) {
+  for i = 0, idx = hash & self.capacity_mask {
     match self.entries[idx] {
       Some(entry) => {
         if entry.hash == hash && entry.key == key {
@@ -233,7 +229,7 @@ pub fn remove[K : Hash + Eq, V](self : Map[K, V], key : K) -> Unit {
         if i > entry.psl {
           break
         }
-        continue i + 1, (idx + 1).land(self.capacity_mask)
+        continue i + 1, (idx + 1) & self.capacity_mask
       }
       None => break
     }
@@ -280,7 +276,7 @@ fn remove_entry[K : Eq, V](self : Map[K, V], entry : Entry[K, V]) -> Unit {
 }
 
 fn shift_back[K : Hash, V](self : Map[K, V], start_index : Int) -> Unit {
-  for prev = start_index, curr = (start_index + 1).land(self.capacity_mask) {
+  for prev = start_index, curr = (start_index + 1) & self.capacity_mask {
     match (self.entries[curr], self.list[curr]) {
       (Some(entry), currNode) => {
         if entry.psl == 0 {
@@ -294,7 +290,7 @@ fn shift_back[K : Hash, V](self : Map[K, V], start_index : Int) -> Unit {
         self.list[prev].next = currNode.next
         currNode.prev = None
         currNode.next = None
-        continue curr, (curr + 1).land(self.capacity_mask)
+        continue curr, (curr + 1) & self.capacity_mask
       }
       (None, _) => break
     }
