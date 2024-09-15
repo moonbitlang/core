@@ -16,6 +16,7 @@ impl String {
   iter(String) -> Iter[Char]
   iter2(String) -> Iter2[Int, Char]
   last_index_of(String, String, ~from : Int = ..) -> Int
+  pad_left(String, Int, Char) -> String
   replace(String, ~old : String, ~new : String) -> String
   replace_all(String, ~old : String, ~new : String) -> String
   rev(String) -> String
