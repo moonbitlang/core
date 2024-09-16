@@ -38,11 +38,11 @@ pub fn sin(x : Double) -> Double {
       sign = true
     }
     let mut j = (x_ * pi4).to_int64()
-    if j.land(1L) == 1L {
+    if (j & 1L) == 1L {
       j += 1L
     }
     let y = j.to_double()
-    j = j.land(7L)
+    j = j & 7L
     if j > 3L {
       sign = sign.not()
       j -= 4L
@@ -91,11 +91,11 @@ pub fn cos(x : Double) -> Double {
     let mut sign = false
     let x_ = x.abs()
     let mut j = (x_ * pi4).to_int64()
-    if j.land(1L) == 1L {
+    if (j & 1L) == 1L {
       j += 1L
     }
     let y = j.to_double()
-    j = j.land(7L)
+    j = j & 7L
     if j > 3L {
       sign = sign.not()
       j -= 4L
@@ -150,7 +150,7 @@ pub fn tan(x : Double) -> Double {
   } else {
     let x_ = x.abs()
     let mut j = (x_ * pi4).to_int64()
-    if j.land(1L) == 1L {
+    if (j & 1L) == 1L {
       j += 1L
     }
     let y = j.to_double()
@@ -167,7 +167,7 @@ pub fn tan(x : Double) -> Double {
     } else {
       z
     }
-    if j.land(2L) == 2L {
+    if (j & 2L) == 2L {
       zz = -1.0 / zz
     }
     if x.signum() < 0.0 {

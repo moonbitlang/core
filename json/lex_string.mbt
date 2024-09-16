@@ -66,17 +66,17 @@ fn lex_hex_digits(ctx : ParseContext, n : Int) -> Int!ParseError {
     match read_char(ctx) {
       Some(c) =>
         if c >= 'A' {
-          let d = c.to_int().land((32).lnot()) - 'A'.to_int() + 10
+          let d = (c.to_int() & (32).lnot()) - 'A'.to_int() + 10
           if d > 15 {
             invalid_char!(ctx, shift=-1)
           }
-          r = r.lsl(4).lor(d)
+          r = r.lsl(4) | d
         } else if c >= '0' {
           let d = c.to_int() - '0'.to_int()
           if d > 9 {
             invalid_char!(ctx, shift=-1)
           }
-          r = r.lsl(4).lor(d)
+          r = r.lsl(4) | d
         } else {
           invalid_char!(ctx, shift=-1)
         }

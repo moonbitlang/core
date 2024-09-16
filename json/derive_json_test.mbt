@@ -16,7 +16,7 @@ struct Hello[A, B] {
   fieldA : A
   fieldB : B
   data : Map[String, A]
-} derive(ToJson, @json.FromJson, Show, Eq)
+} derive(ToJson, FromJson, Show, Eq)
 
 test {
   let v = Hello::{ fieldA: 3, fieldB: 2, data: { "a": 3 } }
