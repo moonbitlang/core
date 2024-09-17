@@ -494,13 +494,13 @@ test "String::fold" {
 }
 
 test "pad_left" {
-  inspect!("2".pad_left(3, '0'), content="002")
-  inspect!("22".pad_left(2, '0'), content="22")
-  inspect!("5".pad_left(4, 'x'), content="xxx5")
+  inspect!("2".pad_start(3, '0'), content="002")
+  inspect!("22".pad_start(2, '0'), content="22")
+  inspect!("5".pad_start(4, 'x'), content="xxx5")
 }
 
 test "pad_right" {
-  inspect!("2".pad_right(3, 'x'), content="2xx")
-  inspect!("22".pad_right(2, '0'), content="22")
-  inspect!("5".pad_right(4, 'x'), content="5xxx")
+  inspect!("2".pad_end(3, 'x'), content="2xx")
+  inspect!("22".pad_end(2, '0'), content="22")
+  inspect!("5".pad_end(4, 'x'), content="5xxx")
 }

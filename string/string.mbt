@@ -544,7 +544,7 @@ pub fn rev(self : String) -> String {
 /// Example:
 /// 
 /// ```"2".pad_left(3, '0') == "002"```
-pub fn pad_left(
+pub fn pad_start(
   self : String,
   total_width : Int,
   padding_char : Char
@@ -568,11 +568,7 @@ pub fn pad_left(
 /// Example:
 /// 
 /// ```"2".pad_right(3, 'x') == "2xx"```
-pub fn pad_right(
-  self : String,
-  total_width : Int,
-  padding_char : Char
-) -> String {
+pub fn pad_end(self : String, total_width : Int, padding_char : Char) -> String {
   let len = self.length()
   if len >= total_width {
     self
