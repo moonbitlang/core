@@ -173,27 +173,27 @@ test "panic substring_length_index_error" {
 }
 
 test "trim_left" {
-  inspect!("aaabcd".trim_left("a"), content="bcd")
-  inspect!("aaabcd".trim_left(" "), content="aaabcd")
-  inspect!("aaabcd".trim_left(""), content="aaabcd")
-  inspect!("  abc".trim_left(" "), content="abc")
+  inspect!("aaabcd".trim_start("a"), content="bcd")
+  inspect!("aaabcd".trim_start(" "), content="aaabcd")
+  inspect!("aaabcd".trim_start(""), content="aaabcd")
+  inspect!("  abc".trim_start(" "), content="abc")
   inspect!(
-    "哇你好月兔你好哇".trim_left("你好哇"),
+    "哇你好月兔你好哇".trim_start("你好哇"),
     content="月兔你好哇",
   )
-  inspect!("😍😍😭😡😡".trim_left("😍"), content="😭😡😡")
+  inspect!("😍😍😭😡😡".trim_start("😍"), content="😭😡😡")
 }
 
 test "trim_right" {
-  inspect!("abcddd".trim_right("d"), content="abc")
-  inspect!("abcddd".trim_right(" "), content="abcddd")
-  inspect!("abcddd".trim_right(""), content="abcddd")
-  inspect!("abc  ".trim_right(" "), content="abc")
+  inspect!("abcddd".trim_end("d"), content="abc")
+  inspect!("abcddd".trim_end(" "), content="abcddd")
+  inspect!("abcddd".trim_end(""), content="abcddd")
+  inspect!("abc  ".trim_end(" "), content="abc")
   inspect!(
-    "哇你好月兔你好哇".trim_right("你好哇"),
+    "哇你好月兔你好哇".trim_end("你好哇"),
     content="哇你好月兔",
   )
-  inspect!("😍😍😭😡😡".trim_right("😡"), content="😍😍😭")
+  inspect!("😍😍😭😡😡".trim_end("😡"), content="😍😍😭")
 }
 
 test "trim" {
@@ -494,13 +494,13 @@ test "String::fold" {
 }
 
 test "pad_left" {
-  inspect!("2".pad_left(3, '0'), content="002")
-  inspect!("22".pad_left(2, '0'), content="22")
-  inspect!("5".pad_left(4, 'x'), content="xxx5")
+  inspect!("2".pad_start(3, '0'), content="002")
+  inspect!("22".pad_start(2, '0'), content="22")
+  inspect!("5".pad_start(4, 'x'), content="xxx5")
 }
 
 test "pad_right" {
-  inspect!("2".pad_right(3, 'x'), content="2xx")
-  inspect!("22".pad_right(2, '0'), content="22")
-  inspect!("5".pad_right(4, 'x'), content="5xxx")
+  inspect!("2".pad_end(3, 'x'), content="2xx")
+  inspect!("22".pad_end(2, '0'), content="22")
+  inspect!("5".pad_end(4, 'x'), content="5xxx")
 }

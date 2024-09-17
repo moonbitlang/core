@@ -16,8 +16,8 @@ impl String {
   iter(String) -> Iter[Char]
   iter2(String) -> Iter2[Int, Char]
   last_index_of(String, String, ~from : Int = ..) -> Int
-  pad_left(String, Int, Char) -> String
-  pad_right(String, Int, Char) -> String
+  pad_end(String, Int, Char) -> String
+  pad_start(String, Int, Char) -> String
   replace(String, ~old : String, ~new : String) -> String
   replace_all(String, ~old : String, ~new : String) -> String
   rev(String) -> String
@@ -31,9 +31,11 @@ impl String {
   to_lower(String) -> String
   to_upper(String) -> String
   trim(String, String) -> String
+  trim_end(String, String) -> String
   trim_left(String, String) -> String
   trim_right(String, String) -> String
   trim_space(String) -> String
+  trim_start(String, String) -> String
 }
 
 // Type aliases
