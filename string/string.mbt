@@ -537,3 +537,51 @@ pub fn rev(self : String) -> String {
   }
   result
 }
+
+/// `pad_left` is a new string with `padding_char`s prefixed to `self` if `self.length() < total_width`. The length of the
+/// returned string is `total_width`.
+/// 
+/// Example:
+/// 
+/// ```"2".pad_left(3, '0') == "002"```
+pub fn pad_left(
+  self : String,
+  total_width : Int,
+  padding_char : Char
+) -> String {
+  let len = self.length()
+  if len >= total_width {
+    self
+  } else {
+    let buf = Buffer::new(size_hint=total_width)
+    for i = 0; i < total_width - len; i = i + 1 {
+      buf.write_char(padding_char)
+    }
+    buf.write_string(self)
+    buf.to_string()
+  }
+}
+
+/// `pad_right` is a new String with `padding_char`s suffixed to `self` if `self.length() < total_width`. The length of the
+/// returned string is `total_width`.
+/// 
+/// Example:
+/// 
+/// ```"2".pad_right(3, 'x') == "2xx"```
+pub fn pad_right(
+  self : String,
+  total_width : Int,
+  padding_char : Char
+) -> String {
+  let len = self.length()
+  if len >= total_width {
+    self
+  } else {
+    let buf = Buffer::new(size_hint=total_width)
+    buf.write_string(self)
+    for i = 0; i < total_width - len; i = i + 1 {
+      buf.write_char(padding_char)
+    }
+    buf.to_string()
+  }
+}
