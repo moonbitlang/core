@@ -31,9 +31,11 @@ impl String {
   to_lower(String) -> String
   to_upper(String) -> String
   trim(String, String) -> String
+  trim_end(String, String) -> String
   trim_left(String, String) -> String
   trim_right(String, String) -> String
   trim_space(String) -> String
+  trim_start(String, String) -> String
 }
 
 // Type aliases
