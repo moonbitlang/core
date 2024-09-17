@@ -181,7 +181,7 @@ test "trim_left" {
     "哇你好月兔你好哇".trim_start("你好哇"),
     content="月兔你好哇",
   )
-  inspect!("😍😍😭😡😡".trim_left("😍"), content="😭😡😡")
+  inspect!("😍😍😭😡😡".trim_start("😍"), content="😭😡😡")
 }
 
 test "trim_right" {
@@ -193,7 +193,7 @@ test "trim_right" {
     "哇你好月兔你好哇".trim_end("你好哇"),
     content="哇你好月兔",
   )
-  inspect!("😍😍😭😡😡".trim_right("😡"), content="😍😍😭")
+  inspect!("😍😍😭😡😡".trim_end("😡"), content="😍😍😭")
 }
 
 test "trim" {
