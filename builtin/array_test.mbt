@@ -71,6 +71,16 @@ test "array_equal" {
   inspect!([1, 2] == [1, 2, 3], content="false")
 }
 
+test "array_compare" {
+  let arr1 = [1, 2, 3]
+  let arr2 = [1, 2, 4]
+  let arr3 = [1, 2]
+  inspect!(arr1.compare(arr2), content="-1")
+  inspect!(arr1.compare(arr3), content="1")
+  inspect!(arr3.compare(arr1), content="-1")
+  inspect!(arr1.compare(arr1), content="0")
+}
+
 test "array_add" {
   let arr1 = [1, 2, 3]
   let arr2 = [4, 5, 6]
