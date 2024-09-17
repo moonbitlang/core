@@ -18,6 +18,7 @@ impl String {
   last_index_of(String, String, ~from : Int = ..) -> Int
   pad_end(String, Int, Char) -> String
   pad_start(String, Int, Char) -> String
+  repeat(String, Int) -> String
   replace(String, ~old : String, ~new : String) -> String
   replace_all(String, ~old : String, ~new : String) -> String
   rev(String) -> String
