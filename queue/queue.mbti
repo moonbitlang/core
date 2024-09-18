@@ -1,5 +1,7 @@
 package moonbitlang/core/queue
 
+alias @moonbitlang/core/quickcheck as @quickcheck
+
 // Values
 
 // Types and methods
@@ -34,4 +36,6 @@ impl T {
 
 // Extension Methods
 impl Show for T
+
+impl @quickcheck.Arbitrary for T
 

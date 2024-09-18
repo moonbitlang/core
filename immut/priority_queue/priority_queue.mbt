@@ -203,6 +203,13 @@ pub impl[A : Show + Compare] Show for T[A] with output(self, logger) {
   logger.write_char(')')
 }
 
+pub impl[X : @quickcheck.Arbitrary + Compare] @quickcheck.Arbitrary for T[X] with arbitrary(
+  size,
+  rs
+) {
+  @quickcheck.Arbitrary::arbitrary(size, rs) |> from_array
+}
+
 pub fn to_string[A : Show + Compare](self : T[A]) -> String {
   Show::to_string(self)
 }

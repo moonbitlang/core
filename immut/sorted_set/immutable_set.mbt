@@ -511,6 +511,13 @@ pub fn to_string[A : Show](self : T[A]) -> String {
   Show::to_string(self)
 }
 
+pub impl[X : @quickcheck.Arbitrary + Compare] @quickcheck.Arbitrary for T[X] with arbitrary(
+  size,
+  rs
+) {
+  @quickcheck.Arbitrary::arbitrary(size, rs) |> from_array
+}
+
 // The following are the helper functions or types used by the internal implementation of ImmutableSet
 
 priv enum SplitBis[A] {

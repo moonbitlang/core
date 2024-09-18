@@ -113,6 +113,13 @@ pub fn op_equal[K : Eq, V : Eq](self : T[K, V], other : T[K, V]) -> Bool {
   self.to_array() == other.to_array()
 }
 
+pub impl[K : @quickcheck.Arbitrary + Compare, V : @quickcheck.Arbitrary] @quickcheck.Arbitrary for T[
+  K,
+  V,
+] with arbitrary(size, rs) {
+  @quickcheck.Arbitrary::arbitrary(size, rs) |> from_array
+}
+
 /// The ratio between the sizes of the left and right subtrees.
 let ratio = 5
 

@@ -381,6 +381,13 @@ pub impl[V : Show] Show for T[V] with output(self, logger) {
   }
 }
 
+pub impl[X : @quickcheck.Arbitrary + Compare] @quickcheck.Arbitrary for T[X] with arbitrary(
+  size,
+  rs
+) {
+  @quickcheck.Arbitrary::arbitrary(size, rs) |> T::from_iter
+}
+
 pub fn to_string[V : Show](self : T[V]) -> String {
   Show::to_string(self)
 }
