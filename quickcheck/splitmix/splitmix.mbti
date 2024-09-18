@@ -1,4 +1,4 @@
-package moonbitlang/core/random/splitmix
+package moonbitlang/core/quickcheck/splitmix
 
 // Values
 
