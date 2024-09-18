@@ -378,3 +378,86 @@ test "stringify number" {
     ,
   )
 }
+
+test "stringify with indent" {
+  let json : Json = {
+    "key": [1.0, true, Null, [], { "key": "value", "value": 100.0 }],
+    "int": 12345,
+    "double": 123.45,
+    "null": Null,
+    "bool": false,
+    "obj": {},
+  }
+  inspect!(
+    json.stringify(indent=0),
+    content=
+      #|{"key":[1,true,null,[],{"key":"value","value":100}],"int":12345,"double":123.45,"null":null,"bool":false,"obj":{}}
+    ,
+  )
+  inspect!(
+    json.stringify(indent=1),
+    content=
+      #|{
+      #| "key": [
+      #|  1,
+      #|  true,
+      #|  null,
+      #|  [],
+      #|  {
+      #|   "key": "value",
+      #|   "value": 100
+      #|  }
+      #| ],
+      #| "int": 12345,
+      #| "double": 123.45,
+      #| "null": null,
+      #| "bool": false,
+      #| "obj": {}
+      #|}
+    ,
+  )
+  inspect!(
+    json.stringify(indent=2),
+    content=
+      #|{
+      #|  "key": [
+      #|    1,
+      #|    true,
+      #|    null,
+      #|    [],
+      #|    {
+      #|      "key": "value",
+      #|      "value": 100
+      #|    }
+      #|  ],
+      #|  "int": 12345,
+      #|  "double": 123.45,
+      #|  "null": null,
+      #|  "bool": false,
+      #|  "obj": {}
+      #|}
+    ,
+  )
+  inspect!(
+    json.stringify(indent=4),
+    content=
+      #|{
+      #|    "key": [
+      #|        1,
+      #|        true,
+      #|        null,
+      #|        [],
+      #|        {
+      #|            "key": "value",
+      #|            "value": 100
+      #|        }
+      #|    ],
+      #|    "int": 12345,
+      #|    "double": 123.45,
+      #|    "null": null,
+      #|    "bool": false,
+      #|    "obj": {}
+      #|}
+    ,
+  )
+}

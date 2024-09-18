@@ -213,7 +213,7 @@ pub fn trim(self : String, trim_set : String) -> String {
   if self == "" || trim_set == "" {
     self
   } else {
-    self.trim_left(trim_set).trim_right(trim_set)
+    self.trim_start(trim_set).trim_end(trim_set)
   }
 }
 
@@ -221,8 +221,13 @@ pub fn contains_char(self : String, c : Char) -> Bool {
   self.iter().any(fn(ch) { ch == c })
 }
 
-/// Removes all leading chars contained in the given string.
+/// @alert deprecated "Use `String::trim_start` instead"
 pub fn trim_left(self : String, trim_set : String) -> String {
+  self.trim_start(trim_set)
+}
+
+/// Removes all leading chars contained in the given string.
+pub fn trim_start(self : String, trim_set : String) -> String {
   let len = self.length()
   for i = 0; i < len; i = i + 1 {
     let c1 = self[i]
@@ -246,8 +251,13 @@ pub fn trim_left(self : String, trim_set : String) -> String {
   }
 }
 
-/// Removes all trailing chars contained in the given string.
+/// @alert deprecated "Use `String::trim_end` instead"
 pub fn trim_right(self : String, trim_set : String) -> String {
+  self.trim_end(trim_set)
+}
+
+/// Removes all trailing chars contained in the given string.
+pub fn trim_end(self : String, trim_set : String) -> String {
   let len = self.length()
   for i = len - 1; i >= 0; i = i - 1 {
     let c2 = self[i]
@@ -536,4 +546,64 @@ pub fn rev(self : String) -> String {
     result = result + self[i].to_string()
   }
   result
+}
+
+/// Repeats the string `n` times.
+pub fn repeat(self : String, n : Int) -> String {
+  if n <= 0 {
+    return ""
+  }
+  if n == 1 {
+    return self
+  }
+  let len = self.length()
+  let buf = Buffer::new(size_hint=len * n)
+  for _ in 0..<n {
+    buf.write_string(self)
+  }
+  buf.to_string()
+}
+
+/// `pad_left` is a new string with `padding_char`s prefixed to `self` if `self.length() < total_width`. The length of the
+/// returned string is `total_width`.
+/// 
+/// Example:
+/// 
+/// ```"2".pad_left(3, '0') == "002"```
+pub fn pad_start(
+  self : String,
+  total_width : Int,
+  padding_char : Char
+) -> String {
+  let len = self.length()
+  if len >= total_width {
+    self
+  } else {
+    let buf = Buffer::new(size_hint=total_width)
+    for i = 0; i < total_width - len; i = i + 1 {
+      buf.write_char(padding_char)
+    }
+    buf.write_string(self)
+    buf.to_string()
+  }
+}
+
+/// `pad_right` is a new String with `padding_char`s suffixed to `self` if `self.length() < total_width`. The length of the
+/// returned string is `total_width`.
+/// 
+/// Example:
+/// 
+/// ```"2".pad_right(3, 'x') == "2xx"```
+pub fn pad_end(self : String, total_width : Int, padding_char : Char) -> String {
+  let len = self.length()
+  if len >= total_width {
+    self
+  } else {
+    let buf = Buffer::new(size_hint=total_width)
+    buf.write_string(self)
+    for i = 0; i < total_width - len; i = i + 1 {
+      buf.write_char(padding_char)
+    }
+    buf.to_string()
+  }
 }

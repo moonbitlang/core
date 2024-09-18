@@ -100,6 +100,25 @@ pub fn op_equal[T : Eq](self : Array[T], other : Array[T]) -> Bool {
   }
 }
 
+pub fn compare[T : Compare](self : Array[T], other : Array[T]) -> Int {
+  let len_self = self.length()
+  let len_other = other.length()
+  if len_self < len_other {
+    -1
+  } else if len_self > len_other {
+    1
+  } else {
+    for i in 0..<len_self {
+      let cmp = self[i].compare(other[i])
+      if cmp != 0 {
+        break cmp
+      }
+    } else {
+      0
+    }
+  }
+}
+
 pub fn op_add[T](self : Array[T], other : Array[T]) -> Array[T] {
   let result = Array::make_uninit(self.length() + other.length())
   UninitializedArray::unsafe_blit(
