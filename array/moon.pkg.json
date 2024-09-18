@@ -4,7 +4,7 @@
     "moonbitlang/core/coverage",
     "moonbitlang/core/test",
     "moonbitlang/core/quickcheck",
-    "moonbitlang/core/random/splitmix"
+    "moonbitlang/core/quickcheck/splitmix"
   ],
   "test-import": [
     "moonbitlang/core/random"
