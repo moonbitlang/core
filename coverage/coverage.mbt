@@ -117,6 +117,15 @@ pub fn end() -> Unit {
     println(trailing_line)
   }
   println("----- END MOONBIT COVERAGE -----")
+  loop counters.val {
+    MCons((_, counter), xs) => {
+      for i = 0; i < counter.counter.length(); i = i + 1 {
+        counter.counter[i] = 0
+      }
+      continue xs
+    }
+    MNil => ()
+  }
 }
 
 fn coverage_log(
