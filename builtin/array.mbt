@@ -861,7 +861,7 @@ pub fn repeat[T](self : Array[T], times : Int) -> Array[T] {
 ///
 /// # Example
 /// ```
-/// let sum = [1, 2, 3, 4, 5].fold(~init=0, fn { sum, elem => sum + elem })
+/// let sum = [1, 2, 3, 4, 5].fold(init=0, fn { sum, elem => sum + elem })
 /// sum // 15
 /// ```
 pub fn fold[A, B](self : Array[A], ~init : B, f : (B, A) -> B) -> B {
@@ -876,7 +876,7 @@ pub fn fold[A, B](self : Array[A], ~init : B, f : (B, A) -> B) -> B {
 ///
 /// # Example
 /// ```
-/// let sum = [1, 2, 3, 4, 5].rev_fold(~init=0, fn { sum, elem => sum + elem })
+/// let sum = [1, 2, 3, 4, 5].rev_fold(init=0, fn { sum, elem => sum + elem })
 /// sum // 15
 /// ```
 pub fn rev_fold[A, B](self : Array[A], ~init : B, f : (B, A) -> B) -> B {
@@ -891,7 +891,7 @@ pub fn rev_fold[A, B](self : Array[A], ~init : B, f : (B, A) -> B) -> B {
 ///
 /// # Example
 /// ```
-/// let sum = [1, 2, 3, 4, 5].foldi(~init=0, fn { index, sum, elem => sum + index })
+/// let sum = [1, 2, 3, 4, 5].foldi(init=0, fn { index, sum, elem => sum + index })
 /// sum // 10
 /// ```
 pub fn foldi[A, B](self : Array[A], ~init : B, f : (Int, B, A) -> B) -> B {
@@ -906,7 +906,7 @@ pub fn foldi[A, B](self : Array[A], ~init : B, f : (Int, B, A) -> B) -> B {
 ///
 /// # Example
 /// ```
-/// let sum = [1, 2, 3, 4, 5].rev_foldi(~init=0, fn { index, sum, elem => sum + index })
+/// let sum = [1, 2, 3, 4, 5].rev_foldi(init=0, fn { index, sum, elem => sum + index })
 /// sum // 10
 /// ```
 pub fn rev_foldi[A, B](self : Array[A], ~init : B, f : (Int, B, A) -> B) -> B {
