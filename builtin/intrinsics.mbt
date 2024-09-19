@@ -245,6 +245,12 @@ pub fn UInt::shr(self : UInt, shift : Int) -> UInt = "%u32.shr"
 
 pub fn UInt::op_shr(self : UInt, shift : Int) -> UInt = "%u32.shr"
 
+pub fn UInt::clz(self : UInt) -> Int = "%u32.clz"
+
+pub fn UInt::ctz(self : UInt) -> Int = "%u32.ctz"
+
+pub fn UInt::popcnt(self : UInt) -> Int = "%u32.popcnt"
+
 pub fn UInt::to_uint64(self : UInt) -> UInt64 {
   UInt64::extend_uint(self)
 }

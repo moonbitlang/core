@@ -125,6 +125,12 @@ pub fn UInt64::lsr(self : UInt64, shift : Int) -> UInt64 = "%u64.shr"
 
 pub fn UInt64::op_shr(self : UInt64, shift : Int) -> UInt64 = "%u64.shr"
 
+pub fn UInt64::clz(self : UInt64) -> Int = "%u64.clz"
+
+pub fn UInt64::ctz(self : UInt64) -> Int = "%u64.ctz"
+
+pub fn UInt64::popcnt(self : UInt64) -> Int = "%u64.popcnt"
+
 pub fn UInt64::shr(self : UInt64, shift : Int) -> UInt64 = "%u64.shr"
 
 pub fn UInt64::to_float(self : UInt64) -> Float = "%u64.to_f32"

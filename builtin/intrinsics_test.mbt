@@ -210,3 +210,83 @@ test "Int::to_double" {
   inspect!((10).to_double(), content="10")
   inspect!((20).to_double(), content="20")
 }
+
+test "Int::clz" {
+  // Test for the smallest positive integer
+  inspect!(Int::clz(1), content="31")
+
+  // Test for the largest positive integer
+  inspect!(Int::clz(2147483647), content="1")
+
+  // Test for zero, which is an edge case
+  inspect!(Int::clz(0), content="32")
+
+  // Test for the smallest negative integer
+  inspect!(Int::clz(-2147483648), content="0")
+
+  // Test for the largest negative integer
+  inspect!(Int::clz(-1), content="0")
+  // Random cases to cover various scenarios
+  inspect!(Int::clz(123456), content="15")
+  inspect!(Int::clz(987654), content="12")
+  inspect!(Int::clz(54321), content="16")
+  inspect!(Int::clz(123456789), content="5")
+  inspect!(Int::clz(987654321), content="2")
+  inspect!(Int::clz(1024), content="21")
+  inspect!(Int::clz(65536), content="15")
+  inspect!(Int::clz(32768), content="16")
+  inspect!(Int::clz(16384), content="17")
+  inspect!(Int::clz(8192), content="18")
+}
+
+test "grouped test for boundary cases" {
+  inspect!(UInt::clz(0x00000000U), content="32")
+  inspect!(UInt::clz(0x80000000U), content="0")
+  inspect!(UInt::clz(0x40000000U), content="1")
+  inspect!(UInt::clz(0x20000000U), content="2")
+  inspect!(UInt::clz(0x10000000U), content="3")
+}
+
+test "grouped test for random cases" {
+  inspect!(UInt::clz(0x12345678U), content="3")
+  inspect!(UInt::clz(0x87654321U), content="0")
+  inspect!(UInt::clz(0xABCDEF01U), content="0")
+  inspect!(UInt::clz(0x0FEDCBA9U), content="4")
+  inspect!(UInt::clz(0x0000FFFFU), content="16")
+  inspect!(UInt::clz(0xFFFF0000U), content="0")
+}
+
+test "grouped test for edge and random cases" {
+  inspect!(UInt::clz(0x00000001U), content="31")
+  inspect!(UInt::clz(0x00000002U), content="30")
+  inspect!(UInt::clz(0x00000004U), content="29")
+  inspect!(UInt::clz(0x00000008U), content="28")
+  inspect!(UInt::clz(0x00000010U), content="27")
+  inspect!(UInt::clz(0x00000020U), content="26")
+  inspect!(UInt::clz(0x00000040U), content="25")
+  inspect!(UInt::clz(0x00000080U), content="24")
+  inspect!(UInt::clz(0x00000100U), content="23")
+  inspect!(UInt::clz(0x00000200U), content="22")
+  inspect!(UInt::clz(0x00000400U), content="21")
+  inspect!(UInt::clz(0x00000800U), content="20")
+  inspect!(UInt::clz(0x00001000U), content="19")
+  inspect!(UInt::clz(0x00002000U), content="18")
+  inspect!(UInt::clz(0x00004000U), content="17")
+  inspect!(UInt::clz(0x00008000U), content="16")
+  inspect!(UInt::clz(0x00010000U), content="15")
+  inspect!(UInt::clz(0x00020000U), content="14")
+  inspect!(UInt::clz(0x00040000U), content="13")
+  inspect!(UInt::clz(0x00080000U), content="12")
+  inspect!(UInt::clz(0x00100000U), content="11")
+  inspect!(UInt::clz(0x00200000U), content="10")
+  inspect!(UInt::clz(0x00400000U), content="9")
+  inspect!(UInt::clz(0x00800000U), content="8")
+  inspect!(UInt::clz(0x01000000U), content="7")
+  inspect!(UInt::clz(0x02000000U), content="6")
+  inspect!(UInt::clz(0x04000000U), content="5")
+  inspect!(UInt::clz(0x08000000U), content="4")
+  inspect!(UInt::clz(0x10000000U), content="3")
+  inspect!(UInt::clz(0x20000000U), content="2")
+  inspect!(UInt::clz(0x40000000U), content="1")
+  inspect!(UInt::clz(0x80000000U), content="0")
+}
