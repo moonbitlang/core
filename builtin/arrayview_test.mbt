@@ -106,3 +106,27 @@ test "to_string" {
   inspect!(arr[1:3].to_string(), content="[1, 2]")
   inspect!("\{arr[1:3]}!", content="[1, 2]!")
 }
+
+test "arrayview_fold" {
+  let arr = [1, 2, 3][:]
+  let sum = arr.fold(fn(acc, x) { acc + x }, init=0)
+  inspect!(sum, content="6")
+}
+
+test "arrayview_rev_fold" {
+  let arr = [1, 2, 3][:]
+  let sum = arr.rev_fold(fn(acc, x) { acc + x }, init=0)
+  inspect!(sum, content="6")
+}
+
+test "arrayview_foldi" {
+  let arr = [1, 2, 3][:]
+  let sum = arr.foldi(fn(i, acc, x) { acc + i + x }, init=0)
+  inspect!(sum, content="9")
+}
+
+test "arrayview_rev_foldi" {
+  let arr = [1, 2, 3][:]
+  let sum = arr.rev_foldi(fn(i, acc, x) { acc + i + x }, init=0)
+  inspect!(sum, content="9")
+}

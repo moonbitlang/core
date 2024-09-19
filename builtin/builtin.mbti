@@ -120,11 +120,15 @@ impl Array {
 
 type ArrayView
 impl ArrayView {
+  fold[A, B](Self[A], ~init : B, (B, A) -> B) -> B
+  foldi[A, B](Self[A], ~init : B, (Int, B, A) -> B) -> B
   iter[A](Self[A]) -> Iter[A]
   length[T](Self[T]) -> Int
   op_as_view[T](Self[T], ~start : Int, ~end? : Int) -> Self[T]
   op_get[T](Self[T], Int) -> T
   op_set[T](Self[T], Int, T) -> Unit
+  rev_fold[A, B](Self[A], ~init : B, (B, A) -> B) -> B
+  rev_foldi[A, B](Self[A], ~init : B, (Int, B, A) -> B) -> B
   swap[T](Self[T], Int, Int) -> Unit
   to_string[X : Show](Self[X]) -> String
 }
