@@ -157,8 +157,9 @@ pub fn rev_foldi[A, B](
   ~init : B,
   f : (Int, B, A) -> B
 ) -> B {
-  for i = self.length() - 1, acc = init; i >= 0; {
-    continue i - 1, f(self.length() - i - 1, acc, self[i])
+  let len = self.length()
+  for i = len - 1, acc = init; i >= 0; {
+    continue i - 1, f(len - i - 1, acc, self[i])
   } else {
     acc
   }
