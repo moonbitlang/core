@@ -250,6 +250,13 @@ pub fn T::from_array[K : Eq + Hash, V](arr : Array[(K, V)]) -> T[K, V] {
   }
 }
 
+pub impl[K : Eq + Hash + @quickcheck.Arbitrary, V : @quickcheck.Arbitrary] @quickcheck.Arbitrary for T[
+  K,
+  V,
+] with arbitrary(size, rs) {
+  @quickcheck.Arbitrary::arbitrary(size, rs) |> from_array
+}
+
 pub fn T::of[K : Eq + Hash, V](arr : FixedArray[(K, V)]) -> T[K, V] {
   loop arr.length(), T::new() {
     0, map => map

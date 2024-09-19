@@ -38,3 +38,5 @@ impl Show for RationalError
 
 impl Show for T
 
+impl @moonbitlang/core/quickcheck.Arbitrary for T
+

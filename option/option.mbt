@@ -397,3 +397,22 @@ test "or error" {
     "This is ok",
   )
 }
+
+pub impl[X : @quickcheck.Arbitrary] @quickcheck.Arbitrary for X? with arbitrary(
+  i,
+  rs
+) {
+  if rs.next_double() < 0.3 {
+    None
+  } else {
+    Some(@quickcheck.Arbitrary::arbitrary(i, rs))
+  }
+}
+
+test "arbitrary" {
+  let samples : Array[Int?] = @quickcheck.samples(10)
+  inspect!(
+    samples,
+    content="[None, None, Some(-1), Some(0), None, Some(0), Some(-5), Some(2), None, Some(4)]",
+  )
+}

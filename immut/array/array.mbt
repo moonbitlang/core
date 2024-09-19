@@ -354,6 +354,13 @@ pub fn T::of[A](arr : FixedArray[A]) -> T[A] {
   makei(arr.length(), fn(i) { arr[i] })
 }
 
+pub impl[X : @quickcheck.Arbitrary] @quickcheck.Arbitrary for T[X] with arbitrary(
+  size,
+  rs
+) {
+  @quickcheck.Arbitrary::arbitrary(size, rs) |> from_array
+}
+
 test "mix" {
   let mut v = T::new()
   inspect!(v.tree.is_empty_tree(), content="true")

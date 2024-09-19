@@ -3,7 +3,7 @@
     "moonbitlang/core/builtin",
     "moonbitlang/core/coverage",
     "moonbitlang/core/quickcheck",
-    "moonbitlang/core/random/splitmix"
+    "moonbitlang/core/quickcheck/splitmix"
   ],
   "test-import": [
     "moonbitlang/core/test"
