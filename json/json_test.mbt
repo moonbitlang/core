@@ -287,15 +287,18 @@ test "stringify escape" {
       #|{"\b":"\"hello\"","\n":"\n\r\t\f","\\":"\/","\u001f":"\u0001","actual":"a,\"b\",c","escpae":"\u0000"}
     ,
   )
-  inspect!(json.stringify(escape_slash=false, indent=2), content=
-    #|{
-    #|  "\b": "\"hello\"",
-    #|  "\n": "\n\r\t\f",
-    #|  "\\": "/",
-    #|  "\u001f": "\u0001",
-    #|  "actual": "a,\"b\",c",
-    #|  "escpae": "\u0000"
-    #|}
+  inspect!(
+    json.stringify(escape_slash=false, indent=2),
+    content=
+      #|{
+      #|  "\b": "\"hello\"",
+      #|  "\n": "\n\r\t\f",
+      #|  "\\": "/",
+      #|  "\u001f": "\u0001",
+      #|  "actual": "a,\"b\",c",
+      #|  "escpae": "\u0000"
+      #|}
+    ,
   )
   inspect!(
     json.stringify(escape_slash=false),
