@@ -200,34 +200,14 @@ test "get as object" {
 }
 
 test "deep access" {
-  let json = Json::Object(
-    Map::of(
-      [
-        (
-          "key",
-          Json::Array(
-            [
-              Json::Number(1.0),
-              Json::True,
-              Json::Null,
-              Json::Array([]),
-              Json::Object(
-                Map::of(
-                  [
-                    ("key", Json::String("value")),
-                    ("value", Json::Number(100.0)),
-                  ],
-                ),
-              ),
-            ],
-          ),
-        ),
-        ("null", Json::Null),
-        ("bool", Json::False),
-        ("obj", Json::Object({})),
-      ],
-    ),
-  )
+  let json : Json = {
+    "key": [1.0, true, Null, [], { "key": "value", "value": 100.0 }],
+    "int": 12345,
+    "double": 123.45,
+    "null": Null,
+    "bool": false,
+    "obj": {},
+  }
   inspect!(json.value("null").bind(@json.as_null), content="Some(())")
   inspect!(
     json.value("key").bind(fn { array => array.item(2) }).bind(@json.as_null),
@@ -306,6 +286,16 @@ test "stringify escape" {
     content=
       #|{"\b":"\"hello\"","\n":"\n\r\t\f","\\":"\/","\u001f":"\u0001","actual":"a,\"b\",c","escpae":"\u0000"}
     ,
+  )
+  inspect!(json.stringify(escape_slash=false, indent=2), content=
+    #|{
+    #|  "\b": "\"hello\"",
+    #|  "\n": "\n\r\t\f",
+    #|  "\\": "/",
+    #|  "\u001f": "\u0001",
+    #|  "actual": "a,\"b\",c",
+    #|  "escpae": "\u0000"
+    #|}
   )
   inspect!(
     json.stringify(escape_slash=false),
