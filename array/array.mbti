@@ -1,5 +1,7 @@
 package moonbitlang/core/array
 
+alias @moonbitlang/core/quickcheck as @quickcheck
+
 // Values
 
 // Types and methods
@@ -16,7 +18,6 @@ impl FixedArray {
   from_array[T](Array[T]) -> Self[T]
   from_iter[T](Iter[T]) -> Self[T]
   is_sorted[T : Compare + Eq](Self[T]) -> Bool
-  iter[T](Self[T]) -> Iter[T]
   last[A](Self[A]) -> A?
   makei[T](Int, (Int) -> T) -> Self[T]
   map[T, U](Self[T], (T) -> U) -> Self[U]
@@ -40,8 +41,6 @@ impl FixedArray {
 impl Array {
   copy[T](Self[T]) -> Self[T]
   from_iter[T](Iter[T]) -> Self[T]
-  iter[T](Self[T]) -> Iter[T]
-  iter2[A](Self[A]) -> Iter2[Int, A]
   join[T : Show](Self[T], String) -> String
   last[A](Self[A]) -> A?
   makei[T](Int, (Int) -> T) -> Self[T]
@@ -63,4 +62,7 @@ impl ArrayView {
 // Traits
 
 // Extension Methods
+impl @quickcheck.Arbitrary for FixedArray
+
+impl @quickcheck.Arbitrary for Array
 

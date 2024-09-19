@@ -12,15 +12,35 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+/// @intrinsic %iter.from_array
+pub fn iter[T](self : FixedArray[T]) -> Iter[T] {
+  Iter::new(
+    fn(yield) {
+      for v in self {
+        guard let IterContinue = yield(v) else { x => break x }
+
+      } else {
+        IterContinue
+      }
+    },
+  )
+}
+
+pub fn iter2[T](self : FixedArray[T]) -> Iter2[Int, T] {
+  Iter2::new(
+    fn(yield) {
+      for i, v in self {
+        guard let IterContinue = yield(i, v) else { x => break x }
+
+      } else {
+        IterContinue
+      }
+    },
+  )
+}
+
 pub fn to_string[X : Show](self : FixedArray[X]) -> String {
-  let mut acc = "["
-  for i = 0; i < self.length(); i = i + 1 {
-    if i > 0 {
-      acc = acc + ", "
-    }
-    acc = acc + self[i].to_string()
-  }
-  acc + "]"
+  Show::to_string(self)
 }
 
 pub fn FixedArray::default[X]() -> FixedArray[X] {
@@ -34,7 +54,7 @@ pub fn FixedArray::default[X]() -> FixedArray[X] {
 /// [0, 0, 0, 0, 0].fill(3) // [3, 3, 3, 3, 3]
 /// ```
 pub fn fill[T](self : FixedArray[T], value : T) -> Unit {
-  for i = 0; i < self.length(); i = i + 1 {
+  for i in 0..<self.length() {
     self[i] = value
   }
 }

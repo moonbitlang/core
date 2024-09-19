@@ -89,7 +89,7 @@ let table = [
 ]
 
 fn pow10_fast_path(exponent : Int) -> Double {
-  table[exponent.land(31)]
+  table[exponent & 31]
 }
 
 let int_pow10 : Array[UInt64] = [

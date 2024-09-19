@@ -55,7 +55,7 @@ pub fn set[K : Hash + Eq, V](self : T[K, V], key : K, value : V) -> Unit {
     self.grow()
   }
   let hash = key.hash()
-  for idx = hash.land(self.capacity - 1), entry = { psl: 0, hash, key, value } {
+  for idx = hash & (self.capacity - 1), entry = { psl: 0, hash, key, value } {
     match self.entries[idx] {
       None => {
         self.entries[idx] = Some(entry)
@@ -134,7 +134,7 @@ pub fn contains[K : Hash + Eq, V](self : T[K, V], key : K) -> Bool {
 /// Remove a key-value pair from hash map.
 pub fn remove[K : Hash + Eq, V](self : T[K, V], key : K) -> Unit {
   let hash = key.hash()
-  for i = 0, idx = hash.land(self.capacity - 1) {
+  for i = 0, idx = hash & (self.capacity - 1) {
     match self.entries[idx] {
       Some(entry) => {
         if entry.hash == hash && entry.key == key {
@@ -146,7 +146,7 @@ pub fn remove[K : Hash + Eq, V](self : T[K, V], key : K) -> Unit {
         if i > entry.psl {
           break
         }
-        continue i + 1, (idx + 1).land(self.capacity - 1)
+        continue i + 1, (idx + 1) & (self.capacity - 1)
       }
       None => break
     }
@@ -154,7 +154,7 @@ pub fn remove[K : Hash + Eq, V](self : T[K, V], key : K) -> Unit {
 }
 
 fn shift_back[K : Hash, V](self : T[K, V], start_index : Int) -> Unit {
-  for prev = start_index, curr = (start_index + 1).land(self.capacity - 1) {
+  for prev = start_index, curr = (start_index + 1) & (self.capacity - 1) {
     match self.entries[curr] {
       Some({ psl, hash, key, value, .. }) => {
         if psl == 0 {
@@ -162,7 +162,7 @@ fn shift_back[K : Hash, V](self : T[K, V], start_index : Int) -> Unit {
         }
         self.entries[prev] = Some({ psl: psl - 1, hash, key, value })
         self.entries[curr] = None
-        continue curr, (curr + 1).land(self.capacity - 1)
+        continue curr, (curr + 1) & (self.capacity - 1)
       }
       None => break
     }
@@ -196,6 +196,17 @@ test "of" {
   inspect!(m.get(3), content="Some(4)")
 }
 
+pub impl[K : @quickcheck.Arbitrary + Hash + Eq, V : @quickcheck.Arbitrary] @quickcheck.Arbitrary for T[
+  K,
+  V,
+] with arbitrary(size, rs) {
+  let m = new()
+  (@quickcheck.Arbitrary::arbitrary(size, rs) : Iter[(K, V)]).each(
+    fn { (k, v) => m.set(k, v) },
+  )
+  m
+}
+
 priv type MyString String derive(Eq)
 
 impl Hash for MyString with hash(self) { self._.length() }
@@ -205,6 +216,22 @@ impl Hash for MyString with hash_combine(self, hasher) {
 }
 
 impl Show for MyString with output(self, logger) { logger.write_string(self._) }
+
+test "arbitrary" {
+  let samples : Array[T[String, Int]] = @quickcheck.samples(20)
+  inspect!(
+    samples[5:10],
+    content=
+      #|[HashMap::of([("", -1)]), HashMap::of([("E9", 0), ("", 0), ("h", 1)]), HashMap::of([("\x07", -1), ("", 0)]), HashMap::of([("", 0)]), HashMap::of([("", 0), ("\x02", 1)])]
+    ,
+  )
+  inspect!(
+    samples[11:15],
+    content=
+      #|[HashMap::of([("4j", -2), ("v\x05", 0), ("", 0)]), HashMap::of([("", 0)]), HashMap::of([("Vw\b", 6), ("T", 0), ("m", 5), ("", 4)]), HashMap::of([])]
+    ,
+  )
+}
 
 test "set" {
   let m : T[MyString, Int] = new()

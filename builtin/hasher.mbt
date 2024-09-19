@@ -118,17 +118,14 @@ fn consume1(self : Hasher, input : Byte) -> Unit {
 }
 
 fn rotl(x : Int, r : Int) -> Int {
-  x.lsl(r).lor(x.lsr(32 - r))
+  x.lsl(r) | x.lsr(32 - r)
 }
 
 fn endian32(input : Bytes, cur : Int) -> Int {
-  input[cur + 0]
-  .to_int()
-  .lor(
-    input[cur + 1]
-    .to_int()
-    .lsl(8)
-    .lor(input[cur + 2].to_int().lsl(16).lor(input[cur + 3].to_int().lsl(24))),
+  input[cur + 0].to_int() |
+  (
+    input[cur + 1].to_int().lsl(8) |
+    (input[cur + 2].to_int().lsl(16) | input[cur + 3].to_int().lsl(24))
   )
 }
 
@@ -148,13 +145,13 @@ pub impl Hash for Bytes with hash_combine(self, hasher) {
 
 // https://github.com/skeeto/hash-prospector
 pub impl Hash for Int with hash(self) {
-  let mut x = self.lxor(self.lsr(17))
+  let mut x = self ^ self.lsr(17)
   x = x * 0xed5ad4bb
-  x = x.lxor(x.lsr(11))
+  x = x ^ x.lsr(11)
   x = x * 0xac4c1b51
-  x = x.lxor(x.lsr(15))
+  x = x ^ x.lsr(15)
   x = x * 0x31848bab
-  x = x.lxor(x.lsr(14))
+  x = x ^ x.lsr(14)
   x
 }
 

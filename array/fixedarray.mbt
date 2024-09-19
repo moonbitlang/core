@@ -921,21 +921,6 @@ test "op_add" {
   )
 }
 
-/// @intrinsic %iter.from_array
-pub fn iter[T](self : FixedArray[T]) -> Iter[T] {
-  Iter::new(
-    fn(yield) {
-      for i = 0, len = self.length(); i < len; i = i + 1 {
-        if yield(self[i]) == IterEnd {
-          break IterEnd
-        }
-      } else {
-        IterContinue
-      }
-    },
-  )
-}
-
 test "iter" {
   let arr : FixedArray[_] = [1, 2, 3, 4, 5]
   let iter = arr.iter()
@@ -971,4 +956,12 @@ pub fn FixedArray::last[A](self : FixedArray[A]) -> A? {
     [] => None
     [.., last] => Some(last)
   }
+}
+
+pub impl[X : @quickcheck.Arbitrary] @quickcheck.Arbitrary for FixedArray[X] with arbitrary(
+  size,
+  rs
+) {
+  let len = if size == 0 { 0 } else { rs.next_positive_int() % size }
+  FixedArray::makei(len, fn(x) { X::arbitrary(x, rs) })
 }

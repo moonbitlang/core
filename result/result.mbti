@@ -1,5 +1,7 @@
 package moonbitlang/core/result
 
+alias @moonbitlang/core/quickcheck as @quickcheck
+
 // Values
 fn err[T, E](E) -> Result[T, E]
 
@@ -34,4 +36,5 @@ impl Result {
 // Traits
 
 // Extension Methods
+impl @quickcheck.Arbitrary for Result
 

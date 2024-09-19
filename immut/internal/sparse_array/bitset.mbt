@@ -21,7 +21,7 @@ let empty_bitset : Bitset = Bitset(0)
 ///
 /// Check if the given index is present in the bitset.
 pub fn has(self : Bitset, idx : Int) -> Bool {
-  self._.land((1).lsl(idx)) != 0
+  (self._ & (1).lsl(idx)) != 0
 }
 
 /// `index_of(self: Bitset, idx: Int)`
@@ -35,14 +35,14 @@ pub fn index_of(self : Bitset, idx : Int) -> Int {
 ///
 /// Add a new index to the bitset.
 pub fn add(self : Bitset, idx : Int) -> Bitset {
-  Bitset(self._.lor((1).lsl(idx)))
+  Bitset(self._ | (1).lsl(idx))
 }
 
 /// `remove(self: Bitset, idx: Int)`
 ///
 /// Remove an index from the bitset.
 pub fn remove(self : Bitset, idx : Int) -> Bitset {
-  Bitset(self._.lxor((1).lsl(idx)))
+  Bitset(self._ ^ (1).lsl(idx))
 }
 
 /// `size(self: Bitset) -> Int`

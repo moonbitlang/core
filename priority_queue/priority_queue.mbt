@@ -254,3 +254,30 @@ pub impl[A : Show + Compare] Show for T[A] with output(self, logger) {
 pub fn to_string[A : Show + Compare](self : T[A]) -> String {
   Show::to_string(self)
 }
+
+pub impl[X : @quickcheck.Arbitrary + Compare] @quickcheck.Arbitrary for T[X] with arbitrary(
+  size,
+  rs
+) {
+  let len : Int = if size == 0 { 0 } else { rs.next_positive_int() % size }
+  for i = 0, acc = Node::Nil {
+    if i < len {
+      continue i + 1,
+        meld(acc, Cons(content=X::arbitrary(i, rs), sibling=Nil, child=Nil))
+    } else {
+      break { len, top: acc }
+    }
+  }
+}
+
+test "priority queue arbitrary" {
+  let samples : Array[T[Int]] = @quickcheck.samples(20)
+  inspect!(
+    samples[5:10],
+    content="[@priority_queue.of([0]), @priority_queue.of([0]), @priority_queue.of([0]), @priority_queue.of([0, 0, 0]), @priority_queue.of([3, 0, 0, 0, 0])]",
+  )
+  inspect!(
+    samples[11:15],
+    content="[@priority_queue.of([1, 0, 0, 0]), @priority_queue.of([4, 0, 0, 0, -1, -1, -1]), @priority_queue.of([0, 0]), @priority_queue.of([2, 0, 0, -1])]",
+  )
+}

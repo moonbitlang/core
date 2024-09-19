@@ -100,6 +100,25 @@ pub fn op_equal[T : Eq](self : Array[T], other : Array[T]) -> Bool {
   }
 }
 
+pub fn compare[T : Compare](self : Array[T], other : Array[T]) -> Int {
+  let len_self = self.length()
+  let len_other = other.length()
+  if len_self < len_other {
+    -1
+  } else if len_self > len_other {
+    1
+  } else {
+    for i in 0..<len_self {
+      let cmp = self[i].compare(other[i])
+      if cmp != 0 {
+        break cmp
+      }
+    } else {
+      0
+    }
+  }
+}
+
 pub fn op_add[T](self : Array[T], other : Array[T]) -> Array[T] {
   let result = Array::make_uninit(self.length() + other.length())
   UninitializedArray::unsafe_blit(
@@ -1040,4 +1059,30 @@ pub fn shrink_to_fit[T](self : Array[T]) -> Unit {
 /// Converts the array to a string.
 pub fn to_string[T : Show](self : Array[T]) -> String {
   Show::to_string(self)
+}
+
+pub fn iter[T](self : Array[T]) -> Iter[T] {
+  Iter::new(
+    fn(yield) {
+      for v in self {
+        guard let IterContinue = yield(v) else { x => break x }
+
+      } else {
+        IterContinue
+      }
+    },
+  )
+}
+
+pub fn iter2[A](self : Array[A]) -> Iter2[Int, A] {
+  Iter2::new(
+    fn(yield) {
+      for i, v in self {
+        guard let IterContinue = yield(i, v) else { x => break x }
+
+      } else {
+        IterContinue
+      }
+    },
+  )
 }

@@ -4,6 +4,7 @@
     "moonbitlang/core/array",
     "moonbitlang/core/coverage",
     "moonbitlang/core/tuple",
+    "moonbitlang/core/quickcheck",
     "moonbitlang/core/immut/internal/sparse_array"
   ],
   "test-import": [

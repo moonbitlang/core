@@ -1,5 +1,7 @@
 package moonbitlang/core/immut/list
 
+alias @moonbitlang/core/quickcheck as @quickcheck
+
 // Values
 fn repeat[A](Int, A) -> T[A]
 
@@ -80,4 +82,6 @@ impl T {
 
 // Extension Methods
 impl Show for T
+
+impl @quickcheck.Arbitrary for T
 

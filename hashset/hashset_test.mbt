@@ -253,3 +253,15 @@ test "from_iter empty iter" {
   let map : @hashset.T[Int] = @hashset.T::from_iter(Iter::empty())
   inspect!(map, content="@hashset.of([])")
 }
+
+test "hashset arbitrary" {
+  let samples : Array[@hashset.T[Int]] = @quickcheck.samples(20)
+  inspect!(
+    samples[5:10],
+    content="[@hashset.of([0]), @hashset.of([0]), @hashset.of([0]), @hashset.of([0]), @hashset.of([0, 3])]",
+  )
+  inspect!(
+    samples[11:15],
+    content="[@hashset.of([0, 1]), @hashset.of([0, 4, -1]), @hashset.of([0]), @hashset.of([2, 0, -1])]",
+  )
+}

@@ -57,19 +57,19 @@ test "byte_lsr" {
 }
 
 test "byte_lxor" {
-  assert_eq!(b'\xFF'.lxor(b'\xFF'), b'\x00')
-  assert_eq!(b'\xFF'.lxor(b'\x0F'), b'\xF0')
-  assert_eq!(b'\x0F'.lxor(b'\xFF'), b'\xF0')
+  assert_eq!(b'\xFF' ^ b'\xFF', b'\x00')
+  assert_eq!(b'\xFF' ^ b'\x0F', b'\xF0')
+  assert_eq!(b'\x0F' ^ b'\xFF', b'\xF0')
 }
 
 test "byte_lor" {
-  assert_eq!(b'\xFF'.lor(b'\xFF'), b'\xFF')
-  assert_eq!(b'\xFF'.lor(b'\x0F'), b'\xFF')
-  assert_eq!(b'\x0F'.lor(b'\xFF'), b'\xFF')
+  assert_eq!(b'\xFF' | b'\xFF', b'\xFF')
+  assert_eq!(b'\xFF' | b'\x0F', b'\xFF')
+  assert_eq!(b'\x0F' | b'\xFF', b'\xFF')
 }
 
 test "byte_land" {
-  assert_eq!(b'\xFF'.land(b'\xFF'), b'\xFF')
-  assert_eq!(b'\xFF'.land(b'\x0F'), b'\x0F')
-  assert_eq!(b'\x0F'.land(b'\xFF'), b'\x0F')
+  assert_eq!(b'\xFF' & b'\xFF', b'\xFF')
+  assert_eq!(b'\xFF' & b'\x0F', b'\x0F')
+  assert_eq!(b'\x0F' & b'\xFF', b'\x0F')
 }

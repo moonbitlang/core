@@ -53,7 +53,7 @@ pub fn find[K : Eq + Hash, V](self : T[K, V], key : K) -> V? {
     // get the first segment (lower 5 bits) of the hash value
     // inline the hot path of Sparse_array::op_get
     Branch(children), hash => {
-      let idx = hash.land(segment_mask)
+      let idx = hash & segment_mask
       if children.elem_info.has(idx) {
         let child = children.data[children.elem_info.index_of(idx)]
         continue child, hash.lsr(segment_length)
@@ -79,7 +79,7 @@ fn add_with_hash[K : Eq, V](
     if depth >= 32 {
       T::Leaf(key, value)
     } else {
-      let idx = hash.land(segment_mask)
+      let idx = hash & segment_mask
       let child = make_leaf(
         depth + segment_length,
         key,
@@ -100,7 +100,7 @@ fn add_with_hash[K : Eq, V](
       }
     Collision(bucket) => Collision(bucket.add(key, value))
     Branch(children) => {
-      let idx = hash.land(segment_mask)
+      let idx = hash & segment_mask
       match children[idx] {
         Some(child) => {
           let child = child.add_with_hash(
@@ -153,7 +153,7 @@ fn remove_with_hash[K : Eq, V](
         Some(new_bucket) => Collision(new_bucket)
       }
     Branch(children) => {
-      let idx = hash.land(segment_mask)
+      let idx = hash & segment_mask
       match children[idx] {
         None => self
         Some(child) => {
@@ -248,6 +248,13 @@ pub fn T::from_array[K : Eq + Hash, V](arr : Array[(K, V)]) -> T[K, V] {
       continue n - 1, map.add(k, v)
     }
   }
+}
+
+pub impl[K : Eq + Hash + @quickcheck.Arbitrary, V : @quickcheck.Arbitrary] @quickcheck.Arbitrary for T[
+  K,
+  V,
+] with arbitrary(size, rs) {
+  @quickcheck.Arbitrary::arbitrary(size, rs) |> from_array
 }
 
 pub fn T::of[K : Eq + Hash, V](arr : FixedArray[(K, V)]) -> T[K, V] {

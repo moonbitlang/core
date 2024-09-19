@@ -12,32 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-pub fn iter[T](self : Array[T]) -> Iter[T] {
-  Iter::new(
-    fn(yield) {
-      for v in self {
-        guard let IterContinue = yield(v) else { x => break x }
-
-      } else {
-        IterContinue
-      }
-    },
-  )
-}
-
-pub fn iter2[A](self : Array[A]) -> Iter2[Int, A] {
-  Iter2::new(
-    fn(yield) {
-      for i, v in self {
-        guard let IterContinue = yield(i, v) else { x => break x }
-
-      } else {
-        IterContinue
-      }
-    },
-  )
-}
-
 pub fn Array::from_iter[T](iter : Iter[T]) -> Array[T] {
   iter.collect()
 }
@@ -182,4 +156,12 @@ pub fn last[A](self : Array[A]) -> A? {
     [] => None
     [.., last] => Some(last)
   }
+}
+
+pub impl[X : @quickcheck.Arbitrary] @quickcheck.Arbitrary for Array[X] with arbitrary(
+  size,
+  rs
+) {
+  let len = if size == 0 { 0 } else { rs.next_positive_int() % size }
+  Array::makei(len, fn(x) { X::arbitrary(x, rs) })
 }

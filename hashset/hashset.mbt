@@ -213,6 +213,13 @@ pub fn T::from_iter[K : Hash + Eq](iter : Iter[K]) -> T[K] {
   s
 }
 
+pub impl[X : @quickcheck.Arbitrary + Eq + Hash] @quickcheck.Arbitrary for T[X] with arbitrary(
+  size,
+  rs
+) {
+  @quickcheck.Arbitrary::arbitrary(size, rs) |> T::from_iter
+}
+
 fn shift_back[K : Hash](self : T[K], start_index : Int) -> Unit {
   for i = 0, prev = start_index, curr = self.next_index(start_index)
       i < self.entries.length()
@@ -254,7 +261,7 @@ fn grow[K : Hash + Eq](self : T[K]) -> Unit {
 }
 
 fn index[K : Hash](self : T[K], hash : Int) -> Int {
-  abs(hash).land(self.capacity - 1)
+  abs(hash) & (self.capacity - 1)
 }
 
 fn abs(n : Int) -> Int {
@@ -266,7 +273,7 @@ fn abs(n : Int) -> Int {
 }
 
 fn next_index[K : Hash](self : T[K], index : Int) -> Int {
-  (index + 1).land(self.capacity - 1)
+  (index + 1) & (self.capacity - 1)
 }
 
 fn calc_grow_threshold(capacity : Int) -> Int {

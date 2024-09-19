@@ -182,6 +182,18 @@ test "from_iter empty iter" {
   inspect!(pq, content="@sorted_map.of([])")
 }
 
+test "arbitrary" {
+  let map : Array[@sorted_map.T[Int, UInt]] = @quickcheck.samples(20)
+  inspect!(
+    map[5:10],
+    content="[@sorted_map.of([(-2, 2), (0, 1)]), @sorted_map.of([(0, 2), (1, 2)]), @sorted_map.of([(0, 0)]), @sorted_map.of([(0, 0)]), @sorted_map.of([(-2, 5), (0, 1), (2, 0), (4, 1)])]",
+  )
+  inspect!(
+    map[11:15],
+    content="[@sorted_map.of([(0, 0)]), @sorted_map.of([(-1, 2), (0, 2)]), @sorted_map.of([(-4, 1), (-3, 2), (-1, 2), (0, 2), (1, 4), (3, 2), (6, 1)]), @sorted_map.of([(0, 0)])]",
+  )
+}
+
 test "iter2" {
   let map = @sorted_map.of([(3, "c"), (2, "b"), (1, "a")])
   let buf = Buffer::new()

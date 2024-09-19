@@ -28,14 +28,8 @@ pub fn T::new[A](~capacity : Int = 0) -> T[A] {
 }
 
 pub impl[A : Show] Show for T[A] with output(self, logger) {
-  logger.write_string("Deque::[")
-  for i = 0; i < self.length(); i = i + 1 {
-    if i > 0 {
-      logger.write_string(", ")
-    }
-    Show::output(self[i], logger)
-  }
-  logger.write_string("]")
+  logger.write_string("Deque::")
+  logger.write_object(self.iter())
 }
 
 pub fn to_string[A : Show](self : T[A]) -> String {
@@ -449,12 +443,7 @@ pub fn search[A : Eq](self : T[A], value : A) -> Int? {
 /// dv.contains(3) // true
 /// ```
 pub fn contains[A : Eq](self : T[A], value : A) -> Bool {
-  for i = 0; i < self.len; i = i + 1 {
-    if self.buf[i] == value {
-      return true
-    }
-  }
-  false
+  self.iter().contains(value)
 }
 
 /// Reserves capacity to ensure that it can hold at least the number of elements
@@ -513,10 +502,9 @@ pub fn shrink_to_fit[A](self : T[A]) -> Unit {
 pub fn iter[A](self : T[A]) -> Iter[A] {
   Iter::new(
     fn(yield) {
-      for i = 0, len = self.length(); i < len; i = i + 1 {
-        if yield(self[i]) == IterEnd {
-          break IterEnd
-        }
+      for i in 0..<self.length() {
+        guard let IterContinue = yield(self[i]) else { x => break x }
+
       } else {
         IterContinue
       }

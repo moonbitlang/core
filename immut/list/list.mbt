@@ -890,3 +890,10 @@ pub fn T::of[A](arr : FixedArray[A]) -> T[A] {
     list
   }
 }
+
+pub impl[X : @quickcheck.Arbitrary] @quickcheck.Arbitrary for T[X] with arbitrary(
+  size,
+  rs
+) {
+  @quickcheck.Arbitrary::arbitrary(size, rs) |> from_array
+}

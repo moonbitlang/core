@@ -31,16 +31,16 @@ pub impl Hash for Int64 with hash(self) -> Int {
   let mut acc = seed + gPRIME5 + 8
   let mut x = acc + input.to_int() * gPRIME3
   let r = 17
-  acc = x.lsl(r).lor(x.lsr(32 - r)) * gPRIME4
+  acc = (x.lsl(r) | x.lsr(32 - r)) * gPRIME4
   input = input.lsr(32)
   x = acc + input.to_int() * gPRIME3
-  acc = x.lsl(r).lor(x.lsr(32 - r)) * gPRIME4
+  acc = (x.lsl(r) | x.lsr(32 - r)) * gPRIME4
   input = input.lsr(32)
-  acc = acc.lxor(acc.lsr(15))
+  acc = acc ^ acc.lsr(15)
   acc *= gPRIME2
-  acc = acc.lxor(acc.lsr(13))
+  acc = acc ^ acc.lsr(13)
   acc *= gPRIME3
-  acc = acc.lxor(acc.lsr(16))
+  acc = acc ^ acc.lsr(16)
   acc
 }
 
