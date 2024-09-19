@@ -117,7 +117,11 @@ pub fn end() -> Unit {
     println(trailing_line)
   }
   println("----- END MOONBIT COVERAGE -----")
-  loop counters.val {
+  coverage_reset(counters.val) // Reset all counters to avoid double counting
+}
+
+fn coverage_reset(counters : MList[(String, CoverageCounter)]) -> Unit {
+  loop counters {
     MCons((_, counter), xs) => {
       for i = 0; i < counter.counter.length(); i = i + 1 {
         counter.counter[i] = 0
@@ -192,6 +196,38 @@ test "log" {
 test "backslash escape" {
   let s = "\n\r\t\b\"'\\"
   inspect!(s.escape(), content="\"\\n\\r\\t\\b\\\"'\\\\\"")
+}
+
+test "reset" {
+  let test_counter_a = CoverageCounter::new(2)
+  let test_counter_b = CoverageCounter::new(2)
+  test_counter_a.incr(0)
+  test_counter_b.incr(1)
+  let counters : MList[(String, CoverageCounter)] = MCons(
+    ("foo/foo", test_counter_a),
+    MCons(("foo/bar", test_counter_b), MNil),
+  )
+  let buf = Buffer::new(size_hint=1024)
+  coverage_log(counters, buf)
+  inspect!(
+    buf,
+    content=
+      #|{ "foo/foo": [1, 0]
+      #|, "foo/bar": [0, 1]
+      #|}
+    ,
+  )
+  coverage_reset(counters)
+  let buf = Buffer::new(size_hint=1024)
+  coverage_log(counters, buf)
+  inspect!(
+    buf,
+    content=
+      #|{ "foo/foo": [0, 0]
+      #|, "foo/bar": [0, 0]
+      #|}
+    ,
+  )
 }
 
 // FIXME: formatting string does not work, this test will be destroyed by formatting
