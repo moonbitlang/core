@@ -21,41 +21,50 @@ let golden_gamma : UInt64 = 0x9e3779b97f4a7c15
 
 let double_ulp : Double = 1.0 / (1L << 53).to_double()
 
+/// Create a new RandomState from an optional seed.
 pub fn RandomState::new(~seed : UInt64 = 37) -> RandomState {
   { seed: mix64(seed), gamma: mix_gamma(seed + golden_gamma) }
 }
 
+/// Clone a RandomState.
 pub fn clone(self : RandomState) -> RandomState {
   { ..self }
 }
 
+/// Skip the next random number.
 pub fn next(self : RandomState) -> Unit {
   self.next_uint64() |> ignore
 }
 
+/// Get the next random number as a 64-bit unsigned integer.
 pub fn next_uint64(self : RandomState) -> UInt64 {
   let { seed, gamma } = self
   self.seed = seed + gamma
   mix64(self.seed)
 }
 
+/// Get the next random number as a 32-bit unsigned integer.
 pub fn next_uint(self : RandomState) -> UInt {
   self.next_uint64().to_uint()
 }
 
+/// Get the next random number as a 64-bit signed integer.
 pub fn next_int64(self : RandomState) -> Int64 {
   self.next_uint64().to_int64()
 }
 
+/// Get the next two random number as 32-bit signed integers.
 pub fn next_two_uint(self : RandomState) -> (UInt, UInt) {
   let g = self.next_uint64()
   (g.lsr(32).to_uint(), g.to_uint())
 }
 
+/// Get the next random number as a 32-bit signed integer.
 pub fn next_int(self : RandomState) -> Int {
   self.next_uint().reinterpret_as_int()
 }
 
+/// Get the next random number as a positive 32-bit signed integer.
 pub fn next_positive_int(self : RandomState) -> Int {
   let r = self.next_int()
   if r < 0 {
@@ -65,11 +74,13 @@ pub fn next_positive_int(self : RandomState) -> Int {
   }
 }
 
+/// Get the next random number as a double.
 pub fn next_double(self : RandomState) -> Double {
   let u = self.next_uint64()
   u.lsr(11).to_int64().to_double() * double_ulp
 }
 
+/// Generates an independent random number generator.
 pub fn split(self : RandomState) -> RandomState {
   let seed1 = self.seed + self.gamma
   self.seed = seed1 + self.gamma
