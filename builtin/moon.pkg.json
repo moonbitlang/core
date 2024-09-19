@@ -12,5 +12,9 @@
     "moonbitlang/core/array",
     "moonbitlang/core/int64",
     "moonbitlang/core/uint"
-  ]
+  ],
+  "targets": {
+    "int64_js.mbt": ["js"],
+    "int64_wasm.mbt": ["wasm", "wasm-gc"]
+  }
 }
