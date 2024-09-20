@@ -427,7 +427,9 @@ impl Int64 {
   upto(Int64, Int64, ~inclusive : Bool = ..) -> Iter[Int64]
 }
 impl UInt {
+  clz(UInt) -> Int
   compare(UInt, UInt) -> Int
+  ctz(UInt) -> Int
   land(UInt, UInt) -> UInt
   lnot(UInt) -> UInt
   lor(UInt, UInt) -> UInt
@@ -443,6 +445,7 @@ impl UInt {
   op_shl(UInt, Int) -> UInt
   op_shr(UInt, Int) -> UInt
   op_sub(UInt, UInt) -> UInt
+  popcnt(UInt) -> Int
   reinterpret_as_int(UInt) -> Int
   shl(UInt, Int) -> UInt
   shr(UInt, Int) -> UInt
@@ -454,7 +457,9 @@ impl UInt {
   upto(UInt, UInt, ~inclusive : Bool = ..) -> Iter[UInt]
 }
 impl UInt64 {
+  clz(UInt64) -> Int
   compare(UInt64, UInt64) -> Int
+  ctz(UInt64) -> Int
   default() -> UInt64
   extend_uint(UInt) -> UInt64
   land(UInt64, UInt64) -> UInt64

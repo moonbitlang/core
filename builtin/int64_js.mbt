@@ -571,6 +571,18 @@ pub fn UInt64::op_shr(self : UInt64, shift : Int) -> UInt64 {
   MyInt64::lsr(MyInt64::from_uint64(self), shift).to_uint64()
 }
 
+pub fn UInt64::clz(self : UInt64) -> Int {
+  MyInt64::from_uint64(self).clz()
+}
+
+pub fn UInt64::ctz(self : UInt64) -> Int {
+  MyInt64::from_uint64(self).ctz()
+}
+
+pub fn UInt64::popcnt(self : UInt64) -> Int {
+  MyInt64::from_uint64(self).popcnt()
+}
+
 pub fn Int64::to_float(self : Int64) -> Float {
   self.to_double().to_float()
 }
