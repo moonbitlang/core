@@ -15,6 +15,6 @@
   ],
   "targets": {
     "int64_js.mbt": ["js"],
-    "int64_wasm.mbt": ["wasm", "wasm-gc"]
+    "int64_nonjs.mbt": ["not", "js"]
   }
 }

@@ -8,6 +8,6 @@
   ],
   "targets": {
     "exp_js.mbt": ["js"],
-    "exp_wasm.mbt": ["wasm", "wasm-gc"]
+    "exp_nonjs.mbt": ["not", "js"]
   }
 }
