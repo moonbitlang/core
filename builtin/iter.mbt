@@ -44,7 +44,7 @@ pub impl[T : Show] Show for Iter[T] with output(self, logger) {
 }
 
 pub fn to_string[T : Show](self : Iter[T]) -> String {
-  self.to_array().to_string()
+  Show::to_string(self)
 }
 
 // Consumers
@@ -635,6 +635,17 @@ pub fn find_first[T](self : Iter[T], f : (T) -> Bool) -> T? {
   } else {
     None
   }
+}
+
+pub fn peek[T](self : Iter[T]) -> T? {
+  let mut first = None
+  self.just_run(
+    fn(a) {
+      first = Some(a)
+      IterEnd
+    },
+  )
+  first
 }
 
 /// Prepends a single element to the beginning of the iterator.
