@@ -5,5 +5,9 @@
     "moonbitlang/core/int64",
     "moonbitlang/core/coverage",
     "moonbitlang/core/double/internal/ryu"
-  ]
+  ],
+  "targets": {
+    "exp_js.mbt": ["js"],
+    "exp_nonjs.mbt": ["not", "js"]
+  }
 }

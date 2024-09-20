@@ -99,3 +99,68 @@ pub fn iter[A](self : ArrayView[A]) -> Iter[A] {
     },
   )
 }
+
+/// Fold out values from an arrayview according to certain rules.
+///
+/// # Example
+/// ```
+/// let sum = [1, 2, 3, 4, 5][:].fold(init=0, fn { sum, elem => sum + elem })
+/// sum // 15
+/// ```
+pub fn fold[A, B](self : ArrayView[A], ~init : B, f : (B, A) -> B) -> B {
+  for i = 0, acc = init; i < self.length(); {
+    continue i + 1, f(acc, self[i])
+  } else {
+    acc
+  }
+}
+
+/// Fold out values from an arrayview according to certain rules in reversed turn.
+///
+/// # Example
+/// ```
+/// let sum = [1, 2, 3, 4, 5][:].rev_fold(init=0, fn { sum, elem => sum + elem })
+/// sum // 15
+/// ```
+pub fn rev_fold[A, B](self : ArrayView[A], ~init : B, f : (B, A) -> B) -> B {
+  for i = self.length() - 1, acc = init; i >= 0; {
+    continue i - 1, f(acc, self[i])
+  } else {
+    acc
+  }
+}
+
+/// Fold out values from an arrayview according to certain rules with index.
+///
+/// # Example
+/// ```
+/// let sum = [1, 2, 3, 4, 5][:].foldi(init=0, fn { index, sum, elem => sum + index })
+/// sum // 10
+/// ```
+pub fn foldi[A, B](self : ArrayView[A], ~init : B, f : (Int, B, A) -> B) -> B {
+  for i = 0, acc = init; i < self.length(); {
+    continue i + 1, f(i, acc, self[i])
+  } else {
+    acc
+  }
+}
+
+/// Fold out values from an arrayview according to certain rules in reversed turn with index.
+///
+/// # Example
+/// ```
+/// let sum = [1, 2, 3, 4, 5][:].rev_foldi(~init=0, fn { index, sum, elem => sum + index })
+/// sum // 10
+/// ```
+pub fn rev_foldi[A, B](
+  self : ArrayView[A],
+  ~init : B,
+  f : (Int, B, A) -> B
+) -> B {
+  let len = self.length()
+  for i = len - 1, acc = init; i >= 0; {
+    continue i - 1, f(len - i - 1, acc, self[i])
+  } else {
+    acc
+  }
+}

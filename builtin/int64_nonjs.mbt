@@ -40,11 +40,12 @@ pub fn Int64::op_shl(self : Int64, other : Int) -> Int64 = "%i64_shl"
 
 pub fn Int64::lsr(self : Int64, other : Int) -> Int64 = "%u64.shr"
 
+/// @alert deprecated "Use shr instead"
 pub fn Int64::asr(self : Int64, other : Int) -> Int64 = "%i64_shr"
 
-pub fn Int64::op_shr(self : Int64, other : Int) -> Int64 = "%i64_shr"
-
 pub fn Int64::shr(self : Int64, other : Int) -> Int64 = "%i64_shr"
+
+pub fn Int64::op_shr(self : Int64, other : Int) -> Int64 = "%i64_shr"
 
 pub fn Int64::ctz(self : Int64) -> Int = "%i64_ctz"
 
@@ -66,11 +67,11 @@ pub fn Int64::reinterpret_as_double(self : Int64) -> Double = "%i64_to_f64_reint
 
 pub fn Int64::to_byte(self : Int64) -> Byte = "%i64_to_byte"
 
+pub fn UInt64::trunc_double(val : Double) -> UInt64 = "%f64.to_u64"
+
 pub fn Int64::to_float(self : Int64) -> Float = "%i64.to_f32"
 
 pub fn UInt64::extend_uint(val : UInt) -> UInt64 = "%u32.to_u64"
-
-pub fn UInt64::trunc_double(val : Double) -> UInt64 = "%f64.to_u64"
 
 pub fn Int::to_int64(self : Int) -> Int64 = "%i32_to_i64"
 
@@ -123,6 +124,12 @@ pub fn UInt64::op_shl(self : UInt64, shift : Int) -> UInt64 = "%u64.shl"
 pub fn UInt64::lsr(self : UInt64, shift : Int) -> UInt64 = "%u64.shr"
 
 pub fn UInt64::op_shr(self : UInt64, shift : Int) -> UInt64 = "%u64.shr"
+
+pub fn UInt64::clz(self : UInt64) -> Int = "%u64.clz"
+
+pub fn UInt64::ctz(self : UInt64) -> Int = "%u64.ctz"
+
+pub fn UInt64::popcnt(self : UInt64) -> Int = "%u64.popcnt"
 
 pub fn UInt64::shr(self : UInt64, shift : Int) -> UInt64 = "%u64.shr"
 

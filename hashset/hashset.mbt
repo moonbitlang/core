@@ -213,6 +213,13 @@ pub fn T::from_iter[K : Hash + Eq](iter : Iter[K]) -> T[K] {
   s
 }
 
+pub impl[X : @quickcheck.Arbitrary + Eq + Hash] @quickcheck.Arbitrary for T[X] with arbitrary(
+  size,
+  rs
+) {
+  @quickcheck.Arbitrary::arbitrary(size, rs) |> T::from_iter
+}
+
 fn shift_back[K : Hash](self : T[K], start_index : Int) -> Unit {
   for i = 0, prev = start_index, curr = self.next_index(start_index)
       i < self.entries.length()

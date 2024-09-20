@@ -215,6 +215,13 @@ pub fn T::from_iter[K : Compare, V](iter : Iter[(K, V)]) -> T[K, V] {
   m
 }
 
+pub impl[K : @quickcheck.Arbitrary + Compare, V : @quickcheck.Arbitrary] @quickcheck.Arbitrary for T[
+  K,
+  V,
+] with arbitrary(size, rs) {
+  @quickcheck.Arbitrary::arbitrary(size, rs) |> T::from_iter
+}
+
 // AVL tree operations
 
 fn replace_root_with_min[K : Compare, V](

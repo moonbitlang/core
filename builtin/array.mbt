@@ -100,6 +100,25 @@ pub fn op_equal[T : Eq](self : Array[T], other : Array[T]) -> Bool {
   }
 }
 
+pub fn compare[T : Compare](self : Array[T], other : Array[T]) -> Int {
+  let len_self = self.length()
+  let len_other = other.length()
+  if len_self < len_other {
+    -1
+  } else if len_self > len_other {
+    1
+  } else {
+    for i in 0..<len_self {
+      let cmp = self[i].compare(other[i])
+      if cmp != 0 {
+        break cmp
+      }
+    } else {
+      0
+    }
+  }
+}
+
 pub fn op_add[T](self : Array[T], other : Array[T]) -> Array[T] {
   let result = Array::make_uninit(self.length() + other.length())
   UninitializedArray::unsafe_blit(
@@ -842,7 +861,7 @@ pub fn repeat[T](self : Array[T], times : Int) -> Array[T] {
 ///
 /// # Example
 /// ```
-/// let sum = [1, 2, 3, 4, 5].fold(~init=0, fn { sum, elem => sum + elem })
+/// let sum = [1, 2, 3, 4, 5].fold(init=0, fn { sum, elem => sum + elem })
 /// sum // 15
 /// ```
 pub fn fold[A, B](self : Array[A], ~init : B, f : (B, A) -> B) -> B {
@@ -857,7 +876,7 @@ pub fn fold[A, B](self : Array[A], ~init : B, f : (B, A) -> B) -> B {
 ///
 /// # Example
 /// ```
-/// let sum = [1, 2, 3, 4, 5].rev_fold(~init=0, fn { sum, elem => sum + elem })
+/// let sum = [1, 2, 3, 4, 5].rev_fold(init=0, fn { sum, elem => sum + elem })
 /// sum // 15
 /// ```
 pub fn rev_fold[A, B](self : Array[A], ~init : B, f : (B, A) -> B) -> B {
@@ -872,7 +891,7 @@ pub fn rev_fold[A, B](self : Array[A], ~init : B, f : (B, A) -> B) -> B {
 ///
 /// # Example
 /// ```
-/// let sum = [1, 2, 3, 4, 5].foldi(~init=0, fn { index, sum, elem => sum + index })
+/// let sum = [1, 2, 3, 4, 5].foldi(init=0, fn { index, sum, elem => sum + index })
 /// sum // 10
 /// ```
 pub fn foldi[A, B](self : Array[A], ~init : B, f : (Int, B, A) -> B) -> B {
@@ -887,12 +906,13 @@ pub fn foldi[A, B](self : Array[A], ~init : B, f : (Int, B, A) -> B) -> B {
 ///
 /// # Example
 /// ```
-/// let sum = [1, 2, 3, 4, 5].rev_foldi(~init=0, fn { index, sum, elem => sum + index })
+/// let sum = [1, 2, 3, 4, 5].rev_foldi(init=0, fn { index, sum, elem => sum + index })
 /// sum // 10
 /// ```
 pub fn rev_foldi[A, B](self : Array[A], ~init : B, f : (Int, B, A) -> B) -> B {
-  for i = self.length() - 1, acc = init; i >= 0; {
-    continue i - 1, f(self.length() - i - 1, acc, self[i])
+  let len = self.length()
+  for i = len - 1, acc = init; i >= 0; {
+    continue i - 1, f(len - i - 1, acc, self[i])
   } else {
     acc
   }

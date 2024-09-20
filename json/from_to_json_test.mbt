@@ -12,10 +12,29 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-pub fn UInt64::default() -> UInt64 {
-  0
-}
+enum Expr {
+  Add(Expr, Expr)
+  Sub(Expr, Expr)
+  Mul(Expr, Expr)
+  Div(Expr, Expr)
+  Val(String)
+} derive(ToJson, FromJson, Show, Eq)
 
 test {
-  inspect!(0x7000_0001_1F00_100FUL.popcnt(), content="14")
+  let e = Expr::Add(Val("x"), Val("y"))
+  let ej = e.to_json()
+  inspect!(
+    ej |> @json.stringify,
+    content=
+      #|{"$tag":"Add","0":{"$tag":"Val","0":"x"},"1":{"$tag":"Val","0":"y"}}
+    ,
+  )
+  let e0 : Expr = @json.from_json!(ej)
+  inspect!(
+    e0,
+    content=
+      #|Add(Val("x"), Val("y"))
+    ,
+  )
+  assert_eq!(e0, e)
 }

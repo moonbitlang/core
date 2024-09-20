@@ -3,7 +3,8 @@
     "moonbitlang/core/builtin",
     "moonbitlang/core/test",
     "moonbitlang/core/array",
-    "moonbitlang/core/coverage"
+    "moonbitlang/core/coverage",
+    "moonbitlang/core/quickcheck"
   ],
   "test-import": [
     "moonbitlang/core/string",

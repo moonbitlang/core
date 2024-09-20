@@ -1,5 +1,7 @@
 package moonbitlang/core/option
 
+alias @moonbitlang/core/quickcheck as @quickcheck
+
 // Values
 fn empty[T]() -> T?
 
@@ -32,4 +34,5 @@ impl Option {
 // Traits
 
 // Extension Methods
+impl @quickcheck.Arbitrary for Option
 

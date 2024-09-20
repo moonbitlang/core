@@ -58,6 +58,51 @@ pub impl Arbitrary for UInt64 with arbitrary(size, rs) {
   }
 }
 
+pub impl Arbitrary for Char with arbitrary(_i, rs) {
+  // Choose only ASCII characters
+  rs.next_uint() % 128 |> UInt::reinterpret_as_int |> Char::from_int
+}
+
+pub impl Arbitrary for String with arbitrary(size, rs) {
+  let len = if size == 0 { 0 } else { rs.next_positive_int() % size }
+  let mut s = ""
+  for i = 0; i < len; i = i + 1 {
+    s = s + (Arbitrary::arbitrary(i, rs) : Char).to_string()
+  }
+  s
+}
+
+pub impl Arbitrary for BigInt with arbitrary(size, rs) {
+  if size == 0 {
+    0
+  } else {
+    rs.next_int64() |> BigInt::from_int64
+  }
+}
+
+pub impl[X : Arbitrary] Arbitrary for Iter[X] with arbitrary(size, rs) {
+  let len = if size == 0 { 0 } else { rs.next_positive_int() % size }
+  Iter::new(
+    fn(yield) {
+      for i = 0; i < len; i = i + 1 {
+        if yield(X::arbitrary(i, rs)) == IterEnd {
+          break IterEnd
+        }
+      } else {
+        IterContinue
+      }
+    },
+  )
+}
+
+test "iter arbitrary" {
+  let samples : Array[Iter[Int]] = samples(20)
+  inspect!("[0, 0, 0, 1, 2, -2]", content="[0, 0, 0, 1, 2, -2]")
+  inspect!(samples[1:5], content="[[], [0], [0], [0]]")
+  // inspect!(samples[9], content="[0, 0, 0, 1, 2, -2]") (Cause infinite loop?)
+  inspect!(samples[10], content="[0, 0, 0]")
+}
+
 pub fn gen[T : Arbitrary](~size? : Int, ~state? : @splitmix.RandomState) -> T {
   let size = match size {
     None => 0

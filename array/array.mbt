@@ -170,3 +170,11 @@ pub fn last[A](self : Array[A]) -> A? {
     [.., last] => Some(last)
   }
 }
+
+pub impl[X : @quickcheck.Arbitrary] @quickcheck.Arbitrary for Array[X] with arbitrary(
+  size,
+  rs
+) {
+  let len = if size == 0 { 0 } else { rs.next_positive_int() % size }
+  Array::makei(len, fn(x) { X::arbitrary(x, rs) })
+}

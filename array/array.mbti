@@ -1,5 +1,7 @@
 package moonbitlang/core/array
 
+alias @moonbitlang/core/quickcheck as @quickcheck
+
 // Values
 
 // Types and methods
@@ -66,4 +68,7 @@ impl ArrayView {
 // Traits
 
 // Extension Methods
+impl @quickcheck.Arbitrary for FixedArray
+
+impl @quickcheck.Arbitrary for Array
 

@@ -52,6 +52,7 @@ impl Array {
   chunk_by[T](Self[T], (T, T) -> Bool) -> Self[Self[T]]
   chunks[T](Self[T], Int) -> Self[Self[T]]
   clear[T](Self[T]) -> Unit
+  compare[T : Compare + Eq](Self[T], Self[T]) -> Int
   contains[T : Eq](Self[T], T) -> Bool
   dedup[T : Eq](Self[T]) -> Unit
   drain[T](Self[T], Int, Int) -> Self[T]
@@ -119,11 +120,15 @@ impl Array {
 
 type ArrayView
 impl ArrayView {
+  fold[A, B](Self[A], ~init : B, (B, A) -> B) -> B
+  foldi[A, B](Self[A], ~init : B, (Int, B, A) -> B) -> B
   iter[A](Self[A]) -> Iter[A]
   length[T](Self[T]) -> Int
   op_as_view[T](Self[T], ~start : Int, ~end? : Int) -> Self[T]
   op_get[T](Self[T], Int) -> T
   op_set[T](Self[T], Int, T) -> Unit
+  rev_fold[A, B](Self[A], ~init : B, (B, A) -> B) -> B
+  rev_foldi[A, B](Self[A], ~init : B, (Int, B, A) -> B) -> B
   swap[T](Self[T], Int, Int) -> Unit
   to_string[X : Show](Self[X]) -> String
 }
@@ -422,7 +427,9 @@ impl Int64 {
   upto(Int64, Int64, ~inclusive : Bool = ..) -> Iter[Int64]
 }
 impl UInt {
+  clz(UInt) -> Int
   compare(UInt, UInt) -> Int
+  ctz(UInt) -> Int
   land(UInt, UInt) -> UInt
   lnot(UInt) -> UInt
   lor(UInt, UInt) -> UInt
@@ -438,6 +445,7 @@ impl UInt {
   op_shl(UInt, Int) -> UInt
   op_shr(UInt, Int) -> UInt
   op_sub(UInt, UInt) -> UInt
+  popcnt(UInt) -> Int
   reinterpret_as_int(UInt) -> Int
   shl(UInt, Int) -> UInt
   shr(UInt, Int) -> UInt
@@ -449,7 +457,9 @@ impl UInt {
   upto(UInt, UInt, ~inclusive : Bool = ..) -> Iter[UInt]
 }
 impl UInt64 {
+  clz(UInt64) -> Int
   compare(UInt64, UInt64) -> Int
+  ctz(UInt64) -> Int
   default() -> UInt64
   extend_uint(UInt) -> UInt64
   land(UInt64, UInt64) -> UInt64

@@ -4,6 +4,7 @@
     "moonbitlang/core/test",
     "moonbitlang/core/array",
     "moonbitlang/core/option",
+    "moonbitlang/core/quickcheck",
     "moonbitlang/core/coverage"
   ],
   "test-import":[
