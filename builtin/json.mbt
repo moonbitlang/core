@@ -125,7 +125,7 @@ pub fn Map::to_json[K : Show, V : ToJson](self : Map[K, V]) -> Json {
 pub fn Option::to_json[T : ToJson](self : T?) -> Json {
   match self {
     None => Null
-    Some(value) => value.to_json()
+    Some(value) => { "Some": value.to_json() }
   }
 }
 

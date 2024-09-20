@@ -130,8 +130,25 @@ test "Map::to_json" {
 }
 
 test "Option::to_json" {
-  inspect!((Some(42) : Int?).to_json(), content="Number(42)")
+  inspect!(
+    (Some(42) : Int?).to_json(),
+    content=
+      #|Object({"Some": Number(42)})
+    ,
+  )
   inspect!((None : Int?).to_json(), content="Null")
+  inspect!(
+    (Some(None) : Unit??).to_json(),
+    content=
+      #|Object({"Some": Null})
+    ,
+  )
+  inspect!(
+    (Some(Some(None)) : Unit???).to_json(),
+    content=
+      #|Object({"Some": Object({"Some": Null})})
+    ,
+  )
 }
 
 test "Tuple::to_json" {

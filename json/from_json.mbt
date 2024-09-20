@@ -144,8 +144,24 @@ pub impl[V : FromJson] FromJson for Map[String, V] with from_json(json, path) {
 
 pub impl[T : FromJson] FromJson for T? with from_json(json, path) {
   match json {
+    Object(obj) => {
+      if obj.size() != 1 {
+        decode_error!(path, "Option::from_json: expected object with one field")
+      }
+      match obj {
+        { "Some": value } =>
+          Some(FromJson::from_json!(value, path.add_key("Some")))
+        _ =>
+          decode_error!(
+            path, "Option::from_json: expected object with None or Some field",
+          )
+      }
+    }
     Null => None
-    _ => Some(FromJson::from_json!(json, path))
+    _ =>
+      decode_error!(
+        path, "Option::from_json: expected object with None or Some field",
+      )
   }
 }
 
