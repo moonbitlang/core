@@ -127,7 +127,7 @@ test "mapi" {
   inspect!(dvp[1], content="5")
   inspect!(dvp[2], content="7")
   let dve = @deque.of(([] : FixedArray[Int]))
-  inspect!(dve.mapi(fn(_idx, x) { x }), content="Deque::[]")
+  inspect!(dve.mapi(fn(_idx, x) { x }), content="@deque.of([])")
 }
 
 test "iter_rev" {
@@ -199,7 +199,7 @@ test "iter2" {
 
 test "op_get" {
   let dv = @deque.of([1, 2, 3, 4, 5])
-  inspect!(dv, content="Deque::[1, 2, 3, 4, 5]")
+  inspect!(dv, content="@deque.of([1, 2, 3, 4, 5])")
   dv.pop_front() |> ignore
   dv.push_back(1)
   inspect!(dv[4], content="1")
@@ -208,8 +208,8 @@ test "op_get" {
 }
 
 test "from_array" {
-  inspect!(@deque.from_array(([] : Array[Int])), content="Deque::[]")
-  inspect!(@deque.of([1, 2, 3]), content="Deque::[1, 2, 3]")
+  inspect!(@deque.from_array(([] : Array[Int])), content="@deque.of([])")
+  inspect!(@deque.of([1, 2, 3]), content="@deque.of([1, 2, 3])")
 }
 
 test "panic unsafe_pop_front" {
@@ -262,7 +262,7 @@ test "map" {
   assert_eq!(dvp[1], 5)
   assert_eq!(dvp[2], 6)
   let dve = @deque.of(([] : FixedArray[Int]))
-  inspect!(dve.map(fn(x) { x }), content="Deque::[]")
+  inspect!(dve.map(fn(x) { x }), content="@deque.of([])")
 }
 
 test "push_and_pop" {
@@ -378,14 +378,17 @@ test "reserve_and_push" {
 }
 
 test "from_iter multiple elements iter" {
-  inspect!(@deque.T::from_iter([1, 2, 3].iter()), content="Deque::[1, 2, 3]")
+  inspect!(
+    @deque.T::from_iter([1, 2, 3].iter()),
+    content="@deque.of([1, 2, 3])",
+  )
 }
 
 test "from_iter single element iter" {
-  inspect!(@deque.T::from_iter([1].iter()), content="Deque::[1]")
+  inspect!(@deque.T::from_iter([1].iter()), content="@deque.of([1])")
 }
 
 test "from_iter empty iter" {
   let dq : @deque.T[Int] = @deque.T::from_iter(Iter::empty())
-  inspect!(dq, content="Deque::[]")
+  inspect!(dq, content="@deque.of([])")
 }
