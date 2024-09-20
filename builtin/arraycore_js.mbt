@@ -84,6 +84,7 @@ fn Array::make_uninit[T](len : Int) -> Array[T] = "%fixedarray.make_uninit"
 
 /// Creates a new array.
 pub fn Array::new[T](~capacity : Int = 0) -> Array[T] {
+  ignore(capacity)
   []
 }
 
@@ -144,7 +145,10 @@ test "UninitializedArray::unsafe_blit_fixed" {
 /// v.reserve_capacity(10)
 /// println(v.capacity()) // 10
 /// ```
-pub fn reserve_capacity[T](self : Array[T], capacity : Int) -> Unit {}
+pub fn reserve_capacity[T](self : Array[T], capacity : Int) -> Unit {
+  ignore(self)
+  ignore(capacity)
+}
 
 /// Shrinks the capacity of the array as much as possible.
 ///
@@ -160,7 +164,9 @@ pub fn reserve_capacity[T](self : Array[T], capacity : Int) -> Unit {}
 /// v.shrink_to_fit()
 /// println(v.capacity()) // >= 3
 /// ```
-pub fn shrink_to_fit[T](self : Array[T]) -> Unit {}
+pub fn shrink_to_fit[T](self : Array[T]) -> Unit {
+  ignore(self)
+}
 
 /// Adds an element to the end of the array.
 ///
