@@ -31,3 +31,11 @@ pub fn abs(self : Float) -> Float {
     self
   }
 }
+
+pub fn to_string(self : Float) -> String {
+  Show::to_string(self)
+}
+
+pub impl Show for Float with output(self, logger) {
+  logger.write_string(self.to_double().to_string())
+}

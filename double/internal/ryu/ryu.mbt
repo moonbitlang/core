@@ -579,6 +579,7 @@ fn d2d_small_int(
   Some({ mantissa: m2.lsr(-e2), exponent: 0 })
 }
 
+/// TODO: ryu_to_logger[T:Logger](Double/Float, T) -> Unit
 pub fn ryu_to_string(val : Double) -> String {
   if val == 0.0 {
     return "0"
