@@ -106,19 +106,16 @@ test "array_unsafe_blit_fixed" {
   }
 }
 
-test "array_resize_buffer" {
-  let arr = Array::new(capacity=2)
-  arr.push(1)
-  arr.push(2)
-  arr.resize_buffer(4)
-  assert_eq!(arr.buffer()._.length() >= 4, true)
-  arr.push(3)
-  arr.push(4)
-  assert_eq!(arr.length(), 4)
-  assert_eq!(arr[0], 1)
-  assert_eq!(arr[1], 2)
-  assert_eq!(arr[2], 3)
-  assert_eq!(arr[3], 4)
+test "UninitializedArray::unsafe_blit_fixed" {
+  let src = FixedArray::make(5, 0)
+  let dst = UninitializedArray::make(5)
+  for i in 0..<5 {
+    src[i] = i + 1
+  }
+  UninitializedArray::unsafe_blit_fixed(dst, 0, src, 0, 5)
+  for i in 0..<5 {
+    assert_eq!(dst[i], src[i])
+  }
 }
 
 test "UninitializedArray::unsafe_blit_fixed" {
@@ -148,29 +145,191 @@ test "Array::resize_buffer" {
   assert_eq!(arr[3], 4)
 }
 
-test "UninitializedArray::unsafe_blit_fixed" {
-  let src = FixedArray::make(5, 0)
-  let dst = UninitializedArray::make(5)
-  for i in 0..<5 {
-    src[i] = i + 1
+/// Reallocate the array with a new capacity.
+fn realloc[T](self : Array[T]) -> Unit {
+  let old_cap = self.length()
+  let new_cap = if old_cap == 0 { 8 } else { old_cap * 2 }
+  self.resize_buffer(new_cap)
+}
+
+/// Reserves capacity to ensure that it can hold at least the number of elements
+/// specified by the `capacity` argument.
+///
+/// # Example
+///
+/// ```
+/// let v = [1]
+/// v.reserve_capacity(10)
+/// println(v.capacity()) // 10
+/// ```
+pub fn reserve_capacity[T](self : Array[T], capacity : Int) -> Unit {
+  if self.capacity() >= capacity {
+    return
   }
-  UninitializedArray::unsafe_blit_fixed(dst, 0, src, 0, 5)
-  for i in 0..<5 {
-    assert_eq!(dst[i], src[i])
+  self.resize_buffer(capacity)
+}
+
+/// Shrinks the capacity of the array as much as possible.
+///
+/// # Example
+///
+/// ```
+/// let v = Array::new(capacity=10)
+/// v.push(1)
+/// v.push(2)
+/// v.push(3)
+/// println(v.capacity()) // >= 10
+/// v.shrink_to_fit()
+/// println(v.capacity()) // >= 3
+/// ```
+pub fn shrink_to_fit[T](self : Array[T]) -> Unit {
+  if self.capacity() <= self.length() {
+    return
+  }
+  self.resize_buffer(self.length())
+}
+
+/// Adds an element to the end of the array.
+///
+/// If the array is at capacity, it will be reallocated.
+///
+/// # Example
+/// ```
+/// let v = []
+/// v.push(3)
+/// ```
+pub fn push[T](self : Array[T], value : T) -> Unit {
+  if self.length() == self.buffer()._.length() {
+    self.realloc()
+  }
+  let length = self.length()
+  self.buffer()[length] = value
+  self.set_length(length + 1)
+}
+
+/// Removes the last element from a array and returns it, or `None` if it is empty.
+///
+/// # Example
+/// ```
+/// let v = [1, 2, 3]
+/// v.pop()
+/// ```
+pub fn pop[T](self : Array[T]) -> T? {
+  if self.length() == 0 {
+    None
+  } else {
+    let index = self.length() - 1
+    let v = self.buffer()[index]
+    self.set_length(index)
+    Some(v)
   }
 }
 
-test "Array::resize_buffer" {
-  let arr = Array::new(capacity=2)
-  arr.push(1)
-  arr.push(2)
-  arr.resize_buffer(4)
-  assert_eq!(arr.buffer()._.length() >= 4, true)
-  arr.push(3)
-  arr.push(4)
-  assert_eq!(arr.length(), 4)
-  assert_eq!(arr[0], 1)
-  assert_eq!(arr[1], 2)
-  assert_eq!(arr[2], 3)
-  assert_eq!(arr[3], 4)
+/// @alert deprecated "Use `unsafe_pop` instead"
+pub fn pop_exn[T](self : Array[T]) -> T {
+  self.unsafe_pop()
+}
+
+/// Removes the last element from a array and returns it.
+/// 
+/// @alert unsafe "Panic if the array is empty."
+pub fn unsafe_pop[T](self : Array[T]) -> T {
+  guard self.length() != 0
+  let index = self.length() - 1
+  let v = self.buffer()[index]
+  self.set_length(index)
+  v
+}
+
+/// Remove an element from the array at a given index.
+///
+/// Removes and returns the element at position index within the array, shifting all elements after it to the left.
+///
+/// # Example
+/// ```
+/// let v = [3, 4, 5]
+/// v.remove(1)
+/// ```
+/// @alert unsafe "Panic if index is out of bounds."
+pub fn remove[T](self : Array[T], index : Int) -> T {
+  if index < 0 || index >= self.length() {
+    let len = self.length()
+    abort(
+      "index out of bounds: the len is from 0 to \{len} but the index is \{index}",
+    )
+  }
+  let value = self.buffer()[index]
+  UninitializedArray::unsafe_blit(
+    self.buffer(),
+    index,
+    self.buffer(),
+    index + 1,
+    self.length() - index - 1,
+  )
+  self.set_length(self.length() - 1)
+  value
+}
+
+/// Removes the specified range from the array and returns it.
+///
+/// This functions returns a array range from `begin` to `end` `[begin, end)`
+///
+/// # Example
+/// ```
+/// let v = [3, 4, 5]
+/// let vv = v.drain(1, 2) // vv = [4], v = [3, 5]
+/// ```
+/// @alert unsafe "Panic if index is out of bounds."
+pub fn drain[T](self : Array[T], begin : Int, end : Int) -> Array[T] {
+  if begin < 0 ||
+    begin >= self.length() ||
+    end < 0 ||
+    end > self.length() ||
+    begin > end {
+    let len = self.length()
+    abort(
+      "index out of bounds: the len is \{len} but the index is (\{begin}, \{end})",
+    )
+  }
+  let num = end - begin
+  let v = Array::make_uninit(num)
+  UninitializedArray::unsafe_blit(v.buffer(), 0, self.buffer(), begin, num)
+  UninitializedArray::unsafe_blit(
+    self.buffer(),
+    begin,
+    self.buffer(),
+    end,
+    self.length() - end,
+  )
+  self.set_length(self.length() - num)
+  v
+}
+
+/// Inserts an element at a given index within the array.
+///
+/// # Example
+/// ```
+/// [3, 4, 5].insert(1, 6)
+/// ```
+/// @alert unsafe "Panic if index is out of bounds."
+pub fn insert[T](self : Array[T], index : Int, value : T) -> Unit {
+  if index < 0 || index > self.length() {
+    let len = self.length()
+    abort(
+      "index out of bounds: the len is from 0 to \{len} but the index is \{index}",
+    )
+  }
+  if self.length() == self.buffer()._.length() {
+    self.realloc()
+  }
+  UninitializedArray::unsafe_blit(
+    self.buffer(),
+    index + 1,
+    self.buffer(),
+    index,
+    self.length() - index,
+  )
+  let length = self.length()
+  self.buffer()[index] = value
+  self.set_length(length + 1)
 }
