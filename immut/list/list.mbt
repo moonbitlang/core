@@ -22,16 +22,9 @@ pub fn add[A](self : T[A], head : A) -> T[A] {
 }
 
 pub impl[A : Show] Show for T[A] with output(xs, logger) {
-  logger.write_string("@list.of([")
-  xs.eachi(
-    fn(i, x) {
-      if i > 0 {
-        logger.write_string(", ")
-      }
-      x.output(logger)
-    },
-  )
-  logger.write_string("])")
+  logger.write_string("@list.of(")
+  logger.write_object(xs.iter())
+  logger.write_string(")")
 }
 
 pub fn T::to_string[A : Show](xs : T[A]) -> String {
