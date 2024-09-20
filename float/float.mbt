@@ -33,7 +33,7 @@ pub fn abs(self : Float) -> Float {
 }
 
 pub fn to_string(self : Float) -> String {
-  self.to_double().to_string()
+  Show::to_string(self)
 }
 
 pub impl Show for Float with output(self, logger) {
