@@ -82,3 +82,5 @@ impl Show with to_string(self) {
 pub fn Logger::write_object[Obj : Show](self : Logger, obj : Obj) -> Unit {
   obj.output(self)
 }
+
+// TODO: Logger::write_double(self:Logger, val:Double) -> Unit
