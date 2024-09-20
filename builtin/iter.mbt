@@ -637,6 +637,17 @@ pub fn find_first[T](self : Iter[T], f : (T) -> Bool) -> T? {
   }
 }
 
+pub fn peek[T](self : Iter[T]) -> T? {
+  let mut first = None
+  self.just_run(
+    fn(a) {
+      first = Some(a)
+      IterEnd
+    },
+  )
+  first
+}
+
 /// Prepends a single element to the beginning of the iterator.
 ///
 /// # Type Parameters
