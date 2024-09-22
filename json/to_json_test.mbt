@@ -133,3 +133,78 @@ test "Option::to_json" {
   inspect!((Some(42) : Int?).to_json(), content="Number(42)")
   inspect!((None : Int?).to_json(), content="Null")
 }
+
+test "Tuple::to_json" {
+  let tuple = (0, 1)
+  inspect!(ToJson::to_json(tuple), content="Array([Number(0), Number(1)])")
+  let tuple = (0, 1, 2)
+  inspect!(
+    ToJson::to_json(tuple),
+    content="Array([Number(0), Number(1), Number(2)])",
+  )
+  let tuple = (0, 1, 2, 3)
+  inspect!(
+    ToJson::to_json(tuple),
+    content="Array([Number(0), Number(1), Number(2), Number(3)])",
+  )
+  let tuple = (0, 1, 2, 3, 4)
+  inspect!(
+    ToJson::to_json(tuple),
+    content="Array([Number(0), Number(1), Number(2), Number(3), Number(4)])",
+  )
+  let tuple = (0, 1, 2, 3, 4, 5)
+  inspect!(
+    ToJson::to_json(tuple),
+    content="Array([Number(0), Number(1), Number(2), Number(3), Number(4), Number(5)])",
+  )
+  let tuple = (0, 1, 2, 3, 4, 5, 6)
+  inspect!(
+    ToJson::to_json(tuple),
+    content="Array([Number(0), Number(1), Number(2), Number(3), Number(4), Number(5), Number(6)])",
+  )
+  let tuple = (0, 1, 2, 3, 4, 5, 6, 7)
+  inspect!(
+    ToJson::to_json(tuple),
+    content="Array([Number(0), Number(1), Number(2), Number(3), Number(4), Number(5), Number(6), Number(7)])",
+  )
+  let tuple = (0, 1, 2, 3, 4, 5, 6, 7, 8)
+  inspect!(
+    ToJson::to_json(tuple),
+    content="Array([Number(0), Number(1), Number(2), Number(3), Number(4), Number(5), Number(6), Number(7), Number(8)])",
+  )
+  let tuple = (0, 1, 2, 3, 4, 5, 6, 7, 8, 9)
+  inspect!(
+    ToJson::to_json(tuple),
+    content="Array([Number(0), Number(1), Number(2), Number(3), Number(4), Number(5), Number(6), Number(7), Number(8), Number(9)])",
+  )
+  let tuple = (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10)
+  inspect!(
+    ToJson::to_json(tuple),
+    content="Array([Number(0), Number(1), Number(2), Number(3), Number(4), Number(5), Number(6), Number(7), Number(8), Number(9), Number(10)])",
+  )
+  let tuple = (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11)
+  inspect!(
+    ToJson::to_json(tuple),
+    content="Array([Number(0), Number(1), Number(2), Number(3), Number(4), Number(5), Number(6), Number(7), Number(8), Number(9), Number(10), Number(11)])",
+  )
+  let tuple = (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12)
+  inspect!(
+    ToJson::to_json(tuple),
+    content="Array([Number(0), Number(1), Number(2), Number(3), Number(4), Number(5), Number(6), Number(7), Number(8), Number(9), Number(10), Number(11), Number(12)])",
+  )
+  let tuple = (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13)
+  inspect!(
+    ToJson::to_json(tuple),
+    content="Array([Number(0), Number(1), Number(2), Number(3), Number(4), Number(5), Number(6), Number(7), Number(8), Number(9), Number(10), Number(11), Number(12), Number(13)])",
+  )
+  let tuple = (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14)
+  inspect!(
+    ToJson::to_json(tuple),
+    content="Array([Number(0), Number(1), Number(2), Number(3), Number(4), Number(5), Number(6), Number(7), Number(8), Number(9), Number(10), Number(11), Number(12), Number(13), Number(14)])",
+  )
+  let tuple = (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15)
+  inspect!(
+    ToJson::to_json(tuple),
+    content="Array([Number(0), Number(1), Number(2), Number(3), Number(4), Number(5), Number(6), Number(7), Number(8), Number(9), Number(10), Number(11), Number(12), Number(13), Number(14), Number(15)])",
+  )
+}

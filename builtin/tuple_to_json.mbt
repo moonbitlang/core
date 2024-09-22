@@ -103,3 +103,251 @@ pub impl[A : ToJson, B : ToJson, C : ToJson, D : ToJson, E : ToJson, F : ToJson,
     self.7.to_json(),
   ]
 }
+
+pub impl[A : ToJson, B : ToJson, C : ToJson, D : ToJson, E : ToJson, F : ToJson, G : ToJson, H : ToJson, I : ToJson] ToJson for (
+  A,
+  B,
+  C,
+  D,
+  E,
+  F,
+  G,
+  H,
+  I,
+) with to_json(self) {
+  [
+    self.0.to_json(),
+    self.1.to_json(),
+    self.2.to_json(),
+    self.3.to_json(),
+    self.4.to_json(),
+    self.5.to_json(),
+    self.6.to_json(),
+    self.7.to_json(),
+    self.8.to_json(),
+  ]
+}
+
+pub impl[A : ToJson, B : ToJson, C : ToJson, D : ToJson, E : ToJson, F : ToJson, G : ToJson, H : ToJson, I : ToJson, J : ToJson] ToJson for (
+  A,
+  B,
+  C,
+  D,
+  E,
+  F,
+  G,
+  H,
+  I,
+  J,
+) with to_json(self) {
+  [
+    self.0.to_json(),
+    self.1.to_json(),
+    self.2.to_json(),
+    self.3.to_json(),
+    self.4.to_json(),
+    self.5.to_json(),
+    self.6.to_json(),
+    self.7.to_json(),
+    self.8.to_json(),
+    self.9.to_json(),
+  ]
+}
+
+pub impl[A : ToJson, B : ToJson, C : ToJson, D : ToJson, E : ToJson, F : ToJson, G : ToJson, H : ToJson, I : ToJson, J : ToJson, K : ToJson] ToJson for (
+  A,
+  B,
+  C,
+  D,
+  E,
+  F,
+  G,
+  H,
+  I,
+  J,
+  K,
+) with to_json(self) {
+  [
+    self.0.to_json(),
+    self.1.to_json(),
+    self.2.to_json(),
+    self.3.to_json(),
+    self.4.to_json(),
+    self.5.to_json(),
+    self.6.to_json(),
+    self.7.to_json(),
+    self.8.to_json(),
+    self.9.to_json(),
+    self.10.to_json(),
+  ]
+}
+
+pub impl[A : ToJson, B : ToJson, C : ToJson, D : ToJson, E : ToJson, F : ToJson, G : ToJson, H : ToJson, I : ToJson, J : ToJson, K : ToJson, L : ToJson] ToJson for (
+  A,
+  B,
+  C,
+  D,
+  E,
+  F,
+  G,
+  H,
+  I,
+  J,
+  K,
+  L,
+) with to_json(self) {
+  [
+    self.0.to_json(),
+    self.1.to_json(),
+    self.2.to_json(),
+    self.3.to_json(),
+    self.4.to_json(),
+    self.5.to_json(),
+    self.6.to_json(),
+    self.7.to_json(),
+    self.8.to_json(),
+    self.9.to_json(),
+    self.10.to_json(),
+    self.11.to_json(),
+  ]
+}
+
+pub impl[A : ToJson, B : ToJson, C : ToJson, D : ToJson, E : ToJson, F : ToJson, G : ToJson, H : ToJson, I : ToJson, J : ToJson, K : ToJson, L : ToJson, M : ToJson] ToJson for (
+  A,
+  B,
+  C,
+  D,
+  E,
+  F,
+  G,
+  H,
+  I,
+  J,
+  K,
+  L,
+  M,
+) with to_json(self) {
+  [
+    self.0.to_json(),
+    self.1.to_json(),
+    self.2.to_json(),
+    self.3.to_json(),
+    self.4.to_json(),
+    self.5.to_json(),
+    self.6.to_json(),
+    self.7.to_json(),
+    self.8.to_json(),
+    self.9.to_json(),
+    self.10.to_json(),
+    self.11.to_json(),
+    self.12.to_json(),
+  ]
+}
+
+pub impl[A : ToJson, B : ToJson, C : ToJson, D : ToJson, E : ToJson, F : ToJson, G : ToJson, H : ToJson, I : ToJson, J : ToJson, K : ToJson, L : ToJson, M : ToJson, N : ToJson] ToJson for (
+  A,
+  B,
+  C,
+  D,
+  E,
+  F,
+  G,
+  H,
+  I,
+  J,
+  K,
+  L,
+  M,
+  N,
+) with to_json(self) {
+  [
+    self.0.to_json(),
+    self.1.to_json(),
+    self.2.to_json(),
+    self.3.to_json(),
+    self.4.to_json(),
+    self.5.to_json(),
+    self.6.to_json(),
+    self.7.to_json(),
+    self.8.to_json(),
+    self.9.to_json(),
+    self.10.to_json(),
+    self.11.to_json(),
+    self.12.to_json(),
+    self.13.to_json(),
+  ]
+}
+
+pub impl[A : ToJson, B : ToJson, C : ToJson, D : ToJson, E : ToJson, F : ToJson, G : ToJson, H : ToJson, I : ToJson, J : ToJson, K : ToJson, L : ToJson, M : ToJson, N : ToJson, O : ToJson] ToJson for (
+  A,
+  B,
+  C,
+  D,
+  E,
+  F,
+  G,
+  H,
+  I,
+  J,
+  K,
+  L,
+  M,
+  N,
+  O,
+) with to_json(self) {
+  [
+    self.0.to_json(),
+    self.1.to_json(),
+    self.2.to_json(),
+    self.3.to_json(),
+    self.4.to_json(),
+    self.5.to_json(),
+    self.6.to_json(),
+    self.7.to_json(),
+    self.8.to_json(),
+    self.9.to_json(),
+    self.10.to_json(),
+    self.11.to_json(),
+    self.12.to_json(),
+    self.13.to_json(),
+    self.14.to_json(),
+  ]
+}
+
+pub impl[A : ToJson, B : ToJson, C : ToJson, D : ToJson, E : ToJson, F : ToJson, G : ToJson, H : ToJson, I : ToJson, J : ToJson, K : ToJson, L : ToJson, M : ToJson, N : ToJson, O : ToJson, P : ToJson] ToJson for (
+  A,
+  B,
+  C,
+  D,
+  E,
+  F,
+  G,
+  H,
+  I,
+  J,
+  K,
+  L,
+  M,
+  N,
+  O,
+  P,
+) with to_json(self) {
+  [
+    self.0.to_json(),
+    self.1.to_json(),
+    self.2.to_json(),
+    self.3.to_json(),
+    self.4.to_json(),
+    self.5.to_json(),
+    self.6.to_json(),
+    self.7.to_json(),
+    self.8.to_json(),
+    self.9.to_json(),
+    self.10.to_json(),
+    self.11.to_json(),
+    self.12.to_json(),
+    self.13.to_json(),
+    self.14.to_json(),
+    self.15.to_json(),
+  ]
+}

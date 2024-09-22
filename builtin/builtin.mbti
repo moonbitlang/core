@@ -811,3 +811,19 @@ impl ToJson for Tuple(7)
 
 impl ToJson for Tuple(8)
 
+impl ToJson for Tuple(9)
+
+impl ToJson for Tuple(10)
+
+impl ToJson for Tuple(11)
+
+impl ToJson for Tuple(12)
+
+impl ToJson for Tuple(13)
+
+impl ToJson for Tuple(14)
+
+impl ToJson for Tuple(15)
+
+impl ToJson for Tuple(16)
+
