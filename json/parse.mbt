@@ -55,18 +55,11 @@ fn parse_object(ctx : ParseContext) -> JsonValue!ParseError {
   loop lex_property_name!(ctx) {
     RBrace => Object(map)
     String(name) => {
-      let tok2 = lex_after_property_name!(ctx)
-      match tok2 {
-        Colon => {
-          let val = parse_value!(ctx)
-          map.set(name, val)
-          let tok3 = lex_after_object_value!(ctx)
-          match tok3 {
-            Comma => continue lex_property_name2!(ctx)
-            RBrace => Object(map)
-            _ => abort("unreachable")
-          }
-        }
+      guard let Colon = lex_after_property_name!(ctx)
+      map[name] = parse_value!(ctx)
+      match lex_after_object_value!(ctx) {
+        Comma => continue lex_property_name2!(ctx)
+        RBrace => Object(map)
         _ => abort("unreachable")
       }
     }
