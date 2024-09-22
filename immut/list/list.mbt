@@ -22,9 +22,8 @@ pub fn add[A](self : T[A], head : A) -> T[A] {
 }
 
 pub impl[A : Show] Show for T[A] with output(xs, logger) {
-  logger.write_string("@list.of(")
-  logger.write_object(xs.iter())
-  logger.write_string(")")
+  logger..write_string("@list.of([")..write_iter(xs.iter())..write_string("])")
+  |> ignore
 }
 
 pub fn T::to_string[A : Show](xs : T[A]) -> String {

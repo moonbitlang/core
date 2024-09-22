@@ -583,6 +583,7 @@ impl Bytes {
   to_string(Bytes) -> String
 }
 impl Logger {
+  write_iter[T : Show](Self, Iter[T], ~sep : String = .., ~trailing : Bool = ..) -> Unit
   write_object[Obj : Show](Self, Obj) -> Unit
 }
 impl Tuple(2) {

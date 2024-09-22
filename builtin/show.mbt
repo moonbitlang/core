@@ -48,12 +48,13 @@ pub impl Show for Bytes with output(self, logger) {
   }
 
   logger.write_string("b\"")
-  for i = 0; i < self.length(); i = i + 1 {
-    let byte = self[i].to_int()
+  for b in self {
+    let byte = b.to_int()
     logger
     ..write_string("\\x")
     ..write_char(to_hex_digit(byte / 16))
-    .write_char(to_hex_digit(byte % 16))
+    ..write_char(to_hex_digit(byte % 16))
+    |> ignore
   }
   logger.write_string("\"")
 }
@@ -152,15 +153,18 @@ pub impl[X : Show] Show for Ref[X] with output(self, logger) {
 }
 
 pub impl[X : Show] Show for FixedArray[X] with output(self, logger) {
-  logger.write_object(self.iter())
+  logger..write_string("[")..write_iter(self.iter())..write_string("]")
+  |> ignore
 }
 
 pub impl[X : Show] Show for Array[X] with output(self, logger) {
-  logger.write_object(self.iter())
+  logger..write_string("[")..write_iter(self.iter())..write_string("]")
+  |> ignore
 }
 
 pub impl[X : Show] Show for ArrayView[X] with output(self, logger) {
-  logger.write_object(self.iter())
+  logger..write_string("[")..write_iter(self.iter())..write_string("]")
+  |> ignore
 }
 
 pub fn ArrayView::to_string[X : Show](self : ArrayView[X]) -> String {

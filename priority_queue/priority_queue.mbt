@@ -251,9 +251,11 @@ test "meld_and_merges" {
 }
 
 pub impl[A : Show + Compare] Show for T[A] with output(self, logger) {
-  logger.write_string("@priority_queue.of(")
-  Show::output(self.to_array(), logger)
-  logger.write_char(')')
+  logger
+  ..write_string("@priority_queue.of([")
+  ..write_iter(self.iter())
+  ..write_string("])")
+  |> ignore
 }
 
 pub fn to_string[A : Show + Compare](self : T[A]) -> String {

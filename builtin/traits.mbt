@@ -83,4 +83,28 @@ pub fn Logger::write_object[Obj : Show](self : Logger, obj : Obj) -> Unit {
   obj.output(self)
 }
 
+pub fn Logger::write_iter[T : Show](
+  self : Logger,
+  iter : Iter[T],
+  ~sep : String = ", ",
+  ~trailing : Bool = false
+) -> Unit {
+  if trailing {
+    for x in iter {
+      self.write_object(x)
+      self.write_string(sep)
+    }
+  } else {
+    // trailing is false 
+    let mut first = true
+    for x in iter {
+      if first {
+        first = false
+      } else {
+        self.write_string(sep)
+      }
+      self.write_object(x)
+    }
+  }
+}
 // TODO: Logger::write_double(self:Logger, val:Double) -> Unit

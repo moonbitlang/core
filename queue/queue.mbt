@@ -44,16 +44,11 @@ pub fn T::from_array[A](arr : Array[A]) -> T[A] {
 }
 
 pub impl[A : Show] Show for T[A] with output(self, logger) {
-  logger.write_string("@queue.of([")
-  self.eachi(
-    fn(i, t) {
-      if i > 0 {
-        logger.write_string(", ")
-      }
-      t.output(logger)
-    },
-  )
-  logger.write_string("])")
+  logger
+  ..write_string("@queue.of([")
+  ..write_iter(self.iter())
+  ..write_string("])")
+  |> ignore
 }
 
 // Reuse the default implementation of [Show::to_string] here

@@ -28,9 +28,11 @@ pub fn T::new[A](~capacity : Int = 0) -> T[A] {
 }
 
 pub impl[A : Show] Show for T[A] with output(self, logger) {
-  logger.write_string("@deque.of(")
-  logger.write_object(self.iter())
-  logger.write_string(")")
+  logger
+  ..write_string("@deque.of([")
+  ..write_iter(self.iter())
+  ..write_string("])")
+  |> ignore
 }
 
 pub fn to_string[A : Show](self : T[A]) -> String {
