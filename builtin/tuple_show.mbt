@@ -160,3 +160,445 @@ pub fn to_string[A : Show, B : Show, C : Show, D : Show, E : Show, F : Show, G :
 ) -> String {
   Show::to_string(self)
 }
+
+pub impl[T0 : Show, T1 : Show, T2 : Show, T3 : Show, T4 : Show, T5 : Show, T6 : Show, T7 : Show] Show for (
+  T0,
+  T1,
+  T2,
+  T3,
+  T4,
+  T5,
+  T6,
+  T7,
+) with output(self, logger) {
+  let (x0, x1, x2, x3, x4, x5, x6, x7) = self
+  logger
+  ..write_string("(")
+  ..write_object(x0)
+  ..write_string(", ")
+  ..write_object(x1)
+  ..write_string(", ")
+  ..write_object(x2)
+  ..write_string(", ")
+  ..write_object(x3)
+  ..write_string(", ")
+  ..write_object(x4)
+  ..write_string(", ")
+  ..write_object(x5)
+  ..write_string(", ")
+  ..write_object(x6)
+  ..write_string(", ")
+  ..write_object(x7)
+  .write_string(")")
+}
+
+pub fn to_string[T0 : Show, T1 : Show, T2 : Show, T3 : Show, T4 : Show, T5 : Show, T6 : Show, T7 : Show](
+  self : (T0, T1, T2, T3, T4, T5, T6, T7)
+) -> String {
+  Show::to_string(self)
+}
+
+pub impl[T0 : Show, T1 : Show, T2 : Show, T3 : Show, T4 : Show, T5 : Show, T6 : Show, T7 : Show, T8 : Show] Show for (
+  T0,
+  T1,
+  T2,
+  T3,
+  T4,
+  T5,
+  T6,
+  T7,
+  T8,
+) with output(self, logger) {
+  let (x0, x1, x2, x3, x4, x5, x6, x7, x8) = self
+  logger
+  ..write_string("(")
+  ..write_object(x0)
+  ..write_string(", ")
+  ..write_object(x1)
+  ..write_string(", ")
+  ..write_object(x2)
+  ..write_string(", ")
+  ..write_object(x3)
+  ..write_string(", ")
+  ..write_object(x4)
+  ..write_string(", ")
+  ..write_object(x5)
+  ..write_string(", ")
+  ..write_object(x6)
+  ..write_string(", ")
+  ..write_object(x7)
+  ..write_string(", ")
+  ..write_object(x8)
+  .write_string(")")
+}
+
+pub fn to_string[T0 : Show, T1 : Show, T2 : Show, T3 : Show, T4 : Show, T5 : Show, T6 : Show, T7 : Show, T8 : Show](
+  self : (T0, T1, T2, T3, T4, T5, T6, T7, T8)
+) -> String {
+  Show::to_string(self)
+}
+
+pub impl[T0 : Show, T1 : Show, T2 : Show, T3 : Show, T4 : Show, T5 : Show, T6 : Show, T7 : Show, T8 : Show, T9 : Show] Show for (
+  T0,
+  T1,
+  T2,
+  T3,
+  T4,
+  T5,
+  T6,
+  T7,
+  T8,
+  T9,
+) with output(self, logger) {
+  let (x0, x1, x2, x3, x4, x5, x6, x7, x8, x9) = self
+  logger
+  ..write_string("(")
+  ..write_object(x0)
+  ..write_string(", ")
+  ..write_object(x1)
+  ..write_string(", ")
+  ..write_object(x2)
+  ..write_string(", ")
+  ..write_object(x3)
+  ..write_string(", ")
+  ..write_object(x4)
+  ..write_string(", ")
+  ..write_object(x5)
+  ..write_string(", ")
+  ..write_object(x6)
+  ..write_string(", ")
+  ..write_object(x7)
+  ..write_string(", ")
+  ..write_object(x8)
+  ..write_string(", ")
+  ..write_object(x9)
+  .write_string(")")
+}
+
+pub fn to_string[T0 : Show, T1 : Show, T2 : Show, T3 : Show, T4 : Show, T5 : Show, T6 : Show, T7 : Show, T8 : Show, T9 : Show](
+  self : (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9)
+) -> String {
+  Show::to_string(self)
+}
+
+pub impl[T0 : Show, T1 : Show, T2 : Show, T3 : Show, T4 : Show, T5 : Show, T6 : Show, T7 : Show, T8 : Show, T9 : Show, T10 : Show] Show for (
+  T0,
+  T1,
+  T2,
+  T3,
+  T4,
+  T5,
+  T6,
+  T7,
+  T8,
+  T9,
+  T10,
+) with output(self, logger) {
+  let (x0, x1, x2, x3, x4, x5, x6, x7, x8, x9, x10) = self
+  logger
+  ..write_string("(")
+  ..write_object(x0)
+  ..write_string(", ")
+  ..write_object(x1)
+  ..write_string(", ")
+  ..write_object(x2)
+  ..write_string(", ")
+  ..write_object(x3)
+  ..write_string(", ")
+  ..write_object(x4)
+  ..write_string(", ")
+  ..write_object(x5)
+  ..write_string(", ")
+  ..write_object(x6)
+  ..write_string(", ")
+  ..write_object(x7)
+  ..write_string(", ")
+  ..write_object(x8)
+  ..write_string(", ")
+  ..write_object(x9)
+  ..write_string(", ")
+  ..write_object(x10)
+  .write_string(")")
+}
+
+pub fn to_string[T0 : Show, T1 : Show, T2 : Show, T3 : Show, T4 : Show, T5 : Show, T6 : Show, T7 : Show, T8 : Show, T9 : Show, T10 : Show](
+  self : (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10)
+) -> String {
+  Show::to_string(self)
+}
+
+pub impl[T0 : Show, T1 : Show, T2 : Show, T3 : Show, T4 : Show, T5 : Show, T6 : Show, T7 : Show, T8 : Show, T9 : Show, T10 : Show, T11 : Show] Show for (
+  T0,
+  T1,
+  T2,
+  T3,
+  T4,
+  T5,
+  T6,
+  T7,
+  T8,
+  T9,
+  T10,
+  T11,
+) with output(self, logger) {
+  let (x0, x1, x2, x3, x4, x5, x6, x7, x8, x9, x10, x11) = self
+  logger
+  ..write_string("(")
+  ..write_object(x0)
+  ..write_string(", ")
+  ..write_object(x1)
+  ..write_string(", ")
+  ..write_object(x2)
+  ..write_string(", ")
+  ..write_object(x3)
+  ..write_string(", ")
+  ..write_object(x4)
+  ..write_string(", ")
+  ..write_object(x5)
+  ..write_string(", ")
+  ..write_object(x6)
+  ..write_string(", ")
+  ..write_object(x7)
+  ..write_string(", ")
+  ..write_object(x8)
+  ..write_string(", ")
+  ..write_object(x9)
+  ..write_string(", ")
+  ..write_object(x10)
+  ..write_string(", ")
+  ..write_object(x11)
+  .write_string(")")
+}
+
+pub fn to_string[T0 : Show, T1 : Show, T2 : Show, T3 : Show, T4 : Show, T5 : Show, T6 : Show, T7 : Show, T8 : Show, T9 : Show, T10 : Show, T11 : Show](
+  self : (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11)
+) -> String {
+  Show::to_string(self)
+}
+
+pub impl[T0 : Show, T1 : Show, T2 : Show, T3 : Show, T4 : Show, T5 : Show, T6 : Show, T7 : Show, T8 : Show, T9 : Show, T10 : Show, T11 : Show, T12 : Show] Show for (
+  T0,
+  T1,
+  T2,
+  T3,
+  T4,
+  T5,
+  T6,
+  T7,
+  T8,
+  T9,
+  T10,
+  T11,
+  T12,
+) with output(self, logger) {
+  let (x0, x1, x2, x3, x4, x5, x6, x7, x8, x9, x10, x11, x12) = self
+  logger
+  ..write_string("(")
+  ..write_object(x0)
+  ..write_string(", ")
+  ..write_object(x1)
+  ..write_string(", ")
+  ..write_object(x2)
+  ..write_string(", ")
+  ..write_object(x3)
+  ..write_string(", ")
+  ..write_object(x4)
+  ..write_string(", ")
+  ..write_object(x5)
+  ..write_string(", ")
+  ..write_object(x6)
+  ..write_string(", ")
+  ..write_object(x7)
+  ..write_string(", ")
+  ..write_object(x8)
+  ..write_string(", ")
+  ..write_object(x9)
+  ..write_string(", ")
+  ..write_object(x10)
+  ..write_string(", ")
+  ..write_object(x11)
+  ..write_string(", ")
+  ..write_object(x12)
+  .write_string(")")
+}
+
+pub fn to_string[T0 : Show, T1 : Show, T2 : Show, T3 : Show, T4 : Show, T5 : Show, T6 : Show, T7 : Show, T8 : Show, T9 : Show, T10 : Show, T11 : Show, T12 : Show](
+  self : (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12)
+) -> String {
+  Show::to_string(self)
+}
+
+pub impl[T0 : Show, T1 : Show, T2 : Show, T3 : Show, T4 : Show, T5 : Show, T6 : Show, T7 : Show, T8 : Show, T9 : Show, T10 : Show, T11 : Show, T12 : Show, T13 : Show] Show for (
+  T0,
+  T1,
+  T2,
+  T3,
+  T4,
+  T5,
+  T6,
+  T7,
+  T8,
+  T9,
+  T10,
+  T11,
+  T12,
+  T13,
+) with output(self, logger) {
+  let (x0, x1, x2, x3, x4, x5, x6, x7, x8, x9, x10, x11, x12, x13) = self
+  logger
+  ..write_string("(")
+  ..write_object(x0)
+  ..write_string(", ")
+  ..write_object(x1)
+  ..write_string(", ")
+  ..write_object(x2)
+  ..write_string(", ")
+  ..write_object(x3)
+  ..write_string(", ")
+  ..write_object(x4)
+  ..write_string(", ")
+  ..write_object(x5)
+  ..write_string(", ")
+  ..write_object(x6)
+  ..write_string(", ")
+  ..write_object(x7)
+  ..write_string(", ")
+  ..write_object(x8)
+  ..write_string(", ")
+  ..write_object(x9)
+  ..write_string(", ")
+  ..write_object(x10)
+  ..write_string(", ")
+  ..write_object(x11)
+  ..write_string(", ")
+  ..write_object(x12)
+  ..write_string(", ")
+  ..write_object(x13)
+  .write_string(")")
+}
+
+pub fn to_string[T0 : Show, T1 : Show, T2 : Show, T3 : Show, T4 : Show, T5 : Show, T6 : Show, T7 : Show, T8 : Show, T9 : Show, T10 : Show, T11 : Show, T12 : Show, T13 : Show](
+  self : (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13)
+) -> String {
+  Show::to_string(self)
+}
+
+pub impl[T0 : Show, T1 : Show, T2 : Show, T3 : Show, T4 : Show, T5 : Show, T6 : Show, T7 : Show, T8 : Show, T9 : Show, T10 : Show, T11 : Show, T12 : Show, T13 : Show, T14 : Show] Show for (
+  T0,
+  T1,
+  T2,
+  T3,
+  T4,
+  T5,
+  T6,
+  T7,
+  T8,
+  T9,
+  T10,
+  T11,
+  T12,
+  T13,
+  T14,
+) with output(self, logger) {
+  let (x0, x1, x2, x3, x4, x5, x6, x7, x8, x9, x10, x11, x12, x13, x14) = self
+  logger
+  ..write_string("(")
+  ..write_object(x0)
+  ..write_string(", ")
+  ..write_object(x1)
+  ..write_string(", ")
+  ..write_object(x2)
+  ..write_string(", ")
+  ..write_object(x3)
+  ..write_string(", ")
+  ..write_object(x4)
+  ..write_string(", ")
+  ..write_object(x5)
+  ..write_string(", ")
+  ..write_object(x6)
+  ..write_string(", ")
+  ..write_object(x7)
+  ..write_string(", ")
+  ..write_object(x8)
+  ..write_string(", ")
+  ..write_object(x9)
+  ..write_string(", ")
+  ..write_object(x10)
+  ..write_string(", ")
+  ..write_object(x11)
+  ..write_string(", ")
+  ..write_object(x12)
+  ..write_string(", ")
+  ..write_object(x13)
+  ..write_string(", ")
+  ..write_object(x14)
+  .write_string(")")
+}
+
+pub fn to_string[T0 : Show, T1 : Show, T2 : Show, T3 : Show, T4 : Show, T5 : Show, T6 : Show, T7 : Show, T8 : Show, T9 : Show, T10 : Show, T11 : Show, T12 : Show, T13 : Show, T14 : Show](
+  self : (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14)
+) -> String {
+  Show::to_string(self)
+}
+
+pub impl[T0 : Show, T1 : Show, T2 : Show, T3 : Show, T4 : Show, T5 : Show, T6 : Show, T7 : Show, T8 : Show, T9 : Show, T10 : Show, T11 : Show, T12 : Show, T13 : Show, T14 : Show, T15 : Show] Show for (
+  T0,
+  T1,
+  T2,
+  T3,
+  T4,
+  T5,
+  T6,
+  T7,
+  T8,
+  T9,
+  T10,
+  T11,
+  T12,
+  T13,
+  T14,
+  T15,
+) with output(self, logger) {
+  let (x0, x1, x2, x3, x4, x5, x6, x7, x8, x9, x10, x11, x12, x13, x14, x15) = self
+  logger
+  ..write_string("(")
+  ..write_object(x0)
+  ..write_string(", ")
+  ..write_object(x1)
+  ..write_string(", ")
+  ..write_object(x2)
+  ..write_string(", ")
+  ..write_object(x3)
+  ..write_string(", ")
+  ..write_object(x4)
+  ..write_string(", ")
+  ..write_object(x5)
+  ..write_string(", ")
+  ..write_object(x6)
+  ..write_string(", ")
+  ..write_object(x7)
+  ..write_string(", ")
+  ..write_object(x8)
+  ..write_string(", ")
+  ..write_object(x9)
+  ..write_string(", ")
+  ..write_object(x10)
+  ..write_string(", ")
+  ..write_object(x11)
+  ..write_string(", ")
+  ..write_object(x12)
+  ..write_string(", ")
+  ..write_object(x13)
+  ..write_string(", ")
+  ..write_object(x14)
+  ..write_string(", ")
+  ..write_object(x15)
+  .write_string(")")
+}
+
+pub fn to_string[T0 : Show, T1 : Show, T2 : Show, T3 : Show, T4 : Show, T5 : Show, T6 : Show, T7 : Show, T8 : Show, T9 : Show, T10 : Show, T11 : Show, T12 : Show, T13 : Show, T14 : Show, T15 : Show](
+  self : (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15)
+) -> String {
+  Show::to_string(self)
+}
+
