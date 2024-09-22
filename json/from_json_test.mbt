@@ -75,6 +75,73 @@ test "tuple" {
   let u : Json = [1, 2, 3, 4, 5, 6, 7, 8]
   let v : (Int, Int, Int, Int, Int, Int, Int, Int) = @json.from_json!(u)
   inspect!(v, content="(1, 2, 3, 4, 5, 6, 7, 8)")
+  let u : Json = [1, 2, 3, 4, 5, 6, 7, 8, 9]
+  let v : (Int, Int, Int, Int, Int, Int, Int, Int, Int) = @json.from_json!(u)
+  inspect!(v, content="(1, 2, 3, 4, 5, 6, 7, 8, 9)")
+  let u : Json = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+  let v : (Int, Int, Int, Int, Int, Int, Int, Int, Int, Int) = @json.from_json!(
+    u,
+  )
+  inspect!(v, content="(1, 2, 3, 4, 5, 6, 7, 8, 9, 10)")
+  let u : Json = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]
+  let v : (Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int) = @json.from_json!(
+    u,
+  )
+  inspect!(v, content="(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11)")
+  let u : Json = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
+  let v : (Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int) = @json.from_json!(
+    u,
+  )
+  inspect!(v, content="(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12)")
+  let u : Json = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]
+  let v : (Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int) = @json.from_json!(
+    u,
+  )
+  inspect!(v, content="(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13)")
+  let u : Json = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14]
+  let v : (Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int) = @json.from_json!(
+    u,
+  )
+  inspect!(v, content="(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14)")
+  let u : Json = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
+  let v : (
+    Int,
+    Int,
+    Int,
+    Int,
+    Int,
+    Int,
+    Int,
+    Int,
+    Int,
+    Int,
+    Int,
+    Int,
+    Int,
+    Int,
+    Int,
+  ) = @json.from_json!(u)
+  inspect!(v, content="(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15)")
+  let u : Json = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16]
+  let v : (
+    Int,
+    Int,
+    Int,
+    Int,
+    Int,
+    Int,
+    Int,
+    Int,
+    Int,
+    Int,
+    Int,
+    Int,
+    Int,
+    Int,
+    Int,
+    Int,
+  ) = @json.from_json!(u)
+  inspect!(v, content="(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16)")
 }
 
 test "tuple roundtrip" {
@@ -104,6 +171,100 @@ test "tuple roundtrip" {
   inspect!(
     (@json.from_json!(u.to_json()) : (Int, Int, Int, Int, Int, Int, Int)),
     content="(1, 2, 3, 4, 5, 6, 7)",
+  )
+  let u = [1, 2, 3, 4, 5, 6, 7, 8]
+  inspect!(
+    (@json.from_json!(u.to_json()) : (Int, Int, Int, Int, Int, Int, Int, Int)),
+    content="(1, 2, 3, 4, 5, 6, 7, 8)",
+  )
+  let u = [1, 2, 3, 4, 5, 6, 7, 8, 9]
+  inspect!(
+    (
+      @json.from_json!(u.to_json()) :
+      (Int, Int, Int, Int, Int, Int, Int, Int, Int)),
+    content="(1, 2, 3, 4, 5, 6, 7, 8, 9)",
+  )
+  let u = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+  inspect!(
+    (
+      @json.from_json!(u.to_json()) :
+      (Int, Int, Int, Int, Int, Int, Int, Int, Int, Int)),
+    content="(1, 2, 3, 4, 5, 6, 7, 8, 9, 10)",
+  )
+  let u = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]
+  inspect!(
+    (
+      @json.from_json!(u.to_json()) :
+      (Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int)),
+    content="(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11)",
+  )
+  let u = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
+  inspect!(
+    (
+      @json.from_json!(u.to_json()) :
+      (Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int)),
+    content="(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12)",
+  )
+  let u = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]
+  inspect!(
+    (
+      @json.from_json!(u.to_json()) :
+      (Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int)),
+    content="(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13)",
+  )
+  let u = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14]
+  inspect!(
+    (
+      @json.from_json!(u.to_json()) :
+      (Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int)),
+    content="(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14)",
+  )
+  let u = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
+  inspect!(
+    (
+      @json.from_json!(u.to_json()) :
+      (
+        Int,
+        Int,
+        Int,
+        Int,
+        Int,
+        Int,
+        Int,
+        Int,
+        Int,
+        Int,
+        Int,
+        Int,
+        Int,
+        Int,
+        Int,
+      )),
+    content="(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15)",
+  )
+  let u = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16]
+  inspect!(
+    (
+      @json.from_json!(u.to_json()) :
+      (
+        Int,
+        Int,
+        Int,
+        Int,
+        Int,
+        Int,
+        Int,
+        Int,
+        Int,
+        Int,
+        Int,
+        Int,
+        Int,
+        Int,
+        Int,
+        Int,
+      )),
+    content="(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16)",
   )
 }
 
