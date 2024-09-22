@@ -209,19 +209,11 @@ pub fn T::from_iter[A : Eq + Hash](iter : Iter[A]) -> T[A] {
 }
 
 pub impl[A : Show] Show for T[A] with output(self, logger) {
-  let mut is_first = true
-  logger.write_string("@immut/hashset.of([")
-  self.each(
-    fn(k) {
-      if is_first {
-        is_first = false
-      } else {
-        logger.write_string(", ")
-      }
-      k.output(logger)
-    },
-  )
-  logger.write_string("])")
+  logger
+  ..write_string("@immut/hashset.of([")
+  ..write_iter(self.iter())
+  ..write_string("])")
+  |> ignore
 }
 
 pub fn to_string[A : Show](self : T[A]) -> String {

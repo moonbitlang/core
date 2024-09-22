@@ -55,21 +55,11 @@ fn debug_tree[K : Show, V : Show](self : T[K, V]) -> String {
 }
 
 pub impl[K : Show, V : Show] Show for T[K, V] with output(self, logger) {
-  logger.write_string("@sorted_map.of([")
-  self.eachi(
-    fn(i, k, v) {
-      if i > 0 {
-        logger.write_string(", ")
-      }
-      logger
-      ..write_string("(")
-      ..write_object(k)
-      ..write_string(", ")
-      ..write_object(v)
-      .write_string(")")
-    },
-  )
-  logger.write_string("])")
+  logger
+  ..write_string("@sorted_map.of([")
+  ..write_iter(self.iter())
+  ..write_string("])")
+  |> ignore
 }
 
 pub fn to_string[K : Show, V : Show](self : T[K, V]) -> String {

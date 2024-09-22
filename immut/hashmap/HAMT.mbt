@@ -216,24 +216,11 @@ pub fn T::from_iter[K : Eq + Hash, V](iter : Iter[(K, V)]) -> T[K, V] {
 }
 
 pub impl[K : Show, V : Show] Show for T[K, V] with output(self, logger) {
-  let mut is_first = true
-  logger.write_string("@immut/hashmap.of([")
-  self.each(
-    fn(k, v) {
-      if is_first {
-        is_first = false
-      } else {
-        logger.write_string(", ")
-      }
-      logger
-      ..write_string("(")
-      ..write_object(k)
-      ..write_string(", ")
-      ..write_object(v)
-      .write_string(")")
-    },
-  )
-  logger.write_string("])")
+  logger
+  ..write_string("@immut/hashmap.of([")
+  ..write_iter(self.iter())
+  ..write_string("])")
+  |> ignore
 }
 
 pub fn to_string[K : Show, V : Show](self : T[K, V]) -> String {

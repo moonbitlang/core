@@ -18,16 +18,11 @@ pub fn T::new[A]() -> T[A] {
 }
 
 pub impl[A : Show] Show for T[A] with output(self, logger) {
-  logger.write_string("@immut/array.of([")
-  self.eachi(
-    fn(i, v) {
-      if i > 0 {
-        logger.write_string(", ")
-      }
-      v.output(logger)
-    },
-  )
-  logger.write_string("])")
+  logger
+  ..write_string("@immut/array.of([")
+  ..write_iter(self.iter())
+  ..write_string("])")
+  |> ignore
 }
 
 pub fn to_string[A : Show](self : T[A]) -> String {
