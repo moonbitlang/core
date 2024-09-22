@@ -72,6 +72,9 @@ test "tuple" {
   let u : Json = [1, 2, 3, 4, 5, 6, 7]
   let v : (Int, Int, Int, Int, Int, Int, Int) = @json.from_json!(u)
   inspect!(v, content="(1, 2, 3, 4, 5, 6, 7)")
+  let u : Json = [1, 2, 3, 4, 5, 6, 7, 8]
+  let v : (Int, Int, Int, Int, Int, Int, Int, Int) = @json.from_json!(u)
+  inspect!(v, content="(1, 2, 3, 4, 5, 6, 7, 8)")
 }
 
 test "tuple roundtrip" {
