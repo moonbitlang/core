@@ -216,11 +216,7 @@ pub fn T::from_iter[K : Eq + Hash, V](iter : Iter[(K, V)]) -> T[K, V] {
 }
 
 pub impl[K : Show, V : Show] Show for T[K, V] with output(self, logger) {
-  logger
-  ..write_string("@immut/hashmap.of([")
-  ..write_iter(self.iter())
-  ..write_string("])")
-  |> ignore
+  logger.write_iter(self.iter(), prefix="@immut/hashmap.of([", suffix="])")
 }
 
 pub fn to_string[K : Show, V : Show](self : T[K, V]) -> String {

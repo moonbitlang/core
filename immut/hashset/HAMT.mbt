@@ -209,11 +209,7 @@ pub fn T::from_iter[A : Eq + Hash](iter : Iter[A]) -> T[A] {
 }
 
 pub impl[A : Show] Show for T[A] with output(self, logger) {
-  logger
-  ..write_string("@immut/hashset.of([")
-  ..write_iter(self.iter())
-  ..write_string("])")
-  |> ignore
+  logger.write_iter(self.iter(), prefix="@immut/hashset.of([", suffix="])")
 }
 
 pub fn to_string[A : Show](self : T[A]) -> String {

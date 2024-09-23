@@ -492,11 +492,7 @@ pub fn filter[A : Compare](self : T[A], f : (A) -> Bool) -> T[A] {
 }
 
 pub impl[A : Show] Show for T[A] with output(self, logger) {
-  logger
-  ..write_string("@immut/sorted_set.of([")
-  ..write_iter(self.iter())
-  ..write_string("])")
-  |> ignore
+  logger.write_iter(self.iter(), prefix="@immut/sorted_set.of([", suffix="])")
 }
 
 pub fn to_string[A : Show](self : T[A]) -> String {

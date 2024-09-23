@@ -393,11 +393,7 @@ pub fn to_string[V : Show](self : T[V]) -> String {
 }
 
 impl[T : Show] Show for Node[T] with output(self, logger) {
-  logger
-  ..write_string("@sorted_set.of([")
-  ..write_iter(self.iter())
-  ..write_string("])")
-  |> ignore
+  logger.write_iter(self.iter(), prefix="@sorted_set.of([", suffix="])")
 }
 
 fn to_array[T](self : Node[T]) -> Array[T] {

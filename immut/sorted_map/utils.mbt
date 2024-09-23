@@ -251,11 +251,7 @@ pub fn T::of[K : Compare, V](array : FixedArray[(K, V)]) -> T[K, V] {
 }
 
 pub impl[K : Show, V : Show] Show for T[K, V] with output(self, logger) {
-  logger
-  ..write_string("@immut/sorted_map.of([")
-  ..write_iter(self.iter())
-  ..write_string("])")
-  |> ignore
+  logger.write_iter(self.iter(), prefix="@immut/sorted_map.of([", suffix="])")
 }
 
 pub fn to_string[K : Show, V : Show](self : T[K, V]) -> String {

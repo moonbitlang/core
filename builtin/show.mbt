@@ -153,18 +153,15 @@ pub impl[X : Show] Show for Ref[X] with output(self, logger) {
 }
 
 pub impl[X : Show] Show for FixedArray[X] with output(self, logger) {
-  logger..write_string("[")..write_iter(self.iter())..write_string("]")
-  |> ignore
+  logger.write_iter(self.iter())
 }
 
 pub impl[X : Show] Show for Array[X] with output(self, logger) {
-  logger..write_string("[")..write_iter(self.iter())..write_string("]")
-  |> ignore
+  logger.write_iter(self.iter())
 }
 
 pub impl[X : Show] Show for ArrayView[X] with output(self, logger) {
-  logger..write_string("[")..write_iter(self.iter())..write_string("]")
-  |> ignore
+  logger.write_iter(self.iter())
 }
 
 pub fn ArrayView::to_string[X : Show](self : ArrayView[X]) -> String {
