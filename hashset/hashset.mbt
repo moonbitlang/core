@@ -295,11 +295,7 @@ fn debug_entries[K : Show](self : T[K]) -> String {
 }
 
 pub impl[K : Show] Show for T[K] with output(self, logger) {
-  logger
-  ..write_string("@hashset.of([")
-  ..write_iter(self.iter())
-  ..write_string("])")
-  |> ignore
+  logger.write_iter(self.iter(), prefix="@hashset.of([", suffix="])")
 }
 
 // Reuse the default implementation of [Show::to_string] here

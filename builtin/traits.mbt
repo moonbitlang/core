@@ -86,9 +86,12 @@ pub fn Logger::write_object[Obj : Show](self : Logger, obj : Obj) -> Unit {
 pub fn Logger::write_iter[T : Show](
   self : Logger,
   iter : Iter[T],
+  ~prefix : String = "[",
+  ~suffix : String = "]",
   ~sep : String = ", ",
   ~trailing : Bool = false
 ) -> Unit {
+  self.write_string(prefix)
   if trailing {
     for x in iter {
       self.write_object(x)
@@ -106,5 +109,6 @@ pub fn Logger::write_iter[T : Show](
       self.write_object(x)
     }
   }
+  self.write_string(suffix)
 }
 // TODO: Logger::write_double(self:Logger, val:Double) -> Unit

@@ -198,11 +198,11 @@ pub fn T::of[A : Compare](arr : FixedArray[A]) -> T[A] {
 }
 
 pub impl[A : Show + Compare] Show for T[A] with output(self, logger) {
-  logger
-  ..write_string("@immut/priority_queue.of([")
-  ..write_iter(self.iter())
-  ..write_string("])")
-  |> ignore
+  logger.write_iter(
+    self.iter(),
+    prefix="@immut/priority_queue.of([",
+    suffix="])",
+  )
 }
 
 pub impl[X : @quickcheck.Arbitrary + Compare] @quickcheck.Arbitrary for T[X] with arbitrary(

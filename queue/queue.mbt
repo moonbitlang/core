@@ -44,11 +44,7 @@ pub fn T::from_array[A](arr : Array[A]) -> T[A] {
 }
 
 pub impl[A : Show] Show for T[A] with output(self, logger) {
-  logger
-  ..write_string("@queue.of([")
-  ..write_iter(self.iter())
-  ..write_string("])")
-  |> ignore
+  logger.write_iter(self.iter(), prefix="@queue.of([", suffix="])")
 }
 
 // Reuse the default implementation of [Show::to_string] here
