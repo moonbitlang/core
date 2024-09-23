@@ -20,9 +20,9 @@ impl T {
   new[A]() -> Self[A]
   of[A](FixedArray[A]) -> Self[A]
   peek[A](Self[A]) -> A?
-  peek_exn[A](Self[A]) -> A
+  peek_exn[A](Self[A]) -> A //deprecated
   pop[A](Self[A]) -> A?
-  pop_exn[A](Self[A]) -> A
+  pop_exn[A](Self[A]) -> A //deprecated
   push[A](Self[A], A) -> Unit
   to_string[A : Show](Self[A]) -> String
   transfer[A](Self[A], Self[A]) -> Unit
