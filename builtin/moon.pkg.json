@@ -17,6 +17,7 @@
     "int64_js.mbt": ["js"],
     "int64_nonjs.mbt": ["not", "js"],
     "arraycore_js.mbt": ["js"],
-    "arraycore_nonjs.mbt": ["not", "js"]
+    "arraycore_nonjs.mbt": ["not", "js"],
+    "array_nonjs_test.mbt": ["not", "js"]
   }
 }
