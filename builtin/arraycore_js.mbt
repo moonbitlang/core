@@ -47,32 +47,43 @@ fn UninitializedArray::unsafe_blit_fixed[T](
 
 //#region
 // These types are of workaround for the restriction that MoonBit do not support 
-// generic type parameters of extern ffi 
+// generic type parameters of extern ffi
 
 type JSValue
 
-fn JSValue::ofAny[T](array: T) -> JSValue  = "%identity"
-fn JSValue::toAny[T](self: JSValue) -> T = "%identity"
+fn JSValue::ofAny[T](array : T) -> JSValue = "%identity"
+
+fn JSValue::toAny[T](self : JSValue) -> T = "%identity"
 
 type JSArray
 
-fn JSArray::ofAnyArray[T](array: Array[T]) -> JSArray  = "%identity"
-fn JSArray::toAnyArray[T](self: JSArray) -> Array[T] = "%identity"
+fn JSArray::ofAnyArray[T](array : Array[T]) -> JSArray = "%identity"
 
-extern "js" fn JSArray::set_length(self: JSArray, new_len: Int) -> Unit = 
-#| (arr, len) => { arr.length = len; }
+fn JSArray::toAnyArray[T](self : JSArray) -> Array[T] = "%identity"
 
-extern "js" fn JSArray::push(self: JSArray, value: JSValue) -> Unit =
-#| (arr, val) => { arr.push(val); }
+extern "js" fn JSArray::set_length(self : JSArray, new_len : Int) -> Unit =
+  #| (arr, len) => { arr.length = len; }
 
-extern "js" fn JSArray::pop(self: JSArray) -> JSValue =
-#| (arr) => arr.pop()
+extern "js" fn JSArray::push(self : JSArray, value : JSValue) -> Unit =
+  #| (arr, val) => { arr.push(val); }
 
-extern "js" fn JSArray::splice(self: JSArray, index: Int, count: Int) -> JSArray =
-#| (arr, idx, cnt) => arr.splice(idx, cnt)
+extern "js" fn JSArray::pop(self : JSArray) -> JSValue =
+  #| (arr) => arr.pop()
 
-extern "js" fn JSArray::splice1(self: JSArray, index: Int, count: Int, value: JSValue) -> JSArray =
-#| (arr, idx, cnt, val) => arr.splice(idx, cnt, val)
+extern "js" fn JSArray::splice(
+  self : JSArray,
+  index : Int,
+  count : Int
+) -> JSArray =
+  #| (arr, idx, cnt) => arr.splice(idx, cnt)
+
+extern "js" fn JSArray::splice1(
+  self : JSArray,
+  index : Int,
+  count : Int,
+  value : JSValue
+) -> JSArray =
+  #| (arr, idx, cnt, val) => arr.splice(idx, cnt, val)
 
 //#endregion
 
@@ -92,7 +103,7 @@ pub fn Array::new[T](~capacity : Int = 0) -> Array[T] {
 pub fn length[T](self : Array[T]) -> Int = "%fixedarray.length"
 
 fn set_length[T](self : Array[T], new_len : Int) -> Unit {
-  JSArray::ofAnyArray(self).set_length(new_len) 
+  JSArray::ofAnyArray(self).set_length(new_len)
 }
 
 fn buffer[T](self : Array[T]) -> UninitializedArray[T] = "%identity"
@@ -108,7 +119,6 @@ test "array_unsafe_blit_fixed" {
     assert_eq!(dst[i], src[i])
   }
 }
-
 
 test "UninitializedArray::unsafe_blit_fixed" {
   let src = FixedArray::make(5, 0)
@@ -273,4 +283,5 @@ pub fn insert[T](self : Array[T], index : Int, value : T) -> Unit {
     )
   }
   let _ = JSArray::ofAnyArray(self).splice1(index, 0, JSValue::ofAny(value))
+
 }
