@@ -25,9 +25,9 @@ impl T {
   op_get[A](Self[A], Int) -> A
   op_set[A](Self[A], Int, A) -> Unit
   pop_back[A](Self[A]) -> A?
-  pop_back_exn[A](Self[A]) -> Unit
+  pop_back_exn[A](Self[A]) -> Unit //deprecated
   pop_front[A](Self[A]) -> A?
-  pop_front_exn[A](Self[A]) -> Unit
+  pop_front_exn[A](Self[A]) -> Unit //deprecated
   push_back[A](Self[A], A) -> Unit
   push_front[A](Self[A], A) -> Unit
   reserve_capacity[A](Self[A], Int) -> Unit

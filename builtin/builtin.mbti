@@ -61,13 +61,13 @@ impl Array {
   ends_with[T : Eq](Self[T], Self[T]) -> Bool
   extract_if[T](Self[T], (T) -> Bool) -> Self[T]
   filter[T](Self[T], (T) -> Bool) -> Self[T]
-  find_index[T](Self[T], (T) -> Bool) -> Int?
+  find_index[T](Self[T], (T) -> Bool) -> Int? //deprecated
   flatten[T](Self[Self[T]]) -> Self[T]
   fold[A, B](Self[A], ~init : B, (B, A) -> B) -> B
-  fold_left[T, U](Self[T], (U, T) -> U, ~init : U) -> U
-  fold_lefti[T, U](Self[T], (Int, U, T) -> U, ~init : U) -> U
-  fold_right[T, U](Self[T], (U, T) -> U, ~init : U) -> U
-  fold_righti[T, U](Self[T], (Int, U, T) -> U, ~init : U) -> U
+  fold_left[T, U](Self[T], (U, T) -> U, ~init : U) -> U //deprecated
+  fold_lefti[T, U](Self[T], (Int, U, T) -> U, ~init : U) -> U //deprecated
+  fold_right[T, U](Self[T], (U, T) -> U, ~init : U) -> U //deprecated
+  fold_righti[T, U](Self[T], (Int, U, T) -> U, ~init : U) -> U //deprecated
   foldi[A, B](Self[A], ~init : B, (Int, B, A) -> B) -> B
   from_fixed_array[T](FixedArray[T]) -> Self[T]
   get[T](Self[T], Int) -> T?
@@ -89,7 +89,7 @@ impl Array {
   op_get[T](Self[T], Int) -> T
   op_set[T](Self[T], Int, T) -> Unit
   pop[T](Self[T]) -> T?
-  pop_exn[T](Self[T]) -> T
+  pop_exn[T](Self[T]) -> T //deprecated
   push[T](Self[T], T) -> Unit
   remove[T](Self[T], Int) -> T
   repeat[T](Self[T], Int) -> Self[T]
@@ -234,7 +234,7 @@ impl Iter {
   singleton[T](T) -> Self[T]
   take[T](Self[T], Int) -> Self[T]
   take_while[T](Self[T], (T) -> Bool) -> Self[T]
-  tap[T](Self[T], (T) -> Unit) -> Self[T]
+  tap[T](Self[T], (T) -> Unit) -> Self[T] //deprecated
   to_array[T](Self[T]) -> Array[T]
   to_string[T : Show](Self[T]) -> String
 }
@@ -388,12 +388,12 @@ impl Int {
   to_int64(Int) -> Int64
   to_json(Int) -> Json
   to_string(Int) -> String
-  to_uint(Int) -> UInt
+  to_uint(Int) -> UInt //deprecated
   until(Int, Int, ~step : Int = .., ~inclusive : Bool = ..) -> Iter[Int]
   upto(Int, Int, ~inclusive : Bool = ..) -> Iter[Int]
 }
 impl Int64 {
-  asr(Int64, Int) -> Int64
+  asr(Int64, Int) -> Int64 //deprecated
   clz(Int64) -> Int
   compare(Int64, Int64) -> Int
   ctz(Int64) -> Int
@@ -451,7 +451,7 @@ impl UInt {
   shl(UInt, Int) -> UInt
   shr(UInt, Int) -> UInt
   to_float(UInt) -> Float
-  to_int(UInt) -> Int
+  to_int(UInt) -> Int //deprecated
   to_string(UInt) -> String
   to_uint64(UInt) -> UInt64
   trunc_double(Double) -> UInt

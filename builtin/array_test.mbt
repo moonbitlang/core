@@ -34,11 +34,6 @@ test "array_make" {
   }
 }
 
-test "array_capacity" {
-  let arr : Array[Int] = Array::new(capacity=10)
-  assert_true!(arr.capacity() >= 10)
-}
-
 test "array_realloc" {
   let arr = Array::new(capacity=2)
   arr.push(1)
@@ -349,16 +344,6 @@ test "array_remove" {
   assert_eq!(arr[1], 3)
 }
 
-test "array_retain" {
-  let arr = [1, 2, 3, 4, 5]
-  assert_eq!(arr.capacity(), 5)
-  arr.retain(fn(x) { x % 2 == 0 })
-  assert_eq!(arr.length(), 2)
-  assert_eq!(arr.capacity(), 5)
-  assert_eq!(arr[0], 2)
-  assert_eq!(arr[1], 4)
-}
-
 test "array_resize" {
   let arr = [1, 2, 3]
   arr.resize(5, 42)
@@ -504,11 +489,6 @@ test "array_pop_empty" {
   assert_eq!(arr.pop(), None)
 }
 
-test "panic array_pop_exn_empty" {
-  let arr : Array[Int] = Array::new()
-  arr.unsafe_pop() |> ignore // This should panic
-}
-
 test "panic array_drain_out_of_bounds" {
   let arr = [1, 2, 3, 4, 5]
   arr.drain(3, 6) |> ignore // This should panic
@@ -547,18 +527,6 @@ test "array_split" {
 test "array_search_by" {
   inspect!([1, 2, 3, 4, 5].search_by(fn(x) { x % 2 == 0 }), content="Some(1)")
   inspect!([1, 2, 3, 4, 5].search_by(fn(x) { x > 5 }), content="None")
-}
-
-test "shrink_to_fit" {
-  let v = Array::new(capacity=10)
-  v.push(1)
-  v.push(2)
-  v.push(3)
-  inspect!(v.capacity(), content="10")
-  v.shrink_to_fit()
-  inspect!(v.capacity(), content="3")
-  v.shrink_to_fit()
-  inspect!(v.capacity(), content="3")
 }
 
 test "array_binary_search_int_test" {

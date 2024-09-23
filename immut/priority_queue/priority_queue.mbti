@@ -16,7 +16,7 @@ impl T {
   of[A : Compare + Eq](FixedArray[A]) -> Self[A]
   peek[A](Self[A]) -> A?
   pop[A : Compare + Eq](Self[A]) -> Self[A]?
-  pop_exn[A : Compare + Eq](Self[A]) -> Self[A]
+  pop_exn[A : Compare + Eq](Self[A]) -> Self[A] //deprecated
   push[A : Compare + Eq](Self[A], A) -> Self[A]
   to_array[A : Compare + Eq](Self[A]) -> Array[A]
   to_string[A : Show + Compare + Eq](Self[A]) -> String
