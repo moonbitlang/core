@@ -416,27 +416,6 @@ pub fn flat_map[T, R](self : Iter[T], f : (T) -> Iter[R]) -> Iter[R] {
   fn { yield => self.run(fn { x => f(x).run(yield) }) }
 }
 
-/// Applies a function to each element of the iterator without modifying the iterator.
-///
-/// # Type Parameters
-///
-/// - `T`: The type of the elements in the iterator.
-///
-/// # Arguments
-///
-/// * `self` - The input iterator.
-/// * `f` - The function to apply to each element of the iterator.
-///
-/// # Returns
-///
-/// The same iterator.
-/// 
-/// @alert deprecated "use cascade operator [..] instead"
-pub fn tap[T](self : Iter[T], f : (T) -> Unit) -> Iter[T] {
-  self.each(f)
-  self
-}
-
 /// Takes the first `n` elements from the iterator.
 ///
 /// # Type Parameters
