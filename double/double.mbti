@@ -20,7 +20,7 @@ impl Double {
   exp(Double) -> Double
   floor(Double) -> Double
   from_int(Int) -> Double
-  inf(Int) -> Double
+  inf(Int) -> Double //deprecated
   is_close(Double, Double, ~relative_tolerance : Double = .., ~absolute_tolerance : Double = ..) -> Bool
   is_inf(Double) -> Bool
   is_nan(Double) -> Bool
@@ -29,8 +29,8 @@ impl Double {
   ln(Double) -> Double
   log10(Double) -> Double
   log2(Double) -> Double
-  min_normal() -> Double
-  nan() -> Double
+  min_normal() -> Double //deprecated
+  nan() -> Double //deprecated
   round(Double) -> Double
   signum(Double) -> Double
   to_string(Double) -> String

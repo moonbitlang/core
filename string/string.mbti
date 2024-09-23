@@ -33,8 +33,8 @@ impl String {
   to_upper(String) -> String
   trim(String, String) -> String
   trim_end(String, String) -> String
-  trim_left(String, String) -> String
-  trim_right(String, String) -> String
+  trim_left(String, String) -> String //deprecated
+  trim_right(String, String) -> String //deprecated
   trim_space(String) -> String
   trim_start(String, String) -> String
 }
