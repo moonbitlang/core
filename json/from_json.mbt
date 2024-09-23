@@ -145,7 +145,8 @@ pub impl[V : FromJson] FromJson for Map[String, V] with from_json(json, path) {
 pub impl[T : FromJson] FromJson for T? with from_json(json, path) {
   match json {
     Null => None
-    _ => Some(FromJson::from_json!(json, path))
+    Array([value]) => Some(FromJson::from_json!(value, path.add_index(0)))
+    _ => decode_error!(path, "Option::from_json: expected array or null")
   }
 }
 

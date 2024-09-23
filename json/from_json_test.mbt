@@ -314,6 +314,12 @@ test "Option" {
   let u = Some(1).to_json()
   let v : Int? = @json.from_json!(u)
   inspect!(v, content="Some(1)")
+  let nested : Json = (Some(None) : Unit??).to_json()
+  let v : Unit?? = @json.from_json!(nested)
+  inspect!(v, content="Some(None)")
+  let nested : Json = (Some(Some(None)) : Unit???).to_json()
+  let v : Unit??? = @json.from_json!(nested)
+  inspect!(v, content="Some(Some(None))")
 }
 
 test "Result" {
