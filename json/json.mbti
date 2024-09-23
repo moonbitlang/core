@@ -107,3 +107,21 @@ impl FromJson for Tuple(6)
 
 impl FromJson for Tuple(7)
 
+impl FromJson for Tuple(8)
+
+impl FromJson for Tuple(9)
+
+impl FromJson for Tuple(10)
+
+impl FromJson for Tuple(11)
+
+impl FromJson for Tuple(12)
+
+impl FromJson for Tuple(13)
+
+impl FromJson for Tuple(14)
+
+impl FromJson for Tuple(15)
+
+impl FromJson for Tuple(16)
+
