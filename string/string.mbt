@@ -33,31 +33,29 @@ pub fn String::from_array(chars : Array[Char]) -> String {
 /// 
 /// ```
 /// String::concat(["Hello", ", ", "world!"]) // "Hello, world!"
+/// String::concat(["a", "b", "c"], separator=",") // "a,b,c"
 /// ```
 /// 
-pub fn String::concat(strings : Array[String]) -> String {
+pub fn String::concat(
+  strings : Array[String],
+  ~separator : String = ""
+) -> String {
   let buf = Buffer::new()
-  for s in strings {
-    buf.write_string(s)
-  }
-  buf.to_string()
-}
-
-/// Join strings with a separator.
-/// 
-/// ```
-/// String::join(["Hello", "world!"], separator=", ") // "Hello, world!"
-/// ```
-pub fn String::join(strings : Array[String], ~separator : String) -> String {
-  let buf = Buffer::new()
-  let mut first = true
-  for s in strings {
-    if first {
-      first = false
-    } else {
-      buf.write_string(separator)
+  if separator == "" {
+    for s in strings {
+      buf.write_string(s)
     }
-    buf.write_string(s)
+  } else {
+    match strings {
+      [] => ()
+      [hd, .. as tl] => {
+        buf.write_string(hd)
+        for s in tl {
+          buf.write_string(separator)
+          buf.write_string(s)
+        }
+      }
+    }
   }
   buf.to_string()
 }

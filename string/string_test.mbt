@@ -18,14 +18,11 @@ test "String::from_array" {
 
 test "String::concat" {
   inspect!(String::concat(["123", "456"]), content="123456")
-}
-
-test "String::join" {
   inspect!(
-    String::join(["aaa", "bbb", "ccc"], separator=" "),
+    String::concat(["aaa", "bbb", "ccc"], separator=" "),
     content="aaa bbb ccc",
   )
-  inspect!(String::join([], separator=" "), content="")
+  inspect!(String::concat([], separator=" "), content="")
 }
 
 test "default" {
