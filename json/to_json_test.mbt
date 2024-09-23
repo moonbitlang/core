@@ -129,24 +129,38 @@ test "Map::to_json" {
   )
 }
 
+struct Opt {
+  x : Int?
+  t : Int??
+} derive(ToJson)
+
 test "Option::to_json" {
-  inspect!(
-    (Some(42) : Int?).to_json(),
-    content=
-      #|Object({"Some": Number(42)})
-    ,
-  )
+  inspect!((Some(42) : Int?).to_json(), content="Array([Number(42)])")
   inspect!((None : Int?).to_json(), content="Null")
-  inspect!(
-    (Some(None) : Unit??).to_json(),
-    content=
-      #|Object({"Some": Null})
-    ,
-  )
+  inspect!((Some(None) : Unit??).to_json(), content="Array([Null])")
   inspect!(
     (Some(Some(None)) : Unit???).to_json(),
+    content="Array([Array([Null])])",
+  )
+  let opt = { x: Some(42), t: Some(Some(42)) }
+  inspect!(
+    opt.to_json(),
     content=
-      #|Object({"Some": Object({"Some": Null})})
+      #|Object({"x": Array([Number(42)]), "t": Array([Array([Number(42)])])})
+    ,
+  )
+  let opt = { x: None, t: None }
+  inspect!(
+    opt.to_json(),
+    content=
+      #|Object({"x": Null, "t": Null})
+    ,
+  )
+  let opt = { x: None, t: Some(None) }
+  inspect!(
+    opt.to_json(),
+    content=
+      #|Object({"x": Null, "t": Array([Null])})
     ,
   )
 }
