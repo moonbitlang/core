@@ -104,37 +104,6 @@ pub fn to_array(self : String) -> Array[Char] {
   )
 }
 
-/// @intrinsic %string.substring
-fn unsafe_substring(str : String, start : Int, end : Int) -> String {
-  let len = end - start
-  let buf = Buffer::new(size_hint=len)
-  buf.write_sub_string(str, start, len)
-  buf.to_string()
-}
-
-/// Get substring of the string from [start] to [end] exclusive.
-pub fn substring(
-  self : String,
-  ~start : Int = 0,
-  ~end : Int = self.length()
-) -> String {
-  if start < 0 {
-    abort("String::substring: start index is negative")
-  }
-  if end < 0 {
-    abort("String::substring: end index is negative")
-  }
-  if start > end {
-    abort("String::substring: start index is greater than end index")
-  }
-  if end > self.length() {
-    abort(
-      "String::substring: end index is greater than the length of the string",
-    )
-  }
-  unsafe_substring(self, start, end)
-}
-
 pub fn iter(self : String) -> Iter[Char] {
   Iter::new(
     fn(yield) {

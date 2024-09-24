@@ -28,7 +28,6 @@ impl String {
   rev_iter(String) -> Iter[Char]
   split(String, String) -> Iter[String]
   starts_with(String, String) -> Bool
-  substring(String, ~start : Int = .., ~end : Int = ..) -> String
   to_array(String) -> Array[Char]
   to_bytes(String) -> Bytes
   to_lower(String) -> String
