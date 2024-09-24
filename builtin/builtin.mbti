@@ -315,6 +315,15 @@ impl SourceLoc {
   to_string(Self) -> String
 }
 
+type StringBuilder
+impl StringBuilder {
+  new(~size_hint : Int = ..) -> Self
+  to_string(Self) -> String
+  write_char(Self, Char) -> Unit
+  write_string(Self, String) -> Unit
+  write_sub_string(Self, String, Int, Int) -> Unit
+}
+
 pub type UnsafeMaybeUninit
 impl Unit {
   op_equal(Unit, Unit) -> Bool
