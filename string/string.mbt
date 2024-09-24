@@ -12,6 +12,53 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+/// Convert char array to string.
+/// 
+/// ```
+/// String::from_array(['H', 'e', 'l', 'l', 'o']) // "Hello"  
+/// ```
+/// 
+/// Do not convert large datas to `Array[Char]` and build a string with `String::from_array`.
+/// 
+/// For efficiency considerations, it's recommended to use `Buffer` instead.
+pub fn String::from_array(chars : Array[Char]) -> String {
+  let buf = Buffer::new(size_hint=chars.length() * 4)
+  for c in chars {
+    buf.write_char(c)
+  }
+  buf.to_string()
+}
+
+/// Concatenate strings.
+/// 
+/// ```
+/// String::concat(["Hello", ", ", "world!"]) // "Hello, world!"
+/// String::concat(["a", "b", "c"], separator=",") // "a,b,c"
+/// ```
+pub fn String::concat(
+  strings : Array[String],
+  ~separator : String = ""
+) -> String {
+  let buf = Buffer::new()
+  if separator == "" {
+    for s in strings {
+      buf.write_string(s)
+    }
+  } else {
+    match strings {
+      [] => ()
+      [hd, .. as tl] => {
+        buf.write_string(hd)
+        for s in tl {
+          buf.write_string(separator)
+          buf.write_string(s)
+        }
+      }
+    }
+  }
+  buf.to_string()
+}
+
 /// Compare two strings.
 /// String with longer length is bigger.
 /// strings of the same length are compared in lexicalgraphic order.
