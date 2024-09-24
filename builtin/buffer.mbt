@@ -68,9 +68,7 @@ fn grow_if_necessary(self : Buffer, required : Int) -> Unit {
     enough_space = enough_space * 2
   }
   if enough_space != self.bytes.length() {
-    let new_bytes = Bytes::new(enough_space)
-    blit(new_bytes, 0, self.bytes, 0, self.len)
-    self.bytes = new_bytes
+    self.bytes = Bytes::new(enough_space)..blit(0, self.bytes, 0, self.len)
   }
 }
 
@@ -90,7 +88,7 @@ pub fn Buffer::new(~size_hint : Int = 0) -> Buffer {
 pub fn write_string(self : Buffer, value : String) -> Unit {
   self.grow_if_necessary(self.len + value.length() * 2)
   self.bytes.blit_from_string(self.len, value, 0, value.length())
-  self.len = self.len + value.length() * 2
+  self.len += value.length() * 2
 }
 
 pub fn write_object(self : Buffer, value : Show) -> Unit {
@@ -101,7 +99,7 @@ pub fn write_bytes(self : Buffer, value : Bytes) -> Unit {
   let val_len = value.length()
   self.grow_if_necessary(self.len + val_len)
   self.bytes.blit(self.len, value, 0, val_len)
-  self.len = self.len + val_len
+  self.len += val_len
 }
 
 /// Write a sub-string into buffer.
@@ -111,19 +109,17 @@ pub fn write_sub_string(
   start : Int,
   len : Int
 ) -> Unit {
-  if start < 0 || len < 0 || start + len > value.length() {
-    abort("Buffer::write_sub_string")
-  }
+  guard start >= 0 && len >= 0 && start + len <= value.length()
   self.grow_if_necessary(self.len + len * 2)
   self.bytes.blit_from_string(self.len, value, start, len)
-  self.len = self.len + len * 2
+  self.len += len * 2
 }
 
 /// Write a char into buffer.
 pub fn write_char(self : Buffer, value : Char) -> Unit {
   self.grow_if_necessary(self.len + 4)
   let inc = self.bytes.set_utf16_char(self.len, value)
-  self.len = self.len + inc
+  self.len += inc
 }
 
 /// Write a byte into buffer.
@@ -139,9 +135,7 @@ pub fn reset(self : Buffer) -> Unit {
 }
 
 pub fn to_bytes(self : Buffer) -> Bytes {
-  let bytes = Bytes::new(self.len)
-  bytes.blit(0, self.bytes, 0, self.len)
-  bytes
+  Bytes::new(self.len)..blit(0, self.bytes, 0, self.len)
 }
 
 pub impl Show for Buffer with output(self, logger) {
