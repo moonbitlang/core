@@ -74,7 +74,7 @@ pub trait Show {
 
 // Default implementation for `Show::to_string`, uses a `Buffer`
 impl Show with to_string(self) {
-  let logger = Buffer::new()
+  let logger = StringBuilder::new()
   self.output(logger)
   logger.to_string()
 }
