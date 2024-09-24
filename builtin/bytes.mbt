@@ -12,12 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-fn unsafe_sub_string(
-  self : Bytes,
-  byte_offset : Int,
-  byte_length : Int
-) -> String = "$moonbit.unsafe_bytes_sub_string"
-
 /// Create a new String from byte sequence.
 pub fn to_string(self : Bytes) -> String {
   self.sub_string(0, self.length())
@@ -25,21 +19,22 @@ pub fn to_string(self : Bytes) -> String {
 
 /// Create byte sequence from String.
 pub fn Bytes::of_string(str : String) -> Bytes {
-  let bytes = Bytes::new(str.length() * 2)
-  bytes.blit_from_string(0, str, 0, str.length())
-  bytes
+  Bytes::new(str.length() * 2)..blit_from_string(0, str, 0, str.length())
 }
+
+/// TODO: support local primitive declaration
+fn unsafe_sub_string(
+  self : Bytes,
+  byte_offset : Int,
+  byte_length : Int
+) -> String = "$moonbit.unsafe_bytes_sub_string"
 
 /// Return a new String, containing the subsequence of `self` that
 /// starts at `byte_offset` and has length `byte_length`.
 pub fn sub_string(self : Bytes, byte_offset : Int, byte_length : Int) -> String {
-  if byte_length < 0 ||
-    byte_offset < 0 ||
-    byte_offset + byte_length > self.length() {
-    abort("sub_string out of bound")
-  } else {
-    unsafe_sub_string(self, byte_offset, byte_length)
-  }
+  let len = self.length()
+  guard byte_offset >= 0 && byte_length >= 0 && byte_offset + byte_length <= len
+  unsafe_sub_string(self, byte_offset, byte_length)
 }
 
 /// Copy `length` chars from string `str`, starting at `str_offset`,
@@ -57,25 +52,18 @@ pub fn blit_from_string(
   let e2 = str_offset + length - 1
   let len1 = self.length()
   let len2 = str.length()
-  if length < 0 || s1 < 0 || e1 >= len1 || s2 < 0 || e2 >= len2 {
-    abort("blit_from_string out of bounds")
-  } else {
-    let end_str_offset = str_offset + length
-    for i = str_offset, j = bytes_offset
-        i < end_str_offset
-        i = i + 1, j = j + 2 {
-      let c = str[i].to_int()
-      self[j] = c.land(0xff).to_byte()
-      self[j + 1] = c.lsr(8).to_byte()
-    }
+  guard length >= 0 && s1 >= 0 && e1 < len1 && s2 >= 0 && e2 < len2
+  let end_str_offset = str_offset + length
+  for i = str_offset, j = bytes_offset; i < end_str_offset; i = i + 1, j = j + 2 {
+    let c = str[i].to_int()
+    self[j] = c.land(0xff).to_byte()
+    self[j + 1] = c.lsr(8).to_byte()
   }
 }
 
 /// Return a new Bytes that contains the same byte sequence.
 pub fn copy(self : Bytes) -> Bytes {
-  let dst = Bytes::new(self.length())
-  blit(dst, 0, self, 0, self.length())
-  dst
+  Bytes::new(self.length())..blit(0, self, 0, self.length())
 }
 
 /// Fill utf8 encoded char `value` into byte sequence `self`, starting at `offset`.
