@@ -707,7 +707,7 @@ impl Hash for Result
 
 impl Hash for Bytes
 
-impl Hash for Hash
+impl Hash for $default_impl
 
 impl Hash for Tuple(2)
 
@@ -749,6 +749,8 @@ impl Show for Bytes
 
 impl Show for Ref
 
+impl Show for $default_impl
+
 impl Show for Array
 
 impl Show for ArrayView
@@ -762,8 +764,6 @@ impl Show for Iter
 impl Show for Iter2
 
 impl Show for Map
-
-impl Show for Show
 
 impl Show for SourceLoc
 
