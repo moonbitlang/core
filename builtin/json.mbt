@@ -61,7 +61,7 @@ fn escape_json_string(str : String) -> String {
   }
 
   let len = str.length()
-  let buf = Buffer::new(size_hint=len)
+  let buf = StringBuilder::new(size_hint=len)
   for i in 0..<len {
     let c = str[i]
     match c {

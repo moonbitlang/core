@@ -325,7 +325,7 @@ fn calc_grow_threshold(capacity : Int) -> Int {
 // Utils
 
 fn debug_entries[K : Show, V : Show](self : Map[K, V]) -> String {
-  let buf = Buffer::new()
+  let buf = StringBuilder::new()
   for i = 0; i < self.entries.length(); i = i + 1 {
     if i > 0 {
       buf.write_char(',')
