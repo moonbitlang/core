@@ -18,7 +18,7 @@
 /// String::from_array(['H', 'e', 'l', 'l', 'o']) // "Hello"  
 /// ```
 /// 
-/// Do not convert large datas to `Array[Char]` and build a string with `String::join`.
+/// Do not convert large datas to `Array[Char]` and build a string with `String::from_array`.
 /// 
 /// For efficiency considerations, it's recommended to use `Buffer` instead.
 pub fn String::from_array(chars : Array[Char]) -> String {
@@ -35,7 +35,6 @@ pub fn String::from_array(chars : Array[Char]) -> String {
 /// String::concat(["Hello", ", ", "world!"]) // "Hello, world!"
 /// String::concat(["a", "b", "c"], separator=",") // "a,b,c"
 /// ```
-/// 
 pub fn String::concat(
   strings : Array[String],
   ~separator : String = ""

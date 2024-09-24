@@ -68,7 +68,7 @@ pub fn Array::new_with_index[T](length : Int, value : (Int) -> T) -> Array[T] {
 ///
 /// The joined string.
 /// 
-/// @alert deprecated "Use `String::join` instead"
+/// @alert deprecated "Use `String::concat` instead"
 pub fn join[T : Show](self : Array[T], sep : String) -> String {
   let len = self.length()
   if len == 0 {
