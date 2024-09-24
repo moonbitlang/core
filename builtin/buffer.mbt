@@ -67,7 +67,7 @@ pub fn write_string(self : Buffer, value : String) -> Unit {
 }
 
 pub fn write_object(self : Buffer, value : Show) -> Unit {
-  write_string(self, value.to_string())
+  self.write_string(value.to_string())
 }
 
 pub fn write_bytes(self : Buffer, value : Bytes) -> Unit {
