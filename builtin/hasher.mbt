@@ -139,10 +139,6 @@ pub impl Hash for String with hash_combine(self, hasher) {
   hasher.combine_string(self)
 }
 
-pub impl Hash for Bytes with hash_combine(self, hasher) {
-  hasher.combine_bytes(self)
-}
-
 // https://github.com/skeeto/hash-prospector
 pub impl Hash for Int with hash(self) {
   let mut x = self ^ self.lsr(17)
@@ -163,24 +159,8 @@ pub impl Hash for UInt with hash_combine(self, hasher) {
   hasher.combine_uint(self)
 }
 
-pub impl Hash for Int64 with hash_combine(self, hasher) {
-  hasher.combine_int64(self)
-}
-
 pub impl Hash for UInt64 with hash_combine(self, hasher) {
   hasher.combine_uint64(self)
-}
-
-pub impl Hash for Double with hash_combine(self, hasher) {
-  hasher.combine_double(self)
-}
-
-pub impl Hash for Bool with hash_combine(self, hasher) {
-  hasher.combine_bool(self)
-}
-
-pub impl Hash for Unit with hash_combine(_self, hasher) {
-  hasher.combine_unit()
 }
 
 pub impl[X : Hash] Hash for X? with hash_combine(self, hasher) {
