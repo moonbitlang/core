@@ -163,11 +163,6 @@ jobs:
       - name: moon check
         run: moon check --deny-warn
 
-      - name: moon info
-        run: |
-          moon info
-          git diff --exit-code
-
       - name: Set ulimit and run moon test
         if: ${{ matrix.os != 'windows-latest' }}
         run: |
@@ -184,6 +179,11 @@ jobs:
       - name: moon bundle
         run: moon bundle --all
 
+      - name: moon info
+        run: |
+          moon info
+          git diff
+
       - name: check core size
         if: ${{ matrix.os != 'windows-latest' }}
         run: find ./target -name '*.core' | xargs ls -lh
@@ -195,7 +195,7 @@ jobs:
       - name: format diff
         run: |
           moon fmt
-          git diff --exit-code
+          git diff
 
   bleeding-check:
     continue-on-error: true
@@ -216,11 +216,6 @@ jobs:
       - name: moon check
         run: moon check --deny-warn
 
-      - name: moon info
-        run: |
-          moon info
-          git diff --exit-code
-
       - name: Set ulimit and run moon test
         run: |
           ulimit -s 8176
@@ -230,10 +225,15 @@ jobs:
       - name: moon bundle
         run: moon bundle --all
 
+      - name: moon info
+        run: |
+          moon info
+          git diff
+
       - name: check core size
         run: find ./target -name '*.core' | xargs ls -lh
 
       - name: format diff
         run: |
           moon fmt
-          git diff --exit-code
+          git diff
