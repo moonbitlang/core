@@ -96,7 +96,7 @@ pub fn stringify(
         if members.is_empty() {
           return "{}"
         }
-        let buf = Buffer::new(size_hint=0)
+        let buf = StringBuilder::new(size_hint=0)
         buf.write_char('{')
         buf.write_string(indent_str(level + 1, indent))
         let mut first = true
@@ -125,7 +125,7 @@ pub fn stringify(
         if arr.is_empty() {
           return "[]"
         }
-        let buf = Buffer::new(size_hint=0)
+        let buf = StringBuilder::new(size_hint=0)
         buf.write_char('[')
         buf.write_string(indent_str(level + 1, indent))
         for i, v in arr {
@@ -139,7 +139,7 @@ pub fn stringify(
         buf..write_char(']').to_string()
       }
       String(s) => {
-        let buf = Buffer::new(size_hint=0)
+        let buf = StringBuilder::new(size_hint=0)
         buf
         ..write_char('\"')
         ..write_string(escape(s, ~escape_slash))
@@ -165,7 +165,7 @@ fn escape(str : String, ~escape_slash : Bool) -> String {
     }
   }
 
-  let buf = Buffer::new(size_hint=str.length())
+  let buf = StringBuilder::new(size_hint=str.length())
   for c in str {
     match c {
       '"' | '\\' => buf.write_string("\\\{c}")
