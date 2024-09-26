@@ -136,6 +136,17 @@ test "concat" {
   inspect!(ls.concat(rs), content="@list.of([1, 2, 3, 4, 5, 6, 7, 8, 9, 10])")
 }
 
+test "rev_concat" {
+  let ls = @list.of([1, 2, 3, 4, 5])
+  let rs = @list.of([6, 7, 8, 9, 10])
+  inspect!(@list.Nil.rev_concat(ls), content="@list.of([1, 2, 3, 4, 5])")
+  inspect!(rs.rev_concat(@list.Nil), content="@list.of([10, 9, 8, 7, 6])")
+  inspect!(
+    ls.rev_concat(rs),
+    content="@list.of([5, 4, 3, 2, 1, 6, 7, 8, 9, 10])",
+  )
+}
+
 test "rev" {
   let ls = @list.of([1, 2, 3, 4, 5])
   let rs = @list.of([5, 4, 3, 2, 1])

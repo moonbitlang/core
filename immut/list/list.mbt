@@ -263,6 +263,21 @@ pub fn concat[A](self : T[A], other : T[A]) -> T[A] {
   }
 }
 
+/// Reverse the first list and concatenate it with the second.
+///
+/// # Example
+///
+/// ```
+/// let ls = of([1, 2, 3, 4, 5]).concat(of([6, 7, 8, 9, 10]))
+/// println(ls) // output: @list.of([5, 4, 3, 2, 1, 6, 7, 8, 9, 10])
+/// ```
+pub fn rev_concat[A](self : T[A], other : T[A]) -> T[A] {
+  loop self, other {
+    Nil, other => other
+    Cons(head, tail), other => continue tail, Cons(head, other)
+  }
+}
+
 /// Reverse the list.
 ///
 /// # Example
@@ -272,13 +287,7 @@ pub fn concat[A](self : T[A], other : T[A]) -> T[A] {
 /// // output: from_array([5, 4, 3, 2, 1])
 /// ```
 pub fn rev[A](self : T[A]) -> T[A] {
-  loop self, (Nil : T[A]) {
-    xs, ys =>
-      match (xs, ys) {
-        (Nil, acc) => acc
-        (Cons(x, xs), acc) => continue xs, Cons(x, acc)
-      }
-  }
+  self.rev_concat(Nil)
 }
 
 /// Fold the list from left.

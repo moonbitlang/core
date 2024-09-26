@@ -65,6 +65,7 @@ impl T {
   remove[A : Eq](Self[A], A) -> Self[A]
   remove_at[A](Self[A], Int) -> Self[A]
   rev[A](Self[A]) -> Self[A]
+  rev_concat[A](Self[A], Self[A]) -> Self[A]
   rev_fold[A, B](Self[A], ~init : B, (A, B) -> B) -> B
   rev_foldi[A, B](Self[A], ~init : B, (Int, A, B) -> B) -> B
   scan_left[A, E](Self[A], (E, A) -> E, ~init : E) -> Self[E]
