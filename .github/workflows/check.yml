@@ -87,7 +87,7 @@ jobs:
 
       - name: coverage report
         run: |
-          moon coverage report -f summary summary > coverage_summary.txt
+          moon coverage report -f summary > coverage_summary.txt
           # Put the coverage report in the pipline output
           cat coverage_summary.txt >> "$GITHUB_STEP_SUMMARY"
           # We don't use the official coveralls upload tool because it takes >1min to build itself
