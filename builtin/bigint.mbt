@@ -732,7 +732,7 @@ pub fn BigInt::from_hex(input : String) -> BigInt {
 }
 
 /// Converts a BigInt to a hex string.
-pub fn to_hex(self : BigInt) -> String {
+pub fn to_hex(self : BigInt, ~uppercase : Bool = true) -> String {
   // WARN: this implementation assumes that `radix_bit_len` is a multiple of 4.
   let mut result = ""
   for i = self.len - 1; i >= 0; i = i - 1 { // TODO: reverse iteration would be a bit faster.
@@ -744,8 +744,10 @@ pub fn to_hex(self : BigInt) -> String {
       x /= 16
       tmp = (if y < 10 {
           Char::from_int(y.reinterpret_as_int() + 48).to_string()
-        } else {
+        } else if uppercase {
           Char::from_int(y.reinterpret_as_int() + 55).to_string()
+        } else {
+          Char::from_int(y.reinterpret_as_int() + 87).to_string()
         }) +
         tmp
     }
