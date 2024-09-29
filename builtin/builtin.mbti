@@ -156,7 +156,7 @@ impl BigInt {
   pow(Self, Self, ~modulus : Self = ..) -> Self
   shl(Self, Int) -> Self
   shr(Self, Int) -> Self
-  to_hex(Self) -> String
+  to_hex(Self, ~uppercase : Bool = ..) -> String
   to_json(Self) -> Json
   to_octets(Self, ~length? : Int) -> Bytes
   to_string(Self) -> String
