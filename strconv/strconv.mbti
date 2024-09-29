@@ -21,8 +21,6 @@ impl Decimal {
   to_double(Self) -> Double!StrConvError
 }
 
-type Number
-
 pub type! StrConvError String
 
 // Type aliases

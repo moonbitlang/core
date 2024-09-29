@@ -14,7 +14,7 @@
 
 let min_19digit_int : UInt64 = 100_0000_0000_0000_0000UL
 
-struct Number {
+priv struct Number {
   exponent : Int64
   mantissa : UInt64
   negative : Bool
