@@ -14,7 +14,7 @@
 
 struct RandomState {
   mut seed : UInt64
-  mut gamma : UInt64
+  gamma : UInt64
 } derive(Show, Default)
 
 let golden_gamma : UInt64 = 0x9e3779b97f4a7c15

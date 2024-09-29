@@ -16,8 +16,8 @@
 /// TODO: make it a monad
 priv struct StringSlice {
   string : String
-  mut start : Int
-  mut end : Int
+  start : Int
+  end : Int
 }
 
 fn slice(s : String, start : Int, end : Int) -> StringSlice {
