@@ -9,6 +9,14 @@ fn atan(Double) -> Double
 
 fn cos(Double) -> Double
 
+fn exp(Double) -> Double
+
+fn ln(Double) -> Double
+
+fn log10(Double) -> Double
+
+fn log2(Double) -> Double
+
 fn maximum[T : Compare + Eq](T, T) -> T
 
 fn minimum[T : Compare + Eq](T, T) -> T
