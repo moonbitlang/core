@@ -62,7 +62,7 @@ let logf_data : LogfData = {
   poly: [-0x1.00ea348b88334p-2, 0x1.5575b0be00b6ap-2, -0x1.ffffef20a4123p-2],
 }
 
-pub fn Float::logf(x : Float) -> Float {
+pub fn Float::log(x : Float) -> Float {
   let mut ix : UInt = x.reinterpret_as_int().reinterpret_as_uint()
   if ix == 0x3f800000U {
     return 0.0

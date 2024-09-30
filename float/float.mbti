@@ -3,8 +3,6 @@ package moonbitlang/core/float
 // Values
 let infinity : Float
 
-fn logf(Float) -> Float
-
 let max_value : Float
 
 let min_positive : Float
@@ -18,6 +16,7 @@ let not_a_number : Float
 // Types and methods
 impl Float {
   abs(Float) -> Float
+  log(Float) -> Float
   to_string(Float) -> String
 }
 
