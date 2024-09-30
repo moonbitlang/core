@@ -1,0 +1,5 @@
+langchain
+argparse
+langchain_community
+glob
+pyjwt
