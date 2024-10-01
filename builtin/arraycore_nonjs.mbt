@@ -237,7 +237,10 @@ pub fn unsafe_pop[T](self : Array[T]) -> T {
   guard self.length() != 0
   let index = self.length() - 1
   let v = self.buffer()[index]
-  self.set_length(index)
+  // self.set_length(index)
+  self.buf.set_null(index) 
+  // comment out wasm compilation is find
+  self.len = index
   v
 }
 
