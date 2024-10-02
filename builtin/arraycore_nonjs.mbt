@@ -70,14 +70,52 @@ pub fn length[T](self : Array[T]) -> Int {
   self.len
 }
 
-fn set_length[T](self : Array[T], new_len : Int) -> Unit {
-  let len = self.len
-  if new_len < len {
-    for i in new_len..<len {
-      self.buf.set_null(i)
-    }
+/// Truncates the array to the specified length. This function is marked as
+/// `unsafe` because it directly manipulates the internal buffer of the array,
+/// which can lead to undefined behavior if not used carefully.
+///
+/// # Parameters
+///
+/// - `self` : The array to be truncated.
+/// - `new_len` : The new length to which the array should be truncated. Must be
+/// less than or equal to the current length of the array.
+///
+/// # Returns
+///
+/// - `Unit` : This function does not return a value.
+///
+/// # Errors
+///
+/// - This function does not explicitly raise errors, but improper use (e.g.,
+/// setting `new_len` greater than the current length) can lead to undefined
+/// behavior.
+///
+/// # Examples
+///
+/// ```moonbit
+/// test "unsafe_truncate_to_length example" {
+///  let mut arr = [1, 2, 3, 4, 5]
+///  unsafe_truncate_to_length(arr, 3)
+///  inspect!(arr, content="[1, 2, 3]")
+/// }
+/// ```
+fn unsafe_truncate_to_length[T](self : Array[T], new_len : Int) -> Unit {
+  let len = self.length()
+  guard new_len <= len
+  for i in new_len..<len {
+    self.buf.set_null(i)
   }
   self.len = new_len
+}
+
+
+test "unsafe_truncate_to_length" {
+  let arr = [1, 2, 3, 4, 5]
+  unsafe_truncate_to_length(arr, 3)
+  assert_eq!(arr.length(), 3)
+  assert_eq!(arr[0], 1)
+  assert_eq!(arr[1], 2)
+  assert_eq!(arr[2], 3)
 }
 
 fn buffer[T](self : Array[T]) -> UninitializedArray[T] {
@@ -219,7 +257,7 @@ pub fn pop[T](self : Array[T]) -> T? {
   } else {
     let index = self.length() - 1
     let v = self.buffer()[index]
-    self.set_length(index)
+    self.unsafe_truncate_to_length(index)
     Some(v)
   }
 }
@@ -236,7 +274,7 @@ pub fn unsafe_pop[T](self : Array[T]) -> T {
   guard self.length() != 0
   let index = self.length() - 1
   let v = self.buffer()[index]
-  self.set_length(index)
+  self.unsafe_truncate_to_length(index)
   v
 }
 
@@ -265,7 +303,7 @@ pub fn remove[T](self : Array[T], index : Int) -> T {
     index + 1,
     self.length() - index - 1,
   )
-  self.set_length(self.length() - 1)
+  self.unsafe_truncate_to_length(self.length() - 1)
   value
 }
 
@@ -300,7 +338,7 @@ pub fn drain[T](self : Array[T], begin : Int, end : Int) -> Array[T] {
     end,
     self.length() - end,
   )
-  self.set_length(self.length() - num)
+  self.unsafe_truncate_to_length(self.length() - num)
   v
 }
 
