@@ -71,7 +71,6 @@ pub fn length[T](self : Array[T]) -> Int {
 }
 
 fn set_length[T](self : Array[T], new_len : Int) -> Unit {
-  // assert new_len >= 0 && new_len <= self.buf.len
   let len = self.len
   if new_len < len {
     for i in new_len..<len {
@@ -204,7 +203,7 @@ pub fn push[T](self : Array[T], value : T) -> Unit {
   }
   let length = self.length()
   self.buffer()[length] = value
-  self.set_length(length + 1)
+  self.len = length + 1
 }
 
 /// Removes the last element from a array and returns it, or `None` if it is empty.
@@ -331,5 +330,5 @@ pub fn insert[T](self : Array[T], index : Int, value : T) -> Unit {
   )
   let length = self.length()
   self.buffer()[index] = value
-  self.set_length(length + 1)
+  self.len = length + 1
 }
