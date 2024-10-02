@@ -99,6 +99,7 @@ pub fn length[T](self : Array[T]) -> Int {
 ///  inspect!(arr, content="[1, 2, 3]")
 /// }
 /// ```
+/// TODO: this can be optimized by using the intrinsic to null out the range
 fn unsafe_truncate_to_length[T](self : Array[T], new_len : Int) -> Unit {
   let len = self.length()
   guard new_len <= len
@@ -112,7 +113,6 @@ test "unsafe_truncate_to_length" {
   let arr = [1, 2, 3, 4, 5]
   unsafe_truncate_to_length(arr, 3)
   inspect!(arr, content="[1, 2, 3]")
-  
 }
 
 fn buffer[T](self : Array[T]) -> UninitializedArray[T] {
@@ -315,16 +315,7 @@ pub fn remove[T](self : Array[T], index : Int) -> T {
 /// ```
 /// @alert unsafe "Panic if index is out of bounds."
 pub fn drain[T](self : Array[T], begin : Int, end : Int) -> Array[T] {
-  if begin < 0 ||
-    begin >= self.length() ||
-    end < 0 ||
-    end > self.length() ||
-    begin > end {
-    let len = self.length()
-    abort(
-      "index out of bounds: the len is \{len} but the index is (\{begin}, \{end})",
-    )
-  }
+  guard begin >= 0 && end <= self.length() && begin <= end
   let num = end - begin
   let v = Array::make_uninit(num)
   UninitializedArray::unsafe_blit(v.buffer(), 0, self.buffer(), begin, num)
