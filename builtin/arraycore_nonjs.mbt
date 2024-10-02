@@ -111,10 +111,8 @@ fn unsafe_truncate_to_length[T](self : Array[T], new_len : Int) -> Unit {
 test "unsafe_truncate_to_length" {
   let arr = [1, 2, 3, 4, 5]
   unsafe_truncate_to_length(arr, 3)
-  assert_eq!(arr.length(), 3)
-  assert_eq!(arr[0], 1)
-  assert_eq!(arr[1], 2)
-  assert_eq!(arr[2], 3)
+  inspect!(arr, content="[1, 2, 3]")
+  
 }
 
 fn buffer[T](self : Array[T]) -> UninitializedArray[T] {
