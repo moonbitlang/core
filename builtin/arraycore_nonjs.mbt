@@ -108,7 +108,6 @@ fn unsafe_truncate_to_length[T](self : Array[T], new_len : Int) -> Unit {
   self.len = new_len
 }
 
-
 test "unsafe_truncate_to_length" {
   let arr = [1, 2, 3, 4, 5]
   unsafe_truncate_to_length(arr, 3)
