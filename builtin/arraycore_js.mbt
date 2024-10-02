@@ -102,7 +102,7 @@ pub fn Array::new[T](~capacity : Int = 0) -> Array[T] {
 /// Returns the number of elements in the array.
 pub fn length[T](self : Array[T]) -> Int = "%fixedarray.length"
 
-fn set_length[T](self : Array[T], new_len : Int) -> Unit {
+fn unsafe_truncate_to_length[T](self : Array[T], new_len : Int) -> Unit {
   JSArray::ofAnyArray(self).set_length(new_len)
 }
 
