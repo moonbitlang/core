@@ -259,8 +259,6 @@ pub fn drain[T](self : Array[T], begin : Int, end : Int) -> Array[T] {
       "index out of bounds: the len is \{self.length()} but the index is (\{begin}, \{end})",
     )
   }
-
-
   JSArray::ofAnyArray(self).splice(begin, end - begin).toAnyArray()
 }
 
