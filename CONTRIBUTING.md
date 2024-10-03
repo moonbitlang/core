@@ -29,8 +29,8 @@
   cd hello
   echo """fn main {
     println([1, 2, 3].rev())
-  }""" > main/main.mbt
-  moon run main
+  }""" > src/main/main.mbt
+  moon run src/main
   # Output: [3, 2, 1]
   ```
 
