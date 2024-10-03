@@ -233,10 +233,9 @@ pub fn unsafe_pop[T](self : Array[T]) -> T {
 /// ```
 /// @alert unsafe "Panic if index is out of bounds."
 pub fn remove[T](self : Array[T], index : Int) -> T {
-  if index < 0 || index >= self.length() {
-    let len = self.length()
+  guard index >= 0 && index < self.length() else {
     abort(
-      "index out of bounds: the len is from 0 to \{len} but the index is \{index}",
+      "index out of bounds: the len is from 0 to \{self.length()} but the index is \{index}",
     )
   }
   let value = self.buffer()[index]
@@ -255,16 +254,13 @@ pub fn remove[T](self : Array[T], index : Int) -> T {
 /// ```
 /// @alert unsafe "Panic if index is out of bounds."
 pub fn drain[T](self : Array[T], begin : Int, end : Int) -> Array[T] {
-  if begin < 0 ||
-    begin >= self.length() ||
-    end < 0 ||
-    end > self.length() ||
-    begin > end {
-    let len = self.length()
+  guard begin >= 0 && end <= self.length() && begin <= end else {
     abort(
-      "index out of bounds: the len is \{len} but the index is (\{begin}, \{end})",
+      "index out of bounds: the len is \{self.length()} but the index is (\{begin}, \{end})",
     )
   }
+
+
   JSArray::ofAnyArray(self).splice(begin, end - begin).toAnyArray()
 }
 
