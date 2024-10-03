@@ -270,10 +270,9 @@ pub fn drain[T](self : Array[T], begin : Int, end : Int) -> Array[T] {
 /// ```
 /// @alert unsafe "Panic if index is out of bounds."
 pub fn insert[T](self : Array[T], index : Int, value : T) -> Unit {
-  if index < 0 || index > self.length() {
-    let len = self.length()
+  guard index >= 0 && index <= self.length() else {
     abort(
-      "index out of bounds: the len is from 0 to \{len} but the index is \{index}",
+      "index out of bounds: the len is from 0 to \{self.length()} but the index is \{index}",
     )
   }
   let _ = JSArray::ofAnyArray(self).splice1(index, 0, JSValue::ofAny(value))
