@@ -15,7 +15,9 @@
 test "log" {
   inspect!((1.0 : Float).ln(), content="0")
   inspect!((0.0 : Float).ln(), content="-Infinity")
+  inspect!(@float.infinity.ln(), content="Infinity")
   inspect!((2.0 : Float).ln(), content="0.6931471824645996")
   inspect!((2.718 : Float).ln(), content="0.9998962879180908")
   inspect!((1.0e37 : Float).ln(), content="85.19564819335938")
+  inspect!((-1.0 : Float).ln(), content="NaN")
 }
