@@ -58,7 +58,7 @@ pub fn ln(self : Float) -> Float {
       return not_a_number
     }
     ix = (self * 0x1.0p23).reinterpret_as_int().reinterpret_as_uint()
-    ix -= 23U << 23
+    ix -= (23 << 23).reinterpret_as_uint()
   }
   let tmp = ix - logf_off
   let i = ((tmp >> (23 - logf_table_bits)) % logf_n).reinterpret_as_int()
@@ -66,7 +66,7 @@ pub fn ln(self : Float) -> Float {
   let iz = ix - (tmp & 0xff800000U)
   let invc = logf_data.invc[i]
   let logc = logf_data.logc[i]
-  let z = iz.to_float().to_double()
+  let z = iz.reinterpret_as_int().reinterpret_as_float().to_double()
   let r = z * invc - 1
   let y0 = logc + k.to_double() * logf_data.ln2
   let r2 = r * r
