@@ -12,26 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-// fn frexpf(x : Float, e : Ref[UInt]) -> Float {
-//   let i = x.reinterpret_as_int().reinterpret_as_uint()
-//   let ee = (i >> 23) & 0xff
-//   if ee == 0 {
-//     if x != 0 {
-//       let x = frexpf(x * 0x1.0p64, e)
-//       e.val = e.val - 64
-//     } else {
-//       e.val = 0
-//     }
-//     return x
-//   } else if ee == 0xff {
-//     return x
-//   }
-//   e.val = ee - 0x7eU
-//   let i = i & 0x807fffff
-//   let i = i | 0x3f000000
-//   return i.to_float()
-// }
-
 let logf_off = 0x3f330000U
 
 let logf_table_bits = 4
@@ -62,8 +42,8 @@ let logf_data : LogfData = {
   poly: [-0x1.00ea348b88334p-2, 0x1.5575b0be00b6ap-2, -0x1.ffffef20a4123p-2],
 }
 
-pub fn Float::log(x : Float) -> Float {
-  let mut ix : UInt = x.reinterpret_as_int().reinterpret_as_uint()
+pub fn ln(self : Float) -> Float {
+  let mut ix : UInt = self.reinterpret_as_int().reinterpret_as_uint()
   if ix == 0x3f800000U {
     return 0.0
   }
@@ -72,12 +52,12 @@ pub fn Float::log(x : Float) -> Float {
       return neg_infinity
     }
     if ix == 0x7f800000U {
-      return x
+      return self
     }
     if (ix & 0x80000000U) != 0 || ix * 2 >= 0xff000000U {
       return not_a_number
     }
-    ix = (x * 0x1.0p23).reinterpret_as_int().reinterpret_as_uint()
+    ix = (self * 0x1.0p23).reinterpret_as_int().reinterpret_as_uint()
     ix -= 23U << 23
   }
   let tmp = ix - logf_off
