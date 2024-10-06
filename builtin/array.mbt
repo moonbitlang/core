@@ -842,7 +842,7 @@ pub fn dedup[T : Eq](self : Array[T]) -> Unit {
 /// let v = [3, 4, 5, 6, 6, 4]
 /// v.unique() // v = [3, 4, 5, 6, 4]
 /// ```
-pub fn unique[T: Eq](self : Array[T]) -> Unit {
+pub fn unique[T : Eq](self : Array[T]) -> Unit {
   for i in 0..<self.length() {
     for j = i + 1; j < self.length(); j = j + 1 {
       if self[i] == self[j] {
