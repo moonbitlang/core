@@ -815,7 +815,7 @@ pub fn fold_righti[T, U](self : Array[T], f : (Int, U, T) -> U, ~init : U) -> U 
   self.rev_foldi(~init, f)
 }
 
-/// Removes consecutive repeated elements in the array according to the Eq trait.
+/// Removes repeated elements in the array according to the Eq trait.
 ///
 /// # Example
 /// ```
