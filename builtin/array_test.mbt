@@ -554,3 +554,15 @@ test "unique - long" {
   array.unique()
   inspect!(array, content="[1, 2, 3, 4, 5, 6, 4, 3, 2, 1]")
 }
+
+test "unique - edge cases" {
+  let array = [1, 1, 1, 1, 1]
+  array.unique()
+  inspect!(array, content="[1]")
+  let array : Array[Int] = []
+  array.unique()
+  inspect!(array, content="[]")
+  let array = [1, 2, 3, 4, 5]
+  array.unique()
+  inspect!(array, content="[1, 2, 3, 4, 5]")
+}
