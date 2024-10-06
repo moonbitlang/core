@@ -113,6 +113,7 @@ impl Array {
   swap[T](Self[T], Int, Int) -> Unit
   to_json[X : ToJson](Self[X]) -> Json
   to_string[T : Show](Self[T]) -> String
+  unique[T : Eq](Self[T]) -> Unit
   unsafe_blit[A](Self[A], Int, Self[A], Int, Int) -> Unit
   unsafe_blit_fixed[A](Self[A], Int, FixedArray[A], Int, Int) -> Unit
   unsafe_pop[T](Self[T]) -> T
