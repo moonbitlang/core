@@ -548,3 +548,9 @@ test "unique" {
   array.unique()
   inspect!(array, content="[3, 4, 5, 6, 4]")
 }
+
+test "unique - long" {
+  let array = [1, 2, 2, 3, 3, 3, 4, 4, 4, 4, 5, 5, 6, 6, 4, 3, 2, 1, 1, 1]
+  array.unique()
+  inspect!(array, content="[1, 2, 3, 4, 5, 6, 4, 3, 2, 1]")
+}
