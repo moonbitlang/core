@@ -16,6 +16,7 @@ let not_a_number : Float
 // Types and methods
 impl Float {
   abs(Float) -> Float
+  ln(Float) -> Float
   to_string(Float) -> String
 }
 
