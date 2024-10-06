@@ -542,3 +542,9 @@ test "array_binary_search_by_test" {
   target = { num: 49 }
   assert_eq!(arr.binary_search_by(cmp), Err(4))
 }
+
+test "unique" {
+  let array = [3, 4, 5, 6, 6, 4]
+  array.unique()
+  inspect!(array, content="[3, 4, 5, 6, 4]")
+}
