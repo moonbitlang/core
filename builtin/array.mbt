@@ -835,6 +835,25 @@ pub fn dedup[T : Eq](self : Array[T]) -> Unit {
   }
 }
 
+/// Removes consecutive repeated elements in the array according to the Eq trait.
+/// 
+/// # Example
+/// ```
+/// let v = [3, 4, 5, 6, 6, 4]
+/// v.unique() // v = [3, 4, 5, 6, 4]
+/// ```
+pub fn unique[T: Eq](self : Array[T]) -> Unit {
+  for i in 0..<self.length() {
+    for j = i + 1; j < self.length(); j = j + 1 {
+      if self[i] == self[j] {
+        self.remove(j) |> ignore
+      } else {
+        break
+      }
+    }
+  }
+}
+
 /// Extract elements from the array according to the given function.
 ///
 /// This function will remove the elements from the original array and return a new array.
