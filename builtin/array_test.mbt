@@ -543,26 +543,26 @@ test "array_binary_search_by_test" {
   assert_eq!(arr.binary_search_by(cmp), Err(4))
 }
 
-test "unique" {
+test "dedup_consecutive" {
   let array = [3, 4, 5, 6, 6, 4]
-  array.unique()
+  array.dedup_consecutive()
   inspect!(array, content="[3, 4, 5, 6, 4]")
 }
 
-test "unique - long" {
+test "dedup_consecutive - long" {
   let array = [1, 2, 2, 3, 3, 3, 4, 4, 4, 4, 5, 5, 6, 6, 4, 3, 2, 1, 1, 1]
-  array.unique()
+  array.dedup_consecutive()
   inspect!(array, content="[1, 2, 3, 4, 5, 6, 4, 3, 2, 1]")
 }
 
-test "unique - edge cases" {
+test "dedup_consecutive - edge cases" {
   let array = [1, 1, 1, 1, 1]
-  array.unique()
+  array.dedup_consecutive()
   inspect!(array, content="[1]")
   let array : Array[Int] = []
-  array.unique()
+  array.dedup_consecutive()
   inspect!(array, content="[]")
   let array = [1, 2, 3, 4, 5]
-  array.unique()
+  array.dedup_consecutive()
   inspect!(array, content="[1, 2, 3, 4, 5]")
 }

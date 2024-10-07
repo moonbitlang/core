@@ -840,9 +840,9 @@ pub fn dedup[T : Eq](self : Array[T]) -> Unit {
 /// # Example
 /// ```
 /// let v = [3, 4, 5, 6, 6, 4]
-/// v.unique() // v = [3, 4, 5, 6, 4]
+/// v.dedup_consecutive() // v = [3, 4, 5, 6, 4]
 /// ```
-pub fn unique[T : Eq](self : Array[T]) -> Unit {
+pub fn dedup_consecutive[T : Eq](self : Array[T]) -> Unit {
   for i = 0; i < self.length(); i = i + 1 {
     while i + 1 < self.length() && self[i] == self[i + 1] {
       self.remove(i + 1) |> ignore
