@@ -144,7 +144,7 @@ test "Option::to_json" {
   )
 }
 
-test "optinal field" {
+test "optional field" {
   let opt = [
     { x: Some(42), t: Some(Some(42)) },
     { x: None, t: None },
