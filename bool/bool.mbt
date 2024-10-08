@@ -22,25 +22,25 @@ pub fn to_int(self : Bool) -> Int {
 
 pub fn to_int64(self : Bool) -> Int64 {
   if self {
-    1L
+    1
   } else {
-    0L
+    0
   }
 }
 
 pub fn to_uint(self : Bool) -> UInt {
   if self {
-    1U
+    1
   } else {
-    0U
+    0
   }
 }
 
 pub fn to_uint64(self : Bool) -> UInt64 {
   if self {
-    1UL
+    1
   } else {
-    0UL
+    0
   }
 }
 

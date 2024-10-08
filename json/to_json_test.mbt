@@ -144,29 +144,19 @@ test "Option::to_json" {
   )
 }
 
-// test "optinal field" {
-//   let opt = { x: Some(42), t: Some(Some(42)) }
-//   inspect!(
-//     opt.to_json(),
-//     content=
-//       #|Object({"x": Array([Number(42)]), "t": Array([Array([Number(42)])])})
-//     ,
-//   )
-//   let opt = { x: None, t: None }
-//   inspect!(
-//     opt.to_json(),
-//     content=
-//       #|Object({"x": Null, "t": Null})
-//     ,
-//   )
-//   let opt = { x: None, t: Some(None) }
-//   inspect!(
-//     opt.to_json(),
-//     content=
-//       #|Object({"x": Null, "t": Array([Null])})
-//     ,
-//   )
-// }
+test "optinal field" {
+  let opt = [
+    { x: Some(42), t: Some(Some(42)) },
+    { x: None, t: None },
+    { x: None, t: Some(None) },
+  ]
+  inspect!(
+    opt.to_json() |> @json.stringify,
+    content=
+      #|[{"x":42,"t":[42]},{},{"t":null}]
+    ,
+  )
+}
 
 test "optional field round trip" {
   let opt = { x: Some(42), t: Some(Some(42)) }
