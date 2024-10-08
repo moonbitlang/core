@@ -843,11 +843,17 @@ pub fn dedup[T : Eq](self : Array[T]) -> Unit {
 /// v.dedup_consecutive() // v = [3, 4, 5, 6, 4]
 /// ```
 pub fn dedup_consecutive[T : Eq](self : Array[T]) -> Unit {
-  for i = 0; i < self.length(); i = i + 1 {
-    while i + 1 < self.length() && self[i] == self[i + 1] {
-      self.remove(i + 1) |> ignore
+  if self.is_empty() {
+    return
+  }
+  let mut w = 1
+  for i = 1; i < self.length(); i = i + 1 {
+    if self[i] != self[w - 1] {
+      self[w] = self[i]
+      w = w + 1
     }
   }
+  self.unsafe_truncate_to_length(w)
 }
 
 /// Extract elements from the array according to the given function.
