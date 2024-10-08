@@ -30,11 +30,8 @@ fn __math_uflowf(sign : UInt) -> Float {
 
 let exp2f_table_bits = 5
 
-let exp2f_poly_order = 3
-
 struct Exp2fData {
   tab : Array[UInt64]
-  shift_scaled : Double
   poly : Array[Double]
   shift : Double
   invln2_scaled : Double
@@ -56,7 +53,6 @@ let exp2f_data : Exp2fData = {
     0x3feee89f995ad3ad, 0x3feeff76f2fb5e47, 0x3fef199bdd85529c, 0x3fef3720dcef9069,
     0x3fef5818dcfba487, 0x3fef7c97337b9b5f, 0x3fefa4afa2a490da, 0x3fefd0765b6e4540,
   ],
-  shift_scaled: 0x1.8p+52 / exp2f_data_n,
   poly: [0x1.c6af84b912394p-5, 0x1.ebfce50fac4f3p-3, 0x1.62e42ff0c52d6p-1],
   shift: 0x1.8p+52,
   invln2_scaled: 0x1.71547652b82fep+0 * exp2f_data_n,
