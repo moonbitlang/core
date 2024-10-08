@@ -30,7 +30,7 @@ fn __math_uflowf(sign : UInt) -> Float {
 
 let exp2f_table_bits = 5
 
-struct Exp2fData {
+priv struct Exp2fData {
   tab : Array[UInt64]
   poly : Array[Double]
   shift : Double
