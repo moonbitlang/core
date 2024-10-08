@@ -67,7 +67,7 @@ let exp2f_data : Exp2fData = {
   ],
 }
 
-fn exp(self : Float) -> Float {
+pub fn exp(self : Float) -> Float {
   let xd = self.to_double()
   let abstop = top12(self) & 0x7ff
   if abstop >= top12(88.0) {
