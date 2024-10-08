@@ -31,10 +31,10 @@ fn __math_uflowf(sign : UInt) -> Float {
 let exp2f_table_bits = 5
 
 priv struct Exp2fData {
-  tab : Array[UInt64]
+  tab : FixedArray[UInt64]
   shift : Double
   invln2_scaled : Double
-  poly_scaled : Array[Double]
+  poly_scaled : FixedArray[Double]
 }
 
 let expf_n : UInt64 = (1 << exp2f_table_bits).to_int64().to_uint64()
