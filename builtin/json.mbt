@@ -29,9 +29,9 @@ pub trait ToJson {
 
 pub fn Bool::to_json(self : Bool) -> Json {
   if self {
-    True
+    true
   } else {
-    False
+    false
   }
 }
 
