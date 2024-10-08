@@ -24,30 +24,27 @@ pub fn length[T](self : ArrayView[T]) -> Int {
 }
 
 pub fn op_get[T](self : ArrayView[T], index : Int) -> T {
-  if index < 0 || index >= self.len {
-    let len = self.len
+  guard index >= 0 && index < self.len else {
     abort(
-      "index out of bounds: the len is from 0 to \{len} but the index is \{index}",
+      "index out of bounds: the len is from 0 to \{self.len} but the index is \{index}",
     )
   }
   self.buf[self.start + index]
 }
 
 pub fn op_set[T](self : ArrayView[T], index : Int, value : T) -> Unit {
-  if index < 0 || index >= self.len {
-    let len = self.len
+  guard index >= 0 && index < self.len else {
     abort(
-      "index out of bounds: the len is from 0 to \{len} but the index is \{index}",
+      "index out of bounds: the len is from 0 to \{self.len} but the index is \{index}",
     )
   }
   self.buf[self.start + index] = value
 }
 
 pub fn swap[T](self : ArrayView[T], i : Int, j : Int) -> Unit {
-  if i >= self.len || j >= self.len || i < 0 || j < 0 {
-    let len = self.len
+  guard i >= 0 && i < self.len && j >= 0 && j < self.len else {
     abort(
-      "index out of bounds: the len is from 0 to \{len} but the index is (\{i}, \{j})",
+      "index out of bounds: the len is from 0 to \{self.len} but the index is (\{i}, \{j})",
     )
   }
   let temp = self.buf[self.start + i]

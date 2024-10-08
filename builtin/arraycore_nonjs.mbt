@@ -70,15 +70,49 @@ pub fn length[T](self : Array[T]) -> Int {
   self.len
 }
 
-fn set_length[T](self : Array[T], new_len : Int) -> Unit {
-  // assert new_len >= 0 && new_len <= self.buf.len
-  let len = self.len
-  if new_len < len {
-    for i in new_len..<len {
-      self.buf.set_null(i)
-    }
+/// Truncates the array to the specified length. This function is marked as
+/// `unsafe` because it directly manipulates the internal buffer of the array,
+/// which can lead to undefined behavior if not used carefully.
+///
+/// # Parameters
+///
+/// - `self` : The array to be truncated.
+/// - `new_len` : The new length to which the array should be truncated. Must be
+/// less than or equal to the current length of the array.
+///
+/// # Returns
+///
+/// - `Unit` : This function does not return a value.
+///
+/// # Errors
+///
+/// - This function does not explicitly raise errors, but improper use (e.g.,
+/// setting `new_len` greater than the current length) can lead to undefined
+/// behavior.
+///
+/// # Examples
+///
+/// ```moonbit
+/// test "unsafe_truncate_to_length example" {
+///  let mut arr = [1, 2, 3, 4, 5]
+///  unsafe_truncate_to_length(arr, 3)
+///  inspect!(arr, content="[1, 2, 3]")
+/// }
+/// ```
+/// TODO: this can be optimized by using the intrinsic to null out the range
+fn unsafe_truncate_to_length[T](self : Array[T], new_len : Int) -> Unit {
+  let len = self.length()
+  guard new_len <= len
+  for i in new_len..<len {
+    self.buf.set_null(i)
   }
   self.len = new_len
+}
+
+test "unsafe_truncate_to_length" {
+  let arr = [1, 2, 3, 4, 5]
+  unsafe_truncate_to_length(arr, 3)
+  inspect!(arr, content="[1, 2, 3]")
 }
 
 fn buffer[T](self : Array[T]) -> UninitializedArray[T] {
@@ -204,7 +238,7 @@ pub fn push[T](self : Array[T], value : T) -> Unit {
   }
   let length = self.length()
   self.buffer()[length] = value
-  self.set_length(length + 1)
+  self.len = length + 1
 }
 
 /// Removes the last element from a array and returns it, or `None` if it is empty.
@@ -220,7 +254,7 @@ pub fn pop[T](self : Array[T]) -> T? {
   } else {
     let index = self.length() - 1
     let v = self.buffer()[index]
-    self.set_length(index)
+    self.unsafe_truncate_to_length(index)
     Some(v)
   }
 }
@@ -237,7 +271,7 @@ pub fn unsafe_pop[T](self : Array[T]) -> T {
   guard self.length() != 0
   let index = self.length() - 1
   let v = self.buffer()[index]
-  self.set_length(index)
+  self.unsafe_truncate_to_length(index)
   v
 }
 
@@ -252,10 +286,9 @@ pub fn unsafe_pop[T](self : Array[T]) -> T {
 /// ```
 /// @alert unsafe "Panic if index is out of bounds."
 pub fn remove[T](self : Array[T], index : Int) -> T {
-  if index < 0 || index >= self.length() {
-    let len = self.length()
+  guard index >= 0 && index < self.length() else {
     abort(
-      "index out of bounds: the len is from 0 to \{len} but the index is \{index}",
+      "index out of bounds: the len is from 0 to \{self.length()} but the index is \{index}",
     )
   }
   let value = self.buffer()[index]
@@ -266,7 +299,7 @@ pub fn remove[T](self : Array[T], index : Int) -> T {
     index + 1,
     self.length() - index - 1,
   )
-  self.set_length(self.length() - 1)
+  self.unsafe_truncate_to_length(self.length() - 1)
   value
 }
 
@@ -281,16 +314,7 @@ pub fn remove[T](self : Array[T], index : Int) -> T {
 /// ```
 /// @alert unsafe "Panic if index is out of bounds."
 pub fn drain[T](self : Array[T], begin : Int, end : Int) -> Array[T] {
-  if begin < 0 ||
-    begin >= self.length() ||
-    end < 0 ||
-    end > self.length() ||
-    begin > end {
-    let len = self.length()
-    abort(
-      "index out of bounds: the len is \{len} but the index is (\{begin}, \{end})",
-    )
-  }
+  guard begin >= 0 && end <= self.length() && begin <= end
   let num = end - begin
   let v = Array::make_uninit(num)
   UninitializedArray::unsafe_blit(v.buffer(), 0, self.buffer(), begin, num)
@@ -301,7 +325,7 @@ pub fn drain[T](self : Array[T], begin : Int, end : Int) -> Array[T] {
     end,
     self.length() - end,
   )
-  self.set_length(self.length() - num)
+  self.unsafe_truncate_to_length(self.length() - num)
   v
 }
 
@@ -313,10 +337,9 @@ pub fn drain[T](self : Array[T], begin : Int, end : Int) -> Array[T] {
 /// ```
 /// @alert unsafe "Panic if index is out of bounds."
 pub fn insert[T](self : Array[T], index : Int, value : T) -> Unit {
-  if index < 0 || index > self.length() {
-    let len = self.length()
+  guard index >= 0 && index <= self.length() else {
     abort(
-      "index out of bounds: the len is from 0 to \{len} but the index is \{index}",
+      "index out of bounds: the len is from 0 to \{self.length()} but the index is \{index}",
     )
   }
   if self.length() == self.buffer()._.length() {
@@ -331,5 +354,5 @@ pub fn insert[T](self : Array[T], index : Int, value : T) -> Unit {
   )
   let length = self.length()
   self.buffer()[index] = value
-  self.set_length(length + 1)
+  self.len = length + 1
 }

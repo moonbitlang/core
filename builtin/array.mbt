@@ -211,7 +211,7 @@ pub fn eachi[T](self : Array[T], f : (Int, T) -> Unit) -> Unit {
 /// v.clear()
 /// ```
 pub fn clear[T](self : Array[T]) -> Unit {
-  self.set_length(0)
+  self.unsafe_truncate_to_length(0)
 }
 
 /// Maps a function over the elements of the array.
@@ -652,7 +652,8 @@ pub fn retain[T](self : Array[T], f : (T) -> Bool) -> Unit {
     }
     continue i + 1, j
   } else {
-    self.set_length(j)
+    // we use `else` here to capture `j`  
+    self.unsafe_truncate_to_length(j)
   }
 }
 
@@ -668,7 +669,7 @@ pub fn resize[T](self : Array[T], new_len : Int, f : T) -> Unit {
     abort("negative new length")
   }
   if new_len < self.length() {
-    self.set_length(new_len)
+    self.unsafe_truncate_to_length(new_len)
   } else {
     for i = self.length(); i < new_len; i = i + 1 {
       self.push(f)

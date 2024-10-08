@@ -102,7 +102,7 @@ pub fn Array::new[T](~capacity : Int = 0) -> Array[T] {
 /// Returns the number of elements in the array.
 pub fn length[T](self : Array[T]) -> Int = "%fixedarray.length"
 
-fn set_length[T](self : Array[T], new_len : Int) -> Unit {
+fn unsafe_truncate_to_length[T](self : Array[T], new_len : Int) -> Unit {
   JSArray::ofAnyArray(self).set_length(new_len)
 }
 
@@ -233,10 +233,9 @@ pub fn unsafe_pop[T](self : Array[T]) -> T {
 /// ```
 /// @alert unsafe "Panic if index is out of bounds."
 pub fn remove[T](self : Array[T], index : Int) -> T {
-  if index < 0 || index >= self.length() {
-    let len = self.length()
+  guard index >= 0 && index < self.length() else {
     abort(
-      "index out of bounds: the len is from 0 to \{len} but the index is \{index}",
+      "index out of bounds: the len is from 0 to \{self.length()} but the index is \{index}",
     )
   }
   let value = self.buffer()[index]
@@ -255,14 +254,9 @@ pub fn remove[T](self : Array[T], index : Int) -> T {
 /// ```
 /// @alert unsafe "Panic if index is out of bounds."
 pub fn drain[T](self : Array[T], begin : Int, end : Int) -> Array[T] {
-  if begin < 0 ||
-    begin >= self.length() ||
-    end < 0 ||
-    end > self.length() ||
-    begin > end {
-    let len = self.length()
+  guard begin >= 0 && end <= self.length() && begin <= end else {
     abort(
-      "index out of bounds: the len is \{len} but the index is (\{begin}, \{end})",
+      "index out of bounds: the len is \{self.length()} but the index is (\{begin}, \{end})",
     )
   }
   JSArray::ofAnyArray(self).splice(begin, end - begin).toAnyArray()
@@ -276,10 +270,9 @@ pub fn drain[T](self : Array[T], begin : Int, end : Int) -> Array[T] {
 /// ```
 /// @alert unsafe "Panic if index is out of bounds."
 pub fn insert[T](self : Array[T], index : Int, value : T) -> Unit {
-  if index < 0 || index > self.length() {
-    let len = self.length()
+  guard index >= 0 && index <= self.length() else {
     abort(
-      "index out of bounds: the len is from 0 to \{len} but the index is \{index}",
+      "index out of bounds: the len is from 0 to \{self.length()} but the index is \{index}",
     )
   }
   let _ = JSArray::ofAnyArray(self).splice1(index, 0, JSValue::ofAny(value))

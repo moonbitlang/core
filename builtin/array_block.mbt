@@ -51,8 +51,10 @@ pub fn Array::blit_to[A](
   ~src_offset : Int = 0,
   ~dst_offset : Int = 0
 ) -> Unit {
-  if dst_offset + len > dst.length() || src_offset + len > self.length() {
-    abort("invalid argument in blit")
-  }
+  guard len >= 0 &&
+    dst_offset >= 0 &&
+    src_offset >= 0 &&
+    dst_offset + len <= dst.length() &&
+    src_offset + len <= self.length()
   Array::unsafe_blit(dst, dst_offset, self, src_offset, len)
 }

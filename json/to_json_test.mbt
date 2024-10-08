@@ -132,7 +132,7 @@ test "Map::to_json" {
 struct Opt {
   x : Int?
   t : Int??
-} derive(ToJson)
+} derive(ToJson, FromJson, Eq, Show)
 
 test "Option::to_json" {
   inspect!((Some(42) : Int?).to_json(), content="Array([Number(42)])")
@@ -142,27 +142,39 @@ test "Option::to_json" {
     (Some(Some(None)) : Unit???).to_json(),
     content="Array([Array([Null])])",
   )
+}
+
+// test "optinal field" {
+//   let opt = { x: Some(42), t: Some(Some(42)) }
+//   inspect!(
+//     opt.to_json(),
+//     content=
+//       #|Object({"x": Array([Number(42)]), "t": Array([Array([Number(42)])])})
+//     ,
+//   )
+//   let opt = { x: None, t: None }
+//   inspect!(
+//     opt.to_json(),
+//     content=
+//       #|Object({"x": Null, "t": Null})
+//     ,
+//   )
+//   let opt = { x: None, t: Some(None) }
+//   inspect!(
+//     opt.to_json(),
+//     content=
+//       #|Object({"x": Null, "t": Array([Null])})
+//     ,
+//   )
+// }
+
+test "optional field round trip" {
   let opt = { x: Some(42), t: Some(Some(42)) }
-  inspect!(
-    opt.to_json(),
-    content=
-      #|Object({"x": Array([Number(42)]), "t": Array([Array([Number(42)])])})
-    ,
-  )
+  assert_eq!(@json.from_json!(opt.to_json()), opt)
   let opt = { x: None, t: None }
-  inspect!(
-    opt.to_json(),
-    content=
-      #|Object({"x": Null, "t": Null})
-    ,
-  )
+  assert_eq!(@json.from_json!(opt.to_json()), opt)
   let opt = { x: None, t: Some(None) }
-  inspect!(
-    opt.to_json(),
-    content=
-      #|Object({"x": Null, "t": Array([Null])})
-    ,
-  )
+  assert_eq!(@json.from_json!(opt.to_json()), opt)
 }
 
 test "Tuple::to_json" {
