@@ -90,9 +90,9 @@ pub fn exp(self : Float) -> Float {
   let t = t + (ki << (52 - exp2f_table_bits))
   let s = t.to_int64().reinterpret_as_double()
   let z = exp2f_data.poly_scaled[0] * r + exp2f_data.poly_scaled[1]
-  let r2 = r * r;
+  let r2 = r * r
   let y = exp2f_data.poly[2] * r + 1
-  let y = z * r2 + y;
-  let y = y * s;
+  let y = z * r2 + y
+  let y = y * s
   y.to_float()
 }
