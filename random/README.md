@@ -1,12 +1,10 @@
-# Moonbit/Core Random
-
-## Overview
+# Random
 
 This is an efficient random number generation function based on the paper [Fast Random Integer Generation in an Interval](https://arxiv.org/abs/1805.10941) by Daniel Lemire, as well as the Golang's `rand/v2` package.
 
 Internally, it uses the `Chacha8` cipher to generate random numbers. It is a cryptographically secure pseudo-random number generator (CSPRNG) that is also very fast.
 
-## Usage
+# Usage
 
 ```moonbit
   let r = @random.new()

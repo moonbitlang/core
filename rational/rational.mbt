@@ -12,6 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+// TODO:
+// - Add a trait for `Integer` and make `Rational` generic as `Rational[T: Integer]`. Currently, the numerator and denominator are specific to `Int64` types.
+// - `to_double` method needs fix. See its comment.
+
 /// Rational number type.
 /// 
 /// Invariants:

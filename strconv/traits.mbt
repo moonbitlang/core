@@ -12,6 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+// TODO:
+// 
+// - Format functions.
+// - Support hexadecimal floating point number.
+// - Implements Eisel-Lemire algorithm to speed up floating point parsing.
+
 pub trait FromStr {
   from_string(String) -> Self!StrConvError
 }
