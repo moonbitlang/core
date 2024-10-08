@@ -35,7 +35,7 @@ println(arr1) // of([1, 2, 3, 4, 5])
 println(arr2) // of([1, 2, 10, 4, 5, 6])
 ```
 
-# Query
+## Query
 
 You can use `op_get()` to get the value at the index, or `length()` to get the length of the array, or `is_empty()` to check whether the array is empty.
 
@@ -46,7 +46,7 @@ println(arr.length()) // 5
 println(arr.is_empty()) // false
 ```
 
-# Iteration
+## Iteration
 
 You can use `iter()` to get an iterator of the array, or use `each()` to iterate over the array.
 
