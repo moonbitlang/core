@@ -1,12 +1,10 @@
 # HashMap
 
-## Overview
-
 A mutable hash map based on a Robin Hood hash table.
 
-## Usage
+# Usage
 
-### Create
+## Create
 
 You can create an empty map using `new()` or construct it using `from_array()`.
 
@@ -15,7 +13,7 @@ let map1 = @hashmap.of([1, 2, 3, 4, 5])
 let map2 : @hashmap.T[String, Int] = @hashmap.new()
 ```
 
-### Set & Get
+## Set & Get
 
 You can use `set()` to add a key-value pair to the map, and use `get()` to get a value.
 
@@ -27,7 +25,7 @@ println(map.get_or_default("a", 0)) // 1
 println(map.get_or_default("b", 0)) // 0
 ```
 
-### Remove
+## Remove
 
 You can use `remove()` to remove a key-value pair.
 
@@ -37,7 +35,7 @@ map.remove("a")
 println(map) // of([("c", 3), ("b", 2)])
 ```
 
-### Contains
+## Contains
 
 You can use `contains()` to check whether a key exists.
 
@@ -47,7 +45,7 @@ println(map.contains("a")) // true
 println(map.contains("d")) // false
 ```
 
-### Size & Capacity
+## Size & Capacity
 
 You can use `size()` to get the number of key-value pairs in the map, or `capacity()` to get the current capacity.
 
@@ -64,7 +62,7 @@ let map = @hashmap.new()
 println(map.is_empty()) // true
 ```
 
-### Clear
+## Clear
 
 You can use `clear` to remove all key-value pairs from the map, but the allocated memory will not change.
 
@@ -74,7 +72,7 @@ map.clear()
 println(map.is_empty()) // true
 ```
 
-### Iteration
+## Iteration
 
 You can use `each()` or `eachi()` to iterate through all key-value pairs.
 
