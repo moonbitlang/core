@@ -1,14 +1,17 @@
+# Immutable hashmap
+
 This package provides an immutable hash map data structure.
 
 ## Basic usage
+
 ```mbt
 test {
-  let h =
-    @immutable_hashmap.empty()
-    .add(1, 1)
-    .add(2, 2)
-  let h2 = h.add(3, 3)
-  @assert.assert_eq(h.find(3), None)
-  @assert.assert_eq(h2.find(3), Some(3))
+  let map = 
+    @hashmap.new()
+      .add("a", 1)
+      .add("b", 2)
+      .add("c", 3)
+  println(map.find("a")) // Some(1)
+  println(map.find("d")) // None
 }
 ```

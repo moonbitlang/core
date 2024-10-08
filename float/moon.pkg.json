@@ -3,5 +3,8 @@
     "moonbitlang/core/builtin",
     "moonbitlang/core/coverage",
     "moonbitlang/core/double"
+  ],
+  "test-import": [
+    "moonbitlang/core/quickcheck"
   ]
 }

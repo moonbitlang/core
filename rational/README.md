@@ -1,16 +1,16 @@
-# Moonbit/Core Rational
-
-## Overview
+# Rational
 
 The `Rational` type represents a rational number, which is a number that can be expressed as a fraction `a/b` where `a` and `b` are integers and `b` is not zero.
+
+# Usage
 
 ## Arithmetic Operations
 
 The `Rational` type supports the following arithmetic operations:
 
 ```moonbit
-let a = Rational::new(1L, 2L)
-let b = Rational::new(1L, 3L)
+let a = @rational.new(1L, 2L)
+let b = @rational.new(1L, 3L)
 let c = a + b // 5/6
 let d = a - b // 1/6
 let e = a * b // 1/6
@@ -25,8 +25,8 @@ let i = g.abs() // 1/2
 The `Rational` type supports the following comparison operations:
 
 ```moonbit
-let a = Rational::new(1L, 2L)
-let b = Rational::new(1L, 3L)
+let a = @rational.new(1L, 2L)
+let b = @raitonal.new(1L, 3L)
 let c = a == b // false
 let d = a != b // true
 let e = a < b // false
@@ -41,7 +41,7 @@ let i = a.compare(b) // -1
 The `Rational` type supports the following integer operations:
 
 ```moonbit
-let a = Rational::new(1L, 2L)
+let a = @rational.new(1L, 2L)
 let c = a.floor() // 0
 let d = a.ceil() // 1
 let b = a.fract() // 1
@@ -54,9 +54,9 @@ let h = a.is_integer() // false
 The `Rational` type supports the following double operations:
 
 ```moonbit
-let a = Rational::new(1L, 2L)
+let a = @rational.new(1L, 2L)
 let b = a.to_double() // 0.5
-let c = Rational::from_double(0.5) // 1/2
+let c = @rational.from_double(0.5) // 1/2
 ```
 
 ## String Operations
@@ -64,11 +64,7 @@ let c = Rational::from_double(0.5) // 1/2
 The `Rational` type supports the following string operations:
 
 ```moonbit
-let a = Rational::new(1L, 2L)
+let a = @rational.new(1L, 2L)
 let b = a.to_string() // "1/2"
 ```
 
-## TODO
-
-- Add a trait for `Integer` and make `Rational` generic as `Rational[T: Integer]`. Currently, the numerator and denominator are specific to `Int64` types.
-- `to_double` method needs fix. See its comment.
