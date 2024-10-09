@@ -8,5 +8,9 @@
     ],
     "test-import": [
       "moonbitlang/core/immut/list"
-    ]
+    ],
+    "targets": {
+      "panic_test.mbt": ["not", "native"]
+    }
+
 }

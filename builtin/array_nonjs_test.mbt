@@ -17,11 +17,6 @@ test "array_capacity" {
   assert_true!(arr.capacity() >= 10)
 }
 
-test "panic array_pop_exn_empty" {
-  let arr : Array[Int] = Array::new()
-  arr.unsafe_pop() |> ignore // This should panic
-}
-
 test "array_retain" {
   let arr = [1, 2, 3, 4, 5]
   assert_eq!(arr.capacity(), 5)

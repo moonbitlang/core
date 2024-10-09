@@ -7,5 +7,8 @@
   ],
   "test-import": [
     "moonbitlang/core/array"
-  ]
+  ],
+  "targets": {
+    "panic_test.mbt": ["not", "native"]
+  }
 }

@@ -8,5 +8,9 @@
       "path": "moonbitlang/core/array",
       "alias": "core/array"
     }
-  ]
+  ],
+  "targets": {
+    "panic_test.mbt": ["not", "native"],
+    "panic_wbtest.mbt": ["not", "native"]
+  }
 }

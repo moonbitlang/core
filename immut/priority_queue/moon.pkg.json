@@ -6,5 +6,8 @@
     "moonbitlang/core/coverage",
     "moonbitlang/core/immut/list",
     "moonbitlang/core/quickcheck"
-  ]
+  ],
+  "targets": {
+    "panic_test.mbt": ["not", "native"]
+  }
 }

@@ -12,26 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-pub fn op_equal[X : Eq](self : X?, other : X?) -> Bool {
-  match (self, other) {
-    (None, None) => true
-    (Some(x), Some(y)) => x == y
-    _ => false
-  }
-}
-
-pub fn to_string[X : Show](self : X?) -> String {
-  match self {
-    None => "None"
-    Some(x) => "Some(" + x.to_string() + ")"
-  }
-}
-
-/// Extract the value in `Some`.
-/// Panic if input is `None`.
-pub fn unwrap[X](self : X?) -> X {
-  match self {
-    None => panic()
-    Some(x) => x
-  }
+test "panic" {
+  let a : FixedArray[Int] = [1, 2, 3, 4]
+  let b : FixedArray[Int] = [1, 2, 3, 4]
+  a.blit_to(b, len=13)
 }

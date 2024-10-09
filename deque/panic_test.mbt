@@ -12,26 +12,18 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-pub fn op_equal[X : Eq](self : X?, other : X?) -> Bool {
-  match (self, other) {
-    (None, None) => true
-    (Some(x), Some(y)) => x == y
-    _ => false
-  }
+test "panic unsafe_pop_front" {
+  @deque.from_array(([] : Array[Int])).unsafe_pop_front()
 }
 
-pub fn to_string[X : Show](self : X?) -> String {
-  match self {
-    None => "None"
-    Some(x) => "Some(" + x.to_string() + ")"
-  }
+test "panic unsafe_pop_back" {
+  @deque.from_array(([] : Array[Int])).unsafe_pop_back()
 }
 
-/// Extract the value in `Some`.
-/// Panic if input is `None`.
-pub fn unwrap[X](self : X?) -> X {
-  match self {
-    None => panic()
-    Some(x) => x
-  }
+test "panic op_get" {
+  @deque.of([1, 2, 3])[-1] |> ignore
+}
+
+test "panic op_set" {
+  @deque.of([1, 2, 3])[-1] = 1
 }

@@ -169,22 +169,6 @@ test "Buffer::to_bytes" {
   assert_eq!(buffer.to_bytes().to_string(), "中文")
 }
 
-test "panic substring_start_index_error" {
-  "test".substring(start=-1, end=0) |> ignore
-}
-
-test "panic substring_end_index_error" {
-  "test".substring(start=0, end=-1) |> ignore
-}
-
-test "panic substring_start_end_index_error" {
-  "test".substring(start=1, end=0) |> ignore
-}
-
-test "panic substring_length_index_error" {
-  "test".substring(start=0, end=5) |> ignore
-}
-
 test "trim_left" {
   inspect!("aaabcd".trim_start("a"), content="bcd")
   inspect!("aaabcd".trim_start(" "), content="aaabcd")

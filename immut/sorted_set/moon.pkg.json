@@ -4,5 +4,8 @@
     "moonbitlang/core/array",
     "moonbitlang/core/quickcheck",
     "moonbitlang/core/coverage"
-  ]
+  ],
+  "targets": {
+    "panic_test.mbt": ["not", "native"]
+  }
 }

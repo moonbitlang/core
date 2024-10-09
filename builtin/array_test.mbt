@@ -270,14 +270,6 @@ test "array_split_at" {
   assert_eq!(arr2[2], 5)
 }
 
-test "panic array_split_at" {
-  [1].split_at(3) |> ignore
-}
-
-test "panic array_split_at" {
-  [1].split_at(3) |> ignore
-}
-
 test "array_contains" {
   let arr = [1, 2, 3]
   assert_true!(arr.contains(2))
@@ -325,14 +317,6 @@ test "array_swap" {
   assert_eq!(arr[0], 3)
   assert_eq!(arr[1], 2)
   assert_eq!(arr[2], 1)
-}
-
-test "panic array_swap" {
-  [1, 2, 3].swap(1, 5)
-}
-
-test "panic array_swap" {
-  [1, 2, 3].swap(1, 5)
 }
 
 test "array_remove" {
@@ -471,42 +455,9 @@ test "array_get_out_of_bounds" {
   assert_eq!(arr.get(3), None)
 }
 
-test "panic array_op_get" {
-  [1, 2, 3][5] |> ignore
-}
-
-test "panic array_op_get" {
-  [1, 2, 3][5] |> ignore
-}
-
-test "panic array_set_out_of_bounds" {
-  let arr = [1, 2, 3]
-  arr[3] = 4 // This should panic
-}
-
 test "array_pop_empty" {
   let arr : Array[Int] = []
   assert_eq!(arr.pop(), None)
-}
-
-test "panic array_drain_out_of_bounds" {
-  let arr = [1, 2, 3, 4, 5]
-  arr.drain(3, 6) |> ignore // This should panic
-}
-
-test "panic array_remove_out_of_bounds" {
-  let arr = [1, 2, 3]
-  arr.remove(3) |> ignore // This should panic
-}
-
-test "panic array_insert_out_of_bounds" {
-  let arr = [1, 2, 3]
-  arr.insert(4, 42) // This should panic
-}
-
-test "panic array_resize_negative" {
-  let arr = [1, 2, 3]
-  arr.resize(-1, 42) // This should panic
 }
 
 test "array_reserve" {

@@ -379,11 +379,3 @@ test "split_max with non-empty tree" {
     content="(2,two,(1,one,(0,zero,_,_),_),(3,three,_,_))",
   )
 }
-
-test "panic split_max with empty tree" {
-  (Empty : T[Int, Int]).split_max() |> ignore
-}
-
-test "panic split_min with empty tree" {
-  (Empty : T[Int, Int]).split_min() |> ignore
-}

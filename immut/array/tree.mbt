@@ -74,18 +74,3 @@ fn add[T](self : Tree[T], index : Int, shift : Int, value : T) -> Tree[T] {
     Empty => Leaf([value])
   }
 }
-
-test "panic get_first on empty tree should panic" {
-  let tree : Tree[Int] = Tree::Empty
-  get_first(tree) |> ignore
-}
-
-test "panic get_last on empty tree should panic" {
-  let tree : Tree[Int] = Tree::Empty
-  get_last(tree) |> ignore
-}
-
-test "panic get on empty tree should panic" {
-  let tree : Tree[Int] = Tree::Empty
-  get(tree, 0, 5) |> ignore
-}

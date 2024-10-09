@@ -82,11 +82,6 @@ test "unsafe_pop" {
   inspect!(pq_.length(), content="0")
 }
 
-test "panic unsafe_pop" {
-  let pq : @priority_queue.T[Int] = @priority_queue.of([])
-  pq.unsafe_pop()
-}
-
 test "pop" {
   let pq = @priority_queue.of([1, 2, 3, 4, 5, 5])
   assert_eq!(pq.pop(), Some(5))

@@ -12,26 +12,17 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-pub fn op_equal[X : Eq](self : X?, other : X?) -> Bool {
-  match (self, other) {
-    (None, None) => true
-    (Some(x), Some(y)) => x == y
-    _ => false
-  }
+test "panic remove_min on empty set" {
+  let empty : @sorted_set.T[Int] = @sorted_set.new()
+  empty.remove_min() |> ignore
 }
 
-pub fn to_string[X : Show](self : X?) -> String {
-  match self {
-    None => "None"
-    Some(x) => "Some(" + x.to_string() + ")"
-  }
+test "panic min on empty set" {
+  let empty : @sorted_set.T[Int] = @sorted_set.new()
+  empty.min() |> ignore
 }
 
-/// Extract the value in `Some`.
-/// Panic if input is `None`.
-pub fn unwrap[X](self : X?) -> X {
-  match self {
-    None => panic()
-    Some(x) => x
-  }
+test "panic max on empty set" {
+  let empty : @sorted_set.T[Int] = @sorted_set.new()
+  empty.max() |> ignore
 }
