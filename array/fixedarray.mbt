@@ -1004,7 +1004,8 @@ test "iter" {
     },
   )
   assert_eq!(i, arr.length())
-  exb.expect!(
+  inspect!(
+    exb,
     content=
       #|1
       #|2

@@ -15,13 +15,13 @@
 test "expect method with matching content" {
   let buf = Buffer::new(size_hint=100)
   buf.write_string("Test")
-  buf.expect!(content="Test")
+  inspect!(buf, content="Test")
 }
 
 test "expect method with non-matching content" {
   let buf = Buffer::new(size_hint=100)
   buf.write_string("Test")
-  buf.expect!(content="Test")
+  inspect!(buf, content="Test")
 }
 
 test "grow_if_necessary method" {
@@ -35,14 +35,14 @@ test "grow_if_necessary method" {
 test "write_sub_string method" {
   let buf = Buffer::new(size_hint=10)
   buf.write_sub_string("Hello, World!", 7, 5)
-  buf.expect!(content="World")
+  inspect!(buf, content="World")
 }
 
 test "write_byte method" {
   let buf = Buffer::new(size_hint=10)
   buf.write_byte(b'A')
   buf.write_byte(b'\x00')
-  buf.expect!(content="A")
+  inspect!(buf, content="A")
 }
 
 test "to_bytes method" {
@@ -55,7 +55,7 @@ test "to_bytes method" {
 test "expect method with non-matching content" {
   let buf = Buffer::new(size_hint=100)
   buf.write_string("Test")
-  buf.expect!(content="Test")
+  inspect!(buf, content="Test")
 }
 
 test "grow_if_necessary method" {
@@ -69,14 +69,14 @@ test "grow_if_necessary method" {
 test "write_sub_string method" {
   let buf = Buffer::new(size_hint=10)
   buf.write_sub_string("Hello, World!", 7, 5)
-  buf.expect!(content="World")
+  inspect!(buf, content="World")
 }
 
 test "write_byte method" {
   let buf = Buffer::new(size_hint=10)
   buf.write_byte(b'A')
   buf.write_byte(b'\x00')
-  buf.expect!(content="A")
+  inspect!(buf, content="A")
 }
 
 test "to_bytes method" {
@@ -89,13 +89,13 @@ test "to_bytes method" {
 test "expect method with matching content" {
   let buf = Buffer::new(size_hint=100)
   buf.write_string("Test")
-  buf.expect!(content="Test")
+  inspect!(buf, content="Test")
 }
 
 test "expect method with non-matching content" {
   let buf = Buffer::new(size_hint=100)
   buf.write_string("Test")
-  buf.expect!(content="Test")
+  inspect!(buf, content="Test")
 }
 
 test "grow_if_necessary method" {
@@ -109,14 +109,14 @@ test "grow_if_necessary method" {
 test "write_sub_string method" {
   let buf = Buffer::new(size_hint=10)
   buf.write_sub_string("Hello, World!", 7, 5)
-  buf.expect!(content="World")
+  inspect!(buf, content="World")
 }
 
 test "write_byte method" {
   let buf = Buffer::new(size_hint=10)
   buf.write_byte(b'A')
   buf.write_byte(b'\x00')
-  buf.expect!(content="A")
+  inspect!(buf, content="A")
 }
 
 test "to_bytes method" {
@@ -130,5 +130,5 @@ test "write_bytes" {
   let buf = Buffer::new(size_hint=4)
   buf.write_bytes(b"1\x002\x003\x004\x00")
   buf.write_bytes(b"5\x006\x007\x008\x00")
-  buf.expect!(content="12345678")
+  inspect!(buf, content="12345678")
 }

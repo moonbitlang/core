@@ -478,14 +478,14 @@ test "List::output with non-empty list" {
   let buf = Buffer::new(size_hint=100)
   let list = @list.of([1, 2, 3, 4, 5])
   Show::output(list, buf)
-  buf.expect!(content="@list.of([1, 2, 3, 4, 5])")
+  inspect!(buf, content="@list.of([1, 2, 3, 4, 5])")
 }
 
 test "List::output with empty list" {
   let buf = Buffer::new(size_hint=100)
   let list : @list.T[Int] = @list.Nil
   Show::output(list, buf)
-  buf.expect!(content="@list.of([])")
+  inspect!(buf, content="@list.of([])")
 }
 
 test "List::head_exn with non-empty list" {

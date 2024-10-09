@@ -177,7 +177,7 @@ test "array_eachi_rev_2" {
     },
   )
   inspect!(
-    buf.to_string(),
+    buf,
     content=
       #|0: 'c'
       #|1: 'b'

@@ -353,7 +353,8 @@ test "iter" {
       exb.write_char('\n')
     },
   )
-  exb.expect!(
+  inspect!(
+    exb,
     content=
       #|42
       #|
@@ -369,7 +370,7 @@ test "iter" {
       exb.write_char('\n')
     },
   )
-  exb.expect!(content="")
+  inspect!(exb, content="")
 }
 
 pub fn or_error[T, Err : Error](self : T?, err : Err) -> T!Err {
