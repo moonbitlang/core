@@ -91,10 +91,6 @@ test "unsafe_peek" {
   assert_eq!(queue.length(), 3)
 }
 
-test "panic unsafe_peek" {
-  @queue.of([]).unsafe_peek()
-}
-
 test "peek" {
   let queue : @queue.T[Int] = @queue.of([1, 2, 3, 4])
   assert_eq!(queue.peek(), Some(1))
@@ -109,10 +105,6 @@ test "unsafe_pop" {
   assert_eq!(queue.unsafe_pop(), 3)
   assert_eq!(queue.unsafe_pop(), 4)
   assert_eq!(queue.length(), 0)
-}
-
-test "panic unsafe_pop" {
-  @queue.of([]).unsafe_pop()
 }
 
 test "pop" {

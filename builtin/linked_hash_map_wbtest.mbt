@@ -672,10 +672,6 @@ test "hash collision" {
   inspect!(m["d"], content="None")
 }
 
-test "panic unwrap" {
-  (None : Unit?).unwrap()
-}
-
 test "remove" {
   let m : Map[MyString, Int] = Map::new()
   m.set("a", 1)

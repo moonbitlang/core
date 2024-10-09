@@ -19,24 +19,6 @@ test "is_empty" {
   inspect!(ve.is_empty(), content="true")
 }
 
-test "panic set with out-of-bounds index" {
-  let v = @array.of([1, 2, 3, 4, 5])
-  let v1 = v.set(10, 10) // This should trigger the panic in set function
-  inspect!(v1, content="ImmutableVec::[1, 2, 3, 4, 5]")
-}
-
-test "panic set with negative index" {
-  let v = @array.of([1, 2, 3, 4, 5])
-  let v1 = v.set(-1, 10) // This should trigger the panic in set function
-  inspect!(v1, content="ImmutableVec::[1, 2, 3, 4, 5]")
-}
-
-test "panic set with empty array" {
-  let v = @array.new()
-  let v1 = v.set(0, 10) // This should trigger the panic in set function
-  inspect!(v1, content="ImmutableVec::[]")
-}
-
 test "set with valid index" {
   let v = @array.of([1, 2, 3, 4, 5])
   let v1 = v.set(2, 10) // This should not trigger the panic

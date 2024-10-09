@@ -114,10 +114,6 @@ test "last" {
   inspect!(ls.last(), content="5")
 }
 
-test "panic last" {
-  @list.Nil.last()
-}
-
 test "init_" {
   let ls = @list.of([1, 2, 3, 4, 5])
   let el : @list.T[Int] = @list.Nil
@@ -205,10 +201,6 @@ test "nth" {
   let ls = @list.of([1, 2, 3, 4, 5])
   inspect!(ls.nth(0), content="Some(1)")
   inspect!(ls.nth(1), content="Some(2)")
-}
-
-test "panic nth_exn" {
-  @list.Nil.unsafe_nth(0)
 }
 
 test "nth" {
@@ -502,10 +494,6 @@ test "List::head_exn with non-empty list" {
   assert_eq!(head, Some(1))
 }
 
-test "panic @list.exn with empty list" {
-  @list.Nil.unsafe_head()
-}
-
 test "List::last with non-empty list" {
   let list = @list.of([1, 2, 3, 4, 5])
   let last = @list.last(list)
@@ -540,10 +528,6 @@ test "@list.maximum with empty list" {
   inspect!((@list.Nil : @list.T[Int]).maximum(), content="None")
 }
 
-test "panic @list.unsafe_maximum with empty list" {
-  inspect!((@list.Nil : @list.T[Int]).unsafe_maximum())
-}
-
 test "List::minimum with non-empty list" {
   let list = @list.of([1, 3, 5, 2, 4])
   let min = @list.minimum(list)
@@ -552,10 +536,6 @@ test "List::minimum with non-empty list" {
 
 test "@list.minimum with empty list" {
   (@list.Nil : @list.T[Int]).minimum() |> ignore
-}
-
-test "panic @list.unsafe_minimum with empty list" {
-  inspect!((@list.Nil : @list.T[Int]).unsafe_minimum())
 }
 
 test "op_add" {

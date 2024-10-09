@@ -12,26 +12,17 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-pub fn op_equal[X : Eq](self : X?, other : X?) -> Bool {
-  match (self, other) {
-    (None, None) => true
-    (Some(x), Some(y)) => x == y
-    _ => false
-  }
+test "panic get_first on empty tree should panic" {
+  let tree : Tree[Int] = Tree::Empty
+  get_first(tree) |> ignore
 }
 
-pub fn to_string[X : Show](self : X?) -> String {
-  match self {
-    None => "None"
-    Some(x) => "Some(" + x.to_string() + ")"
-  }
+test "panic get_last on empty tree should panic" {
+  let tree : Tree[Int] = Tree::Empty
+  get_last(tree) |> ignore
 }
 
-/// Extract the value in `Some`.
-/// Panic if input is `None`.
-pub fn unwrap[X](self : X?) -> X {
-  match self {
-    None => panic()
-    Some(x) => x
-  }
+test "panic get on empty tree should panic" {
+  let tree : Tree[Int] = Tree::Empty
+  get(tree, 0, 5) |> ignore
 }

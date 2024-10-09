@@ -12,26 +12,18 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-pub fn op_equal[X : Eq](self : X?, other : X?) -> Bool {
-  match (self, other) {
-    (None, None) => true
-    (Some(x), Some(y)) => x == y
-    _ => false
-  }
+test "panic substring_start_index_error" {
+  "test".substring(start=-1, end=0) |> ignore
 }
 
-pub fn to_string[X : Show](self : X?) -> String {
-  match self {
-    None => "None"
-    Some(x) => "Some(" + x.to_string() + ")"
-  }
+test "panic substring_end_index_error" {
+  "test".substring(start=0, end=-1) |> ignore
 }
 
-/// Extract the value in `Some`.
-/// Panic if input is `None`.
-pub fn unwrap[X](self : X?) -> X {
-  match self {
-    None => panic()
-    Some(x) => x
-  }
+test "panic substring_start_end_index_error" {
+  "test".substring(start=1, end=0) |> ignore
+}
+
+test "panic substring_length_index_error" {
+  "test".substring(start=0, end=5) |> ignore
 }

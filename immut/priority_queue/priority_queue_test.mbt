@@ -104,11 +104,6 @@ test "length" {
   inspect!(pq.unsafe_pop().unsafe_pop().length(), content="0")
 }
 
-test "panic unsafe_pop" {
-  let pq = @priority_queue.of([1])
-  pq.unsafe_pop().unsafe_pop() |> ignore
-}
-
 test "from_iter multiple elements iter" {
   inspect!(
     @priority_queue.T::from_iter([1, 2, 3].iter()),
