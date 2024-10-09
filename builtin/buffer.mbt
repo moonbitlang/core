@@ -31,7 +31,6 @@ struct Buffer {
   initial_bytes : Bytes
 }
 
-
 /// Expand the buffer size if capacity smaller than required space.
 fn grow_if_necessary(self : Buffer, required : Int) -> Unit {
   // TODO: get rid of mut
