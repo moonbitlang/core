@@ -200,3 +200,23 @@ fn escape(str : String, ~escape_slash : Bool) -> String {
 pub fn to_json(self : JsonValue) -> JsonValue {
   self
 }
+
+pub fn inspect(
+  obj : ToJson,
+  ~content? : Json,
+  ~loc : SourceLoc = _,
+  ~args_loc : ArgsLoc = _
+) -> Unit!InspectError {
+  let loc = loc.to_string().escape()
+  let args_loc = args_loc.to_json().escape()
+  let actual = obj.to_json().stringify()
+  let want = match content {
+    None => "".to_json().stringify()
+    Some(x) => x.stringify()
+  }
+  if actual != want {
+    raise InspectError(
+      "@EXPECT_FAILED {\"loc\": \{loc}, \"args_loc\": \{args_loc}, \"expect\": \{want.escape()}, \"actual\": \{actual.escape()}, \"mode\": \"json\"}",
+    )
+  }
+}
