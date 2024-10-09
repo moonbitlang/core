@@ -36,6 +36,13 @@ pub fn StringBuilder::write_sub_string(
   self.val += str.substring(~start, end=start + len)
 }
 
+pub impl Show for StringBuilder with output(self, logger) {
+  logger.write_string(self.val)
+}
 pub fn StringBuilder::to_string(self : StringBuilder) -> String {
   self.val
+}
+
+pub fn reset(self : StringBuilder) -> Unit {
+  self.val = ""
 }
