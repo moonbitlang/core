@@ -81,7 +81,8 @@ test "iter" {
     },
   )
   assert_eq!(i, dv.length())
-  buf.expect!(
+  inspect!(
+    buf,
     content=
       #|1
       #|2
