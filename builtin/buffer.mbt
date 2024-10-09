@@ -31,30 +31,6 @@ struct Buffer {
   initial_bytes : Bytes
 }
 
-pub fn expect(
-  self : Buffer,
-  ~content : String = "",
-  ~loc : SourceLoc = _,
-  ~args_loc : ArgsLoc = _
-) -> Unit!InspectError {
-  let current = self.to_string()
-  self.reset()
-  if current != content {
-    fn repr(s : String) -> String {
-      let buf = Buffer::new()
-      Show::output(s, buf)
-      buf.to_string()
-    }
-
-    let loc = repr(loc.to_string())
-    let args_loc = repr(args_loc.to_json())
-    let expect = repr(content)
-    let actual = repr(current)
-    raise InspectError(
-      "@EXPECT_FAILED {\"loc\": \{loc}, \"args_loc\": \{args_loc}, \"expect\": \{expect}, \"actual\": \{actual}}",
-    )
-  }
-}
 
 /// Expand the buffer size if capacity smaller than required space.
 fn grow_if_necessary(self : Buffer, required : Int) -> Unit {
