@@ -57,7 +57,7 @@ pub fn op_as_view[T](
   ~start : Int,
   ~end? : Int
 ) -> ArrayView[T] {
-  let len = self.length()
+  let len = self.len
   let end = match end {
     None => len
     Some(end) => end
@@ -65,7 +65,7 @@ pub fn op_as_view[T](
   guard start >= 0 && start <= end && end <= len else {
     abort("View start index out of bounds")
   }
-  ArrayView::{ buf: self.buffer(), start, len: end - start }
+  ArrayView::{ buf: self.buf, start, len: end - start }
 }
 
 pub fn op_as_view[T](
@@ -73,7 +73,7 @@ pub fn op_as_view[T](
   ~start : Int,
   ~end? : Int
 ) -> ArrayView[T] {
-  let len = self.length()
+  let len = self.len
   let end = match end {
     None => len
     Some(end) => end
@@ -105,7 +105,7 @@ pub fn iter[A](self : ArrayView[A]) -> Iter[A] {
 /// sum // 15
 /// ```
 pub fn fold[A, B](self : ArrayView[A], ~init : B, f : (B, A) -> B) -> B {
-  for i = 0, acc = init; i < self.length(); {
+  for i = 0, acc = init; i < self.len; {
     continue i + 1, f(acc, self[i])
   } else {
     acc
@@ -120,7 +120,7 @@ pub fn fold[A, B](self : ArrayView[A], ~init : B, f : (B, A) -> B) -> B {
 /// sum // 15
 /// ```
 pub fn rev_fold[A, B](self : ArrayView[A], ~init : B, f : (B, A) -> B) -> B {
-  for i = self.length() - 1, acc = init; i >= 0; {
+  for i = self.len - 1, acc = init; i >= 0; {
     continue i - 1, f(acc, self[i])
   } else {
     acc
@@ -135,7 +135,7 @@ pub fn rev_fold[A, B](self : ArrayView[A], ~init : B, f : (B, A) -> B) -> B {
 /// sum // 10
 /// ```
 pub fn foldi[A, B](self : ArrayView[A], ~init : B, f : (Int, B, A) -> B) -> B {
-  for i = 0, acc = init; i < self.length(); {
+  for i = 0, acc = init; i < self.len; {
     continue i + 1, f(i, acc, self[i])
   } else {
     acc
@@ -154,7 +154,7 @@ pub fn rev_foldi[A, B](
   ~init : B,
   f : (Int, B, A) -> B
 ) -> B {
-  let len = self.length()
+  let len = self.len
   for i = len - 1, acc = init; i >= 0; {
     continue i - 1, f(len - i - 1, acc, self[i])
   } else {

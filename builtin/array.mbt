@@ -16,7 +16,7 @@
 pub fn Array::from_fixed_array[T](arr : FixedArray[T]) -> Array[T] {
   let len = arr.length()
   let arr2 = Array::make_uninit(len)
-  UninitializedArray::unsafe_blit_fixed(arr2.buffer(), 0, arr, 0, len)
+  UninitializedArray::unsafe_blit_fixed(arr2.buf, 0, arr, 0, len)
   arr2
 }
 
@@ -24,14 +24,14 @@ pub fn Array::from_fixed_array[T](arr : FixedArray[T]) -> Array[T] {
 pub fn Array::make[T](len : Int, elem : T) -> Array[T] {
   let arr = Array::make_uninit(len)
   for i = 0; i < len; i = i + 1 {
-    arr.buffer()[i] = elem
+    arr.buf[i] = elem
   }
   arr
 }
 
 /// Returns the total number of elements the array can hold without reallocating.
 pub fn capacity[T](self : Array[T]) -> Int {
-  self.buffer()._.length()
+  self.buf._.length()
 }
 
 /// Retrieves the element at the specified index from the array.
@@ -44,9 +44,9 @@ pub fn capacity[T](self : Array[T]) -> Int {
 /// ```
 /// @alert unsafe "Panic if index is out of bounds"
 pub fn op_get[T](self : Array[T], index : Int) -> T {
-  let len = self.length()
+  let len = self.len
   guard index >= 0 && index < len
-  self.buffer()[index]
+  self.buf[index]
 }
 
 /// Retrieves the element at the specified index from the array, or `None` if index is out of bounds
@@ -58,9 +58,9 @@ pub fn op_get[T](self : Array[T], index : Int) -> T {
 /// println(v.get(0)) // Some(3)
 /// ```
 pub fn get[T](self : Array[T], index : Int) -> T? {
-  let len = self.length()
+  let len = self.len
   guard index >= 0 && index < len else { None }
-  Some(self.buffer()[index])
+  Some(self.buf[index])
 }
 
 /// Sets the value of the element at the specified index.
@@ -73,17 +73,17 @@ pub fn get[T](self : Array[T], index : Int) -> T? {
 /// ```
 /// @alert unsafe "Panic if index is out of bounds."
 pub fn op_set[T](self : Array[T], index : Int, value : T) -> Unit {
-  let len = self.length()
+  let len = self.len
   guard index >= 0 && index < len
-  self.buffer()[index] = value
+  self.buf[index] = value
 }
 
 /// Compares two arrays for equality.
 pub fn op_equal[T : Eq](self : Array[T], other : Array[T]) -> Bool {
-  guard self.length() == other.length() else { return false }
+  guard self.len == other.len else { return false }
   for i = 0 {
     // CR: format issue
-    if i >= self.length() {
+    if i >= self.len {
       break true
     }
     if self[i] != other[i] {
@@ -94,8 +94,8 @@ pub fn op_equal[T : Eq](self : Array[T], other : Array[T]) -> Bool {
 }
 
 pub fn compare[T : Compare](self : Array[T], other : Array[T]) -> Int {
-  let len_self = self.length()
-  let len_other = other.length()
+  let len_self = self.len
+  let len_other = other.len
   if len_self < len_other {
     -1
   } else if len_self > len_other {
@@ -113,21 +113,9 @@ pub fn compare[T : Compare](self : Array[T], other : Array[T]) -> Int {
 }
 
 pub fn op_add[T](self : Array[T], other : Array[T]) -> Array[T] {
-  let result = Array::make_uninit(self.length() + other.length())
-  UninitializedArray::unsafe_blit(
-    result.buffer(),
-    0,
-    self.buffer(),
-    0,
-    self.length(),
-  )
-  UninitializedArray::unsafe_blit(
-    result.buffer(),
-    self.length(),
-    other.buffer(),
-    0,
-    other.length(),
-  )
+  let result = Array::make_uninit(self.len + other.len)
+  UninitializedArray::unsafe_blit(result.buf, 0, self.buf, 0, self.len)
+  UninitializedArray::unsafe_blit(result.buf, self.len, other.buf, 0, other.len)
   result
 }
 
@@ -141,7 +129,7 @@ pub fn op_add[T](self : Array[T], other : Array[T]) -> Array[T] {
 /// ```
 /// TODO: could be made more efficient doing direct mem.copy
 pub fn append[T](self : Array[T], other : Array[T]) -> Unit {
-  self.reserve_capacity(self.length() + other.length())
+  self.reserve_capacity(self.len + other.len)
   for v in other {
     self.push(v)
   }
@@ -165,7 +153,7 @@ pub fn each[T](self : Array[T], f : (T) -> Unit) -> Unit {
 }
 
 pub fn rev_each[T](self : Array[T], f : (T) -> Unit) -> Unit {
-  let len = self.length()
+  let len = self.len
   for i in 0..<len {
     f(self[len - i - 1])
   }
@@ -181,7 +169,7 @@ pub fn rev_each[T](self : Array[T], f : (T) -> Unit) -> Unit {
 /// assert_eq!(sum, 15)
 /// ```
 pub fn rev_eachi[T](self : Array[T], f : (Int, T) -> Unit) -> Unit {
-  let len = self.length()
+  let len = self.len
   for i in 0..<len {
     f(i, self[len - i - 1])
   }
@@ -222,12 +210,12 @@ pub fn clear[T](self : Array[T]) -> Unit {
 /// v.map(fn (x) {x + 1})
 /// ```
 pub fn map[T, U](self : Array[T], f : (T) -> U) -> Array[U] {
-  if self.length() == 0 {
+  if self.len == 0 {
     return []
   }
-  let arr = Array::make_uninit(self.length())
+  let arr = Array::make_uninit(self.len)
   for i, v in self {
-    arr.buffer()[i] = f(v)
+    arr.buf[i] = f(v)
   }
   arr
 }
@@ -253,12 +241,12 @@ pub fn map_inplace[T](self : Array[T], f : (T) -> T) -> Unit {
 /// v.mapi(fn (i, x) {x + i})
 /// ```
 pub fn mapi[T, U](self : Array[T], f : (Int, T) -> U) -> Array[U] {
-  if self.length() == 0 {
+  if self.len == 0 {
     return []
   }
-  let arr = Array::make_uninit(self.length())
+  let arr = Array::make_uninit(self.len)
   for i, v in self {
-    arr.buffer()[i] = f(i, v)
+    arr.buf[i] = f(i, v)
   }
   arr
 }
@@ -301,7 +289,7 @@ pub fn filter[T](self : Array[T], f : (T) -> Bool) -> Array[T] {
 /// v.is_empty()
 /// ```
 pub fn is_empty[T](self : Array[T]) -> Bool {
-  self.length() == 0
+  self.len == 0
 }
 
 /// Test if the array is sorted.
@@ -313,7 +301,7 @@ pub fn is_empty[T](self : Array[T]) -> Bool {
 /// ```
 pub fn is_sorted[T : Compare](self : Array[T]) -> Bool {
   for i = 1 {
-    if i >= self.length() {
+    if i >= self.len {
       break true
     }
     if self[i - 1] > self[i] {
@@ -331,18 +319,18 @@ pub fn is_sorted[T : Compare](self : Array[T]) -> Bool {
 /// v.rev_inplace()
 /// ```
 pub fn rev_inplace[T](self : Array[T]) -> Unit {
-  for i = 0; i < self.length() / 2; i = i + 1 {
-    let temp = self.buffer()[i]
-    self.buffer()[i] = self.buffer()[self.length() - i - 1]
-    self.buffer()[self.length() - i - 1] = temp
+  for i = 0; i < self.len / 2; i = i + 1 {
+    let temp = self.buf[i]
+    self.buf[i] = self.buf[self.len - i - 1]
+    self.buf[self.len - i - 1] = temp
   }
 }
 
 /// Reverses the order of elements in the Array and returns a new Array.
 pub fn rev[T](self : Array[T]) -> Array[T] {
-  let arr = Array::make_uninit(self.length())
-  for i = 0; i < self.length(); i = i + 1 {
-    arr.buffer()[i] = self.buffer()[self.length() - i - 1]
+  let arr = Array::make_uninit(self.len)
+  for i = 0; i < self.len; i = i + 1 {
+    arr.buf[i] = self.buf[self.len - i - 1]
   }
   arr
 }
@@ -357,22 +345,16 @@ pub fn rev[T](self : Array[T]) -> Array[T] {
 /// TODO: perf could be optimized
 /// @alert unsafe "Panic if index is out of bounds."
 pub fn split_at[T](self : Array[T], index : Int) -> (Array[T], Array[T]) {
-  if index < 0 || index >= self.length() {
-    let len = self.length()
+  if index < 0 || index >= self.len {
+    let len = self.len
     abort(
       "index out of bounds: the len is from 0 to \{len} but the index is \{index}",
     )
   }
   let v1 = Array::make_uninit(index)
-  let v2 = Array::make_uninit(self.length() - index)
-  UninitializedArray::unsafe_blit(v1.buffer(), 0, self.buffer(), 0, index)
-  UninitializedArray::unsafe_blit(
-    v2.buffer(),
-    0,
-    self.buffer(),
-    index,
-    self.length() - index,
-  )
+  let v2 = Array::make_uninit(self.len - index)
+  UninitializedArray::unsafe_blit(v1.buf, 0, self.buf, 0, index)
+  UninitializedArray::unsafe_blit(v2.buf, 0, self.buf, index, self.len - index)
   (v1, v2)
 }
 
@@ -401,11 +383,11 @@ pub fn contains[T : Eq](self : Array[T], value : T) -> Bool {
 /// v.starts_with([3, 4])
 /// ```
 pub fn starts_with[T : Eq](self : Array[T], prefix : Array[T]) -> Bool {
-  if prefix.length() > self.length() {
+  if prefix.len > self.len {
     return false
   }
-  for i = 0; i < prefix.length(); i = i + 1 {
-    if self.buffer()[i] != prefix.buffer()[i] {
+  for i = 0; i < prefix.len; i = i + 1 {
+    if self.buf[i] != prefix.buf[i] {
       break false
     }
   } else {
@@ -421,11 +403,11 @@ pub fn starts_with[T : Eq](self : Array[T], prefix : Array[T]) -> Bool {
 /// v.ends_with([5])
 /// ```
 pub fn ends_with[T : Eq](self : Array[T], suffix : Array[T]) -> Bool {
-  if suffix.length() > self.length() {
+  if suffix.len > self.len {
     return false
   }
-  for i = 0; i < suffix.length(); i = i + 1 {
-    if self.buffer()[self.length() - suffix.length() + i] != suffix.buffer()[i] {
+  for i = 0; i < suffix.len; i = i + 1 {
+    if self.buf[self.len - suffix.len + i] != suffix.buf[i] {
       break false
     }
   } else {
@@ -444,13 +426,13 @@ pub fn ends_with[T : Eq](self : Array[T], suffix : Array[T]) -> Bool {
 /// ```
 pub fn strip_prefix[T : Eq](self : Array[T], prefix : Array[T]) -> Array[T]? {
   if self.starts_with(prefix) {
-    let v = Array::make_uninit(self.length() - prefix.length())
+    let v = Array::make_uninit(self.len - prefix.len)
     UninitializedArray::unsafe_blit(
-      v.buffer(),
+      v.buf,
       0,
-      self.buffer(),
-      prefix.length(),
-      self.length() - prefix.length(),
+      self.buf,
+      prefix.len,
+      self.len - prefix.len,
     )
     Some(v)
   } else {
@@ -469,9 +451,9 @@ pub fn strip_prefix[T : Eq](self : Array[T], prefix : Array[T]) -> Array[T]? {
 /// ```
 pub fn strip_suffix[T : Eq](self : Array[T], suffix : Array[T]) -> Array[T]? {
   if self.ends_with(suffix) {
-    let v = Array::make_uninit(self.length() - suffix.length())
-    let len = self.length() - suffix.length()
-    UninitializedArray::unsafe_blit(v.buffer(), 0, self.buffer(), 0, len)
+    let v = Array::make_uninit(self.len - suffix.len)
+    let len = self.len - suffix.len
+    UninitializedArray::unsafe_blit(v.buf, 0, self.buf, 0, len)
     Some(v)
   } else {
     None
@@ -547,18 +529,18 @@ pub fn binary_search[T : Compare](
   self : Array[T],
   value : T
 ) -> Result[Int, Int] {
-  let len = self.length()
+  let len = self.len
   for i = 0, j = len; i < j; {
     let h = i + (j - i) / 2
-    // Note even if self.buffer()[h] == value, we still continue the search
+    // Note even if self.buf[h] == value, we still continue the search
     // because we want to find the leftmost match
-    if self.buffer()[h] < value {
+    if self.buf[h] < value {
       continue h + 1, j
     } else {
       continue i, h
     }
   } else {
-    if i < len && self.buffer()[i] == value {
+    if i < len && self.buf[i] == value {
       Ok(i)
     } else {
       Err(i)
@@ -597,18 +579,18 @@ pub fn binary_search_by[T](
   self : Array[T],
   cmp : (T) -> Int
 ) -> Result[Int, Int] {
-  let len = self.length()
+  let len = self.len
   for i = 0, j = len; i < j; {
     let h = i + (j - i) / 2
-    // Note even if self.buffer()[h] == value, we still continue the search
+    // Note even if self.buf[h] == value, we still continue the search
     // because we want to find the leftmost match
-    if cmp(self.buffer()[h]) < 0 {
+    if cmp(self.buf[h]) < 0 {
       continue h + 1, j
     } else {
       continue i, h
     }
   } else {
-    if i < len && cmp(self.buffer()[i]) == 0 {
+    if i < len && cmp(self.buf[i]) == 0 {
       Ok(i)
     } else {
       Err(i)
@@ -625,15 +607,15 @@ pub fn binary_search_by[T](
 /// ```
 /// @alert unsafe "Panic if index is out of bounds."
 pub fn swap[T](self : Array[T], i : Int, j : Int) -> Unit {
-  if i >= self.length() || j >= self.length() || i < 0 || j < 0 {
-    let len = self.length()
+  if i >= self.len || j >= self.len || i < 0 || j < 0 {
+    let len = self.len
     abort(
       "index out of bounds: the len is from 0 to \{len} but the index is (\{i}, \{j})",
     )
   }
-  let temp = self.buffer()[i]
-  self.buffer()[i] = self.buffer()[j]
-  self.buffer()[j] = temp
+  let temp = self.buf[i]
+  self.buf[i] = self.buf[j]
+  self.buf[j] = temp
 }
 
 /// Retains only the elements specified by the predicate.
@@ -645,9 +627,9 @@ pub fn swap[T](self : Array[T], i : Int, j : Int) -> Unit {
 /// ```
 /// TODO: perf could be improved
 pub fn retain[T](self : Array[T], f : (T) -> Bool) -> Unit {
-  for i = 0, j = 0; i < self.length(); {
-    if f(self.buffer()[i]) {
-      self.buffer()[j] = self.buffer()[i]
+  for i = 0, j = 0; i < self.len; {
+    if f(self.buf[i]) {
+      self.buf[j] = self.buf[i]
       continue i + 1, j + 1
     }
     continue i + 1, j
@@ -668,10 +650,10 @@ pub fn resize[T](self : Array[T], new_len : Int, f : T) -> Unit {
   if new_len < 0 {
     abort("negative new length")
   }
-  if new_len < self.length() {
+  if new_len < self.len {
     self.unsafe_truncate_to_length(new_len)
   } else {
-    for i = self.length(); i < new_len; i = i + 1 {
+    for i = self.len; i < new_len; i = i + 1 {
       self.push(f)
     }
   }
@@ -699,7 +681,7 @@ pub fn flatten[T](self : Array[Array[T]]) -> Array[T] {
 /// [3, 4].repeat(2)
 /// ```
 pub fn repeat[T](self : Array[T], times : Int) -> Array[T] {
-  let v = Array::new(capacity=self.length() * times)
+  let v = Array::new(capacity=self.len * times)
   for i = 0; i < times; i = i + 1 {
     v.append(self)
   }
@@ -714,7 +696,7 @@ pub fn repeat[T](self : Array[T], times : Int) -> Array[T] {
 /// sum // 15
 /// ```
 pub fn fold[A, B](self : Array[A], ~init : B, f : (B, A) -> B) -> B {
-  for i = 0, acc = init; i < self.length(); {
+  for i = 0, acc = init; i < self.len; {
     continue i + 1, f(acc, self[i])
   } else {
     acc
@@ -729,7 +711,7 @@ pub fn fold[A, B](self : Array[A], ~init : B, f : (B, A) -> B) -> B {
 /// sum // 15
 /// ```
 pub fn rev_fold[A, B](self : Array[A], ~init : B, f : (B, A) -> B) -> B {
-  for i = self.length() - 1, acc = init; i >= 0; {
+  for i = self.len - 1, acc = init; i >= 0; {
     continue i - 1, f(acc, self[i])
   } else {
     acc
@@ -744,7 +726,7 @@ pub fn rev_fold[A, B](self : Array[A], ~init : B, f : (B, A) -> B) -> B {
 /// sum // 10
 /// ```
 pub fn foldi[A, B](self : Array[A], ~init : B, f : (Int, B, A) -> B) -> B {
-  for i = 0, acc = init; i < self.length(); {
+  for i = 0, acc = init; i < self.len; {
     continue i + 1, f(i, acc, self[i])
   } else {
     acc
@@ -759,7 +741,7 @@ pub fn foldi[A, B](self : Array[A], ~init : B, f : (Int, B, A) -> B) -> B {
 /// sum // 10
 /// ```
 pub fn rev_foldi[A, B](self : Array[A], ~init : B, f : (Int, B, A) -> B) -> B {
-  let len = self.length()
+  let len = self.len
   for i = len - 1, acc = init; i >= 0; {
     continue i - 1, f(len - i - 1, acc, self[i])
   } else {
@@ -838,7 +820,7 @@ pub fn dedup[T : Eq](self : Array[T]) -> Unit {
     return
   }
   let mut w = 1
-  for i = 1; i < self.length(); i = i + 1 {
+  for i = 1; i < self.len; i = i + 1 {
     if self[i] != self[w - 1] {
       self[w] = self[i]
       w = w + 1
@@ -858,13 +840,13 @@ pub fn dedup[T : Eq](self : Array[T]) -> Unit {
 pub fn extract_if[T](self : Array[T], f : (T) -> Bool) -> Array[T] {
   let v = []
   let indices = []
-  for i = 0; i < self.length(); i = i + 1 {
+  for i = 0; i < self.len; i = i + 1 {
     if f(self[i]) {
       v.push(self[i])
       indices.push(i)
     }
   }
-  for i = 0; i < indices.length(); i = i + 1 {
+  for i = 0; i < indices.len; i = i + 1 {
     self.remove(indices[i] - i) |> ignore
   }
   v
@@ -882,9 +864,9 @@ pub fn extract_if[T](self : Array[T], f : (T) -> Bool) -> Array[T] {
 pub fn chunks[T](self : Array[T], size : Int) -> Array[Array[T]] {
   let chunks = []
   let mut i = 0
-  while i < self.length() {
+  while i < self.len {
     let chunk = Array::new(capacity=size)
-    for j = 0; j < size && i < self.length(); j = j + 1 {
+    for j = 0; j < size && i < self.len; j = j + 1 {
       chunk.push(self[i])
       i = i + 1
     }
@@ -904,11 +886,11 @@ pub fn chunks[T](self : Array[T], size : Int) -> Array[Array[T]] {
 pub fn chunk_by[T](self : Array[T], pred : (T, T) -> Bool) -> Array[Array[T]] {
   let chunks = []
   let mut i = 0
-  while i < self.length() {
+  while i < self.len {
     let chunk = []
     chunk.push(self[i])
     i = i + 1
-    while i < self.length() && pred(self[i - 1], self[i]) {
+    while i < self.len && pred(self[i - 1], self[i]) {
       chunk.push(self[i])
       i = i + 1
     }
@@ -927,9 +909,9 @@ pub fn chunk_by[T](self : Array[T], pred : (T, T) -> Bool) -> Array[Array[T]] {
 pub fn split[T](self : Array[T], pred : (T) -> Bool) -> Array[Array[T]] {
   let chunks = []
   let mut i = 0
-  while i < self.length() {
+  while i < self.len {
     let chunk = []
-    while i < self.length() && pred(self[i]).not() {
+    while i < self.len && pred(self[i]).not() {
       chunk.push(self[i])
       i = i + 1
     }
