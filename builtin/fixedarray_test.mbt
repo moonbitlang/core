@@ -19,5 +19,5 @@ test "to_string with empty FixedArray" {
 
 test "to_string with non-empty FixedArray" {
   let array : FixedArray[Int] = [1, 2, 3]
-  assert_eq!(array.to_string(), "[1, 2, 3]")
+  @json.inspect!(array, content=[1, 2, 3])
 }
