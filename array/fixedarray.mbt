@@ -994,7 +994,7 @@ test "op_add" {
 test "iter" {
   let arr : FixedArray[_] = [1, 2, 3, 4, 5]
   let iter = arr.iter()
-  let exb = Buffer::new()
+  let exb = StringBuilder::new()
   let mut i = 0
   iter.each(
     fn(x) {

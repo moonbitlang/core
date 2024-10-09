@@ -318,8 +318,10 @@ impl SourceLoc {
 type StringBuilder
 impl StringBuilder {
   new(~size_hint : Int = ..) -> Self
+  reset(Self) -> Unit
   to_string(Self) -> String
   write_char(Self, Char) -> Unit
+  write_object[T : Show](Self, T) -> Unit
   write_string(Self, String) -> Unit
   write_sub_string(Self, String, Int, Int) -> Unit
 }
@@ -766,6 +768,8 @@ impl Show for Iter2
 impl Show for Map
 
 impl Show for SourceLoc
+
+impl Show for StringBuilder
 
 impl Show for Tuple(2)
 

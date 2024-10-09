@@ -45,7 +45,7 @@ test "op_get after removal" {
 test "iter" {
   let map = [(3, "three"), (8, "eight"), (1, "one"), (2, "two"), (0, "zero")]
     |> @sorted_map.of
-  let buf = Buffer::new()
+  let buf = StringBuilder::new()
   for k, v in map {
     buf.write_object(k)
     buf.write_string(": ")

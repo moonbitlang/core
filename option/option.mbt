@@ -344,7 +344,7 @@ pub fn iter[T](self : T?) -> Iter[T] {
 
 test "iter" {
   let x = Option::Some(42)
-  let exb = Buffer::new(size_hint=0)
+  let exb = StringBuilder::new(size_hint=0)
   x
   .iter()
   .each(

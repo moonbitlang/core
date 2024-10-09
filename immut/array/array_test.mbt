@@ -45,7 +45,7 @@ test "to_array" {
 }
 
 test "iter" {
-  let buf = Buffer::new(size_hint=20)
+  let buf = StringBuilder::new(size_hint=20)
   let v = @array.of([1, 2, 3])
   v.iter().each(fn(e) { buf.write_string("[\{e}]") })
   inspect!(buf, content="[1][2][3]")

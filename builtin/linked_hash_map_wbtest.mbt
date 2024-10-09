@@ -200,7 +200,7 @@ test "grow" {
 }
 
 test "iter" {
-  let buf = Buffer::new(size_hint=20)
+  let buf = StringBuilder::new(size_hint=20)
   let map = { 1: "one", 2: "two", 3: "three" }
   map
   .iter()
@@ -228,7 +228,7 @@ test "iter order" {
   let m = { "one": 1 }
   m["three"] = 3
   m["two"] = 2
-  let buf = Buffer::new(size_hint=0)
+  let buf = StringBuilder::new(size_hint=0)
   m.each(fn(k, v) { buf.write_string("[\{k}-\{v}]") })
   inspect!(buf.to_string(), content="[one-1][three-3][two-2]")
 }

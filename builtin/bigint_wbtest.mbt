@@ -21,7 +21,7 @@ impl Show for MyBigInt with output(self, logger) {
 }
 
 test "debug_string" {
-  let buf = Buffer::new()
+  let buf = StringBuilder::new()
   let v : Array[MyBigInt] = [0, 1, 2, 3, 4, -0, -1, -2, -3]
   (buf as Logger).write_iter(v.iter(), sep="\n", prefix="", suffix="")
   // Logger::writer_iter()

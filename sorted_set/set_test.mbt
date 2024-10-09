@@ -58,7 +58,7 @@ test "intersect" {
 
 test "each" {
   let set = @sorted_set.of([7, 2, 9, 4, 5, 6, 3, 8, 1])
-  let result = Buffer::new(size_hint=10)
+  let result = StringBuilder::new(size_hint=10)
   set.each(fn(x) { result.write_string(x.to_string()) })
   inspect!(result.to_string(), content="123456789")
   let set : @sorted_set.T[Int] = @sorted_set.new()
@@ -67,7 +67,7 @@ test "each" {
 
 test "eachi" {
   let set = @sorted_set.of([7, 2, 9, 4, 5, 6, 3, 8, 1])
-  let result = Buffer::new(size_hint=10)
+  let result = StringBuilder::new(size_hint=10)
   set.eachi(fn(i, x) { result.write_string("[\{i}-\{x}]") })
   inspect!(
     result.to_string(),

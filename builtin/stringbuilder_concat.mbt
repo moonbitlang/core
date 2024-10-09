@@ -39,6 +39,7 @@ pub fn StringBuilder::write_sub_string(
 pub impl Show for StringBuilder with output(self, logger) {
   logger.write_string(self.val)
 }
+
 pub fn StringBuilder::to_string(self : StringBuilder) -> String {
   self.val
 }
