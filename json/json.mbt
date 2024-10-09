@@ -209,10 +209,10 @@ pub fn inspect(
 ) -> Unit!InspectError {
   let loc = loc.to_string().escape()
   let args_loc = args_loc.to_json().escape()
-  let actual = obj.to_json().stringify()
+  let actual = obj.to_json().stringify(escape_slash=false)
   let want = match content {
-    None => "".to_json().stringify()
-    Some(x) => x.stringify()
+    None => "".to_json().stringify(escape_slash=false)
+    Some(x) => x.stringify(escape_slash=false)
   }
   if actual != want {
     raise InspectError(
