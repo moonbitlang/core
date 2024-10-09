@@ -2,7 +2,8 @@ from langchain_community.chat_models import ChatZhipuAI
 from langchain_core.output_parsers import StrOutputParser
 from langchain_core.prompts import ChatPromptTemplate
 
-def generate_test_code(moonbit_code,path,api_key):
+
+def generate_test_code(moonbit_code, path, api_key):
     test_prompt = ChatPromptTemplate.from_template(
         """作为一名MoonBit语言工程师，你的任务是编写一系列测试用例来验证项目的正确性。
         请根据以下提供的格式，结合文件名{path}理解函数的用途，对给出的MoonBit函数编写对应的测试用例,
@@ -18,19 +19,11 @@ def generate_test_code(moonbit_code,path,api_key):
     )
 
     test_llm = ChatZhipuAI(
-        api_key=api_key,
-        model="glm-4-plus",
-        temperature=0.5,
-        max_tokens=2048
+        api_key=api_key, model="glm-4-plus", temperature=0.5
     )
 
-    test_retriever_chain = (
-        test_prompt
-        | test_llm
-        | StrOutputParser()
+    test_retriever_chain = test_prompt | test_llm | StrOutputParser()
+    test_code = test_retriever_chain.invoke(
+        {"moonbit_code": moonbit_code, "path": path}
     )
-    test_code = test_retriever_chain.invoke({
-        "moonbit_code": moonbit_code,
-        "path":path
-    })
     return test_code
