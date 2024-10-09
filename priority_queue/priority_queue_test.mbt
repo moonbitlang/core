@@ -45,7 +45,7 @@ test "to_array" {
 }
 
 test "iter" {
-  let buf = Buffer::new(size_hint=20)
+  let buf = StringBuilder::new(size_hint=20)
   let v = @priority_queue.of([1, 2, 3])
   for e in v {
     buf.write_string("[\{e}]")

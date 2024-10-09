@@ -166,7 +166,7 @@ test "array_eachi_rev" {
 
 test "array_eachi_rev_2" {
   let arr = ['a', 'b', 'c']
-  let buf = Buffer::new()
+  let buf = StringBuilder::new()
   arr.rev_eachi(
     fn(i, x) {
       buf

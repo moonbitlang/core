@@ -48,7 +48,7 @@ test "to_bytes" {
 
 test "Show::output" {
   fn repr(s : String) {
-    let buf = Buffer::new(size_hint=0)
+    let buf = StringBuilder::new(size_hint=0)
     s |> Show::output(buf)
     buf.to_string()
   }
@@ -157,9 +157,9 @@ test "iter2" {
 
 // test here to avlid cyclic dependency between assertion and builtin
 test "Buffer::to_bytes" {
-  let buffer = Buffer::new(size_hint=16)
+  let buffer = StringBuilder::new(size_hint=16)
   buffer.write_string("中文")
-  assert_eq!(buffer.to_bytes().to_string(), "中文")
+  assert_eq!(buffer.to_string(), "中文")
 }
 
 test "trim_left" {

@@ -456,7 +456,7 @@ test "shrink_to_fit_2" {
 }
 
 test "iter" {
-  let buf = Buffer::new(size_hint=5)
+  let buf = StringBuilder::new(size_hint=5)
   [1, 2, 3, 4, 5].iter().each(fn { x => buf.write_string(x.to_string()) })
   inspect!(buf, content="12345")
   buf.reset()

@@ -77,7 +77,7 @@ pub fn join[T : Show](self : Array[T], sep : String) -> String {
   let sep_size = sep.length() * (len - 1)
   let self_size = self[0].to_string().length() * (len + 1) // + 1 to avoid allocation in buffer
   let size = sep_size + self_size
-  let buf = Buffer::new(size_hint=size + 1) // + 1 to avoid allocation in buffer
+  let buf = StringBuilder::new(size_hint=size + 1) // + 1 to avoid allocation in buffer
   buf.write_string(self[0].to_string())
   for i in 1..<len {
     buf.write_string(sep)

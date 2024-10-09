@@ -71,7 +71,7 @@ test "shrink_to_fit_2" {
 test "iter" {
   let dv = @deque.of([1, 2, 3, 4, 5])
   let iter = dv.iter()
-  let buf = Buffer::new(size_hint=0)
+  let buf = StringBuilder::new(size_hint=0)
   let mut i = 0
   iter.each(
     fn(x) {

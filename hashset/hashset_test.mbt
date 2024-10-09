@@ -128,7 +128,7 @@ test "symmetric_difference" {
 }
 
 test "iter" {
-  let buf = Buffer::new(size_hint=20)
+  let buf = StringBuilder::new(size_hint=20)
   let map = @hashset.of(["a", "b", "c"])
   map.iter().each(fn(e) { buf.write_string("[\{e}]") })
   inspect!(buf, content="[c][a][b]")

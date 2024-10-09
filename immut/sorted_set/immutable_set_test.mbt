@@ -446,7 +446,7 @@ test "from_iter empty iter" {
 }
 
 test "iter" {
-  let buf = Buffer::new(size_hint=20)
+  let buf = StringBuilder::new(size_hint=20)
   let set = [2, 7, 1, 2, 3, 4, 5] |> @sorted_set.of
   for x in set {
     buf.write_object(x)
