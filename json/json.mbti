@@ -3,6 +3,8 @@ package moonbitlang/core/json
 // Values
 fn from_json[T : FromJson](Json, ~path : JsonPath = ..) -> T!JsonDecodeError
 
+fn inspect(ToJson, ~content? : Json, ~loc : SourceLoc = _, ~args_loc : ArgsLoc = _) -> Unit!InspectError
+
 fn parse(String) -> Json!ParseError
 
 fn valid(String) -> Bool
