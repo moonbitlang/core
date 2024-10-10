@@ -87,7 +87,7 @@ fn indent_str(level : Int, indent : Int) -> String {
 
 pub fn stringify(
   self : JsonValue,
-  ~escape_slash : Bool = true,
+  ~escape_slash : Bool = false,
   ~indent : Int = 0
 ) -> String {
   fn stringify_inner(value : JsonValue, level : Int) -> String {
