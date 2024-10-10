@@ -74,7 +74,7 @@ impl Output for StringBuffer with output(self : StringBuffer, content : String) 
   self._.push(content)
 }
 
-impl Output for Buffer with output(self, content) -> Unit {
+impl Output for StringBuilder with output(self, content) -> Unit {
   self.write_string(content)
 }
 
@@ -96,7 +96,7 @@ pub fn end() -> Unit {
   println("----- BEGIN MOONBIT COVERAGE -----")
   let sbuf = StringBuffer::StringBuffer([])
   coverage_log(counters.val, sbuf)
-  let line_buf = Buffer::new()
+  let line_buf = StringBuilder::new()
   for i = 0; i < sbuf._.length(); i = i + 1 {
     let str = sbuf._[i]
     let mut start = 0
@@ -181,7 +181,7 @@ test "log" {
     ("foo/foo", test_counter_a),
     MCons(("foo/bar", test_counter_b), MNil),
   )
-  let buf = Buffer::new(size_hint=1024)
+  let buf = StringBuilder::new(size_hint=1024)
   coverage_log(counters, buf)
   inspect!(
     buf,
@@ -207,7 +207,7 @@ test "reset" {
     ("foo/foo", test_counter_a),
     MCons(("foo/bar", test_counter_b), MNil),
   )
-  let buf = Buffer::new(size_hint=1024)
+  let buf = StringBuilder::new(size_hint=1024)
   coverage_log(counters, buf)
   inspect!(
     buf,
@@ -218,7 +218,7 @@ test "reset" {
     ,
   )
   coverage_reset(counters)
-  let buf = Buffer::new(size_hint=1024)
+  let buf = StringBuilder::new(size_hint=1024)
   coverage_log(counters, buf)
   inspect!(
     buf,

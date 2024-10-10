@@ -82,7 +82,7 @@ fn is_empty(self : StringSlice) -> Bool {
 }
 
 fn to_string(self : StringSlice) -> String {
-  let buf = Buffer::new(size_hint=self.length())
+  let buf = StringBuilder::new(size_hint=self.length())
   for i = 0; i < self.length(); i = i + 1 {
     buf.write_char(self[i])
   }
