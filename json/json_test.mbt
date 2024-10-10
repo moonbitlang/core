@@ -284,6 +284,12 @@ test "stringify escape" {
   inspect!(
     json.stringify(),
     content=
+      #|{"\b":"\"hello\"","\n":"\n\r\t\f","\\":"/","\u001f":"\u0001","actual":"a,\"b\",c","escpae":"\u0000"}
+    ,
+  )
+  inspect!(
+    json.stringify(escape_slash=true),
+    content=
       #|{"\b":"\"hello\"","\n":"\n\r\t\f","\\":"\/","\u001f":"\u0001","actual":"a,\"b\",c","escpae":"\u0000"}
     ,
   )
@@ -315,13 +321,13 @@ test "stringify escape" {
 test "escape" {
   let s = "http://example.com/"
   inspect!(
-    @json.stringify(String(s)),
+    @json.stringify(String(s), escape_slash=true),
     content=
       #|"http:\/\/example.com\/"
     ,
   )
   inspect!(
-    @json.stringify(String(s), escape_slash=false),
+    @json.stringify(String(s)),
     content=
       #|"http://example.com/"
     ,
