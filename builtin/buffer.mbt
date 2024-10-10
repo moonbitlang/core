@@ -53,6 +53,8 @@ pub fn to_string(self : Buffer) -> String {
 }
 
 /// Create a buffer with initial capacity (in bytes).
+/// Note: StringBuilder is recommended for string concatenation in favor of Buffer.
+/// @alert deprecated "Buffer is moved to buffer package, use @buffer.new instead"
 pub fn Buffer::new(~size_hint : Int = 0) -> Buffer {
   let initial = if size_hint < 1 { 1 } else { size_hint }
   let bytes = Bytes::new(initial)
