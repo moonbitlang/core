@@ -14,9 +14,11 @@
 
 /// Extensible buffer.
 ///
-/// It provides accumulative concatenation of strings in linear time.
+/// It provides accumulative concatenation of bytes in linear time.
 /// The capacity of buffer will automatically expand as necessary.
 ///
+/// Note: StringBuilder is recommended for string concatenation in favor of
+/// Buffer, since it is optimized for all targets.
 /// # Usage
 ///
 /// ```

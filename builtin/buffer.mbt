@@ -14,9 +14,11 @@
 
 /// Extensible buffer.
 ///
-/// It provides accumulative concatenation of strings in linear time.
+/// It provides accumulative concatenation of bytes in linear time.
 /// The capacity of buffer will automatically expand as necessary.
 ///
+/// Note: StringBuilder is recommended for string concatenation in favor of
+/// Buffer, since it is optimized for all targets.
 /// # Usage
 ///
 /// ```
@@ -53,7 +55,6 @@ pub fn to_string(self : Buffer) -> String {
 }
 
 /// Create a buffer with initial capacity (in bytes).
-/// Note: StringBuilder is recommended for string concatenation in favor of Buffer.
 /// @alert deprecated "Buffer is moved to buffer package, use @buffer.new instead"
 pub fn Buffer::new(~size_hint : Int = 0) -> Buffer {
   let initial = if size_hint < 1 { 1 } else { size_hint }
