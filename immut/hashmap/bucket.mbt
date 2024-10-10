@@ -122,7 +122,7 @@ test "Bucket" {
 
 test "Bucket::iter" {
   let b : Bucket[_] = More(0, 0, More(1, 1, Just_One(31, 31)))
-  let buf = Buffer::new(size_hint=0)
+  let buf = StringBuilder::new(size_hint=0)
   let mut is_first = true
   b.each(
     fn(k, v) {
@@ -139,7 +139,7 @@ test "Bucket::iter" {
 
 test "Bucket::iter" {
   let b : Bucket[_] = More(0, 0, More(1, 1, Just_One(31, 31)))
-  let buf = Buffer::new(size_hint=0)
+  let buf = StringBuilder::new(size_hint=0)
   let mut is_first = true
   b
   .iter()

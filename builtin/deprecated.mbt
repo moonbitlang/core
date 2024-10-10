@@ -23,7 +23,7 @@ pub fn expect(
   self.reset()
   if current != content {
     fn repr(s : String) -> String {
-      let buf = Buffer::new()
+      let buf = StringBuilder::new()
       Show::output(s, buf)
       buf.to_string()
     }

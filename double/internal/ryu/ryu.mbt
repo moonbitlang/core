@@ -16,7 +16,7 @@
 // This is a fork of the ryu crate adjusted to comply to the ECMAScript number-to-string algorithm,
 
 fn string_from_bytes(bytes : Bytes, from : Int, to : Int) -> String {
-  let buf = Buffer::new(size_hint=bytes.length())
+  let buf = StringBuilder::new(size_hint=bytes.length())
   for i = from; i < to; i = i + 1 {
     buf.write_char(Char::from_int(bytes[i].to_int()))
   }
