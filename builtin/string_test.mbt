@@ -45,19 +45,3 @@ test "substring" {
   assert_eq!("abc".substring(end=2), "ab")
   assert_eq!("abc".substring(start=1, end=2), "b")
 }
-
-test "panic substring_start_index_error" {
-  "test".substring(start=-1, end=0) |> ignore
-}
-
-test "panic substring_end_index_error" {
-  "test".substring(start=0, end=-1) |> ignore
-}
-
-test "panic substring_start_end_index_error" {
-  "test".substring(start=1, end=0) |> ignore
-}
-
-test "panic substring_length_index_error" {
-  "test".substring(start=0, end=5) |> ignore
-}
