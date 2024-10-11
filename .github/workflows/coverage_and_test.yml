@@ -64,7 +64,9 @@ jobs:
     continue-on-error: true
     steps:
       - uses: actions/checkout@v4
-      
+        with:
+          python-version: '3.9'
+          
       - name: install
         run: |
           curl -fsSL https://cli.moonbitlang.com/install/unix.sh | bash
@@ -78,7 +80,10 @@ jobs:
           moon coverage report -f summary > coverage_summary.txt
           cat coverage_summary.txt >> "$GITHUB_STEP_SUMMARY"
       
-
+      - name: Install dependencies
+        run: |
+          pip install -r scripts/requirements.txt
+          
       - name: loop coverage improvement
         id: loop-coverage
         run: |
