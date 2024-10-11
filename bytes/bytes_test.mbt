@@ -86,7 +86,7 @@ test "from_iter empty iterator" {
 }
 
 test "iter" {
-  let buf = Buffer::new(size_hint=5)
+  let buf = StringBuilder::new(size_hint=5)
   b"abcde".iter().each(fn { x => buf.write_string(x.to_string()) })
   inspect!(buf, content="b'\\x61'b'\\x62'b'\\x63'b'\\x64'b'\\x65'")
   buf.reset()

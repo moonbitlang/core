@@ -536,7 +536,7 @@ fn to_string(self : Decimal) -> String {
   if self.decimal_point < 0 {
     n += -self.decimal_point
   }
-  let buf = Buffer::new(size_hint=n)
+  let buf = StringBuilder::new(size_hint=n)
   if self.decimal_point <= 0 {
     // zeros filling between the decimal point and the digits
     buf.write_string("0.")
