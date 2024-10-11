@@ -55,19 +55,24 @@ pub fn Int::lor(self : Int, other : Int) -> Int = "%i32_lor"
 
 pub fn Int::lxor(self : Int, other : Int) -> Int = "%i32_lxor"
 
-pub fn Int::lsl(self : Int, other : Int) -> Int = "%i32_shl"
-
-pub fn Int::shl(self : Int, other : Int) -> Int = "%i32_shl"
-
 pub fn Int::op_shl(self : Int, other : Int) -> Int = "%i32_shl"
 
+pub fn Int::op_shr(self : Int, other : Int) -> Int = "%i32_shr"
+
+/// @alert deprecated "Use infix operator `<<` instead"
+pub fn Int::lsl(self : Int, other : Int) -> Int = "%i32_shl"
+
+/// @alert deprecated "Use infix operator `<<` instead" 
+pub fn Int::shl(self : Int, other : Int) -> Int = "%i32_shl"
+
+/// @alert deprecated "Use UInt type and infix operator `>>` instead"
 pub fn Int::lsr(self : Int, other : Int) -> Int = "%u32.shr"
 
+/// @alert deprecated "Use infix operator `>>` instead"
 pub fn Int::asr(self : Int, other : Int) -> Int = "%i32_shr"
 
+/// @alert deprecated "Use infix operator `>>` instead"
 pub fn Int::shr(self : Int, other : Int) -> Int = "%i32_shr"
-
-pub fn Int::op_shr(self : Int, other : Int) -> Int = "%i32_shr"
 
 pub fn Int::ctz(self : Int) -> Int = "%i32_ctz"
 
@@ -233,15 +238,19 @@ pub fn UInt::lxor(self : UInt, other : UInt) -> UInt = "%u32.bitxor"
 
 pub fn UInt::lnot(self : UInt) -> UInt = "%u32.bitnot"
 
+/// @alert deprecated "Use infix operator `<<` instead"
 pub fn UInt::lsl(self : UInt, shift : Int) -> UInt = "%u32.shl"
 
+/// @alert deprecated "Use infix operator `<<` instead"
 pub fn UInt::shl(self : UInt, shift : Int) -> UInt = "%u32.shl"
 
-pub fn UInt::op_shl(self : UInt, shift : Int) -> UInt = "%u32.shl"
-
+/// @alert deprecated "Use infix operator `>>` instead"
 pub fn UInt::lsr(self : UInt, shift : Int) -> UInt = "%u32.shr"
 
+/// @alert deprecated "Use infix operator `>>` instead"
 pub fn UInt::shr(self : UInt, shift : Int) -> UInt = "%u32.shr"
+
+pub fn UInt::op_shl(self : UInt, shift : Int) -> UInt = "%u32.shl"
 
 pub fn UInt::op_shr(self : UInt, shift : Int) -> UInt = "%u32.shr"
 

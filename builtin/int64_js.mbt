@@ -363,16 +363,8 @@ pub fn Int64::op_div(self : Int64, other : Int64) -> Int64 {
   MyInt64::from_int64(self).op_div(MyInt64::from_int64(other)).to_int64()
 }
 
-pub fn Int64::div_u(self : Int64, other : Int64) -> Int64 {
-  MyInt64::from_int64(self).div_u(MyInt64::from_int64(other)).to_int64()
-}
-
 pub fn Int64::op_mod(self : Int64, other : Int64) -> Int64 {
   MyInt64::from_int64(self).op_mod(MyInt64::from_int64(other)).to_int64()
-}
-
-pub fn Int64::mod_u(self : Int64, other : Int64) -> Int64 {
-  MyInt64::from_int64(self).mod_u(MyInt64::from_int64(other)).to_int64()
 }
 
 pub fn Int64::lnot(self : Int64) -> Int64 {
@@ -391,23 +383,28 @@ pub fn Int64::lxor(self : Int64, other : Int64) -> Int64 {
   MyInt64::from_int64(self).lxor(MyInt64::from_int64(other)).to_int64()
 }
 
+/// @alert deprecated "Use infix operator `<<` instead"
 pub fn Int64::lsl(self : Int64, other : Int) -> Int64 {
   MyInt64::from_int64(self).lsl(other).to_int64()
 }
 
+/// @alert deprecated "Use infix operator `<<` instead"
 pub fn Int64::shl(self : Int64, other : Int) -> Int64 {
   MyInt64::from_int64(self).lsl(other).to_int64()
 }
 
-pub fn Int64::op_shl(self : Int64, other : Int) -> Int64 {
-  MyInt64::from_int64(self).lsl(other).to_int64()
-}
-
+/// @alert deprecated "Use UInt64 type and infix operator `>>` instead"
 pub fn Int64::lsr(self : Int64, other : Int) -> Int64 {
   MyInt64::from_int64(self).lsr(other).to_int64()
 }
 
+/// @alert deprecated "Use infix operator `>>` instead"
 pub fn Int64::shr(self : Int64, other : Int) -> Int64 {
+  MyInt64::from_int64(self).asr(other).to_int64()
+}
+
+/// @alert deprecated "Use infix operator `>>` instead"
+pub fn Int64::asr(self : Int64, other : Int) -> Int64 {
   MyInt64::from_int64(self).asr(other).to_int64()
 }
 
@@ -415,8 +412,8 @@ pub fn Int64::op_shr(self : Int64, other : Int) -> Int64 {
   MyInt64::from_int64(self).asr(other).to_int64()
 }
 
-pub fn Int64::asr(self : Int64, other : Int) -> Int64 {
-  MyInt64::from_int64(self).asr(other).to_int64()
+pub fn Int64::op_shl(self : Int64, other : Int) -> Int64 {
+  MyInt64::from_int64(self).lsl(other).to_int64()
 }
 
 pub fn Int64::ctz(self : Int64) -> Int {
@@ -559,24 +556,28 @@ pub fn UInt64::lnot(self : UInt64) -> UInt64 {
   MyInt64::lnot(MyInt64::from_uint64(self)).to_uint64()
 }
 
+/// @alert deprecated "Use infix operator `<<` instead"
 pub fn UInt64::lsl(self : UInt64, shift : Int) -> UInt64 {
   MyInt64::lsl(MyInt64::from_uint64(self), shift).to_uint64()
 }
 
+/// @alert deprecated "Use infix operator `<<` instead"
 pub fn UInt64::lsr(self : UInt64, shift : Int) -> UInt64 {
   MyInt64::lsr(MyInt64::from_uint64(self), shift).to_uint64()
 }
 
+/// @alert deprecated "Use infix operator `>>` instead"
 pub fn UInt64::shl(self : UInt64, shift : Int) -> UInt64 {
   MyInt64::lsl(MyInt64::from_uint64(self), shift).to_uint64()
 }
 
-pub fn UInt64::op_shl(self : UInt64, shift : Int) -> UInt64 {
-  MyInt64::lsl(MyInt64::from_uint64(self), shift).to_uint64()
-}
-
+/// @alert deprecated "Use infix operator `>>` instead"
 pub fn UInt64::shr(self : UInt64, shift : Int) -> UInt64 {
   MyInt64::lsr(MyInt64::from_uint64(self), shift).to_uint64()
+}
+
+pub fn UInt64::op_shl(self : UInt64, shift : Int) -> UInt64 {
+  MyInt64::lsl(MyInt64::from_uint64(self), shift).to_uint64()
 }
 
 pub fn UInt64::op_shr(self : UInt64, shift : Int) -> UInt64 {
