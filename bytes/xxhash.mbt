@@ -42,7 +42,7 @@ pub impl Hash for Bytes with hash_combine(self, hasher) {
 }
 
 fn rotl(x : Int, r : Int) -> Int {
-  x.lsl(r) | x.lsr(32 - r)
+  (x << r) | (x.reinterpret_as_uint() >> (32 - r)).reinterpret_as_int()
 }
 
 fn round(acc : Int, input : Int) -> Int {
@@ -50,7 +50,7 @@ fn round(acc : Int, input : Int) -> Int {
 }
 
 fn avalanche_step(h : Int, rshift : Int, prime : Int) -> Int {
-  (h ^ h.lsr(rshift)) * prime
+  (h ^ (h.reinterpret_as_uint() >> rshift).reinterpret_as_int()) * prime
 }
 
 fn avalanche(h : Int) -> Int {
@@ -64,8 +64,8 @@ fn avalanche(h : Int) -> Int {
 fn endian32(input : Bytes, cur : Int) -> Int {
   input[cur + 0].to_int() |
   (
-    input[cur + 1].to_int().lsl(8) |
-    (input[cur + 2].to_int().lsl(16) | input[cur + 3].to_int().lsl(24))
+    (input[cur + 1].to_int() << 8) |
+    ((input[cur + 2].to_int() << 16) | (input[cur + 3].to_int() << 24))
   )
 }
 

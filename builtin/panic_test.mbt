@@ -125,14 +125,14 @@ test "panic op_mod coverage for modulo by zero" {
   a % b |> ignore
 }
 
-test "panic shl coverage for negative shift" {
+test "panic op_shl coverage for negative shift" {
   let a = BigInt::from_int(123456789)
   a << -1 |> ignore
 }
 
-test "panic lsr coverage for negative shift" {
+test "panic op_shr coverage for negative shift" {
   let a = BigInt::from_int(123456789)
-  a << -1 |> ignore
+  a >> -1 |> ignore
 }
 
 test "panic from_string coverage for empty string" {
@@ -163,12 +163,12 @@ test "panic op_mod coverage for modulo by zero" {
   a % b |> ignore
 }
 
-test "panic shl coverage for negative shift" {
+test "panic op_shl coverage for negative shift" {
   let a = BigInt::from_int(123456789)
   a << -1 |> ignore
 }
 
-test "panic shr coverage for negative shift" {
+test "panic op_shr coverage for negative shift" {
   let a = BigInt::from_int(123456789)
   a >> -1 |> ignore
 }

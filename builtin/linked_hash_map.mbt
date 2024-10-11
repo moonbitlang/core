@@ -64,7 +64,7 @@ fn power_2_above(x : Int, n : Int) -> Int {
     if i >= n {
       break i
     }
-    let next = i.lsl(1)
+    let next = i << 1
     if next < 0 {
       // overflow happend  
       break i
@@ -300,7 +300,7 @@ fn shift_back[K : Hash, V](self : Map[K, V], start_index : Int) -> Unit {
 fn grow[K : Hash + Eq, V](self : Map[K, V]) -> Unit {
   let old_head = self.head
   let old_list = self.list
-  let new_capacity = self.capacity.lsl(1)
+  let new_capacity = self.capacity << 1
   self.entries = FixedArray::make(new_capacity, None)
   self.list = FixedArray::make(new_capacity, { prev: None, next: None })
   self.capacity = new_capacity

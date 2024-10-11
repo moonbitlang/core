@@ -99,7 +99,7 @@ pub fn set[A](self : T[A], index : Int, value : A) -> T[A] {
     match t {
       Leaf(l) => Leaf(immutable_set(l, i & bitmask, e))
       Node(node) => {
-        let idx = i.lsr(s) & bitmask
+        let idx = shr_as_uint(i, s) & bitmask
         Node(immutable_set(node, idx, set(i, e, s - num_bits, node[idx])))
       }
       Empty => abort("Index out of bounds")
@@ -121,7 +121,7 @@ pub fn set[A](self : T[A], index : Int, value : A) -> T[A] {
 /// v.push(4)
 /// ```
 pub fn push[A](self : T[A], value : A) -> T[A] {
-  if self.size == branching_factor.lsl(self.shift) {
+  if self.size == (branching_factor << self.shift) {
     {
       tree: Node([self.tree, new_branch([value], self.shift)]),
       size: self.size + 1,
@@ -185,7 +185,7 @@ pub fn eachi[A](self : T[A], f : (Int, A) -> Unit) -> Unit {
         let mut start = start
         for i = 0; i < n.length(); i = i + 1 {
           go(n[i], child_shift, start)
-          start += (1).lsl(shift)
+          start += 1 << shift
         }
       }
     }

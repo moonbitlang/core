@@ -364,7 +364,7 @@ test "div" {
   inspect!(c.to_string(), content="0")
 }
 
-test "lsl" {
+test "op_shl" {
   let a = BigInt::from_int64(1234567890123456789)
   let b = a << 1
   inspect!(b.to_string(), content="2469135780246913578")
@@ -375,7 +375,7 @@ test "lsl" {
   inspect!(b.to_string(), content="0")
 }
 
-test "shr" {
+test "op_shr" {
   let a = BigInt::from_int64(1234567890123456789L)
   let b = a >> 1
   inspect!(b.to_string(), content="617283945061728394")

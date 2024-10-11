@@ -64,21 +64,33 @@ pub fn Byte::lnot(self : Byte) -> Byte {
 }
 
 pub fn Byte::land(self : Byte, that : Byte) -> Byte {
-  self.to_int().land(that.to_int()).to_byte()
+  (self.to_int() & that.to_int()).to_byte()
 }
 
 pub fn Byte::lor(self : Byte, that : Byte) -> Byte {
-  self.to_int().lor(that.to_int()).to_byte()
+  (self.to_int() | that.to_int()).to_byte()
 }
 
 pub fn Byte::lxor(self : Byte, that : Byte) -> Byte {
-  self.to_int().lxor(that.to_int()).to_byte()
+  (self.to_int() ^ that.to_int()).to_byte()
+}
+
+pub fn Byte::to_uint(self : Byte) -> UInt {
+  self.to_int().reinterpret_as_uint()
+}
+
+pub fn Byte::op_shl(self : Byte, count : Int) -> Byte {
+  (self.to_int() << count).to_byte()
+}
+
+pub fn Byte::op_shr(self : Byte, count : Int) -> Byte {
+  (self.to_uint() >> count).reinterpret_as_int().to_byte()
 }
 
 pub fn Byte::lsl(self : Byte, count : Int) -> Byte {
-  self.to_int().lsl(count).to_byte()
+  (self.to_int() << count).to_byte()
 }
 
 pub fn Byte::lsr(self : Byte, count : Int) -> Byte {
-  self.to_int().lsr(count).to_byte()
+  (self.to_uint() >> count).reinterpret_as_int().to_byte()
 }

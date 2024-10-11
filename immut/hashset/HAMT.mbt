@@ -56,7 +56,8 @@ pub fn contains[A : Eq + Hash](self : T[A], key : A) -> Bool {
       let idx = hash & segment_mask
       if children.elem_info.has(idx) {
         let child = children.data[children.elem_info.index_of(idx)]
-        continue child, hash.lsr(segment_length)
+        continue child,
+          (hash.reinterpret_as_uint() >> segment_length).reinterpret_as_int()
       }
       false
     }
@@ -73,7 +74,7 @@ fn add_with_hash[A : Eq](self : T[A], key : A, depth : Int, hash : Int) -> T[A] 
       let child = make_leaf(
         depth + segment_length,
         key,
-        hash.lsr(segment_length),
+        (hash.reinterpret_as_uint() >> segment_length).reinterpret_as_int(),
       )
       Branch(@sparse_array.SparseArray::singleton(idx, child))
     }
@@ -95,7 +96,7 @@ fn add_with_hash[A : Eq](self : T[A], key : A, depth : Int, hash : Int) -> T[A] 
           let child = child.add_with_hash(
             key,
             depth + segment_length,
-            hash.lsr(segment_length),
+            (hash.reinterpret_as_uint() >> segment_length).reinterpret_as_int(),
           )
           Branch(children.replace(idx, child))
         }
@@ -103,7 +104,7 @@ fn add_with_hash[A : Eq](self : T[A], key : A, depth : Int, hash : Int) -> T[A] 
           let child = make_leaf(
             depth + segment_length,
             key,
-            hash.lsr(segment_length),
+            (hash.reinterpret_as_uint() >> segment_length).reinterpret_as_int(),
           )
           Branch(children.add(idx, child))
         }
@@ -145,7 +146,7 @@ fn remove_with_hash[A : Eq](
           let new_child = child.remove_with_hash(
             key,
             depth + segment_length,
-            hash.lsr(segment_length),
+            (hash.reinterpret_as_uint() >> segment_length).reinterpret_as_int(),
           )
           match (children.size(), new_child) {
             (1, Empty) => Empty

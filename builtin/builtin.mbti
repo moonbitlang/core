@@ -349,10 +349,13 @@ impl Byte {
   lsr(Byte, Int) -> Byte
   lxor(Byte, Byte) -> Byte
   op_equal(Byte, Byte) -> Bool
+  op_shl(Byte, Int) -> Byte
+  op_shr(Byte, Int) -> Byte
   to_float(Byte) -> Float
   to_int(Byte) -> Int
   to_int64(Byte) -> Int64
   to_string(Byte) -> String
+  to_uint(Byte) -> UInt
 }
 impl Char {
   compare(Char, Char) -> Int

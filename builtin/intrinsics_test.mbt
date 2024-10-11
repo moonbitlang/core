@@ -38,36 +38,36 @@ test "Int::lxor should perform bitwise XOR operation" {
   inspect!((0xffff_ffff ^ 0xffff_ffff) == 0, content="true")
 }
 
-/// test Int::lsl
-test "Int::lsl should perform left shift operation" {
-  inspect!((7).lsl(1), content="14")
-  inspect!((0b101).lsl(1) == 0b1010, content="true")
-  inspect!((0xffff_ffff).lsl(1) == 0xffff_fffe, content="true")
-  inspect!((0xffff_ffff).lsl(0) == 0xffff_ffff, content="true")
-  inspect!((0xffff_ffff).lsl(3), content="-8")
+/// test Int::op_shl
+test "Int::op_shl should perform left shift operation" {
+  inspect!(7 << 1, content="14")
+  inspect!((0b101 << 1) == 0b1010, content="true")
+  inspect!((0xffff_ffff << 1) == 0xffff_fffe, content="true")
+  inspect!((0xffff_ffff << 0) == 0xffff_ffff, content="true")
+  inspect!(0xffff_ffff << 3, content="-8")
   let arr = Array::make(33, 0).mapi(fn { i, _ => i })
   inspect!(
     arr,
     content="[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32]",
   )
-  let r = arr.map(fn { i => (0xffff_ffff).lsl(i) })
+  let r = arr.map(fn { i => 0xffff_ffff << i })
   // note when shifting 32 bits or more, it returns the original value
   inspect!(
     r,
     content="[-1, -2, -4, -8, -16, -32, -64, -128, -256, -512, -1024, -2048, -4096, -8192, -16384, -32768, -65536, -131072, -262144, -524288, -1048576, -2097152, -4194304, -8388608, -16777216, -33554432, -67108864, -134217728, -268435456, -536870912, -1073741824, -2147483648, -1]",
   )
-  inspect!((7).lsl(32), content="7")
+  inspect!(7 << 32, content="7")
 }
 
 test "reinterpret: UInt <-> Int" {
   inspect!(0U.reinterpret_as_int(), content="0")
   inspect!(1U.reinterpret_as_int(), content="1")
-  inspect!((0x7fff_ffff : UInt).reinterpret_as_int(), content="2147483647")
-  inspect!((0x7fff_ffff : UInt), content="2147483647")
-  inspect!((0x8000_0000 : UInt).reinterpret_as_int(), content="-2147483648")
-  inspect!((0x8000_0000 : UInt), content="2147483648")
-  inspect!((0xffff_ffff : UInt).reinterpret_as_int(), content="-1")
-  inspect!((0xffff_ffff : UInt), content="4294967295")
+  inspect!(0x7fff_ffffU.reinterpret_as_int(), content="2147483647")
+  inspect!(0x7fff_ffffU, content="2147483647")
+  inspect!(0x8000_0000U.reinterpret_as_int(), content="-2147483648")
+  inspect!(0x8000_0000U, content="2147483648")
+  inspect!(0xffff_ffffU.reinterpret_as_int(), content="-1")
+  inspect!(0xffff_ffffU, content="4294967295")
   inspect!((0).reinterpret_as_uint(), content="0")
   inspect!((1).reinterpret_as_uint(), content="1")
   inspect!((2147483647).reinterpret_as_uint(), content="2147483647")
@@ -90,8 +90,8 @@ test "uint test" {
   inspect!(0xFFFFFFFFU & 0xFFFFU, content="65535")
   inspect!(0xFF00U | 0xFFU, content="65535")
   inspect!(0xFFFF00U ^ 0xFF00FFU, content="65535")
-  inspect!(0x1U.lsl(31), content="2147483648")
-  inspect!(2147483648U.lsr(31), content="1")
+  inspect!(0x1U << 31, content="2147483648")
+  inspect!(2147483648U >> 31, content="1")
 }
 
 test "uint64 test" {
@@ -110,8 +110,8 @@ test "uint64 test" {
   inspect!(0xFFFFFFFFUL & 0xFFFFUL, content="65535")
   inspect!(0xFF00UL | 0xFFUL, content="65535")
   inspect!(0xFFFF00UL ^ 0xFF00FFUL, content="65535")
-  inspect!(0x1UL.lsl(63), content="9223372036854775808")
-  inspect!(9223372036854775808UL.lsr(63), content="1")
+  inspect!(0x1UL << 63, content="9223372036854775808")
+  inspect!(9223372036854775808UL >> 63, content="1")
 }
 
 test "from double to" {
