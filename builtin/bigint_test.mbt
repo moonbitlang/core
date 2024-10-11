@@ -364,7 +364,7 @@ test "div" {
   inspect!(c.to_string(), content="0")
 }
 
-test "lsl" {
+test "op_shl" {
   let a = BigInt::from_int64(1234567890123456789)
   let b = a << 1
   inspect!(b.to_string(), content="2469135780246913578")
@@ -375,7 +375,7 @@ test "lsl" {
   inspect!(b.to_string(), content="0")
 }
 
-test "shr" {
+test "op_shr" {
   let a = BigInt::from_int64(1234567890123456789L)
   let b = a >> 1
   inspect!(b.to_string(), content="617283945061728394")
@@ -556,42 +556,4 @@ test "to_hex" {
     a.to_hex(uppercase=false),
     content="-11e3444dc1f35f057ad2cbc2791737468140a426fac3cba7af8c92a8f34e",
   )
-}
-
-test "panic op_div coverage for division by zero" {
-  let a = BigInt::from_int(123456789)
-  let b = BigInt::from_int(0)
-  a / b |> ignore
-}
-
-test "panic op_mod coverage for modulo by zero" {
-  let a = BigInt::from_int(123456789)
-  let b = BigInt::from_int(0)
-  a % b |> ignore
-}
-
-test "panic shl coverage for negative shift" {
-  let a = BigInt::from_int(123456789)
-  a << -1 |> ignore
-}
-
-test "panic lsr coverage for negative shift" {
-  let a = BigInt::from_int(123456789)
-  a << -1 |> ignore
-}
-
-test "panic from_string coverage for empty string" {
-  BigInt::from_string("") |> ignore
-}
-
-test "panic from_string coverage for invalid character" {
-  BigInt::from_string("123a56789") |> ignore
-}
-
-test "panic from_hex coverage for empty string" {
-  BigInt::from_hex("") |> ignore
-}
-
-test "panic from_hex coverage for invalid character" {
-  BigInt::from_hex("123g56789") |> ignore
 }

@@ -344,7 +344,7 @@ pub fn iter[T](self : T?) -> Iter[T] {
 
 test "iter" {
   let x = Option::Some(42)
-  let exb = Buffer::new(size_hint=0)
+  let exb = StringBuilder::new(size_hint=0)
   x
   .iter()
   .each(
@@ -353,7 +353,8 @@ test "iter" {
       exb.write_char('\n')
     },
   )
-  exb.expect!(
+  inspect!(
+    exb,
     content=
       #|42
       #|
@@ -369,7 +370,7 @@ test "iter" {
       exb.write_char('\n')
     },
   )
-  exb.expect!(content="")
+  inspect!(exb, content="")
 }
 
 pub fn or_error[T, Err : Error](self : T?, err : Err) -> T!Err {

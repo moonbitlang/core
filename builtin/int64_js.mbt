@@ -33,9 +33,9 @@ fn MyInt64::op_neg(self : MyInt64) -> MyInt64 {
 fn MyInt64::add_hi_lo(self : MyInt64, bhi : Int, blo : Int) -> MyInt64 {
   let { hi: ahi, lo: alo } = self
   let lo = alo + blo
-  let s = lo.asr(31)
-  let as_ = alo.asr(31)
-  let bs = blo.asr(31)
+  let s = lo >> 31
+  let as_ = alo >> 31
+  let bs = blo >> 31
   let c = ((as_ & bs) | (s.lnot() & (as_ ^ bs))) & 1
   let hi = ahi + bhi + c
   { hi, lo }
@@ -56,35 +56,42 @@ fn MyInt64::op_sub(self : MyInt64, other : MyInt64) -> MyInt64 {
 fn MyInt64::op_mul(self : MyInt64, other : MyInt64) -> MyInt64 {
   let { hi: ahi, lo: alo } = self
   let { hi: bhi, lo: blo } = other
-  let a48 = ahi.lsr(16)
+  let ahi = ahi.reinterpret_as_uint()
+  let alo = alo.reinterpret_as_uint()
+  let bhi = bhi.reinterpret_as_uint()
+  let blo = blo.reinterpret_as_uint()
+  let a48 = ahi >> 16
   let a32 = ahi & 0xffff
-  let a16 = alo.lsr(16)
+  let a16 = alo >> 16
   let a00 = alo & 0xffff
-  let b48 = bhi.lsr(16)
+  let b48 = bhi >> 16
   let b32 = bhi & 0xffff
-  let b16 = blo.lsr(16)
+  let b16 = blo >> 16
   let b00 = blo & 0xffff
   let c00 = a00 * b00
-  let c16 = c00.lsr(16)
+  let c16 = c00 >> 16
   let c00 = c00 & 0xffff
   let c16 = c16 + a16 * b00
-  let c32 = c16.lsr(16)
+  let c32 = c16 >> 16
   let c16 = c16 & 0xffff
   let c16 = c16 + a00 * b16
-  let c32 = c32 + c16.lsr(16)
+  let c32 = c32 + (c16 >> 16)
   let c16 = c16 & 0xffff
   let c32 = c32 + a32 * b00
-  let c48 = c32.lsr(16)
+  let c48 = c32 >> 16
   let c32 = c32 & 0xffff
   let c32 = c32 + a16 * b16
-  let c48 = c48 + c32.lsr(16)
+  let c48 = c48 + (c32 >> 16)
   let c32 = c32 & 0xffff
   let c32 = c32 + a00 * b32
-  let c48 = c48 + c32.lsr(16)
+  let c48 = c48 + (c32 >> 16)
   let c32 = c32 & 0xffff
   let c48 = c48 + a48 * b00 + a32 * b16 + a16 * b32 + a00 * b48
   let c48 = c48 & 0xffff
-  { hi: c48.lsl(16) | c32, lo: c16.lsl(16) | c00 }
+  {
+    hi: ((c48 << 16) | c32).reinterpret_as_int(),
+    lo: ((c16 << 16) | c00).reinterpret_as_int(),
+  }
 }
 
 struct Int64WasmHelper {
@@ -158,9 +165,14 @@ fn MyInt64::lsl(self : MyInt64, shift : Int) -> MyInt64 {
   if shift == 0 {
     self
   } else if shift < 32 {
-    { hi: self.hi.lsl(shift) | self.lo.lsr(32 - shift), lo: self.lo.lsl(shift) }
+    let { hi, lo } = self
+    let hi = hi.reinterpret_as_uint()
+    let lo = lo.reinterpret_as_uint()
+    let hi = (hi << shift) | (lo >> (32 - shift))
+    let lo = lo << shift
+    { hi: hi.reinterpret_as_int(), lo: lo.reinterpret_as_int() }
   } else {
-    { hi: self.lo.lsl(shift - 32), lo: 0 }
+    { hi: self.lo << (shift - 32), lo: 0 }
   }
 }
 
@@ -169,9 +181,16 @@ fn MyInt64::lsr(self : MyInt64, shift : Int) -> MyInt64 {
   if shift == 0 {
     self
   } else if shift < 32 {
-    { hi: self.hi.lsr(shift), lo: self.lo.lsr(shift) | self.hi.lsl(32 - shift) }
+    {
+      hi: (self.hi.reinterpret_as_uint() >> shift).reinterpret_as_int(),
+      lo: (self.lo.reinterpret_as_uint() >> shift).reinterpret_as_int() |
+      (self.hi << (32 - shift)),
+    }
   } else {
-    { hi: 0, lo: self.hi.lsr(shift - 32) }
+    {
+      hi: 0,
+      lo: (self.hi.reinterpret_as_uint() >> (shift - 32)).reinterpret_as_int(),
+    }
   }
 }
 
@@ -180,9 +199,13 @@ fn MyInt64::asr(self : MyInt64, shift : Int) -> MyInt64 {
   if shift == 0 {
     self
   } else if shift < 32 {
-    { hi: self.hi.asr(shift), lo: self.lo.lsr(shift) | self.hi.lsl(32 - shift) }
+    {
+      hi: self.hi >> shift,
+      lo: (self.lo.reinterpret_as_uint() >> shift).reinterpret_as_int() |
+      (self.hi << (32 - shift)),
+    }
   } else {
-    { hi: self.hi.asr(31), lo: self.hi.asr(shift - 32) }
+    { hi: self.hi >> 31, lo: self.hi >> (shift - 32) }
   }
 }
 
@@ -256,7 +279,7 @@ extern "js" fn MyInt64::compare_u(self : MyInt64, other : MyInt64) -> Int =
   #|}
 
 fn MyInt64::from_int(value : Int) -> MyInt64 {
-  { hi: value.asr(31) & -1, lo: value | 0 }
+  { hi: (value >> 31) & -1, lo: value | 0 }
 }
 
 fn MyInt64::to_int(self : MyInt64) -> Int {
@@ -351,16 +374,8 @@ pub fn Int64::op_div(self : Int64, other : Int64) -> Int64 {
   MyInt64::from_int64(self).op_div(MyInt64::from_int64(other)).to_int64()
 }
 
-pub fn Int64::div_u(self : Int64, other : Int64) -> Int64 {
-  MyInt64::from_int64(self).div_u(MyInt64::from_int64(other)).to_int64()
-}
-
 pub fn Int64::op_mod(self : Int64, other : Int64) -> Int64 {
   MyInt64::from_int64(self).op_mod(MyInt64::from_int64(other)).to_int64()
-}
-
-pub fn Int64::mod_u(self : Int64, other : Int64) -> Int64 {
-  MyInt64::from_int64(self).mod_u(MyInt64::from_int64(other)).to_int64()
 }
 
 pub fn Int64::lnot(self : Int64) -> Int64 {
@@ -379,23 +394,28 @@ pub fn Int64::lxor(self : Int64, other : Int64) -> Int64 {
   MyInt64::from_int64(self).lxor(MyInt64::from_int64(other)).to_int64()
 }
 
+/// @alert deprecated "Use infix operator `<<` instead"
 pub fn Int64::lsl(self : Int64, other : Int) -> Int64 {
   MyInt64::from_int64(self).lsl(other).to_int64()
 }
 
+/// @alert deprecated "Use infix operator `<<` instead"
 pub fn Int64::shl(self : Int64, other : Int) -> Int64 {
   MyInt64::from_int64(self).lsl(other).to_int64()
 }
 
-pub fn Int64::op_shl(self : Int64, other : Int) -> Int64 {
-  MyInt64::from_int64(self).lsl(other).to_int64()
-}
-
+/// @alert deprecated "Use UInt64 type and infix operator `>>` instead"
 pub fn Int64::lsr(self : Int64, other : Int) -> Int64 {
   MyInt64::from_int64(self).lsr(other).to_int64()
 }
 
+/// @alert deprecated "Use infix operator `>>` instead"
 pub fn Int64::shr(self : Int64, other : Int) -> Int64 {
+  MyInt64::from_int64(self).asr(other).to_int64()
+}
+
+/// @alert deprecated "Use infix operator `>>` instead"
+pub fn Int64::asr(self : Int64, other : Int) -> Int64 {
   MyInt64::from_int64(self).asr(other).to_int64()
 }
 
@@ -403,8 +423,8 @@ pub fn Int64::op_shr(self : Int64, other : Int) -> Int64 {
   MyInt64::from_int64(self).asr(other).to_int64()
 }
 
-pub fn Int64::asr(self : Int64, other : Int) -> Int64 {
-  MyInt64::from_int64(self).asr(other).to_int64()
+pub fn Int64::op_shl(self : Int64, other : Int) -> Int64 {
+  MyInt64::from_int64(self).lsl(other).to_int64()
 }
 
 pub fn Int64::ctz(self : Int64) -> Int {
@@ -483,7 +503,10 @@ fn MyInt64::to_uint64(self : MyInt64) -> UInt64 = "%identity"
 
 fn MyInt64::from_uint64(value : UInt64) -> MyInt64 = "%identity"
 
+/// @alert deprecated "Use `reinterpret_as_uint64` instead"
 pub fn Int64::to_uint64(self : Int64) -> UInt64 = "%identity"
+
+pub fn Int64::reinterpret_as_uint64(self : Int64) -> UInt64 = "%identity"
 
 pub fn UInt64::op_add(self : UInt64, other : UInt64) -> UInt64 {
   MyInt64::from_uint64(self).op_add(MyInt64::from_uint64(other)).to_uint64()
@@ -547,24 +570,28 @@ pub fn UInt64::lnot(self : UInt64) -> UInt64 {
   MyInt64::lnot(MyInt64::from_uint64(self)).to_uint64()
 }
 
+/// @alert deprecated "Use infix operator `<<` instead"
 pub fn UInt64::lsl(self : UInt64, shift : Int) -> UInt64 {
   MyInt64::lsl(MyInt64::from_uint64(self), shift).to_uint64()
 }
 
+/// @alert deprecated "Use infix operator `<<` instead"
 pub fn UInt64::lsr(self : UInt64, shift : Int) -> UInt64 {
   MyInt64::lsr(MyInt64::from_uint64(self), shift).to_uint64()
 }
 
+/// @alert deprecated "Use infix operator `>>` instead"
 pub fn UInt64::shl(self : UInt64, shift : Int) -> UInt64 {
   MyInt64::lsl(MyInt64::from_uint64(self), shift).to_uint64()
 }
 
-pub fn UInt64::op_shl(self : UInt64, shift : Int) -> UInt64 {
-  MyInt64::lsl(MyInt64::from_uint64(self), shift).to_uint64()
-}
-
+/// @alert deprecated "Use infix operator `>>` instead"
 pub fn UInt64::shr(self : UInt64, shift : Int) -> UInt64 {
   MyInt64::lsr(MyInt64::from_uint64(self), shift).to_uint64()
+}
+
+pub fn UInt64::op_shl(self : UInt64, shift : Int) -> UInt64 {
+  MyInt64::lsl(MyInt64::from_uint64(self), shift).to_uint64()
 }
 
 pub fn UInt64::op_shr(self : UInt64, shift : Int) -> UInt64 {

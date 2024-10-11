@@ -222,6 +222,12 @@ jobs:
           moon test --target all
           moon test --release --target all
 
+      - name: moon test in native backend
+        run: |
+          ulimit -s 8176
+          moon test --target native
+          moon test --release --target native
+
       - name: moon bundle
         run: moon bundle --all
 

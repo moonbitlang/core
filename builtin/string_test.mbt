@@ -38,3 +38,10 @@ test "String::escape" {
     ,
   )
 }
+
+test "substring" {
+  assert_eq!("abc".substring(), "abc")
+  assert_eq!("abc".substring(start=1), "bc")
+  assert_eq!("abc".substring(end=2), "ab")
+  assert_eq!("abc".substring(start=1, end=2), "b")
+}

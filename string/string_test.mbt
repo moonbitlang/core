@@ -48,7 +48,7 @@ test "to_bytes" {
 
 test "Show::output" {
   fn repr(s : String) {
-    let buf = Buffer::new(size_hint=0)
+    let buf = StringBuilder::new(size_hint=0)
     s |> Show::output(buf)
     buf.to_string()
   }
@@ -74,13 +74,6 @@ test "to_array" {
   inspect!(a[4], content="'b'")
   inspect!(a[5], content="'t'")
   inspect!(a[6], content="'😀'")
-}
-
-test "substring" {
-  assert_eq!("abc".substring(), "abc")
-  assert_eq!("abc".substring(start=1), "bc")
-  assert_eq!("abc".substring(end=2), "ab")
-  assert_eq!("abc".substring(start=1, end=2), "b")
 }
 
 test "chars" {
@@ -164,25 +157,9 @@ test "iter2" {
 
 // test here to avlid cyclic dependency between assertion and builtin
 test "Buffer::to_bytes" {
-  let buffer = Buffer::new(size_hint=16)
+  let buffer = StringBuilder::new(size_hint=16)
   buffer.write_string("中文")
-  assert_eq!(buffer.to_bytes().to_string(), "中文")
-}
-
-test "panic substring_start_index_error" {
-  "test".substring(start=-1, end=0) |> ignore
-}
-
-test "panic substring_end_index_error" {
-  "test".substring(start=0, end=-1) |> ignore
-}
-
-test "panic substring_start_end_index_error" {
-  "test".substring(start=1, end=0) |> ignore
-}
-
-test "panic substring_length_index_error" {
-  "test".substring(start=0, end=5) |> ignore
+  assert_eq!(buffer.to_string(), "中文")
 }
 
 test "trim_left" {

@@ -107,9 +107,9 @@ test "from_double array" {
   let a : Array[Double] = [
     0.5, 5, 29.97, -29.97, 63.5, 126.5, 127.0, 127.5, -63.5, -126.5, -127.0, -127.5,
   ]
-  inspect_double_array!(
-    a,
-    content="[Ok(1/2), Ok(5), Ok(2997/100), Ok(-2997/100), Ok(127/2), Ok(253/2), Ok(127), Ok(255/2), Ok(-127/2), Ok(-253/2), Ok(-127), Ok(-255/2)]",
+  inspect!(
+    a.map(fn { x => @rational.from_double?(x).unwrap() }),
+    content="[1/2, 5, 2997/100, -2997/100, 127/2, 253/2, 127, 255/2, -127/2, -253/2, -127, -255/2]",
   )
   let a = [
     -10.0e200, 10.0e200, @double.infinity, @double.neg_infinity, @double.not_a_number,

@@ -14,25 +14,25 @@
 
 test "empty" {
   let iter = Iter::empty()
-  let exb = Buffer::new(size_hint=0)
+  let exb = StringBuilder::new(size_hint=0)
   iter.each(fn { x => exb.write_char(x) })
-  exb.expect!()
+  inspect!(exb)
 }
 
 test "singleton" {
   let iter = Iter::singleton('1')
-  let exb = Buffer::new(size_hint=0)
+  let exb = StringBuilder::new(size_hint=0)
   iter.each(fn { x => exb.write_char(x) })
-  exb.expect!(content="1")
+  inspect!(exb, content="1")
 }
 
 test "repeat" {
   let iter = Iter::repeat('1')
-  let exb = Buffer::new(size_hint=0)
+  let exb = StringBuilder::new(size_hint=0)
   for n in iter[:3] {
     exb.write_char(n)
   }
-  exb.expect!(content="111")
+  inspect!(exb, content="111")
 }
 
 test "count" {
@@ -42,36 +42,36 @@ test "count" {
 
 test "take" {
   let iter = test_from_array(['1', '2', '3', '4', '5'])
-  let exb = Buffer::new(size_hint=0)
+  let exb = StringBuilder::new(size_hint=0)
   iter.take(3).each(fn { x => exb.write_char(x) })
-  exb.expect!(content="123")
+  inspect!(exb, content="123")
 }
 
 test "take2" {
   let iter = test_from_array(['1', '2', '3', '4', '5'])
-  let exb = Buffer::new(size_hint=0)
+  let exb = StringBuilder::new(size_hint=0)
   iter
   .take(10)
   .concat(Iter::repeat('6').take(1))
   .each(fn { x => exb.write_char(x) })
-  exb.expect!(content="123456")
+  inspect!(exb, content="123456")
 }
 
 test "take_while" {
   let iter = test_from_array(['1', '2', '3', '4', '5'])
-  let exb = Buffer::new(size_hint=0)
+  let exb = StringBuilder::new(size_hint=0)
   iter.take_while(fn { x => x != '4' }).each(fn { x => exb.write_char(x) })
-  exb.expect!(content="123")
+  inspect!(exb, content="123")
 }
 
 test "take_while2" {
   let iter = test_from_array(['1', '2', '3', '4', '5'])
-  let exb = Buffer::new(size_hint=0)
+  let exb = StringBuilder::new(size_hint=0)
   iter
   .take_while(fn { x => x != '4' })
   .concat(singleton('6'))
   .each(fn { x => exb.write_char(x) })
-  exb.expect!(content="1236")
+  inspect!(exb, content="1236")
 }
 
 test "take_while3" {
@@ -103,21 +103,21 @@ test "take_while5" {
 
 test "map_while1" {
   let iter = test_from_array([1, 2, 3, 4, 5])
-  let exb = Buffer::new(size_hint=0)
+  let exb = StringBuilder::new(size_hint=0)
   iter
   .map_while(fn { x => if x != 4 { Some(x) } else { None } })
   .each(fn { x => exb.write_string("\{x}\n") })
-  exb.expect!(content="1\n2\n3\n")
+  inspect!(exb, content="1\n2\n3\n")
 }
 
 test "map_while2" {
   let iter = test_from_array([1, 2, 3, 4, 5])
-  let exb = Buffer::new(size_hint=0)
+  let exb = StringBuilder::new(size_hint=0)
   iter
   .map_while(fn { x => if x != 4 { Some(x) } else { None } })
   .concat(singleton(6))
   .each(fn { x => exb.write_string("\{x}\n") })
-  exb.expect!(content="1\n2\n3\n6\n")
+  inspect!(exb, content="1\n2\n3\n6\n")
 }
 
 test "map_while3" {
@@ -149,16 +149,16 @@ test "map_while5" {
 
 test "drop" {
   let iter = test_from_array(['1', '2', '3', '4', '5'])
-  let exb = Buffer::new(size_hint=0)
+  let exb = StringBuilder::new(size_hint=0)
   iter.drop(3).each(fn { x => exb.write_char(x) })
-  exb.expect!(content="45")
+  inspect!(exb, content="45")
 }
 
 test "drop_while" {
   let iter = test_from_array(['1', '2', '3', '4', '5'])
-  let exb = Buffer::new(size_hint=0)
+  let exb = StringBuilder::new(size_hint=0)
   iter.drop_while(fn { x => x != '4' }).each(fn { x => exb.write_char(x) })
-  exb.expect!(content="45")
+  inspect!(exb, content="45")
 }
 
 test "drop_while2" {
@@ -172,7 +172,7 @@ test "drop_while2" {
 
 test "drop_while3" {
   let iter = test_from_array([1, 2, 3, 4, 5])
-  let exb = Buffer::new(size_hint=0)
+  let exb = StringBuilder::new(size_hint=0)
   let res = iter
     .drop_while(fn { x => x < 3 })
     .concat(singleton(6))
@@ -185,7 +185,7 @@ test "drop_while3" {
       },
     )
   // make sure the predicate in find_first is called only once
-  exb.expect!(content="x")
+  inspect!(exb, content="x")
   inspect!(res, content="Some(3)")
 }
 
@@ -201,36 +201,36 @@ test "drop_while4" {
 
 test "filter" {
   let iter = test_from_array(['1', '2', '3', '4', '5'])
-  let exb = Buffer::new(size_hint=0)
+  let exb = StringBuilder::new(size_hint=0)
   iter.filter(fn { x => x != '4' }).each(fn { x => exb.write_char(x) })
-  exb.expect!(content="1235")
+  inspect!(exb, content="1235")
 }
 
 test "map" {
   let iter = test_from_array(['1', '2', '3', '4', '5'])
-  let exb = Buffer::new(size_hint=0)
+  let exb = StringBuilder::new(size_hint=0)
   iter
   .map(fn { x => Char::from_int(x.to_int() + 1) })
   .each(fn { x => exb.write_char(x) })
-  exb.expect!(content="23456")
+  inspect!(exb, content="23456")
 }
 
 test "flat_map" {
   let iter = test_from_array(['1', '2', '3', '4', '5'])
-  let exb = Buffer::new(size_hint=0)
+  let exb = StringBuilder::new(size_hint=0)
   iter
   .flat_map(fn { x => Iter::repeat(x).take(2) })
   .each(fn { x => exb.write_char(x) })
-  exb.expect!(content="1122334455")
+  inspect!(exb, content="1122334455")
 }
 
 test "flat_map2" {
   let iter = test_from_array(['1', '2', '3', '4', '5'])
-  let exb = Buffer::new(size_hint=0)
+  let exb = StringBuilder::new(size_hint=0)
   iter
   .flat_map(fn { x => Iter::singleton(x) })
   .each(fn { x => exb.write_char(x) })
-  exb.expect!(content="12345")
+  inspect!(exb, content="12345")
 }
 
 test "fold" {
@@ -257,32 +257,32 @@ test "find_first2" {
 
 test "tap" {
   let iter = test_from_array(['1', '2', '3', '4', '5'])
-  let exb = Buffer::new(size_hint=0)
+  let exb = StringBuilder::new(size_hint=0)
   iter..each(fn { x => exb.write_char(x) }).each(fn { x => exb.write_char(x) })
-  exb.expect!(content="1234512345")
+  inspect!(exb, content="1234512345")
 }
 
 test "prepend" {
   let iter = test_from_array(['0', '1', '2', '3', '4', '5'])
-  let exb = Buffer::new(size_hint=0)
+  let exb = StringBuilder::new(size_hint=0)
   iter.prepend('X').each(fn { x => exb.write_char(x) })
-  exb.expect!(content="X012345")
+  inspect!(exb, content="X012345")
 }
 
 test "append" {
   let iter = test_from_array(['1', '2', '3', '4', '5'])
-  let exb = Buffer::new(size_hint=0)
+  let exb = StringBuilder::new(size_hint=0)
   iter.append('6').each(fn { x => exb.write_char(x) })
-  exb.expect!(content="123456")
+  inspect!(exb, content="123456")
 }
 
 test "concat" {
   let iter1 = test_from_array(['1', '2', '3'])
   let iter2 = test_from_array(['4', '5', '6'])
   let combined_iter = Iter::concat(iter1, iter2)
-  let exb = Buffer::new(size_hint=0)
+  let exb = StringBuilder::new(size_hint=0)
   combined_iter.each(fn { x => exb.write_char(x) })
-  exb.expect!(content="123456")
+  inspect!(exb, content="123456")
 }
 
 test "collect" {
@@ -297,81 +297,6 @@ test "collect" {
   )
   let vec = iter.collect()
   assert_eq!(vec, ['1', '2', '3', '4', '5'])
-}
-
-test "upto" {
-  // edge cases
-  inspect!((0).upto(10).take(100), content="[0, 1, 2, 3, 4, 5, 6, 7, 8, 9]")
-  inspect!((100).upto(10).take(100), content="[]")
-  // inclusive
-  inspect!(
-    (@int.max_value - 2).upto(@int.max_value - 1),
-    content="[2147483645]",
-  )
-  inspect!(
-    (@int.max_value - 2).upto(@int.max_value - 1, inclusive=true),
-    content="[2147483645, 2147483646]",
-  )
-  inspect!((@int.max_value - 1).upto(@int.max_value), content="[2147483646]")
-  inspect!(
-    (@int.max_value - 1).upto(@int.max_value, inclusive=true),
-    content="[2147483646, 2147483647]",
-  )
-  inspect!(
-    (@int64.max_value - 2).upto(@int64.max_value - 1L, inclusive=true),
-    content="[9223372036854775805, 9223372036854775806]",
-  )
-  inspect!(
-    (@int.max_value - 1).upto(@int.max_value, inclusive=true).concat([0].iter()),
-    content="[2147483646, 2147483647, 0]",
-  )
-  inspect!(
-    (@uint.max_value - 1)
-    .upto(@uint.max_value, inclusive=true)
-    .concat([0U].iter()),
-    content="[4294967294, 4294967295, 0]",
-  )
-  inspect!(
-    (@int64.max_value - 2).upto(@int64.max_value - 1L, inclusive=true),
-    content="[9223372036854775805, 9223372036854775806]",
-  )
-  inspect!(
-    (@int64.max_value - 1).upto(@int64.max_value, inclusive=true),
-    content="[9223372036854775806, 9223372036854775807]",
-  )
-  inspect!(
-    (@int64.max_value - 1)
-    .upto(@int64.max_value, inclusive=true)
-    .concat([0L].iter()),
-    content="[9223372036854775806, 9223372036854775807, 0]",
-  )
-  inspect!(0.0.upto(10.0), content="[0, 1, 2, 3, 4, 5, 6, 7, 8, 9]")
-  inspect!(
-    0.0.upto(10.0, inclusive=true),
-    content="[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]",
-  )
-  // upto
-  inspect!(
-    (0).upto(10).take(5).concat((0).upto(2)),
-    content="[0, 1, 2, 3, 4, 0, 1]",
-  )
-  inspect!(
-    0x80000000L
-    .upto(0x80000000L + 10L)
-    .take(5)
-    .concat((0x80000000L + 10L).upto(0x80000000L + 20L).take(3)),
-    content="[2147483648, 2147483649, 2147483650, 2147483651, 2147483652, 2147483658, 2147483659, 2147483660]",
-  )
-  inspect!(
-    0.0.upto(10.0).take(5).concat(0.0.upto(2.0)),
-    content="[0, 1, 2, 3, 4, 0, 1]",
-  )
-  inspect!(
-    (@double.infinity - 1.0)
-    .upto(@double.infinity, inclusive=true)
-    .concat([0.0].iter()),
-    content="[Infinity, 0]",
-  )
 }
 
 test "until" {
@@ -471,16 +396,16 @@ test "until" {
 
 test "each" {
   let iter = test_from_array(['1', '2', '3', '4', '5'])
-  let exb = Buffer::new(size_hint=5)
+  let exb = StringBuilder::new(size_hint=5)
   iter.each(fn { x => exb.write_char(x) })
-  exb.expect!(content="12345")
+  inspect!(exb, content="12345")
 }
 
 test "eachi" {
   let iter = test_from_array([1, 2, 3, 4, 5])
-  let exb = Buffer::new(size_hint=5)
+  let exb = StringBuilder::new(size_hint=5)
   iter.eachi(fn { i, x => exb.write_string((x + i).to_string()) })
-  exb.expect!(content="13579")
+  inspect!(exb, content="13579")
 }
 
 // For testing purposes
@@ -544,9 +469,9 @@ fn iter(self : Tree) -> Iter[Int] {
 test "tree" {
   // let tree = Node(Node(Leaf(1), Leaf(2)), Node(Leaf(3), Leaf(4)))
   let tree = Node(Node(Leaf(1), 2, Leaf(3)), 4, Leaf(5))
-  let exb = Buffer::new(size_hint=0)
+  let exb = StringBuilder::new(size_hint=0)
   tree.iter().each(fn { x => exb.write_string(x.to_string()) })
-  exb.expect!(content="12345")
+  inspect!(exb, content="12345")
 }
 
 test "Iter::intersperse" {

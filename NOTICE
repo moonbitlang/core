@@ -40,7 +40,7 @@ THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-File random/rand.mbt is adapted from Golang's [`math/rand/v2`](https://pkg.go.dev/math/rand/v2) package.
+File random/random.mbt is adapted from Golang's [`math/rand/v2`](https://pkg.go.dev/math/rand/v2) package.
 
 License from Golang:
 Copyright 2009 The Go Authors.

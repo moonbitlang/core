@@ -6,5 +6,8 @@
     "moonbitlang/core/test",
     "moonbitlang/core/coverage",
     "moonbitlang/core/double"
-  ]
+  ],
+  "targets": {
+    "panic_test.mbt": ["not", "native"]
+  }
 }

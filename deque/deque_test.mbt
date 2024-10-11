@@ -71,7 +71,7 @@ test "shrink_to_fit_2" {
 test "iter" {
   let dv = @deque.of([1, 2, 3, 4, 5])
   let iter = dv.iter()
-  let buf = Buffer::new(size_hint=0)
+  let buf = StringBuilder::new(size_hint=0)
   let mut i = 0
   iter.each(
     fn(x) {
@@ -81,7 +81,8 @@ test "iter" {
     },
   )
   assert_eq!(i, dv.length())
-  buf.expect!(
+  inspect!(
+    buf,
     content=
       #|1
       #|2
@@ -210,22 +211,6 @@ test "op_get" {
 test "from_array" {
   inspect!(@deque.from_array(([] : Array[Int])), content="@deque.of([])")
   inspect!(@deque.of([1, 2, 3]), content="@deque.of([1, 2, 3])")
-}
-
-test "panic unsafe_pop_front" {
-  @deque.from_array(([] : Array[Int])).unsafe_pop_front()
-}
-
-test "panic unsafe_pop_back" {
-  @deque.from_array(([] : Array[Int])).unsafe_pop_back()
-}
-
-test "panic op_get" {
-  @deque.of([1, 2, 3])[-1] |> ignore
-}
-
-test "panic op_set" {
-  @deque.of([1, 2, 3])[-1] = 1
 }
 
 test "op_set" {

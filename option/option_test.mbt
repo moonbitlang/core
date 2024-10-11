@@ -12,11 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-test "panic unwrap should panic on None" {
-  let none : Int? = None
-  none.unwrap() |> ignore
-}
-
 test "unwrap should return value on Some" {
   let some : Int? = Some(42)
   assert_eq!(some.unwrap(), 42)

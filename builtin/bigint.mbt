@@ -50,7 +50,7 @@ priv enum Sign {
 let radix_bit_len = 32
 
 /// The base of the number system.
-let radix : UInt64 = 1UL.lsl(radix_bit_len) // TODO: This can be generalized once we have const generics
+let radix : UInt64 = 1UL << radix_bit_len // TODO: This can be generalized once we have const generics
 
 /// The mask to extract the lower `radix_bit_len` bits.
 let radix_mask : UInt64 = radix - 1
@@ -80,7 +80,7 @@ pub fn BigInt::from_int64(n : Int64) -> BigInt {
     return { limbs: FixedArray::make(1, 0), sign: Positive, len: 1 }
   }
   let limbs = FixedArray::make(64 / radix_bit_len, 0U)
-  let mut m = (if n < 0L { -n } else { n }).to_uint64()
+  let mut m = (if n < 0L { -n } else { n }).reinterpret_as_uint64()
   let mut i = 0
   while m > 0 {
     limbs[i] = (m % radix).to_uint()
@@ -157,10 +157,10 @@ pub fn op_sub(self : BigInt, other : BigInt) -> BigInt {
     }
     let diff = a - b - borrow // 0 <= a < radix, 0 <= b < radix, 0 <= borrow <= 1 => -radix <= diff < radix
     if diff < 0L {
-      limbs[i] = (diff + radix.to_int64()).to_uint64().to_uint() // -radix <= diff < 0, so we don't need to mod by radix
+      limbs[i] = (diff + radix.to_int64()).reinterpret_as_uint64().to_uint() // -radix <= diff < 0, so we don't need to mod by radix
       borrow = 1L
     } else {
-      limbs[i] = diff.to_uint64().to_uint() // 0 <= diff < radix, so we don't need to mod by radix
+      limbs[i] = diff.reinterpret_as_uint64().to_uint() // 0 <= diff < radix, so we don't need to mod by radix
       borrow = 0L
     }
     i += 1
@@ -295,9 +295,9 @@ fn grade_school_div(self : BigInt, other : BigInt) -> (BigInt, BigInt) {
     let x = number.to_uint64()
     let mut y = 0UL
     for i = self.len - 1; i >= 0; i = i - 1 {
-      y = y.lsl(radix_bit_len)
+      y = y << radix_bit_len
       y += a[i].to_uint64()
-      a[i] = (y / x).land(radix_mask).to_uint()
+      a[i] = ((y / x) & radix_mask).to_uint()
       y %= x
     }
     if ret.limbs[ret.len - 1] == 0 {
@@ -368,14 +368,14 @@ fn grade_school_div(self : BigInt, other : BigInt) -> (BigInt, BigInt) {
     for j = 0; j < b_len; j = j + 1 {
       carry += qh * b[j]
       borrow += a[i + j].to_int64()
-      borrow -= carry.land(radix_mask).to_int64()
-      a[i + j] = borrow.land(radix_mask.to_int64()).to_uint64()
+      borrow -= (carry & radix_mask).to_int64()
+      a[i + j] = (borrow & radix_mask.to_int64()).reinterpret_as_uint64()
       borrow = borrow >> radix_bit_len
-      carry = carry.lsr(radix_bit_len)
+      carry = carry >> radix_bit_len
     }
     borrow = borrow + a[i + b_len].to_int64()
     borrow -= carry.to_int64()
-    a[i + b_len] = borrow.land(radix_mask.to_int64()).to_uint64()
+    a[i + b_len] = (borrow & radix_mask.to_int64()).reinterpret_as_uint64()
     borrow = borrow >> radix_bit_len
     if borrow < 0L {
       carry = 0UL
@@ -415,8 +415,7 @@ fn grade_school_div(self : BigInt, other : BigInt) -> (BigInt, BigInt) {
 
 // Bitwise Operations
 
-/// Left shift a bigint
-/// /// @alert deprecate "Use shl instead"
+/// @alert deprecated "Use infix bitwise operator `<<` instead"
 pub fn lsl(self : BigInt, n : Int) -> BigInt {
   if n < 0 {
     abort("negative shift count")
@@ -433,9 +432,9 @@ pub fn lsl(self : BigInt, n : Int) -> BigInt {
     if r != 0 {
       let mut carry = 0UL
       for i = 0; i < self.len; i = i + 1 {
-        carry = carry | a[i].to_uint64().lsl(r)
+        carry = carry | (a[i].to_uint64() << r)
         new_limbs[i + lz] = (carry % radix).to_uint()
-        carry = carry.lsr(radix_bit_len)
+        carry = carry >> radix_bit_len
       }
       if carry != 0 {
         new_limbs[self.len + lz] = carry.to_uint()
@@ -455,6 +454,7 @@ pub fn lsl(self : BigInt, n : Int) -> BigInt {
 /// Left shift a bigint
 /// The sign of the result is the same as the sign of the input.
 /// Only the absolute value is shifted.
+/// 
 pub fn op_shl(self : BigInt, n : Int) -> BigInt {
   if n < 0 {
     abort("negative shift count")
@@ -471,9 +471,9 @@ pub fn op_shl(self : BigInt, n : Int) -> BigInt {
     if r != 0 {
       let mut carry = 0UL
       for i = 0; i < self.len; i = i + 1 {
-        carry = carry | a[i].to_uint64().lsl(r)
+        carry = carry | (a[i].to_uint64() << r)
         new_limbs[i + lz] = (carry % radix).to_uint()
-        carry = carry.lsr(radix_bit_len)
+        carry = carry >> radix_bit_len
       }
       if carry != 0 {
         new_limbs[self.len + lz] = carry.to_uint()
@@ -491,6 +491,8 @@ pub fn op_shl(self : BigInt, n : Int) -> BigInt {
 /// Left shift a bigint
 /// The sign of the result is the same as the sign of the input.
 /// Only the absolute value is shifted.
+/// 
+/// @alert deprecated "Use infix bitwise operator `<<` instead"
 pub fn shl(self : BigInt, n : Int) -> BigInt {
   self << n
 }
@@ -522,13 +524,13 @@ pub fn op_shr(self : BigInt, n : Int) -> BigInt {
     let mut carry = 0UL
     for i = self.len - 1; i >= lz; i = i - 1 {
       let x = a[i].to_uint64()
-      new_limbs[i - lz] = x.lsr(r).lor(carry).to_uint()
-      carry = x.lsl(radix_bit_len - r) % radix
+      new_limbs[i - lz] = ((x >> r) | carry).to_uint()
+      carry = (x << (radix_bit_len - r)) % radix
     }
     if new_len > 1 && new_limbs[new_len - 1] == 0 {
       new_len -= 1
     }
-    if self.sign == Negative && (carry & 1UL.lsl(r)) != carry {
+    if self.sign == Negative && (carry & (1UL << r)) != carry {
       { limbs: new_limbs, sign: self.sign, len: new_len } - 1
     } else {
       { limbs: new_limbs, sign: self.sign, len: new_len }
@@ -539,10 +541,13 @@ pub fn op_shr(self : BigInt, n : Int) -> BigInt {
 /// Right shift a bigint
 /// The sign of the result is the same as the sign of the input.
 /// Only the absolute value is shifted.
+/// 
+/// @alert deprecated "Use infix bitwise operator `>>` instead"
 pub fn shr(self : BigInt, n : Int) -> BigInt {
   self >> n
 }
 
+/// @alert deprecated "Use infix bitwise operator `>>` instead"
 pub fn asr(self : BigInt, n : Int) -> BigInt {
   self >> n
 }
@@ -614,7 +619,7 @@ pub fn to_string(self : BigInt) -> String {
   for i = self.len - 1; i >= 0; i = i - 1 {
     let mut x = self.limbs[i].to_uint64().to_int64()
     for j = 0; j < v_idx; j = j + 1 {
-      let y = v[j].lsl(radix_bit_len) | x
+      let y = (v[j] << radix_bit_len) | x
       x = y / decimal_mask
       v[j] = y % decimal_mask
     }
@@ -831,7 +836,7 @@ pub fn BigInt::from_octets(input : Bytes, ~signum : Int = 1) -> BigInt {
   let limbs = FixedArray::make(limbs_len, 0U)
   // head at most significant limb
   for i = 0; i < mod / 8; i = i + 1 {
-    limbs[limbs_len - 1] = limbs[limbs_len - 1].lsl(8) |
+    limbs[limbs_len - 1] = (limbs[limbs_len - 1] << 8) |
       input[i].to_int().reinterpret_as_uint()
   }
   let byte_per_limb = radix_bit_len / 8
@@ -839,7 +844,7 @@ pub fn BigInt::from_octets(input : Bytes, ~signum : Int = 1) -> BigInt {
   for i = 0; i < div; i = i + 1 {
     for j = 0; j < byte_per_limb; j = j + 1 {
       let bytes_idx = len - byte_per_limb - i * byte_per_limb + j
-      limbs[i] = limbs[i].lsl(8) |
+      limbs[i] = (limbs[i] << 8) |
         input[bytes_idx].to_int().reinterpret_as_uint()
     }
   }

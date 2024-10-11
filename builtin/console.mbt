@@ -43,7 +43,7 @@ pub fn to_string(self : Int64) -> String {
   // The min and max value of i64 are -9223372036854775808 and 9223372036854775807,
   // so max=20 is enough.
 
-  let buf = Buffer::new(size_hint=20)
+  let buf = StringBuilder::new(size_hint=20)
   if self < 0L {
     buf.write_char('-')
   }
@@ -71,7 +71,7 @@ pub fn to_string(self : Int) -> String {
   // The min and max value of i32 are -2147483648 and 2147483647,
   // so max=11 is enough.
 
-  let buf = Buffer::new()
+  let buf = StringBuilder::new()
   if self < 0 {
     buf.write_char('-')
   }
@@ -88,7 +88,7 @@ pub fn to_string(self : Int) -> String {
 }
 
 pub fn UInt::to_string(self : UInt) -> String {
-  let buf = Buffer::new()
+  let buf = StringBuilder::new()
   fn write_digits(num) {
     let num2 = num / 10U
     if num2 != 0U {
@@ -108,7 +108,7 @@ test "UInt::to_string" {
 }
 
 pub fn UInt64::to_string(self : UInt64) -> String {
-  let buf = Buffer::new()
+  let buf = StringBuilder::new()
   fn write_digits(num : UInt64) {
     let num2 = num / 10UL
     if num2 != 0UL {

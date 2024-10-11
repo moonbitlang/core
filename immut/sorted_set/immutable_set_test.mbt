@@ -358,21 +358,6 @@ test "iter" {
 //   sub(array.length(), array[:]).0
 // }
 
-test "panic remove_min on empty set" {
-  let empty : @sorted_set.T[Int] = @sorted_set.new()
-  empty.remove_min() |> ignore
-}
-
-test "panic min on empty set" {
-  let empty : @sorted_set.T[Int] = @sorted_set.new()
-  empty.min() |> ignore
-}
-
-test "panic max on empty set" {
-  let empty : @sorted_set.T[Int] = @sorted_set.new()
-  empty.max() |> ignore
-}
-
 test "split with value not in set" {
   let set = @sorted_set.of([1, 2, 3, 4, 5])
   let (left, present, right) = set.split(6)
@@ -461,7 +446,7 @@ test "from_iter empty iter" {
 }
 
 test "iter" {
-  let buf = Buffer::new(size_hint=20)
+  let buf = StringBuilder::new(size_hint=20)
   let set = [2, 7, 1, 2, 3, 4, 5] |> @sorted_set.of
   for x in set {
     buf.write_object(x)

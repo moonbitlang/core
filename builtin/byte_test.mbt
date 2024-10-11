@@ -47,13 +47,13 @@ test "byte_op_equal" {
 }
 
 test "byte_lsl" {
-  assert_eq!(b'\xFF'.lsl(8), b'\x00')
-  assert_eq!(b'\xFF'.lsl(8).to_int(), 0)
+  assert_eq!(b'\xFF' << 8, b'\x00')
+  assert_eq!((b'\xFF' << 8).to_int(), 0)
 }
 
 test "byte_lsr" {
-  assert_eq!(b'\xFF'.lsr(8), b'\x00')
-  assert_eq!((0xFFF).to_byte().lsr(8), b'\x00')
+  assert_eq!(b'\xFF' >> 8, b'\x00')
+  assert_eq!((0xFFF).to_byte() >> 8, b'\x00')
 }
 
 test "byte_lxor" {

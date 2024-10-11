@@ -20,6 +20,6 @@ struct T[A] {
 
 priv enum Tree[A] {
   Empty
-  Node(Array[Tree[A]])
-  Leaf(Array[A])
+  Node(FixedArray[Tree[A]])
+  Leaf(FixedArray[A])
 } derive(Eq, Show)

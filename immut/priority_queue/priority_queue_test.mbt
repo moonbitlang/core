@@ -33,7 +33,7 @@ test "to_array" {
 }
 
 test "as_iter" {
-  let buf = Buffer::new(size_hint=20)
+  let buf = StringBuilder::new(size_hint=20)
   let v = @priority_queue.of([1, 2, 3])
   v.iter().each(fn(e) { buf.write_string("[\{e}]") })
   inspect!(buf, content="[3][2][1]")
@@ -102,11 +102,6 @@ test "length" {
   inspect!(pq.length(), content="2")
   inspect!(pq.unsafe_pop().length(), content="1")
   inspect!(pq.unsafe_pop().unsafe_pop().length(), content="0")
-}
-
-test "panic unsafe_pop" {
-  let pq = @priority_queue.of([1])
-  pq.unsafe_pop().unsafe_pop() |> ignore
 }
 
 test "from_iter multiple elements iter" {

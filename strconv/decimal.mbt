@@ -191,7 +191,7 @@ pub fn to_double(self : Decimal) -> Double!StrConvError {
     self.shift(-n)
     exponent += n
   }
-  if exponent - double_info.bias >= (1).lsl(double_info.exponent_bits) - 1 {
+  if exponent - double_info.bias >= (1 << double_info.exponent_bits) - 1 {
     // overflow
     range_err!()
   }
@@ -202,17 +202,17 @@ pub fn to_double(self : Decimal) -> Double!StrConvError {
   mantissa = self.rounded_integer()
 
   // rounding might have added a bit, shift down.
-  if mantissa == 2L.lsl(double_info.mantissa_bits) {
-    mantissa = mantissa.lsr(1)
+  if mantissa == (2L << double_info.mantissa_bits) {
+    mantissa = mantissa << 1
     exponent += 1
-    if exponent - double_info.bias >= (1).lsl(double_info.exponent_bits) - 1 {
+    if exponent - double_info.bias >= (1 << double_info.exponent_bits) - 1 {
       // overflow
       range_err!()
     }
   }
 
   // denormalized
-  if (mantissa & 1L.lsl(double_info.mantissa_bits)) == 0L {
+  if (mantissa & (1L << double_info.mantissa_bits)) == 0L {
     exponent = double_info.bias
   }
 
@@ -247,16 +247,13 @@ pub fn shift(self : Decimal, s : Int) -> Unit {
 fn assemble_bits(mantissa : Int64, exponent : Int, negative : Bool) -> Int64 {
   let biased_exp = exponent - double_info.bias
   // set the mantissa bits
-  let mut bits = mantissa & (1L.lsl(double_info.mantissa_bits) - 1L)
+  let mut bits = mantissa & ((1L << double_info.mantissa_bits) - 1L)
   // set the exponent bits
-  let exp_bits = biased_exp
-    .land((1).lsl(double_info.exponent_bits) - 1)
-    .to_int64()
-  bits = bits | exp_bits.lsl(double_info.mantissa_bits)
+  let exp_bits = (biased_exp & ((1 << double_info.exponent_bits) - 1)).to_int64()
+  bits = bits | (exp_bits << double_info.mantissa_bits)
   // set the sign bit
   if negative {
-    bits = bits |
-      1L.lsl(double_info.mantissa_bits).lsl(double_info.exponent_bits)
+    bits = bits | (1L << double_info.mantissa_bits << double_info.exponent_bits)
   }
   bits
 }
@@ -332,39 +329,39 @@ fn right_shift(self : Decimal, s : Int) -> Unit {
   let mut write_index = 0
 
   // read enough leading digits to start a shift
-  let mut acc = 0L
-  while acc.lsr(s) == 0L {
+  let mut acc = 0UL
+  while (acc >> s) == 0 {
     if read_index >= self.digits_num {
-      while acc.lsr(s) == 0L {
+      while (acc >> s) == 0 {
         acc *= 10
         read_index += 1
       }
       break
     }
     let d = self.digits[read_index]
-    acc = acc * 10 + d.to_int64()
+    acc = acc * 10 + d.to_int64().reinterpret_as_uint64()
     read_index += 1
   }
   self.decimal_point -= read_index - 1
 
   // read a digit and output a shifted digit
-  let mask = 1L.lsl(s) - 1
+  let mask = (1UL << s) - 1
   while read_index < self.digits_num {
     // output (acc >> s)
-    let out = acc.lsr(s).to_int()
+    let out = acc >> s
     self.digits[write_index] = out.to_byte()
     write_index += 1
     // contract
     acc = acc & mask
     // expand
     let d = self.digits[read_index]
-    acc = acc * 10L + d.to_int64()
+    acc = acc * 10 + d.to_int64().reinterpret_as_uint64()
     read_index += 1
   }
 
   // output extra digits
   while acc > 0 {
-    let out = acc.lsr(s).to_int()
+    let out = acc >> s
     if write_index < self.digits.length() {
       self.digits[write_index] = out.to_byte()
       write_index += 1
@@ -372,7 +369,7 @@ fn right_shift(self : Decimal, s : Int) -> Unit {
       self.truncated = true
     }
     acc = acc & mask
-    acc = acc * 10L
+    acc = acc * 10
   }
 
   // update and trim
@@ -483,7 +480,7 @@ fn left_shift(self : Decimal, s : Int) -> Unit {
   read_index -= 1
   while read_index >= 0 {
     let d = self.digits[read_index].to_int64()
-    acc += d.lsl(s)
+    acc += d << s
     let quo = acc / 10L
     let rem = (acc - quo * 10L).to_int()
     write_index -= 1
@@ -539,7 +536,7 @@ fn to_string(self : Decimal) -> String {
   if self.decimal_point < 0 {
     n += -self.decimal_point
   }
-  let buf = Buffer::new(size_hint=n)
+  let buf = StringBuilder::new(size_hint=n)
   if self.decimal_point <= 0 {
     // zeros filling between the decimal point and the digits
     buf.write_string("0.")

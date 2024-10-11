@@ -45,7 +45,7 @@ test "to_array" {
 }
 
 test "iter" {
-  let buf = Buffer::new(size_hint=20)
+  let buf = StringBuilder::new(size_hint=20)
   let v = @priority_queue.of([1, 2, 3])
   for e in v {
     buf.write_string("[\{e}]")
@@ -80,11 +80,6 @@ test "unsafe_pop" {
   let pq_ = @priority_queue.of([1])
   pq_.unsafe_pop()
   inspect!(pq_.length(), content="0")
-}
-
-test "panic unsafe_pop" {
-  let pq : @priority_queue.T[Int] = @priority_queue.of([])
-  pq.unsafe_pop()
 }
 
 test "pop" {

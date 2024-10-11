@@ -21,7 +21,7 @@ impl Show for MyBigInt with output(self, logger) {
 }
 
 test "debug_string" {
-  let buf = Buffer::new()
+  let buf = StringBuilder::new()
   let v : Array[MyBigInt] = [0, 1, 2, 3, 4, -0, -1, -2, -3]
   (buf as Logger).write_iter(v.iter(), sep="\n", prefix="", suffix="")
   // Logger::writer_iter()
@@ -382,7 +382,7 @@ test "div" {
   inspect!(c, content="0")
 }
 
-test "shl" {
+test "op_shl" {
   let a = BigInt::from_int64(1234567890123456789)
   let b = a << 1
   check_len!(b)
@@ -396,7 +396,7 @@ test "shl" {
   inspect!(b, content="0")
 }
 
-test "shr" {
+test "op_shr" {
   let a = BigInt::from_int64(1234567890123456789L)
   let b = a >> 1
   check_len!(b)
@@ -798,66 +798,4 @@ test "pow" {
   inspect!(4N.pow(13N, modulus=497N), content="445")
   inspect!(65N.pow(17, modulus=3233), content="2790")
   inspect!(2790N.pow(413, modulus=3233), content="65")
-}
-
-test "panic op_div coverage for division by zero" {
-  let a = BigInt::from_int(123456789)
-  let b = BigInt::from_int(0)
-  a / b |> ignore
-}
-
-test "panic op_mod coverage for modulo by zero" {
-  let a = BigInt::from_int(123456789)
-  let b = BigInt::from_int(0)
-  a % b |> ignore
-}
-
-test "panic shl coverage for negative shift" {
-  let a = BigInt::from_int(123456789)
-  a << -1 |> ignore
-}
-
-test "panic shr coverage for negative shift" {
-  let a = BigInt::from_int(123456789)
-  a >> -1 |> ignore
-}
-
-test "panic from_string coverage for empty string" {
-  from_string("") |> ignore
-}
-
-test "panic from_string coverage for invalid character" {
-  from_string("123a56789") |> ignore
-}
-
-test "panic from_hex coverage for empty string" {
-  from_hex("") |> ignore
-}
-
-test "panic from_hex coverage for invalid character" {
-  from_hex("123g56789") |> ignore
-}
-
-test "panic pow coverage for negative exponent" {
-  4N.pow(-13N, modulus=497N) |> ignore
-}
-
-test "panic pow coverage for zero modulus" {
-  4N.pow(13N, modulus=0N) |> ignore
-}
-
-test "panic to_octets coverage for negative length" {
-  123456789N.to_octets(length=-1) |> ignore
-}
-
-test "panic to_octets coverage for zero length" {
-  123456789N.to_octets(length=0) |> ignore
-}
-
-test "panic to_octets coverage for negative number than required" {
-  (-123456789N).to_octets() |> ignore
-}
-
-test "panic from_octets coverage for empty octets" {
-  from_octets(b"") |> ignore
 }

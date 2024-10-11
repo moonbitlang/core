@@ -87,7 +87,7 @@ fn indent_str(level : Int, indent : Int) -> String {
 
 pub fn stringify(
   self : JsonValue,
-  ~escape_slash : Bool = true,
+  ~escape_slash : Bool = false,
   ~indent : Int = 0
 ) -> String {
   fn stringify_inner(value : JsonValue, level : Int) -> String {
@@ -96,7 +96,7 @@ pub fn stringify(
         if members.is_empty() {
           return "{}"
         }
-        let buf = Buffer::new(size_hint=0)
+        let buf = StringBuilder::new(size_hint=0)
         buf.write_char('{')
         buf.write_string(indent_str(level + 1, indent))
         let mut first = true
@@ -125,7 +125,7 @@ pub fn stringify(
         if arr.is_empty() {
           return "[]"
         }
-        let buf = Buffer::new(size_hint=0)
+        let buf = StringBuilder::new(size_hint=0)
         buf.write_char('[')
         buf.write_string(indent_str(level + 1, indent))
         for i, v in arr {
@@ -139,7 +139,7 @@ pub fn stringify(
         buf..write_char(']').to_string()
       }
       String(s) => {
-        let buf = Buffer::new(size_hint=0)
+        let buf = StringBuilder::new(size_hint=0)
         buf
         ..write_char('\"')
         ..write_string(escape(s, ~escape_slash))
@@ -165,7 +165,7 @@ fn escape(str : String, ~escape_slash : Bool) -> String {
     }
   }
 
-  let buf = Buffer::new(size_hint=str.length())
+  let buf = StringBuilder::new(size_hint=str.length())
   for c in str {
     match c {
       '"' | '\\' => buf.write_string("\\\{c}")
@@ -199,4 +199,24 @@ fn escape(str : String, ~escape_slash : Bool) -> String {
 /// Useful for json interpolation
 pub fn to_json(self : JsonValue) -> JsonValue {
   self
+}
+
+pub fn inspect(
+  obj : ToJson,
+  ~content? : Json,
+  ~loc : SourceLoc = _,
+  ~args_loc : ArgsLoc = _
+) -> Unit!InspectError {
+  let loc = loc.to_string().escape()
+  let args_loc = args_loc.to_json().escape()
+  let actual = obj.to_json().stringify(escape_slash=false)
+  let want = match content {
+    None => "".to_json().stringify(escape_slash=false)
+    Some(x) => x.stringify(escape_slash=false)
+  }
+  if actual != want {
+    raise InspectError(
+      "@EXPECT_FAILED {\"loc\": \{loc}, \"args_loc\": \{args_loc}, \"expect\": \{want.escape()}, \"actual\": \{actual.escape()}, \"mode\": \"json\"}",
+    )
+  }
 }

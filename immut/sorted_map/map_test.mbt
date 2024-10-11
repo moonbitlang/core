@@ -104,7 +104,7 @@ test "op_equal" {
 }
 
 test "iter" {
-  let buf = Buffer::new(size_hint=20)
+  let buf = StringBuilder::new(size_hint=20)
   let map = @sorted_map.of([(1, "one"), (2, "two"), (3, "three")])
   map
   .iter()

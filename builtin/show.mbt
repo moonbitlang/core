@@ -60,7 +60,7 @@ pub impl Show for Bytes with output(self, logger) {
 }
 
 pub impl Show for Bytes with to_string(self) {
-  let buf = Buffer::new()
+  let buf = StringBuilder::new()
   Show::output(self, buf)
   buf.to_string()
 }
@@ -128,7 +128,7 @@ pub impl Show for String with to_string(self) { self }
 /// Returns a valid MoonBit string literal representation of a string,
 /// add quotes and escape special characters.
 pub fn escape(self : String) -> String {
-  let buf = Buffer::new()
+  let buf = StringBuilder::new()
   Show::output(self, buf)
   buf.to_string()
 }

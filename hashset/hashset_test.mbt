@@ -27,16 +27,6 @@ test "new" {
   assert_eq!(m.size(), 0)
 }
 
-type MyString String derive(Eq)
-
-impl Hash for MyString with hash(self) { self._.length() }
-
-impl Hash for MyString with hash_combine(self, hasher) {
-  hasher.combine_string(self._)
-}
-
-impl Show for MyString with output(self, logger) { logger.write_string(self._) }
-
 test "insert" {
   let m = @hashset.new()
   m.insert("a")
@@ -138,7 +128,7 @@ test "symmetric_difference" {
 }
 
 test "iter" {
-  let buf = Buffer::new(size_hint=20)
+  let buf = StringBuilder::new(size_hint=20)
   let map = @hashset.of(["a", "b", "c"])
   map.iter().each(fn(e) { buf.write_string("[\{e}]") })
   inspect!(buf, content="[c][a][b]")

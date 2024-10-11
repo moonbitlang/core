@@ -60,7 +60,7 @@ pub fn State::next(self : State) -> (UInt64, Bool) {
 fn bytesToUInt64(b : Bytes) -> UInt64 {
   let mut result = 0UL
   for i = 0; i < 8; i = i + 1 {
-    result = result | (b[i].to_int64().to_uint64() << (i * 8))
+    result = result | (b[i].to_int64().reinterpret_as_uint64() << (i * 8))
   }
   result
 }
@@ -101,9 +101,9 @@ fn State::init64(self : State, seed : FixedArray[UInt64]) -> Unit {
   for i = 0; i < 16; i = i + 1 {
     let hi = self.buffer[i * 2]
     let lo = self.buffer[i * 2 + 1]
-    buffer[i][0] = hi.lsr(32).to_uint()
+    buffer[i][0] = (hi >> 32).to_uint()
     buffer[i][1] = hi.to_uint()
-    buffer[i][2] = lo.lsr(32).to_uint()
+    buffer[i][2] = (lo >> 32).to_uint()
     buffer[i][3] = lo.to_uint()
   }
   // [buffer] is changed in chacha_block
@@ -139,9 +139,9 @@ pub fn State::refill(self : State) -> Unit {
   for i = 0; i < 16; i = i + 1 {
     let hi = self.buffer[i * 2]
     let lo = self.buffer[i * 2 + 1]
-    buffer[i][0] = hi.lsr(32).to_uint()
+    buffer[i][0] = (hi >> 32).to_uint()
     buffer[i][1] = hi.to_uint()
-    buffer[i][2] = lo.lsr(32).to_uint()
+    buffer[i][2] = (lo >> 32).to_uint()
     buffer[i][3] = lo.to_uint()
   }
   chacha_block(self.seed, buffer, self.c)
@@ -188,16 +188,16 @@ fn chacha_block(
     let d = t.3
     let a = a + b
     let d = d ^ a
-    let d = (d << 16) | d.lsr(16)
+    let d = (d << 16) | (d >> 16)
     let c = c + d
     let b = b ^ c
-    let b = (b << 12) | b.lsr(20)
+    let b = (b << 12) | (b >> 20)
     let a = a + b
     let d = d ^ a
-    let d = (d << 8) | d.lsr(24)
+    let d = (d << 8) | (d >> 24)
     let c = c + d
     let b = b ^ c
-    let b = (b << 7) | b.lsr(25)
+    let b = (b << 7) | (b >> 25)
     return (a, b, c, d)
   }
 
@@ -305,34 +305,34 @@ fn setup(
   b32[4][1] = seed[0].to_uint()
   b32[4][2] = seed[0].to_uint()
   b32[4][3] = seed[0].to_uint()
-  b32[5][0] = seed[0].lsr(32).to_uint()
-  b32[5][1] = seed[0].lsr(32).to_uint()
-  b32[5][2] = seed[0].lsr(32).to_uint()
-  b32[5][3] = seed[0].lsr(32).to_uint()
+  b32[5][0] = (seed[0] >> 32).to_uint()
+  b32[5][1] = (seed[0] >> 32).to_uint()
+  b32[5][2] = (seed[0] >> 32).to_uint()
+  b32[5][3] = (seed[0] >> 32).to_uint()
   b32[6][0] = seed[1].to_uint()
   b32[6][1] = seed[1].to_uint()
   b32[6][2] = seed[1].to_uint()
   b32[6][3] = seed[1].to_uint()
-  b32[7][0] = seed[1].lsr(32).to_uint()
-  b32[7][1] = seed[1].lsr(32).to_uint()
-  b32[7][2] = seed[1].lsr(32).to_uint()
-  b32[7][3] = seed[1].lsr(32).to_uint()
+  b32[7][0] = (seed[1] >> 32).to_uint()
+  b32[7][1] = (seed[1] >> 32).to_uint()
+  b32[7][2] = (seed[1] >> 32).to_uint()
+  b32[7][3] = (seed[1] >> 32).to_uint()
   b32[8][0] = seed[2].to_uint()
   b32[8][1] = seed[2].to_uint()
   b32[8][2] = seed[2].to_uint()
   b32[8][3] = seed[2].to_uint()
-  b32[9][0] = seed[2].lsr(32).to_uint()
-  b32[9][1] = seed[2].lsr(32).to_uint()
-  b32[9][2] = seed[2].lsr(32).to_uint()
-  b32[9][3] = seed[2].lsr(32).to_uint()
+  b32[9][0] = (seed[2] >> 32).to_uint()
+  b32[9][1] = (seed[2] >> 32).to_uint()
+  b32[9][2] = (seed[2] >> 32).to_uint()
+  b32[9][3] = (seed[2] >> 32).to_uint()
   b32[10][0] = seed[3].to_uint()
   b32[10][1] = seed[3].to_uint()
   b32[10][2] = seed[3].to_uint()
   b32[10][3] = seed[3].to_uint()
-  b32[11][0] = seed[3].lsr(32).to_uint()
-  b32[11][1] = seed[3].lsr(32).to_uint()
-  b32[11][2] = seed[3].lsr(32).to_uint()
-  b32[11][3] = seed[3].lsr(32).to_uint()
+  b32[11][0] = (seed[3] >> 32).to_uint()
+  b32[11][1] = (seed[3] >> 32).to_uint()
+  b32[11][2] = (seed[3] >> 32).to_uint()
+  b32[11][3] = (seed[3] >> 32).to_uint()
   b32[12][0] = counter + 0
   b32[12][1] = counter + 1
   b32[12][2] = counter + 2

@@ -818,21 +818,33 @@ pub fn fold_righti[T, U](self : Array[T], f : (Int, U, T) -> U, ~init : U) -> U 
 /// Removes consecutive repeated elements in the array according to the Eq trait.
 ///
 /// # Example
+///
 /// ```
 /// let v = [3, 4, 4, 5, 5, 5]
 /// v.dedup() // v = [3, 4, 5]
 /// ```
+///
+/// # Notes
+///
+/// Usually, you might want to sort the array before calling this function. For example:
+///
+/// ```
+/// let v = [3, 4, 5, 4, 5, 5]
+/// v.sort()
+/// v.dedup() // v = [3, 4, 5]
+/// ```
 pub fn dedup[T : Eq](self : Array[T]) -> Unit {
-  for i = 0; i < self.length(); i = i + 1 {
-    let mut j = i + 1
-    while j < self.length() {
-      if self[i] == self[j] {
-        self.remove(j) |> ignore
-      } else {
-        j = j + 1
-      }
+  if self.is_empty() {
+    return
+  }
+  let mut w = 1
+  for i = 1; i < self.length(); i = i + 1 {
+    if self[i] != self[w - 1] {
+      self[w] = self[i]
+      w = w + 1
     }
   }
+  self.unsafe_truncate_to_length(w)
 }
 
 /// Extract elements from the array according to the given function.

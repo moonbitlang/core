@@ -96,7 +96,7 @@ pub fn exp(self : Double) -> Double {
     insert_words(
       (0x3FF00000 + (k.reinterpret_as_uint() << 20).reinterpret_as_int())
       .to_int64()
-      .to_uint64(),
+      .reinterpret_as_uint64(),
       0,
     )
   } else {

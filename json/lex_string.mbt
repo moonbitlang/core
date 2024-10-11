@@ -13,11 +13,11 @@
 // limitations under the License.
 
 fn lex_string(ctx : ParseContext) -> String!ParseError {
-  let buf = StringBuilder::make()
+  let buf = StringBuilder::new()
   let mut start = ctx.offset
   fn flush(end : Int) {
     if start > 0 && end > start {
-      buf.add_substring(ctx.input, start, end)
+      buf.write_sub_string(ctx.input, start, end - start)
     }
   }
 
@@ -31,17 +31,17 @@ fn lex_string(ctx : ParseContext) -> String!ParseError {
       Some('\\') => {
         flush(ctx.offset - 1)
         match read_char(ctx) {
-          Some('b') => buf.add_char('\b')
-          Some('f') => buf.add_char('\x0C')
-          Some('n') => buf.add_char('\n')
-          Some('r') => buf.add_char('\r')
-          Some('t') => buf.add_char('\t')
-          Some('"') => buf.add_char('"')
-          Some('\\') => buf.add_char('\\')
-          Some('/') => buf.add_char('/')
+          Some('b') => buf.write_char('\b')
+          Some('f') => buf.write_char('\x0C')
+          Some('n') => buf.write_char('\n')
+          Some('r') => buf.write_char('\r')
+          Some('t') => buf.write_char('\t')
+          Some('"') => buf.write_char('"')
+          Some('\\') => buf.write_char('\\')
+          Some('/') => buf.write_char('/')
           Some('u') => {
             let c = lex_hex_digits!(ctx, 4)
-            buf.add_char(Char::from_int(c))
+            buf.write_char(Char::from_int(c))
           }
           Some(_) => invalid_char!(ctx, shift=-1)
           None => raise InvalidEof
@@ -70,13 +70,13 @@ fn lex_hex_digits(ctx : ParseContext, n : Int) -> Int!ParseError {
           if d > 15 {
             invalid_char!(ctx, shift=-1)
           }
-          r = r.lsl(4) | d
+          r = (r << 4) | d
         } else if c >= '0' {
           let d = c.to_int() - '0'.to_int()
           if d > 9 {
             invalid_char!(ctx, shift=-1)
           }
-          r = r.lsl(4) | d
+          r = (r << 4) | d
         } else {
           invalid_char!(ctx, shift=-1)
         }

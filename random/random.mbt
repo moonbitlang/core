@@ -53,7 +53,7 @@ test "next" {
 pub fn Rand::int(self : Rand, ~limit : Int = 0) -> Int {
   if limit == 0 {
     // Range [0, 2^31)
-    self.next().lsr(33).to_int()
+    (self.next() >> 33).to_int()
   } else {
     self.uint(limit=limit.reinterpret_as_uint()).reinterpret_as_int()
   }
@@ -72,7 +72,7 @@ pub fn Rand::int64(self : Rand, ~limit : Int64 = 0) -> Int64 {
     let mask : UInt64 = 1UL << 63
     return (self.next() & mask).to_int64()
   } else {
-    self.uint64(limit=limit.to_uint64()).to_int64()
+    self.uint64(limit=limit.reinterpret_as_uint64()).to_int64()
   }
 }
 
@@ -140,7 +140,7 @@ test "UInt64" {
 
 /// [double] returns a pseudo-random 64-bit Double in the range [0.0, 1.0)
 pub fn Rand::double(self : Rand) -> Double {
-  Double::convert_uint64((self.next() << 11).lsr(11)) /
+  Double::convert_uint64(self.next() << 11 >> 11) /
   Double::convert_uint64(1UL << 53)
 }
 

@@ -18,16 +18,6 @@ test "new" {
   assert_eq!(m.size(), 0)
 }
 
-type MyString String derive(Eq)
-
-impl Hash for MyString with hash(self) { self._.length() }
-
-impl Hash for MyString with hash_combine(self, hasher) {
-  hasher.combine_string(self._)
-}
-
-impl Show for MyString with output(self, logger) { logger.write_string(self._) }
-
 test "get" {
   let m = @hashmap.new()
   m.set("a", 1)
@@ -128,7 +118,7 @@ test "iteri" {
 }
 
 test "iter" {
-  let buf = Buffer::new(size_hint=20)
+  let buf = StringBuilder::new(size_hint=20)
   let map = @hashmap.of([(1, "one"), (2, "two"), (3, "three")])
   map
   .iter()

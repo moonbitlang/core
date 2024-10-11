@@ -21,10 +21,10 @@ test "UInt to byte" {
   inspect!(c, content="b'\\x0A'")
   let d = 255UL.to_byte()
   inspect!(d, content="b'\\xFF'")
-  let f = 24U.lsr(16)
+  let f = 24U >> 16
   let e = f.to_byte()
   inspect!(e, content="b'\\x00'")
-  let f = 24U.lsr(64)
+  let f = 24U >> 64
   let e = f.to_byte()
   inspect!(e, content="b'\\x18'")
   // to_byte

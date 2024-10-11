@@ -22,7 +22,7 @@
 /// 
 /// For efficiency considerations, it's recommended to use `Buffer` instead.
 pub fn String::from_array(chars : Array[Char]) -> String {
-  let buf = Buffer::new(size_hint=chars.length() * 4)
+  let buf = StringBuilder::new(size_hint=chars.length() * 4)
   for c in chars {
     buf.write_char(c)
   }
@@ -39,7 +39,7 @@ pub fn String::concat(
   strings : Array[String],
   ~separator : String = ""
 ) -> String {
-  let buf = Buffer::new()
+  let buf = StringBuilder::new()
   if separator == "" {
     for s in strings {
       buf.write_string(s)
@@ -102,37 +102,6 @@ pub fn to_array(self : String) -> Array[Char] {
       rv
     },
   )
-}
-
-/// @intrinsic %string.substring
-fn unsafe_substring(str : String, start : Int, end : Int) -> String {
-  let len = end - start
-  let buf = Buffer::new(size_hint=len)
-  buf.write_sub_string(str, start, len)
-  buf.to_string()
-}
-
-/// Get substring of the string from [start] to [end] exclusive.
-pub fn substring(
-  self : String,
-  ~start : Int = 0,
-  ~end : Int = self.length()
-) -> String {
-  if start < 0 {
-    abort("String::substring: start index is negative")
-  }
-  if end < 0 {
-    abort("String::substring: end index is negative")
-  }
-  if start > end {
-    abort("String::substring: start index is greater than end index")
-  }
-  if end > self.length() {
-    abort(
-      "String::substring: end index is greater than the length of the string",
-    )
-  }
-  unsafe_substring(self, start, end)
 }
 
 pub fn iter(self : String) -> Iter[Char] {
@@ -527,7 +496,7 @@ pub fn replace(self : String, ~old : String, ~new : String) -> String {
 
 /// Replace all old string in this string to new string.
 pub fn replace_all(self : String, ~old : String, ~new : String) -> String {
-  let buf = Buffer::new()
+  let buf = StringBuilder::new()
   let len = self.length()
   let old_len = old.length()
   if old_len == 0 {
@@ -559,7 +528,7 @@ pub fn replace_all(self : String, ~old : String, ~new : String) -> String {
 /// Converts this string to lowercase.
 pub fn to_lower(self : String) -> String {
   // TODO: deal with non-ascii characters
-  let buf = Buffer::new(size_hint=self.length())
+  let buf = StringBuilder::new(size_hint=self.length())
   for c in self {
     if c >= 'A' && c <= 'Z' {
       buf.write_char(Char::from_int(c.to_int() + 32))
@@ -573,7 +542,7 @@ pub fn to_lower(self : String) -> String {
 /// Converts this string to uppercase.
 pub fn to_upper(self : String) -> String {
   // TODO: deal with non-ascii characters
-  let buf = Buffer::new(size_hint=self.length())
+  let buf = StringBuilder::new(size_hint=self.length())
   for c in self {
     if c >= 'a' && c <= 'z' {
       buf.write_char(Char::from_int(c.to_int() - 32))
@@ -604,7 +573,7 @@ pub fn repeat(self : String, n : Int) -> String {
     return self
   }
   let len = self.length()
-  let buf = Buffer::new(size_hint=len * n)
+  let buf = StringBuilder::new(size_hint=len * n)
   for _ in 0..<n {
     buf.write_string(self)
   }
@@ -626,7 +595,7 @@ pub fn pad_start(
   if len >= total_width {
     self
   } else {
-    let buf = Buffer::new(size_hint=total_width)
+    let buf = StringBuilder::new(size_hint=total_width)
     for i = 0; i < total_width - len; i = i + 1 {
       buf.write_char(padding_char)
     }
@@ -646,7 +615,7 @@ pub fn pad_end(self : String, total_width : Int, padding_char : Char) -> String 
   if len >= total_width {
     self
   } else {
-    let buf = Buffer::new(size_hint=total_width)
+    let buf = StringBuilder::new(size_hint=total_width)
     buf.write_string(self)
     for i = 0; i < total_width - len; i = i + 1 {
       buf.write_char(padding_char)

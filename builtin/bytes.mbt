@@ -56,8 +56,8 @@ pub fn blit_from_string(
   let end_str_offset = str_offset + length
   for i = str_offset, j = bytes_offset; i < end_str_offset; i = i + 1, j = j + 2 {
     let c = str[i].to_int()
-    self[j] = c.land(0xff).to_byte()
-    self[j + 1] = c.lsr(8).to_byte()
+    self[j] = (c & 0xff).to_byte()
+    self[j + 1] = (c.reinterpret_as_uint() >> 8).reinterpret_as_int().to_byte()
   }
 }
 
@@ -69,24 +69,30 @@ pub fn copy(self : Bytes) -> Bytes {
 /// Fill utf8 encoded char `value` into byte sequence `self`, starting at `offset`.
 /// It return the length of bytes has been written.
 pub fn set_utf8_char(self : Bytes, offset : Int, value : Char) -> Int {
-  let code = value.to_int()
+  let code = value.to_int().reinterpret_as_uint()
   if code < 0x80 {
-    self[offset] = code.land(0x7F).lor(0x00).to_byte()
+    self[offset] = ((code & 0x7F) | 0x00).reinterpret_as_int().to_byte()
     1
   } else if code < 0x0800 {
-    self[offset] = code.lsr(6).land(0x1F).lor(0xC0).to_byte()
-    self[offset + 1] = code.land(0x3F).lor(0x80).to_byte()
+    self[offset] = (((code >> 6) & 0x1F) | 0xC0).reinterpret_as_int().to_byte()
+    self[offset + 1] = ((code & 0x3F) | 0x80).reinterpret_as_int().to_byte()
     2
   } else if code < 0x010000 {
-    self[offset] = code.lsr(12).land(0x0F).lor(0xE0).to_byte()
-    self[offset + 1] = code.lsr(6).land(0x3F).lor(0x80).to_byte()
-    self[offset + 2] = code.land(0x3F).lor(0x80).to_byte()
+    self[offset] = (((code >> 12) & 0x0F) | 0xE0).reinterpret_as_int().to_byte()
+    self[offset + 1] = (((code >> 6) & 0x3F) | 0x80)
+      .reinterpret_as_int()
+      .to_byte()
+    self[offset + 2] = ((code & 0x3F) | 0x80).reinterpret_as_int().to_byte()
     3
   } else if code < 0x110000 {
-    self[offset] = code.lsr(18).land(0x07).lor(0xF0).to_byte()
-    self[offset + 1] = code.lsr(12).land(0x3F).lor(0x80).to_byte()
-    self[offset + 2] = code.lsr(6).land(0x3F).lor(0x80).to_byte()
-    self[offset + 3] = code.land(0x3F).lor(0x80).to_byte()
+    self[offset] = (((code >> 18) & 0x07) | 0xF0).reinterpret_as_int().to_byte()
+    self[offset + 1] = (((code >> 12) & 0x3F) | 0x80)
+      .reinterpret_as_int()
+      .to_byte()
+    self[offset + 2] = (((code >> 6) & 0x3F) | 0x80)
+      .reinterpret_as_int()
+      .to_byte()
+    self[offset + 3] = ((code & 0x3F) | 0x80).reinterpret_as_int().to_byte()
     4
   } else {
     abort("Char out of range")
@@ -96,19 +102,19 @@ pub fn set_utf8_char(self : Bytes, offset : Int, value : Char) -> Int {
 /// Fill utf16 encoded char `value` into byte sequence `self`, starting at `offset`.
 /// It return the length of bytes has been written.
 pub fn set_utf16_char(self : Bytes, offset : Int, value : Char) -> Int {
-  let code = value.to_int()
+  let code = value.to_int().reinterpret_as_uint()
   if code < 0x10000 {
-    self[offset] = code.land(0xFF).to_byte()
-    self[offset + 1] = code.lsr(8).to_byte()
+    self[offset] = (code & 0xFF).reinterpret_as_int().to_byte()
+    self[offset + 1] = (code >> 8).reinterpret_as_int().to_byte()
     2
   } else if code < 0x110000 {
     let hi = code - 0x10000
-    let lo = hi.lsr(10) | 0xD800
+    let lo = (hi >> 10) | 0xD800
     let hi = (hi & 0x3FF) | 0xDC00
-    self[offset] = lo.land(0xFF).to_byte()
-    self[offset + 1] = lo.lsr(8).to_byte()
-    self[offset + 2] = hi.land(0xFF).to_byte()
-    self[offset + 3] = hi.lsr(8).to_byte()
+    self[offset] = (lo & 0xFF).reinterpret_as_int().to_byte()
+    self[offset + 1] = (lo >> 8).reinterpret_as_int().to_byte()
+    self[offset + 2] = (hi & 0xFF).reinterpret_as_int().to_byte()
+    self[offset + 3] = (hi >> 8).reinterpret_as_int().to_byte()
     4
   } else {
     abort("Char out of range")

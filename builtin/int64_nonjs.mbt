@@ -32,18 +32,22 @@ pub fn Int64::lor(self : Int64, other : Int64) -> Int64 = "%i64_lor"
 
 pub fn Int64::lxor(self : Int64, other : Int64) -> Int64 = "%i64_lxor"
 
+/// @alert deprecated "Use infix operator `<<` instead"
 pub fn Int64::lsl(self : Int64, other : Int) -> Int64 = "%i64_shl"
 
+/// @alert deprecated "Use infix operator `<<` instead"
 pub fn Int64::shl(self : Int64, other : Int) -> Int64 = "%i64_shl"
 
-pub fn Int64::op_shl(self : Int64, other : Int) -> Int64 = "%i64_shl"
-
+/// @alert deprecated "Use UInt64 type and infix operator `>>` instead"
 pub fn Int64::lsr(self : Int64, other : Int) -> Int64 = "%u64.shr"
 
-/// @alert deprecated "Use shr instead"
+/// @alert deprecated "Use infix operator `>>` instead"
 pub fn Int64::asr(self : Int64, other : Int) -> Int64 = "%i64_shr"
 
+/// @alert deprecated "Use infix operator `>>` instead"
 pub fn Int64::shr(self : Int64, other : Int) -> Int64 = "%i64_shr"
+
+pub fn Int64::op_shl(self : Int64, other : Int) -> Int64 = "%i64_shl"
 
 pub fn Int64::op_shr(self : Int64, other : Int) -> Int64 = "%i64_shr"
 
@@ -83,7 +87,10 @@ pub fn Double::reinterpret_as_u64(self : Double) -> UInt64 = "%f64_to_i64_reinte
 
 pub fn Double::convert_uint64(val : UInt64) -> Double = "%u64.to_f64"
 
+/// @alert deprecated "Use `reinterpret_as_uint64` instead"
 pub fn Int64::to_uint64(self : Int64) -> UInt64 = "%i64.to_u64_reinterpret"
+
+pub fn Int64::reinterpret_as_uint64(self : Int64) -> UInt64 = "%i64.to_u64_reinterpret"
 
 pub fn UInt64::to_int64(self : UInt64) -> Int64 = "%u64.to_i64_reinterpret"
 
@@ -115,13 +122,19 @@ pub fn UInt64::lxor(self : UInt64, other : UInt64) -> UInt64 = "%u64.bitxor"
 
 pub fn UInt64::lnot(self : UInt64) -> UInt64 = "%u64.bitnot"
 
+/// @alert deprecated "Use infix operator `<<` instead"
 pub fn UInt64::lsl(self : UInt64, shift : Int) -> UInt64 = "%u64.shl"
 
+/// @alert deprecated "Use infix operator `<<` instead"
 pub fn UInt64::shl(self : UInt64, shift : Int) -> UInt64 = "%u64.shl"
 
-pub fn UInt64::op_shl(self : UInt64, shift : Int) -> UInt64 = "%u64.shl"
+/// @alert deprecated "Use infix operator `>>` instead"
+pub fn UInt64::shr(self : UInt64, shift : Int) -> UInt64 = "%u64.shr"
 
+/// @alert deprecated "Use infix operator `>>` instead"
 pub fn UInt64::lsr(self : UInt64, shift : Int) -> UInt64 = "%u64.shr"
+
+pub fn UInt64::op_shl(self : UInt64, shift : Int) -> UInt64 = "%u64.shl"
 
 pub fn UInt64::op_shr(self : UInt64, shift : Int) -> UInt64 = "%u64.shr"
 
@@ -130,7 +143,5 @@ pub fn UInt64::clz(self : UInt64) -> Int = "%u64.clz"
 pub fn UInt64::ctz(self : UInt64) -> Int = "%u64.ctz"
 
 pub fn UInt64::popcnt(self : UInt64) -> Int = "%u64.popcnt"
-
-pub fn UInt64::shr(self : UInt64, shift : Int) -> UInt64 = "%u64.shr"
 
 pub fn UInt64::to_float(self : UInt64) -> Float = "%u64.to_f32"

@@ -3,7 +3,7 @@ package moonbitlang/core/immut/internal/sparse_array
 // Values
 
 // Types and methods
-pub type Bitset Int
+pub type Bitset UInt
 impl Bitset {
   add(Self, Int) -> Self
   has(Self, Int) -> Bool

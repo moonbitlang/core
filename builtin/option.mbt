@@ -35,8 +35,3 @@ pub fn unwrap[X](self : X?) -> X {
     Some(x) => x
   }
 }
-
-test "panic" {
-  let _ : Int = Option::None.unwrap()
-
-}

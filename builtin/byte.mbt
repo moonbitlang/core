@@ -55,28 +55,6 @@ pub impl Hash for Byte with hash_combine(self, hasher) {
   hasher.combine_byte(self)
 }
 
-test "panic alphabet function coverage" {
-  // Test cases to cover all branches in the alphabet function
-  inspect!(alphabet(0), content="0")
-  inspect!(alphabet(1), content="1")
-  inspect!(alphabet(2), content="2")
-  inspect!(alphabet(3), content="3")
-  inspect!(alphabet(4), content="4")
-  inspect!(alphabet(5), content="5")
-  inspect!(alphabet(6), content="6")
-  inspect!(alphabet(7), content="7")
-  inspect!(alphabet(8), content="8")
-  inspect!(alphabet(9), content="9")
-  inspect!(alphabet(10), content="A")
-  inspect!(alphabet(11), content="B")
-  inspect!(alphabet(12), content="C")
-  inspect!(alphabet(13), content="D")
-  inspect!(alphabet(14), content="E")
-  inspect!(alphabet(15), content="F")
-  // Test for the panic case
-  alphabet(16) |> ignore
-}
-
 pub fn Byte::default() -> Byte {
   b'\x00'
 }
@@ -86,21 +64,35 @@ pub fn Byte::lnot(self : Byte) -> Byte {
 }
 
 pub fn Byte::land(self : Byte, that : Byte) -> Byte {
-  self.to_int().land(that.to_int()).to_byte()
+  (self.to_int() & that.to_int()).to_byte()
 }
 
 pub fn Byte::lor(self : Byte, that : Byte) -> Byte {
-  self.to_int().lor(that.to_int()).to_byte()
+  (self.to_int() | that.to_int()).to_byte()
 }
 
 pub fn Byte::lxor(self : Byte, that : Byte) -> Byte {
-  self.to_int().lxor(that.to_int()).to_byte()
+  (self.to_int() ^ that.to_int()).to_byte()
 }
 
+pub fn Byte::to_uint(self : Byte) -> UInt {
+  self.to_int().reinterpret_as_uint()
+}
+
+pub fn Byte::op_shl(self : Byte, count : Int) -> Byte {
+  (self.to_int() << count).to_byte()
+}
+
+pub fn Byte::op_shr(self : Byte, count : Int) -> Byte {
+  (self.to_uint() >> count).reinterpret_as_int().to_byte()
+}
+
+/// @alert deprecated "Use infix operator `<<` instead"
 pub fn Byte::lsl(self : Byte, count : Int) -> Byte {
-  self.to_int().lsl(count).to_byte()
+  (self.to_int() << count).to_byte()
 }
 
+/// @alert deprecated "Use infix operator `>>` instead"
 pub fn Byte::lsr(self : Byte, count : Int) -> Byte {
-  self.to_int().lsr(count).to_byte()
+  (self.to_uint() >> count).reinterpret_as_int().to_byte()
 }
