@@ -1,8 +1,8 @@
 import argparse
 import json
-from scripts.readcoverage import read_coverage
-from scripts.gettest import generate_test_code
-from scripts.writedown import writedown_and_test
+from readcoverage import read_coverage
+from gettest import generate_test_code
+from writedown import writedown_and_test
 
 
 def main():
