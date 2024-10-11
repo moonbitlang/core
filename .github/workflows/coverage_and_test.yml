@@ -74,6 +74,7 @@ jobs:
           
       - name: initial moon test
         run: moon test --enable-coverage
+             moon coverage report -f coveralls
 
       - name: initial coverage report
         run: |
@@ -96,7 +97,9 @@ jobs:
             python scripts/testagent.py --api_key ${{ secrets.API_KEY }}
 
             moon test --enable-coverage
-
+            
+            moon coverage report -f coveralls
+            
             moon coverage report -f summary summary > coverage_summary.txt
           
             new_coverage=$(cat coverage_summary.txt | grep 'Total Coverage' | awk '{print $NF}' | tr -d '%')
