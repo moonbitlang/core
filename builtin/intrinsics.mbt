@@ -66,7 +66,9 @@ pub fn Int::lsl(self : Int, other : Int) -> Int = "%i32_shl"
 pub fn Int::shl(self : Int, other : Int) -> Int = "%i32_shl"
 
 /// @alert deprecated "Use UInt type and infix operator `>>` instead"
-pub fn Int::lsr(self : Int, other : Int) -> Int = "%u32.shr"
+pub fn Int::lsr(self : Int, other : Int) -> Int {
+  (self.reinterpret_as_uint() >> other).reinterpret_as_int()
+}
 
 /// @alert deprecated "Use infix operator `>>` instead"
 pub fn Int::asr(self : Int, other : Int) -> Int = "%i32_shr"
