@@ -268,7 +268,7 @@ pub fn concat[A](self : T[A], other : T[A]) -> T[A] {
 /// # Example
 ///
 /// ```
-/// let ls = of([1, 2, 3, 4, 5]).concat(of([6, 7, 8, 9, 10]))
+/// let ls = of([1, 2, 3, 4, 5]).rev_concat(of([6, 7, 8, 9, 10]))
 /// println(ls) // output: @list.of([5, 4, 3, 2, 1, 6, 7, 8, 9, 10])
 /// ```
 pub fn rev_concat[A](self : T[A], other : T[A]) -> T[A] {
