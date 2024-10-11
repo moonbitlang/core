@@ -72,7 +72,7 @@ pub fn Rand::int64(self : Rand, ~limit : Int64 = 0) -> Int64 {
     let mask : UInt64 = 1UL << 63
     return (self.next() & mask).to_int64()
   } else {
-    self.uint64(limit=limit.to_uint64()).to_int64()
+    self.uint64(limit=limit.reinterpret_as_uint64()).to_int64()
   }
 }
 

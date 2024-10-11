@@ -80,7 +80,7 @@ pub fn BigInt::from_int64(n : Int64) -> BigInt {
     return { limbs: FixedArray::make(1, 0), sign: Positive, len: 1 }
   }
   let limbs = FixedArray::make(64 / radix_bit_len, 0U)
-  let mut m = (if n < 0L { -n } else { n }).to_uint64()
+  let mut m = (if n < 0L { -n } else { n }).reinterpret_as_uint64()
   let mut i = 0
   while m > 0 {
     limbs[i] = (m % radix).to_uint()
@@ -157,10 +157,10 @@ pub fn op_sub(self : BigInt, other : BigInt) -> BigInt {
     }
     let diff = a - b - borrow // 0 <= a < radix, 0 <= b < radix, 0 <= borrow <= 1 => -radix <= diff < radix
     if diff < 0L {
-      limbs[i] = (diff + radix.to_int64()).to_uint64().to_uint() // -radix <= diff < 0, so we don't need to mod by radix
+      limbs[i] = (diff + radix.to_int64()).reinterpret_as_uint64().to_uint() // -radix <= diff < 0, so we don't need to mod by radix
       borrow = 1L
     } else {
-      limbs[i] = diff.to_uint64().to_uint() // 0 <= diff < radix, so we don't need to mod by radix
+      limbs[i] = diff.reinterpret_as_uint64().to_uint() // 0 <= diff < radix, so we don't need to mod by radix
       borrow = 0L
     }
     i += 1
@@ -369,13 +369,13 @@ fn grade_school_div(self : BigInt, other : BigInt) -> (BigInt, BigInt) {
       carry += qh * b[j]
       borrow += a[i + j].to_int64()
       borrow -= (carry & radix_mask).to_int64()
-      a[i + j] = (borrow & radix_mask.to_int64()).to_uint64()
+      a[i + j] = (borrow & radix_mask.to_int64()).reinterpret_as_uint64()
       borrow = borrow >> radix_bit_len
       carry = carry >> radix_bit_len
     }
     borrow = borrow + a[i + b_len].to_int64()
     borrow -= carry.to_int64()
-    a[i + b_len] = (borrow & radix_mask.to_int64()).to_uint64()
+    a[i + b_len] = (borrow & radix_mask.to_int64()).reinterpret_as_uint64()
     borrow = borrow >> radix_bit_len
     if borrow < 0L {
       carry = 0UL
