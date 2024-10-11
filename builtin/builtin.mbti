@@ -404,7 +404,7 @@ impl Int {
   to_string(Int) -> String
   to_uint(Int) -> UInt //deprecated
   until(Int, Int, ~step : Int = .., ~inclusive : Bool = ..) -> Iter[Int]
-  upto(Int, Int, ~inclusive : Bool = ..) -> Iter[Int]
+  upto(Int, Int, ~inclusive : Bool = ..) -> Iter[Int] //deprecated
 }
 impl Int64 {
   asr(Int64, Int) -> Int64 //deprecated
@@ -439,7 +439,7 @@ impl Int64 {
   to_string(Int64) -> String
   to_uint64(Int64) -> UInt64
   until(Int64, Int64, ~step : Int64 = .., ~inclusive : Bool = ..) -> Iter[Int64]
-  upto(Int64, Int64, ~inclusive : Bool = ..) -> Iter[Int64]
+  upto(Int64, Int64, ~inclusive : Bool = ..) -> Iter[Int64] //deprecated
 }
 impl UInt {
   clz(UInt) -> Int
@@ -469,7 +469,7 @@ impl UInt {
   to_string(UInt) -> String
   to_uint64(UInt) -> UInt64
   trunc_double(Double) -> UInt
-  upto(UInt, UInt, ~inclusive : Bool = ..) -> Iter[UInt]
+  upto(UInt, UInt, ~inclusive : Bool = ..) -> Iter[UInt] //deprecated
 }
 impl UInt64 {
   clz(UInt64) -> Int
@@ -502,7 +502,7 @@ impl UInt64 {
   to_string(UInt64) -> String
   to_uint(UInt64) -> UInt
   trunc_double(Double) -> UInt64
-  upto(UInt64, UInt64, ~inclusive : Bool = ..) -> Iter[UInt64]
+  upto(UInt64, UInt64, ~inclusive : Bool = ..) -> Iter[UInt64] //deprecated
 }
 impl Float {
   compare(Float, Float) -> Int
@@ -518,7 +518,7 @@ impl Float {
   to_double(Float) -> Double
   to_json(Float) -> Json
   until(Float, Float, ~step : Float = .., ~inclusive : Bool = ..) -> Iter[Float]
-  upto(Float, Float, ~inclusive : Bool = ..) -> Iter[Float]
+  upto(Float, Float, ~inclusive : Bool = ..) -> Iter[Float] //deprecated
 }
 impl Double {
   compare(Double, Double) -> Int
@@ -540,7 +540,7 @@ impl Double {
   to_int64(Double) -> Int64
   to_json(Double) -> Json
   until(Double, Double, ~step : Double = .., ~inclusive : Bool = ..) -> Iter[Double]
-  upto(Double, Double, ~inclusive : Bool = ..) -> Iter[Double]
+  upto(Double, Double, ~inclusive : Bool = ..) -> Iter[Double] //deprecated
 }
 impl String {
   escape(String) -> String
