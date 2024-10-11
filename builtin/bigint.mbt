@@ -415,8 +415,7 @@ fn grade_school_div(self : BigInt, other : BigInt) -> (BigInt, BigInt) {
 
 // Bitwise Operations
 
-/// Left shift a bigint
-/// /// @alert deprecate "Use shl instead"
+/// @alert deprecated "Use infix bitwise operator `<<` instead"
 pub fn lsl(self : BigInt, n : Int) -> BigInt {
   if n < 0 {
     abort("negative shift count")
@@ -455,6 +454,7 @@ pub fn lsl(self : BigInt, n : Int) -> BigInt {
 /// Left shift a bigint
 /// The sign of the result is the same as the sign of the input.
 /// Only the absolute value is shifted.
+/// 
 pub fn op_shl(self : BigInt, n : Int) -> BigInt {
   if n < 0 {
     abort("negative shift count")
@@ -491,6 +491,8 @@ pub fn op_shl(self : BigInt, n : Int) -> BigInt {
 /// Left shift a bigint
 /// The sign of the result is the same as the sign of the input.
 /// Only the absolute value is shifted.
+/// 
+/// @alert deprecated "Use infix bitwise operator `<<` instead"
 pub fn shl(self : BigInt, n : Int) -> BigInt {
   self << n
 }
@@ -539,10 +541,13 @@ pub fn op_shr(self : BigInt, n : Int) -> BigInt {
 /// Right shift a bigint
 /// The sign of the result is the same as the sign of the input.
 /// Only the absolute value is shifted.
+/// 
+/// @alert deprecated "Use infix bitwise operator `>>` instead"
 pub fn shr(self : BigInt, n : Int) -> BigInt {
   self >> n
 }
 
+/// @alert deprecated "Use infix bitwise operator `>>` instead"
 pub fn asr(self : BigInt, n : Int) -> BigInt {
   self >> n
 }

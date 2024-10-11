@@ -135,7 +135,7 @@ impl ArrayView {
 
 type BigInt
 impl BigInt {
-  asr(Self, Int) -> Self
+  asr(Self, Int) -> Self //deprecated
   compare(Self, Self) -> Int
   from_hex(String) -> Self
   from_int(Int) -> Self
@@ -143,7 +143,7 @@ impl BigInt {
   from_octets(Bytes, ~signum : Int = ..) -> Self
   from_string(String) -> Self
   is_zero(Self) -> Bool
-  lsl(Self, Int) -> Self
+  lsl(Self, Int) -> Self //deprecated
   op_add(Self, Self) -> Self
   op_div(Self, Self) -> Self
   op_equal(Self, Self) -> Bool
@@ -154,8 +154,8 @@ impl BigInt {
   op_shr(Self, Int) -> Self
   op_sub(Self, Self) -> Self
   pow(Self, Self, ~modulus : Self = ..) -> Self
-  shl(Self, Int) -> Self
-  shr(Self, Int) -> Self
+  shl(Self, Int) -> Self //deprecated
+  shr(Self, Int) -> Self //deprecated
   to_hex(Self, ~uppercase : Bool = ..) -> String
   to_json(Self) -> Json
   to_octets(Self, ~length? : Int) -> Bytes
@@ -345,8 +345,8 @@ impl Byte {
   land(Byte, Byte) -> Byte
   lnot(Byte) -> Byte
   lor(Byte, Byte) -> Byte
-  lsl(Byte, Int) -> Byte
-  lsr(Byte, Int) -> Byte
+  lsl(Byte, Int) -> Byte //deprecated
+  lsr(Byte, Int) -> Byte //deprecated
   lxor(Byte, Byte) -> Byte
   op_equal(Byte, Byte) -> Bool
   op_shl(Byte, Int) -> Byte
@@ -367,7 +367,7 @@ impl Char {
   to_string(Char) -> String
 }
 impl Int {
-  asr(Int, Int) -> Int
+  asr(Int, Int) -> Int //deprecated
   clz(Int) -> Int
   compare(Int, Int) -> Int
   ctz(Int) -> Int
@@ -379,8 +379,8 @@ impl Int {
   land(Int, Int) -> Int
   lnot(Int) -> Int
   lor(Int, Int) -> Int
-  lsl(Int, Int) -> Int
-  lsr(Int, Int) -> Int
+  lsl(Int, Int) -> Int //deprecated
+  lsr(Int, Int) -> Int //deprecated
   lxor(Int, Int) -> Int
   op_add(Int, Int) -> Int
   op_div(Int, Int) -> Int
@@ -394,8 +394,8 @@ impl Int {
   popcnt(Int) -> Int
   reinterpret_as_float(Int) -> Float
   reinterpret_as_uint(Int) -> UInt
-  shl(Int, Int) -> Int
-  shr(Int, Int) -> Int
+  shl(Int, Int) -> Int //deprecated
+  shr(Int, Int) -> Int //deprecated
   to_byte(Int) -> Byte
   to_double(Int) -> Double
   to_float(Int) -> Float
@@ -404,7 +404,7 @@ impl Int {
   to_string(Int) -> String
   to_uint(Int) -> UInt //deprecated
   until(Int, Int, ~step : Int = .., ~inclusive : Bool = ..) -> Iter[Int]
-  upto(Int, Int, ~inclusive : Bool = ..) -> Iter[Int]
+  upto(Int, Int, ~inclusive : Bool = ..) -> Iter[Int] //deprecated
 }
 impl Int64 {
   asr(Int64, Int) -> Int64 //deprecated
@@ -415,8 +415,8 @@ impl Int64 {
   land(Int64, Int64) -> Int64
   lnot(Int64) -> Int64
   lor(Int64, Int64) -> Int64
-  lsl(Int64, Int) -> Int64
-  lsr(Int64, Int) -> Int64
+  lsl(Int64, Int) -> Int64 //deprecated
+  lsr(Int64, Int) -> Int64 //deprecated
   lxor(Int64, Int64) -> Int64
   op_add(Int64, Int64) -> Int64
   op_div(Int64, Int64) -> Int64
@@ -430,8 +430,8 @@ impl Int64 {
   popcnt(Int64) -> Int
   reinterpret_as_double(Int64) -> Double
   reinterpret_as_uint64(Int64) -> UInt64
-  shl(Int64, Int) -> Int64
-  shr(Int64, Int) -> Int64
+  shl(Int64, Int) -> Int64 //deprecated
+  shr(Int64, Int) -> Int64 //deprecated
   to_byte(Int64) -> Byte
   to_double(Int64) -> Double
   to_float(Int64) -> Float
@@ -440,7 +440,7 @@ impl Int64 {
   to_string(Int64) -> String
   to_uint64(Int64) -> UInt64 //deprecated
   until(Int64, Int64, ~step : Int64 = .., ~inclusive : Bool = ..) -> Iter[Int64]
-  upto(Int64, Int64, ~inclusive : Bool = ..) -> Iter[Int64]
+  upto(Int64, Int64, ~inclusive : Bool = ..) -> Iter[Int64] //deprecated
 }
 impl UInt {
   clz(UInt) -> Int
@@ -449,8 +449,8 @@ impl UInt {
   land(UInt, UInt) -> UInt
   lnot(UInt) -> UInt
   lor(UInt, UInt) -> UInt
-  lsl(UInt, Int) -> UInt
-  lsr(UInt, Int) -> UInt
+  lsl(UInt, Int) -> UInt //deprecated
+  lsr(UInt, Int) -> UInt //deprecated
   lxor(UInt, UInt) -> UInt
   op_add(UInt, UInt) -> UInt
   op_div(UInt, UInt) -> UInt
@@ -463,14 +463,14 @@ impl UInt {
   op_sub(UInt, UInt) -> UInt
   popcnt(UInt) -> Int
   reinterpret_as_int(UInt) -> Int
-  shl(UInt, Int) -> UInt
-  shr(UInt, Int) -> UInt
+  shl(UInt, Int) -> UInt //deprecated
+  shr(UInt, Int) -> UInt //deprecated
   to_float(UInt) -> Float
   to_int(UInt) -> Int //deprecated
   to_string(UInt) -> String
   to_uint64(UInt) -> UInt64
   trunc_double(Double) -> UInt
-  upto(UInt, UInt, ~inclusive : Bool = ..) -> Iter[UInt]
+  upto(UInt, UInt, ~inclusive : Bool = ..) -> Iter[UInt] //deprecated
 }
 impl UInt64 {
   clz(UInt64) -> Int
@@ -481,8 +481,8 @@ impl UInt64 {
   land(UInt64, UInt64) -> UInt64
   lnot(UInt64) -> UInt64
   lor(UInt64, UInt64) -> UInt64
-  lsl(UInt64, Int) -> UInt64
-  lsr(UInt64, Int) -> UInt64
+  lsl(UInt64, Int) -> UInt64 //deprecated
+  lsr(UInt64, Int) -> UInt64 //deprecated
   lxor(UInt64, UInt64) -> UInt64
   op_add(UInt64, UInt64) -> UInt64
   op_div(UInt64, UInt64) -> UInt64
@@ -493,8 +493,8 @@ impl UInt64 {
   op_shr(UInt64, Int) -> UInt64
   op_sub(UInt64, UInt64) -> UInt64
   popcnt(UInt64) -> Int
-  shl(UInt64, Int) -> UInt64
-  shr(UInt64, Int) -> UInt64
+  shl(UInt64, Int) -> UInt64 //deprecated
+  shr(UInt64, Int) -> UInt64 //deprecated
   to_byte(UInt64) -> Byte
   to_double(UInt64) -> Double
   to_float(UInt64) -> Float
@@ -503,7 +503,7 @@ impl UInt64 {
   to_string(UInt64) -> String
   to_uint(UInt64) -> UInt
   trunc_double(Double) -> UInt64
-  upto(UInt64, UInt64, ~inclusive : Bool = ..) -> Iter[UInt64]
+  upto(UInt64, UInt64, ~inclusive : Bool = ..) -> Iter[UInt64] //deprecated
 }
 impl Float {
   compare(Float, Float) -> Int
@@ -519,7 +519,7 @@ impl Float {
   to_double(Float) -> Double
   to_json(Float) -> Json
   until(Float, Float, ~step : Float = .., ~inclusive : Bool = ..) -> Iter[Float]
-  upto(Float, Float, ~inclusive : Bool = ..) -> Iter[Float]
+  upto(Float, Float, ~inclusive : Bool = ..) -> Iter[Float] //deprecated
 }
 impl Double {
   compare(Double, Double) -> Int
@@ -541,7 +541,7 @@ impl Double {
   to_int64(Double) -> Int64
   to_json(Double) -> Json
   until(Double, Double, ~step : Double = .., ~inclusive : Bool = ..) -> Iter[Double]
-  upto(Double, Double, ~inclusive : Bool = ..) -> Iter[Double]
+  upto(Double, Double, ~inclusive : Bool = ..) -> Iter[Double] //deprecated
 }
 impl String {
   escape(String) -> String
