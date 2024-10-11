@@ -23,6 +23,7 @@
 /// # Returns
 ///
 /// Returns an iterator that iterates over the range of Int from `start` to `end - 1`.
+/// @alert deprecated "Use `..<` in for loop or `until` method instead"
 pub fn upto(self : Int, end : Int, ~inclusive : Bool = false) -> Iter[Int] {
   fn(yield) {
     let mut i = self
@@ -51,6 +52,7 @@ pub fn upto(self : Int, end : Int, ~inclusive : Bool = false) -> Iter[Int] {
 /// # Returns
 /// 
 /// Returns an iterator that iterates over the range of UInt from `start` to `end - 1`.
+/// @alert deprecated "Use `..<` in for loop or `until` method instead"
 pub fn upto(self : UInt, end : UInt, ~inclusive : Bool = false) -> Iter[UInt] {
   fn(yield) {
     let mut i = self
@@ -79,6 +81,7 @@ pub fn upto(self : UInt, end : UInt, ~inclusive : Bool = false) -> Iter[UInt] {
 /// # Returns
 /// 
 /// Returns an iterator that iterates over the range of UInt64 from `start` to `end - 1`.
+/// @alert deprecated "Use `..<` in for loop or `until` method instead"
 pub fn upto(
   self : UInt64,
   end : UInt64,
@@ -111,6 +114,7 @@ pub fn upto(
 /// # Returns
 ///
 /// Returns an iterator that iterates over the range of Int64 from `start` to `end - 1`.
+/// @alert deprecated "Use `..<` in for loop or `until` method instead"
 pub fn upto(
   self : Int64,
   end : Int64,
@@ -143,6 +147,7 @@ pub fn upto(
 /// # Returns
 ///
 /// Returns an iterator that iterates over the range of Float from `start` to `end - 1`.
+/// @alert deprecated "Use `..<` in for loop or `until` method instead"
 pub fn upto(
   self : Float,
   end : Float,
@@ -175,6 +180,7 @@ pub fn upto(
 /// # Returns
 ///
 /// Returns an iterator that iterates over the range of Double from `start` to `end - 1`.
+/// @alert deprecated "Use `..<` in for loop or `until` method instead"
 pub fn upto(
   self : Double,
   end : Double,
