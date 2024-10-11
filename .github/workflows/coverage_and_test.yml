@@ -57,7 +57,6 @@ jobs:
 
       - name: Install dependencies
         run: |
-          sudo apt install python3-pip
           pip install -r scripts/requirements.txt
 
   test:
@@ -65,7 +64,12 @@ jobs:
     continue-on-error: true
     steps:
       - uses: actions/checkout@v4
-
+      
+      - name: install
+        run: |
+          curl -fsSL https://cli.moonbitlang.com/install/unix.sh | bash
+          echo "$HOME/.moon/bin" >> $GITHUB_PATH
+          
       - name: initial moon test
         run: moon test --enable-coverage
 
