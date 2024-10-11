@@ -20,8 +20,6 @@ fn op_get[T](self : UninitializedArray[T], index : Int) -> T = "%fixedarray.get"
 
 fn op_set[T](self : UninitializedArray[T], index : Int, value : T) = "%fixedarray.set"
 
-fn set_null[T](self : UninitializedArray[T], index : Int) = "%fixedarray.set_null"
-
 fn UninitializedArray::unsafe_blit[T](
   dst : UninitializedArray[T],
   dst_offset : Int,
