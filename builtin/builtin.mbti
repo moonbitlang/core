@@ -348,9 +348,11 @@ impl Byte {
   lsl(Byte, Int) -> Byte //deprecated
   lsr(Byte, Int) -> Byte //deprecated
   lxor(Byte, Byte) -> Byte
+  op_add(Byte, Byte) -> Byte
   op_equal(Byte, Byte) -> Bool
   op_shl(Byte, Int) -> Byte
   op_shr(Byte, Int) -> Byte
+  op_sub(Byte, Byte) -> Byte
   to_float(Byte) -> Float
   to_int(Byte) -> Int
   to_int64(Byte) -> Int64

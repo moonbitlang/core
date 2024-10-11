@@ -13,11 +13,19 @@
 // limitations under the License.
 
 pub fn op_equal(self : Byte, that : Byte) -> Bool {
-  return self.to_int() == that.to_int()
+  self.to_int() == that.to_int()
+}
+
+pub fn op_add(self : Byte, that : Byte) -> Byte {
+  (self.to_int() + that.to_int()).to_byte()
+}
+
+pub fn op_sub(self : Byte, that : Byte) -> Byte {
+  (self.to_int() - that.to_int()).to_byte()
 }
 
 pub fn compare(self : Byte, that : Byte) -> Int {
-  return self.to_int().compare(that.to_int())
+  self.to_int().compare(that.to_int())
 }
 
 fn alphabet(self : Int) -> String {
