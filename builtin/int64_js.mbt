@@ -33,9 +33,9 @@ fn MyInt64::op_neg(self : MyInt64) -> MyInt64 {
 fn MyInt64::add_hi_lo(self : MyInt64, bhi : Int, blo : Int) -> MyInt64 {
   let { hi: ahi, lo: alo } = self
   let lo = alo + blo
-  let s = lo.asr(31)
-  let as_ = alo.asr(31)
-  let bs = blo.asr(31)
+  let s = lo >> 31
+  let as_ = alo >> 31
+  let bs = blo >> 31
   let c = ((as_ & bs) | (s.lnot() & (as_ ^ bs))) & 1
   let hi = ahi + bhi + c
   { hi, lo }
@@ -56,35 +56,42 @@ fn MyInt64::op_sub(self : MyInt64, other : MyInt64) -> MyInt64 {
 fn MyInt64::op_mul(self : MyInt64, other : MyInt64) -> MyInt64 {
   let { hi: ahi, lo: alo } = self
   let { hi: bhi, lo: blo } = other
-  let a48 = ahi.lsr(16)
+  let ahi = ahi.reinterpret_as_uint()
+  let alo = alo.reinterpret_as_uint()
+  let bhi = bhi.reinterpret_as_uint()
+  let blo = blo.reinterpret_as_uint()
+  let a48 = ahi >> 16
   let a32 = ahi & 0xffff
-  let a16 = alo.lsr(16)
+  let a16 = alo >> 16
   let a00 = alo & 0xffff
-  let b48 = bhi.lsr(16)
+  let b48 = bhi >> 16
   let b32 = bhi & 0xffff
-  let b16 = blo.lsr(16)
+  let b16 = blo >> 16
   let b00 = blo & 0xffff
   let c00 = a00 * b00
-  let c16 = c00.lsr(16)
+  let c16 = c00 >> 16
   let c00 = c00 & 0xffff
   let c16 = c16 + a16 * b00
-  let c32 = c16.lsr(16)
+  let c32 = c16 >> 16
   let c16 = c16 & 0xffff
   let c16 = c16 + a00 * b16
-  let c32 = c32 + c16.lsr(16)
+  let c32 = c32 + (c16 >> 16)
   let c16 = c16 & 0xffff
   let c32 = c32 + a32 * b00
-  let c48 = c32.lsr(16)
+  let c48 = c32 >> 16
   let c32 = c32 & 0xffff
   let c32 = c32 + a16 * b16
-  let c48 = c48 + c32.lsr(16)
+  let c48 = c48 + (c32 >> 16)
   let c32 = c32 & 0xffff
   let c32 = c32 + a00 * b32
-  let c48 = c48 + c32.lsr(16)
+  let c48 = c48 + (c32 >> 16)
   let c32 = c32 & 0xffff
   let c48 = c48 + a48 * b00 + a32 * b16 + a16 * b32 + a00 * b48
   let c48 = c48 & 0xffff
-  { hi: c48.lsl(16) | c32, lo: c16.lsl(16) | c00 }
+  {
+    hi: ((c48 << 16) | c32).reinterpret_as_int(),
+    lo: ((c16 << 16) | c00).reinterpret_as_int(),
+  }
 }
 
 struct Int64WasmHelper {
@@ -158,9 +165,14 @@ fn MyInt64::lsl(self : MyInt64, shift : Int) -> MyInt64 {
   if shift == 0 {
     self
   } else if shift < 32 {
-    { hi: self.hi.lsl(shift) | self.lo.lsr(32 - shift), lo: self.lo.lsl(shift) }
+    let { hi, lo } = self
+    let hi = hi.reinterpret_as_uint()
+    let lo = lo.reinterpret_as_uint()
+    let hi = (hi << shift) | (lo >> (32 - shift))
+    let lo = lo << shift
+    { hi: hi.reinterpret_as_int(), lo: lo.reinterpret_as_int() }
   } else {
-    { hi: self.lo.lsl(shift - 32), lo: 0 }
+    { hi: self.lo << (shift - 32), lo: 0 }
   }
 }
 

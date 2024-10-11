@@ -51,7 +51,7 @@ pub fn combine_int(self : Hasher, value : Int) -> Unit {
 pub fn combine_int64(self : Hasher, value : Int64) -> Unit {
   self.acc += 8
   self.consume4(value.to_int())
-  self.consume4(value.lsr(32).to_int())
+  self.consume4((value.to_uint64() >> 32).to_int())
 }
 
 pub fn combine_uint(self : Hasher, value : UInt) -> Unit {
@@ -100,13 +100,13 @@ pub fn finalize(self : Hasher) -> Int {
 }
 
 fn avalanche(self : Hasher) -> Int {
-  let mut acc = self.acc
-  acc = acc ^ acc.lsr(15)
-  acc *= gPRIME2
-  acc = acc ^ acc.lsr(13)
-  acc *= gPRIME3
-  acc = acc ^ acc.lsr(16)
-  acc
+  let mut acc = self.acc.reinterpret_as_uint()
+  acc = acc ^ (acc >> 15)
+  acc *= gPRIME2.reinterpret_as_uint()
+  acc = acc ^ (acc >> 13)
+  acc *= gPRIME3.reinterpret_as_uint()
+  acc = acc ^ (acc >> 16)
+  acc.reinterpret_as_int()
 }
 
 fn consume4(self : Hasher, input : Int) -> Unit {
@@ -118,14 +118,15 @@ fn consume1(self : Hasher, input : Byte) -> Unit {
 }
 
 fn rotl(x : Int, r : Int) -> Int {
-  x.lsl(r) | x.lsr(32 - r)
+  (x << r) | (x.reinterpret_as_uint() >> (32 - r)).reinterpret_as_int()
 }
 
 fn endian32(input : Bytes, cur : Int) -> Int {
   input[cur + 0].to_int() |
   (
-    input[cur + 1].to_int().lsl(8) |
-    (input[cur + 2].to_int().lsl(16) | input[cur + 3].to_int().lsl(24))
+    (input[cur + 1].to_int() << 8) |
+    (input[cur + 2].to_int() << 16) |
+    (input[cur + 3].to_int() << 24)
   )
 }
 
@@ -141,14 +142,15 @@ pub impl Hash for String with hash_combine(self, hasher) {
 
 // https://github.com/skeeto/hash-prospector
 pub impl Hash for Int with hash(self) {
-  let mut x = self ^ self.lsr(17)
+  let self = self.reinterpret_as_uint()
+  let mut x = self ^ (self >> 17)
   x = x * 0xed5ad4bb
-  x = x ^ x.lsr(11)
+  x = x ^ (x >> 11)
   x = x * 0xac4c1b51
-  x = x ^ x.lsr(15)
+  x = x ^ (x >> 15)
   x = x * 0x31848bab
-  x = x ^ x.lsr(14)
-  x
+  x = x ^ (x >> 14)
+  x.reinterpret_as_int()
 }
 
 pub impl Hash for Int with hash_combine(self, hasher) {
