@@ -429,6 +429,7 @@ impl Int64 {
   op_sub(Int64, Int64) -> Int64
   popcnt(Int64) -> Int
   reinterpret_as_double(Int64) -> Double
+  reinterpret_as_uint64(Int64) -> UInt64
   shl(Int64, Int) -> Int64 //deprecated
   shr(Int64, Int) -> Int64 //deprecated
   to_byte(Int64) -> Byte
@@ -437,7 +438,7 @@ impl Int64 {
   to_int(Int64) -> Int
   to_json(Int64) -> Json
   to_string(Int64) -> String
-  to_uint64(Int64) -> UInt64
+  to_uint64(Int64) -> UInt64 //deprecated
   until(Int64, Int64, ~step : Int64 = .., ~inclusive : Bool = ..) -> Iter[Int64]
   upto(Int64, Int64, ~inclusive : Bool = ..) -> Iter[Int64] //deprecated
 }

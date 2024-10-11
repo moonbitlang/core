@@ -339,7 +339,7 @@ fn right_shift(self : Decimal, s : Int) -> Unit {
       break
     }
     let d = self.digits[read_index]
-    acc = acc * 10 + d.to_int64().to_uint64()
+    acc = acc * 10 + d.to_int64().reinterpret_as_uint64()
     read_index += 1
   }
   self.decimal_point -= read_index - 1
@@ -355,7 +355,7 @@ fn right_shift(self : Decimal, s : Int) -> Unit {
     acc = acc & mask
     // expand
     let d = self.digits[read_index]
-    acc = acc * 10 + d.to_int64().to_uint64()
+    acc = acc * 10 + d.to_int64().reinterpret_as_uint64()
     read_index += 1
   }
 

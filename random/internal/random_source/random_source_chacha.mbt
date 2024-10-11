@@ -60,7 +60,7 @@ pub fn State::next(self : State) -> (UInt64, Bool) {
 fn bytesToUInt64(b : Bytes) -> UInt64 {
   let mut result = 0UL
   for i = 0; i < 8; i = i + 1 {
-    result = result | (b[i].to_int64().to_uint64() << (i * 8))
+    result = result | (b[i].to_int64().reinterpret_as_uint64() << (i * 8))
   }
   result
 }

@@ -503,7 +503,10 @@ fn MyInt64::to_uint64(self : MyInt64) -> UInt64 = "%identity"
 
 fn MyInt64::from_uint64(value : UInt64) -> MyInt64 = "%identity"
 
+/// @alert deprecated "Use `reinterpret_as_uint64` instead"
 pub fn Int64::to_uint64(self : Int64) -> UInt64 = "%identity"
+
+pub fn Int64::reinterpret_as_uint64(self : Int64) -> UInt64 = "%identity"
 
 pub fn UInt64::op_add(self : UInt64, other : UInt64) -> UInt64 {
   MyInt64::from_uint64(self).op_add(MyInt64::from_uint64(other)).to_uint64()

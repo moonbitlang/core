@@ -26,7 +26,7 @@ let gPRIME5 = 0x165667B1U
 // https://github.com/Cyan4973/xxHash/blob/dev/doc/xxhash_spec.md#xxh32-algorithm-description
 // For a more readable version, see bytes/xxhash.mbt
 pub impl Hash for Int64 with hash(self) -> Int {
-  let mut input = self.to_uint64()
+  let mut input = self.reinterpret_as_uint64()
   let seed = 0U
   let mut acc = seed + gPRIME5 + 8
   let mut x = acc + input.to_uint() * gPRIME3
@@ -50,7 +50,7 @@ pub impl Hash for Int64 with hash_combine(self, hasher) {
 
 fn slow_hash(self : Int64) -> Int {
   let b = Bytes::new(8)
-  let self = self.to_uint64()
+  let self = self.reinterpret_as_uint64()
   b[7] = (self >> 56).to_byte()
   b[6] = ((self >> 48) & 0xFF).to_byte()
   b[5] = ((self >> 40) & 0xFF).to_byte()

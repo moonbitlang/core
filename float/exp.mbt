@@ -37,7 +37,7 @@ priv struct Exp2fData {
   poly_scaled : FixedArray[Double]
 }
 
-let expf_n : UInt64 = (1 << exp2f_table_bits).to_int64().to_uint64()
+let expf_n : UInt64 = (1 << exp2f_table_bits).to_int64().reinterpret_as_uint64()
 
 let exp2f_data_n : Double = (1 << exp2f_table_bits).to_double()
 
