@@ -25,3 +25,7 @@ fn immutable_push[T](arr : Array[T], val : T) -> Array[T] {
   new_arr[len] = val
   new_arr
 }
+
+fn shr_as_uint(x : Int, y : Int) -> Int {
+  (x.reinterpret_as_uint() >> y).reinterpret_as_int()
+}

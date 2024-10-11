@@ -14,7 +14,7 @@
 
 // Returns e == 0 ? 1 : ceil(log_2(5^e)); requires 0 <= e <= 3528.
 fn pow5bits(e : Int) -> Int {
-  (e * 1217359).lsr(19) + 1
+  ((e * 1217359).reinterpret_as_uint() >> 19).reinterpret_as_int() + 1
 }
 
 fn copy_special_str(sign : Bool, exponent : Bool, mantissa : Bool) -> String {
@@ -30,10 +30,10 @@ fn copy_special_str(sign : Bool, exponent : Bool, mantissa : Bool) -> String {
 
 // Returns floor(log_10(5^e)); requires 0 <= e <= 2620.
 fn log10Pow5(e : Int) -> Int {
-  (e * 732923).lsr(20)
+  ((e * 732923).reinterpret_as_uint() >> 20).reinterpret_as_int()
 }
 
 // Returns floor(log_10(2^e)); requires 0 <= e <= 1650.
 fn log10Pow2(e : Int) -> Int {
-  (e * 78913).lsr(18)
+  ((e * 78913).reinterpret_as_uint() >> 18).reinterpret_as_int()
 }

@@ -38,7 +38,7 @@ fn umul128(a : UInt64, b : UInt64) -> (UInt64, UInt64) {
 }
 
 fn shiftright128(lo : UInt64, hi : UInt64, dist : Int) -> UInt64 {
-  hi.lsl(64 - dist) | lo.lsr(dist)
+  (hi << (64 - dist)) | (lo >> dist)
 }
 
 fn pow5Factor(value : UInt64) -> Int {
@@ -72,7 +72,7 @@ fn multipleOfPowerOf5(value : UInt64, p : Int) -> Bool {
 }
 
 fn multipleOfPowerOf2(value : UInt64, p : Int) -> Bool {
-  (value & (1UL.lsl(p) - 1UL)) == 0UL
+  (value & ((1UL << p) - 1UL)) == 0UL
 }
 
 fn mulShiftAll64(
@@ -81,7 +81,7 @@ fn mulShiftAll64(
   j : Int,
   mmShift : Bool
 ) -> (UInt64, UInt64, UInt64) {
-  let m = m.lsl(1)
+  let m = m << 1
   let (lo, tmp) = umul128(m, mul.0)
   let (lo2, hi2) = umul128(m, mul.1)
   let mid = tmp + lo2
@@ -137,7 +137,7 @@ let gDOUBLE_POW5_SPLIT2 : Array[UInt64] = [
   665883850346957067, 1211445438634777304, 14931890668723713708, 1565756531257009982,
 ]
 
-let gPOW5_OFFSETS : Array[Int] = [
+let gPOW5_OFFSETS : Array[UInt] = [
   0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x40000000, 0x59695995, 0x55545555,
   0x56555515, 0x41150504, 0x40555410, 0x44555145, 0x44504540, 0x45555550, 0x40004000,
   0x96440440, 0x55565565, 0x54454045, 0x40154151, 0x55559155, 0x51405555, 0x00000105,
@@ -170,7 +170,7 @@ fn double_computePow5(i : Int) -> (UInt64, UInt64) {
   }
   let delta : Int = pow5bits(i) - pow5bits(base2)
   let a = shiftright128(low0, sum, delta) +
-    gPOW5_OFFSETS[i / 16].lsr((i % 16).lsl(1)).land(3).to_int64().to_uint64()
+    ((gPOW5_OFFSETS[i / 16] >> ((i % 16) << 1)) & 3).to_uint64()
   let b = shiftright128(sum, high1, delta)
   (a, b)
 }
@@ -196,7 +196,7 @@ fn double_computeInvPow5(i : Int) -> (UInt64, UInt64) {
   let delta : Int = pow5bits(base2) - pow5bits(i)
   let a = shiftright128(low0, sum, delta) +
     1 +
-    gPOW5_INV_OFFSETS[i / 16].lsr((i % 16).lsl(1)).land(3).to_uint64()
+    ((gPOW5_INV_OFFSETS[i / 16] >> ((i % 16) << 1)) & 3).to_uint64()
   let b = shiftright128(sum, high1, delta)
   (a, b)
 }
@@ -288,7 +288,7 @@ fn d2d(ieeeMantissa : UInt64, ieeeExponent : UInt) -> FloatingDecimal64 {
       gDOUBLE_BIAS -
       gDOUBLE_MANTISSA_BITS -
       2
-    m2 = 1UL.lsl(gDOUBLE_MANTISSA_BITS) | ieeeMantissa
+    m2 = (1UL << gDOUBLE_MANTISSA_BITS) | ieeeMantissa
   }
   let even = (m2 & 1UL) == 0UL
   let mv = 4UL *
@@ -563,7 +563,7 @@ fn d2d_small_int(
   ieeeMantissa : UInt64,
   ieeeExponent : Int
 ) -> FloatingDecimal64? {
-  let m2 : UInt64 = 1UL.lsl(gDOUBLE_MANTISSA_BITS) | ieeeMantissa
+  let m2 : UInt64 = (1UL << gDOUBLE_MANTISSA_BITS) | ieeeMantissa
   let e2 : Int = ieeeExponent - gDOUBLE_BIAS - gDOUBLE_MANTISSA_BITS
   if e2 > 0 {
     return None
@@ -571,12 +571,12 @@ fn d2d_small_int(
   if e2 < -52 {
     return None
   }
-  let mask : UInt64 = 1UL.lsl(-e2) - 1UL
+  let mask : UInt64 = (1UL << -e2) - 1UL
   let fraction : UInt64 = m2 & mask
   if fraction != 0UL {
     return None
   }
-  Some({ mantissa: m2.lsr(-e2), exponent: 0 })
+  Some({ mantissa: m2 >> -e2, exponent: 0 })
 }
 
 /// TODO: ryu_to_logger[T:Logger](Double/Float, T) -> Unit
@@ -588,14 +588,14 @@ pub fn ryu_to_string(val : Double) -> String {
   let bits : UInt64 = val.reinterpret_as_u64()
 
   // Decode bits into sign, mantissa, and exponent.
-  let ieeeSign = (bits.lsr(gDOUBLE_MANTISSA_BITS + gDOUBLE_EXPONENT_BITS) & 1UL) !=
+  let ieeeSign = (
+      (bits >> (gDOUBLE_MANTISSA_BITS + gDOUBLE_EXPONENT_BITS)) & 1UL
+    ) !=
     0UL
-  let ieeeMantissa : UInt64 = bits & (1UL.lsl(gDOUBLE_MANTISSA_BITS) - 1UL)
-  let ieeeExponent : Int = bits
-    .lsr(gDOUBLE_MANTISSA_BITS)
-    .land(1UL.lsl(gDOUBLE_EXPONENT_BITS) - 1UL)
-    .to_int()
-  if ieeeExponent == (1).lsl(gDOUBLE_EXPONENT_BITS) - 1 ||
+  let ieeeMantissa : UInt64 = bits & ((1UL << gDOUBLE_MANTISSA_BITS) - 1UL)
+  let ieeeExponent : Int = ((bits >> gDOUBLE_MANTISSA_BITS) &
+  ((1UL << gDOUBLE_EXPONENT_BITS) - 1UL)).to_int()
+  if ieeeExponent == (1 << gDOUBLE_EXPONENT_BITS) - 1 ||
     (ieeeExponent == 0 && ieeeMantissa == 0UL) {
     return copy_special_str(ieeeSign, ieeeExponent != 0, ieeeMantissa != 0UL)
   }
