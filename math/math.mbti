@@ -7,9 +7,13 @@ fn asin(Double) -> Double
 
 fn atan(Double) -> Double
 
+fn ceil(Double) -> Double
+
 fn cos(Double) -> Double
 
 fn exp(Double) -> Double
+
+fn floor(Double) -> Double
 
 fn ln(Double) -> Double
 
@@ -23,9 +27,13 @@ fn minimum[T : Compare + Eq](T, T) -> T
 
 let pi : Double
 
+fn round(Double) -> Double
+
 fn sin(Double) -> Double
 
 fn tan(Double) -> Double
+
+fn trunc(Double) -> Double
 
 // Types and methods
 
