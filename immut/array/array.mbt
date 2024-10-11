@@ -63,7 +63,8 @@ pub fn copy[A](self : T[A]) -> T[A] {
     match t {
       Leaf(l) => Leaf(l.copy())
       Empty => Empty
-      Node(node) => Node(Array::makei(node.length(), fn(i) { copy(node[i]) }))
+      Node(node) =>
+        Node(FixedArray::makei(node.length(), fn(i) { copy(node[i]) }))
     }
   }
 
@@ -272,14 +273,14 @@ pub fn map[A, B](self : T[A], f : (A) -> B) -> T[B] {
     match t {
       Empty => Empty
       Leaf(l) => Leaf(l.map(f))
-      Node(n) => Node(Array::makei(n.length(), fn(i) { go(n[i]) }))
+      Node(n) => Node(FixedArray::makei(n.length(), fn(i) { go(n[i]) }))
     }
   }
 
   { tree: go(self.tree), size: self.size, shift: self.shift }
 }
 
-fn new_by_leaves[A](len : Int, gen_leaf : (Int, Int) -> Array[A]) -> T[A] {
+fn new_by_leaves[A](len : Int, gen_leaf : (Int, Int) -> FixedArray[A]) -> T[A] {
   fn tree(cap, len, s) -> Tree[A] {
     if cap == branching_factor {
       Leaf(gen_leaf(s, len))
@@ -296,7 +297,7 @@ fn new_by_leaves[A](len : Int, gen_leaf : (Int, Int) -> Array[A]) -> T[A] {
         tree(cap / branching_factor, len, i)
       }
 
-      Node(Array::makei(child_count, child))
+      Node(FixedArray::makei(child_count, child))
     }
   }
 
@@ -316,15 +317,15 @@ fn new_by_leaves[A](len : Int, gen_leaf : (Int, Int) -> Array[A]) -> T[A] {
 
 test "new_by_leaves" {
   let e : T[Int] = new_by_leaves(0, fn(_s, _l) { abort("never reach") })
-  let v = new_by_leaves(5, fn(_s, l) { Array::make(l, 1) })
-  let v2 = new_by_leaves(33, fn(_s, l) { Array::make(l, 10) })
+  let v = new_by_leaves(5, fn(_s, l) { FixedArray::make(l, 1) })
+  let v2 = new_by_leaves(33, fn(_s, l) { FixedArray::make(l, 10) })
   inspect!(e, content="@immut/array.of([])")
   inspect!(v, content="@immut/array.of([1, 1, 1, 1, 1])")
   inspect!(
     v2,
     content="@immut/array.of([10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10])",
   )
-  let v3 = new_by_leaves(32, fn(_s, l) { Array::make(l, 10) })
+  let v3 = new_by_leaves(32, fn(_s, l) { FixedArray::make(l, 10) })
   inspect!(
     v3,
     content="@immut/array.of([10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10])",
@@ -333,12 +334,12 @@ test "new_by_leaves" {
 
 /// Create a persistent array with a given length and value.
 pub fn T::make[A](len : Int, value : A) -> T[A] {
-  new_by_leaves(len, fn(_s, l) { Array::make(l, value) })
+  new_by_leaves(len, fn(_s, l) { FixedArray::make(l, value) })
 }
 
 /// Create a persistent array with a given length and a function to generate values.
 pub fn T::makei[A](len : Int, f : (Int) -> A) -> T[A] {
-  new_by_leaves(len, fn(s, l) { Array::makei(l, fn(i) { f(s + i) }) })
+  new_by_leaves(len, fn(s, l) { FixedArray::makei(l, fn(i) { f(s + i) }) })
 }
 
 pub fn T::of[A](arr : FixedArray[A]) -> T[A] {

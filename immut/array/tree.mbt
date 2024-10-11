@@ -54,7 +54,7 @@ fn is_empty_tree[T](self : Tree[T]) -> Bool {
   }
 }
 
-fn new_branch[T](leaf : Array[T], shift : Int) -> Tree[T] {
+fn new_branch[T](leaf : FixedArray[T], shift : Int) -> Tree[T] {
   match shift {
     0 => Leaf(leaf)
     s => Node([new_branch(leaf, s - num_bits)])
