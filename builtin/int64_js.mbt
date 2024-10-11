@@ -181,9 +181,16 @@ fn MyInt64::lsr(self : MyInt64, shift : Int) -> MyInt64 {
   if shift == 0 {
     self
   } else if shift < 32 {
-    { hi: self.hi.lsr(shift), lo: self.lo.lsr(shift) | self.hi.lsl(32 - shift) }
+    {
+      hi: (self.hi.reinterpret_as_uint() >> shift).reinterpret_as_int(),
+      lo: (self.lo.reinterpret_as_uint() >> shift).reinterpret_as_int() |
+      (self.hi << (32 - shift)),
+    }
   } else {
-    { hi: 0, lo: self.hi.lsr(shift - 32) }
+    {
+      hi: 0,
+      lo: (self.hi.reinterpret_as_uint() >> (shift - 32)).reinterpret_as_int(),
+    }
   }
 }
 
@@ -192,9 +199,13 @@ fn MyInt64::asr(self : MyInt64, shift : Int) -> MyInt64 {
   if shift == 0 {
     self
   } else if shift < 32 {
-    { hi: self.hi.asr(shift), lo: self.lo.lsr(shift) | self.hi.lsl(32 - shift) }
+    {
+      hi: self.hi >> shift,
+      lo: (self.lo.reinterpret_as_uint() >> shift).reinterpret_as_int() |
+      (self.hi << (32 - shift)),
+    }
   } else {
-    { hi: self.hi.asr(31), lo: self.hi.asr(shift - 32) }
+    { hi: self.hi >> 31, lo: self.hi >> (shift - 32) }
   }
 }
 
@@ -268,7 +279,7 @@ extern "js" fn MyInt64::compare_u(self : MyInt64, other : MyInt64) -> Int =
   #|}
 
 fn MyInt64::from_int(value : Int) -> MyInt64 {
-  { hi: value.asr(31) & -1, lo: value | 0 }
+  { hi: (value >> 31) & -1, lo: value | 0 }
 }
 
 fn MyInt64::to_int(self : MyInt64) -> Int {
