@@ -1,0 +1,26 @@
+package moonbitlang/core/buffer
+
+// Values
+
+// Types and methods
+type Buffer
+impl Buffer {
+  new(~size_hint : Int = ..) -> Self
+  reset(Self) -> Unit
+  to_bytes(Self) -> Bytes
+  to_string(Self) -> String
+  write_byte(Self, Byte) -> Unit
+  write_bytes(Self, Bytes) -> Unit
+  write_char(Self, Char) -> Unit
+  write_object(Self, Show) -> Unit
+  write_string(Self, String) -> Unit
+  write_sub_string(Self, String, Int, Int) -> Unit
+}
+
+// Type aliases
+
+// Traits
+
+// Extension Methods
+impl Show for Buffer
+
