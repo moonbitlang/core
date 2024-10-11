@@ -75,7 +75,7 @@ jobs:
 
       - name: initial coverage report
         run: |
-          moon coverage report -f summary summary > coverage_summary.txt
+          moon coverage report -f summary > coverage_summary.txt
           cat coverage_summary.txt >> "$GITHUB_STEP_SUMMARY"
       
 
