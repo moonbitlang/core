@@ -56,7 +56,7 @@ pub fn next_int64(self : RandomState) -> Int64 {
 /// Get the next two random number as 32-bit signed integers.
 pub fn next_two_uint(self : RandomState) -> (UInt, UInt) {
   let g = self.next_uint64()
-  (g.lsr(32).to_uint(), g.to_uint())
+  ((g >> 32).to_uint(), g.to_uint())
 }
 
 /// Get the next random number as a 32-bit signed integer.
@@ -77,7 +77,7 @@ pub fn next_positive_int(self : RandomState) -> Int {
 /// Get the next random number as a double.
 pub fn next_double(self : RandomState) -> Double {
   let u = self.next_uint64()
-  u.lsr(11).to_int64().to_double() * double_ulp
+  (u >> 11).to_double() * double_ulp
 }
 
 /// Generates an independent random number generator.
@@ -88,7 +88,7 @@ pub fn split(self : RandomState) -> RandomState {
 }
 
 fn shift_xor(n : Int, w : UInt64) -> UInt64 {
-  w ^ w.lsr(n)
+  w ^ (w >> n)
 }
 
 fn shift_xor_mul(n : Int, k : UInt64, w : UInt64) -> UInt64 {

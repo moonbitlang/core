@@ -22,7 +22,7 @@ fn read_char(ctx : ParseContext) -> Char? {
         let c2 = ctx.input[ctx.offset].to_int()
         if c2 >= 0xDC00 && c2 <= 0xDFFF {
           ctx.offset += 1
-          let c3 = c1.lsl(10) + c2 - 0x35fdc00
+          let c3 = (c1 << 10) + c2 - 0x35fdc00
           return Some(Char::from_int(c3))
         }
       }
