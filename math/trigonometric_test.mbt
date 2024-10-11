@@ -203,14 +203,6 @@ test "acos" {
   inspect!(max_inaccuracy, content="2.220446049250313e-16")
 }
 
-fn copysign(x : Double, y : Double) -> Double {
-  if y < 0 {
-    -x.abs()
-  } else {
-    x.abs()
-  }
-}
-
 test "atan2" {
   let atan2_res : FixedArray[Double] = [
     1.1088291730037004444527075e+00, 9.1218183188715804018797795e-01, 1.5984772603216203736068915e+00,
