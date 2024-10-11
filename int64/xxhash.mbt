@@ -15,33 +15,33 @@
 // Not needed for 8 bytes data
 // let gPRIME1 = 0x9E3779B1
 
-let gPRIME2 = 0x85EBCA77
+let gPRIME2 = 0x85EBCA77U
 
-let gPRIME3 = 0xC2B2AE3D
+let gPRIME3 = 0xC2B2AE3DU
 
-let gPRIME4 = 0x27D4EB2F
+let gPRIME4 = 0x27D4EB2FU
 
-let gPRIME5 = 0x165667B1
+let gPRIME5 = 0x165667B1U
 
 // https://github.com/Cyan4973/xxHash/blob/dev/doc/xxhash_spec.md#xxh32-algorithm-description
 // For a more readable version, see bytes/xxhash.mbt
 pub impl Hash for Int64 with hash(self) -> Int {
-  let mut input = self
-  let seed = 0
+  let mut input = self.to_uint64()
+  let seed = 0U
   let mut acc = seed + gPRIME5 + 8
-  let mut x = acc + input.to_int() * gPRIME3
+  let mut x = acc + input.to_uint() * gPRIME3
   let r = 17
-  acc = (x.lsl(r) | x.lsr(32 - r)) * gPRIME4
-  input = input.lsr(32)
-  x = acc + input.to_int() * gPRIME3
-  acc = (x.lsl(r) | x.lsr(32 - r)) * gPRIME4
-  input = input.lsr(32)
-  acc = acc ^ acc.lsr(15)
+  acc = ((x << r) | (x >> (32 - r))) * gPRIME4
+  input = input >> 32
+  x = acc + input.to_uint() * gPRIME3
+  acc = ((x << r) | (x >> (32 - r))) * gPRIME4
+  input = input >> 32
+  acc = acc ^ (acc >> 15)
   acc *= gPRIME2
-  acc = acc ^ acc.lsr(13)
+  acc = acc ^ (acc >> 13)
   acc *= gPRIME3
-  acc = acc ^ acc.lsr(16)
-  acc
+  acc = acc ^ (acc >> 16)
+  acc.reinterpret_as_int()
 }
 
 pub impl Hash for Int64 with hash_combine(self, hasher) {
@@ -50,24 +50,25 @@ pub impl Hash for Int64 with hash_combine(self, hasher) {
 
 fn slow_hash(self : Int64) -> Int {
   let b = Bytes::new(8)
-  b[7] = self.lsr(56).to_byte()
-  b[6] = self.lsr(48).land(0xFFL).to_byte()
-  b[5] = self.lsr(40).land(0xFFL).to_byte()
-  b[4] = self.lsr(32).land(0xFFL).to_byte()
-  b[3] = self.lsr(24).land(0xFFL).to_byte()
-  b[2] = self.lsr(16).land(0xFFL).to_byte()
-  b[1] = self.lsr(8).land(0xFFL).to_byte()
-  b[0] = self.land(0xFFL).to_byte()
+  let self = self.to_uint64()
+  b[7] = (self >> 56).to_byte()
+  b[6] = ((self >> 48) & 0xFF).to_byte()
+  b[5] = ((self >> 40) & 0xFF).to_byte()
+  b[4] = ((self >> 32) & 0xFF).to_byte()
+  b[3] = ((self >> 24) & 0xFF).to_byte()
+  b[2] = ((self >> 16) & 0xFF).to_byte()
+  b[1] = ((self >> 8) & 0xFF).to_byte()
+  b[0] = (self & 0xFF).to_byte()
   Hash::hash(b)
 }
 
 test "int64 hash" {
   let i0 = 9_223_372_036_854_775_807L // INT64_MAX
   let i1 = -9_223_372_036_854_775_808L // INT64_MIN
-  let i2 = gPRIME2.to_int64()
-  let i3 = gPRIME3.to_int64()
-  let i4 = gPRIME4.to_int64()
-  let i5 = gPRIME5.to_int64()
+  let i2 = gPRIME2.to_uint64().to_int64()
+  let i3 = gPRIME3.to_uint64().to_int64()
+  let i4 = gPRIME4.to_uint64().to_int64()
+  let i5 = gPRIME5.to_uint64().to_int64()
   let i6 = 0L
   inspect!(Hash::hash(i0).to_string(), content=i0.slow_hash().to_string())
   inspect!(Hash::hash(i1).to_string(), content=i1.slow_hash().to_string())
