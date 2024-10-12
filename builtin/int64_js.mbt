@@ -475,6 +475,10 @@ pub fn Int64::reinterpret_as_double(self : Int64) -> Double {
   MyInt64::reinterpret_as_double(MyInt64::from_int64(self))
 }
 
+pub fn UInt64::reinterpret_as_double(self : UInt64) -> Double {
+  MyInt64::reinterpret_as_double(MyInt64::from_uint64(self))
+}
+
 pub fn Int::to_int64(self : Int) -> Int64 {
   MyInt64::from_int(self).to_int64()
 }

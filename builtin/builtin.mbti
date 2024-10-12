@@ -495,6 +495,7 @@ impl UInt64 {
   op_shr(UInt64, Int) -> UInt64
   op_sub(UInt64, UInt64) -> UInt64
   popcnt(UInt64) -> Int
+  reinterpret_as_double(UInt64) -> Double
   shl(UInt64, Int) -> UInt64 //deprecated
   shr(UInt64, Int) -> UInt64 //deprecated
   to_byte(UInt64) -> Byte
