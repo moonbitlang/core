@@ -309,6 +309,31 @@ impl Map {
   values[K, V](Self[K, V]) -> Iter[V]
 }
 
+type Set
+impl Set {
+  capacity[K](Self[K]) -> Int
+  clear[K](Self[K]) -> Unit
+  contains[K : Hash + Eq](Self[K], K) -> Bool
+  difference[K : Hash + Eq](Self[K], Self[K]) -> Self[K]
+  each[K](Self[K], (K) -> Unit) -> Unit
+  eachi[K](Self[K], (Int, K) -> Unit) -> Unit
+  from_array[K : Hash + Eq](Array[K]) -> Self[K]
+  from_iter[K : Hash + Eq](Iter[K]) -> Self[K]
+  insert[K : Hash + Eq](Self[K], K) -> Unit
+  intersection[K : Hash + Eq](Self[K], Self[K]) -> Self[K]
+  is_empty[K](Self[K]) -> Bool
+  iter[K](Self[K]) -> Iter[K]
+  new[K](~capacity : Int = ..) -> Self[K]
+  of[K : Hash + Eq](FixedArray[K]) -> Self[K]
+  op_equal[K : Eq](Self[K], Self[K]) -> Bool
+  remove[K : Hash + Eq](Self[K], K) -> Unit
+  size[K](Self[K]) -> Int
+  symmetric_difference[K : Hash + Eq](Self[K], Self[K]) -> Self[K]
+  to_array[K](Self[K]) -> Array[K]
+  to_string[K : Show](Self[K]) -> String
+  union[K : Hash + Eq](Self[K], Self[K]) -> Self[K]
+}
+
 pub type! SnapshotError String
 
 pub type SourceLoc
@@ -777,6 +802,8 @@ impl Show for Iter
 impl Show for Iter2
 
 impl Show for Map
+
+impl Show for Set
 
 impl Show for SourceLoc
 
