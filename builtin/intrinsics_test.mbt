@@ -384,3 +384,28 @@ test "Char::to_uint - Unicode Characters" {
   inspect!(Char::to_uint('⚡'), content="9889")
   inspect!(Char::to_uint('♫'), content="9835")
 }
+
+test "Int::to_uint64 - Boundary Cases" {
+  inspect!(Int::to_uint64(0), content="0")
+  inspect!(Int::to_uint64(1), content="1")
+  inspect!(Int::to_uint64(-1), content="18446744073709551615")
+  inspect!(Int::to_uint64(2147483647), content="2147483647")
+  inspect!(Int::to_uint64(-2147483648), content="18446744071562067968")
+}
+
+test "Int::to_uint64 - Random Cases" {
+  inspect!(Int::to_uint64(123456789), content="123456789")
+  inspect!(Int::to_uint64(-987654321), content="18446744072721897295")
+  inspect!(Int::to_uint64(987654321), content="987654321")
+  inspect!(Int::to_uint64(-123456789), content="18446744073586094827")
+}
+
+test "Int::to_uint64 - Edge Cases with Zero" {
+  inspect!(Int::to_uint64(0), content="0")
+  inspect!(Int::to_uint64(-0), content="0")
+}
+
+test "Int::to_uint64 - Random Values" {
+  inspect!(Int::to_uint64(1234567890), content="1234567890")
+  inspect!(Int::to_uint64(-1234567890), content="18446744072474983726")
+}

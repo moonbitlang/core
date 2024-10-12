@@ -433,6 +433,7 @@ impl Int {
   to_json(Int) -> Json
   to_string(Int) -> String
   to_uint(Int) -> UInt //deprecated
+  to_uint64(Int) -> UInt64
   until(Int, Int, ~step : Int = .., ~inclusive : Bool = ..) -> Iter[Int]
   upto(Int, Int, ~inclusive : Bool = ..) -> Iter[Int] //deprecated
 }
