@@ -146,6 +146,15 @@ test "insert_and_grow" {
   }
   assert_eq!(m.size(), 10)
   assert_eq!(m.capacity(), 16)
+  @json.inspect!(m, content=["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"])
+}
+
+test "array unique via Set" {
+  let v = [1, 2, 3, 4, 5, 3, 2, 4, 5]
+  let h = Set::from_iter(v.iter())
+  let v = [..h]
+  // @json.inspect!([..h])
+  @json.inspect!(v, content=[1, 2, 3, 4, 5])
 }
 
 test "remove_and_shift_back" {

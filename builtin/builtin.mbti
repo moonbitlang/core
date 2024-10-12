@@ -330,6 +330,7 @@ impl Set {
   size[K](Self[K]) -> Int
   symmetric_difference[K : Hash + Eq](Self[K], Self[K]) -> Self[K]
   to_array[K](Self[K]) -> Array[K]
+  to_json[X : ToJson](Self[X]) -> Json
   to_string[K : Show](Self[K]) -> String
   union[K : Hash + Eq](Self[K], Self[K]) -> Self[K]
 }

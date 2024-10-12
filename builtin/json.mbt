@@ -134,6 +134,14 @@ pub fn Map::to_json[K : Show, V : ToJson](self : Map[K, V]) -> Json {
   Object(object)
 }
 
+pub fn Set::to_json[X : ToJson](self : Set[X]) -> Json {
+  let array = []
+  for v in self {
+    array.push(v.to_json())
+  }
+  Array(array)
+}
+
 pub fn Option::to_json[T : ToJson](self : T?) -> Json {
   match self {
     None => Null
