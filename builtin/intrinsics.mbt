@@ -181,9 +181,17 @@ pub fn FixedArray::op_get[T](self : FixedArray[T], idx : Int) -> T = "%fixedarra
 
 pub fn FixedArray::get[T](self : FixedArray[T], idx : Int) -> T = "%fixedarray.get"
 
+pub fn FixedArray::unsafe_get[T](self : FixedArray[T], idx : Int) -> T = "%fixedarray.unsafe_get"
+
 pub fn FixedArray::op_set[T](self : FixedArray[T], idx : Int, val : T) -> Unit = "%fixedarray.set"
 
 pub fn FixedArray::set[T](self : FixedArray[T], idx : Int, val : T) -> Unit = "%fixedarray.set"
+
+pub fn FixedArray::unsafe_set[T](
+  self : FixedArray[T],
+  idx : Int,
+  val : T
+) -> Unit = "%fixedarray.unsafe_set"
 
 pub fn FixedArray::length[T](self : FixedArray[T]) -> Int = "%fixedarray.length"
 
