@@ -81,9 +81,15 @@ pub fn Int::to_int64(self : Int) -> Int64 = "%i32_to_i64"
 
 pub fn Double::to_int64(self : Double) -> Int64 = "%f64_to_i64"
 
+/// @alert deprecated "Use `reinterpret_as_int64` instead"
 pub fn Double::reinterpret_as_i64(self : Double) -> Int64 = "%f64_to_i64_reinterpret"
 
+pub fn Double::reinterpret_as_int64(self : Double) -> Int64 = "%f64_to_i64_reinterpret"
+
+/// @alert deprecated "Use `reinterpret_as_uint64` instead"
 pub fn Double::reinterpret_as_u64(self : Double) -> UInt64 = "%f64_to_i64_reinterpret"
+
+pub fn Double::reinterpret_as_uint64(self : Double) -> UInt64 = "%f64_to_i64_reinterpret"
 
 pub fn Double::convert_uint64(val : UInt64) -> Double = "%u64.to_f64"
 

@@ -118,10 +118,10 @@ test "uint64 test" {
 }
 
 test "from double to" {
-  inspect!(10.0.reinterpret_as_i64(), content="4621819117588971520")
-  inspect!(10.0.reinterpret_as_u64(), content="4621819117588971520")
-  inspect!(20.0.reinterpret_as_i64(), content="4626322717216342016")
-  inspect!(20.0.reinterpret_as_u64(), content="4626322717216342016")
+  inspect!(10.0.reinterpret_as_int64(), content="4621819117588971520")
+  inspect!(10.0.reinterpret_as_uint64(), content="4621819117588971520")
+  inspect!(20.0.reinterpret_as_int64(), content="4626322717216342016")
+  inspect!(20.0.reinterpret_as_uint64(), content="4626322717216342016")
 }
 
 test "u64 to double" {
