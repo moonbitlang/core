@@ -224,10 +224,11 @@ pub fn unsafe_last[A](self : T[A]) -> A {
 /// println(of([1, 2, 3, 4, 5]).last())
 /// // output: Some(5)
 /// ```
-pub fn last[A](self : T[A]) -> A? {
+/// @alert deprecated "In the next release `last` will return an `Option`. Use `unsafe_last` instead"
+pub fn last[A](self : T[A]) -> A {
   loop self {
-    Nil => None
-    Cons(head, Nil) => Some(head)
+    Nil => abort("last of empty list")
+    Cons(head, Nil) => head
     Cons(_, tail) => continue tail
   }
 }
