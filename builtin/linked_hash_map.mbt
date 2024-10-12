@@ -114,7 +114,8 @@ pub fn set[K : Hash + Eq, V](self : Map[K, V], key : K, value : V) -> Unit {
   }
   let hash = key.hash()
   let insert_entry = { idx: -1, psl: 0, hash, key, value }
-  loop 0, hash & self.capacity_mask, insert_entry, { prev: None, next: None } {
+  let list_node : ListNode[K, V] = { prev: None, next: None }
+  loop 0, hash & self.capacity_mask, insert_entry, list_node {
     i, idx, entry, node =>
       match self.entries[idx] {
         None => {
