@@ -45,8 +45,8 @@ test "iter" {
     array[:].iter().to_array(),
     content=[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
   )
-  inspect!(array[5:].iter().to_array(), content="[5, 6, 7, 8, 9, 10]")
-  inspect!(array[5:9].iter().to_array(), content="[5, 6, 7, 8]")
+  @json.inspect!(array[5:].iter().to_array(), content=[5, 6, 7, 8, 9, 10])
+  @json.inspect!(array[5:9].iter().to_array(), content=[5, 6, 7, 8])
 }
 
 test "to_string" {
