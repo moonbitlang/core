@@ -11,7 +11,8 @@
     "moonbitlang/core/uint64",
     "moonbitlang/core/array",
     "moonbitlang/core/int64",
-    "moonbitlang/core/uint"
+    "moonbitlang/core/uint",
+    "moonbitlang/core/json"
   ],
   "targets": {
     "int64_js.mbt": ["js"],
@@ -22,7 +23,7 @@
     "panic_wbtest.mbt": ["not", "native"],
     "panic_nonjs_test.mbt": ["wasm", "wasm-gc"],
     "array_nonjs_test.mbt": ["not", "js"],
-    "stringbuilder_buffer.mbt": ["not", ["js"]],
+    "stringbuilder_buffer.mbt": ["not", "js"],
     "stringbuilder_concat.mbt": ["js"]
   }
 }

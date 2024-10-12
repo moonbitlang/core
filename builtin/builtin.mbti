@@ -130,6 +130,7 @@ impl ArrayView {
   rev_fold[A, B](Self[A], ~init : B, (B, A) -> B) -> B
   rev_foldi[A, B](Self[A], ~init : B, (Int, B, A) -> B) -> B
   swap[T](Self[T], Int, Int) -> Unit
+  to_json[X : ToJson](Self[X]) -> Json
   to_string[X : Show](Self[X]) -> String
 }
 
@@ -495,6 +496,7 @@ impl UInt64 {
   op_shr(UInt64, Int) -> UInt64
   op_sub(UInt64, UInt64) -> UInt64
   popcnt(UInt64) -> Int
+  reinterpret_as_double(UInt64) -> Double
   shl(UInt64, Int) -> UInt64 //deprecated
   shr(UInt64, Int) -> UInt64 //deprecated
   to_byte(UInt64) -> Byte
