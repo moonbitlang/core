@@ -618,6 +618,8 @@ impl FixedArray {
   to_json[X : ToJson](Self[X]) -> Json
   to_string[X : Show](Self[X]) -> String
   unsafe_blit[A](Self[A], Int, Self[A], Int, Int) -> Unit
+  unsafe_get[T](Self[T], Int) -> T
+  unsafe_set[T](Self[T], Int, T) -> Unit
 }
 impl Bytes {
   blit(Bytes, Int, Bytes, Int, Int) -> Unit
