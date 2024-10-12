@@ -24,7 +24,7 @@ pub fn Array::from_fixed_array[T](arr : FixedArray[T]) -> Array[T] {
 pub fn Array::make[T](len : Int, elem : T) -> Array[T] {
   let arr = Array::make_uninit(len)
   for i = 0; i < len; i = i + 1 {
-    arr.buffer()[i] = elem
+    arr.unsafe_set(i, elem)
   }
   arr
 }
@@ -32,6 +32,11 @@ pub fn Array::make[T](len : Int, elem : T) -> Array[T] {
 /// Returns the total number of elements the array can hold without reallocating.
 pub fn capacity[T](self : Array[T]) -> Int {
   self.buffer()._.length()
+}
+
+/// @intrinsic %array.unsafe_get
+fn unsafe_get[T](self : Array[T], idx : Int) -> T {
+  self.buffer()[idx]
 }
 
 /// Retrieves the element at the specified index from the array.
@@ -43,6 +48,7 @@ pub fn capacity[T](self : Array[T]) -> Int {
 /// println(v[0]) // 3
 /// ```
 /// @alert unsafe "Panic if index is out of bounds"
+/// @intrinsic %array.get
 pub fn op_get[T](self : Array[T], index : Int) -> T {
   let len = self.length()
   guard index >= 0 && index < len
@@ -60,7 +66,12 @@ pub fn op_get[T](self : Array[T], index : Int) -> T {
 pub fn get[T](self : Array[T], index : Int) -> T? {
   let len = self.length()
   guard index >= 0 && index < len else { None }
-  Some(self.buffer()[index])
+  Some(self.unsafe_get(index))
+}
+
+/// @intrinsic %array.unsafe_set
+fn unsafe_set[T](self : Array[T], idx : Int, val : T) -> Unit {
+  self.buffer()[idx] = val
 }
 
 /// Sets the value of the element at the specified index.
@@ -72,6 +83,7 @@ pub fn get[T](self : Array[T], index : Int) -> T? {
 /// println(v[0]) // 3
 /// ```
 /// @alert unsafe "Panic if index is out of bounds."
+/// @intrinsic %array.set
 pub fn op_set[T](self : Array[T], index : Int, value : T) -> Unit {
   let len = self.length()
   guard index >= 0 && index < len
@@ -227,7 +239,7 @@ pub fn map[T, U](self : Array[T], f : (T) -> U) -> Array[U] {
   }
   let arr = Array::make_uninit(self.length())
   for i, v in self {
-    arr.buffer()[i] = f(v)
+    arr.unsafe_set(i, f(v))
   }
   arr
 }
@@ -258,7 +270,7 @@ pub fn mapi[T, U](self : Array[T], f : (Int, T) -> U) -> Array[U] {
   }
   let arr = Array::make_uninit(self.length())
   for i, v in self {
-    arr.buffer()[i] = f(i, v)
+    arr.unsafe_set(i, f(i, v))
   }
   arr
 }
@@ -332,9 +344,9 @@ pub fn is_sorted[T : Compare](self : Array[T]) -> Bool {
 /// ```
 pub fn rev_inplace[T](self : Array[T]) -> Unit {
   for i = 0; i < self.length() / 2; i = i + 1 {
-    let temp = self.buffer()[i]
-    self.buffer()[i] = self.buffer()[self.length() - i - 1]
-    self.buffer()[self.length() - i - 1] = temp
+    let temp = self.unsafe_get(i)
+    self.unsafe_set(i, self.unsafe_get(self.length() - i - 1))
+    self.unsafe_set(self.length() - i - 1, temp)
   }
 }
 
@@ -342,7 +354,7 @@ pub fn rev_inplace[T](self : Array[T]) -> Unit {
 pub fn rev[T](self : Array[T]) -> Array[T] {
   let arr = Array::make_uninit(self.length())
   for i = 0; i < self.length(); i = i + 1 {
-    arr.buffer()[i] = self.buffer()[self.length() - i - 1]
+    arr.unsafe_set(i, self.unsafe_get(self.length() - i - 1))
   }
   arr
 }
@@ -405,7 +417,7 @@ pub fn starts_with[T : Eq](self : Array[T], prefix : Array[T]) -> Bool {
     return false
   }
   for i = 0; i < prefix.length(); i = i + 1 {
-    if self.buffer()[i] != prefix.buffer()[i] {
+    if self.unsafe_get(i) != prefix.unsafe_get(i) {
       break false
     }
   } else {
@@ -425,7 +437,8 @@ pub fn ends_with[T : Eq](self : Array[T], suffix : Array[T]) -> Bool {
     return false
   }
   for i = 0; i < suffix.length(); i = i + 1 {
-    if self.buffer()[self.length() - suffix.length() + i] != suffix.buffer()[i] {
+    if self.unsafe_get(self.length() - suffix.length() + i) !=
+      suffix.unsafe_get(i) {
       break false
     }
   } else {
@@ -550,15 +563,15 @@ pub fn binary_search[T : Compare](
   let len = self.length()
   for i = 0, j = len; i < j; {
     let h = i + (j - i) / 2
-    // Note even if self.buffer()[h] == value, we still continue the search
+    // Note even if self[h] == value, we still continue the search
     // because we want to find the leftmost match
-    if self.buffer()[h] < value {
+    if self.unsafe_get(h) < value {
       continue h + 1, j
     } else {
       continue i, h
     }
   } else {
-    if i < len && self.buffer()[i] == value {
+    if i < len && self.unsafe_get(i) == value {
       Ok(i)
     } else {
       Err(i)
@@ -600,15 +613,15 @@ pub fn binary_search_by[T](
   let len = self.length()
   for i = 0, j = len; i < j; {
     let h = i + (j - i) / 2
-    // Note even if self.buffer()[h] == value, we still continue the search
+    // Note even if self[h] == value, we still continue the search
     // because we want to find the leftmost match
-    if cmp(self.buffer()[h]) < 0 {
+    if cmp(self.unsafe_get(h)) < 0 {
       continue h + 1, j
     } else {
       continue i, h
     }
   } else {
-    if i < len && cmp(self.buffer()[i]) == 0 {
+    if i < len && cmp(self.unsafe_get(i)) == 0 {
       Ok(i)
     } else {
       Err(i)
@@ -631,9 +644,9 @@ pub fn swap[T](self : Array[T], i : Int, j : Int) -> Unit {
       "index out of bounds: the len is from 0 to \{len} but the index is (\{i}, \{j})",
     )
   }
-  let temp = self.buffer()[i]
-  self.buffer()[i] = self.buffer()[j]
-  self.buffer()[j] = temp
+  let temp = self.unsafe_get(i)
+  self.unsafe_set(i, self.unsafe_get(j))
+  self.unsafe_set(j, temp)
 }
 
 /// Retains only the elements specified by the predicate.
@@ -646,8 +659,8 @@ pub fn swap[T](self : Array[T], i : Int, j : Int) -> Unit {
 /// TODO: perf could be improved
 pub fn retain[T](self : Array[T], f : (T) -> Bool) -> Unit {
   for i = 0, j = 0; i < self.length(); {
-    if f(self.buffer()[i]) {
-      self.buffer()[j] = self.buffer()[i]
+    if f(self.unsafe_get(i)) {
+      self.unsafe_set(j, self.unsafe_get(i))
       continue i + 1, j + 1
     }
     continue i + 1, j

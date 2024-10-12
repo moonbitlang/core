@@ -130,6 +130,7 @@ impl ArrayView {
   rev_fold[A, B](Self[A], ~init : B, (B, A) -> B) -> B
   rev_foldi[A, B](Self[A], ~init : B, (Int, B, A) -> B) -> B
   swap[T](Self[T], Int, Int) -> Unit
+  to_json[X : ToJson](Self[X]) -> Json
   to_string[X : Show](Self[X]) -> String
 }
 
@@ -520,6 +521,7 @@ impl UInt64 {
   op_shr(UInt64, Int) -> UInt64
   op_sub(UInt64, UInt64) -> UInt64
   popcnt(UInt64) -> Int
+  reinterpret_as_double(UInt64) -> Double
   shl(UInt64, Int) -> UInt64 //deprecated
   shr(UInt64, Int) -> UInt64 //deprecated
   to_byte(UInt64) -> Byte
@@ -542,6 +544,7 @@ impl Float {
   op_neq(Float, Float) -> Bool
   op_sub(Float, Float) -> Float
   reinterpret_as_int(Float) -> Int
+  reinterpret_as_uint(Float) -> UInt
   sqrt(Float) -> Float
   to_double(Float) -> Double
   to_json(Float) -> Json
@@ -560,8 +563,10 @@ impl Double {
   op_neg(Double) -> Double
   op_neq(Double, Double) -> Bool
   op_sub(Double, Double) -> Double
-  reinterpret_as_i64(Double) -> Int64
-  reinterpret_as_u64(Double) -> UInt64
+  reinterpret_as_i64(Double) -> Int64 //deprecated
+  reinterpret_as_int64(Double) -> Int64
+  reinterpret_as_u64(Double) -> UInt64 //deprecated
+  reinterpret_as_uint64(Double) -> UInt64
   sqrt(Double) -> Double
   to_float(Double) -> Float
   to_int(Double) -> Int

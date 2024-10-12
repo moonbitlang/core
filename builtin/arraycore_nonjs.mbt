@@ -66,6 +66,7 @@ pub fn Array::new[T](~capacity : Int = 0) -> Array[T] {
 }
 
 /// Returns the number of elements in the array.
+/// @intrinsic %array.length
 pub fn length[T](self : Array[T]) -> Int {
   self.len
 }
@@ -237,7 +238,7 @@ pub fn push[T](self : Array[T], value : T) -> Unit {
     self.realloc()
   }
   let length = self.length()
-  self.buffer()[length] = value
+  self.unsafe_set(length, value)
   self.len = length + 1
 }
 
@@ -249,12 +250,14 @@ pub fn push[T](self : Array[T], value : T) -> Unit {
 /// v.pop()
 /// ```
 pub fn pop[T](self : Array[T]) -> T? {
-  if self.length() == 0 {
+  let len = self.length()
+  if len == 0 {
     None
   } else {
-    let index = self.length() - 1
-    let v = self.buffer()[index]
-    self.unsafe_truncate_to_length(index)
+    let index = len - 1
+    let v = self.unsafe_get(index)
+    self.buf.set_null(index)
+    self.len = index
     Some(v)
   }
 }
@@ -268,10 +271,12 @@ pub fn pop_exn[T](self : Array[T]) -> T {
 /// 
 /// @alert unsafe "Panic if the array is empty."
 pub fn unsafe_pop[T](self : Array[T]) -> T {
-  guard self.length() != 0
-  let index = self.length() - 1
-  let v = self.buffer()[index]
-  self.unsafe_truncate_to_length(index)
+  let len = self.length()
+  guard len != 0
+  let index = len - 1
+  let v = self.unsafe_get(index)
+  self.buf.set_null(index)
+  self.len = index
   v
 }
 
@@ -291,7 +296,7 @@ pub fn remove[T](self : Array[T], index : Int) -> T {
       "index out of bounds: the len is from 0 to \{self.length()} but the index is \{index}",
     )
   }
-  let value = self.buffer()[index]
+  let value = self.unsafe_get(index)
   UninitializedArray::unsafe_blit(
     self.buffer(),
     index,
@@ -353,6 +358,6 @@ pub fn insert[T](self : Array[T], index : Int, value : T) -> Unit {
     self.length() - index,
   )
   let length = self.length()
-  self.buffer()[index] = value
+  self.unsafe_set(index, value)
   self.len = length + 1
 }

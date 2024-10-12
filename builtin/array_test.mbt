@@ -200,7 +200,7 @@ test "array_map" {
   assert_eq!(mapped[0], 2)
   assert_eq!(mapped[1], 4)
   assert_eq!(mapped[2], 6)
-  inspect!(([] : Array[Int]).map(fn(x) { x }), content="[]")
+  @json.inspect!(([] : Array[Int]).map(fn(x) { x }), content=[])
 }
 
 test "array_map_inplace" {
