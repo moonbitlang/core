@@ -5,6 +5,8 @@ package moonbitlang/core/buffer
 // Types and methods
 type Buffer
 impl Buffer {
+  is_empty(Self) -> Bool
+  length(Self) -> Int
   new(~size_hint : Int = ..) -> Self
   reset(Self) -> Unit
   to_bytes(Self) -> Bytes
