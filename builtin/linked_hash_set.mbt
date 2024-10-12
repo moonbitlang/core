@@ -69,7 +69,6 @@ pub fn Set::from_array[K : Hash + Eq](arr : Array[K]) -> Set[K] {
 }
 
 /// Insert a key into the hash set.
-/// @alert unsafe "Panic if the hash set is full."
 pub fn insert[K : Hash + Eq](self : Set[K], key : K) -> Unit {
   if self.size >= self.growAt {
     self.grow()
