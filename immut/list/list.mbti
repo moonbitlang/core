@@ -50,7 +50,7 @@ impl T {
   is_suffix[A : Eq](Self[A], Self[A]) -> Bool
   iter[A](Self[A]) -> Iter[A]
   iter2[A](Self[A]) -> Iter2[Int, A]
-  last[A](Self[A]) -> A
+  last[A](Self[A]) -> A?
   length[A](Self[A]) -> Int
   lookup[A : Eq, B](Self[(A, B)], A) -> B?
   map[A, B](Self[A], (A) -> B) -> Self[B]
