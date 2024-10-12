@@ -143,11 +143,11 @@ test "iter" {
 }
 
 test "to_array" {
-  let map = of([(1, "one"), (2, "two"), (3, "three")])
+  let map = @hashmap.of([(1, "one"), (2, "two"), (3, "three")])
   inspect!(
     map.to_array(),
     content=
-      #|[(1, "one"), (2, "two"), (3, "three")]
+      #|[(2, "two"), (1, "one"), (3, "three")]
     ,
   )
 }
