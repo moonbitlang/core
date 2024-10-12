@@ -586,7 +586,7 @@ pub fn ryu_to_string(val : Double) -> String {
     return "0"
   }
   // Step 1: Decode the floating-point number, and unify normalized and subnormal cases.
-  let bits : UInt64 = val.reinterpret_as_u64()
+  let bits : UInt64 = val.reinterpret_as_uint64()
 
   // Decode bits into sign, mantissa, and exponent.
   let ieeeSign = (

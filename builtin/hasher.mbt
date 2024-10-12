@@ -63,7 +63,7 @@ pub fn combine_uint64(self : Hasher, value : UInt64) -> Unit {
 }
 
 pub fn combine_double(self : Hasher, value : Double) -> Unit {
-  self.combine_int64(value.reinterpret_as_i64())
+  self.combine_int64(value.reinterpret_as_int64())
 }
 
 pub fn combine_byte(self : Hasher, value : Byte) -> Unit {
