@@ -250,12 +250,14 @@ pub fn push[T](self : Array[T], value : T) -> Unit {
 /// v.pop()
 /// ```
 pub fn pop[T](self : Array[T]) -> T? {
-  if self.length() == 0 {
+  let len = self.length()
+  if len == 0 {
     None
   } else {
-    let index = self.length() - 1
+    let index = len - 1
     let v = self.unsafe_get(index)
-    self.unsafe_truncate_to_length(index)
+    self.buf.set_null(index)
+    self.len = index
     Some(v)
   }
 }
@@ -269,10 +271,12 @@ pub fn pop_exn[T](self : Array[T]) -> T {
 /// 
 /// @alert unsafe "Panic if the array is empty."
 pub fn unsafe_pop[T](self : Array[T]) -> T {
-  guard self.length() != 0
-  let index = self.length() - 1
+  let len = self.length()
+  guard len != 0
+  let index = len - 1
   let v = self.unsafe_get(index)
-  self.unsafe_truncate_to_length(index)
+  self.buf.set_null(index)
+  self.len = index
   v
 }
 
