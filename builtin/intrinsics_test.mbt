@@ -293,3 +293,53 @@ test "grouped test for edge and random cases" {
   inspect!(UInt::clz(0x40000000U), content="1")
   inspect!(UInt::clz(0x80000000U), content="0")
 }
+
+test "grouped test for boundary cases" {
+  // Test for the smallest positive normal float
+  inspect!(Float::reinterpret_as_uint(1.17549435e-38), content="8388608")
+
+  // Test for the largest positive normal float
+  inspect!(Float::reinterpret_as_uint(3.40282347e+38), content="2139095039")
+
+  // Test for the smallest positive subnormal float
+  inspect!(Float::reinterpret_as_uint(1.40129846e-45), content="1")
+
+  // Test for the largest positive subnormal float
+  inspect!(Float::reinterpret_as_uint(1.17549421e-38), content="8388607")
+
+  // Test for zero
+  inspect!(Float::reinterpret_as_uint(0.0), content="0")
+
+  // Test for negative zero
+  inspect!(Float::reinterpret_as_uint(-0.0), content="2147483648")
+
+  // Test for positive infinity
+  inspect!(
+    Float::reinterpret_as_uint((0x7F800000).reinterpret_as_float()),
+    content="2139095040",
+  )
+
+  // Test for negative infinity
+  inspect!(
+    Float::reinterpret_as_uint((0xFF800000).reinterpret_as_float()),
+    content="4286578688",
+  )
+
+  // Test for NaN
+  inspect!(
+    Float::reinterpret_as_uint((0x7FC00000).reinterpret_as_float()),
+    content="2143289344",
+  )
+}
+
+test "grouped test for random cases" {
+  // Random float values
+  inspect!(Float::reinterpret_as_uint(123.456), content="1123477881")
+  inspect!(Float::reinterpret_as_uint(-123.456), content="3270961529")
+  inspect!(Float::reinterpret_as_uint(0.000123), content="956365200")
+  inspect!(Float::reinterpret_as_uint(-0.000123), content="3103848848")
+  inspect!(Float::reinterpret_as_uint(987654321.0), content="1315666339")
+  inspect!(Float::reinterpret_as_uint(-987654321.0), content="3463149987")
+  inspect!(Float::reinterpret_as_uint(1.0e+30), content="1900671690")
+  inspect!(Float::reinterpret_as_uint(-1.0e+30), content="4048155338")
+}

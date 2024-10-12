@@ -517,6 +517,7 @@ impl Float {
   op_neq(Float, Float) -> Bool
   op_sub(Float, Float) -> Float
   reinterpret_as_int(Float) -> Int
+  reinterpret_as_uint(Float) -> UInt
   sqrt(Float) -> Float
   to_double(Float) -> Double
   to_json(Float) -> Json
