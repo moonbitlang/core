@@ -12,8 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-test "last None" {
-  assert_eq!(@list.Nil.last(), (None : Unit?))
+test "panic last" {
+  @list.Nil.last()
 }
 
 test "panic nth_exn" {
