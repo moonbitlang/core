@@ -153,7 +153,7 @@ test "array unique via Set" {
   let v = [1, 2, 3, 4, 5, 3, 2, 4, 5]
   let h = Set::from_iter(v.iter())
   let v = [..h]
-  // @json.inspect!([..h])
+  @json.inspect!([..h])
   @json.inspect!(v, content=[1, 2, 3, 4, 5])
 }
 
