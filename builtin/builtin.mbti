@@ -130,6 +130,7 @@ impl ArrayView {
   rev_fold[A, B](Self[A], ~init : B, (B, A) -> B) -> B
   rev_foldi[A, B](Self[A], ~init : B, (Int, B, A) -> B) -> B
   swap[T](Self[T], Int, Int) -> Unit
+  to_json[X : ToJson](Self[X]) -> Json
   to_string[X : Show](Self[X]) -> String
 }
 
