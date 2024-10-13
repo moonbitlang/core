@@ -19,6 +19,10 @@ fn imprecise_equal(x : Double, y : Double) -> Bool {
   (x - y).abs() < 4.5e-9
 }
 
+fn inaccuracy(x : Double, y : Double) -> Double {
+  (x - y).abs()
+}
+
 let vf = [
   4.9790119248836735e+00, 7.7388724745781045e+00, -2.7688005719200159e-01, -5.0106036182710749e+00,
   9.6362937071984173e+00, 2.9263772392439646e+00, 5.2290834314593066e+00, 2.7279399104360102e+00,
@@ -41,13 +45,23 @@ test "sin" {
   inspect!(@math.sin(@double.not_a_number), content="NaN")
   inspect!(@math.sin(@double.infinity), content="Infinity")
   inspect!(@math.sin(@double.neg_infinity), content="-Infinity")
+  let mut max_inaccuracy = 0.0
   for i = 0; i < vf.length(); i = i + 1 {
     inspect!(imprecise_equal(@math.sin(vf[i]), sin_res[i]), content="true")
+    max_inaccuracy = @math.maximum(
+      max_inaccuracy,
+      inaccuracy(@math.sin(vf[i]), sin_res[i]),
+    )
     inspect!(
       imprecise_equal(@math.sin(100000.0 * pi + vf[i]), sin_res_large[i]),
       content="true",
     )
+    max_inaccuracy = @math.maximum(
+      max_inaccuracy,
+      inaccuracy(@math.sin(100000.0 * pi + vf[i]), sin_res_large[i]),
+    )
   }
+  inspect!(max_inaccuracy, content="5.6910670620524684e-11")
 }
 
 test "cos" {
@@ -66,13 +80,23 @@ test "cos" {
   inspect!(@math.cos(@double.not_a_number), content="NaN")
   inspect!(@math.cos(@double.infinity), content="Infinity")
   inspect!(@math.cos(@double.neg_infinity), content="-Infinity")
+  let mut max_inaccuracy = 0.0
   for i = 0; i < vf.length(); i = i + 1 {
     inspect!(imprecise_equal(@math.cos(vf[i]), cos_res[i]), content="true")
+    max_inaccuracy = @math.maximum(
+      max_inaccuracy,
+      inaccuracy(@math.cos(vf[i]), cos_res[i]),
+    )
     inspect!(
       imprecise_equal(@math.cos(100000.0 * pi + vf[i]), cos_res_large[i]),
       content="true",
     )
+    max_inaccuracy = @math.maximum(
+      max_inaccuracy,
+      inaccuracy(@math.cos(100000.0 * pi + vf[i]), cos_res_large[i]),
+    )
   }
+  inspect!(max_inaccuracy, content="5.7822691079678634e-11")
 }
 
 test "tan" {
@@ -91,13 +115,23 @@ test "tan" {
   inspect!(@math.tan(@double.not_a_number), content="NaN")
   inspect!(@math.tan(@double.infinity), content="Infinity")
   inspect!(@math.tan(@double.neg_infinity), content="-Infinity")
+  let mut max_inaccuracy = 0.0
   for i = 0; i < vf.length(); i = i + 1 {
     inspect!(imprecise_equal(@math.tan(vf[i]), tan_res[i]), content="true")
+    max_inaccuracy = @math.maximum(
+      max_inaccuracy,
+      inaccuracy(@math.tan(vf[i]), tan_res[i]),
+    )
     inspect!(
       imprecise_equal(@math.tan(100000.0 * pi + vf[i]), tan_res_large[i]),
       content="true",
     )
+    max_inaccuracy = @math.maximum(
+      max_inaccuracy,
+      inaccuracy(@math.tan(100000.0 * pi + vf[i]), tan_res_large[i]),
+    )
   }
+  inspect!(max_inaccuracy, content="4.4124632836428646e-9")
 }
 
 test "atan" {
@@ -110,9 +144,15 @@ test "atan" {
   inspect!(@math.atan(@double.not_a_number), content="NaN")
   inspect!(@math.atan(@double.infinity), content="Infinity")
   inspect!(@math.atan(@double.neg_infinity), content="-Infinity")
+  let mut max_inaccuracy = 0.0
   for i = 0; i < vf.length(); i = i + 1 {
     inspect!(imprecise_equal(@math.atan(vf[i]), atan_res[i]), content="true")
+    max_inaccuracy = @math.maximum(
+      max_inaccuracy,
+      inaccuracy(@math.atan(vf[i]), atan_res[i]),
+    )
   }
+  inspect!(max_inaccuracy, content="2.220446049250313e-16")
 }
 
 test "asin" {
@@ -125,12 +165,18 @@ test "asin" {
   inspect!(@math.asin(@double.not_a_number), content="NaN")
   inspect!(@math.asin(@double.infinity), content="Infinity")
   inspect!(@math.asin(@double.neg_infinity), content="-Infinity")
+  let mut max_inaccuracy = 0.0
   for i = 0; i < vf.length(); i = i + 1 {
     inspect!(
       imprecise_equal(@math.asin(vf[i] / 10.0), asin_res[i]),
       content="true",
     )
+    max_inaccuracy = @math.maximum(
+      max_inaccuracy,
+      inaccuracy(@math.asin(vf[i] / 10.0), asin_res[i]),
+    )
   }
+  inspect!(max_inaccuracy, content="2.220446049250313e-16")
 }
 
 test "acos" {
@@ -143,10 +189,37 @@ test "acos" {
   inspect!(@math.acos(@double.not_a_number), content="NaN")
   inspect!(@math.acos(@double.infinity), content="Infinity")
   inspect!(@math.acos(@double.neg_infinity), content="-Infinity")
+  let mut max_inaccuracy = 0.0
   for i = 0; i < vf.length(); i = i + 1 {
     inspect!(
       imprecise_equal(@math.acos(vf[i] / 10.0), acos_res[i]),
       content="true",
     )
+    max_inaccuracy = @math.maximum(
+      max_inaccuracy,
+      inaccuracy(@math.acos(vf[i] / 10.0), acos_res[i]),
+    )
   }
+  inspect!(max_inaccuracy, content="2.220446049250313e-16")
+}
+
+test "atan2" {
+  let atan2_res : FixedArray[Double] = [
+    1.1088291730037004444527075e+00, 9.1218183188715804018797795e-01, 1.5984772603216203736068915e+00,
+    2.0352918654092086637227327e+00, 8.0391819139044720267356014e-01, 1.2861075249894661588866752e+00,
+    1.0889904479131695712182587e+00, 1.3044821793397925293797357e+00, 1.3902530903455392306872261e+00,
+    2.2859857424479142655411058e+00,
+  ]
+  let mut max_inaccuracy = 0.0
+  for i = 0; i < vf.length(); i = i + 1 {
+    inspect!(
+      imprecise_equal(@math.atan2(10, vf[i]), atan2_res[i]),
+      content="true",
+    )
+    max_inaccuracy = @math.maximum(
+      max_inaccuracy,
+      inaccuracy(@math.atan2(10, vf[i]), atan2_res[i]),
+    )
+  }
+  inspect!(max_inaccuracy, content="4.440892098500626e-16")
 }

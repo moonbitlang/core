@@ -81,7 +81,7 @@ pub fn exp(self : Float) -> Float {
   }
   let z = exp2f_data.invln2_scaled * xd
   let kd = z + exp2f_data.shift
-  let ki = kd.reinterpret_as_u64()
+  let ki = kd.reinterpret_as_uint64()
   let kd = kd - exp2f_data.shift
   let r = z - kd
   let t = exp2f_data.tab[(ki % expf_n).to_int()]

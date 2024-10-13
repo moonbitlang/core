@@ -13,19 +13,19 @@
 // limitations under the License.
 
 test "expect method with matching content" {
-  let buf = Buffer::new(size_hint=100)
+  let buf = @buffer.new(size_hint=100)
   buf.write_string("Test")
   inspect!(buf, content="Test")
 }
 
 test "expect method with non-matching content" {
-  let buf = Buffer::new(size_hint=100)
+  let buf = @buffer.new(size_hint=100)
   buf.write_string("Test")
   inspect!(buf, content="Test")
 }
 
 test "grow_if_necessary method" {
-  let buf = Buffer::new(size_hint=10)
+  let buf = @buffer.new(size_hint=10)
   buf.write_string(
     "This is a test string that is longer than the initial capacity",
   )
@@ -33,33 +33,33 @@ test "grow_if_necessary method" {
 }
 
 test "write_sub_string method" {
-  let buf = Buffer::new(size_hint=10)
+  let buf = @buffer.new(size_hint=10)
   buf.write_sub_string("Hello, World!", 7, 5)
   inspect!(buf, content="World")
 }
 
 test "write_byte method" {
-  let buf = Buffer::new(size_hint=10)
+  let buf = @buffer.new(size_hint=10)
   buf.write_byte(b'A')
   buf.write_byte(b'\x00')
   inspect!(buf, content="A")
 }
 
 test "to_bytes method" {
-  let buf = Buffer::new(size_hint=10)
+  let buf = @buffer.new(size_hint=10)
   buf.write_string("Test")
   let bytes = buf.to_bytes()
   assert_eq!(bytes.length(), 8) // Each character in "Test" is 2 bytes
 }
 
 test "expect method with non-matching content" {
-  let buf = Buffer::new(size_hint=100)
+  let buf = @buffer.new(size_hint=100)
   buf.write_string("Test")
   inspect!(buf, content="Test")
 }
 
 test "grow_if_necessary method" {
-  let buf = Buffer::new(size_hint=10)
+  let buf = @buffer.new(size_hint=10)
   buf.write_string(
     "This is a test string that is longer than the initial capacity",
   )
@@ -67,39 +67,39 @@ test "grow_if_necessary method" {
 }
 
 test "write_sub_string method" {
-  let buf = Buffer::new(size_hint=10)
+  let buf = @buffer.new(size_hint=10)
   buf.write_sub_string("Hello, World!", 7, 5)
   inspect!(buf, content="World")
 }
 
 test "write_byte method" {
-  let buf = Buffer::new(size_hint=10)
+  let buf = @buffer.new(size_hint=10)
   buf.write_byte(b'A')
   buf.write_byte(b'\x00')
   inspect!(buf, content="A")
 }
 
 test "to_bytes method" {
-  let buf = Buffer::new(size_hint=10)
+  let buf = @buffer.new(size_hint=10)
   buf.write_string("Test")
   let bytes = buf.to_bytes()
   assert_eq!(bytes.length(), 8) // Each character in "Test" is 2 bytes
 }
 
 test "expect method with matching content" {
-  let buf = Buffer::new(size_hint=100)
+  let buf = @buffer.new(size_hint=100)
   buf.write_string("Test")
   inspect!(buf, content="Test")
 }
 
 test "expect method with non-matching content" {
-  let buf = Buffer::new(size_hint=100)
+  let buf = @buffer.new(size_hint=100)
   buf.write_string("Test")
   inspect!(buf, content="Test")
 }
 
 test "grow_if_necessary method" {
-  let buf = Buffer::new(size_hint=10)
+  let buf = @buffer.new(size_hint=10)
   buf.write_string(
     "This is a test string that is longer than the initial capacity",
   )
@@ -107,27 +107,27 @@ test "grow_if_necessary method" {
 }
 
 test "write_sub_string method" {
-  let buf = Buffer::new(size_hint=10)
+  let buf = @buffer.new(size_hint=10)
   buf.write_sub_string("Hello, World!", 7, 5)
   inspect!(buf, content="World")
 }
 
 test "write_byte method" {
-  let buf = Buffer::new(size_hint=10)
+  let buf = @buffer.new(size_hint=10)
   buf.write_byte(b'A')
   buf.write_byte(b'\x00')
   inspect!(buf, content="A")
 }
 
 test "to_bytes method" {
-  let buf = Buffer::new(size_hint=10)
+  let buf = @buffer.new(size_hint=10)
   buf.write_string("Test")
   let bytes = buf.to_bytes()
   assert_eq!(bytes.length(), 8) // Each character in "Test" is 2 bytes
 }
 
 test "write_bytes" {
-  let buf = Buffer::new(size_hint=4)
+  let buf = @buffer.new(size_hint=4)
   buf.write_bytes(b"1\x002\x003\x004\x00")
   buf.write_bytes(b"5\x006\x007\x008\x00")
   inspect!(buf, content="12345678")

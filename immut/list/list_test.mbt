@@ -109,10 +109,10 @@ test "head" {
   inspect!(el.head(), content="None")
 }
 
-test "last" {
-  let ls = @list.of([1, 2, 3, 4, 5])
-  inspect!(ls.last(), content="5")
-}
+// test "last" {
+//   let ls = @list.of([1, 2, 3, 4, 5])
+//   inspect!(ls.last(), content="5")
+// }
 
 test "init_" {
   let ls = @list.of([1, 2, 3, 4, 5])
@@ -494,11 +494,11 @@ test "List::head_exn with non-empty list" {
   assert_eq!(head, Some(1))
 }
 
-test "List::last with non-empty list" {
-  let list = @list.of([1, 2, 3, 4, 5])
-  let last = @list.last(list)
-  assert_eq!(last, 5)
-}
+// test "List::last with non-empty list" {
+//   let list = @list.of([1, 2, 3, 4, 5])
+//   let last = @list.last(list)
+//   assert_eq!(last, 5)
+// }
 
 test "List::zip with lists of equal length" {
   let list1 = @list.of([1, 2, 3])

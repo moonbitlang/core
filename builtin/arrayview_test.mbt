@@ -41,18 +41,18 @@ test "swap" {
 
 test "iter" {
   let array = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
-  inspect!(
+  @json.inspect!(
     array[:].iter().to_array(),
-    content="[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]",
+    content=[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
   )
-  inspect!(array[5:].iter().to_array(), content="[5, 6, 7, 8, 9, 10]")
-  inspect!(array[5:9].iter().to_array(), content="[5, 6, 7, 8]")
+  @json.inspect!(array[5:].iter().to_array(), content=[5, 6, 7, 8, 9, 10])
+  @json.inspect!(array[5:9].iter().to_array(), content=[5, 6, 7, 8])
 }
 
 test "to_string" {
   let arr = [0, 1, 2, 3, 4]
-  inspect!(arr[1:3].to_string(), content="[1, 2]")
-  inspect!("\{arr[1:3]}!", content="[1, 2]!")
+  @json.inspect!(arr[1:3], content=[1, 2])
+  @json.inspect!("\{arr[1:3]}!", content="[1, 2]!")
 }
 
 test "arrayview_fold" {

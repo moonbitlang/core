@@ -13,11 +13,11 @@
 // limitations under the License.
 
 fn get_high_word(x : Double) -> UInt {
-  (x.reinterpret_as_u64() >> 32).to_uint()
+  (x.reinterpret_as_uint64() >> 32).to_uint()
 }
 
 fn get_low_word(x : Double) -> UInt {
-  x.reinterpret_as_u64().to_uint()
+  x.reinterpret_as_uint64().to_uint()
 }
 
 fn insert_words(ix0 : UInt64, ix1 : UInt64) -> Double {

@@ -251,3 +251,50 @@ pub fn acos(x : Double) -> Double {
     pi / 2.0 - asin(x)
   }
 }
+
+fn copysign(x : Double, y : Double) -> Double {
+  if y < 0 {
+    -x.abs()
+  } else {
+    x.abs()
+  }
+}
+
+pub fn atan2(y : Double, x : Double) -> Double {
+  if Double::is_nan(x) || Double::is_nan(y) {
+    @double.not_a_number
+  } else if y == 0 {
+    if x >= 0 {
+      copysign(0, y)
+    } else {
+      copysign(pi, y)
+    }
+  } else if x == 0 {
+    copysign(pi / 2, y)
+  } else if x.is_inf() {
+    if x.is_pos_inf() {
+      if y.is_inf() {
+        copysign(pi / 4, y)
+      } else {
+        copysign(0, y)
+      }
+    } else if y.is_inf() {
+      copysign(3.0 * pi / 4, y)
+    } else {
+      copysign(pi, y)
+    }
+  } else if y.is_inf() {
+    copysign(pi / 2, y)
+  } else {
+    let q = atan(y / x)
+    if x < 0 {
+      if q <= 0 {
+        q + pi
+      } else {
+        q - pi
+      }
+    } else {
+      q
+    }
+  }
+}

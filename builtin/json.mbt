@@ -107,11 +107,23 @@ pub fn FixedArray::to_json[X : ToJson](self : FixedArray[X]) -> Json {
   if len == 0 {
     return []
   }
-  let res = FixedArray::make(self.length(), ToJson::to_json(self[0]))
+  let res = Array::make(self.length(), ToJson::to_json(self[0]))
   for i in 1..<len {
     res[i] = ToJson::to_json(self[i])
   }
-  Array(Array::from_fixed_array(res))
+  Array(res)
+}
+
+pub fn ArrayView::to_json[X : ToJson](self : ArrayView[X]) -> Json {
+  let len = self.length()
+  if len == 0 {
+    return []
+  }
+  let res = Array::make(self.length(), ToJson::to_json(self[0]))
+  for i in 1..<len {
+    res[i] = ToJson::to_json(self[i])
+  }
+  Array(res)
 }
 
 pub fn Map::to_json[K : Show, V : ToJson](self : Map[K, V]) -> Json {
@@ -120,6 +132,14 @@ pub fn Map::to_json[K : Show, V : ToJson](self : Map[K, V]) -> Json {
     object[k.to_string()] = v.to_json()
   }
   Object(object)
+}
+
+pub fn Set::to_json[X : ToJson](self : Set[X]) -> Json {
+  let array = []
+  for v in self {
+    array.push(v.to_json())
+  }
+  Array(array)
 }
 
 pub fn Option::to_json[T : ToJson](self : T?) -> Json {

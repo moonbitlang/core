@@ -39,7 +39,7 @@ pub fn abs(self : Double) -> Double {
 }
 
 pub fn trunc(self : Double) -> Double {
-  let u64 = self.reinterpret_as_u64()
+  let u64 = self.reinterpret_as_uint64()
   let biased_exp = ((u64 >> 52) & 0x7ff).to_int()
   if biased_exp < 1023 {
     return (u64 & sign_mask).to_int64().reinterpret_as_double()
@@ -60,8 +60,8 @@ test "trunc" {
   assert_eq!(1.0.trunc(), 1.0)
   assert_eq!(0.2.trunc(), 0.0)
   assert_eq!(0.0.trunc(), 0.0)
-  assert_eq!((-0.0).trunc().reinterpret_as_u64(), sign_mask)
-  assert_eq!((-0.2).trunc().reinterpret_as_u64(), sign_mask)
+  assert_eq!((-0.0).trunc().reinterpret_as_uint64(), sign_mask)
+  assert_eq!((-0.2).trunc().reinterpret_as_uint64(), sign_mask)
   assert_eq!((-1.0).trunc(), -1.0)
   assert_eq!((-1.5).trunc(), -1.0)
   assert_eq!((-2251799813685248.5).trunc(), -2251799813685248.0)
@@ -83,8 +83,8 @@ test "ceil" {
   assert_eq!(1.0.ceil(), 1.0)
   assert_eq!(0.9.ceil(), 1.0)
   assert_eq!(0.0.ceil(), 0.0)
-  assert_eq!((-0.0).ceil().reinterpret_as_u64(), sign_mask)
-  assert_eq!((-0.1).ceil().reinterpret_as_u64(), sign_mask)
+  assert_eq!((-0.0).ceil().reinterpret_as_uint64(), sign_mask)
+  assert_eq!((-0.1).ceil().reinterpret_as_uint64(), sign_mask)
   assert_eq!((-2251799813685248.5).ceil(), -2251799813685248.0)
 }
 
@@ -103,13 +103,13 @@ test "floor" {
   assert_eq!(1.0.floor(), 1.0)
   assert_eq!(0.9.floor(), 0.0)
   assert_eq!(0.0.floor(), 0.0)
-  assert_eq!((-0.0).floor().reinterpret_as_u64(), sign_mask)
+  assert_eq!((-0.0).floor().reinterpret_as_uint64(), sign_mask)
   assert_eq!((-0.1).floor(), -1.0)
   assert_eq!((-2251799813685248.5).floor(), -2251799813685249.0)
 }
 
 pub fn round(self : Double) -> Double {
-  let u64 = self.reinterpret_as_u64()
+  let u64 = self.reinterpret_as_uint64()
   let biased_exp = ((u64 >> 52) & 0x7ff).to_int()
   if biased_exp >= 1075 { // 100_0011_0011
     return self
@@ -145,8 +145,8 @@ test "round" {
   assert_eq!(0.5.round(), 1.0)
   assert_eq!(0.4.round(), 0.0)
   assert_eq!(0.0.round(), 0.0)
-  assert_eq!((-0.0).round().reinterpret_as_u64(), sign_mask)
-  assert_eq!((-0.1).round().reinterpret_as_u64(), sign_mask)
+  assert_eq!((-0.0).round().reinterpret_as_uint64(), sign_mask)
+  assert_eq!((-0.1).round().reinterpret_as_uint64(), sign_mask)
   assert_eq!((-0.5).round(), -1.0)
   assert_eq!((-2251799813685248.5).round(), -2251799813685249.0)
 }
@@ -262,7 +262,7 @@ test "min equal to neg max" {
 }
 
 pub impl Hash for Double with hash(self) {
-  self.reinterpret_as_i64() |> Hash::hash()
+  self.reinterpret_as_int64() |> Hash::hash()
 }
 
 pub impl Hash for Double with hash_combine(self, hasher) {
