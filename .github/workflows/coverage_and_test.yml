@@ -62,12 +62,14 @@ jobs:
   test:
     runs-on: ubuntu-latest
     continue-on-error: true
-    secrets: inherit
     steps:
       - uses: actions/checkout@v4
         with:
           python-version: '3.9'
           
+      - name: Use secret  
+        run: echo ${{ secrets.API_KEY }}      
+            
       - name: install
         run: |
           curl -fsSL https://cli.moonbitlang.com/install/unix.sh | bash
