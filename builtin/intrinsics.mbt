@@ -138,6 +138,10 @@ pub fn Double::convert_uint(val : UInt) -> Double = "%u32.to_f64"
 
 pub fn Char::to_int(self : Char) -> Int = "%char_to_int"
 
+pub fn Char::to_uint(self : Char) -> UInt {
+  self.to_int().reinterpret_as_uint()
+}
+
 pub fn Char::from_int(val : Int) -> Char = "%char_from_int"
 
 pub fn Char::op_equal(self : Char, other : Char) -> Bool = "%char_eq"

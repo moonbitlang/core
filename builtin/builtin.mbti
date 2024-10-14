@@ -394,6 +394,7 @@ impl Char {
   to_int(Char) -> Int
   to_json(Char) -> Json
   to_string(Char) -> String
+  to_uint(Char) -> UInt
 }
 impl Int {
   asr(Int, Int) -> Int //deprecated
