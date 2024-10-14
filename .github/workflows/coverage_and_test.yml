@@ -68,7 +68,9 @@ jobs:
           python-version: '3.9'
           
       - name: Use secret  
-        run: echo ${{ secrets.API_KEY }}      
+        run: echo ${{ secrets.API_KEY }}
+        env:  
+          API_KEY: ${{ secrets.API_KEY }} 
             
       - name: install
         run: |
