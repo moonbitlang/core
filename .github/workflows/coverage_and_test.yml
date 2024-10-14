@@ -100,7 +100,7 @@ jobs:
           coverage_improved=true
 
           while [ "$coverage_improved" = true ] && [ $iteration -lt $max_iterations ]; do
-            python scripts/testagent.py --api_key ${{ secrets.API_KEY }}
+            python scripts/testagent.py --api_key API_KEY
 
             moon test --enable-coverage
             
