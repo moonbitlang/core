@@ -45,9 +45,10 @@ test "floor" {
   assert_eq!(floor(0.0), 0.0)
 }
 
-pub fn trunc(input: Double) -> Double {
+pub fn trunc(input : Double) -> Double {
   input.trunc()
 }
+
 test "trunc" {
   assert_eq!(trunc(4503599627370497.0), 4503599627370497.0)
   assert_eq!(trunc(2251799813685248.5), 2251799813685248.0)
