@@ -110,6 +110,10 @@ pub fn Int::reinterpret_as_uint(self : Int) -> UInt = "%i32.to_u32_reinterpret"
 pub fn Int::to_uint(self : Int) -> UInt = "%i32.to_u32_reinterpret"
 // Double primitive ops
 
+pub fn Int::to_uint64(self : Int) -> UInt64 {
+  self.to_int64().reinterpret_as_uint64()
+}
+
 pub fn Double::op_neg(self : Double) -> Double = "%f64_neg"
 
 pub fn Double::op_add(self : Double, other : Double) -> Double = "%f64_add"
@@ -137,6 +141,10 @@ pub fn Double::convert_uint(val : UInt) -> Double = "%u32.to_f64"
 // Char primitive ops
 
 pub fn Char::to_int(self : Char) -> Int = "%char_to_int"
+
+pub fn Char::to_uint(self : Char) -> UInt {
+  self.to_int().reinterpret_as_uint()
+}
 
 pub fn Char::from_int(val : Int) -> Char = "%char_from_int"
 

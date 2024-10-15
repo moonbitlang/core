@@ -343,3 +343,69 @@ test "grouped test for random cases" {
   inspect!(Float::reinterpret_as_uint(1.0e+30), content="1900671690")
   inspect!(Float::reinterpret_as_uint(-1.0e+30), content="4048155338")
 }
+
+test "Char::to_uint - Boundary Cases" {
+  // Test for the boundary values of Char
+  inspect!(Char::to_uint('\u{0}'), content="0")
+  inspect!(Char::to_uint('\u{FFFF}'), content="65535")
+}
+
+test "Char::to_uint - Random Cases" {
+  // Test for some random values of Char
+  inspect!(Char::to_uint('a'), content="97")
+  inspect!(Char::to_uint('A'), content="65")
+  inspect!(Char::to_uint('1'), content="49")
+  inspect!(Char::to_uint('!'), content="33")
+  inspect!(Char::to_uint(' '), content="32")
+  inspect!(Char::to_uint('中'), content="20013")
+}
+
+test "Char::to_uint - Edge Cases" {
+  // Test for some edge cases
+  inspect!(Char::to_uint('\u{0001}'), content="1")
+  inspect!(Char::to_uint('\u{00FF}'), content="255")
+  inspect!(Char::to_uint('\u{0100}'), content="256")
+  inspect!(Char::to_uint('\u{FFFE}'), content="65534")
+}
+
+test "Char::to_uint - Special Characters" {
+  // Test for special characters
+  inspect!(Char::to_uint('\n'), content="10")
+  inspect!(Char::to_uint('\t'), content="9")
+  inspect!(Char::to_uint('\r'), content="13")
+  inspect!(Char::to_uint('\\'), content="92")
+  inspect!(Char::to_uint('\''), content="39")
+}
+
+test "Char::to_uint - Unicode Characters" {
+  // Test for some Unicode characters
+  inspect!(Char::to_uint('😀'), content="128512")
+  inspect!(Char::to_uint('🌍'), content="127757")
+  inspect!(Char::to_uint('⚡'), content="9889")
+  inspect!(Char::to_uint('♫'), content="9835")
+}
+
+test "Int::to_uint64 - Boundary Cases" {
+  inspect!(Int::to_uint64(0), content="0")
+  inspect!(Int::to_uint64(1), content="1")
+  inspect!(Int::to_uint64(-1), content="18446744073709551615")
+  inspect!(Int::to_uint64(2147483647), content="2147483647")
+  inspect!(Int::to_uint64(-2147483648), content="18446744071562067968")
+}
+
+test "Int::to_uint64 - Random Cases" {
+  inspect!(Int::to_uint64(123456789), content="123456789")
+  inspect!(Int::to_uint64(-987654321), content="18446744072721897295")
+  inspect!(Int::to_uint64(987654321), content="987654321")
+  inspect!(Int::to_uint64(-123456789), content="18446744073586094827")
+}
+
+test "Int::to_uint64 - Edge Cases with Zero" {
+  inspect!(Int::to_uint64(0), content="0")
+  inspect!(Int::to_uint64(-0), content="0")
+}
+
+test "Int::to_uint64 - Random Values" {
+  inspect!(Int::to_uint64(1234567890), content="1234567890")
+  inspect!(Int::to_uint64(-1234567890), content="18446744072474983726")
+}
