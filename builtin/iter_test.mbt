@@ -535,3 +535,12 @@ test "peek function - random cases" {
   let iter5 = [0, 0, 0].iter()
   inspect!(iter5.peek(), content="Some(0)")
 }
+
+test "Iter::of" {
+  let iter = Iter::of([1, 2, 3])
+  let arr = iter.collect()
+  assert_eq!(arr, [1, 2, 3])
+  // chain iter method
+  let arr2 = Iter::of([1, 2, 3]).take(2).peek()
+  inspect!(arr2, content="Some(1)")
+}

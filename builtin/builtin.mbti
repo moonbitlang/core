@@ -226,6 +226,7 @@ impl Iter {
   map[T, R](Self[T], (T) -> R) -> Self[R]
   map_while[A, B](Self[A], (A) -> B?) -> Self[B]
   new[T](((T) -> IterResult) -> IterResult) -> Self[T]
+  of[T](FixedArray[T]) -> Self[T]
   op_add[T](Self[T], Self[T]) -> Self[T]
   op_as_view[A](Self[A], ~start : Int, ~end? : Int) -> Self[A]
   peek[T](Self[T]) -> T?

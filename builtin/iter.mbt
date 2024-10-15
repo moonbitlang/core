@@ -811,3 +811,17 @@ pub fn contains[A : Eq](self : Iter[A], value : A) -> Bool {
   }
   false
 }
+
+pub fn Iter::of[T](arr : FixedArray[T]) -> Iter[T] {
+  Iter::new(
+    fn(yield) {
+      for i = 0, len = arr.length(); i < len; i = i + 1 {
+        if yield(arr[i]) == IterEnd {
+          break IterEnd
+        }
+      } else {
+        IterContinue
+      }
+    },
+  )
+}
