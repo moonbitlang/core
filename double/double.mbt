@@ -42,14 +42,13 @@ pub fn trunc(self : Double) -> Double {
   let u64 = self.reinterpret_as_uint64()
   let biased_exp = ((u64 >> 52) & 0x7ff).to_int()
   if biased_exp < 1023 {
-    return (u64 & sign_mask).to_int64().reinterpret_as_double()
+    return (u64 & sign_mask).reinterpret_as_double()
   }
   if biased_exp >= 1075 {
     return self
   }
-  (u64 & (sign_mask.to_int64() >> (biased_exp - 1012)).reinterpret_as_uint64())
-  .to_int64()
-  .reinterpret_as_double()
+  (u64 &
+  (sign_mask.reinterpret_as_int64() >> (biased_exp - 1012)).reinterpret_as_uint64()).reinterpret_as_double()
 }
 
 test "trunc" {
@@ -114,17 +113,13 @@ pub fn round(self : Double) -> Double {
   if biased_exp >= 1075 { // 100_0011_0011
     return self
   } else if biased_exp < 1022 { // 011_1111_1110
-    return (u64 & sign_mask).to_int64().reinterpret_as_double()
+    return (u64 & sign_mask).reinterpret_as_double()
   } else if biased_exp == 1022 {
-    return ((u64 & sign_mask) | 0x3FF0_0000_0000_0000)
-      .to_int64()
-      .reinterpret_as_double()
+    return ((u64 & sign_mask) | 0x3FF0_0000_0000_0000).reinterpret_as_double()
   }
   // 011_1111_0100
   let trunced = (u64 &
-    (sign_mask.to_int64() >> (biased_exp - 1012)).reinterpret_as_uint64())
-    .to_int64()
-    .reinterpret_as_double()
+  (sign_mask.reinterpret_as_int64() >> (biased_exp - 1012)).reinterpret_as_uint64()).reinterpret_as_double()
   if (u64 & (sign_mask >> (biased_exp - 1011))) == 0 {
     return trunced
   } else if self > 0.0 {

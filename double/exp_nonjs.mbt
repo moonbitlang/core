@@ -24,7 +24,7 @@ fn insert_words(ix0 : UInt64, ix1 : UInt64) -> Double {
   let mut bits : UInt64 = 0
   bits = bits | (ix0 << 32)
   bits = bits | ix1
-  bits.to_int64().reinterpret_as_double()
+  bits.reinterpret_as_double()
 }
 
 pub fn exp(self : Double) -> Double {
