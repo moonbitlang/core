@@ -82,21 +82,17 @@ jobs:
         id: loop-coverage
         run:
           prev_coverage=$(cat coverage_summary.txt | grep 'Total Coverage' | awk '{print $NF}' | tr -d '%')
-          
           max_iterations=5
-          
           iteration=0
-          
           coverage_improved=true
 
           while [ "$coverage_improved" = true ] && [ $iteration -lt $max_iterations ]; do
-            
             python scripts/testagent.py --api_key "$API_KEY"
 
             moon test --enable-coverage
             
-            moon coverage report -f coveralls
-            
+             moon coverage report -f coveralls
+
             moon coverage report -f summary summary > coverage_summary.txt
           
             new_coverage=$(cat coverage_summary.txt | grep 'Total Coverage' | awk '{print $NF}' | tr -d '%')
@@ -109,7 +105,8 @@ jobs:
               echo "Coverage did not improve. Stopping loop."
             fi
             iteration=$((iteration + 1))
-            done
+          done
+          echo "Final coverage:$new_coverage%"
 
 
 
