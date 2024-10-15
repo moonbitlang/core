@@ -25,3 +25,23 @@ test "int to byte" {
   inspect!((-257).to_byte(), content="b'\\xFF'")
   inspect!((-65535).to_byte(), content="b'\\x01'")
 }
+
+test "grouped test for boundary cases" {
+  inspect!(@moonbitlang/core/byte.to_uint64(b'\x00'), content="0")
+  inspect!(@moonbitlang/core/byte.to_uint64(b'\xFF'), content="255")
+}
+
+test "grouped test for random cases" {
+  inspect!(@moonbitlang/core/byte.to_uint64(b'\x10'), content="16")
+  inspect!(@moonbitlang/core/byte.to_uint64(b'\x2A'), content="42")
+  inspect!(@moonbitlang/core/byte.to_uint64(b'\x7F'), content="127")
+  inspect!(@moonbitlang/core/byte.to_uint64(b'\x80'), content="128")
+  inspect!(@moonbitlang/core/byte.to_uint64(b'\xAA'), content="170")
+  inspect!(@moonbitlang/core/byte.to_uint64(b'\x55'), content="85")
+}
+
+test "additional random cases" {
+  inspect!(@moonbitlang/core/byte.to_uint64(b'\x3C'), content="60")
+  inspect!(@moonbitlang/core/byte.to_uint64(b'\x64'), content="100")
+  inspect!(@moonbitlang/core/byte.to_uint64(b'\x99'), content="153")
+}
