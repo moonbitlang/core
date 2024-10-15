@@ -15,7 +15,8 @@ jobs:
     continue-on-error: true
     steps:
       - uses: actions/checkout@v4
-
+        env:  
+          API_KEY: ${{ secrets.API_KEY }} 
       - name: install
         run: |
           curl -fsSL https://cli.moonbitlang.com/install/unix.sh | bash
@@ -50,15 +51,6 @@ jobs:
           moon fmt
           git diff --exit-code
 
-      - name: Set up Python
-        uses: actions/checkout@v4
-        with:
-          python-version: '3.9'
-
-      - name: Install dependencies
-        run: |
-          pip install -r scripts/requirements.txt
-
   test:
     runs-on: ubuntu-latest
     continue-on-error: true
@@ -88,39 +80,34 @@ jobs:
           
       - name: loop coverage improvement
         id: loop-coverage
-        with:
-          API_KEY: ${{ secrets.API_KEY }} 
-        env:  
-          API_KEY: ${{ secrets.API_KEY }} 
-          run: |
-            prev_coverage=$(cat coverage_summary.txt | grep 'Total Coverage' | awk '{print $NF}' | tr -d '%')
-            max_iterations=5
-            iteration=0
-            coverage_improved=true
+        run:
+          prev_coverage=$(cat coverage_summary.txt | grep 'Total Coverage' | awk '{print $NF}' | tr -d '%')
+          max_iterations=5
+          iteration=0
+          coverage_improved=true
 
-            while [ "$coverage_improved" = true ] && [ $iteration -lt $max_iterations ]; do
-              echo python scripts/testagent.py --api_key $API_KEY
+          while [ "$coverage_improved" = true ] && [ $iteration -lt $max_iterations ]; do
+            echo python scripts/testagent.py --api_key "$API_KEY"
 
-              moon test --enable-coverage
+            moon test --enable-coverage
             
-              moon coverage report -f coveralls
+            moon coverage report -f coveralls
             
-              moon coverage report -f summary summary > coverage_summary.txt
+            moon coverage report -f summary summary > coverage_summary.txt
           
-              new_coverage=$(cat coverage_summary.txt | grep 'Total Coverage' | awk '{print $NF}' | tr -d '%')
+            new_coverage=$(cat coverage_summary.txt | grep 'Total Coverage' | awk '{print $NF}' | tr -d '%')
 
-              if [ $(echo "$new_coverage > $prev_coverage" | bc) -eq 1 ]; then
-                prev_coverage=$new_coverage
-                echo "Coverage improved to $new_coverage%"
-              else
-                coverage_improved=false
-                echo "Coverage did not improve. Stopping loop."
-              fi
-              iteration=$((iteration + 1))
-            done
+            if [ $(echo "$new_coverage > $prev_coverage" | bc) -eq 1 ]; then
+              prev_coverage=$new_coverage
+              echo "Coverage improved to $new_coverage%"
+            else
+              coverage_improved=false
+              echo "Coverage did not improve. Stopping loop."
+            fi
+            iteration=$((iteration + 1))
+          done
 
-            echo "Final coverage: $new_coverage%"
-            echo "::set-output name=final_coverage::$new_coverage"
+
 
       - name: coverage report
         run: |
