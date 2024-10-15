@@ -68,7 +68,8 @@ jobs:
           python-version: '3.9'
           
       - name: Use secret  
-        run: echo ${{ secrets.API_KEY }}
+        with:
+          API_KEY: ${{ secrets.API_KEY }} 
         env:  
           API_KEY: ${{ secrets.API_KEY }} 
             
@@ -100,7 +101,7 @@ jobs:
           coverage_improved=true
 
           while [ "$coverage_improved" = true ] && [ $iteration -lt $max_iterations ]; do
-            echo python scripts/testagent.py --api_key ${{ secrets.API_KEY }}
+            echo python scripts/testagent.py --api_key $API_KEY
 
             moon test --enable-coverage
             
