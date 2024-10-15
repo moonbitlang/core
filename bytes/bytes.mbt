@@ -69,3 +69,43 @@ pub fn iter(self : Bytes) -> Iter[Byte] {
     },
   )
 }
+
+/// Reads a 32-bit integer from the given offset.
+/// alert unsafe "Panic if offset + 4 > self.length()"
+pub fn read_int(self : Bytes, offset : Int) -> Int {
+  let mut rv = 0
+  for i = 0; i < 4; i = i + 1 {
+    rv = rv | (self[offset + i].to_int() << (i * 8))
+  }
+  rv
+}
+
+/// Reads a 64-bit integer from the given offset.
+/// alert unsafe "Panic if offset + 8 > self.length()"
+pub fn read_int64(self : Bytes, offset : Int) -> Int64 {
+  let mut rv = 0L
+  for i = 0; i < 8; i = i + 1 {
+    rv = rv | (self[offset + i].to_int64() << (i * 8))
+  }
+  rv
+}
+
+/// Reads a 32-bit unsigned integer from the given offset.
+/// alert unsafe "Panic if offset + 4 > self.length()"
+pub fn read_uint(self : Bytes, offset : Int) -> UInt {
+  let mut rv = 0U
+  for i = 0; i < 4; i = i + 1 {
+    rv = rv | (self[offset + i].to_uint() << (i * 8))
+  }
+  rv
+}
+
+/// Reads a 64-bit unsigned integer from the given offset.
+/// alert unsafe "Panic if offset + 8 > self.length()"
+pub fn read_uint64(self : Bytes, offset : Int) -> UInt64 {
+  let mut rv = 0UL
+  for i = 0; i < 8; i = i + 1 {
+    rv = rv | (self[offset + i].to_uint64() << (i * 8))
+  }
+  rv
+}

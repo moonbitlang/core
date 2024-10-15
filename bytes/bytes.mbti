@@ -8,6 +8,10 @@ impl Bytes {
   from_iter(Iter[Byte]) -> Bytes
   iter(Bytes) -> Iter[Byte]
   of(FixedArray[Byte]) -> Bytes
+  read_int(Bytes, Int) -> Int
+  read_int64(Bytes, Int) -> Int64
+  read_uint(Bytes, Int) -> UInt
+  read_uint64(Bytes, Int) -> UInt64
   to_array(Bytes) -> Array[Byte]
 }
 
