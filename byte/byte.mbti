@@ -6,6 +6,9 @@ let max_value : Byte
 let min_value : Byte
 
 // Types and methods
+impl Byte {
+  to_uint64(Byte) -> UInt64
+}
 
 // Type aliases
 
