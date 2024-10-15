@@ -14,5 +14,5 @@
 
 pub struct T {
   name : String
-  buffer : Buffer
+  buffer : StringBuilder
 }

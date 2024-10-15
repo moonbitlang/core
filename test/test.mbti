@@ -18,7 +18,7 @@ fn ne[T : Show + Eq](T, T, ~loc : SourceLoc = _) -> Unit! //deprecated
 // Types and methods
 pub struct T {
   pub name : String
-  pub buffer : Buffer
+  pub buffer : StringBuilder
 }
 impl T {
   snapshot(Self, ~filename : String, ~loc : SourceLoc = _, ~args_loc : ArgsLoc = _) -> Unit!SnapshotError
