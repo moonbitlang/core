@@ -86,7 +86,7 @@ pub fn exp(self : Float) -> Float {
   let r = z - kd
   let t = exp2f_data.tab[(ki % expf_n).to_int()]
   let t = t + (ki << (52 - exp2f_table_bits))
-  let s = t.to_int64().reinterpret_as_double()
+  let s = t.reinterpret_as_double()
   let z = exp2f_data.poly_scaled[0] * r + exp2f_data.poly_scaled[1]
   let r2 = r * r
   let y = exp2f_data.poly_scaled[2] * r + 1

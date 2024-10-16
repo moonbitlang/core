@@ -98,7 +98,10 @@ test "uint64 test" {
   inspect!(100UL == 100UL, content="true")
   inspect!(0UL < 100UL, content="true")
   inspect!(100UL > 0UL, content="true")
-  inspect!(9223372036854775808UL.to_int64(), content="-9223372036854775808")
+  inspect!(
+    9223372036854775808UL.reinterpret_as_int64(),
+    content="-9223372036854775808",
+  )
   inspect!(
     (-9223372036854775808L).reinterpret_as_uint64(),
     content="9223372036854775808",

@@ -114,7 +114,9 @@ pub fn UInt64::to_string(self : UInt64) -> String {
     if num2 != 0UL {
       write_digits(num2)
     }
-    buf.write_char(Char::from_int((num % 10UL).to_int64().to_int() + 48))
+    buf.write_char(
+      Char::from_int((num % 10UL).reinterpret_as_int64().to_int() + 48),
+    )
   }
 
   write_digits(self)

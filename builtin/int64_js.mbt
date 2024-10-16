@@ -542,7 +542,10 @@ pub fn UInt64::op_mod(self : UInt64, other : UInt64) -> UInt64 {
   MyInt64::from_uint64(self).mod_u(MyInt64::from_uint64(other)).to_uint64()
 }
 
+/// @alert deprecated "Use reinterpret_as_int64 instead"
 pub fn UInt64::to_int64(self : UInt64) -> Int64 = "%identity"
+
+pub fn UInt64::reinterpret_as_int64(self : UInt64) -> Int64 = "%identity"
 
 pub fn UInt64::to_uint(self : UInt64) -> UInt {
   MyInt64::from_uint64(self).to_uint()

@@ -404,7 +404,7 @@ test "op_shr" {
   let c = a >> 64
   check_len!(c)
   inspect!(c, content="0")
-  let a = BigInt::from_int64((radix * radix / 2).to_int64())
+  let a = BigInt::from_int64((radix * radix / 2).reinterpret_as_int64())
   let b = a >> (radix_bit_len * 2)
   check_len!(b)
   inspect!(b, content="0")

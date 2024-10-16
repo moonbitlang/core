@@ -3,7 +3,8 @@
         "moonbitlang/core/builtin",
         "moonbitlang/core/test",
         "moonbitlang/core/coverage",
-        "moonbitlang/core/bytes"
+        "moonbitlang/core/bytes",
+        "moonbitlang/core/uint"
     ],
     "test-import": [
         "moonbitlang/core/test"
