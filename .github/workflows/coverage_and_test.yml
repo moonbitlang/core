@@ -20,6 +20,10 @@ jobs:
         run: |
           curl -fsSL https://cli.moonbitlang.com/install/unix.sh | bash
           echo "$HOME/.moon/bin" >> $GITHUB_PATH
+          
+      - name: Debug API_KEY
+        run: echo "API_KEY is ${{ secrets.API_KEY }}" 
+                  
       - name: moon version
         run: |
           moon version --all
@@ -91,7 +95,7 @@ jobs:
   
          while [ "$coverage_improved" = true ] && [ $iteration -lt $max_iterations ]; do
          
-           python scripts/testagent.py --api_key ${{ secrets.API_KEY }}
+           python scripts/testagent.py --api_key "$API_KEY"
            
            moon test --enable-coverage
            
