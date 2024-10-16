@@ -274,6 +274,10 @@ pub fn UInt::to_uint64(self : UInt) -> UInt64 {
   UInt64::extend_uint(self)
 }
 
+pub fn UInt::to_byte(self : UInt) -> Byte {
+  self.reinterpret_as_int().to_byte()
+}
+
 // Float primitive
 pub fn Float::op_neg(self : Float) -> Float = "%f32.neg"
 
