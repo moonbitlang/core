@@ -58,7 +58,7 @@ jobs:
         with:
           python-version: '3.9'
         env:
-          API_KEY: ${{ secrets.api_key }}
+          API_KEY: ${{ secrets.API_KEY }}
                    
       - name: install
         run: |
@@ -80,6 +80,8 @@ jobs:
           pip install -r scripts/requirements.txt
           
       - name: loop coverage improvement
+        env:
+          API_KEY: ${{ secrets.API_KEY }}
         id: loop-coverage
         run:
          prev_coverage=$(cat coverage_summary.txt | grep 'Total Coverage' | awk '{print $NF}' | tr -d '%')  
