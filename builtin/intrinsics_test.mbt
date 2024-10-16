@@ -412,3 +412,24 @@ test "Int::to_uint64 - Random Values" {
   inspect!(Int::to_uint64(1234567890), content="1234567890")
   inspect!(Int::to_uint64(-1234567890), content="18446744072474983726")
 }
+
+test "UInt::reinterpret_as_float roundtrip" {
+  let values = [
+    0x00000000U, // zero
+     0x80000000U, // negative zero
+     0x3F800000U, // 1.0
+     0xBF800000U, // -1.0
+     0x7F800000U, // positive infinity
+     0xFF800000U, // negative infinity
+     0x7FC00000U, // NaN
+     0x00800000U, // smallest positive normal float
+     0x7F7FFFFFU, // largest positive normal float
+     0x00000001U, // smallest positive subnormal float
+     0x007FFFFFU, // largest positive subnormal float
+  ]
+  for value in values {
+    let float_value = value.reinterpret_as_float()
+    let roundtrip_value = Float::reinterpret_as_uint(float_value)
+    assert_eq!(roundtrip_value, value)
+  }
+}

@@ -307,6 +307,8 @@ pub fn Int::to_float(self : Int) -> Float = "%i32.to_f32"
 
 pub fn Int::reinterpret_as_float(self : Int) -> Float = "%i32.to_f32_reinterpret"
 
+pub fn UInt::reinterpret_as_float(self : UInt) -> Float = "%i32.to_f32_reinterpret"
+
 pub fn Byte::to_float(self : Byte) -> Float = "%byte.to_f32"
 
 pub fn Double::to_float(self : Double) -> Float = "%f64.to_f32"
