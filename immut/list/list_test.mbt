@@ -62,6 +62,13 @@ test "mapi" {
   inspect!(el.mapi(fn(i, x) { i * x }), content="@list.of([])")
 }
 
+test "rev_map" {
+  let ls = @list.of([1, 2, 3, 4, 5])
+  let rs : @list.T[Int] = @list.Nil
+  inspect!(ls.rev_map(fn(x) { x * 2 }), content="@list.of([10, 8, 6, 4, 2])")
+  inspect!(rs.rev_map(fn(x) { x * 2 }), content="@list.of([])")
+}
+
 test "to_array" {
   let list = @list.of([1, 2, 3, 4, 5])
   let empty : @list.T[Int] = @list.Nil

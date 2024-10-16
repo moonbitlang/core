@@ -148,6 +148,22 @@ pub fn mapi[A, B](self : T[A], f : (Int, A) -> B) -> T[B] {
   go(self, 0, f)
 }
 
+/// Maps the list and reverses the result.
+///
+/// `list.rev_map(f)` is equivalent to `list.map(f).rev()` but more efficient.
+///
+/// # Example
+/// ```
+/// println(@list.of([1, 2, 3, 4, 5]).rev_map(fn(x) { x * 2 }))
+/// // output: of([10, 8, 6, 4, 2])
+/// ```
+pub fn rev_map[A, B](self : T[A], f : (A) -> B) -> T[B] {
+  loop Nil, self {
+    acc, Nil => acc
+    acc, Cons(x, xs) => continue Cons(f(x), acc), xs
+  }
+}
+
 /// Convert list to array.
 pub fn to_array[A](self : T[A]) -> Array[A] {
   match self {

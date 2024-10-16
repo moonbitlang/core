@@ -70,6 +70,7 @@ impl T {
   rev_concat[A](Self[A], Self[A]) -> Self[A]
   rev_fold[A, B](Self[A], ~init : B, (A, B) -> B) -> B
   rev_foldi[A, B](Self[A], ~init : B, (Int, A, B) -> B) -> B
+  rev_map[A, B](Self[A], (A) -> B) -> Self[B]
   scan_left[A, E](Self[A], (E, A) -> E, ~init : E) -> Self[E]
   scan_right[A, B](Self[A], (A, B) -> B, ~init : B) -> Self[B]
   sort[A : Compare + Eq](Self[A]) -> Self[A]
