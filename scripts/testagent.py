@@ -17,7 +17,6 @@ def main():
     )
     args = parser.parse_args()
     zhipuai_api_key = args.api_key
-    print(zhipuai_api_key)
     for source_file in data["source_files"]:
         with open(source_file["name"], "r") as codefile:
             indexs = [
