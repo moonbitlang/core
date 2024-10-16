@@ -2478,7 +2478,7 @@ test "9223372036854775807 % 9223372036854775807 = 0" {
 }
 
 fn test_mod_u(x : Int64, y : Int64) -> Int64 {
-  (x.reinterpret_as_uint64() % y.reinterpret_as_uint64()).to_int64()
+  (x.reinterpret_as_uint64() % y.reinterpret_as_uint64()).reinterpret_as_int64()
 }
 
 test "0 %u -1 = 0" {
@@ -4306,7 +4306,7 @@ test "9223372036854775807 << 65 = -2" {
 }
 
 fn shr_as_uint64(x : Int64, y : Int) -> Int64 {
-  (x.reinterpret_as_uint64() >> y).to_int64()
+  (x.reinterpret_as_uint64() >> y).reinterpret_as_int64()
 }
 
 test "0 >>> 0 = 0" {

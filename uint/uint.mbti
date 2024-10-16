@@ -7,7 +7,6 @@ let min_value : UInt
 
 // Types and methods
 impl UInt {
-  to_byte(UInt) -> Byte
   to_int64(UInt) -> Int64
 }
 

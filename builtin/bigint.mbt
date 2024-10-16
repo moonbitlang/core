@@ -149,15 +149,21 @@ pub fn op_sub(self : BigInt, other : BigInt) -> BigInt {
   let mut borrow = 0L
   let mut i = 0
   while i < self_len || i < other_len || borrow != 0L {
-    let a = if i < self_len { self.limbs[i].to_uint64().to_int64() } else { 0 }
+    let a = if i < self_len {
+      self.limbs[i].to_uint64().reinterpret_as_int64()
+    } else {
+      0
+    }
     let b = if i < other_len {
-      other.limbs[i].to_uint64().to_int64()
+      other.limbs[i].to_uint64().reinterpret_as_int64()
     } else {
       0
     }
     let diff = a - b - borrow // 0 <= a < radix, 0 <= b < radix, 0 <= borrow <= 1 => -radix <= diff < radix
     if diff < 0L {
-      limbs[i] = (diff + radix.to_int64()).reinterpret_as_uint64().to_uint() // -radix <= diff < 0, so we don't need to mod by radix
+      limbs[i] = (diff + radix.reinterpret_as_int64())
+        .reinterpret_as_uint64()
+        .to_uint() // -radix <= diff < 0, so we don't need to mod by radix
       borrow = 1L
     } else {
       limbs[i] = diff.reinterpret_as_uint64().to_uint() // 0 <= diff < radix, so we don't need to mod by radix
@@ -325,7 +331,10 @@ fn grade_school_div(self : BigInt, other : BigInt) -> (BigInt, BigInt) {
   let lshift = max(
     0,
     radix_bit_len -
-    (64 - divisor.limbs[divisor.len - 1].to_uint64().to_int64().clz()),
+    (
+      64 -
+      divisor.limbs[divisor.len - 1].to_uint64().reinterpret_as_int64().clz()
+    ),
   )
   let a_len = dividend.len
   let dividend = dividend << lshift
@@ -367,15 +376,15 @@ fn grade_school_div(self : BigInt, other : BigInt) -> (BigInt, BigInt) {
     let mut carry = 0UL
     for j = 0; j < b_len; j = j + 1 {
       carry += qh * b[j]
-      borrow += a[i + j].to_int64()
-      borrow -= (carry & radix_mask).to_int64()
-      a[i + j] = (borrow & radix_mask.to_int64()).reinterpret_as_uint64()
+      borrow += a[i + j].reinterpret_as_int64()
+      borrow -= (carry & radix_mask).reinterpret_as_int64()
+      a[i + j] = (borrow & radix_mask.reinterpret_as_int64()).reinterpret_as_uint64()
       borrow = borrow >> radix_bit_len
       carry = carry >> radix_bit_len
     }
-    borrow = borrow + a[i + b_len].to_int64()
-    borrow -= carry.to_int64()
-    a[i + b_len] = (borrow & radix_mask.to_int64()).reinterpret_as_uint64()
+    borrow = borrow + a[i + b_len].reinterpret_as_int64()
+    borrow -= carry.reinterpret_as_int64()
+    a[i + b_len] = (borrow & radix_mask.reinterpret_as_int64()).reinterpret_as_uint64()
     borrow = borrow >> radix_bit_len
     if borrow < 0L {
       carry = 0UL
@@ -388,7 +397,7 @@ fn grade_school_div(self : BigInt, other : BigInt) -> (BigInt, BigInt) {
       carry += a[i + b_len]
       a[i + b_len] = carry & radix_mask
       carry = carry >> radix_bit_len
-      borrow += carry.to_int64()
+      borrow += carry.reinterpret_as_int64()
       qh -= 1
     }
     q[i] = qh.to_uint()
@@ -617,7 +626,7 @@ pub fn to_string(self : BigInt) -> String {
   let v = Array::make(decimal_len, 0L)
   let mut v_idx = 0
   for i = self.len - 1; i >= 0; i = i - 1 {
-    let mut x = self.limbs[i].to_uint64().to_int64()
+    let mut x = self.limbs[i].to_uint64().reinterpret_as_int64()
     for j = 0; j < v_idx; j = j + 1 {
       let y = (v[j] << radix_bit_len) | x
       x = y / decimal_mask
