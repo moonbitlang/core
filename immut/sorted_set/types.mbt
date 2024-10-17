@@ -20,4 +20,4 @@
 enum T[A] {
   Empty
   Node(~left : T[A], ~right : T[A], ~height : Int, ~value : A)
-} derive(Default, Eq)
+} derive(Default)
