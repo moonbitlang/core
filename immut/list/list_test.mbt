@@ -488,6 +488,22 @@ test "List::output with empty list" {
   inspect!(buf, content="@list.of([])")
 }
 
+test "List::to_json with non-empty list" {
+  let list = @list.of([1, 2, 3, 4, 5])
+  @json.inspect!(ToJson::to_json(list), content=[1, 2, 3, 4, 5])
+}
+
+test "List::to_json with empty list" {
+  let list : @list.T[Int] = Nil
+  @json.inspect!(ToJson::to_json(list), content=[])
+}
+
+test "List::from_json" {
+  for xs in (@quickcheck.samples(20) : Array[@list.T[Int]]) {
+    assert_eq!(xs, @json.from_json!(xs.to_json()))
+  }
+}
+
 test "List::head_exn with non-empty list" {
   let list = @list.of([1, 2, 3, 4, 5])
   let head = @list.head(list)

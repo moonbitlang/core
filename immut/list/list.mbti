@@ -1,5 +1,6 @@
 package moonbitlang/core/immut/list
 
+alias @moonbitlang/core/json as @json
 alias @moonbitlang/core/quickcheck as @quickcheck
 
 // Values
@@ -40,6 +41,7 @@ impl T {
   foldi[A, B](Self[A], ~init : B, (Int, B, A) -> B) -> B
   from_array[A](Array[A]) -> Self[A]
   from_iter[A](Iter[A]) -> Self[A]
+  from_json[A : @json.FromJson](Json) -> Self[A]!@json.JsonDecodeError
   head[A](Self[A]) -> A?
   head_exn[A](Self[A]) -> A //deprecated
   init_[A](Self[A]) -> Self[A]
@@ -75,6 +77,7 @@ impl T {
   take[A](Self[A], Int) -> Self[A]
   take_while[A](Self[A], (A) -> Bool) -> Self[A]
   to_array[A](Self[A]) -> Array[A]
+  to_json[A : ToJson](Self[A]) -> Json
   to_string[A : Show](Self[A]) -> String
   unsafe_head[A](Self[A]) -> A
   unsafe_last[A](Self[A]) -> A
@@ -90,6 +93,10 @@ impl T {
 
 // Extension Methods
 impl Show for T
+
+impl ToJson for T
+
+impl @json.FromJson for T
 
 impl @quickcheck.Arbitrary for T
 
