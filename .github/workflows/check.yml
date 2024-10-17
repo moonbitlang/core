@@ -243,3 +243,12 @@ jobs:
         run: |
           moon fmt
           git diff
+
+  bleeding-upload:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: upload core-bleeding.zip
+        run: |
+          zip -r core-bleeding.zip ./
+          aws s3 cp core-bleeding.zip s3://cli.moonbitlang.com/cores/core-bleeding.zip
