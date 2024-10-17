@@ -38,15 +38,12 @@ pub fn Bytes::blit(
   src_offset : Int,
   length : Int
 ) -> Unit {
-  let s1 = dst_offset
-  let s2 = src_offset
-  let e1 = dst_offset + length - 1
-  let e2 = src_offset + length - 1
-  let len1 = self.length()
-  let len2 = src.length()
-  if length < 0 || s1 < 0 || e1 >= len1 || s2 < 0 || e2 >= len2 {
-    abort("blit out of bounds")
-  } else {
-    Bytes::unsafe_blit(self, dst_offset, src, src_offset, length)
-  }
+  let dst_len = self.length()
+  let src_len = src.length()
+  guard length >= 0 &&
+    dst_offset >= 0 &&
+    src_offset >= 0 &&
+    dst_offset + length <= dst_len &&
+    src_offset + length <= src_len
+  Bytes::unsafe_blit(self, dst_offset, src, src_offset, length)
 }
