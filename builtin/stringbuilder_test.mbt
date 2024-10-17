@@ -16,6 +16,6 @@ test "stringbuilder" {
   let buf = StringBuilder::new()
   buf.write_string("hello")
   buf.write_char(' ')
-  buf.write_sub_string("world", 0, 3)
+  buf.write_substring("world", 0, 3)
   inspect!(buf.to_string(), content="hello wor")
 }
