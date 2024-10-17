@@ -41,11 +41,7 @@ pub fn T::from_iter[A : Compare](iter : Iter[A]) -> T[A] {
 }
 
 test {
-  let buf = StringBuilder::new(size_hint=20)
-  of([2, 7, 1, 2, 3, 4, 5])
-  .iter()
-  .each(fn { x => buf.write_string(x.to_string()) })
-  inspect!(buf, content="123457")
+  @json.inspect!(of([2, 7, 1, 2, 3, 4, 5]), content=[1, 2, 3, 4, 5, 7])
 }
 
 pub fn T::op_equal[A : Eq](self : T[A], other : T[A]) -> Bool {

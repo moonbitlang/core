@@ -306,6 +306,11 @@ test "op_equal" {
   }
 }
 
+test "to_json" {
+  @json.inspect!(@sorted_set.of([5, 2, 4, 3, 1]), content=[1, 2, 3, 4, 5])
+  @json.inspect!((@sorted_set.of([]) : @sorted_set.T[Int]), content=[])
+}
+
 test "iter" {
   let mut s = ""
   @sorted_set.of([7, 2, 9, 4, 5, 6, 3, 8, 1]).each(fn(x) { s += x.to_string() })
