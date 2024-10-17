@@ -499,6 +499,18 @@ pub fn to_string[A : Show](self : T[A]) -> String {
   Show::to_string(self)
 }
 
+pub impl[A : ToJson] ToJson for T[A] with to_json(self) {
+  let capacity = self.iter().count()
+  guard capacity != 0 else { return Array([]) }
+  let jsons = Array::new(~capacity)
+  self.each(fn(a) { jsons.push(a.to_json()) })
+  Array(jsons)
+}
+
+pub fn T::to_json[A : ToJson](self : T[A]) -> Json {
+  ToJson::to_json(self)
+}
+
 pub impl[X : @quickcheck.Arbitrary + Compare] @quickcheck.Arbitrary for T[X] with arbitrary(
   size,
   rs
