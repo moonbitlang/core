@@ -14,7 +14,12 @@
 
 test "to_string" {
   let bytes = Bytes::of_string("Hello, World!")
-  assert_eq!(bytes.to_string(), "Hello, World!")
+  inspect!(
+    bytes.to_string(),
+    content=
+      #|b"\x48\x00\x65\x00\x6c\x00\x6c\x00\x6f\x00\x2c\x00\x20\x00\x57\x00\x6f\x00\x72\x00\x6c\x00\x64\x00\x21\x00"
+    ,
+  )
 }
 
 test "of_string" {
