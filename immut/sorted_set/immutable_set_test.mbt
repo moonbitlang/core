@@ -311,6 +311,12 @@ test "to_json" {
   @json.inspect!((@sorted_set.of([]) : @sorted_set.T[Int]), content=[])
 }
 
+test "from_json" {
+  for xs in (@quickcheck.samples(20) : Array[@sorted_set.T[Int]]) {
+    assert_eq!(xs, @json.from_json!(xs.to_json()))
+  }
+}
+
 test "iter" {
   let mut s = ""
   @sorted_set.of([7, 2, 9, 4, 5, 6, 3, 8, 1]).each(fn(x) { s += x.to_string() })
