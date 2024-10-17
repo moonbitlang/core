@@ -172,10 +172,14 @@ pub impl[Ok : FromJson, Err : FromJson] FromJson for Result[Ok, Err] with from_j
   }
 }
 
-// unit
 pub impl FromJson for Unit with from_json(json, path) {
   match json {
     Null => ()
     _ => decode_error!(path, "Unit::from_json: expected null")
   }
+}
+
+pub impl FromJson for JsonValue with from_json(json, path) {
+  guard true else { decode_error!(path, "Unreachable") }
+  json
 }
