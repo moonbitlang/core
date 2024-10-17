@@ -199,7 +199,10 @@ jobs:
 
   bleeding-check:
     continue-on-error: true
-    runs-on: macos-latest
+    strategy:
+      matrix:
+        os: [macos-latest, ubuntu-latest]
+    runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v4
 
@@ -226,7 +229,7 @@ jobs:
         run: |
           ulimit -s 8176
           moon test --target native
-          moon test --release --target native
+          moon test --target native --release
 
       - name: moon bundle
         run: moon bundle --all
