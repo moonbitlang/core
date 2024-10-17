@@ -493,6 +493,7 @@ impl UInt {
   op_shr(UInt, Int) -> UInt
   op_sub(UInt, UInt) -> UInt
   popcnt(UInt) -> Int
+  reinterpret_as_float(UInt) -> Float
   reinterpret_as_int(UInt) -> Int
   shl(UInt, Int) -> UInt //deprecated
   shr(UInt, Int) -> UInt //deprecated
