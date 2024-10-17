@@ -53,7 +53,7 @@ pub fn StringBuilder::write_char(self : StringBuilder, ch : Char) -> Unit {
   self.len += inc
 }
 
-pub fn StringBuilder::write_sub_string(
+pub fn StringBuilder::write_substring(
   self : StringBuilder,
   str : String,
   start : Int,
