@@ -75,6 +75,7 @@ impl T {
   take[A](Self[A], Int) -> Self[A]
   take_while[A](Self[A], (A) -> Bool) -> Self[A]
   to_array[A](Self[A]) -> Array[A]
+  to_json[A : ToJson](Self[A]) -> Json
   to_string[A : Show](Self[A]) -> String
   unsafe_head[A](Self[A]) -> A
   unsafe_last[A](Self[A]) -> A
@@ -90,6 +91,8 @@ impl T {
 
 // Extension Methods
 impl Show for T
+
+impl ToJson for T
 
 impl @quickcheck.Arbitrary for T
 
