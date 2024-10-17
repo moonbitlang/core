@@ -92,3 +92,9 @@ test "to_json with empty map" {
   let map : @sorted_map.T[Int, String] = @sorted_map.empty()
   @json.inspect!(map.to_json(), content={})
 }
+
+test "from_json" {
+  for xs in (@quickcheck.samples(20) : Array[@sorted_map.T[String, Int]]) {
+    assert_eq!(xs, @json.from_json!(xs.to_json()))
+  }
+}

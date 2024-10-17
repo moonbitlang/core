@@ -269,3 +269,28 @@ pub impl[K : Show, V : ToJson] ToJson for T[K, V] with to_json(self) {
 pub fn to_json[K : Show, V : ToJson](self : T[K, V]) -> Json {
   ToJson::to_json(self)
 }
+
+pub impl[V : @json.FromJson] @json.FromJson for T[String, V] with from_json(
+  json,
+  path
+) {
+  match json {
+    Object(obj) => {
+      let mut map = T::empty()
+      for k, v in obj {
+        map = map.insert(k, V::from_json!(v, path))
+      }
+      map
+    }
+    _ =>
+      raise @json.JsonDecodeError(
+        (path, "@immut/sorted_map.from_json: expected object"),
+      )
+  }
+}
+
+pub fn T::from_json[V : @json.FromJson](
+  json : Json
+) -> T[String, V]!@json.JsonDecodeError {
+  @json.from_json!(json)
+}
