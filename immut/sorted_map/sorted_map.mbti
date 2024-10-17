@@ -34,6 +34,7 @@ impl T {
   singleton[K, V](K, V) -> Self[K, V]
   size[K, V](Self[K, V]) -> Int
   to_array[K, V](Self[K, V]) -> Array[(K, V)]
+  to_json[K : Show, V : ToJson](Self[K, V]) -> Json
   to_string[K : Show, V : Show](Self[K, V]) -> String
 }
 
@@ -43,6 +44,8 @@ impl T {
 
 // Extension Methods
 impl Show for T
+
+impl ToJson for T
 
 impl @quickcheck.Arbitrary for T
 

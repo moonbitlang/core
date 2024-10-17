@@ -78,3 +78,17 @@ test "op_get with empty map" {
   let map : @sorted_map.T[Int, String] = @sorted_map.empty()
   assert_eq!(map[3], None)
 }
+
+test "to_json with non-empty map" {
+  let map = [(3, "three"), (8, "eight"), (1, "one"), (2, "two"), (0, "zero")]
+    |> @sorted_map.of
+  @json.inspect!(
+    map.to_json(),
+    content={ "0": "zero", "1": "one", "2": "two", "3": "three", "8": "eight" },
+  )
+}
+
+test "to_json with empty map" {
+  let map : @sorted_map.T[Int, String] = @sorted_map.empty()
+  @json.inspect!(map.to_json(), content={})
+}
