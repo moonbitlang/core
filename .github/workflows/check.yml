@@ -176,6 +176,24 @@ jobs:
           moon test --target all
           moon test --release --target all
 
+      - name: moon test in native backend (unix)
+        if: ${{ matrix.os != 'windows-latest' }}
+        run: |
+          ulimit -s 8176
+          moon test --target native
+          moon test --target native --release
+
+      - name: Setup MSVC
+        if: ${{ matrix.os == 'windows-latest' }}
+        uses: ilammy/msvc-dev-cmd@v1
+
+      - name: moon test in native backend (windows)
+        if: ${{ matrix.os == 'windows-latest' }}
+        run: |
+          # --release not support for windows
+          moon test --target native --dry-run
+          moon test --target native
+
       - name: moon bundle
         run: moon bundle --all
 
