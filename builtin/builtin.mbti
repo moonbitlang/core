@@ -175,7 +175,7 @@ impl Buffer {
   write_char(Self, Char) -> Unit
   write_object(Self, Show) -> Unit
   write_string(Self, String) -> Unit
-  write_substring(Self, String, Int, Int) -> Unit
+  write_sub_string(Self, String, Int, Int) -> Unit
 }
 
 pub type! Failure String
@@ -350,7 +350,7 @@ impl StringBuilder {
   write_char(Self, Char) -> Unit
   write_object[T : Show](Self, T) -> Unit
   write_string(Self, String) -> Unit
-  write_substring(Self, String, Int, Int) -> Unit
+  write_sub_string(Self, String, Int, Int) -> Unit
 }
 
 pub type UnsafeMaybeUninit
@@ -723,7 +723,7 @@ pub trait Hash {
 
 pub trait Logger {
   write_string(Self, String) -> Unit
-  write_substring(Self, String, Int, Int) -> Unit
+  write_sub_string(Self, String, Int, Int) -> Unit
   write_char(Self, Char) -> Unit
 }
 

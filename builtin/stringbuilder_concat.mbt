@@ -27,7 +27,7 @@ pub fn StringBuilder::write_char(self : StringBuilder, ch : Char) -> Unit {
   self.val += Char::to_string(ch)
 }
 
-pub fn StringBuilder::write_substring(
+pub fn StringBuilder::write_sub_string(
   self : StringBuilder,
   str : String,
   start : Int,

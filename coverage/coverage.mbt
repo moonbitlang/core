@@ -102,14 +102,14 @@ pub fn end() -> Unit {
     let mut start = 0
     for j = 0; j < str.length(); j = j + 1 {
       if str[j] == '\n' {
-        line_buf.write_substring(str, start, j)
+        line_buf.write_sub_string(str, start, j)
         println(line_buf.to_string())
         line_buf.reset()
         start = j + 1
       }
     }
     if start < str.length() {
-      line_buf.write_substring(str, start, str.length())
+      line_buf.write_sub_string(str, start, str.length())
     }
   }
   let trailing_line = line_buf.to_string()

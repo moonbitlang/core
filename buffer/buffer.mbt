@@ -80,7 +80,8 @@ pub fn write_bytes(self : Buffer, value : Bytes) -> Unit {
 }
 
 /// Write a sub-string into buffer.
-pub fn write_substring(
+/// @alert deprecated "We'll remove it in future"
+pub fn write_sub_string(
   self : Buffer,
   value : String,
   start : Int,

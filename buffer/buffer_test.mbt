@@ -32,9 +32,9 @@ test "grow_if_necessary method" {
   assert_true!(buf.to_bytes().length() >= 60)
 }
 
-test "write_substring method" {
+test "write_sub_string method" {
   let buf = @buffer.new(size_hint=10)
-  buf.write_substring("Hello, World!", 7, 5)
+  buf.write_sub_string("Hello, World!", 7, 5)
   inspect!(buf, content="World")
 }
 
@@ -66,9 +66,9 @@ test "grow_if_necessary method" {
   assert_true!(buf.to_bytes().length() >= 60)
 }
 
-test "write_substring method" {
+test "write_sub_string method" {
   let buf = @buffer.new(size_hint=10)
-  buf.write_substring("Hello, World!", 7, 5)
+  buf.write_sub_string("Hello, World!", 7, 5)
   inspect!(buf, content="World")
 }
 
@@ -106,9 +106,9 @@ test "grow_if_necessary method" {
   assert_true!(buf.to_bytes().length() >= 60)
 }
 
-test "write_substring method" {
+test "write_sub_string method" {
   let buf = @buffer.new(size_hint=10)
-  buf.write_substring("Hello, World!", 7, 5)
+  buf.write_sub_string("Hello, World!", 7, 5)
   inspect!(buf, content="World")
 }
 
