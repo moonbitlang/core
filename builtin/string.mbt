@@ -26,19 +26,6 @@ pub fn substring(
   ~start : Int = 0,
   ~end : Int = self.length()
 ) -> String {
-  if start < 0 {
-    abort("String::substring: start index is negative")
-  }
-  if end < 0 {
-    abort("String::substring: end index is negative")
-  }
-  if start > end {
-    abort("String::substring: start index is greater than end index")
-  }
-  if end > self.length() {
-    abort(
-      "String::substring: end index is greater than the length of the string",
-    )
-  }
+  guard start >= 0 && start <= end && end <= self.length()
   unsafe_substring(self, start, end)
 }

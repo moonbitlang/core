@@ -3,8 +3,6 @@
     "moonbitlang/core/builtin",
     "moonbitlang/core/double",
     "moonbitlang/core/string",
-    "moonbitlang/core/char",
-    "moonbitlang/core/test",
     "moonbitlang/core/coverage",
     "moonbitlang/core/strconv"
   ],
