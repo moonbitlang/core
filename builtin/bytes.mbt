@@ -14,7 +14,26 @@
 
 /// Create a new String from byte sequence.
 pub fn to_string(self : Bytes) -> String {
-  self.sub_string(0, self.length())
+  let sb = StringBuilder::new(size_hint=self.length())
+  fn to_hex_digit(i : Int) -> Char {
+    if i < 10 {
+      Char::from_int('0'.to_int() + i)
+    } else {
+      Char::from_int('a'.to_int() + (i - 10))
+    }
+  }
+
+  sb.write_string("b\"")
+  for b in self {
+    let byte = b.to_int()
+    sb
+    ..write_string("\\x")
+    ..write_char(to_hex_digit(byte / 16))
+    ..write_char(to_hex_digit(byte % 16))
+    |> ignore
+  }
+  sb.write_string("\"")
+  sb.to_string()
 }
 
 /// Create byte sequence from String.
