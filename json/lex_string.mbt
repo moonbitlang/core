@@ -17,7 +17,7 @@ fn lex_string(ctx : ParseContext) -> String!ParseError {
   let mut start = ctx.offset
   fn flush(end : Int) {
     if start > 0 && end > start {
-      buf.write_sub_string(ctx.input, start, end - start)
+      buf.write_substring(ctx.input, start, end - start)
     }
   }
 

@@ -47,7 +47,7 @@ pub trait Default {
 /// Trait for a logger, where debug logs can be written into
 pub trait Logger {
   write_string(Self, String) -> Unit
-  write_sub_string(Self, String, Int, Int) -> Unit
+  write_substring(Self, String, Int, Int) -> Unit
   write_char(Self, Char) -> Unit
 }
 
