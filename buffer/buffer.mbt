@@ -92,6 +92,17 @@ pub fn write_substring(
   self.len += len * 2
 }
 
+/// Write a sub-string into buffer.
+/// @alert deprecated "Use `Buffer::write_substring` instead"
+pub fn write_sub_string(
+  self : Buffer,
+  value : String,
+  start : Int,
+  len : Int
+) -> Unit {
+  self.write_substring(value, start, len)
+}
+
 /// Write a char into buffer.
 pub fn write_char(self : Buffer, value : Char) -> Unit {
   self.grow_if_necessary(self.len + 4)
