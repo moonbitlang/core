@@ -3,7 +3,6 @@
     "moonbitlang/core/builtin",
     "moonbitlang/core/quickcheck",
     "moonbitlang/core/quickcheck/splitmix",
-    "moonbitlang/core/test",
     "moonbitlang/core/coverage",
     "moonbitlang/core/double"
   ],
