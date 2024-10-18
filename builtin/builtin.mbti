@@ -175,7 +175,8 @@ impl Buffer {
   write_char(Self, Char) -> Unit
   write_object(Self, Show) -> Unit
   write_string(Self, String) -> Unit
-  write_sub_string(Self, String, Int, Int) -> Unit
+  write_sub_string(Self, String, Int, Int) -> Unit //deprecated
+  write_substring(Self, String, Int, Int) -> Unit
 }
 
 pub type! Failure String
@@ -350,7 +351,7 @@ impl StringBuilder {
   write_char(Self, Char) -> Unit
   write_object[T : Show](Self, T) -> Unit
   write_string(Self, String) -> Unit
-  write_sub_string(Self, String, Int, Int) -> Unit
+  write_substring(Self, String, Int, Int) -> Unit
 }
 
 pub type UnsafeMaybeUninit
@@ -723,6 +724,7 @@ pub trait Hash {
 
 pub trait Logger {
   write_string(Self, String) -> Unit
+  write_substring(Self, String, Int, Int) -> Unit
   write_sub_string(Self, String, Int, Int) -> Unit
   write_char(Self, Char) -> Unit
 }
@@ -764,6 +766,8 @@ impl Hash for Tuple(5)
 impl Hash for Tuple(6)
 
 impl Hash for Tuple(7)
+
+impl Logger::write_sub_string
 
 impl Show for Unit
 

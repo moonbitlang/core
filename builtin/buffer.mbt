@@ -81,7 +81,7 @@ pub fn write_bytes(self : Buffer, value : Bytes) -> Unit {
 }
 
 /// Write a sub-string into buffer.
-pub fn write_sub_string(
+pub fn write_substring(
   self : Buffer,
   value : String,
   start : Int,
@@ -91,6 +91,17 @@ pub fn write_sub_string(
   self.grow_if_necessary(self.len + len * 2)
   self.bytes.blit_from_string(self.len, value, start, len)
   self.len += len * 2
+}
+
+/// Write a sub-string into buffer.
+/// @alert deprecated "Use `Buffer::write_substring` instead"
+pub fn write_sub_string(
+  self : Buffer,
+  value : String,
+  start : Int,
+  len : Int
+) -> Unit {
+  self.write_substring(value, start, len)
 }
 
 /// Write a char into buffer.
