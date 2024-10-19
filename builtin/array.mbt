@@ -982,3 +982,7 @@ pub fn iter2[A](self : Array[A]) -> Iter2[Int, A] {
     },
   )
 }
+
+pub fn Array::default[T]() -> Array[T] {
+  []
+}
