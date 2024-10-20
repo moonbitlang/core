@@ -174,6 +174,13 @@ test "trim_left" {
   inspect!("😍😍😭😡😡".trim_start("😍"), content="😭😡😡")
 }
 
+test "contains" {
+  @json.inspect!("abc".contains("a"), content=true)
+  @json.inspect!("中文".contains("文"), content=true)
+  @json.inspect!("中文".contains("中"), content=true)
+  @json.inspect!("中文".contains("a"), content=false)
+}
+
 test "trim_right" {
   inspect!("abcddd".trim_end("d"), content="abc")
   inspect!("abcddd".trim_end(" "), content="abcddd")

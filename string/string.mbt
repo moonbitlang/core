@@ -237,11 +237,6 @@ pub fn contains_char(self : String, c : Char) -> Bool {
   self.iter().any(fn(ch) { ch == c })
 }
 
-/// @alert deprecated "Use `String::trim_start` instead"
-pub fn trim_left(self : String, trim_set : String) -> String {
-  self.trim_start(trim_set)
-}
-
 /// Removes all leading chars contained in the given string.
 pub fn trim_start(self : String, trim_set : String) -> String {
   let len = self.length()
@@ -265,11 +260,6 @@ pub fn trim_start(self : String, trim_set : String) -> String {
   } else {
     ""
   }
-}
-
-/// @alert deprecated "Use `String::trim_end` instead"
-pub fn trim_right(self : String, trim_set : String) -> String {
-  self.trim_end(trim_set)
 }
 
 /// Removes all trailing chars contained in the given string.

@@ -6,7 +6,8 @@
         "moonbitlang/core/char"
     ],
     "test-import": [
-      "moonbitlang/core/immut/list"
+      "moonbitlang/core/immut/list",
+      "moonbitlang/core/json"
     ],
     "targets": {
       "panic_test.mbt": ["not", "native"]
