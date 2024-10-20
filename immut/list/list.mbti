@@ -6,6 +6,8 @@ alias @moonbitlang/core/quickcheck as @quickcheck
 // Values
 fn repeat[A](Int, A) -> T[A]
 
+fn singleton[A](A) -> T[A]
+
 fn unfold[A, S]((S) -> (A, S)?, ~init : S) -> T[A]
 
 fn unzip[A, B](T[(A, B)]) -> (T[A], T[B])

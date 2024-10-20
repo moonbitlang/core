@@ -21,7 +21,8 @@ test "from_array" {
 
 test "length" {
   let ls = @list.of([1, 2, 3, 4, 5])
-  inspect!(ls.length(), content="5")
+  @json.inspect!(ls.length(), content=5)
+  @json.inspect!(@list.singleton(11), content=[11])
 }
 
 test "iter" {

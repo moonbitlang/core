@@ -1025,3 +1025,7 @@ pub impl[X : @quickcheck.Arbitrary] @quickcheck.Arbitrary for T[X] with arbitrar
 ) {
   @quickcheck.Arbitrary::arbitrary(size, rs) |> from_array
 }
+
+pub fn singleton[A](x : A) -> T[A] {
+  Cons(x, Nil)
+}
