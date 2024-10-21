@@ -12,8 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+///-----------------------------------------------------------------------------
 let min_19digit_int : UInt64 = 100_0000_0000_0000_0000UL
 
+///-----------------------------------------------------------------------------
 priv struct Number {
   exponent : Int64
   mantissa : UInt64
@@ -21,14 +23,17 @@ priv struct Number {
   many_digits : Bool
 }
 
+///-----------------------------------------------------------------------------
 fn is_digit(c : Char) -> Bool {
   c >= '0' && c <= '9'
 }
 
+///-----------------------------------------------------------------------------
 fn to_digit(c : Char) -> Int {
   c.to_int() - 48
 }
 
+///-----------------------------------------------------------------------------
 /// Returns the remaining slice, the parsed number, and the number of digits parsed.
 fn parse_digits(s : StringSlice, x : UInt64) -> (StringSlice, UInt64, Int) {
   fold_digits(
@@ -40,6 +45,7 @@ fn parse_digits(s : StringSlice, x : UInt64) -> (StringSlice, UInt64, Int) {
   )
 }
 
+///-----------------------------------------------------------------------------
 fn try_parse_19digits(
   s : StringSlice,
   x : UInt64
@@ -58,6 +64,7 @@ fn try_parse_19digits(
   (s, x, len)
 }
 
+///-----------------------------------------------------------------------------
 fn parse_scientific(s : StringSlice) -> (StringSlice, Int64)? {
   // the first character is 'e'/'E' and scientific mode is enabled
   let mut s = match s.step(1) {
@@ -92,6 +99,7 @@ fn parse_scientific(s : StringSlice) -> (StringSlice, Int64)? {
   }
 }
 
+///-----------------------------------------------------------------------------
 /// Parse the number from the string, returning the number and the length of the parsed string.
 fn parse_number(s : String) -> (Number, Int)? {
   let mut s = full_slice(s)
@@ -181,6 +189,7 @@ fn parse_number(s : String) -> (Number, Int)? {
   Some(({ exponent, mantissa, negative, many_digits }, len))
 }
 
+///-----------------------------------------------------------------------------
 /// Parse the number from the string, returning the number and the length of the parsed string.
 fn parse_inf_nan(s : String) -> (Double, Int)? {
   fn parse_inf_rest(s : StringSlice) -> Int {
@@ -218,6 +227,7 @@ fn parse_inf_nan(s : String) -> (Double, Int)? {
   None
 }
 
+///-----------------------------------------------------------------------------
 /// Returns None if the multiplication might overflow (there are some false-negative corner cases).
 /// Otherwise, returns Some(m), where m = self * b.
 fn checked_mul(a : UInt64, b : UInt64) -> UInt64? {

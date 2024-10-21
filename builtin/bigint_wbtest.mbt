@@ -12,14 +12,17 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+///-----------------------------------------------------------------------------
 type MyBigInt BigInt
 
+///-----------------------------------------------------------------------------
 impl Show for MyBigInt with output(self, logger) {
   logger.write_string(
     "{limbs : \{self.limbs}, sign : \{self.sign}, len : \{self.len} }",
   )
 }
 
+///-----------------------------------------------------------------------------
 test "debug_string" {
   let buf = StringBuilder::new()
   let v : Array[MyBigInt] = [0, 1, 2, 3, 4, -0, -1, -2, -3]
@@ -45,6 +48,7 @@ test "debug_string" {
   )
 }
 
+///-----------------------------------------------------------------------------
 fn check_len(a : BigInt) -> Unit! {
   if a.is_zero() {
     return ()
@@ -55,6 +59,7 @@ fn check_len(a : BigInt) -> Unit! {
   }
 }
 
+///-----------------------------------------------------------------------------
 test "trivial property" {
   let a = BigInt::from_int64(0L)
   let b = -a
@@ -67,6 +72,7 @@ test "trivial property" {
   inspect!(a / b, content="1")
 }
 
+///-----------------------------------------------------------------------------
 test "neg" {
   let a = BigInt::from_int64(123456789012345678L)
   let b = -a
@@ -92,6 +98,7 @@ test "neg" {
   check_len!(b)
 }
 
+///-----------------------------------------------------------------------------
 test "add" {
   let a = BigInt::from_int64(123456789012345678L)
   let b = BigInt::from_int64(987654321098765432L)
@@ -160,6 +167,7 @@ test "add" {
   inspect!(c, content="2")
 }
 
+///-----------------------------------------------------------------------------
 test "sub" {
   let a = BigInt::from_int64(987654321098765432L)
   let b = BigInt::from_int64(123456789012345678L)
@@ -202,6 +210,7 @@ test "sub" {
   inspect!(c, content="123456789012345678123456789012345677246")
 }
 
+///-----------------------------------------------------------------------------
 test "mul" {
   let a = BigInt::from_int64(987654321098765432L)
   let b = BigInt::from_int64(123456789012345678L)
@@ -258,6 +267,7 @@ test "mul" {
   )
 }
 
+///-----------------------------------------------------------------------------
 test "div" {
   let a = BigInt::from_int64(987654321098765432L)
   let b = BigInt::from_int64(123456789012345678L)
@@ -382,6 +392,7 @@ test "div" {
   inspect!(c, content="0")
 }
 
+///-----------------------------------------------------------------------------
 test "op_shl" {
   let a = BigInt::from_int64(1234567890123456789)
   let b = a << 1
@@ -396,6 +407,7 @@ test "op_shl" {
   inspect!(b, content="0")
 }
 
+///-----------------------------------------------------------------------------
 test "op_shr" {
   let a = BigInt::from_int64(1234567890123456789L)
   let b = a >> 1
@@ -410,6 +422,7 @@ test "op_shr" {
   inspect!(b, content="0")
 }
 
+///-----------------------------------------------------------------------------
 test "decimal_string" {
   let a = BigInt::from_string("0")
   check_len!(a)
@@ -437,6 +450,7 @@ test "decimal_string" {
   inspect!(b, content="-1234567890")
 }
 
+///-----------------------------------------------------------------------------
 test "from_int" {
   let a = BigInt::from_int(1234567899)
   check_len!(a)
@@ -446,6 +460,7 @@ test "from_int" {
   inspect!(b, content="-1234567890")
 }
 
+///-----------------------------------------------------------------------------
 test "compare" {
   let a = BigInt::from_int64(1234567890123456789L)
   let b = BigInt::from_int64(-1234567890123456789L)
@@ -461,6 +476,7 @@ test "compare" {
   assert_eq!(b.compare(a) > 0, true)
 }
 
+///-----------------------------------------------------------------------------
 test "from_hex" {
   // Check zero
   let a = from_hex("0")
@@ -522,6 +538,7 @@ test "from_hex" {
   )
 }
 
+///-----------------------------------------------------------------------------
 test "to_hex" {
   // Check zero
   let a = from_hex("00")
@@ -590,6 +607,7 @@ test "to_hex" {
   )
 }
 
+///-----------------------------------------------------------------------------
 test "from_octets" {
   // Check zero
   let a = from_octets(b"\x00")
@@ -672,6 +690,7 @@ test "from_octets" {
   assert_eq!(a, 0)
 }
 
+///-----------------------------------------------------------------------------
 test "to_octets" {
   // Check zero
   let a = 0x00N
@@ -750,6 +769,7 @@ test "to_octets" {
   )
 }
 
+///-----------------------------------------------------------------------------
 test "to_octets with padding" {
   // corner case of zero
   let a = zero
@@ -776,6 +796,7 @@ test "to_octets with padding" {
   )
 }
 
+///-----------------------------------------------------------------------------
 test "op_add coverage for max(self_len, other_len)" {
   let a = BigInt::from_int(123456789)
   let b = BigInt::from_int(987654321)
@@ -785,6 +806,7 @@ test "op_add coverage for max(self_len, other_len)" {
   inspect!(result.len, content="1")
 }
 
+///-----------------------------------------------------------------------------
 test "op_sub coverage for max(self_len, other_len)" {
   let a = BigInt::from_int(987654321)
   let b = BigInt::from_int(123456789)
@@ -794,6 +816,7 @@ test "op_sub coverage for max(self_len, other_len)" {
   inspect!(result.len, content="1")
 }
 
+///-----------------------------------------------------------------------------
 test "pow" {
   inspect!(4N.pow(13N, modulus=497N), content="445")
   inspect!(65N.pow(17, modulus=3233), content="2790")

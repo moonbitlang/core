@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+///-----------------------------------------------------------------------------
 /// A big integer represented as an array of Int.
 // 
 // Design explained: 
@@ -35,6 +36,7 @@ struct BigInt {
   len : Int
 }
 
+///-----------------------------------------------------------------------------
 priv enum Sign {
   Positive
   Negative
@@ -42,6 +44,7 @@ priv enum Sign {
 
 // Hyper Params
 
+///-----------------------------------------------------------------------------
 /// Invariants:
 /// - ((radix - 1) ^ 2) must fit in an Int64
 /// - radix can only be a power of 2
@@ -49,31 +52,39 @@ priv enum Sign {
 /// - radix_bit_len <= 32
 let radix_bit_len = 32
 
+///-----------------------------------------------------------------------------
 /// The base of the number system.
 let radix : UInt64 = 1UL << radix_bit_len // TODO: This can be generalized once we have const generics
 
+///-----------------------------------------------------------------------------
 /// The mask to extract the lower `radix_bit_len` bits.
 let radix_mask : UInt64 = radix - 1
 
+///-----------------------------------------------------------------------------
 /// The ratio of the number of decimal digits to the number of radix digits.
 let decimal_ratio = 0.302 // log10(2)
 
+///-----------------------------------------------------------------------------
 /// When to switch to Karatsuba multiplication
 let karatsuba_threshold = 50
 
 // Useful bigints
 
+///-----------------------------------------------------------------------------
 let zero : BigInt = 0N
 
+///-----------------------------------------------------------------------------
 let one : BigInt = 1N
 
 // Conversion Functions
 
+///-----------------------------------------------------------------------------
 /// Convert an Int to a BigInt.
 pub fn BigInt::from_int(n : Int) -> BigInt {
   BigInt::from_int64(n.to_int64())
 }
 
+///-----------------------------------------------------------------------------
 /// Convert an Int64 to a BigInt.
 pub fn BigInt::from_int64(n : Int64) -> BigInt {
   if n == 0L {
@@ -92,6 +103,7 @@ pub fn BigInt::from_int64(n : Int64) -> BigInt {
 
 // Arithmetic Operations
 
+///-----------------------------------------------------------------------------
 /// Negate a bigint
 pub fn op_neg(self : BigInt) -> BigInt {
   if self.is_zero() {
@@ -100,6 +112,7 @@ pub fn op_neg(self : BigInt) -> BigInt {
   { ..self, sign: if self.sign == Positive { Negative } else { Positive } }
 }
 
+///-----------------------------------------------------------------------------
 /// Add two bigint.
 pub fn op_add(self : BigInt, other : BigInt) -> BigInt {
   if self.sign == Negative {
@@ -127,6 +140,7 @@ pub fn op_add(self : BigInt, other : BigInt) -> BigInt {
   { limbs, sign: Positive, len: i }
 }
 
+///-----------------------------------------------------------------------------
 /// Subtract two bigint
 pub fn op_sub(self : BigInt, other : BigInt) -> BigInt {
   // first make sure self and other > 0
@@ -178,6 +192,7 @@ pub fn op_sub(self : BigInt, other : BigInt) -> BigInt {
   { limbs, sign: Positive, len: i }
 }
 
+///-----------------------------------------------------------------------------
 /// Multiply two bigint 
 pub fn op_mul(self : BigInt, other : BigInt) -> BigInt {
   if self.is_zero() || other.is_zero() {
@@ -191,6 +206,7 @@ pub fn op_mul(self : BigInt, other : BigInt) -> BigInt {
   { ..ret, sign: if self.sign == other.sign { Positive } else { Negative } }
 }
 
+///-----------------------------------------------------------------------------
 // Simplest way to multiply two BigInts.
 fn grade_school_mul(self : BigInt, other : BigInt) -> BigInt {
   let self_len = self.len
@@ -214,6 +230,7 @@ fn grade_school_mul(self : BigInt, other : BigInt) -> BigInt {
   { limbs, sign: Positive, len }
 }
 
+///-----------------------------------------------------------------------------
 // Karatsuba multiplication
 fn karatsuba_mul(self : BigInt, other : BigInt) -> BigInt {
   let half = (max(self.len, other.len) + 1) / 2
@@ -227,6 +244,7 @@ fn karatsuba_mul(self : BigInt, other : BigInt) -> BigInt {
   p2
 }
 
+///-----------------------------------------------------------------------------
 // Get the lower half of the number.
 fn split(self : BigInt, half : Int) -> (BigInt, BigInt) {
   if self.len <= half {
@@ -242,6 +260,7 @@ fn split(self : BigInt, half : Int) -> (BigInt, BigInt) {
   )
 }
 
+///-----------------------------------------------------------------------------
 /// Divide two bigint
 pub fn op_div(self : BigInt, other : BigInt) -> BigInt {
   // TODO: 
@@ -263,6 +282,7 @@ pub fn op_div(self : BigInt, other : BigInt) -> BigInt {
   }
 }
 
+///-----------------------------------------------------------------------------
 /// Modulo two bigint
 pub fn op_mod(self : BigInt, other : BigInt) -> BigInt {
   if other == zero {
@@ -282,6 +302,7 @@ pub fn op_mod(self : BigInt, other : BigInt) -> BigInt {
   }
 }
 
+///-----------------------------------------------------------------------------
 // Simplest way to divide two BigInts.
 // Assumption: other != zero.
 fn grade_school_div(self : BigInt, other : BigInt) -> (BigInt, BigInt) {
@@ -424,6 +445,7 @@ fn grade_school_div(self : BigInt, other : BigInt) -> (BigInt, BigInt) {
 
 // Bitwise Operations
 
+///-----------------------------------------------------------------------------
 /// @alert deprecated "Use infix bitwise operator `<<` instead"
 pub fn lsl(self : BigInt, n : Int) -> BigInt {
   if n < 0 {
@@ -460,6 +482,7 @@ pub fn lsl(self : BigInt, n : Int) -> BigInt {
   }
 }
 
+///-----------------------------------------------------------------------------
 /// Left shift a bigint
 /// The sign of the result is the same as the sign of the input.
 /// Only the absolute value is shifted.
@@ -497,6 +520,7 @@ pub fn op_shl(self : BigInt, n : Int) -> BigInt {
   }
 }
 
+///-----------------------------------------------------------------------------
 /// Left shift a bigint
 /// The sign of the result is the same as the sign of the input.
 /// Only the absolute value is shifted.
@@ -506,6 +530,7 @@ pub fn shl(self : BigInt, n : Int) -> BigInt {
   self << n
 }
 
+///-----------------------------------------------------------------------------
 /// Right shift a bigint
 /// The sign of the result is the same as the sign of the input.
 /// Only the absolute value is shifted.
@@ -547,6 +572,7 @@ pub fn op_shr(self : BigInt, n : Int) -> BigInt {
   }
 }
 
+///-----------------------------------------------------------------------------
 /// Right shift a bigint
 /// The sign of the result is the same as the sign of the input.
 /// Only the absolute value is shifted.
@@ -556,6 +582,7 @@ pub fn shr(self : BigInt, n : Int) -> BigInt {
   self >> n
 }
 
+///-----------------------------------------------------------------------------
 /// @alert deprecated "Use infix bitwise operator `>>` instead"
 pub fn asr(self : BigInt, n : Int) -> BigInt {
   self >> n
@@ -563,11 +590,13 @@ pub fn asr(self : BigInt, n : Int) -> BigInt {
 
 // Comparison Operations
 
+///-----------------------------------------------------------------------------
 /// Check if a bigint is zero
 pub fn is_zero(self : BigInt) -> Bool {
   self.len == 1 && self.limbs[0] == 0
 }
 
+///-----------------------------------------------------------------------------
 /// Implements the compare trait for BigInt
 pub fn compare(self : BigInt, other : BigInt) -> Int {
   if self.sign != other.sign {
@@ -594,6 +623,7 @@ pub fn compare(self : BigInt, other : BigInt) -> Int {
   0
 }
 
+///-----------------------------------------------------------------------------
 /// Implements the Eq trait for BigInt
 pub fn op_equal(self : BigInt, other : BigInt) -> Bool {
   if self.sign != other.sign || self.len != other.len {
@@ -607,6 +637,7 @@ pub fn op_equal(self : BigInt, other : BigInt) -> Bool {
   true
 }
 
+///-----------------------------------------------------------------------------
 /// Returns the decimal string representation of the BigInt.
 pub fn to_string(self : BigInt) -> String {
   // This function first converts the BigInt to a decimal representation, with a radix of 2^(`decimal_radix_bit_len`).
@@ -655,10 +686,12 @@ pub fn to_string(self : BigInt) -> String {
   s + ret
 }
 
+///-----------------------------------------------------------------------------
 pub impl Show for BigInt with output(self, logger) {
   logger.write_string(self.to_string())
 }
 
+///-----------------------------------------------------------------------------
 /// Converts decimal string to a BigInt.
 pub fn BigInt::from_string(input : String) -> BigInt {
   let len = input.length()
@@ -695,6 +728,7 @@ pub fn BigInt::from_string(input : String) -> BigInt {
   { limbs: b, sign, len: b_len }
 }
 
+///-----------------------------------------------------------------------------
 /// Converts a hex string to a BigInt.
 /// 
 /// The input string must be a valid hex string with no extra `0x` prefix.
@@ -745,6 +779,7 @@ pub fn BigInt::from_hex(input : String) -> BigInt {
   { limbs: b, sign, len: b_len }
 }
 
+///-----------------------------------------------------------------------------
 /// Converts a BigInt to a hex string.
 pub fn to_hex(self : BigInt, ~uppercase : Bool = true) -> String {
   // WARN: this implementation assumes that `radix_bit_len` is a multiple of 4.
@@ -783,12 +818,14 @@ pub fn to_hex(self : BigInt, ~uppercase : Bool = true) -> String {
   }
 }
 
+///-----------------------------------------------------------------------------
 fn deep_clone(self : BigInt) -> BigInt {
   let new_limbs = FixedArray::make(self.len, 0U)
   new_limbs.unsafe_blit(0, self.limbs, 0, self.len)
   { limbs: new_limbs, sign: self.sign, len: self.len }
 }
 
+///-----------------------------------------------------------------------------
 fn max[T : Compare](a : T, b : T) -> T {
   if a > b {
     a
@@ -797,6 +834,7 @@ fn max[T : Compare](a : T, b : T) -> T {
   }
 }
 
+///-----------------------------------------------------------------------------
 /// Compute the power of a BigInt to another BigInt.
 /// 
 /// Optionally takes a modulus BigInt.
@@ -822,6 +860,7 @@ pub fn pow(self : BigInt, exp : BigInt, ~modulus : BigInt = one) -> BigInt {
   result
 }
 
+///-----------------------------------------------------------------------------
 /// Convert an octet string to a BigInt.
 /// 
 /// The input is treated as a big-endian octet array.
@@ -864,6 +903,7 @@ pub fn BigInt::from_octets(input : Bytes, ~signum : Int = 1) -> BigInt {
   }
 }
 
+///-----------------------------------------------------------------------------
 /// Convert a BigInt to an octet string.
 /// 
 /// The output is a big-endian octet array.

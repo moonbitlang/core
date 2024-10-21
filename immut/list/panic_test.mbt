@@ -16,18 +16,22 @@
 //   @list.Nil.last()
 // }
 
+///-----------------------------------------------------------------------------
 test "panic nth_exn" {
   @list.Nil.unsafe_nth(0)
 }
 
+///-----------------------------------------------------------------------------
 test "panic @list.exn with empty list" {
   @list.Nil.unsafe_head()
 }
 
+///-----------------------------------------------------------------------------
 test "panic @list.unsafe_maximum with empty list" {
   inspect!((@list.Nil : @list.T[Int]).unsafe_maximum())
 }
 
+///-----------------------------------------------------------------------------
 test "panic @list.unsafe_minimum with empty list" {
   inspect!((@list.Nil : @list.T[Int]).unsafe_minimum())
 }

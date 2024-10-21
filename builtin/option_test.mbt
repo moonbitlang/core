@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+///-----------------------------------------------------------------------------
 test {
   assert_eq!((Option::None : Unit?), Option::None)
   assert_eq!(Option::Some(1), Option::Some(1))

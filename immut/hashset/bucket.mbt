@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+///-----------------------------------------------------------------------------
 /// A bucket is a non-empty linked list of key-value pair,
 /// used to resolve hash collision in HAMT
 priv enum Bucket[T] {
@@ -19,6 +20,7 @@ priv enum Bucket[T] {
   More(T, Bucket[T])
 }
 
+///-----------------------------------------------------------------------------
 /// Lookup a key from the bucket
 fn find[T : Eq](self : Bucket[T], key : T) -> Bool {
   match self {
@@ -27,6 +29,7 @@ fn find[T : Eq](self : Bucket[T], key : T) -> Bool {
   }
 }
 
+///-----------------------------------------------------------------------------
 /// Add a new key-value pair to a bucket.
 /// Replace the old entry if one with the same key already exists.
 fn add[T : Eq](self : Bucket[T], key : T) -> Bucket[T] {
@@ -41,6 +44,7 @@ fn add[T : Eq](self : Bucket[T], key : T) -> Bucket[T] {
   }
 }
 
+///-----------------------------------------------------------------------------
 /// Remove a key from a bucket
 fn remove[T : Eq](self : Bucket[T], key : T) -> Bucket[T]? {
   match self {
@@ -57,6 +61,7 @@ fn remove[T : Eq](self : Bucket[T], key : T) -> Bucket[T]? {
   }
 }
 
+///-----------------------------------------------------------------------------
 /// Get the size of a bucket
 fn size[T](self : Bucket[T]) -> Int {
   loop self, 1 {
@@ -65,6 +70,7 @@ fn size[T](self : Bucket[T]) -> Int {
   }
 }
 
+///-----------------------------------------------------------------------------
 /// Iterate through elements of a bucket
 fn each[T](self : Bucket[T], f : (T) -> Unit) -> Unit {
   loop self {
@@ -76,6 +82,7 @@ fn each[T](self : Bucket[T], f : (T) -> Unit) -> Unit {
   }
 }
 
+///-----------------------------------------------------------------------------
 fn iter[T](self : Bucket[T]) -> Iter[T] {
   Iter::new(
     fn {
@@ -93,6 +100,7 @@ fn iter[T](self : Bucket[T]) -> Iter[T] {
   )
 }
 
+///-----------------------------------------------------------------------------
 test "Bucket" {
   let b0 : Bucket[_] = Just_One(0)
   inspect!((b0.find(0), b0.find(1), b0.size()), content="(true, false, 1)")
@@ -110,6 +118,7 @@ test "Bucket" {
   inspect!((b1.find(0), b1.find(1)), content="(true, false)")
 }
 
+///-----------------------------------------------------------------------------
 test "Bucket::iter" {
   let b : Bucket[_] = More(0, More(1, Just_One(31)))
   let buf = StringBuilder::new(size_hint=0)
@@ -127,6 +136,7 @@ test "Bucket::iter" {
   inspect!(buf.to_string(), content="0, 1, 31")
 }
 
+///-----------------------------------------------------------------------------
 test "Bucket::iter" {
   let b : Bucket[_] = More(0, More(1, Just_One(31)))
   let buf = StringBuilder::new(size_hint=0)
@@ -150,6 +160,7 @@ test "Bucket::iter" {
   inspect!(buf.to_string(), content="0, 1, 31")
 }
 
+///-----------------------------------------------------------------------------
 test "Bucket add and remove" {
   let b0 : Bucket[_] = Just_One(0)
   let b1 = b0.add(1)
@@ -175,6 +186,7 @@ test "Bucket add and remove" {
   assert_eq!(b5.find(2), false)
 }
 
+///-----------------------------------------------------------------------------
 test "Bucket size" {
   let b0 : Bucket[_] = Just_One(0)
   let b1 = b0.add(1)
@@ -190,6 +202,7 @@ test "Bucket size" {
   assert_eq!(b5.size(), 2)
 }
 
+///-----------------------------------------------------------------------------
 test "Bucket iter" {
   let b0 : Bucket[_] = Just_One(0)
   let b1 = b0.add(1)
@@ -209,6 +222,7 @@ test "Bucket iter" {
   inspect!(buf, content="1, 2, 0")
 }
 
+///-----------------------------------------------------------------------------
 test "Bucket iter" {
   let b0 : Bucket[_] = Just_One(0)
   let b1 = b0.add(1)

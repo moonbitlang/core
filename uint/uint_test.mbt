@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+///-----------------------------------------------------------------------------
 test "UInt to byte" {
   let a = 10U.to_byte()
   inspect!(a, content="b'\\x0A'")
@@ -48,6 +49,7 @@ test "UInt to byte" {
   inspect!(b, content="b'\\x00'")
 }
 
+///-----------------------------------------------------------------------------
 test "shift" {
   inspect!(1U << 2, content="4")
   inspect!(4U >> 2, content="1")

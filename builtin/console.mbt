@@ -12,17 +12,21 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+///-----------------------------------------------------------------------------
 fn println_mono(s : String) -> Unit = "%println"
 
+///-----------------------------------------------------------------------------
 pub fn println[T : Show](input : T) -> Unit {
   println_mono(input.to_string())
 }
 
+///-----------------------------------------------------------------------------
 /// @alert deprecated "Use `println` instead"
 pub fn print[T : Show](input : T) -> Unit {
   println(input)
 }
 
+///-----------------------------------------------------------------------------
 pub fn to_string(self : Bool) -> String {
   if self {
     "true"
@@ -31,6 +35,7 @@ pub fn to_string(self : Bool) -> String {
   }
 }
 
+///-----------------------------------------------------------------------------
 pub fn to_string(self : Int64) -> String {
   fn abs(n : Int64) -> Int64 {
     if n < 0L {
@@ -59,6 +64,7 @@ pub fn to_string(self : Int64) -> String {
   buf.to_string()
 }
 
+///-----------------------------------------------------------------------------
 pub fn to_string(self : Int) -> String {
   fn abs(n : Int) -> Int {
     if n < 0 {
@@ -87,6 +93,7 @@ pub fn to_string(self : Int) -> String {
   buf.to_string()
 }
 
+///-----------------------------------------------------------------------------
 pub fn UInt::to_string(self : UInt) -> String {
   let buf = StringBuilder::new()
   fn write_digits(num) {
@@ -101,12 +108,14 @@ pub fn UInt::to_string(self : UInt) -> String {
   buf.to_string()
 }
 
+///-----------------------------------------------------------------------------
 test "UInt::to_string" {
   inspect!(0U, content="0")
   inspect!(17U, content="17")
   inspect!(4294967295U, content="4294967295")
 }
 
+///-----------------------------------------------------------------------------
 pub fn UInt64::to_string(self : UInt64) -> String {
   let buf = StringBuilder::new()
   fn write_digits(num : UInt64) {
@@ -123,48 +132,59 @@ pub fn UInt64::to_string(self : UInt64) -> String {
   buf.to_string()
 }
 
+///-----------------------------------------------------------------------------
 /// @coverage.skip 
 pub fn op_lt[T : Compare](self_ : T, other : T) -> Bool {
   self_.compare(other).is_neg()
 }
 
+///-----------------------------------------------------------------------------
 /// @coverage.skip 
 pub fn op_gt[T : Compare](self_ : T, other : T) -> Bool {
   self_.compare(other).is_pos()
 }
 
+///-----------------------------------------------------------------------------
 /// @coverage.skip 
 pub fn op_le[T : Compare](self_ : T, other : T) -> Bool {
   self_.compare(other).is_non_pos()
 }
 
+///-----------------------------------------------------------------------------
 /// @coverage.skip 
 pub fn op_ge[T : Compare](self_ : T, other : T) -> Bool {
   self_.compare(other).is_non_neg()
 }
 
+///-----------------------------------------------------------------------------
 /// @coverage.skip 
 pub fn op_notequal[T : Eq](x : T, y : T) -> Bool {
   not(x == y)
 }
 
+///-----------------------------------------------------------------------------
 /// A reference to string in host JS.
 /// @alert deprecated "Use js-string-builtins api instead"
 pub type Js_string
 
+///-----------------------------------------------------------------------------
 /// Create a JS string from a string in Moonbit by calling intrinsic primitive
 pub fn Js_string::new(x : String) -> Js_string {
   x.to_js_string()
 }
 
+///-----------------------------------------------------------------------------
 /// Call FFI to log the JS string
 pub fn log(self : Js_string) -> Unit = "js_string" "log"
 
+///-----------------------------------------------------------------------------
 /// Call FFI to append two JS strings
 pub fn op_add(self : Js_string, other : Js_string) -> Js_string = "js_string" "append"
 
+///-----------------------------------------------------------------------------
 fn unsafe_make_string(length : Int, value : Char) -> String = "$moonbit.unsafe_make_string"
 
+///-----------------------------------------------------------------------------
 /// Create new string of `length`, where each character is `value`
 ///
 /// ```
@@ -178,8 +198,10 @@ pub fn String::make(length : Int, value : Char) -> String {
   }
 }
 
+///-----------------------------------------------------------------------------
 pub type! InspectError String
 
+///-----------------------------------------------------------------------------
 pub fn inspect(
   obj : Show,
   ~content : String = "",
@@ -198,5 +220,6 @@ pub fn inspect(
   }
 }
 
+///-----------------------------------------------------------------------------
 // Used by test driver
 pub type! SnapshotError String

@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+///-----------------------------------------------------------------------------
 test "combine int" {
   fn hash(v) {
     Hasher::new()..combine_int(v).finalize()
@@ -27,6 +28,7 @@ test "combine int" {
   inspect!(hash(0) == hash(1), content="false")
 }
 
+///-----------------------------------------------------------------------------
 test "combine int64" {
   fn hash(v) {
     Hasher::new()..combine_int64(v).finalize()
@@ -42,6 +44,7 @@ test "combine int64" {
   inspect!(hash(0) == hash(1), content="false")
 }
 
+///-----------------------------------------------------------------------------
 test "combine uint" {
   fn hash(v) {
     Hasher::new()..combine_uint(v).finalize()
@@ -56,6 +59,7 @@ test "combine uint" {
   inspect!(hash(0) == hash(1), content="false")
 }
 
+///-----------------------------------------------------------------------------
 test "combine uint64" {
   fn hash(v) {
     Hasher::new()..combine_uint64(v).finalize()
@@ -70,6 +74,7 @@ test "combine uint64" {
   inspect!(hash(0) == hash(1), content="false")
 }
 
+///-----------------------------------------------------------------------------
 test "combine double" {
   fn hash(v) {
     Hasher::new()..combine_double(v).finalize()
@@ -83,6 +88,7 @@ test "combine double" {
   inspect!(hash(0.0) == hash(0.1), content="false")
 }
 
+///-----------------------------------------------------------------------------
 test "combine string" {
   fn hash(v) {
     Hasher::new()..combine_string(v).finalize()
@@ -101,6 +107,7 @@ test "combine string" {
   inspect!(hash("five") == hash("five"), content="true")
 }
 
+///-----------------------------------------------------------------------------
 test "combine bytes" {
   fn bytes_of(arr : Array[Int]) {
     let rv = Bytes::new(arr.length())
@@ -131,6 +138,7 @@ test "combine bytes" {
   inspect!(hash(b1) == hash(b2), content="false")
 }
 
+///-----------------------------------------------------------------------------
 test "combine byte" {
   fn hash(v) {
     Hasher::new()..combine_byte(v).finalize()
@@ -144,6 +152,7 @@ test "combine byte" {
   inspect!(hash(b'0') == hash(b'1'), content="false")
 }
 
+///-----------------------------------------------------------------------------
 test "combine all" {
   let hasher = Hasher::new()
   hasher

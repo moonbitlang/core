@@ -12,10 +12,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+///-----------------------------------------------------------------------------
 pub let max_value = 2147483647
 
+///-----------------------------------------------------------------------------
 pub let min_value = -2147483648
 
+///-----------------------------------------------------------------------------
 /// Returns the absolute value of an integer.
 /// 
 /// # Parameters

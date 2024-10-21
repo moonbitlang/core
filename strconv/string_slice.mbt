@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+///-----------------------------------------------------------------------------
 /// A slice of a string.
 /// TODO: make it a monad
 priv struct StringSlice {
@@ -20,30 +21,37 @@ priv struct StringSlice {
   end : Int
 }
 
+///-----------------------------------------------------------------------------
 fn slice(s : String, start : Int, end : Int) -> StringSlice {
   { string: s, start, end }
 }
 
+///-----------------------------------------------------------------------------
 fn full_slice(s : String) -> StringSlice {
   slice(s, 0, s.length())
 }
 
+///-----------------------------------------------------------------------------
 fn subfix_unchecked(self : StringSlice, start : Int) -> StringSlice {
   { string: self.string, start: self.start + start, end: self.end }
 }
 
+///-----------------------------------------------------------------------------
 fn first_is(self : StringSlice, c : Char) -> Bool {
   self.length() > 0 && self[0] == c
 }
 
+///-----------------------------------------------------------------------------
 fn first_is_either(self : StringSlice, c1 : Char, c2 : Char) -> Bool {
   self.length() > 0 && (self[0] == c1 || self[0] == c2)
 }
 
+///-----------------------------------------------------------------------------
 fn first_is_digit(self : StringSlice) -> Bool {
   self.length() > 0 && is_digit(self[0])
 }
 
+///-----------------------------------------------------------------------------
 /// Step over `step` non-underscore characters. 
 /// Return None if there are not enough characters.
 fn step(self : StringSlice, step : Int) -> StringSlice? {
@@ -63,24 +71,29 @@ fn step(self : StringSlice, step : Int) -> StringSlice? {
   }
 }
 
+///-----------------------------------------------------------------------------
 /// Step over the first character without checking.
 fn step_1_unchecked(self : StringSlice) -> StringSlice {
   { string: self.string, start: self.start + 1, end: self.end }
 }
 
+///-----------------------------------------------------------------------------
 /// Unsafe: make sure index is in bounds
 fn op_get(self : StringSlice, index : Int) -> Char {
   self.string[self.start + index]
 }
 
+///-----------------------------------------------------------------------------
 fn length(self : StringSlice) -> Int {
   self.end - self.start
 }
 
+///-----------------------------------------------------------------------------
 fn is_empty(self : StringSlice) -> Bool {
   self.start == self.end
 }
 
+///-----------------------------------------------------------------------------
 fn to_string(self : StringSlice) -> String {
   let buf = StringBuilder::new(size_hint=self.length())
   for i = 0; i < self.length(); i = i + 1 {
@@ -89,6 +102,7 @@ fn to_string(self : StringSlice) -> String {
   buf.to_string()
 }
 
+///-----------------------------------------------------------------------------
 fn prefix_eq_ignore_case(self : StringSlice, s2 : String) -> Bool {
   for i = 0; i < s2.length() && i < self.length(); i = i + 1 {
     let c1 = self[i]
@@ -100,6 +114,7 @@ fn prefix_eq_ignore_case(self : StringSlice, s2 : String) -> Bool {
   true
 }
 
+///-----------------------------------------------------------------------------
 fn lower(c : Char) -> Char {
   if 'A' <= c && c <= 'Z' {
     Char::from_int(c.to_int() + 'a'.to_int() - 'A'.to_int())
@@ -108,6 +123,7 @@ fn lower(c : Char) -> Char {
   }
 }
 
+///-----------------------------------------------------------------------------
 /// Returns the accumulated value, the slice left, and the number of digits consumed.
 /// It ignores underscore and stops when a non-digit character is found.
 fn fold_digits[T](
@@ -130,12 +146,14 @@ fn fold_digits[T](
   (self.subfix_unchecked(self.length()), ret, len)
 }
 
+///-----------------------------------------------------------------------------
 test "eq_ignore_case" {
   assert_true!(prefix_eq_ignore_case(full_slice("nan"), "NaN"))
   assert_true!(prefix_eq_ignore_case(full_slice("inf"), "inf"))
   assert_true!(prefix_eq_ignore_case(full_slice("inf"), "Inf"))
 }
 
+///-----------------------------------------------------------------------------
 test "lower" {
   assert_eq!(lower('Z'), 'z')
   assert_eq!(lower('A'), 'a')

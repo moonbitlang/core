@@ -12,16 +12,19 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+///-----------------------------------------------------------------------------
 priv struct Cont[A] {
   content : A
   mut next : Cell[A]
 }
 
+///-----------------------------------------------------------------------------
 priv enum Cell[A] {
   Nil
   Cons(Cont[A])
 }
 
+///-----------------------------------------------------------------------------
 struct T[A] {
   mut length : Int
   mut first : Cell[A]

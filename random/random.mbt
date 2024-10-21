@@ -12,11 +12,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+///-----------------------------------------------------------------------------
 /// Currently we only support [chacha8] as the source of randomness.
 struct Rand {
   src : @random_source.ChaCha8
 }
 
+///-----------------------------------------------------------------------------
 /// Create a new random number generator with [seed].
 /// @alert unsafe "Panic if seed is not 32 bytes long"
 pub fn Rand::new(~seed : Bytes = b"ABCDEFGHIJKLMNOPQRSTUVWXYZ123456") -> Rand {
@@ -27,6 +29,7 @@ pub fn Rand::new(~seed : Bytes = b"ABCDEFGHIJKLMNOPQRSTUVWXYZ123456") -> Rand {
   { src, }
 }
 
+///-----------------------------------------------------------------------------
 fn Rand::next(self : Rand) -> UInt64 {
   for {
     let x = self.src.state.next()
@@ -37,6 +40,7 @@ fn Rand::next(self : Rand) -> UInt64 {
   }
 }
 
+///-----------------------------------------------------------------------------
 test "next" {
   let r = Rand::new()
   let n = r.next()
@@ -44,6 +48,7 @@ test "next" {
   assert_eq!(n, exp)
 }
 
+///-----------------------------------------------------------------------------
 /// [int] Return a non-negative pseudo-random 31-bit integer as an Int in the range [0, 2^31) or [0, limit) if limit is provided.
 /// 
 /// # Arguments
@@ -59,6 +64,7 @@ pub fn Rand::int(self : Rand, ~limit : Int = 0) -> Int {
   }
 }
 
+///-----------------------------------------------------------------------------
 /// [int64] returns a non-negative pseudo-random 63-bit integer as an Int64 in the range [0, 2^63)
 /// 
 /// # Arguments
@@ -76,6 +82,7 @@ pub fn Rand::int64(self : Rand, ~limit : Int64 = 0) -> Int64 {
   }
 }
 
+///-----------------------------------------------------------------------------
 /// [uint] returns a non-negative pseudo-random 32-bit integer as a Uint in the range [0, 2^32) or [0, limit) if limit is provided.
 /// 
 /// # Arguments
@@ -90,6 +97,7 @@ pub fn Rand::uint(self : Rand, ~limit : UInt = 0) -> UInt {
   self.uint64(limit=limit.to_uint64()).to_uint()
 }
 
+///-----------------------------------------------------------------------------
 test "uint" {
   let r = Rand::new()
   let n = r.uint(limit=10U)
@@ -100,6 +108,7 @@ test "uint" {
   inspect!(n, content="5")
 }
 
+///-----------------------------------------------------------------------------
 /// [uint64] returns a non-negative pseudo-random 64-bit integer as a Uint64 in the range [0, 2^64) or [0, limit) if limit is provided.
 /// 
 /// # Arguments
@@ -124,6 +133,7 @@ pub fn Rand::uint64(self : Rand, ~limit : UInt64 = 0) -> UInt64 {
   gUInt128.hi
 }
 
+///-----------------------------------------------------------------------------
 test "UInt64" {
   let r = Rand::new()
   let n = r.uint64()
@@ -138,30 +148,36 @@ test "UInt64" {
   inspect!(n, content="5")
 }
 
+///-----------------------------------------------------------------------------
 /// [double] returns a pseudo-random 64-bit Double in the range [0.0, 1.0)
 pub fn Rand::double(self : Rand) -> Double {
   Double::convert_uint64(self.next() << 11 >> 11) /
   Double::convert_uint64(1UL << 53)
 }
 
+///-----------------------------------------------------------------------------
 test "double" {
   let r = Rand::new()
   let n = r.double()
   inspect!(n, content="0.615969772029264")
 }
 
+///-----------------------------------------------------------------------------
 /// [float] returns a pseudo-random 32-bit Float in the range [0.0, 1.0)
 pub fn Rand::float(self : Rand) -> Float {
   ((self.uint() << 8 >> 8) / (1U << 24)).to_float()
 }
 
+///-----------------------------------------------------------------------------
 priv struct UInt128 {
   mut hi : UInt64
   mut lo : UInt64
 } derive(Eq)
 
+///-----------------------------------------------------------------------------
 let gUInt128 : UInt128 = { hi: 0UL, lo: 0UL }
 
+///-----------------------------------------------------------------------------
 /// [umul128] returns the 128-bit product of x and y: (hi, lo) = x * y
 /// with the product bits' upper half returned in hi and the lower
 /// half returned in lo.
@@ -180,30 +196,35 @@ fn umul128(a : UInt64, b : UInt64) -> Unit {
   gUInt128.lo = a * b
 }
 
+///-----------------------------------------------------------------------------
 test "umul128" {
   umul128(0x123456789ABCDEF0, 0xFEDCBA9876543210)
   assert_eq!(gUInt128.hi, 1305938385386173474UL)
   assert_eq!(gUInt128.lo, 2552847189736476416UL)
 }
 
+///-----------------------------------------------------------------------------
 test "umul128: handles small numbers correctly" {
   umul128(1UL, 1UL)
   assert_eq!(gUInt128.hi, 0UL)
   assert_eq!(gUInt128.lo, 1UL)
 }
 
+///-----------------------------------------------------------------------------
 test "umul128: handles large numbers correctly" {
   umul128(1UL, 0xFFFFFFFFFFFFFFFFUL)
   assert_eq!(gUInt128.hi, 0UL)
   assert_eq!(gUInt128.lo, 0xFFFFFFFFFFFFFFFFUL)
 }
 
+///-----------------------------------------------------------------------------
 test "umul128: handles zero correctly" {
   umul128(0UL, 0UL)
   assert_eq!(gUInt128.hi, 0UL)
   assert_eq!(gUInt128.lo, 0UL)
 }
 
+///-----------------------------------------------------------------------------
 /// [shuffle] shuffles the first n elements of an array using the Fisher-Yates shuffle algorithm.
 /// @alert unsafe "Panics if limit is negative"
 /// 
@@ -234,6 +255,7 @@ pub fn Rand::shuffle(
   }
 }
 
+///-----------------------------------------------------------------------------
 test "shuffle" {
   let r = Rand::new()
   let a = [1, 2, 3, 4, 5]

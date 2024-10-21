@@ -16,6 +16,7 @@
 // The types stored in set need to implement the Compare trait.
 // All operations over sets are purely applicative (no side-effects).
 
+///-----------------------------------------------------------------------------
 pub fn iter[A](self : T[A]) -> Iter[A] {
   Iter::new(
     fn(yield) {
@@ -36,10 +37,12 @@ pub fn iter[A](self : T[A]) -> Iter[A] {
   )
 }
 
+///-----------------------------------------------------------------------------
 pub fn T::from_iter[A : Compare](iter : Iter[A]) -> T[A] {
   iter.fold(init=T::new(), fn(s, e) { s.add(e) })
 }
 
+///-----------------------------------------------------------------------------
 test {
   let buf = StringBuilder::new(size_hint=20)
   of([2, 7, 1, 2, 3, 4, 5])

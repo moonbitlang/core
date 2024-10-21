@@ -27,6 +27,7 @@
 // - <https://handwiki.org/wiki/Hash%20array%20mapped%20trie>
 // - <https://lampwww.epfl.ch/papers/idealhashtrees.pdf>
 
+///-----------------------------------------------------------------------------
 /// An immutable hash set data structure
 enum T[A] {
   Empty
@@ -35,15 +36,19 @@ enum T[A] {
   Branch(@sparse_array.SparseArray[T[A]])
 }
 
+///-----------------------------------------------------------------------------
 // The number of bits consumed at every [Branch] node
 let segment_length : Int = 5
 
+///-----------------------------------------------------------------------------
 let segment_mask : Int = 0b11111
 
+///-----------------------------------------------------------------------------
 pub fn T::new[A]() -> T[A] {
   Empty
 }
 
+///-----------------------------------------------------------------------------
 /// Lookup a value from the hash set
 pub fn contains[A : Eq + Hash](self : T[A], key : A) -> Bool {
   loop self, key.hash() {
@@ -64,6 +69,7 @@ pub fn contains[A : Eq + Hash](self : T[A], key : A) -> Bool {
   }
 }
 
+///-----------------------------------------------------------------------------
 fn add_with_hash[A : Eq](self : T[A], key : A, depth : Int, hash : Int) -> T[A] {
   fn make_leaf(depth : Int, key : A, hash : Int) {
     // make sure leaf nodes always appear at the bottom of the tree
@@ -113,16 +119,19 @@ fn add_with_hash[A : Eq](self : T[A], key : A, depth : Int, hash : Int) -> T[A] 
   }
 }
 
+///-----------------------------------------------------------------------------
 /// Add a key to the hashset.
 pub fn add[A : Eq + Hash](self : T[A], key : A) -> T[A] {
   self.add_with_hash(key, 0, key.hash())
 }
 
+///-----------------------------------------------------------------------------
 /// Remove an element from a set
 pub fn remove[A : Eq + Hash](self : T[A], key : A) -> T[A] {
   self.remove_with_hash(key, 0, key.hash())
 }
 
+///-----------------------------------------------------------------------------
 fn remove_with_hash[A : Eq](
   self : T[A],
   key : A,
@@ -158,6 +167,7 @@ fn remove_with_hash[A : Eq](
   }
 }
 
+///-----------------------------------------------------------------------------
 /// Calculate the size of a set.
 ///
 /// WARNING: this operation is `O(N)` in set size
@@ -177,6 +187,7 @@ pub fn size[A](self : T[A]) -> Int {
   }
 }
 
+///-----------------------------------------------------------------------------
 /// Returns true if the hash set is empty.
 pub fn is_empty[A](self : T[A]) -> Bool {
   match self {
@@ -185,6 +196,7 @@ pub fn is_empty[A](self : T[A]) -> Bool {
   }
 }
 
+///-----------------------------------------------------------------------------
 /// Iterate through the elements in a hash set
 pub fn each[A](self : T[A], f : (A) -> Unit) -> Unit {
   match self {
@@ -195,6 +207,7 @@ pub fn each[A](self : T[A], f : (A) -> Unit) -> Unit {
   }
 }
 
+///-----------------------------------------------------------------------------
 /// Converted to Iter
 pub fn iter[A](self : T[A]) -> Iter[A] {
   match self {
@@ -205,18 +218,22 @@ pub fn iter[A](self : T[A]) -> Iter[A] {
   }
 }
 
+///-----------------------------------------------------------------------------
 pub fn T::from_iter[A : Eq + Hash](iter : Iter[A]) -> T[A] {
   iter.fold(init=new(), fn(s, e) { s.add(e) })
 }
 
+///-----------------------------------------------------------------------------
 pub impl[A : Show] Show for T[A] with output(self, logger) {
   logger.write_iter(self.iter(), prefix="@immut/hashset.of([", suffix="])")
 }
 
+///-----------------------------------------------------------------------------
 pub fn to_string[A : Show](self : T[A]) -> String {
   Show::to_string(self)
 }
 
+///-----------------------------------------------------------------------------
 pub fn T::from_array[A : Eq + Hash](arr : Array[A]) -> T[A] {
   loop arr.length(), T::new() {
     0, set => set
@@ -227,6 +244,7 @@ pub fn T::from_array[A : Eq + Hash](arr : Array[A]) -> T[A] {
   }
 }
 
+///-----------------------------------------------------------------------------
 pub fn T::of[A : Eq + Hash](arr : FixedArray[A]) -> T[A] {
   loop arr.length(), T::new() {
     0, set => set
@@ -237,6 +255,7 @@ pub fn T::of[A : Eq + Hash](arr : FixedArray[A]) -> T[A] {
   }
 }
 
+///-----------------------------------------------------------------------------
 pub impl[K : Eq + Hash + @quickcheck.Arbitrary] @quickcheck.Arbitrary for T[K] with arbitrary(
   size,
   rs

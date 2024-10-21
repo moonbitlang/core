@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+///-----------------------------------------------------------------------------
 test "overflow" {
   // signed integer expected to be negative
   inspect!(0xC2B2AE3D, content="-1028477379")
@@ -23,6 +24,7 @@ test "overflow" {
   inspect!(-0x7fff_ffff, content="-2147483647")
 }
 
+///-----------------------------------------------------------------------------
 test "hash" {
   inspect!(Hash::hash(0), content="0")
   inspect!(Hash::hash(1), content="69681622")
@@ -38,6 +40,7 @@ test "hash" {
   inspect!(Hash::hash(0x7fffffff + 1), content="963800214")
 }
 
+///-----------------------------------------------------------------------------
 test "abs function coverage" {
   // Test cases for abs function
   assert_eq!(Int::abs(5), 5)

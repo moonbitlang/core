@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+///-----------------------------------------------------------------------------
 test "Result equality with Ok" {
   let result1 : Result[Int, String] = Result::Ok(1)
   let result2 = Result::Ok(1)
@@ -20,6 +21,7 @@ test "Result equality with Ok" {
   assert_not_eq!(result1, result3)
 }
 
+///-----------------------------------------------------------------------------
 test "Result equality with Err" {
   let result1 : Result[Int, String] = Result::Err("error")
   let result2 = Result::Err("error")
@@ -28,6 +30,7 @@ test "Result equality with Err" {
   assert_not_eq!(result1, result3)
 }
 
+///-----------------------------------------------------------------------------
 test "Result equality mixed" {
   let okResult = Result::Ok(1)
   let errResult = Result::Err("error")

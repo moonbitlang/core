@@ -27,6 +27,7 @@
 // - <https://handwiki.org/wiki/Hash%20array%20mapped%20trie>
 // - <https://lampwww.epfl.ch/papers/idealhashtrees.pdf>
 
+///-----------------------------------------------------------------------------
 /// An immutable hash-map data structure
 enum T[K, V] {
   Empty
@@ -35,15 +36,19 @@ enum T[K, V] {
   Branch(@sparse_array.SparseArray[T[K, V]])
 }
 
+///-----------------------------------------------------------------------------
 // The number of bits consumed at every [Branch] node
 let segment_length : Int = 5
 
+///-----------------------------------------------------------------------------
 let segment_mask : Int = 0b11111
 
+///-----------------------------------------------------------------------------
 pub fn T::new[K, V]() -> T[K, V] {
   Empty
 }
 
+///-----------------------------------------------------------------------------
 /// Lookup a key from a hash map
 pub fn find[K : Eq + Hash, V](self : T[K, V], key : K) -> V? {
   loop self, key.hash() {
@@ -64,10 +69,12 @@ pub fn find[K : Eq + Hash, V](self : T[K, V], key : K) -> V? {
   }
 }
 
+///-----------------------------------------------------------------------------
 pub fn op_get[K : Eq + Hash, V](self : T[K, V], key : K) -> V? {
   self.find(key)
 }
 
+///-----------------------------------------------------------------------------
 fn add_with_hash[K : Eq, V](
   self : T[K, V],
   key : K,
@@ -126,6 +133,7 @@ fn add_with_hash[K : Eq, V](
   }
 }
 
+///-----------------------------------------------------------------------------
 /// Add a key-value pair to the hashmap.
 ///
 /// If a pair with the same key already exists, the old one is replaced
@@ -133,11 +141,13 @@ pub fn add[K : Eq + Hash, V](self : T[K, V], key : K, value : V) -> T[K, V] {
   self.add_with_hash(key, 0, key.hash(), value)
 }
 
+///-----------------------------------------------------------------------------
 /// Remove an element from a map
 pub fn remove[K : Eq + Hash, V](self : T[K, V], key : K) -> T[K, V] {
   self.remove_with_hash(key, 0, key.hash())
 }
 
+///-----------------------------------------------------------------------------
 fn remove_with_hash[K : Eq, V](
   self : T[K, V],
   key : K,
@@ -173,6 +183,7 @@ fn remove_with_hash[K : Eq, V](
   }
 }
 
+///-----------------------------------------------------------------------------
 /// Calculate the size of a map.
 ///
 /// WARNING: this operation is `O(N)` in map size
@@ -192,6 +203,7 @@ pub fn size[K, V](self : T[K, V]) -> Int {
   }
 }
 
+///-----------------------------------------------------------------------------
 /// Iterate through the elements in a hash map
 pub fn each[K, V](self : T[K, V], f : (K, V) -> Unit) -> Unit {
   match self {
@@ -202,6 +214,7 @@ pub fn each[K, V](self : T[K, V], f : (K, V) -> Unit) -> Unit {
   }
 }
 
+///-----------------------------------------------------------------------------
 /// Converted to Iter
 pub fn iter[K, V](self : T[K, V]) -> Iter[(K, V)] {
   match self {
@@ -212,18 +225,22 @@ pub fn iter[K, V](self : T[K, V]) -> Iter[(K, V)] {
   }
 }
 
+///-----------------------------------------------------------------------------
 pub fn T::from_iter[K : Eq + Hash, V](iter : Iter[(K, V)]) -> T[K, V] {
   iter.fold(init=T::new(), fn(m, e) { m.add(e.0, e.1) })
 }
 
+///-----------------------------------------------------------------------------
 pub impl[K : Show, V : Show] Show for T[K, V] with output(self, logger) {
   logger.write_iter(self.iter(), prefix="@immut/hashmap.of([", suffix="])")
 }
 
+///-----------------------------------------------------------------------------
 pub fn to_string[K : Show, V : Show](self : T[K, V]) -> String {
   Show::to_string(self)
 }
 
+///-----------------------------------------------------------------------------
 pub fn T::from_array[K : Eq + Hash, V](arr : Array[(K, V)]) -> T[K, V] {
   loop arr.length(), T::new() {
     0, map => map
@@ -234,6 +251,7 @@ pub fn T::from_array[K : Eq + Hash, V](arr : Array[(K, V)]) -> T[K, V] {
   }
 }
 
+///-----------------------------------------------------------------------------
 pub impl[K : Eq + Hash + @quickcheck.Arbitrary, V : @quickcheck.Arbitrary] @quickcheck.Arbitrary for T[
   K,
   V,
@@ -241,6 +259,7 @@ pub impl[K : Eq + Hash + @quickcheck.Arbitrary, V : @quickcheck.Arbitrary] @quic
   @quickcheck.Arbitrary::arbitrary(size, rs) |> from_array
 }
 
+///-----------------------------------------------------------------------------
 pub fn T::of[K : Eq + Hash, V](arr : FixedArray[(K, V)]) -> T[K, V] {
   loop arr.length(), T::new() {
     0, map => map

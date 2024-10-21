@@ -12,12 +12,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+///-----------------------------------------------------------------------------
 struct Hello[A, B] {
   fieldA : A
   fieldB : B
   data : Map[String, A]
 } derive(ToJson, FromJson, Show, Eq)
 
+///-----------------------------------------------------------------------------
 test {
   let v = Hello::{ fieldA: 3, fieldB: 2, data: { "a": 3 } }
   let vj = v.to_json()
@@ -31,6 +33,7 @@ test {
   assert_eq!(v0, v)
 }
 
+///-----------------------------------------------------------------------------
 // struct Hello2 [A, B] {
 //   fieldA : A 
 //   fieldB : B 
@@ -43,6 +46,7 @@ struct Hello3[A, B] {
   data : Map[Int, A]
 } derive(ToJson)
 
+///-----------------------------------------------------------------------------
 test {
   let h = Hello::{ fieldA: 1, fieldB: "hello", data: { "a": 1, "b": 2 } }
   let j = h.to_json()

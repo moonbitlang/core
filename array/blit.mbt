@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+///-----------------------------------------------------------------------------
 pub fn copy[T](self : FixedArray[T]) -> FixedArray[T] {
   let len = self.length()
   if len == 0 {
@@ -23,6 +24,7 @@ pub fn copy[T](self : FixedArray[T]) -> FixedArray[T] {
   }
 }
 
+///-----------------------------------------------------------------------------
 test "copy" {
   let a : FixedArray[_] = [1, 2, 3, 4]
   let b = a.copy()

@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+///-----------------------------------------------------------------------------
 test "prng" {
   let r = @random.new()
   assert_eq!(r.uint(limit=10), 7)

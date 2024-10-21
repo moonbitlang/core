@@ -12,11 +12,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+///-----------------------------------------------------------------------------
 test "byte to uint" {
   assert_eq!(b'\xFF'.to_uint(), 255)
   assert_eq!(b'\x00'.to_uint(), 0)
 }
 
+///-----------------------------------------------------------------------------
 test "int to byte" {
   inspect!((-255).to_byte(), content="b'\\x01'")
   inspect!((-0).to_byte(), content="b'\\x00'")
@@ -26,11 +28,13 @@ test "int to byte" {
   inspect!((-65535).to_byte(), content="b'\\x01'")
 }
 
+///-----------------------------------------------------------------------------
 test "grouped test for boundary cases" {
   inspect!(@moonbitlang/core/byte.to_uint64(b'\x00'), content="0")
   inspect!(@moonbitlang/core/byte.to_uint64(b'\xFF'), content="255")
 }
 
+///-----------------------------------------------------------------------------
 test "grouped test for random cases" {
   inspect!(@moonbitlang/core/byte.to_uint64(b'\x10'), content="16")
   inspect!(@moonbitlang/core/byte.to_uint64(b'\x2A'), content="42")
@@ -40,6 +44,7 @@ test "grouped test for random cases" {
   inspect!(@moonbitlang/core/byte.to_uint64(b'\x55'), content="85")
 }
 
+///-----------------------------------------------------------------------------
 test "additional random cases" {
   inspect!(@moonbitlang/core/byte.to_uint64(b'\x3C'), content="60")
   inspect!(@moonbitlang/core/byte.to_uint64(b'\x64'), content="100")

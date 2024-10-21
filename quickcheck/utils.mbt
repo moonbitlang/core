@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+///-----------------------------------------------------------------------------
 pub fn samples[X : Arbitrary](x : Int) -> Array[X] {
   let rs = @splitmix.RandomState::new()
   let array = Array::make(x, X::arbitrary(0, rs))

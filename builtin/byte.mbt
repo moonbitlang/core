@@ -12,22 +12,27 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+///-----------------------------------------------------------------------------
 pub fn op_equal(self : Byte, that : Byte) -> Bool {
   self.to_int() == that.to_int()
 }
 
+///-----------------------------------------------------------------------------
 pub fn op_add(self : Byte, that : Byte) -> Byte {
   (self.to_int() + that.to_int()).to_byte()
 }
 
+///-----------------------------------------------------------------------------
 pub fn op_sub(self : Byte, that : Byte) -> Byte {
   (self.to_int() - that.to_int()).to_byte()
 }
 
+///-----------------------------------------------------------------------------
 pub fn compare(self : Byte, that : Byte) -> Int {
   self.to_int().compare(that.to_int())
 }
 
+///-----------------------------------------------------------------------------
 fn alphabet(self : Int) -> String {
   match self {
     0 => "0"
@@ -50,6 +55,7 @@ fn alphabet(self : Int) -> String {
   }
 }
 
+///-----------------------------------------------------------------------------
 pub fn to_string(self : Byte) -> String {
   let i = self.to_int()
   let hi = alphabet(i / 16)
@@ -57,49 +63,61 @@ pub fn to_string(self : Byte) -> String {
   "b'\\x\{hi}\{lo}'"
 }
 
+///-----------------------------------------------------------------------------
 pub impl Hash for Byte with hash(self) { self.to_int() }
 
+///-----------------------------------------------------------------------------
 pub impl Hash for Byte with hash_combine(self, hasher) {
   hasher.combine_byte(self)
 }
 
+///-----------------------------------------------------------------------------
 pub fn Byte::default() -> Byte {
   b'\x00'
 }
 
+///-----------------------------------------------------------------------------
 pub fn Byte::lnot(self : Byte) -> Byte {
   self.to_int().lnot().to_byte()
 }
 
+///-----------------------------------------------------------------------------
 pub fn Byte::land(self : Byte, that : Byte) -> Byte {
   (self.to_int() & that.to_int()).to_byte()
 }
 
+///-----------------------------------------------------------------------------
 pub fn Byte::lor(self : Byte, that : Byte) -> Byte {
   (self.to_int() | that.to_int()).to_byte()
 }
 
+///-----------------------------------------------------------------------------
 pub fn Byte::lxor(self : Byte, that : Byte) -> Byte {
   (self.to_int() ^ that.to_int()).to_byte()
 }
 
+///-----------------------------------------------------------------------------
 pub fn Byte::to_uint(self : Byte) -> UInt {
   self.to_int().reinterpret_as_uint()
 }
 
+///-----------------------------------------------------------------------------
 pub fn Byte::op_shl(self : Byte, count : Int) -> Byte {
   (self.to_int() << count).to_byte()
 }
 
+///-----------------------------------------------------------------------------
 pub fn Byte::op_shr(self : Byte, count : Int) -> Byte {
   (self.to_uint() >> count).reinterpret_as_int().to_byte()
 }
 
+///-----------------------------------------------------------------------------
 /// @alert deprecated "Use infix operator `<<` instead"
 pub fn Byte::lsl(self : Byte, count : Int) -> Byte {
   (self.to_int() << count).to_byte()
 }
 
+///-----------------------------------------------------------------------------
 /// @alert deprecated "Use infix operator `>>` instead"
 pub fn Byte::lsr(self : Byte, count : Int) -> Byte {
   (self.to_uint() >> count).reinterpret_as_int().to_byte()

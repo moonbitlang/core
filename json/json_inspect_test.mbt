@@ -12,32 +12,38 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+///-----------------------------------------------------------------------------
 test {
   @json.inspect!(1, content=1)
 }
 
+///-----------------------------------------------------------------------------
 test {
   @json.inspect!({ "x": 1 }, content={ "x": 1 })
 }
 
+///-----------------------------------------------------------------------------
 struct P {
   x : Int
   y : Int
   color : Color
 } derive(ToJson)
 
+///-----------------------------------------------------------------------------
 enum Color {
   Red
   Green
   Blue
 } derive(ToJson)
 
+///-----------------------------------------------------------------------------
 struct Line {
   p1 : P
   p2 : P
   color : Color
 } derive(ToJson)
 
+///-----------------------------------------------------------------------------
 test "json inspect" {
   let p1 = { x: 0, y: 0, color: Color::Red }
   let p2 = { x: 1, y: 2, color: Color::Green }

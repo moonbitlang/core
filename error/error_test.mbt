@@ -12,8 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+///-----------------------------------------------------------------------------
 type! IntError Int
 
+///-----------------------------------------------------------------------------
 test "show error" {
   fn f(b : Bool) -> String! {
     if b {

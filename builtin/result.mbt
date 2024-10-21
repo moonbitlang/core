@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+///-----------------------------------------------------------------------------
 pub fn op_equal[T : Eq, E : Eq](
   self : Result[T, E],
   other : Result[T, E]

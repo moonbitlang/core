@@ -12,18 +12,21 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+///-----------------------------------------------------------------------------
 test "expect method with matching content" {
   let buf = @buffer.new(size_hint=100)
   buf.write_string("Test")
   inspect!(buf, content="Test")
 }
 
+///-----------------------------------------------------------------------------
 test "expect method with non-matching content" {
   let buf = @buffer.new(size_hint=100)
   buf.write_string("Test")
   inspect!(buf, content="Test")
 }
 
+///-----------------------------------------------------------------------------
 test "grow_if_necessary method" {
   let buf = @buffer.new(size_hint=10)
   buf.write_string(
@@ -32,12 +35,14 @@ test "grow_if_necessary method" {
   assert_true!(buf.to_bytes().length() >= 60)
 }
 
+///-----------------------------------------------------------------------------
 test "write_sub_string method" {
   let buf = @buffer.new(size_hint=10)
   buf.write_sub_string("Hello, World!", 7, 5)
   inspect!(buf, content="World")
 }
 
+///-----------------------------------------------------------------------------
 test "write_byte method" {
   let buf = @buffer.new(size_hint=10)
   buf.write_byte(b'A')
@@ -45,6 +50,7 @@ test "write_byte method" {
   inspect!(buf, content="A")
 }
 
+///-----------------------------------------------------------------------------
 test "to_bytes method" {
   let buf = @buffer.new(size_hint=10)
   buf.write_string("Test")
@@ -52,12 +58,14 @@ test "to_bytes method" {
   assert_eq!(bytes.length(), 8) // Each character in "Test" is 2 bytes
 }
 
+///-----------------------------------------------------------------------------
 test "expect method with non-matching content" {
   let buf = @buffer.new(size_hint=100)
   buf.write_string("Test")
   inspect!(buf, content="Test")
 }
 
+///-----------------------------------------------------------------------------
 test "grow_if_necessary method" {
   let buf = @buffer.new(size_hint=10)
   buf.write_string(
@@ -66,12 +74,14 @@ test "grow_if_necessary method" {
   assert_true!(buf.to_bytes().length() >= 60)
 }
 
+///-----------------------------------------------------------------------------
 test "write_sub_string method" {
   let buf = @buffer.new(size_hint=10)
   buf.write_sub_string("Hello, World!", 7, 5)
   inspect!(buf, content="World")
 }
 
+///-----------------------------------------------------------------------------
 test "write_byte method" {
   let buf = @buffer.new(size_hint=10)
   buf.write_byte(b'A')
@@ -79,6 +89,7 @@ test "write_byte method" {
   inspect!(buf, content="A")
 }
 
+///-----------------------------------------------------------------------------
 test "to_bytes method" {
   let buf = @buffer.new(size_hint=10)
   buf.write_string("Test")
@@ -86,18 +97,21 @@ test "to_bytes method" {
   assert_eq!(bytes.length(), 8) // Each character in "Test" is 2 bytes
 }
 
+///-----------------------------------------------------------------------------
 test "expect method with matching content" {
   let buf = @buffer.new(size_hint=100)
   buf.write_string("Test")
   inspect!(buf, content="Test")
 }
 
+///-----------------------------------------------------------------------------
 test "expect method with non-matching content" {
   let buf = @buffer.new(size_hint=100)
   buf.write_string("Test")
   inspect!(buf, content="Test")
 }
 
+///-----------------------------------------------------------------------------
 test "grow_if_necessary method" {
   let buf = @buffer.new(size_hint=10)
   buf.write_string(
@@ -106,12 +120,14 @@ test "grow_if_necessary method" {
   assert_true!(buf.to_bytes().length() >= 60)
 }
 
+///-----------------------------------------------------------------------------
 test "write_sub_string method" {
   let buf = @buffer.new(size_hint=10)
   buf.write_sub_string("Hello, World!", 7, 5)
   inspect!(buf, content="World")
 }
 
+///-----------------------------------------------------------------------------
 test "write_byte method" {
   let buf = @buffer.new(size_hint=10)
   buf.write_byte(b'A')
@@ -119,6 +135,7 @@ test "write_byte method" {
   inspect!(buf, content="A")
 }
 
+///-----------------------------------------------------------------------------
 test "to_bytes method" {
   let buf = @buffer.new(size_hint=10)
   buf.write_string("Test")
@@ -126,6 +143,7 @@ test "to_bytes method" {
   assert_eq!(bytes.length(), 8) // Each character in "Test" is 2 bytes
 }
 
+///-----------------------------------------------------------------------------
 test "write_bytes" {
   let buf = @buffer.new(size_hint=4)
   buf.write_bytes(b"1\x002\x003\x004\x00")

@@ -12,10 +12,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+///-----------------------------------------------------------------------------
 pub let min_value : UInt = 0U
 
+///-----------------------------------------------------------------------------
 pub let max_value : UInt = 4294967295U
 
+///-----------------------------------------------------------------------------
 pub fn to_int64(self : UInt) -> Int64 {
   self.to_uint64().reinterpret_as_int64()
 }

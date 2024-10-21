@@ -12,16 +12,19 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+///-----------------------------------------------------------------------------
 pub struct ChaCha8 {
   state : State
 }
 
+///-----------------------------------------------------------------------------
 pub fn ChaCha8::new(seed : Bytes) -> ChaCha8 {
   let c = { state: State::new() }
   c.state.init(seed)
   c
 }
 
+///-----------------------------------------------------------------------------
 pub struct State {
   mut buffer : FixedArray[UInt64] // size=[32]
   mut seed : FixedArray[UInt64] // size=[4]
@@ -30,6 +33,7 @@ pub struct State {
   mut c : UInt
 }
 
+///-----------------------------------------------------------------------------
 fn State::new() -> State {
   {
     buffer: FixedArray::make(32, 0UL),
@@ -40,14 +44,19 @@ fn State::new() -> State {
   }
 }
 
+///-----------------------------------------------------------------------------
 let ctrInc = 4U
 
+///-----------------------------------------------------------------------------
 let ctrMax = 16U
 
+///-----------------------------------------------------------------------------
 let chunk = 32U
 
+///-----------------------------------------------------------------------------
 let chachaReseed = 4
 
+///-----------------------------------------------------------------------------
 pub fn State::next(self : State) -> (UInt64, Bool) {
   let i = self.i
   if i >= self.n {
@@ -57,6 +66,7 @@ pub fn State::next(self : State) -> (UInt64, Bool) {
   (self.buffer[i.reinterpret_as_int() & 31], true)
 }
 
+///-----------------------------------------------------------------------------
 fn bytesToUInt64(b : Bytes) -> UInt64 {
   let mut result = 0UL
   for i = 0; i < 8; i = i + 1 {
@@ -65,6 +75,7 @@ fn bytesToUInt64(b : Bytes) -> UInt64 {
   result
 }
 
+///-----------------------------------------------------------------------------
 test "bytesToUInt64" {
   let bytes = Bytes::new(8)
   for i = 0; i < 2; i = i + 1 {
@@ -73,6 +84,7 @@ test "bytesToUInt64" {
   inspect!(bytesToUInt64(bytes), content="256")
 }
 
+///-----------------------------------------------------------------------------
 /// [seed] must be 32 bytes long.
 fn State::init(self : State, seed : Bytes) -> Unit {
   let seed0 = Bytes::new(8)
@@ -93,6 +105,7 @@ fn State::init(self : State, seed : Bytes) -> Unit {
   self.init64(arr)
 }
 
+///-----------------------------------------------------------------------------
 fn State::init64(self : State, seed : FixedArray[UInt64]) -> Unit {
   self.seed = seed
   // convert FixedArray[UInt64] size=[32] to FixedArray[FixedArray[UInt]] size=[16][4]
@@ -122,6 +135,7 @@ fn State::init64(self : State, seed : FixedArray[UInt64]) -> Unit {
   self.n = chunk
 }
 
+///-----------------------------------------------------------------------------
 pub fn State::refill(self : State) -> Unit {
   self.c = self.c + ctrInc
   if self.c == ctrMax {
@@ -161,6 +175,7 @@ pub fn State::refill(self : State) -> Unit {
   }
 }
 
+///-----------------------------------------------------------------------------
 fn State::reseed(self : State) -> Unit {
   let seed = FixedArray::make(4, 0UL)
   for i = 0; i < 4; i = i + 1 {
@@ -176,6 +191,7 @@ fn State::reseed(self : State) -> Unit {
   self.init64(seed)
 }
 
+///-----------------------------------------------------------------------------
 fn chacha_block(
   seed : FixedArray[UInt64],
   buf : FixedArray[FixedArray[UInt]],
@@ -280,6 +296,7 @@ fn chacha_block(
   }
 }
 
+///-----------------------------------------------------------------------------
 fn setup(
   seed : FixedArray[UInt64],
   b32 : FixedArray[FixedArray[UInt]],
@@ -351,6 +368,7 @@ fn setup(
   b32[15][3] = 0
 }
 
+///-----------------------------------------------------------------------------
 test "output" {
   let s = State::new()
   let seed = b"ABCDEFGHIJKLMNOPQRSTUVWXYZ123456"

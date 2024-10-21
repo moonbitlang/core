@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+///-----------------------------------------------------------------------------
 test "slice" {
   let v = [1, 2, 3, 4, 5]
   let s = v[1:4]
@@ -20,6 +21,7 @@ test "slice" {
   assert_eq!(s[1], 3)
 }
 
+///-----------------------------------------------------------------------------
 test "each" {
   let v = [1, 2, 3, 4, 5]
   let s = v[2:5]

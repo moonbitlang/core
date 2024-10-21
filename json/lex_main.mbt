@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+///-----------------------------------------------------------------------------
 let non_ascii_whitespace : CharClass = CharClass::of(
   [
     ('\u00A0', '\u00A0'),
@@ -25,6 +26,7 @@ let non_ascii_whitespace : CharClass = CharClass::of(
   ],
 )
 
+///-----------------------------------------------------------------------------
 fn lex_value(
   ctx : ParseContext,
   ~allow_rbracket : Bool = false

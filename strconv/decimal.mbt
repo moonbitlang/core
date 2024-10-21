@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+///-----------------------------------------------------------------------------
 /// High Precision Decimal structure for "Simple Decimal Conversion" algorithm.
 /// Developed by Ken. Thompson, Russ Cox, Robert Griesemer, Nigel Tao.
 /// 
@@ -26,16 +27,19 @@ struct Decimal {
   mut truncated : Bool
 }
 
+///-----------------------------------------------------------------------------
 /// Maximum shift that we can do in one pass without overflow.
 /// We have to be able to accommodate 9 << max_shift.
 let max_shift = 59
 
+///-----------------------------------------------------------------------------
 /// Decimal power of ten to binary power of two.
 /// The Ith entry (starting at I = 0) is the largest power of 2 less than (10 ** I)
 let powtab = [
   1, 3, 6, 9, 13, 16, 19, 23, 26, 29, 33, 36, 39, 43, 46, 49, 53, 56, 59,
 ]
 
+///-----------------------------------------------------------------------------
 /// Create a zero decimal.
 pub fn Decimal::new() -> Decimal {
   {
@@ -47,11 +51,13 @@ pub fn Decimal::new() -> Decimal {
   }
 }
 
+///-----------------------------------------------------------------------------
 /// Create a decimal with an Int64 value.
 pub fn Decimal::from_int64(v : Int64) -> Decimal {
   Decimal::new()..assign(v)
 }
 
+///-----------------------------------------------------------------------------
 /// Create a decimal from number string.
 pub fn Decimal::parse_decimal(str : String) -> Decimal!StrConvError {
   let d = Decimal::new()
@@ -137,6 +143,7 @@ pub fn Decimal::parse_decimal(str : String) -> Decimal!StrConvError {
   d
 }
 
+///-----------------------------------------------------------------------------
 /// Convert the decimal to Double.
 pub fn to_double(self : Decimal) -> Double!StrConvError {
   let mut exponent = 0
@@ -221,6 +228,7 @@ pub fn to_double(self : Decimal) -> Double!StrConvError {
   bits.reinterpret_as_double()
 }
 
+///-----------------------------------------------------------------------------
 /// Binary shift left (s > 0) or right (s < 0).
 /// The shift count must not larger than the max_shift to avoid overflow.
 pub fn shift(self : Decimal, s : Int) -> Unit {
@@ -244,6 +252,7 @@ pub fn shift(self : Decimal, s : Int) -> Unit {
   }
 }
 
+///-----------------------------------------------------------------------------
 fn assemble_bits(mantissa : Int64, exponent : Int, negative : Bool) -> Int64 {
   let biased_exp = exponent - double_info.bias
   // set the mantissa bits
@@ -258,6 +267,7 @@ fn assemble_bits(mantissa : Int64, exponent : Int, negative : Bool) -> Int64 {
   bits
 }
 
+///-----------------------------------------------------------------------------
 /// Extract a rounded 64bit integer
 fn rounded_integer(self : Decimal) -> Int64 {
   if self.decimal_point > 20 {
@@ -279,6 +289,7 @@ fn rounded_integer(self : Decimal) -> Int64 {
   n
 }
 
+///-----------------------------------------------------------------------------
 /// Check if truncate at d digits should round up.
 /// Typically, when rounding a decimal fraction to an integer, 7.3 rounds down to 7 and 7.6 rounds up to 8. 
 /// Rounding numbers like 7.5, half-way between two integers, will round to even.
@@ -299,6 +310,7 @@ fn should_round_up(self : Decimal, d : Int) -> Bool {
   self.digits[d].to_int() >= 5
 }
 
+///-----------------------------------------------------------------------------
 /// Assign a Int64 value to decimal.
 fn assign(self : Decimal, v : Int64) -> Unit {
   let buf = Bytes::new(24)
@@ -323,6 +335,7 @@ fn assign(self : Decimal, v : Int64) -> Unit {
   self.trim()
 }
 
+///-----------------------------------------------------------------------------
 /// Binary shift right by s bits.
 fn right_shift(self : Decimal, s : Int) -> Unit {
   let mut read_index = 0
@@ -377,6 +390,7 @@ fn right_shift(self : Decimal, s : Int) -> Unit {
   self.trim()
 }
 
+///-----------------------------------------------------------------------------
 /// Cheat sheet for left shift: table indexed by shift count giving
 /// number of new digits that will be introduced by that shift.
 /// left_shift_cheats[s] = (new digits num, (5 ** s))
@@ -444,6 +458,7 @@ let left_shift_cheats = [
   (19, "867361737988403547205962240695953369140625"), // * 1152921504606846976
 ]
 
+///-----------------------------------------------------------------------------
 /// Lookup the cheat sheet to find the new digits num.
 fn new_digits(self : Decimal, s : Int) -> Int {
   let new_digits = left_shift_cheats[s].0
@@ -468,6 +483,7 @@ fn new_digits(self : Decimal, s : Int) -> Int {
   }
 }
 
+///-----------------------------------------------------------------------------
 /// Binary shift left by s bits.
 fn left_shift(self : Decimal, s : Int) -> Unit {
   let new_digits = self.new_digits(s)
@@ -515,6 +531,7 @@ fn left_shift(self : Decimal, s : Int) -> Unit {
   self.trim()
 }
 
+///-----------------------------------------------------------------------------
 /// Trim trailing zeros.
 fn trim(self : Decimal) -> Unit {
   while self.digits_num > 0 && self.digits[self.digits_num - 1].to_int() == 0 {
@@ -525,6 +542,7 @@ fn trim(self : Decimal) -> Unit {
   }
 }
 
+///-----------------------------------------------------------------------------
 fn to_string(self : Decimal) -> String {
   if self.digits_num == 0 {
     return "0"
@@ -566,6 +584,7 @@ fn to_string(self : Decimal) -> String {
   buf.to_string()
 }
 
+///-----------------------------------------------------------------------------
 test "new" {
   let hpd = Decimal::from_int64(1L)
   assert_eq!(hpd.digits.length(), 800)
@@ -575,11 +594,13 @@ test "new" {
   assert_eq!(hpd.truncated, false)
 }
 
+///-----------------------------------------------------------------------------
 test "from_int64" {
   let hpd = Decimal::from_int64(123456789L)
   assert_eq!(hpd.to_string(), "123456789")
 }
 
+///-----------------------------------------------------------------------------
 test "parse_decimal" {
   let s = "0.0000000000000000000000000000007888609052210118054117285652827862296732064351090230047702789306640625"
   let hpd = try {
@@ -596,6 +617,7 @@ test "parse_decimal" {
   assert_eq!(hpd.to_string(), "0.0000000001")
 }
 
+///-----------------------------------------------------------------------------
 test "to_string" {
   let hpd = Decimal::from_int64(123456789L)
   hpd.decimal_point = 1
@@ -608,6 +630,7 @@ test "to_string" {
   assert_eq!(hpd.to_string(), "1234567890")
 }
 
+///-----------------------------------------------------------------------------
 test "shift" {
   let tests : Array[_] = [
     (0L, 100, "0"),

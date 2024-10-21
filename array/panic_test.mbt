@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+///-----------------------------------------------------------------------------
 test "panic" {
   let a : FixedArray[Int] = [1, 2, 3, 4]
   let b : FixedArray[Int] = [1, 2, 3, 4]

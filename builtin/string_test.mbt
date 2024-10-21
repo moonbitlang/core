@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+///-----------------------------------------------------------------------------
 test "String::escape" {
   inspect!(
     "abc,def".escape(),
@@ -39,6 +40,7 @@ test "String::escape" {
   )
 }
 
+///-----------------------------------------------------------------------------
 test "substring" {
   assert_eq!("abc".substring(), "abc")
   assert_eq!("abc".substring(start=1), "bc")

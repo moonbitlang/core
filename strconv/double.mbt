@@ -12,32 +12,40 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+///-----------------------------------------------------------------------------
 priv struct FloatInfo {
   mantissa_bits : Int
   exponent_bits : Int
   bias : Int
 }
 
+///-----------------------------------------------------------------------------
 let double_info : FloatInfo = {
   mantissa_bits: 52,
   exponent_bits: 11,
   bias: -1023,
 }
 
+///-----------------------------------------------------------------------------
 /// TODO: For `f32` it is 23, but we don't have `f32` yet. 
 let mantissa_explicit_bits = 52
 
+///-----------------------------------------------------------------------------
 /// TODO: For `f32` it is -10, but we don't have `f32` yet.
 let min_exponent_fast_path : Int64 = -22L
 
+///-----------------------------------------------------------------------------
 /// TODO: For `f32` it is 10, but we don't have `f32` yet.
 let max_exponent_fast_path : Int64 = 22L
 
+///-----------------------------------------------------------------------------
 /// TODO: For `f32` it is 17, but we don't have `f32` yet.
 let max_exponent_disguised_fast_path : Int64 = 37L
 
+///-----------------------------------------------------------------------------
 let max_mantissa_fast_path : UInt64 = 2UL << mantissa_explicit_bits
 
+///-----------------------------------------------------------------------------
 pub fn parse_double(str : String) -> Double!StrConvError {
   if str.length() == 0 {
     syntax_err!()
@@ -73,6 +81,7 @@ pub fn parse_double(str : String) -> Double!StrConvError {
   }
 }
 
+///-----------------------------------------------------------------------------
 fn is_fast_path(self : Number) -> Bool {
   min_exponent_fast_path <= self.exponent &&
   self.exponent <= max_exponent_disguised_fast_path &&
@@ -80,6 +89,7 @@ fn is_fast_path(self : Number) -> Bool {
   not(self.many_digits)
 }
 
+///-----------------------------------------------------------------------------
 let table = [
   1.0, 10.0, 100.0, 1000.0, 10000.0, 100000.0, 1000000.0, 10000000.0, 100000000.0,
   1000000000.0, 10000000000.0, 100000000000.0, 1000000000000.0, 10000000000000.0,
@@ -88,16 +98,19 @@ let table = [
   10000000000000000000000.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
 ]
 
+///-----------------------------------------------------------------------------
 fn pow10_fast_path(exponent : Int) -> Double {
   table[exponent & 31]
 }
 
+///-----------------------------------------------------------------------------
 let int_pow10 : Array[UInt64] = [
   1UL, 10UL, 100UL, 1000UL, 10000UL, 100000UL, 1000000UL, 10000000UL, 100000000UL,
   1000000000UL, 10000000000UL, 100000000000UL, 1000000000000UL, 10000000000000UL,
   100000000000000UL, 1000000000000000UL,
 ]
 
+///-----------------------------------------------------------------------------
 fn try_fast_path(self : Number) -> Double? {
   if self.is_fast_path() {
     let mut value = if self.exponent <= max_exponent_fast_path {
@@ -131,6 +144,7 @@ fn try_fast_path(self : Number) -> Double? {
   }
 }
 
+///-----------------------------------------------------------------------------
 test "parse_double" {
   let tests : Array[(String, Result[Double, String])] = [
     ("", Err(syntax_err_str)),
@@ -251,6 +265,7 @@ test "parse_double" {
   }
 }
 
+///-----------------------------------------------------------------------------
 test "parse_double_inf" {
   assert_eq!(
     try {
@@ -310,6 +325,7 @@ test "parse_double_inf" {
   )
 }
 
+///-----------------------------------------------------------------------------
 test "parse_double_nan" {
   let nan = try {
     parse_double!("nan")

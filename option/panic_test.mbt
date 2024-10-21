@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+///-----------------------------------------------------------------------------
 test "panic unwrap should panic on None" {
   let none : Int? = None
   none.unwrap() |> ignore

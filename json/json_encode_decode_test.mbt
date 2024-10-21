@@ -12,16 +12,19 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+///-----------------------------------------------------------------------------
 pub struct AllThree {
   ints : Array[Int]
   floats : Array[Double]
   strings : Array[String]
 } derive(Eq, Show)
 
+///-----------------------------------------------------------------------------
 fn array_to_json[T](arr : Array[T], ~f : (T) -> Json) -> Json {
   Array(arr.map(f))
 }
 
+///-----------------------------------------------------------------------------
 fn to_json(self : AllThree) -> Json {
   let { ints, floats, strings } = self
   {
@@ -31,18 +34,22 @@ fn to_json(self : AllThree) -> Json {
   }
 }
 
+///-----------------------------------------------------------------------------
 struct DecodeErrorData {
   message : String
 } derive(Eq, Show)
 
+///-----------------------------------------------------------------------------
 type! DecodeError DecodeErrorData
 
+///-----------------------------------------------------------------------------
 pub impl Show for DecodeError with output(self, logger) {
   match self {
     DecodeError(e) => Show::output(e, logger)
   }
 }
 
+///-----------------------------------------------------------------------------
 fn of_json(jv : Json) -> AllThree!DecodeError {
   match jv {
     { "ints": Array(ints), "floats": Array(floats), "strings": Array(strings) } => {
@@ -78,6 +85,7 @@ fn of_json(jv : Json) -> AllThree!DecodeError {
   }
 }
 
+///-----------------------------------------------------------------------------
 test {
   let all_three = AllThree::{
     ints: [1, 2, 3],

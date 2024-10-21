@@ -12,22 +12,28 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+///-----------------------------------------------------------------------------
 type MyString String derive(Eq)
 
+///-----------------------------------------------------------------------------
 impl Hash for MyString with hash(self) { self._.length() }
 
+///-----------------------------------------------------------------------------
 impl Hash for MyString with hash_combine(self, hasher) {
   hasher.combine_string(self._)
 }
 
+///-----------------------------------------------------------------------------
 impl Show for MyString with output(self, logger) { logger.write_string(self._) }
 
+///-----------------------------------------------------------------------------
 test "new" {
   let m : Map[Int, Int] = Map::new()
   assert_eq!(m.capacity, 8)
   assert_eq!(m.size, 0)
 }
 
+///-----------------------------------------------------------------------------
 test "set" {
   let m : Map[MyString, Int] = Map::new()
   m.set("a", 1)
@@ -44,6 +50,7 @@ test "set" {
   )
 }
 
+///-----------------------------------------------------------------------------
 test "get" {
   let m : Map[String, Int] = Map::new()
   m.set("a", 1)
@@ -55,6 +62,7 @@ test "get" {
   assert_eq!(m.get("d"), None)
 }
 
+///-----------------------------------------------------------------------------
 test "get_or_default" {
   let m : Map[String, Int] = Map::new()
   m.set("a", 1)
@@ -66,6 +74,7 @@ test "get_or_default" {
   assert_eq!(m.get_or_default("d", 42), 42)
 }
 
+///-----------------------------------------------------------------------------
 test "get_or_init" {
   let m : Map[String, Array[Int]] = Map::new()
   m.get_or_init("a", fn() { Array::new() }).push(1)
@@ -75,6 +84,7 @@ test "get_or_init" {
   assert_eq!(m.get("b"), Some([2]))
 }
 
+///-----------------------------------------------------------------------------
 test "get_or_init" {
   let m : Map[String, Array[Int]] = Map::new()
   m.get_or_init("a", fn() { Array::new() }).push(1)
@@ -84,6 +94,7 @@ test "get_or_init" {
   assert_eq!(m.get("b"), Some([2]))
 }
 
+///-----------------------------------------------------------------------------
 test "op_set" {
   let m : Map[String, Int] = Map::new()
   m["a"] = 1
@@ -92,6 +103,7 @@ test "op_set" {
   assert_eq!(m.get("b"), Some(2))
 }
 
+///-----------------------------------------------------------------------------
 test "op_get" {
   let m : Map[String, Int] = Map::new()
   m.set("a", 1)
@@ -101,6 +113,7 @@ test "op_get" {
   assert_eq!(m["c"], None)
 }
 
+///-----------------------------------------------------------------------------
 test "set_update" {
   let m : Map[String, Int] = Map::new()
   m.set("a", 1)
@@ -110,6 +123,7 @@ test "set_update" {
   assert_eq!(m.get("a"), Some(2))
 }
 
+///-----------------------------------------------------------------------------
 test "contains" {
   let m : Map[String, Int] = Map::new()
   m.set("a", 1)
@@ -117,6 +131,7 @@ test "contains" {
   assert_eq!(m.contains("b"), false)
 }
 
+///-----------------------------------------------------------------------------
 test "from_array" {
   let m = { "a": 1, "b": 2, "c": 3 }
   assert_eq!(m.get("a"), Some(1))
@@ -124,6 +139,7 @@ test "from_array" {
   assert_eq!(m.get("c"), Some(3))
 }
 
+///-----------------------------------------------------------------------------
 test "size" {
   let m : Map[String, Int] = Map::new()
   assert_eq!(m.size(), 0)
@@ -131,6 +147,7 @@ test "size" {
   assert_eq!(m.size(), 1)
 }
 
+///-----------------------------------------------------------------------------
 test "is_empty" {
   let m : Map[String, Int] = Map::new()
   assert_eq!(m.is_empty(), true)
@@ -142,6 +159,7 @@ test "is_empty" {
   assert_eq!(m.is_empty(), true)
 }
 
+///-----------------------------------------------------------------------------
 test "iter" {
   let m = { "a": 1, "b": 2, "c": 3 }
   let mut sum = 0
@@ -149,6 +167,7 @@ test "iter" {
   assert_eq!(sum, 6)
 }
 
+///-----------------------------------------------------------------------------
 test "iteri" {
   let m = { "a": 1, "b": 2, "c": 3 }
   let mut sum = 0
@@ -163,6 +182,7 @@ test "iteri" {
   assert_eq!(sum, 6)
 }
 
+///-----------------------------------------------------------------------------
 test "clear" {
   let m = { "a": 1, "b": 2, "c": 3 }
   m.clear()
@@ -175,6 +195,7 @@ test "clear" {
   }
 }
 
+///-----------------------------------------------------------------------------
 test "grow" {
   let m : Map[MyString, Int] = Map::new()
   m.set("C", 1)
@@ -199,6 +220,7 @@ test "grow" {
   )
 }
 
+///-----------------------------------------------------------------------------
 test "iter" {
   let buf = StringBuilder::new(size_hint=20)
   let map = { 1: "one", 2: "two", 3: "three" }
@@ -224,6 +246,7 @@ test "iter" {
   inspect!(buf, content="[1-one][2-two]")
 }
 
+///-----------------------------------------------------------------------------
 test "iter order" {
   let m = { "one": 1 }
   m["three"] = 3
@@ -233,6 +256,7 @@ test "iter order" {
   inspect!(buf.to_string(), content="[one-1][three-3][two-2]")
 }
 
+///-----------------------------------------------------------------------------
 test "linked list" {
   let m = {}
   inspect!(m, content="{}")
@@ -286,6 +310,7 @@ test "linked list" {
   inspect!(m, content="{}")
 }
 
+///-----------------------------------------------------------------------------
 test "to_array" {
   let map = { 1: "one", 2: "two", 3: "three" }
   inspect!(
@@ -296,6 +321,7 @@ test "to_array" {
   )
 }
 
+///-----------------------------------------------------------------------------
 test "set_existing_key" {
   let m = {}
   m.set("a", 1)
@@ -306,6 +332,7 @@ test "set_existing_key" {
   assert_eq!(m.get("a"), Some(4))
 }
 
+///-----------------------------------------------------------------------------
 test "get_nonexistent_key" {
   let m : Map[String, Int] = Map::new()
   m.set("a", 1)
@@ -314,6 +341,7 @@ test "get_nonexistent_key" {
   assert_eq!(m.get("d"), None)
 }
 
+///-----------------------------------------------------------------------------
 test "get_or_default_existing_key" {
   let m : Map[String, Int] = Map::new()
   m.set("a", 1)
@@ -322,6 +350,7 @@ test "get_or_default_existing_key" {
   assert_eq!(m.get_or_default("a", 42), 1)
 }
 
+///-----------------------------------------------------------------------------
 test "get_or_default_nonexistent_key" {
   let m : Map[String, Int] = Map::new()
   m.set("a", 1)
@@ -330,6 +359,7 @@ test "get_or_default_nonexistent_key" {
   assert_eq!(m.get_or_default("d", 42), 42)
 }
 
+///-----------------------------------------------------------------------------
 test "remove_existing_key" {
   let m : Map[String, Int] = Map::new()
   m.set("a", 1)
@@ -340,6 +370,7 @@ test "remove_existing_key" {
   assert_eq!(m.get("b"), None)
 }
 
+///-----------------------------------------------------------------------------
 test "remove_nonexistent_key" {
   let m : Map[String, Int] = Map::new()
   m.set("a", 1)
@@ -349,6 +380,7 @@ test "remove_nonexistent_key" {
   assert_eq!(m.size(), 3)
 }
 
+///-----------------------------------------------------------------------------
 test "contains_existing_key" {
   let m : Map[String, Int] = Map::new()
   m.set("a", 1)
@@ -357,6 +389,7 @@ test "contains_existing_key" {
   assert_eq!(m.contains("b"), true)
 }
 
+///-----------------------------------------------------------------------------
 test "contains_nonexistent_key" {
   let m : Map[String, Int] = Map::new()
   m.set("a", 1)
@@ -365,6 +398,7 @@ test "contains_nonexistent_key" {
   assert_eq!(m.contains("d"), false)
 }
 
+///-----------------------------------------------------------------------------
 test "clear" {
   let m : Map[String, Int] = Map::new()
   m.set("a", 1)
@@ -380,6 +414,7 @@ test "clear" {
   }
 }
 
+///-----------------------------------------------------------------------------
 test "iter" {
   let m : Map[String, Int] = Map::new()
   m.set("a", 1)
@@ -390,6 +425,7 @@ test "iter" {
   assert_eq!(sum, 6)
 }
 
+///-----------------------------------------------------------------------------
 test "iteri" {
   let m : Map[String, Int] = Map::new()
   m.set("a", 1)
@@ -407,6 +443,7 @@ test "iteri" {
   assert_eq!(sum, 6)
 }
 
+///-----------------------------------------------------------------------------
 test "to_array" {
   let m : Map[String, Int] = Map::new()
   m.set("a", 1)
@@ -415,6 +452,7 @@ test "to_array" {
   assert_eq!(m.to_array(), [("a", 1), ("b", 2), ("c", 3)])
 }
 
+///-----------------------------------------------------------------------------
 test "new" {
   let m : Map[String, Int] = Map::new()
   assert_eq!(m.size, 0)
@@ -426,6 +464,7 @@ test "new" {
   }
 }
 
+///-----------------------------------------------------------------------------
 test "get" {
   let m : Map[String, Int] = Map::new()
   m.set("a", 1)
@@ -437,6 +476,7 @@ test "get" {
   assert_eq!(m.get("d"), None)
 }
 
+///-----------------------------------------------------------------------------
 test "get_or_default" {
   let m : Map[String, Int] = Map::new()
   m.set("a", 1)
@@ -448,6 +488,7 @@ test "get_or_default" {
   assert_eq!(m.get_or_default("d", 42), 42)
 }
 
+///-----------------------------------------------------------------------------
 test "contains" {
   let m : Map[String, Int] = Map::new()
   m.set("a", 1)
@@ -455,6 +496,7 @@ test "contains" {
   assert_eq!(m.contains("b"), false)
 }
 
+///-----------------------------------------------------------------------------
 test "size" {
   let m : Map[String, Int] = Map::new()
   assert_eq!(m.size, 0)
@@ -462,6 +504,7 @@ test "size" {
   assert_eq!(m.size, 1)
 }
 
+///-----------------------------------------------------------------------------
 test "is_empty" {
   let m : Map[String, Int] = Map::new()
   assert_eq!(m.is_empty(), true)
@@ -471,6 +514,7 @@ test "is_empty" {
   assert_eq!(m.is_empty(), true)
 }
 
+///-----------------------------------------------------------------------------
 test "iter" {
   let m : Map[String, Int] = Map::new()
   m.set("a", 1)
@@ -481,6 +525,7 @@ test "iter" {
   assert_eq!(sum, 6)
 }
 
+///-----------------------------------------------------------------------------
 test "iteri" {
   let m : Map[String, Int] = Map::new()
   m.set("a", 1)
@@ -498,6 +543,7 @@ test "iteri" {
   assert_eq!(sum, 6)
 }
 
+///-----------------------------------------------------------------------------
 test "clear" {
   let m : Map[String, Int] = Map::new()
   m.set("a", 1)
@@ -513,6 +559,7 @@ test "clear" {
   }
 }
 
+///-----------------------------------------------------------------------------
 test "set_existing_key" {
   let m : Map[String, Int] = Map::new()
   m.set("a", 1)
@@ -523,6 +570,7 @@ test "set_existing_key" {
   assert_eq!(m.get("a"), Some(4))
 }
 
+///-----------------------------------------------------------------------------
 test "get_nonexistent_key" {
   let m : Map[String, Int] = Map::new()
   m.set("a", 1)
@@ -531,6 +579,7 @@ test "get_nonexistent_key" {
   assert_eq!(m.get("d"), None)
 }
 
+///-----------------------------------------------------------------------------
 test "get_or_default_existing_key" {
   let m : Map[String, Int] = Map::new()
   m.set("a", 1)
@@ -539,6 +588,7 @@ test "get_or_default_existing_key" {
   assert_eq!(m.get_or_default("a", 42), 1)
 }
 
+///-----------------------------------------------------------------------------
 test "get_or_default_nonexistent_key" {
   let m : Map[String, Int] = Map::new()
   m.set("a", 1)
@@ -547,6 +597,7 @@ test "get_or_default_nonexistent_key" {
   assert_eq!(m.get_or_default("d", 42), 42)
 }
 
+///-----------------------------------------------------------------------------
 test "remove_existing_key" {
   let m : Map[String, Int] = Map::new()
   m.set("a", 1)
@@ -557,6 +608,7 @@ test "remove_existing_key" {
   assert_eq!(m.get("b"), None)
 }
 
+///-----------------------------------------------------------------------------
 test "remove_nonexistent_key" {
   let m : Map[String, Int] = Map::new()
   m.set("a", 1)
@@ -566,6 +618,7 @@ test "remove_nonexistent_key" {
   assert_eq!(m.size(), 3)
 }
 
+///-----------------------------------------------------------------------------
 test "contains_existing_key" {
   let m : Map[String, Int] = Map::new()
   m.set("a", 1)
@@ -574,6 +627,7 @@ test "contains_existing_key" {
   assert_eq!(m.contains("b"), true)
 }
 
+///-----------------------------------------------------------------------------
 test "contains_nonexistent_key" {
   let m : Map[String, Int] = Map::new()
   m.set("a", 1)
@@ -582,6 +636,7 @@ test "contains_nonexistent_key" {
   assert_eq!(m.contains("d"), false)
 }
 
+///-----------------------------------------------------------------------------
 test "clear" {
   let m : Map[String, Int] = Map::new()
   m.set("a", 1)
@@ -597,6 +652,7 @@ test "clear" {
   }
 }
 
+///-----------------------------------------------------------------------------
 test "iter" {
   let m : Map[String, Int] = Map::new()
   m.set("a", 1)
@@ -607,6 +663,7 @@ test "iter" {
   assert_eq!(sum, 6)
 }
 
+///-----------------------------------------------------------------------------
 test "iteri" {
   let m : Map[String, Int] = Map::new()
   m.set("a", 1)
@@ -624,6 +681,7 @@ test "iteri" {
   assert_eq!(sum, 6)
 }
 
+///-----------------------------------------------------------------------------
 test "to_array" {
   let m : Map[String, Int] = Map::new()
   m.set("a", 1)
@@ -632,6 +690,7 @@ test "to_array" {
   assert_eq!(m.to_array(), [("a", 1), ("b", 2), ("c", 3)])
 }
 
+///-----------------------------------------------------------------------------
 test "op_equal" {
   let m1 : Map[String, Int] = Map::new()
   m1.set("a", 1)
@@ -643,6 +702,7 @@ test "op_equal" {
   inspect!({ 1: 2, 2: 3 } == { 1: 3, 2: 4 }, content="false")
 }
 
+///-----------------------------------------------------------------------------
 test "to_string" {
   let m = {}
   inspect!(m.to_string(), content="{}")
@@ -664,6 +724,7 @@ test "to_string" {
   )
 }
 
+///-----------------------------------------------------------------------------
 test "hash collision" {
   let m : Map[MyString, Int] = Map::new()
   m.set("a", 1)
@@ -672,6 +733,7 @@ test "hash collision" {
   inspect!(m["d"], content="None")
 }
 
+///-----------------------------------------------------------------------------
 test "remove" {
   let m : Map[MyString, Int] = Map::new()
   m.set("a", 1)
@@ -688,6 +750,7 @@ test "remove" {
   )
 }
 
+///-----------------------------------------------------------------------------
 test "remove_unexist_key" {
   let m : Map[MyString, Int] = Map::new()
   m.set("a", 1)
@@ -698,6 +761,7 @@ test "remove_unexist_key" {
   assert_eq!(m.debug_entries(), "_,(0,a,1),(0,ab,2),(0,abc,3),_,_,_,_")
 }
 
+///-----------------------------------------------------------------------------
 test "insert_entry_panic" {
   let map = Map::new(capacity=1)
   map.set(1, 1)
@@ -705,6 +769,7 @@ test "insert_entry_panic" {
   map.set(2, 2)
 }
 
+///-----------------------------------------------------------------------------
 test "get_entry_none" {
   let map = Map::new(capacity=1)
   map.set(1, 1)
@@ -713,6 +778,7 @@ test "get_entry_none" {
   assert_eq!(result, None)
 }
 
+///-----------------------------------------------------------------------------
 test "remove_entry_head" {
   let map = Map::new(capacity=2)
   map.set(1, 1)
@@ -725,6 +791,7 @@ test "remove_entry_head" {
   )
 }
 
+///-----------------------------------------------------------------------------
 test "remove_entry_tail" {
   let map = Map::new(capacity=2)
   map.set(1, 1)
@@ -737,6 +804,7 @@ test "remove_entry_tail" {
   )
 }
 
+///-----------------------------------------------------------------------------
 test "op_equal_size_mismatch" {
   let map1 = Map::new(capacity=1)
   let map2 = Map::new(capacity=2)
@@ -747,6 +815,7 @@ test "op_equal_size_mismatch" {
   assert_eq!(map1 == map2, false)
 }
 
+///-----------------------------------------------------------------------------
 test "op_equal_key_value_mismatch" {
   let map1 = Map::new(capacity=2)
   let map2 = Map::new(capacity=2)
@@ -758,6 +827,7 @@ test "op_equal_key_value_mismatch" {
   assert_eq!(map1 == map2, false)
 }
 
+///-----------------------------------------------------------------------------
 test "op_equal_size_mismatch" {
   let map1 = Map::new(capacity=1)
   let map2 = Map::new(capacity=2)
@@ -768,6 +838,7 @@ test "op_equal_size_mismatch" {
   assert_eq!(map1 == map2, false)
 }
 
+///-----------------------------------------------------------------------------
 test "op_equal_key_value_mismatch" {
   let map1 = Map::new(capacity=2)
   let map2 = Map::new(capacity=2)
@@ -779,6 +850,7 @@ test "op_equal_key_value_mismatch" {
   assert_eq!(map1 == map2, false)
 }
 
+///-----------------------------------------------------------------------------
 test "op_equal_size_mismatch" {
   let map1 = Map::new(capacity=1)
   let map2 = Map::new(capacity=2)
@@ -789,6 +861,7 @@ test "op_equal_size_mismatch" {
   assert_eq!(map1 == map2, false)
 }
 
+///-----------------------------------------------------------------------------
 test "op_equal_key_value_mismatch" {
   let map1 = Map::new(capacity=2)
   let map2 = Map::new(capacity=2)

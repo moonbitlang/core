@@ -12,16 +12,19 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+///-----------------------------------------------------------------------------
 /// Create an empty map.
 pub fn T::empty[K, V]() -> T[K, V] {
   Empty
 }
 
+///-----------------------------------------------------------------------------
 /// Create a map with a single key-value pair.
 pub fn T::singleton[K, V](key : K, value : V) -> T[K, V] {
   Tree(key, ~value, size=1, Empty, Empty)
 }
 
+///-----------------------------------------------------------------------------
 /// Check if the map contains a key.
 /// O(log n).
 pub fn contains[K : Compare, V](self : T[K, V], key : K) -> Bool {
@@ -40,6 +43,7 @@ pub fn contains[K : Compare, V](self : T[K, V], key : K) -> Bool {
   }
 }
 
+///-----------------------------------------------------------------------------
 /// Get the number of key-value pairs in the map.
 pub fn size[K, V](self : T[K, V]) -> Int {
   match self {
@@ -48,15 +52,18 @@ pub fn size[K, V](self : T[K, V]) -> Int {
   }
 }
 
+///-----------------------------------------------------------------------------
 pub fn is_empty[K, V](self : T[K, V]) -> Bool {
   self.size() == 0
 }
 
+///-----------------------------------------------------------------------------
 fn new[K, V](key : K, value : V, l : T[K, V], r : T[K, V]) -> T[K, V] {
   let size = size(l) + size(r) + 1
   Tree(key, ~value, ~size, l, r)
 }
 
+///-----------------------------------------------------------------------------
 /// Get the value associated with a key.
 /// O(log n).
 pub fn lookup[K : Compare, V](self : T[K, V], key : K) -> V? {
@@ -75,10 +82,12 @@ pub fn lookup[K : Compare, V](self : T[K, V], key : K) -> V? {
   }
 }
 
+///-----------------------------------------------------------------------------
 pub fn op_get[K : Compare, V](self : T[K, V], key : K) -> V? {
   self.lookup(key)
 }
 
+///-----------------------------------------------------------------------------
 /// Iterate over the key-value pairs in the map.
 pub fn each[K, V](self : T[K, V], f : (K, V) -> Unit) -> Unit {
   match self {
@@ -91,6 +100,7 @@ pub fn each[K, V](self : T[K, V], f : (K, V) -> Unit) -> Unit {
   }
 }
 
+///-----------------------------------------------------------------------------
 /// Iterate over the key-value pairs with index.
 pub fn eachi[K, V](self : T[K, V], f : (Int, K, V) -> Unit) -> Unit {
   fn do_eachi(m : T[K, V], f, i) {
@@ -107,6 +117,7 @@ pub fn eachi[K, V](self : T[K, V], f : (Int, K, V) -> Unit) -> Unit {
   do_eachi(self, f, 0)
 }
 
+///-----------------------------------------------------------------------------
 /// Ts over the values in the map.
 pub fn map[K, X, Y](self : T[K, X], f : (X) -> Y) -> T[K, Y] {
   match self {
@@ -116,6 +127,7 @@ pub fn map[K, X, Y](self : T[K, X], f : (X) -> Y) -> T[K, Y] {
   }
 }
 
+///-----------------------------------------------------------------------------
 /// Maps over the key-value pairs in the map.
 pub fn map_with_key[K, X, Y](self : T[K, X], f : (K, X) -> Y) -> T[K, Y] {
   match self {
@@ -125,12 +137,14 @@ pub fn map_with_key[K, X, Y](self : T[K, X], f : (K, X) -> Y) -> T[K, Y] {
   }
 }
 
+///-----------------------------------------------------------------------------
 /// Fold the values in the map.
 /// O(n).
 pub fn fold[K, V, A](self : T[K, V], ~init : A, f : (A, V) -> A) -> A {
   foldl_with_key(self, fn(acc, _k, v) { f(acc, v) }, ~init)
 }
 
+///-----------------------------------------------------------------------------
 /// Post-order fold.
 /// O(n).
 pub fn foldr_with_key[K, V, A](
@@ -148,6 +162,7 @@ pub fn foldr_with_key[K, V, A](
   go(self, init)
 }
 
+///-----------------------------------------------------------------------------
 /// Pre-order fold.
 /// O(n).
 pub fn foldl_with_key[K, V, A](
@@ -165,6 +180,7 @@ pub fn foldl_with_key[K, V, A](
   go(self, init)
 }
 
+///-----------------------------------------------------------------------------
 fn debug_tree[K : Show, V : Show](self : T[K, V]) -> String {
   match self {
     Empty => "_"
@@ -176,6 +192,7 @@ fn debug_tree[K : Show, V : Show](self : T[K, V]) -> String {
   }
 }
 
+///-----------------------------------------------------------------------------
 /// Build a map from an array of key-value pairs.
 /// O(n*log n).
 pub fn T::from_array[K : Compare, V](array : Array[(K, V)]) -> T[K, V] {
@@ -187,6 +204,7 @@ pub fn T::from_array[K : Compare, V](array : Array[(K, V)]) -> T[K, V] {
   }
 }
 
+///-----------------------------------------------------------------------------
 pub fn iter[K, V](self : T[K, V]) -> Iter[(K, V)] {
   Iter::new(
     fn(yield) {
@@ -207,6 +225,7 @@ pub fn iter[K, V](self : T[K, V]) -> Iter[(K, V)] {
   )
 }
 
+///-----------------------------------------------------------------------------
 pub fn iter2[K, V](self : T[K, V]) -> Iter2[K, V] {
   Iter2::new(
     fn(yield) {
@@ -227,20 +246,24 @@ pub fn iter2[K, V](self : T[K, V]) -> Iter2[K, V] {
   )
 }
 
+///-----------------------------------------------------------------------------
 pub fn T::from_iter[K : Compare, V](iter : Iter[(K, V)]) -> T[K, V] {
   iter.fold(init=T::empty(), fn(m, e) { m.insert(e.0, e.1) })
 }
 
+///-----------------------------------------------------------------------------
 /// Return all keys of the map in ascending order.
 pub fn keys[K, V](self : T[K, V]) -> Array[K] {
   self.iter().map(fn { (k, _) => k }).collect()
 }
 
+///-----------------------------------------------------------------------------
 /// Return all elements of the map in the ascending order of their keys.
 pub fn elems[K, V](self : T[K, V]) -> Array[V] {
   self.iter().map(fn { (_, v) => v }).collect()
 }
 
+///-----------------------------------------------------------------------------
 pub fn T::of[K : Compare, V](array : FixedArray[(K, V)]) -> T[K, V] {
   for i = 0, mp = Empty; i < array.length(); {
     let (k, v) = array[i]
@@ -250,10 +273,12 @@ pub fn T::of[K : Compare, V](array : FixedArray[(K, V)]) -> T[K, V] {
   }
 }
 
+///-----------------------------------------------------------------------------
 pub impl[K : Show, V : Show] Show for T[K, V] with output(self, logger) {
   logger.write_iter(self.iter(), prefix="@immut/sorted_map.of([", suffix="])")
 }
 
+///-----------------------------------------------------------------------------
 pub fn to_string[K : Show, V : Show](self : T[K, V]) -> String {
   Show::to_string(self)
 }

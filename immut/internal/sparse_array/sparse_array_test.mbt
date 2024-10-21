@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+///-----------------------------------------------------------------------------
 test "SparseArray" {
   let arr0 = @sparse_array.singleton(1, 1)
   inspect!(
@@ -35,6 +36,7 @@ test "SparseArray" {
   )
 }
 
+///-----------------------------------------------------------------------------
 test "SparseArray::iter" {
   let arr = @sparse_array.singleton(0, 0).add(1, 1).add(3, 3).add(31, 31)
   let buf = StringBuilder::new(size_hint=0)

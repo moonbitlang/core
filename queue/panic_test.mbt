@@ -12,10 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+///-----------------------------------------------------------------------------
 test "panic unsafe_peek" {
   @queue.of([]).unsafe_peek()
 }
 
+///-----------------------------------------------------------------------------
 test "panic unsafe_pop" {
   @queue.of([]).unsafe_pop()
 }

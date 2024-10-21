@@ -12,14 +12,17 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+///-----------------------------------------------------------------------------
 fn get_high_word(x : Double) -> UInt {
   (x.reinterpret_as_uint64() >> 32).to_uint()
 }
 
+///-----------------------------------------------------------------------------
 fn get_low_word(x : Double) -> UInt {
   x.reinterpret_as_uint64().to_uint()
 }
 
+///-----------------------------------------------------------------------------
 fn insert_words(ix0 : UInt64, ix1 : UInt64) -> Double {
   let mut bits : UInt64 = 0
   bits = bits | (ix0 << 32)
@@ -27,6 +30,7 @@ fn insert_words(ix0 : UInt64, ix1 : UInt64) -> Double {
   bits.reinterpret_as_double()
 }
 
+///-----------------------------------------------------------------------------
 pub fn exp(self : Double) -> Double {
   let mut x = self
   let one = 1.0

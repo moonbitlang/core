@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+///-----------------------------------------------------------------------------
 test "new" {
   // 1/2
   let a = @rational.new(1L, 2L)
@@ -22,6 +23,7 @@ test "new" {
   inspect!(a, content="None")
 }
 
+///-----------------------------------------------------------------------------
 test "addition" {
   let a = @rational.new(1L, 2L).unwrap()
   let b = @rational.new(1L, 3L).unwrap()
@@ -29,6 +31,7 @@ test "addition" {
   inspect!(result, content="5/6")
 }
 
+///-----------------------------------------------------------------------------
 test "subtraction" {
   let a = @rational.new(3L, 4L).unwrap()
   let b = @rational.new(1L, 4L).unwrap()
@@ -36,6 +39,7 @@ test "subtraction" {
   inspect!(result, content="1/2")
 }
 
+///-----------------------------------------------------------------------------
 test "multiplication" {
   let a = @rational.new(2L, 3L).unwrap()
   let b = @rational.new(3L, 4L).unwrap()
@@ -43,6 +47,7 @@ test "multiplication" {
   inspect!(result, content="1/2")
 }
 
+///-----------------------------------------------------------------------------
 test "division" {
   let a = @rational.new(1L, 2L).unwrap()
   let b = @rational.new(3L, 4L).unwrap()
@@ -50,11 +55,13 @@ test "division" {
   inspect!(result, content="2/3")
 }
 
+///-----------------------------------------------------------------------------
 test "from_double overflow" {
   let result = 10.0e200 |> @result.wrap1(f=@rational.from_double)
   assert_eq!(result, Err(RationalError("Rational::from_double: overflow")))
 }
 
+///-----------------------------------------------------------------------------
 test "from_double NaN" {
   let result = @double.not_a_number |> @result.wrap1(f=@rational.from_double)
   assert_eq!(
@@ -63,23 +70,27 @@ test "from_double NaN" {
   )
 }
 
+///-----------------------------------------------------------------------------
 test "from_double overflow edge case" {
   let result = 9_223_372_036_854_775_807.1
     |> @result.wrap1(f=@rational.from_double)
   assert_eq!(result, Err(RationalError("Rational::from_double: overflow")))
 }
 
+///-----------------------------------------------------------------------------
 test "from_double overflow edge case" {
   let result = 9_223_372_036_854_775_807.1
     |> @result.wrap1(f=@rational.from_double)
   assert_eq!(result, Err(RationalError("Rational::from_double: overflow")))
 }
 
+///-----------------------------------------------------------------------------
 test "from_double overflow check in continued fraction algorithm" {
   let result = 10.0e200 |> @result.wrap1(f=@rational.from_double)
   assert_eq!(result, Err(RationalError("Rational::from_double: overflow")))
 }
 
+///-----------------------------------------------------------------------------
 test "from_double NaN check" {
   let result = @double.not_a_number |> @result.wrap1(f=@rational.from_double)
   assert_eq!(
@@ -88,6 +99,7 @@ test "from_double NaN check" {
   )
 }
 
+///-----------------------------------------------------------------------------
 // currently it requires the `content` argument to be passed int the second position
 fn inspect_double_array(
   a : Array[Double],
@@ -103,6 +115,7 @@ fn inspect_double_array(
   )
 }
 
+///-----------------------------------------------------------------------------
 test "from_double array" {
   let a : Array[Double] = [
     0.5, 5, 29.97, -29.97, 63.5, 126.5, 127.0, 127.5, -63.5, -126.5, -127.0, -127.5,
@@ -132,6 +145,7 @@ test "from_double array" {
   // content="[Ok(1/4503599627370496), Ok(0), Ok(0), Ok(9223372036800000000)]")
 }
 
+///-----------------------------------------------------------------------------
 test "rational arbitrary" {
   let samples : Array[@rational.T] = @quickcheck.samples(20)
   inspect!(samples[1:5], content="[0, 0, 0, 1/-1]")

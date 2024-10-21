@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+///-----------------------------------------------------------------------------
 test "bytes literal" {
   inspect!(
     b"ABC",
@@ -27,6 +28,7 @@ test "bytes literal" {
   )
 }
 
+///-----------------------------------------------------------------------------
 test "from_array" {
   let b = @bytes.of([b'\x41', b'\x00', b'\x42', b'\x00', b'\x43', b'\x00'])
   inspect!(
@@ -37,6 +39,7 @@ test "from_array" {
   )
 }
 
+///-----------------------------------------------------------------------------
 test "hash" {
   let b1 = @bytes.of(
     [
@@ -65,11 +68,13 @@ test "hash" {
   inspect!(Hash::hash(b1) == Hash::hash(b2), content="false")
 }
 
+///-----------------------------------------------------------------------------
 test "to_array" {
   let b = @bytes.of([b'A', b'B', b'C'])
   inspect!(b.to_array(), content="[b'\\x41', b'\\x42', b'\\x43']")
 }
 
+///-----------------------------------------------------------------------------
 test "from_iter multiple elements" {
   inspect!(
     Bytes::from_iter([b'\x00', b'\x01', b'\x02'].iter()).to_array(),
@@ -77,14 +82,17 @@ test "from_iter multiple elements" {
   )
 }
 
+///-----------------------------------------------------------------------------
 test "from_iter single element" {
   inspect!(Bytes::from_iter([b'\x00'].iter()).to_array(), content="[b'\\x00']")
 }
 
+///-----------------------------------------------------------------------------
 test "from_iter empty iterator" {
   inspect!(Bytes::from_iter(Iter::empty()).to_array(), content="[]")
 }
 
+///-----------------------------------------------------------------------------
 test "iter" {
   let buf = StringBuilder::new(size_hint=5)
   b"abcde".iter().each(fn { x => buf.write_string(x.to_string()) })

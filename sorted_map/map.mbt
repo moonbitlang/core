@@ -12,23 +12,28 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+///-----------------------------------------------------------------------------
 pub fn op_set[K : Compare, V](self : T[K, V], key : K, value : V) -> Unit {
   self.add(key, value)
 }
 
+///-----------------------------------------------------------------------------
 pub fn op_get[K : Compare, V](self : T[K, V], key : K) -> V? {
   self.get(key)
 }
 
+///-----------------------------------------------------------------------------
 pub fn op_equal[K : Eq, V : Eq](self : T[K, V], other : T[K, V]) -> Bool {
   self.to_array() == other.to_array()
 }
 
+///-----------------------------------------------------------------------------
 /// Returns a new sorted map.
 pub fn new[K, V]() -> T[K, V] {
   { root: None, size: 0 }
 }
 
+///-----------------------------------------------------------------------------
 /// Creates a sorted map from given entries.
 pub fn of[K : Compare, V](entries : Array[(K, V)]) -> T[K, V] {
   let map = { root: None, size: 0 }
@@ -36,6 +41,7 @@ pub fn of[K : Compare, V](entries : Array[(K, V)]) -> T[K, V] {
   map
 }
 
+///-----------------------------------------------------------------------------
 /// Inserts a key-value pair.
 pub fn add[K : Compare, V](self : T[K, V], key : K, value : V) -> Unit {
   let (new_root, inserted) = add_node(self.root, key, value)
@@ -47,6 +53,7 @@ pub fn add[K : Compare, V](self : T[K, V], key : K, value : V) -> Unit {
   }
 }
 
+///-----------------------------------------------------------------------------
 /// Removes a key-value pair.
 pub fn remove[K : Compare, V](self : T[K, V], key : K) -> Unit {
   match self.root {
@@ -63,6 +70,7 @@ pub fn remove[K : Compare, V](self : T[K, V], key : K) -> Unit {
   }
 }
 
+///-----------------------------------------------------------------------------
 /// Gets a value by a key.
 pub fn get[K : Compare, V](self : T[K, V], key : K) -> V? {
   loop self.root {
@@ -80,6 +88,7 @@ pub fn get[K : Compare, V](self : T[K, V], key : K) -> V? {
   }
 }
 
+///-----------------------------------------------------------------------------
 /// Checks if map contains a key-value pair.
 pub fn contains[K : Compare, V](self : T[K, V], key : K) -> Bool {
   match self.get(key) {
@@ -88,22 +97,26 @@ pub fn contains[K : Compare, V](self : T[K, V], key : K) -> Bool {
   }
 }
 
+///-----------------------------------------------------------------------------
 /// Returns true if map is empty.
 pub fn is_empty[K, V](self : T[K, V]) -> Bool {
   self.size == 0
 }
 
+///-----------------------------------------------------------------------------
 /// Returns the count of key-value pairs in the map.
 pub fn size[K, V](self : T[K, V]) -> Int {
   self.size
 }
 
+///-----------------------------------------------------------------------------
 /// Clears the map.
 pub fn clear[K, V](self : T[K, V]) -> Unit {
   self.root = None
   self.size = 0
 }
 
+///-----------------------------------------------------------------------------
 /// Iterates the map.
 pub fn each[K, V](self : T[K, V], f : (K, V) -> Unit) -> Unit {
   let s = []
@@ -121,6 +134,7 @@ pub fn each[K, V](self : T[K, V], f : (K, V) -> Unit) -> Unit {
   }
 }
 
+///-----------------------------------------------------------------------------
 /// Iterates the map with index.
 pub fn eachi[K, V](self : T[K, V], f : (Int, K, V) -> Unit) -> Unit {
   let s = []
@@ -140,6 +154,7 @@ pub fn eachi[K, V](self : T[K, V], f : (Int, K, V) -> Unit) -> Unit {
   }
 }
 
+///-----------------------------------------------------------------------------
 /// Returns all keys in the map.
 pub fn keys[K, V](self : T[K, V]) -> Array[K] {
   let keys = []
@@ -147,6 +162,7 @@ pub fn keys[K, V](self : T[K, V]) -> Array[K] {
   keys
 }
 
+///-----------------------------------------------------------------------------
 /// Returns all values in the map.
 pub fn values[K, V](self : T[K, V]) -> Array[V] {
   let values = []
@@ -154,6 +170,7 @@ pub fn values[K, V](self : T[K, V]) -> Array[V] {
   values
 }
 
+///-----------------------------------------------------------------------------
 /// Converts the map to an array.
 pub fn to_array[K, V](self : T[K, V]) -> Array[(K, V)] {
   let arr = []
@@ -161,10 +178,12 @@ pub fn to_array[K, V](self : T[K, V]) -> Array[(K, V)] {
   arr
 }
 
+///-----------------------------------------------------------------------------
 pub fn iter[K, V](self : T[K, V]) -> Iter[(K, V)] {
   iter_aux(self.root)
 }
 
+///-----------------------------------------------------------------------------
 fn iter_aux[K, V](node : Node[K, V]?) -> Iter[(K, V)] {
   Iter::new(
     fn(yield) {
@@ -185,10 +204,12 @@ fn iter_aux[K, V](node : Node[K, V]?) -> Iter[(K, V)] {
   )
 }
 
+///-----------------------------------------------------------------------------
 pub fn iter2[K, V](self : T[K, V]) -> Iter2[K, V] {
   iter_aux2(self.root)
 }
 
+///-----------------------------------------------------------------------------
 fn iter_aux2[K, V](node : Node[K, V]?) -> Iter2[K, V] {
   Iter2::new(
     fn(yield) {
@@ -209,12 +230,14 @@ fn iter_aux2[K, V](node : Node[K, V]?) -> Iter2[K, V] {
   )
 }
 
+///-----------------------------------------------------------------------------
 pub fn T::from_iter[K : Compare, V](iter : Iter[(K, V)]) -> T[K, V] {
   let m = new()
   iter.each(fn(e) { m[e.0] = e.1 })
   m
 }
 
+///-----------------------------------------------------------------------------
 pub impl[K : @quickcheck.Arbitrary + Compare, V : @quickcheck.Arbitrary] @quickcheck.Arbitrary for T[
   K,
   V,
@@ -224,6 +247,7 @@ pub impl[K : @quickcheck.Arbitrary + Compare, V : @quickcheck.Arbitrary] @quickc
 
 // AVL tree operations
 
+///-----------------------------------------------------------------------------
 fn replace_root_with_min[K : Compare, V](
   root : Node[K, V],
   node : Node[K, V]
@@ -242,10 +266,12 @@ fn replace_root_with_min[K : Compare, V](
   }
 }
 
+///-----------------------------------------------------------------------------
 fn update_height[K, V](self : Node[K, V]) -> Unit {
   self.height = 1 + max(height(self.left), height(self.right))
 }
 
+///-----------------------------------------------------------------------------
 fn height_ge[K, V](x1 : Node[K, V]?, x2 : Node[K, V]?) -> Bool {
   match x2 {
     None => true
@@ -257,6 +283,7 @@ fn height_ge[K, V](x1 : Node[K, V]?, x2 : Node[K, V]?) -> Bool {
   }
 }
 
+///-----------------------------------------------------------------------------
 fn balance[K : Compare, V](root : Node[K, V]) -> Node[K, V] {
   let (l, r) = (root.left, root.right)
   let (hl, hr) = (height(l), height(r))
@@ -281,6 +308,7 @@ fn balance[K : Compare, V](root : Node[K, V]) -> Node[K, V] {
   new_root
 }
 
+///-----------------------------------------------------------------------------
 fn rotate_l[K : Compare, V](n : Node[K, V]) -> Node[K, V] {
   let r = n.right.unwrap()
   n.right = r.left
@@ -290,6 +318,7 @@ fn rotate_l[K : Compare, V](n : Node[K, V]) -> Node[K, V] {
   r
 }
 
+///-----------------------------------------------------------------------------
 fn rotate_r[K : Compare, V](n : Node[K, V]) -> Node[K, V] {
   let l = n.left.unwrap()
   n.left = l.right
@@ -299,6 +328,7 @@ fn rotate_r[K : Compare, V](n : Node[K, V]) -> Node[K, V] {
   l
 }
 
+///-----------------------------------------------------------------------------
 fn rotate_lr[K : Compare, V](n : Node[K, V]) -> Node[K, V] {
   let l = n.left.unwrap()
   let v = rotate_l(l)
@@ -306,6 +336,7 @@ fn rotate_lr[K : Compare, V](n : Node[K, V]) -> Node[K, V] {
   rotate_r(n)
 }
 
+///-----------------------------------------------------------------------------
 fn rotate_rl[K : Compare, V](n : Node[K, V]) -> Node[K, V] {
   let r = n.right.unwrap()
   let v = rotate_r(r)
@@ -313,6 +344,7 @@ fn rotate_rl[K : Compare, V](n : Node[K, V]) -> Node[K, V] {
   rotate_l(n)
 }
 
+///-----------------------------------------------------------------------------
 fn add_node[K : Compare, V](
   root : Node[K, V]?,
   key : K,
@@ -339,6 +371,7 @@ fn add_node[K : Compare, V](
   }
 }
 
+///-----------------------------------------------------------------------------
 fn delete_node[K : Compare, V](
   root : Node[K, V],
   key : K
@@ -375,18 +408,21 @@ fn delete_node[K : Compare, V](
   }
 }
 
+///-----------------------------------------------------------------------------
 test "new" {
   let map : T[Int, String] = new()
   inspect!(map.debug_tree(), content="_")
   inspect!(map.size(), content="0")
 }
 
+///-----------------------------------------------------------------------------
 test "of" {
   let map = of([(3, "c"), (2, "b"), (1, "a")])
   inspect!(map.debug_tree(), content="([2]2,b,([1]1,a,_,_),([1]3,c,_,_))")
   inspect!(map.size(), content="3")
 }
 
+///-----------------------------------------------------------------------------
 test "add1" {
   let map = new()
   map.add(6, "a")
@@ -402,6 +438,7 @@ test "add1" {
   inspect!(map.size(), content="6")
 }
 
+///-----------------------------------------------------------------------------
 test "add2" {
   let map = new()
   map.add(1, "a")
@@ -417,6 +454,7 @@ test "add2" {
   inspect!(map.size(), content="6")
 }
 
+///-----------------------------------------------------------------------------
 test "add3" {
   let map = new()
   map.add(4, "a")
@@ -429,6 +467,7 @@ test "add3" {
   )
 }
 
+///-----------------------------------------------------------------------------
 test "add4" {
   let map = new()
   map.add(1, "a")
@@ -441,6 +480,7 @@ test "add4" {
   )
 }
 
+///-----------------------------------------------------------------------------
 test "add duplicate key" {
   let map = of([(3, "c"), (2, "b"), (1, "a")])
   inspect!(map.debug_tree(), content="([2]2,b,([1]1,a,_,_),([1]3,c,_,_))")
@@ -448,6 +488,7 @@ test "add duplicate key" {
   inspect!(map.debug_tree(), content="([2]2,b,([1]1,x,_,_),([1]3,c,_,_))")
 }
 
+///-----------------------------------------------------------------------------
 test "remove" {
   let map = of(
     [
@@ -504,6 +545,7 @@ test "remove" {
   inspect!(map.size, content="0")
 }
 
+///-----------------------------------------------------------------------------
 test "op_set" {
   let map = new()
   map[1] = "a"
@@ -512,6 +554,7 @@ test "op_set" {
   inspect!(map.debug_tree(), content="([2]2,b,([1]1,a,_,_),([1]3,c,_,_))")
 }
 
+///-----------------------------------------------------------------------------
 test "clear" {
   let map = of([(3, "c"), (2, "b"), (1, "a")])
   map.clear()

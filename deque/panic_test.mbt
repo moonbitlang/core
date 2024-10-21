@@ -12,18 +12,22 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+///-----------------------------------------------------------------------------
 test "panic unsafe_pop_front" {
   @deque.from_array(([] : Array[Int])).unsafe_pop_front()
 }
 
+///-----------------------------------------------------------------------------
 test "panic unsafe_pop_back" {
   @deque.from_array(([] : Array[Int])).unsafe_pop_back()
 }
 
+///-----------------------------------------------------------------------------
 test "panic op_get" {
   @deque.of([1, 2, 3])[-1] |> ignore
 }
 
+///-----------------------------------------------------------------------------
 test "panic op_set" {
   @deque.of([1, 2, 3])[-1] = 1
 }

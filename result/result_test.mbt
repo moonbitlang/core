@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+///-----------------------------------------------------------------------------
 test "Result unwrap should return Ok value" {
   let ok_result : Result[Int, String] = Ok(42)
   assert_eq!(ok_result.unwrap(), 42)

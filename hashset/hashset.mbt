@@ -12,9 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+///-----------------------------------------------------------------------------
 // Default initial capacity
 let default_init_capacity = 8
 
+///-----------------------------------------------------------------------------
 /// Create new hash set.
 pub fn T::new[K]() -> T[K] {
   {
@@ -25,6 +27,7 @@ pub fn T::new[K]() -> T[K] {
   }
 }
 
+///-----------------------------------------------------------------------------
 /// Create new hash set from array.
 pub fn T::from_array[K : Hash + Eq](arr : Array[K]) -> T[K] {
   let m = new()
@@ -32,12 +35,14 @@ pub fn T::from_array[K : Hash + Eq](arr : Array[K]) -> T[K] {
   m
 }
 
+///-----------------------------------------------------------------------------
 pub fn T::of[K : Hash + Eq](arr : FixedArray[K]) -> T[K] {
   let m = new()
   arr.each(fn(e) { m.insert(e) })
   m
 }
 
+///-----------------------------------------------------------------------------
 /// Insert a key into hash set.
 /// @alert unsafe "Panic if the hash set is full."
 pub fn insert[K : Hash + Eq](self : T[K], key : K) -> Unit {
@@ -75,6 +80,7 @@ pub fn insert[K : Hash + Eq](self : T[K], key : K) -> Unit {
   }
 }
 
+///-----------------------------------------------------------------------------
 /// Check if the hash set contains a key.
 pub fn contains[K : Hash + Eq](self : T[K], key : K) -> Bool {
   let hash = key.hash()
@@ -96,6 +102,7 @@ pub fn contains[K : Hash + Eq](self : T[K], key : K) -> Bool {
   false
 }
 
+///-----------------------------------------------------------------------------
 /// Remove a key from hash set.
 pub fn remove[K : Hash + Eq](self : T[K], key : K) -> Unit {
   let hash = key.hash()
@@ -119,26 +126,31 @@ pub fn remove[K : Hash + Eq](self : T[K], key : K) -> Unit {
   }
 }
 
+///-----------------------------------------------------------------------------
 /// Get the number of keys in the set.
 pub fn size[K](self : T[K]) -> Int {
   self.size
 }
 
+///-----------------------------------------------------------------------------
 /// Get the capacity of the set.
 pub fn capacity[K](self : T[K]) -> Int {
   self.capacity
 }
 
+///-----------------------------------------------------------------------------
 /// Check if the hash set is empty.
 pub fn is_empty[K](self : T[K]) -> Bool {
   self.size == 0
 }
 
+///-----------------------------------------------------------------------------
 /// Iterate over all keys of the set.
 pub fn each[K](self : T[K], f : (K) -> Unit) -> Unit {
   self.eachi(fn(_i, k) { f(k) })
 }
 
+///-----------------------------------------------------------------------------
 /// Iterate over all keys of the set, with index.
 pub fn eachi[K](self : T[K], f : (Int, K) -> Unit) -> Unit {
   let mut idx = 0
@@ -153,6 +165,7 @@ pub fn eachi[K](self : T[K], f : (Int, K) -> Unit) -> Unit {
   }
 }
 
+///-----------------------------------------------------------------------------
 /// Clears the set, removing all keys. Keeps the allocated space.
 pub fn clear[K](self : T[K]) -> Unit {
   for i = 0; i < self.capacity; i = i + 1 {
@@ -161,6 +174,7 @@ pub fn clear[K](self : T[K]) -> Unit {
   self.size = 0
 }
 
+///-----------------------------------------------------------------------------
 /// Union of two hash sets.
 /// @alert unsafe "Panic if the hash set is full."
 pub fn union[K : Hash + Eq](self : T[K], other : T[K]) -> T[K] {
@@ -170,6 +184,7 @@ pub fn union[K : Hash + Eq](self : T[K], other : T[K]) -> T[K] {
   m
 }
 
+///-----------------------------------------------------------------------------
 /// Intersection of two hash sets.
 pub fn intersection[K : Hash + Eq](self : T[K], other : T[K]) -> T[K] {
   let m = T::new()
@@ -177,6 +192,7 @@ pub fn intersection[K : Hash + Eq](self : T[K], other : T[K]) -> T[K] {
   m
 }
 
+///-----------------------------------------------------------------------------
 /// Difference of two hash sets.
 pub fn difference[K : Hash + Eq](self : T[K], other : T[K]) -> T[K] {
   let m = T::new()
@@ -184,6 +200,7 @@ pub fn difference[K : Hash + Eq](self : T[K], other : T[K]) -> T[K] {
   m
 }
 
+///-----------------------------------------------------------------------------
 /// Symmetric difference of two hash sets.
 pub fn symmetric_difference[K : Hash + Eq](self : T[K], other : T[K]) -> T[K] {
   let m = T::new()
@@ -192,6 +209,7 @@ pub fn symmetric_difference[K : Hash + Eq](self : T[K], other : T[K]) -> T[K] {
   m
 }
 
+///-----------------------------------------------------------------------------
 pub fn iter[K](self : T[K]) -> Iter[K] {
   Iter::new(
     fn(yield) {
@@ -207,12 +225,14 @@ pub fn iter[K](self : T[K]) -> Iter[K] {
   )
 }
 
+///-----------------------------------------------------------------------------
 pub fn T::from_iter[K : Hash + Eq](iter : Iter[K]) -> T[K] {
   let s = T::new()
   iter.each(fn(e) { s.insert(e) })
   s
 }
 
+///-----------------------------------------------------------------------------
 pub impl[X : @quickcheck.Arbitrary + Eq + Hash] @quickcheck.Arbitrary for T[X] with arbitrary(
   size,
   rs
@@ -220,6 +240,7 @@ pub impl[X : @quickcheck.Arbitrary + Eq + Hash] @quickcheck.Arbitrary for T[X] w
   @quickcheck.Arbitrary::arbitrary(size, rs) |> T::from_iter
 }
 
+///-----------------------------------------------------------------------------
 fn shift_back[K : Hash](self : T[K], start_index : Int) -> Unit {
   for i = 0, prev = start_index, curr = self.next_index(start_index)
       i < self.entries.length()
@@ -238,6 +259,7 @@ fn shift_back[K : Hash](self : T[K], start_index : Int) -> Unit {
   }
 }
 
+///-----------------------------------------------------------------------------
 fn grow[K : Hash + Eq](self : T[K]) -> Unit {
   // handle zero capacity
   if self.capacity == 0 {
@@ -260,10 +282,12 @@ fn grow[K : Hash + Eq](self : T[K]) -> Unit {
   }
 }
 
+///-----------------------------------------------------------------------------
 fn index[K : Hash](self : T[K], hash : Int) -> Int {
   abs(hash) & (self.capacity - 1)
 }
 
+///-----------------------------------------------------------------------------
 fn abs(n : Int) -> Int {
   if n < 0 {
     -n
@@ -272,14 +296,17 @@ fn abs(n : Int) -> Int {
   }
 }
 
+///-----------------------------------------------------------------------------
 fn next_index[K : Hash](self : T[K], index : Int) -> Int {
   (index + 1) & (self.capacity - 1)
 }
 
+///-----------------------------------------------------------------------------
 fn calc_grow_threshold(capacity : Int) -> Int {
   capacity * 13 / 16
 }
 
+///-----------------------------------------------------------------------------
 fn debug_entries[K : Show](self : T[K]) -> String {
   let mut s = ""
   for i = 0; i < self.entries.length(); i = i + 1 {
@@ -294,25 +321,32 @@ fn debug_entries[K : Show](self : T[K]) -> String {
   s
 }
 
+///-----------------------------------------------------------------------------
 pub impl[K : Show] Show for T[K] with output(self, logger) {
   logger.write_iter(self.iter(), prefix="@hashset.of([", suffix="])")
 }
 
+///-----------------------------------------------------------------------------
 // Reuse the default implementation of [Show::to_string] here
 pub fn to_string[K : Show](self : T[K]) -> String {
   Show::to_string(self)
 }
 
+///-----------------------------------------------------------------------------
 priv type MyString String derive(Eq)
 
+///-----------------------------------------------------------------------------
 impl Hash for MyString with hash(self) { self._.length() }
 
+///-----------------------------------------------------------------------------
 impl Hash for MyString with hash_combine(self, hasher) {
   hasher.combine_string(self._)
 }
 
+///-----------------------------------------------------------------------------
 impl Show for MyString with output(self, logger) { logger.write_string(self._) }
 
+///-----------------------------------------------------------------------------
 test "set" {
   let m : T[MyString] = T::new()
   m.insert("a")
@@ -329,6 +363,7 @@ test "set" {
   )
 }
 
+///-----------------------------------------------------------------------------
 test "remove" {
   let m : T[MyString] = T::new()
   fn i(s) {
@@ -346,6 +381,7 @@ test "remove" {
   assert_eq!(m.debug_entries(), "_,(0,a),(0,bc),(1,cd),(1,abc),_,(0,abcdef),_")
 }
 
+///-----------------------------------------------------------------------------
 test "remove_unexist_key" {
   let m : T[MyString] = T::new()
   fn i(s) {
@@ -360,6 +396,7 @@ test "remove_unexist_key" {
   assert_eq!(m.debug_entries(), "_,(0,a),(0,ab),(0,abc),_,_,_,_")
 }
 
+///-----------------------------------------------------------------------------
 test "grow" {
   let m : T[MyString] = T::new()
   fn i(s) {
@@ -388,6 +425,7 @@ test "grow" {
   )
 }
 
+///-----------------------------------------------------------------------------
 test "clear" {
   let m : T[MyString] = T::new()
   m.clear()

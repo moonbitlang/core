@@ -12,10 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+///-----------------------------------------------------------------------------
 pub fn op_equal[T0 : Eq, T1 : Eq](self : (T0, T1), other : (T0, T1)) -> Bool {
   self.0 == other.0 && self.1 == other.1
 }
 
+///-----------------------------------------------------------------------------
 pub fn op_equal[T0 : Eq, T1 : Eq, T2 : Eq](
   self : (T0, T1, T2),
   other : (T0, T1, T2)
@@ -23,6 +25,7 @@ pub fn op_equal[T0 : Eq, T1 : Eq, T2 : Eq](
   self.0 == other.0 && self.1 == other.1 && self.2 == other.2
 }
 
+///-----------------------------------------------------------------------------
 pub fn op_equal[T0 : Eq, T1 : Eq, T2 : Eq, T3 : Eq](
   self : (T0, T1, T2, T3),
   other : (T0, T1, T2, T3)
@@ -33,6 +36,7 @@ pub fn op_equal[T0 : Eq, T1 : Eq, T2 : Eq, T3 : Eq](
   self.3 == other.3
 }
 
+///-----------------------------------------------------------------------------
 pub fn op_equal[T0 : Eq, T1 : Eq, T2 : Eq, T3 : Eq, T4 : Eq](
   self : (T0, T1, T2, T3, T4),
   other : (T0, T1, T2, T3, T4)
@@ -44,6 +48,7 @@ pub fn op_equal[T0 : Eq, T1 : Eq, T2 : Eq, T3 : Eq, T4 : Eq](
   self.4 == other.4
 }
 
+///-----------------------------------------------------------------------------
 pub fn op_equal[T0 : Eq, T1 : Eq, T2 : Eq, T3 : Eq, T4 : Eq, T5 : Eq](
   self : (T0, T1, T2, T3, T4, T5),
   other : (T0, T1, T2, T3, T4, T5)
@@ -56,6 +61,7 @@ pub fn op_equal[T0 : Eq, T1 : Eq, T2 : Eq, T3 : Eq, T4 : Eq, T5 : Eq](
   self.5 == other.5
 }
 
+///-----------------------------------------------------------------------------
 pub fn op_equal[T0 : Eq, T1 : Eq, T2 : Eq, T3 : Eq, T4 : Eq, T5 : Eq, T6 : Eq](
   self : (T0, T1, T2, T3, T4, T5, T6),
   other : (T0, T1, T2, T3, T4, T5, T6)
@@ -69,6 +75,7 @@ pub fn op_equal[T0 : Eq, T1 : Eq, T2 : Eq, T3 : Eq, T4 : Eq, T5 : Eq, T6 : Eq](
   self.6 == other.6
 }
 
+///-----------------------------------------------------------------------------
 pub fn op_equal[T0 : Eq, T1 : Eq, T2 : Eq, T3 : Eq, T4 : Eq, T5 : Eq, T6 : Eq, T7 : Eq](
   self : (T0, T1, T2, T3, T4, T5, T6, T7),
   other : (T0, T1, T2, T3, T4, T5, T6, T7)
@@ -83,6 +90,7 @@ pub fn op_equal[T0 : Eq, T1 : Eq, T2 : Eq, T3 : Eq, T4 : Eq, T5 : Eq, T6 : Eq, T
   self.7 == other.7
 }
 
+///-----------------------------------------------------------------------------
 pub fn op_equal[T0 : Eq, T1 : Eq, T2 : Eq, T3 : Eq, T4 : Eq, T5 : Eq, T6 : Eq, T7 : Eq, T8 : Eq](
   self : (T0, T1, T2, T3, T4, T5, T6, T7, T8),
   other : (T0, T1, T2, T3, T4, T5, T6, T7, T8)
@@ -98,6 +106,7 @@ pub fn op_equal[T0 : Eq, T1 : Eq, T2 : Eq, T3 : Eq, T4 : Eq, T5 : Eq, T6 : Eq, T
   self.8 == other.8
 }
 
+///-----------------------------------------------------------------------------
 pub fn op_equal[T0 : Eq, T1 : Eq, T2 : Eq, T3 : Eq, T4 : Eq, T5 : Eq, T6 : Eq, T7 : Eq, T8 : Eq, T9 : Eq](
   self : (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9),
   other : (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9)
@@ -114,6 +123,7 @@ pub fn op_equal[T0 : Eq, T1 : Eq, T2 : Eq, T3 : Eq, T4 : Eq, T5 : Eq, T6 : Eq, T
   self.9 == other.9
 }
 
+///-----------------------------------------------------------------------------
 pub fn op_equal[T0 : Eq, T1 : Eq, T2 : Eq, T3 : Eq, T4 : Eq, T5 : Eq, T6 : Eq, T7 : Eq, T8 : Eq, T9 : Eq, T10 : Eq](
   self : (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10),
   other : (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10)
@@ -131,6 +141,7 @@ pub fn op_equal[T0 : Eq, T1 : Eq, T2 : Eq, T3 : Eq, T4 : Eq, T5 : Eq, T6 : Eq, T
   self.10 == other.10
 }
 
+///-----------------------------------------------------------------------------
 pub fn op_equal[T0 : Eq, T1 : Eq, T2 : Eq, T3 : Eq, T4 : Eq, T5 : Eq, T6 : Eq, T7 : Eq, T8 : Eq, T9 : Eq, T10 : Eq, T11 : Eq](
   self : (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11),
   other : (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11)
@@ -149,6 +160,7 @@ pub fn op_equal[T0 : Eq, T1 : Eq, T2 : Eq, T3 : Eq, T4 : Eq, T5 : Eq, T6 : Eq, T
   self.11 == other.11
 }
 
+///-----------------------------------------------------------------------------
 pub fn op_equal[T0 : Eq, T1 : Eq, T2 : Eq, T3 : Eq, T4 : Eq, T5 : Eq, T6 : Eq, T7 : Eq, T8 : Eq, T9 : Eq, T10 : Eq, T11 : Eq, T12 : Eq](
   self : (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12),
   other : (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12)
@@ -168,6 +180,7 @@ pub fn op_equal[T0 : Eq, T1 : Eq, T2 : Eq, T3 : Eq, T4 : Eq, T5 : Eq, T6 : Eq, T
   self.12 == other.12
 }
 
+///-----------------------------------------------------------------------------
 pub fn op_equal[T0 : Eq, T1 : Eq, T2 : Eq, T3 : Eq, T4 : Eq, T5 : Eq, T6 : Eq, T7 : Eq, T8 : Eq, T9 : Eq, T10 : Eq, T11 : Eq, T12 : Eq, T13 : Eq](
   self : (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13),
   other : (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13)
@@ -188,6 +201,7 @@ pub fn op_equal[T0 : Eq, T1 : Eq, T2 : Eq, T3 : Eq, T4 : Eq, T5 : Eq, T6 : Eq, T
   self.13 == other.13
 }
 
+///-----------------------------------------------------------------------------
 pub fn op_equal[T0 : Eq, T1 : Eq, T2 : Eq, T3 : Eq, T4 : Eq, T5 : Eq, T6 : Eq, T7 : Eq, T8 : Eq, T9 : Eq, T10 : Eq, T11 : Eq, T12 : Eq, T13 : Eq, T14 : Eq](
   self : (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14),
   other : (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14)
@@ -209,6 +223,7 @@ pub fn op_equal[T0 : Eq, T1 : Eq, T2 : Eq, T3 : Eq, T4 : Eq, T5 : Eq, T6 : Eq, T
   self.14 == other.14
 }
 
+///-----------------------------------------------------------------------------
 pub fn op_equal[T0 : Eq, T1 : Eq, T2 : Eq, T3 : Eq, T4 : Eq, T5 : Eq, T6 : Eq, T7 : Eq, T8 : Eq, T9 : Eq, T10 : Eq, T11 : Eq, T12 : Eq, T13 : Eq, T14 : Eq, T15 : Eq](
   self : (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15),
   other : (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15)

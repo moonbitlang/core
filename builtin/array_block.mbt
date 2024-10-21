@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+///-----------------------------------------------------------------------------
 pub fn Array::unsafe_blit[A](
   dst : Array[A],
   dst_offset : Int,
@@ -28,6 +29,7 @@ pub fn Array::unsafe_blit[A](
   )
 }
 
+///-----------------------------------------------------------------------------
 pub fn Array::unsafe_blit_fixed[A](
   dst : Array[A],
   dst_offset : Int,
@@ -44,6 +46,7 @@ pub fn Array::unsafe_blit_fixed[A](
   )
 }
 
+///-----------------------------------------------------------------------------
 pub fn Array::blit_to[A](
   self : Array[A],
   dst : Array[A],

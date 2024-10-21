@@ -16,6 +16,7 @@
 // - Add a trait for `Integer` and make `Rational` generic as `Rational[T: Integer]`. Currently, the numerator and denominator are specific to `Int64` types.
 // - `to_double` method needs fix. See its comment.
 
+///-----------------------------------------------------------------------------
 /// Rational number type.
 /// 
 /// Invariants:
@@ -26,6 +27,7 @@ struct T {
   denominator : Int64
 }
 
+///-----------------------------------------------------------------------------
 fn gcd(a : Int64, b : Int64) -> Int64 {
   for a = a, b = b {
     if b == 0L {
@@ -35,6 +37,7 @@ fn gcd(a : Int64, b : Int64) -> Int64 {
   }
 }
 
+///-----------------------------------------------------------------------------
 /// Creates a rational number.
 pub fn T::new(numerator : Int64, denominator : Int64) -> T? {
   if denominator == 0L {
@@ -53,12 +56,14 @@ pub fn T::new(numerator : Int64, denominator : Int64) -> T? {
   }
 }
 
+///-----------------------------------------------------------------------------
 /// Creates a rational number without enforcing invariants.
 fn T::new_unchecked(numerator : Int64, denominator : Int64) -> T {
   let gcd = gcd(numerator.abs(), denominator).abs()
   { numerator: numerator / gcd, denominator: denominator / gcd }
 }
 
+///-----------------------------------------------------------------------------
 /// NOTE: we don't check overflow here, to align with the `op_add` of `Int64`.
 /// TODO: add a `checked_add` method.
 pub fn op_add(self : T, other : T) -> T {
@@ -68,6 +73,7 @@ pub fn op_add(self : T, other : T) -> T {
   )
 }
 
+///-----------------------------------------------------------------------------
 pub fn op_sub(self : T, other : T) -> T {
   new_unchecked(
     self.numerator * other.denominator - other.numerator * self.denominator,
@@ -75,6 +81,7 @@ pub fn op_sub(self : T, other : T) -> T {
   )
 }
 
+///-----------------------------------------------------------------------------
 pub fn op_mul(self : T, other : T) -> T {
   new_unchecked(
     self.numerator * other.numerator,
@@ -82,6 +89,7 @@ pub fn op_mul(self : T, other : T) -> T {
   )
 }
 
+///-----------------------------------------------------------------------------
 pub fn op_div(self : T, other : T) -> T {
   if other.numerator < 0L {
     new_unchecked(
@@ -96,6 +104,7 @@ pub fn op_div(self : T, other : T) -> T {
   }
 }
 
+///-----------------------------------------------------------------------------
 /// Returns the reciprocal of a rational number.
 pub fn reciprocal(self : T) -> T {
   if self.numerator < 0L {
@@ -105,21 +114,25 @@ pub fn reciprocal(self : T) -> T {
   }
 }
 
+///-----------------------------------------------------------------------------
 /// Returns the negation of a rational number.
 pub fn neg(self : T) -> T {
   new_unchecked(-self.numerator, self.denominator)
 }
 
+///-----------------------------------------------------------------------------
 /// Returns the absolute value of a rational number.
 pub fn abs(self : T) -> T {
   new_unchecked(self.numerator.abs(), self.denominator.abs())
 }
 
+///-----------------------------------------------------------------------------
 /// Equal to operator for rational numbers.
 pub fn op_equal(self : T, other : T) -> Bool {
   self.numerator * other.denominator == other.numerator * self.denominator
 }
 
+///-----------------------------------------------------------------------------
 /// Compares two rational numbers.
 pub fn compare(self : T, other : T) -> Int {
   let left = self.numerator * other.denominator
@@ -133,28 +146,34 @@ pub fn compare(self : T, other : T) -> Int {
   }
 }
 
+///-----------------------------------------------------------------------------
 /// Returns the approximate double value of a rational number.
 pub fn to_double(self : T) -> Double {
   // TODO: complete algorithm
   self.numerator.to_double() / self.denominator.to_double()
 }
 
+///-----------------------------------------------------------------------------
 fn nan_error[T]() -> T!RationalError {
   raise RationalError("Rational::from_double: cannot convert NaN")
 }
 
+///-----------------------------------------------------------------------------
 fn overflow_error[T]() -> T!RationalError {
   raise RationalError("Rational::from_double: overflow")
 }
 
+///-----------------------------------------------------------------------------
 pub type! RationalError String
 
+///-----------------------------------------------------------------------------
 pub impl Show for RationalError with output(self, logger) {
   match self {
     RationalError(e) => Show::output(e, logger)
   }
 }
 
+///-----------------------------------------------------------------------------
 pub impl Eq for RationalError with op_equal(
   self : RationalError,
   other : RationalError
@@ -164,6 +183,7 @@ pub impl Eq for RationalError with op_equal(
   }
 }
 
+///-----------------------------------------------------------------------------
 /// Returns the approximate rational value of a double.
 pub fn T::from_double(value : Double) -> T!RationalError {
   // continued fraction algorithm
@@ -240,6 +260,7 @@ pub fn T::from_double(value : Double) -> T!RationalError {
   }
 }
 
+///-----------------------------------------------------------------------------
 /// Ceils a rational number towards positive infinity.
 pub fn ceil(self : T) -> Int64 {
   let sign = if self.numerator < 0L { -1L } else { 1L }
@@ -251,6 +272,7 @@ pub fn ceil(self : T) -> Int64 {
   }
 }
 
+///-----------------------------------------------------------------------------
 /// Floors a rational number towards negative infinity.
 pub fn floor(self : T) -> Int64 {
   let sign = if self.numerator < 0L { -1L } else { 1L }
@@ -262,6 +284,7 @@ pub fn floor(self : T) -> Int64 {
   }
 }
 
+///-----------------------------------------------------------------------------
 /// Rounds a rational number towards zero.
 pub fn trunc(self : T) -> Int64 {
   if self.numerator < 0L {
@@ -271,12 +294,14 @@ pub fn trunc(self : T) -> Int64 {
   }
 }
 
+///-----------------------------------------------------------------------------
 /// Fractional part of a rational number.
 /// Same as `self - self.trunc()`.
 pub fn fract(self : T) -> T {
   new_unchecked(self.numerator % self.denominator, self.denominator)
 }
 
+///-----------------------------------------------------------------------------
 pub impl Show for T with output(self, logger) {
   if self.numerator == 0L {
     logger.write_string("0")
@@ -290,6 +315,7 @@ pub impl Show for T with output(self, logger) {
   }
 }
 
+///-----------------------------------------------------------------------------
 pub impl @quickcheck.Arbitrary for T with arbitrary(size, rs) {
   let numerator : Int64 = @quickcheck.Arbitrary::arbitrary(size, rs)
   let denominator : Int64 = {
@@ -303,14 +329,17 @@ pub impl @quickcheck.Arbitrary for T with arbitrary(size, rs) {
   new_unchecked(numerator, denominator)
 }
 
+///-----------------------------------------------------------------------------
 pub fn to_string(self : T) -> String {
   Show::to_string(self)
 }
 
+///-----------------------------------------------------------------------------
 pub fn is_integer(self : T) -> Bool {
   self.denominator == 1L
 }
 
+///-----------------------------------------------------------------------------
 test "op_add" {
   // 1/2 + 1/3 = 5/6
   let a = T::new_unchecked(1L, 2L)
@@ -346,6 +375,7 @@ test "op_add" {
   assert_eq!(c.denominator, 1L)
 }
 
+///-----------------------------------------------------------------------------
 test "op_sub" {
   // 1/2 - 1/3 = 1/6
   let a = T::new_unchecked(1L, 2L)
@@ -381,6 +411,7 @@ test "op_sub" {
   assert_eq!(c.numerator, 0L)
 }
 
+///-----------------------------------------------------------------------------
 test "op_mul" {
   // 1/2 * 2/3 = 1/3
   let a = T::new_unchecked(1L, 2L)
@@ -404,6 +435,7 @@ test "op_mul" {
   assert_eq!(c.denominator, 1L)
 }
 
+///-----------------------------------------------------------------------------
 test "op_div" {
   // 1/2 / 2/3 = 3/4
   let a = T::new_unchecked(1L, 2L)
@@ -427,6 +459,7 @@ test "op_div" {
   assert_eq!(c.denominator, 1L)
 }
 
+///-----------------------------------------------------------------------------
 test "reciprocal" {
   // 1/2 -> 2/1
   let a = T::new_unchecked(1L, 2L)
@@ -441,6 +474,7 @@ test "reciprocal" {
   assert_eq!(b.denominator, 1L)
 }
 
+///-----------------------------------------------------------------------------
 test "neg" {
   // 1/2 -> -1/2
   let a = T::new_unchecked(1L, 2L)
@@ -455,6 +489,7 @@ test "neg" {
   assert_eq!(b.denominator, 2L)
 }
 
+///-----------------------------------------------------------------------------
 test "abs" {
   // 1/2 -> 1/2
   let a = T::new_unchecked(1L, 2L)
@@ -469,6 +504,7 @@ test "abs" {
   assert_eq!(b.denominator, 2L)
 }
 
+///-----------------------------------------------------------------------------
 test "to_double" {
   // 1/2 -> 0.5
   let a = T::new_unchecked(1L, 2L)
@@ -481,6 +517,7 @@ test "to_double" {
   assert_eq!(b, -0.5)
 }
 
+///-----------------------------------------------------------------------------
 test "ceil" {
   // 1/2 -> 1
   let a = T::new_unchecked(1L, 2L)
@@ -503,6 +540,7 @@ test "ceil" {
   assert_eq!(b, 1L)
 }
 
+///-----------------------------------------------------------------------------
 test "floor" {
   // 1/2 -> 0
   let a = T::new_unchecked(1L, 2L)
@@ -525,6 +563,7 @@ test "floor" {
   assert_eq!(b, 1L)
 }
 
+///-----------------------------------------------------------------------------
 test "trunc" {
   // 1/2 -> 0
   let a = T::new_unchecked(1L, 2L)
@@ -537,6 +576,7 @@ test "trunc" {
   assert_eq!(b, 0L)
 }
 
+///-----------------------------------------------------------------------------
 test "fract" {
   // 1/2 -> 1/2
   let a = T::new_unchecked(1L, 2L)
@@ -563,6 +603,7 @@ test "fract" {
   assert_eq!(b.denominator, 2L)
 }
 
+///-----------------------------------------------------------------------------
 test "to_string" {
   // 1/2 -> "1/2"
   let a = T::new_unchecked(1L, 2L)
@@ -580,6 +621,7 @@ test "to_string" {
   assert_eq!(b, "0")
 }
 
+///-----------------------------------------------------------------------------
 test "is_integer" {
   // 1/2 is not an integer
   let a = T::new_unchecked(1L, 2L)
@@ -598,6 +640,7 @@ test "is_integer" {
   assert_true!(a.is_integer())
 }
 
+///-----------------------------------------------------------------------------
 test "compare" {
   // 1/2 < 2/3
   let a = T::new_unchecked(1L, 2L)
@@ -622,21 +665,25 @@ test "compare" {
   assert_true!(a == b)
 }
 
+///-----------------------------------------------------------------------------
 test "from_double normal case" {
   let result = 0.5 |> @result.wrap1(f=from_double)
   assert_eq!(result, Ok(new_unchecked(1L, 2L)))
 }
 
+///-----------------------------------------------------------------------------
 test "from_double edge case" {
   let result = 9_223_372_036_800_000_000.0 |> @result.wrap1(f=from_double)
   assert_eq!(result, Ok(new_unchecked(9_223_372_036_800_000_000L, 1L)))
 }
 
+///-----------------------------------------------------------------------------
 test "from_double normal case" {
   let result = 0.5 |> @result.wrap1(f=from_double)
   assert_eq!(result, Ok(new_unchecked(1L, 2L)))
 }
 
+///-----------------------------------------------------------------------------
 test "from_double edge case" {
   let result = 9_223_372_036_800_000_000.0 |> @result.wrap1(f=from_double)
   assert_eq!(result, Ok(new_unchecked(9_223_372_036_800_000_000L, 1L)))

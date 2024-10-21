@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+///-----------------------------------------------------------------------------
 /// Maps the value of a Result if it is `Ok` into another, otherwise returns the `Err` value unchanged.
 ///
 /// # Example
@@ -27,6 +28,7 @@ pub fn map[T, E, U](self : Result[T, E], f : (T) -> U) -> Result[U, E] {
   }
 }
 
+///-----------------------------------------------------------------------------
 test "map" {
   let x : Result[Int, Unit] = Ok(6)
   let y = x.map(fn(v : Int) { v * 7 })
@@ -36,6 +38,7 @@ test "map" {
   assert_eq!(w, Err(3))
 }
 
+///-----------------------------------------------------------------------------
 /// Maps the value of a Result if it is `Err` into another, otherwise returns the `Ok` value unchanged.
 ///
 /// # Example
@@ -51,6 +54,7 @@ pub fn map_err[T, E, F](self : Result[T, E], f : (E) -> F) -> Result[T, F] {
   }
 }
 
+///-----------------------------------------------------------------------------
 test "map_err" {
   let x : Result[Int, String] = Err("error")
   let y = x.map_err(fn(v : String) { v + "!" })
@@ -60,6 +64,7 @@ test "map_err" {
   assert_eq!(w, Ok(6))
 }
 
+///-----------------------------------------------------------------------------
 /// Create an `Err` of type `E`.
 ///
 /// # Example
@@ -71,11 +76,13 @@ pub fn err[T, E](value : E) -> Result[T, E] {
   Err(value)
 }
 
+///-----------------------------------------------------------------------------
 test "err" {
   let x : Result[Int, String] = err("error")
   assert_eq!(x, Err("error"))
 }
 
+///-----------------------------------------------------------------------------
 /// Create an `Ok` of type `T`.
 ///
 /// # Example
@@ -87,11 +94,13 @@ pub fn ok[T, E](value : T) -> Result[T, E] {
   Ok(value)
 }
 
+///-----------------------------------------------------------------------------
 test "ok" {
   let x : Result[String, Unit] = ok("yes")
   assert_eq!(x, Ok("yes"))
 }
 
+///-----------------------------------------------------------------------------
 /// Check if a `Result` is an `Ok`.
 pub fn is_ok[T, E](self : Result[T, E]) -> Bool {
   match self {
@@ -100,6 +109,7 @@ pub fn is_ok[T, E](self : Result[T, E]) -> Bool {
   }
 }
 
+///-----------------------------------------------------------------------------
 test "is_ok" {
   let x : Result[Int, String] = Ok(6)
   let y : Result[Int, String] = Err("error")
@@ -107,6 +117,7 @@ test "is_ok" {
   assert_eq!(is_ok(y), false)
 }
 
+///-----------------------------------------------------------------------------
 /// Check if a `Result` is an `Err`.
 pub fn is_err[T, E](self : Result[T, E]) -> Bool {
   match self {
@@ -115,6 +126,7 @@ pub fn is_err[T, E](self : Result[T, E]) -> Bool {
   }
 }
 
+///-----------------------------------------------------------------------------
 test "is_err" {
   let x : Result[Int, String] = Ok(6)
   let y : Result[Int, String] = Err("error")
@@ -122,6 +134,7 @@ test "is_err" {
   assert_eq!(is_err(y), true)
 }
 
+///-----------------------------------------------------------------------------
 /// Return the inner `Ok` value, if it exists, otherwise return the provided default.
 ///
 /// # Example
@@ -137,6 +150,7 @@ pub fn or[T, E](self : Result[T, E], default : T) -> T {
   }
 }
 
+///-----------------------------------------------------------------------------
 test "or" {
   let x : Result[Int, String] = Ok(6)
   let y : Result[Int, String] = Err("error")
@@ -146,6 +160,7 @@ test "or" {
   assert_eq!(w, 0)
 }
 
+///-----------------------------------------------------------------------------
 /// Return the inner `Ok` value, if it exists, otherwise return the provided default.
 ///
 /// Default is lazily evaluated.
@@ -162,6 +177,7 @@ pub fn or_else[T, E](self : Result[T, E], default : () -> T) -> T {
   }
 }
 
+///-----------------------------------------------------------------------------
 test "or_else" {
   let x : Result[Int, String] = Ok(6)
   let y : Result[Int, String] = Err("error")
@@ -171,6 +187,7 @@ test "or_else" {
   assert_eq!(w, 0)
 }
 
+///-----------------------------------------------------------------------------
 /// Flatten a `Result` of `Result` into a single `Result`.
 /// 
 /// If the outer `Result` is an `Ok`, the inner `Result` is returned. If the outer `Result` is an `Err`, the inner `Result` is ignored and the `Err` is returned.
@@ -188,6 +205,7 @@ pub fn flatten[T, E](self : Result[Result[T, E], E]) -> Result[T, E] {
   }
 }
 
+///-----------------------------------------------------------------------------
 test "flatten" {
   let x : Result[Result[Int, String], String] = Ok(Ok(6))
   let y = x.flatten()
@@ -197,6 +215,7 @@ test "flatten" {
   assert_eq!(w, Err("error"))
 }
 
+///-----------------------------------------------------------------------------
 /// Binds a result to a function that returns another result.
 ///
 /// # Example
@@ -215,12 +234,14 @@ pub fn bind[T, E, U](
   }
 }
 
+///-----------------------------------------------------------------------------
 test "bind" {
   let x : Result[Int, String] = Ok(6)
   let y = bind(x, fn(v : Int) { Ok(v * 7) })
   assert_eq!(y, Ok(42))
 }
 
+///-----------------------------------------------------------------------------
 /// Folds a `Result` into a single value.
 /// 
 /// If the `Result` is an `Ok`, the `ok` function is applied to the value. If the `Result` is an `Err`, the `err` function is applied to the value.
@@ -237,6 +258,7 @@ pub fn fold[T, E, V](self : Result[T, E], ok : (T) -> V, err : (E) -> V) -> V {
   }
 }
 
+///-----------------------------------------------------------------------------
 test "fold" {
   let x : Result[Int, String] = Ok(6)
   let y = fold(x, fn(v : Int) -> Int { v * 7 }, fn(_e : String) -> Int { 0 })
@@ -246,6 +268,7 @@ test "fold" {
   assert_eq!(w, 0)
 }
 
+///-----------------------------------------------------------------------------
 /// Converts a `Result` to an `Option`.
 /// 
 /// Converts `Ok` to `Some` and `Err` to `None`.
@@ -263,6 +286,7 @@ pub fn to_option[T, E](self : Result[T, E]) -> T? {
   }
 }
 
+///-----------------------------------------------------------------------------
 test "to_option" {
   let x : Result[Int, String] = Ok(6)
   let y : Result[Int, String] = Err("error")
@@ -272,6 +296,7 @@ test "to_option" {
   assert_eq!(w, None)
 }
 
+///-----------------------------------------------------------------------------
 pub fn compare[T : Compare, E : Compare](
   self : Result[T, E],
   other : Result[T, E]
@@ -284,6 +309,7 @@ pub fn compare[T : Compare, E : Compare](
   }
 }
 
+///-----------------------------------------------------------------------------
 test "compare" {
   let ok1 = Result::Ok(1)
   let ok2 = Result::Ok(2)
@@ -299,6 +325,7 @@ test "compare" {
   assert_eq!(1, err1.compare(ok2))
 }
 
+///-----------------------------------------------------------------------------
 pub fn unwrap[T, E](self : Result[T, E]) -> T {
   match self {
     Ok(x) => x
@@ -306,6 +333,7 @@ pub fn unwrap[T, E](self : Result[T, E]) -> T {
   }
 }
 
+///-----------------------------------------------------------------------------
 pub fn to_string[T : Show, E : Show](self : Result[T, E]) -> String {
   match self {
     Ok(x) => "Ok(\{x})"
@@ -313,6 +341,7 @@ pub fn to_string[T : Show, E : Show](self : Result[T, E]) -> String {
   }
 }
 
+///-----------------------------------------------------------------------------
 test "show" {
   let ok : Result[_, String] = Ok("hello")
   inspect!(
@@ -330,6 +359,7 @@ test "show" {
   )
 }
 
+///-----------------------------------------------------------------------------
 pub fn unwrap_or_error[T, E : Error](self : Result[T, E]) -> T!E {
   match self {
     Ok(x) => x
@@ -337,6 +367,7 @@ pub fn unwrap_or_error[T, E : Error](self : Result[T, E]) -> T!E {
   }
 }
 
+///-----------------------------------------------------------------------------
 test "unwrap exn" {
   (try {
     (Err(Failure("This is serious")) : Result[Unit, Failure]).unwrap_or_error!()
@@ -351,6 +382,7 @@ test "unwrap exn" {
   )
 }
 
+///-----------------------------------------------------------------------------
 pub fn wrap0[T, E : Error](~f : () -> T!E) -> Result[T, E] {
   try {
     f!() |> Ok
@@ -359,6 +391,7 @@ pub fn wrap0[T, E : Error](~f : () -> T!E) -> Result[T, E] {
   }
 }
 
+///-----------------------------------------------------------------------------
 pub fn wrap1[T, A, E : Error](~f : (A) -> T!E, a : A) -> Result[T, E] {
   try {
     f!(a) |> Ok
@@ -367,6 +400,7 @@ pub fn wrap1[T, A, E : Error](~f : (A) -> T!E, a : A) -> Result[T, E] {
   }
 }
 
+///-----------------------------------------------------------------------------
 pub fn wrap2[T, A, B, E : Error](
   ~f : (A, B) -> T!E,
   a : A,
@@ -379,6 +413,7 @@ pub fn wrap2[T, A, B, E : Error](
   }
 }
 
+///-----------------------------------------------------------------------------
 pub impl[T : @quickcheck.Arbitrary, E : @quickcheck.Arbitrary] @quickcheck.Arbitrary for Result[
   T,
   E,

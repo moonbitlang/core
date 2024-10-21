@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+///-----------------------------------------------------------------------------
 /// Create a new map with a key-value pair inserted.
 /// O(log n).
 pub fn insert[K : Compare, V](self : T[K, V], key : K, value : V) -> T[K, V] {
@@ -26,6 +27,7 @@ pub fn insert[K : Compare, V](self : T[K, V], key : K, value : V) -> T[K, V] {
   }
 }
 
+///-----------------------------------------------------------------------------
 fn split_max[K : Compare, V](self : T[K, V]) -> (K, V, T[K, V]) {
   match self {
     Tree(k, value=v, l, Empty, ..) => (k, v, l)
@@ -37,6 +39,7 @@ fn split_max[K : Compare, V](self : T[K, V]) -> (K, V, T[K, V]) {
   }
 }
 
+///-----------------------------------------------------------------------------
 fn split_min[K : Compare, V](self : T[K, V]) -> (K, V, T[K, V]) {
   match self {
     Tree(k, value=v, Empty, r, ..) => (k, v, r)
@@ -48,6 +51,7 @@ fn split_min[K : Compare, V](self : T[K, V]) -> (K, V, T[K, V]) {
   }
 }
 
+///-----------------------------------------------------------------------------
 fn glue[K : Compare, V](self : T[K, V], other : T[K, V]) -> T[K, V] {
   match (self, other) {
     (Empty, r) => r
@@ -63,6 +67,7 @@ fn glue[K : Compare, V](self : T[K, V], other : T[K, V]) -> T[K, V] {
   }
 }
 
+///-----------------------------------------------------------------------------
 /// Create a new map with a key-value pair removed. O(log n).
 /// If the key is not a member or map, the original map is returned.
 pub fn remove[K : Compare, V](self : T[K, V], key : K) -> T[K, V] {
@@ -81,11 +86,13 @@ pub fn remove[K : Compare, V](self : T[K, V], key : K) -> T[K, V] {
   }
 }
 
+///-----------------------------------------------------------------------------
 /// Filter values that satisfy the predicate
 pub fn filter[K : Compare, V](self : T[K, V], pred : (V) -> Bool) -> T[K, V] {
   filter_with_key(self, fn(_k, v) { pred(v) })
 }
 
+///-----------------------------------------------------------------------------
 /// Filter key-value pairs that satisfy the predicate
 pub fn filter_with_key[K : Compare, V](
   self : T[K, V],
@@ -102,6 +109,7 @@ pub fn filter_with_key[K : Compare, V](
   }
 }
 
+///-----------------------------------------------------------------------------
 /// Convert to an array of key-value pairs.
 pub fn to_array[K, V](self : T[K, V]) -> Array[(K, V)] {
   let arr = []
@@ -109,10 +117,12 @@ pub fn to_array[K, V](self : T[K, V]) -> Array[(K, V)] {
   arr
 }
 
+///-----------------------------------------------------------------------------
 pub fn op_equal[K : Eq, V : Eq](self : T[K, V], other : T[K, V]) -> Bool {
   self.to_array() == other.to_array()
 }
 
+///-----------------------------------------------------------------------------
 pub impl[K : @quickcheck.Arbitrary + Compare, V : @quickcheck.Arbitrary] @quickcheck.Arbitrary for T[
   K,
   V,
@@ -120,9 +130,11 @@ pub impl[K : @quickcheck.Arbitrary + Compare, V : @quickcheck.Arbitrary] @quickc
   @quickcheck.Arbitrary::arbitrary(size, rs) |> from_array
 }
 
+///-----------------------------------------------------------------------------
 /// The ratio between the sizes of the left and right subtrees.
 let ratio = 5
 
+///-----------------------------------------------------------------------------
 fn balance[K : Compare, V](
   key : K,
   value : V,
@@ -205,6 +217,7 @@ fn balance[K : Compare, V](
   }
 }
 
+///-----------------------------------------------------------------------------
 test "from_array" {
   let m = of([(3, "three"), (8, "eight"), (1, "one"), (2, "two"), (0, "zero")])
   inspect!(
@@ -213,6 +226,7 @@ test "from_array" {
   )
 }
 
+///-----------------------------------------------------------------------------
 test "insert" {
   let m = of([(3, "three"), (8, "eight"), (1, "one")])
   inspect!(m.debug_tree(), content="(3,three,(1,one,_,_),(8,eight,_,_))")
@@ -227,6 +241,7 @@ test "insert" {
   )
 }
 
+///-----------------------------------------------------------------------------
 test "remove" {
   let m1 = of([(3, "three"), (8, "eight"), (1, "one"), (2, "two"), (0, "zero")])
   inspect!(
@@ -244,6 +259,7 @@ test "remove" {
   inspect!(e.remove(1).debug_tree(), content="_")
 }
 
+///-----------------------------------------------------------------------------
 test "contains" {
   let m = of([(3, "three"), (8, "eight"), (1, "one"), (2, "two"), (0, "zero")])
   inspect!(
@@ -255,6 +271,7 @@ test "contains" {
   assert_eq!(m.contains(4), false)
 }
 
+///-----------------------------------------------------------------------------
 test "map" {
   let m = of([(3, "three"), (8, "eight"), (1, "one"), (2, "two"), (0, "zero")])
   let n = m.map(fn(v) { v + "X" })
@@ -264,6 +281,7 @@ test "map" {
   )
 }
 
+///-----------------------------------------------------------------------------
 test "map_with_key" {
   let m = of([(3, "three"), (8, "eight"), (1, "one"), (2, "two"), (0, "zero")])
   let n = m.map_with_key(fn(k, v) { "\{k}-\{v}" })
@@ -273,23 +291,27 @@ test "map_with_key" {
   )
 }
 
+///-----------------------------------------------------------------------------
 test "filter" {
   let m = of([(3, "three"), (8, "eight"), (1, "one"), (2, "two"), (0, "zero")])
   let fm = m.filter(fn(v) { v.length() > 3 })
   assert_eq!(fm.debug_tree(), "(3,three,(0,zero,_,_),(8,eight,_,_))")
 }
 
+///-----------------------------------------------------------------------------
 test "filter_with_key" {
   let m = of([(3, "three"), (8, "eight"), (1, "one"), (2, "two"), (0, "zero")])
   let fm = m.filter_with_key(fn(k, v) { k > 3 && v.length() > 3 })
   assert_eq!(fm.debug_tree(), "(8,eight,_,_)")
 }
 
+///-----------------------------------------------------------------------------
 test "singleton" {
   let m = singleton(3, "three")
   assert_eq!(m.debug_tree(), "(3,three,_,_)")
 }
 
+///-----------------------------------------------------------------------------
 test "insert" {
   let m = of([(3, "three"), (8, "eight"), (1, "one")])
   inspect!(m.debug_tree(), content="(3,three,(1,one,_,_),(8,eight,_,_))")
@@ -304,6 +326,7 @@ test "insert" {
   )
 }
 
+///-----------------------------------------------------------------------------
 test "remove" {
   let m = of([(3, "three"), (8, "eight"), (1, "one"), (2, "two"), (0, "zero")])
   inspect!(
@@ -314,23 +337,27 @@ test "remove" {
   assert_eq!(m.debug_tree(), "(2,two,(0,zero,_,_),(8,eight,_,_))")
 }
 
+///-----------------------------------------------------------------------------
 test "filter" {
   let m = of([(3, "three"), (8, "eight"), (1, "one"), (2, "two"), (0, "zero")])
   let fm = m.filter(fn(v) { v.length() > 3 })
   assert_eq!(fm.debug_tree(), "(3,three,(0,zero,_,_),(8,eight,_,_))")
 }
 
+///-----------------------------------------------------------------------------
 test "filter_with_key" {
   let m = of([(3, "three"), (8, "eight"), (1, "one"), (2, "two"), (0, "zero")])
   let fm = m.filter_with_key(fn(k, v) { k > 3 && v.length() > 3 })
   assert_eq!(fm.debug_tree(), "(8,eight,_,_)")
 }
 
+///-----------------------------------------------------------------------------
 test "empty" {
   let m : T[Int, Int] = empty()
   assert_eq!(m.debug_tree(), "_")
 }
 
+///-----------------------------------------------------------------------------
 test "split_max" {
   let m = of([(3, "three"), (8, "eight"), (1, "one"), (2, "two"), (0, "zero")])
   assert_eq!(
@@ -343,6 +370,7 @@ test "split_max" {
   assert_eq!(r.debug_tree(), "(2,two,(1,one,(0,zero,_,_),_),(3,three,_,_))")
 }
 
+///-----------------------------------------------------------------------------
 test "split_min" {
   let m = of([(3, "three"), (8, "eight"), (2, "two"), (1, "one"), (0, "zero")])
   assert_eq!(
@@ -355,6 +383,7 @@ test "split_min" {
   assert_eq!(r.debug_tree(), "(3,three,(1,one,_,(2,two,_,_)),(8,eight,_,_))")
 }
 
+///-----------------------------------------------------------------------------
 test "glue" {
   let m = of([(3, "three"), (8, "eight"), (1, "one"), (2, "two"), (0, "zero")])
   assert_eq!(
@@ -369,6 +398,7 @@ test "glue" {
   assert_eq!(m.debug_tree(), "(2,two,(1,one,(0,zero,_,_),_),(8,eight,_,_))")
 }
 
+///-----------------------------------------------------------------------------
 test "split_max with non-empty tree" {
   let m = of([(3, "three"), (8, "eight"), (1, "one"), (2, "two"), (0, "zero")])
   let (k, v, r) = m.split_max()

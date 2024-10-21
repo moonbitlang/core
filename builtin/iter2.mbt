@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+///-----------------------------------------------------------------------------
 // Similar to Iter but used for two values
 // It is useful for iterating over map entries
 // without boxing
@@ -21,11 +22,13 @@
 // ```
 type Iter2[A, B] ((A, B) -> IterResult) -> IterResult
 
+///-----------------------------------------------------------------------------
 //TODO: Add intrinsic for Iter::run
 pub fn run[A, B](self : Iter2[A, B], f : (A, B) -> IterResult) -> IterResult {
   (self._)(f)
 }
 
+///-----------------------------------------------------------------------------
 pub impl[A : Show, B : Show] Show for Iter2[A, B] with output(self, logger) {
   logger.write_string("[")
   let mut first = true
@@ -45,16 +48,19 @@ pub impl[A : Show, B : Show] Show for Iter2[A, B] with output(self, logger) {
   logger.write_string("]")
 }
 
+///-----------------------------------------------------------------------------
 pub fn to_string[A : Show, B : Show](self : Iter2[A, B]) -> String {
   Show::to_string(self)
 }
 
+///-----------------------------------------------------------------------------
 pub fn Iter2::new[A, B](
   f : ((A, B) -> IterResult) -> IterResult
 ) -> Iter2[A, B] {
   Iter2(f)
 }
 
+///-----------------------------------------------------------------------------
 pub fn each[A, B](self : Iter2[A, B], f : (A, B) -> Unit) -> Unit {
   self.run(
     fn(a, b) {
@@ -65,10 +71,12 @@ pub fn each[A, B](self : Iter2[A, B], f : (A, B) -> Unit) -> Unit {
   |> ignore
 }
 
+///-----------------------------------------------------------------------------
 pub fn iter[A, B](self : Iter2[A, B]) -> Iter[(A, B)] {
   Iter::new(fn(yield) { self.run(fn(a, b) { yield((a, b)) }) })
 }
 
+///-----------------------------------------------------------------------------
 pub fn iter2[A, B](self : Iter2[A, B]) -> Iter2[A, B] {
   // This is a no-op to make sure
   // `for k,v in map.iter2() { ... }` 
@@ -76,6 +84,7 @@ pub fn iter2[A, B](self : Iter2[A, B]) -> Iter2[A, B] {
   self
 }
 
+///-----------------------------------------------------------------------------
 pub fn to_array[A, B](self : Iter2[A, B]) -> Array[(A, B)] {
   let arr = []
   for k, v in self {

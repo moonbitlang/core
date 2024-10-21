@@ -12,12 +12,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+///-----------------------------------------------------------------------------
 test "new" {
   let m : @hashmap.T[Int, Int] = @hashmap.new()
   inspect!(m.capacity(), content="8")
   assert_eq!(m.size(), 0)
 }
 
+///-----------------------------------------------------------------------------
 test "get" {
   let m = @hashmap.new()
   m.set("a", 1)
@@ -29,6 +31,7 @@ test "get" {
   inspect!(m.get("d"), content="None")
 }
 
+///-----------------------------------------------------------------------------
 test "get_or_default" {
   let m = @hashmap.new()
   m.set("a", 1)
@@ -40,6 +43,7 @@ test "get_or_default" {
   assert_eq!(m.get_or_default("d", 42), 42)
 }
 
+///-----------------------------------------------------------------------------
 test "op_set" {
   let m = @hashmap.new()
   m["a"] = 1
@@ -48,6 +52,7 @@ test "op_set" {
   assert_eq!(m.get("b"), Some(2))
 }
 
+///-----------------------------------------------------------------------------
 test "op_get" {
   let m = @hashmap.new()
   m.set("a", 1)
@@ -57,6 +62,7 @@ test "op_get" {
   assert_eq!(m["c"], None)
 }
 
+///-----------------------------------------------------------------------------
 test "set_update" {
   let m = @hashmap.new()
   m.set("a", 1)
@@ -66,6 +72,7 @@ test "set_update" {
   assert_eq!(m.get("a"), Some(2))
 }
 
+///-----------------------------------------------------------------------------
 test "contains" {
   let m = @hashmap.new()
   m.set("a", 1)
@@ -73,6 +80,7 @@ test "contains" {
   assert_eq!(m.contains("b"), false)
 }
 
+///-----------------------------------------------------------------------------
 test "from_array" {
   let m = @hashmap.of([("a", 1), ("b", 2), ("c", 3)])
   assert_eq!(m.get("a"), Some(1))
@@ -80,6 +88,7 @@ test "from_array" {
   assert_eq!(m.get("c"), Some(3))
 }
 
+///-----------------------------------------------------------------------------
 test "size" {
   let m = @hashmap.new()
   assert_eq!(m.size(), 0)
@@ -87,6 +96,7 @@ test "size" {
   assert_eq!(m.size(), 1)
 }
 
+///-----------------------------------------------------------------------------
 test "is_empty" {
   let m = @hashmap.new()
   assert_eq!(m.is_empty(), true)
@@ -96,6 +106,7 @@ test "is_empty" {
   assert_eq!(m.is_empty(), true)
 }
 
+///-----------------------------------------------------------------------------
 test "iter" {
   let m = @hashmap.of([("a", 1), ("b", 2), ("c", 3)])
   let mut sum = 0
@@ -103,6 +114,7 @@ test "iter" {
   assert_eq!(sum, 6)
 }
 
+///-----------------------------------------------------------------------------
 test "iteri" {
   let m = @hashmap.of([("a", 1), ("b", 2), ("c", 3)])
   let mut sum = 0
@@ -117,6 +129,7 @@ test "iteri" {
   assert_eq!(sum, 6)
 }
 
+///-----------------------------------------------------------------------------
 test "iter" {
   let buf = StringBuilder::new(size_hint=20)
   let map = @hashmap.of([(1, "one"), (2, "two"), (3, "three")])
@@ -142,6 +155,7 @@ test "iter" {
   inspect!(buf, content="[2-two][1-one]")
 }
 
+///-----------------------------------------------------------------------------
 test "to_array" {
   let map = @hashmap.of([(1, "one"), (2, "two"), (3, "three")])
   inspect!(
@@ -152,6 +166,7 @@ test "to_array" {
   )
 }
 
+///-----------------------------------------------------------------------------
 test "get_nonexistent_key" {
   let m = @hashmap.new()
   m.set("a", 1)
@@ -159,6 +174,7 @@ test "get_nonexistent_key" {
   inspect!(m.get("c"), content="None")
 }
 
+///-----------------------------------------------------------------------------
 test "remove_nonexistent_key" {
   let m = @hashmap.new()
   m.set("a", 1)
@@ -167,6 +183,7 @@ test "remove_nonexistent_key" {
   assert_eq!(m.size(), 2)
 }
 
+///-----------------------------------------------------------------------------
 test "get_nonexistent_key" {
   let m = @hashmap.new()
   m.set("a", 1)
@@ -174,6 +191,7 @@ test "get_nonexistent_key" {
   inspect!(m.get("c"), content="None")
 }
 
+///-----------------------------------------------------------------------------
 test "remove_nonexistent_key" {
   let m = @hashmap.new()
   m.set("a", 1)
@@ -182,6 +200,7 @@ test "remove_nonexistent_key" {
   assert_eq!(m.size(), 2)
 }
 
+///-----------------------------------------------------------------------------
 test "get_nonexistent_key" {
   let m = @hashmap.new()
   m.set("a", 1)
@@ -189,6 +208,7 @@ test "get_nonexistent_key" {
   inspect!(m.get("c"), content="None")
 }
 
+///-----------------------------------------------------------------------------
 test "remove_nonexistent_key" {
   let m = @hashmap.new()
   m.set("a", 1)
@@ -197,6 +217,7 @@ test "remove_nonexistent_key" {
   assert_eq!(m.size(), 2)
 }
 
+///-----------------------------------------------------------------------------
 test "get_nonexistent_key" {
   let m = @hashmap.new()
   m.set("a", 1)
@@ -204,6 +225,7 @@ test "get_nonexistent_key" {
   inspect!(m.get("c"), content="None")
 }
 
+///-----------------------------------------------------------------------------
 test "remove_nonexistent_key" {
   let m = @hashmap.new()
   m.set("a", 1)
@@ -212,6 +234,7 @@ test "remove_nonexistent_key" {
   assert_eq!(m.size(), 2)
 }
 
+///-----------------------------------------------------------------------------
 test "get_nonexistent_key_with_psl" {
   let m = @hashmap.new()
   m.set("a", 1)
@@ -268,6 +291,7 @@ test "get_nonexistent_key_with_psl" {
   inspect!(m.get("Z"), content="None")
 }
 
+///-----------------------------------------------------------------------------
 test "from_iter multiple elements iter" {
   inspect!(
     @hashmap.T::from_iter([(1, 1), (2, 2), (3, 3)].iter()),
@@ -275,6 +299,7 @@ test "from_iter multiple elements iter" {
   )
 }
 
+///-----------------------------------------------------------------------------
 test "from_iter single element iter" {
   inspect!(
     @hashmap.T::from_iter([(1, 1)].iter()),
@@ -282,6 +307,7 @@ test "from_iter single element iter" {
   )
 }
 
+///-----------------------------------------------------------------------------
 test "from_iter empty iter" {
   let map : @hashmap.T[Int, Int] = @hashmap.T::from_iter(Iter::empty())
   inspect!(map, content="HashMap::of([])")

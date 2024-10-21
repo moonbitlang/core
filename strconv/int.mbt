@@ -12,14 +12,19 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+///-----------------------------------------------------------------------------
 let int_min = 0x80000000
 
+///-----------------------------------------------------------------------------
 let int_max = 0x7fffffff
 
+///-----------------------------------------------------------------------------
 let int64_min = -0x8000000000000000L
 
+///-----------------------------------------------------------------------------
 let int64_max = 0x7fffffffffffffffL
 
+///-----------------------------------------------------------------------------
 /// Parse a string in the given base (0, 2 to 36), return a Int64 number or an error.
 /// If the `~base` argument is 0, the base will be inferred by the prefix.
 pub fn parse_int64(str : String, ~base : Int = 0) -> Int64!StrConvError {
@@ -97,6 +102,7 @@ pub fn parse_int64(str : String, ~base : Int = 0) -> Int64!StrConvError {
   n
 }
 
+///-----------------------------------------------------------------------------
 /// Parse a string in the given base (0, 2 to 36), return a Int number or an error.
 /// If the `~base` argument is 0, the base will be inferred by the prefix.
 pub fn parse_int(str : String, ~base : Int = 0) -> Int!StrConvError {
@@ -107,6 +113,7 @@ pub fn parse_int(str : String, ~base : Int = 0) -> Int!StrConvError {
   n.to_int()
 }
 
+///-----------------------------------------------------------------------------
 // Check whether the underscores are correct.
 // Underscores must appear only between digits or between a base prefix and a digit.
 fn check_underscore(str : String) -> Bool {
@@ -164,6 +171,7 @@ fn check_underscore(str : String) -> Bool {
   return last_char != '_'
 }
 
+///-----------------------------------------------------------------------------
 // Determine the base of the value.
 fn determine_base(s : String) -> Int {
   if s.length() < 2 {
@@ -177,6 +185,7 @@ fn determine_base(s : String) -> Int {
   }
 }
 
+///-----------------------------------------------------------------------------
 fn overflow_threshold(base : Int, neg : Bool) -> Int64 {
   if not(neg) {
     if base == 10 {
@@ -195,6 +204,7 @@ fn overflow_threshold(base : Int, neg : Bool) -> Int64 {
   }
 }
 
+///-----------------------------------------------------------------------------
 test "check_underscore" {
   assert_true!(check_underscore("123"))
   assert_true!(check_underscore("0x123"))
@@ -209,6 +219,7 @@ test "check_underscore" {
   assert_false!(check_underscore("123_"))
 }
 
+///-----------------------------------------------------------------------------
 test "determine_base" {
   assert_eq!(determine_base("1234"), 10)
   assert_eq!(determine_base("0x1234"), 16)
@@ -219,6 +230,7 @@ test "determine_base" {
   assert_eq!(determine_base("0B1010"), 2)
 }
 
+///-----------------------------------------------------------------------------
 test "parse_int64" {
   let tests : Array[(String, Result[Int64, String])] = [
     ("", Err(syntax_err_str)),
@@ -260,6 +272,7 @@ test "parse_int64" {
   }
 }
 
+///-----------------------------------------------------------------------------
 test "parse_int64_base" {
   let tests : Array[(String, Int, Result[Int64, String])] = [
     ("", 0, Err(syntax_err_str)),
@@ -379,6 +392,7 @@ test "parse_int64_base" {
   }
 }
 
+///-----------------------------------------------------------------------------
 test "parse_int" {
   let tests : Array[(String, Result[Int, String])] = [
     ("", Err(syntax_err_str)),

@@ -12,32 +12,40 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+///-----------------------------------------------------------------------------
 pub impl Show for Unit with output(_self, logger) { logger.write_string("()") }
 
+///-----------------------------------------------------------------------------
 pub impl Show for Bool with output(self, logger) {
   logger.write_string(self.to_string())
 }
 
+///-----------------------------------------------------------------------------
 pub impl Show for Int with output(self, logger) {
   logger.write_string(self.to_string())
 }
 
+///-----------------------------------------------------------------------------
 pub impl Show for Int64 with output(self, logger) {
   logger.write_string(self.to_string())
 }
 
+///-----------------------------------------------------------------------------
 pub impl Show for UInt with output(self, logger) {
   logger.write_string(self.to_string())
 }
 
+///-----------------------------------------------------------------------------
 pub impl Show for UInt64 with output(self, logger) {
   logger.write_string(self.to_string())
 }
 
+///-----------------------------------------------------------------------------
 pub impl Show for Byte with output(self, logger) {
   logger.write_string(self.to_string())
 }
 
+///-----------------------------------------------------------------------------
 pub impl Show for Bytes with output(self, logger) {
   fn to_hex_digit(i : Int) -> Char {
     if i < 10 {
@@ -59,12 +67,14 @@ pub impl Show for Bytes with output(self, logger) {
   logger.write_string("\"")
 }
 
+///-----------------------------------------------------------------------------
 pub impl Show for Bytes with to_string(self) {
   let buf = StringBuilder::new()
   Show::output(self, buf)
   buf.to_string()
 }
 
+///-----------------------------------------------------------------------------
 pub impl Show for String with output(self, logger) {
   logger.write_char('"')
   let mut segment_start = 0
@@ -123,8 +133,10 @@ pub impl Show for String with output(self, logger) {
   logger.write_char('"')
 }
 
+///-----------------------------------------------------------------------------
 pub impl Show for String with to_string(self) { self }
 
+///-----------------------------------------------------------------------------
 /// Returns a valid MoonBit string literal representation of a string,
 /// add quotes and escape special characters.
 pub fn escape(self : String) -> String {
@@ -133,6 +145,7 @@ pub fn escape(self : String) -> String {
   buf.to_string()
 }
 
+///-----------------------------------------------------------------------------
 pub impl[X : Show] Show for X? with output(self, logger) {
   match self {
     None => logger.write_string("None")
@@ -141,6 +154,7 @@ pub impl[X : Show] Show for X? with output(self, logger) {
   }
 }
 
+///-----------------------------------------------------------------------------
 pub impl[T : Show, E : Show] Show for Result[T, E] with output(self, logger) {
   match self {
     Ok(x) => logger..write_string("Ok(")..write_object(x).write_string(")")
@@ -148,26 +162,32 @@ pub impl[T : Show, E : Show] Show for Result[T, E] with output(self, logger) {
   }
 }
 
+///-----------------------------------------------------------------------------
 pub impl[X : Show] Show for Ref[X] with output(self, logger) {
   logger..write_string("{val: ")..write_object(self.val).write_string("}")
 }
 
+///-----------------------------------------------------------------------------
 pub impl[X : Show] Show for FixedArray[X] with output(self, logger) {
   logger.write_iter(self.iter())
 }
 
+///-----------------------------------------------------------------------------
 pub impl[X : Show] Show for Array[X] with output(self, logger) {
   logger.write_iter(self.iter())
 }
 
+///-----------------------------------------------------------------------------
 pub impl[X : Show] Show for ArrayView[X] with output(self, logger) {
   logger.write_iter(self.iter())
 }
 
+///-----------------------------------------------------------------------------
 pub fn ArrayView::to_string[X : Show](self : ArrayView[X]) -> String {
   Show::to_string(self)
 }
 
+///-----------------------------------------------------------------------------
 /// Convert Char to String
 /// @intrinsic %char.to_string
 pub fn to_string(self : Char) -> String {
@@ -176,6 +196,7 @@ pub fn to_string(self : Char) -> String {
   bytes.sub_string(0, len)
 }
 
+///-----------------------------------------------------------------------------
 pub impl Show for Char with output(self, logger) {
   fn to_hex_digit(i : Int) -> Char {
     if i < 10 {

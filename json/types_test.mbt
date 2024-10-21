@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+///-----------------------------------------------------------------------------
 test "ParseError::to_string coverage" {
   let invalidCharError = @json.InvalidChar(
     @json.Position::{ line: 1, column: 0 },

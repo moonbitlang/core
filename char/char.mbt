@@ -12,10 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+///-----------------------------------------------------------------------------
 test "to_string" {
   assert_eq!('a'.to_string(), "a")
 }
 
+///-----------------------------------------------------------------------------
 test "show output" {
   fn repr(chr) {
     let buf = StringBuilder::new(size_hint=0)
@@ -34,8 +36,10 @@ test "show output" {
   assert_eq!(repr(Char::from_int(0)), "'\\x00'")
 }
 
+///-----------------------------------------------------------------------------
 pub impl Hash for Char with hash(self) { self.to_int() }
 
+///-----------------------------------------------------------------------------
 pub impl Hash for Char with hash_combine(self, hasher) -> Unit {
   hasher.combine_char(self)
 }

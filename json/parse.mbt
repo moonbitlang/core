@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+///-----------------------------------------------------------------------------
 pub fn valid(input : String) -> Bool {
   try {
     parse!(input) |> ignore
@@ -21,6 +22,7 @@ pub fn valid(input : String) -> Bool {
   }
 }
 
+///-----------------------------------------------------------------------------
 pub fn parse(input : String) -> JsonValue!ParseError {
   let ctx = ParseContext::make(input)
   let val = parse_value!(ctx)
@@ -32,11 +34,13 @@ pub fn parse(input : String) -> JsonValue!ParseError {
   }
 }
 
+///-----------------------------------------------------------------------------
 fn parse_value(ctx : ParseContext) -> JsonValue!ParseError {
   let tok = lex_value!(ctx)
   parse_value2!(ctx, tok)
 }
 
+///-----------------------------------------------------------------------------
 fn parse_value2(ctx : ParseContext, tok : Token) -> JsonValue!ParseError {
   match tok {
     Null => Null
@@ -50,6 +54,7 @@ fn parse_value2(ctx : ParseContext, tok : Token) -> JsonValue!ParseError {
   }
 }
 
+///-----------------------------------------------------------------------------
 fn parse_object(ctx : ParseContext) -> JsonValue!ParseError {
   let map = Map::new()
   loop lex_property_name!(ctx) {
@@ -67,6 +72,7 @@ fn parse_object(ctx : ParseContext) -> JsonValue!ParseError {
   }
 }
 
+///-----------------------------------------------------------------------------
 fn parse_array(ctx : ParseContext) -> JsonValue!ParseError {
   let vec = []
   loop lex_value!(ctx, allow_rbracket=true) {

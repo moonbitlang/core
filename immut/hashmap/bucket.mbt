@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+///-----------------------------------------------------------------------------
 /// A bucket is a non-empty linked list of key-value pair,
 /// used to resolve hash collision in HAMT
 priv enum Bucket[K, V] {
@@ -19,6 +20,7 @@ priv enum Bucket[K, V] {
   More(K, V, Bucket[K, V])
 }
 
+///-----------------------------------------------------------------------------
 /// Lookup a key from the bucket
 fn find[K : Eq, V](self : Bucket[K, V], key : K) -> V? {
   match self {
@@ -32,6 +34,7 @@ fn find[K : Eq, V](self : Bucket[K, V], key : K) -> V? {
   }
 }
 
+///-----------------------------------------------------------------------------
 /// Add a new key-value pair to a bucket.
 /// Replace the old entry if one with the same key already exists.
 fn add[K : Eq, V](self : Bucket[K, V], key : K, value : V) -> Bucket[K, V] {
@@ -51,6 +54,7 @@ fn add[K : Eq, V](self : Bucket[K, V], key : K, value : V) -> Bucket[K, V] {
   }
 }
 
+///-----------------------------------------------------------------------------
 /// Remove a key from a bucket
 fn remove[K : Eq, V](self : Bucket[K, V], key : K) -> Bucket[K, V]? {
   match self {
@@ -67,6 +71,7 @@ fn remove[K : Eq, V](self : Bucket[K, V], key : K) -> Bucket[K, V]? {
   }
 }
 
+///-----------------------------------------------------------------------------
 /// Get the size of a bucket
 fn size[K, V](self : Bucket[K, V]) -> Int {
   loop self, 1 {
@@ -75,6 +80,7 @@ fn size[K, V](self : Bucket[K, V]) -> Int {
   }
 }
 
+///-----------------------------------------------------------------------------
 /// Iterate through elements of a bucket
 fn each[K, V](self : Bucket[K, V], f : (K, V) -> Unit) -> Unit {
   loop self {
@@ -86,6 +92,7 @@ fn each[K, V](self : Bucket[K, V], f : (K, V) -> Unit) -> Unit {
   }
 }
 
+///-----------------------------------------------------------------------------
 fn iter[K, V](self : Bucket[K, V]) -> Iter[(K, V)] {
   Iter::new(
     fn {
@@ -103,6 +110,7 @@ fn iter[K, V](self : Bucket[K, V]) -> Iter[(K, V)] {
   )
 }
 
+///-----------------------------------------------------------------------------
 test "Bucket" {
   let b0 : Bucket[_] = Just_One(0, 0)
   inspect!((b0.find(0), b0.find(1), b0.size()), content="(Some(0), None, 1)")
@@ -120,6 +128,7 @@ test "Bucket" {
   inspect!((b1.find(0), b1.find(1)), content="(Some(2), None)")
 }
 
+///-----------------------------------------------------------------------------
 test "Bucket::iter" {
   let b : Bucket[_] = More(0, 0, More(1, 1, Just_One(31, 31)))
   let buf = StringBuilder::new(size_hint=0)
@@ -137,6 +146,7 @@ test "Bucket::iter" {
   inspect!(buf.to_string(), content="0 => 0, 1 => 1, 31 => 31")
 }
 
+///-----------------------------------------------------------------------------
 test "Bucket::iter" {
   let b : Bucket[_] = More(0, 0, More(1, 1, Just_One(31, 31)))
   let buf = StringBuilder::new(size_hint=0)

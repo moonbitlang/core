@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+///-----------------------------------------------------------------------------
 pub impl[A : @quickcheck.Arbitrary, B : @quickcheck.Arbitrary] @quickcheck.Arbitrary for (
   A,
   B,
@@ -23,6 +24,7 @@ pub impl[A : @quickcheck.Arbitrary, B : @quickcheck.Arbitrary] @quickcheck.Arbit
   )
 }
 
+///-----------------------------------------------------------------------------
 pub impl[A : @quickcheck.Arbitrary, B : @quickcheck.Arbitrary, C : @quickcheck.Arbitrary] @quickcheck.Arbitrary for (
   A,
   B,
@@ -33,6 +35,7 @@ pub impl[A : @quickcheck.Arbitrary, B : @quickcheck.Arbitrary, C : @quickcheck.A
   (@quickcheck.Arbitrary::arbitrary(size, r0), v1, v2)
 }
 
+///-----------------------------------------------------------------------------
 pub impl[A : @quickcheck.Arbitrary, B : @quickcheck.Arbitrary, C : @quickcheck.Arbitrary, D : @quickcheck.Arbitrary] @quickcheck.Arbitrary for (
   A,
   B,
@@ -44,6 +47,7 @@ pub impl[A : @quickcheck.Arbitrary, B : @quickcheck.Arbitrary, C : @quickcheck.A
   (@quickcheck.Arbitrary::arbitrary(size, r0), v1, v2, v3)
 }
 
+///-----------------------------------------------------------------------------
 pub impl[A : @quickcheck.Arbitrary, B : @quickcheck.Arbitrary, C : @quickcheck.Arbitrary, D : @quickcheck.Arbitrary, E : @quickcheck.Arbitrary] @quickcheck.Arbitrary for (
   A,
   B,
@@ -56,6 +60,7 @@ pub impl[A : @quickcheck.Arbitrary, B : @quickcheck.Arbitrary, C : @quickcheck.A
   (@quickcheck.Arbitrary::arbitrary(size, r0), v1, v2, v3, v4)
 }
 
+///-----------------------------------------------------------------------------
 pub impl[A : @quickcheck.Arbitrary, B : @quickcheck.Arbitrary, C : @quickcheck.Arbitrary, D : @quickcheck.Arbitrary, E : @quickcheck.Arbitrary, F : @quickcheck.Arbitrary] @quickcheck.Arbitrary for (
   A,
   B,
@@ -69,6 +74,7 @@ pub impl[A : @quickcheck.Arbitrary, B : @quickcheck.Arbitrary, C : @quickcheck.A
   (@quickcheck.Arbitrary::arbitrary(size, r0), v1, v2, v3, v4, v5)
 }
 
+///-----------------------------------------------------------------------------
 pub impl[A : @quickcheck.Arbitrary, B : @quickcheck.Arbitrary, C : @quickcheck.Arbitrary, D : @quickcheck.Arbitrary, E : @quickcheck.Arbitrary, F : @quickcheck.Arbitrary, G : @quickcheck.Arbitrary] @quickcheck.Arbitrary for (
   A,
   B,

@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+///-----------------------------------------------------------------------------
 test "overflow" {
   inspect!(0x8000000000000000L, content="-9223372036854775808")
   inspect!(-0x8000000000000000L, content="-9223372036854775808")
@@ -19,11 +20,13 @@ test "overflow" {
   inspect!(-0x7fffffffffffffffL, content="-9223372036854775807")
 }
 
+///-----------------------------------------------------------------------------
 test "Int64::min_value" {
   let min_value = @int64.min_value
   assert_eq!(min_value, -9223372036854775808L)
 }
 
+///-----------------------------------------------------------------------------
 test "shift" {
   inspect!(1L << 2, content="4")
   inspect!(4L >> 2, content="1")
@@ -31,6 +34,7 @@ test "shift" {
   inspect!(2L >> 2, content="0")
 }
 
+///-----------------------------------------------------------------------------
 test "grouped test for boundary cases" {
   // Test for the smallest UInt64 value
   inspect!(UInt64::ctz(0UL), content="64")
@@ -45,6 +49,7 @@ test "grouped test for boundary cases" {
   inspect!(UInt64::ctz(0x8000000000000000UL), content="63")
 }
 
+///-----------------------------------------------------------------------------
 test "grouped test for random cases" {
   // Random cases to test various bit patterns
   inspect!(UInt64::ctz(0x0000000000000001UL), content="0")
@@ -113,6 +118,7 @@ test "grouped test for random cases" {
   inspect!(UInt64::ctz(0x8000000000000000UL), content="63")
 }
 
+///-----------------------------------------------------------------------------
 test "grouped test for boundary cases" {
   inspect!(UInt64::clz(0UL), content="64")
   inspect!(UInt64::clz(1UL), content="63")
@@ -120,6 +126,7 @@ test "grouped test for boundary cases" {
   inspect!(UInt64::clz(0x7FFFFFFFFFFFFFFFUL), content="1")
 }
 
+///-----------------------------------------------------------------------------
 test "grouped test for random cases" {
   inspect!(UInt64::clz(0x123456789ABCDEF0UL), content="3")
   inspect!(UInt64::clz(0xABCDEF0123456789UL), content="0")
@@ -129,6 +136,7 @@ test "grouped test for random cases" {
   inspect!(UInt64::clz(0x00000000000000FFUL), content="56")
 }
 
+///-----------------------------------------------------------------------------
 test "grouped test for edge cases with specific patterns" {
   inspect!(UInt64::clz(0x0000000000000000UL), content="64")
   inspect!(UInt64::clz(0xFFFFFFFFFFFFFFFFUL), content="0")
@@ -136,6 +144,7 @@ test "grouped test for edge cases with specific patterns" {
   inspect!(UInt64::clz(0x8000000000000000UL), content="0")
 }
 
+///-----------------------------------------------------------------------------
 test "grouped test for basic functionality" {
   inspect!(UInt64::popcnt(0UL), content="0")
   inspect!(UInt64::popcnt(1UL), content="1")
@@ -143,12 +152,14 @@ test "grouped test for basic functionality" {
   inspect!(UInt64::popcnt(3UL), content="2")
 }
 
+///-----------------------------------------------------------------------------
 test "grouped test for edge cases" {
   inspect!(UInt64::popcnt(0xFFFFFFFFFFFFFFFFUL), content="64")
   inspect!(UInt64::popcnt(0x8000000000000000UL), content="1")
   inspect!(UInt64::popcnt(0x7FFFFFFFFFFFFFFFUL), content="63")
 }
 
+///-----------------------------------------------------------------------------
 test "grouped test for random cases" {
   inspect!(UInt64::popcnt(0x123456789ABCDEF0UL), content="32")
   inspect!(UInt64::popcnt(0xABCDEF0123456789UL), content="32")

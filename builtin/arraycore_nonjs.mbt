@@ -12,16 +12,22 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+///-----------------------------------------------------------------------------
 priv type UninitializedArray[T] FixedArray[UnsafeMaybeUninit[T]]
 
+///-----------------------------------------------------------------------------
 fn UninitializedArray::make[T](size : Int) -> UninitializedArray[T] = "%fixedarray.make_uninit"
 
+///-----------------------------------------------------------------------------
 fn op_get[T](self : UninitializedArray[T], index : Int) -> T = "%fixedarray.get"
 
+///-----------------------------------------------------------------------------
 fn op_set[T](self : UninitializedArray[T], index : Int, value : T) = "%fixedarray.set"
 
+///-----------------------------------------------------------------------------
 fn set_null[T](self : UninitializedArray[T], index : Int) = "%fixedarray.set_null"
 
+///-----------------------------------------------------------------------------
 fn UninitializedArray::unsafe_blit[T](
   dst : UninitializedArray[T],
   dst_offset : Int,
@@ -32,6 +38,7 @@ fn UninitializedArray::unsafe_blit[T](
   FixedArray::unsafe_blit(dst._, dst_offset, src._, src_offset, len)
 }
 
+///-----------------------------------------------------------------------------
 /// @intrinsic %fixedarray.copy
 fn UninitializedArray::unsafe_blit_fixed[T](
   dst : UninitializedArray[T],
@@ -45,6 +52,7 @@ fn UninitializedArray::unsafe_blit_fixed[T](
   }
 }
 
+///-----------------------------------------------------------------------------
 /// An `Array` is a collection of values that supports random access and can
 /// grow in size.
 struct Array[T] {
@@ -52,10 +60,12 @@ struct Array[T] {
   mut len : Int
 }
 
+///-----------------------------------------------------------------------------
 fn Array::make_uninit[T](len : Int) -> Array[T] {
   { buf: UninitializedArray::make(len), len }
 }
 
+///-----------------------------------------------------------------------------
 /// Creates a new array.
 pub fn Array::new[T](~capacity : Int = 0) -> Array[T] {
   if capacity == 0 {
@@ -65,12 +75,14 @@ pub fn Array::new[T](~capacity : Int = 0) -> Array[T] {
   }
 }
 
+///-----------------------------------------------------------------------------
 /// Returns the number of elements in the array.
 /// @intrinsic %array.length
 pub fn length[T](self : Array[T]) -> Int {
   self.len
 }
 
+///-----------------------------------------------------------------------------
 /// Truncates the array to the specified length. This function is marked as
 /// `unsafe` because it directly manipulates the internal buffer of the array,
 /// which can lead to undefined behavior if not used carefully.
@@ -110,16 +122,19 @@ fn unsafe_truncate_to_length[T](self : Array[T], new_len : Int) -> Unit {
   self.len = new_len
 }
 
+///-----------------------------------------------------------------------------
 test "unsafe_truncate_to_length" {
   let arr = [1, 2, 3, 4, 5]
   unsafe_truncate_to_length(arr, 3)
   inspect!(arr, content="[1, 2, 3]")
 }
 
+///-----------------------------------------------------------------------------
 fn buffer[T](self : Array[T]) -> UninitializedArray[T] {
   self.buf
 }
 
+///-----------------------------------------------------------------------------
 fn resize_buffer[T](self : Array[T], new_capacity : Int) -> Unit {
   let new_buf = UninitializedArray::make(new_capacity)
   let old_buf = self.buf
@@ -129,6 +144,7 @@ fn resize_buffer[T](self : Array[T], new_capacity : Int) -> Unit {
   self.buf = new_buf
 }
 
+///-----------------------------------------------------------------------------
 test "array_unsafe_blit_fixed" {
   let src = FixedArray::make(5, 0)
   let dst = UninitializedArray::make(5)
@@ -141,6 +157,7 @@ test "array_unsafe_blit_fixed" {
   }
 }
 
+///-----------------------------------------------------------------------------
 test "UninitializedArray::unsafe_blit_fixed" {
   let src = FixedArray::make(5, 0)
   let dst = UninitializedArray::make(5)
@@ -153,6 +170,7 @@ test "UninitializedArray::unsafe_blit_fixed" {
   }
 }
 
+///-----------------------------------------------------------------------------
 test "UninitializedArray::unsafe_blit_fixed" {
   let src = FixedArray::make(5, 0)
   let dst = UninitializedArray::make(5)
@@ -165,6 +183,7 @@ test "UninitializedArray::unsafe_blit_fixed" {
   }
 }
 
+///-----------------------------------------------------------------------------
 test "Array::resize_buffer" {
   let arr = Array::new(capacity=2)
   arr.push(1)
@@ -180,6 +199,7 @@ test "Array::resize_buffer" {
   assert_eq!(arr[3], 4)
 }
 
+///-----------------------------------------------------------------------------
 /// Reallocate the array with a new capacity.
 fn realloc[T](self : Array[T]) -> Unit {
   let old_cap = self.length()
@@ -187,6 +207,7 @@ fn realloc[T](self : Array[T]) -> Unit {
   self.resize_buffer(new_cap)
 }
 
+///-----------------------------------------------------------------------------
 /// Reserves capacity to ensure that it can hold at least the number of elements
 /// specified by the `capacity` argument.
 ///
@@ -204,6 +225,7 @@ pub fn reserve_capacity[T](self : Array[T], capacity : Int) -> Unit {
   self.resize_buffer(capacity)
 }
 
+///-----------------------------------------------------------------------------
 /// Shrinks the capacity of the array as much as possible.
 ///
 /// # Example
@@ -224,6 +246,7 @@ pub fn shrink_to_fit[T](self : Array[T]) -> Unit {
   self.resize_buffer(self.length())
 }
 
+///-----------------------------------------------------------------------------
 /// Adds an element to the end of the array.
 ///
 /// If the array is at capacity, it will be reallocated.
@@ -242,6 +265,7 @@ pub fn push[T](self : Array[T], value : T) -> Unit {
   self.len = length + 1
 }
 
+///-----------------------------------------------------------------------------
 /// Removes the last element from a array and returns it, or `None` if it is empty.
 ///
 /// # Example
@@ -262,11 +286,13 @@ pub fn pop[T](self : Array[T]) -> T? {
   }
 }
 
+///-----------------------------------------------------------------------------
 /// @alert deprecated "Use `unsafe_pop` instead"
 pub fn pop_exn[T](self : Array[T]) -> T {
   self.unsafe_pop()
 }
 
+///-----------------------------------------------------------------------------
 /// Removes the last element from a array and returns it.
 /// 
 /// @alert unsafe "Panic if the array is empty."
@@ -280,6 +306,7 @@ pub fn unsafe_pop[T](self : Array[T]) -> T {
   v
 }
 
+///-----------------------------------------------------------------------------
 /// Remove an element from the array at a given index.
 ///
 /// Removes and returns the element at position index within the array, shifting all elements after it to the left.
@@ -308,6 +335,7 @@ pub fn remove[T](self : Array[T], index : Int) -> T {
   value
 }
 
+///-----------------------------------------------------------------------------
 /// Removes the specified range from the array and returns it.
 ///
 /// This functions returns a array range from `begin` to `end` `[begin, end)`
@@ -334,6 +362,7 @@ pub fn drain[T](self : Array[T], begin : Int, end : Int) -> Array[T] {
   v
 }
 
+///-----------------------------------------------------------------------------
 /// Inserts an element at a given index within the array.
 ///
 /// # Example

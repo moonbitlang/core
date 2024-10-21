@@ -12,11 +12,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+///-----------------------------------------------------------------------------
 //region errors
 test "throws on empty documents" {
   inspect!(@json.parse?(""), content="Err(Unexpected end of file)")
 }
 
+///-----------------------------------------------------------------------------
 test "throws on invalid characters in values" {
   inspect!(
     @json.parse?("a"),
@@ -24,6 +26,7 @@ test "throws on invalid characters in values" {
   )
 }
 
+///-----------------------------------------------------------------------------
 test "throws on invalid characters following a sign" {
   inspect!(
     @json.parse?("-a"),
@@ -31,6 +34,7 @@ test "throws on invalid characters following a sign" {
   )
 }
 
+///-----------------------------------------------------------------------------
 test "throws on invalid characters following a leading decimal point" {
   inspect!(
     @json.parse?("1.a"),
@@ -38,6 +42,7 @@ test "throws on invalid characters following a leading decimal point" {
   )
 }
 
+///-----------------------------------------------------------------------------
 test "throws on invalid characters following an exponent indicator" {
   inspect!(
     @json.parse?("1ea"),
@@ -45,6 +50,7 @@ test "throws on invalid characters following an exponent indicator" {
   )
 }
 
+///-----------------------------------------------------------------------------
 test "throws on invalid characters following an exponent sign" {
   inspect!(
     @json.parse?("1e-a"),
@@ -52,6 +58,7 @@ test "throws on invalid characters following an exponent sign" {
   )
 }
 
+///-----------------------------------------------------------------------------
 test "throws on invalid new lines in strings" {
   inspect!(
     @json.parse?("\"\n\""),
@@ -62,10 +69,12 @@ test "throws on invalid new lines in strings" {
   )
 }
 
+///-----------------------------------------------------------------------------
 test "throws on unterminated strings" {
   inspect!(@json.parse?("\""), content="Err(Unexpected end of file)")
 }
 
+///-----------------------------------------------------------------------------
 test "throws on invalid identifier start characters in property names" {
   inspect!(
     @json.parse?("{!:1}"),
@@ -73,6 +82,7 @@ test "throws on invalid identifier start characters in property names" {
   )
 }
 
+///-----------------------------------------------------------------------------
 test "throws on invalid characters following a property name" {
   inspect!(
     @json.parse?("{\"a\"!1}"),
@@ -80,6 +90,7 @@ test "throws on invalid characters following a property name" {
   )
 }
 
+///-----------------------------------------------------------------------------
 test "throws on invalid characters following a property value" {
   inspect!(
     @json.parse?("{\"a\":1!}"),
@@ -87,6 +98,7 @@ test "throws on invalid characters following a property value" {
   )
 }
 
+///-----------------------------------------------------------------------------
 test "throws on invalid characters following an array value" {
   inspect!(
     @json.parse?("[1!]"),
@@ -94,6 +106,7 @@ test "throws on invalid characters following an array value" {
   )
 }
 
+///-----------------------------------------------------------------------------
 test "throws on invalid characters in literals" {
   inspect!(
     @json.parse?("tru!"),
@@ -101,10 +114,12 @@ test "throws on invalid characters in literals" {
   )
 }
 
+///-----------------------------------------------------------------------------
 test "throws on unterminated escapes" {
   inspect!(@json.parse?("\"\\"), content="Err(Unexpected end of file)")
 }
 
+///-----------------------------------------------------------------------------
 test "throws on invalid unicode escapes" {
   inspect!(
     @json.parse?("\"\\u000g\""),
@@ -112,6 +127,7 @@ test "throws on invalid unicode escapes" {
   )
 }
 
+///-----------------------------------------------------------------------------
 test "throws on escaped digits" {
   inspect!(
     @json.parse?("\"\\0\""),
@@ -123,6 +139,7 @@ test "throws on escaped digits" {
   )
 }
 
+///-----------------------------------------------------------------------------
 test "throws on multiple values" {
   inspect!(
     @json.parse?("1 2"),
@@ -130,30 +147,37 @@ test "throws on multiple values" {
   )
 }
 
+///-----------------------------------------------------------------------------
 test "throws on unclosed objects before property names" {
   inspect!(@json.parse?("{"), content="Err(Unexpected end of file)")
 }
 
+///-----------------------------------------------------------------------------
 test "throws on unclosed objects after property names" {
   inspect!(@json.parse?("{\"a\""), content="Err(Unexpected end of file)")
 }
 
+///-----------------------------------------------------------------------------
 test "throws on unclosed objects before property values" {
   inspect!(@json.parse?("{\"a\":"), content="Err(Unexpected end of file)")
 }
 
+///-----------------------------------------------------------------------------
 test "throws on unclosed objects after property values" {
   inspect!(@json.parse?("{\"a\":1"), content="Err(Unexpected end of file)")
 }
 
+///-----------------------------------------------------------------------------
 test "throws on unclosed arrays before values" {
   inspect!(@json.parse?("["), content="Err(Unexpected end of file)")
 }
 
+///-----------------------------------------------------------------------------
 test "throws on unclosed arrays after values" {
   inspect!(@json.parse?("[1"), content="Err(Unexpected end of file)")
 }
 
+///-----------------------------------------------------------------------------
 test "throws on invalid property names" {
   inspect!(
     @json.parse?("{a:1}"),
@@ -161,6 +185,7 @@ test "throws on invalid property names" {
   )
 }
 
+///-----------------------------------------------------------------------------
 test "throws on array with extra comma" {
   inspect!(
     @json.parse?("[1,]"),
@@ -172,6 +197,7 @@ test "throws on array with extra comma" {
   )
 }
 
+///-----------------------------------------------------------------------------
 test "throws on object with extra comma" {
   inspect!(
     @json.parse?("{\"id\":0,}"),
@@ -179,6 +205,7 @@ test "throws on object with extra comma" {
   )
 }
 
+///-----------------------------------------------------------------------------
 test "throws on invalid number" {
   inspect!(
     @json.parse?("+1"),
@@ -216,6 +243,7 @@ test "throws on invalid number" {
   )
 }
 
+///-----------------------------------------------------------------------------
 test "throws on invalid chars" {
   inspect!(
     @json.parse?("[\u000c]"),

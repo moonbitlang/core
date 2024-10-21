@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+///-----------------------------------------------------------------------------
 test "to_string" {
   let empty : Array[Int] = []
   inspect!(empty, content="[]")
@@ -23,6 +24,7 @@ test "to_string" {
   inspect!(a0, content="[0, 1, 2]")
 }
 
+///-----------------------------------------------------------------------------
 test "get" {
   let v = [3]
   inspect!(v.get(-1), content="None")
@@ -30,6 +32,7 @@ test "get" {
   inspect!(v.get(1), content="None")
 }
 
+///-----------------------------------------------------------------------------
 test "op_add" {
   inspect!(([] : Array[Int]) + [], content="[]")
   inspect!(([] : Array[Int]) + [1, 2, 3, 4, 5], content="[1, 2, 3, 4, 5]")
@@ -40,6 +43,7 @@ test "op_add" {
   )
 }
 
+///-----------------------------------------------------------------------------
 test "op_equal" {
   let v1 = [3, 4, 5]
   let v2 = [3, 4, 5]
@@ -48,6 +52,7 @@ test "op_equal" {
   assert_false!(v1 == v3)
 }
 
+///-----------------------------------------------------------------------------
 test "pop" {
   let v = []
   v.push(3)
@@ -59,6 +64,7 @@ test "pop" {
   assert_eq!(v.pop(), None)
 }
 
+///-----------------------------------------------------------------------------
 test "unsafe_pop" {
   let v = []
   v.push(3)
@@ -69,6 +75,7 @@ test "unsafe_pop" {
   assert_eq!(v.length(), 0)
 }
 
+///-----------------------------------------------------------------------------
 test "push" {
   let v = [3, 4, 5]
   assert_eq!(v, [3, 4, 5])
@@ -76,6 +83,7 @@ test "push" {
   assert_eq!(v, [6, 4, 5])
 }
 
+///-----------------------------------------------------------------------------
 test "push_iter" {
   let u = [1, 2, 3]
   let v = [4, 5, 6]
@@ -83,6 +91,7 @@ test "push_iter" {
   inspect!(u, content="[1, 2, 3, 4, 5, 6]")
 }
 
+///-----------------------------------------------------------------------------
 test "drain" {
   let v = [3, 4, 5]
   let v2 = [1, 2, 3, 4, 5]
@@ -94,6 +103,7 @@ test "drain" {
   assert_eq!(v2v, [3, 4, 5])
 }
 
+///-----------------------------------------------------------------------------
 test "append" {
   let v1 = [3, 4, 5]
   let v2 = [6, 7, 8]
@@ -102,6 +112,7 @@ test "append" {
   assert_eq!(v1.length(), 6)
 }
 
+///-----------------------------------------------------------------------------
 test "each" {
   let v = [3, 4, 5]
   let mut sum = 0
@@ -111,6 +122,7 @@ test "each" {
   assert_eq!(sum, 12)
 }
 
+///-----------------------------------------------------------------------------
 test "each_rev" {
   let v = Array::new(capacity=3)
   v.push(3)
@@ -121,6 +133,7 @@ test "each_rev" {
   assert_eq!(sum, 12)
 }
 
+///-----------------------------------------------------------------------------
 test "eachi" {
   let v = [3, 4, 5]
   let mut sum = 0
@@ -131,6 +144,7 @@ test "eachi" {
   assert_eq!(sum, 15)
 }
 
+///-----------------------------------------------------------------------------
 test "rev_eachi" {
   let v = [3, 4, 5]
   let mut sum = 0
@@ -138,12 +152,14 @@ test "rev_eachi" {
   assert_eq!(sum, 15)
 }
 
+///-----------------------------------------------------------------------------
 test "clear" {
   let v = [3, 4, 5]
   v.clear()
   assert_eq!(v.length(), 0)
 }
 
+///-----------------------------------------------------------------------------
 test "map" {
   let v = [3, 4, 5]
   let e : Array[Int] = []
@@ -164,6 +180,7 @@ test "map" {
   )
 }
 
+///-----------------------------------------------------------------------------
 test "map_inplace" {
   let v = [3, 4, 5]
   let e : Array[Int] = []
@@ -173,6 +190,7 @@ test "map_inplace" {
   inspect!(e, content="[]")
 }
 
+///-----------------------------------------------------------------------------
 test "mapi" {
   let v = [3, 4, 5]
   let e : Array[Int] = []
@@ -186,6 +204,7 @@ test "mapi" {
   inspect!(e.mapi(fn(_i, x) { x + 1 }), content="[]")
 }
 
+///-----------------------------------------------------------------------------
 test "mapi_inplace" {
   let v = [3, 4, 5]
   let e : Array[Int] = []
@@ -195,11 +214,13 @@ test "mapi_inplace" {
   inspect!(e, content="[]")
 }
 
+///-----------------------------------------------------------------------------
 test "filter" {
   let arr = [1, 2, 3, 4, 5, 6]
   inspect!(arr.filter(fn(x) { x % 2 == 0 }), content="[2, 4, 6]")
 }
 
+///-----------------------------------------------------------------------------
 test "is_empty" {
   let v = []
   assert_true!(v.is_empty())
@@ -207,6 +228,7 @@ test "is_empty" {
   assert_false!(v.is_empty())
 }
 
+///-----------------------------------------------------------------------------
 test "is_sorted" {
   let v : Array[Int] = []
   assert_true!(v.is_sorted())
@@ -216,6 +238,7 @@ test "is_sorted" {
   assert_false!(v2.is_sorted())
 }
 
+///-----------------------------------------------------------------------------
 test "rev_inplace" {
   let v = [3, 4, 5]
   v.rev_inplace()
@@ -231,6 +254,7 @@ test "rev_inplace" {
   assert_eq!(empty, empty)
 }
 
+///-----------------------------------------------------------------------------
 test "rev" {
   let v = [3, 4, 5]
   let vv = v.rev()
@@ -240,6 +264,7 @@ test "rev" {
   assert_eq!(vv2, [3, 4, 5])
 }
 
+///-----------------------------------------------------------------------------
 test "split_at" {
   let v = [3, 4, 5]
   let (v1, v2) = v.split_at(1)
@@ -247,6 +272,7 @@ test "split_at" {
   assert_eq!(v2, [4, 5])
 }
 
+///-----------------------------------------------------------------------------
 test "contains" {
   let v = [3, 4, 5]
   assert_true!(v.contains(3))
@@ -255,6 +281,7 @@ test "contains" {
   assert_false!(v.contains(6))
 }
 
+///-----------------------------------------------------------------------------
 test "starts_with" {
   let v = [3, 4, 5]
   assert_true!(v.starts_with([3, 4]))
@@ -263,6 +290,7 @@ test "starts_with" {
   assert_false!(v.starts_with([3, 4, 5, 6]))
 }
 
+///-----------------------------------------------------------------------------
 test "ends_with" {
   let v = [3, 4, 5]
   assert_true!(v.ends_with([4, 5]))
@@ -271,6 +299,7 @@ test "ends_with" {
   assert_false!(v.ends_with([2, 3, 4, 5]))
 }
 
+///-----------------------------------------------------------------------------
 test "strip_prefix" {
   let v = [3, 4, 5]
   let sv = v.strip_prefix([3])
@@ -279,6 +308,7 @@ test "strip_prefix" {
   assert_eq!(v.strip_prefix([4]), None)
 }
 
+///-----------------------------------------------------------------------------
 test "strip_suffix" {
   let v = [3, 4, 5]
   let sv = v.strip_suffix([5])
@@ -287,6 +317,7 @@ test "strip_suffix" {
   assert_eq!(v.strip_suffix([4]), None)
 }
 
+///-----------------------------------------------------------------------------
 test "search" {
   let v = [3, 4, 5]
   assert_eq!(v.search(3), Some(0))
@@ -295,6 +326,7 @@ test "search" {
   assert_eq!(v.search(6), None)
 }
 
+///-----------------------------------------------------------------------------
 test "swap" {
   let v = [3, 4, 5]
   v.swap(0, 2)
@@ -303,18 +335,21 @@ test "swap" {
   assert_eq!(v, [3, 4, 5])
 }
 
+///-----------------------------------------------------------------------------
 test "remove" {
   let v = [3, 4, 5]
   assert_eq!(v.remove(1), 4)
   assert_eq!(v, [3, 5])
 }
 
+///-----------------------------------------------------------------------------
 test "retain" {
   let v = [3, 4, 5]
   v.retain(fn(x) { x > 3 })
   assert_eq!(v, [4, 5])
 }
 
+///-----------------------------------------------------------------------------
 test "resize" {
   let v = [3, 4, 5]
   v.resize(5, 0)
@@ -326,6 +361,7 @@ test "resize" {
   assert_eq!(vv.length(), 2)
 }
 
+///-----------------------------------------------------------------------------
 test "insert" {
   let v = [3, 4, 5]
   v.insert(1, 6)
@@ -333,6 +369,7 @@ test "insert" {
   assert_eq!(v.length(), 4)
 }
 
+///-----------------------------------------------------------------------------
 test "flatten" {
   let v = [[3, 4], [5, 6]]
   let vv = v.flatten()
@@ -340,6 +377,7 @@ test "flatten" {
   assert_eq!(vv.length(), 4)
 }
 
+///-----------------------------------------------------------------------------
 test "repeat" {
   let v = [3, 4]
   let vv = v.repeat(2)
@@ -347,6 +385,7 @@ test "repeat" {
   assert_eq!(vv.length(), 4)
 }
 
+///-----------------------------------------------------------------------------
 test "flatten" {
   let v = [[3, 4], [5, 6]]
   let vv = v.flatten()
@@ -354,11 +393,13 @@ test "flatten" {
   assert_eq!(vv.length(), 4)
 }
 
+///-----------------------------------------------------------------------------
 test "fold" {
   let sum = [1, 2, 3, 4, 5].fold(init=0, fn { sum, elem => sum + elem })
   assert_eq!(sum, 15)
 }
 
+///-----------------------------------------------------------------------------
 test "rev_fold" {
   let sum = [1, 2, 3, 4, 5].rev_fold(init=0, fn { sum, elem => sum + elem })
   assert_eq!(sum, 15)
@@ -369,6 +410,7 @@ test "rev_fold" {
   assert_eq!(ss0, ss1)
 }
 
+///-----------------------------------------------------------------------------
 test "foldi" {
   let sum = [1, 2, 3, 4, 5].foldi(
     init=0,
@@ -377,6 +419,7 @@ test "foldi" {
   assert_eq!(sum, 10)
 }
 
+///-----------------------------------------------------------------------------
 test "rev_foldi" {
   let sum = [1, 2, 3, 4, 5].rev_foldi(
     init=0,
@@ -390,6 +433,7 @@ test "rev_foldi" {
   assert_eq!(v0, v1)
 }
 
+///-----------------------------------------------------------------------------
 test "dedup" {
   let v = [3, 4, 4, 5, 5, 5]
   v.dedup()
@@ -397,6 +441,7 @@ test "dedup" {
   assert_eq!(v.length(), 3)
 }
 
+///-----------------------------------------------------------------------------
 test "extract_if" {
   let v = [3, 4, 5]
   let vv = v.extract_if(fn(x) { x > 3 })
@@ -405,6 +450,7 @@ test "extract_if" {
   assert_eq!(vv, [4, 5])
 }
 
+///-----------------------------------------------------------------------------
 test "chunks" {
   let v = [1, 2, 3, 4, 5, 6, 7, 8, 9]
   let chunks = v.chunks(3)
@@ -413,6 +459,7 @@ test "chunks" {
   assert_eq!(chunks2, [[1, 2], [3, 4], [5, 6], [7, 8], [9]])
 }
 
+///-----------------------------------------------------------------------------
 test "chunk_by" {
   let v = [1, 1, 2, 3, 2, 3, 2, 3, 4]
   let chunks = v.chunk_by(fn(x, y) { x <= y })
@@ -421,6 +468,7 @@ test "chunk_by" {
   assert_eq!(chunks[2], [2, 3, 4])
 }
 
+///-----------------------------------------------------------------------------
 test "split" {
   let v = [1, 0, 2, 0, 3, 0, 4]
   let chunks = v.split(fn(x) { x == 0 })
@@ -428,18 +476,21 @@ test "split" {
   assert_eq!(chunks.length(), 4)
 }
 
+///-----------------------------------------------------------------------------
 test "reserve_capacity" {
   let v = [1]
   // Only test that it doesn't panic
   v.reserve_capacity(10)
 }
 
+///-----------------------------------------------------------------------------
 test "reserve_capacity_2" {
   let v = [1, 2, 3, 4, 5]
   // Only test that it doesn't panic
   v.reserve_capacity(3)
 }
 
+///-----------------------------------------------------------------------------
 test "shrink_to_fit" {
   let v = Array::new(capacity=10)
   v.push(1)
@@ -449,12 +500,14 @@ test "shrink_to_fit" {
   v.shrink_to_fit()
 }
 
+///-----------------------------------------------------------------------------
 test "shrink_to_fit_2" {
   let v = [1, 2, 3]
   // Only test that it doesn't panic
   v.shrink_to_fit()
 }
 
+///-----------------------------------------------------------------------------
 test "iter" {
   let buf = StringBuilder::new(size_hint=5)
   [1, 2, 3, 4, 5].iter().each(fn { x => buf.write_string(x.to_string()) })
@@ -467,6 +520,7 @@ test "iter" {
   inspect!(buf, content="12")
 }
 
+///-----------------------------------------------------------------------------
 test "shuffle_in_place" {
   let arr : Array[Int] = [1, 2, 3, 4, 5, 6, 7]
   fn rand(upper : Int) -> Int {
@@ -480,12 +534,14 @@ test "shuffle_in_place" {
   inspect!(arr, content="[3, 2, 1, 5, 6, 7, 4]")
 }
 
+///-----------------------------------------------------------------------------
 test "search_by" {
   let arr : Array[Int] = [1, 2, 3, 4, 5, 6, 7]
   let index = arr.search_by(fn(x) { x == 3 })
   assert_eq!(index, Some(2))
 }
 
+///-----------------------------------------------------------------------------
 test "copy" {
   let arr = [1, 2, 3, 4, 5]
   let copied = arr.copy()
@@ -494,27 +550,32 @@ test "copy" {
   inspect!(([] : Array[Int]).copy(), content="[]")
 }
 
+///-----------------------------------------------------------------------------
 test "Array::makei with positive length" {
   let arr = Array::makei(5, fn(i) { i * 2 })
   assert_eq!(arr, [0, 2, 4, 6, 8])
 }
 
+///-----------------------------------------------------------------------------
 test "Array::makei with zero length" {
   let arr = Array::makei(0, fn(i) { i * 2 })
   assert_eq!(arr, [])
 }
 
+///-----------------------------------------------------------------------------
 test "Array::makei with negative length" {
   let arr = Array::makei(-1, fn(i) { i * 2 })
   assert_eq!(arr, [])
 }
 
+///-----------------------------------------------------------------------------
 test "map_option" {
   let arr = [1, 2, 3, 4, 5]
   let mapped = arr.map_option(fn(x) { if x % 2 == 0 { Some(x) } else { None } })
   inspect!(mapped, content="[2, 4]")
 }
 
+///-----------------------------------------------------------------------------
 test "from_iter" {
   let arr : Array[Int] = []
   inspect!(Array::from_iter(arr.iter()), content="[]")
@@ -522,6 +583,7 @@ test "from_iter" {
   inspect!(Array::from_iter(arr.iter()), content="[1, 2, 3, 4, 5]")
 }
 
+///-----------------------------------------------------------------------------
 test "Array::iter2" {
   let arr = [1, 2, 3]
   let v = arr.iter2()
@@ -533,6 +595,7 @@ test "Array::iter2" {
   inspect!(res, content="(0, 1)(1, 2)(2, 3)")
 }
 
+///-----------------------------------------------------------------------------
 test "Array::last" {
   // Test with a random array of integers
   inspect!([1, 2, 3, 4, 5].last(), content="Some(5)")
@@ -551,6 +614,7 @@ test "Array::last" {
   inspect!([1].last(), content="Some(1)")
 }
 
+///-----------------------------------------------------------------------------
 test "arbitrary" {
   let arr : Array[Array[Int]] = @quickcheck.samples(20)
   inspect!(arr[5:9], content="[[0], [0], [0], [0, 0, 0]]")

@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+///-----------------------------------------------------------------------------
 test "get as null" {
   inspect!(Null |> @json.as_null, content="Some(())")
   inspect!(True |> @json.as_null, content="None")
@@ -25,6 +26,7 @@ test "get as null" {
   )
 }
 
+///-----------------------------------------------------------------------------
 test "get as bool" {
   inspect!(Json::Null |> @json.as_bool, content="None")
   inspect!(Json::True |> @json.as_bool, content="Some(true)")
@@ -38,14 +40,17 @@ test "get as bool" {
   inspect!({ "key": "key", "value": 100.0 } |> @json.as_bool, content="None")
 }
 
+///-----------------------------------------------------------------------------
 fn check!(x : String) -> Json {
   @json.parse!(x)
 }
 
+///-----------------------------------------------------------------------------
 fn check2!(x : String) -> Json!@json.ParseError {
   @json.parse!(x)
 }
 
+///-----------------------------------------------------------------------------
 test "get as number" {
   let _ = check
   let _ = check2
@@ -67,6 +72,7 @@ test "get as number" {
   )
 }
 
+///-----------------------------------------------------------------------------
 test "get as string" {
   inspect!(Json::Null |> @json.as_string, content="None")
   inspect!(Json::True |> @json.as_string, content="None")
@@ -91,6 +97,7 @@ test "get as string" {
   )
 }
 
+///-----------------------------------------------------------------------------
 test "get as array" {
   inspect!(Json::Null |> @json.as_array, content="None")
   inspect!(Json::True |> @json.as_array, content="None")
@@ -126,6 +133,7 @@ test "get as array" {
   )
 }
 
+///-----------------------------------------------------------------------------
 test "get as object" {
   inspect!(
     Json::Null |> @json.as_object |> @option.map(Map::to_array),
@@ -199,6 +207,7 @@ test "get as object" {
   )
 }
 
+///-----------------------------------------------------------------------------
 test "deep access" {
   let json : Json = {
     "key": [1.0, true, Null, [], { "key": "value", "value": 100.0 }],
@@ -244,6 +253,7 @@ test "deep access" {
   )
 }
 
+///-----------------------------------------------------------------------------
 test "stringify" {
   let json : Json = {
     "key": [1.0, true, Null, [], { "key": "value", "value": 100.0 }],
@@ -271,6 +281,7 @@ test "stringify" {
   assert_eq!(newjson, json)
 }
 
+///-----------------------------------------------------------------------------
 test "stringify escape" {
   let json : Json = {
     "\b": "\"hello\"",
@@ -318,6 +329,7 @@ test "stringify escape" {
   }
 }
 
+///-----------------------------------------------------------------------------
 test "escape" {
   let s = "http://example.com/"
   inspect!(
@@ -334,6 +346,7 @@ test "escape" {
   )
 }
 
+///-----------------------------------------------------------------------------
 test "stringify number" {
   let nums : Array[Json] = [
     0.0,
@@ -378,6 +391,7 @@ test "stringify number" {
   )
 }
 
+///-----------------------------------------------------------------------------
 test "stringify with indent" {
   let json : Json = {
     "key": [1.0, true, Null, [], { "key": "value", "value": 100.0 }],

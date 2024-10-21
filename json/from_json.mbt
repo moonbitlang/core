@@ -12,13 +12,16 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+///-----------------------------------------------------------------------------
 pub type! JsonDecodeError (JsonPath, String) derive(Eq, Show)
 
+///-----------------------------------------------------------------------------
 /// Trait for types that can be converted from `Json`
 pub trait FromJson {
   from_json(Json, JsonPath) -> Self!JsonDecodeError
 }
 
+///-----------------------------------------------------------------------------
 pub fn from_json[T : FromJson](
   json : Json,
   ~path : JsonPath = Root
@@ -26,10 +29,12 @@ pub fn from_json[T : FromJson](
   FromJson::from_json!(json, path)
 }
 
+///-----------------------------------------------------------------------------
 fn decode_error[T](path : JsonPath, msg : String) -> T!JsonDecodeError {
   raise JsonDecodeError((path, msg))
 }
 
+///-----------------------------------------------------------------------------
 pub impl FromJson for Bool with from_json(json, path) {
   match json {
     true => true
@@ -38,6 +43,7 @@ pub impl FromJson for Bool with from_json(json, path) {
   }
 }
 
+///-----------------------------------------------------------------------------
 pub impl FromJson for Int with from_json(json, path) {
   match json {
     Number(n) => n.to_int()
@@ -45,6 +51,7 @@ pub impl FromJson for Int with from_json(json, path) {
   }
 }
 
+///-----------------------------------------------------------------------------
 pub impl FromJson for Int64 with from_json(json, path) {
   match json {
     Number(n) => n.to_int64()
@@ -52,6 +59,7 @@ pub impl FromJson for Int64 with from_json(json, path) {
   }
 }
 
+///-----------------------------------------------------------------------------
 pub impl FromJson for Double with from_json(json, path) {
   match json {
     Number(n) => n
@@ -59,6 +67,7 @@ pub impl FromJson for Double with from_json(json, path) {
   }
 }
 
+///-----------------------------------------------------------------------------
 pub impl FromJson for String with from_json(json, path) {
   match json {
     String(a) => a
@@ -66,6 +75,7 @@ pub impl FromJson for String with from_json(json, path) {
   }
 }
 
+///-----------------------------------------------------------------------------
 pub impl FromJson for Char with from_json(json, path) {
   match json {
     String(a) =>
@@ -78,6 +88,7 @@ pub impl FromJson for Char with from_json(json, path) {
   }
 }
 
+///-----------------------------------------------------------------------------
 pub impl FromJson for BigInt with from_json(json, path) {
   match json {
     String(s) => BigInt::from_string(s)
@@ -85,6 +96,7 @@ pub impl FromJson for BigInt with from_json(json, path) {
   }
 }
 
+///-----------------------------------------------------------------------------
 pub impl[X : FromJson] FromJson for Array[X] with from_json(json, path) {
   match json {
     Array(a) => {
@@ -100,6 +112,7 @@ pub impl[X : FromJson] FromJson for Array[X] with from_json(json, path) {
   }
 }
 
+///-----------------------------------------------------------------------------
 pub impl[X : FromJson] FromJson for FixedArray[X] with from_json(json, path) {
   match json {
     Array(a) => {
@@ -122,6 +135,7 @@ pub impl[X : FromJson] FromJson for FixedArray[X] with from_json(json, path) {
   }
 }
 
+///-----------------------------------------------------------------------------
 pub impl[V : FromJson] FromJson for Map[String, V] with from_json(json, path) {
   // Note in theory, we can make it more general like
   // Map[K : FromString, V : FromJson]
@@ -142,6 +156,7 @@ pub impl[V : FromJson] FromJson for Map[String, V] with from_json(json, path) {
   }
 }
 
+///-----------------------------------------------------------------------------
 pub impl[T : FromJson] FromJson for T? with from_json(json, path) {
   match json {
     Null => None
@@ -150,6 +165,7 @@ pub impl[T : FromJson] FromJson for T? with from_json(json, path) {
   }
 }
 
+///-----------------------------------------------------------------------------
 pub impl[Ok : FromJson, Err : FromJson] FromJson for Result[Ok, Err] with from_json(
   json,
   path
@@ -172,6 +188,7 @@ pub impl[Ok : FromJson, Err : FromJson] FromJson for Result[Ok, Err] with from_j
   }
 }
 
+///-----------------------------------------------------------------------------
 // unit
 pub impl FromJson for Unit with from_json(json, path) {
   match json {

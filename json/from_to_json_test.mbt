@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+///-----------------------------------------------------------------------------
 enum Expr {
   Add(Expr, Expr)
   Sub(Expr, Expr)
@@ -20,6 +21,7 @@ enum Expr {
   Val(String)
 } derive(ToJson, FromJson, Show, Eq)
 
+///-----------------------------------------------------------------------------
 test {
   let e = Expr::Add(Val("x"), Val("y"))
   let ej = e.to_json()

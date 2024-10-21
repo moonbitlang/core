@@ -16,11 +16,13 @@
 // The types stored in set need to implement the Compare trait.
 // All operations over sets are purely applicative (no side-effects).
 
+///-----------------------------------------------------------------------------
 test "new" {
   let empty : @sorted_set.T[Int] = @sorted_set.new()
   inspect!(empty, content="@immut/sorted_set.of([])")
 }
 
+///-----------------------------------------------------------------------------
 test "disjoint" {
   inspect!(
     @sorted_set.of([1]).disjoint(@sorted_set.of([1, 2, 3])),
@@ -40,6 +42,7 @@ test "disjoint" {
   )
 }
 
+///-----------------------------------------------------------------------------
 test "subset" {
   inspect!(
     @sorted_set.of([1, 2, 3]).subset(
@@ -53,6 +56,7 @@ test "subset" {
   )
 }
 
+///-----------------------------------------------------------------------------
 test "diff" {
   let empty = @sorted_set.new()
   inspect!(
@@ -73,6 +77,7 @@ test "diff" {
   )
 }
 
+///-----------------------------------------------------------------------------
 test "inter" {
   inspect!(
     @sorted_set.of([3, 4, 5]).inter(@sorted_set.of([4, 5, 6])),
@@ -84,6 +89,7 @@ test "inter" {
   )
 }
 
+///-----------------------------------------------------------------------------
 test "union" {
   let empty = @sorted_set.new()
   inspect!(
@@ -108,6 +114,7 @@ test "union" {
   )
 }
 
+///-----------------------------------------------------------------------------
 test "map" {
   inspect!(
     @sorted_set.of([1, 2, 3, 4, 5]).map(fn(x) { x * 2 }),
@@ -115,16 +122,19 @@ test "map" {
   )
 }
 
+///-----------------------------------------------------------------------------
 test "all" {
   inspect!(@sorted_set.of([2, 4, 6]).all(fn(v) { v % 2 == 0 }), content="true")
   inspect!(@sorted_set.of([1, 3, 5]).all(fn(v) { v % 2 == 0 }), content="false")
 }
 
+///-----------------------------------------------------------------------------
 test "any" {
   inspect!(@sorted_set.of([1, 4, 3]).any(fn(v) { v % 2 == 0 }), content="true")
   inspect!(@sorted_set.of([1, 5, 3]).any(fn(v) { v % 2 == 0 }), content="false")
 }
 
+///-----------------------------------------------------------------------------
 test "fold" {
   inspect!(
     @sorted_set.of([1, 2, 3, 4, 5]).fold(init=0, fn(acc, x) { acc + x }),
@@ -132,6 +142,7 @@ test "fold" {
   )
 }
 
+///-----------------------------------------------------------------------------
 test "filter" {
   inspect!(
     @sorted_set.of([1, 2, 3, 4, 5, 6]).filter(fn(v) { v % 2 == 0 }),
@@ -139,6 +150,7 @@ test "filter" {
   )
 }
 
+///-----------------------------------------------------------------------------
 test "split" {
   let (left, present, right) = @sorted_set.of([7, 2, 9, 4, 5, 6, 3, 8, 1]).split(
     5,
@@ -154,6 +166,7 @@ test "split" {
   inspect!(right, content="@immut/sorted_set.of([1, 2, 3, 4, 5, 6, 7, 8, 9])")
 }
 
+///-----------------------------------------------------------------------------
 test "contain" {
   inspect!(
     @sorted_set.of([7, 2, 9, 4, 6, 3, 8, 1]).add(5).contains(5),
@@ -165,6 +178,7 @@ test "contain" {
   )
 }
 
+///-----------------------------------------------------------------------------
 test "to_array" {
   inspect!(
     @sorted_set.of([7, 2, 9, 4, 5, 6, 3, 8, 1]).to_array(),
@@ -172,6 +186,7 @@ test "to_array" {
   )
 }
 
+///-----------------------------------------------------------------------------
 test "from_fixed_array" {
   inspect!(
     @sorted_set.of([7, 2, 9, 4, 5, 6, 3, 8, 1]),
@@ -179,6 +194,7 @@ test "from_fixed_array" {
   )
 }
 
+///-----------------------------------------------------------------------------
 test "from_array" {
   inspect!(
     @sorted_set.of([7, 2, 9, 4, 5, 6, 3, 8, 1]),
@@ -186,6 +202,7 @@ test "from_array" {
   )
 }
 
+///-----------------------------------------------------------------------------
 test "remove_min" {
   inspect!(
     @sorted_set.of([3, 4, 5]).remove_min(),
@@ -193,6 +210,7 @@ test "remove_min" {
   )
 }
 
+///-----------------------------------------------------------------------------
 test "add" {
   inspect!(
     @sorted_set.of([7, 2, 9, 4, 6, 3, 8, 1]).add(5),
@@ -226,6 +244,7 @@ test "add" {
   )
 }
 
+///-----------------------------------------------------------------------------
 test "remove" {
   let empty = @sorted_set.new()
   inspect!(empty.remove(1), content="@immut/sorted_set.of([])")
@@ -251,10 +270,12 @@ test "remove" {
   )
 }
 
+///-----------------------------------------------------------------------------
 test "min" {
   inspect!(@sorted_set.of([7, 2, 9, 4, 5, 6, 3, 8, 1]).min(), content="1")
 }
 
+///-----------------------------------------------------------------------------
 test "min_option" {
   let empty : @sorted_set.T[Int] = @sorted_set.new()
   inspect!(empty.min_option(), content="None")
@@ -264,10 +285,12 @@ test "min_option" {
   )
 }
 
+///-----------------------------------------------------------------------------
 test "max" {
   inspect!(@sorted_set.of([7, 2, 9, 4, 5, 6, 3, 8, 1]).max(), content="9")
 }
 
+///-----------------------------------------------------------------------------
 test "max_option" {
   let empty : @sorted_set.T[Int] = @sorted_set.new()
   inspect!(empty.max_option(), content="None")
@@ -277,11 +300,13 @@ test "max_option" {
   )
 }
 
+///-----------------------------------------------------------------------------
 test "is_empty" {
   inspect!((@sorted_set.of([]) : @sorted_set.T[Int]).is_empty(), content="true")
   inspect!(@sorted_set.of([1]).is_empty(), content="false")
 }
 
+///-----------------------------------------------------------------------------
 test "to_string" {
   inspect!(
     @sorted_set.of([1, 2, 3, 4, 5]),
@@ -293,6 +318,7 @@ test "to_string" {
   )
 }
 
+///-----------------------------------------------------------------------------
 test "iter" {
   let mut s = ""
   @sorted_set.of([7, 2, 9, 4, 5, 6, 3, 8, 1]).each(fn(x) { s += x.to_string() })
@@ -358,6 +384,7 @@ test "iter" {
 //   sub(array.length(), array[:]).0
 // }
 
+///-----------------------------------------------------------------------------
 test "split with value not in set" {
   let set = @sorted_set.of([1, 2, 3, 4, 5])
   let (left, present, right) = set.split(6)
@@ -366,24 +393,28 @@ test "split with value not in set" {
   inspect!(right, content="@immut/sorted_set.of([])")
 }
 
+///-----------------------------------------------------------------------------
 test "remove_min on non-empty set" {
   let set = @sorted_set.of([3, 4, 5])
   let new_set = set.remove_min()
   inspect!(new_set, content="@immut/sorted_set.of([4, 5])")
 }
 
+///-----------------------------------------------------------------------------
 test "min on non-empty set" {
   let set = @sorted_set.of([7, 2, 9, 4, 5, 6, 3, 8, 1])
   let min_value = set.min()
   inspect!(min_value, content="1")
 }
 
+///-----------------------------------------------------------------------------
 test "max on non-empty set" {
   let set = @sorted_set.of([7, 2, 9, 4, 5, 6, 3, 8, 1])
   let max_value = set.max()
   inspect!(max_value, content="9")
 }
 
+///-----------------------------------------------------------------------------
 test "union with different heights" {
   let set1 = @sorted_set.of([3, 4, 5])
   let set2 = @sorted_set.of([4, 5, 6])
@@ -391,6 +422,7 @@ test "union with different heights" {
   inspect!(union_set, content="@immut/sorted_set.of([3, 4, 5, 6])")
 }
 
+///-----------------------------------------------------------------------------
 test "disjoint with different sets" {
   let set1 = @sorted_set.of([1, 2, 3])
   let set2 = @sorted_set.of([4, 5, 6])
@@ -398,6 +430,7 @@ test "disjoint with different sets" {
   inspect!(disjoint, content="true")
 }
 
+///-----------------------------------------------------------------------------
 test "union with different heights" {
   let set1 = @sorted_set.of([3, 4, 5])
   let set2 = @sorted_set.of([4, 5, 6])
@@ -405,6 +438,7 @@ test "union with different heights" {
   inspect!(union_set, content="@immut/sorted_set.of([3, 4, 5, 6])")
 }
 
+///-----------------------------------------------------------------------------
 test "disjoint with different sets" {
   let set1 = @sorted_set.of([1, 2, 3])
   let set2 = @sorted_set.of([4, 5, 6])
@@ -412,6 +446,7 @@ test "disjoint with different sets" {
   inspect!(disjoint, content="true")
 }
 
+///-----------------------------------------------------------------------------
 test "union with different heights" {
   let set1 = @sorted_set.of([3, 4, 5])
   let set2 = @sorted_set.of([4, 5, 6])
@@ -419,6 +454,7 @@ test "union with different heights" {
   inspect!(union_set, content="@immut/sorted_set.of([3, 4, 5, 6])")
 }
 
+///-----------------------------------------------------------------------------
 test "disjoint with different sets" {
   let set1 = @sorted_set.of([1, 2, 3])
   let set2 = @sorted_set.of([4, 5, 6])
@@ -426,6 +462,7 @@ test "disjoint with different sets" {
   inspect!(disjoint, content="true")
 }
 
+///-----------------------------------------------------------------------------
 test "from_iter multiple elements iter" {
   inspect!(
     @sorted_set.T::from_iter([1, 2, 3].iter()),
@@ -433,6 +470,7 @@ test "from_iter multiple elements iter" {
   )
 }
 
+///-----------------------------------------------------------------------------
 test "from_iter single element iter" {
   inspect!(
     @sorted_set.T::from_iter([1].iter()),
@@ -440,11 +478,13 @@ test "from_iter single element iter" {
   )
 }
 
+///-----------------------------------------------------------------------------
 test "from_iter empty iter" {
   let pq : @sorted_set.T[Int] = @sorted_set.T::from_iter(Iter::empty())
   inspect!(pq, content="@immut/sorted_set.of([])")
 }
 
+///-----------------------------------------------------------------------------
 test "iter" {
   let buf = StringBuilder::new(size_hint=20)
   let set = [2, 7, 1, 2, 3, 4, 5] |> @sorted_set.of

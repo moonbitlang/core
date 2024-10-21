@@ -12,30 +12,37 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+///-----------------------------------------------------------------------------
 struct RandomState {
   mut seed : UInt64
   gamma : UInt64
 } derive(Show, Default)
 
+///-----------------------------------------------------------------------------
 let golden_gamma : UInt64 = 0x9e3779b97f4a7c15
 
+///-----------------------------------------------------------------------------
 let double_ulp : Double = 1.0 / (1L << 53).to_double()
 
+///-----------------------------------------------------------------------------
 /// Create a new RandomState from an optional seed.
 pub fn RandomState::new(~seed : UInt64 = 37) -> RandomState {
   { seed: mix64(seed), gamma: mix_gamma(seed + golden_gamma) }
 }
 
+///-----------------------------------------------------------------------------
 /// Clone a RandomState.
 pub fn clone(self : RandomState) -> RandomState {
   { ..self }
 }
 
+///-----------------------------------------------------------------------------
 /// Skip the next random number.
 pub fn next(self : RandomState) -> Unit {
   self.next_uint64() |> ignore
 }
 
+///-----------------------------------------------------------------------------
 /// Get the next random number as a 64-bit unsigned integer.
 pub fn next_uint64(self : RandomState) -> UInt64 {
   let { seed, gamma } = self
@@ -43,27 +50,32 @@ pub fn next_uint64(self : RandomState) -> UInt64 {
   mix64(self.seed)
 }
 
+///-----------------------------------------------------------------------------
 /// Get the next random number as a 32-bit unsigned integer.
 pub fn next_uint(self : RandomState) -> UInt {
   self.next_uint64().to_uint()
 }
 
+///-----------------------------------------------------------------------------
 /// Get the next random number as a 64-bit signed integer.
 pub fn next_int64(self : RandomState) -> Int64 {
   self.next_uint64().reinterpret_as_int64()
 }
 
+///-----------------------------------------------------------------------------
 /// Get the next two random number as 32-bit signed integers.
 pub fn next_two_uint(self : RandomState) -> (UInt, UInt) {
   let g = self.next_uint64()
   ((g >> 32).to_uint(), g.to_uint())
 }
 
+///-----------------------------------------------------------------------------
 /// Get the next random number as a 32-bit signed integer.
 pub fn next_int(self : RandomState) -> Int {
   self.next_uint().reinterpret_as_int()
 }
 
+///-----------------------------------------------------------------------------
 /// Get the next random number as a positive 32-bit signed integer.
 pub fn next_positive_int(self : RandomState) -> Int {
   let r = self.next_int()
@@ -74,12 +86,14 @@ pub fn next_positive_int(self : RandomState) -> Int {
   }
 }
 
+///-----------------------------------------------------------------------------
 /// Get the next random number as a double.
 pub fn next_double(self : RandomState) -> Double {
   let u = self.next_uint64()
   (u >> 11).to_double() * double_ulp
 }
 
+///-----------------------------------------------------------------------------
 /// Generates an independent random number generator.
 pub fn split(self : RandomState) -> RandomState {
   let seed1 = self.seed + self.gamma
@@ -87,26 +101,31 @@ pub fn split(self : RandomState) -> RandomState {
   { seed: mix64(seed1), gamma: mix_gamma(self.seed) }
 }
 
+///-----------------------------------------------------------------------------
 fn shift_xor(n : Int, w : UInt64) -> UInt64 {
   w ^ (w >> n)
 }
 
+///-----------------------------------------------------------------------------
 fn shift_xor_mul(n : Int, k : UInt64, w : UInt64) -> UInt64 {
   shift_xor(n, w) * k
 }
 
+///-----------------------------------------------------------------------------
 fn mix64(z0 : UInt64) -> UInt64 {
   let z1 = shift_xor_mul(30, 0xff51afd7ed558ccd, z0)
   let z2 = shift_xor_mul(33, 0xc4ceb9fe1a85ec53, z1)
   shift_xor(33, z2)
 }
 
+///-----------------------------------------------------------------------------
 fn mix64variant13(z0 : UInt64) -> UInt64 {
   let z1 = shift_xor_mul(30, 0xbf58476d1ce4e5b9, z0)
   let z2 = shift_xor_mul(27, 0x94d049bb133111eb, z1)
   shift_xor(31, z2)
 }
 
+///-----------------------------------------------------------------------------
 fn mix_gamma(z0 : UInt64) -> UInt64 {
   let z1 = mix64variant13(z0 | 1)
   let n = (z1 | (z1 >> 1)).popcnt()

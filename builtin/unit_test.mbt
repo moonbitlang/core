@@ -12,12 +12,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+///-----------------------------------------------------------------------------
 test {
   let unit1 = ()
   let unit2 = ()
   assert_eq!(unit1, unit2)
 }
 
+///-----------------------------------------------------------------------------
 test {
   let unit1 = ()
   let unit2 = ()

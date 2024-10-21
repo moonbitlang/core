@@ -12,12 +12,16 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+///-----------------------------------------------------------------------------
 let logf_off = 0x3f330000U
 
+///-----------------------------------------------------------------------------
 let logf_table_bits = 4
 
+///-----------------------------------------------------------------------------
 let logf_n : UInt = 1U << logf_table_bits
 
+///-----------------------------------------------------------------------------
 priv struct LogfData {
   invc : Array[Double]
   logc : Array[Double]
@@ -25,6 +29,7 @@ priv struct LogfData {
   poly : Array[Double]
 }
 
+///-----------------------------------------------------------------------------
 let logf_data : LogfData = {
   invc: [
     0x1.661ec79f8f3bep+0, 0x1.571ed4aaf883dp+0, 0x1.49539f0f010bp+0, 0x1.3c995b0b80385p+0,
@@ -42,6 +47,7 @@ let logf_data : LogfData = {
   poly: [-0x1.00ea348b88334p-2, 0x1.5575b0be00b6ap-2, -0x1.ffffef20a4123p-2],
 }
 
+///-----------------------------------------------------------------------------
 pub fn ln(self : Float) -> Float {
   let mut ix : UInt = self.reinterpret_as_int().reinterpret_as_uint()
   if ix == 0x3f800000U {

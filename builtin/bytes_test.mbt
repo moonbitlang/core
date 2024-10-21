@@ -12,23 +12,27 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+///-----------------------------------------------------------------------------
 test "to_string" {
   let bytes = Bytes::of_string("Hello, World!")
   assert_eq!(bytes.to_string(), "Hello, World!")
 }
 
+///-----------------------------------------------------------------------------
 test "of_string" {
   let str = "Hello, World!"
   let bytes = Bytes::of_string(str)
   assert_eq!(bytes.length(), str.length() * 2)
 }
 
+///-----------------------------------------------------------------------------
 test "sub_string" {
   let bytes = Bytes::of_string("Hello, World!")
   assert_eq!(bytes.sub_string(0, 5 * 2), "Hello")
   // assert_eq(bytes.sub_string(10, 5 * 2), "World")?
 }
 
+///-----------------------------------------------------------------------------
 test "blit_from_string" {
   let bytes = Bytes::new(10)
   let str = "Hello"
@@ -36,12 +40,14 @@ test "blit_from_string" {
   assert_eq!(bytes.sub_string(0, str.length() * 2), str)
 }
 
+///-----------------------------------------------------------------------------
 test "copy" {
   let bytes = Bytes::of_string("Hello, World!")
   let copy_bytes = bytes.copy()
   assert_eq!(copy_bytes.to_string(), bytes.to_string())
 }
 
+///-----------------------------------------------------------------------------
 test "set_utf8_char" {
   let bytes = Bytes::new(10)
   let char = 'A'
@@ -52,6 +58,7 @@ test "set_utf8_char" {
   inspect!(bytes.sub_string(0, 2), content="A")
 }
 
+///-----------------------------------------------------------------------------
 test "set_utf16_char" {
   let bytes = Bytes::new(10)
   let char = 'A'
@@ -60,6 +67,7 @@ test "set_utf16_char" {
   assert_eq!(bytes.sub_string(0, 2), "A")
 }
 
+///-----------------------------------------------------------------------------
 test "op_equal" {
   let bytes = Bytes::of_string("Hello, World!")
   let copy_bytes = bytes.copy()

@@ -12,11 +12,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+///-----------------------------------------------------------------------------
 test "new" {
   let queue : @priority_queue.T[Int] = @priority_queue.new()
   assert_eq!(queue.length(), 0)
 }
 
+///-----------------------------------------------------------------------------
 test "from_array" {
   let pq = @priority_queue.of([1, 3, 6, 4, 5])
   inspect!(pq.peek(), content="Some(6)")
@@ -24,11 +26,13 @@ test "from_array" {
   inspect!(pq_.peek(), content="None")
 }
 
+///-----------------------------------------------------------------------------
 test "from_fixed_array" {
   let pq = @priority_queue.of([1, 2, 3, 4, 5])
   assert_eq!(pq.peek(), Some(5))
 }
 
+///-----------------------------------------------------------------------------
 test "copy" {
   let v = @priority_queue.of([1, 2, 3, 4])
   let ve = v.copy()
@@ -39,11 +43,13 @@ test "copy" {
   inspect!(ve.peek(), content="Some(4)")
 }
 
+///-----------------------------------------------------------------------------
 test "to_array" {
   let v = @priority_queue.of([1, 6, 3, 4, 9, 2, 1])
   inspect!(v.to_array(), content="[9, 6, 4, 3, 2, 1, 1]")
 }
 
+///-----------------------------------------------------------------------------
 test "iter" {
   let buf = StringBuilder::new(size_hint=20)
   let v = @priority_queue.of([1, 2, 3])
@@ -58,6 +64,7 @@ test "iter" {
   inspect!(buf, content="[3][2]")
 }
 
+///-----------------------------------------------------------------------------
 test "length" {
   let pq = @priority_queue.new()
   assert_eq!(pq.length(), 0)
@@ -69,6 +76,7 @@ test "length" {
   assert_eq!(pq.length(), 1)
 }
 
+///-----------------------------------------------------------------------------
 test "unsafe_pop" {
   let pq = @priority_queue.of([5, 5, 4, 3, 2, 1])
   inspect!(pq.length(), content="6")
@@ -82,6 +90,7 @@ test "unsafe_pop" {
   inspect!(pq_.length(), content="0")
 }
 
+///-----------------------------------------------------------------------------
 test "pop" {
   let pq = @priority_queue.of([1, 2, 3, 4, 5, 5])
   assert_eq!(pq.pop(), Some(5))
@@ -92,6 +101,7 @@ test "pop" {
   inspect!(pq_.length(), content="0")
 }
 
+///-----------------------------------------------------------------------------
 test "push" {
   let pq = @priority_queue.of([5, 4, 3, 2, 1])
   pq.push(-1)
@@ -100,6 +110,7 @@ test "push" {
   assert_eq!(pq.peek(), Some(6))
 }
 
+///-----------------------------------------------------------------------------
 test "peek" {
   let pq = @priority_queue.of([1, 2, 3, 4, 5])
   assert_eq!(pq.peek(), Some(5))
@@ -107,12 +118,14 @@ test "peek" {
   assert_eq!(pq.peek(), None)
 }
 
+///-----------------------------------------------------------------------------
 test "clear" {
   let pq = @priority_queue.of([5, 4, 3, 2, 1])
   pq.clear()
   assert_eq!(pq.length(), 0)
 }
 
+///-----------------------------------------------------------------------------
 test "is_empty" {
   let pq = @priority_queue.of([5, 4, 3, 2, 1])
   assert_eq!(pq.is_empty(), false)
@@ -120,6 +133,7 @@ test "is_empty" {
   assert_eq!(pq.is_empty(), true)
 }
 
+///-----------------------------------------------------------------------------
 test "from_iter multiple elements iter" {
   inspect!(
     @priority_queue.T::from_iter([1, 2, 3].iter()),
@@ -127,6 +141,7 @@ test "from_iter multiple elements iter" {
   )
 }
 
+///-----------------------------------------------------------------------------
 test "from_iter single element iter" {
   inspect!(
     @priority_queue.T::from_iter([1].iter()),
@@ -134,6 +149,7 @@ test "from_iter single element iter" {
   )
 }
 
+///-----------------------------------------------------------------------------
 test "from_iter empty iter" {
   let pq : @priority_queue.T[Int] = @priority_queue.T::from_iter(Iter::empty())
   inspect!(pq, content="@priority_queue.of([])")

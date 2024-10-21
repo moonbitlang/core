@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+///-----------------------------------------------------------------------------
 test "panic alphabet function coverage" {
   // Test cases to cover all branches in the alphabet function
   inspect!(alphabet(0), content="0")
@@ -34,6 +35,7 @@ test "panic alphabet function coverage" {
   alphabet(16) |> ignore
 }
 
+///-----------------------------------------------------------------------------
 test "panic unwrap" {
   (None : Unit?).unwrap()
 }

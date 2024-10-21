@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+///-----------------------------------------------------------------------------
 test "show" {
   let f : Float = 3.14159
   inspect!(f, content="3.141590118408203")

@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+///-----------------------------------------------------------------------------
 fn lex_decimal_integer(ctx : ParseContext, ~start : Int) -> Double!ParseError {
   for {
     match read_char(ctx) {
@@ -29,6 +30,7 @@ fn lex_decimal_integer(ctx : ParseContext, ~start : Int) -> Double!ParseError {
   }
 }
 
+///-----------------------------------------------------------------------------
 fn lex_decimal_point(ctx : ParseContext, ~start : Int) -> Double!ParseError {
   match read_char(ctx) {
     Some(c) =>
@@ -41,6 +43,7 @@ fn lex_decimal_point(ctx : ParseContext, ~start : Int) -> Double!ParseError {
   }
 }
 
+///-----------------------------------------------------------------------------
 fn lex_decimal_fraction(ctx : ParseContext, ~start : Int) -> Double!ParseError {
   for {
     match read_char(ctx) {
@@ -57,6 +60,7 @@ fn lex_decimal_fraction(ctx : ParseContext, ~start : Int) -> Double!ParseError {
   }
 }
 
+///-----------------------------------------------------------------------------
 fn lex_decimal_exponent(ctx : ParseContext, ~start : Int) -> Double!ParseError {
   match read_char(ctx) {
     Some('+') | Some('-') => return lex_decimal_exponent_sign!(ctx, ~start)
@@ -71,6 +75,7 @@ fn lex_decimal_exponent(ctx : ParseContext, ~start : Int) -> Double!ParseError {
   }
 }
 
+///-----------------------------------------------------------------------------
 fn lex_decimal_exponent_sign(
   ctx : ParseContext,
   ~start : Int
@@ -87,6 +92,7 @@ fn lex_decimal_exponent_sign(
   }
 }
 
+///-----------------------------------------------------------------------------
 fn lex_decimal_exponent_integer(
   ctx : ParseContext,
   ~start : Int
@@ -105,6 +111,7 @@ fn lex_decimal_exponent_integer(
   }
 }
 
+///-----------------------------------------------------------------------------
 fn lex_zero(ctx : ParseContext, ~start : Int) -> Double!ParseError {
   match read_char(ctx) {
     Some('.') => lex_decimal_point!(ctx, ~start)
@@ -121,6 +128,7 @@ fn lex_zero(ctx : ParseContext, ~start : Int) -> Double!ParseError {
   }
 }
 
+///-----------------------------------------------------------------------------
 fn lex_number_end(
   ctx : ParseContext,
   start : Int,

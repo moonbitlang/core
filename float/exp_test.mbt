@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+///-----------------------------------------------------------------------------
 test "exp" {
   inspect!((0.5 : Float).exp(), content="1.6487212181091309")
   inspect!((1.0 : Float).exp(), content="2.7182817459106445")
@@ -24,6 +25,7 @@ test "exp" {
   inspect!((-104 : Float).exp(), content="0")
 }
 
+///-----------------------------------------------------------------------------
 test "exp - quickcheck" {
   let double : Array[Double] = @quickcheck.samples(4)
   inspect!(

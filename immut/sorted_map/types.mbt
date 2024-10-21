@@ -18,6 +18,7 @@
 // Stephen Adams, "Efficient sets: a balancing act" Journal of Functional Programming 3(4):553-562, October 1993
 //
 
+///-----------------------------------------------------------------------------
 /// Immuatable map, consists of key-value pairs.
 ///
 /// # Example

@@ -12,25 +12,30 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+///-----------------------------------------------------------------------------
 pub fn to_string(self : Unit) -> String {
   let _ = self
   "()"
 }
 
+///-----------------------------------------------------------------------------
 pub impl Hash for Unit with hash(self) {
   let _ = self
   0
 }
 
+///-----------------------------------------------------------------------------
 pub impl Hash for Unit with hash_combine(self, hasher) -> Unit {
   let _ = self
   hasher.combine_unit()
 }
 
+///-----------------------------------------------------------------------------
 pub fn Unit::default() -> Unit {
   ()
 }
 
+///-----------------------------------------------------------------------------
 pub fn compare(self : Unit, _other : Unit) -> Int {
   let _ = self
   0

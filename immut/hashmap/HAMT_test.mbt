@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+///-----------------------------------------------------------------------------
 test "HAMT::size" {
   for i = 0, map = @hashmap.new(); i < 20; i = i + 1, map = map.add(i, i) {
     assert_eq!(map.size(), i)
@@ -20,6 +21,7 @@ test "HAMT::size" {
   }
 }
 
+///-----------------------------------------------------------------------------
 test "HAMT" {
   let map = loop 0, @hashmap.new() {
     100, map => map
@@ -42,6 +44,7 @@ test "HAMT" {
   }
 }
 
+///-----------------------------------------------------------------------------
 test "HAMT::remove" {
   let map = loop 0, @hashmap.new() {
     100, map => map
@@ -60,6 +63,7 @@ test "HAMT::remove" {
   }
 }
 
+///-----------------------------------------------------------------------------
 test "HAMT::iter" {
   let data = @hashmap.of([(0, "a"), (2, "b"), (3, "d"), (5, "e"), (11111, "f")])
   let mut s = ""
@@ -67,6 +71,7 @@ test "HAMT::iter" {
   inspect!(s, content=" 0,a 5,e 3,d 11111,f 2,b")
 }
 
+///-----------------------------------------------------------------------------
 test "HAMT::to_string" {
   let map = @hashmap.new()
     .add(1, 1)
@@ -79,6 +84,7 @@ test "HAMT::to_string" {
   )
 }
 
+///-----------------------------------------------------------------------------
 test "HAMT::from_array" {
   let map = @hashmap.of([(1, "1"), (2, "2"), (42, "42")])
   inspect!(
@@ -102,6 +108,7 @@ test "HAMT::from_array" {
   inspect!((43, map.find(43)), content="(43, None)")
 }
 
+///-----------------------------------------------------------------------------
 test "from_iter multiple elements iter" {
   inspect!(
     @hashmap.T::from_iter([(1, 1), (2, 2), (3, 3)].iter()),
@@ -109,6 +116,7 @@ test "from_iter multiple elements iter" {
   )
 }
 
+///-----------------------------------------------------------------------------
 test "from_iter single element iter" {
   inspect!(
     @hashmap.T::from_iter([(1, 1)].iter()),
@@ -116,6 +124,7 @@ test "from_iter single element iter" {
   )
 }
 
+///-----------------------------------------------------------------------------
 test "from_iter empty iter" {
   let pq : @hashmap.T[Int, Int] = @hashmap.T::from_iter(Iter::empty())
   inspect!(pq, content="@immut/hashmap.of([])")

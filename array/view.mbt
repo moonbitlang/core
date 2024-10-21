@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+///-----------------------------------------------------------------------------
 pub fn rev_inplace[T](self : ArrayView[T]) -> Unit {
   let mid_len = self.length() / 2
   for i = 0; i < mid_len; i = i + 1 {
@@ -20,6 +21,7 @@ pub fn rev_inplace[T](self : ArrayView[T]) -> Unit {
   }
 }
 
+///-----------------------------------------------------------------------------
 pub fn each[T](self : ArrayView[T], f : (T) -> Unit) -> Unit {
   for i = 0; i < self.length(); i = i + 1 {
     f(self[i])

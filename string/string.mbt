@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+///-----------------------------------------------------------------------------
 /// Convert char array to string.
 /// 
 /// ```
@@ -29,6 +30,7 @@ pub fn String::from_array(chars : Array[Char]) -> String {
   buf.to_string()
 }
 
+///-----------------------------------------------------------------------------
 /// Concatenate strings.
 /// 
 /// ```
@@ -59,6 +61,7 @@ pub fn String::concat(
   buf.to_string()
 }
 
+///-----------------------------------------------------------------------------
 /// Compare two strings.
 /// String with longer length is bigger.
 /// strings of the same length are compared in lexicalgraphic order.
@@ -78,11 +81,13 @@ pub fn compare(self : String, other : String) -> Int {
   }
 }
 
+///-----------------------------------------------------------------------------
 /// The empty string
 pub fn String::default() -> String {
   ""
 }
 
+///-----------------------------------------------------------------------------
 /// `String` holds a sequence of UTF-16 code units encoded in little endian format
 pub fn to_bytes(self : String) -> Bytes {
   let len = self.length()
@@ -91,6 +96,7 @@ pub fn to_bytes(self : String) -> Bytes {
   bytes
 }
 
+///-----------------------------------------------------------------------------
 /// Converts the String into an array of Chars.
 pub fn to_array(self : String) -> Array[Char] {
   self
@@ -104,6 +110,7 @@ pub fn to_array(self : String) -> Array[Char] {
   )
 }
 
+///-----------------------------------------------------------------------------
 pub fn iter(self : String) -> Iter[Char] {
   Iter::new(
     fn(yield) {
@@ -128,6 +135,7 @@ pub fn iter(self : String) -> Iter[Char] {
   )
 }
 
+///-----------------------------------------------------------------------------
 pub fn iter2(self : String) -> Iter2[Int, Char] {
   Iter2::new(
     fn(yield) {
@@ -152,6 +160,7 @@ pub fn iter2(self : String) -> Iter2[Int, Char] {
   )
 }
 
+///-----------------------------------------------------------------------------
 pub fn fold[A](self : String, ~init : A, f : (A, Char) -> A) -> A {
   let mut rv = init
   for c in self {
@@ -160,6 +169,7 @@ pub fn fold[A](self : String, ~init : A, f : (A, Char) -> A) -> A {
   rv
 }
 
+///-----------------------------------------------------------------------------
 pub fn rev_fold[A](self : String, ~init : A, f : (A, Char) -> A) -> A {
   let mut rv = init
   for c in self.rev_iter() {
@@ -168,6 +178,7 @@ pub fn rev_fold[A](self : String, ~init : A, f : (A, Char) -> A) -> A {
   rv
 }
 
+///-----------------------------------------------------------------------------
 /// Returns an iterator that yields characters from the end to the start of the string. This function handles 
 /// Unicode surrogate pairs correctly, ensuring that characters are not split across surrogate pairs.
 /// 
@@ -219,11 +230,13 @@ pub fn rev_iter(self : String) -> Iter[Char] {
   )
 }
 
+///-----------------------------------------------------------------------------
 /// Removes all leading and trailing spaces.
 pub fn trim_space(self : String) -> String {
   self.trim(" \n\r\t")
 }
 
+///-----------------------------------------------------------------------------
 /// Removes all leading and trailing chars contained in the given string.
 pub fn trim(self : String, trim_set : String) -> String {
   if self == "" || trim_set == "" {
@@ -233,15 +246,18 @@ pub fn trim(self : String, trim_set : String) -> String {
   }
 }
 
+///-----------------------------------------------------------------------------
 pub fn contains_char(self : String, c : Char) -> Bool {
   self.iter().any(fn(ch) { ch == c })
 }
 
+///-----------------------------------------------------------------------------
 /// @alert deprecated "Use `String::trim_start` instead"
 pub fn trim_left(self : String, trim_set : String) -> String {
   self.trim_start(trim_set)
 }
 
+///-----------------------------------------------------------------------------
 /// Removes all leading chars contained in the given string.
 pub fn trim_start(self : String, trim_set : String) -> String {
   let len = self.length()
@@ -267,11 +283,13 @@ pub fn trim_start(self : String, trim_set : String) -> String {
   }
 }
 
+///-----------------------------------------------------------------------------
 /// @alert deprecated "Use `String::trim_end` instead"
 pub fn trim_right(self : String, trim_set : String) -> String {
   self.trim_end(trim_set)
 }
 
+///-----------------------------------------------------------------------------
 /// Removes all trailing chars contained in the given string.
 pub fn trim_end(self : String, trim_set : String) -> String {
   let len = self.length()
@@ -297,16 +315,19 @@ pub fn trim_end(self : String, trim_set : String) -> String {
   }
 }
 
+///-----------------------------------------------------------------------------
 /// Returns true if this string is empty.
 pub fn is_empty(self : String) -> Bool {
   self == ""
 }
 
+///-----------------------------------------------------------------------------
 /// Returns true if this string is blank.
 pub fn is_blank(self : String) -> Bool {
   self.trim_space() == ""
 }
 
+///-----------------------------------------------------------------------------
 /// Returns the first index of the sub string.
 pub fn index_of(self : String, str : String, ~from : Int = 0) -> Int {
   let from = if from < 0 {
@@ -350,6 +371,7 @@ pub fn index_of(self : String, str : String, ~from : Int = 0) -> Int {
   -1
 }
 
+///-----------------------------------------------------------------------------
 /// Returns the last index of the sub string.
 pub fn last_index_of(
   self : String,
@@ -402,11 +424,13 @@ pub fn last_index_of(
   -1
 }
 
+///-----------------------------------------------------------------------------
 /// Returns true if this string contains given sub string.
 pub fn contains(self : String, str : String) -> Bool {
   self.index_of(str) >= 0
 }
 
+///-----------------------------------------------------------------------------
 /// Returns true if this string starts with a sub string.
 pub fn starts_with(self : String, str : String) -> Bool {
   if str.length() > self.length() {
@@ -416,6 +440,7 @@ pub fn starts_with(self : String, str : String) -> Bool {
   }
 }
 
+///-----------------------------------------------------------------------------
 /// Returns true if this string ends with a sub string.
 pub fn ends_with(self : String, str : String) -> Bool {
   let len = self.length()
@@ -427,6 +452,7 @@ pub fn ends_with(self : String, str : String) -> Bool {
   }
 }
 
+///-----------------------------------------------------------------------------
 /// Splits the input `String` into an `Iter` of `String` using the specified `separator`.
 /// 
 /// # Parameters
@@ -482,6 +508,7 @@ pub fn split(self : String, seperator : String) -> Iter[String] {
   )
 }
 
+///-----------------------------------------------------------------------------
 /// Replace the first old string in this string to new string.
 pub fn replace(self : String, ~old : String, ~new : String) -> String {
   let old_idx = self.index_of(old)
@@ -494,6 +521,7 @@ pub fn replace(self : String, ~old : String, ~new : String) -> String {
   }
 }
 
+///-----------------------------------------------------------------------------
 /// Replace all old string in this string to new string.
 pub fn replace_all(self : String, ~old : String, ~new : String) -> String {
   let buf = StringBuilder::new()
@@ -525,6 +553,7 @@ pub fn replace_all(self : String, ~old : String, ~new : String) -> String {
   buf.to_string()
 }
 
+///-----------------------------------------------------------------------------
 /// Converts this string to lowercase.
 pub fn to_lower(self : String) -> String {
   // TODO: deal with non-ascii characters
@@ -539,6 +568,7 @@ pub fn to_lower(self : String) -> String {
   buf.to_string()
 }
 
+///-----------------------------------------------------------------------------
 /// Converts this string to uppercase.
 pub fn to_upper(self : String) -> String {
   // TODO: deal with non-ascii characters
@@ -553,6 +583,7 @@ pub fn to_upper(self : String) -> String {
   buf.to_string()
 }
 
+///-----------------------------------------------------------------------------
 /// Reverse string
 pub fn rev(self : String) -> String {
   // TODO: deal with non-ascii characters
@@ -564,6 +595,7 @@ pub fn rev(self : String) -> String {
   result
 }
 
+///-----------------------------------------------------------------------------
 /// Repeats the string `n` times.
 pub fn repeat(self : String, n : Int) -> String {
   if n <= 0 {
@@ -580,6 +612,7 @@ pub fn repeat(self : String, n : Int) -> String {
   buf.to_string()
 }
 
+///-----------------------------------------------------------------------------
 /// `pad_left` is a new string with `padding_char`s prefixed to `self` if `self.length() < total_width`. The length of the
 /// returned string is `total_width`.
 /// 
@@ -604,6 +637,7 @@ pub fn pad_start(
   }
 }
 
+///-----------------------------------------------------------------------------
 /// `pad_right` is a new String with `padding_char`s suffixed to `self` if `self.length() < total_width`. The length of the
 /// returned string is `total_width`.
 /// 

@@ -12,10 +12,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+///-----------------------------------------------------------------------------
 let syntax_err = "invalid syntax"
 
+///-----------------------------------------------------------------------------
 let base_err = "invalid base"
 
+///-----------------------------------------------------------------------------
 fn parse_as_result(s : String, ~base : Int) -> Result[Int64, String] {
   try {
     @strconv.parse_int64!(s, ~base) |> Ok
@@ -24,6 +27,7 @@ fn parse_as_result(s : String, ~base : Int) -> Result[Int64, String] {
   }
 }
 
+///-----------------------------------------------------------------------------
 test "parse_int64_invalid_base" {
   assert_eq!(parse_as_result("12345", base=1), Err(base_err))
   assert_eq!(parse_as_result("12345", base=37), Err(base_err))
@@ -31,6 +35,7 @@ test "parse_int64_invalid_base" {
   assert_eq!(parse_as_result("12345", base=100), Err(base_err))
 }
 
+///-----------------------------------------------------------------------------
 test "parse_int64_uncovered_lines" {
   let tests : Array[(String, Int, Result[Int64, String])] = [
     // Test cases for uncovered lines in strconv/int.mbt:69

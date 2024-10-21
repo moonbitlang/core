@@ -12,14 +12,17 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+///-----------------------------------------------------------------------------
 let default_init_capacity = 8
 
+///-----------------------------------------------------------------------------
 test "new" {
   let m : Set[Int] = Set::new()
   assert_eq!(m.capacity(), default_init_capacity)
   assert_eq!(m.size(), 0)
 }
 
+///-----------------------------------------------------------------------------
 test "insert" {
   let m = Set::new()
   m.insert("a")
@@ -31,6 +34,7 @@ test "insert" {
   assert_false!(m.contains("d"))
 }
 
+///-----------------------------------------------------------------------------
 test "from_array" {
   let m = Set::of(["a", "b", "c"])
   assert_true!(m.contains("a"))
@@ -39,6 +43,7 @@ test "from_array" {
   assert_false!(m.contains("d"))
 }
 
+///-----------------------------------------------------------------------------
 test "size" {
   let m = Set::new()
   assert_eq!(m.size(), 0)
@@ -46,6 +51,7 @@ test "size" {
   assert_eq!(m.size(), 1)
 }
 
+///-----------------------------------------------------------------------------
 test "is_empty" {
   let m = Set::new()
   assert_eq!(m.is_empty(), true)
@@ -55,6 +61,7 @@ test "is_empty" {
   assert_eq!(m.is_empty(), true)
 }
 
+///-----------------------------------------------------------------------------
 test "iter" {
   let m = Set::of(["a", "b", "c"])
   let mut sum = ""
@@ -62,6 +69,7 @@ test "iter" {
   inspect!(sum, content="abc")
 }
 
+///-----------------------------------------------------------------------------
 test "iteri" {
   let m = Set::of(["1", "2", "3"])
   let mut s = ""
@@ -76,6 +84,7 @@ test "iteri" {
   inspect!(sum, content="3")
 }
 
+///-----------------------------------------------------------------------------
 test "union" {
   let m1 = Set::of(["a", "b", "c"])
   let m2 = Set::of(["b", "c", "d"])
@@ -87,6 +96,7 @@ test "union" {
   assert_true!(m.contains("d"))
 }
 
+///-----------------------------------------------------------------------------
 test "intersection" {
   let m1 = Set::of(["a", "b", "c"])
   let m2 = Set::of(["b", "c", "d"])
@@ -98,6 +108,7 @@ test "intersection" {
   assert_false!(m.contains("d"))
 }
 
+///-----------------------------------------------------------------------------
 test "difference" {
   let m1 = Set::of(["a", "b", "c"])
   let m2 = Set::of(["b", "c", "d"])
@@ -109,6 +120,7 @@ test "difference" {
   assert_false!(m.contains("d"))
 }
 
+///-----------------------------------------------------------------------------
 test "symmetric_difference" {
   let m1 = Set::of(["a", "b", "c"])
   let m2 = Set::of(["b", "c", "d"])
@@ -120,6 +132,7 @@ test "symmetric_difference" {
   assert_true!(m.contains("d"))
 }
 
+///-----------------------------------------------------------------------------
 test "iter" {
   let buf = StringBuilder::new(size_hint=20)
   let map = Set::of(["a", "b", "c"])
@@ -130,6 +143,7 @@ test "iter" {
   inspect!(buf, content="[a][b]")
 }
 
+///-----------------------------------------------------------------------------
 test "from_array" {
   let arr = ["a", "b", "c"]
   let m = Set::from_array(arr)
@@ -139,6 +153,7 @@ test "from_array" {
   assert_false!(m.contains("d"))
 }
 
+///-----------------------------------------------------------------------------
 test "insert_and_grow" {
   let m = Set::new()
   for i = 0; i < 10; i = i + 1 {
@@ -149,6 +164,7 @@ test "insert_and_grow" {
   @json.inspect!(m, content=["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"])
 }
 
+///-----------------------------------------------------------------------------
 test "array unique via Set" {
   let v = [1, 2, 3, 4, 5, 3, 2, 4, 5]
   let h = Set::from_iter(v.iter())
@@ -157,6 +173,7 @@ test "array unique via Set" {
   @json.inspect!(v, content=[1, 2, 3, 4, 5])
 }
 
+///-----------------------------------------------------------------------------
 test "remove_and_shift_back" {
   let m = Set::new()
   m.insert("a")
@@ -170,6 +187,7 @@ test "remove_and_shift_back" {
   assert_true!(m.contains("d"))
 }
 
+///-----------------------------------------------------------------------------
 test "capacity_and_size" {
   let m = Set::new()
   assert_eq!(m.capacity(), default_init_capacity)
@@ -178,6 +196,7 @@ test "capacity_and_size" {
   assert_eq!(m.size(), 1)
 }
 
+///-----------------------------------------------------------------------------
 test "clear_and_reinsert" {
   let m = Set::new()
   m.insert("a")
@@ -189,6 +208,7 @@ test "clear_and_reinsert" {
   assert_true!(m.contains("c"))
 }
 
+///-----------------------------------------------------------------------------
 test "insert_and_grow" {
   let m = Set::new()
   for i = 0; i < 10; i = i + 1 {
@@ -198,6 +218,7 @@ test "insert_and_grow" {
   assert_eq!(m.capacity(), 16)
 }
 
+///-----------------------------------------------------------------------------
 test "remove_and_shift_back" {
   let m = Set::new()
   m.insert("a")
@@ -211,6 +232,7 @@ test "remove_and_shift_back" {
   assert_true!(m.contains("d"))
 }
 
+///-----------------------------------------------------------------------------
 test "capacity_and_size" {
   let m = Set::new()
   assert_eq!(m.capacity(), default_init_capacity)
@@ -219,6 +241,7 @@ test "capacity_and_size" {
   assert_eq!(m.size(), 1)
 }
 
+///-----------------------------------------------------------------------------
 test "clear_and_reinsert" {
   let m = Set::new()
   m.insert("a")
@@ -230,14 +253,17 @@ test "clear_and_reinsert" {
   assert_true!(m.contains("c"))
 }
 
+///-----------------------------------------------------------------------------
 test "from_iter multiple elements iter" {
   inspect!(Set::from_iter([1, 2, 3].iter()), content="{1, 2, 3}")
 }
 
+///-----------------------------------------------------------------------------
 test "from_iter single element iter" {
   inspect!(Set::from_iter([1].iter()), content="{1}")
 }
 
+///-----------------------------------------------------------------------------
 test "from_iter empty iter" {
   let map : Set[Int] = Set::from_iter(Iter::empty())
   inspect!(map, content="{}")

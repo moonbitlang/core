@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+///-----------------------------------------------------------------------------
 test "panic unsafe_pop" {
   let pq : @priority_queue.T[Int] = @priority_queue.of([])
   pq.unsafe_pop()

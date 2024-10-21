@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+///-----------------------------------------------------------------------------
 /// Sorts the array in place.
 /// 
 /// It's an in-place, unstable sort(it will reorder equal elements). The time complexity is O(n log n) in the worst case.
@@ -28,6 +29,7 @@ pub fn sort[T : Compare](self : Array[T]) -> Unit {
   quick_sort(self[:len], None, get_limit(len))
 }
 
+///-----------------------------------------------------------------------------
 fn quick_sort[T : Compare](arr : ArrayView[T], pred : T?, limit : Int) -> Unit {
   let mut limit = limit
   let mut arr = arr
@@ -90,6 +92,7 @@ fn quick_sort[T : Compare](arr : ArrayView[T], pred : T?, limit : Int) -> Unit {
   }
 }
 
+///-----------------------------------------------------------------------------
 fn get_limit(len : Int) -> Int {
   let mut len = len
   let mut limit = 0
@@ -100,6 +103,7 @@ fn get_limit(len : Int) -> Int {
   limit
 }
 
+///-----------------------------------------------------------------------------
 /// Try to sort the array with bubble sort.
 /// 
 /// It will only tolerate at most 8 unsorted elements. The time complexity is O(n).
@@ -126,6 +130,7 @@ fn try_bubble_sort[T : Compare](
   true
 }
 
+///-----------------------------------------------------------------------------
 /// Used when the array is small enough (<=16) to avoid recursion overhead.
 fn ArrayView::insertion_sort[T : Compare](arr : ArrayView[T]) -> Unit {
   for i = 1; i < arr.length(); i = i + 1 {
@@ -135,6 +140,7 @@ fn ArrayView::insertion_sort[T : Compare](arr : ArrayView[T]) -> Unit {
   }
 }
 
+///-----------------------------------------------------------------------------
 fn partition[T : Compare](arr : ArrayView[T], pivot_index : Int) -> (Int, Bool) {
   arr.swap(pivot_index, arr.length() - 1)
   let pivot = arr[arr.length() - 1]
@@ -153,6 +159,7 @@ fn partition[T : Compare](arr : ArrayView[T], pivot_index : Int) -> (Int, Bool) 
   (i, partitioned)
 }
 
+///-----------------------------------------------------------------------------
 /// Choose a pivot index for quick sort.
 /// 
 /// It avoids worst case performance by choosing a pivot that is likely to be close to the median.
@@ -195,6 +202,7 @@ fn choose_pivot[T : Compare](arr : ArrayView[T]) -> (Int, Bool) {
   }
 }
 
+///-----------------------------------------------------------------------------
 fn heap_sort[T : Compare](arr : ArrayView[T]) -> Unit {
   let len = arr.length()
   for i = len / 2 - 1; i >= 0; i = i - 1 {
@@ -206,6 +214,7 @@ fn heap_sort[T : Compare](arr : ArrayView[T]) -> Unit {
   }
 }
 
+///-----------------------------------------------------------------------------
 fn sift_down[T : Compare](arr : ArrayView[T], index : Int) -> Unit {
   let mut index = index
   let len = arr.length()
@@ -223,6 +232,7 @@ fn sift_down[T : Compare](arr : ArrayView[T], index : Int) -> Unit {
   }
 }
 
+///-----------------------------------------------------------------------------
 fn test_sort(f : (Array[Int]) -> Unit) -> Unit! {
   let arr = [5, 4, 3, 2, 1]
   f(arr)
@@ -248,6 +258,7 @@ fn test_sort(f : (Array[Int]) -> Unit) -> Unit! {
   assert_eq!(arr, expected)
 }
 
+///-----------------------------------------------------------------------------
 test "try_bubble_sort" {
   let arr = [8, 7, 6, 5, 4, 3, 2, 1]
   let sorted = try_bubble_sort(arr[0:8])
@@ -255,18 +266,22 @@ test "try_bubble_sort" {
   assert_eq!(arr, [1, 2, 3, 4, 5, 6, 7, 8])
 }
 
+///-----------------------------------------------------------------------------
 test "heap_sort" {
   test_sort!(fn(arr) { heap_sort(arr[:]) })
 }
 
+///-----------------------------------------------------------------------------
 test "insertion_sort" {
   test_sort!(fn(arr) { ArrayView::insertion_sort(arr[:]) })
 }
 
+///-----------------------------------------------------------------------------
 test "sort" {
   test_sort!(fn(arr) { arr.sort() })
 }
 
+///-----------------------------------------------------------------------------
 test "heap_sort coverage" {
   let arr = [5, 4, 3, 2, 1]
   heap_sort(arr[:])
@@ -282,6 +297,7 @@ test "heap_sort coverage" {
   assert_eq!(arr3, [1, 5, 5, 5, 5])
 }
 
+///-----------------------------------------------------------------------------
 test "quick_sort limit check" {
   let arr = [5, 4, 3, 2, 1]
   quick_sort(arr[:], None, 0)
@@ -294,6 +310,7 @@ test "quick_sort limit check" {
   assert_eq!(arr3, [1, 5, 5, 5, 5])
 }
 
+///-----------------------------------------------------------------------------
 test "quick_sort with pred check" {
   let arr = [5, 4, 3, 2, 1]
   quick_sort(arr[:], Some(3), 0)
@@ -306,6 +323,7 @@ test "quick_sort with pred check" {
   assert_eq!(arr3, [1, 5, 5, 5, 5])
 }
 
+///-----------------------------------------------------------------------------
 test "quick_sort with unbalanced partitions" {
   let arr = [5, 4, 3, 2, 1]
   quick_sort(arr[:], None, 1)
@@ -318,18 +336,21 @@ test "quick_sort with unbalanced partitions" {
   assert_eq!(arr3, [1, 5, 5, 5, 5])
 }
 
+///-----------------------------------------------------------------------------
 test "quick_sort with pivot equal to pred" {
   let arr = [5, 4, 3, 2, 1]
   quick_sort(arr[:], Some(3), 0)
   assert_eq!(arr, [1, 2, 3, 4, 5])
 }
 
+///-----------------------------------------------------------------------------
 test "quick_sort with pred less than all elements" {
   let arr = [5, 4, 3, 2, 1]
   quick_sort(arr[:], Some(0), 0)
   assert_eq!(arr, [1, 2, 3, 4, 5])
 }
 
+///-----------------------------------------------------------------------------
 test "quick_sort with pred greater than all elements" {
   let arr = [5, 4, 3, 2, 1]
   quick_sort(arr[:], Some(6), 0)

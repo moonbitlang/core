@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+///-----------------------------------------------------------------------------
 /// Sorts the array with a key extraction function.
 /// 
 /// It's an in-place, unstable sort(it will reorder equal elements). The time complexity is O(n log n) in the worst case.
@@ -32,6 +33,7 @@ pub fn sort_by_key[T, K : Compare](self : Array[T], map : (T) -> K) -> Unit {
   )
 }
 
+///-----------------------------------------------------------------------------
 /// Sorts the array with a custom comparison function.
 /// 
 /// It's an in-place, unstable sort(it will reorder equal elements). The time complexity is O(n log n) in the worst case.
@@ -47,6 +49,7 @@ pub fn sort_by[T](self : Array[T], cmp : (T, T) -> Int) -> Unit {
   quick_sort_by(self[:], cmp, None, get_limit(self.length()))
 }
 
+///-----------------------------------------------------------------------------
 fn quick_sort_by[T](
   arr : ArrayView[T],
   cmp : (T, T) -> Int,
@@ -114,6 +117,7 @@ fn quick_sort_by[T](
   }
 }
 
+///-----------------------------------------------------------------------------
 /// Try to sort the array with bubble sort.
 /// 
 /// It will only tolerate at most 8 unsorted elements. The time complexity is O(n).
@@ -141,6 +145,7 @@ fn try_bubble_sort_by[T](
   true
 }
 
+///-----------------------------------------------------------------------------
 /// Try to sort the array with bubble sort.
 /// 
 /// It will only tolerate at most 8 unsorted elements. The time complexity is O(n).
@@ -154,6 +159,7 @@ fn bubble_sort_by[T](arr : ArrayView[T], cmp : (T, T) -> Int) -> Unit {
   }
 }
 
+///-----------------------------------------------------------------------------
 fn partition_by[T](
   arr : ArrayView[T],
   cmp : (T, T) -> Int,
@@ -176,6 +182,7 @@ fn partition_by[T](
   (i, partitioned)
 }
 
+///-----------------------------------------------------------------------------
 /// Choose a pivot index for quick sort.
 /// 
 /// It avoids worst case performance by choosing a pivot that is likely to be close to the median.
@@ -218,6 +225,7 @@ fn choose_pivot_by[T](arr : ArrayView[T], cmp : (T, T) -> Int) -> (Int, Bool) {
   }
 }
 
+///-----------------------------------------------------------------------------
 fn heap_sort_by[T](arr : ArrayView[T], cmp : (T, T) -> Int) -> Unit {
   let len = arr.length()
   for i = len / 2 - 1; i >= 0; i = i - 1 {
@@ -229,6 +237,7 @@ fn heap_sort_by[T](arr : ArrayView[T], cmp : (T, T) -> Int) -> Unit {
   }
 }
 
+///-----------------------------------------------------------------------------
 fn sift_down_by[T](
   arr : ArrayView[T],
   index : Int,
@@ -250,6 +259,7 @@ fn sift_down_by[T](
   }
 }
 
+///-----------------------------------------------------------------------------
 test "try_bubble_sort" {
   let arr = [8, 7, 6, 5, 4, 3, 2, 1]
   let sorted = try_bubble_sort_by(arr[0:8], fn(a, b) { a - b })
@@ -257,20 +267,24 @@ test "try_bubble_sort" {
   assert_eq!(arr, [1, 2, 3, 4, 5, 6, 7, 8])
 }
 
+///-----------------------------------------------------------------------------
 test "heap_sort" {
   test_sort!(fn(arr) { heap_sort_by(arr[:], fn(a, b) { a - b }) })
 }
 
+///-----------------------------------------------------------------------------
 test "bubble_sort" {
   test_sort!(fn(arr) { bubble_sort_by(arr[:], fn(a, b) { a - b }) })
 }
 
+///-----------------------------------------------------------------------------
 test "sort_by_key" {
   let arr = [5, 1, 3, 4, 2]
   arr.sort_by_key(fn(x) { -x })
   assert_eq!(arr, [5, 4, 3, 2, 1])
 }
 
+///-----------------------------------------------------------------------------
 test "sort_by" {
   test_sort!(fn(arr) { arr.sort_by(fn(a, b) { a - b }) })
 }

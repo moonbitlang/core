@@ -12,10 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+///-----------------------------------------------------------------------------
 pub fn UInt64::default() -> UInt64 {
   0
 }
 
+///-----------------------------------------------------------------------------
 test {
   inspect!(0x7000_0001_1F00_100FUL.popcnt(), content="14")
 }

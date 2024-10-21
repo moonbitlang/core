@@ -12,16 +12,21 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+///-----------------------------------------------------------------------------
 let num_bits = 5
 
+///-----------------------------------------------------------------------------
 let branching_factor : Int = 1 << num_bits
 
+///-----------------------------------------------------------------------------
 let bitmask : Int = branching_factor - 1
 
+///-----------------------------------------------------------------------------
 fn Tree::empty[T]() -> Tree[T] {
   Tree::Empty
 }
 
+///-----------------------------------------------------------------------------
 fn get_first[T](self : Tree[T]) -> T {
   match self {
     Leaf(leaf) => leaf[0]
@@ -30,6 +35,7 @@ fn get_first[T](self : Tree[T]) -> T {
   }
 }
 
+///-----------------------------------------------------------------------------
 fn get_last[T](self : Tree[T]) -> T {
   match self {
     Leaf(leaf) => leaf[leaf.length() - 1]
@@ -38,6 +44,7 @@ fn get_last[T](self : Tree[T]) -> T {
   }
 }
 
+///-----------------------------------------------------------------------------
 fn get[T](self : Tree[T], index : Int, shift : Int) -> T {
   match self {
     Leaf(leaf) => leaf[index & bitmask]
@@ -47,6 +54,7 @@ fn get[T](self : Tree[T], index : Int, shift : Int) -> T {
   }
 }
 
+///-----------------------------------------------------------------------------
 fn is_empty_tree[T](self : Tree[T]) -> Bool {
   match self {
     Tree::Empty => true
@@ -54,6 +62,7 @@ fn is_empty_tree[T](self : Tree[T]) -> Bool {
   }
 }
 
+///-----------------------------------------------------------------------------
 fn new_branch[T](leaf : FixedArray[T], shift : Int) -> Tree[T] {
   match shift {
     0 => Leaf(leaf)
@@ -61,6 +70,7 @@ fn new_branch[T](leaf : FixedArray[T], shift : Int) -> Tree[T] {
   }
 }
 
+///-----------------------------------------------------------------------------
 fn add[T](self : Tree[T], index : Int, shift : Int, value : T) -> Tree[T] {
   match self {
     Leaf(l) => Leaf(immutable_push(l, value))

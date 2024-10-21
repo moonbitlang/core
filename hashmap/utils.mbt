@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+///-----------------------------------------------------------------------------
 fn debug_entries[K : Show, V : Show](self : T[K, V]) -> String {
   for s = "", i = 0; i < self.entries.length(); {
     let s = if i > 0 { s + "," } else { s }
@@ -25,12 +26,14 @@ fn debug_entries[K : Show, V : Show](self : T[K, V]) -> String {
   }
 }
 
+///-----------------------------------------------------------------------------
 /// Clears the map, removing all key-value pairs. Keeps the allocated space.
 pub fn clear[K, V](self : T[K, V]) -> Unit {
   self.entries.fill(None)
   self.size = 0
 }
 
+///-----------------------------------------------------------------------------
 /// Returns an iterator of the map.
 pub fn iter[K, V](self : T[K, V]) -> Iter[(K, V)] {
   Iter::new(
@@ -51,12 +54,14 @@ pub fn iter[K, V](self : T[K, V]) -> Iter[(K, V)] {
   )
 }
 
+///-----------------------------------------------------------------------------
 pub fn T::from_iter[K : Hash + Eq, V](iter : Iter[(K, V)]) -> T[K, V] {
   let m = T::new()
   iter.each(fn(e) { m[e.0] = e.1 })
   m
 }
 
+///-----------------------------------------------------------------------------
 /// Converts the map to an array.
 pub fn to_array[K, V](self : T[K, V]) -> Array[(K, V)] {
   let arr = []
@@ -70,21 +75,25 @@ pub fn to_array[K, V](self : T[K, V]) -> Array[(K, V)] {
   arr
 }
 
+///-----------------------------------------------------------------------------
 /// Get the number of key-value pairs in the map.
 pub fn size[K, V](self : T[K, V]) -> Int {
   self.size
 }
 
+///-----------------------------------------------------------------------------
 /// Get the capacity of the map.
 pub fn capacity[K, V](self : T[K, V]) -> Int {
   self.capacity
 }
 
+///-----------------------------------------------------------------------------
 /// Check if the hash map is empty.
 pub fn is_empty[K, V](self : T[K, V]) -> Bool {
   self.size == 0
 }
 
+///-----------------------------------------------------------------------------
 /// Iterate over all key-value pairs of the map.
 pub fn each[K, V](self : T[K, V], f : (K, V) -> Unit) -> Unit {
   for i = 0; i < self.capacity; i = i + 1 {
@@ -95,6 +104,7 @@ pub fn each[K, V](self : T[K, V], f : (K, V) -> Unit) -> Unit {
   }
 }
 
+///-----------------------------------------------------------------------------
 /// Iterate over all key-value pairs of the map, with index.
 pub fn eachi[K, V](self : T[K, V], f : (Int, K, V) -> Unit) -> Unit {
   for i = 0, idx = 0; i < self.capacity; {
@@ -108,6 +118,7 @@ pub fn eachi[K, V](self : T[K, V], f : (Int, K, V) -> Unit) -> Unit {
   }
 }
 
+///-----------------------------------------------------------------------------
 pub impl[K : Show, V : Show] Show for T[K, V] with output(self, logger) {
   logger.write_string("HashMap::of([")
   self.eachi(
@@ -126,6 +137,7 @@ pub impl[K : Show, V : Show] Show for T[K, V] with output(self, logger) {
   logger.write_string("])")
 }
 
+///-----------------------------------------------------------------------------
 pub fn to_string[K : Show, V : Show](self : T[K, V]) -> String {
   Show::to_string(self)
 }

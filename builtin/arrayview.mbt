@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+///-----------------------------------------------------------------------------
 /// A `ArrayView` is a slice of a `Array`.
 struct ArrayView[T] {
   buf : UninitializedArray[T]
@@ -19,10 +20,12 @@ struct ArrayView[T] {
   len : Int
 }
 
+///-----------------------------------------------------------------------------
 pub fn length[T](self : ArrayView[T]) -> Int {
   self.len
 }
 
+///-----------------------------------------------------------------------------
 pub fn op_get[T](self : ArrayView[T], index : Int) -> T {
   guard index >= 0 && index < self.len else {
     abort(
@@ -32,6 +35,7 @@ pub fn op_get[T](self : ArrayView[T], index : Int) -> T {
   self.buf[self.start + index]
 }
 
+///-----------------------------------------------------------------------------
 pub fn op_set[T](self : ArrayView[T], index : Int, value : T) -> Unit {
   guard index >= 0 && index < self.len else {
     abort(
@@ -41,6 +45,7 @@ pub fn op_set[T](self : ArrayView[T], index : Int, value : T) -> Unit {
   self.buf[self.start + index] = value
 }
 
+///-----------------------------------------------------------------------------
 pub fn swap[T](self : ArrayView[T], i : Int, j : Int) -> Unit {
   guard i >= 0 && i < self.len && j >= 0 && j < self.len else {
     abort(
@@ -52,6 +57,7 @@ pub fn swap[T](self : ArrayView[T], i : Int, j : Int) -> Unit {
   self.buf[self.start + j] = temp
 }
 
+///-----------------------------------------------------------------------------
 pub fn op_as_view[T](
   self : Array[T],
   ~start : Int,
@@ -68,6 +74,7 @@ pub fn op_as_view[T](
   ArrayView::{ buf: self.buffer(), start, len: end - start }
 }
 
+///-----------------------------------------------------------------------------
 pub fn op_as_view[T](
   self : ArrayView[T],
   ~start : Int,
@@ -84,6 +91,7 @@ pub fn op_as_view[T](
   ArrayView::{ buf: self.buf, start: self.start + start, len: end - start }
 }
 
+///-----------------------------------------------------------------------------
 pub fn iter[A](self : ArrayView[A]) -> Iter[A] {
   Iter::new(
     fn(yield) {
@@ -97,6 +105,7 @@ pub fn iter[A](self : ArrayView[A]) -> Iter[A] {
   )
 }
 
+///-----------------------------------------------------------------------------
 /// Fold out values from an arrayview according to certain rules.
 ///
 /// # Example
@@ -112,6 +121,7 @@ pub fn fold[A, B](self : ArrayView[A], ~init : B, f : (B, A) -> B) -> B {
   }
 }
 
+///-----------------------------------------------------------------------------
 /// Fold out values from an arrayview according to certain rules in reversed turn.
 ///
 /// # Example
@@ -127,6 +137,7 @@ pub fn rev_fold[A, B](self : ArrayView[A], ~init : B, f : (B, A) -> B) -> B {
   }
 }
 
+///-----------------------------------------------------------------------------
 /// Fold out values from an arrayview according to certain rules with index.
 ///
 /// # Example
@@ -142,6 +153,7 @@ pub fn foldi[A, B](self : ArrayView[A], ~init : B, f : (Int, B, A) -> B) -> B {
   }
 }
 
+///-----------------------------------------------------------------------------
 /// Fold out values from an arrayview according to certain rules in reversed turn with index.
 ///
 /// # Example

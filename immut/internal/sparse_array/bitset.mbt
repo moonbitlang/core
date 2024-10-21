@@ -12,11 +12,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+///-----------------------------------------------------------------------------
 /// a simple bit set to store a set of integers less than 32
 pub type Bitset UInt
 
+///-----------------------------------------------------------------------------
 let empty_bitset : Bitset = Bitset(0)
 
+///-----------------------------------------------------------------------------
 /// `has(self: Bitset, idx: Int)`
 ///
 /// Check if the given index is present in the bitset.
@@ -24,6 +27,7 @@ pub fn has(self : Bitset, idx : Int) -> Bool {
   (self._ & (1U << idx)) != 0
 }
 
+///-----------------------------------------------------------------------------
 /// `index_of(self: Bitset, idx: Int)`
 ///
 /// Get the index of the bit in the bitset.
@@ -31,6 +35,7 @@ pub fn index_of(self : Bitset, idx : Int) -> Int {
   (self._ & ((1U << idx) - 1)).popcnt()
 }
 
+///-----------------------------------------------------------------------------
 /// `add(self: Bitset, idx: Int)`
 ///
 /// Add a new index to the bitset.
@@ -38,6 +43,7 @@ pub fn add(self : Bitset, idx : Int) -> Bitset {
   Bitset(self._ | (1U << idx))
 }
 
+///-----------------------------------------------------------------------------
 /// `remove(self: Bitset, idx: Int)`
 ///
 /// Remove an index from the bitset.
@@ -45,6 +51,7 @@ pub fn remove(self : Bitset, idx : Int) -> Bitset {
   Bitset(self._ ^ (1U << idx))
 }
 
+///-----------------------------------------------------------------------------
 /// `size(self: Bitset) -> Int`
 ///
 /// Calculate the size of a bitset
@@ -52,6 +59,7 @@ pub fn size(self : Bitset) -> Int {
   self._.popcnt()
 }
 
+///-----------------------------------------------------------------------------
 test "Bitset::has" {
   let b = empty_bitset.add(2)
   inspect!(b.has(0), content="false")
@@ -61,6 +69,7 @@ test "Bitset::has" {
   inspect!(b.has(2), content="true")
 }
 
+///-----------------------------------------------------------------------------
 test "Bitset::index_of" {
   let b = empty_bitset.add(2)
   inspect!(b.index_of(2), content="0")
@@ -77,6 +86,7 @@ test "Bitset::index_of" {
   inspect!(b.index_of(6), content="3")
 }
 
+///-----------------------------------------------------------------------------
 test "Bitset::remove" {
   let b = empty_bitset.add(2).add(3)
   inspect!(b.has(2), content="true")
@@ -89,6 +99,7 @@ test "Bitset::remove" {
   inspect!(b.index_of(3), content="0")
 }
 
+///-----------------------------------------------------------------------------
 test "Bitset::remove" {
   let b = empty_bitset.add(2).add(3)
   inspect!(b.has(2), content="true")
@@ -101,6 +112,7 @@ test "Bitset::remove" {
   inspect!(b.index_of(3), content="0")
 }
 
+///-----------------------------------------------------------------------------
 test "Bitset::size" {
   let b = empty_bitset
   inspect!(b.size(), content="0")
@@ -112,6 +124,7 @@ test "Bitset::size" {
   inspect!(b.size(), content="2")
 }
 
+///-----------------------------------------------------------------------------
 test "Bitset::ctpop" {
   inspect!(
     ([0, 0xf0f0f0f0, 0x3c3c0ff0] : Array[_]).map(fn { x => x.popcnt() }),
