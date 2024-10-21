@@ -12,20 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-/// @intrinsic %string.substring
-fn unsafe_substring(str : String, start : Int, end : Int) -> String {
-  let len = end - start
-  let bytes = Bytes::new(len * 2)
-  bytes.blit_from_string(0, str, start, len)
-  bytes.sub_string(0, bytes.length())
+/// @alert deprecated "Use `String::trim_start` instead"
+pub fn trim_left(self : String, trim_set : String) -> String {
+  self.trim_start(trim_set)
 }
 
-/// Get substring of the string from [start] to [end] exclusive.
-pub fn substring(
-  self : String,
-  ~start : Int = 0,
-  ~end : Int = self.length()
-) -> String {
-  guard start >= 0 && start <= end && end <= self.length()
-  unsafe_substring(self, start, end)
+/// @alert deprecated "Use `String::trim_end` instead"
+pub fn trim_right(self : String, trim_set : String) -> String {
+  self.trim_end(trim_set)
 }

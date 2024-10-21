@@ -53,7 +53,7 @@ pub impl Show for String with output(self, logger) {
   let mut segment_start = 0
   fn flush_segment(i : Int) {
     if i > segment_start {
-      logger.write_sub_string(self, segment_start, i - segment_start)
+      logger.write_substring(self, segment_start, i - segment_start)
     }
     segment_start = i + 1
   }

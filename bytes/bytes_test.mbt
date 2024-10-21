@@ -37,6 +37,29 @@ test "from_array" {
   )
 }
 
+test "from_array literal" {
+  let b = @bytes.of([65, 0, 66, 0, 67, 0])
+  inspect!(
+    b,
+    content=
+      #|b"\x41\x00\x42\x00\x43\x00"
+    ,
+  )
+}
+
+test "from array literal" {
+  let b1 = @bytes.of(
+    [
+      b'\x41', b'\x00', b'\x42', b'\x00', b'\x43', b'\x00', b'\x44', b'\x00', b'\x45',
+      b'\x00', b'\x46', b'\x00', b'\x47', b'\x00', b'\x48', b'\x00', b'\x49', b'\x00',
+    ],
+  )
+  let b2 = @bytes.of(
+    [65, 0, 66, 0, 67, 0, 68, 0, 69, 0, 70, 0, 71, 0, 72, 0, 73, 0],
+  )
+  assert_eq!(b1, b2)
+}
+
 test "hash" {
   let b1 = @bytes.of(
     [

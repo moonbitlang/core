@@ -21,7 +21,8 @@ test "from_array" {
 
 test "length" {
   let ls = @list.of([1, 2, 3, 4, 5])
-  inspect!(ls.length(), content="5")
+  @json.inspect!(ls.length(), content=5)
+  @json.inspect!(@list.singleton(11), content=[11])
 }
 
 test "iter" {
@@ -60,6 +61,13 @@ test "mapi" {
   let el : @list.T[Int] = @list.Nil
   inspect!(ls.mapi(fn(i, x) { i * x }), content="@list.of([0, 2, 6, 12, 20])")
   inspect!(el.mapi(fn(i, x) { i * x }), content="@list.of([])")
+}
+
+test "rev_map" {
+  let ls = @list.of([1, 2, 3, 4, 5])
+  let rs : @list.T[Int] = @list.Nil
+  inspect!(ls.rev_map(fn(x) { x * 2 }), content="@list.of([10, 8, 6, 4, 2])")
+  inspect!(rs.rev_map(fn(x) { x * 2 }), content="@list.of([])")
 }
 
 test "to_array" {

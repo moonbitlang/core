@@ -1,13 +1,13 @@
 {
     "import": [
         "moonbitlang/core/builtin",
-        "moonbitlang/core/test",
         "moonbitlang/core/coverage",
         "moonbitlang/core/bytes",
         "moonbitlang/core/char"
     ],
     "test-import": [
-      "moonbitlang/core/immut/list"
+      "moonbitlang/core/immut/list",
+      "moonbitlang/core/json"
     ],
     "targets": {
       "panic_test.mbt": ["not", "native"]

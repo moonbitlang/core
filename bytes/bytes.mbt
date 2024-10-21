@@ -39,7 +39,7 @@ pub fn Bytes::from_iter(iter : Iter[Byte]) -> Bytes {
 /// ```moonbit
 /// let b = @bytes.of([b'\x41', b'\x00', b'\x42'])
 /// ```
-/// 
+/// TODO: marked as intrinsic, inline if it is constant
 pub fn Bytes::of(arr : FixedArray[Byte]) -> Bytes {
   let rv = Bytes::new(arr.length())
   for i = 0; i < arr.length(); i = i + 1 {
