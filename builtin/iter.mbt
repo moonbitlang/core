@@ -396,6 +396,21 @@ pub fn map[T, R](self : Iter[T], f : (T) -> R) -> Iter[R] {
   fn { yield => self.run(fn { a => yield(f(a)) }) }
 }
 
+/// Transforms the elements of the iterator using a mapping function that returns an `Option`.
+/// The elements for which the function returns `None` are filtered out.
+pub fn map_option[A, B](self : Iter[A], f : (A) -> B?) -> Iter[B] {
+  fn(yield) {
+    self.run(
+      fn(a) {
+        match f(a) {
+          Some(b) => yield(b)
+          None => IterContinue
+        }
+      },
+    )
+  }
+}
+
 /// Transforms each element of the iterator into an iterator and flattens the resulting iterators into a single iterator.
 ///
 /// # Type Parameters
