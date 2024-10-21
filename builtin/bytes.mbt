@@ -14,7 +14,55 @@
 
 /// Create a new String from byte sequence.
 pub fn to_string(self : Bytes) -> String {
-  self.sub_string(0, self.length())
+  let sb = StringBuilder::new(size_hint=self.length())
+  fn to_hex_digit(i : Int) -> Char {
+    if i < 10 {
+      Char::from_int('0'.to_int() + i)
+    } else {
+      Char::from_int('a'.to_int() + (i - 10))
+    }
+  }
+
+  fn printable(i : Int) -> Bool {
+    i >= 0x20 && i < 0x7F
+  }
+
+  sb.write_string("b\"")
+  for byte in self {
+    let ch = byte.to_int()
+    // escape special characters
+    if ch == '\\'.to_int() {
+      sb.write_string("\\\\")
+      continue
+    } else if ch == '\"'.to_int() {
+      sb.write_string("\\\"")
+      continue
+    } else if ch == '\n'.to_int() {
+      sb.write_string("\\n")
+      continue
+    } else if ch == '\t'.to_int() {
+      sb.write_string("\\t")
+      continue
+    } else if ch == '\r'.to_int() {
+      sb.write_string("\\r")
+      continue
+    } else if ch == '\b'.to_int() {
+      sb.write_string("\\b")
+      continue
+    }
+    // ASCII printable characters
+    if printable(ch) {
+      sb.write_char(Char::from_int(ch))
+    } else {
+      sb
+      ..write_string("\\x")
+      ..write_char(to_hex_digit(ch / 16))
+      ..write_char(to_hex_digit(ch % 16))
+      |> ignore
+    }
+  }
+  sb.write_string("\"")
+  sb.to_string()
 }
 
 /// Create byte sequence from String.
