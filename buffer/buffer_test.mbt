@@ -12,6 +12,20 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+test "length method" {
+  let buf = @buffer.new(size_hint=100)
+  inspect!(buf.length(), content="0")
+  buf.write_string("Test")
+  inspect!(buf.length(), content="8")
+}
+
+test "is_empty method" {
+  let buf = @buffer.new(size_hint=100)
+  inspect!(buf.is_empty(), content="true")
+  buf.write_string("Test")
+  inspect!(buf.is_empty(), content="false")
+}
+
 test "expect method with matching content" {
   let buf = @buffer.new(size_hint=100)
   buf.write_string("Test")
