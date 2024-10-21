@@ -16,13 +16,13 @@ test "bytes literal" {
   inspect!(
     b"ABC",
     content=
-      #|b"\x41\x42\x43"
+      #|b"ABC"
     ,
   )
   inspect!(
     b"\x41\x42\x43",
     content=
-      #|b"\x41\x42\x43"
+      #|b"ABC"
     ,
   )
 }
@@ -32,7 +32,7 @@ test "from_array" {
   inspect!(
     b,
     content=
-      #|b"\x41\x00\x42\x00\x43\x00"
+      #|b"A\x00B\x00C\x00"
     ,
   )
 }
@@ -42,7 +42,7 @@ test "from_array literal" {
   inspect!(
     b,
     content=
-      #|b"\x41\x00\x42\x00\x43\x00"
+      #|b"A\x00B\x00C\x00"
     ,
   )
 }

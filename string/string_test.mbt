@@ -41,27 +41,45 @@ test "compare" {
 
 test "to_bytes" {
   inspect!(
-    "中文".to_bytes().to_string(),
+    "中文".to_bytes(),
     content=
-      #|b"\x2d\x4e\x87\x65"
+      #|b"-N\x87e"
     ,
   )
   inspect!(
-    "asdf".to_bytes().to_string(),
+    "\n\t\"\\\r\b".to_bytes(),
     content=
-      #|b"\x61\x00\x73\x00\x64\x00\x66\x00"
+      #|b"\n\x00\t\x00\"\x00\\\x00\r\x00\b\x00"
+    ,
+  )
+    inspect!(
+    "\n\t\"\\\r\b".to_array(),
+    content=
+      #|['\n', '\t', '"', '\\', '\r', '\b']
     ,
   )
   inspect!(
-    "🤣🤣".to_bytes().to_string(),
+    "\"Hello\"\nNew line.\t".to_bytes(),
     content=
-      #|b"\x3e\xd8\x23\xdd\x3e\xd8\x23\xdd"
+      #|b"\"\x00H\x00e\x00l\x00l\x00o\x00\"\x00\n\x00N\x00e\x00w\x00 \x00l\x00i\x00n\x00e\x00.\x00\t\x00"
     ,
   )
   inspect!(
-    "🤔".to_bytes().to_string(),
+    "asdf".to_bytes(),
     content=
-      #|b"\x3e\xd8\x14\xdd"
+      #|b"a\x00s\x00d\x00f\x00"
+    ,
+  )
+  inspect!(
+    "🤣🤣".to_bytes(),
+    content=
+      #|b">\xd8#\xdd>\xd8#\xdd"
+    ,
+  )
+  inspect!(
+    "🤔".to_bytes(),
+    content=
+      #|b">\xd8\x14\xdd"
     ,
   )
 }
