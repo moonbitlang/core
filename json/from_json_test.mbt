@@ -17,11 +17,10 @@ fn temp() -> Unit {
   ()
 }
 
-
 typealias TestX = Map[String, Int]
 
 test {
-  let _ = temp()  
+  let _ = temp()
   let u = { "x": 3, "y": 4 }
   let j = u.to_json()
   let h : TestX = @json.from_json!(j)
