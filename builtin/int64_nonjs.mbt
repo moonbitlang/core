@@ -12,6 +12,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+pub fn Int64::low_32bits(self : Int64) -> Int {
+  return self.to_int()
+}
+
+pub fn Int64::high_32bits(self : Int64) -> Int {
+  return (self >> 32).to_int()
+}
+
 pub fn Int64::op_neg(self : Int64) -> Int64 = "%i64_neg"
 
 pub fn Int64::op_add(self : Int64, other : Int64) -> Int64 = "%i64_add"
@@ -99,6 +107,14 @@ pub fn Double::convert_uint64(val : UInt64) -> Double = "%u64.to_f64"
 pub fn Int64::to_uint64(self : Int64) -> UInt64 = "%i64.to_u64_reinterpret"
 
 pub fn Int64::reinterpret_as_uint64(self : Int64) -> UInt64 = "%i64.to_u64_reinterpret"
+
+pub fn UInt64::low_32bits(self : UInt64) -> UInt {
+  return self.to_uint()
+}
+
+pub fn UInt64::high_32bits(self : UInt64) -> UInt {
+  return (self >> 32).to_uint()
+}
 
 /// @alert deprecated "Use `reinterpret_as_int64` instead"
 pub fn UInt64::to_int64(self : UInt64) -> Int64 = "%u64.to_i64_reinterpret"

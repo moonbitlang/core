@@ -354,6 +354,14 @@ extern "js" fn MyInt64::convert_to_double(self : MyInt64) -> Double =
   #|(a) => a.hi * 4294967296.0 + (a.lo >>> 0)
 //endregion
 
+pub fn Int64::low_32bits(self : Int64) -> Int {
+  MyInt64::from_int64(self).lo
+}
+
+pub fn Int64::high_32bits(self : Int64) -> Int {
+  MyInt64::from_int64(self).hi
+}
+
 pub fn Int64::op_neg(self : Int64) -> Int64 {
   (-MyInt64::from_int64(self)).to_int64()
 }
@@ -521,6 +529,14 @@ fn MyInt64::from_uint64(value : UInt64) -> MyInt64 = "%identity"
 pub fn Int64::to_uint64(self : Int64) -> UInt64 = "%identity"
 
 pub fn Int64::reinterpret_as_uint64(self : Int64) -> UInt64 = "%identity"
+
+pub fn UInt64::low_32bits(self : Int64) -> UInt {
+  MyInt64::from_int64(self).lo.reinterpret_as_uint()
+}
+
+pub fn UInt64::high_32bits(self : Int64) -> UInt {
+  MyInt64::from_int64(self).hi.reinterpret_as_uint()
+}
 
 pub fn UInt64::op_add(self : UInt64, other : UInt64) -> UInt64 {
   MyInt64::from_uint64(self).op_add(MyInt64::from_uint64(other)).to_uint64()

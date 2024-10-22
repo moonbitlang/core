@@ -445,9 +445,11 @@ impl Int64 {
   compare(Int64, Int64) -> Int
   ctz(Int64) -> Int
   default() -> Int64
+  high_32bits(Int64) -> Int
   land(Int64, Int64) -> Int64
   lnot(Int64) -> Int64
   lor(Int64, Int64) -> Int64
+  low_32bits(Int64) -> Int
   lsl(Int64, Int) -> Int64 //deprecated
   lsr(Int64, Int) -> Int64 //deprecated
   lxor(Int64, Int64) -> Int64
@@ -513,9 +515,11 @@ impl UInt64 {
   ctz(UInt64) -> Int
   default() -> UInt64
   extend_uint(UInt) -> UInt64
+  high_32bits(UInt64) -> UInt
   land(UInt64, UInt64) -> UInt64
   lnot(UInt64) -> UInt64
   lor(UInt64, UInt64) -> UInt64
+  low_32bits(UInt64) -> UInt
   lsl(UInt64, Int) -> UInt64 //deprecated
   lsr(UInt64, Int) -> UInt64 //deprecated
   lxor(UInt64, UInt64) -> UInt64
