@@ -69,3 +69,7 @@ pub fn iter(self : Bytes) -> Iter[Byte] {
     },
   )
 }
+
+pub fn Bytes::default() -> Bytes {
+  b""
+}
