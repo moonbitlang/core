@@ -95,6 +95,8 @@ impl FromJson for Array
 
 impl FromJson for BigInt
 
+impl FromJson for Json
+
 impl FromJson for Map
 
 impl FromJson for Tuple(2)

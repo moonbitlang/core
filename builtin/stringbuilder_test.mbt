@@ -12,10 +12,24 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+// when we write the string into the buffer
+// we assume the string is utf16 and blit
+// we assume the bytes (in valid region [0, len)) is utf16
+// so that 
+fn id(s : String) -> String {
+  StringBuilder::new()..write_string(s).to_string()
+}
+
 test "stringbuilder" {
   let buf = StringBuilder::new()
   buf.write_string("hello")
   buf.write_char(' ')
-  buf.write_sub_string("world", 0, 3)
+  buf.write_substring("world", 0, 3)
   inspect!(buf.to_string(), content="hello wor")
+}
+
+test {
+  let data = ["a", "b", "c", "hello world"]
+  @json.inspect!(data.map(id), content=["a", "b", "c", "hello world"])
+  // assert_eq!(StringBuilder::new()..write_string("hello").to_string(), "hello")
 }

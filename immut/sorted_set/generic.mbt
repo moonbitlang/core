@@ -41,9 +41,58 @@ pub fn T::from_iter[A : Compare](iter : Iter[A]) -> T[A] {
 }
 
 test {
-  let buf = StringBuilder::new(size_hint=20)
-  of([2, 7, 1, 2, 3, 4, 5])
-  .iter()
-  .each(fn { x => buf.write_string(x.to_string()) })
-  inspect!(buf, content="123457")
+  @json.inspect!(of([2, 7, 1, 2, 3, 4, 5]), content=[1, 2, 3, 4, 5, 7])
+}
+
+pub fn T::op_equal[A : Eq](self : T[A], other : T[A]) -> Bool {
+  // There's no `Iter::zip` (https://github.com/moonbitlang/core/issues/994#issuecomment-2350935193),
+  // so we have to use the manual implementation below:
+  let iter = InorderIterator::new(self)
+  let iter1 = InorderIterator::new(other)
+  loop iter.next(), iter1.next() {
+    None, None => true
+    Some(a), Some(b) => {
+      guard a == b else { break false }
+      continue iter.next(), iter1.next()
+    }
+    _, _ => false
+  }
+}
+
+priv type InorderIterator[A] Array[T[A]]
+
+fn InorderIterator::new[A](root : T[A]) -> InorderIterator[A] {
+  InorderIterator([])..move_left(root)
+}
+
+fn InorderIterator::move_left[A](
+  self : InorderIterator[A],
+  node : T[A]
+) -> Unit {
+  loop node {
+    Empty => ()
+    Node(~left, ..) as curr => {
+      self._.push(curr)
+      continue left
+    }
+  }
+}
+
+fn InorderIterator::next[A](self : InorderIterator[A]) -> A? {
+  guard let Some(curr) = self._.pop() else { _ => return None }
+  guard let Node(~right, ~value, ..) = curr
+  self.move_left(right)
+  Some(value)
+}
+
+test "InorderIterator" {
+  let arr : FixedArray[_] = [1, 2, 3, 4, 5, 6, 7]
+  let set = of(arr)
+  let iter = InorderIterator::new(set)
+  for i = 0; ; i = i + 1 {
+    match iter.next() {
+      None => break
+      Some(value) => assert_eq!(value, arr[i])
+    }
+  }
 }

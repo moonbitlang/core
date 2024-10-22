@@ -566,3 +566,11 @@ test "array_dedup - edge cases" {
   array.dedup()
   inspect!(array, content="[1, 2, 3, 4, 5]")
 }
+
+struct MX {
+  mm_num : Array[Int]
+} derive(Default, ToJson)
+
+test {
+  @json.inspect!(MX::default(), content={ "mm_num": [] })
+}

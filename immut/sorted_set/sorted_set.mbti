@@ -1,5 +1,6 @@
 package moonbitlang/core/immut/sorted_set
 
+alias @moonbitlang/core/json as @json
 alias @moonbitlang/core/quickcheck as @quickcheck
 
 // Values
@@ -19,6 +20,7 @@ impl T {
   fold[A : Compare + Eq, B](Self[A], ~init : B, (B, A) -> B) -> B
   from_array[A : Compare + Eq](Array[A]) -> Self[A]
   from_iter[A : Compare + Eq](Iter[A]) -> Self[A]
+  from_json[A : @json.FromJson + Compare + Eq](Json) -> Self[A]!@json.JsonDecodeError
   inter[A : Compare + Eq](Self[A], Self[A]) -> Self[A]
   is_empty[A : Compare + Eq](Self[A]) -> Bool
   iter[A](Self[A]) -> Iter[A]
@@ -36,6 +38,7 @@ impl T {
   split[A : Compare + Eq](Self[A], A) -> (Self[A], Bool, Self[A])
   subset[A : Compare + Eq](Self[A], Self[A]) -> Bool
   to_array[A : Compare + Eq](Self[A]) -> Array[A]
+  to_json[A : ToJson](Self[A]) -> Json
   to_string[A : Show](Self[A]) -> String
   union[A : Compare + Eq](Self[A], Self[A]) -> Self[A]
 }
@@ -46,6 +49,10 @@ impl T {
 
 // Extension Methods
 impl Show for T
+
+impl ToJson for T
+
+impl @json.FromJson for T
 
 impl @quickcheck.Arbitrary for T
 

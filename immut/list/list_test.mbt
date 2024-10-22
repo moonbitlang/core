@@ -21,7 +21,8 @@ test "from_array" {
 
 test "length" {
   let ls = @list.of([1, 2, 3, 4, 5])
-  inspect!(ls.length(), content="5")
+  @json.inspect!(ls.length(), content=5)
+  @json.inspect!(@list.singleton(11), content=[11])
 }
 
 test "iter" {
@@ -60,6 +61,13 @@ test "mapi" {
   let el : @list.T[Int] = @list.Nil
   inspect!(ls.mapi(fn(i, x) { i * x }), content="@list.of([0, 2, 6, 12, 20])")
   inspect!(el.mapi(fn(i, x) { i * x }), content="@list.of([])")
+}
+
+test "rev_map" {
+  let ls = @list.of([1, 2, 3, 4, 5])
+  let rs : @list.T[Int] = @list.Nil
+  inspect!(ls.rev_map(fn(x) { x * 2 }), content="@list.of([10, 8, 6, 4, 2])")
+  inspect!(rs.rev_map(fn(x) { x * 2 }), content="@list.of([])")
 }
 
 test "to_array" {
@@ -109,10 +117,10 @@ test "head" {
   inspect!(el.head(), content="None")
 }
 
-// test "last" {
-//   let ls = @list.of([1, 2, 3, 4, 5])
-//   inspect!(ls.last(), content="5")
-// }
+test "last" {
+  let ls = @list.of([1, 2, 3, 4, 5])
+  inspect!(ls.last(), content="Some(5)")
+}
 
 test "init_" {
   let ls = @list.of([1, 2, 3, 4, 5])
@@ -488,17 +496,33 @@ test "List::output with empty list" {
   inspect!(buf, content="@list.of([])")
 }
 
+test "List::to_json with non-empty list" {
+  let list = @list.of([1, 2, 3, 4, 5])
+  @json.inspect!(ToJson::to_json(list), content=[1, 2, 3, 4, 5])
+}
+
+test "List::to_json with empty list" {
+  let list : @list.T[Int] = Nil
+  @json.inspect!(ToJson::to_json(list), content=[])
+}
+
+test "List::from_json" {
+  for xs in (@quickcheck.samples(20) : Array[@list.T[Int]]) {
+    assert_eq!(xs, @json.from_json!(xs.to_json()))
+  }
+}
+
 test "List::head_exn with non-empty list" {
   let list = @list.of([1, 2, 3, 4, 5])
   let head = @list.head(list)
   assert_eq!(head, Some(1))
 }
 
-// test "List::last with non-empty list" {
-//   let list = @list.of([1, 2, 3, 4, 5])
-//   let last = @list.last(list)
-//   assert_eq!(last, 5)
-// }
+test "List::last with non-empty list" {
+  let list = @list.of([1, 2, 3, 4, 5])
+  let last = @list.last(list)
+  assert_eq!(last, Some(5))
+}
 
 test "List::zip with lists of equal length" {
   let list1 = @list.of([1, 2, 3])

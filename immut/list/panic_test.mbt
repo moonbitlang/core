@@ -12,9 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-// test "panic last" {
-//   @list.Nil.last()
-// }
+test "last None" {
+  assert_eq!(@list.Nil.last(), (None : Unit?))
+}
 
 test "panic nth_exn" {
   @list.Nil.unsafe_nth(0)
