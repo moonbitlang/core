@@ -19,3 +19,7 @@ pub let max_value : UInt = 4294967295U
 pub fn to_int64(self : UInt) -> Int64 {
   self.to_uint64().reinterpret_as_int64()
 }
+
+pub fn UInt::default() -> UInt {
+  0
+}
