@@ -424,42 +424,6 @@ fn grade_school_div(self : BigInt, other : BigInt) -> (BigInt, BigInt) {
 
 // Bitwise Operations
 
-/// @alert deprecated "Use infix bitwise operator `<<` instead"
-pub fn lsl(self : BigInt, n : Int) -> BigInt {
-  if n < 0 {
-    abort("negative shift count")
-  }
-  if not(self.is_zero()) {
-    let new_limbs = FixedArray::make(
-      self.len + (n + radix_bit_len - 1) / radix_bit_len, // ceiling(n / radix_bit_len)
-      0U,
-    )
-    let a = self.limbs
-    let r = n % radix_bit_len
-    let lz = n / radix_bit_len // number of leading zeros
-    let mut len = self.len + lz
-    if r != 0 {
-      let mut carry = 0UL
-      for i = 0; i < self.len; i = i + 1 {
-        carry = carry | (a[i].to_uint64() << r)
-        new_limbs[i + lz] = (carry % radix).to_uint()
-        carry = carry >> radix_bit_len
-      }
-      if carry != 0 {
-        new_limbs[self.len + lz] = carry.to_uint()
-        len += 1
-      }
-    } else {
-      for i = 0; i < self.len; i = i + 1 {
-        new_limbs[i + lz] = a[i]
-      }
-    }
-    { limbs: new_limbs, sign: self.sign, len }
-  } else {
-    zero
-  }
-}
-
 /// Left shift a bigint
 /// The sign of the result is the same as the sign of the input.
 /// Only the absolute value is shifted.
@@ -495,15 +459,6 @@ pub fn op_shl(self : BigInt, n : Int) -> BigInt {
   } else {
     zero
   }
-}
-
-/// Left shift a bigint
-/// The sign of the result is the same as the sign of the input.
-/// Only the absolute value is shifted.
-/// 
-/// @alert deprecated "Use infix bitwise operator `<<` instead"
-pub fn shl(self : BigInt, n : Int) -> BigInt {
-  self << n
 }
 
 /// Right shift a bigint
@@ -545,20 +500,6 @@ pub fn op_shr(self : BigInt, n : Int) -> BigInt {
       { limbs: new_limbs, sign: self.sign, len: new_len }
     }
   }
-}
-
-/// Right shift a bigint
-/// The sign of the result is the same as the sign of the input.
-/// Only the absolute value is shifted.
-/// 
-/// @alert deprecated "Use infix bitwise operator `>>` instead"
-pub fn shr(self : BigInt, n : Int) -> BigInt {
-  self >> n
-}
-
-/// @alert deprecated "Use infix bitwise operator `>>` instead"
-pub fn asr(self : BigInt, n : Int) -> BigInt {
-  self >> n
 }
 
 // Comparison Operations
