@@ -1,9 +1,5 @@
 {
-  "import": [
-    "moonbitlang/core/builtin",
-    "moonbitlang/core/coverage",
-    "moonbitlang/core/double"
-  ],
+  "import": ["moonbitlang/core/builtin", "moonbitlang/core/double"],
   "test-import": ["moonbitlang/core/quickcheck"],
   "targets": {
     "round_js.mbt": ["js"],

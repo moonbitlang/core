@@ -2,8 +2,7 @@
   "import": [
     "moonbitlang/core/builtin",
     "moonbitlang/core/quickcheck",
-    "moonbitlang/core/quickcheck/splitmix",
-    "moonbitlang/core/coverage"
+    "moonbitlang/core/quickcheck/splitmix"
   ],
   "targets": {
     "panic_test.mbt": ["not", "native"]
