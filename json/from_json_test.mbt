@@ -12,9 +12,15 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+/// FIXME: remove later, workround formatter bug
+fn temp() -> Unit {
+  ()
+}
+
 typealias TestX = Map[String, Int]
 
 test {
+  let _ = temp()
   let u = { "x": 3, "y": 4 }
   let j = u.to_json()
   let h : TestX = @json.from_json!(j)
