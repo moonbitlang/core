@@ -226,6 +226,7 @@ impl Iter {
   just_run[T](Self[T], (T) -> IterResult) -> Unit
   last[A](Self[A]) -> A?
   map[T, R](Self[T], (T) -> R) -> Self[R]
+  map_option[A, B](Self[A], (A) -> B?) -> Self[B]
   map_while[A, B](Self[A], (A) -> B?) -> Self[B]
   new[T](((T) -> IterResult) -> IterResult) -> Self[T]
   op_add[T](Self[T], Self[T]) -> Self[T]
