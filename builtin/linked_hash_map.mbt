@@ -512,3 +512,7 @@ pub fn Map::from_iter[K : Hash + Eq, V](iter : Iter[(K, V)]) -> Map[K, V] {
   iter.each(fn(e) { m.set(e.0, e.1) })
   m
 }
+
+pub fn Map::default[K, V]() -> Map[K, V] {
+  Map::new()
+}
