@@ -4,7 +4,6 @@
     "moonbitlang/core/tuple",
     "moonbitlang/core/string",
     "moonbitlang/core/array",
-    "moonbitlang/core/coverage",
     "moonbitlang/core/quickcheck",
     "moonbitlang/core/json"
   ],

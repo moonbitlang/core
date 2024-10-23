@@ -7,7 +7,6 @@
     "moonbitlang/core/int",
     "moonbitlang/core/tuple",
     "moonbitlang/core/double",
-    "moonbitlang/core/coverage",
     "moonbitlang/core/uint64",
     "moonbitlang/core/array",
     "moonbitlang/core/int64",
