@@ -4,8 +4,5 @@
         "moonbitlang/core/coverage",
         "moonbitlang/core/bytes",
         "moonbitlang/core/uint"
-    ],
-    "test-import": [
-        "moonbitlang/core/test"
     ]
 }
