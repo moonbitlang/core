@@ -40,10 +40,48 @@ test "compare" {
 }
 
 test "to_bytes" {
-  assert_eq!("中文".to_bytes().to_string(), "中文")
-  assert_eq!("asdf".to_bytes().to_string(), "asdf")
-  assert_eq!("🤣🤣".to_bytes().to_string(), "🤣🤣")
-  assert_eq!("🤔".to_bytes().to_string(), "🤔")
+  inspect!(
+    "中文".to_bytes(),
+    content=
+      #|b"-N\x87e"
+    ,
+  )
+  inspect!(
+    "\n\t\"\\\r\b".to_bytes(),
+    content=
+      #|b"\n\x00\t\x00\"\x00\\\x00\r\x00\b\x00"
+    ,
+  )
+    inspect!(
+    "\n\t\"\\\r\b".to_array(),
+    content=
+      #|['\n', '\t', '"', '\\', '\r', '\b']
+    ,
+  )
+  inspect!(
+    "\"Hello\"\nNew line.\t".to_bytes(),
+    content=
+      #|b"\"\x00H\x00e\x00l\x00l\x00o\x00\"\x00\n\x00N\x00e\x00w\x00 \x00l\x00i\x00n\x00e\x00.\x00\t\x00"
+    ,
+  )
+  inspect!(
+    "asdf".to_bytes(),
+    content=
+      #|b"a\x00s\x00d\x00f\x00"
+    ,
+  )
+  inspect!(
+    "🤣🤣".to_bytes(),
+    content=
+      #|b">\xd8#\xdd>\xd8#\xdd"
+    ,
+  )
+  inspect!(
+    "🤔".to_bytes(),
+    content=
+      #|b">\xd8\x14\xdd"
+    ,
+  )
 }
 
 test "Show::output" {
