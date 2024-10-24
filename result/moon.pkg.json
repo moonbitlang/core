@@ -1,9 +1,5 @@
 {
-  "import": [
-    "moonbitlang/core/builtin",
-    "moonbitlang/core/coverage",
-    "moonbitlang/core/quickcheck"
-  ],
+  "import": ["moonbitlang/core/builtin", "moonbitlang/core/quickcheck"],
   "targets": {
     "panic_test.mbt": ["not", "native"]
   }
