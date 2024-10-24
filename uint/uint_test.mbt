@@ -53,3 +53,7 @@ test "shift" {
   inspect!(4U >> 2, content="1")
   inspect!(2U >> 2, content="0")
 }
+
+test "default" {
+  inspect!(UInt::default(), content="0")
+}
