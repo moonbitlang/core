@@ -245,6 +245,12 @@ test "split_at" {
   let (v1, v2) = v.split_at(1)
   assert_eq!(v1, [3])
   assert_eq!(v2, [4, 5])
+  let (v1, v2) = v.split_at(0)
+  assert_eq!(v1, [])
+  assert_eq!(v2, [3, 4, 5])
+  let (v1, v2) = v.split_at(3)
+  assert_eq!(v1, [3, 4, 5])
+  assert_eq!(v2, [])
 }
 
 test "contains" {

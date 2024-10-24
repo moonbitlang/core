@@ -369,7 +369,7 @@ pub fn rev[T](self : Array[T]) -> Array[T] {
 /// TODO: perf could be optimized
 /// @alert unsafe "Panic if index is out of bounds."
 pub fn split_at[T](self : Array[T], index : Int) -> (Array[T], Array[T]) {
-  if index < 0 || index >= self.length() {
+  if index < 0 || index > self.length() {
     let len = self.length()
     abort(
       "index out of bounds: the len is from 0 to \{len} but the index is \{index}",
@@ -378,13 +378,15 @@ pub fn split_at[T](self : Array[T], index : Int) -> (Array[T], Array[T]) {
   let v1 = Array::make_uninit(index)
   let v2 = Array::make_uninit(self.length() - index)
   UninitializedArray::unsafe_blit(v1.buffer(), 0, self.buffer(), 0, index)
-  UninitializedArray::unsafe_blit(
-    v2.buffer(),
-    0,
-    self.buffer(),
-    index,
-    self.length() - index,
-  )
+  if index != self.length() {
+    UninitializedArray::unsafe_blit(
+      v2.buffer(),
+      0,
+      self.buffer(),
+      index,
+      self.length() - index,
+    )
+  }
   (v1, v2)
 }
 
