@@ -54,6 +54,17 @@ test "minimum.ref" {
   @test.is!(@math.minimum(x2t, x2), x2t)
 }
 
+test "exp" {
+  assert_eq!(@math.exp(1), 2.718281828459045)
+  assert_eq!(@math.exp(-1), 0.36787944117144233)
+}
+
+test "log" {
+  inspect!(@math.ln(@math.exp(1)), content="1")
+  inspect!(@math.log2(4), content="2")
+  inspect!(@math.log10(10), content="1")
+}
+
 // For testing purposes
 priv struct T {
   x : Int

@@ -27,6 +27,14 @@ test "combine int" {
   inspect!(hash(0) == hash(1), content="false")
 }
 
+test "combine char" {
+  fn hash(v) {
+    Hasher::new()..combine_char(v).finalize()
+  }
+
+  inspect!(hash('c'), content="-1500876651")
+}
+
 test "combine int64" {
   fn hash(v) {
     Hasher::new()..combine_int64(v).finalize()
