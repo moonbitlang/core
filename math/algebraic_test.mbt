@@ -33,6 +33,13 @@ test "maximum.ref" {
   @test.is!(@math.maximum(x2t, x2), x2)
 }
 
+test "maximum_by_key" {
+  let abs = fn(n : Int) { if n < 0 { 0 - n } else { n } }
+  assert_eq!(@math.maximum_by_key(1, -2, abs), -2)
+  assert_eq!(@math.maximum_by_key(-2, 1, abs), -2)
+  assert_eq!(@math.maximum_by_key(-2, 2, abs), 2)
+}
+
 test "minimum.value" {
   assert_eq!(@math.minimum(1, 2), 1)
   assert_eq!(@math.minimum(2, 1), 1)
@@ -52,6 +59,13 @@ test "minimum.ref" {
   @test.is!(@math.minimum(x2, x1), x1)
   @test.is!(@math.minimum(x2, x2t), x2)
   @test.is!(@math.minimum(x2t, x2), x2t)
+}
+
+test "minimum_by_key" {
+  let abs = fn(n : Int) { if n < 0 { 0 - n } else { n } }
+  assert_eq!(@math.minimum_by_key(1, -2, abs), 1)
+  assert_eq!(@math.minimum_by_key(-2, 1, abs), 1)
+  assert_eq!(@math.minimum_by_key(-2, 2, abs), -2)
 }
 
 test "exp" {
