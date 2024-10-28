@@ -47,6 +47,6 @@ Attention, the language of the code is MoonBit.
 
     read_retriever_chain = read_prompt | read_llm | StrOutputParser()
     response = read_retriever_chain.invoke(
-        {"moonbit": moonbit, "index": [index]}
+        {"moonbit": moonbit_code, "index": [index]}
     )
     return response
