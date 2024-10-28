@@ -1,9 +1,10 @@
 name: coverage_and_test
 
 on:
-  pull_request:
+  pull_request_target:
+    types: [opened, synchronize, edited]
     branches:
-      - main
+      - main  
 
 jobs:
   test:
@@ -35,17 +36,16 @@ jobs:
           moon coverage report -f coveralls
 
       - name: coverage improvement
-        run: python scripts/testagent.py
-
+        run: python scripts/testagent.py --api_key ${{ secrets.api_key }}
+      
       - name: Get code changes
+        id: get_code_changes
         run: |
-            git diff  > changes.txt   
-          
+            git diff > changes.txt   
             test_code=$(cat changes.txt)   
-          
-            echo "::set-output name=test_code::$test_code"  
+            echo "test_code=$test_code" >> $GITHUB_ENV  
 
-      - name: push comments
+      - name: Push comments
         uses: peter-evans/create-or-update-comment@v1
         env:
             GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -54,7 +54,7 @@ jobs:
             body: |
               Here are the test code changes:  
               ```  
-              ${{ steps.get_code_changes.outputs.test_code }}  
+              ${{ env.test_code }}  
               ```
             reaction-type: rocket
 
