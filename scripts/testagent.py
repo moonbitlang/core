@@ -21,12 +21,9 @@ def testagent(api_key):
                 moonbit_code = codefile.read()
                 for index in indexs:
                     uncovered_code = read_coverage(moonbit_code, index, api_key)
-                    print(index)
-                    print("uncovered code is" + uncovered_code)
                     test_code = generate_test_code(
                         uncovered_code, source_file["name"], api_key
                     )
-                    print("test_code is" + test_code)
                     test_test_code(uncovered_code, test_code, source_file["name"], zhipuai_api_key)
 
 
