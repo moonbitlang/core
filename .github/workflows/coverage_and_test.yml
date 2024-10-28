@@ -29,8 +29,10 @@ jobs:
       - name: initial coverage report
         run: |
           moon coverage report -f summary > coverage_summary.txt
+          
           cat coverage_summary.txt >> "$GITHUB_STEP_SUMMARY"
-      
+
+          moon coverage report -f coveralls
 
       - name: coverage improvement
         run: python scripts/testagent.py
