@@ -47,15 +47,6 @@ Attention, the language of the code is MoonBit.
 
     read_retriever_chain = read_prompt | read_llm | StrOutputParser()
     response = read_retriever_chain.invoke(
-        {"moonbit": moonbit, "index": [index]}
-    )
-    return response  
-    )
-
-    read_llm = ChatZhipuAI(api_key=api_key, model="glm-4-plus", temperature=0.5)
-
-    read_retriever_chain = read_prompt | read_llm | StrOutputParser()
-    response = read_retriever_chain.invoke(
         {"moonbit_code": moonbit_code, "index": [index]}
     )
     return response
