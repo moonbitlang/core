@@ -1,46 +1,64 @@
 import argparse
 import json
-from readcoverage import read_coverage
+import subprocess
+from readcoverage import read_coverage, get_coverage_from_summary
 from gettest import generate_test_code
-from writedown import writedown_and_test
+from writedown import test_test_code
 
 
-def main():
+def testagent(api_key):
     with open("coveralls.json", "r") as file:
         data = json.load(file)
 
-    parser = argparse.ArgumentParser(description="用于加载API密钥。")
-    parser.add_argument(
-        "--api_key",
-        type=str,
-        help="API密钥",
-    )
-    args = parser.parse_args()
-    zhipuai_api_key = args.api_key
     for source_file in data["source_files"]:
         with open(source_file["name"], "r") as codefile:
             indexs = [
-                indexs
-                for indexs, value in enumerate(source_file["coverage"])
+                index
+                for index, value in enumerate(source_file["coverage"])
                 if value == 0
             ]
             if indexs:
-                print(indexs)
                 moonbit_code = codefile.read()
                 for index in indexs:
-                    for attempt in range(3):
-                        response = read_coverage(moonbit_code, index, zhipuai_api_key)
-                        print("未覆盖的函数声明为" + response)
-                        response = generate_test_code(
-                            response, source_file["name"], zhipuai_api_key
-                        )
-                        test_code = response.replace("```moonbit\n", "").rstrip("```")
-                        print("测试用例为" + test_code)
-                        result = writedown_and_test(response, source_file["name"])
-
-                        if result == 0:
-                            break
+                    uncovered_code = read_coverage(moonbit_code, index, api_key)
+                    print(index)
+                    print("uncovered code is" + uncovered_code)
+                    test_code = generate_test_code(
+                        uncovered_code, source_file["name"], api_key
+                    )
+                    print("test_code is" + test_code)
+                    test_test_code(uncovered_code, test_code, source_file["name"], zhipuai_api_key)
 
 
-if __name__ == "__main__":
-    main()
+prev_coverage = get_coverage_from_summary("coverage_summary.txt")
+max_iterations = 5
+iteration = 0
+coverage_improved = True
+parser = argparse.ArgumentParser(description="to load API_KEY。")
+parser.add_argument(
+    "--api_key",
+    type=str,
+    help="API_KEY",
+)
+args = parser.parse_args()
+zhipuai_api_key = args.api_key
+new_coverage = prev_coverage
+while coverage_improved and iteration < max_iterations:
+    iteration += 1
+    testagent(zhipuai_api_key)
+    subprocess.run(["moon", "test", "--enable-coverage"])
+    subprocess.run(["moon", "coverage", "report", "-f", "coveralls"])
+    subprocess.run(
+        ["moon", "coverage", "report", "-f", "summary", "summary"],
+        stdout=open("coverage_summary.txt", "w"),
+    )
+    new_coverage = get_coverage_from_summary("coverage_summary.txt")
+
+    if new_coverage > prev_coverage:
+        prev_coverage = new_coverage
+        print(f"Coverage improved to {new_coverage}%")
+    else:
+        coverage_improved = False
+        print("Coverage did not improve. Stopping loop.")
+
+print(f"Final coverage: {new_coverage}%")
