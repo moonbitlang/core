@@ -20,12 +20,13 @@ def get_coverage_from_summary(file_path):
 
 
 def read_coverage(moonbit_code, index, api_key):
+   def read_coverage(moonbit, index, api_key):
     read_prompt = ChatPromptTemplate.from_template(
         """You are a professional MoonBit code analyst. Your task is to find and return the complete function definition containing the given uncovered code line indices.
 
 Input:
 
-moonbit_code: The entire code in which you need to search for uncovered lines.
+moonbit: The entire code in which you need to search for uncovered lines.
 Uncovered code line index: An integer representing the line number of the code that is marked as uncovered.
 Output requirements:
 
@@ -36,8 +37,20 @@ Do not include any analysis process, additional information, or explanatory stat
 Example:
 If the uncovered code line index is [2], then the output should be the complete function definition that includes line 2.
  Now, please find the uncovered code based on the following input information:
-        moonbit_code:{moonbit_code}
+        moonbit:{moonbit}
         Uncovered code line index:{index}   
+Attention, the language of the code is MoonBit.
+        
+        """
+    )
+
+    read_llm = ChatZhipuAI(api_key=api_key, model="glm-4-plus", temperature=0.5)
+
+    read_retriever_chain = read_prompt | read_llm | StrOutputParser()
+    response = read_retriever_chain.invoke(
+        {"moonbit": moonbit, "index": [index]}
+    )
+    return response  
         """
     )
 
