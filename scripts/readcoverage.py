@@ -50,7 +50,6 @@ Attention, the language of the code is MoonBit.
         {"moonbit": moonbit, "index": [index]}
     )
     return response  
-        """
     )
 
     read_llm = ChatZhipuAI(api_key=api_key, model="glm-4-plus", temperature=0.5)
