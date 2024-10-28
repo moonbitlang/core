@@ -1,8 +1,7 @@
 name: coverage_and_test
 
 on:
-  pull_request_target:
-    types: [synchronize, opened, edited,closed]
+  pull_request:
     branches:
       - main
 
