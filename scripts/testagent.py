@@ -39,6 +39,7 @@ parser.add_argument(
     "--api_key",
     type=str,
     help="API_KEY",
+    default=4a478b99108ee30c1ae4aaa0aefe6632.X8sj7A6gaBgWh9AE
 )
 args = parser.parse_args()
 zhipuai_api_key = args.api_key
