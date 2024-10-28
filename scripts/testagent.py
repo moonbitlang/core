@@ -1,9 +1,7 @@
-import argparse
-import json
-import subprocess
-from readcoverage import read_coverage, get_coverage_from_summary
+from readcoverage import read_coverage
 from gettest import generate_test_code
 from writedown import test_test_code
+import json
 
 
 def testagent(api_key):
@@ -21,41 +19,9 @@ def testagent(api_key):
                 moonbit_code = codefile.read()
                 for index in indexs:
                     uncovered_code = read_coverage(moonbit_code, index, api_key)
+                    print("uncovered code is  " + uncovered_code)
                     test_code = generate_test_code(
-                        uncovered_code, source_file["name"], api_key
+                     uncovered_code, source_file["name"], api_key
                     )
-                    test_test_code(uncovered_code, test_code, source_file["name"], zhipuai_api_key)
-
-
-prev_coverage = get_coverage_from_summary("coverage_summary.txt")
-max_iterations = 5
-iteration = 0
-coverage_improved = True
-parser = argparse.ArgumentParser(description="to load API_KEY。")
-parser.add_argument(
-    "--api_key",
-    type=str,
-    help="API_KEY"
-)
-args = parser.parse_args()
-zhipuai_api_key = args.api_key
-new_coverage = prev_coverage
-while coverage_improved and iteration < max_iterations:
-    iteration += 1
-    testagent(zhipuai_api_key)
-    subprocess.run(["moon", "test", "--enable-coverage"])
-    subprocess.run(["moon", "coverage", "report", "-f", "coveralls"])
-    subprocess.run(
-        ["moon", "coverage", "report", "-f", "summary"],
-        stdout=open("coverage_summary.txt", "w"),
-    )
-    new_coverage = get_coverage_from_summary("coverage_summary.txt")
-
-    if new_coverage > prev_coverage:
-        prev_coverage = new_coverage
-        print(f"Coverage improved to {new_coverage}%")
-    else:
-        coverage_improved = False
-        print("Coverage did not improve. Stopping loop.")
-
-print(f"Final coverage: {new_coverage}%")
+                    print("test_code is  " + test_code)
+                    test_test_code(uncovered_code, test_code, source_file["name"], api_key)
