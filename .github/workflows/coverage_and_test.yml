@@ -11,12 +11,19 @@ jobs:
     continue-on-error: true
     steps:
       - uses: actions/checkout@v4
-
+        with:  
+          python-version: 3.9  
+          
+      - name: Install dependencies  
+        run: |  
+          python -m pip install --upgrade pip  
+          pip install -r requirements.txt
+          
       - name: install
         run: |
           curl -fsSL https://cli.moonbitlang.com/install/unix.sh | bash
           echo "$HOME/.moon/bin" >> $GITHUB_PATH
-
+      
       - name: initial moon test
         run: moon test --enable-coverage
 
