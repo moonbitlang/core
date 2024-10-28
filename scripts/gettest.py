@@ -26,7 +26,7 @@ def generate_test_code(moonbit_code, path, api_key):
     )
 
     test_llm = ChatZhipuAI(
-        api_key=api_key, model="glm-4-9b:772570335:v3:odbzuhb9", temperature=0.5, max_tokens=2048
+        api_key=api_key, model="glm-4-9b:772570335:v3:odbzuhb9", temperature=0.5, max_tokens=4095
     )
 
     test_retriever_chain = test_prompt | test_llm | StrOutputParser()
