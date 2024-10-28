@@ -20,7 +20,6 @@ def get_coverage_from_summary(file_path):
 
 
 def read_coverage(moonbit_code, index, api_key):
-   def read_coverage(moonbit, index, api_key):
     read_prompt = ChatPromptTemplate.from_template(
         """You are a professional MoonBit code analyst. Your task is to find and return the complete function definition containing the given uncovered code line indices.
 
