@@ -1,16 +1,25 @@
-from zhipuai import ChatZhipuAI
+from zhipuai_model import ChatZhipuAI
 from langchain_core.output_parsers import StrOutputParser
 from langchain_core.prompts import ChatPromptTemplate
 
 
+def get_line_content(moonbit_code, index):
+    lines = moonbit_code.strip().split("\n")
+
+    if 0 <= index < len(lines):
+        return lines[index]
+    else:
+        return "Index out of range"
+
+
 def get_coverage_from_summary(file_path):
-    with open(file_path, 'r') as file:
+    with open(file_path, "r") as file:
         lines = file.readlines()
         last_line = lines[-1].strip()
 
-        parts = last_line.split(':')
-        if len(parts) == 2 and parts[0].strip() == 'Total':
-            total_parts = parts[1].strip().split('/')
+        parts = last_line.split(":")
+        if len(parts) == 2 and parts[0].strip() == "Total":
+            total_parts = parts[1].strip().split("/")
             if len(total_parts) == 2:
                 total_passed = int(total_parts[0])
                 total_tests = int(total_parts[1])
@@ -19,27 +28,23 @@ def get_coverage_from_summary(file_path):
     return 0.0
 
 
-def read_coverage(moonbit_code, index, api_key):
+def read_coverage(moonbit, index, api_key):
+    uncovered_code = get_line_content(moonbit, index)
     read_prompt = ChatPromptTemplate.from_template(
-        """You are a professional MoonBit code analyst. Your task is to find and return the complete function definition containing the given uncovered code line indices.
+        """
+         Given the following piece of code from a larger codebase (moonbit):
 
-Input:
+    {moonbit}
 
-moonbit: The entire code in which you need to search for uncovered lines.
-Uncovered code line index: An integer representing the line number of the code that is marked as uncovered.
-Output requirements:
+    You are provided with a specific line of code (uncovered_code):
 
-For the given uncovered code line index, locate and return the complete function definition that contains that line.
-The output should be a string representing the entire code of a function, including its signature and body.
-Do not include any analysis process, additional information, or explanatory statements; just return the required function definition.
+    {uncovered_code}
 
-Example:
-If the uncovered code line index is [2], then the output should be the complete function definition that includes line 2.
- Now, please find the uncovered code based on the following input information:
-        moonbit:{moonbit}
-        Uncovered code line index:{index}   
-Attention, the language of the code is MoonBit.
-        
+    Your task is to identify the entire function that this line of code belongs to and return the complete function definition.
+
+    Please ensure that you include all lines of the function from its definition to the end of the function body.
+
+    Attention, your output must only include the funciton, without any analyse or annotation
         """
     )
 
@@ -47,6 +52,6 @@ Attention, the language of the code is MoonBit.
 
     read_retriever_chain = read_prompt | read_llm | StrOutputParser()
     response = read_retriever_chain.invoke(
-        {"moonbit": moonbit_code, "index": [index]}
+        {"moonbit": moonbit, "uncovered_code": uncovered_code}
     )
     return response
