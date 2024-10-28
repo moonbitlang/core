@@ -28,7 +28,7 @@ def generate_test_code(moonbit_code, path, api_key):
 
     test_retriever_chain = test_prompt | test_llm | StrOutputParser()
     test_code_output = test_retriever_chain.invoke(
-        {"moonbit": moonbit, "filename": filename}
+        {"moonbit": moonbit_code, "filename": filename}
     )
     test_code = test_code_output.replace("```moonbit\n", "").rstrip(
         "```"
@@ -45,7 +45,7 @@ def rethink_test_code(moonbit_code, test_moonbit_code, file_path, error_message,
         2. **Test Case Code**: This is the current test case code, which may contain errors leading to test failures.
         3. **Test Error Message**: This is the error message generated when running the test case, 
         which can help you pinpoint the issue.
-        4. **MoonBit Code**: This is the actual MoonBit code that the test case is supposed to test.
+        4. **MoonBit**: This is the actual MoonBit code that the test case is supposed to test.
 
         Please carefully read this information, analyze the cause of the error, and generate a corrected test case code. 
         Ensure that your output code passes the test and is logically correct.
@@ -54,7 +54,7 @@ def rethink_test_code(moonbit_code, test_moonbit_code, file_path, error_message,
         Filename: <Filename>
         Test Case Code:<test case code>
         Error Message:<error message>
-        MoonBit Code:<MoonBit code>
+        MoonBit:<MoonBit>
 
         **Output Format:**
         Corrected Test Case Code:<corrected test case code>
@@ -65,7 +65,7 @@ def rethink_test_code(moonbit_code, test_moonbit_code, file_path, error_message,
         please remove the assertion values in the assert statement.
         
         Now, please generate the corrected test case code based on the following input information:
-        MoonBit Code:{moonbit_code}
+        MoonBit:{moonbit}
         Filename: {filename}
         Test Case Code:{test_moonbit_code}
         Error Message:{error_message}   
@@ -79,7 +79,7 @@ def rethink_test_code(moonbit_code, test_moonbit_code, file_path, error_message,
 
     rethink_retriever_chain = rethink_prompt | rethink_llm | StrOutputParser()
     test_code_output = rethink_retriever_chain.invoke(
-        { "moonbit_code": moonbit_code, "filename": filename, "test_moonbit_code": test_moonbit_code, "error_message": error_message}
+        { "moonbit": moonbit_code, "filename": filename, "test_moonbit_code": test_moonbit_code, "error_message": error_message}
     )
     test_code = test_code_output.replace("```moonbit\n", "").rstrip(
         "```"
