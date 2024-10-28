@@ -4,6 +4,7 @@ package moonbitlang/core/bytes
 
 // Types and methods
 impl Bytes {
+  default() -> Bytes
   from_array(Array[Byte]) -> Bytes
   from_iter(Iter[Byte]) -> Bytes
   iter(Bytes) -> Iter[Byte]

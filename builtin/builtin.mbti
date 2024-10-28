@@ -31,7 +31,7 @@ fn panic[T]() -> T
 
 fn physical_equal[T](T, T) -> Bool
 
-fn print[T : Show](T) -> Unit
+fn print[T : Show](T) -> Unit //deprecated
 
 fn println[T : Show](T) -> Unit
 
@@ -55,6 +55,7 @@ impl Array {
   compare[T : Compare + Eq](Self[T], Self[T]) -> Int
   contains[T : Eq](Self[T], T) -> Bool
   dedup[T : Eq](Self[T]) -> Unit
+  default[T]() -> Self[T]
   drain[T](Self[T], Int, Int) -> Self[T]
   each[T](Self[T], (T) -> Unit) -> Unit
   eachi[T](Self[T], (Int, T) -> Unit) -> Unit
@@ -175,7 +176,8 @@ impl Buffer {
   write_char(Self, Char) -> Unit
   write_object(Self, Show) -> Unit
   write_string(Self, String) -> Unit
-  write_sub_string(Self, String, Int, Int) -> Unit
+  write_sub_string(Self, String, Int, Int) -> Unit //deprecated
+  write_substring(Self, String, Int, Int) -> Unit
 }
 
 pub type! Failure String
@@ -224,6 +226,7 @@ impl Iter {
   just_run[T](Self[T], (T) -> IterResult) -> Unit
   last[A](Self[A]) -> A?
   map[T, R](Self[T], (T) -> R) -> Self[R]
+  map_option[A, B](Self[A], (A) -> B?) -> Self[B]
   map_while[A, B](Self[A], (A) -> B?) -> Self[B]
   new[T](((T) -> IterResult) -> IterResult) -> Self[T]
   op_add[T](Self[T], Self[T]) -> Self[T]
@@ -259,7 +262,7 @@ impl IterResult {
   op_equal(Self, Self) -> Bool
 }
 
-pub type Js_string
+pub type Js_string //deprecated
 impl Js_string {
   log(Self) -> Unit
   new(String) -> Self
@@ -276,6 +279,7 @@ pub enum Json {
   Object(Map[String, Json])
 }
 impl Json {
+  default() -> Self
   op_equal(Self, Self) -> Bool
 }
 
@@ -284,6 +288,7 @@ impl Map {
   capacity[K, V](Self[K, V]) -> Int
   clear[K, V](Self[K, V]) -> Unit
   contains[K : Hash + Eq, V](Self[K, V], K) -> Bool
+  default[K, V]() -> Self[K, V]
   each[K, V](Self[K, V], (K, V) -> Unit) -> Unit
   eachi[K, V](Self[K, V], (Int, K, V) -> Unit) -> Unit
   from_array[K : Hash + Eq, V](Array[(K, V)]) -> Self[K, V]
@@ -350,7 +355,7 @@ impl StringBuilder {
   write_char(Self, Char) -> Unit
   write_object[T : Show](Self, T) -> Unit
   write_string(Self, String) -> Unit
-  write_sub_string(Self, String, Int, Int) -> Unit
+  write_substring(Self, String, Int, Int) -> Unit
 }
 
 pub type UnsafeMaybeUninit
@@ -394,6 +399,7 @@ impl Char {
   to_int(Char) -> Int
   to_json(Char) -> Json
   to_string(Char) -> String
+  to_uint(Char) -> UInt
 }
 impl Int {
   asr(Int, Int) -> Int //deprecated
@@ -432,6 +438,7 @@ impl Int {
   to_json(Int) -> Json
   to_string(Int) -> String
   to_uint(Int) -> UInt //deprecated
+  to_uint64(Int) -> UInt64
   until(Int, Int, ~step : Int = .., ~inclusive : Bool = ..) -> Iter[Int]
   upto(Int, Int, ~inclusive : Bool = ..) -> Iter[Int] //deprecated
 }
@@ -491,9 +498,11 @@ impl UInt {
   op_shr(UInt, Int) -> UInt
   op_sub(UInt, UInt) -> UInt
   popcnt(UInt) -> Int
+  reinterpret_as_float(UInt) -> Float
   reinterpret_as_int(UInt) -> Int
   shl(UInt, Int) -> UInt //deprecated
   shr(UInt, Int) -> UInt //deprecated
+  to_byte(UInt) -> Byte
   to_float(UInt) -> Float
   to_int(UInt) -> Int //deprecated
   to_string(UInt) -> String
@@ -523,13 +532,14 @@ impl UInt64 {
   op_sub(UInt64, UInt64) -> UInt64
   popcnt(UInt64) -> Int
   reinterpret_as_double(UInt64) -> Double
+  reinterpret_as_int64(UInt64) -> Int64
   shl(UInt64, Int) -> UInt64 //deprecated
   shr(UInt64, Int) -> UInt64 //deprecated
   to_byte(UInt64) -> Byte
   to_double(UInt64) -> Double
   to_float(UInt64) -> Float
   to_int(UInt64) -> Int
-  to_int64(UInt64) -> Int64
+  to_int64(UInt64) -> Int64 //deprecated
   to_string(UInt64) -> String
   to_uint(UInt64) -> UInt
   trunc_double(Double) -> UInt64
@@ -718,6 +728,7 @@ pub trait Hash {
 
 pub trait Logger {
   write_string(Self, String) -> Unit
+  write_substring(Self, String, Int, Int) -> Unit
   write_sub_string(Self, String, Int, Int) -> Unit
   write_char(Self, Char) -> Unit
 }
@@ -759,6 +770,8 @@ impl Hash for Tuple(5)
 impl Hash for Tuple(6)
 
 impl Hash for Tuple(7)
+
+impl Logger::write_sub_string
 
 impl Show for Unit
 

@@ -15,3 +15,7 @@
 pub let max_value : Byte = b'\xFF'
 
 pub let min_value : Byte = b'\x00'
+
+pub fn to_uint64(self : Byte) -> UInt64 {
+  self.to_uint().to_uint64()
+}

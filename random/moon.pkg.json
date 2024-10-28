@@ -1,7 +1,6 @@
 {
     "import": [
       "moonbitlang/core/builtin",
-      "moonbitlang/core/array",
       "moonbitlang/core/double",
       "moonbitlang/core/coverage",
       "moonbitlang/core/random/internal/random_source"

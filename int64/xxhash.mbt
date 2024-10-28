@@ -65,10 +65,10 @@ fn slow_hash(self : Int64) -> Int {
 test "int64 hash" {
   let i0 = 9_223_372_036_854_775_807L // INT64_MAX
   let i1 = -9_223_372_036_854_775_808L // INT64_MIN
-  let i2 = gPRIME2.to_uint64().to_int64()
-  let i3 = gPRIME3.to_uint64().to_int64()
-  let i4 = gPRIME4.to_uint64().to_int64()
-  let i5 = gPRIME5.to_uint64().to_int64()
+  let i2 = gPRIME2.to_int64()
+  let i3 = gPRIME3.to_int64()
+  let i4 = gPRIME4.to_int64()
+  let i5 = gPRIME5.to_int64()
   let i6 = 0L
   inspect!(Hash::hash(i0).to_string(), content=i0.slow_hash().to_string())
   inspect!(Hash::hash(i1).to_string(), content=i1.slow_hash().to_string())

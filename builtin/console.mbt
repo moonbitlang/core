@@ -18,7 +18,7 @@ pub fn println[T : Show](input : T) -> Unit {
   println_mono(input.to_string())
 }
 
-/// @alert deprecate "Use `println` instead"
+/// @alert deprecated "Use `println` instead"
 pub fn print[T : Show](input : T) -> Unit {
   println(input)
 }
@@ -114,7 +114,9 @@ pub fn UInt64::to_string(self : UInt64) -> String {
     if num2 != 0UL {
       write_digits(num2)
     }
-    buf.write_char(Char::from_int((num % 10UL).to_int64().to_int() + 48))
+    buf.write_char(
+      Char::from_int((num % 10UL).reinterpret_as_int64().to_int() + 48),
+    )
   }
 
   write_digits(self)
@@ -147,6 +149,7 @@ pub fn op_notequal[T : Eq](x : T, y : T) -> Bool {
 }
 
 /// A reference to string in host JS.
+/// @alert deprecated "Use js-string-builtins api instead"
 pub type Js_string
 
 /// Create a JS string from a string in Moonbit by calling intrinsic primitive

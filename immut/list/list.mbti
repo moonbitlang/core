@@ -1,9 +1,12 @@
 package moonbitlang/core/immut/list
 
+alias @moonbitlang/core/json as @json
 alias @moonbitlang/core/quickcheck as @quickcheck
 
 // Values
 fn repeat[A](Int, A) -> T[A]
+
+fn singleton[A](A) -> T[A]
 
 fn unfold[A, S]((S) -> (A, S)?, ~init : S) -> T[A]
 
@@ -28,6 +31,7 @@ impl T {
   eachi[A](Self[A], (Int, A) -> Unit) -> Unit
   equal[A : Eq](Self[A], Self[A]) -> Bool
   filter[A](Self[A], (A) -> Bool) -> Self[A]
+  filter_map[A, B](Self[A], (A) -> B?) -> Self[B]
   find[A](Self[A], (A) -> Bool) -> A?
   findi[A](Self[A], (A, Int) -> Bool) -> A?
   flat_map[A, B](Self[A], (A) -> Self[B]) -> Self[B]
@@ -40,6 +44,7 @@ impl T {
   foldi[A, B](Self[A], ~init : B, (Int, B, A) -> B) -> B
   from_array[A](Array[A]) -> Self[A]
   from_iter[A](Iter[A]) -> Self[A]
+  from_json[A : @json.FromJson](Json) -> Self[A]!@json.JsonDecodeError
   head[A](Self[A]) -> A?
   head_exn[A](Self[A]) -> A //deprecated
   init_[A](Self[A]) -> Self[A]
@@ -50,7 +55,7 @@ impl T {
   is_suffix[A : Eq](Self[A], Self[A]) -> Bool
   iter[A](Self[A]) -> Iter[A]
   iter2[A](Self[A]) -> Iter2[Int, A]
-  last[A](Self[A]) -> A //deprecated
+  last[A](Self[A]) -> A?
   length[A](Self[A]) -> Int
   lookup[A : Eq, B](Self[(A, B)], A) -> B?
   map[A, B](Self[A], (A) -> B) -> Self[B]
@@ -68,6 +73,7 @@ impl T {
   rev_concat[A](Self[A], Self[A]) -> Self[A]
   rev_fold[A, B](Self[A], ~init : B, (A, B) -> B) -> B
   rev_foldi[A, B](Self[A], ~init : B, (Int, A, B) -> B) -> B
+  rev_map[A, B](Self[A], (A) -> B) -> Self[B]
   scan_left[A, E](Self[A], (E, A) -> E, ~init : E) -> Self[E]
   scan_right[A, B](Self[A], (A, B) -> B, ~init : B) -> Self[B]
   sort[A : Compare + Eq](Self[A]) -> Self[A]
@@ -75,6 +81,7 @@ impl T {
   take[A](Self[A], Int) -> Self[A]
   take_while[A](Self[A], (A) -> Bool) -> Self[A]
   to_array[A](Self[A]) -> Array[A]
+  to_json[A : ToJson](Self[A]) -> Json
   to_string[A : Show](Self[A]) -> String
   unsafe_head[A](Self[A]) -> A
   unsafe_last[A](Self[A]) -> A
@@ -90,6 +97,10 @@ impl T {
 
 // Extension Methods
 impl Show for T
+
+impl ToJson for T
+
+impl @json.FromJson for T
 
 impl @quickcheck.Arbitrary for T
 

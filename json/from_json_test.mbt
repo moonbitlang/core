@@ -12,9 +12,15 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+/// FIXME: remove later, workround formatter bug
+fn temp() -> Unit {
+  ()
+}
+
 typealias TestX = Map[String, Int]
 
 test {
+  let _ = temp()
   let u = { "x": 3, "y": 4 }
   let j = u.to_json()
   let h : TestX = @json.from_json!(j)
@@ -341,4 +347,38 @@ test "bigint" {
   let u = BigInt::from_string("10238490123489120893478175871203124819").to_json()
   let v : BigInt = @json.from_json!(u)
   inspect!(v, content="10238490123489120893478175871203124819")
+}
+
+test "jsonvalue" {
+  let u = Json::String("str")
+  let v : Json = @json.from_json!(u)
+  inspect!(v, content="String(\"str\")")
+  let u = Json::Number(123)
+  let v : Json = @json.from_json!(u)
+  inspect!(v, content="Number(123)")
+  let u = Json::True
+  let v : Json = @json.from_json!(u)
+  inspect!(v, content="True")
+  let u = Json::False
+  let v : Json = @json.from_json!(u)
+  inspect!(v, content="False")
+  let u = Json::Null
+  let v : Json = @json.from_json!(u)
+  inspect!(v, content="Null")
+  let u = Json::Array([Json::Number(1), Json::String("str")])
+  let v : Json = @json.from_json!(u)
+  inspect!(
+    v,
+    content=
+      #|Array([Number(1), String("str")])
+    ,
+  )
+  let u = Json::Object({ "x": Json::Number(1) })
+  let v : Json = @json.from_json!(u)
+  inspect!(
+    v,
+    content=
+      #|Object({"x": Number(1)})
+    ,
+  )
 }

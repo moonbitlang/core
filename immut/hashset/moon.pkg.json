@@ -4,13 +4,10 @@
     "moonbitlang/core/array",
     "moonbitlang/core/coverage",
     "moonbitlang/core/immut/internal/sparse_array",
-    "moonbitlang/core/test",
-    "moonbitlang/core/quickcheck",
-    "moonbitlang/core/tuple"
+    "moonbitlang/core/quickcheck"
   ],
   "test-import": [
     "moonbitlang/core/string",
     "moonbitlang/core/int",
-    "moonbitlang/core/option"
   ]
 }

@@ -257,3 +257,40 @@ pub impl[K : Show, V : Show] Show for T[K, V] with output(self, logger) {
 pub fn to_string[K : Show, V : Show](self : T[K, V]) -> String {
   Show::to_string(self)
 }
+
+pub impl[K : Show, V : ToJson] ToJson for T[K, V] with to_json(self) {
+  let capacity = self.size()
+  guard capacity != 0 else { return Object(Map::new()) }
+  let jsons = Map::new(~capacity)
+  self.each(fn(k, v) { jsons[k.to_string()] = v.to_json() })
+  Object(jsons)
+}
+
+pub fn to_json[K : Show, V : ToJson](self : T[K, V]) -> Json {
+  ToJson::to_json(self)
+}
+
+pub impl[V : @json.FromJson] @json.FromJson for T[String, V] with from_json(
+  json,
+  path
+) {
+  match json {
+    Object(obj) => {
+      let mut map = T::empty()
+      for k, v in obj {
+        map = map.insert(k, V::from_json!(v, path))
+      }
+      map
+    }
+    _ =>
+      raise @json.JsonDecodeError(
+        (path, "@immut/sorted_map.from_json: expected object"),
+      )
+  }
+}
+
+pub fn T::from_json[V : @json.FromJson](
+  json : Json
+) -> T[String, V]!@json.JsonDecodeError {
+  @json.from_json!(json)
+}

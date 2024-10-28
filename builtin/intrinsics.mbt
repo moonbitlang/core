@@ -110,6 +110,10 @@ pub fn Int::reinterpret_as_uint(self : Int) -> UInt = "%i32.to_u32_reinterpret"
 pub fn Int::to_uint(self : Int) -> UInt = "%i32.to_u32_reinterpret"
 // Double primitive ops
 
+pub fn Int::to_uint64(self : Int) -> UInt64 {
+  self.to_int64().reinterpret_as_uint64()
+}
+
 pub fn Double::op_neg(self : Double) -> Double = "%f64_neg"
 
 pub fn Double::op_add(self : Double, other : Double) -> Double = "%f64_add"
@@ -137,6 +141,10 @@ pub fn Double::convert_uint(val : UInt) -> Double = "%u32.to_f64"
 // Char primitive ops
 
 pub fn Char::to_int(self : Char) -> Int = "%char_to_int"
+
+pub fn Char::to_uint(self : Char) -> UInt {
+  self.to_int().reinterpret_as_uint()
+}
 
 pub fn Char::from_int(val : Int) -> Char = "%char_from_int"
 
@@ -266,6 +274,10 @@ pub fn UInt::to_uint64(self : UInt) -> UInt64 {
   UInt64::extend_uint(self)
 }
 
+pub fn UInt::to_byte(self : UInt) -> Byte {
+  self.reinterpret_as_int().to_byte()
+}
+
 // Float primitive
 pub fn Float::op_neg(self : Float) -> Float = "%f32.neg"
 
@@ -294,6 +306,8 @@ pub fn Float::reinterpret_as_uint(self : Float) -> UInt = "%f32.to_i32_reinterpr
 pub fn Int::to_float(self : Int) -> Float = "%i32.to_f32"
 
 pub fn Int::reinterpret_as_float(self : Int) -> Float = "%i32.to_f32_reinterpret"
+
+pub fn UInt::reinterpret_as_float(self : UInt) -> Float = "%i32.to_f32_reinterpret"
 
 pub fn Byte::to_float(self : Byte) -> Float = "%byte.to_f32"
 

@@ -215,6 +215,19 @@ test "map" {
   inspect!(exb, content="23456")
 }
 
+test "map_option" {
+  let arr = [1, 2, 3, 4, 5]
+  let r1 = arr
+    .iter()
+    .map_option(fn(x) { if x < 3 { None } else { Some(x) } })
+    .collect()
+  inspect!(r1, content="[3, 4, 5]")
+  let r2 : Array[Unit] = arr.iter().map_option(fn(_x) { None }).collect()
+  inspect!(r2, content="[]")
+  let r3 : Array[Unit] = [].iter().map_option(Option::Some).collect()
+  inspect!(r3, content="[]")
+}
+
 test "flat_map" {
   let iter = test_from_array(['1', '2', '3', '4', '5'])
   let exb = StringBuilder::new(size_hint=0)

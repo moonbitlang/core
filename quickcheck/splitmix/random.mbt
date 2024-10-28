@@ -50,7 +50,7 @@ pub fn next_uint(self : RandomState) -> UInt {
 
 /// Get the next random number as a 64-bit signed integer.
 pub fn next_int64(self : RandomState) -> Int64 {
-  self.next_uint64().to_int64()
+  self.next_uint64().reinterpret_as_int64()
 }
 
 /// Get the next two random number as 32-bit signed integers.

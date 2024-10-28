@@ -29,6 +29,39 @@ pub fn T::to_string[A : Show](xs : T[A]) -> String {
   Show::to_string(xs)
 }
 
+pub impl[A : ToJson] ToJson for T[A] with to_json(self) {
+  let capacity = self.length()
+  guard capacity != 0 else { return Array([]) }
+  let jsons = Array::new(~capacity)
+  self.each(fn(a) { jsons.push(a.to_json()) })
+  Array(jsons)
+}
+
+pub fn T::to_json[A : ToJson](self : T[A]) -> Json {
+  ToJson::to_json(self)
+}
+
+pub impl[A : @json.FromJson] @json.FromJson for T[A] with from_json(json, path) {
+  match json {
+    Array(arr) =>
+      for i = arr.length() - 1, list = Nil; i >= 0; {
+        continue i - 1, list.add(A::from_json!(arr[i], path))
+      } else {
+        list
+      }
+    _ =>
+      raise @json.JsonDecodeError(
+        (path, "@immut/list.from_json: expected array"),
+      )
+  }
+}
+
+pub fn T::from_json[A : @json.FromJson](
+  json : Json
+) -> T[A]!@json.JsonDecodeError {
+  @json.from_json!(json)
+}
+
 /// Convert array to list.
 ///
 /// # Example
@@ -113,6 +146,22 @@ pub fn mapi[A, B](self : T[A], f : (Int, A) -> B) -> T[B] {
   }
 
   go(self, 0, f)
+}
+
+/// Maps the list and reverses the result.
+///
+/// `list.rev_map(f)` is equivalent to `list.map(f).rev()` but more efficient.
+///
+/// # Example
+/// ```
+/// println(@list.of([1, 2, 3, 4, 5]).rev_map(fn(x) { x * 2 }))
+/// // output: of([10, 8, 6, 4, 2])
+/// ```
+pub fn rev_map[A, B](self : T[A], f : (A) -> B) -> T[B] {
+  loop Nil, self {
+    acc, Nil => acc
+    acc, Cons(x, xs) => continue Cons(f(x), acc), xs
+  }
 }
 
 /// Convert list to array.
@@ -224,11 +273,10 @@ pub fn unsafe_last[A](self : T[A]) -> A {
 /// println(of([1, 2, 3, 4, 5]).last())
 /// // output: Some(5)
 /// ```
-/// @alert deprecated "In the next release `last` will return an `Option`. Use `unsafe_last` instead"
-pub fn last[A](self : T[A]) -> A {
+pub fn last[A](self : T[A]) -> A? {
   loop self {
-    Nil => abort("last of empty list")
-    Cons(head, Nil) => head
+    Nil => None
+    Cons(head, Nil) => Some(head)
     Cons(_, tail) => continue tail
   }
 }
@@ -448,6 +496,26 @@ pub fn flat_map[A, B](self : T[A], f : (A) -> T[B]) -> T[B] {
   match self {
     Nil => Nil
     Cons(head, tail) => concat(f(head), flat_map(tail, f))
+  }
+}
+
+/// Map over the list and keep all `value`s for which the mapped result is `Some(value)`.
+///
+/// # Example
+///
+/// ```
+/// let ls = of([4, 2, 2, 6, 3, 1])
+/// let r = ls.filter_map(fn(x) { if (x >= 3) { Some(x) } else { None } })
+/// println(r) // output: of([4, 6, 3])
+/// ```
+pub fn filter_map[A, B](self : T[A], f : (A) -> B?) -> T[B] {
+  loop Nil, self {
+    acc, Nil => acc.rev()
+    acc, Cons(x, xs) =>
+      match f(x) {
+        Some(v) => continue acc.add(v), xs
+        None => continue acc, xs
+      }
   }
 }
 
@@ -976,4 +1044,8 @@ pub impl[X : @quickcheck.Arbitrary] @quickcheck.Arbitrary for T[X] with arbitrar
   rs
 ) {
   @quickcheck.Arbitrary::arbitrary(size, rs) |> from_array
+}
+
+pub fn singleton[A](x : A) -> T[A] {
+  Cons(x, Nil)
 }

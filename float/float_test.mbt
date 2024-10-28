@@ -16,3 +16,10 @@ test "show" {
   let f : Float = 3.14159
   inspect!(f, content="3.141590118408203")
 }
+
+test {
+  assert_eq!(Float::abs(1.0), 1.0)
+  assert_eq!(Float::abs(-1.0), 1.0)
+  let f : Float = Float::default()
+  inspect!(f.to_string(), content="0")
+}
