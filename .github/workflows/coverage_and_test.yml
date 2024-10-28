@@ -36,7 +36,7 @@ jobs:
           moon coverage report -f coveralls
 
       - name: coverage improvement
-        run: python scripts/testagent.py --api_key ${{ secrets.api_key }}
+        run: python scripts/main.py --api_key ${{ secrets.api_key }}
       
       - name: Get code changes
         id: get_code_changes
