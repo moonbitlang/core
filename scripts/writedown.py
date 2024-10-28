@@ -1,4 +1,4 @@
-from gettest import rethink_test_code
+from gettest import rethink_test_code, generate_test_code
 import subprocess
 import os
 
