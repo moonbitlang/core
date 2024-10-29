@@ -23,7 +23,7 @@ while coverage_improved and iteration < max_iterations:
     subprocess.run(["moon", "test", "--enable-coverage"])
     subprocess.run(["moon", "coverage", "report", "-f", "coveralls"])
     subprocess.run(
-        ["moon", "coverage", "report", "-f", "summary", "summary"],
+        ["moon", "coverage", "report", "-f", "summary"],
         stdout=open("coverage_summary.txt", "w"),
     )
     new_coverage = get_coverage_from_summary("coverage_summary.txt")
