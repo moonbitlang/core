@@ -55,6 +55,52 @@ pub fn sort_by[T](self : FixedArray[T], cmp : (T, T) -> Int) -> Unit {
   )
 }
 
+test "sort_by: basic functionality" {
+  let arr : FixedArray[_] = [5, 3, 2, 4, 1]
+  arr.sort_by(fn(a, b) { a - b })
+  inspect!(arr, content="[1, 2, 3, 4, 5]")
+}
+
+test "sort_by: edge cases" {
+  let empty_arr : FixedArray[Int] = []
+  empty_arr.sort_by(fn(a, b) { a - b })
+  inspect!(empty_arr, content="[]")
+  let single_element_arr : FixedArray[_] = [1]
+  single_element_arr.sort_by(fn(a, b) { a - b })
+  inspect!(single_element_arr, content="[1]")
+}
+
+test "sort_by: random cases" {
+  let random_arr1 : FixedArray[_] = [3, 1, 4, 1, 5, 9, 2, 6, 5, 3, 5]
+  random_arr1.sort_by(fn(a, b) { a - b })
+  inspect!(random_arr1, content="[1, 1, 2, 3, 3, 4, 5, 5, 5, 6, 9]")
+  let random_arr2 : FixedArray[_] = [7, 1, 8, 2, 8, 1, 8, 2, 8, 4, 5, 9]
+  random_arr2.sort_by(fn(a, b) { a - b })
+  inspect!(random_arr2, content="[1, 1, 2, 2, 4, 5, 7, 8, 8, 8, 8, 9]")
+  let random_arr3 : FixedArray[_] = [10, -1, 0, 10, -1, 0, 10, -1, 0]
+  random_arr3.sort_by(fn(a, b) { a - b })
+  inspect!(random_arr3, content="[-1, -1, -1, 0, 0, 0, 10, 10, 10]")
+}
+
+test "sort_by: large array" {
+  let large_arr = FixedArray::makei(1000, fn(i) { 1000 - i })
+  large_arr.sort_by(fn(a, b) { a - b })
+  let expected = FixedArray::makei(1000, fn(i) { i + 1 })
+  inspect!(large_arr, content=expected.to_string())
+}
+
+test "sort_by: negative numbers" {
+  let negative_arr : FixedArray[_] = [-5, -3, -2, -4, -1]
+  negative_arr.sort_by(fn(a, b) { a - b })
+  inspect!(negative_arr, content="[-5, -4, -3, -2, -1]")
+}
+
+test "sort_by: mixed positive and negative numbers" {
+  let mixed_arr : FixedArray[_] = [-5, 3, -2, 4, -1]
+  mixed_arr.sort_by(fn(a, b) { a - b })
+  inspect!(mixed_arr, content="[-5, -2, -1, 3, 4]")
+}
+
 fn fixed_quick_sort_by[T](
   arr : FixedArraySlice[T],
   cmp : (T, T) -> Int,
