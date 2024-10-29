@@ -48,6 +48,8 @@ impl T {
 // Traits
 
 // Extension Methods
+impl Hash for T
+
 impl Show for T
 
 impl ToJson for T
