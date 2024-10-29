@@ -15,11 +15,11 @@ jobs:
         with:  
           python-version: 3.9  
           
-      - name: Install dependencies  
+      - name: install dependencies  
         run: |  
           pip install -r scripts/requirements.txt
           
-      - name: install
+      - name: install Moonbit CLI
         run: |
           curl -fsSL https://cli.moonbitlang.com/install/unix.sh | bash
           echo "$HOME/.moon/bin" >> $GITHUB_PATH
@@ -38,14 +38,14 @@ jobs:
       - name: coverage improvement
         run: python scripts/main.py --api_key ${{ secrets.api_key }}
       
-      - name: Get code changes
+      - name: get code changes
         id: get_code_changes
         run: |
             git diff > changes.txt   
             test_code=$(cat changes.txt)   
             echo "test_code=$test_code" >> $GITHUB_ENV  
 
-      - name: Push comments
+      - name: push comments
         uses: peter-evans/create-or-update-comment@v1
         env:
             GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
