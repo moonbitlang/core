@@ -89,18 +89,10 @@ test "from_double NaN check" {
 }
 
 // currently it requires the `content` argument to be passed int the second position
-fn inspect_double_array(
-  a : Array[Double],
-  ~content : String = "",
-  ~loc : SourceLoc = _,
-  ~args_loc : ArgsLoc = _
-) -> Unit! {
-  inspect!(
-    a.map(fn { x => @rational.from_double?(x) }),
-    ~content,
-    ~loc,
-    ~args_loc,
-  )
+fn from_double_array(
+  a : Array[Double]
+) -> Array[Result[@rational.T, @rational.RationalError]] {
+  a.map(fn { x => @rational.from_double?(x) })
 }
 
 test "from_double array" {
@@ -114,17 +106,18 @@ test "from_double array" {
   let a = [
     -10.0e200, 10.0e200, @double.infinity, @double.neg_infinity, @double.not_a_number,
   ]
-  a
-  |> inspect_double_array!(
+  from_double_array(a)
+  |> inspect!(
     content=
       #|[Err("Rational::from_double: overflow"), Err("Rational::from_double: overflow"), Err("Rational::from_double: overflow"), Err("Rational::from_double: overflow"), Err("Rational::from_double: cannot convert NaN")]
     ,
   )
-  inspect_double_array!(
+  inspect!(
     [
       2.2204460492503131e-16, 0.0, -0.0, 9_223_372_036_800_000_000.0, 9_223_372_036_854_775_807.1,
       9_223_372_036_854_775_807.0,
-    ],
+    ]
+    |> from_double_array,
     content=
       #|[Ok(1/4503599627370496), Ok(0), Ok(0), Ok(9223372036800000000), Err("Rational::from_double: overflow"), Err("Rational::from_double: overflow")]
     ,

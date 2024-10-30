@@ -175,9 +175,9 @@ fn fixed_quick_sort_by[T](
 /// Returns whether the array is sorted.
 fn fixed_try_bubble_sort_by[T](
   arr : FixedArraySlice[T],
-  cmp : (T, T) -> Int,
-  ~max_tries : Int = 8
+  cmp : (T, T) -> Int
 ) -> Bool {
+  let max_tries = 8
   let mut tries = 0
   for i = 1; i < arr.length(); i = i + 1 {
     let mut sorted = true
