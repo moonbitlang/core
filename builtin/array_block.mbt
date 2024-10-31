@@ -90,22 +90,22 @@ test "Array::blit_to - edge cases" {
 /// 1. allow skip
 /// 2. verify test
 /// 3. concurrency test
-// test "Array::blit_to - random cases" {
-//   let src = [10, 20, 30, 40, 50]
-//   let dst = [0, 0, 0, 0, 0]
+test "Array::blit_to - random cases" {
+  let src = [10, 20, 30, 40, 50]
+  let dst = [0, 0, 0, 0, 0]
 
-//   // Random len, src_offset, and dst_offset
-//   Array::blit_to(src, dst, len=2, src_offset=2, dst_offset=1)
-//   inspect!(dst, content="[0, 30, 40, 0, 0]")
+  // Random len, src_offset, and dst_offset
+  Array::blit_to(src, dst, len=2, src_offset=2, dst_offset=1)
+  inspect!(dst, content="[0, 30, 40, 0, 0]")
 
-//   // Another random case
-//   Array::blit_to(src, dst, len=3, src_offset=1, dst_offset=2)
-//   inspect!(dst, content="[0, 30, 20, 30, 40]")
+  // Another random case
+  Array::blit_to(src, dst, len=3, src_offset=1, dst_offset=2)
+  inspect!(dst, content="[0, 30, 20, 30, 40]")
 
-//   // Yet another random case
-//   Array::blit_to(src, dst, len=1, src_offset=4, dst_offset=4)
-//   inspect!(dst, content="[0, 30, 20, 30, 50]")
-// }
+  // Yet another random case
+  Array::blit_to(src, dst, len=1, src_offset=4, dst_offset=4)
+  inspect!(dst, content="[0, 30, 20, 30, 50]")
+}
 
 test "Array::blit_to - boundary cases" {
   let src = [1, 2, 3, 4, 5]
