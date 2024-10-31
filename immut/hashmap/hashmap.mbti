@@ -15,6 +15,7 @@ impl T {
   iter[K, V](Self[K, V]) -> Iter[(K, V)]
   new[K, V]() -> Self[K, V]
   of[K : Eq + Hash, V](FixedArray[(K, V)]) -> Self[K, V]
+  op_equal[K : Eq + Hash, V : Eq](Self[K, V], Self[K, V]) -> Bool
   op_get[K : Eq + Hash, V](Self[K, V], K) -> V?
   remove[K : Eq + Hash, V](Self[K, V], K) -> Self[K, V]
   size[K, V](Self[K, V]) -> Int
@@ -26,6 +27,8 @@ impl T {
 // Traits
 
 // Extension Methods
+impl Hash for T
+
 impl Show for T
 
 impl @quickcheck.Arbitrary for T

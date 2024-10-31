@@ -358,7 +358,13 @@ impl StringBuilder {
   write_substring(Self, String, Int, Int) -> Unit
 }
 
-pub type UnsafeMaybeUninit
+type UninitializedArray
+impl UninitializedArray {
+  length[A](Self[A]) -> Int
+  make[T](Int) -> Self[T]
+  op_get[T](Self[T], Int) -> T
+  op_set[T](Self[T], Int, T) -> Unit
+}
 impl Unit {
   op_equal(Unit, Unit) -> Bool
   to_json(Unit) -> Json

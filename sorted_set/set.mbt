@@ -67,8 +67,8 @@ fn new_node[V](
 
 fn new_node_update_height[V](
   value : V,
-  ~left : Node[V]? = None,
-  ~right : Node[V]? = None
+  ~left : Node[V]?,
+  ~right : Node[V]?
 ) -> Node[V] {
   { value, left, right, height: max(height(left), height(right)) + 1 }
 }
