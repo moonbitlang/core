@@ -12,25 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-priv type UninitializedArray[T] FixedArray[UnsafeMaybeUninit[T]]
-
-fn UninitializedArray::make[T](size : Int) -> UninitializedArray[T] = "%fixedarray.make_uninit"
-
-fn op_get[T](self : UninitializedArray[T], index : Int) -> T = "%fixedarray.get"
-
-fn op_set[T](self : UninitializedArray[T], index : Int, value : T) = "%fixedarray.set"
-
 fn set_null[T](self : UninitializedArray[T], index : Int) = "%fixedarray.set_null"
-
-fn UninitializedArray::unsafe_blit[T](
-  dst : UninitializedArray[T],
-  dst_offset : Int,
-  src : UninitializedArray[T],
-  src_offset : Int,
-  len : Int
-) -> Unit {
-  FixedArray::unsafe_blit(dst._, dst_offset, src._, src_offset, len)
-}
 
 /// @intrinsic %fixedarray.copy
 fn UninitializedArray::unsafe_blit_fixed[T](

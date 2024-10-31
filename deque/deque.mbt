@@ -12,16 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-fn UninitializedArray::make[A](size : Int) -> UninitializedArray[A] = "%fixedarray.make_uninit"
-
-fn op_get[A](self : UninitializedArray[A], index : Int) -> A = "%fixedarray.get"
-
-fn op_set[A](self : UninitializedArray[A], index : Int, value : A) = "%fixedarray.set"
-
-fn length[A](self : UninitializedArray[A]) -> Int {
-  self._.length()
-}
-
 /// Creates a new, empty deque.
 pub fn T::new[A](~capacity : Int = 0) -> T[A] {
   T::{ buf: UninitializedArray::make(capacity), len: 0, head: 0, tail: 0 }
@@ -475,7 +465,7 @@ pub fn reserve_capacity[A](self : T[A], capacity : Int) -> Unit {
   self.head = 0
   self.tail = 0
   for i = 0; i < len; i = i + 1 {
-    let idx = (head + i) % buf._.length()
+    let idx = (head + i) % buf.length()
     self.buf[i] = buf[idx]
     self.tail += 1
   }
@@ -503,7 +493,7 @@ pub fn shrink_to_fit[A](self : T[A]) -> Unit {
   self.head = 0
   self.tail = 0
   for i = 0; i < len; i = i + 1 {
-    let idx = (head + i) % buf._.length()
+    let idx = (head + i) % buf.length()
     self.buf[i] = buf[idx]
   }
 }
