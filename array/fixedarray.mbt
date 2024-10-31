@@ -290,7 +290,7 @@ test "makei" {
   assert_eq!(simple_arr[0].val, 2)
   let arr = FixedArray::makei(2, fn(_i) { { val: 1 } })
   assert_eq!(arr.length(), 2)
-  @test.is_not!(arr[0], arr[1])
+  is_not!(arr[0], arr[1])
   assert_eq!(arr[0].val, 1)
   assert_eq!(arr[1].val, 1)
 }
@@ -934,18 +934,18 @@ test "deep_clone" {
   {
     let pre : FixedArray[Int] = []
     let arr = deep_clone(pre)
-    @test.is_not!(arr, pre)
+    is_not!(arr, pre)
     assert_eq!(arr, [])
   }
   {
     let pre : FixedArray[_] = [3]
     let arr = deep_clone(pre)
-    @test.is_not!(arr, pre)
+    is_not!(arr, pre)
     assert_eq!(arr, [3])
   }
   let pre : FixedArray[_] = [1, 2, 3, 4, 5]
   let arr = deep_clone(pre)
-  @test.is_not!(arr, pre)
+  is_not!(arr, pre)
   assert_eq!(arr, [1, 2, 3, 4, 5])
 }
 

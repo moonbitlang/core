@@ -2,7 +2,11 @@
   "import": [
     "moonbitlang/core/builtin",
     "moonbitlang/core/coverage",
-    "moonbitlang/core/test",
+    { 
+      "path": "moonbitlang/core/test",
+      "alias": "test",
+      "value": ["is_not"]
+    },
     "moonbitlang/core/quickcheck",
     "moonbitlang/core/quickcheck/splitmix"
   ],
