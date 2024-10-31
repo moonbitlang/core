@@ -32,19 +32,20 @@ def read_coverage(moonbit, index, api_key):
     uncovered_code = get_line_content(moonbit, index)
     read_prompt = ChatPromptTemplate.from_template(
         """
-         Given the following piece of code from a larger codebase (moonbit):
+        The following piece of code from a larger moonbit language codebase (moonbit_code):{moonbit_code}
 
-    {moonbit}
+         You are provided with one line of code which is uncovered in the test(uncovered_code):{uncovered_code}
 
-    You are provided with a specific line of code (uncovered_code):
+         Your task is to identify the entire function that this line of code belongs to and return the complete function definition.
 
-    {uncovered_code}
+          Please ensure that you include all lines of the function from its definition to the end of the function body.
 
-    Your task is to identify the entire function that this line of code belongs to and return the complete function definition.
+          Your output should follow this format:
 
-    Please ensure that you include all lines of the function from its definition to the end of the function body.
-
-    Attention, your output must only include the funciton, without any analyse or annotation
+          **Output Format:**
+            ```moonbit  
+               <complete function>
+            ```
         """
     )
 
@@ -52,6 +53,6 @@ def read_coverage(moonbit, index, api_key):
 
     read_retriever_chain = read_prompt | read_llm | StrOutputParser()
     response = read_retriever_chain.invoke(
-        {"moonbit": moonbit, "uncovered_code": uncovered_code}
+        {"moonbit_code": moonbit, "uncovered_code": uncovered_code}
     )
     return response
