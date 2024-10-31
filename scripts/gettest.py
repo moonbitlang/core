@@ -6,21 +6,37 @@ import os
 
 def generate_test_code(moonbit, path, api_key):
     filename = os.path.basename(path)
-    test_prompt = ChatPromptTemplate.from_template(
-        """As a MoonBit language engineer, your task is to write a series of test cases to verify the correctness of a project. 
-        Based on the provided format and the understanding of the function's purpose from the filename {filename}, 
-        write corresponding test cases for the given MoonBit function including edge cases and any potential error scenarios:
-         test {{  
-           assert_eq!(f(x))  
-           assert_eq!(f(x))  
-         }}
-        Provide test cases for the MoonBit function given as {moonbit}.
-        Note that your output should only contain the code for the test cases, without any analysis, explanations, or any other statements. 
-        Also, ensure that you are generating test cases for the MoonBit language, and do not confuse MoonBit language with any other"""
-    )
+    test_prompt = ChatPromptTemplate.from_messages(
+    [
+        ("system", """
+            As a MoonBit language engineer, your task is to write a series of test cases to verify the correctness of a project.
+            I will provide the following information:
+            1. **Filename**: This helps you understand the context of the MoonBit Code and guide you in using the correct data structures for generating test cases.
+            2. **MoonBit Code**: This is the MoonBit language code that the test case is supposed to test.
+
+            Please carefully read this information and generate correct test cases for the MoonBit Code with your knowledge of MoonBit language.
+
+            **Input Format:**
+            The filename is <filename>
+            The MoonBit code is <moonbit>
+
+            **Output Format:**
+            ```moonbit
+            test {{
+                assert_eq!(moonbit_code)
+            }}
+            ```
+
+            Note that your output should only contain the code for the test cases, without any analysis, explanations, or any other statements.
+            Also, ensure that you are generating test cases for the MoonBit language, and do not confuse it with any other language.
+        """),
+        ("user", "The filename is \"{filename}\"\nThe MoonBit code is\n{moonbit}")
+    ]
+)
+
 
     test_llm = ChatZhipuAI(
-        api_key=api_key, model="glm-4-9b:772570335:v3:odbzuhb9", temperature=0.5, max_tokens=2048
+        api_key=api_key, model="glm-4-9b:772570335:v5:iwfb27vl", temperature=0.7, max_tokens=4095
     )
 
     test_retriever_chain = test_prompt | test_llm | StrOutputParser()
@@ -51,13 +67,30 @@ def rethink_test_code(moonbit_code, test_moonbit_code, file_path, api_key):
         MoonBit Code:<MoonBit code>
 
         **Output Format:**
-        Corrected Test Case Code:<corrected test case code>
-        
-        If the test case encounters issues with data structure usage, 
-        please modify the data structures used in the test case based on the file name. 
+        ```moonbit  
+           test {{  
+           assert_eq!(moonbit_code)    
+         }}
+        ```
+         
         If there are issues with the values in the test case, 
-        please remove the assertion values in the assert statement.
-        
+        you can remove the assertion values in the assert statement like:
+
+        ```test_moonbit_code
+        test "to_string" {{
+         let arr = [1, 2, 3]
+         let str = arr.to_string()
+         assert_eq!(str,"[1, 2, 3]")
+          }}
+        ```
+
+        ```output
+         test "to_string" {{
+         let arr = [1, 2, 3]
+         let str = arr.to_string()
+         assert_eq!(str)
+          }}
+        ```
         Now, please generate the corrected test case code based on the following input information:
         MoonBit Code:{moonbit_code}
         Filename: {filename}
@@ -67,7 +100,7 @@ def rethink_test_code(moonbit_code, test_moonbit_code, file_path, api_key):
                 """
     )
     rethink_llm = ChatZhipuAI(
-        api_key=api_key, model="glm-4-9b:772570335:v3:odbzuhb9", temperature=0.5, max_tokens=2048
+        api_key=api_key, model="glm-4-9b:772570335:v5:iwfb27vl", temperature=0.7, max_tokens=4095
     )
 
     rethink_retriever_chain = rethink_prompt | rethink_llm | StrOutputParser()
