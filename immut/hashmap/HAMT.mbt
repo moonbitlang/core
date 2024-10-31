@@ -250,3 +250,21 @@ pub fn T::of[K : Eq + Hash, V](arr : FixedArray[(K, V)]) -> T[K, V] {
     }
   }
 }
+
+pub fn op_equal[K : Eq + Hash, V : Eq](self : T[K, V], other : T[K, V]) -> Bool {
+  if self.size() != other.size() {
+    return false
+  }
+  for kv in self.iter() {
+    match other.find(kv.0) {
+      Some(v) => if v != kv.1 { break false }
+      None => break false
+    }
+  } else {
+    true
+  }
+}
+
+pub impl[K : Hash, V : Hash] Hash for T[K, V] with hash_combine(self, hasher) {
+  self.each(fn(k, v) { hasher..combine(k).combine(v) })
+}
