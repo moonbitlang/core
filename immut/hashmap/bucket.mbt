@@ -12,13 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-/// A bucket is a non-empty linked list of key-value pair,
-/// used to resolve hash collision in HAMT
-priv enum Bucket[K, V] {
-  Just_One(K, V) // must be non-empty
-  More(K, V, Bucket[K, V])
-}
-
 /// Lookup a key from the bucket
 fn find[K : Eq, V](self : Bucket[K, V], key : K) -> V? {
   match self {

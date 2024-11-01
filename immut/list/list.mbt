@@ -12,11 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-pub enum T[A] {
-  Nil
-  Cons(A, T[A])
-} derive(Eq)
-
 pub fn add[A](self : T[A], head : A) -> T[A] {
   Cons(head, self)
 }
