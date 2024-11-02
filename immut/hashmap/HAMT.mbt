@@ -27,14 +27,6 @@
 // - <https://handwiki.org/wiki/Hash%20array%20mapped%20trie>
 // - <https://lampwww.epfl.ch/papers/idealhashtrees.pdf>
 
-/// An immutable hash-map data structure
-enum T[K, V] {
-  Empty
-  Leaf(K, V) // optimize for the case of no collision
-  Collision(Bucket[K, V]) // use a list of buckets to resolve collision
-  Branch(@sparse_array.SparseArray[T[K, V]])
-}
-
 // The number of bits consumed at every [Branch] node
 let segment_length : Int = 5
 
