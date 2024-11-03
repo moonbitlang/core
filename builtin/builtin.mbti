@@ -302,7 +302,7 @@ impl Map {
   keys[K, V](Self[K, V]) -> Iter[K]
   new[K, V](~capacity : Int = ..) -> Self[K, V]
   of[K : Hash + Eq, V](FixedArray[(K, V)]) -> Self[K, V]
-  op_equal[K : Eq, V : Eq](Self[K, V], Self[K, V]) -> Bool
+  op_equal[K : Hash + Eq, V : Eq](Self[K, V], Self[K, V]) -> Bool
   op_get[K : Hash + Eq, V](Self[K, V], K) -> V?
   op_set[K : Hash + Eq, V](Self[K, V], K, V) -> Unit
   remove[K : Hash + Eq, V](Self[K, V], K) -> Unit
