@@ -479,20 +479,20 @@ pub fn to_array[K, V](self : Map[K, V]) -> Array[(K, V)] {
   arr
 }
 
-pub fn op_equal[K : Eq, V : Eq](self : Map[K, V], that : Map[K, V]) -> Bool {
+pub fn op_equal[K : Hash + Eq, V : Eq](
+  self : Map[K, V],
+  that : Map[K, V]
+) -> Bool {
   if self.size != that.size {
     return false
   }
-  loop self.head, that.head {
-    None, None => true
-    Some({ key: k1, value: v1, idx: i1, .. }),
-    Some({ key: k2, value: v2, idx: i2, .. }) => {
-      if k1 != k2 || v1 != v2 {
-        return false
-      }
-      continue self.list[i1].next, that.list[i2].next
+  for k, v in self {
+    match that.get(k) {
+      None => break false
+      Some(v_) => if v_ != v { break false }
     }
-    _, _ => false
+  } else {
+    true
   }
 }
 
