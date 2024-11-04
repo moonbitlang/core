@@ -25,7 +25,11 @@ fn log2(Double) -> Double
 
 fn maximum[T : Compare + Eq](T, T) -> T
 
+fn maximum_by_key[T, K : Compare + Eq](T, T, (T) -> K) -> T
+
 fn minimum[T : Compare + Eq](T, T) -> T
+
+fn minimum_by_key[T, K : Compare + Eq](T, T, (T) -> K) -> T
 
 let pi : Double
 

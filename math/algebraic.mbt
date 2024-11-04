@@ -30,6 +30,25 @@ pub fn maximum[T : Compare](x : T, y : T) -> T {
   }
 }
 
+/// Returns the element that gives the maximum value from the specified function.
+///
+/// Returns the second argument if the comparison determines them to be equal.
+///
+/// # Examples
+///
+/// ```
+/// let abs = fn(n : Int) { if n < 0 { 0 - n } else { n } }
+/// print(@math.maximum_by_key(-2, 1, abs)) // output: -2
+/// print(@math.maximum_by_key(-2, 2, abs)) // output: 2
+/// ```
+pub fn maximum_by_key[T, K : Compare](x : T, y : T, f : (T) -> K) -> T {
+  if f(x) > f(y) {
+    x
+  } else {
+    y
+  }
+}
+
 /// Compares and returns the minimum of two values.
 ///
 /// Returns the first argument if the comparison determines them to be equal.
@@ -42,6 +61,25 @@ pub fn maximum[T : Compare](x : T, y : T) -> T {
 /// ```
 pub fn minimum[T : Compare](x : T, y : T) -> T {
   if x > y {
+    y
+  } else {
+    x
+  }
+}
+
+/// Returns the element that gives the minimum value from the specified function.
+///
+/// Returns the first argument if the comparison determines them to be equal.
+///
+/// # Examples
+///
+/// ```
+/// let abs = fn(n : Int) { if n < 0 { 0 - n } else { n } }
+/// print(@math.minimum_by_key(-2, 1, abs)) // output: 1
+/// print(@math.minimum_by_key(-2, 2, abs)) // output: -2
+/// ```
+pub fn minimum_by_key[T, K : Compare](x : T, y : T, f : (T) -> K) -> T {
+  if f(x) > f(y) {
     y
   } else {
     x
