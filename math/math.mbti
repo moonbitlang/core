@@ -1,6 +1,8 @@
 package moonbitlang/core/math
 
 // Values
+const PI : Double = 0x3.243F6A8885A308CA8A54
+
 fn acos(Double) -> Double
 
 fn asin(Double) -> Double
