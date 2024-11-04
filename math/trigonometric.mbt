@@ -18,9 +18,12 @@ let pi4b = 0x0.000000A2216800000988
 
 let pi4c = 0x0.000000000000C234BE07
 
+pub const PI = 0x3.243F6A8885A308CA8A54
+
 pub let pi = 0x3.243F6A8885A308CA8A54
 
-let pi4 : Double = 4.0 / pi
+// todo: allow const here
+let pi4 : Double = 4.0 / PI
 
 let sin_ = [
   0x0.00000000AEC7E8FE9D35, -0x0.0000006B9796A4A487D, 0x0.00002E3BC6ACFA913766, -1.98412698295895385996e-4,
@@ -213,9 +216,9 @@ fn satan(x : Double) -> Double {
   if x <= 0.66 {
     xatan(x)
   } else if x > tan3pio8 {
-    pi / 2.0 - xatan(1.0 / x) + morebits
+    PI / 2.0 - xatan(1.0 / x) + morebits
   } else {
-    pi / 4.0 + xatan((x - 1.0) / (x + 1.0)) + 0.5 * morebits
+    PI / 4.0 + xatan((x - 1.0) / (x + 1.0)) + 0.5 * morebits
   }
 }
 
@@ -238,7 +241,7 @@ pub fn asin(x : Double) -> Double {
       @double.not_a_number
     } else {
       let temp = (1.0 - x_ * x_).sqrt()
-      (if x > 0.7 { pi / 2.0 - satan(temp / x_) } else { satan(x_ / temp) }) *
+      (if x > 0.7 { PI / 2.0 - satan(temp / x_) } else { satan(x_ / temp) }) *
       x.signum()
     }
   }
@@ -248,7 +251,7 @@ pub fn acos(x : Double) -> Double {
   if Double::is_inf(x) || Double::is_nan(x) {
     x
   } else {
-    pi / 2.0 - asin(x)
+    PI / 2.0 - asin(x)
   }
 }
 
@@ -267,31 +270,31 @@ pub fn atan2(y : Double, x : Double) -> Double {
     if x >= 0 {
       copysign(0, y)
     } else {
-      copysign(pi, y)
+      copysign(PI, y)
     }
   } else if x == 0 {
-    copysign(pi / 2, y)
+    copysign(PI / 2, y)
   } else if x.is_inf() {
     if x.is_pos_inf() {
       if y.is_inf() {
-        copysign(pi / 4, y)
+        copysign(PI / 4, y)
       } else {
         copysign(0, y)
       }
     } else if y.is_inf() {
-      copysign(3.0 * pi / 4, y)
+      copysign(3.0 * PI / 4, y)
     } else {
-      copysign(pi, y)
+      copysign(PI, y)
     }
   } else if y.is_inf() {
-    copysign(pi / 2, y)
+    copysign(PI / 2, y)
   } else {
     let q = atan(y / x)
     if x < 0 {
       if q <= 0 {
-        q + pi
+        q + PI
       } else {
-        q - pi
+        q - PI
       }
     } else {
       q
