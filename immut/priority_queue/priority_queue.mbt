@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+///|
 /// Creates a new empty immutable priority queue.
 /// 
 /// # Example
@@ -22,6 +23,7 @@ pub fn T::new[A : Compare]() -> T[A] {
   { body: Empty, len: 0 }
 }
 
+///|
 /// Creates a new immutable priority queue from an array.
 /// 
 /// # Example
@@ -39,6 +41,7 @@ pub fn T::from_array[A : Compare](arr : Array[A]) -> T[A] {
   }
 }
 
+///|
 pub fn to_array[A : Compare](self : T[A]) -> Array[A] {
   let arr : Array[A] = []
   fn go(x : Cont[A]) {
@@ -62,6 +65,7 @@ pub fn to_array[A : Compare](self : T[A]) -> Array[A] {
   arr
 }
 
+///|
 pub fn iter[A : Compare](self : T[A]) -> Iter[A] {
   Iter::new(
     fn(yield) {
@@ -77,10 +81,12 @@ pub fn iter[A : Compare](self : T[A]) -> Iter[A] {
   )
 }
 
+///|
 pub fn T::from_iter[A : Compare](iter : Iter[A]) -> T[A] {
   iter.fold(init=T::new(), fn(s, e) { s.push(e) })
 }
 
+///|
 fn meld[A : Compare](l : Cont[A], r : Cont[A]) -> Cont[A] {
   match (l, r) {
     (Empty, _) => r
@@ -94,6 +100,7 @@ fn meld[A : Compare](l : Cont[A], r : Cont[A]) -> Cont[A] {
   }
 }
 
+///|
 fn merges[A : Compare](x : @list.T[Cont[A]]) -> Cont[A] {
   loop x, Empty {
     Nil, acc => acc
@@ -101,6 +108,7 @@ fn merges[A : Compare](x : @list.T[Cont[A]]) -> Cont[A] {
   }
 }
 
+///|
 /// Pops the first value from the immutable priority queue, which returns None if the queue is empty.
 /// 
 /// # Example
@@ -115,6 +123,7 @@ pub fn pop[A : Compare](self : T[A]) -> T[A]? {
   }
 }
 
+///|
 /// Pops the first value from the immutable priority queue.
 /// 
 /// Panics if the queue is empty.
@@ -130,11 +139,13 @@ pub fn unsafe_pop[A : Compare](self : T[A]) -> T[A] {
   }
 }
 
+///|
 /// @alert deprecated "Use `unsafe_pop` instead"
 pub fn pop_exn[A : Compare](self : T[A]) -> T[A] {
   unsafe_pop(self)
 }
 
+///|
 /// Adds a value to the immutable priority queue.
 /// 
 /// # Example
@@ -146,6 +157,7 @@ pub fn push[A : Compare](self : T[A], value : A) -> T[A] {
   { body: meld(self.body, Node(value, Nil)), len: self.len + 1 }
 }
 
+///|
 /// Peeks at the first value in the immutable priority queue, which returns None if the immutable priority queue is empty.
 /// 
 /// # Example
@@ -160,6 +172,7 @@ pub fn peek[A](self : T[A]) -> A? {
   }
 }
 
+///|
 /// Checks if the immutable priority queue is empty.
 /// 
 /// # Example
@@ -174,6 +187,7 @@ pub fn is_empty[A](self : T[A]) -> Bool {
   }
 }
 
+///|
 /// Return the length of the immutable priority queue.
 /// 
 /// # Example
@@ -186,6 +200,7 @@ pub fn length[A](self : T[A]) -> Int {
   self.len
 }
 
+///|
 pub fn T::of[A : Compare](arr : FixedArray[A]) -> T[A] {
   let len = arr.length()
   for i = 0, acc = Cont::Empty {
@@ -197,6 +212,7 @@ pub fn T::of[A : Compare](arr : FixedArray[A]) -> T[A] {
   }
 }
 
+///|
 pub impl[A : Show + Compare] Show for T[A] with output(self, logger) {
   logger.write_iter(
     self.iter(),
@@ -205,6 +221,7 @@ pub impl[A : Show + Compare] Show for T[A] with output(self, logger) {
   )
 }
 
+///|
 pub impl[X : @quickcheck.Arbitrary + Compare] @quickcheck.Arbitrary for T[X] with arbitrary(
   size,
   rs
@@ -212,6 +229,7 @@ pub impl[X : @quickcheck.Arbitrary + Compare] @quickcheck.Arbitrary for T[X] wit
   @quickcheck.Arbitrary::arbitrary(size, rs) |> from_array
 }
 
+///|
 pub fn to_string[A : Show + Compare](self : T[A]) -> String {
   Show::to_string(self)
 }

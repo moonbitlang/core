@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+///|
 /// Lookup a key from the bucket
 fn find[K : Eq, V](self : Bucket[K, V], key : K) -> V? {
   match self {
@@ -25,6 +26,7 @@ fn find[K : Eq, V](self : Bucket[K, V], key : K) -> V? {
   }
 }
 
+///|
 /// Add a new key-value pair to a bucket.
 /// Replace the old entry if one with the same key already exists.
 fn add[K : Eq, V](self : Bucket[K, V], key : K, value : V) -> Bucket[K, V] {
@@ -44,6 +46,7 @@ fn add[K : Eq, V](self : Bucket[K, V], key : K, value : V) -> Bucket[K, V] {
   }
 }
 
+///|
 /// Remove a key from a bucket
 fn remove[K : Eq, V](self : Bucket[K, V], key : K) -> Bucket[K, V]? {
   match self {
@@ -60,6 +63,7 @@ fn remove[K : Eq, V](self : Bucket[K, V], key : K) -> Bucket[K, V]? {
   }
 }
 
+///|
 /// Get the size of a bucket
 fn size[K, V](self : Bucket[K, V]) -> Int {
   loop self, 1 {
@@ -68,6 +72,7 @@ fn size[K, V](self : Bucket[K, V]) -> Int {
   }
 }
 
+///|
 /// Iterate through elements of a bucket
 fn each[K, V](self : Bucket[K, V], f : (K, V) -> Unit) -> Unit {
   loop self {
@@ -79,6 +84,7 @@ fn each[K, V](self : Bucket[K, V], f : (K, V) -> Unit) -> Unit {
   }
 }
 
+///|
 fn iter[K, V](self : Bucket[K, V]) -> Iter[(K, V)] {
   Iter::new(
     fn {

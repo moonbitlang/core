@@ -12,14 +12,18 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+///|
 pub let max_value = 9223372036854775807L
 
+///|
 pub let min_value = -9223372036854775808L
 
+///|
 pub fn Int64::from_int(i : Int) -> Int64 {
   i.to_int64()
 }
 
+///|
 pub fn abs(self : Int64) -> Int64 {
   if self < 0L {
     -self

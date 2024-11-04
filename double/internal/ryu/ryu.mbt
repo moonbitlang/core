@@ -15,6 +15,7 @@
 // MoonBit implementation of Ryu, https://github.com/ulfjack/ryu
 // This is a fork of the ryu crate adjusted to comply to the ECMAScript number-to-string algorithm,
 
+///|
 fn string_from_bytes(bytes : Bytes, from : Int, to : Int) -> String {
   let buf = StringBuilder::new(size_hint=bytes.length())
   for i = from; i < to; i = i + 1 {
@@ -23,6 +24,7 @@ fn string_from_bytes(bytes : Bytes, from : Int, to : Int) -> String {
   buf.to_string()
 }
 
+///|
 fn umul128(a : UInt64, b : UInt64) -> (UInt64, UInt64) {
   let aLo = a & 0xffffffff
   let aHi = a >> 32
@@ -37,10 +39,12 @@ fn umul128(a : UInt64, b : UInt64) -> (UInt64, UInt64) {
   (lo, hi)
 }
 
+///|
 fn shiftright128(lo : UInt64, hi : UInt64, dist : Int) -> UInt64 {
   (hi << (64 - dist)) | (lo >> dist)
 }
 
+///|
 fn pow5Factor(value : UInt64) -> Int {
   // We want to find the largest power of 5 that divides value.
   if value % 5UL != 0UL {
@@ -67,14 +71,17 @@ fn pow5Factor(value : UInt64) -> Int {
   abort("IllegalArgumentException \{value}")
 }
 
+///|
 fn multipleOfPowerOf5(value : UInt64, p : Int) -> Bool {
   pow5Factor(value) >= p
 }
 
+///|
 fn multipleOfPowerOf2(value : UInt64, p : Int) -> Bool {
   (value & ((1UL << p) - 1UL)) == 0UL
 }
 
+///|
 fn mulShiftAll64(
   m : UInt64,
   mul : (UInt64, UInt64),
@@ -109,8 +116,10 @@ fn mulShiftAll64(
   (vr, vp, vm)
 }
 
+///|
 let gPOW5_TABLE_SIZE = 26
 
+///|
 let gDOUBLE_POW5_INV_SPLIT2 : Array[UInt64] = [
   1, 2305843009213693952, 5955668970331000884, 1784059615882449851, 8982663654677661702,
   1380349269358112757, 7286864317269821294, 2135987035920910082, 7005857020398200553,
@@ -122,12 +131,14 @@ let gDOUBLE_POW5_INV_SPLIT2 : Array[UInt64] = [
   2032799256770390445,
 ]
 
+///|
 let gPOW5_INV_OFFSETS : Array[UInt] = [
   0x54544554, 0x04055545, 0x10041000, 0x00400414, 0x40010000, 0x41155555, 0x00000454,
   0x00010044, 0x40000000, 0x44000041, 0x50454450, 0x55550054, 0x51655554, 0x40004000,
   0x01000001, 0x00010500, 0x51515411, 0x05555554, 0x00000000,
 ]
 
+///|
 let gDOUBLE_POW5_SPLIT2 : Array[UInt64] = [
   0, 1152921504606846976, 0, 1490116119384765625, 1032610780636961552, 1925929944387235853,
   7910200175544436838, 1244603055572228341, 16941905809032713930, 1608611746708759036,
@@ -137,12 +148,14 @@ let gDOUBLE_POW5_SPLIT2 : Array[UInt64] = [
   665883850346957067, 1211445438634777304, 14931890668723713708, 1565756531257009982,
 ]
 
+///|
 let gPOW5_OFFSETS : Array[UInt] = [
   0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x40000000, 0x59695995, 0x55545555,
   0x56555515, 0x41150504, 0x40555410, 0x44555145, 0x44504540, 0x45555550, 0x40004000,
   0x96440440, 0x55565565, 0x54454045, 0x40154151, 0x55559155, 0x51405555, 0x00000105,
 ]
 
+///|
 let gDOUBLE_POW5_TABLE : Array[UInt64] = [
   1, 5, 25, 125, 625, 3125, 15625, 78125, 390625, 1953125, 9765625, 48828125, 244140625,
   1220703125, 6103515625, 30517578125, 152587890625, 762939453125, 3814697265625,
@@ -150,6 +163,7 @@ let gDOUBLE_POW5_TABLE : Array[UInt64] = [
   59604644775390625, 298023223876953125,
 ]
 
+///|
 /// Computes 5^i in the form required by Ryū.
 fn double_computePow5(i : Int) -> (UInt64, UInt64) {
   let base = i / gPOW5_TABLE_SIZE
@@ -175,6 +189,7 @@ fn double_computePow5(i : Int) -> (UInt64, UInt64) {
   (a, b)
 }
 
+///|
 /// Computes 5^-i in the form required by Ryū.
 fn double_computeInvPow5(i : Int) -> (UInt64, UInt64) {
   let base = (i + gPOW5_TABLE_SIZE - 1) / gPOW5_TABLE_SIZE
@@ -201,16 +216,22 @@ fn double_computeInvPow5(i : Int) -> (UInt64, UInt64) {
   (a, b)
 }
 
+///|
 let gDOUBLE_MANTISSA_BITS : Int = 52
 
+///|
 let gDOUBLE_EXPONENT_BITS : Int = 11
 
+///|
 let gDOUBLE_BIAS : Int = 1023
 
+///|
 let gDOUBLE_POW5_INV_BITCOUNT : Int = 125
 
+///|
 let gDOUBLE_POW5_BITCOUNT : Int = 125
 
+///|
 fn decimal_length17(v : UInt64) -> Int {
   // This is slightly faster than a loop.
   // The average output length is 16.38 digits, so we check high-to-low.
@@ -267,6 +288,7 @@ fn decimal_length17(v : UInt64) -> Int {
   return 1
 }
 
+///|
 // A floating decimal representing m * 10^e.
 priv struct FloatingDecimal64 {
   mantissa : UInt64
@@ -275,6 +297,7 @@ priv struct FloatingDecimal64 {
   exponent : Int
 }
 
+///|
 fn d2d(ieeeMantissa : UInt64, ieeeExponent : UInt) -> FloatingDecimal64 {
   let mut e2 : Int = 0
   let mut m2 : UInt64 = 0
@@ -455,6 +478,7 @@ fn d2d(ieeeMantissa : UInt64, ieeeExponent : UInt) -> FloatingDecimal64 {
   fd
 }
 
+///|
 fn to_chars(v : FloatingDecimal64, sign : Bool) -> String {
   // Step 5: Print the decimal representation.
   let result = Bytes::new(25)
@@ -560,6 +584,7 @@ fn to_chars(v : FloatingDecimal64, sign : Bool) -> String {
   }
 }
 
+///|
 fn d2d_small_int(
   ieeeMantissa : UInt64,
   ieeeExponent : Int
@@ -580,6 +605,7 @@ fn d2d_small_int(
   Some({ mantissa: m2 >> -e2, exponent: 0 })
 }
 
+///|
 /// TODO: ryu_to_logger[T:Logger](Double/Float, T) -> Unit
 pub fn ryu_to_string(val : Double) -> String {
   if val == 0.0 {

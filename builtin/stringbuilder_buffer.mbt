@@ -12,17 +12,20 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+///|
 struct StringBuilder {
   mut bytes : Bytes
   mut len : Int
 }
 
+///|
 pub fn StringBuilder::new(~size_hint : Int = 0) -> StringBuilder {
   let initial = if size_hint < 1 { 1 } else { size_hint }
   let bytes = Bytes::new(initial)
   { bytes, len: 0 }
 }
 
+///|
 fn StringBuilder::grow_if_necessary(
   self : StringBuilder,
   required : Int
@@ -41,18 +44,21 @@ fn StringBuilder::grow_if_necessary(
   }
 }
 
+///|
 pub fn StringBuilder::write_string(self : StringBuilder, str : String) -> Unit {
   self.grow_if_necessary(self.len + str.length() * 2)
   self.bytes.blit_from_string(self.len, str, 0, str.length())
   self.len += str.length() * 2
 }
 
+///|
 pub fn StringBuilder::write_char(self : StringBuilder, ch : Char) -> Unit {
   self.grow_if_necessary(self.len + 4)
   let inc = self.bytes.set_utf16_char(self.len, ch)
   self.len += inc
 }
 
+///|
 pub fn StringBuilder::write_substring(
   self : StringBuilder,
   str : String,
@@ -65,15 +71,18 @@ pub fn StringBuilder::write_substring(
   self.len += len * 2
 }
 
+///|
 pub fn StringBuilder::to_string(self : StringBuilder) -> String {
   self.bytes.sub_string(0, self.len)
 }
 
+///|
 /// TODO: improve perf
 pub impl Show for StringBuilder with output(self, logger) {
   logger.write_string(self.bytes.sub_string(0, self.len))
 }
 
+///|
 pub fn reset(self : StringBuilder) -> Unit {
   self.len = 0
 }

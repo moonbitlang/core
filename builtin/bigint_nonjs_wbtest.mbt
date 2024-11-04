@@ -12,8 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+///|
 type MyBigInt BigInt
 
+///|
 impl Show for MyBigInt with output(self, logger) {
   logger.write_string(
     "{limbs : \{self.limbs}, sign : \{self.sign}, len : \{self.len} }",
@@ -45,6 +47,7 @@ test "debug_string" {
   )
 }
 
+///|
 fn check_len(a : BigInt) -> Unit! {
   if a.is_zero() {
     return ()

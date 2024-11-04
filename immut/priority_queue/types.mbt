@@ -12,11 +12,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+///|
 priv enum Cont[A] {
   Empty
   Node(A, @list.T[Cont[A]])
 } derive(Show)
 
+///|
 struct T[A] {
   len : Int
   body : Cont[A]

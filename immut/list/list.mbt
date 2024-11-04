@@ -12,18 +12,22 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+///|
 pub fn add[A](self : T[A], head : A) -> T[A] {
   Cons(head, self)
 }
 
+///|
 pub impl[A : Show] Show for T[A] with output(xs, logger) {
   logger.write_iter(xs.iter(), prefix="@list.of([", suffix="])")
 }
 
+///|
 pub fn T::to_string[A : Show](xs : T[A]) -> String {
   Show::to_string(xs)
 }
 
+///|
 pub impl[A : ToJson] ToJson for T[A] with to_json(self) {
   let capacity = self.length()
   guard capacity != 0 else { return Array([]) }
@@ -32,10 +36,12 @@ pub impl[A : ToJson] ToJson for T[A] with to_json(self) {
   Array(jsons)
 }
 
+///|
 pub fn T::to_json[A : ToJson](self : T[A]) -> Json {
   ToJson::to_json(self)
 }
 
+///|
 pub impl[A : @json.FromJson] @json.FromJson for T[A] with from_json(json, path) {
   match json {
     Array(arr) =>
@@ -51,12 +57,14 @@ pub impl[A : @json.FromJson] @json.FromJson for T[A] with from_json(json, path) 
   }
 }
 
+///|
 pub fn T::from_json[A : @json.FromJson](
   json : Json
 ) -> T[A]!@json.JsonDecodeError {
   @json.from_json!(json)
 }
 
+///|
 /// Convert array to list.
 ///
 /// # Example
@@ -73,6 +81,7 @@ pub fn T::from_array[A](arr : Array[A]) -> T[A] {
   }
 }
 
+///|
 /// Get the length of the list.
 pub fn length[A](self : T[A]) -> Int {
   loop self, 0 {
@@ -81,6 +90,7 @@ pub fn length[A](self : T[A]) -> Int {
   }
 }
 
+///|
 /// Iterates over the list.
 ///
 /// # Example
@@ -98,6 +108,7 @@ pub fn each[A](self : T[A], f : (A) -> Unit) -> Unit {
   }
 }
 
+///|
 /// Iterates over the list with index.
 ///
 /// # Example
@@ -116,6 +127,7 @@ pub fn eachi[A](self : T[A], f : (Int, A) -> Unit) -> Unit {
   }
 }
 
+///|
 /// Maps the list.
 ///
 /// # Example
@@ -131,6 +143,7 @@ pub fn map[A, B](self : T[A], f : (A) -> B) -> T[B] {
   }
 }
 
+///|
 /// Maps the list with index.
 pub fn mapi[A, B](self : T[A], f : (Int, A) -> B) -> T[B] {
   fn go(xs : T[A], i : Int, f : (Int, A) -> B) -> T[B] {
@@ -143,6 +156,7 @@ pub fn mapi[A, B](self : T[A], f : (Int, A) -> B) -> T[B] {
   go(self, 0, f)
 }
 
+///|
 /// Maps the list and reverses the result.
 ///
 /// `list.rev_map(f)` is equivalent to `list.map(f).rev()` but more efficient.
@@ -159,6 +173,7 @@ pub fn rev_map[A, B](self : T[A], f : (A) -> B) -> T[B] {
   }
 }
 
+///|
 /// Convert list to array.
 pub fn to_array[A](self : T[A]) -> Array[A] {
   match self {
@@ -171,6 +186,7 @@ pub fn to_array[A](self : T[A]) -> Array[A] {
   }
 }
 
+///|
 /// Filter the list.
 ///
 /// # Example
@@ -191,6 +207,7 @@ pub fn filter[A](self : T[A], f : (A) -> Bool) -> T[A] {
   }
 }
 
+///|
 /// Test if all elements of the list satisfy the predicate.
 pub fn all[A](self : T[A], f : (A) -> Bool) -> Bool {
   match self {
@@ -199,6 +216,7 @@ pub fn all[A](self : T[A], f : (A) -> Bool) -> Bool {
   }
 }
 
+///|
 /// Test if any element of the list satisfies the predicate.
 pub fn any[A](self : T[A], f : (A) -> Bool) -> Bool {
   match self {
@@ -207,6 +225,7 @@ pub fn any[A](self : T[A], f : (A) -> Bool) -> Bool {
   }
 }
 
+///|
 /// Tail of the list.
 ///
 /// # Example
@@ -222,6 +241,7 @@ pub fn tail[A](self : T[A]) -> T[A] {
   }
 }
 
+///|
 /// Get first element of the list.
 /// @alert unsafe "Panic if the list is empty"
 pub fn unsafe_head[A](self : T[A]) -> A {
@@ -231,11 +251,13 @@ pub fn unsafe_head[A](self : T[A]) -> A {
   }
 }
 
+///|
 /// @alert deprecated "Use `unsafe_head` instead"
 pub fn head_exn[A](self : T[A]) -> A {
   unsafe_head(self)
 }
 
+///|
 /// Get first element of the list.
 ///
 /// # Example
@@ -251,6 +273,7 @@ pub fn head[A](self : T[A]) -> A? {
   }
 }
 
+///|
 /// @alert unsafe "Panic if the list is empty"
 pub fn unsafe_last[A](self : T[A]) -> A {
   loop self {
@@ -260,6 +283,7 @@ pub fn unsafe_last[A](self : T[A]) -> A {
   }
 }
 
+///|
 /// Last element of the list.
 ///
 /// # Example
@@ -276,6 +300,7 @@ pub fn last[A](self : T[A]) -> A? {
   }
 }
 
+///|
 /// Init of the list.
 ///
 /// # Example
@@ -292,6 +317,7 @@ pub fn init_[A](self : T[A]) -> T[A] {
   }
 }
 
+///|
 /// Concatenate two lists.
 ///
 /// # Example
@@ -307,6 +333,7 @@ pub fn concat[A](self : T[A], other : T[A]) -> T[A] {
   }
 }
 
+///|
 /// Reverse the first list and concatenate it with the second.
 ///
 /// # Example
@@ -322,6 +349,7 @@ pub fn rev_concat[A](self : T[A], other : T[A]) -> T[A] {
   }
 }
 
+///|
 /// Reverse the list.
 ///
 /// # Example
@@ -334,6 +362,7 @@ pub fn rev[A](self : T[A]) -> T[A] {
   self.rev_concat(Nil)
 }
 
+///|
 /// Fold the list from left.
 ///
 /// # Example
@@ -349,6 +378,7 @@ pub fn fold[A, B](self : T[A], ~init : B, f : (B, A) -> B) -> B {
   }
 }
 
+///|
 /// Fold the list from right.
 ///
 /// # Example
@@ -362,6 +392,7 @@ pub fn rev_fold[A, B](self : T[A], ~init : B, f : (A, B) -> B) -> B {
   }
 }
 
+///|
 /// Fold the list from left.
 ///
 /// # Example
@@ -375,6 +406,7 @@ pub fn fold_left[A, B](self : T[A], f : (B, A) -> B, ~init : B) -> B {
   self.fold(~init, f)
 }
 
+///|
 /// Fold the list from right.
 ///
 /// # Example
@@ -389,6 +421,7 @@ pub fn fold_right[A, B](self : T[A], f : (A, B) -> B, ~init : B) -> B {
   }
 }
 
+///|
 /// Fold the list from left with index.
 pub fn foldi[A, B](self : T[A], ~init : B, f : (Int, B, A) -> B) -> B {
   fn go(xs : T[A], i : Int, f : (Int, B, A) -> B, acc : B) -> B {
@@ -401,6 +434,7 @@ pub fn foldi[A, B](self : T[A], ~init : B, f : (Int, B, A) -> B) -> B {
   go(self, 0, f, init)
 }
 
+///|
 /// Fold the list from right with index.
 pub fn rev_foldi[A, B](self : T[A], ~init : B, f : (Int, A, B) -> B) -> B {
   fn go(xs : T[A], i : Int, f : (Int, A, B) -> B, acc : B) -> B {
@@ -413,6 +447,7 @@ pub fn rev_foldi[A, B](self : T[A], ~init : B, f : (Int, A, B) -> B) -> B {
   go(self, 0, f, init)
 }
 
+///|
 /// Fold the list from left with index.
 /// @alert deprecated "Use `foldi` instead"
 pub fn fold_lefti[A, B](self : T[A], f : (Int, B, A) -> B, ~init : B) -> B {
@@ -426,6 +461,7 @@ pub fn fold_lefti[A, B](self : T[A], f : (Int, B, A) -> B, ~init : B) -> B {
   go(self, 0, f, init)
 }
 
+///|
 /// Fold the list from right with index.
 /// @alert deprecated "Use `rev_foldi` instead"
 pub fn fold_righti[A, B](self : T[A], f : (Int, A, B) -> B, ~init : B) -> B {
@@ -439,6 +475,7 @@ pub fn fold_righti[A, B](self : T[A], f : (Int, A, B) -> B, ~init : B) -> B {
   go(self, 0, f, init)
 }
 
+///|
 /// Zip two lists.
 /// If the lists have different lengths, it will return None.
 ///
@@ -460,6 +497,7 @@ pub fn zip[A, B](self : T[A], other : T[B]) -> T[(A, B)]? {
   }
 }
 
+///|
 /// map over the list and concat all results.
 ///
 /// `concat_map(f, ls)` equal to `ls.map(f).fold(Nil, fn(acc, x) { acc.concat(x) })))`
@@ -476,6 +514,7 @@ pub fn concat_map[A, B](self : T[A], f : (A) -> T[B]) -> T[B] {
   flat_map(self, f)
 }
 
+///|
 /// map over the list and concat all results.
 ///
 /// `flat_map(f, ls)` equal to `ls.map(f).fold(Nil, fn(acc, x) { acc.concat(x) })))`
@@ -494,6 +533,7 @@ pub fn flat_map[A, B](self : T[A], f : (A) -> T[B]) -> T[B] {
   }
 }
 
+///|
 /// Map over the list and keep all `value`s for which the mapped result is `Some(value)`.
 ///
 /// # Example
@@ -514,6 +554,7 @@ pub fn filter_map[A, B](self : T[A], f : (A) -> B?) -> T[B] {
   }
 }
 
+///|
 /// @alert unsafe "Panic if the index is out of bounds"
 pub fn unsafe_nth[A](self : T[A], n : Int) -> A {
   loop self, n {
@@ -523,11 +564,13 @@ pub fn unsafe_nth[A](self : T[A], n : Int) -> A {
   }
 }
 
+///|
 /// @alert deprecated "Use `unsafe_nth` instead"
 pub fn nth_exn[A](self : T[A], n : Int) -> A {
   unsafe_nth(self, n)
 }
 
+///|
 /// Get nth element of the list or None if the index is out of bounds
 pub fn nth[A](self : T[A], n : Int) -> A? {
   loop self, n {
@@ -537,6 +580,7 @@ pub fn nth[A](self : T[A], n : Int) -> A? {
   }
 }
 
+///|
 /// Create a list of length n with the given value
 ///
 /// # Example
@@ -552,6 +596,7 @@ pub fn repeat[A](n : Int, x : A) -> T[A] {
   }
 }
 
+///|
 /// Insert separator to the list.
 ///
 /// # Example
@@ -569,6 +614,7 @@ pub fn intersperse[A](self : T[A], separator : A) -> T[A] {
   }
 }
 
+///|
 /// Check if the list is empty.
 pub fn is_empty[A](self : T[A]) -> Bool {
   match self {
@@ -577,6 +623,7 @@ pub fn is_empty[A](self : T[A]) -> Bool {
   }
 }
 
+///|
 /// Unzip two lists.
 ///
 /// # Example
@@ -596,6 +643,7 @@ pub fn unzip[A, B](list : T[(A, B)]) -> (T[A], T[B]) {
   }
 }
 
+///|
 /// flatten a list of lists.
 ///
 /// # Example
@@ -611,6 +659,7 @@ pub fn flatten[A](self : T[T[A]]) -> T[A] {
   }
 }
 
+///|
 /// @alert unsafe "Panic if the list is empty"
 pub fn unsafe_maximum[A : Compare](self : T[A]) -> A {
   match self {
@@ -627,6 +676,7 @@ pub fn unsafe_maximum[A : Compare](self : T[A]) -> A {
   }
 }
 
+///|
 /// Get maximum element of the list.
 /// Returns None if the list is empty.
 pub fn maximum[A : Compare](self : T[A]) -> A? {
@@ -641,6 +691,7 @@ pub fn maximum[A : Compare](self : T[A]) -> A? {
   }
 }
 
+///|
 /// @alert unsafe "Panic if the list is empty"
 pub fn unsafe_minimum[A : Compare](self : T[A]) -> A {
   match self {
@@ -657,6 +708,7 @@ pub fn unsafe_minimum[A : Compare](self : T[A]) -> A {
   }
 }
 
+///|
 /// Get minimum element of the list.
 pub fn minimum[A : Compare](self : T[A]) -> A? {
   match self {
@@ -670,6 +722,7 @@ pub fn minimum[A : Compare](self : T[A]) -> A? {
   }
 }
 
+///|
 /// Sort the list in ascending order.
 ///
 /// # Example
@@ -689,6 +742,7 @@ pub fn sort[A : Compare](self : T[A]) -> T[A] {
   }
 }
 
+///|
 /// Concatenate two lists.
 ///
 /// `a + b` equal to `a.concat(b)`
@@ -696,6 +750,7 @@ pub fn op_add[A](self : T[A], other : T[A]) -> T[A] {
   self.concat(other)
 }
 
+///|
 /// Check if the list contains the value.
 pub fn contains[A : Eq](self : T[A], value : A) -> Bool {
   loop self {
@@ -704,6 +759,7 @@ pub fn contains[A : Eq](self : T[A], value : A) -> Bool {
   }
 }
 
+///|
 /// Produces a collection iteratively.
 ///
 /// # Example
@@ -719,6 +775,7 @@ pub fn unfold[A, S](f : (S) -> (A, S)?, ~init : S) -> T[A] {
   }
 }
 
+///|
 /// Take first n elements of the list.
 /// If the list is shorter than n, return the whole list.
 ///
@@ -741,6 +798,7 @@ pub fn take[A](self : T[A], n : Int) -> T[A] {
   }
 }
 
+///|
 /// Drop first n elements of the list.
 /// If the list is shorter than n, return an empty list.
 ///
@@ -763,6 +821,7 @@ pub fn drop[A](self : T[A], n : Int) -> T[A] {
   }
 }
 
+///|
 /// Take the longest prefix of a list of elements that satisfies a given predicate.
 ///
 /// # Example
@@ -777,6 +836,7 @@ pub fn take_while[A](self : T[A], p : (A) -> Bool) -> T[A] {
   }
 }
 
+///|
 /// Drop the longest prefix of a list of elements that satisfies a given predicate.
 ///
 /// # Example
@@ -791,6 +851,7 @@ pub fn drop_while[A](self : T[A], p : (A) -> Bool) -> T[A] {
   }
 }
 
+///|
 /// Fold a list and return a list of successive reduced values from the left
 ///
 /// # Example
@@ -809,6 +870,7 @@ pub fn scan_left[A, E](self : T[A], f : (E, A) -> E, ~init : E) -> T[E] {
   )
 }
 
+///|
 /// Fold a list and return a list of successive reduced values from the right
 ///
 /// Note that the order of parameters on the accumulating function are reversed.
@@ -828,6 +890,7 @@ pub fn scan_right[A, B](self : T[A], f : (A, B) -> B, ~init : B) -> T[B] {
   }
 }
 
+///|
 /// Looks up a key in an association list.
 ///
 /// # Example
@@ -843,6 +906,7 @@ pub fn lookup[A : Eq, B](self : T[(A, B)], v : A) -> B? {
   }
 }
 
+///|
 /// Find the first element in the list that satisfies f.
 ///
 /// # Example
@@ -863,6 +927,7 @@ pub fn find[A](self : T[A], f : (A) -> Bool) -> A? {
   }
 }
 
+///|
 /// Find the first element in the list that satisfies f and passes the index as an argument.
 ///
 /// # Example
@@ -889,6 +954,7 @@ pub fn findi[A](self : T[A], f : (A, Int) -> Bool) -> A? {
   }
 }
 
+///|
 /// Removes the element at the specified index in the list.
 ///
 /// # Example
@@ -906,6 +972,7 @@ pub fn remove_at[A](self : T[A], index : Int) -> T[A] {
   }
 }
 
+///|
 /// Removes the first occurrence of the specified element from the list, if it is present.
 ///
 /// # Example
@@ -926,6 +993,7 @@ pub fn remove[A : Eq](self : T[A], elem : A) -> T[A] {
   }
 }
 
+///|
 /// Returns true if list starts with prefix.
 ///
 /// # Example
@@ -942,6 +1010,7 @@ pub fn is_prefix[A : Eq](self : T[A], prefix : T[A]) -> Bool {
   }
 }
 
+///|
 /// Compares two lists for equality.
 ///
 /// # Example
@@ -958,6 +1027,7 @@ pub fn equal[A : Eq](self : T[A], other : T[A]) -> Bool {
   }
 }
 
+///|
 /// Returns true if list ends with suffix.
 ///
 /// # Example
@@ -970,6 +1040,7 @@ pub fn is_suffix[A : Eq](self : T[A], suffix : T[A]) -> Bool {
   self.rev().is_prefix(suffix.rev())
 }
 
+///|
 /// Similar to intersperse but with a list of values.
 ///
 /// # Example
@@ -985,11 +1056,13 @@ pub fn intercalate[A](self : T[T[A]], sep : T[A]) -> T[A] {
   self.intersperse(sep).flatten()
 }
 
+///|
 /// The empty list
 pub fn T::default[X]() -> T[X] {
   Nil
 }
 
+///|
 pub fn iter[A](self : T[A]) -> Iter[A] {
   Iter::new(
     fn(yield) {
@@ -1006,6 +1079,7 @@ pub fn iter[A](self : T[A]) -> Iter[A] {
   )
 }
 
+///|
 pub fn iter2[A](self : T[A]) -> Iter2[Int, A] {
   Iter2::new(
     fn(yield) {
@@ -1022,10 +1096,12 @@ pub fn iter2[A](self : T[A]) -> Iter2[Int, A] {
   )
 }
 
+///|
 pub fn T::from_iter[A](iter : Iter[A]) -> T[A] {
   iter.fold(init=Nil, fn(acc, e) { Cons(e, acc) })
 }
 
+///|
 pub fn T::of[A](arr : FixedArray[A]) -> T[A] {
   for i = arr.length() - 1, list = Nil; i >= 0; {
     continue i - 1, Cons(arr[i], list)
@@ -1034,6 +1110,7 @@ pub fn T::of[A](arr : FixedArray[A]) -> T[A] {
   }
 }
 
+///|
 pub impl[X : @quickcheck.Arbitrary] @quickcheck.Arbitrary for T[X] with arbitrary(
   size,
   rs
@@ -1041,6 +1118,7 @@ pub impl[X : @quickcheck.Arbitrary] @quickcheck.Arbitrary for T[X] with arbitrar
   @quickcheck.Arbitrary::arbitrary(size, rs) |> from_array
 }
 
+///|
 pub fn singleton[A](x : A) -> T[A] {
   Cons(x, Nil)
 }

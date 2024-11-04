@@ -12,17 +12,20 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+///|
 /// create a reference from value
 /// @alert deprecated "Use `new` instead"
 pub fn ref[T](x : T) -> Ref[T] {
   { val: x }
 }
 
+///|
 /// create a reference from value
 pub fn Ref::new[T](x : T) -> Ref[T] {
   { val: x }
 }
 
+///|
 pub fn to_string[X : Show](self : Ref[X]) -> String {
   let v = self.val
   "{val: \{v}}"
@@ -32,6 +35,7 @@ test "to_string" {
   inspect!(new(3), content="{val: 3}")
 }
 
+///|
 /// Maps the value of a `Ref` using a given function.
 ///
 /// # Example
@@ -43,6 +47,7 @@ pub fn map[T, R](self : Ref[T], f : (T) -> R) -> Ref[R] {
   { val: f(self.val) }
 }
 
+///|
 /// This function allows you to temporarily replace the value of a reference with a new value, 
 /// execute a given function, and then restore the original value of the reference.
 ///
@@ -75,6 +80,7 @@ pub fn protect[T, R](self : Ref[T], a : T, f : () -> R) -> R {
   r
 }
 
+///|
 /// Swaps the values of two references.
 ///
 /// # Example
@@ -100,6 +106,7 @@ test "swap" {
   inspect!(y.val, content="1")
 }
 
+///|
 pub fn update[T](self : Ref[T], f : (T) -> T) -> Unit {
   self.val = f(self.val)
 }
@@ -120,6 +127,7 @@ test "incr" {
   inspect!(a.val, content="7")
 }
 
+///|
 pub impl[X : @quickcheck.Arbitrary] @quickcheck.Arbitrary for Ref[X] with arbitrary(
   size,
   rs

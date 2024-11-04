@@ -12,14 +12,17 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+///|
 /// @alert deprecated "Definition of json is moved to builtin package, use `Json` instead"
 pub typealias JsonValue = Json
 
+///|
 pub struct Position {
   line : Int // 1-based
   column : Int // 0-based
 } derive(Eq)
 
+///|
 pub type! ParseError {
   InvalidChar(Position, Char)
   InvalidEof
@@ -27,6 +30,7 @@ pub type! ParseError {
   InvalidIdentEscape(Position)
 } derive(Eq)
 
+///|
 pub fn to_string(self : ParseError) -> String {
   match self {
     InvalidChar({ line, column }, c) =>
@@ -39,6 +43,7 @@ pub fn to_string(self : ParseError) -> String {
   }
 }
 
+///|
 pub impl Show for ParseError with output(self, logger) {
   logger.write_string(self.to_string())
 }
@@ -53,6 +58,7 @@ pub impl Show for ParseError with output(self, logger) {
 //   logger.write_string(self.to_string())
 // }
 
+///|
 pub impl Show for JsonValue with output(self, logger) {
   match self {
     Null => logger.write_string("Null")
@@ -81,6 +87,7 @@ pub impl Show for JsonValue with output(self, logger) {
   }
 }
 
+///|
 pub fn to_string(self : JsonValue) -> String {
   Show::to_string(self)
 }

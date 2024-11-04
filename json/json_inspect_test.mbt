@@ -20,18 +20,21 @@ test {
   @json.inspect!({ "x": 1 }, content={ "x": 1 })
 }
 
+///|
 struct P {
   x : Int
   y : Int
   color : Color
 } derive(ToJson)
 
+///|
 enum Color {
   Red
   Green
   Blue
 } derive(ToJson)
 
+///|
 struct Line {
   p1 : P
   p2 : P

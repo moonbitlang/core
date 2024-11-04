@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+///|
 /// @intrinsic %string.substring
 fn unsafe_substring(str : String, start : Int, end : Int) -> String {
   let len = end - start
@@ -20,6 +21,7 @@ fn unsafe_substring(str : String, start : Int, end : Int) -> String {
   bytes.sub_string(0, bytes.length())
 }
 
+///|
 /// Get substring of the string from [start] to [end] exclusive.
 pub fn substring(
   self : String,

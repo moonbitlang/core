@@ -12,14 +12,17 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+///|
 fn new_node[K, V](key : K, value : V) -> Node[K, V] {
   { key, value, left: None, right: None, height: 1 }
 }
 
+///|
 fn op_equal[K : Eq, V](self : Node[K, V], other : Node[K, V]) -> Bool {
   self.key == other.key
 }
 
+///|
 fn max(x : Int, y : Int) -> Int {
   if x > y {
     x
@@ -28,6 +31,7 @@ fn max(x : Int, y : Int) -> Int {
   }
 }
 
+///|
 fn height[K, V](node : Node[K, V]?) -> Int {
   match node {
     None => 0
@@ -35,6 +39,7 @@ fn height[K, V](node : Node[K, V]?) -> Int {
   }
 }
 
+///|
 fn debug_node[K : Show, V : Show](self : Node[K, V]) -> String {
   let l = match self.left {
     Some(left) => left.debug_node()
@@ -47,6 +52,7 @@ fn debug_node[K : Show, V : Show](self : Node[K, V]) -> String {
   "([\{self.height}]\{self.key},\{self.value},\{l},\{r})"
 }
 
+///|
 fn debug_tree[K : Show, V : Show](self : T[K, V]) -> String {
   match self.root {
     Some(root) => root.debug_node()
@@ -54,10 +60,12 @@ fn debug_tree[K : Show, V : Show](self : T[K, V]) -> String {
   }
 }
 
+///|
 pub impl[K : Show, V : Show] Show for T[K, V] with output(self, logger) {
   logger.write_iter(self.iter(), prefix="@sorted_map.of([", suffix="])")
 }
 
+///|
 pub fn to_string[K : Show, V : Show](self : T[K, V]) -> String {
   Show::to_string(self)
 }

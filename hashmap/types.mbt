@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+///|
 priv struct Entry[K, V] {
   mut psl : Int
   hash : Int
@@ -25,6 +26,7 @@ priv struct Entry[K, V] {
 /// - <https://programming.guide/robin-hood-hashing.html>
 /// - <https://cs.uwaterloo.ca/research/tr/1986/CS-86-14.pdf>
 
+///|
 /// Mutable hash map, not thread safe. 
 ///  
 /// # Example

@@ -12,8 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+///|
 fn check_len(_a : BigInt) -> Unit! {
   assert_true!(true)
 }
 
+///|
 let zero = 0N

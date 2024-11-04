@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+///|
 /// The `CoverageCounter` structure is used for keeping track of the number of
 /// times each chunk of code is executed. It's not very useful outside of
 /// generated code.
@@ -19,6 +20,7 @@ struct CoverageCounter {
   counter : FixedArray[UInt]
 }
 
+///|
 /// Create a new coverage counter with the given size.
 ///
 /// @coverage.skip 
@@ -26,6 +28,7 @@ pub fn CoverageCounter::new(size : Int) -> CoverageCounter {
   { counter: FixedArray::make(size, 0) }
 }
 
+///|
 /// Increment the specified tracking index.
 ///
 /// @coverage.skip 
@@ -34,6 +37,7 @@ pub fn CoverageCounter::incr(self : CoverageCounter, idx : Int) -> Unit {
   self.counter[idx] = counter + 1
 }
 
+///|
 pub impl Show for CoverageCounter with output(self, logger) {
   logger.write_char('[')
   for i = 0; i < self.counter.length(); i = i + 1 {
@@ -45,18 +49,22 @@ pub impl Show for CoverageCounter with output(self, logger) {
   logger.write_char(']')
 }
 
+///|
 pub fn to_string(self : CoverageCounter) -> String {
   Show::to_string(self)
 }
 
+///|
 priv enum MList[T] {
   MNil
   MCons(T, MList[T])
 }
 
+///|
 /// The global list of counters currently tracking.
 let counters : Ref[MList[(String, CoverageCounter)]] = { val: MNil }
 
+///|
 /// Add the given counter along its ID to the tracking list.
 ///
 /// @coverage.skip
@@ -64,20 +72,25 @@ pub fn track(name : String, counter : CoverageCounter) -> Unit {
   counters.val = MCons((name, counter), counters.val)
 }
 
+///|
 trait Output {
   output(Self, String) -> Unit
 }
 
+///|
 priv type StringBuffer Array[String]
 
+///|
 impl Output for StringBuffer with output(self : StringBuffer, content : String) -> Unit {
   self._.push(content)
 }
 
+///|
 impl Output for StringBuilder with output(self, content) -> Unit {
   self.write_string(content)
 }
 
+///|
 /// Output the counters to stdout for coverage report usages. The counter data
 /// is printed as a map of `{ counter_id: counter_contents }`, enclosed between
 /// a pair of delimiters.
@@ -120,6 +133,7 @@ pub fn end() -> Unit {
   coverage_reset(counters.val) // Reset all counters to avoid double counting
 }
 
+///|
 fn coverage_reset(counters : MList[(String, CoverageCounter)]) -> Unit {
   loop counters {
     MCons((_, counter), xs) => {
@@ -132,6 +146,7 @@ fn coverage_reset(counters : MList[(String, CoverageCounter)]) -> Unit {
   }
 }
 
+///|
 fn coverage_log(
   counters : MList[(String, CoverageCounter)],
   io : Output

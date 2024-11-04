@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+///|
 fn power_2_above(x : Int, n : Int) -> Int {
   for i = x {
     if i >= n {
@@ -35,12 +36,14 @@ test "power_2_above" {
   inspect!(power_2_above(1, 2147483647), content="1073741824")
 }
 
+///|
 /// Create new hash map.
 pub fn T::new[K, V](~capacity : Int = 8) -> T[K, V] {
   let capacity = power_2_above(8, capacity)
   { size: 0, capacity, entries: FixedArray::make(capacity, None) }
 }
 
+///|
 /// Create new hash map from array.
 pub fn T::from_array[K : Hash + Eq, V](arr : Array[(K, V)]) -> T[K, V] {
   let m = new(capacity=arr.length())
@@ -48,6 +51,7 @@ pub fn T::from_array[K : Hash + Eq, V](arr : Array[(K, V)]) -> T[K, V] {
   m
 }
 
+///|
 /// Set a key-value pair into hash map.
 /// @alert unsafe "Panic if the hash map is full."
 pub fn set[K : Hash + Eq, V](self : T[K, V], key : K, value : V) -> Unit {
@@ -80,10 +84,12 @@ pub fn set[K : Hash + Eq, V](self : T[K, V], key : K, value : V) -> Unit {
   }
 }
 
+///|
 pub fn op_set[K : Hash + Eq, V](self : T[K, V], key : K, value : V) -> Unit {
   self.set(key, value)
 }
 
+///|
 /// Get the value associated with a key.
 pub fn get[K : Hash + Eq, V](self : T[K, V], key : K) -> V? {
   let hash = key.hash()
@@ -106,10 +112,12 @@ pub fn get[K : Hash + Eq, V](self : T[K, V], key : K) -> V? {
   }
 }
 
+///|
 pub fn op_get[K : Hash + Eq, V](self : T[K, V], key : K) -> V? {
   self.get(key)
 }
 
+///|
 /// Get the value associated with a key, 
 /// returns the provided default value if the key does not exist.
 pub fn get_or_default[K : Hash + Eq, V](
@@ -123,6 +131,7 @@ pub fn get_or_default[K : Hash + Eq, V](
   }
 }
 
+///|
 /// Check if the hash map contains a key.
 pub fn contains[K : Hash + Eq, V](self : T[K, V], key : K) -> Bool {
   match self.get(key) {
@@ -131,6 +140,7 @@ pub fn contains[K : Hash + Eq, V](self : T[K, V], key : K) -> Bool {
   }
 }
 
+///|
 /// Remove a key-value pair from hash map.
 pub fn remove[K : Hash + Eq, V](self : T[K, V], key : K) -> Unit {
   let hash = key.hash()
@@ -153,6 +163,7 @@ pub fn remove[K : Hash + Eq, V](self : T[K, V], key : K) -> Unit {
   }
 }
 
+///|
 fn shift_back[K : Hash, V](self : T[K, V], start_index : Int) -> Unit {
   for prev = start_index, curr = (start_index + 1) & (self.capacity - 1) {
     match self.entries[curr] {
@@ -169,6 +180,7 @@ fn shift_back[K : Hash, V](self : T[K, V], start_index : Int) -> Unit {
   }
 }
 
+///|
 // TODO: this could be further optimized
 fn grow[K : Hash + Eq, V](self : T[K, V]) -> Unit {
   let old_entries = self.entries
@@ -184,6 +196,7 @@ fn grow[K : Hash + Eq, V](self : T[K, V]) -> Unit {
   }
 }
 
+///|
 pub fn T::of[K : Eq + Hash, V](arr : FixedArray[(K, V)]) -> T[K, V] {
   let m = new(capacity=arr.length())
   arr.each(fn(e) { m.set(e.0, e.1) })
@@ -196,6 +209,7 @@ test "of" {
   inspect!(m.get(3), content="Some(4)")
 }
 
+///|
 pub impl[K : @quickcheck.Arbitrary + Hash + Eq, V : @quickcheck.Arbitrary] @quickcheck.Arbitrary for T[
   K,
   V,
@@ -207,14 +221,18 @@ pub impl[K : @quickcheck.Arbitrary + Hash + Eq, V : @quickcheck.Arbitrary] @quic
   m
 }
 
+///|
 priv type MyString String derive(Eq)
 
+///|
 impl Hash for MyString with hash(self) { self._.length() }
 
+///|
 impl Hash for MyString with hash_combine(self, hasher) {
   hasher.combine_string(self._)
 }
 
+///|
 impl Show for MyString with output(self, logger) { logger.write_string(self._) }
 
 test "arbitrary" {

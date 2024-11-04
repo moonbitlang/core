@@ -12,29 +12,35 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+///|
 /// Return a new empty array
 pub fn T::new[A]() -> T[A] {
   { tree: Tree::empty(), size: 0, shift: 0 }
 }
 
+///|
 pub impl[A : Show] Show for T[A] with output(self, logger) {
   logger.write_iter(self.iter(), prefix="@immut/array.of([", suffix="])")
 }
 
+///|
 pub fn to_string[A : Show](self : T[A]) -> String {
   Show::to_string(self)
 }
 
+///|
 pub fn is_empty[A](self : T[A]) -> Bool {
   self.size == 0
 }
 
+///|
 pub fn to_array[A](self : T[A]) -> Array[A] {
   let arr = []
   self.each(fn(v) { arr.push(v) })
   arr
 }
 
+///|
 pub fn iter[A](self : T[A]) -> Iter[A] {
   Iter::new(
     fn(yield) {
@@ -50,14 +56,17 @@ pub fn iter[A](self : T[A]) -> Iter[A] {
   )
 }
 
+///|
 pub fn T::from_iter[A](iter : Iter[A]) -> T[A] {
   iter.fold(init=new(), fn(arr, e) { arr.push(e) })
 }
 
+///|
 pub fn length[A](self : T[A]) -> Int {
   self.size
 }
 
+///|
 pub fn copy[A](self : T[A]) -> T[A] {
   fn copy(t : Tree[A]) -> Tree[A] {
     match t {
@@ -71,6 +80,7 @@ pub fn copy[A](self : T[A]) -> T[A] {
   { tree: copy(self.tree), size: self.size, shift: self.shift }
 }
 
+///|
 /// Get a value at the given index.
 /// 
 /// # Examples
@@ -88,6 +98,7 @@ pub fn op_get[A](self : T[A], index : Int) -> A {
   }
 }
 
+///|
 /// Set a value at the given index (immutable).
 /// 
 /// # Example
@@ -114,6 +125,7 @@ pub fn set[A](self : T[A], index : Int, value : A) -> T[A] {
   }
 }
 
+///|
 /// Push a value to the end of the array.
 /// 
 /// # Example
@@ -137,6 +149,7 @@ pub fn push[A](self : T[A], value : A) -> T[A] {
   }
 }
 
+///|
 /// Create a persistent array from an array.
 /// 
 /// # Example
@@ -147,6 +160,7 @@ pub fn T::from_array[A](arr : Array[A]) -> T[A] {
   makei(arr.length(), fn(i) { arr[i] })
 }
 
+///|
 /// Iterate over the array.
 /// 
 /// # Example
@@ -166,6 +180,7 @@ pub fn each[A](self : T[A], f : (A) -> Unit) -> Unit {
   go(self.tree)
 }
 
+///|
 /// Iterate over the array with index.
 /// 
 /// # Example
@@ -195,10 +210,12 @@ pub fn eachi[A](self : T[A], f : (Int, A) -> Unit) -> Unit {
   go(self.tree, self.shift, 0)
 }
 
+///|
 pub fn op_equal[A : Eq](self : T[A], other : T[A]) -> Bool {
   self.size == other.size && self.tree == other.tree
 }
 
+///|
 /// Fold the array.
 /// 
 /// # Example
@@ -218,6 +235,7 @@ pub fn fold[A, B](self : T[A], ~init : B, f : (B, A) -> B) -> B {
   go(self.tree, init)
 }
 
+///|
 /// Fold the array in reverse order.
 /// 
 /// # Example
@@ -237,6 +255,7 @@ pub fn rev_fold[A, B](self : T[A], ~init : B, f : (B, A) -> B) -> B {
   go(self.tree, init)
 }
 
+///|
 /// Fold the array from left to right.
 /// 
 /// # Example
@@ -249,6 +268,7 @@ pub fn fold_left[A](self : T[A], f : (A, A) -> A, ~init : A) -> A {
   self.fold(~init, f)
 }
 
+///|
 /// Fold the array from right to left.
 /// 
 /// # Example
@@ -261,6 +281,7 @@ pub fn fold_right[A](self : T[A], f : (A, A) -> A, ~init : A) -> A {
   self.rev_fold(~init, f)
 }
 
+///|
 /// Map a function over the array.
 /// 
 /// # Example
@@ -280,6 +301,7 @@ pub fn map[A, B](self : T[A], f : (A) -> B) -> T[B] {
   { tree: go(self.tree), size: self.size, shift: self.shift }
 }
 
+///|
 fn new_by_leaves[A](len : Int, gen_leaf : (Int, Int) -> FixedArray[A]) -> T[A] {
   fn tree(cap, len, s) -> Tree[A] {
     if cap == branching_factor {
@@ -332,20 +354,24 @@ test "new_by_leaves" {
   )
 }
 
+///|
 /// Create a persistent array with a given length and value.
 pub fn T::make[A](len : Int, value : A) -> T[A] {
   new_by_leaves(len, fn(_s, l) { FixedArray::make(l, value) })
 }
 
+///|
 /// Create a persistent array with a given length and a function to generate values.
 pub fn T::makei[A](len : Int, f : (Int) -> A) -> T[A] {
   new_by_leaves(len, fn(s, l) { FixedArray::makei(l, fn(i) { f(s + i) }) })
 }
 
+///|
 pub fn T::of[A](arr : FixedArray[A]) -> T[A] {
   makei(arr.length(), fn(i) { arr[i] })
 }
 
+///|
 pub impl[X : @quickcheck.Arbitrary] @quickcheck.Arbitrary for T[X] with arbitrary(
   size,
   rs
