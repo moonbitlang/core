@@ -72,14 +72,14 @@ jobs:
           git diff --exit-code
 
   coverage-check:
-    runs-on: macos-14
+    runs-on: macos-latest
     continue-on-error: true
     steps:
       - uses: actions/checkout@v4
 
       - name: install
         run: |
-          curl -fsSL https://cli.moonbitlang.com/install/unix.sh | bash
+          curl -fsSL https://cli.moonbitlang.com/install/unix.sh | bash -s bleeding
           echo "$HOME/.moon/bin" >> $GITHUB_PATH
 
       - name: moon test
