@@ -262,13 +262,6 @@ impl IterResult {
   op_equal(Self, Self) -> Bool
 }
 
-pub type Js_string //deprecated
-impl Js_string {
-  log(Self) -> Unit
-  new(String) -> Self
-  op_add(Self, Self) -> Self
-}
-
 pub enum Json {
   Null
   True
@@ -601,7 +594,6 @@ impl String {
   op_equal(String, String) -> Bool
   op_get(String, Int) -> Char
   substring(String, ~start : Int = .., ~end : Int = ..) -> String
-  to_js_string(String) -> Js_string
   to_json(String) -> Json
   to_string(String) -> String
 }

@@ -1,6 +1,8 @@
 package moonbitlang/core/math
 
 // Values
+const PI : Double = 0x3.243F6A8885A308CA8A54
+
 fn acos(Double) -> Double
 
 fn asin(Double) -> Double
@@ -27,7 +29,7 @@ fn maximum[T : Compare + Eq](T, T) -> T
 
 fn minimum[T : Compare + Eq](T, T) -> T
 
-let pi : Double
+let pi : Double //deprecated
 
 fn round(Double) -> Double
 
