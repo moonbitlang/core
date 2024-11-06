@@ -203,8 +203,6 @@ pub fn String::op_equal(self : String, other : String) -> Bool = "%string_eq"
 
 pub fn String::to_string(self : String) -> String = "%string_to_string"
 
-pub fn String::to_js_string(self : String) -> Js_string = "%string_to_jsstring"
-
 // For internal use only
 priv type UnsafeMaybeUninit[_]
 
