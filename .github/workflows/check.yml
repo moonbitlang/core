@@ -11,16 +11,22 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest, macos-latest, macos-13, windows-latest]
+        release: [latest, nightly, bleeding]
+        exclude:
+          - os: windows-latest
+            release: bleeding
+          - os: macos-13
+            release: bleeding
       fail-fast: false
     runs-on: ${{ matrix.os }}
-    continue-on-error: false
+    continue-on-error: ${{ matrix.release != 'latest' }}
     steps:
       - uses: actions/checkout@v4
 
       - name: install
         if: ${{ matrix.os != 'windows-latest' }}
         run: |
-          curl -fsSL https://cli.moonbitlang.com/install/unix.sh | bash
+          curl -fsSL https://cli.moonbitlang.com/install/unix.sh | bash -s -- ${{ matrix.release }}
           echo "$HOME/.moon/bin" >> $GITHUB_PATH
 
       - name: install on windows
@@ -28,6 +34,8 @@ jobs:
         run: |
           Set-ExecutionPolicy RemoteSigned -Scope CurrentUser; irm https://cli.moonbitlang.com/install/powershell.ps1 | iex
           "C:\Users\runneradmin\.moon\bin" | Out-File -FilePath $env:GITHUB_PATH -Append
+        env:
+          MOONBIT_INSTALL_VERSION: ${{ matrix.release }}
 
       - name: moon version
         run: |
@@ -37,17 +45,19 @@ jobs:
       - name: moon check
         run: moon check --deny-warn
 
-      - name: moon info
-        run: |
-          moon info
-          git diff --exit-code
-
       - name: Set ulimit and run moon test
         if: ${{ matrix.os != 'windows-latest' }}
         run: |
           ulimit -s 8176
           moon test --target all
           moon test --release --target all
+
+      - name: Set ulimit and run moon test in native backend
+        if: ${{ matrix.os != 'windows-latest' }}
+        run: |
+          ulimit -s 8176
+          moon test --target native
+          moon test --release --target native
 
       - name: Run moon test on Windows
         if: ${{ matrix.os == 'windows-latest' }}
@@ -66,9 +76,52 @@ jobs:
         if: ${{ matrix.os == 'windows-latest' }}
         run: Get-ChildItem -Path ".\target" -Recurse -Filter "*.core" | ForEach-Object { "{0} ({1} bytes)" -f $_.FullName, $_.Length }
 
-      - name: format diff
+  format-check:
+    strategy:
+      matrix:
+        release: [latest, nightly, bleeding]
+      fail-fast: false
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: install
         run: |
-          moon fmt
+          curl -fsSL https://cli.moonbitlang.com/install/unix.sh | bash -s -- ${{ matrix.release }}
+          echo "$HOME/.moon/bin" >> $GITHUB_PATH
+
+      - name: moon version
+        run: |
+          moon version --all
+          moonrun --version
+
+      - name: format diff
+        run: moon fmt --check
+
+  interface-check:
+    strategy:
+      matrix:
+        release: [latest, nightly, bleeding]
+      fail-fast: false
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: install
+        run: |
+          curl -fsSL https://cli.moonbitlang.com/install/unix.sh | bash -s -- ${{ matrix.release }}
+          echo "$HOME/.moon/bin" >> $GITHUB_PATH
+
+      - name: moon version
+        run: |
+          moon version --all
+          moonrun --version
+
+      - name: check interface
+        run: |
+          moon info
           git diff --exit-code
 
   coverage-check:
@@ -129,120 +182,3 @@ jobs:
         run: curl --proto '=https' --tlsv1.2 -LsSf https://github.com/korandoru/hawkeye/releases/download/$HAWKEYE_VERSION/hawkeye-installer.sh | sh
       - name: Check License Header
         run: hawkeye check
-
-  nightly-check:
-    strategy:
-      matrix:
-        os: [ubuntu-latest, macos-latest, macos-13, windows-latest]
-      fail-fast: false
-
-    continue-on-error: true
-    runs-on: ${{ matrix.os }}
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: install
-        if: ${{ matrix.os != 'windows-latest' }}
-        run: |
-          curl -fsSL https://cli.moonbitlang.com/install/unix.sh | bash -s 'nightly'
-          echo "$HOME/.moon/bin" >> $GITHUB_PATH
-
-      - name: install on windows
-        if: ${{ matrix.os == 'windows-latest' }}
-        run: |
-          irm https://cli.moonbitlang.com/install/powershell.ps1 | iex
-          "C:\Users\runneradmin\.moon\bin" | Out-File -FilePath $env:GITHUB_PATH -Append
-        env:
-          MOONBIT_INSTALL_VERSION: nightly
-
-      - name: moon version
-        run: |
-          moon version --all
-          moonrun --version
-
-      - name: moon check
-        run: moon check --deny-warn
-
-      - name: Set ulimit and run moon test
-        if: ${{ matrix.os != 'windows-latest' }}
-        run: |
-          ulimit -s 8176
-          moon test --target all
-          moon test --release --target all
-
-      - name: Run moon test on Windows
-        if: ${{ matrix.os == 'windows-latest' }}
-        run: |
-          moon test --target all
-          moon test --release --target all
-
-      - name: moon bundle
-        run: moon bundle --all
-
-      - name: moon info
-        run: |
-          moon info
-          git diff
-
-      - name: check core size
-        if: ${{ matrix.os != 'windows-latest' }}
-        run: find ./target -name '*.core' | xargs ls -lh
-
-      - name: check core size on windows
-        if: ${{ matrix.os == 'windows-latest' }}
-        run: Get-ChildItem -Path ".\target" -Recurse -Filter "*.core" | ForEach-Object { "{0} ({1} bytes)" -f $_.FullName, $_.Length }
-
-      - name: format diff
-        run: |
-          moon fmt
-          git diff
-
-  bleeding-check:
-    continue-on-error: true
-    strategy:
-      matrix:
-        os: [macos-latest, ubuntu-latest]
-    runs-on: ${{ matrix.os }}
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: install
-        run: |
-          curl -fsSL https://cli.moonbitlang.com/install/unix.sh | bash -s 'bleeding'
-          echo "$HOME/.moon/bin" >> $GITHUB_PATH
-
-      - name: moon version
-        run: |
-          moon version --all
-          moonrun --version
-
-      - name: moon check
-        run: moon check --deny-warn
-
-      - name: Set ulimit and run moon test
-        run: |
-          ulimit -s 8176
-          moon test --target all
-          moon test --release --target all
-
-      - name: moon test in native backend
-        run: |
-          ulimit -s 8176
-          moon test --target native
-          moon test --target native --release
-
-      - name: moon bundle
-        run: moon bundle --all
-
-      - name: moon info
-        run: |
-          moon info
-          git diff
-
-      - name: check core size
-        run: find ./target -name '*.core' | xargs ls -lh
-
-      - name: format diff
-        run: |
-          moon fmt
-          git diff
