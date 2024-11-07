@@ -26,6 +26,10 @@ impl T {
 // Traits
 
 // Extension Methods
+impl Eq for T
+
+impl Hash for T
+
 impl Show for T
 
 impl @quickcheck.Arbitrary for T

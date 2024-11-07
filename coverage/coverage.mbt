@@ -64,7 +64,7 @@ pub fn track(name : String, counter : CoverageCounter) -> Unit {
   counters.val = MCons((name, counter), counters.val)
 }
 
-trait Output {
+priv trait Output {
   output(Self, String) -> Unit
 }
 
