@@ -12,6 +12,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-pub fn exp(input : Double) -> Double {
+trait Exp {
+  exp(Self) -> Double
+}
+
+pub impl Exp for Double with exp(inp) { inp.exp() }
+
+pub impl Exp for Int with exp(inp) { inp.to_double().exp() }
+
+pub fn exp[T : Exp](input : T) -> Double {
   input.exp()
 }
