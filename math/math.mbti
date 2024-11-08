@@ -15,7 +15,7 @@ fn ceil(Double) -> Double
 
 fn cos(Double) -> Double
 
-fn exp(Double) -> Double
+fn exp[T : Exp](T) -> Double
 
 fn floor(Double) -> Double
 
@@ -44,6 +44,9 @@ fn trunc(Double) -> Double
 // Type aliases
 
 // Traits
-
+trait Exp
 // Extension Methods
+impl Exp for Int
+
+impl Exp for Double
 
