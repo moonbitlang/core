@@ -14,6 +14,8 @@
 
 trait Floating {
   asin(Self) -> Self
+  // ideas: `as`
+  // or use @math.Floating::asin(x)  
   acos(Self) -> Self
 }
 
