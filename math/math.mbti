@@ -3,9 +3,9 @@ package moonbitlang/core/math
 // Values
 const PI : Double = 0x3.243F6A8885A308CA8A54
 
-fn acos(Double) -> Double
+fn acos[T : Floating](T) -> T
 
-fn asin(Double) -> Double
+fn asin[T : Floating](T) -> T
 
 fn atan(Double) -> Double
 
@@ -44,6 +44,7 @@ fn trunc(Double) -> Double
 // Type aliases
 
 // Traits
-
+trait Floating
 // Extension Methods
+impl Floating for Double
 
