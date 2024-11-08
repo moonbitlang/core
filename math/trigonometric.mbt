@@ -233,29 +233,6 @@ pub fn atan(x : Double) -> Double {
   }
 }
 
-pub fn asin(x : Double) -> Double {
-  if Double::is_inf(x) || Double::is_nan(x) || x == 0.0 {
-    x
-  } else {
-    let x_ = x.abs()
-    if x_ > 1.0 {
-      @double.not_a_number
-    } else {
-      let temp = (1.0 - x_ * x_).sqrt()
-      (if x > 0.7 { PI / 2.0 - satan(temp / x_) } else { satan(x_ / temp) }) *
-      x.signum()
-    }
-  }
-}
-
-pub fn acos(x : Double) -> Double {
-  if Double::is_inf(x) || Double::is_nan(x) {
-    x
-  } else {
-    PI / 2.0 - asin(x)
-  }
-}
-
 fn copysign(x : Double, y : Double) -> Double {
   if y < 0 {
     -x.abs()
