@@ -19,11 +19,10 @@ impl RandomState {
   split(Self) -> Self
   to_string(Self) -> String
 }
+impl Default for RandomState
+impl Show for RandomState
 
 // Type aliases
 
 // Traits
-
-// Extension Methods
-impl Show for RandomState
 

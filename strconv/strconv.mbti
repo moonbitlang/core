@@ -22,22 +22,16 @@ impl Decimal {
 }
 
 pub type! StrConvError String
+impl Show for StrConvError
 
 // Type aliases
 
 // Traits
-pub trait FromStr {
+pub(open) trait FromStr {
   from_string(String) -> Self!StrConvError
 }
-
-// Extension Methods
-impl Show for StrConvError
-
 impl FromStr for Bool
-
 impl FromStr for Int
-
 impl FromStr for Int64
-
 impl FromStr for Double
 

@@ -14,6 +14,8 @@ let neg_infinity : Float
 let not_a_number : Float
 
 // Types and methods
+
+
 impl Float {
   abs(Float) -> Float
   default() -> Float
@@ -25,7 +27,4 @@ impl Float {
 // Type aliases
 
 // Traits
-
-// Extension Methods
-impl Show for Float
 

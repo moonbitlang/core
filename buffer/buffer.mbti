@@ -19,11 +19,9 @@ impl Buffer {
   write_sub_string(Self, String, Int, Int) -> Unit //deprecated
   write_substring(Self, String, Int, Int) -> Unit
 }
+impl Show for Buffer
 
 // Type aliases
 
 // Traits
-
-// Extension Methods
-impl Show for Buffer
 

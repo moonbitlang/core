@@ -20,17 +20,12 @@ impl T {
   size[A](Self[A]) -> Int
   to_string[A : Show](Self[A]) -> String
 }
+impl[A : Eq] Eq for T[A]
+impl[A : Hash] Hash for T[A]
+impl[A : Show] Show for T[A]
+impl[K : Eq + Hash + @quickcheck.Arbitrary] @quickcheck.Arbitrary for T[K]
 
 // Type aliases
 
 // Traits
-
-// Extension Methods
-impl Eq for T
-
-impl Hash for T
-
-impl Show for T
-
-impl @quickcheck.Arbitrary for T
 

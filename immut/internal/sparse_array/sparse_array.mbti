@@ -12,6 +12,7 @@ impl Bitset {
   remove(Self, Int) -> Self
   size(Self) -> Int
 }
+impl Eq for Bitset
 
 pub struct SparseArray {
   pub elem_info : Bitset
@@ -27,10 +28,9 @@ impl SparseArray {
   singleton[X](Int, X) -> Self[X]
   size[X](Self[X]) -> Int
 }
+impl[X : Eq] Eq for SparseArray[X]
 
 // Type aliases
 
 // Traits
-
-// Extension Methods
 

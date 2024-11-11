@@ -3,6 +3,8 @@ package moonbitlang/core/unit
 // Values
 
 // Types and methods
+
+
 impl Unit {
   compare(Unit, Unit) -> Int
   default() -> Unit
@@ -12,7 +14,4 @@ impl Unit {
 // Type aliases
 
 // Traits
-
-// Extension Methods
-impl Hash for Unit
 

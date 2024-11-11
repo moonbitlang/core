@@ -6,6 +6,8 @@ let max_value : Int
 let min_value : Int
 
 // Types and methods
+
+
 impl Int {
   abs(Int) -> Int
 }
@@ -13,6 +15,4 @@ impl Int {
 // Type aliases
 
 // Traits
-
-// Extension Methods
 
