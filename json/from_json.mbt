@@ -17,7 +17,7 @@ pub type! JsonDecodeError (JsonPath, String) derive(Eq, Show)
 
 ///|
 /// Trait for types that can be converted from `Json`
-pub trait FromJson {
+pub(open) trait FromJson {
   from_json(Json, JsonPath) -> Self!JsonDecodeError
 }
 

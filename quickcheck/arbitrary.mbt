@@ -14,7 +14,7 @@
 
 ///|
 /// Trait for types that can be randomly generated
-pub trait Arbitrary {
+pub(open) trait Arbitrary {
   // `arbitrary` function takes a random number generator and a number that 
   // determines the size of the generated value as arguments, and returns a
   // randomly generated value of certain type.
