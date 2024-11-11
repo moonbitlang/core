@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+///|
 /// Sorts the array with a key extraction function.
 /// 
 /// It's an in-place, unstable sort(it will reorder equal elements). The time complexity is O(n log n) in the worst case.
@@ -35,6 +36,7 @@ pub fn sort_by_key[T, K : Compare](
   )
 }
 
+///|
 /// Sorts the array with a custom comparison function.
 /// 
 /// It's an in-place, unstable sort(it will reorder equal elements). The time complexity is O(n log n) in the worst case.
@@ -101,6 +103,7 @@ test "sort_by: mixed positive and negative numbers" {
   inspect!(mixed_arr, content="[-5, -2, -1, 3, 4]")
 }
 
+///|
 fn fixed_quick_sort_by[T](
   arr : FixedArraySlice[T],
   cmp : (T, T) -> Int,
@@ -168,6 +171,7 @@ fn fixed_quick_sort_by[T](
   }
 }
 
+///|
 /// Try to sort the array with bubble sort.
 /// 
 /// It will only tolerate at most 8 unsorted elements. The time complexity is O(n).
@@ -195,6 +199,7 @@ fn fixed_try_bubble_sort_by[T](
   true
 }
 
+///|
 /// Try to sort the array with bubble sort.
 /// 
 /// It will only tolerate at most 8 unsorted elements. The time complexity is O(n).
@@ -221,6 +226,7 @@ test "try_bubble_sort" {
   assert_eq!(arr, [1, 2, 3, 4, 5, 6, 7, 8])
 }
 
+///|
 fn fixed_partition_by[T](
   arr : FixedArraySlice[T],
   cmp : (T, T) -> Int,
@@ -243,6 +249,7 @@ fn fixed_partition_by[T](
   (i, partitioned)
 }
 
+///|
 /// Choose a pivot index for quick sort.
 /// 
 /// It avoids worst case performance by choosing a pivot that is likely to be close to the median.
@@ -288,6 +295,7 @@ fn fixed_choose_pivot_by[T](
   }
 }
 
+///|
 fn fixed_heap_sort_by[T](arr : FixedArraySlice[T], cmp : (T, T) -> Int) -> Unit {
   let len = arr.length()
   for i = len / 2 - 1; i >= 0; i = i - 1 {
@@ -299,6 +307,7 @@ fn fixed_heap_sort_by[T](arr : FixedArraySlice[T], cmp : (T, T) -> Int) -> Unit 
   }
 }
 
+///|
 fn fixed_sift_down_by[T](
   arr : FixedArraySlice[T],
   index : Int,

@@ -421,6 +421,7 @@ test "eachi" {
   inspect!(exb, content="13579")
 }
 
+///|
 // For testing purposes
 fn test_from_array[T](arr : Array[T]) -> Iter[T] {
   Iter::new(
@@ -455,11 +456,13 @@ test "all" {
   assert_eq!(iter.take(6).all(fn { x => x < 7 }), true)
 }
 
+///|
 enum Tree {
   Leaf(Int)
   Node(Tree, Int, Tree)
 }
 
+///|
 fn iter(self : Tree) -> Iter[Int] {
   Iter::new(
     fn(yield) {

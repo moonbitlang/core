@@ -12,33 +12,40 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+///|
 // Types
 type Iter[T] ((T) -> IterResult) -> IterResult
 
+///|
 //TODO: Add intrinsic for Iter::run
 pub fn run[T](self : Iter[T], f : (T) -> IterResult) -> IterResult {
   (self._)(f)
 }
 
+///|
 pub fn just_run[T](self : Iter[T], f : (T) -> IterResult) -> Unit {
   (self._)(f) |> ignore
 }
 
+///|
 pub enum IterResult {
   IterEnd // false
   IterContinue // true
 } derive(Eq)
 
+///|
 pub impl[T : Show] Show for Iter[T] with output(self, logger) {
   logger.write_iter(self)
 }
 
+///|
 pub fn to_string[T : Show](self : Iter[T]) -> String {
   Show::to_string(self)
 }
 
 // Consumers
 
+///|
 /// Iterates over each element in the iterator, applying the function `f` to each element.
 ///
 /// # Type Parameters
@@ -57,15 +64,18 @@ pub fn each[T](self : Iter[T], f : (T) -> Unit) -> Unit {
   }
 }
 
+///|
 pub fn any[T](self : Iter[T], f : (T) -> Bool) -> Bool {
   self.run(fn(k) { if f(k) { IterEnd } else { IterContinue } }) != IterContinue
 }
 
+///|
 pub fn all[T](self : Iter[T], f : (T) -> Bool) -> Bool {
   self.run(fn(k) { if not(f(k)) { IterEnd } else { IterContinue } }) ==
   IterContinue
 }
 
+///|
 /// Iterates over each element in the iterator, applying the function `f` to each element with index.
 ///
 /// # Type Parameters
@@ -85,6 +95,7 @@ pub fn eachi[T](self : Iter[T], f : (Int, T) -> Unit) -> Unit {
   }
 }
 
+///|
 /// Folds the elements of the iterator using the given function, starting with the given initial value.
 ///
 /// # Type Parameters
@@ -110,6 +121,7 @@ pub fn fold[T, B](self : Iter[T], ~init : B, f : (B, T) -> B) -> B {
   acc
 }
 
+///|
 /// Counts the number of elements in the iterator.
 ///
 /// # Type Parameters
@@ -129,11 +141,13 @@ pub fn count[T](self : Iter[T]) -> Int {
 
 // Producers
 
+///|
 /// Do not use this method, it is for internal use only.
 pub fn Iter::new[T](f : ((T) -> IterResult) -> IterResult) -> Iter[T] {
   Iter(f)
 }
 
+///|
 /// Creates an empty iterator.
 ///
 /// # Type Parameters
@@ -147,6 +161,7 @@ pub fn Iter::empty[T]() -> Iter[T] {
   fn { _ => IterContinue }
 }
 
+///|
 /// Creates an iterator that contains a single element.
 ///
 /// # Type Parameters
@@ -164,6 +179,7 @@ pub fn Iter::singleton[T](a : T) -> Iter[T] {
   fn { yield => yield(a) }
 }
 
+///|
 /// Creates an iterator that repeats the given element indefinitely.
 ///
 /// # Type Parameters
@@ -187,6 +203,7 @@ pub fn Iter::repeat[T](a : T) -> Iter[T] {
   }
 }
 
+///|
 /// Creates an iterator that iterates over a range of Int with default step 1.
 /// To grow the range downward, set the `step` parameter to a negative value.
 ///
@@ -229,6 +246,7 @@ pub fn until(
   }
 }
 
+///|
 /// Creates an iterator that iterates over a range of Int64 with default step 1L.
 /// To grow the range downward, set the `step` parameter to a negative value.
 ///
@@ -271,6 +289,7 @@ pub fn until(
   }
 }
 
+///|
 /// Creates an iterator that iterates over a range of Float with default step 1.0 .
 /// To grow the range downward, set the `step` parameter to a negative value.
 ///
@@ -313,6 +332,7 @@ pub fn until(
   }
 }
 
+///|
 /// Creates an iterator that iterates over a range of Double with default step 1.0 .
 /// To grow the range downward, set the `step` parameter to a negative value.
 ///
@@ -357,6 +377,7 @@ pub fn until(
 
 // operators
 
+///|
 /// Filters the elements of the iterator based on a predicate function.
 ///
 /// # Type Parameters
@@ -376,6 +397,7 @@ pub fn filter[T](self : Iter[T], f : (T) -> Bool) -> Iter[T] {
   fn(yield) { self.run(fn { a => if f(a) { yield(a) } else { IterContinue } }) }
 }
 
+///|
 /// Transforms the elements of the iterator using a mapping function.
 ///
 /// # Type Parameters
@@ -396,6 +418,7 @@ pub fn map[T, R](self : Iter[T], f : (T) -> R) -> Iter[R] {
   fn { yield => self.run(fn { a => yield(f(a)) }) }
 }
 
+///|
 /// Transforms the elements of the iterator using a mapping function that returns an `Option`.
 /// The elements for which the function returns `None` are filtered out.
 pub fn map_option[A, B](self : Iter[A], f : (A) -> B?) -> Iter[B] {
@@ -411,6 +434,7 @@ pub fn map_option[A, B](self : Iter[A], f : (A) -> B?) -> Iter[B] {
   }
 }
 
+///|
 /// Transforms each element of the iterator into an iterator and flattens the resulting iterators into a single iterator.
 ///
 /// # Type Parameters
@@ -431,6 +455,7 @@ pub fn flat_map[T, R](self : Iter[T], f : (T) -> Iter[R]) -> Iter[R] {
   fn { yield => self.run(fn { x => f(x).run(yield) }) }
 }
 
+///|
 /// Applies a function to each element of the iterator without modifying the iterator.
 ///
 /// # Type Parameters
@@ -452,6 +477,7 @@ pub fn tap[T](self : Iter[T], f : (T) -> Unit) -> Iter[T] {
   self
 }
 
+///|
 /// Takes the first `n` elements from the iterator.
 ///
 /// # Type Parameters
@@ -495,6 +521,7 @@ pub fn take[T](self : Iter[T], n : Int) -> Iter[T] {
   }
 }
 
+///|
 /// Takes elements from the iterator as long as the predicate function returns `true`.
 ///
 /// # Type Parameters
@@ -536,6 +563,7 @@ pub fn take_while[T](self : Iter[T], f : (T) -> Bool) -> Iter[T] {
   }
 }
 
+///|
 /// Transforms the elements of the iterator using a mapping function upto the function returns `None`.
 pub fn map_while[A, B](self : Iter[A], f : (A) -> B?) -> Iter[B] {
   fn(yield) {
@@ -558,6 +586,7 @@ pub fn map_while[A, B](self : Iter[A], f : (A) -> B?) -> Iter[B] {
   }
 }
 
+///|
 /// Skips the first `n` elements from the iterator.
 ///
 /// # Type Parameters
@@ -588,6 +617,7 @@ pub fn drop[T](self : Iter[T], n : Int) -> Iter[T] {
   }
 }
 
+///|
 /// Skips elements from the iterator as long as the predicate function returns `true`.
 ///
 /// # Type Parameters
@@ -618,6 +648,7 @@ pub fn drop_while[T](self : Iter[T], f : (T) -> Bool) -> Iter[T] {
   }
 }
 
+///|
 /// Finds the first element in the iterator that satisfies the predicate function.
 ///
 /// # Type Parameters
@@ -642,6 +673,7 @@ pub fn find_first[T](self : Iter[T], f : (T) -> Bool) -> T? {
   }
 }
 
+///|
 pub fn peek[T](self : Iter[T]) -> T? {
   let mut first = None
   self.just_run(
@@ -653,6 +685,7 @@ pub fn peek[T](self : Iter[T]) -> T? {
   first
 }
 
+///|
 /// Prepends a single element to the beginning of the iterator.
 ///
 /// # Type Parameters
@@ -671,6 +704,7 @@ pub fn prepend[T](self : Iter[T], a : T) -> Iter[T] {
   fn(yield) { if yield(a) == IterContinue { self.run(yield) } else { IterEnd } }
 }
 
+///|
 /// Appends a single element to the end of the iterator.
 ///
 /// # Type Parameters
@@ -689,6 +723,7 @@ pub fn append[T](self : Iter[T], a : T) -> Iter[T] {
   fn(yield) { if self.run(yield) == IterContinue { yield(a) } else { IterEnd } }
 }
 
+///|
 /// Combines two iterators into one by appending the elements of the second iterator to the first.
 ///
 /// # Type Parameters
@@ -714,10 +749,12 @@ pub fn Iter::concat[T](self : Iter[T], other : Iter[T]) -> Iter[T] {
   }
 }
 
+///|
 pub fn op_add[T](self : Iter[T], other : Iter[T]) -> Iter[T] {
   Iter::concat(self, other)
 }
 
+///|
 /// Collects the elements of the iterator into an array.
 pub fn to_array[T](self : Iter[T]) -> Array[T] {
   let result = []
@@ -727,6 +764,7 @@ pub fn to_array[T](self : Iter[T]) -> Array[T] {
   result
 }
 
+///|
 /// Collects the elements of the iterator into an array.
 pub fn collect[T](self : Iter[T]) -> Array[T] {
   let result = []
@@ -734,12 +772,14 @@ pub fn collect[T](self : Iter[T]) -> Array[T] {
   result
 }
 
+///|
 /// Iter itself is an iterator.
 /// so that it works with array spread operator. e.g, `[..iter]`
 pub fn iter[T](self : Iter[T]) -> Iter[T] {
   self
 }
 
+///|
 /// Returns the last element of the iterator, or `None` if the iterator is empty.
 pub fn last[A](self : Iter[A]) -> A? {
   fn f(_a : A?, b : A) {
@@ -749,6 +789,7 @@ pub fn last[A](self : Iter[A]) -> A? {
   self.fold(init=None, f)
 }
 
+///|
 /// Returns the first element of the iterator, or `None` if the iterator is empty.
 /// 
 /// # Type Parameters
@@ -779,6 +820,7 @@ pub fn head[A](self : Iter[A]) -> A? {
   }
 }
 
+///|
 /// Inserts a separator element `sep` between each element of the iterator.
 /// 
 /// # Parameters
@@ -811,6 +853,7 @@ pub fn intersperse[A](self : Iter[A], sep : A) -> Iter[A] {
   }
 }
 
+///|
 pub fn op_as_view[A](self : Iter[A], ~start : Int, ~end? : Int) -> Iter[A] {
   match end {
     Some(end) => self.drop(start).take(end - start)
@@ -818,6 +861,7 @@ pub fn op_as_view[A](self : Iter[A], ~start : Int, ~end? : Int) -> Iter[A] {
   }
 }
 
+///|
 pub fn contains[A : Eq](self : Iter[A], value : A) -> Bool {
   for v in self {
     if v == value {

@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+///|
 let default_init_capacity = 8
 
 test "doc" {

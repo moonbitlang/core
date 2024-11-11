@@ -16,6 +16,7 @@
 // The types stored in set need to implement the Compare trait.
 // All operations over sets are purely applicative (no side-effects).
 
+///|
 pub fn iter[A](self : T[A]) -> Iter[A] {
   Iter::new(
     fn(yield) {
@@ -36,6 +37,7 @@ pub fn iter[A](self : T[A]) -> Iter[A] {
   )
 }
 
+///|
 pub fn T::from_iter[A : Compare](iter : Iter[A]) -> T[A] {
   iter.fold(init=T::new(), fn(s, e) { s.add(e) })
 }
@@ -44,6 +46,7 @@ test {
   @json.inspect!(of([2, 7, 1, 2, 3, 4, 5]), content=[1, 2, 3, 4, 5, 7])
 }
 
+///|
 pub fn T::op_equal[A : Eq](self : T[A], other : T[A]) -> Bool {
   // There's no `Iter::zip` (https://github.com/moonbitlang/core/issues/994#issuecomment-2350935193),
   // so we have to use the manual implementation below:
@@ -59,12 +62,15 @@ pub fn T::op_equal[A : Eq](self : T[A], other : T[A]) -> Bool {
   }
 }
 
+///|
 priv type InorderIterator[A] Array[T[A]]
 
+///|
 fn InorderIterator::new[A](root : T[A]) -> InorderIterator[A] {
   InorderIterator([])..move_left(root)
 }
 
+///|
 fn InorderIterator::move_left[A](
   self : InorderIterator[A],
   node : T[A]
@@ -78,6 +84,7 @@ fn InorderIterator::move_left[A](
   }
 }
 
+///|
 fn InorderIterator::next[A](self : InorderIterator[A]) -> A? {
   guard let Some(curr) = self._.pop() else { _ => return None }
   guard let Node(~right, ~value, ..) = curr

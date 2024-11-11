@@ -12,8 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+///|
 type UninitializedArray[T] FixedArray[UnsafeMaybeUninit[T]]
 
+///|
 /// Creates an uninitialized array of the specified size.
 ///
 /// Parameters:
@@ -23,6 +25,7 @@ type UninitializedArray[T] FixedArray[UnsafeMaybeUninit[T]]
 /// Returns an uninitialized array of type `T` with the specified size.
 pub fn UninitializedArray::make[T](size : Int) -> UninitializedArray[T] = "%fixedarray.make_uninit"
 
+///|
 /// Retrieves the element at the specified index from an uninitialized array.
 ///
 /// Parameters:
@@ -33,6 +36,7 @@ pub fn UninitializedArray::make[T](size : Int) -> UninitializedArray[T] = "%fixe
 /// Returns the element at the specified index.
 pub fn op_get[T](self : UninitializedArray[T], index : Int) -> T = "%fixedarray.get"
 
+///|
 /// Sets the value at the specified index in an uninitialized array.
 ///
 /// Parameters:
@@ -42,6 +46,7 @@ pub fn op_get[T](self : UninitializedArray[T], index : Int) -> T = "%fixedarray.
 /// - `value` : The value to be set at the specified index.
 pub fn op_set[T](self : UninitializedArray[T], index : Int, value : T) = "%fixedarray.set"
 
+///|
 /// Returns the length of an uninitialized array.
 ///
 /// Parameters:
@@ -53,6 +58,7 @@ pub fn length[A](self : UninitializedArray[A]) -> Int {
   self._.length()
 }
 
+///|
 fn UninitializedArray::unsafe_blit[T](
   dst : UninitializedArray[T],
   dst_offset : Int,

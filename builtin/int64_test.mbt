@@ -2477,6 +2477,7 @@ test "9223372036854775807 % 9223372036854775807 = 0" {
   assert_eq!(9223372036854775807L.op_mod(9223372036854775807L), 0L)
 }
 
+///|
 fn test_mod_u(x : Int64, y : Int64) -> Int64 {
   (x.reinterpret_as_uint64() % y.reinterpret_as_uint64()).reinterpret_as_int64()
 }
@@ -4305,6 +4306,7 @@ test "9223372036854775807 << 65 = -2" {
   assert_eq!(9223372036854775807L << 65, -2L)
 }
 
+///|
 fn shr_as_uint64(x : Int64, y : Int) -> Int64 {
   (x.reinterpret_as_uint64() >> y).reinterpret_as_int64()
 }
@@ -5497,6 +5499,7 @@ test "compare(9223372036854775807, 9223372036854775807) = 0" {
   assert_eq!(9223372036854775807L.compare(9223372036854775807L), 0)
 }
 
+///|
 fn test_compare_u(x : Int64, y : Int64) -> Int {
   x.reinterpret_as_uint64().compare(y.reinterpret_as_uint64())
 }

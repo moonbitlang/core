@@ -12,19 +12,23 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+///|
 /// Creates a new, empty deque.
 pub fn T::new[A](~capacity : Int = 0) -> T[A] {
   T::{ buf: UninitializedArray::make(capacity), len: 0, head: 0, tail: 0 }
 }
 
+///|
 pub impl[A : Show] Show for T[A] with output(self, logger) {
   logger.write_iter(self.iter(), prefix="@deque.of([", suffix="])")
 }
 
+///|
 pub fn to_string[A : Show](self : T[A]) -> String {
   Show::to_string(self)
 }
 
+///|
 /// Creates a new deque from an array.
 pub fn T::from_array[A](arr : Array[A]) -> T[A] {
   let deq = T::{
@@ -39,6 +43,7 @@ pub fn T::from_array[A](arr : Array[A]) -> T[A] {
   deq
 }
 
+///|
 pub fn T::of[A](arr : FixedArray[A]) -> T[A] {
   let deq = T::{
     buf: UninitializedArray::make(arr.length()),
@@ -52,16 +57,19 @@ pub fn T::of[A](arr : FixedArray[A]) -> T[A] {
   deq
 }
 
+///|
 /// Returns the deque of elements in the vector.
 pub fn length[A](self : T[A]) -> Int {
   self.len
 }
 
+///|
 /// Returns the total number of elements the deque can hold without reallocating.
 pub fn capacity[A](self : T[A]) -> Int {
   self.buf.length()
 }
 
+///|
 /// Reallocate the deque with a new capacity.
 fn realloc[A](self : T[A]) -> Unit {
   let old_cap = self.len
@@ -91,6 +99,7 @@ fn realloc[A](self : T[A]) -> Unit {
   self.buf = new_buf
 }
 
+///|
 /// Return the front element from a deque, or `None` if it is empty.
 ///
 /// # Example
@@ -106,6 +115,7 @@ pub fn front[A](self : T[A]) -> A? {
   }
 }
 
+///|
 /// Return the back element from a deque, or `None` if it is empty.
 ///
 /// # Example
@@ -121,6 +131,7 @@ pub fn back[A](self : T[A]) -> A? {
   }
 }
 
+///|
 /// Adds an element to the front of the deque.
 ///
 /// If the deque is at capacity, it will be reallocated.
@@ -141,6 +152,7 @@ pub fn push_front[A](self : T[A], value : A) -> Unit {
   self.len += 1
 }
 
+///|
 /// Adds an element to the back of the deque.
 ///
 /// If the deque is at capacity, it will be reallocated.
@@ -161,6 +173,7 @@ pub fn push_back[A](self : T[A], value : A) -> Unit {
   self.len += 1
 }
 
+///|
 /// Removes a front element from a deque.
 ///
 /// # Example
@@ -177,11 +190,13 @@ pub fn unsafe_pop_front[A](self : T[A]) -> Unit {
   self.len -= 1
 }
 
+///|
 /// @alert deprecated "Use `unsafe_pop_front` instead"
 pub fn pop_front_exn[A](self : T[A]) -> Unit {
   unsafe_pop_front(self)
 }
 
+///|
 /// Removes a back element from a deque.
 ///
 /// # Example
@@ -198,11 +213,13 @@ pub fn unsafe_pop_back[A](self : T[A]) -> Unit {
   self.len -= 1
 }
 
+///|
 /// @alert deprecated "Use `unsafe_pop_back` instead"
 pub fn pop_back_exn[A](self : T[A]) -> Unit {
   unsafe_pop_back(self)
 }
 
+///|
 /// Removes a front element from a deque and returns it, or `None` if it is empty.
 ///
 /// # Example
@@ -220,6 +237,7 @@ pub fn pop_front[A](self : T[A]) -> A? {
   Some(self.buf[origin_head])
 }
 
+///|
 /// Removes a back element from a deque and returns it, or `None` if it is empty.
 ///
 /// # Example
@@ -237,6 +255,7 @@ pub fn pop_back[A](self : T[A]) -> A? {
   Some(self.buf[origin_back])
 }
 
+///|
 /// Retrieves the element at the specified index from the deque.
 ///
 /// If you try to access an index which isn’t in the Deque, it will panic.
@@ -261,6 +280,7 @@ pub fn op_get[A](self : T[A], index : Int) -> A {
   }
 }
 
+///|
 /// Sets the value of the element at the specified index.
 ///
 /// If you try to access an index which isn’t in the Deque, it will panic.
@@ -286,6 +306,7 @@ pub fn op_set[A](self : T[A], index : Int, value : A) -> Unit {
   }
 }
 
+///|
 /// Compares two deques for equality.
 pub fn op_equal[A : Eq](self : T[A], other : T[A]) -> Bool {
   if self.len != other.len {
@@ -299,6 +320,7 @@ pub fn op_equal[A : Eq](self : T[A], other : T[A]) -> Bool {
   true
 }
 
+///|
 /// Iterates over the elements of the deque.
 ///
 /// # Example
@@ -313,6 +335,7 @@ pub fn each[A](self : T[A], f : (A) -> Unit) -> Unit {
   }
 }
 
+///|
 /// Iterates over the elements of the deque with index.
 ///
 /// # Example
@@ -327,6 +350,7 @@ pub fn eachi[A](self : T[A], f : (Int, A) -> Unit) -> Unit {
   }
 }
 
+///|
 /// Iterates over the elements of the deque in reversed turn.
 ///
 /// # Example
@@ -341,6 +365,7 @@ pub fn rev_each[A](self : T[A], f : (A) -> Unit) -> Unit {
   }
 }
 
+///|
 /// Iterates over the elements of the deque in reversed turn with index.
 ///
 /// # Example
@@ -355,6 +380,7 @@ pub fn rev_eachi[A](self : T[A], f : (Int, A) -> Unit) -> Unit {
   }
 }
 
+///|
 /// Clears the deque, removing all values.
 ///
 /// This method has no effect on the allocated capacity of the deque, only setting the length to 0.
@@ -370,6 +396,7 @@ pub fn clear[A](self : T[A]) -> Unit {
   self.tail = 0
 }
 
+///|
 /// Maps a function over the elements of the deque.
 ///
 /// # Example
@@ -389,6 +416,7 @@ pub fn map[A, U](self : T[A], f : (A) -> U) -> T[U] {
   }
 }
 
+///|
 /// Maps a function over the elements of the deque with index.
 ///
 /// # Example
@@ -408,6 +436,7 @@ pub fn mapi[A, U](self : T[A], f : (Int, A) -> U) -> T[U] {
   }
 }
 
+///|
 /// Test if the deque is empty.
 ///
 /// # Example
@@ -419,6 +448,7 @@ pub fn is_empty[A](self : T[A]) -> Bool {
   self.len == 0
 }
 
+///|
 ///
 /// # Example
 /// ```
@@ -434,6 +464,7 @@ pub fn search[A : Eq](self : T[A], value : A) -> Int? {
   None
 }
 
+///|
 /// Checks if the array contains an element.
 ///
 /// # Example
@@ -445,6 +476,7 @@ pub fn contains[A : Eq](self : T[A], value : A) -> Bool {
   self.iter().contains(value)
 }
 
+///|
 /// Reserves capacity to ensure that it can hold at least the number of elements
 /// specified by the `capacity` argument.
 ///
@@ -471,6 +503,7 @@ pub fn reserve_capacity[A](self : T[A], capacity : Int) -> Unit {
   }
 }
 
+///|
 /// Shrinks the capacity of the deque as much as possible.
 ///
 /// # Example
@@ -498,6 +531,7 @@ pub fn shrink_to_fit[A](self : T[A]) -> Unit {
   }
 }
 
+///|
 pub fn iter[A](self : T[A]) -> Iter[A] {
   Iter::new(
     fn(yield) {
@@ -511,6 +545,7 @@ pub fn iter[A](self : T[A]) -> Iter[A] {
   )
 }
 
+///|
 pub fn T::from_iter[A](iter : Iter[A]) -> T[A] {
   let dq = T::new()
   iter.each(fn(e) { dq.push_back(e) })

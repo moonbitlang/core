@@ -14,16 +14,22 @@
 
 // https://github.com/Cyan4973/xxHash/blob/dev/doc/xxhash_spec.md#xxh32-algorithm-description
 
+///|
 let gPRIME1 = 0x9E3779B1
 
+///|
 let gPRIME2 = 0x85EBCA77
 
+///|
 let gPRIME3 = 0xC2B2AE3D
 
+///|
 let gPRIME4 = 0x27D4EB2F
 
+///|
 let gPRIME5 = 0x165667B1
 
+///|
 fn xxhash32(input : Bytes, seed : Int) -> Int {
   let len = input.length()
   let h = (if len >= 16 {
@@ -35,24 +41,30 @@ fn xxhash32(input : Bytes, seed : Int) -> Int {
   finalize(h, input, len & -16, len & 0xF)
 }
 
+///|
 pub impl Hash for Bytes with hash(self) { xxhash32(self, 0) }
 
+///|
 pub impl Hash for Bytes with hash_combine(self, hasher) {
   hasher.combine_bytes(self)
 }
 
+///|
 fn rotl(x : Int, r : Int) -> Int {
   (x << r) | (x.reinterpret_as_uint() >> (32 - r)).reinterpret_as_int()
 }
 
+///|
 fn round(acc : Int, input : Int) -> Int {
   rotl(acc + input * gPRIME2, 13) * gPRIME1
 }
 
+///|
 fn avalanche_step(h : Int, rshift : Int, prime : Int) -> Int {
   (h ^ (h.reinterpret_as_uint() >> rshift).reinterpret_as_int()) * prime
 }
 
+///|
 fn avalanche(h : Int) -> Int {
   avalanche_step(
     avalanche_step(avalanche_step(h, 15, gPRIME2), 13, gPRIME3),
@@ -61,6 +73,7 @@ fn avalanche(h : Int) -> Int {
   )
 }
 
+///|
 fn endian32(input : Bytes, cur : Int) -> Int {
   input[cur + 0].to_int() |
   (
@@ -69,10 +82,12 @@ fn endian32(input : Bytes, cur : Int) -> Int {
   )
 }
 
+///|
 fn fetch32(input : Bytes, cur : Int, v : Int) -> Int {
   round(v, endian32(input, cur))
 }
 
+///|
 fn finalize(h : Int, input : Bytes, cur : Int, remain : Int) -> Int {
   if remain >= 4 {
     finalize(
@@ -93,6 +108,7 @@ fn finalize(h : Int, input : Bytes, cur : Int, remain : Int) -> Int {
   }
 }
 
+///|
 fn _h16bytes(
   input : Bytes,
   cur : Int,
@@ -117,6 +133,7 @@ fn _h16bytes(
   }
 }
 
+///|
 fn h16bytes(input : Bytes, cur : Int, len : Int, seed : Int) -> Int {
   _h16bytes(
     input,

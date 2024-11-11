@@ -88,6 +88,7 @@ test "from_double NaN check" {
   )
 }
 
+///|
 // currently it requires the `content` argument to be passed int the second position
 fn from_double_array(
   a : Array[Double]

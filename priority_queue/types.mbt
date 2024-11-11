@@ -12,11 +12,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+///|
 priv enum Node[A] {
   Nil
   Cons(~content : A, mut ~sibling : Node[A], mut ~child : Node[A])
 }
 
+///|
 struct T[A] {
   mut len : Int
   mut top : Node[A]

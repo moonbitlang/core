@@ -12,10 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+///|
 fn op_equal[V : Eq](self : Node[V], other : Node[V]) -> Bool {
   self.value == other.value
 }
 
+///|
 fn max(x : Int, y : Int) -> Int {
   if x > y {
     x
@@ -24,6 +26,7 @@ fn max(x : Int, y : Int) -> Int {
   }
 }
 
+///|
 fn height[V](node : Node[V]?) -> Int {
   match node {
     None => 0
@@ -31,6 +34,7 @@ fn height[V](node : Node[V]?) -> Int {
   }
 }
 
+///|
 fn debug_node[V : Show](self : Node[V]) -> String {
   let l = match self.left {
     Some(left) => left.debug_node()
@@ -45,6 +49,7 @@ fn debug_node[V : Show](self : Node[V]) -> String {
   "([\{height}]\{value},\{l},\{r})"
 }
 
+///|
 fn debug_tree[V : Show](self : T[V]) -> String {
   match self.root {
     Some(root) => root.debug_node()

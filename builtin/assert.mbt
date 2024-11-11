@@ -12,18 +12,21 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+///|
 fn debug_string[T : Show](t : T) -> String {
   let buf = StringBuilder::new(size_hint=50)
   t.output(buf)
   buf.to_string()
 }
 
+///|
 pub fn assert_eq[T : Eq + Show](a : T, b : T, ~loc : SourceLoc = _) -> Unit! {
   if a != b {
     fail!("FAILED: \{loc} `\{a} == \{b}`")
   }
 }
 
+///|
 pub fn assert_not_eq[T : Eq + Show](
   a : T,
   b : T,
@@ -36,12 +39,14 @@ pub fn assert_not_eq[T : Eq + Show](
   }
 }
 
+///|
 pub fn assert_true(x : Bool, ~loc : SourceLoc = _) -> Unit! {
   if not(x) {
     fail!("FAILED: \{loc} `\{x}` is not true")
   }
 }
 
+///|
 pub fn assert_false(x : Bool, ~loc : SourceLoc = _) -> Unit! {
   if x {
     let x = debug_string(x)

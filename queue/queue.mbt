@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+///|
 /// Creates a new empty queue.
 ///
 /// # Example
@@ -22,6 +23,7 @@ pub fn T::new[A]() -> T[A] {
   { length: 0, first: Nil, last: Nil }
 }
 
+///|
 /// Creates a new queue from an array.
 ///
 /// # Example
@@ -43,15 +45,18 @@ pub fn T::from_array[A](arr : Array[A]) -> T[A] {
   queue
 }
 
+///|
 pub impl[A : Show] Show for T[A] with output(self, logger) {
   logger.write_iter(self.iter(), prefix="@queue.of([", suffix="])")
 }
 
+///|
 // Reuse the default implementation of [Show::to_string] here
 pub fn to_string[A : Show](self : T[A]) -> String {
   Show::to_string(self)
 }
 
+///|
 /// Tests if two queue cells are equal.
 fn op_equal[T : Eq](self : Cell[T], other : Cell[T]) -> Bool {
   loop self, other {
@@ -66,11 +71,13 @@ fn op_equal[T : Eq](self : Cell[T], other : Cell[T]) -> Bool {
   }
 }
 
+///|
 /// Tests if two queues are equal.
 fn op_equal[A : Eq](self : T[A], other : T[A]) -> Bool {
   self.length == other.length && self.first == other.first
 }
 
+///|
 /// Clears the queue.
 ///
 /// # Example
@@ -84,6 +91,7 @@ pub fn clear[A](self : T[A]) -> Unit {
   self.last = Nil
 }
 
+///|
 /// Get the length of the queue.
 ///
 /// # Example
@@ -95,6 +103,7 @@ pub fn length[A](self : T[A]) -> Int {
   self.length
 }
 
+///|
 /// Checks if the queue is empty.
 ///
 /// # Example
@@ -106,6 +115,7 @@ pub fn is_empty[A](self : T[A]) -> Bool {
   self.length == 0
 }
 
+///|
 /// Adds a value to the queue.
 ///
 /// # Example
@@ -129,6 +139,7 @@ pub fn push[A](self : T[A], x : A) -> Unit {
   }
 }
 
+///|
 /// Peeks at the first value in the queue.
 ///
 /// # Example
@@ -144,11 +155,13 @@ pub fn unsafe_peek[A](self : T[A]) -> A {
   }
 }
 
+///|
 /// @alert deprecated "Use `unsafe_peek` instead"
 pub fn peek_exn[A](self : T[A]) -> A {
   unsafe_peek(self)
 }
 
+///|
 /// Peeks at the first value in the queue, which returns None if the queue is empty.
 ///
 /// # Example
@@ -163,6 +176,7 @@ pub fn peek[A](self : T[A]) -> A? {
   }
 }
 
+///|
 /// Pops the first value from the queue.
 ///
 /// # Example
@@ -186,11 +200,13 @@ pub fn unsafe_pop[A](self : T[A]) -> A {
   }
 }
 
+///|
 /// @alert deprecated "Use `unsafe_pop` instead"
 pub fn pop_exn[A](self : T[A]) -> A {
   unsafe_pop(self)
 }
 
+///|
 /// Pops the first value from the queue, which returns None if the queue is empty.
 ///
 /// # Example
@@ -206,6 +222,7 @@ pub fn pop[A](self : T[A]) -> A? {
   }
 }
 
+///|
 /// Iterates over the queue.
 ///
 /// # Example
@@ -224,6 +241,7 @@ pub fn each[A](self : T[A], f : (A) -> Unit) -> Unit {
   }
 }
 
+///|
 /// Iterates over the queue with index.
 ///
 /// # Example
@@ -242,6 +260,7 @@ pub fn eachi[A](self : T[A], f : (Int, A) -> Unit) -> Unit {
   }
 }
 
+///|
 /// Folds over the queue.
 ///
 /// # Example
@@ -256,6 +275,7 @@ pub fn fold[A, B](self : T[A], ~init : B, f : (B, A) -> B) -> B {
   }
 }
 
+///|
 /// Returns a copy of the queue.
 ///
 /// # Example
@@ -286,6 +306,7 @@ pub fn copy[A](self : T[A]) -> T[A] {
   }
 }
 
+///|
 /// Transfers all elements from one queue to another.
 ///
 /// Adds all of the elements of source to the end of destination, then clears source.
@@ -315,6 +336,7 @@ pub fn transfer[A](self : T[A], dst : T[A]) -> Unit {
   }
 }
 
+///|
 /// Creates an iter from the queue.
 ///
 /// # Example
@@ -338,6 +360,7 @@ pub fn iter[A](self : T[A]) -> Iter[A] {
   )
 }
 
+///|
 /// Creates a new queue from an iter.
 ///
 /// # Example
@@ -350,6 +373,7 @@ pub fn T::from_iter[A](iter : Iter[A]) -> T[A] {
   q
 }
 
+///|
 /// Creates a new queue from a FixedArray.
 ///
 /// # Example
@@ -429,6 +453,7 @@ test "cell_equal" {
   assert_false!(of([]).first == of([1]).first)
 }
 
+///|
 pub impl[X : @quickcheck.Arbitrary] @quickcheck.Arbitrary for T[X] with arbitrary(
   size,
   rs

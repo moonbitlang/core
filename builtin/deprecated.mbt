@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+///|
 /// @alert deprecated "Use `inspect!(buf) directly instead of buf.expect!()"
 pub fn expect(
   self : Buffer,

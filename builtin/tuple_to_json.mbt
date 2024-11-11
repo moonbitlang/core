@@ -12,22 +12,26 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+///|
 pub impl[A : ToJson, B : ToJson] ToJson for (A, B) with to_json(self) {
   [self.0.to_json(), self.1.to_json()]
 }
 
+///|
 pub impl[A : ToJson, B : ToJson, C : ToJson] ToJson for (A, B, C) with to_json(
   self
 ) {
   [self.0.to_json(), self.1.to_json(), self.2.to_json()]
 }
 
+///|
 pub impl[A : ToJson, B : ToJson, C : ToJson, D : ToJson] ToJson for (A, B, C, D) with to_json(
   self
 ) {
   [self.0.to_json(), self.1.to_json(), self.2.to_json(), self.3.to_json()]
 }
 
+///|
 pub impl[A : ToJson, B : ToJson, C : ToJson, D : ToJson, E : ToJson] ToJson for (
   A,
   B,
@@ -44,6 +48,7 @@ pub impl[A : ToJson, B : ToJson, C : ToJson, D : ToJson, E : ToJson] ToJson for 
   ]
 }
 
+///|
 pub impl[A : ToJson, B : ToJson, C : ToJson, D : ToJson, E : ToJson, F : ToJson] ToJson for (
   A,
   B,
@@ -62,6 +67,7 @@ pub impl[A : ToJson, B : ToJson, C : ToJson, D : ToJson, E : ToJson, F : ToJson]
   ]
 }
 
+///|
 pub impl[A : ToJson, B : ToJson, C : ToJson, D : ToJson, E : ToJson, F : ToJson, G : ToJson] ToJson for (
   A,
   B,
@@ -82,6 +88,7 @@ pub impl[A : ToJson, B : ToJson, C : ToJson, D : ToJson, E : ToJson, F : ToJson,
   ]
 }
 
+///|
 pub impl[A : ToJson, B : ToJson, C : ToJson, D : ToJson, E : ToJson, F : ToJson, G : ToJson, H : ToJson] ToJson for (
   A,
   B,
@@ -104,6 +111,7 @@ pub impl[A : ToJson, B : ToJson, C : ToJson, D : ToJson, E : ToJson, F : ToJson,
   ]
 }
 
+///|
 pub impl[A : ToJson, B : ToJson, C : ToJson, D : ToJson, E : ToJson, F : ToJson, G : ToJson, H : ToJson, I : ToJson] ToJson for (
   A,
   B,
@@ -128,6 +136,7 @@ pub impl[A : ToJson, B : ToJson, C : ToJson, D : ToJson, E : ToJson, F : ToJson,
   ]
 }
 
+///|
 pub impl[A : ToJson, B : ToJson, C : ToJson, D : ToJson, E : ToJson, F : ToJson, G : ToJson, H : ToJson, I : ToJson, J : ToJson] ToJson for (
   A,
   B,
@@ -154,6 +163,7 @@ pub impl[A : ToJson, B : ToJson, C : ToJson, D : ToJson, E : ToJson, F : ToJson,
   ]
 }
 
+///|
 pub impl[A : ToJson, B : ToJson, C : ToJson, D : ToJson, E : ToJson, F : ToJson, G : ToJson, H : ToJson, I : ToJson, J : ToJson, K : ToJson] ToJson for (
   A,
   B,
@@ -182,6 +192,7 @@ pub impl[A : ToJson, B : ToJson, C : ToJson, D : ToJson, E : ToJson, F : ToJson,
   ]
 }
 
+///|
 pub impl[A : ToJson, B : ToJson, C : ToJson, D : ToJson, E : ToJson, F : ToJson, G : ToJson, H : ToJson, I : ToJson, J : ToJson, K : ToJson, L : ToJson] ToJson for (
   A,
   B,
@@ -212,6 +223,7 @@ pub impl[A : ToJson, B : ToJson, C : ToJson, D : ToJson, E : ToJson, F : ToJson,
   ]
 }
 
+///|
 pub impl[A : ToJson, B : ToJson, C : ToJson, D : ToJson, E : ToJson, F : ToJson, G : ToJson, H : ToJson, I : ToJson, J : ToJson, K : ToJson, L : ToJson, M : ToJson] ToJson for (
   A,
   B,
@@ -244,6 +256,7 @@ pub impl[A : ToJson, B : ToJson, C : ToJson, D : ToJson, E : ToJson, F : ToJson,
   ]
 }
 
+///|
 pub impl[A : ToJson, B : ToJson, C : ToJson, D : ToJson, E : ToJson, F : ToJson, G : ToJson, H : ToJson, I : ToJson, J : ToJson, K : ToJson, L : ToJson, M : ToJson, N : ToJson] ToJson for (
   A,
   B,
@@ -278,6 +291,7 @@ pub impl[A : ToJson, B : ToJson, C : ToJson, D : ToJson, E : ToJson, F : ToJson,
   ]
 }
 
+///|
 pub impl[A : ToJson, B : ToJson, C : ToJson, D : ToJson, E : ToJson, F : ToJson, G : ToJson, H : ToJson, I : ToJson, J : ToJson, K : ToJson, L : ToJson, M : ToJson, N : ToJson, O : ToJson] ToJson for (
   A,
   B,
@@ -314,6 +328,7 @@ pub impl[A : ToJson, B : ToJson, C : ToJson, D : ToJson, E : ToJson, F : ToJson,
   ]
 }
 
+///|
 pub impl[A : ToJson, B : ToJson, C : ToJson, D : ToJson, E : ToJson, F : ToJson, G : ToJson, H : ToJson, I : ToJson, J : ToJson, K : ToJson, L : ToJson, M : ToJson, N : ToJson, O : ToJson, P : ToJson] ToJson for (
   A,
   B,

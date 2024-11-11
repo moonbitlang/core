@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+///|
 pub enum T[A] {
   Nil
   Cons(A, T[A])

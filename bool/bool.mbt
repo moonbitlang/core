@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+///|
 pub fn to_int(self : Bool) -> Int {
   if self {
     1
@@ -20,6 +21,7 @@ pub fn to_int(self : Bool) -> Int {
   }
 }
 
+///|
 pub fn to_int64(self : Bool) -> Int64 {
   if self {
     1
@@ -28,6 +30,7 @@ pub fn to_int64(self : Bool) -> Int64 {
   }
 }
 
+///|
 pub fn to_uint(self : Bool) -> UInt {
   if self {
     1
@@ -36,6 +39,7 @@ pub fn to_uint(self : Bool) -> UInt {
   }
 }
 
+///|
 pub fn to_uint64(self : Bool) -> UInt64 {
   if self {
     1
@@ -44,8 +48,10 @@ pub fn to_uint64(self : Bool) -> UInt64 {
   }
 }
 
+///|
 pub impl Hash for Bool with hash(self) { self.to_int() }
 
+///|
 pub impl Hash for Bool with hash_combine(self, hasher) {
   hasher.combine_bool(self)
 }

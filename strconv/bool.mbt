@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+///|
 /// Parse a string and return the represented boolean value or an error.
 pub fn parse_bool(str : String) -> Bool!StrConvError {
   match str {

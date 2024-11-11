@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+///|
 /// Create a new map with a key-value pair inserted.
 /// O(log n).
 pub fn insert[K : Compare, V](self : T[K, V], key : K, value : V) -> T[K, V] {
@@ -26,6 +27,7 @@ pub fn insert[K : Compare, V](self : T[K, V], key : K, value : V) -> T[K, V] {
   }
 }
 
+///|
 fn split_max[K : Compare, V](self : T[K, V]) -> (K, V, T[K, V]) {
   match self {
     Tree(k, value=v, l, Empty, ..) => (k, v, l)
@@ -37,6 +39,7 @@ fn split_max[K : Compare, V](self : T[K, V]) -> (K, V, T[K, V]) {
   }
 }
 
+///|
 fn split_min[K : Compare, V](self : T[K, V]) -> (K, V, T[K, V]) {
   match self {
     Tree(k, value=v, Empty, r, ..) => (k, v, r)
@@ -48,6 +51,7 @@ fn split_min[K : Compare, V](self : T[K, V]) -> (K, V, T[K, V]) {
   }
 }
 
+///|
 fn glue[K : Compare, V](self : T[K, V], other : T[K, V]) -> T[K, V] {
   match (self, other) {
     (Empty, r) => r
@@ -63,6 +67,7 @@ fn glue[K : Compare, V](self : T[K, V], other : T[K, V]) -> T[K, V] {
   }
 }
 
+///|
 /// Create a new map with a key-value pair removed. O(log n).
 /// If the key is not a member or map, the original map is returned.
 pub fn remove[K : Compare, V](self : T[K, V], key : K) -> T[K, V] {
@@ -81,11 +86,13 @@ pub fn remove[K : Compare, V](self : T[K, V], key : K) -> T[K, V] {
   }
 }
 
+///|
 /// Filter values that satisfy the predicate
 pub fn filter[K : Compare, V](self : T[K, V], pred : (V) -> Bool) -> T[K, V] {
   filter_with_key(self, fn(_k, v) { pred(v) })
 }
 
+///|
 /// Filter key-value pairs that satisfy the predicate
 pub fn filter_with_key[K : Compare, V](
   self : T[K, V],
@@ -102,6 +109,7 @@ pub fn filter_with_key[K : Compare, V](
   }
 }
 
+///|
 /// Convert to an array of key-value pairs.
 pub fn to_array[K, V](self : T[K, V]) -> Array[(K, V)] {
   let arr = []
@@ -109,10 +117,12 @@ pub fn to_array[K, V](self : T[K, V]) -> Array[(K, V)] {
   arr
 }
 
+///|
 pub fn op_equal[K : Eq, V : Eq](self : T[K, V], other : T[K, V]) -> Bool {
   self.to_array() == other.to_array()
 }
 
+///|
 pub impl[K : @quickcheck.Arbitrary + Compare, V : @quickcheck.Arbitrary] @quickcheck.Arbitrary for T[
   K,
   V,
@@ -120,9 +130,11 @@ pub impl[K : @quickcheck.Arbitrary + Compare, V : @quickcheck.Arbitrary] @quickc
   @quickcheck.Arbitrary::arbitrary(size, rs) |> from_array
 }
 
+///|
 /// The ratio between the sizes of the left and right subtrees.
 let ratio = 5
 
+///|
 fn balance[K : Compare, V](
   key : K,
   value : V,

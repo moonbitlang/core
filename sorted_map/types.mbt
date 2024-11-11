@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+///|
 priv struct Node[K, V] {
   mut key : K
   mut value : V
@@ -20,6 +21,7 @@ priv struct Node[K, V] {
   mut height : Int
 }
 
+///|
 struct T[K, V] {
   mut root : Node[K, V]?
   mut size : Int

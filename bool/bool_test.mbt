@@ -17,6 +17,7 @@ test "Bool hash function" {
   assert_eq!(Hash::hash(false), 0)
 }
 
+///|
 struct TestHash {
   flag : Bool
   x : Int
