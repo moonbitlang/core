@@ -52,6 +52,18 @@ fn grow_if_necessary(self : Buffer, required : Int) -> Unit {
 }
 
 ///|
+/// Return the given buffer's length in bytes.
+pub fn length(self : Buffer) -> Int {
+  self.len
+}
+
+///|
+/// Return whether the given buffer is empty.
+pub fn is_empty(self : Buffer) -> Bool {
+  self.len == 0
+}
+
+///|
 /// Return a new String contains the data in buffer.
 pub fn to_string(self : Buffer) -> String {
   self.bytes.sub_string(0, self.len)
