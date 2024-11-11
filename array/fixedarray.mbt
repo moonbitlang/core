@@ -171,7 +171,7 @@ test "rev_each" {
 /// ```
 pub fn rev_eachi[T](self : FixedArray[T], f : (Int, T) -> Unit) -> Unit {
   let len = self.length()
-  for i = 0; i < len; i = i + 1 {
+  for i in 0..<len {
     f(i, self[len - i - 1])
   }
 }
