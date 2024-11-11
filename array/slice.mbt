@@ -41,9 +41,10 @@ fn swap[T](self : FixedArraySlice[T], a : Int, b : Int) -> Unit {
 
 ///|
 fn rev_inplace[T](self : FixedArraySlice[T]) -> Unit {
-  let mid_len = self.length() / 2
-  for i = 0; i < mid_len; i = i + 1 {
-    let j = self.length() - i - 1
+  let len = self.length()
+  let mid_len = len / 2
+  for i in 0..<mid_len {
+    let j = len - i - 1
     self.swap(i, j)
   }
 }
