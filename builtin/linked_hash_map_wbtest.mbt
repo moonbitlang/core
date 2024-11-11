@@ -632,7 +632,7 @@ test "to_array" {
   assert_eq!(m.to_array(), [("a", 1), ("b", 2), ("c", 3)])
 }
 
-test "op_equal" {
+test "op_equal_1" {
   let m1 : Map[String, Int] = Map::new()
   m1.set("a", 1)
   m1.set("b", 2)
@@ -641,6 +641,14 @@ test "op_equal" {
   inspect!(m1 == m2, content="true")
   inspect!({ "a": 1 } == {}, content="false")
   inspect!({ 1: 2, 2: 3 } == { 1: 3, 2: 4 }, content="false")
+}
+
+test "op_equal_2" {
+  let map1 = { "a": 1, "b": 2 }
+  let map2 = { "b": 2, "a": 1 }
+  let map3 = { "a": 1, "b": 2 }
+  inspect!(map1 == map2, content="true")
+  inspect!(map1 == map3, content="true")
 }
 
 test "to_string" {

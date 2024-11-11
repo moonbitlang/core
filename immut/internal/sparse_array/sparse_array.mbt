@@ -18,7 +18,7 @@ pub struct SparseArray[X] {
   // record which elements are present
   elem_info : Bitset
   data : FixedArray[X]
-}
+} derive(Eq)
 
 pub fn SparseArray::singleton[X](idx : Int, value : X) -> SparseArray[X] {
   { elem_info: empty_bitset.add(idx), data: [value] }

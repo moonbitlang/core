@@ -27,14 +27,6 @@
 // - <https://handwiki.org/wiki/Hash%20array%20mapped%20trie>
 // - <https://lampwww.epfl.ch/papers/idealhashtrees.pdf>
 
-/// An immutable hash-map data structure
-enum T[K, V] {
-  Empty
-  Leaf(K, V) // optimize for the case of no collision
-  Collision(Bucket[K, V]) // use a list of buckets to resolve collision
-  Branch(@sparse_array.SparseArray[T[K, V]])
-}
-
 // The number of bits consumed at every [Branch] node
 let segment_length : Int = 5
 
@@ -249,4 +241,22 @@ pub fn T::of[K : Eq + Hash, V](arr : FixedArray[(K, V)]) -> T[K, V] {
       continue n - 1, map.add(k, v)
     }
   }
+}
+
+pub fn op_equal[K : Eq + Hash, V : Eq](self : T[K, V], other : T[K, V]) -> Bool {
+  if self.size() != other.size() {
+    return false
+  }
+  for kv in self.iter() {
+    match other.find(kv.0) {
+      Some(v) => if v != kv.1 { break false }
+      None => break false
+    }
+  } else {
+    true
+  }
+}
+
+pub impl[K : Hash, V : Hash] Hash for T[K, V] with hash_combine(self, hasher) {
+  self.each(fn(k, v) { hasher..combine(k).combine(v) })
 }

@@ -6,9 +6,6 @@
     "moonbitlang/core/coverage",
     "moonbitlang/core/quickcheck/splitmix"
   ],
-  "test-import": [
-    "moonbitlang/core/test"
-  ],
   "targets": {
     "panic_test.mbt": ["not", "native"]
   }

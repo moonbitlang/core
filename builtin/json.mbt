@@ -158,7 +158,11 @@ pub fn Result::to_json[Ok : ToJson, Err : ToJson](
   }
 }
 
-// unit
+//| unit
 pub fn Unit::to_json(_self : Unit) -> Json {
   Null
+}
+
+pub fn Json::default() -> Json {
+  false
 }

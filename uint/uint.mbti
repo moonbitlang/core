@@ -7,6 +7,7 @@ let min_value : UInt
 
 // Types and methods
 impl UInt {
+  default() -> UInt
   to_int64(UInt) -> Int64
 }
 

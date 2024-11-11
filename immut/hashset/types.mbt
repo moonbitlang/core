@@ -12,14 +12,17 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-pub let min_value : UInt = 0U
-
-pub let max_value : UInt = 4294967295U
-
-pub fn to_int64(self : UInt) -> Int64 {
-  self.to_uint64().reinterpret_as_int64()
+/// A bucket is a non-empty linked list of key-value pair,
+/// used to resolve hash collision in HAMT
+priv enum Bucket[T] {
+  Just_One(T) // must be non-empty
+  More(T, Bucket[T])
 }
 
-pub fn UInt::default() -> UInt {
-  0
+/// An immutable hash set data structure
+enum T[A] {
+  Empty
+  Leaf(A) // optimize for the case of no collision
+  Collision(Bucket[A]) // use a list of buckets to resolve collision
+  Branch(@sparse_array.SparseArray[T[A]])
 }

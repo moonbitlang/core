@@ -12,11 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-pub enum T[A] {
-  Nil
-  Cons(A, T[A])
-} derive(Eq)
-
 pub fn add[A](self : T[A], head : A) -> T[A] {
   Cons(head, self)
 }
@@ -496,6 +491,26 @@ pub fn flat_map[A, B](self : T[A], f : (A) -> T[B]) -> T[B] {
   match self {
     Nil => Nil
     Cons(head, tail) => concat(f(head), flat_map(tail, f))
+  }
+}
+
+/// Map over the list and keep all `value`s for which the mapped result is `Some(value)`.
+///
+/// # Example
+///
+/// ```
+/// let ls = of([4, 2, 2, 6, 3, 1])
+/// let r = ls.filter_map(fn(x) { if (x >= 3) { Some(x) } else { None } })
+/// println(r) // output: of([4, 6, 3])
+/// ```
+pub fn filter_map[A, B](self : T[A], f : (A) -> B?) -> T[B] {
+  loop Nil, self {
+    acc, Nil => acc.rev()
+    acc, Cons(x, xs) =>
+      match f(x) {
+        Some(v) => continue acc.add(v), xs
+        None => continue acc, xs
+      }
   }
 }
 

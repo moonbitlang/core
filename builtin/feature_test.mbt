@@ -12,14 +12,30 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-test "show" {
-  let f : Float = 3.14159
-  inspect!(f, content="3.141590118408203")
+struct RangeImpl[T] {
+  lo : T
+  hi : T
+} derive(Show, ToJson)
+
+// pub 
+// priv
+// default to abstract 
+trait Range {
+  range(Self, Self) -> RangeImpl[Self]
 }
 
+impl Range for Int with range(lo, hi) { { lo, hi } }
+
+impl Range for String with range(lo, hi) { { lo, hi } }
+
+fn my_range[T : Range](lo : T, hi : T) -> RangeImpl[T] {
+  T::range(lo, hi)
+}
+// Note when use trait to encode overloading:
+// 1. the trait must be exposed to users
+//    ideas: can we have a feature called final trait?
+
 test {
-  assert_eq!(Float::abs(1.0), 1.0)
-  assert_eq!(Float::abs(-1.0), 1.0)
-  let f : Float = Float::default()
-  inspect!(f.to_string(), content="0")
+  @json.inspect!(my_range(1, 10), content={ "lo": 1, "hi": 10 })
+  @json.inspect!(my_range("a", "z"), content={ "lo": "a", "hi": "z" })
 }

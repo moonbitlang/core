@@ -205,6 +205,19 @@ test "flat_map" {
   )
 }
 
+test "filter_map" {
+  let ls = @list.of([4, 2, 2, 6, 3, 1])
+  let rs : @list.T[Int] = @list.Nil
+  inspect!(
+    ls.filter_map(fn(x) { if x >= 3 { Some(x) } else { None } }),
+    content="@list.of([4, 6, 3])",
+  )
+  inspect!(
+    rs.filter_map(fn(x) { if x >= 3 { Some(x) } else { None } }),
+    content="@list.of([])",
+  )
+}
+
 test "nth" {
   let ls = @list.of([1, 2, 3, 4, 5])
   inspect!(ls.nth(0), content="Some(1)")

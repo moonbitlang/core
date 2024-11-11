@@ -19,6 +19,10 @@ test "overflow" {
   inspect!(-0x7fffffffffffffffL, content="-9223372036854775807")
 }
 
+test "from int" {
+  inspect!(@int64.from_int(1256), content="1256")
+}
+
 test "Int64::min_value" {
   let min_value = @int64.min_value
   assert_eq!(min_value, -9223372036854775808L)

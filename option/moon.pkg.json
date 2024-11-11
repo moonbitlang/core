@@ -3,8 +3,7 @@
     "moonbitlang/core/builtin",
     "moonbitlang/core/quickcheck",
     "moonbitlang/core/quickcheck/splitmix",
-    "moonbitlang/core/coverage",
-    "moonbitlang/core/double"
+    "moonbitlang/core/coverage"
   ],
   "targets": {
     "panic_test.mbt": ["not", "native"]

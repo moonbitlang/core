@@ -715,6 +715,12 @@ pub fn T::of[A : Compare](array : FixedArray[A]) -> T[A] {
   }
 }
 
+pub impl[A : Hash] Hash for T[A] with hash_combine(self, hasher) {
+  for t in self {
+    t.hash_combine(hasher)
+  }
+}
+
 test "split_bis" {
   inspect!(of([1, 2, 3]).split_bis(1), content="Found")
   inspect!(of([1, 2, 3]).split_bis(3), content="Found")
@@ -744,4 +750,9 @@ test "join with different heights" {
   let right = of([5, 6, 7])
   let joined_set = join(left, value, right)
   inspect!(joined_set, content="@immut/sorted_set.of([1, 2, 3, 4, 5, 6, 7])")
+}
+
+test "hash" {
+  assert_eq!(Hash::hash(of([1, 2, 3, 4])), Hash::hash(of([3, 2]).add(1).add(4)))
+  assert_not_eq!(Hash::hash(of([1, 2, 3])), Hash::hash(of([1, 2, 4])))
 }

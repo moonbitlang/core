@@ -12,14 +12,21 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-pub let min_value : UInt = 0U
+type! StringError String
 
-pub let max_value : UInt = 4294967295U
+type! IntError Int
 
-pub fn to_int64(self : UInt) -> Int64 {
-  self.to_uint64().reinterpret_as_int64()
-}
-
-pub fn UInt::default() -> UInt {
-  0
+test {
+  let v : Array[Error] = [StringError("x"), IntError(1)]
+  let buf = StringBuilder::new()
+  for i in v {
+    match i {
+      StringError(s) => buf.write_string(s)
+      IntError(i) =>
+        // assert_eq!(i, 1)
+        buf.write_object(i)
+      _ => abort("impossible")
+    }
+  }
+  @json.inspect!(buf.to_string(), content="x1")
 }

@@ -5,7 +5,7 @@
     "moonbitlang/core/quickcheck",
     {
       "path": "moonbitlang/core/array",
-      "alias": "core/array"
+      "alias": "_core/array"
     }
   ],
   "targets": {

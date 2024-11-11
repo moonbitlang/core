@@ -27,14 +27,6 @@
 // - <https://handwiki.org/wiki/Hash%20array%20mapped%20trie>
 // - <https://lampwww.epfl.ch/papers/idealhashtrees.pdf>
 
-/// An immutable hash set data structure
-enum T[A] {
-  Empty
-  Leaf(A) // optimize for the case of no collision
-  Collision(Bucket[A]) // use a list of buckets to resolve collision
-  Branch(@sparse_array.SparseArray[T[A]])
-}
-
 // The number of bits consumed at every [Branch] node
 let segment_length : Int = 5
 
@@ -237,9 +229,34 @@ pub fn T::of[A : Eq + Hash](arr : FixedArray[A]) -> T[A] {
   }
 }
 
+pub impl[A : Hash] Hash for T[A] with hash_combine(self, hasher) {
+  hasher.combine(self.iter().fold(init=0, fn(x, y) { x ^ y.hash() }))
+}
+
+pub impl[A : Eq] Eq for T[A] with op_equal(self, other) {
+  match (self, other) {
+    (Empty, Empty) => true
+    (Leaf(x), Leaf(y)) => x == y
+    (Collision(xs), Collision(ys)) =>
+      xs.size() == ys.size() && xs.iter().all(fn(x) { ys.find(x) })
+    (Branch(xs), Branch(ys)) => xs == ys
+    _ => false
+  }
+}
+
 pub impl[K : Eq + Hash + @quickcheck.Arbitrary] @quickcheck.Arbitrary for T[K] with arbitrary(
   size,
   rs
 ) {
   @quickcheck.Arbitrary::arbitrary(size, rs) |> from_array
+}
+
+test "hash" {
+  assert_eq!(Hash::hash(of([1, 2, 3, 4])), Hash::hash(of([3, 2]).add(1).add(4)))
+  assert_not_eq!(Hash::hash(of([1, 2, 3])), Hash::hash(of([1, 2, 4])))
+}
+
+test "eq" {
+  assert_eq!(of([1, 2, 3, 4]), of([3, 2]).add(1).add(4))
+  assert_not_eq!(of([1, 2, 3]), of([1, 2, 4]))
 }

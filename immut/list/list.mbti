@@ -31,6 +31,7 @@ impl T {
   eachi[A](Self[A], (Int, A) -> Unit) -> Unit
   equal[A : Eq](Self[A], Self[A]) -> Bool
   filter[A](Self[A], (A) -> Bool) -> Self[A]
+  filter_map[A, B](Self[A], (A) -> B?) -> Self[B]
   find[A](Self[A], (A) -> Bool) -> A?
   findi[A](Self[A], (A, Int) -> Bool) -> A?
   flat_map[A, B](Self[A], (A) -> Self[B]) -> Self[B]

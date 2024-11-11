@@ -8,7 +8,6 @@
     "moonbitlang/core/quickcheck"
   ],
   "test-import": [
-    "moonbitlang/core/string",
-    "moonbitlang/core/tuple"
+    "moonbitlang/core/string"
   ]
 }

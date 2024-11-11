@@ -20,11 +20,7 @@ pub impl Show for SourceLoc with output(self, logger) {
   logger.write_string(self.to_string())
 }
 
-pub type ArgsLoc Array[SourceLoc?]
-
-pub fn ArgsLoc::to_string(self : ArgsLoc) -> String {
-  self._.to_string()
-}
+pub type ArgsLoc Array[SourceLoc?] derive(Show)
 
 pub fn ArgsLoc::to_json(self : ArgsLoc) -> String {
   let buf = StringBuilder::new(size_hint=10)
