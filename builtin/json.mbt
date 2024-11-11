@@ -25,7 +25,7 @@ pub enum Json {
 
 ///|
 /// Trait for types that can be converted to `Json`
-pub trait ToJson {
+pub(open) trait ToJson {
   to_json(Self) -> Json
 }
 

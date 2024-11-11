@@ -19,7 +19,7 @@
 // - Implements Eisel-Lemire algorithm to speed up floating point parsing.
 
 ///|
-pub trait FromStr {
+pub(open) trait FromStr {
   from_string(String) -> Self!StrConvError
 }
 
