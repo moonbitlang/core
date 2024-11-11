@@ -12,11 +12,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+///|
 struct RangeImpl[T] {
   lo : T
   hi : T
 } derive(Show, ToJson)
 
+///|
 // pub 
 // priv
 // default to abstract 
@@ -24,10 +26,13 @@ trait Range {
   range(Self, Self) -> RangeImpl[Self]
 }
 
+///|
 impl Range for Int with range(lo, hi) { { lo, hi } }
 
+///|
 impl Range for String with range(lo, hi) { { lo, hi } }
 
+///|
 fn my_range[T : Range](lo : T, hi : T) -> RangeImpl[T] {
   T::range(lo, hi)
 }

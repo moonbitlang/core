@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+///|
 /// Creates an iterator that iterates over a range of Int with default step 1.
 ///
 /// # Arguments
@@ -41,6 +42,7 @@ pub fn upto(self : Int, end : Int, ~inclusive : Bool = false) -> Iter[Int] {
   }
 }
 
+///|
 /// Creates an iterator that iterates over a range of UInt with default step 1U.
 /// 
 /// # Arguments
@@ -70,6 +72,7 @@ pub fn upto(self : UInt, end : UInt, ~inclusive : Bool = false) -> Iter[UInt] {
   }
 }
 
+///|
 /// Creates an iterator that iterates over a range of UInt64 with default step 1UL.
 /// 
 /// # Arguments
@@ -103,6 +106,7 @@ pub fn upto(
   }
 }
 
+///|
 /// Creates an iterator that iterates over a range of Int64 with default step 1L.
 ///
 /// # Arguments
@@ -136,6 +140,7 @@ pub fn upto(
   }
 }
 
+///|
 /// Creates an iterator that iterates over a range of Float with default step 1.0 .
 ///
 /// # Arguments
@@ -169,6 +174,7 @@ pub fn upto(
   }
 }
 
+///|
 /// Creates an iterator that iterates over a range of Double with default step 1.0 .
 ///
 /// # Arguments

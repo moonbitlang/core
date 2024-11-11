@@ -34,6 +34,7 @@ test "show output" {
   assert_eq!(repr(Char::from_int(0)), "'\\x00'")
 }
 
+///|
 struct TestHash {
   x : Char
 } derive(Hash, Eq, Show)

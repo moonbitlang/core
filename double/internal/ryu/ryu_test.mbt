@@ -279,6 +279,7 @@ test "boundary conditions" {
   assert_eq!(@ryu.ryu_to_string(0.0009999999999999998), "0.0009999999999999998")
 }
 
+///|
 // For testing purposes
 fn ieee_parts_to_double(
   sign : Bool,

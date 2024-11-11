@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+///|
 pub fn compare[T0 : Compare, T1 : Compare](
   self : (T0, T1),
   other : (T0, T1)
@@ -21,6 +22,7 @@ pub fn compare[T0 : Compare, T1 : Compare](
   self.1.compare(other.1)
 }
 
+///|
 pub fn compare[T0 : Compare, T1 : Compare, T2 : Compare](
   self : (T0, T1, T2),
   other : (T0, T1, T2)
@@ -32,6 +34,7 @@ pub fn compare[T0 : Compare, T1 : Compare, T2 : Compare](
   self.2.compare(other.2)
 }
 
+///|
 pub fn compare[T0 : Compare, T1 : Compare, T2 : Compare, T3 : Compare](
   self : (T0, T1, T2, T3),
   other : (T0, T1, T2, T3)
@@ -45,6 +48,7 @@ pub fn compare[T0 : Compare, T1 : Compare, T2 : Compare, T3 : Compare](
   self.3.compare(other.3)
 }
 
+///|
 pub fn compare[T0 : Compare, T1 : Compare, T2 : Compare, T3 : Compare, T4 : Compare](
   self : (T0, T1, T2, T3, T4),
   other : (T0, T1, T2, T3, T4)
@@ -60,6 +64,7 @@ pub fn compare[T0 : Compare, T1 : Compare, T2 : Compare, T3 : Compare, T4 : Comp
   self.4.compare(other.4)
 }
 
+///|
 pub fn compare[T0 : Compare, T1 : Compare, T2 : Compare, T3 : Compare, T4 : Compare, T5 : Compare](
   self : (T0, T1, T2, T3, T4, T5),
   other : (T0, T1, T2, T3, T4, T5)
@@ -77,6 +82,7 @@ pub fn compare[T0 : Compare, T1 : Compare, T2 : Compare, T3 : Compare, T4 : Comp
   self.5.compare(other.5)
 }
 
+///|
 pub fn compare[T0 : Compare, T1 : Compare, T2 : Compare, T3 : Compare, T4 : Compare, T5 : Compare, T6 : Compare](
   self : (T0, T1, T2, T3, T4, T5, T6),
   other : (T0, T1, T2, T3, T4, T5, T6)
@@ -96,6 +102,7 @@ pub fn compare[T0 : Compare, T1 : Compare, T2 : Compare, T3 : Compare, T4 : Comp
   self.6.compare(other.6)
 }
 
+///|
 pub fn compare[T0 : Compare, T1 : Compare, T2 : Compare, T3 : Compare, T4 : Compare, T5 : Compare, T6 : Compare, T7 : Compare](
   self : (T0, T1, T2, T3, T4, T5, T6, T7),
   other : (T0, T1, T2, T3, T4, T5, T6, T7)
@@ -117,6 +124,7 @@ pub fn compare[T0 : Compare, T1 : Compare, T2 : Compare, T3 : Compare, T4 : Comp
   self.7.compare(other.7)
 }
 
+///|
 pub fn compare[T0 : Compare, T1 : Compare, T2 : Compare, T3 : Compare, T4 : Compare, T5 : Compare, T6 : Compare, T7 : Compare, T8 : Compare](
   self : (T0, T1, T2, T3, T4, T5, T6, T7, T8),
   other : (T0, T1, T2, T3, T4, T5, T6, T7, T8)
@@ -140,6 +148,7 @@ pub fn compare[T0 : Compare, T1 : Compare, T2 : Compare, T3 : Compare, T4 : Comp
   self.8.compare(other.8)
 }
 
+///|
 pub fn compare[T0 : Compare, T1 : Compare, T2 : Compare, T3 : Compare, T4 : Compare, T5 : Compare, T6 : Compare, T7 : Compare, T8 : Compare, T9 : Compare](
   self : (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9),
   other : (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9)
@@ -165,6 +174,7 @@ pub fn compare[T0 : Compare, T1 : Compare, T2 : Compare, T3 : Compare, T4 : Comp
   self.9.compare(other.9)
 }
 
+///|
 pub fn compare[T0 : Compare, T1 : Compare, T2 : Compare, T3 : Compare, T4 : Compare, T5 : Compare, T6 : Compare, T7 : Compare, T8 : Compare, T9 : Compare, T10 : Compare](
   self : (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10),
   other : (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10)
@@ -192,6 +202,7 @@ pub fn compare[T0 : Compare, T1 : Compare, T2 : Compare, T3 : Compare, T4 : Comp
   self.10.compare(other.10)
 }
 
+///|
 pub fn compare[T0 : Compare, T1 : Compare, T2 : Compare, T3 : Compare, T4 : Compare, T5 : Compare, T6 : Compare, T7 : Compare, T8 : Compare, T9 : Compare, T10 : Compare, T11 : Compare](
   self : (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11),
   other : (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11)
@@ -221,6 +232,7 @@ pub fn compare[T0 : Compare, T1 : Compare, T2 : Compare, T3 : Compare, T4 : Comp
   self.11.compare(other.11)
 }
 
+///|
 pub fn compare[T0 : Compare, T1 : Compare, T2 : Compare, T3 : Compare, T4 : Compare, T5 : Compare, T6 : Compare, T7 : Compare, T8 : Compare, T9 : Compare, T10 : Compare, T11 : Compare, T12 : Compare](
   self : (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12),
   other : (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12)
@@ -252,6 +264,7 @@ pub fn compare[T0 : Compare, T1 : Compare, T2 : Compare, T3 : Compare, T4 : Comp
   self.12.compare(other.12)
 }
 
+///|
 pub fn compare[T0 : Compare, T1 : Compare, T2 : Compare, T3 : Compare, T4 : Compare, T5 : Compare, T6 : Compare, T7 : Compare, T8 : Compare, T9 : Compare, T10 : Compare, T11 : Compare, T12 : Compare, T13 : Compare](
   self : (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13),
   other : (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13)
@@ -285,6 +298,7 @@ pub fn compare[T0 : Compare, T1 : Compare, T2 : Compare, T3 : Compare, T4 : Comp
   self.13.compare(other.13)
 }
 
+///|
 pub fn compare[T0 : Compare, T1 : Compare, T2 : Compare, T3 : Compare, T4 : Compare, T5 : Compare, T6 : Compare, T7 : Compare, T8 : Compare, T9 : Compare, T10 : Compare, T11 : Compare, T12 : Compare, T13 : Compare, T14 : Compare](
   self : (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14),
   other : (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14)
@@ -320,6 +334,7 @@ pub fn compare[T0 : Compare, T1 : Compare, T2 : Compare, T3 : Compare, T4 : Comp
   self.14.compare(other.14)
 }
 
+///|
 pub fn compare[T0 : Compare, T1 : Compare, T2 : Compare, T3 : Compare, T4 : Compare, T5 : Compare, T6 : Compare, T7 : Compare, T8 : Compare, T9 : Compare, T10 : Compare, T11 : Compare, T12 : Compare, T13 : Compare, T14 : Compare, T15 : Compare](
   self : (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15),
   other : (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15)

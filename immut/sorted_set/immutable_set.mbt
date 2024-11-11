@@ -16,16 +16,19 @@
 // The types stored in set need to implement the Compare trait.
 // All operations over sets are purely applicative (no side-effects).
 
+///|
 // Construct a empty ImmutableSet.
 pub fn T::new[A]() -> T[A] {
   Empty
 }
 
+///|
 /// Returns the one-value ImmutableSet containing only `value`.
 pub fn T::singleton[A : Compare](value : A) -> T[A] {
   Node(left=Empty, ~value, right=Empty, height=1)
 }
 
+///|
 /// Initialize an ImmutableSet[T] from a Array[T]
 pub fn T::from_array[A : Compare](array : Array[A]) -> T[A] {
   for i = array.length() - 1, set = Empty; i >= 0; {
@@ -35,6 +38,7 @@ pub fn T::from_array[A : Compare](array : Array[A]) -> T[A] {
   }
 }
 
+///|
 /// Convert ImmutableSet[T] to Array[T], the result must be ordered.
 pub fn to_array[A : Compare](self : T[A]) -> Array[A] {
   let arr = []
@@ -54,6 +58,7 @@ pub fn to_array[A : Compare](self : T[A]) -> Array[A] {
   arr
 }
 
+///|
 /// Remove the smallest value,
 /// 
 /// # Example
@@ -74,6 +79,7 @@ pub fn remove_min[A : Compare](self : T[A]) -> T[A] {
   }
 }
 
+///|
 /// Insert a value into the ImmutableSet.
 /// 
 /// # Example
@@ -108,6 +114,7 @@ pub fn add[A : Compare](self : T[A], value : A) -> T[A] {
   }
 }
 
+///|
 /// Remove n value from the ImmutableSet.
 /// 
 /// # Example
@@ -142,6 +149,7 @@ pub fn remove[A : Compare](self : T[A], value : A) -> T[A] {
   }
 }
 
+///|
 /// Returns the smallest value in the sorted_set.
 /// 
 /// # Example
@@ -162,6 +170,7 @@ pub fn min[A : Compare](self : T[A]) -> A {
   }
 }
 
+///|
 /// Returns the smallest value in the sorted_set.
 /// But returns None when the value does not exist.
 pub fn min_option[A : Compare](self : T[A]) -> A? {
@@ -175,6 +184,7 @@ pub fn min_option[A : Compare](self : T[A]) -> A? {
   }
 }
 
+///|
 /// Returns the largest value in the sorted_set.
 /// 
 /// # Example
@@ -195,6 +205,7 @@ pub fn max[A : Compare](self : T[A]) -> A {
   }
 }
 
+///|
 /// Returns the largest value in the ImmutableSet.
 /// But returns None when the value does not exist.
 pub fn max_option[A : Compare](self : T[A]) -> A? {
@@ -208,6 +219,7 @@ pub fn max_option[A : Compare](self : T[A]) -> A? {
   }
 }
 
+///|
 /// Returns a triple (left, present, right), where left < divide < right.
 /// present == false if self contains no value equal to divide, 
 /// present == true  if self contains an value equal to divide.
@@ -238,6 +250,7 @@ pub fn split[A : Compare](self : T[A], divide : A) -> (T[A], Bool, T[A]) {
   }
 }
 
+///|
 /// Returns true if sorted_set is empty
 pub fn is_empty[A : Compare](self : T[A]) -> Bool {
   match self {
@@ -246,6 +259,7 @@ pub fn is_empty[A : Compare](self : T[A]) -> Bool {
   }
 }
 
+///|
 /// Return true if value contain in sorted_set
 pub fn contains[A : Compare](self : T[A], value : A) -> Bool {
   match self {
@@ -258,6 +272,7 @@ pub fn contains[A : Compare](self : T[A], value : A) -> Bool {
   }
 }
 
+///|
 /// Returns the union of self and other.
 /// 
 /// # Example
@@ -290,6 +305,7 @@ pub fn union[A : Compare](self : T[A], other : T[A]) -> T[A] {
   }
 }
 
+///|
 /// Returns the intersection of self with other.
 /// 
 /// # Example
@@ -309,6 +325,7 @@ pub fn inter[A : Compare](self : T[A], other : T[A]) -> T[A] {
   }
 }
 
+///|
 /// Returns the difference between self and other.
 /// 
 /// # Example
@@ -329,6 +346,7 @@ pub fn diff[A : Compare](self : T[A], other : T[A]) -> T[A] {
   }
 }
 
+///|
 /// Returns true if self is a subset of other.
 /// 
 /// # Example
@@ -359,6 +377,7 @@ pub fn subset[A : Compare](self : T[A], other : T[A]) -> Bool {
   }
 }
 
+///|
 /// Returns true if the two sets do not intersect.
 /// 
 /// # Example
@@ -382,6 +401,7 @@ pub fn disjoint[A : Compare](self : T[A], other : T[A]) -> Bool {
   }
 }
 
+///|
 /// Iterates over the ImmutableSet.
 /// 
 /// # Example
@@ -401,6 +421,7 @@ pub fn each[A](self : T[A], f : (A) -> Unit) -> Unit {
   }
 }
 
+///|
 /// Fold the ImmutableSet.
 /// 
 /// # Example
@@ -417,6 +438,7 @@ pub fn fold[A : Compare, B](self : T[A], ~init : B, f : (B, A) -> B) -> B {
   }
 }
 
+///|
 /// Maps the ImmutableSet.
 /// 
 /// # Example
@@ -433,6 +455,7 @@ pub fn map[A : Compare, B : Compare](self : T[A], f : (A) -> B) -> T[B] {
   }
 }
 
+///|
 /// Test if all values of the ImmutableSet satisfy the predicate.
 /// 
 /// # Example
@@ -448,6 +471,7 @@ pub fn all[A : Compare](self : T[A], f : (A) -> Bool) -> Bool {
   }
 }
 
+///|
 /// Checks if at least one element of the set satisfies the predicate.
 /// 
 /// # Example
@@ -463,6 +487,7 @@ pub fn any[A : Compare](self : T[A], f : (A) -> Bool) -> Bool {
   }
 }
 
+///|
 /// Filter the ImmutableSet.
 /// 
 /// # Example
@@ -491,14 +516,17 @@ pub fn filter[A : Compare](self : T[A], f : (A) -> Bool) -> T[A] {
   }
 }
 
+///|
 pub impl[A : Show] Show for T[A] with output(self, logger) {
   logger.write_iter(self.iter(), prefix="@immut/sorted_set.of([", suffix="])")
 }
 
+///|
 pub fn to_string[A : Show](self : T[A]) -> String {
   Show::to_string(self)
 }
 
+///|
 pub impl[A : ToJson] ToJson for T[A] with to_json(self) {
   let capacity = self.iter().count()
   guard capacity != 0 else { return Array([]) }
@@ -507,10 +535,12 @@ pub impl[A : ToJson] ToJson for T[A] with to_json(self) {
   Array(jsons)
 }
 
+///|
 pub fn T::to_json[A : ToJson](self : T[A]) -> Json {
   ToJson::to_json(self)
 }
 
+///|
 pub impl[A : @json.FromJson + Compare] @json.FromJson for T[A] with from_json(
   json,
   path
@@ -530,12 +560,14 @@ pub impl[A : @json.FromJson + Compare] @json.FromJson for T[A] with from_json(
   }
 }
 
+///|
 pub fn T::from_json[A : @json.FromJson + Compare](
   json : Json
 ) -> T[A]!@json.JsonDecodeError {
   @json.from_json!(json)
 }
 
+///|
 pub impl[X : @quickcheck.Arbitrary + Compare] @quickcheck.Arbitrary for T[X] with arbitrary(
   size,
   rs
@@ -545,11 +577,13 @@ pub impl[X : @quickcheck.Arbitrary + Compare] @quickcheck.Arbitrary for T[X] wit
 
 // The following are the helper functions or types used by the internal implementation of ImmutableSet
 
+///|
 priv enum SplitBis[A] {
   Found
   NotFound(T[A], () -> T[A])
 }
 
+///|
 impl[T : Show] Show for SplitBis[T] with output(self, logger) {
   match self {
     Found => logger.write_string("Found")
@@ -557,6 +591,7 @@ impl[T : Show] Show for SplitBis[T] with output(self, logger) {
   }
 }
 
+///|
 /// Same as split, but compute the left and right only if the pivot value is not in the ImmutableSet.
 /// The right is computed on demand.
 fn split_bis[A : Compare](self : T[A], value : A) -> SplitBis[A] {
@@ -582,6 +617,7 @@ fn split_bis[A : Compare](self : T[A], value : A) -> SplitBis[A] {
   }
 }
 
+///|
 /// Get the height of set.
 fn height[A : Compare](self : T[A]) -> Int {
   match self {
@@ -590,6 +626,7 @@ fn height[A : Compare](self : T[A]) -> Int {
   }
 }
 
+///|
 /// Creates a new node.
 fn create[A : Compare](left : T[A], value : A, right : T[A]) -> T[A] {
   let left_height = left.height()
@@ -602,6 +639,7 @@ fn create[A : Compare](left : T[A], value : A, right : T[A]) -> T[A] {
   Node(~left, ~right, ~value, ~height)
 }
 
+///|
 /// Same as create, but performs one step of rebalancing if necessary.
 fn balance[A : Compare](left : T[A], value : A, right : T[A]) -> T[A] {
   let left_height = left.height()
@@ -644,6 +682,7 @@ fn balance[A : Compare](left : T[A], value : A, right : T[A]) -> T[A] {
   }
 }
 
+///|
 fn add_min_value[A : Compare](self : T[A], value : A) -> T[A] {
   match self {
     Empty => singleton(value)
@@ -652,6 +691,7 @@ fn add_min_value[A : Compare](self : T[A], value : A) -> T[A] {
   }
 }
 
+///|
 fn add_max_value[A : Compare](self : T[A], value : A) -> T[A] {
   match self {
     Empty => singleton(value)
@@ -660,6 +700,7 @@ fn add_max_value[A : Compare](self : T[A], value : A) -> T[A] {
   }
 }
 
+///|
 /// Same as create and balance, but no assumptions are made on the relative heights of left and right.
 fn join[A : Compare](left : T[A], value : A, right : T[A]) -> T[A] {
   match (left, right) {
@@ -679,6 +720,7 @@ fn join[A : Compare](left : T[A], value : A, right : T[A]) -> T[A] {
   }
 }
 
+///|
 fn try_join[A : Compare](left : T[A], value : A, right : T[A]) -> T[A] {
   if (left == Empty || left.max().compare(value) < 0) &&
     (right == Empty || value.compare(right.min()) < 0) {
@@ -688,6 +730,7 @@ fn try_join[A : Compare](left : T[A], value : A, right : T[A]) -> T[A] {
   }
 }
 
+///|
 /// Merge two ImmutableSet[T] into one. 
 /// All values of left must precede the values of r.
 fn merge[A : Compare](self : T[A], other : T[A]) -> T[A] {
@@ -698,6 +741,7 @@ fn merge[A : Compare](self : T[A], other : T[A]) -> T[A] {
   }
 }
 
+///|
 /// Same as merge, but no assumption on the heights of self and other.
 fn concat[A : Compare](self : T[A], other : T[A]) -> T[A] {
   match (self, other) {
@@ -707,6 +751,7 @@ fn concat[A : Compare](self : T[A], other : T[A]) -> T[A] {
   }
 }
 
+///|
 pub fn T::of[A : Compare](array : FixedArray[A]) -> T[A] {
   for i = array.length() - 1, set = Empty; i >= 0; {
     continue i - 1, set.add(array[i])
@@ -715,6 +760,7 @@ pub fn T::of[A : Compare](array : FixedArray[A]) -> T[A] {
   }
 }
 
+///|
 pub impl[A : Hash] Hash for T[A] with hash_combine(self, hasher) {
   for t in self {
     t.hash_combine(hasher)

@@ -12,11 +12,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+///|
 /// Trait for types whose elements can test for equality
 pub trait Eq {
   op_equal(Self, Self) -> Bool
 }
 
+///|
 /// Trait for types whose elements are ordered
 ///
 /// The return value of [compare] is:
@@ -27,23 +29,27 @@ pub trait Compare: Eq {
   compare(Self, Self) -> Int
 }
 
+///|
 /// Trait for types that can be hashed
 pub trait Hash {
   hash_combine(Self, Hasher) -> Unit
   hash(Self) -> Int
 }
 
+///|
 impl Hash with hash(self) {
   let hasher = Hasher::new()
   hasher.combine(self)
   hasher.finalize()
 }
 
+///|
 /// Trait for types with a default value
 pub trait Default {
   default() -> Self
 }
 
+///|
 /// Trait for a logger, where debug logs can be written into
 pub trait Logger {
   write_string(Self, String) -> Unit
@@ -53,10 +59,12 @@ pub trait Logger {
   write_char(Self, Char) -> Unit
 }
 
+///|
 impl Logger with write_sub_string(self, value, start, len) {
   self.write_substring(value, start, len)
 }
 
+///|
 /// Trait for types that can be converted to `String`
 pub trait Show {
   // `output` is used for composition of aggregate structure.
@@ -78,6 +86,7 @@ pub trait Show {
   to_string(Self) -> String
 }
 
+///|
 // Default implementation for `Show::to_string`, uses a `Buffer`
 impl Show with to_string(self) {
   let logger = StringBuilder::new()
@@ -85,10 +94,12 @@ impl Show with to_string(self) {
   logger.to_string()
 }
 
+///|
 pub fn Logger::write_object[Obj : Show](self : Logger, obj : Obj) -> Unit {
   obj.output(self)
 }
 
+///|
 pub fn Logger::write_iter[T : Show](
   self : Logger,
   iter : Iter[T],

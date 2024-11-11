@@ -129,6 +129,7 @@ test "Map::to_json" {
   )
 }
 
+///|
 struct Opt {
   x : Int?
   t : Int??

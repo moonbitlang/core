@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+///|
 /// A sparse array with at most 32 elements, where elements are not required to have contiguous index.
 /// Empty elements don't waste any space, without losing constant-time access
 pub struct SparseArray[X] {
@@ -20,14 +21,17 @@ pub struct SparseArray[X] {
   data : FixedArray[X]
 } derive(Eq)
 
+///|
 pub fn SparseArray::singleton[X](idx : Int, value : X) -> SparseArray[X] {
   { elem_info: empty_bitset.add(idx), data: [value] }
 }
 
+///|
 pub fn has[X](self : SparseArray[X], idx : Int) -> Bool {
   self.elem_info.has(idx)
 }
 
+///|
 pub fn op_get[X](self : SparseArray[X], idx : Int) -> X? {
   if self.elem_info.has(idx) {
     Some(self.data[self.elem_info.index_of(idx)])
@@ -36,6 +40,7 @@ pub fn op_get[X](self : SparseArray[X], idx : Int) -> X? {
   }
 }
 
+///|
 /// `add(self: SparseArray[X], idx: Int, value: X)`
 ///
 /// Add a new element into the sparse array.
@@ -56,6 +61,7 @@ pub fn add[X](self : SparseArray[X], idx : Int, value : X) -> SparseArray[X] {
   { elem_info: self.elem_info.add(idx), data: new_data }
 }
 
+///|
 /// `replace(self: SparseArray[X], idx: Int, value: X)`
 ///
 // replace an existing element in the sparse array.
@@ -69,6 +75,7 @@ pub fn replace[X](
   { elem_info: self.elem_info, data: new_data }
 }
 
+///|
 /// `size(self: SparseArray[X]) -> Int`
 ///
 /// Return the size of a sparse array
@@ -76,6 +83,7 @@ pub fn size[X](self : SparseArray[X]) -> Int {
   self.data.length()
 }
 
+///|
 /// `each(self: SparseArray[X], f: (X) -> Unit) -> Unit`
 ///
 /// Iterate through elements in a sparse array

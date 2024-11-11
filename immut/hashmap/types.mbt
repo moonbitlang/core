@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+///|
 /// A bucket is a non-empty linked list of key-value pair,
 /// used to resolve hash collision in HAMT
 priv enum Bucket[K, V] {
@@ -19,6 +20,7 @@ priv enum Bucket[K, V] {
   More(K, V, Bucket[K, V])
 }
 
+///|
 /// An immutable hash-map data structure
 enum T[K, V] {
   Empty

@@ -12,10 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+///|
 pub fn Array::from_iter[T](iter : Iter[T]) -> Array[T] {
   iter.collect()
 }
 
+///|
 /// Adds all elements from an iterator to the end of the array.
 ///
 /// This function iterates over each element in the provided iterator
@@ -33,6 +35,7 @@ pub fn push_iter[T](self : Array[T], iter : Iter[T]) -> Unit {
   }
 }
 
+///|
 pub fn copy[T](self : Array[T]) -> Array[T] {
   let len = self.length()
   if len == 0 {
@@ -44,6 +47,7 @@ pub fn copy[T](self : Array[T]) -> Array[T] {
   }
 }
 
+///|
 /// @alert deprecated "Use `Array::makei` instead"
 pub fn Array::new_with_index[T](length : Int, value : (Int) -> T) -> Array[T] {
   if length <= 0 {
@@ -57,6 +61,7 @@ pub fn Array::new_with_index[T](length : Int, value : (Int) -> T) -> Array[T] {
   }
 }
 
+///|
 /// Joins the elements of an array into a single string, using the specified separator.
 ///
 /// # Arguments
@@ -86,6 +91,7 @@ pub fn join[T : Show](self : Array[T], sep : String) -> String {
   buf.to_string()
 }
 
+///|
 pub fn Array::makei[T](length : Int, value : (Int) -> T) -> Array[T] {
   if length <= 0 {
     []
@@ -98,6 +104,7 @@ pub fn Array::makei[T](length : Int, value : (Int) -> T) -> Array[T] {
   }
 }
 
+///|
 /// Shuffle the array using Knuth shuffle
 /// 
 /// To use this function, you need to provide a rand function, which takes an integer as it upper bound
@@ -122,6 +129,7 @@ pub fn Array::shuffle_in_place[T](arr : Array[T], ~rand : (Int) -> Int) -> Unit 
   }
 }
 
+///|
 /// Shuffle the array using Knuth shuffle
 /// 
 /// To use this function, you need to provide a rand function, which takes an integer as it upper bound
@@ -142,6 +150,7 @@ pub fn Array::shuffle[T](arr : Array[T], ~rand : (Int) -> Int) -> Array[T] {
   new_arr
 }
 
+///|
 /// Returns a new array containing the elements of the original array that satisfy the given predicate.
 /// 
 /// # Arguments
@@ -165,6 +174,7 @@ pub fn map_option[A, B](self : Array[A], f : (A) -> B?) -> Array[B] {
   result
 }
 
+///|
 /// Returns the last element of the array.
 pub fn last[A](self : Array[A]) -> A? {
   match self {
@@ -173,6 +183,7 @@ pub fn last[A](self : Array[A]) -> A? {
   }
 }
 
+///|
 pub impl[X : @quickcheck.Arbitrary] @quickcheck.Arbitrary for Array[X] with arbitrary(
   size,
   rs

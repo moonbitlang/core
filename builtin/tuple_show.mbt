@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+///|
 pub impl[A : Show, B : Show] Show for (A, B) with output(self, logger) {
   let (a, b) = self
   logger
@@ -22,10 +23,12 @@ pub impl[A : Show, B : Show] Show for (A, B) with output(self, logger) {
   .write_string(")")
 }
 
+///|
 pub fn to_string[A : Show, B : Show](self : (A, B)) -> String {
   Show::to_string(self)
 }
 
+///|
 pub impl[A : Show, B : Show, C : Show] Show for (A, B, C) with output(
   self,
   logger
@@ -41,10 +44,12 @@ pub impl[A : Show, B : Show, C : Show] Show for (A, B, C) with output(
   .write_string(")")
 }
 
+///|
 pub fn to_string[A : Show, B : Show, C : Show](self : (A, B, C)) -> String {
   Show::to_string(self)
 }
 
+///|
 pub impl[A : Show, B : Show, C : Show, D : Show] Show for (A, B, C, D) with output(
   self,
   logger
@@ -62,12 +67,14 @@ pub impl[A : Show, B : Show, C : Show, D : Show] Show for (A, B, C, D) with outp
   .write_string(")")
 }
 
+///|
 pub fn to_string[A : Show, B : Show, C : Show, D : Show](
   self : (A, B, C, D)
 ) -> String {
   Show::to_string(self)
 }
 
+///|
 pub impl[A : Show, B : Show, C : Show, D : Show, E : Show] Show for (
   A,
   B,
@@ -90,12 +97,14 @@ pub impl[A : Show, B : Show, C : Show, D : Show, E : Show] Show for (
   .write_string(")")
 }
 
+///|
 pub fn to_string[A : Show, B : Show, C : Show, D : Show, E : Show](
   self : (A, B, C, D, E)
 ) -> String {
   Show::to_string(self)
 }
 
+///|
 pub impl[A : Show, B : Show, C : Show, D : Show, E : Show, F : Show] Show for (
   A,
   B,
@@ -121,12 +130,14 @@ pub impl[A : Show, B : Show, C : Show, D : Show, E : Show, F : Show] Show for (
   .write_string(")")
 }
 
+///|
 pub fn to_string[A : Show, B : Show, C : Show, D : Show, E : Show, F : Show](
   self : (A, B, C, D, E, F)
 ) -> String {
   Show::to_string(self)
 }
 
+///|
 pub impl[A : Show, B : Show, C : Show, D : Show, E : Show, F : Show, G : Show] Show for (
   A,
   B,
@@ -155,12 +166,14 @@ pub impl[A : Show, B : Show, C : Show, D : Show, E : Show, F : Show, G : Show] S
   .write_string(")")
 }
 
+///|
 pub fn to_string[A : Show, B : Show, C : Show, D : Show, E : Show, F : Show, G : Show](
   self : (A, B, C, D, E, F, G)
 ) -> String {
   Show::to_string(self)
 }
 
+///|
 pub impl[T0 : Show, T1 : Show, T2 : Show, T3 : Show, T4 : Show, T5 : Show, T6 : Show, T7 : Show] Show for (
   T0,
   T1,
@@ -192,12 +205,14 @@ pub impl[T0 : Show, T1 : Show, T2 : Show, T3 : Show, T4 : Show, T5 : Show, T6 : 
   .write_string(")")
 }
 
+///|
 pub fn to_string[T0 : Show, T1 : Show, T2 : Show, T3 : Show, T4 : Show, T5 : Show, T6 : Show, T7 : Show](
   self : (T0, T1, T2, T3, T4, T5, T6, T7)
 ) -> String {
   Show::to_string(self)
 }
 
+///|
 pub impl[T0 : Show, T1 : Show, T2 : Show, T3 : Show, T4 : Show, T5 : Show, T6 : Show, T7 : Show, T8 : Show] Show for (
   T0,
   T1,
@@ -232,12 +247,14 @@ pub impl[T0 : Show, T1 : Show, T2 : Show, T3 : Show, T4 : Show, T5 : Show, T6 : 
   .write_string(")")
 }
 
+///|
 pub fn to_string[T0 : Show, T1 : Show, T2 : Show, T3 : Show, T4 : Show, T5 : Show, T6 : Show, T7 : Show, T8 : Show](
   self : (T0, T1, T2, T3, T4, T5, T6, T7, T8)
 ) -> String {
   Show::to_string(self)
 }
 
+///|
 pub impl[T0 : Show, T1 : Show, T2 : Show, T3 : Show, T4 : Show, T5 : Show, T6 : Show, T7 : Show, T8 : Show, T9 : Show] Show for (
   T0,
   T1,
@@ -275,12 +292,14 @@ pub impl[T0 : Show, T1 : Show, T2 : Show, T3 : Show, T4 : Show, T5 : Show, T6 : 
   .write_string(")")
 }
 
+///|
 pub fn to_string[T0 : Show, T1 : Show, T2 : Show, T3 : Show, T4 : Show, T5 : Show, T6 : Show, T7 : Show, T8 : Show, T9 : Show](
   self : (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9)
 ) -> String {
   Show::to_string(self)
 }
 
+///|
 pub impl[T0 : Show, T1 : Show, T2 : Show, T3 : Show, T4 : Show, T5 : Show, T6 : Show, T7 : Show, T8 : Show, T9 : Show, T10 : Show] Show for (
   T0,
   T1,
@@ -321,12 +340,14 @@ pub impl[T0 : Show, T1 : Show, T2 : Show, T3 : Show, T4 : Show, T5 : Show, T6 : 
   .write_string(")")
 }
 
+///|
 pub fn to_string[T0 : Show, T1 : Show, T2 : Show, T3 : Show, T4 : Show, T5 : Show, T6 : Show, T7 : Show, T8 : Show, T9 : Show, T10 : Show](
   self : (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10)
 ) -> String {
   Show::to_string(self)
 }
 
+///|
 pub impl[T0 : Show, T1 : Show, T2 : Show, T3 : Show, T4 : Show, T5 : Show, T6 : Show, T7 : Show, T8 : Show, T9 : Show, T10 : Show, T11 : Show] Show for (
   T0,
   T1,
@@ -370,12 +391,14 @@ pub impl[T0 : Show, T1 : Show, T2 : Show, T3 : Show, T4 : Show, T5 : Show, T6 : 
   .write_string(")")
 }
 
+///|
 pub fn to_string[T0 : Show, T1 : Show, T2 : Show, T3 : Show, T4 : Show, T5 : Show, T6 : Show, T7 : Show, T8 : Show, T9 : Show, T10 : Show, T11 : Show](
   self : (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11)
 ) -> String {
   Show::to_string(self)
 }
 
+///|
 pub impl[T0 : Show, T1 : Show, T2 : Show, T3 : Show, T4 : Show, T5 : Show, T6 : Show, T7 : Show, T8 : Show, T9 : Show, T10 : Show, T11 : Show, T12 : Show] Show for (
   T0,
   T1,
@@ -422,12 +445,14 @@ pub impl[T0 : Show, T1 : Show, T2 : Show, T3 : Show, T4 : Show, T5 : Show, T6 : 
   .write_string(")")
 }
 
+///|
 pub fn to_string[T0 : Show, T1 : Show, T2 : Show, T3 : Show, T4 : Show, T5 : Show, T6 : Show, T7 : Show, T8 : Show, T9 : Show, T10 : Show, T11 : Show, T12 : Show](
   self : (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12)
 ) -> String {
   Show::to_string(self)
 }
 
+///|
 pub impl[T0 : Show, T1 : Show, T2 : Show, T3 : Show, T4 : Show, T5 : Show, T6 : Show, T7 : Show, T8 : Show, T9 : Show, T10 : Show, T11 : Show, T12 : Show, T13 : Show] Show for (
   T0,
   T1,
@@ -477,12 +502,14 @@ pub impl[T0 : Show, T1 : Show, T2 : Show, T3 : Show, T4 : Show, T5 : Show, T6 : 
   .write_string(")")
 }
 
+///|
 pub fn to_string[T0 : Show, T1 : Show, T2 : Show, T3 : Show, T4 : Show, T5 : Show, T6 : Show, T7 : Show, T8 : Show, T9 : Show, T10 : Show, T11 : Show, T12 : Show, T13 : Show](
   self : (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13)
 ) -> String {
   Show::to_string(self)
 }
 
+///|
 pub impl[T0 : Show, T1 : Show, T2 : Show, T3 : Show, T4 : Show, T5 : Show, T6 : Show, T7 : Show, T8 : Show, T9 : Show, T10 : Show, T11 : Show, T12 : Show, T13 : Show, T14 : Show] Show for (
   T0,
   T1,
@@ -535,12 +562,14 @@ pub impl[T0 : Show, T1 : Show, T2 : Show, T3 : Show, T4 : Show, T5 : Show, T6 : 
   .write_string(")")
 }
 
+///|
 pub fn to_string[T0 : Show, T1 : Show, T2 : Show, T3 : Show, T4 : Show, T5 : Show, T6 : Show, T7 : Show, T8 : Show, T9 : Show, T10 : Show, T11 : Show, T12 : Show, T13 : Show, T14 : Show](
   self : (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14)
 ) -> String {
   Show::to_string(self)
 }
 
+///|
 pub impl[T0 : Show, T1 : Show, T2 : Show, T3 : Show, T4 : Show, T5 : Show, T6 : Show, T7 : Show, T8 : Show, T9 : Show, T10 : Show, T11 : Show, T12 : Show, T13 : Show, T14 : Show, T15 : Show] Show for (
   T0,
   T1,
@@ -596,6 +625,7 @@ pub impl[T0 : Show, T1 : Show, T2 : Show, T3 : Show, T4 : Show, T5 : Show, T6 : 
   .write_string(")")
 }
 
+///|
 pub fn to_string[T0 : Show, T1 : Show, T2 : Show, T3 : Show, T4 : Show, T5 : Show, T6 : Show, T7 : Show, T8 : Show, T9 : Show, T10 : Show, T11 : Show, T12 : Show, T13 : Show, T14 : Show, T15 : Show](
   self : (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15)
 ) -> String {

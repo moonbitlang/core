@@ -12,14 +12,17 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+///|
 pub fn ln(input : Double) -> Double {
   input.ln()
 }
 
+///|
 pub fn log2(input : Double) -> Double {
   input.log2()
 }
 
+///|
 pub fn log10(input : Double) -> Double {
   input.log10()
 }

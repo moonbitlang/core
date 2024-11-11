@@ -12,8 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+///|
 pub type! Failure String
 
+///|
 pub fn fail[T](msg : String, ~loc : SourceLoc = _) -> T!Failure {
   raise Failure("FAILED: \{loc} \{msg}")
 }

@@ -16,6 +16,7 @@
 // The types stored in set need to implement the Compare trait.
 // All operations over sets are purely applicative (no side-effects).
 
+///|
 /// ImmutableSets are represented by balanced binary trees (the heights of the children differ by at most 2).
 enum T[A] {
   Empty

@@ -12,11 +12,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+///|
 /// @alert deprecated "Use infix bitwise operator `>>` instead"
 pub fn asr(self : BigInt, n : Int) -> BigInt {
   self >> n
 }
 
+///|
 /// Left shift a bigint
 /// The sign of the result is the same as the sign of the input.
 /// Only the absolute value is shifted.
@@ -26,6 +28,7 @@ pub fn shl(self : BigInt, n : Int) -> BigInt {
   self << n
 }
 
+///|
 /// Left shift a bigint
 /// The sign of the result is the same as the sign of the input.
 /// Only the absolute value is shifted.
@@ -35,6 +38,7 @@ pub fn lsl(self : BigInt, n : Int) -> BigInt {
   self << n
 }
 
+///|
 /// Right shift a bigint
 /// The sign of the result is the same as the sign of the input.
 /// Only the absolute value is shifted.

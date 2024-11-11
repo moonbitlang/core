@@ -16,11 +16,13 @@
 // The types stored in set need to implement the Compare trait.
 // All operations over sets are purely applicative (no side-effects).
 
+///|
 struct T[V] {
   mut root : Node[V]?
   mut size : Int64
 }
 
+///|
 priv struct Node[V] {
   mut value : V
   mut left : Node[V]?

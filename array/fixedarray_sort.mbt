@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+///|
 /// Sorts the array
 /// 
 /// It's an stable sort(it will not reorder equal elements). The time complexity is *O*(*n* \* log(*n*)) in the worst case.
@@ -27,11 +28,13 @@ pub fn stable_sort[T : Compare](self : FixedArray[T]) -> Unit {
   timsort({ array: self, start: 0, end: self.length() })
 }
 
+///|
 priv struct TimSortRun {
   len : Int
   start : Int
 }
 
+///|
 /// The algorithm identifies strictly descending and non-descending subsequences, which are called
 /// natural runs. There is a stack of pending runs yet to be merged. Each newly found run is pushed
 /// onto the stack, and then some pairs of adjacent runs are merged until these two invariants are
@@ -79,6 +82,7 @@ fn timsort[T : Compare](arr : FixedArraySlice[T]) -> Unit {
   }
 }
 
+///|
 fn FixedArraySlice::insertion_sort[T : Compare](
   arr : FixedArraySlice[T]
 ) -> Unit {
@@ -89,6 +93,7 @@ fn FixedArraySlice::insertion_sort[T : Compare](
   }
 }
 
+///|
 /// Merges non-decreasing runs `arr[:mid]` and `arr[mid:]`. Copy `arr[mid:]` to buf and merge 
 /// `buf` and `arr[:mid]` to `arr[:]`
 fn merge[T : Compare](arr : FixedArraySlice[T], mid : Int) -> Unit {
@@ -116,6 +121,7 @@ fn merge[T : Compare](arr : FixedArraySlice[T], mid : Int) -> Unit {
   }
 }
 
+///|
 /// Finds a streak of presorted elements starting at the beginning of the slice. Returns the first
 /// value that is not part of said streak, and a bool denoting whether the streak was reversed.
 /// Streaks can be increasing or decreasing.
@@ -144,6 +150,7 @@ fn find_streak[T : Compare](arr : FixedArraySlice[T]) -> (Int, Bool) {
   }
 }
 
+///|
 fn provide_sorted_batch[T : Compare](
   arr : FixedArraySlice[T],
   start : Int,
@@ -168,6 +175,7 @@ fn provide_sorted_batch[T : Compare](
   }
 }
 
+///|
 // TimSort is infamous for its buggy implementations, as described here:
 // http://envisage-project.eu/timsort-specification-and-verification/
 //
@@ -193,6 +201,7 @@ fn collapse(runs : Array[TimSortRun], stop : Int) -> Int? {
   }
 }
 
+///|
 /// Sorts the array
 /// 
 /// It's an in-place, unstable sort(it will reorder equal elements). The time complexity is O(n log n) in the worst case.
@@ -212,6 +221,7 @@ pub fn sort[T : Compare](self : FixedArray[T]) -> Unit {
   )
 }
 
+///|
 fn fixed_quick_sort[T : Compare](
   arr : FixedArraySlice[T],
   pred : T?,
@@ -278,6 +288,7 @@ fn fixed_quick_sort[T : Compare](
   }
 }
 
+///|
 fn fixed_get_limit(len : Int) -> Int {
   let mut len = len
   let mut limit = 0
@@ -288,6 +299,7 @@ fn fixed_get_limit(len : Int) -> Int {
   limit
 }
 
+///|
 /// Try to sort the array with bubble sort.
 /// 
 /// It will only tolerate at most 8 unsorted elements. The time complexity is O(n).
@@ -312,6 +324,7 @@ fn fixed_try_bubble_sort[T : Compare](arr : FixedArraySlice[T]) -> Bool {
   true
 }
 
+///|
 /// Try to sort the array with bubble sort.
 /// 
 /// It will only tolerate at most 8 unsorted elements. The time complexity is O(n).
@@ -332,6 +345,7 @@ test "fixed_try_bubble_sort" {
   assert_eq!(arr, [1, 2, 3, 4, 5, 6, 7, 8])
 }
 
+///|
 fn fixed_partition[T : Compare](
   arr : FixedArraySlice[T],
   pivot_index : Int
@@ -353,6 +367,7 @@ fn fixed_partition[T : Compare](
   (i, partitioned)
 }
 
+///|
 /// Choose a pivot index for quick sort.
 /// 
 /// It avoids worst case performance by choosing a pivot that is likely to be close to the median.
@@ -395,6 +410,7 @@ fn fixed_choose_pivot[T : Compare](arr : FixedArraySlice[T]) -> (Int, Bool) {
   }
 }
 
+///|
 fn fixed_heap_sort[T : Compare](arr : FixedArraySlice[T]) -> Unit {
   let len = arr.length()
   for i = len / 2 - 1; i >= 0; i = i - 1 {
@@ -406,6 +422,7 @@ fn fixed_heap_sort[T : Compare](arr : FixedArraySlice[T]) -> Unit {
   }
 }
 
+///|
 fn fixed_sift_down[T : Compare](arr : FixedArraySlice[T], index : Int) -> Unit {
   let mut index = index
   let len = arr.length()
@@ -423,6 +440,7 @@ fn fixed_sift_down[T : Compare](arr : FixedArraySlice[T], index : Int) -> Unit {
   }
 }
 
+///|
 fn fixed_test_sort(f : (FixedArray[Int]) -> Unit) -> Unit! {
   let arr : FixedArray[_] = [5, 4, 3, 2, 1]
   f(arr)
@@ -483,6 +501,7 @@ test "stable_sort" {
   assert_eq!(arr, expected)
 }
 
+///|
 pub fn FixedArray::is_sorted[T : Compare](arr : FixedArray[T]) -> Bool {
   for i in 1..<arr.length() {
     if arr[i] < arr[i - 1] {

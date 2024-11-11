@@ -14,30 +14,43 @@
 
 // ported from https://github.com/golang/go/blob/master/src/math/log.go
 
+///|
 let sqrt2 = 1.41421356237309504880168872420969807856967187537694807317667974
 
+///|
 let ln2 = 0.693147180559945309417232121458176568075500134360255254120680009
 
+///|
 let ln10 = 2.30258509299404568401799145468436420760110148862877297603332790
 
+///|
 let ln2_hi = 6.93147180369123816490e-01 // 3fe62e42 fee00000
 
+///|
 let ln2_lo = 1.90821492927058770002e-10 // 3dea39ef 35793c76
 
+///|
 let l1 = 6.666666666666735130e-01 // 3FE55555 55555593
 
+///|
 let l2 = 3.999999999940941908e-01 // 3FD99999 9997FA04
 
+///|
 let l3 = 2.857142874366239149e-01 // 3FD24924 94229359
 
+///|
 let l4 = 2.222219843214978396e-01 // 3FCC71C5 1D8E78AF
 
+///|
 let l5 = 1.818357216161805012e-01 // 3FC74664 96CB03DE
 
+///|
 let l6 = 1.531383769920937332e-01 // 3FC39A09 D078C69F
 
+///|
 let l7 = 1.479819860511658591e-01 // 3FC2F112 DF3E5244
 
+///|
 fn normalize(f : Double) -> (Double, Int) {
   if f.abs() < min_positive {
     return (f * (1L << 52).to_double(), -52)
@@ -45,6 +58,7 @@ fn normalize(f : Double) -> (Double, Int) {
   (f, 0)
 }
 
+///|
 fn frexp(f : Double) -> (Double, Int) {
   if f == 0.0 || f.is_inf() || f.is_nan() {
     return (f, 0)
@@ -56,6 +70,7 @@ fn frexp(f : Double) -> (Double, Int) {
   return (frac, exp)
 }
 
+///|
 pub fn ln(self : Double) -> Double {
   if self.is_nan() || self.is_inf() {
     return self
@@ -80,6 +95,7 @@ pub fn ln(self : Double) -> Double {
   k * ln2_hi - (hfsq - (s * (hfsq + r) + k * ln2_lo) - f)
 }
 
+///|
 pub fn log2(self : Double) -> Double {
   let (f, e) = frexp(self)
   if f == 0.5 {
@@ -88,6 +104,7 @@ pub fn log2(self : Double) -> Double {
   ln(f) / ln2 + e.to_double()
 }
 
+///|
 pub fn log10(self : Double) -> Double {
   ln(self) / ln10
 }

@@ -12,18 +12,25 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+///|
 pub let not_a_number : Float = (0x7FC00000).reinterpret_as_float()
 
+///|
 pub let infinity : Float = (0x7F800000).reinterpret_as_float()
 
+///|
 pub let neg_infinity : Float = (0xFF800000).reinterpret_as_float()
 
+///|
 pub let max_value : Float = (0x7F7FFFFF).reinterpret_as_float()
 
+///|
 pub let min_value : Float = (0xFF7FFFFF).reinterpret_as_float()
 
+///|
 pub let min_positive : Float = (0x00800000).reinterpret_as_float()
 
+///|
 pub fn abs(self : Float) -> Float {
   if self < 0.0 {
     -self
@@ -32,14 +39,17 @@ pub fn abs(self : Float) -> Float {
   }
 }
 
+///|
 pub fn to_string(self : Float) -> String {
   Show::to_string(self)
 }
 
+///|
 pub impl Show for Float with output(self, logger) {
   logger.write_string(self.to_double().to_string())
 }
 
+///|
 pub fn Float::default() -> Float {
   0.0
 }

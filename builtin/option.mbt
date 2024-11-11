@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+///|
 pub fn op_equal[X : Eq](self : X?, other : X?) -> Bool {
   match (self, other) {
     (None, None) => true
@@ -20,6 +21,7 @@ pub fn op_equal[X : Eq](self : X?, other : X?) -> Bool {
   }
 }
 
+///|
 pub fn to_string[X : Show](self : X?) -> String {
   match self {
     None => "None"
@@ -27,6 +29,7 @@ pub fn to_string[X : Show](self : X?) -> String {
   }
 }
 
+///|
 /// Extract the value in `Some`.
 /// Panic if input is `None`.
 pub fn unwrap[X](self : X?) -> X {

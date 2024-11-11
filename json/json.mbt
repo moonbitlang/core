@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+///|
 /// Try to get this element as a Null
 pub fn as_null(self : JsonValue) -> Unit? {
   match self {
@@ -20,6 +21,7 @@ pub fn as_null(self : JsonValue) -> Unit? {
   }
 }
 
+///|
 /// Try to get this element as a Boolean
 pub fn as_bool(self : JsonValue) -> Bool? {
   match self {
@@ -29,6 +31,7 @@ pub fn as_bool(self : JsonValue) -> Bool? {
   }
 }
 
+///|
 /// Try to get this element as a Number
 pub fn as_number(self : JsonValue) -> Double? {
   match self {
@@ -37,6 +40,7 @@ pub fn as_number(self : JsonValue) -> Double? {
   }
 }
 
+///|
 /// Try to get this element as a String
 pub fn as_string(self : JsonValue) -> String? {
   match self {
@@ -45,6 +49,7 @@ pub fn as_string(self : JsonValue) -> String? {
   }
 }
 
+///|
 /// Try to get this element as an Array
 pub fn as_array(self : JsonValue) -> Array[JsonValue]? {
   match self {
@@ -53,6 +58,7 @@ pub fn as_array(self : JsonValue) -> Array[JsonValue]? {
   }
 }
 
+///|
 /// Try to get this element as a Json Array and get the element at the `index` as a Json Value
 pub fn item(self : JsonValue, index : Int) -> JsonValue? {
   match self.as_array() {
@@ -61,6 +67,7 @@ pub fn item(self : JsonValue, index : Int) -> JsonValue? {
   }
 }
 
+///|
 /// Try to get this element as an Object
 pub fn as_object(self : JsonValue) -> Map[String, JsonValue]? {
   match self {
@@ -69,6 +76,7 @@ pub fn as_object(self : JsonValue) -> Map[String, JsonValue]? {
   }
 }
 
+///|
 /// Try to get this element as a Json Object and get the element with the `key` as a Json Value
 pub fn value(self : JsonValue, key : String) -> JsonValue? {
   match self.as_object() {
@@ -77,6 +85,7 @@ pub fn value(self : JsonValue, key : String) -> JsonValue? {
   }
 }
 
+///|
 fn indent_str(level : Int, indent : Int) -> String {
   if indent == 0 {
     ""
@@ -85,6 +94,7 @@ fn indent_str(level : Int, indent : Int) -> String {
   }
 }
 
+///|
 pub fn stringify(
   self : JsonValue,
   ~escape_slash : Bool = false,
@@ -156,6 +166,7 @@ pub fn stringify(
   stringify_inner(self, 0)
 }
 
+///|
 fn escape(str : String, ~escape_slash : Bool) -> String {
   fn to_hex_digit(i : Int) -> Char {
     if i < 10 {
@@ -196,11 +207,13 @@ fn escape(str : String, ~escape_slash : Bool) -> String {
   buf.to_string()
 }
 
+///|
 /// Useful for json interpolation
 pub fn to_json(self : JsonValue) -> JsonValue {
   self
 }
 
+///|
 pub fn inspect(
   obj : ToJson,
   ~content? : Json,

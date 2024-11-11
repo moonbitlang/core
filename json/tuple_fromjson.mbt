@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+///|
 pub impl[A : FromJson, B : FromJson] FromJson for (A, B) with from_json!(
   json,
   path
@@ -26,6 +27,7 @@ pub impl[A : FromJson, B : FromJson] FromJson for (A, B) with from_json!(
   }
 }
 
+///|
 pub impl[A : FromJson, B : FromJson, C : FromJson] FromJson for (A, B, C) with from_json!(
   json,
   path
@@ -41,6 +43,7 @@ pub impl[A : FromJson, B : FromJson, C : FromJson] FromJson for (A, B, C) with f
   }
 }
 
+///|
 pub impl[A : FromJson, B : FromJson, C : FromJson, D : FromJson] FromJson for (
   A,
   B,
@@ -59,6 +62,7 @@ pub impl[A : FromJson, B : FromJson, C : FromJson, D : FromJson] FromJson for (
   }
 }
 
+///|
 pub impl[A : FromJson, B : FromJson, C : FromJson, D : FromJson, E : FromJson] FromJson for (
   A,
   B,
@@ -79,6 +83,7 @@ pub impl[A : FromJson, B : FromJson, C : FromJson, D : FromJson, E : FromJson] F
   }
 }
 
+///|
 pub impl[A : FromJson, B : FromJson, C : FromJson, D : FromJson, E : FromJson, F : FromJson] FromJson for (
   A,
   B,
@@ -101,6 +106,7 @@ pub impl[A : FromJson, B : FromJson, C : FromJson, D : FromJson, E : FromJson, F
   }
 }
 
+///|
 pub impl[A : FromJson, B : FromJson, C : FromJson, D : FromJson, E : FromJson, F : FromJson, G : FromJson] FromJson for (
   A,
   B,
@@ -125,6 +131,7 @@ pub impl[A : FromJson, B : FromJson, C : FromJson, D : FromJson, E : FromJson, F
   }
 }
 
+///|
 pub impl[T0 : FromJson, T1 : FromJson, T2 : FromJson, T3 : FromJson, T4 : FromJson, T5 : FromJson, T6 : FromJson, T7 : FromJson] FromJson for (
   T0,
   T1,
@@ -151,6 +158,7 @@ pub impl[T0 : FromJson, T1 : FromJson, T2 : FromJson, T3 : FromJson, T4 : FromJs
   }
 }
 
+///|
 pub impl[T0 : FromJson, T1 : FromJson, T2 : FromJson, T3 : FromJson, T4 : FromJson, T5 : FromJson, T6 : FromJson, T7 : FromJson, T8 : FromJson] FromJson for (
   T0,
   T1,
@@ -179,6 +187,7 @@ pub impl[T0 : FromJson, T1 : FromJson, T2 : FromJson, T3 : FromJson, T4 : FromJs
   }
 }
 
+///|
 pub impl[T0 : FromJson, T1 : FromJson, T2 : FromJson, T3 : FromJson, T4 : FromJson, T5 : FromJson, T6 : FromJson, T7 : FromJson, T8 : FromJson, T9 : FromJson] FromJson for (
   T0,
   T1,
@@ -209,6 +218,7 @@ pub impl[T0 : FromJson, T1 : FromJson, T2 : FromJson, T3 : FromJson, T4 : FromJs
   }
 }
 
+///|
 pub impl[T0 : FromJson, T1 : FromJson, T2 : FromJson, T3 : FromJson, T4 : FromJson, T5 : FromJson, T6 : FromJson, T7 : FromJson, T8 : FromJson, T9 : FromJson, T10 : FromJson] FromJson for (
   T0,
   T1,
@@ -241,6 +251,7 @@ pub impl[T0 : FromJson, T1 : FromJson, T2 : FromJson, T3 : FromJson, T4 : FromJs
   }
 }
 
+///|
 pub impl[T0 : FromJson, T1 : FromJson, T2 : FromJson, T3 : FromJson, T4 : FromJson, T5 : FromJson, T6 : FromJson, T7 : FromJson, T8 : FromJson, T9 : FromJson, T10 : FromJson, T11 : FromJson] FromJson for (
   T0,
   T1,
@@ -275,6 +286,7 @@ pub impl[T0 : FromJson, T1 : FromJson, T2 : FromJson, T3 : FromJson, T4 : FromJs
   }
 }
 
+///|
 pub impl[T0 : FromJson, T1 : FromJson, T2 : FromJson, T3 : FromJson, T4 : FromJson, T5 : FromJson, T6 : FromJson, T7 : FromJson, T8 : FromJson, T9 : FromJson, T10 : FromJson, T11 : FromJson, T12 : FromJson] FromJson for (
   T0,
   T1,
@@ -311,6 +323,7 @@ pub impl[T0 : FromJson, T1 : FromJson, T2 : FromJson, T3 : FromJson, T4 : FromJs
   }
 }
 
+///|
 pub impl[T0 : FromJson, T1 : FromJson, T2 : FromJson, T3 : FromJson, T4 : FromJson, T5 : FromJson, T6 : FromJson, T7 : FromJson, T8 : FromJson, T9 : FromJson, T10 : FromJson, T11 : FromJson, T12 : FromJson, T13 : FromJson] FromJson for (
   T0,
   T1,
@@ -349,6 +362,7 @@ pub impl[T0 : FromJson, T1 : FromJson, T2 : FromJson, T3 : FromJson, T4 : FromJs
   }
 }
 
+///|
 pub impl[T0 : FromJson, T1 : FromJson, T2 : FromJson, T3 : FromJson, T4 : FromJson, T5 : FromJson, T6 : FromJson, T7 : FromJson, T8 : FromJson, T9 : FromJson, T10 : FromJson, T11 : FromJson, T12 : FromJson, T13 : FromJson, T14 : FromJson] FromJson for (
   T0,
   T1,
@@ -389,6 +403,7 @@ pub impl[T0 : FromJson, T1 : FromJson, T2 : FromJson, T3 : FromJson, T4 : FromJs
   }
 }
 
+///|
 pub impl[T0 : FromJson, T1 : FromJson, T2 : FromJson, T3 : FromJson, T4 : FromJson, T5 : FromJson, T6 : FromJson, T7 : FromJson, T8 : FromJson, T9 : FromJson, T10 : FromJson, T11 : FromJson, T12 : FromJson, T13 : FromJson, T14 : FromJson, T15 : FromJson] FromJson for (
   T0,
   T1,
