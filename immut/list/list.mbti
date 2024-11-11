@@ -90,17 +90,13 @@ impl T {
   unsafe_nth[A](Self[A], Int) -> A
   zip[A, B](Self[A], Self[B]) -> Self[(A, B)]?
 }
+impl[A : Eq] Eq for T[A]
+impl[A : Show] Show for T[A]
+impl[A : ToJson] ToJson for T[A]
+impl[A : @json.FromJson] @json.FromJson for T[A]
+impl[X : @quickcheck.Arbitrary] @quickcheck.Arbitrary for T[X]
 
 // Type aliases
 
 // Traits
-
-// Extension Methods
-impl Show for T
-
-impl ToJson for T
-
-impl @json.FromJson for T
-
-impl @quickcheck.Arbitrary for T
 

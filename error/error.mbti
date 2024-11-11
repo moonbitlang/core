@@ -8,6 +8,3 @@ package moonbitlang/core/error
 
 // Traits
 
-// Extension Methods
-impl Show for Error
-

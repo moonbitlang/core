@@ -27,13 +27,10 @@ impl T {
   to_string[K : Show](Self[K]) -> String
   union[K : Hash + Eq](Self[K], Self[K]) -> Self[K]
 }
+impl[K : Show] Show for T[K]
+impl[X : @quickcheck.Arbitrary + Eq + Hash] @quickcheck.Arbitrary for T[X]
 
 // Type aliases
 
 // Traits
-
-// Extension Methods
-impl Show for T
-
-impl @quickcheck.Arbitrary for T
 

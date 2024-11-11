@@ -39,11 +39,9 @@ impl T {
   unsafe_pop_back[A](Self[A]) -> Unit
   unsafe_pop_front[A](Self[A]) -> Unit
 }
+impl[A : Show] Show for T[A]
 
 // Type aliases
 
 // Traits
-
-// Extension Methods
-impl Show for T
 

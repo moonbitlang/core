@@ -29,13 +29,10 @@ impl T {
   unsafe_peek[A](Self[A]) -> A
   unsafe_pop[A](Self[A]) -> A
 }
+impl[A : Show] Show for T[A]
+impl[X : @quickcheck.Arbitrary] @quickcheck.Arbitrary for T[X]
 
 // Type aliases
 
 // Traits
-
-// Extension Methods
-impl Show for T
-
-impl @quickcheck.Arbitrary for T
 

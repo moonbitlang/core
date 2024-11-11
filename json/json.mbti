@@ -15,6 +15,8 @@ impl JsonDecodeError {
   op_equal(Self, Self) -> Bool
   to_string(Self) -> String
 }
+impl Eq for JsonDecodeError
+impl Show for JsonDecodeError
 
 type JsonPath
 impl JsonPath {
@@ -23,6 +25,7 @@ impl JsonPath {
   op_equal(Self, Self) -> Bool
   output(Self, Logger) -> Unit
 }
+impl Eq for JsonPath
 
 pub type! ParseError {
   InvalidChar(Position, Char)
@@ -34,6 +37,8 @@ impl ParseError {
   op_equal(Self, Self) -> Bool
   to_string(Self) -> String
 }
+impl Eq for ParseError
+impl Show for ParseError
 
 pub struct Position {
   pub line : Int
@@ -42,6 +47,9 @@ pub struct Position {
 impl Position {
   op_equal(Self, Self) -> Bool
 }
+impl Eq for Position
+
+
 impl Json {
   as_array(Self) -> Array[Self]?
   as_bool(Self) -> Bool?
@@ -60,72 +68,36 @@ impl Json {
 pub typealias JsonValue = Json
 
 // Traits
-pub trait FromJson {
+pub(open) trait FromJson {
   from_json(Json, JsonPath) -> Self!JsonDecodeError
 }
-
-// Extension Methods
-impl Show for Json
-
-impl Show for JsonDecodeError
-
-impl Show for ParseError
-
 impl FromJson for Unit
-
 impl FromJson for Bool
-
 impl FromJson for Char
-
 impl FromJson for Int
-
 impl FromJson for Int64
-
 impl FromJson for Double
-
 impl FromJson for String
-
-impl FromJson for Option
-
-impl FromJson for Result
-
-impl FromJson for FixedArray
-
-impl FromJson for Array
-
+impl[T : FromJson] FromJson for T?
+impl[Ok : FromJson, Err : FromJson] FromJson for Result[Ok, Err]
+impl[X : FromJson] FromJson for FixedArray[X]
+impl[X : FromJson] FromJson for Array[X]
 impl FromJson for BigInt
-
 impl FromJson for Json
-
-impl FromJson for Map
-
-impl FromJson for Tuple(2)
-
-impl FromJson for Tuple(3)
-
-impl FromJson for Tuple(4)
-
-impl FromJson for Tuple(5)
-
-impl FromJson for Tuple(6)
-
-impl FromJson for Tuple(7)
-
-impl FromJson for Tuple(8)
-
-impl FromJson for Tuple(9)
-
-impl FromJson for Tuple(10)
-
-impl FromJson for Tuple(11)
-
-impl FromJson for Tuple(12)
-
-impl FromJson for Tuple(13)
-
-impl FromJson for Tuple(14)
-
-impl FromJson for Tuple(15)
-
-impl FromJson for Tuple(16)
+impl[V : FromJson] FromJson for Map[String, V]
+impl[A : FromJson, B : FromJson] FromJson for (A, B)
+impl[A : FromJson, B : FromJson, C : FromJson] FromJson for (A, B, C)
+impl[A : FromJson, B : FromJson, C : FromJson, D : FromJson] FromJson for (A, B, C, D)
+impl[A : FromJson, B : FromJson, C : FromJson, D : FromJson, E : FromJson] FromJson for (A, B, C, D, E)
+impl[A : FromJson, B : FromJson, C : FromJson, D : FromJson, E : FromJson, F : FromJson] FromJson for (A, B, C, D, E, F)
+impl[A : FromJson, B : FromJson, C : FromJson, D : FromJson, E : FromJson, F : FromJson, G : FromJson] FromJson for (A, B, C, D, E, F, G)
+impl[T0 : FromJson, T1 : FromJson, T2 : FromJson, T3 : FromJson, T4 : FromJson, T5 : FromJson, T6 : FromJson, T7 : FromJson] FromJson for (T0, T1, T2, T3, T4, T5, T6, T7)
+impl[T0 : FromJson, T1 : FromJson, T2 : FromJson, T3 : FromJson, T4 : FromJson, T5 : FromJson, T6 : FromJson, T7 : FromJson, T8 : FromJson] FromJson for (T0, T1, T2, T3, T4, T5, T6, T7, T8)
+impl[T0 : FromJson, T1 : FromJson, T2 : FromJson, T3 : FromJson, T4 : FromJson, T5 : FromJson, T6 : FromJson, T7 : FromJson, T8 : FromJson, T9 : FromJson] FromJson for (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9)
+impl[T0 : FromJson, T1 : FromJson, T2 : FromJson, T3 : FromJson, T4 : FromJson, T5 : FromJson, T6 : FromJson, T7 : FromJson, T8 : FromJson, T9 : FromJson, T10 : FromJson] FromJson for (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10)
+impl[T0 : FromJson, T1 : FromJson, T2 : FromJson, T3 : FromJson, T4 : FromJson, T5 : FromJson, T6 : FromJson, T7 : FromJson, T8 : FromJson, T9 : FromJson, T10 : FromJson, T11 : FromJson] FromJson for (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11)
+impl[T0 : FromJson, T1 : FromJson, T2 : FromJson, T3 : FromJson, T4 : FromJson, T5 : FromJson, T6 : FromJson, T7 : FromJson, T8 : FromJson, T9 : FromJson, T10 : FromJson, T11 : FromJson, T12 : FromJson] FromJson for (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12)
+impl[T0 : FromJson, T1 : FromJson, T2 : FromJson, T3 : FromJson, T4 : FromJson, T5 : FromJson, T6 : FromJson, T7 : FromJson, T8 : FromJson, T9 : FromJson, T10 : FromJson, T11 : FromJson, T12 : FromJson, T13 : FromJson] FromJson for (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13)
+impl[T0 : FromJson, T1 : FromJson, T2 : FromJson, T3 : FromJson, T4 : FromJson, T5 : FromJson, T6 : FromJson, T7 : FromJson, T8 : FromJson, T9 : FromJson, T10 : FromJson, T11 : FromJson, T12 : FromJson, T13 : FromJson, T14 : FromJson] FromJson for (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14)
+impl[T0 : FromJson, T1 : FromJson, T2 : FromJson, T3 : FromJson, T4 : FromJson, T5 : FromJson, T6 : FromJson, T7 : FromJson, T8 : FromJson, T9 : FromJson, T10 : FromJson, T11 : FromJson, T12 : FromJson, T13 : FromJson, T14 : FromJson, T15 : FromJson] FromJson for (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15)
 

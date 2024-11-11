@@ -6,6 +6,8 @@ let max_value : UInt
 let min_value : UInt
 
 // Types and methods
+
+
 impl UInt {
   default() -> UInt
   to_int64(UInt) -> Int64
@@ -14,6 +16,4 @@ impl UInt {
 // Type aliases
 
 // Traits
-
-// Extension Methods
 

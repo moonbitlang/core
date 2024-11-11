@@ -39,17 +39,12 @@ impl T {
   to_json[K : Show, V : ToJson](Self[K, V]) -> Json
   to_string[K : Show, V : Show](Self[K, V]) -> String
 }
+impl[K : Show, V : Show] Show for T[K, V]
+impl[K : Show, V : ToJson] ToJson for T[K, V]
+impl[V : @json.FromJson] @json.FromJson for T[String, V]
+impl[K : @quickcheck.Arbitrary + Compare + Eq, V : @quickcheck.Arbitrary] @quickcheck.Arbitrary for T[K, V]
 
 // Type aliases
 
 // Traits
-
-// Extension Methods
-impl Show for T
-
-impl ToJson for T
-
-impl @json.FromJson for T
-
-impl @quickcheck.Arbitrary for T
 

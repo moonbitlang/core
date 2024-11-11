@@ -31,13 +31,10 @@ impl T {
   to_array[A](Self[A]) -> Array[A]
   to_string[A : Show](Self[A]) -> String
 }
+impl[A : Show] Show for T[A]
+impl[X : @quickcheck.Arbitrary] @quickcheck.Arbitrary for T[X]
 
 // Type aliases
 
 // Traits
-
-// Extension Methods
-impl Show for T
-
-impl @quickcheck.Arbitrary for T
 

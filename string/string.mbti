@@ -3,6 +3,8 @@ package moonbitlang/core/string
 // Values
 
 // Types and methods
+
+
 impl String {
   compare(String, String) -> Int
   concat(Array[String], ~separator : String = ..) -> String
@@ -43,6 +45,4 @@ impl String {
 // Type aliases
 
 // Traits
-
-// Extension Methods
 

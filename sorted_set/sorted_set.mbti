@@ -31,13 +31,10 @@ impl T {
   to_string[V : Show](Self[V]) -> String
   union[V : Compare + Eq](Self[V], Self[V]) -> Self[V]
 }
+impl[V : Show] Show for T[V]
+impl[X : @quickcheck.Arbitrary + Compare + Eq] @quickcheck.Arbitrary for T[X]
 
 // Type aliases
 
 // Traits
-
-// Extension Methods
-impl Show for T
-
-impl @quickcheck.Arbitrary for T
 
