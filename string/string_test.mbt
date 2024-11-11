@@ -40,10 +40,10 @@ test "compare" {
 }
 
 test "to_bytes" {
-  assert_eq!("中文".to_bytes().to_string(), "中文")
-  assert_eq!("asdf".to_bytes().to_string(), "asdf")
-  assert_eq!("🤣🤣".to_bytes().to_string(), "🤣🤣")
-  assert_eq!("🤔".to_bytes().to_string(), "🤔")
+  assert_eq!("中文".to_bytes().to_unchecked_string(), "中文")
+  assert_eq!("asdf".to_bytes().to_unchecked_string(), "asdf")
+  assert_eq!("🤣🤣".to_bytes().to_unchecked_string(), "🤣🤣")
+  assert_eq!("🤔".to_bytes().to_unchecked_string(), "🤔")
 }
 
 test "Show::output" {

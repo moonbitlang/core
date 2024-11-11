@@ -18,7 +18,7 @@ fn unsafe_substring(str : String, start : Int, end : Int) -> String {
   let len = end - start
   let bytes = Bytes::new(len * 2)
   bytes.blit_from_string(0, str, start, len)
-  bytes.sub_string(0, bytes.length())
+  bytes.to_unchecked_string(offset=0, length=bytes.length())
 }
 
 ///|

@@ -68,7 +68,7 @@ pub fn is_empty(self : Buffer) -> Bool {
 /// 
 /// @alert deprecated "Use `Buffer::to_unchecked_string` instead"
 pub fn to_string(self : Buffer) -> String {
-  self.bytes.sub_string(0, self.len)
+  self.bytes.to_unchecked_string(offset=0, length=self.len)
 }
 
 ///|
@@ -163,5 +163,5 @@ pub fn to_bytes(self : Buffer) -> Bytes {
 
 ///|
 pub impl Show for Buffer with output(self, logger) {
-  logger.write_string(self.to_string())
+  logger.write_string(self.to_unchecked_string())
 }

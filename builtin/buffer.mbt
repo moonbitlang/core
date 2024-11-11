@@ -54,7 +54,7 @@ fn grow_if_necessary(self : Buffer, required : Int) -> Unit {
 ///|
 /// Return a new String contains the data in buffer.
 pub fn to_string(self : Buffer) -> String {
-  self.bytes.sub_string(0, self.len)
+  self.bytes.to_unchecked_string(offset=0, length=self.len)
 }
 
 ///|
