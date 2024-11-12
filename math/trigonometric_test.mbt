@@ -54,12 +54,12 @@ test "sin" {
       inaccuracy(@math.sin(vf[i]), sin_res[i]),
     )
     inspect!(
-      imprecise_equal(@math.sin(100000.0 * pi + vf[i]), sin_res_large[i]),
+      imprecise_equal(@math.sin(100000.0 * PI + vf[i]), sin_res_large[i]),
       content="true",
     )
     max_inaccuracy = @math.maximum(
       max_inaccuracy,
-      inaccuracy(@math.sin(100000.0 * pi + vf[i]), sin_res_large[i]),
+      inaccuracy(@math.sin(100000.0 * PI + vf[i]), sin_res_large[i]),
     )
   }
   inspect!(max_inaccuracy, content="5.6910670620524684e-11")
@@ -89,12 +89,12 @@ test "cos" {
       inaccuracy(@math.cos(vf[i]), cos_res[i]),
     )
     inspect!(
-      imprecise_equal(@math.cos(100000.0 * pi + vf[i]), cos_res_large[i]),
+      imprecise_equal(@math.cos(100000.0 * PI + vf[i]), cos_res_large[i]),
       content="true",
     )
     max_inaccuracy = @math.maximum(
       max_inaccuracy,
-      inaccuracy(@math.cos(100000.0 * pi + vf[i]), cos_res_large[i]),
+      inaccuracy(@math.cos(100000.0 * PI + vf[i]), cos_res_large[i]),
     )
   }
   inspect!(max_inaccuracy, content="5.7822691079678634e-11")
@@ -124,12 +124,12 @@ test "tan" {
       inaccuracy(@math.tan(vf[i]), tan_res[i]),
     )
     inspect!(
-      imprecise_equal(@math.tan(100000.0 * pi + vf[i]), tan_res_large[i]),
+      imprecise_equal(@math.tan(100000.0 * PI + vf[i]), tan_res_large[i]),
       content="true",
     )
     max_inaccuracy = @math.maximum(
       max_inaccuracy,
-      inaccuracy(@math.tan(100000.0 * pi + vf[i]), tan_res_large[i]),
+      inaccuracy(@math.tan(100000.0 * PI + vf[i]), tan_res_large[i]),
     )
   }
   inspect!(max_inaccuracy, content="4.4124632836428646e-9")
