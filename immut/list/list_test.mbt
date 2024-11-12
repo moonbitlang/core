@@ -13,9 +13,9 @@
 // limitations under the License.
 
 test "from_array" {
-  let ls = @list.of([1, 2, 3, 4, 5])
-  let el : @list.T[Int] = @list.Nil
-  inspect!(ls, content="@list.of([1, 2, 3, 4, 5])")
+  let ls = of([1, 2, 3, 4, 5])
+  let el : @list.T[Int] = Nil
+  @json.inspect!(ls, content=[1,2,3,4,5])
   inspect!(el, content="@list.of([])")
 }
 

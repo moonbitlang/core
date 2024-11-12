@@ -8,5 +8,6 @@
   ],
   "targets": {
     "panic_test.mbt": ["not", "native"]
-  }
+  },
+  "test-import-all" : true
 }
