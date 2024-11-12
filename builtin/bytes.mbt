@@ -13,12 +13,6 @@
 // limitations under the License.
 
 ///|
-/// Create a new String from byte sequence.
-pub fn to_string(self : Bytes) -> String {
-  self.sub_string(0, self.length())
-}
-
-///|
 /// Create byte sequence from String.
 pub fn Bytes::of_string(str : String) -> Bytes {
   Bytes::new(str.length() * 2)..blit_from_string(0, str, 0, str.length())
@@ -27,18 +21,43 @@ pub fn Bytes::of_string(str : String) -> Bytes {
 ///|
 /// TODO: support local primitive declaration
 fn unsafe_sub_string(
-  self : Bytes,
+  bytes : Bytes,
   byte_offset : Int,
   byte_length : Int
 ) -> String = "$moonbit.unsafe_bytes_sub_string"
 
 ///|
-/// Return a new String, containing the subsequence of `self` that
+/// Return a new unchecked string, containing the subsequence of `self` that
 /// starts at `byte_offset` and has length `byte_length`.
+/// 
+/// @alert deprecated "Use `to_unchecked_string` instead"
 pub fn sub_string(self : Bytes, byte_offset : Int, byte_length : Int) -> String {
+  self.to_unchecked_string(offset=byte_offset, length=byte_length)
+}
+
+///|
+/// Create a new unchecked string from byte sequence.
+/// 
+/// @alert deprecated "Use `to_unchecked_string` instead"
+pub fn to_string(self : Bytes) -> String {
+  self.to_unchecked_string(offset=0, length=self.length())
+}
+
+///|
+/// Return an unchecked string, containing the subsequence of `self` that starts at 
+/// `offset` and has length `length`. Both `offset` and `length` 
+/// are indexed by byte.
+/// 
+/// Note this function does not validate the encoding of the byte sequence, 
+/// it simply copy the bytes into a new String.
+pub fn to_unchecked_string(
+  self : Bytes,
+  ~offset : Int = 0,
+  ~length : Int = self.length() - offset
+) -> String {
   let len = self.length()
-  guard byte_offset >= 0 && byte_length >= 0 && byte_offset + byte_length <= len
-  unsafe_sub_string(self, byte_offset, byte_length)
+  guard offset >= 0 && length >= 0 && offset + length <= len
+  unsafe_sub_string(self, offset, length)
 }
 
 ///|

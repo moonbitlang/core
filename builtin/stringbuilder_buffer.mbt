@@ -73,13 +73,13 @@ pub fn StringBuilder::write_substring(
 
 ///|
 pub fn StringBuilder::to_string(self : StringBuilder) -> String {
-  self.bytes.sub_string(0, self.len)
+  self.bytes.to_unchecked_string(offset=0, length=self.len)
 }
 
 ///|
 /// TODO: improve perf
 pub impl Show for StringBuilder with output(self, logger) {
-  logger.write_string(self.bytes.sub_string(0, self.len))
+  logger.write_string(self.bytes.to_unchecked_string(offset=0, length=self.len))
 }
 
 ///|

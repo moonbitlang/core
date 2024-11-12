@@ -64,9 +64,19 @@ pub fn is_empty(self : Buffer) -> Bool {
 }
 
 ///|
-/// Return a new String contains the data in buffer.
+/// Return a new string contains the data in buffer.
+/// 
+/// @alert deprecated "Use `Buffer::to_unchecked_string` instead"
 pub fn to_string(self : Buffer) -> String {
-  self.bytes.sub_string(0, self.len)
+  self.bytes.to_unchecked_string(offset=0, length=self.len)
+}
+
+///|
+/// Return a new unchecked string contains the data in buffer.
+/// Note this function does not validate the encoding of the byte sequence, 
+/// it simply copy the bytes into a new String.
+pub fn to_unchecked_string(self : Buffer) -> String {
+  self.bytes.to_unchecked_string(offset=0, length=self.len)
 }
 
 ///|
@@ -153,5 +163,5 @@ pub fn to_bytes(self : Buffer) -> Bytes {
 
 ///|
 pub impl Show for Buffer with output(self, logger) {
-  logger.write_string(self.to_string())
+  logger.write_string(self.to_unchecked_string())
 }

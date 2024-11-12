@@ -10,7 +10,8 @@ impl Buffer {
   new(~size_hint : Int = ..) -> Self
   reset(Self) -> Unit
   to_bytes(Self) -> Bytes
-  to_string(Self) -> String
+  to_string(Self) -> String //deprecated
+  to_unchecked_string(Self) -> String
   write_byte(Self, Byte) -> Unit
   write_bytes(Self, Bytes) -> Unit
   write_char(Self, Char) -> Unit
