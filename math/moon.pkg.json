@@ -6,5 +6,6 @@
   ],
   "test-import": [
     "moonbitlang/core/test"
-  ]
+  ],
+  "test-import-all" : true
 }

@@ -12,8 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-///|
-let pi = 0x3.243F6A8885A308CA8A54
+
 
 ///|
 //Compare two Double values for equality within the allowed error range of 4.5e-9.
