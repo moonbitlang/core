@@ -12,8 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-
-
 ///|
 //Compare two Double values for equality within the allowed error range of 4.5e-9.
 fn imprecise_equal(x : Double, y : Double) -> Bool {
