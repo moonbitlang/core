@@ -45,7 +45,14 @@ pub fn T::of[K : Hash + Eq](arr : FixedArray[K]) -> T[K] {
 ///|
 /// Insert a key into hash set.
 /// @alert unsafe "Panic if the hash set is full."
+/// @alert deprecated "Use `add` instead."
 pub fn insert[K : Hash + Eq](self : T[K], key : K) -> Unit {
+  self.add(key)
+}
+
+///|
+/// Insert a key into hash set.
+pub fn add[K : Hash + Eq](self : T[K], key : K) -> Unit {
   if self.capacity == 0 || self.size >= self.growAt {
     self.grow()
   }

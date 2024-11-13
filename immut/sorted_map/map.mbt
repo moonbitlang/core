@@ -15,13 +15,23 @@
 ///|
 /// Create a new map with a key-value pair inserted.
 /// O(log n).
+/// 
+/// @alert deprecated "Use `add` instead"
 pub fn insert[K : Compare, V](self : T[K, V], key : K, value : V) -> T[K, V] {
+  self.add(key, value)
+}
+
+///|
+/// Create a new map with a key-value pair inserted.
+/// O(log n).
+/// 
+pub fn add[K : Compare, V](self : T[K, V], key : K, value : V) -> T[K, V] {
   match self {
     Empty => singleton(key, value)
     Tree(k, value=v, l, r, ..) =>
       match key.compare(k) {
-        -1 => balance(k, v, insert(l, key, value), r)
-        1 => balance(k, v, l, insert(r, key, value))
+        -1 => balance(k, v, add(l, key, value), r)
+        1 => balance(k, v, l, add(r, key, value))
         _ => new(k, value, l, r)
       }
   }
