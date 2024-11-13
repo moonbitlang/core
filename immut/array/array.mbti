@@ -23,7 +23,6 @@ impl T {
   map[A, B](Self[A], (A) -> B) -> Self[B]
   new[A]() -> Self[A]
   of[A](FixedArray[A]) -> Self[A]
-  op_equal[A : Eq](Self[A], Self[A]) -> Bool
   op_get[A](Self[A], Int) -> A
   push[A](Self[A], A) -> Self[A]
   rev_fold[A, B](Self[A], ~init : B, (B, A) -> B) -> B
@@ -31,6 +30,8 @@ impl T {
   to_array[A](Self[A]) -> Array[A]
   to_string[A : Show](Self[A]) -> String
 }
+impl[A : Eq] Eq for T[A]
+impl[A : Hash] Hash for T[A]
 impl[A : Show] Show for T[A]
 impl[X : @quickcheck.Arbitrary] @quickcheck.Arbitrary for T[X]
 

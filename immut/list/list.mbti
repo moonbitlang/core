@@ -91,6 +91,7 @@ impl T {
   zip[A, B](Self[A], Self[B]) -> Self[(A, B)]?
 }
 impl[A : Eq] Eq for T[A]
+impl[A : Hash] Hash for T[A]
 impl[A : Show] Show for T[A]
 impl[A : ToJson] ToJson for T[A]
 impl[A : @json.FromJson] @json.FromJson for T[A]

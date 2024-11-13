@@ -30,7 +30,6 @@ impl T {
   map[K, X, Y](Self[K, X], (X) -> Y) -> Self[K, Y]
   map_with_key[K, X, Y](Self[K, X], (K, X) -> Y) -> Self[K, Y]
   of[K : Compare + Eq, V](FixedArray[(K, V)]) -> Self[K, V]
-  op_equal[K : Eq, V : Eq](Self[K, V], Self[K, V]) -> Bool
   op_get[K : Compare + Eq, V](Self[K, V], K) -> V?
   remove[K : Compare + Eq, V](Self[K, V], K) -> Self[K, V]
   singleton[K, V](K, V) -> Self[K, V]
@@ -39,6 +38,8 @@ impl T {
   to_json[K : Show, V : ToJson](Self[K, V]) -> Json
   to_string[K : Show, V : Show](Self[K, V]) -> String
 }
+impl[K : Eq, V : Eq] Eq for T[K, V]
+impl[K : Hash, V : Hash] Hash for T[K, V]
 impl[K : Show, V : Show] Show for T[K, V]
 impl[K : Show, V : ToJson] ToJson for T[K, V]
 impl[V : @json.FromJson] @json.FromJson for T[String, V]

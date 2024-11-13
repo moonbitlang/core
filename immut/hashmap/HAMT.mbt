@@ -262,7 +262,7 @@ pub fn T::of[K : Eq + Hash, V](arr : FixedArray[(K, V)]) -> T[K, V] {
 }
 
 ///|
-pub fn op_equal[K : Eq + Hash, V : Eq](self : T[K, V], other : T[K, V]) -> Bool {
+pub impl[K : Eq + Hash, V : Eq] Eq for T[K, V] with op_equal(self, other) {
   if self.size() != other.size() {
     return false
   }

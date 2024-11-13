@@ -31,7 +31,6 @@ impl T {
   min_option[A : Compare + Eq](Self[A]) -> A?
   new[A]() -> Self[A]
   of[A : Compare + Eq](FixedArray[A]) -> Self[A]
-  op_equal[A : Eq](Self[A], Self[A]) -> Bool
   remove[A : Compare + Eq](Self[A], A) -> Self[A]
   remove_min[A : Compare + Eq](Self[A]) -> Self[A]
   singleton[A : Compare + Eq](A) -> Self[A]
@@ -43,6 +42,7 @@ impl T {
   union[A : Compare + Eq](Self[A], Self[A]) -> Self[A]
 }
 impl[A : Default] Default for T[A]
+impl[A : Eq] Eq for T[A]
 impl[A : Hash] Hash for T[A]
 impl[A : Show] Show for T[A]
 impl[A : ToJson] ToJson for T[A]
