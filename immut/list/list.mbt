@@ -1122,3 +1122,10 @@ pub impl[X : @quickcheck.Arbitrary] @quickcheck.Arbitrary for T[X] with arbitrar
 pub fn singleton[A](x : A) -> T[A] {
   Cons(x, Nil)
 }
+
+///|
+pub impl[A : Hash] Hash for T[A] with hash_combine(self, hasher) {
+  for e in self {
+    hasher.combine(e)
+  }
+}
