@@ -140,6 +140,7 @@ pub impl[K : @quickcheck.Arbitrary + Compare, V : @quickcheck.Arbitrary] @quickc
   @quickcheck.Arbitrary::arbitrary(size, rs) |> from_array
 }
 
+///|
 pub impl[K : Hash, V : Hash] Hash for T[K, V] with hash_combine(self, hasher) {
   for e in self {
     hasher..combine(e.0).combine(e.1)

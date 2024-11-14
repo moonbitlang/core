@@ -379,6 +379,7 @@ pub impl[X : @quickcheck.Arbitrary] @quickcheck.Arbitrary for T[X] with arbitrar
   @quickcheck.Arbitrary::arbitrary(size, rs) |> from_array
 }
 
+///|
 pub impl[A : Hash] Hash for T[A] with hash_combine(self, hasher) {
   for e in self {
     hasher.combine(e)
