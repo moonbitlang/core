@@ -602,11 +602,9 @@ test "hash" {
   let l1 = @list.of([1, 2, 3, 4, 5])
   let l2 = @list.of([1, 2, 3, 4, 5])
   inspect!(Hash::hash(l1) == Hash::hash(l2), content="true")
-
   let l3 = @list.of([5, 4, 3, 2, 1])
   inspect!(Hash::hash(l1) == Hash::hash(l3), content="false")
-
-  let l4: @list.T[Int] = @list.of([])
+  let l4 : @list.T[Int] = @list.of([])
   inspect!(Hash::hash(l1) == Hash::hash(l4), content="false")
   inspect!(Hash::hash(l4) == Hash::hash(l4), content="true")
 }
