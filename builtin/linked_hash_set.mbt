@@ -70,13 +70,13 @@ pub fn Set::new[K](~capacity : Int = 8) -> Set[K] {
 /// Create a hash set from array.
 pub fn Set::from_array[K : Hash + Eq](arr : Array[K]) -> Set[K] {
   let m = Set::new(capacity=arr.length())
-  arr.each(fn(e) { m.insert(e) })
+  arr.each(fn(e) { let _ = m.insert(e) })
   m
 }
 
 ///|
-/// Insert a key into the hash set.
-pub fn insert[K : Hash + Eq](self : Set[K], key : K) -> Unit {
+/// Insert a key into the hash set,if key exists return false else true
+pub fn insert[K : Hash + Eq](self : Set[K], key : K) -> Bool {
   if self.size >= self.growAt {
     self.grow()
   }
@@ -92,12 +92,12 @@ pub fn insert[K : Hash + Eq](self : Set[K], key : K) -> Unit {
           entry.idx = idx
           self.add_entry_to_tail(insert_entry)
           self.size += 1
-          break
+          break true
         }
         Some(curr_entry) => {
           let curr_node = self.list[curr_entry.idx]
           if curr_entry.hash == entry.hash && curr_entry.key == entry.key {
-            break
+            break false
           }
           if entry.psl > curr_entry.psl {
             self.entries[idx] = Some(entry)
@@ -138,8 +138,8 @@ pub fn contains[K : Hash + Eq](self : Set[K], key : K) -> Bool {
 }
 
 ///|
-/// Remove a key from hash set.
-pub fn remove[K : Hash + Eq](self : Set[K], key : K) -> Unit {
+/// Remove a key from hash set.if key exists return true else false
+pub fn remove[K : Hash + Eq](self : Set[K], key : K) -> Bool {
   let hash = key.hash()
   for i = 0, idx = hash & self.capacity_mask {
     match self.entries[idx] {
@@ -149,14 +149,14 @@ pub fn remove[K : Hash + Eq](self : Set[K], key : K) -> Unit {
           self.remove_entry(entry)
           self.shift_back(idx)
           self.size -= 1
-          break
+          break true
         }
         if i > entry.psl {
-          break
+          break false
         }
         continue i + 1, (idx + 1) & self.capacity_mask
       }
-      None => break
+      None => break false
     }
   }
 }
@@ -240,7 +240,7 @@ fn grow[K : Hash + Eq](self : Set[K]) -> Unit {
   self.tail = None
   loop old_head {
     Some({ idx, key, .. }) => {
-      self.insert(key)
+      let _=self.insert(key)
       continue old_list[idx].next
     }
     None => break
@@ -391,7 +391,7 @@ pub fn Set::of[K : Hash + Eq](arr : FixedArray[K]) -> Set[K] {
   // arr.iter(fn(e) { m.set(e.0, e.1) })
   for i = 0; i < length; i = i + 1 {
     let e = arr[i]
-    m.insert(e)
+    let _=m.insert(e)
   }
   m
 }
@@ -399,14 +399,14 @@ pub fn Set::of[K : Hash + Eq](arr : FixedArray[K]) -> Set[K] {
 ///|
 pub fn Set::from_iter[K : Hash + Eq](iter : Iter[K]) -> Set[K] {
   let m = Set::new()
-  iter.each(fn(e) { m.insert(e) })
+  iter.each(fn(e) { let _=m.insert(e) })
   m
 }
 
 ///|
 pub fn difference[K : Hash + Eq](self : Set[K], other : Set[K]) -> Set[K] {
   let m = Set::new()
-  self.each(fn(k) { if not(other.contains(k)) { m.insert(k) } })
+  self.each(fn(k) { if not(other.contains(k)) { let _=m.insert(k) } })
   m
 }
 
@@ -416,22 +416,22 @@ pub fn symmetric_difference[K : Hash + Eq](
   other : Set[K]
 ) -> Set[K] {
   let m = Set::new()
-  self.each(fn(k) { if not(other.contains(k)) { m.insert(k) } })
-  other.each(fn(k) { if not(self.contains(k)) { m.insert(k) } })
+  self.each(fn(k) { if not(other.contains(k)) { let _=m.insert(k) } })
+  other.each(fn(k) { if not(self.contains(k)) { let _=m.insert(k) } })
   m
 }
 
 ///|
 pub fn union[K : Hash + Eq](self : Set[K], other : Set[K]) -> Set[K] {
   let m = Set::new()
-  self.each(fn(k) { m.insert(k) })
-  other.each(fn(k) { m.insert(k) })
+  self.each(fn(k) { let _=m.insert(k) })
+  other.each(fn(k) { let _=m.insert(k) })
   m
 }
 
 ///|
 pub fn intersection[K : Hash + Eq](self : Set[K], other : Set[K]) -> Set[K] {
   let m = Set::new()
-  self.each(fn(k) { if other.contains(k) { m.insert(k) } })
+  self.each(fn(k) { if other.contains(k) { let _=m.insert(k) } })
   m
 }
