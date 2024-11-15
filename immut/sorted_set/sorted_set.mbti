@@ -13,7 +13,8 @@ impl T {
   any[A : Compare + Eq](Self[A], (A) -> Bool) -> Bool
   contains[A : Compare + Eq](Self[A], A) -> Bool
   default[A : Default]() -> Self[A]
-  diff[A : Compare + Eq](Self[A], Self[A]) -> Self[A]
+  diff[A : Compare + Eq](Self[A], Self[A]) -> Self[A] //deprecated
+  difference[A : Compare + Eq](Self[A], Self[A]) -> Self[A]
   disjoint[A : Compare + Eq](Self[A], Self[A]) -> Bool
   each[A](Self[A], (A) -> Unit) -> Unit
   filter[A : Compare + Eq](Self[A], (A) -> Bool) -> Self[A]
@@ -21,7 +22,8 @@ impl T {
   from_array[A : Compare + Eq](Array[A]) -> Self[A]
   from_iter[A : Compare + Eq](Iter[A]) -> Self[A]
   from_json[A : @json.FromJson + Compare + Eq](Json) -> Self[A]!@json.JsonDecodeError
-  inter[A : Compare + Eq](Self[A], Self[A]) -> Self[A]
+  inter[A : Compare + Eq](Self[A], Self[A]) -> Self[A] //deprecated
+  intersection[A : Compare + Eq](Self[A], Self[A]) -> Self[A]
   is_empty[A : Compare + Eq](Self[A]) -> Bool
   iter[A](Self[A]) -> Iter[A]
   map[A : Compare + Eq, B : Compare + Eq](Self[A], (A) -> B) -> Self[B]
