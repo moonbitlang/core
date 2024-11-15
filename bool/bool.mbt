@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+///|
 /// Converts a boolean value to its integer representation, where `true` becomes
 /// 1 and `false` becomes 0.
 ///
@@ -43,6 +44,7 @@ pub fn to_int(self : Bool) -> Int {
   }
 }
 
+///|
 /// Converts a boolean value to a 64-bit integer. Returns 1 for `true` and 0 for
 /// `false`.
 ///
@@ -73,6 +75,7 @@ pub fn to_int64(self : Bool) -> Int64 {
   }
 }
 
+///|
 /// Converts a boolean value to an unsigned integer. Returns 1 for `true` and 0
 /// for `false`.
 ///
@@ -103,6 +106,7 @@ pub fn to_uint(self : Bool) -> UInt {
   }
 }
 
+///|
 /// Converts a boolean value to an unsigned 64-bit integer. Returns 1 for `true`
 /// and 0 for `false`.
 ///
