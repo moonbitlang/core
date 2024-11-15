@@ -83,8 +83,8 @@ pub fn insert[K : Hash + Eq](self : Set[K], key : K) -> Unit {
 }
 
 ///|
-/// Insert a key into the hash set.
-pub fn add[K : Hash + Eq](self : Set[K], key : K) -> Unit {
+/// Insert a key into the hash set.if the key exists return false
+pub fn add_and_check[K : Hash + Eq](self : Set[K], key : K) -> Bool {
   if self.size >= self.growAt {
     self.grow()
   }
@@ -100,12 +100,12 @@ pub fn add[K : Hash + Eq](self : Set[K], key : K) -> Unit {
           entry.idx = idx
           self.add_entry_to_tail(insert_entry)
           self.size += 1
-          break
+          break true
         }
         Some(curr_entry) => {
           let curr_node = self.list[curr_entry.idx]
           if curr_entry.hash == entry.hash && curr_entry.key == entry.key {
-            break
+            break false
           }
           if entry.psl > curr_entry.psl {
             self.entries[idx] = Some(entry)
@@ -123,6 +123,13 @@ pub fn add[K : Hash + Eq](self : Set[K], key : K) -> Unit {
         }
       }
   }
+}
+
+///|
+/// Insert a key into the hash set.
+pub fn add[K : Hash + Eq](self : Set[K], key : K) -> Unit {
+  let _ = self.add_and_check(key)
+
 }
 
 ///|
@@ -148,6 +155,13 @@ pub fn contains[K : Hash + Eq](self : Set[K], key : K) -> Bool {
 ///|
 /// Remove a key from hash set.
 pub fn remove[K : Hash + Eq](self : Set[K], key : K) -> Unit {
+  let _ = self.remove_and_check(key)
+
+}
+
+///|
+/// Remove a key from hash set.if the key exists, delete it and return true
+pub fn remove_and_check[K : Hash + Eq](self : Set[K], key : K) -> Bool {
   let hash = key.hash()
   for i = 0, idx = hash & self.capacity_mask {
     match self.entries[idx] {
@@ -157,14 +171,14 @@ pub fn remove[K : Hash + Eq](self : Set[K], key : K) -> Unit {
           self.remove_entry(entry)
           self.shift_back(idx)
           self.size -= 1
-          break
+          break true
         }
         if i > entry.psl {
-          break
+          break false
         }
         continue i + 1, (idx + 1) & self.capacity_mask
       }
-      None => break
+      None => break false
     }
   }
 }
