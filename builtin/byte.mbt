@@ -13,6 +13,16 @@
 // limitations under the License.
 
 ///|
+pub fn op_mul(self : Byte, that : Byte) -> Byte {
+  (self.to_int() * that.to_int()).to_byte()
+}
+
+///|
+pub fn op_div(self : Byte, that : Byte) -> Byte {
+  (self.to_int() / that.to_int()).to_byte()
+}
+
+///|
 /// Compares two `Byte` values for equality.
 ///
 /// Parameters:
