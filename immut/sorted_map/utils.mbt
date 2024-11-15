@@ -198,7 +198,7 @@ fn debug_tree[K : Show, V : Show](self : T[K, V]) -> String {
 pub fn T::from_array[K : Compare, V](array : Array[(K, V)]) -> T[K, V] {
   for i = 0, mp = Empty; i < array.length(); {
     let (k, v) = array[i]
-    continue i + 1, mp.insert(k, v)
+    continue i + 1, mp.add(k, v)
   } else {
     mp
   }
@@ -248,7 +248,7 @@ pub fn iter2[K, V](self : T[K, V]) -> Iter2[K, V] {
 
 ///|
 pub fn T::from_iter[K : Compare, V](iter : Iter[(K, V)]) -> T[K, V] {
-  iter.fold(init=T::empty(), fn(m, e) { m.insert(e.0, e.1) })
+  iter.fold(init=T::empty(), fn(m, e) { m.add(e.0, e.1) })
 }
 
 ///|
@@ -267,7 +267,7 @@ pub fn elems[K, V](self : T[K, V]) -> Array[V] {
 pub fn T::of[K : Compare, V](array : FixedArray[(K, V)]) -> T[K, V] {
   for i = 0, mp = Empty; i < array.length(); {
     let (k, v) = array[i]
-    continue i + 1, mp.insert(k, v)
+    continue i + 1, mp.add(k, v)
   } else {
     mp
   }
@@ -306,7 +306,7 @@ pub impl[V : @json.FromJson] @json.FromJson for T[String, V] with from_json(
     Object(obj) => {
       let mut map = T::empty()
       for k, v in obj {
-        map = map.insert(k, V::from_json!(v, path))
+        map = map.add(k, V::from_json!(v, path))
       }
       map
     }

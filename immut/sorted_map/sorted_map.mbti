@@ -8,6 +8,7 @@ alias @moonbitlang/core/quickcheck as @quickcheck
 // Types and methods
 type T
 impl T {
+  add[K : Compare + Eq, V](Self[K, V], K, V) -> Self[K, V]
   contains[K : Compare + Eq, V](Self[K, V], K) -> Bool
   each[K, V](Self[K, V], (K, V) -> Unit) -> Unit
   eachi[K, V](Self[K, V], (Int, K, V) -> Unit) -> Unit
@@ -21,7 +22,7 @@ impl T {
   from_array[K : Compare + Eq, V](Array[(K, V)]) -> Self[K, V]
   from_iter[K : Compare + Eq, V](Iter[(K, V)]) -> Self[K, V]
   from_json[V : @json.FromJson](Json) -> Self[String, V]!@json.JsonDecodeError
-  insert[K : Compare + Eq, V](Self[K, V], K, V) -> Self[K, V]
+  insert[K : Compare + Eq, V](Self[K, V], K, V) -> Self[K, V] //deprecated
   is_empty[K, V](Self[K, V]) -> Bool
   iter[K, V](Self[K, V]) -> Iter[(K, V)]
   iter2[K, V](Self[K, V]) -> Iter2[K, V]
