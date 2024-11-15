@@ -70,7 +70,7 @@ pub fn Set::new[K](~capacity : Int = 8) -> Set[K] {
 /// Create a hash set from array.
 pub fn Set::from_array[K : Hash + Eq](arr : Array[K]) -> Set[K] {
   let m = Set::new(capacity=arr.length())
-  arr.each(fn(e) { m.insert(e) })
+  arr.each(fn(e) { m.add(e) })
   m
 }
 
@@ -248,7 +248,7 @@ fn grow[K : Hash + Eq](self : Set[K]) -> Unit {
   self.tail = None
   loop old_head {
     Some({ idx, key, .. }) => {
-      self.insert(key)
+      self.add(key)
       continue old_list[idx].next
     }
     None => break
@@ -399,7 +399,7 @@ pub fn Set::of[K : Hash + Eq](arr : FixedArray[K]) -> Set[K] {
   // arr.iter(fn(e) { m.set(e.0, e.1) })
   for i = 0; i < length; i = i + 1 {
     let e = arr[i]
-    m.insert(e)
+    m.add(e)
   }
   m
 }
@@ -407,14 +407,14 @@ pub fn Set::of[K : Hash + Eq](arr : FixedArray[K]) -> Set[K] {
 ///|
 pub fn Set::from_iter[K : Hash + Eq](iter : Iter[K]) -> Set[K] {
   let m = Set::new()
-  iter.each(fn(e) { m.insert(e) })
+  iter.each(fn(e) { m.add(e) })
   m
 }
 
 ///|
 pub fn difference[K : Hash + Eq](self : Set[K], other : Set[K]) -> Set[K] {
   let m = Set::new()
-  self.each(fn(k) { if not(other.contains(k)) { m.insert(k) } })
+  self.each(fn(k) { if not(other.contains(k)) { m.add(k) } })
   m
 }
 
@@ -424,22 +424,22 @@ pub fn symmetric_difference[K : Hash + Eq](
   other : Set[K]
 ) -> Set[K] {
   let m = Set::new()
-  self.each(fn(k) { if not(other.contains(k)) { m.insert(k) } })
-  other.each(fn(k) { if not(self.contains(k)) { m.insert(k) } })
+  self.each(fn(k) { if not(other.contains(k)) { m.add(k) } })
+  other.each(fn(k) { if not(self.contains(k)) { m.add(k) } })
   m
 }
 
 ///|
 pub fn union[K : Hash + Eq](self : Set[K], other : Set[K]) -> Set[K] {
   let m = Set::new()
-  self.each(fn(k) { m.insert(k) })
-  other.each(fn(k) { m.insert(k) })
+  self.each(fn(k) { m.add(k) })
+  other.each(fn(k) { m.add(k) })
   m
 }
 
 ///|
 pub fn intersection[K : Hash + Eq](self : Set[K], other : Set[K]) -> Set[K] {
   let m = Set::new()
-  self.each(fn(k) { if other.contains(k) { m.insert(k) } })
+  self.each(fn(k) { if other.contains(k) { m.add(k) } })
   m
 }
