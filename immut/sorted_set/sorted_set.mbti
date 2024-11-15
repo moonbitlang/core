@@ -22,7 +22,8 @@ impl T {
   from_array[A : Compare + Eq](Array[A]) -> Self[A]
   from_iter[A : Compare + Eq](Iter[A]) -> Self[A]
   from_json[A : @json.FromJson + Compare + Eq](Json) -> Self[A]!@json.JsonDecodeError
-  inter[A : Compare + Eq](Self[A], Self[A]) -> Self[A]
+  inter[A : Compare + Eq](Self[A], Self[A]) -> Self[A] //deprecated
+  intersection[A : Compare + Eq](Self[A], Self[A]) -> Self[A]
   is_empty[A : Compare + Eq](Self[A]) -> Bool
   iter[A](Self[A]) -> Iter[A]
   map[A : Compare + Eq, B : Compare + Eq](Self[A], (A) -> B) -> Self[B]

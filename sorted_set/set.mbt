@@ -264,7 +264,14 @@ pub fn difference[V : Compare](self : T[V], src : T[V]) -> T[V] {
 
 ///|
 /// Returns the intersection of two sets.
+/// @alert deprecated "Use `intersection` instead"
 pub fn intersect[V : Compare](self : T[V], src : T[V]) -> T[V] {
+  self.intersection(src)
+}
+
+///|
+/// Returns the intersection of two sets.
+pub fn intersection[V : Compare](self : T[V], src : T[V]) -> T[V] {
   let ret = new()
   self.each(fn(x) { if src.contains(x) { ret.add(x) } })
   ret

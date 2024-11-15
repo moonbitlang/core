@@ -306,6 +306,12 @@ pub fn union[A : Compare](self : T[A], other : T[A]) -> T[A] {
 }
 
 ///|
+/// @alert deprecated "Use `intersection` instead"
+pub fn inter[A : Compare](self : T[A], other : T[A]) -> T[A] {
+  self.intersection(other)
+}
+
+///|
 /// Returns the intersection of self with other.
 /// 
 /// # Example
@@ -314,7 +320,7 @@ pub fn union[A : Compare](self : T[A], other : T[A]) -> T[A] {
 /// println(of([3, 4, 5]).inter(of([4, 5, 6])))
 /// // output: of([4, 5])
 /// ```
-pub fn inter[A : Compare](self : T[A], other : T[A]) -> T[A] {
+pub fn intersection[A : Compare](self : T[A], other : T[A]) -> T[A] {
   match (self, other) {
     (Empty, _) | (_, Empty) => Empty
     (Node(left=l1, value=v1, right=r1, ..), _) =>
