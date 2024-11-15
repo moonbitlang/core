@@ -3,7 +3,6 @@ package moonbitlang/core/ref
 alias @moonbitlang/core/quickcheck as @quickcheck
 
 // Values
-fn ref[T](T) -> Ref[T] //deprecated
 
 // Types and methods
 

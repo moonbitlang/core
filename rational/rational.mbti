@@ -3,7 +3,7 @@ package moonbitlang/core/rational
 // Values
 
 // Types and methods
-pub type! RationalError String
+pub(all) type! RationalError String
 impl Eq for RationalError
 impl Show for RationalError
 

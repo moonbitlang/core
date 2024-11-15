@@ -1,16 +1,16 @@
 package moonbitlang/core/json
 
 // Values
-fn from_json[T : FromJson](Json, ~path : JsonPath = ..) -> T!JsonDecodeError
+fn from_json[T : FromJson](Json, path~ : JsonPath = ..) -> T!JsonDecodeError
 
-fn inspect(ToJson, ~content? : Json, ~loc : SourceLoc = _, ~args_loc : ArgsLoc = _) -> Unit!InspectError
+fn inspect(ToJson, content? : Json, loc~ : SourceLoc = _, args_loc~ : ArgsLoc = _) -> Unit!InspectError
 
 fn parse(String) -> Json!ParseError
 
 fn valid(String) -> Bool
 
 // Types and methods
-pub type! JsonDecodeError (JsonPath, String)
+pub(all) type! JsonDecodeError (JsonPath, String)
 impl JsonDecodeError {
   op_equal(Self, Self) -> Bool
   to_string(Self) -> String
@@ -27,7 +27,7 @@ impl JsonPath {
 }
 impl Eq for JsonPath
 
-pub type! ParseError {
+pub(all) type! ParseError {
   InvalidChar(Position, Char)
   InvalidEof
   InvalidNumber(Position, String)
@@ -40,9 +40,9 @@ impl ParseError {
 impl Eq for ParseError
 impl Show for ParseError
 
-pub struct Position {
-  pub line : Int
-  pub column : Int
+pub(all) struct Position {
+  line : Int
+  column : Int
 }
 impl Position {
   op_equal(Self, Self) -> Bool
@@ -58,7 +58,7 @@ impl Json {
   as_object(Self) -> Map[String, Self]?
   as_string(Self) -> String?
   item(Self, Int) -> Self?
-  stringify(Self, ~escape_slash : Bool = .., ~indent : Int = ..) -> String
+  stringify(Self, escape_slash~ : Bool = .., indent~ : Int = ..) -> String
   to_json(Self) -> Self
   to_string(Self) -> String
   value(Self, String) -> Self?

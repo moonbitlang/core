@@ -1,27 +1,27 @@
 package moonbitlang/core/test
 
 // Values
-fn eq[T : Show + Eq](T, T, ~loc : SourceLoc = _) -> Unit! //deprecated
+fn eq[T : Show + Eq](T, T, loc~ : SourceLoc = _) -> Unit! //deprecated
 
-fn fail[T](String, ~loc : SourceLoc = _) -> T!
+fn fail[T](String, loc~ : SourceLoc = _) -> T!
 
-fn is[T : Show](T, T, ~loc : SourceLoc = _) -> Unit!
+fn is[T : Show](T, T, loc~ : SourceLoc = _) -> Unit!
 
-fn is_false(Bool, ~loc : SourceLoc = _) -> Unit! //deprecated
+fn is_false(Bool, loc~ : SourceLoc = _) -> Unit! //deprecated
 
-fn is_not[T : Show](T, T, ~loc : SourceLoc = _) -> Unit!
+fn is_not[T : Show](T, T, loc~ : SourceLoc = _) -> Unit!
 
-fn is_true(Bool, ~loc : SourceLoc = _) -> Unit! //deprecated
+fn is_true(Bool, loc~ : SourceLoc = _) -> Unit! //deprecated
 
-fn ne[T : Show + Eq](T, T, ~loc : SourceLoc = _) -> Unit! //deprecated
+fn ne[T : Show + Eq](T, T, loc~ : SourceLoc = _) -> Unit! //deprecated
 
 // Types and methods
-pub struct T {
-  pub name : String
-  pub buffer : StringBuilder
+pub(all) struct T {
+  name : String
+  buffer : StringBuilder
 }
 impl T {
-  snapshot(Self, ~filename : String, ~loc : SourceLoc = _, ~args_loc : ArgsLoc = _) -> Unit!SnapshotError
+  snapshot(Self, filename~ : String, loc~ : SourceLoc = _, args_loc~ : ArgsLoc = _) -> Unit!SnapshotError
   write(Self, Show) -> Unit
   writeln(Self, Show) -> Unit
 }
