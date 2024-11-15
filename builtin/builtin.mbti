@@ -400,7 +400,9 @@ impl Byte {
   lsr(Byte, Int) -> Byte //deprecated
   lxor(Byte, Byte) -> Byte
   op_add(Byte, Byte) -> Byte
+  op_div(Byte, Byte) -> Byte
   op_equal(Byte, Byte) -> Bool
+  op_mul(Byte, Byte) -> Byte
   op_shl(Byte, Int) -> Byte
   op_shr(Byte, Int) -> Byte
   op_sub(Byte, Byte) -> Byte
