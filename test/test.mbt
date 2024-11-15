@@ -70,15 +70,21 @@ pub fn is_false(x : Bool, loc~ : SourceLoc = _) -> Unit! {
 /// ```
 /// let a = "4" + "2"
 /// let b = "4" + "2"
-/// is(a, a)!  // this is okay
-/// is(a, b)!  // yields an error
+/// same_object(a, a)!  // this is okay
+/// same_object(a, b)!  // yields an error
 /// ```
-pub fn is[T : Show](a : T, b : T, loc~ : SourceLoc = _) -> Unit! {
+pub fn same_object[T : Show](a : T, b : T, loc~ : SourceLoc = _) -> Unit! {
   if not(physical_equal(a, b)) {
     let a = debug_string(a)
     let b = debug_string(b)
     fail!("FAILED: \{loc} `\{a} is \{b}`")
   }
+}
+
+///|
+/// @alert deprecated "Use `same_object` instead"
+pub fn is[T : Show](a : T, b : T, loc~ : SourceLoc = _) -> Unit! {
+  same_object!(a, b, loc~)
 }
 
 ///|

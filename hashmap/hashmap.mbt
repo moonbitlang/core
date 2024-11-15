@@ -299,7 +299,7 @@ test "clear" {
   assert_eq!(m.size(), 0)
   assert_eq!(m.capacity(), 8)
   for i = 0; i < m.capacity(); i = i + 1 {
-    @test.is!(m.entries[i], None)
+    @test.same_object!(m.entries[i], None)
   }
 }
 
