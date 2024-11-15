@@ -25,8 +25,8 @@ fn unsafe_substring(str : String, start : Int, end : Int) -> String {
 /// Get substring of the string from [start] to [end] exclusive.
 pub fn substring(
   self : String,
-  ~start : Int = 0,
-  ~end : Int = self.length()
+  start~ : Int = 0,
+  end~ : Int = self.length()
 ) -> String {
   guard start >= 0 && start <= end && end <= self.length()
   unsafe_substring(self, start, end)

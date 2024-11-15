@@ -14,7 +14,7 @@
 
 ///|
 /// a simple bit set to store a set of integers less than 32
-pub type Bitset UInt derive(Eq)
+pub(all) type Bitset UInt derive(Eq)
 
 ///|
 let empty_bitset : Bitset = Bitset(0)

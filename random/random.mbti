@@ -7,12 +7,12 @@ type Rand
 impl Rand {
   double(Self) -> Double
   float(Self) -> Float
-  int(Self, ~limit : Int = ..) -> Int
-  int64(Self, ~limit : Int64 = ..) -> Int64
-  new(~seed : Bytes = ..) -> Self
+  int(Self, limit~ : Int = ..) -> Int
+  int64(Self, limit~ : Int64 = ..) -> Int64
+  new(seed~ : Bytes = ..) -> Self
   shuffle(Self, Int, (Int, Int) -> Unit) -> Unit
-  uint(Self, ~limit : UInt = ..) -> UInt
-  uint64(Self, ~limit : UInt64 = ..) -> UInt64
+  uint(Self, limit~ : UInt = ..) -> UInt
+  uint64(Self, limit~ : UInt64 = ..) -> UInt64
 }
 
 // Type aliases

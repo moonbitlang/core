@@ -179,14 +179,14 @@ pub fn String::make(length : Int, value : Char) -> String {
 }
 
 ///|
-pub type! InspectError String
+pub(all) type! InspectError String
 
 ///|
 pub fn inspect(
   obj : Show,
-  ~content : String = "",
-  ~loc : SourceLoc = _,
-  ~args_loc : ArgsLoc = _
+  content~ : String = "",
+  loc~ : SourceLoc = _,
+  args_loc~ : ArgsLoc = _
 ) -> Unit!InspectError {
   let actual = obj.to_string()
   if actual != content {
@@ -202,4 +202,4 @@ pub fn inspect(
 
 ///|
 // Used by test driver
-pub type! SnapshotError String
+pub(all) type! SnapshotError String

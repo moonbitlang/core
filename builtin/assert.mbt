@@ -20,7 +20,7 @@ fn debug_string[T : Show](t : T) -> String {
 }
 
 ///|
-pub fn assert_eq[T : Eq + Show](a : T, b : T, ~loc : SourceLoc = _) -> Unit! {
+pub fn assert_eq[T : Eq + Show](a : T, b : T, loc~ : SourceLoc = _) -> Unit! {
   if a != b {
     fail!("FAILED: \{loc} `\{a} == \{b}`")
   }
@@ -30,7 +30,7 @@ pub fn assert_eq[T : Eq + Show](a : T, b : T, ~loc : SourceLoc = _) -> Unit! {
 pub fn assert_not_eq[T : Eq + Show](
   a : T,
   b : T,
-  ~loc : SourceLoc = _
+  loc~ : SourceLoc = _
 ) -> Unit! {
   if not(a != b) {
     let a = debug_string(a)
@@ -40,14 +40,14 @@ pub fn assert_not_eq[T : Eq + Show](
 }
 
 ///|
-pub fn assert_true(x : Bool, ~loc : SourceLoc = _) -> Unit! {
+pub fn assert_true(x : Bool, loc~ : SourceLoc = _) -> Unit! {
   if not(x) {
     fail!("FAILED: \{loc} `\{x}` is not true")
   }
 }
 
 ///|
-pub fn assert_false(x : Bool, ~loc : SourceLoc = _) -> Unit! {
+pub fn assert_false(x : Bool, loc~ : SourceLoc = _) -> Unit! {
   if x {
     let x = debug_string(x)
     fail!("FAILED: \{loc}: `\{x}` is not false")

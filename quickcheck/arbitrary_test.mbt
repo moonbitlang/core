@@ -21,12 +21,12 @@ struct H {
 test {
   let state = @splitmix.RandomState::default()
   let size = 10
-  let v : H = @quickcheck.gen(~state, ~size)
+  let v : H = @quickcheck.gen(state~, size~)
   inspect!(v, content="{x: 0, y: 0}")
   let state = state.split()
-  let v : H = @quickcheck.gen(~state, ~size)
+  let v : H = @quickcheck.gen(state~, size~)
   inspect!(v, content="{x: -1, y: -2}")
   let state = state.split()
-  let v : H = @quickcheck.gen(~state, ~size)
+  let v : H = @quickcheck.gen(state~, size~)
   inspect!(v, content="{x: 7, y: 2}")
 }

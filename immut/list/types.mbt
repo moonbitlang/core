@@ -13,7 +13,7 @@
 // limitations under the License.
 
 ///|
-pub enum T[A] {
+pub(all) enum T[A] {
   Nil
   Cons(A, T[A])
 } derive(Eq)

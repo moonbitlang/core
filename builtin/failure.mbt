@@ -13,9 +13,9 @@
 // limitations under the License.
 
 ///|
-pub type! Failure String
+pub(all) type! Failure String
 
 ///|
-pub fn fail[T](msg : String, ~loc : SourceLoc = _) -> T!Failure {
+pub fn fail[T](msg : String, loc~ : SourceLoc = _) -> T!Failure {
   raise Failure("FAILED: \{loc} \{msg}")
 }

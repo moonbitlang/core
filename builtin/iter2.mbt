@@ -73,7 +73,7 @@ pub fn each[A, B](self : Iter2[A, B], f : (A, B) -> Unit) -> Unit {
 
 ///|
 pub fn iter[A, B](self : Iter2[A, B]) -> Iter[(A, B)] {
-  Iter::new(fn(yield) { self.run(fn(a, b) { yield((a, b)) }) })
+  Iter::new(fn(yield_) { self.run(fn(a, b) { yield_((a, b)) }) })
 }
 
 ///|

@@ -31,7 +31,7 @@ pub fn T::to_string[A : Show](xs : T[A]) -> String {
 pub impl[A : ToJson] ToJson for T[A] with to_json(self) {
   let capacity = self.length()
   guard capacity != 0 else { return Array([]) }
-  let jsons = Array::new(~capacity)
+  let jsons = Array::new(capacity~)
   self.each(fn(a) { jsons.push(a.to_json()) })
   Array(jsons)
 }
@@ -371,7 +371,7 @@ pub fn rev[A](self : T[A]) -> T[A] {
 /// let r = of([1, 2, 3, 4, 5]).fold(~init=0, fn(acc, x) { acc + x })
 /// println(r) // output: 15
 /// ```
-pub fn fold[A, B](self : T[A], ~init : B, f : (B, A) -> B) -> B {
+pub fn fold[A, B](self : T[A], init~ : B, f : (B, A) -> B) -> B {
   match self {
     Nil => init
     Cons(head, tail) => tail.fold(f, init=f(init, head))
@@ -385,10 +385,10 @@ pub fn fold[A, B](self : T[A], ~init : B, f : (B, A) -> B) -> B {
 /// ```
 /// let r = of([1, 2, 3, 4, 5]).rev_fold(fn(x, acc) { x + acc }, ~init=0)
 /// ```
-pub fn rev_fold[A, B](self : T[A], ~init : B, f : (A, B) -> B) -> B {
+pub fn rev_fold[A, B](self : T[A], init~ : B, f : (A, B) -> B) -> B {
   match self {
     Nil => init
-    Cons(head, tail) => f(head, tail.rev_fold(f, ~init))
+    Cons(head, tail) => f(head, tail.rev_fold(f, init~))
   }
 }
 
@@ -402,8 +402,8 @@ pub fn rev_fold[A, B](self : T[A], ~init : B, f : (A, B) -> B) -> B {
 /// println(r) // output: 15
 /// ```
 /// @alert deprecated "Use `fold` instead"
-pub fn fold_left[A, B](self : T[A], f : (B, A) -> B, ~init : B) -> B {
-  self.fold(~init, f)
+pub fn fold_left[A, B](self : T[A], f : (B, A) -> B, init~ : B) -> B {
+  self.fold(init~, f)
 }
 
 ///|
@@ -414,16 +414,16 @@ pub fn fold_left[A, B](self : T[A], f : (B, A) -> B, ~init : B) -> B {
 /// let r = of([1, 2, 3, 4, 5]).fold_right(fn(x, acc) { x + acc }, ~init=0)
 /// ```
 /// @alert deprecated "Use `rev_fold` instead"
-pub fn fold_right[A, B](self : T[A], f : (A, B) -> B, ~init : B) -> B {
+pub fn fold_right[A, B](self : T[A], f : (A, B) -> B, init~ : B) -> B {
   match self {
     Nil => init
-    Cons(head, tail) => f(head, tail.rev_fold(f, ~init))
+    Cons(head, tail) => f(head, tail.rev_fold(f, init~))
   }
 }
 
 ///|
 /// Fold the list from left with index.
-pub fn foldi[A, B](self : T[A], ~init : B, f : (Int, B, A) -> B) -> B {
+pub fn foldi[A, B](self : T[A], init~ : B, f : (Int, B, A) -> B) -> B {
   fn go(xs : T[A], i : Int, f : (Int, B, A) -> B, acc : B) -> B {
     match xs {
       Nil => acc
@@ -436,7 +436,7 @@ pub fn foldi[A, B](self : T[A], ~init : B, f : (Int, B, A) -> B) -> B {
 
 ///|
 /// Fold the list from right with index.
-pub fn rev_foldi[A, B](self : T[A], ~init : B, f : (Int, A, B) -> B) -> B {
+pub fn rev_foldi[A, B](self : T[A], init~ : B, f : (Int, A, B) -> B) -> B {
   fn go(xs : T[A], i : Int, f : (Int, A, B) -> B, acc : B) -> B {
     match xs {
       Nil => acc
@@ -450,7 +450,7 @@ pub fn rev_foldi[A, B](self : T[A], ~init : B, f : (Int, A, B) -> B) -> B {
 ///|
 /// Fold the list from left with index.
 /// @alert deprecated "Use `foldi` instead"
-pub fn fold_lefti[A, B](self : T[A], f : (Int, B, A) -> B, ~init : B) -> B {
+pub fn fold_lefti[A, B](self : T[A], f : (Int, B, A) -> B, init~ : B) -> B {
   fn go(xs : T[A], i : Int, f : (Int, B, A) -> B, acc : B) -> B {
     match xs {
       Nil => acc
@@ -464,7 +464,7 @@ pub fn fold_lefti[A, B](self : T[A], f : (Int, B, A) -> B, ~init : B) -> B {
 ///|
 /// Fold the list from right with index.
 /// @alert deprecated "Use `rev_foldi` instead"
-pub fn fold_righti[A, B](self : T[A], f : (Int, A, B) -> B, ~init : B) -> B {
+pub fn fold_righti[A, B](self : T[A], f : (Int, A, B) -> B, init~ : B) -> B {
   fn go(xs : T[A], i : Int, f : (Int, A, B) -> B, acc : B) -> B {
     match xs {
       Nil => acc
@@ -768,7 +768,7 @@ pub fn contains[A : Eq](self : T[A], value : A) -> Bool {
 /// // from_array([0, 1, 2])
 /// unfold(0, fn { i => if i == 3 { None } else { Some(i, i + 1) } }) |> debug
 /// ```
-pub fn unfold[A, S](f : (S) -> (A, S)?, ~init : S) -> T[A] {
+pub fn unfold[A, S](f : (S) -> (A, S)?, init~ : S) -> T[A] {
   match f(init) {
     Some((element, new_state)) => Cons(element, unfold(init=new_state, f))
     None => Nil
@@ -860,7 +860,7 @@ pub fn drop_while[A](self : T[A], p : (A) -> Bool) -> T[A] {
 /// let ls = of([1, 2, 3, 4, 5])
 /// ls.scan_left(fn(acc, x) { acc + x }, ~init=0)
 /// ```
-pub fn scan_left[A, E](self : T[A], f : (E, A) -> E, ~init : E) -> T[E] {
+pub fn scan_left[A, E](self : T[A], f : (E, A) -> E, init~ : E) -> T[E] {
   Cons(
     init,
     match self {
@@ -880,11 +880,11 @@ pub fn scan_left[A, E](self : T[A], f : (E, A) -> E, ~init : E) -> T[E] {
 /// let ls = of([1, 2, 3, 4, 5])
 /// ls.scan_right(fn(x, acc) { acc + x }, ~init=0)
 /// ```
-pub fn scan_right[A, B](self : T[A], f : (A, B) -> B, ~init : B) -> T[B] {
+pub fn scan_right[A, B](self : T[A], f : (A, B) -> B, init~ : B) -> T[B] {
   match self {
     Nil => Cons(init, Nil)
     Cons(x, xs) => {
-      let qs = xs.scan_right(f, ~init)
+      let qs = xs.scan_right(f, init~)
       Cons(f(x, qs.unsafe_head()), qs)
     }
   }
@@ -1065,11 +1065,11 @@ pub fn T::default[X]() -> T[X] {
 ///|
 pub fn iter[A](self : T[A]) -> Iter[A] {
   Iter::new(
-    fn(yield) {
+    fn(yield_) {
       loop self {
         Nil => IterContinue
         Cons(head, tail) => {
-          if yield(head) == IterEnd {
+          if yield_(head) == IterEnd {
             break IterEnd
           }
           continue tail
@@ -1082,11 +1082,11 @@ pub fn iter[A](self : T[A]) -> Iter[A] {
 ///|
 pub fn iter2[A](self : T[A]) -> Iter2[Int, A] {
   Iter2::new(
-    fn(yield) {
+    fn(yield_) {
       loop self, 0 {
         Nil, _ => IterEnd
         Cons(head, tail), i => {
-          if yield(i, head) == IterEnd {
+          if yield_(i, head) == IterEnd {
             break IterEnd
           }
           continue tail, i + 1

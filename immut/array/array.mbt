@@ -43,10 +43,10 @@ pub fn to_array[A](self : T[A]) -> Array[A] {
 ///|
 pub fn iter[A](self : T[A]) -> Iter[A] {
   Iter::new(
-    fn(yield) {
+    fn(yield_) {
       let arr = self.to_array()
       for i = 0; i < self.size; i = i + 1 {
-        if yield(arr[i]) == IterEnd {
+        if yield_(arr[i]) == IterEnd {
           break IterEnd
         }
       } else {
@@ -223,7 +223,7 @@ pub fn op_equal[A : Eq](self : T[A], other : T[A]) -> Bool {
 /// let v = @immut/array.of([1, 2, 3, 4, 5])
 /// v.fold(fn(a, b) { a + b }, init=0)
 /// ```
-pub fn fold[A, B](self : T[A], ~init : B, f : (B, A) -> B) -> B {
+pub fn fold[A, B](self : T[A], init~ : B, f : (B, A) -> B) -> B {
   fn go(t : Tree[A], acc : B) -> B {
     match t {
       Empty => acc
@@ -243,7 +243,7 @@ pub fn fold[A, B](self : T[A], ~init : B, f : (B, A) -> B) -> B {
 /// let v = @immut/array.of([1, 2, 3, 4, 5])
 /// v.rev_fold(fn(a, b) { a + b }, init=0)
 /// ```
-pub fn rev_fold[A, B](self : T[A], ~init : B, f : (B, A) -> B) -> B {
+pub fn rev_fold[A, B](self : T[A], init~ : B, f : (B, A) -> B) -> B {
   fn go(t : Tree[A], acc : B) -> B {
     match t {
       Empty => acc
@@ -264,8 +264,8 @@ pub fn rev_fold[A, B](self : T[A], ~init : B, f : (B, A) -> B) -> B {
 /// v.fold_left(fn(a, b) { a + b }, init=0)
 /// ```
 /// @alert deprecated "Use `fold` instead"
-pub fn fold_left[A](self : T[A], f : (A, A) -> A, ~init : A) -> A {
-  self.fold(~init, f)
+pub fn fold_left[A](self : T[A], f : (A, A) -> A, init~ : A) -> A {
+  self.fold(init~, f)
 }
 
 ///|
@@ -277,8 +277,8 @@ pub fn fold_left[A](self : T[A], f : (A, A) -> A, ~init : A) -> A {
 /// v.fold_right(fn(a, b) { a + b }, init=0)
 /// ```
 /// @alert deprecated "Use `rev_fold` instead"
-pub fn fold_right[A](self : T[A], f : (A, A) -> A, ~init : A) -> A {
-  self.rev_fold(~init, f)
+pub fn fold_right[A](self : T[A], f : (A, A) -> A, init~ : A) -> A {
+  self.rev_fold(init~, f)
 }
 
 ///|

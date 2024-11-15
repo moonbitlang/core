@@ -7,6 +7,7 @@ alias @moonbitlang/core/quickcheck as @quickcheck
 // Types and methods
 type T
 impl T {
+  add[K : Hash + Eq](Self[K], K) -> Unit
   capacity[K](Self[K]) -> Int
   clear[K](Self[K]) -> Unit
   contains[K : Hash + Eq](Self[K], K) -> Bool
@@ -15,7 +16,7 @@ impl T {
   eachi[K](Self[K], (Int, K) -> Unit) -> Unit
   from_array[K : Hash + Eq](Array[K]) -> Self[K]
   from_iter[K : Hash + Eq](Iter[K]) -> Self[K]
-  insert[K : Hash + Eq](Self[K], K) -> Unit
+  insert[K : Hash + Eq](Self[K], K) -> Unit //deprecated
   intersection[K : Hash + Eq](Self[K], Self[K]) -> Self[K]
   is_empty[K](Self[K]) -> Bool
   iter[K](Self[K]) -> Iter[K]

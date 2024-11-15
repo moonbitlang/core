@@ -14,7 +14,7 @@
 
 ///|
 /// Creates a new, empty deque.
-pub fn T::new[A](~capacity : Int = 0) -> T[A] {
+pub fn T::new[A](capacity~ : Int = 0) -> T[A] {
   T::{ buf: UninitializedArray::make(capacity), len: 0, head: 0, tail: 0 }
 }
 
@@ -534,9 +534,9 @@ pub fn shrink_to_fit[A](self : T[A]) -> Unit {
 ///|
 pub fn iter[A](self : T[A]) -> Iter[A] {
   Iter::new(
-    fn(yield) {
+    fn(yield_) {
       for i in 0..<self.length() {
-        guard let IterContinue = yield(self[i]) else { x => break x }
+        guard let IterContinue = yield_(self[i]) else { x => break x }
 
       } else {
         IterContinue

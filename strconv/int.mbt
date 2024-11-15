@@ -27,7 +27,7 @@ let int64_max = 0x7fffffffffffffffL
 ///|
 /// Parse a string in the given base (0, 2 to 36), return a Int64 number or an error.
 /// If the `~base` argument is 0, the base will be inferred by the prefix.
-pub fn parse_int64(str : String, ~base : Int = 0) -> Int64!StrConvError {
+pub fn parse_int64(str : String, base~ : Int = 0) -> Int64!StrConvError {
   if str == "" {
     syntax_err!()
   }
@@ -105,8 +105,8 @@ pub fn parse_int64(str : String, ~base : Int = 0) -> Int64!StrConvError {
 ///|
 /// Parse a string in the given base (0, 2 to 36), return a Int number or an error.
 /// If the `~base` argument is 0, the base will be inferred by the prefix.
-pub fn parse_int(str : String, ~base : Int = 0) -> Int!StrConvError {
-  let n = parse_int64!(str, ~base)
+pub fn parse_int(str : String, base~ : Int = 0) -> Int!StrConvError {
+  let n = parse_int64!(str, base~)
   if n < int_min.to_int64() || n > int_max.to_int64() {
     range_err!()
   }

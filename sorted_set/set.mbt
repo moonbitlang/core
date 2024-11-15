@@ -55,7 +55,7 @@ fn deep_clone_tree[V](node : Node[V]?) -> Node[V]? {
     Some(node) => {
       let left = deep_clone_tree(node.left)
       let right = deep_clone_tree(node.right)
-      let new_node = new_node(node.value, ~left, ~right, height=node.height)
+      let new_node = new_node(node.value, left~, right~, height=node.height)
       Some(new_node)
     }
   }
@@ -64,9 +64,9 @@ fn deep_clone_tree[V](node : Node[V]?) -> Node[V]? {
 ///|
 fn new_node[V](
   value : V,
-  ~left : Node[V]? = None,
-  ~right : Node[V]? = None,
-  ~height : Int = 1
+  left~ : Node[V]? = None,
+  right~ : Node[V]? = None,
+  height~ : Int = 1
 ) -> Node[V] {
   { value, left, right, height }
 }
@@ -74,8 +74,8 @@ fn new_node[V](
 ///|
 fn new_node_update_height[V](
   value : V,
-  ~left : Node[V]?,
-  ~right : Node[V]?
+  left~ : Node[V]?,
+  right~ : Node[V]?
 ) -> Node[V] {
   { value, left, right, height: max(height(left), height(right)) + 1 }
 }
@@ -190,7 +190,7 @@ fn join[V : Compare](left : Node[V]?, value : V, right : Node[V]?) -> Node[V] {
   } else if hr > hl + 1 {
     join_left(left, value, right)
   } else {
-    new_node_update_height(value, ~left, ~right)
+    new_node_update_height(value, left~, right~)
   }
 }
 
@@ -246,6 +246,8 @@ fn join_right[V : Compare](l : Node[V]?, v : V, r : Node[V]?) -> Node[V] {
 
 ///|
 /// Returns the difference of two sets.
+/// 
+/// @alert deprecated "Use `difference` instead"
 pub fn diff[V : Compare](self : T[V], src : T[V]) -> T[V] {
   let ret = new()
   self.each(fn(x) { if not(src.contains(x)) { ret.add(x) } })
@@ -253,8 +255,23 @@ pub fn diff[V : Compare](self : T[V], src : T[V]) -> T[V] {
 }
 
 ///|
+/// Returns the difference of two sets.
+pub fn difference[V : Compare](self : T[V], src : T[V]) -> T[V] {
+  let ret = new()
+  self.each(fn(x) { if not(src.contains(x)) { ret.add(x) } })
+  ret
+}
+
+///|
 /// Returns the intersection of two sets.
+/// @alert deprecated "Use `intersection` instead"
 pub fn intersect[V : Compare](self : T[V], src : T[V]) -> T[V] {
+  self.intersection(src)
+}
+
+///|
+/// Returns the intersection of two sets.
+pub fn intersection[V : Compare](self : T[V], src : T[V]) -> T[V] {
   let ret = new()
   self.each(fn(x) { if src.contains(x) { ret.add(x) } })
   ret
@@ -364,10 +381,10 @@ pub fn to_array[V](self : T[V]) -> Array[V] {
 /// Returns a iterator.
 pub fn iter[V](self : T[V]) -> Iter[V] {
   Iter::new(
-    fn(yield) {
+    fn(yield_) {
       match self.root {
         None => IterContinue
-        Some(root) => root.iter().run(yield)
+        Some(root) => root.iter().run(yield_)
       }
     },
   )
@@ -376,20 +393,20 @@ pub fn iter[V](self : T[V]) -> Iter[V] {
 ///|
 fn iter[A](self : Node[A]) -> Iter[A] {
   Iter::new(
-    fn(yield) {
+    fn(yield_) {
       let { left, value, right, .. } = self
       let res = match left {
         None => IterContinue
-        Some(l) => l.iter().run(yield)
+        Some(l) => l.iter().run(yield_)
       }
       if res == IterEnd {
         IterEnd
-      } else if yield(value) == IterEnd {
+      } else if yield_(value) == IterEnd {
         IterEnd
       } else {
         match right {
           None => IterContinue
-          Some(r) => r.iter().run(yield)
+          Some(r) => r.iter().run(yield_)
         }
       }
     },

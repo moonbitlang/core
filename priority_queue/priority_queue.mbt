@@ -90,10 +90,10 @@ pub fn to_array[A : Compare](self : T[A]) -> Array[A] {
 ///|
 pub fn iter[A : Compare](self : T[A]) -> Iter[A] {
   Iter::new(
-    fn(yield) {
+    fn(yield_) {
       let arr = self.to_array()
       for i = 0; i < arr.length(); i = i + 1 {
-        if yield(arr[i]) == IterEnd {
+        if yield_(arr[i]) == IterEnd {
           break IterEnd
         }
       } else {
@@ -132,7 +132,7 @@ fn meld[A : Compare](x : Node[A], y : Node[A]) -> Node[A] {
 fn merges[A : Compare](x : Node[A]) -> Node[A] {
   match x {
     Nil => Nil
-    Cons(~sibling, ..) =>
+    Cons(sibling~, ..) =>
       match sibling {
         Nil => x
         Cons(sibling=next_sibling, ..) =>
@@ -161,7 +161,7 @@ pub fn length[A](self : T[A]) -> Int {
 pub fn unsafe_pop[A : Compare](self : T[A]) -> Unit {
   self.top = match self.top {
     Nil => abort("The PriorityQueue is empty!")
-    Cons(~child, ..) => merges(child)
+    Cons(child~, ..) => merges(child)
   }
   self.len -= 1
 }
@@ -184,7 +184,7 @@ pub fn pop[A : Compare](self : T[A]) -> A? {
   let result = self.peek()
   self.top = match self.top {
     Nil => Nil
-    Cons(~child, ..) => {
+    Cons(child~, ..) => {
       self.len -= 1
       merges(child)
     }
@@ -216,7 +216,7 @@ pub fn push[A : Compare](self : T[A], value : A) -> Unit {
 pub fn peek[A](self : T[A]) -> A? {
   match self.top {
     Nil => None
-    Cons(~content, ..) => Some(content)
+    Cons(content~, ..) => Some(content)
   }
 }
 

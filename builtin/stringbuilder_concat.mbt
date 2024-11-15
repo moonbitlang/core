@@ -16,7 +16,7 @@
 type StringBuilder Ref[String]
 
 ///|
-pub fn StringBuilder::new(~size_hint : Int = 0) -> StringBuilder {
+pub fn StringBuilder::new(size_hint~ : Int = 0) -> StringBuilder {
   ignore(size_hint)
   { val: "" }
 }
@@ -38,7 +38,7 @@ pub fn StringBuilder::write_substring(
   start : Int,
   len : Int
 ) -> Unit {
-  self.val += str.substring(~start, end=start + len)
+  self.val += str.substring(start~, end=start + len)
 }
 
 ///|

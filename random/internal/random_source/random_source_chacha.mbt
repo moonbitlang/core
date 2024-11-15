@@ -13,7 +13,7 @@
 // limitations under the License.
 
 ///|
-pub struct ChaCha8 {
+pub(all) struct ChaCha8 {
   state : State
 }
 
@@ -25,7 +25,7 @@ pub fn ChaCha8::new(seed : Bytes) -> ChaCha8 {
 }
 
 ///|
-pub struct State {
+pub(all) struct State {
   mut buffer : FixedArray[UInt64] // size=[32]
   mut seed : FixedArray[UInt64] // size=[4]
   mut i : UInt

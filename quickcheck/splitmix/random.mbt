@@ -26,7 +26,7 @@ let double_ulp : Double = 1.0 / (1L << 53).to_double()
 
 ///|
 /// Create a new RandomState from an optional seed.
-pub fn RandomState::new(~seed : UInt64 = 37) -> RandomState {
+pub fn RandomState::new(seed~ : UInt64 = 37) -> RandomState {
   { seed: mix64(seed), gamma: mix_gamma(seed + golden_gamma) }
 }
 

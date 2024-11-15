@@ -14,13 +14,6 @@
 
 ///|
 /// create a reference from value
-/// @alert deprecated "Use `new` instead"
-pub fn ref[T](x : T) -> Ref[T] {
-  { val: x }
-}
-
-///|
-/// create a reference from value
 pub fn Ref::new[T](x : T) -> Ref[T] {
   { val: x }
 }

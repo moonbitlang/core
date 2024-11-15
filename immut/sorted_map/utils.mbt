@@ -21,7 +21,7 @@ pub fn T::empty[K, V]() -> T[K, V] {
 ///|
 /// Create a map with a single key-value pair.
 pub fn T::singleton[K, V](key : K, value : V) -> T[K, V] {
-  Tree(key, ~value, size=1, Empty, Empty)
+  Tree(key, value~, size=1, Empty, Empty)
 }
 
 ///|
@@ -60,7 +60,7 @@ pub fn is_empty[K, V](self : T[K, V]) -> Bool {
 ///|
 fn new[K, V](key : K, value : V, l : T[K, V], r : T[K, V]) -> T[K, V] {
   let size = size(l) + size(r) + 1
-  Tree(key, ~value, ~size, l, r)
+  Tree(key, value~, size~, l, r)
 }
 
 ///|
@@ -69,7 +69,7 @@ fn new[K, V](key : K, value : V, l : T[K, V], r : T[K, V]) -> T[K, V] {
 pub fn lookup[K : Compare, V](self : T[K, V], key : K) -> V? {
   loop self {
     Empty => None
-    Tree(k, ~value, l, r, ..) => {
+    Tree(k, value~, l, r, ..) => {
       let c = key.compare(k)
       if c == 0 {
         Some(value)
@@ -92,7 +92,7 @@ pub fn op_get[K : Compare, V](self : T[K, V], key : K) -> V? {
 pub fn each[K, V](self : T[K, V], f : (K, V) -> Unit) -> Unit {
   match self {
     Empty => ()
-    Tree(k, ~value, l, r, ..) => {
+    Tree(k, value~, l, r, ..) => {
       each(l, f)
       f(k, value)
       each(r, f)
@@ -106,7 +106,7 @@ pub fn eachi[K, V](self : T[K, V], f : (Int, K, V) -> Unit) -> Unit {
   fn do_eachi(m : T[K, V], f, i) {
     match m {
       Empty => ()
-      Tree(k, ~value, l, r, ..) => {
+      Tree(k, value~, l, r, ..) => {
         do_eachi(l, f, i)
         f(size(l) + i, k, value)
         do_eachi(r, f, size(l) + i + 1)
@@ -122,8 +122,8 @@ pub fn eachi[K, V](self : T[K, V], f : (Int, K, V) -> Unit) -> Unit {
 pub fn map[K, X, Y](self : T[K, X], f : (X) -> Y) -> T[K, Y] {
   match self {
     Empty => Empty
-    Tree(k, ~value, ~size, l, r) =>
-      Tree(k, value=f(value), ~size, map(l, f), map(r, f))
+    Tree(k, value~, size~, l, r) =>
+      Tree(k, value=f(value), size~, map(l, f), map(r, f))
   }
 }
 
@@ -132,16 +132,16 @@ pub fn map[K, X, Y](self : T[K, X], f : (X) -> Y) -> T[K, Y] {
 pub fn map_with_key[K, X, Y](self : T[K, X], f : (K, X) -> Y) -> T[K, Y] {
   match self {
     Empty => Empty
-    Tree(k, ~value, l, r, ~size) =>
-      Tree(k, value=f(k, value), ~size, map_with_key(l, f), map_with_key(r, f))
+    Tree(k, value~, l, r, size~) =>
+      Tree(k, value=f(k, value), size~, map_with_key(l, f), map_with_key(r, f))
   }
 }
 
 ///|
 /// Fold the values in the map.
 /// O(n).
-pub fn fold[K, V, A](self : T[K, V], ~init : A, f : (A, V) -> A) -> A {
-  foldl_with_key(self, fn(acc, _k, v) { f(acc, v) }, ~init)
+pub fn fold[K, V, A](self : T[K, V], init~ : A, f : (A, V) -> A) -> A {
+  foldl_with_key(self, fn(acc, _k, v) { f(acc, v) }, init~)
 }
 
 ///|
@@ -150,12 +150,12 @@ pub fn fold[K, V, A](self : T[K, V], ~init : A, f : (A, V) -> A) -> A {
 pub fn foldr_with_key[K, V, A](
   self : T[K, V],
   f : (A, K, V) -> A,
-  ~init : A
+  init~ : A
 ) -> A {
   fn go(m : T[K, V], acc) {
     match m {
       Empty => acc
-      Tree(k, ~value, l, r, ..) => go(l, f(go(r, acc), k, value))
+      Tree(k, value~, l, r, ..) => go(l, f(go(r, acc), k, value))
     }
   }
 
@@ -168,12 +168,12 @@ pub fn foldr_with_key[K, V, A](
 pub fn foldl_with_key[K, V, A](
   self : T[K, V],
   f : (A, K, V) -> A,
-  ~init : A
+  init~ : A
 ) -> A {
   fn go(m : T[K, V], acc) {
     match m {
       Empty => acc
-      Tree(k, ~value, l, r, ..) => go(r, f(go(l, acc), k, value))
+      Tree(k, value~, l, r, ..) => go(r, f(go(l, acc), k, value))
     }
   }
 
@@ -184,7 +184,7 @@ pub fn foldl_with_key[K, V, A](
 fn debug_tree[K : Show, V : Show](self : T[K, V]) -> String {
   match self {
     Empty => "_"
-    Tree(k, ~value, l, r, ..) => {
+    Tree(k, value~, l, r, ..) => {
       let l = debug_tree(l)
       let r = debug_tree(r)
       "(\{k},\{value},\{l},\{r})"
@@ -198,7 +198,7 @@ fn debug_tree[K : Show, V : Show](self : T[K, V]) -> String {
 pub fn T::from_array[K : Compare, V](array : Array[(K, V)]) -> T[K, V] {
   for i = 0, mp = Empty; i < array.length(); {
     let (k, v) = array[i]
-    continue i + 1, mp.insert(k, v)
+    continue i + 1, mp.add(k, v)
   } else {
     mp
   }
@@ -207,15 +207,15 @@ pub fn T::from_array[K : Compare, V](array : Array[(K, V)]) -> T[K, V] {
 ///|
 pub fn iter[K, V](self : T[K, V]) -> Iter[(K, V)] {
   Iter::new(
-    fn(yield) {
+    fn(yield_) {
       match self {
         Empty => IterContinue
-        Tree(k, ~value, l, r, ..) =>
-          if l.iter().run(yield) == IterEnd {
+        Tree(k, value~, l, r, ..) =>
+          if l.iter().run(yield_) == IterEnd {
             IterEnd
-          } else if yield((k, value)) == IterEnd {
+          } else if yield_((k, value)) == IterEnd {
             IterEnd
-          } else if r.iter().run(yield) == IterEnd {
+          } else if r.iter().run(yield_) == IterEnd {
             IterEnd
           } else {
             IterContinue
@@ -228,15 +228,15 @@ pub fn iter[K, V](self : T[K, V]) -> Iter[(K, V)] {
 ///|
 pub fn iter2[K, V](self : T[K, V]) -> Iter2[K, V] {
   Iter2::new(
-    fn(yield) {
+    fn(yield_) {
       match self {
         Empty => IterContinue
-        Tree(k, ~value, l, r, ..) =>
-          if l.iter2().run(yield) == IterEnd {
+        Tree(k, value~, l, r, ..) =>
+          if l.iter2().run(yield_) == IterEnd {
             IterEnd
-          } else if yield(k, value) == IterEnd {
+          } else if yield_(k, value) == IterEnd {
             IterEnd
-          } else if r.iter2().run(yield) == IterEnd {
+          } else if r.iter2().run(yield_) == IterEnd {
             IterEnd
           } else {
             IterContinue
@@ -248,7 +248,7 @@ pub fn iter2[K, V](self : T[K, V]) -> Iter2[K, V] {
 
 ///|
 pub fn T::from_iter[K : Compare, V](iter : Iter[(K, V)]) -> T[K, V] {
-  iter.fold(init=T::empty(), fn(m, e) { m.insert(e.0, e.1) })
+  iter.fold(init=T::empty(), fn(m, e) { m.add(e.0, e.1) })
 }
 
 ///|
@@ -267,7 +267,7 @@ pub fn elems[K, V](self : T[K, V]) -> Array[V] {
 pub fn T::of[K : Compare, V](array : FixedArray[(K, V)]) -> T[K, V] {
   for i = 0, mp = Empty; i < array.length(); {
     let (k, v) = array[i]
-    continue i + 1, mp.insert(k, v)
+    continue i + 1, mp.add(k, v)
   } else {
     mp
   }
@@ -287,7 +287,7 @@ pub fn to_string[K : Show, V : Show](self : T[K, V]) -> String {
 pub impl[K : Show, V : ToJson] ToJson for T[K, V] with to_json(self) {
   let capacity = self.size()
   guard capacity != 0 else { return Object(Map::new()) }
-  let jsons = Map::new(~capacity)
+  let jsons = Map::new(capacity~)
   self.each(fn(k, v) { jsons[k.to_string()] = v.to_json() })
   Object(jsons)
 }
@@ -306,7 +306,7 @@ pub impl[V : @json.FromJson] @json.FromJson for T[String, V] with from_json(
     Object(obj) => {
       let mut map = T::empty()
       for k, v in obj {
-        map = map.insert(k, V::from_json!(v, path))
+        map = map.add(k, V::from_json!(v, path))
       }
       map
     }
