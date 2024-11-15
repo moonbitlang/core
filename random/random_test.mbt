@@ -35,3 +35,12 @@ test "prng" {
   )
   assert_eq!(a, [2, 1, 4, 3, 5])
 }
+
+test {
+  let random = @random.new()
+  inspect!(random.float(), content="0.27378302812576294")
+  inspect!(random.float(), content="0.4169347286224365")
+  inspect!(random.float(), content="0.5513989925384521")
+  inspect!(random.float(), content="0.8607915639877319")
+  inspect!(random.float(), content="0.10972100496292114")
+}
