@@ -18,7 +18,7 @@ impl T {
   disjoint[A : Compare + Eq](Self[A], Self[A]) -> Bool
   each[A](Self[A], (A) -> Unit) -> Unit
   filter[A : Compare + Eq](Self[A], (A) -> Bool) -> Self[A]
-  fold[A : Compare + Eq, B](Self[A], ~init : B, (B, A) -> B) -> B
+  fold[A : Compare + Eq, B](Self[A], init~ : B, (B, A) -> B) -> B
   from_array[A : Compare + Eq](Array[A]) -> Self[A]
   from_iter[A : Compare + Eq](Iter[A]) -> Self[A]
   from_json[A : @json.FromJson + Compare + Eq](Json) -> Self[A]!@json.JsonDecodeError

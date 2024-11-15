@@ -7,7 +7,7 @@ type T
 impl T {
   is_empty(Self) -> Bool
   length(Self) -> Int
-  new(~size_hint : Int = ..) -> Self
+  new(size_hint~ : Int = ..) -> Self
   reset(Self) -> Unit
   to_bytes(Self) -> Bytes
   to_string(Self) -> String //deprecated

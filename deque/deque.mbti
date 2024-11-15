@@ -19,7 +19,7 @@ impl T {
   length[A](Self[A]) -> Int
   map[A, U](Self[A], (A) -> U) -> Self[U]
   mapi[A, U](Self[A], (Int, A) -> U) -> Self[U]
-  new[A](~capacity : Int = ..) -> Self[A]
+  new[A](capacity~ : Int = ..) -> Self[A]
   of[A](FixedArray[A]) -> Self[A]
   op_equal[A : Eq](Self[A], Self[A]) -> Bool
   op_get[A](Self[A], Int) -> A
