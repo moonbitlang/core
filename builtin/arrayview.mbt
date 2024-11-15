@@ -58,11 +58,7 @@ pub fn swap[T](self : ArrayView[T], i : Int, j : Int) -> Unit {
 }
 
 ///|
-pub fn op_as_view[T](
-  self : Array[T],
-  ~start : Int,
-  ~end? : Int
-) -> ArrayView[T] {
+pub fn op_as_view[T](self : Array[T], start~ : Int, end? : Int) -> ArrayView[T] {
   let len = self.length()
   let end = match end {
     None => len
@@ -77,8 +73,8 @@ pub fn op_as_view[T](
 ///|
 pub fn op_as_view[T](
   self : ArrayView[T],
-  ~start : Int,
-  ~end? : Int
+  start~ : Int,
+  end? : Int
 ) -> ArrayView[T] {
   let len = self.length()
   let end = match end {
@@ -94,9 +90,9 @@ pub fn op_as_view[T](
 ///|
 pub fn iter[A](self : ArrayView[A]) -> Iter[A] {
   Iter::new(
-    fn(yield) {
+    fn(yield_) {
       for v in self {
-        guard let IterContinue = yield(v) else { x => break x }
+        guard let IterContinue = yield_(v) else { x => break x }
 
       } else {
         IterContinue
@@ -113,7 +109,7 @@ pub fn iter[A](self : ArrayView[A]) -> Iter[A] {
 /// let sum = [1, 2, 3, 4, 5][:].fold(init=0, fn { sum, elem => sum + elem })
 /// sum // 15
 /// ```
-pub fn fold[A, B](self : ArrayView[A], ~init : B, f : (B, A) -> B) -> B {
+pub fn fold[A, B](self : ArrayView[A], init~ : B, f : (B, A) -> B) -> B {
   for i = 0, acc = init; i < self.length(); {
     continue i + 1, f(acc, self[i])
   } else {
@@ -129,7 +125,7 @@ pub fn fold[A, B](self : ArrayView[A], ~init : B, f : (B, A) -> B) -> B {
 /// let sum = [1, 2, 3, 4, 5][:].rev_fold(init=0, fn { sum, elem => sum + elem })
 /// sum // 15
 /// ```
-pub fn rev_fold[A, B](self : ArrayView[A], ~init : B, f : (B, A) -> B) -> B {
+pub fn rev_fold[A, B](self : ArrayView[A], init~ : B, f : (B, A) -> B) -> B {
   for i = self.length() - 1, acc = init; i >= 0; {
     continue i - 1, f(acc, self[i])
   } else {
@@ -145,7 +141,7 @@ pub fn rev_fold[A, B](self : ArrayView[A], ~init : B, f : (B, A) -> B) -> B {
 /// let sum = [1, 2, 3, 4, 5][:].foldi(init=0, fn { index, sum, elem => sum + index })
 /// sum // 10
 /// ```
-pub fn foldi[A, B](self : ArrayView[A], ~init : B, f : (Int, B, A) -> B) -> B {
+pub fn foldi[A, B](self : ArrayView[A], init~ : B, f : (Int, B, A) -> B) -> B {
   for i = 0, acc = init; i < self.length(); {
     continue i + 1, f(i, acc, self[i])
   } else {
@@ -163,7 +159,7 @@ pub fn foldi[A, B](self : ArrayView[A], ~init : B, f : (Int, B, A) -> B) -> B {
 /// ```
 pub fn rev_foldi[A, B](
   self : ArrayView[A],
-  ~init : B,
+  init~ : B,
   f : (Int, B, A) -> B
 ) -> B {
   let len = self.length()

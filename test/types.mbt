@@ -13,7 +13,7 @@
 // limitations under the License.
 
 ///|
-pub struct T {
+pub(all) struct T {
   name : String
   buffer : StringBuilder
 }

@@ -19,7 +19,7 @@ struct StringBuilder {
 }
 
 ///|
-pub fn StringBuilder::new(~size_hint : Int = 0) -> StringBuilder {
+pub fn StringBuilder::new(size_hint~ : Int = 0) -> StringBuilder {
   let initial = if size_hint < 1 { 1 } else { size_hint }
   let bytes = Bytes::new(initial)
   { bytes, len: 0 }

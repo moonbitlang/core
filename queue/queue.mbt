@@ -268,7 +268,7 @@ pub fn eachi[A](self : T[A], f : (Int, A) -> Unit) -> Unit {
 /// let queue : @queue.T[Int] = @queue.new()
 /// let sum = queue.fold(init=0, fn(acc, x) { acc + x })
 /// ```
-pub fn fold[A, B](self : T[A], ~init : B, f : (B, A) -> B) -> B {
+pub fn fold[A, B](self : T[A], init~ : B, f : (B, A) -> B) -> B {
   loop self.first, init {
     Nil, acc => acc
     Cons({ content, next }), acc => continue next, f(acc, content)
@@ -346,10 +346,10 @@ pub fn transfer[A](self : T[A], dst : T[A]) -> Unit {
 /// ```
 pub fn iter[A](self : T[A]) -> Iter[A] {
   Iter::new(
-    fn(yield) {
+    fn(yield_) {
       loop self.first {
         Cons({ content, next }) => {
-          if yield(content) == IterEnd {
+          if yield_(content) == IterEnd {
             break IterEnd
           }
           continue next

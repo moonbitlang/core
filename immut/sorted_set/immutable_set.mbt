@@ -25,7 +25,7 @@ pub fn T::new[A]() -> T[A] {
 ///|
 /// Returns the one-value ImmutableSet containing only `value`.
 pub fn T::singleton[A : Compare](value : A) -> T[A] {
-  Node(left=Empty, ~value, right=Empty, height=1)
+  Node(left=Empty, value~, right=Empty, height=1)
 }
 
 ///|
@@ -45,7 +45,7 @@ pub fn to_array[A : Compare](self : T[A]) -> Array[A] {
   fn aux(set : T[A]) {
     match set {
       Empty => ()
-      Node(~left, ~value, ~right, ..) => {
+      Node(left~, value~, right~, ..) => {
         aux(left)
         arr.push(value)
         aux(right)
@@ -71,7 +71,7 @@ pub fn to_array[A : Compare](self : T[A]) -> Array[A] {
 pub fn remove_min[A : Compare](self : T[A]) -> T[A] {
   match self {
     Empty => abort("remove_min: empty ImmutableSet")
-    Node(~left, ~right, ~value, ..) =>
+    Node(left~, right~, value~, ..) =>
       match left {
         Empty => right
         _ => balance(left.remove_min(), value, right)
@@ -90,8 +90,8 @@ pub fn remove_min[A : Compare](self : T[A]) -> T[A] {
 /// ```
 pub fn add[A : Compare](self : T[A], value : A) -> T[A] {
   match self {
-    Empty => Node(left=Empty, ~value, right=Empty, height=1)
-    Node(~left, ~right, value=node_value, ..) => {
+    Empty => Node(left=Empty, value~, right=Empty, height=1)
+    Node(left~, right~, value=node_value, ..) => {
       let compare_result = value.compare(node_value)
       if compare_result == 0 {
         self
@@ -126,7 +126,7 @@ pub fn add[A : Compare](self : T[A], value : A) -> T[A] {
 pub fn remove[A : Compare](self : T[A], value : A) -> T[A] {
   match self {
     Empty => Empty
-    Node(~left, ~right, value=node_value, ..) => {
+    Node(left~, right~, value=node_value, ..) => {
       let compare_result = value.compare(node_value)
       if compare_result == 0 {
         left.merge(right)
@@ -162,7 +162,7 @@ pub fn remove[A : Compare](self : T[A], value : A) -> T[A] {
 pub fn min[A : Compare](self : T[A]) -> A {
   match self {
     Empty => abort("min: there are no values in sorted_set.")
-    Node(~left, ~value, ..) =>
+    Node(left~, value~, ..) =>
       match left {
         Empty => value
         _ => left.min()
@@ -176,7 +176,7 @@ pub fn min[A : Compare](self : T[A]) -> A {
 pub fn min_option[A : Compare](self : T[A]) -> A? {
   match self {
     Empty => None
-    Node(~left, ~value, ..) =>
+    Node(left~, value~, ..) =>
       match left {
         Empty => Some(value)
         _ => left.min_option()
@@ -197,7 +197,7 @@ pub fn min_option[A : Compare](self : T[A]) -> A? {
 pub fn max[A : Compare](self : T[A]) -> A {
   match self {
     Empty => abort("max: there are no values in ImmutableSet.")
-    Node(~right, ~value, ..) =>
+    Node(right~, value~, ..) =>
       match right {
         Empty => value
         _ => right.max()
@@ -211,7 +211,7 @@ pub fn max[A : Compare](self : T[A]) -> A {
 pub fn max_option[A : Compare](self : T[A]) -> A? {
   match self {
     Empty => None
-    Node(~right, ~value, ..) =>
+    Node(right~, value~, ..) =>
       match right {
         Empty => Some(value)
         _ => right.max_option()
@@ -235,7 +235,7 @@ pub fn max_option[A : Compare](self : T[A]) -> A? {
 pub fn split[A : Compare](self : T[A], divide : A) -> (T[A], Bool, T[A]) {
   match self {
     Empty => (Empty, false, Empty)
-    Node(~left, ~right, ~value, ..) => {
+    Node(left~, right~, value~, ..) => {
       let compare_result = divide.compare(value)
       if compare_result == 0 {
         (left, true, right)
@@ -264,7 +264,7 @@ pub fn is_empty[A : Compare](self : T[A]) -> Bool {
 pub fn contains[A : Compare](self : T[A], value : A) -> Bool {
   match self {
     Empty => false
-    Node(~left, ~right, value=node_value, ..) => {
+    Node(left~, right~, value=node_value, ..) => {
       let compare_result = value.compare(node_value)
       compare_result == 0 ||
       (if compare_result < 0 { left } else { right }).contains(value)
@@ -434,7 +434,7 @@ pub fn disjoint[A : Compare](self : T[A], other : T[A]) -> Bool {
 pub fn each[A](self : T[A], f : (A) -> Unit) -> Unit {
   match self {
     Empty => ()
-    Node(~left, ~value, ~right, ..) => {
+    Node(left~, value~, right~, ..) => {
       left.each(f)
       f(value)
       right.each(f)
@@ -451,11 +451,11 @@ pub fn each[A](self : T[A], f : (A) -> Unit) -> Unit {
 /// println(of([1, 2, 3, 4, 5]).fold(0, fn(acc, x) { acc + x }))
 /// // output: 15
 /// ```
-pub fn fold[A : Compare, B](self : T[A], ~init : B, f : (B, A) -> B) -> B {
+pub fn fold[A : Compare, B](self : T[A], init~ : B, f : (B, A) -> B) -> B {
   match self {
     Empty => init
-    Node(~left, ~value, ~right, ..) =>
-      right.fold(init=f(left.fold(~init, f), value), f)
+    Node(left~, value~, right~, ..) =>
+      right.fold(init=f(left.fold(init~, f), value), f)
   }
 }
 
@@ -471,7 +471,7 @@ pub fn fold[A : Compare, B](self : T[A], ~init : B, f : (B, A) -> B) -> B {
 pub fn map[A : Compare, B : Compare](self : T[A], f : (A) -> B) -> T[B] {
   match self {
     Empty => Empty
-    Node(~left, ~value, ~right, ..) =>
+    Node(left~, value~, right~, ..) =>
       try_join(left.map(f), f(value), right.map(f))
   }
 }
@@ -488,7 +488,7 @@ pub fn map[A : Compare, B : Compare](self : T[A], f : (A) -> B) -> T[B] {
 pub fn all[A : Compare](self : T[A], f : (A) -> Bool) -> Bool {
   match self {
     Empty => true
-    Node(~left, ~value, ~right, ..) => f(value) && left.all(f) && right.all(f)
+    Node(left~, value~, right~, ..) => f(value) && left.all(f) && right.all(f)
   }
 }
 
@@ -504,7 +504,7 @@ pub fn all[A : Compare](self : T[A], f : (A) -> Bool) -> Bool {
 pub fn any[A : Compare](self : T[A], f : (A) -> Bool) -> Bool {
   match self {
     Empty => false
-    Node(~left, ~value, ~right, ..) => f(value) || left.any(f) || right.any(f)
+    Node(left~, value~, right~, ..) => f(value) || left.any(f) || right.any(f)
   }
 }
 
@@ -520,7 +520,7 @@ pub fn any[A : Compare](self : T[A], f : (A) -> Bool) -> Bool {
 pub fn filter[A : Compare](self : T[A], f : (A) -> Bool) -> T[A] {
   match self {
     Empty => Empty
-    Node(~left, ~value, ~right, ..) => {
+    Node(left~, value~, right~, ..) => {
       let l = left.filter(f)
       let v = f(value)
       let r = right.filter(f)
@@ -551,7 +551,7 @@ pub fn to_string[A : Show](self : T[A]) -> String {
 pub impl[A : ToJson] ToJson for T[A] with to_json(self) {
   let capacity = self.iter().count()
   guard capacity != 0 else { return Array([]) }
-  let jsons = Array::new(~capacity)
+  let jsons = Array::new(capacity~)
   self.each(fn(a) { jsons.push(a.to_json()) })
   Array(jsons)
 }
@@ -618,7 +618,7 @@ impl[T : Show] Show for SplitBis[T] with output(self, logger) {
 fn split_bis[A : Compare](self : T[A], value : A) -> SplitBis[A] {
   match self {
     Empty => NotFound(Empty, fn() -> T[A] { Empty })
-    Node(~left, value=node_value, ~right, ..) => {
+    Node(left~, value=node_value, right~, ..) => {
       let compare_result = value.compare(node_value)
       if compare_result == 0 {
         Found
@@ -643,7 +643,7 @@ fn split_bis[A : Compare](self : T[A], value : A) -> SplitBis[A] {
 fn height[A : Compare](self : T[A]) -> Int {
   match self {
     Empty => 0
-    Node(~height, ..) => height
+    Node(height~, ..) => height
   }
 }
 
@@ -657,7 +657,7 @@ fn create[A : Compare](left : T[A], value : A, right : T[A]) -> T[A] {
   } else {
     right_height + 1
   }
-  Node(~left, ~right, ~value, ~height)
+  Node(left~, right~, value~, height~)
 }
 
 ///|
@@ -699,7 +699,7 @@ fn balance[A : Compare](left : T[A], value : A, right : T[A]) -> T[A] {
     } else {
       right_height + 1
     }
-    Node(~left, ~value, ~right, ~height)
+    Node(left~, value~, right~, height~)
   }
 }
 
@@ -707,7 +707,7 @@ fn balance[A : Compare](left : T[A], value : A, right : T[A]) -> T[A] {
 fn add_min_value[A : Compare](self : T[A], value : A) -> T[A] {
   match self {
     Empty => singleton(value)
-    Node(~left, value=node_value, ~right, ..) =>
+    Node(left~, value=node_value, right~, ..) =>
       balance(left.add_min_value(value), node_value, right)
   }
 }
@@ -716,7 +716,7 @@ fn add_min_value[A : Compare](self : T[A], value : A) -> T[A] {
 fn add_max_value[A : Compare](self : T[A], value : A) -> T[A] {
   match self {
     Empty => singleton(value)
-    Node(~left, value=node_value, ~right, ..) =>
+    Node(left~, value=node_value, right~, ..) =>
       balance(left, node_value, right.add_max_value(value))
   }
 }

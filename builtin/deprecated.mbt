@@ -16,9 +16,9 @@
 /// @alert deprecated "Use `inspect!(buf) directly instead of buf.expect!()"
 pub fn expect(
   self : Buffer,
-  ~content : String = "",
-  ~loc : SourceLoc = _,
-  ~args_loc : ArgsLoc = _
+  content~ : String = "",
+  loc~ : SourceLoc = _,
+  args_loc~ : ArgsLoc = _
 ) -> Unit!InspectError {
   let current = self.to_string()
   self.reset()

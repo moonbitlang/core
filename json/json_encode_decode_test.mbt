@@ -13,14 +13,14 @@
 // limitations under the License.
 
 ///|
-pub struct AllThree {
+pub(all) struct AllThree {
   ints : Array[Int]
   floats : Array[Double]
   strings : Array[String]
 } derive(Eq, Show)
 
 ///|
-fn array_to_json[T](arr : Array[T], ~f : (T) -> Json) -> Json {
+fn array_to_json[T](arr : Array[T], f~ : (T) -> Json) -> Json {
   Array(arr.map(f))
 }
 

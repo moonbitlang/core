@@ -21,7 +21,7 @@ struct Rand {
 ///|
 /// Create a new random number generator with [seed].
 /// @alert unsafe "Panic if seed is not 32 bytes long"
-pub fn Rand::new(~seed : Bytes = b"ABCDEFGHIJKLMNOPQRSTUVWXYZ123456") -> Rand {
+pub fn Rand::new(seed~ : Bytes = b"ABCDEFGHIJKLMNOPQRSTUVWXYZ123456") -> Rand {
   if seed.length() != 32 {
     abort("seed must be 32 bytes long")
   }
@@ -54,7 +54,7 @@ test "next" {
 /// 
 /// * `limit` - The upper bound (exclusive) of the random number to be generated (Optional).
 ///             When limit is 0, the range is [0, 2^31).
-pub fn Rand::int(self : Rand, ~limit : Int = 0) -> Int {
+pub fn Rand::int(self : Rand, limit~ : Int = 0) -> Int {
   if limit == 0 {
     // Range [0, 2^31)
     (self.next() >> 33).to_int()
@@ -70,7 +70,7 @@ pub fn Rand::int(self : Rand, ~limit : Int = 0) -> Int {
 /// 
 /// * `limit` - The upper bound (exclusive) of the random number to be generated (Optional).
 ///            When limit is 0, the range is [0, 2^63).
-pub fn Rand::int64(self : Rand, ~limit : Int64 = 0) -> Int64 {
+pub fn Rand::int64(self : Rand, limit~ : Int64 = 0) -> Int64 {
   if limit == 0 {
     // range [0, 2^63)
     // Create a mask that has all bits set to 1 except the highest bit
@@ -88,7 +88,7 @@ pub fn Rand::int64(self : Rand, ~limit : Int64 = 0) -> Int64 {
 /// 
 /// * `limit` - The upper bound (exclusive) of the random number to be generated (Optional).
 ///            When limit is 0, the range is [0, 2^32).
-pub fn Rand::uint(self : Rand, ~limit : UInt = 0) -> UInt {
+pub fn Rand::uint(self : Rand, limit~ : UInt = 0) -> UInt {
   if limit == 0 {
     // Range: [0, 2^32)
     return self.next().to_uint()
@@ -113,7 +113,7 @@ test "uint" {
 /// 
 /// * `limit` - The upper bound (exclusive) of the random number to be generated (Optional).
 ///           When limit is 0, the range is [0, 2^64).
-pub fn Rand::uint64(self : Rand, ~limit : UInt64 = 0) -> UInt64 {
+pub fn Rand::uint64(self : Rand, limit~ : UInt64 = 0) -> UInt64 {
   if limit == 0 {
     // Range: [0, 2^64)
     return self.next()

@@ -15,7 +15,7 @@
 ///|
 priv enum Node[A] {
   Nil
-  Cons(~content : A, mut ~sibling : Node[A], mut ~child : Node[A])
+  Cons(content~ : A, mut sibling~ : Node[A], mut child~ : Node[A])
 }
 
 ///|

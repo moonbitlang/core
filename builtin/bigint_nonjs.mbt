@@ -718,7 +718,7 @@ pub fn BigInt::from_hex(input : String) -> BigInt {
 
 ///|
 /// Converts a BigInt to a hex string.
-pub fn to_hex(self : BigInt, ~uppercase : Bool = true) -> String {
+pub fn to_hex(self : BigInt, uppercase~ : Bool = true) -> String {
   // WARN: this implementation assumes that `radix_bit_len` is a multiple of 4.
   let mut result = ""
   for i = self.len - 1; i >= 0; i = i - 1 { // TODO: reverse iteration would be a bit faster.
@@ -777,7 +777,7 @@ fn max[T : Compare](a : T, b : T) -> T {
 /// Optionally takes a modulus BigInt.
 /// 
 /// The exponent must be non-negative, and modulus must be positive.
-pub fn pow(self : BigInt, exp : BigInt, ~modulus : BigInt = one) -> BigInt {
+pub fn pow(self : BigInt, exp : BigInt, modulus~ : BigInt = one) -> BigInt {
   if exp.sign == Negative {
     abort("negative exponent")
   }
@@ -805,7 +805,7 @@ pub fn pow(self : BigInt, exp : BigInt, ~modulus : BigInt = one) -> BigInt {
 /// Example: `from_octets(b"\xab\xcd\xef") == from_hex("abcdef")`
 /// 
 /// The input must not be empty, unless signum is zero
-pub fn BigInt::from_octets(input : Bytes, ~signum : Int = 1) -> BigInt {
+pub fn BigInt::from_octets(input : Bytes, signum~ : Int = 1) -> BigInt {
   let len = input.length() // number of bytes
   if signum == 0 {
     return zero
@@ -853,7 +853,7 @@ pub fn BigInt::from_octets(input : Bytes, ~signum : Int = 1) -> BigInt {
 /// Example: 
 /// - `to_octets(from_hex("abcdef"), length=3) == b"\xab\xcd\xef"`
 /// - `to_octets(from_hex("1abcdef"), length=3) == b"\x01\xab\xcd\xef"`
-pub fn BigInt::to_octets(self : BigInt, ~length? : Int) -> Bytes {
+pub fn BigInt::to_octets(self : BigInt, length? : Int) -> Bytes {
   let length = match length {
     None => 1
     Some(l) => if l <= 0 { abort("negative length") } else { l }

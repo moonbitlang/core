@@ -14,16 +14,16 @@
 
 ///|
 /// @alert deprecated "Definition of json is moved to builtin package, use `Json` instead"
-pub typealias JsonValue = Json
+pub(all) typealias JsonValue = Json
 
 ///|
-pub struct Position {
+pub(all) struct Position {
   line : Int // 1-based
   column : Int // 0-based
 } derive(Eq)
 
 ///|
-pub type! ParseError {
+pub(all) type! ParseError {
   InvalidChar(Position, Char)
   InvalidEof
   InvalidNumber(Position, String)

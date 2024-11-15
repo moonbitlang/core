@@ -103,10 +103,10 @@ pub fn Logger::write_object[Obj : Show](self : Logger, obj : Obj) -> Unit {
 pub fn Logger::write_iter[T : Show](
   self : Logger,
   iter : Iter[T],
-  ~prefix : String = "[",
-  ~suffix : String = "]",
-  ~sep : String = ", ",
-  ~trailing : Bool = false
+  prefix~ : String = "[",
+  suffix~ : String = "]",
+  sep~ : String = ", ",
+  trailing~ : Bool = false
 ) -> Unit {
   self.write_string(prefix)
   if trailing {
