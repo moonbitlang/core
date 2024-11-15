@@ -40,6 +40,8 @@ test "add remove" {
   if m.remove_if_exists("a") {
     m.add("d")
   }
+  assert_true!(m.add_if_noexists("test"))
+  assert_false!(m.add_if_noexists("test"))
   assert_true!(m.contains("a").not() && m.contains("d"))
   assert_true!(m.contains("b"))
   assert_true!(m.contains("c"))
