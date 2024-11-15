@@ -320,6 +320,7 @@ impl[K : Show, V : Show] Show for Map[K, V]
 type Set
 impl Set {
   add[K : Hash + Eq](Self[K], K) -> Unit
+  add_and_check[K : Hash + Eq](Self[K], K) -> Bool
   capacity[K](Self[K]) -> Int
   clear[K](Self[K]) -> Unit
   contains[K : Hash + Eq](Self[K], K) -> Bool
@@ -336,6 +337,7 @@ impl Set {
   of[K : Hash + Eq](FixedArray[K]) -> Self[K]
   op_equal[K : Eq](Self[K], Self[K]) -> Bool
   remove[K : Hash + Eq](Self[K], K) -> Unit
+  remove_and_check[K : Hash + Eq](Self[K], K) -> Bool
   size[K](Self[K]) -> Int
   symmetric_difference[K : Hash + Eq](Self[K], Self[K]) -> Self[K]
   to_array[K](Self[K]) -> Array[K]
