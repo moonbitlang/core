@@ -44,14 +44,14 @@ test "subset" {
 
 test "diff" {
   inspect!(
-    @sorted_set.of([1, 2, 3]).diff(@sorted_set.of([4, 5, 1])),
+    @sorted_set.of([1, 2, 3]).difference(@sorted_set.of([4, 5, 1])),
     content="@sorted_set.of([2, 3])",
   )
 }
 
 test "intersect" {
   inspect!(
-    @sorted_set.of([3, 4, 5]).intersect(@sorted_set.of([4, 5, 6])),
+    @sorted_set.of([3, 4, 5]).intersection(@sorted_set.of([4, 5, 6])),
     content="@sorted_set.of([4, 5])",
   )
 }
@@ -153,9 +153,9 @@ test "mix_everything" {
   inspect!(set1, content="@sorted_set.of([1, 2, 3, 4, 5])")
   let set3 = set1.union(set2)
   inspect!(set3, content="@sorted_set.of([1, 2, 3, 4, 5, 6, 7, 8])")
-  let set4 = set1.diff(set2)
+  let set4 = set1.difference(set2)
   inspect!(set4, content="@sorted_set.of([1, 2, 3])")
-  let set5 = set1.intersect(set2)
+  let set5 = set1.intersection(set2)
   inspect!(set5, content="@sorted_set.of([4, 5])")
   inspect!(set1.subset(set3), content="true")
   set3.remove(3)

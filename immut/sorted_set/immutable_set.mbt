@@ -317,7 +317,7 @@ pub fn inter[A : Compare](self : T[A], other : T[A]) -> T[A] {
 /// # Example
 /// 
 /// ```
-/// println(of([3, 4, 5]).inter(of([4, 5, 6])))
+/// println(of([3, 4, 5]).intersection(of([4, 5, 6])))
 /// // output: of([4, 5])
 /// ```
 pub fn intersection[A : Compare](self : T[A], other : T[A]) -> T[A] {
@@ -325,8 +325,8 @@ pub fn intersection[A : Compare](self : T[A], other : T[A]) -> T[A] {
     (Empty, _) | (_, Empty) => Empty
     (Node(left=l1, value=v1, right=r1, ..), _) =>
       match other.split(v1) {
-        (l2, false, r2) => l1.inter(l2).concat(r1.inter(r2))
-        (l2, true, r2) => join(l1.inter(l2), v1, r1.inter(r2))
+        (l2, false, r2) => l1.intersection(l2).concat(r1.intersection(r2))
+        (l2, true, r2) => join(l1.intersection(l2), v1, r1.intersection(r2))
       }
   }
 }
@@ -337,7 +337,7 @@ pub fn intersection[A : Compare](self : T[A], other : T[A]) -> T[A] {
 /// # Example
 /// 
 /// ```
-/// println(of([1, 2, 3]).diff(of([4, 5, 1])))
+/// println(of([1, 2, 3]).difference(of([4, 5, 1])))
 /// // output: of([2, 3])
 /// ```
 /// 
@@ -352,7 +352,7 @@ pub fn diff[A : Compare](self : T[A], other : T[A]) -> T[A] {
 /// # Example
 /// 
 /// ```
-/// println(of([1, 2, 3]).diff(of([4, 5, 1])))
+/// println(of([1, 2, 3]).difference(of([4, 5, 1])))
 /// // output: of([2, 3])
 /// ```
 pub fn difference[A : Compare](self : T[A], other : T[A]) -> T[A] {
@@ -361,8 +361,8 @@ pub fn difference[A : Compare](self : T[A], other : T[A]) -> T[A] {
     (_, Empty) => self
     (Node(left=l1, value=v1, right=r1, ..), _) =>
       match other.split(v1) {
-        (l2, false, r2) => join(l1.diff(l2), v1, r1.diff(r2))
-        (l2, true, r2) => l1.diff(l2).concat(r1.diff(r2))
+        (l2, false, r2) => join(l1.difference(l2), v1, r1.difference(r2))
+        (l2, true, r2) => l1.difference(l2).concat(r1.difference(r2))
       }
   }
 }
