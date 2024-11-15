@@ -89,7 +89,7 @@ fn Array::make_uninit[T](len : Int) -> Array[T] = "%fixedarray.make_uninit"
 
 ///|
 /// Creates a new array.
-pub fn Array::new[T](~capacity : Int = 0) -> Array[T] {
+pub fn Array::new[T](capacity~ : Int = 0) -> Array[T] {
   ignore(capacity)
   []
 }

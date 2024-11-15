@@ -52,7 +52,7 @@ struct Set[K] {
 /// Create a hash set.
 /// The capacity of the set will be the smallest power of 2 that is
 /// greater than or equal to the provided [capacity].
-pub fn Set::new[K](~capacity : Int = 8) -> Set[K] {
+pub fn Set::new[K](capacity~ : Int = 8) -> Set[K] {
   let capacity = power_2_above(8, capacity)
   {
     size: 0,
@@ -347,10 +347,10 @@ pub fn clear[K](self : Set[K]) -> Unit {
 /// Returns the iterator of the hash set, provide elements in the order of insertion.
 pub fn iter[K](self : Set[K]) -> Iter[K] {
   Iter::new(
-    fn(yield) {
+    fn(yield_) {
       loop self.head {
         Some({ key, idx, .. }) => {
-          if yield(key) == IterEnd {
+          if yield_(key) == IterEnd {
             break IterEnd
           }
           continue self.list[idx].next

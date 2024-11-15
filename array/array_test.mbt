@@ -480,8 +480,8 @@ test "shuffle_in_place" {
     rng.int() % upper
   }
 
-  let shuffled = Array::shuffle(arr, ~rand)
-  Array::shuffle_in_place(arr, ~rand)
+  let shuffled = Array::shuffle(arr, rand~)
+  Array::shuffle_in_place(arr, rand~)
   assert_eq!(shuffled, arr)
   inspect!(arr, content="[3, 2, 1, 5, 6, 7, 4]")
 }

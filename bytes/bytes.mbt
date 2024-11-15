@@ -63,9 +63,9 @@ pub fn to_array(self : Bytes) -> Array[Byte] {
 ///|
 pub fn iter(self : Bytes) -> Iter[Byte] {
   Iter::new(
-    fn(yield) {
+    fn(yield_) {
       for i = 0, len = self.length(); i < len; i = i + 1 {
-        if yield(self[i]) == IterEnd {
+        if yield_(self[i]) == IterEnd {
           break IterEnd
         }
       } else {

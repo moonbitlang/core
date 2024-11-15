@@ -357,7 +357,7 @@ test "from_array" {
 /// let sum = [1, 2, 3, 4, 5].fold(init=0, fn { sum, elem => sum + elem })
 /// sum // 15
 /// ```
-pub fn fold[A, B](self : FixedArray[A], ~init : B, f : (B, A) -> B) -> B {
+pub fn fold[A, B](self : FixedArray[A], init~ : B, f : (B, A) -> B) -> B {
   for i = 0, acc = init; i < self.length(); {
     continue i + 1, f(acc, self[i])
   } else {
@@ -374,8 +374,8 @@ pub fn fold[A, B](self : FixedArray[A], ~init : B, f : (B, A) -> B) -> B {
 /// sum // 15
 /// ```
 /// @alert deprecated "Use `fold` instead"
-pub fn fold_left[T, U](self : FixedArray[T], f : (U, T) -> U, ~init : U) -> U {
-  self.fold(~init, f)
+pub fn fold_left[T, U](self : FixedArray[T], f : (U, T) -> U, init~ : U) -> U {
+  self.fold(init~, f)
 }
 
 test "fold" {
@@ -398,7 +398,7 @@ test "fold" {
 /// let sum = [1, 2, 3, 4, 5].fold_rev(init=0, fn { sum, elem => sum + elem })
 /// sum // 15
 /// ```
-pub fn rev_fold[A, B](self : FixedArray[A], ~init : B, f : (B, A) -> B) -> B {
+pub fn rev_fold[A, B](self : FixedArray[A], init~ : B, f : (B, A) -> B) -> B {
   for i = self.length() - 1, acc = init; i >= 0; {
     continue i - 1, f(acc, self[i])
   } else {
@@ -415,8 +415,8 @@ pub fn rev_fold[A, B](self : FixedArray[A], ~init : B, f : (B, A) -> B) -> B {
 /// sum // 15
 /// ```
 /// @alert deprecated "Use `rev_fold` instead"
-pub fn fold_right[T, U](self : FixedArray[T], f : (U, T) -> U, ~init : U) -> U {
-  self.rev_fold(~init, f)
+pub fn fold_right[T, U](self : FixedArray[T], f : (U, T) -> U, init~ : U) -> U {
+  self.rev_fold(init~, f)
 }
 
 test "rev_fold" {
@@ -445,7 +445,7 @@ test "rev_fold" {
 /// let sum = [1, 2, 3, 4, 5].foldi(init=0, fn { index, sum, elem => sum + index })
 /// sum // 10
 /// ```
-pub fn foldi[A, B](self : FixedArray[A], ~init : B, f : (Int, B, A) -> B) -> B {
+pub fn foldi[A, B](self : FixedArray[A], init~ : B, f : (Int, B, A) -> B) -> B {
   for i = 0, acc = init; i < self.length(); {
     continue i + 1, f(i, acc, self[i])
   } else {
@@ -465,9 +465,9 @@ pub fn foldi[A, B](self : FixedArray[A], ~init : B, f : (Int, B, A) -> B) -> B {
 pub fn fold_lefti[T, U](
   self : FixedArray[T],
   f : (Int, U, T) -> U,
-  ~init : U
+  init~ : U
 ) -> U {
-  self.foldi(~init, f)
+  self.foldi(init~, f)
 }
 
 test "fold_lefti" {
@@ -494,7 +494,7 @@ test "fold_lefti" {
 /// ```
 pub fn rev_foldi[A, B](
   self : FixedArray[A],
-  ~init : B,
+  init~ : B,
   f : (Int, B, A) -> B
 ) -> B {
   let len = self.length()
@@ -517,7 +517,7 @@ pub fn rev_foldi[A, B](
 pub fn fold_righti[T, U](
   self : FixedArray[T],
   f : (Int, U, T) -> U,
-  ~init : U
+  init~ : U
 ) -> U {
   let len = self.length()
   for i = len - 1, acc = init; i >= 0; {

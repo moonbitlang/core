@@ -771,7 +771,7 @@ pub fn repeat[T](self : Array[T], times : Int) -> Array[T] {
 /// let sum = [1, 2, 3, 4, 5].fold(init=0, fn { sum, elem => sum + elem })
 /// sum // 15
 /// ```
-pub fn fold[A, B](self : Array[A], ~init : B, f : (B, A) -> B) -> B {
+pub fn fold[A, B](self : Array[A], init~ : B, f : (B, A) -> B) -> B {
   for i = 0, acc = init; i < self.length(); {
     continue i + 1, f(acc, self[i])
   } else {
@@ -787,7 +787,7 @@ pub fn fold[A, B](self : Array[A], ~init : B, f : (B, A) -> B) -> B {
 /// let sum = [1, 2, 3, 4, 5].rev_fold(init=0, fn { sum, elem => sum + elem })
 /// sum // 15
 /// ```
-pub fn rev_fold[A, B](self : Array[A], ~init : B, f : (B, A) -> B) -> B {
+pub fn rev_fold[A, B](self : Array[A], init~ : B, f : (B, A) -> B) -> B {
   for i = self.length() - 1, acc = init; i >= 0; {
     continue i - 1, f(acc, self[i])
   } else {
@@ -803,7 +803,7 @@ pub fn rev_fold[A, B](self : Array[A], ~init : B, f : (B, A) -> B) -> B {
 /// let sum = [1, 2, 3, 4, 5].foldi(init=0, fn { index, sum, elem => sum + index })
 /// sum // 10
 /// ```
-pub fn foldi[A, B](self : Array[A], ~init : B, f : (Int, B, A) -> B) -> B {
+pub fn foldi[A, B](self : Array[A], init~ : B, f : (Int, B, A) -> B) -> B {
   for i = 0, acc = init; i < self.length(); {
     continue i + 1, f(i, acc, self[i])
   } else {
@@ -819,7 +819,7 @@ pub fn foldi[A, B](self : Array[A], ~init : B, f : (Int, B, A) -> B) -> B {
 /// let sum = [1, 2, 3, 4, 5].rev_foldi(init=0, fn { index, sum, elem => sum + index })
 /// sum // 10
 /// ```
-pub fn rev_foldi[A, B](self : Array[A], ~init : B, f : (Int, B, A) -> B) -> B {
+pub fn rev_foldi[A, B](self : Array[A], init~ : B, f : (Int, B, A) -> B) -> B {
   let len = self.length()
   for i = len - 1, acc = init; i >= 0; {
     continue i - 1, f(len - i - 1, acc, self[i])
@@ -837,8 +837,8 @@ pub fn rev_foldi[A, B](self : Array[A], ~init : B, f : (Int, B, A) -> B) -> B {
 /// sum // 15
 /// ```
 /// @alert deprecated "Use `fold` instead."
-pub fn fold_left[T, U](self : Array[T], f : (U, T) -> U, ~init : U) -> U {
-  self.fold(~init, f)
+pub fn fold_left[T, U](self : Array[T], f : (U, T) -> U, init~ : U) -> U {
+  self.fold(init~, f)
 }
 
 ///|
@@ -850,8 +850,8 @@ pub fn fold_left[T, U](self : Array[T], f : (U, T) -> U, ~init : U) -> U {
 /// sum // 15
 /// ```
 /// @alert deprecated "Use `rev_fold` instead."
-pub fn fold_right[T, U](self : Array[T], f : (U, T) -> U, ~init : U) -> U {
-  self.rev_fold(~init, f)
+pub fn fold_right[T, U](self : Array[T], f : (U, T) -> U, init~ : U) -> U {
+  self.rev_fold(init~, f)
 }
 
 ///|
@@ -863,8 +863,8 @@ pub fn fold_right[T, U](self : Array[T], f : (U, T) -> U, ~init : U) -> U {
 /// sum // 10
 /// ```
 /// @alert deprecated "Use `foldi` instead."
-pub fn fold_lefti[T, U](self : Array[T], f : (Int, U, T) -> U, ~init : U) -> U {
-  self.foldi(~init, f)
+pub fn fold_lefti[T, U](self : Array[T], f : (Int, U, T) -> U, init~ : U) -> U {
+  self.foldi(init~, f)
 }
 
 ///|
@@ -876,8 +876,8 @@ pub fn fold_lefti[T, U](self : Array[T], f : (Int, U, T) -> U, ~init : U) -> U {
 /// sum // 10
 /// ```
 /// @alert deprecated "Use `rev_foldi` instead."
-pub fn fold_righti[T, U](self : Array[T], f : (Int, U, T) -> U, ~init : U) -> U {
-  self.rev_foldi(~init, f)
+pub fn fold_righti[T, U](self : Array[T], f : (Int, U, T) -> U, init~ : U) -> U {
+  self.rev_foldi(init~, f)
 }
 
 ///|
@@ -1018,9 +1018,9 @@ pub fn to_string[T : Show](self : Array[T]) -> String {
 ///|
 pub fn iter[T](self : Array[T]) -> Iter[T] {
   Iter::new(
-    fn(yield) {
+    fn(yield_) {
       for v in self {
-        guard let IterContinue = yield(v) else { x => break x }
+        guard let IterContinue = yield_(v) else { x => break x }
 
       } else {
         IterContinue
@@ -1032,9 +1032,9 @@ pub fn iter[T](self : Array[T]) -> Iter[T] {
 ///|
 pub fn iter2[A](self : Array[A]) -> Iter2[Int, A] {
   Iter2::new(
-    fn(yield) {
+    fn(yield_) {
       for i, v in self {
-        guard let IterContinue = yield(i, v) else { x => break x }
+        guard let IterContinue = yield_(i, v) else { x => break x }
 
       } else {
         IterContinue

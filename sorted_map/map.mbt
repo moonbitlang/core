@@ -186,15 +186,15 @@ pub fn iter[K, V](self : T[K, V]) -> Iter[(K, V)] {
 ///|
 fn iter_aux[K, V](node : Node[K, V]?) -> Iter[(K, V)] {
   Iter::new(
-    fn(yield) {
+    fn(yield_) {
       match node {
         None => IterContinue
         Some(node) =>
-          if iter_aux(node.left).run(yield) == IterEnd {
+          if iter_aux(node.left).run(yield_) == IterEnd {
             return IterEnd
-          } else if yield((node.key, node.value)) == IterEnd {
+          } else if yield_((node.key, node.value)) == IterEnd {
             return IterEnd
-          } else if iter_aux(node.right).run(yield) == IterEnd {
+          } else if iter_aux(node.right).run(yield_) == IterEnd {
             return IterEnd
           } else {
             IterContinue
@@ -212,15 +212,15 @@ pub fn iter2[K, V](self : T[K, V]) -> Iter2[K, V] {
 ///|
 fn iter_aux2[K, V](node : Node[K, V]?) -> Iter2[K, V] {
   Iter2::new(
-    fn(yield) {
+    fn(yield_) {
       match node {
         None => IterContinue
         Some(node) =>
-          if iter_aux2(node.left).run(yield) == IterEnd {
+          if iter_aux2(node.left).run(yield_) == IterEnd {
             return IterEnd
-          } else if yield(node.key, node.value) == IterEnd {
+          } else if yield_(node.key, node.value) == IterEnd {
             return IterEnd
-          } else if iter_aux2(node.right).run(yield) == IterEnd {
+          } else if iter_aux2(node.right).run(yield_) == IterEnd {
             return IterEnd
           } else {
             IterContinue

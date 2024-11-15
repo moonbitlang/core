@@ -81,7 +81,7 @@ pub fn to_unchecked_string(self : T) -> String {
 
 ///|
 /// Create a buffer with initial capacity (in bytes).
-pub fn T::new(~size_hint : Int = 0) -> T {
+pub fn T::new(size_hint~ : Int = 0) -> T {
   let initial = if size_hint < 1 { 1 } else { size_hint }
   let bytes = Bytes::new(initial)
   { bytes, len: 0, initial_bytes: bytes }

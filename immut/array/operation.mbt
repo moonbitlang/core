@@ -23,7 +23,7 @@ fn immutable_set[T](arr : FixedArray[T], i : Int, v : T) -> FixedArray[T] {
 fn immutable_push[T](arr : FixedArray[T], val : T) -> FixedArray[T] {
   let len = arr.length()
   let new_arr = FixedArray::make(len + 1, val)
-  arr.blit_to(new_arr, ~len)
+  arr.blit_to(new_arr, len~)
   new_arr[len] = val
   new_arr
 }

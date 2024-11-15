@@ -29,7 +29,7 @@ fn offset_to_position(input : String, offset : Int) -> Position {
 }
 
 ///|
-fn invalid_char[T](ctx : ParseContext, ~shift : Int = 0) -> T!ParseError {
+fn invalid_char[T](ctx : ParseContext, shift~ : Int = 0) -> T!ParseError {
   let offset = ctx.offset + shift
   raise InvalidChar(offset_to_position(ctx.input, offset), ctx.input[offset])
 }

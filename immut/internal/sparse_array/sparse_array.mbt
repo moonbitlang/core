@@ -15,7 +15,7 @@
 ///|
 /// A sparse array with at most 32 elements, where elements are not required to have contiguous index.
 /// Empty elements don't waste any space, without losing constant-time access
-pub struct SparseArray[X] {
+pub(all) struct SparseArray[X] {
   // record which elements are present
   elem_info : Bitset
   data : FixedArray[X]

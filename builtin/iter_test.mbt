@@ -301,9 +301,9 @@ test "concat" {
 test "collect" {
   let arr = ['1', '2', '3', '4', '5']
   let iter = Iter::new(
-    fn(yield) {
+    fn(yield_) {
       for i = 0, len = arr.length(); i < len; i = i + 1 {
-        yield(arr[i]) |> ignore
+        yield_(arr[i]) |> ignore
       }
       IterContinue
     },
@@ -426,9 +426,9 @@ test "eachi" {
 fn test_from_array[T](arr : Array[T]) -> Iter[T] {
   Iter::new(
     fn {
-      yield =>
+      yield_ =>
         for i = 0; i < arr.length(); i = i + 1 {
-          if yield(arr[i]) == IterEnd {
+          if yield_(arr[i]) == IterEnd {
             break IterEnd
           }
         } else {
@@ -465,17 +465,17 @@ enum Tree {
 ///|
 fn iter(self : Tree) -> Iter[Int] {
   Iter::new(
-    fn(yield) {
+    fn(yield_) {
       match self {
-        Leaf(x) => yield(x)
+        Leaf(x) => yield_(x)
         Node(l, v, r) =>
           // ([ .. l, v , .. r]).apply(f)
-          if l.iter().run(yield) == IterEnd {
+          if l.iter().run(yield_) == IterEnd {
             IterEnd
-          } else if yield(v) == IterEnd {
+          } else if yield_(v) == IterEnd {
             IterEnd
           } else {
-            r.iter().run(yield)
+            r.iter().run(yield_)
           }
       }
     },
