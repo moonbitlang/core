@@ -32,6 +32,20 @@ test "insert" {
   assert_false!(m.contains("d"))
 }
 
+test "add remove" {
+  let m = Set::new()
+  m.add("a")
+  m.add("b")
+  m.add("c")
+  if m.remove_if_exists("a") {
+    m.add("d")
+  }
+  assert_true!(m.contains("a").not() && m.contains("d"))
+  assert_true!(m.contains("b"))
+  assert_true!(m.contains("c"))
+  assert_true!(m.contains("d"))
+}
+
 test "from_array" {
   let m = Set::of(["a", "b", "c"])
   assert_true!(m.contains("a"))

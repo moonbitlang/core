@@ -83,6 +83,49 @@ pub fn insert[K : Hash + Eq](self : Set[K], key : K) -> Unit {
 }
 
 ///|
+/// Insert a key into the hash set.if the key exists return false
+pub fn add_if_noexists[K : Hash + Eq](self : Set[K], key : K) -> Bool {
+  if self.size >= self.growAt {
+    self.grow()
+  }
+  let hash = key.hash()
+  let insert_entry = { idx: -1, psl: 0, hash, key }
+  let list_node : SListNode[K] = { prev: None, next: None }
+  loop 0, hash & self.capacity_mask, insert_entry, list_node {
+    i, idx, entry, node =>
+      match self.entries[idx] {
+        None => {
+          self.entries[idx] = Some(entry)
+          self.list[idx] = node
+          entry.idx = idx
+          self.add_entry_to_tail(insert_entry)
+          self.size += 1
+          break true
+        }
+        Some(curr_entry) => {
+          let curr_node = self.list[curr_entry.idx]
+          if curr_entry.hash == entry.hash && curr_entry.key == entry.key {
+            break false
+          }
+          if entry.psl > curr_entry.psl {
+            self.entries[idx] = Some(entry)
+            self.list[idx] = node
+            entry.idx = idx
+            curr_entry.psl += 1
+            continue i + 1,
+              (idx + 1) & self.capacity_mask,
+              curr_entry,
+              curr_node
+          } else {
+            entry.psl += 1
+            continue i + 1, (idx + 1) & self.capacity_mask, entry, node
+          }
+        }
+      }
+  }
+}
+
+///|
 /// Insert a key into the hash set.
 pub fn add[K : Hash + Eq](self : Set[K], key : K) -> Unit {
   if self.size >= self.growAt {
@@ -165,6 +208,30 @@ pub fn remove[K : Hash + Eq](self : Set[K], key : K) -> Unit {
         continue i + 1, (idx + 1) & self.capacity_mask
       }
       None => break
+    }
+  }
+}
+
+///|
+/// Remove a key from hash set.if the key exists, delete it and return true
+pub fn remove_if_exists[K : Hash + Eq](self : Set[K], key : K) -> Bool {
+  let hash = key.hash()
+  for i = 0, idx = hash & self.capacity_mask {
+    match self.entries[idx] {
+      Some(entry) => {
+        if entry.hash == hash && entry.key == key {
+          self.entries[idx] = None
+          self.remove_entry(entry)
+          self.shift_back(idx)
+          self.size -= 1
+          break true
+        }
+        if i > entry.psl {
+          break false
+        }
+        continue i + 1, (idx + 1) & self.capacity_mask
+      }
+      None => break false
     }
   }
 }
