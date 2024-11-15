@@ -5,7 +5,7 @@ fn eq[T : Show + Eq](T, T, loc~ : SourceLoc = _) -> Unit! //deprecated
 
 fn fail[T](String, loc~ : SourceLoc = _) -> T!
 
-fn is[T : Show](T, T, loc~ : SourceLoc = _) -> Unit!
+fn is[T : Show](T, T, loc~ : SourceLoc = _) -> Unit! //deprecated
 
 fn is_false(Bool, loc~ : SourceLoc = _) -> Unit! //deprecated
 
@@ -14,6 +14,8 @@ fn is_not[T : Show](T, T, loc~ : SourceLoc = _) -> Unit!
 fn is_true(Bool, loc~ : SourceLoc = _) -> Unit! //deprecated
 
 fn ne[T : Show + Eq](T, T, loc~ : SourceLoc = _) -> Unit! //deprecated
+
+fn same_object[T : Show](T, T, loc~ : SourceLoc = _) -> Unit!
 
 // Types and methods
 pub(all) struct T {

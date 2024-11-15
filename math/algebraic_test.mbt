@@ -27,10 +27,10 @@ test "maximum.ref" {
   // We need another value that equals to x2 by value but not reference
   let x2t = T::{ x: v2 }
   @test.is_not!(x2, x2t)
-  @test.is!(@math.maximum(x1, x2), x2)
-  @test.is!(@math.maximum(x2, x1), x2)
-  @test.is!(@math.maximum(x2, x2t), x2t)
-  @test.is!(@math.maximum(x2t, x2), x2)
+  @test.same_object!(@math.maximum(x1, x2), x2)
+  @test.same_object!(@math.maximum(x2, x1), x2)
+  @test.same_object!(@math.maximum(x2, x2t), x2t)
+  @test.same_object!(@math.maximum(x2t, x2), x2)
 }
 
 test "minimum.value" {
@@ -48,10 +48,10 @@ test "minimum.ref" {
   // We need another value that equals to x2 by value but not reference
   let x2t = T::{ x: v2 }
   @test.is_not!(x2, x2t)
-  @test.is!(@math.minimum(x1, x2), x1)
-  @test.is!(@math.minimum(x2, x1), x1)
-  @test.is!(@math.minimum(x2, x2t), x2)
-  @test.is!(@math.minimum(x2t, x2), x2t)
+  @test.same_object!(@math.minimum(x1, x2), x1)
+  @test.same_object!(@math.minimum(x2, x1), x1)
+  @test.same_object!(@math.minimum(x2, x2t), x2)
+  @test.same_object!(@math.minimum(x2t, x2), x2t)
 }
 
 test "exp" {
