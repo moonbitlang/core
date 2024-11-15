@@ -334,7 +334,22 @@ pub fn inter[A : Compare](self : T[A], other : T[A]) -> T[A] {
 /// println(of([1, 2, 3]).diff(of([4, 5, 1])))
 /// // output: of([2, 3])
 /// ```
+/// 
+/// @alert deprecated "Use `difference` instead"
 pub fn diff[A : Compare](self : T[A], other : T[A]) -> T[A] {
+  self.difference(other)
+}
+
+///|
+/// Returns the difference between self and other.
+/// 
+/// # Example
+/// 
+/// ```
+/// println(of([1, 2, 3]).diff(of([4, 5, 1])))
+/// // output: of([2, 3])
+/// ```
+pub fn difference[A : Compare](self : T[A], other : T[A]) -> T[A] {
   match (self, other) {
     (Empty, _) => Empty
     (_, Empty) => self

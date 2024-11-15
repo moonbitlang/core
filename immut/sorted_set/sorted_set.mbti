@@ -13,7 +13,8 @@ impl T {
   any[A : Compare + Eq](Self[A], (A) -> Bool) -> Bool
   contains[A : Compare + Eq](Self[A], A) -> Bool
   default[A : Default]() -> Self[A]
-  diff[A : Compare + Eq](Self[A], Self[A]) -> Self[A]
+  diff[A : Compare + Eq](Self[A], Self[A]) -> Self[A] //deprecated
+  difference[A : Compare + Eq](Self[A], Self[A]) -> Self[A]
   disjoint[A : Compare + Eq](Self[A], Self[A]) -> Bool
   each[A](Self[A], (A) -> Unit) -> Unit
   filter[A : Compare + Eq](Self[A], (A) -> Bool) -> Self[A]
