@@ -37,11 +37,11 @@ test "add remove" {
   m.add("a")
   m.add("b")
   m.add("c")
-  if m.remove_if_exists("a") {
+  if m.remove_and_check("a") {
     m.add("d")
   }
-  assert_true!(m.add_if_noexists("test"))
-  assert_false!(m.add_if_noexists("test"))
+  assert_true!(m.add_and_check("test"))
+  assert_false!(m.add_and_check("test"))
   assert_true!(m.contains("a").not() && m.contains("d"))
   assert_true!(m.contains("b"))
   assert_true!(m.contains("c"))

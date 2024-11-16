@@ -84,7 +84,7 @@ pub fn insert[K : Hash + Eq](self : Set[K], key : K) -> Unit {
 
 ///|
 /// Insert a key into the hash set.if the key exists return false
-pub fn add_if_noexists[K : Hash + Eq](self : Set[K], key : K) -> Bool {
+pub fn add_and_check[K : Hash + Eq](self : Set[K], key : K) -> Bool {
   if self.size >= self.growAt {
     self.grow()
   }
@@ -128,7 +128,7 @@ pub fn add_if_noexists[K : Hash + Eq](self : Set[K], key : K) -> Bool {
 ///|
 /// Insert a key into the hash set.
 pub fn add[K : Hash + Eq](self : Set[K], key : K) -> Unit {
-  let _ = self.add_if_noexists(key)
+  let _ = self.add_and_check(key)
 
 }
 
@@ -155,13 +155,13 @@ pub fn contains[K : Hash + Eq](self : Set[K], key : K) -> Bool {
 ///|
 /// Remove a key from hash set.
 pub fn remove[K : Hash + Eq](self : Set[K], key : K) -> Unit {
-  let _ = self.remove_if_exists(key)
+  let _ = self.remove_and_check(key)
 
 }
 
 ///|
 /// Remove a key from hash set.if the key exists, delete it and return true
-pub fn remove_if_exists[K : Hash + Eq](self : Set[K], key : K) -> Bool {
+pub fn remove_and_check[K : Hash + Eq](self : Set[K], key : K) -> Bool {
   let hash = key.hash()
   for i = 0, idx = hash & self.capacity_mask {
     match self.entries[idx] {
