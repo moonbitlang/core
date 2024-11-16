@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+///|
 pub fn write_object[T : Show](self : StringBuilder, obj : T) -> Unit {
   self.write_string(obj.to_string())
 }

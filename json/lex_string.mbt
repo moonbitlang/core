@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+///|
 fn lex_string(ctx : ParseContext) -> String!ParseError {
   let buf = StringBuilder::new()
   let mut start = ctx.offset
@@ -60,6 +61,7 @@ fn lex_string(ctx : ParseContext) -> String!ParseError {
   buf.to_string()
 }
 
+///|
 fn lex_hex_digits(ctx : ParseContext, n : Int) -> Int!ParseError {
   let mut r = 0
   for i = 0; i < n; i = i + 1 {

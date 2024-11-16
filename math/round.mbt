@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+///|
 pub fn round(input : Double) -> Double {
   input.round()
 }
@@ -21,6 +22,7 @@ test "round" {
   assert_eq!(round(2251799813685248.5), 2251799813685249.0)
 }
 
+///|
 pub fn ceil(input : Double) -> Double {
   input.ceil()
 }
@@ -33,6 +35,7 @@ test "ceil" {
   assert_eq!(ceil(0.0), 0.0)
 }
 
+///|
 pub fn floor(input : Double) -> Double {
   input.floor()
 }
@@ -45,6 +48,7 @@ test "floor" {
   assert_eq!(floor(0.0), 0.0)
 }
 
+///|
 pub fn trunc(input : Double) -> Double {
   input.trunc()
 }

@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+///|
 /// @intrinsic %fixedarray.copy
 pub fn FixedArray::unsafe_blit[A](
   dst : FixedArray[A],
@@ -31,12 +32,13 @@ pub fn FixedArray::unsafe_blit[A](
   }
 }
 
+///|
 pub fn FixedArray::blit_to[A](
   self : FixedArray[A],
   dst : FixedArray[A],
-  ~len : Int,
-  ~src_offset : Int = 0,
-  ~dst_offset : Int = 0
+  len~ : Int,
+  src_offset~ : Int = 0,
+  dst_offset~ : Int = 0
 ) -> Unit {
   if dst_offset + len > dst.length() || src_offset + len > self.length() {
     panic()

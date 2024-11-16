@@ -19,7 +19,7 @@ impl T {
   length[A](Self[A]) -> Int
   map[A, U](Self[A], (A) -> U) -> Self[U]
   mapi[A, U](Self[A], (Int, A) -> U) -> Self[U]
-  new[A](~capacity : Int = ..) -> Self[A]
+  new[A](capacity~ : Int = ..) -> Self[A]
   of[A](FixedArray[A]) -> Self[A]
   op_equal[A : Eq](Self[A], Self[A]) -> Bool
   op_get[A](Self[A], Int) -> A
@@ -39,11 +39,9 @@ impl T {
   unsafe_pop_back[A](Self[A]) -> Unit
   unsafe_pop_front[A](Self[A]) -> Unit
 }
+impl[A : Show] Show for T[A]
 
 // Type aliases
 
 // Traits
-
-// Extension Methods
-impl Show for T
 

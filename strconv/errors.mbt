@@ -12,28 +12,36 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-pub type! StrConvError String
+///|
+pub(all) type! StrConvError String
 
+///|
 pub impl Show for StrConvError with output(self, logger) {
   match self {
     StrConvError(err) => logger.write_string(err)
   }
 }
 
+///|
 let range_err_str = "value out of range"
 
+///|
 let syntax_err_str = "invalid syntax"
 
+///|
 let base_err_str = "invalid base"
 
+///|
 fn range_err[T]() -> T!StrConvError {
   raise StrConvError(range_err_str)
 }
 
+///|
 fn syntax_err[T]() -> T!StrConvError {
   raise StrConvError(syntax_err_str)
 }
 
+///|
 fn base_err[T]() -> T!StrConvError {
   raise StrConvError(base_err_str)
 }

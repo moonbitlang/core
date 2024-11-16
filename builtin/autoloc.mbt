@@ -12,16 +12,21 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-pub type SourceLoc
+///|
+pub(all) type SourceLoc
 
+///|
 pub fn SourceLoc::to_string(self : SourceLoc) -> String = "%loc_to_string"
 
+///|
 pub impl Show for SourceLoc with output(self, logger) {
   logger.write_string(self.to_string())
 }
 
-pub type ArgsLoc Array[SourceLoc?] derive(Show)
+///|
+pub(all) type ArgsLoc Array[SourceLoc?] derive(Show)
 
+///|
 pub fn ArgsLoc::to_json(self : ArgsLoc) -> String {
   let buf = StringBuilder::new(size_hint=10)
   buf.write_char('[')

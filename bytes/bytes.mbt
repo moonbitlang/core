@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+///|
 /// Makes a new Bytes with the given byte array.
 /// 
 /// # Usage
@@ -28,10 +29,12 @@ pub fn Bytes::from_array(arr : Array[Byte]) -> Bytes {
   rv
 }
 
+///|
 pub fn Bytes::from_iter(iter : Iter[Byte]) -> Bytes {
   Bytes::from_array(iter.collect())
 }
 
+///|
 /// Makes a new Bytes with the given byte fixedarray.
 /// 
 /// # Usage
@@ -48,6 +51,7 @@ pub fn Bytes::of(arr : FixedArray[Byte]) -> Bytes {
   rv
 }
 
+///|
 pub fn to_array(self : Bytes) -> Array[Byte] {
   let rv = Array::make(self.length(), b'0')
   for i = 0; i < self.length(); i = i + 1 {
@@ -56,11 +60,12 @@ pub fn to_array(self : Bytes) -> Array[Byte] {
   rv
 }
 
+///|
 pub fn iter(self : Bytes) -> Iter[Byte] {
   Iter::new(
-    fn(yield) {
+    fn(yield_) {
       for i = 0, len = self.length(); i < len; i = i + 1 {
-        if yield(self[i]) == IterEnd {
+        if yield_(self[i]) == IterEnd {
           break IterEnd
         }
       } else {
@@ -70,6 +75,7 @@ pub fn iter(self : Bytes) -> Iter[Byte] {
   )
 }
 
+///|
 pub fn Bytes::default() -> Bytes {
   b""
 }

@@ -3,19 +3,19 @@ package moonbitlang/core/builtin
 // Values
 fn abort[T](String) -> T
 
-fn assert_eq[T : Eq + Show](T, T, ~loc : SourceLoc = _) -> Unit!
+fn assert_eq[T : Eq + Show](T, T, loc~ : SourceLoc = _) -> Unit!
 
-fn assert_false(Bool, ~loc : SourceLoc = _) -> Unit!
+fn assert_false(Bool, loc~ : SourceLoc = _) -> Unit!
 
-fn assert_not_eq[T : Eq + Show](T, T, ~loc : SourceLoc = _) -> Unit!
+fn assert_not_eq[T : Eq + Show](T, T, loc~ : SourceLoc = _) -> Unit!
 
-fn assert_true(Bool, ~loc : SourceLoc = _) -> Unit!
+fn assert_true(Bool, loc~ : SourceLoc = _) -> Unit!
 
-fn fail[T](String, ~loc : SourceLoc = _) -> T!Failure
+fn fail[T](String, loc~ : SourceLoc = _) -> T!Failure
 
 fn ignore[T](T) -> Unit
 
-fn inspect(Show, ~content : String = .., ~loc : SourceLoc = _, ~args_loc : ArgsLoc = _) -> Unit!InspectError
+fn inspect(Show, content~ : String = .., loc~ : SourceLoc = _, args_loc~ : ArgsLoc = _) -> Unit!InspectError
 
 fn op_ge[T : Compare + Eq](T, T) -> Bool
 
@@ -36,18 +36,19 @@ fn print[T : Show](T) -> Unit //deprecated
 fn println[T : Show](T) -> Unit
 
 // Types and methods
-pub type ArgsLoc Array[SourceLoc?]
+pub(all) type ArgsLoc Array[SourceLoc?]
 impl ArgsLoc {
   to_json(Self) -> String
   to_string(Self) -> String
 }
+impl Show for ArgsLoc
 
 type Array
 impl Array {
   append[T](Self[T], Self[T]) -> Unit
   binary_search[T : Compare + Eq](Self[T], T) -> Result[Int, Int]
   binary_search_by[T](Self[T], (T) -> Int) -> Result[Int, Int]
-  blit_to[A](Self[A], Self[A], ~len : Int, ~src_offset : Int = .., ~dst_offset : Int = ..) -> Unit
+  blit_to[A](Self[A], Self[A], len~ : Int, src_offset~ : Int = .., dst_offset~ : Int = ..) -> Unit
   capacity[T](Self[T]) -> Int
   chunk_by[T](Self[T], (T, T) -> Bool) -> Self[Self[T]]
   chunks[T](Self[T], Int) -> Self[Self[T]]
@@ -64,12 +65,12 @@ impl Array {
   filter[T](Self[T], (T) -> Bool) -> Self[T]
   find_index[T](Self[T], (T) -> Bool) -> Int? //deprecated
   flatten[T](Self[Self[T]]) -> Self[T]
-  fold[A, B](Self[A], ~init : B, (B, A) -> B) -> B
-  fold_left[T, U](Self[T], (U, T) -> U, ~init : U) -> U //deprecated
-  fold_lefti[T, U](Self[T], (Int, U, T) -> U, ~init : U) -> U //deprecated
-  fold_right[T, U](Self[T], (U, T) -> U, ~init : U) -> U //deprecated
-  fold_righti[T, U](Self[T], (Int, U, T) -> U, ~init : U) -> U //deprecated
-  foldi[A, B](Self[A], ~init : B, (Int, B, A) -> B) -> B
+  fold[A, B](Self[A], init~ : B, (B, A) -> B) -> B
+  fold_left[T, U](Self[T], (U, T) -> U, init~ : U) -> U //deprecated
+  fold_lefti[T, U](Self[T], (Int, U, T) -> U, init~ : U) -> U //deprecated
+  fold_right[T, U](Self[T], (U, T) -> U, init~ : U) -> U //deprecated
+  fold_righti[T, U](Self[T], (Int, U, T) -> U, init~ : U) -> U //deprecated
+  foldi[A, B](Self[A], init~ : B, (Int, B, A) -> B) -> B
   from_fixed_array[T](FixedArray[T]) -> Self[T]
   get[T](Self[T], Int) -> T?
   insert[T](Self[T], Int, T) -> Unit
@@ -83,9 +84,9 @@ impl Array {
   map_inplace[T](Self[T], (T) -> T) -> Unit
   mapi[T, U](Self[T], (Int, T) -> U) -> Self[U]
   mapi_inplace[T](Self[T], (Int, T) -> T) -> Unit
-  new[T](~capacity : Int = ..) -> Self[T]
+  new[T](capacity~ : Int = ..) -> Self[T]
   op_add[T](Self[T], Self[T]) -> Self[T]
-  op_as_view[T](Self[T], ~start : Int, ~end? : Int) -> ArrayView[T]
+  op_as_view[T](Self[T], start~ : Int, end? : Int) -> ArrayView[T]
   op_equal[T : Eq](Self[T], Self[T]) -> Bool
   op_get[T](Self[T], Int) -> T
   op_set[T](Self[T], Int, T) -> Unit
@@ -100,8 +101,8 @@ impl Array {
   rev[T](Self[T]) -> Self[T]
   rev_each[T](Self[T], (T) -> Unit) -> Unit
   rev_eachi[T](Self[T], (Int, T) -> Unit) -> Unit
-  rev_fold[A, B](Self[A], ~init : B, (B, A) -> B) -> B
-  rev_foldi[A, B](Self[A], ~init : B, (Int, B, A) -> B) -> B
+  rev_fold[A, B](Self[A], init~ : B, (B, A) -> B) -> B
+  rev_foldi[A, B](Self[A], init~ : B, (Int, B, A) -> B) -> B
   rev_inplace[T](Self[T]) -> Unit
   search[T : Eq](Self[T], T) -> Int?
   search_by[T](Self[T], (T) -> Bool) -> Int?
@@ -118,22 +119,24 @@ impl Array {
   unsafe_blit_fixed[A](Self[A], Int, FixedArray[A], Int, Int) -> Unit
   unsafe_pop[T](Self[T]) -> T
 }
+impl[X : Show] Show for Array[X]
 
 type ArrayView
 impl ArrayView {
-  fold[A, B](Self[A], ~init : B, (B, A) -> B) -> B
-  foldi[A, B](Self[A], ~init : B, (Int, B, A) -> B) -> B
+  fold[A, B](Self[A], init~ : B, (B, A) -> B) -> B
+  foldi[A, B](Self[A], init~ : B, (Int, B, A) -> B) -> B
   iter[A](Self[A]) -> Iter[A]
   length[T](Self[T]) -> Int
-  op_as_view[T](Self[T], ~start : Int, ~end? : Int) -> Self[T]
+  op_as_view[T](Self[T], start~ : Int, end? : Int) -> Self[T]
   op_get[T](Self[T], Int) -> T
   op_set[T](Self[T], Int, T) -> Unit
-  rev_fold[A, B](Self[A], ~init : B, (B, A) -> B) -> B
-  rev_foldi[A, B](Self[A], ~init : B, (Int, B, A) -> B) -> B
+  rev_fold[A, B](Self[A], init~ : B, (B, A) -> B) -> B
+  rev_foldi[A, B](Self[A], init~ : B, (Int, B, A) -> B) -> B
   swap[T](Self[T], Int, Int) -> Unit
   to_json[X : ToJson](Self[X]) -> Json
   to_string[X : Show](Self[X]) -> String
 }
+impl[X : Show] Show for ArrayView[X]
 
 type BigInt
 impl BigInt {
@@ -142,7 +145,7 @@ impl BigInt {
   from_hex(String) -> Self
   from_int(Int) -> Self
   from_int64(Int64) -> Self
-  from_octets(Bytes, ~signum : Int = ..) -> Self
+  from_octets(Bytes, signum~ : Int = ..) -> Self
   from_string(String) -> Self
   is_zero(Self) -> Bool
   lsl(Self, Int) -> Self //deprecated
@@ -155,19 +158,20 @@ impl BigInt {
   op_shl(Self, Int) -> Self
   op_shr(Self, Int) -> Self
   op_sub(Self, Self) -> Self
-  pow(Self, Self, ~modulus : Self = ..) -> Self
+  pow(Self, Self, modulus~ : Self = ..) -> Self
   shl(Self, Int) -> Self //deprecated
   shr(Self, Int) -> Self //deprecated
-  to_hex(Self, ~uppercase : Bool = ..) -> String
+  to_hex(Self, uppercase~ : Bool = ..) -> String
   to_json(Self) -> Json
-  to_octets(Self, ~length? : Int) -> Bytes
+  to_octets(Self, length? : Int) -> Bytes
   to_string(Self) -> String
 }
+impl Show for BigInt
 
 type Buffer
 impl Buffer {
-  expect(Self, ~content : String = .., ~loc : SourceLoc = _, ~args_loc : ArgsLoc = _) -> Unit!InspectError //deprecated
-  new(~size_hint : Int = ..) -> Self //deprecated
+  expect(Self, content~ : String = .., loc~ : SourceLoc = _, args_loc~ : ArgsLoc = _) -> Unit!InspectError //deprecated
+  new(size_hint~ : Int = ..) -> Self //deprecated
   reset(Self) -> Unit
   to_bytes(Self) -> Bytes
   to_string(Self) -> String
@@ -179,8 +183,9 @@ impl Buffer {
   write_sub_string(Self, String, Int, Int) -> Unit //deprecated
   write_substring(Self, String, Int, Int) -> Unit
 }
+impl Show for Buffer
 
-pub type! Failure String
+pub(all) type! Failure String
 
 type Hasher
 impl Hasher {
@@ -197,10 +202,10 @@ impl Hasher {
   combine_uint64(Self, UInt64) -> Unit
   combine_unit(Self) -> Unit
   finalize(Self) -> Int
-  new(~seed : Int = ..) -> Self
+  new(seed~ : Int = ..) -> Self
 }
 
-pub type! InspectError String
+pub(all) type! InspectError String
 
 type Iter
 impl Iter {
@@ -219,7 +224,7 @@ impl Iter {
   filter[T](Self[T], (T) -> Bool) -> Self[T]
   find_first[T](Self[T], (T) -> Bool) -> T?
   flat_map[T, R](Self[T], (T) -> Self[R]) -> Self[R]
-  fold[T, B](Self[T], ~init : B, (B, T) -> B) -> B
+  fold[T, B](Self[T], init~ : B, (B, T) -> B) -> B
   head[A](Self[A]) -> A?
   intersperse[A](Self[A], A) -> Self[A]
   iter[T](Self[T]) -> Self[T]
@@ -230,7 +235,7 @@ impl Iter {
   map_while[A, B](Self[A], (A) -> B?) -> Self[B]
   new[T](((T) -> IterResult) -> IterResult) -> Self[T]
   op_add[T](Self[T], Self[T]) -> Self[T]
-  op_as_view[A](Self[A], ~start : Int, ~end? : Int) -> Self[A]
+  op_as_view[A](Self[A], start~ : Int, end? : Int) -> Self[A]
   peek[T](Self[T]) -> T?
   prepend[T](Self[T], T) -> Self[T]
   repeat[T](T) -> Self[T]
@@ -242,6 +247,7 @@ impl Iter {
   to_array[T](Self[T]) -> Array[T]
   to_string[T : Show](Self[T]) -> String
 }
+impl[T : Show] Show for Iter[T]
 
 type Iter2
 impl Iter2 {
@@ -253,16 +259,18 @@ impl Iter2 {
   to_array[A, B](Self[A, B]) -> Array[(A, B)]
   to_string[A : Show, B : Show](Self[A, B]) -> String
 }
+impl[A : Show, B : Show] Show for Iter2[A, B]
 
-pub enum IterResult {
+pub(all) enum IterResult {
   IterEnd
   IterContinue
 }
 impl IterResult {
   op_equal(Self, Self) -> Bool
 }
+impl Eq for IterResult
 
-pub enum Json {
+pub(all) enum Json {
   Null
   True
   False
@@ -275,6 +283,7 @@ impl Json {
   default() -> Self
   op_equal(Self, Self) -> Bool
 }
+impl Eq for Json
 
 type Map
 impl Map {
@@ -293,7 +302,7 @@ impl Map {
   iter[K, V](Self[K, V]) -> Iter[(K, V)]
   iter2[K, V](Self[K, V]) -> Iter2[K, V]
   keys[K, V](Self[K, V]) -> Iter[K]
-  new[K, V](~capacity : Int = ..) -> Self[K, V]
+  new[K, V](capacity~ : Int = ..) -> Self[K, V]
   of[K : Hash + Eq, V](FixedArray[(K, V)]) -> Self[K, V]
   op_equal[K : Hash + Eq, V : Eq](Self[K, V], Self[K, V]) -> Bool
   op_get[K : Hash + Eq, V](Self[K, V], K) -> V?
@@ -306,9 +315,11 @@ impl Map {
   to_string[K : Show, V : Show](Self[K, V]) -> String
   values[K, V](Self[K, V]) -> Iter[V]
 }
+impl[K : Show, V : Show] Show for Map[K, V]
 
 type Set
 impl Set {
+  add[K : Hash + Eq](Self[K], K) -> Unit
   capacity[K](Self[K]) -> Int
   clear[K](Self[K]) -> Unit
   contains[K : Hash + Eq](Self[K], K) -> Bool
@@ -317,11 +328,11 @@ impl Set {
   eachi[K](Self[K], (Int, K) -> Unit) -> Unit
   from_array[K : Hash + Eq](Array[K]) -> Self[K]
   from_iter[K : Hash + Eq](Iter[K]) -> Self[K]
-  insert[K : Hash + Eq](Self[K], K) -> Unit
+  insert[K : Hash + Eq](Self[K], K) -> Unit //deprecated
   intersection[K : Hash + Eq](Self[K], Self[K]) -> Self[K]
   is_empty[K](Self[K]) -> Bool
   iter[K](Self[K]) -> Iter[K]
-  new[K](~capacity : Int = ..) -> Self[K]
+  new[K](capacity~ : Int = ..) -> Self[K]
   of[K : Hash + Eq](FixedArray[K]) -> Self[K]
   op_equal[K : Eq](Self[K], Self[K]) -> Bool
   remove[K : Hash + Eq](Self[K], K) -> Unit
@@ -332,17 +343,19 @@ impl Set {
   to_string[K : Show](Self[K]) -> String
   union[K : Hash + Eq](Self[K], Self[K]) -> Self[K]
 }
+impl[K : Show] Show for Set[K]
 
-pub type! SnapshotError String
+pub(all) type! SnapshotError String
 
-pub type SourceLoc
+pub(all) type SourceLoc
 impl SourceLoc {
   to_string(Self) -> String
 }
+impl Show for SourceLoc
 
 type StringBuilder
 impl StringBuilder {
-  new(~size_hint : Int = ..) -> Self
+  new(size_hint~ : Int = ..) -> Self
   reset(Self) -> Unit
   to_string(Self) -> String
   write_char(Self, Char) -> Unit
@@ -350,6 +363,7 @@ impl StringBuilder {
   write_string(Self, String) -> Unit
   write_substring(Self, String, Int, Int) -> Unit
 }
+impl Show for StringBuilder
 
 type UninitializedArray
 impl UninitializedArray {
@@ -358,10 +372,14 @@ impl UninitializedArray {
   op_get[T](Self[T], Int) -> T
   op_set[T](Self[T], Int, T) -> Unit
 }
+
+
 impl Unit {
   op_equal(Unit, Unit) -> Bool
   to_json(Unit) -> Json
 }
+
+
 impl Bool {
   default() -> Bool
   not(Bool) -> Bool
@@ -370,6 +388,8 @@ impl Bool {
   to_json(Bool) -> Json
   to_string(Bool) -> String
 }
+
+
 impl Byte {
   compare(Byte, Byte) -> Int
   default() -> Byte
@@ -380,7 +400,9 @@ impl Byte {
   lsr(Byte, Int) -> Byte //deprecated
   lxor(Byte, Byte) -> Byte
   op_add(Byte, Byte) -> Byte
+  op_div(Byte, Byte) -> Byte
   op_equal(Byte, Byte) -> Bool
+  op_mul(Byte, Byte) -> Byte
   op_shl(Byte, Int) -> Byte
   op_shr(Byte, Int) -> Byte
   op_sub(Byte, Byte) -> Byte
@@ -390,6 +412,8 @@ impl Byte {
   to_string(Byte) -> String
   to_uint(Byte) -> UInt
 }
+
+
 impl Char {
   compare(Char, Char) -> Int
   default() -> Char
@@ -400,6 +424,8 @@ impl Char {
   to_string(Char) -> String
   to_uint(Char) -> UInt
 }
+
+
 impl Int {
   asr(Int, Int) -> Int //deprecated
   clz(Int) -> Int
@@ -438,9 +464,11 @@ impl Int {
   to_string(Int) -> String
   to_uint(Int) -> UInt //deprecated
   to_uint64(Int) -> UInt64
-  until(Int, Int, ~step : Int = .., ~inclusive : Bool = ..) -> Iter[Int]
-  upto(Int, Int, ~inclusive : Bool = ..) -> Iter[Int] //deprecated
+  until(Int, Int, step~ : Int = .., inclusive~ : Bool = ..) -> Iter[Int]
+  upto(Int, Int, inclusive~ : Bool = ..) -> Iter[Int] //deprecated
 }
+
+
 impl Int64 {
   asr(Int64, Int) -> Int64 //deprecated
   clz(Int64) -> Int
@@ -474,9 +502,11 @@ impl Int64 {
   to_json(Int64) -> Json
   to_string(Int64) -> String
   to_uint64(Int64) -> UInt64 //deprecated
-  until(Int64, Int64, ~step : Int64 = .., ~inclusive : Bool = ..) -> Iter[Int64]
-  upto(Int64, Int64, ~inclusive : Bool = ..) -> Iter[Int64] //deprecated
+  until(Int64, Int64, step~ : Int64 = .., inclusive~ : Bool = ..) -> Iter[Int64]
+  upto(Int64, Int64, inclusive~ : Bool = ..) -> Iter[Int64] //deprecated
 }
+
+
 impl UInt {
   clz(UInt) -> Int
   compare(UInt, UInt) -> Int
@@ -507,8 +537,10 @@ impl UInt {
   to_string(UInt) -> String
   to_uint64(UInt) -> UInt64
   trunc_double(Double) -> UInt
-  upto(UInt, UInt, ~inclusive : Bool = ..) -> Iter[UInt] //deprecated
+  upto(UInt, UInt, inclusive~ : Bool = ..) -> Iter[UInt] //deprecated
 }
+
+
 impl UInt64 {
   clz(UInt64) -> Int
   compare(UInt64, UInt64) -> Int
@@ -542,8 +574,10 @@ impl UInt64 {
   to_string(UInt64) -> String
   to_uint(UInt64) -> UInt
   trunc_double(Double) -> UInt64
-  upto(UInt64, UInt64, ~inclusive : Bool = ..) -> Iter[UInt64] //deprecated
+  upto(UInt64, UInt64, inclusive~ : Bool = ..) -> Iter[UInt64] //deprecated
 }
+
+
 impl Float {
   compare(Float, Float) -> Int
   op_add(Float, Float) -> Float
@@ -558,9 +592,11 @@ impl Float {
   sqrt(Float) -> Float
   to_double(Float) -> Double
   to_json(Float) -> Json
-  until(Float, Float, ~step : Float = .., ~inclusive : Bool = ..) -> Iter[Float]
-  upto(Float, Float, ~inclusive : Bool = ..) -> Iter[Float] //deprecated
+  until(Float, Float, step~ : Float = .., inclusive~ : Bool = ..) -> Iter[Float]
+  upto(Float, Float, inclusive~ : Bool = ..) -> Iter[Float] //deprecated
 }
+
+
 impl Double {
   compare(Double, Double) -> Int
   convert_uint(UInt) -> Double
@@ -582,9 +618,11 @@ impl Double {
   to_int(Double) -> Int
   to_int64(Double) -> Int64
   to_json(Double) -> Json
-  until(Double, Double, ~step : Double = .., ~inclusive : Bool = ..) -> Iter[Double]
-  upto(Double, Double, ~inclusive : Bool = ..) -> Iter[Double] //deprecated
+  until(Double, Double, step~ : Double = .., inclusive~ : Bool = ..) -> Iter[Double]
+  upto(Double, Double, inclusive~ : Bool = ..) -> Iter[Double] //deprecated
 }
+
+
 impl String {
   escape(String) -> String
   get(String, Int) -> Char
@@ -593,22 +631,28 @@ impl String {
   op_add(String, String) -> String
   op_equal(String, String) -> Bool
   op_get(String, Int) -> Char
-  substring(String, ~start : Int = .., ~end : Int = ..) -> String
+  substring(String, start~ : Int = .., end~ : Int = ..) -> String
   to_json(String) -> Json
   to_string(String) -> String
 }
+
+
 impl Option {
   op_equal[X : Eq](X?, X?) -> Bool
   to_json[T : ToJson](T?) -> Json
   to_string[X : Show](X?) -> String
   unwrap[X](X?) -> X
 }
+
+
 impl Result {
   op_equal[T : Eq, E : Eq](Self[T, E], Self[T, E]) -> Bool
   to_json[Ok : ToJson, Err : ToJson](Self[Ok, Err]) -> Json
 }
+
+
 impl FixedArray {
-  blit_to[A](Self[A], Self[A], ~len : Int, ~src_offset : Int = .., ~dst_offset : Int = ..) -> Unit
+  blit_to[A](Self[A], Self[A], len~ : Int, src_offset~ : Int = .., dst_offset~ : Int = ..) -> Unit
   default[X]() -> Self[X]
   fill[T](Self[T], T) -> Unit
   get[T](Self[T], Int) -> T
@@ -623,6 +667,8 @@ impl FixedArray {
   to_string[X : Show](Self[X]) -> String
   unsafe_blit[A](Self[A], Int, Self[A], Int, Int) -> Unit
 }
+
+
 impl Bytes {
   blit(Bytes, Int, Bytes, Int, Int) -> Unit
   blit_from_string(Bytes, Int, String, Int, Int) -> Unit
@@ -636,83 +682,116 @@ impl Bytes {
   op_set(Bytes, Int, Byte) -> Unit
   set_utf16_char(Bytes, Int, Char) -> Int
   set_utf8_char(Bytes, Int, Char) -> Int
-  sub_string(Bytes, Int, Int) -> String
-  to_string(Bytes) -> String
+  sub_string(Bytes, Int, Int) -> String //deprecated
+  to_string(Bytes) -> String //deprecated
+  to_unchecked_string(Bytes, offset~ : Int = .., length~ : Int = ..) -> String
 }
+
+
 impl Logger {
-  write_iter[T : Show](Self, Iter[T], ~prefix : String = .., ~suffix : String = .., ~sep : String = .., ~trailing : Bool = ..) -> Unit
+  write_iter[T : Show](Self, Iter[T], prefix~ : String = .., suffix~ : String = .., sep~ : String = .., trailing~ : Bool = ..) -> Unit
   write_object[Obj : Show](Self, Obj) -> Unit
 }
+
+
 impl Tuple(2) {
   compare[T0 : Compare + Eq, T1 : Compare + Eq]((T0, T1), (T0, T1)) -> Int
   op_equal[T0 : Eq, T1 : Eq]((T0, T1), (T0, T1)) -> Bool
   to_string[A : Show, B : Show]((A, B)) -> String
 }
+
+
 impl Tuple(3) {
   compare[T0 : Compare + Eq, T1 : Compare + Eq, T2 : Compare + Eq]((T0, T1, T2), (T0, T1, T2)) -> Int
   op_equal[T0 : Eq, T1 : Eq, T2 : Eq]((T0, T1, T2), (T0, T1, T2)) -> Bool
   to_string[A : Show, B : Show, C : Show]((A, B, C)) -> String
 }
+
+
 impl Tuple(4) {
   compare[T0 : Compare + Eq, T1 : Compare + Eq, T2 : Compare + Eq, T3 : Compare + Eq]((T0, T1, T2, T3), (T0, T1, T2, T3)) -> Int
   op_equal[T0 : Eq, T1 : Eq, T2 : Eq, T3 : Eq]((T0, T1, T2, T3), (T0, T1, T2, T3)) -> Bool
   to_string[A : Show, B : Show, C : Show, D : Show]((A, B, C, D)) -> String
 }
+
+
 impl Tuple(5) {
   compare[T0 : Compare + Eq, T1 : Compare + Eq, T2 : Compare + Eq, T3 : Compare + Eq, T4 : Compare + Eq]((T0, T1, T2, T3, T4), (T0, T1, T2, T3, T4)) -> Int
   op_equal[T0 : Eq, T1 : Eq, T2 : Eq, T3 : Eq, T4 : Eq]((T0, T1, T2, T3, T4), (T0, T1, T2, T3, T4)) -> Bool
   to_string[A : Show, B : Show, C : Show, D : Show, E : Show]((A, B, C, D, E)) -> String
 }
+
+
 impl Tuple(6) {
   compare[T0 : Compare + Eq, T1 : Compare + Eq, T2 : Compare + Eq, T3 : Compare + Eq, T4 : Compare + Eq, T5 : Compare + Eq]((T0, T1, T2, T3, T4, T5), (T0, T1, T2, T3, T4, T5)) -> Int
   op_equal[T0 : Eq, T1 : Eq, T2 : Eq, T3 : Eq, T4 : Eq, T5 : Eq]((T0, T1, T2, T3, T4, T5), (T0, T1, T2, T3, T4, T5)) -> Bool
   to_string[A : Show, B : Show, C : Show, D : Show, E : Show, F : Show]((A, B, C, D, E, F)) -> String
 }
+
+
 impl Tuple(7) {
   compare[T0 : Compare + Eq, T1 : Compare + Eq, T2 : Compare + Eq, T3 : Compare + Eq, T4 : Compare + Eq, T5 : Compare + Eq, T6 : Compare + Eq]((T0, T1, T2, T3, T4, T5, T6), (T0, T1, T2, T3, T4, T5, T6)) -> Int
   op_equal[T0 : Eq, T1 : Eq, T2 : Eq, T3 : Eq, T4 : Eq, T5 : Eq, T6 : Eq]((T0, T1, T2, T3, T4, T5, T6), (T0, T1, T2, T3, T4, T5, T6)) -> Bool
   to_string[A : Show, B : Show, C : Show, D : Show, E : Show, F : Show, G : Show]((A, B, C, D, E, F, G)) -> String
 }
+
+
 impl Tuple(8) {
   compare[T0 : Compare + Eq, T1 : Compare + Eq, T2 : Compare + Eq, T3 : Compare + Eq, T4 : Compare + Eq, T5 : Compare + Eq, T6 : Compare + Eq, T7 : Compare + Eq]((T0, T1, T2, T3, T4, T5, T6, T7), (T0, T1, T2, T3, T4, T5, T6, T7)) -> Int
   op_equal[T0 : Eq, T1 : Eq, T2 : Eq, T3 : Eq, T4 : Eq, T5 : Eq, T6 : Eq, T7 : Eq]((T0, T1, T2, T3, T4, T5, T6, T7), (T0, T1, T2, T3, T4, T5, T6, T7)) -> Bool
   to_string[T0 : Show, T1 : Show, T2 : Show, T3 : Show, T4 : Show, T5 : Show, T6 : Show, T7 : Show]((T0, T1, T2, T3, T4, T5, T6, T7)) -> String
 }
+
+
 impl Tuple(9) {
   compare[T0 : Compare + Eq, T1 : Compare + Eq, T2 : Compare + Eq, T3 : Compare + Eq, T4 : Compare + Eq, T5 : Compare + Eq, T6 : Compare + Eq, T7 : Compare + Eq, T8 : Compare + Eq]((T0, T1, T2, T3, T4, T5, T6, T7, T8), (T0, T1, T2, T3, T4, T5, T6, T7, T8)) -> Int
   op_equal[T0 : Eq, T1 : Eq, T2 : Eq, T3 : Eq, T4 : Eq, T5 : Eq, T6 : Eq, T7 : Eq, T8 : Eq]((T0, T1, T2, T3, T4, T5, T6, T7, T8), (T0, T1, T2, T3, T4, T5, T6, T7, T8)) -> Bool
   to_string[T0 : Show, T1 : Show, T2 : Show, T3 : Show, T4 : Show, T5 : Show, T6 : Show, T7 : Show, T8 : Show]((T0, T1, T2, T3, T4, T5, T6, T7, T8)) -> String
 }
+
+
 impl Tuple(10) {
   compare[T0 : Compare + Eq, T1 : Compare + Eq, T2 : Compare + Eq, T3 : Compare + Eq, T4 : Compare + Eq, T5 : Compare + Eq, T6 : Compare + Eq, T7 : Compare + Eq, T8 : Compare + Eq, T9 : Compare + Eq]((T0, T1, T2, T3, T4, T5, T6, T7, T8, T9), (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9)) -> Int
   op_equal[T0 : Eq, T1 : Eq, T2 : Eq, T3 : Eq, T4 : Eq, T5 : Eq, T6 : Eq, T7 : Eq, T8 : Eq, T9 : Eq]((T0, T1, T2, T3, T4, T5, T6, T7, T8, T9), (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9)) -> Bool
   to_string[T0 : Show, T1 : Show, T2 : Show, T3 : Show, T4 : Show, T5 : Show, T6 : Show, T7 : Show, T8 : Show, T9 : Show]((T0, T1, T2, T3, T4, T5, T6, T7, T8, T9)) -> String
 }
+
+
 impl Tuple(11) {
   compare[T0 : Compare + Eq, T1 : Compare + Eq, T2 : Compare + Eq, T3 : Compare + Eq, T4 : Compare + Eq, T5 : Compare + Eq, T6 : Compare + Eq, T7 : Compare + Eq, T8 : Compare + Eq, T9 : Compare + Eq, T10 : Compare + Eq]((T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10), (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10)) -> Int
   op_equal[T0 : Eq, T1 : Eq, T2 : Eq, T3 : Eq, T4 : Eq, T5 : Eq, T6 : Eq, T7 : Eq, T8 : Eq, T9 : Eq, T10 : Eq]((T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10), (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10)) -> Bool
   to_string[T0 : Show, T1 : Show, T2 : Show, T3 : Show, T4 : Show, T5 : Show, T6 : Show, T7 : Show, T8 : Show, T9 : Show, T10 : Show]((T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10)) -> String
 }
+
+
 impl Tuple(12) {
   compare[T0 : Compare + Eq, T1 : Compare + Eq, T2 : Compare + Eq, T3 : Compare + Eq, T4 : Compare + Eq, T5 : Compare + Eq, T6 : Compare + Eq, T7 : Compare + Eq, T8 : Compare + Eq, T9 : Compare + Eq, T10 : Compare + Eq, T11 : Compare + Eq]((T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11), (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11)) -> Int
   op_equal[T0 : Eq, T1 : Eq, T2 : Eq, T3 : Eq, T4 : Eq, T5 : Eq, T6 : Eq, T7 : Eq, T8 : Eq, T9 : Eq, T10 : Eq, T11 : Eq]((T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11), (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11)) -> Bool
   to_string[T0 : Show, T1 : Show, T2 : Show, T3 : Show, T4 : Show, T5 : Show, T6 : Show, T7 : Show, T8 : Show, T9 : Show, T10 : Show, T11 : Show]((T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11)) -> String
 }
+
+
 impl Tuple(13) {
   compare[T0 : Compare + Eq, T1 : Compare + Eq, T2 : Compare + Eq, T3 : Compare + Eq, T4 : Compare + Eq, T5 : Compare + Eq, T6 : Compare + Eq, T7 : Compare + Eq, T8 : Compare + Eq, T9 : Compare + Eq, T10 : Compare + Eq, T11 : Compare + Eq, T12 : Compare + Eq]((T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12), (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12)) -> Int
   op_equal[T0 : Eq, T1 : Eq, T2 : Eq, T3 : Eq, T4 : Eq, T5 : Eq, T6 : Eq, T7 : Eq, T8 : Eq, T9 : Eq, T10 : Eq, T11 : Eq, T12 : Eq]((T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12), (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12)) -> Bool
   to_string[T0 : Show, T1 : Show, T2 : Show, T3 : Show, T4 : Show, T5 : Show, T6 : Show, T7 : Show, T8 : Show, T9 : Show, T10 : Show, T11 : Show, T12 : Show]((T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12)) -> String
 }
+
+
 impl Tuple(14) {
   compare[T0 : Compare + Eq, T1 : Compare + Eq, T2 : Compare + Eq, T3 : Compare + Eq, T4 : Compare + Eq, T5 : Compare + Eq, T6 : Compare + Eq, T7 : Compare + Eq, T8 : Compare + Eq, T9 : Compare + Eq, T10 : Compare + Eq, T11 : Compare + Eq, T12 : Compare + Eq, T13 : Compare + Eq]((T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13), (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13)) -> Int
   op_equal[T0 : Eq, T1 : Eq, T2 : Eq, T3 : Eq, T4 : Eq, T5 : Eq, T6 : Eq, T7 : Eq, T8 : Eq, T9 : Eq, T10 : Eq, T11 : Eq, T12 : Eq, T13 : Eq]((T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13), (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13)) -> Bool
   to_string[T0 : Show, T1 : Show, T2 : Show, T3 : Show, T4 : Show, T5 : Show, T6 : Show, T7 : Show, T8 : Show, T9 : Show, T10 : Show, T11 : Show, T12 : Show, T13 : Show]((T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13)) -> String
 }
+
+
 impl Tuple(15) {
   compare[T0 : Compare + Eq, T1 : Compare + Eq, T2 : Compare + Eq, T3 : Compare + Eq, T4 : Compare + Eq, T5 : Compare + Eq, T6 : Compare + Eq, T7 : Compare + Eq, T8 : Compare + Eq, T9 : Compare + Eq, T10 : Compare + Eq, T11 : Compare + Eq, T12 : Compare + Eq, T13 : Compare + Eq, T14 : Compare + Eq]((T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14), (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14)) -> Int
   op_equal[T0 : Eq, T1 : Eq, T2 : Eq, T3 : Eq, T4 : Eq, T5 : Eq, T6 : Eq, T7 : Eq, T8 : Eq, T9 : Eq, T10 : Eq, T11 : Eq, T12 : Eq, T13 : Eq, T14 : Eq]((T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14), (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14)) -> Bool
   to_string[T0 : Show, T1 : Show, T2 : Show, T3 : Show, T4 : Show, T5 : Show, T6 : Show, T7 : Show, T8 : Show, T9 : Show, T10 : Show, T11 : Show, T12 : Show, T13 : Show, T14 : Show]((T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14)) -> String
 }
+
+
 impl Tuple(16) {
   compare[T0 : Compare + Eq, T1 : Compare + Eq, T2 : Compare + Eq, T3 : Compare + Eq, T4 : Compare + Eq, T5 : Compare + Eq, T6 : Compare + Eq, T7 : Compare + Eq, T8 : Compare + Eq, T9 : Compare + Eq, T10 : Compare + Eq, T11 : Compare + Eq, T12 : Compare + Eq, T13 : Compare + Eq, T14 : Compare + Eq, T15 : Compare + Eq]((T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15), (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15)) -> Int
   op_equal[T0 : Eq, T1 : Eq, T2 : Eq, T3 : Eq, T4 : Eq, T5 : Eq, T6 : Eq, T7 : Eq, T8 : Eq, T9 : Eq, T10 : Eq, T11 : Eq, T12 : Eq, T13 : Eq, T14 : Eq, T15 : Eq]((T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15), (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15)) -> Bool
@@ -722,179 +801,96 @@ impl Tuple(16) {
 // Type aliases
 
 // Traits
-pub trait Compare : Eq {
+pub(open) trait Compare : Eq {
   compare(Self, Self) -> Int
 }
 
-pub trait Default {
+pub(open) trait Default {
   default() -> Self
 }
 
-pub trait Eq {
+pub(open) trait Eq {
   op_equal(Self, Self) -> Bool
 }
 
-pub trait Hash {
+pub(open) trait Hash {
   hash_combine(Self, Hasher) -> Unit
   hash(Self) -> Int
 }
+impl Hash::hash
+impl Hash for Byte
+impl Hash for Int
+impl Hash for UInt
+impl Hash for UInt64
+impl Hash for String
+impl[X : Hash] Hash for X?
+impl[T : Hash, E : Hash] Hash for Result[T, E]
+impl[A : Hash, B : Hash] Hash for (A, B)
+impl[A : Hash, B : Hash, C : Hash] Hash for (A, B, C)
+impl[A : Hash, B : Hash, C : Hash, D : Hash] Hash for (A, B, C, D)
+impl[A : Hash, B : Hash, C : Hash, D : Hash, E : Hash] Hash for (A, B, C, D, E)
+impl[A : Hash, B : Hash, C : Hash, D : Hash, E : Hash, F : Hash] Hash for (A, B, C, D, E, F)
+impl[A : Hash, B : Hash, C : Hash, D : Hash, E : Hash, F : Hash, G : Hash] Hash for (A, B, C, D, E, F, G)
 
-pub trait Logger {
+pub(open) trait Logger {
   write_string(Self, String) -> Unit
   write_substring(Self, String, Int, Int) -> Unit
   write_sub_string(Self, String, Int, Int) -> Unit
   write_char(Self, Char) -> Unit
 }
+impl Logger::write_sub_string
 
-pub trait Show {
+pub(open) trait Show {
   output(Self, Logger) -> Unit
   to_string(Self) -> String
 }
+impl Show::to_string
+impl Show for Unit
+impl Show for Bool
+impl Show for Byte
+impl Show for Char
+impl Show for Int
+impl Show for Int64
+impl Show for UInt
+impl Show for UInt64
+impl Show for String
+impl[X : Show] Show for X?
+impl[T : Show, E : Show] Show for Result[T, E]
+impl[X : Show] Show for FixedArray[X]
+impl Show for Bytes
+impl[X : Show] Show for Ref[X]
+impl[A : Show, B : Show] Show for (A, B)
+impl[A : Show, B : Show, C : Show] Show for (A, B, C)
+impl[A : Show, B : Show, C : Show, D : Show] Show for (A, B, C, D)
+impl[A : Show, B : Show, C : Show, D : Show, E : Show] Show for (A, B, C, D, E)
+impl[A : Show, B : Show, C : Show, D : Show, E : Show, F : Show] Show for (A, B, C, D, E, F)
+impl[A : Show, B : Show, C : Show, D : Show, E : Show, F : Show, G : Show] Show for (A, B, C, D, E, F, G)
+impl[T0 : Show, T1 : Show, T2 : Show, T3 : Show, T4 : Show, T5 : Show, T6 : Show, T7 : Show] Show for (T0, T1, T2, T3, T4, T5, T6, T7)
+impl[T0 : Show, T1 : Show, T2 : Show, T3 : Show, T4 : Show, T5 : Show, T6 : Show, T7 : Show, T8 : Show] Show for (T0, T1, T2, T3, T4, T5, T6, T7, T8)
+impl[T0 : Show, T1 : Show, T2 : Show, T3 : Show, T4 : Show, T5 : Show, T6 : Show, T7 : Show, T8 : Show, T9 : Show] Show for (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9)
+impl[T0 : Show, T1 : Show, T2 : Show, T3 : Show, T4 : Show, T5 : Show, T6 : Show, T7 : Show, T8 : Show, T9 : Show, T10 : Show] Show for (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10)
+impl[T0 : Show, T1 : Show, T2 : Show, T3 : Show, T4 : Show, T5 : Show, T6 : Show, T7 : Show, T8 : Show, T9 : Show, T10 : Show, T11 : Show] Show for (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11)
+impl[T0 : Show, T1 : Show, T2 : Show, T3 : Show, T4 : Show, T5 : Show, T6 : Show, T7 : Show, T8 : Show, T9 : Show, T10 : Show, T11 : Show, T12 : Show] Show for (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12)
+impl[T0 : Show, T1 : Show, T2 : Show, T3 : Show, T4 : Show, T5 : Show, T6 : Show, T7 : Show, T8 : Show, T9 : Show, T10 : Show, T11 : Show, T12 : Show, T13 : Show] Show for (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13)
+impl[T0 : Show, T1 : Show, T2 : Show, T3 : Show, T4 : Show, T5 : Show, T6 : Show, T7 : Show, T8 : Show, T9 : Show, T10 : Show, T11 : Show, T12 : Show, T13 : Show, T14 : Show] Show for (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14)
+impl[T0 : Show, T1 : Show, T2 : Show, T3 : Show, T4 : Show, T5 : Show, T6 : Show, T7 : Show, T8 : Show, T9 : Show, T10 : Show, T11 : Show, T12 : Show, T13 : Show, T14 : Show, T15 : Show] Show for (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15)
 
-pub trait ToJson {
+pub(open) trait ToJson {
   to_json(Self) -> Json
 }
-
-// Extension Methods
-impl Hash for Byte
-
-impl Hash for Int
-
-impl Hash for UInt
-
-impl Hash for UInt64
-
-impl Hash for String
-
-impl Hash for Option
-
-impl Hash for Result
-
-impl Hash::hash
-
-impl Hash for Tuple(2)
-
-impl Hash for Tuple(3)
-
-impl Hash for Tuple(4)
-
-impl Hash for Tuple(5)
-
-impl Hash for Tuple(6)
-
-impl Hash for Tuple(7)
-
-impl Logger::write_sub_string
-
-impl Show for Unit
-
-impl Show for Bool
-
-impl Show for Byte
-
-impl Show for Char
-
-impl Show for Int
-
-impl Show for Int64
-
-impl Show for UInt
-
-impl Show for UInt64
-
-impl Show for String
-
-impl Show for Option
-
-impl Show for Result
-
-impl Show for FixedArray
-
-impl Show for Bytes
-
-impl Show for Ref
-
-impl Show::to_string
-
-impl Show for ArgsLoc
-
-impl Show for Array
-
-impl Show for ArrayView
-
-impl Show for BigInt
-
-impl Show for Buffer
-
-impl Show for Iter
-
-impl Show for Iter2
-
-impl Show for Map
-
-impl Show for Set
-
-impl Show for SourceLoc
-
-impl Show for StringBuilder
-
-impl Show for Tuple(2)
-
-impl Show for Tuple(3)
-
-impl Show for Tuple(4)
-
-impl Show for Tuple(5)
-
-impl Show for Tuple(6)
-
-impl Show for Tuple(7)
-
-impl Show for Tuple(8)
-
-impl Show for Tuple(9)
-
-impl Show for Tuple(10)
-
-impl Show for Tuple(11)
-
-impl Show for Tuple(12)
-
-impl Show for Tuple(13)
-
-impl Show for Tuple(14)
-
-impl Show for Tuple(15)
-
-impl Show for Tuple(16)
-
-impl ToJson for Tuple(2)
-
-impl ToJson for Tuple(3)
-
-impl ToJson for Tuple(4)
-
-impl ToJson for Tuple(5)
-
-impl ToJson for Tuple(6)
-
-impl ToJson for Tuple(7)
-
-impl ToJson for Tuple(8)
-
-impl ToJson for Tuple(9)
-
-impl ToJson for Tuple(10)
-
-impl ToJson for Tuple(11)
-
-impl ToJson for Tuple(12)
-
-impl ToJson for Tuple(13)
-
-impl ToJson for Tuple(14)
-
-impl ToJson for Tuple(15)
-
-impl ToJson for Tuple(16)
+impl[A : ToJson, B : ToJson] ToJson for (A, B)
+impl[A : ToJson, B : ToJson, C : ToJson] ToJson for (A, B, C)
+impl[A : ToJson, B : ToJson, C : ToJson, D : ToJson] ToJson for (A, B, C, D)
+impl[A : ToJson, B : ToJson, C : ToJson, D : ToJson, E : ToJson] ToJson for (A, B, C, D, E)
+impl[A : ToJson, B : ToJson, C : ToJson, D : ToJson, E : ToJson, F : ToJson] ToJson for (A, B, C, D, E, F)
+impl[A : ToJson, B : ToJson, C : ToJson, D : ToJson, E : ToJson, F : ToJson, G : ToJson] ToJson for (A, B, C, D, E, F, G)
+impl[A : ToJson, B : ToJson, C : ToJson, D : ToJson, E : ToJson, F : ToJson, G : ToJson, H : ToJson] ToJson for (A, B, C, D, E, F, G, H)
+impl[A : ToJson, B : ToJson, C : ToJson, D : ToJson, E : ToJson, F : ToJson, G : ToJson, H : ToJson, I : ToJson] ToJson for (A, B, C, D, E, F, G, H, I)
+impl[A : ToJson, B : ToJson, C : ToJson, D : ToJson, E : ToJson, F : ToJson, G : ToJson, H : ToJson, I : ToJson, J : ToJson] ToJson for (A, B, C, D, E, F, G, H, I, J)
+impl[A : ToJson, B : ToJson, C : ToJson, D : ToJson, E : ToJson, F : ToJson, G : ToJson, H : ToJson, I : ToJson, J : ToJson, K : ToJson] ToJson for (A, B, C, D, E, F, G, H, I, J, K)
+impl[A : ToJson, B : ToJson, C : ToJson, D : ToJson, E : ToJson, F : ToJson, G : ToJson, H : ToJson, I : ToJson, J : ToJson, K : ToJson, L : ToJson] ToJson for (A, B, C, D, E, F, G, H, I, J, K, L)
+impl[A : ToJson, B : ToJson, C : ToJson, D : ToJson, E : ToJson, F : ToJson, G : ToJson, H : ToJson, I : ToJson, J : ToJson, K : ToJson, L : ToJson, M : ToJson] ToJson for (A, B, C, D, E, F, G, H, I, J, K, L, M)
+impl[A : ToJson, B : ToJson, C : ToJson, D : ToJson, E : ToJson, F : ToJson, G : ToJson, H : ToJson, I : ToJson, J : ToJson, K : ToJson, L : ToJson, M : ToJson, N : ToJson] ToJson for (A, B, C, D, E, F, G, H, I, J, K, L, M, N)
+impl[A : ToJson, B : ToJson, C : ToJson, D : ToJson, E : ToJson, F : ToJson, G : ToJson, H : ToJson, I : ToJson, J : ToJson, K : ToJson, L : ToJson, M : ToJson, N : ToJson, O : ToJson] ToJson for (A, B, C, D, E, F, G, H, I, J, K, L, M, N, O)
+impl[A : ToJson, B : ToJson, C : ToJson, D : ToJson, E : ToJson, F : ToJson, G : ToJson, H : ToJson, I : ToJson, J : ToJson, K : ToJson, L : ToJson, M : ToJson, N : ToJson, O : ToJson, P : ToJson] ToJson for (A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P)
 

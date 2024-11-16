@@ -12,20 +12,23 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+///|
 fn immutable_set[T](arr : FixedArray[T], i : Int, v : T) -> FixedArray[T] {
   let arr = arr.copy()
   arr[i] = v
   arr
 }
 
+///|
 fn immutable_push[T](arr : FixedArray[T], val : T) -> FixedArray[T] {
   let len = arr.length()
   let new_arr = FixedArray::make(len + 1, val)
-  arr.blit_to(new_arr, ~len)
+  arr.blit_to(new_arr, len~)
   new_arr[len] = val
   new_arr
 }
 
+///|
 fn shr_as_uint(x : Int, y : Int) -> Int {
   (x.reinterpret_as_uint() >> y).reinterpret_as_int()
 }

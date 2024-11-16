@@ -14,6 +14,8 @@ let neg_infinity : Double
 let not_a_number : Double
 
 // Types and methods
+
+
 impl Double {
   abs(Double) -> Double
   ceil(Double) -> Double
@@ -21,7 +23,7 @@ impl Double {
   floor(Double) -> Double
   from_int(Int) -> Double
   inf(Int) -> Double //deprecated
-  is_close(Double, Double, ~relative_tolerance : Double = .., ~absolute_tolerance : Double = ..) -> Bool
+  is_close(Double, Double, relative_tolerance~ : Double = .., absolute_tolerance~ : Double = ..) -> Bool
   is_inf(Double) -> Bool
   is_nan(Double) -> Bool
   is_neg_inf(Double) -> Bool
@@ -40,9 +42,4 @@ impl Double {
 // Type aliases
 
 // Traits
-
-// Extension Methods
-impl Hash for Double
-
-impl Show for Double
 

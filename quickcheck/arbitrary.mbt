@@ -12,18 +12,22 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+///|
 /// Trait for types that can be randomly generated
-pub trait Arbitrary {
+pub(open) trait Arbitrary {
   // `arbitrary` function takes a random number generator and a number that 
   // determines the size of the generated value as arguments, and returns a
   // randomly generated value of certain type.
   arbitrary(Int, @splitmix.RandomState) -> Self
 }
 
+///|
 pub impl Arbitrary for Unit with arbitrary(_i, _rs) { () }
 
+///|
 pub impl Arbitrary for Bool with arbitrary(_i, rs) { rs.next_double() < 0.5 }
 
+///|
 pub impl Arbitrary for UInt with arbitrary(size, rs) {
   if size == 0 {
     0
@@ -32,6 +36,7 @@ pub impl Arbitrary for UInt with arbitrary(size, rs) {
   }
 }
 
+///|
 pub impl Arbitrary for Int with arbitrary(size, rs) {
   if size == 0 {
     0
@@ -40,6 +45,7 @@ pub impl Arbitrary for Int with arbitrary(size, rs) {
   }
 }
 
+///|
 pub impl Arbitrary for Int64 with arbitrary(size, rs) {
   if size == 0 {
     0
@@ -48,8 +54,10 @@ pub impl Arbitrary for Int64 with arbitrary(size, rs) {
   }
 }
 
+///|
 pub impl Arbitrary for Double with arbitrary(_i, rs) { rs.next_double() }
 
+///|
 pub impl Arbitrary for UInt64 with arbitrary(size, rs) {
   if size == 0 {
     0
@@ -58,11 +66,13 @@ pub impl Arbitrary for UInt64 with arbitrary(size, rs) {
   }
 }
 
+///|
 pub impl Arbitrary for Char with arbitrary(_i, rs) {
   // Choose only ASCII characters
   rs.next_uint() % 128 |> UInt::reinterpret_as_int |> Char::from_int
 }
 
+///|
 pub impl Arbitrary for String with arbitrary(size, rs) {
   let len = if size == 0 { 0 } else { rs.next_positive_int() % size }
   let mut s = ""
@@ -72,6 +82,7 @@ pub impl Arbitrary for String with arbitrary(size, rs) {
   s
 }
 
+///|
 pub impl Arbitrary for BigInt with arbitrary(size, rs) {
   if size == 0 {
     0
@@ -80,12 +91,13 @@ pub impl Arbitrary for BigInt with arbitrary(size, rs) {
   }
 }
 
+///|
 pub impl[X : Arbitrary] Arbitrary for Iter[X] with arbitrary(size, rs) {
   let len = if size == 0 { 0 } else { rs.next_positive_int() % size }
   Iter::new(
-    fn(yield) {
+    fn(yield_) {
       for i = 0; i < len; i = i + 1 {
-        if yield(X::arbitrary(i, rs)) == IterEnd {
+        if yield_(X::arbitrary(i, rs)) == IterEnd {
           break IterEnd
         }
       } else {
@@ -103,7 +115,8 @@ test "iter arbitrary" {
   inspect!(samples[10], content="[0, 0, 0]")
 }
 
-pub fn gen[T : Arbitrary](~size? : Int, ~state? : @splitmix.RandomState) -> T {
+///|
+pub fn gen[T : Arbitrary](size? : Int, state? : @splitmix.RandomState) -> T {
   let size = match size {
     None => 0
     Some(x) => x

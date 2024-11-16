@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+///|
 /// Lookup a key from the bucket
 fn find[T : Eq](self : Bucket[T], key : T) -> Bool {
   match self {
@@ -20,6 +21,7 @@ fn find[T : Eq](self : Bucket[T], key : T) -> Bool {
   }
 }
 
+///|
 /// Add a new key-value pair to a bucket.
 /// Replace the old entry if one with the same key already exists.
 fn add[T : Eq](self : Bucket[T], key : T) -> Bucket[T] {
@@ -34,6 +36,7 @@ fn add[T : Eq](self : Bucket[T], key : T) -> Bucket[T] {
   }
 }
 
+///|
 /// Remove a key from a bucket
 fn remove[T : Eq](self : Bucket[T], key : T) -> Bucket[T]? {
   match self {
@@ -50,6 +53,7 @@ fn remove[T : Eq](self : Bucket[T], key : T) -> Bucket[T]? {
   }
 }
 
+///|
 /// Get the size of a bucket
 fn size[T](self : Bucket[T]) -> Int {
   loop self, 1 {
@@ -58,6 +62,7 @@ fn size[T](self : Bucket[T]) -> Int {
   }
 }
 
+///|
 /// Iterate through elements of a bucket
 fn each[T](self : Bucket[T], f : (T) -> Unit) -> Unit {
   loop self {
@@ -69,6 +74,7 @@ fn each[T](self : Bucket[T], f : (T) -> Unit) -> Unit {
   }
 }
 
+///|
 fn iter[T](self : Bucket[T]) -> Iter[T] {
   Iter::new(
     fn {

@@ -12,6 +12,17 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+///|
+pub fn op_mul(self : Byte, that : Byte) -> Byte {
+  (self.to_int() * that.to_int()).to_byte()
+}
+
+///|
+pub fn op_div(self : Byte, that : Byte) -> Byte {
+  (self.to_int() / that.to_int()).to_byte()
+}
+
+///|
 /// Compares two `Byte` values for equality.
 ///
 /// Parameters:
@@ -24,6 +35,7 @@ pub fn op_equal(self : Byte, that : Byte) -> Bool {
   self.to_int() == that.to_int()
 }
 
+///|
 /// Adds two `Byte` values together and returns the result as a `Byte`.
 ///
 /// Parameters:
@@ -36,6 +48,7 @@ pub fn op_add(self : Byte, that : Byte) -> Byte {
   (self.to_int() + that.to_int()).to_byte()
 }
 
+///|
 /// Subtracts the second byte from the first byte and returns the result as a
 /// byte.
 ///
@@ -49,6 +62,7 @@ pub fn op_sub(self : Byte, that : Byte) -> Byte {
   (self.to_int() - that.to_int()).to_byte()
 }
 
+///|
 /// Compares two `Byte` values and returns an integer indicating their relative
 /// order.
 ///
@@ -65,6 +79,7 @@ pub fn compare(self : Byte, that : Byte) -> Int {
   self.to_int().compare(that.to_int())
 }
 
+///|
 fn alphabet(self : Int) -> String {
   match self {
     0 => "0"
@@ -87,6 +102,7 @@ fn alphabet(self : Int) -> String {
   }
 }
 
+///|
 /// Converts a `Byte` to its string representation in hexadecimal format.
 ///
 /// Parameters:
@@ -102,12 +118,15 @@ pub fn to_string(self : Byte) -> String {
   "b'\\x\{hi}\{lo}'"
 }
 
+///|
 pub impl Hash for Byte with hash(self) { self.to_int() }
 
+///|
 pub impl Hash for Byte with hash_combine(self, hasher) {
   hasher.combine_byte(self)
 }
 
+///|
 /// Returns the default value for a `Byte`, which is `b'\x00'`.
 ///
 /// Parameters:
@@ -119,6 +138,7 @@ pub fn Byte::default() -> Byte {
   b'\x00'
 }
 
+///|
 /// Performs a bitwise NOT operation on the given `Byte` value.
 ///
 /// Parameters:
@@ -130,6 +150,7 @@ pub fn Byte::lnot(self : Byte) -> Byte {
   self.to_int().lnot().to_byte()
 }
 
+///|
 /// Performs a bitwise AND operation between two `Byte` values.
 ///
 /// Parameters:
@@ -143,6 +164,7 @@ pub fn Byte::land(self : Byte, that : Byte) -> Byte {
   (self.to_int() & that.to_int()).to_byte()
 }
 
+///|
 /// Performs a bitwise OR operation between two `Byte` values.
 ///
 /// Parameters:
@@ -155,6 +177,7 @@ pub fn Byte::lor(self : Byte, that : Byte) -> Byte {
   (self.to_int() | that.to_int()).to_byte()
 }
 
+///|
 /// Performs a bitwise XOR operation between two `Byte` values.
 ///
 /// Parameters:
@@ -167,6 +190,7 @@ pub fn Byte::lxor(self : Byte, that : Byte) -> Byte {
   (self.to_int() ^ that.to_int()).to_byte()
 }
 
+///|
 /// Converts a `Byte` to a `UInt`.
 ///
 /// Parameters:
@@ -178,6 +202,7 @@ pub fn Byte::to_uint(self : Byte) -> UInt {
   self.to_int().reinterpret_as_uint()
 }
 
+///|
 /// Shifts the bits of the `Byte` value to the left by the specified number of
 /// positions.
 ///
@@ -192,6 +217,7 @@ pub fn Byte::op_shl(self : Byte, count : Int) -> Byte {
   (self.to_int() << count).to_byte()
 }
 
+///|
 /// Shifts the bits of the `Byte` value to the right by the specified number of
 /// positions.
 ///
@@ -206,6 +232,7 @@ pub fn Byte::op_shr(self : Byte, count : Int) -> Byte {
   (self.to_uint() >> count).reinterpret_as_int().to_byte()
 }
 
+///|
 /// positions.
 ///
 /// Parameters:
@@ -221,6 +248,7 @@ pub fn Byte::lsl(self : Byte, count : Int) -> Byte {
   (self.to_int() << count).to_byte()
 }
 
+///|
 /// bits.
 ///
 /// Parameters:

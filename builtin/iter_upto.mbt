@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+///|
 /// Creates an iterator that iterates over a range of Int with default step 1.
 ///
 /// # Arguments
@@ -24,11 +25,11 @@
 ///
 /// Returns an iterator that iterates over the range of Int from `start` to `end - 1`.
 /// @alert deprecated "Use `..<` in for loop or `until` method instead"
-pub fn upto(self : Int, end : Int, ~inclusive : Bool = false) -> Iter[Int] {
-  fn(yield) {
+pub fn upto(self : Int, end : Int, inclusive~ : Bool = false) -> Iter[Int] {
+  fn(yield_) {
     let mut i = self
     while i < end || (inclusive && i == end) {
-      if yield(i) == IterEnd {
+      if yield_(i) == IterEnd {
         break IterEnd
       }
       if i == end {
@@ -41,6 +42,7 @@ pub fn upto(self : Int, end : Int, ~inclusive : Bool = false) -> Iter[Int] {
   }
 }
 
+///|
 /// Creates an iterator that iterates over a range of UInt with default step 1U.
 /// 
 /// # Arguments
@@ -53,11 +55,11 @@ pub fn upto(self : Int, end : Int, ~inclusive : Bool = false) -> Iter[Int] {
 /// 
 /// Returns an iterator that iterates over the range of UInt from `start` to `end - 1`.
 /// @alert deprecated "Use `..<` in for loop or `until` method instead"
-pub fn upto(self : UInt, end : UInt, ~inclusive : Bool = false) -> Iter[UInt] {
-  fn(yield) {
+pub fn upto(self : UInt, end : UInt, inclusive~ : Bool = false) -> Iter[UInt] {
+  fn(yield_) {
     let mut i = self
     while i < end || (inclusive && i == end) {
-      if yield(i) == IterEnd {
+      if yield_(i) == IterEnd {
         break IterEnd
       }
       if i == end {
@@ -70,6 +72,7 @@ pub fn upto(self : UInt, end : UInt, ~inclusive : Bool = false) -> Iter[UInt] {
   }
 }
 
+///|
 /// Creates an iterator that iterates over a range of UInt64 with default step 1UL.
 /// 
 /// # Arguments
@@ -85,12 +88,12 @@ pub fn upto(self : UInt, end : UInt, ~inclusive : Bool = false) -> Iter[UInt] {
 pub fn upto(
   self : UInt64,
   end : UInt64,
-  ~inclusive : Bool = false
+  inclusive~ : Bool = false
 ) -> Iter[UInt64] {
-  fn(yield) {
+  fn(yield_) {
     let mut i = self
     while i < end || (inclusive && i == end) {
-      if yield(i) == IterEnd {
+      if yield_(i) == IterEnd {
         break IterEnd
       }
       if i == end {
@@ -103,6 +106,7 @@ pub fn upto(
   }
 }
 
+///|
 /// Creates an iterator that iterates over a range of Int64 with default step 1L.
 ///
 /// # Arguments
@@ -118,12 +122,12 @@ pub fn upto(
 pub fn upto(
   self : Int64,
   end : Int64,
-  ~inclusive : Bool = false
+  inclusive~ : Bool = false
 ) -> Iter[Int64] {
-  fn(yield) {
+  fn(yield_) {
     let mut i = self
     while i < end || (inclusive && i == end) {
-      if yield(i) == IterEnd {
+      if yield_(i) == IterEnd {
         break IterEnd
       }
       if i == end {
@@ -136,6 +140,7 @@ pub fn upto(
   }
 }
 
+///|
 /// Creates an iterator that iterates over a range of Float with default step 1.0 .
 ///
 /// # Arguments
@@ -151,12 +156,12 @@ pub fn upto(
 pub fn upto(
   self : Float,
   end : Float,
-  ~inclusive : Bool = false
+  inclusive~ : Bool = false
 ) -> Iter[Float] {
-  fn(yield) {
+  fn(yield_) {
     let mut i = self
     while i < end || (inclusive && i == end) {
-      if yield(i) == IterEnd {
+      if yield_(i) == IterEnd {
         break IterEnd
       }
       if i == end {
@@ -169,6 +174,7 @@ pub fn upto(
   }
 }
 
+///|
 /// Creates an iterator that iterates over a range of Double with default step 1.0 .
 ///
 /// # Arguments
@@ -184,12 +190,12 @@ pub fn upto(
 pub fn upto(
   self : Double,
   end : Double,
-  ~inclusive : Bool = false
+  inclusive~ : Bool = false
 ) -> Iter[Double] {
-  fn(yield) {
+  fn(yield_) {
     let mut i = self
     while i < end || (inclusive && i == end) {
-      if yield(i) == IterEnd {
+      if yield_(i) == IterEnd {
         break IterEnd
       }
       if i == end {

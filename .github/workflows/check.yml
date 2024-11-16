@@ -59,7 +59,7 @@ jobs:
 
       - name: format diff
         run: |
-          moon fmt
+          moon fmt --block-style
           git diff --exit-code
 
   coverage-check:

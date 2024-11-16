@@ -18,6 +18,7 @@
 // Stephen Adams, "Efficient sets: a balancing act" Journal of Functional Programming 3(4):553-562, October 1993
 //
 
+///|
 /// Immuatable map, consists of key-value pairs.
 ///
 /// # Example
@@ -32,5 +33,5 @@
 /// ```
 enum T[K, V] {
   Empty
-  Tree(K, ~value : V, ~size : Int, T[K, V], T[K, V])
+  Tree(K, value~ : V, size~ : Int, T[K, V], T[K, V])
 }

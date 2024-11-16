@@ -12,14 +12,16 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+///|
 fn debug_string[T : Show](t : T) -> String {
   let buf = StringBuilder::new(size_hint=50)
   t.output(buf)
   buf.to_string()
 }
 
+///|
 /// @alert deprecated "Use built-in `assert_eq` instead"
-pub fn eq[T : Show + Eq](a : T, b : T, ~loc : SourceLoc = _) -> Unit! {
+pub fn eq[T : Show + Eq](a : T, b : T, loc~ : SourceLoc = _) -> Unit! {
   if a != b {
     let a = debug_string(a)
     let b = debug_string(b)
@@ -27,8 +29,9 @@ pub fn eq[T : Show + Eq](a : T, b : T, ~loc : SourceLoc = _) -> Unit! {
   }
 }
 
+///|
 /// @alert deprecated "Use built-in `assert_not_eq` instead"
-pub fn ne[T : Show + Eq](a : T, b : T, ~loc : SourceLoc = _) -> Unit! {
+pub fn ne[T : Show + Eq](a : T, b : T, loc~ : SourceLoc = _) -> Unit! {
   if not(a != b) {
     let a = debug_string(a)
     let b = debug_string(b)
@@ -36,22 +39,25 @@ pub fn ne[T : Show + Eq](a : T, b : T, ~loc : SourceLoc = _) -> Unit! {
   }
 }
 
+///|
 /// @alert deprecated "Use built-in `assert_true` instead"
-pub fn is_true(x : Bool, ~loc : SourceLoc = _) -> Unit! {
+pub fn is_true(x : Bool, loc~ : SourceLoc = _) -> Unit! {
   if not(x) {
     let x = debug_string(x)
     fail!("FAILED: \{loc} `\{x}` is not true")
   }
 }
 
+///|
 /// @alert deprecated "Use built-in `assert_false` instead"
-pub fn is_false(x : Bool, ~loc : SourceLoc = _) -> Unit! {
+pub fn is_false(x : Bool, loc~ : SourceLoc = _) -> Unit! {
   if x {
     let x = debug_string(x)
     fail!("FAILED: \{loc}: `\{x}` is not false")
   }
 }
 
+///|
 /// Assert referential equality of two values.
 ///
 /// Returns Ok if the two arguments are the same object by reference, using
@@ -67,7 +73,7 @@ pub fn is_false(x : Bool, ~loc : SourceLoc = _) -> Unit! {
 /// is(a, a)!  // this is okay
 /// is(a, b)!  // yields an error
 /// ```
-pub fn is[T : Show](a : T, b : T, ~loc : SourceLoc = _) -> Unit! {
+pub fn is[T : Show](a : T, b : T, loc~ : SourceLoc = _) -> Unit! {
   if not(physical_equal(a, b)) {
     let a = debug_string(a)
     let b = debug_string(b)
@@ -75,6 +81,7 @@ pub fn is[T : Show](a : T, b : T, ~loc : SourceLoc = _) -> Unit! {
   }
 }
 
+///|
 /// Assert referential inequality of two values.
 ///
 /// Returns Ok if the two arguments are NOT the same object by reference, using
@@ -90,7 +97,7 @@ pub fn is[T : Show](a : T, b : T, ~loc : SourceLoc = _) -> Unit! {
 /// is_not(a, b)!  // this is okay
 /// is_not(a, a)!  // yields an error
 /// ```
-pub fn is_not[T : Show](a : T, b : T, ~loc : SourceLoc = _) -> Unit! {
+pub fn is_not[T : Show](a : T, b : T, loc~ : SourceLoc = _) -> Unit! {
   if physical_equal(a, b) {
     let a = debug_string(a)
     let b = debug_string(b)
@@ -98,24 +105,28 @@ pub fn is_not[T : Show](a : T, b : T, ~loc : SourceLoc = _) -> Unit! {
   }
 }
 
-pub fn fail[T](msg : String, ~loc : SourceLoc = _) -> T! {
-  @builtin.fail!(msg, ~loc)
+///|
+pub fn fail[T](msg : String, loc~ : SourceLoc = _) -> T! {
+  @builtin.fail!(msg, loc~)
 }
 
+///|
 pub fn write(self : T, obj : Show) -> Unit {
   self.buffer.write_string(obj.to_string())
 }
 
+///|
 pub fn writeln(self : T, obj : Show) -> Unit {
   self.write(obj)
   self.buffer.write_char('\n')
 }
 
+///|
 pub fn snapshot(
   self : T,
-  ~filename : String,
-  ~loc : SourceLoc = _,
-  ~args_loc : ArgsLoc = _
+  filename~ : String,
+  loc~ : SourceLoc = _,
+  args_loc~ : ArgsLoc = _
 ) -> Unit!SnapshotError {
   let loc = loc.to_string().escape()
   let args_loc = args_loc.to_json().escape()

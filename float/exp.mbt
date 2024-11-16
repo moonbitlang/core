@@ -12,24 +12,30 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+///|
 fn top12(x : Float) -> UInt {
   x.reinterpret_as_int().reinterpret_as_uint() >> 20
 }
 
+///|
 fn __math_xflowf(sign : UInt, y : Float) -> Float {
   return (if sign != 0 { -y } else { y }) * y
 }
 
+///|
 fn __math_oflowf(sign : UInt) -> Float {
   return __math_xflowf(sign, 0x1.0p97)
 }
 
+///|
 fn __math_uflowf(sign : UInt) -> Float {
   return __math_xflowf(sign, 0x1.0p-95)
 }
 
+///|
 let exp2f_table_bits = 5
 
+///|
 priv struct Exp2fData {
   tab : FixedArray[UInt64]
   shift : Double
@@ -37,10 +43,13 @@ priv struct Exp2fData {
   poly_scaled : FixedArray[Double]
 }
 
+///|
 let expf_n : UInt64 = (1 << exp2f_table_bits).to_int64().reinterpret_as_uint64()
 
+///|
 let exp2f_data_n : Double = (1 << exp2f_table_bits).to_double()
 
+///|
 let exp2f_data : Exp2fData = {
   tab: [
     0x3ff0000000000000, 0x3fefd9b0d3158574, 0x3fefb5586cf9890f, 0x3fef9301d0125b51,
@@ -61,6 +70,7 @@ let exp2f_data : Exp2fData = {
   ],
 }
 
+///|
 pub fn exp(self : Float) -> Float {
   let xd = self.to_double()
   let abstop = top12(self) & 0x7ff

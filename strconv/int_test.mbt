@@ -12,13 +12,16 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+///|
 let syntax_err = "invalid syntax"
 
+///|
 let base_err = "invalid base"
 
-fn parse_as_result(s : String, ~base : Int) -> Result[Int64, String] {
+///|
+fn parse_as_result(s : String, base~ : Int) -> Result[Int64, String] {
   try {
-    @strconv.parse_int64!(s, ~base) |> Ok
+    @strconv.parse_int64!(s, base~) |> Ok
   } catch {
     StrConvError(err) => Err(err)
   }

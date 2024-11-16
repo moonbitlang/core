@@ -24,13 +24,10 @@ impl T {
   to_string[A : Show + Compare + Eq](Self[A]) -> String
   unsafe_pop[A : Compare + Eq](Self[A]) -> Unit
 }
+impl[A : Show + Compare + Eq] Show for T[A]
+impl[X : @quickcheck.Arbitrary + Compare + Eq] @quickcheck.Arbitrary for T[X]
 
 // Type aliases
 
 // Traits
-
-// Extension Methods
-impl Show for T
-
-impl @quickcheck.Arbitrary for T
 

@@ -14,16 +14,19 @@
 
 /// Constructions
 
+///|
 /// Construct a empty set.
 pub fn new[V]() -> T[V] {
   { root: None, size: 0L }
 }
 
+///|
 /// Returns the one-value set containing only `value`.
 pub fn singleton[V : Compare](value : V) -> T[V] {
   { root: Some({ value, left: None, right: None, height: 1 }), size: 1L }
 }
 
+///|
 /// Initialize an set from an array.
 pub fn of[V : Compare](array : Array[V]) -> T[V] {
   let set = new()
@@ -33,6 +36,7 @@ pub fn of[V : Compare](array : Array[V]) -> T[V] {
   set
 }
 
+///|
 /// Returns a deep clone of the MutableSet.
 /// 
 /// FIXME: it is just copying the tree structure, not the values.
@@ -44,37 +48,41 @@ pub fn deep_clone[V](self : T[V]) -> T[V] {
   }
 }
 
+///|
 fn deep_clone_tree[V](node : Node[V]?) -> Node[V]? {
   match node {
     None => None
     Some(node) => {
       let left = deep_clone_tree(node.left)
       let right = deep_clone_tree(node.right)
-      let new_node = new_node(node.value, ~left, ~right, height=node.height)
+      let new_node = new_node(node.value, left~, right~, height=node.height)
       Some(new_node)
     }
   }
 }
 
+///|
 fn new_node[V](
   value : V,
-  ~left : Node[V]? = None,
-  ~right : Node[V]? = None,
-  ~height : Int = 1
+  left~ : Node[V]? = None,
+  right~ : Node[V]? = None,
+  height~ : Int = 1
 ) -> Node[V] {
   { value, left, right, height }
 }
 
+///|
 fn new_node_update_height[V](
   value : V,
-  ~left : Node[V]?,
-  ~right : Node[V]?
+  left~ : Node[V]?,
+  right~ : Node[V]?
 ) -> Node[V] {
   { value, left, right, height: max(height(left), height(right)) + 1 }
 }
 
 // Manipulations
 
+///|
 pub fn add[V : Compare](self : T[V], value : V) -> Unit {
   let (new_root, inserted) = add_node(self.root, value)
   if self.root != new_root {
@@ -85,6 +93,7 @@ pub fn add[V : Compare](self : T[V], value : V) -> Unit {
   }
 }
 
+///|
 pub fn remove[V : Compare](self : T[V], value : V) -> Unit {
   match self.root {
     None => ()
@@ -105,6 +114,7 @@ pub fn remove[V : Compare](self : T[V], value : V) -> Unit {
 // Note that these functions return a new set that doesn't share memory with
 // the original set, and the original sets are not modified.
 
+///|
 /// Return if a value is contained in the set.
 pub fn contains[V : Compare](self : T[V], value : V) -> Bool {
   loop self.root, value {
@@ -122,6 +132,7 @@ pub fn contains[V : Compare](self : T[V], value : V) -> Bool {
   }
 }
 
+///|
 /// Returns the union of two sets.
 pub fn union[V : Compare](self : T[V], src : T[V]) -> T[V] {
   fn aux(a : Node[V]?, b : Node[V]?) -> Node[V]? {
@@ -154,6 +165,7 @@ pub fn union[V : Compare](self : T[V], src : T[V]) -> T[V] {
   }
 }
 
+///|
 fn split[V : Compare](root : Node[V]?, value : V) -> (Node[V]?, Node[V]?) {
   match root {
     None => (None, None)
@@ -170,6 +182,7 @@ fn split[V : Compare](root : Node[V]?, value : V) -> (Node[V]?, Node[V]?) {
   }
 }
 
+///|
 fn join[V : Compare](left : Node[V]?, value : V, right : Node[V]?) -> Node[V] {
   let (hl, hr) = (height(left), height(right))
   if hl > hr + 1 {
@@ -177,10 +190,11 @@ fn join[V : Compare](left : Node[V]?, value : V, right : Node[V]?) -> Node[V] {
   } else if hr > hl + 1 {
     join_left(left, value, right)
   } else {
-    new_node_update_height(value, ~left, ~right)
+    new_node_update_height(value, left~, right~)
   }
 }
 
+///|
 fn join_left[V : Compare](l : Node[V]?, v : V, r : Node[V]?) -> Node[V] {
   let { value: rv, left: rl, right: rr, .. } = r.unwrap()
   let node = if height(rl) <= height(l) + 1 {
@@ -205,6 +219,7 @@ fn join_left[V : Compare](l : Node[V]?, v : V, r : Node[V]?) -> Node[V] {
   node
 }
 
+///|
 fn join_right[V : Compare](l : Node[V]?, v : V, r : Node[V]?) -> Node[V] {
   let { value: lv, left: ll, right: lr, .. } = l.unwrap()
   let node = if height(lr) <= height(r) + 1 {
@@ -229,20 +244,40 @@ fn join_right[V : Compare](l : Node[V]?, v : V, r : Node[V]?) -> Node[V] {
   node
 }
 
+///|
 /// Returns the difference of two sets.
+/// 
+/// @alert deprecated "Use `difference` instead"
 pub fn diff[V : Compare](self : T[V], src : T[V]) -> T[V] {
   let ret = new()
   self.each(fn(x) { if not(src.contains(x)) { ret.add(x) } })
   ret
 }
 
+///|
+/// Returns the difference of two sets.
+pub fn difference[V : Compare](self : T[V], src : T[V]) -> T[V] {
+  let ret = new()
+  self.each(fn(x) { if not(src.contains(x)) { ret.add(x) } })
+  ret
+}
+
+///|
 /// Returns the intersection of two sets.
+/// @alert deprecated "Use `intersection` instead"
 pub fn intersect[V : Compare](self : T[V], src : T[V]) -> T[V] {
+  self.intersection(src)
+}
+
+///|
+/// Returns the intersection of two sets.
+pub fn intersection[V : Compare](self : T[V], src : T[V]) -> T[V] {
   let ret = new()
   self.each(fn(x) { if src.contains(x) { ret.add(x) } })
   ret
 }
 
+///|
 /// Returns if a set is a subset of another set.
 pub fn subset[V : Compare](self : T[V], src : T[V]) -> Bool {
   let mut ret = true
@@ -250,6 +285,7 @@ pub fn subset[V : Compare](self : T[V], src : T[V]) -> Bool {
   ret
 }
 
+///|
 /// Returns if two sets are disjoint.
 pub fn disjoint[V : Compare](self : T[V], src : T[V]) -> Bool {
   let mut ret = true
@@ -259,10 +295,12 @@ pub fn disjoint[V : Compare](self : T[V], src : T[V]) -> Bool {
 
 // General collection operations
 
+///|
 pub fn op_equal[V : Compare](self : T[V], other : T[V]) -> Bool {
   self.to_array() == other.to_array()
 }
 
+///|
 /// Returns if MutableSet is empty.
 pub fn is_empty[V : Compare](self : T[V]) -> Bool {
   match self.root {
@@ -271,11 +309,13 @@ pub fn is_empty[V : Compare](self : T[V]) -> Bool {
   }
 }
 
+///|
 /// Returns the number of elements in the MutableSet.
 pub fn size[V : Compare](self : T[V]) -> Int64 {
   self.size
 }
 
+///|
 /// Iterates the set.
 pub fn each[V](self : T[V], f : (V) -> Unit) -> Unit {
   match self.root {
@@ -284,6 +324,7 @@ pub fn each[V](self : T[V], f : (V) -> Unit) -> Unit {
   }
 }
 
+///|
 fn each[V](self : Node[V], f : (V) -> Unit) -> Unit {
   let s = []
   let mut p = Some(self)
@@ -300,6 +341,7 @@ fn each[V](self : Node[V], f : (V) -> Unit) -> Unit {
   }
 }
 
+///|
 /// Iterates the set with index.
 pub fn eachi[V](self : T[V], f : (Int, V) -> Unit) -> Unit {
   match self.root {
@@ -308,6 +350,7 @@ pub fn eachi[V](self : T[V], f : (Int, V) -> Unit) -> Unit {
   }
 }
 
+///|
 fn eachi[V](self : Node[V], f : (Int, V) -> Unit) -> Unit {
   let s = []
   let mut p = Some(self)
@@ -326,6 +369,7 @@ fn eachi[V](self : Node[V], f : (Int, V) -> Unit) -> Unit {
   }
 }
 
+///|
 /// Converts the set to an array.
 pub fn to_array[V](self : T[V]) -> Array[V] {
   let arr = []
@@ -333,46 +377,50 @@ pub fn to_array[V](self : T[V]) -> Array[V] {
   arr
 }
 
+///|
 /// Returns a iterator.
 pub fn iter[V](self : T[V]) -> Iter[V] {
   Iter::new(
-    fn(yield) {
+    fn(yield_) {
       match self.root {
         None => IterContinue
-        Some(root) => root.iter().run(yield)
+        Some(root) => root.iter().run(yield_)
       }
     },
   )
 }
 
+///|
 fn iter[A](self : Node[A]) -> Iter[A] {
   Iter::new(
-    fn(yield) {
+    fn(yield_) {
       let { left, value, right, .. } = self
       let res = match left {
         None => IterContinue
-        Some(l) => l.iter().run(yield)
+        Some(l) => l.iter().run(yield_)
       }
       if res == IterEnd {
         IterEnd
-      } else if yield(value) == IterEnd {
+      } else if yield_(value) == IterEnd {
         IterEnd
       } else {
         match right {
           None => IterContinue
-          Some(r) => r.iter().run(yield)
+          Some(r) => r.iter().run(yield_)
         }
       }
     },
   )
 }
 
+///|
 pub fn T::from_iter[V : Compare](iter : Iter[V]) -> T[V] {
   let s = new()
   iter.each(fn(e) { s.add(e) })
   s
 }
 
+///|
 /// Converts the set to string.
 pub impl[V : Show] Show for T[V] with output(self, logger) {
   match self.root {
@@ -381,6 +429,7 @@ pub impl[V : Show] Show for T[V] with output(self, logger) {
   }
 }
 
+///|
 pub impl[X : @quickcheck.Arbitrary + Compare] @quickcheck.Arbitrary for T[X] with arbitrary(
   size,
   rs
@@ -388,14 +437,17 @@ pub impl[X : @quickcheck.Arbitrary + Compare] @quickcheck.Arbitrary for T[X] wit
   @quickcheck.Arbitrary::arbitrary(size, rs) |> T::from_iter
 }
 
+///|
 pub fn to_string[V : Show](self : T[V]) -> String {
   Show::to_string(self)
 }
 
+///|
 impl[T : Show] Show for Node[T] with output(self, logger) {
   logger.write_iter(self.iter(), prefix="@sorted_set.of([", suffix="])")
 }
 
+///|
 fn to_array[T](self : Node[T]) -> Array[T] {
   fn aux(n : Node[T]?) -> Array[_] {
     match n {
@@ -409,6 +461,7 @@ fn to_array[T](self : Node[T]) -> Array[T] {
 
 // AVL tree operations
 
+///|
 fn replace_root_with_min[V : Compare](
   root : Node[V],
   node : Node[V]
@@ -426,10 +479,12 @@ fn replace_root_with_min[V : Compare](
   }
 }
 
+///|
 fn update_height[V](self : Node[V]) -> Unit {
   self.height = 1 + max(height(self.left), height(self.right))
 }
 
+///|
 fn height_ge[V](x1 : Node[V]?, x2 : Node[V]?) -> Bool {
   match x2 {
     None => true
@@ -441,6 +496,7 @@ fn height_ge[V](x1 : Node[V]?, x2 : Node[V]?) -> Bool {
   }
 }
 
+///|
 fn balance[V : Compare](root : Node[V]) -> Node[V] {
   let (l, r) = (root.left, root.right)
   let (hl, hr) = (height(l), height(r))
@@ -465,6 +521,7 @@ fn balance[V : Compare](root : Node[V]) -> Node[V] {
   new_root
 }
 
+///|
 fn rotate_l[V : Compare](n : Node[V]) -> Node[V] {
   let r = n.right.unwrap()
   n.right = r.left
@@ -474,6 +531,7 @@ fn rotate_l[V : Compare](n : Node[V]) -> Node[V] {
   r
 }
 
+///|
 fn rotate_r[V : Compare](n : Node[V]) -> Node[V] {
   let l = n.left.unwrap()
   n.left = l.right
@@ -483,6 +541,7 @@ fn rotate_r[V : Compare](n : Node[V]) -> Node[V] {
   l
 }
 
+///|
 fn rotate_lr[V : Compare](n : Node[V]) -> Node[V] {
   let l = n.left.unwrap()
   let v = rotate_l(l)
@@ -490,6 +549,7 @@ fn rotate_lr[V : Compare](n : Node[V]) -> Node[V] {
   rotate_r(n)
 }
 
+///|
 fn rotate_rl[V : Compare](n : Node[V]) -> Node[V] {
   let r = n.right.unwrap()
   let v = rotate_r(r)
@@ -497,6 +557,7 @@ fn rotate_rl[V : Compare](n : Node[V]) -> Node[V] {
   rotate_l(n)
 }
 
+///|
 fn add_node[V : Compare](root : Node[V]?, value : V) -> (Node[V]?, Bool) {
   match root {
     None => (Some(new_node(value)), true)
@@ -519,6 +580,7 @@ fn add_node[V : Compare](root : Node[V]?, value : V) -> (Node[V]?, Bool) {
   }
 }
 
+///|
 fn delete_node[V : Compare](root : Node[V], value : V) -> (Node[V]?, Bool) {
   if value == root.value {
     let (l, r) = (root.left, root.right)

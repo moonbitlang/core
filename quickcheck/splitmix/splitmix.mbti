@@ -7,7 +7,7 @@ type RandomState
 impl RandomState {
   clone(Self) -> Self
   default() -> Self
-  new(~seed : UInt64 = ..) -> Self
+  new(seed~ : UInt64 = ..) -> Self
   next(Self) -> Unit
   next_double(Self) -> Double
   next_int(Self) -> Int
@@ -19,11 +19,10 @@ impl RandomState {
   split(Self) -> Self
   to_string(Self) -> String
 }
+impl Default for RandomState
+impl Show for RandomState
 
 // Type aliases
 
 // Traits
-
-// Extension Methods
-impl Show for RandomState
 

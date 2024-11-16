@@ -12,17 +12,21 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+///|
 fn println_mono(s : String) -> Unit = "%println"
 
+///|
 pub fn println[T : Show](input : T) -> Unit {
   println_mono(input.to_string())
 }
 
+///|
 /// @alert deprecated "Use `println` instead"
 pub fn print[T : Show](input : T) -> Unit {
   println(input)
 }
 
+///|
 pub fn to_string(self : Bool) -> String {
   if self {
     "true"
@@ -31,6 +35,7 @@ pub fn to_string(self : Bool) -> String {
   }
 }
 
+///|
 pub fn to_string(self : Int64) -> String {
   fn abs(n : Int64) -> Int64 {
     if n < 0L {
@@ -59,6 +64,7 @@ pub fn to_string(self : Int64) -> String {
   buf.to_string()
 }
 
+///|
 pub fn to_string(self : Int) -> String {
   fn abs(n : Int) -> Int {
     if n < 0 {
@@ -87,6 +93,7 @@ pub fn to_string(self : Int) -> String {
   buf.to_string()
 }
 
+///|
 pub fn UInt::to_string(self : UInt) -> String {
   let buf = StringBuilder::new()
   fn write_digits(num) {
@@ -107,6 +114,7 @@ test "UInt::to_string" {
   inspect!(4294967295U, content="4294967295")
 }
 
+///|
 pub fn UInt64::to_string(self : UInt64) -> String {
   let buf = StringBuilder::new()
   fn write_digits(num : UInt64) {
@@ -123,33 +131,40 @@ pub fn UInt64::to_string(self : UInt64) -> String {
   buf.to_string()
 }
 
+///|
 /// @coverage.skip 
 pub fn op_lt[T : Compare](self_ : T, other : T) -> Bool {
   self_.compare(other).is_neg()
 }
 
+///|
 /// @coverage.skip 
 pub fn op_gt[T : Compare](self_ : T, other : T) -> Bool {
   self_.compare(other).is_pos()
 }
 
+///|
 /// @coverage.skip 
 pub fn op_le[T : Compare](self_ : T, other : T) -> Bool {
   self_.compare(other).is_non_pos()
 }
 
+///|
 /// @coverage.skip 
 pub fn op_ge[T : Compare](self_ : T, other : T) -> Bool {
   self_.compare(other).is_non_neg()
 }
 
+///|
 /// @coverage.skip 
 pub fn op_notequal[T : Eq](x : T, y : T) -> Bool {
   not(x == y)
 }
 
+///|
 fn unsafe_make_string(length : Int, value : Char) -> String = "$moonbit.unsafe_make_string"
 
+///|
 /// Create new string of `length`, where each character is `value`
 ///
 /// ```
@@ -163,13 +178,15 @@ pub fn String::make(length : Int, value : Char) -> String {
   }
 }
 
-pub type! InspectError String
+///|
+pub(all) type! InspectError String
 
+///|
 pub fn inspect(
   obj : Show,
-  ~content : String = "",
-  ~loc : SourceLoc = _,
-  ~args_loc : ArgsLoc = _
+  content~ : String = "",
+  loc~ : SourceLoc = _,
+  args_loc~ : ArgsLoc = _
 ) -> Unit!InspectError {
   let actual = obj.to_string()
   if actual != content {
@@ -183,5 +200,6 @@ pub fn inspect(
   }
 }
 
+///|
 // Used by test driver
-pub type! SnapshotError String
+pub(all) type! SnapshotError String

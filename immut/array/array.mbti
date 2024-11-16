@@ -10,9 +10,9 @@ impl T {
   copy[A](Self[A]) -> Self[A]
   each[A](Self[A], (A) -> Unit) -> Unit
   eachi[A](Self[A], (Int, A) -> Unit) -> Unit
-  fold[A, B](Self[A], ~init : B, (B, A) -> B) -> B
-  fold_left[A](Self[A], (A, A) -> A, ~init : A) -> A //deprecated
-  fold_right[A](Self[A], (A, A) -> A, ~init : A) -> A //deprecated
+  fold[A, B](Self[A], init~ : B, (B, A) -> B) -> B
+  fold_left[A](Self[A], (A, A) -> A, init~ : A) -> A //deprecated
+  fold_right[A](Self[A], (A, A) -> A, init~ : A) -> A //deprecated
   from_array[A](Array[A]) -> Self[A]
   from_iter[A](Iter[A]) -> Self[A]
   is_empty[A](Self[A]) -> Bool
@@ -23,21 +23,19 @@ impl T {
   map[A, B](Self[A], (A) -> B) -> Self[B]
   new[A]() -> Self[A]
   of[A](FixedArray[A]) -> Self[A]
-  op_equal[A : Eq](Self[A], Self[A]) -> Bool
   op_get[A](Self[A], Int) -> A
   push[A](Self[A], A) -> Self[A]
-  rev_fold[A, B](Self[A], ~init : B, (B, A) -> B) -> B
+  rev_fold[A, B](Self[A], init~ : B, (B, A) -> B) -> B
   set[A](Self[A], Int, A) -> Self[A]
   to_array[A](Self[A]) -> Array[A]
   to_string[A : Show](Self[A]) -> String
 }
+impl[A : Eq] Eq for T[A]
+impl[A : Hash] Hash for T[A]
+impl[A : Show] Show for T[A]
+impl[X : @quickcheck.Arbitrary] @quickcheck.Arbitrary for T[X]
 
 // Type aliases
 
 // Traits
-
-// Extension Methods
-impl Show for T
-
-impl @quickcheck.Arbitrary for T
 

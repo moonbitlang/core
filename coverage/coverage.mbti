@@ -12,11 +12,9 @@ impl CoverageCounter {
   new(Int) -> Self
   to_string(Self) -> String
 }
+impl Show for CoverageCounter
 
 // Type aliases
 
 // Traits
-
-// Extension Methods
-impl Show for CoverageCounter
 

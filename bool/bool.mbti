@@ -3,6 +3,8 @@ package moonbitlang/core/bool
 // Values
 
 // Types and methods
+
+
 impl Bool {
   to_int(Bool) -> Int
   to_int64(Bool) -> Int64
@@ -13,7 +15,4 @@ impl Bool {
 // Type aliases
 
 // Traits
-
-// Extension Methods
-impl Hash for Bool
 

@@ -3,7 +3,7 @@ package moonbitlang/core/quickcheck
 alias @moonbitlang/core/quickcheck/splitmix as @splitmix
 
 // Values
-fn gen[T : Arbitrary](~size? : Int, ~state? : @splitmix.RandomState) -> T
+fn gen[T : Arbitrary](size? : Int, state? : @splitmix.RandomState) -> T
 
 fn samples[X : Arbitrary](Int) -> Array[X]
 
@@ -12,30 +12,18 @@ fn samples[X : Arbitrary](Int) -> Array[X]
 // Type aliases
 
 // Traits
-pub trait Arbitrary {
+pub(open) trait Arbitrary {
   arbitrary(Int, @splitmix.RandomState) -> Self
 }
-
-// Extension Methods
 impl Arbitrary for Unit
-
 impl Arbitrary for Bool
-
 impl Arbitrary for Char
-
 impl Arbitrary for Int
-
 impl Arbitrary for Int64
-
 impl Arbitrary for UInt
-
 impl Arbitrary for UInt64
-
 impl Arbitrary for Double
-
 impl Arbitrary for String
-
 impl Arbitrary for BigInt
-
-impl Arbitrary for Iter
+impl[X : Arbitrary] Arbitrary for Iter[X]
 

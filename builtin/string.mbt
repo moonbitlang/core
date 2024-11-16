@@ -12,19 +12,21 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+///|
 /// @intrinsic %string.substring
 fn unsafe_substring(str : String, start : Int, end : Int) -> String {
   let len = end - start
   let bytes = Bytes::new(len * 2)
   bytes.blit_from_string(0, str, start, len)
-  bytes.sub_string(0, bytes.length())
+  bytes.to_unchecked_string(offset=0, length=bytes.length())
 }
 
+///|
 /// Get substring of the string from [start] to [end] exclusive.
 pub fn substring(
   self : String,
-  ~start : Int = 0,
-  ~end : Int = self.length()
+  start~ : Int = 0,
+  end~ : Int = self.length()
 ) -> String {
   guard start >= 0 && start <= end && end <= self.length()
   unsafe_substring(self, start, end)

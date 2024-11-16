@@ -3,7 +3,9 @@ package moonbitlang/core/rational
 // Values
 
 // Types and methods
-pub type! RationalError String
+pub(all) type! RationalError String
+impl Eq for RationalError
+impl Show for RationalError
 
 type T
 impl T {
@@ -26,17 +28,10 @@ impl T {
   to_string(Self) -> String
   trunc(Self) -> Int64
 }
+impl Show for T
+impl @moonbitlang/core/quickcheck.Arbitrary for T
 
 // Type aliases
 
 // Traits
-
-// Extension Methods
-impl Eq for RationalError
-
-impl Show for RationalError
-
-impl Show for T
-
-impl @moonbitlang/core/quickcheck.Arbitrary for T
 

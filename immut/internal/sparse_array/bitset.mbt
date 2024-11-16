@@ -12,11 +12,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+///|
 /// a simple bit set to store a set of integers less than 32
-pub type Bitset UInt derive(Eq)
+pub(all) type Bitset UInt derive(Eq)
 
+///|
 let empty_bitset : Bitset = Bitset(0)
 
+///|
 /// `has(self: Bitset, idx: Int)`
 ///
 /// Check if the given index is present in the bitset.
@@ -24,6 +27,7 @@ pub fn has(self : Bitset, idx : Int) -> Bool {
   (self._ & (1U << idx)) != 0
 }
 
+///|
 /// `index_of(self: Bitset, idx: Int)`
 ///
 /// Get the index of the bit in the bitset.
@@ -31,6 +35,7 @@ pub fn index_of(self : Bitset, idx : Int) -> Int {
   (self._ & ((1U << idx) - 1)).popcnt()
 }
 
+///|
 /// `add(self: Bitset, idx: Int)`
 ///
 /// Add a new index to the bitset.
@@ -38,6 +43,7 @@ pub fn add(self : Bitset, idx : Int) -> Bitset {
   Bitset(self._ | (1U << idx))
 }
 
+///|
 /// `remove(self: Bitset, idx: Int)`
 ///
 /// Remove an index from the bitset.
@@ -45,6 +51,7 @@ pub fn remove(self : Bitset, idx : Int) -> Bitset {
   Bitset(self._ ^ (1U << idx))
 }
 
+///|
 /// `size(self: Bitset) -> Int`
 ///
 /// Calculate the size of a bitset

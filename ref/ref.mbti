@@ -3,9 +3,10 @@ package moonbitlang/core/ref
 alias @moonbitlang/core/quickcheck as @quickcheck
 
 // Values
-fn ref[T](T) -> Ref[T] //deprecated
 
 // Types and methods
+
+
 impl Ref {
   map[T, R](Self[T], (T) -> R) -> Self[R]
   new[T](T) -> Self[T]
@@ -18,7 +19,4 @@ impl Ref {
 // Type aliases
 
 // Traits
-
-// Extension Methods
-impl @quickcheck.Arbitrary for Ref
 

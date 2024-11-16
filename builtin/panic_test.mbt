@@ -236,17 +236,17 @@ test "panic blit_out_of_bounds_dst" {
 
 test "panic sub_string with invalid byte_length" {
   let bytes = Bytes::of_string("Hello, World!")
-  bytes.sub_string(0, -1) |> ignore
+  bytes.to_unchecked_string(offset=0, length=-1) |> ignore
 }
 
 test "panic sub_string with invalid byte_offset" {
   let bytes = Bytes::of_string("Hello, World!")
-  bytes.sub_string(-1, 5) |> ignore
+  bytes.to_unchecked_string(offset=-1, length=5) |> ignore
 }
 
 test "panic sub_string with invalid byte_offset + byte_length" {
   let bytes = Bytes::of_string("Hello, World!")
-  bytes.sub_string(0, bytes.length() + 1) |> ignore
+  bytes.to_unchecked_string(offset=0, length=bytes.length() + 1) |> ignore
 }
 
 test "panic blit_from_string with invalid length" {

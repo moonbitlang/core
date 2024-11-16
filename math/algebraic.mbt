@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+///|
 /// Compares and returns the maximum of two values.
 ///
 /// Returns the second argument if the comparison determines them to be equal.
@@ -30,6 +31,7 @@ pub fn maximum[T : Compare](x : T, y : T) -> T {
   }
 }
 
+///|
 /// Compares and returns the minimum of two values.
 ///
 /// Returns the first argument if the comparison determines them to be equal.

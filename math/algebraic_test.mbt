@@ -65,6 +65,7 @@ test "log" {
   inspect!(@math.log10(10), content="1")
 }
 
+///|
 // For testing purposes
 priv struct T {
   x : Int

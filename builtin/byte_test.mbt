@@ -171,3 +171,13 @@ test "byte_op_sub" {
   inspect!(b'\x80' - b'\xFF', content="b'\\x81'")
   inspect!(b'\x0F' - b'\x10', content="b'\\xFF'")
 }
+
+test "byte_op_mul" {
+  inspect!((8 : Byte) * 16, content="b'\\x80'")
+  inspect!((3 : Byte) * 200, content="b'\\x58'")
+}
+
+test "byte_op_div" {
+  inspect!((80 : Byte) / 8, content="b'\\x0A'")
+  inspect!((10 : Byte) / 3, content="b'\\x03'")
+}

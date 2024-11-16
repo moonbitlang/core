@@ -27,16 +27,3 @@ fn uncurry[T, U, V]((T) -> (U) -> V) -> (T, U) -> V
 
 // Traits
 
-// Extension Methods
-impl @quickcheck.Arbitrary for Tuple(2)
-
-impl @quickcheck.Arbitrary for Tuple(3)
-
-impl @quickcheck.Arbitrary for Tuple(4)
-
-impl @quickcheck.Arbitrary for Tuple(5)
-
-impl @quickcheck.Arbitrary for Tuple(6)
-
-impl @quickcheck.Arbitrary for Tuple(7)
-

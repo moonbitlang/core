@@ -517,6 +517,7 @@ test "array_binary_search_str_test" {
   assert_eq!(arr.binary_search("world"), Ok(3))
 }
 
+///|
 struct TestStruct {
   num : Int
 }
@@ -567,6 +568,7 @@ test "array_dedup - edge cases" {
   inspect!(array, content="[1, 2, 3, 4, 5]")
 }
 
+///|
 struct MX {
   mm_num : Array[Int]
 } derive(Default, ToJson)

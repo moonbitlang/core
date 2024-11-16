@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+///|
 /// Extensible buffer.
 ///
 /// It provides accumulative concatenation of bytes in linear time.
@@ -33,6 +34,7 @@ struct Buffer {
   initial_bytes : Bytes
 }
 
+///|
 /// Expand the buffer size if capacity smaller than required space.
 fn grow_if_necessary(self : Buffer, required : Int) -> Unit {
   // TODO: get rid of mut
@@ -49,19 +51,22 @@ fn grow_if_necessary(self : Buffer, required : Int) -> Unit {
   }
 }
 
+///|
 /// Return a new String contains the data in buffer.
 pub fn to_string(self : Buffer) -> String {
-  self.bytes.sub_string(0, self.len)
+  self.bytes.to_unchecked_string(offset=0, length=self.len)
 }
 
+///|
 /// Create a buffer with initial capacity (in bytes).
 /// @alert deprecated "Buffer is moved to buffer package, use @buffer.new instead"
-pub fn Buffer::new(~size_hint : Int = 0) -> Buffer {
+pub fn Buffer::new(size_hint~ : Int = 0) -> Buffer {
   let initial = if size_hint < 1 { 1 } else { size_hint }
   let bytes = Bytes::new(initial)
   { bytes, len: 0, initial_bytes: bytes }
 }
 
+///|
 /// Write a string into buffer.
 pub fn write_string(self : Buffer, value : String) -> Unit {
   self.grow_if_necessary(self.len + value.length() * 2)
@@ -69,10 +74,12 @@ pub fn write_string(self : Buffer, value : String) -> Unit {
   self.len += value.length() * 2
 }
 
+///|
 pub fn write_object(self : Buffer, value : Show) -> Unit {
   self.write_string(value.to_string())
 }
 
+///|
 pub fn write_bytes(self : Buffer, value : Bytes) -> Unit {
   let val_len = value.length()
   self.grow_if_necessary(self.len + val_len)
@@ -80,6 +87,7 @@ pub fn write_bytes(self : Buffer, value : Bytes) -> Unit {
   self.len += val_len
 }
 
+///|
 /// Write a sub-string into buffer.
 pub fn write_substring(
   self : Buffer,
@@ -93,6 +101,7 @@ pub fn write_substring(
   self.len += len * 2
 }
 
+///|
 /// Write a sub-string into buffer.
 /// @alert deprecated "Use `Buffer::write_substring` instead"
 pub fn write_sub_string(
@@ -104,6 +113,7 @@ pub fn write_sub_string(
   self.write_substring(value, start, len)
 }
 
+///|
 /// Write a char into buffer.
 pub fn write_char(self : Buffer, value : Char) -> Unit {
   self.grow_if_necessary(self.len + 4)
@@ -111,6 +121,7 @@ pub fn write_char(self : Buffer, value : Char) -> Unit {
   self.len += inc
 }
 
+///|
 /// Write a byte into buffer.
 pub fn write_byte(self : Buffer, value : Byte) -> Unit {
   self.grow_if_necessary(self.len + 1)
@@ -118,15 +129,18 @@ pub fn write_byte(self : Buffer, value : Byte) -> Unit {
   self.len += 1
 }
 
+///|
 pub fn reset(self : Buffer) -> Unit {
   self.bytes = self.initial_bytes
   self.len = 0
 }
 
+///|
 pub fn to_bytes(self : Buffer) -> Bytes {
   Bytes::new(self.len)..blit(0, self.bytes, 0, self.len)
 }
 
+///|
 pub impl Show for Buffer with output(self, logger) {
   logger.write_string(self.to_string())
 }

@@ -33,7 +33,7 @@ test "size" {
 test "is_empty" {
   let m : @sorted_map.T[Int, Int] = @sorted_map.empty()
   assert_eq!(m.is_empty(), true)
-  let m = m.insert(1, 1)
+  let m = m.add(1, 1)
   assert_eq!(m.is_empty(), false)
 }
 
@@ -170,4 +170,14 @@ test "from_iter single element iter" {
 test "from_iter empty iter" {
   let pq : @sorted_map.T[Int, Int] = @sorted_map.T::from_iter(Iter::empty())
   inspect!(pq, content="@immut/sorted_map.of([])")
+}
+
+test "hash" {
+  let map1 = @sorted_map.T::of([("one", 1), ("two", 2)])
+  let map2 = @sorted_map.T::of([("one", 1), ("two", 2)])
+  inspect!(Hash::hash(map1) == Hash::hash(map2), content="true")
+  let map3 = @sorted_map.T::of([("two", 2), ("one", 1)])
+  inspect!(Hash::hash(map1) == Hash::hash(map3), content="true")
+  let map4 = @sorted_map.T::of([("one", 1), ("two", 2), ("three", 3)])
+  inspect!(Hash::hash(map1) == Hash::hash(map4), content="false")
 }

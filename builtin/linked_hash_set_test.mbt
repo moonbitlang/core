@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+///|
 let default_init_capacity = 8
 
 test "new" {
@@ -22,9 +23,9 @@ test "new" {
 
 test "insert" {
   let m = Set::new()
-  m.insert("a")
-  m.insert("b")
-  m.insert("c")
+  m.add("a")
+  m.add("b")
+  m.add("c")
   assert_true!(m.contains("a"))
   assert_true!(m.contains("b"))
   assert_true!(m.contains("c"))
@@ -42,14 +43,14 @@ test "from_array" {
 test "size" {
   let m = Set::new()
   assert_eq!(m.size(), 0)
-  m.insert("a")
+  m.add("a")
   assert_eq!(m.size(), 1)
 }
 
 test "is_empty" {
   let m = Set::new()
   assert_eq!(m.is_empty(), true)
-  m.insert("a")
+  m.add("a")
   assert_eq!(m.is_empty(), false)
   m.remove("a")
   assert_eq!(m.is_empty(), true)
@@ -142,7 +143,7 @@ test "from_array" {
 test "insert_and_grow" {
   let m = Set::new()
   for i = 0; i < 10; i = i + 1 {
-    m.insert(i.to_string())
+    m.add(i.to_string())
   }
   assert_eq!(m.size(), 10)
   assert_eq!(m.capacity(), 16)
@@ -159,10 +160,10 @@ test "array unique via Set" {
 
 test "remove_and_shift_back" {
   let m = Set::new()
-  m.insert("a")
-  m.insert("b")
-  m.insert("c")
-  m.insert("d")
+  m.add("a")
+  m.add("b")
+  m.add("c")
+  m.add("d")
   m.remove("b")
   assert_false!(m.contains("b"))
   assert_true!(m.contains("a"))
@@ -174,17 +175,17 @@ test "capacity_and_size" {
   let m = Set::new()
   assert_eq!(m.capacity(), default_init_capacity)
   assert_eq!(m.size(), 0)
-  m.insert("a")
+  m.add("a")
   assert_eq!(m.size(), 1)
 }
 
 test "clear_and_reinsert" {
   let m = Set::new()
-  m.insert("a")
-  m.insert("b")
+  m.add("a")
+  m.add("b")
   m.clear()
   assert_eq!(m.size(), 0)
-  m.insert("c")
+  m.add("c")
   assert_eq!(m.size(), 1)
   assert_true!(m.contains("c"))
 }
@@ -192,7 +193,7 @@ test "clear_and_reinsert" {
 test "insert_and_grow" {
   let m = Set::new()
   for i = 0; i < 10; i = i + 1 {
-    m.insert(i.to_string())
+    m.add(i.to_string())
   }
   assert_eq!(m.size(), 10)
   assert_eq!(m.capacity(), 16)
@@ -200,10 +201,10 @@ test "insert_and_grow" {
 
 test "remove_and_shift_back" {
   let m = Set::new()
-  m.insert("a")
-  m.insert("b")
-  m.insert("c")
-  m.insert("d")
+  m.add("a")
+  m.add("b")
+  m.add("c")
+  m.add("d")
   m.remove("b")
   assert_false!(m.contains("b"))
   assert_true!(m.contains("a"))
@@ -215,17 +216,17 @@ test "capacity_and_size" {
   let m = Set::new()
   assert_eq!(m.capacity(), default_init_capacity)
   assert_eq!(m.size(), 0)
-  m.insert("a")
+  m.add("a")
   assert_eq!(m.size(), 1)
 }
 
 test "clear_and_reinsert" {
   let m = Set::new()
-  m.insert("a")
-  m.insert("b")
+  m.add("a")
+  m.add("b")
   m.clear()
   assert_eq!(m.size(), 0)
-  m.insert("c")
+  m.add("c")
   assert_eq!(m.size(), 1)
   assert_true!(m.contains("c"))
 }

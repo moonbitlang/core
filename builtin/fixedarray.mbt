@@ -12,12 +12,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+///|
 /// @intrinsic %iter.from_array
 pub fn iter[T](self : FixedArray[T]) -> Iter[T] {
   Iter::new(
-    fn(yield) {
+    fn(yield_) {
       for v in self {
-        guard let IterContinue = yield(v) else { x => break x }
+        guard let IterContinue = yield_(v) else { x => break x }
 
       } else {
         IterContinue
@@ -26,11 +27,12 @@ pub fn iter[T](self : FixedArray[T]) -> Iter[T] {
   )
 }
 
+///|
 pub fn iter2[T](self : FixedArray[T]) -> Iter2[Int, T] {
   Iter2::new(
-    fn(yield) {
+    fn(yield_) {
       for i, v in self {
-        guard let IterContinue = yield(i, v) else { x => break x }
+        guard let IterContinue = yield_(i, v) else { x => break x }
 
       } else {
         IterContinue
@@ -39,14 +41,17 @@ pub fn iter2[T](self : FixedArray[T]) -> Iter2[Int, T] {
   )
 }
 
+///|
 pub fn to_string[X : Show](self : FixedArray[X]) -> String {
   Show::to_string(self)
 }
 
+///|
 pub fn FixedArray::default[X]() -> FixedArray[X] {
   []
 }
 
+///|
 /// Fill the array with a given value.
 ///
 /// # Example

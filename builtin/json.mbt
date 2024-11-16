@@ -12,7 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-pub enum Json {
+///|
+pub(all) enum Json {
   Null
   True
   False
@@ -22,11 +23,13 @@ pub enum Json {
   Object(Map[String, Json])
 } derive(Eq)
 
+///|
 /// Trait for types that can be converted to `Json`
-pub trait ToJson {
+pub(open) trait ToJson {
   to_json(Self) -> Json
 }
 
+///|
 pub fn Bool::to_json(self : Bool) -> Json {
   if self {
     true
@@ -35,22 +38,27 @@ pub fn Bool::to_json(self : Bool) -> Json {
   }
 }
 
+///|
 pub fn Int::to_json(self : Int) -> Json {
   Number(self.to_double())
 }
 
+///|
 pub fn Int64::to_json(self : Int64) -> Json {
   Number(self.to_double())
 }
 
+///|
 pub fn Double::to_json(self : Double) -> Json {
   Number(self)
 }
 
+///|
 pub fn Float::to_json(self : Float) -> Json {
   Number(self.to_double())
 }
 
+///|
 fn escape_json_string(str : String) -> String {
   fn to_hex_digit(i : Int) -> Char {
     if i < 10 {
@@ -86,22 +94,27 @@ fn escape_json_string(str : String) -> String {
   buf.to_string()
 }
 
+///|
 pub fn String::to_json(self : String) -> Json {
   String(escape_json_string(self))
 }
 
+///|
 pub fn Char::to_json(self : Char) -> Json {
   String(self.to_string())
 }
 
+///|
 pub fn BigInt::to_json(self : BigInt) -> Json {
   String(self.to_string())
 }
 
+///|
 pub fn Array::to_json[X : ToJson](self : Array[X]) -> Json {
   Array(self.map(ToJson::to_json))
 }
 
+///|
 pub fn FixedArray::to_json[X : ToJson](self : FixedArray[X]) -> Json {
   let len = self.length()
   if len == 0 {
@@ -114,6 +127,7 @@ pub fn FixedArray::to_json[X : ToJson](self : FixedArray[X]) -> Json {
   Array(res)
 }
 
+///|
 pub fn ArrayView::to_json[X : ToJson](self : ArrayView[X]) -> Json {
   let len = self.length()
   if len == 0 {
@@ -126,6 +140,7 @@ pub fn ArrayView::to_json[X : ToJson](self : ArrayView[X]) -> Json {
   Array(res)
 }
 
+///|
 pub fn Map::to_json[K : Show, V : ToJson](self : Map[K, V]) -> Json {
   let object = {}
   for k, v in self {
@@ -134,6 +149,7 @@ pub fn Map::to_json[K : Show, V : ToJson](self : Map[K, V]) -> Json {
   Object(object)
 }
 
+///|
 pub fn Set::to_json[X : ToJson](self : Set[X]) -> Json {
   let array = []
   for v in self {
@@ -142,6 +158,7 @@ pub fn Set::to_json[X : ToJson](self : Set[X]) -> Json {
   Array(array)
 }
 
+///|
 pub fn Option::to_json[T : ToJson](self : T?) -> Json {
   match self {
     None => Null
@@ -149,6 +166,7 @@ pub fn Option::to_json[T : ToJson](self : T?) -> Json {
   }
 }
 
+///|
 pub fn Result::to_json[Ok : ToJson, Err : ToJson](
   self : Result[Ok, Err]
 ) -> Json {
@@ -158,11 +176,13 @@ pub fn Result::to_json[Ok : ToJson, Err : ToJson](
   }
 }
 
+///|
 //| unit
 pub fn Unit::to_json(_self : Unit) -> Json {
   Null
 }
 
+///|
 pub fn Json::default() -> Json {
   false
 }

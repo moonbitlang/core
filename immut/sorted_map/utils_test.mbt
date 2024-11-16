@@ -30,7 +30,7 @@ test "op_get after insertion" {
   let map = @sorted_map.of(
     [(3, "three"), (8, "eight"), (1, "one"), (2, "two"), (0, "zero")],
   )
-  let map = map.insert(4, "four")
+  let map = map.add(4, "four")
   assert_eq!(map[4], Some("four"))
 }
 

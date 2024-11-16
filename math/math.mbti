@@ -45,5 +45,3 @@ fn trunc(Double) -> Double
 
 // Traits
 
-// Extension Methods
-

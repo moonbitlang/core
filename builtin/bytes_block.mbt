@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+///|
 fn Bytes::unsafe_blit(
   self : Bytes,
   dst_offset : Int,
@@ -20,6 +21,7 @@ fn Bytes::unsafe_blit(
   length : Int
 ) = "$moonbit.unsafe_bytes_blit"
 
+///|
 /// Transfer bytes.
 ///
 /// It copies `length` bytes from `src` begin at `src_offset`, to destination byte sequence `self` begin at `dst_offset`.

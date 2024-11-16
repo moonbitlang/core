@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+///|
 /// @intrinsic %fixedarray.copy
 fn UninitializedArray::unsafe_blit_fixed[T](
   dst : UninitializedArray[T],
@@ -29,27 +30,37 @@ fn UninitializedArray::unsafe_blit_fixed[T](
 // These types are of workaround for the restriction that MoonBit do not support 
 // generic type parameters of extern ffi
 
+///|
 type JSValue
 
+///|
 fn JSValue::ofAny[T](array : T) -> JSValue = "%identity"
 
+///|
 fn JSValue::toAny[T](self : JSValue) -> T = "%identity"
 
+///|
 type JSArray
 
+///|
 fn JSArray::ofAnyArray[T](array : Array[T]) -> JSArray = "%identity"
 
+///|
 fn JSArray::toAnyArray[T](self : JSArray) -> Array[T] = "%identity"
 
+///|
 extern "js" fn JSArray::set_length(self : JSArray, new_len : Int) -> Unit =
   #| (arr, len) => { arr.length = len; }
 
+///|
 extern "js" fn JSArray::push(self : JSArray, value : JSValue) -> Unit =
   #| (arr, val) => { arr.push(val); }
 
+///|
 extern "js" fn JSArray::pop(self : JSArray) -> JSValue =
   #| (arr) => arr.pop()
 
+///|
 extern "js" fn JSArray::splice(
   self : JSArray,
   index : Int,
@@ -57,6 +68,7 @@ extern "js" fn JSArray::splice(
 ) -> JSArray =
   #| (arr, idx, cnt) => arr.splice(idx, cnt)
 
+///|
 extern "js" fn JSArray::splice1(
   self : JSArray,
   index : Int,
@@ -67,25 +79,31 @@ extern "js" fn JSArray::splice1(
 
 //#endregion
 
+///|
 /// An `Array` is a collection of values that supports random access and can
 /// grow in size.
 type Array[T] FixedArray[T]
 
+///|
 fn Array::make_uninit[T](len : Int) -> Array[T] = "%fixedarray.make_uninit"
 
+///|
 /// Creates a new array.
-pub fn Array::new[T](~capacity : Int = 0) -> Array[T] {
+pub fn Array::new[T](capacity~ : Int = 0) -> Array[T] {
   ignore(capacity)
   []
 }
 
+///|
 /// Returns the number of elements in the array.
 pub fn length[T](self : Array[T]) -> Int = "%fixedarray.length"
 
+///|
 fn unsafe_truncate_to_length[T](self : Array[T], new_len : Int) -> Unit {
   JSArray::ofAnyArray(self).set_length(new_len)
 }
 
+///|
 fn buffer[T](self : Array[T]) -> UninitializedArray[T] = "%identity"
 
 test "array_unsafe_blit_fixed" {
@@ -124,6 +142,7 @@ test "UninitializedArray::unsafe_blit_fixed" {
   }
 }
 
+///|
 /// Reserves capacity to ensure that it can hold at least the number of elements
 /// specified by the `capacity` argument.
 /// 
@@ -140,6 +159,7 @@ pub fn reserve_capacity[T](self : Array[T], capacity : Int) -> Unit {
   ignore(capacity)
 }
 
+///|
 /// Shrinks the capacity of the array as much as possible.
 ///
 /// **NOTE**: This method does nothing on js platform.
@@ -158,6 +178,7 @@ pub fn shrink_to_fit[T](self : Array[T]) -> Unit {
   ignore(self)
 }
 
+///|
 /// Adds an element to the end of the array.
 ///
 /// If the array is at capacity, it will be reallocated.
@@ -171,6 +192,7 @@ pub fn push[T](self : Array[T], value : T) -> Unit {
   JSArray::ofAnyArray(self).push(JSValue::ofAny(value))
 }
 
+///|
 /// Removes the last element from a array and returns it, or `None` if it is empty.
 ///
 /// # Example
@@ -187,11 +209,13 @@ pub fn pop[T](self : Array[T]) -> T? {
   }
 }
 
+///|
 /// @alert deprecated "Use `unsafe_pop` instead"
 pub fn pop_exn[T](self : Array[T]) -> T {
   self.unsafe_pop()
 }
 
+///|
 /// Removes the last element from a array and returns it.
 /// 
 /// **NOTE** This method will not cause a panic, but it may result in undefined
@@ -202,6 +226,7 @@ pub fn unsafe_pop[T](self : Array[T]) -> T {
   JSArray::ofAnyArray(self).pop().toAny()
 }
 
+///|
 /// Remove an element from the array at a given index.
 ///
 /// Removes and returns the element at position index within the array, shifting all elements after it to the left.
@@ -223,6 +248,7 @@ pub fn remove[T](self : Array[T], index : Int) -> T {
   value
 }
 
+///|
 /// Removes the specified range from the array and returns it.
 ///
 /// This functions returns a array range from `begin` to `end` `[begin, end)`
@@ -242,6 +268,7 @@ pub fn drain[T](self : Array[T], begin : Int, end : Int) -> Array[T] {
   JSArray::ofAnyArray(self).splice(begin, end - begin).toAnyArray()
 }
 
+///|
 /// Inserts an element at a given index within the array.
 ///
 /// # Example

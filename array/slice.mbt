@@ -12,36 +12,44 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+///|
 priv struct FixedArraySlice[T] {
   array : FixedArray[T]
   start : Int
   end : Int
 }
 
+///|
 fn length[T](self : FixedArraySlice[T]) -> Int {
   self.end - self.start
 }
 
+///|
 fn op_get[T](self : FixedArraySlice[T], index : Int) -> T {
   self.array[self.start + index]
 }
 
+///|
 fn op_set[T](self : FixedArraySlice[T], index : Int, value : T) -> Unit {
   self.array[self.start + index] = value
 }
 
+///|
 fn swap[T](self : FixedArraySlice[T], a : Int, b : Int) -> Unit {
   self.array.swap(self.start + a, self.start + b)
 }
 
+///|
 fn rev_inplace[T](self : FixedArraySlice[T]) -> Unit {
-  let mid_len = self.length() / 2
-  for i = 0; i < mid_len; i = i + 1 {
-    let j = self.length() - i - 1
+  let len = self.length()
+  let mid_len = len / 2
+  for i in 0..<mid_len {
+    let j = len - i - 1
     self.swap(i, j)
   }
 }
 
+///|
 fn slice[T](
   self : FixedArraySlice[T],
   start : Int,

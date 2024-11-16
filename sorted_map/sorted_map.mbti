@@ -30,13 +30,10 @@ impl T {
   to_string[K : Show, V : Show](Self[K, V]) -> String
   values[K, V](Self[K, V]) -> Array[V]
 }
+impl[K : Show, V : Show] Show for T[K, V]
+impl[K : @quickcheck.Arbitrary + Compare + Eq, V : @quickcheck.Arbitrary] @quickcheck.Arbitrary for T[K, V]
 
 // Type aliases
 
 // Traits
-
-// Extension Methods
-impl Show for T
-
-impl @quickcheck.Arbitrary for T
 

@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+///|
 struct Hello[A, B] {
   fieldA : A
   fieldB : B
@@ -31,6 +32,7 @@ test {
   assert_eq!(v0, v)
 }
 
+///|
 // struct Hello2 [A, B] {
 //   fieldA : A 
 //   fieldB : B 

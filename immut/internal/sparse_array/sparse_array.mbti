@@ -3,7 +3,7 @@ package moonbitlang/core/immut/internal/sparse_array
 // Values
 
 // Types and methods
-pub type Bitset UInt
+pub(all) type Bitset UInt
 impl Bitset {
   add(Self, Int) -> Self
   has(Self, Int) -> Bool
@@ -12,10 +12,11 @@ impl Bitset {
   remove(Self, Int) -> Self
   size(Self) -> Int
 }
+impl Eq for Bitset
 
-pub struct SparseArray {
-  pub elem_info : Bitset
-  pub data : FixedArray[X]
+pub(all) struct SparseArray {
+  elem_info : Bitset
+  data : FixedArray[X]
 }
 impl SparseArray {
   add[X](Self[X], Int, X) -> Self[X]
@@ -27,10 +28,9 @@ impl SparseArray {
   singleton[X](Int, X) -> Self[X]
   size[X](Self[X]) -> Int
 }
+impl[X : Eq] Eq for SparseArray[X]
 
 // Type aliases
 
 // Traits
-
-// Extension Methods
 

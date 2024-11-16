@@ -50,9 +50,9 @@ pub fn Array::unsafe_blit_fixed[A](
 pub fn Array::blit_to[A](
   self : Array[A],
   dst : Array[A],
-  ~len : Int,
-  ~src_offset : Int = 0,
-  ~dst_offset : Int = 0
+  len~ : Int,
+  src_offset~ : Int = 0,
+  dst_offset~ : Int = 0
 ) -> Unit {
   guard len >= 0 &&
     dst_offset >= 0 &&

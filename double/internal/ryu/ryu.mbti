@@ -9,5 +9,3 @@ fn ryu_to_string(Double) -> String
 
 // Traits
 
-// Extension Methods
-

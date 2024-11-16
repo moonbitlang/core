@@ -3,28 +3,30 @@ package moonbitlang/core/string
 // Values
 
 // Types and methods
+
+
 impl String {
   compare(String, String) -> Int
-  concat(Array[String], ~separator : String = ..) -> String
+  concat(Array[String], separator~ : String = ..) -> String
   contains(String, String) -> Bool
   contains_char(String, Char) -> Bool
   default() -> String
   ends_with(String, String) -> Bool
-  fold[A](String, ~init : A, (A, Char) -> A) -> A
+  fold[A](String, init~ : A, (A, Char) -> A) -> A
   from_array(Array[Char]) -> String
-  index_of(String, String, ~from : Int = ..) -> Int
+  index_of(String, String, from~ : Int = ..) -> Int
   is_blank(String) -> Bool
   is_empty(String) -> Bool
   iter(String) -> Iter[Char]
   iter2(String) -> Iter2[Int, Char]
-  last_index_of(String, String, ~from : Int = ..) -> Int
+  last_index_of(String, String, from~ : Int = ..) -> Int
   pad_end(String, Int, Char) -> String
   pad_start(String, Int, Char) -> String
   repeat(String, Int) -> String
-  replace(String, ~old : String, ~new : String) -> String
-  replace_all(String, ~old : String, ~new : String) -> String
+  replace(String, old~ : String, new~ : String) -> String
+  replace_all(String, old~ : String, new~ : String) -> String
   rev(String) -> String
-  rev_fold[A](String, ~init : A, (A, Char) -> A) -> A
+  rev_fold[A](String, init~ : A, (A, Char) -> A) -> A
   rev_iter(String) -> Iter[Char]
   split(String, String) -> Iter[String]
   starts_with(String, String) -> Bool
@@ -43,6 +45,4 @@ impl String {
 // Type aliases
 
 // Traits
-
-// Extension Methods
 

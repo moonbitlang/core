@@ -12,17 +12,22 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+///|
 let int_min = 0x80000000
 
+///|
 let int_max = 0x7fffffff
 
+///|
 let int64_min = -0x8000000000000000L
 
+///|
 let int64_max = 0x7fffffffffffffffL
 
+///|
 /// Parse a string in the given base (0, 2 to 36), return a Int64 number or an error.
 /// If the `~base` argument is 0, the base will be inferred by the prefix.
-pub fn parse_int64(str : String, ~base : Int = 0) -> Int64!StrConvError {
+pub fn parse_int64(str : String, base~ : Int = 0) -> Int64!StrConvError {
   if str == "" {
     syntax_err!()
   }
@@ -97,16 +102,18 @@ pub fn parse_int64(str : String, ~base : Int = 0) -> Int64!StrConvError {
   n
 }
 
+///|
 /// Parse a string in the given base (0, 2 to 36), return a Int number or an error.
 /// If the `~base` argument is 0, the base will be inferred by the prefix.
-pub fn parse_int(str : String, ~base : Int = 0) -> Int!StrConvError {
-  let n = parse_int64!(str, ~base)
+pub fn parse_int(str : String, base~ : Int = 0) -> Int!StrConvError {
+  let n = parse_int64!(str, base~)
   if n < int_min.to_int64() || n > int_max.to_int64() {
     range_err!()
   }
   n.to_int()
 }
 
+///|
 // Check whether the underscores are correct.
 // Underscores must appear only between digits or between a base prefix and a digit.
 fn check_underscore(str : String) -> Bool {
@@ -164,6 +171,7 @@ fn check_underscore(str : String) -> Bool {
   return last_char != '_'
 }
 
+///|
 // Determine the base of the value.
 fn determine_base(s : String) -> Int {
   if s.length() < 2 {
@@ -177,6 +185,7 @@ fn determine_base(s : String) -> Int {
   }
 }
 
+///|
 fn overflow_threshold(base : Int, neg : Bool) -> Int64 {
   if not(neg) {
     if base == 10 {

@@ -12,20 +12,32 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+///|
 /// Create a new map with a key-value pair inserted.
 /// O(log n).
+/// 
+/// @alert deprecated "Use `add` instead"
 pub fn insert[K : Compare, V](self : T[K, V], key : K, value : V) -> T[K, V] {
+  self.add(key, value)
+}
+
+///|
+/// Create a new map with a key-value pair inserted.
+/// O(log n).
+/// 
+pub fn add[K : Compare, V](self : T[K, V], key : K, value : V) -> T[K, V] {
   match self {
     Empty => singleton(key, value)
     Tree(k, value=v, l, r, ..) =>
       match key.compare(k) {
-        -1 => balance(k, v, insert(l, key, value), r)
-        1 => balance(k, v, l, insert(r, key, value))
+        -1 => balance(k, v, add(l, key, value), r)
+        1 => balance(k, v, l, add(r, key, value))
         _ => new(k, value, l, r)
       }
   }
 }
 
+///|
 fn split_max[K : Compare, V](self : T[K, V]) -> (K, V, T[K, V]) {
   match self {
     Tree(k, value=v, l, Empty, ..) => (k, v, l)
@@ -37,6 +49,7 @@ fn split_max[K : Compare, V](self : T[K, V]) -> (K, V, T[K, V]) {
   }
 }
 
+///|
 fn split_min[K : Compare, V](self : T[K, V]) -> (K, V, T[K, V]) {
   match self {
     Tree(k, value=v, Empty, r, ..) => (k, v, r)
@@ -48,6 +61,7 @@ fn split_min[K : Compare, V](self : T[K, V]) -> (K, V, T[K, V]) {
   }
 }
 
+///|
 fn glue[K : Compare, V](self : T[K, V], other : T[K, V]) -> T[K, V] {
   match (self, other) {
     (Empty, r) => r
@@ -63,6 +77,7 @@ fn glue[K : Compare, V](self : T[K, V], other : T[K, V]) -> T[K, V] {
   }
 }
 
+///|
 /// Create a new map with a key-value pair removed. O(log n).
 /// If the key is not a member or map, the original map is returned.
 pub fn remove[K : Compare, V](self : T[K, V], key : K) -> T[K, V] {
@@ -81,11 +96,13 @@ pub fn remove[K : Compare, V](self : T[K, V], key : K) -> T[K, V] {
   }
 }
 
+///|
 /// Filter values that satisfy the predicate
 pub fn filter[K : Compare, V](self : T[K, V], pred : (V) -> Bool) -> T[K, V] {
   filter_with_key(self, fn(_k, v) { pred(v) })
 }
 
+///|
 /// Filter key-value pairs that satisfy the predicate
 pub fn filter_with_key[K : Compare, V](
   self : T[K, V],
@@ -102,6 +119,7 @@ pub fn filter_with_key[K : Compare, V](
   }
 }
 
+///|
 /// Convert to an array of key-value pairs.
 pub fn to_array[K, V](self : T[K, V]) -> Array[(K, V)] {
   let arr = []
@@ -109,10 +127,12 @@ pub fn to_array[K, V](self : T[K, V]) -> Array[(K, V)] {
   arr
 }
 
-pub fn op_equal[K : Eq, V : Eq](self : T[K, V], other : T[K, V]) -> Bool {
+///|
+pub impl[K : Eq, V : Eq] Eq for T[K, V] with op_equal(self, other) {
   self.to_array() == other.to_array()
 }
 
+///|
 pub impl[K : @quickcheck.Arbitrary + Compare, V : @quickcheck.Arbitrary] @quickcheck.Arbitrary for T[
   K,
   V,
@@ -120,9 +140,18 @@ pub impl[K : @quickcheck.Arbitrary + Compare, V : @quickcheck.Arbitrary] @quickc
   @quickcheck.Arbitrary::arbitrary(size, rs) |> from_array
 }
 
+///|
+pub impl[K : Hash, V : Hash] Hash for T[K, V] with hash_combine(self, hasher) {
+  for e in self {
+    hasher..combine(e.0).combine(e.1)
+  }
+}
+
+///|
 /// The ratio between the sizes of the left and right subtrees.
 let ratio = 5
 
+///|
 fn balance[K : Compare, V](
   key : K,
   value : V,
@@ -216,11 +245,7 @@ test "from_array" {
 test "insert" {
   let m = of([(3, "three"), (8, "eight"), (1, "one")])
   inspect!(m.debug_tree(), content="(3,three,(1,one,_,_),(8,eight,_,_))")
-  let m = m
-    .insert(5, "five")
-    .insert(2, "two")
-    .insert(0, "zero")
-    .insert(1, "one_updated")
+  let m = m.add(5, "five").add(2, "two").add(0, "zero").add(1, "one_updated")
   inspect!(
     m.debug_tree(),
     content="(3,three,(1,one_updated,(0,zero,_,_),(2,two,_,_)),(8,eight,(5,five,_,_),_))",
@@ -293,11 +318,7 @@ test "singleton" {
 test "insert" {
   let m = of([(3, "three"), (8, "eight"), (1, "one")])
   inspect!(m.debug_tree(), content="(3,three,(1,one,_,_),(8,eight,_,_))")
-  let m = m
-    .insert(5, "five")
-    .insert(2, "two")
-    .insert(0, "zero")
-    .insert(1, "one_updated")
+  let m = m.add(5, "five").add(2, "two").add(0, "zero").add(1, "one_updated")
   inspect!(
     m.debug_tree(),
     content="(3,three,(1,one_updated,(0,zero,_,_),(2,two,_,_)),(8,eight,(5,five,_,_),_))",

@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+///|
 /// Creates a new empty priority queue.
 /// 
 /// # Example
@@ -22,6 +23,7 @@ pub fn T::new[A : Compare]() -> T[A] {
   { len: 0, top: Nil }
 }
 
+///|
 /// Creates a new priority queue from an array.
 /// 
 /// # Example
@@ -40,6 +42,7 @@ pub fn T::from_array[A : Compare](arr : Array[A]) -> T[A] {
   }
 }
 
+///|
 fn copy_node[A](x : Node[A]) -> Node[A] {
   match x {
     Nil => Nil
@@ -52,6 +55,7 @@ fn copy_node[A](x : Node[A]) -> Node[A] {
   }
 }
 
+///|
 /// Return a copy of the queue.
 /// 
 /// # Example
@@ -64,6 +68,7 @@ pub fn copy[A](self : T[A]) -> T[A] {
   new_que
 }
 
+///|
 pub fn to_array[A : Compare](self : T[A]) -> Array[A] {
   let arr : Array[A] = []
   fn go(x : Node[A]) {
@@ -82,12 +87,13 @@ pub fn to_array[A : Compare](self : T[A]) -> Array[A] {
   arr
 }
 
+///|
 pub fn iter[A : Compare](self : T[A]) -> Iter[A] {
   Iter::new(
-    fn(yield) {
+    fn(yield_) {
       let arr = self.to_array()
       for i = 0; i < arr.length(); i = i + 1 {
-        if yield(arr[i]) == IterEnd {
+        if yield_(arr[i]) == IterEnd {
           break IterEnd
         }
       } else {
@@ -97,12 +103,14 @@ pub fn iter[A : Compare](self : T[A]) -> Iter[A] {
   )
 }
 
+///|
 pub fn T::from_iter[K : Compare](iter : Iter[K]) -> T[K] {
   let s = T::new()
   iter.each(fn(e) { s.push(e) })
   s
 }
 
+///|
 fn meld[A : Compare](x : Node[A], y : Node[A]) -> Node[A] {
   match (x, y) {
     (Nil, _) => y
@@ -120,10 +128,11 @@ fn meld[A : Compare](x : Node[A], y : Node[A]) -> Node[A] {
   }
 }
 
+///|
 fn merges[A : Compare](x : Node[A]) -> Node[A] {
   match x {
     Nil => Nil
-    Cons(~sibling, ..) =>
+    Cons(sibling~, ..) =>
       match sibling {
         Nil => x
         Cons(sibling=next_sibling, ..) =>
@@ -135,10 +144,12 @@ fn merges[A : Compare](x : Node[A]) -> Node[A] {
   }
 }
 
+///|
 pub fn length[A](self : T[A]) -> Int {
   self.len
 }
 
+///|
 /// Pops the first value from the priority queue.
 /// 
 /// # Example
@@ -150,16 +161,18 @@ pub fn length[A](self : T[A]) -> Int {
 pub fn unsafe_pop[A : Compare](self : T[A]) -> Unit {
   self.top = match self.top {
     Nil => abort("The PriorityQueue is empty!")
-    Cons(~child, ..) => merges(child)
+    Cons(child~, ..) => merges(child)
   }
   self.len -= 1
 }
 
+///|
 /// @alert deprecated "Use `unsafe_pop` instead"
 pub fn pop_exn[A : Compare](self : T[A]) -> Unit {
   unsafe_pop(self)
 }
 
+///|
 /// Pops the first value from the priority queue, which returns None if the queue is empty.
 /// 
 /// # Example
@@ -171,7 +184,7 @@ pub fn pop[A : Compare](self : T[A]) -> A? {
   let result = self.peek()
   self.top = match self.top {
     Nil => Nil
-    Cons(~child, ..) => {
+    Cons(child~, ..) => {
       self.len -= 1
       merges(child)
     }
@@ -179,6 +192,7 @@ pub fn pop[A : Compare](self : T[A]) -> A? {
   result
 }
 
+///|
 /// Adds a value to the priority queue.
 /// 
 /// # Example
@@ -191,6 +205,7 @@ pub fn push[A : Compare](self : T[A], value : A) -> Unit {
   self.len += 1
 }
 
+///|
 /// Peeks at the first value in the priority queue, which returns None if the priority queue is empty.
 /// 
 /// # Example
@@ -201,10 +216,11 @@ pub fn push[A : Compare](self : T[A], value : A) -> Unit {
 pub fn peek[A](self : T[A]) -> A? {
   match self.top {
     Nil => None
-    Cons(~content, ..) => Some(content)
+    Cons(content~, ..) => Some(content)
   }
 }
 
+///|
 /// Clears the queue.
 /// 
 /// # Example
@@ -217,6 +233,7 @@ pub fn clear[A](self : T[A]) -> Unit {
   self.len = 0
 }
 
+///|
 /// Checks if the priority queue is empty.
 /// 
 /// # Example
@@ -228,6 +245,7 @@ pub fn is_empty[A](self : T[A]) -> Bool {
   self.len == 0
 }
 
+///|
 pub fn T::of[A : Compare](arr : FixedArray[A]) -> T[A] {
   // CR: bad formatting  
   let len = arr.length()
@@ -250,14 +268,17 @@ test "meld_and_merges" {
   )
 }
 
+///|
 pub impl[A : Show + Compare] Show for T[A] with output(self, logger) {
   logger.write_iter(self.iter(), prefix="@priority_queue.of([", suffix="])")
 }
 
+///|
 pub fn to_string[A : Show + Compare](self : T[A]) -> String {
   Show::to_string(self)
 }
 
+///|
 pub impl[X : @quickcheck.Arbitrary + Compare] @quickcheck.Arbitrary for T[X] with arbitrary(
   size,
   rs

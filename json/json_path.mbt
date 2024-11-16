@@ -12,25 +12,29 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+///|
 enum JsonPath {
   Root
-  Key(JsonPath, mut ~key : String)
-  Index(JsonPath, mut ~index : Int)
+  Key(JsonPath, mut key~ : String)
+  Index(JsonPath, mut index~ : Int)
 } derive(Eq)
 
+///|
 pub fn add_index(self : JsonPath, index : Int) -> JsonPath {
-  Index(self, ~index)
+  Index(self, index~)
 }
 
+///|
 pub fn add_key(self : JsonPath, key : String) -> JsonPath {
-  Key(self, ~key)
+  Key(self, key~)
 }
 
+///|
 pub fn output(self : JsonPath, logger : Logger) -> Unit {
   match self {
     Root => logger.write_string("$")
-    Key(p, ~key) => logger..write_object(p)..write_string(".").write_string(key)
-    Index(p, ~index) =>
+    Key(p, key~) => logger..write_object(p)..write_string(".").write_string(key)
+    Index(p, index~) =>
       logger
       ..write_object(p)
       ..write_string("[")
@@ -39,6 +43,7 @@ pub fn output(self : JsonPath, logger : Logger) -> Unit {
   }
 }
 
+///|
 fn update_key_inplace(self : JsonPath, key : String) -> Unit {
   match self {
     Key(_) as k => k.key = key
@@ -46,6 +51,7 @@ fn update_key_inplace(self : JsonPath, key : String) -> Unit {
   }
 }
 
+///|
 fn update_index_inplace(self : JsonPath, index : Int) -> Unit {
   match self {
     Index(_) as i => i.index = index

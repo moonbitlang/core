@@ -12,7 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-fn test_parse(input : String, ~loc : SourceLoc = _) -> Json!Error {
+///|
+fn test_parse(input : String, loc~ : SourceLoc = _) -> Json!Error {
   match @json.parse?(input) {
     Ok(json) => json
     Err(err) => fail!("Parse failed, \{loc}, \{err}")

@@ -3,6 +3,8 @@ package moonbitlang/core/bytes
 // Values
 
 // Types and methods
+
+
 impl Bytes {
   default() -> Bytes
   from_array(Array[Byte]) -> Bytes
@@ -15,7 +17,4 @@ impl Bytes {
 // Type aliases
 
 // Traits
-
-// Extension Methods
-impl Hash for Bytes
 

@@ -12,17 +12,18 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-let pi = 0x3.243F6A8885A308CA8A54
-
+///|
 //Compare two Double values for equality within the allowed error range of 4.5e-9.
 fn imprecise_equal(x : Double, y : Double) -> Bool {
   (x - y).abs() < 4.5e-9
 }
 
+///|
 fn inaccuracy(x : Double, y : Double) -> Double {
   (x - y).abs()
 }
 
+///|
 let vf = [
   4.9790119248836735e+00, 7.7388724745781045e+00, -2.7688005719200159e-01, -5.0106036182710749e+00,
   9.6362937071984173e+00, 2.9263772392439646e+00, 5.2290834314593066e+00, 2.7279399104360102e+00,
@@ -53,12 +54,12 @@ test "sin" {
       inaccuracy(@math.sin(vf[i]), sin_res[i]),
     )
     inspect!(
-      imprecise_equal(@math.sin(100000.0 * pi + vf[i]), sin_res_large[i]),
+      imprecise_equal(@math.sin(100000.0 * PI + vf[i]), sin_res_large[i]),
       content="true",
     )
     max_inaccuracy = @math.maximum(
       max_inaccuracy,
-      inaccuracy(@math.sin(100000.0 * pi + vf[i]), sin_res_large[i]),
+      inaccuracy(@math.sin(100000.0 * PI + vf[i]), sin_res_large[i]),
     )
   }
   inspect!(max_inaccuracy, content="5.6910670620524684e-11")
@@ -88,12 +89,12 @@ test "cos" {
       inaccuracy(@math.cos(vf[i]), cos_res[i]),
     )
     inspect!(
-      imprecise_equal(@math.cos(100000.0 * pi + vf[i]), cos_res_large[i]),
+      imprecise_equal(@math.cos(100000.0 * PI + vf[i]), cos_res_large[i]),
       content="true",
     )
     max_inaccuracy = @math.maximum(
       max_inaccuracy,
-      inaccuracy(@math.cos(100000.0 * pi + vf[i]), cos_res_large[i]),
+      inaccuracy(@math.cos(100000.0 * PI + vf[i]), cos_res_large[i]),
     )
   }
   inspect!(max_inaccuracy, content="5.7822691079678634e-11")
@@ -123,12 +124,12 @@ test "tan" {
       inaccuracy(@math.tan(vf[i]), tan_res[i]),
     )
     inspect!(
-      imprecise_equal(@math.tan(100000.0 * pi + vf[i]), tan_res_large[i]),
+      imprecise_equal(@math.tan(100000.0 * PI + vf[i]), tan_res_large[i]),
       content="true",
     )
     max_inaccuracy = @math.maximum(
       max_inaccuracy,
-      inaccuracy(@math.tan(100000.0 * pi + vf[i]), tan_res_large[i]),
+      inaccuracy(@math.tan(100000.0 * PI + vf[i]), tan_res_large[i]),
     )
   }
   inspect!(max_inaccuracy, content="4.4124632836428646e-9")

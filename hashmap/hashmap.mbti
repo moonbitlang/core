@@ -18,7 +18,7 @@ impl T {
   get_or_default[K : Hash + Eq, V](Self[K, V], K, V) -> V
   is_empty[K, V](Self[K, V]) -> Bool
   iter[K, V](Self[K, V]) -> Iter[(K, V)]
-  new[K, V](~capacity : Int = ..) -> Self[K, V]
+  new[K, V](capacity~ : Int = ..) -> Self[K, V]
   of[K : Eq + Hash, V](FixedArray[(K, V)]) -> Self[K, V]
   op_get[K : Hash + Eq, V](Self[K, V], K) -> V?
   op_set[K : Hash + Eq, V](Self[K, V], K, V) -> Unit
@@ -28,13 +28,10 @@ impl T {
   to_array[K, V](Self[K, V]) -> Array[(K, V)]
   to_string[K : Show, V : Show](Self[K, V]) -> String
 }
+impl[K : Show, V : Show] Show for T[K, V]
+impl[K : @quickcheck.Arbitrary + Hash + Eq, V : @quickcheck.Arbitrary] @quickcheck.Arbitrary for T[K, V]
 
 // Type aliases
 
 // Traits
-
-// Extension Methods
-impl Show for T
-
-impl @quickcheck.Arbitrary for T
 
