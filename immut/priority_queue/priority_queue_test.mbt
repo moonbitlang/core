@@ -122,3 +122,29 @@ test "from_iter empty iter" {
   let pq : @priority_queue.T[Int] = @priority_queue.T::from_iter(Iter::empty())
   inspect!(pq, content="@immut/priority_queue.of([])")
 }
+
+test "hash" {
+  let pq1 = @priority_queue.of([1, 2, 3, 4, 5])
+  let pq2 = @priority_queue.of([1, 2, 3, 4, 5])
+  inspect!(Hash::hash(pq1) == Hash::hash(pq2), content="true")
+  let pq3 = @priority_queue.of([5, 4, 3, 2, 1])
+  inspect!(Hash::hash(pq1) == Hash::hash(pq3), content="true")
+  let pq4 : @priority_queue.T[Int] = @priority_queue.new()
+  inspect!(Hash::hash(pq1) == Hash::hash(pq4), content="false")
+  inspect!(Hash::hash(pq4) == Hash::hash(pq4), content="true")
+  let pq5 = @priority_queue.of([1, 2, 3, 4, 6])
+  inspect!(Hash::hash(pq1) == Hash::hash(pq5), content="false")
+}
+
+test "equal" {
+  let pq1 = @priority_queue.of([1, 2, 3, 4, 5])
+  inspect!(pq1 == pq1, content="true")
+  let pq2 = @priority_queue.of([1, 2, 3, 4, 5])
+  inspect!(pq1 == pq2, content="true")
+  let pq3 = @priority_queue.of([5, 4, 3, 2, 1])
+  inspect!(pq1 == pq3, content="true")
+  let pq4 : @priority_queue.T[Int] = @priority_queue.new()
+  inspect!(pq1 == pq4, content="false")
+  let pq5 = @priority_queue.of([1, 2, 3])
+  inspect!(pq1 == pq5, content="false")
+}

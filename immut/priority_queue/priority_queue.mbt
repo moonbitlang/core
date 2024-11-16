@@ -234,6 +234,18 @@ pub fn to_string[A : Show + Compare](self : T[A]) -> String {
   Show::to_string(self)
 }
 
+///|
+pub impl[A : Compare] Eq for T[A] with op_equal(self, other) {
+  self.length() == other.length() && self.to_array() == other.to_array()
+}
+
+///|
+pub impl[A : Hash + Compare] Hash for T[A] with hash_combine(self, hasher) {
+  for e in self {
+    hasher.combine(e)
+  }
+}
+
 test "meld" {
   inspect!(meld(Empty, of([1]).body), content="Node(1, @list.of([]))")
   inspect!(meld(of([1]).body, Empty), content="Node(1, @list.of([]))")

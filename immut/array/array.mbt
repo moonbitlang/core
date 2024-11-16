@@ -211,7 +211,7 @@ pub fn eachi[A](self : T[A], f : (Int, A) -> Unit) -> Unit {
 }
 
 ///|
-pub fn op_equal[A : Eq](self : T[A], other : T[A]) -> Bool {
+pub impl[A : Eq] Eq for T[A] with op_equal(self, other) {
   self.size == other.size && self.tree == other.tree
 }
 
@@ -377,6 +377,13 @@ pub impl[X : @quickcheck.Arbitrary] @quickcheck.Arbitrary for T[X] with arbitrar
   rs
 ) {
   @quickcheck.Arbitrary::arbitrary(size, rs) |> from_array
+}
+
+///|
+pub impl[A : Hash] Hash for T[A] with hash_combine(self, hasher) {
+  for e in self {
+    hasher.combine(e)
+  }
 }
 
 test "mix" {
