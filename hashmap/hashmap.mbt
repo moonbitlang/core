@@ -38,7 +38,7 @@ test "power_2_above" {
 
 ///|
 /// Create new hash map.
-pub fn T::new[K, V](~capacity : Int = 8) -> T[K, V] {
+pub fn T::new[K, V](capacity~ : Int = 8) -> T[K, V] {
   let capacity = power_2_above(8, capacity)
   { size: 0, capacity, entries: FixedArray::make(capacity, None) }
 }

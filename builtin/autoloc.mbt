@@ -13,7 +13,7 @@
 // limitations under the License.
 
 ///|
-pub type SourceLoc
+pub(all) type SourceLoc
 
 ///|
 pub fn SourceLoc::to_string(self : SourceLoc) -> String = "%loc_to_string"
@@ -24,7 +24,7 @@ pub impl Show for SourceLoc with output(self, logger) {
 }
 
 ///|
-pub type ArgsLoc Array[SourceLoc?] derive(Show)
+pub(all) type ArgsLoc Array[SourceLoc?] derive(Show)
 
 ///|
 pub fn ArgsLoc::to_json(self : ArgsLoc) -> String {

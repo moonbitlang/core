@@ -97,8 +97,8 @@ fn indent_str(level : Int, indent : Int) -> String {
 ///|
 pub fn stringify(
   self : JsonValue,
-  ~escape_slash : Bool = false,
-  ~indent : Int = 0
+  escape_slash~ : Bool = false,
+  indent~ : Int = 0
 ) -> String {
   fn stringify_inner(value : JsonValue, level : Int) -> String {
     match value {
@@ -119,7 +119,7 @@ pub fn stringify(
           }
           buf
           ..write_char('\"')
-          ..write_string(escape(k, ~escape_slash))
+          ..write_string(escape(k, escape_slash~))
           .write_char('\"')
           if indent == 0 {
             buf.write_char(':')
@@ -152,7 +152,7 @@ pub fn stringify(
         let buf = StringBuilder::new(size_hint=0)
         buf
         ..write_char('\"')
-        ..write_string(escape(s, ~escape_slash))
+        ..write_string(escape(s, escape_slash~))
         ..write_char('\"')
         .to_string()
       }
@@ -167,7 +167,7 @@ pub fn stringify(
 }
 
 ///|
-fn escape(str : String, ~escape_slash : Bool) -> String {
+fn escape(str : String, escape_slash~ : Bool) -> String {
   fn to_hex_digit(i : Int) -> Char {
     if i < 10 {
       Char::from_int('0'.to_int() + i)
@@ -216,9 +216,9 @@ pub fn to_json(self : JsonValue) -> JsonValue {
 ///|
 pub fn inspect(
   obj : ToJson,
-  ~content? : Json,
-  ~loc : SourceLoc = _,
-  ~args_loc : ArgsLoc = _
+  content? : Json,
+  loc~ : SourceLoc = _,
+  args_loc~ : ArgsLoc = _
 ) -> Unit!InspectError {
   let loc = loc.to_string().escape()
   let args_loc = args_loc.to_json().escape()

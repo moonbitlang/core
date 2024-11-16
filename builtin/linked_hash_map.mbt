@@ -91,7 +91,7 @@ test "power_2_above" {
 /// Create a hash map.
 /// The capacity of the map will be the smallest power of 2 that is
 /// greater than or equal to the provided [capacity].
-pub fn Map::new[K, V](~capacity : Int = 8) -> Map[K, V] {
+pub fn Map::new[K, V](capacity~ : Int = 8) -> Map[K, V] {
   let capacity = power_2_above(8, capacity)
   {
     size: 0,
@@ -436,10 +436,10 @@ pub fn clear[K, V](self : Map[K, V]) -> Unit {
 /// Returns the iterator of the hash map, provide elements in the order of insertion.
 pub fn iter[K, V](self : Map[K, V]) -> Iter[(K, V)] {
   Iter::new(
-    fn(yield) {
+    fn(yield_) {
       loop self.head {
         Some({ key, value, idx, .. }) => {
-          if yield((key, value)) == IterEnd {
+          if yield_((key, value)) == IterEnd {
             break IterEnd
           }
           continue self.list[idx].next
@@ -453,10 +453,10 @@ pub fn iter[K, V](self : Map[K, V]) -> Iter[(K, V)] {
 ///|
 pub fn iter2[K, V](self : Map[K, V]) -> Iter2[K, V] {
   Iter2::new(
-    fn(yield) {
+    fn(yield_) {
       loop self.head {
         Some({ key, value, idx, .. }) =>
-          if yield(key, value) == IterEnd {
+          if yield_(key, value) == IterEnd {
             IterEnd
           } else {
             continue self.list[idx].next
@@ -470,10 +470,10 @@ pub fn iter2[K, V](self : Map[K, V]) -> Iter2[K, V] {
 ///|
 pub fn keys[K, V](self : Map[K, V]) -> Iter[K] {
   Iter::new(
-    fn(yield) {
+    fn(yield_) {
       loop self.head {
         Some({ key, idx, .. }) =>
-          match yield(key) {
+          match yield_(key) {
             IterEnd => IterEnd
             IterContinue => continue self.list[idx].next
           }
@@ -486,10 +486,10 @@ pub fn keys[K, V](self : Map[K, V]) -> Iter[K] {
 ///|
 pub fn values[K, V](self : Map[K, V]) -> Iter[V] {
   Iter::new(
-    fn(yield) {
+    fn(yield_) {
       loop self.head {
         Some({ value, idx, .. }) =>
-          match yield(value) {
+          match yield_(value) {
             IterEnd => IterEnd
             IterContinue => continue self.list[idx].next
           }

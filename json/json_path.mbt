@@ -15,26 +15,26 @@
 ///|
 enum JsonPath {
   Root
-  Key(JsonPath, mut ~key : String)
-  Index(JsonPath, mut ~index : Int)
+  Key(JsonPath, mut key~ : String)
+  Index(JsonPath, mut index~ : Int)
 } derive(Eq)
 
 ///|
 pub fn add_index(self : JsonPath, index : Int) -> JsonPath {
-  Index(self, ~index)
+  Index(self, index~)
 }
 
 ///|
 pub fn add_key(self : JsonPath, key : String) -> JsonPath {
-  Key(self, ~key)
+  Key(self, key~)
 }
 
 ///|
 pub fn output(self : JsonPath, logger : Logger) -> Unit {
   match self {
     Root => logger.write_string("$")
-    Key(p, ~key) => logger..write_object(p)..write_string(".").write_string(key)
-    Index(p, ~index) =>
+    Key(p, key~) => logger..write_object(p)..write_string(".").write_string(key)
+    Index(p, index~) =>
       logger
       ..write_object(p)
       ..write_string("[")

@@ -13,7 +13,7 @@
 // limitations under the License.
 
 ///|
-pub enum Json {
+pub(all) enum Json {
   Null
   True
   False

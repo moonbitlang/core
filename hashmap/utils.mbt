@@ -37,12 +37,12 @@ pub fn clear[K, V](self : T[K, V]) -> Unit {
 /// Returns an iterator of the map.
 pub fn iter[K, V](self : T[K, V]) -> Iter[(K, V)] {
   Iter::new(
-    fn(yield) {
+    fn(yield_) {
       let len = self.entries.length()
       for i = 0; i < len; i = i + 1 {
         match self.entries[i] {
           Some({ key, value, .. }) =>
-            if yield((key, value)) == IterEnd {
+            if yield_((key, value)) == IterEnd {
               break IterEnd
             }
           None => continue

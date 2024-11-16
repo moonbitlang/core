@@ -19,15 +19,15 @@
 ///|
 pub fn iter[A](self : T[A]) -> Iter[A] {
   Iter::new(
-    fn(yield) {
+    fn(yield_) {
       match self {
         Empty => IterContinue
-        Node(~left, ~right, ~value, ..) =>
-          if left.iter().run(yield) == IterEnd {
+        Node(left~, right~, value~, ..) =>
+          if left.iter().run(yield_) == IterEnd {
             return IterEnd
-          } else if yield(value) == IterEnd {
+          } else if yield_(value) == IterEnd {
             return IterEnd
-          } else if right.iter().run(yield) == IterEnd {
+          } else if right.iter().run(yield_) == IterEnd {
             return IterEnd
           } else {
             return IterContinue
@@ -77,7 +77,7 @@ fn InorderIterator::move_left[A](
 ) -> Unit {
   loop node {
     Empty => ()
-    Node(~left, ..) as curr => {
+    Node(left~, ..) as curr => {
       self._.push(curr)
       continue left
     }
@@ -87,7 +87,7 @@ fn InorderIterator::move_left[A](
 ///|
 fn InorderIterator::next[A](self : InorderIterator[A]) -> A? {
   guard let Some(curr) = self._.pop() else { _ => return None }
-  guard let Node(~right, ~value, ..) = curr
+  guard let Node(right~, value~, ..) = curr
   self.move_left(right)
   Some(value)
 }

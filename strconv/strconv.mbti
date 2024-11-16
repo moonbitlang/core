@@ -7,9 +7,9 @@ fn parse_bool(String) -> Bool!StrConvError
 
 fn parse_double(String) -> Double!StrConvError
 
-fn parse_int(String, ~base : Int = ..) -> Int!StrConvError
+fn parse_int(String, base~ : Int = ..) -> Int!StrConvError
 
-fn parse_int64(String, ~base : Int = ..) -> Int64!StrConvError
+fn parse_int64(String, base~ : Int = ..) -> Int64!StrConvError
 
 // Types and methods
 type Decimal
@@ -21,7 +21,7 @@ impl Decimal {
   to_double(Self) -> Double!StrConvError
 }
 
-pub type! StrConvError String
+pub(all) type! StrConvError String
 impl Show for StrConvError
 
 // Type aliases

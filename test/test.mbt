@@ -21,7 +21,7 @@ fn debug_string[T : Show](t : T) -> String {
 
 ///|
 /// @alert deprecated "Use built-in `assert_eq` instead"
-pub fn eq[T : Show + Eq](a : T, b : T, ~loc : SourceLoc = _) -> Unit! {
+pub fn eq[T : Show + Eq](a : T, b : T, loc~ : SourceLoc = _) -> Unit! {
   if a != b {
     let a = debug_string(a)
     let b = debug_string(b)
@@ -31,7 +31,7 @@ pub fn eq[T : Show + Eq](a : T, b : T, ~loc : SourceLoc = _) -> Unit! {
 
 ///|
 /// @alert deprecated "Use built-in `assert_not_eq` instead"
-pub fn ne[T : Show + Eq](a : T, b : T, ~loc : SourceLoc = _) -> Unit! {
+pub fn ne[T : Show + Eq](a : T, b : T, loc~ : SourceLoc = _) -> Unit! {
   if not(a != b) {
     let a = debug_string(a)
     let b = debug_string(b)
@@ -41,7 +41,7 @@ pub fn ne[T : Show + Eq](a : T, b : T, ~loc : SourceLoc = _) -> Unit! {
 
 ///|
 /// @alert deprecated "Use built-in `assert_true` instead"
-pub fn is_true(x : Bool, ~loc : SourceLoc = _) -> Unit! {
+pub fn is_true(x : Bool, loc~ : SourceLoc = _) -> Unit! {
   if not(x) {
     let x = debug_string(x)
     fail!("FAILED: \{loc} `\{x}` is not true")
@@ -50,7 +50,7 @@ pub fn is_true(x : Bool, ~loc : SourceLoc = _) -> Unit! {
 
 ///|
 /// @alert deprecated "Use built-in `assert_false` instead"
-pub fn is_false(x : Bool, ~loc : SourceLoc = _) -> Unit! {
+pub fn is_false(x : Bool, loc~ : SourceLoc = _) -> Unit! {
   if x {
     let x = debug_string(x)
     fail!("FAILED: \{loc}: `\{x}` is not false")
@@ -73,7 +73,7 @@ pub fn is_false(x : Bool, ~loc : SourceLoc = _) -> Unit! {
 /// is(a, a)!  // this is okay
 /// is(a, b)!  // yields an error
 /// ```
-pub fn is[T : Show](a : T, b : T, ~loc : SourceLoc = _) -> Unit! {
+pub fn is[T : Show](a : T, b : T, loc~ : SourceLoc = _) -> Unit! {
   if not(physical_equal(a, b)) {
     let a = debug_string(a)
     let b = debug_string(b)
@@ -97,7 +97,7 @@ pub fn is[T : Show](a : T, b : T, ~loc : SourceLoc = _) -> Unit! {
 /// is_not(a, b)!  // this is okay
 /// is_not(a, a)!  // yields an error
 /// ```
-pub fn is_not[T : Show](a : T, b : T, ~loc : SourceLoc = _) -> Unit! {
+pub fn is_not[T : Show](a : T, b : T, loc~ : SourceLoc = _) -> Unit! {
   if physical_equal(a, b) {
     let a = debug_string(a)
     let b = debug_string(b)
@@ -106,8 +106,8 @@ pub fn is_not[T : Show](a : T, b : T, ~loc : SourceLoc = _) -> Unit! {
 }
 
 ///|
-pub fn fail[T](msg : String, ~loc : SourceLoc = _) -> T! {
-  @builtin.fail!(msg, ~loc)
+pub fn fail[T](msg : String, loc~ : SourceLoc = _) -> T! {
+  @builtin.fail!(msg, loc~)
 }
 
 ///|
@@ -124,9 +124,9 @@ pub fn writeln(self : T, obj : Show) -> Unit {
 ///|
 pub fn snapshot(
   self : T,
-  ~filename : String,
-  ~loc : SourceLoc = _,
-  ~args_loc : ArgsLoc = _
+  filename~ : String,
+  loc~ : SourceLoc = _,
+  args_loc~ : ArgsLoc = _
 ) -> Unit!SnapshotError {
   let loc = loc.to_string().escape()
   let args_loc = args_loc.to_json().escape()

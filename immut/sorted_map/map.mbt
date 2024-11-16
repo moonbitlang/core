@@ -15,13 +15,23 @@
 ///|
 /// Create a new map with a key-value pair inserted.
 /// O(log n).
+/// 
+/// @alert deprecated "Use `add` instead"
 pub fn insert[K : Compare, V](self : T[K, V], key : K, value : V) -> T[K, V] {
+  self.add(key, value)
+}
+
+///|
+/// Create a new map with a key-value pair inserted.
+/// O(log n).
+/// 
+pub fn add[K : Compare, V](self : T[K, V], key : K, value : V) -> T[K, V] {
   match self {
     Empty => singleton(key, value)
     Tree(k, value=v, l, r, ..) =>
       match key.compare(k) {
-        -1 => balance(k, v, insert(l, key, value), r)
-        1 => balance(k, v, l, insert(r, key, value))
+        -1 => balance(k, v, add(l, key, value), r)
+        1 => balance(k, v, l, add(r, key, value))
         _ => new(k, value, l, r)
       }
   }
@@ -235,11 +245,7 @@ test "from_array" {
 test "insert" {
   let m = of([(3, "three"), (8, "eight"), (1, "one")])
   inspect!(m.debug_tree(), content="(3,three,(1,one,_,_),(8,eight,_,_))")
-  let m = m
-    .insert(5, "five")
-    .insert(2, "two")
-    .insert(0, "zero")
-    .insert(1, "one_updated")
+  let m = m.add(5, "five").add(2, "two").add(0, "zero").add(1, "one_updated")
   inspect!(
     m.debug_tree(),
     content="(3,three,(1,one_updated,(0,zero,_,_),(2,two,_,_)),(8,eight,(5,five,_,_),_))",
@@ -312,11 +318,7 @@ test "singleton" {
 test "insert" {
   let m = of([(3, "three"), (8, "eight"), (1, "one")])
   inspect!(m.debug_tree(), content="(3,three,(1,one,_,_),(8,eight,_,_))")
-  let m = m
-    .insert(5, "five")
-    .insert(2, "two")
-    .insert(0, "zero")
-    .insert(1, "one_updated")
+  let m = m.add(5, "five").add(2, "two").add(0, "zero").add(1, "one_updated")
   inspect!(
     m.debug_tree(),
     content="(3,three,(1,one_updated,(0,zero,_,_),(2,two,_,_)),(8,eight,(5,five,_,_),_))",

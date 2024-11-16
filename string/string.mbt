@@ -39,7 +39,7 @@ pub fn String::from_array(chars : Array[Char]) -> String {
 /// ```
 pub fn String::concat(
   strings : Array[String],
-  ~separator : String = ""
+  separator~ : String = ""
 ) -> String {
   let buf = StringBuilder::new()
   if separator == "" {
@@ -113,7 +113,7 @@ pub fn to_array(self : String) -> Array[Char] {
 ///|
 pub fn iter(self : String) -> Iter[Char] {
   Iter::new(
-    fn(yield) {
+    fn(yield_) {
       let len = self.length()
       for index = 0; index < len; index = index + 1 {
         let c1 = self[index]
@@ -121,12 +121,12 @@ pub fn iter(self : String) -> Iter[Char] {
           let c2 = self[index + 1]
           if is_trailing_surrogate(c2) {
             let c = code_point_of_surrogate_pair(c1, c2)
-            guard let IterContinue = yield(c) else { x => break x }
+            guard let IterContinue = yield_(c) else { x => break x }
             continue index + 2
           }
         }
         //TODO: handle garbage input
-        guard let IterContinue = yield(c1) else { x => break x }
+        guard let IterContinue = yield_(c1) else { x => break x }
 
       } else {
         IterContinue
@@ -138,7 +138,7 @@ pub fn iter(self : String) -> Iter[Char] {
 ///|
 pub fn iter2(self : String) -> Iter2[Int, Char] {
   Iter2::new(
-    fn(yield) {
+    fn(yield_) {
       let len = self.length()
       for index = 0, n = 0; index < len; index = index + 1, n = n + 1 {
         let c1 = self[index]
@@ -146,12 +146,12 @@ pub fn iter2(self : String) -> Iter2[Int, Char] {
           let c2 = self[index + 1]
           if is_trailing_surrogate(c2) {
             let c = code_point_of_surrogate_pair(c1, c2)
-            guard let IterContinue = yield(n, c) else { x => break x }
+            guard let IterContinue = yield_(n, c) else { x => break x }
             continue index + 2, n + 1
           }
         }
         //TODO: handle garbage input
-        guard let IterContinue = yield(n, c1) else { x => break x }
+        guard let IterContinue = yield_(n, c1) else { x => break x }
 
       } else {
         IterContinue
@@ -161,7 +161,7 @@ pub fn iter2(self : String) -> Iter2[Int, Char] {
 }
 
 ///|
-pub fn fold[A](self : String, ~init : A, f : (A, Char) -> A) -> A {
+pub fn fold[A](self : String, init~ : A, f : (A, Char) -> A) -> A {
   let mut rv = init
   for c in self {
     rv = f(rv, c)
@@ -170,7 +170,7 @@ pub fn fold[A](self : String, ~init : A, f : (A, Char) -> A) -> A {
 }
 
 ///|
-pub fn rev_fold[A](self : String, ~init : A, f : (A, Char) -> A) -> A {
+pub fn rev_fold[A](self : String, init~ : A, f : (A, Char) -> A) -> A {
   let mut rv = init
   for c in self.rev_iter() {
     rv = f(rv, c)
@@ -195,7 +195,7 @@ pub fn rev_fold[A](self : String, ~init : A, f : (A, Char) -> A) -> A {
 /// - The function iterates over the string in reverse order.
 /// - If a trailing surrogate is encountered, it checks for a preceding leading surrogate to form a complete Unicode code point.
 /// - Yields each character or combined code point to the iterator.
-/// - Stops iteration if the `yield` function returns `IterEnd`.
+/// - Stops iteration if the `yield_` function returns `IterEnd`.
 /// 
 /// # Examples
 /// 
@@ -208,7 +208,7 @@ pub fn rev_fold[A](self : String, ~init : A, f : (A, Char) -> A) -> A {
 /// ```
 pub fn rev_iter(self : String) -> Iter[Char] {
   Iter::new(
-    fn(yield) {
+    fn(yield_) {
       let len = self.length()
       for index = len - 1; index >= 0; index = index - 1 {
         let c1 = self[index]
@@ -216,12 +216,12 @@ pub fn rev_iter(self : String) -> Iter[Char] {
           let c2 = self[index - 1]
           if is_leading_surrogate(c2) {
             let c = code_point_of_surrogate_pair(c2, c1)
-            guard let IterContinue = yield(c) else { x => break x }
+            guard let IterContinue = yield_(c) else { x => break x }
             continue index - 2
           }
         }
         // TODO: handle garbage input
-        guard let IterContinue = yield(c1) else { x => break x }
+        guard let IterContinue = yield_(c1) else { x => break x }
 
       } else {
         IterContinue
@@ -317,7 +317,7 @@ pub fn is_blank(self : String) -> Bool {
 
 ///|
 /// Returns the first index of the sub string.
-pub fn index_of(self : String, str : String, ~from : Int = 0) -> Int {
+pub fn index_of(self : String, str : String, from~ : Int = 0) -> Int {
   let from = if from < 0 {
     0
   } else if from >= self.length() {
@@ -364,7 +364,7 @@ pub fn index_of(self : String, str : String, ~from : Int = 0) -> Int {
 pub fn last_index_of(
   self : String,
   str : String,
-  ~from : Int = self.length()
+  from~ : Int = self.length()
 ) -> Int {
   let from = if from < 0 {
     0
@@ -475,17 +475,17 @@ pub fn split(self : String, seperator : String) -> Iter[String] {
     return self.iter().map(fn(c) { c.to_string() })
   }
   Iter::new(
-    fn(yield) {
+    fn(yield_) {
       let mut start = 0
       while start < len {
         let end = self.index_of(seperator, from=start)
         if end < 0 {
-          if yield(self.substring(~start)) == IterEnd {
+          if yield_(self.substring(start~)) == IterEnd {
             break IterEnd
           }
           break IterContinue
         }
-        if yield(self.substring(~start, ~end)) == IterEnd {
+        if yield_(self.substring(start~, end~)) == IterEnd {
           break IterEnd
         }
         start = end + sep_len
@@ -498,7 +498,7 @@ pub fn split(self : String, seperator : String) -> Iter[String] {
 
 ///|
 /// Replace the first old string in this string to new string.
-pub fn replace(self : String, ~old : String, ~new : String) -> String {
+pub fn replace(self : String, old~ : String, new~ : String) -> String {
   let old_idx = self.index_of(old)
   if old_idx < 0 {
     self
@@ -511,7 +511,7 @@ pub fn replace(self : String, ~old : String, ~new : String) -> String {
 
 ///|
 /// Replace all old string in this string to new string.
-pub fn replace_all(self : String, ~old : String, ~new : String) -> String {
+pub fn replace_all(self : String, old~ : String, new~ : String) -> String {
   let buf = StringBuilder::new()
   let len = self.length()
   let old_len = old.length()
@@ -530,10 +530,10 @@ pub fn replace_all(self : String, ~old : String, ~new : String) -> String {
     while start < len {
       let end = self.index_of(old, from=start)
       if end < 0 {
-        buf.write_string(self.substring(~start))
+        buf.write_string(self.substring(start~))
         break
       }
-      buf.write_string(self.substring(~start, ~end))
+      buf.write_string(self.substring(start~, end~))
       buf.write_string(new)
       start = end + old_len
     }

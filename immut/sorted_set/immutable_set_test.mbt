@@ -56,30 +56,30 @@ test "subset" {
 test "diff" {
   let empty = @sorted_set.new()
   inspect!(
-    empty.diff(@sorted_set.of([1, 2, 3])),
+    empty.difference(@sorted_set.of([1, 2, 3])),
     content="@immut/sorted_set.of([])",
   )
   inspect!(
-    @sorted_set.of([1, 2, 3]).diff(empty),
+    @sorted_set.of([1, 2, 3]).difference(empty),
     content="@immut/sorted_set.of([1, 2, 3])",
   )
   inspect!(
-    @sorted_set.of([1, 2, 3]).diff(@sorted_set.of([4, 5, 1])),
+    @sorted_set.of([1, 2, 3]).difference(@sorted_set.of([4, 5, 1])),
     content="@immut/sorted_set.of([2, 3])",
   )
   inspect!(
-    @sorted_set.of([1, 2, 3]).diff(@sorted_set.of([1, 2, 3])),
+    @sorted_set.of([1, 2, 3]).difference(@sorted_set.of([1, 2, 3])),
     content="@immut/sorted_set.of([])",
   )
 }
 
 test "inter" {
   inspect!(
-    @sorted_set.of([3, 4, 5]).inter(@sorted_set.of([4, 5, 6])),
+    @sorted_set.of([3, 4, 5]).intersection(@sorted_set.of([4, 5, 6])),
     content="@immut/sorted_set.of([4, 5])",
   )
   inspect!(
-    @sorted_set.of([3, 4]).inter(@sorted_set.of([5, 6])),
+    @sorted_set.of([3, 4]).intersection(@sorted_set.of([5, 6])),
     content="@immut/sorted_set.of([])",
   )
 }

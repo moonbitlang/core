@@ -34,7 +34,7 @@ struct Hasher {
 }
 
 ///|
-pub fn Hasher::new(~seed : Int = 0) -> Hasher {
+pub fn Hasher::new(seed~ : Int = 0) -> Hasher {
   { acc: seed + gPRIME5 }
 }
 

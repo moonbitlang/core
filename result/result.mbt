@@ -368,7 +368,7 @@ test "unwrap exn" {
 }
 
 ///|
-pub fn wrap0[T, E : Error](~f : () -> T!E) -> Result[T, E] {
+pub fn wrap0[T, E : Error](f~ : () -> T!E) -> Result[T, E] {
   try {
     f!() |> Ok
   } catch {
@@ -377,7 +377,7 @@ pub fn wrap0[T, E : Error](~f : () -> T!E) -> Result[T, E] {
 }
 
 ///|
-pub fn wrap1[T, A, E : Error](~f : (A) -> T!E, a : A) -> Result[T, E] {
+pub fn wrap1[T, A, E : Error](f~ : (A) -> T!E, a : A) -> Result[T, E] {
   try {
     f!(a) |> Ok
   } catch {
@@ -387,7 +387,7 @@ pub fn wrap1[T, A, E : Error](~f : (A) -> T!E, a : A) -> Result[T, E] {
 
 ///|
 pub fn wrap2[T, A, B, E : Error](
-  ~f : (A, B) -> T!E,
+  f~ : (A, B) -> T!E,
   a : A,
   b : B
 ) -> Result[T, E] {

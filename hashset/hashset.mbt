@@ -31,21 +31,28 @@ pub fn T::new[K]() -> T[K] {
 /// Create new hash set from array.
 pub fn T::from_array[K : Hash + Eq](arr : Array[K]) -> T[K] {
   let m = new()
-  arr.each(fn(e) { m.insert(e) })
+  arr.each(fn(e) { m.add(e) })
   m
 }
 
 ///|
 pub fn T::of[K : Hash + Eq](arr : FixedArray[K]) -> T[K] {
   let m = new()
-  arr.each(fn(e) { m.insert(e) })
+  arr.each(fn(e) { m.add(e) })
   m
 }
 
 ///|
 /// Insert a key into hash set.
 /// @alert unsafe "Panic if the hash set is full."
+/// @alert deprecated "Use `add` instead."
 pub fn insert[K : Hash + Eq](self : T[K], key : K) -> Unit {
+  self.add(key)
+}
+
+///|
+/// Insert a key into hash set.
+pub fn add[K : Hash + Eq](self : T[K], key : K) -> Unit {
   if self.capacity == 0 || self.size >= self.growAt {
     self.grow()
   }
@@ -179,8 +186,8 @@ pub fn clear[K](self : T[K]) -> Unit {
 /// @alert unsafe "Panic if the hash set is full."
 pub fn union[K : Hash + Eq](self : T[K], other : T[K]) -> T[K] {
   let m = T::new()
-  self.each(fn(k) { m.insert(k) })
-  other.each(fn(k) { m.insert(k) })
+  self.each(fn(k) { m.add(k) })
+  other.each(fn(k) { m.add(k) })
   m
 }
 
@@ -188,7 +195,7 @@ pub fn union[K : Hash + Eq](self : T[K], other : T[K]) -> T[K] {
 /// Intersection of two hash sets.
 pub fn intersection[K : Hash + Eq](self : T[K], other : T[K]) -> T[K] {
   let m = T::new()
-  self.each(fn(k) { if other.contains(k) { m.insert(k) } })
+  self.each(fn(k) { if other.contains(k) { m.add(k) } })
   m
 }
 
@@ -196,7 +203,7 @@ pub fn intersection[K : Hash + Eq](self : T[K], other : T[K]) -> T[K] {
 /// Difference of two hash sets.
 pub fn difference[K : Hash + Eq](self : T[K], other : T[K]) -> T[K] {
   let m = T::new()
-  self.each(fn(k) { if not(other.contains(k)) { m.insert(k) } })
+  self.each(fn(k) { if not(other.contains(k)) { m.add(k) } })
   m
 }
 
@@ -204,18 +211,18 @@ pub fn difference[K : Hash + Eq](self : T[K], other : T[K]) -> T[K] {
 /// Symmetric difference of two hash sets.
 pub fn symmetric_difference[K : Hash + Eq](self : T[K], other : T[K]) -> T[K] {
   let m = T::new()
-  self.each(fn(k) { if not(other.contains(k)) { m.insert(k) } })
-  other.each(fn(k) { if not(self.contains(k)) { m.insert(k) } })
+  self.each(fn(k) { if not(other.contains(k)) { m.add(k) } })
+  other.each(fn(k) { if not(self.contains(k)) { m.add(k) } })
   m
 }
 
 ///|
 pub fn iter[K](self : T[K]) -> Iter[K] {
   Iter::new(
-    fn(yield) {
+    fn(yield_) {
       for i = 0, len = self.entries.length(); i < len; i = i + 1 {
         match self.entries[i] {
-          Some({ key, .. }) => if yield(key) == IterEnd { break IterEnd }
+          Some({ key, .. }) => if yield_(key) == IterEnd { break IterEnd }
           None => continue
         }
       } else {
@@ -228,7 +235,7 @@ pub fn iter[K](self : T[K]) -> Iter[K] {
 ///|
 pub fn T::from_iter[K : Hash + Eq](iter : Iter[K]) -> T[K] {
   let s = T::new()
-  iter.each(fn(e) { s.insert(e) })
+  iter.each(fn(e) { s.add(e) })
   s
 }
 
@@ -276,7 +283,7 @@ fn grow[K : Hash + Eq](self : T[K]) -> Unit {
   self.size = 0
   for i = 0; i < old_entries.length(); i = i + 1 {
     match old_entries[i] {
-      Some({ key, .. }) => self.insert(key)
+      Some({ key, .. }) => self.add(key)
       None => ()
     }
   }
@@ -348,13 +355,13 @@ impl Show for MyString with output(self, logger) { logger.write_string(self._) }
 
 test "set" {
   let m : T[MyString] = T::new()
-  m.insert("a")
-  m.insert("b")
-  m.insert("bc")
-  m.insert("abc")
-  m.insert("cd")
-  m.insert("c")
-  m.insert("d")
+  m.add("a")
+  m.add("b")
+  m.add("bc")
+  m.add("abc")
+  m.add("cd")
+  m.add("c")
+  m.add("d")
   assert_eq!(m.size, 7)
   assert_eq!(
     m.debug_entries(),
@@ -368,12 +375,12 @@ test "remove" {
     MyString::MyString(s)
   }
 
-  m.insert("a" |> i)
-  m.insert("ab" |> i)
-  m.insert("bc" |> i)
-  m.insert("cd" |> i)
-  m.insert("abc" |> i)
-  m.insert("abcdef" |> i)
+  m.add("a" |> i)
+  m.add("ab" |> i)
+  m.add("bc" |> i)
+  m.add("cd" |> i)
+  m.add("abc" |> i)
+  m.add("abcdef" |> i)
   m.remove("ab" |> i)
   assert_eq!(m.size(), 5)
   assert_eq!(m.debug_entries(), "_,(0,a),(0,bc),(1,cd),(1,abc),_,(0,abcdef),_")
@@ -385,9 +392,9 @@ test "remove_unexist_key" {
     MyString::MyString(s)
   }
 
-  m.insert("a" |> i)
-  m.insert("ab" |> i)
-  m.insert("abc" |> i)
+  m.add("a" |> i)
+  m.add("ab" |> i)
+  m.add("abc" |> i)
   m.remove("d" |> i)
   assert_eq!(m.size(), 3)
   assert_eq!(m.debug_entries(), "_,(0,a),(0,ab),(0,abc),_,_,_,_")
@@ -399,20 +406,20 @@ test "grow" {
     MyString::MyString(s)
   }
 
-  m.insert("C" |> i)
-  m.insert("Go" |> i)
-  m.insert("C++" |> i)
-  m.insert("Java" |> i)
-  m.insert("Scala" |> i)
-  m.insert("Julia" |> i)
+  m.add("C" |> i)
+  m.add("Go" |> i)
+  m.add("C++" |> i)
+  m.add("Java" |> i)
+  m.add("Scala" |> i)
+  m.add("Julia" |> i)
   assert_eq!(m.size, 6)
   assert_eq!(m.capacity, 8)
-  m.insert("Cobol" |> i)
+  m.add("Cobol" |> i)
   assert_eq!(m.size, 7)
   assert_eq!(m.capacity, 16)
-  m.insert("Python" |> i)
-  m.insert("Haskell" |> i)
-  m.insert("Rescript" |> i)
+  m.add("Python" |> i)
+  m.add("Haskell" |> i)
+  m.add("Rescript" |> i)
   assert_eq!(m.size, 10)
   assert_eq!(m.capacity, 16)
   assert_eq!(

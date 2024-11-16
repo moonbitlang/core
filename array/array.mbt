@@ -119,7 +119,7 @@ pub fn Array::makei[T](length : Int, value : (Int) -> T) -> Array[T] {
 /// }
 /// Array::shuffle_in_place(arr, ~rand=rand)
 /// ```
-pub fn Array::shuffle_in_place[T](arr : Array[T], ~rand : (Int) -> Int) -> Unit {
+pub fn Array::shuffle_in_place[T](arr : Array[T], rand~ : (Int) -> Int) -> Unit {
   let n = arr.length()
   for i = n - 1; i > 0; i = i - 1 {
     let j = rand(i + 1) % (i + 1)
@@ -144,9 +144,9 @@ pub fn Array::shuffle_in_place[T](arr : Array[T], ~rand : (Int) -> Int) -> Unit 
 /// }
 /// let shuffled = Array::shuffle(arr, ~rand=rand)
 /// ```
-pub fn Array::shuffle[T](arr : Array[T], ~rand : (Int) -> Int) -> Array[T] {
+pub fn Array::shuffle[T](arr : Array[T], rand~ : (Int) -> Int) -> Array[T] {
   let new_arr = arr.copy()
-  Array::shuffle_in_place(new_arr, ~rand)
+  Array::shuffle_in_place(new_arr, rand~)
   new_arr
 }
 

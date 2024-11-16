@@ -33,5 +33,5 @@
 /// ```
 enum T[K, V] {
   Empty
-  Tree(K, ~value : V, ~size : Int, T[K, V], T[K, V])
+  Tree(K, value~ : V, size~ : Int, T[K, V], T[K, V])
 }

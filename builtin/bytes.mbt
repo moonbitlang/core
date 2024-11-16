@@ -52,8 +52,8 @@ pub fn to_string(self : Bytes) -> String {
 /// it simply copy the bytes into a new String.
 pub fn to_unchecked_string(
   self : Bytes,
-  ~offset : Int = 0,
-  ~length : Int = self.length() - offset
+  offset~ : Int = 0,
+  length~ : Int = self.length() - offset
 ) -> String {
   let len = self.length()
   guard offset >= 0 && length >= 0 && offset + length <= len

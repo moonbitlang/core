@@ -41,7 +41,7 @@ pub extern "js" fn BigInt::from_hex(str : String) -> BigInt =
   #|(x) => x.startsWith('-') ? -BigInt(`0x${x.slice(1)}`) : BigInt(`0x${x}`)
 
 ///|
-pub extern "js" fn to_hex(self : BigInt, ~uppercase : Bool = true) -> String =
+pub extern "js" fn to_hex(self : BigInt, uppercase~ : Bool = true) -> String =
   #|(x, uppercase) => {
   #|  const r = x.toString(16);
   #|  return uppercase ? r.toUpperCase() : r;
@@ -52,7 +52,7 @@ extern "js" fn hex2(b : Byte) -> String =
   #|(x) => x.toString(16).padStart(2, '0')
 
 ///|
-pub fn BigInt::from_octets(octets : Bytes, ~signum : Int = 1) -> BigInt {
+pub fn BigInt::from_octets(octets : Bytes, signum~ : Int = 1) -> BigInt {
   if signum < 0 {
     return -1N * BigInt::from_octets(octets, signum=1)
   }
@@ -68,7 +68,7 @@ pub fn BigInt::from_octets(octets : Bytes, ~signum : Int = 1) -> BigInt {
 }
 
 ///|
-pub fn to_octets(self : BigInt, ~length? : Int) -> Bytes {
+pub fn to_octets(self : BigInt, length? : Int) -> Bytes {
   if self < 0 {
     abort("negative BigInt")
   }
@@ -161,7 +161,7 @@ pub extern "js" fn op_mod(self : BigInt, other : BigInt) -> BigInt =
 pub extern "js" fn pow(
   self : BigInt,
   other : BigInt,
-  ~modulus : BigInt = 1N
+  modulus~ : BigInt = 1N
 ) -> BigInt =
   #|(x, y, z) => (x ** y) % z
 

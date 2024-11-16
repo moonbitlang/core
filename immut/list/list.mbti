@@ -8,12 +8,12 @@ fn repeat[A](Int, A) -> T[A]
 
 fn singleton[A](A) -> T[A]
 
-fn unfold[A, S]((S) -> (A, S)?, ~init : S) -> T[A]
+fn unfold[A, S]((S) -> (A, S)?, init~ : S) -> T[A]
 
 fn unzip[A, B](T[(A, B)]) -> (T[A], T[B])
 
 // Types and methods
-pub enum T {
+pub(all) enum T {
   Nil
   Cons(A, T[A])
 }
@@ -36,12 +36,12 @@ impl T {
   findi[A](Self[A], (A, Int) -> Bool) -> A?
   flat_map[A, B](Self[A], (A) -> Self[B]) -> Self[B]
   flatten[A](Self[Self[A]]) -> Self[A]
-  fold[A, B](Self[A], ~init : B, (B, A) -> B) -> B
-  fold_left[A, B](Self[A], (B, A) -> B, ~init : B) -> B //deprecated
-  fold_lefti[A, B](Self[A], (Int, B, A) -> B, ~init : B) -> B //deprecated
-  fold_right[A, B](Self[A], (A, B) -> B, ~init : B) -> B //deprecated
-  fold_righti[A, B](Self[A], (Int, A, B) -> B, ~init : B) -> B //deprecated
-  foldi[A, B](Self[A], ~init : B, (Int, B, A) -> B) -> B
+  fold[A, B](Self[A], init~ : B, (B, A) -> B) -> B
+  fold_left[A, B](Self[A], (B, A) -> B, init~ : B) -> B //deprecated
+  fold_lefti[A, B](Self[A], (Int, B, A) -> B, init~ : B) -> B //deprecated
+  fold_right[A, B](Self[A], (A, B) -> B, init~ : B) -> B //deprecated
+  fold_righti[A, B](Self[A], (Int, A, B) -> B, init~ : B) -> B //deprecated
+  foldi[A, B](Self[A], init~ : B, (Int, B, A) -> B) -> B
   from_array[A](Array[A]) -> Self[A]
   from_iter[A](Iter[A]) -> Self[A]
   from_json[A : @json.FromJson](Json) -> Self[A]!@json.JsonDecodeError
@@ -71,11 +71,11 @@ impl T {
   remove_at[A](Self[A], Int) -> Self[A]
   rev[A](Self[A]) -> Self[A]
   rev_concat[A](Self[A], Self[A]) -> Self[A]
-  rev_fold[A, B](Self[A], ~init : B, (A, B) -> B) -> B
-  rev_foldi[A, B](Self[A], ~init : B, (Int, A, B) -> B) -> B
+  rev_fold[A, B](Self[A], init~ : B, (A, B) -> B) -> B
+  rev_foldi[A, B](Self[A], init~ : B, (Int, A, B) -> B) -> B
   rev_map[A, B](Self[A], (A) -> B) -> Self[B]
-  scan_left[A, E](Self[A], (E, A) -> E, ~init : E) -> Self[E]
-  scan_right[A, B](Self[A], (A, B) -> B, ~init : B) -> Self[B]
+  scan_left[A, E](Self[A], (E, A) -> E, init~ : E) -> Self[E]
+  scan_right[A, B](Self[A], (A, B) -> B, init~ : B) -> Self[B]
   sort[A : Compare + Eq](Self[A]) -> Self[A]
   tail[A](Self[A]) -> Self[A]
   take[A](Self[A], Int) -> Self[A]
