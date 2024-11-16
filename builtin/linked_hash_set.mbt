@@ -129,6 +129,7 @@ pub fn add_and_check[K : Hash + Eq](self : Set[K], key : K) -> Bool {
 /// Insert a key into the hash set.
 pub fn add[K : Hash + Eq](self : Set[K], key : K) -> Unit {
   let _ = self.add_and_check(key)
+
 }
 
 ///|
