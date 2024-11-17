@@ -128,8 +128,7 @@ pub fn add_and_check[K : Hash + Eq](self : Set[K], key : K) -> Bool {
 ///|
 /// Insert a key into the hash set.
 pub fn add[K : Hash + Eq](self : Set[K], key : K) -> Unit {
-  let _ = self.add_and_check(key)
-
+  self.add_and_check(key) |> ignore
 }
 
 ///|
@@ -155,8 +154,7 @@ pub fn contains[K : Hash + Eq](self : Set[K], key : K) -> Bool {
 ///|
 /// Remove a key from hash set.
 pub fn remove[K : Hash + Eq](self : Set[K], key : K) -> Unit {
-  let _ = self.remove_and_check(key)
-
+  self.remove_and_check(key) |> ignore
 }
 
 ///|
