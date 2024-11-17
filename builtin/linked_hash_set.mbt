@@ -191,7 +191,25 @@ pub fn contains[K : Hash + Eq](self : Set[K], key : K) -> Bool {
 ///|
 /// Remove a key from hash set.
 pub fn remove[K : Hash + Eq](self : Set[K], key : K) -> Unit {
-  self.remove_and_check(key) |> ignore
+  let hash = key.hash()
+  for i = 0, idx = hash & self.capacity_mask {
+    match self.entries[idx] {
+      Some(entry) => {
+        if entry.hash == hash && entry.key == key {
+          self.entries[idx] = None
+          self.remove_entry(entry)
+          self.shift_back(idx)
+          self.size -= 1
+          break
+        }
+        if i > entry.psl {
+          break
+        }
+        continue i + 1, (idx + 1) & self.capacity_mask
+      }
+      None => break
+    }
+  }
 }
 
 ///|
