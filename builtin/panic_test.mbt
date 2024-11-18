@@ -279,12 +279,6 @@ test "panic blit_from_string with invalid str_offset + length" {
   bytes.blit_from_string(0, str, 0, str.length() + 1) |> ignore
 }
 
-test "panic set_utf8_char with invalid code point" {
-  let bytes = Bytes::new(10)
-  let char = Char::from_int(0x110000)
-  bytes.set_utf8_char(0, char) |> ignore
-}
-
 test "panic set_utf16_char with invalid code point" {
   let bytes = Bytes::new(10)
   let char = Char::from_int(0x110000)

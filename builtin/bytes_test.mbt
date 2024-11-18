@@ -42,16 +42,6 @@ test "copy" {
   assert_eq!(copy_bytes.to_unchecked_string(), bytes.to_unchecked_string())
 }
 
-test "set_utf8_char" {
-  let bytes = Bytes::new(10)
-  let char = 'A'
-  let len = bytes.set_utf8_char(0, char)
-  assert_eq!(len, 1)
-  // FIXME: inconsistency between wasm-gc & js
-  bytes.to_unchecked_string(offset=0, length=1) |> ignore
-  inspect!(bytes.to_unchecked_string(offset=0, length=2), content="A")
-}
-
 test "set_utf16_char" {
   let bytes = Bytes::new(10)
   let char = 'A'
