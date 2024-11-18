@@ -94,6 +94,7 @@ pub fn copy(self : Bytes) -> Bytes {
 ///|
 /// Fill utf8 encoded char `value` into byte sequence `self`, starting at `offset`.
 /// It return the length of bytes has been written.
+/// @alert deprecated "The type Bytes is about to be changed to be immutable. Use `FixedArray[Byte]` or `Buffer` instead."
 pub fn set_utf8_char(self : Bytes, offset : Int, value : Char) -> Int {
   let code = value.to_uint()
   if code < 0x80 {
