@@ -23,6 +23,7 @@ impl T {
 impl Show for T
 
 // Type aliases
+pub typealias Buffer = T
 
 // Traits
 
