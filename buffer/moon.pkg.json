@@ -1,3 +1,7 @@
 {
-  "import": ["moonbitlang/core/builtin", "moonbitlang/core/coverage"]
+  "import": [
+    "moonbitlang/core/builtin",
+    "moonbitlang/core/coverage",
+    "moonbitlang/core/bytes"
+  ]
 }

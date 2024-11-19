@@ -86,6 +86,31 @@ pub fn blit_from_string(
 }
 
 ///|
+/// Copy `length` chars from string `str`, starting at `str_offset`,
+/// into byte sequence `self`, starting at `bytes_offset`.
+pub fn bytearray_blit_from_string(
+  self : FixedArray[Byte],
+  bytes_offset : Int,
+  str : String,
+  str_offset : Int,
+  length : Int
+) -> Unit {
+  let s1 = bytes_offset
+  let s2 = str_offset
+  let e1 = bytes_offset + length - 1
+  let e2 = str_offset + length - 1
+  let len1 = self.length()
+  let len2 = str.length()
+  guard length >= 0 && s1 >= 0 && e1 < len1 && s2 >= 0 && e2 < len2
+  let end_str_offset = str_offset + length
+  for i = str_offset, j = bytes_offset; i < end_str_offset; i = i + 1, j = j + 2 {
+    let c = str[i].to_uint()
+    self[j] = (c & 0xff).to_byte()
+    self[j + 1] = (c >> 8).to_byte()
+  }
+}
+
+///|
 /// Return a new Bytes that contains the same byte sequence.
 pub fn copy(self : Bytes) -> Bytes {
   Bytes::new(self.length())..blit(0, self, 0, self.length())
@@ -125,6 +150,34 @@ pub fn set_utf8_char(self : Bytes, offset : Int, value : Char) -> Int {
 /// It return the length of bytes has been written.
 /// @alert unsafe "Panic if the [value] is out of range"
 pub fn set_utf16_char(self : Bytes, offset : Int, value : Char) -> Int {
+  let code = value.to_uint()
+  if code < 0x10000 {
+    self[offset] = (code & 0xFF).to_byte()
+    self[offset + 1] = (code >> 8).to_byte()
+    2
+  } else if code < 0x110000 {
+    let hi = code - 0x10000
+    let lo = (hi >> 10) | 0xD800
+    let hi = (hi & 0x3FF) | 0xDC00
+    self[offset] = (lo & 0xFF).to_byte()
+    self[offset + 1] = (lo >> 8).to_byte()
+    self[offset + 2] = (hi & 0xFF).to_byte()
+    self[offset + 3] = (hi >> 8).to_byte()
+    4
+  } else {
+    abort("Char out of range")
+  }
+}
+
+///|
+/// Fill utf16 encoded char `value` into byte sequence `self`, starting at `offset`.
+/// It return the length of bytes has been written.
+/// @alert unsafe "Panic if the [value] is out of range"
+pub fn bytearray_set_utf16_char(
+  self : FixedArray[Byte],
+  offset : Int,
+  value : Char
+) -> Int {
   let code = value.to_uint()
   if code < 0x10000 {
     self[offset] = (code & 0xFF).to_byte()
