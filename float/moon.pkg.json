@@ -4,7 +4,10 @@
     "moonbitlang/core/coverage",
     "moonbitlang/core/double"
   ],
-  "test-import": [
-    "moonbitlang/core/quickcheck"
-  ]
+  "test-import": ["moonbitlang/core/quickcheck"],
+  "targets": {
+    "round_js.mbt": ["js"],
+    "round_wasm.mbt": ["wasm", "wasm-gc"],
+    "round.mbt": ["not", "js", "wasm", "wasm-gc"]
+  }
 }
