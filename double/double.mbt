@@ -31,9 +31,6 @@ pub let min_value : Double = 0xFFEFFFFFFFFFFFFFL.reinterpret_as_double()
 pub let min_positive : Double = 0x0010000000000000L.reinterpret_as_double()
 
 ///|
-let sign_mask : UInt64 = 0x8000_0000_0000_0000
-
-///|
 pub fn Double::from_int(i : Int) -> Double {
   i.to_double()
 }
@@ -45,118 +42,6 @@ pub fn abs(self : Double) -> Double {
   } else {
     self
   }
-}
-
-///|
-pub fn trunc(self : Double) -> Double {
-  let u64 = self.reinterpret_as_uint64()
-  let biased_exp = ((u64 >> 52) & 0x7ff).to_int()
-  if biased_exp < 1023 {
-    return (u64 & sign_mask).reinterpret_as_double()
-  }
-  if biased_exp >= 1075 {
-    return self
-  }
-  (u64 &
-  (sign_mask.reinterpret_as_int64() >> (biased_exp - 1012)).reinterpret_as_uint64()).reinterpret_as_double()
-}
-
-test "trunc" {
-  assert_eq!(4503599627370497.0.trunc(), 4503599627370497.0)
-  assert_eq!(2251799813685248.5.trunc(), 2251799813685248.0)
-  assert_eq!(4.5.trunc(), 4.0)
-  assert_eq!(1.5.trunc(), 1.0)
-  assert_eq!(1.0.trunc(), 1.0)
-  assert_eq!(0.2.trunc(), 0.0)
-  assert_eq!(0.0.trunc(), 0.0)
-  assert_eq!((-0.0).trunc().reinterpret_as_uint64(), sign_mask)
-  assert_eq!((-0.2).trunc().reinterpret_as_uint64(), sign_mask)
-  assert_eq!((-1.0).trunc(), -1.0)
-  assert_eq!((-1.5).trunc(), -1.0)
-  assert_eq!((-2251799813685248.5).trunc(), -2251799813685248.0)
-  assert_eq!((-4503599627370497.0).trunc(), -4503599627370497.0)
-}
-
-///|
-pub fn ceil(self : Double) -> Double {
-  let trunced = self.trunc()
-  if self == trunced || self < 0.0 {
-    trunced
-  } else {
-    trunced + 1.0
-  }
-}
-
-test "ceil" {
-  assert_eq!(2251799813685248.5.ceil(), 2251799813685249.0)
-  assert_eq!(1.1.ceil(), 2.0)
-  assert_eq!(1.0.ceil(), 1.0)
-  assert_eq!(0.9.ceil(), 1.0)
-  assert_eq!(0.0.ceil(), 0.0)
-  assert_eq!((-0.0).ceil().reinterpret_as_uint64(), sign_mask)
-  assert_eq!((-0.1).ceil().reinterpret_as_uint64(), sign_mask)
-  assert_eq!((-2251799813685248.5).ceil(), -2251799813685248.0)
-}
-
-///|
-pub fn floor(self : Double) -> Double {
-  let trunced = self.trunc()
-  if self == trunced || self > 0.0 {
-    trunced
-  } else {
-    trunced - 1.0
-  }
-}
-
-test "floor" {
-  assert_eq!(2251799813685248.5.floor(), 2251799813685248.0)
-  assert_eq!(1.1.floor(), 1.0)
-  assert_eq!(1.0.floor(), 1.0)
-  assert_eq!(0.9.floor(), 0.0)
-  assert_eq!(0.0.floor(), 0.0)
-  assert_eq!((-0.0).floor().reinterpret_as_uint64(), sign_mask)
-  assert_eq!((-0.1).floor(), -1.0)
-  assert_eq!((-2251799813685248.5).floor(), -2251799813685249.0)
-}
-
-///|
-pub fn round(self : Double) -> Double {
-  let u64 = self.reinterpret_as_uint64()
-  let biased_exp = ((u64 >> 52) & 0x7ff).to_int()
-  if biased_exp >= 1075 { // 100_0011_0011
-    return self
-  } else if biased_exp < 1022 { // 011_1111_1110
-    return (u64 & sign_mask).reinterpret_as_double()
-  } else if biased_exp == 1022 {
-    return ((u64 & sign_mask) | 0x3FF0_0000_0000_0000).reinterpret_as_double()
-  }
-  // 011_1111_0100
-  let trunced = (u64 &
-  (sign_mask.reinterpret_as_int64() >> (biased_exp - 1012)).reinterpret_as_uint64()).reinterpret_as_double()
-  if (u64 & (sign_mask >> (biased_exp - 1011))) == 0 {
-    return trunced
-  } else if self > 0.0 {
-    return trunced + 1.0
-  } else {
-    return trunced - 1.0
-  }
-}
-
-test "round" {
-  assert_eq!(4503599627370497.5.round(), 4503599627370498.0)
-  assert_eq!(2251799813685248.5.round(), 2251799813685249.0)
-  assert_eq!(5.5.round(), 6.0)
-  assert_eq!(5.2.round(), 5.0)
-  assert_eq!(1.1.round(), 1.0)
-  assert_eq!(1.0.round(), 1.0)
-  assert_eq!(0.9.round(), 1.0)
-  assert_eq!(0.5.round(), 1.0)
-  assert_eq!(0.4.round(), 0.0)
-  assert_eq!(0.0.round(), 0.0)
-  assert_eq!((-0.0).round().reinterpret_as_uint64(), sign_mask)
-  assert_eq!((-0.1).round().reinterpret_as_uint64(), sign_mask)
-  assert_eq!((-0.5).round(), -1.0)
-  assert_eq!((-2251799813685248.5).round(), -2251799813685249.0)
 }
 
 ///|

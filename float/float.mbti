@@ -18,10 +18,14 @@ let not_a_number : Float
 
 impl Float {
   abs(Float) -> Float
+  ceil(Float) -> Float
   default() -> Float
   exp(Float) -> Float
+  floor(Float) -> Float
   ln(Float) -> Float
+  round(Float) -> Float
   to_string(Float) -> String
+  trunc(Float) -> Float
 }
 
 // Type aliases
