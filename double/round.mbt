@@ -15,10 +15,13 @@
 ///|
 let sign_mask : UInt64 = 0x8000_0000_0000_0000
 
+///|
 let exp_bias = 1023
 
+///|
 let exp_bits = 11
 
+///|
 let frac_bits = 52
 
 ///|
