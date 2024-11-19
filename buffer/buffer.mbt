@@ -33,9 +33,9 @@ pub(all) typealias Buffer = T
 /// println(buf.to_string()) // output: Test
 /// ```
 struct T {
-  mut bytes : Bytes
+  mut bytes : FixedArray[Byte]
   mut len : Int
-  initial_bytes : Bytes
+  initial_bytes : FixedArray[Byte]
 }
 
 ///|
@@ -51,7 +51,12 @@ fn grow_if_necessary(self : T, required : Int) -> Unit {
     enough_space = enough_space * 2
   }
   if enough_space != self.bytes.length() {
-    self.bytes = Bytes::new(enough_space)..blit(0, self.bytes, 0, self.len)
+    self.bytes = FixedArray::make(enough_space, Byte::default())..unsafe_blit(
+      0,
+      self.bytes,
+      0,
+      self.len,
+    )
   }
 }
 
@@ -72,7 +77,7 @@ pub fn is_empty(self : T) -> Bool {
 /// 
 /// @alert deprecated "Use `Buffer::to_unchecked_string` instead"
 pub fn to_string(self : T) -> String {
-  self.bytes.to_unchecked_string(offset=0, length=self.len)
+  self.to_unchecked_string()
 }
 
 ///|
@@ -80,14 +85,17 @@ pub fn to_string(self : T) -> String {
 /// Note this function does not validate the encoding of the byte sequence, 
 /// it simply copy the bytes into a new String.
 pub fn to_unchecked_string(self : T) -> String {
-  self.bytes.to_unchecked_string(offset=0, length=self.len)
+  Bytes::cast_from_fixedarray(self.bytes).to_unchecked_string(
+    offset=0,
+    length=self.len,
+  )
 }
 
 ///|
 /// Create a buffer with initial capacity (in bytes).
 pub fn T::new(size_hint~ : Int = 0) -> T {
   let initial = if size_hint < 1 { 1 } else { size_hint }
-  let bytes = Bytes::new(initial)
+  let bytes = FixedArray::make(initial, Byte::default())
   { bytes, len: 0, initial_bytes: bytes }
 }
 
@@ -95,7 +103,7 @@ pub fn T::new(size_hint~ : Int = 0) -> T {
 /// Write a string into buffer.
 pub fn write_string(self : T, value : String) -> Unit {
   self.grow_if_necessary(self.len + value.length() * 2)
-  self.bytes.blit_from_string(self.len, value, 0, value.length())
+  self.bytes.bytearray_blit_from_string(self.len, value, 0, value.length())
   self.len += value.length() * 2
 }
 
@@ -108,7 +116,7 @@ pub fn write_object(self : T, value : Show) -> Unit {
 pub fn write_bytes(self : T, value : Bytes) -> Unit {
   let val_len = value.length()
   self.grow_if_necessary(self.len + val_len)
-  self.bytes.blit(self.len, value, 0, val_len)
+  self.bytes.unsafe_blit(self.len, value.cast_to_fixedarray(), 0, val_len)
   self.len += val_len
 }
 
@@ -122,7 +130,7 @@ pub fn write_substring(
 ) -> Unit {
   guard start >= 0 && len >= 0 && start + len <= value.length()
   self.grow_if_necessary(self.len + len * 2)
-  self.bytes.blit_from_string(self.len, value, start, len)
+  self.bytes.bytearray_blit_from_string(self.len, value, start, len)
   self.len += len * 2
 }
 
@@ -142,7 +150,7 @@ pub fn write_sub_string(
 /// Write a char into buffer.
 pub fn write_char(self : T, value : Char) -> Unit {
   self.grow_if_necessary(self.len + 4)
-  let inc = self.bytes.set_utf16_char(self.len, value)
+  let inc = self.bytes.bytearray_set_utf16_char(self.len, value)
   self.len += inc
 }
 
@@ -162,7 +170,9 @@ pub fn reset(self : T) -> Unit {
 
 ///|
 pub fn to_bytes(self : T) -> Bytes {
-  Bytes::new(self.len)..blit(0, self.bytes, 0, self.len)
+  let bytes = FixedArray::make(self.len, Byte::default())
+  bytes.unsafe_blit(0, self.bytes, 0, self.len)
+  Bytes::cast_from_fixedarray(bytes)
 }
 
 ///|

@@ -6,6 +6,8 @@ package moonbitlang/core/bytes
 
 
 impl Bytes {
+  cast_from_fixedarray(FixedArray[Byte]) -> Bytes
+  cast_to_fixedarray(Bytes) -> FixedArray[Byte]
   default() -> Bytes
   from_array(Array[Byte]) -> Bytes
   from_iter(Iter[Byte]) -> Bytes
