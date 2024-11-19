@@ -30,12 +30,12 @@ pub fn Bytes::from_array(arr : Array[Byte]) -> Bytes {
 }
 
 ///|
-/// Cast a fixedarray to bytes.
-/// @alert unstable "The behavior is subject to change. Use it only when you know what you are doing."
-// TODO: this will be replaced by an identity-like intrinsics
-pub fn Bytes::cast_from_fixedarray(arr : FixedArray[Byte]) -> Bytes {
-  let bytes = Bytes::new(arr.length())
-  let len = arr.length()
+/// Makes a new Bytes from a fixedarray.
+pub fn Bytes::from_fixedarray(
+  arr : FixedArray[Byte],
+  len~ : Int = arr.length()
+) -> Bytes {
+  let bytes = Bytes::new(len)
   for i = 0; i < len; i = i + 1 {
     bytes[i] = arr[i]
   }
@@ -43,11 +43,11 @@ pub fn Bytes::cast_from_fixedarray(arr : FixedArray[Byte]) -> Bytes {
 }
 
 ///|
-/// Cast a bytes to a fixedarray.
-/// @alert unstable "The behavior is subject to change. Use it only when you know what you are doing."
-// TODO: this will be replaced by an identity-like intrinsics
-pub fn Bytes::cast_to_fixedarray(self : Bytes) -> FixedArray[Byte] {
-  let len = self.length()
+/// Converts a Bytes to a fixedarray.
+pub fn Bytes::to_fixedarray(
+  self : Bytes,
+  len~ : Int = self.length()
+) -> FixedArray[Byte] {
   let arr = FixedArray::make(len, Byte::default())
   for i = 0; i < len; i = i + 1 {
     arr[i] = self[i]

@@ -56,3 +56,20 @@ test "op_equal" {
   assert_eq!(bytes, copy_bytes)
   assert_not_eq!(bytes, Bytes::new(10))
 }
+
+test "fixedarray_byte_blit_from_string" {
+  let arr : FixedArray[Byte] = FixedArray::make(10, Byte::default())
+  let str = "Hello"
+  arr.blit_from_string(0, str, 0, str.length())
+  inspect!(
+    arr,
+    content="[b'\\x48', b'\\x00', b'\\x65', b'\\x00', b'\\x6C', b'\\x00', b'\\x6C', b'\\x00', b'\\x6F', b'\\x00']",
+  )
+}
+
+test "fixedarray_byte_blit_from_bytes" {
+  let arr : FixedArray[Byte] = FixedArray::make(5, Byte::default())
+  let bytes = b"Hello"
+  arr.blit_from_bytes(0, bytes, 0, bytes.length())
+  inspect!(arr, content="[b'\\x48', b'\\x65', b'\\x6C', b'\\x6C', b'\\x6F']")
+}
