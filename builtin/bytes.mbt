@@ -88,7 +88,7 @@ pub fn blit_from_string(
 ///|
 /// Copy `length` chars from string `str`, starting at `str_offset`,
 /// into byte sequence `self`, starting at `bytes_offset`.
-pub fn bytearray_blit_from_string(
+pub fn blit_from_string(
   self : FixedArray[Byte],
   bytes_offset : Int,
   str : String,
@@ -107,6 +107,29 @@ pub fn bytearray_blit_from_string(
     let c = str[i].to_uint()
     self[j] = (c & 0xff).to_byte()
     self[j + 1] = (c >> 8).to_byte()
+  }
+}
+
+///|
+/// Copy `length` chars from byte sequence `src`, starting at `src_offset`,
+/// into byte sequence `self`, starting at `bytes_offset`.
+pub fn blit_from_bytes(
+  self : FixedArray[Byte],
+  bytes_offset : Int,
+  src : Bytes,
+  src_offset : Int,
+  length : Int
+) -> Unit {
+  let s1 = bytes_offset
+  let s2 = src_offset
+  let e1 = bytes_offset + length - 1
+  let e2 = src_offset + length - 1
+  let len1 = self.length()
+  let len2 = src.length()
+  guard length >= 0 && s1 >= 0 && e1 < len1 && s2 >= 0 && e2 < len2
+  let end_src_offset = src_offset + length
+  for i = src_offset, j = bytes_offset; i < end_src_offset; i = i + 1, j = j + 1 {
+    self[j] = src[i]
   }
 }
 
@@ -173,7 +196,7 @@ pub fn set_utf16_char(self : Bytes, offset : Int, value : Char) -> Int {
 /// Fill utf16 encoded char `value` into byte sequence `self`, starting at `offset`.
 /// It return the length of bytes has been written.
 /// @alert unsafe "Panic if the [value] is out of range"
-pub fn bytearray_set_utf16_char(
+pub fn set_utf16_char(
   self : FixedArray[Byte],
   offset : Int,
   value : Char

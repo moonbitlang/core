@@ -654,9 +654,9 @@ impl Result {
 
 
 impl FixedArray {
+  blit_from_bytes(Self[Byte], Int, Bytes, Int, Int) -> Unit
+  blit_from_string(Self[Byte], Int, String, Int, Int) -> Unit
   blit_to[A](Self[A], Self[A], len~ : Int, src_offset~ : Int = .., dst_offset~ : Int = ..) -> Unit
-  bytearray_blit_from_string(Self[Byte], Int, String, Int, Int) -> Unit
-  bytearray_set_utf16_char(Self[Byte], Int, Char) -> Int
   default[X]() -> Self[X]
   fill[T](Self[T], T) -> Unit
   get[T](Self[T], Int) -> T
@@ -667,6 +667,7 @@ impl FixedArray {
   op_get[T](Self[T], Int) -> T
   op_set[T](Self[T], Int, T) -> Unit
   set[T](Self[T], Int, T) -> Unit
+  set_utf16_char(Self[Byte], Int, Char) -> Int
   to_json[X : ToJson](Self[X]) -> Json
   to_string[X : Show](Self[X]) -> String
   unsafe_blit[A](Self[A], Int, Self[A], Int, Int) -> Unit
