@@ -24,12 +24,13 @@
 /// # Example
 ///
 /// ```
-/// let map1 = of([(3, "three"), (8, "eight"), (1, "one")])
-/// let map2 = map1.insert(2, "two").remove(3)
-/// println(map3.lookup(3)) // output: None
-/// println(map3.lookup(2)) // output: Some("two")
-/// let map3 = map2.insert(2, "updated")
-/// println(map3.lookup(2)) // output: Some("updated")
+/// let map1 = @sorted_map.of([(3, "three"), (8, "eight"), (1, "one")])
+/// let map2 = map1.add(2, "two").remove(3)
+/// assert_eq!(map2.lookup(2), Some("two"))
+/// let map3 = map2.add(2, "updated")
+/// assert_eq!(map2.lookup(3), None)
+/// assert_eq!(map3.lookup(3), None)
+/// assert_eq!(map3.lookup(2), Some("updated"))
 /// ```
 enum T[K, V] {
   Empty
