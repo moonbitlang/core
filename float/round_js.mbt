@@ -25,10 +25,15 @@ pub fn floor(self : Float) -> Float = "Math" "floor"
 // Round to nearest, ties to Even
 pub extern "js" fn round(self : Float) -> Float =
   #| (num) => {
-  #|   const intPart = Math.floor(num);
-  #|   const fracPart = num - intPart;
-  #|   if (fracPart === 0.5) {
-  #|     return intPart % 2 === 0 ? intPart : intPart + 1;
+  #|   const floor = Math.floor(num);
+  #|   const diff = num - floor;
+  #|   if (diff > 0.5) {
+  #|     return floor + 1;
+  #|   } else if (diff < 0.5) {
+  #|     return floor;
+  #|   } else if (floor % 2 === 0) {
+  #|     return floor;
+  #|   } else {
+  #|     return floor + 1;
   #|   }
-  #|   return Math.round(num);
   #| }

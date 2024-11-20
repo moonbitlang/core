@@ -76,15 +76,14 @@ fn _int_part_parity(self : Float) -> Int {
 // Round to nearest, ties to Even
 pub fn round(self : Float) -> Float {
   let floor = floor(self)
-  let ceil = floor + 1
-  let diff = ceil - self - (self - floor)
-  if diff > 0.0 {
+  let diff = self - floor
+  if diff > 0.5 {
+    return floor + 1.0
+  } else if diff < 0.5 {
     return floor
-  } else if diff < 0.0 {
-    return ceil
   } else if _int_part_parity(floor) == 0 {
     return floor
   } else {
-    return ceil
+    return floor + 1.0
   }
 }
