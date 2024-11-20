@@ -56,7 +56,9 @@ pub fn FixedArray::default[X]() -> FixedArray[X] {
 ///
 /// # Example
 /// ```
-/// [0, 0, 0, 0, 0].fill(3) // [3, 3, 3, 3, 3]
+/// let fa : FixedArray[Int] = [0, 0, 0, 0, 0]
+/// fa.fill(3)
+/// assert_eq!(fa[0], 3)
 /// ```
 pub fn fill[T](self : FixedArray[T], value : T) -> Unit {
   for i in 0..<self.length() {

@@ -17,8 +17,9 @@
 /// 
 /// # Usage
 /// 
-/// ```moonbit
-/// let b = @bytes.from_array([b'\x41', b'\x00', b'\x42'])
+/// ```
+/// let b = @bytes.from_array([b'\x41', b'\x42'])
+/// assert_eq!(b, b"AB")
 /// ```
 /// 
 pub fn Bytes::from_array(arr : Array[Byte]) -> Bytes {
@@ -67,8 +68,9 @@ pub fn Bytes::from_iter(iter : Iter[Byte]) -> Bytes {
 /// 
 /// # Usage
 /// 
-/// ```moonbit
-/// let b = @bytes.of([b'\x41', b'\x00', b'\x42'])
+/// ```
+/// let b = @bytes.of([b'\x41', b'\x42'])
+/// assert_eq!(b, b"AB")
 /// ```
 /// TODO: marked as intrinsic, inline if it is constant
 pub fn Bytes::of(arr : FixedArray[Byte]) -> Bytes {

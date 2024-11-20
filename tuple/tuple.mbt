@@ -17,7 +17,8 @@
 /// 
 /// # Example
 /// ```
-/// let tuple = pair(1, 2)
+/// let tuple = @tuple.pair(1, 2)
+/// assert_eq!(tuple, (1, 2))
 /// ```
 pub fn pair[T, U](x : T, y : U) -> (T, U) {
   (x, y)
@@ -29,7 +30,8 @@ pub fn pair[T, U](x : T, y : U) -> (T, U) {
 /// # Example
 /// ```
 /// let tuple = (1, 2)
-/// let x = fst(tuple)
+/// let x = @tuple.fst(tuple)
+/// assert_eq!(x, 1)
 /// ```
 pub fn fst[T, U](tuple : (T, U)) -> T {
   tuple.0
@@ -41,7 +43,8 @@ pub fn fst[T, U](tuple : (T, U)) -> T {
 /// # Example
 /// ```
 /// let tuple = (1, 2)
-/// let y = snd(tuple)
+/// let y = @tuple.snd(tuple)
+/// assert_eq!(y, 2)
 /// ```
 pub fn snd[T, U](tuple : (T, U)) -> U {
   tuple.1
@@ -53,7 +56,8 @@ pub fn snd[T, U](tuple : (T, U)) -> U {
 /// # Example
 /// ```
 /// let tuple = (1, 2)
-/// let mapped = map_fst(fn(x : Int) -> Int { x + 1 }, tuple)
+/// let mapped = @tuple.map_fst(fn(x : Int) -> Int { x + 1 }, tuple)
+/// assert_eq!(mapped, (2, 2))
 /// ```
 pub fn map_fst[T, U, V](f : (T) -> U, tuple : (T, V)) -> (U, V) {
   (f(tuple.0), tuple.1)
@@ -65,7 +69,8 @@ pub fn map_fst[T, U, V](f : (T) -> U, tuple : (T, V)) -> (U, V) {
 /// # Example
 /// ```
 /// let tuple = (1, 2)
-/// let mapped = map_snd(fn(x : Int) -> Int { x + 1 }, tuple)
+/// let mapped = @tuple.map_snd(fn(x : Int) -> Int { x + 1 }, tuple)
+/// assert_eq!(mapped, (1, 3))
 /// ```
 pub fn map_snd[T, U, V](f : (T) -> U, tuple : (V, T)) -> (V, U) {
   (tuple.0, f(tuple.1))
@@ -77,7 +82,8 @@ pub fn map_snd[T, U, V](f : (T) -> U, tuple : (V, T)) -> (V, U) {
 /// # Example
 /// ```
 /// let tuple = (1, 2)
-/// let mapped = map_both(fn(x : Int) -> Int { x + 1 }, fn(x : Int) -> Int { x - 1 }, tuple)
+/// let mapped = @tuple.map_both(fn(x : Int) -> Int { x + 1 }, fn(x : Int) -> Int { x - 1 }, tuple)
+/// assert_eq!(mapped, (2, 1))
 /// ```
 pub fn map_both[T, U, V, W](
   f : (T) -> U,
@@ -93,7 +99,8 @@ pub fn map_both[T, U, V, W](
 /// # Example
 /// ```
 /// let tuple = (1, 2)
-/// let swapped = swap(tuple)
+/// let swapped = @tuple.swap(tuple)
+/// assert_eq!(swapped, (2, 1))
 /// ```
 pub fn swap[T, U](tuple : (T, U)) -> (U, T) {
   (tuple.1, tuple.0)
@@ -105,8 +112,8 @@ pub fn swap[T, U](tuple : (T, U)) -> (U, T) {
 /// # Example
 /// ```
 /// let add = fn(x : Int, y : Int) -> Int { x + y }
-/// let curried_add = curry(add)
-/// curried_add(1)(2)
+/// let curried_add = @tuple.curry(add)
+/// assert_eq!(curried_add(1)(2), 3)
 /// ```
 pub fn curry[T, U, V](f : (T, U) -> V) -> (T) -> (U) -> V {
   fn(x : T) { fn(y : U) -> V { f(x, y) } }
@@ -118,8 +125,8 @@ pub fn curry[T, U, V](f : (T, U) -> V) -> (T) -> (U) -> V {
 /// # Example
 /// ```
 /// let add = fn(x : Int) -> (Int) -> Int { fn(y : Int) -> Int { x + y } }
-/// let uncurried_add = uncurry(add)
-/// uncurried_add(1, 2)
+/// let uncurried_add = @tuple.uncurry(add)
+/// assert_eq!(uncurried_add(1, 2), 3)
 /// ```
 pub fn uncurry[T, U, V](f : (T) -> (U) -> V) -> (T, U) -> V {
   fn(x : T, y : U) { f(x)(y) }

@@ -85,8 +85,8 @@ pub fn copy[A](self : T[A]) -> T[A] {
 /// 
 /// # Examples
 /// ```
-/// let v = @immut/array.of([1, 2, 3, 4, 5])
-/// v[0]
+/// let v = @array.of([1, 2, 3, 4, 5])
+/// assert_eq!(v[0], 1)
 /// ```
 pub fn op_get[A](self : T[A], index : Int) -> A {
   if index == 0 {
@@ -103,8 +103,8 @@ pub fn op_get[A](self : T[A], index : Int) -> A {
 /// 
 /// # Example
 /// ```
-/// let v = @immut/array.of([1, 2, 3, 4, 5])
-/// v.set(1, 10)
+/// let v = @array.of([1, 2, 3, 4, 5])
+/// assert_eq!(v.set(1, 10), @array.of([1, 10, 3, 4, 5]))
 /// ```
 pub fn set[A](self : T[A], index : Int, value : A) -> T[A] {
   fn set(i : Int, e, s, t : Tree[A]) -> Tree[A] {
@@ -130,8 +130,8 @@ pub fn set[A](self : T[A], index : Int, value : A) -> T[A] {
 /// 
 /// # Example
 /// ```
-/// let v = @immut/array.of([1, 2, 3])
-/// v.push(4)
+/// let v = @array.of([1, 2, 3])
+/// assert_eq!(v.push(4), @array.of([1, 2, 3, 4]))
 /// ```
 pub fn push[A](self : T[A], value : A) -> T[A] {
   if self.size == (branching_factor << self.shift) {
@@ -154,7 +154,8 @@ pub fn push[A](self : T[A], value : A) -> T[A] {
 /// 
 /// # Example
 /// ```
-/// let v = @immut/array.of([1, 2, 3])
+/// let v = @array.of([1, 2, 3])
+/// assert_eq!(v, @array.from_array([1, 2, 3]))
 /// ```
 pub fn T::from_array[A](arr : Array[A]) -> T[A] {
   makei(arr.length(), fn(i) { arr[i] })
@@ -165,8 +166,10 @@ pub fn T::from_array[A](arr : Array[A]) -> T[A] {
 /// 
 /// # Example
 /// ```
-/// let v = @immut/array.of([1, 2, 3, 4, 5])
-/// v.each(fn(e) { println(e) })
+/// let arr = []
+/// let v = @array.of([1, 2, 3, 4, 5])
+/// v.each(fn(e) { arr.push(e) })
+/// assert_eq!(arr, [1, 2, 3, 4, 5])
 /// ```
 pub fn each[A](self : T[A], f : (A) -> Unit) -> Unit {
   fn go(t : Tree[A]) -> Unit {
@@ -185,8 +188,10 @@ pub fn each[A](self : T[A], f : (A) -> Unit) -> Unit {
 /// 
 /// # Example
 /// ```
-/// let v = @immut/array.of([1, 2, 3, 4, 5])
-/// v.eachi(fn(i, e) { println(i * e) })
+/// let arr = []
+/// let v = @array.of([1, 2, 3, 4, 5])
+/// v.eachi(fn(i, e) { arr.push(i * e) })
+/// assert_eq!(arr, [0, 2, 6, 12, 20])
 /// ```
 pub fn eachi[A](self : T[A], f : (Int, A) -> Unit) -> Unit {
   fn go(t : Tree[A], shift : Int, start : Int) -> Unit {
@@ -220,8 +225,8 @@ pub impl[A : Eq] Eq for T[A] with op_equal(self, other) {
 /// 
 /// # Example
 /// ```
-/// let v = @immut/array.of([1, 2, 3, 4, 5])
-/// v.fold(fn(a, b) { a + b }, init=0)
+/// let v = @array.of([1, 2, 3, 4, 5])
+/// assert_eq!(v.fold(fn(a, b) { a + b }, init=0), 15)
 /// ```
 pub fn fold[A, B](self : T[A], init~ : B, f : (B, A) -> B) -> B {
   fn go(t : Tree[A], acc : B) -> B {
@@ -240,8 +245,8 @@ pub fn fold[A, B](self : T[A], init~ : B, f : (B, A) -> B) -> B {
 /// 
 /// # Example
 /// ```
-/// let v = @immut/array.of([1, 2, 3, 4, 5])
-/// v.rev_fold(fn(a, b) { a + b }, init=0)
+/// let v = @array.of([1, 2, 3, 4, 5])
+/// assert_eq!(v.rev_fold(fn(a, b) { a + b }, init=0), 15)
 /// ```
 pub fn rev_fold[A, B](self : T[A], init~ : B, f : (B, A) -> B) -> B {
   fn go(t : Tree[A], acc : B) -> B {
@@ -260,8 +265,8 @@ pub fn rev_fold[A, B](self : T[A], init~ : B, f : (B, A) -> B) -> B {
 /// 
 /// # Example
 /// ```
-/// let v = @immut/array.of([1, 2, 3, 4, 5])
-/// v.fold_left(fn(a, b) { a + b }, init=0)
+/// let v = @array.of([1, 2, 3, 4, 5])
+/// assert_eq!(v.fold(fn(a, b) { a + b }, init=0), 15)
 /// ```
 /// @alert deprecated "Use `fold` instead"
 pub fn fold_left[A](self : T[A], f : (A, A) -> A, init~ : A) -> A {
@@ -273,8 +278,8 @@ pub fn fold_left[A](self : T[A], f : (A, A) -> A, init~ : A) -> A {
 /// 
 /// # Example
 /// ```
-/// let v = @immut/array.of([1, 2, 3, 4, 5])
-/// v.fold_right(fn(a, b) { a + b }, init=0)
+/// let v = @array.of([1, 2, 3, 4, 5])
+/// assert_eq!(v.rev_fold(fn(a, b) { a + b }, init=0), 15)
 /// ```
 /// @alert deprecated "Use `rev_fold` instead"
 pub fn fold_right[A](self : T[A], f : (A, A) -> A, init~ : A) -> A {
@@ -286,8 +291,8 @@ pub fn fold_right[A](self : T[A], f : (A, A) -> A, init~ : A) -> A {
 /// 
 /// # Example
 /// ```
-/// let v = @immut/array.of([1, 2, 3, 4, 5])
-/// v.map(fn(e) { e * 2 })
+/// let v = @array.of([1, 2, 3, 4, 5])
+/// assert_eq!(v.map(fn(e) { e * 2 }), @array.of([2, 4, 6, 8, 10]))
 /// ```
 pub fn map[A, B](self : T[A], f : (A) -> B) -> T[B] {
   fn go(t : Tree[A]) -> Tree[B] {

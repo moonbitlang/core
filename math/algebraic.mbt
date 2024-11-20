@@ -20,8 +20,8 @@
 /// # Examples
 ///
 /// ```
-/// print(@math.maximum(1, 2))  // output: 2
-/// print(@math.maximum(2, 2))  // output: 2
+/// assert_eq!(@math.maximum(1, 2), 2)
+/// assert_eq!(@math.maximum(2, 2), 2)
 /// ```
 pub fn maximum[T : Compare](x : T, y : T) -> T {
   if x > y {
@@ -39,8 +39,8 @@ pub fn maximum[T : Compare](x : T, y : T) -> T {
 /// # Examples
 ///
 /// ```
-/// print(@math.minimum(1, 2))  // output: 1
-/// print(@math.minimum(2, 2))  // output: 2
+/// assert_eq!(@math.minimum(1, 2), 1)
+/// assert_eq!(@math.minimum(2, 2), 2)
 /// ```
 pub fn minimum[T : Compare](x : T, y : T) -> T {
   if x > y {

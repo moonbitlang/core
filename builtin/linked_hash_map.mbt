@@ -40,15 +40,10 @@ priv struct ListNode[K, V] {
 /// 
 /// ```
 /// let map = { 3: "three", 8 :  "eight", 1 :  "one"}
-/// println(map.get(2)) // output: None
-/// println(map.get(3)) // output: Some("three")
+/// assert_eq!(map.get(2), None)
+/// assert_eq!(map.get(3), Some("three"))
 /// map.set(3, "updated")
-/// println(map.get(3)) // output: Some("updated")
-/// map.each(fn(k, v) { println("\(k)-\(v)") })
-/// // output:
-/// // 3-three
-/// // 8-eight
-/// // 1-one
+/// assert_eq!(map.get(3), Some("updated"))
 /// ```
 struct Map[K, V] {
   mut entries : FixedArray[Entry[K, V]?]

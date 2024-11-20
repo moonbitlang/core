@@ -17,7 +17,8 @@
 /// 
 /// # Example
 /// ```
-/// let queue : ImmutablePriorityQueue[Int] = ImmutablePriorityQueue::new()
+/// let queue = @priority_queue.new()
+/// assert_eq!(queue.push(1).length(), 1)
 /// ```
 pub fn T::new[A : Compare]() -> T[A] {
   { body: Empty, len: 0 }
@@ -28,7 +29,8 @@ pub fn T::new[A : Compare]() -> T[A] {
 /// 
 /// # Example
 /// ```
-/// let queue = of([1, 2, 3, 4, 5])
+/// let queue = @priority_queue.of([1, 2, 3, 4, 5])
+/// assert_eq!(queue.length(), 5)
 /// ```
 pub fn T::from_array[A : Compare](arr : Array[A]) -> T[A] {
   let len = arr.length()
@@ -113,8 +115,9 @@ fn merges[A : Compare](x : @list.T[Cont[A]]) -> Cont[A] {
 /// 
 /// # Example
 /// ```
-/// let queue = of([1, 2, 3, 4])
+/// let queue = @priority_queue.of([1, 2, 3, 4])
 /// let first = queue.pop()
+/// assert_eq!(first, Some(@priority_queue.of([1, 2, 3])))
 /// ```
 pub fn pop[A : Compare](self : T[A]) -> T[A]? {
   match self.body {
@@ -129,8 +132,9 @@ pub fn pop[A : Compare](self : T[A]) -> T[A]? {
 /// Panics if the queue is empty.
 /// # Example
 /// ```
-/// let queue = of([1, 2, 3, 4])
-/// let first = queue.pop()
+/// let queue = @priority_queue.of([1, 2, 3, 4])
+/// let first = queue.unsafe_pop()
+/// assert_eq!(first, @priority_queue.of([1, 2, 3]))
 /// ```
 pub fn unsafe_pop[A : Compare](self : T[A]) -> T[A] {
   match self.body {
@@ -150,8 +154,8 @@ pub fn pop_exn[A : Compare](self : T[A]) -> T[A] {
 /// 
 /// # Example
 /// ```
-/// let queue : ImmutablePriorityQueue[Int] = ImmutablePriorityQueue::new()
-/// queue.add(1)
+/// let queue = @priority_queue.new()
+/// assert_eq!(queue.push(1).length(), 1)
 /// ```
 pub fn push[A : Compare](self : T[A], value : A) -> T[A] {
   { body: meld(self.body, Node(value, Nil)), len: self.len + 1 }
@@ -162,8 +166,8 @@ pub fn push[A : Compare](self : T[A], value : A) -> T[A] {
 /// 
 /// # Example
 /// ```
-/// let queue : ImmutablePriorityQueue[Int] = of([1, 2, 3, 4])
-/// queue.peek() // Some(4)
+/// let queue = @priority_queue.of([1, 2, 3, 4])
+/// assert_eq!(queue.peek(), Some(4))
 /// ```
 pub fn peek[A](self : T[A]) -> A? {
   match self.body {
@@ -177,8 +181,9 @@ pub fn peek[A](self : T[A]) -> A? {
 /// 
 /// # Example
 /// ```
-/// let queue : ImmutablePriorityt[Int] = ImmutablePriority::new()
-/// queue.is_empty() // true
+/// let queue = @priority_queue.new()
+/// assert_eq!(queue.is_empty(), true)
+/// assert_eq!(queue.push(1).is_empty(), false)
 /// ```
 pub fn is_empty[A](self : T[A]) -> Bool {
   match self.body {
@@ -192,9 +197,9 @@ pub fn is_empty[A](self : T[A]) -> Bool {
 /// 
 /// # Example
 /// ```
-/// let queue : ImmutablePriorityt[Int] = ImmutablePriority::new()
-/// queue.length() // 0
-/// queue.push(1).length() // 1
+/// let queue = @priority_queue.new()
+/// assert_eq!(queue.length(), 0)
+/// assert_eq!(queue.push(1).length(), 1)
 /// ```
 pub fn length[A](self : T[A]) -> Int {
   self.len

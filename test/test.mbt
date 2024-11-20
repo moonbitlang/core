@@ -70,8 +70,8 @@ pub fn is_false(x : Bool, loc~ : SourceLoc = _) -> Unit! {
 /// ```
 /// let a = "4" + "2"
 /// let b = "4" + "2"
-/// same_object(a, a)!  // this is okay
-/// same_object(a, b)!  // yields an error
+/// @test.same_object!(a, a)
+/// @test.is_not!(a, b)
 /// ```
 pub fn same_object[T : Show](a : T, b : T, loc~ : SourceLoc = _) -> Unit! {
   if not(physical_equal(a, b)) {
@@ -100,8 +100,8 @@ pub fn is[T : Show](a : T, b : T, loc~ : SourceLoc = _) -> Unit! {
 /// ```
 /// let a = "4" + "2"
 /// let b = "4" + "2"
-/// is_not(a, b)!  // this is okay
-/// is_not(a, a)!  // yields an error
+/// @test.is_not!(a, b)
+/// @test.same_object!(a, a)
 /// ```
 pub fn is_not[T : Show](a : T, b : T, loc~ : SourceLoc = _) -> Unit! {
   if physical_equal(a, b) {

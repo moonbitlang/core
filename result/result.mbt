@@ -18,8 +18,9 @@
 /// # Example
 ///
 /// ```
-/// let x = Ok(6)
+/// let x: Result[Int, Unit] = Ok(6)
 /// let y = x.map(fn (v : Int) { v * 7 })
+/// assert_eq!(y, Ok(42))
 /// ```
 pub fn map[T, E, U](self : Result[T, E], f : (T) -> U) -> Result[U, E] {
   match self {
@@ -43,8 +44,9 @@ test "map" {
 /// # Example
 ///
 /// ```
-/// let x = Err("error")
+/// let x: Result[Int, String] = Err("error")
 /// let y = x.map_err(fn (v : String) { v + "!" })
+/// assert_eq!(y, Err("error!"))
 /// ```
 pub fn map_err[T, E, F](self : Result[T, E], f : (E) -> F) -> Result[T, F] {
   match self {
@@ -68,7 +70,8 @@ test "map_err" {
 /// # Example
 ///
 /// ```
-/// let x = err("error")
+/// let x: Result[Int, String] = Err("error")
+/// assert_eq!(x, Err("error"))
 /// ```
 pub fn err[T, E](value : E) -> Result[T, E] {
   Err(value)
@@ -85,7 +88,8 @@ test "err" {
 /// # Example
 ///
 /// ```
-/// let x = ok("yes")
+/// let x: Result[String, Unit] = Ok("yes")
+/// assert_true!(x.is_ok())
 /// ```
 pub fn ok[T, E](value : T) -> Result[T, E] {
   Ok(value)
@@ -134,8 +138,9 @@ test "is_err" {
 /// # Example
 ///
 /// ```
-/// let x = Ok(6)
+/// let x: Result[Int, String] = Ok(6)
 /// let y = x.or(0)
+/// assert_eq!(y, 6)
 /// ```
 pub fn or[T, E](self : Result[T, E], default : T) -> T {
   match self {
@@ -160,8 +165,9 @@ test "or" {
 /// # Example
 ///
 /// ```
-/// let x = Ok(6)
+/// let x: Result[Int, String] = Ok(6)
 /// let y = x.or_else(fn() { 0 })
+/// assert_eq!(y, 6)
 /// ```
 pub fn or_else[T, E](self : Result[T, E], default : () -> T) -> T {
   match self {
@@ -187,8 +193,9 @@ test "or_else" {
 /// # Example
 ///
 /// ```
-/// let x = Ok(Ok(6))
+/// let x: Result[Result[Int, String], String] = Ok(Ok(6))
 /// let y = x.flatten()
+/// assert_eq!(y, Ok(6))
 /// ```
 pub fn flatten[T, E](self : Result[Result[T, E], E]) -> Result[T, E] {
   match self {
@@ -212,8 +219,9 @@ test "flatten" {
 /// # Example
 ///
 /// ```
-/// let x = Ok(6)
-/// let y = bind(x, fn(v : Int) { Ok(v * 7) })
+/// let x: Result[Int, String] = Ok(6)
+/// let y = x.bind(fn(v : Int) { Ok(v * 7) })
+/// assert_eq!(y, Ok(42))
 /// ```
 pub fn bind[T, E, U](
   self : Result[T, E],
@@ -239,7 +247,8 @@ test "bind" {
 ///
 /// ```
 /// let x = Ok(6)
-/// let y = fold(x, fn(v : Int) -> Int { v * 7 }, fn(_e : String) -> Int { 0 })
+/// let y = x.fold(fn(v : Int) -> Int { v * 7 }, fn(_e : String) -> Int { 0 })
+/// assert_eq!(y, 42)
 /// ```
 pub fn fold[T, E, V](self : Result[T, E], ok : (T) -> V, err : (E) -> V) -> V {
   match self {
@@ -265,8 +274,9 @@ test "fold" {
 /// # Example
 ///
 /// ```
-/// let x = Ok(6)
+/// let x: Result[Int, String] = Ok(6)
 /// let y = x.to_option()
+/// assert_eq!(y, Some(6))
 /// ```
 pub fn to_option[T, E](self : Result[T, E]) -> T? {
   match self {
