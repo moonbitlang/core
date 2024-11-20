@@ -22,5 +22,13 @@ pub fn ceil(self : Float) -> Float = "(func (param f32) (result f32) (f32.ceil (
 pub fn floor(self : Float) -> Float = "(func (param f32) (result f32) (f32.floor (local.get 0)))"
 
 ///|
-// Round to nearest, ties to Even
-pub fn round(self : Float) -> Float = "(func (param f32) (result f32) (f32.nearest (local.get 0)))"
+// Round to nearest, ties to Ceiling
+pub fn round(self : Float) -> Float {
+  let floor = floor(self)
+  let diff = self - floor
+  if diff >= 0.5 {
+    return floor + 1.0
+  } else {
+    return floor
+  }
+}

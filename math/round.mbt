@@ -19,7 +19,7 @@ pub fn round(input : Double) -> Double {
 
 test "round" {
   assert_eq!(round(4503599627370497.5), 4503599627370498.0)
-  assert_eq!(round(2251799813685248.5), 2251799813685248.0)
+  assert_eq!(round(2251799813685248.5), 2251799813685249.0)
 }
 
 ///|

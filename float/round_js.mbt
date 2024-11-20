@@ -22,18 +22,5 @@ pub fn ceil(self : Float) -> Float = "Math" "ceil"
 pub fn floor(self : Float) -> Float = "Math" "floor"
 
 ///|
-// Round to nearest, ties to Even
-pub extern "js" fn round(self : Float) -> Float =
-  #| (num) => {
-  #|   const floor = Math.floor(num);
-  #|   const diff = num - floor;
-  #|   if (diff > 0.5) {
-  #|     return floor + 1;
-  #|   } else if (diff < 0.5) {
-  #|     return floor;
-  #|   } else if (floor % 2 === 0) {
-  #|     return floor;
-  #|   } else {
-  #|     return floor + 1;
-  #|   }
-  #| }
+// Round to nearest, ties to Ceiling
+pub fn round(self : Float) -> Float = "Math" "round"
