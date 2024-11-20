@@ -231,6 +231,9 @@ jobs:
           moon test --target native
           moon test --target native --release
 
+      - name: moon test --doc
+        run: |
+          moon test --doc
       - name: moon bundle
         run: moon bundle --all
 
