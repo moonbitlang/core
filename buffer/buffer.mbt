@@ -27,10 +27,10 @@ pub(all) typealias Buffer = T
 /// # Usage
 ///
 /// ```
-/// let buf = Buffer::new(size_hint=100)
+/// let buf = @buffer.new(size_hint=100)
 /// buf.write_string("Tes")
-/// buf.write_char("t")
-/// println(buf.to_string()) // output: Test
+/// buf.write_char('t')
+/// assert_eq!(buf.to_string(), "Test")
 /// ```
 struct T {
   mut data : FixedArray[Byte]

@@ -22,7 +22,7 @@
 /// ```
 /// let arr = [5, 3, 2, 4, 1]
 /// arr.sort_by_key(fn (x) {-x})
-/// println(arr) //output: [5, 4, 3, 2, 1]
+/// assert_eq!(arr, [5, 4, 3, 2, 1])
 /// ```
 pub fn sort_by_key[T, K : Compare](
   self : FixedArray[T],
@@ -46,7 +46,7 @@ pub fn sort_by_key[T, K : Compare](
 /// ```
 /// let arr = [5, 3, 2, 4, 1]
 /// arr.sort_by(fn (a, b) { a - b })
-/// println(arr) //output: [1, 2, 3, 4, 5]
+/// assert_eq!(arr, [1, 2, 3, 4, 5])
 /// ```
 pub fn sort_by[T](self : FixedArray[T], cmp : (T, T) -> Int) -> Unit {
   fixed_quick_sort_by(

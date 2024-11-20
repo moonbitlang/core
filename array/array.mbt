@@ -28,6 +28,7 @@ pub fn Array::from_iter[T](iter : Iter[T]) -> Array[T] {
 /// let u = [1, 2, 3]
 /// let v = [4, 5, 6]
 /// u.push_iter(v.iter())
+/// assert_eq!(u, [1, 2, 3, 4, 5, 6])
 /// ```
 pub fn push_iter[T](self : Array[T], iter : Iter[T]) -> Unit {
   for x in iter {
@@ -113,11 +114,12 @@ pub fn Array::makei[T](length : Int, value : (Int) -> T) -> Array[T] {
 /// # Example
 /// 
 /// ```
+/// let arr = [1, 2, 3, 4, 5]
 /// fn rand(upper : Int) -> Int {
-///   let rng = @random.RandomInt::new()
-///   rng.summon() % upper
+///   let rng = @random.new()
+///   rng.int(limit=upper)
 /// }
-/// Array::shuffle_in_place(arr, ~rand=rand)
+/// Array::shuffle_in_place(arr, rand=rand)
 /// ```
 pub fn Array::shuffle_in_place[T](arr : Array[T], rand~ : (Int) -> Int) -> Unit {
   let n = arr.length()
@@ -129,6 +131,10 @@ pub fn Array::shuffle_in_place[T](arr : Array[T], rand~ : (Int) -> Int) -> Unit 
   }
 }
 
+test {
+
+}
+
 ///|
 /// Shuffle the array using Knuth shuffle
 /// 
@@ -138,11 +144,12 @@ pub fn Array::shuffle_in_place[T](arr : Array[T], rand~ : (Int) -> Int) -> Unit 
 /// # Example
 /// 
 /// ```
+/// let arr = [1, 2, 3, 4, 5]
 /// fn rand(upper : Int) -> Int {
-///   let rng = @random.RandomInt::new()
-///   rng.summon() % upper
+///   let rng = @random.new()
+///   rng.int(limit=upper)
 /// }
-/// let shuffled = Array::shuffle(arr, ~rand=rand)
+/// let _shuffled = Array::shuffle(arr, rand=rand)
 /// ```
 pub fn Array::shuffle[T](arr : Array[T], rand~ : (Int) -> Int) -> Array[T] {
   let new_arr = arr.copy()

@@ -107,7 +107,7 @@ pub fn iter[A](self : ArrayView[A]) -> Iter[A] {
 /// # Example
 /// ```
 /// let sum = [1, 2, 3, 4, 5][:].fold(init=0, fn { sum, elem => sum + elem })
-/// sum // 15
+/// assert_eq!(sum, 15)
 /// ```
 pub fn fold[A, B](self : ArrayView[A], init~ : B, f : (B, A) -> B) -> B {
   for i = 0, acc = init; i < self.length(); {
@@ -123,7 +123,7 @@ pub fn fold[A, B](self : ArrayView[A], init~ : B, f : (B, A) -> B) -> B {
 /// # Example
 /// ```
 /// let sum = [1, 2, 3, 4, 5][:].rev_fold(init=0, fn { sum, elem => sum + elem })
-/// sum // 15
+/// assert_eq!(sum, 15)
 /// ```
 pub fn rev_fold[A, B](self : ArrayView[A], init~ : B, f : (B, A) -> B) -> B {
   for i = self.length() - 1, acc = init; i >= 0; {
@@ -138,8 +138,8 @@ pub fn rev_fold[A, B](self : ArrayView[A], init~ : B, f : (B, A) -> B) -> B {
 ///
 /// # Example
 /// ```
-/// let sum = [1, 2, 3, 4, 5][:].foldi(init=0, fn { index, sum, elem => sum + index })
-/// sum // 10
+/// let sum = [1, 2, 3, 4, 5][:].foldi(init=0, fn { index, sum, _elem => sum + index })
+/// assert_eq!(sum, 10)
 /// ```
 pub fn foldi[A, B](self : ArrayView[A], init~ : B, f : (Int, B, A) -> B) -> B {
   for i = 0, acc = init; i < self.length(); {
@@ -154,8 +154,8 @@ pub fn foldi[A, B](self : ArrayView[A], init~ : B, f : (Int, B, A) -> B) -> B {
 ///
 /// # Example
 /// ```
-/// let sum = [1, 2, 3, 4, 5][:].rev_foldi(~init=0, fn { index, sum, elem => sum + index })
-/// sum // 10
+/// let sum = [1, 2, 3, 4, 5][:].rev_foldi(init=0, fn { index, sum, _elem => sum + index })
+/// assert_eq!(sum, 10)
 /// ```
 pub fn rev_foldi[A, B](
   self : ArrayView[A],

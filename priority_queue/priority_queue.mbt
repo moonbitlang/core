@@ -17,7 +17,8 @@
 /// 
 /// # Example
 /// ```
-/// let queue : PriorityQueue[Int] = PriorityQueue::new()
+/// let queue : @priority_queue.T[Int] = @priority_queue.new()
+/// assert_eq!(queue.length(), 0)
 /// ```
 pub fn T::new[A : Compare]() -> T[A] {
   { len: 0, top: Nil }
@@ -28,7 +29,8 @@ pub fn T::new[A : Compare]() -> T[A] {
 /// 
 /// # Example
 /// ```
-/// let queue = of([1, 2, 3, 4, 5])
+/// let queue = @priority_queue.of([1, 2, 3, 4, 5])
+/// assert_eq!(queue.length(), 5)
 /// ```
 pub fn T::from_array[A : Compare](arr : Array[A]) -> T[A] {
   // CR: bad formatting  
@@ -60,8 +62,9 @@ fn copy_node[A](x : Node[A]) -> Node[A] {
 /// 
 /// # Example
 /// ```
-/// let queue : PriorityQueue[Int] = of([1, 2, 3, 4])
-/// let queue2 : PriorityQueue[Int] = PriorityQueue.copy()
+/// let queue = @priority_queue.of([1, 2, 3, 4])
+/// let queue2 = @priority_queue.copy(queue)
+/// assert_eq!(queue2.length(), 4)
 /// ```
 pub fn copy[A](self : T[A]) -> T[A] {
   let new_que : T[A] = { len: self.len, top: copy_node(self.top) }
@@ -154,8 +157,9 @@ pub fn length[A](self : T[A]) -> Int {
 /// 
 /// # Example
 /// ```
-/// let queue = of([1, 2, 3, 4])
-/// let first = queue.unsafe_pop() // 4
+/// let queue = @priority_queue.of([1, 2, 3, 4])
+/// queue.unsafe_pop()
+/// assert_eq!(queue.length(), 3)
 /// ```
 /// @alert unsafe "Panic if the queue is empty."
 pub fn unsafe_pop[A : Compare](self : T[A]) -> Unit {
@@ -177,8 +181,10 @@ pub fn pop_exn[A : Compare](self : T[A]) -> Unit {
 /// 
 /// # Example
 /// ```
-/// let queue = of([1, 2, 3, 4])
+/// let queue = @priority_queue.of([1, 2, 3, 4])
 /// let first = queue.pop() // Some(4)
+/// assert_eq!(first, Some(4))
+/// assert_eq!(queue.length(), 3)
 /// ```
 pub fn pop[A : Compare](self : T[A]) -> A? {
   let result = self.peek()
@@ -197,8 +203,9 @@ pub fn pop[A : Compare](self : T[A]) -> A? {
 /// 
 /// # Example
 /// ```
-/// let queue : PriorityQueue[Int] = PriorityQueue::new()
-/// queue.add(1)
+/// let queue = @priority_queue.new()
+/// queue.push(1)
+/// assert_eq!(queue.length(), 1)
 /// ```
 pub fn push[A : Compare](self : T[A], value : A) -> Unit {
   self.top = meld(self.top, Cons(content=value, sibling=Nil, child=Nil))
@@ -210,8 +217,9 @@ pub fn push[A : Compare](self : T[A], value : A) -> Unit {
 /// 
 /// # Example
 /// ```
-/// let queue : PriorityQueue[Int] = of([1, 2, 3, 4])
+/// let queue = @priority_queue.of([1, 2, 3, 4])
 /// let first = queue.peek() // Some(4)
+/// assert_eq!(first, Some(4))
 /// ```
 pub fn peek[A](self : T[A]) -> A? {
   match self.top {
@@ -225,8 +233,9 @@ pub fn peek[A](self : T[A]) -> A? {
 /// 
 /// # Example
 /// ```
-/// let queue = of([1, 2, 3, 4])
+/// let queue = @priority_queue.of([1, 2, 3, 4])
 /// queue.clear()
+/// assert_eq!(queue.length(), 0)
 /// ```
 pub fn clear[A](self : T[A]) -> Unit {
   self.top = Nil
@@ -238,8 +247,8 @@ pub fn clear[A](self : T[A]) -> Unit {
 /// 
 /// # Example
 /// ```
-/// let queue : Priorityt[Int] = Priority::new()
-/// let is_empty = queue.is_empty() // true
+/// let queue : @priority_queue.T[Int] = @priority_queue.new()
+/// assert_eq!(queue.is_empty(), true)
 /// ```
 pub fn is_empty[A](self : T[A]) -> Bool {
   self.len == 0

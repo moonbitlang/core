@@ -152,7 +152,7 @@ test "UninitializedArray::unsafe_blit_fixed" {
 /// ```
 /// let v = [1]
 /// v.reserve_capacity(10)
-/// println(v.capacity()) // 10
+/// assert_eq!(v.capacity(), 1)
 /// ```
 pub fn reserve_capacity[T](self : Array[T], capacity : Int) -> Unit {
   ignore(self)
@@ -170,9 +170,9 @@ pub fn reserve_capacity[T](self : Array[T], capacity : Int) -> Unit {
 /// v.push(1)
 /// v.push(2)
 /// v.push(3)
-/// println(v.capacity()) // >= 10
+/// assert_eq!(v.capacity(), 3)
 /// v.shrink_to_fit()
-/// println(v.capacity()) // >= 3
+/// assert_eq!(v.capacity(), 3)
 /// ```
 pub fn shrink_to_fit[T](self : Array[T]) -> Unit {
   ignore(self)
@@ -198,7 +198,9 @@ pub fn push[T](self : Array[T], value : T) -> Unit {
 /// # Example
 /// ```
 /// let v = [1, 2, 3]
-/// v.pop()
+/// let vv = v.pop()
+/// assert_eq!(vv, Some(3))
+/// assert_eq!(v, [1, 2])
 /// ```
 pub fn pop[T](self : Array[T]) -> T? {
   if self.length() == 0 {
@@ -234,7 +236,9 @@ pub fn unsafe_pop[T](self : Array[T]) -> T {
 /// # Example
 /// ```
 /// let v = [3, 4, 5]
-/// v.remove(1)
+/// let vv = v.remove(1)
+/// assert_eq!(vv, 4)
+/// assert_eq!(v, [3, 5])
 /// ```
 /// @alert unsafe "Panic if index is out of bounds."
 pub fn remove[T](self : Array[T], index : Int) -> T {

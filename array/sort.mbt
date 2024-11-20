@@ -22,7 +22,7 @@
 /// ```
 /// let arr = [5, 4, 3, 2, 1]
 /// arr.sort()
-/// println(arr) //output: [1, 2, 3, 4, 5]
+/// assert_eq!(arr, [1, 2, 3, 4, 5])
 /// ```
 pub fn sort[T : Compare](self : Array[T]) -> Unit {
   let len = self.length()

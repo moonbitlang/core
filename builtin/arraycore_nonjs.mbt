@@ -80,15 +80,6 @@ pub fn length[T](self : Array[T]) -> Int {
 /// setting `new_len` greater than the current length) can lead to undefined
 /// behavior.
 ///
-/// # Examples
-///
-/// ```moonbit
-/// test "unsafe_truncate_to_length example" {
-///  let mut arr = [1, 2, 3, 4, 5]
-///  unsafe_truncate_to_length(arr, 3)
-///  inspect!(arr, content="[1, 2, 3]")
-/// }
-/// ```
 /// TODO: this can be optimized by using the intrinsic to null out the range
 fn unsafe_truncate_to_length[T](self : Array[T], new_len : Int) -> Unit {
   let len = self.length()
@@ -188,7 +179,7 @@ fn realloc[T](self : Array[T]) -> Unit {
 /// ```
 /// let v = [1]
 /// v.reserve_capacity(10)
-/// println(v.capacity()) // 10
+/// assert_eq!(v.capacity(), 10)
 /// ```
 pub fn reserve_capacity[T](self : Array[T], capacity : Int) -> Unit {
   if self.capacity() >= capacity {
@@ -207,9 +198,8 @@ pub fn reserve_capacity[T](self : Array[T], capacity : Int) -> Unit {
 /// v.push(1)
 /// v.push(2)
 /// v.push(3)
-/// println(v.capacity()) // >= 10
 /// v.shrink_to_fit()
-/// println(v.capacity()) // >= 3
+/// assert_eq!(v.capacity(), 3)
 /// ```
 pub fn shrink_to_fit[T](self : Array[T]) -> Unit {
   if self.capacity() <= self.length() {
@@ -243,7 +233,8 @@ pub fn push[T](self : Array[T], value : T) -> Unit {
 /// # Example
 /// ```
 /// let v = [1, 2, 3]
-/// v.pop()
+/// assert_eq!(v.pop(), Some(3))
+/// assert_eq!(v, [1, 2])
 /// ```
 pub fn pop[T](self : Array[T]) -> T? {
   let len = self.length()
@@ -286,7 +277,8 @@ pub fn unsafe_pop[T](self : Array[T]) -> T {
 /// # Example
 /// ```
 /// let v = [3, 4, 5]
-/// v.remove(1)
+/// assert_eq!(v.remove(1), 4)
+/// assert_eq!(v, [3, 5])
 /// ```
 /// @alert unsafe "Panic if index is out of bounds."
 pub fn remove[T](self : Array[T], index : Int) -> T {
@@ -316,6 +308,8 @@ pub fn remove[T](self : Array[T], index : Int) -> T {
 /// ```
 /// let v = [3, 4, 5]
 /// let vv = v.drain(1, 2) // vv = [4], v = [3, 5]
+/// assert_eq!(vv, [4])
+/// assert_eq!(v, [3, 5])
 /// ```
 /// @alert unsafe "Panic if index is out of bounds."
 pub fn drain[T](self : Array[T], begin : Int, end : Int) -> Array[T] {

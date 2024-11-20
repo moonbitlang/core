@@ -31,10 +31,8 @@ pub let min_value = -2147483648
 /// 
 /// # Examples
 /// 
-/// ```moonbit
-/// test {
-///   inspect!(abs(-10), content="10")
-/// }
+/// ```
+/// inspect!(Int::abs(-10), content="10")
 /// ```
 pub fn abs(self : Int) -> Int {
   if self < 0 {
