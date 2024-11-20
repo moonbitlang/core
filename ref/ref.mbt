@@ -34,7 +34,7 @@ test "to_string" {
 /// # Example
 ///
 /// ```
-/// println(ref(1).map(fn(a){ a + 1 })) //output: ref(2)
+/// assert_eq!(@ref.new(1).map(fn(a){ a + 1 }).val, 2)
 /// ```
 pub fn map[T, R](self : Ref[T], f : (T) -> R) -> Ref[R] {
   { val: f(self.val) }
@@ -57,13 +57,11 @@ pub fn map[T, R](self : Ref[T], f : (T) -> R) -> Ref[R] {
 /// # Example
 /// 
 /// ```
-/// let x = ref(1)
-/// x.protect(2, fn(){
-///  println(x) //output: ref(2)
-///  x.val = 3
-///  println(x) //output: ref(3)  
+/// let x = @ref.new(1)
+/// x.protect(2, fn!(){
+///   x.val = 3
 /// })
-/// println(x) //output: ref(1)
+/// assert_eq!(x.val, 1)
 /// ```
 pub fn protect[T, R](self : Ref[T], a : T, f : () -> R) -> R {
   let old = self.val
@@ -79,11 +77,11 @@ pub fn protect[T, R](self : Ref[T], a : T, f : () -> R) -> R {
 /// # Example
 ///
 /// ```
-/// let x = ref(1)
-/// let y = ref(2)
-/// swap(x, y)
-/// println(x) //output: ref(2)
-/// println(y) //output: ref(1)
+/// let x = @ref.new(1)
+/// let y = @ref.new(2)
+/// @ref.swap(x, y)
+/// assert_eq!(x.val, 2)
+/// assert_eq!(y.val, 1)
 /// ```
 pub fn swap[T](self : Ref[T], that : Ref[T]) -> Unit {
   let tmp = self.val

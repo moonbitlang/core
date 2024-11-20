@@ -222,7 +222,7 @@ test "umul128: handles zero correctly" {
 /// 
 /// # Example
 /// ```
-/// let r = Rand::new()
+/// let r = @random.new()
 /// let a = [1, 2, 3, 4, 5]
 /// r.shuffle(
 ///   a.length(),
