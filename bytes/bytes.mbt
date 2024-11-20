@@ -31,12 +31,13 @@ pub fn Bytes::from_array(arr : Array[Byte]) -> Bytes {
 
 ///|
 /// Makes a new Bytes from a fixedarray.
-pub fn Bytes::from_fixedarray(
-  arr : FixedArray[Byte],
-  len~ : Int = arr.length()
-) -> Bytes {
+pub fn Bytes::from_fixedarray(arr : FixedArray[Byte], len? : Int) -> Bytes {
+  let len = match len {
+    None => arr.length()
+    Some(x) => x
+  }
   let bytes = Bytes::new(len)
-  for i = 0; i < len; i = i + 1 {
+  for i in 0..<len {
     bytes[i] = arr[i]
   }
   bytes
@@ -44,12 +45,13 @@ pub fn Bytes::from_fixedarray(
 
 ///|
 /// Converts a Bytes to a fixedarray.
-pub fn Bytes::to_fixedarray(
-  self : Bytes,
-  len~ : Int = self.length()
-) -> FixedArray[Byte] {
+pub fn Bytes::to_fixedarray(self : Bytes, len? : Int) -> FixedArray[Byte] {
+  let len = match len {
+    None => self.length()
+    Some(x) => x
+  }
   let arr = FixedArray::make(len, Byte::default())
-  for i = 0; i < len; i = i + 1 {
+  for i in 0..<len {
     arr[i] = self[i]
   }
   arr
