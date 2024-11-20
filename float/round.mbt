@@ -41,20 +41,20 @@ pub fn trunc(self : Float) -> Float {
 ///|
 pub fn ceil(self : Float) -> Float {
   let trunced = self.trunc()
-  if self == trunced || self < 0.0 {
-    trunced
+  if self > trunced {
+    return trunced + 1.0
   } else {
-    trunced + 1.0
+    return trunced
   }
 }
 
 ///|
 pub fn floor(self : Float) -> Float {
   let trunced = self.trunc()
-  if self == trunced || self > 0.0 {
-    trunced
+  if self < trunced {
+    return trunced - 1.0
   } else {
-    trunced - 1.0
+    return trunced
   }
 }
 
