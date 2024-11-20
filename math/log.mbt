@@ -24,14 +24,9 @@
 ///
 /// Examples:
 ///
-/// ```moonbit
-/// test "ln/normal" {
-///   inspect!(ln(1.0), content="0.0")
-/// }
-/// 
-/// test "ln/negative" {
-///   inspect!(ln(0.5), content="-0.6931471805599453")
-/// }
+/// ```
+/// assert_eq!(ln(1.0), 0.0)
+/// assert_eq!(ln(0.5), -0.6931471805599453)
 /// ```
 pub fn ln(input : Double) -> Double {
   input.ln()
@@ -49,10 +44,8 @@ pub fn ln(input : Double) -> Double {
 ///
 /// Example:
 ///
-/// ```moonbit
-/// test "log2/normal" {
-///   inspect!(log2(8.0), content="3.0")
-/// }
+/// ```
+/// assert_eq!(log2(8.0), 3.0)
 /// ```
 pub fn log2(input : Double) -> Double {
   input.log2()
@@ -69,10 +62,8 @@ pub fn log2(input : Double) -> Double {
 ///
 /// Example:
 ///
-/// ```moonbit
-/// test "log10/normal" {
-///   inspect!(log10(100.0), content="2.0")
-/// }
+/// ```
+/// assert_eq!(log10(100.0), 2.0)
 /// ```
 pub fn log10(input : Double) -> Double {
   input.log10()

@@ -202,12 +202,10 @@ pub fn rev_fold[A](self : String, init~ : A, f : (A, Char) -> A) -> A {
 /// 
 /// # Examples
 /// 
-/// ```moonbit
-/// test {
-///   let input = "Hello, World!"
-///   let reversed = rev_iter(input).collect()
-///   inspect!(reversed, content="[\"!\", \"d\", \"l\", \"r\", \"o\", \"W\", \" \", \",\", \"o\", \"l\", \"l\", \"e\", \"H\"]")
-/// }
+/// ```
+/// let input = "Hello, World!"
+/// let reversed = input.rev_iter().collect()
+/// assert_eq!(reversed, ['!', 'd', 'l', 'r', 'o', 'W', ' ', ',', 'o', 'l', 'l', 'e', 'H'])
 /// ```
 pub fn rev_iter(self : String) -> Iter[Char] {
   Iter::new(
@@ -463,13 +461,11 @@ pub fn ends_with(self : String, str : String) -> Bool {
 /// 
 /// # Examples
 /// 
-/// ```moonbit
-/// test {
-///   let input = "a,b,c,d"
-///   let separator = ","
-///   let result = split(input, separator).collect()
-///   inspect!(result, content="[\"a\", \"b\", \"c\", \"d\"]")
-/// }
+/// ```
+/// let input = "a,b,c,d"
+/// let separator = ","
+/// let result = input.split(separator).collect()
+/// assert_eq!(result, ["a", "b", "c", "d"])
 /// ```
 pub fn split(self : String, seperator : String) -> Iter[String] {
   let len = self.length()
@@ -604,12 +600,14 @@ pub fn repeat(self : String, n : Int) -> String {
 }
 
 ///|
-/// `pad_left` is a new string with `padding_char`s prefixed to `self` if `self.length() < total_width`. The length of the
+/// `pad_start` is a new string with `padding_char`s prefixed to `self` if `self.length() < total_width`. The length of the
 /// returned string is `total_width`.
 /// 
 /// Example:
 /// 
-/// ```"2".pad_left(3, '0') == "002"```
+/// ```
+/// assert_eq!("2".pad_start(3, '0'), "002")
+/// ```
 pub fn pad_start(
   self : String,
   total_width : Int,
@@ -629,12 +627,14 @@ pub fn pad_start(
 }
 
 ///|
-/// `pad_right` is a new String with `padding_char`s suffixed to `self` if `self.length() < total_width`. The length of the
+/// `pad_end` is a new String with `padding_char`s suffixed to `self` if `self.length() < total_width`. The length of the
 /// returned string is `total_width`.
 /// 
 /// Example:
 /// 
-/// ```"2".pad_right(3, 'x') == "2xx"```
+/// ```
+/// assert_eq!("2".pad_end(3, 'x'), "2xx")
+/// ```
 pub fn pad_end(self : String, total_width : Int, padding_char : Char) -> String {
   let len = self.length()
   if len >= total_width {
