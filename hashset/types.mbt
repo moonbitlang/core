@@ -32,8 +32,8 @@ priv struct Entry[K] {
 /// 
 /// ```
 /// let set = @hashset.of([(3, "three"), (8, "eight"), (1, "one")])
-/// set.insert(3)
-/// println(set.contains(3)) // output: true
+/// set.add((4, "four"))
+/// assert_eq!(set.contains((4, "four")), true)
 /// ```
 struct T[K] {
   mut entries : FixedArray[Entry[K]?]

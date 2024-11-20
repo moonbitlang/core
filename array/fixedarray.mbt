@@ -23,7 +23,9 @@
 /// # Example
 ///
 /// ```
-/// [1, 2, 3, 4, 5].each(fn(x){ print("\(x) ") }) //output: 1 2 3 4 5
+/// let arr = []
+/// [1, 2, 3, 4, 5].each(fn(x){ arr.push(x) })
+/// assert_eq!(arr, [1, 2, 3, 4, 5])
 /// ```
 /// TODO: change the intrinsic to match the function name
 /// @intrinsic %fixedarray.iter
@@ -71,9 +73,11 @@ test "each" {
 /// # Example
 ///
 /// ```
+/// let arr = []
 /// [1, 2, 3, 4, 5].eachi(fn(index, elem){
-///   print("(\(index),\(elem)) ")
-/// }) //output: (0,1) (1,2) (2,3) (3,4) (4,5)
+///   arr.push((index, elem))
+/// })
+/// assert_eq!(arr, [(0, 1), (1, 2), (2, 3), (3, 4), (4, 5)])
 /// ```
 pub fn eachi[T](self : FixedArray[T], f : (Int, T) -> Unit) -> Unit {
   for i, v in self {
@@ -119,7 +123,9 @@ test "eachi" {
 /// # Example
 ///
 /// ```
-/// [1, 2, 3, 4, 5].each(fn(x){ print("\(x) ") }) //output: 5 4 3 2 1
+/// let arr = []
+/// [1, 2, 3, 4, 5].rev_each(fn(x){ arr.push(x) })
+/// assert_eq!(arr, [5, 4, 3, 2, 1])
 /// ```
 pub fn rev_each[T](self : FixedArray[T], f : (T) -> Unit) -> Unit {
   for i = self.length() - 1; i >= 0; i = i - 1 {
@@ -165,9 +171,11 @@ test "rev_each" {
 /// # Example
 ///
 /// ```
+/// let arr = []
 /// [1, 2, 3, 4, 5].rev_eachi(fn(index, elem){
-///   print("(\(index),\(elem)) ")
-/// }) //output: (4,5) (3,4) (2,3) (1,2) (0,1)
+///   arr.push((index, elem))
+/// })
+/// assert_eq!(arr, [(0, 5), (1, 4), (2, 3), (3, 2), (4, 1)])
 /// ```
 pub fn rev_eachi[T](self : FixedArray[T], f : (Int, T) -> Unit) -> Unit {
   let len = self.length()
@@ -219,7 +227,7 @@ test "rev_eachi" {
 /// ```
 /// let arr = [1, 2, 3, 4, 5]
 /// let doubled = arr.map(fn(x){ x * 2 })
-/// println(doubled) //output: [2, 4, 6, 8, 10]
+/// assert_eq!(doubled, [2, 4, 6, 8, 10])
 /// ```
 pub fn map[T, U](self : FixedArray[T], f : (T) -> U) -> FixedArray[U] {
   if self.length() == 0 {
@@ -250,7 +258,7 @@ test "map" {
 /// ```
 /// let arr = [3, 4, 5]
 /// let added = arr.mapi(fn (i, x) { x + i })
-/// println(added) //output: [3, 5, 7]
+/// assert_eq!(added, [3, 5, 7])
 /// ```
 pub fn mapi[T, U](self : FixedArray[T], f : (Int, T) -> U) -> FixedArray[U] {
   if self.length() == 0 {
@@ -355,7 +363,7 @@ test "from_array" {
 /// # Example
 /// ```
 /// let sum = [1, 2, 3, 4, 5].fold(init=0, fn { sum, elem => sum + elem })
-/// sum // 15
+/// assert_eq!(sum, 15)
 /// ```
 pub fn fold[A, B](self : FixedArray[A], init~ : B, f : (B, A) -> B) -> B {
   for i = 0, acc = init; i < self.length(); {
@@ -370,8 +378,8 @@ pub fn fold[A, B](self : FixedArray[A], init~ : B, f : (B, A) -> B) -> B {
 ///
 /// # Example
 /// ```
-/// let sum = [1, 2, 3, 4, 5].fold_left(init=0, fn { sum, elem => sum + elem })
-/// sum // 15
+/// let sum = [1, 2, 3, 4, 5].fold(init=0, fn { sum, elem => sum + elem })
+/// assert_eq!(sum, 15)
 /// ```
 /// @alert deprecated "Use `fold` instead"
 pub fn fold_left[T, U](self : FixedArray[T], f : (U, T) -> U, init~ : U) -> U {
@@ -395,8 +403,8 @@ test "fold" {
 ///
 /// # Example
 /// ```
-/// let sum = [1, 2, 3, 4, 5].fold_rev(init=0, fn { sum, elem => sum + elem })
-/// sum // 15
+/// let sum = [1, 2, 3, 4, 5].rev_fold(init=0, fn { sum, elem => sum + elem })
+/// assert_eq!(sum, 15)
 /// ```
 pub fn rev_fold[A, B](self : FixedArray[A], init~ : B, f : (B, A) -> B) -> B {
   for i = self.length() - 1, acc = init; i >= 0; {
@@ -411,8 +419,8 @@ pub fn rev_fold[A, B](self : FixedArray[A], init~ : B, f : (B, A) -> B) -> B {
 ///
 /// # Example
 /// ```
-/// let sum = [1, 2, 3, 4, 5].fold_right(init=0, fn { sum, elem => sum + elem })
-/// sum // 15
+/// let sum = [1, 2, 3, 4, 5].rev_fold(init=0, fn { sum, elem => sum + elem })
+/// assert_eq!(sum, 15)
 /// ```
 /// @alert deprecated "Use `rev_fold` instead"
 pub fn fold_right[T, U](self : FixedArray[T], f : (U, T) -> U, init~ : U) -> U {
@@ -442,8 +450,8 @@ test "rev_fold" {
 ///
 /// # Example
 /// ```
-/// let sum = [1, 2, 3, 4, 5].foldi(init=0, fn { index, sum, elem => sum + index })
-/// sum // 10
+/// let sum = [1, 2, 3, 4, 5].foldi(init=0, fn { index, sum, _elem => sum + index })
+/// assert_eq!(sum, 10)
 /// ```
 pub fn foldi[A, B](self : FixedArray[A], init~ : B, f : (Int, B, A) -> B) -> B {
   for i = 0, acc = init; i < self.length(); {
@@ -458,8 +466,8 @@ pub fn foldi[A, B](self : FixedArray[A], init~ : B, f : (Int, B, A) -> B) -> B {
 ///
 /// # Example
 /// ```
-/// let sum = [1, 2, 3, 4, 5].fold_lefti(init=0, fn { index, sum, elem => sum + index })
-/// sum // 10
+/// let sum = [1, 2, 3, 4, 5].foldi(init=0, fn { index, sum, _elem => sum + index })
+/// assert_eq!(sum, 10)
 /// ```
 /// @alert deprecated "Use `foldi` instead"
 pub fn fold_lefti[T, U](
@@ -489,8 +497,8 @@ test "fold_lefti" {
 ///
 /// # Example
 /// ```
-/// let sum = [1, 2, 3, 4, 5].rev_foldi(init=0, fn { index, sum, elem => sum + index })
-/// sum // 10
+/// let sum = [1, 2, 3, 4, 5].rev_foldi(init=0, fn { index, sum, _elem => sum + index })
+/// assert_eq!(sum, 10)
 /// ```
 pub fn rev_foldi[A, B](
   self : FixedArray[A],
@@ -510,8 +518,8 @@ pub fn rev_foldi[A, B](
 ///
 /// # Example
 /// ```
-/// let sum = [1, 2, 3, 4, 5].fold_righti(init=0, fn { index, sum, elem => sum + index })
-/// sum // 10
+/// let sum = [1, 2, 3, 4, 5].rev_foldi(init=0, fn { index, sum, _elem => sum + index })
+/// assert_eq!(sum, 10)
 /// ```
 /// @alert deprecated "Use `rev_foldi` instead"
 pub fn fold_righti[T, U](
@@ -622,7 +630,7 @@ test "rev" {
 /// ```
 /// let arr = [1, 2, 3, 4, 5]
 /// arr.swap(0, 1)
-/// println(arr) //output: [2, 1, 3, 4, 5]
+/// assert_eq!(arr, [2, 1, 3, 4, 5])
 /// ```
 fn swap[T](self : FixedArray[T], i : Int, j : Int) -> Unit {
   let temp = self[i]
@@ -656,9 +664,9 @@ test "swap" {
 /// # Example
 ///
 /// ```
-/// let arr = [1, 2, 3, 4, 5]
-/// arr.all(fn(ele) { ele < 6 }) // true
-/// arr.all(fn(ele) { ele < 5 }) // false
+/// let arr: FixedArray[Int] = [1, 2, 3, 4, 5]
+/// assert_true!(arr.all(fn(ele) { ele < 6 }))
+/// assert_false!(arr.all(fn(ele) { ele < 5 }))
 /// ```
 pub fn all[T](self : FixedArray[T], f : (T) -> Bool) -> Bool {
   for i = 0; i < self.length(); i = i + 1 {
@@ -691,9 +699,9 @@ test "all" {
 /// # Example
 ///
 /// ```
-/// let arr = [1, 2, 3, 4, 5]
-/// arr.any(fn(ele) { ele < 6 }) // true
-/// arr.any(fn(ele) { ele < 5 }) // true
+/// let arr: FixedArray[Int] = [1, 2, 3, 4, 5]
+/// assert_true!(arr.any(fn(ele) { ele < 6 }))
+/// assert_true!(arr.any(fn(ele) { ele < 5 }))
 /// ```
 pub fn any[T](self : FixedArray[T], f : (T) -> Bool) -> Bool {
   for i = 0; i < self.length(); i = i + 1 {
@@ -741,8 +749,8 @@ test "fill" {
 ///
 /// # Example
 /// ```
-/// let arr = [3, 4, 5]
-/// arr.search(3) // 0
+/// let arr: FixedArray[Int] = [3, 4, 5]
+/// assert_eq!(arr.search(3), Some(0))
 /// ```
 pub fn search[T : Eq](self : FixedArray[T], value : T) -> Int? {
   for i = 0; i < self.length(); i = i + 1 {
@@ -776,8 +784,8 @@ test "search" {
 ///
 /// # Example
 /// ```
-/// let arr = [3, 4, 5]
-/// arr.contains(3)
+/// let arr: FixedArray[Int] = [3, 4, 5]
+/// assert_true!(arr.contains(3))
 /// ```
 pub fn contains[T : Eq](self : FixedArray[T], value : T) -> Bool {
   for i = 0; i < self.length(); i = i + 1 {
@@ -811,8 +819,8 @@ test "contains" {
 ///
 /// # Example
 /// ```
-/// let arr = [3, 4, 5]
-/// arr.starts_with([3, 4]) // true
+/// let arr: FixedArray[Int] = [3, 4, 5]
+/// assert_true!(arr.starts_with([3, 4]))
 /// ```
 pub fn starts_with[T : Eq](
   self : FixedArray[T],
@@ -858,8 +866,8 @@ test "starts_with" {
 ///
 /// # Example
 /// ```
-/// let v = [3, 4, 5]
-/// v.ends_with([5]) // true
+/// let v: FixedArray[Int] = [3, 4, 5]
+/// assert_true!(v.ends_with([5]))
 /// ```
 pub fn ends_with[T : Eq](self : FixedArray[T], suffix : FixedArray[T]) -> Bool {
   let self_len = self.length()

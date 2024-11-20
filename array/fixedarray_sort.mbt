@@ -20,9 +20,9 @@
 /// # Example
 /// 
 /// ```
-/// let arr = [5, 4, 3, 2, 1]
+/// let arr: FixedArray[Int] = [5, 4, 3, 2, 1]
 /// arr.stable_sort()
-/// println(arr) //output: [1, 2, 3, 4, 5]
+/// assert_eq!(arr, [1, 2, 3, 4, 5])
 /// ```
 pub fn stable_sort[T : Compare](self : FixedArray[T]) -> Unit {
   timsort({ array: self, start: 0, end: self.length() })
@@ -211,7 +211,7 @@ fn collapse(runs : Array[TimSortRun], stop : Int) -> Int? {
 /// ```
 /// let arr = [5, 4, 3, 2, 1]
 /// arr.sort()
-/// println(arr) //output: [1, 2, 3, 4, 5]
+/// assert_eq!(arr, [1, 2, 3, 4, 5])
 /// ```
 pub fn sort[T : Compare](self : FixedArray[T]) -> Unit {
   fixed_quick_sort(
