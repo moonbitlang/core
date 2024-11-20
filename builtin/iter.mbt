@@ -820,11 +820,9 @@ pub fn last[A](self : Iter[A]) -> A? {
 /// 
 /// # Examples
 /// 
-/// ```moonbit
-/// test {
-///   let iter = Iter::singleton(42)
-///   inspect!(head(iter), content="Some(42)")
-/// }
+/// ```
+/// let iter = Iter::singleton(42)
+/// assert_eq!(head(iter), Some(42))
 /// ```
 pub fn head[A](self : Iter[A]) -> A? {
   for i in self {
@@ -844,10 +842,10 @@ pub fn head[A](self : Iter[A]) -> A? {
 /// 
 /// # Examples
 /// 
-/// ```moonbit
-/// test {
-///   inspect!([1, 2, 3].iter().intersperse(0), content="[1, 0, 2, 0, 3]")
-/// }
+/// ```
+/// let arr = []
+/// [1, 2, 3].iter().intersperse(0).each(fn(i) {arr.push(i)})
+/// assert_eq!(arr, [1, 0, 2, 0, 3])
 /// ```
 pub fn intersperse[A](self : Iter[A], sep : A) -> Iter[A] {
   fn(yield_) {

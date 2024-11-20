@@ -80,15 +80,6 @@ pub fn length[T](self : Array[T]) -> Int {
 /// setting `new_len` greater than the current length) can lead to undefined
 /// behavior.
 ///
-/// # Examples
-///
-/// ```moonbit
-/// test "unsafe_truncate_to_length example" {
-///  let mut arr = [1, 2, 3, 4, 5]
-///  unsafe_truncate_to_length(arr, 3)
-///  inspect!(arr, content="[1, 2, 3]")
-/// }
-/// ```
 /// TODO: this can be optimized by using the intrinsic to null out the range
 fn unsafe_truncate_to_length[T](self : Array[T], new_len : Int) -> Unit {
   let len = self.length()
