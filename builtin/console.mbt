@@ -168,7 +168,7 @@ fn unsafe_make_string(length : Int, value : Char) -> String = "$moonbit.unsafe_m
 /// Create new string of `length`, where each character is `value`
 ///
 /// ```
-/// println(String::make(5,'S')) // Output: "SSSSS"
+/// assert_eq!(String::make(5,'S'), "SSSSS")
 /// ```
 pub fn String::make(length : Int, value : Char) -> String {
   if length < 0 {

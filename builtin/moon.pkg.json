@@ -8,6 +8,7 @@
     "moonbitlang/core/coverage",
     "moonbitlang/core/uint64",
     "moonbitlang/core/array",
+    "moonbitlang/core/buffer",
     "moonbitlang/core/int64",
     "moonbitlang/core/uint",
     "moonbitlang/core/json"
