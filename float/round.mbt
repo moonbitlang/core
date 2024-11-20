@@ -59,31 +59,13 @@ pub fn floor(self : Float) -> Float {
 }
 
 ///|
-fn _int_part_parity(self : Float) -> Int {
-  let u32 = self.reinterpret_as_uint()
-  let biased_exp = ((u32 >> frac_bits) & ((0x1U << exp_bits) - 1)).reinterpret_as_int()
-  if biased_exp < exp_bias || biased_exp > exp_bias + frac_bits {
-    return 0
-  } else if biased_exp == exp_bias + frac_bits {
-    return (u32 & 1).reinterpret_as_int()
-  }
-  let mask_shift = biased_exp - exp_bias + exp_bits
-  let parity_mask = sign_mask >> mask_shift
-  return if (u32 & parity_mask) > 0 { 1 } else { 0 }
-}
-
-///|
-// Round to nearest, ties to Even
+// Round to nearest, ties to Ceiling
 pub fn round(self : Float) -> Float {
   let floor = floor(self)
   let diff = self - floor
-  if diff > 0.5 {
+  if diff >= 0.5 {
     return floor + 1.0
-  } else if diff < 0.5 {
-    return floor
-  } else if _int_part_parity(floor) == 0 {
-    return floor
   } else {
-    return floor + 1.0
+    return floor
   }
 }

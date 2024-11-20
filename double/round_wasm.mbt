@@ -22,5 +22,13 @@ pub fn ceil(self : Double) -> Double = "(func (param f64) (result f64) (f64.ceil
 pub fn floor(self : Double) -> Double = "(func (param f64) (result f64) (f64.floor (local.get 0)))"
 
 ///|
-// Round to nearest, ties to Even
-pub fn round(self : Double) -> Double = "(func (param f64) (result f64) (f64.nearest (local.get 0)))"
+// Round to nearest, ties to Ceiling
+pub fn round(self : Double) -> Double {
+  let floor = floor(self)
+  let diff = self - floor
+  if diff >= 0.5 {
+    return floor + 1.0
+  } else {
+    return floor
+  }
+}
