@@ -16,7 +16,8 @@
 /// Convert char array to string.
 /// 
 /// ```
-/// String::from_array(['H', 'e', 'l', 'l', 'o']) // "Hello"  
+/// let s = @string.from_array(['H', 'e', 'l', 'l', 'o'])
+/// assert_eq!(s, "Hello")
 /// ```
 /// 
 /// Do not convert large datas to `Array[Char]` and build a string with `String::from_array`.
@@ -34,8 +35,10 @@ pub fn String::from_array(chars : Array[Char]) -> String {
 /// Concatenate strings.
 /// 
 /// ```
-/// String::concat(["Hello", ", ", "world!"]) // "Hello, world!"
-/// String::concat(["a", "b", "c"], separator=",") // "a,b,c"
+/// let s = @string.concat(["Hello", ", ", "world!"])
+/// assert_eq!(s, "Hello, world!")
+/// let s = @string.concat(["a", "b", "c"], separator=",")
+/// assert_eq!(s, "a,b,c")
 /// ```
 pub fn String::concat(
   strings : Array[String],
