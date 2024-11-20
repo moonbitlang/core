@@ -26,16 +26,16 @@ let frac_bits = 52
 
 ///|
 pub fn trunc(self : Double) -> Double {
-  let u32 = self.reinterpret_as_uint64()
-  let biased_exp = ((u32 >> frac_bits) & ((0x1UL << exp_bits) - 1)).to_int()
+  let u64 = self.reinterpret_as_uint64()
+  let biased_exp = ((u64 >> frac_bits) & ((0x1UL << exp_bits) - 1)).to_int()
   if biased_exp < exp_bias {
-    return (u32 & sign_mask).reinterpret_as_double()
+    return (u64 & sign_mask).reinterpret_as_double()
   } else if biased_exp >= exp_bias + frac_bits {
     return self
   }
   let mask_shift = biased_exp - exp_bias + exp_bits
   let trunc_mask = (sign_mask.reinterpret_as_int64() >> mask_shift).reinterpret_as_uint64()
-  return (u32 & trunc_mask).reinterpret_as_double()
+  return (u64 & trunc_mask).reinterpret_as_double()
 }
 
 ///|
