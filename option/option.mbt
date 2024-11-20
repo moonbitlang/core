@@ -27,8 +27,8 @@
 /// # Example
 ///
 /// ```
-/// let result = when(true, fn(){ "Hello, World!" })
-/// println(result) //output: Some("Hello, World!"
+/// let result = @option.when(true, fn(){ "Hello, World!" })
+/// assert_eq!(result, Some("Hello, World!"))
 /// ```
 pub fn when[T](condition : Bool, value : () -> T) -> T? {
   if condition {
@@ -101,10 +101,10 @@ test "some" {
 ///
 /// ```
 /// let a = Some(5)
-/// println(a.map(fn(x){ x * 2 })) //output: Some(10)
+/// assert_eq!(a.map(fn(x){ x * 2 }), Some(10))
 ///
 /// let b = None
-/// println(b.map(fn(x){ x * 2 })) //output: None
+/// assert_eq!(b.map(fn(x){ x * 2 }), None)
 /// ```
 pub fn map[T, U](self : T?, f : (T) -> U) -> U? {
   match self {
@@ -128,10 +128,7 @@ test "map" {
 ///
 /// ```
 /// let a = Some(5)
-/// println(a.map_or(3, fn(x){ x * 2 })) //output: 10
-///
-/// let b: Option[Int] = None
-/// println(b.map(3, fn(x){ x * 2 })) //output: 3
+/// assert_eq!(a.map_or(3, fn(x){ x * 2 }), 10)
 /// ```
 pub fn map_or[T, U](self : T?, default : U, f : (T) -> U) -> U {
   match self {
@@ -154,10 +151,7 @@ test "map_or" {
 ///
 /// ```
 /// let a = Some(5)
-/// println(a.map_or_else(fn(){ 3 }, fn(x){ x * 2 })) //output: 10
-///
-/// let b: Option[Int] = None
-/// println(b.map(fn(){ 5 }, fn(x){ x * 2 })) //output: 3
+/// assert_eq!(a.map_or_else(fn(){ 3 }, fn(x){ x * 2 }), 10)
 /// ```
 pub fn map_or_else[T, U](self : T?, default : () -> U, f : (T) -> U) -> U {
   match self {
@@ -182,11 +176,10 @@ test "map_or_else" {
 /// ```
 /// let a = Option::Some(5)
 /// let r1 = a.bind(fn(x){ Some(x * 2) })
-/// println(r1) //output: Some(10)
-///
+/// assert_eq!(r1, Some(10))
 /// let b : Option[Int] = None
 /// let r2 = b.bind(fn(x){ Some(x * 2) })
-/// println(r2) //output: None
+/// assert_eq!(r2, None)
 /// ```
 pub fn bind[T, U](self : T?, f : (T) -> U?) -> U? {
   match self {
@@ -211,9 +204,9 @@ test "bind" {
 ///
 /// ```
 /// let a = Some(Some(42));
-/// println(flatten(a)) //output: Some(42)
+/// assert_eq!(@option.flatten(a), Some(42))
 /// let b = Some(None)
-/// println(flatten(b)) //output: None
+/// assert_eq!(@option.flatten(b), None)
 /// ```
 pub fn flatten[T](self : T??) -> T? {
   match self {
@@ -254,8 +247,8 @@ test "is_empty" {
 /// # Example
 /// ```
 /// let x = Some(3)
-/// println(x.filter(fn(x){ x > 5 })) //output: None
-/// println(x.filter(fn(x){ x < 5 })) //output: Some(3)
+/// assert_eq!(x.filter(fn(x){ x > 5 }), None)
+/// assert_eq!(x.filter(fn(x){ x < 5 }), Some(3))
 /// ```
 pub fn filter[T](self : T?, f : (T) -> Bool) -> T? {
   match self {
