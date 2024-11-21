@@ -1,0 +1,26 @@
+package moonbitlang/core/encoding
+
+alias @moonbitlang/core/buffer as @buffer
+
+// Values
+fn decode_lossy(~encoding : Encoding = .., @buffer.T) -> Stream
+
+fn decode_strict(~encoding : Encoding = .., @buffer.T) -> Stream
+
+// Types and methods
+pub enum Encoding {
+  UTF8
+  UTF16
+  UTF16BE
+  UTF16LE
+}
+
+type Stream
+impl Stream {
+  iter(Self) -> Iter[Char]
+}
+
+// Type aliases
+
+// Traits
+
