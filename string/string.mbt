@@ -31,6 +31,11 @@ pub fn String::from_array(chars : Array[Char]) -> String {
   buf.to_string()
 }
 
+pub fn String::from_iter(iter : Iter[Char]) -> String {
+  let chars = iter.collect()
+  String::from_array(chars)
+}
+
 ///|
 /// Concatenate strings.
 /// 
