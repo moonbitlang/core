@@ -454,6 +454,8 @@ pub fn mapi[A, U](self : T[A], f : (Int, A) -> U) -> T[U] {
 /// ```
 /// let dv = @deque.new()
 /// assert_eq!(dv.is_empty(), true)
+/// dv.push_back(1)
+/// assert_eq!(dv.is_empty(), false)
 /// ```
 pub fn is_empty[A](self : T[A]) -> Bool {
   self.len == 0
