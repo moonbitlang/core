@@ -205,7 +205,7 @@ test "bind" {
 /// ```
 /// let a = Some(Some(42));
 /// assert_eq!(@option.flatten(a), Some(42))
-/// let b = Some(None)
+/// let b : Int?? = Some(None)
 /// assert_eq!(@option.flatten(b), None)
 /// ```
 pub fn flatten[T](self : T??) -> T? {

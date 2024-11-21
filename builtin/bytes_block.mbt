@@ -30,8 +30,8 @@ fn Bytes::unsafe_blit(
 /// ```
 /// let b1 = Bytes::of_string("abcdef")
 /// let b2 = Bytes::of_string("ABCDEF")
-/// b1.blit(2, b2, 3, 2)
-/// println(b1.to_string()) // output: abDEef
+/// b1.blit(2, b2, 2, 2)
+/// assert_eq!(b1.to_unchecked_string(), "aBcdef")
 /// ```
 pub fn Bytes::blit(
   self : Bytes,
