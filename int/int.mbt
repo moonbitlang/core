@@ -41,3 +41,11 @@ pub fn abs(self : Int) -> Int {
     self
   }
 }
+
+pub fn minimum(self : Int, x : Int) -> Int {
+  if self > x {
+    x
+  } else {
+    self
+  }
+}

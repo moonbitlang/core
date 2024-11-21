@@ -10,6 +10,7 @@ let min_value : Int
 
 impl Int {
   abs(Int) -> Int
+  minimum(Int, Int) -> Int
 }
 
 // Type aliases
