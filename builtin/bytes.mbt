@@ -168,6 +168,35 @@ pub fn set_utf8_char(self : Bytes, offset : Int, value : Char) -> Int {
   }
 }
 
+pub fn set_utf8_char(
+  self : FixedArray[Byte],
+  offset : Int,
+  value : Char
+) -> Int {
+  let code = value.to_uint()
+  if code < 0x80 {
+    self[offset] = ((code & 0x7F) | 0x00).to_byte()
+    1
+  } else if code < 0x0800 {
+    self[offset] = (((code >> 6) & 0x1F) | 0xC0).to_byte()
+    self[offset + 1] = ((code & 0x3F) | 0x80).to_byte()
+    2
+  } else if code < 0x010000 {
+    self[offset] = (((code >> 12) & 0x0F) | 0xE0).to_byte()
+    self[offset + 1] = (((code >> 6) & 0x3F) | 0x80).to_byte()
+    self[offset + 2] = ((code & 0x3F) | 0x80).to_byte()
+    3
+  } else if code < 0x110000 {
+    self[offset] = (((code >> 18) & 0x07) | 0xF0).to_byte()
+    self[offset + 1] = (((code >> 12) & 0x3F) | 0x80).to_byte()
+    self[offset + 2] = (((code >> 6) & 0x3F) | 0x80).to_byte()
+    self[offset + 3] = ((code & 0x3F) | 0x80).to_byte()
+    4
+  } else {
+    abort("Char out of range")
+  }
+}
+
 ///|
 /// Fill utf16 encoded char `value` into byte sequence `self`, starting at `offset`.
 /// It return the length of bytes has been written.
