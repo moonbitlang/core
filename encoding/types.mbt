@@ -12,8 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+///|
 typealias Cont = (Decoder) -> Decode
 
+///|
 pub(all) enum Encoding {
   UTF8
   UTF16
@@ -23,6 +25,7 @@ pub(all) enum Encoding {
 
 // Decoder
 
+///|
 priv struct Decoder {
   mut i : @buffer.T
   mut i_pos : Int
@@ -33,16 +36,19 @@ priv struct Decoder {
   mut k : Cont
 }
 
+///|
 priv enum Decode {
   End
   Malformed(String)
   Uchar(Char)
 }
 
+///|
 fn malformed(buf : @buffer.T, offset : Int, length : Int) -> Decode {
   Malformed(buf.to_unchecked_string(offset~, length~))
 }
 
+///|
 fn malformed_pair(
   be : Bool,
   hi : Int,
@@ -63,11 +69,13 @@ fn malformed_pair(
 
 // Stream
 
+///|
 struct Stream {
   decoder : Decoder
   lossy : Bool
 }
 
+///|
 pub fn iter(self : Stream) -> Iter[Char] {
   Iter::new(
     fn(yield_) {

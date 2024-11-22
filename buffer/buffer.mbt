@@ -100,12 +100,14 @@ pub fn T::new(size_hint~ : Int = 0) -> T {
   { data, len: 0, initial_data: data }
 }
 
+///|
 pub fn T::from_bytes(bytes : Bytes) -> T {
   let buf = T::new(size_hint=bytes.length())
   buf.write_bytes(bytes)
   buf
 }
 
+///|
 pub fn T::from_array(arr : Array[Byte]) -> T {
   let buf = T::new(size_hint=arr.length())
   for byte in arr {
@@ -169,6 +171,7 @@ pub fn write_char(self : T, value : Char) -> Unit {
   self.len += inc
 }
 
+///|
 pub fn write_utf8_char(self : T, value : Char) -> Unit {
   self.grow_if_necessary(self.len + 4)
   let inc = self.data.set_utf8_char(self.len, value)
@@ -183,6 +186,7 @@ pub fn write_byte(self : T, value : Byte) -> Unit {
   self.len += 1
 }
 
+///|
 pub fn blit(self : T, srcoff : Int, dst : T, dstoff : Int, len : Int) -> Unit {
   Bytes::blit(self.to_bytes(), srcoff, dst.to_bytes(), dstoff, len)
 }
@@ -208,6 +212,7 @@ pub fn op_set(self : T, index : Int, value : Byte) -> Unit {
   self.data[index] = value
 }
 
+///|
 pub fn op_get(self : T, index : Int) -> Byte {
   self.data[index]
 }

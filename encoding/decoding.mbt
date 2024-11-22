@@ -12,8 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+///|
 const U_REP = '\u{FFFD}'
 
+///|
 // consider const
 let utf_8_len = [
   1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
@@ -28,6 +30,7 @@ let utf_8_len = [
   4, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 ]
 
+///|
 fn r_utf_8(buf : @buffer.T, offset : Int, length : Int) -> Decode {
   fn uchar(c : Int) {
     Uchar(Char::from_int(c))
@@ -112,6 +115,7 @@ fn r_utf_8(buf : @buffer.T, offset : Int, length : Int) -> Decode {
   }
 }
 
+///|
 fn r_utf_16(buf : @buffer.T, offset0 : Int, offset1 : Int) -> UTF16Decode {
   let b0 = buf[offset0].to_int()
   let b1 = buf[offset1].to_int()
@@ -127,6 +131,7 @@ fn r_utf_16(buf : @buffer.T, offset0 : Int, offset1 : Int) -> UTF16Decode {
   }
 }
 
+///|
 fn r_utf_16_lo(
   hi : Int,
   buf : @buffer.T,
@@ -149,10 +154,12 @@ fn r_utf_16_lo(
   }
 }
 
+///|
 fn decode(self : Decoder) -> Decode {
   (self.k)(self)
 }
 
+///|
 fn decoder(encoding~ : Encoding, src : @buffer.T) -> Decoder {
   let i = src
   let i_pos = 0
@@ -169,17 +176,20 @@ fn decoder(encoding~ : Encoding, src : @buffer.T) -> Decoder {
   { i, i_pos, i_max, t, t_len, t_need, k }
 }
 
+///|
 fn ret(self : Decoder, k : Cont, v : Decode) -> Decode {
   self.k = k
   v
 }
 
+///|
 priv enum UTF16Decode {
   Hi(Int)
   UTF16Malformed(String)
   UTF16Uchar(Char)
 }
 
+///|
 fn t_decode_utf_16le_lo(hi : Int, decoder : Decoder) -> Decode {
   if decoder.t_len < decoder.t_need {
     decoder.ret(
@@ -191,6 +201,7 @@ fn t_decode_utf_16le_lo(hi : Int, decoder : Decoder) -> Decode {
   }
 }
 
+///|
 fn t_decode_utf_16le(self : Decoder) -> Decode {
   if self.t_len < self.t_need {
     self.ret(decode_utf_16le, malformed(self.t, 0, self.t_len))
@@ -199,6 +210,7 @@ fn t_decode_utf_16le(self : Decoder) -> Decode {
   }
 }
 
+///|
 fn decode_utf_16le_lo(self : Decoder, v : UTF16Decode) -> Decode {
   match v {
     UTF16Uchar(u) => Uchar(u)
@@ -217,6 +229,7 @@ fn decode_utf_16le_lo(self : Decoder, v : UTF16Decode) -> Decode {
   }
 }
 
+///|
 fn decode_utf_16le(self : Decoder) -> Decode {
   let rem = self.i_rem()
   match rem.compare(0) {
@@ -239,6 +252,7 @@ fn decode_utf_16le(self : Decoder) -> Decode {
   }
 }
 
+///|
 fn t_decode_utf_8(self : Decoder) -> Decode {
   if self.t_len < self.t_need {
     malformed(self.t, 0, self.t_len)
@@ -247,6 +261,7 @@ fn t_decode_utf_8(self : Decoder) -> Decode {
   }
 }
 
+///|
 fn decode_utf_8(self : Decoder) -> Decode {
   let rem = self.i_rem()
   match rem.compare(0) {
@@ -276,27 +291,32 @@ fn decode_utf_8(self : Decoder) -> Decode {
   }
 }
 
+///|
 fn i_rem(self : Decoder) -> Int {
   self.i_max - self.i_pos + 1
 }
 
+///|
 fn eoi(self : Decoder) -> Unit {
   self.i = @buffer.new()
   self.i_pos = 0
   self.i_max = @int.min_value
 }
 
+///|
 fn refill(self : Decoder, k : Cont) -> Decode {
   // only Buffer
   self.eoi()
   k(self)
 }
 
+///|
 fn t_need(self : Decoder, need : Int) -> Unit {
   self.t_len = 0
   self.t_need = need
 }
 
+///|
 fn t_fill(k : Cont, decoder : Decoder) -> Decode {
   fn blit(decoder : Decoder, l : Int) -> Unit {
     decoder.i.blit(decoder.i_pos, decoder.t, decoder.t_len, l)
@@ -319,11 +339,13 @@ fn t_fill(k : Cont, decoder : Decoder) -> Decode {
   }
 }
 
+///|
 pub fn decode_lossy(encoding~ : Encoding = UTF8, src : @buffer.T) -> Stream {
   let decoder = decoder(encoding~, src)
   { decoder, lossy: true }
 }
 
+///|
 pub fn decode_strict(encoding~ : Encoding = UTF8, src : @buffer.T) -> Stream {
   let decoder = decoder(encoding~, src)
   { decoder, lossy: false }

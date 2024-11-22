@@ -168,6 +168,7 @@ pub fn set_utf8_char(self : Bytes, offset : Int, value : Char) -> Int {
   }
 }
 
+///|
 pub fn set_utf8_char(
   self : FixedArray[Byte],
   offset : Int,
