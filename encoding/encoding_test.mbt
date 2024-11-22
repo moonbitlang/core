@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-test "decoding String (UTF16LE) to String" {
+test "lossy decoding String (UTF16LE encoded) to String" {
   let src = "你好👀"
   let buf = @buffer.T::from_bytes(src.to_bytes())
   inspect!(
@@ -25,7 +25,7 @@ test "decoding String (UTF16LE) to String" {
   inspect!(String::from_iter(stream.iter()), content=src)
 }
 
-test "decoding UTF16LE to String" {
+test "lossy decoding UTF16LE encoded data to String" {
   let src = "你好👀"
   let buf = @buffer.T::new(size_hint=10)
   buf.write_bytes(b"\x60\x4f")
@@ -41,7 +41,7 @@ test "decoding UTF16LE to String" {
   inspect!(String::from_iter(stream.iter()), content=src)
 }
 
-test "decoding UTF8 to String" {
+test "lossy decoding UTF8 encoded data to String" {
   let buf = @buffer.T::new(size_hint=10)
   buf.write_bytes(b"\xe4\xbd\xa0")
   buf.write_bytes(b"\xe5\xa5\xbd")
@@ -56,7 +56,7 @@ test "decoding UTF8 to String" {
   inspect!(String::from_iter(stream.iter()), content="你好👀")
 }
 
-test "decoding encoded String (UTF16LE) to String" {
+test "lossy decoding String (UTF16LE encoded) to String" {
   let src = "👋再见"
   let buf = @buffer.T::new(size_hint=10)
   for s in src {
@@ -72,7 +72,7 @@ test "decoding encoded String (UTF16LE) to String" {
   inspect!(String::from_iter(stream.iter()), content=src)
 }
 
-test "decoding encoded UTF8 to String" {
+test "lossy decoding UTF8 encoded data to String" {
   let src = "👋再见"
   let buf = @buffer.T::new(size_hint=10)
   for s in src {
@@ -88,7 +88,7 @@ test "decoding encoded UTF8 to String" {
   inspect!(String::from_iter(stream.iter()), content=src)
 }
 
-test "decoding encoded UTF8" {
+test "lossy decoding UTF8 encoded data" {
   let src = "👋再见"
   let buf = @buffer.T::new(size_hint=10)
   for s in src {
@@ -103,3 +103,79 @@ test "decoding encoded UTF8" {
   let stream = @encoding.decode_lossy(buf) // defaults to UTF8
   inspect!(stream.iter().collect(), content="['👋', '再', '见']")
 }
+
+test "lossy decoding UTF8 encoded data with UTF16LE" {
+  let src = "跑步🏃游泳🏊"
+  let buf = @buffer.T::new(size_hint=10)
+  for s in src {
+    buf.write_char(s)
+  }
+  inspect!(
+    buf.to_bytes(),
+    content=
+      #|b"\xd1\x8d\x65\x6b\x3c\xd8\xc3\xdf\x38\x6e\xf3\x6c\x3c\xd8\xca\xdf"
+    ,
+  )
+  let stream = @encoding.decode_lossy(buf) // defaults to UTF8
+  inspect!(
+    stream.iter().collect(),
+    content="['э', 'e', 'k', '<', '�', '�', 'n', '�', '�']",
+  )
+}
+
+test "lossy decoding UTF16LE encoded data with UTF8" {
+  let src = "跑步🏃游泳🏊"
+  let buf = @buffer.T::new(size_hint=10)
+  for s in src {
+    buf.write_utf8_char(s)
+  }
+  inspect!(
+    buf.to_bytes(),
+    content=
+      #|b"\xe8\xb7\x91\xe6\xad\xa5\xf0\x9f\x8f\x83\xe6\xb8\xb8\xe6\xb3\xb3\xf0\x9f\x8f\x8a"
+    ,
+  )
+  let stream = @encoding.decode_lossy(encoding=UTF16LE, buf) // defaults to UTF8
+  inspect!(
+    stream.iter().collect(),
+    content="['럨', '', 'ꖭ', '鿰', '莏', '룦', '', '뎳', '鿰', '誏']",
+  )
+}
+
+// test "scrictly decoding UTF8 encoded data with UTF16LE" {
+//   let src = "跑步🏃游泳🏊"
+//   let buf = @buffer.T::new(size_hint=10)
+//   for s in src {
+//     buf.write_char(s)
+//   }
+//   inspect!(
+//     buf.to_bytes(),
+//     content=
+//       #|b"\xd1\x8d\x65\x6b\x3c\xd8\xc3\xdf\x38\x6e\xf3\x6c\x3c\xd8\xca\xdf"
+//     ,
+//   )
+//   let stream = @encoding.decode_strict(buf) // defaults to UTF8
+//   inspect!(
+//     stream.iter().collect(),
+//     content="['э', 'e', 'k', '<', '�', '�', 'n', '�', '�']",
+//   )
+// }
+//
+// test "scrictly decoding UTF16LE encoded data with UTF8" {
+//   let src = "跑步🏃游泳🏊"
+//   let buf = @buffer.T::new(size_hint=10)
+//   for s in src {
+//     buf.write_utf8_char(s)
+//   }
+//   inspect!(
+//     buf.to_bytes(),
+//     content=
+//       #|b"\xe8\xb7\x91\xe6\xad\xa5\xf0\x9f\x8f\x83\xe6\xb8\xb8\xe6\xb3\xb3\xf0\x9f\x8f\x8a"
+//     ,
+//   )
+//   let stream = @encoding.decode_strict(encoding=UTF16LE, buf)
+//   inspect!(
+//     stream.iter().collect(),
+//     content="['럨', '', 'ꖭ', '鿰', '莏', '룦', '', '뎳', '鿰', '誏']",
+//   )
+// }
