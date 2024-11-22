@@ -172,6 +172,48 @@ pub fn append[T](self : Array[T], other : Array[T]) -> Unit {
 }
 
 ///|
+/// like append but faster than append implementation
+pub fn append_fast[T](self : Array[T], other : Array[T]) -> Unit {
+  if other.len == 0 {
+    return
+  }
+  let oldlen = self.len
+  let newLen = self.len + other.len
+  self.resize_buffer(newLen)
+  self.len = newLen
+  Array::unsafe_blit(self, oldlen, other, 0, other.len)
+}
+
+///|
+/// like blit
+/// copy the data of length len from the 'from' position of 'other' to the offset position of 'self' and overwrite it, 
+/// which will automatically expand the size
+pub fn set[T](
+  self : Array[T],
+  offset : Int,
+  other : Array[T],
+  from : Int,
+  len : Int
+) -> Unit {
+  if other.len == 0 {
+    return
+  }
+  let remain = other.len - from
+  if remain == 0 {
+    return
+  }
+  let len = if len >= remain { remain } else { len }
+  let offset = if offset < 0 || offset >= self.len { self.len } else { offset }
+  let oldlen = self.len
+  let newlen = offset + len
+  if oldlen < newlen {
+    self.resize_buffer(newlen)
+    self.len = newlen
+  }
+  Array::unsafe_blit(self, offset, other, from, len)
+}
+
+///|
 /// Iterates over the elements of the array.
 ///
 /// # Example

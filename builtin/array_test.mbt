@@ -568,6 +568,20 @@ test "array_dedup - edge cases" {
   inspect!(array, content="[1, 2, 3, 4, 5]")
 }
 
+test "append_fast" {
+  let b : Array[Byte] = [1, 3, 6]
+  let b2 : Array[Byte] = [7, 8, 9]
+  b.append_fast(b2)
+  assert_eq!(b, [1, 3, 6, 7, 8, 9])
+}
+
+test "set" {
+  let b : Array[Byte] = [1, 3, 6]
+  let b2 : Array[Byte] = [4, 5, 6, 7, 8, 9]
+  b.set(2, b2, 2, 3)
+  assert_eq!(b, [1, 3, 6, 7, 8])
+}
+
 ///|
 struct MX {
   mm_num : Array[Int]
