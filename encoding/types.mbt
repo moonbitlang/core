@@ -12,11 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-typealias Buffer = @buffer.T
-
 typealias Cont = (Decoder) -> Decode
 
-pub enum Encoding {
+pub(all) enum Encoding {
   UTF8
   UTF16
   UTF16BE
@@ -26,10 +24,10 @@ pub enum Encoding {
 // Decoder
 
 priv struct Decoder {
-  mut i : Buffer
+  mut i : @buffer.T
   mut i_pos : Int
   mut i_max : Int
-  t : Buffer
+  t : @buffer.T
   mut t_len : Int
   mut t_need : Int
   mut k : Cont
@@ -41,25 +39,25 @@ priv enum Decode {
   Uchar(Char)
 }
 
-fn malformed(buf : Buffer, offset : Int, length : Int) -> Decode {
-  Malformed(buf.to_unchecked_string(~offset, ~length))
+fn malformed(buf : @buffer.T, offset : Int, length : Int) -> Decode {
+  Malformed(buf.to_unchecked_string(offset~, length~))
 }
 
 fn malformed_pair(
   be : Bool,
   hi : Int,
-  buf : Buffer,
+  buf : @buffer.T,
   offset : Int,
   length : Int
 ) -> Decode {
-  let bs1 = buf.to_unchecked_string(~offset, ~length).to_bytes()
-  let bs0 = Buffer::new(size_hint=2)
+  let bs1 = buf.to_unchecked_string(offset~, length~).to_bytes()
+  let bs0 = @buffer.new(size_hint=2)
   let (j0, j1) = if be { (0, 1) } else { (1, 0) }
   bs0[j0] = (hi >> 8).to_byte()
   bs0[j1] = hi.land(0xFF).to_byte()
   let arr = bs0.to_array()
   arr.append(bs1.to_array())
-  let bs = Buffer::from_array(arr)
+  let bs = @buffer.from_array(arr)
   Malformed(bs.to_unchecked_string(offset=0, length=bs.length()))
 }
 
@@ -72,10 +70,10 @@ struct Stream {
 
 pub fn iter(self : Stream) -> Iter[Char] {
   Iter::new(
-    fn(yield) {
+    fn(yield_) {
       loop self.decoder.decode() {
         Uchar(u) => {
-          if yield(u) == IterEnd {
+          if yield_(u) == IterEnd {
             break IterEnd
           }
           continue self.decoder.decode()
@@ -84,7 +82,7 @@ pub fn iter(self : Stream) -> Iter[Char] {
           if not(self.lossy) {
             abort(s)
           }
-          if yield(U_REP) == IterEnd {
+          if yield_(U_REP) == IterEnd {
             break IterEnd
           }
           continue self.decoder.decode()

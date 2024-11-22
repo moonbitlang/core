@@ -28,7 +28,7 @@ let utf_8_len = [
   4, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 ]
 
-fn r_utf_8(buf : Buffer, offset : Int, length : Int) -> Decode {
+fn r_utf_8(buf : @buffer.T, offset : Int, length : Int) -> Decode {
   fn uchar(c : Int) {
     Uchar(Char::from_int(c))
   }
@@ -112,7 +112,7 @@ fn r_utf_8(buf : Buffer, offset : Int, length : Int) -> Decode {
   }
 }
 
-fn r_utf_16(buf : Buffer, offset0 : Int, offset1 : Int) -> UTF16Decode {
+fn r_utf_16(buf : @buffer.T, offset0 : Int, offset1 : Int) -> UTF16Decode {
   let b0 = buf[offset0].to_int()
   let b1 = buf[offset1].to_int()
   let u = (b0 << 8) | b1
@@ -127,7 +127,12 @@ fn r_utf_16(buf : Buffer, offset0 : Int, offset1 : Int) -> UTF16Decode {
   }
 }
 
-fn r_utf_16_lo(hi : Int, buf : Buffer, offset0 : Int, offset1 : Int) -> Decode {
+fn r_utf_16_lo(
+  hi : Int,
+  buf : @buffer.T,
+  offset0 : Int,
+  offset1 : Int
+) -> Decode {
   let b0 = buf[offset0].to_int()
   let b1 = buf[offset1].to_int()
   let lo = (b0 << 8) | b1
@@ -148,11 +153,11 @@ fn decode(self : Decoder) -> Decode {
   (self.k)(self)
 }
 
-fn decoder(~encoding : Encoding, src : Buffer) -> Decoder {
+fn decoder(encoding~ : Encoding, src : @buffer.T) -> Decoder {
   let i = src
   let i_pos = 0
   let i_max = src.length() - 1
-  let t = Buffer::from_bytes(b"\x00\x00\x00\x00")
+  let t = @buffer.from_bytes(b"\x00\x00\x00\x00")
   let t_len = 0
   let t_need = 0
   let k = match encoding {
@@ -276,7 +281,7 @@ fn i_rem(self : Decoder) -> Int {
 }
 
 fn eoi(self : Decoder) -> Unit {
-  self.i = Buffer::new()
+  self.i = @buffer.new()
   self.i_pos = 0
   self.i_max = @int.min_value
 }
@@ -314,12 +319,12 @@ fn t_fill(k : Cont, decoder : Decoder) -> Decode {
   }
 }
 
-pub fn decode_lossy(~encoding : Encoding = UTF8, src : Buffer) -> Stream {
-  let decoder = decoder(~encoding, src)
+pub fn decode_lossy(encoding~ : Encoding = UTF8, src : @buffer.T) -> Stream {
+  let decoder = decoder(encoding~, src)
   { decoder, lossy: true }
 }
 
-pub fn decode_strict(~encoding : Encoding = UTF8, src : Buffer) -> Stream {
-  let decoder = decoder(~encoding, src)
+pub fn decode_strict(encoding~ : Encoding = UTF8, src : @buffer.T) -> Stream {
+  let decoder = decoder(encoding~, src)
   { decoder, lossy: false }
 }
