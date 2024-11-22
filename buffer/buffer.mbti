@@ -6,6 +6,8 @@ package moonbitlang/core/buffer
 type T
 impl T {
   blit(Self, Int, Self, Int, Int) -> Unit
+  from_array(Array[Byte]) -> Self
+  from_bytes(Bytes) -> Self
   is_empty(Self) -> Bool
   length(Self) -> Int
   new(size_hint~ : Int = ..) -> Self
