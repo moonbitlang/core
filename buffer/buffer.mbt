@@ -100,6 +100,20 @@ pub fn T::new(size_hint~ : Int = 0) -> T {
   { data, len: 0, initial_data: data }
 }
 
+pub fn T::from_bytes(bytes : Bytes) -> T {
+  let buf = T::new(size_hint=bytes.length())
+  buf.write_bytes(bytes)
+  buf
+}
+
+pub fn T::from_array(arr : Array[Byte]) -> T {
+  let buf = T::new(size_hint=arr.length())
+  for byte in arr {
+    buf.write_byte(byte)
+  }
+  buf
+}
+
 ///|
 /// Write a string into buffer.
 pub fn write_string(self : T, value : String) -> Unit {
