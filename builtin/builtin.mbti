@@ -47,6 +47,7 @@ type Array
 impl Array {
   append[T](Self[T], Self[T]) -> Unit
   append_fast[T](Self[T], Self[T]) -> Unit
+  appendex[T](Self[T], Self[T], Int, Int) -> Unit
   binary_search[T : Compare + Eq](Self[T], T) -> Result[Int, Int]
   binary_search_by[T](Self[T], (T) -> Int) -> Result[Int, Int]
   blit_to[A](Self[A], Self[A], len~ : Int, src_offset~ : Int = .., dst_offset~ : Int = ..) -> Unit

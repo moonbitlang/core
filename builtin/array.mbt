@@ -185,6 +185,35 @@ pub fn append_fast[T](self : Array[T], other : Array[T]) -> Unit {
 }
 
 ///|
+/// Appends select elements of other array into self
+pub fn appendex[T](
+  self : Array[T],
+  other : Array[T],
+  from : Int,
+  len : Int
+) -> Unit {
+  if from < 0 {
+    return
+  }
+  let remain = {
+    let l = other.len - from
+    if l < len {
+      len
+    } else {
+      l
+    }
+  }
+  if remain <= 0 {
+    return
+  }
+  let oldlen = self.len
+  let newLen = self.len + remain
+  self.resize_buffer(newLen)
+  self.len = newLen
+  Array::unsafe_blit(self, oldlen, other, from, remain)
+}
+
+///|
 /// like blit
 /// copy the data of length len from the 'from' position of 'other' to the offset position of 'self' and overwrite it, 
 /// which will automatically expand the size
