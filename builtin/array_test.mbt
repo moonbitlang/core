@@ -575,6 +575,13 @@ test "append_fast" {
   assert_eq!(b, [1, 3, 6, 7, 8, 9])
 }
 
+test "appendex" {
+  let b : Array[Byte] = [1, 3, 6]
+  let b2 : Array[Byte] = [7, 8, 9, 10, 11]
+  b.appendex(b2, 2, 3)
+  assert_eq!(b, [1, 3, 6, 9, 10, 11])
+}
+
 test "set" {
   let b : Array[Byte] = [1, 3, 6]
   let b2 : Array[Byte] = [4, 5, 6, 7, 8, 9]
