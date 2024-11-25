@@ -67,33 +67,64 @@ fn malformed_pair(
   Malformed(bs.to_unchecked_string(offset=0, length=bs.length()))
 }
 
-// Stream
+// Chars
 
 ///|
-struct Stream {
-  decoder : Decoder
-  lossy : Bool
-}
+type LossyChars Decoder
 
 ///|
-pub fn iter(self : Stream) -> Iter[Char] {
+pub fn iter(self : LossyChars) -> Iter[Char] {
   Iter::new(
     fn(yield_) {
-      loop self.decoder.decode() {
+      loop self._.decode() {
         Uchar(u) => {
           if yield_(u) == IterEnd {
             break IterEnd
           }
-          continue self.decoder.decode()
+          continue self._.decode()
         }
-        Malformed(s) => {
-          if not(self.lossy) {
-            abort(s)
-          }
+        Malformed(_) => {
           if yield_(U_REP) == IterEnd {
             break IterEnd
           }
-          continue self.decoder.decode()
+          continue self._.decode()
+        }
+        End => break IterEnd
+      }
+    },
+  )
+}
+
+///|
+type StrictChars Decoder
+
+///|
+type! DecodeError String
+
+///|
+pub impl Show for DecodeError with output(self, logger) {
+  match self {
+    DecodeError(err) => logger.write_string(err)
+  }
+}
+
+///|
+pub fn iter(self : StrictChars) -> Iter[Result[Char, DecodeError]] {
+  Iter::new(
+    fn(yield_) {
+      loop self._.decode() {
+        Uchar(u) => {
+          if yield_(Ok(u)) == IterEnd {
+            break IterEnd
+          }
+          continue self._.decode()
+        }
+        Malformed(s) => {
+          let err = DecodeError(s)
+          if yield_(Err(err)) == IterEnd {
+            break IterEnd
+          }
+          continue self._.decode()
         }
         End => break IterEnd
       }

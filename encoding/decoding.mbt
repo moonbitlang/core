@@ -340,13 +340,16 @@ fn t_fill(k : Cont, decoder : Decoder) -> Decode {
 }
 
 ///|
-pub fn decode_lossy(encoding~ : Encoding = UTF8, src : @buffer.T) -> Stream {
+pub fn decode_lossy(encoding~ : Encoding = UTF8, src : @buffer.T) -> LossyChars {
   let decoder = decoder(encoding~, src)
-  { decoder, lossy: true }
+  decoder
 }
 
 ///|
-pub fn decode_strict(encoding~ : Encoding = UTF8, src : @buffer.T) -> Stream {
+pub fn decode_strict(
+  encoding~ : Encoding = UTF8,
+  src : @buffer.T
+) -> StrictChars {
   let decoder = decoder(encoding~, src)
-  { decoder, lossy: false }
+  decoder
 }

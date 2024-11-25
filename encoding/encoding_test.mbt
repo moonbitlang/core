@@ -142,40 +142,37 @@ test "lossy decoding UTF16LE encoded data with UTF8" {
   )
 }
 
-// test "scrictly decoding UTF8 encoded data with UTF16LE" {
-//   let src = "跑步🏃游泳🏊"
-//   let buf = @buffer.T::new(size_hint=10)
-//   for s in src {
-//     buf.write_char(s)
-//   }
-//   inspect!(
-//     buf.to_bytes(),
-//     content=
-//       #|b"\xd1\x8d\x65\x6b\x3c\xd8\xc3\xdf\x38\x6e\xf3\x6c\x3c\xd8\xca\xdf"
-//     ,
-//   )
-//   let stream = @encoding.decode_strict(buf) // defaults to UTF8
-//   inspect!(
-//     stream.iter().collect(),
-//     content="['э', 'e', 'k', '<', '�', '�', 'n', '�', '�']",
-//   )
-// }
-//
-// test "scrictly decoding UTF16LE encoded data with UTF8" {
-//   let src = "跑步🏃游泳🏊"
-//   let buf = @buffer.T::new(size_hint=10)
-//   for s in src {
-//     buf.write_utf8_char(s)
-//   }
-//   inspect!(
-//     buf.to_bytes(),
-//     content=
-//       #|b"\xe8\xb7\x91\xe6\xad\xa5\xf0\x9f\x8f\x83\xe6\xb8\xb8\xe6\xb3\xb3\xf0\x9f\x8f\x8a"
-//     ,
-//   )
-//   let stream = @encoding.decode_strict(encoding=UTF16LE, buf)
-//   inspect!(
-//     stream.iter().collect(),
-//     content="['럨', '', 'ꖭ', '鿰', '莏', '룦', '', '뎳', '鿰', '誏']",
-//   )
-// }
+test "scrictly decoding UTF8 encoded data with UTF16LE" {
+  let src = "跑步🏃游泳🏊"
+  let buf = @buffer.T::new(size_hint=10)
+  for s in src {
+    buf.write_char(s)
+  }
+  inspect!(
+    buf.to_bytes(),
+    content=
+      #|b"\xd1\x8d\x65\x6b\x3c\xd8\xc3\xdf\x38\x6e\xf3\x6c\x3c\xd8\xca\xdf"
+    ,
+  )
+  let stream = @encoding.decode_strict(buf) // defaults to UTF8
+  inspect!(stream.iter().try_collect?(), content="Err(쏘)")
+}
+
+test "scrictly decoding UTF16LE encoded data with UTF8" {
+  let src = "跑步🏃游泳🏊"
+  let buf = @buffer.T::new(size_hint=10)
+  for s in src {
+    buf.write_utf8_char(s)
+  }
+  inspect!(
+    buf.to_bytes(),
+    content=
+      #|b"\xe8\xb7\x91\xe6\xad\xa5\xf0\x9f\x8f\x83\xe6\xb8\xb8\xe6\xb3\xb3\xf0\x9f\x8f\x8a"
+    ,
+  )
+  let stream = @encoding.decode_strict(encoding=UTF16LE, buf)
+  inspect!(
+    stream.iter().try_collect?(),
+    content="Ok(['럨', '', 'ꖭ', '鿰', '莏', '룦', '', '뎳', '鿰', '誏'])",
+  )
+}
