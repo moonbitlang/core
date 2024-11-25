@@ -56,7 +56,6 @@ pub fn parse_int64(str : String, base~ : Int = 0) -> Int64!StrConvError {
     _ => base_err!()
   }
 
-
   // calculate overflow threshold
   let overflow_threshold = overflow_threshold(num_base, neg)
 
