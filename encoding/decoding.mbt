@@ -56,7 +56,7 @@ fn decoder(encoding : Encoding, src : @buffer.T) -> Decoder {
   let t_need = 0
   let k = match encoding {
     UTF8 => decode_utf_8
-    UTF16 => decode_utf_16be // TODO: BE
+    UTF16 => decode_utf_16be
     UTF16BE => decode_utf_16be
     UTF16LE => decode_utf_16le
   }
@@ -356,5 +356,63 @@ fn r_utf_16(buf : @buffer.T, offset0 : Int, offset1 : Int) -> UTF16Decode {
     )
   } else {
     Hi(u)
+  }
+}
+
+// UTF16BE
+
+fn decode_utf_16be(self : Decoder) -> Decode {
+  let rem = self.i_rem()
+  match rem.compare(0) {
+    // rem < 0
+    -1 => Decode::End
+    // rem = 0
+    0 => self.refill(decode_utf_16be)
+    // rem > 0
+    1 => {
+      if rem < 2 {
+        self.t_need(2)
+        t_fill(t_decode_utf_16be, self)
+      } else {
+        let j = self.i_pos
+        self.i_pos = self.i_pos + 2
+        self.decode_utf_16be_lo(r_utf_16(self.i, j, (j + 1)))
+      }
+    }
+    _ => abort("unreachable")
+  }
+}
+
+fn t_decode_utf_16be(self : Decoder) -> Decode {
+  if self.t_len < self.t_need {
+    self.ret(decode_utf_16be, malformed(self.t, 0, self.t_len))
+  } else {
+    self.decode_utf_16be_lo(r_utf_16(self.t, 0, 1))
+  }
+}
+
+fn decode_utf_16be_lo(self : Decoder, decode : UTF16Decode) -> Decode {
+  match decode {
+    UTF16Uchar(x)=> self.ret(decode_utf_16be, Uchar(x))
+    UTF16Malformed(x)=> self.ret(decode_utf_16be, Malformed(x))
+    Hi(hi) => {
+      let rem = self.i_rem()
+      if rem < 2 {
+        self.t_need(2)
+        t_fill(@tuple.curry(t_decode_utf_16be_lo)(hi), self)
+      } else {
+        let j = self.i_pos
+        self.i_pos = self.i_pos + 2
+        self.ret(decode_utf_16be, r_utf_16_lo(hi, self.i, j, (j + 1)))
+      }
+    }
+  }
+}
+
+fn t_decode_utf_16be_lo(hi : Int, self : Decoder) -> Decode {
+  if self.t_len < self.t_need {
+    self.ret(decode_utf_16be, malformed_pair(true, hi, self.t, 0, self.t_len))
+  } else {
+    self.ret(decode_utf_16be, r_utf_16_lo(hi, self.t, 0, 1))
   }
 }
