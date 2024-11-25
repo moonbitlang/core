@@ -16,7 +16,6 @@
 const U_REP = '\u{FFFD}'
 
 ///|
-// consider const
 let utf_8_len = [
   1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
   1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
@@ -29,6 +28,140 @@ let utf_8_len = [
   2, 2, 2, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 4, 4, 4,
   4, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 ]
+
+///|
+pub fn decode_lossy(encoding~ : Encoding = UTF8, src : @buffer.T) -> LossyChars {
+  let decoder = decoder(encoding~, src)
+  decoder
+}
+
+///|
+pub fn decode_strict(
+  encoding~ : Encoding = UTF8,
+  src : @buffer.T
+) -> StrictChars {
+  let decoder = decoder(encoding~, src)
+  decoder
+}
+
+// Implements
+
+///|
+fn decoder(encoding~ : Encoding, src : @buffer.T) -> Decoder {
+  let i = src
+  let i_pos = 0
+  let i_max = src.length() - 1
+  let t = @buffer.from_bytes(b"\x00\x00\x00\x00")
+  let t_len = 0
+  let t_need = 0
+  let k = match encoding {
+    UTF8 => decode_utf_8
+    UTF16 => decode_utf_16be // TODO: BE
+    UTF16BE => decode_utf_16be
+    UTF16LE => decode_utf_16le
+  }
+  { i, i_pos, i_max, t, t_len, t_need, k }
+}
+
+///|
+fn decode(self : Decoder) -> Decode {
+  (self.k)(self)
+}
+
+///|
+fn ret(self : Decoder, k : Cont, v : Decode) -> Decode {
+  self.k = k
+  v
+}
+
+///|
+fn i_rem(self : Decoder) -> Int {
+  self.i_max - self.i_pos + 1
+}
+
+///|
+fn eoi(self : Decoder) -> Unit {
+  self.i = @buffer.new()
+  self.i_pos = 0
+  self.i_max = @int.min_value
+}
+
+///|
+fn refill(self : Decoder, k : Cont) -> Decode {
+  // only Buffer
+  self.eoi()
+  k(self)
+}
+
+///|
+fn t_need(self : Decoder, need : Int) -> Unit {
+  self.t_len = 0
+  self.t_need = need
+}
+
+///|
+fn t_fill(k : Cont, decoder : Decoder) -> Decode {
+  fn blit(decoder : Decoder, l : Int) -> Unit {
+    decoder.i.blit(decoder.i_pos, decoder.t, decoder.t_len, l)
+    decoder.i_pos = decoder.i_pos + 1
+    decoder.t_len = decoder.t_len + 1
+  }
+
+  let rem = decoder.i_rem()
+  if rem < 0 { // eoi
+    k(decoder)
+  } else {
+    let need = decoder.t_need - decoder.t_len
+    if rem < need {
+      blit(decoder, rem)
+      decoder.refill(@tuple.curry(t_fill)(k))
+    } else {
+      blit(decoder, need)
+      k(decoder)
+    }
+  }
+}
+
+// UTF8
+
+///|
+fn decode_utf_8(self : Decoder) -> Decode {
+  let rem = self.i_rem()
+  match rem.compare(0) {
+    // rem < 0
+    -1 => Decode::End
+    // rem = 0
+    0 => self.refill(decode_utf_8)
+    // rem > 0
+    1 => {
+      let idx = self.i[self.i_pos].to_int()
+      let need = utf_8_len[idx]
+      if rem < need {
+        self.t_need(need)
+        t_fill(t_decode_utf_8, self)
+      } else {
+        let j = self.i_pos
+        if need == 0 {
+          self.i_pos = self.i_pos + 1
+          self.ret(decode_utf_8, malformed(self.i, j, 1))
+        } else {
+          self.i_pos = self.i_pos + need
+          self.ret(decode_utf_8, r_utf_8(self.i, j, need))
+        }
+      }
+    }
+    _ => abort("unreachable")
+  }
+}
+
+///|
+fn t_decode_utf_8(self : Decoder) -> Decode {
+  if self.t_len < self.t_need {
+    malformed(self.t, 0, self.t_len)
+  } else {
+    r_utf_8(self.t, 0, self.t_len)
+  }
+}
 
 ///|
 fn r_utf_8(buf : @buffer.T, offset : Int, length : Int) -> Decode {
@@ -115,72 +248,7 @@ fn r_utf_8(buf : @buffer.T, offset : Int, length : Int) -> Decode {
   }
 }
 
-///|
-fn r_utf_16(buf : @buffer.T, offset0 : Int, offset1 : Int) -> UTF16Decode {
-  let b0 = buf[offset0].to_int()
-  let b1 = buf[offset1].to_int()
-  let u = (b0 << 8) | b1
-  if u < 0xD800 || u > 0xDFFF {
-    UTF16Uchar(Char::from_int(u))
-  } else if u > 0xDBFF {
-    UTF16Malformed(
-      buf.to_unchecked_string(offset=@int.minimum(offset0, offset1), length=2),
-    )
-  } else {
-    Hi(u)
-  }
-}
-
-///|
-fn r_utf_16_lo(
-  hi : Int,
-  buf : @buffer.T,
-  offset0 : Int,
-  offset1 : Int
-) -> Decode {
-  let b0 = buf[offset0].to_int()
-  let b1 = buf[offset1].to_int()
-  let lo = (b0 << 8) | b1
-  if lo < 0xDC00 || lo > 0xDFFF {
-    malformed_pair(
-      offset0 < offset1,
-      hi,
-      buf,
-      @int.minimum(offset0, offset1),
-      2,
-    )
-  } else {
-    Uchar(Char::from_int(((hi & 0x3FF) << 10) | ((lo & 0x3FF) + 0x10000)))
-  }
-}
-
-///|
-fn decode(self : Decoder) -> Decode {
-  (self.k)(self)
-}
-
-///|
-fn decoder(encoding~ : Encoding, src : @buffer.T) -> Decoder {
-  let i = src
-  let i_pos = 0
-  let i_max = src.length() - 1
-  let t = @buffer.from_bytes(b"\x00\x00\x00\x00")
-  let t_len = 0
-  let t_need = 0
-  let k = match encoding {
-    UTF8 => decode_utf_8
-    UTF16 => decode_utf_16le
-    UTF16BE => decode_utf_16le
-    UTF16LE => decode_utf_16le
-  }
-  { i, i_pos, i_max, t, t_len, t_need, k }
-}
-
-///|
-fn ret(self : Decoder, k : Cont, v : Decode) -> Decode {
-  self.k = k
-  v
-}
+// UTF16LE
 
 ///|
 priv enum UTF16Decode {
@@ -190,14 +258,25 @@ priv enum UTF16Decode {
 }
 
 ///|
-fn t_decode_utf_16le_lo(hi : Int, decoder : Decoder) -> Decode {
-  if decoder.t_len < decoder.t_need {
-    decoder.ret(
-      decode_utf_16le,
-      malformed_pair(false, hi, decoder.t, 0, decoder.t_len),
-    )
-  } else {
-    decoder.ret(decode_utf_16le, r_utf_16_lo(hi, decoder.t, 1, 0))
+fn decode_utf_16le(self : Decoder) -> Decode {
+  let rem = self.i_rem()
+  match rem.compare(0) {
+    // rem < 0
+    -1 => Decode::End
+    // rem = 0
+    0 => self.refill(decode_utf_16le)
+    // rem > 0
+    1 =>
+      if rem < 2 {
+        self.t_need(2)
+        t_fill(t_decode_utf_16le, self)
+      } else {
+        let j = self.i_pos
+        self.i_pos = self.i_pos + 2
+        // mark
+        self.decode_utf_16le_lo(r_utf_16(self.i, j + 1, j))
+      }
+    _ => abort("unreachable")
   }
 }
 
@@ -230,126 +309,52 @@ fn decode_utf_16le_lo(self : Decoder, v : UTF16Decode) -> Decode {
 }
 
 ///|
-fn decode_utf_16le(self : Decoder) -> Decode {
-  let rem = self.i_rem()
-  match rem.compare(0) {
-    // rem < 0
-    -1 => Decode::End
-    // rem = 0
-    0 => self.refill(decode_utf_16le)
-    // rem > 0
-    1 =>
-      if rem < 2 {
-        self.t_need(2)
-        t_fill(t_decode_utf_16le, self)
-      } else {
-        let j = self.i_pos
-        self.i_pos = self.i_pos + 2
-        // mark
-        self.decode_utf_16le_lo(r_utf_16(self.i, j + 1, j))
-      }
-    _ => abort("unreachable")
-  }
-}
-
-///|
-fn t_decode_utf_8(self : Decoder) -> Decode {
-  if self.t_len < self.t_need {
-    malformed(self.t, 0, self.t_len)
+fn t_decode_utf_16le_lo(hi : Int, decoder : Decoder) -> Decode {
+  if decoder.t_len < decoder.t_need {
+    decoder.ret(
+      decode_utf_16le,
+      malformed_pair(false, hi, decoder.t, 0, decoder.t_len),
+    )
   } else {
-    r_utf_8(self.t, 0, self.t_len)
+    decoder.ret(decode_utf_16le, r_utf_16_lo(hi, decoder.t, 1, 0))
   }
 }
 
 ///|
-fn decode_utf_8(self : Decoder) -> Decode {
-  let rem = self.i_rem()
-  match rem.compare(0) {
-    // rem < 0
-    -1 => Decode::End
-    // rem = 0
-    0 => self.refill(decode_utf_8)
-    // rem > 0
-    1 => {
-      let idx = self.i[self.i_pos].to_int()
-      let need = utf_8_len[idx]
-      if rem < need {
-        self.t_need(need)
-        t_fill(t_decode_utf_8, self)
-      } else {
-        let j = self.i_pos
-        if need == 0 {
-          self.i_pos = self.i_pos + 1
-          self.ret(decode_utf_8, malformed(self.i, j, 1))
-        } else {
-          self.i_pos = self.i_pos + need
-          self.ret(decode_utf_8, r_utf_8(self.i, j, need))
-        }
-      }
-    }
-    _ => abort("unreachable")
-  }
-}
-
-///|
-fn i_rem(self : Decoder) -> Int {
-  self.i_max - self.i_pos + 1
-}
-
-///|
-fn eoi(self : Decoder) -> Unit {
-  self.i = @buffer.new()
-  self.i_pos = 0
-  self.i_max = @int.min_value
-}
-
-///|
-fn refill(self : Decoder, k : Cont) -> Decode {
-  // only Buffer
-  self.eoi()
-  k(self)
-}
-
-///|
-fn t_need(self : Decoder, need : Int) -> Unit {
-  self.t_len = 0
-  self.t_need = need
-}
-
-///|
-fn t_fill(k : Cont, decoder : Decoder) -> Decode {
-  fn blit(decoder : Decoder, l : Int) -> Unit {
-    decoder.i.blit(decoder.i_pos, decoder.t, decoder.t_len, l)
-    decoder.i_pos = decoder.i_pos + 1
-    decoder.t_len = decoder.t_len + 1
-  }
-
-  let rem = decoder.i_rem()
-  if rem < 0 { // eoi
-    k(decoder)
+fn r_utf_16_lo(
+  hi : Int,
+  buf : @buffer.T,
+  offset0 : Int,
+  offset1 : Int
+) -> Decode {
+  let b0 = buf[offset0].to_int()
+  let b1 = buf[offset1].to_int()
+  let lo = (b0 << 8) | b1
+  if lo < 0xDC00 || lo > 0xDFFF {
+    malformed_pair(
+      offset0 < offset1,
+      hi,
+      buf,
+      @int.minimum(offset0, offset1),
+      2,
+    )
   } else {
-    let need = decoder.t_need - decoder.t_len
-    if rem < need {
-      blit(decoder, rem)
-      decoder.refill(@tuple.curry(t_fill)(k))
-    } else {
-      blit(decoder, need)
-      k(decoder)
-    }
+    Uchar(Char::from_int(((hi & 0x3FF) << 10) | ((lo & 0x3FF) + 0x10000)))
   }
 }
 
 ///|
-pub fn decode_lossy(encoding~ : Encoding = UTF8, src : @buffer.T) -> LossyChars {
-  let decoder = decoder(encoding~, src)
-  decoder
-}
-
-///|
-pub fn decode_strict(
-  encoding~ : Encoding = UTF8,
-  src : @buffer.T
-) -> StrictChars {
-  let decoder = decoder(encoding~, src)
-  decoder
+fn r_utf_16(buf : @buffer.T, offset0 : Int, offset1 : Int) -> UTF16Decode {
+  let b0 = buf[offset0].to_int()
+  let b1 = buf[offset1].to_int()
+  let u = (b0 << 8) | b1
+  if u < 0xD800 || u > 0xDFFF {
+    UTF16Uchar(Char::from_int(u))
+  } else if u > 0xDBFF {
+    UTF16Malformed(
+      buf.to_unchecked_string(offset=@int.minimum(offset0, offset1), length=2),
+    )
+  } else {
+    Hi(u)
+  }
 }
