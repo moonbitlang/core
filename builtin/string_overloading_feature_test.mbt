@@ -18,14 +18,14 @@ trait FromString {
 }
 
 ///|
-type MyInt Int
+type MyInt Int derive(Show)
 
 ///|
 // _ allow in names
 impl FromString for MyInt with from_string(_s) { 0 }
 
 ///|
-type MyString String
+type MyString String derive(Show)
 
 ///|
 impl FromString for MyString with from_string(_s) { "" }
@@ -43,6 +43,12 @@ fn need_string(_x : MyString) -> Unit {
 test {
   let u0 : MyString = FromString::from_string("")
   let u1 : MyInt = FromString::from_string("")
+  inspect!(
+    (u0, u1),
+    content=
+      #|(MyString(""), MyInt(0))
+    ,
+  )
   need_int(FromString::from_string(""))
   need_string(FromString::from_string(""))
   let z = FromString::from_string("")
