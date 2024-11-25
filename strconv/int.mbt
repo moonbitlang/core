@@ -66,9 +66,9 @@ pub fn parse_int64(str : String, base~ : Int = 0) -> Int64!StrConvError {
     let mut d = 0
     match c {
       '_' => continue
-      '0'..='9' => d = c.to_int() - '0'.to_int()
-      'a'..='z' => d = c.to_int() - 'a'.to_int() + 10
-      'A'..='Z' => d = c.to_int() - 'A'.to_int() + 10
+      '0'..='9' => d = c - '0'
+      'a'..='z' => d = c - 'a' + 10
+      'A'..='Z' => d = c - 'A' + 10
       _ => syntax_err!()
     }
     if d >= num_base {

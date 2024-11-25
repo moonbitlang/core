@@ -420,6 +420,7 @@ impl Char {
   default() -> Char
   from_int(Int) -> Char
   op_equal(Char, Char) -> Bool
+  op_sub(Char, Char) -> Int
   to_int(Char) -> Int
   to_json(Char) -> Json
   to_string(Char) -> String
