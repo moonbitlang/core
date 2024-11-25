@@ -154,6 +154,14 @@ pub fn op_add[T](self : Array[T], other : Array[T]) -> Array[T] {
   result
 }
 
+/// TODO: could be made more efficient doing direct mem.copy
+// pub fn append[T](self : Array[T], other : Array[T]) -> Unit {
+//   self.reserve_capacity(self.length() + other.length())
+//   for v in other {
+//     self.push(v)
+//   }
+// }
+
 ///|
 /// Appends all the elements of other array into self
 ///
@@ -163,41 +171,19 @@ pub fn op_add[T](self : Array[T], other : Array[T]) -> Array[T] {
 /// let v2 = [6, 7, 8]
 /// v1.append(v2)
 /// ```
-/// TODO: could be made more efficient doing direct mem.copy
-pub fn append[T](self : Array[T], other : Array[T]) -> Unit {
-  self.reserve_capacity(self.length() + other.length())
-  for v in other {
-    self.push(v)
-  }
-}
-
-///|
-/// like append but faster than append implementation
-pub fn append_fast[T](self : Array[T], other : Array[T]) -> Unit {
-  if other.len == 0 {
-    return
-  }
-  let oldlen = self.len
-  let newLen = self.len + other.len
-  self.resize_buffer(newLen)
-  self.len = newLen
-  Array::unsafe_blit(self, oldlen, other, 0, other.len)
-}
-
-///|
-/// Appends select elements of other array into self
-pub fn appendex[T](
+pub fn append[T](
   self : Array[T],
   other : Array[T],
-  from : Int,
-  len : Int
+  from~ : Int = 0,
+  len~ : Int = 0
 ) -> Unit {
   if from < 0 {
     return
   }
+  let len = if len <= 0 { other.len } else { len }
   let remain = {
     let l = other.len - from
-    if l < len {
+    if l > len {
       len
     } else {
       l
@@ -224,22 +210,7 @@ pub fn set[T](
   from : Int,
   len : Int
 ) -> Unit {
-  if other.len == 0 {
-    return
-  }
-  let remain = other.len - from
-  if remain == 0 {
-    return
-  }
-  let len = if len >= remain { remain } else { len }
-  let offset = if offset < 0 || offset >= self.len { self.len } else { offset }
-  let oldlen = self.len
-  let newlen = offset + len
-  if oldlen < newlen {
-    self.resize_buffer(newlen)
-    self.len = newlen
-  }
-  Array::unsafe_blit(self, offset, other, from, len)
+  other.blit_to(self, len~, src_offset=from, dst_offset=offset)
 }
 
 ///|

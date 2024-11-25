@@ -571,14 +571,11 @@ test "array_dedup - edge cases" {
 test "append_fast" {
   let b : Array[Byte] = [1, 3, 6]
   let b2 : Array[Byte] = [7, 8, 9]
-  b.append_fast(b2)
+  b.append(b2)
   assert_eq!(b, [1, 3, 6, 7, 8, 9])
-}
-
-test "appendex" {
   let b : Array[Byte] = [1, 3, 6]
   let b2 : Array[Byte] = [7, 8, 9, 10, 11]
-  b.appendex(b2, 2, 3)
+  b.append(b2, from=2, len=3)
   assert_eq!(b, [1, 3, 6, 9, 10, 11])
 }
 

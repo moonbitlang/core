@@ -47,6 +47,24 @@ pub fn Array::unsafe_blit_fixed[A](
 }
 
 ///|
+// pub fn Array::blit_to[A](
+//   self : Array[A],
+//   dst : Array[A],
+//   len~ : Int,
+//   src_offset~ : Int = 0,
+//   dst_offset~ : Int = 0
+// ) -> Unit {
+//   guard len >= 0 &&
+//     dst_offset >= 0 &&
+//     src_offset >= 0 &&
+//     dst_offset + len <= dst.length() &&
+//     src_offset + len <= self.length()
+//   Array::unsafe_blit(dst, dst_offset, self, src_offset, len)
+// }
+
+///| 
+/// automatic expansion
+/// if dst_offset <0 || dst_offset>=dst.len will append
 pub fn Array::blit_to[A](
   self : Array[A],
   dst : Array[A],
@@ -54,11 +72,28 @@ pub fn Array::blit_to[A](
   src_offset~ : Int = 0,
   dst_offset~ : Int = 0
 ) -> Unit {
-  guard len >= 0 &&
-    dst_offset >= 0 &&
-    src_offset >= 0 &&
-    dst_offset + len <= dst.length() &&
-    src_offset + len <= self.length()
+  if self.len == 0 || src_offset >= self.len || src_offset < 0 {
+    return
+  }
+  let len = {
+    let remain = self.len - src_offset
+    if len >= remain {
+      remain
+    } else {
+      len
+    }
+  }
+  let oldlen = dst.len
+  let dst_offset = if dst_offset < 0 || dst_offset >= oldlen {
+    dst.len
+  } else {
+    dst_offset
+  }
+  let newlen = dst_offset + len
+  if oldlen < newlen {
+    dst.resize_buffer(newlen)
+    dst.len = newlen
+  }
   Array::unsafe_blit(dst, dst_offset, self, src_offset, len)
 }
 
