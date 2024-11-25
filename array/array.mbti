@@ -23,7 +23,7 @@ impl FixedArray {
   foldi[A, B](Self[A], init~ : B, (Int, B, A) -> B) -> B
   from_array[T](Array[T]) -> Self[T]
   from_iter[T](Iter[T]) -> Self[T]
-  is_sorted[T : Compare + Eq](Self[T]) -> Bool
+  is_sorted[T : Compare](Self[T]) -> Bool
   last[A](Self[A]) -> A?
   makei[T](Int, (Int) -> T) -> Self[T]
   map[T, U](Self[T], (T) -> U) -> Self[U]
@@ -39,10 +39,10 @@ impl FixedArray {
   rev_foldi[A, B](Self[A], init~ : B, (Int, B, A) -> B) -> B
   rev_inplace[T](Self[T]) -> Unit
   search[T : Eq](Self[T], T) -> Int?
-  sort[T : Compare + Eq](Self[T]) -> Unit
+  sort[T : Compare](Self[T]) -> Unit
   sort_by[T](Self[T], (T, T) -> Int) -> Unit
-  sort_by_key[T, K : Compare + Eq](Self[T], (T) -> K) -> Unit
-  stable_sort[T : Compare + Eq](Self[T]) -> Unit
+  sort_by_key[T, K : Compare](Self[T], (T) -> K) -> Unit
+  stable_sort[T : Compare](Self[T]) -> Unit
   starts_with[T : Eq](Self[T], Self[T]) -> Bool
 }
 
@@ -58,9 +58,9 @@ impl Array {
   push_iter[T](Self[T], Iter[T]) -> Unit
   shuffle[T](Self[T], rand~ : (Int) -> Int) -> Self[T]
   shuffle_in_place[T](Self[T], rand~ : (Int) -> Int) -> Unit
-  sort[T : Compare + Eq](Self[T]) -> Unit
+  sort[T : Compare](Self[T]) -> Unit
   sort_by[T](Self[T], (T, T) -> Int) -> Unit
-  sort_by_key[T, K : Compare + Eq](Self[T], (T) -> K) -> Unit
+  sort_by_key[T, K : Compare](Self[T], (T) -> K) -> Unit
 }
 
 

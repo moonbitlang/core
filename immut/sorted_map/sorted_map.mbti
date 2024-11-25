@@ -8,31 +8,31 @@ alias @moonbitlang/core/quickcheck as @quickcheck
 // Types and methods
 type T
 impl T {
-  add[K : Compare + Eq, V](Self[K, V], K, V) -> Self[K, V]
-  contains[K : Compare + Eq, V](Self[K, V], K) -> Bool
+  add[K : Compare, V](Self[K, V], K, V) -> Self[K, V]
+  contains[K : Compare, V](Self[K, V], K) -> Bool
   each[K, V](Self[K, V], (K, V) -> Unit) -> Unit
   eachi[K, V](Self[K, V], (Int, K, V) -> Unit) -> Unit
   elems[K, V](Self[K, V]) -> Array[V]
   empty[K, V]() -> Self[K, V]
-  filter[K : Compare + Eq, V](Self[K, V], (V) -> Bool) -> Self[K, V]
-  filter_with_key[K : Compare + Eq, V](Self[K, V], (K, V) -> Bool) -> Self[K, V]
+  filter[K : Compare, V](Self[K, V], (V) -> Bool) -> Self[K, V]
+  filter_with_key[K : Compare, V](Self[K, V], (K, V) -> Bool) -> Self[K, V]
   fold[K, V, A](Self[K, V], init~ : A, (A, V) -> A) -> A
   foldl_with_key[K, V, A](Self[K, V], (A, K, V) -> A, init~ : A) -> A
   foldr_with_key[K, V, A](Self[K, V], (A, K, V) -> A, init~ : A) -> A
-  from_array[K : Compare + Eq, V](Array[(K, V)]) -> Self[K, V]
-  from_iter[K : Compare + Eq, V](Iter[(K, V)]) -> Self[K, V]
+  from_array[K : Compare, V](Array[(K, V)]) -> Self[K, V]
+  from_iter[K : Compare, V](Iter[(K, V)]) -> Self[K, V]
   from_json[V : @json.FromJson](Json) -> Self[String, V]!@json.JsonDecodeError
-  insert[K : Compare + Eq, V](Self[K, V], K, V) -> Self[K, V] //deprecated
+  insert[K : Compare, V](Self[K, V], K, V) -> Self[K, V] //deprecated
   is_empty[K, V](Self[K, V]) -> Bool
   iter[K, V](Self[K, V]) -> Iter[(K, V)]
   iter2[K, V](Self[K, V]) -> Iter2[K, V]
   keys[K, V](Self[K, V]) -> Array[K]
-  lookup[K : Compare + Eq, V](Self[K, V], K) -> V?
+  lookup[K : Compare, V](Self[K, V], K) -> V?
   map[K, X, Y](Self[K, X], (X) -> Y) -> Self[K, Y]
   map_with_key[K, X, Y](Self[K, X], (K, X) -> Y) -> Self[K, Y]
-  of[K : Compare + Eq, V](FixedArray[(K, V)]) -> Self[K, V]
-  op_get[K : Compare + Eq, V](Self[K, V], K) -> V?
-  remove[K : Compare + Eq, V](Self[K, V], K) -> Self[K, V]
+  of[K : Compare, V](FixedArray[(K, V)]) -> Self[K, V]
+  op_get[K : Compare, V](Self[K, V], K) -> V?
+  remove[K : Compare, V](Self[K, V], K) -> Self[K, V]
   singleton[K, V](K, V) -> Self[K, V]
   size[K, V](Self[K, V]) -> Int
   to_array[K, V](Self[K, V]) -> Array[(K, V)]
@@ -44,7 +44,7 @@ impl[K : Hash, V : Hash] Hash for T[K, V]
 impl[K : Show, V : Show] Show for T[K, V]
 impl[K : Show, V : ToJson] ToJson for T[K, V]
 impl[V : @json.FromJson] @json.FromJson for T[String, V]
-impl[K : @quickcheck.Arbitrary + Compare + Eq, V : @quickcheck.Arbitrary] @quickcheck.Arbitrary for T[K, V]
+impl[K : @quickcheck.Arbitrary + Compare, V : @quickcheck.Arbitrary] @quickcheck.Arbitrary for T[K, V]
 
 // Type aliases
 
