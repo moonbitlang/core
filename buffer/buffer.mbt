@@ -209,11 +209,15 @@ pub fn to_array(self : T) -> Array[Byte] {
 
 ///|
 pub fn op_set(self : T, index : Int, value : Byte) -> Unit {
+  let len = self.length()
+  guard index >= 0 && index < len
   self.data[index] = value
 }
 
 ///|
 pub fn op_get(self : T, index : Int) -> Byte {
+  let len = self.length()
+  guard index >= 0 && index < len
   self.data[index]
 }
 
