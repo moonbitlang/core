@@ -135,7 +135,7 @@ test "lossy decoding UTF16LE encoded data with UTF8" {
       #|b"\xe8\xb7\x91\xe6\xad\xa5\xf0\x9f\x8f\x83\xe6\xb8\xb8\xe6\xb3\xb3\xf0\x9f\x8f\x8a"
     ,
   )
-  let stream = @encoding.decode_lossy(encoding=UTF16LE, buf) // defaults to UTF8
+  let stream = @encoding.decode_lossy(encoding=UTF16LE, buf)
   inspect!(
     stream.iter().collect(),
     content="['럨', '', 'ꖭ', '鿰', '莏', '룦', '', '뎳', '鿰', '誏']",
