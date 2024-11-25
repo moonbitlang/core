@@ -30,24 +30,24 @@ let utf_8_len = [
 ]
 
 ///|
-pub fn decode_lossy(encoding~ : Encoding = UTF8, src : @buffer.T) -> LossyChars {
-  let decoder = decoder(encoding~, src)
+pub fn decode_lossy(encoding : Encoding, src : @buffer.T) -> LossyChars {
+  let decoder = decoder(encoding, src)
   decoder
 }
 
 ///|
 pub fn decode_strict(
-  encoding~ : Encoding = UTF8,
+  encoding : Encoding,
   src : @buffer.T
 ) -> StrictChars {
-  let decoder = decoder(encoding~, src)
+  let decoder = decoder(encoding, src)
   decoder
 }
 
 // Implements
 
 ///|
-fn decoder(encoding~ : Encoding, src : @buffer.T) -> Decoder {
+fn decoder(encoding : Encoding, src : @buffer.T) -> Decoder {
   let i = src
   let i_pos = 0
   let i_max = src.length() - 1
