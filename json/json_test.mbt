@@ -372,12 +372,7 @@ test "stringify number" {
       Ok(newjson) => assert_eq!(newjson, json)
     }
   }
-  inspect!(
-    err,
-    content=
-      "[]"
-    ,
-  )
+  inspect!(err, content="[]")
 }
 
 test "stringify with indent" {
