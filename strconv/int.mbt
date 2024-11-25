@@ -45,16 +45,17 @@ pub fn parse_int64(str : String, base~ : Int = 0) -> Int64!StrConvError {
 
   // determine base
   let mut num_base = 10
-  if base == 0 {
-    num_base = determine_base(s)
-    if num_base != 10 {
-      s = s.substring(start=2)
+  match base {
+    0 => {
+      num_base = determine_base(s)
+      if num_base != 10 {
+        s = s.substring(start=2)
+      }
     }
-  } else if 2 <= base && base <= 36 {
-    num_base = base
-  } else {
-    base_err!()
+    2..=36 => num_base = base
+    _ => base_err!()
   }
+
 
   // calculate overflow threshold
   let overflow_threshold = overflow_threshold(num_base, neg)
