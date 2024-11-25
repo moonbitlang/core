@@ -17,7 +17,7 @@ impl T {
   to_array(Self) -> Array[Byte]
   to_bytes(Self) -> Bytes
   to_string(Self) -> String //deprecated
-  to_unchecked_string(Self, offset~ : Int = .., length~ : Int = ..) -> String
+  to_unchecked_string(Self, offset? : Int, length? : Int) -> String
   write_byte(Self, Byte) -> Unit
   write_bytes(Self, Bytes) -> Unit
   write_char(Self, Char) -> Unit
