@@ -246,6 +246,7 @@ impl Iter {
   tap[T](Self[T], (T) -> Unit) -> Self[T] //deprecated
   to_array[T](Self[T]) -> Array[T]
   to_string[T : Show](Self[T]) -> String
+  try_collect[T, E : Error](Self[Result[T, E]]) -> Array[T]!E
 }
 impl[T : Show] Show for Iter[T]
 
