@@ -193,7 +193,7 @@ pub fn append[T](
     return
   }
   let oldlen = self.len
-  let newLen = self.len + remain
+  let newLen = oldlen + remain
   self.resize_buffer(newLen)
   self.len = newLen
   Array::unsafe_blit(self, oldlen, other, from, remain)
