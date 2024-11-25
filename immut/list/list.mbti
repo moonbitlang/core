@@ -60,8 +60,8 @@ impl T {
   lookup[A : Eq, B](Self[(A, B)], A) -> B?
   map[A, B](Self[A], (A) -> B) -> Self[B]
   mapi[A, B](Self[A], (Int, A) -> B) -> Self[B]
-  maximum[A : Compare + Eq](Self[A]) -> A?
-  minimum[A : Compare + Eq](Self[A]) -> A?
+  maximum[A : Compare](Self[A]) -> A?
+  minimum[A : Compare](Self[A]) -> A?
   nth[A](Self[A], Int) -> A?
   nth_exn[A](Self[A], Int) -> A //deprecated
   of[A](FixedArray[A]) -> Self[A]
@@ -76,7 +76,7 @@ impl T {
   rev_map[A, B](Self[A], (A) -> B) -> Self[B]
   scan_left[A, E](Self[A], (E, A) -> E, init~ : E) -> Self[E]
   scan_right[A, B](Self[A], (A, B) -> B, init~ : B) -> Self[B]
-  sort[A : Compare + Eq](Self[A]) -> Self[A]
+  sort[A : Compare](Self[A]) -> Self[A]
   tail[A](Self[A]) -> Self[A]
   take[A](Self[A], Int) -> Self[A]
   take_while[A](Self[A], (A) -> Bool) -> Self[A]
@@ -85,8 +85,8 @@ impl T {
   to_string[A : Show](Self[A]) -> String
   unsafe_head[A](Self[A]) -> A
   unsafe_last[A](Self[A]) -> A
-  unsafe_maximum[A : Compare + Eq](Self[A]) -> A
-  unsafe_minimum[A : Compare + Eq](Self[A]) -> A
+  unsafe_maximum[A : Compare](Self[A]) -> A
+  unsafe_minimum[A : Compare](Self[A]) -> A
   unsafe_nth[A](Self[A], Int) -> A
   zip[A, B](Self[A], Self[B]) -> Self[(A, B)]?
 }

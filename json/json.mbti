@@ -13,7 +13,6 @@ fn valid(String) -> Bool
 pub(all) type! JsonDecodeError (JsonPath, String)
 impl JsonDecodeError {
   op_equal(Self, Self) -> Bool
-  to_string(Self) -> String
 }
 impl Eq for JsonDecodeError
 impl Show for JsonDecodeError

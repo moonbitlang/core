@@ -8,48 +8,48 @@ alias @moonbitlang/core/quickcheck as @quickcheck
 // Types and methods
 type T
 impl T {
-  add[A : Compare + Eq](Self[A], A) -> Self[A]
-  all[A : Compare + Eq](Self[A], (A) -> Bool) -> Bool
-  any[A : Compare + Eq](Self[A], (A) -> Bool) -> Bool
-  contains[A : Compare + Eq](Self[A], A) -> Bool
+  add[A : Compare](Self[A], A) -> Self[A]
+  all[A : Compare](Self[A], (A) -> Bool) -> Bool
+  any[A : Compare](Self[A], (A) -> Bool) -> Bool
+  contains[A : Compare](Self[A], A) -> Bool
   default[A : Default]() -> Self[A]
-  diff[A : Compare + Eq](Self[A], Self[A]) -> Self[A] //deprecated
-  difference[A : Compare + Eq](Self[A], Self[A]) -> Self[A]
-  disjoint[A : Compare + Eq](Self[A], Self[A]) -> Bool
+  diff[A : Compare](Self[A], Self[A]) -> Self[A] //deprecated
+  difference[A : Compare](Self[A], Self[A]) -> Self[A]
+  disjoint[A : Compare](Self[A], Self[A]) -> Bool
   each[A](Self[A], (A) -> Unit) -> Unit
-  filter[A : Compare + Eq](Self[A], (A) -> Bool) -> Self[A]
-  fold[A : Compare + Eq, B](Self[A], init~ : B, (B, A) -> B) -> B
-  from_array[A : Compare + Eq](Array[A]) -> Self[A]
-  from_iter[A : Compare + Eq](Iter[A]) -> Self[A]
-  from_json[A : @json.FromJson + Compare + Eq](Json) -> Self[A]!@json.JsonDecodeError
-  inter[A : Compare + Eq](Self[A], Self[A]) -> Self[A] //deprecated
-  intersection[A : Compare + Eq](Self[A], Self[A]) -> Self[A]
-  is_empty[A : Compare + Eq](Self[A]) -> Bool
+  filter[A : Compare](Self[A], (A) -> Bool) -> Self[A]
+  fold[A : Compare, B](Self[A], init~ : B, (B, A) -> B) -> B
+  from_array[A : Compare](Array[A]) -> Self[A]
+  from_iter[A : Compare](Iter[A]) -> Self[A]
+  from_json[A : @json.FromJson + Compare](Json) -> Self[A]!@json.JsonDecodeError
+  inter[A : Compare](Self[A], Self[A]) -> Self[A] //deprecated
+  intersection[A : Compare](Self[A], Self[A]) -> Self[A]
+  is_empty[A : Compare](Self[A]) -> Bool
   iter[A](Self[A]) -> Iter[A]
-  map[A : Compare + Eq, B : Compare + Eq](Self[A], (A) -> B) -> Self[B]
-  max[A : Compare + Eq](Self[A]) -> A
-  max_option[A : Compare + Eq](Self[A]) -> A?
-  min[A : Compare + Eq](Self[A]) -> A
-  min_option[A : Compare + Eq](Self[A]) -> A?
+  map[A : Compare, B : Compare](Self[A], (A) -> B) -> Self[B]
+  max[A : Compare](Self[A]) -> A
+  max_option[A : Compare](Self[A]) -> A?
+  min[A : Compare](Self[A]) -> A
+  min_option[A : Compare](Self[A]) -> A?
   new[A]() -> Self[A]
-  of[A : Compare + Eq](FixedArray[A]) -> Self[A]
-  remove[A : Compare + Eq](Self[A], A) -> Self[A]
-  remove_min[A : Compare + Eq](Self[A]) -> Self[A]
-  singleton[A : Compare + Eq](A) -> Self[A]
-  split[A : Compare + Eq](Self[A], A) -> (Self[A], Bool, Self[A])
-  subset[A : Compare + Eq](Self[A], Self[A]) -> Bool
-  to_array[A : Compare + Eq](Self[A]) -> Array[A]
+  of[A : Compare](FixedArray[A]) -> Self[A]
+  remove[A : Compare](Self[A], A) -> Self[A]
+  remove_min[A : Compare](Self[A]) -> Self[A]
+  singleton[A : Compare](A) -> Self[A]
+  split[A : Compare](Self[A], A) -> (Self[A], Bool, Self[A])
+  subset[A : Compare](Self[A], Self[A]) -> Bool
+  to_array[A : Compare](Self[A]) -> Array[A]
   to_json[A : ToJson](Self[A]) -> Json
   to_string[A : Show](Self[A]) -> String
-  union[A : Compare + Eq](Self[A], Self[A]) -> Self[A]
+  union[A : Compare](Self[A], Self[A]) -> Self[A]
 }
 impl[A : Default] Default for T[A]
 impl[A : Eq] Eq for T[A]
 impl[A : Hash] Hash for T[A]
 impl[A : Show] Show for T[A]
 impl[A : ToJson] ToJson for T[A]
-impl[A : @json.FromJson + Compare + Eq] @json.FromJson for T[A]
-impl[X : @quickcheck.Arbitrary + Compare + Eq] @quickcheck.Arbitrary for T[X]
+impl[A : @json.FromJson + Compare] @json.FromJson for T[A]
+impl[X : @quickcheck.Arbitrary + Compare] @quickcheck.Arbitrary for T[X]
 
 // Type aliases
 

@@ -5,36 +5,36 @@ alias @moonbitlang/core/quickcheck as @quickcheck
 // Values
 fn new[V]() -> T[V]
 
-fn of[V : Compare + Eq](Array[V]) -> T[V]
+fn of[V : Compare](Array[V]) -> T[V]
 
-fn singleton[V : Compare + Eq](V) -> T[V]
+fn singleton[V : Compare](V) -> T[V]
 
 // Types and methods
 type T
 impl T {
-  add[V : Compare + Eq](Self[V], V) -> Unit
-  contains[V : Compare + Eq](Self[V], V) -> Bool
+  add[V : Compare](Self[V], V) -> Unit
+  contains[V : Compare](Self[V], V) -> Bool
   deep_clone[V](Self[V]) -> Self[V]
-  diff[V : Compare + Eq](Self[V], Self[V]) -> Self[V] //deprecated
-  difference[V : Compare + Eq](Self[V], Self[V]) -> Self[V]
-  disjoint[V : Compare + Eq](Self[V], Self[V]) -> Bool
+  diff[V : Compare](Self[V], Self[V]) -> Self[V] //deprecated
+  difference[V : Compare](Self[V], Self[V]) -> Self[V]
+  disjoint[V : Compare](Self[V], Self[V]) -> Bool
   each[V](Self[V], (V) -> Unit) -> Unit
   eachi[V](Self[V], (Int, V) -> Unit) -> Unit
-  from_iter[V : Compare + Eq](Iter[V]) -> Self[V]
-  intersect[V : Compare + Eq](Self[V], Self[V]) -> Self[V] //deprecated
-  intersection[V : Compare + Eq](Self[V], Self[V]) -> Self[V]
-  is_empty[V : Compare + Eq](Self[V]) -> Bool
+  from_iter[V : Compare](Iter[V]) -> Self[V]
+  intersect[V : Compare](Self[V], Self[V]) -> Self[V] //deprecated
+  intersection[V : Compare](Self[V], Self[V]) -> Self[V]
+  is_empty[V : Compare](Self[V]) -> Bool
   iter[V](Self[V]) -> Iter[V]
-  op_equal[V : Compare + Eq](Self[V], Self[V]) -> Bool
-  remove[V : Compare + Eq](Self[V], V) -> Unit
-  size[V : Compare + Eq](Self[V]) -> Int64
-  subset[V : Compare + Eq](Self[V], Self[V]) -> Bool
+  op_equal[V : Compare](Self[V], Self[V]) -> Bool
+  remove[V : Compare](Self[V], V) -> Unit
+  size[V : Compare](Self[V]) -> Int64
+  subset[V : Compare](Self[V], Self[V]) -> Bool
   to_array[V](Self[V]) -> Array[V]
   to_string[V : Show](Self[V]) -> String
-  union[V : Compare + Eq](Self[V], Self[V]) -> Self[V]
+  union[V : Compare](Self[V], Self[V]) -> Self[V]
 }
 impl[V : Show] Show for T[V]
-impl[X : @quickcheck.Arbitrary + Compare + Eq] @quickcheck.Arbitrary for T[X]
+impl[X : @quickcheck.Arbitrary + Compare] @quickcheck.Arbitrary for T[X]
 
 // Type aliases
 
