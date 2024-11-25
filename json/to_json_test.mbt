@@ -29,6 +29,10 @@ test "Double::to_json" {
   inspect!(42.0.to_json(), content="Number(42)")
 }
 
+test "Double::to_json/NaN" {
+  inspect!(@double.not_a_number.to_json(), content="Null")
+}
+
 test "Float::to_json" {
   inspect!((42.0 : Float).to_json(), content="Number(42)")
 }
