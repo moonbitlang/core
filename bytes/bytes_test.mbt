@@ -79,13 +79,13 @@ test "hash" {
   let b4 = @bytes.of(
     [b'\x7f', b'\xff', b'\xff', b'\xff', b'\xff', b'\xff', b'\xff', b'\xff'],
   )
-  inspect!(Hash::hash(b1), content="273427599")
-  inspect!(Hash::hash(b2), content="2013728637")
-  inspect!(Hash::hash(b3), content="-983520567")
-  inspect!(Hash::hash(b4), content="-1652773543")
-  inspect!(Hash::hash(b1) == Hash::hash(b1), content="true")
-  inspect!(Hash::hash(b2) == Hash::hash(b2), content="true")
-  inspect!(Hash::hash(b1) == Hash::hash(b2), content="false")
+  inspect!(b1.hash(), content="273427599")
+  inspect!(b2.hash(), content="2013728637")
+  inspect!(b3.hash(), content="-983520567")
+  inspect!(b4.hash(), content="-1652773543")
+  inspect!(b1.hash() == b1.hash(), content="true")
+  inspect!(b2.hash() == b2.hash(), content="true")
+  inspect!(b1.hash() == b2.hash(), content="false")
 }
 
 test "to_array" {

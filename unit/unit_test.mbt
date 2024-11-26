@@ -38,5 +38,5 @@ test {
 
 test {
   let unit = ()
-  assert_eq!(Hash::hash(unit), 0)
+  assert_eq!(unit.hash(), 0)
 }
