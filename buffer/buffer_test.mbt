@@ -35,19 +35,19 @@ test "to_unchecked_string method" {
 test "to_unchecked_string method with offset" {
   let buf = @buffer.new(size_hint=100)
   buf.write_string("Test")
-  inspect!(buf.to_unchecked_string(offset = 4), content="st")
+  inspect!(buf.to_unchecked_string(offset=4), content="st")
 }
 
 test "to_unchecked_string method with length" {
   let buf = @buffer.new(size_hint=100)
   buf.write_string("Test")
-  inspect!(buf.to_unchecked_string(length = 2), content="T")
+  inspect!(buf.to_unchecked_string(length=2), content="T")
 }
 
 test "to_unchecked_string method with offset and length" {
   let buf = @buffer.new(size_hint=100)
   buf.write_string("Test")
-  inspect!(buf.to_unchecked_string(offset = 0, length = 4), content="Te")
+  inspect!(buf.to_unchecked_string(offset=0, length=4), content="Te")
 }
 
 test "expect method with matching content" {
