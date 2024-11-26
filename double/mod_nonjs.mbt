@@ -12,8 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-fn copy_sign(sign : Double, f : Double) -> Double {
-  f.abs() * sign.signum()
+fn copy_sign(x : Double, y : Double) -> Double {
+  if x < 0 {
+    -y.abs()
+  } else {
+    y.abs()
+  }
 }
 
 fn ldexp(frac : Double, exp_ : Double) -> Double {
