@@ -162,6 +162,30 @@ pub fn new(size_hint~ : Int = 0) -> T {
   { data, len: 0, initial_data: data }
 }
 
+///| Create a buffer from a bytes.
+pub fn from_bytes(bytes : Bytes) -> T {
+  let buf = new(size_hint=bytes.length())
+  buf.write_bytes(bytes)
+  buf
+}
+
+///|
+/// Create a buffer from an array.
+pub fn from_array(arr : Array[Byte]) -> T {
+  let buf = new(size_hint=arr.length())
+  for byte in arr {
+    buf.write_byte(byte)
+  }
+  buf
+}
+
+///|
+/// Create a buffer from an array.
+pub fn from_iter(iter : Iter[Byte]) -> T {
+  let arr = iter.collect()
+  from_array(arr)
+}
+
 ///|
 /// Writes a UTF-16LE encoded string into the buffer. The buffer will
 /// automatically grow if needed to accommodate the string.
