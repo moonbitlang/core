@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+///|
 fn check(x : Float, y : Float) -> Bool {
   (x - y).abs() < 1.0e-4
 }

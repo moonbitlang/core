@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+///|
 pub fn op_mod(self : Float, other : Float) -> Float {
   (self.to_double() % other.to_double()).to_float()
 }

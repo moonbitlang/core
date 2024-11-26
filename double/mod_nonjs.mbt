@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+///|
 fn copy_sign(x : Double, y : Double) -> Double {
   if x < 0 {
     -y.abs()
@@ -20,6 +21,7 @@ fn copy_sign(x : Double, y : Double) -> Double {
   }
 }
 
+///|
 fn ldexp(frac : Double, exp_ : Double) -> Double {
   if frac == 0 {
     0
@@ -52,6 +54,7 @@ fn ldexp(frac : Double, exp_ : Double) -> Double {
   }
 }
 
+///|
 pub fn op_mod(self : Double, other : Double) -> Double {
   if other == 0 || self.is_inf() || self.is_nan() || other.is_nan() {
     not_a_number

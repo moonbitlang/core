@@ -12,5 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+///|
 pub extern "js" fn op_mod(self : Double, other : Double) -> Double =
   #| (a, b) => (a % b)
