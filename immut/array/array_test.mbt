@@ -215,10 +215,10 @@ test "from_iter empty iter" {
 test "hash" {
   let l1 = @array.of([1, 2, 3, 4, 5])
   let l2 = @array.of([1, 2, 3, 4, 5])
-  inspect!(Hash::hash(l1) == Hash::hash(l2), content="true")
+  inspect!(l1.hash() == l2.hash(), content="true")
   let l3 = @array.of([5, 4, 3, 2, 1])
-  inspect!(Hash::hash(l1) == Hash::hash(l3), content="false")
+  inspect!(l1.hash() == l3.hash(), content="false")
   let l4 : @array.T[Int] = @array.of([])
-  inspect!(Hash::hash(l1) == Hash::hash(l4), content="false")
-  inspect!(Hash::hash(l4) == Hash::hash(l4), content="true")
+  inspect!(l1.hash() == l4.hash(), content="false")
+  inspect!(l4.hash() == l4.hash(), content="true")
 }
