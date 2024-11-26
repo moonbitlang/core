@@ -36,10 +36,7 @@ pub fn decode_lossy(encoding : Encoding, src : @buffer.T) -> LossyChars {
 }
 
 ///|
-pub fn decode_strict(
-  encoding : Encoding,
-  src : @buffer.T
-) -> StrictChars {
+pub fn decode_strict(encoding : Encoding, src : @buffer.T) -> StrictChars {
   let decoder = decoder(encoding, src)
   decoder
 }
@@ -361,6 +358,7 @@ fn r_utf_16(buf : @buffer.T, offset0 : Int, offset1 : Int) -> UTF16Decode {
 
 // UTF16BE
 
+///|
 fn decode_utf_16be(self : Decoder) -> Decode {
   let rem = self.i_rem()
   match rem.compare(0) {
@@ -369,20 +367,20 @@ fn decode_utf_16be(self : Decoder) -> Decode {
     // rem = 0
     0 => self.refill(decode_utf_16be)
     // rem > 0
-    1 => {
+    1 =>
       if rem < 2 {
         self.t_need(2)
         t_fill(t_decode_utf_16be, self)
       } else {
         let j = self.i_pos
         self.i_pos = self.i_pos + 2
-        self.decode_utf_16be_lo(r_utf_16(self.i, j, (j + 1)))
+        self.decode_utf_16be_lo(r_utf_16(self.i, j, j + 1))
       }
-    }
     _ => abort("unreachable")
   }
 }
 
+///|
 fn t_decode_utf_16be(self : Decoder) -> Decode {
   if self.t_len < self.t_need {
     self.ret(decode_utf_16be, malformed(self.t, 0, self.t_len))
@@ -391,10 +389,11 @@ fn t_decode_utf_16be(self : Decoder) -> Decode {
   }
 }
 
+///|
 fn decode_utf_16be_lo(self : Decoder, decode : UTF16Decode) -> Decode {
   match decode {
-    UTF16Uchar(x)=> self.ret(decode_utf_16be, Uchar(x))
-    UTF16Malformed(x)=> self.ret(decode_utf_16be, Malformed(x))
+    UTF16Uchar(x) => self.ret(decode_utf_16be, Uchar(x))
+    UTF16Malformed(x) => self.ret(decode_utf_16be, Malformed(x))
     Hi(hi) => {
       let rem = self.i_rem()
       if rem < 2 {
@@ -403,12 +402,13 @@ fn decode_utf_16be_lo(self : Decoder, decode : UTF16Decode) -> Decode {
       } else {
         let j = self.i_pos
         self.i_pos = self.i_pos + 2
-        self.ret(decode_utf_16be, r_utf_16_lo(hi, self.i, j, (j + 1)))
+        self.ret(decode_utf_16be, r_utf_16_lo(hi, self.i, j, j + 1))
       }
     }
   }
 }
 
+///|
 fn t_decode_utf_16be_lo(hi : Int, self : Decoder) -> Decode {
   if self.t_len < self.t_need {
     self.ret(decode_utf_16be, malformed_pair(true, hi, self.t, 0, self.t_len))
