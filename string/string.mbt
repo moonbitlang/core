@@ -37,7 +37,7 @@ pub fn String::from_array(chars : Array[Char]) -> String {
 /// ```
 /// let s = @string.concat_view(["Hello", ", ", "world!"][:])
 /// assert_eq!(s, "Hello, world!")
-/// let s = @string.concat(["a", "b", "c"][:], separator=",")
+/// let s = @string.concat_view(["a", "b", "c"][:], separator=",")
 /// assert_eq!(s, "a,b,c")
 /// ```
 pub fn String::concat_view(
