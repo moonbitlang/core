@@ -24,11 +24,6 @@ pub impl[A : Show] Show for T[A] with output(self, logger) {
 }
 
 ///|
-pub fn to_string[A : Show](self : T[A]) -> String {
-  Show::to_string(self)
-}
-
-///|
 /// Creates a new deque from an array.
 pub fn T::from_array[A](arr : Array[A]) -> T[A] {
   let deq = T::{

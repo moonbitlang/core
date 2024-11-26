@@ -334,12 +334,6 @@ pub impl[K : Show] Show for T[K] with output(self, logger) {
 }
 
 ///|
-// Reuse the default implementation of [Show::to_string] here
-pub fn to_string[K : Show](self : T[K]) -> String {
-  Show::to_string(self)
-}
-
-///|
 priv type MyString String derive(Eq)
 
 ///|

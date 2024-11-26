@@ -53,12 +53,6 @@ pub impl[A : Show] Show for T[A] with output(self, logger) {
 }
 
 ///|
-// Reuse the default implementation of [Show::to_string] here
-pub fn to_string[A : Show](self : T[A]) -> String {
-  Show::to_string(self)
-}
-
-///|
 /// Tests if two queue cells are equal.
 fn op_equal[T : Eq](self : Cell[T], other : Cell[T]) -> Bool {
   loop self, other {

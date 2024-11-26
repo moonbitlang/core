@@ -1030,12 +1030,6 @@ pub fn split[T](self : Array[T], pred : (T) -> Bool) -> Array[Array[T]] {
 }
 
 ///|
-/// Converts the array to a string.
-pub fn to_string[T : Show](self : Array[T]) -> String {
-  Show::to_string(self)
-}
-
-///|
 pub fn iter[T](self : Array[T]) -> Iter[T] {
   Iter::new(
     fn(yield_) {

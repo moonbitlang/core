@@ -18,12 +18,6 @@ pub fn Ref::new[T](x : T) -> Ref[T] {
   { val: x }
 }
 
-///|
-pub fn to_string[X : Show](self : Ref[X]) -> String {
-  let v = self.val
-  "{val: \{v}}"
-}
-
 test "to_string" {
   inspect!(new(3), content="{val: 3}")
 }
