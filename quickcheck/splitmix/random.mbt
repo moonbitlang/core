@@ -24,7 +24,7 @@ let golden_gamma : UInt64 = 0x9e3779b97f4a7c15
 ///|
 let double_ulp : Double = 1.0 / (1L << 53).to_double()
 
-//|
+///|
 let float_ulp : Float = 1.0.to_float() / (1L << 24).to_float()
 
 ///|
