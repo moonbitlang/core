@@ -668,7 +668,9 @@ impl FixedArray {
   op_get[T](Self[T], Int) -> T
   op_set[T](Self[T], Int, T) -> Unit
   set[T](Self[T], Int, T) -> Unit
-  set_utf16_char(Self[Byte], Int, Char) -> Int
+  set_utf16_char(Self[Byte], Int, Char) -> Int //deprecated
+  set_utf16be_char(Self[Byte], Int, Char) -> Int
+  set_utf16le_char(Self[Byte], Int, Char) -> Int
   set_utf8_char(Self[Byte], Int, Char) -> Int
   to_json[X : ToJson](Self[X]) -> Json
   to_string[X : Show](Self[X]) -> String
@@ -687,7 +689,7 @@ impl Bytes {
   op_equal(Bytes, Bytes) -> Bool
   op_get(Bytes, Int) -> Byte
   op_set(Bytes, Int, Byte) -> Unit
-  set_utf16_char(Bytes, Int, Char) -> Int
+  set_utf16_char(Bytes, Int, Char) -> Int //deprecated
   set_utf8_char(Bytes, Int, Char) -> Int //deprecated
   sub_string(Bytes, Int, Int) -> String //deprecated
   to_string(Bytes) -> String //deprecated
