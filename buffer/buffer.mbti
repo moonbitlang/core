@@ -11,7 +11,7 @@ impl T {
   reset(Self) -> Unit
   to_bytes(Self) -> Bytes
   to_string(Self) -> String //deprecated
-  to_unchecked_string(Self, Int?, Int?) -> String
+  to_unchecked_string(Self, offset? : Int, length? : Int) -> String
   write_byte(Self, Byte) -> Unit
   write_bytes(Self, Bytes) -> Unit
   write_char(Self, Char) -> Unit
