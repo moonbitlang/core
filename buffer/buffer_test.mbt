@@ -26,6 +26,30 @@ test "is_empty method" {
   inspect!(buf.is_empty(), content="false")
 }
 
+test "to_unchecked_string method" {
+  let buf = @buffer.new(size_hint=100)
+  buf.write_string("Test")
+  inspect!(buf.to_unchecked_string(), content="Test")
+}
+
+test "to_unchecked_string method with offset" {
+  let buf = @buffer.new(size_hint=100)
+  buf.write_string("Test")
+  inspect!(buf.to_unchecked_string(offset = 4), content="st")
+}
+
+test "to_unchecked_string method with length" {
+  let buf = @buffer.new(size_hint=100)
+  buf.write_string("Test")
+  inspect!(buf.to_unchecked_string(length = 2), content="T")
+}
+
+test "to_unchecked_string method with offset and length" {
+  let buf = @buffer.new(size_hint=100)
+  buf.write_string("Test")
+  inspect!(buf.to_unchecked_string(offset = 0, length = 5), content="Te")
+}
+
 test "expect method with matching content" {
   let buf = @buffer.new(size_hint=100)
   buf.write_string("Test")

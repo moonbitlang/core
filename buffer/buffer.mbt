@@ -84,11 +84,16 @@ pub fn to_string(self : T) -> String {
 /// Return a new unchecked string contains the data in buffer.
 /// Note this function does not validate the encoding of the byte sequence, 
 /// it simply copy the bytes into a new String.
-pub fn to_unchecked_string(self : T) -> String {
-  Bytes::from_fixedarray(self.data).to_unchecked_string(
-    offset=0,
-    length=self.len,
-  )
+pub fn to_unchecked_string(self : T, offset? : Int, length? : Int) -> String {
+  let offset = match offset {
+    None => 0
+    Some(x) => x
+  }
+  let length = match length {
+    None => self.len - offset
+    Some(x) => x
+  }
+  Bytes::from_fixedarray(self.data).to_unchecked_string(offset~, length~)
 }
 
 ///|
