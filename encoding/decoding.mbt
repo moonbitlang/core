@@ -53,9 +53,9 @@ fn decoder(encoding : Encoding, src : @buffer.T) -> Decoder {
   let t_need = 0
   let k = match encoding {
     UTF8 => decode_utf_8
-    UTF16 => decode_utf_16be
-    UTF16BE => decode_utf_16be
+    UTF16 => decode_utf_16le
     UTF16LE => decode_utf_16le
+    UTF16BE => decode_utf_16be
   }
   { i, i_pos, i_max, t, t_len, t_need, k }
 }

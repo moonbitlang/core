@@ -56,19 +56,19 @@ test "lossy decoding UTF16BE encoded data to String" {
   inspect!(String::from_iter(stream.iter()), content="🐈🐱🐇🐰")
 }
 
-test "lossy decoding UTF16 (alias of UTF16BE) encoded data to String" {
-  let buf = @buffer.T::new(size_hint=24)
-  buf.write_bytes(b"\x18\x65")
-  buf.write_bytes(b"\x18\x20")
-  buf.write_bytes(b"\x18\x73")
-  buf.write_bytes(b"\x18\x64")
-  buf.write_bytes(b"\x18\x73")
-  buf.write_bytes(b"\x18\x36")
-  buf.write_bytes(b"\x18\x20")
+test "lossy decoding UTF16 (alias of UTF16LE) encoded data to String" {
+  let buf = @buffer.T::new(size_hint=20)
+  buf.write_bytes(b"\x65\x18")
+  buf.write_bytes(b"\x20\x18")
+  buf.write_bytes(b"\x73\x18")
+  buf.write_bytes(b"\x64\x18")
+  buf.write_bytes(b"\x73\x18")
+  buf.write_bytes(b"\x36\x18")
+  buf.write_bytes(b"\x20\x18")
   inspect!(
     buf.to_bytes(),
     content=
-      #|b"\x18\x65\x18\x20\x18\x73\x18\x64\x18\x73\x18\x36\x18\x20"
+      #|b"\x65\x18\x20\x18\x73\x18\x64\x18\x73\x18\x36\x18\x20\x18"
     ,
   )
   let stream = @encoding.decode_lossy(UTF16, buf)

@@ -18,9 +18,9 @@ typealias Cont = (Decoder) -> Decode
 ///|
 pub(all) enum Encoding {
   UTF8
-  UTF16
-  UTF16BE
+  UTF16 // alias of UTF16LE
   UTF16LE
+  UTF16BE
 }
 
 // Decoder
