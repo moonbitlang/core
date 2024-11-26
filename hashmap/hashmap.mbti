@@ -26,7 +26,6 @@ impl T {
   set[K : Hash + Eq, V](Self[K, V], K, V) -> Unit
   size[K, V](Self[K, V]) -> Int
   to_array[K, V](Self[K, V]) -> Array[(K, V)]
-  to_string[K : Show, V : Show](Self[K, V]) -> String
 }
 impl[K : Show, V : Show] Show for T[K, V]
 impl[K : @quickcheck.Arbitrary + Hash + Eq, V : @quickcheck.Arbitrary] @quickcheck.Arbitrary for T[K, V]

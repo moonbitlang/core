@@ -38,11 +38,6 @@ pub impl[T : Show] Show for Iter[T] with output(self, logger) {
   logger.write_iter(self)
 }
 
-///|
-pub fn to_string[T : Show](self : Iter[T]) -> String {
-  Show::to_string(self)
-}
-
 // Consumers
 
 ///|

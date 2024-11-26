@@ -438,11 +438,6 @@ pub impl[X : @quickcheck.Arbitrary + Compare] @quickcheck.Arbitrary for T[X] wit
 }
 
 ///|
-pub fn to_string[V : Show](self : T[V]) -> String {
-  Show::to_string(self)
-}
-
-///|
 impl[T : Show] Show for Node[T] with output(self, logger) {
   logger.write_iter(self.iter(), prefix="@sorted_set.of([", suffix="])")
 }

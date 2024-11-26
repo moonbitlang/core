@@ -25,7 +25,6 @@ impl Float {
   ln(Float) -> Float
   op_mod(Float, Float) -> Float
   round(Float) -> Float
-  to_string(Float) -> String
   trunc(Float) -> Float
 }
 
