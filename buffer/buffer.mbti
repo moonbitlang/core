@@ -5,6 +5,9 @@ package moonbitlang/core/buffer
 // Types and methods
 type T
 impl T {
+  from_array(Array[Byte]) -> Self
+  from_bytes(Bytes) -> Self
+  from_iter(Iter[Byte]) -> Self
   is_empty(Self) -> Bool
   length(Self) -> Int
   new(size_hint~ : Int = ..) -> Self
