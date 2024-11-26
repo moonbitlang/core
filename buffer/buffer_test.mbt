@@ -146,3 +146,13 @@ test "write_bytes" {
   buf.write_bytes(b"5\x006\x007\x008\x00")
   inspect!(buf, content="12345678")
 }
+
+test "op_set, op_get operator" {
+  let buf = @buffer.new(size_hint=4)
+  buf.write_string("Test")
+  buf[2] = b'1'
+  buf[3] = b'\x00'
+  assert_eq!(buf[2], b'1')
+  assert_eq!(buf[3], b'\x00')
+  inspect!(buf, content="T1st")
+}

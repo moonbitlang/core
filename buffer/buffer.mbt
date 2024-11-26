@@ -174,6 +174,20 @@ pub fn to_bytes(self : T) -> Bytes {
 }
 
 ///|
+pub fn op_set(self : T, index : Int, value : Byte) -> Unit {
+  let len = self.length()
+  guard index >= 0 && index < len
+  self.data[index] = value
+}
+
+///|
+pub fn op_get(self : T, index : Int) -> Byte {
+  let len = self.length()
+  guard index >= 0 && index < len
+  self.data[index]
+}
+
+///|
 pub impl Show for T with output(self, logger) {
   logger.write_string(self.to_unchecked_string())
 }
