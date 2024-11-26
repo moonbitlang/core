@@ -682,7 +682,7 @@ impl Bytes {
   op_equal(Bytes, Bytes) -> Bool
   op_get(Bytes, Int) -> Byte
   op_set(Bytes, Int, Byte) -> Unit
-  set_utf16_char(Bytes, Int, Char) -> Int //deprecated
+  set_utf16_char(Bytes, Int, Char) -> Int
   set_utf8_char(Bytes, Int, Char) -> Int //deprecated
   sub_string(Bytes, Int, Int) -> String //deprecated
   to_string(Bytes) -> String //deprecated
