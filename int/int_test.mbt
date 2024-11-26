@@ -24,17 +24,17 @@ test "overflow" {
 }
 
 test "hash" {
-  inspect!(Hash::hash(0), content="0")
-  inspect!(Hash::hash(1), content="69681622")
-  inspect!(Hash::hash(2), content="-236984087")
-  inspect!(Hash::hash(3), content="-1057966777")
-  inspect!(Hash::hash(4), content="-744398955")
-  inspect!(Hash::hash(5), content="-482482911")
-  inspect!(Hash::hash(6), content="-1506254959")
-  inspect!(Hash::hash(7), content="1327878809")
-  inspect!(Hash::hash(8), content="1120898975")
-  inspect!(Hash::hash(9), content="1567958539")
-  inspect!(Hash::hash(0x7fffffff), content="943411498")
+  inspect!((0).hash(), content="0")
+  inspect!((1).hash(), content="69681622")
+  inspect!((2).hash(), content="-236984087")
+  inspect!((3).hash(), content="-1057966777")
+  inspect!((4).hash(), content="-744398955")
+  inspect!((5).hash(), content="-482482911")
+  inspect!((6).hash(), content="-1506254959")
+  inspect!((7).hash(), content="1327878809")
+  inspect!((8).hash(), content="1120898975")
+  inspect!((9).hash(), content="1567958539")
+  inspect!((0x7fffffff).hash(), content="943411498")
   inspect!(Hash::hash(0x7fffffff + 1), content="963800214")
 }
 

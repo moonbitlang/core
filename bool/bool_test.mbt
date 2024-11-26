@@ -13,8 +13,8 @@
 // limitations under the License.
 
 test "Bool hash function" {
-  assert_eq!(Hash::hash(true), 1)
-  assert_eq!(Hash::hash(false), 0)
+  assert_eq!(true.hash(), 1)
+  assert_eq!(false.hash(), 0)
 }
 
 ///|
