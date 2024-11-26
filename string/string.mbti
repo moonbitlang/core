@@ -8,6 +8,7 @@ package moonbitlang/core/string
 impl String {
   compare(String, String) -> Int
   concat(Array[String], separator~ : String = ..) -> String
+  concat_view(ArrayView[String], separator~ : String = ..) -> String
   contains(String, String) -> Bool
   contains_char(String, Char) -> Bool
   default() -> String
