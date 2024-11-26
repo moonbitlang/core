@@ -8,6 +8,7 @@
     "moonbitlang/core/tuple",
     "moonbitlang/core/array",
     "moonbitlang/core/char",
+    "moonbitlang/core/result",
     "moonbitlang/core/int"
   ],
   "test-import": [

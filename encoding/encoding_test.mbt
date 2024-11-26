@@ -12,20 +12,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-///|
-pub fn encode(encoding : Encoding, src : String) -> Bytes! {
-  let buf = @buffer.T::from_bytes(src.to_bytes())
-  // MoonBit String encoded UTF16LE
-  let chars = decode_strict(UTF16LE, buf)
-  let new_buf = @buffer.T::new(size_hint=buf.length())
-  let write = match encoding {
-    UTF8 => @buffer.write_utf8_char
-    UTF16 => @buffer.write_char // TODO: no
-    UTF16BE => @buffer.write_char
-    UTF16LE => @buffer.write_char
-  }
-  for char in chars {
-    write(new_buf, char.unwrap_or_error!())
-  }
-  new_buf.to_bytes()
+test "pp" {
+  let src = "你好👀"
+  let bytes = @encoding.encode!(UTF8, src)
+  inspect!(
+    bytes,
+    content=
+      #|b"\xe4\xbd\xa0\xe5\xa5\xbd\xf0\x9f\x91\x80"
+    ,
+  )
 }
