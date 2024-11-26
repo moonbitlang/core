@@ -204,7 +204,6 @@ pub fn set_utf8_char(
 /// Fill UTF16 encoded char `value` into byte sequence `self`, starting at `offset`.
 /// It return the length of bytes has been written.
 /// @alert unsafe "Panic if the [value] is out of range"
-/// @alert deprecated "The type Bytes is about to be changed to be immutable. Use `FixedArray[Byte]` or `Buffer` instead."
 pub fn set_utf16_char(self : Bytes, offset : Int, value : Char) -> Int {
   let code = value.to_uint()
   if code < 0x10000 {
