@@ -25,7 +25,6 @@ impl T {
   op_sub(Self, Self) -> Self
   reciprocal(Self) -> Self
   to_double(Self) -> Double
-  to_string(Self) -> String
   trunc(Self) -> Int64
 }
 impl Show for T

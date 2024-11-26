@@ -355,11 +355,6 @@ pub impl[K : Show] Show for Set[K] with output(self, logger) {
 }
 
 ///|
-pub fn to_string[K : Show](self : Set[K]) -> String {
-  Show::to_string(self)
-}
-
-///|
 /// Get the number of keys in the set.
 pub fn size[K](self : Set[K]) -> Int {
   self.size

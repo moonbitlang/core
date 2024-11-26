@@ -24,7 +24,6 @@ impl Float {
   floor(Float) -> Float
   ln(Float) -> Float
   round(Float) -> Float
-  to_string(Float) -> String
   trunc(Float) -> Float
 }
 

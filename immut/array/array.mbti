@@ -28,7 +28,6 @@ impl T {
   rev_fold[A, B](Self[A], init~ : B, (B, A) -> B) -> B
   set[A](Self[A], Int, A) -> Self[A]
   to_array[A](Self[A]) -> Array[A]
-  to_string[A : Show](Self[A]) -> String
 }
 impl[A : Eq] Eq for T[A]
 impl[A : Hash] Hash for T[A]

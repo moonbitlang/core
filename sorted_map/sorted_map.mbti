@@ -27,7 +27,6 @@ impl T {
   remove[K : Compare, V](Self[K, V], K) -> Unit
   size[K, V](Self[K, V]) -> Int
   to_array[K, V](Self[K, V]) -> Array[(K, V)]
-  to_string[K : Show, V : Show](Self[K, V]) -> String
   values[K, V](Self[K, V]) -> Array[V]
 }
 impl[K : Show, V : Show] Show for T[K, V]

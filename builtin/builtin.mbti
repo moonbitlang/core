@@ -113,7 +113,6 @@ impl Array {
   strip_suffix[T : Eq](Self[T], Self[T]) -> Self[T]?
   swap[T](Self[T], Int, Int) -> Unit
   to_json[X : ToJson](Self[X]) -> Json
-  to_string[T : Show](Self[T]) -> String
   unsafe_blit[A](Self[A], Int, Self[A], Int, Int) -> Unit
   unsafe_blit_fixed[A](Self[A], Int, FixedArray[A], Int, Int) -> Unit
   unsafe_pop[T](Self[T]) -> T
@@ -244,7 +243,6 @@ impl Iter {
   take_while[T](Self[T], (T) -> Bool) -> Self[T]
   tap[T](Self[T], (T) -> Unit) -> Self[T] //deprecated
   to_array[T](Self[T]) -> Array[T]
-  to_string[T : Show](Self[T]) -> String
 }
 impl[T : Show] Show for Iter[T]
 
@@ -256,7 +254,6 @@ impl Iter2 {
   new[A, B](((A, B) -> IterResult) -> IterResult) -> Self[A, B]
   run[A, B](Self[A, B], (A, B) -> IterResult) -> IterResult
   to_array[A, B](Self[A, B]) -> Array[(A, B)]
-  to_string[A : Show, B : Show](Self[A, B]) -> String
 }
 impl[A : Show, B : Show] Show for Iter2[A, B]
 
@@ -311,7 +308,6 @@ impl Map {
   size[K, V](Self[K, V]) -> Int
   to_array[K, V](Self[K, V]) -> Array[(K, V)]
   to_json[K : Show, V : ToJson](Self[K, V]) -> Json
-  to_string[K : Show, V : Show](Self[K, V]) -> String
   values[K, V](Self[K, V]) -> Iter[V]
 }
 impl[K : Show, V : Show] Show for Map[K, V]
@@ -341,7 +337,6 @@ impl Set {
   symmetric_difference[K : Hash + Eq](Self[K], Self[K]) -> Self[K]
   to_array[K](Self[K]) -> Array[K]
   to_json[X : ToJson](Self[X]) -> Json
-  to_string[K : Show](Self[K]) -> String
   union[K : Hash + Eq](Self[K], Self[K]) -> Self[K]
 }
 impl[K : Show] Show for Set[K]
@@ -669,7 +664,6 @@ impl FixedArray {
   set[T](Self[T], Int, T) -> Unit
   set_utf16_char(Self[Byte], Int, Char) -> Int
   to_json[X : ToJson](Self[X]) -> Json
-  to_string[X : Show](Self[X]) -> String
   unsafe_blit[A](Self[A], Int, Self[A], Int, Int) -> Unit
 }
 
@@ -702,105 +696,90 @@ impl Logger {
 impl Tuple(2) {
   compare[T0 : Compare, T1 : Compare]((T0, T1), (T0, T1)) -> Int
   op_equal[T0 : Eq, T1 : Eq]((T0, T1), (T0, T1)) -> Bool
-  to_string[A : Show, B : Show]((A, B)) -> String
 }
 
 
 impl Tuple(3) {
   compare[T0 : Compare, T1 : Compare, T2 : Compare]((T0, T1, T2), (T0, T1, T2)) -> Int
   op_equal[T0 : Eq, T1 : Eq, T2 : Eq]((T0, T1, T2), (T0, T1, T2)) -> Bool
-  to_string[A : Show, B : Show, C : Show]((A, B, C)) -> String
 }
 
 
 impl Tuple(4) {
   compare[T0 : Compare, T1 : Compare, T2 : Compare, T3 : Compare]((T0, T1, T2, T3), (T0, T1, T2, T3)) -> Int
   op_equal[T0 : Eq, T1 : Eq, T2 : Eq, T3 : Eq]((T0, T1, T2, T3), (T0, T1, T2, T3)) -> Bool
-  to_string[A : Show, B : Show, C : Show, D : Show]((A, B, C, D)) -> String
 }
 
 
 impl Tuple(5) {
   compare[T0 : Compare, T1 : Compare, T2 : Compare, T3 : Compare, T4 : Compare]((T0, T1, T2, T3, T4), (T0, T1, T2, T3, T4)) -> Int
   op_equal[T0 : Eq, T1 : Eq, T2 : Eq, T3 : Eq, T4 : Eq]((T0, T1, T2, T3, T4), (T0, T1, T2, T3, T4)) -> Bool
-  to_string[A : Show, B : Show, C : Show, D : Show, E : Show]((A, B, C, D, E)) -> String
 }
 
 
 impl Tuple(6) {
   compare[T0 : Compare, T1 : Compare, T2 : Compare, T3 : Compare, T4 : Compare, T5 : Compare]((T0, T1, T2, T3, T4, T5), (T0, T1, T2, T3, T4, T5)) -> Int
   op_equal[T0 : Eq, T1 : Eq, T2 : Eq, T3 : Eq, T4 : Eq, T5 : Eq]((T0, T1, T2, T3, T4, T5), (T0, T1, T2, T3, T4, T5)) -> Bool
-  to_string[A : Show, B : Show, C : Show, D : Show, E : Show, F : Show]((A, B, C, D, E, F)) -> String
 }
 
 
 impl Tuple(7) {
   compare[T0 : Compare, T1 : Compare, T2 : Compare, T3 : Compare, T4 : Compare, T5 : Compare, T6 : Compare]((T0, T1, T2, T3, T4, T5, T6), (T0, T1, T2, T3, T4, T5, T6)) -> Int
   op_equal[T0 : Eq, T1 : Eq, T2 : Eq, T3 : Eq, T4 : Eq, T5 : Eq, T6 : Eq]((T0, T1, T2, T3, T4, T5, T6), (T0, T1, T2, T3, T4, T5, T6)) -> Bool
-  to_string[A : Show, B : Show, C : Show, D : Show, E : Show, F : Show, G : Show]((A, B, C, D, E, F, G)) -> String
 }
 
 
 impl Tuple(8) {
   compare[T0 : Compare, T1 : Compare, T2 : Compare, T3 : Compare, T4 : Compare, T5 : Compare, T6 : Compare, T7 : Compare]((T0, T1, T2, T3, T4, T5, T6, T7), (T0, T1, T2, T3, T4, T5, T6, T7)) -> Int
   op_equal[T0 : Eq, T1 : Eq, T2 : Eq, T3 : Eq, T4 : Eq, T5 : Eq, T6 : Eq, T7 : Eq]((T0, T1, T2, T3, T4, T5, T6, T7), (T0, T1, T2, T3, T4, T5, T6, T7)) -> Bool
-  to_string[T0 : Show, T1 : Show, T2 : Show, T3 : Show, T4 : Show, T5 : Show, T6 : Show, T7 : Show]((T0, T1, T2, T3, T4, T5, T6, T7)) -> String
 }
 
 
 impl Tuple(9) {
   compare[T0 : Compare, T1 : Compare, T2 : Compare, T3 : Compare, T4 : Compare, T5 : Compare, T6 : Compare, T7 : Compare, T8 : Compare]((T0, T1, T2, T3, T4, T5, T6, T7, T8), (T0, T1, T2, T3, T4, T5, T6, T7, T8)) -> Int
   op_equal[T0 : Eq, T1 : Eq, T2 : Eq, T3 : Eq, T4 : Eq, T5 : Eq, T6 : Eq, T7 : Eq, T8 : Eq]((T0, T1, T2, T3, T4, T5, T6, T7, T8), (T0, T1, T2, T3, T4, T5, T6, T7, T8)) -> Bool
-  to_string[T0 : Show, T1 : Show, T2 : Show, T3 : Show, T4 : Show, T5 : Show, T6 : Show, T7 : Show, T8 : Show]((T0, T1, T2, T3, T4, T5, T6, T7, T8)) -> String
 }
 
 
 impl Tuple(10) {
   compare[T0 : Compare, T1 : Compare, T2 : Compare, T3 : Compare, T4 : Compare, T5 : Compare, T6 : Compare, T7 : Compare, T8 : Compare, T9 : Compare]((T0, T1, T2, T3, T4, T5, T6, T7, T8, T9), (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9)) -> Int
   op_equal[T0 : Eq, T1 : Eq, T2 : Eq, T3 : Eq, T4 : Eq, T5 : Eq, T6 : Eq, T7 : Eq, T8 : Eq, T9 : Eq]((T0, T1, T2, T3, T4, T5, T6, T7, T8, T9), (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9)) -> Bool
-  to_string[T0 : Show, T1 : Show, T2 : Show, T3 : Show, T4 : Show, T5 : Show, T6 : Show, T7 : Show, T8 : Show, T9 : Show]((T0, T1, T2, T3, T4, T5, T6, T7, T8, T9)) -> String
 }
 
 
 impl Tuple(11) {
   compare[T0 : Compare, T1 : Compare, T2 : Compare, T3 : Compare, T4 : Compare, T5 : Compare, T6 : Compare, T7 : Compare, T8 : Compare, T9 : Compare, T10 : Compare]((T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10), (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10)) -> Int
   op_equal[T0 : Eq, T1 : Eq, T2 : Eq, T3 : Eq, T4 : Eq, T5 : Eq, T6 : Eq, T7 : Eq, T8 : Eq, T9 : Eq, T10 : Eq]((T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10), (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10)) -> Bool
-  to_string[T0 : Show, T1 : Show, T2 : Show, T3 : Show, T4 : Show, T5 : Show, T6 : Show, T7 : Show, T8 : Show, T9 : Show, T10 : Show]((T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10)) -> String
 }
 
 
 impl Tuple(12) {
   compare[T0 : Compare, T1 : Compare, T2 : Compare, T3 : Compare, T4 : Compare, T5 : Compare, T6 : Compare, T7 : Compare, T8 : Compare, T9 : Compare, T10 : Compare, T11 : Compare]((T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11), (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11)) -> Int
   op_equal[T0 : Eq, T1 : Eq, T2 : Eq, T3 : Eq, T4 : Eq, T5 : Eq, T6 : Eq, T7 : Eq, T8 : Eq, T9 : Eq, T10 : Eq, T11 : Eq]((T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11), (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11)) -> Bool
-  to_string[T0 : Show, T1 : Show, T2 : Show, T3 : Show, T4 : Show, T5 : Show, T6 : Show, T7 : Show, T8 : Show, T9 : Show, T10 : Show, T11 : Show]((T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11)) -> String
 }
 
 
 impl Tuple(13) {
   compare[T0 : Compare, T1 : Compare, T2 : Compare, T3 : Compare, T4 : Compare, T5 : Compare, T6 : Compare, T7 : Compare, T8 : Compare, T9 : Compare, T10 : Compare, T11 : Compare, T12 : Compare]((T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12), (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12)) -> Int
   op_equal[T0 : Eq, T1 : Eq, T2 : Eq, T3 : Eq, T4 : Eq, T5 : Eq, T6 : Eq, T7 : Eq, T8 : Eq, T9 : Eq, T10 : Eq, T11 : Eq, T12 : Eq]((T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12), (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12)) -> Bool
-  to_string[T0 : Show, T1 : Show, T2 : Show, T3 : Show, T4 : Show, T5 : Show, T6 : Show, T7 : Show, T8 : Show, T9 : Show, T10 : Show, T11 : Show, T12 : Show]((T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12)) -> String
 }
 
 
 impl Tuple(14) {
   compare[T0 : Compare, T1 : Compare, T2 : Compare, T3 : Compare, T4 : Compare, T5 : Compare, T6 : Compare, T7 : Compare, T8 : Compare, T9 : Compare, T10 : Compare, T11 : Compare, T12 : Compare, T13 : Compare]((T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13), (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13)) -> Int
   op_equal[T0 : Eq, T1 : Eq, T2 : Eq, T3 : Eq, T4 : Eq, T5 : Eq, T6 : Eq, T7 : Eq, T8 : Eq, T9 : Eq, T10 : Eq, T11 : Eq, T12 : Eq, T13 : Eq]((T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13), (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13)) -> Bool
-  to_string[T0 : Show, T1 : Show, T2 : Show, T3 : Show, T4 : Show, T5 : Show, T6 : Show, T7 : Show, T8 : Show, T9 : Show, T10 : Show, T11 : Show, T12 : Show, T13 : Show]((T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13)) -> String
 }
 
 
 impl Tuple(15) {
   compare[T0 : Compare, T1 : Compare, T2 : Compare, T3 : Compare, T4 : Compare, T5 : Compare, T6 : Compare, T7 : Compare, T8 : Compare, T9 : Compare, T10 : Compare, T11 : Compare, T12 : Compare, T13 : Compare, T14 : Compare]((T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14), (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14)) -> Int
   op_equal[T0 : Eq, T1 : Eq, T2 : Eq, T3 : Eq, T4 : Eq, T5 : Eq, T6 : Eq, T7 : Eq, T8 : Eq, T9 : Eq, T10 : Eq, T11 : Eq, T12 : Eq, T13 : Eq, T14 : Eq]((T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14), (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14)) -> Bool
-  to_string[T0 : Show, T1 : Show, T2 : Show, T3 : Show, T4 : Show, T5 : Show, T6 : Show, T7 : Show, T8 : Show, T9 : Show, T10 : Show, T11 : Show, T12 : Show, T13 : Show, T14 : Show]((T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14)) -> String
 }
 
 
 impl Tuple(16) {
   compare[T0 : Compare, T1 : Compare, T2 : Compare, T3 : Compare, T4 : Compare, T5 : Compare, T6 : Compare, T7 : Compare, T8 : Compare, T9 : Compare, T10 : Compare, T11 : Compare, T12 : Compare, T13 : Compare, T14 : Compare, T15 : Compare]((T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15), (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15)) -> Int
   op_equal[T0 : Eq, T1 : Eq, T2 : Eq, T3 : Eq, T4 : Eq, T5 : Eq, T6 : Eq, T7 : Eq, T8 : Eq, T9 : Eq, T10 : Eq, T11 : Eq, T12 : Eq, T13 : Eq, T14 : Eq, T15 : Eq]((T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15), (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15)) -> Bool
-  to_string[T0 : Show, T1 : Show, T2 : Show, T3 : Show, T4 : Show, T5 : Show, T6 : Show, T7 : Show, T8 : Show, T9 : Show, T10 : Show, T11 : Show, T12 : Show, T13 : Show, T14 : Show, T15 : Show]((T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15)) -> String
 }
 
 // Type aliases

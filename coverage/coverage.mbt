@@ -50,11 +50,6 @@ pub impl Show for CoverageCounter with output(self, logger) {
 }
 
 ///|
-pub fn to_string(self : CoverageCounter) -> String {
-  Show::to_string(self)
-}
-
-///|
 priv enum MList[T] {
   MNil
   MCons(T, MList[T])
