@@ -1,15 +1,15 @@
 {
   "import": [
-    "moonbitlang/core/builtin",
-    "moonbitlang/core/buffer",
-    "moonbitlang/core/coverage",
-    "moonbitlang/core/string",
-    "moonbitlang/core/bytes",
-    "moonbitlang/core/tuple",
     "moonbitlang/core/array",
+    "moonbitlang/core/buffer",
+    "moonbitlang/core/builtin",
+    "moonbitlang/core/bytes",
     "moonbitlang/core/char",
+    "moonbitlang/core/coverage",
+    "moonbitlang/core/int",
     "moonbitlang/core/result",
-    "moonbitlang/core/int"
+    "moonbitlang/core/string",
+    "moonbitlang/core/tuple"
   ],
   "test-import": [
   ]
