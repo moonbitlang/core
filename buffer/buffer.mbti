@@ -25,6 +25,7 @@ impl T {
   write_string(Self, String) -> Unit
   write_sub_string(Self, String, Int, Int) -> Unit //deprecated
   write_substring(Self, String, Int, Int) -> Unit
+  write_utf16be_char(Self, Char) -> Unit
   write_utf8_char(Self, Char) -> Unit
 }
 impl Show for T

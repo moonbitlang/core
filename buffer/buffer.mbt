@@ -168,14 +168,23 @@ pub fn write_sub_string(
 }
 
 ///|
-/// Write a char into buffer.
+/// Write a char into buffer as UTF16LE.
 pub fn write_char(self : T, value : Char) -> Unit {
   self.grow_if_necessary(self.len + 4)
-  let inc = self.data.set_utf16_char(self.len, value)
+  let inc = self.data.set_utf16le_char(self.len, value)
   self.len += inc
 }
 
 ///|
+/// Write a char into buffer as UTF16BE.
+pub fn write_utf16be_char(self : T, value : Char) -> Unit {
+  self.grow_if_necessary(self.len + 4)
+  let inc = self.data.set_utf16be_char(self.len, value)
+  self.len += inc
+}
+
+///|
+/// Write a char into buffer as UTF8.
 pub fn write_utf8_char(self : T, value : Char) -> Unit {
   self.grow_if_necessary(self.len + 4)
   let inc = self.data.set_utf8_char(self.len, value)
