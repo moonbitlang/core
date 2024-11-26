@@ -28,6 +28,15 @@ pub impl Arbitrary for Unit with arbitrary(_i, _rs) { () }
 pub impl Arbitrary for Bool with arbitrary(_i, rs) { rs.next_double() < 0.5 }
 
 ///|
+pub impl Arbitrary for Int with arbitrary(size, rs) {
+  if size == 0 {
+    0
+  } else {
+    rs.next_int() % size
+  }
+}
+
+///|
 pub impl Arbitrary for UInt with arbitrary(size, rs) {
   if size == 0 {
     0
@@ -37,11 +46,19 @@ pub impl Arbitrary for UInt with arbitrary(size, rs) {
 }
 
 ///|
-pub impl Arbitrary for Int with arbitrary(size, rs) {
+pub impl Arbitrary for Byte with arbitrary(_i, rs) { rs.next_uint().to_byte() }
+
+///|
+pub impl Arbitrary for Bytes with arbitrary(size, rs) {
   if size == 0 {
-    0
+    Bytes::new(0)
   } else {
-    rs.next_int() % size
+    let sz = rs.next_positive_int() % size
+    let result = Bytes::new(sz)
+    for i = 0; i < sz; i = i + 1 {
+      result[i] = Byte::arbitrary(size, rs)
+    }
+    result
   }
 }
 
@@ -55,16 +72,19 @@ pub impl Arbitrary for Int64 with arbitrary(size, rs) {
 }
 
 ///|
-pub impl Arbitrary for Double with arbitrary(_i, rs) { rs.next_double() }
-
-///|
 pub impl Arbitrary for UInt64 with arbitrary(size, rs) {
   if size == 0 {
     0
   } else {
-    rs.next_uint64() % size.reinterpret_as_uint().to_uint64()
+    rs.next_uint64() % size.to_uint64()
   }
 }
+
+///|
+pub impl Arbitrary for Float with arbitrary(_i, rs) { rs.next_float() }
+
+///|
+pub impl Arbitrary for Double with arbitrary(_i, rs) { rs.next_double() }
 
 ///|
 pub impl Arbitrary for Char with arbitrary(_i, rs) {
@@ -77,7 +97,7 @@ pub impl Arbitrary for String with arbitrary(size, rs) {
   let len = if size == 0 { 0 } else { rs.next_positive_int() % size }
   let mut s = ""
   for i = 0; i < len; i = i + 1 {
-    s = s + (Arbitrary::arbitrary(i, rs) : Char).to_string()
+    s = s + Char::arbitrary(i, rs).to_string()
   }
   s
 }

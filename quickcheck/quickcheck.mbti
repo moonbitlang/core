@@ -17,13 +17,16 @@ pub(open) trait Arbitrary {
 }
 impl Arbitrary for Unit
 impl Arbitrary for Bool
+impl Arbitrary for Byte
 impl Arbitrary for Char
 impl Arbitrary for Int
 impl Arbitrary for Int64
 impl Arbitrary for UInt
 impl Arbitrary for UInt64
+impl Arbitrary for Float
 impl Arbitrary for Double
 impl Arbitrary for String
+impl Arbitrary for Bytes
 impl Arbitrary for BigInt
 impl[X : Arbitrary] Arbitrary for Iter[X]
 
