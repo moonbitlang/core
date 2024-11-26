@@ -3,6 +3,7 @@
   "test-import": [
     "moonbitlang/core/char",
     "moonbitlang/core/string",
+    "moonbitlang/core/bytes",
     "moonbitlang/core/int",
     "moonbitlang/core/double",
     "moonbitlang/core/coverage",
