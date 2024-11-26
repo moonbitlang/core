@@ -7,25 +7,25 @@ alias @moonbitlang/core/quickcheck as @quickcheck
 // Types and methods
 type T
 impl T {
-  from_array[A : Compare + Eq](Array[A]) -> Self[A]
-  from_iter[A : Compare + Eq](Iter[A]) -> Self[A]
+  from_array[A : Compare](Array[A]) -> Self[A]
+  from_iter[A : Compare](Iter[A]) -> Self[A]
   is_empty[A](Self[A]) -> Bool
-  iter[A : Compare + Eq](Self[A]) -> Iter[A]
+  iter[A : Compare](Self[A]) -> Iter[A]
   length[A](Self[A]) -> Int
-  new[A : Compare + Eq]() -> Self[A]
-  of[A : Compare + Eq](FixedArray[A]) -> Self[A]
+  new[A : Compare]() -> Self[A]
+  of[A : Compare](FixedArray[A]) -> Self[A]
   peek[A](Self[A]) -> A?
-  pop[A : Compare + Eq](Self[A]) -> Self[A]?
-  pop_exn[A : Compare + Eq](Self[A]) -> Self[A] //deprecated
-  push[A : Compare + Eq](Self[A], A) -> Self[A]
-  to_array[A : Compare + Eq](Self[A]) -> Array[A]
-  to_string[A : Show + Compare + Eq](Self[A]) -> String
-  unsafe_pop[A : Compare + Eq](Self[A]) -> Self[A]
+  pop[A : Compare](Self[A]) -> Self[A]?
+  pop_exn[A : Compare](Self[A]) -> Self[A] //deprecated
+  push[A : Compare](Self[A], A) -> Self[A]
+  to_array[A : Compare](Self[A]) -> Array[A]
+  to_string[A : Show + Compare](Self[A]) -> String
+  unsafe_pop[A : Compare](Self[A]) -> Self[A]
 }
-impl[A : Compare + Eq] Eq for T[A]
-impl[A : Hash + Compare + Eq] Hash for T[A]
-impl[A : Show + Compare + Eq] Show for T[A]
-impl[X : @quickcheck.Arbitrary + Compare + Eq] @quickcheck.Arbitrary for T[X]
+impl[A : Compare] Eq for T[A]
+impl[A : Hash + Compare] Hash for T[A]
+impl[A : Show + Compare] Show for T[A]
+impl[X : @quickcheck.Arbitrary + Compare] @quickcheck.Arbitrary for T[X]
 
 // Type aliases
 

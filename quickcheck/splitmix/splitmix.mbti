@@ -17,7 +17,6 @@ impl RandomState {
   next_uint(Self) -> UInt
   next_uint64(Self) -> UInt64
   split(Self) -> Self
-  to_string(Self) -> String
 }
 impl Default for RandomState
 impl Show for RandomState

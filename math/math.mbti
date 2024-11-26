@@ -25,9 +25,9 @@ fn log10(Double) -> Double
 
 fn log2(Double) -> Double
 
-fn maximum[T : Compare + Eq](T, T) -> T
+fn maximum[T : Compare](T, T) -> T
 
-fn minimum[T : Compare + Eq](T, T) -> T
+fn minimum[T : Compare](T, T) -> T
 
 let pi : Double //deprecated
 

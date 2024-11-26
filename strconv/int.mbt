@@ -45,15 +45,15 @@ pub fn parse_int64(str : String, base~ : Int = 0) -> Int64!StrConvError {
 
   // determine base
   let mut num_base = 10
-  if base == 0 {
-    num_base = determine_base(s)
-    if num_base != 10 {
-      s = s.substring(start=2)
+  match base {
+    0 => {
+      num_base = determine_base(s)
+      if num_base != 10 {
+        s = s.substring(start=2)
+      }
     }
-  } else if 2 <= base && base <= 36 {
-    num_base = base
-  } else {
-    base_err!()
+    2..=36 => num_base = base
+    _ => base_err!()
   }
 
   // calculate overflow threshold
@@ -64,17 +64,12 @@ pub fn parse_int64(str : String, base~ : Int = 0) -> Int64!StrConvError {
   for i = 0; i < s.length(); i = i + 1 {
     let c = s[i]
     let mut d = 0
-    if c == '_' {
-      continue
-    }
-    if '0' <= c && c <= '9' {
-      d = c.to_int() - '0'.to_int()
-    } else if 'a' <= c && c <= 'z' {
-      d = c.to_int() - 'a'.to_int() + 10
-    } else if 'A' <= c && c <= 'Z' {
-      d = c.to_int() - 'A'.to_int() + 10
-    } else {
-      syntax_err!()
+    match c {
+      '_' => continue
+      '0'..='9' => d = c - '0'
+      'a'..='z' => d = c - 'a' + 10
+      'A'..='Z' => d = c - 'A' + 10
+      _ => syntax_err!()
     }
     if d >= num_base {
       syntax_err!()

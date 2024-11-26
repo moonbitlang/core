@@ -18,7 +18,7 @@ fn wrap2[T, A, B, E : Error](f~ : (A, B) -> T!E, A, B) -> Result[T, E]
 
 impl Result {
   bind[T, E, U](Self[T, E], (T) -> Self[U, E]) -> Self[U, E]
-  compare[T : Compare + Eq, E : Compare + Eq](Self[T, E], Self[T, E]) -> Int
+  compare[T : Compare, E : Compare](Self[T, E], Self[T, E]) -> Int
   flatten[T, E](Self[Self[T, E], E]) -> Self[T, E]
   fold[T, E, V](Self[T, E], (T) -> V, (E) -> V) -> V
   is_err[T, E](Self[T, E]) -> Bool
