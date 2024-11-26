@@ -25,6 +25,15 @@ test "String::concat" {
   inspect!(String::concat([], separator=" "), content="")
 }
 
+test "String::concat_view" {
+  inspect!(String::concat_view(["123", "456"][:]), content="123456")
+  inspect!(
+    String::concat_view(["aaa", "bbb", "ccc"][1:3], separator=" "),
+    content="bbb ccc",
+  )
+  inspect!(String::concat_view([][:], separator=" "), content="")
+}
+
 test "default" {
   inspect!(@string.default())
 }

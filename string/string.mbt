@@ -32,16 +32,16 @@ pub fn String::from_array(chars : Array[Char]) -> String {
 }
 
 ///|
-/// Concatenate strings.
+/// Concatenate strings by a string array view.
 /// 
 /// ```
-/// let s = @string.concat(["Hello", ", ", "world!"])
+/// let s = @string.concat_view(["Hello", ", ", "world!"][:])
 /// assert_eq!(s, "Hello, world!")
-/// let s = @string.concat(["a", "b", "c"], separator=",")
+/// let s = @string.concat(["a", "b", "c"][:], separator=",")
 /// assert_eq!(s, "a,b,c")
 /// ```
-pub fn String::concat(
-  strings : Array[String],
+pub fn String::concat_view(
+  strings : ArrayView[String],
   separator~ : String = ""
 ) -> String {
   let buf = StringBuilder::new()
@@ -62,6 +62,22 @@ pub fn String::concat(
     }
   }
   buf.to_string()
+}
+
+///|
+/// Concatenate strings by a string array.
+/// 
+/// ```
+/// let s = @string.concat(["Hello", ", ", "world!"])
+/// assert_eq!(s, "Hello, world!")
+/// let s = @string.concat(["a", "b", "c"], separator=",")
+/// assert_eq!(s, "a,b,c")
+/// ```
+pub fn String::concat(
+  strings : Array[String],
+  separator~ : String = ""
+) -> String {
+  String::concat_view(strings[:], separator~)
 }
 
 ///|
