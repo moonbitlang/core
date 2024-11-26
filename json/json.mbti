@@ -59,7 +59,6 @@ impl Json {
   item(Self, Int) -> Self?
   stringify(Self, escape_slash~ : Bool = .., indent~ : Int = ..) -> String
   to_json(Self) -> Self
-  to_string(Self) -> String
   value(Self, String) -> Self?
 }
 

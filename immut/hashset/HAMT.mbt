@@ -220,11 +220,6 @@ pub impl[A : Show] Show for T[A] with output(self, logger) {
 }
 
 ///|
-pub fn to_string[A : Show](self : T[A]) -> String {
-  Show::to_string(self)
-}
-
-///|
 pub fn T::from_array[A : Eq + Hash](arr : Array[A]) -> T[A] {
   loop arr.length(), T::new() {
     0, set => set

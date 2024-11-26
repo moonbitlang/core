@@ -18,7 +18,6 @@ impl T {
   of[A : Eq + Hash](FixedArray[A]) -> Self[A]
   remove[A : Eq + Hash](Self[A], A) -> Self[A]
   size[A](Self[A]) -> Int
-  to_string[A : Show](Self[A]) -> String
 }
 impl[A : Eq] Eq for T[A]
 impl[A : Hash] Hash for T[A]

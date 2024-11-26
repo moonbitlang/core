@@ -48,16 +48,6 @@ pub impl Show for ParseError with output(self, logger) {
   logger.write_string(self.to_string())
 }
 
-// pub fn ParseError::to_string(self : ParseError) -> String {
-//   match self {
-//     ParseError(e) => e.to_string()
-//   }
-// }
-
-// pub impl Show for ParseError with output(self, logger) {
-//   logger.write_string(self.to_string())
-// }
-
 ///|
 pub impl Show for JsonValue with output(self, logger) {
   match self {
@@ -85,9 +75,4 @@ pub impl Show for JsonValue with output(self, logger) {
       logger.write_string(")")
     }
   }
-}
-
-///|
-pub fn to_string(self : JsonValue) -> String {
-  Show::to_string(self)
 }

@@ -330,11 +330,6 @@ pub impl @quickcheck.Arbitrary for T with arbitrary(size, rs) {
 }
 
 ///|
-pub fn to_string(self : T) -> String {
-  Show::to_string(self)
-}
-
-///|
 pub fn is_integer(self : T) -> Bool {
   self.denominator == 1L
 }
@@ -594,17 +589,17 @@ test "fract" {
 test "to_string" {
   // 1/2 -> "1/2"
   let a = T::new_unchecked(1L, 2L)
-  let b = to_string(a)
+  let b = a.to_string()
   assert_eq!(b, "1/2")
 
   // 4/4 -> "1"
   let a = T::new_unchecked(4L, 4L)
-  let b = to_string(a)
+  let b = a.to_string()
   assert_eq!(b, "1")
 
   // 0/1 -> "0"
   let a = T::new_unchecked(0L, 1L)
-  let b = to_string(a)
+  let b = a.to_string()
   assert_eq!(b, "0")
 }
 

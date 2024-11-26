@@ -42,11 +42,6 @@ pub fn iter2[T](self : FixedArray[T]) -> Iter2[Int, T] {
 }
 
 ///|
-pub fn to_string[X : Show](self : FixedArray[X]) -> String {
-  Show::to_string(self)
-}
-
-///|
 pub fn FixedArray::default[X]() -> FixedArray[X] {
   []
 }

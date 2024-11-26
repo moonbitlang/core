@@ -77,12 +77,6 @@ pub(open) trait Show {
   // By default `to_string` is implemented using `output` and a buffer,
   // but some types, such as `String`, may override `to_string`,
   // for different (unescaped) behavior when interpolated/printed directly
-  //
-  // By default, `to_string` cannot be called via dot directly.
-  // If implementors of `Show` wants to allow `.to_string()` usage,
-  // they should create a method wrapper manually:
-  //
-  //    fn to_string(self : T) -> String { Show::to_string(self) }
   to_string(Self) -> String
 }
 

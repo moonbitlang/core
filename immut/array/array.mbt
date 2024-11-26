@@ -24,11 +24,6 @@ pub impl[A : Show] Show for T[A] with output(self, logger) {
 }
 
 ///|
-pub fn to_string[A : Show](self : T[A]) -> String {
-  Show::to_string(self)
-}
-
-///|
 pub fn is_empty[A](self : T[A]) -> Bool {
   self.size == 0
 }
