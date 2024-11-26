@@ -84,11 +84,16 @@ pub fn to_string(self : T) -> String {
 /// Return a new unchecked string contains the data in buffer.
 /// Note this function does not validate the encoding of the byte sequence, 
 /// it simply copy the bytes into a new String.
-pub fn to_unchecked_string(self : T) -> String {
-  Bytes::from_fixedarray(self.data).to_unchecked_string(
-    offset=0,
-    length=self.len,
-  )
+pub fn to_unchecked_string(self : T, offset? : Int, length? : Int) -> String {
+  let offset = match offset {
+    None => 0
+    Some(x) => x
+  }
+  let length = match length {
+    None => self.len
+    Some(x) => x
+  }
+  Bytes::from_fixedarray(self.data).to_unchecked_string(offset~, length~)
 }
 
 ///|
@@ -97,6 +102,22 @@ pub fn T::new(size_hint~ : Int = 0) -> T {
   let initial = if size_hint < 1 { 1 } else { size_hint }
   let data = FixedArray::make(initial, Byte::default())
   { data, len: 0, initial_data: data }
+}
+
+///|
+pub fn T::from_bytes(bytes : Bytes) -> T {
+  let buf = T::new(size_hint=bytes.length())
+  buf.write_bytes(bytes)
+  buf
+}
+
+///|
+pub fn T::from_array(arr : Array[Byte]) -> T {
+  let buf = T::new(size_hint=arr.length())
+  for byte in arr {
+    buf.write_byte(byte)
+  }
+  buf
 }
 
 ///|
@@ -147,10 +168,26 @@ pub fn write_sub_string(
 }
 
 ///|
-/// Write a char into buffer.
+/// Write a char into buffer as UTF16LE.
 pub fn write_char(self : T, value : Char) -> Unit {
   self.grow_if_necessary(self.len + 4)
-  let inc = self.data.set_utf16_char(self.len, value)
+  let inc = self.data.set_utf16le_char(self.len, value)
+  self.len += inc
+}
+
+///|
+/// Write a char into buffer as UTF16BE.
+pub fn write_utf16be_char(self : T, value : Char) -> Unit {
+  self.grow_if_necessary(self.len + 4)
+  let inc = self.data.set_utf16be_char(self.len, value)
+  self.len += inc
+}
+
+///|
+/// Write a char into buffer as UTF8.
+pub fn write_utf8_char(self : T, value : Char) -> Unit {
+  self.grow_if_necessary(self.len + 4)
+  let inc = self.data.set_utf8_char(self.len, value)
   self.len += inc
 }
 
@@ -160,6 +197,11 @@ pub fn write_byte(self : T, value : Byte) -> Unit {
   self.grow_if_necessary(self.len + 1)
   self.data[self.len] = value
   self.len += 1
+}
+
+///|
+pub fn blit(self : T, srcoff : Int, dst : T, dstoff : Int, len : Int) -> Unit {
+  Bytes::blit(self.to_bytes(), srcoff, dst.to_bytes(), dstoff, len)
 }
 
 ///|
@@ -174,6 +216,25 @@ pub fn to_bytes(self : T) -> Bytes {
 }
 
 ///|
+pub fn to_array(self : T) -> Array[Byte] {
+  self.to_bytes().to_array()
+}
+
+///|
+pub fn op_set(self : T, index : Int, value : Byte) -> Unit {
+  let len = self.length()
+  guard index >= 0 && index < len
+  self.data[index] = value
+}
+
+///|
+pub fn op_get(self : T, index : Int) -> Byte {
+  let len = self.length()
+  guard index >= 0 && index < len
+  self.data[index]
+}
+
+///|
 pub impl Show for T with output(self, logger) {
-  logger.write_string(self.to_unchecked_string())
+  logger.write_string(self.to_unchecked_string(offset=0, length=self.len))
 }

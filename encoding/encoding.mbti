@@ -1,0 +1,36 @@
+package moonbitlang/core/encoding
+
+alias @moonbitlang/core/buffer as @buffer
+
+// Values
+fn decode_lossy(Encoding, @buffer.T) -> LossyChars
+
+fn decode_strict(Encoding, @buffer.T) -> StrictChars
+
+fn encode(Encoding, String) -> Bytes
+
+// Types and methods
+type DecodeError
+impl Show for DecodeError
+
+pub(all) enum Encoding {
+  UTF8
+  UTF16
+  UTF16LE
+  UTF16BE
+}
+
+type LossyChars
+impl LossyChars {
+  iter(Self) -> Iter[Char]
+}
+
+type StrictChars
+impl StrictChars {
+  iter(Self) -> Iter[Result[Char, DecodeError]]
+}
+
+// Type aliases
+
+// Traits
+
