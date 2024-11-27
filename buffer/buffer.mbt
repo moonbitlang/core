@@ -150,7 +150,7 @@ pub fn write_sub_string(
 /// Write a char into buffer.
 pub fn write_char(self : T, value : Char) -> Unit {
   self.grow_if_necessary(self.len + 4)
-  let inc = self.data.set_utf16_char(self.len, value)
+  let inc = self.data.set_utf16le_char(self.len, value)
   self.len += inc
 }
 

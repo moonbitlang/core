@@ -662,7 +662,10 @@ impl FixedArray {
   op_get[T](Self[T], Int) -> T
   op_set[T](Self[T], Int, T) -> Unit
   set[T](Self[T], Int, T) -> Unit
-  set_utf16_char(Self[Byte], Int, Char) -> Int
+  set_utf16_char(Self[Byte], Int, Char) -> Int //deprecated
+  set_utf16be_char(Self[Byte], Int, Char) -> Int
+  set_utf16le_char(Self[Byte], Int, Char) -> Int
+  set_utf8_char(Self[Byte], Int, Char) -> Int
   to_json[X : ToJson](Self[X]) -> Json
   unsafe_blit[A](Self[A], Int, Self[A], Int, Int) -> Unit
 }
