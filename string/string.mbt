@@ -32,7 +32,8 @@ pub fn String::from_array(chars : Array[Char]) -> String {
 }
 
 ///|
-/// Convert char iterator to string
+/// Convert char iterator to string,
+/// a simple wrapper for `from_array`.
 pub fn String::from_iter(iter : Iter[Char]) -> String {
   let chars = iter.collect()
   String::from_array(chars)
