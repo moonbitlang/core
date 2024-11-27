@@ -11,6 +11,8 @@ let min_value : Int64
 impl Int64 {
   abs(Int64) -> Int64
   from_int(Int) -> Int64
+  max(Int64, Int64) -> Int64
+  min(Int64, Int64) -> Int64
 }
 
 // Type aliases

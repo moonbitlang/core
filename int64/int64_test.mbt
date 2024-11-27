@@ -163,3 +163,30 @@ test "grouped test for random cases" {
   // 1011111011101111110111101010110110111110111011111101111010101101
   inspect!(UInt64::popcnt(0xBEEFDEADBEEFDEADUL), content="48")
 }
+
+test "abs function coverage" {
+  // Test cases for abs function
+  assert_eq!(Int64::abs(5), 5)
+  assert_eq!(Int64::abs(-5), 5)
+  assert_eq!(Int64::abs(0), 0)
+  assert_eq!(Int64::abs(@int64.min_value), @int64.min_value.abs())
+  assert_eq!(Int64::abs(@int64.max_value), @int64.max_value)
+}
+
+test "min function coverage" {
+  // Test cases for min function
+  assert_eq!(Int64::min(5, 5), 5)
+  assert_eq!(Int64::min(-5, 5), -5)
+  assert_eq!(Int64::min(0, 1), 0)
+  assert_eq!(Int64::min(2, 1), 1)
+  assert_eq!(Int64::min(@int64.min_value, @int64.max_value), @int64.min_value)
+}
+
+test "max function coverage" {
+  // Test cases for max function
+  assert_eq!(Int64::max(5, 5), 5)
+  assert_eq!(Int64::max(-5, 5), 5)
+  assert_eq!(Int64::max(0, 1), 1)
+  assert_eq!(Int64::max(2, 1), 2)
+  assert_eq!(Int64::max(@int64.min_value, @int64.max_value), @int64.max_value)
+}

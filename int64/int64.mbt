@@ -31,3 +31,21 @@ pub fn abs(self : Int64) -> Int64 {
     self
   }
 }
+
+///|
+pub fn min(self : Int64, x : Int64) -> Int64 {
+  if self > x {
+    x
+  } else {
+    self
+  }
+}
+
+///|
+pub fn max(self : Int64, x : Int64) -> Int64 {
+  if self > x {
+    self
+  } else {
+    x
+  }
+}

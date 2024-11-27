@@ -41,3 +41,23 @@ pub fn abs(self : Int) -> Int {
     self
   }
 }
+
+///|
+/// Return the smaller of the two integers.
+pub fn min(self : Int, x : Int) -> Int {
+  if self > x {
+    x
+  } else {
+    self
+  }
+}
+
+///|
+/// Return the greater of the two integers.
+pub fn max(self : Int, x : Int) -> Int {
+  if self > x {
+    self
+  } else {
+    x
+  }
+}
