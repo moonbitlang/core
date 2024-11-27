@@ -70,6 +70,21 @@ test "set_utf8_char (CJK)" {
   )
 }
 
+test "set_utf8_char (0x600)" {
+  let arr = FixedArray::makei(4, fn { _ => b'\x00' })
+  let char = '؀'
+  inspect!(char.to_int(), content="1536")
+  let len = arr.set_utf8_char(0, char)
+  let bytes = @bytes.from_fixedarray(arr)
+  assert_eq!(len, 2)
+  inspect!(
+    bytes,
+    content=
+      #|b"\xd8\x80\x00\x00"
+    ,
+  )
+}
+
 test "set_utf8_char (Emoji)" {
   let arr = FixedArray::makei(4, fn { _ => b'\x00' })
   let char = '🙅'
