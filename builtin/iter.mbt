@@ -782,8 +782,8 @@ pub fn collect[T](self : Iter[T]) -> Array[T] {
 }
 
 ///|
-/// Collects the elements of Ok of the iterator into an array,
-/// short circuiting if a failure is encountered.
+/// Collects the `Ok` elements of the iterator into an array,
+/// short circuiting if a `Err` is encountered.
 pub fn try_collect[T, E : Error](self : Iter[Result[T, E]]) -> Array[T]!E {
   let result = []
   for element in self {
