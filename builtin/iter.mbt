@@ -782,6 +782,20 @@ pub fn collect[T](self : Iter[T]) -> Array[T] {
 }
 
 ///|
+/// Collects the elements of Ok of the iterator into an array,
+/// short circuiting if a failure is encountered.
+pub fn try_collect[T, E : Error](self : Iter[Result[T, E]]) -> Array[T]!E {
+  let result = []
+  for element in self {
+    match element {
+      Ok(x) => result.push(x)
+      Err(e) => raise e
+    }
+  }
+  result
+}
+
+///|
 /// Iter itself is an iterator.
 /// so that it works with array spread operator. e.g, `[..iter]`
 pub fn iter[T](self : Iter[T]) -> Iter[T] {

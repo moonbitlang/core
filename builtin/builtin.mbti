@@ -243,6 +243,7 @@ impl Iter {
   take_while[T](Self[T], (T) -> Bool) -> Self[T]
   tap[T](Self[T], (T) -> Unit) -> Self[T] //deprecated
   to_array[T](Self[T]) -> Array[T]
+  try_collect[T, E : Error](Self[Result[T, E]]) -> Array[T]!E
 }
 impl[T : Show] Show for Iter[T]
 

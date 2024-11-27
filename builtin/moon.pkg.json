@@ -11,7 +11,8 @@
     "moonbitlang/core/array",
     "moonbitlang/core/int64",
     "moonbitlang/core/uint",
-    "moonbitlang/core/json"
+    "moonbitlang/core/json",
+    "moonbitlang/core/error"
   ],
   "targets": {
     "int64_js.mbt": ["js"],

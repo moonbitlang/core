@@ -312,6 +312,38 @@ test "collect" {
   assert_eq!(vec, ['1', '2', '3', '4', '5'])
 }
 
+test "try_collect Ok" {
+  let arr = ['1', '2', '3', '4', '5']
+  let iter : Iter[Result[Char, Error]] = Iter::new(
+    fn(yield_) {
+      for i = 0, len = arr.length(); i < len; i = i + 1 {
+        yield_(Ok(arr[i])) |> ignore
+      }
+      IterContinue
+    },
+  )
+  let vec = iter.try_collect?()
+  inspect!(vec, content="Ok(['1', '2', '3', '4', '5'])")
+}
+
+test "try_collect Err" {
+  let arr = ['1', '2', '3', '4', '5']
+  let iter : Iter[Result[Char, Error]] = Iter::new(
+    fn(yield_) {
+      for i = 0, len = arr.length(); i < len; i = i + 1 {
+        if i % 2 == 0 {
+          yield_(Ok(arr[i])) |> ignore
+        } else {
+          yield_(Err(Failure("odd"))) |> ignore
+        }
+      }
+      IterContinue
+    },
+  )
+  let vec = iter.try_collect?()
+  inspect!(vec, content="Err(moonbitlang/core/builtin.Failure.Failure)")
+}
+
 test "until" {
   // edge cases
   inspect!((0).until(10).take(100), content="[0, 1, 2, 3, 4, 5, 6, 7, 8, 9]")
