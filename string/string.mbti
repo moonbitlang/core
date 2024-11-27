@@ -14,6 +14,7 @@ impl String {
   ends_with(String, String) -> Bool
   fold[A](String, init~ : A, (A, Char) -> A) -> A
   from_array(Array[Char]) -> String
+  from_iter(Iter[Char]) -> String
   index_of(String, String, from~ : Int = ..) -> Int
   is_blank(String) -> Bool
   is_empty(String) -> Bool
