@@ -14,7 +14,7 @@
 
 ///|
 fn check(x : Double, y : Double) -> Bool {
-  (x - y).abs() < 1.0e-4
+  (x - y).abs() < 1.0e-15
 }
 
 test "mod" {
