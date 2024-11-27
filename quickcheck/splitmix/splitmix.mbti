@@ -10,6 +10,7 @@ impl RandomState {
   new(seed~ : UInt64 = ..) -> Self
   next(Self) -> Unit
   next_double(Self) -> Double
+  next_float(Self) -> Float
   next_int(Self) -> Int
   next_int64(Self) -> Int64
   next_positive_int(Self) -> Int

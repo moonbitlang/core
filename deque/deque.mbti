@@ -35,7 +35,6 @@ impl T {
   rev_eachi[A](Self[A], (Int, A) -> Unit) -> Unit
   search[A : Eq](Self[A], A) -> Int?
   shrink_to_fit[A](Self[A]) -> Unit
-  to_string[A : Show](Self[A]) -> String
   unsafe_pop_back[A](Self[A]) -> Unit
   unsafe_pop_front[A](Self[A]) -> Unit
 }

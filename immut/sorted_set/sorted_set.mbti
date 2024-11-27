@@ -40,7 +40,6 @@ impl T {
   subset[A : Compare](Self[A], Self[A]) -> Bool
   to_array[A : Compare](Self[A]) -> Array[A]
   to_json[A : ToJson](Self[A]) -> Json
-  to_string[A : Show](Self[A]) -> String
   union[A : Compare](Self[A], Self[A]) -> Self[A]
 }
 impl[A : Default] Default for T[A]

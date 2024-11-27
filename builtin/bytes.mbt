@@ -140,7 +140,7 @@ pub fn copy(self : Bytes) -> Bytes {
 }
 
 ///|
-/// Fill utf8 encoded char `value` into byte sequence `self`, starting at `offset`.
+/// Fill UTF8 encoded char `value` into byte sequence `self`, starting at `offset`.
 /// It return the length of bytes has been written.
 /// @alert deprecated "The type Bytes is about to be changed to be immutable. Use `FixedArray[Byte]` or `Buffer` instead."
 pub fn set_utf8_char(self : Bytes, offset : Int, value : Char) -> Int {
@@ -169,7 +169,39 @@ pub fn set_utf8_char(self : Bytes, offset : Int, value : Char) -> Int {
 }
 
 ///|
-/// Fill utf16 encoded char `value` into byte sequence `self`, starting at `offset`.
+/// Fill UTF8 encoded char `value` into byte sequence `self`, starting at `offset`.
+/// It return the length of bytes has been written.
+pub fn set_utf8_char(
+  self : FixedArray[Byte],
+  offset : Int,
+  value : Char
+) -> Int {
+  let code = value.to_uint()
+  if code < 0x80 {
+    self[offset] = ((code & 0x7F) | 0x00).to_byte()
+    1
+  } else if code < 0x0800 {
+    self[offset] = (((code >> 6) & 0x1F) | 0xC0).to_byte()
+    self[offset + 1] = ((code & 0x3F) | 0x80).to_byte()
+    2
+  } else if code < 0x010000 {
+    self[offset] = (((code >> 12) & 0x0F) | 0xE0).to_byte()
+    self[offset + 1] = (((code >> 6) & 0x3F) | 0x80).to_byte()
+    self[offset + 2] = ((code & 0x3F) | 0x80).to_byte()
+    3
+  } else if code < 0x110000 {
+    self[offset] = (((code >> 18) & 0x07) | 0xF0).to_byte()
+    self[offset + 1] = (((code >> 12) & 0x3F) | 0x80).to_byte()
+    self[offset + 2] = (((code >> 6) & 0x3F) | 0x80).to_byte()
+    self[offset + 3] = ((code & 0x3F) | 0x80).to_byte()
+    4
+  } else {
+    abort("Char out of range")
+  }
+}
+
+///|
+/// Fill UTF16 encoded char `value` into byte sequence `self`, starting at `offset`.
 /// It return the length of bytes has been written.
 /// @alert unsafe "Panic if the [value] is out of range"
 pub fn set_utf16_char(self : Bytes, offset : Int, value : Char) -> Int {
@@ -196,6 +228,7 @@ pub fn set_utf16_char(self : Bytes, offset : Int, value : Char) -> Int {
 /// Fill utf16 encoded char `value` into byte sequence `self`, starting at `offset`.
 /// It return the length of bytes has been written.
 /// @alert unsafe "Panic if the [value] is out of range"
+/// @alert deprecated "Use `set_utf16le_char` instead"
 pub fn set_utf16_char(
   self : FixedArray[Byte],
   offset : Int,
@@ -214,6 +247,62 @@ pub fn set_utf16_char(
     self[offset + 1] = (lo >> 8).to_byte()
     self[offset + 2] = (hi & 0xFF).to_byte()
     self[offset + 3] = (hi >> 8).to_byte()
+    4
+  } else {
+    abort("Char out of range")
+  }
+}
+
+///|
+/// Fill UTF16LE encoded char `value` into byte sequence `self`, starting at `offset`.
+/// It return the length of bytes has been written.
+/// @alert unsafe "Panic if the [value] is out of range"
+pub fn set_utf16le_char(
+  self : FixedArray[Byte],
+  offset : Int,
+  value : Char
+) -> Int {
+  let code = value.to_uint()
+  if code < 0x10000 {
+    self[offset] = (code & 0xFF).to_byte()
+    self[offset + 1] = (code >> 8).to_byte()
+    2
+  } else if code < 0x110000 {
+    let hi = code - 0x10000
+    let lo = (hi >> 10) | 0xD800
+    let hi = (hi & 0x3FF) | 0xDC00
+    self[offset] = (lo & 0xFF).to_byte()
+    self[offset + 1] = (lo >> 8).to_byte()
+    self[offset + 2] = (hi & 0xFF).to_byte()
+    self[offset + 3] = (hi >> 8).to_byte()
+    4
+  } else {
+    abort("Char out of range")
+  }
+}
+
+///|
+/// Fill UTF16BE encoded char `value` into byte sequence `self`, starting at `offset`.
+/// It return the length of bytes has been written.
+/// @alert unsafe "Panic if the [value] is out of range"
+pub fn set_utf16be_char(
+  self : FixedArray[Byte],
+  offset : Int,
+  value : Char
+) -> Int {
+  let code = value.to_uint()
+  if code < 0x10000 {
+    self[offset] = (code >> 0xFF).to_byte()
+    self[offset + 1] = (code & 0xFF).to_byte()
+    2
+  } else if code < 0x110000 {
+    let hi = code - 0x10000
+    let lo = (hi >> 10) | 0xD800
+    let hi = (hi & 0x3FF) | 0xDC00
+    self[offset] = (lo >> 8).to_byte()
+    self[offset + 1] = (lo & 0xFF).to_byte()
+    self[offset + 2] = (hi >> 8).to_byte()
+    self[offset + 3] = (hi & 0xFF).to_byte()
     4
   } else {
     abort("Char out of range")

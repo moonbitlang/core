@@ -30,7 +30,6 @@ impl T {
   size[V : Compare](Self[V]) -> Int64
   subset[V : Compare](Self[V], Self[V]) -> Bool
   to_array[V](Self[V]) -> Array[V]
-  to_string[V : Show](Self[V]) -> String
   union[V : Compare](Self[V], Self[V]) -> Self[V]
 }
 impl[V : Show] Show for T[V]

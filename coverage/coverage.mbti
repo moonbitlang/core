@@ -10,7 +10,6 @@ type CoverageCounter
 impl CoverageCounter {
   incr(Self, Int) -> Unit
   new(Int) -> Self
-  to_string(Self) -> String
 }
 impl Show for CoverageCounter
 

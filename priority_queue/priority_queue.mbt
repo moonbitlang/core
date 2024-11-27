@@ -283,11 +283,6 @@ pub impl[A : Show + Compare] Show for T[A] with output(self, logger) {
 }
 
 ///|
-pub fn to_string[A : Show + Compare](self : T[A]) -> String {
-  Show::to_string(self)
-}
-
-///|
 pub impl[X : @quickcheck.Arbitrary + Compare] @quickcheck.Arbitrary for T[X] with arbitrary(
   size,
   rs

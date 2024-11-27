@@ -37,7 +37,6 @@ impl T {
   size[K, V](Self[K, V]) -> Int
   to_array[K, V](Self[K, V]) -> Array[(K, V)]
   to_json[K : Show, V : ToJson](Self[K, V]) -> Json
-  to_string[K : Show, V : Show](Self[K, V]) -> String
 }
 impl[K : Eq, V : Eq] Eq for T[K, V]
 impl[K : Hash, V : Hash] Hash for T[K, V]

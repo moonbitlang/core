@@ -528,11 +528,6 @@ pub impl[A : Show] Show for T[A] with output(self, logger) {
 }
 
 ///|
-pub fn to_string[A : Show](self : T[A]) -> String {
-  Show::to_string(self)
-}
-
-///|
 pub impl[A : ToJson] ToJson for T[A] with to_json(self) {
   let capacity = self.iter().count()
   guard capacity != 0 else { return Array([]) }

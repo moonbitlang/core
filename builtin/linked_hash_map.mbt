@@ -372,11 +372,6 @@ pub impl[K : Show, V : Show] Show for Map[K, V] with output(self, logger) {
 }
 
 ///|
-pub fn to_string[K : Show, V : Show](self : Map[K, V]) -> String {
-  Show::to_string(self)
-}
-
-///|
 /// Get the number of key-value pairs in the map.
 pub fn size[K, V](self : Map[K, V]) -> Int {
   self.size

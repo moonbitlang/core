@@ -49,11 +49,6 @@ pub impl[A : Show, B : Show] Show for Iter2[A, B] with output(self, logger) {
 }
 
 ///|
-pub fn to_string[A : Show, B : Show](self : Iter2[A, B]) -> String {
-  Show::to_string(self)
-}
-
-///|
 pub fn Iter2::new[A, B](
   f : ((A, B) -> IterResult) -> IterResult
 ) -> Iter2[A, B] {

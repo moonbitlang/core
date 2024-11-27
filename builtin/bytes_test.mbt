@@ -42,12 +42,90 @@ test "copy" {
   assert_eq!(copy_bytes.to_unchecked_string(), bytes.to_unchecked_string())
 }
 
-test "set_utf16_char" {
-  let bytes = Bytes::new(10)
+test "set_utf8_char (ASCII)" {
+  let arr = FixedArray::makei(4, fn { _ => b'\x00' })
   let char = 'A'
-  let len = bytes.set_utf16_char(0, char)
+  let len = arr.set_utf8_char(0, char)
+  let bytes = @bytes.from_fixedarray(arr)
+  assert_eq!(len, 1)
+  inspect!(
+    bytes,
+    content=
+      #|b"\x41\x00\x00\x00"
+    ,
+  )
+}
+
+test "set_utf8_char (CJK)" {
+  let arr = FixedArray::makei(4, fn { _ => b'\x00' })
+  let char = '拼'
+  let len = arr.set_utf8_char(0, char)
+  let bytes = @bytes.from_fixedarray(arr)
+  assert_eq!(len, 3)
+  inspect!(
+    bytes,
+    content=
+      #|b"\xe6\x8b\xbc\x00"
+    ,
+  )
+}
+
+test "set_utf8_char (Emoji)" {
+  let arr = FixedArray::makei(4, fn { _ => b'\x00' })
+  let char = '🙅'
+  let len = arr.set_utf8_char(0, char)
+  let bytes = @bytes.from_fixedarray(arr)
+  assert_eq!(len, 4)
+  inspect!(
+    bytes,
+    content=
+      #|b"\xf0\x9f\x99\x85"
+    ,
+  )
+}
+
+test "set_utf16le_char" {
+  let arr = FixedArray::makei(4, fn { _ => b'\x00' })
+  let char = 'A'
+  let len = arr.set_utf16le_char(0, char)
+  let bytes = @bytes.from_fixedarray(arr)
   assert_eq!(len, 2)
   assert_eq!(bytes.to_unchecked_string(offset=0, length=2), "A")
+  inspect!(
+    bytes,
+    content=
+      #|b"\x41\x00\x00\x00"
+    ,
+  )
+}
+
+test "set_utf16le_char (surrogate pair)" {
+  let arr = FixedArray::makei(4, fn { _ => b'\x00' })
+  let char = '🉑'
+  let len = arr.set_utf16le_char(0, char)
+  let bytes = @bytes.from_fixedarray(arr)
+  assert_eq!(len, 4)
+  assert_eq!(bytes.to_unchecked_string(offset=0, length=4), "🉑")
+  inspect!(
+    bytes,
+    content=
+      #|b"\x3c\xd8\x51\xde"
+    ,
+  )
+}
+
+test "set_utf16be_char" {
+  let arr = FixedArray::makei(4, fn { _ => b'\x00' })
+  let char = 'A'
+  let len = arr.set_utf16be_char(0, char)
+  let bytes = @bytes.from_fixedarray(arr)
+  assert_eq!(len, 2)
+  inspect!(
+    bytes,
+    content=
+      #|b"\x00\x41\x00\x00"
+    ,
+  )
 }
 
 test "op_equal" {
