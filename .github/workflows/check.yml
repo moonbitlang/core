@@ -55,6 +55,10 @@ jobs:
           moon test --target all
           moon test --release --target all
 
+      - name: moon test --doc
+        run: |
+          moon test --doc
+
       - name: moon bundle
         run: moon bundle --all
 
@@ -176,6 +180,10 @@ jobs:
           moon test --target all
           moon test --release --target all
 
+      - name: moon test --doc
+        run: |
+          moon test --doc
+
       - name: moon bundle
         run: moon bundle --all
 
@@ -234,6 +242,7 @@ jobs:
       - name: moon test --doc
         run: |
           moon test --doc
+
       - name: moon bundle
         run: moon bundle --all
 
