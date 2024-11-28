@@ -582,7 +582,7 @@ test "append_fast" {
 test "set" {
   let b : Array[Byte] = [1, 3, 6]
   let b2 : Array[Byte] = [4, 5, 6, 7, 8, 9]
-  b.set(2, b2, 2, 3)
+  b2.blit_to(b, src_offset=2, len=3, dst_offset=2)
   assert_eq!(b, [1, 3, 6, 7, 8])
 }
 

@@ -200,20 +200,6 @@ pub fn append[T](
 }
 
 ///|
-/// like blit
-/// copy the data of length len from the 'from' position of 'other' to the offset position of 'self' and overwrite it, 
-/// which will automatically expand the size
-pub fn set[T](
-  self : Array[T],
-  offset : Int,
-  other : Array[T],
-  from : Int,
-  len : Int
-) -> Unit {
-  other.blit_to(self, len~, src_offset=from, dst_offset=offset)
-}
-
-///|
 /// Iterates over the elements of the array.
 ///
 /// # Example

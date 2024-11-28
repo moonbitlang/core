@@ -105,7 +105,6 @@ impl Array {
   rev_inplace[T](Self[T]) -> Unit
   search[T : Eq](Self[T], T) -> Int?
   search_by[T](Self[T], (T) -> Bool) -> Int?
-  set[T](Self[T], Int, Self[T], Int, Int) -> Unit
   shrink_to_fit[T](Self[T]) -> Unit
   split[T](Self[T], (T) -> Bool) -> Self[Self[T]]
   split_at[T](Self[T], Int) -> (Self[T], Self[T])
