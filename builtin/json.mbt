@@ -50,6 +50,11 @@ pub fn Int64::to_json(self : Int64) -> Json {
 
 ///|
 pub fn Double::to_json(self : Double) -> Json {
+  if self != self ||
+    self > 0x7FEFFFFFFFFFFFFFL.reinterpret_as_double() ||
+    self < 0xFFEFFFFFFFFFFFFFL.reinterpret_as_double() {
+    return Null
+  }
   Number(self)
 }
 
