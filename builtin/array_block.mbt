@@ -47,6 +47,8 @@ pub fn Array::unsafe_blit_fixed[A](
 }
 
 ///|
+/// when `dst_off_set + len > dst.length()`, 
+/// `dst` will grow its capacity to `dst_off_set + len`
 pub fn Array::blit_to[A](
   self : Array[A],
   dst : Array[A],
@@ -57,9 +59,102 @@ pub fn Array::blit_to[A](
   guard len >= 0 &&
     dst_offset >= 0 &&
     src_offset >= 0 &&
-    dst_offset + len <= dst.length() &&
     src_offset + len <= self.length()
-  Array::unsafe_blit(dst, dst_offset, self, src_offset, len)
+  if dst_offset + len > dst.length() {
+    // dst.reserve_capacity(dst_offset + len)
+    // println("resized.. \{dst.length()} -> \{dst_offset + len}")
+    // dst.resize_buffer(dst_offset + len)
+    // dst.len = dst_offset + len 
+    // this is needed, otherwise dst will not be displayed correctly
+    // FIXME: resize_buffer does not change length
+    // our FixedArray::unsafe_blit use intrinscs called %fixedarray.copy
+    // its semantics need be carfully documented
+    // println("resized.. \{dst.length()}")
+    let new_cap = dst_offset + len
+    let new_buf = UninitializedArray::make(new_cap)
+    let old_buf = dst.buf
+    // let old_cap = old_buf._.length()
+    UninitializedArray::unsafe_blit(new_buf, 0, old_buf, 0, dst_offset)
+    UninitializedArray::unsafe_blit(
+      new_buf,
+      dst_offset,
+      self.buf,
+      src_offset,
+      len,
+    )
+    dst.buf = new_buf
+    dst.len = new_cap
+  } else {
+    Array::unsafe_blit(dst, dst_offset, self, src_offset, len)
+  }
+}
+
+test "Array::blit_to/basic" {
+  let src = [1, 2, 3, 4, 5]
+  let dst = [0, 0, 0, 0, 0]
+  Array::blit_to(src, dst, len=3, src_offset=1, dst_offset=2)
+  inspect!(dst, content="[0, 0, 2, 3, 4]")
+}
+
+test "Array::blit_to/zero_length" {
+  let src = [1, 2, 3]
+  let dst = [4, 5, 6]
+  Array::blit_to(src, dst, len=0)
+  inspect!(dst, content="[4, 5, 6]")
+}
+
+test "Array::blit_to/grow_destination" {
+  let src = [1, 2, 3, 4, 5]
+  let dst = [0, 0]
+  Array::blit_to(src, dst, len=3, dst_offset=1)
+  inspect!(dst, content="[0, 1, 2, 3]")
+}
+
+test "Array::blit_to" {
+  let src = [1, 2, 3, 4, 5]
+  let dst = [0, 0, 0, 0, 0]
+  Array::blit_to(src, dst, len=3)
+  inspect!(dst, content="[1, 2, 3, 0, 0]")
+}
+
+test "Array::blit_to/edge_cases" {
+  // Test with src_offset and dst_offset
+  let src = [1, 2, 3, 4, 5]
+  let dst = [0, 0, 0, 0, 0]
+  Array::blit_to(src, dst, len=2, src_offset=1, dst_offset=2)
+  inspect!(dst, content="[0, 0, 2, 3, 0]")
+
+  // Test when src and dst are the same array
+  Array::blit_to(src, src, len=2, src_offset=0, dst_offset=3)
+  inspect!(src, content="[1, 2, 3, 1, 2]")
+
+  // Test with len equal to 0
+  Array::blit_to(src, dst, len=0, src_offset=0, dst_offset=0)
+  inspect!(dst, content="[0, 0, 2, 3, 0]")
+
+  // Test with len equal to the length of src
+  Array::blit_to(src, dst, len=5)
+  inspect!(dst, content="[1, 2, 3, 1, 2]")
+}
+
+test "panic Array::blit_to/boundary_cases" {
+  let src = [1, 2, 3, 4, 5]
+  let dst = [0, 0, 0, 0, 0]
+
+  // Invalid len
+  ignore(Array::blit_to(src, dst, len=-1))
+
+  // Invalid src_offset
+  ignore(Array::blit_to(src, dst, len=2, src_offset=-1))
+
+  // Invalid dst_offset
+  ignore(Array::blit_to(src, dst, len=2, dst_offset=-1))
+
+  // len exceeding src length
+  ignore(Array::blit_to(src, dst, len=6))
+
+  // len exceeding dst length
+  ignore(Array::blit_to(src, dst, len=5, dst_offset=1))
 }
 
 test "Array::blit_to - basic functionality" {
