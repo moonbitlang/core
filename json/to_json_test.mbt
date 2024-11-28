@@ -27,6 +27,9 @@ test "Int64::to_json" {
 
 test "Double::to_json" {
   inspect!(42.0.to_json(), content="Number(42)")
+  inspect!(@double.not_a_number.to_json(), content="Null")
+  inspect!(@double.infinity.to_json(), content="Null")
+  inspect!(@double.neg_infinity.to_json(), content="Null")
 }
 
 test "Float::to_json" {

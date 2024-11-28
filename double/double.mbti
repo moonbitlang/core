@@ -33,6 +33,7 @@ impl Double {
   log2(Double) -> Double
   min_normal() -> Double //deprecated
   nan() -> Double //deprecated
+  op_mod(Double, Double) -> Double
   round(Double) -> Double
   signum(Double) -> Double
   to_string(Double) -> String
