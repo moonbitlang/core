@@ -1,1 +1,0 @@
-sudo -u $_REMOTE_USER /bin/bash -c "$(curl -fsSL https://cli.moonbitlang.com/ubuntu_x86_64_moon_setup.sh)"

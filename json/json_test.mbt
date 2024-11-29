@@ -362,9 +362,9 @@ test "stringify number" {
   inspect!(nums[7].stringify(), content="9.999999999992234e+29")
   inspect!(nums[8].stringify(), content="-1.7976931348623157e+308")
   inspect!(nums[9].stringify(), content="1.7976931348623157e+308")
-  inspect!(nums[10].stringify(), content="NaN")
-  inspect!(nums[11].stringify(), content="Infinity")
-  inspect!(nums[12].stringify(), content="-Infinity")
+  inspect!(nums[10].stringify(), content="null")
+  inspect!(nums[11].stringify(), content="null")
+  inspect!(nums[12].stringify(), content="null")
   let err : Array[String] = []
   for json in nums {
     match @json.parse?(json.stringify()) {
@@ -372,12 +372,7 @@ test "stringify number" {
       Ok(newjson) => assert_eq!(newjson, json)
     }
   }
-  inspect!(
-    err,
-    content=
-      #|["Invalid character 'N' at line 1, column 0", "Invalid character 'I' at line 1, column 0", "Invalid character 'I' at line 1, column 1"]
-    ,
-  )
+  inspect!(err, content="[]")
 }
 
 test "stringify with indent" {
