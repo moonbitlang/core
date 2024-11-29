@@ -33,6 +33,20 @@ pub fn FixedArray::unsafe_blit[A](
 }
 
 ///|
+/// @intrinsic %fixedarray.copy
+fn UninitializedArray::unsafe_blit_fixed[T](
+  dst : UninitializedArray[T],
+  dst_offset : Int,
+  src : FixedArray[T],
+  src_offset : Int,
+  len : Int
+) -> Unit {
+  for i = len - 1; i >= 0; i = i - 1 {
+    dst[dst_offset + i] = src[src_offset + i]
+  }
+}
+
+///|
 pub fn FixedArray::blit_to[A](
   self : FixedArray[A],
   dst : FixedArray[A],
