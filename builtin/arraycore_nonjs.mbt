@@ -16,20 +16,6 @@
 fn set_null[T](self : UninitializedArray[T], index : Int) = "%fixedarray.set_null"
 
 ///|
-/// @intrinsic %fixedarray.copy
-fn UninitializedArray::unsafe_blit_fixed[T](
-  dst : UninitializedArray[T],
-  dst_offset : Int,
-  src : FixedArray[T],
-  src_offset : Int,
-  len : Int
-) -> Unit {
-  for i = len - 1; i >= 0; i = i - 1 {
-    dst[dst_offset + i] = src[src_offset + i]
-  }
-}
-
-///|
 /// An `Array` is a collection of values that supports random access and can
 /// grow in size.
 struct Array[T] {
