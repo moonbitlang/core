@@ -166,23 +166,6 @@ impl BigInt {
 }
 impl Show for BigInt
 
-type Buffer
-impl Buffer {
-  expect(Self, content~ : String = .., loc~ : SourceLoc = _, args_loc~ : ArgsLoc = _) -> Unit!InspectError //deprecated
-  new(size_hint~ : Int = ..) -> Self //deprecated
-  reset(Self) -> Unit
-  to_bytes(Self) -> Bytes
-  to_string(Self) -> String
-  write_byte(Self, Byte) -> Unit
-  write_bytes(Self, Bytes) -> Unit
-  write_char(Self, Char) -> Unit
-  write_object(Self, Show) -> Unit
-  write_string(Self, String) -> Unit
-  write_sub_string(Self, String, Int, Int) -> Unit //deprecated
-  write_substring(Self, String, Int, Int) -> Unit
-}
-impl Show for Buffer
-
 pub(all) type! Failure String
 
 type Hasher
