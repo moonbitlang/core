@@ -12,20 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-///|
-/// @intrinsic %fixedarray.copy
-fn UninitializedArray::unsafe_blit_fixed[T](
-  dst : UninitializedArray[T],
-  dst_offset : Int,
-  src : FixedArray[T],
-  src_offset : Int,
-  len : Int
-) -> Unit {
-  for i = len - 1; i >= 0; i = i - 1 {
-    dst[dst_offset + i] = src[src_offset + i]
-  }
-}
-
 //#region
 // These types are of workaround for the restriction that MoonBit do not support 
 // generic type parameters of extern ffi
