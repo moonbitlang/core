@@ -16,6 +16,9 @@
 fn println_mono(s : String) -> Unit = "%println"
 
 ///|
+fn any_to_string[T](any : T) -> String = "%any.to_string"
+
+///|
 pub fn println[T : Show](input : T) -> Unit {
   println_mono(input.to_string())
 }
@@ -25,6 +28,18 @@ pub fn println[T : Show](input : T) -> Unit {
 /// @coverage.skip
 pub fn print[T : Show](input : T) -> Unit {
   println(input)
+}
+
+///|
+/// Prints and returns the value of a given expression for quick and dirty debugging.
+/// @alert deprecated "This function is for debugging only and should not be used in production"
+pub fn dump[T](t : T, name? : String, loc~ : SourceLoc = _) -> T {
+  let name = match name {
+    Some(name) => name
+    None => ""
+  }
+  println("dump(\{name}@\{loc}) = \{any_to_string(t)}")
+  t
 }
 
 ///|
