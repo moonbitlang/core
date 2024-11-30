@@ -177,6 +177,31 @@ test "eq" {
   )
 }
 
+test "compare" {
+  assert_eq!((1, 2).compare((2, 1)), -1)
+  assert_eq!((1, 2).compare((1, 3)), -1)
+  assert_eq!((1, 2, 3).compare((1, 2, 5)), -1)
+  assert_eq!((1, 2, 3).compare((1, 3, 3)), -1)
+  assert_eq!((1, 2, (3, 4)).compare((1, 2, (4, 4))), -1)
+  assert_eq!((1, 2, (4, 6)).compare((1, 2, (4, 5))), 1)
+  assert_eq!((1, 2, 4).compare((1, 2, 3)), 1)
+  assert_eq!((1, 3, 3).compare((1, 2, 3)), 1)
+}
+
+test "hash" {
+  let tuple1 = (1, 2, 3, 4, 5)
+  let tuple2 = (1, 2, 3, 4, 5)
+  assert_true!(tuple1.hash() == tuple2.hash())
+  let tuple3 = (5, 4, 3, 2, 1)
+  let tuple4 = (1, 2, (3, 4, 5))
+  assert_false!(tuple1.hash() == tuple3.hash())
+  assert_true!(tuple1.hash() == tuple1.hash())
+  assert_true!(tuple2.hash() == tuple2.hash())
+  assert_true!(tuple3.hash() == tuple3.hash())
+  assert_false!(tuple1.hash() == tuple4.hash())
+  assert_true!(tuple4.hash() == tuple4.hash())
+}
+
 test "show" {
   let tuple2 = (1, 2)
   let tuple3 = ("a", "b", "c")
