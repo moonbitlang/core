@@ -258,3 +258,14 @@ pub fn strip_prefix[T : Eq](self : ArrayView[T], prefix : ArrayView[T]) -> Array
     None
   }
 }
+
+pub fn strip_suffix[T : Eq](self : ArrayView[T], suffix : ArrayView[T]) -> ArrayView[T]? {
+  if self.ends_with(suffix) {
+    let v = Array::make_uninit(self.length() - suffix.length())
+    let len = self.length() - suffix.length()
+    UninitializedArray::unsafe_blit(v.buffer(), 0, self.buf, 0, len)
+    Some(v[:])
+  } else {
+    None
+  }
+}

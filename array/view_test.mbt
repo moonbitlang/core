@@ -216,3 +216,19 @@ test "split" {
   assert_eq!(chunks, [[1][:], [2][:], [3][:], [4][:]][:])
   assert_eq!(chunks.length(), 4)
 }
+
+test "strip_prefix" {
+  let v = [3, 4, 5][:]
+  let sv = v.strip_prefix([3][:])
+  assert_eq!(v, [3, 4, 5][:])
+  assert_eq!(sv, Some([4, 5][:]))
+  assert_eq!(v.strip_prefix([4][:]), None)
+}
+
+test "strip_suffix" {
+  let v = [3, 4, 5][:]
+  let sv = v.strip_suffix([5][:])
+  assert_eq!(v, [3, 4, 5][:])
+  assert_eq!(sv, Some([3, 4][:]))
+  assert_eq!(v.strip_suffix([4][:]), None)
+}
