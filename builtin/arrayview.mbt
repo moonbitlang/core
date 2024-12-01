@@ -195,3 +195,66 @@ pub fn mapi[T, U](self : ArrayView[T], f : (Int, T) -> U) -> ArrayView[U] {
 pub fn is_empty[T](self : ArrayView[T]) -> Bool {
   self.length() == 0
 }
+
+pub fn starts_with[T : Eq](self : ArrayView[T], prefix : ArrayView[T]) -> Bool {
+  if prefix.length() > self.length() {
+    return false
+  }
+  for i in 0..<prefix.length() {
+    if self[i] != prefix[i] {
+      break false
+    }
+  } else {
+    true
+  }
+}
+
+pub fn ends_with[T : Eq](self : ArrayView[T], suffix : ArrayView[T]) -> Bool {
+  if suffix.length() > self.length() {
+    return false
+  }
+  for i in 0..<suffix.length() {
+    if self[self.length() - suffix.length() + i] != suffix[i] {
+      break false
+    }
+  } else {
+    true
+  }
+}
+
+/// TODO: perf could be optimized
+pub fn rev[T](self : ArrayView[T]) -> ArrayView[T] {
+  let arr = []
+  for i in 0..<self.length() {
+    arr.push(self[self.length() - i - 1])
+  }
+  arr[:]
+}
+
+/// TODO: perf could be optimized
+/// @alert unsafe "Panic if index is out of bounds."
+pub fn split_at[T](self : ArrayView[T], index : Int) -> (ArrayView[T], ArrayView[T]) {
+  if index < 0 || index > self.length() {
+    let len = self.length()
+    abort(
+      "index out of bounds: the len is from 0 to \{len} but the index is \{index}",
+    )
+  }
+  (self[0:index], self[index:])
+}
+
+pub fn strip_prefix[T : Eq](self : ArrayView[T], prefix : ArrayView[T]) -> ArrayView[T]? {
+  if self.starts_with(prefix) {
+    let v = Array::make_uninit(self.length() - prefix.length())[:]
+    UninitializedArray::unsafe_blit(
+      v.buf,
+      0,
+      self.buf,
+      prefix.length(),
+      self.length() - prefix.length(),
+    )
+    Some(v)
+  } else {
+    None
+  }
+}

@@ -109,32 +109,6 @@ pub fn contains[T : Eq](self : ArrayView[T], value : T) -> Bool {
   }
 }
 
-pub fn starts_with[T : Eq](self : ArrayView[T], prefix : ArrayView[T]) -> Bool {
-  if prefix.length() > self.length() {
-    return false
-  }
-  for i in 0..<prefix.length() {
-    if self[i] != prefix[i] {
-      break false
-    }
-  } else {
-    true
-  }
-}
-
-pub fn ends_with[T : Eq](self : ArrayView[T], suffix : ArrayView[T]) -> Bool {
-  if suffix.length() > self.length() {
-    return false
-  }
-  for i in 0..<suffix.length() {
-    if self[self.length() - suffix.length() + i] != suffix[i] {
-      break false
-    }
-  } else {
-    true
-  }
-}
-
 pub fn is_sorted[T : Compare](self : ArrayView[T]) -> Bool {
   for i in 1..<self.length() {
     if self[i - 1] > self[i] {
@@ -183,4 +157,49 @@ pub fn map_option[A, B](self : ArrayView[A], f : (A) -> B?) -> ArrayView[B] {
     },
   )
   result[:]
+}
+
+pub fn chunks[T](self : ArrayView[T], size : Int) -> ArrayView[ArrayView[T]] {
+  let chunks = []
+  let mut i = 0
+  while i < self.length() {
+    let chunk = Array::new(capacity=size)
+    for j = 0; j < size && i < self.length(); j = j + 1 {
+      chunk.push(self[i])
+      i = i + 1
+    }
+    chunks.push(chunk[:])
+  }
+  chunks[:]
+}
+
+pub fn chunk_by[T](self : ArrayView[T], pred : (T, T) -> Bool) -> ArrayView[ArrayView[T]] {
+  let chunks = []
+  let mut i = 0
+  while i < self.length() {
+    let chunk = []
+    chunk.push(self[i])
+    i = i + 1
+    while i < self.length() && pred(self[i - 1], self[i]) {
+      chunk.push(self[i])
+      i = i + 1
+    }
+    chunks.push(chunk[:])
+  }
+  chunks[:]
+}
+
+pub fn split[T](self : ArrayView[T], pred : (T) -> Bool) -> ArrayView[ArrayView[T]] {
+  let chunks = []
+  let mut i = 0
+  while i < self.length() {
+    let chunk = []
+    while i < self.length() && pred(self[i]).not() {
+      chunk.push(self[i])
+      i = i + 1
+    }
+    chunks.push(chunk[:])
+    i = i + 1
+  }
+  chunks[:]
 }

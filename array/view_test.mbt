@@ -28,6 +28,30 @@ test "each" {
   assert_eq!(sum, 12)
 }
 
+test "rev_each" {
+  let v = [3, 4, 5][:]
+  let mut sum = 0
+  v.rev_each(fn(x) { sum = sum + x })
+  assert_eq!(sum, 12)
+}
+
+test "eachi" {
+  let v = [3, 4, 5][:]
+  let mut sum = 0
+  for i, x in v {
+    // todo: maybe support (i,x)   
+    sum = sum + x + i
+  }
+  assert_eq!(sum, 15)
+}
+
+test "rev_eachi" {
+  let v = [3, 4, 5][:]
+  let mut sum = 0
+  v.rev_eachi(fn(i, x) { sum = sum + x + i })
+  assert_eq!(sum, 15)
+}
+
 test "map" {
   let v = [1, 2, 3, 4, 5]
   let s = v[2:5]
@@ -102,6 +126,15 @@ test "search" {
   assert_eq!(v.search(6), None)
 }
 
+test "rev" {
+  let v = [3, 4, 5][:]
+  let vv = v.rev()
+  assert_eq!(v, [3, 4, 5][:])
+  assert_eq!(vv, [5, 4, 3][:])
+  let vv2 = vv.rev()
+  assert_eq!(vv2, [3, 4, 5][:])
+}
+
 test "fold" {
   let sum = [1, 2, 3, 4, 5].fold(init=0, fn { sum, elem => sum + elem })
   assert_eq!(sum, 15)
@@ -114,6 +147,30 @@ test "foldi" {
   )
   assert_eq!(sum, 10)
 }
+
+test "rev_fold" {
+  let sum = [1, 2, 3, 4, 5][:].rev_fold(init=0, fn { sum, elem => sum + elem })
+  assert_eq!(sum, 15)
+  let op = fn { sum, elem => sum - elem }
+  let data = [1, 2, 3, 4, 5][:]
+  let ss0 = data.rev_fold(init=0, op)
+  let ss1 = data.rev().fold(init=0, op)
+  assert_eq!(ss0, ss1)
+}
+
+test "rev_foldi" {
+  let sum = [1, 2, 3, 4, 5][:].rev_foldi(
+    init=0,
+    fn { index, sum, _elem => sum + index },
+  )
+  assert_eq!(sum, 10)
+  let op = fn { index, sum, elem => index - sum - elem }
+  let data = [1, 2, 3, 4, 5, 10]
+  let v0 = data.rev_foldi(init=0, op)
+  let v1 = data.rev().foldi(init=0, op)
+  assert_eq!(v0, v1)
+}
+
 
 test "search_by" {
   let arr = [1, 2, 3, 4, 5, 6, 7][:]
@@ -135,4 +192,27 @@ test "is_sorted" {
   assert_true!(v.is_sorted())
   let v2 = [3, 5, 4][:]
   assert_false!(v2.is_sorted())
+}
+
+test "chunks" {
+  let v = [1, 2, 3, 4, 5, 6, 7, 8, 9][:]
+  let chunks = v.chunks(3)
+  let chunks2 = v.chunks(2)
+  assert_eq!(chunks, [[1, 2, 3][:], [4, 5, 6][:], [7, 8, 9][:]][:])
+  assert_eq!(chunks2, [[1, 2][:], [3, 4][:], [5, 6][:], [7, 8][:], [9][:]][:])
+}
+
+test "chunk_by" {
+  let v = [1, 1, 2, 3, 2, 3, 2, 3, 4][:]
+  let chunks = v.chunk_by(fn(x, y) { x <= y })
+  assert_eq!(chunks[0], [1, 1, 2, 3][:])
+  assert_eq!(chunks[1], [2, 3][:])
+  assert_eq!(chunks[2], [2, 3, 4][:])
+}
+
+test "split" {
+  let v = [1, 0, 2, 0, 3, 0, 4][:]
+  let chunks = v.split(fn(x) { x == 0 })
+  assert_eq!(chunks, [[1][:], [2][:], [3][:], [4][:]][:])
+  assert_eq!(chunks.length(), 4)
 }
