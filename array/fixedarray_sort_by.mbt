@@ -162,8 +162,8 @@ fn fixed_quick_sort_by[T](
     // Reduce the stack depth by only call quick_sort on the smaller partition.
     if left.length() < right.length() {
       fixed_quick_sort_by(left, cmp, pred, limit)
-      arr = right
       pred = Some(arr[pivot])
+      arr = right
     } else {
       fixed_quick_sort_by(right, cmp, Some(arr[pivot]), limit)
       arr = left

@@ -279,8 +279,8 @@ fn fixed_quick_sort[T : Compare](
     // Reduce the stack depth by only call fixed_quick_sort on the smaller fixed_partition.
     if left.length() < right.length() {
       fixed_quick_sort(left, pred, limit)
-      arr = right
       pred = Some(arr[pivot])
+      arr = right
     } else {
       fixed_quick_sort(right, Some(arr[pivot]), limit)
       arr = left
