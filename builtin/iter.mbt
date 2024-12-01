@@ -862,6 +862,13 @@ pub fn intersperse[A](self : Iter[A], sep : A) -> Iter[A] {
 
 ///|
 pub fn op_as_view[A](self : Iter[A], start~ : Int, end? : Int) -> Iter[A] {
+  // Note here we mark `end` as an optional parameter
+  // since the meaningful default value of `end` is the length of the iterator
+  // this is time consuming to calculate
+  // while `None` is more appropriate.
+  // In general, when to use `end = expr` and when to use `end?` is a design decision.
+  // when `expr` is always needed when user does not specify, the former is 
+  // slightly more efficient. When `expr` is not always needed, the latter is more appropriate. 
   match end {
     Some(end) => self.drop(start).take(end - start)
     None => self.drop(start)
@@ -869,11 +876,36 @@ pub fn op_as_view[A](self : Iter[A], start~ : Int, end? : Int) -> Iter[A] {
 }
 
 ///|
+/// Checks if the iterator contains an element equal to the given value.
+///
+/// Parameters:
+///
+/// * `self` : The iterator to search in.
+/// * `value` : The value to search for.
+///
+/// Returns `true` if the iterator contains an element equal to the given value,
+/// `false` otherwise.
+///
+/// Example:
+///
+/// ```moonbit
+/// test "Iter::contains" {
+///   let iter = [1, 2, 3, 4, 5].iter()
+///   inspect!(iter.contains(3), content="true")
+///   inspect!(iter.contains(6), content="false")
+/// }
+/// 
+/// test "Iter::contains/empty" {
+///   let iter = Iter::empty()
+///   inspect!(iter.contains(1), content="false")
+/// }
+/// ```
 pub fn contains[A : Eq](self : Iter[A], value : A) -> Bool {
   for v in self {
     if v == value {
-      return true
+      break true
     }
+  } else {
+    false
   }
-  false
 }
