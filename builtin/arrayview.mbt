@@ -169,3 +169,29 @@ pub fn rev_foldi[A, B](
     acc
   }
 }
+
+pub fn map[T, U](self : ArrayView[T], f : (T) -> U) -> ArrayView[U] {
+  if self.length() == 0 {
+    return [][:]
+  }
+  let arr = Array::make_uninit(self.length())
+  for i, v in self {
+    arr.unsafe_set(i, f(v))
+  }
+  arr[:]
+}
+
+pub fn mapi[T, U](self : ArrayView[T], f : (Int, T) -> U) -> ArrayView[U] {
+  if self.length() == 0 {
+    return [][:]
+  }
+  let arr = Array::make_uninit(self.length())
+  for i, v in self {
+    arr.unsafe_set(i, f(i, v))
+  }
+  arr[:]
+}
+
+pub fn is_empty[T](self : ArrayView[T]) -> Bool {
+  self.length() == 0
+}

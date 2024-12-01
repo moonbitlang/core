@@ -27,3 +27,160 @@ pub fn each[T](self : ArrayView[T], f : (T) -> Unit) -> Unit {
     f(self[i])
   }
 }
+
+pub fn rev_each[T](self : ArrayView[T], f : (T) -> Unit) -> Unit {
+  let len = self.length()
+  for i in 0..<len {
+    f(self[len - i - 1])
+  }
+}
+
+pub fn eachi[T](self : ArrayView[T], f : (Int, T) -> Unit) -> Unit {
+  for i, v in self {
+    f(i, v)
+  }
+}
+
+pub fn rev_eachi[T](self : ArrayView[T], f : (Int, T) -> Unit) -> Unit {
+  let len = self.length()
+  for i in 0..<len {
+    f(i, self[len - i - 1])
+  }
+}
+
+///|
+/// Compares two arrayviews for equality.
+pub fn op_equal[T : Eq](self : ArrayView[T], other : ArrayView[T]) -> Bool {
+  guard self.length() == other.length() else { return false }
+  for i in 0..<self.length() {
+    if self[i] != other[i] {
+      break false
+    }
+  } else {
+    true
+  }
+}
+
+pub fn compare[T : Compare](self : ArrayView[T], other : ArrayView[T]) -> Int {
+  let len_self = self.length()
+  let len_other = other.length()
+  if len_self < len_other {
+    -1
+  } else if len_self > len_other {
+    1
+  } else {
+    for i in 0..<len_self {
+      let cmp = self[i].compare(other[i])
+      if cmp != 0 {
+        break cmp
+      }
+    } else {
+      0
+    }
+  }
+}
+
+pub fn filter[T](self : ArrayView[T], f : (T) -> Bool) -> ArrayView[T] {
+  let arr = []
+  for v in self {
+    if f(v) {
+      arr.push(v)
+    }
+  }
+  arr[:]
+}
+
+pub fn all[T](self : ArrayView[T], f : (T) -> Bool) -> Bool {
+  for i in 0..<self.length() {
+    if f(self[i]).not() {
+      return false
+    }
+  }
+  true
+}
+
+pub fn contains[T : Eq](self : ArrayView[T], value : T) -> Bool {
+  for v in self {
+    if v == value {
+      break true
+    }
+  } else {
+    false
+  }
+}
+
+pub fn starts_with[T : Eq](self : ArrayView[T], prefix : ArrayView[T]) -> Bool {
+  if prefix.length() > self.length() {
+    return false
+  }
+  for i in 0..<self.length() {
+    if self[i] != prefix[i] {
+      break false
+    }
+  } else {
+    true
+  }
+}
+
+pub fn ends_with[T : Eq](self : ArrayView[T], suffix : ArrayView[T]) -> Bool {
+  if suffix.length() > self.length() {
+    return false
+  }
+  for i in 0..<suffix.length() {
+    if self[self.length() - suffix.length() + i] != suffix[i] {
+      break false
+    }
+  } else {
+    true
+  }
+}
+
+pub fn is_sorted[T : Compare](self : ArrayView[T]) -> Bool {
+  for i in 0..<self.length() {
+    if self[i - 1] > self[i] {
+      break false
+    }
+  } else {
+    true
+  }
+}
+
+pub fn search[T : Eq](self : ArrayView[T], value : T) -> Int? {
+  for i = 0; i < self.length(); i = i + 1 {
+    if self[i] == value {
+      return Some(i)
+    }
+  }
+  None
+}
+
+pub fn search_by[T](self : ArrayView[T], f : (T) -> Bool) -> Int? {
+  for i, v in self {
+    if f(v) {
+      break Some(i)
+    }
+  } else {
+    None
+  }
+}
+
+pub fn last[T](self : ArrayView[T]) -> T? {
+  match self {
+    [] => None
+    [.., last] => Some(last)
+  }
+}
+
+pub fn map_option[A, B](self : ArrayView[A], f : (A) -> B?) -> ArrayView[B] {
+  let result = []
+  self.each(
+    fn {
+      x =>
+        match f(x) {
+          None => ()
+          Some(x) => result.push(x)
+        }
+    },
+  )
+  result[:]
+}
