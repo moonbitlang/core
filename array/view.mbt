@@ -49,7 +49,7 @@ pub fn rev_eachi[T](self : ArrayView[T], f : (Int, T) -> Unit) -> Unit {
 }
 
 ///|
-/// Compares two arrayviews for equality.
+/// Compares two arrayviews for equality of items, ignoring start/end positions.
 pub fn op_equal[T : Eq](self : ArrayView[T], other : ArrayView[T]) -> Bool {
   guard self.length() == other.length() else { return false }
   for i in 0..<self.length() {
@@ -113,7 +113,7 @@ pub fn starts_with[T : Eq](self : ArrayView[T], prefix : ArrayView[T]) -> Bool {
   if prefix.length() > self.length() {
     return false
   }
-  for i in 0..<self.length() {
+  for i in 0..<prefix.length() {
     if self[i] != prefix[i] {
       break false
     }
@@ -136,7 +136,7 @@ pub fn ends_with[T : Eq](self : ArrayView[T], suffix : ArrayView[T]) -> Bool {
 }
 
 pub fn is_sorted[T : Compare](self : ArrayView[T]) -> Bool {
-  for i in 0..<self.length() {
+  for i in 1..<self.length() {
     if self[i - 1] > self[i] {
       break false
     }

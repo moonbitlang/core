@@ -87,10 +87,6 @@ pub fn Array::shuffle_in_place[T](arr : Array[T], rand~ : (Int) -> Int) -> Unit 
   }
 }
 
-test {
-
-}
-
 ///|
 /// Shuffle the array using Knuth shuffle
 /// 
