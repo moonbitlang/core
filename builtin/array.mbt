@@ -562,7 +562,7 @@ pub fn find_index[T](self : Array[T], f : (T) -> Bool) -> Int? {
 
 ///|
 /// Search the index of the first element that satisfies the predicate.
-//
+///
 /// # Example
 /// 
 /// ```
