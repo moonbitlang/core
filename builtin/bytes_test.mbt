@@ -30,7 +30,7 @@ test "sub_string" {
 }
 
 test "blit_from_string" {
-  let bytes = Bytes::new(10)
+  let bytes = FixedArray::make(10, Byte::default())
   let str = "Hello"
   bytes.blit_from_string(0, str, 0, str.length())
   assert_eq!(bytes.to_unchecked_string(offset=0, length=str.length() * 2), str)
