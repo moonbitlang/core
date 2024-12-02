@@ -640,19 +640,21 @@ impl FixedArray {
   make[T](Int, T) -> Self[T]
   op_get[T](Self[T], Int) -> T
   op_set[T](Self[T], Int, T) -> Unit
+  reinterpret_as_bytes(Self[Byte]) -> Bytes
   set[T](Self[T], Int, T) -> Unit
   set_utf16_char(Self[Byte], Int, Char) -> Int //deprecated
   set_utf16be_char(Self[Byte], Int, Char) -> Int
   set_utf16le_char(Self[Byte], Int, Char) -> Int
   set_utf8_char(Self[Byte], Int, Char) -> Int
   to_json[X : ToJson](Self[X]) -> Json
+  to_unchecked_string(Self[Byte], offset~ : Int = .., length~ : Int = ..) -> String
   unsafe_blit[A](Self[A], Int, Self[A], Int, Int) -> Unit
 }
 
 
 impl Bytes {
   blit(Bytes, Int, Bytes, Int, Int) -> Unit
-  blit_from_string(Bytes, Int, String, Int, Int) -> Unit
+  blit_from_string(Bytes, Int, String, Int, Int) -> Unit //deprecated
   copy(Bytes) -> Bytes
   length(Bytes) -> Int
   make(Int, Byte) -> Bytes
@@ -661,7 +663,8 @@ impl Bytes {
   op_equal(Bytes, Bytes) -> Bool
   op_get(Bytes, Int) -> Byte
   op_set(Bytes, Int, Byte) -> Unit
-  set_utf16_char(Bytes, Int, Char) -> Int
+  reinterpret_as_fixedarray(Bytes) -> FixedArray[Byte]
+  set_utf16_char(Bytes, Int, Char) -> Int //deprecated
   set_utf8_char(Bytes, Int, Char) -> Int //deprecated
   sub_string(Bytes, Int, Int) -> String //deprecated
   to_string(Bytes) -> String //deprecated
