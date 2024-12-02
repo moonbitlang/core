@@ -16,6 +16,10 @@ test "String::from_array" {
   inspect!(String::from_array(['1', '2', '3', '4', '5']), content="12345")
 }
 
+test "String::from_iter" {
+  inspect!(String::from_iter(['1', '2', '3', '4', '5'].iter()), content="12345")
+}
+
 test "String::concat" {
   inspect!(String::concat(["123", "456"]), content="123456")
   inspect!(

@@ -83,8 +83,8 @@ fn quick_sort[T : Compare](arr : ArrayView[T], pred : T?, limit : Int) -> Unit {
     // Reduce the stack depth by only call quick_sort on the smaller partition.
     if left.length() < right.length() {
       quick_sort(left, pred, limit)
-      arr = right
       pred = Some(arr[pivot])
+      arr = right
     } else {
       quick_sort(right, Some(arr[pivot]), limit)
       arr = left
@@ -273,6 +273,19 @@ test "insertion_sort" {
 
 test "sort" {
   test_sort!(fn(arr) { arr.sort() })
+}
+
+test "sort with same pivot optimization" {
+  let arr = [
+    35, 43, 72, 83, 39, 4, 83, 18, 43, 25, 88, 51, 43, 60, 83, 6, 36, 68, 79, 86,
+  ]
+  arr.sort()
+  assert_eq!(
+    arr,
+    [
+      4, 6, 18, 25, 35, 36, 39, 43, 43, 43, 51, 60, 68, 72, 79, 83, 83, 83, 86, 88,
+    ],
+  )
 }
 
 test "heap_sort coverage" {
