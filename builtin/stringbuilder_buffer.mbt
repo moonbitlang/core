@@ -14,15 +14,15 @@
 
 ///|
 struct StringBuilder {
-  mut bytes : Bytes
+  mut data : FixedArray[Byte]
   mut len : Int
 }
 
 ///|
 pub fn StringBuilder::new(size_hint~ : Int = 0) -> StringBuilder {
   let initial = if size_hint < 1 { 1 } else { size_hint }
-  let bytes = Bytes::new(initial)
-  { bytes, len: 0 }
+  let data = FixedArray::make(initial, Byte::default())
+  { data, len: 0 }
 }
 
 ///|
@@ -31,7 +31,7 @@ fn StringBuilder::grow_if_necessary(
   required : Int
 ) -> Unit {
   // TODO: get rid of mut
-  let mut enough_space = self.bytes.length()
+  let mut enough_space = self.data.length()
   if enough_space <= 0 {
     enough_space = 1
   }
@@ -39,22 +39,27 @@ fn StringBuilder::grow_if_necessary(
   while enough_space < required {
     enough_space = enough_space * 2
   }
-  if enough_space != self.bytes.length() {
-    self.bytes = Bytes::new(enough_space)..blit(0, self.bytes, 0, self.len)
+  if enough_space != self.data.length() {
+    self.data = FixedArray::make(enough_space, Byte::default())..unsafe_blit(
+      0,
+      self.data,
+      0,
+      self.len,
+    )
   }
 }
 
 ///|
 pub fn StringBuilder::write_string(self : StringBuilder, str : String) -> Unit {
   self.grow_if_necessary(self.len + str.length() * 2)
-  self.bytes.blit_from_string(self.len, str, 0, str.length())
+  self.data.blit_from_string(self.len, str, 0, str.length())
   self.len += str.length() * 2
 }
 
 ///|
 pub fn StringBuilder::write_char(self : StringBuilder, ch : Char) -> Unit {
   self.grow_if_necessary(self.len + 4)
-  let inc = self.bytes.set_utf16_char(self.len, ch)
+  let inc = self.data.set_utf16le_char(self.len, ch)
   self.len += inc
 }
 
@@ -67,19 +72,19 @@ pub fn StringBuilder::write_substring(
 ) -> Unit {
   guard start >= 0 && len >= 0 && start + len <= str.length()
   self.grow_if_necessary(self.len + len * 2)
-  self.bytes.blit_from_string(self.len, str, start, len)
+  self.data.blit_from_string(self.len, str, start, len)
   self.len += len * 2
 }
 
 ///|
 pub fn StringBuilder::to_string(self : StringBuilder) -> String {
-  self.bytes.to_unchecked_string(offset=0, length=self.len)
+  self.data.to_unchecked_string(offset=0, length=self.len)
 }
 
 ///|
 /// TODO: improve perf
 pub impl Show for StringBuilder with output(self, logger) {
-  logger.write_string(self.bytes.to_unchecked_string(offset=0, length=self.len))
+  logger.write_string(self.data.to_unchecked_string(offset=0, length=self.len))
 }
 
 ///|

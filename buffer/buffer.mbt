@@ -85,10 +85,7 @@ pub fn to_string(self : T) -> String {
 /// Note this function does not validate the encoding of the byte sequence, 
 /// it simply copy the bytes into a new String.
 pub fn to_unchecked_string(self : T) -> String {
-  Bytes::from_fixedarray(self.data).to_unchecked_string(
-    offset=0,
-    length=self.len,
-  )
+  self.data.to_unchecked_string(offset=0, length=self.len)
 }
 
 ///|

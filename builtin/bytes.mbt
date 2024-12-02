@@ -13,9 +13,19 @@
 // limitations under the License.
 
 ///|
+/// Reinterpret the byte sequence as Bytes.
+pub fn reinterpret_as_bytes(self : FixedArray[Byte]) -> Bytes = "%identity"
+
+///|
+/// Reinterpret the byte sequence as FixedArray[Byte].
+pub fn reinterpret_as_fixedarray(self : Bytes) -> FixedArray[Byte] = "%identity"
+
+///|
 /// Create byte sequence from String.
 pub fn Bytes::of_string(str : String) -> Bytes {
-  Bytes::new(str.length() * 2)..blit_from_string(0, str, 0, str.length())
+  FixedArray::make(str.length() * 2, Byte::default())
+  ..blit_from_string(0, str, 0, str.length())
+  .reinterpret_as_bytes()
 }
 
 ///|
@@ -61,8 +71,24 @@ pub fn to_unchecked_string(
 }
 
 ///|
+/// Return an unchecked string, containing the subsequence of `self` that starts at 
+/// `offset` and has length `length`. Both `offset` and `length` 
+/// are indexed by byte.
+/// 
+/// Note this function does not validate the encoding of the byte sequence, 
+/// it simply copy the bytes into a new String.
+pub fn to_unchecked_string(
+  self : FixedArray[Byte],
+  offset~ : Int = 0,
+  length~ : Int = self.length() - offset
+) -> String {
+  self.reinterpret_as_bytes().to_unchecked_string(offset~, length~)
+}
+
+///|
 /// Copy `length` chars from string `str`, starting at `str_offset`,
 /// into byte sequence `self`, starting at `bytes_offset`.
+/// @alert deprecated "The type Bytes is about to be changed to be immutable. Use `FixedArray[Byte]` or `Buffer` instead."
 pub fn blit_from_string(
   self : Bytes,
   bytes_offset : Int,
@@ -212,6 +238,7 @@ pub fn set_utf8_char(
 /// Fill UTF16 encoded char `value` into byte sequence `self`, starting at `offset`.
 /// It return the length of bytes has been written.
 /// @alert unsafe "Panic if the [value] is out of range"
+/// @alert deprecated "The type Bytes is about to be changed to be immutable. Use `FixedArray[Byte]` or `Buffer` instead."
 pub fn set_utf16_char(self : Bytes, offset : Int, value : Char) -> Int {
   let code = value.to_uint()
   if code < 0x10000 {
