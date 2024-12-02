@@ -11,9 +11,6 @@ fn valid(String) -> Bool
 
 // Types and methods
 pub(all) type! JsonDecodeError (JsonPath, String)
-impl JsonDecodeError {
-  op_equal(Self, Self) -> Bool
-}
 impl Eq for JsonDecodeError
 impl Show for JsonDecodeError
 
@@ -21,7 +18,6 @@ type JsonPath
 impl JsonPath {
   add_index(Self, Int) -> Self
   add_key(Self, String) -> Self
-  op_equal(Self, Self) -> Bool
   output(Self, Logger) -> Unit
 }
 impl Eq for JsonPath
@@ -33,7 +29,6 @@ pub(all) type! ParseError {
   InvalidIdentEscape(Position)
 }
 impl ParseError {
-  op_equal(Self, Self) -> Bool
   to_string(Self) -> String
 }
 impl Eq for ParseError
@@ -42,9 +37,6 @@ impl Show for ParseError
 pub(all) struct Position {
   line : Int
   column : Int
-}
-impl Position {
-  op_equal(Self, Self) -> Bool
 }
 impl Eq for Position
 

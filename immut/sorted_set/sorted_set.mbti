@@ -12,7 +12,6 @@ impl T {
   all[A : Compare](Self[A], (A) -> Bool) -> Bool
   any[A : Compare](Self[A], (A) -> Bool) -> Bool
   contains[A : Compare](Self[A], A) -> Bool
-  default[A : Default]() -> Self[A]
   diff[A : Compare](Self[A], Self[A]) -> Self[A] //deprecated
   difference[A : Compare](Self[A], Self[A]) -> Self[A]
   disjoint[A : Compare](Self[A], Self[A]) -> Bool
