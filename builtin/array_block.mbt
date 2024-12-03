@@ -63,7 +63,6 @@ pub fn Array::unsafe_blit_fixed[A](
 /// - `dst_offset` is negative  
 /// - `src_offset + len` exceeds source array length
 /// - `dst_offset` exceeds destination array length
-
 pub fn Array::blit_to[A](
   self : Array[A],
   dst : Array[A],
