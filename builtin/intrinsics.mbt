@@ -185,7 +185,10 @@ pub fn Double::compare(self : Double, other : Double) -> Int = "%f64_compare"
 pub fn Double::default() -> Double = "%f64_default"
 
 ///|
+/// @alert deprecated "Use `unsafe_to_int` instead"
 pub fn Double::to_int(self : Double) -> Int = "%f64_to_i32"
+
+pub fn Double::unsafe_to_int(self : Double) -> Int = "%f64_to_i32"
 
 ///|
 pub fn Double::convert_uint(val : UInt) -> Double = "%u32.to_f64"
@@ -413,7 +416,7 @@ pub fn Float::compare(self : Float, other : Float) -> Int = "%f32.compare"
 pub fn Float::to_double(self : Float) -> Double = "%f32.to_f64"
 
 ///|
-pub fn Float::to_int(self : Float) -> Int = "%f32.to_i32"
+pub fn Float::unsafe_to_int(self : Float) -> Int = "%f32.to_i32"
 
 ///|
 pub fn Float::reinterpret_as_int(self : Float) -> Int = "%f32.to_i32_reinterpret"
