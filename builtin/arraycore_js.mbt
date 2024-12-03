@@ -281,14 +281,10 @@ pub fn insert[T](self : Array[T], index : Int, value : T) -> Unit {
 ///
 /// If `new_len` is greater than `len`, the array will be extended by the 
 /// difference, and the values in the new slots are left uninitilized.
-///  If `new_len` is less than `len`, the array will be truncated.
+///  If `new_len` is less than `len`, it will panic
 ///
 /// @alert unsafe "Panic if new length is negative."
-fn resize_uninit[T](self : Array[T], new_len : Int) -> Unit {
-  guard new_len >= 0 else { abort("negative new length") }
-  if new_len < self.length() {
-    self.unsafe_truncate_to_length(new_len)
-  } else {
-    JSArray::ofAnyArray(self).set_length(new_len)
-  }
+fn unsafe_grow_to_length[T](self : Array[T], new_len : Int) -> Unit {
+  guard new_len >= self.length()
+  JSArray::ofAnyArray(self).set_length(new_len)
 }
