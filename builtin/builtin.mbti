@@ -567,6 +567,7 @@ impl Float {
   reinterpret_as_uint(Float) -> UInt
   sqrt(Float) -> Float
   to_double(Float) -> Double
+  to_int(Float) -> Int
   to_json(Float) -> Json
   until(Float, Float, step~ : Float = .., inclusive~ : Bool = ..) -> Iter[Float]
   upto(Float, Float, inclusive~ : Bool = ..) -> Iter[Float] //deprecated
