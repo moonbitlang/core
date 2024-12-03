@@ -269,3 +269,14 @@ pub fn strip_suffix[T : Eq](self : ArrayView[T], suffix : ArrayView[T]) -> Array
     None
   }
 }
+
+pub fn copy[T](self : ArrayView[T]) -> ArrayView[T] {
+  let len = self.length()
+  if len == 0 {
+    [][:]
+  } else {
+    let arr = Array::make(len, self[0])
+    UninitializedArray::unsafe_blit(arr.buffer(), 0, self.buf, 0, len)
+    arr[:]
+  }
+}

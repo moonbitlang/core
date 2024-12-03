@@ -203,3 +203,63 @@ pub fn split[T](self : ArrayView[T], pred : (T) -> Bool) -> ArrayView[ArrayView[
   }
   chunks[:]
 }
+
+pub fn map_inplace[T](self : ArrayView[T], f : (T) -> T) -> Unit {
+  for i, v in self {
+    self[i] = f(v)
+  }
+}
+
+pub fn mapi_inplace[T](self : ArrayView[T], f : (Int, T) -> T) -> Unit {
+  for i, v in self {
+    self[i] = f(i, v)
+  }
+}
+
+pub fn binary_search[T : Compare](
+  self : ArrayView[T],
+  value : T
+) -> Result[Int, Int] {
+  let len = self.length()
+  for i = 0, j = len; i < j; {
+    let h = i + (j - i) / 2
+    // Note even if self[h] == value, we still continue the search
+    // because we want to find the leftmost match
+    if self.op_get(h) < value {
+      continue h + 1, j
+    } else {
+      continue i, h
+    }
+  } else {
+    if i < len && self.op_get(i) == value {
+      Ok(i)
+    } else {
+      Err(i)
+    }
+  }
+}
+
+pub fn binary_search_by[T](
+  self : ArrayView[T],
+  cmp : (T) -> Int
+) -> Result[Int, Int] {
+  let len = self.length()
+  for i = 0, j = len; i < j; {
+    let h = i + (j - i) / 2
+    // Note even if self[h] == value, we still continue the search
+    // because we want to find the leftmost match
+    if cmp(self.op_get(h)) < 0 {
+      continue h + 1, j
+    } else {
+      continue i, h
+    }
+  } else {
+    if i < len && cmp(self.op_get(i)) == 0 {
+      Ok(i)
+    } else {
+      Err(i)
+    }
+  }
+}
+
+

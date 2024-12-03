@@ -73,6 +73,26 @@ test "mapi" {
   inspect!(e.mapi(fn(_i, x) { x + 1 }), content="[]")
 }
 
+test "map_inplace" {
+  let arr = [2, 3, 4, 5, 6]
+  let v = arr[1:4]
+  let e : Array[Int] = []
+  v.map_inplace(fn(x) { x + 1 })
+  e.map_inplace(fn(x) { x + 1 })
+  inspect!(v, content="[4, 5, 6]")
+  inspect!(arr, content="[2, 4, 5, 6, 6]")
+  inspect!(e, content="[]")
+}
+
+test "mapi_inplace" {
+  let v = [3, 4, 5]
+  let e : Array[Int] = []
+  v.mapi_inplace(fn(i, x) { x + i })
+  e.mapi_inplace(fn(_i, x) { x + 1 })
+  inspect!(v, content="[3, 5, 7]")
+  inspect!(e, content="[]")
+}
+
 test "filter" {
   let arr = [1, 2, 3, 4, 5]
   let slice = arr[1:5].filter(fn(x) { x % 2 == 0 })
@@ -133,6 +153,24 @@ test "rev" {
   assert_eq!(vv, [5, 4, 3][:])
   let vv2 = vv.rev()
   assert_eq!(vv2, [3, 4, 5][:])
+}
+
+test "rev_inplace" {
+  let arr = [1, 2, 3, 4, 5]
+  let v = arr[2:]
+  v.rev_inplace()
+  assert_eq!(v, [5, 4, 3][:])
+  assert_eq!(arr, [1, 2, 5, 4, 3])
+  v.rev_inplace()
+  assert_eq!(v, [3, 4, 5][:])
+  assert_eq!(arr, [1, 2, 3, 4, 5])
+  let v = [3, 4][:]
+  v.rev_inplace()
+  assert_eq!(v, [4, 3][:])
+  v.rev_inplace()
+  assert_eq!(v, [3, 4][:])
+  let empty : ArrayView[Int] = [][:]
+  assert_eq!(empty, empty)
 }
 
 test "fold" {
@@ -231,4 +269,12 @@ test "strip_suffix" {
   assert_eq!(v, [3, 4, 5][:])
   assert_eq!(sv, Some([3, 4][:]))
   assert_eq!(v.strip_suffix([4][:]), None)
+}
+
+test "copy" {
+  let arr = [1, 2, 3, 4, 5][:]
+  let copied = arr.copy()
+  assert_eq!(copied, [1, 2, 3, 4, 5][:])
+  @test.is_not!(arr, copied)
+  inspect!(([][:] : ArrayView[Int]).copy(), content="[]")
 }
