@@ -448,13 +448,7 @@ test "Float::unsafe_to_int" {
   inspect!((-2.0 : Float).unsafe_to_int(), content="-2")
   inspect!((-2.5 : Float).unsafe_to_int(), content="-2")
   inspect!((-2.9 : Float).unsafe_to_int(), content="-2")
-}
 
-test "panic Float::unsafe_to_int" {
-  ignore((2147483647.0 : Float).unsafe_to_int())
-  ignore((2147483648.0 : Float).unsafe_to_int())
-  ignore((2147483649.0 : Float).unsafe_to_int())
-  ignore((-2147483647.0 : Float).unsafe_to_int())
-  ignore((-2147483648.0 : Float).unsafe_to_int())
-  ignore((-2147483649.0 : Float).unsafe_to_int())
+  // We don't test for the edge cases of the unsafe_to_int function because it
+  // is not defined for those cases
 }
