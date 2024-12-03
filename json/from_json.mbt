@@ -46,7 +46,7 @@ pub impl FromJson for Bool with from_json(json, path) {
 ///|
 pub impl FromJson for Int with from_json(json, path) {
   match json {
-    Number(n) => n.to_int()
+    Number(n) => n.unsafe_to_int()
     _ => decode_error!(path, "Int::from_json: expected number")
   }
 }

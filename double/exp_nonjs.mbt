@@ -82,7 +82,7 @@ pub fn exp(self : Double) -> Double {
       lo = ln2LO[xsb]
       k = 1 - xsb - xsb
     } else {
-      k = (invln2 * self + halF[xsb]).to_int()
+      k = (invln2 * self + halF[xsb]).unsafe_to_int()
       let t = k.to_double()
       hi = self - t * ln2HI[0]
       lo = t * ln2LO[0]
