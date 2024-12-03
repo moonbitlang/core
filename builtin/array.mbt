@@ -191,6 +191,24 @@ pub fn each[T](self : Array[T], f : (T) -> Unit) -> Unit {
 }
 
 ///|
+/// Iterates over the elements of the array in reverse order, applying the given
+/// function to each element.
+///
+/// Parameters:
+///
+/// * `array` : The array to iterate over.
+/// * `f` : A function that takes an element of type `T` and returns `Unit`. This
+/// function is applied to each element of the array in reverse order.
+///
+/// Example:
+///
+/// ```
+/// let v = [3, 4, 5]
+/// let mut sum = 0
+/// v.rev_each(fn(x) { sum = sum - x })
+/// @json.inspect!(sum, content=-12)
+/// 
+/// ```
 pub fn rev_each[T](self : Array[T], f : (T) -> Unit) -> Unit {
   let len = self.length()
   for i in 0..<len {
