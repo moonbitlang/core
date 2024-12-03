@@ -342,3 +342,19 @@ pub fn insert[T](self : Array[T], index : Int, value : T) -> Unit {
   self.unsafe_set(index, value)
   self.len = length + 1
 }
+
+///|
+/// Resize the array in-place so that `len` is equal to `new_len`.
+///
+/// If `new_len` is greater than `len`, the array will be extended by the 
+/// difference, and the values in the new slots are left uninitilized.
+///  If `new_len` is less than `len`, it will panic
+///
+/// @alert unsafe "Panic if new length is negative."
+fn unsafe_grow_to_length[T](self : Array[T], new_len : Int) -> Unit {
+  guard new_len >= self.length()
+  let new_buf = UninitializedArray::make(new_len)
+  UninitializedArray::unsafe_blit(new_buf, 0, self.buf, 0, self.len)
+  self.len = new_len
+  self.buf = new_buf
+}

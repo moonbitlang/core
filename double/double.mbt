@@ -59,15 +59,15 @@ pub fn signum(self : Double) -> Double {
   }
 }
 
-///|
-// Returns a "not-a-number" value
+///| Returns a "not-a-number" value
+/// 
 /// @alert deprecated "Use `@double.not_a_number` instead"
 pub fn Double::nan() -> Double {
   not_a_number
 }
 
 ///|
-// Returns positive infinity if sign >= 0, negative infinity if sign < 0.
+/// Returns positive infinity if sign >= 0, negative infinity if sign < 0.
 /// @alert deprecated "Use `@double.infinity` and `@double.neg_infinity` instead"
 pub fn Double::inf(sign : Int) -> Double {
   if sign >= 0 {
@@ -78,33 +78,33 @@ pub fn Double::inf(sign : Int) -> Double {
 }
 
 ///|
-// Returns the smallest positive normal value of Double
+/// Returns the smallest positive normal value of Double
 /// @alert deprecated "Use `@double.min_positive` instead"
 pub fn Double::min_normal() -> Double {
   min_positive
 }
 
 ///|
-// Check whether the double is a "not-a-number" value
+/// Check whether the double is a "not-a-number" value
 pub fn is_nan(self : Double) -> Bool {
   // only NaNs satisfy f != f.
   self != self
 }
 
 ///|
-// Check whether the double is infinity
+/// Check whether the double is infinity
 pub fn is_inf(self : Double) -> Bool {
   self > max_value || self < min_value
 }
 
 ///|
-// Check whether the double is positive infinity
+/// Check whether the double is positive infinity
 pub fn is_pos_inf(self : Double) -> Bool {
   self > max_value
 }
 
 ///|
-// Check whether the double is negative infinity
+/// Check whether the double is negative infinity
 pub fn is_neg_inf(self : Double) -> Bool {
   self < min_value
 }

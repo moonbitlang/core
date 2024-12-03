@@ -8,7 +8,6 @@ impl Bitset {
   add(Self, Int) -> Self
   has(Self, Int) -> Bool
   index_of(Self, Int) -> Int
-  op_equal(Self, Self) -> Bool
   remove(Self, Int) -> Self
   size(Self) -> Int
 }
@@ -22,7 +21,6 @@ impl SparseArray {
   add[X](Self[X], Int, X) -> Self[X]
   each[X](Self[X], (X) -> Unit) -> Unit
   has[X](Self[X], Int) -> Bool
-  op_equal[X : Eq](Self[X], Self[X]) -> Bool
   op_get[X](Self[X], Int) -> X?
   replace[X](Self[X], Int, X) -> Self[X]
   singleton[X](Int, X) -> Self[X]

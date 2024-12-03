@@ -13,6 +13,26 @@
 // limitations under the License.
 
 ///|
+/// Copies a slice of elements from one fixed array to another.
+///
+/// This function copies `len` elements from `src` starting at `src_offset` to `dst` starting at `dst_offset`.
+/// The arrays may overlap, in which case the copy is performed in a way that preserves the data.
+///
+/// # Example
+/// ```
+/// let src = FixedArray::from_array([1, 2, 3, 4, 5])
+/// let dst = FixedArray::from_array([0, 0, 0, 0, 0])
+/// FixedArray::unsafe_blit(dst, 0, src, 0, 3)
+/// assert_eq!(dst, FixedArray::from_array([1, 2, 3, 0, 0]))
+/// ```
+///
+/// The behavior is undefined and platform-specific if:
+/// - `len < 0`
+/// - `src_offset < 0`
+/// - `dst_offset < 0`
+/// - `dst_offset + len > dst.length()`
+/// - `src_offset + len > src.length()`
+///
 /// @intrinsic %fixedarray.copy
 pub fn FixedArray::unsafe_blit[A](
   dst : FixedArray[A],

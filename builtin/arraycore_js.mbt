@@ -275,3 +275,16 @@ pub fn insert[T](self : Array[T], index : Int, value : T) -> Unit {
   let _ = JSArray::ofAnyArray(self).splice1(index, 0, JSValue::ofAny(value))
 
 }
+
+///|
+/// Resize the array in-place so that `len` is equal to `new_len`.
+///
+/// If `new_len` is greater than `len`, the array will be extended by the 
+/// difference, and the values in the new slots are left uninitilized.
+///  If `new_len` is less than `len`, it will panic
+///
+/// @alert unsafe "Panic if new length is negative."
+fn unsafe_grow_to_length[T](self : Array[T], new_len : Int) -> Unit {
+  guard new_len >= self.length()
+  JSArray::ofAnyArray(self).set_length(new_len)
+}

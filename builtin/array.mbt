@@ -163,12 +163,13 @@ pub fn op_add[T](self : Array[T], other : Array[T]) -> Array[T] {
 /// let v2 = [6, 7, 8]
 /// v1.append(v2)
 /// ```
-/// TODO: could be made more efficient doing direct mem.copy
 pub fn append[T](self : Array[T], other : Array[T]) -> Unit {
-  self.reserve_capacity(self.length() + other.length())
-  for v in other {
-    self.push(v)
-  }
+  other.blit_to(
+    self,
+    len=other.length(),
+    src_offset=0,
+    dst_offset=self.length(),
+  )
 }
 
 ///|
@@ -190,6 +191,24 @@ pub fn each[T](self : Array[T], f : (T) -> Unit) -> Unit {
 }
 
 ///|
+/// Iterates over the elements of the array in reverse order, applying the given
+/// function to each element.
+///
+/// Parameters:
+///
+/// * `array` : The array to iterate over.
+/// * `f` : A function that takes an element of type `T` and returns `Unit`. This
+/// function is applied to each element of the array in reverse order.
+///
+/// Example:
+///
+/// ```
+/// let v = [3, 4, 5]
+/// let mut sum = 0
+/// v.rev_each(fn(x) { sum = sum - x })
+/// @json.inspect!(sum, content=-12)
+/// 
+/// ```
 pub fn rev_each[T](self : Array[T], f : (T) -> Unit) -> Unit {
   let len = self.length()
   for i in 0..<len {
@@ -562,7 +581,7 @@ pub fn find_index[T](self : Array[T], f : (T) -> Bool) -> Int? {
 
 ///|
 /// Search the index of the first element that satisfies the predicate.
-//
+///
 /// # Example
 /// 
 /// ```

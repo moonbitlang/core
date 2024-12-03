@@ -246,9 +246,6 @@ pub(all) enum IterResult {
   IterEnd
   IterContinue
 }
-impl IterResult {
-  op_equal(Self, Self) -> Bool
-}
 impl Eq for IterResult
 
 pub(all) enum Json {
@@ -262,7 +259,6 @@ pub(all) enum Json {
 }
 impl Json {
   default() -> Self
-  op_equal(Self, Self) -> Bool
 }
 impl Eq for Json
 
