@@ -163,12 +163,13 @@ pub fn op_add[T](self : Array[T], other : Array[T]) -> Array[T] {
 /// let v2 = [6, 7, 8]
 /// v1.append(v2)
 /// ```
-/// TODO: could be made more efficient doing direct mem.copy
 pub fn append[T](self : Array[T], other : Array[T]) -> Unit {
-  self.reserve_capacity(self.length() + other.length())
-  for v in other {
-    self.push(v)
-  }
+  other.blit_to(
+    self,
+    len=other.length(),
+    src_offset=0,
+    dst_offset=self.length(),
+  )
 }
 
 ///|
