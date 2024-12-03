@@ -13,6 +13,9 @@
 // limitations under the License.
 
 ///|
+/// Invariants:
+/// - shift = height * num_bits. When it is 0, we are at the leaf level.
+/// - size = the number of elements in the tree.
 struct T[A] {
   tree : Tree[A]
   size : Int
@@ -20,8 +23,10 @@ struct T[A] {
 }
 
 ///|
+/// Invariants:
+/// - For Node, the sizes array is None if the tree is full, i.e., we can use radix indexing.
 priv enum Tree[A] {
   Empty
-  Node(FixedArray[Tree[A]])
+  Node(FixedArray[Tree[A]], FixedArray[Int]?) // (Subtrees, Sizes of subtrees)
   Leaf(FixedArray[A])
 } derive(Eq, Show)
