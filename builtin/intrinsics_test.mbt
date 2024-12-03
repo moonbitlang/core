@@ -433,3 +433,28 @@ test "UInt::reinterpret_as_float roundtrip" {
     assert_eq!(roundtrip_value, value)
   }
 }
+
+test "Float::to_int" {
+  inspect!((0.0 : Float).to_int(), content="0")
+  inspect!((1.0 : Float).to_int(), content="1")
+  inspect!((1.5 : Float).to_int(), content="1")
+  inspect!((1.9 : Float).to_int(), content="1")
+  inspect!((2.0 : Float).to_int(), content="2")
+  inspect!((2.5 : Float).to_int(), content="2")
+  inspect!((2.9 : Float).to_int(), content="2")
+  inspect!((-1.0 : Float).to_int(), content="-1")
+  inspect!((-1.5 : Float).to_int(), content="-1")
+  inspect!((-1.9 : Float).to_int(), content="-1")
+  inspect!((-2.0 : Float).to_int(), content="-2")
+  inspect!((-2.5 : Float).to_int(), content="-2")
+  inspect!((-2.9 : Float).to_int(), content="-2")
+}
+
+test "panic Float::to_int" {
+  ignore((2147483647.0 : Float).to_int())
+  ignore((2147483648.0 : Float).to_int())
+  ignore((2147483649.0 : Float).to_int())
+  ignore((-2147483647.0 : Float).to_int())
+  ignore((-2147483648.0 : Float).to_int())
+  ignore((-2147483649.0 : Float).to_int())
+}
