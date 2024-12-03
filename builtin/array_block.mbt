@@ -76,7 +76,7 @@ pub fn Array::blit_to[A](
     dst_offset <= dst.length() &&
     src_offset + len <= self.length()
   if dst_offset + len > dst.length() {
-    dst.resize_uninit(dst_offset + len)
+    dst.unsafe_grow_to_length(dst_offset + len)
   }
   Array::unsafe_blit(dst, dst_offset, self, src_offset, len)
 }
