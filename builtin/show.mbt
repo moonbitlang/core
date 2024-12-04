@@ -193,7 +193,7 @@ pub fn ArrayView::to_string[X : Show](self : ArrayView[X]) -> String {
 pub fn to_string(self : Char) -> String {
   let bytes = FixedArray::make(4, Byte::default())
   let length = bytes.set_utf16le_char(0, self)
-  bytes.to_unchecked_string(offset=0, length~)
+  bytes.unsafe_to_bytes().to_unchecked_string(offset=0, length~)
 }
 
 ///|

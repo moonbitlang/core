@@ -14,18 +14,14 @@
 
 ///|
 /// Reinterpret the byte sequence as Bytes.
-pub fn reinterpret_as_bytes(self : FixedArray[Byte]) -> Bytes = "%identity"
-
-///|
-/// Reinterpret the byte sequence as FixedArray[Byte].
-pub fn reinterpret_as_fixedarray(self : Bytes) -> FixedArray[Byte] = "%identity"
+fn unsafe_to_bytes(self : FixedArray[Byte]) -> Bytes = "%identity"
 
 ///|
 /// Create byte sequence from String.
 pub fn Bytes::of_string(str : String) -> Bytes {
   FixedArray::make(str.length() * 2, Byte::default())
   ..blit_from_string(0, str, 0, str.length())
-  .reinterpret_as_bytes()
+  .unsafe_to_bytes()
 }
 
 ///|
@@ -68,21 +64,6 @@ pub fn to_unchecked_string(
   let len = self.length()
   guard offset >= 0 && length >= 0 && offset + length <= len
   unsafe_sub_string(self, offset, length)
-}
-
-///|
-/// Return an unchecked string, containing the subsequence of `self` that starts at 
-/// `offset` and has length `length`. Both `offset` and `length` 
-/// are indexed by byte.
-/// 
-/// Note this function does not validate the encoding of the byte sequence, 
-/// it simply copy the bytes into a new String.
-pub fn to_unchecked_string(
-  self : FixedArray[Byte],
-  offset~ : Int = 0,
-  length~ : Int = self.length() - offset
-) -> String {
-  self.reinterpret_as_bytes().to_unchecked_string(offset~, length~)
 }
 
 ///|
