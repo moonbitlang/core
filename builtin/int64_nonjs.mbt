@@ -117,6 +117,19 @@ pub fn Int::to_int64(self : Int) -> Int64 = "%i32_to_i64"
 fn Double::unsafe_to_int64(self : Double) -> Int64 = "%f64_to_i64"
 
 ///|
+pub fn Double::to_int64(self : Double) -> Int64 {
+  if self != self {
+    0
+  } else if self >= 9223372036854775807 {
+    9223372036854775807L
+  } else if self <= -9223372036854775808 {
+    -9223372036854775808L
+  } else {
+    self.unsafe_to_int64()
+  }
+}
+
+///|
 /// @alert deprecated "Use `reinterpret_as_int64` instead"
 pub fn Double::reinterpret_as_i64(self : Double) -> Int64 = "%f64_to_i64_reinterpret"
 
