@@ -23,3 +23,14 @@ test {
   let f : Float = Float::default()
   inspect!(f.to_string(), content="0")
 }
+
+test "abs" {
+  inspect!(1.0.abs(), content="1")
+  inspect!((-1.0).abs(), content="1")
+  inspect!(0.0.abs().reinterpret_as_uint64(), content="0")
+  inspect!((-0.0).abs().reinterpret_as_uint64(), content="0")
+  inspect!(@double.not_a_number.abs(), content="NaN")
+  inspect!((-@double.not_a_number).abs(), content="NaN")
+  inspect!(@double.infinity.abs(), content="Infinity")
+  inspect!(@double.neg_infinity.abs(), content="Infinity")
+}
