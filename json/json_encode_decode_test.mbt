@@ -58,7 +58,7 @@ fn of_json(jv : Json) -> AllThree!DecodeError {
       let strings_result = []
       for n in ints {
         match n {
-          Number(n) => ints_result.push(n.unsafe_to_int())
+          Number(n) => ints_result.push(n.to_int())
           _ => () // error handling here 
         }
       }

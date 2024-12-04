@@ -114,7 +114,7 @@ pub fn UInt64::extend_uint(val : UInt) -> UInt64 = "%u32.to_u64"
 pub fn Int::to_int64(self : Int) -> Int64 = "%i32_to_i64"
 
 ///|
-pub fn Double::to_int64(self : Double) -> Int64 = "%f64_to_i64"
+fn Double::unsafe_to_int64(self : Double) -> Int64 = "%f64_to_i64"
 
 ///|
 /// @alert deprecated "Use `reinterpret_as_int64` instead"
