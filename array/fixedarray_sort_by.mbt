@@ -36,6 +36,15 @@ pub fn sort_by_key[T, K : Compare](
   )
 }
 
+test "@array.sort_by_key/basic" {
+  let arr : FixedArray[_] = [3, 1, 4, 1, 5]
+  arr.sort_by_key(fn(x) { x })
+  inspect!(arr, content="[1, 1, 3, 4, 5]")
+  let arr2 : FixedArray[_] = [3, 1, 4, 1, 5]
+  arr2.sort_by_key(fn(x) { -x })
+  inspect!(arr2, content="[5, 4, 3, 1, 1]")
+}
+
 ///|
 /// Sorts the array with a custom comparison function.
 /// 
