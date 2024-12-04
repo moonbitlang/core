@@ -32,11 +32,7 @@ pub let min_positive : Float = (0x00800000).reinterpret_as_float()
 
 ///|
 pub fn abs(self : Float) -> Float {
-  if self < 0.0 {
-    -self
-  } else {
-    self
-  }
+  (self.reinterpret_as_uint() & 0x7FFFFFFF).reinterpret_as_float()
 }
 
 ///|
