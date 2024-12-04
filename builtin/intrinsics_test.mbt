@@ -433,22 +433,3 @@ test "UInt::reinterpret_as_float roundtrip" {
     assert_eq!(roundtrip_value, value)
   }
 }
-
-test "Float::unsafe_to_int" {
-  inspect!((0.0 : Float).to_int(), content="0")
-  inspect!((1.0 : Float).to_int(), content="1")
-  inspect!((1.5 : Float).to_int(), content="1")
-  inspect!((1.9 : Float).to_int(), content="1")
-  inspect!((2.0 : Float).to_int(), content="2")
-  inspect!((2.5 : Float).to_int(), content="2")
-  inspect!((2.9 : Float).to_int(), content="2")
-  inspect!((-1.0 : Float).to_int(), content="-1")
-  inspect!((-1.5 : Float).to_int(), content="-1")
-  inspect!((-1.9 : Float).to_int(), content="-1")
-  inspect!((-2.0 : Float).to_int(), content="-2")
-  inspect!((-2.5 : Float).to_int(), content="-2")
-  inspect!((-2.9 : Float).to_int(), content="-2")
-
-  // We don't test for the edge cases of the unsafe_to_int function because it
-  // is not defined for those cases
-}

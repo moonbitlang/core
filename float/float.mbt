@@ -44,3 +44,19 @@ pub impl Show for Float with output(self, logger) {
 pub fn Float::default() -> Float {
   0.0
 }
+
+///|
+fn Float::unsafe_to_int(self : Float) -> Int = "%f32.to_i32"
+
+///|
+pub fn Float::to_int(self : Float) -> Int {
+  if self != self {
+    0
+  } else if self >= 2147483647 {
+    2147483647
+  } else if self <= -2147483648 {
+    -2147483648
+  } else {
+    self.unsafe_to_int()
+  }
+}

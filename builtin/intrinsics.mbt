@@ -413,9 +413,6 @@ pub fn Float::compare(self : Float, other : Float) -> Int = "%f32.compare"
 pub fn Float::to_double(self : Float) -> Double = "%f32.to_f64"
 
 ///|
-fn Float::unsafe_to_int(self : Float) -> Int = "%f32.to_i32"
-
-///|
 pub fn Float::reinterpret_as_int(self : Float) -> Int = "%f32.to_i32_reinterpret"
 
 ///|
