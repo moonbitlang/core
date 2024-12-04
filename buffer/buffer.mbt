@@ -100,6 +100,31 @@ pub fn T::new(size_hint~ : Int = 0) -> T {
 }
 
 ///|
+/// Create a buffer from a bytes.
+pub fn T::from_bytes(bytes : Bytes) -> T {
+  let buf = T::new(size_hint=bytes.length())
+  buf.write_bytes(bytes)
+  buf
+}
+
+///|
+/// Create a buffer from an array.
+pub fn T::from_array(arr : Array[Byte]) -> T {
+  let buf = T::new(size_hint=arr.length())
+  for byte in arr {
+    buf.write_byte(byte)
+  }
+  buf
+}
+
+///|
+/// Create a buffer from an array.
+pub fn T::from_iter(iter : Iter[Byte]) -> T {
+  let arr = iter.collect()
+  T::from_array(arr)
+}
+
+///|
 /// Write a string into buffer.
 pub fn write_string(self : T, value : String) -> Unit {
   self.grow_if_necessary(self.len + value.length() * 2)
