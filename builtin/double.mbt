@@ -13,6 +13,33 @@
 // limitations under the License.
 
 ///|
+/// Converts a double-precision floating-point number to a 32-bit integer.
+/// Handles special cases including NaN and numbers outside the valid Int range.
+///
+/// Parameters:
+///
+/// * `self` : The double-precision floating-point number to be converted.
+///
+/// Returns an 32-bit integer value according to the following rules:
+///
+/// * Returns 0 if the input is NaN
+/// * Returns `@int.max_value` (2147483647) if the input is greater than or
+///   equal to `@int.max_value`
+/// * Returns `@int.min_value` (-2147483648) if the input is less than or equal
+///   to `@int.min_value`
+/// * Otherwise returns the integer part of the input by truncating towards zero
+///
+/// Example:
+///
+/// ```moonbit
+/// test "Double::to_int/normal" {
+///   inspect!(42.0.to_int(), content="42")
+///   inspect!((-42.5).to_int(), content="-42")
+///   inspect!((0.0 / 0.0).to_int(), content="0") // NaN
+///   inspect!((1.0 / 0.0).to_int(), content="2147483647") // Infinity
+///   inspect!((-1.0 / 0.0).to_int(), content="-2147483648") // -Infinity
+/// }
+/// ```
 pub fn Double::to_int(self : Double) -> Int {
   if self != self {
     0
