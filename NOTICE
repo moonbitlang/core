@@ -1,7 +1,7 @@
 This product includes software developed at
 International Digital Economy Academy (https://www.idea.edu.cn/).
 
-File double/exp.mbt is adapted from v8 (https://v8.dev), which is adapted from fdlibm (http://www.netlib.org/fdlibm).
+File double/exp.mbt, double/pow_nonjs.mbt is adapted from v8 (https://v8.dev), which is adapted from fdlibm (http://www.netlib.org/fdlibm).
 
 License from fdlibm:
 Copyright (C) 1993 by Sun Microsystems, Inc. All rights reserved.
