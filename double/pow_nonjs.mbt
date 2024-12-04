@@ -243,7 +243,7 @@ pub fn pow(self : Double, other : Double) -> Double {
         if ((ix - 0x3ff00000) | yisint) == 0 {
           // (-1)**non-int is NaN
           z = not_a_number
-        } else if (yisint == 1) {
+        } else if yisint == 1 {
           z = -z // (x<0)**odd = -(|x|**odd)
         }
       }
