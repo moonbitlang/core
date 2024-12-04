@@ -75,17 +75,25 @@ pub fn is_empty(self : T) -> Bool {
 ///|
 /// Return a new string contains the data in buffer.
 /// 
-/// @alert deprecated "Use `Buffer::to_unchecked_string` instead"
+/// @alert deprecated "Use `Buffer::contents` to read the contents of the buffer"
 pub fn to_string(self : T) -> String {
-  self.to_unchecked_string()
+  self.contents().to_unchecked_string(offset=0, length=self.len)
 }
 
 ///|
 /// Return a new unchecked string contains the data in buffer.
 /// Note this function does not validate the encoding of the byte sequence, 
 /// it simply copy the bytes into a new String.
+/// 
+/// @alert deprecated "Use `Buffer::contents` to read the contents of the buffer"
 pub fn to_unchecked_string(self : T) -> String {
-  self.data.to_unchecked_string(offset=0, length=self.len)
+  self.contents().to_unchecked_string(offset=0, length=self.len)
+}
+
+///|
+/// Return the contents of the buffer as a Bytes.
+pub fn contents(self : T) -> Bytes {
+  Bytes::from_fixedarray(self.data, len=self.len)
 }
 
 ///|
@@ -172,5 +180,5 @@ pub fn to_bytes(self : T) -> Bytes {
 
 ///|
 pub impl Show for T with output(self, logger) {
-  logger.write_string(self.to_unchecked_string())
+  logger.write_string(self.contents().to_unchecked_string())
 }
