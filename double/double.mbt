@@ -37,7 +37,7 @@ pub fn Double::from_int(i : Int) -> Double {
 
 ///|
 pub fn abs(self : Double) -> Double {
-  (self.reinterpret_as_uint64() & 0x7FFFFFFFFFFFFFFFUL).reinterpret_as_double()
+  (self.reinterpret_as_uint64() & 0x7FFF_FFFF_FFFF_FFFFUL).reinterpret_as_double()
 }
 
 ///|
