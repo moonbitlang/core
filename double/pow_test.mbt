@@ -12,109 +12,52 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-test "pow" {
-  inspect!(@double.pow(2.0, 0.0), content="1")
-  inspect!(@double.pow(-2.0, 0.0), content="1")
-  inspect!(@double.pow(2.0, -0.0), content="1")
-  inspect!(@double.pow(-2.0, -0.0), content="1")
-  inspect!(@double.pow(2.0, 0.5), content="1.4142135623730951")
-  inspect!(@double.pow(-2.0, 0.5), content="NaN")
-  inspect!(@double.pow(2.0, -0.5), content="0.7071067811865475")
-  inspect!(@double.pow(-2.0, -0.5), content="NaN")
-  inspect!(@double.pow(2.0, 1.0), content="2")
-  inspect!(@double.pow(-2.0, 1.0), content="-2")
-  inspect!(@double.pow(2.0, -1.0), content="0.5")
-  inspect!(@double.pow(-2.0, -1.0), content="-0.5")
-  inspect!(@double.pow(2.0, 2.0), content="4")
-  inspect!(@double.pow(-2.0, 2.0), content="4")
-  inspect!(@double.pow(2.0, -2.0), content="0.25")
-  inspect!(@double.pow(-2.0, -2.0), content="0.25")
-  inspect!(@double.pow(2.0, 2.5), content="5.65685424949238")
-  inspect!(@double.pow(-2.0, 2.5), content="NaN")
-  inspect!(@double.pow(2.0, -2.5), content="0.17677669529663687")
-  inspect!(@double.pow(-2.0, -2.5), content="NaN")
-}
-
-test "pow/zero" {
-  inspect!(@double.pow(0.0, 0.0), content="1")
-  inspect!(@double.pow(-0.0, 0.0), content="1")
-  inspect!(@double.pow(0.0, -0.0), content="1")
-  inspect!(@double.pow(-0.0, -0.0), content="1")
-  inspect!(@double.pow(0.0, 1.2), content="0")
-  inspect!(@double.pow(-0.0, 1.2), content="0")
-  inspect!(@double.pow(0.0, -1.2), content="Infinity")
-  inspect!(@double.pow(-0.0, -1.2), content="Infinity")
-}
-
-test "pow/fraction" {
-  inspect!(@double.pow(2.5, 0.0), content="1")
-  inspect!(@double.pow(2.5, 2.5), content="9.882117688026185")
-  inspect!(@double.pow(-2.5, 2.5), content="NaN")
-  inspect!(@double.pow(2.5, -2.5), content="0.10119288512538814")
-  inspect!(@double.pow(-2.5, -2.5), content="NaN")
-}
-
-test "pow/xflow" {
-  inspect!(@double.pow(2.0, 1024.0), content="Infinity")
-  inspect!(@double.pow(2.0, -2048.0), content="0")
-  inspect!(@double.pow(0.5, 2048.0), content="0")
-  inspect!(@double.pow(0.5, -1024.0), content="Infinity")
-  inspect!(@double.pow(1.0001, 1.0e10), content="Infinity")
-  inspect!(@double.pow(1.0001, -1.0e10), content="0")
-  inspect!(@double.pow(1.0001, 1.0e38), content="Infinity")
-  inspect!(@double.pow(1.0001, -1.0e38), content="0")
-  inspect!(@double.pow(1.0e10, 1.0e10), content="Infinity")
-  inspect!(@double.pow(1.0e10, -1.0e10), content="0")
-  inspect!(@double.pow(1.0e10, 1.0e38), content="Infinity")
-  inspect!(@double.pow(1.0e10, -1.0e38), content="0")
-  inspect!(@double.pow(1.0e-10, 1.0e10), content="0")
-  inspect!(@double.pow(1.0e-10, -1.0e10), content="Infinity")
-  inspect!(@double.pow(1.0e-10, 1.0e38), content="0")
-  inspect!(@double.pow(1.0e-10, -1.0e38), content="Infinity")
-}
-
-test "pow/base-special" {
-  inspect!(@double.pow(@double.not_a_number, 3.14), content="NaN")
-  inspect!(@double.pow(@double.not_a_number, 3.0), content="NaN")
-  inspect!(@double.pow(@double.not_a_number, -3.0), content="NaN")
-  inspect!(@double.pow(@double.infinity, 3.14), content="Infinity")
-  inspect!(@double.pow(@double.infinity, -3.0), content="0")
-  inspect!(@double.pow(@double.neg_infinity, 2.0), content="Infinity")
-  inspect!(@double.pow(@double.neg_infinity, 3.0), content="-Infinity")
-}
-
-test "pow/exp-special" {
-  inspect!(@double.pow(3.14, @double.not_a_number), content="NaN")
-  inspect!(@double.pow(3.14, @double.infinity), content="Infinity")
-  inspect!(@double.pow(3.14, @double.neg_infinity), content="0")
-}
-
-test "pow/special" {
-  inspect!(@double.pow(0.0, @double.not_a_number), content="NaN")
-  inspect!(@double.pow(0.0, @double.infinity), content="0")
-  inspect!(@double.pow(0.0, @double.neg_infinity), content="Infinity")
-  inspect!(@double.pow(-0.0, @double.not_a_number), content="NaN")
-  inspect!(@double.pow(-0.0, @double.infinity), content="0")
-  inspect!(@double.pow(-0.0, @double.neg_infinity), content="Infinity")
-  inspect!(
-    @double.pow(@double.not_a_number, @double.not_a_number),
-    content="NaN",
-  )
-  inspect!(@double.pow(@double.not_a_number, @double.infinity), content="NaN")
-  inspect!(
-    @double.pow(@double.not_a_number, @double.neg_infinity),
-    content="NaN",
-  )
-  inspect!(@double.pow(@double.infinity, @double.not_a_number), content="NaN")
-  inspect!(@double.pow(@double.infinity, @double.infinity), content="Infinity")
-  inspect!(@double.pow(@double.infinity, @double.neg_infinity), content="0")
-  inspect!(
-    @double.pow(@double.neg_infinity, @double.not_a_number),
-    content="NaN",
-  )
-  inspect!(
-    @double.pow(@double.neg_infinity, @double.infinity),
-    content="Infinity",
-  )
-  inspect!(@double.pow(@double.neg_infinity, @double.neg_infinity), content="0")
+test "pow" (it : @test.T) {
+  let value = [
+    0.0,
+    -0.0,
+    0x0000000000000001UL.reinterpret_as_double(),
+    -0x0000000000000001UL.reinterpret_as_double(),
+    0x0000000000000002UL.reinterpret_as_double(),
+    -0x0000000000000002UL.reinterpret_as_double(),
+    0x0000000000000003UL.reinterpret_as_double(),
+    -0x0000000000000003UL.reinterpret_as_double(),
+    1.0e-300,
+    -1.0e-300,
+    1.0e-10,
+    -1.0e-10,
+    0.5,
+    -0.5,
+    1.0,
+    -1.0,
+    1.224744871,
+    -1.224744871,
+    1.732,
+    -1.732,
+    2.0,
+    -2.0,
+    2.718281828459045,
+    -2.718281828459045,
+    1024.0,
+    -1024.0,
+    1075.0,
+    -1075.0,
+    2048.0,
+    -2048.0,
+    2147483647.0,
+    -2147483647.0,
+    1.0e10,
+    -1.0e10,
+    1.0e300,
+    -1.0e300,
+    @double.infinity,
+    @double.neg_infinity,
+    @double.not_a_number,
+  ]
+  for x in value {
+    for y in value {
+      it.writeln("\{x} ** \{y} == \{@double.pow(x, y)}")
+    }
+  }
+  it.snapshot!(filename="pow")
 }
