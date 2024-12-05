@@ -73,24 +73,6 @@ pub fn is_empty(self : T) -> Bool {
 }
 
 ///|
-/// Return a new string contains the data in buffer.
-/// 
-/// @alert deprecated "Use `Buffer::contents` to read the contents of the buffer"
-pub fn to_string(self : T) -> String {
-  self.contents().to_unchecked_string(offset=0, length=self.len)
-}
-
-///|
-/// Return a new unchecked string contains the data in buffer.
-/// Note this function does not validate the encoding of the byte sequence, 
-/// it simply copy the bytes into a new String.
-/// 
-/// @alert deprecated "Use `Buffer::contents` to read the contents of the buffer"
-pub fn to_unchecked_string(self : T) -> String {
-  self.contents().to_unchecked_string(offset=0, length=self.len)
-}
-
-///|
 /// Return the contents of the buffer as a Bytes.
 pub fn contents(self : T) -> Bytes {
   Bytes::from_fixedarray(self.data, len=self.len)
@@ -137,18 +119,6 @@ pub fn write_substring(
   self.grow_if_necessary(self.len + len * 2)
   self.data.blit_from_string(self.len, value, start, len)
   self.len += len * 2
-}
-
-///|
-/// Write a sub-string into buffer.
-/// @alert deprecated "Use `Buffer::write_substring` instead"
-pub fn write_sub_string(
-  self : T,
-  value : String,
-  start : Int,
-  len : Int
-) -> Unit {
-  self.write_substring(value, start, len)
 }
 
 ///|
