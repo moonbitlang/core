@@ -67,6 +67,10 @@ test "pow/xflow" {
   inspect!(@double.pow(1.0e10, -1.0e10), content="0")
   inspect!(@double.pow(1.0e10, 1.0e38), content="Infinity")
   inspect!(@double.pow(1.0e10, -1.0e38), content="0")
+  inspect!(@double.pow(1.0e-10, 1.0e10), content="0")
+  inspect!(@double.pow(1.0e-10, -1.0e10), content="Infinity")
+  inspect!(@double.pow(1.0e-10, 1.0e38), content="0")
+  inspect!(@double.pow(1.0e-10, -1.0e38), content="Infinity")
 }
 
 test "pow/base-special" {
@@ -83,4 +87,34 @@ test "pow/exp-special" {
   inspect!(@double.pow(3.14, @double.not_a_number), content="NaN")
   inspect!(@double.pow(3.14, @double.infinity), content="Infinity")
   inspect!(@double.pow(3.14, @double.neg_infinity), content="0")
+}
+
+test "pow/special" {
+  inspect!(@double.pow(0.0, @double.not_a_number), content="NaN")
+  inspect!(@double.pow(0.0, @double.infinity), content="0")
+  inspect!(@double.pow(0.0, @double.neg_infinity), content="Infinity")
+  inspect!(@double.pow(-0.0, @double.not_a_number), content="NaN")
+  inspect!(@double.pow(-0.0, @double.infinity), content="0")
+  inspect!(@double.pow(-0.0, @double.neg_infinity), content="Infinity")
+  inspect!(
+    @double.pow(@double.not_a_number, @double.not_a_number),
+    content="NaN",
+  )
+  inspect!(@double.pow(@double.not_a_number, @double.infinity), content="NaN")
+  inspect!(
+    @double.pow(@double.not_a_number, @double.neg_infinity),
+    content="NaN",
+  )
+  inspect!(@double.pow(@double.infinity, @double.not_a_number), content="NaN")
+  inspect!(@double.pow(@double.infinity, @double.infinity), content="Infinity")
+  inspect!(@double.pow(@double.infinity, @double.neg_infinity), content="0")
+  inspect!(
+    @double.pow(@double.neg_infinity, @double.not_a_number),
+    content="NaN",
+  )
+  inspect!(
+    @double.pow(@double.neg_infinity, @double.infinity),
+    content="Infinity",
+  )
+  inspect!(@double.pow(@double.neg_infinity, @double.neg_infinity), content="0")
 }
