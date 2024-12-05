@@ -53,7 +53,7 @@ pub fn rev_eachi[T](self : ArrayView[T], f : (Int, T) -> Unit) -> Unit {
 
 ///|
 /// Compares two arrayviews for equality of items, ignoring start/end positions.
-pub fn op_equal[T : Eq](self : ArrayView[T], other : ArrayView[T]) -> Bool {
+pub impl[T : Eq] Eq for ArrayView[T] with op_equal(self, other) {
   guard self.length() == other.length() else { return false }
   for i in 0..<self.length() {
     if self[i] != other[i] {
@@ -65,7 +65,7 @@ pub fn op_equal[T : Eq](self : ArrayView[T], other : ArrayView[T]) -> Bool {
 }
 
 ///|
-pub fn compare[T : Compare](self : ArrayView[T], other : ArrayView[T]) -> Int {
+pub impl[T : Compare] Compare for ArrayView[T] with compare(self, other) -> Int {
   let len_self = self.length()
   let len_other = other.length()
   if len_self < len_other {
@@ -285,4 +285,13 @@ pub fn binary_search_by[T](
       Err(i)
     }
   }
+}
+
+///|
+pub fn flatten[T](self : ArrayView[ArrayView[T]]) -> ArrayView[T] {
+  let v = []
+  for view in self {
+    v.push_iter(view.iter())
+  }
+  v[:]
 }

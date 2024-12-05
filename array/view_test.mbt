@@ -277,3 +277,10 @@ test "copy" {
   @test.is_not!(arr, copied)
   inspect!(([][:] : ArrayView[Int]).copy(), content="[]")
 }
+
+test "flatten" {
+  let v = [[3, 4][:], [5, 6][:]][:]
+  let vv = v.flatten()
+  assert_eq!(vv, [3, 4, 5, 6][:])
+  assert_eq!(vv.length(), 4)
+}

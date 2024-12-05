@@ -78,3 +78,40 @@ test "arrayview_rev_foldi" {
   let sum = arr.rev_foldi(fn(i, acc, x) { acc + i + x }, init=0)
   inspect!(sum, content="9")
 }
+
+test "arrayview_binary_search_int_test" {
+  let arr = [1, 2, 3, 4][:]
+  assert_eq!(arr.binary_search(-100), Err(0))
+  assert_eq!(arr.binary_search(-1), Err(0))
+  assert_eq!(arr.binary_search(1), Ok(0))
+  assert_eq!(arr.binary_search(3), Ok(2))
+  assert_eq!(arr.binary_search(4), Ok(3))
+  assert_eq!(arr.binary_search(5), Err(4))
+  assert_eq!(arr.binary_search(60), Err(4))
+}
+
+test "arrayview_binary_search_duplicate_int_test" {
+  let arr = [1, 2, 3, 3, 4, 4, 4, 5][:]
+  assert_eq!(arr.binary_search(3), Ok(2))
+  assert_eq!(arr.binary_search(4), Ok(4))
+  assert_eq!(arr.binary_search(5), Ok(7))
+  let arr = [0, 1, 1, 1, 1, 2, 3, 5, 8, 13, 21, 34, 55]
+  assert_eq!(arr.binary_search(1), Ok(1))
+}
+
+test "arrayview_binary_search_float_test" {
+  let arr = [-0.25, 0.0, 1.5][:]
+  assert_eq!(arr.binary_search(-0.25), Ok(0))
+  assert_eq!(arr.binary_search(0.0), Ok(1))
+  assert_eq!(arr.binary_search(1.5), Ok(2))
+  assert_eq!(arr.binary_search(1.6), Err(3))
+}
+
+test "arrayview_binary_search_str_test" {
+  let arr = ["hello", "world", "moon", "bit"][:]
+  arr.sort()
+  assert_eq!(arr.binary_search("bit"), Ok(0))
+  assert_eq!(arr.binary_search("moon"), Ok(1))
+  assert_eq!(arr.binary_search("hello"), Ok(2))
+  assert_eq!(arr.binary_search("world"), Ok(3))
+}
