@@ -41,6 +41,7 @@ impl T {
   to_json[A : ToJson](Self[A]) -> Json
   union[A : Compare](Self[A], Self[A]) -> Self[A]
 }
+impl[A : Compare] Compare for T[A]
 impl[A : Default] Default for T[A]
 impl[A : Eq] Eq for T[A]
 impl[A : Hash] Hash for T[A]
