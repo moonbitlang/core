@@ -185,7 +185,7 @@ pub fn Double::compare(self : Double, other : Double) -> Int = "%f64_compare"
 pub fn Double::default() -> Double = "%f64_default"
 
 ///|
-fn Double::unsafe_to_int(self : Double) -> Int = "%f64_to_i32"
+fn Double::unchecked_to_int(self : Double) -> Int = "%f64_to_i32"
 
 ///|
 pub fn Double::convert_uint(val : UInt) -> Double = "%u32.to_f64"

@@ -46,7 +46,7 @@ pub fn Float::default() -> Float {
 }
 
 ///|
-fn Float::unsafe_to_int(self : Float) -> Int = "%f32.to_i32"
+fn Float::unchecked_to_int(self : Float) -> Int = "%f32.to_i32"
 
 ///|
 /// Converts a floating-point number to an integer, with proper handling of
@@ -81,6 +81,6 @@ pub fn Float::to_int(self : Float) -> Int {
   } else if self <= -2147483648 {
     -2147483648
   } else {
-    self.unsafe_to_int()
+    self.unchecked_to_int()
   }
 }

@@ -48,6 +48,6 @@ pub fn Double::to_int(self : Double) -> Int {
   } else if self <= -2147483648 {
     -2147483648
   } else {
-    self.unsafe_to_int()
+    self.unchecked_to_int()
   }
 }

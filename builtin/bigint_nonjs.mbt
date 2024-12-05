@@ -588,7 +588,7 @@ pub fn to_string(self : BigInt) -> String {
   // This is an approximation of the number of slots needed to represent the decimal value.
   let decimal_len = ((self.len * radix_bit_len).to_double() *
     decimal_ratio /
-    decimal_radix_bit_len.to_double()).unsafe_to_int() +
+    decimal_radix_bit_len.to_double()).unchecked_to_int() +
     1
   let s = if self.sign == Negative { "-" } else { "" }
   let v = Array::make(decimal_len, 0L)
@@ -637,7 +637,7 @@ pub fn BigInt::from_string(input : String) -> BigInt {
   }
   let sign : Sign = if input[0] == '-' { Negative } else { Positive }
   let mut b_len = (
-      (len.to_double() / decimal_ratio).unsafe_to_int() + 1 + radix_bit_len
+      (len.to_double() / decimal_ratio).unchecked_to_int() + 1 + radix_bit_len
     ) /
     radix_bit_len +
     1

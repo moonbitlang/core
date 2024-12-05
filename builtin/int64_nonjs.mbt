@@ -114,7 +114,7 @@ pub fn UInt64::extend_uint(val : UInt) -> UInt64 = "%u32.to_u64"
 pub fn Int::to_int64(self : Int) -> Int64 = "%i32_to_i64"
 
 ///|
-fn Double::unsafe_to_int64(self : Double) -> Int64 = "%f64_to_i64"
+fn Double::unchecked_to_int64(self : Double) -> Int64 = "%f64_to_i64"
 
 ///|
 /// Converts a double-precision floating-point number to a 64-bit integer.
@@ -152,7 +152,7 @@ pub fn Double::to_int64(self : Double) -> Int64 {
   } else if self <= -9223372036854775808 {
     -9223372036854775808L
   } else {
-    self.unsafe_to_int64()
+    self.unchecked_to_int64()
   }
 }
 
