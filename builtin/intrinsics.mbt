@@ -36,7 +36,11 @@ pub fn Bool::not(self : Bool) -> Bool = "%bool_not"
 pub fn Bool::op_equal(self : Bool, other : Bool) -> Bool = "%bool_eq"
 
 ///|
+/// @alert deprecated "Use `compare` instead"
 pub fn Bool::op_compare(self : Bool, other : Bool) -> Int = "%bool_compare"
+
+///|
+pub fn Bool::compare(self : Bool, other : Bool) -> Int = "%bool_compare"
 
 ///|
 pub fn Bool::default() -> Bool = "%bool_default"
