@@ -306,6 +306,15 @@ test "op_equal" {
   }
 }
 
+test "compare" {
+  let xss : Array[@sorted_set.T[Int]] = @quickcheck.samples(5)
+  for xs in xss {
+    for ys in xss {
+      assert_eq!(xs.compare(ys), xs.to_array().compare(ys.to_array()))
+    }
+  }
+}
+
 test "to_json" {
   @json.inspect!(@sorted_set.of([5, 2, 4, 3, 1]), content=[1, 2, 3, 4, 5])
   @json.inspect!((@sorted_set.of([]) : @sorted_set.T[Int]), content=[])
