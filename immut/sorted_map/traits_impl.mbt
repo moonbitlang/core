@@ -1,4 +1,7 @@
 ///|
+pub impl[K, V] Default for T[K, V] with default() { empty() }
+
+///|
 pub impl[K : Eq, V : Eq] Eq for T[K, V] with op_equal(self, other) {
   self.to_array() == other.to_array()
 }
