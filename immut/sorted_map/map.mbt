@@ -128,26 +128,6 @@ pub fn to_array[K, V](self : T[K, V]) -> Array[(K, V)] {
 }
 
 ///|
-pub impl[K : Eq, V : Eq] Eq for T[K, V] with op_equal(self, other) {
-  self.to_array() == other.to_array()
-}
-
-///|
-pub impl[K : @quickcheck.Arbitrary + Compare, V : @quickcheck.Arbitrary] @quickcheck.Arbitrary for T[
-  K,
-  V,
-] with arbitrary(size, rs) {
-  @quickcheck.Arbitrary::arbitrary(size, rs) |> from_array
-}
-
-///|
-pub impl[K : Hash, V : Hash] Hash for T[K, V] with hash_combine(self, hasher) {
-  for e in self {
-    hasher..combine(e.0).combine(e.1)
-  }
-}
-
-///|
 /// The ratio between the sizes of the left and right subtrees.
 let ratio = 5
 
