@@ -103,6 +103,15 @@ test "op_equal" {
   assert_eq!(m1 == m3, false)
 }
 
+test "compare" {
+  let xss : Array[@sorted_map.T[Int, Int]] = @quickcheck.samples(5)
+  for xs in xss {
+    for ys in xss {
+      assert_eq!(xs.compare(ys), xs.to_array().compare(ys.to_array()))
+    }
+  }
+}
+
 test "iter" {
   let buf = StringBuilder::new(size_hint=20)
   let map = @sorted_map.of([(1, "one"), (2, "two"), (3, "three")])
