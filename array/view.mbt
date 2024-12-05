@@ -28,6 +28,7 @@ pub fn each[T](self : ArrayView[T], f : (T) -> Unit) -> Unit {
   }
 }
 
+///|
 pub fn rev_each[T](self : ArrayView[T], f : (T) -> Unit) -> Unit {
   let len = self.length()
   for i in 0..<len {
@@ -35,12 +36,14 @@ pub fn rev_each[T](self : ArrayView[T], f : (T) -> Unit) -> Unit {
   }
 }
 
+///|
 pub fn eachi[T](self : ArrayView[T], f : (Int, T) -> Unit) -> Unit {
   for i, v in self {
     f(i, v)
   }
 }
 
+///|
 pub fn rev_eachi[T](self : ArrayView[T], f : (Int, T) -> Unit) -> Unit {
   let len = self.length()
   for i in 0..<len {
@@ -61,6 +64,7 @@ pub fn op_equal[T : Eq](self : ArrayView[T], other : ArrayView[T]) -> Bool {
   }
 }
 
+///|
 pub fn compare[T : Compare](self : ArrayView[T], other : ArrayView[T]) -> Int {
   let len_self = self.length()
   let len_other = other.length()
@@ -80,6 +84,7 @@ pub fn compare[T : Compare](self : ArrayView[T], other : ArrayView[T]) -> Int {
   }
 }
 
+///|
 pub fn filter[T](self : ArrayView[T], f : (T) -> Bool) -> ArrayView[T] {
   let arr = []
   for v in self {
@@ -90,6 +95,7 @@ pub fn filter[T](self : ArrayView[T], f : (T) -> Bool) -> ArrayView[T] {
   arr[:]
 }
 
+///|
 pub fn all[T](self : ArrayView[T], f : (T) -> Bool) -> Bool {
   for i in 0..<self.length() {
     if f(self[i]).not() {
@@ -99,6 +105,7 @@ pub fn all[T](self : ArrayView[T], f : (T) -> Bool) -> Bool {
   true
 }
 
+///|
 pub fn contains[T : Eq](self : ArrayView[T], value : T) -> Bool {
   for v in self {
     if v == value {
@@ -109,6 +116,7 @@ pub fn contains[T : Eq](self : ArrayView[T], value : T) -> Bool {
   }
 }
 
+///|
 pub fn is_sorted[T : Compare](self : ArrayView[T]) -> Bool {
   for i in 1..<self.length() {
     if self[i - 1] > self[i] {
@@ -119,6 +127,7 @@ pub fn is_sorted[T : Compare](self : ArrayView[T]) -> Bool {
   }
 }
 
+///|
 pub fn search[T : Eq](self : ArrayView[T], value : T) -> Int? {
   for i = 0; i < self.length(); i = i + 1 {
     if self[i] == value {
@@ -128,6 +137,7 @@ pub fn search[T : Eq](self : ArrayView[T], value : T) -> Int? {
   None
 }
 
+///|
 pub fn search_by[T](self : ArrayView[T], f : (T) -> Bool) -> Int? {
   for i, v in self {
     if f(v) {
@@ -138,6 +148,7 @@ pub fn search_by[T](self : ArrayView[T], f : (T) -> Bool) -> Int? {
   }
 }
 
+///|
 pub fn last[T](self : ArrayView[T]) -> T? {
   match self {
     [] => None
@@ -145,6 +156,7 @@ pub fn last[T](self : ArrayView[T]) -> T? {
   }
 }
 
+///|
 pub fn map_option[A, B](self : ArrayView[A], f : (A) -> B?) -> ArrayView[B] {
   let result = []
   self.each(
@@ -159,6 +171,7 @@ pub fn map_option[A, B](self : ArrayView[A], f : (A) -> B?) -> ArrayView[B] {
   result[:]
 }
 
+///|
 pub fn chunks[T](self : ArrayView[T], size : Int) -> ArrayView[ArrayView[T]] {
   let chunks = []
   let mut i = 0
@@ -173,7 +186,11 @@ pub fn chunks[T](self : ArrayView[T], size : Int) -> ArrayView[ArrayView[T]] {
   chunks[:]
 }
 
-pub fn chunk_by[T](self : ArrayView[T], pred : (T, T) -> Bool) -> ArrayView[ArrayView[T]] {
+///|
+pub fn chunk_by[T](
+  self : ArrayView[T],
+  pred : (T, T) -> Bool
+) -> ArrayView[ArrayView[T]] {
   let chunks = []
   let mut i = 0
   while i < self.length() {
@@ -189,7 +206,11 @@ pub fn chunk_by[T](self : ArrayView[T], pred : (T, T) -> Bool) -> ArrayView[Arra
   chunks[:]
 }
 
-pub fn split[T](self : ArrayView[T], pred : (T) -> Bool) -> ArrayView[ArrayView[T]] {
+///|
+pub fn split[T](
+  self : ArrayView[T],
+  pred : (T) -> Bool
+) -> ArrayView[ArrayView[T]] {
   let chunks = []
   let mut i = 0
   while i < self.length() {
@@ -204,18 +225,21 @@ pub fn split[T](self : ArrayView[T], pred : (T) -> Bool) -> ArrayView[ArrayView[
   chunks[:]
 }
 
+///|
 pub fn map_inplace[T](self : ArrayView[T], f : (T) -> T) -> Unit {
   for i, v in self {
     self[i] = f(v)
   }
 }
 
+///|
 pub fn mapi_inplace[T](self : ArrayView[T], f : (Int, T) -> T) -> Unit {
   for i, v in self {
     self[i] = f(i, v)
   }
 }
 
+///|
 pub fn binary_search[T : Compare](
   self : ArrayView[T],
   value : T
@@ -239,6 +263,7 @@ pub fn binary_search[T : Compare](
   }
 }
 
+///|
 pub fn binary_search_by[T](
   self : ArrayView[T],
   cmp : (T) -> Int
@@ -261,5 +286,3 @@ pub fn binary_search_by[T](
     }
   }
 }
-
-

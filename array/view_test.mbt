@@ -209,7 +209,6 @@ test "rev_foldi" {
   assert_eq!(v0, v1)
 }
 
-
 test "search_by" {
   let arr = [1, 2, 3, 4, 5, 6, 7][:]
   let index = arr.search_by(fn(x) { x == 3 })

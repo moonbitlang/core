@@ -170,6 +170,7 @@ pub fn rev_foldi[A, B](
   }
 }
 
+///|
 pub fn map[T, U](self : ArrayView[T], f : (T) -> U) -> ArrayView[U] {
   if self.length() == 0 {
     return [][:]
@@ -181,6 +182,7 @@ pub fn map[T, U](self : ArrayView[T], f : (T) -> U) -> ArrayView[U] {
   arr[:]
 }
 
+///|
 pub fn mapi[T, U](self : ArrayView[T], f : (Int, T) -> U) -> ArrayView[U] {
   if self.length() == 0 {
     return [][:]
@@ -192,10 +194,12 @@ pub fn mapi[T, U](self : ArrayView[T], f : (Int, T) -> U) -> ArrayView[U] {
   arr[:]
 }
 
+///|
 pub fn is_empty[T](self : ArrayView[T]) -> Bool {
   self.length() == 0
 }
 
+///|
 pub fn starts_with[T : Eq](self : ArrayView[T], prefix : ArrayView[T]) -> Bool {
   if prefix.length() > self.length() {
     return false
@@ -209,6 +213,7 @@ pub fn starts_with[T : Eq](self : ArrayView[T], prefix : ArrayView[T]) -> Bool {
   }
 }
 
+///|
 pub fn ends_with[T : Eq](self : ArrayView[T], suffix : ArrayView[T]) -> Bool {
   if suffix.length() > self.length() {
     return false
@@ -222,7 +227,7 @@ pub fn ends_with[T : Eq](self : ArrayView[T], suffix : ArrayView[T]) -> Bool {
   }
 }
 
-/// TODO: perf could be optimized
+///| TODO: perf could be optimized
 pub fn rev[T](self : ArrayView[T]) -> ArrayView[T] {
   let arr = []
   for i in 0..<self.length() {
@@ -231,9 +236,12 @@ pub fn rev[T](self : ArrayView[T]) -> ArrayView[T] {
   arr[:]
 }
 
-/// TODO: perf could be optimized
+///| TODO: perf could be optimized
 /// @alert unsafe "Panic if index is out of bounds."
-pub fn split_at[T](self : ArrayView[T], index : Int) -> (ArrayView[T], ArrayView[T]) {
+pub fn split_at[T](
+  self : ArrayView[T],
+  index : Int
+) -> (ArrayView[T], ArrayView[T]) {
   if index < 0 || index > self.length() {
     let len = self.length()
     abort(
@@ -243,7 +251,11 @@ pub fn split_at[T](self : ArrayView[T], index : Int) -> (ArrayView[T], ArrayView
   (self[0:index], self[index:])
 }
 
-pub fn strip_prefix[T : Eq](self : ArrayView[T], prefix : ArrayView[T]) -> ArrayView[T]? {
+///|
+pub fn strip_prefix[T : Eq](
+  self : ArrayView[T],
+  prefix : ArrayView[T]
+) -> ArrayView[T]? {
   if self.starts_with(prefix) {
     let v = Array::make_uninit(self.length() - prefix.length())[:]
     UninitializedArray::unsafe_blit(
@@ -259,7 +271,11 @@ pub fn strip_prefix[T : Eq](self : ArrayView[T], prefix : ArrayView[T]) -> Array
   }
 }
 
-pub fn strip_suffix[T : Eq](self : ArrayView[T], suffix : ArrayView[T]) -> ArrayView[T]? {
+///|
+pub fn strip_suffix[T : Eq](
+  self : ArrayView[T],
+  suffix : ArrayView[T]
+) -> ArrayView[T]? {
   if self.ends_with(suffix) {
     let v = Array::make_uninit(self.length() - suffix.length())
     let len = self.length() - suffix.length()
@@ -270,6 +286,7 @@ pub fn strip_suffix[T : Eq](self : ArrayView[T], suffix : ArrayView[T]) -> Array
   }
 }
 
+///|
 pub fn copy[T](self : ArrayView[T]) -> ArrayView[T] {
   let len = self.length()
   if len == 0 {
