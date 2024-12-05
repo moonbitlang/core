@@ -58,7 +58,7 @@ pub fn is_empty[K, V](self : T[K, V]) -> Bool {
 }
 
 ///|
-fn new[K, V](key : K, value : V, l : T[K, V], r : T[K, V]) -> T[K, V] {
+fn make_tree[K, V](key : K, value : V, l : T[K, V], r : T[K, V]) -> T[K, V] {
   let size = size(l) + size(r) + 1
   Tree(key, value~, size~, l, r)
 }
