@@ -356,9 +356,10 @@ impl Unit {
 
 
 impl Bool {
+  compare(Bool, Bool) -> Int
   default() -> Bool
   not(Bool) -> Bool
-  op_compare(Bool, Bool) -> Int
+  op_compare(Bool, Bool) -> Int //deprecated
   op_equal(Bool, Bool) -> Bool
   to_json(Bool) -> Json
   to_string(Bool) -> String
