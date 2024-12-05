@@ -68,22 +68,22 @@ impl ArrayView {
   binary_search_by[T](Self[T], (T) -> Int) -> Result[Int, Int]
   chunk_by[T](Self[T], (T, T) -> Bool) -> Self[Self[T]]
   chunks[T](Self[T], Int) -> Self[Self[T]]
-  compare[T : Compare](Self[T], Self[T]) -> Int
   contains[T : Eq](Self[T], T) -> Bool
   each[T](Self[T], (T) -> Unit) -> Unit
   eachi[T](Self[T], (Int, T) -> Unit) -> Unit
   filter[T](Self[T], (T) -> Bool) -> Self[T]
+  flatten[T](Self[Self[T]]) -> Self[T]
   is_sorted[T : Compare](Self[T]) -> Bool
   last[T](Self[T]) -> T?
   map_inplace[T](Self[T], (T) -> T) -> Unit
   map_option[A, B](Self[A], (A) -> B?) -> Self[B]
   mapi_inplace[T](Self[T], (Int, T) -> T) -> Unit
-  op_equal[T : Eq](Self[T], Self[T]) -> Bool
   rev_each[T](Self[T], (T) -> Unit) -> Unit
   rev_eachi[T](Self[T], (Int, T) -> Unit) -> Unit
   rev_inplace[T](Self[T]) -> Unit
   search[T : Eq](Self[T], T) -> Int?
   search_by[T](Self[T], (T) -> Bool) -> Int?
+  sort[T : Compare](Self[T]) -> Unit
   split[T](Self[T], (T) -> Bool) -> Self[Self[T]]
 }
 
