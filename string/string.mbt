@@ -101,10 +101,7 @@ pub fn String::default() -> String {
 ///|
 /// `String` holds a sequence of UTF-16 code units encoded in little endian format
 pub fn to_bytes(self : String) -> Bytes {
-  let len = self.length()
-  let bytes = Bytes::new(len * 2)
-  bytes.blit_from_string(0, self, 0, len)
-  bytes
+  Bytes::of_string(self)
 }
 
 ///|

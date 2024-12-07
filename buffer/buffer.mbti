@@ -5,13 +5,14 @@ package moonbitlang/core/buffer
 // Types and methods
 type T
 impl T {
+  contents(Self) -> Bytes
   is_empty(Self) -> Bool
   length(Self) -> Int
   new(size_hint~ : Int = ..) -> Self
   reset(Self) -> Unit
   to_bytes(Self) -> Bytes
   to_string(Self) -> String //deprecated
-  to_unchecked_string(Self) -> String
+  to_unchecked_string(Self) -> String //deprecated
   write_byte(Self, Byte) -> Unit
   write_bytes(Self, Bytes) -> Unit
   write_char(Self, Char) -> Unit

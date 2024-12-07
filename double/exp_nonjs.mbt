@@ -13,25 +13,22 @@
 // limitations under the License.
 
 ///|
-fn get_high_word(x : Double) -> UInt {
-  (x.reinterpret_as_uint64() >> 32).to_uint()
-}
-
-///|
-fn get_low_word(x : Double) -> UInt {
-  x.reinterpret_as_uint64().to_uint()
-}
-
-///|
-fn insert_words(ix0 : UInt64, ix1 : UInt64) -> Double {
-  let mut bits : UInt64 = 0
-  bits = bits | (ix0 << 32)
-  bits = bits | ix1
-  bits.reinterpret_as_double()
-}
-
-///|
 pub fn exp(self : Double) -> Double {
+  fn get_high_word(x : Double) -> UInt {
+    (x.reinterpret_as_uint64() >> 32).to_uint()
+  }
+
+  fn get_low_word(x : Double) -> UInt {
+    x.reinterpret_as_uint64().to_uint()
+  }
+
+  fn insert_words(ix0 : UInt64, ix1 : UInt64) -> Double {
+    let mut bits : UInt64 = 0
+    bits = bits | (ix0 << 32)
+    bits = bits | ix1
+    bits.reinterpret_as_double()
+  }
+
   let mut x = self
   let one = 1.0
   let halF = [0.5, -0.5]

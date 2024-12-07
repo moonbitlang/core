@@ -6038,3 +6038,26 @@ test "grouped test for specific patterns" {
   // Test for all bits set except the most significant bit
   inspect!(UInt64::reinterpret_as_double(0x7FFFFFFFFFFFFFFFUL), content="NaN")
 }
+
+test "Double::to_int64" {
+  inspect!(0.0.to_int64(), content="0")
+  inspect!(1.0.to_int64(), content="1")
+  inspect!(1.5.to_int64(), content="1")
+  inspect!(1.9.to_int64(), content="1")
+  inspect!(2.0.to_int64(), content="2")
+  inspect!(2.5.to_int64(), content="2")
+  inspect!(2.9.to_int64(), content="2")
+  inspect!(-1.0.to_int64(), content="-1")
+  inspect!(-1.5.to_int64(), content="-1")
+  inspect!(-1.9.to_int64(), content="-1")
+  inspect!(-2.0.to_int64(), content="-2")
+  inspect!(-2.5.to_int64(), content="-2")
+  inspect!(-2.9.to_int64(), content="-2")
+  inspect!((0.0 / 0.0).to_int64(), content="0")
+  inspect!((1.0 / 0.0).to_int64(), content="9223372036854775807")
+  inspect!((-1.0 / 0.0).to_int64(), content="-9223372036854775808")
+  inspect!(9223372036854775807.0.to_int64(), content="9223372036854775807")
+  inspect!((-9223372036854775808.0).to_int64(), content="-9223372036854775808")
+  inspect!(9223372036854775808.0.to_int64(), content="9223372036854775807")
+  inspect!((-9223372036854775809.0).to_int64(), content="-9223372036854775808")
+}

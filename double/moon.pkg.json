@@ -10,8 +10,13 @@
     "exp_nonjs.mbt": ["not", "js"],
     "mod_js.mbt": ["js"],
     "mod_nonjs.mbt": ["not", "js"],
+    "pow_js.mbt": ["js"],
+    "pow_nonjs.mbt": ["not", "js"],
     "round_js.mbt": ["js"],
     "round_wasm.mbt": ["wasm", "wasm-gc"],
     "round.mbt": ["not", "js", "wasm", "wasm-gc"]
-  }
+  },
+  "test-import": [
+    "moonbitlang/core/test"
+  ]
 }

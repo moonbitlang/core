@@ -13,21 +13,6 @@
 // limitations under the License.
 
 ///|
-/// @intrinsic %string.substring
-fn unsafe_substring(str : String, start : Int, end : Int) -> String {
-  let len = end - start
-  let bytes = FixedArray::make(len * 2, Byte::default())
-  bytes.blit_from_string(0, str, start, len)
-  bytes.unsafe_to_bytes().to_unchecked_string()
-}
-
-///|
-/// Get substring of the string from [start] to [end] exclusive.
-pub fn substring(
-  self : String,
-  start~ : Int = 0,
-  end~ : Int = self.length()
-) -> String {
-  guard start >= 0 && start <= end && end <= self.length()
-  unsafe_substring(self, start, end)
+pub fn pow(self : Float, other : Float) -> Float {
+  self.to_double().pow(other.to_double()).to_float()
 }

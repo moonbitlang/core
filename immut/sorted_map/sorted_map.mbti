@@ -38,6 +38,8 @@ impl T {
   to_array[K, V](Self[K, V]) -> Array[(K, V)]
   to_json[K : Show, V : ToJson](Self[K, V]) -> Json
 }
+impl[K : Compare, V : Compare] Compare for T[K, V]
+impl[K, V] Default for T[K, V]
 impl[K : Eq, V : Eq] Eq for T[K, V]
 impl[K : Hash, V : Hash] Hash for T[K, V]
 impl[K : Show, V : Show] Show for T[K, V]

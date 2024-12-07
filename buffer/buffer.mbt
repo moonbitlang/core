@@ -73,22 +73,9 @@ pub fn is_empty(self : T) -> Bool {
 }
 
 ///|
-/// Return a new string contains the data in buffer.
-/// 
-/// @alert deprecated "Use `Buffer::to_unchecked_string` instead"
-pub fn to_string(self : T) -> String {
-  self.to_unchecked_string()
-}
-
-///|
-/// Return a new unchecked string contains the data in buffer.
-/// Note this function does not validate the encoding of the byte sequence, 
-/// it simply copy the bytes into a new String.
-pub fn to_unchecked_string(self : T) -> String {
-  Bytes::from_fixedarray(self.data).to_unchecked_string(
-    offset=0,
-    length=self.len,
-  )
+/// Return the contents of the buffer as a Bytes.
+pub fn contents(self : T) -> Bytes {
+  Bytes::from_fixedarray(self.data, len=self.len)
 }
 
 ///|
@@ -135,18 +122,6 @@ pub fn write_substring(
 }
 
 ///|
-/// Write a sub-string into buffer.
-/// @alert deprecated "Use `Buffer::write_substring` instead"
-pub fn write_sub_string(
-  self : T,
-  value : String,
-  start : Int,
-  len : Int
-) -> Unit {
-  self.write_substring(value, start, len)
-}
-
-///|
 /// Write a char into buffer.
 pub fn write_char(self : T, value : Char) -> Unit {
   self.grow_if_necessary(self.len + 4)
@@ -175,5 +150,5 @@ pub fn to_bytes(self : T) -> Bytes {
 
 ///|
 pub impl Show for T with output(self, logger) {
-  logger.write_string(self.to_unchecked_string())
+  logger.write_string(self.contents().to_unchecked_string())
 }
