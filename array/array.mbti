@@ -84,6 +84,8 @@ impl ArrayView {
   search[T : Eq](Self[T], T) -> Int?
   search_by[T](Self[T], (T) -> Bool) -> Int?
   sort[T : Compare](Self[T]) -> Unit
+  sort_by[T](Self[T], (T, T) -> Int) -> Unit
+  sort_by_key[T, K : Compare](Self[T], (T) -> K) -> Unit
   split[T](Self[T], (T) -> Bool) -> Self[Self[T]]
 }
 

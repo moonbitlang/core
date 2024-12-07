@@ -34,6 +34,16 @@ pub fn sort_by_key[T, K : Compare](self : Array[T], map : (T) -> K) -> Unit {
 }
 
 ///|
+pub fn sort_by_key[T, K : Compare](self : ArrayView[T], map : (T) -> K) -> Unit {
+  quick_sort_by(
+    self,
+    fn(a, b) { map(a).compare(map(b)) },
+    None,
+    get_limit(self.length()),
+  )
+}
+
+///|
 /// Sorts the array with a custom comparison function.
 /// 
 /// It's an in-place, unstable sort(it will reorder equal elements). The time complexity is O(n log n) in the worst case.
@@ -46,6 +56,11 @@ pub fn sort_by_key[T, K : Compare](self : Array[T], map : (T) -> K) -> Unit {
 /// assert_eq!(arr, [1, 2, 3, 4, 5])
 /// ```
 pub fn sort_by[T](self : Array[T], cmp : (T, T) -> Int) -> Unit {
+  quick_sort_by(self[:], cmp, None, get_limit(self.length()))
+}
+
+///|
+pub fn sort_by[T](self : ArrayView[T], cmp : (T, T) -> Int) -> Unit {
   quick_sort_by(self[:], cmp, None, get_limit(self.length()))
 }
 

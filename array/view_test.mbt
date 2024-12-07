@@ -300,3 +300,24 @@ test "repeat" {
   assert_eq!(vv, [3, 4, 3, 4][:])
   assert_eq!(vv.length(), 4)
 }
+
+test "sort" {
+  let v = [5, 4, 3, 2, 1][:]
+  v.sort()
+  assert_eq!(v, [1, 2, 3, 4, 5][:])
+  let v = [5, 4, 3, 2, 1][1:4]
+  v.sort()
+  assert_eq!(v, [2, 3, 4][:])
+}
+
+test "sort_by" {
+  let v = [5, 3, 2, 4, 1][:]
+  v.sort_by(fn(a, b) { a - b })
+  assert_eq!(v, [1, 2, 3, 4, 5][:])
+}
+
+test "sort_by_key" {
+  let v = [5, 3, 2, 4, 1][:]
+  v.sort_by_key(fn(x) { -x })
+  assert_eq!(v, [5, 4, 3, 2, 1][:])
+}
