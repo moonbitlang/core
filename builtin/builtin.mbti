@@ -133,6 +133,7 @@ impl ArrayView {
   op_as_view[T](Self[T], start~ : Int, end? : Int) -> Self[T]
   op_get[T](Self[T], Int) -> T
   op_set[T](Self[T], Int, T) -> Unit
+  repeat[T](Self[T], Int) -> Self[T]
   rev[T](Self[T]) -> Self[T]
   rev_fold[A, B](Self[A], init~ : B, (B, A) -> B) -> B
   rev_foldi[A, B](Self[A], init~ : B, (Int, B, A) -> B) -> B

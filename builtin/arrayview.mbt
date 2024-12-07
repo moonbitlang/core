@@ -293,7 +293,13 @@ pub fn copy[T](self : ArrayView[T]) -> ArrayView[T] {
     [][:]
   } else {
     let arr = Array::make(len, self[0])
-    UninitializedArray::unsafe_blit(arr.buffer(), 0, self.buf, 0, len)
+    UninitializedArray::unsafe_blit(arr.buffer(), 0, self.buf, self.start, len)
     arr[:]
   }
+}
+
+pub fn repeat[T](self : ArrayView[T], times : Int) -> ArrayView[T] {
+  let v = Array::make_uninit(self.length())
+  UninitializedArray::unsafe_blit(v.buffer(), 0, self.buf, self.start, self.length())
+  v.repeat(times)[:]
 }

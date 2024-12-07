@@ -271,16 +271,32 @@ test "strip_suffix" {
 }
 
 test "copy" {
-  let arr = [1, 2, 3, 4, 5][:]
-  let copied = arr.copy()
+  let v1 = [1, 2, 3, 4, 5][:]
+  let copied = v1.copy()
   assert_eq!(copied, [1, 2, 3, 4, 5][:])
-  @test.is_not!(arr, copied)
+  @test.is_not!(v1, copied)
   inspect!(([][:] : ArrayView[Int]).copy(), content="[]")
+  let v2 = [1, 2, 3, 4, 5][1:4]
+  let copied = v2.copy()
+  assert_eq!(copied, [2, 3, 4][:])
+  @test.is_not!(v1, copied)
 }
 
 test "flatten" {
   let v = [[3, 4][:], [5, 6][:]][:]
   let vv = v.flatten()
   assert_eq!(vv, [3, 4, 5, 6][:])
+  assert_eq!(vv.length(), 4)
+  let v : ArrayView[ArrayView[Int]] = [][:]
+  assert_eq!(v.flatten(), [][:])
+  let v = [[1, 2, 3, 4][:], [4, 5, 6, 7][1:4], [7, 8, 9, 10][1:3]][:]
+  let vv = v.flatten()
+  assert_eq!(vv, [1, 2, 3, 4, 5, 6, 7, 8, 9][:])
+}
+
+test "repeat" {
+  let v = [1, 2, 3, 4, 5][2:4]
+  let vv = v.repeat(2)
+  assert_eq!(vv, [3, 4, 3, 4][:])
   assert_eq!(vv.length(), 4)
 }
