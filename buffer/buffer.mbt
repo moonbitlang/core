@@ -291,7 +291,7 @@ pub fn double_to_bytes(f : Double) -> Bytes {
 /// # Example
 /// 
 /// ```
-/// b"\x11\x45\x14\x19\x19\x81\x00\x00" |> bytes_to_double_raw
+/// b"\x11\x45\x14\x19\x19\x81\x00\x00" |> bytes_to_double
 /// ```
 pub fn bytes_to_double(bs : Bytes) -> Double {
   bs |> bytes_to_uint64 |> UInt64::reinterpret_as_double
@@ -314,7 +314,7 @@ pub fn float_to_bytes(f : Float) -> Bytes {
 /// # Example
 /// 
 /// ```
-/// b"\x11\x45\x14\x00" |> bytes_to_float_raw
+/// b"\x11\x45\x14\x00" |> bytes_to_float
 /// ```
 pub fn bytes_to_float(bs : Bytes) -> Float {
   bs |> bytes_to_uint |> UInt::reinterpret_as_float
@@ -337,7 +337,7 @@ pub fn int_to_bytes(i : Int) -> Bytes {
 /// # Example
 /// 
 /// ```
-/// b"\x11\x45\x14\x00" |> bytes_to_int_raw
+/// b"\x11\x45\x14\x00" |> bytes_to_int
 /// ```
 pub fn bytes_to_int(bs : Bytes) -> Int {
   bs |> bytes_to_uint |> UInt::reinterpret_as_int
@@ -360,7 +360,7 @@ pub fn int64_to_bytes(i : Int64) -> Bytes {
 /// # Example
 /// 
 /// ```
-/// b"\x11\x45\x14\x19\x19\x81\x00\x00" |> bytes_to_int64_raw
+/// b"\x11\x45\x14\x19\x19\x81\x00\x00" |> bytes_to_int64
 /// ```
 pub fn bytes_to_int64(bs : Bytes) -> Int64 {
   bs |> bytes_to_uint64 |> UInt64::reinterpret_as_int64
