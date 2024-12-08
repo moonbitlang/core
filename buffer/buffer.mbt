@@ -95,6 +95,54 @@ pub fn write_string(self : T, value : String) -> Unit {
 }
 
 ///|
+/// Write an UInt64 into buffer.
+pub fn write_uint64(self : T, value : UInt64) -> Unit {
+  self.grow_if_necessary(self.len + 16)
+  self.data.blit_from_bytes(self.len, value |> uint64_to_bytes, 0, 8)
+  self.len += 8
+}
+
+///|
+/// Write an Int64 into buffer.
+pub fn write_int64(self : T, value : Int64) -> Unit {
+  self.grow_if_necessary(self.len + 16)
+  self.data.blit_from_bytes(self.len, value |> int64_to_bytes, 0, 8)
+  self.len += 8
+}
+
+///|
+/// Write an UInt into buffer.
+pub fn write_uint(self : T, value : UInt) -> Unit {
+  self.grow_if_necessary(self.len + 8)
+  self.data.blit_from_bytes(self.len, value |> uint_to_bytes, 0, 4)
+  self.len += 4
+}
+
+///|
+/// Write an Int into buffer.
+pub fn write_int(self : T, value : Int) -> Unit {
+  self.grow_if_necessary(self.len + 8)
+  self.data.blit_from_bytes(self.len, value |> int_to_bytes, 0, 4)
+  self.len += 4
+}
+
+///|
+/// Write a Double into buffer.
+pub fn write_double(self : T, value : Double) -> Unit {
+  self.grow_if_necessary(self.len + 16)
+  self.data.blit_from_bytes(self.len, value |> double_to_bytes, 0, 8)
+  self.len += 8
+}
+
+///|
+/// Write a Float into buffer.
+pub fn write_float(self : T, value : Float) -> Unit {
+  self.grow_if_necessary(self.len + 8)
+  self.data.blit_from_bytes(self.len, value |> float_to_bytes, 0, 4)
+  self.len += 4
+}
+
+///|
 pub fn write_object(self : T, value : Show) -> Unit {
   self.write_string(value.to_string())
 }
@@ -146,6 +194,176 @@ pub fn reset(self : T) -> Unit {
 ///|
 pub fn to_bytes(self : T) -> Bytes {
   Bytes::from_fixedarray(self.data, len=self.len)
+}
+
+///| Convert an UInt64 into a 8 bytes long Bytes.
+/// 
+/// # Example
+/// 
+/// ```
+/// uint64_number |> uint64_to_bytes
+/// ```
+pub fn uint64_to_bytes(i : UInt64) -> Bytes {
+  let byte1 = i.to_byte()
+  let byte2 = (i >> 8).to_byte()
+  let byte3 = (i >> 16).to_byte()
+  let byte4 = (i >> 24).to_byte()
+  let byte5 = (i >> 32).to_byte()
+  let byte6 = (i >> 40).to_byte()
+  let byte7 = (i >> 48).to_byte()
+  let byte8 = (i >> 56).to_byte()
+  [byte1, byte2, byte3, byte4, byte5, byte6, byte7, byte8]
+  |> Bytes::from_fixedarray
+}
+
+///| Convert a 8 bytes long Bytes into an UInt64 **without** a length check.
+/// This function does not check the input so take the risk at your own.
+/// 
+/// # Example
+/// 
+/// ```
+/// [b'\x11', b'\x45', b'\x14', b'\x19', b'\x19', b'\x81', b'\x00', b'\x00'] |> bytes_to_uint64
+/// ```
+pub fn bytes_to_uint64(bs : Bytes) -> UInt64 {
+  let uint64_1 = bs[0] |> Byte::to_uint |> UInt::to_uint64
+  let uint64_2 = (bs[1] |> Byte::to_uint |> UInt::to_uint64) << 8
+  let uint64_3 = (bs[2] |> Byte::to_uint |> UInt::to_uint64) << 16
+  let uint64_4 = (bs[3] |> Byte::to_uint |> UInt::to_uint64) << 24
+  let uint64_5 = (bs[4] |> Byte::to_uint |> UInt::to_uint64) << 32
+  let uint64_6 = (bs[5] |> Byte::to_uint |> UInt::to_uint64) << 40
+  let uint64_7 = (bs[6] |> Byte::to_uint |> UInt::to_uint64) << 48
+  let uint64_8 = (bs[7] |> Byte::to_uint |> UInt::to_uint64) << 56
+  uint64_1 +
+  uint64_2 +
+  uint64_3 +
+  uint64_4 +
+  uint64_5 +
+  uint64_6 +
+  uint64_7 +
+  uint64_8
+}
+
+///| Convert an UInt into a 4 bytes long Bytes.
+/// 
+/// # Example
+/// 
+/// ```
+/// uint_number |> uint_to_bytes
+/// ```
+pub fn uint_to_bytes(i : UInt) -> Bytes {
+  let byte1 = i.to_byte()
+  let byte2 = (i >> 8).to_byte()
+  let byte3 = (i >> 16).to_byte()
+  let byte4 = (i >> 24).to_byte()
+  [byte1, byte2, byte3, byte4] |> Bytes::from_fixedarray
+}
+
+///| Convert a 4 bytes long Bytes into an UInt **without** a length check.
+/// This function does not check the input so take the risk at your own.
+/// 
+/// # Example
+/// 
+/// ```
+/// [b'\x11', b'\x45', b'\x14', b'\x00'] |> bytes_to_uint
+/// ```
+pub fn bytes_to_uint(bs : Bytes) -> UInt {
+  let uint64_1 = bs[0].to_uint()
+  let uint64_2 = bs[1].to_uint() << 8
+  let uint64_3 = bs[2].to_uint() << 16
+  let uint64_4 = bs[3].to_uint() << 24
+  uint64_1 + uint64_2 + uint64_3 + uint64_4
+}
+
+///| Convert a Double into a 8 bytes long Bytes
+/// 
+/// # Example
+/// 
+/// ```
+/// double_number |> double_to_bytes
+/// ```
+pub fn double_to_bytes(f : Double) -> Bytes {
+  f |> Double::reinterpret_as_uint64 |> uint64_to_bytes
+}
+
+///| Convert a 8 bytes long Bytes into an Double **without** a length check.
+/// This function does not check the input so take the risk at your own.
+/// 
+/// # Example
+/// 
+/// ```
+/// [b'\x11', b'\x45', b'\x14', b'\x19', b'\x19', b'\x81', b'\x00', b'\x00'] |> bytes_to_double_raw
+/// ```
+pub fn bytes_to_double(bs : Bytes) -> Double {
+  bs |> bytes_to_uint64 |> UInt64::reinterpret_as_double
+}
+
+///| Convert a Float into a 4 bytes long Bytes
+/// 
+/// # Example
+/// 
+/// ```
+/// float_number |> float_to_bytes
+/// ```
+pub fn float_to_bytes(f : Float) -> Bytes {
+  f |> Float::reinterpret_as_uint |> uint_to_bytes
+}
+
+///| Convert a 4 bytes long Bytes into an Float **without** a length check.
+/// This function does not check the input so take the risk at your own.
+/// 
+/// # Example
+/// 
+/// ```
+/// [b'\x11', b'\x45', b'\x14', b'\x00'] |> bytes_to_float_raw
+/// ```
+pub fn bytes_to_float(bs : Bytes) -> Float {
+  bs |> bytes_to_uint |> UInt::reinterpret_as_float
+}
+
+///| Convert an Int into a 4 bytes long Bytes.
+/// 
+/// # Example
+/// 
+/// ```
+/// int_number |> int_to_bytes
+/// ```
+pub fn int_to_bytes(i : Int) -> Bytes {
+  i |> Int::reinterpret_as_uint |> uint_to_bytes
+}
+
+///| Convert a 4 bytes long Bytes into an Int **without** a length check.
+/// This function does not check the input so take the risk at your own.
+/// 
+/// # Example
+/// 
+/// ```
+/// [b'\x11', b'\x45', b'\x14', b'\x00'] |> bytes_to_int_raw
+/// ```
+pub fn bytes_to_int(bs : Bytes) -> Int {
+  bs |> bytes_to_uint |> UInt::reinterpret_as_int
+}
+
+///| Convert an Int64 into a 8 bytes long Bytes.
+/// 
+/// # Example
+/// 
+/// ```
+/// int64_number |> int64_to_bytes
+/// ```
+pub fn int64_to_bytes(i : Int64) -> Bytes {
+  i |> Int64::reinterpret_as_uint64 |> uint64_to_bytes
+}
+
+///| Convert a 8 bytes long Bytes into an Int64 **without** a length check.
+/// This function does not check the input so take the risk at your own.
+/// 
+/// # Example
+/// 
+/// ```
+/// [b'\x11', b'\x45', b'\x14', b'\x19', b'\x19', b'\x81', b'\x00', b'\x00'] |> bytes_to_int64_raw
+/// ```
+pub fn bytes_to_int64(bs : Bytes) -> Int64 {
+  bs |> bytes_to_uint64 |> UInt64::reinterpret_as_int64
 }
 
 ///|
