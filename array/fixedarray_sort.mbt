@@ -523,9 +523,9 @@ test "stable_sort_complex" {
       index += 1
     }
   }
-  assert_false!(is_sorted(arr))
+  assert_false!(arr.is_sorted())
   arr.stable_sort()
-  assert_true!(is_sorted(arr))
+  assert_true!(arr.is_sorted())
 }
 
 test "find_streak with empty array" {

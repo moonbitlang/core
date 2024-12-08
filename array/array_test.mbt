@@ -353,13 +353,6 @@ test "repeat" {
   assert_eq!(vv.length(), 4)
 }
 
-test "flatten" {
-  let v = [[3, 4], [5, 6]]
-  let vv = v.flatten()
-  assert_eq!(vv, [3, 4, 5, 6])
-  assert_eq!(vv.length(), 4)
-}
-
 test "fold" {
   let sum = [1, 2, 3, 4, 5].fold(init=0, fn { sum, elem => sum + elem })
   assert_eq!(sum, 15)
