@@ -201,7 +201,7 @@ pub fn to_bytes(self : T) -> Bytes {
 /// # Example
 /// 
 /// ```
-/// uint64_number |> uint64_to_bytes
+/// let uint64_bytes = 1145141919810 |> @buffer.uint64_to_bytes
 /// ```
 pub fn uint64_to_bytes(i : UInt64) -> Bytes {
   let byte1 = i.to_byte()
@@ -222,7 +222,7 @@ pub fn uint64_to_bytes(i : UInt64) -> Bytes {
 /// # Example
 /// 
 /// ```
-/// b"\x11\x45\x14\x19\x19\x81\x00\x00" |> bytes_to_uint64
+/// let uint64_number = b"\x11\x45\x14\x19\x19\x81\x00\x00" |> @buffer.bytes_to_uint64
 /// ```
 pub fn bytes_to_uint64(bs : Bytes) -> UInt64 {
   let uint64_1 = bs[0] |> Byte::to_uint |> UInt::to_uint64
@@ -248,7 +248,7 @@ pub fn bytes_to_uint64(bs : Bytes) -> UInt64 {
 /// # Example
 /// 
 /// ```
-/// uint_number |> uint_to_bytes
+/// let uint_bytes = 114514 |> @buffer.uint_to_bytes
 /// ```
 pub fn uint_to_bytes(i : UInt) -> Bytes {
   let byte1 = i.to_byte()
@@ -264,7 +264,7 @@ pub fn uint_to_bytes(i : UInt) -> Bytes {
 /// # Example
 /// 
 /// ```
-/// b"\x11\x45\x14\x00" |> bytes_to_uint
+/// let uint_number = b"\x11\x45\x14\x00" |> @buffer.bytes_to_uint
 /// ```
 pub fn bytes_to_uint(bs : Bytes) -> UInt {
   let uint64_1 = bs[0].to_uint()
@@ -279,7 +279,7 @@ pub fn bytes_to_uint(bs : Bytes) -> UInt {
 /// # Example
 /// 
 /// ```
-/// double_number |> double_to_bytes
+/// let double_bytes = 114.514 |> @buffer.double_to_bytes
 /// ```
 pub fn double_to_bytes(f : Double) -> Bytes {
   f |> Double::reinterpret_as_uint64 |> uint64_to_bytes
@@ -291,7 +291,7 @@ pub fn double_to_bytes(f : Double) -> Bytes {
 /// # Example
 /// 
 /// ```
-/// b"\x11\x45\x14\x19\x19\x81\x00\x00" |> bytes_to_double
+/// let double_number = b"\x11\x45\x14\x19\x19\x81\x00\x00" |> @buffer.bytes_to_double
 /// ```
 pub fn bytes_to_double(bs : Bytes) -> Double {
   bs |> bytes_to_uint64 |> UInt64::reinterpret_as_double
@@ -302,7 +302,7 @@ pub fn bytes_to_double(bs : Bytes) -> Double {
 /// # Example
 /// 
 /// ```
-/// float_number |> float_to_bytes
+/// let float_bytes = 114.514 |> @buffer.float_to_bytes
 /// ```
 pub fn float_to_bytes(f : Float) -> Bytes {
   f |> Float::reinterpret_as_uint |> uint_to_bytes
@@ -314,7 +314,7 @@ pub fn float_to_bytes(f : Float) -> Bytes {
 /// # Example
 /// 
 /// ```
-/// b"\x11\x45\x14\x00" |> bytes_to_float
+/// let float_number = b"\x11\x45\x14\x00" |> @buffer.bytes_to_float
 /// ```
 pub fn bytes_to_float(bs : Bytes) -> Float {
   bs |> bytes_to_uint |> UInt::reinterpret_as_float
@@ -325,7 +325,7 @@ pub fn bytes_to_float(bs : Bytes) -> Float {
 /// # Example
 /// 
 /// ```
-/// int_number |> int_to_bytes
+/// let int_bytes = 114514 |> @buffer.int_to_bytes
 /// ```
 pub fn int_to_bytes(i : Int) -> Bytes {
   i |> Int::reinterpret_as_uint |> uint_to_bytes
@@ -337,7 +337,7 @@ pub fn int_to_bytes(i : Int) -> Bytes {
 /// # Example
 /// 
 /// ```
-/// b"\x11\x45\x14\x00" |> bytes_to_int
+/// let int_number = b"\x11\x45\x14\x00" |> @buffer.bytes_to_int
 /// ```
 pub fn bytes_to_int(bs : Bytes) -> Int {
   bs |> bytes_to_uint |> UInt::reinterpret_as_int
@@ -348,7 +348,7 @@ pub fn bytes_to_int(bs : Bytes) -> Int {
 /// # Example
 /// 
 /// ```
-/// int64_number |> int64_to_bytes
+/// let int64_bytes = 114514 |> @buffer.int64_to_bytes
 /// ```
 pub fn int64_to_bytes(i : Int64) -> Bytes {
   i |> Int64::reinterpret_as_uint64 |> uint64_to_bytes
@@ -360,7 +360,7 @@ pub fn int64_to_bytes(i : Int64) -> Bytes {
 /// # Example
 /// 
 /// ```
-/// b"\x11\x45\x14\x19\x19\x81\x00\x00" |> bytes_to_int64
+/// let int64_number = b"\x11\x45\x14\x19\x19\x81\x00\x00" |> @buffer.bytes_to_int64
 /// ```
 pub fn bytes_to_int64(bs : Bytes) -> Int64 {
   bs |> bytes_to_uint64 |> UInt64::reinterpret_as_int64
