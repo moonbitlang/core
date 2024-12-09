@@ -23,6 +23,7 @@ impl T {
   from_iter[K : Compare, V](Iter[(K, V)]) -> Self[K, V]
   from_json[V : @json.FromJson](Json) -> Self[String, V]!@json.JsonDecodeError
   insert[K : Compare, V](Self[K, V], K, V) -> Self[K, V] //deprecated
+  intersection[K : Compare, V1, V2](Self[K, V1], Self[K, V2]) -> Iter[(K, V1, V2)]
   is_empty[K, V](Self[K, V]) -> Bool
   iter[K, V](Self[K, V]) -> Iter[(K, V)]
   iter2[K, V](Self[K, V]) -> Iter2[K, V]

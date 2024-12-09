@@ -190,3 +190,33 @@ test "hash" {
   let map4 = @sorted_map.T::of([("one", 1), ("two", 2), ("three", 3)])
   inspect!(map1.hash() == map4.hash(), content="false")
 }
+
+test "intersection" {
+  let m1 = @sorted_map.T::of(
+    [(1, "one"), (2, "two"), (3, "three"), (4, "four")],
+  )
+  let m2 = @sorted_map.T::of([(2, 2), (3, 3), (4, 4), (5, 5)])
+  let result = m1.intersection(m2).collect()
+
+  // Should contain (2, "two", 2), (3, "three", 3), (4, "four", 4)
+  assert_eq!(result.length(), 3)
+  assert_eq!(result[0], (2, "two", 2))
+  assert_eq!(result[1], (3, "three", 3))
+  assert_eq!(result[2], (4, "four", 4))
+}
+
+test "intersection with empty maps" {
+  let m1 = @sorted_map.T::of([(1, "one"), (2, "two")])
+  let m2 : @sorted_map.T[Int, Int] = @sorted_map.new()
+  let result = m1.intersection(m2).collect()
+  assert_eq!(result.length(), 0)
+  let result2 = m2.intersection(m1).collect()
+  assert_eq!(result2.length(), 0)
+}
+
+test "intersection with no common elements" {
+  let m1 = @sorted_map.T::of([(1, "one"), (2, "two")])
+  let m2 = @sorted_map.T::of([(3, 3), (4, 4)])
+  let result = m1.intersection(m2).collect()
+  assert_eq!(result.length(), 0)
+}
