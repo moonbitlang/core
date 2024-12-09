@@ -31,14 +31,3 @@ pub fn abs(self : Int64) -> Int64 {
     self
   }
 }
-
-///| Convert an Int64 into a 8 bytes long Bytes.
-/// 
-/// # Example
-/// 
-/// ```
-/// let int64_bytes = 114514 |> Int64::to_bytes
-/// ```
-pub fn to_bytes(self : Int64) -> Bytes {
-  self |> Int64::reinterpret_as_uint64 |> UInt64::to_bytes
-}

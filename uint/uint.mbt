@@ -27,18 +27,3 @@ pub fn to_int64(self : UInt) -> Int64 {
 pub fn UInt::default() -> UInt {
   0
 }
-
-///| Convert an UInt into a 4 bytes long Bytes.
-/// 
-/// # Example
-/// 
-/// ```
-/// let uint_bytes = 114514 |> UInt::to_bytes
-/// ```
-pub fn to_bytes(self : UInt) -> Bytes {
-  let byte1 = self.to_byte()
-  let byte2 = (self >> 8).to_byte()
-  let byte3 = (self >> 16).to_byte()
-  let byte4 = (self >> 24).to_byte()
-  [byte1, byte2, byte3, byte4] |> Bytes::from_fixedarray
-}

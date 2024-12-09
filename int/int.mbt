@@ -41,14 +41,3 @@ pub fn abs(self : Int) -> Int {
     self
   }
 }
-
-///| Convert an Int into a 4 bytes long Bytes.
-/// 
-/// # Example
-/// 
-/// ```
-/// let int_bytes = 114514 |> Int::to_bytes
-/// ```
-pub fn to_bytes(self : Int) -> Bytes {
-  self |> Int::reinterpret_as_uint |> UInt::to_bytes
-}

@@ -84,14 +84,3 @@ pub fn Float::to_int(self : Float) -> Int {
     self.unchecked_to_int()
   }
 }
-
-///| Convert a Float into a 4 bytes long Bytes
-/// 
-/// # Example
-/// 
-/// ```
-/// let float_bytes = 114.514 |> Float::to_bytes
-/// ```
-pub fn to_bytes(self : Float) -> Bytes {
-  self |> Float::reinterpret_as_uint |> UInt::to_bytes
-}
