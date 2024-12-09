@@ -330,6 +330,7 @@ impl Show for SourceLoc
 
 type StringBuilder
 impl StringBuilder {
+  is_empty(Self) -> Bool
   new(size_hint~ : Int = ..) -> Self
   reset(Self) -> Unit
   to_string(Self) -> String
