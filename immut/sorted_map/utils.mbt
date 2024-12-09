@@ -12,9 +12,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-///|
-/// Create an empty map.
+///| Create an empty map.
+/// @alert deprecated "Use `new()` instead"
 pub fn T::empty[K, V]() -> T[K, V] {
+  Empty
+}
+
+///| Create an empty map.
+pub fn T::new[K, V]() -> T[K, V] {
   Empty
 }
 
