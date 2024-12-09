@@ -26,6 +26,12 @@ pub fn StringBuilder::new(size_hint~ : Int = 0) -> StringBuilder {
 }
 
 ///|
+/// Return whether the given buffer is empty.
+pub fn StringBuilder::is_empty(self : StringBuilder) -> Bool {
+  self.len == 0
+}
+
+///|
 fn StringBuilder::grow_if_necessary(
   self : StringBuilder,
   required : Int
