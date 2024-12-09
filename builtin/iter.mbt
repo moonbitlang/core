@@ -785,21 +785,7 @@ pub fn collect[T](self : Iter[T]) -> Array[T] {
 /// Collects the elements of the iterator into a string.
 pub fn join(self : Iter[String], separator~ : String = "") -> String {
   let buf = StringBuilder::new()
-  if separator == "" {
-    for str in self {
-      buf.write_string(str)
-    }
-  } else {
-    let mut first = true
-    for str in self {
-      if first {
-        first = false
-      } else {
-        buf.write_string(separator)
-      }
-      buf.write_string(str)
-    }
-  }
+  (buf : Logger).write_iter(self, prefix="", suffix="", sep=separator)
   buf.to_string()
 }
 
