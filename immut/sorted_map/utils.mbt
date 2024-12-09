@@ -253,7 +253,7 @@ pub fn iter2[K, V](self : T[K, V]) -> Iter2[K, V] {
 
 ///|
 pub fn T::from_iter[K : Compare, V](iter : Iter[(K, V)]) -> T[K, V] {
-  iter.fold(init=T::empty(), fn(m, e) { m.add(e.0, e.1) })
+  iter.fold(init=T::new(), fn(m, e) { m.add(e.0, e.1) })
 }
 
 ///|
