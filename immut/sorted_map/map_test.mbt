@@ -31,7 +31,7 @@ test "size" {
 }
 
 test "is_empty" {
-  let m : @sorted_map.T[Int, Int] = @sorted_map.empty()
+  let m : @sorted_map.T[Int, Int] = @sorted_map.new()
   assert_eq!(m.is_empty(), true)
   let m = m.add(1, 1)
   assert_eq!(m.is_empty(), false)
