@@ -2,7 +2,8 @@
   "import": [
     "moonbitlang/core/builtin",
     "moonbitlang/core/coverage",
-    "moonbitlang/core/double"
+    "moonbitlang/core/double",
+    "moonbitlang/core/uint"
   ],
   "test-import": ["moonbitlang/core/quickcheck"],
   "targets": {

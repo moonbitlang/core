@@ -201,7 +201,7 @@ test "write_float method" {
 test "test for uint64_byte_array and reverse" {
   let test_number : UInt64 = 1145141919810
   let tested : UInt64 = test_number
-    |> @buffer.uint64_to_bytes
+    |> UInt64::to_bytes
     |> @buffer.bytes_to_uint64
   if test_number != tested {
     fail!("Not equal after bytes conversion!")
@@ -210,9 +210,7 @@ test "test for uint64_byte_array and reverse" {
 
 test "test for uint_byte_array and reverse" {
   let test_number : UInt = 114514
-  let tested : UInt = test_number
-    |> @buffer.uint_to_bytes
-    |> @buffer.bytes_to_uint
+  let tested : UInt = test_number |> UInt::to_bytes |> @buffer.bytes_to_uint
   if test_number != tested {
     fail!("Not equal after bytes conversion!")
   }
@@ -221,7 +219,7 @@ test "test for uint_byte_array and reverse" {
 test "test 1 for double_byte_array and reverse" {
   let test_number : Double = 1145141919810
   let tested : Double = test_number
-    |> @buffer.double_to_bytes
+    |> Double::to_bytes
     |> @buffer.bytes_to_double
   if test_number != tested {
     fail!("Not equal after bytes conversion!")
@@ -231,7 +229,7 @@ test "test 1 for double_byte_array and reverse" {
 test "test 2 for double_byte_array and reverse" {
   let test_number : Double = -1145141919810
   let tested : Double = test_number
-    |> @buffer.double_to_bytes
+    |> Double::to_bytes
     |> @buffer.bytes_to_double
   if test_number != tested {
     fail!("Not equal after bytes conversion!")
@@ -241,7 +239,7 @@ test "test 2 for double_byte_array and reverse" {
 test "test 3 for double_byte_array and reverse" {
   let test_number : Double = 114514.1919810
   let tested : Double = test_number
-    |> @buffer.double_to_bytes
+    |> Double::to_bytes
     |> @buffer.bytes_to_double
   if test_number != tested {
     fail!("Not equal after bytes conversion!")
@@ -251,7 +249,7 @@ test "test 3 for double_byte_array and reverse" {
 test "test 4 for double_byte_array and reverse" {
   let test_number : Double = -114514.1919810
   let tested : Double = test_number
-    |> @buffer.double_to_bytes
+    |> Double::to_bytes
     |> @buffer.bytes_to_double
   if test_number != tested {
     fail!("Not equal after bytes conversion!")
@@ -260,9 +258,7 @@ test "test 4 for double_byte_array and reverse" {
 
 test "test 1 for float_byte_array and reverse" {
   let test_number : Float = 1145141919810
-  let tested : Float = test_number
-    |> @buffer.float_to_bytes
-    |> @buffer.bytes_to_float
+  let tested : Float = test_number |> Float::to_bytes |> @buffer.bytes_to_float
   if test_number != tested {
     fail!("Not equal after bytes conversion!")
   }
@@ -270,9 +266,7 @@ test "test 1 for float_byte_array and reverse" {
 
 test "test 2 for float_byte_array and reverse" {
   let test_number : Float = -1145141919810
-  let tested : Float = test_number
-    |> @buffer.float_to_bytes
-    |> @buffer.bytes_to_float
+  let tested : Float = test_number |> Float::to_bytes |> @buffer.bytes_to_float
   if test_number != tested {
     fail!("Not equal after bytes conversion!")
   }
@@ -280,9 +274,7 @@ test "test 2 for float_byte_array and reverse" {
 
 test "test 3 for float_byte_array and reverse" {
   let test_number : Float = 114514.1919810
-  let tested : Float = test_number
-    |> @buffer.float_to_bytes
-    |> @buffer.bytes_to_float
+  let tested : Float = test_number |> Float::to_bytes |> @buffer.bytes_to_float
   if test_number != tested {
     fail!("Not equal after bytes conversion!")
   }
@@ -290,9 +282,7 @@ test "test 3 for float_byte_array and reverse" {
 
 test "test 4 for float_byte_array and reverse" {
   let test_number : Float = -114514.1919810
-  let tested : Float = test_number
-    |> @buffer.float_to_bytes
-    |> @buffer.bytes_to_float
+  let tested : Float = test_number |> Float::to_bytes |> @buffer.bytes_to_float
   if test_number != tested {
     fail!("Not equal after bytes conversion!")
   }
@@ -300,9 +290,7 @@ test "test 4 for float_byte_array and reverse" {
 
 test "test 1 for int_byte_array and reverse" {
   let test_number : Int64 = 1145141919810
-  let tested : Int64 = test_number
-    |> @buffer.int64_to_bytes
-    |> @buffer.bytes_to_int64
+  let tested : Int64 = test_number |> Int64::to_bytes |> @buffer.bytes_to_int64
   if test_number != tested {
     fail!("Not equal after bytes conversion!")
   }
@@ -310,9 +298,7 @@ test "test 1 for int_byte_array and reverse" {
 
 test "test 2 for int64_byte_array and reverse" {
   let test_number : Int64 = -1145141919810
-  let tested : Int64 = test_number
-    |> @buffer.int64_to_bytes
-    |> @buffer.bytes_to_int64
+  let tested : Int64 = test_number |> Int64::to_bytes |> @buffer.bytes_to_int64
   if test_number != tested {
     fail!("Not equal after bytes conversion!")
   }
@@ -320,7 +306,7 @@ test "test 2 for int64_byte_array and reverse" {
 
 test "test 1 for int_byte_array and reverse" {
   let test_number : Int = 114514
-  let tested : Int = test_number |> @buffer.int_to_bytes |> @buffer.bytes_to_int
+  let tested : Int = test_number |> Int::to_bytes |> @buffer.bytes_to_int
   if test_number != tested {
     fail!("Not equal after bytes conversion!")
   }
@@ -328,7 +314,7 @@ test "test 1 for int_byte_array and reverse" {
 
 test "test 2 for int_byte_array and reverse" {
   let test_number : Int = -114514
-  let tested : Int = test_number |> @buffer.int_to_bytes |> @buffer.bytes_to_int
+  let tested : Int = test_number |> Int::to_bytes |> @buffer.bytes_to_int
   if test_number != tested {
     fail!("Not equal after bytes conversion!")
   }

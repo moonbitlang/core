@@ -17,3 +17,23 @@ pub let min_value : UInt64 = 0UL
 
 ///|
 pub let max_value : UInt64 = 18446744073709551615UL
+
+///| Convert an UInt64 into a 8 bytes long Bytes.
+/// 
+/// # Example
+/// 
+/// ```
+/// let uint64_bytes = 1145141919810 |> UInt64::to_bytes
+/// ```
+pub fn to_bytes(self : UInt64) -> Bytes {
+  let byte1 = self.to_byte()
+  let byte2 = (self >> 8).to_byte()
+  let byte3 = (self >> 16).to_byte()
+  let byte4 = (self >> 24).to_byte()
+  let byte5 = (self >> 32).to_byte()
+  let byte6 = (self >> 40).to_byte()
+  let byte7 = (self >> 48).to_byte()
+  let byte8 = (self >> 56).to_byte()
+  [byte1, byte2, byte3, byte4, byte5, byte6, byte7, byte8]
+  |> Bytes::from_fixedarray
+}

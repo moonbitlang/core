@@ -7,6 +7,11 @@ let min_value : UInt64
 
 // Types and methods
 
+
+impl UInt64 {
+  to_bytes(UInt64) -> Bytes
+}
+
 // Type aliases
 
 // Traits

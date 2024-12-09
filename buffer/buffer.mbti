@@ -13,18 +13,6 @@ fn bytes_to_uint(Bytes) -> UInt
 
 fn bytes_to_uint64(Bytes) -> UInt64
 
-fn double_to_bytes(Double) -> Bytes
-
-fn float_to_bytes(Float) -> Bytes
-
-fn int64_to_bytes(Int64) -> Bytes
-
-fn int_to_bytes(Int) -> Bytes
-
-fn uint64_to_bytes(UInt64) -> Bytes
-
-fn uint_to_bytes(UInt) -> Bytes
-
 // Types and methods
 type T
 impl T {

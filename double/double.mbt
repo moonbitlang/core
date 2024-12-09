@@ -202,3 +202,14 @@ pub fn is_close(
     ) ||
     diff <= absolute_tolerance
 }
+
+///| Convert a Double into a 8 bytes long Bytes
+/// 
+/// # Example
+/// 
+/// ```
+/// let double_bytes = 114.514 |> Double::to_bytes
+/// ```
+pub fn to_bytes(self : Double) -> Bytes {
+  self |> Double::reinterpret_as_uint64 |> UInt64::to_bytes
+}

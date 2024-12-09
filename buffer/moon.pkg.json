@@ -2,6 +2,12 @@
   "import": [
     "moonbitlang/core/builtin",
     "moonbitlang/core/coverage",
-    "moonbitlang/core/bytes"
+    "moonbitlang/core/bytes",
+    "moonbitlang/core/uint64",
+    "moonbitlang/core/uint",
+    "moonbitlang/core/int64",
+    "moonbitlang/core/int",
+    "moonbitlang/core/double",
+    "moonbitlang/core/float"
   ]
 }

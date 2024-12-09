@@ -37,6 +37,7 @@ impl Double {
   pow(Double, Double) -> Double
   round(Double) -> Double
   signum(Double) -> Double
+  to_bytes(Double) -> Bytes
   to_string(Double) -> String
   trunc(Double) -> Double
 }

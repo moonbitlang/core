@@ -10,6 +10,7 @@ let min_value : UInt
 
 impl UInt {
   default() -> UInt
+  to_bytes(UInt) -> Bytes
   to_int64(UInt) -> Int64
 }
 
