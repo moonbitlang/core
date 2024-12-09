@@ -97,49 +97,47 @@ pub fn write_string(self : T, value : String) -> Unit {
 ///|
 /// Write an UInt64 into buffer.
 pub fn write_uint64(self : T, value : UInt64) -> Unit {
-  self.grow_if_necessary(self.len + 16)
-  self.data.blit_from_bytes(self.len, value |> UInt64::to_bytes, 0, 8)
-  self.len += 8
+  self.write_byte(value.to_byte())
+  self.write_byte((value >> 8).to_byte())
+  self.write_byte((value >> 16).to_byte())
+  self.write_byte((value >> 24).to_byte())
+  self.write_byte((value >> 32).to_byte())
+  self.write_byte((value >> 40).to_byte())
+  self.write_byte((value >> 48).to_byte())
+  self.write_byte((value >> 56).to_byte())
 }
 
 ///|
 /// Write an Int64 into buffer.
 pub fn write_int64(self : T, value : Int64) -> Unit {
-  self.grow_if_necessary(self.len + 16)
-  self.data.blit_from_bytes(self.len, value |> Int64::to_bytes, 0, 8)
-  self.len += 8
+  self.write_uint64(value.reinterpret_as_uint64())
 }
 
 ///|
 /// Write an UInt into buffer.
 pub fn write_uint(self : T, value : UInt) -> Unit {
-  self.grow_if_necessary(self.len + 8)
-  self.data.blit_from_bytes(self.len, value |> UInt::to_bytes, 0, 4)
-  self.len += 4
+  self.write_byte(value.to_byte())
+  self.write_byte((value >> 8).to_byte())
+  self.write_byte((value >> 16).to_byte())
+  self.write_byte((value >> 24).to_byte())
 }
 
 ///|
 /// Write an Int into buffer.
 pub fn write_int(self : T, value : Int) -> Unit {
-  self.grow_if_necessary(self.len + 8)
-  self.data.blit_from_bytes(self.len, value |> Int::to_bytes, 0, 4)
-  self.len += 4
+  self.write_uint(value.reinterpret_as_uint())
 }
 
 ///|
 /// Write a Double into buffer.
 pub fn write_double(self : T, value : Double) -> Unit {
-  self.grow_if_necessary(self.len + 16)
-  self.data.blit_from_bytes(self.len, value |> Double::to_bytes, 0, 8)
-  self.len += 8
+  self.write_uint64(value.reinterpret_as_uint64())
 }
 
 ///|
 /// Write a Float into buffer.
 pub fn write_float(self : T, value : Float) -> Unit {
-  self.grow_if_necessary(self.len + 8)
-  self.data.blit_from_bytes(self.len, value |> Float::to_bytes, 0, 4)
-  self.len += 4
+  self.write_uint(value.reinterpret_as_uint())
 }
 
 ///|
