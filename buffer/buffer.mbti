@@ -1,17 +1,6 @@
 package moonbitlang/core/buffer
 
 // Values
-fn bytes_to_double(Bytes) -> Double
-
-fn bytes_to_float(Bytes) -> Float
-
-fn bytes_to_int(Bytes) -> Int
-
-fn bytes_to_int64(Bytes) -> Int64
-
-fn bytes_to_uint(Bytes) -> UInt
-
-fn bytes_to_uint64(Bytes) -> UInt64
 
 // Types and methods
 type T
