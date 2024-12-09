@@ -12,9 +12,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-///|
-/// Create an empty map.
+///| Create an empty map.
+/// @alert deprecated "Use `new()` instead"
 pub fn T::empty[K, V]() -> T[K, V] {
+  Empty
+}
+
+///| Create an empty map.
+pub fn T::new[K, V]() -> T[K, V] {
   Empty
 }
 
@@ -248,7 +253,7 @@ pub fn iter2[K, V](self : T[K, V]) -> Iter2[K, V] {
 
 ///|
 pub fn T::from_iter[K : Compare, V](iter : Iter[(K, V)]) -> T[K, V] {
-  iter.fold(init=T::empty(), fn(m, e) { m.add(e.0, e.1) })
+  iter.fold(init=T::new(), fn(m, e) { m.add(e.0, e.1) })
 }
 
 ///|
