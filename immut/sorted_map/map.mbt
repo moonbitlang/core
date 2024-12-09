@@ -32,7 +32,7 @@ pub fn add[K : Compare, V](self : T[K, V], key : K, value : V) -> T[K, V] {
       match key.compare(k) {
         -1 => balance(k, v, add(l, key, value), r)
         1 => balance(k, v, l, add(r, key, value))
-        _ => new(k, value, l, r)
+        _ => make_tree(k, value, l, r)
       }
   }
 }
@@ -128,26 +128,6 @@ pub fn to_array[K, V](self : T[K, V]) -> Array[(K, V)] {
 }
 
 ///|
-pub impl[K : Eq, V : Eq] Eq for T[K, V] with op_equal(self, other) {
-  self.to_array() == other.to_array()
-}
-
-///|
-pub impl[K : @quickcheck.Arbitrary + Compare, V : @quickcheck.Arbitrary] @quickcheck.Arbitrary for T[
-  K,
-  V,
-] with arbitrary(size, rs) {
-  @quickcheck.Arbitrary::arbitrary(size, rs) |> from_array
-}
-
-///|
-pub impl[K : Hash, V : Hash] Hash for T[K, V] with hash_combine(self, hasher) {
-  for e in self {
-    hasher..combine(e.0).combine(e.1)
-  }
-}
-
-///|
 /// The ratio between the sizes of the left and right subtrees.
 let ratio = 5
 
@@ -164,12 +144,14 @@ fn balance[K : Compare, V](
   //        / \             / \
   //       y   z           x   y
   fn single_l {
-    k1, v1, x, Tree(k2, value=v2, y, z, ..) => new(k2, v2, new(k1, v1, x, y), z)
+    k1, v1, x, Tree(k2, value=v2, y, z, ..) =>
+      make_tree(k2, v2, make_tree(k1, v1, x, y), z)
     _, _, _, _ => abort("single_l error")
   }
 
   fn single_r {
-    k2, v2, Tree(k1, value=v1, x, y, ..), z => new(k1, v1, x, new(k2, v2, y, z))
+    k2, v2, Tree(k1, value=v1, x, y, ..), z =>
+      make_tree(k1, v1, x, make_tree(k2, v2, y, z))
     _, _, _, _ => abort("single_r error")
   }
 
@@ -182,7 +164,7 @@ fn balance[K : Compare, V](
   //    y1 y2
   fn double_l {
     k1, v1, x, Tree(k3, value=v3, Tree(k2, value=v2, y1, y2, ..), z, ..) =>
-      new(k2, v2, new(k1, v1, x, y1), new(k3, v3, y2, z))
+      make_tree(k2, v2, make_tree(k1, v1, x, y1), make_tree(k3, v3, y2, z))
     _, _, _, _ => abort("double_l error")
   }
 
@@ -195,14 +177,14 @@ fn balance[K : Compare, V](
   //   y1 y2
   fn double_r {
     k3, v3, Tree(k1, value=v1, x, Tree(k2, value=v2, y1, y2, ..), ..), z =>
-      new(k2, v2, new(k1, v1, x, y1), new(k3, v3, y2, z))
+      make_tree(k2, v2, make_tree(k1, v1, x, y1), make_tree(k3, v3, y2, z))
     _, _, _, _ => abort("double_r error")
   }
 
   let ln = size(l)
   let rn = size(r)
   if ln + rn < 2 {
-    new(key, value, l, r)
+    make_tree(key, value, l, r)
   } else if rn > ratio * ln {
     // right is too big
     let (rl, rr) = match r {
@@ -230,7 +212,7 @@ fn balance[K : Compare, V](
       double_r(key, value, l, r)
     }
   } else {
-    new(key, value, l, r)
+    make_tree(key, value, l, r)
   }
 }
 
@@ -348,7 +330,7 @@ test "filter_with_key" {
 }
 
 test "empty" {
-  let m : T[Int, Int] = empty()
+  let m : T[Int, Int] = T::new()
   assert_eq!(m.debug_tree(), "_")
 }
 

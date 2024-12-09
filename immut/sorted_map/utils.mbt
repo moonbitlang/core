@@ -12,9 +12,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-///|
-/// Create an empty map.
+///| Create an empty map.
+/// @alert deprecated "Use `new()` instead"
 pub fn T::empty[K, V]() -> T[K, V] {
+  Empty
+}
+
+///| Create an empty map.
+pub fn T::new[K, V]() -> T[K, V] {
   Empty
 }
 
@@ -58,7 +63,7 @@ pub fn is_empty[K, V](self : T[K, V]) -> Bool {
 }
 
 ///|
-fn new[K, V](key : K, value : V, l : T[K, V], r : T[K, V]) -> T[K, V] {
+fn make_tree[K, V](key : K, value : V, l : T[K, V], r : T[K, V]) -> T[K, V] {
   let size = size(l) + size(r) + 1
   Tree(key, value~, size~, l, r)
 }
@@ -248,7 +253,7 @@ pub fn iter2[K, V](self : T[K, V]) -> Iter2[K, V] {
 
 ///|
 pub fn T::from_iter[K : Compare, V](iter : Iter[(K, V)]) -> T[K, V] {
-  iter.fold(init=T::empty(), fn(m, e) { m.add(e.0, e.1) })
+  iter.fold(init=T::new(), fn(m, e) { m.add(e.0, e.1) })
 }
 
 ///|
@@ -274,42 +279,8 @@ pub fn T::of[K : Compare, V](array : FixedArray[(K, V)]) -> T[K, V] {
 }
 
 ///|
-pub impl[K : Show, V : Show] Show for T[K, V] with output(self, logger) {
-  logger.write_iter(self.iter(), prefix="@immut/sorted_map.of([", suffix="])")
-}
-
-///|
-pub impl[K : Show, V : ToJson] ToJson for T[K, V] with to_json(self) {
-  let capacity = self.size()
-  guard capacity != 0 else { return Object(Map::new()) }
-  let jsons = Map::new(capacity~)
-  self.each(fn(k, v) { jsons[k.to_string()] = v.to_json() })
-  Object(jsons)
-}
-
-///|
 pub fn to_json[K : Show, V : ToJson](self : T[K, V]) -> Json {
   ToJson::to_json(self)
-}
-
-///|
-pub impl[V : @json.FromJson] @json.FromJson for T[String, V] with from_json(
-  json,
-  path
-) {
-  match json {
-    Object(obj) => {
-      let mut map = T::empty()
-      for k, v in obj {
-        map = map.add(k, V::from_json!(v, path))
-      }
-      map
-    }
-    _ =>
-      raise @json.JsonDecodeError(
-        (path, "@immut/sorted_map.from_json: expected object"),
-      )
-  }
 }
 
 ///|

@@ -31,7 +31,7 @@ test "size" {
 }
 
 test "is_empty" {
-  let m : @sorted_map.T[Int, Int] = @sorted_map.empty()
+  let m : @sorted_map.T[Int, Int] = @sorted_map.new()
   assert_eq!(m.is_empty(), true)
   let m = m.add(1, 1)
   assert_eq!(m.is_empty(), false)
@@ -101,6 +101,15 @@ test "op_equal" {
   let m3 = @sorted_map.of([(3, "three"), (8, "eight"), (1, "one"), (2, "two")])
   assert_eq!(m1 == m2, true)
   assert_eq!(m1 == m3, false)
+}
+
+test "compare" {
+  let xss : Array[@sorted_map.T[Int, Int]] = @quickcheck.samples(5)
+  for xs in xss {
+    for ys in xss {
+      assert_eq!(xs.compare(ys), xs.to_array().compare(ys.to_array()))
+    }
+  }
 }
 
 test "iter" {

@@ -1,7 +1,7 @@
 {
   "import": [
     "moonbitlang/core/builtin",
-    "moonbitlang/core/coverage",
+    
     "moonbitlang/core/test",
     "moonbitlang/core/quickcheck",
     "moonbitlang/core/quickcheck/splitmix"

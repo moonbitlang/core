@@ -22,6 +22,12 @@ pub fn StringBuilder::new(size_hint~ : Int = 0) -> StringBuilder {
 }
 
 ///|
+/// Return whether the given buffer is empty.
+pub fn StringBuilder::is_empty(self : StringBuilder) -> Bool {
+  self.val == ""
+}
+
+///|
 pub fn StringBuilder::write_string(self : StringBuilder, str : String) -> Unit {
   self.val += str
 }

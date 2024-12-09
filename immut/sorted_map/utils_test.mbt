@@ -75,7 +75,7 @@ test "iter" {
 }
 
 test "op_get with empty map" {
-  let map : @sorted_map.T[Int, String] = @sorted_map.empty()
+  let map : @sorted_map.T[Int, String] = @sorted_map.new()
   assert_eq!(map[3], None)
 }
 
@@ -89,7 +89,7 @@ test "to_json with non-empty map" {
 }
 
 test "to_json with empty map" {
-  let map : @sorted_map.T[Int, String] = @sorted_map.empty()
+  let map : @sorted_map.T[Int, String] = @sorted_map.new()
   @json.inspect!(map.to_json(), content={})
 }
 
