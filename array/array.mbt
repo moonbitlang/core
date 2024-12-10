@@ -37,18 +37,6 @@ pub fn push_iter[T](self : Array[T], iter : Iter[T]) -> Unit {
 }
 
 ///|
-pub fn copy[T](self : Array[T]) -> Array[T] {
-  let len = self.length()
-  if len == 0 {
-    []
-  } else {
-    let arr = Array::make(len, self[0])
-    Array::unsafe_blit(arr, 0, self, 0, len)
-    arr
-  }
-}
-
-///|
 pub fn Array::makei[T](length : Int, value : (Int) -> T) -> Array[T] {
   if length <= 0 {
     []
