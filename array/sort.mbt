@@ -30,6 +30,12 @@ pub fn sort[T : Compare](self : Array[T]) -> Unit {
 }
 
 ///|
+pub fn sort[T : Compare](self : ArrayView[T]) -> Unit {
+  let len = self.length()
+  quick_sort(self[:len], None, get_limit(len))
+}
+
+///|
 fn quick_sort[T : Compare](arr : ArrayView[T], pred : T?, limit : Int) -> Unit {
   let mut limit = limit
   let mut arr = arr
