@@ -146,3 +146,54 @@ test "write_bytes" {
   buf.write_bytes(b"5\x006\x007\x008\x00")
   inspect!(buf, content="12345678")
 }
+
+test "write_uint64 method" {
+  let buf = @buffer.new(size_hint=16)
+  buf.write_uint64(114)
+  buf.write_uint64(514)
+  assert_eq!(
+    buf.to_bytes(),
+    b"\x72\x00\x00\x00\x00\x00\x00\x00\x02\x02\x00\x00\x00\x00\x00\x00",
+  )
+}
+
+test "write_int64 method" {
+  let buf = @buffer.new(size_hint=16)
+  buf.write_int64(-114)
+  buf.write_int64(514)
+  assert_eq!(
+    buf.to_bytes(),
+    b"\x8e\xff\xff\xff\xff\xff\xff\xff\x02\x02\x00\x00\x00\x00\x00\x00",
+  )
+}
+
+test "write_uint method" {
+  let buf = @buffer.new(size_hint=8)
+  buf.write_uint(114)
+  buf.write_uint(514)
+  assert_eq!(buf.to_bytes(), b"\x72\x00\x00\x00\x02\x02\x00\x00")
+}
+
+test "write_int method" {
+  let buf = @buffer.new(size_hint=8)
+  buf.write_int(-114)
+  buf.write_int(514)
+  assert_eq!(buf.to_bytes(), b"\x8e\xff\xff\xff\x02\x02\x00\x00")
+}
+
+test "write_double method" {
+  let buf = @buffer.new(size_hint=16)
+  buf.write_double(-114)
+  buf.write_double(0.514)
+  assert_eq!(
+    buf.to_bytes(),
+    b"\x00\x00\x00\x00\x00\x80\x5c\xc0\xa6\x9b\xc4\x20\xb0\x72\xe0\x3f",
+  )
+}
+
+test "write_float method" {
+  let buf = @buffer.new(size_hint=8)
+  buf.write_float(-114)
+  buf.write_float(0.514)
+  assert_eq!(buf.to_bytes(), b"\x00\x00\xe4\xc2\x81\x95\x03\x3f")
+}

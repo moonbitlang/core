@@ -95,6 +95,52 @@ pub fn write_string(self : T, value : String) -> Unit {
 }
 
 ///|
+/// Write an UInt64 into buffer.
+pub fn write_uint64(self : T, value : UInt64) -> Unit {
+  self.write_byte(value.to_byte())
+  self.write_byte((value >> 8).to_byte())
+  self.write_byte((value >> 16).to_byte())
+  self.write_byte((value >> 24).to_byte())
+  self.write_byte((value >> 32).to_byte())
+  self.write_byte((value >> 40).to_byte())
+  self.write_byte((value >> 48).to_byte())
+  self.write_byte((value >> 56).to_byte())
+}
+
+///|
+/// Write an Int64 into buffer.
+pub fn write_int64(self : T, value : Int64) -> Unit {
+  self.write_uint64(value.reinterpret_as_uint64())
+}
+
+///|
+/// Write an UInt into buffer.
+pub fn write_uint(self : T, value : UInt) -> Unit {
+  self.write_byte(value.to_byte())
+  self.write_byte((value >> 8).to_byte())
+  self.write_byte((value >> 16).to_byte())
+  self.write_byte((value >> 24).to_byte())
+}
+
+///|
+/// Write an Int into buffer.
+pub fn write_int(self : T, value : Int) -> Unit {
+  self.write_uint(value.reinterpret_as_uint())
+}
+
+///|
+/// Write a Double into buffer.
+pub fn write_double(self : T, value : Double) -> Unit {
+  self.write_uint64(value.reinterpret_as_uint64())
+}
+
+///|
+/// Write a Float into buffer.
+pub fn write_float(self : T, value : Float) -> Unit {
+  self.write_uint(value.reinterpret_as_uint())
+}
+
+///|
 pub fn write_object(self : T, value : Show) -> Unit {
   self.write_string(value.to_string())
 }
