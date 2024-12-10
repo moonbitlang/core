@@ -18,6 +18,7 @@ impl T {
   get_or_default[K : Hash + Eq, V](Self[K, V], K, V) -> V
   is_empty[K, V](Self[K, V]) -> Bool
   iter[K, V](Self[K, V]) -> Iter[(K, V)]
+  iter2[K, V](Self[K, V]) -> Iter2[K, V]
   new[K, V](capacity~ : Int = ..) -> Self[K, V]
   of[K : Eq + Hash, V](FixedArray[(K, V)]) -> Self[K, V]
   op_get[K : Hash + Eq, V](Self[K, V], K) -> V?
