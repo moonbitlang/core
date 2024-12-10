@@ -119,6 +119,58 @@ pub fn filter_with_key[K : Compare, V](
   }
 }
 
+///| Get the intersection of two maps.
+/// This returns an iterator that traverses over the common keys in both maps,
+/// yielding tuples (key, value1, value2).
+/// O(n log m) where n is the size of the smaller map and m is the size of the larger map.
+pub fn intersection[K : Compare, V1, V2](
+  self : T[K, V1],
+  other : T[K, V2]
+) -> Iter[(K, V1, V2)] {
+  Iter::new(
+    fn(yield_) {
+      if self.size() <= other.size() {
+        intersection_visit(self, other, yield_)
+      } else {
+        intersection_visit(
+          other,
+          self,
+          fn { (k, v2, v1) => yield_((k, v1, v2)) },
+        )
+      }
+    },
+  )
+}
+
+///|
+fn intersection_visit[K : Compare, V1, V2](
+  t1 : T[K, V1],
+  t2 : T[K, V2],
+  yield_ : ((K, V1, V2)) -> IterResult
+) -> IterResult {
+  match t1 {
+    Empty => IterContinue
+    Tree(k1, value=value1, l1, r1, ..) => {
+      // First visit left subtree
+      if intersection_visit(l1, t2, yield_) == IterEnd {
+        return IterEnd
+      }
+
+      // Check current node
+      match t2.lookup(k1) {
+        Some(value2) =>
+          if yield_((k1, value1, value2)) == IterEnd {
+            return IterEnd
+          }
+        None => ()
+      }
+
+      // Then visit right subtree
+      intersection_visit(r1, t2, yield_)
+    }
+  }
+}
+
 ///|
 /// Convert to an array of key-value pairs.
 pub fn to_array[K, V](self : T[K, V]) -> Array[(K, V)] {
