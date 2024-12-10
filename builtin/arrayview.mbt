@@ -58,7 +58,11 @@ pub fn swap[T](self : ArrayView[T], i : Int, j : Int) -> Unit {
 }
 
 ///|
-pub fn op_as_view[T](self : Array[T], start~ : Int, end? : Int) -> ArrayView[T] {
+pub fn op_as_view[T](
+  self : Array[T],
+  start~ : Int = 0,
+  end? : Int
+) -> ArrayView[T] {
   let len = self.length()
   let end = match end {
     None => len
@@ -73,7 +77,7 @@ pub fn op_as_view[T](self : Array[T], start~ : Int, end? : Int) -> ArrayView[T] 
 ///|
 pub fn op_as_view[T](
   self : ArrayView[T],
-  start~ : Int,
+  start~ : Int = 0,
   end? : Int
 ) -> ArrayView[T] {
   let len = self.length()

@@ -85,7 +85,7 @@ impl Array {
   mapi_inplace[T](Self[T], (Int, T) -> T) -> Unit
   new[T](capacity~ : Int = ..) -> Self[T]
   op_add[T](Self[T], Self[T]) -> Self[T]
-  op_as_view[T](Self[T], start~ : Int, end? : Int) -> ArrayView[T]
+  op_as_view[T](Self[T], start~ : Int = .., end? : Int) -> ArrayView[T]
   op_equal[T : Eq](Self[T], Self[T]) -> Bool
   op_get[T](Self[T], Int) -> T
   op_set[T](Self[T], Int, T) -> Unit
@@ -125,7 +125,7 @@ impl ArrayView {
   foldi[A, B](Self[A], init~ : B, (Int, B, A) -> B) -> B
   iter[A](Self[A]) -> Iter[A]
   length[T](Self[T]) -> Int
-  op_as_view[T](Self[T], start~ : Int, end? : Int) -> Self[T]
+  op_as_view[T](Self[T], start~ : Int = .., end? : Int) -> Self[T]
   op_get[T](Self[T], Int) -> T
   op_set[T](Self[T], Int, T) -> Unit
   rev_fold[A, B](Self[A], init~ : B, (B, A) -> B) -> B
@@ -216,7 +216,7 @@ impl Iter {
   map_while[A, B](Self[A], (A) -> B?) -> Self[B]
   new[T](((T) -> IterResult) -> IterResult) -> Self[T]
   op_add[T](Self[T], Self[T]) -> Self[T]
-  op_as_view[A](Self[A], start~ : Int, end? : Int) -> Self[A]
+  op_as_view[A](Self[A], start~ : Int = .., end? : Int) -> Self[A]
   peek[T](Self[T]) -> T?
   prepend[T](Self[T], T) -> Self[T]
   repeat[T](T) -> Self[T]
