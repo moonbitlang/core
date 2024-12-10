@@ -55,6 +55,26 @@ pub fn iter[K, V](self : T[K, V]) -> Iter[(K, V)] {
 }
 
 ///|
+pub fn T::iter2[K, V](self : T[K, V]) -> Iter2[K, V] {
+  Iter2::new(
+    fn(yield_) {
+      let len = self.entries.length()
+      for i = 0; i < len; i = i + 1 {
+        match self.entries[i] {
+          Some({ key, value, .. }) =>
+            if yield_(key, value) == IterEnd {
+              break IterEnd
+            }
+          None => continue
+        }
+      } else {
+        IterContinue
+      }
+    },
+  )
+}
+
+///|
 pub fn T::from_iter[K : Hash + Eq, V](iter : Iter[(K, V)]) -> T[K, V] {
   let m = T::new()
   iter.each(fn(e) { m[e.0] = e.1 })
