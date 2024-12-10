@@ -3,7 +3,6 @@
     "moonbitlang/core/builtin",
     "moonbitlang/core/array",
     "moonbitlang/core/quickcheck",
-    "moonbitlang/core/coverage",
     "moonbitlang/core/quickcheck/splitmix"
   ],
   "targets": {

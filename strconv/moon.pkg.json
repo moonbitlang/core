@@ -1,7 +1,3 @@
 {
-  "import": [
-    "moonbitlang/core/builtin",
-    "moonbitlang/core/double",
-    "moonbitlang/core/uint64"
-  ]
+  "import": ["moonbitlang/core/builtin", "moonbitlang/core/double", "moonbitlang/core/uint64"]
 }

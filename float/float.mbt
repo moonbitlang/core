@@ -31,9 +31,7 @@ pub let min_value : Float = (0xFF7FFFFF).reinterpret_as_float()
 pub let min_positive : Float = (0x00800000).reinterpret_as_float()
 
 ///|
-pub fn abs(self : Float) -> Float {
-  (self.reinterpret_as_uint() & 0x7FFF_FFFF).reinterpret_as_float()
-}
+pub fn abs(self : Float) -> Float = "%f32.abs"
 
 ///|
 pub impl Show for Float with output(self, logger) {
@@ -46,7 +44,7 @@ pub fn Float::default() -> Float {
 }
 
 ///|
-fn Float::unchecked_to_int(self : Float) -> Int = "%f32.to_i32"
+fn Float::to_unchecked_int(self : Float) -> Int = "%f32.to_i32"
 
 ///|
 /// Converts a floating-point number to an integer, with proper handling of
@@ -81,6 +79,6 @@ pub fn Float::to_int(self : Float) -> Int {
   } else if self <= -2147483648 {
     -2147483648
   } else {
-    self.unchecked_to_int()
+    self.to_unchecked_int()
   }
 }
