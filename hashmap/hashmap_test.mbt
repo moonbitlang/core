@@ -142,6 +142,15 @@ test "iter" {
   inspect!(buf, content="[2-two][1-one]")
 }
 
+test "iter2" {
+  let buf = StringBuilder::new(size_hint=20)
+  let map = @hashmap.of([(1, "one"), (2, "two"), (3, "three")])
+  for k, v in map {
+    buf.write_string("[\{k}-\{v}]")
+  }
+  inspect!(buf, content="[2-two][1-one][3-three]")
+}
+
 test "to_array" {
   let map = @hashmap.of([(1, "one"), (2, "two"), (3, "three")])
   inspect!(
