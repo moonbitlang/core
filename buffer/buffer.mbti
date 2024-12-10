@@ -16,16 +16,22 @@ impl T {
   write_byte(Self, Byte) -> Unit
   write_bytes(Self, Bytes) -> Unit
   write_char(Self, Char) -> Unit
-  write_double(Self, Double) -> Unit
-  write_float(Self, Float) -> Unit
-  write_int(Self, Int) -> Unit
-  write_int64(Self, Int64) -> Unit
+  write_double_be(Self, Double) -> Unit
+  write_double_le(Self, Double) -> Unit
+  write_float_be(Self, Float) -> Unit
+  write_float_le(Self, Float) -> Unit
+  write_int64_be(Self, Int64) -> Unit
+  write_int64_le(Self, Int64) -> Unit
+  write_int_be(Self, Int) -> Unit
+  write_int_le(Self, Int) -> Unit
   write_object(Self, Show) -> Unit
   write_string(Self, String) -> Unit
   write_sub_string(Self, String, Int, Int) -> Unit //deprecated
   write_substring(Self, String, Int, Int) -> Unit
-  write_uint(Self, UInt) -> Unit
-  write_uint64(Self, UInt64) -> Unit
+  write_uint64_be(Self, UInt64) -> Unit
+  write_uint64_le(Self, UInt64) -> Unit
+  write_uint_be(Self, UInt) -> Unit
+  write_uint_le(Self, UInt) -> Unit
 }
 impl Show for T
 
