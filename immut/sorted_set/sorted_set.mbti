@@ -35,6 +35,7 @@ impl T {
   remove[A : Compare](Self[A], A) -> Self[A]
   remove_min[A : Compare](Self[A]) -> Self[A]
   singleton[A : Compare](A) -> Self[A]
+  size[A : Compare](Self[A]) -> Int
   split[A : Compare](Self[A], A) -> (Self[A], Bool, Self[A])
   subset[A : Compare](Self[A], Self[A]) -> Bool
   to_array[A : Compare](Self[A]) -> Array[A]
