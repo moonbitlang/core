@@ -12,13 +12,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-// This module implements the set data structure.
-// The types stored in set need to implement the Compare trait.
-// All operations over sets are purely applicative (no side-effects).
-
 ///|
-/// ImmutableSets are represented by balanced binary trees (the heights of the children differ by at most 2).
-enum T[A] {
-  Empty
-  Node(left~ : T[A], right~ : T[A], size~ : Int, value~ : A)
+pub fn copy[T](self : Array[T]) -> Array[T] {
+  let len = self.length()
+  if len == 0 {
+    []
+  } else {
+    let arr = Array::make(len, self[0])
+    Array::unsafe_blit(arr, 0, self, 0, len)
+    arr
+  }
 }

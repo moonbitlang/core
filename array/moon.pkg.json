@@ -8,6 +8,8 @@
   ],
   "test-import": ["moonbitlang/core/random"],
   "targets": {
+    "array_js.mbt": ["js"],
+    "array_nonjs.mbt": ["not", "js"],
     "panic_test.mbt": ["not", "native"]
   }
 }

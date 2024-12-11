@@ -12,13 +12,20 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-// This module implements the set data structure.
-// The types stored in set need to implement the Compare trait.
-// All operations over sets are purely applicative (no side-effects).
+///|
+type JSArray
 
 ///|
-/// ImmutableSets are represented by balanced binary trees (the heights of the children differ by at most 2).
-enum T[A] {
-  Empty
-  Node(left~ : T[A], right~ : T[A], size~ : Int, value~ : A)
+fn JSArray::ofAnyArray[T](array : Array[T]) -> JSArray = "%identity"
+
+///|
+fn JSArray::toAnyArray[T](self : JSArray) -> Array[T] = "%identity"
+
+///|
+extern "js" fn JSArray::copy(self : JSArray) -> JSArray =
+  #|(arr) => arr.slice(0)
+
+///|
+pub fn copy[T](self : Array[T]) -> Array[T] {
+  JSArray::ofAnyArray(self).copy().toAnyArray()
 }
