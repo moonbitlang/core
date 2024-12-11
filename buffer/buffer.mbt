@@ -72,30 +72,26 @@ pub fn is_empty(self : T) -> Bool {
   self.len == 0
 }
 
-///|
-/// Return the contents of the buffer as a Bytes.
+///| Return the contents of the buffer as a Bytes.
 pub fn contents(self : T) -> Bytes {
   Bytes::from_fixedarray(self.data, len=self.len)
 }
 
-///|
-/// Create a buffer with initial capacity (in bytes).
+///| Create a buffer with initial capacity (in bytes).
 pub fn T::new(size_hint~ : Int = 0) -> T {
   let initial = if size_hint < 1 { 1 } else { size_hint }
   let data = FixedArray::make(initial, Byte::default())
   { data, len: 0, initial_data: data }
 }
 
-///|
-/// Write a string into buffer at little endian.
+///| Write a string into buffer in little endian format.
 pub fn write_string(self : T, value : String) -> Unit {
   self.grow_if_necessary(self.len + value.length() * 2)
   self.data.blit_from_string(self.len, value, 0, value.length())
   self.len += value.length() * 2
 }
 
-///|
-/// Write an UInt64 into buffer at big endian.
+///| Write an UInt64 into buffer in big endian format.
 pub fn write_uint64_be(self : T, value : UInt64) -> Unit {
   self.write_byte((value >> 56).to_byte())
   self.write_byte((value >> 48).to_byte())
@@ -107,8 +103,7 @@ pub fn write_uint64_be(self : T, value : UInt64) -> Unit {
   self.write_byte(value.to_byte())
 }
 
-///|
-/// Write an UInt64 into buffer at little endian.
+///| Write a UInt64 into buffer in little endian format.
 pub fn write_uint64_le(self : T, value : UInt64) -> Unit {
   self.write_byte(value.to_byte())
   self.write_byte((value >> 8).to_byte())
@@ -120,20 +115,17 @@ pub fn write_uint64_le(self : T, value : UInt64) -> Unit {
   self.write_byte((value >> 56).to_byte())
 }
 
-///|
-/// Write an Int64 into buffer at big endian.
+///| Write an Int64 into buffer in big endian format.
 pub fn write_int64_be(self : T, value : Int64) -> Unit {
   self.write_uint64_be(value.reinterpret_as_uint64())
 }
 
-///|
-/// Write an Int64 into buffer at little endian.
+///| Write an Int64 into buffer in little endian format.
 pub fn write_int64_le(self : T, value : Int64) -> Unit {
   self.write_uint64_le(value.reinterpret_as_uint64())
 }
 
-///|
-/// Write an UInt into buffer at big endian.
+///| Write an UInt into buffer in big endian format.
 pub fn write_uint_be(self : T, value : UInt) -> Unit {
   self.write_byte((value >> 24).to_byte())
   self.write_byte((value >> 16).to_byte())
@@ -141,8 +133,7 @@ pub fn write_uint_be(self : T, value : UInt) -> Unit {
   self.write_byte(value.to_byte())
 }
 
-///|
-/// Write an UInt into buffer at little endian.
+///| Write an UInt into buffer in little endian format.
 pub fn write_uint_le(self : T, value : UInt) -> Unit {
   self.write_byte(value.to_byte())
   self.write_byte((value >> 8).to_byte())
@@ -150,38 +141,32 @@ pub fn write_uint_le(self : T, value : UInt) -> Unit {
   self.write_byte((value >> 24).to_byte())
 }
 
-///|
-/// Write an Int into buffer at big endian.
+///| Write an Int into buffer in big endian format.
 pub fn write_int_be(self : T, value : Int) -> Unit {
   self.write_uint_be(value.reinterpret_as_uint())
 }
 
-///|
-/// Write an Int into buffer at little endian.
+///| Write an Int into buffer in little endian format.
 pub fn write_int_le(self : T, value : Int) -> Unit {
   self.write_uint_le(value.reinterpret_as_uint())
 }
 
-///|
-/// Write a Double into buffer at big endian.
+///| Write a Double into buffer in big endian format.
 pub fn write_double_be(self : T, value : Double) -> Unit {
   self.write_uint64_be(value.reinterpret_as_uint64())
 }
 
-///|
-/// Write a Double into buffer at little endian.
+///| Write a Double into buffer in little endian format.
 pub fn write_double_le(self : T, value : Double) -> Unit {
   self.write_uint64_le(value.reinterpret_as_uint64())
 }
 
-///|
-/// Write a Float into buffer at big endian.
+///| Write a Float into buffer in big endian format.
 pub fn write_float_be(self : T, value : Float) -> Unit {
   self.write_uint_be(value.reinterpret_as_uint())
 }
 
-///|
-/// Write a Float into buffer at little endian.
+///| Write a Float into buffer in little endian format.
 pub fn write_float_le(self : T, value : Float) -> Unit {
   self.write_uint_le(value.reinterpret_as_uint())
 }

@@ -149,102 +149,144 @@ test "write_bytes" {
 
 test "write_uint64_le method" {
   let buf = @buffer.new(size_hint=16)
-  buf.write_uint64_le(114)
-  buf.write_uint64_le(514)
-  assert_eq!(
+  buf.write_uint64_le(0xdeadbeefaabbccdd)
+  buf.write_uint64_le(0xfacefeedaabbccdd)
+  inspect!(
     buf.to_bytes(),
-    b"\x72\x00\x00\x00\x00\x00\x00\x00\x02\x02\x00\x00\x00\x00\x00\x00",
+    content=
+      #|b"\xdd\xcc\xbb\xaa\xef\xbe\xad\xde\xdd\xcc\xbb\xaa\xed\xfe\xce\xfa"
+    ,
   )
 }
 
 test "write_uint64_be method" {
   let buf = @buffer.new(size_hint=16)
-  buf.write_uint64_be(114)
-  buf.write_uint64_be(514)
-  assert_eq!(
+  buf.write_uint64_be(0xdeadbeefaabbccdd)
+  buf.write_uint64_be(0xfacefeedaabbccdd)
+  inspect!(
     buf.to_bytes(),
-    b"\x00\x00\x00\x00\x00\x00\x00\x72\x00\x00\x00\x00\x00\x00\x02\x02",
+    content=
+      #|b"\xde\xad\xbe\xef\xaa\xbb\xcc\xdd\xfa\xce\xfe\xed\xaa\xbb\xcc\xdd"
+    ,
   )
 }
 
 test "write_int64_le method" {
   let buf = @buffer.new(size_hint=16)
-  buf.write_int64_le(-114)
-  buf.write_int64_le(514)
-  assert_eq!(
+  buf.write_int64_le(-2)
+  buf.write_int64_le(0xdeadbeeffacefeed)
+  inspect!(
     buf.to_bytes(),
-    b"\x8e\xff\xff\xff\xff\xff\xff\xff\x02\x02\x00\x00\x00\x00\x00\x00",
+    content=
+      #|b"\xfe\xff\xff\xff\xff\xff\xff\xff\xed\xfe\xce\xfa\xef\xbe\xad\xde"
+    ,
   )
 }
 
 test "write_int64_be method" {
   let buf = @buffer.new(size_hint=16)
-  buf.write_int64_be(-114)
-  buf.write_int64_be(514)
-  assert_eq!(
+  buf.write_int64_be(-2)
+  buf.write_int64_be(0xdeadbeef)
+  inspect!(
     buf.to_bytes(),
-    b"\xff\xff\xff\xff\xff\xff\xff\x8e\x00\x00\x00\x00\x00\x00\x02\x02",
+    content=
+      #|b"\xff\xff\xff\xff\xff\xff\xff\xfe\x00\x00\x00\x00\xde\xad\xbe\xef"
+    ,
   )
 }
 
 test "write_uint_le method" {
   let buf = @buffer.new(size_hint=8)
-  buf.write_uint_le(114)
-  buf.write_uint_le(514)
-  assert_eq!(buf.to_bytes(), b"\x72\x00\x00\x00\x02\x02\x00\x00")
+  buf.write_uint_le(0xdeadbeef)
+  buf.write_uint_le(0xdeadc0de)
+  inspect!(
+    buf.to_bytes(),
+    content=
+      #|b"\xef\xbe\xad\xde\xde\xc0\xad\xde"
+    ,
+  )
 }
 
 test "write_uint_be method" {
   let buf = @buffer.new(size_hint=8)
-  buf.write_uint_be(114)
-  buf.write_uint_be(514)
-  assert_eq!(buf.to_bytes(), b"\x00\x00\x00\x72\x00\x00\x02\x02")
+  buf.write_uint_be(0xdeadbeef)
+  buf.write_uint_be(0xdeadc0de)
+  inspect!(
+    buf.to_bytes(),
+    content=
+      #|b"\xde\xad\xbe\xef\xde\xad\xc0\xde"
+    ,
+  )
 }
 
 test "write_int_le method" {
   let buf = @buffer.new(size_hint=8)
-  buf.write_int_le(-114)
-  buf.write_int_le(514)
-  assert_eq!(buf.to_bytes(), b"\x8e\xff\xff\xff\x02\x02\x00\x00")
+  buf.write_int_le(-2)
+  buf.write_int_le(0xdeadbeef)
+  inspect!(
+    buf.to_bytes(),
+    content=
+      #|b"\xfe\xff\xff\xff\xef\xbe\xad\xde"
+    ,
+  )
 }
 
 test "write_int_be method" {
   let buf = @buffer.new(size_hint=8)
-  buf.write_int_be(-114)
-  buf.write_int_be(514)
-  assert_eq!(buf.to_bytes(), b"\xff\xff\xff\x8e\x00\x00\x02\x02")
+  buf.write_int_be(-2)
+  buf.write_int_be(0xdeadbeef)
+  inspect!(
+    buf.to_bytes(),
+    content=
+      #|b"\xff\xff\xff\xfe\xde\xad\xbe\xef"
+    ,
+  )
 }
 
 test "write_double_le method" {
   let buf = @buffer.new(size_hint=16)
-  buf.write_double_le(-114)
-  buf.write_double_le(0.514)
-  assert_eq!(
+  buf.write_double_le(-2)
+  buf.write_double_le(3.14)
+  inspect!(
     buf.to_bytes(),
-    b"\x00\x00\x00\x00\x00\x80\x5c\xc0\xa6\x9b\xc4\x20\xb0\x72\xe0\x3f",
+    content=
+      #|b"\x00\x00\x00\x00\x00\x00\x00\xc0\x1f\x85\xeb\x51\xb8\x1e\x09\x40"
+    ,
   )
 }
 
 test "write_double_be method" {
   let buf = @buffer.new(size_hint=16)
-  buf.write_double_be(-114)
-  buf.write_double_be(0.514)
-  assert_eq!(
+  buf.write_double_be(-2)
+  buf.write_double_be(3.14)
+  inspect!(
     buf.to_bytes(),
-    b"\xc0\x5c\x80\x00\x00\x00\x00\x00\x3f\xe0\x72\xb0\x20\xc4\x9b\xa6",
+    content=
+      #|b"\xc0\x00\x00\x00\x00\x00\x00\x00\x40\x09\x1e\xb8\x51\xeb\x85\x1f"
+    ,
   )
 }
 
 test "write_float_le method" {
   let buf = @buffer.new(size_hint=8)
-  buf.write_float_le(-114)
-  buf.write_float_le(0.514)
-  assert_eq!(buf.to_bytes(), b"\x00\x00\xe4\xc2\x81\x95\x03\x3f")
+  buf.write_float_le(-2)
+  buf.write_float_le(3.14)
+  inspect!(
+    buf.to_bytes(),
+    content=
+      #|b"\x00\x00\x00\xc0\xc3\xf5\x48\x40"
+    ,
+  )
 }
 
 test "write_float_be method" {
   let buf = @buffer.new(size_hint=8)
-  buf.write_float_be(-114)
-  buf.write_float_be(0.514)
-  assert_eq!(buf.to_bytes(), b"\xc2\xe4\x00\x00\x3f\x03\x95\x81")
+  buf.write_float_be(-2)
+  buf.write_float_be(3.14)
+  inspect!(
+    buf.to_bytes(),
+    content=
+      #|b"\xc0\x00\x00\x00\x40\x48\xf5\xc3"
+    ,
+  )
 }
