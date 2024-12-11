@@ -121,10 +121,15 @@ impl[X : Show] Show for Array[X]
 
 type ArrayView
 impl ArrayView {
+  filter[T](Self[T], (T) -> Bool) -> Array[T]
   fold[A, B](Self[A], init~ : B, (B, A) -> B) -> B
   foldi[A, B](Self[A], init~ : B, (Int, B, A) -> B) -> B
   iter[A](Self[A]) -> Iter[A]
   length[T](Self[T]) -> Int
+  map[T, U](Self[T], (T) -> U) -> Array[U]
+  map_inplace[T](Self[T], (T) -> T) -> Unit
+  mapi[T, U](Self[T], (Int, T) -> U) -> Array[U]
+  mapi_inplace[T](Self[T], (Int, T) -> T) -> Unit
   op_as_view[T](Self[T], start~ : Int = .., end? : Int) -> Self[T]
   op_get[T](Self[T], Int) -> T
   op_set[T](Self[T], Int, T) -> Unit
