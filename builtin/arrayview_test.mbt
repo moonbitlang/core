@@ -78,3 +78,46 @@ test "arrayview_rev_foldi" {
   let sum = arr.rev_foldi(fn(i, acc, x) { acc + i + x }, init=0)
   inspect!(sum, content="9")
 }
+
+test "arrayview_map" {
+  let arr = [1, 2, 3]
+  let mapped = arr[1:].map(fn(x) { x * 2 })
+  assert_eq!(mapped.length(), 2)
+  assert_eq!(mapped[0], 4)
+  assert_eq!(mapped[1], 6)
+  @json.inspect!(([1] : Array[Int])[1:].map(fn(x) { x }), content=[])
+}
+
+test "arrayview_map_inplace" {
+  let arr = [1, 2, 3]
+  arr[1:].map_inplace(fn(x) { x * 2 })
+  assert_eq!(arr.length(), 3)
+  assert_eq!(arr[0], 1)
+  assert_eq!(arr[1], 4)
+  assert_eq!(arr[2], 6)
+}
+
+test "arrayview_mapi" {
+  let arr = [1, 2, 3]
+  let mapped = arr[1:].mapi(fn(i, x) { i + x })
+  assert_eq!(mapped.length(), 2)
+  assert_eq!(mapped[0], 2)
+  assert_eq!(mapped[1], 4)
+  inspect!(([1] : Array[Int])[1:].mapi(fn(_idx, x) { x }), content="[]")
+}
+
+test "arrayview_mapi_inplace" {
+  let arr = [1, 2, 3]
+  arr[1:].mapi_inplace(fn(i, x) { i + x })
+  assert_eq!(arr.length(), 3)
+  assert_eq!(arr[0], 1)
+  assert_eq!(arr[1], 2)
+  assert_eq!(arr[2], 4)
+}
+
+test "arrayview_filter" {
+  let arr = [1, 2, 3, 4, 5]
+  let filtered = arr[2:].filter(fn(x) { x % 2 == 0 })
+  assert_eq!(filtered.length(), 1)
+  assert_eq!(filtered[0], 4)
+}
