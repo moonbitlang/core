@@ -31,9 +31,7 @@ pub let min_value : Float = (0xFF7FFFFF).reinterpret_as_float()
 pub let min_positive : Float = (0x00800000).reinterpret_as_float()
 
 ///|
-pub fn abs(self : Float) -> Float {
-  (self.reinterpret_as_uint() & 0x7FFF_FFFF).reinterpret_as_float()
-}
+pub fn abs(self : Float) -> Float = "%f32.abs"
 
 ///|
 pub impl Show for Float with output(self, logger) {

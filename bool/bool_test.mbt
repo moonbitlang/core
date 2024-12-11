@@ -18,12 +18,14 @@ test "Bool hash function" {
 }
 
 ///|
-struct TestHash {
-  flag : Bool
-  x : Int
-} derive(Hash, Eq, Show)
 
 test "Bool hash function with struct" {
+  struct TestHash {
+    flag : Bool
+    x : Int
+  } derive(Hash, Eq, Show)
+  // type MyInt Int derive(Show) this does not work
+  // let m : Map[TestHash, Char] = {}
   let m = {}
   m[{ flag: true, x: 1 }] = '3'
   m[{ flag: false, x: 1 }] = '3'
