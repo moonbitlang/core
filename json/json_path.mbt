@@ -61,23 +61,23 @@ fn update_index_inplace(self : JsonPath, index : Int) -> Unit {
 
 test "show JsonPath" {
   let path = Key(Index(Root, index=0), key="foo")
-  @builtin.inspect!(path, content="$[0].foo")
-  @builtin.inspect!(path.add_index(1), content="$[0].foo[1]")
-  @builtin.inspect!(path.add_key("bar"), content="$[0].foo.bar")
-  @builtin.inspect!(
+  @moonbitlang/core/builtin.inspect!(path, content="$[0].foo")
+  @moonbitlang/core/builtin.inspect!(path.add_index(1), content="$[0].foo[1]")
+  @moonbitlang/core/builtin.inspect!(path.add_key("bar"), content="$[0].foo.bar")
+  @moonbitlang/core/builtin.inspect!(
     Root.add_key("foo").add_key("foo1").add_index(2),
     content="$.foo.foo1[2]",
   )
-  @builtin.inspect!(Root.add_key("foo").add_key("foo1"), content="$.foo.foo1")
-  @builtin.inspect!(
+  @moonbitlang/core/builtin.inspect!(Root.add_key("foo").add_key("foo1"), content="$.foo.foo1")
+  @moonbitlang/core/builtin.inspect!(
     Root.add_key("foo").add_key("foo1").add_index(2).add_key("bar"),
     content="$.foo.foo1[2].bar",
   )
-  @builtin.inspect!(
+  @moonbitlang/core/builtin.inspect!(
     Root.add_key("foo").add_key("foo1").add_index(2).add_key("bar").add_index(3),
     content="$.foo.foo1[2].bar[3]",
   )
-  @builtin.inspect!(
+  @moonbitlang/core/builtin.inspect!(
     Root
     .add_key("foo")
     .add_key("foo1")
@@ -87,7 +87,7 @@ test "show JsonPath" {
     .add_key("baz"),
     content="$.foo.foo1[2].bar[3].baz",
   )
-  @builtin.inspect!(
+  @moonbitlang/core/builtin.inspect!(
     Root.add_key("foo").add_key("foo1").add_index(2).add_index(3).add_index(4),
     content="$.foo.foo1[2][3][4]",
   )

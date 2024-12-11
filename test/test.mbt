@@ -113,7 +113,7 @@ pub fn is_not[T : Show](a : T, b : T, loc~ : SourceLoc = _) -> Unit! {
 
 ///|
 pub fn fail[T](msg : String, loc~ : SourceLoc = _) -> T! {
-  @builtin.fail!(msg, loc~)
+  @moonbitlang/core/builtin.fail!(msg, loc~)
 }
 
 ///|

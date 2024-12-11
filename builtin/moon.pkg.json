@@ -1,5 +1,6 @@
 {
   "import": [],
+  "test-import-all": true,
   "test-import": [
     "moonbitlang/core/char",
     "moonbitlang/core/string",
