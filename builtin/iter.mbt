@@ -861,7 +861,7 @@ pub fn intersperse[A](self : Iter[A], sep : A) -> Iter[A] {
 }
 
 ///|
-pub fn op_as_view[A](self : Iter[A], start~ : Int, end? : Int) -> Iter[A] {
+pub fn op_as_view[A](self : Iter[A], start~ : Int = 0, end? : Int) -> Iter[A] {
   // Note here we mark `end` as an optional parameter
   // since the meaningful default value of `end` is the length of the iterator
   // this is time consuming to calculate
