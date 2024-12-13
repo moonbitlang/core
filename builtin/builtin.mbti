@@ -364,6 +364,7 @@ impl Unit {
 impl Bool {
   compare(Bool, Bool) -> Int
   default() -> Bool
+  negate(Bool) -> Bool
   not(Bool) -> Bool
   op_compare(Bool, Bool) -> Int //deprecated
   op_equal(Bool, Bool) -> Bool
