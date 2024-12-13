@@ -179,9 +179,15 @@ pub fn rev_map[A, B](self : T[A], f : (A) -> B) -> T[B] {
 pub fn to_array[A](self : T[A]) -> Array[A] {
   match self {
     Nil => []
-    Cons(head, _) => {
-      let arr = Array::make(self.length(), head)
-      self.eachi(fn(i, x) { arr[i] = x })
+    Cons(x, xs) => {
+      let arr = [x]
+      loop xs {
+        Nil => ()
+        Cons(x, xs) => {
+          arr.push(x)
+          continue xs
+        }
+      }
       arr
     }
   }
