@@ -275,7 +275,7 @@ pub fn trim_start(self : String, trim_set : String) -> String {
         }
       }
     }
-    if trim_set.contains_char(self[i]).not() {
+    if not(trim_set.contains_char(self[i])) {
       return self.substring(start=i)
     }
   } else {
@@ -301,7 +301,7 @@ pub fn trim_end(self : String, trim_set : String) -> String {
         }
       }
     }
-    if trim_set.contains_char(self[i]).not() {
+    if not(trim_set.contains_char(self[i])) {
       return self.substring(end=i + 1)
     }
   } else {

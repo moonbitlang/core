@@ -29,8 +29,12 @@ pub fn panic[T]() -> T = "%panic"
 
 // Bool primitive ops
 
-///|
-pub fn Bool::not(self : Bool) -> Bool = "%bool_not"
+///| Return the logical negation of the boolean value.
+/// This function will be replace by the `not x` syntax in the future.
+pub fn Bool::not(x : Bool) -> Bool = "%bool_not"
+
+///| Return the logical negation of the boolean value.
+pub fn Bool::negate(self : Bool) -> Bool = "%bool_not"
 
 ///|
 pub fn Bool::op_equal(self : Bool, other : Bool) -> Bool = "%bool_eq"

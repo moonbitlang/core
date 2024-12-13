@@ -328,12 +328,12 @@ pub fn each[V](self : T[V], f : (V) -> Unit) -> Unit {
 fn each[V](self : Node[V], f : (V) -> Unit) -> Unit {
   let s = []
   let mut p = Some(self)
-  while p.is_empty().not() || s.is_empty().not() {
-    while p.is_empty().not() {
+  while p.is_empty().negate() || s.is_empty().negate() {
+    while p.is_empty().negate() {
       s.push(p)
       p = p.unwrap().left
     }
-    if s.is_empty().not() {
+    if s.is_empty().negate() {
       p = s.unsafe_pop()
       f(p.unwrap().value)
       p = p.unwrap().right
@@ -355,12 +355,12 @@ fn eachi[V](self : Node[V], f : (Int, V) -> Unit) -> Unit {
   let s = []
   let mut p = Some(self)
   let mut i = 0
-  while p.is_empty().not() || s.is_empty().not() {
-    while p.is_empty().not() {
+  while p.is_empty().negate() || s.is_empty().negate() {
+    while p.is_empty().negate() {
       s.push(p)
       p = p.unwrap().left
     }
-    if s.is_empty().not() {
+    if s.is_empty().negate() {
       p = s.unsafe_pop()
       f(i, p.unwrap().value)
       p = p.unwrap().right
