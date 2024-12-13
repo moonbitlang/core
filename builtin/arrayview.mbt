@@ -216,7 +216,7 @@ pub fn map_inplace[T](self : ArrayView[T], f : (T) -> T) -> Unit {
 /// ```
 /// let v = [3, 4, 5]
 /// let v2 = v[1:].mapi(fn (i, x) {x + i})
-/// assert_eq!(v2, [3, 4, 6])
+/// assert_eq!(v2, [4, 6])
 /// ```
 pub fn mapi[T, U](self : ArrayView[T], f : (Int, T) -> U) -> Array[U] {
   if self.length() == 0 {
