@@ -27,3 +27,57 @@ pub fn each[T](self : ArrayView[T], f : (T) -> Unit) -> Unit {
     f(self[i])
   }
 }
+
+///|
+pub fn eachi[T](self : ArrayView[T], f : (Int, T) -> Unit) -> Unit {
+  for i, v in self {
+    f(i, v)
+  }
+}
+
+///|
+pub fn all[T](self : ArrayView[T], f : (T) -> Bool) -> Bool {
+  for v in self {
+    if f(v).not() {
+      return false
+    }
+  }
+  true
+}
+
+///|
+/// Check if any of the elements in the array view match the condition.
+///
+/// # Example
+///
+/// ```
+/// let v = [1, 2, 3, 4, 5][:]
+/// assert_true!(v.any(fn(ele) { ele < 6 }))
+/// assert_false!(v.any(fn(ele) { ele < 1 }))
+/// ```
+pub fn any[T](self : ArrayView[T], f : (T) -> Bool) -> Bool {
+  for v in self {
+    if f(v) {
+      return true
+    }
+  }
+  false
+}
+
+///|
+/// Checks if the array view contains an element.
+///
+/// # Example
+/// ```
+/// let v = [3, 4, 5][:]
+/// assert_true!(v.contains(3))
+/// ```
+pub fn contains[T : Eq](self : ArrayView[T], value : T) -> Bool {
+  for v in self {
+    if v == value {
+      break true
+    }
+  } else {
+    false
+  }
+}
