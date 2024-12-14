@@ -29,6 +29,16 @@ pub fn each[T](self : ArrayView[T], f : (T) -> Unit) -> Unit {
 }
 
 ///|
+/// Iterates over the elements of the array view with index.
+///
+/// # Example
+/// 
+/// ```
+/// let v = [3, 4, 5][:]
+/// let mut sum = 0
+/// v.eachi(fn (i, x) { sum = sum + x + i })
+/// assert_eq!(sum, 15)
+/// ```
 pub fn eachi[T](self : ArrayView[T], f : (Int, T) -> Unit) -> Unit {
   for i, v in self {
     f(i, v)
@@ -36,9 +46,18 @@ pub fn eachi[T](self : ArrayView[T], f : (Int, T) -> Unit) -> Unit {
 }
 
 ///|
+/// Checks if all elements in the array view match the condition.
+/// 
+/// # Example
+/// 
+/// ```
+/// let v = [1, 4, 6, 8, 9]
+/// assert_false!(v[:].all(fn(elem) { elem % 2 == 0 }))
+/// assert_true!(v[1:4].all(fn(elem) { elem % 2 == 0 }))
+/// ```
 pub fn all[T](self : ArrayView[T], f : (T) -> Bool) -> Bool {
   for v in self {
-    if f(v).not() {
+    if not(f(v)) {
       return false
     }
   }
