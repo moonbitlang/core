@@ -12,14 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-///|
-/// Create a new map with a key-value pair inserted.
-/// O(log n).
-/// 
-/// @alert deprecated "Use `add` instead"
-pub fn insert[K : Compare, V](self : T[K, V], key : K, value : V) -> T[K, V] {
-  self.add(key, value)
-}
+
 
 ///|
 /// Create a new map with a key-value pair inserted.
@@ -187,10 +180,7 @@ fn balance[K : Compare, V](
     make_tree(key, value, l, r)
   } else if rn > ratio * ln {
     // right is too big
-    let (rl, rr) = match r {
-      Tree(_, rl, rr, ..) => (rl, rr)
-      Empty => abort("unreachable")
-    }
+    guard let Tree(_, rl, rr, ..) = r 
     let rln = size(rl)
     let rrn = size(rr)
     if rln < rrn {
@@ -200,10 +190,7 @@ fn balance[K : Compare, V](
     }
   } else if ln > ratio * rn {
     // left is too big
-    let (ll, lr) = match l {
-      Tree(_, ll, lr, ..) => (ll, lr)
-      Empty => abort("unreachable")
-    }
+    guard let Tree(_, ll, lr, ..) = l
     let lln = size(ll)
     let lrn = size(lr)
     if lrn < lln {
