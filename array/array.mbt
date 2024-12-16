@@ -113,15 +113,13 @@ pub fn Array::shuffle[T](arr : Array[T], rand~ : (Int) -> Int) -> Array[T] {
 /// 
 pub fn map_option[A, B](self : Array[A], f : (A) -> B?) -> Array[B] {
   let result = []
-  self.each(
-    fn {
-      x =>
-        match f(x) {
-          None => ()
-          Some(x) => result.push(x)
-        }
-    },
-  )
+  self.each(fn {
+    x =>
+      match f(x) {
+        None => ()
+        Some(x) => result.push(x)
+      }
+  })
   result
 }
 

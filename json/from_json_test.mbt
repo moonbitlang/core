@@ -46,12 +46,10 @@ test {
 }
 
 test {
-  let u = Json::Object(
-    {
-      "x": Json::Object({ "xx": Json::Number(1) }),
-      "y": Json::Object({ "yy": Json::String("str") }),
-    },
-  )
+  let u = Json::Object({
+    "x": Json::Object({ "xx": Json::Number(1) }),
+    "y": Json::Object({ "yy": Json::String("str") }),
+  })
   let v : Result[Map[String, Map[String, Double]], _] = @json.from_json?(u)
   inspect!(
     v,

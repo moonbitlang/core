@@ -117,12 +117,12 @@ pub fn fail[T](msg : String, loc~ : SourceLoc = _) -> T! {
 }
 
 ///|
-pub fn write(self : T, obj : Show) -> Unit {
+pub fn write(self : T, obj : &Show) -> Unit {
   self.buffer.write_string(obj.to_string())
 }
 
 ///|
-pub fn writeln(self : T, obj : Show) -> Unit {
+pub fn writeln(self : T, obj : &Show) -> Unit {
   self.write(obj)
   self.buffer.write_char('\n')
 }

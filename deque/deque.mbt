@@ -541,16 +541,14 @@ pub fn shrink_to_fit[A](self : T[A]) -> Unit {
 
 ///|
 pub fn iter[A](self : T[A]) -> Iter[A] {
-  Iter::new(
-    fn(yield_) {
-      for i in 0..<self.length() {
-        guard let IterContinue = yield_(self[i]) else { x => break x }
+  Iter::new(fn(yield_) {
+    for i in 0..<self.length() {
+      guard let IterContinue = yield_(self[i]) else { x => break x }
 
-      } else {
-        IterContinue
-      }
-    },
-  )
+    } else {
+      IterContinue
+    }
+  })
 }
 
 ///|

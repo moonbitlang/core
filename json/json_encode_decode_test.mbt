@@ -77,11 +77,9 @@ fn of_json(jv : Json) -> AllThree!DecodeError {
       { ints: ints_result, floats: floats_result, strings: strings_result }
     }
     _ =>
-      raise DecodeError(
-        DecodeErrorData::{
-          message: "Expected an object of ints, floats, and strings",
-        },
-      )
+      raise DecodeError(DecodeErrorData::{
+        message: "Expected an object of ints, floats, and strings",
+      })
   }
 }
 

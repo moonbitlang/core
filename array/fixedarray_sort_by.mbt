@@ -227,10 +227,12 @@ fn fixed_bubble_sort_by[T](
 
 test "try_bubble_sort" {
   let arr : FixedArray[_] = [8, 7, 6, 5, 4, 3, 2, 1]
-  let sorted = fixed_try_bubble_sort_by(
-    { array: arr, start: 0, end: 8 },
-    fn(a, b) { a - b },
-  )
+  let sorted = fixed_try_bubble_sort_by({ array: arr, start: 0, end: 8 }, fn(
+    a,
+    b
+  ) {
+    a - b
+  })
   assert_eq!(sorted, true)
   assert_eq!(arr, [1, 2, 3, 4, 5, 6, 7, 8])
 }
@@ -339,25 +341,19 @@ fn fixed_sift_down_by[T](
 }
 
 test "heap_sort" {
-  fixed_test_sort!(
-    fn(arr) {
-      fixed_heap_sort_by(
-        { array: arr, start: 0, end: arr.length() },
-        fn(a, b) { a - b },
-      )
-    },
-  )
+  fixed_test_sort!(fn(arr) {
+    fixed_heap_sort_by({ array: arr, start: 0, end: arr.length() }, fn(a, b) {
+      a - b
+    })
+  })
 }
 
 test "bubble_sort" {
-  fixed_test_sort!(
-    fn(arr) {
-      fixed_bubble_sort_by(
-        { array: arr, start: 0, end: arr.length() },
-        fn(a, b) { a - b },
-      )
-    },
-  )
+  fixed_test_sort!(fn(arr) {
+    fixed_bubble_sort_by({ array: arr, start: 0, end: arr.length() }, fn(a, b) {
+      a - b
+    })
+  })
 }
 
 test "sort" {

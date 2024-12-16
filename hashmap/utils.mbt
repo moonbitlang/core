@@ -36,40 +36,36 @@ pub fn clear[K, V](self : T[K, V]) -> Unit {
 ///|
 /// Returns an iterator of the map.
 pub fn iter[K, V](self : T[K, V]) -> Iter[(K, V)] {
-  Iter::new(
-    fn(yield_) {
-      for entry in self.entries {
-        match entry {
-          Some({ key, value, .. }) =>
-            if yield_((key, value)) == IterEnd {
-              break IterEnd
-            }
-          None => continue
-        }
-      } else {
-        IterContinue
+  Iter::new(fn(yield_) {
+    for entry in self.entries {
+      match entry {
+        Some({ key, value, .. }) =>
+          if yield_((key, value)) == IterEnd {
+            break IterEnd
+          }
+        None => continue
       }
-    },
-  )
+    } else {
+      IterContinue
+    }
+  })
 }
 
 ///|
 pub fn T::iter2[K, V](self : T[K, V]) -> Iter2[K, V] {
-  Iter2::new(
-    fn(yield_) {
-      for entry in self.entries {
-        match entry {
-          Some({ key, value, .. }) =>
-            if yield_(key, value) == IterEnd {
-              break IterEnd
-            }
-          None => continue
-        }
-      } else {
-        IterContinue
+  Iter2::new(fn(yield_) {
+    for entry in self.entries {
+      match entry {
+        Some({ key, value, .. }) =>
+          if yield_(key, value) == IterEnd {
+            break IterEnd
+          }
+        None => continue
       }
-    },
-  )
+    } else {
+      IterContinue
+    }
+  })
 }
 
 ///|
@@ -139,18 +135,16 @@ pub fn eachi[K, V](self : T[K, V], f : (Int, K, V) -> Unit) -> Unit {
 ///|
 pub impl[K : Show, V : Show] Show for T[K, V] with output(self, logger) {
   logger.write_string("HashMap::of([")
-  self.eachi(
-    fn(i, k, v) {
-      if i > 0 {
-        logger.write_string(", ")
-      }
-      logger
-      ..write_string("(")
-      ..write_object(k)
-      ..write_string(", ")
-      ..write_object(v)
-      .write_string(")")
-    },
-  )
+  self.eachi(fn(i, k, v) {
+    if i > 0 {
+      logger.write_string(", ")
+    }
+    logger
+    ..write_string("(")
+    ..write_object(k)
+    ..write_string(", ")
+    ..write_object(v)
+    .write_string(")")
+  })
   logger.write_string("])")
 }

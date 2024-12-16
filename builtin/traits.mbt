@@ -71,7 +71,7 @@ pub(open) trait Show {
   // `output` writes a string representation of `self` to a logger.
   // `output` should produce a valid MoonBit-syntax representation if possible.
   // For example, `Show::output` for `String` should be quoted
-  output(Self, Logger) -> Unit
+  output(Self, &Logger) -> Unit
   // `to_string` should be used by end users of `Show`,
   // for printing, interpolation, etc. only, and should not be used for composition.
   // By default `to_string` is implemented using `output` and a buffer,
@@ -89,13 +89,13 @@ impl Show with to_string(self) {
 }
 
 ///|
-pub fn Logger::write_object[Obj : Show](self : Logger, obj : Obj) -> Unit {
+pub fn &Logger::write_object[Obj : Show](self : &Logger, obj : Obj) -> Unit {
   obj.output(self)
 }
 
 ///|
-pub fn Logger::write_iter[T : Show](
-  self : Logger,
+pub fn &Logger::write_iter[T : Show](
+  self : &Logger,
   iter : Iter[T],
   prefix~ : String = "[",
   suffix~ : String = "]",

@@ -30,6 +30,9 @@ pub fn panic[T]() -> T = "%panic"
 // Bool primitive ops
 
 ///|
+pub fn not(x : Bool) -> Bool = "%bool_not"
+
+///| @alert deprecated "Use `not(x)` instead"
 pub fn Bool::not(self : Bool) -> Bool = "%bool_not"
 
 ///|

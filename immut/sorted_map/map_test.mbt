@@ -13,18 +13,26 @@
 // limitations under the License.
 
 test "lookup" {
-  let m = @sorted_map.of(
-    [(3, "three"), (8, "eight"), (1, "one"), (2, "two"), (0, "zero")],
-  )
+  let m = @sorted_map.of([
+    (3, "three"),
+    (8, "eight"),
+    (1, "one"),
+    (2, "two"),
+    (0, "zero"),
+  ])
   assert_eq!(m.lookup(8), Some("eight"))
   assert_eq!(m.lookup(2), Some("two"))
   assert_eq!(m.lookup(4), None)
 }
 
 test "size" {
-  let m = @sorted_map.of(
-    [(3, "three"), (8, "eight"), (1, "one"), (2, "two"), (0, "zero")],
-  )
+  let m = @sorted_map.of([
+    (3, "three"),
+    (8, "eight"),
+    (1, "one"),
+    (2, "two"),
+    (0, "zero"),
+  ])
   assert_eq!(m.size(), 5)
   let m = m.remove(1).remove(3)
   assert_eq!(m.size(), 3)
@@ -38,18 +46,26 @@ test "is_empty" {
 }
 
 test "iter" {
-  let m = @sorted_map.of(
-    [(3, "three"), (8, "eight"), (1, "one"), (2, "two"), (0, "zero")],
-  )
+  let m = @sorted_map.of([
+    (3, "three"),
+    (8, "eight"),
+    (1, "one"),
+    (2, "two"),
+    (0, "zero"),
+  ])
   let mut s = ""
   m.each(fn(k, v) { s = s + "(\{k},\{v})" })
   assert_eq!(s, "(0,zero)(1,one)(2,two)(3,three)(8,eight)")
 }
 
 test "iteri" {
-  let m = @sorted_map.of(
-    [(3, "three"), (8, "eight"), (1, "one"), (2, "two"), (0, "zero")],
-  )
+  let m = @sorted_map.of([
+    (3, "three"),
+    (8, "eight"),
+    (1, "one"),
+    (2, "two"),
+    (0, "zero"),
+  ])
   let mut s = ""
   m.eachi(fn(i, k, v) { s = s + "(\{i},\{k},\{v})" })
   assert_eq!(s, "(0,0,zero)(1,1,one)(2,2,two)(3,3,three)(4,8,eight)")
@@ -92,12 +108,20 @@ test "elems" {
 }
 
 test "op_equal" {
-  let m1 = @sorted_map.of(
-    [(3, "three"), (8, "eight"), (1, "one"), (2, "two"), (0, "zero")],
-  )
-  let m2 = @sorted_map.of(
-    [(3, "three"), (8, "eight"), (1, "one"), (2, "two"), (0, "zero")],
-  )
+  let m1 = @sorted_map.of([
+    (3, "three"),
+    (8, "eight"),
+    (1, "one"),
+    (2, "two"),
+    (0, "zero"),
+  ])
+  let m2 = @sorted_map.of([
+    (3, "three"),
+    (8, "eight"),
+    (1, "one"),
+    (2, "two"),
+    (0, "zero"),
+  ])
   let m3 = @sorted_map.of([(3, "three"), (8, "eight"), (1, "one"), (2, "two")])
   assert_eq!(m1 == m2, true)
   assert_eq!(m1 == m3, false)
@@ -117,23 +141,19 @@ test "iter" {
   let map = @sorted_map.of([(1, "one"), (2, "two"), (3, "three")])
   map
   .iter()
-  .each(
-    fn(e) {
-      let (k, v) = e
-      buf.write_string("[\{k}-\{v}]")
-    },
-  )
+  .each(fn(e) {
+    let (k, v) = e
+    buf.write_string("[\{k}-\{v}]")
+  })
   inspect!(buf, content="[1-one][2-two][3-three]")
   buf.reset()
   map
   .iter()
   .take(2)
-  .each(
-    fn(e) {
-      let (k, v) = e
-      buf.write_string("[\{k}-\{v}]")
-    },
-  )
+  .each(fn(e) {
+    let (k, v) = e
+    buf.write_string("[\{k}-\{v}]")
+  })
   inspect!(buf, content="[1-one][2-two]")
 }
 
@@ -143,12 +163,20 @@ test "to_array" {
 }
 
 test "op_equal" {
-  let m1 = @sorted_map.of(
-    [(3, "three"), (8, "eight"), (1, "one"), (2, "two"), (0, "zero")],
-  )
-  let m2 = @sorted_map.of(
-    [(3, "three"), (8, "eight"), (1, "one"), (2, "two"), (0, "zero")],
-  )
+  let m1 = @sorted_map.of([
+    (3, "three"),
+    (8, "eight"),
+    (1, "one"),
+    (2, "two"),
+    (0, "zero"),
+  ])
+  let m2 = @sorted_map.of([
+    (3, "three"),
+    (8, "eight"),
+    (1, "one"),
+    (2, "two"),
+    (0, "zero"),
+  ])
   let m3 = @sorted_map.of([(3, "three"), (8, "eight"), (1, "one"), (2, "two")])
   assert_eq!(m1 == m2, true)
   assert_eq!(m1 == m3, false)

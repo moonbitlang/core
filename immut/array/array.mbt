@@ -37,18 +37,16 @@ pub fn to_array[A](self : T[A]) -> Array[A] {
 
 ///|
 pub fn iter[A](self : T[A]) -> Iter[A] {
-  Iter::new(
-    fn(yield_) {
-      let arr = self.to_array()
-      for i = 0; i < self.size; i = i + 1 {
-        if yield_(arr[i]) == IterEnd {
-          break IterEnd
-        }
-      } else {
-        IterContinue
+  Iter::new(fn(yield_) {
+    let arr = self.to_array()
+    for i = 0; i < self.size; i = i + 1 {
+      if yield_(arr[i]) == IterEnd {
+        break IterEnd
       }
-    },
-  )
+    } else {
+      IterContinue
+    }
+  })
 }
 
 ///|
