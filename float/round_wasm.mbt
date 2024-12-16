@@ -13,13 +13,13 @@
 // limitations under the License.
 
 ///|
-pub fn trunc(self : Float) -> Float = "(func (param f32) (result f32) (f32.trunc (local.get 0)))"
+pub fn trunc(self : Float) -> Float = "(func (param $f f32) (result f32) (f32.trunc (local.get $f)))"
 
 ///|
-pub fn ceil(self : Float) -> Float = "(func (param f32) (result f32) (f32.ceil (local.get 0)))"
+pub fn ceil(self : Float) -> Float = "(func (param $f f32) (result f32) (f32.ceil (local.get $f)))"
 
 ///|
-pub fn floor(self : Float) -> Float = "(func (param f32) (result f32) (f32.floor (local.get 0)))"
+pub fn floor(self : Float) -> Float = "(func (param $f f32) (result f32) (f32.floor (local.get $f)))"
 
 ///|
 // Round to nearest, ties to Ceiling
