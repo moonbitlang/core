@@ -42,7 +42,7 @@ test "add remove" {
   }
   assert_true!(m.add_and_check("test"))
   assert_false!(m.add_and_check("test"))
-  assert_true!(m.contains("a").not() && m.contains("d"))
+  assert_true!(not(m.contains("a")) && m.contains("d"))
   assert_true!(m.contains("b"))
   assert_true!(m.contains("c"))
   assert_true!(m.contains("d"))

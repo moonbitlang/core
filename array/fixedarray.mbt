@@ -574,7 +574,7 @@ test "swap" {
 /// ```
 pub fn all[T](self : FixedArray[T], f : (T) -> Bool) -> Bool {
   for i = 0; i < self.length(); i = i + 1 {
-    if f(self[i]).not() {
+    if not(f(self[i])) {
       return false
     }
   }

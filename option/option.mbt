@@ -60,7 +60,7 @@ test "when" {
 /// An `Option` value that is `Some(value())` if the condition is false, otherwise `None`.
 ///
 pub fn unless[T](condition : Bool, value : () -> T) -> T? {
-  when(condition.not(), value)
+  when(not(condition), value)
 }
 
 test "unless" {

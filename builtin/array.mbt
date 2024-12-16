@@ -1038,7 +1038,7 @@ pub fn split[T](self : Array[T], pred : (T) -> Bool) -> Array[Array[T]] {
   let mut i = 0
   while i < self.length() {
     let chunk = []
-    while i < self.length() && pred(self[i]).not() {
+    while i < self.length() && not(pred(self[i])) {
       chunk.push(self[i])
       i = i + 1
     }

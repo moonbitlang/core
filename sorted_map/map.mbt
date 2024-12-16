@@ -121,12 +121,12 @@ pub fn clear[K, V](self : T[K, V]) -> Unit {
 pub fn each[K, V](self : T[K, V], f : (K, V) -> Unit) -> Unit {
   let s = []
   let mut p = self.root
-  while p.is_empty().not() || s.is_empty().not() {
-    while p.is_empty().not() {
+  while not(p.is_empty()) || not(s.is_empty()) {
+    while not(p.is_empty()) {
       s.push(p)
       p = p.unwrap().left
     }
-    if s.is_empty().not() {
+    if not(s.is_empty()) {
       p = s.unsafe_pop()
       f(p.unwrap().key, p.unwrap().value)
       p = p.unwrap().right
@@ -140,12 +140,12 @@ pub fn eachi[K, V](self : T[K, V], f : (Int, K, V) -> Unit) -> Unit {
   let s = []
   let mut p = self.root
   let mut i = 0
-  while p.is_empty().not() || s.is_empty().not() {
-    while p.is_empty().not() {
+  while not(p.is_empty()) || not(s.is_empty()) {
+    while not(p.is_empty()) {
       s.push(p)
       p = p.unwrap().left
     }
-    if s.is_empty().not() {
+    if not(s.is_empty()) {
       p = s.unsafe_pop()
       f(i, p.unwrap().key, p.unwrap().value)
       p = p.unwrap().right
