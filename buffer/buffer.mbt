@@ -172,7 +172,7 @@ pub fn write_float_le(self : T, value : Float) -> Unit {
 }
 
 ///|
-pub fn write_object(self : T, value : Show) -> Unit {
+pub fn write_object(self : T, value : &Show) -> Unit {
   self.write_string(value.to_string())
 }
 

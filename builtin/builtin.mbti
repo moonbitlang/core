@@ -15,7 +15,7 @@ fn fail[T](String, loc~ : SourceLoc = _) -> T!Failure
 
 fn ignore[T](T) -> Unit
 
-fn inspect(Show, content~ : String = .., loc~ : SourceLoc = _, args_loc~ : ArgsLoc = _) -> Unit!InspectError
+fn inspect(&Show, content~ : String = .., loc~ : SourceLoc = _, args_loc~ : ArgsLoc = _) -> Unit!InspectError
 
 fn op_ge[T : Compare](T, T) -> Bool
 
@@ -677,8 +677,8 @@ impl Bytes {
 
 
 impl Logger {
-  write_iter[T : Show](Self, Iter[T], prefix~ : String = .., suffix~ : String = .., sep~ : String = .., trailing~ : Bool = ..) -> Unit
-  write_object[Obj : Show](Self, Obj) -> Unit
+  write_iter[T : Show](&Self, Iter[T], prefix~ : String = .., suffix~ : String = .., sep~ : String = .., trailing~ : Bool = ..) -> Unit
+  write_object[Obj : Show](&Self, Obj) -> Unit
 }
 
 
@@ -814,7 +814,7 @@ pub(open) trait Logger {
 impl Logger::write_sub_string
 
 pub(open) trait Show {
-  output(Self, Logger) -> Unit
+  output(Self, &Logger) -> Unit
   to_string(Self) -> String
 }
 impl Show::to_string

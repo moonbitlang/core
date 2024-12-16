@@ -3,7 +3,7 @@ package moonbitlang/core/json
 // Values
 fn from_json[T : FromJson](Json, path~ : JsonPath = ..) -> T!JsonDecodeError
 
-fn inspect(ToJson, content? : Json, loc~ : SourceLoc = _, args_loc~ : ArgsLoc = _) -> Unit!InspectError
+fn inspect(&ToJson, content? : Json, loc~ : SourceLoc = _, args_loc~ : ArgsLoc = _) -> Unit!InspectError
 
 fn parse(String) -> Json!ParseError
 
@@ -18,7 +18,7 @@ type JsonPath
 impl JsonPath {
   add_index(Self, Int) -> Self
   add_key(Self, String) -> Self
-  output(Self, Logger) -> Unit
+  output(Self, &Logger) -> Unit
 }
 impl Eq for JsonPath
 
