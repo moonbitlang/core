@@ -10,5 +10,6 @@
     "moonbitlang/core/option",
     "moonbitlang/core/unit",
     "moonbitlang/core/array"
-  ]
+  ],
+  "test-import-all": false
 }
