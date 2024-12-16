@@ -13,13 +13,13 @@
 // limitations under the License.
 
 ///|
-pub fn trunc(self : Double) -> Double = "(func (param f64) (result f64) (f64.trunc (local.get 0)))"
+pub fn trunc(self : Double) -> Double = "(func (param $d f64) (result f64) (f64.trunc (local.get $d)))"
 
 ///|
-pub fn ceil(self : Double) -> Double = "(func (param f64) (result f64) (f64.ceil (local.get 0)))"
+pub fn ceil(self : Double) -> Double = "(func (param $d f64) (result f64) (f64.ceil (local.get $d)))"
 
 ///|
-pub fn floor(self : Double) -> Double = "(func (param f64) (result f64) (f64.floor (local.get 0)))"
+pub fn floor(self : Double) -> Double = "(func (param $d f64) (result f64) (f64.floor (local.get $d)))"
 
 ///|
 // Round to nearest, ties to Ceiling
