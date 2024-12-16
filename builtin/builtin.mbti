@@ -17,6 +17,8 @@ fn ignore[T](T) -> Unit
 
 fn inspect(&Show, content~ : String = .., loc~ : SourceLoc = _, args_loc~ : ArgsLoc = _) -> Unit!InspectError
 
+fn not(Bool) -> Bool
+
 fn op_ge[T : Compare](T, T) -> Bool
 
 fn op_gt[T : Compare](T, T) -> Bool
@@ -364,7 +366,7 @@ impl Unit {
 impl Bool {
   compare(Bool, Bool) -> Int
   default() -> Bool
-  not(Bool) -> Bool
+  not(Bool) -> Bool //deprecated
   op_compare(Bool, Bool) -> Int //deprecated
   op_equal(Bool, Bool) -> Bool
   to_json(Bool) -> Json
