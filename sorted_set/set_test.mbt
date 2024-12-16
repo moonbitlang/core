@@ -179,12 +179,9 @@ test "mix_everything" {
   for i = 6; i <= 33; i = i + 1 {
     set7.remove(i)
   }
-  let set = @sorted_set.of(
-    [
-      90, 70, 13, 44, 11, 49, 39, 35, 52, 8, 80, 40, 58, 67, 84, 38, 93, 97, 54,
-      95,
-    ],
-  )
+  let set = @sorted_set.of([
+    90, 70, 13, 44, 11, 49, 39, 35, 52, 8, 80, 40, 58, 67, 84, 38, 93, 97, 54, 95,
+  ])
   set.remove(70)
   inspect!(
     set,

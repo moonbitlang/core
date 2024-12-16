@@ -344,19 +344,17 @@ pub fn transfer[A](self : T[A], dst : T[A]) -> Unit {
 /// assert_eq!(sum, 26)
 /// ```
 pub fn iter[A](self : T[A]) -> Iter[A] {
-  Iter::new(
-    fn(yield_) {
-      loop self.first {
-        Cons({ content, next }) => {
-          if yield_(content) == IterEnd {
-            break IterEnd
-          }
-          continue next
+  Iter::new(fn(yield_) {
+    loop self.first {
+      Cons({ content, next }) => {
+        if yield_(content) == IterEnd {
+          break IterEnd
         }
-        Nil => IterContinue
+        continue next
       }
-    },
-  )
+      Nil => IterContinue
+    }
+  })
 }
 
 ///|

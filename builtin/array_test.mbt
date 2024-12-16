@@ -167,15 +167,9 @@ test "array_eachi_rev" {
 test "array_eachi_rev_2" {
   let arr = ['a', 'b', 'c']
   let buf = StringBuilder::new()
-  arr.rev_eachi(
-    fn(i, x) {
-      buf
-      ..write_object(i)
-      ..write_string(": ")
-      ..write_object(x)
-      .write_string("\n")
-    },
-  )
+  arr.rev_eachi(fn(i, x) {
+    buf..write_object(i)..write_string(": ")..write_object(x).write_string("\n")
+  })
   inspect!(
     buf,
     content=

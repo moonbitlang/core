@@ -420,14 +420,12 @@ pub fn map[T, R](self : Iter[T], f : (T) -> R) -> Iter[R] {
 /// The elements for which the function returns `None` are filtered out.
 pub fn map_option[A, B](self : Iter[A], f : (A) -> B?) -> Iter[B] {
   fn(yield_) {
-    self.run(
-      fn(a) {
-        match f(a) {
-          Some(b) => yield_(b)
-          None => IterContinue
-        }
-      },
-    )
+    self.run(fn(a) {
+      match f(a) {
+        Some(b) => yield_(b)
+        None => IterContinue
+      }
+    })
   }
 }
 
@@ -498,22 +496,20 @@ pub fn take[T](self : Iter[T], n : Int) -> Iter[T] {
   fn(yield_) {
     let mut i = 0
     let mut r = IterContinue
-    self.just_run(
-      fn {
-        a =>
-          if i < n {
-            if yield_(a) == IterContinue {
-              i = i + 1
-              IterContinue
-            } else {
-              r = IterEnd
-              IterEnd
-            }
+    self.just_run(fn {
+      a =>
+        if i < n {
+          if yield_(a) == IterContinue {
+            i = i + 1
+            IterContinue
           } else {
+            r = IterEnd
             IterEnd
           }
-      },
-    )
+        } else {
+          IterEnd
+        }
+    })
     r
   }
 }
@@ -542,20 +538,18 @@ pub fn take_while[T](self : Iter[T], f : (T) -> Bool) -> Iter[T] {
     // but [.. take_while(..), next] would continue
     // See test "take_while2"
     let mut r : IterResult = IterContinue
-    self.just_run(
-      fn(a) {
-        if f(a) {
-          if yield_(a) == IterContinue {
-            IterContinue
-          } else {
-            r = IterEnd
-            IterEnd
-          }
+    self.just_run(fn(a) {
+      if f(a) {
+        if yield_(a) == IterContinue {
+          IterContinue
         } else {
+          r = IterEnd
           IterEnd
         }
-      },
-    )
+      } else {
+        IterEnd
+      }
+    })
     r
   }
 }
@@ -565,20 +559,18 @@ pub fn take_while[T](self : Iter[T], f : (T) -> Bool) -> Iter[T] {
 pub fn map_while[A, B](self : Iter[A], f : (A) -> B?) -> Iter[B] {
   fn(yield_) {
     let mut r : IterResult = IterContinue
-    self.just_run(
-      fn(a) {
-        match f(a) {
-          Some(b) =>
-            if yield_(b) == IterContinue {
-              IterContinue
-            } else {
-              r = IterEnd
-              IterEnd
-            }
-          None => IterEnd
-        }
-      },
-    )
+    self.just_run(fn(a) {
+      match f(a) {
+        Some(b) =>
+          if yield_(b) == IterContinue {
+            IterContinue
+          } else {
+            r = IterEnd
+            IterEnd
+          }
+        None => IterEnd
+      }
+    })
     r
   }
 }
@@ -601,16 +593,14 @@ pub fn map_while[A, B](self : Iter[A], f : (A) -> B?) -> Iter[B] {
 pub fn drop[T](self : Iter[T], n : Int) -> Iter[T] {
   fn(yield_) {
     let mut i = 0
-    self.run(
-      fn(a) {
-        if i < n {
-          i = i + 1
-          IterContinue
-        } else {
-          yield_(a)
-        }
-      },
-    )
+    self.run(fn(a) {
+      if i < n {
+        i = i + 1
+        IterContinue
+      } else {
+        yield_(a)
+      }
+    })
   }
 }
 
@@ -632,16 +622,14 @@ pub fn drop[T](self : Iter[T], n : Int) -> Iter[T] {
 pub fn drop_while[T](self : Iter[T], f : (T) -> Bool) -> Iter[T] {
   fn(yield_) {
     let mut dropping = true
-    self.run(
-      fn(a) {
-        if dropping && f(a) {
-          IterContinue
-        } else {
-          dropping = false
-          yield_(a)
-        }
-      },
-    )
+    self.run(fn(a) {
+      if dropping && f(a) {
+        IterContinue
+      } else {
+        dropping = false
+        yield_(a)
+      }
+    })
   }
 }
 
@@ -673,12 +661,10 @@ pub fn find_first[T](self : Iter[T], f : (T) -> Bool) -> T? {
 ///|
 pub fn peek[T](self : Iter[T]) -> T? {
   let mut first = None
-  self.just_run(
-    fn(a) {
-      first = Some(a)
-      IterEnd
-    },
-  )
+  self.just_run(fn(a) {
+    first = Some(a)
+    IterEnd
+  })
   first
 }
 
@@ -845,18 +831,16 @@ pub fn head[A](self : Iter[A]) -> A? {
 pub fn intersperse[A](self : Iter[A], sep : A) -> Iter[A] {
   fn(yield_) {
     let mut first = true
-    self.run(
-      fn(x) {
-        if first {
-          first = false
-          yield_(x)
-        } else if yield_(sep) == IterEnd {
-          IterEnd
-        } else {
-          yield_(x)
-        }
-      },
-    )
+    self.run(fn(x) {
+      if first {
+        first = false
+        yield_(x)
+      } else if yield_(sep) == IterEnd {
+        IterEnd
+      } else {
+        yield_(x)
+      }
+    })
   }
 }
 

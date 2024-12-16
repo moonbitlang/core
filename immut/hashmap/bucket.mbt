@@ -86,20 +86,18 @@ fn each[K, V](self : Bucket[K, V], f : (K, V) -> Unit) -> Unit {
 
 ///|
 fn iter[K, V](self : Bucket[K, V]) -> Iter[(K, V)] {
-  Iter::new(
-    fn {
-      f =>
-        loop self {
-          Just_One(k, v) => f((k, v))
-          More(k, v, rest) =>
-            if f((k, v)) == IterContinue {
-              continue rest
-            } else {
-              IterEnd
-            }
-        }
-    },
-  )
+  Iter::new(fn {
+    f =>
+      loop self {
+        Just_One(k, v) => f((k, v))
+        More(k, v, rest) =>
+          if f((k, v)) == IterContinue {
+            continue rest
+          } else {
+            IterEnd
+          }
+      }
+  })
 }
 
 test "Bucket" {
@@ -123,16 +121,14 @@ test "Bucket::iter" {
   let b : Bucket[_] = More(0, 0, More(1, 1, Just_One(31, 31)))
   let buf = StringBuilder::new(size_hint=0)
   let mut is_first = true
-  b.each(
-    fn(k, v) {
-      if is_first {
-        is_first = false
-      } else {
-        buf.write_string(", ")
-      }
-      buf.write_string("\{k} => \{v}")
-    },
-  )
+  b.each(fn(k, v) {
+    if is_first {
+      is_first = false
+    } else {
+      buf.write_string(", ")
+    }
+    buf.write_string("\{k} => \{v}")
+  })
   inspect!(buf.to_string(), content="0 => 0, 1 => 1, 31 => 31")
 }
 
@@ -142,19 +138,17 @@ test "Bucket::iter" {
   let mut is_first = true
   b
   .iter()
-  .each(
-    fn {
-      (k, v) => {
-        // weird syntax conventions that
-        // braces needed here
-        if is_first {
-          is_first = false
-        } else {
-          buf.write_string(", ")
-        }
-        buf.write_string("\{k} => \{v}")
+  .each(fn {
+    (k, v) => {
+      // weird syntax conventions that
+      // braces needed here
+      if is_first {
+        is_first = false
+      } else {
+        buf.write_string(", ")
       }
-    },
-  )
+      buf.write_string("\{k} => \{v}")
+    }
+  })
   inspect!(buf.to_string(), content="0 => 0, 1 => 1, 31 => 31")
 }

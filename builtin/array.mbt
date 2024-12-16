@@ -1050,30 +1050,26 @@ pub fn split[T](self : Array[T], pred : (T) -> Bool) -> Array[Array[T]] {
 
 ///|
 pub fn iter[T](self : Array[T]) -> Iter[T] {
-  Iter::new(
-    fn(yield_) {
-      for v in self {
-        guard let IterContinue = yield_(v) else { x => break x }
+  Iter::new(fn(yield_) {
+    for v in self {
+      guard let IterContinue = yield_(v) else { x => break x }
 
-      } else {
-        IterContinue
-      }
-    },
-  )
+    } else {
+      IterContinue
+    }
+  })
 }
 
 ///|
 pub fn iter2[A](self : Array[A]) -> Iter2[Int, A] {
-  Iter2::new(
-    fn(yield_) {
-      for i, v in self {
-        guard let IterContinue = yield_(i, v) else { x => break x }
+  Iter2::new(fn(yield_) {
+    for i, v in self {
+      guard let IterContinue = yield_(i, v) else { x => break x }
 
-      } else {
-        IterContinue
-      }
-    },
-  )
+    } else {
+      IterContinue
+    }
+  })
 }
 
 ///|

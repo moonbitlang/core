@@ -22,9 +22,10 @@ test "ParseError::to_string coverage" {
     @json.Position::{ line: 1, column: 0 },
     "123abc",
   )
-  let invalidIdentEscapeError = @json.InvalidIdentEscape(
-    @json.Position::{ line: 1, column: 0 },
-  )
+  let invalidIdentEscapeError = @json.InvalidIdentEscape(@json.Position::{
+    line: 1,
+    column: 0,
+  })
   assert_eq!(
     invalidCharError.to_string(),
     "Invalid character 'a' at line 1, column 0",

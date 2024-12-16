@@ -353,10 +353,9 @@ test "fold" {
   assert_eq!(sum, 1)
   let sum = ([1] : FixedArray[_]).fold(init=2, fn { sum, elem => sum + elem })
   assert_eq!(sum, 3)
-  let sum = ([1, 2, 3, 4, 5] : FixedArray[_]).fold(
-    init=0,
-    fn { sum, elem => sum + elem },
-  )
+  let sum = ([1, 2, 3, 4, 5] : FixedArray[_]).fold(init=0, fn {
+    sum, elem => sum + elem
+  })
   assert_eq!(sum, 15)
 }
 
@@ -377,20 +376,15 @@ pub fn rev_fold[A, B](self : FixedArray[A], init~ : B, f : (B, A) -> B) -> B {
 }
 
 test "rev_fold" {
-  let sum = ([] : FixedArray[_]).rev_fold(
-    init=1,
-    fn { sum, elem => sum + elem },
-  )
+  let sum = ([] : FixedArray[_]).rev_fold(init=1, fn { sum, elem => sum + elem })
   assert_eq!(sum, 1)
-  let sum = ([1] : FixedArray[_]).rev_fold(
-    init=2,
-    fn { sum, elem => sum + elem },
-  )
+  let sum = ([1] : FixedArray[_]).rev_fold(init=2, fn {
+    sum, elem => sum + elem
+  })
   assert_eq!(sum, 3)
-  let sum = ([1, 2, 3, 4, 5] : FixedArray[_]).rev_fold(
-    init=0,
-    fn { sum, elem => sum + elem },
-  )
+  let sum = ([1, 2, 3, 4, 5] : FixedArray[_]).rev_fold(init=0, fn {
+    sum, elem => sum + elem
+  })
   assert_eq!(sum, 15)
 }
 
@@ -944,13 +938,11 @@ test "iter" {
   let iter = arr.iter()
   let exb = StringBuilder::new()
   let mut i = 0
-  iter.each(
-    fn(x) {
-      exb.write_string(x.to_string())
-      exb.write_char('\n')
-      i = i + 1
-    },
-  )
+  iter.each(fn(x) {
+    exb.write_string(x.to_string())
+    exb.write_char('\n')
+    i = i + 1
+  })
   assert_eq!(i, arr.length())
   inspect!(
     exb,

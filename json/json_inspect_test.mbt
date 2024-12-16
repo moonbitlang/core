@@ -46,12 +46,9 @@ test "json inspect" {
   let p2 = { x: 1, y: 2, color: Color::Green }
   @json.inspect!(p1, content={ "x": 0, "y": 0, "color": { "$tag": "Red" } })
   let line = { p1, p2, color: Color::Blue }
-  @json.inspect!(
-    line,
-    content={
-      "p1": { "x": 0, "y": 0, "color": { "$tag": "Red" } },
-      "p2": { "x": 1, "y": 2, "color": { "$tag": "Green" } },
-      "color": { "$tag": "Blue" },
-    },
-  )
+  @json.inspect!(line, content={
+    "p1": { "x": 0, "y": 0, "color": { "$tag": "Red" } },
+    "p2": { "x": 1, "y": 2, "color": { "$tag": "Green" } },
+    "color": { "$tag": "Blue" },
+  })
 }

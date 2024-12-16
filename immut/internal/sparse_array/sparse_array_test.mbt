@@ -39,15 +39,13 @@ test "SparseArray::iter" {
   let arr = @sparse_array.singleton(0, 0).add(1, 1).add(3, 3).add(31, 31)
   let buf = StringBuilder::new(size_hint=0)
   let mut is_first = true
-  arr.each(
-    fn(x) {
-      if is_first {
-        is_first = false
-      } else {
-        buf.write_string(", ")
-      }
-      buf.write_string(x.to_string())
-    },
-  )
+  arr.each(fn(x) {
+    if is_first {
+      is_first = false
+    } else {
+      buf.write_string(", ")
+    }
+    buf.write_string(x.to_string())
+  })
   inspect!(buf, content="0, 1, 3, 31")
 }

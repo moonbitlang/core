@@ -357,12 +357,10 @@ test "iter" {
   let exb = StringBuilder::new(size_hint=0)
   x
   .iter()
-  .each(
-    fn(x) {
-      exb.write_string(x.to_string())
-      exb.write_char('\n')
-    },
-  )
+  .each(fn(x) {
+    exb.write_string(x.to_string())
+    exb.write_char('\n')
+  })
   inspect!(
     exb,
     content=
@@ -374,12 +372,10 @@ test "iter" {
   let y : Int? = None
   y
   .iter()
-  .each(
-    fn(x) {
-      exb.write_string(x.to_string())
-      exb.write_char('\n')
-    },
-  )
+  .each(fn(x) {
+    exb.write_string(x.to_string())
+    exb.write_char('\n')
+  })
   inspect!(exb, content="")
 }
 

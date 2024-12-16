@@ -92,17 +92,15 @@ pub fn to_array(self : Bytes) -> Array[Byte] {
 
 ///|
 pub fn iter(self : Bytes) -> Iter[Byte] {
-  Iter::new(
-    fn(yield_) {
-      for i = 0, len = self.length(); i < len; i = i + 1 {
-        if yield_(self[i]) == IterEnd {
-          break IterEnd
-        }
-      } else {
-        IterContinue
+  Iter::new(fn(yield_) {
+    for i = 0, len = self.length(); i < len; i = i + 1 {
+      if yield_(self[i]) == IterEnd {
+        break IterEnd
       }
-    },
-  )
+    } else {
+      IterContinue
+    }
+  })
 }
 
 ///|

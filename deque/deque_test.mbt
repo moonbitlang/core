@@ -73,13 +73,11 @@ test "iter" {
   let iter = dv.iter()
   let buf = StringBuilder::new(size_hint=0)
   let mut i = 0
-  iter.each(
-    fn(x) {
-      buf.write_string(x.to_string())
-      buf.write_char('\n')
-      i = i + 1
-    },
-  )
+  iter.each(fn(x) {
+    buf.write_string(x.to_string())
+    buf.write_char('\n')
+    i = i + 1
+  })
   assert_eq!(i, dv.length())
   inspect!(
     buf,
@@ -134,14 +132,12 @@ test "mapi" {
 test "iter_rev" {
   let mut i = 6
   let mut failed = false
-  @deque.of([1, 2, 3, 4, 5]).rev_each(
-    fn(elem) {
-      if elem != i - 1 {
-        failed = true
-      }
-      i = i - 1
-    },
-  )
+  @deque.of([1, 2, 3, 4, 5]).rev_each(fn(elem) {
+    if elem != i - 1 {
+      failed = true
+    }
+    i = i - 1
+  })
   assert_false!(failed)
 }
 
@@ -149,43 +145,37 @@ test "iter_revi" {
   let mut i = 6
   let mut j = 0
   let mut failed = false
-  @deque.of([1, 2, 3, 4, 5]).rev_eachi(
-    fn(index, elem) {
-      if index != j || elem != i - 1 {
-        failed = true
-      }
-      i = i - 1
-      j = j + 1
-    },
-  )
+  @deque.of([1, 2, 3, 4, 5]).rev_eachi(fn(index, elem) {
+    if index != j || elem != i - 1 {
+      failed = true
+    }
+    i = i - 1
+    j = j + 1
+  })
   assert_false!(failed)
 }
 
 test "iteri" {
   let mut i = 0
   let mut failed = false
-  @deque.of([1, 2, 3, 4, 5]).eachi(
-    fn(index, elem) {
-      if index != i || elem != i + 1 {
-        failed = true
-      }
-      i = i + 1
-    },
-  )
+  @deque.of([1, 2, 3, 4, 5]).eachi(fn(index, elem) {
+    if index != i || elem != i + 1 {
+      failed = true
+    }
+    i = i + 1
+  })
   assert_false!(failed)
 }
 
 test "iter" {
   let mut i = 0
   let mut failed = false
-  @deque.of([1, 2, 3, 4, 5]).each(
-    fn(elem) {
-      if elem != i + 1 {
-        failed = true
-      }
-      i = i + 1
-    },
-  )
+  @deque.of([1, 2, 3, 4, 5]).each(fn(elem) {
+    if elem != i + 1 {
+      failed = true
+    }
+    i = i + 1
+  })
   assert_false!(failed)
 }
 
@@ -319,12 +309,10 @@ test "realloc" {
   dv.push_back(10)
   let result = Array::make(7, 0)
   let mut i = 0
-  dv.each(
-    fn(x) {
-      result[i] = x
-      i += 1
-    },
-  )
+  dv.each(fn(x) {
+    result[i] = x
+    i += 1
+  })
   assert_eq!(result, [4, 5, 6, 7, 8, 9, 10])
 }
 

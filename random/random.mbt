@@ -250,13 +250,10 @@ pub fn Rand::shuffle(
 test "shuffle" {
   let r = Rand::new()
   let a = [1, 2, 3, 4, 5]
-  r.shuffle(
-    a.length(),
-    fn(i : Int, j : Int) {
-      let t = a[i]
-      a[i] = a[j]
-      a[j] = t
-    },
-  )
+  r.shuffle(a.length(), fn(i : Int, j : Int) {
+    let t = a[i]
+    a[i] = a[j]
+    a[j] = t
+  })
   inspect!(a, content="[3, 5, 2, 1, 4]")
 }
