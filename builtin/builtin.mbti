@@ -210,6 +210,7 @@ impl Iter {
   eachi[T](Self[T], (Int, T) -> Unit) -> Unit
   empty[T]() -> Self[T]
   filter[T](Self[T], (T) -> Bool) -> Self[T]
+  filter_map[A, B](Self[A], (A) -> B?) -> Self[B]
   find_first[T](Self[T], (T) -> Bool) -> T?
   flat_map[T, R](Self[T], (T) -> Self[R]) -> Self[R]
   fold[T, B](Self[T], init~ : B, (B, T) -> B) -> B
@@ -219,7 +220,7 @@ impl Iter {
   just_run[T](Self[T], (T) -> IterResult) -> Unit
   last[A](Self[A]) -> A?
   map[T, R](Self[T], (T) -> R) -> Self[R]
-  map_option[A, B](Self[A], (A) -> B?) -> Self[B]
+  map_option[A, B](Self[A], (A) -> B?) -> Self[B] //deprecated
   map_while[A, B](Self[A], (A) -> B?) -> Self[B]
   new[T](((T) -> IterResult) -> IterResult) -> Self[T]
   op_add[T](Self[T], Self[T]) -> Self[T]
