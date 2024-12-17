@@ -557,3 +557,21 @@ test "to_hex" {
     content="-11e3444dc1f35f057ad2cbc2791737468140a426fac3cba7af8c92a8f34e",
   )
 }
+
+test "land" {
+  let a = BigInt::from_string("-10")
+  let b = BigInt::from_string("11")
+  inspect!(a & b, content="10")
+}
+
+test "lor" {
+  let a = BigInt::from_string("-10")
+  let b = BigInt::from_string("11")
+  inspect!(a | b, content="-11")
+}
+
+test "lxor" {
+  let a = BigInt::from_string("-10")
+  let b = BigInt::from_string("11")
+  inspect!(a ^ b, content="-1")
+}

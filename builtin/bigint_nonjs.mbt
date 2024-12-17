@@ -876,3 +876,41 @@ pub fn BigInt::to_octets(self : BigInt, length? : Int) -> Bytes {
   }
   result
 }
+
+///|
+pub fn land(self : BigInt, other : BigInt) -> BigInt {
+  let new_limbs = FixedArray::make(self.limbs.length(), 0U)
+  for i = 0; i < self.len; i = i + 1 {
+    new_limbs[i] = self.limbs[i] & other.limbs[i]
+  }
+  let new_sign = if self.sign == Negative && other.sign == Negative {
+    Negative
+  } else {
+    Positive
+  }
+  { ..self, limbs: new_limbs, sign: new_sign }
+}
+
+///|
+pub fn lor(self : BigInt, other : BigInt) -> BigInt {
+  let new_limbs = FixedArray::make(self.limbs.length(), 0U)
+  for i = 0; i < self.len; i = i + 1 {
+    new_limbs[i] = self.limbs[i] | other.limbs[i]
+  }
+  let new_sign = if self.sign == Positive && other.sign == Positive {
+    Positive
+  } else {
+    Negative
+  }
+  { ..self, limbs: new_limbs, sign: new_sign }
+}
+
+///|
+pub fn lxor(self : BigInt, other : BigInt) -> BigInt {
+  let new_limbs = FixedArray::make(self.limbs.length(), 0U)
+  for i = 0; i < self.len; i = i + 1 {
+    new_limbs[i] = self.limbs[i] ^ other.limbs[i]
+  }
+  let new_sign = if self.sign == other.sign { Positive } else { Negative }
+  { ..self, limbs: new_limbs, sign: new_sign }
+}
