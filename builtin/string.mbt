@@ -99,7 +99,7 @@ test "substring/boundary" {
   inspect!("a".substring(start=0, end=1), content="a")
   inspect!("abc".substring(start=0), content="abc")
   inspect!("abc".substring(start=1), content="bc")
-  inspect!("abc".substring(start=0,end=3), content="abc")
+  inspect!("abc".substring(start=0, end=3), content="abc")
 }
 
 test "panic substring/out_of_bounds" {
