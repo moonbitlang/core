@@ -623,7 +623,7 @@ impl String {
   op_add(String, String) -> String
   op_equal(String, String) -> Bool
   op_get(String, Int) -> Char
-  substring(String, start~ : Int = .., end~ : Int = ..) -> String
+  substring(String, start~ : Int = .., end? : Int) -> String
   to_json(String) -> Json
   to_string(String) -> String
 }
