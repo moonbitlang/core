@@ -23,11 +23,12 @@ fn unsafe_substring(str : String, start : Int, end : Int) -> String {
 
 ///|
 /// Get substring of the string from [start] to [end] exclusive.
-pub fn substring(
-  self : String,
-  start~ : Int = 0,
-  end~ : Int = self.length()
-) -> String {
-  guard start >= 0 && start <= end && end <= self.length()
+pub fn substring(self : String, start~ : Int = 0, end? : Int) -> String {
+  let len = self.length()
+  let end = match end {
+    Some(end) => end
+    None => len
+  }
+  guard start >= 0 && start <= end && end <= len
   unsafe_substring(self, start, end)
 }
