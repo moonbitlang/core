@@ -31,10 +31,8 @@ test "each" {
 test "eachi" {
   let v = [3, 4, 5][:]
   let mut sum = 0
-  for i, x in v {
-    sum = sum + x + i
-  }
-  assert_eq!(sum, 15)
+  v.eachi(fn(i, x) { sum = sum + x + i })
+  inspect!(sum, content="15")
 }
 
 test "all" {
