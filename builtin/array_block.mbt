@@ -208,6 +208,13 @@ test "Array::blit_to - boundary cases" {
   inspect!(dst, content="[5, 0, 0, 4, 5]")
 }
 
+test "Array::unsafe_blit_fixed" {
+  let src = FixedArray::make(3, 1) // Create a FixedArray with 3 elements of value 1
+  let dst = Array::make(5, 0) // Create an Array with 5 elements of value 0
+  Array::unsafe_blit_fixed(dst, 1, src, 0, 2) // Copy 2 elements from src[0] to dst[1]
+  inspect!(dst, content="[0, 1, 1, 0, 0]")
+}
+
 // test "Array::blit_to - invalid cases" {
 //   let src = [1, 2, 3, 4, 5]
 //   let dst = [0, 0, 0, 0, 0]
