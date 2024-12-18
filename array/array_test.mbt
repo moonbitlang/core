@@ -513,9 +513,9 @@ test "Array::makei with negative length" {
   assert_eq!(arr, [])
 }
 
-test "map_option" {
+test "filter_map" {
   let arr = [1, 2, 3, 4, 5]
-  let mapped = arr.map_option(fn(x) { if x % 2 == 0 { Some(x) } else { None } })
+  let mapped = arr.filter_map(fn(x) { if x % 2 == 0 { Some(x) } else { None } })
   inspect!(mapped, content="[2, 4]")
 }
 
