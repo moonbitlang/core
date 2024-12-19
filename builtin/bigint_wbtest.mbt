@@ -723,4 +723,5 @@ test "pow" {
   inspect!(4N.pow(13N, modulus=497N), content="445")
   inspect!(65N.pow(17, modulus=3233), content="2790")
   inspect!(2790N.pow(413, modulus=3233), content="65")
+  inspect!(2790N.pow(413), content="0")
 }
