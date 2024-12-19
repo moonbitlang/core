@@ -27,3 +27,23 @@ pub fn to_int64(self : UInt) -> Int64 {
 pub fn UInt::default() -> UInt {
   0
 }
+
+///|
+pub fn to_be_bytes(self : UInt) -> Bytes {
+  let bs = Bytes::make(4, 0)
+  bs[0] = (self >> 24).to_byte()
+  bs[1] = (self >> 16).to_byte()
+  bs[2] = (self >> 8).to_byte()
+  bs[3] = self.to_byte()
+  bs
+}
+
+///|
+pub fn to_le_bytes(self : UInt) -> Bytes {
+  let bs = Bytes::make(4, 0)
+  bs[0] = self.to_byte()
+  bs[1] = (self >> 8).to_byte()
+  bs[2] = (self >> 16).to_byte()
+  bs[3] = (self >> 24).to_byte()
+  bs
+}

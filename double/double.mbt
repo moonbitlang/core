@@ -203,3 +203,13 @@ pub fn is_close(
     ) ||
     diff <= absolute_tolerance
 }
+
+///|
+pub fn to_be_bytes(self : Double) -> Bytes {
+  self.reinterpret_as_uint64().to_be_bytes()
+}
+
+///|
+pub fn to_le_bytes(self : Double) -> Bytes {
+  self.reinterpret_as_uint64().to_le_bytes()
+}

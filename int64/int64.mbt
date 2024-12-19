@@ -63,3 +63,13 @@ pub fn abs(self : Int64) -> Int64 {
     self
   }
 }
+
+///|
+pub fn to_be_bytes(self : Int64) -> Bytes {
+  self.reinterpret_as_uint64().to_be_bytes()
+}
+
+///|
+pub fn to_le_bytes(self : Int64) -> Bytes {
+  self.reinterpret_as_uint64().to_le_bytes()
+}
