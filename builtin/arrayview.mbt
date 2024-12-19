@@ -260,3 +260,37 @@ pub fn filter[T](self : ArrayView[T], f : (T) -> Bool) -> Array[T] {
   }
   arr
 }
+
+///|
+pub impl[T : Eq] Eq for ArrayView[T] with op_equal(self, other) -> Bool {
+  if self.length() != other.length() {
+    return false
+  }
+  for i in 0..<self.length() {
+    if not(self[i] == other[i]) {
+      return false
+    }
+  } else {
+    true
+  }
+}
+
+///|
+pub impl[T : Compare] Compare for ArrayView[T] with compare(self, other) -> Int {
+  let len_self = self.length()
+  let len_other = other.length()
+  if len_self < len_other {
+    -1
+  } else if len_self > len_other {
+    1
+  } else {
+    for i in 0..<len_self {
+      let cmp = self[i].compare(other[i])
+      if cmp != 0 {
+        break cmp
+      }
+    } else {
+      0
+    }
+  }
+}

@@ -55,3 +55,21 @@ test "contains" {
   assert_true!(v.contains(4))
   assert_false!(v.contains(6))
 }
+
+test "op_equal" {
+  let v1 = [1, 2, 3][:]
+  let v2 = [1, 2, 3][:]
+  assert_true!(v1 == v2)
+  let v3 = [1, 2, 4, 6, 10][1:3]
+  let v4 = [0, 1, 2, 4, 6, 10, 12][2:4]
+  assert_true!(v3 == v4)
+  assert_false!(v1 == v3)
+}
+
+test "compare" {
+  assert_eq!([1, 2, 4][:].compare([1, 2, 3][:]), 1)
+  assert_eq!([-1, 2, 4][:].compare([1, 2, 4][:]), -1)
+  assert_eq!([1, 2, 3][:].compare([1, 2, 3][:]), 0)
+  assert_eq!([1, 2, 0][:].compare([1, 2][:]), 1)
+  assert_eq!([1, 2][:].compare([1, 2, 0][:]), -1)
+}

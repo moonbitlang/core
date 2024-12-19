@@ -141,6 +141,8 @@ impl ArrayView {
   to_json[X : ToJson](Self[X]) -> Json
   to_string[X : Show](Self[X]) -> String
 }
+impl[T : Compare] Compare for ArrayView[T]
+impl[T : Eq] Eq for ArrayView[T]
 impl[X : Show] Show for ArrayView[X]
 
 type BigInt
