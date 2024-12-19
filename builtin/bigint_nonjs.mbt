@@ -777,24 +777,41 @@ fn max[T : Compare](a : T, b : T) -> T {
 /// Optionally takes a modulus BigInt.
 /// 
 /// The exponent must be non-negative, and modulus must be positive.
-pub fn pow(self : BigInt, exp : BigInt, modulus~ : BigInt = one) -> BigInt {
+pub fn pow(self : BigInt, exp : BigInt, modulus? : BigInt) -> BigInt {
   if exp.sign == Negative {
     abort("negative exponent")
   }
-  if modulus.is_zero() || modulus.sign == Negative {
-    abort("modulus non-positive")
-  }
-  let mut result = 1N
-  let mut base = self
-  let mut exp = exp
-  while exp > 0N {
-    if exp % 2N == 1N {
-      result = result * base % modulus
+  match modulus {
+    None => {
+      let mut result = 1N
+      let mut base = self
+      let mut exp = exp
+      while exp > 0N {
+        if exp % 2N == 1N {
+          result = result * base
+        }
+        base = base * base
+        exp = exp / 2N
+      }
+      result
     }
-    base = base * base % modulus
-    exp = exp / 2N
+    Some(modulus) => {
+      if modulus.is_zero() || modulus.sign == Negative {
+        abort("modulus non-positive")
+      }
+      let mut result = 1N
+      let mut base = self
+      let mut exp = exp
+      while exp > 0N {
+        if exp % 2N == 1N {
+          result = result * base % modulus
+        }
+        base = base * base % modulus
+        exp = exp / 2N
+      }
+      result
+    }
   }
-  result
 }
 
 ///|
