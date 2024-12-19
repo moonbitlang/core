@@ -797,7 +797,7 @@ pub fn pow(self : BigInt, exp : BigInt, modulus? : BigInt) -> BigInt {
     }
     Some(modulus) => {
       if modulus.is_zero() || modulus.sign == Negative {
-        abort("modulus non-positive")
+        abort("non-positive modulus")
       }
       let mut result = 1N
       let mut base = self
