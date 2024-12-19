@@ -21,6 +21,8 @@
     "bigint_nonjs_wbtest.mbt": ["not", "js"],
     "arraycore_js.mbt": ["js"],
     "arraycore_nonjs.mbt": ["not", "js"],
+    "array_js.mbt": ["js"],
+    "array_nonjs.mbt": ["not", "js"],
     "panic_test.mbt": ["not", "native"],
     "panic_wbtest.mbt": ["not", "native"],
     "panic_nonjs_test.mbt": ["wasm", "wasm-gc"],
