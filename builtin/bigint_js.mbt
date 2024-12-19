@@ -158,12 +158,29 @@ pub extern "js" fn op_mod(self : BigInt, other : BigInt) -> BigInt =
   #|(x, y) => x % y
 
 ///|
-pub extern "js" fn pow(
+extern "js" fn modpow(
   self : BigInt,
   other : BigInt,
-  modulus~ : BigInt = 1N
+  modulus : BigInt
 ) -> BigInt =
-  #|(x, y, z) => (x ** y) % z
+  #|(x, y, z) => x ** y % z
+
+///|
+extern "js" fn pow_(self : BigInt, other : BigInt) -> BigInt =
+  #|(x, y) => x ** y
+
+///|
+pub fn pow(self : BigInt, other : BigInt, modulus? : BigInt) -> BigInt {
+  match modulus {
+    Some(modulus) =>
+      if modulus <= 0 {
+        abort("non-positive modulus")
+      } else {
+        modpow(self, other, modulus)
+      }
+    None => pow_(self, other)
+  }
+}
 
 ///|
 extern "js" fn to_byte(self : BigInt) -> Byte =
