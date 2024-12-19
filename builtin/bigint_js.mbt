@@ -192,3 +192,15 @@ extern "js" fn js_shl(self : BigInt, other : Int) -> BigInt =
 ///|
 extern "js" fn js_shr(self : BigInt, other : Int) -> BigInt =
   #|(x, y) => x >> BigInt(y)
+
+///|
+extern "js" fn js_land(self : BigInt, other : BigInt) -> BigInt =
+  #|(x, y) => x & y
+
+///|
+extern "js" fn js_lor(self : BigInt, other : BigInt) -> BigInt =
+  #|(x, y) => x | y
+
+///|
+extern "js" fn js_lxor(self : BigInt, other : BigInt) -> BigInt =
+  #|(x, y) => x ^ y
