@@ -82,3 +82,13 @@ pub fn Float::to_int(self : Float) -> Int {
     self.to_unchecked_int()
   }
 }
+
+///|
+pub fn to_be_bytes(self : Float) -> Bytes {
+  self.reinterpret_as_uint().to_be_bytes()
+}
+
+///|
+pub fn to_le_bytes(self : Float) -> Bytes {
+  self.reinterpret_as_uint().to_le_bytes()
+}
