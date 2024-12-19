@@ -561,17 +561,17 @@ test "to_hex" {
 test "land" {
   let a = BigInt::from_string("-10")
   let b = BigInt::from_string("11")
-  inspect!(a & b, content="10")
+  inspect!(a.land(b), content="10")
 }
 
 test "lor" {
   let a = BigInt::from_string("-10")
   let b = BigInt::from_string("11")
-  inspect!(a | b, content="-11")
+  inspect!(a.lor(b), content="-11")
 }
 
 test "lxor" {
   let a = BigInt::from_string("-10")
   let b = BigInt::from_string("11")
-  inspect!(a ^ b, content="-1")
+  inspect!(a.lxor(b), content="-1")
 }
