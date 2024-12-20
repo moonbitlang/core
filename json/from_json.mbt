@@ -60,6 +60,22 @@ pub impl FromJson for Int64 with from_json(json, path) {
 }
 
 ///|
+pub impl FromJson for UInt with from_json(json, path) {
+  match json {
+    Number(n) => n.to_int().reinterpret_as_uint()
+    _ => decode_error!(path, "UInt::from_json: expected number")
+  }
+}
+
+///|
+pub impl FromJson for UInt64 with from_json(json, path) {
+  match json {
+    Number(n) => n.to_int64().reinterpret_as_uint64()
+    _ => decode_error!(path, "UInt64::from_json: expected number")
+  }
+}
+
+///|
 pub impl FromJson for Double with from_json(json, path) {
   match json {
     Number(n) => n
@@ -139,8 +155,8 @@ pub impl[X : FromJson] FromJson for FixedArray[X] with from_json(json, path) {
 pub impl[V : FromJson] FromJson for Map[String, V] with from_json(json, path) {
   // Note in theory, we can make it more general like
   // Map[K : FromString, V : FromJson]
-  // but currently we don't have FromString 
-  // Here ToJSON we have 
+  // but currently we don't have FromString
+  // Here ToJSON we have
   // Map[K : Show, V : ToJson]
   match json {
     Object(obj) => {

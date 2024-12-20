@@ -25,6 +25,14 @@ test "Int64::to_json" {
   inspect!(42L.to_json(), content="Number(42)")
 }
 
+test "UInt::to_json" {
+  inspect!((42U).to_json(), content="Number(42)")
+}
+
+test "UInt64::to_json" {
+  inspect!(42UL.to_json(), content="Number(42)")
+}
+
 test "Double::to_json" {
   inspect!(42.0.to_json(), content="Number(42)")
   inspect!(@double.not_a_number.to_json(), content="Null")

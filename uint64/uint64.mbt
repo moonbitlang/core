@@ -17,3 +17,8 @@ pub let min_value : UInt64 = 0UL
 
 ///|
 pub let max_value : UInt64 = 18446744073709551615UL
+
+///|
+pub fn UInt64::to_json(self : UInt64) -> Json {
+  Number(self.to_double())
+}
