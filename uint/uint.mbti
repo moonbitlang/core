@@ -11,6 +11,7 @@ let min_value : UInt
 impl UInt {
   default() -> UInt
   to_int64(UInt) -> Int64
+  to_json(UInt) -> Json
 }
 
 // Type aliases
