@@ -143,8 +143,8 @@ test "atan" {
     -1.4561721938838084990898679e+00,
   ]
   inspect!(@math.atan(@double.not_a_number), content="NaN")
-  inspect!(@math.atan(@double.infinity), content="Infinity")
-  inspect!(@math.atan(@double.neg_infinity), content="-Infinity")
+  inspect!(@math.atan(@double.infinity), content="1.5707963267948966")
+  inspect!(@math.atan(@double.neg_infinity), content="-1.5707963267948966")
   let mut max_inaccuracy = 0.0
   for i = 0; i < vf.length(); i = i + 1 {
     inspect!(imprecise_equal(@math.atan(vf[i]), atan_res[i]), content="true")
