@@ -118,6 +118,45 @@ pub fn op_get[K : Hash + Eq, V](self : T[K, V], key : K) -> V? {
 }
 
 ///|
+/// Gets the value associated with the given key. If the key doesn't exist in the
+/// map, initializes it with the given function and returns the new value.
+///
+/// Parameters:
+///
+/// * `map` : The hash map to operate on.
+/// * `key` : The key to look up in the map.
+/// * `init_fn` : A function that takes the key and returns a new value. This
+/// function is called only when the key is not found in the map.
+///
+/// Returns the value associated with the key, either existing or newly
+/// initialized.
+///
+/// Example:
+///
+/// ```moonbit
+/// test "get_or_init" {
+///   let map : @hashmap.T[String, Int] = @hashmap.new()
+///   let v = map.get_or_init("key", fn(k) { k.length() })
+///   inspect!(v, content="3")
+///   inspect!(map.get("key"), content="Some(3)")
+/// }
+/// ```
+pub fn get_or_init[K : Hash + Eq, V](
+  self : T[K, V],
+  key : K,
+  init : (K) -> V
+) -> V {
+  match self.get(key) {
+    Some(v) => v
+    None => {
+      let v = init(key)
+      self.set(key, v)
+      v
+    }
+  }
+}
+
+///|
 /// Get the value associated with a key, 
 /// returns the provided default value if the key does not exist.
 pub fn get_or_default[K : Hash + Eq, V](
