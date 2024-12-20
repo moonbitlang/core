@@ -26,7 +26,7 @@ test "Int64::to_json" {
 }
 
 test "UInt::to_json" {
-  inspect!((42U).to_json(), content="Number(42)")
+  inspect!(42U.to_json(), content="Number(42)")
 }
 
 test "UInt64::to_json" {
