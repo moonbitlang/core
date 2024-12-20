@@ -24,8 +24,8 @@ pub(all) struct T {
 }
 impl T {
   snapshot(Self, filename~ : String, loc~ : SourceLoc = _, args_loc~ : ArgsLoc = _) -> Unit!SnapshotError
-  write(Self, Show) -> Unit
-  writeln(Self, Show) -> Unit
+  write(Self, &Show) -> Unit
+  writeln(Self, &Show) -> Unit
 }
 
 // Type aliases

@@ -36,9 +36,7 @@ pub fn Double::from_int(i : Int) -> Double {
 }
 
 ///|
-pub fn abs(self : Double) -> Double {
-  (self.reinterpret_as_uint64() & 0x7FFF_FFFF_FFFF_FFFFUL).reinterpret_as_double()
-}
+pub fn abs(self : Double) -> Double = "%f64.abs"
 
 ///|
 /// Returns the sign of the double.

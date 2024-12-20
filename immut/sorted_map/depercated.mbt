@@ -12,17 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-test "pattern" {
-  let m = @hashmap.of([
-    ("name", "John Doe"),
-    ("age", "43"),
-    ("is_human", "true"),
-  ])
-  let { "name"? : name, "age"? : age, "is_human"? : is_human } = m
-  inspect!(
-    (name, age, is_human),
-    content=
-      #|(Some("John Doe"), Some("43"), Some("true"))
-    ,
-  )
+///|
+/// Create a new map with a key-value pair inserted.
+/// O(log n).
+/// 
+/// @alert deprecated "Use `add` instead"
+pub fn insert[K : Compare, V](self : T[K, V], key : K, value : V) -> T[K, V] {
+  self.add(key, value)
 }

@@ -215,9 +215,9 @@ pub impl[K : @quickcheck.Arbitrary + Hash + Eq, V : @quickcheck.Arbitrary] @quic
   V,
 ] with arbitrary(size, rs) {
   let m = new()
-  (@quickcheck.Arbitrary::arbitrary(size, rs) : Iter[(K, V)]).each(
-    fn { (k, v) => m.set(k, v) },
-  )
+  (@quickcheck.Arbitrary::arbitrary(size, rs) : Iter[(K, V)]).each(fn {
+    (k, v) => m.set(k, v)
+  })
   m
 }
 

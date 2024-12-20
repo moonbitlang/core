@@ -12,9 +12,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-///|
-/// Create an empty map.
+///| Create an empty map.
+/// @alert deprecated "Use `new()` instead"
 pub fn T::empty[K, V]() -> T[K, V] {
+  Empty
+}
+
+///| Create an empty map.
+pub fn T::new[K, V]() -> T[K, V] {
   Empty
 }
 
@@ -206,49 +211,45 @@ pub fn T::from_array[K : Compare, V](array : Array[(K, V)]) -> T[K, V] {
 
 ///|
 pub fn iter[K, V](self : T[K, V]) -> Iter[(K, V)] {
-  Iter::new(
-    fn(yield_) {
-      match self {
-        Empty => IterContinue
-        Tree(k, value~, l, r, ..) =>
-          if l.iter().run(yield_) == IterEnd {
-            IterEnd
-          } else if yield_((k, value)) == IterEnd {
-            IterEnd
-          } else if r.iter().run(yield_) == IterEnd {
-            IterEnd
-          } else {
-            IterContinue
-          }
-      }
-    },
-  )
+  Iter::new(fn(yield_) {
+    match self {
+      Empty => IterContinue
+      Tree(k, value~, l, r, ..) =>
+        if l.iter().run(yield_) == IterEnd {
+          IterEnd
+        } else if yield_((k, value)) == IterEnd {
+          IterEnd
+        } else if r.iter().run(yield_) == IterEnd {
+          IterEnd
+        } else {
+          IterContinue
+        }
+    }
+  })
 }
 
 ///|
 pub fn iter2[K, V](self : T[K, V]) -> Iter2[K, V] {
-  Iter2::new(
-    fn(yield_) {
-      match self {
-        Empty => IterContinue
-        Tree(k, value~, l, r, ..) =>
-          if l.iter2().run(yield_) == IterEnd {
-            IterEnd
-          } else if yield_(k, value) == IterEnd {
-            IterEnd
-          } else if r.iter2().run(yield_) == IterEnd {
-            IterEnd
-          } else {
-            IterContinue
-          }
-      }
-    },
-  )
+  Iter2::new(fn(yield_) {
+    match self {
+      Empty => IterContinue
+      Tree(k, value~, l, r, ..) =>
+        if l.iter2().run(yield_) == IterEnd {
+          IterEnd
+        } else if yield_(k, value) == IterEnd {
+          IterEnd
+        } else if r.iter2().run(yield_) == IterEnd {
+          IterEnd
+        } else {
+          IterContinue
+        }
+    }
+  })
 }
 
 ///|
 pub fn T::from_iter[K : Compare, V](iter : Iter[(K, V)]) -> T[K, V] {
-  iter.fold(init=T::empty(), fn(m, e) { m.add(e.0, e.1) })
+  iter.fold(init=T::new(), fn(m, e) { m.add(e.0, e.1) })
 }
 
 ///|

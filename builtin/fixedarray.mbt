@@ -15,30 +15,26 @@
 ///|
 /// @intrinsic %iter.from_array
 pub fn iter[T](self : FixedArray[T]) -> Iter[T] {
-  Iter::new(
-    fn(yield_) {
-      for v in self {
-        guard let IterContinue = yield_(v) else { x => break x }
+  Iter::new(fn(yield_) {
+    for v in self {
+      guard let IterContinue = yield_(v) else { x => break x }
 
-      } else {
-        IterContinue
-      }
-    },
-  )
+    } else {
+      IterContinue
+    }
+  })
 }
 
 ///|
 pub fn iter2[T](self : FixedArray[T]) -> Iter2[Int, T] {
-  Iter2::new(
-    fn(yield_) {
-      for i, v in self {
-        guard let IterContinue = yield_(i, v) else { x => break x }
+  Iter2::new(fn(yield_) {
+    for i, v in self {
+      guard let IterContinue = yield_(i, v) else { x => break x }
 
-      } else {
-        IterContinue
-      }
-    },
-  )
+    } else {
+      IterContinue
+    }
+  })
 }
 
 ///|

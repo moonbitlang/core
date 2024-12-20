@@ -13,7 +13,7 @@
 // limitations under the License.
 
 ///|
-pub impl[K, V] Default for T[K, V] with default() { empty() }
+pub impl[K, V] Default for T[K, V] with default() { T::new() }
 
 ///|
 pub impl[K : Eq, V : Eq] Eq for T[K, V] with op_equal(self, other) -> Bool {
@@ -81,7 +81,7 @@ pub impl[V : @json.FromJson] @json.FromJson for T[String, V] with from_json(
 ) {
   match json {
     Object(obj) => {
-      let mut map = T::empty()
+      let mut map = T::new()
       for k, v in obj {
         map = map.add(k, V::from_json!(v, path))
       }

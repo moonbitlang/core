@@ -1,15 +1,15 @@
 {
   "import": [
     "moonbitlang/core/builtin",
-    "moonbitlang/core/coverage",
+
     "moonbitlang/core/test",
     "moonbitlang/core/quickcheck",
     "moonbitlang/core/quickcheck/splitmix"
   ],
-  "test-import": [
-    "moonbitlang/core/random"
-  ],
+  "test-import": ["moonbitlang/core/random"],
   "targets": {
+    "array_js.mbt": ["js"],
+    "array_nonjs.mbt": ["not", "js"],
     "panic_test.mbt": ["not", "native"]
   }
 }

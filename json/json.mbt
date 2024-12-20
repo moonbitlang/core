@@ -215,7 +215,7 @@ pub fn to_json(self : JsonValue) -> JsonValue {
 
 ///|
 pub fn inspect(
-  obj : ToJson,
+  obj : &ToJson,
   content? : Json,
   loc~ : SourceLoc = _,
   args_loc~ : ArgsLoc = _

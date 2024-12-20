@@ -60,7 +60,7 @@ test "when" {
 /// An `Option` value that is `Some(value())` if the condition is false, otherwise `None`.
 ///
 pub fn unless[T](condition : Bool, value : () -> T) -> T? {
-  when(condition.not(), value)
+  when(not(condition), value)
 }
 
 test "unless" {
@@ -357,12 +357,10 @@ test "iter" {
   let exb = StringBuilder::new(size_hint=0)
   x
   .iter()
-  .each(
-    fn(x) {
-      exb.write_string(x.to_string())
-      exb.write_char('\n')
-    },
-  )
+  .each(fn(x) {
+    exb.write_string(x.to_string())
+    exb.write_char('\n')
+  })
   inspect!(
     exb,
     content=
@@ -374,12 +372,10 @@ test "iter" {
   let y : Int? = None
   y
   .iter()
-  .each(
-    fn(x) {
-      exb.write_string(x.to_string())
-      exb.write_char('\n')
-    },
-  )
+  .each(fn(x) {
+    exb.write_string(x.to_string())
+    exb.write_char('\n')
+  })
   inspect!(exb, content="")
 }
 

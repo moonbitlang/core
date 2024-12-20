@@ -69,18 +69,16 @@ pub fn to_array[A : Compare](self : T[A]) -> Array[A] {
 
 ///|
 pub fn iter[A : Compare](self : T[A]) -> Iter[A] {
-  Iter::new(
-    fn(yield_) {
-      let arr = self.to_array()
-      for i = 0; i < arr.length(); i = i + 1 {
-        if yield_(arr[i]) == IterEnd {
-          break IterEnd
-        }
-      } else {
-        IterContinue
+  Iter::new(fn(yield_) {
+    let arr = self.to_array()
+    for i = 0; i < arr.length(); i = i + 1 {
+      if yield_(arr[i]) == IterEnd {
+        break IterEnd
       }
-    },
-  )
+    } else {
+      IterContinue
+    }
+  })
 }
 
 ///|

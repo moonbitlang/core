@@ -12,17 +12,20 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-test "pattern" {
-  let m = @hashmap.of([
-    ("name", "John Doe"),
-    ("age", "43"),
-    ("is_human", "true"),
-  ])
-  let { "name"? : name, "age"? : age, "is_human"? : is_human } = m
-  inspect!(
-    (name, age, is_human),
-    content=
-      #|(Some("John Doe"), Some("43"), Some("true"))
-    ,
-  )
+///|
+type JSArray
+
+///|
+fn JSArray::ofAnyArray[T](array : Array[T]) -> JSArray = "%identity"
+
+///|
+fn JSArray::toAnyArray[T](self : JSArray) -> Array[T] = "%identity"
+
+///|
+extern "js" fn JSArray::copy(self : JSArray) -> JSArray =
+  #|(arr) => arr.slice(0)
+
+///|
+pub fn copy[T](self : Array[T]) -> Array[T] {
+  JSArray::ofAnyArray(self).copy().toAnyArray()
 }

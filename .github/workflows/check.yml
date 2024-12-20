@@ -48,12 +48,19 @@ jobs:
           ulimit -s 8176
           moon test --target all
           moon test --release --target all
+          moon test --target native
+          moon test --target native --release
+
+      - name: Setup MSVC
+        if: ${{ matrix.os == 'windows-latest' }}
+        uses: ilammy/msvc-dev-cmd@v1
 
       - name: Run moon test on Windows
         if: ${{ matrix.os == 'windows-latest' }}
         run: |
           moon test --target all
           moon test --release --target all
+          moon test --target native
 
       - name: moon test --doc
         run: |
@@ -173,12 +180,19 @@ jobs:
           ulimit -s 8176
           moon test --target all
           moon test --release --target all
+          moon test --target native
+          moon test --target native --release
+
+      - name: Setup MSVC
+        if: ${{ matrix.os == 'windows-latest' }}
+        uses: ilammy/msvc-dev-cmd@v1
 
       - name: Run moon test on Windows
         if: ${{ matrix.os == 'windows-latest' }}
         run: |
           moon test --target all
           moon test --release --target all
+          moon test --target native
 
       - name: moon test --doc
         run: |
@@ -232,10 +246,6 @@ jobs:
           ulimit -s 8176
           moon test --target all
           moon test --release --target all
-
-      - name: moon test in native backend
-        run: |
-          ulimit -s 8176
           moon test --target native
           moon test --target native --release
 

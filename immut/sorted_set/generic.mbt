@@ -18,23 +18,21 @@
 
 ///|
 pub fn iter[A](self : T[A]) -> Iter[A] {
-  Iter::new(
-    fn(yield_) {
-      match self {
-        Empty => IterContinue
-        Node(left~, right~, value~, ..) =>
-          if left.iter().run(yield_) == IterEnd {
-            return IterEnd
-          } else if yield_(value) == IterEnd {
-            return IterEnd
-          } else if right.iter().run(yield_) == IterEnd {
-            return IterEnd
-          } else {
-            return IterContinue
-          }
-      }
-    },
-  )
+  Iter::new(fn(yield_) {
+    match self {
+      Empty => IterContinue
+      Node(left~, right~, value~, ..) =>
+        if left.iter().run(yield_) == IterEnd {
+          return IterEnd
+        } else if yield_(value) == IterEnd {
+          return IterEnd
+        } else if right.iter().run(yield_) == IterEnd {
+          return IterEnd
+        } else {
+          return IterContinue
+        }
+    }
+  })
 }
 
 ///|

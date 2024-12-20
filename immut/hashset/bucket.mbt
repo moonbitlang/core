@@ -76,20 +76,18 @@ fn each[T](self : Bucket[T], f : (T) -> Unit) -> Unit {
 
 ///|
 fn iter[T](self : Bucket[T]) -> Iter[T] {
-  Iter::new(
-    fn {
-      f =>
-        loop self {
-          Just_One(k) => f(k)
-          More(k, rest) =>
-            if f(k) == IterContinue {
-              continue rest
-            } else {
-              IterEnd
-            }
-        }
-    },
-  )
+  Iter::new(fn {
+    f =>
+      loop self {
+        Just_One(k) => f(k)
+        More(k, rest) =>
+          if f(k) == IterContinue {
+            continue rest
+          } else {
+            IterEnd
+          }
+      }
+  })
 }
 
 test "Bucket" {
@@ -113,16 +111,14 @@ test "Bucket::iter" {
   let b : Bucket[_] = More(0, More(1, Just_One(31)))
   let buf = StringBuilder::new(size_hint=0)
   let mut is_first = true
-  b.each(
-    fn(k) {
-      if is_first {
-        is_first = false
-      } else {
-        buf.write_string(", ")
-      }
-      buf.write_string("\{k}")
-    },
-  )
+  b.each(fn(k) {
+    if is_first {
+      is_first = false
+    } else {
+      buf.write_string(", ")
+    }
+    buf.write_string("\{k}")
+  })
   inspect!(buf.to_string(), content="0, 1, 31")
 }
 
@@ -132,20 +128,18 @@ test "Bucket::iter" {
   let mut is_first = true
   b
   .iter()
-  .each(
-    fn {
-      k => {
-        // weird syntax conventions that
-        // braces needed here
-        if is_first {
-          is_first = false
-        } else {
-          buf.write_string(", ")
-        }
-        buf.write_string("\{k}")
+  .each(fn {
+    k => {
+      // weird syntax conventions that
+      // braces needed here
+      if is_first {
+        is_first = false
+      } else {
+        buf.write_string(", ")
       }
-    },
-  )
+      buf.write_string("\{k}")
+    }
+  })
   inspect!(buf.to_string(), content="0, 1, 31")
 }
 
@@ -195,16 +189,14 @@ test "Bucket iter" {
   let b2 = b1.add(2)
   let buf = StringBuilder::new(size_hint=0)
   let mut is_first = true
-  b2.each(
-    fn(k) {
-      if is_first {
-        is_first = false
-      } else {
-        buf.write_string(", ")
-      }
-      buf.write_string("\{k}")
-    },
-  )
+  b2.each(fn(k) {
+    if is_first {
+      is_first = false
+    } else {
+      buf.write_string(", ")
+    }
+    buf.write_string("\{k}")
+  })
   inspect!(buf, content="1, 2, 0")
 }
 
@@ -216,17 +208,15 @@ test "Bucket iter" {
   let mut is_first = true
   b2
   .iter()
-  .each(
-    fn {
-      k => {
-        if is_first {
-          is_first = false
-        } else {
-          buf.write_string(", ")
-        }
-        buf.write_string("\{k}")
+  .each(fn {
+    k => {
+      if is_first {
+        is_first = false
+      } else {
+        buf.write_string(", ")
       }
-    },
-  )
+      buf.write_string("\{k}")
+    }
+  })
   inspect!(buf, content="1, 2, 0")
 }

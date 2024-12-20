@@ -42,7 +42,7 @@ test "add remove" {
   }
   assert_true!(m.add_and_check("test"))
   assert_false!(m.add_and_check("test"))
-  assert_true!(m.contains("a").not() && m.contains("d"))
+  assert_true!(not(m.contains("a")) && m.contains("d"))
   assert_true!(m.contains("b"))
   assert_true!(m.contains("c"))
   assert_true!(m.contains("d"))
@@ -83,12 +83,10 @@ test "iteri" {
   let m = Set::of(["1", "2", "3"])
   let mut s = ""
   let mut sum = 0
-  m.eachi(
-    fn(i, k) {
-      s += k
-      sum += i
-    },
-  )
+  m.eachi(fn(i, k) {
+    s += k
+    sum += i
+  })
   inspect!(s, content="123")
   inspect!(sum, content="3")
 }

@@ -56,7 +56,7 @@ pub fn sin(x : Double) -> Double {
     let y = j.to_double()
     j = j & 7L
     if j > 3L {
-      sign = sign.not()
+      sign = not(sign)
       j -= 4L
     }
     let z = x_ - y * pi4a - y * pi4b - y * pi4c
@@ -111,12 +111,12 @@ pub fn cos(x : Double) -> Double {
     let y = j.to_double()
     j = j & 7L
     if j > 3L {
-      sign = sign.not()
+      sign = not(sign)
       j -= 4L
     }
     let z = x_ - y * pi4a - y * pi4b - y * pi4c
     if j > 1L {
-      sign = sign.not()
+      sign = not(sign)
     }
     let zz = z * z
     (if j == 1L || j == 2L {

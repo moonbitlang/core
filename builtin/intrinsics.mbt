@@ -30,6 +30,9 @@ pub fn panic[T]() -> T = "%panic"
 // Bool primitive ops
 
 ///|
+pub fn not(x : Bool) -> Bool = "%bool_not"
+
+///| @alert deprecated "Use `not(x)` instead"
 pub fn Bool::not(self : Bool) -> Bool = "%bool_not"
 
 ///|
@@ -189,7 +192,7 @@ pub fn Double::compare(self : Double, other : Double) -> Int = "%f64_compare"
 pub fn Double::default() -> Double = "%f64_default"
 
 ///|
-fn Double::unchecked_to_int(self : Double) -> Int = "%f64_to_i32"
+fn Double::to_unchecked_int(self : Double) -> Int = "%f64_to_i32"
 
 ///|
 pub fn Double::convert_uint(val : UInt) -> Double = "%u32.to_f64"

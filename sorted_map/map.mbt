@@ -121,12 +121,12 @@ pub fn clear[K, V](self : T[K, V]) -> Unit {
 pub fn each[K, V](self : T[K, V], f : (K, V) -> Unit) -> Unit {
   let s = []
   let mut p = self.root
-  while p.is_empty().not() || s.is_empty().not() {
-    while p.is_empty().not() {
+  while not(p.is_empty()) || not(s.is_empty()) {
+    while not(p.is_empty()) {
       s.push(p)
       p = p.unwrap().left
     }
-    if s.is_empty().not() {
+    if not(s.is_empty()) {
       p = s.unsafe_pop()
       f(p.unwrap().key, p.unwrap().value)
       p = p.unwrap().right
@@ -140,12 +140,12 @@ pub fn eachi[K, V](self : T[K, V], f : (Int, K, V) -> Unit) -> Unit {
   let s = []
   let mut p = self.root
   let mut i = 0
-  while p.is_empty().not() || s.is_empty().not() {
-    while p.is_empty().not() {
+  while not(p.is_empty()) || not(s.is_empty()) {
+    while not(p.is_empty()) {
       s.push(p)
       p = p.unwrap().left
     }
-    if s.is_empty().not() {
+    if not(s.is_empty()) {
       p = s.unsafe_pop()
       f(i, p.unwrap().key, p.unwrap().value)
       p = p.unwrap().right
@@ -185,23 +185,21 @@ pub fn iter[K, V](self : T[K, V]) -> Iter[(K, V)] {
 
 ///|
 fn iter_aux[K, V](node : Node[K, V]?) -> Iter[(K, V)] {
-  Iter::new(
-    fn(yield_) {
-      match node {
-        None => IterContinue
-        Some(node) =>
-          if iter_aux(node.left).run(yield_) == IterEnd {
-            return IterEnd
-          } else if yield_((node.key, node.value)) == IterEnd {
-            return IterEnd
-          } else if iter_aux(node.right).run(yield_) == IterEnd {
-            return IterEnd
-          } else {
-            IterContinue
-          }
-      }
-    },
-  )
+  Iter::new(fn(yield_) {
+    match node {
+      None => IterContinue
+      Some(node) =>
+        if iter_aux(node.left).run(yield_) == IterEnd {
+          return IterEnd
+        } else if yield_((node.key, node.value)) == IterEnd {
+          return IterEnd
+        } else if iter_aux(node.right).run(yield_) == IterEnd {
+          return IterEnd
+        } else {
+          IterContinue
+        }
+    }
+  })
 }
 
 ///|
@@ -211,23 +209,21 @@ pub fn iter2[K, V](self : T[K, V]) -> Iter2[K, V] {
 
 ///|
 fn iter_aux2[K, V](node : Node[K, V]?) -> Iter2[K, V] {
-  Iter2::new(
-    fn(yield_) {
-      match node {
-        None => IterContinue
-        Some(node) =>
-          if iter_aux2(node.left).run(yield_) == IterEnd {
-            return IterEnd
-          } else if yield_(node.key, node.value) == IterEnd {
-            return IterEnd
-          } else if iter_aux2(node.right).run(yield_) == IterEnd {
-            return IterEnd
-          } else {
-            IterContinue
-          }
-      }
-    },
-  )
+  Iter2::new(fn(yield_) {
+    match node {
+      None => IterContinue
+      Some(node) =>
+        if iter_aux2(node.left).run(yield_) == IterEnd {
+          return IterEnd
+        } else if yield_(node.key, node.value) == IterEnd {
+          return IterEnd
+        } else if iter_aux2(node.right).run(yield_) == IterEnd {
+          return IterEnd
+        } else {
+          IterContinue
+        }
+    }
+  })
 }
 
 ///|
@@ -482,18 +478,16 @@ test "add duplicate key" {
 }
 
 test "remove" {
-  let map = of(
-    [
-      (1, "a"),
-      (2, "b"),
-      (3, "c"),
-      (4, "d"),
-      (5, "e"),
-      (6, "f"),
-      (7, "g"),
-      (8, "h"),
-    ],
-  )
+  let map = of([
+    (1, "a"),
+    (2, "b"),
+    (3, "c"),
+    (4, "d"),
+    (5, "e"),
+    (6, "f"),
+    (7, "g"),
+    (8, "h"),
+  ])
   inspect!(
     map.debug_tree(),
     content="([4]4,d,([2]2,b,([1]1,a,_,_),([1]3,c,_,_)),([3]6,f,([1]5,e,_,_),([2]7,g,_,([1]8,h,_,_))))",

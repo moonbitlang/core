@@ -183,7 +183,7 @@ pub(all) type! InspectError String
 
 ///|
 pub fn inspect(
-  obj : Show,
+  obj : &Show,
   content~ : String = "",
   loc~ : SourceLoc = _,
   args_loc~ : ArgsLoc = _

@@ -408,19 +408,17 @@ pub fn clear[K](self : Set[K]) -> Unit {
 ///|
 /// Returns the iterator of the hash set, provide elements in the order of insertion.
 pub fn iter[K](self : Set[K]) -> Iter[K] {
-  Iter::new(
-    fn(yield_) {
-      loop self.head {
-        Some({ key, idx, .. }) => {
-          if yield_(key) == IterEnd {
-            break IterEnd
-          }
-          continue self.list[idx].next
+  Iter::new(fn(yield_) {
+    loop self.head {
+      Some({ key, idx, .. }) => {
+        if yield_(key) == IterEnd {
+          break IterEnd
         }
-        None => break IterContinue
+        continue self.list[idx].next
       }
-    },
-  )
+      None => break IterContinue
+    }
+  })
 }
 
 ///|

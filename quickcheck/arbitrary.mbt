@@ -114,17 +114,15 @@ pub impl Arbitrary for BigInt with arbitrary(size, rs) {
 ///|
 pub impl[X : Arbitrary] Arbitrary for Iter[X] with arbitrary(size, rs) {
   let len = if size == 0 { 0 } else { rs.next_positive_int() % size }
-  Iter::new(
-    fn(yield_) {
-      for i = 0; i < len; i = i + 1 {
-        if yield_(X::arbitrary(i, rs)) == IterEnd {
-          break IterEnd
-        }
-      } else {
-        IterContinue
+  Iter::new(fn(yield_) {
+    for i = 0; i < len; i = i + 1 {
+      if yield_(X::arbitrary(i, rs)) == IterEnd {
+        break IterEnd
       }
-    },
-  )
+    } else {
+      IterContinue
+    }
+  })
 }
 
 test "iter arbitrary" {

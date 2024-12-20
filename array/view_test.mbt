@@ -27,3 +27,31 @@ test "each" {
   s.each(fn(x) { sum = sum + x })
   assert_eq!(sum, 12)
 }
+
+test "eachi" {
+  let v = [3, 4, 5][:]
+  let mut sum = 0
+  v.eachi(fn(i, x) { sum = sum + x + i })
+  inspect!(sum, content="15")
+}
+
+test "all" {
+  let nums = [1, 2, 3, 4, 6, 8]
+  assert_false!(nums[0:4].all(fn(x) { x % 2 == 0 }))
+  assert_true!(nums[3:].all(fn(x) { x % 2 == 0 }))
+}
+
+test "any" {
+  let v = [1, 2, 3, 4, 5, 6]
+  assert_true!(v[:].any(fn(ele) { ele < 6 }))
+  assert_true!(v[:].any(fn(ele) { ele < 5 }))
+  assert_false!(v[4:].any(fn(ele) { ele < 5 }))
+}
+
+test "contains" {
+  let v = [2, 3, 4, 5][:]
+  assert_true!(v.contains(2))
+  assert_true!(v.contains(3))
+  assert_true!(v.contains(4))
+  assert_false!(v.contains(6))
+}

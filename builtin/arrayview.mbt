@@ -58,7 +58,11 @@ pub fn swap[T](self : ArrayView[T], i : Int, j : Int) -> Unit {
 }
 
 ///|
-pub fn op_as_view[T](self : Array[T], start~ : Int, end? : Int) -> ArrayView[T] {
+pub fn op_as_view[T](
+  self : Array[T],
+  start~ : Int = 0,
+  end? : Int
+) -> ArrayView[T] {
   let len = self.length()
   let end = match end {
     None => len
@@ -73,7 +77,7 @@ pub fn op_as_view[T](self : Array[T], start~ : Int, end? : Int) -> ArrayView[T] 
 ///|
 pub fn op_as_view[T](
   self : ArrayView[T],
-  start~ : Int,
+  start~ : Int = 0,
   end? : Int
 ) -> ArrayView[T] {
   let len = self.length()
@@ -89,16 +93,14 @@ pub fn op_as_view[T](
 
 ///|
 pub fn iter[A](self : ArrayView[A]) -> Iter[A] {
-  Iter::new(
-    fn(yield_) {
-      for v in self {
-        guard let IterContinue = yield_(v) else { x => break x }
+  Iter::new(fn(yield_) {
+    for v in self {
+      guard let IterContinue = yield_(v) else { x => break x }
 
-      } else {
-        IterContinue
-      }
-    },
-  )
+    } else {
+      IterContinue
+    }
+  })
 }
 
 ///|
@@ -168,4 +170,93 @@ pub fn rev_foldi[A, B](
   } else {
     acc
   }
+}
+
+///|
+/// Maps a function over the elements of the array view.
+///
+/// # Example
+/// ```
+/// let v = [3, 4, 5]
+/// let v2 = v[1:].map(fn (x) {x + 1})
+/// assert_eq!(v2, [5, 6])
+/// ```
+pub fn map[T, U](self : ArrayView[T], f : (T) -> U) -> Array[U] {
+  if self.length() == 0 {
+    return []
+  }
+  let arr = Array::make_uninit(self.length())
+  for i, v in self {
+    arr.unsafe_set(i, f(v))
+  }
+  arr
+}
+
+///|
+/// Maps a function over the elements of the array view in place.
+///
+/// # Example
+/// ```
+/// let v = [3, 4, 5]
+/// v[1:].map_inplace(fn (x) {x + 1})
+/// assert_eq!(v, [3, 5, 6])
+/// ```
+pub fn map_inplace[T](self : ArrayView[T], f : (T) -> T) -> Unit {
+  for i, v in self {
+    self[i] = f(v)
+  }
+}
+
+///|
+/// Maps a function over the elements of the array view with index.
+///
+/// # Example
+/// ```
+/// let v = [3, 4, 5]
+/// let v2 = v[1:].mapi(fn (i, x) {x + i})
+/// assert_eq!(v2, [4, 6])
+/// ```
+pub fn mapi[T, U](self : ArrayView[T], f : (Int, T) -> U) -> Array[U] {
+  if self.length() == 0 {
+    return []
+  }
+  let arr = Array::make_uninit(self.length())
+  for i, v in self {
+    arr.unsafe_set(i, f(i, v))
+  }
+  arr
+}
+
+///|
+/// Maps a function over the elements of the array view with index in place.
+///
+/// # Example
+/// ```
+/// let v = [3, 4, 5]
+/// v[1:].mapi_inplace(fn (i, x) {x + i})
+/// assert_eq!(v, [3, 4, 6])
+/// ```
+pub fn mapi_inplace[T](self : ArrayView[T], f : (Int, T) -> T) -> Unit {
+  for i, v in self {
+    self[i] = f(i, v)
+  }
+}
+
+///|
+/// Filters the array view with a predicate function.
+///
+/// # Example
+/// ```
+/// let arr = [1, 2, 3, 4, 5, 6]
+/// let v = arr[2:].filter(fn (x) { x % 2 == 0 })
+/// assert_eq!(v, [4, 6])
+/// ```
+pub fn filter[T](self : ArrayView[T], f : (T) -> Bool) -> Array[T] {
+  let arr = []
+  for v in self {
+    if f(v) {
+      arr.push(v)
+    }
+  }
+  arr
 }

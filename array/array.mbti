@@ -63,7 +63,11 @@ impl Array {
 
 
 impl ArrayView {
+  all[T](Self[T], (T) -> Bool) -> Bool
+  any[T](Self[T], (T) -> Bool) -> Bool
+  contains[T : Eq](Self[T], T) -> Bool
   each[T](Self[T], (T) -> Unit) -> Unit
+  eachi[T](Self[T], (Int, T) -> Unit) -> Unit
   rev_inplace[T](Self[T]) -> Unit
 }
 

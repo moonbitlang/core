@@ -57,12 +57,10 @@ pub fn Iter2::new[A, B](
 
 ///|
 pub fn each[A, B](self : Iter2[A, B], f : (A, B) -> Unit) -> Unit {
-  self.run(
-    fn(a, b) {
-      f(a, b)
-      IterContinue
-    },
-  )
+  self.run(fn(a, b) {
+    f(a, b)
+    IterContinue
+  })
   |> ignore
 }
 

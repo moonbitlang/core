@@ -179,9 +179,15 @@ pub fn rev_map[A, B](self : T[A], f : (A) -> B) -> T[B] {
 pub fn to_array[A](self : T[A]) -> Array[A] {
   match self {
     Nil => []
-    Cons(head, _) => {
-      let arr = Array::make(self.length(), head)
-      self.eachi(fn(i, x) { arr[i] = x })
+    Cons(x, xs) => {
+      let arr = [x]
+      loop xs {
+        Nil => ()
+        Cons(x, xs) => {
+          arr.push(x)
+          continue xs
+        }
+      }
       arr
     }
   }
@@ -1064,36 +1070,32 @@ pub fn T::default[X]() -> T[X] {
 
 ///|
 pub fn iter[A](self : T[A]) -> Iter[A] {
-  Iter::new(
-    fn(yield_) {
-      loop self {
-        Nil => IterContinue
-        Cons(head, tail) => {
-          if yield_(head) == IterEnd {
-            break IterEnd
-          }
-          continue tail
+  Iter::new(fn(yield_) {
+    loop self {
+      Nil => IterContinue
+      Cons(head, tail) => {
+        if yield_(head) == IterEnd {
+          break IterEnd
         }
+        continue tail
       }
-    },
-  )
+    }
+  })
 }
 
 ///|
 pub fn iter2[A](self : T[A]) -> Iter2[Int, A] {
-  Iter2::new(
-    fn(yield_) {
-      loop self, 0 {
-        Nil, _ => IterEnd
-        Cons(head, tail), i => {
-          if yield_(i, head) == IterEnd {
-            break IterEnd
-          }
-          continue tail, i + 1
+  Iter2::new(fn(yield_) {
+    loop self, 0 {
+      Nil, _ => IterEnd
+      Cons(head, tail), i => {
+        if yield_(i, head) == IterEnd {
+          break IterEnd
         }
+        continue tail, i + 1
       }
-    },
-  )
+    }
+  })
 }
 
 ///|

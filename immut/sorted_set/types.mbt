@@ -20,5 +20,5 @@
 /// ImmutableSets are represented by balanced binary trees (the heights of the children differ by at most 2).
 enum T[A] {
   Empty
-  Node(left~ : T[A], right~ : T[A], height~ : Int, value~ : A)
-} derive(Default)
+  Node(left~ : T[A], right~ : T[A], size~ : Int, value~ : A)
+}

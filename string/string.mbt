@@ -109,63 +109,56 @@ pub fn to_bytes(self : String) -> Bytes {
 pub fn to_array(self : String) -> Array[Char] {
   self
   .iter()
-  .fold(
-    init=Array::new(capacity=self.length()),
-    fn(rv, c) {
-      rv.push(c)
-      rv
-    },
-  )
+  .fold(init=Array::new(capacity=self.length()), fn(rv, c) {
+    rv.push(c)
+    rv
+  })
 }
 
 ///|
 pub fn iter(self : String) -> Iter[Char] {
-  Iter::new(
-    fn(yield_) {
-      let len = self.length()
-      for index = 0; index < len; index = index + 1 {
-        let c1 = self[index]
-        if is_leading_surrogate(c1) && index + 1 < len {
-          let c2 = self[index + 1]
-          if is_trailing_surrogate(c2) {
-            let c = code_point_of_surrogate_pair(c1, c2)
-            guard let IterContinue = yield_(c) else { x => break x }
-            continue index + 2
-          }
+  Iter::new(fn(yield_) {
+    let len = self.length()
+    for index = 0; index < len; index = index + 1 {
+      let c1 = self[index]
+      if is_leading_surrogate(c1) && index + 1 < len {
+        let c2 = self[index + 1]
+        if is_trailing_surrogate(c2) {
+          let c = code_point_of_surrogate_pair(c1, c2)
+          guard let IterContinue = yield_(c) else { x => break x }
+          continue index + 2
         }
-        //TODO: handle garbage input
-        guard let IterContinue = yield_(c1) else { x => break x }
-
-      } else {
-        IterContinue
       }
-    },
-  )
+      //TODO: handle garbage input
+      guard let IterContinue = yield_(c1) else { x => break x }
+
+    } else {
+      IterContinue
+    }
+  })
 }
 
 ///|
 pub fn iter2(self : String) -> Iter2[Int, Char] {
-  Iter2::new(
-    fn(yield_) {
-      let len = self.length()
-      for index = 0, n = 0; index < len; index = index + 1, n = n + 1 {
-        let c1 = self[index]
-        if is_leading_surrogate(c1) && index + 1 < len {
-          let c2 = self[index + 1]
-          if is_trailing_surrogate(c2) {
-            let c = code_point_of_surrogate_pair(c1, c2)
-            guard let IterContinue = yield_(n, c) else { x => break x }
-            continue index + 2, n + 1
-          }
+  Iter2::new(fn(yield_) {
+    let len = self.length()
+    for index = 0, n = 0; index < len; index = index + 1, n = n + 1 {
+      let c1 = self[index]
+      if is_leading_surrogate(c1) && index + 1 < len {
+        let c2 = self[index + 1]
+        if is_trailing_surrogate(c2) {
+          let c = code_point_of_surrogate_pair(c1, c2)
+          guard let IterContinue = yield_(n, c) else { x => break x }
+          continue index + 2, n + 1
         }
-        //TODO: handle garbage input
-        guard let IterContinue = yield_(n, c1) else { x => break x }
-
-      } else {
-        IterContinue
       }
-    },
-  )
+      //TODO: handle garbage input
+      guard let IterContinue = yield_(n, c1) else { x => break x }
+
+    } else {
+      IterContinue
+    }
+  })
 }
 
 ///|
@@ -213,27 +206,25 @@ pub fn rev_fold[A](self : String, init~ : A, f : (A, Char) -> A) -> A {
 /// assert_eq!(reversed, ['!', 'd', 'l', 'r', 'o', 'W', ' ', ',', 'o', 'l', 'l', 'e', 'H'])
 /// ```
 pub fn rev_iter(self : String) -> Iter[Char] {
-  Iter::new(
-    fn(yield_) {
-      let len = self.length()
-      for index = len - 1; index >= 0; index = index - 1 {
-        let c1 = self[index]
-        if is_trailing_surrogate(c1) && index - 1 >= 0 {
-          let c2 = self[index - 1]
-          if is_leading_surrogate(c2) {
-            let c = code_point_of_surrogate_pair(c2, c1)
-            guard let IterContinue = yield_(c) else { x => break x }
-            continue index - 2
-          }
+  Iter::new(fn(yield_) {
+    let len = self.length()
+    for index = len - 1; index >= 0; index = index - 1 {
+      let c1 = self[index]
+      if is_trailing_surrogate(c1) && index - 1 >= 0 {
+        let c2 = self[index - 1]
+        if is_leading_surrogate(c2) {
+          let c = code_point_of_surrogate_pair(c2, c1)
+          guard let IterContinue = yield_(c) else { x => break x }
+          continue index - 2
         }
-        // TODO: handle garbage input
-        guard let IterContinue = yield_(c1) else { x => break x }
-
-      } else {
-        IterContinue
       }
-    },
-  )
+      // TODO: handle garbage input
+      guard let IterContinue = yield_(c1) else { x => break x }
+
+    } else {
+      IterContinue
+    }
+  })
 }
 
 ///|
@@ -275,7 +266,7 @@ pub fn trim_start(self : String, trim_set : String) -> String {
         }
       }
     }
-    if trim_set.contains_char(self[i]).not() {
+    if not(trim_set.contains_char(self[i])) {
       return self.substring(start=i)
     }
   } else {
@@ -301,7 +292,7 @@ pub fn trim_end(self : String, trim_set : String) -> String {
         }
       }
     }
-    if trim_set.contains_char(self[i]).not() {
+    if not(trim_set.contains_char(self[i])) {
       return self.substring(end=i + 1)
     }
   } else {
@@ -478,26 +469,24 @@ pub fn split(self : String, seperator : String) -> Iter[String] {
   if sep_len == 0 {
     return self.iter().map(fn(c) { c.to_string() })
   }
-  Iter::new(
-    fn(yield_) {
-      let mut start = 0
-      while start < len {
-        let end = self.index_of(seperator, from=start)
-        if end < 0 {
-          if yield_(self.substring(start~)) == IterEnd {
-            break IterEnd
-          }
-          break IterContinue
-        }
-        if yield_(self.substring(start~, end~)) == IterEnd {
+  Iter::new(fn(yield_) {
+    let mut start = 0
+    while start < len {
+      let end = self.index_of(seperator, from=start)
+      if end < 0 {
+        if yield_(self.substring(start~)) == IterEnd {
           break IterEnd
         }
-        start = end + sep_len
-      } else {
-        IterContinue
+        break IterContinue
       }
-    },
-  )
+      if yield_(self.substring(start~, end~)) == IterEnd {
+        break IterEnd
+      }
+      start = end + sep_len
+    } else {
+      IterContinue
+    }
+  })
 }
 
 ///|
@@ -523,12 +512,10 @@ pub fn replace_all(self : String, old~ : String, new~ : String) -> String {
     buf.write_string(new)
     self
     .iter()
-    .each(
-      fn(c) {
-        buf.write_char(c)
-        buf.write_string(new)
-      },
-    )
+    .each(fn(c) {
+      buf.write_char(c)
+      buf.write_string(new)
+    })
   } else {
     let mut start = 0
     while start < len {

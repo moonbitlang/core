@@ -107,12 +107,10 @@ test "iteri" {
   let m = @hashmap.of([("a", 1), ("b", 2), ("c", 3)])
   let mut sum = 0
   let mut s = ""
-  m.eachi(
-    fn(i, _k, v) {
-      s += i.to_string()
-      sum += v
-    },
-  )
+  m.eachi(fn(i, _k, v) {
+    s += i.to_string()
+    sum += v
+  })
   assert_eq!(s, "012")
   assert_eq!(sum, 6)
 }
@@ -122,24 +120,29 @@ test "iter" {
   let map = @hashmap.of([(1, "one"), (2, "two"), (3, "three")])
   map
   .iter()
-  .each(
-    fn(e) {
-      let (k, v) = e
-      buf.write_string("[\{k}-\{v}]")
-    },
-  )
+  .each(fn(e) {
+    let (k, v) = e
+    buf.write_string("[\{k}-\{v}]")
+  })
   inspect!(buf, content="[2-two][1-one][3-three]")
   buf.reset()
   map
   .iter()
   .take(2)
-  .each(
-    fn(e) {
-      let (k, v) = e
-      buf.write_string("[\{k}-\{v}]")
-    },
-  )
+  .each(fn(e) {
+    let (k, v) = e
+    buf.write_string("[\{k}-\{v}]")
+  })
   inspect!(buf, content="[2-two][1-one]")
+}
+
+test "iter2" {
+  let buf = StringBuilder::new(size_hint=20)
+  let map = @hashmap.of([(1, "one"), (2, "two"), (3, "three")])
+  for k, v in map {
+    buf.write_string("[\{k}-\{v}]")
+  }
+  inspect!(buf, content="[2-two][1-one][3-three]")
 }
 
 test "to_array" {

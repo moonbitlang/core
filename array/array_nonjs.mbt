@@ -12,17 +12,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-test "pattern" {
-  let m = @hashmap.of([
-    ("name", "John Doe"),
-    ("age", "43"),
-    ("is_human", "true"),
-  ])
-  let { "name"? : name, "age"? : age, "is_human"? : is_human } = m
-  inspect!(
-    (name, age, is_human),
-    content=
-      #|(Some("John Doe"), Some("43"), Some("true"))
-    ,
-  )
+///|
+pub fn copy[T](self : Array[T]) -> Array[T] {
+  let len = self.length()
+  if len == 0 {
+    []
+  } else {
+    let arr = Array::make(len, self[0])
+    Array::unsafe_blit(arr, 0, self, 0, len)
+    arr
+  }
 }

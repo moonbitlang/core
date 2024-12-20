@@ -425,68 +425,60 @@ pub fn clear[K, V](self : Map[K, V]) -> Unit {
 ///|
 /// Returns the iterator of the hash map, provide elements in the order of insertion.
 pub fn iter[K, V](self : Map[K, V]) -> Iter[(K, V)] {
-  Iter::new(
-    fn(yield_) {
-      loop self.head {
-        Some({ key, value, idx, .. }) => {
-          if yield_((key, value)) == IterEnd {
-            break IterEnd
-          }
-          continue self.list[idx].next
+  Iter::new(fn(yield_) {
+    loop self.head {
+      Some({ key, value, idx, .. }) => {
+        if yield_((key, value)) == IterEnd {
+          break IterEnd
         }
-        None => break IterContinue
+        continue self.list[idx].next
       }
-    },
-  )
+      None => break IterContinue
+    }
+  })
 }
 
 ///|
 pub fn iter2[K, V](self : Map[K, V]) -> Iter2[K, V] {
-  Iter2::new(
-    fn(yield_) {
-      loop self.head {
-        Some({ key, value, idx, .. }) =>
-          if yield_(key, value) == IterEnd {
-            IterEnd
-          } else {
-            continue self.list[idx].next
-          }
-        None => IterContinue
-      }
-    },
-  )
+  Iter2::new(fn(yield_) {
+    loop self.head {
+      Some({ key, value, idx, .. }) =>
+        if yield_(key, value) == IterEnd {
+          IterEnd
+        } else {
+          continue self.list[idx].next
+        }
+      None => IterContinue
+    }
+  })
 }
 
 ///|
 pub fn keys[K, V](self : Map[K, V]) -> Iter[K] {
-  Iter::new(
-    fn(yield_) {
-      loop self.head {
-        Some({ key, idx, .. }) =>
-          match yield_(key) {
-            IterEnd => IterEnd
-            IterContinue => continue self.list[idx].next
-          }
-        None => IterContinue
-      }
-    },
-  )
+  Iter::new(fn(yield_) {
+    loop self.head {
+      Some({ key, idx, .. }) =>
+        match yield_(key) {
+          IterEnd => IterEnd
+          IterContinue => continue self.list[idx].next
+        }
+      None => IterContinue
+    }
+  })
 }
 
 ///|
 pub fn values[K, V](self : Map[K, V]) -> Iter[V] {
-  Iter::new(
-    fn(yield_) {
-      loop self.head {
-        Some({ value, idx, .. }) =>
-          match yield_(value) {
-            IterEnd => IterEnd
-            IterContinue => continue self.list[idx].next
-          }
-        None => IterContinue
-      }
-    },
-  )
+  Iter::new(fn(yield_) {
+    loop self.head {
+      Some({ value, idx, .. }) =>
+        match yield_(value) {
+          IterEnd => IterEnd
+          IterContinue => continue self.list[idx].next
+        }
+      None => IterContinue
+    }
+  })
 }
 
 ///|
