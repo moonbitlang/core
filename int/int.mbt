@@ -41,3 +41,13 @@ pub fn abs(self : Int) -> Int {
     self
   }
 }
+
+///|
+pub fn to_be_bytes(self : Int) -> Bytes {
+  self.reinterpret_as_uint().to_be_bytes()
+}
+
+///|
+pub fn to_le_bytes(self : Int) -> Bytes {
+  self.reinterpret_as_uint().to_le_bytes()
+}
