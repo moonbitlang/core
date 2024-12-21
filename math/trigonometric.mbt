@@ -244,7 +244,7 @@ fn satan(x : Double) -> Double {
 
 ///|
 pub fn atan(x : Double) -> Double {
-  if Double::is_inf(x) || Double::is_nan(x) || x == 0.0 {
+  if Double::is_nan(x) || x == 0.0 {
     x
   } else if x > 0.0 {
     satan(x)
