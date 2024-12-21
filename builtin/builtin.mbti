@@ -11,6 +11,8 @@ fn assert_not_eq[T : Eq + Show](T, T, loc~ : SourceLoc = _) -> Unit!
 
 fn assert_true(Bool, loc~ : SourceLoc = _) -> Unit!
 
+fn dump[T](T, name? : String, loc~ : SourceLoc = _) -> T //deprecated
+
 fn fail[T](String, loc~ : SourceLoc = _) -> T!Failure
 
 fn ignore[T](T) -> Unit
