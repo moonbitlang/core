@@ -289,3 +289,37 @@ test "from_iter empty iter" {
   let map : @hashmap.T[Int, Int] = @hashmap.T::from_iter(Iter::empty())
   inspect!(map, content="HashMap::of([])")
 }
+
+test "@hashmap.T::get_or_init/init_new_key" {
+  let map : @hashmap.T[String, Int] = @hashmap.T::new()
+  // Test initialization of a new key
+  let v1 = map.get_or_init("test", fn(__) { __.length() })
+  inspect!(v1, content="4")
+  inspect!(map.get("test"), content="Some(4)")
+}
+
+test "@hashmap.T::get_or_init/existing_key" {
+  let map : @hashmap.T[String, Int] = @hashmap.T::new()
+  map.set("key", 42)
+  // Test retrieval of existing key without calling init function
+  let v2 = map.get_or_init("key", fn(__) { __.length() })
+  inspect!(v2, content="42")
+  inspect!(map.get("key"), content="Some(42)")
+}
+
+test "@hashmap.T::get_or_init/multiple_calls" {
+  let map : @hashmap.T[String, Int] = @hashmap.T::new()
+  let mut counter = 0
+  // Test that init function is only called once for the same key
+  let v1 = map.get_or_init("test", fn(__) {
+    counter = counter + 1
+    counter
+  })
+  let v2 = map.get_or_init("test", fn(__) {
+    counter = counter + 1
+    counter
+  })
+  inspect!(v1, content="1")
+  inspect!(v2, content="1")
+  inspect!(counter, content="1")
+}
