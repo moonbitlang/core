@@ -27,3 +27,8 @@ pub fn to_int64(self : UInt) -> Int64 {
 pub fn UInt::default() -> UInt {
   0
 }
+
+///|
+pub fn UInt::to_json(self : UInt) -> Json {
+  Number(self.to_uint64().to_double())
+}
