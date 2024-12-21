@@ -55,10 +55,19 @@ pub fn T::from_array[K : Hash + Eq, V](arr : Array[(K, V)]) -> T[K, V] {
 /// Set a key-value pair into hash map.
 /// @alert unsafe "Panic if the hash map is full."
 pub fn set[K : Hash + Eq, V](self : T[K, V], key : K, value : V) -> Unit {
+  self.set_with_hash(key, value, key.hash())
+}
+
+///|
+fn set_with_hash[K : Eq, V](
+  self : T[K, V],
+  key : K,
+  value : V,
+  hash : Int
+) -> Unit {
   if self.size >= self.capacity / 2 {
     self.grow()
   }
-  let hash = key.hash()
   for idx = hash & (self.capacity - 1), entry = { psl: 0, hash, key, value } {
     match self.entries[idx] {
       None => {
@@ -181,8 +190,7 @@ fn shift_back[K : Hash, V](self : T[K, V], start_index : Int) -> Unit {
 }
 
 ///|
-// TODO: this could be further optimized
-fn grow[K : Hash + Eq, V](self : T[K, V]) -> Unit {
+fn grow[K : Eq, V](self : T[K, V]) -> Unit {
   let old_entries = self.entries
   let new_capacity = self.capacity << 1
   self.entries = FixedArray::make(new_capacity, None)
@@ -190,7 +198,7 @@ fn grow[K : Hash + Eq, V](self : T[K, V]) -> Unit {
   self.size = 0
   for i = 0; i < old_entries.length(); i = i + 1 {
     match old_entries[i] {
-      Some({ key, value, .. }) => self.set(key, value)
+      Some({ key, value, hash, .. }) => self.set_with_hash(key, value, hash)
       None => ()
     }
   }
