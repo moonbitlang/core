@@ -365,3 +365,19 @@ test "sort_by" {
   arr.sort_by_key(fn(x) { -x })
   assert_eq!(arr, [5, 4, 3, 2, 1])
 }
+
+test "sort_by_fallback" {
+  // Creating a large array that will trigger heap sort
+  let arr = FixedArray::makei(100, fn(i) { if i % 2 == 0 { 1 } else { 0 } })
+  arr.sort_by(fn(a, b) {
+    // this comparison function always returns -1 or 1
+    // which creates many imbalanced partitions
+    // and eventually triggers heap sort when limit reaches 0
+    if a < b {
+      -1
+    } else {
+      1
+    }
+  })
+  assert_true!(arr.is_sorted())
+}

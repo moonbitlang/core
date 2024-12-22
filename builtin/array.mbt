@@ -273,9 +273,6 @@ pub fn clear[T](self : Array[T]) -> Unit {
 /// assert_eq!(v2, [4, 5, 6])
 /// ```
 pub fn map[T, U](self : Array[T], f : (T) -> U) -> Array[U] {
-  if self.length() == 0 {
-    return []
-  }
   let arr = Array::make_uninit(self.length())
   for i, v in self {
     arr.unsafe_set(i, f(v))
