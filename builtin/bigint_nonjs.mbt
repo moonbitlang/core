@@ -830,7 +830,7 @@ pub fn pow(self : BigInt, exp : BigInt, modulus? : BigInt) -> BigInt {
       result
     }
     Some(modulus) => {
-      guard not (modulus.is_zero() || modulus.sign == Negative) 
+      guard not(modulus.is_zero() || modulus.sign == Negative)
       let mut result = 1N
       let mut base = self
       let mut exp = exp
