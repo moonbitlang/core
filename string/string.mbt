@@ -116,6 +116,16 @@ pub fn to_array(self : String) -> Array[Char] {
 }
 
 ///|
+/// Returns an iterator over the Unicode characters in the string.
+///
+/// Note: This iterator yields Unicode characters, not Utf16 code units.
+/// As a result, the count of characters returned by `iter().count()` may not be equal to the length of the string returned by `length()`.
+///
+/// ```
+/// let s = "Hello, World!🤣";
+/// assert_eq!(s.iter().count(), 14); // Unicode characters
+/// assert_eq!(s.length(), 15); // Utf16 code units
+/// ```
 pub fn iter(self : String) -> Iter[Char] {
   Iter::new(fn(yield_) {
     let len = self.length()
@@ -162,6 +172,8 @@ pub fn iter2(self : String) -> Iter2[Int, Char] {
 }
 
 ///|
+/// Note: This method operates on Unicode characters, not Utf16 code units.
+/// As a result, the count of characters passed to the folding function may not be equal to the length of the string.
 pub fn fold[A](self : String, init~ : A, f : (A, Char) -> A) -> A {
   let mut rv = init
   for c in self {
