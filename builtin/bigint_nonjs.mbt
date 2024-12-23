@@ -772,11 +772,45 @@ fn max[T : Compare](a : T, b : T) -> T {
 }
 
 ///|
-/// Compute the power of a BigInt to another BigInt.
+/// Computes the result of raising a `BigInt` to the power of another `BigInt`,
+/// with an optional modulus.
+///
+/// When a modulus is provided, computes the modular exponentiation using the
+/// square-and-multiply algorithm. This is particularly useful in cryptographic
+/// applications where direct exponentiation would result in numbers too large to
+/// handle efficiently.
+///
+/// Parameters:
+///
+/// * `self` : The base number to be raised to a power.
+/// * `exp` : The exponent (must be non-negative).
+/// * `modulus` : Optional modulus for modular exponentiation (must be positive
+/// if provided).
+///
+/// Returns the result of the exponentiation, or the result modulo `modulus` if a
+/// modulus is provided.
+///
+/// Throws:
+///
+/// * Aborts if the exponent is negative.
+/// * Aborts if the provided modulus is zero or negative.
+///
+/// Example:
+///
+/// ```moonbit
+/// test "BigInt::pow" {
+///   let base = BigInt::from_string("3")
+///   let exp = BigInt::from_string("4")
+///   inspect!(base.pow(exp), content="81")
+///   inspect!(base.pow(exp, modulus=BigInt::from_string("10")), content="1")
+/// }
 /// 
-/// Optionally takes a modulus BigInt.
-/// 
-/// The exponent must be non-negative, and modulus must be positive.
+/// test "panic BigInt::pow/negative_exponent" {
+///   let base = BigInt::from_string("3")
+///   let exp = BigInt::from_string("-1")
+///   ignore(base.pow(exp))
+/// }
+/// ```
 pub fn pow(self : BigInt, exp : BigInt, modulus? : BigInt) -> BigInt {
   if exp.sign == Negative {
     abort("negative exponent")
@@ -786,28 +820,26 @@ pub fn pow(self : BigInt, exp : BigInt, modulus? : BigInt) -> BigInt {
       let mut result = 1N
       let mut base = self
       let mut exp = exp
-      while exp > 0N {
-        if exp % 2N == 1N {
+      while exp > 0 {
+        if exp % 2 == 1 {
           result = result * base
         }
         base = base * base
-        exp = exp / 2N
+        exp = exp / 2
       }
       result
     }
     Some(modulus) => {
-      if modulus.is_zero() || modulus.sign == Negative {
-        abort("non-positive modulus")
-      }
+      guard not (modulus.is_zero() || modulus.sign == Negative) 
       let mut result = 1N
       let mut base = self
       let mut exp = exp
-      while exp > 0N {
-        if exp % 2N == 1N {
+      while exp > 0 {
+        if exp % 2 == 1 {
           result = result * base % modulus
         }
         base = base * base % modulus
-        exp = exp / 2N
+        exp = exp / 2
       }
       result
     }
