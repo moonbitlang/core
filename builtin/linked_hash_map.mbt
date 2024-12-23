@@ -184,16 +184,47 @@ pub fn op_get[K : Hash + Eq, V](self : Map[K, V], key : K) -> V? {
 }
 
 ///|
-/// Get the value associated with a key, 
-/// returns the provided default value if the key does not exist.
+/// Returns the value associated with the key in the map, or computes and returns
+/// a default value if the key does not exist.
+///
+/// Parameters:
+///
+/// * `map` : The map to search in.
+/// * `key` : The key to look up in the map.
+/// * `default` : A function that returns a default value when the key is not
+/// found.
+///
+/// Returns either the value associated with the key if it exists, or the result
+/// of calling the default function.
+///
+/// Example:
+///
+/// ```moonbit
+/// test "get_or_default" {
+///   let map = { "a": 1, "b": 2 }
+///   inspect!(map.get_or_default("a", 0), content="1")
+///   inspect!(map.get_or_default("c", 42), content="42")
+/// }
+/// ```
 pub fn get_or_default[K : Hash + Eq, V](
   self : Map[K, V],
   key : K,
   default : V
 ) -> V {
-  match self.get(key) {
-    Some(v) => v
-    None => default
+  let hash = key.hash()
+  for i = 0, idx = hash & self.capacity_mask {
+    match self.entries[idx] {
+      Some(entry) => {
+        if entry.hash == hash && entry.key == key {
+          break entry.value
+        }
+        if i > entry.psl {
+          break default
+        }
+        continue i + 1, (idx + 1) & self.capacity_mask
+      }
+      None => break default
+    }
   }
 }
 

@@ -158,12 +158,32 @@ pub extern "js" fn op_mod(self : BigInt, other : BigInt) -> BigInt =
   #|(x, y) => x % y
 
 ///|
-pub extern "js" fn pow(
+extern "js" fn modpow_ffi(
   self : BigInt,
-  other : BigInt,
-  modulus~ : BigInt = 1N
+  exponent : BigInt,
+  modulus : BigInt
 ) -> BigInt =
-  #|(x, y, z) => (x ** y) % z
+  #|(x, y, z) => x ** y % z
+
+///|
+extern "js" fn pow_ffi(self : BigInt, exponent : BigInt) -> BigInt =
+  #|(x, y) => x ** y
+
+///|
+pub fn pow(self : BigInt, exponent : BigInt, modulus? : BigInt) -> BigInt {
+  if exponent < 0 {
+    abort("negative exponent")
+  }
+  match modulus {
+    Some(modulus) =>
+      if modulus <= 0 {
+        abort("non-positive modulus")
+      } else {
+        modpow_ffi(self, exponent, modulus)
+      }
+    None => pow_ffi(self, exponent)
+  }
+}
 
 ///|
 extern "js" fn to_byte(self : BigInt) -> Byte =
@@ -192,3 +212,15 @@ extern "js" fn js_shl(self : BigInt, other : Int) -> BigInt =
 ///|
 extern "js" fn js_shr(self : BigInt, other : Int) -> BigInt =
   #|(x, y) => x >> BigInt(y)
+
+///|
+pub extern "js" fn land(self : BigInt, other : BigInt) -> BigInt =
+  #|(x, y) => x & y
+
+///|
+pub extern "js" fn lor(self : BigInt, other : BigInt) -> BigInt =
+  #|(x, y) => x | y
+
+///|
+pub extern "js" fn lxor(self : BigInt, other : BigInt) -> BigInt =
+  #|(x, y) => x ^ y
