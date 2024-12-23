@@ -101,11 +101,12 @@ pub fn op_set[K : Hash + Eq, V](self : T[K, V], key : K, value : V) -> Unit {
 ///|
 /// Get the value associated with a key.
 pub fn get[K : Hash + Eq, V](self : T[K, V], key : K) -> V? {
-  let hash = key.hash()
+  self.get_with_hash(key, key.hash())
+}
+
+///|
+fn get_with_hash[K : Hash + Eq, V](self : T[K, V], key : K, hash : Int) -> V? {
   for i = 0, idx = hash & (self.capacity - 1) {
-    // if i == self.capacity {
-    //   panic()
-    // }
     match self.entries[idx] {
       Some(entry) => {
         if entry.hash == hash && entry.key == key {
@@ -156,11 +157,12 @@ pub fn get_or_init[K : Hash + Eq, V](
   key : K,
   init : () -> V
 ) -> V {
-  match self.get(key) {
+  let hash = key.hash()
+  match self.get_with_hash(key, hash) {
     Some(v) => v
     None => {
       let v = init()
-      self.set(key, v)
+      self.set_with_hash(key, v, hash)
       v
     }
   }
