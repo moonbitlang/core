@@ -566,6 +566,33 @@ pub fn iter[A](self : T[A]) -> Iter[A] {
 }
 
 ///|
+pub fn iter2[A](self : T[A]) -> Iter2[Int, A] {
+  Iter2::new(fn(yield_) {
+    guard not(self.is_empty()) else { IterContinue }
+    let { head, buf, len, .. } = self
+    let cap = buf.length()
+    let head_len = cap - head
+    let mut j = 0
+    if head_len >= len {
+      for i in head..<(head + len) {
+        guard let IterContinue = yield_(j, buf[i]) else { x => return x }
+        j += 1
+      }
+    } else {
+      for i in head..<cap {
+        guard let IterContinue = yield_(j, buf[i]) else { x => return x }
+        j += 1
+      }
+      for i in 0..<(len - head_len) {
+        guard let IterContinue = yield_(j, buf[i]) else { x => return x }
+        j += 1
+      }
+    }
+    IterContinue
+  })
+}
+
+///|
 pub fn T::from_iter[A](iter : Iter[A]) -> T[A] {
   let dq = T::new()
   iter.each(fn(e) { dq.push_back(e) })
