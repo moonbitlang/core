@@ -39,6 +39,22 @@ pub fn T::from_array[A](arr : Array[A]) -> T[A] {
 }
 
 ///|
+/// Creates a new copy of this deque.
+pub fn T::copy[A](self : T[A]) -> T[A] {
+  let len = self.len
+  let deq = T::{
+    buf: UninitializedArray::make(len),
+    len,
+    head: 0,
+    tail: len - 1,
+  }
+  for i, x in self {
+    deq.buf[i] = x
+  }
+  deq
+}
+
+///|
 pub fn T::of[A](arr : FixedArray[A]) -> T[A] {
   let deq = T::{
     buf: UninitializedArray::make(arr.length()),

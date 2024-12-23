@@ -203,6 +203,15 @@ test "from_array" {
   inspect!(@deque.of([1, 2, 3]), content="@deque.of([1, 2, 3])")
 }
 
+test "copy" {
+  inspect!((@deque.new() : @deque.T[Int]).copy(), content="@deque.of([])")
+  let deq = @deque.of([1, 2, 3])
+  let deq1 = deq.copy()
+  deq1[0] = 111
+  inspect!(deq, content="@deque.of([1, 2, 3])")
+  inspect!(deq1, content="@deque.of([111, 2, 3])")
+}
+
 test "op_set" {
   let dv = @deque.of([1, 2, 3, 4, 5])
   dv[1] = 3
