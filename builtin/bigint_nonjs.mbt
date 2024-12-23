@@ -995,7 +995,7 @@ pub fn land(self : BigInt, other : BigInt) -> BigInt {
       x_limbs[i] = x_limbs[i] ^ 0xFFFFFFFFU
     }
   }
-  
+
   // return the result
   {
     limbs: FixedArray::make(max_length - 1, 0U)..unsafe_blit(
