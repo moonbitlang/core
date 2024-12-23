@@ -925,3 +925,264 @@ pub fn BigInt::to_octets(self : BigInt, length? : Int) -> Bytes {
   }
   result
 }
+
+///|
+pub fn land(self : BigInt, other : BigInt) -> BigInt {
+  let max_length = if self.limbs.length() < other.limbs.length() {
+    other.limbs.length() + 1
+  } else {
+    self.limbs.length() + 1
+  }
+  // Extend the limbs to store the sign bits
+  let x_limbs = FixedArray::make(max_length, 0U)..unsafe_blit(
+    0,
+    self.limbs,
+    0,
+    self.limbs.length(),
+  )
+  let y_limbs = FixedArray::make(max_length, 0U)..unsafe_blit(
+    0,
+    other.limbs,
+    0,
+    other.limbs.length(),
+  )
+
+  // Calculate the complement code per 2
+  if self.sign == Negative {
+    for i = 0; i < x_limbs.length(); i = i + 1 {
+      x_limbs[i] = x_limbs[i] ^ 0xFFFFFFFFU
+    }
+    for i = 0; i < x_limbs.length(); i = i + 1 {
+      x_limbs[i] += 1
+      if x_limbs[i] != 0x0U {
+        break
+      }
+    }
+  }
+  if other.sign == Negative {
+    for i = 0; i < y_limbs.length(); i = i + 1 {
+      y_limbs[i] = y_limbs[i] ^ 0xFFFFFFFFU
+    }
+    for i = 0; i < y_limbs.length(); i = i + 1 {
+      y_limbs[i] += 1
+      if y_limbs[i] != 0x0U {
+        break
+      }
+    }
+  }
+
+  // Bit Ops 
+  for i = 0; i < x_limbs.length(); i = i + 1 {
+    x_limbs[i] = x_limbs[i] & y_limbs[i]
+  }
+
+  // Check wether the result is either positive or negative
+  let new_sign = if x_limbs[x_limbs.length() - 1] == 0xFFFFFFFFU {
+    Negative
+  } else {
+    Positive
+  }
+
+  // Restore as true code
+  if new_sign == Negative {
+    for i = 0; i < x_limbs.length(); i = i + 1 {
+      x_limbs[i] -= 1
+      if x_limbs[i] != 0xFFFFFFFFU {
+        break
+      }
+    }
+    for i = 0; i < x_limbs.length(); i = i + 1 {
+      x_limbs[i] = x_limbs[i] ^ 0xFFFFFFFFU
+    }
+  }
+
+  // return the result
+  {
+    limbs: FixedArray::make(max_length - 1, 0U)..unsafe_blit(
+      0,
+      x_limbs,
+      0,
+      max_length - 1,
+    ),
+    sign: new_sign,
+    len: if self.len > other.len {
+      self.len
+    } else {
+      other.len
+    },
+  }
+}
+
+///|
+pub fn lor(self : BigInt, other : BigInt) -> BigInt {
+  let max_length = if self.limbs.length() < other.limbs.length() {
+    other.limbs.length() + 1
+  } else {
+    self.limbs.length() + 1
+  }
+  // Extend the limbs to store the sign bits
+  let x_limbs = FixedArray::make(max_length, 0U)..unsafe_blit(
+    0,
+    self.limbs,
+    0,
+    self.limbs.length(),
+  )
+  let y_limbs = FixedArray::make(max_length, 0U)..unsafe_blit(
+    0,
+    other.limbs,
+    0,
+    other.limbs.length(),
+  )
+
+  // Calculate the complement code per 2
+  if self.sign == Negative {
+    for i = 0; i < x_limbs.length(); i = i + 1 {
+      x_limbs[i] = x_limbs[i] ^ 0xFFFFFFFFU
+    }
+    for i = 0; i < x_limbs.length(); i = i + 1 {
+      x_limbs[i] += 1
+      if x_limbs[i] != 0x0U {
+        break
+      }
+    }
+  }
+  if other.sign == Negative {
+    for i = 0; i < y_limbs.length(); i = i + 1 {
+      y_limbs[i] = y_limbs[i] ^ 0xFFFFFFFFU
+    }
+    for i = 0; i < y_limbs.length(); i = i + 1 {
+      y_limbs[i] += 1
+      if y_limbs[i] != 0x0U {
+        break
+      }
+    }
+  }
+
+  // Bit Ops 
+  for i = 0; i < x_limbs.length(); i = i + 1 {
+    x_limbs[i] = x_limbs[i] | y_limbs[i]
+  }
+
+  // Check wether the result is either positive or negative
+  let new_sign = if x_limbs[x_limbs.length() - 1] == 0xFFFFFFFFU {
+    Negative
+  } else {
+    Positive
+  }
+
+  // Restore as true code
+  if new_sign == Negative {
+    for i = 0; i < x_limbs.length(); i = i + 1 {
+      x_limbs[i] -= 1
+      if x_limbs[i] != 0xFFFFFFFFU {
+        break
+      }
+    }
+    for i = 0; i < x_limbs.length(); i = i + 1 {
+      x_limbs[i] = x_limbs[i] ^ 0xFFFFFFFFU
+    }
+  }
+
+  // return the result
+  {
+    limbs: FixedArray::make(max_length - 1, 0U)..unsafe_blit(
+      0,
+      x_limbs,
+      0,
+      max_length - 1,
+    ),
+    sign: new_sign,
+    len: if self.len > other.len {
+      self.len
+    } else {
+      other.len
+    },
+  }
+}
+
+///|
+pub fn lxor(self : BigInt, other : BigInt) -> BigInt {
+  let max_length = if self.limbs.length() < other.limbs.length() {
+    other.limbs.length() + 1
+  } else {
+    self.limbs.length() + 1
+  }
+  // Extend the limbs to store the sign bits
+  let x_limbs = FixedArray::make(max_length, 0U)..unsafe_blit(
+    0,
+    self.limbs,
+    0,
+    self.limbs.length(),
+  )
+  let y_limbs = FixedArray::make(max_length, 0U)..unsafe_blit(
+    0,
+    other.limbs,
+    0,
+    other.limbs.length(),
+  )
+
+  // Calculate the complement code per 2
+  if self.sign == Negative {
+    for i = 0; i < x_limbs.length(); i = i + 1 {
+      x_limbs[i] = x_limbs[i] ^ 0xFFFFFFFFU
+    }
+    for i = 0; i < x_limbs.length(); i = i + 1 {
+      x_limbs[i] += 1
+      if x_limbs[i] != 0x0U {
+        break
+      }
+    }
+  }
+  if other.sign == Negative {
+    for i = 0; i < y_limbs.length(); i = i + 1 {
+      y_limbs[i] = y_limbs[i] ^ 0xFFFFFFFFU
+    }
+    for i = 0; i < y_limbs.length(); i = i + 1 {
+      y_limbs[i] += 1
+      if y_limbs[i] != 0x0U {
+        break
+      }
+    }
+  }
+
+  // Bit Ops 
+  for i = 0; i < x_limbs.length(); i = i + 1 {
+    x_limbs[i] = x_limbs[i] ^ y_limbs[i]
+  }
+
+  // Check wether the result is either positive or negative
+  let new_sign = if x_limbs[x_limbs.length() - 1] == 0xFFFFFFFFU {
+    Negative
+  } else {
+    Positive
+  }
+
+  // Restore as true code
+  if new_sign == Negative {
+    for i = 0; i < x_limbs.length(); i = i + 1 {
+      x_limbs[i] -= 1
+      if x_limbs[i] != 0xFFFFFFFFU {
+        break
+      }
+    }
+    for i = 0; i < x_limbs.length(); i = i + 1 {
+      x_limbs[i] = x_limbs[i] ^ 0xFFFFFFFFU
+    }
+  }
+
+  // return the result
+  {
+    limbs: FixedArray::make(max_length - 1, 0U)..unsafe_blit(
+      0,
+      x_limbs,
+      0,
+      max_length - 1,
+    ),
+    sign: new_sign,
+    len: if self.len > other.len {
+      self.len
+    } else {
+      other.len
+    },
+  }
+}
