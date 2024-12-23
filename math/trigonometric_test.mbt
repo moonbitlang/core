@@ -44,8 +44,8 @@ test "sin" {
     -6.7344058693131973066e-01,
   ]
   inspect!(@math.sin(@double.not_a_number), content="NaN")
-  inspect!(@math.sin(@double.infinity), content="Infinity")
-  inspect!(@math.sin(@double.neg_infinity), content="-Infinity")
+  inspect!(@math.sin(@double.infinity), content="NaN")
+  inspect!(@math.sin(@double.neg_infinity), content="NaN")
   let mut max_inaccuracy = 0.0
   for i = 0; i < vf.length(); i = i + 1 {
     inspect!(imprecise_equal(@math.sin(vf[i]), sin_res[i]), content="true")
@@ -79,8 +79,8 @@ test "cos" {
     -7.3924135157173099849e-01,
   ]
   inspect!(@math.cos(@double.not_a_number), content="NaN")
-  inspect!(@math.cos(@double.infinity), content="Infinity")
-  inspect!(@math.cos(@double.neg_infinity), content="-Infinity")
+  inspect!(@math.cos(@double.infinity), content="NaN")
+  inspect!(@math.cos(@double.neg_infinity), content="NaN")
   let mut max_inaccuracy = 0.0
   for i = 0; i < vf.length(); i = i + 1 {
     inspect!(imprecise_equal(@math.cos(vf[i]), cos_res[i]), content="true")
@@ -114,8 +114,8 @@ test "tan" {
     9.1098879344275101051e-01,
   ]
   inspect!(@math.tan(@double.not_a_number), content="NaN")
-  inspect!(@math.tan(@double.infinity), content="Infinity")
-  inspect!(@math.tan(@double.neg_infinity), content="-Infinity")
+  inspect!(@math.tan(@double.infinity), content="NaN")
+  inspect!(@math.tan(@double.neg_infinity), content="NaN")
   let mut max_inaccuracy = 0.0
   for i = 0; i < vf.length(); i = i + 1 {
     inspect!(imprecise_equal(@math.tan(vf[i]), tan_res[i]), content="true")
@@ -164,8 +164,8 @@ test "asin" {
     -1.0523547536021497774980928e+00,
   ]
   inspect!(@math.asin(@double.not_a_number), content="NaN")
-  inspect!(@math.asin(@double.infinity), content="Infinity")
-  inspect!(@math.asin(@double.neg_infinity), content="-Infinity")
+  inspect!(@math.asin(@double.infinity), content="NaN")
+  inspect!(@math.asin(@double.neg_infinity), content="NaN")
   let mut max_inaccuracy = 0.0
   for i = 0; i < vf.length(); i = i + 1 {
     inspect!(
@@ -188,8 +188,8 @@ test "acos" {
     2.6231510803970463967294145e+00,
   ]
   inspect!(@math.acos(@double.not_a_number), content="NaN")
-  inspect!(@math.acos(@double.infinity), content="Infinity")
-  inspect!(@math.acos(@double.neg_infinity), content="-Infinity")
+  inspect!(@math.acos(@double.infinity), content="NaN")
+  inspect!(@math.acos(@double.neg_infinity), content="NaN")
   let mut max_inaccuracy = 0.0
   for i = 0; i < vf.length(); i = i + 1 {
     inspect!(

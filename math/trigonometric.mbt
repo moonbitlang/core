@@ -41,7 +41,7 @@ let sin_ = [
 ///|
 pub fn sin(x : Double) -> Double {
   if Double::is_inf(x) || Double::is_nan(x) {
-    x
+    @double.not_a_number
   } else {
     let mut sign = false
     let mut x_ = x
@@ -100,7 +100,7 @@ let cos_ = [
 ///|
 pub fn cos(x : Double) -> Double {
   if Double::is_inf(x) || Double::is_nan(x) {
-    x
+    @double.not_a_number
   } else {
     let mut sign = false
     let x_ = x.abs()
@@ -163,7 +163,7 @@ let tan_q = [
 ///|
 pub fn tan(x : Double) -> Double {
   if Double::is_inf(x) || Double::is_nan(x) {
-    x
+    @double.not_a_number
   } else {
     let x_ = x.abs()
     let mut j = (x_ * pi4).to_int64()
@@ -255,7 +255,7 @@ pub fn atan(x : Double) -> Double {
 
 ///|
 pub fn asin(x : Double) -> Double {
-  if Double::is_inf(x) || Double::is_nan(x) || x == 0.0 {
+  if Double::is_nan(x) || x == 0.0 {
     x
   } else {
     let x_ = x.abs()
@@ -271,7 +271,7 @@ pub fn asin(x : Double) -> Double {
 
 ///|
 pub fn acos(x : Double) -> Double {
-  if Double::is_inf(x) || Double::is_nan(x) {
+  if Double::is_nan(x) {
     x
   } else {
     PI / 2.0 - asin(x)
