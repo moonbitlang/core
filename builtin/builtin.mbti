@@ -168,7 +168,7 @@ impl BigInt {
   op_shl(Self, Int) -> Self
   op_shr(Self, Int) -> Self
   op_sub(Self, Self) -> Self
-  pow(Self, Self, modulus~ : Self = ..) -> Self
+  pow(Self, Self, modulus? : Self) -> Self
   shl(Self, Int) -> Self //deprecated
   shr(Self, Int) -> Self //deprecated
   to_hex(Self, uppercase~ : Bool = ..) -> String
