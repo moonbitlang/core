@@ -141,6 +141,8 @@ impl ArrayView {
   to_json[X : ToJson](Self[X]) -> Json
   to_string[X : Show](Self[X]) -> String
 }
+impl[T : Compare] Compare for ArrayView[T]
+impl[T : Eq] Eq for ArrayView[T]
 impl[X : Show] Show for ArrayView[X]
 
 type BigInt
@@ -153,7 +155,10 @@ impl BigInt {
   from_octets(Bytes, signum~ : Int = ..) -> Self
   from_string(String) -> Self
   is_zero(Self) -> Bool
+  land(Self, Self) -> Self
+  lor(Self, Self) -> Self
   lsl(Self, Int) -> Self //deprecated
+  lxor(Self, Self) -> Self
   op_add(Self, Self) -> Self
   op_div(Self, Self) -> Self
   op_equal(Self, Self) -> Bool
@@ -163,7 +168,7 @@ impl BigInt {
   op_shl(Self, Int) -> Self
   op_shr(Self, Int) -> Self
   op_sub(Self, Self) -> Self
-  pow(Self, Self, modulus~ : Self = ..) -> Self
+  pow(Self, Self, modulus? : Self) -> Self
   shl(Self, Int) -> Self //deprecated
   shr(Self, Int) -> Self //deprecated
   to_hex(Self, uppercase~ : Bool = ..) -> String

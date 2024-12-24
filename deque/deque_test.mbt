@@ -203,6 +203,15 @@ test "from_array" {
   inspect!(@deque.of([1, 2, 3]), content="@deque.of([1, 2, 3])")
 }
 
+test "copy" {
+  inspect!((@deque.new() : @deque.T[Int]).copy(), content="@deque.of([])")
+  let deq = @deque.of([1, 2, 3])
+  let deq1 = deq.copy()
+  deq1[0] = 111
+  inspect!(deq, content="@deque.of([1, 2, 3])")
+  inspect!(deq1, content="@deque.of([111, 2, 3])")
+}
+
 test "op_set" {
   let dv = @deque.of([1, 2, 3, 4, 5])
   dv[1] = 3
@@ -364,4 +373,76 @@ test "from_iter single element iter" {
 test "from_iter empty iter" {
   let dq : @deque.T[Int] = @deque.T::from_iter(Iter::empty())
   inspect!(dq, content="@deque.of([])")
+}
+
+test "from_array with single element" {
+  let arr = [42]
+  let deque = @deque.T::from_array(arr)
+  assert_eq!(deque.length(), 1)
+  assert_eq!(deque.front(), Some(42))
+  assert_eq!(deque.back(), Some(42))
+}
+
+test "unsafe_pop_front after many push_front" {
+  let dq = @deque.new()
+  // First fill some elements to create a buffer with some capacity
+  for i = 0; i < 10; i = i + 1 {
+    dq.push_front(i)
+  }
+  // Pop all elements except one
+  for i = 0; i < 9; i = i + 1 {
+    dq.unsafe_pop_front()
+  }
+  // Now head should be at the end of buffer
+  // When we pop again, head should wrap around to 0
+  inspect!(dq.front(), content="Some(0)")
+  dq.unsafe_pop_front()
+  inspect!(dq.is_empty(), content="true")
+}
+
+test "unsafe_pop_back when tail needs to wrap around" {
+  let dq = @deque.new(capacity=2)
+  dq.push_back(1) // tail = 0
+  dq.push_back(2) // tail = 1
+  dq.unsafe_pop_front() // head = 1
+  dq.push_back(3) // tail = 0 (wraps around)
+  dq.unsafe_pop_back()
+  inspect!(dq.back(), content="Some(2)")
+}
+
+test "deque op_set wrapping case" {
+  let dq = @deque.new(capacity=4)
+  // Add elements until the deque wraps around
+  dq.push_back(1) // head=0, tail=0
+  dq.push_back(2) // head=0, tail=1
+  dq.push_back(3) // head=0, tail=2
+  dq.push_back(4) // head=0, tail=3
+  dq.push_front(0) // head=3, tail=3
+
+  // Now the deque is [0,1,2,3,4] with head=3, tail=3
+  // Setting dq[2] should trigger the uncovered branch
+  dq[2] = 10
+
+  // Verify the change
+  inspect!(dq, content="@deque.of([0, 10, 2, 3, 4])")
+}
+
+test "iter when tail needs to wrap around" {
+  let dq = @deque.new(capacity=2)
+  dq.push_back(1) // tail = 0
+  dq.push_back(2) // tail = 1
+  dq.unsafe_pop_front() // head = 1
+  dq.push_back(3) // tail = 0 (wraps around)
+  inspect!(dq.iter().to_array(), content="[2, 3]")
+  inspect!(dq.iter().filter(fn(x) { x % 2 == 0 }).to_array(), content="[2]")
+  inspect!(dq.iter().filter(fn(x) { x % 2 != 0 }).to_array(), content="[3]")
+}
+
+test "iter2 when tail needs to wrap around" {
+  let dq = @deque.new(capacity=2)
+  dq.push_back(1) // tail = 0
+  dq.push_back(2) // tail = 1
+  dq.unsafe_pop_front() // head = 1
+  dq.push_back(3) // tail = 0 (wraps around)
+  inspect!(dq.iter2().to_array(), content="[(0, 2), (1, 3)]")
 }

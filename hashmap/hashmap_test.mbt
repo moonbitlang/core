@@ -289,3 +289,24 @@ test "from_iter empty iter" {
   let map : @hashmap.T[Int, Int] = @hashmap.T::from_iter(Iter::empty())
   inspect!(map, content="HashMap::of([])")
 }
+
+test "@hashmap.contains/empty" {
+  let map : @hashmap.T[Int, String] = @hashmap.T::new()
+  inspect!(map.contains(42), content="false")
+}
+
+test "@hashmap.contains/basic" {
+  let map = @hashmap.T::of([(1, "one"), (2, "two"), (3, "three")])
+  inspect!(map.contains(2), content="true")
+  inspect!(map.contains(4), content="false")
+}
+
+test "@hashmap.contains/after_operations" {
+  let map = @hashmap.T::of([(1, "one"), (2, "two")])
+  map.remove(1)
+  inspect!(map.contains(1), content="false")
+  map.set(1, "ONE")
+  inspect!(map.contains(1), content="true")
+  map.clear()
+  inspect!(map.contains(2), content="false")
+}
