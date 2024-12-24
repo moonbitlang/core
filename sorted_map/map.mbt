@@ -241,6 +241,17 @@ pub impl[K : @quickcheck.Arbitrary + Compare, V : @quickcheck.Arbitrary] @quickc
   @quickcheck.Arbitrary::arbitrary(size, rs) |> T::from_iter
 }
 
+///|Returns a new array of key-value pairs that are within the specified range [low, high).
+pub fn range[K : Compare, V](
+  self : T[K, V],
+  low : K,
+  high : K
+) -> Array[(K, V)] {
+  let result = []
+  self.each(fn(k, v) { if k >= low && k <= high { result.push((k, v)) } })
+  result
+}
+
 // AVL tree operations
 
 ///|
