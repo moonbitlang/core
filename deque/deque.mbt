@@ -346,8 +346,8 @@ pub fn op_equal[A : Eq](self : T[A], other : T[A]) -> Bool {
 /// assert_eq!(sum, 15)
 /// ```
 pub fn each[A](self : T[A], f : (A) -> Unit) -> Unit {
-  for i = 0; i < self.length(); i = i + 1 {
-    f(self[i])
+  for v in self {
+    f(v)
   }
 }
 
@@ -362,8 +362,8 @@ pub fn each[A](self : T[A], f : (A) -> Unit) -> Unit {
 /// assert_eq!(idx_sum, 10)
 /// ```
 pub fn eachi[A](self : T[A], f : (Int, A) -> Unit) -> Unit {
-  for i = 0; i < self.length(); i = i + 1 {
-    f(i, self[i])
+  for i, v in self {
+    f(i, v)
   }
 }
 
