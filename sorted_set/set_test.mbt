@@ -222,3 +222,9 @@ test "from_iter empty iter" {
   let pq : @sorted_set.T[Int] = @sorted_set.T::from_iter(Iter::empty())
   inspect!(pq, content="@sorted_set.of([])")
 }
+
+test "range" {
+  let set = @sorted_set.of([1, 2, 3, 4, 5])
+  let result = set.range(2, 4)
+  inspect!(result, content="[2, 3, 4]")
+}

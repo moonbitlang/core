@@ -428,6 +428,13 @@ fn to_array[T](self : Node[T]) -> Array[T] {
   aux(Some(self))
 }
 
+///|
+pub fn range[V : Compare](self : T[V], low : V, high : V) -> Array[V] {
+  let result = []
+  self.each(fn(x) { if x >= low && x <= high { result.push(x) } })
+  result
+}
+
 // AVL tree operations
 
 ///|
