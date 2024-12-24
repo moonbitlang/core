@@ -211,3 +211,14 @@ test "iter" {
   }
   inspect!(buf, content="[1a][2b][3c]")
 }
+
+test "range" {
+  let map = @sorted_map.of([(1, "a"), (2, "b"), (3, "c"), (4, "d"), (5, "e")])
+  let result = map.range(2, 4)
+  inspect!(
+    result,
+    content=
+      #|[(2, "b"), (3, "c"), (4, "d")]
+    ,
+  )
+}
