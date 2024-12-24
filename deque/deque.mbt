@@ -39,6 +39,22 @@ pub fn T::from_array[A](arr : Array[A]) -> T[A] {
 }
 
 ///|
+/// Creates a new copy of this deque.
+pub fn T::copy[A](self : T[A]) -> T[A] {
+  let len = self.len
+  let deq = T::{
+    buf: UninitializedArray::make(len),
+    len,
+    head: 0,
+    tail: len - 1,
+  }
+  for i, x in self {
+    deq.buf[i] = x
+  }
+  deq
+}
+
+///|
 pub fn T::of[A](arr : FixedArray[A]) -> T[A] {
   let deq = T::{
     buf: UninitializedArray::make(arr.length()),
@@ -542,12 +558,53 @@ pub fn shrink_to_fit[A](self : T[A]) -> Unit {
 ///|
 pub fn iter[A](self : T[A]) -> Iter[A] {
   Iter::new(fn(yield_) {
-    for i in 0..<self.length() {
-      guard let IterContinue = yield_(self[i]) else { x => break x }
+    guard not(self.is_empty()) else { IterContinue }
+    let { head, buf, len, .. } = self
+    let cap = buf.length()
+    let head_len = cap - head
+    if head_len >= len {
+      for i in head..<(head + len) {
+        guard let IterContinue = yield_(buf[i]) else { x => return x }
 
+      }
     } else {
-      IterContinue
+      for i in head..<cap {
+        guard let IterContinue = yield_(buf[i]) else { x => return x }
+
+      }
+      for i in 0..<(len - head_len) {
+        guard let IterContinue = yield_(buf[i]) else { x => return x }
+
+      }
     }
+    IterContinue
+  })
+}
+
+///|
+pub fn iter2[A](self : T[A]) -> Iter2[Int, A] {
+  Iter2::new(fn(yield_) {
+    guard not(self.is_empty()) else { IterContinue }
+    let { head, buf, len, .. } = self
+    let cap = buf.length()
+    let head_len = cap - head
+    let mut j = 0
+    if head_len >= len {
+      for i in head..<(head + len) {
+        guard let IterContinue = yield_(j, buf[i]) else { x => return x }
+        j += 1
+      }
+    } else {
+      for i in head..<cap {
+        guard let IterContinue = yield_(j, buf[i]) else { x => return x }
+        j += 1
+      }
+      for i in 0..<(len - head_len) {
+        guard let IterContinue = yield_(j, buf[i]) else { x => return x }
+        j += 1
+      }
+    }
+    IterContinue
   })
 }
 
