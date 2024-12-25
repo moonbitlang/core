@@ -13,6 +13,9 @@
 // limitations under the License.
 
 ///|
+fn set_null[T](buffer : UninitializedArray[T], index : Int) = "%fixedarray.set_null"
+
+///|
 /// Creates a new, empty deque.
 pub fn T::new[A](capacity~ : Int = 0) -> T[A] {
   T::{ buf: UninitializedArray::make(capacity), len: 0, head: 0, tail: 0 }
@@ -199,8 +202,12 @@ pub fn push_back[A](self : T[A], value : A) -> Unit {
 pub fn unsafe_pop_front[A](self : T[A]) -> Unit {
   match self.len {
     0 => abort("The deque is empty!")
-    1 => self.len -= 1
+    1 => {
+      set_null(self.buf, self.head)
+      self.len -= 1
+    }
     _ => {
+      set_null(self.buf, self.head)
       self.head = if self.head < self.buf.length() - 1 {
         self.head + 1
       } else {
@@ -231,8 +238,12 @@ pub fn pop_front_exn[A](self : T[A]) -> Unit {
 pub fn unsafe_pop_back[A](self : T[A]) -> Unit {
   match self.len {
     0 => abort("The deque is empty!")
-    1 => self.len -= 1
+    1 => {
+      set_null(self.buf, self.tail)
+      self.len -= 1
+    }
     _ => {
+      set_null(self.buf, self.tail)
       self.tail = if self.tail > 0 {
         self.tail - 1
       } else {
@@ -262,11 +273,14 @@ pub fn pop_front[A](self : T[A]) -> A? {
   match self.len {
     0 => None
     1 => {
+      let origin_head = self.buf[self.head]
+      set_null(self.buf, self.head)
       self.len -= 1
-      Some(self.buf[self.head])
+      Some(origin_head)
     }
     _ => {
       let origin_head = self.head
+      set_null(self.buf, self.head)
       self.head = if self.head < self.buf.length() - 1 {
         self.head + 1
       } else {
@@ -290,11 +304,14 @@ pub fn pop_back[A](self : T[A]) -> A? {
   match self.len {
     0 => None
     1 => {
+      let origin_back = self.buf[self.tail]
+      set_null(self.buf, self.tail)
       self.len -= 1
-      Some(self.buf[self.tail])
+      Some(origin_back)
     }
     _ => {
       let origin_back = self.tail
+      set_null(self.buf, self.tail)
       self.tail = if self.tail > 0 {
         self.tail - 1
       } else {
