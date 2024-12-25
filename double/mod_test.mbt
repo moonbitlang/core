@@ -29,9 +29,12 @@ test "mod" {
   inspect!(5.75 % 5.75, content="0")
   inspect!(15.25 % 4.5, content="1.75")
   inspect!(-8.4 % 3.2, content="-2")
+  inspect!(8.0 % 4.0, content="0")
+  inspect!(15.0 % 3.0, content="0")
   // subnormal numbers
   inspect!(5.0e-324 % 5.0e-324, content="0")
   inspect!(0.5 % 1.5e-323, content="1e-323")
+  inspect!(4.0e-310 % 3.0e-310, content="1e-310")
   // inf
   inspect!(1.0 % @double.infinity, content="1")
   assert_true!(@double.is_nan(@double.infinity % @double.infinity))
