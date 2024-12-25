@@ -197,12 +197,18 @@ pub fn push_back[A](self : T[A], value : A) -> Unit {
 /// ```
 /// @alert unsafe "Panic if the deque is empty."
 pub fn unsafe_pop_front[A](self : T[A]) -> Unit {
-  if self.len == 0 {
-    abort("The deque is empty!")
+  match self.len {
+    0 => abort("The deque is empty!")
+    1 => self.len -= 1
+    _ => {
+      self.head = if self.head < self.buf.length() - 1 {
+        self.head + 1
+      } else {
+        0
+      }
+      self.len -= 1
+    }
   }
-  self.head = if self.head < self.buf.length() - 1 { self.head + 1 } else { 0 }
-  self.len -= 1
-  guard self.len != 0 || (self.head == self.tail)
 }
 
 ///|
@@ -223,12 +229,18 @@ pub fn pop_front_exn[A](self : T[A]) -> Unit {
 /// ```
 /// @alert unsafe "Panic if the deque is empty."
 pub fn unsafe_pop_back[A](self : T[A]) -> Unit {
-  if self.len == 0 {
-    abort("The deque is empty!")
+  match self.len {
+    0 => abort("The deque is empty!")
+    1 => self.len -= 1
+    _ => {
+      self.tail = if self.tail > 0 {
+        self.tail - 1
+      } else {
+        self.buf.length() - 1
+      }
+      self.len -= 1
+    }
   }
-  self.tail = if self.tail > 0 { self.tail - 1 } else { self.buf.length() - 1 }
-  self.len -= 1
-  guard self.len != 0 || (self.head == self.tail)
 }
 
 ///|
@@ -247,13 +259,23 @@ pub fn pop_back_exn[A](self : T[A]) -> Unit {
 /// assert_eq!(dv.pop_front(), Some(1))
 /// ```
 pub fn pop_front[A](self : T[A]) -> A? {
-  if self.len == 0 {
-    return None
+  match self.len {
+    0 => None
+    1 => {
+      self.len -= 1
+      Some(self.buf[self.head])
+    }
+    _ => {
+      let origin_head = self.head
+      self.head = if self.head < self.buf.length() - 1 {
+        self.head + 1
+      } else {
+        0
+      }
+      self.len -= 1
+      Some(self.buf[origin_head])
+    }
   }
-  let origin_head = self.head
-  self.head = if self.head < self.buf.length() - 1 { self.head + 1 } else { 0 }
-  self.len -= 1
-  Some(self.buf[origin_head])
 }
 
 ///|
@@ -265,13 +287,23 @@ pub fn pop_front[A](self : T[A]) -> A? {
 /// assert_eq!(dv.pop_back(), Some(5))
 /// ```
 pub fn pop_back[A](self : T[A]) -> A? {
-  if self.len == 0 {
-    return None
+  match self.len {
+    0 => None
+    1 => {
+      self.len -= 1
+      Some(self.buf[self.tail])
+    }
+    _ => {
+      let origin_back = self.tail
+      self.tail = if self.tail > 0 {
+        self.tail - 1
+      } else {
+        self.buf.length() - 1
+      }
+      self.len -= 1
+      Some(self.buf[origin_back])
+    }
   }
-  let origin_back = self.tail
-  self.tail = if self.tail > 0 { self.tail - 1 } else { self.buf.length() - 1 }
-  self.len -= 1
-  Some(self.buf[origin_back])
 }
 
 ///|
