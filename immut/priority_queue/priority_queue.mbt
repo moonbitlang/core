@@ -143,6 +143,7 @@ pub fn unsafe_pop[A : Compare](self : T[A]) -> T[A] {
 
 ///|
 /// @alert deprecated "Use `unsafe_pop` instead"
+/// @coverage.skip
 pub fn pop_exn[A : Compare](self : T[A]) -> T[A] {
   unsafe_pop(self)
 }
