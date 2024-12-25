@@ -12,16 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-///|
-/// @alert deprecated "Use `String::trim_start` instead"
-/// @coverage.skip
-pub fn trim_left(self : String, trim_set : String) -> String {
-  self.trim_start(trim_set)
-}
-
-///|
-/// @alert deprecated "Use `String::trim_end` instead"
-/// @coverage.skip
-pub fn trim_right(self : String, trim_set : String) -> String {
-  self.trim_end(trim_set)
+test {
+  let empty : Array[Unit] = Array::make_uninit(0)
+  inspect!(empty, content="[]")
 }

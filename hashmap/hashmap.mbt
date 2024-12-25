@@ -55,10 +55,19 @@ pub fn T::from_array[K : Hash + Eq, V](arr : Array[(K, V)]) -> T[K, V] {
 /// Set a key-value pair into hash map.
 /// @alert unsafe "Panic if the hash map is full."
 pub fn set[K : Hash + Eq, V](self : T[K, V], key : K, value : V) -> Unit {
+  self.set_with_hash(key, value, key.hash())
+}
+
+///|
+fn set_with_hash[K : Eq, V](
+  self : T[K, V],
+  key : K,
+  value : V,
+  hash : Int
+) -> Unit {
   if self.size >= self.capacity / 2 {
     self.grow()
   }
-  let hash = key.hash()
   for idx = hash & (self.capacity - 1), entry = { psl: 0, hash, key, value } {
     match self.entries[idx] {
       None => {
@@ -92,11 +101,12 @@ pub fn op_set[K : Hash + Eq, V](self : T[K, V], key : K, value : V) -> Unit {
 ///|
 /// Get the value associated with a key.
 pub fn get[K : Hash + Eq, V](self : T[K, V], key : K) -> V? {
-  let hash = key.hash()
+  self.get_with_hash(key, key.hash())
+}
+
+///|
+fn get_with_hash[K : Hash + Eq, V](self : T[K, V], key : K, hash : Int) -> V? {
   for i = 0, idx = hash & (self.capacity - 1) {
-    // if i == self.capacity {
-    //   panic()
-    // }
     match self.entries[idx] {
       Some(entry) => {
         if entry.hash == hash && entry.key == key {
@@ -115,6 +125,47 @@ pub fn get[K : Hash + Eq, V](self : T[K, V], key : K) -> V? {
 ///|
 pub fn op_get[K : Hash + Eq, V](self : T[K, V], key : K) -> V? {
   self.get(key)
+}
+
+///|
+/// Gets the value associated with the given key. If the key doesn't exist in the
+/// map, initializes it with the result of calling the provided initialization
+/// function.
+///
+/// Parameters:
+///
+/// * `self` : The hash map.
+/// * `key` : The key to look up in the map.
+/// * `init` : A function that takes no arguments and returns a value to be
+/// associated with the key if it doesn't exist.
+///
+/// Returns the value associated with the key, either existing or newly
+/// initialized.
+///
+/// Example:
+///
+/// ```moonbit
+/// test "get_or_init" {
+///   let map : @hashmap.T[String, Int] = @hashmap.new()
+///   let value = map.get_or_init("key", fn() { 42 })
+///   inspect!(value, content="42")
+///   inspect!(map.get("key"), content="Some(42)")
+/// }
+/// ```
+pub fn get_or_init[K : Hash + Eq, V](
+  self : T[K, V],
+  key : K,
+  init : () -> V
+) -> V {
+  let hash = key.hash()
+  match self.get_with_hash(key, hash) {
+    Some(v) => v
+    None => {
+      let v = init()
+      self.set_with_hash(key, v, hash)
+      v
+    }
+  }
 }
 
 ///|
@@ -181,8 +232,7 @@ fn shift_back[K : Hash, V](self : T[K, V], start_index : Int) -> Unit {
 }
 
 ///|
-// TODO: this could be further optimized
-fn grow[K : Hash + Eq, V](self : T[K, V]) -> Unit {
+fn grow[K : Eq, V](self : T[K, V]) -> Unit {
   let old_entries = self.entries
   let new_capacity = self.capacity << 1
   self.entries = FixedArray::make(new_capacity, None)
@@ -190,7 +240,7 @@ fn grow[K : Hash + Eq, V](self : T[K, V]) -> Unit {
   self.size = 0
   for i = 0; i < old_entries.length(); i = i + 1 {
     match old_entries[i] {
-      Some({ key, value, .. }) => self.set(key, value)
+      Some({ key, value, hash, .. }) => self.set_with_hash(key, value, hash)
       None => ()
     }
   }

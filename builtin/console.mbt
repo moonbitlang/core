@@ -22,6 +22,7 @@ pub fn println[T : Show](input : T) -> Unit {
 
 ///|
 /// @alert deprecated "Use `println` instead"
+/// @coverage.skip
 pub fn print[T : Show](input : T) -> Unit {
   println(input)
 }

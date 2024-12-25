@@ -273,9 +273,6 @@ pub fn clear[T](self : Array[T]) -> Unit {
 /// assert_eq!(v2, [4, 5, 6])
 /// ```
 pub fn map[T, U](self : Array[T], f : (T) -> U) -> Array[U] {
-  if self.length() == 0 {
-    return []
-  }
   let arr = Array::make_uninit(self.length())
   for i, v in self {
     arr.unsafe_set(i, f(v))
@@ -575,6 +572,7 @@ pub fn search[T : Eq](self : Array[T], value : T) -> Int? {
 
 ///|
 /// @alert deprecated "Use `search_by` instead."
+/// @coverage.skip
 pub fn find_index[T](self : Array[T], f : (T) -> Bool) -> Int? {
   search_by(self, f)
 }
@@ -871,6 +869,7 @@ pub fn rev_foldi[A, B](self : Array[A], init~ : B, f : (Int, B, A) -> B) -> B {
 /// assert_eq!(sum, 15)
 /// ```
 /// @alert deprecated "Use `fold` instead."
+/// @coverage.skip
 pub fn fold_left[T, U](self : Array[T], f : (U, T) -> U, init~ : U) -> U {
   self.fold(init~, f)
 }
@@ -884,6 +883,7 @@ pub fn fold_left[T, U](self : Array[T], f : (U, T) -> U, init~ : U) -> U {
 /// assert_eq!(sum, 15)
 /// ```
 /// @alert deprecated "Use `rev_fold` instead."
+/// @coverage.skip
 pub fn fold_right[T, U](self : Array[T], f : (U, T) -> U, init~ : U) -> U {
   self.rev_fold(init~, f)
 }
@@ -897,6 +897,7 @@ pub fn fold_right[T, U](self : Array[T], f : (U, T) -> U, init~ : U) -> U {
 /// assert_eq!(sum, 10)
 /// ```
 /// @alert deprecated "Use `foldi` instead."
+/// @coverage.skip
 pub fn fold_lefti[T, U](self : Array[T], f : (Int, U, T) -> U, init~ : U) -> U {
   self.foldi(init~, f)
 }
@@ -910,6 +911,7 @@ pub fn fold_lefti[T, U](self : Array[T], f : (Int, U, T) -> U, init~ : U) -> U {
 /// assert_eq!(sum, 10)
 /// ```
 /// @alert deprecated "Use `rev_foldi` instead."
+/// @coverage.skip
 pub fn fold_righti[T, U](self : Array[T], f : (Int, U, T) -> U, init~ : U) -> U {
   self.rev_foldi(init~, f)
 }
