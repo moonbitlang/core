@@ -202,6 +202,7 @@ pub fn unsafe_pop_front[A](self : T[A]) -> Unit {
   }
   self.head = if self.head < self.buf.length() - 1 { self.head + 1 } else { 0 }
   self.len -= 1
+  guard self.len != 0 || (self.head == self.tail)
 }
 
 ///|
@@ -227,6 +228,7 @@ pub fn unsafe_pop_back[A](self : T[A]) -> Unit {
   }
   self.tail = if self.tail > 0 { self.tail - 1 } else { self.buf.length() - 1 }
   self.len -= 1
+  guard self.len != 0 || (self.head == self.tail)
 }
 
 ///|
