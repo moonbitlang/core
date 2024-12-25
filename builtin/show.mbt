@@ -137,6 +137,18 @@ pub impl Show for String with output(self, logger) {
 pub impl Show for String with to_string(self) { self }
 
 ///|
+pub impl Show for Failure with to_string(self) {
+  let Failure(msg) = self
+  msg
+}
+
+///|
+pub impl Show for Failure with output(self, logger) {
+  let Failure(msg) = self
+  msg.output(logger)
+}
+
+///|
 /// Returns a valid MoonBit string literal representation of a string,
 /// add quotes and escape special characters.
 pub fn escape(self : String) -> String {

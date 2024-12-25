@@ -179,6 +179,7 @@ impl BigInt {
 impl Show for BigInt
 
 pub(all) type! Failure String
+impl Show for Failure
 
 type Hasher
 impl Hasher {
