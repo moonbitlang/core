@@ -139,13 +139,13 @@ pub impl Show for String with to_string(self) { self }
 ///|
 pub impl Show for Failure with to_string(self) {
   let Failure(msg) = self
-  msg
+  "Failure(\{msg})"
 }
 
 ///|
 pub impl Show for Failure with output(self, logger) {
   let Failure(msg) = self
-  msg.output(logger)
+  "Failure(\{msg})".output(logger)
 }
 
 ///|
