@@ -244,6 +244,7 @@ pub fn Byte::op_shr(self : Byte, count : Int) -> Byte {
 /// Returns the resulting `Byte` value after the bitwise left shift operation.
 /// 
 /// @alert deprecated "Use infix operator `<<` instead"
+/// @coverage.skip
 pub fn Byte::lsl(self : Byte, count : Int) -> Byte {
   (self.to_int() << count).to_byte()
 }
@@ -259,6 +260,7 @@ pub fn Byte::lsl(self : Byte, count : Int) -> Byte {
 /// Returns the result of the logical shift right operation as a `Byte`.
 ///
 /// @alert deprecated "Use infix operator `>>` instead"
+/// @coverage.skip
 pub fn Byte::lsr(self : Byte, count : Int) -> Byte {
   (self.to_uint() >> count).reinterpret_as_int().to_byte()
 }

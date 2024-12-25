@@ -17,6 +17,7 @@
 /// O(log n).
 /// 
 /// @alert deprecated "Use `add` instead"
+/// @coverage.skip
 pub fn insert[K : Compare, V](self : T[K, V], key : K, value : V) -> T[K, V] {
   self.add(key, value)
 }
