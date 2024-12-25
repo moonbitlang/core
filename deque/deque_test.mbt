@@ -427,6 +427,22 @@ test "deque op_set wrapping case" {
   inspect!(dq, content="@deque.of([0, 10, 2, 3, 4])")
 }
 
+test "deque push_front when empty" {
+  let d = @deque.of([0, 1])
+  ignore(d.pop_back())
+  guard let Some(f) = d.pop_back()
+  d.push_front(f)
+  inspect!(d, content="@deque.of([0])")
+}
+
+test "deque push_back when empty" {
+  let d = @deque.of([0, 1])
+  ignore(d.pop_front())
+  guard let Some(f) = d.pop_front()
+  d.push_back(f)
+  inspect!(d, content="@deque.of([1])")
+}
+
 test "iter when tail needs to wrap around" {
   let dq = @deque.new(capacity=2)
   dq.push_back(1) // tail = 0

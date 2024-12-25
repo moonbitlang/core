@@ -157,8 +157,10 @@ pub fn push_front[A](self : T[A], value : A) -> Unit {
   if self.len == self.buf.length() {
     self.realloc()
   }
-  if self.len != 0 {
-    self.head = (self.head + self.buf.length() - 1) % self.buf.length()
+  self.head = if self.len == 0 {
+    self.tail
+  } else {
+    (self.head + self.buf.length() - 1) % self.buf.length()
   }
   self.buf[self.head] = value
   self.len += 1
@@ -179,8 +181,10 @@ pub fn push_back[A](self : T[A], value : A) -> Unit {
   if self.len == self.buf.length() {
     self.realloc()
   }
-  if self.len != 0 {
-    self.tail = (self.tail + self.buf.length() + 1) % self.buf.length()
+  self.tail = if self.len == 0 {
+    self.head
+  } else {
+    (self.tail + self.buf.length() + 1) % self.buf.length()
   }
   self.buf[self.tail] = value
   self.len += 1
