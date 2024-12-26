@@ -279,7 +279,7 @@ pub fn pop_front[A](self : T[A]) -> A? {
       Some(origin_head)
     }
     _ => {
-      let origin_head = self.head
+      let origin_head = self.buf[self.head]
       set_null(self.buf, self.head)
       self.head = if self.head < self.buf.length() - 1 {
         self.head + 1
@@ -287,7 +287,7 @@ pub fn pop_front[A](self : T[A]) -> A? {
         0
       }
       self.len -= 1
-      Some(self.buf[origin_head])
+      Some(origin_head)
     }
   }
 }
@@ -310,7 +310,7 @@ pub fn pop_back[A](self : T[A]) -> A? {
       Some(origin_back)
     }
     _ => {
-      let origin_back = self.tail
+      let origin_back = self.buf[self.tail]
       set_null(self.buf, self.tail)
       self.tail = if self.tail > 0 {
         self.tail - 1
@@ -318,7 +318,7 @@ pub fn pop_back[A](self : T[A]) -> A? {
         self.buf.length() - 1
       }
       self.len -= 1
-      Some(self.buf[origin_back])
+      Some(origin_back)
     }
   }
 }
