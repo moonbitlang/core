@@ -15,6 +15,7 @@
 ///|
 /// Create a new array. Values are lazily built.
 /// @alert deprecated "Use `FixedArray::makei` instead"
+/// @coverage.skip
 pub fn FixedArray::new[T](length : Int, value : () -> T) -> FixedArray[T] {
   if length <= 0 {
     []
@@ -30,6 +31,7 @@ pub fn FixedArray::new[T](length : Int, value : () -> T) -> FixedArray[T] {
 ///|
 /// Create a new array. Values are built from indexes.
 /// @alert deprecated "Use `FixedArray::makei` instead"
+/// @coverage.skip
 pub fn FixedArray::new_with_index[T](
   length : Int,
   value : (Int) -> T
@@ -46,6 +48,7 @@ pub fn FixedArray::new_with_index[T](
 /// assert_eq!(sum, 15)
 /// ```
 /// @alert deprecated "Use `fold` instead"
+/// @coverage.skip
 pub fn fold_left[T, U](self : FixedArray[T], f : (U, T) -> U, init~ : U) -> U {
   self.fold(init~, f)
 }
@@ -59,6 +62,7 @@ pub fn fold_left[T, U](self : FixedArray[T], f : (U, T) -> U, init~ : U) -> U {
 /// assert_eq!(sum, 15)
 /// ```
 /// @alert deprecated "Use `rev_fold` instead"
+/// @coverage.skip
 pub fn fold_right[T, U](self : FixedArray[T], f : (U, T) -> U, init~ : U) -> U {
   self.rev_fold(init~, f)
 }
@@ -72,6 +76,7 @@ pub fn fold_right[T, U](self : FixedArray[T], f : (U, T) -> U, init~ : U) -> U {
 /// assert_eq!(sum, 10)
 /// ```
 /// @alert deprecated "Use `foldi` instead"
+/// @coverage.skip
 pub fn fold_lefti[T, U](
   self : FixedArray[T],
   f : (Int, U, T) -> U,
@@ -89,6 +94,7 @@ pub fn fold_lefti[T, U](
 /// assert_eq!(sum, 10)
 /// ```
 /// @alert deprecated "Use `rev_foldi` instead"
+/// @coverage.skip
 pub fn fold_righti[T, U](
   self : FixedArray[T],
   f : (Int, U, T) -> U,

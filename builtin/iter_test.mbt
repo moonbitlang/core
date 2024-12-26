@@ -213,16 +213,16 @@ test "map" {
   inspect!(exb, content="23456")
 }
 
-test "map_option" {
+test "filter_map" {
   let arr = [1, 2, 3, 4, 5]
   let r1 = arr
     .iter()
-    .map_option(fn(x) { if x < 3 { None } else { Some(x) } })
+    .filter_map(fn(x) { if x < 3 { None } else { Some(x) } })
     .collect()
   inspect!(r1, content="[3, 4, 5]")
-  let r2 : Array[Unit] = arr.iter().map_option(fn(_x) { None }).collect()
+  let r2 : Array[Unit] = arr.iter().filter_map(fn(_x) { None }).collect()
   inspect!(r2, content="[]")
-  let r3 : Array[Unit] = [].iter().map_option(Option::Some).collect()
+  let r3 : Array[Unit] = [].iter().filter_map(Option::Some).collect()
   inspect!(r3, content="[]")
 }
 
@@ -269,8 +269,8 @@ test "find_first2" {
 test "tap" {
   let iter = test_from_array(['1', '2', '3', '4', '5'])
   let exb = StringBuilder::new(size_hint=0)
-  iter..each(fn { x => exb.write_char(x) }).each(fn { x => exb.write_char(x) })
-  inspect!(exb, content="1234512345")
+  iter.tap(fn { x => exb.write_char(x) }).each(fn { x => exb.write_char(x) })
+  inspect!(exb, content="1122334455")
 }
 
 test "prepend" {

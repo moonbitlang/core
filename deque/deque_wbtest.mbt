@@ -12,16 +12,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-///|
-/// @alert deprecated "Use `String::trim_start` instead"
-/// @coverage.skip
-pub fn trim_left(self : String, trim_set : String) -> String {
-  self.trim_start(trim_set)
-}
-
-///|
-/// @alert deprecated "Use `String::trim_end` instead"
-/// @coverage.skip
-pub fn trim_right(self : String, trim_set : String) -> String {
-  self.trim_end(trim_set)
+test "unsafe_pop_front after many push_front" {
+  let dq = new()
+  for i = 0; i < 10; i = i + 1 {
+    dq.push_front(i)
+  }
+  for i = 0; i < 10; i = i + 1 {
+    dq.unsafe_pop_front()
+  }
+  assert_eq!(dq.head, dq.tail)
 }

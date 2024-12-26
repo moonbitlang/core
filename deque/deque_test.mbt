@@ -129,7 +129,7 @@ test "mapi" {
   inspect!(dve.mapi(fn(_idx, x) { x }), content="@deque.of([])")
 }
 
-test "iter_rev" {
+test "rev_each" {
   let mut i = 6
   let mut failed = false
   @deque.of([1, 2, 3, 4, 5]).rev_each(fn(elem) {
@@ -141,7 +141,7 @@ test "iter_rev" {
   assert_false!(failed)
 }
 
-test "iter_revi" {
+test "rev_eachi" {
   let mut i = 6
   let mut j = 0
   let mut failed = false
@@ -445,4 +445,77 @@ test "iter2 when tail needs to wrap around" {
   dq.unsafe_pop_front() // head = 1
   dq.push_back(3) // tail = 0 (wraps around)
   inspect!(dq.iter2().to_array(), content="[(0, 2), (1, 3)]")
+}
+
+test "rev_iter when head needs to wrap around" {
+  let dq = @deque.new(capacity=4)
+  dq.push_back(1)
+  dq.unsafe_pop_front()
+  dq.push_back(2)
+  dq.unsafe_pop_front()
+  for i in 3..=6 {
+    dq.push_back(i)
+  }
+  inspect!(dq.rev_iter().to_array(), content="[6, 5, 4, 3]")
+}
+
+test "rev_iter2 when head needs to wrap around" {
+  let dq = @deque.new(capacity=4)
+  dq.push_back(1)
+  dq.unsafe_pop_front()
+  dq.push_back(2)
+  dq.unsafe_pop_front()
+  for i in 3..=6 {
+    dq.push_back(i)
+  }
+  inspect!(
+    dq.rev_iter2().to_array(),
+    content="[(0, 6), (1, 5), (2, 4), (3, 3)]",
+  )
+}
+
+test "deque push_front when empty" {
+  let d = @deque.of([0, 1])
+  ignore(d.pop_back())
+  guard let Some(f) = d.pop_back()
+  d.push_front(f)
+  inspect!(d, content="@deque.of([0])")
+  let d = @deque.of(["a", "b"])
+  inspect!(
+    d.pop_back(),
+    content=
+      #|Some("b")
+    ,
+  )
+  inspect!(
+    d.pop_back(),
+    content=
+      #|Some("a")
+    ,
+  )
+  d.push_front("a")
+  inspect!(d, content="@deque.of([\"a\"])")
+}
+
+test "deque push_back when empty" {
+  let d = @deque.of([0, 1])
+  ignore(d.pop_front())
+  guard let Some(f) = d.pop_front()
+  d.push_back(f)
+  inspect!(d, content="@deque.of([1])")
+  let d = @deque.of(["a", "b"])
+  inspect!(
+    d.pop_front(),
+    content=
+      #|Some("a")
+    ,
+  )
+  inspect!(
+    d.pop_front(),
+    content=
+      #|Some("b")
+    ,
+  )
+  d.push_back("b")
+  inspect!(d, content="@deque.of([\"b\"])")
 }

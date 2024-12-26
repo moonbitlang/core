@@ -153,6 +153,7 @@ pub fn unsafe_peek[A](self : T[A]) -> A {
 
 ///|
 /// @alert deprecated "Use `unsafe_peek` instead"
+/// @coverage.skip
 pub fn peek_exn[A](self : T[A]) -> A {
   unsafe_peek(self)
 }
@@ -198,6 +199,7 @@ pub fn unsafe_pop[A](self : T[A]) -> A {
 
 ///|
 /// @alert deprecated "Use `unsafe_pop` instead"
+/// @coverage.skip
 pub fn pop_exn[A](self : T[A]) -> A {
   unsafe_pop(self)
 }
