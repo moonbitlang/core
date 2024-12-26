@@ -446,3 +446,19 @@ test "iter2 when tail needs to wrap around" {
   dq.push_back(3) // tail = 0 (wraps around)
   inspect!(dq.iter2().to_array(), content="[(0, 2), (1, 3)]")
 }
+
+test "deque push_front when empty" {
+  let d = @deque.of([0, 1])
+  ignore(d.pop_back())
+  guard let Some(f) = d.pop_back()
+  d.push_front(f)
+  inspect!(d, content="@deque.of([0])")
+}
+
+test "deque push_back when empty" {
+  let d = @deque.of([0, 1])
+  ignore(d.pop_front())
+  guard let Some(f) = d.pop_front()
+  d.push_back(f)
+  inspect!(d, content="@deque.of([1])")
+}
