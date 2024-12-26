@@ -144,7 +144,7 @@ fn coverage_reset(counters : MList[(String, CoverageCounter)]) -> Unit {
 ///|
 fn coverage_log(
   counters : MList[(String, CoverageCounter)],
-  io : Output
+  io : &Output
 ) -> Unit {
   let print = fn { x => io.output(x) }
   let println = fn {

@@ -44,3 +44,33 @@ test {
   @json.inspect!(my_range(1, 10), content={ "lo": 1, "hi": 10 })
   @json.inspect!(my_range("a", "z"), content={ "lo": "a", "hi": "z" })
 }
+
+///|
+fn labeld_break(xss : Array[Array[Double]]) -> Double? {
+  let mut threshold = 0.0
+  mylabel~: for xs in xss {
+    for x in xs {
+      threshold += x
+      if threshold > 10.0 {
+        break mylabel~ Some(threshold)
+      }
+    }
+  } else {
+    None
+  }
+}
+
+test "labeld_break/empty" {
+  let xss : Array[Array[Double]] = []
+  inspect!(labeld_break(xss), content="None")
+}
+
+test "labeld_break/sum_under_threshold" {
+  let xss = [[1.0, 2.0], [3.0, 4.0]]
+  inspect!(labeld_break(xss), content="None")
+}
+
+test "labeld_break/cross_threshold" {
+  let xss = [[3.0, 4.0], [5.0, 6.0]]
+  inspect!(labeld_break(xss), content="Some(12)")
+}

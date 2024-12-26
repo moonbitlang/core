@@ -79,9 +79,10 @@ test "parses nested arrays" {
   let json = test_parse!("[1,[2,3]]")
   assert_eq!(
     json,
-    Json::Array(
-      [Json::Number(1.0), Json::Array([Json::Number(2.0), Json::Number(3.0)])],
-    ),
+    Json::Array([
+      Json::Number(1.0),
+      Json::Array([Json::Number(2.0), Json::Number(3.0)]),
+    ]),
   )
 }
 //endregion
@@ -118,14 +119,12 @@ test "parses integers" {
   let json = test_parse!("[1,23,456,7890]")
   assert_eq!(
     json,
-    Json::Array(
-      [
-        Json::Number(1.0),
-        Json::Number(23.0),
-        Json::Number(456.0),
-        Json::Number(7890.0),
-      ],
-    ),
+    Json::Array([
+      Json::Number(1.0),
+      Json::Number(23.0),
+      Json::Number(456.0),
+      Json::Number(7890.0),
+    ]),
   )
 }
 
@@ -133,14 +132,12 @@ test "parses signed numbers" {
   let json = test_parse!("[-1,2,-0.1,-0]")
   assert_eq!(
     json,
-    Json::Array(
-      [
-        Json::Number(-1.0),
-        Json::Number(2.0),
-        Json::Number(-0.1),
-        Json::Number(-0.0),
-      ],
-    ),
+    Json::Array([
+      Json::Number(-1.0),
+      Json::Number(2.0),
+      Json::Number(-0.1),
+      Json::Number(-0.0),
+    ]),
   )
 }
 
@@ -153,17 +150,15 @@ test "parses exponents" {
   let json = test_parse!("[1e0,1e1,1e01,1.0e0,1.1e0,1e-1,1e+1]")
   assert_eq!(
     json,
-    Json::Array(
-      [
-        Json::Number(1.0),
-        Json::Number(10.0),
-        Json::Number(10.0),
-        Json::Number(1.0),
-        Json::Number(1.1),
-        Json::Number(0.1),
-        Json::Number(10.0),
-      ],
-    ),
+    Json::Array([
+      Json::Number(1.0),
+      Json::Number(10.0),
+      Json::Number(10.0),
+      Json::Number(1.0),
+      Json::Number(1.1),
+      Json::Number(0.1),
+      Json::Number(10.0),
+    ]),
   )
 }
 

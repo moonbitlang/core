@@ -18,23 +18,21 @@
 
 ///|
 pub fn iter[A](self : T[A]) -> Iter[A] {
-  Iter::new(
-    fn(yield_) {
-      match self {
-        Empty => IterContinue
-        Node(left~, right~, value~, ..) =>
-          if left.iter().run(yield_) == IterEnd {
-            return IterEnd
-          } else if yield_(value) == IterEnd {
-            return IterEnd
-          } else if right.iter().run(yield_) == IterEnd {
-            return IterEnd
-          } else {
-            return IterContinue
-          }
-      }
-    },
-  )
+  Iter::new(fn(yield_) {
+    match self {
+      Empty => IterContinue
+      Node(left~, right~, value~, ..) =>
+        if left.iter().run(yield_) == IterEnd {
+          return IterEnd
+        } else if yield_(value) == IterEnd {
+          return IterEnd
+        } else if right.iter().run(yield_) == IterEnd {
+          return IterEnd
+        } else {
+          return IterContinue
+        }
+    }
+  })
 }
 
 ///|
@@ -59,6 +57,22 @@ pub impl[A : Eq] Eq for T[A] with op_equal(self, other) -> Bool {
       continue iter.next(), iter1.next()
     }
     _, _ => false
+  }
+}
+
+///|
+pub impl[A : Compare] Compare for T[A] with compare(self, other) -> Int {
+  let iter = InorderIterator::new(self)
+  let iter1 = InorderIterator::new(other)
+  loop iter.next(), iter1.next() {
+    None, None => 0
+    Some(a), Some(b) => {
+      let cmp = a.compare(b)
+      guard cmp == 0 else { break cmp }
+      continue iter.next(), iter1.next()
+    }
+    Some(_), None => 1
+    None, Some(_) => -1
   }
 }
 

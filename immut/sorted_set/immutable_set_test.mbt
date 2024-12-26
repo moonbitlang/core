@@ -306,6 +306,15 @@ test "op_equal" {
   }
 }
 
+test "compare" {
+  let xss : Array[@sorted_set.T[Int]] = @quickcheck.samples(5)
+  for xs in xss {
+    for ys in xss {
+      assert_eq!(xs.compare(ys), xs.to_array().compare(ys.to_array()))
+    }
+  }
+}
+
 test "to_json" {
   @json.inspect!(@sorted_set.of([5, 2, 4, 3, 1]), content=[1, 2, 3, 4, 5])
   @json.inspect!((@sorted_set.of([]) : @sorted_set.T[Int]), content=[])
@@ -476,4 +485,20 @@ test "iter" {
     buf.write_object(x)
   }
   inspect!(buf, content="123457")
+}
+
+test "size" {
+  // Empty set should have size 0
+  let empty_set : @sorted_set.T[Int] = @sorted_set.T::new()
+  inspect!(empty_set.size(), content="0")
+
+  // Single element set should have size 1
+  inspect!(@sorted_set.of([1]).size(), content="1")
+
+  // Multiple elements set should have correct size
+  // The order of insertion should not affect the size
+  inspect!(
+    @sorted_set.of([3, 1, 4, 1, 5, 9, 2, 6, 5, 3, 5]).size(),
+    content="7",
+  )
 }

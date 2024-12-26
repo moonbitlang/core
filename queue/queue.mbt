@@ -153,6 +153,7 @@ pub fn unsafe_peek[A](self : T[A]) -> A {
 
 ///|
 /// @alert deprecated "Use `unsafe_peek` instead"
+/// @coverage.skip
 pub fn peek_exn[A](self : T[A]) -> A {
   unsafe_peek(self)
 }
@@ -198,6 +199,7 @@ pub fn unsafe_pop[A](self : T[A]) -> A {
 
 ///|
 /// @alert deprecated "Use `unsafe_pop` instead"
+/// @coverage.skip
 pub fn pop_exn[A](self : T[A]) -> A {
   unsafe_pop(self)
 }
@@ -344,19 +346,17 @@ pub fn transfer[A](self : T[A], dst : T[A]) -> Unit {
 /// assert_eq!(sum, 26)
 /// ```
 pub fn iter[A](self : T[A]) -> Iter[A] {
-  Iter::new(
-    fn(yield_) {
-      loop self.first {
-        Cons({ content, next }) => {
-          if yield_(content) == IterEnd {
-            break IterEnd
-          }
-          continue next
+  Iter::new(fn(yield_) {
+    loop self.first {
+      Cons({ content, next }) => {
+        if yield_(content) == IterEnd {
+          break IterEnd
         }
-        Nil => IterContinue
+        continue next
       }
-    },
-  )
+      Nil => IterContinue
+    }
+  })
 }
 
 ///|

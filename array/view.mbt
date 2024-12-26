@@ -27,3 +27,76 @@ pub fn each[T](self : ArrayView[T], f : (T) -> Unit) -> Unit {
     f(self[i])
   }
 }
+
+///|
+/// Iterates over the elements of the array view with index.
+///
+/// # Example
+/// 
+/// ```
+/// let v = [3, 4, 5][:]
+/// let mut sum = 0
+/// v.eachi(fn (i, x) { sum = sum + x + i })
+/// assert_eq!(sum, 15)
+/// ```
+pub fn eachi[T](self : ArrayView[T], f : (Int, T) -> Unit) -> Unit {
+  for i, v in self {
+    f(i, v)
+  }
+}
+
+///|
+/// Checks if all elements in the array view match the condition.
+/// 
+/// # Example
+/// 
+/// ```
+/// let v = [1, 4, 6, 8, 9]
+/// assert_false!(v[:].all(fn(elem) { elem % 2 == 0 }))
+/// assert_true!(v[1:4].all(fn(elem) { elem % 2 == 0 }))
+/// ```
+pub fn all[T](self : ArrayView[T], f : (T) -> Bool) -> Bool {
+  for v in self {
+    if not(f(v)) {
+      return false
+    }
+  }
+  true
+}
+
+///|
+/// Check if any of the elements in the array view match the condition.
+///
+/// # Example
+///
+/// ```
+/// let v = [1, 2, 3, 4, 5][:]
+/// assert_true!(v.any(fn(ele) { ele < 6 }))
+/// assert_false!(v.any(fn(ele) { ele < 1 }))
+/// ```
+pub fn any[T](self : ArrayView[T], f : (T) -> Bool) -> Bool {
+  for v in self {
+    if f(v) {
+      return true
+    }
+  }
+  false
+}
+
+///|
+/// Checks if the array view contains an element.
+///
+/// # Example
+/// ```
+/// let v = [3, 4, 5][:]
+/// assert_true!(v.contains(3))
+/// ```
+pub fn contains[T : Eq](self : ArrayView[T], value : T) -> Bool {
+  for v in self {
+    if v == value {
+      break true
+    }
+  } else {
+    false
+  }
+}

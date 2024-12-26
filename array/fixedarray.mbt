@@ -282,21 +282,6 @@ test "mapi" {
   assert_eq!(doubled, [2, 5, 8, 11, 14])
 }
 
-///|
-/// Create a new array. Values are lazily built.
-/// @alert deprecated "Use `FixedArray::makei` instead"
-pub fn FixedArray::new[T](length : Int, value : () -> T) -> FixedArray[T] {
-  if length <= 0 {
-    []
-  } else {
-    let array = FixedArray::make(length, value())
-    for i = 1; i < length; i = i + 1 {
-      array[i] = value()
-    }
-    array
-  }
-}
-
 test "makei" {
   let empty = FixedArray::makei(0, fn(_i) { { val: 3 } })
   assert_eq!(empty.length(), 0)
@@ -308,16 +293,6 @@ test "makei" {
   @test.is_not!(arr[0], arr[1])
   assert_eq!(arr[0].val, 1)
   assert_eq!(arr[1].val, 1)
-}
-
-///|
-/// Create a new array. Values are built from indexes.
-/// @alert deprecated "Use `FixedArray::makei` instead"
-pub fn FixedArray::new_with_index[T](
-  length : Int,
-  value : (Int) -> T
-) -> FixedArray[T] {
-  FixedArray::makei(length, value)
 }
 
 ///|
@@ -373,28 +348,14 @@ pub fn fold[A, B](self : FixedArray[A], init~ : B, f : (B, A) -> B) -> B {
   }
 }
 
-///|
-/// Fold out values from an array according to certain rules.
-///
-/// # Example
-/// ```
-/// let sum = [1, 2, 3, 4, 5].fold(init=0, fn { sum, elem => sum + elem })
-/// assert_eq!(sum, 15)
-/// ```
-/// @alert deprecated "Use `fold` instead"
-pub fn fold_left[T, U](self : FixedArray[T], f : (U, T) -> U, init~ : U) -> U {
-  self.fold(init~, f)
-}
-
 test "fold" {
   let sum = ([] : FixedArray[_]).fold(init=1, fn { sum, elem => sum + elem })
   assert_eq!(sum, 1)
   let sum = ([1] : FixedArray[_]).fold(init=2, fn { sum, elem => sum + elem })
   assert_eq!(sum, 3)
-  let sum = ([1, 2, 3, 4, 5] : FixedArray[_]).fold(
-    init=0,
-    fn { sum, elem => sum + elem },
-  )
+  let sum = ([1, 2, 3, 4, 5] : FixedArray[_]).fold(init=0, fn {
+    sum, elem => sum + elem
+  })
   assert_eq!(sum, 15)
 }
 
@@ -414,34 +375,16 @@ pub fn rev_fold[A, B](self : FixedArray[A], init~ : B, f : (B, A) -> B) -> B {
   }
 }
 
-///|
-/// Fold out values from an array according to certain rules in reversed turn.
-///
-/// # Example
-/// ```
-/// let sum = [1, 2, 3, 4, 5].rev_fold(init=0, fn { sum, elem => sum + elem })
-/// assert_eq!(sum, 15)
-/// ```
-/// @alert deprecated "Use `rev_fold` instead"
-pub fn fold_right[T, U](self : FixedArray[T], f : (U, T) -> U, init~ : U) -> U {
-  self.rev_fold(init~, f)
-}
-
 test "rev_fold" {
-  let sum = ([] : FixedArray[_]).rev_fold(
-    init=1,
-    fn { sum, elem => sum + elem },
-  )
+  let sum = ([] : FixedArray[_]).rev_fold(init=1, fn { sum, elem => sum + elem })
   assert_eq!(sum, 1)
-  let sum = ([1] : FixedArray[_]).rev_fold(
-    init=2,
-    fn { sum, elem => sum + elem },
-  )
+  let sum = ([1] : FixedArray[_]).rev_fold(init=2, fn {
+    sum, elem => sum + elem
+  })
   assert_eq!(sum, 3)
-  let sum = ([1, 2, 3, 4, 5] : FixedArray[_]).rev_fold(
-    init=0,
-    fn { sum, elem => sum + elem },
-  )
+  let sum = ([1, 2, 3, 4, 5] : FixedArray[_]).rev_fold(init=0, fn {
+    sum, elem => sum + elem
+  })
   assert_eq!(sum, 15)
 }
 
@@ -459,23 +402,6 @@ pub fn foldi[A, B](self : FixedArray[A], init~ : B, f : (Int, B, A) -> B) -> B {
   } else {
     acc
   }
-}
-
-///|
-/// Fold out values from an array according to certain rules with index.
-///
-/// # Example
-/// ```
-/// let sum = [1, 2, 3, 4, 5].foldi(init=0, fn { index, sum, _elem => sum + index })
-/// assert_eq!(sum, 10)
-/// ```
-/// @alert deprecated "Use `foldi` instead"
-pub fn fold_lefti[T, U](
-  self : FixedArray[T],
-  f : (Int, U, T) -> U,
-  init~ : U
-) -> U {
-  self.foldi(init~, f)
 }
 
 test "fold_lefti" {
@@ -505,28 +431,6 @@ pub fn rev_foldi[A, B](
   init~ : B,
   f : (Int, B, A) -> B
 ) -> B {
-  let len = self.length()
-  for i = len - 1, acc = init; i >= 0; {
-    continue i - 1, f(len - i - 1, acc, self[i])
-  } else {
-    acc
-  }
-}
-
-///|
-/// Fold out values from an array according to certain rules in reversed turn with index.
-///
-/// # Example
-/// ```
-/// let sum = [1, 2, 3, 4, 5].rev_foldi(init=0, fn { index, sum, _elem => sum + index })
-/// assert_eq!(sum, 10)
-/// ```
-/// @alert deprecated "Use `rev_foldi` instead"
-pub fn fold_righti[T, U](
-  self : FixedArray[T],
-  f : (Int, U, T) -> U,
-  init~ : U
-) -> U {
   let len = self.length()
   for i = len - 1, acc = init; i >= 0; {
     continue i - 1, f(len - i - 1, acc, self[i])
@@ -670,7 +574,7 @@ test "swap" {
 /// ```
 pub fn all[T](self : FixedArray[T], f : (T) -> Bool) -> Bool {
   for i = 0; i < self.length(); i = i + 1 {
-    if f(self[i]).not() {
+    if not(f(self[i])) {
       return false
     }
   }
@@ -1034,13 +938,11 @@ test "iter" {
   let iter = arr.iter()
   let exb = StringBuilder::new()
   let mut i = 0
-  iter.each(
-    fn(x) {
-      exb.write_string(x.to_string())
-      exb.write_char('\n')
-      i = i + 1
-    },
-  )
+  iter.each(fn(x) {
+    exb.write_string(x.to_string())
+    exb.write_char('\n')
+    i = i + 1
+  })
   assert_eq!(i, arr.length())
   inspect!(
     exb,
@@ -1067,6 +969,33 @@ pub fn FixedArray::last[A](self : FixedArray[A]) -> A? {
     [] => None
     [.., last] => Some(last)
   }
+}
+
+test "FixedArray::last/empty" {
+  let empty : FixedArray[Int] = []
+  inspect!(empty.last(), content="None")
+}
+
+test "FixedArray::last/non_empty" {
+  let array : FixedArray[_] = [1, 2, 3]
+  inspect!(array.last(), content="Some(3)")
+  let single : FixedArray[_] = [42]
+  inspect!(single.last(), content="Some(42)")
+}
+
+test "FixedArray::last/empty_array" {
+  let empty_array : FixedArray[Int] = []
+  inspect!(FixedArray::last(empty_array), content="None")
+}
+
+test "FixedArray::last/single_element" {
+  let single_element_array : FixedArray[Int] = [42]
+  inspect!(FixedArray::last(single_element_array), content="Some(42)")
+}
+
+test "FixedArray::last/multiple_elements" {
+  let multiple_elements_array : FixedArray[Int] = [1, 2, 3, 4, 5]
+  inspect!(FixedArray::last(multiple_elements_array), content="Some(5)")
 }
 
 ///|

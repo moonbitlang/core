@@ -172,9 +172,10 @@ test "eq for random cases with different types" {
   inspect!(map8 == map10, content="false")
 
   // Test with maps containing different keys of different types
-  let map11 : @hashmap.T[String, Int] = @hashmap.T::of(
-    [("one", 1), ("three", 3)],
-  )
+  let map11 : @hashmap.T[String, Int] = @hashmap.T::of([
+    ("one", 1),
+    ("three", 3),
+  ])
   inspect!(map8 == map11, content="false")
 }
 

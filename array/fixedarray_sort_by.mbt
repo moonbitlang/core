@@ -36,6 +36,15 @@ pub fn sort_by_key[T, K : Compare](
   )
 }
 
+test "@array.sort_by_key/basic" {
+  let arr : FixedArray[_] = [3, 1, 4, 1, 5]
+  arr.sort_by_key(fn(x) { x })
+  inspect!(arr, content="[1, 1, 3, 4, 5]")
+  let arr2 : FixedArray[_] = [3, 1, 4, 1, 5]
+  arr2.sort_by_key(fn(x) { -x })
+  inspect!(arr2, content="[5, 4, 3, 1, 1]")
+}
+
 ///|
 /// Sorts the array with a custom comparison function.
 /// 
@@ -218,10 +227,12 @@ fn fixed_bubble_sort_by[T](
 
 test "try_bubble_sort" {
   let arr : FixedArray[_] = [8, 7, 6, 5, 4, 3, 2, 1]
-  let sorted = fixed_try_bubble_sort_by(
-    { array: arr, start: 0, end: 8 },
-    fn(a, b) { a - b },
-  )
+  let sorted = fixed_try_bubble_sort_by({ array: arr, start: 0, end: 8 }, fn(
+    a,
+    b
+  ) {
+    a - b
+  })
   assert_eq!(sorted, true)
   assert_eq!(arr, [1, 2, 3, 4, 5, 6, 7, 8])
 }
@@ -330,25 +341,19 @@ fn fixed_sift_down_by[T](
 }
 
 test "heap_sort" {
-  fixed_test_sort!(
-    fn(arr) {
-      fixed_heap_sort_by(
-        { array: arr, start: 0, end: arr.length() },
-        fn(a, b) { a - b },
-      )
-    },
-  )
+  fixed_test_sort!(fn(arr) {
+    fixed_heap_sort_by({ array: arr, start: 0, end: arr.length() }, fn(a, b) {
+      a - b
+    })
+  })
 }
 
 test "bubble_sort" {
-  fixed_test_sort!(
-    fn(arr) {
-      fixed_bubble_sort_by(
-        { array: arr, start: 0, end: arr.length() },
-        fn(a, b) { a - b },
-      )
-    },
-  )
+  fixed_test_sort!(fn(arr) {
+    fixed_bubble_sort_by({ array: arr, start: 0, end: arr.length() }, fn(a, b) {
+      a - b
+    })
+  })
 }
 
 test "sort" {
@@ -359,4 +364,20 @@ test "sort_by" {
   let arr = [5, 1, 3, 4, 2]
   arr.sort_by_key(fn(x) { -x })
   assert_eq!(arr, [5, 4, 3, 2, 1])
+}
+
+test "sort_by_fallback" {
+  // Creating a large array that will trigger heap sort
+  let arr = FixedArray::makei(100, fn(i) { if i % 2 == 0 { 1 } else { 0 } })
+  arr.sort_by(fn(a, b) {
+    // this comparison function always returns -1 or 1
+    // which creates many imbalanced partitions
+    // and eventually triggers heap sort when limit reaches 0
+    if a < b {
+      -1
+    } else {
+      1
+    }
+  })
+  assert_true!(arr.is_sorted())
 }

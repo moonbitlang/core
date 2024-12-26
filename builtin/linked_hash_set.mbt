@@ -78,6 +78,7 @@ pub fn Set::from_array[K : Hash + Eq](arr : Array[K]) -> Set[K] {
 /// Insert a key into the hash set.
 /// 
 /// @alert deprecated "Use `add` instead."
+/// @coverage.skip
 pub fn insert[K : Hash + Eq](self : Set[K], key : K) -> Unit {
   self.add(key)
 }
@@ -408,19 +409,17 @@ pub fn clear[K](self : Set[K]) -> Unit {
 ///|
 /// Returns the iterator of the hash set, provide elements in the order of insertion.
 pub fn iter[K](self : Set[K]) -> Iter[K] {
-  Iter::new(
-    fn(yield_) {
-      loop self.head {
-        Some({ key, idx, .. }) => {
-          if yield_(key) == IterEnd {
-            break IterEnd
-          }
-          continue self.list[idx].next
+  Iter::new(fn(yield_) {
+    loop self.head {
+      Some({ key, idx, .. }) => {
+        if yield_(key) == IterEnd {
+          break IterEnd
         }
-        None => break IterContinue
+        continue self.list[idx].next
       }
-    },
-  )
+      None => break IterContinue
+    }
+  })
 }
 
 ///|

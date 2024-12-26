@@ -25,6 +25,7 @@ pub fn println[T : Show](input : T) -> Unit {
 
 ///|
 /// @alert deprecated "Use `println` instead"
+/// @coverage.skip
 pub fn print[T : Show](input : T) -> Unit {
   println(input)
 }
@@ -198,7 +199,7 @@ pub(all) type! InspectError String
 
 ///|
 pub fn inspect(
-  obj : Show,
+  obj : &Show,
   content~ : String = "",
   loc~ : SourceLoc = _,
   args_loc~ : ArgsLoc = _

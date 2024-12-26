@@ -23,3 +23,40 @@ test {
   let f : Float = Float::default()
   inspect!(f.to_string(), content="0")
 }
+
+test "abs" {
+  inspect!(1.0.abs(), content="1")
+  inspect!((-1.0).abs(), content="1")
+  inspect!(0.0.abs().reinterpret_as_uint64(), content="0")
+  inspect!((-0.0).abs().reinterpret_as_uint64(), content="0")
+  inspect!(@double.not_a_number.abs(), content="NaN")
+  inspect!((-@double.not_a_number).abs(), content="NaN")
+  inspect!(@double.infinity.abs(), content="Infinity")
+  inspect!(@double.neg_infinity.abs(), content="Infinity")
+}
+
+test "Float::to_int" {
+  inspect!((0.0 : Float).to_int(), content="0")
+  inspect!((1.0 : Float).to_int(), content="1")
+  inspect!((1.5 : Float).to_int(), content="1")
+  inspect!((1.9 : Float).to_int(), content="1")
+  inspect!((2.0 : Float).to_int(), content="2")
+  inspect!((2.5 : Float).to_int(), content="2")
+  inspect!((2.9 : Float).to_int(), content="2")
+  inspect!((-1.0 : Float).to_int(), content="-1")
+  inspect!((-1.5 : Float).to_int(), content="-1")
+  inspect!((-1.9 : Float).to_int(), content="-1")
+  inspect!((-2.0 : Float).to_int(), content="-2")
+  inspect!((-2.5 : Float).to_int(), content="-2")
+  inspect!((-2.9 : Float).to_int(), content="-2")
+  inspect!(((0.0 : Float) / 0.0).to_int(), content="0")
+  inspect!(@float.not_a_number.to_int(), content="0")
+  inspect!(((1.0 : Float) / 0.0).to_int(), content="2147483647")
+  inspect!(@float.infinity.to_int(), content="2147483647")
+  inspect!(((-1.0 : Float) / 0.0).to_int(), content="-2147483648")
+  inspect!(@float.neg_infinity.to_int(), content="-2147483648")
+  inspect!((2147483647.0 : Float).to_int(), content="2147483647")
+  inspect!((-2147483648.0 : Float).to_int(), content="-2147483648")
+  inspect!((2147483648.0 : Float).to_int(), content="2147483647")
+  inspect!((-2147483649.0 : Float).to_int(), content="-2147483648")
+}

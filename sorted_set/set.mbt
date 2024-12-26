@@ -248,6 +248,7 @@ fn join_right[V : Compare](l : Node[V]?, v : V, r : Node[V]?) -> Node[V] {
 /// Returns the difference of two sets.
 /// 
 /// @alert deprecated "Use `difference` instead"
+/// @coverage.skip
 pub fn diff[V : Compare](self : T[V], src : T[V]) -> T[V] {
   let ret = new()
   self.each(fn(x) { if not(src.contains(x)) { ret.add(x) } })
@@ -265,6 +266,7 @@ pub fn difference[V : Compare](self : T[V], src : T[V]) -> T[V] {
 ///|
 /// Returns the intersection of two sets.
 /// @alert deprecated "Use `intersection` instead"
+/// @coverage.skip
 pub fn intersect[V : Compare](self : T[V], src : T[V]) -> T[V] {
   self.intersection(src)
 }
@@ -328,12 +330,12 @@ pub fn each[V](self : T[V], f : (V) -> Unit) -> Unit {
 fn each[V](self : Node[V], f : (V) -> Unit) -> Unit {
   let s = []
   let mut p = Some(self)
-  while p.is_empty().not() || s.is_empty().not() {
-    while p.is_empty().not() {
+  while not(p.is_empty()) || not(s.is_empty()) {
+    while not(p.is_empty()) {
       s.push(p)
       p = p.unwrap().left
     }
-    if s.is_empty().not() {
+    if not(s.is_empty()) {
       p = s.unsafe_pop()
       f(p.unwrap().value)
       p = p.unwrap().right
@@ -355,12 +357,12 @@ fn eachi[V](self : Node[V], f : (Int, V) -> Unit) -> Unit {
   let s = []
   let mut p = Some(self)
   let mut i = 0
-  while p.is_empty().not() || s.is_empty().not() {
-    while p.is_empty().not() {
+  while not(p.is_empty()) || not(s.is_empty()) {
+    while not(p.is_empty()) {
       s.push(p)
       p = p.unwrap().left
     }
-    if s.is_empty().not() {
+    if not(s.is_empty()) {
       p = s.unsafe_pop()
       f(i, p.unwrap().value)
       p = p.unwrap().right
@@ -380,37 +382,33 @@ pub fn to_array[V](self : T[V]) -> Array[V] {
 ///|
 /// Returns a iterator.
 pub fn iter[V](self : T[V]) -> Iter[V] {
-  Iter::new(
-    fn(yield_) {
-      match self.root {
-        None => IterContinue
-        Some(root) => root.iter().run(yield_)
-      }
-    },
-  )
+  Iter::new(fn(yield_) {
+    match self.root {
+      None => IterContinue
+      Some(root) => root.iter().run(yield_)
+    }
+  })
 }
 
 ///|
 fn iter[A](self : Node[A]) -> Iter[A] {
-  Iter::new(
-    fn(yield_) {
-      let { left, value, right, .. } = self
-      let res = match left {
+  Iter::new(fn(yield_) {
+    let { left, value, right, .. } = self
+    let res = match left {
+      None => IterContinue
+      Some(l) => l.iter().run(yield_)
+    }
+    if res == IterEnd {
+      IterEnd
+    } else if yield_(value) == IterEnd {
+      IterEnd
+    } else {
+      match right {
         None => IterContinue
-        Some(l) => l.iter().run(yield_)
+        Some(r) => r.iter().run(yield_)
       }
-      if res == IterEnd {
-        IterEnd
-      } else if yield_(value) == IterEnd {
-        IterEnd
-      } else {
-        match right {
-          None => IterContinue
-          Some(r) => r.iter().run(yield_)
-        }
-      }
-    },
-  )
+    }
+  })
 }
 
 ///|
@@ -718,16 +716,14 @@ test "split" {
   inspect!(l, content="None")
   inspect!(r, content="None")
   let (l, r) = split(
-    of(
-      [
-        0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20,
-        21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39,
-        40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58,
-        59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77,
-        78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96,
-        97, 98, 99, 100,
-      ],
-    ).root,
+    of([
+      0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21,
+      22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40,
+      41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59,
+      60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78,
+      79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97,
+      98, 99, 100,
+    ]).root,
     50,
   )
   inspect!(

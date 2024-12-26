@@ -107,12 +107,10 @@ test "iteri" {
   let m = @hashmap.of([("a", 1), ("b", 2), ("c", 3)])
   let mut sum = 0
   let mut s = ""
-  m.eachi(
-    fn(i, _k, v) {
-      s += i.to_string()
-      sum += v
-    },
-  )
+  m.eachi(fn(i, _k, v) {
+    s += i.to_string()
+    sum += v
+  })
   assert_eq!(s, "012")
   assert_eq!(sum, 6)
 }
@@ -122,24 +120,29 @@ test "iter" {
   let map = @hashmap.of([(1, "one"), (2, "two"), (3, "three")])
   map
   .iter()
-  .each(
-    fn(e) {
-      let (k, v) = e
-      buf.write_string("[\{k}-\{v}]")
-    },
-  )
+  .each(fn(e) {
+    let (k, v) = e
+    buf.write_string("[\{k}-\{v}]")
+  })
   inspect!(buf, content="[2-two][1-one][3-three]")
   buf.reset()
   map
   .iter()
   .take(2)
-  .each(
-    fn(e) {
-      let (k, v) = e
-      buf.write_string("[\{k}-\{v}]")
-    },
-  )
+  .each(fn(e) {
+    let (k, v) = e
+    buf.write_string("[\{k}-\{v}]")
+  })
   inspect!(buf, content="[2-two][1-one]")
+}
+
+test "iter2" {
+  let buf = StringBuilder::new(size_hint=20)
+  let map = @hashmap.of([(1, "one"), (2, "two"), (3, "three")])
+  for k, v in map {
+    buf.write_string("[\{k}-\{v}]")
+  }
+  inspect!(buf, content="[2-two][1-one][3-three]")
 }
 
 test "to_array" {
@@ -285,4 +288,25 @@ test "from_iter single element iter" {
 test "from_iter empty iter" {
   let map : @hashmap.T[Int, Int] = @hashmap.T::from_iter(Iter::empty())
   inspect!(map, content="HashMap::of([])")
+}
+
+test "@hashmap.contains/empty" {
+  let map : @hashmap.T[Int, String] = @hashmap.T::new()
+  inspect!(map.contains(42), content="false")
+}
+
+test "@hashmap.contains/basic" {
+  let map = @hashmap.T::of([(1, "one"), (2, "two"), (3, "three")])
+  inspect!(map.contains(2), content="true")
+  inspect!(map.contains(4), content="false")
+}
+
+test "@hashmap.contains/after_operations" {
+  let map = @hashmap.T::of([(1, "one"), (2, "two")])
+  map.remove(1)
+  inspect!(map.contains(1), content="false")
+  map.set(1, "ONE")
+  inspect!(map.contains(1), content="true")
+  map.clear()
+  inspect!(map.contains(2), content="false")
 }

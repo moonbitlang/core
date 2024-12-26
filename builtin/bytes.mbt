@@ -13,9 +13,15 @@
 // limitations under the License.
 
 ///|
+/// Reinterpret the byte sequence as Bytes.
+fn unsafe_to_bytes(self : FixedArray[Byte]) -> Bytes = "%identity"
+
+///|
 /// Create byte sequence from String.
 pub fn Bytes::of_string(str : String) -> Bytes {
-  Bytes::new(str.length() * 2)..blit_from_string(0, str, 0, str.length())
+  FixedArray::make(str.length() * 2, Byte::default())
+  ..blit_from_string(0, str, 0, str.length())
+  .unsafe_to_bytes()
 }
 
 ///|
@@ -31,6 +37,7 @@ fn unsafe_sub_string(
 /// starts at `byte_offset` and has length `byte_length`.
 /// 
 /// @alert deprecated "Use `to_unchecked_string` instead"
+/// @coverage.skip
 pub fn sub_string(self : Bytes, byte_offset : Int, byte_length : Int) -> String {
   self.to_unchecked_string(offset=byte_offset, length=byte_length)
 }
@@ -39,6 +46,7 @@ pub fn sub_string(self : Bytes, byte_offset : Int, byte_length : Int) -> String 
 /// Create a new unchecked string from byte sequence.
 /// 
 /// @alert deprecated "Use `to_unchecked_string` instead"
+/// @coverage.skip
 pub fn to_string(self : Bytes) -> String {
   self.to_unchecked_string(offset=0, length=self.length())
 }
@@ -63,6 +71,8 @@ pub fn to_unchecked_string(
 ///|
 /// Copy `length` chars from string `str`, starting at `str_offset`,
 /// into byte sequence `self`, starting at `bytes_offset`.
+/// @alert deprecated "The type Bytes is about to be changed to be immutable. Use `FixedArray[Byte]` or `Buffer` instead."
+/// @coverage.skip
 pub fn blit_from_string(
   self : Bytes,
   bytes_offset : Int,
@@ -143,6 +153,7 @@ pub fn copy(self : Bytes) -> Bytes {
 /// Fill UTF8 encoded char `value` into byte sequence `self`, starting at `offset`.
 /// It return the length of bytes has been written.
 /// @alert deprecated "The type Bytes is about to be changed to be immutable. Use `FixedArray[Byte]` or `Buffer` instead."
+/// @coverage.skip
 pub fn set_utf8_char(self : Bytes, offset : Int, value : Char) -> Int {
   let code = value.to_uint()
   match code {
@@ -212,6 +223,8 @@ pub fn set_utf8_char(
 /// Fill UTF16 encoded char `value` into byte sequence `self`, starting at `offset`.
 /// It return the length of bytes has been written.
 /// @alert unsafe "Panic if the [value] is out of range"
+/// @alert deprecated "The type Bytes is about to be changed to be immutable. Use `FixedArray[Byte]` or `Buffer` instead."
+/// @coverage.skip
 pub fn set_utf16_char(self : Bytes, offset : Int, value : Char) -> Int {
   let code = value.to_uint()
   if code < 0x10000 {
@@ -237,6 +250,7 @@ pub fn set_utf16_char(self : Bytes, offset : Int, value : Char) -> Int {
 /// It return the length of bytes has been written.
 /// @alert unsafe "Panic if the [value] is out of range"
 /// @alert deprecated "Use `set_utf16le_char` instead"
+/// @coverage.skip
 pub fn set_utf16_char(
   self : FixedArray[Byte],
   offset : Int,

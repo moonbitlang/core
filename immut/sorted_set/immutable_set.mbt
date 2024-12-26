@@ -23,9 +23,12 @@ pub fn T::new[A]() -> T[A] {
 }
 
 ///|
+pub impl[A] Default for T[A] with default() { Empty }
+
+///|
 /// Returns the one-value ImmutableSet containing only `value`.
 pub fn T::singleton[A : Compare](value : A) -> T[A] {
-  Node(left=Empty, value~, right=Empty, height=1)
+  Node(left=Empty, value~, right=Empty, size=1)
 }
 
 ///|
@@ -88,7 +91,7 @@ pub fn remove_min[A : Compare](self : T[A]) -> T[A] {
 /// ```
 pub fn add[A : Compare](self : T[A], value : A) -> T[A] {
   match self {
-    Empty => Node(left=Empty, value~, right=Empty, height=1)
+    Empty => Node(left=Empty, value~, right=Empty, size=1)
     Node(left~, right~, value=node_value, ..) => {
       let compare_result = value.compare(node_value)
       if compare_result == 0 {
@@ -280,17 +283,17 @@ pub fn union[A : Compare](self : T[A], other : T[A]) -> T[A] {
     (Empty, _) => other
     (_, Empty) => self
     (
-      Node(left=l1, value=v1, right=r1, height=h1),
-      Node(left=l2, value=v2, right=r2, height=h2),
+      Node(left=l1, value=v1, right=r1, size=s1),
+      Node(left=l2, value=v2, right=r2, size=s2),
     ) =>
-      if h1 >= h2 {
-        if h2 == 1 {
+      if s1 >= s2 {
+        if s2 == 1 {
           self.add(v2)
         } else {
           let (l2, _, r2) = other.split(v1)
           join(l1.union(l2), v1, r1.union(r2))
         }
-      } else if h1 == 1 {
+      } else if s1 == 1 {
         other.add(v1)
       } else {
         let (l1, _, r1) = self.split(v2)
@@ -301,6 +304,7 @@ pub fn union[A : Compare](self : T[A], other : T[A]) -> T[A] {
 
 ///|
 /// @alert deprecated "Use `intersection` instead"
+/// @coverage.skip
 pub fn inter[A : Compare](self : T[A], other : T[A]) -> T[A] {
   self.intersection(other)
 }
@@ -334,6 +338,7 @@ pub fn intersection[A : Compare](self : T[A], other : T[A]) -> T[A] {
 /// ```
 /// 
 /// @alert deprecated "Use `difference` instead"
+/// @coverage.skip
 pub fn diff[A : Compare](self : T[A], other : T[A]) -> T[A] {
   self.difference(other)
 }
@@ -378,10 +383,10 @@ pub fn subset[A : Compare](self : T[A], other : T[A]) -> Bool {
       if compare_result == 0 {
         l1.subset(l2) && r1.subset(r2)
       } else if compare_result < 0 {
-        Node(left=l1, value=v1, right=Empty, height=0).subset(l2) &&
+        Node(left=l1, value=v1, right=Empty, size=1).subset(l2) &&
         r1.subset(self)
       } else {
-        Node(left=Empty, value=v1, right=r1, height=0).subset(r2) &&
+        Node(left=Empty, value=v1, right=r1, size=1).subset(r2) &&
         l1.subset(self)
       }
     }
@@ -579,6 +584,10 @@ pub impl[X : @quickcheck.Arbitrary + Compare] @quickcheck.Arbitrary for T[X] wit
 // The following are the helper functions or types used by the internal implementation of ImmutableSet
 
 ///|
+/// The ratio between the sizes of the left and right subtrees.
+const BALANCE_RATIO = 5
+
+///|
 priv enum SplitBis[A] {
   Found
   NotFound(T[A], () -> T[A])
@@ -620,36 +629,31 @@ fn split_bis[A : Compare](self : T[A], value : A) -> SplitBis[A] {
 
 ///|
 /// Get the height of set.
-fn height[A : Compare](self : T[A]) -> Int {
+pub fn size[A : Compare](self : T[A]) -> Int {
   match self {
     Empty => 0
-    Node(height~, ..) => height
+    Node(size~, ..) => size
   }
 }
 
 ///|
 /// Creates a new node.
 fn create[A : Compare](left : T[A], value : A, right : T[A]) -> T[A] {
-  let left_height = left.height()
-  let right_height = right.height()
-  let height = if left_height >= right_height {
-    left_height + 1
-  } else {
-    right_height + 1
-  }
-  Node(left~, right~, value~, height~)
+  Node(left~, right~, value~, size=left.size() + right.size() + 1)
 }
 
 ///|
 /// Same as create, but performs one step of rebalancing if necessary.
 fn balance[A : Compare](left : T[A], value : A, right : T[A]) -> T[A] {
-  let left_height = left.height()
-  let right_height = right.height()
-  if left_height > right_height + 2 {
+  let left_size = left.size()
+  let right_size = right.size()
+  if left_size + right_size < 2 {
+    create(left, value, right)
+  } else if left_size > right_size * BALANCE_RATIO {
     match left {
       Empty => abort("balance: left is empty.")
       Node(left=ll, value=lv, right=lr, ..) =>
-        if ll.height() >= lr.height() {
+        if ll.size() >= lr.size() {
           create(ll, lv, create(lr, value, right))
         } else {
           match lr {
@@ -659,11 +663,11 @@ fn balance[A : Compare](left : T[A], value : A, right : T[A]) -> T[A] {
           }
         }
     }
-  } else if right_height > left_height + 2 {
+  } else if right_size > left_size * BALANCE_RATIO {
     match right {
       Empty => abort("balance: right is empty")
       Node(left=rl, value=rv, right=rr, ..) =>
-        if rr.height() >= rl.height() {
+        if rr.size() >= rl.size() {
           create(create(left, value, rl), rv, rr)
         } else {
           match rl {
@@ -674,12 +678,7 @@ fn balance[A : Compare](left : T[A], value : A, right : T[A]) -> T[A] {
         }
     }
   } else {
-    let height = if left_height >= right_height {
-      left_height + 1
-    } else {
-      right_height + 1
-    }
-    Node(left~, value~, right~, height~)
+    create(left, value, right)
   }
 }
 
@@ -708,12 +707,12 @@ fn join[A : Compare](left : T[A], value : A, right : T[A]) -> T[A] {
     (Empty, _) => right.add_min_value(value)
     (_, Empty) => left.add_max_value(value)
     (
-      Node(left=ll, value=lv, right=lr, height=lh),
-      Node(left=rl, value=rv, right=rr, height=rh),
+      Node(left=ll, value=lv, right=lr, size=ls),
+      Node(left=rl, value=rv, right=rr, size=rs),
     ) =>
-      if lh > rh + 2 {
+      if ls > rs * BALANCE_RATIO {
         balance(ll, lv, join(lr, value, right))
-      } else if rh > lh + 2 {
+      } else if rs > ls * BALANCE_RATIO {
         balance(join(left, value, rl), rv, rr)
       } else {
         create(left, value, right)

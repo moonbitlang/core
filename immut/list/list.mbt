@@ -179,9 +179,15 @@ pub fn rev_map[A, B](self : T[A], f : (A) -> B) -> T[B] {
 pub fn to_array[A](self : T[A]) -> Array[A] {
   match self {
     Nil => []
-    Cons(head, _) => {
-      let arr = Array::make(self.length(), head)
-      self.eachi(fn(i, x) { arr[i] = x })
+    Cons(x, xs) => {
+      let arr = [x]
+      loop xs {
+        Nil => ()
+        Cons(x, xs) => {
+          arr.push(x)
+          continue xs
+        }
+      }
       arr
     }
   }
@@ -252,6 +258,7 @@ pub fn unsafe_head[A](self : T[A]) -> A {
 
 ///|
 /// @alert deprecated "Use `unsafe_head` instead"
+/// @coverage.skip
 pub fn head_exn[A](self : T[A]) -> A {
   unsafe_head(self)
 }
@@ -398,6 +405,7 @@ pub fn rev_fold[A, B](self : T[A], init~ : B, f : (A, B) -> B) -> B {
 /// assert_eq!(r, 15)
 /// ```
 /// @alert deprecated "Use `fold` instead"
+/// @coverage.skip
 pub fn fold_left[A, B](self : T[A], f : (B, A) -> B, init~ : B) -> B {
   self.fold(init~, f)
 }
@@ -411,6 +419,7 @@ pub fn fold_left[A, B](self : T[A], f : (B, A) -> B, init~ : B) -> B {
 /// assert_eq!(r, 15)
 /// ```
 /// @alert deprecated "Use `rev_fold` instead"
+/// @coverage.skip
 pub fn fold_right[A, B](self : T[A], f : (A, B) -> B, init~ : B) -> B {
   match self {
     Nil => init
@@ -447,6 +456,7 @@ pub fn rev_foldi[A, B](self : T[A], init~ : B, f : (Int, A, B) -> B) -> B {
 ///|
 /// Fold the list from left with index.
 /// @alert deprecated "Use `foldi` instead"
+/// @coverage.skip
 pub fn fold_lefti[A, B](self : T[A], f : (Int, B, A) -> B, init~ : B) -> B {
   fn go(xs : T[A], i : Int, f : (Int, B, A) -> B, acc : B) -> B {
     match xs {
@@ -461,6 +471,7 @@ pub fn fold_lefti[A, B](self : T[A], f : (Int, B, A) -> B, init~ : B) -> B {
 ///|
 /// Fold the list from right with index.
 /// @alert deprecated "Use `rev_foldi` instead"
+/// @coverage.skip
 pub fn fold_righti[A, B](self : T[A], f : (Int, A, B) -> B, init~ : B) -> B {
   fn go(xs : T[A], i : Int, f : (Int, A, B) -> B, acc : B) -> B {
     match xs {
@@ -507,6 +518,7 @@ pub fn zip[A, B](self : T[A], other : T[B]) -> T[(A, B)]? {
 /// assert_eq!(r, @list.from_array([1, 2, 2, 4, 3, 6]))
 /// ```
 /// @alert deprecated "Use `flat_map` instead"
+/// @coverage.skip
 pub fn concat_map[A, B](self : T[A], f : (A) -> T[B]) -> T[B] {
   flat_map(self, f)
 }
@@ -563,6 +575,7 @@ pub fn unsafe_nth[A](self : T[A], n : Int) -> A {
 
 ///|
 /// @alert deprecated "Use `unsafe_nth` instead"
+/// @coverage.skip
 pub fn nth_exn[A](self : T[A], n : Int) -> A {
   unsafe_nth(self, n)
 }
@@ -1064,36 +1077,32 @@ pub fn T::default[X]() -> T[X] {
 
 ///|
 pub fn iter[A](self : T[A]) -> Iter[A] {
-  Iter::new(
-    fn(yield_) {
-      loop self {
-        Nil => IterContinue
-        Cons(head, tail) => {
-          if yield_(head) == IterEnd {
-            break IterEnd
-          }
-          continue tail
+  Iter::new(fn(yield_) {
+    loop self {
+      Nil => IterContinue
+      Cons(head, tail) => {
+        if yield_(head) == IterEnd {
+          break IterEnd
         }
+        continue tail
       }
-    },
-  )
+    }
+  })
 }
 
 ///|
 pub fn iter2[A](self : T[A]) -> Iter2[Int, A] {
-  Iter2::new(
-    fn(yield_) {
-      loop self, 0 {
-        Nil, _ => IterEnd
-        Cons(head, tail), i => {
-          if yield_(i, head) == IterEnd {
-            break IterEnd
-          }
-          continue tail, i + 1
+  Iter2::new(fn(yield_) {
+    loop self, 0 {
+      Nil, _ => IterEnd
+      Cons(head, tail), i => {
+        if yield_(i, head) == IterEnd {
+          break IterEnd
         }
+        continue tail, i + 1
       }
-    },
-  )
+    }
+  })
 }
 
 ///|

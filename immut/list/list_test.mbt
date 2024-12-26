@@ -261,9 +261,11 @@ test "unzip" {
 }
 
 test "flatten" {
-  let ls = @list.of(
-    [@list.of([1, 2, 3]), @list.of([4, 5, 6]), @list.of([7, 8, 9])],
-  )
+  let ls = @list.of([
+    @list.of([1, 2, 3]),
+    @list.of([4, 5, 6]),
+    @list.of([7, 8, 9]),
+  ])
   let el : @list.T[@list.T[Int]] = @list.Nil
   inspect!(ls.flatten(), content="@list.of([1, 2, 3, 4, 5, 6, 7, 8, 9])")
   inspect!(el.flatten(), content="@list.of([])")
@@ -296,10 +298,9 @@ test "contain" {
 }
 
 test "unfold" {
-  let ls = @list.unfold(
-    init=0,
-    fn { i => if i == 3 { None } else { Some((i, i + 1)) } },
-  )
+  let ls = @list.unfold(init=0, fn {
+    i => if i == 3 { None } else { Some((i, i + 1)) }
+  })
   inspect!(ls, content="@list.of([0, 1, 2])")
 }
 
@@ -385,21 +386,21 @@ test "find" {
 
 test "findi" {
   inspect!(
-    @list.of([1, 3, 5, 8]).findi(
-      fn(element, i) -> Bool { element % 2 == 0 && i == 3 },
-    ),
+    @list.of([1, 3, 5, 8]).findi(fn(element, i) -> Bool {
+      element % 2 == 0 && i == 3
+    }),
     content="Some(8)",
   )
   inspect!(
-    @list.of([1, 3, 8, 5]).findi(
-      fn(element, i) -> Bool { element % 2 == 0 && i == 3 },
-    ),
+    @list.of([1, 3, 8, 5]).findi(fn(element, i) -> Bool {
+      element % 2 == 0 && i == 3
+    }),
     content="None",
   )
   inspect!(
-    (@list.Nil : @list.T[Int]).findi(
-      fn(element, i) -> Bool { element % 2 == 0 && i == 3 },
-    ),
+    (@list.Nil : @list.T[Int]).findi(fn(element, i) -> Bool {
+      element % 2 == 0 && i == 3
+    }),
     content="None",
   )
 }
@@ -471,9 +472,11 @@ test "is_suffix" {
 }
 
 test "intercalate" {
-  let ls = @list.of(
-    [@list.of([1, 2, 3]), @list.of([4, 5, 6]), @list.of([7, 8, 9])],
-  )
+  let ls = @list.of([
+    @list.of([1, 2, 3]),
+    @list.of([4, 5, 6]),
+    @list.of([7, 8, 9]),
+  ])
   let el : @list.T[@list.T[Int]] = @list.Nil
   inspect!(
     ls.intercalate(@list.of([0])),

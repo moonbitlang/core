@@ -16,15 +16,6 @@
 /// Create a new map with a key-value pair inserted.
 /// O(log n).
 /// 
-/// @alert deprecated "Use `add` instead"
-pub fn insert[K : Compare, V](self : T[K, V], key : K, value : V) -> T[K, V] {
-  self.add(key, value)
-}
-
-///|
-/// Create a new map with a key-value pair inserted.
-/// O(log n).
-/// 
 pub fn add[K : Compare, V](self : T[K, V], key : K, value : V) -> T[K, V] {
   match self {
     Empty => singleton(key, value)
@@ -32,7 +23,7 @@ pub fn add[K : Compare, V](self : T[K, V], key : K, value : V) -> T[K, V] {
       match key.compare(k) {
         -1 => balance(k, v, add(l, key, value), r)
         1 => balance(k, v, l, add(r, key, value))
-        _ => new(k, value, l, r)
+        _ => make_tree(k, value, l, r)
       }
   }
 }
@@ -128,26 +119,6 @@ pub fn to_array[K, V](self : T[K, V]) -> Array[(K, V)] {
 }
 
 ///|
-pub impl[K : Eq, V : Eq] Eq for T[K, V] with op_equal(self, other) {
-  self.to_array() == other.to_array()
-}
-
-///|
-pub impl[K : @quickcheck.Arbitrary + Compare, V : @quickcheck.Arbitrary] @quickcheck.Arbitrary for T[
-  K,
-  V,
-] with arbitrary(size, rs) {
-  @quickcheck.Arbitrary::arbitrary(size, rs) |> from_array
-}
-
-///|
-pub impl[K : Hash, V : Hash] Hash for T[K, V] with hash_combine(self, hasher) {
-  for e in self {
-    hasher..combine(e.0).combine(e.1)
-  }
-}
-
-///|
 /// The ratio between the sizes of the left and right subtrees.
 let ratio = 5
 
@@ -163,14 +134,14 @@ fn balance[K : Compare, V](
   //     x   2       --->    1   z
   //        / \             / \
   //       y   z           x   y
-  fn single_l {
-    k1, v1, x, Tree(k2, value=v2, y, z, ..) => new(k2, v2, new(k1, v1, x, y), z)
-    _, _, _, _ => abort("single_l error")
+  fn single_l(k1, v1, x, r) {
+    guard let Tree(k2, value=v2, y, z, ..) = r
+    make_tree(k2, v2, make_tree(k1, v1, x, y), z)
   }
 
-  fn single_r {
-    k2, v2, Tree(k1, value=v1, x, y, ..), z => new(k1, v1, x, new(k2, v2, y, z))
-    _, _, _, _ => abort("single_r error")
+  fn single_r(k2, v2, l, z) {
+    guard let Tree(k1, value=v1, x, y, ..) = l
+    make_tree(k1, v1, x, make_tree(k2, v2, y, z))
   }
 
   //      1                 2
@@ -180,10 +151,9 @@ fn balance[K : Compare, V](
   //      2   z        x  y1 y2  z
   //     / \
   //    y1 y2
-  fn double_l {
-    k1, v1, x, Tree(k3, value=v3, Tree(k2, value=v2, y1, y2, ..), z, ..) =>
-      new(k2, v2, new(k1, v1, x, y1), new(k3, v3, y2, z))
-    _, _, _, _ => abort("double_l error")
+  fn double_l(k1, v1, x, r) {
+    guard let Tree(k3, value=v3, Tree(k2, value=v2, y1, y2, ..), z, ..) = r
+    make_tree(k2, v2, make_tree(k1, v1, x, y1), make_tree(k3, v3, y2, z))
   }
 
   //      3                 2
@@ -193,22 +163,18 @@ fn balance[K : Compare, V](
   //  x  2             x  y1 y2  z
   //    / \
   //   y1 y2
-  fn double_r {
-    k3, v3, Tree(k1, value=v1, x, Tree(k2, value=v2, y1, y2, ..), ..), z =>
-      new(k2, v2, new(k1, v1, x, y1), new(k3, v3, y2, z))
-    _, _, _, _ => abort("double_r error")
+  fn double_r(k3, v3, l, z) {
+    guard let Tree(k1, value=v1, x, Tree(k2, value=v2, y1, y2, ..), ..) = l
+    make_tree(k2, v2, make_tree(k1, v1, x, y1), make_tree(k3, v3, y2, z))
   }
 
   let ln = size(l)
   let rn = size(r)
   if ln + rn < 2 {
-    new(key, value, l, r)
+    make_tree(key, value, l, r)
   } else if rn > ratio * ln {
     // right is too big
-    let (rl, rr) = match r {
-      Tree(_, rl, rr, ..) => (rl, rr)
-      Empty => abort("unreachable")
-    }
+    guard let Tree(_, rl, rr, ..) = r
     let rln = size(rl)
     let rrn = size(rr)
     if rln < rrn {
@@ -218,10 +184,7 @@ fn balance[K : Compare, V](
     }
   } else if ln > ratio * rn {
     // left is too big
-    let (ll, lr) = match l {
-      Tree(_, ll, lr, ..) => (ll, lr)
-      Empty => abort("unreachable")
-    }
+    guard let Tree(_, ll, lr, ..) = l
     let lln = size(ll)
     let lrn = size(lr)
     if lrn < lln {
@@ -230,7 +193,7 @@ fn balance[K : Compare, V](
       double_r(key, value, l, r)
     }
   } else {
-    new(key, value, l, r)
+    make_tree(key, value, l, r)
   }
 }
 
@@ -348,7 +311,7 @@ test "filter_with_key" {
 }
 
 test "empty" {
-  let m : T[Int, Int] = empty()
+  let m : T[Int, Int] = T::new()
   assert_eq!(m.debug_tree(), "_")
 }
 

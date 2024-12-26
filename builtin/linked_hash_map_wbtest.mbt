@@ -157,12 +157,10 @@ test "iteri" {
   let m = { "a": 1, "b": 2, "c": 3 }
   let mut sum = 0
   let mut s = ""
-  m.eachi(
-    fn(i, _k, v) {
-      s += i.to_string()
-      sum += v
-    },
-  )
+  m.eachi(fn(i, _k, v) {
+    s += i.to_string()
+    sum += v
+  })
   assert_eq!(s, "012")
   assert_eq!(sum, 6)
 }
@@ -208,23 +206,19 @@ test "iter" {
   let map = { 1: "one", 2: "two", 3: "three" }
   map
   .iter()
-  .each(
-    fn(e) {
-      let (k, v) = e
-      buf.write_string("[\{k}-\{v}]")
-    },
-  )
+  .each(fn(e) {
+    let (k, v) = e
+    buf.write_string("[\{k}-\{v}]")
+  })
   inspect!(buf, content="[1-one][2-two][3-three]")
   buf.reset()
   map
   .iter()
   .take(2)
-  .each(
-    fn(e) {
-      let (k, v) = e
-      buf.write_string("[\{k}-\{v}]")
-    },
-  )
+  .each(fn(e) {
+    let (k, v) = e
+    buf.write_string("[\{k}-\{v}]")
+  })
   inspect!(buf, content="[1-one][2-two]")
 }
 
@@ -401,12 +395,10 @@ test "iteri" {
   m.set("c", 3)
   let mut sum = 0
   let mut s = ""
-  m.eachi(
-    fn(i, _k, v) {
-      s += i.to_string()
-      sum += v
-    },
-  )
+  m.eachi(fn(i, _k, v) {
+    s += i.to_string()
+    sum += v
+  })
   assert_eq!(s, "012")
   assert_eq!(sum, 6)
 }
@@ -492,12 +484,10 @@ test "iteri" {
   m.set("c", 3)
   let mut sum = 0
   let mut s = ""
-  m.eachi(
-    fn(i, _k, v) {
-      s += i.to_string()
-      sum += v
-    },
-  )
+  m.eachi(fn(i, _k, v) {
+    s += i.to_string()
+    sum += v
+  })
   assert_eq!(s, "012")
   assert_eq!(sum, 6)
 }
@@ -618,12 +608,10 @@ test "iteri" {
   m.set("c", 3)
   let mut sum = 0
   let mut s = ""
-  m.eachi(
-    fn(i, _k, v) {
-      s += i.to_string()
-      sum += v
-    },
-  )
+  m.eachi(fn(i, _k, v) {
+    s += i.to_string()
+    sum += v
+  })
   assert_eq!(s, "012")
   assert_eq!(sum, 6)
 }

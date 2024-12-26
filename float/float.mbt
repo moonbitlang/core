@@ -31,13 +31,7 @@ pub let min_value : Float = (0xFF7FFFFF).reinterpret_as_float()
 pub let min_positive : Float = (0x00800000).reinterpret_as_float()
 
 ///|
-pub fn abs(self : Float) -> Float {
-  if self < 0.0 {
-    -self
-  } else {
-    self
-  }
-}
+pub fn abs(self : Float) -> Float = "%f32.abs"
 
 ///|
 pub impl Show for Float with output(self, logger) {
@@ -47,4 +41,44 @@ pub impl Show for Float with output(self, logger) {
 ///|
 pub fn Float::default() -> Float {
   0.0
+}
+
+///|
+fn Float::to_unchecked_int(self : Float) -> Int = "%f32.to_i32"
+
+///|
+/// Converts a floating-point number to an integer, with proper handling of
+/// special cases such as NaN and values outside the range of 32-bit integers.
+///
+/// Parameters:
+///
+/// * `self` : The floating-point number to be converted.
+///
+/// Returns an integer representation of the float value. Specifically:
+/// * `0` for `@float.not_a_number` (NaN),
+/// * `@int.max_value` (2147483647) for values greater than `@int.max_value`,
+/// * `@int.min_value` (-2147483648) for values less than `@int.min_value`.
+/// * truncated (towards zero) integer value for other cases.
+///
+/// Examples:
+///
+/// ```moonbit
+/// test "Float::to_int/normal" {
+///   inspect!((1.5 : Float).to_int(), content="1")
+///   inspect!((-1.5 : Float).to_int(), content="-1")
+///   inspect!(@float.not_a_number.to_int(), content="0")
+///   inspect!(@float.infinity.to_int(), content="2147483647")
+///   inspect!(@float.neg_infinity.to_int(), content="-2147483648")
+/// }
+/// ```
+pub fn Float::to_int(self : Float) -> Int {
+  if self != self {
+    0
+  } else if self >= 2147483647 {
+    2147483647
+  } else if self <= -2147483648 {
+    -2147483648
+  } else {
+    self.to_unchecked_int()
+  }
 }

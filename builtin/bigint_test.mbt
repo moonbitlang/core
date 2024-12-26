@@ -557,3 +557,93 @@ test "to_hex" {
     content="-11e3444dc1f35f057ad2cbc2791737468140a426fac3cba7af8c92a8f34e",
   )
 }
+
+test "land_1" {
+  let a = BigInt::from_string("-10")
+  let b = BigInt::from_string("11")
+  inspect!(a & b, content="2")
+}
+
+test "land_2" {
+  let a = BigInt::from_string("-10")
+  let b = BigInt::from_hex("fffffffffffffff") // 15 'f' chars
+  inspect!(a & b, content="1152921504606846966")
+}
+
+test "land_3" {
+  let a = BigInt::from_hex("ffffffffffffffff") // 16 'f' chars
+  let b = BigInt::from_string("-10")
+  inspect!(a & b, content="18446744073709551606")
+}
+
+test "land_4" {
+  let a = BigInt::from_string("0")
+  let b = BigInt::from_string("-10")
+  inspect!(a & b, content="0")
+}
+
+test "land_5" {
+  let a = BigInt::from_hex("ffffffffffffffff")
+  let b = BigInt::from_hex("ffffffffffffffff")
+  inspect!(a & b, content="18446744073709551615")
+}
+
+test "lor_1" {
+  let a = BigInt::from_string("-10")
+  let b = BigInt::from_string("11")
+  inspect!(a | b, content="-1")
+}
+
+test "lor_2" {
+  let a = BigInt::from_string("-10")
+  let b = BigInt::from_hex("fffffffffffffff") // 15 'f' chars
+  inspect!(a | b, content="-1")
+}
+
+test "lor_3" {
+  let a = BigInt::from_hex("ffffffffffffffff") // 16 'f' chars
+  let b = BigInt::from_string("-10")
+  inspect!(a | b, content="-1")
+}
+
+test "lor_4" {
+  let a = BigInt::from_string("0")
+  let b = BigInt::from_string("-10")
+  inspect!(a | b, content="-10")
+}
+
+test "lor_5" {
+  let a = BigInt::from_hex("ffffffffffffffff")
+  let b = BigInt::from_string("0")
+  inspect!(a | b, content="18446744073709551615")
+}
+
+test "lxor_1" {
+  let a = BigInt::from_string("-10")
+  let b = BigInt::from_string("11")
+  inspect!(a ^ b, content="-3")
+}
+
+test "lxor_2" {
+  let a = BigInt::from_string("-10")
+  let b = BigInt::from_hex("fffffffffffffff") // 15 'f' chars
+  inspect!(a ^ b, content="-1152921504606846967")
+}
+
+test "lxor_3" {
+  let a = BigInt::from_hex("ffffffffffffffff") // 16 'f' chars
+  let b = BigInt::from_string("-10")
+  inspect!(a ^ b, content="-18446744073709551607")
+}
+
+test "lxor_4" {
+  let a = BigInt::from_string("0")
+  let b = BigInt::from_string("-10")
+  inspect!(a ^ b, content="-10")
+}
+
+test "lxor_5" {
+  let a = BigInt::from_string("0")
+  let b = BigInt::from_hex("ffffffffffffffff")
+  inspect!(a ^ b, content="18446744073709551615")
+}

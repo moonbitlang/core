@@ -29,6 +29,15 @@ test "stringbuilder" {
   inspect!(buf.to_string(), content="hello wor")
 }
 
+test "is_empty method" {
+  let buf = StringBuilder::new()
+  inspect!(buf.is_empty(), content="true")
+  buf.write_string("Test")
+  inspect!(buf.is_empty(), content="false")
+  buf.reset()
+  inspect!(buf.is_empty(), content="true")
+}
+
 test {
   let data = ["a", "b", "c", "hello world"]
   @json.inspect!(data.map(id), content=["a", "b", "c", "hello world"])

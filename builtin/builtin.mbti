@@ -17,7 +17,9 @@ fn fail[T](String, loc~ : SourceLoc = _) -> T!Failure
 
 fn ignore[T](T) -> Unit
 
-fn inspect(Show, content~ : String = .., loc~ : SourceLoc = _, args_loc~ : ArgsLoc = _) -> Unit!InspectError
+fn inspect(&Show, content~ : String = .., loc~ : SourceLoc = _, args_loc~ : ArgsLoc = _) -> Unit!InspectError
+
+fn not(Bool) -> Bool
 
 fn op_ge[T : Compare](T, T) -> Bool
 
@@ -87,7 +89,7 @@ impl Array {
   mapi_inplace[T](Self[T], (Int, T) -> T) -> Unit
   new[T](capacity~ : Int = ..) -> Self[T]
   op_add[T](Self[T], Self[T]) -> Self[T]
-  op_as_view[T](Self[T], start~ : Int, end? : Int) -> ArrayView[T]
+  op_as_view[T](Self[T], start~ : Int = .., end? : Int) -> ArrayView[T]
   op_equal[T : Eq](Self[T], Self[T]) -> Bool
   op_get[T](Self[T], Int) -> T
   op_set[T](Self[T], Int, T) -> Unit
@@ -123,11 +125,16 @@ impl[X : Show] Show for Array[X]
 
 type ArrayView
 impl ArrayView {
+  filter[T](Self[T], (T) -> Bool) -> Array[T]
   fold[A, B](Self[A], init~ : B, (B, A) -> B) -> B
   foldi[A, B](Self[A], init~ : B, (Int, B, A) -> B) -> B
   iter[A](Self[A]) -> Iter[A]
   length[T](Self[T]) -> Int
-  op_as_view[T](Self[T], start~ : Int, end? : Int) -> Self[T]
+  map[T, U](Self[T], (T) -> U) -> Array[U]
+  map_inplace[T](Self[T], (T) -> T) -> Unit
+  mapi[T, U](Self[T], (Int, T) -> U) -> Array[U]
+  mapi_inplace[T](Self[T], (Int, T) -> T) -> Unit
+  op_as_view[T](Self[T], start~ : Int = .., end? : Int) -> Self[T]
   op_get[T](Self[T], Int) -> T
   op_set[T](Self[T], Int, T) -> Unit
   rev_fold[A, B](Self[A], init~ : B, (B, A) -> B) -> B
@@ -136,6 +143,8 @@ impl ArrayView {
   to_json[X : ToJson](Self[X]) -> Json
   to_string[X : Show](Self[X]) -> String
 }
+impl[T : Compare] Compare for ArrayView[T]
+impl[T : Eq] Eq for ArrayView[T]
 impl[X : Show] Show for ArrayView[X]
 
 type BigInt
@@ -148,7 +157,10 @@ impl BigInt {
   from_octets(Bytes, signum~ : Int = ..) -> Self
   from_string(String) -> Self
   is_zero(Self) -> Bool
+  land(Self, Self) -> Self
+  lor(Self, Self) -> Self
   lsl(Self, Int) -> Self //deprecated
+  lxor(Self, Self) -> Self
   op_add(Self, Self) -> Self
   op_div(Self, Self) -> Self
   op_equal(Self, Self) -> Bool
@@ -158,7 +170,7 @@ impl BigInt {
   op_shl(Self, Int) -> Self
   op_shr(Self, Int) -> Self
   op_sub(Self, Self) -> Self
-  pow(Self, Self, modulus~ : Self = ..) -> Self
+  pow(Self, Self, modulus? : Self) -> Self
   shl(Self, Int) -> Self //deprecated
   shr(Self, Int) -> Self //deprecated
   to_hex(Self, uppercase~ : Bool = ..) -> String
@@ -169,6 +181,7 @@ impl BigInt {
 impl Show for BigInt
 
 pub(all) type! Failure String
+impl Show for Failure
 
 type Hasher
 impl Hasher {
@@ -205,6 +218,7 @@ impl Iter {
   eachi[T](Self[T], (Int, T) -> Unit) -> Unit
   empty[T]() -> Self[T]
   filter[T](Self[T], (T) -> Bool) -> Self[T]
+  filter_map[A, B](Self[A], (A) -> B?) -> Self[B]
   find_first[T](Self[T], (T) -> Bool) -> T?
   flat_map[T, R](Self[T], (T) -> Self[R]) -> Self[R]
   fold[T, B](Self[T], init~ : B, (B, T) -> B) -> B
@@ -214,11 +228,11 @@ impl Iter {
   just_run[T](Self[T], (T) -> IterResult) -> Unit
   last[A](Self[A]) -> A?
   map[T, R](Self[T], (T) -> R) -> Self[R]
-  map_option[A, B](Self[A], (A) -> B?) -> Self[B]
+  map_option[A, B](Self[A], (A) -> B?) -> Self[B] //deprecated
   map_while[A, B](Self[A], (A) -> B?) -> Self[B]
   new[T](((T) -> IterResult) -> IterResult) -> Self[T]
   op_add[T](Self[T], Self[T]) -> Self[T]
-  op_as_view[A](Self[A], start~ : Int, end? : Int) -> Self[A]
+  op_as_view[A](Self[A], start~ : Int = .., end? : Int) -> Self[A]
   peek[T](Self[T]) -> T?
   prepend[T](Self[T], T) -> Self[T]
   repeat[T](T) -> Self[T]
@@ -332,6 +346,7 @@ impl Show for SourceLoc
 
 type StringBuilder
 impl StringBuilder {
+  is_empty(Self) -> Bool
   new(size_hint~ : Int = ..) -> Self
   reset(Self) -> Unit
   to_string(Self) -> String
@@ -358,9 +373,10 @@ impl Unit {
 
 
 impl Bool {
+  compare(Bool, Bool) -> Int
   default() -> Bool
-  not(Bool) -> Bool
-  op_compare(Bool, Bool) -> Int
+  not(Bool) -> Bool //deprecated
+  op_compare(Bool, Bool) -> Int //deprecated
   op_equal(Bool, Bool) -> Bool
   to_json(Bool) -> Json
   to_string(Bool) -> String
@@ -609,7 +625,7 @@ impl String {
   op_add(String, String) -> String
   op_equal(String, String) -> Bool
   op_get(String, Int) -> Char
-  substring(String, start~ : Int = .., end~ : Int = ..) -> String
+  substring(String, start~ : Int = .., end? : Int) -> String
   to_json(String) -> Json
   to_string(String) -> String
 }
@@ -654,7 +670,7 @@ impl FixedArray {
 
 impl Bytes {
   blit(Bytes, Int, Bytes, Int, Int) -> Unit
-  blit_from_string(Bytes, Int, String, Int, Int) -> Unit
+  blit_from_string(Bytes, Int, String, Int, Int) -> Unit //deprecated
   copy(Bytes) -> Bytes
   length(Bytes) -> Int
   make(Int, Byte) -> Bytes
@@ -663,7 +679,7 @@ impl Bytes {
   op_equal(Bytes, Bytes) -> Bool
   op_get(Bytes, Int) -> Byte
   op_set(Bytes, Int, Byte) -> Unit
-  set_utf16_char(Bytes, Int, Char) -> Int
+  set_utf16_char(Bytes, Int, Char) -> Int //deprecated
   set_utf8_char(Bytes, Int, Char) -> Int //deprecated
   sub_string(Bytes, Int, Int) -> String //deprecated
   to_string(Bytes) -> String //deprecated
@@ -672,8 +688,8 @@ impl Bytes {
 
 
 impl Logger {
-  write_iter[T : Show](Self, Iter[T], prefix~ : String = .., suffix~ : String = .., sep~ : String = .., trailing~ : Bool = ..) -> Unit
-  write_object[Obj : Show](Self, Obj) -> Unit
+  write_iter[T : Show](&Self, Iter[T], prefix~ : String = .., suffix~ : String = .., sep~ : String = .., trailing~ : Bool = ..) -> Unit
+  write_object[Obj : Show](&Self, Obj) -> Unit
 }
 
 
@@ -809,7 +825,7 @@ pub(open) trait Logger {
 impl Logger::write_sub_string
 
 pub(open) trait Show {
-  output(Self, Logger) -> Unit
+  output(Self, &Logger) -> Unit
   to_string(Self) -> String
 }
 impl Show::to_string

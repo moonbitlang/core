@@ -376,18 +376,16 @@ test "rev_fold" {
 }
 
 test "foldi" {
-  let sum = [1, 2, 3, 4, 5].foldi(
-    init=0,
-    fn { index, sum, _elem => sum + index },
-  )
+  let sum = [1, 2, 3, 4, 5].foldi(init=0, fn {
+    index, sum, _elem => sum + index
+  })
   assert_eq!(sum, 10)
 }
 
 test "rev_foldi" {
-  let sum = [1, 2, 3, 4, 5].rev_foldi(
-    init=0,
-    fn { index, sum, _elem => sum + index },
-  )
+  let sum = [1, 2, 3, 4, 5].rev_foldi(init=0, fn {
+    index, sum, _elem => sum + index
+  })
   assert_eq!(sum, 10)
   let op = fn { index, sum, elem => index - sum - elem }
   let data = [1, 2, 3, 4, 5, 10]
@@ -515,9 +513,9 @@ test "Array::makei with negative length" {
   assert_eq!(arr, [])
 }
 
-test "map_option" {
+test "filter_map" {
   let arr = [1, 2, 3, 4, 5]
-  let mapped = arr.map_option(fn(x) { if x % 2 == 0 { Some(x) } else { None } })
+  let mapped = arr.filter_map(fn(x) { if x % 2 == 0 { Some(x) } else { None } })
   inspect!(mapped, content="[2, 4]")
 }
 

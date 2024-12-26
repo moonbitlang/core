@@ -46,6 +46,7 @@ pub fn T::of[K : Hash + Eq](arr : FixedArray[K]) -> T[K] {
 /// Insert a key into hash set.
 /// @alert unsafe "Panic if the hash set is full."
 /// @alert deprecated "Use `add` instead."
+/// @coverage.skip
 pub fn insert[K : Hash + Eq](self : T[K], key : K) -> Unit {
   self.add(key)
 }
@@ -218,18 +219,16 @@ pub fn symmetric_difference[K : Hash + Eq](self : T[K], other : T[K]) -> T[K] {
 
 ///|
 pub fn iter[K](self : T[K]) -> Iter[K] {
-  Iter::new(
-    fn(yield_) {
-      for i = 0, len = self.entries.length(); i < len; i = i + 1 {
-        match self.entries[i] {
-          Some({ key, .. }) => if yield_(key) == IterEnd { break IterEnd }
-          None => continue
-        }
-      } else {
-        IterContinue
+  Iter::new(fn(yield_) {
+    for entry in self.entries {
+      match entry {
+        Some({ key, .. }) => if yield_(key) == IterEnd { break IterEnd }
+        None => continue
       }
-    },
-  )
+    } else {
+      IterContinue
+    }
+  })
 }
 
 ///|

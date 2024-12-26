@@ -184,16 +184,47 @@ pub fn op_get[K : Hash + Eq, V](self : Map[K, V], key : K) -> V? {
 }
 
 ///|
-/// Get the value associated with a key, 
-/// returns the provided default value if the key does not exist.
+/// Returns the value associated with the key in the map, or computes and returns
+/// a default value if the key does not exist.
+///
+/// Parameters:
+///
+/// * `map` : The map to search in.
+/// * `key` : The key to look up in the map.
+/// * `default` : A function that returns a default value when the key is not
+/// found.
+///
+/// Returns either the value associated with the key if it exists, or the result
+/// of calling the default function.
+///
+/// Example:
+///
+/// ```moonbit
+/// test "get_or_default" {
+///   let map = { "a": 1, "b": 2 }
+///   inspect!(map.get_or_default("a", 0), content="1")
+///   inspect!(map.get_or_default("c", 42), content="42")
+/// }
+/// ```
 pub fn get_or_default[K : Hash + Eq, V](
   self : Map[K, V],
   key : K,
   default : V
 ) -> V {
-  match self.get(key) {
-    Some(v) => v
-    None => default
+  let hash = key.hash()
+  for i = 0, idx = hash & self.capacity_mask {
+    match self.entries[idx] {
+      Some(entry) => {
+        if entry.hash == hash && entry.key == key {
+          break entry.value
+        }
+        if i > entry.psl {
+          break default
+        }
+        continue i + 1, (idx + 1) & self.capacity_mask
+      }
+      None => break default
+    }
   }
 }
 
@@ -425,68 +456,60 @@ pub fn clear[K, V](self : Map[K, V]) -> Unit {
 ///|
 /// Returns the iterator of the hash map, provide elements in the order of insertion.
 pub fn iter[K, V](self : Map[K, V]) -> Iter[(K, V)] {
-  Iter::new(
-    fn(yield_) {
-      loop self.head {
-        Some({ key, value, idx, .. }) => {
-          if yield_((key, value)) == IterEnd {
-            break IterEnd
-          }
-          continue self.list[idx].next
+  Iter::new(fn(yield_) {
+    loop self.head {
+      Some({ key, value, idx, .. }) => {
+        if yield_((key, value)) == IterEnd {
+          break IterEnd
         }
-        None => break IterContinue
+        continue self.list[idx].next
       }
-    },
-  )
+      None => break IterContinue
+    }
+  })
 }
 
 ///|
 pub fn iter2[K, V](self : Map[K, V]) -> Iter2[K, V] {
-  Iter2::new(
-    fn(yield_) {
-      loop self.head {
-        Some({ key, value, idx, .. }) =>
-          if yield_(key, value) == IterEnd {
-            IterEnd
-          } else {
-            continue self.list[idx].next
-          }
-        None => IterContinue
-      }
-    },
-  )
+  Iter2::new(fn(yield_) {
+    loop self.head {
+      Some({ key, value, idx, .. }) =>
+        if yield_(key, value) == IterEnd {
+          IterEnd
+        } else {
+          continue self.list[idx].next
+        }
+      None => IterContinue
+    }
+  })
 }
 
 ///|
 pub fn keys[K, V](self : Map[K, V]) -> Iter[K] {
-  Iter::new(
-    fn(yield_) {
-      loop self.head {
-        Some({ key, idx, .. }) =>
-          match yield_(key) {
-            IterEnd => IterEnd
-            IterContinue => continue self.list[idx].next
-          }
-        None => IterContinue
-      }
-    },
-  )
+  Iter::new(fn(yield_) {
+    loop self.head {
+      Some({ key, idx, .. }) =>
+        match yield_(key) {
+          IterEnd => IterEnd
+          IterContinue => continue self.list[idx].next
+        }
+      None => IterContinue
+    }
+  })
 }
 
 ///|
 pub fn values[K, V](self : Map[K, V]) -> Iter[V] {
-  Iter::new(
-    fn(yield_) {
-      loop self.head {
-        Some({ value, idx, .. }) =>
-          match yield_(value) {
-            IterEnd => IterEnd
-            IterContinue => continue self.list[idx].next
-          }
-        None => IterContinue
-      }
-    },
-  )
+  Iter::new(fn(yield_) {
+    loop self.head {
+      Some({ value, idx, .. }) =>
+        match yield_(value) {
+          IterEnd => IterEnd
+          IterContinue => continue self.list[idx].next
+        }
+      None => IterContinue
+    }
+  })
 }
 
 ///|

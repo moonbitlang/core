@@ -74,12 +74,10 @@ test "iteri" {
   let m = @hashset.of(["1", "2", "3"])
   let mut s = ""
   let mut sum = 0
-  m.eachi(
-    fn(i, k) {
-      s += k
-      sum += i
-    },
-  )
+  m.eachi(fn(i, k) {
+    s += k
+    sum += i
+  })
   inspect!(s, content="231")
   inspect!(sum, content="3")
 }

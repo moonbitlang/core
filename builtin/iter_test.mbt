@@ -176,14 +176,12 @@ test "drop_while3" {
   let res = iter
     .drop_while(fn { x => x < 3 })
     .concat(singleton(6))
-    .find_first(
-      fn {
-        x => {
-          exb.write_char('x')
-          x % 3 == 0
-        }
-      },
-    )
+    .find_first(fn {
+      x => {
+        exb.write_char('x')
+        x % 3 == 0
+      }
+    })
   // make sure the predicate in find_first is called only once
   inspect!(exb, content="x")
   inspect!(res, content="Some(3)")
@@ -215,16 +213,16 @@ test "map" {
   inspect!(exb, content="23456")
 }
 
-test "map_option" {
+test "filter_map" {
   let arr = [1, 2, 3, 4, 5]
   let r1 = arr
     .iter()
-    .map_option(fn(x) { if x < 3 { None } else { Some(x) } })
+    .filter_map(fn(x) { if x < 3 { None } else { Some(x) } })
     .collect()
   inspect!(r1, content="[3, 4, 5]")
-  let r2 : Array[Unit] = arr.iter().map_option(fn(_x) { None }).collect()
+  let r2 : Array[Unit] = arr.iter().filter_map(fn(_x) { None }).collect()
   inspect!(r2, content="[]")
-  let r3 : Array[Unit] = [].iter().map_option(Option::Some).collect()
+  let r3 : Array[Unit] = [].iter().filter_map(Option::Some).collect()
   inspect!(r3, content="[]")
 }
 
@@ -300,14 +298,12 @@ test "concat" {
 
 test "collect" {
   let arr = ['1', '2', '3', '4', '5']
-  let iter = Iter::new(
-    fn(yield_) {
-      for i = 0, len = arr.length(); i < len; i = i + 1 {
-        yield_(arr[i]) |> ignore
-      }
-      IterContinue
-    },
-  )
+  let iter = Iter::new(fn(yield_) {
+    for i = 0, len = arr.length(); i < len; i = i + 1 {
+      yield_(arr[i]) |> ignore
+    }
+    IterContinue
+  })
   let vec = iter.collect()
   assert_eq!(vec, ['1', '2', '3', '4', '5'])
 }
@@ -424,18 +420,16 @@ test "eachi" {
 ///|
 // For testing purposes
 fn test_from_array[T](arr : Array[T]) -> Iter[T] {
-  Iter::new(
-    fn {
-      yield_ =>
-        for i = 0; i < arr.length(); i = i + 1 {
-          if yield_(arr[i]) == IterEnd {
-            break IterEnd
-          }
-        } else {
-          IterContinue
+  Iter::new(fn {
+    yield_ =>
+      for i = 0; i < arr.length(); i = i + 1 {
+        if yield_(arr[i]) == IterEnd {
+          break IterEnd
         }
-    },
-  )
+      } else {
+        IterContinue
+      }
+  })
 }
 
 test "any" {
@@ -464,22 +458,20 @@ enum Tree {
 
 ///|
 fn iter(self : Tree) -> Iter[Int] {
-  Iter::new(
-    fn(yield_) {
-      match self {
-        Leaf(x) => yield_(x)
-        Node(l, v, r) =>
-          // ([ .. l, v , .. r]).apply(f)
-          if l.iter().run(yield_) == IterEnd {
-            IterEnd
-          } else if yield_(v) == IterEnd {
-            IterEnd
-          } else {
-            r.iter().run(yield_)
-          }
-      }
-    },
-  )
+  Iter::new(fn(yield_) {
+    match self {
+      Leaf(x) => yield_(x)
+      Node(l, v, r) =>
+        // ([ .. l, v , .. r]).apply(f)
+        if l.iter().run(yield_) == IterEnd {
+          IterEnd
+        } else if yield_(v) == IterEnd {
+          IterEnd
+        } else {
+          r.iter().run(yield_)
+        }
+    }
+  })
 }
 
 test "tree" {
