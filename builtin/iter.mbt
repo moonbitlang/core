@@ -474,12 +474,13 @@ pub fn flat_map[T, R](self : Iter[T], f : (T) -> Iter[R]) -> Iter[R] {
 /// # Returns
 ///
 /// The same iterator.
-/// 
-/// @alert deprecated "use cascade operator [..] instead"
-/// @coverage.skip
 pub fn tap[T](self : Iter[T], f : (T) -> Unit) -> Iter[T] {
-  self.each(f)
-  self
+  self.map(fn {
+    a => {
+      f(a)
+      a
+    }
+  })
 }
 
 ///|

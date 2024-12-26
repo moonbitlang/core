@@ -431,8 +431,8 @@ pub fn eachi[A](self : T[A], f : (Int, A) -> Unit) -> Unit {
 /// assert_eq!(sum, 15)
 /// ```
 pub fn rev_each[A](self : T[A], f : (A) -> Unit) -> Unit {
-  for i = self.length() - 1; i >= 0; i = i - 1 {
-    f(self[i])
+  for v in self.rev_iter() {
+    f(v)
   }
 }
 
@@ -447,8 +447,8 @@ pub fn rev_each[A](self : T[A], f : (A) -> Unit) -> Unit {
 /// assert_eq!(idx_sum, 10)
 /// ```
 pub fn rev_eachi[A](self : T[A], f : (Int, A) -> Unit) -> Unit {
-  for i = 0; i < self.len; i = i + 1 {
-    f(i, self[self.len - i - 1])
+  for i, v in self.rev_iter2() {
+    f(i, v)
   }
 }
 
@@ -653,6 +653,59 @@ pub fn iter2[A](self : T[A]) -> Iter2[Int, A] {
         j += 1
       }
       for i in 0..<(len - head_len) {
+        guard let IterContinue = yield_(j, buf[i]) else { x => return x }
+        j += 1
+      }
+    }
+    IterContinue
+  })
+}
+
+///|
+pub fn rev_iter[A](self : T[A]) -> Iter[A] {
+  Iter::new(fn(yield_) {
+    guard not(self.is_empty()) else { IterContinue }
+    let { head, buf, len, .. } = self
+    let cap = buf.length()
+    let head_len = cap - head
+    if head_len >= len {
+      for i = head + len - 1; i >= head; i = i - 1 {
+        guard let IterContinue = yield_(buf[i]) else { x => return x }
+
+      }
+    } else {
+      for i = len - head_len - 1; i >= 0; i = i - 1 {
+        guard let IterContinue = yield_(buf[i]) else { x => return x }
+
+      }
+      for i = cap - 1; i >= head; i = i - 1 {
+        guard let IterContinue = yield_(buf[i]) else { x => return x }
+
+      }
+    }
+    IterContinue
+  })
+}
+
+///|
+pub fn rev_iter2[A](self : T[A]) -> Iter2[Int, A] {
+  Iter2::new(fn(yield_) {
+    guard not(self.is_empty()) else { IterContinue }
+    let { head, buf, len, .. } = self
+    let cap = buf.length()
+    let head_len = cap - head
+    let mut j = 0
+    if head_len >= len {
+      for i = head + len - 1; i >= head; i = i - 1 {
+        guard let IterContinue = yield_(j, buf[i]) else { x => return x }
+        j += 1
+      }
+    } else {
+      for i = len - head_len - 1; i >= 0; i = i - 1 {
+        guard let IterContinue = yield_(j, buf[i]) else { x => return x }
+        j += 1
+      }
+      for i = cap - 1; i >= head; i = i - 1 {
         guard let IterContinue = yield_(j, buf[i]) else { x => return x }
         j += 1
       }

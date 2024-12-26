@@ -269,8 +269,8 @@ test "find_first2" {
 test "tap" {
   let iter = test_from_array(['1', '2', '3', '4', '5'])
   let exb = StringBuilder::new(size_hint=0)
-  iter..each(fn { x => exb.write_char(x) }).each(fn { x => exb.write_char(x) })
-  inspect!(exb, content="1234512345")
+  iter.tap(fn { x => exb.write_char(x) }).each(fn { x => exb.write_char(x) })
+  inspect!(exb, content="1122334455")
 }
 
 test "prepend" {

@@ -129,7 +129,7 @@ test "mapi" {
   inspect!(dve.mapi(fn(_idx, x) { x }), content="@deque.of([])")
 }
 
-test "iter_rev" {
+test "rev_each" {
   let mut i = 6
   let mut failed = false
   @deque.of([1, 2, 3, 4, 5]).rev_each(fn(elem) {
@@ -141,7 +141,7 @@ test "iter_rev" {
   assert_false!(failed)
 }
 
-test "iter_revi" {
+test "rev_eachi" {
   let mut i = 6
   let mut j = 0
   let mut failed = false
@@ -445,6 +445,33 @@ test "iter2 when tail needs to wrap around" {
   dq.unsafe_pop_front() // head = 1
   dq.push_back(3) // tail = 0 (wraps around)
   inspect!(dq.iter2().to_array(), content="[(0, 2), (1, 3)]")
+}
+
+test "rev_iter when head needs to wrap around" {
+  let dq = @deque.new(capacity=4)
+  dq.push_back(1)
+  dq.unsafe_pop_front()
+  dq.push_back(2)
+  dq.unsafe_pop_front()
+  for i in 3..=6 {
+    dq.push_back(i)
+  }
+  inspect!(dq.rev_iter().to_array(), content="[6, 5, 4, 3]")
+}
+
+test "rev_iter2 when head needs to wrap around" {
+  let dq = @deque.new(capacity=4)
+  dq.push_back(1)
+  dq.unsafe_pop_front()
+  dq.push_back(2)
+  dq.unsafe_pop_front()
+  for i in 3..=6 {
+    dq.push_back(i)
+  }
+  inspect!(
+    dq.rev_iter2().to_array(),
+    content="[(0, 6), (1, 5), (2, 4), (3, 3)]",
+  )
 }
 
 test "deque push_front when empty" {
