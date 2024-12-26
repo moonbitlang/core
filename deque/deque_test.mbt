@@ -457,7 +457,7 @@ test "deque push_front when empty" {
   inspect!(
     d.pop_back(),
     content=
-      #|Some("")
+      #|Some("b")
     ,
   )
   inspect!(
@@ -480,7 +480,7 @@ test "deque push_back when empty" {
   inspect!(
     d.pop_front(),
     content=
-      #|Some("")
+      #|Some("a")
     ,
   )
   inspect!(
