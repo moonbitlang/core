@@ -431,8 +431,8 @@ pub fn eachi[A](self : T[A], f : (Int, A) -> Unit) -> Unit {
 /// assert_eq!(sum, 15)
 /// ```
 pub fn rev_each[A](self : T[A], f : (A) -> Unit) -> Unit {
-  for i = self.length() - 1; i >= 0; i = i - 1 {
-    f(self[i])
+  for v in self.rev_iter() {
+    f(v)
   }
 }
 
@@ -447,8 +447,8 @@ pub fn rev_each[A](self : T[A], f : (A) -> Unit) -> Unit {
 /// assert_eq!(idx_sum, 10)
 /// ```
 pub fn rev_eachi[A](self : T[A], f : (Int, A) -> Unit) -> Unit {
-  for i = 0; i < self.len; i = i + 1 {
-    f(i, self[self.len - i - 1])
+  for i, v in self.rev_iter2() {
+    f(i, v)
   }
 }
 
