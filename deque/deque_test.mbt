@@ -453,6 +453,21 @@ test "deque push_front when empty" {
   guard let Some(f) = d.pop_back()
   d.push_front(f)
   inspect!(d, content="@deque.of([0])")
+  let d = @deque.of(["a", "b"])
+  inspect!(
+    d.pop_back(),
+    content=
+      #|Some("")
+    ,
+  )
+  inspect!(
+    d.pop_back(),
+    content=
+      #|Some("a")
+    ,
+  )
+  d.push_front("a")
+  inspect!(d, content="@deque.of([\"a\"])")
 }
 
 test "deque push_back when empty" {
@@ -461,4 +476,19 @@ test "deque push_back when empty" {
   guard let Some(f) = d.pop_front()
   d.push_back(f)
   inspect!(d, content="@deque.of([1])")
+  let d = @deque.of(["a", "b"])
+  inspect!(
+    d.pop_front(),
+    content=
+      #|Some("")
+    ,
+  )
+  inspect!(
+    d.pop_front(),
+    content=
+      #|Some("b")
+    ,
+  )
+  d.push_back("b")
+  inspect!(d, content="@deque.of([\"b\"])")
 }
