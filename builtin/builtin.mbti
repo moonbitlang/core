@@ -240,7 +240,7 @@ impl Iter {
   singleton[T](T) -> Self[T]
   take[T](Self[T], Int) -> Self[T]
   take_while[T](Self[T], (T) -> Bool) -> Self[T]
-  tap[T](Self[T], (T) -> Unit) -> Self[T] //deprecated
+  tap[T](Self[T], (T) -> Unit) -> Self[T]
   to_array[T](Self[T]) -> Array[T]
 }
 impl[T : Show] Show for Iter[T]
