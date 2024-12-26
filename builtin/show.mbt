@@ -137,12 +137,6 @@ pub impl Show for String with output(self, logger) {
 pub impl Show for String with to_string(self) { self }
 
 ///|
-pub impl Show for Failure with to_string(self) {
-  let Failure(msg) = self
-  "Failure(\{msg})"
-}
-
-///|
 pub impl Show for Failure with output(self, logger) {
   let Failure(msg) = self
   "Failure(\{msg})".output(logger)
