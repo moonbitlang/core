@@ -35,6 +35,8 @@ impl T {
   reserve_capacity[A](Self[A], Int) -> Unit
   rev_each[A](Self[A], (A) -> Unit) -> Unit
   rev_eachi[A](Self[A], (Int, A) -> Unit) -> Unit
+  rev_iter[A](Self[A]) -> Iter[A]
+  rev_iter2[A](Self[A]) -> Iter2[Int, A]
   search[A : Eq](Self[A], A) -> Int?
   shrink_to_fit[A](Self[A]) -> Unit
   unsafe_pop_back[A](Self[A]) -> Unit
