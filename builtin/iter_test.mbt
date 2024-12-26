@@ -214,15 +214,15 @@ test "map" {
 }
 
 test "filter_map" {
-  let arr = [1, 2, 3, 4, 5]
-  let r1 = arr
-    .iter()
+  let r1 = test_from_array([1, 2, 3, 4, 5])
     .filter_map(fn(x) { if x < 3 { None } else { Some(x) } })
     .collect()
   inspect!(r1, content="[3, 4, 5]")
-  let r2 : Array[Unit] = arr.iter().filter_map(fn(_x) { None }).collect()
+  let r2 : Array[Unit] = test_from_array([1, 2, 3, 4, 5])
+    .filter_map(fn(_x) { None })
+    .collect()
   inspect!(r2, content="[]")
-  let r3 : Array[Unit] = [].iter().filter_map(Option::Some).collect()
+  let r3 : Array[Unit] = test_from_array([]).filter_map(Option::Some).collect()
   inspect!(r3, content="[]")
 }
 
@@ -256,6 +256,7 @@ test "find_first" {
   let iter = test_from_array(['1', '2', '3', '4', '5'])
   let result = iter.find_first(fn { x => x > '3' })
   assert_eq!(result, Some('4'))
+  let iter = test_from_array(['1', '2', '3', '4', '5'])
   let result2 = iter.find_first(fn { x => x > '5' })
   assert_eq!(result2, None)
 }
@@ -329,7 +330,7 @@ test "until" {
   inspect!(
     (@int.max_value - 1)
     .until(@int.max_value, inclusive=true)
-    .concat([0].iter()),
+    .concat(test_from_array([0])),
     content="[2147483646, 2147483647, 0]",
   )
   inspect!((@int.max_value - 1).until(@int.max_value), content="[2147483646]")
@@ -418,10 +419,15 @@ test "eachi" {
 }
 
 ///|
-// For testing purposes
+/// For testing purposes
+/// 
+/// Any iter should only be run once
 fn test_from_array[T](arr : Array[T]) -> Iter[T] {
+  let mut ran = false
   Iter::new(fn {
-    yield_ =>
+    yield_ => {
+      guard not(ran)
+      ran = true
       for i = 0; i < arr.length(); i = i + 1 {
         if yield_(arr[i]) == IterEnd {
           break IterEnd
@@ -429,25 +435,23 @@ fn test_from_array[T](arr : Array[T]) -> Iter[T] {
       } else {
         IterContinue
       }
+    }
   })
 }
 
 test "any" {
-  let iter = [1, 2, 3, 4, 5, 6] |> test_from_array
-  assert_eq!(iter.take(3).any(fn { x => x < 4 }), true)
-  assert_eq!(iter.take(8).any(fn { x => x < 7 }), true)
-  assert_eq!(iter.take(6).any(fn { x => x < 7 }), true)
-  let iter = [1, 2, 3, 4, 5, 6] |> test_from_array
-  assert_eq!(iter.all(fn { x => x < 4 }), false)
-  assert_eq!(iter.take(8).all(fn { x => x < 7 }), true)
+  let arr = [1, 2, 3, 4, 5, 6]
+  assert_eq!(test_from_array(arr).take(3).any(fn { x => x < 4 }), true)
+  assert_eq!(test_from_array(arr).take(8).any(fn { x => x < 7 }), true)
+  assert_eq!(test_from_array(arr).take(6).any(fn { x => x < 7 }), true)
 }
 
 test "all" {
-  let iter = [1, 2, 3, 4, 5, 6] |> test_from_array
-  assert_eq!(iter.take(3).all(fn { x => x < 4 }), true)
-  assert_eq!(iter.take(3).all(fn { x => x < 2 }), false)
-  assert_eq!(iter.take(8).all(fn { x => x < 7 }), true)
-  assert_eq!(iter.take(6).all(fn { x => x < 7 }), true)
+  let array = [1, 2, 3, 4, 5, 6]
+  assert_eq!(test_from_array(array).take(3).all(fn { x => x < 4 }), true)
+  assert_eq!(test_from_array(array).take(3).all(fn { x => x < 2 }), false)
+  assert_eq!(test_from_array(array).take(8).all(fn { x => x < 7 }), true)
+  assert_eq!(test_from_array(array).take(6).all(fn { x => x < 7 }), true)
 }
 
 ///|
@@ -458,10 +462,17 @@ enum Tree {
 
 ///|
 fn iter(self : Tree) -> Iter[Int] {
+  let mut ran = false
   Iter::new(fn(yield_) {
     match self {
-      Leaf(x) => yield_(x)
-      Node(l, v, r) =>
+      Leaf(x) => {
+        guard not(ran)
+        ran = true
+        yield_(x)
+      }
+      Node(l, v, r) => {
+        guard not(ran)
+        ran = true
         // ([ .. l, v , .. r]).apply(f)
         if l.iter().run(yield_) == IterEnd {
           IterEnd
@@ -470,6 +481,7 @@ fn iter(self : Tree) -> Iter[Int] {
         } else {
           r.iter().run(yield_)
         }
+      }
     }
   })
 }
@@ -483,32 +495,32 @@ test "tree" {
 }
 
 test "Iter::intersperse" {
-  inspect!([1, 2, 3].iter().intersperse(0), content="[1, 0, 2, 0, 3]")
+  inspect!(test_from_array([1, 2, 3]).intersperse(0), content="[1, 0, 2, 0, 3]")
   inspect!(
-    [1, 2, 3, 4, 5, 6, 7, 8, 9].iter().intersperse(0),
+    test_from_array([1, 2, 3, 4, 5, 6, 7, 8, 9]).intersperse(0),
     content="[1, 0, 2, 0, 3, 0, 4, 0, 5, 0, 6, 0, 7, 0, 8, 0, 9]",
   )
-  inspect!(([] : Array[Int]).iter().intersperse(0), content="[]")
-  inspect!([1].iter().intersperse(0), content="[1]")
+  inspect!(test_from_array(([] : Array[Int])).intersperse(0), content="[]")
+  inspect!(test_from_array([1]).intersperse(0), content="[1]")
 }
 
 test "Iter::last" {
-  inspect!([1, 2, 3].iter().last(), content="Some(3)")
-  inspect!([1].iter().last(), content="Some(1)")
-  inspect!(([] : Array[Int]).iter().last(), content="None")
+  inspect!(test_from_array([1, 2, 3]).last(), content="Some(3)")
+  inspect!(test_from_array([1]).last(), content="Some(1)")
+  inspect!(test_from_array(([] : Array[Int])).last(), content="None")
 }
 
 test "Iter::head" {
-  inspect!([1, 2, 3].iter().head(), content="Some(1)")
-  inspect!([1].iter().head(), content="Some(1)")
-  inspect!(([] : Array[Int]).iter().head(), content="None")
+  inspect!(test_from_array([1, 2, 3]).head(), content="Some(1)")
+  inspect!(test_from_array([1]).head(), content="Some(1)")
+  inspect!(test_from_array(([] : Array[Int])).head(), content="None")
 }
 
 test "Iter::as_view" {
-  inspect!([1, 2, 3].iter()[1:2], content="[2]")
-  inspect!([1, 2, 3].iter()[1:], content="[2, 3]")
-  inspect!([1, 2, 3].iter()[1:], content="[2, 3]")
-  inspect!([1, 2, 3].iter()[:], content="[1, 2, 3]")
+  inspect!(test_from_array([1, 2, 3])[1:2], content="[2]")
+  inspect!(test_from_array([1, 2, 3])[1:], content="[2, 3]")
+  inspect!(test_from_array([1, 2, 3])[1:], content="[2, 3]")
+  inspect!(test_from_array([1, 2, 3])[:], content="[1, 2, 3]")
 }
 
 test "Iter::enumerate" {
@@ -527,19 +539,19 @@ test "peek function - empty iterator" {
 }
 
 test "peek function - multiple elements" {
-  let iter = [1, 2, 3].iter()
+  let iter = test_from_array([1, 2, 3])
   inspect!(iter.peek(), content="Some(1)")
 }
 
 test "peek function - random cases" {
-  let iter1 = [10, 20, 30].iter()
+  let iter1 = test_from_array([10, 20, 30])
   inspect!(iter1.peek(), content="Some(10)")
-  let iter2 = [-5, 0, 5].iter()
+  let iter2 = test_from_array([-5, 0, 5])
   inspect!(iter2.peek(), content="Some(-5)")
-  let iter3 = [100, 200, 300, 400].iter()
+  let iter3 = test_from_array([100, 200, 300, 400])
   inspect!(iter3.peek(), content="Some(100)")
-  let iter4 = [-10, -20, -30].iter()
+  let iter4 = test_from_array([-10, -20, -30])
   inspect!(iter4.peek(), content="Some(-10)")
-  let iter5 = [0, 0, 0].iter()
+  let iter5 = test_from_array([0, 0, 0])
   inspect!(iter5.peek(), content="Some(0)")
 }
