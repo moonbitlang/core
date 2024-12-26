@@ -50,23 +50,33 @@ pub fn iter[A](self : T[A]) -> Iter[A] {
 }
 
 ///|
+
+///|
 pub fn T::from_iter[A](iter : Iter[A]) -> T[A] {
   iter.fold(init=new(), fn(arr, e) { arr.push(e) })
 }
 
 ///|
+///
 pub fn length[A](self : T[A]) -> Int {
   self.size
 }
 
 ///|
+///
 pub fn copy[A](self : T[A]) -> T[A] {
   fn copy(t : Tree[A]) -> Tree[A] {
     match t {
       Leaf(l) => Leaf(l.copy())
       Empty => Empty
-      Node(node) =>
-        Node(FixedArray::makei(node.length(), fn(i) { copy(node[i]) }))
+      Node(node, sizes) =>
+        Node(
+          FixedArray::makei(node.length(), fn(i) { copy(node[i]) }),
+          match sizes {
+            Some(sizes) => Some(FixedArray::copy(sizes))
+            None => None
+          },
+        )
     }
   }
 
@@ -74,6 +84,7 @@ pub fn copy[A](self : T[A]) -> T[A] {
 }
 
 ///|
+///
 /// Get a value at the given index.
 /// 
 /// # Examples
@@ -92,6 +103,7 @@ pub fn op_get[A](self : T[A], index : Int) -> A {
 }
 
 ///|
+///
 /// Set a value at the given index (immutable).
 /// 
 /// # Example
@@ -100,25 +112,15 @@ pub fn op_get[A](self : T[A], index : Int) -> A {
 /// assert_eq!(v.set(1, 10), @array.of([1, 10, 3, 4, 5]))
 /// ```
 pub fn set[A](self : T[A], index : Int, value : A) -> T[A] {
-  fn set(i : Int, e, s, t : Tree[A]) -> Tree[A] {
-    match t {
-      Leaf(l) => Leaf(immutable_set(l, i & bitmask, e))
-      Node(node) => {
-        let idx = shr_as_uint(i, s) & bitmask
-        Node(immutable_set(node, idx, set(i, e, s - num_bits, node[idx])))
-      }
-      Empty => abort("Index out of bounds")
-    }
-  }
-
   {
-    tree: set(index, value, self.shift, self.tree),
+    tree: self.tree.set(index, self.shift, value),
     size: self.size,
     shift: self.shift,
   }
 }
 
 ///|
+///
 /// Push a value to the end of the array.
 /// 
 /// # Example
@@ -127,22 +129,12 @@ pub fn set[A](self : T[A], index : Int, value : A) -> T[A] {
 /// assert_eq!(v.push(4), @array.of([1, 2, 3, 4]))
 /// ```
 pub fn push[A](self : T[A], value : A) -> T[A] {
-  if self.size == (branching_factor << self.shift) {
-    {
-      tree: Node([self.tree, new_branch([value], self.shift)]),
-      size: self.size + 1,
-      shift: self.shift + num_bits,
-    }
-  } else {
-    {
-      tree: self.tree.add(self.size, self.shift, value),
-      size: self.size + 1,
-      shift: self.shift,
-    }
-  }
+  let (tree, shift) = self.tree.push_end(self.shift, value)
+  { tree, size: self.size + 1, shift }
 }
 
 ///|
+///
 /// Create a persistent array from an array.
 /// 
 /// # Example
@@ -155,6 +147,7 @@ pub fn T::from_array[A](arr : Array[A]) -> T[A] {
 }
 
 ///|
+///
 /// Iterate over the array.
 /// 
 /// # Example
@@ -165,18 +158,11 @@ pub fn T::from_array[A](arr : Array[A]) -> T[A] {
 /// assert_eq!(arr, [1, 2, 3, 4, 5])
 /// ```
 pub fn each[A](self : T[A], f : (A) -> Unit) -> Unit {
-  fn go(t : Tree[A]) -> Unit {
-    match t {
-      Empty => ()
-      Leaf(l) => l.each(f)
-      Node(n) => n.each(fn(t) { go(t) })
-    }
-  }
-
-  go(self.tree)
+  self.tree.each(f)
 }
 
 ///|
+///
 /// Iterate over the array with index.
 /// 
 /// # Example
@@ -187,33 +173,17 @@ pub fn each[A](self : T[A], f : (A) -> Unit) -> Unit {
 /// assert_eq!(arr, [0, 2, 6, 12, 20])
 /// ```
 pub fn eachi[A](self : T[A], f : (Int, A) -> Unit) -> Unit {
-  fn go(t : Tree[A], shift : Int, start : Int) -> Unit {
-    match t {
-      Empty => ()
-      Leaf(l) =>
-        for i = 0; i < l.length(); i = i + 1 {
-          f(start + i, l[i])
-        }
-      Node(n) => {
-        let child_shift = shift - num_bits
-        let mut start = start
-        for i = 0; i < n.length(); i = i + 1 {
-          go(n[i], child_shift, start)
-          start += 1 << shift
-        }
-      }
-    }
-  }
-
-  go(self.tree, self.shift, 0)
+  self.tree.eachi(f, self.shift, 0)
 }
 
 ///|
+///
 pub impl[A : Eq] Eq for T[A] with op_equal(self, other) {
   self.size == other.size && self.tree == other.tree
 }
 
 ///|
+///
 /// Fold the array.
 /// 
 /// # Example
@@ -222,18 +192,11 @@ pub impl[A : Eq] Eq for T[A] with op_equal(self, other) {
 /// assert_eq!(v.fold(fn(a, b) { a + b }, init=0), 15)
 /// ```
 pub fn fold[A, B](self : T[A], init~ : B, f : (B, A) -> B) -> B {
-  fn go(t : Tree[A], acc : B) -> B {
-    match t {
-      Empty => acc
-      Leaf(l) => l.fold(f, init=acc)
-      Node(n) => n.fold(fn(t, acc) { go(acc, t) }, init=acc)
-    }
-  }
-
-  go(self.tree, init)
+  self.tree.fold(init, f)
 }
 
 ///|
+///
 /// Fold the array in reverse order.
 /// 
 /// # Example
@@ -242,18 +205,11 @@ pub fn fold[A, B](self : T[A], init~ : B, f : (B, A) -> B) -> B {
 /// assert_eq!(v.rev_fold(fn(a, b) { a + b }, init=0), 15)
 /// ```
 pub fn rev_fold[A, B](self : T[A], init~ : B, f : (B, A) -> B) -> B {
-  fn go(t : Tree[A], acc : B) -> B {
-    match t {
-      Empty => acc
-      Leaf(l) => l.rev_fold(f, init=acc)
-      Node(n) => n.rev_fold(fn(t, acc) { go(acc, t) }, init=acc)
-    }
-  }
-
-  go(self.tree, init)
+  self.tree.rev_fold(init, f)
 }
 
 ///|
+///
 /// Fold the array from left to right.
 /// 
 /// # Example
@@ -267,6 +223,7 @@ pub fn fold_left[A](self : T[A], f : (A, A) -> A, init~ : A) -> A {
 }
 
 ///|
+///
 /// Fold the array from right to left.
 /// 
 /// # Example
@@ -280,6 +237,7 @@ pub fn fold_right[A](self : T[A], f : (A, A) -> A, init~ : A) -> A {
 }
 
 ///|
+///
 /// Map a function over the array.
 /// 
 /// # Example
@@ -288,18 +246,11 @@ pub fn fold_right[A](self : T[A], f : (A, A) -> A, init~ : A) -> A {
 /// assert_eq!(v.map(fn(e) { e * 2 }), @array.of([2, 4, 6, 8, 10]))
 /// ```
 pub fn map[A, B](self : T[A], f : (A) -> B) -> T[B] {
-  fn go(t : Tree[A]) -> Tree[B] {
-    match t {
-      Empty => Empty
-      Leaf(l) => Leaf(l.map(f))
-      Node(n) => Node(FixedArray::makei(n.length(), fn(i) { go(n[i]) }))
-    }
-  }
-
-  { tree: go(self.tree), size: self.size, shift: self.shift }
+  { tree: self.tree.map(f), size: self.size, shift: self.shift }
 }
 
 ///|
+///
 fn new_by_leaves[A](len : Int, gen_leaf : (Int, Int) -> FixedArray[A]) -> T[A] {
   fn tree(cap, len, s) -> Tree[A] {
     if cap == branching_factor {
@@ -317,7 +268,9 @@ fn new_by_leaves[A](len : Int, gen_leaf : (Int, Int) -> FixedArray[A]) -> T[A] {
         tree(cap / branching_factor, len, i)
       }
 
-      Node(FixedArray::makei(child_count, child))
+      // Use None here because the implementation of `new_by_leaves` ensures that the tree is full
+      // and we can use radix indexing.
+      Node(FixedArray::makei(child_count, child), None)
     }
   }
 
@@ -353,23 +306,27 @@ test "new_by_leaves" {
 }
 
 ///|
+///
 /// Create a persistent array with a given length and value.
 pub fn T::make[A](len : Int, value : A) -> T[A] {
   new_by_leaves(len, fn(_s, l) { FixedArray::make(l, value) })
 }
 
 ///|
+///
 /// Create a persistent array with a given length and a function to generate values.
 pub fn T::makei[A](len : Int, f : (Int) -> A) -> T[A] {
   new_by_leaves(len, fn(s, l) { FixedArray::makei(l, fn(i) { f(s + i) }) })
 }
 
 ///|
+///
 pub fn T::of[A](arr : FixedArray[A]) -> T[A] {
   makei(arr.length(), fn(i) { arr[i] })
 }
 
 ///|
+///
 pub impl[X : @quickcheck.Arbitrary] @quickcheck.Arbitrary for T[X] with arbitrary(
   size,
   rs
@@ -378,6 +335,7 @@ pub impl[X : @quickcheck.Arbitrary] @quickcheck.Arbitrary for T[X] with arbitrar
 }
 
 ///|
+///
 pub impl[A : Hash] Hash for T[A] with hash_combine(self, hasher) {
   for e in self {
     hasher.combine(e)
@@ -404,8 +362,8 @@ test "mix" {
   v2.each(fn(e) { ct = ct + e })
   inspect!(ct, content="14850")
   v2 = v2.map(fn(e) { e * 2 })
-  let ct1 = fold(v2, fn(a, b) { a + b }, init=0)
-  let ct2 = rev_fold(v2, fn(a, b) { a + b }, init=0)
+  let ct1 = v2.fold(fn(a, b) { a + b }, init=0)
+  let ct2 = v2.rev_fold(fn(a, b) { a + b }, init=0)
   inspect!(ct1, content="19800")
   inspect!(ct2, content="19800")
   inspect!(v.tree.is_empty_tree(), content="false")
