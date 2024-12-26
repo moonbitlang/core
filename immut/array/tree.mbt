@@ -27,6 +27,14 @@ let bitmask : Int = branching_factor - 1
 const LINEAR_THRESHOLD : Int = 4
 
 ///|
+/// The $e_{max}$ parameter of the search step invariant.
+const E_MAX : Int = 2
+
+///|
+/// $e_{max} / 2$.
+let e_max_2 : Int = E_MAX / 2
+
+///|
 fn Tree::empty[T]() -> Tree[T] {
   Tree::Empty
 }
@@ -405,14 +413,35 @@ fn merge[A](
 
 ///|
 fn concat_plan[A](t : FixedArray[Tree[A]]) -> (FixedArray[Int], Int) {
-  let c = FixedArray::make(t.length(), fn(i : Int) { t[i].num_children() })
-  let S = c.fold(init=0, fn(acc, x) { acc + x })
+  let mut node_counts = FixedArray::makei(t.length(), fn {
+    i => t[i].num_children()
+  })
+  let total_nodes = node_counts.fold(init=0, fn { acc, x => acc + x })
   // round up to the nearest integer of S/branching_factor
-  let opt_len = (S + branching_factor - 1) / branching_factor
-  let mut n = t.length()
+  let opt_len = (total_nodes + branching_factor - 1) / branching_factor
+  let mut new_len = t.length()
   let mut i = 0
-  
+  while opt_len + e_max_2 < new_len {
+    // Skip over all nodes satisfying the invariant.
+    while node_counts[i] > branching_factor - e_max_2 {
+      i += 1
+    }
 
+    // Found short node, so redistribute over the next nodes
+    let mut remaining_nodes = node_counts[i]
+    while remaining_nodes > 0 {
+      let min_size = min(remaining_nodes + node_counts[i + 1], branching_factor)
+      node_counts[i] = min_size
+      remaining_nodes = remaining_nodes + node_counts[i + 1] - min_size
+      i += 1
+    }
+    for j = i; j < new_len - 1; j = j + 1 {
+      node_counts[j] = node_counts[j + 1]
+    }
+    new_len -= 1
+    i -= 1
+  }
+  return (node_counts, new_len)
 }
 
 ///|
@@ -475,5 +504,14 @@ fn num_children[A](self : Tree[A]) -> Int {
     Empty => 0
     Leaf(l) => l.length()
     Node(children, _) => children.length()
+  }
+}
+
+///|
+fn min(a : Int, b : Int) -> Int {
+  if a < b {
+    a
+  } else {
+    b
   }
 }
