@@ -313,6 +313,12 @@ test "quick_sort limit check" {
 }
 
 test "quick_sort with pred check" {
+  let arr = []
+  for i = 16; i >= 0; i = i - 1 {
+    arr.push(i)
+  }
+  quick_sort(arr[:], Some(8), 0)
+  assert_eq!(arr, [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16])
   let arr = [5, 4, 3, 2, 1]
   quick_sort(arr[:], Some(3), 0)
   assert_eq!(arr, [1, 2, 3, 4, 5])
@@ -325,6 +331,12 @@ test "quick_sort with pred check" {
 }
 
 test "quick_sort with unbalanced partitions" {
+  let arr = []
+  for i = 16; i >= 0; i = i - 1 {
+    arr.push(if i >= 8 { i } else { 8 })
+  }
+  quick_sort(arr[:], Some(8), 42)
+  assert_eq!(arr, [8, 8, 8, 8, 8, 8, 8, 8, 8, 9, 10, 11, 12, 13, 14, 15, 16])
   let arr = [5, 4, 3, 2, 1]
   quick_sort(arr[:], None, 1)
   assert_eq!(arr, [1, 2, 3, 4, 5])
