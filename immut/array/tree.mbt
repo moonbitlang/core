@@ -412,9 +412,10 @@ fn merge[A](
 }
 
 ///|
-fn concat_plan[A](t : FixedArray[Tree[A]]) -> (FixedArray[Int], Int) {
+/// Create a redistribution plan for the tree.
+fn redis_plan[A](t : FixedArray[Tree[A]]) -> (FixedArray[Int], Int) {
   let mut node_counts = FixedArray::makei(t.length(), fn {
-    i => t[i].num_children()
+    i => t[i].size()
   })
   let total_nodes = node_counts.fold(init=0, fn { acc, x => acc + x })
   // round up to the nearest integer of S/branching_factor
@@ -442,6 +443,107 @@ fn concat_plan[A](t : FixedArray[Tree[A]]) -> (FixedArray[Int], Int) {
     i -= 1
   }
   return (node_counts, new_len)
+}
+
+///|
+/// This function redistributes the nodes in `old_t` according to the plan in `node_counts`.
+/// 
+/// Preconditions:
+/// - forall i in 0..node_nums, old_t[i] != Empty.
+/// - `old_t` contains a list of trees, each of (`shift` / `num_bits`) height.
+/// - `node_counts` contains the number of children of each node in `new_t` (the redistributed version of `old_t`).
+/// - `node_nums` is the length of `node_counts`.
+fn redis[A](
+  old_t : FixedArray[Tree[A]],
+  node_counts : FixedArray[Int],
+  node_nums : Int,
+  shift : Int
+) -> FixedArray[Tree[A]] {
+  let old_len = old_t.length()
+  let new_t = FixedArray::make(node_nums, Empty)
+  let mut old_offset = 0
+  let mut j = 0 // the index of in the old tree
+  if shift == 0 {
+    // Handle Leaf case
+    for i = 0; i < node_nums; i = i + 1 {
+      // t[j] is the next to be redistributed
+      // old_offset is the index of the next node to be redistributed in old_t[j]
+      //   old_offset == 0 means all nodes in old_t[j] are to be redistributed 
+      // new_t[i] is the current node to be filled with redistributed nodes
+      let old_leaf_elems = old_t[i].leaf_elements()
+      let old_leaf_len = old_leaf_elems.length()
+      if old_offset == 0 && old_leaf_len == node_counts[i] {
+        // Perfect, we just point to the old leaf
+        new_t[i] = old_t[i]
+      } else {
+        let mut new_offset = 0 // the accumulated number of elements in the new leaf
+        let new_leaf_len = node_counts[i]
+        let new_elems = FixedArray::make(new_leaf_len, old_leaf_elems[0])
+        while new_offset < node_counts[i] {
+          guard j < old_len  // This shouldn't be triggered if the plan was correctly generated
+          let remaining = min(
+            node_counts[i] - new_offset,
+            old_leaf_len - old_offset,
+          )
+          FixedArray::unsafe_blit(
+            new_elems, new_offset, old_leaf_elems, old_offset, remaining,
+          )
+          new_offset += remaining
+          old_offset += remaining
+          if old_offset == old_leaf_len {
+            j += 1
+            old_offset = 0
+          }
+        }
+        new_t[i] = Leaf(new_elems)
+      }
+    }
+  } else {
+    // Handle Node case, pretty much the same as the Leaf case
+    for i = 0; i < node_nums; i = i + 1 {
+      let old_node_chldrn = old_t[i].node_children()
+      let old_node_len = old_node_chldrn.length()
+      if old_offset == 0 && old_node_len == node_counts[i] {
+        new_t[i] = old_t[i]
+      } else {
+        let mut new_offset = 0 // the accumulated number of elements in the new leaf
+        let new_node_len = node_counts[i]
+        let new_node_chldrn = FixedArray::make(new_node_len, old_node_chldrn[0])
+        while new_offset < node_counts[i] {
+          guard j < old_len  // This shouldn't be triggered if the plan was correctly generated
+          let remaining = min(
+            node_counts[i] - new_offset,
+            old_node_len - old_offset,
+          )
+          FixedArray::unsafe_blit(
+            new_node_chldrn, new_offset, old_node_chldrn, old_offset, remaining,
+          )
+          new_offset += remaining
+          old_offset += remaining
+          if old_offset == old_node_len {
+            j += 1
+            old_offset = 0
+          }
+        }
+      new_t[i] = Node(new_node_chldrn, compute_sizes(new_node_chldrn))
+      }
+
+    }
+  }
+  new_t
+}
+
+fn compute_sizes[A](children : FixedArray[Tree[A]]) -> FixedArray[Int] {
+  let mut sizes = FixedArray::make(children.length(), 0)
+  let mut sum = 0
+  let mut flag = true
+  for i = 0; i < children.length(); i = i + 1 {
+    let sz = children[i].size()
+    flag = flag & (sz == branching_factor)
+    sum += sz
+    sizes[i] = sum
+  }
+  sizes
 }
 
 ///|
@@ -498,8 +600,17 @@ fn leaf_elements[A](self : Tree[A]) -> FixedArray[A] {
 }
 
 ///|
+/// Get the children of a `Node`. Abort if it is not a `Node`.
+fn node_children[A](self : Tree[A]) -> FixedArray[Tree[A]] {
+  match self {
+    Node(children, _) => children
+    _ => abort("Should not call `node_children` on non-`Node`s")
+  }
+}
+
+///|
 /// Get the length of the current node, not the total number of elements in the tree.
-fn num_children[A](self : Tree[A]) -> Int {
+fn size[A](self : Tree[A]) -> Int {
   match self {
     Empty => 0
     Leaf(l) => l.length()
