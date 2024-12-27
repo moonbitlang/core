@@ -191,6 +191,7 @@ impl Hasher {
   combine_bytes(Self, Bytes) -> Unit
   combine_char(Self, Char) -> Unit
   combine_double(Self, Double) -> Unit
+  combine_float(Self, Float) -> Unit
   combine_int(Self, Int) -> Unit
   combine_int64(Self, Int64) -> Unit
   combine_string(Self, String) -> Unit

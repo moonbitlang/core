@@ -16,3 +16,9 @@
 pub fn op_sub(self : Char, that : Char) -> Int {
   self.to_int() - that.to_int()
 }
+
+test "char subtraction" {
+  let b = 'b'
+  let a = 'a'
+  inspect!(b - a, content="1")
+}

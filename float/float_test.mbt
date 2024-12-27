@@ -60,3 +60,13 @@ test "Float::to_int" {
   inspect!((2147483648.0 : Float).to_int(), content="2147483647")
   inspect!((-2147483649.0 : Float).to_int(), content="-2147483648")
 }
+
+test "Hash" {
+  struct A {
+    a : Float
+  } derive(Hash)
+  let a = A::{ a: 1.0 }
+  inspect!(a.hash(), content="1986884538")
+  inspect!(a.a.hash(), content="749479517")
+  inspect!((2.0 : Float).hash(), content="-1861484393")
+}
