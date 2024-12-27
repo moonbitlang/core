@@ -933,13 +933,13 @@ pub fn BigInt::to_octets(self : BigInt, length? : Int) -> Bytes {
   let tail_len = self.len - 1
   let len = (head_bits + 7) / 8 + tail_len * (radix_bit_len / 8)
   let len = max(length, len)
-  let result = Bytes::new(len)
+  let result = FixedArray::make(len, Byte::default())
   for i = 0; i < len && i / 4 < self.len; i = i + 1 {
     result[len - 1 - i] = ((self.limbs[i / 4] >> (i % 4 * 8)) & 0xffU)
       .reinterpret_as_int()
       .to_byte()
   }
-  result
+  result.unsafe_to_bytes()
 }
 
 ///|

@@ -20,7 +20,7 @@
 /// - <https://nigeltao.github.io/blog/2020/parse-number-f64-simple.html>
 /// - <https://nigeltao.github.io/blog/2020/eisel-lemire.html>
 struct Decimal {
-  digits : Bytes
+  digits : FixedArray[Byte]
   mut digits_num : Int
   mut decimal_point : Int
   mut negative : Bool
@@ -43,7 +43,7 @@ let powtab = [
 /// Create a zero decimal.
 pub fn Decimal::new() -> Decimal {
   {
-    digits: Bytes::new(800),
+    digits: FixedArray::make(800, Byte::default()),
     digits_num: 0,
     decimal_point: 0,
     negative: false,
@@ -313,7 +313,7 @@ fn should_round_up(self : Decimal, d : Int) -> Bool {
 ///|
 /// Assign a Int64 value to decimal.
 fn assign(self : Decimal, v : Int64) -> Unit {
-  let buf = Bytes::new(24)
+  let buf = FixedArray::make(24, Byte::default())
 
   // write value to buf
   let mut n = 0

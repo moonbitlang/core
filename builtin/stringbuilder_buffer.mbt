@@ -36,23 +36,22 @@ fn StringBuilder::grow_if_necessary(
   self : StringBuilder,
   required : Int
 ) -> Unit {
-  // TODO: get rid of mut
-  let mut enough_space = self.data.length()
-  if enough_space <= 0 {
-    enough_space = 1
+  let len = self.data.length()
+  if required <= len {
+    return
   }
+  // TODO: get rid of mut
+  let mut enough_space = if len <= 0 { 8 } else { len }
   // double the enough_space until it larger than required
   while enough_space < required {
     enough_space = enough_space * 2
   }
-  if enough_space != self.data.length() {
-    self.data = FixedArray::make(enough_space, Byte::default())..unsafe_blit(
-      0,
-      self.data,
-      0,
-      self.len,
-    )
-  }
+  self.data = FixedArray::make(enough_space, Byte::default())..unsafe_blit(
+    0,
+    self.data,
+    0,
+    self.len,
+  )
 }
 
 ///|
@@ -67,6 +66,13 @@ pub fn StringBuilder::write_char(self : StringBuilder, ch : Char) -> Unit {
   self.grow_if_necessary(self.len + 4)
   let inc = self.data.set_utf16le_char(self.len, ch)
   self.len += inc
+}
+
+///|
+pub fn StringBuilder::write_byte(self : StringBuilder, ch : Byte) -> Unit {
+  self.grow_if_necessary(self.len + 1)
+  self.data[self.len] = ch
+  self.len += 1
 }
 
 ///|

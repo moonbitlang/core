@@ -46,6 +46,9 @@ pub impl Arbitrary for UInt with arbitrary(size, rs) {
 }
 
 ///|
+fn unsafe_to_bytes(bytes : FixedArray[Byte]) -> Bytes = "%identity"
+
+///|
 pub impl Arbitrary for Byte with arbitrary(_i, rs) { rs.next_uint().to_byte() }
 
 ///|
@@ -54,11 +57,11 @@ pub impl Arbitrary for Bytes with arbitrary(size, rs) {
     Bytes::new(0)
   } else {
     let sz = rs.next_positive_int() % size
-    let result = Bytes::new(sz)
+    let result = FixedArray::make(sz, Byte::default())
     for i = 0; i < sz; i = i + 1 {
       result[i] = Byte::arbitrary(size, rs)
     }
-    result
+    unsafe_to_bytes(result)
   }
 }
 

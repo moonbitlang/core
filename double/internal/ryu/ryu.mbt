@@ -16,7 +16,7 @@
 // This is a fork of the ryu crate adjusted to comply to the ECMAScript number-to-string algorithm,
 
 ///|
-fn string_from_bytes(bytes : Bytes, from : Int, to : Int) -> String {
+fn string_from_bytes(bytes : FixedArray[Byte], from : Int, to : Int) -> String {
   let buf = StringBuilder::new(size_hint=bytes.length())
   for i = from; i < to; i = i + 1 {
     buf.write_char(Char::from_int(bytes[i].to_int()))
@@ -481,7 +481,7 @@ fn d2d(ieeeMantissa : UInt64, ieeeExponent : UInt) -> FloatingDecimal64 {
 ///|
 fn to_chars(v : FloatingDecimal64, sign : Bool) -> String {
   // Step 5: Print the decimal representation.
-  let result = Bytes::new(25)
+  let result = FixedArray::make(25, Byte::default())
   let mut index : Int = 0
   if sign {
     result[index] = b'-'
