@@ -360,7 +360,8 @@ fn concat[A](
 }
 
 ///|
-/// Given three `Node`s of the same height, rebalance them into two.
+/// Given three `Node`s of the same height (`shift` / `num_bits`), rebalance them into two.
+/// `top` is `true` if the resulting node has no upper node.
 fn rebalance[A](
   left : Tree[A],
   center : Tree[A],
@@ -368,8 +369,29 @@ fn rebalance[A](
   shift : Int,
   top : Bool
 ) -> Tree[A] {
-  let t = merge(left, center, right)
-
+  let t = tri_merge(left, center, right)
+  let (nc, nc_len) = redis_plan(t)
+  let new_t = redis(t, nc, nc_len, shift)
+  if nc_len < branching_factor {
+    guard new_t.length() == 1
+    // All nodes can be accommodated in a single node
+    if not(top) {
+      return Node(new_t, compute_sizes(new_t, shift))
+    } else {
+      return new_t[0]
+    }
+  } else {
+    let new_child_1 = FixedArray::makei(branching_factor, fn(i) { new_t[i] })
+    let new_child_2 = FixedArray::makei(new_t.length() - branching_factor, fn(
+      i
+    ) {
+      new_t[i + branching_factor]
+    })
+    let new_node_1 = Node(new_child_1, compute_sizes(new_child_1, shift))
+    let new_node_2 = Node(new_child_2, compute_sizes(new_child_2, shift))
+    let new_children = FixedArray::from_array([new_node_1, new_node_2])
+    return Node(new_children, compute_sizes(new_children, shift))
+  }
 }
 
 ///|
@@ -378,7 +400,7 @@ fn rebalance[A](
 /// `center` is always a `Node`.
 /// The resulting array might be longer than `branching_factor`,
 /// which will be handled by `rebalance` later.
-fn merge[A](
+fn tri_merge[A](
   left : Tree[A],
   center : Tree[A],
   right : Tree[A]
@@ -414,9 +436,7 @@ fn merge[A](
 ///|
 /// Create a redistribution plan for the tree.
 fn redis_plan[A](t : FixedArray[Tree[A]]) -> (FixedArray[Int], Int) {
-  let mut node_counts = FixedArray::makei(t.length(), fn {
-    i => t[i].size()
-  })
+  let mut node_counts = FixedArray::makei(t.length(), fn { i => t[i].size() })
   let total_nodes = node_counts.fold(init=0, fn { acc, x => acc + x })
   // round up to the nearest integer of S/branching_factor
   let opt_len = (total_nodes + branching_factor - 1) / branching_factor
@@ -506,11 +526,11 @@ fn redis[A](
       if old_offset == 0 && old_node_len == node_counts[i] {
         new_t[i] = old_t[i]
       } else {
-        let mut new_offset = 0 // the accumulated number of elements in the new leaf
+        let mut new_offset = 0
         let new_node_len = node_counts[i]
         let new_node_chldrn = FixedArray::make(new_node_len, old_node_chldrn[0])
         while new_offset < node_counts[i] {
-          guard j < old_len  // This shouldn't be triggered if the plan was correctly generated
+          guard j < old_len
           let remaining = min(
             node_counts[i] - new_offset,
             old_node_len - old_offset,
@@ -525,25 +545,35 @@ fn redis[A](
             old_offset = 0
           }
         }
-      new_t[i] = Node(new_node_chldrn, compute_sizes(new_node_chldrn))
+        new_t[i] = Node(new_node_chldrn, compute_sizes(new_node_chldrn, shift))
       }
-
     }
   }
   new_t
 }
 
-fn compute_sizes[A](children : FixedArray[Tree[A]]) -> FixedArray[Int] {
-  let mut sizes = FixedArray::make(children.length(), 0)
+///|
+/// Given a list of trees as `children` and the `shift` of them.
+fn compute_sizes[A](
+  children : FixedArray[Tree[A]],
+  shift : Int
+) -> FixedArray[Int]? {
+  let len = children.length()
+  let mut sizes = FixedArray::make(len, 0)
   let mut sum = 0
   let mut flag = true
-  for i = 0; i < children.length(); i = i + 1 {
-    let sz = children[i].size()
-    flag = flag & (sz == branching_factor)
+  let full_subtree_size = branching_factor << shift
+  for i = 0; i < len; i = i + 1 {
+    let sz = children[i].length(shift)
+    flag = flag && sz == full_subtree_size
     sum += sz
     sizes[i] = sum
   }
-  sizes
+  if flag {
+    None
+  } else {
+    Some(sizes)
+  }
 }
 
 ///|
@@ -609,12 +639,24 @@ fn node_children[A](self : Tree[A]) -> FixedArray[Tree[A]] {
 }
 
 ///|
-/// Get the length of the current node, not the total number of elements in the tree.
+/// Get the physical size of the current node, not the total number of elements in the tree.
 fn size[A](self : Tree[A]) -> Int {
   match self {
     Empty => 0
     Leaf(l) => l.length()
     Node(children, _) => children.length()
+  }
+}
+
+///|
+/// Get the total number of elements in the tree.
+fn length[A](self : Tree[A], shift : Int) -> Int {
+  match self {
+    Empty => 0
+    Leaf(l) => l.length()
+    Node(children, Some(sizes)) => sizes[-1]
+    Node(children, None) =>
+      ((children.length() - 1) << shift) + children[-1].length(shift - num_bits)
   }
 }
 
