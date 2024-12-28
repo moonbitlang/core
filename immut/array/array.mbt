@@ -19,6 +19,27 @@ pub fn T::new[A]() -> T[A] {
 }
 
 ///|
+/// Given two trees, concatenate them into a new tree.
+/// 
+/// # Example
+/// ```
+/// let a = @immut/array::Tree::from_array([1, 2, 3])
+/// let b = @immut/array::Tree::from_array([4, 5, 6])
+/// let c = a.concat(b)
+/// assert_eq!(tree, @immut/array::Tree::from_array([1, 2, 3, 4, 5, 6]))
+/// ```
+pub fn T::concat[A](self : T[A], other : T[A]) -> T[A] {
+  let (tree, shift) = concat(
+    self.tree,
+    self.shift,
+    other.tree,
+    other.shift,
+    true,
+  )
+  { tree, size: self.size + other.size, shift }
+}
+
+///|
 pub impl[A : Show] Show for T[A] with output(self, logger) {
   logger.write_iter(self.iter(), prefix="@immut/array.of([", suffix="])")
 }
@@ -48,8 +69,6 @@ pub fn iter[A](self : T[A]) -> Iter[A] {
     }
   })
 }
-
-///|
 
 ///|
 pub fn T::from_iter[A](iter : Iter[A]) -> T[A] {

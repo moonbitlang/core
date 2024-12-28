@@ -309,6 +309,8 @@ fn map[A, B](self : Tree[A], f : (A) -> B) -> Tree[B] {
 }
 
 ///|
+/// Concatenate two trees.
+/// Should be called as with `top = true`.
 fn concat[A](
   left : Tree[A],
   left_shift : Int,
@@ -324,7 +326,8 @@ fn concat[A](
       right_shift,
       false,
     )
-    return rebalance(left, left_shift, c, c_shift, Empty, 0, false), 
+    guard c_shift == left_shift
+    return rebalance(left, c, Empty, left_shift, top)
   } else if right_shift > left_shift {
     let (c, c_shift) = concat(
       left,
@@ -333,52 +336,74 @@ fn concat[A](
       right_shift - num_bits,
       false,
     )
-    return rebalance(Empty, 0, c, c_shift, right, right_shift, false)
-  }
-  else {
-
-    if left_shift == 0 {
-        let left_elems = left.leaf_elements()
-        let right_elems = right.leaf_elements()
-        let left_len = left_elems.length()
-        let right_len = right_elems.length()
-        let len =  left_len+right_len
-      let children = {
-        if top && len <= branching_factor{
-           [Leaf(FixedArray::makei(len, fn (i: Int) { if i < left_len {left_elems[i]} else {right_elems[i-left_len]}}))]
-        }
-        else {
-          [left, right]
-        }
-      }
-      return Node(children, None)
+    guard c_shift == right_shift
+    return rebalance(Empty, c, right, right_shift, top)
+  } else if left_shift == 0 {
+    // Handle Leaf case
+    let left_elems = left.leaf_elements()
+    let right_elems = right.leaf_elements()
+    let left_len = left_elems.length()
+    let right_len = right_elems.length()
+    let len = left_len + right_len
+    if top && len <= branching_factor {
+      return (
+        Leaf(
+          FixedArray::makei(len, fn(i : Int) {
+            if i < left_len {
+              left_elems[i]
+            } else {
+              right_elems[i - left_len]
+            }
+          }),
+        ),
+        0,
+      )
     } else {
-      let c = concat(left.right_child(), left_child - num_bits, right.left_child(), right_child - num_bits, false)
-      return rebalance()
+      return (
+        Node(
+          FixedArray::from_array([left, right]),
+          Some(FixedArray::from_array([left_len, len])),
+        ),
+        num_bits,
+      )
     }
+  } else {
+    // Handle Node case
+    let (c, c_shift) = concat(
+      left.right_child(),
+      left_shift - num_bits,
+      right.left_child(),
+      right_shift - num_bits,
+      false,
+    )
+    guard c_shift == left_shift
+    guard c_shift == right_shift
+    return rebalance(left, c, right, left_shift, top)
   }
 }
 
 ///|
 /// Given three `Node`s of the same height (`shift` / `num_bits`), rebalance them into two.
 /// `top` is `true` if the resulting node has no upper node.
+/// Returns the new node and its shift.
 fn rebalance[A](
   left : Tree[A],
   center : Tree[A],
   right : Tree[A],
   shift : Int,
   top : Bool
-) -> Tree[A] {
-  let t = tri_merge(left, center, right)
+) -> (Tree[A], Int) {
+  // Suppose H = shift / num_bits
+  let t = tri_merge(left, center, right) // t is a list of trees of (H-1) height
   let (nc, nc_len) = redis_plan(t)
-  let new_t = redis(t, nc, nc_len, shift)
+  let new_t = redis(t, nc, nc_len, shift) // new_t is a list of trees of (H-1) height
   if nc_len < branching_factor {
     guard new_t.length() == 1
     // All nodes can be accommodated in a single node
     if not(top) {
-      return Node(new_t, compute_sizes(new_t, shift))
+      return (Node(new_t, compute_sizes(new_t, shift)), shift) // return H height node
     } else {
-      return new_t[0]
+      return (new_t[0], shift - num_bits) // return H-1 height node
     }
   } else {
     let new_child_1 = FixedArray::makei(branching_factor, fn(i) { new_t[i] })
@@ -390,7 +415,7 @@ fn rebalance[A](
     let new_node_1 = Node(new_child_1, compute_sizes(new_child_1, shift))
     let new_node_2 = Node(new_child_2, compute_sizes(new_child_2, shift))
     let new_children = FixedArray::from_array([new_node_1, new_node_2])
-    return Node(new_children, compute_sizes(new_children, shift))
+    return (Node(new_children, compute_sizes(new_children, shift)), shift) // return H height node
   }
 }
 
@@ -400,6 +425,14 @@ fn rebalance[A](
 /// `center` is always a `Node`.
 /// The resulting array might be longer than `branching_factor`,
 /// which will be handled by `rebalance` later.
+/// 
+/// Preconditions:
+/// - `left` and `right` are `Empty` or `Node`.
+/// - `center` is `Node`.
+/// 
+/// Postconditions:
+/// - The resulting array is of length `left.size() + center.size() + right.size()`.
+/// - The height of a `Tree` in the resulting array is one less than the height of the input `Tree`s.
 fn tri_merge[A](
   left : Tree[A],
   center : Tree[A],
@@ -436,7 +469,7 @@ fn tri_merge[A](
 ///|
 /// Create a redistribution plan for the tree.
 fn redis_plan[A](t : FixedArray[Tree[A]]) -> (FixedArray[Int], Int) {
-  let mut node_counts = FixedArray::makei(t.length(), fn { i => t[i].size() })
+  let node_counts = FixedArray::makei(t.length(), fn { i => t[i].size() })
   let total_nodes = node_counts.fold(init=0, fn { acc, x => acc + x })
   // round up to the nearest integer of S/branching_factor
   let opt_len = (total_nodes + branching_factor - 1) / branching_factor
@@ -473,6 +506,9 @@ fn redis_plan[A](t : FixedArray[Tree[A]]) -> (FixedArray[Int], Int) {
 /// - `old_t` contains a list of trees, each of (`shift` / `num_bits`) height.
 /// - `node_counts` contains the number of children of each node in `new_t` (the redistributed version of `old_t`).
 /// - `node_nums` is the length of `node_counts`.
+/// 
+/// Postcondition:
+/// - The resulting trees in `new_t` are of the same height as trees in `old_t`.
 fn redis[A](
   old_t : FixedArray[Tree[A]],
   node_counts : FixedArray[Int],
@@ -559,7 +595,7 @@ fn compute_sizes[A](
   shift : Int
 ) -> FixedArray[Int]? {
   let len = children.length()
-  let mut sizes = FixedArray::make(len, 0)
+  let sizes = FixedArray::make(len, 0)
   let mut sum = 0
   let mut flag = true
   let full_subtree_size = branching_factor << shift
@@ -654,7 +690,7 @@ fn length[A](self : Tree[A], shift : Int) -> Int {
   match self {
     Empty => 0
     Leaf(l) => l.length()
-    Node(children, Some(sizes)) => sizes[-1]
+    Node(_, Some(sizes)) => sizes[-1]
     Node(children, None) =>
       ((children.length() - 1) << shift) + children[-1].length(shift - num_bits)
   }
