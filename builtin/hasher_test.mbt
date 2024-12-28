@@ -91,6 +91,19 @@ test "combine double" {
   inspect!(hash(0.0) == hash(0.1), content="false")
 }
 
+test "combine float" {
+  fn hash(v : Float) {
+    Hasher::new()..combine_float(v).finalize()
+  }
+
+  inspect!(hash(0.0), content="148298089")
+  inspect!(hash(0.1), content="1101647392")
+  inspect!(hash(0.2), content="-352548260")
+  inspect!(hash(0.0) == hash(0.0), content="true")
+  inspect!(hash(0.1) == hash(0.1), content="true")
+  inspect!(hash(0.0) == hash(0.1), content="false")
+}
+
 test "combine string" {
   fn hash(v) {
     Hasher::new()..combine_string(v).finalize()

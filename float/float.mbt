@@ -82,3 +82,13 @@ pub fn Float::to_int(self : Float) -> Int {
     self.to_unchecked_int()
   }
 }
+
+///|
+pub impl Hash for Float with hash(self) {
+  self.reinterpret_as_int() |> Hash::hash()
+}
+
+///|
+pub impl Hash for Float with hash_combine(self, hasher) {
+  hasher.combine_float(self)
+}
