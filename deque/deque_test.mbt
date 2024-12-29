@@ -519,3 +519,128 @@ test "deque push_back when empty" {
   d.push_back("b")
   inspect!(d, content="@deque.of([\"b\"])")
 }
+
+test "test_get" {
+  let tester = @deque.new()
+  tester.push_back(114)
+  tester.push_back(514)
+  tester.push_back(1919810)
+  assert_eq!(tester.length(), 3)
+  assert_eq!(tester[1], 514)
+  assert_eq!(tester[2], 1919810)
+  assert_eq!(tester[0], 114)
+  let _ = tester.pop_front()
+  assert_eq!(tester.length(), 2)
+  assert_eq!(tester[0], 514)
+  assert_eq!(tester[1], 1919810)
+}
+
+test "test_reserve_capacity" {
+  let tester : @deque.T[Int] = @deque.new(capacity=1)
+  assert_eq!(tester.capacity(), 1)
+  tester.reserve_capacity(514)
+  assert_eq!(tester.capacity(), 514)
+  tester.reserve_capacity(114)
+  // reserving won't shrink the buffer
+  assert_eq!(tester.capacity(), 514)
+  tester.reserve_capacity(1919810)
+  assert_eq!(tester.capacity(), 1919810)
+}
+
+test "test_contains" {
+  let tester = @deque.new()
+  tester.push_back(114)
+  tester.push_back(514)
+  tester.push_back(1919)
+  tester.push_back(810)
+  assert_true!(tester.contains(114))
+  assert_true!(tester.contains(514))
+  assert_true!(tester.contains(1919))
+  assert_true!(tester.contains(810))
+  let _ = tester.pop_front()
+  assert_true!(tester.contains(514))
+  assert_true!(tester.contains(1919))
+  assert_true!(tester.contains(810))
+}
+
+test "test_shrink_to_fit" {
+  let tester = @deque.new(capacity=15)
+  let cap = tester.capacity()
+  tester.reserve_capacity(63)
+  let max_cap = tester.capacity()
+  let start = 0
+  for len in 0..=cap {
+    // 0, 1, 2, .., len - 1
+    let expected = @deque.from_array(start.until(len).collect())
+    for head_pos in 0..=max_cap {
+      tester.reserve_capacity(head_pos)
+      tester.clear()
+      tester.reserve_capacity(63)
+      for i in start.until(len) {
+        tester.push_back(i)
+      }
+      tester.shrink_to_fit()
+      assert_true!(tester.capacity() <= cap)
+      assert_eq!(tester, expected)
+    }
+  }
+}
+
+test "test_from_vec" {
+  for cap in 0..=35 {
+    for len in 0..=cap {
+      let vec = Array::make(cap, 0)
+      for i in 0..=len {
+        vec.push(i)
+      }
+      let vd = @deque.from_array(vec)
+      assert_eq!(vd.length(), vec.length())
+      for i = 0; i < vd.length(); i = i + 1 {
+        assert_eq!(vd[i], vec[i])
+      }
+    }
+  }
+}
+
+test "test_from_array" {
+  fn test_fn!(n : Int) -> Unit {
+    let array : FixedArray[Int] = FixedArray::make(n, 0)
+    for index = 0; index < n; index = index + 1 {
+      array[index] = index
+    }
+    let deq = @deque.of(array)
+    for index = 0; index < n; index = index + 1 {
+      assert_eq!(deq[index], array[index])
+    }
+    assert_eq!(deq.length(), array.length())
+  }
+
+  test_fn!(0)
+  test_fn!(1)
+  test_fn!(2)
+  test_fn!(32)
+  test_fn!(35)
+}
+
+test "test_clone_from" {
+  let m = FixedArray::make(8, 1)
+  let n = FixedArray::make(12, 2)
+  let limit = 8
+  for pfv = 0; pfv < limit; pfv = pfv + 1 {
+    for pfu = 0; pfu < limit; pfu = pfu + 1 {
+      for longer = 0; longer < 2; longer = longer + 1 {
+        let (vr, ur) = if longer == 0 { (m, n) } else { (n, m) }
+        let v = @deque.of(vr)
+        for _idx = 0; _idx < pfv; _idx = _idx + 1 {
+          v.push_front(1)
+        }
+        let u = @deque.of(ur)
+        for _idx = 0; _idx < pfu; _idx = _idx + 1 {
+          u.push_front(2)
+        }
+        let v = @deque.copy(u)
+        assert_eq!(v, u)
+      }
+    }
+  }
+}
