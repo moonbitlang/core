@@ -13,69 +13,80 @@
 // limitations under the License.
 
 ///|
-fn copy_sign(x : Double, y : Double) -> Double {
-  if x < 0 {
-    -y.abs()
-  } else {
-    y.abs()
-  }
-}
-
-///|
-fn ldexp(frac : Double, exp_ : Double) -> Double {
-  if frac == 0 {
-    0
-  } else if frac.is_inf() || frac.is_nan() {
-    frac
-  } else {
-    let (frac, e) = normalize(frac)
-    let mut exp = exp_
-    exp += e.to_double()
-    let mut x = frac.reinterpret_as_uint64()
-    exp += (((x >> 52).to_int() & 0x7FF) - 1023).to_double()
-    if exp < -1075 {
-      copy_sign(0, frac)
-    } else if exp > 1023 {
-      if frac < 0 {
-        neg_infinity
-      } else {
-        infinity
-      }
-    } else {
-      let mut m : Double = 1
-      if exp < -1022 {
-        exp += 53
-        m = 1.0 / (1 << 53).to_double()
-      }
-      x = x & (0x7FFUL << 52).lnot()
-      x = x | ((exp + 1023.0).to_int64().reinterpret_as_uint64() << 52)
-      m * x.reinterpret_as_double()
-    }
-  }
-}
-
-///|
 pub fn op_mod(self : Double, other : Double) -> Double {
-  if other == 0 || self.is_inf() || self.is_nan() || other.is_nan() {
-    not_a_number
-  } else {
-    let y = other.abs()
-    let (yfr, yexp) = frexp(y)
-    let mut r = self
-    if self < 0 {
-      r = -self
-    }
-    while r >= y {
-      let (rfr, rexp_) = frexp(r)
-      let mut rexp = rexp_
-      if rfr < yfr {
-        rexp -= 1
-      }
-      r = r - ldexp(y, (rexp - yexp).to_double())
-    }
-    if self < 0 {
-      r = -r
-    }
-    r
+  let x = self
+  let y = other
+  let mut uint64_x = x.reinterpret_as_uint64()
+  let mut uint64_y = y.reinterpret_as_uint64()
+  let mut ex = ((uint64_x >> 52) & 0x7FF).to_int()
+  let mut ey = ((uint64_y >> 52) & 0x7FF).to_int()
+  let sign_x = uint64_x >> 63
+  let mut i : UInt64 = 0
+  if (uint64_y << 1) == 0 || y.is_nan() || ex == 0x7ff {
+    return x * y / (x * y)
   }
+  if (uint64_x << 1) <= (uint64_y << 1) {
+    if (uint64_x << 1) == (uint64_y << 1) {
+      return 0.0 * x
+    }
+    return x
+  }
+
+  // normalize x and y
+  if ex == 0 {
+    i = uint64_x << 12
+    while (i >> 63) == 0 {
+      ex -= 1
+      i = i << 1
+    }
+    uint64_x = uint64_x << (-ex + 1)
+  } else {
+    uint64_x = uint64_x & (18446744073709551615UL >> 12)
+    uint64_x = uint64_x | (1UL << 52)
+  }
+  if ey == 0 {
+    i = uint64_y << 12
+    while (i >> 63) == 0 {
+      ey -= 1
+      i = i << 1
+    }
+    uint64_y = uint64_y << (-ey + 1)
+  } else {
+    uint64_y = uint64_y & (18446744073709551615UL >> 12)
+    uint64_y = uint64_y | (1UL << 52)
+  }
+
+  // x mod y
+  while ex > ey {
+    i = uint64_x - uint64_y
+    if (i >> 63) == 0 {
+      if i == 0 {
+        return 0.0 * x
+      }
+      uint64_x = i
+    }
+    uint64_x = uint64_x << 1
+    ex -= 1
+  }
+  i = uint64_x - uint64_y
+  if (i >> 63) == 0 {
+    if i == 0 {
+      return 0.0 * x
+    }
+    uint64_x = i
+  }
+  while (uint64_x >> 52) == 0 {
+    uint64_x = uint64_x << 1
+    ex -= 1
+  }
+
+  // scale result
+  if ex > 0 {
+    uint64_x = uint64_x - (1UL << 52)
+    uint64_x = uint64_x | (ex.to_uint64() << 52)
+  } else {
+    uint64_x = uint64_x >> (-ex + 1)
+  }
+  uint64_x = uint64_x | (sign_x << 63)
+  uint64_x.reinterpret_as_double()
 }

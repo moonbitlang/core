@@ -82,6 +82,11 @@ pub fn combine_double(self : Hasher, value : Double) -> Unit {
 }
 
 ///|
+pub fn combine_float(self : Hasher, value : Float) -> Unit {
+  self.combine_int(value.reinterpret_as_int())
+}
+
+///|
 pub fn combine_byte(self : Hasher, value : Byte) -> Unit {
   self.consume1(value)
 }

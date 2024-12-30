@@ -13,6 +13,9 @@
 // limitations under the License.
 
 ///|
+fn set_null[T](buffer : UninitializedArray[T], index : Int) = "%fixedarray.set_null"
+
+///|
 /// Creates a new, empty deque.
 pub fn T::new[A](capacity~ : Int = 0) -> T[A] {
   T::{ buf: UninitializedArray::make(capacity), len: 0, head: 0, tail: 0 }
@@ -34,6 +37,22 @@ pub fn T::from_array[A](arr : Array[A]) -> T[A] {
   }
   for i = 0; i < arr.length(); i = i + 1 {
     deq.buf[i] = arr[i]
+  }
+  deq
+}
+
+///|
+/// Creates a new copy of this deque.
+pub fn T::copy[A](self : T[A]) -> T[A] {
+  let len = self.len
+  let deq = T::{
+    buf: UninitializedArray::make(len),
+    len,
+    head: 0,
+    tail: len - 1,
+  }
+  for i, x in self {
+    deq.buf[i] = x
   }
   deq
 }
@@ -181,15 +200,27 @@ pub fn push_back[A](self : T[A], value : A) -> Unit {
 /// ```
 /// @alert unsafe "Panic if the deque is empty."
 pub fn unsafe_pop_front[A](self : T[A]) -> Unit {
-  if self.len == 0 {
-    abort("The deque is empty!")
+  match self.len {
+    0 => abort("The deque is empty!")
+    1 => {
+      set_null(self.buf, self.head)
+      self.len -= 1
+    }
+    _ => {
+      set_null(self.buf, self.head)
+      self.head = if self.head < self.buf.length() - 1 {
+        self.head + 1
+      } else {
+        0
+      }
+      self.len -= 1
+    }
   }
-  self.head = if self.head < self.buf.length() - 1 { self.head + 1 } else { 0 }
-  self.len -= 1
 }
 
 ///|
 /// @alert deprecated "Use `unsafe_pop_front` instead"
+/// @coverage.skip
 pub fn pop_front_exn[A](self : T[A]) -> Unit {
   unsafe_pop_front(self)
 }
@@ -205,15 +236,27 @@ pub fn pop_front_exn[A](self : T[A]) -> Unit {
 /// ```
 /// @alert unsafe "Panic if the deque is empty."
 pub fn unsafe_pop_back[A](self : T[A]) -> Unit {
-  if self.len == 0 {
-    abort("The deque is empty!")
+  match self.len {
+    0 => abort("The deque is empty!")
+    1 => {
+      set_null(self.buf, self.tail)
+      self.len -= 1
+    }
+    _ => {
+      set_null(self.buf, self.tail)
+      self.tail = if self.tail > 0 {
+        self.tail - 1
+      } else {
+        self.buf.length() - 1
+      }
+      self.len -= 1
+    }
   }
-  self.tail = if self.tail > 0 { self.tail - 1 } else { self.buf.length() - 1 }
-  self.len -= 1
 }
 
 ///|
 /// @alert deprecated "Use `unsafe_pop_back` instead"
+/// @coverage.skip
 pub fn pop_back_exn[A](self : T[A]) -> Unit {
   unsafe_pop_back(self)
 }
@@ -227,13 +270,26 @@ pub fn pop_back_exn[A](self : T[A]) -> Unit {
 /// assert_eq!(dv.pop_front(), Some(1))
 /// ```
 pub fn pop_front[A](self : T[A]) -> A? {
-  if self.len == 0 {
-    return None
+  match self.len {
+    0 => None
+    1 => {
+      let origin_head = self.buf[self.head]
+      set_null(self.buf, self.head)
+      self.len -= 1
+      Some(origin_head)
+    }
+    _ => {
+      let origin_head = self.buf[self.head]
+      set_null(self.buf, self.head)
+      self.head = if self.head < self.buf.length() - 1 {
+        self.head + 1
+      } else {
+        0
+      }
+      self.len -= 1
+      Some(origin_head)
+    }
   }
-  let origin_head = self.head
-  self.head = if self.head < self.buf.length() - 1 { self.head + 1 } else { 0 }
-  self.len -= 1
-  Some(self.buf[origin_head])
 }
 
 ///|
@@ -245,13 +301,26 @@ pub fn pop_front[A](self : T[A]) -> A? {
 /// assert_eq!(dv.pop_back(), Some(5))
 /// ```
 pub fn pop_back[A](self : T[A]) -> A? {
-  if self.len == 0 {
-    return None
+  match self.len {
+    0 => None
+    1 => {
+      let origin_back = self.buf[self.tail]
+      set_null(self.buf, self.tail)
+      self.len -= 1
+      Some(origin_back)
+    }
+    _ => {
+      let origin_back = self.buf[self.tail]
+      set_null(self.buf, self.tail)
+      self.tail = if self.tail > 0 {
+        self.tail - 1
+      } else {
+        self.buf.length() - 1
+      }
+      self.len -= 1
+      Some(origin_back)
+    }
   }
-  let origin_back = self.tail
-  self.tail = if self.tail > 0 { self.tail - 1 } else { self.buf.length() - 1 }
-  self.len -= 1
-  Some(self.buf[origin_back])
 }
 
 ///|
@@ -330,8 +399,8 @@ pub fn op_equal[A : Eq](self : T[A], other : T[A]) -> Bool {
 /// assert_eq!(sum, 15)
 /// ```
 pub fn each[A](self : T[A], f : (A) -> Unit) -> Unit {
-  for i = 0; i < self.length(); i = i + 1 {
-    f(self[i])
+  for v in self {
+    f(v)
   }
 }
 
@@ -346,8 +415,8 @@ pub fn each[A](self : T[A], f : (A) -> Unit) -> Unit {
 /// assert_eq!(idx_sum, 10)
 /// ```
 pub fn eachi[A](self : T[A], f : (Int, A) -> Unit) -> Unit {
-  for i = 0; i < self.length(); i = i + 1 {
-    f(i, self[i])
+  for i, v in self {
+    f(i, v)
   }
 }
 
@@ -362,8 +431,8 @@ pub fn eachi[A](self : T[A], f : (Int, A) -> Unit) -> Unit {
 /// assert_eq!(sum, 15)
 /// ```
 pub fn rev_each[A](self : T[A], f : (A) -> Unit) -> Unit {
-  for i = self.length() - 1; i >= 0; i = i - 1 {
-    f(self[i])
+  for v in self.rev_iter() {
+    f(v)
   }
 }
 
@@ -378,8 +447,8 @@ pub fn rev_each[A](self : T[A], f : (A) -> Unit) -> Unit {
 /// assert_eq!(idx_sum, 10)
 /// ```
 pub fn rev_eachi[A](self : T[A], f : (Int, A) -> Unit) -> Unit {
-  for i = 0; i < self.len; i = i + 1 {
-    f(i, self[self.len - i - 1])
+  for i, v in self.rev_iter2() {
+    f(i, v)
   }
 }
 
@@ -542,12 +611,106 @@ pub fn shrink_to_fit[A](self : T[A]) -> Unit {
 ///|
 pub fn iter[A](self : T[A]) -> Iter[A] {
   Iter::new(fn(yield_) {
-    for i in 0..<self.length() {
-      guard let IterContinue = yield_(self[i]) else { x => break x }
+    guard not(self.is_empty()) else { IterContinue }
+    let { head, buf, len, .. } = self
+    let cap = buf.length()
+    let head_len = cap - head
+    if head_len >= len {
+      for i in head..<(head + len) {
+        guard let IterContinue = yield_(buf[i]) else { x => return x }
 
+      }
     } else {
-      IterContinue
+      for i in head..<cap {
+        guard let IterContinue = yield_(buf[i]) else { x => return x }
+
+      }
+      for i in 0..<(len - head_len) {
+        guard let IterContinue = yield_(buf[i]) else { x => return x }
+
+      }
     }
+    IterContinue
+  })
+}
+
+///|
+pub fn iter2[A](self : T[A]) -> Iter2[Int, A] {
+  Iter2::new(fn(yield_) {
+    guard not(self.is_empty()) else { IterContinue }
+    let { head, buf, len, .. } = self
+    let cap = buf.length()
+    let head_len = cap - head
+    let mut j = 0
+    if head_len >= len {
+      for i in head..<(head + len) {
+        guard let IterContinue = yield_(j, buf[i]) else { x => return x }
+        j += 1
+      }
+    } else {
+      for i in head..<cap {
+        guard let IterContinue = yield_(j, buf[i]) else { x => return x }
+        j += 1
+      }
+      for i in 0..<(len - head_len) {
+        guard let IterContinue = yield_(j, buf[i]) else { x => return x }
+        j += 1
+      }
+    }
+    IterContinue
+  })
+}
+
+///|
+pub fn rev_iter[A](self : T[A]) -> Iter[A] {
+  Iter::new(fn(yield_) {
+    guard not(self.is_empty()) else { IterContinue }
+    let { head, buf, len, .. } = self
+    let cap = buf.length()
+    let head_len = cap - head
+    if head_len >= len {
+      for i = head + len - 1; i >= head; i = i - 1 {
+        guard let IterContinue = yield_(buf[i]) else { x => return x }
+
+      }
+    } else {
+      for i = len - head_len - 1; i >= 0; i = i - 1 {
+        guard let IterContinue = yield_(buf[i]) else { x => return x }
+
+      }
+      for i = cap - 1; i >= head; i = i - 1 {
+        guard let IterContinue = yield_(buf[i]) else { x => return x }
+
+      }
+    }
+    IterContinue
+  })
+}
+
+///|
+pub fn rev_iter2[A](self : T[A]) -> Iter2[Int, A] {
+  Iter2::new(fn(yield_) {
+    guard not(self.is_empty()) else { IterContinue }
+    let { head, buf, len, .. } = self
+    let cap = buf.length()
+    let head_len = cap - head
+    let mut j = 0
+    if head_len >= len {
+      for i = head + len - 1; i >= head; i = i - 1 {
+        guard let IterContinue = yield_(j, buf[i]) else { x => return x }
+        j += 1
+      }
+    } else {
+      for i = len - head_len - 1; i >= 0; i = i - 1 {
+        guard let IterContinue = yield_(j, buf[i]) else { x => return x }
+        j += 1
+      }
+      for i = cap - 1; i >= head; i = i - 1 {
+        guard let IterContinue = yield_(j, buf[i]) else { x => return x }
+        j += 1
+      }
+    }
+    IterContinue
   })
 }
 

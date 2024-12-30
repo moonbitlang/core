@@ -418,7 +418,7 @@ pub fn map[T, R](self : Iter[T], f : (T) -> R) -> Iter[R] {
 ///|
 /// Transforms the elements of the iterator using a mapping function that returns an `Option`.
 /// The elements for which the function returns `None` are filtered out.
-pub fn map_option[A, B](self : Iter[A], f : (A) -> B?) -> Iter[B] {
+pub fn filter_map[A, B](self : Iter[A], f : (A) -> B?) -> Iter[B] {
   fn(yield_) {
     self.run(fn(a) {
       match f(a) {
@@ -427,6 +427,15 @@ pub fn map_option[A, B](self : Iter[A], f : (A) -> B?) -> Iter[B] {
       }
     })
   }
+}
+
+///|
+/// Transforms the elements of the iterator using a mapping function that returns an `Option`.
+/// The elements for which the function returns `None` are filtered out.
+///
+/// @alert deprecated "Use `Iter::filter_map` instead"
+pub fn map_option[A, B](self : Iter[A], f : (A) -> B?) -> Iter[B] {
+  self.filter_map(f)
 }
 
 ///|
@@ -465,11 +474,13 @@ pub fn flat_map[T, R](self : Iter[T], f : (T) -> Iter[R]) -> Iter[R] {
 /// # Returns
 ///
 /// The same iterator.
-/// 
-/// @alert deprecated "use cascade operator [..] instead"
 pub fn tap[T](self : Iter[T], f : (T) -> Unit) -> Iter[T] {
-  self.each(f)
-  self
+  self.map(fn {
+    a => {
+      f(a)
+      a
+    }
+  })
 }
 
 ///|

@@ -18,7 +18,7 @@
 // without boxing
 // It is useful for syntax sugar
 // ```
-//    foreach k, v := map { ... }
+//    for k, v in map { ... }
 // ```
 type Iter2[A, B] ((A, B) -> IterResult) -> IterResult
 

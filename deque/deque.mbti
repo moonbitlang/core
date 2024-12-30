@@ -9,6 +9,7 @@ impl T {
   capacity[A](Self[A]) -> Int
   clear[A](Self[A]) -> Unit
   contains[A : Eq](Self[A], A) -> Bool
+  copy[A](Self[A]) -> Self[A]
   each[A](Self[A], (A) -> Unit) -> Unit
   eachi[A](Self[A], (Int, A) -> Unit) -> Unit
   from_array[A](Array[A]) -> Self[A]
@@ -16,6 +17,7 @@ impl T {
   front[A](Self[A]) -> A?
   is_empty[A](Self[A]) -> Bool
   iter[A](Self[A]) -> Iter[A]
+  iter2[A](Self[A]) -> Iter2[Int, A]
   length[A](Self[A]) -> Int
   map[A, U](Self[A], (A) -> U) -> Self[U]
   mapi[A, U](Self[A], (Int, A) -> U) -> Self[U]
@@ -33,6 +35,8 @@ impl T {
   reserve_capacity[A](Self[A], Int) -> Unit
   rev_each[A](Self[A], (A) -> Unit) -> Unit
   rev_eachi[A](Self[A], (Int, A) -> Unit) -> Unit
+  rev_iter[A](Self[A]) -> Iter[A]
+  rev_iter2[A](Self[A]) -> Iter2[Int, A]
   search[A : Eq](Self[A], A) -> Int?
   shrink_to_fit[A](Self[A]) -> Unit
   unsafe_pop_back[A](Self[A]) -> Unit

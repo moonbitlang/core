@@ -11,6 +11,8 @@ fn assert_not_eq[T : Eq + Show](T, T, loc~ : SourceLoc = _) -> Unit!
 
 fn assert_true(Bool, loc~ : SourceLoc = _) -> Unit!
 
+fn dump[T](T, name? : String, loc~ : SourceLoc = _) -> T //deprecated
+
 fn fail[T](String, loc~ : SourceLoc = _) -> T!Failure
 
 fn ignore[T](T) -> Unit
@@ -181,6 +183,7 @@ impl BigInt {
 impl Show for BigInt
 
 pub(all) type! Failure String
+impl Show for Failure
 
 type Hasher
 impl Hasher {
@@ -190,6 +193,7 @@ impl Hasher {
   combine_bytes(Self, Bytes) -> Unit
   combine_char(Self, Char) -> Unit
   combine_double(Self, Double) -> Unit
+  combine_float(Self, Float) -> Unit
   combine_int(Self, Int) -> Unit
   combine_int64(Self, Int64) -> Unit
   combine_string(Self, String) -> Unit
@@ -217,6 +221,7 @@ impl Iter {
   eachi[T](Self[T], (Int, T) -> Unit) -> Unit
   empty[T]() -> Self[T]
   filter[T](Self[T], (T) -> Bool) -> Self[T]
+  filter_map[A, B](Self[A], (A) -> B?) -> Self[B]
   find_first[T](Self[T], (T) -> Bool) -> T?
   flat_map[T, R](Self[T], (T) -> Self[R]) -> Self[R]
   fold[T, B](Self[T], init~ : B, (B, T) -> B) -> B
@@ -226,7 +231,7 @@ impl Iter {
   just_run[T](Self[T], (T) -> IterResult) -> Unit
   last[A](Self[A]) -> A?
   map[T, R](Self[T], (T) -> R) -> Self[R]
-  map_option[A, B](Self[A], (A) -> B?) -> Self[B]
+  map_option[A, B](Self[A], (A) -> B?) -> Self[B] //deprecated
   map_while[A, B](Self[A], (A) -> B?) -> Self[B]
   new[T](((T) -> IterResult) -> IterResult) -> Self[T]
   op_add[T](Self[T], Self[T]) -> Self[T]
@@ -238,7 +243,7 @@ impl Iter {
   singleton[T](T) -> Self[T]
   take[T](Self[T], Int) -> Self[T]
   take_while[T](Self[T], (T) -> Bool) -> Self[T]
-  tap[T](Self[T], (T) -> Unit) -> Self[T] //deprecated
+  tap[T](Self[T], (T) -> Unit) -> Self[T]
   to_array[T](Self[T]) -> Array[T]
 }
 impl[T : Show] Show for Iter[T]
@@ -623,7 +628,7 @@ impl String {
   op_add(String, String) -> String
   op_equal(String, String) -> Bool
   op_get(String, Int) -> Char
-  substring(String, start~ : Int = .., end~ : Int = ..) -> String
+  substring(String, start~ : Int = .., end? : Int) -> String
   to_json(String) -> Json
   to_string(String) -> String
 }
