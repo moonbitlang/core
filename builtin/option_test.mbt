@@ -19,3 +19,13 @@ test {
   assert_not_eq!(Option::None, Option::Some(1))
   assert_not_eq!(Option::Some(1), Option::None)
 }
+
+test "to_string for Option None" {
+  let x : Int? = None
+  inspect!(x.to_string(), content="None")
+}
+
+test "to_string for Option Some" {
+  let x : Int? = Some(42)
+  inspect!(x.to_string(), content="Some(42)")
+}
