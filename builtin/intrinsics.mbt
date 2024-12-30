@@ -224,6 +224,10 @@ pub fn Char::default() -> Char = "%char_default"
 ///|
 pub fn Bytes::op_get(self : Bytes, idx : Int) -> Byte = "%bytes_get"
 
+///| 
+/// @alert unsafe "Panic if index is out of bounds"
+pub fn Bytes::unsafe_get(self : Bytes, idx : Int) -> Byte = "%bytes_get"
+
 ///|
 pub fn Bytes::op_set(self : Bytes, idx : Int, val : Byte) -> Unit = "%bytes_set"
 
@@ -251,6 +255,10 @@ pub fn UInt64::to_byte(self : UInt64) -> Byte {
 
 ///|
 pub fn FixedArray::op_get[T](self : FixedArray[T], idx : Int) -> T = "%fixedarray.get"
+
+///|
+/// @alert unsafe "Panic if index is out of bounds"
+pub fn FixedArray::unsafe_get[T](self : FixedArray[T], idx : Int) -> T = "%fixedarray.unsafe_get"
 
 ///|
 pub fn FixedArray::get[T](self : FixedArray[T], idx : Int) -> T = "%fixedarray.get"
