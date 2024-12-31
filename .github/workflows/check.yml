@@ -35,12 +35,13 @@ jobs:
           moonrun --version
 
       - name: moon check
-        run: moon check --deny-warn
+        run: moon check --deny-warn --target all
 
       - name: moon info
         run: |
           moon info
           git diff --exit-code
+          diff <(mooninfo target/js/release/check/builtin/builtin.mi -format text) <(mooninfo target/wasm-gc/release/check/builtin/builtin.mi -format text)
 
       - name: Set ulimit and run moon test
         if: ${{ matrix.os != 'windows-latest' }}
