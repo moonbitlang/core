@@ -668,14 +668,16 @@ pub fn shrink_to_fit[A](self : T[A]) -> Unit {
 /// }
 /// ```
 pub fn truncate[A](self : T[A], len : Int) -> Unit {
-  let { head, buf, .. } = self
   guard len < self.len else { return }
+  let { head, buf, .. } = self
   let (front, back) = self.as_views()
   if front.length() < len {
     // `len` is wrapping around the end of the buffer.
     // Thus, we need to drop the latter part of the back view.
     self.len = len
-    for i in (len - front.length())..<back.length() {
+    let start = len - front.length()
+    self.tail = start - 1
+    for i in start..<back.length() {
       set_null(buf, i)
     }
   } else {
@@ -683,7 +685,9 @@ pub fn truncate[A](self : T[A], len : Int) -> Unit {
     // - The latter part of the front view;
     // - The entire back view.
     self.len = len
-    for i in (head + len)..<(head + front.length()) {
+    let start = head + len
+    self.tail = start - 1
+    for i in start..<self.buf.length() {
       set_null(buf, i)
     }
     for i in 0..<back.length() {
