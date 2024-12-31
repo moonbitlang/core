@@ -182,6 +182,16 @@ impl BigInt {
 }
 impl Show for BigInt
 
+type BytesView
+impl BytesView {
+  iter(Self) -> Iter[Byte]
+  length(Self) -> Int
+  op_as_view(Self, start~ : Int = .., end? : Int) -> Self
+  op_get(Self, Int) -> Byte
+  unsafe_get(Self, Int) -> Byte
+}
+impl Show for BytesView
+
 pub(all) type! Failure String
 impl Show for Failure
 
@@ -680,6 +690,7 @@ impl Bytes {
   make(Int, Byte) -> Bytes
   new(Int) -> Bytes
   of_string(String) -> Bytes
+  op_as_view(Bytes, start~ : Int = .., end? : Int) -> BytesView
   op_equal(Bytes, Bytes) -> Bool
   op_get(Bytes, Int) -> Byte
   op_set(Bytes, Int, Byte) -> Unit
