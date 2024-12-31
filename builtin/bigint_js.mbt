@@ -122,6 +122,10 @@ pub extern "js" fn BigInt::from_int(x : Int) -> BigInt =
   #|(x) => BigInt(x)
 
 ///|
+pub extern "js" fn BigInt::from_uint(x : UInt) -> BigInt =
+  #|(x) => BigInt(x >>> 0)
+
+///|
 pub extern "js" fn BigInt::from_int64(x : Int64) -> BigInt =
   #|(x) => BigInt(x.hi) * 0x100000000n + BigInt(x.lo >>> 0)
 
@@ -186,7 +190,7 @@ pub fn pow(self : BigInt, exponent : BigInt, modulus? : BigInt) -> BigInt {
 }
 
 ///|
-extern "js" fn to_byte(self : BigInt) -> Byte =
+pub extern "js" fn to_byte(self : BigInt) -> Byte =
   #|(x) => Number(BigInt.asUintN(8, x)) | 0
 
 ///|
@@ -224,3 +228,25 @@ pub extern "js" fn lor(self : BigInt, other : BigInt) -> BigInt =
 ///|
 pub extern "js" fn lxor(self : BigInt, other : BigInt) -> BigInt =
   #|(x, y) => x ^ y
+
+///|
+pub extern "js" fn to_uint(self : BigInt) -> UInt =
+  #|(x) => Number(BigInt.asUintN(32, x))
+
+///|
+pub extern "js" fn to_int(self : BigInt) -> Int =
+  #|(x) => Number(BigInt.asIntN(32, x))
+
+///|
+pub fn to_uint64(self : BigInt) -> UInt64 {
+  let hi = (self >> 32).to_uint().reinterpret_as_int()
+  let lo = self.to_uint().reinterpret_as_int()
+  MyInt64::{ hi, lo }.to_uint64()
+}
+
+///|
+pub fn to_int64(self : BigInt) -> Int64 {
+  let hi = (self >> 32).to_int()
+  let lo = self.to_uint().reinterpret_as_int()
+  MyInt64::{ hi, lo }.to_int64()
+}

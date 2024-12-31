@@ -647,3 +647,43 @@ test "lxor_5" {
   let b = BigInt::from_hex("ffffffffffffffff")
   inspect!(a ^ b, content="18446744073709551615")
 }
+
+test "to_int" {
+  let a = BigInt::from_int(1234567899)
+  inspect!(a.to_int(), content="1234567899")
+  let b = BigInt::from_int(-1234567890)
+  inspect!(b.to_int(), content="-1234567890")
+  let max = 2N.pow(32) - 1
+  inspect!(max.to_int(), content="-1")
+  inspect!((max + 1).to_int(), content="0")
+}
+
+test "to_uint" {
+  let a = BigInt::from_uint(1234567899)
+  inspect!(a.to_uint(), content="1234567899")
+  let b = BigInt::from_int(-1234567890)
+  inspect!(b.to_uint(), content="3060399406")
+  let max = 2N.pow(32) - 1
+  inspect!(max.to_uint(), content="4294967295")
+  inspect!((max + 1).to_uint(), content="0")
+}
+
+test "to_int64" {
+  let a = BigInt::from_int64(1234567890123456789L)
+  inspect!(a.to_int64(), content="1234567890123456789")
+  let b = BigInt::from_int64(-1234567890123456789L)
+  inspect!(b.to_int64(), content="-1234567890123456789")
+  let max = 2N.pow(63) - 1
+  inspect!(max.to_int64(), content="9223372036854775807")
+  inspect!((max + 1).to_int64(), content="-9223372036854775808")
+}
+
+test "to_uint64" {
+  let a = BigInt::from_uint64(1234567890123456789UL)
+  inspect!(a.to_uint64(), content="1234567890123456789")
+  let b = BigInt::from_int64(-1234567890123456789L)
+  inspect!(b.to_uint64(), content="17212176183586094827")
+  let max = 2N.pow(64) - 1
+  inspect!(max.to_uint64(), content="18446744073709551615")
+  inspect!((max + 1).to_uint64(), content="0")
+}
