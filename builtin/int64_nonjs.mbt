@@ -177,7 +177,7 @@ pub fn Double::reinterpret_as_u64(self : Double) -> UInt64 = "%f64_to_i64_reinte
 ///|
 pub fn Double::reinterpret_as_uint64(self : Double) -> UInt64 = "%f64_to_i64_reinterpret"
 
-///|
+///| @alert deprecated "Use `UInt64::to_double` instead"
 pub fn Double::convert_uint64(val : UInt64) -> Double = "%u64.to_f64"
 
 ///|

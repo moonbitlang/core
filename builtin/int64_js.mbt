@@ -103,7 +103,7 @@ fn MyInt64::op_mul(self : MyInt64, other : MyInt64) -> MyInt64 {
 }
 
 ///|
-struct Int64WasmHelper {
+priv struct Int64WasmHelper {
   div_s : (Int, Int, Int, Int) -> Int
   div_u : (Int, Int, Int, Int) -> Int
   rem_s : (Int, Int, Int, Int) -> Int
@@ -531,7 +531,7 @@ pub fn Int64::to_int(self : Int64) -> Int {
   MyInt64::from_int64(self).to_int()
 }
 
-///|
+///| @alert deprecated "Use `a.reinterpret_as_uint64().to_uint()` or `a.to_int().repinterpret_as_uint()` instead"
 pub fn Int64::to_uint(self : Int64) -> UInt {
   MyInt64::from_int64(self).to_uint()
 }
@@ -622,12 +622,12 @@ pub fn Double::reinterpret_as_uint64(self : Double) -> UInt64 {
   MyInt64::reinterpret_double(self).to_uint64()
 }
 
-///|
+///| @alert deprecated "Use `UInt64::to_double` instead"
 pub fn Double::convert_uint64(value : UInt64) -> Double {
   MyInt64::convert_to_double_u(MyInt64::from_uint64(value))
 }
 
-///|
+///| @alert deprecated "Use `Int64::to_double` instead"
 pub fn Double::convert_int64(value : Int64) -> Double {
   MyInt64::convert_to_double(MyInt64::from_int64(value))
 }
