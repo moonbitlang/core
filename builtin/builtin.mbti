@@ -119,6 +119,7 @@ impl Array {
   to_json[X : ToJson](Self[X]) -> Json
   unsafe_blit[A](Self[A], Int, Self[A], Int, Int) -> Unit
   unsafe_blit_fixed[A](Self[A], Int, FixedArray[A], Int, Int) -> Unit
+  unsafe_get[T](Self[T], Int) -> T
   unsafe_pop[T](Self[T]) -> T
 }
 impl[X : Show] Show for Array[X]
@@ -142,6 +143,7 @@ impl ArrayView {
   swap[T](Self[T], Int, Int) -> Unit
   to_json[X : ToJson](Self[X]) -> Json
   to_string[X : Show](Self[X]) -> String
+  unsafe_get[T](Self[T], Int) -> T
 }
 impl[T : Compare] Compare for ArrayView[T]
 impl[T : Eq] Eq for ArrayView[T]
@@ -179,6 +181,16 @@ impl BigInt {
   to_string(Self) -> String
 }
 impl Show for BigInt
+
+type BytesView
+impl BytesView {
+  iter(Self) -> Iter[Byte]
+  length(Self) -> Int
+  op_as_view(Self, start~ : Int = .., end? : Int) -> Self
+  op_get(Self, Int) -> Byte
+  unsafe_get(Self, Int) -> Byte
+}
+impl Show for BytesView
 
 pub(all) type! Failure String
 impl Show for Failure
@@ -362,6 +374,7 @@ type UninitializedArray
 impl UninitializedArray {
   length[A](Self[A]) -> Int
   make[T](Int) -> Self[T]
+  op_as_view[T](Self[T], start~ : Int = .., end? : Int) -> ArrayView[T]
   op_get[T](Self[T], Int) -> T
   op_set[T](Self[T], Int, T) -> Unit
 }
@@ -666,6 +679,7 @@ impl FixedArray {
   set_utf8_char(Self[Byte], Int, Char) -> Int
   to_json[X : ToJson](Self[X]) -> Json
   unsafe_blit[A](Self[A], Int, Self[A], Int, Int) -> Unit
+  unsafe_get[T](Self[T], Int) -> T
 }
 
 
@@ -677,6 +691,7 @@ impl Bytes {
   make(Int, Byte) -> Bytes
   new(Int) -> Bytes
   of_string(String) -> Bytes
+  op_as_view(Bytes, start~ : Int = .., end? : Int) -> BytesView
   op_equal(Bytes, Bytes) -> Bool
   op_get(Bytes, Int) -> Byte
   op_set(Bytes, Int, Byte) -> Unit
@@ -685,6 +700,7 @@ impl Bytes {
   sub_string(Bytes, Int, Int) -> String //deprecated
   to_string(Bytes) -> String //deprecated
   to_unchecked_string(Bytes, offset~ : Int = .., length~ : Int = ..) -> String
+  unsafe_get(Bytes, Int) -> Byte
 }
 
 

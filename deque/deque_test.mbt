@@ -519,3 +519,63 @@ test "deque push_back when empty" {
   d.push_back("b")
   inspect!(d, content="@deque.of([\"b\"])")
 }
+
+test "deque as_views" {
+  // Test empty deque
+  let dq1 : @deque.T[Int] = @deque.T::new()
+  inspect!(dq1.as_views(), content="([], [])")
+
+  // Test contiguous case (head_len >= len)
+  let dq2 = @deque.of([1, 2, 3])
+  inspect!(dq2.as_views(), content="([1, 2, 3], [])")
+
+  // Test split case (head_len < len)
+  let dq3 = @deque.of([1, 2, 3, 4])
+  // Push and pop to create a wrap-around situation
+  dq3.unsafe_pop_front()
+  dq3.unsafe_pop_front()
+  dq3.push_back(5)
+  dq3.push_back(6)
+  // Now the deque should be [3, 4, 5, 6] with internal wrap-around
+  inspect!(dq3.as_views(), content="([3, 4], [5, 6])")
+}
+
+test "deque truncate" {
+  // Empty deque
+  let dq : @deque.T[Int] = @deque.new()
+  dq.truncate(3)
+  inspect!(dq, content="@deque.of([])")
+
+  // Length is greater than current length
+  let dq = @deque.of([1, 2, 3, 4, 5])
+  dq.truncate(3)
+  inspect!(dq, content="@deque.of([1, 2, 3])")
+
+  // Length is equal to current length
+  dq.truncate(3)
+  inspect!(dq, content="@deque.of([1, 2, 3])")
+
+  // Length is less than current length
+  dq.truncate(2)
+  inspect!(dq, content="@deque.of([1, 2])")
+
+  // Test split case (head_len < len)
+  // Push and pop to create a wrap-around situation
+  let dq = @deque.of([1, 2, 3, 4, 5, 6])
+    ..unsafe_pop_front()
+    ..unsafe_pop_front()
+    ..unsafe_pop_front()
+    ..push_back(7)
+    ..push_back(8)
+  // Current layout: [7, 8, X, 4, 5, 6]
+  inspect!(dq.as_views(), content="([4, 5, 6], [7, 8])")
+  dq.truncate(42)
+  // Current layout: [7, 8, X, 4, 5, 6]
+  inspect!(dq.as_views(), content="([4, 5, 6], [7, 8])")
+  dq.truncate(4)
+  // Current layout: [7, X, X, 4, 5, 6]
+  inspect!(dq.as_views(), content="([4, 5, 6], [7])")
+  // Current layout: [X, X, X, 4, 5, X]
+  dq.truncate(2)
+  inspect!(dq.as_views(), content="([4, 5], [])")
+}

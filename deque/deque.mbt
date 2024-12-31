@@ -375,6 +375,44 @@ pub fn op_set[A](self : T[A], index : Int, value : A) -> Unit {
 }
 
 ///|
+/// Returns two array views that together represent all elements in the deque in
+/// their correct order. The first view contains elements from the head to the
+/// end of the internal buffer, and the second view contains any remaining
+/// elements from the start of the buffer.
+///
+/// If the deque is empty, returns a pair of empty views. If all elements are
+/// contiguous in memory, the second view will be empty.
+///
+/// Parameters:
+///
+/// * `self` : The deque to be viewed.
+///
+/// Returns a tuple of two array views that together contain all elements of the
+/// deque in order.
+///
+/// Example:
+///
+/// ```moonbit
+/// test "T::as_views" {
+///   let dq = @deque.of([1, 2, 3, 4, 5])
+///   let (v1, v2) = dq.as_views()
+///   inspect!(v1.length(), content="5")
+///   inspect!(v2.length(), content="0")
+/// }
+/// ```
+pub fn T::as_views[A](self : T[A]) -> (ArrayView[A], ArrayView[A]) {
+  guard self.len != 0 else { ([][:], [][:]) }
+  let { buf, head, len, .. } = self
+  let cap = buf.length()
+  let head_len = cap - head
+  if head_len >= len {
+    (buf[head:head + len], [][:])
+  } else {
+    (buf[head:cap], buf[:len - head_len])
+  }
+}
+
+///|
 /// Compares two deques for equality.
 pub fn op_equal[A : Eq](self : T[A], other : T[A]) -> Bool {
   if self.len != other.len {
@@ -605,6 +643,52 @@ pub fn shrink_to_fit[A](self : T[A]) -> Unit {
   for i = 0; i < len; i = i + 1 {
     let idx = (head + i) % buf.length()
     self.buf[i] = buf[idx]
+  }
+}
+
+///|
+/// Shortens the deque in-place, keeping the first `len` elements and dropping
+/// the rest.
+///
+/// If `len` is greater than or equal to the deque's current length, this has no
+/// effect.
+///
+/// Parameters:
+///
+/// * `self` : The deque to be truncated.
+/// * `len` : The new length of the deque.
+///
+/// Example:
+///
+/// ```moonbit
+/// test "truncate" {
+///   let dq = @deque.of([1, 2, 3, 4, 5])
+///   dq.truncate(3)
+///   inspect!(dq, content="@deque.of([1, 2, 3])")
+/// }
+/// ```
+pub fn truncate[A](self : T[A], len : Int) -> Unit {
+  let { head, buf, .. } = self
+  guard len < self.len else { return }
+  let (front, back) = self.as_views()
+  if front.length() < len {
+    // `len` is wrapping around the end of the buffer.
+    // Thus, we need to drop the latter part of the back view.
+    self.len = len
+    for i in (len - front.length())..<back.length() {
+      set_null(buf, i)
+    }
+  } else {
+    // `len` is not wrapping around the end of the buffer. Thus, we need to drop:
+    // - The latter part of the front view;
+    // - The entire back view.
+    self.len = len
+    for i in (head + len)..<(head + front.length()) {
+      set_null(buf, i)
+    }
+    for i in 0..<back.length() {
+      set_null(buf, i)
+    }
   }
 }
 
