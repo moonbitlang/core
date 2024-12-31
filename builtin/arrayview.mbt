@@ -35,6 +35,13 @@ pub fn op_get[T](self : ArrayView[T], index : Int) -> T {
   self.buf[self.start + index]
 }
 
+///| 
+/// @intrinsic %arrayview.unsafe_get
+/// @alert unsafe "Panic if index is out of bounds"
+pub fn unsafe_get[T](self : ArrayView[T], index : Int) -> T {
+  self.buf[self.start + index]
+}
+
 ///|
 pub fn op_set[T](self : ArrayView[T], index : Int, value : T) -> Unit {
   guard index >= 0 && index < self.len else {

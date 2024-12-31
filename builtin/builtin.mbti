@@ -119,6 +119,7 @@ impl Array {
   to_json[X : ToJson](Self[X]) -> Json
   unsafe_blit[A](Self[A], Int, Self[A], Int, Int) -> Unit
   unsafe_blit_fixed[A](Self[A], Int, FixedArray[A], Int, Int) -> Unit
+  unsafe_get[T](Self[T], Int) -> T
   unsafe_pop[T](Self[T]) -> T
 }
 impl[X : Show] Show for Array[X]
@@ -142,6 +143,7 @@ impl ArrayView {
   swap[T](Self[T], Int, Int) -> Unit
   to_json[X : ToJson](Self[X]) -> Json
   to_string[X : Show](Self[X]) -> String
+  unsafe_get[T](Self[T], Int) -> T
 }
 impl[T : Compare] Compare for ArrayView[T]
 impl[T : Eq] Eq for ArrayView[T]
@@ -666,6 +668,7 @@ impl FixedArray {
   set_utf8_char(Self[Byte], Int, Char) -> Int
   to_json[X : ToJson](Self[X]) -> Json
   unsafe_blit[A](Self[A], Int, Self[A], Int, Int) -> Unit
+  unsafe_get[T](Self[T], Int) -> T
 }
 
 
@@ -685,6 +688,7 @@ impl Bytes {
   sub_string(Bytes, Int, Int) -> String //deprecated
   to_string(Bytes) -> String //deprecated
   to_unchecked_string(Bytes, offset~ : Int = .., length~ : Int = ..) -> String
+  unsafe_get(Bytes, Int) -> Byte
 }
 
 
