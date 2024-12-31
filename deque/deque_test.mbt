@@ -424,7 +424,7 @@ test "deque op_set wrapping case" {
   dq[2] = 10
 
   // Verify the change
-  inspect!(dq, content="@deque.of([0, 10, 2, 3, 4])")
+  inspect!(dq, content="@deque.of([0, 1, 10, 3, 4])")
 }
 
 test "iter when tail needs to wrap around" {
@@ -750,4 +750,44 @@ test "deque guard iter2 coverage improvement" {
   test_n_via_push_front!(10)
   test_n_via_push_front!(12)
   test_n_via_push_front!(15)
+}
+
+test "deque truncate" {
+  // Empty deque
+  let dq : @deque.T[Int] = @deque.new()
+  dq.truncate(3)
+  inspect!(dq, content="@deque.of([])")
+
+  // Length is greater than current length
+  let dq = @deque.of([1, 2, 3, 4, 5])
+  dq.truncate(3)
+  inspect!(dq, content="@deque.of([1, 2, 3])")
+
+  // Length is equal to current length
+  dq.truncate(3)
+  inspect!(dq, content="@deque.of([1, 2, 3])")
+
+  // Length is less than current length
+  dq.truncate(2)
+  inspect!(dq, content="@deque.of([1, 2])")
+
+  // Test split case (head_len < len)
+  // Push and pop to create a wrap-around situation
+  let dq = @deque.of([1, 2, 3, 4, 5, 6])
+    ..unsafe_pop_front()
+    ..unsafe_pop_front()
+    ..unsafe_pop_front()
+    ..push_back(7)
+    ..push_back(8)
+  // Current layout: [7, 8, X, 4, 5, 6]
+  inspect!(dq.as_views(), content="([4, 5, 6], [7, 8])")
+  dq.truncate(42)
+  // Current layout: [7, 8, X, 4, 5, 6]
+  inspect!(dq.as_views(), content="([4, 5, 6], [7, 8])")
+  dq.truncate(4)
+  // Current layout: [7, X, X, 4, 5, 6]
+  inspect!(dq.as_views(), content="([4, 5, 6], [7])")
+  // Current layout: [X, X, X, 4, 5, X]
+  dq.truncate(2)
+  inspect!(dq.as_views(), content="([4, 5], [])")
 }

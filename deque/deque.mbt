@@ -344,7 +344,7 @@ pub fn op_get[A](self : T[A], index : Int) -> A {
   if self.head + index < self.buf.length() {
     self.buf[self.head + index]
   } else {
-    self.buf[(self.head + index) % self.buf.length()]
+    self.buf[self.head + index - self.buf.length()]
   }
 }
 
@@ -370,7 +370,7 @@ pub fn op_set[A](self : T[A], index : Int, value : A) -> Unit {
   if self.head + index < self.buf.length() {
     self.buf[self.head + index] = value
   } else {
-    self.buf[self.buf.length() - self.head - 1] = value
+    self.buf[self.head + index - self.buf.length()] = value
   }
 }
 
@@ -643,6 +643,52 @@ pub fn shrink_to_fit[A](self : T[A]) -> Unit {
   for i = 0; i < len; i = i + 1 {
     let idx = (head + i) % buf.length()
     self.buf[i] = buf[idx]
+  }
+}
+
+///|
+/// Shortens the deque in-place, keeping the first `len` elements and dropping
+/// the rest.
+///
+/// If `len` is greater than or equal to the deque's current length, this has no
+/// effect.
+///
+/// Parameters:
+///
+/// * `self` : The deque to be truncated.
+/// * `len` : The new length of the deque.
+///
+/// Example:
+///
+/// ```moonbit
+/// test "truncate" {
+///   let dq = @deque.of([1, 2, 3, 4, 5])
+///   dq.truncate(3)
+///   inspect!(dq, content="@deque.of([1, 2, 3])")
+/// }
+/// ```
+pub fn truncate[A](self : T[A], len : Int) -> Unit {
+  let { head, buf, .. } = self
+  guard len < self.len else { return }
+  let (front, back) = self.as_views()
+  if front.length() < len {
+    // `len` is wrapping around the end of the buffer.
+    // Thus, we need to drop the latter part of the back view.
+    self.len = len
+    for i in (len - front.length())..<back.length() {
+      set_null(buf, i)
+    }
+  } else {
+    // `len` is not wrapping around the end of the buffer. Thus, we need to drop:
+    // - The latter part of the front view;
+    // - The entire back view.
+    self.len = len
+    for i in (head + len)..<(head + front.length()) {
+      set_null(buf, i)
+    }
+    for i in 0..<back.length() {
+      set_null(buf, i)
+    }
   }
 }
 
