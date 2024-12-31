@@ -424,7 +424,7 @@ test "deque op_set wrapping case" {
   dq[2] = 10
 
   // Verify the change
-  inspect!(dq, content="@deque.of([0, 10, 2, 3, 4])")
+  inspect!(dq, content="@deque.of([0, 1, 10, 3, 4])")
 }
 
 test "iter when tail needs to wrap around" {
