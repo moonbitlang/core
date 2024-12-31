@@ -137,42 +137,49 @@ test "concat-two-leaf" {
 
 test "concat-multiple-full-tree" {
   let bf2 = branching_factor * branching_factor
-  let mut t = T::new()
-  let mut t_content = FixedArray::from_array([])
-  for i = 0; i < 42; i = i + 1 {
-    let v1_content = []
-    for i = 0; i < bf2; i = i + 1 {
-      v1_content.push(i)
-    }
-    let v1_content = FixedArray::from_array(v1_content)
-    let v1 = T::of(v1_content)
-    inspect!(v1, content="@immut/array.of(\{v1_content})")
-    t = t.concat(v1)
-    t_content = t_content + v1_content
-    inspect!(t, content="@immut/array.of(\{t_content})")
-  }
+  seq_concat_test!(
+    42,
+    fn(_i) { FixedArray::makei(bf2, fn(i) { i }) },
+    FixedArray::from_array([]),
+  )
 }
 
 test "concat-multiple-random-tree" {
-  fn rand(upper : Int) -> Int {
-    let rng = @random.new()
-    rng.int() % upper
-  }
-
   let bq4 = branching_factor *
     branching_factor *
     branching_factor *
     branching_factor
   let max_val = 2024
-  let mut t = T::new()
-  let mut t_content = FixedArray::from_array([])
-  for i = 0; i < 42; i = i + 1 {
-    let len = rand(bq4)
-    let v1_content = FixedArray::makei(len, fn(_i) { rand(max_val) })
+  seq_concat_test!(
+    42,
+    fn(_i) {
+      let len = rand(bq4)
+      FixedArray::makei(len, fn(_i) { rand(max_val) })
+    },
+    FixedArray::from_array([]),
+  )
+}
+
+///|
+fn rand(upper : Int) -> Int {
+  let rng = @random.new()
+  rng.int() % upper
+}
+
+///|
+fn seq_concat_test[A : Show](
+  rep : Int,
+  gen : (Int) -> FixedArray[A],
+  init : FixedArray[A]
+) -> Unit! {
+  let mut t = T::of(init)
+  let mut t_content = init
+  for i = 0; i < rep; i = i + 1 {
+    let v1_content = gen(i)
     let v1 = T::of(v1_content)
     inspect!(v1, content="@immut/array.of(\{v1_content})")
     t = t.concat(v1)
     t_content = t_content + v1_content
-    inspect!(t, content="@immut/array.of(\{t_content})")
+    inspect!(init, content="@immut/array.of(\{t_content})")
   }
 }

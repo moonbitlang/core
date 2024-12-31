@@ -14,6 +14,10 @@
 
 /// A tree data structure that backs the `immut/array`.
 
+//-----------------------------------------------------------------------------
+// Hyperparameters
+//-------------------------------------------------------------------------
+
 ///|
 /// The controlling factor of the tree depth.
 /// This is the only parameter you normally would adjust.
@@ -38,12 +42,42 @@ const E_MAX : Int = 2
 /// $e_{max} / 2$.
 let e_max_2 : Int = E_MAX / 2
 
+//-----------------------------------------------------------------------------
+// Constructors
+//-----------------------------------------------------------------------------
+
 ///|
 fn Tree::empty[T]() -> Tree[T] {
   Tree::Empty
 }
 
 ///|
+/// Create a new tree with a single leaf. Note that the resulting tree is a left-skewed tree.
+fn new_branch_left[T](leaf : FixedArray[T], shift : Int) -> Tree[T] {
+  match shift {
+    0 => Leaf(leaf)
+    s => Node([new_branch_left(leaf, s - num_bits)], None) // size is None because we can use radix indexing
+  }
+}
+
+//-----------------------------------------------------------------------------
+// Properties
+//-----------------------------------------------------------------------------
+
+///|
+fn is_empty_tree[T](self : Tree[T]) -> Bool {
+  match self {
+    Tree::Empty => true
+    _ => false
+  }
+}
+
+//-----------------------------------------------------------------------------
+// Getters
+//-----------------------------------------------------------------------------
+
+///|
+/// Get the rightmost child of a tree. 
 fn get_first[T](self : Tree[T]) -> T {
   match self {
     Leaf(leaf) => leaf[0]
@@ -53,6 +87,7 @@ fn get_first[T](self : Tree[T]) -> T {
 }
 
 ///|
+/// Get the leftmost child of a tree.
 fn get_last[T](self : Tree[T]) -> T {
   match self {
     Leaf(leaf) => leaf[leaf.length() - 1]
@@ -62,6 +97,10 @@ fn get_last[T](self : Tree[T]) -> T {
 }
 
 ///|
+/// Get the element at the given index.
+/// 
+/// Precondition:
+/// - `self` is of height `shift / num_bits`.
 fn get[T](self : Tree[T], index : Int, shift : Int) -> T {
   fn get_radix(node : Tree[T], shift : Int) -> T {
     match node {
@@ -86,7 +125,15 @@ fn get[T](self : Tree[T], index : Int, shift : Int) -> T {
   }
 }
 
+//-----------------------------------------------------------------------------
+// Mutators
+//-----------------------------------------------------------------------------
+
 ///|
+/// Set a value at the given index.
+/// 
+/// Precondition:
+/// - `self` is of height `shift / num_bits`.
 fn set[T](self : Tree[T], index : Int, shift : Int, value : T) -> Tree[T] {
   fn set_radix(node : Tree[T], shift : Int) -> Tree[T] {
     match node {
@@ -128,24 +175,8 @@ fn set[T](self : Tree[T], index : Int, shift : Int, value : T) -> Tree[T] {
 }
 
 ///|
-fn is_empty_tree[T](self : Tree[T]) -> Bool {
-  match self {
-    Tree::Empty => true
-    _ => false
-  }
-}
-
-///|
-/// Create a new tree with a single leaf. Note that the resulting tree is a left-skewed tree.
-fn new_branch_left[T](leaf : FixedArray[T], shift : Int) -> Tree[T] {
-  match shift {
-    0 => Leaf(leaf)
-    s => Node([new_branch_left(leaf, s - num_bits)], None) // size is None because we can use radix indexing
-  }
-}
-
-///|
 /// Push a value to the end of the tree.
+/// 
 /// Precondition:
 /// - The height of `self` = `shift` / `num_bits` (the height starts from 0).
 /// - `length` is the number of elements in the tree.
@@ -233,6 +264,10 @@ fn push_end[T](self : Tree[T], shift : Int, value : T) -> (Tree[T], Int) {
   }
 }
 
+//-----------------------------------------------------------------------------
+// Iteration
+//-----------------------------------------------------------------------------
+
 ///|
 /// For each element in the tree, apply the function `f`.
 fn each[A](self : Tree[A], f : (A) -> Unit) -> Unit {
@@ -309,6 +344,10 @@ fn map[A, B](self : Tree[A], f : (A) -> B) -> Tree[B] {
       )
   }
 }
+
+//-----------------------------------------------------------------------------
+// Concatenation 
+//-----------------------------------------------------------------------------
 
 ///|
 /// Concatenate two trees.
@@ -633,6 +672,10 @@ fn compute_sizes[A](
     Some(sizes)
   }
 }
+
+//-----------------------------------------------------------------------------
+// Common Trait Implementations
+//-----------------------------------------------------------------------------
 
 ///|
 /// Print the tree structure.
