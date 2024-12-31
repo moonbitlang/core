@@ -66,32 +66,104 @@ test "mix" {
   }
 }
 
-
-test "concat" {
-  // 16 elements
-  let mut v = T::new()
-  for i = 0; i < 16; i = i + 1 {
-    v = v.push(i)
+test "concat-two-full-tree" {
+  let bf2 = branching_factor * branching_factor
+  let v_content = []
+  for i = 0; i < bf2; i = i + 1 {
+    v_content.push(i)
   }
-  inspect!(
-    v,
-    content="@immut/array.of([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15])",
-  )
-
-  let mut v2 = T::new()
-  for i = 0; i < 16; i = i + 1 {
-    v2 = v2.push(i)
+  let v_content = FixedArray::from_array(v_content)
+  let v = T::of(v_content)
+  inspect!(v, content="@immut/array.of(\{v_content})")
+  let v2_content = []
+  for i = 0; i < bf2; i = i + 1 {
+    v2_content.push(i)
   }
-  inspect!(
-    v2,
-    content="@immut/array.of([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15])",
-  )
-
+  let v2_content = FixedArray::from_array(v2_content)
+  let v2 = T::of(v2_content)
+  inspect!(v2, content="@immut/array.of(\{v2_content})")
   let c = v.concat(v2)
-  let tree = c.tree
-  println(tree.to_string())
-  inspect!(
-    c,
-    content="@immut/array.of([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15])",
-  )
+  let c_content = v_content + v2_content
+  inspect!(c, content="@immut/array.of(\{c_content})")
+}
+
+test "concat-full-tree-and-a-leaf" {
+  let bf2 = branching_factor * branching_factor
+  let v_content = []
+  for i = 0; i < bf2; i = i + 1 {
+    v_content.push(i)
+  }
+  let v_content = FixedArray::from_array(v_content)
+  let v = T::of(v_content)
+  inspect!(v, content="@immut/array.of(\{v_content})")
+  let v2_content = FixedArray::from_array([0])
+  let v2 = T::of(v2_content)
+  inspect!(v2, content="@immut/array.of(\{v2_content})")
+  let c = v.concat(v2)
+  let c_content = v_content + v2_content
+  inspect!(c, content="@immut/array.of(\{c_content})")
+}
+
+test "concat-a-leaf-and-full-tree" {
+  let v_content = FixedArray::from_array([0])
+  let v = T::of(v_content)
+  inspect!(v, content="@immut/array.of(\{v_content})")
+  let bf2 = branching_factor * branching_factor
+  let v2_content = []
+  for i = 0; i < bf2; i = i + 1 {
+    v2_content.push(i)
+  }
+  let v2_content = FixedArray::from_array(v2_content)
+  let v2 = T::of(v2_content)
+  inspect!(v2, content="@immut/array.of(\{v2_content})")
+  let c = v.concat(v2)
+  let c_content = v_content + v2_content
+  inspect!(c, content="@immut/array.of(\{c_content})")
+}
+
+test "concat-two-leaf" {
+  let v_content = FixedArray::makei(branching_factor, fn(i) { i })
+  let v = T::of(v_content)
+  inspect!(v, content="@immut/array.of(\{v_content})")
+  let v2_content = FixedArray::makei(branching_factor, fn(i) {
+    i + branching_factor
+  })
+  let v2 = T::of(v2_content)
+  inspect!(v2, content="@immut/array.of(\{v2_content})")
+  let c = v.concat(v2)
+  let c_content = v_content + v2_content
+  inspect!(c, content="@immut/array.of(\{c_content})")
+}
+
+test "concat-three-full-tree" {
+    let bf2 = branching_factor * branching_factor
+    let t = T::new()
+    for i = 0; i<10;i=i+1{
+  let v1_content = []
+  for i = 0; i < bf2; i = i + 1 {
+    v1_content.push(i)
+  }
+  let v1_content = FixedArray::from_array(v1_content)
+  let v1 = T::of(v1_content)
+  inspect!(v1, content="@immut/array.of(\{v1_content})")
+  
+  
+    }
+
+  let v1_content = []
+  for i = 0; i < bf2; i = i + 1 {
+    v1_content.push(i)
+  }
+  let v1_content = FixedArray::from_array(v1_content)
+  let v1 = T::of(v1_content)
+  inspect!(v1, content="@immut/array.of(\{v1_content})")
+
+  let v1_content = []
+  for i = 0; i < bf2; i = i + 1 {
+    v1_content.push(i)
+  }
+  let v1_content = FixedArray::from_array(v1_content)
+  let v1 = T::of(v1_content)
+  inspect!(v1, content="@immut/array.of(\{v1_content})")
+
 }

@@ -15,6 +15,8 @@
 /// A tree data structure that backs the `immut/array`.
 
 ///|
+/// The controlling factor of the tree depth.
+/// This is the only parameter you normally would adjust.
 let num_bits = 2
 
 ///|
@@ -397,13 +399,16 @@ fn rebalance[A](
   let t = tri_merge(left, center, right) // t is a list of trees of (H-1) height
   let (nc, nc_len) = redis_plan(t)
   let new_t = redis(t, nc, nc_len, shift - num_bits) // new_t is a list of trees of (H-1) height
+  guard new_t.length() == nc_len
   if nc_len < branching_factor {
-    guard new_t.length() == 1
     // All nodes can be accommodated in a single node
+    let node = Node(new_t, compute_sizes(new_t, shift - num_bits)) // node of H height
     if not(top) {
-      return (Node(new_t, compute_sizes(new_t, shift-num_bits)), shift) // return H height node
+      return (Node(FixedArray::from_array([node]), None), shift + num_bits)
+      // return (H+1) height node, add another layer to align with the case at the end of the thisfunction
     } else {
-      return (new_t[0], shift - num_bits) // return H-1 height node
+      return (node, shift)
+      // return H height node, no upper node so no need to add another layer on top of it
     }
   } else {
     let new_child_1 = FixedArray::makei(branching_factor, fn(i) { new_t[i] })
@@ -412,8 +417,14 @@ fn rebalance[A](
     ) {
       new_t[i + branching_factor]
     })
-    let new_node_1 = Node(new_child_1, compute_sizes(new_child_1, shift-num_bits)) // height H
-    let new_node_2 = Node(new_child_2, compute_sizes(new_child_2, shift-num_bits)) // height H
+    let new_node_1 = Node(
+      new_child_1,
+      compute_sizes(new_child_1, shift - num_bits),
+    ) // height H
+    let new_node_2 = Node(
+      new_child_2,
+      compute_sizes(new_child_2, shift - num_bits),
+    ) // height H
     let new_children = FixedArray::from_array([new_node_1, new_node_2])
     return (
       Node(new_children, compute_sizes(new_children, shift)),
@@ -476,7 +487,7 @@ fn tri_merge[A](
 ///|
 /// Create a redistribution plan for the tree.
 fn redis_plan[A](t : FixedArray[Tree[A]]) -> (FixedArray[Int], Int) {
-  let node_counts = FixedArray::makei(t.length(), fn { i => t[i].size() })
+  let node_counts = FixedArray::makei(t.length(), fn { i => t[i].local_size() })
   let total_nodes = node_counts.fold(init=0, fn { acc, x => acc + x })
   // round up to the nearest integer of S/branching_factor
   let opt_len = (total_nodes + branching_factor - 1) / branching_factor
@@ -596,7 +607,7 @@ fn redis[A](
 }
 
 ///|
-/// Given a list of trees as `children` and the `shift` of them.
+/// Given a list of trees as `children` with heights of (`shift` / `num_bits`), compute the sizes array of the subtrees.
 fn compute_sizes[A](
   children : FixedArray[Tree[A]],
   shift : Int
@@ -607,7 +618,7 @@ fn compute_sizes[A](
   let mut flag = true
   let full_subtree_size = branching_factor << shift
   for i = 0; i < len; i = i + 1 {
-    let sz = children[i].length(shift)
+    let sz = children[i].size(shift)
     flag = flag && sz == full_subtree_size
     sum += sz
     sizes[i] = sum
