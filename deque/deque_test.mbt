@@ -519,3 +519,23 @@ test "deque push_back when empty" {
   d.push_back("b")
   inspect!(d, content="@deque.of([\"b\"])")
 }
+
+test "deque as_views" {
+  // Test empty deque
+  let dq1 : @deque.T[Int] = @deque.T::new()
+  inspect!(dq1.as_views(), content="([], [])")
+
+  // Test contiguous case (head_len >= len)
+  let dq2 = @deque.of([1, 2, 3])
+  inspect!(dq2.as_views(), content="([1, 2, 3], [])")
+
+  // Test split case (head_len < len)
+  let dq3 = @deque.of([1, 2, 3, 4])
+  // Push and pop to create a wrap-around situation
+  dq3.unsafe_pop_front()
+  dq3.unsafe_pop_front()
+  dq3.push_back(5)
+  dq3.push_back(6)
+  // Now the deque should be [3, 4, 5, 6] with internal wrap-around
+  inspect!(dq3.as_views(), content="([3, 4], [5, 6])")
+}
