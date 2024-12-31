@@ -375,6 +375,44 @@ pub fn op_set[A](self : T[A], index : Int, value : A) -> Unit {
 }
 
 ///|
+/// Returns two array views that together represent all elements in the deque in
+/// their correct order. The first view contains elements from the head to the
+/// end of the internal buffer, and the second view contains any remaining
+/// elements from the start of the buffer.
+///
+/// If the deque is empty, returns a pair of empty views. If all elements are
+/// contiguous in memory, the second view will be empty.
+///
+/// Parameters:
+///
+/// * `self` : The deque to be viewed.
+///
+/// Returns a tuple of two array views that together contain all elements of the
+/// deque in order.
+///
+/// Example:
+///
+/// ```moonbit
+/// test "T::as_views" {
+///   let dq = @deque.of([1, 2, 3, 4, 5])
+///   let (v1, v2) = dq.as_views()
+///   inspect!(v1.length(), content="5")
+///   inspect!(v2.length(), content="0")
+/// }
+/// ```
+pub fn T::as_views[A](self : T[A]) -> (ArrayView[A], ArrayView[A]) {
+  guard self.len != 0 else { ([][:], [][:]) }
+  let { buf, head, len, .. } = self
+  let cap = buf.length()
+  let head_len = cap - head
+  if head_len >= len {
+    (buf[head:head + len], [][:])
+  } else {
+    (buf[head:cap], buf[:len - head_len])
+  }
+}
+
+///|
 /// Compares two deques for equality.
 pub fn op_equal[A : Eq](self : T[A], other : T[A]) -> Bool {
   if self.len != other.len {

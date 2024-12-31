@@ -5,6 +5,7 @@ package moonbitlang/core/deque
 // Types and methods
 type T
 impl T {
+  as_views[A](Self[A]) -> (ArrayView[A], ArrayView[A])
   back[A](Self[A]) -> A?
   capacity[A](Self[A]) -> Int
   clear[A](Self[A]) -> Unit
