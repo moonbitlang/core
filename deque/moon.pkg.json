@@ -2,5 +2,8 @@
   "import": ["moonbitlang/core/builtin"],
   "targets": {
     "panic_test.mbt": ["not", "native"]
-  }
+  },
+  "test-import": [
+    "moonbitlang/core/array"
+  ]
 }

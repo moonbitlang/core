@@ -539,3 +539,215 @@ test "deque as_views" {
   // Now the deque should be [3, 4, 5, 6] with internal wrap-around
   inspect!(dq3.as_views(), content="([3, 4], [5, 6])")
 }
+
+test "test_get" {
+  let tester = @deque.new()
+  tester.push_back(1)
+  tester.push_back(2)
+  tester.push_back(35)
+  assert_eq!(tester.length(), 3)
+  assert_eq!(tester[1], 2)
+  assert_eq!(tester[2], 35)
+  assert_eq!(tester[0], 1)
+  let _ = tester.pop_front()
+  assert_eq!(tester.length(), 2)
+  assert_eq!(tester[0], 2)
+  assert_eq!(tester[1], 35)
+}
+
+test "test_reserve_capacity" {
+  let tester : @deque.T[Int] = @deque.new(capacity=1)
+  assert_eq!(tester.capacity(), 1)
+  tester.reserve_capacity(2)
+  assert_eq!(tester.capacity(), 2)
+  tester.reserve_capacity(1)
+  // reserving won't shrink the buffer
+  assert_eq!(tester.capacity(), 2)
+  tester.reserve_capacity(35)
+  assert_eq!(tester.capacity(), 35)
+}
+
+test "test_contains" {
+  let tester = @deque.new()
+  tester.push_back(1)
+  tester.push_back(2)
+  tester.push_back(3)
+  tester.push_back(5)
+  assert_true!(tester.contains(1))
+  assert_true!(tester.contains(2))
+  assert_true!(tester.contains(3))
+  assert_true!(tester.contains(5))
+  let _ = tester.pop_front()
+  assert_true!(tester.contains(2))
+  assert_true!(tester.contains(3))
+  assert_true!(tester.contains(5))
+}
+
+test "test_shrink_to_fit" {
+  let tester = @deque.new(capacity=15)
+  let cap = tester.capacity()
+  tester.reserve_capacity(63)
+  let max_cap = tester.capacity()
+  let start = 0
+  for len in 0..=cap {
+    // 0, 1, 2, .., len - 1
+    let expected = @deque.from_array(start.until(len).collect())
+    for head_pos in 0..=max_cap {
+      tester.reserve_capacity(head_pos)
+      tester.clear()
+      tester.reserve_capacity(63)
+      for i in start.until(len) {
+        tester.push_back(i)
+      }
+      tester.shrink_to_fit()
+      assert_true!(tester.capacity() <= cap)
+      assert_eq!(tester, expected)
+    }
+  }
+}
+
+test "test_from_vec" {
+  for cap in 0..=35 {
+    for len in 0..=cap {
+      let vec = Array::make(cap, 0)
+      for i in 0..=len {
+        vec.push(i)
+      }
+      let vd = @deque.from_array(vec)
+      assert_eq!(vd.length(), vec.length())
+      for i = 0; i < vd.length(); i = i + 1 {
+        assert_eq!(vd[i], vec[i])
+      }
+    }
+  }
+}
+
+test "test_from_array" {
+  fn test_fn!(n : Int) -> Unit {
+    let array : FixedArray[Int] = FixedArray::make(n, 0)
+    for index = 0; index < n; index = index + 1 {
+      array[index] = index
+    }
+    let deq = @deque.of(array)
+    for index = 0; index < n; index = index + 1 {
+      assert_eq!(deq[index], array[index])
+    }
+    assert_eq!(deq.length(), array.length())
+  }
+
+  test_fn!(0)
+  test_fn!(1)
+  test_fn!(2)
+  test_fn!(32)
+  test_fn!(35)
+}
+
+test "test_clone_from" {
+  let m = FixedArray::make(8, 1)
+  let n = FixedArray::make(12, 2)
+  let limit = 8
+  for pfv = 0; pfv < limit; pfv = pfv + 1 {
+    for pfu = 0; pfu < limit; pfu = pfu + 1 {
+      for longer = 0; longer < 2; longer = longer + 1 {
+        let (vr, ur) = if longer == 0 { (m, n) } else { (n, m) }
+        let v = @deque.of(vr)
+        for _idx = 0; _idx < pfv; _idx = _idx + 1 {
+          v.push_front(1)
+        }
+        let u = @deque.of(ur)
+        for _idx = 0; _idx < pfu; _idx = _idx + 1 {
+          u.push_front(2)
+        }
+        let v = @deque.copy(u)
+        assert_eq!(v, u)
+      }
+    }
+  }
+}
+
+test "deque guard iter coverage improvement" {
+  let dq = @deque.new(capacity=15)
+  // Use push_front only
+  fn test_n_via_push_front(n : Int) -> Unit! {
+    for i in 0..=n {
+      dq.push_front(i)
+    }
+    let mut sym = -1
+    for t in 0..=n {
+      for elem in dq.iter() {
+        sym = elem
+        if elem == t {
+          break
+        }
+      }
+      assert_eq!(sym, t)
+    }
+    dq.clear()
+  }
+
+  // This should trigger condition: cap - len >= len
+  test_n_via_push_front!(0)
+  // These should trigger condition: cap - len < len which has no coverage
+  test_n_via_push_front!(2)
+  test_n_via_push_front!(4)
+  test_n_via_push_front!(6)
+  // This should trigger condition: cap - len >= len again
+  test_n_via_push_front!(10)
+  test_n_via_push_front!(12)
+  test_n_via_push_front!(15)
+}
+
+test "deque guard iter after push_front and push_back" {
+  let dq = @deque.new(capacity=15)
+  for i in 0..<15 {
+    dq.push_back(i)
+  }
+  dq.push_front(-1)
+  let arr = FixedArray::from_iter(dq.iter())
+  assert_eq!(arr, [-1, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14])
+  for t in 0..=15 {
+    let mut count = 0
+    let mut expect = -2
+    for i in dq.iter() {
+      count += 1
+      expect = i
+      if i == t - 1 {
+        break
+      }
+    }
+    assert_eq!(count, t + 1)
+    assert_eq!(expect, t - 1)
+  }
+}
+
+test "deque guard iter2 coverage improvement" {
+  let dq = @deque.new(capacity=15)
+  // Use push_front only
+  fn test_n_via_push_front(n : Int) -> Unit! {
+    for i in 0..=n {
+      dq.push_front(i)
+    }
+    let mut sym = (-1, -1)
+    for t in 0..=n {
+      for index, elem in dq.iter2() {
+        sym = (index, elem)
+        if elem == n - t {
+          break
+        }
+      }
+      assert_eq!(sym, (t, n - t))
+    }
+    dq.clear()
+  }
+
+  // This should trigger condition: cap - len >= len
+  test_n_via_push_front!(0)
+  // These should trigger condition: cap - len < len which has no coverage
+  test_n_via_push_front!(2)
+  test_n_via_push_front!(4)
+  test_n_via_push_front!(6)
+  // This should trigger condition: cap - len >= len again
+  test_n_via_push_front!(10)
+  test_n_via_push_front!(12)
+  test_n_via_push_front!(15)
+}
