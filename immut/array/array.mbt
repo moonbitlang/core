@@ -21,6 +21,12 @@ pub fn T::new[A]() -> T[A] {
 ///|
 /// Given two trees, concatenate them into a new tree.
 pub fn T::concat[A](self : T[A], other : T[A]) -> T[A] {
+  if self.is_empty() {
+    return other
+  }
+  if other.is_empty() {
+    return self
+  }
   let (tree, shift) = concat(
     self.tree,
     self.shift,
@@ -169,7 +175,7 @@ pub fn each[A](self : T[A], f : (A) -> Unit) -> Unit {
 }
 
 ///|
-////// Iterate over the array with index.
+/// Iterate over the array with index.
 /// 
 /// # Example
 /// ```

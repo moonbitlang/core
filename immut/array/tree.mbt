@@ -313,6 +313,10 @@ fn map[A, B](self : Tree[A], f : (A) -> B) -> Tree[B] {
 ///|
 /// Concatenate two trees.
 /// Should be called as with `top = true`.
+/// 
+/// Preconditions:
+/// - `left` and `right` are not `Empty`.
+/// - `left` and `right` are of height `left_shift / num_bits` and `right_shift / num_bits`, respectively.
 fn concat[A](
   left : Tree[A],
   left_shift : Int,
