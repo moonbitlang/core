@@ -5,8 +5,7 @@
     {
       "path": "moonbitlang/core/array",
       "alias": "_core/array"
-    },
-    "moonbitlang/core/bool"
+    }
   ],
   "targets": {
     "panic_test.mbt": ["not", "native"],

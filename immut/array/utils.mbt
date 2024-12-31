@@ -12,6 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+/// Utils for `FixedArray`s in the immutable array implementation.
+/// Typically utility functions that are not related with trees.
+
 ///|
 /// Set the value at the given index. This operation is O(n).
 fn immutable_set[T](arr : FixedArray[T], i : Int, v : T) -> FixedArray[T] {
@@ -31,6 +34,7 @@ fn immutable_push[T](arr : FixedArray[T], val : T) -> FixedArray[T] {
 }
 
 ///|
+/// x >> y as unsigned integers, then reinterpret as signed integers.
 fn shr_as_uint(x : Int, y : Int) -> Int {
   (x.reinterpret_as_uint() >> y).reinterpret_as_int()
 }
@@ -42,7 +46,6 @@ fn radix_indexing(index : Int, shift : Int) -> Int {
 }
 
 ///|
-///
 /// Get the index of the branch that contains the given index.
 /// For example, if the sizes are [0, 3, 6, 10] and the index is 5, the function should return 2.
 fn get_branch_index(sizes : FixedArray[Int], index : Int) -> Int {
@@ -68,5 +71,14 @@ fn copy_sizes(sizes : FixedArray[Int]?) -> FixedArray[Int]? {
   match sizes {
     Some(sizes) => Some(sizes.copy())
     None => None
+  }
+}
+
+///|
+fn min(a : Int, b : Int) -> Int {
+  if a < b {
+    a
+  } else {
+    b
   }
 }

@@ -30,4 +30,4 @@ priv enum Tree[A] {
   Empty
   Node(FixedArray[Tree[A]], FixedArray[Int]?) // (Subtrees, Sizes of subtrees)
   Leaf(FixedArray[A])
-} derive(Eq, Show)
+} derive(Eq)

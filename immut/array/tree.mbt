@@ -12,8 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+/// A tree data structure that backs the `immut/array`.
+
 ///|
-let num_bits = 5
+let num_bits = 2
 
 ///|
 /// Invariant: `branching_factor` is a power of 2.
@@ -230,7 +232,6 @@ fn push_end[T](self : Tree[T], shift : Int, value : T) -> (Tree[T], Int) {
 }
 
 ///|
-/// 
 /// For each element in the tree, apply the function `f`.
 fn each[A](self : Tree[A], f : (A) -> Unit) -> Unit {
   match self {
@@ -241,7 +242,6 @@ fn each[A](self : Tree[A], f : (A) -> Unit) -> Unit {
 }
 
 ///|
-///
 /// For each element in the tree, apply the function `f` with the index of the element.
 fn eachi[A](
   self : Tree[A],
@@ -396,12 +396,12 @@ fn rebalance[A](
   // Suppose H = shift / num_bits
   let t = tri_merge(left, center, right) // t is a list of trees of (H-1) height
   let (nc, nc_len) = redis_plan(t)
-  let new_t = redis(t, nc, nc_len, shift) // new_t is a list of trees of (H-1) height
+  let new_t = redis(t, nc, nc_len, shift - num_bits) // new_t is a list of trees of (H-1) height
   if nc_len < branching_factor {
     guard new_t.length() == 1
     // All nodes can be accommodated in a single node
     if not(top) {
-      return (Node(new_t, compute_sizes(new_t, shift)), shift) // return H height node
+      return (Node(new_t, compute_sizes(new_t, shift-num_bits)), shift) // return H height node
     } else {
       return (new_t[0], shift - num_bits) // return H-1 height node
     }
@@ -412,10 +412,13 @@ fn rebalance[A](
     ) {
       new_t[i + branching_factor]
     })
-    let new_node_1 = Node(new_child_1, compute_sizes(new_child_1, shift))
-    let new_node_2 = Node(new_child_2, compute_sizes(new_child_2, shift))
+    let new_node_1 = Node(new_child_1, compute_sizes(new_child_1, shift-num_bits)) // height H
+    let new_node_2 = Node(new_child_2, compute_sizes(new_child_2, shift-num_bits)) // height H
     let new_children = FixedArray::from_array([new_node_1, new_node_2])
-    return (Node(new_children, compute_sizes(new_children, shift)), shift) // return H height node
+    return (
+      Node(new_children, compute_sizes(new_children, shift)),
+      shift + num_bits,
+    ) // return (H+1) height node
   }
 }
 
@@ -453,15 +456,19 @@ fn tri_merge[A](
   let center_children = get_children(center)
   let right_children = get_children(right)
   let left_len = left_children.length()
+  let left_len = if left_len == 0 { 0 } else { left_len - 1 }
   let center_len = center_children.length()
   let right_len = right_children.length()
+  let right_len = if right_len == 0 { 0 } else { right_len - 1 }
   FixedArray::makei(left_len + center_len + right_len, fn(i) {
     if i < left_len {
       left_children[i]
     } else if i < left_len + center_len {
       center_children[i - left_len]
+    } else if right_len > 0 {
+      right_children[1 + i - left_len - center_len]
     } else {
-      right_children[i - left_len - center_len]
+      abort("Unreachable")
     }
   })
 }
@@ -581,7 +588,7 @@ fn redis[A](
             old_offset = 0
           }
         }
-        new_t[i] = Node(new_node_chldrn, compute_sizes(new_node_chldrn, shift))
+        new_t[i] = Node(new_node_chldrn, compute_sizes(new_node_chldrn, shift)) // each node in `new_t` is of height (`shift` / `num_bits`)
       }
     }
   }
@@ -613,94 +620,35 @@ fn compute_sizes[A](
 }
 
 ///|
-fn is_node[A](self : Tree[A]) -> Bool {
-  match self {
-    Node(_, _) => true
-    _ => false
+/// Print the tree structure.
+impl[A : Show] Show for Tree[A] with output(self, logger : &Logger) {
+  fn indent_str(s : String, indent : Int) -> String {
+    String::make(indent, ' ') + s
   }
-}
 
-///|
-fn is_leaf[A](self : Tree[A]) -> Bool {
-  match self {
-    Leaf(_) => true
-    _ => false
+  fn rec(t : Tree[A], ident : Int) {
+    match t {
+      Empty => indent_str("Empty", ident)
+      Leaf(l) => {
+        let mut s = "Leaf("
+        for i = 0; i < l.length(); i = i + 1 {
+          s += l[i].to_string()
+          if i != l.length() - 1 {
+            s += ", "
+          }
+        }
+        s += ")"
+        indent_str(s, ident) + "\n"
+      }
+      Node(children, _sizes) => {
+        let mut s = indent_str("Node(", ident) + "\n"
+        for i = 0; i < children.length(); i = i + 1 {
+          s += rec(children[i], ident + 2)
+        }
+        s + indent_str(")", ident) + "\n"
+      }
+    }
   }
-}
 
-///|
-fn is_empty[A](self : Tree[A]) -> Bool {
-  match self {
-    Empty => true
-    _ => false
-  }
-}
-
-///|
-/// Get the rightmost child of a tree node. Abort if
-/// it is not a `Node`.
-fn right_child[A](self : Tree[A]) -> Tree[A] {
-  match self {
-    Node(children, _) => children[-1]
-    Leaf(_) | Empty => abort("Should not get children on non-`Node`s")
-  }
-}
-
-///|
-/// Get the leftmost child of a tree node. Abort if
-/// it is not a `Node`.
-fn left_child[A](self : Tree[A]) -> Tree[A] {
-  match self {
-    Node(children, _) => children[0]
-    Leaf(_) | Empty => abort("Should not get children on non-`Node`s")
-  }
-}
-
-///|
-/// Get the leaf contents. Abort if it is not a `Leaf`.
-fn leaf_elements[A](self : Tree[A]) -> FixedArray[A] {
-  match self {
-    Leaf(children) => children
-    _ => abort("Should not call `get_leaf_elements` on non-leaf nodes")
-  }
-}
-
-///|
-/// Get the children of a `Node`. Abort if it is not a `Node`.
-fn node_children[A](self : Tree[A]) -> FixedArray[Tree[A]] {
-  match self {
-    Node(children, _) => children
-    _ => abort("Should not call `node_children` on non-`Node`s")
-  }
-}
-
-///|
-/// Get the physical size of the current node, not the total number of elements in the tree.
-fn size[A](self : Tree[A]) -> Int {
-  match self {
-    Empty => 0
-    Leaf(l) => l.length()
-    Node(children, _) => children.length()
-  }
-}
-
-///|
-/// Get the total number of elements in the tree.
-fn length[A](self : Tree[A], shift : Int) -> Int {
-  match self {
-    Empty => 0
-    Leaf(l) => l.length()
-    Node(_, Some(sizes)) => sizes[-1]
-    Node(children, None) =>
-      ((children.length() - 1) << shift) + children[-1].length(shift - num_bits)
-  }
-}
-
-///|
-fn min(a : Int, b : Int) -> Int {
-  if a < b {
-    a
-  } else {
-    b
-  }
+  logger.write_string(rec(self, 0))
 }
