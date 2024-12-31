@@ -40,6 +40,7 @@ impl T {
   rev_iter2[A](Self[A]) -> Iter2[Int, A]
   search[A : Eq](Self[A], A) -> Int?
   shrink_to_fit[A](Self[A]) -> Unit
+  truncate[A](Self[A], Int) -> Unit
   unsafe_pop_back[A](Self[A]) -> Unit
   unsafe_pop_front[A](Self[A]) -> Unit
 }

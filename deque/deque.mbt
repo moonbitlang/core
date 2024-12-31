@@ -647,6 +647,52 @@ pub fn shrink_to_fit[A](self : T[A]) -> Unit {
 }
 
 ///|
+/// Shortens the deque in-place, keeping the first `len` elements and dropping
+/// the rest.
+///
+/// If `len` is greater than or equal to the deque's current length, this has no
+/// effect.
+///
+/// Parameters:
+///
+/// * `self` : The deque to be truncated.
+/// * `len` : The new length of the deque.
+///
+/// Example:
+///
+/// ```moonbit
+/// test "truncate" {
+///   let dq = @deque.of([1, 2, 3, 4, 5])
+///   dq.truncate(3)
+///   inspect!(dq, content="@deque.of([1, 2, 3])")
+/// }
+/// ```
+pub fn truncate[A](self : T[A], len : Int) -> Unit {
+  let { head, buf, .. } = self
+  guard len < self.len else { return }
+  let (front, back) = self.as_views()
+  if front.length() < len {
+    // `len` is wrapping around the end of the buffer.
+    // Thus, we need to drop the latter part of the back view.
+    self.len = len
+    for i in (len - front.length())..<back.length() {
+      set_null(buf, i)
+    }
+  } else {
+    // `len` is not wrapping around the end of the buffer. Thus, we need to drop:
+    // - The latter part of the front view;
+    // - The entire back view.
+    self.len = len
+    for i in (head + len)..<(head + front.length()) {
+      set_null(buf, i)
+    }
+    for i in 0..<back.length() {
+      set_null(buf, i)
+    }
+  }
+}
+
+///|
 pub fn iter[A](self : T[A]) -> Iter[A] {
   Iter::new(fn(yield_) {
     guard not(self.is_empty()) else { IterContinue }
