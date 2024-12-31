@@ -158,6 +158,8 @@ impl BigInt {
   from_int64(Int64) -> Self
   from_octets(Bytes, signum~ : Int = ..) -> Self
   from_string(String) -> Self
+  from_uint(UInt) -> Self
+  from_uint64(UInt64) -> Self
   is_zero(Self) -> Bool
   land(Self, Self) -> Self
   lor(Self, Self) -> Self
@@ -176,9 +178,13 @@ impl BigInt {
   shl(Self, Int) -> Self //deprecated
   shr(Self, Int) -> Self //deprecated
   to_hex(Self, uppercase~ : Bool = ..) -> String
+  to_int(Self) -> Int
+  to_int64(Self) -> Int64
   to_json(Self) -> Json
   to_octets(Self, length? : Int) -> Bytes
   to_string(Self) -> String
+  to_uint(Self) -> UInt
+  to_uint64(Self) -> UInt64
 }
 impl Show for BigInt
 

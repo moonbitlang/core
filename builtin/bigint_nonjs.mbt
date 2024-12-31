@@ -85,20 +85,36 @@ pub fn BigInt::from_int(n : Int) -> BigInt {
 }
 
 ///|
+/// Convert an UInt to a BigInt.
+pub fn BigInt::from_uint(n : UInt) -> BigInt {
+  BigInt::from_uint64(n.to_uint64())
+}
+
+///|
 /// Convert an Int64 to a BigInt.
 pub fn BigInt::from_int64(n : Int64) -> BigInt {
-  if n == 0L {
+  if n < 0L {
+    -BigInt::from_uint64((-n).reinterpret_as_uint64())
+  } else {
+    BigInt::from_uint64(n.reinterpret_as_uint64())
+  }
+}
+
+///| 
+/// Convert an UInt64 to a BigInt.
+pub fn BigInt::from_uint64(n : UInt64) -> BigInt {
+  if n == 0UL {
     return { limbs: FixedArray::make(1, 0), sign: Positive, len: 1 }
   }
   let limbs = FixedArray::make(64 / radix_bit_len, 0U)
-  let mut m = (if n < 0L { -n } else { n }).reinterpret_as_uint64()
+  let mut m = n
   let mut i = 0
   while m > 0 {
     limbs[i] = (m % radix).to_uint()
     m /= radix
     i += 1
   }
-  { limbs, sign: if n < 0L { Negative } else { Positive }, len: i }
+  { limbs, sign: Positive, len: i }
 }
 
 // Arithmetic Operations
@@ -1185,4 +1201,33 @@ pub fn lxor(self : BigInt, other : BigInt) -> BigInt {
       other.len
     },
   }
+}
+
+///|
+pub fn to_int(self : BigInt) -> Int {
+  self.to_uint().reinterpret_as_int()
+}
+
+///|
+pub fn to_uint(self : BigInt) -> UInt {
+  let value = if self.sign == Negative { (1N << 32) + self } else { self }
+  value.limbs[0]
+}
+
+///|
+pub fn to_int64(self : BigInt) -> Int64 {
+  self.to_uint64().reinterpret_as_int64()
+}
+
+///|
+pub fn to_uint64(self : BigInt) -> UInt64 {
+  let value = if self.sign == Negative { (1N << 64) + self } else { self }
+  let len = 64 / radix_bit_len
+  let len = if value.len < len { value.len } else { len }
+  let mut result = 0UL
+  for i = len - 1; i >= 0; i = i - 1 {
+    result = result << radix_bit_len
+    result = result | (value.limbs[i].to_uint64() & radix_mask)
+  }
+  result
 }
