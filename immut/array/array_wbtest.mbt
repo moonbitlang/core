@@ -1,4 +1,4 @@
-// Copyright 2024 International Digital Economy Academy
+/ Copyright 2024 International Digital Economy Academy
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -135,35 +135,44 @@ test "concat-two-leaf" {
   inspect!(c, content="@immut/array.of(\{c_content})")
 }
 
-test "concat-three-full-tree" {
-    let bf2 = branching_factor * branching_factor
-    let t = T::new()
-    for i = 0; i<10;i=i+1{
-  let v1_content = []
-  for i = 0; i < bf2; i = i + 1 {
-    v1_content.push(i)
-  }
-  let v1_content = FixedArray::from_array(v1_content)
-  let v1 = T::of(v1_content)
-  inspect!(v1, content="@immut/array.of(\{v1_content})")
-  
-  
+test "concat-multiple-full-tree" {
+  let bf2 = branching_factor * branching_factor
+  let mut t = T::new()
+  let mut t_content = FixedArray::from_array([])
+  for i = 0; i < 42; i = i + 1 {
+    let v1_content = []
+    for i = 0; i < bf2; i = i + 1 {
+      v1_content.push(i)
     }
-
-  let v1_content = []
-  for i = 0; i < bf2; i = i + 1 {
-    v1_content.push(i)
+    let v1_content = FixedArray::from_array(v1_content)
+    let v1 = T::of(v1_content)
+    inspect!(v1, content="@immut/array.of(\{v1_content})")
+    t = t.concat(v1)
+    t_content = t_content + v1_content
+    inspect!(t, content="@immut/array.of(\{t_content})")
   }
-  let v1_content = FixedArray::from_array(v1_content)
-  let v1 = T::of(v1_content)
-  inspect!(v1, content="@immut/array.of(\{v1_content})")
+}
 
-  let v1_content = []
-  for i = 0; i < bf2; i = i + 1 {
-    v1_content.push(i)
+test "concat-multiple-random-tree" {
+  fn rand(upper : Int) -> Int {
+    let rng = @random.new()
+    rng.int() % upper
   }
-  let v1_content = FixedArray::from_array(v1_content)
-  let v1 = T::of(v1_content)
-  inspect!(v1, content="@immut/array.of(\{v1_content})")
 
+  let bq4 = branching_factor *
+    branching_factor *
+    branching_factor *
+    branching_factor
+  let max_val = 2024
+  let mut t = T::new()
+  let mut t_content = FixedArray::from_array([])
+  for i = 0; i < 42; i = i + 1 {
+    let len = rand(bq4)
+    let v1_content = FixedArray::makei(len, fn(_i) { rand(max_val) })
+    let v1 = T::of(v1_content)
+    inspect!(v1, content="@immut/array.of(\{v1_content})")
+    t = t.concat(v1)
+    t_content = t_content + v1_content
+    inspect!(t, content="@immut/array.of(\{t_content})")
+  }
 }

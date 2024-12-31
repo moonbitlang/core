@@ -400,7 +400,7 @@ fn rebalance[A](
   let (nc, nc_len) = redis_plan(t)
   let new_t = redis(t, nc, nc_len, shift - num_bits) // new_t is a list of trees of (H-1) height
   guard new_t.length() == nc_len
-  if nc_len < branching_factor {
+  if nc_len <= branching_factor {
     // All nodes can be accommodated in a single node
     let node = Node(new_t, compute_sizes(new_t, shift - num_bits)) // node of H height
     if not(top) {
