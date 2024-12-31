@@ -344,7 +344,7 @@ pub fn op_get[A](self : T[A], index : Int) -> A {
   if self.head + index < self.buf.length() {
     self.buf[self.head + index]
   } else {
-    self.buf[(self.head + index) % self.buf.length()]
+    self.buf[self.head + index - self.buf.length()]
   }
 }
 
