@@ -344,7 +344,7 @@ pub fn op_get[A](self : T[A], index : Int) -> A {
   if self.head + index < self.buf.length() {
     self.buf[self.head + index]
   } else {
-    self.buf[(self.head + index) % self.buf.length()]
+    self.buf[self.head + index - self.buf.length()]
   }
 }
 
@@ -370,7 +370,7 @@ pub fn op_set[A](self : T[A], index : Int, value : A) -> Unit {
   if self.head + index < self.buf.length() {
     self.buf[self.head + index] = value
   } else {
-    self.buf[self.buf.length() - self.head - 1] = value
+    self.buf[self.head + index - self.buf.length()] = value
   }
 }
 
