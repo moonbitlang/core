@@ -22,9 +22,27 @@ pub fn rev_inplace[T](self : ArrayView[T]) -> Unit {
 }
 
 ///|
+/// Iterates over each element in the array view and applies a function to it.
+///
+/// Parameters:
+///
+/// * `self` : The array view to iterate over.
+/// * `function` : A function that takes an element of type `T` and returns
+/// nothing. This function will be applied to each element in the array view.
+///
+/// Example:
+///
+/// ```moonbit
+/// test "array_view/each" {
+///   let arr = [1, 2, 3][:]
+///   let mut sum = 0
+///   arr.each(fn(x) { sum = sum + x })
+///   inspect!(sum, content="6")
+/// }
+/// ```
 pub fn each[T](self : ArrayView[T], f : (T) -> Unit) -> Unit {
-  for i = 0; i < self.length(); i = i + 1 {
-    f(self[i])
+  for v in self {
+    f(v)
   }
 }
 

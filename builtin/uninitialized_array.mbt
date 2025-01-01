@@ -47,6 +47,37 @@ pub fn op_get[T](self : UninitializedArray[T], index : Int) -> T = "%fixedarray.
 pub fn op_set[T](self : UninitializedArray[T], index : Int, value : T) = "%fixedarray.set"
 
 ///|
+/// Creates a view into a portion of the uninitialized array.
+///
+/// Parameters:
+///
+/// * `array` : The uninitialized array to create a view from.
+/// * `start` : The starting index of the view (inclusive). Defaults to 0.
+/// * `end` : The ending index of the view (exclusive). If not provided, defaults
+/// to the length of the array.
+///
+/// Returns an `ArrayView` that provides a window into the specified portion of
+/// the array.
+///
+/// Throws an error if the indices are out of bounds or if `start` is greater
+/// than `end`.
+pub fn op_as_view[T](
+  self : UninitializedArray[T],
+  start~ : Int = 0,
+  end? : Int
+) -> ArrayView[T] {
+  let len = self.length()
+  let end = match end {
+    None => len
+    Some(end) => end
+  }
+  guard start >= 0 && start <= end && end <= len else {
+    abort("View start index out of bounds")
+  }
+  { buf: self, start, len: end - start }
+}
+
+///|
 /// Returns the length of an uninitialized array.
 ///
 /// Parameters:
@@ -67,4 +98,21 @@ fn UninitializedArray::unsafe_blit[T](
   len : Int
 ) -> Unit {
   FixedArray::unsafe_blit(dst._, dst_offset, src._, src_offset, len)
+}
+
+test "op_as_view with valid_range" {
+  let arr : UninitializedArray[Int] = UninitializedArray::make(5)
+  let view = arr[1:4]
+  inspect!(view.start, content="1")
+  inspect!(view.len, content="3")
+}
+
+test "panic op_as_view with invalid_start" {
+  let arr : UninitializedArray[Int] = UninitializedArray::make(5)
+  ignore(arr[-1:])
+}
+
+test "panic op_as_view with invalid_end" {
+  let arr : UninitializedArray[Int] = UninitializedArray::make(5)
+  ignore(arr[2:10])
 }
