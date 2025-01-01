@@ -150,20 +150,15 @@ test "concat-multiple-random-tree" {
     branching_factor *
     branching_factor
   let max_val = 2024
+  let rng = @random.new(seed=b"DEADBEEFDEADBEEFDEADBEEFDEADBEEF")
   seq_concat_test!(
     42,
     fn(_i) {
-      let len = rand(bq4)
-      FixedArray::makei(len, fn(_i) { rand(max_val) })
+      let len = rng.int(limit=bq4)
+      FixedArray::makei(len, fn(_i) { rng.int(limit=max_val) })
     },
     FixedArray::from_array([]),
   )
-}
-
-///|
-fn rand(upper : Int) -> Int {
-  let rng = @random.new()
-  rng.int() % upper
 }
 
 ///|
@@ -180,6 +175,6 @@ fn seq_concat_test[A : Show](
     inspect!(v1, content="@immut/array.of(\{v1_content})")
     t = t.concat(v1)
     t_content = t_content + v1_content
-    inspect!(init, content="@immut/array.of(\{t_content})")
+    inspect!(t, content="@immut/array.of(\{t_content})")
   }
 }

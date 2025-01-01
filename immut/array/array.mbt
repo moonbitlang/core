@@ -12,6 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+//-----------------------------------------------------------------------------
+// Constructors (construct T or convert other types to T)
+//-----------------------------------------------------------------------------
+
 ///|
 /// Return a new empty array
 pub fn T::new[A]() -> T[A] {
@@ -19,63 +23,21 @@ pub fn T::new[A]() -> T[A] {
 }
 
 ///|
-/// Given two trees, concatenate them into a new tree.
-pub fn T::concat[A](self : T[A], other : T[A]) -> T[A] {
-  if self.is_empty() {
-    return other
-  }
-  if other.is_empty() {
-    return self
-  }
-  let (tree, shift) = concat(
-    self.tree,
-    self.shift,
-    other.tree,
-    other.shift,
-    true,
-  )
-  { tree, size: self.size + other.size, shift }
+/// Create a persistent array with a given length and value.
+pub fn T::make[A](len : Int, value : A) -> T[A] {
+  new_by_leaves(len, fn(_s, l) { FixedArray::make(l, value) })
 }
 
 ///|
-pub impl[A : Show] Show for T[A] with output(self, logger) {
-  logger.write_iter(self.iter(), prefix="@immut/array.of([", suffix="])")
+/// Create a persistent array with a given length and a function to generate values.
+pub fn T::makei[A](len : Int, f : (Int) -> A) -> T[A] {
+  new_by_leaves(len, fn(s, l) { FixedArray::makei(l, fn(i) { f(s + i) }) })
 }
 
 ///|
-pub fn is_empty[A](self : T[A]) -> Bool {
-  self.size == 0
-}
-
-///|
-pub fn to_array[A](self : T[A]) -> Array[A] {
-  let arr = []
-  self.each(fn(v) { arr.push(v) })
-  arr
-}
-
-///|
-pub fn iter[A](self : T[A]) -> Iter[A] {
-  Iter::new(fn(yield_) {
-    let arr = self.to_array()
-    for i = 0; i < self.size; i = i + 1 {
-      if yield_(arr[i]) == IterEnd {
-        break IterEnd
-      }
-    } else {
-      IterContinue
-    }
-  })
-}
-
-///|
-pub fn T::from_iter[A](iter : Iter[A]) -> T[A] {
-  iter.fold(init=new(), fn(arr, e) { arr.push(e) })
-}
-
-///|
-pub fn length[A](self : T[A]) -> Int {
-  self.size
+/// Convert a FixedArray to an @immut/array.
+pub fn T::of[A](arr : FixedArray[A]) -> T[A] {
+  makei(arr.length(), fn(i) { arr[i] })
 }
 
 ///|
@@ -102,6 +64,52 @@ pub fn copy[A](self : T[A]) -> T[A] {
 }
 
 ///|
+/// Create a persistent array from an array.
+/// 
+/// # Example
+/// ```
+/// let v = @array.of([1, 2, 3])
+/// assert_eq!(v, @array.from_array([1, 2, 3]))
+/// ```
+pub fn T::from_array[A](arr : Array[A]) -> T[A] {
+  makei(arr.length(), fn(i) { arr[i] })
+}
+
+//-----------------------------------------------------------------------------
+// Convertor (convert T to other types)
+//-----------------------------------------------------------------------------
+
+///|
+pub fn to_array[A](self : T[A]) -> Array[A] {
+  let arr = []
+  self.each(fn(v) { arr.push(v) })
+  arr
+}
+
+///|
+pub fn T::from_iter[A](iter : Iter[A]) -> T[A] {
+  iter.fold(init=new(), fn(arr, e) { arr.push(e) })
+}
+
+//-----------------------------------------------------------------------------
+// Properties
+//-----------------------------------------------------------------------------
+
+///|
+pub fn is_empty[A](self : T[A]) -> Bool {
+  self.size == 0
+}
+
+///|
+pub fn length[A](self : T[A]) -> Int {
+  self.size
+}
+
+//-----------------------------------------------------------------------------
+// Lookup
+//-----------------------------------------------------------------------------
+
+///|
 /// Get a value at the given index.
 /// 
 /// # Examples
@@ -118,6 +126,10 @@ pub fn op_get[A](self : T[A], index : Int) -> A {
     self.tree.get(index, self.shift)
   }
 }
+
+//-----------------------------------------------------------------------------
+// Modifier
+//-----------------------------------------------------------------------------
 
 ///|
 /// Set a value at the given index (immutable).
@@ -149,15 +161,39 @@ pub fn push[A](self : T[A], value : A) -> T[A] {
 }
 
 ///|
-/// Create a persistent array from an array.
-/// 
-/// # Example
-/// ```
-/// let v = @array.of([1, 2, 3])
-/// assert_eq!(v, @array.from_array([1, 2, 3]))
-/// ```
-pub fn T::from_array[A](arr : Array[A]) -> T[A] {
-  makei(arr.length(), fn(i) { arr[i] })
+/// Given two trees, concatenate them into a new tree.
+pub fn T::concat[A](self : T[A], other : T[A]) -> T[A] {
+  if self.is_empty() {
+    return other
+  }
+  if other.is_empty() {
+    return self
+  }
+  let (tree, shift) = concat(
+    self.tree,
+    self.shift,
+    other.tree,
+    other.shift,
+    true,
+  )
+  { tree, size: self.size + other.size, shift }
+}
+//-----------------------------------------------------------------------------
+// Iterators
+//-----------------------------------------------------------------------------
+
+///|
+pub fn iter[A](self : T[A]) -> Iter[A] {
+  Iter::new(fn(yield_) {
+    let arr = self.to_array()
+    for i = 0; i < self.size; i = i + 1 {
+      if yield_(arr[i]) == IterEnd {
+        break IterEnd
+      }
+    } else {
+      IterContinue
+    }
+  })
 }
 
 ///|
@@ -186,11 +222,6 @@ pub fn each[A](self : T[A], f : (A) -> Unit) -> Unit {
 /// ```
 pub fn eachi[A](self : T[A], f : (Int, A) -> Unit) -> Unit {
   self.tree.eachi(f, self.shift, 0)
-}
-
-///|
-pub impl[A : Eq] Eq for T[A] with op_equal(self, other) {
-  self.size == other.size && self.tree == other.tree
 }
 
 ///|
@@ -257,6 +288,39 @@ pub fn map[A, B](self : T[A], f : (A) -> B) -> T[B] {
   { tree: self.tree.map(f), size: self.size, shift: self.shift }
 }
 
+//-----------------------------------------------------------------------------
+// Common Traits Implementation
+//-----------------------------------------------------------------------------
+
+///|
+pub impl[X : @quickcheck.Arbitrary] @quickcheck.Arbitrary for T[X] with arbitrary(
+  size,
+  rs
+) {
+  @quickcheck.Arbitrary::arbitrary(size, rs) |> from_array
+}
+
+///|
+pub impl[A : Hash] Hash for T[A] with hash_combine(self, hasher) {
+  for e in self {
+    hasher.combine(e)
+  }
+}
+
+///|
+pub impl[A : Eq] Eq for T[A] with op_equal(self, other) {
+  self.size == other.size && self.tree == other.tree
+}
+
+///|
+pub impl[A : Show] Show for T[A] with output(self, logger) {
+  logger.write_iter(self.iter(), prefix="@immut/array.of([", suffix="])")
+}
+
+//-----------------------------------------------------------------------------
+// For Internal Use
+//-----------------------------------------------------------------------------
+
 ///|
 fn new_by_leaves[A](len : Int, gen_leaf : (Int, Int) -> FixedArray[A]) -> T[A] {
   fn tree(cap, len, s) -> Tree[A] {
@@ -296,33 +360,7 @@ fn new_by_leaves[A](len : Int, gen_leaf : (Int, Int) -> FixedArray[A]) -> T[A] {
 }
 
 ///|
-/// Create a persistent array with a given length and value.
-pub fn T::make[A](len : Int, value : A) -> T[A] {
-  new_by_leaves(len, fn(_s, l) { FixedArray::make(l, value) })
-}
-
-///|
-/// Create a persistent array with a given length and a function to generate values.
-pub fn T::makei[A](len : Int, f : (Int) -> A) -> T[A] {
-  new_by_leaves(len, fn(s, l) { FixedArray::makei(l, fn(i) { f(s + i) }) })
-}
-
-///|
-pub fn T::of[A](arr : FixedArray[A]) -> T[A] {
-  makei(arr.length(), fn(i) { arr[i] })
-}
-
-///|
-pub impl[X : @quickcheck.Arbitrary] @quickcheck.Arbitrary for T[X] with arbitrary(
-  size,
-  rs
-) {
-  @quickcheck.Arbitrary::arbitrary(size, rs) |> from_array
-}
-
-///|
-pub impl[A : Hash] Hash for T[A] with hash_combine(self, hasher) {
-  for e in self {
-    hasher.combine(e)
-  }
+/// Print the tree structure of the internal tree. For debug use.
+fn to_debug_string[A : Show](self : T[A]) -> String {
+  self.tree.to_string()
 }

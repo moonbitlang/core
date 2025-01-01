@@ -16,12 +16,12 @@
 
 //-----------------------------------------------------------------------------
 // Hyperparameters
-//-------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
 
 ///|
 /// The controlling factor of the tree depth.
 /// This is the only parameter you normally would adjust.
-let num_bits = 2
+let num_bits = 5
 
 ///|
 /// Invariant: `branching_factor` is a power of 2.
