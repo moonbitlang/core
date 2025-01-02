@@ -369,7 +369,6 @@ impl StringBuilder {
   new(size_hint~ : Int = ..) -> Self
   reset(Self) -> Unit
   to_string(Self) -> String
-  write_byte(Self, Byte) -> Unit
   write_char(Self, Char) -> Unit
   write_object[T : Show](Self, T) -> Unit
   write_string(Self, String) -> Unit
