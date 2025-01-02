@@ -230,14 +230,68 @@ pub extern "js" fn lxor(self : BigInt, other : BigInt) -> BigInt =
   #|(x, y) => x ^ y
 
 ///|
+/// Converts a `BigInt` to an unsigned 32-bit integer (`UInt`).
+///
+/// Parameters:
+///
+/// * `self` : The `BigInt` value to be converted.
+///
+/// Returns a `UInt` value representing the lower 32 bits of the input `BigInt`.
+///
+/// Example:
+///
+/// ```moonbit
+/// test "BigInt::to_uint" {
+///   let n = 42N
+///   inspect!(n.to_uint(), content="42")
+///   let neg = -1N
+///   inspect!(neg.to_uint(), content="4294967295") // 2^32 - 1
+/// }
+/// ```
 pub extern "js" fn to_uint(self : BigInt) -> UInt =
   #|(x) => Number(BigInt.asUintN(32, x))
 
 ///|
+/// Converts a `BigInt` to a 32-bit signed integer (`Int`).
+///
+/// Parameters:
+///
+/// * `self` : The `BigInt` value to be converted.
+///
+/// Returns a 32-bit signed integer representing the lower 32 bits of the input
+/// `BigInt`.
+///
+/// Example:
+///
+/// ```moonbit
+/// test "BigInt::to_int" {
+///   let big = 2147483648N // 2^31
+///   inspect!(big.to_int(), content="-2147483648") // Overflow to Int.min_value
+/// }
+/// ```
 pub extern "js" fn to_int(self : BigInt) -> Int =
   #|(x) => Number(BigInt.asIntN(32, x))
 
 ///|
+/// Converts a `BigInt` to an unsigned 64-bit integer (`UInt64`).
+///
+/// Parameters:
+///
+/// * `self` : The `BigInt` value to be converted.
+///
+/// Returns a `UInt64` value representing the lower 64 bits of the input
+/// `BigInt`.
+///
+/// Example:
+///
+/// ```moonbit
+/// test "BigInt::to_uint64" {
+///   let n = 12345678901234567890N
+///   inspect!(n.to_uint64(), content="12345678901234567890")
+///   let neg = -1N
+///   inspect!(neg.to_uint64(), content="18446744073709551615") // 2^64 - 1
+/// }
+/// ```
 pub fn to_uint64(self : BigInt) -> UInt64 {
   let hi = (self >> 32).to_uint().reinterpret_as_int()
   let lo = self.to_uint().reinterpret_as_int()
@@ -245,6 +299,25 @@ pub fn to_uint64(self : BigInt) -> UInt64 {
 }
 
 ///|
+/// Converts a `BigInt` to a signed 64-bit integer (`Int64`).
+///
+/// Parameters:
+///
+/// * `value` : The `BigInt` value to be converted.
+///
+/// Returns a 64-bit signed integer (`Int64`) representing the lower 64 bits of
+/// the input `BigInt`.
+///
+/// Example:
+///
+/// ```moonbit
+/// test "BigInt::to_int64" {
+///   let big = 9223372036854775807N // max value of Int64
+///   inspect!(big.to_int64(), content="9223372036854775807")
+///   let bigger = big + 1
+///   inspect!(bigger.to_int64(), content="-9223372036854775808") // Overflow to Int64.min_value
+/// }
+/// ```
 pub fn to_int64(self : BigInt) -> Int64 {
   let hi = (self >> 32).to_int()
   let lo = self.to_uint().reinterpret_as_int()
