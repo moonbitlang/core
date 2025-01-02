@@ -13,6 +13,21 @@
 // limitations under the License.
 
 ///|
+/// Reverses the elements in the array view in place.
+///
+/// Parameters:
+///
+/// * `self` : The array view whose elements are to be reversed.
+///
+/// Example:
+///
+/// ```moonbit
+/// test "rev_inplace" {
+///   let arr = [1, 2, 3, 4, 5]
+///   arr[:].rev_inplace()
+///   inspect!(arr, content="[5, 4, 3, 2, 1]")
+/// }
+/// ```
 pub fn rev_inplace[T](self : ArrayView[T]) -> Unit {
   let mid_len = self.length() / 2
   for i = 0; i < mid_len; i = i + 1 {
@@ -102,12 +117,25 @@ pub fn any[T](self : ArrayView[T], f : (T) -> Bool) -> Bool {
 }
 
 ///|
-/// Checks if the array view contains an element.
+/// Checks whether the array view contains a specific element by comparing each
+/// element with the target value using the equality operator.
 ///
-/// # Example
-/// ```
-/// let v = [3, 4, 5][:]
-/// assert_true!(v.contains(3))
+/// Parameters:
+///
+/// * `view` : The array view to search in.
+/// * `target` : The value to search for in the array view.
+///
+/// Returns a boolean value indicating whether the target value exists in the
+/// array view.
+///
+/// Example:
+///
+/// ```moonbit
+/// test "array_view/contains" {
+///   let arr = [1, 2, 3, 4, 5][:]
+///   inspect!(arr.contains(3), content="true")
+///   inspect!(arr.contains(6), content="false")
+/// }
 /// ```
 pub fn contains[T : Eq](self : ArrayView[T], value : T) -> Bool {
   for v in self {
