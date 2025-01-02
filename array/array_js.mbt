@@ -26,6 +26,25 @@ extern "js" fn JSArray::copy(self : JSArray) -> JSArray =
   #|(arr) => arr.slice(0)
 
 ///|
+/// Creates and returns a new array with a copy of all elements from the input
+/// array.
+///
+/// Parameters:
+///
+/// * `array` : The array to be copied.
+///
+/// Returns a new array containing all elements from the original array.
+///
+/// Example:
+///
+/// ```moonbit
+/// test "copy" {
+///   let original = [1, 2, 3]
+///   let copied = original.copy()
+///   inspect!(copied, content="[1, 2, 3]")
+///   inspect!(physical_equal(original, copied), content="false")
+/// }
+/// ```
 pub fn copy[T](self : Array[T]) -> Array[T] {
   JSArray::ofAnyArray(self).copy().toAnyArray()
 }
