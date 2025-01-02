@@ -792,6 +792,11 @@ test "deque truncate" {
   inspect!(dq.as_views(), content="([4, 5], [])")
 }
 
+test "panic deque truncate" {
+  let dq = @deque.of([1, 2, 3, 4, 5])
+  dq.truncate(-1)
+}
+
 test "deque filter_map_inplace" {
   let inc_if = fn(pred) { fn(x) { if pred(x) { Some(x + 1) } else { None } } }
   let is_even = fn(x) { x % 2 == 0 }
