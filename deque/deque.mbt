@@ -697,6 +697,65 @@ pub fn truncate[A](self : T[A], len : Int) -> Unit {
 }
 
 ///|
+/// Filters and maps elements in-place using a provided function. Modifies the
+/// deque to retain only elements for which the provided function returns `Some`,
+/// and updates those elements with the values inside the `Some` variant.
+///
+/// Parameters:
+///
+/// * `self` : The deque to be filtered and mapped.
+/// * `f` : A function that takes an element and returns either `Some` with a new
+/// value to replace the element, or `None` to remove the element.
+///
+/// Example:
+///
+/// ```moonbit
+/// test "filter_map_inplace" {
+///   let dq = @deque.of([1, 2, 3, 4, 5])
+///   dq.filter_map_inplace(fn(x) { if x % 2 == 0 { Some(x * 2) } else { None } })
+///   inspect!(dq, content="@deque.of([4, 8])")
+/// }
+/// ```
+pub fn filter_map_inplace[A](self : T[A], f : (A) -> A?) -> Unit {
+  guard not(self.is_empty()) else { return }
+  let { head, buf, .. } = self
+  let cap = buf.length()
+  let head_len = cap - head
+  let mut idx = head
+  let (front, back) = self.as_views()
+  for cur in front {
+    match f(cur) {
+      Some(v) => {
+        buf[idx] = v
+        idx += 1
+      }
+      None => ()
+    }
+  }
+  if back.length() == 0 {
+    self.truncate(idx - head)
+    return
+  }
+  for cur in back {
+    if idx == cap {
+      idx = 0
+    }
+    match f(cur) {
+      Some(v) => {
+        buf[idx] = v
+        idx += 1
+      }
+      None => ()
+    }
+  }
+  if idx <= self.len - head_len {
+    self.truncate(idx + head_len)
+  } else {
+    self.truncate(idx - head)
+  }
+}
+
+///|
 pub fn iter[A](self : T[A]) -> Iter[A] {
   Iter::new(fn(yield_) {
     guard not(self.is_empty()) else { IterContinue }
