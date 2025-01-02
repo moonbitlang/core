@@ -502,6 +502,21 @@ pub fn rev_eachi[A](self : T[A], f : (Int, A) -> Unit) -> Unit {
 /// assert_eq!(dv.length(), 0)
 /// ```
 pub fn clear[A](self : T[A]) -> Unit {
+  let { head, buf, len, .. } = self
+  let cap = buf.length()
+  let head_len = cap - head
+  if head_len >= len {
+    for i in head..<(head + len) {
+      set_null(buf, i)
+    }
+  } else {
+    for i in head..<cap {
+      set_null(buf, i)
+    }
+    for i in 0..<(len - head_len) {
+      set_null(buf, i)
+    }
+  }
   self.len = 0
   self.head = 0
   self.tail = 0
