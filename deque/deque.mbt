@@ -668,6 +668,7 @@ pub fn shrink_to_fit[A](self : T[A]) -> Unit {
 /// }
 /// ```
 pub fn truncate[A](self : T[A], len : Int) -> Unit {
+  guard len >= 0
   guard len < self.len else { return }
   let { head, buf, .. } = self
   let (front, back) = self.as_views()
