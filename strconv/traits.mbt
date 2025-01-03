@@ -33,6 +33,12 @@ pub impl FromStr for Int with from_string(str) { parse_int!(str) }
 pub impl FromStr for Int64 with from_string(str) { parse_int64!(str) }
 
 ///|
+pub impl FromStr for UInt with from_string(str) { parse_uint!(str) }
+
+///|
+pub impl FromStr for UInt64 with from_string(str) { parse_uint64!(str) }
+
+///|
 pub impl FromStr for Double with from_string(str) { parse_double!(str) }
 
 ///|
@@ -59,6 +65,18 @@ test "parse" {
     _ => panic()
   }
   assert_eq!(i64, 9223372036854775807L)
+  let ui : UInt = try {
+    parse!("4294967295")
+  } catch {
+    _ => panic()
+  }
+  assert_eq!(ui, 4294967295)
+  let ui64 : UInt64 = try {
+    parse!("18446744073709551615")
+  } catch {
+    _ => panic()
+  }
+  assert_eq!(ui64, 18446744073709551615UL)
   let d : Double = try {
     parse!("1234.56789")
   } catch {
