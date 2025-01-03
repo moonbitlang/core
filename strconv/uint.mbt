@@ -86,7 +86,7 @@ pub fn parse_uint64(str : String, base~ : Int = 0) -> UInt64!StrConvError {
 /// If the `~base` argument is 0, the base will be inferred by the prefix.
 pub fn parse_uint(str : String, base~ : Int = 0) -> UInt!StrConvError {
   let n = parse_uint64!(str, base~)
-  if n < 0 || n > UINT_MAX.to_uint64() {
+  if n > UINT_MAX.to_uint64() {
     range_err!()
   }
   n.to_uint()
