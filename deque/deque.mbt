@@ -502,6 +502,21 @@ pub fn rev_eachi[A](self : T[A], f : (Int, A) -> Unit) -> Unit {
 /// assert_eq!(dv.length(), 0)
 /// ```
 pub fn clear[A](self : T[A]) -> Unit {
+  let { head, buf, len, .. } = self
+  let cap = buf.length()
+  let head_len = cap - head
+  if head_len >= len {
+    for i in head..<(head + len) {
+      set_null(buf, i)
+    }
+  } else {
+    for i in head..<cap {
+      set_null(buf, i)
+    }
+    for i in 0..<(len - head_len) {
+      set_null(buf, i)
+    }
+  }
   self.len = 0
   self.head = 0
   self.tail = 0
@@ -669,6 +684,11 @@ pub fn shrink_to_fit[A](self : T[A]) -> Unit {
 /// ```
 pub fn truncate[A](self : T[A], len : Int) -> Unit {
   guard len < self.len else { return }
+  guard len >= 0
+  if len == 0 {
+    self.clear()
+    return
+  }
   let { head, buf, .. } = self
   let (front, back) = self.as_views()
   if front.length() < len {
