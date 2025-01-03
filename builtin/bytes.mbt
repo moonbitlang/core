@@ -16,6 +16,39 @@
 /// Reinterpret the byte sequence as Bytes.
 fn unsafe_to_bytes(self : FixedArray[Byte]) -> Bytes = "%identity"
 
+///| 
+/// Creates a new byte sequence of the specified length, where each byte is
+/// initialized using a function that maps indices to bytes.
+///
+/// Parameters:
+///
+/// * `length` : The length of the byte sequence to create. If `length` is less than or
+/// equal to 0, returns an empty byte sequence.
+/// * `value` : A function that takes an index (from 0 to `length - 1`) and
+/// returns a byte for that position.
+///
+/// Returns a new byte sequence containing the bytes produced by applying the
+/// value function to each index.
+///
+/// Example:
+///
+/// ```moonbit
+/// test "Bytes::makei" {
+///   let bytes = Bytes::makei(3, fn(i) { (i + 65).to_byte() })
+///   assert_eq!(bytes, b"ABC")
+/// }
+/// ```
+pub fn Bytes::makei(length : Int, value : (Int) -> Byte) -> Bytes {
+  if length <= 0 {
+    return []
+  }
+  let arr = FixedArray::make(length, value(0))
+  for i = 1; i < length; i = i + 1 {
+    arr[i] = value(i)
+  }
+  unsafe_to_bytes(arr)
+}
+
 ///|
 /// Create byte sequence from String.
 pub fn Bytes::of_string(str : String) -> Bytes {
