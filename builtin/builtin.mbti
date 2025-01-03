@@ -431,9 +431,11 @@ impl Byte {
   op_sub(Byte, Byte) -> Byte
   to_float(Byte) -> Float
   to_int(Byte) -> Int
+  to_int16(Byte) -> Int16
   to_int64(Byte) -> Int64
   to_string(Byte) -> String
   to_uint(Byte) -> UInt
+  to_uint16(Byte) -> UInt16
 }
 
 impl Char {
@@ -481,13 +483,22 @@ impl Int {
   to_byte(Int) -> Byte
   to_double(Int) -> Double
   to_float(Int) -> Float
+  to_int16(Int) -> Int16
   to_int64(Int) -> Int64
   to_json(Int) -> Json
   to_string(Int) -> String
   to_uint(Int) -> UInt //deprecated
+  to_uint16(Int) -> UInt16
   to_uint64(Int) -> UInt64
   until(Int, Int, step~ : Int = .., inclusive~ : Bool = ..) -> Iter[Int]
   upto(Int, Int, inclusive~ : Bool = ..) -> Iter[Int] //deprecated
+}
+
+impl Int16 {
+  to_byte(Int16) -> Byte
+  to_int(Int16) -> Int
+  to_int64(Int16) -> Int64
+  to_string(Int16) -> String
 }
 
 impl Int64 {
@@ -520,8 +531,10 @@ impl Int64 {
   to_double(Int64) -> Double
   to_float(Int64) -> Float
   to_int(Int64) -> Int
+  to_int16(Int64) -> Int16
   to_json(Int64) -> Json
   to_string(Int64) -> String
+  to_uint16(Int64) -> UInt16
   to_uint64(Int64) -> UInt64 //deprecated
   until(Int64, Int64, step~ : Int64 = .., inclusive~ : Bool = ..) -> Iter[Int64]
   upto(Int64, Int64, inclusive~ : Bool = ..) -> Iter[Int64] //deprecated
@@ -559,6 +572,13 @@ impl UInt {
   to_uint64(UInt) -> UInt64
   trunc_double(Double) -> UInt
   upto(UInt, UInt, inclusive~ : Bool = ..) -> Iter[UInt] //deprecated
+}
+
+impl UInt16 {
+  to_byte(UInt16) -> Byte
+  to_int(UInt16) -> Int
+  to_int64(UInt16) -> Int64
+  to_string(UInt16) -> String
 }
 
 impl UInt64 {
@@ -841,8 +861,10 @@ impl Show for Bool
 impl Show for Byte
 impl Show for Char
 impl Show for Int
+impl Show for Int16
 impl Show for Int64
 impl Show for UInt
+impl Show for UInt16
 impl Show for UInt64
 impl Show for String
 impl[X : Show] Show for X?
