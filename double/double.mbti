@@ -38,6 +38,7 @@ impl Double {
   to_be_bytes(Double) -> Bytes
   to_le_bytes(Double) -> Bytes
   to_string(Double) -> String
+  to_uint(Double) -> UInt
   trunc(Double) -> Double
 }
 impl Hash for Double

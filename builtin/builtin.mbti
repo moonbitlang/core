@@ -634,6 +634,7 @@ impl Double {
   to_int(Double) -> Int
   to_int64(Double) -> Int64
   to_json(Double) -> Json
+  to_uint64(Double) -> UInt64
   until(Double, Double, step~ : Double = .., inclusive~ : Bool = ..) -> Iter[Double]
   upto(Double, Double, inclusive~ : Bool = ..) -> Iter[Double] //deprecated
 }
