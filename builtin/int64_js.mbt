@@ -321,36 +321,6 @@ fn MyInt64::to_uint(self : MyInt64) -> UInt {
 }
 
 ///|
-extern "js" fn MyInt64::from_double(value : Double) -> MyInt64 =
-  #|(a) => {
-  #|  if (isNaN(a)) {
-  #|    return { hi: 0, lo: 0 };
-  #|  }
-  #|  if (a >= 9223372036854775807) {
-  #|    return { hi: 0x7fffffff, lo: 0xffffffff };
-  #|  }
-  #|  if (a <= -9223372036854775808) {
-  #|    return { hi: -2147483648, lo: 0 };
-  #|  }
-  #|  let neg = false;
-  #|  if (a < 0) {
-  #|    neg = true;
-  #|    a = -a;
-  #|  }
-  #|  let hi = (a * (1 / 0x100000000)) | 0;
-  #|  let lo = a >>> 0;
-  #|  if (neg) {
-  #|    if (lo === 0) {
-  #|      hi = ~hi + 1;
-  #|    } else {
-  #|      hi = ~hi;
-  #|      lo = ~lo + 1;
-  #|    }
-  #|  }
-  #|  return { hi, lo };
-  #|}
-
-///|
 extern "js" fn MyInt64::to_double(self : MyInt64) -> Double =
   #|(a) => a.hi * 4294967296.0 + (a.lo >>> 0)
 
