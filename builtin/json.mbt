@@ -24,6 +24,138 @@ pub(all) enum Json {
 } derive(Eq)
 
 ///|
+/// Creates a JSON null value.
+///
+/// Returns a JSON value representing `null`.
+///
+/// Example:
+///
+/// ```moonbit
+/// test "null" {
+///   inspect!(Json::null(), content="Null")
+/// }
+/// ```
+pub fn Json::null() -> Json {
+  return Null
+}
+
+///|
+/// Creates a JSON number value from a double-precision floating-point number.
+///
+/// Parameters:
+///
+/// * `value` : A double-precision floating-point number to be converted to a
+/// JSON number.
+///
+/// Returns a JSON value representing the given number.
+///
+/// Example:
+///
+/// ```moonbit
+/// test "number" {
+///   inspect!(Json::number(3.14), content="Number(3.14)")
+/// }
+/// ```
+pub fn Json::number(number : Double) -> Json {
+  return Number(number)
+}
+
+///|
+/// Creates a JSON string value from a MoonBit string.
+///
+/// Parameters:
+///
+/// * `string` : A MoonBit string to be converted to a JSON string value.
+///
+/// Returns a JSON value representing the given string.
+///
+/// Example:
+///
+/// ```moonbit
+/// test "string" {
+///   inspect!(Json::string("hello"), content="String(\"hello\")")
+/// }
+/// ```
+pub fn Json::string(string : String) -> Json {
+  return String(string)
+}
+
+///|
+/// Creates a JSON boolean value from a MoonBit boolean.
+///
+/// Parameters:
+///
+/// * `boolean` : A MoonBit boolean to be converted to a JSON boolean value.
+///
+/// Returns a JSON value representing the given boolean.
+///
+/// Example:
+///
+/// ```moonbit
+/// test "boolean" {
+///   inspect!(Json::boolean(true), content="True")
+///   inspect!(Json::boolean(false), content="False")
+/// }
+/// ```
+pub fn Json::boolean(boolean : Bool) -> Json {
+  if boolean {
+    True
+  } else {
+    False
+  }
+}
+
+///|
+/// Creates a JSON array value from a MoonBit array.
+///
+/// Parameters:
+///
+/// * `values` : An array of JSON values to be converted to a JSON array value.
+///
+/// Returns a JSON value representing the given array.
+///
+/// Example:
+///
+/// ```moonbit
+/// test "array" {
+///   let values : Array[Json] = [1.0, "hello"]
+///   inspect!(
+///     Json::array(values),
+///     content="Array([Number(1), String(\"hello\")])",
+///   )
+/// }
+/// ```
+pub fn Json::array(array : Array[Json]) -> Json {
+  return Array(array)
+}
+
+///|
+/// Creates a JSON object value from a MoonBit map.
+///
+/// Parameters:
+///
+/// * `map` : A map from strings to JSON values to be converted to a JSON object
+/// value.
+///
+/// Returns a JSON value representing the given map.
+///
+/// Example:
+///
+/// ```moonbit
+/// test "object" {
+///   let map : Map[String, Json] = { "name": "John", "age": 42.0 }
+///   inspect!(
+///     Json::object(map),
+///     content="Object({\"name\": String(\"John\"), \"age\": Number(42)})",
+///   )
+/// }
+/// ```
+pub fn Json::object(object : Map[String, Json]) -> Json {
+  return Object(object)
+}
+
+
+///|
 /// Trait for types that can be converted to `Json`
 pub(open) trait ToJson {
   to_json(Self) -> Json
