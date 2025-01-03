@@ -29,21 +29,21 @@ pub fn UInt::default() -> UInt {
 }
 
 ///|
-pub fn to_be_bytes(self : UInt) -> Bytes {
+pub fn to_be_bytes(self : UInt) -> BytesView {
   let bs = Bytes::make(4, 0)
   bs[0] = (self >> 24).to_byte()
   bs[1] = (self >> 16).to_byte()
   bs[2] = (self >> 8).to_byte()
   bs[3] = self.to_byte()
-  bs
+  bs[:]
 }
 
 ///|
-pub fn to_le_bytes(self : UInt) -> Bytes {
+pub fn to_le_bytes(self : UInt) -> BytesView {
   let bs = Bytes::make(4, 0)
   bs[0] = self.to_byte()
   bs[1] = (self >> 8).to_byte()
   bs[2] = (self >> 16).to_byte()
   bs[3] = (self >> 24).to_byte()
-  bs
+  bs[:]
 }

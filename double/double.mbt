@@ -205,11 +205,11 @@ pub fn is_close(
 }
 
 ///|
-pub fn to_be_bytes(self : Double) -> Bytes {
-  self.reinterpret_as_uint64().to_be_bytes()
+pub fn to_be_bytes(self : Double) -> BytesView {
+  self.reinterpret_as_uint64().to_be_bytes_view()
 }
 
 ///|
-pub fn to_le_bytes(self : Double) -> Bytes {
-  self.reinterpret_as_uint64().to_le_bytes()
+pub fn to_le_bytes(self : Double) -> BytesView {
+  self.reinterpret_as_uint64().to_le_bytes_view()
 }

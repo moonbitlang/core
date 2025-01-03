@@ -10,8 +10,8 @@ let min_value : Int
 
 impl Int {
   abs(Int) -> Int
-  to_be_bytes(Int) -> Bytes
-  to_le_bytes(Int) -> Bytes
+  to_be_bytes(Int) -> BytesView
+  to_le_bytes(Int) -> BytesView
 }
 
 // Type aliases

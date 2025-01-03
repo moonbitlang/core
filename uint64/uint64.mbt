@@ -19,7 +19,7 @@ pub let min_value : UInt64 = 0UL
 pub let max_value : UInt64 = 18446744073709551615UL
 
 ///|
-pub fn to_be_bytes(self : UInt64) -> Bytes {
+pub fn to_be_bytes_view(self : UInt64) -> BytesView {
   let bs = Bytes::make(8, 0)
   bs[0] = (self >> 56).to_byte()
   bs[1] = (self >> 48).to_byte()
@@ -29,11 +29,11 @@ pub fn to_be_bytes(self : UInt64) -> Bytes {
   bs[5] = (self >> 16).to_byte()
   bs[6] = (self >> 8).to_byte()
   bs[7] = self.to_byte()
-  bs
+  bs[:]
 }
 
 ///|
-pub fn to_le_bytes(self : UInt64) -> Bytes {
+pub fn to_le_bytes_view(self : UInt64) -> BytesView {
   let bs = Bytes::make(8, 0)
   bs[0] = self.to_byte()
   bs[1] = (self >> 8).to_byte()
@@ -43,5 +43,5 @@ pub fn to_le_bytes(self : UInt64) -> Bytes {
   bs[5] = (self >> 40).to_byte()
   bs[6] = (self >> 48).to_byte()
   bs[7] = (self >> 56).to_byte()
-  bs
+  bs[:]
 }

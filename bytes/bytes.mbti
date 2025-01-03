@@ -13,19 +13,7 @@ impl Bytes {
   iter(Bytes) -> Iter[Byte]
   of(FixedArray[Byte]) -> Bytes
   to_array(Bytes) -> Array[Byte]
-  to_double_be(Bytes) -> Double
-  to_double_le(Bytes) -> Double
   to_fixedarray(Bytes, len? : Int) -> FixedArray[Byte]
-  to_float_be(Bytes) -> Float
-  to_float_le(Bytes) -> Float
-  to_int64_be(Bytes) -> Int64
-  to_int64_le(Bytes) -> Int64
-  to_int_be(Bytes) -> Int
-  to_int_le(Bytes) -> Int
-  to_uint64_be(Bytes) -> UInt64
-  to_uint64_le(Bytes) -> UInt64
-  to_uint_be(Bytes) -> UInt
-  to_uint_le(Bytes) -> UInt
 }
 
 // Type aliases
