@@ -9,8 +9,8 @@ let min_value : UInt64
 
 
 impl UInt64 {
-  to_be_bytes(UInt64) -> Bytes
-  to_le_bytes(UInt64) -> Bytes
+  to_be_bytes_view(UInt64) -> BytesView
+  to_le_bytes_view(UInt64) -> BytesView
 }
 
 // Type aliases

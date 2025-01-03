@@ -54,11 +54,11 @@ pub impl Hash for Float with hash_combine(self, hasher) {
 }
 
 ///|
-pub fn to_be_bytes(self : Float) -> Bytes {
+pub fn to_be_bytes_view(self : Float) -> BytesView {
   self.reinterpret_as_uint().to_be_bytes()
 }
 
 ///|
-pub fn to_le_bytes(self : Float) -> Bytes {
+pub fn to_le_bytes_view(self : Float) -> BytesView {
   self.reinterpret_as_uint().to_le_bytes()
 }

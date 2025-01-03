@@ -47,11 +47,11 @@ pub fn abs(self : Int) -> Int {
 }
 
 ///|
-pub fn to_be_bytes(self : Int) -> Bytes {
+pub fn to_be_bytes(self : Int) -> BytesView {
   self.reinterpret_as_uint().to_be_bytes()
 }
 
 ///|
-pub fn to_le_bytes(self : Int) -> Bytes {
+pub fn to_le_bytes(self : Int) -> BytesView {
   self.reinterpret_as_uint().to_le_bytes()
 }

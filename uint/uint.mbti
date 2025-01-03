@@ -10,9 +10,9 @@ let min_value : UInt
 
 impl UInt {
   default() -> UInt
-  to_be_bytes(UInt) -> Bytes
+  to_be_bytes(UInt) -> BytesView
   to_int64(UInt) -> Int64
-  to_le_bytes(UInt) -> Bytes
+  to_le_bytes(UInt) -> BytesView
 }
 
 // Type aliases
