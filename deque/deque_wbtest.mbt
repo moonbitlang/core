@@ -12,13 +12,20 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-///|
-pub fn op_sub(self : Char, that : Char) -> Int {
-  self.to_int() - that.to_int()
+test "unsafe_pop_front after many push_front" {
+  let dq = new()
+  for i = 0; i < 10; i = i + 1 {
+    dq.push_front(i)
+  }
+  for i = 0; i < 10; i = i + 1 {
+    dq.unsafe_pop_front()
+  }
+  assert_eq!(dq.head, dq.tail)
 }
 
-test "char subtraction" {
-  let b = 'b'
-  let a = 'a'
-  inspect!(b - a, content="1")
+test "truncate zero" {
+  let dq = of([1, 2, 3])
+  dq.truncate(0)
+  assert_eq!(dq.len, 0)
+  assert_eq!(dq.head, dq.tail)
 }

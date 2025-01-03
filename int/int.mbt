@@ -13,26 +13,30 @@
 // limitations under the License.
 
 ///|
+/// Maximum value of an integer.
 pub let max_value = 2147483647
 
 ///|
+/// Minimum value of an integer.
 pub let min_value = -2147483648
 
 ///|
-/// Returns the absolute value of an integer.
-/// 
-/// # Parameters
-/// 
-/// - `self` : The integer whose absolute value is to be determined.
-/// 
-/// # Returns
-/// 
-/// - The absolute value of the input integer.
-/// 
-/// # Examples
-/// 
-/// ```
-/// inspect!(Int::abs(-10), content="10")
+/// Computes the absolute value of an integer.
+///
+/// Parameters:
+///
+/// * `self` : The integer whose absolute value is to be computed.
+///
+/// Returns the absolute value of the integer.
+///
+/// Example:
+///
+/// ```moonbit
+/// test "abs" {
+///   inspect!(@int.abs(42), content="42")
+///   inspect!(@int.abs(-42), content="42")
+///   inspect!(@int.abs(0), content="0")
+/// }
 /// ```
 pub fn abs(self : Int) -> Int {
   if self < 0 {

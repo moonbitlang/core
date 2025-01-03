@@ -44,15 +44,17 @@ impl FixedArray {
   sort_by_key[T, K : Compare](Self[T], (T) -> K) -> Unit
   stable_sort[T : Compare](Self[T]) -> Unit
   starts_with[T : Eq](Self[T], Self[T]) -> Bool
+  swap[T](Self[T], Int, Int) -> Unit
 }
 
 
 impl Array {
   copy[T](Self[T]) -> Self[T]
+  filter_map[A, B](Self[A], (A) -> B?) -> Self[B]
   from_iter[T](Iter[T]) -> Self[T]
   last[A](Self[A]) -> A?
   makei[T](Int, (Int) -> T) -> Self[T]
-  map_option[A, B](Self[A], (A) -> B?) -> Self[B]
+  map_option[A, B](Self[A], (A) -> B?) -> Self[B] //deprecated
   push_iter[T](Self[T], Iter[T]) -> Unit
   shuffle[T](Self[T], rand~ : (Int) -> Int) -> Self[T]
   shuffle_in_place[T](Self[T], rand~ : (Int) -> Int) -> Unit

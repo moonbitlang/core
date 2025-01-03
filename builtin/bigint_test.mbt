@@ -557,3 +557,133 @@ test "to_hex" {
     content="-11e3444dc1f35f057ad2cbc2791737468140a426fac3cba7af8c92a8f34e",
   )
 }
+
+test "land_1" {
+  let a = BigInt::from_string("-10")
+  let b = BigInt::from_string("11")
+  inspect!(a & b, content="2")
+}
+
+test "land_2" {
+  let a = BigInt::from_string("-10")
+  let b = BigInt::from_hex("fffffffffffffff") // 15 'f' chars
+  inspect!(a & b, content="1152921504606846966")
+}
+
+test "land_3" {
+  let a = BigInt::from_hex("ffffffffffffffff") // 16 'f' chars
+  let b = BigInt::from_string("-10")
+  inspect!(a & b, content="18446744073709551606")
+}
+
+test "land_4" {
+  let a = BigInt::from_string("0")
+  let b = BigInt::from_string("-10")
+  inspect!(a & b, content="0")
+}
+
+test "land_5" {
+  let a = BigInt::from_hex("ffffffffffffffff")
+  let b = BigInt::from_hex("ffffffffffffffff")
+  inspect!(a & b, content="18446744073709551615")
+}
+
+test "lor_1" {
+  let a = BigInt::from_string("-10")
+  let b = BigInt::from_string("11")
+  inspect!(a | b, content="-1")
+}
+
+test "lor_2" {
+  let a = BigInt::from_string("-10")
+  let b = BigInt::from_hex("fffffffffffffff") // 15 'f' chars
+  inspect!(a | b, content="-1")
+}
+
+test "lor_3" {
+  let a = BigInt::from_hex("ffffffffffffffff") // 16 'f' chars
+  let b = BigInt::from_string("-10")
+  inspect!(a | b, content="-1")
+}
+
+test "lor_4" {
+  let a = BigInt::from_string("0")
+  let b = BigInt::from_string("-10")
+  inspect!(a | b, content="-10")
+}
+
+test "lor_5" {
+  let a = BigInt::from_hex("ffffffffffffffff")
+  let b = BigInt::from_string("0")
+  inspect!(a | b, content="18446744073709551615")
+}
+
+test "lxor_1" {
+  let a = BigInt::from_string("-10")
+  let b = BigInt::from_string("11")
+  inspect!(a ^ b, content="-3")
+}
+
+test "lxor_2" {
+  let a = BigInt::from_string("-10")
+  let b = BigInt::from_hex("fffffffffffffff") // 15 'f' chars
+  inspect!(a ^ b, content="-1152921504606846967")
+}
+
+test "lxor_3" {
+  let a = BigInt::from_hex("ffffffffffffffff") // 16 'f' chars
+  let b = BigInt::from_string("-10")
+  inspect!(a ^ b, content="-18446744073709551607")
+}
+
+test "lxor_4" {
+  let a = BigInt::from_string("0")
+  let b = BigInt::from_string("-10")
+  inspect!(a ^ b, content="-10")
+}
+
+test "lxor_5" {
+  let a = BigInt::from_string("0")
+  let b = BigInt::from_hex("ffffffffffffffff")
+  inspect!(a ^ b, content="18446744073709551615")
+}
+
+test "to_int" {
+  let a = BigInt::from_int(1234567899)
+  inspect!(a.to_int(), content="1234567899")
+  let b = BigInt::from_int(-1234567890)
+  inspect!(b.to_int(), content="-1234567890")
+  let max = 2N.pow(32) - 1
+  inspect!(max.to_int(), content="-1")
+  inspect!((max + 1).to_int(), content="0")
+}
+
+test "to_uint" {
+  let a = BigInt::from_uint(1234567899)
+  inspect!(a.to_uint(), content="1234567899")
+  let b = BigInt::from_int(-1234567890)
+  inspect!(b.to_uint(), content="3060399406")
+  let max = 2N.pow(32) - 1
+  inspect!(max.to_uint(), content="4294967295")
+  inspect!((max + 1).to_uint(), content="0")
+}
+
+test "to_int64" {
+  let a = BigInt::from_int64(1234567890123456789L)
+  inspect!(a.to_int64(), content="1234567890123456789")
+  let b = BigInt::from_int64(-1234567890123456789L)
+  inspect!(b.to_int64(), content="-1234567890123456789")
+  let max = 2N.pow(63) - 1
+  inspect!(max.to_int64(), content="9223372036854775807")
+  inspect!((max + 1).to_int64(), content="-9223372036854775808")
+}
+
+test "to_uint64" {
+  let a = BigInt::from_uint64(1234567890123456789UL)
+  inspect!(a.to_uint64(), content="1234567890123456789")
+  let b = BigInt::from_int64(-1234567890123456789L)
+  inspect!(b.to_uint64(), content="17212176183586094827")
+  let max = 2N.pow(64) - 1
+  inspect!(max.to_uint64(), content="18446744073709551615")
+  inspect!((max + 1).to_uint64(), content="0")
+}

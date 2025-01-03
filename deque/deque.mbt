@@ -13,6 +13,9 @@
 // limitations under the License.
 
 ///|
+fn set_null[T](buffer : UninitializedArray[T], index : Int) = "%fixedarray.set_null"
+
+///|
 /// Creates a new, empty deque.
 pub fn T::new[A](capacity~ : Int = 0) -> T[A] {
   T::{ buf: UninitializedArray::make(capacity), len: 0, head: 0, tail: 0 }
@@ -34,6 +37,22 @@ pub fn T::from_array[A](arr : Array[A]) -> T[A] {
   }
   for i = 0; i < arr.length(); i = i + 1 {
     deq.buf[i] = arr[i]
+  }
+  deq
+}
+
+///|
+/// Creates a new copy of this deque.
+pub fn T::copy[A](self : T[A]) -> T[A] {
+  let len = self.len
+  let deq = T::{
+    buf: UninitializedArray::make(len),
+    len,
+    head: 0,
+    tail: len - 1,
+  }
+  for i, x in self {
+    deq.buf[i] = x
   }
   deq
 }
@@ -181,15 +200,27 @@ pub fn push_back[A](self : T[A], value : A) -> Unit {
 /// ```
 /// @alert unsafe "Panic if the deque is empty."
 pub fn unsafe_pop_front[A](self : T[A]) -> Unit {
-  if self.len == 0 {
-    abort("The deque is empty!")
+  match self.len {
+    0 => abort("The deque is empty!")
+    1 => {
+      set_null(self.buf, self.head)
+      self.len -= 1
+    }
+    _ => {
+      set_null(self.buf, self.head)
+      self.head = if self.head < self.buf.length() - 1 {
+        self.head + 1
+      } else {
+        0
+      }
+      self.len -= 1
+    }
   }
-  self.head = if self.head < self.buf.length() - 1 { self.head + 1 } else { 0 }
-  self.len -= 1
 }
 
 ///|
 /// @alert deprecated "Use `unsafe_pop_front` instead"
+/// @coverage.skip
 pub fn pop_front_exn[A](self : T[A]) -> Unit {
   unsafe_pop_front(self)
 }
@@ -205,15 +236,27 @@ pub fn pop_front_exn[A](self : T[A]) -> Unit {
 /// ```
 /// @alert unsafe "Panic if the deque is empty."
 pub fn unsafe_pop_back[A](self : T[A]) -> Unit {
-  if self.len == 0 {
-    abort("The deque is empty!")
+  match self.len {
+    0 => abort("The deque is empty!")
+    1 => {
+      set_null(self.buf, self.tail)
+      self.len -= 1
+    }
+    _ => {
+      set_null(self.buf, self.tail)
+      self.tail = if self.tail > 0 {
+        self.tail - 1
+      } else {
+        self.buf.length() - 1
+      }
+      self.len -= 1
+    }
   }
-  self.tail = if self.tail > 0 { self.tail - 1 } else { self.buf.length() - 1 }
-  self.len -= 1
 }
 
 ///|
 /// @alert deprecated "Use `unsafe_pop_back` instead"
+/// @coverage.skip
 pub fn pop_back_exn[A](self : T[A]) -> Unit {
   unsafe_pop_back(self)
 }
@@ -227,13 +270,26 @@ pub fn pop_back_exn[A](self : T[A]) -> Unit {
 /// assert_eq!(dv.pop_front(), Some(1))
 /// ```
 pub fn pop_front[A](self : T[A]) -> A? {
-  if self.len == 0 {
-    return None
+  match self.len {
+    0 => None
+    1 => {
+      let origin_head = self.buf[self.head]
+      set_null(self.buf, self.head)
+      self.len -= 1
+      Some(origin_head)
+    }
+    _ => {
+      let origin_head = self.buf[self.head]
+      set_null(self.buf, self.head)
+      self.head = if self.head < self.buf.length() - 1 {
+        self.head + 1
+      } else {
+        0
+      }
+      self.len -= 1
+      Some(origin_head)
+    }
   }
-  let origin_head = self.head
-  self.head = if self.head < self.buf.length() - 1 { self.head + 1 } else { 0 }
-  self.len -= 1
-  Some(self.buf[origin_head])
 }
 
 ///|
@@ -245,13 +301,26 @@ pub fn pop_front[A](self : T[A]) -> A? {
 /// assert_eq!(dv.pop_back(), Some(5))
 /// ```
 pub fn pop_back[A](self : T[A]) -> A? {
-  if self.len == 0 {
-    return None
+  match self.len {
+    0 => None
+    1 => {
+      let origin_back = self.buf[self.tail]
+      set_null(self.buf, self.tail)
+      self.len -= 1
+      Some(origin_back)
+    }
+    _ => {
+      let origin_back = self.buf[self.tail]
+      set_null(self.buf, self.tail)
+      self.tail = if self.tail > 0 {
+        self.tail - 1
+      } else {
+        self.buf.length() - 1
+      }
+      self.len -= 1
+      Some(origin_back)
+    }
   }
-  let origin_back = self.tail
-  self.tail = if self.tail > 0 { self.tail - 1 } else { self.buf.length() - 1 }
-  self.len -= 1
-  Some(self.buf[origin_back])
 }
 
 ///|
@@ -275,7 +344,7 @@ pub fn op_get[A](self : T[A], index : Int) -> A {
   if self.head + index < self.buf.length() {
     self.buf[self.head + index]
   } else {
-    self.buf[(self.head + index) % self.buf.length()]
+    self.buf[self.head + index - self.buf.length()]
   }
 }
 
@@ -301,7 +370,45 @@ pub fn op_set[A](self : T[A], index : Int, value : A) -> Unit {
   if self.head + index < self.buf.length() {
     self.buf[self.head + index] = value
   } else {
-    self.buf[self.buf.length() - self.head - 1] = value
+    self.buf[self.head + index - self.buf.length()] = value
+  }
+}
+
+///|
+/// Returns two array views that together represent all elements in the deque in
+/// their correct order. The first view contains elements from the head to the
+/// end of the internal buffer, and the second view contains any remaining
+/// elements from the start of the buffer.
+///
+/// If the deque is empty, returns a pair of empty views. If all elements are
+/// contiguous in memory, the second view will be empty.
+///
+/// Parameters:
+///
+/// * `self` : The deque to be viewed.
+///
+/// Returns a tuple of two array views that together contain all elements of the
+/// deque in order.
+///
+/// Example:
+///
+/// ```moonbit
+/// test "T::as_views" {
+///   let dq = @deque.of([1, 2, 3, 4, 5])
+///   let (v1, v2) = dq.as_views()
+///   inspect!(v1.length(), content="5")
+///   inspect!(v2.length(), content="0")
+/// }
+/// ```
+pub fn T::as_views[A](self : T[A]) -> (ArrayView[A], ArrayView[A]) {
+  guard self.len != 0 else { ([][:], [][:]) }
+  let { buf, head, len, .. } = self
+  let cap = buf.length()
+  let head_len = cap - head
+  if head_len >= len {
+    (buf[head:head + len], [][:])
+  } else {
+    (buf[head:cap], buf[:len - head_len])
   }
 }
 
@@ -330,8 +437,8 @@ pub fn op_equal[A : Eq](self : T[A], other : T[A]) -> Bool {
 /// assert_eq!(sum, 15)
 /// ```
 pub fn each[A](self : T[A], f : (A) -> Unit) -> Unit {
-  for i = 0; i < self.length(); i = i + 1 {
-    f(self[i])
+  for v in self {
+    f(v)
   }
 }
 
@@ -346,8 +453,8 @@ pub fn each[A](self : T[A], f : (A) -> Unit) -> Unit {
 /// assert_eq!(idx_sum, 10)
 /// ```
 pub fn eachi[A](self : T[A], f : (Int, A) -> Unit) -> Unit {
-  for i = 0; i < self.length(); i = i + 1 {
-    f(i, self[i])
+  for i, v in self {
+    f(i, v)
   }
 }
 
@@ -362,8 +469,8 @@ pub fn eachi[A](self : T[A], f : (Int, A) -> Unit) -> Unit {
 /// assert_eq!(sum, 15)
 /// ```
 pub fn rev_each[A](self : T[A], f : (A) -> Unit) -> Unit {
-  for i = self.length() - 1; i >= 0; i = i - 1 {
-    f(self[i])
+  for v in self.rev_iter() {
+    f(v)
   }
 }
 
@@ -378,8 +485,8 @@ pub fn rev_each[A](self : T[A], f : (A) -> Unit) -> Unit {
 /// assert_eq!(idx_sum, 10)
 /// ```
 pub fn rev_eachi[A](self : T[A], f : (Int, A) -> Unit) -> Unit {
-  for i = 0; i < self.len; i = i + 1 {
-    f(i, self[self.len - i - 1])
+  for i, v in self.rev_iter2() {
+    f(i, v)
   }
 }
 
@@ -395,6 +502,21 @@ pub fn rev_eachi[A](self : T[A], f : (Int, A) -> Unit) -> Unit {
 /// assert_eq!(dv.length(), 0)
 /// ```
 pub fn clear[A](self : T[A]) -> Unit {
+  let { head, buf, len, .. } = self
+  let cap = buf.length()
+  let head_len = cap - head
+  if head_len >= len {
+    for i in head..<(head + len) {
+      set_null(buf, i)
+    }
+  } else {
+    for i in head..<cap {
+      set_null(buf, i)
+    }
+    for i in 0..<(len - head_len) {
+      set_null(buf, i)
+    }
+  }
   self.len = 0
   self.head = 0
   self.tail = 0
@@ -540,14 +662,222 @@ pub fn shrink_to_fit[A](self : T[A]) -> Unit {
 }
 
 ///|
+/// Shortens the deque in-place, keeping the first `len` elements and dropping
+/// the rest.
+///
+/// If `len` is greater than or equal to the deque's current length, this has no
+/// effect.
+///
+/// Parameters:
+///
+/// * `self` : The deque to be truncated.
+/// * `len` : The new length of the deque.
+///
+/// Example:
+///
+/// ```moonbit
+/// test "truncate" {
+///   let dq = @deque.of([1, 2, 3, 4, 5])
+///   dq.truncate(3)
+///   inspect!(dq, content="@deque.of([1, 2, 3])")
+/// }
+/// ```
+pub fn truncate[A](self : T[A], len : Int) -> Unit {
+  guard len < self.len else { return }
+  guard len >= 0
+  if len == 0 {
+    self.clear()
+    return
+  }
+  let { head, buf, .. } = self
+  let (front, back) = self.as_views()
+  if front.length() < len {
+    // `len` is wrapping around the end of the buffer.
+    // Thus, we need to drop the latter part of the back view.
+    self.len = len
+    let start = len - front.length()
+    self.tail = start - 1
+    for i in start..<back.length() {
+      set_null(buf, i)
+    }
+  } else {
+    // `len` is not wrapping around the end of the buffer. Thus, we need to drop:
+    // - The latter part of the front view;
+    // - The entire back view.
+    self.len = len
+    let start = head + len
+    self.tail = start - 1
+    for i in start..<self.buf.length() {
+      set_null(buf, i)
+    }
+    for i in 0..<back.length() {
+      set_null(buf, i)
+    }
+  }
+}
+
+///|
+/// Filters and maps elements in-place using a provided function. Modifies the
+/// deque to retain only elements for which the provided function returns `Some`,
+/// and updates those elements with the values inside the `Some` variant.
+///
+/// Parameters:
+///
+/// * `self` : The deque to be filtered and mapped.
+/// * `f` : A function that takes an element and returns either `Some` with a new
+/// value to replace the element, or `None` to remove the element.
+///
+/// Example:
+///
+/// ```moonbit
+/// test "filter_map_inplace" {
+///   let dq = @deque.of([1, 2, 3, 4, 5])
+///   dq.filter_map_inplace(fn(x) { if x % 2 == 0 { Some(x * 2) } else { None } })
+///   inspect!(dq, content="@deque.of([4, 8])")
+/// }
+/// ```
+pub fn filter_map_inplace[A](self : T[A], f : (A) -> A?) -> Unit {
+  guard not(self.is_empty()) else { return }
+  let { head, buf, .. } = self
+  let cap = buf.length()
+  let head_len = cap - head
+  let mut idx = head
+  let (front, back) = self.as_views()
+  for cur in front {
+    match f(cur) {
+      Some(v) => {
+        buf[idx] = v
+        idx += 1
+      }
+      None => ()
+    }
+  }
+  if back.length() == 0 {
+    self.truncate(idx - head)
+    return
+  }
+  for cur in back {
+    if idx == cap {
+      idx = 0
+    }
+    match f(cur) {
+      Some(v) => {
+        buf[idx] = v
+        idx += 1
+      }
+      None => ()
+    }
+  }
+  if idx <= self.len - head_len {
+    self.truncate(idx + head_len)
+  } else {
+    self.truncate(idx - head)
+  }
+}
+
+///|
 pub fn iter[A](self : T[A]) -> Iter[A] {
   Iter::new(fn(yield_) {
-    for i in 0..<self.length() {
-      guard let IterContinue = yield_(self[i]) else { x => break x }
+    guard not(self.is_empty()) else { IterContinue }
+    let { head, buf, len, .. } = self
+    let cap = buf.length()
+    let head_len = cap - head
+    if head_len >= len {
+      for i in head..<(head + len) {
+        guard let IterContinue = yield_(buf[i]) else { x => return x }
 
+      }
     } else {
-      IterContinue
+      for i in head..<cap {
+        guard let IterContinue = yield_(buf[i]) else { x => return x }
+
+      }
+      for i in 0..<(len - head_len) {
+        guard let IterContinue = yield_(buf[i]) else { x => return x }
+
+      }
     }
+    IterContinue
+  })
+}
+
+///|
+pub fn iter2[A](self : T[A]) -> Iter2[Int, A] {
+  Iter2::new(fn(yield_) {
+    guard not(self.is_empty()) else { IterContinue }
+    let { head, buf, len, .. } = self
+    let cap = buf.length()
+    let head_len = cap - head
+    let mut j = 0
+    if head_len >= len {
+      for i in head..<(head + len) {
+        guard let IterContinue = yield_(j, buf[i]) else { x => return x }
+        j += 1
+      }
+    } else {
+      for i in head..<cap {
+        guard let IterContinue = yield_(j, buf[i]) else { x => return x }
+        j += 1
+      }
+      for i in 0..<(len - head_len) {
+        guard let IterContinue = yield_(j, buf[i]) else { x => return x }
+        j += 1
+      }
+    }
+    IterContinue
+  })
+}
+
+///|
+pub fn rev_iter[A](self : T[A]) -> Iter[A] {
+  Iter::new(fn(yield_) {
+    guard not(self.is_empty()) else { IterContinue }
+    let { head, buf, len, .. } = self
+    let cap = buf.length()
+    let head_len = cap - head
+    if head_len >= len {
+      for i = head + len - 1; i >= head; i = i - 1 {
+        guard let IterContinue = yield_(buf[i]) else { x => return x }
+
+      }
+    } else {
+      for i = len - head_len - 1; i >= 0; i = i - 1 {
+        guard let IterContinue = yield_(buf[i]) else { x => return x }
+
+      }
+      for i = cap - 1; i >= head; i = i - 1 {
+        guard let IterContinue = yield_(buf[i]) else { x => return x }
+
+      }
+    }
+    IterContinue
+  })
+}
+
+///|
+pub fn rev_iter2[A](self : T[A]) -> Iter2[Int, A] {
+  Iter2::new(fn(yield_) {
+    guard not(self.is_empty()) else { IterContinue }
+    let { head, buf, len, .. } = self
+    let cap = buf.length()
+    let head_len = cap - head
+    let mut j = 0
+    if head_len >= len {
+      for i = head + len - 1; i >= head; i = i - 1 {
+        guard let IterContinue = yield_(j, buf[i]) else { x => return x }
+        j += 1
+      }
+    } else {
+      for i = len - head_len - 1; i >= 0; i = i - 1 {
+        guard let IterContinue = yield_(j, buf[i]) else { x => return x }
+        j += 1
+      }
+      for i = cap - 1; i >= head; i = i - 1 {
+        guard let IterContinue = yield_(j, buf[i]) else { x => return x }
+        j += 1
+      }
+    }
+    IterContinue
   })
 }
 

@@ -85,20 +85,36 @@ pub fn BigInt::from_int(n : Int) -> BigInt {
 }
 
 ///|
+/// Convert an UInt to a BigInt.
+pub fn BigInt::from_uint(n : UInt) -> BigInt {
+  BigInt::from_uint64(n.to_uint64())
+}
+
+///|
 /// Convert an Int64 to a BigInt.
 pub fn BigInt::from_int64(n : Int64) -> BigInt {
-  if n == 0L {
+  if n < 0L {
+    -BigInt::from_uint64((-n).reinterpret_as_uint64())
+  } else {
+    BigInt::from_uint64(n.reinterpret_as_uint64())
+  }
+}
+
+///| 
+/// Convert an UInt64 to a BigInt.
+pub fn BigInt::from_uint64(n : UInt64) -> BigInt {
+  if n == 0UL {
     return { limbs: FixedArray::make(1, 0), sign: Positive, len: 1 }
   }
   let limbs = FixedArray::make(64 / radix_bit_len, 0U)
-  let mut m = (if n < 0L { -n } else { n }).reinterpret_as_uint64()
+  let mut m = n
   let mut i = 0
   while m > 0 {
     limbs[i] = (m % radix).to_uint()
     m /= radix
     i += 1
   }
-  { limbs, sign: if n < 0L { Negative } else { Positive }, len: i }
+  { limbs, sign: Positive, len: i }
 }
 
 // Arithmetic Operations
@@ -772,29 +788,78 @@ fn max[T : Compare](a : T, b : T) -> T {
 }
 
 ///|
-/// Compute the power of a BigInt to another BigInt.
+/// Computes the result of raising a `BigInt` to the power of another `BigInt`,
+/// with an optional modulus.
+///
+/// When a modulus is provided, computes the modular exponentiation using the
+/// square-and-multiply algorithm. This is particularly useful in cryptographic
+/// applications where direct exponentiation would result in numbers too large to
+/// handle efficiently.
+///
+/// Parameters:
+///
+/// * `self` : The base number to be raised to a power.
+/// * `exp` : The exponent (must be non-negative).
+/// * `modulus` : Optional modulus for modular exponentiation (must be positive
+/// if provided).
+///
+/// Returns the result of the exponentiation, or the result modulo `modulus` if a
+/// modulus is provided.
+///
+/// Throws:
+///
+/// * Aborts if the exponent is negative.
+/// * Aborts if the provided modulus is zero or negative.
+///
+/// Example:
+///
+/// ```moonbit
+/// test "BigInt::pow" {
+///   let base = BigInt::from_string("3")
+///   let exp = BigInt::from_string("4")
+///   inspect!(base.pow(exp), content="81")
+///   inspect!(base.pow(exp, modulus=BigInt::from_string("10")), content="1")
+/// }
 /// 
-/// Optionally takes a modulus BigInt.
-/// 
-/// The exponent must be non-negative, and modulus must be positive.
-pub fn pow(self : BigInt, exp : BigInt, modulus~ : BigInt = one) -> BigInt {
+/// test "panic BigInt::pow/negative_exponent" {
+///   let base = BigInt::from_string("3")
+///   let exp = BigInt::from_string("-1")
+///   ignore(base.pow(exp))
+/// }
+/// ```
+pub fn pow(self : BigInt, exp : BigInt, modulus? : BigInt) -> BigInt {
   if exp.sign == Negative {
     abort("negative exponent")
   }
-  if modulus.is_zero() || modulus.sign == Negative {
-    abort("modulus non-positive")
-  }
-  let mut result = 1N
-  let mut base = self
-  let mut exp = exp
-  while exp > 0N {
-    if exp % 2N == 1N {
-      result = result * base % modulus
+  match modulus {
+    None => {
+      let mut result = 1N
+      let mut base = self
+      let mut exp = exp
+      while exp > 0 {
+        if exp % 2 == 1 {
+          result = result * base
+        }
+        base = base * base
+        exp = exp / 2
+      }
+      result
     }
-    base = base * base % modulus
-    exp = exp / 2N
+    Some(modulus) => {
+      guard not(modulus.is_zero() || modulus.sign == Negative)
+      let mut result = 1N
+      let mut base = self
+      let mut exp = exp
+      while exp > 0 {
+        if exp % 2 == 1 {
+          result = result * base % modulus
+        }
+        base = base * base % modulus
+        exp = exp / 2
+      }
+      result
+    }
   }
-  result
 }
 
 ///|
@@ -868,11 +933,374 @@ pub fn BigInt::to_octets(self : BigInt, length? : Int) -> Bytes {
   let tail_len = self.len - 1
   let len = (head_bits + 7) / 8 + tail_len * (radix_bit_len / 8)
   let len = max(length, len)
-  let result = Bytes::new(len)
+  let result = FixedArray::make(len, Byte::default())
   for i = 0; i < len && i / 4 < self.len; i = i + 1 {
     result[len - 1 - i] = ((self.limbs[i / 4] >> (i % 4 * 8)) & 0xffU)
       .reinterpret_as_int()
       .to_byte()
+  }
+  result.unsafe_to_bytes()
+}
+
+///|
+pub fn land(self : BigInt, other : BigInt) -> BigInt {
+  let max_length = if self.limbs.length() < other.limbs.length() {
+    other.limbs.length() + 1
+  } else {
+    self.limbs.length() + 1
+  }
+  // Extend the limbs to store the sign bits
+  let x_limbs = FixedArray::make(max_length, 0U)..unsafe_blit(
+    0,
+    self.limbs,
+    0,
+    self.limbs.length(),
+  )
+  let y_limbs = FixedArray::make(max_length, 0U)..unsafe_blit(
+    0,
+    other.limbs,
+    0,
+    other.limbs.length(),
+  )
+
+  // Calculate the complement code per 2
+  if self.sign == Negative {
+    for i = 0; i < x_limbs.length(); i = i + 1 {
+      x_limbs[i] = x_limbs[i] ^ 0xFFFFFFFFU
+    }
+    for i = 0; i < x_limbs.length(); i = i + 1 {
+      x_limbs[i] += 1
+      if x_limbs[i] != 0x0U {
+        break
+      }
+    }
+  }
+  if other.sign == Negative {
+    for i = 0; i < y_limbs.length(); i = i + 1 {
+      y_limbs[i] = y_limbs[i] ^ 0xFFFFFFFFU
+    }
+    for i = 0; i < y_limbs.length(); i = i + 1 {
+      y_limbs[i] += 1
+      if y_limbs[i] != 0x0U {
+        break
+      }
+    }
+  }
+
+  // Bit Ops 
+  for i = 0; i < x_limbs.length(); i = i + 1 {
+    x_limbs[i] = x_limbs[i] & y_limbs[i]
+  }
+
+  // Check wether the result is either positive or negative
+  let new_sign = if x_limbs[x_limbs.length() - 1] == 0xFFFFFFFFU {
+    Negative
+  } else {
+    Positive
+  }
+
+  // Restore as true code
+  if new_sign == Negative {
+    for i = 0; i < x_limbs.length(); i = i + 1 {
+      x_limbs[i] -= 1
+      if x_limbs[i] != 0xFFFFFFFFU {
+        break
+      }
+    }
+    for i = 0; i < x_limbs.length(); i = i + 1 {
+      x_limbs[i] = x_limbs[i] ^ 0xFFFFFFFFU
+    }
+  }
+
+  // return the result
+  {
+    limbs: FixedArray::make(max_length - 1, 0U)..unsafe_blit(
+      0,
+      x_limbs,
+      0,
+      max_length - 1,
+    ),
+    sign: new_sign,
+    len: if self.len > other.len {
+      self.len
+    } else {
+      other.len
+    },
+  }
+}
+
+///|
+pub fn lor(self : BigInt, other : BigInt) -> BigInt {
+  let max_length = if self.limbs.length() < other.limbs.length() {
+    other.limbs.length() + 1
+  } else {
+    self.limbs.length() + 1
+  }
+  // Extend the limbs to store the sign bits
+  let x_limbs = FixedArray::make(max_length, 0U)..unsafe_blit(
+    0,
+    self.limbs,
+    0,
+    self.limbs.length(),
+  )
+  let y_limbs = FixedArray::make(max_length, 0U)..unsafe_blit(
+    0,
+    other.limbs,
+    0,
+    other.limbs.length(),
+  )
+
+  // Calculate the complement code per 2
+  if self.sign == Negative {
+    for i = 0; i < x_limbs.length(); i = i + 1 {
+      x_limbs[i] = x_limbs[i] ^ 0xFFFFFFFFU
+    }
+    for i = 0; i < x_limbs.length(); i = i + 1 {
+      x_limbs[i] += 1
+      if x_limbs[i] != 0x0U {
+        break
+      }
+    }
+  }
+  if other.sign == Negative {
+    for i = 0; i < y_limbs.length(); i = i + 1 {
+      y_limbs[i] = y_limbs[i] ^ 0xFFFFFFFFU
+    }
+    for i = 0; i < y_limbs.length(); i = i + 1 {
+      y_limbs[i] += 1
+      if y_limbs[i] != 0x0U {
+        break
+      }
+    }
+  }
+
+  // Bit Ops 
+  for i = 0; i < x_limbs.length(); i = i + 1 {
+    x_limbs[i] = x_limbs[i] | y_limbs[i]
+  }
+
+  // Check wether the result is either positive or negative
+  let new_sign = if x_limbs[x_limbs.length() - 1] == 0xFFFFFFFFU {
+    Negative
+  } else {
+    Positive
+  }
+
+  // Restore as true code
+  if new_sign == Negative {
+    for i = 0; i < x_limbs.length(); i = i + 1 {
+      x_limbs[i] -= 1
+      if x_limbs[i] != 0xFFFFFFFFU {
+        break
+      }
+    }
+    for i = 0; i < x_limbs.length(); i = i + 1 {
+      x_limbs[i] = x_limbs[i] ^ 0xFFFFFFFFU
+    }
+  }
+
+  // return the result
+  {
+    limbs: FixedArray::make(max_length - 1, 0U)..unsafe_blit(
+      0,
+      x_limbs,
+      0,
+      max_length - 1,
+    ),
+    sign: new_sign,
+    len: if self.len > other.len {
+      self.len
+    } else {
+      other.len
+    },
+  }
+}
+
+///|
+pub fn lxor(self : BigInt, other : BigInt) -> BigInt {
+  let max_length = if self.limbs.length() < other.limbs.length() {
+    other.limbs.length() + 1
+  } else {
+    self.limbs.length() + 1
+  }
+  // Extend the limbs to store the sign bits
+  let x_limbs = FixedArray::make(max_length, 0U)..unsafe_blit(
+    0,
+    self.limbs,
+    0,
+    self.limbs.length(),
+  )
+  let y_limbs = FixedArray::make(max_length, 0U)..unsafe_blit(
+    0,
+    other.limbs,
+    0,
+    other.limbs.length(),
+  )
+
+  // Calculate the complement code per 2
+  if self.sign == Negative {
+    for i = 0; i < x_limbs.length(); i = i + 1 {
+      x_limbs[i] = x_limbs[i] ^ 0xFFFFFFFFU
+    }
+    for i = 0; i < x_limbs.length(); i = i + 1 {
+      x_limbs[i] += 1
+      if x_limbs[i] != 0x0U {
+        break
+      }
+    }
+  }
+  if other.sign == Negative {
+    for i = 0; i < y_limbs.length(); i = i + 1 {
+      y_limbs[i] = y_limbs[i] ^ 0xFFFFFFFFU
+    }
+    for i = 0; i < y_limbs.length(); i = i + 1 {
+      y_limbs[i] += 1
+      if y_limbs[i] != 0x0U {
+        break
+      }
+    }
+  }
+
+  // Bit Ops 
+  for i = 0; i < x_limbs.length(); i = i + 1 {
+    x_limbs[i] = x_limbs[i] ^ y_limbs[i]
+  }
+
+  // Check wether the result is either positive or negative
+  let new_sign = if x_limbs[x_limbs.length() - 1] == 0xFFFFFFFFU {
+    Negative
+  } else {
+    Positive
+  }
+
+  // Restore as true code
+  if new_sign == Negative {
+    for i = 0; i < x_limbs.length(); i = i + 1 {
+      x_limbs[i] -= 1
+      if x_limbs[i] != 0xFFFFFFFFU {
+        break
+      }
+    }
+    for i = 0; i < x_limbs.length(); i = i + 1 {
+      x_limbs[i] = x_limbs[i] ^ 0xFFFFFFFFU
+    }
+  }
+
+  // return the result
+  {
+    limbs: FixedArray::make(max_length - 1, 0U)..unsafe_blit(
+      0,
+      x_limbs,
+      0,
+      max_length - 1,
+    ),
+    sign: new_sign,
+    len: if self.len > other.len {
+      self.len
+    } else {
+      other.len
+    },
+  }
+}
+
+///|
+/// Converts a `BigInt` to a 32-bit signed integer (`Int`).
+///
+/// Parameters:
+///
+/// * `self` : The `BigInt` value to be converted.
+///
+/// Returns a 32-bit signed integer representing the lower 32 bits of the input
+/// `BigInt`.
+///
+/// Example:
+///
+/// ```moonbit
+/// test "BigInt::to_int" {
+///   let big = 2147483648N // 2^31
+///   inspect!(big.to_int(), content="-2147483648") // Overflow to Int.min_value
+/// }
+/// ```
+pub fn to_int(self : BigInt) -> Int {
+  self.to_uint().reinterpret_as_int()
+}
+
+///|
+/// Converts a `BigInt` to an unsigned 32-bit integer (`UInt`).
+///
+/// Parameters:
+///
+/// * `self` : The `BigInt` value to be converted.
+///
+/// Returns a `UInt` value representing the lower 32 bits of the input `BigInt`.
+///
+/// Example:
+///
+/// ```moonbit
+/// test "BigInt::to_uint" {
+///   let n = 42N
+///   inspect!(n.to_uint(), content="42")
+///   let neg = -1N
+///   inspect!(neg.to_uint(), content="4294967295") // 2^32 - 1
+/// }
+/// ```
+pub fn to_uint(self : BigInt) -> UInt {
+  let value = if self.sign == Negative { (1N << 32) + self } else { self }
+  value.limbs[0]
+}
+
+///|
+/// Converts a `BigInt` to a signed 64-bit integer (`Int64`).
+///
+/// Parameters:
+///
+/// * `value` : The `BigInt` value to be converted.
+///
+/// Returns a 64-bit signed integer (`Int64`) representing the lower 64 bits of
+/// the input `BigInt`.
+///
+/// Example:
+///
+/// ```moonbit
+/// test "BigInt::to_int64" {
+///   let big = 9223372036854775807N // max value of Int64
+///   inspect!(big.to_int64(), content="9223372036854775807")
+///   let bigger = big + 1
+///   inspect!(bigger.to_int64(), content="-9223372036854775808") // Overflow to Int64.min_value
+/// }
+/// ```
+pub fn to_int64(self : BigInt) -> Int64 {
+  self.to_uint64().reinterpret_as_int64()
+}
+
+///|
+/// Converts a `BigInt` to an unsigned 64-bit integer (`UInt64`).
+///
+/// Parameters:
+///
+/// * `self` : The `BigInt` value to be converted.
+///
+/// Returns a `UInt64` value representing the lower 64 bits of the input
+/// `BigInt`.
+///
+/// Example:
+///
+/// ```moonbit
+/// test "BigInt::to_uint64" {
+///   let n = 12345678901234567890N
+///   inspect!(n.to_uint64(), content="12345678901234567890")
+///   let neg = -1N
+///   inspect!(neg.to_uint64(), content="18446744073709551615") // 2^64 - 1
+/// }
+/// ```
+pub fn to_uint64(self : BigInt) -> UInt64 {
+  let value = if self.sign == Negative { (1N << 64) + self } else { self }
+  let len = 64 / radix_bit_len
+  let len = if value.len < len { value.len } else { len }
+  let mut result = 0UL
+  for i = len - 1; i >= 0; i = i - 1 {
+    result = result << radix_bit_len
+    result = result | (value.limbs[i].to_uint64() & radix_mask)
   }
   result
 }

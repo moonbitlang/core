@@ -296,7 +296,27 @@ test "makei" {
 }
 
 ///|
-/// Create a new array. Values are built from indexes.
+/// Creates a new fixed-size array of the specified length, where each element is
+/// initialized using a function that maps indices to values.
+///
+/// Parameters:
+///
+/// * `length` : The length of the array to create. If `length` is less than or
+/// equal to 0, returns an empty array.
+/// * `initializer` : A function that takes an index (from 0 to `length - 1`) and
+/// returns a value of type `T` for that position.
+///
+/// Returns a new fixed array containing the values produced by applying the
+/// initializer function to each index.
+///
+/// Example:
+///
+/// ```moonbit
+/// test "FixedArray::makei" {
+///   let arr = FixedArray::makei(3, fn(i) { i * 2 })
+///   inspect!(arr, content="[0, 2, 4]")
+/// }
+/// ```
 pub fn FixedArray::makei[T](length : Int, value : (Int) -> T) -> FixedArray[T] {
   if length <= 0 {
     []
@@ -322,7 +342,25 @@ test "fixedarray_new_with_index" {
 }
 
 ///|
-/// Create a new array with given values.
+/// Creates a new fixed-size array from a dynamic array. The resulting fixed
+/// array will have the same length and elements as the input array.
+///
+/// Parameters:
+///
+/// * `array` : A dynamic array containing elements of type `T` that will be
+/// converted to a fixed array.
+///
+/// Returns a new fixed array containing the same elements as the input array.
+///
+/// Example:
+///
+/// ```moonbit
+/// test "FixedArray::from_array" {
+///   let dynamic_array = [1, 2, 3, 4, 5]
+///   let fixed_array = FixedArray::from_array(dynamic_array)
+///   inspect!(fixed_array, content="[1, 2, 3, 4, 5]")
+/// }
+/// ```
 pub fn FixedArray::from_array[T](array : Array[T]) -> FixedArray[T] {
   FixedArray::makei(array.length(), fn(i) { array[i] })
 }
@@ -454,6 +492,22 @@ test "rev_foldi" {
 }
 
 ///|
+/// Reverses the array in place by swapping elements from both ends until
+/// reaching the middle.
+///
+/// Parameters:
+///
+/// * `array` : The array to be reversed. The array will be modified in place.
+///
+/// Example:
+///
+/// ```moonbit
+/// test "rev_inplace" {
+///   let arr : FixedArray[_] = [1, 2, 3, 4, 5]
+///   arr.rev_inplace()
+///   inspect!(arr, content="[5, 4, 3, 2, 1]")
+/// }
+/// ```
 pub fn rev_inplace[T](self : FixedArray[T]) -> Unit {
   let mid_len = self.length() / 2
   for i = 0; i < mid_len; i = i + 1 {
@@ -465,6 +519,25 @@ pub fn rev_inplace[T](self : FixedArray[T]) -> Unit {
 }
 
 ///|
+/// Returns a new array containing all elements in reverse order. The original
+/// array remains unchanged.
+///
+/// Parameters:
+///
+/// * `self` : The array to be reversed.
+///
+/// Returns a new array with the same elements but in reverse order.
+///
+/// Example:
+///
+/// ```moonbit
+/// test "FixedArray::rev" {
+///   let arr : FixedArray[Int] = [1, 2, 3, 4, 5]
+///   inspect!(arr.rev(), content="[5, 4, 3, 2, 1]")
+///   // Original array remains unchanged
+///   inspect!(arr, content="[1, 2, 3, 4, 5]")
+/// }
+/// ```
 pub fn rev[T](self : FixedArray[T]) -> FixedArray[T] {
   match self {
     [] => []
@@ -536,7 +609,7 @@ test "rev" {
 /// arr.swap(0, 1)
 /// assert_eq!(arr, [2, 1, 3, 4, 5])
 /// ```
-fn swap[T](self : FixedArray[T], i : Int, j : Int) -> Unit {
+pub fn swap[T](self : FixedArray[T], i : Int, j : Int) -> Unit {
   let temp = self[i]
   self[i] = self[j]
   self[j] = temp
@@ -816,6 +889,30 @@ test "ends_with" {
 }
 
 ///|
+/// Checks if two fixed arrays are equal.
+///
+/// Two arrays are considered equal if they have the same length and all
+/// corresponding elements are equal. The elements in the arrays must implement
+/// the `Eq` trait.
+///
+/// Parameters:
+///
+/// * `self` : The first fixed array to compare.
+/// * `other` : The second fixed array to compare.
+///
+/// Returns `true` if the arrays are equal, `false` otherwise.
+///
+/// Example:
+///
+/// ```moonbit
+/// test "FixedArray::op_equal" {
+///   let arr1 : FixedArray[Int] = [1, 2, 3]
+///   let arr2 : FixedArray[Int] = [1, 2, 3]
+///   let arr3 : FixedArray[Int] = [1, 2, 4]
+///   inspect!(arr1 == arr2, content="true")
+///   inspect!(arr1 == arr3, content="false")
+/// }
+/// ```
 pub fn op_equal[T : Eq](self : FixedArray[T], that : FixedArray[T]) -> Bool {
   if self.length() != that.length() {
     return false
@@ -891,6 +988,27 @@ test "deep_clone" {
 }
 
 ///|
+/// Concatenates two arrays and returns a new array containing all elements from
+/// both arrays in order.
+///
+/// Parameters:
+///
+/// * `self` : The first array to concatenate.
+/// * `other` : The second array to concatenate.
+///
+/// Returns a new array that contains all elements from the first array followed
+/// by all elements from the second array. The returned array is independent of
+/// both input arrays.
+///
+/// Example:
+///
+/// ```moonbit
+/// test "op_add" {
+///   let arr1 : FixedArray[Int] = [1, 2, 3]
+///   let arr2 : FixedArray[Int] = [4, 5, 6]
+///   inspect!(arr1 + arr2, content="[1, 2, 3, 4, 5, 6]")
+/// }
+/// ```
 pub fn op_add[T](self : FixedArray[T], other : FixedArray[T]) -> FixedArray[T] {
   let slen = self.length()
   let nlen = other.length()
@@ -958,12 +1076,48 @@ test "iter" {
 }
 
 ///|
+/// Creates a new fixed array from an iterator.
+///
+/// Parameters:
+///
+/// * `iterator` : An iterator of type `Iter[T]` from which elements will be
+/// collected into a fixed array.
+///
+/// Returns a new fixed array containing all elements from the iterator.
+///
+/// Example:
+///
+/// ```moonbit
+/// test "FixedArray::from_iter" {
+///   let arr = [1, 2, 3]
+///   let fixed_arr = FixedArray::from_iter(arr.iter())
+///   inspect!(fixed_arr, content="[1, 2, 3]")
+/// }
+/// ```
 pub fn FixedArray::from_iter[T](iter : Iter[T]) -> FixedArray[T] {
   FixedArray::from_array(iter.collect())
 }
 
 ///|
-/// Returns the last element of the fixed array.
+/// Returns the last element of a fixed array if it exists.
+///
+/// Parameters:
+///
+/// * `self` : The fixed array to get the last element from.
+///
+/// Returns `Some(element)` containing the last element if the array is not
+/// empty, or `None` if the array is empty.
+///
+/// Example:
+///
+/// ```moonbit
+/// test "FixedArray::last" {
+///   let array : FixedArray[Int] = [1, 2, 3]
+///   inspect!(array.last(), content="Some(3)")
+///   let empty : FixedArray[Int] = []
+///   inspect!(empty.last(), content="None")
+/// }
+/// ```
 pub fn FixedArray::last[A](self : FixedArray[A]) -> A? {
   match self {
     [] => None

@@ -23,11 +23,7 @@
 /// ```
 /// 
 pub fn Bytes::from_array(arr : Array[Byte]) -> Bytes {
-  let rv = Bytes::new(arr.length())
-  for i = 0; i < arr.length(); i = i + 1 {
-    rv[i] = arr[i]
-  }
-  rv
+  Bytes::makei(arr.length(), fn(i) { arr[i] })
 }
 
 ///|
@@ -37,11 +33,7 @@ pub fn Bytes::from_fixedarray(arr : FixedArray[Byte], len? : Int) -> Bytes {
     None => arr.length()
     Some(x) => x
   }
-  let bytes = Bytes::new(len)
-  for i in 0..<len {
-    bytes[i] = arr[i]
-  }
-  bytes
+  Bytes::makei(len, fn(i) { arr[i] })
 }
 
 ///|
@@ -74,11 +66,7 @@ pub fn Bytes::from_iter(iter : Iter[Byte]) -> Bytes {
 /// ```
 /// TODO: marked as intrinsic, inline if it is constant
 pub fn Bytes::of(arr : FixedArray[Byte]) -> Bytes {
-  let rv = Bytes::new(arr.length())
-  for i = 0; i < arr.length(); i = i + 1 {
-    rv[i] = arr[i]
-  }
-  rv
+  Bytes::makei(arr.length(), fn(i) { arr[i] })
 }
 
 ///|

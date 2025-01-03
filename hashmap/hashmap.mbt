@@ -101,11 +101,12 @@ pub fn op_set[K : Hash + Eq, V](self : T[K, V], key : K, value : V) -> Unit {
 ///|
 /// Get the value associated with a key.
 pub fn get[K : Hash + Eq, V](self : T[K, V], key : K) -> V? {
-  let hash = key.hash()
+  self.get_with_hash(key, key.hash())
+}
+
+///|
+fn get_with_hash[K : Hash + Eq, V](self : T[K, V], key : K, hash : Int) -> V? {
   for i = 0, idx = hash & (self.capacity - 1) {
-    // if i == self.capacity {
-    //   panic()
-    // }
     match self.entries[idx] {
       Some(entry) => {
         if entry.hash == hash && entry.key == key {
@@ -124,6 +125,47 @@ pub fn get[K : Hash + Eq, V](self : T[K, V], key : K) -> V? {
 ///|
 pub fn op_get[K : Hash + Eq, V](self : T[K, V], key : K) -> V? {
   self.get(key)
+}
+
+///|
+/// Gets the value associated with the given key. If the key doesn't exist in the
+/// map, initializes it with the result of calling the provided initialization
+/// function.
+///
+/// Parameters:
+///
+/// * `self` : The hash map.
+/// * `key` : The key to look up in the map.
+/// * `init` : A function that takes no arguments and returns a value to be
+/// associated with the key if it doesn't exist.
+///
+/// Returns the value associated with the key, either existing or newly
+/// initialized.
+///
+/// Example:
+///
+/// ```moonbit
+/// test "get_or_init" {
+///   let map : @hashmap.T[String, Int] = @hashmap.new()
+///   let value = map.get_or_init("key", fn() { 42 })
+///   inspect!(value, content="42")
+///   inspect!(map.get("key"), content="Some(42)")
+/// }
+/// ```
+pub fn get_or_init[K : Hash + Eq, V](
+  self : T[K, V],
+  key : K,
+  init : () -> V
+) -> V {
+  let hash = key.hash()
+  match self.get_with_hash(key, hash) {
+    Some(v) => v
+    None => {
+      let v = init()
+      self.set_with_hash(key, v, hash)
+      v
+    }
+  }
 }
 
 ///|

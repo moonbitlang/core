@@ -453,30 +453,35 @@ pub fn Int64::lxor(self : Int64, other : Int64) -> Int64 {
 
 ///|
 /// @alert deprecated "Use infix operator `<<` instead"
+/// @coverage.skip
 pub fn Int64::lsl(self : Int64, other : Int) -> Int64 {
   MyInt64::from_int64(self).lsl(other).to_int64()
 }
 
 ///|
 /// @alert deprecated "Use infix operator `<<` instead"
+/// @coverage.skip
 pub fn Int64::shl(self : Int64, other : Int) -> Int64 {
   MyInt64::from_int64(self).lsl(other).to_int64()
 }
 
 ///|
 /// @alert deprecated "Use UInt64 type and infix operator `>>` instead"
+/// @coverage.skip
 pub fn Int64::lsr(self : Int64, other : Int) -> Int64 {
   MyInt64::from_int64(self).lsr(other).to_int64()
 }
 
 ///|
 /// @alert deprecated "Use infix operator `>>` instead"
+/// @coverage.skip
 pub fn Int64::shr(self : Int64, other : Int) -> Int64 {
   MyInt64::from_int64(self).asr(other).to_int64()
 }
 
 ///|
 /// @alert deprecated "Use infix operator `>>` instead"
+/// @coverage.skip
 pub fn Int64::asr(self : Int64, other : Int) -> Int64 {
   MyInt64::from_int64(self).asr(other).to_int64()
 }
@@ -562,39 +567,8 @@ pub fn Int::to_int64(self : Int) -> Int64 {
 }
 
 ///|
-/// Converts a double-precision floating-point number to a 64-bit integer.
-/// Handles special cases including NaN and numbers outside the valid Int range.
-///
-/// Parameters:
-///
-/// * `self` : The double-precision floating-point number to be converted.
-///
-/// Returns an 64-bit integer value according to the following rules:
-///
-/// * Returns 0 if the input is NaN
-/// * Returns `@int64.max_value` (9223372036854775807L) if the input is greater than or
-///   equal to `@int64.max_value`
-/// * Returns `@int64.min_value` (-9223372036854775808L) if the input is less than or equal
-///   to `@int64.min_value`
-/// * Otherwise returns the integer part of the input by truncating towards zero
-///
-/// Example:
-///
-/// ```moonbit
-/// test "Double::to_int64" {
-///   inspect!(42.0.to_int64(), content="42")
-///   inspect!((-42.5).to_int64(), content="-42")
-///   inspect!((0.0 / 0.0).to_int64(), content="0") // NaN
-///   inspect!((1.0 / 0.0).to_int64(), content="9223372036854775807") // Infinity
-///   inspect!((-1.0 / 0.0).to_int64(), content="-9223372036854775808") // -Infinity
-/// }
-/// ```
-pub fn Double::to_int64(self : Double) -> Int64 {
-  MyInt64::from_double(self).to_int64()
-}
-
-///|
 /// @alert deprecated "Use `reinterpret_as_int64` instead"
+/// @coverage.skip
 pub fn Double::reinterpret_as_i64(self : Double) -> Int64 {
   MyInt64::reinterpret_double(self).to_int64()
 }
@@ -606,6 +580,7 @@ pub fn Double::reinterpret_as_int64(self : Double) -> Int64 {
 
 ///|
 /// @alert deprecated "Use `reinterpret_as_uint64` instead"
+/// @coverage.skip
 pub fn Double::reinterpret_as_u64(self : Double) -> UInt64 {
   MyInt64::reinterpret_double(self).to_uint64()
 }
@@ -633,6 +608,7 @@ fn MyInt64::from_uint64(value : UInt64) -> MyInt64 = "%identity"
 
 ///|
 /// @alert deprecated "Use `reinterpret_as_uint64` instead"
+/// @coverage.skip
 pub fn Int64::to_uint64(self : Int64) -> UInt64 = "%identity"
 
 ///|
@@ -665,6 +641,7 @@ pub fn UInt64::op_mod(self : UInt64, other : UInt64) -> UInt64 {
 
 ///|
 /// @alert deprecated "Use reinterpret_as_int64 instead"
+/// @coverage.skip
 pub fn UInt64::to_int64(self : UInt64) -> Int64 = "%identity"
 
 ///|
@@ -722,24 +699,28 @@ pub fn UInt64::lnot(self : UInt64) -> UInt64 {
 
 ///|
 /// @alert deprecated "Use infix operator `<<` instead"
+/// @coverage.skip
 pub fn UInt64::lsl(self : UInt64, shift : Int) -> UInt64 {
   MyInt64::lsl(MyInt64::from_uint64(self), shift).to_uint64()
 }
 
 ///|
 /// @alert deprecated "Use infix operator `<<` instead"
+/// @coverage.skip
 pub fn UInt64::lsr(self : UInt64, shift : Int) -> UInt64 {
   MyInt64::lsr(MyInt64::from_uint64(self), shift).to_uint64()
 }
 
 ///|
 /// @alert deprecated "Use infix operator `>>` instead"
+/// @coverage.skip
 pub fn UInt64::shl(self : UInt64, shift : Int) -> UInt64 {
   MyInt64::lsl(MyInt64::from_uint64(self), shift).to_uint64()
 }
 
 ///|
 /// @alert deprecated "Use infix operator `>>` instead"
+/// @coverage.skip
 pub fn UInt64::shr(self : UInt64, shift : Int) -> UInt64 {
   MyInt64::lsr(MyInt64::from_uint64(self), shift).to_uint64()
 }

@@ -502,6 +502,27 @@ test "stable_sort" {
 }
 
 ///|
+/// Checks if the elements in the array are sorted in ascending order according
+/// to their natural ordering.
+///
+/// Parameters:
+///
+/// * `array` : A fixed array of type `T`, where `T` must implement the `Compare`
+/// trait.
+///
+/// Returns `true` if the array is sorted in ascending order, `false` otherwise.
+/// An empty array or an array with a single element is considered sorted.
+///
+/// Example:
+///
+/// ```moonbit
+/// test "FixedArray::is_sorted" {
+///   let sorted : FixedArray[Int] = [1, 2, 3, 4, 5]
+///   let unsorted : FixedArray[Int] = [5, 4, 3, 2, 1]
+///   inspect!(FixedArray::is_sorted(sorted), content="true")
+///   inspect!(FixedArray::is_sorted(unsorted), content="false")
+/// }
+/// ```
 pub fn FixedArray::is_sorted[T : Compare](arr : FixedArray[T]) -> Bool {
   for i in 1..<arr.length() {
     if arr[i] < arr[i - 1] {

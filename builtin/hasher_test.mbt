@@ -91,6 +91,19 @@ test "combine double" {
   inspect!(hash(0.0) == hash(0.1), content="false")
 }
 
+test "combine float" {
+  fn hash(v : Float) {
+    Hasher::new()..combine_float(v).finalize()
+  }
+
+  inspect!(hash(0.0), content="148298089")
+  inspect!(hash(0.1), content="1101647392")
+  inspect!(hash(0.2), content="-352548260")
+  inspect!(hash(0.0) == hash(0.0), content="true")
+  inspect!(hash(0.1) == hash(0.1), content="true")
+  inspect!(hash(0.0) == hash(0.1), content="false")
+}
+
 test "combine string" {
   fn hash(v) {
     Hasher::new()..combine_string(v).finalize()
@@ -110,26 +123,18 @@ test "combine string" {
 }
 
 test "combine bytes" {
-  fn bytes_of(arr : Array[Int]) {
-    let rv = Bytes::new(arr.length())
-    for i = 0; i < arr.length(); i = i + 1 {
-      rv[i] = arr[i].to_byte()
-    }
-    rv
-  }
-
   fn hash(v) {
     Hasher::new()..combine_bytes(v).finalize()
   }
 
-  let b1 = bytes_of([
+  let b1 : Bytes = [
     65, 0, 66, 0, 67, 0, 68, 0, 69, 0, 70, 0, 71, 0, 72, 0, 73, 0,
-  ])
-  let b2 = bytes_of([
+  ]
+  let b2 : Bytes = [
     65, 0, 66, 0, 67, 0, 68, 0, 69, 0, 70, 0, 71, 0, 72, 0, 74, 0,
-  ])
-  let b3 = bytes_of([128, 0, 0, 0, 0, 0, 0])
-  let b4 = bytes_of([127, 255, 255, 255, 255, 255, 255])
+  ]
+  let b3 : Bytes = [128, 0, 0, 0, 0, 0, 0]
+  let b4 : Bytes = [127, 255, 255, 255, 255, 255, 255]
   inspect!(hash(b1), content="2001377227")
   inspect!(hash(b2), content="-1020996018")
   inspect!(hash(b3), content="-1280010923")

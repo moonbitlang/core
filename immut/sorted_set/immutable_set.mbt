@@ -304,6 +304,7 @@ pub fn union[A : Compare](self : T[A], other : T[A]) -> T[A] {
 
 ///|
 /// @alert deprecated "Use `intersection` instead"
+/// @coverage.skip
 pub fn inter[A : Compare](self : T[A], other : T[A]) -> T[A] {
   self.intersection(other)
 }
@@ -337,6 +338,7 @@ pub fn intersection[A : Compare](self : T[A], other : T[A]) -> T[A] {
 /// ```
 /// 
 /// @alert deprecated "Use `difference` instead"
+/// @coverage.skip
 pub fn diff[A : Compare](self : T[A], other : T[A]) -> T[A] {
   self.difference(other)
 }

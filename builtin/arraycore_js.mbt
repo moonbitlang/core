@@ -199,6 +199,7 @@ pub fn pop[T](self : Array[T]) -> T? {
 
 ///|
 /// @alert deprecated "Use `unsafe_pop` instead"
+/// @coverage.skip
 pub fn pop_exn[T](self : Array[T]) -> T {
   self.unsafe_pop()
 }
