@@ -695,6 +695,7 @@ impl Bytes {
   copy(Bytes) -> Bytes
   length(Bytes) -> Int
   make(Int, Byte) -> Bytes
+  makei(Int, (Int) -> Byte) -> Bytes
   new(Int) -> Bytes
   of_string(String) -> Bytes
   op_as_view(Bytes, start~ : Int = .., end? : Int) -> BytesView

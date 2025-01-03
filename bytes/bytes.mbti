@@ -11,7 +11,7 @@ impl Bytes {
   from_fixedarray(FixedArray[Byte], len? : Int) -> Bytes
   from_iter(Iter[Byte]) -> Bytes
   iter(Bytes) -> Iter[Byte]
-  of(FixedArray[Byte]) -> Bytes //deprecated
+  of(FixedArray[Byte]) -> Bytes
   to_array(Bytes) -> Array[Byte]
   to_fixedarray(Bytes, len? : Int) -> FixedArray[Byte]
 }
