@@ -44,6 +44,7 @@ impl FixedArray {
   sort_by_key[T, K : Compare](Self[T], (T) -> K) -> Unit
   stable_sort[T : Compare](Self[T]) -> Unit
   starts_with[T : Eq](Self[T], Self[T]) -> Bool
+  swap[T](Self[T], Int, Int) -> Unit
 }
 
 
