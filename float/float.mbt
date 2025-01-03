@@ -53,12 +53,12 @@ pub impl Hash for Float with hash_combine(self, hasher) {
   hasher.combine_float(self)
 }
 
-///|
-pub fn to_be_bytes_view(self : Float) -> BytesView {
+///| Converts the Float to a Bytes in big-endian byte order.
+pub fn to_be_bytes(self : Float) -> Bytes {
   self.reinterpret_as_uint().to_be_bytes()
 }
 
-///|
-pub fn to_le_bytes_view(self : Float) -> BytesView {
+///| Converts the Float to a Bytes in little-endian byte order.
+pub fn to_le_bytes(self : Float) -> Bytes {
   self.reinterpret_as_uint().to_le_bytes()
 }

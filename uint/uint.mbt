@@ -28,22 +28,22 @@ pub fn UInt::default() -> UInt {
   0
 }
 
-///|
-pub fn to_be_bytes(self : UInt) -> BytesView {
-  let bs = Bytes::make(4, 0)
-  bs[0] = (self >> 24).to_byte()
-  bs[1] = (self >> 16).to_byte()
-  bs[2] = (self >> 8).to_byte()
-  bs[3] = self.to_byte()
-  bs[:]
+///| Converts the UInt to a Bytes in big-endian byte order.
+pub fn to_be_bytes(self : UInt) -> Bytes {
+  [
+    (self >> 24).to_byte(),
+    (self >> 16).to_byte(),
+    (self >> 8).to_byte(),
+    self.to_byte(),
+  ]
 }
 
-///|
-pub fn to_le_bytes(self : UInt) -> BytesView {
-  let bs = Bytes::make(4, 0)
-  bs[0] = self.to_byte()
-  bs[1] = (self >> 8).to_byte()
-  bs[2] = (self >> 16).to_byte()
-  bs[3] = (self >> 24).to_byte()
-  bs[:]
+///| Converts the UInt to a Bytes in little-endian byte order.
+pub fn to_le_bytes(self : UInt) -> Bytes {
+  [
+    self.to_byte(),
+    (self >> 8).to_byte(),
+    (self >> 16).to_byte(),
+    (self >> 24).to_byte(),
+  ]
 }
