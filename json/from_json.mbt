@@ -54,8 +54,42 @@ pub impl FromJson for Int with from_json(json, path) {
 ///|
 pub impl FromJson for Int64 with from_json(json, path) {
   match json {
-    Number(n) => n.to_int64()
-    _ => decode_error!(path, "Int64::from_json: expected number")
+    String(str) =>
+      try {
+        @strconv.parse_int64!(str)
+      } catch {
+        error =>
+          decode_error!(path, "Int64::from_json: parsing failure \{error}")
+      }
+    _ =>
+      decode_error!(
+        path, "Int64::from_json: expected number in string representation",
+      )
+  }
+}
+
+///|
+pub impl FromJson for UInt with from_json(json, path) {
+  match json {
+    Number(n) => n.to_uint()
+    _ => decode_error!(path, "UInt::from_json: expected number")
+  }
+}
+
+///|
+pub impl FromJson for UInt64 with from_json(json, path) {
+  match json {
+    String(str) =>
+      try {
+        @strconv.parse_uint64!(str)
+      } catch {
+        error =>
+          decode_error!(path, "UInt64::from_json: parsing failure \{error}")
+      }
+    _ =>
+      decode_error!(
+        path, "UInt64::from_json: expected number in string representation",
+      )
   }
 }
 
