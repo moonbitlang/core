@@ -22,10 +22,10 @@ pub(open) trait Arbitrary {
 }
 
 ///|
-pub impl Arbitrary for Unit with arbitrary(_i, _rs) { () }
+pub impl Arbitrary for Unit with arbitrary(_, _) { () }
 
 ///|
-pub impl Arbitrary for Bool with arbitrary(_i, rs) { rs.next_double() < 0.5 }
+pub impl Arbitrary for Bool with arbitrary(_, rs) { rs.next_double() < 0.5 }
 
 ///|
 pub impl Arbitrary for Int with arbitrary(size, rs) {
@@ -46,7 +46,7 @@ pub impl Arbitrary for UInt with arbitrary(size, rs) {
 }
 
 ///|
-pub impl Arbitrary for Byte with arbitrary(_i, rs) { rs.next_uint().to_byte() }
+pub impl Arbitrary for Byte with arbitrary(_, rs) { rs.next_uint().to_byte() }
 
 ///|
 pub impl Arbitrary for Bytes with arbitrary(size, rs) {
@@ -54,7 +54,7 @@ pub impl Arbitrary for Bytes with arbitrary(size, rs) {
     Bytes::new(0)
   } else {
     let sz = rs.next_positive_int() % size
-    Bytes::makei(sz, fn(_i) { Byte::arbitrary(size, rs) })
+    Bytes::makei(sz, fn(_) { Byte::arbitrary(size, rs) })
   }
 }
 
@@ -77,13 +77,13 @@ pub impl Arbitrary for UInt64 with arbitrary(size, rs) {
 }
 
 ///|
-pub impl Arbitrary for Float with arbitrary(_i, rs) { rs.next_float() }
+pub impl Arbitrary for Float with arbitrary(_, rs) { rs.next_float() }
 
 ///|
-pub impl Arbitrary for Double with arbitrary(_i, rs) { rs.next_double() }
+pub impl Arbitrary for Double with arbitrary(_, rs) { rs.next_double() }
 
 ///|
-pub impl Arbitrary for Char with arbitrary(_i, rs) {
+pub impl Arbitrary for Char with arbitrary(_, rs) {
   // Choose only ASCII characters
   rs.next_uint() % 128 |> UInt::reinterpret_as_int |> Char::from_int
 }
