@@ -17,6 +17,18 @@
 fn unsafe_to_bytes(self : FixedArray[Byte]) -> Bytes = "%identity"
 
 ///|
+pub fn Bytes::makei(length : Int, value : (Int) -> Byte) -> Bytes {
+  if length <= 0 {
+    return []
+  }
+  let arr = FixedArray::make(length, value(0))
+  for i = 1; i < length; i = i + 1 {
+    arr[i] = value(i)
+  }
+  unsafe_to_bytes(arr)
+}
+
+///|
 /// Create byte sequence from String.
 pub fn Bytes::of_string(str : String) -> Bytes {
   FixedArray::make(str.length() * 2, Byte::default())

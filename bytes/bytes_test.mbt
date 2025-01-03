@@ -28,9 +28,7 @@ test "bytes literal" {
 }
 
 test "from_array" {
-  let b = @bytes.from_fixedarray([
-    b'\x41', b'\x00', b'\x42', b'\x00', b'\x43', b'\x00',
-  ])
+  let b = @bytes.of([b'\x41', b'\x00', b'\x42', b'\x00', b'\x43', b'\x00'])
   inspect!(
     b,
     content=
@@ -40,7 +38,7 @@ test "from_array" {
 }
 
 test "from_array literal" {
-  let b = @bytes.from_fixedarray([65, 0, 66, 0, 67, 0])
+  let b = @bytes.of([65, 0, 66, 0, 67, 0])
   inspect!(
     b,
     content=
@@ -50,29 +48,29 @@ test "from_array literal" {
 }
 
 test "from array literal" {
-  let b1 = @bytes.from_fixedarray([
+  let b1 = @bytes.of([
     b'\x41', b'\x00', b'\x42', b'\x00', b'\x43', b'\x00', b'\x44', b'\x00', b'\x45',
     b'\x00', b'\x46', b'\x00', b'\x47', b'\x00', b'\x48', b'\x00', b'\x49', b'\x00',
   ])
-  let b2 = @bytes.from_fixedarray([
+  let b2 = @bytes.of([
     65, 0, 66, 0, 67, 0, 68, 0, 69, 0, 70, 0, 71, 0, 72, 0, 73, 0,
   ])
   assert_eq!(b1, b2)
 }
 
 test "hash" {
-  let b1 = @bytes.from_fixedarray([
+  let b1 = @bytes.of([
     b'\x41', b'\x00', b'\x42', b'\x00', b'\x43', b'\x00', b'\x44', b'\x00', b'\x45',
     b'\x00', b'\x46', b'\x00', b'\x47', b'\x00', b'\x48', b'\x00', b'\x49', b'\x00',
   ])
-  let b2 = @bytes.from_fixedarray([
+  let b2 = @bytes.of([
     b'\x41', b'\x00', b'\x42', b'\x00', b'\x43', b'\x00', b'\x44', b'\x00', b'\x45',
     b'\x00', b'\x46', b'\x00', b'\x47', b'\x00', b'\x48', b'\x00', b'\x4A', b'\x00',
   ])
-  let b3 = @bytes.from_fixedarray([
+  let b3 = @bytes.of([
     b'\x80', b'\x00', b'\x00', b'\x00', b'\x00', b'\x00', b'\x00', b'\x00',
   ])
-  let b4 = @bytes.from_fixedarray([
+  let b4 = @bytes.of([
     b'\x7f', b'\xff', b'\xff', b'\xff', b'\xff', b'\xff', b'\xff', b'\xff',
   ])
   inspect!(b1.hash(), content="273427599")
@@ -85,7 +83,7 @@ test "hash" {
 }
 
 test "to_array" {
-  let b = @bytes.from_fixedarray([b'A', b'B', b'C'])
+  let b = @bytes.of([b'A', b'B', b'C'])
   inspect!(b.to_array(), content="[b'\\x41', b'\\x42', b'\\x43']")
 }
 

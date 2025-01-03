@@ -13,9 +13,6 @@
 // limitations under the License.
 
 ///|
-fn unsafe_to_bytes(bytes : FixedArray[Byte]) -> Bytes = "%identity"
-
-///|
 /// Makes a new Bytes with the given byte array.
 /// 
 /// # Usage
@@ -26,11 +23,7 @@ fn unsafe_to_bytes(bytes : FixedArray[Byte]) -> Bytes = "%identity"
 /// ```
 /// 
 pub fn Bytes::from_array(arr : Array[Byte]) -> Bytes {
-  let rv = FixedArray::make(arr.length(), Byte::default())
-  for i = 0; i < arr.length(); i = i + 1 {
-    rv[i] = arr[i]
-  }
-  unsafe_to_bytes(rv)
+  Bytes::makei(arr.length(), fn(i) { arr[i] })
 }
 
 ///|
@@ -40,9 +33,7 @@ pub fn Bytes::from_fixedarray(arr : FixedArray[Byte], len? : Int) -> Bytes {
     None => arr.length()
     Some(x) => x
   }
-  let bytes = FixedArray::make(len, Byte::default())
-  FixedArray::unsafe_blit(bytes, 0, arr, 0, len)
-  unsafe_to_bytes(bytes)
+  Bytes::makei(len, fn(i) { arr[i] })
 }
 
 ///|
@@ -74,9 +65,8 @@ pub fn Bytes::from_iter(iter : Iter[Byte]) -> Bytes {
 /// assert_eq!(b, b"AB")
 /// ```
 /// TODO: marked as intrinsic, inline if it is constant
-/// @alert deprecated "use Bytes::from_fixedarray instead"
 pub fn Bytes::of(arr : FixedArray[Byte]) -> Bytes {
-  Bytes::from_fixedarray(arr)
+  Bytes::makei(arr.length(), fn(i) { arr[i] })
 }
 
 ///|
