@@ -36,23 +36,22 @@ fn StringBuilder::grow_if_necessary(
   self : StringBuilder,
   required : Int
 ) -> Unit {
-  // TODO: get rid of mut
-  let mut enough_space = self.data.length()
-  if enough_space <= 0 {
-    enough_space = 1
+  let current_len = self.data.length()
+  if required <= current_len {
+    return
   }
+  // current_len is at least 1
+  let mut enough_space = current_len
   // double the enough_space until it larger than required
   while enough_space < required {
     enough_space = enough_space * 2
   }
-  if enough_space != self.data.length() {
-    self.data = FixedArray::make(enough_space, Byte::default())..unsafe_blit(
-      0,
-      self.data,
-      0,
-      self.len,
-    )
-  }
+  self.data = FixedArray::make(enough_space, Byte::default())..unsafe_blit(
+    0,
+    self.data,
+    0,
+    self.len,
+  )
 }
 
 ///|
