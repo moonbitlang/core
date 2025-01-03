@@ -148,6 +148,16 @@ pub fn UInt64::to_string(self : UInt64) -> String {
 }
 
 ///|
+pub fn Int16::to_string(self : Int16) -> String {
+  self.to_int().to_string()
+}
+
+///|
+pub fn UInt16::to_string(self : UInt16) -> String {
+  self.to_int().to_string()
+}
+
+///|
 /// @coverage.skip 
 pub fn op_lt[T : Compare](self_ : T, other : T) -> Bool {
   self_.compare(other).is_neg()

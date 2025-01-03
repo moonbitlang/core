@@ -46,6 +46,16 @@ pub impl Show for Byte with output(self, logger) {
 }
 
 ///|
+pub impl Show for Int16 with output(self, logger) {
+  logger.write_string(self.to_string())
+}
+
+///|
+pub impl Show for UInt16 with output(self, logger) {
+  logger.write_string(self.to_string())
+}
+
+///|
 pub impl Show for Bytes with output(self, logger) {
   fn to_hex_digit(i : Int) -> Char {
     if i < 10 {
