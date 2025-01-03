@@ -37,8 +37,8 @@ impl Double {
   pow(Double, Double) -> Double
   round(Double) -> Double
   signum(Double) -> Double
-  to_be_bytes(Double) -> BytesView
-  to_le_bytes(Double) -> BytesView
+  to_be_bytes(Double) -> Bytes
+  to_le_bytes(Double) -> Bytes
   to_string(Double) -> String
   trunc(Double) -> Double
 }

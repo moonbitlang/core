@@ -11,8 +11,8 @@ let min_value : Int64
 impl Int64 {
   abs(Int64) -> Int64
   from_int(Int) -> Int64
-  to_be_bytes_view(Int64) -> BytesView
-  to_le_bytes_view(Int64) -> BytesView
+  to_be_bytes(Int64) -> Bytes
+  to_le_bytes(Int64) -> Bytes
 }
 
 // Type aliases

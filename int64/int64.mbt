@@ -64,12 +64,12 @@ pub fn abs(self : Int64) -> Int64 {
   }
 }
 
-///|
-pub fn to_be_bytes_view(self : Int64) -> BytesView {
-  self.reinterpret_as_uint64().to_be_bytes_view()
+///| Converts the Int64 to a Bytes in big-endian byte order.
+pub fn to_be_bytes(self : Int64) -> Bytes {
+  self.reinterpret_as_uint64().to_be_bytes()
 }
 
-///|
-pub fn to_le_bytes_view(self : Int64) -> BytesView {
-  self.reinterpret_as_uint64().to_le_bytes_view()
+///| Converts the Int64 to a Bytes in little-endian byte order.
+pub fn to_le_bytes(self : Int64) -> Bytes {
+  self.reinterpret_as_uint64().to_le_bytes()
 }
