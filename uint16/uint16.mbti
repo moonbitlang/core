@@ -1,0 +1,19 @@
+package moonbitlang/core/uint16
+
+// Values
+
+// Types and methods
+impl UInt16 {
+  compare(UInt16, UInt16) -> Int
+  op_add(UInt16, UInt16) -> UInt16
+  op_div(UInt16, UInt16) -> UInt16
+  op_equal(UInt16, UInt16) -> Bool
+  op_mul(UInt16, UInt16) -> UInt16
+  op_sub(UInt16, UInt16) -> UInt16
+}
+impl Hash for UInt16
+
+// Type aliases
+
+// Traits
+
