@@ -609,7 +609,7 @@ test "rev" {
 /// arr.swap(0, 1)
 /// assert_eq!(arr, [2, 1, 3, 4, 5])
 /// ```
-fn swap[T](self : FixedArray[T], i : Int, j : Int) -> Unit {
+pub fn swap[T](self : FixedArray[T], i : Int, j : Int) -> Unit {
   let temp = self[i]
   self[i] = self[j]
   self[j] = temp
