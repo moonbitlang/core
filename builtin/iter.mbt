@@ -779,6 +779,14 @@ pub fn collect[T](self : Iter[T]) -> Array[T] {
 }
 
 ///|
+/// Collects the elements of the iterator into a string.
+pub fn join(self : Iter[String], separator~ : String = "") -> String {
+  let buf = StringBuilder::new()
+  (buf : Logger).write_iter(self, prefix="", suffix="", sep=separator)
+  buf.to_string()
+}
+
+///|
 /// Iter itself is an iterator.
 /// so that it works with array spread operator. e.g, `[..iter]`
 pub fn iter[T](self : Iter[T]) -> Iter[T] {
