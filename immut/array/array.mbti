@@ -7,6 +7,7 @@ alias @moonbitlang/core/quickcheck as @quickcheck
 // Types and methods
 type T
 impl T {
+  concat[A](Self[A], Self[A]) -> Self[A]
   copy[A](Self[A]) -> Self[A]
   each[A](Self[A], (A) -> Unit) -> Unit
   eachi[A](Self[A], (Int, A) -> Unit) -> Unit
