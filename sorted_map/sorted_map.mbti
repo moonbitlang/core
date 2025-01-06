@@ -24,7 +24,7 @@ impl T {
   op_equal[K : Eq, V : Eq](Self[K, V], Self[K, V]) -> Bool
   op_get[K : Compare, V](Self[K, V], K) -> V?
   op_set[K : Compare, V](Self[K, V], K, V) -> Unit
-  range[K : Compare, V](Self[K, V], K, K) -> Array[(K, V)]
+  range[K : Compare, V](Self[K, V], K, K) -> Iter2[K, V]
   remove[K : Compare, V](Self[K, V], K) -> Unit
   size[K, V](Self[K, V]) -> Int
   to_array[K, V](Self[K, V]) -> Array[(K, V)]
