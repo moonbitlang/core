@@ -111,10 +111,6 @@ fn random_test_gen(
 /// - concat: 1 length v0 v1 ... v_{length - 1}
 /// - set: 2 index value
 fn execute_array_test(rs : Array[Int]) -> Unit! {
-  fn check(a : Array[Int], t : T[Int]) -> Unit! {
-    inspect!(t, content="@immut/array.of(\{a})")
-  }
-
   let mut t = T::new()
   let a = []
   let len = rs.length()
@@ -129,7 +125,7 @@ fn execute_array_test(rs : Array[Int]) -> Unit! {
         a.push(rsi)
         t = t.push(rsi)
         i += 1
-        check!(a, t)
+        check_array_eq!(a, t)
       }
       1 => {
         // concat
@@ -139,7 +135,7 @@ fn execute_array_test(rs : Array[Int]) -> Unit! {
         let t1 = T::from_iter(rs[i:i + len].iter())
         t = t.concat(t1)
         i += len
-        check!(a, t)
+        check_array_eq!(a, t)
       }
       2 => {
         // set
@@ -148,7 +144,7 @@ fn execute_array_test(rs : Array[Int]) -> Unit! {
         i += 2
         a[idx] = v
         t = t.set(idx, v)
-        check!(a, t)
+        check_array_eq!(a, t)
       }
       _ => abort("Invalid op")
     }
@@ -179,4 +175,17 @@ fn repeat_up_to_32(s : String) -> Bytes {
     j = (j + 1) % s_len
   }
   Bytes::from_fixedarray(a)
+}
+
+///|
+/// Use this function to check if the array and the @immut/array are equal.
+/// If we `inspect` the array, it will raise an error if the arrays are too long.
+/// I guess that's because it exceeds the heap limit of the VM.
+fn check_array_eq(a : Array[Int], t : T[Int]) -> Unit! {
+  assert_eq!(a.length(), t.size)
+  let mut i = 0
+  for tt in t.iter() {
+    assert_eq!(tt, a[i])
+    i += 1
+  }
 }

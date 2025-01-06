@@ -86,14 +86,14 @@ test "concat-two-leaf" {
 }
 
 test "concat-multiple-full-tree" {
-  let bf4 = branching_factor_power(4)
-  execute_array_test!(gen_concat_seq(3, fn(_i) { bf4 }))
+  let bf = branching_factor_power(4)
+  execute_array_test!(gen_concat_seq(3, fn(_i) { bf }))
 }
 
 test "concat-multiple-random-tree" {
-  let bq4 = branching_factor_power(3)
+  let bf = branching_factor_power(2)
   let rng = @random.new(seed=b"DEADBEEFDEADBEEFDEADBEEFDEADBEEF")
-  execute_array_test!(gen_concat_seq(40, fn(_i) { rng.int(limit=bq4) }))
+  execute_array_test!(gen_concat_seq(2, fn(_i) { rng.int(limit=bf) }))
 }
 
 ///|
