@@ -45,3 +45,45 @@ pub fn to_le_bytes(self : UInt64) -> Bytes {
     (self >> 56).to_byte(),
   ]
 }
+
+test "to_be_bytes" {
+  inspect!(
+    to_be_bytes(max_value),
+    content=
+      #|b"\xff\xff\xff\xff\xff\xff\xff\xff"
+    ,
+  )
+  inspect!(
+    to_be_bytes(min_value),
+    content=
+      #|b"\x00\x00\x00\x00\x00\x00\x00\x00"
+    ,
+  )
+  inspect!(
+    to_be_bytes(0x123456789ABCDEF0UL),
+    content=
+      #|b"\x12\x34\x56\x78\x9a\xbc\xde\xf0"
+    ,
+  )
+}
+
+test "to_le_bytes" {
+  inspect!(
+    to_le_bytes(max_value),
+    content=
+      #|b"\xff\xff\xff\xff\xff\xff\xff\xff"
+    ,
+  )
+  inspect!(
+    to_le_bytes(min_value),
+    content=
+      #|b"\x00\x00\x00\x00\x00\x00\x00\x00"
+    ,
+  )
+  inspect!(
+    to_le_bytes(0x123456789ABCDEF0UL),
+    content=
+      #|b"\xf0\xde\xbc\x9a\x78\x56\x34\x12"
+    ,
+  )
+}
