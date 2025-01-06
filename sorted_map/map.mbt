@@ -242,14 +242,39 @@ pub impl[K : @quickcheck.Arbitrary + Compare, V : @quickcheck.Arbitrary] @quickc
 }
 
 ///|Returns a new array of key-value pairs that are within the specified range [low, high).
-pub fn range[K : Compare, V](
-  self : T[K, V],
+pub fn range[K : Compare, V](self : T[K, V], low : K, high : K) -> Iter2[K, V] {
+  range_aux(self.root, low, high)
+}
+
+///|Returns a new array of key-value pairs that are within the specified range [low, high].
+fn range_aux[K : Compare, V](
+  node : Node[K, V]?,
   low : K,
   high : K
-) -> Array[(K, V)] {
-  let result = []
-  self.each(fn(k, v) { if k >= low && k <= high { result.push((k, v)) } })
-  result
+) -> Iter2[K, V] {
+  Iter2::new(fn(yield_) {
+    match node {
+      None => IterContinue
+      Some(node) => {
+        if node.key > low {
+          if range_aux(node.left, low, high).run(yield_) == IterEnd {
+            return IterEnd
+          }
+        }
+        if node.key >= low && node.key <= high {
+          if yield_(node.key, node.value) == IterEnd {
+            return IterEnd
+          }
+        }
+        if node.key < high {
+          if range_aux(node.right, low, high).run(yield_) == IterEnd {
+            return IterEnd
+          }
+        }
+        IterContinue
+      }
+    }
+  })
 }
 
 // AVL tree operations
