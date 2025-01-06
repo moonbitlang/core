@@ -13,6 +13,9 @@
 // limitations under the License.
 
 ///|
+fn Double::to_unchecked_int64(self : Double) -> Int64 = "%f64_to_i64"
+
+///|
 /// Converts a double-precision floating-point number to a 64-bit integer.
 /// Handles special cases including NaN and numbers outside the valid Int range.
 ///
@@ -40,4 +43,15 @@
 ///   inspect!((-1.0 / 0.0).to_int64(), content="-9223372036854775808") // -Infinity
 /// }
 /// ```
-pub fn Double::to_int64(self : Double) -> Int64 = "%f64_to_i64_saturate"
+/// @intrinsic %f64.trunc_sat_i64
+pub fn Double::to_int64(self : Double) -> Int64 {
+  if self != self {
+    0
+  } else if self >= 9223372036854775807 {
+    9223372036854775807L
+  } else if self <= -9223372036854775808 {
+    -9223372036854775808L
+  } else {
+    self.to_unchecked_int64()
+  }
+}

@@ -40,6 +40,7 @@ fn Float::to_unchecked_int(self : Float) -> Int = "%f32.to_i32"
 ///   inspect!(@float.neg_infinity.to_int(), content="-2147483648")
 /// }
 /// ```
+/// @intrinsic %f32.trunc_sat_i32
 pub fn Float::to_int(self : Float) -> Int {
   if self != self {
     0

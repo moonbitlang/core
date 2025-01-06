@@ -40,6 +40,7 @@
 ///   inspect!((-1.0 / 0.0).to_int(), content="-2147483648") // -Infinity
 /// }
 /// ```
+/// @intrinsic %f64.trunc_sat_i32
 pub fn Double::to_int(self : Double) -> Int {
   if self != self {
     0
