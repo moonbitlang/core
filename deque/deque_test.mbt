@@ -797,6 +797,46 @@ test "panic deque truncate" {
   dq.truncate(-1)
 }
 
+test "deque retain" {
+  let is_even = fn(x) { x % 2 == 0 }
+
+  // Empty deque
+  let dq : @deque.T[Int] = @deque.new()
+  dq.retain(is_even)
+  inspect!(dq, content="@deque.of([])")
+
+  // Non-empty deque
+  let dq = @deque.of([1, 2, 3, 4, 5])
+  dq.retain(is_even)
+  inspect!(dq.as_views(), content="([2, 4], [])")
+
+  // Test split case (head_len < len)
+  fn dq!() {
+    // Push and pop to create a wrap-around situation
+    let dq = @deque.of([1, 2, 3, 4, 5, 6])
+      ..unsafe_pop_front()
+      ..unsafe_pop_front()
+      ..unsafe_pop_front()
+      ..push_back(7)
+      ..push_back(8)
+    // Current layout: [7, 8, X, 4, 5, 6]
+    inspect!(dq.as_views(), content="([4, 5, 6], [7, 8])")
+    dq
+  }
+
+  inspect!(dq!()..retain(is_even).as_views(), content="([4, 6, 8], [])")
+  inspect!(
+    dq!()..retain(fn(x) { x >= 5 }).as_views(),
+    content="([5, 6, 7], [8])",
+  )
+  inspect!(dq!()..retain(fn(x) { x >= 7 }).as_views(), content="([7, 8], [])")
+  inspect!(dq!()..retain(fn(_) { false }).as_views(), content="([], [])")
+  inspect!(
+    dq!()..retain(fn(_) { true }).as_views(),
+    content="([4, 5, 6], [7, 8])",
+  )
+}
+
 test "deque filter_map_inplace" {
   let inc_if = fn(pred) { fn(x) { if pred(x) { Some(x + 1) } else { None } } }
   let is_even = fn(x) { x % 2 == 0 }

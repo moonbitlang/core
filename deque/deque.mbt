@@ -776,6 +776,59 @@ pub fn filter_map_inplace[A](self : T[A], f : (A) -> A?) -> Unit {
 }
 
 ///|
+/// Filters elements in-place by retaining only the elements that satisfy the
+/// given predicate. Modifies the deque to keep only the elements for which the
+/// predicate function returns `true`.
+///
+/// Parameters:
+///
+/// * `self` : The deque to be filtered.
+/// * `predicate` : A function that takes an element and returns `true` if the
+/// element should be kept, `false` if it should be removed.
+///
+/// Example:
+///
+/// ```moonbit
+/// test "retain" {
+///   let dq = @deque.of([1, 2, 3, 4, 5])
+///   dq.retain(fn(x) { x % 2 == 0 })
+///   inspect!(dq, content="@deque.of([2, 4])")
+/// }
+/// ```
+pub fn retain[A](self : T[A], f : (A) -> Bool) -> Unit {
+  guard not(self.is_empty()) else { return }
+  let { head, buf, .. } = self
+  let cap = buf.length()
+  let head_len = cap - head
+  let mut idx = head
+  let (front, back) = self.as_views()
+  for cur in front {
+    if f(cur) {
+      buf[idx] = cur
+      idx += 1
+    }
+  }
+  if back.length() == 0 {
+    self.truncate(idx - head)
+    return
+  }
+  for cur in back {
+    if idx == cap {
+      idx = 0
+    }
+    if f(cur) {
+      buf[idx] = cur
+      idx += 1
+    }
+  }
+  if idx <= self.len - head_len {
+    self.truncate(idx + head_len)
+  } else {
+    self.truncate(idx - head)
+  }
+}
+
+///|
 pub fn iter[A](self : T[A]) -> Iter[A] {
   Iter::new(fn(yield_) {
     guard not(self.is_empty()) else { IterContinue }
