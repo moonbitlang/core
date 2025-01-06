@@ -203,3 +203,13 @@ pub fn is_close(
     ) ||
     diff <= absolute_tolerance
 }
+
+///| Converts the Double to a Bytes in big-endian byte order.
+pub fn to_be_bytes(self : Double) -> Bytes {
+  self.reinterpret_as_uint64().to_be_bytes()
+}
+
+///| Converts the Double to a Bytes in little-endian byte order.
+pub fn to_le_bytes(self : Double) -> Bytes {
+  self.reinterpret_as_uint64().to_le_bytes()
+}

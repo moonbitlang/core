@@ -502,6 +502,21 @@ pub fn rev_eachi[A](self : T[A], f : (Int, A) -> Unit) -> Unit {
 /// assert_eq!(dv.length(), 0)
 /// ```
 pub fn clear[A](self : T[A]) -> Unit {
+  let { head, buf, len, .. } = self
+  let cap = buf.length()
+  let head_len = cap - head
+  if head_len >= len {
+    for i in head..<(head + len) {
+      set_null(buf, i)
+    }
+  } else {
+    for i in head..<cap {
+      set_null(buf, i)
+    }
+    for i in 0..<(len - head_len) {
+      set_null(buf, i)
+    }
+  }
   self.len = 0
   self.head = 0
   self.tail = 0
@@ -668,14 +683,21 @@ pub fn shrink_to_fit[A](self : T[A]) -> Unit {
 /// }
 /// ```
 pub fn truncate[A](self : T[A], len : Int) -> Unit {
-  let { head, buf, .. } = self
   guard len < self.len else { return }
+  guard len >= 0
+  if len == 0 {
+    self.clear()
+    return
+  }
+  let { head, buf, .. } = self
   let (front, back) = self.as_views()
   if front.length() < len {
     // `len` is wrapping around the end of the buffer.
     // Thus, we need to drop the latter part of the back view.
     self.len = len
-    for i in (len - front.length())..<back.length() {
+    let start = len - front.length()
+    self.tail = start - 1
+    for i in start..<back.length() {
       set_null(buf, i)
     }
   } else {
@@ -683,12 +705,126 @@ pub fn truncate[A](self : T[A], len : Int) -> Unit {
     // - The latter part of the front view;
     // - The entire back view.
     self.len = len
-    for i in (head + len)..<(head + front.length()) {
+    let start = head + len
+    self.tail = start - 1
+    for i in start..<self.buf.length() {
       set_null(buf, i)
     }
     for i in 0..<back.length() {
       set_null(buf, i)
     }
+  }
+}
+
+///|
+/// Filters and maps elements in-place using a provided function. Modifies the
+/// deque to retain only elements for which the provided function returns `Some`,
+/// and updates those elements with the values inside the `Some` variant.
+///
+/// Parameters:
+///
+/// * `self` : The deque to be filtered and mapped.
+/// * `f` : A function that takes an element and returns either `Some` with a new
+/// value to replace the element, or `None` to remove the element.
+///
+/// Example:
+///
+/// ```moonbit
+/// test "filter_map_inplace" {
+///   let dq = @deque.of([1, 2, 3, 4, 5])
+///   dq.filter_map_inplace(fn(x) { if x % 2 == 0 { Some(x * 2) } else { None } })
+///   inspect!(dq, content="@deque.of([4, 8])")
+/// }
+/// ```
+pub fn filter_map_inplace[A](self : T[A], f : (A) -> A?) -> Unit {
+  guard not(self.is_empty()) else { return }
+  let { head, buf, .. } = self
+  let cap = buf.length()
+  let head_len = cap - head
+  let mut idx = head
+  let (front, back) = self.as_views()
+  for cur in front {
+    match f(cur) {
+      Some(v) => {
+        buf[idx] = v
+        idx += 1
+      }
+      None => ()
+    }
+  }
+  if back.length() == 0 {
+    self.truncate(idx - head)
+    return
+  }
+  for cur in back {
+    if idx == cap {
+      idx = 0
+    }
+    match f(cur) {
+      Some(v) => {
+        buf[idx] = v
+        idx += 1
+      }
+      None => ()
+    }
+  }
+  if idx <= self.len - head_len {
+    self.truncate(idx + head_len)
+  } else {
+    self.truncate(idx - head)
+  }
+}
+
+///|
+/// Filters elements in-place by retaining only the elements that satisfy the
+/// given predicate. Modifies the deque to keep only the elements for which the
+/// predicate function returns `true`.
+///
+/// Parameters:
+///
+/// * `self` : The deque to be filtered.
+/// * `predicate` : A function that takes an element and returns `true` if the
+/// element should be kept, `false` if it should be removed.
+///
+/// Example:
+///
+/// ```moonbit
+/// test "retain" {
+///   let dq = @deque.of([1, 2, 3, 4, 5])
+///   dq.retain(fn(x) { x % 2 == 0 })
+///   inspect!(dq, content="@deque.of([2, 4])")
+/// }
+/// ```
+pub fn retain[A](self : T[A], f : (A) -> Bool) -> Unit {
+  guard not(self.is_empty()) else { return }
+  let { head, buf, .. } = self
+  let cap = buf.length()
+  let head_len = cap - head
+  let mut idx = head
+  let (front, back) = self.as_views()
+  for cur in front {
+    if f(cur) {
+      buf[idx] = cur
+      idx += 1
+    }
+  }
+  if back.length() == 0 {
+    self.truncate(idx - head)
+    return
+  }
+  for cur in back {
+    if idx == cap {
+      idx = 0
+    }
+    if f(cur) {
+      buf[idx] = cur
+      idx += 1
+    }
+  }
+  if idx <= self.len - head_len {
+    self.truncate(idx + head_len)
+  } else {
+    self.truncate(idx - head)
   }
 }
 

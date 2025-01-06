@@ -13,6 +13,7 @@ impl T {
   copy[A](Self[A]) -> Self[A]
   each[A](Self[A], (A) -> Unit) -> Unit
   eachi[A](Self[A], (Int, A) -> Unit) -> Unit
+  filter_map_inplace[A](Self[A], (A) -> A?) -> Unit
   from_array[A](Array[A]) -> Self[A]
   from_iter[A](Iter[A]) -> Self[A]
   front[A](Self[A]) -> A?
@@ -34,6 +35,7 @@ impl T {
   push_back[A](Self[A], A) -> Unit
   push_front[A](Self[A], A) -> Unit
   reserve_capacity[A](Self[A], Int) -> Unit
+  retain[A](Self[A], (A) -> Bool) -> Unit
   rev_each[A](Self[A], (A) -> Unit) -> Unit
   rev_eachi[A](Self[A], (Int, A) -> Unit) -> Unit
   rev_iter[A](Self[A]) -> Iter[A]

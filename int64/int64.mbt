@@ -19,15 +19,57 @@ pub let max_value = 9223372036854775807L
 pub let min_value = -9223372036854775808L
 
 ///|
+/// Converts a 32-bit integer (`Int`) to a 64-bit integer (`Int64`).
+///
+/// Parameters:
+///
+/// * `i` : The integer value to be converted.
+///
+/// Returns the converted 64-bit integer (`Int64`) value.
+///
+/// Example:
+///
+/// ```moonbit
+/// test "Int64::from_int" {
+///   inspect!(@int64.from_int(42), content="42")
+/// }
+/// ```
 pub fn Int64::from_int(i : Int) -> Int64 {
   i.to_int64()
 }
 
 ///|
+/// Computes the absolute value of a 64-bit integer.
+///
+/// Parameters:
+///
+/// * `self` : The 64-bit integer whose absolute value is to be computed.
+///
+/// Returns the absolute value of the input integer.
+///
+/// Example:
+///
+/// ```moonbit
+/// test "abs" {
+///   inspect!(42L.abs(), content="42")
+///   inspect!((-42L).abs(), content="42")
+///   inspect!(0L.abs(), content="0")
+/// }
+/// ```
 pub fn abs(self : Int64) -> Int64 {
   if self < 0L {
     -self
   } else {
     self
   }
+}
+
+///| Converts the Int64 to a Bytes in big-endian byte order.
+pub fn to_be_bytes(self : Int64) -> Bytes {
+  self.reinterpret_as_uint64().to_be_bytes()
+}
+
+///| Converts the Int64 to a Bytes in little-endian byte order.
+pub fn to_le_bytes(self : Int64) -> Bytes {
+  self.reinterpret_as_uint64().to_le_bytes()
 }

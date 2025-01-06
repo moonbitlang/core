@@ -56,16 +56,17 @@ pub impl Hash for Int64 with hash_combine(self, hasher) {
 
 ///|
 fn slow_hash(self : Int64) -> Int {
-  let b = Bytes::new(8)
   let self = self.reinterpret_as_uint64()
-  b[7] = (self >> 56).to_byte()
-  b[6] = ((self >> 48) & 0xFF).to_byte()
-  b[5] = ((self >> 40) & 0xFF).to_byte()
-  b[4] = ((self >> 32) & 0xFF).to_byte()
-  b[3] = ((self >> 24) & 0xFF).to_byte()
-  b[2] = ((self >> 16) & 0xFF).to_byte()
-  b[1] = ((self >> 8) & 0xFF).to_byte()
-  b[0] = (self & 0xFF).to_byte()
+  let b : Bytes = [
+    (self & 0xFF).to_byte(),
+    ((self >> 8) & 0xFF).to_byte(),
+    ((self >> 16) & 0xFF).to_byte(),
+    ((self >> 24) & 0xFF).to_byte(),
+    ((self >> 32) & 0xFF).to_byte(),
+    ((self >> 40) & 0xFF).to_byte(),
+    ((self >> 48) & 0xFF).to_byte(),
+    ((self >> 56) & 0xFF).to_byte(),
+  ]
   b.hash()
 }
 

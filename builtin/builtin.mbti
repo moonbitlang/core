@@ -158,6 +158,8 @@ impl BigInt {
   from_int64(Int64) -> Self
   from_octets(Bytes, signum~ : Int = ..) -> Self
   from_string(String) -> Self
+  from_uint(UInt) -> Self
+  from_uint64(UInt64) -> Self
   is_zero(Self) -> Bool
   land(Self, Self) -> Self
   lor(Self, Self) -> Self
@@ -176,9 +178,13 @@ impl BigInt {
   shl(Self, Int) -> Self //deprecated
   shr(Self, Int) -> Self //deprecated
   to_hex(Self, uppercase~ : Bool = ..) -> String
+  to_int(Self) -> Int
+  to_int64(Self) -> Int64
   to_json(Self) -> Json
   to_octets(Self, length? : Int) -> Bytes
   to_string(Self) -> String
+  to_uint(Self) -> UInt
+  to_uint64(Self) -> UInt64
 }
 impl Show for BigInt
 
@@ -188,6 +194,18 @@ impl BytesView {
   length(Self) -> Int
   op_as_view(Self, start~ : Int = .., end? : Int) -> Self
   op_get(Self, Int) -> Byte
+  to_double_be(Self) -> Double
+  to_double_le(Self) -> Double
+  to_float_be(Self) -> Float
+  to_float_le(Self) -> Float
+  to_int64_be(Self) -> Int64
+  to_int64_le(Self) -> Int64
+  to_int_be(Self) -> Int
+  to_int_le(Self) -> Int
+  to_uint64_be(Self) -> UInt64
+  to_uint64_le(Self) -> UInt64
+  to_uint_be(Self) -> UInt
+  to_uint_le(Self) -> UInt
   unsafe_get(Self, Int) -> Byte
 }
 impl Show for BytesView
@@ -689,6 +707,7 @@ impl Bytes {
   copy(Bytes) -> Bytes
   length(Bytes) -> Int
   make(Int, Byte) -> Bytes
+  makei(Int, (Int) -> Byte) -> Bytes
   new(Int) -> Bytes
   of_string(String) -> Bytes
   op_as_view(Bytes, start~ : Int = .., end? : Int) -> BytesView

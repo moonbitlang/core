@@ -85,20 +85,36 @@ pub fn BigInt::from_int(n : Int) -> BigInt {
 }
 
 ///|
+/// Convert an UInt to a BigInt.
+pub fn BigInt::from_uint(n : UInt) -> BigInt {
+  BigInt::from_uint64(n.to_uint64())
+}
+
+///|
 /// Convert an Int64 to a BigInt.
 pub fn BigInt::from_int64(n : Int64) -> BigInt {
-  if n == 0L {
+  if n < 0L {
+    -BigInt::from_uint64((-n).reinterpret_as_uint64())
+  } else {
+    BigInt::from_uint64(n.reinterpret_as_uint64())
+  }
+}
+
+///| 
+/// Convert an UInt64 to a BigInt.
+pub fn BigInt::from_uint64(n : UInt64) -> BigInt {
+  if n == 0UL {
     return { limbs: FixedArray::make(1, 0), sign: Positive, len: 1 }
   }
   let limbs = FixedArray::make(64 / radix_bit_len, 0U)
-  let mut m = (if n < 0L { -n } else { n }).reinterpret_as_uint64()
+  let mut m = n
   let mut i = 0
   while m > 0 {
     limbs[i] = (m % radix).to_uint()
     m /= radix
     i += 1
   }
-  { limbs, sign: if n < 0L { Negative } else { Positive }, len: i }
+  { limbs, sign: Positive, len: i }
 }
 
 // Arithmetic Operations
@@ -917,13 +933,13 @@ pub fn BigInt::to_octets(self : BigInt, length? : Int) -> Bytes {
   let tail_len = self.len - 1
   let len = (head_bits + 7) / 8 + tail_len * (radix_bit_len / 8)
   let len = max(length, len)
-  let result = Bytes::new(len)
+  let result = FixedArray::make(len, Byte::default())
   for i = 0; i < len && i / 4 < self.len; i = i + 1 {
     result[len - 1 - i] = ((self.limbs[i / 4] >> (i % 4 * 8)) & 0xffU)
       .reinterpret_as_int()
       .to_byte()
   }
-  result
+  result.unsafe_to_bytes()
 }
 
 ///|
@@ -1185,4 +1201,106 @@ pub fn lxor(self : BigInt, other : BigInt) -> BigInt {
       other.len
     },
   }
+}
+
+///|
+/// Converts a `BigInt` to a 32-bit signed integer (`Int`).
+///
+/// Parameters:
+///
+/// * `self` : The `BigInt` value to be converted.
+///
+/// Returns a 32-bit signed integer representing the lower 32 bits of the input
+/// `BigInt`.
+///
+/// Example:
+///
+/// ```moonbit
+/// test "BigInt::to_int" {
+///   let big = 2147483648N // 2^31
+///   inspect!(big.to_int(), content="-2147483648") // Overflow to Int.min_value
+/// }
+/// ```
+pub fn to_int(self : BigInt) -> Int {
+  self.to_uint().reinterpret_as_int()
+}
+
+///|
+/// Converts a `BigInt` to an unsigned 32-bit integer (`UInt`).
+///
+/// Parameters:
+///
+/// * `self` : The `BigInt` value to be converted.
+///
+/// Returns a `UInt` value representing the lower 32 bits of the input `BigInt`.
+///
+/// Example:
+///
+/// ```moonbit
+/// test "BigInt::to_uint" {
+///   let n = 42N
+///   inspect!(n.to_uint(), content="42")
+///   let neg = -1N
+///   inspect!(neg.to_uint(), content="4294967295") // 2^32 - 1
+/// }
+/// ```
+pub fn to_uint(self : BigInt) -> UInt {
+  let value = if self.sign == Negative { (1N << 32) + self } else { self }
+  value.limbs[0]
+}
+
+///|
+/// Converts a `BigInt` to a signed 64-bit integer (`Int64`).
+///
+/// Parameters:
+///
+/// * `value` : The `BigInt` value to be converted.
+///
+/// Returns a 64-bit signed integer (`Int64`) representing the lower 64 bits of
+/// the input `BigInt`.
+///
+/// Example:
+///
+/// ```moonbit
+/// test "BigInt::to_int64" {
+///   let big = 9223372036854775807N // max value of Int64
+///   inspect!(big.to_int64(), content="9223372036854775807")
+///   let bigger = big + 1
+///   inspect!(bigger.to_int64(), content="-9223372036854775808") // Overflow to Int64.min_value
+/// }
+/// ```
+pub fn to_int64(self : BigInt) -> Int64 {
+  self.to_uint64().reinterpret_as_int64()
+}
+
+///|
+/// Converts a `BigInt` to an unsigned 64-bit integer (`UInt64`).
+///
+/// Parameters:
+///
+/// * `self` : The `BigInt` value to be converted.
+///
+/// Returns a `UInt64` value representing the lower 64 bits of the input
+/// `BigInt`.
+///
+/// Example:
+///
+/// ```moonbit
+/// test "BigInt::to_uint64" {
+///   let n = 12345678901234567890N
+///   inspect!(n.to_uint64(), content="12345678901234567890")
+///   let neg = -1N
+///   inspect!(neg.to_uint64(), content="18446744073709551615") // 2^64 - 1
+/// }
+/// ```
+pub fn to_uint64(self : BigInt) -> UInt64 {
+  let value = if self.sign == Negative { (1N << 64) + self } else { self }
+  let len = 64 / radix_bit_len
+  let len = if value.len < len { value.len } else { len }
+  let mut result = 0UL
+  for i = len - 1; i >= 0; i = i - 1 {
+    result = result << radix_bit_len
+    result = result | (value.limbs[i].to_uint64() & radix_mask)
+  }
+  result
 }

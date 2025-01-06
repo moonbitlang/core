@@ -123,3 +123,83 @@ pub fn iter(self : BytesView) -> Iter[Byte] {
     }
   })
 }
+
+///| Converts the 4 bytes long BytesView to a UInt in big-endian byte order.
+pub fn to_uint_be(self : BytesView) -> UInt {
+  (self[0].to_uint() << 24) +
+  (self[1].to_uint() << 16) +
+  (self[2].to_uint() << 8) +
+  self[3].to_uint()
+}
+
+///| Converts the 4 bytes long BytesView to a UInt in little-endian byte order.
+pub fn to_uint_le(self : BytesView) -> UInt {
+  self[0].to_uint() +
+  (self[1].to_uint() << 8) +
+  (self[2].to_uint() << 16) +
+  (self[3].to_uint() << 24)
+}
+
+///| Converts the 8 bytes long BytesView to a UInt64 in big-endian byte order.
+pub fn to_uint64_be(self : BytesView) -> UInt64 {
+  (self[0].to_uint().to_uint64() << 56) +
+  (self[1].to_uint().to_uint64() << 48) +
+  (self[2].to_uint().to_uint64() << 40) +
+  (self[3].to_uint().to_uint64() << 32) +
+  (self[4].to_uint().to_uint64() << 24) +
+  (self[5].to_uint().to_uint64() << 16) +
+  (self[6].to_uint().to_uint64() << 8) +
+  self[7].to_uint().to_uint64()
+}
+
+///| Converts the 8 bytes long BytesView to a UInt64 in little-endian byte order.
+pub fn to_uint64_le(self : BytesView) -> UInt64 {
+  self[0].to_uint().to_uint64() +
+  (self[1].to_uint().to_uint64() << 8) +
+  (self[2].to_uint().to_uint64() << 16) +
+  (self[3].to_uint().to_uint64() << 24) +
+  (self[4].to_uint().to_uint64() << 32) +
+  (self[5].to_uint().to_uint64() << 40) +
+  (self[6].to_uint().to_uint64() << 48) +
+  (self[7].to_uint().to_uint64() << 56)
+}
+
+///| Converts the 4 bytes long BytesView to a Int in big-endian byte order.
+pub fn to_int_be(self : BytesView) -> Int {
+  self.to_uint_be().reinterpret_as_int()
+}
+
+///| Converts the 4 bytes long BytesView to a Int in little-endian byte order.
+pub fn to_int_le(self : BytesView) -> Int {
+  self.to_uint_le().reinterpret_as_int()
+}
+
+///| Converts the 8 bytes long BytesView to a Int64 in big-endian byte order.
+pub fn to_int64_be(self : BytesView) -> Int64 {
+  self.to_uint64_be().reinterpret_as_int64()
+}
+
+///| Converts the 8 bytes long BytesView to a Int64 in little-endian byte order.
+pub fn to_int64_le(self : BytesView) -> Int64 {
+  self.to_uint64_le().reinterpret_as_int64()
+}
+
+///| Converts the 4 bytes long BytesView to a Float in big-endian byte order.
+pub fn to_float_be(self : BytesView) -> Float {
+  self.to_uint_be().reinterpret_as_float()
+}
+
+///| Converts the 4 bytes long BytesView to a Float in little-endian byte order.
+pub fn to_float_le(self : BytesView) -> Float {
+  self.to_uint_le().reinterpret_as_float()
+}
+
+///| Converts the 8 bytes long BytesView to a Double in big-endian byte order.
+pub fn to_double_be(self : BytesView) -> Double {
+  self.to_uint64_be().reinterpret_as_double()
+}
+
+///| Converts the 8 bytes long BytesView to a Double in little-endian byte order.
+pub fn to_double_le(self : BytesView) -> Double {
+  self.to_uint64_le().reinterpret_as_double()
+}

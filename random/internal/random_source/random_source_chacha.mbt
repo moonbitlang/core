@@ -67,7 +67,7 @@ pub fn State::next(self : State) -> (UInt64, Bool) {
 }
 
 ///|
-fn bytesToUInt64(b : Bytes) -> UInt64 {
+fn bytesToUInt64(b : FixedArray[Byte]) -> UInt64 {
   let mut result = 0UL
   for i = 0; i < 8; i = i + 1 {
     result = result | (b[i].to_int64().reinterpret_as_uint64() << (i * 8))
@@ -76,7 +76,7 @@ fn bytesToUInt64(b : Bytes) -> UInt64 {
 }
 
 test "bytesToUInt64" {
-  let bytes = Bytes::new(8)
+  let bytes = FixedArray::make(8, Byte::default())
   for i = 0; i < 2; i = i + 1 {
     bytes[i] = i.to_byte()
   }
@@ -86,10 +86,10 @@ test "bytesToUInt64" {
 ///|
 /// [seed] must be 32 bytes long.
 fn State::init(self : State, seed : Bytes) -> Unit {
-  let seed0 = Bytes::new(8)
-  let seed1 = Bytes::new(8)
-  let seed2 = Bytes::new(8)
-  let seed3 = Bytes::new(8)
+  let seed0 = FixedArray::make(8, Byte::default())
+  let seed1 = FixedArray::make(8, Byte::default())
+  let seed2 = FixedArray::make(8, Byte::default())
+  let seed3 = FixedArray::make(8, Byte::default())
   for i = 0; i < 8; i = i + 1 {
     seed0[i] = seed[i]
     seed1[i] = seed[8 + i]

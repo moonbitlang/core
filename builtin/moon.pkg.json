@@ -26,6 +26,11 @@
     "panic_nonjs_test.mbt": ["wasm", "wasm-gc"],
     "array_nonjs_test.mbt": ["not", "js"],
     "stringbuilder_buffer.mbt": ["not", "js"],
-    "stringbuilder_concat.mbt": ["js"]
+    "stringbuilder_concat.mbt": ["js"],
+    "double_to_int64_js.mbt": ["js"],
+    "double_to_int64_native.mbt": ["native"],
+    "double_to_int64_wasm.mbt": ["wasm", "wasm-gc"],
+    "double_to_int.mbt": ["not", "wasm", "wasm-gc"],
+    "double_to_int_wasm.mbt": ["wasm", "wasm-gc"]
   }
 }
