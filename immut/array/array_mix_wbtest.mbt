@@ -12,21 +12,47 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-test "DEADBEEF-2" {
-  let rng = @random.new(seed=b"DEADBEEFDEADBEEFDEADBEEFDEADBEEF")
-  let rs = random_test_gen(2, rng)
-  println(rs)
-  random_test!(rs)
+/// The naming of test follows the format
+///   random seed - number of operations - maximum level of the tree
+/// If the given random seed is shorter than 32, it will be repeated
+/// up to 32 chars.
+
+test "DEADBEEF-10-4" {
+  run_test!("DEADBEEF", 10, 4)
+}
+
+test "LIVEBEEF-50-3" {
+  run_test!("LIVEBEEF", 50, 3)
+}
+
+test "HAPPYDOG-1000-2" {
+  run_test!("HAPPYDOG", 200, 2)
 }
 
 ///|
-fn random_test_gen(times : Int, rng : @random.Rand) -> Array[Int] {
+fn run_test(seed : String, rep : Int, max_lvl : Int) -> Unit! {
+  let seed = repeat_up_to_32(seed)
+  let rng = @random.new(seed~)
+  let rs = random_test_gen(rng, rep, max_lvl)
+  execute_array_test!(rs)
+}
+
+///|
+/// Generate a random test sequence for the array,
+/// following the format described in the `execute_array_test` function.
+/// 
+/// Inputs:
+/// - `rng`: a random number generator
+/// - `times`: the number of operations to be generated
+/// - `max_lvl`: the maximum level of the tree
+fn random_test_gen(
+  rng : @random.Rand,
+  times : Int,
+  max_lvl : Int
+) -> Array[Int] {
   // Hyperparameters
   let op_count = 3
-  let max_len = branching_factor * branching_factor
-  // *
-  // branching_factor *
-  // branching_factor
+  let max_len = branching_factor_power(max_lvl)
   let max_val = 2025
 
   // Start constructing the array
@@ -44,7 +70,6 @@ fn random_test_gen(times : Int, rng : @random.Rand) -> Array[Int] {
       }
       1 => {
         // concat
-
         ret.push(op)
         let len = rng.int(limit=max_len)
         ret.push(len)
@@ -72,7 +97,20 @@ fn random_test_gen(times : Int, rng : @random.Rand) -> Array[Int] {
 }
 
 ///|
-fn random_test(rs : Array[Int]) -> Unit! {
+/// This function runs a series of operations on an array and checks
+/// if the result matches the expected array.
+/// 
+/// Currently, the operations are:
+/// 0. push_end
+/// 1. concat
+/// 2. set
+/// 
+/// The `rs` array is a sequence of operations to be executed.
+/// For each operation, the following value sequence are expected:
+/// - push_end: 0 value
+/// - concat: 1 length v0 v1 ... v_{length - 1}
+/// - set: 2 index value
+fn execute_array_test(rs : Array[Int]) -> Unit! {
   fn check(a : Array[Int], t : T[Int]) -> Unit! {
     inspect!(t, content="@immut/array.of(\{a})")
   }
@@ -87,8 +125,9 @@ fn random_test(rs : Array[Int]) -> Unit! {
     match op {
       0 => {
         // push_end
-        a.push(rs[i])
-        t = t.push(rs[i])
+        let rsi = rs[i]
+        a.push(rsi)
+        t = t.push(rsi)
         i += 1
         check!(a, t)
       }
@@ -97,7 +136,8 @@ fn random_test(rs : Array[Int]) -> Unit! {
         let len = rs[i]
         i += 1
         rs.blit_to(a, len~, src_offset=i, dst_offset=a.length())
-        t = t.concat(T::from_iter(rs[i:i + len].iter()))
+        let t1 = T::from_iter(rs[i:i + len].iter())
+        t = t.concat(t1)
         i += len
         check!(a, t)
       }
@@ -106,11 +146,37 @@ fn random_test(rs : Array[Int]) -> Unit! {
         let idx = rs[i]
         let v = rs[i + 1]
         i += 2
-        rs[idx] = v
+        a[idx] = v
         t = t.set(idx, v)
         check!(a, t)
       }
       _ => abort("Invalid op")
     }
   }
+}
+
+///|
+/// Compute the power of the branching factor.
+fn branching_factor_power(a : Int) -> Int {
+  let mut ret = 1
+  for i = 0; i < a; i = i + 1 {
+    ret *= branching_factor
+  }
+  ret
+}
+
+///|
+/// Repeat the given string up to 32 characters.
+/// Used to generate a random seed for the test.
+fn repeat_up_to_32(s : String) -> Bytes {
+  let a_len = 32
+  let s_len = s.length()
+  let a = FixedArray::make(a_len, b'0')
+  let mut j = 0
+  for i = 0; i < a_len; i = i + 1 {
+    let l = a.set_utf8_char(i, s[j])
+    guard l == 1
+    j = (j + 1) % s_len
+  }
+  Bytes::from_fixedarray(a)
 }

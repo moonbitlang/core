@@ -350,7 +350,7 @@ fn new_by_leaves[A](len : Int, gen_leaf : (Int, Int) -> FixedArray[A]) -> T[A] {
   } else {
     let (cap, shift) = loop len, branching_factor, 1 {
       len, m_pow, depth =>
-        match len < m_pow {
+        match len <= m_pow {
           false => continue len, m_pow * branching_factor, depth + 1
           true => (m_pow, (depth - 1) * num_bits)
         }

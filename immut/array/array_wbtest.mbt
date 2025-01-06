@@ -67,114 +67,76 @@ test "mix" {
 }
 
 test "concat-two-full-tree" {
-  let bf2 = branching_factor * branching_factor
-  let v_content = []
-  for i = 0; i < bf2; i = i + 1 {
-    v_content.push(i)
-  }
-  let v_content = FixedArray::from_array(v_content)
-  let v = T::of(v_content)
-  inspect!(v, content="@immut/array.of(\{v_content})")
-  let v2_content = []
-  for i = 0; i < bf2; i = i + 1 {
-    v2_content.push(i)
-  }
-  let v2_content = FixedArray::from_array(v2_content)
-  let v2 = T::of(v2_content)
-  inspect!(v2, content="@immut/array.of(\{v2_content})")
-  let c = v.concat(v2)
-  let c_content = v_content + v2_content
-  inspect!(c, content="@immut/array.of(\{c_content})")
+  let bf = branching_factor_power(4)
+  execute_array_test!(gen_concat_seq_from_len_array([bf, bf]))
 }
 
 test "concat-full-tree-and-a-leaf" {
-  let bf2 = branching_factor * branching_factor
-  let v_content = []
-  for i = 0; i < bf2; i = i + 1 {
-    v_content.push(i)
-  }
-  let v_content = FixedArray::from_array(v_content)
-  let v = T::of(v_content)
-  inspect!(v, content="@immut/array.of(\{v_content})")
-  let v2_content = FixedArray::from_array([0])
-  let v2 = T::of(v2_content)
-  inspect!(v2, content="@immut/array.of(\{v2_content})")
-  let c = v.concat(v2)
-  let c_content = v_content + v2_content
-  inspect!(c, content="@immut/array.of(\{c_content})")
+  let bf = branching_factor_power(4)
+  execute_array_test!(gen_concat_seq_from_len_array([bf, 1]))
 }
 
 test "concat-a-leaf-and-full-tree" {
-  let v_content = FixedArray::from_array([0])
-  let v = T::of(v_content)
-  inspect!(v, content="@immut/array.of(\{v_content})")
-  let bf2 = branching_factor * branching_factor
-  let v2_content = []
-  for i = 0; i < bf2; i = i + 1 {
-    v2_content.push(i)
-  }
-  let v2_content = FixedArray::from_array(v2_content)
-  let v2 = T::of(v2_content)
-  inspect!(v2, content="@immut/array.of(\{v2_content})")
-  let c = v.concat(v2)
-  let c_content = v_content + v2_content
-  inspect!(c, content="@immut/array.of(\{c_content})")
+  let bf = branching_factor_power(4)
+  execute_array_test!(gen_concat_seq_from_len_array([1, bf]))
 }
 
 test "concat-two-leaf" {
-  let v_content = FixedArray::makei(branching_factor, fn(i) { i })
-  let v = T::of(v_content)
-  inspect!(v, content="@immut/array.of(\{v_content})")
-  let v2_content = FixedArray::makei(branching_factor, fn(i) {
-    i + branching_factor
-  })
-  let v2 = T::of(v2_content)
-  inspect!(v2, content="@immut/array.of(\{v2_content})")
-  let c = v.concat(v2)
-  let c_content = v_content + v2_content
-  inspect!(c, content="@immut/array.of(\{c_content})")
+  execute_array_test!(gen_concat_seq_from_len_array([1, 1]))
 }
 
 test "concat-multiple-full-tree" {
-  let bf2 = branching_factor * branching_factor
-  seq_concat_test!(
-    42,
-    fn(_i) { FixedArray::makei(bf2, fn(i) { i }) },
-    FixedArray::from_array([]),
-  )
+  let bf4 = branching_factor_power(4)
+  execute_array_test!(gen_concat_seq(3, fn(_i) { bf4 }))
 }
 
 test "concat-multiple-random-tree" {
-  let bq4 = branching_factor *
-    branching_factor *
-    branching_factor *
-    branching_factor
-  let max_val = 2024
+  let bq4 = branching_factor_power(3)
   let rng = @random.new(seed=b"DEADBEEFDEADBEEFDEADBEEFDEADBEEF")
-  seq_concat_test!(
-    42,
-    fn(_i) {
-      let len = rng.int(limit=bq4)
-      FixedArray::makei(len, fn(_i) { rng.int(limit=max_val) })
-    },
-    FixedArray::from_array([]),
-  )
+  execute_array_test!(gen_concat_seq(40, fn(_i) { rng.int(limit=bq4) }))
 }
 
 ///|
-fn seq_concat_test[A : Show](
-  rep : Int,
-  gen : (Int) -> FixedArray[A],
-  init : FixedArray[A]
-) -> Unit! {
-  let mut t = T::of(init)
-  let mut t_content = init
-  for i = 0; i < rep; i = i + 1 {
-    let v1_content = gen(i)
-    let v1 = T::of(v1_content)
-    inspect!(v1, content="@immut/array.of(\{v1_content})")
-    t = t.concat(v1)
-    t_content = t_content + v1_content
-    inspect!(t, content="@immut/array.of(\{t_content})")
+/// Generate a sequence of concatenation operations as a test case,
+/// following the format described in the `execute_array_test` function.
+/// 
+/// Inputs:
+/// - `n`: the number of operations to be generated
+/// - `len_gen`: a function that generates the length of the array to be concatenated
+fn gen_concat_seq(n : Int, len_gen : (Int) -> Int) -> Array[Int] {
+  let ret = []
+  for i = 0; i < n; i = i + 1 {
+    ret.push(1)
+    let len = len_gen(i)
+    ret.push(len)
+    let arr = random_array(len)
+    for j = 0; j < len; j = j + 1 {
+      ret.push(arr[j])
+    }
   }
+  ret
+}
+
+///|
+/// Generate a sequence of concatenation operations as a test case,
+/// similar to `gen_concat_seq`, but this time, the length of the array
+/// to be concatenated is given as an array.
+fn gen_concat_seq_from_len_array(len : Array[Int]) -> Array[Int] {
+  let ret = []
+  for i = 0; i < len.length(); i = i + 1 {
+    ret.push(1)
+    let arr = random_array(len[i])
+    ret.push(len[i])
+    for j = 0; j < len[i]; j = j + 1 {
+      ret.push(arr[j])
+    }
+  }
+  ret
+}
+
+///|
+/// Generate a random array of length `n`.
+fn random_array(n : Int) -> FixedArray[Int] {
+  let rng = @random.new(seed=b"DEADBEEFLIVEBEEFDEADBEEFDEADBEEF")
+  FixedArray::makei(n, fn(i) { rng.int(limit=i) })
 }

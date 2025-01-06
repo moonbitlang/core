@@ -117,7 +117,11 @@ fn get[T](self : Tree[T], index : Int, shift : Int) -> T {
     Leaf(leaf) => leaf[index]
     Node(children, Some(sizes)) => {
       let branch_index = get_branch_index(sizes, index)
-      let sub_index = index - sizes[branch_index]
+      let sub_index = if branch_index == 0 {
+        0
+      } else {
+        index - sizes[branch_index - 1]
+      }
       get(children[branch_index], sub_index, shift - num_bits)
     }
     Node(_, None) => get_radix(self, shift)
@@ -135,6 +139,7 @@ fn get[T](self : Tree[T], index : Int, shift : Int) -> T {
 /// Precondition:
 /// - `self` is of height `shift / num_bits`.
 fn set[T](self : Tree[T], index : Int, shift : Int, value : T) -> Tree[T] {
+  // TODO: optimize this as loop
   fn set_radix(node : Tree[T], shift : Int) -> Tree[T] {
     match node {
       Leaf(leaf) => Leaf(immutable_set(leaf, index & bitmask, value))
@@ -159,14 +164,20 @@ fn set[T](self : Tree[T], index : Int, shift : Int, value : T) -> Tree[T] {
     Leaf(leaf) => Leaf(immutable_set(leaf, index & bitmask, value))
     Node(children, Some(sizes)) => {
       let branch_index = get_branch_index(sizes, index)
-      let sub_index = index - sizes[branch_index]
+      let sub_index = if branch_index == 0 {
+        index
+      } else {
+        index - sizes[branch_index - 1]
+      }
+      let sizes = sizes.copy()
+      check_sizes(sizes, shift - num_bits)
       Node(
         immutable_set(
           children,
           branch_index,
           children[branch_index].set(sub_index, shift - num_bits, value),
         ),
-        Some(sizes.copy()),
+        Some(sizes),
       )
     }
     Node(_children, None) => set_radix(self, shift)
@@ -194,7 +205,7 @@ fn push_end[T](self : Tree[T], shift : Int, value : T) -> (Tree[T], Int) {
 
   fn push_sizes_last(sizes : FixedArray[Int]?) -> FixedArray[Int]? {
     match sizes {
-      Some(sizes) => Some(immutable_push(sizes, 1))
+      Some(sizes) => Some(immutable_push(sizes, 1 + sizes[sizes.length() - 1]))
       None => None
     }
   }
@@ -220,18 +231,28 @@ fn push_end[T](self : Tree[T], shift : Int, value : T) -> (Tree[T], Int) {
           Some(new_node) => {
             let new_nodes = nodes.copy()
             new_nodes[len - 1] = new_node
-            Some(Node(new_nodes, update_sizes_last(sizes)))
+            let sizes = update_sizes_last(sizes)
+            match sizes {
+              Some(sizes) => check_sizes(sizes, shift - num_bits)
+              None => ()
+            }
+            Some(Node(new_nodes, sizes))
           }
           // We need to create a new node to push the value.
           None =>
             if len < branching_factor {
+              let sizes = push_sizes_last(sizes)
+              match sizes {
+                Some(sizes) => check_sizes(sizes, shift - num_bits)
+                None => ()
+              }
               Some(
                 Node(
                   immutable_push(
                     nodes,
                     new_branch_left([value], shift - num_bits),
                   ),
-                  push_sizes_last(sizes),
+                  sizes,
                 ),
               )
             } else {
@@ -250,8 +271,12 @@ fn push_end[T](self : Tree[T], shift : Int, value : T) -> (Tree[T], Int) {
       (
         match self {
           Leaf(_leaf) => Node([self, new_branch], None)
-          Node(_nodes, Some(sizes)) =>
-            Node([self, new_branch], Some([sizes[sizes.length() - 1], 1]))
+          Node(_nodes, Some(sizes)) => {
+            let len = sizes[sizes.length() - 1]
+            let sizes = FixedArray::from_array([len, 1 + len])
+            check_sizes(sizes, shift)
+            Node([self, new_branch], Some(sizes))
+          }
           Node(_nodes, None) => Node([self, new_branch], None)
           Empty =>
             abort(
@@ -559,6 +584,12 @@ fn redis_plan[A](t : FixedArray[Tree[A]]) -> (FixedArray[Int], Int) {
   return (node_counts, new_len)
 }
 
+// test "redis_plan" {
+//   let bf = branching_factor
+//   let t = FixedArray::from_array([bf, bf, 7])
+//   let res = redis_plan(t)
+// }
+
 ///|
 /// This function redistributes the nodes in `old_t` according to the plan in `node_counts`.
 /// 
@@ -582,28 +613,35 @@ fn redis[A](
   let mut j = 0 // the index of in the old tree
   if shift == 0 {
     // Handle Leaf case
+
+    let mut old_leaf_elems = FixedArray::default()
+    let mut old_leaf_len = 0
     for i = 0; i < node_nums; i = i + 1 {
-      // t[j] is the next to be redistributed
+
+      // old_t[j] is the next to be redistributed
       // old_offset is the index of the next node to be redistributed in old_t[j]
       //   old_offset == 0 means all nodes in old_t[j] are to be redistributed 
       // new_t[i] is the current node to be filled with redistributed nodes
-      let old_leaf_elems = old_t[i].leaf_elements()
-      let old_leaf_len = old_leaf_elems.length()
+      old_leaf_elems = old_t[j].leaf_elements()
+      old_leaf_len = old_leaf_elems.length()
       if old_offset == 0 && old_leaf_len == node_counts[i] {
         // Perfect, we just point to the old leaf
-        new_t[i] = old_t[i]
+        new_t[i] = old_t[j]
+        j += 1
       } else {
         let mut new_offset = 0 // the accumulated number of elements in the new leaf
         let new_leaf_len = node_counts[i]
-        let new_elems = FixedArray::make(new_leaf_len, old_leaf_elems[0])
-        while new_offset < node_counts[i] {
+        let new_leaf_elems = FixedArray::make(new_leaf_len, old_leaf_elems[0])
+        while new_offset < new_leaf_len {
+          old_leaf_elems = old_t[j].leaf_elements()
+          old_leaf_len = old_leaf_elems.length()
           guard j < old_len  // This shouldn't be triggered if the plan was correctly generated
           let remaining = min(
-            node_counts[i] - new_offset,
+            new_leaf_len - new_offset,
             old_leaf_len - old_offset,
           )
           FixedArray::unsafe_blit(
-            new_elems, new_offset, old_leaf_elems, old_offset, remaining,
+            new_leaf_elems, new_offset, old_leaf_elems, old_offset, remaining,
           )
           new_offset += remaining
           old_offset += remaining
@@ -612,24 +650,30 @@ fn redis[A](
             old_offset = 0
           }
         }
-        new_t[i] = Leaf(new_elems)
+        new_t[i] = Leaf(new_leaf_elems)
       }
     }
   } else {
     // Handle Node case, pretty much the same as the Leaf case
+
+    let mut old_node_chldrn = FixedArray::default()
+    let mut old_node_len = 0
     for i = 0; i < node_nums; i = i + 1 {
-      let old_node_chldrn = old_t[i].node_children()
-      let old_node_len = old_node_chldrn.length()
+      old_node_chldrn = old_t[j].node_children()
+      old_node_len = old_node_chldrn.length()
       if old_offset == 0 && old_node_len == node_counts[i] {
-        new_t[i] = old_t[i]
+        new_t[i] = old_t[j]
+        j += 1
       } else {
         let mut new_offset = 0
         let new_node_len = node_counts[i]
         let new_node_chldrn = FixedArray::make(new_node_len, old_node_chldrn[0])
-        while new_offset < node_counts[i] {
+        while new_offset < new_node_len {
+          old_node_chldrn = old_t[j].node_children()
+          old_node_len = old_node_chldrn.length()
           guard j < old_len
           let remaining = min(
-            node_counts[i] - new_offset,
+            new_node_len - new_offset,
             old_node_len - old_offset,
           )
           FixedArray::unsafe_blit(
@@ -642,7 +686,10 @@ fn redis[A](
             old_offset = 0
           }
         }
-        new_t[i] = Node(new_node_chldrn, compute_sizes(new_node_chldrn, shift)) // each node in `new_t` is of height (`shift` / `num_bits`)
+        new_t[i] = Node(
+          new_node_chldrn,
+          compute_sizes(new_node_chldrn, shift - num_bits),
+        ) // each node in `new_t` is of height (`shift` / `num_bits`)
       }
     }
   }
@@ -663,13 +710,29 @@ fn compute_sizes[A](
   for i = 0; i < len; i = i + 1 {
     let sz = children[i].size(shift)
     flag = flag && sz == full_subtree_size
+    if sz > full_subtree_size {
+      let _ = children[i].size(shift)
+      abort("TOOO BOGO")
+    }
     sum += sz
     sizes[i] = sum
   }
   if flag {
     None
   } else {
+    check_sizes(sizes, shift)
     Some(sizes)
+  }
+}
+
+///|
+/// `shift` is the height of the subtree, whose size is sizes[i]-sizes[i-1]
+fn check_sizes(sizes : FixedArray[Int], shift : Int) -> Unit {
+  for i = 1; i < sizes.length(); i = i + 1 {
+    if sizes[i] <= sizes[i - 1] ||
+      sizes[i] - sizes[i - 1] > (1 << (shift + num_bits)) {
+      abort("Fuck")
+    }
   }
 }
 
