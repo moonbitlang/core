@@ -105,9 +105,8 @@ fn get[T](self : Tree[T], index : Int, shift : Int) -> T {
   fn get_radix(node : Tree[T], shift : Int) -> T {
     match node {
       Leaf(leaf) => leaf[index & bitmask]
-      Node(node, None) => {
+      Node(node, None) =>
         get_radix(node[radix_indexing(index, shift)], shift - num_bits)
-      }
       Node(_, Some(_)) =>
         abort("Unreachable: Node should not have sizes in get_radix")
       Empty => abort("Index out of bounds")
@@ -125,9 +124,7 @@ fn get[T](self : Tree[T], index : Int, shift : Int) -> T {
       }
       get(children[branch_index], sub_index, shift - num_bits)
     }
-    Node(_, None) => {
-      get_radix(self, shift)
-    }
+    Node(_, None) => get_radix(self, shift)
     Empty => abort("Index out of bounds")
   }
 }
@@ -172,8 +169,6 @@ fn set[T](self : Tree[T], index : Int, shift : Int, value : T) -> Tree[T] {
       } else {
         index - sizes[branch_index - 1]
       }
-      let sizes = sizes.copy()
-      check_sizes(sizes, shift - num_bits)
       Node(
         immutable_set(
           children,
@@ -235,20 +230,12 @@ fn push_end[T](self : Tree[T], shift : Int, value : T) -> (Tree[T], Int) {
             let new_nodes = nodes.copy()
             new_nodes[len - 1] = new_node
             let sizes = update_sizes_last(sizes)
-            match sizes {
-              Some(sizes) => check_sizes(sizes, shift - num_bits)
-              None => ()
-            }
             Some(Node(new_nodes, sizes))
           }
           // We need to create a new node to push the value.
           None =>
             if len < branching_factor {
               let sizes = push_sizes_last(sizes)
-              match sizes {
-                Some(sizes) => check_sizes(sizes, shift - num_bits)
-                None => ()
-              }
               Some(
                 Node(
                   immutable_push(
@@ -278,7 +265,6 @@ fn push_end[T](self : Tree[T], shift : Int, value : T) -> (Tree[T], Int) {
             // println("push-end dada")
             let len = sizes[sizes.length() - 1]
             let sizes = FixedArray::from_array([len, 1 + len])
-            check_sizes(sizes, shift)
             Node([self, new_branch], Some(sizes))
           }
           Node(_nodes, None) => Node([self, new_branch], None)
@@ -714,29 +700,13 @@ fn compute_sizes[A](
   for i = 0; i < len; i = i + 1 {
     let sz = children[i].size(shift)
     flag = flag && sz == full_subtree_size
-    if sz > full_subtree_size {
-      let _ = children[i].size(shift)
-      abort("TOOO BOGO")
-    }
     sum += sz
     sizes[i] = sum
   }
   if flag {
     None
   } else {
-    check_sizes(sizes, shift)
     Some(sizes)
-  }
-}
-
-///|
-/// `shift` is the height of the subtree, whose size is sizes[i]-sizes[i-1]
-fn check_sizes(sizes : FixedArray[Int], shift : Int) -> Unit {
-  for i = 1; i < sizes.length(); i = i + 1 {
-    if sizes[i] <= sizes[i - 1] ||
-      sizes[i] - sizes[i - 1] > (1 << (shift + num_bits)) {
-      abort("Fuck")
-    }
   }
 }
 
