@@ -543,3 +543,24 @@ test "peek function - random cases" {
   let iter5 = [0, 0, 0].iter()
   inspect!(iter5.peek(), content="Some(0)")
 }
+
+test "combine/basic" {
+  let a = [1, 2, 3].iter()
+  let b = ["a", "b", "c"].iter()
+  let result = a.combine(b).to_array()
+  inspect!(result, content="[(1, \"a\"), (2, \"b\"), (3, \"c\")]")
+}
+
+test "combine/empty" {
+  let a = ([] : Array[Int]).iter()
+  let b = ([] : Array[Int]).iter()
+  let result = a.combine(b).to_array()
+  inspect!(result, content="[]")
+}
+
+test "panic combine/unequal_length" {
+  let a = [1, 2, 3].iter()
+  let b = ["a", "b"].iter()
+  ignore(a.combine(b).to_array())
+  inspect!(a.combine(b).to_array(), content="[1]")
+}

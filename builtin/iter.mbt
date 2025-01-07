@@ -904,3 +904,20 @@ pub fn contains[A : Eq](self : Iter[A], value : A) -> Bool {
     false
   }
 }
+
+///|
+pub fn combine[A, B](self : Iter[A], b : Iter[B]) -> Iter2[A, B] {
+  Iter2::new(fn(k) {
+    let (x, xs) = (self.head(), self.drop(1))
+    let (y, ys) = (b.head(), b.drop(1))
+    match (x, y) {
+      (Some(x), Some(y)) =>
+        match k(x, y) {
+          IterEnd => IterEnd
+          IterContinue => xs.combine(ys).run(k)
+        }
+      (None, None) => IterEnd
+      _ => panic()
+    }
+  })
+}

@@ -85,3 +85,22 @@ pub fn to_array[A, B](self : Iter2[A, B]) -> Array[(A, B)] {
   }
   arr
 }
+
+///|
+pub fn fold[A, B, S](self : Iter2[A, B], init~ : S, f : (S, A, B) -> S) -> S {
+  let mut acc = init
+  for a, b in self {
+    acc = f(acc, a, b)
+  }
+  acc
+}
+
+pub fn all[A, B](self : Iter2[A, B], p : (A, B) -> Bool) -> Bool {
+  self.fold(init=true, fn(s, a, b) { s && p(a, b) })
+}
+
+
+pub fn any[A, B](self : Iter2[A, B], p : (A, B) -> Bool) -> Bool {
+  self.fold(init=false, fn(s, a, b) { s || p(a, b) })
+}
+
