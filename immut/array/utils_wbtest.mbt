@@ -158,26 +158,23 @@ fn repeat_up_to_32(s : String) -> Bytes {
 /// I guess that's because it exceeds the heap limit of the VM.
 fn check_array_eq(a : Array[Int], t : T[Int]) -> Unit! {
   assert_eq!(a.length(), t.size)
-  let mut i = 0
-  for tt in t.iter() {
-    assert_eq!(tt, a[i])
-    i += 1
+  let len = t.size
+  for i = 0; i < len; i = i + 1 {
+    assert_eq!(t[i], a[i])
   }
 }
 
-///|
+///|  
 /// Use this function to check if the FixedArray and the @immut/array are equal.
 /// If we `inspect` the array, it will raise an error if the arrays are too long.
 /// I guess that's because it exceeds the heap limit of the VM.
 fn check_fixedarray_eq(a : FixedArray[Int], t : T[Int]) -> Unit! {
   assert_eq!(a.length(), t.size)
-  let mut i = 0
-  for tt in t.iter() {
-    assert_eq!(tt, a[i])
-    i += 1
+  let len = t.size
+  for i = 0; i < len; i = i + 1 {
+    assert_eq!(t[i], a[i])
   }
 }
-
 
 ///|
 /// Generate a random array of length `n`.

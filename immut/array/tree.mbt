@@ -81,7 +81,7 @@ fn is_empty_tree[T](self : Tree[T]) -> Bool {
 fn get_first[T](self : Tree[T]) -> T {
   match self {
     Leaf(leaf) => leaf[0]
-    Node(node, _) => get_first(node[0]) // TODO: prove that this should always be non-zero
+    Node(node, _) => get_first(node[0])
     Empty => abort("Index out of bounds")
   }
 }
@@ -91,7 +91,7 @@ fn get_first[T](self : Tree[T]) -> T {
 fn get_last[T](self : Tree[T]) -> T {
   match self {
     Leaf(leaf) => leaf[leaf.length() - 1]
-    Node(node, _) => get_last(node[node.length() - 1]) // TODO: prove that this should always be non-zero 
+    Node(node, _) => get_last(node[node.length() - 1])
     Empty => abort("Index out of bounds")
   }
 }
@@ -105,8 +105,9 @@ fn get[T](self : Tree[T], index : Int, shift : Int) -> T {
   fn get_radix(node : Tree[T], shift : Int) -> T {
     match node {
       Leaf(leaf) => leaf[index & bitmask]
-      Node(node, None) =>
+      Node(node, None) => {
         get_radix(node[radix_indexing(index, shift)], shift - num_bits)
+      }
       Node(_, Some(_)) =>
         abort("Unreachable: Node should not have sizes in get_radix")
       Empty => abort("Index out of bounds")
@@ -118,13 +119,15 @@ fn get[T](self : Tree[T], index : Int, shift : Int) -> T {
     Node(children, Some(sizes)) => {
       let branch_index = get_branch_index(sizes, index)
       let sub_index = if branch_index == 0 {
-        0
+        index
       } else {
         index - sizes[branch_index - 1]
       }
       get(children[branch_index], sub_index, shift - num_bits)
     }
-    Node(_, None) => get_radix(self, shift)
+    Node(_, None) => {
+      get_radix(self, shift)
+    }
     Empty => abort("Index out of bounds")
   }
 }
@@ -272,6 +275,7 @@ fn push_end[T](self : Tree[T], shift : Int, value : T) -> (Tree[T], Int) {
         match self {
           Leaf(_leaf) => Node([self, new_branch], None)
           Node(_nodes, Some(sizes)) => {
+            // println("push-end dada")
             let len = sizes[sizes.length() - 1]
             let sizes = FixedArray::from_array([len, 1 + len])
             check_sizes(sizes, shift)

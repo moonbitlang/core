@@ -29,6 +29,10 @@ test "HAPPYDOG-1000-2" {
   run_test!("HAPPYDOG", 200, 2)
 }
 
+test "HELLOWOLRD-5-3" {
+  run_test!("HELLOWOLRD", 4, 1)
+}
+
 ///|
 fn run_test(seed : String, rep : Int, max_lvl : Int) -> Unit! {
   let seed = repeat_up_to_32(seed)
