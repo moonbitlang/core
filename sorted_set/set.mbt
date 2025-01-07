@@ -298,8 +298,39 @@ pub fn disjoint[V : Compare](self : T[V], src : T[V]) -> Bool {
 // General collection operations
 
 ///|
+fn combine[A, B](a : Iter[A], b : Iter[B]) -> Iter2[A, B] {
+  Iter2::new(fn(k) {
+    let (x, xs) = (a.head(), a.drop(1))
+    let (y, yx) = (b.head(), b.drop(1))
+    match (x, y) {
+      (Some(x), Some(y)) =>
+        match k(x, y) {
+          IterEnd => IterEnd
+          IterContinue => combine(xs, yx).run(k)
+        }
+      (None, None) => IterEnd
+      _ => panic()
+    }
+  })
+}
+
+///|
+fn fold[A, B, S](xs : Iter2[A, B], init~ : S, f : (S, A, B) -> S) -> S {
+  let mut acc = init
+  for a, b in xs {
+    acc = f(acc, a, b)
+  }
+  acc
+}
+
+///|
+fn all[A, B](xs : Iter2[A, B], p : (A, B) -> Bool) -> Bool {
+  xs |> fold(init=true, fn(s, a, b) { s && p(a, b) })
+}
+
+///|
 pub fn op_equal[V : Compare](self : T[V], other : T[V]) -> Bool {
-  self.to_array() == other.to_array()
+  combine(self.iter(), other.iter()) |> all(fn(a, b) { a == b })
 }
 
 ///|
