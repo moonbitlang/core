@@ -262,7 +262,6 @@ fn push_end[T](self : Tree[T], shift : Int, value : T) -> (Tree[T], Int) {
         match self {
           Leaf(_leaf) => Node([self, new_branch], None)
           Node(_nodes, Some(sizes)) => {
-            // println("push-end dada")
             let len = sizes[sizes.length() - 1]
             let sizes = FixedArray::from_array([len, 1 + len])
             Node([self, new_branch], Some(sizes))
