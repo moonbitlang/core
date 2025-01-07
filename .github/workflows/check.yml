@@ -37,11 +37,6 @@ jobs:
       - name: moon check
         run: moon check --deny-warn
 
-      - name: moon info
-        run: |
-          moon info
-          git diff --exit-code
-
       - name: Set ulimit and run moon test
         if: ${{ matrix.os != 'windows-latest' }}
         run: |
@@ -201,11 +196,6 @@ jobs:
       - name: moon bundle
         run: moon bundle --all
 
-      - name: moon info
-        run: |
-          moon info
-          git diff
-
       - name: check core size
         if: ${{ matrix.os != 'windows-latest' }}
         run: find ./target -name '*.core' | xargs ls -lh
@@ -256,11 +246,6 @@ jobs:
       - name: moon bundle
         run: moon bundle --all
 
-      - name: moon info
-        run: |
-          moon info
-          git diff
-
       - name: check core size
         run: find ./target -name '*.core' | xargs ls -lh
 
@@ -285,3 +270,39 @@ jobs:
             fi
           done
           (exit $_passed)
+
+  moon-info-check:
+    runs-on: ubuntu-latest
+    needs: [build]
+    strategy: 
+      matrix:
+        release: [latest, nightly, bleeding]
+    continue-on-error: ${{ matrix.release != 'latest' }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: install
+        run: |
+          curl -fsSL https://cli.moonbitlang.com/install/unix.sh | bash -s ${{ matrix.release }}
+          echo "$HOME/.moon/bin" >> $GITHUB_PATH
+      - name: check code
+        run: |
+          moon version --all
+          moon check --target all --deny-warn
+      - name: check whether info is up to date
+        run: |
+          moon info
+          git diff --exit-code
+      - name: check info update
+        continue-on-error: true
+        shell: bash
+        run: |
+          for backend in "wasm" "js"; do
+            for f in $(find target/$backend/release/check -name '*.mi'); do
+              wasm_file="${f/$backend/wasm-gc}"
+              diff_output=$(diff <(mooninfo "$f" -format text) <(mooninfo "$wasm_file" -format text))
+              if [ $? -ne 0 ]; then
+              echo "Difference found between $f and $wasm_file"
+              echo "$diff_output"
+              fi
+            done
+          done
