@@ -103,7 +103,7 @@ fn MyInt64::op_mul(self : MyInt64, other : MyInt64) -> MyInt64 {
 }
 
 ///|
-struct Int64WasmHelper {
+priv struct Int64WasmHelper {
   div_s : (Int, Int, Int, Int) -> Int
   div_u : (Int, Int, Int, Int) -> Int
   rem_s : (Int, Int, Int, Int) -> Int
