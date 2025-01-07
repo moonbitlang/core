@@ -222,3 +222,14 @@ test "hash" {
   inspect!(l1.hash() == l4.hash(), content="false")
   inspect!(l4.hash() == l4.hash(), content="true")
 }
+
+test "concat_empty" {
+  let a = @array.of([1, 2, 3])
+  let b : @array.T[Int] = @array.new()
+  let c = a.concat(b)
+  inspect!(c, content="@immut/array.of([1, 2, 3])")
+  let a : @array.T[Int] = @array.new()
+  let b = @array.of([1, 2, 3])
+  let c = a.concat(b)
+  inspect!(c, content="@immut/array.of([1, 2, 3])")
+}

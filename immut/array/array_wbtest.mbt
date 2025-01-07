@@ -13,6 +13,11 @@
 // limitations under the License.
 
 test "new_by_leaves" {
+  let full : T[Int] = new_by_leaves(branching_factor_power(2), fn(_s, l) {
+    FixedArray::make(l, 1)
+  })
+  let full_arr = FixedArray::make(branching_factor_power(2), 1)
+  check_fixedarray_eq!(full_arr, full)
   let e : T[Int] = new_by_leaves(0, fn(_s, _l) { abort("never reach") })
   let v = new_by_leaves(5, fn(_s, l) { FixedArray::make(l, 1) })
   let v2 = new_by_leaves(33, fn(_s, l) { FixedArray::make(l, 10) })
@@ -64,6 +69,19 @@ test "mix" {
   for i = 0; i < large_const; i = i + 1 {
     assert_eq!(vec[i], i)
   }
+}
+
+test "copy" {
+  let bf = branching_factor_power(4)
+  let v1_content = random_array(bf / 2)
+  let v2_content = random_array(bf / 3)
+  let v_content = v1_content + v2_content
+  let v1 = T::from_iter(v1_content.iter())
+  let v2 = T::from_iter(v2_content.iter())
+  let v = v1.concat(v2)
+  let v_copy = v.copy()
+  check_fixedarray_eq!(v_content, v_copy)
+  check_fixedarray_eq!(v_content, v)
 }
 
 test "concat-two-full-tree" {
@@ -132,11 +150,4 @@ fn gen_concat_seq_from_len_array(len : Array[Int]) -> Array[Int] {
     }
   }
   ret
-}
-
-///|
-/// Generate a random array of length `n`.
-fn random_array(n : Int) -> FixedArray[Int] {
-  let rng = @random.new(seed=b"DEADBEEFLIVEBEEFDEADBEEFDEADBEEF")
-  FixedArray::makei(n, fn(i) { rng.int(limit=i) })
 }

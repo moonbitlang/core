@@ -741,7 +741,8 @@ fn check_sizes(sizes : FixedArray[Int], shift : Int) -> Unit {
 //-----------------------------------------------------------------------------
 
 ///|
-/// Print the tree structure.
+/// Print the tree structure. For debug use only.
+/// @coverage.skip
 impl[A : Show] Show for Tree[A] with output(self, logger : &Logger) {
   fn indent_str(s : String, indent : Int) -> String {
     String::make(indent, ' ') + s
