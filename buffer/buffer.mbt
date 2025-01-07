@@ -30,7 +30,7 @@ pub(all) typealias Buffer = T
 /// let buf = @buffer.new(size_hint=100)
 /// buf.write_string("Tes")
 /// buf.write_char('t')
-/// assert_eq!(buf.to_unchecked_string(), "Test")
+/// assert_eq!(buf.contents(), b"T\x00e\x00s\x00t\x00")
 /// ```
 struct T {
   mut data : FixedArray[Byte]
