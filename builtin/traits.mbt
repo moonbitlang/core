@@ -1,4 +1,4 @@
-// Copyright 2024 International Digital Economy Academy
+// Copyright 2025 International Digital Economy Academy
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -123,3 +123,15 @@ pub fn &Logger::write_iter[T : Show](
   self.write_string(suffix)
 }
 // TODO: Logger::write_double(self:Logger, val:Double) -> Unit
+
+///| 
+pub(all) enum Mutability {
+  Mutable
+  Immutable
+} derive(Show)
+
+///| Use clone method intended for cloned object's internal state won't be influenced original object
+pub(open) trait Clone {
+  mutability() -> Mutability
+  clone(Self) -> Self
+}

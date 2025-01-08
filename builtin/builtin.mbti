@@ -338,6 +338,11 @@ impl Map {
 }
 impl[K : Show, V : Show] Show for Map[K, V]
 
+pub(all) enum Mutability {
+  Mutable
+  Immutable
+}
+
 type Set
 impl Set {
   add[K : Hash + Eq](Self[K], K) -> Unit
@@ -791,6 +796,11 @@ impl Tuple(16) {
 // Type aliases
 
 // Traits
+pub(open) trait Clone {
+  mutability() -> Mutability
+  clone(Self) -> Self
+}
+
 pub(open) trait Compare : Eq {
   compare(Self, Self) -> Int
 }
