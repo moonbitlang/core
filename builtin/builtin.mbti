@@ -11,6 +11,8 @@ fn assert_not_eq[T : Eq + Show](T, T, loc~ : SourceLoc = _) -> Unit!
 
 fn assert_true(Bool, loc~ : SourceLoc = _) -> Unit!
 
+fn code_point_of_surrogate_pair(Char, Char) -> Char
+
 fn dump[T](T, name? : String, loc~ : SourceLoc = _) -> T //deprecated
 
 fn fail[T](String, loc~ : SourceLoc = _) -> T!Failure
@@ -18,6 +20,10 @@ fn fail[T](String, loc~ : SourceLoc = _) -> T!Failure
 fn ignore[T](T) -> Unit
 
 fn inspect(&Show, content~ : String = .., loc~ : SourceLoc = _, args_loc~ : ArgsLoc = _) -> Unit!InspectError
+
+fn is_leading_surrogate(Char) -> Bool
+
+fn is_trailing_surrogate(Char) -> Bool
 
 fn not(Bool) -> Bool
 
@@ -210,6 +216,22 @@ impl BytesView {
   unsafe_get(Self, Int) -> Byte
 }
 impl Show for BytesView
+
+type CharOffset
+impl CharOffset {
+  offset_by(String, Int) -> Self?
+  unsafe_from_int(Int) -> Self
+}
+impl Eq for CharOffset
+impl Show for CharOffset
+
+type CharsView
+impl CharsView {
+  length(Self) -> Int
+  op_as_view(Self, start~ : Int = .., end? : Int) -> Self
+  op_get(Self, Int) -> Char
+}
+impl Show for CharsView
 
 pub(all) type! Failure String
 impl Show for Failure
@@ -646,6 +668,7 @@ impl String {
   length(String) -> Int
   make(Int, Char) -> String
   op_add(String, String) -> String
+  op_as_view(String, start~ : CharOffset = .., end? : CharOffset) -> CharsView
   op_equal(String, String) -> Bool
   op_get(String, Int) -> Char
   substring(String, start~ : Int = .., end? : Int) -> String
