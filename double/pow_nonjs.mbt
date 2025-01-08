@@ -108,6 +108,30 @@ const POW_ivln2_h = 1.44269502162933349609e+00
 const POW_ivln2_l = 1.92596299112661746887e-08
 
 ///|
+/// Calculates the power of a number by raising the base to the specified
+/// exponent. Handles special cases and edge conditions according to IEEE 754
+/// standards.
+///
+/// Parameters:
+///
+/// * `base` : The base number to be raised to a power.
+/// * `exponent` : The power to raise the base number to.
+///
+/// Returns the result of raising `base` to the power of `exponent`.
+///
+/// Example:
+///
+/// ```moonbit
+/// test "pow" {
+///   let x = 2.0
+///   inspect!(x.pow(3.0), content="8")
+///   inspect!(x.pow(0.5), content="1.4142135623730951")
+///   inspect!(x.pow(0.0), content="1")
+///   inspect!((-1.0).pow(2.0), content="1")
+///   inspect!(0.0.pow(0.0), content="1")
+///   inspect!(infinity.pow(-1.0), content="0")
+/// }
+/// ```
 pub fn pow(self : Double, other : Double) -> Double {
   fn set_low_word(d : Double, v : UInt) -> Double {
     let bits : UInt64 = d.reinterpret_as_uint64()
@@ -156,7 +180,6 @@ pub fn pow(self : Double, other : Double) -> Double {
   let mut k : Int = 0
   let mut yisint : Int = 0
   let mut n : Int = 0
-
   // int hx, hy, ix, iy;
   // unsigned lx, ly;
   //
@@ -170,7 +193,6 @@ pub fn pow(self : Double, other : Double) -> Double {
   let ly : UInt = (y.reinterpret_as_uint64() & 0xFFFFFFFF).to_uint()
   let mut ix : Int = hx & 0x7FFFFFFF
   let iy : Int = hy & 0x7FFFFFFF
-
   // y==zero: x**0 = 1
   if (iy.reinterpret_as_uint() | ly) == 0 {
     return ONE
@@ -360,7 +382,6 @@ pub fn pow(self : Double, other : Double) -> Double {
     t1 = set_low_word(t1, 0)
     t2 = z_l - (t1 - t - pow_dp_h[k] - z_h)
   }
-
   // split up y into y1+y2 and compute (y1+y2)*(t1+t2)
   y1 = y
   y1 = set_low_word(y1, 0)
