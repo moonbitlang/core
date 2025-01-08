@@ -285,6 +285,14 @@ pub(all) enum Json {
   Array(Array[Json])
   Object(Map[String, Json])
 }
+impl Json {
+  array(Array[Self]) -> Self
+  boolean(Bool) -> Self
+  null() -> Self
+  number(Double) -> Self
+  object(Map[String, Self]) -> Self
+  string(String) -> Self
+}
 impl Default for Json
 impl Eq for Json
 

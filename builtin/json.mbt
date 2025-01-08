@@ -154,7 +154,6 @@ pub fn Json::object(object : Map[String, Json]) -> Json {
   return Object(object)
 }
 
-
 ///|
 /// Trait for types that can be converted to `Json`
 pub(open) trait ToJson {
