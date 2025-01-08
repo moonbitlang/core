@@ -133,13 +133,16 @@ jobs:
   license-header-check:
     runs-on: ubuntu-latest
     env:
-      HAWKEYE_VERSION: v5.5.1
+      HAWKEYE_VERSION: v5.8.1
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       - name: Download HawkEye
         run: curl --proto '=https' --tlsv1.2 -LsSf https://github.com/korandoru/hawkeye/releases/download/$HAWKEYE_VERSION/hawkeye-installer.sh | sh
       - name: Check License Header
-        run: hawkeye check
+        run: |
+          hawkeye check
 
   nightly-check:
     strategy:
