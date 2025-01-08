@@ -3,6 +3,7 @@ package moonbitlang/core/char
 // Values
 
 // Types and methods
+impl Hash for Char
 
 // Type aliases
 

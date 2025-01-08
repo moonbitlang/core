@@ -5,8 +5,6 @@ alias @moonbitlang/core/quickcheck as @quickcheck
 // Values
 
 // Types and methods
-
-
 impl Ref {
   map[T, R](Self[T], (T) -> R) -> Self[R]
   new[T](T) -> Self[T]
@@ -14,6 +12,7 @@ impl Ref {
   swap[T](Self[T], Self[T]) -> Unit
   update[T](Self[T], (T) -> T) -> Unit
 }
+impl[X : @quickcheck.Arbitrary] @quickcheck.Arbitrary for Ref[X]
 
 // Type aliases
 

@@ -3,6 +3,7 @@ package moonbitlang/core/error
 // Values
 
 // Types and methods
+impl Show for Error
 
 // Type aliases
 

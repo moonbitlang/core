@@ -3,8 +3,6 @@ package moonbitlang/core/bytes
 // Values
 
 // Types and methods
-
-
 impl Bytes {
   default() -> Bytes
   from_array(Array[Byte]) -> Bytes
@@ -15,6 +13,7 @@ impl Bytes {
   to_array(Bytes) -> Array[Byte]
   to_fixedarray(Bytes, len? : Int) -> FixedArray[Byte]
 }
+impl Hash for Bytes
 
 // Type aliases
 
