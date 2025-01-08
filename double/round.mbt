@@ -25,6 +25,24 @@ let exp_bits = 11
 let frac_bits = 52
 
 ///|
+/// Returns an integer value by discarding the decimal part of the floating-point
+/// number (truncation toward zero).
+///
+/// Parameters:
+///
+/// * `self` : The floating-point number to be truncated.
+///
+/// Returns a floating-point number representing the integer part of the input.
+///
+/// Example:
+///
+/// ```moonbit
+/// test "trunc" {
+///   inspect!(3.7.trunc(), content="3")
+///   inspect!((-3.7).trunc(), content="-3")
+///   inspect!(0.0.trunc(), content="0")
+/// }
+/// ```
 pub fn trunc(self : Double) -> Double {
   let u64 = self.reinterpret_as_uint64()
   let biased_exp = ((u64 >> frac_bits) & ((0x1UL << exp_bits) - 1)).to_int()
@@ -39,6 +57,23 @@ pub fn trunc(self : Double) -> Double {
 }
 
 ///|
+/// Returns the smallest integer greater than or equal to the given number.
+///
+/// Parameters:
+///
+/// * `self` : The floating point number to find the ceiling of.
+///
+/// Returns the ceiling value of the input number.
+///
+/// Example:
+///
+/// ```moonbit
+/// test "ceil" {
+///   inspect!(3.7.ceil(), content="4")
+///   inspect!((-3.7).ceil(), content="-3")
+///   inspect!(42.0.ceil(), content="42")
+/// }
+/// ```
 pub fn ceil(self : Double) -> Double {
   let trunced = self.trunc()
   if self > trunced {
@@ -49,6 +84,24 @@ pub fn ceil(self : Double) -> Double {
 }
 
 ///|
+/// Returns the largest integer less than or equal to the given number.
+///
+/// Parameters:
+///
+/// * `number` : A floating-point number to be rounded down.
+///
+/// Returns a double-precision floating-point number representing the largest
+/// integer less than or equal to the input.
+///
+/// Example:
+///
+/// ```moonbit
+/// test "floor" {
+///   inspect!(3.7.floor(), content="3")
+///   inspect!((-3.7).floor(), content="-4")
+///   inspect!(0.0.floor(), content="0")
+/// }
+/// ```
 pub fn floor(self : Double) -> Double {
   let trunced = self.trunc()
   if self < trunced {
@@ -59,7 +112,26 @@ pub fn floor(self : Double) -> Double {
 }
 
 ///|
-// Round to nearest, ties to Ceiling
+/// Rounds a floating-point number to the nearest integer using "round half up"
+/// rule. In this rule, when a number is halfway between two integers (like 3.5),
+/// it is rounded up to the next integer.
+///
+/// Parameters:
+///
+/// * `value` : The floating-point number to be rounded.
+///
+/// Returns the rounded value as a double-precision floating-point number.
+///
+/// Example:
+///
+/// ```moonbit
+/// test "round" {
+///   inspect!(3.7.round(), content="4")
+///   inspect!(3.2.round(), content="3")
+///   inspect!(3.5.round(), content="4")
+///   inspect!((-3.5).round(), content="-3")
+/// }
+/// ```
 pub fn round(self : Double) -> Double {
   floor(self + 0.5)
 }

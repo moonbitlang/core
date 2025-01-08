@@ -13,6 +13,29 @@
 // limitations under the License.
 
 ///|
+/// Calculates the floating-point remainder when `dividend` is divided by
+/// `divisor`. Returns NaN if either operand is NaN, or if `dividend` is
+/// infinity, or if `divisor` is zero.
+///
+/// Parameters:
+///
+/// * `dividend` : The floating-point number to be divided.
+/// * `divisor` : The floating-point number used to divide the `dividend`.
+///
+/// Returns the remainder of the division. The result has the same sign as the
+/// `dividend` and has an absolute value less than the absolute value of
+/// `divisor`.
+///
+/// Example:
+///
+/// ```moonbit
+/// test "op_mod" {
+///   inspect!(5.0.op_mod(3.0), content="2")
+///   inspect!((-5.0).op_mod(3.0), content="-2")
+///   inspect!(5.0.op_mod(not_a_number), content="NaN")
+///   inspect!(infinity.op_mod(3.0), content="NaN")
+/// }
+/// ```
 pub fn op_mod(self : Double, other : Double) -> Double {
   let x = self
   let y = other
@@ -31,7 +54,6 @@ pub fn op_mod(self : Double, other : Double) -> Double {
     }
     return x
   }
-
   // normalize x and y
   if ex == 0 {
     i = uint64_x << 12
@@ -55,7 +77,6 @@ pub fn op_mod(self : Double, other : Double) -> Double {
     uint64_y = uint64_y & (18446744073709551615UL >> 12)
     uint64_y = uint64_y | (1UL << 52)
   }
-
   // x mod y
   while ex > ey {
     i = uint64_x - uint64_y
@@ -79,7 +100,6 @@ pub fn op_mod(self : Double, other : Double) -> Double {
     uint64_x = uint64_x << 1
     ex -= 1
   }
-
   // scale result
   if ex > 0 {
     uint64_x = uint64_x - (1UL << 52)
