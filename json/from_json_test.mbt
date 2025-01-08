@@ -1,4 +1,4 @@
-// Copyright 2024 International Digital Economy Academy
+// Copyright 2025 International Digital Economy Academy
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -381,4 +381,52 @@ test "jsonvalue" {
       #|Object({"x": Number(1)})
     ,
   )
+}
+
+test "int roundtrip" {
+  let u = (123).to_json()
+  let v : Int = @json.from_json!(u)
+  inspect!(v, content="123")
+  let u = (-123).to_json()
+  let v : Int = @json.from_json!(u)
+  inspect!(v, content="-123")
+}
+
+test "uint roundtrip" {
+  let u = 123U.to_json()
+  let v : UInt = @json.from_json!(u)
+  inspect!(v, content="123")
+  let u = 4294967295U.to_json()
+  let v : UInt = @json.from_json!(u)
+  inspect!(v, content="4294967295")
+}
+
+test "uint" {
+  let v : UInt = @json.from_json!(Number(4294967295))
+  inspect!(v, content="4294967295")
+  let v : UInt = @json.from_json!(Number(-1))
+  inspect!(v, content="0")
+  let v : UInt = @json.from_json!(Number(4294967296))
+  inspect!(v, content="4294967295")
+}
+
+test "int64 roundtrip" {
+  let u = 123L.to_json()
+  let v : Int64 = @json.from_json!(u)
+  inspect!(v, content="123")
+  let u = 9223372036854775807L.to_json()
+  let v : Int64 = @json.from_json!(u)
+  inspect!(v, content="9223372036854775807")
+  let u = (-9223372036854775808L).to_json()
+  let v : Int64 = @json.from_json!(u)
+  inspect!(v, content="-9223372036854775808")
+}
+
+test "uint64 roundtrip" {
+  let u = 123UL.to_json()
+  let v : UInt64 = @json.from_json!(u)
+  inspect!(v, content="123")
+  let u = 18446744073709551615UL.to_json()
+  let v : UInt64 = @json.from_json!(u)
+  inspect!(v, content="18446744073709551615")
 }
