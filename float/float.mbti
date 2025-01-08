@@ -14,8 +14,6 @@ let neg_infinity : Float
 let not_a_number : Float
 
 // Types and methods
-
-
 impl Float {
   abs(Float) -> Float
   ceil(Float) -> Float
@@ -31,6 +29,8 @@ impl Float {
   to_le_bytes(Float) -> Bytes
   trunc(Float) -> Float
 }
+impl Hash for Float
+impl Show for Float
 
 // Type aliases
 

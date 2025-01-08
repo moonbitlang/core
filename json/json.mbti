@@ -40,7 +40,6 @@ pub(all) struct Position {
 }
 impl Eq for Position
 
-
 impl Json {
   as_array(Self) -> Array[Self]?
   as_bool(Self) -> Bool?
@@ -53,6 +52,7 @@ impl Json {
   to_json(Self) -> Self
   value(Self, String) -> Self?
 }
+impl Show for Json
 
 // Type aliases
 pub typealias JsonValue = Json
