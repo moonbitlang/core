@@ -554,6 +554,7 @@ impl UInt {
   to_byte(UInt) -> Byte
   to_float(UInt) -> Float
   to_int(UInt) -> Int //deprecated
+  to_json(UInt) -> Json
   to_string(UInt) -> String
   to_uint64(UInt) -> UInt64
   trunc_double(Double) -> UInt
@@ -590,6 +591,7 @@ impl UInt64 {
   to_float(UInt64) -> Float
   to_int(UInt64) -> Int
   to_int64(UInt64) -> Int64 //deprecated
+  to_json(UInt64) -> Json
   to_string(UInt64) -> String
   to_uint(UInt64) -> UInt
   trunc_double(Double) -> UInt64
