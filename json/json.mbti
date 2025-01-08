@@ -66,6 +66,8 @@ impl FromJson for Bool
 impl FromJson for Char
 impl FromJson for Int
 impl FromJson for Int64
+impl FromJson for UInt
+impl FromJson for UInt64
 impl FromJson for Double
 impl FromJson for String
 impl[T : FromJson] FromJson for T?
