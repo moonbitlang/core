@@ -13,6 +13,13 @@
 // limitations under the License.
 
 ///|
+enum Op {
+  PushEnd(Int)
+  Concat(Array[Int])
+  Set(Int, Int)
+}
+
+///|
 /// Generate a random test sequence for the array,
 /// following the format described in the `execute_array_test` function.
 /// 
@@ -20,11 +27,7 @@
 /// - `rng`: a random number generator
 /// - `times`: the number of operations to be generated
 /// - `max_lvl`: the maximum level of the tree
-fn random_test_gen(
-  rng : @random.Rand,
-  times : Int,
-  max_lvl : Int
-) -> Array[Int] {
+fn random_test_gen(rng : @random.Rand, times : Int, max_lvl : Int) -> Array[Op] {
   // Hyperparameters
   let op_count = 3
   let max_len = branching_factor_power(max_lvl)
@@ -38,32 +41,24 @@ fn random_test_gen(
     match op {
       0 => {
         // push_end
-        ret.push(op)
-        let val = rng.int(limit=max_val)
-        ret.push(val)
+        ret.push(Op::PushEnd(rng.int(limit=max_val)))
         cur_len += 1
       }
       1 => {
         // concat
-        ret.push(op)
         let len = rng.int(limit=max_len)
-        ret.push(len)
-        for j = 0; j < len; j = j + 1 {
-          let val = rng.int(limit=max_val)
-          ret.push(val)
-        }
+        let a = Array::make(len, rng.int(limit=max_val))
         cur_len += len
+        ret.push(Op::Concat(a))
       }
       2 => {
         // set
         if cur_len == 0 {
           continue
         }
-        ret.push(op)
         let idx = rng.int(limit=cur_len)
         let val = rng.int(limit=max_val)
-        ret.push(idx)
-        ret.push(val)
+        ret.push(Op::Set(idx, val))
       }
       _ => abort("Invalid op")
     }
@@ -81,47 +76,32 @@ fn random_test_gen(
 /// 2. set
 /// 
 /// The `rs` array is a sequence of operations to be executed.
-/// For each operation, the following value sequence are expected:
-/// - push_end: 0 value
-/// - concat: 1 length v0 v1 ... v_{length - 1}
-/// - set: 2 index value
-fn execute_array_test(rs : Array[Int]) -> Unit! {
+fn execute_array_test(rs : Array[Op]) -> Unit! {
   let mut t = T::new()
-  let a = []
-  let len = rs.length()
-  let mut i = 0
-  while i < len {
-    let op = rs[i]
-    i += 1
+  let a : Array[Int] = []
+  for op in rs {
     match op {
-      0 => {
+      PushEnd(v) => {
         // push_end
-        let rsi = rs[i]
-        a.push(rsi)
-        t = t.push(rsi)
-        i += 1
+        a.push(v)
+        t = t.push(v)
         check_array_eq!(a, t)
       }
-      1 => {
+      Concat(v) => {
         // concat
-        let len = rs[i]
-        i += 1
-        rs.blit_to(a, len~, src_offset=i, dst_offset=a.length())
-        let t1 = T::from_iter(rs[i:i + len].iter())
-        t = t.concat(t1)
-        i += len
+        let len = v.length()
+        for i = 0; i < len; i = i + 1 {
+          a.push(v[i])
+        }
+        t = t.concat(T::from_iter(v.iter()))
         check_array_eq!(a, t)
       }
-      2 => {
+      Set(idx, v) => {
         // set
-        let idx = rs[i]
-        let v = rs[i + 1]
-        i += 2
         a[idx] = v
         t = t.set(idx, v)
         check_array_eq!(a, t)
       }
-      _ => abort("Invalid op")
     }
   }
 }
@@ -178,7 +158,7 @@ fn check_fixedarray_eq(a : FixedArray[Int], t : T[Int]) -> Unit! {
 
 ///|
 /// Generate a random array of length `n`.
-fn random_array(n : Int) -> FixedArray[Int] {
+fn random_array(n : Int) -> Array[Int] {
   let rng = @random.new(seed=b"DEADBEEFLIVEBEEFDEADBEEFDEADBEEF")
-  FixedArray::makei(n, fn(i) { rng.int(limit=i) })
+  Array::makei(n, fn(i) { rng.int(limit=i) })
 }

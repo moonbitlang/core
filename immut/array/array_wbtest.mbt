@@ -97,8 +97,8 @@ test "copy" {
   let v2 = T::from_iter(v2_content.iter())
   let v = v1.concat(v2)
   let v_copy = v.copy()
-  check_fixedarray_eq!(v_content, v_copy)
-  check_fixedarray_eq!(v_content, v)
+  check_array_eq!(v_content, v_copy)
+  check_array_eq!(v_content, v)
 }
 
 test "concat-two-full-tree" {
@@ -133,21 +133,14 @@ test "concat-multiple-random-tree" {
 
 ///|
 /// Generate a sequence of concatenation operations as a test case,
-/// following the format described in the `execute_array_test` function.
 /// 
 /// Inputs:
 /// - `n`: the number of operations to be generated
 /// - `len_gen`: a function that generates the length of the array to be concatenated
-fn gen_concat_seq(n : Int, len_gen : (Int) -> Int) -> Array[Int] {
+fn gen_concat_seq(n : Int, len_gen : (Int) -> Int) -> Array[Op] {
   let ret = []
   for i = 0; i < n; i = i + 1 {
-    ret.push(1)
-    let len = len_gen(i)
-    ret.push(len)
-    let arr = random_array(len)
-    for j = 0; j < len; j = j + 1 {
-      ret.push(arr[j])
-    }
+    ret.push(Op::Concat(random_array(len_gen(i))))
   }
   ret
 }
@@ -156,15 +149,10 @@ fn gen_concat_seq(n : Int, len_gen : (Int) -> Int) -> Array[Int] {
 /// Generate a sequence of concatenation operations as a test case,
 /// similar to `gen_concat_seq`, but this time, the length of the array
 /// to be concatenated is given as an array.
-fn gen_concat_seq_from_len_array(len : Array[Int]) -> Array[Int] {
+fn gen_concat_seq_from_len_array(len : Array[Int]) -> Array[Op] {
   let ret = []
   for i = 0; i < len.length(); i = i + 1 {
-    ret.push(1)
-    let arr = random_array(len[i])
-    ret.push(len[i])
-    for j = 0; j < len[i]; j = j + 1 {
-      ret.push(arr[j])
-    }
+    ret.push(Op::Concat(random_array(len[i])))
   }
   ret
 }
