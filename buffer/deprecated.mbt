@@ -14,7 +14,7 @@
 
 ///|
 /// Return a new string contains the data in buffer.
-/// 
+///
 /// @alert deprecated "Use `Buffer::contents` to read the contents of the buffer"
 /// @coverage.skip
 pub fn to_string(self : T) -> String {
@@ -23,9 +23,9 @@ pub fn to_string(self : T) -> String {
 
 ///|
 /// Return a new unchecked string contains the data in buffer.
-/// Note this function does not validate the encoding of the byte sequence, 
+/// Note this function does not validate the encoding of the byte sequence,
 /// it simply copy the bytes into a new String.
-/// 
+///
 /// @alert deprecated "Use `Buffer::contents` to read the contents of the buffer"
 /// @coverage.skip
 pub fn to_unchecked_string(self : T) -> String {
@@ -33,7 +33,16 @@ pub fn to_unchecked_string(self : T) -> String {
 }
 
 ///|
-/// Write a sub-string into buffer.
+/// Write a substring from a given string into the buffer. This is a deprecated
+/// function, use `write_substring` instead.
+///
+/// Parameters:
+///
+/// * `self` : The buffer to write into.
+/// * `string` : The source string from which to extract the substring.
+/// * `offset` : The starting position in the source string (inclusive).
+/// * `length` : The number of characters to write from the starting position.
+///
 /// @alert deprecated "Use `Buffer::write_substring` instead"
 /// @coverage.skip
 pub fn write_sub_string(
