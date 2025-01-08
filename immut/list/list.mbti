@@ -10,8 +10,6 @@ fn singleton[A](A) -> T[A]
 
 fn unfold[A, S]((S) -> (A, S)?, init~ : S) -> T[A]
 
-fn unzip[A, B](T[(A, B)]) -> (T[A], T[B])
-
 // Types and methods
 pub(all) enum T {
   Nil
@@ -87,6 +85,7 @@ impl T {
   unsafe_maximum[A : Compare](Self[A]) -> A
   unsafe_minimum[A : Compare](Self[A]) -> A
   unsafe_nth[A](Self[A], Int) -> A
+  unzip[A, B](Self[(A, B)]) -> (Self[A], Self[B])
   zip[A, B](Self[A], Self[B]) -> Self[(A, B)]?
 }
 impl[A : Eq] Eq for T[A]
