@@ -70,3 +70,48 @@ test "Hash" {
   inspect!(a.a.hash(), content="749479517")
   inspect!((2.0 : Float).hash(), content="-1861484393")
 }
+
+test "Float::is_inf/special_values" {
+  inspect!(@float.infinity.is_inf(), content="true")
+  inspect!(@float.neg_infinity.is_inf(), content="true")
+  inspect!(@float.not_a_number.is_inf(), content="false")
+  inspect!((0.0 : Float).is_inf(), content="false")
+  inspect!(@float.max_value.is_inf(), content="false")
+  inspect!(@float.min_value.is_inf(), content="false")
+  inspect!(@float.min_positive.is_inf(), content="false")
+}
+
+test "@float.Float::is_pos_inf/special_values" {
+  inspect!(@float.infinity.is_pos_inf(), content="true")
+  inspect!(@float.neg_infinity.is_pos_inf(), content="false")
+  inspect!(@float.not_a_number.is_pos_inf(), content="false")
+  inspect!(@float.max_value.is_pos_inf(), content="false")
+  inspect!((-@float.max_value).is_pos_inf(), content="false")
+  inspect!(@float.min_positive.is_pos_inf(), content="false")
+  inspect!((0.0 : Float).is_pos_inf(), content="false")
+  inspect!((1.0 : Float).is_pos_inf(), content="false")
+  inspect!((-1.0 : Float).is_pos_inf(), content="false")
+}
+
+test "@float.Float::is_neg_inf" {
+  inspect!((-1.0 : Float).is_neg_inf(), content="false")
+  inspect!((0.0 : Float).is_neg_inf(), content="false")
+  inspect!((1.0 : Float).is_neg_inf(), content="false")
+  inspect!(@float.neg_infinity.is_neg_inf(), content="true")
+  inspect!(@float.infinity.is_neg_inf(), content="false")
+  inspect!(@float.not_a_number.is_neg_inf(), content="false")
+  inspect!(@float.min_value.is_neg_inf(), content="false")
+  inspect!((@float.min_value - 1.0e38).is_neg_inf(), content="true")
+}
+
+test "@float.Float::is_nan" {
+  inspect!((0.0 : Float).is_nan(), content="false")
+  inspect!((1.0 : Float).is_nan(), content="false")
+  inspect!((-1.0 : Float).is_nan(), content="false")
+  inspect!(@float.not_a_number.is_nan(), content="true")
+  inspect!(@float.infinity.is_nan(), content="false")
+  inspect!(@float.neg_infinity.is_nan(), content="false")
+  inspect!(@float.max_value.is_nan(), content="false")
+  inspect!(@float.min_value.is_nan(), content="false")
+  inspect!(@float.min_positive.is_nan(), content="false")
+}
