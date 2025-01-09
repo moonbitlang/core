@@ -13,53 +13,13 @@
 // limitations under the License.
 
 ///|
-pub fn get_cli_args() -> Array[String] {
-  get_cli_args_internal()
-}
-
-///|
-extern "js" fn get_cli_args_internal() -> Array[String] =
+pub extern "js" fn get_cli_args() -> Array[String] =
   #| function() {
-  #|  return process.argv;
-  #| }
-
-///|
-pub fn get_env_vars() -> Map[String, String] {
-  let tmp = get_env_vars_internal()
-  let res = {}
-  for i = 0; i < tmp.length(); i = i + 2 {
-    res[tmp[i]] = tmp[i + 1]
-  }
-  res
-}
-
-///|
-extern "js" fn get_env_vars_internal() -> Array[String] =
-  #| function() {
-  #|   const env = process.env;
-  #|   const result = [];
-  #|   for (const key in env) {
-  #|     result.push(key);
-  #|     result.push(env[key]);
-  #|   }
-  #|   return result;
-  #| }
-
-///|
-pub fn set_env_var(key : String, value : String) -> Unit {
-  set_env_var_internal(key, value)
-}
-
-///|
-extern "js" fn set_env_var_internal(key : String, value : String) -> Unit =
-  #| function(key, value) {
-  #|   process.env[key] = value;
-  #| }
-
-///|
-pub extern "js" fn exit(code : Int) -> Unit =
-  #| function(code) {
-  #|   process.exit(code);
+  #|  if (typeof process !== "undefined" && typeof process.argv !== "undefined") {
+  #|    return process.argv;
+  #|  } else {
+  #|    return [];
+  #|  }
   #| }
 
 ///|

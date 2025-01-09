@@ -108,31 +108,4 @@ pub fn get_cli_args() -> Array[String] {
 fn get_cli_args_ffi() -> XExternStringArray = "__moonbit_fs_unstable" "args_get"
 
 ///|
-pub fn get_env_vars() -> Map[String, String] {
-  let env = get_env_vars_ffi()
-  let tmp = string_array_from_extern(env)
-  let res = {}
-  for i = 0; i < tmp.length(); i = i + 2 {
-    res[tmp[i]] = tmp[i + 1]
-  }
-  res
-}
-
-///|
-fn get_env_vars_ffi() -> XExternStringArray = "__moonbit_fs_unstable" "get_env_vars"
-
-///|
-pub fn set_env_var(key : String, value : String) -> Unit {
-  let key = string_to_extern(key)
-  let value = string_to_extern(value)
-  set_env_var_ffi(key, value)
-}
-
-///|
-fn set_env_var_ffi(key : XExternString, value : XExternString) = "__moonbit_fs_unstable" "set_env_var"
-
-///|
-pub fn exit(code : Int) = "__moonbit_sys_unstable" "exit"
-
-///|
 pub fn now() -> UInt64 = "__moonbit_time_unstable" "now"
