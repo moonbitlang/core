@@ -13,6 +13,39 @@
 // limitations under the License.
 
 ///|
+/// Copies elements from one array to another array. Works correctly even when
+/// the source and destination arrays overlap.
+///
+/// Parameters:
+///
+/// * `dst` : The destination array where elements will be copied to.
+/// * `dst_offset` : The starting index in the destination array where elements
+/// should be copied.
+/// * `src` : The source array from which elements will be copied.
+/// * `src_offset` : The starting index in the source array from which elements
+/// should be copied.
+/// * `len` : The number of elements to copy.
+///
+/// The behavior is undefined if any of the following conditions are met:
+///
+/// * `len` is negative
+/// * `dst_offset` is negative
+/// * `src_offset` is negative
+/// * `dst_offset + len` exceeds the length of destination array
+/// * `src_offset + len` exceeds the length of source array
+///
+/// Example:
+///
+/// ```moonbit
+/// test "Array::unsafe_blit" {
+///   let src = [1, 2, 3, 4, 5]
+///   let dst = [0, 0, 0, 0, 0]
+///   Array::unsafe_blit(dst, 1, src, 2, 2)
+///   inspect!(dst, content="[0, 3, 4, 0, 0]")
+/// }
+/// ```
+///
+/// @alert unsafe "Panic if the indices or length are out of bounds"
 pub fn Array::unsafe_blit[A](
   dst : Array[A],
   dst_offset : Int,
@@ -30,6 +63,33 @@ pub fn Array::unsafe_blit[A](
 }
 
 ///|
+/// Copies elements from a fixed-size array to a dynamic array. The arrays may
+/// overlap, in which case the copy is performed in a way that preserves the
+/// data.
+///
+/// Parameters:
+///
+/// * `dst` : The destination dynamic array where elements will be copied to.
+/// * `dst_offset` : The starting index in the destination array where copying
+/// begins.
+/// * `src` : The source fixed-size array from which elements will be copied.
+/// * `src_offset` : The starting index in the source array from which copying
+/// begins.
+/// * `len` : The number of elements to copy.
+///
+/// Example:
+///
+/// ```moonbit
+/// test "Array::unsafe_blit_fixed" {
+///   let src = FixedArray::make(5, 0)
+///   let dst = Array::make(5, 0)
+///   for i in 0..<5 {
+///     src[i] = i + 1
+///   }
+///   Array::unsafe_blit_fixed(dst, 1, src, 0, 2)
+///   inspect!(dst, content="[0, 1, 2, 0, 0]")
+/// }
+/// ```
 pub fn Array::unsafe_blit_fixed[A](
   dst : Array[A],
   dst_offset : Int,
@@ -47,22 +107,38 @@ pub fn Array::unsafe_blit_fixed[A](
 }
 
 ///|
-/// Copies elements from one array to another array. The destination array will grow if necessary.
-/// 
-/// # Arguments
-/// - `self`: The source array to copy elements from
-/// - `dst`: The destination array to copy elements to
-/// - `len`: The number of elements to copy
-/// - `src_offset`: Starting index in the source array (default: 0)
-/// - `dst_offset`: Starting index in the destination array (default: 0)
+/// Copies elements from one array to another array, with support for growing the
+/// destination array if needed. The arrays may overlap, in which case the copy
+/// is performed in a way that preserves the data.
 ///
-/// # Panics
+/// Parameters:
+///
+/// * `source` : The array to copy elements from.
+/// * `destination` : The array to copy elements to. Will be automatically grown
+/// if needed to accommodate the copied elements.
+/// * `length` : The number of elements to copy.
+/// * `source_start` : Starting index in the source array. Defaults to 0.
+/// * `destination_start` : Starting index in the destination array. Defaults to
+/// 0.
+///
+/// Example:
+///
+/// ```moonbit
+/// test "Array::blit_to/basic" {
+///   let src = [1, 2, 3, 4, 5]
+///   let dst = [0, 0]
+///   src.blit_to(dst, len=3, dst_offset=1)
+///   inspect!(dst, content="[0, 1, 2, 3]")
+/// }
+/// ```
+///
 /// Panics if:
-/// - `len` is negative
-/// - `src_offset` is negative
-/// - `dst_offset` is negative  
-/// - `src_offset + len` exceeds source array length
-/// - `dst_offset` exceeds destination array length
+///
+/// * `len` is negative
+/// * `src_offset` is negative
+/// * `dst_offset` is negative
+/// * `dst_offset + len` exceeds the length of destination array
+/// * `src_offset + len` exceeds the length of source array
 pub fn Array::blit_to[A](
   self : Array[A],
   dst : Array[A],
