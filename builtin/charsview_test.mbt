@@ -1,4 +1,4 @@
-// Copyright 2024 International Digital Economy Academy
+// Copyright 2025 International Digital Economy Academy
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,28 +12,28 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-test "offset_by" {
+test "index_at" {
   let str = "Hello"
-  let offset = CharOffset::offset_by(str, 3)
-  inspect!(offset, content="Some(CharOffset(3))")
-  let offset = CharOffset::offset_by(str, 5)
+  let offset = StringIndex::index_at(str, 3)
+  inspect!(offset, content="Some(StringIndex(3))")
+  let offset = StringIndex::index_at(str, 5)
   inspect!(offset, content="None")
 }
 
-test "offset_by with surrogate pairs" {
+test "index_at with surrogate pairs" {
   let str = "🤣🤣🤣"
-  let offset = CharOffset::offset_by(str, 1)
-  inspect!(offset, content="Some(CharOffset(2))")
-  let offset = CharOffset::offset_by(str, 2)
-  inspect!(offset, content="Some(CharOffset(4))")
-  let offset = CharOffset::offset_by(str, 3)
+  let offset = StringIndex::index_at(str, 1)
+  inspect!(offset, content="Some(StringIndex(2))")
+  let offset = StringIndex::index_at(str, 2)
+  inspect!(offset, content="Some(StringIndex(4))")
+  let offset = StringIndex::index_at(str, 3)
   inspect!(offset, content="None")
 }
 
 test "charsview basic" {
   let str = "Hello🤣🤣🤣"
-  guard let Some(start) = CharOffset::offset_by(str, 1)
-  guard let Some(end) = CharOffset::offset_by(str, 6)
+  guard let Some(start) = StringIndex::index_at(str, 1)
+  guard let Some(end) = StringIndex::index_at(str, 6)
   inspect!(
     str[start:],
     content=
@@ -62,8 +62,8 @@ test "charsview basic" {
 
 test "charsview basic2" {
   let str = "He🤣🤣🤣llo"
-  guard let Some(start) = CharOffset::offset_by(str, 1)
-  guard let Some(end) = CharOffset::offset_by(str, 7)
+  guard let Some(start) = StringIndex::index_at(str, 1)
+  guard let Some(end) = StringIndex::index_at(str, 7)
   inspect!(
     str[start:],
     content=
@@ -92,8 +92,8 @@ test "charsview basic2" {
 
 test "charsview subview" {
   let str = "Hello🤣🤣🤣"
-  guard let Some(start) = CharOffset::offset_by(str, 1)
-  guard let Some(end) = CharOffset::offset_by(str, 6)
+  guard let Some(start) = StringIndex::index_at(str, 1)
+  guard let Some(end) = StringIndex::index_at(str, 6)
   let view = str[start:end]
   inspect!(
     view[1:],
@@ -123,8 +123,8 @@ test "charsview subview" {
 
 test "charsview op_get" {
   let str = "Hello🤣🤣🤣"
-  guard let Some(start) = CharOffset::offset_by(str, 1)
-  guard let Some(end) = CharOffset::offset_by(str, 6)
+  guard let Some(start) = StringIndex::index_at(str, 1)
+  guard let Some(end) = StringIndex::index_at(str, 6)
   let view = str[start:end]
   inspect!(view[0], content="'e'")
   inspect!(view[4], content="'🤣'")
