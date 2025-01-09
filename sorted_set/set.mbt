@@ -348,29 +348,21 @@ fn each[V](self : Node[V], f : (V) -> Unit) -> Unit {
 ///|
 /// Iterates the set with index.
 pub fn eachi[V](self : T[V], f : (Int, V) -> Unit) -> Unit {
-  match self.root {
-    None => ()
-    Some(root) => root.eachi(f)
-  }
-}
-
-///|
-fn eachi[V](self : Node[V], f : (Int, V) -> Unit) -> Unit {
-  let s = []
-  let mut p = Some(self)
   let mut i = 0
-  while not(p.is_empty()) || not(s.is_empty()) {
-    while not(p.is_empty()) {
-      s.push(p)
-      p = p.unwrap().left
+  fn dfs(root : Node[V]?) -> Unit {
+    match root {
+      Some(root) => {
+        dfs(root.left)
+        f(i, root.value)
+        i = i + 1
+        dfs(root.right)
+      }
+      None => ()
     }
-    if not(s.is_empty()) {
-      p = s.unsafe_pop()
-      f(i, p.unwrap().value)
-      p = p.unwrap().right
-      i += 1
-    }
+    ()
   }
+
+  dfs(self.root)
 }
 
 ///|
