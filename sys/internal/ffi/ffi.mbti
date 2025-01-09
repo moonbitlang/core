@@ -1,0 +1,34 @@
+package moonbitlang/core/sys/internal/ffi
+
+// Values
+fn exit(Int) -> Unit
+
+fn get_cli_args() -> Array[String]
+
+fn get_env_vars() -> Map[String, String]
+
+fn now() -> UInt64
+
+fn set_env_var(String, String) -> Unit
+
+fn string_array_from_extern(XExternStringArray) -> Array[String]
+
+fn string_from_extern(XExternString) -> String
+
+fn string_to_extern(String) -> XExternString
+
+// Types and methods
+pub(all) type XExternString
+
+pub(all) type XExternStringArray
+
+pub(all) type XStringArrayReadHandle
+
+pub(all) type XStringCreateHandle
+
+pub(all) type XStringReadHandle
+
+// Type aliases
+
+// Traits
+
