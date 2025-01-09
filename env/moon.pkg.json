@@ -1,6 +1,6 @@
 {
     "import": [
-        "moonbitlang/core/sys/internal/ffi",
+        "moonbitlang/core/env/internal/ffi",
         "moonbitlang/core/builtin"
     ],
     "targets": {

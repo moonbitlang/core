@@ -14,15 +14,15 @@
 
 test "get_env_vars" {
   let (k, v) = ("THIS_IS_A_TEST_FOR_ENV_VAR", "IT_WORKS")
-  let old_env = @sys.get_env_vars()[k]
+  let old_env = @env.get_env_vars()[k]
   inspect!(
     old_env,
     content=
       #|None
     ,
   )
-  @sys.set_env_var(k, v)
-  let res = @sys.get_env_vars()[k]
+  @env.set_env_var(k, v)
+  let res = @env.get_env_vars()[k]
   inspect!(
     res,
     content=
