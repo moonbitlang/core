@@ -20,6 +20,10 @@ impl Float {
   default() -> Float
   exp(Float) -> Float
   floor(Float) -> Float
+  is_inf(Float) -> Bool
+  is_nan(Float) -> Bool
+  is_neg_inf(Float) -> Bool
+  is_pos_inf(Float) -> Bool
   ln(Float) -> Float
   op_mod(Float, Float) -> Float
   pow(Float, Float) -> Float
