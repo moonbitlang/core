@@ -30,9 +30,11 @@ pub fn T::to_string[A : Show](xs : T[A]) -> String {
 ///|
 pub impl[A : ToJson] ToJson for T[A] with to_json(self) {
   let capacity = self.length()
-  guard capacity != 0 else { return Array([]) }
+  guard capacity != 0 else { return [] }
   let jsons = Array::new(capacity~)
-  self.each(fn(a) { jsons.push(a.to_json()) })
+  for a in self {
+    jsons.push(a.to_json())
+  }
   Array(jsons)
 }
 
