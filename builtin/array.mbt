@@ -1662,6 +1662,38 @@ pub fn iter[T](self : Array[T]) -> Iter[T] {
 }
 
 ///|
+/// Returns an iterator that yields elements from the array in reverse order,
+/// from the last element to the first.
+///
+/// Parameters:
+///
+/// * `array` : The array to iterate over in reverse order.
+///
+/// Returns an iterator that yields each element of the array, starting from the
+/// last element and moving towards the first.
+///
+/// Example:
+///
+/// ```moonbit
+/// test "Array::rev_iter" {
+///   let arr = [1, 2, 3]
+///   let result = []
+///   arr.rev_iter().each(fn(x) { result.push(x) })
+///   inspect!(result, content="[3, 2, 1]")
+/// }
+/// ```
+pub fn rev_iter[T](self : Array[T]) -> Iter[T] {
+  Iter::new(fn(yield_) {
+    for i = self.length() - 1; i >= 0; i = i - 1 {
+      guard let IterContinue = yield_(self.unsafe_get(i)) else { x => break x }
+
+    } else {
+      IterContinue
+    }
+  })
+}
+
+///|
 /// Returns an iterator that provides both indices and values of the array in
 /// order.
 ///
