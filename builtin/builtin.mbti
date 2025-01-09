@@ -217,22 +217,6 @@ impl BytesView {
 }
 impl Show for BytesView
 
-type CharOffset
-impl CharOffset {
-  offset_by(String, Int) -> Self?
-  unsafe_from_int(Int) -> Self
-}
-impl Eq for CharOffset
-impl Show for CharOffset
-
-type CharsView
-impl CharsView {
-  length(Self) -> Int
-  op_as_view(Self, start~ : Int = .., end? : Int) -> Self
-  op_get(Self, Int) -> Char
-}
-impl Show for CharsView
-
 pub(all) type! Failure String
 impl Show for Failure
 
@@ -410,6 +394,22 @@ impl StringBuilder {
   write_substring(Self, String, Int, Int) -> Unit
 }
 impl Show for StringBuilder
+
+type StringIndex
+impl StringIndex {
+  index_at(String, Int) -> Self?
+  unsafe_from_int(Int) -> Self
+}
+impl Eq for StringIndex
+impl Show for StringIndex
+
+type StringView
+impl StringView {
+  length(Self) -> Int
+  op_as_view(Self, start~ : Int = .., end? : Int) -> Self
+  op_get(Self, Int) -> Char
+}
+impl Show for StringView
 
 type UninitializedArray
 impl UninitializedArray {
@@ -668,7 +668,7 @@ impl String {
   length(String) -> Int
   make(Int, Char) -> String
   op_add(String, String) -> String
-  op_as_view(String, start~ : CharOffset = .., end? : CharOffset) -> CharsView
+  op_as_view(String, start~ : StringIndex = .., end? : StringIndex) -> StringView
   op_equal(String, String) -> Bool
   op_get(String, Int) -> Char
   substring(String, start~ : Int = .., end? : Int) -> String
