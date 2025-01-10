@@ -3,17 +3,22 @@ package moonbitlang/core/immut/priority_queue
 alias @moonbitlang/core/quickcheck as @quickcheck
 
 // Values
+fn from_array[A : Compare](Array[A]) -> T[A]
+
+fn new[A : Compare]() -> T[A]
+
+fn of[A : Compare](FixedArray[A]) -> T[A]
 
 // Types and methods
 type T
 impl T {
-  from_array[A : Compare](Array[A]) -> Self[A]
+  from_array[A : Compare](Array[A]) -> Self[A] //deprecated
   from_iter[A : Compare](Iter[A]) -> Self[A]
   is_empty[A](Self[A]) -> Bool
   iter[A : Compare](Self[A]) -> Iter[A]
   length[A](Self[A]) -> Int
-  new[A : Compare]() -> Self[A]
-  of[A : Compare](FixedArray[A]) -> Self[A]
+  new[A : Compare]() -> Self[A] //deprecated
+  of[A : Compare](FixedArray[A]) -> Self[A] //deprecated
   peek[A](Self[A]) -> A?
   pop[A : Compare](Self[A]) -> Self[A]?
   pop_exn[A : Compare](Self[A]) -> Self[A] //deprecated

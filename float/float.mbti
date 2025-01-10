@@ -1,6 +1,8 @@
 package moonbitlang/core/float
 
 // Values
+fn default() -> Float
+
 let infinity : Float
 
 let max_value : Float

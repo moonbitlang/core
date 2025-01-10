@@ -1,6 +1,8 @@
 package moonbitlang/core/uint
 
 // Values
+fn default() -> UInt
+
 let max_value : UInt
 
 let min_value : UInt
