@@ -1,4 +1,4 @@
-// Copyright 2024 International Digital Economy Academy
+// Copyright 2025 International Digital Economy Academy
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -29,7 +29,30 @@ fn Array::make_uninit[T](len : Int) -> Array[T] {
 }
 
 ///|
-/// Creates a new array.
+/// Creates a new empty array with an optional initial capacity.
+///
+/// Parameters:
+///
+/// * `capacity` : The initial capacity of the array. If 0 (default), creates an
+/// array with minimum capacity. Must be non-negative.
+///
+/// Returns a new empty array of type `Array[T]` with the specified initial
+/// capacity.
+///
+/// Example:
+///
+/// ```moonbit
+/// test "Array::new" {
+///   let arr : Array[Int] = Array::new(capacity=10)
+///   inspect!(arr.length(), content="0")
+///   inspect!(arr.capacity(), content="10")
+/// }
+///
+/// test "Array::new/default" {
+///   let arr : Array[Int] = Array::new()
+///   inspect!(arr.length(), content="0")
+/// }
+/// ```
 pub fn Array::new[T](capacity~ : Int = 0) -> Array[T] {
   if capacity == 0 {
     []
@@ -40,7 +63,23 @@ pub fn Array::new[T](capacity~ : Int = 0) -> Array[T] {
 
 ///|
 /// Returns the number of elements in the array.
-/// @intrinsic %array.length
+///
+/// Parameters:
+///
+/// * `array` : The array whose length is to be determined.
+///
+/// Returns the number of elements in the array as an integer.
+///
+/// Example:
+///
+/// ```moonbit
+/// test "Array::length" {
+///   let arr = [1, 2, 3]
+///   inspect!(arr.length(), content="3")
+///   let empty : Array[Int] = []
+///   inspect!(empty.length(), content="0")
+/// }
+/// ```
 pub fn length[T](self : Array[T]) -> Int {
   self.len
 }
@@ -243,8 +282,29 @@ pub fn pop_exn[T](self : Array[T]) -> T {
 }
 
 ///|
-/// Removes the last element from a array and returns it.
-/// 
+/// Removes and returns the last element from the array.
+///
+/// Parameters:
+///
+/// * `array` : The array from which to remove and return the last element.
+///
+/// Returns the last element of the array before removal.
+///
+/// Example:
+///
+/// ```moonbit
+/// test "unsafe_pop" {
+///   let arr = [1, 2, 3]
+///   inspect!(arr.unsafe_pop(), content="3")
+///   inspect!(arr, content="[1, 2]")
+/// }
+///
+/// test "panic unsafe_pop/empty" {
+///   let arr : Array[Int] = []
+///   ignore(arr.unsafe_pop()) // Panics when array is empty
+/// }
+/// ```
+///
 /// @alert unsafe "Panic if the array is empty."
 pub fn unsafe_pop[T](self : Array[T]) -> T {
   let len = self.length()
@@ -347,7 +407,7 @@ pub fn insert[T](self : Array[T], index : Int, value : T) -> Unit {
 ///|
 /// Resize the array in-place so that `len` is equal to `new_len`.
 ///
-/// If `new_len` is greater than `len`, the array will be extended by the 
+/// If `new_len` is greater than `len`, the array will be extended by the
 /// difference, and the values in the new slots are left uninitilized.
 ///  If `new_len` is less than `len`, it will panic
 ///

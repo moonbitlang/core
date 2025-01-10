@@ -16,7 +16,31 @@
 fn set_null[T](buffer : UninitializedArray[T], index : Int) = "%fixedarray.set_null"
 
 ///|
-/// Creates a new, empty deque.
+/// Creates a new empty deque with an optional initial capacity.
+///
+/// Parameters:
+///
+/// * `capacity` : The initial capacity of the deque. If not specified, defaults
+/// to 0 and will be automatically adjusted as elements are added.
+///
+/// Returns a new empty deque of type `T[A]` where `A` is the type of elements
+/// the deque will hold.
+///
+/// Example:
+///
+/// ```moonbit
+/// test "T::new" {
+///   let dq : @deque.T[Int] = @deque.T::new()
+///   inspect!(dq.length(), content="0")
+///   inspect!(dq.capacity(), content="0")
+/// }
+///
+/// test "T::new/with_capacity" {
+///   let dq : @deque.T[Int] = @deque.T::new(capacity=10)
+///   inspect!(dq.length(), content="0")
+///   inspect!(dq.capacity(), content="10")
+/// }
+/// ```
 pub fn T::new[A](capacity~ : Int = 0) -> T[A] {
   T::{ buf: UninitializedArray::make(capacity), len: 0, head: 0, tail: 0 }
 }
@@ -27,7 +51,24 @@ pub impl[A : Show] Show for T[A] with output(self, logger) {
 }
 
 ///|
-/// Creates a new deque from an array.
+/// Creates a new deque with elements copied from an array.
+///
+/// Parameters:
+///
+/// * `array` : The array to initialize the deque with. All elements from the
+/// array will be copied into the new deque in the same order.
+///
+/// Returns a new deque containing all elements from the input array.
+///
+/// Example:
+///
+/// ```moonbit
+/// test "T::from_array" {
+///   let arr = [1, 2, 3, 4, 5]
+///   let dq = @deque.T::from_array(arr)
+///   inspect!(dq, content="@deque.of([1, 2, 3, 4, 5])")
+/// }
+/// ```
 pub fn T::from_array[A](arr : Array[A]) -> T[A] {
   let deq = T::{
     buf: UninitializedArray::make(arr.length()),
@@ -42,7 +83,26 @@ pub fn T::from_array[A](arr : Array[A]) -> T[A] {
 }
 
 ///|
-/// Creates a new copy of this deque.
+/// Creates a new deque with the same elements as the original deque. The new
+/// deque will have a capacity equal to its length, and its elements will be
+/// stored contiguously starting from index 0.
+///
+/// Parameters:
+///
+/// * `self` : The deque to be copied.
+///
+/// Returns a new deque containing all elements from the original deque in the
+/// same order.
+///
+/// Example:
+///
+/// ```moonbit
+/// test "T::copy" {
+///   let dq = @deque.of([1, 2, 3, 4, 5])
+///   let copied = dq.copy()
+///   inspect!(copied, content="@deque.of([1, 2, 3, 4, 5])")
+/// }
+/// ```
 pub fn T::copy[A](self : T[A]) -> T[A] {
   let len = self.len
   let deq = T::{
@@ -58,6 +118,22 @@ pub fn T::copy[A](self : T[A]) -> T[A] {
 }
 
 ///|
+/// Creates a new deque from a fixed array, preserving the order of elements.
+///
+/// Parameters:
+///
+/// * `array` : A fixed-size array containing the initial elements of the deque.
+///
+/// Returns a new deque containing all elements from the input array.
+///
+/// Example:
+///
+/// ```moonbit
+/// test "T::of" {
+///   let dq = @deque.T::of([1, 2, 3])
+///   inspect!(dq, content="@deque.of([1, 2, 3])")
+/// }
+/// ```
 pub fn T::of[A](arr : FixedArray[A]) -> T[A] {
   let deq = T::{
     buf: UninitializedArray::make(arr.length()),
@@ -72,13 +148,48 @@ pub fn T::of[A](arr : FixedArray[A]) -> T[A] {
 }
 
 ///|
-/// Returns the deque of elements in the vector.
+/// Returns the number of elements in the deque.
+///
+/// Parameters:
+///
+/// * `deque` : The deque to get the length of.
+///
+/// Returns the current number of elements in the deque.
+///
+/// Example:
+///
+/// ```moonbit
+/// test "length" {
+///   let dq = @deque.of([1, 2, 3])
+///   inspect!(dq.length(), content="3")
+///   dq.push_back(4)
+///   inspect!(dq.length(), content="4")
+/// }
+/// ```
 pub fn length[A](self : T[A]) -> Int {
   self.len
 }
 
 ///|
-/// Returns the total number of elements the deque can hold without reallocating.
+/// Returns the total number of elements the deque can hold in its internal
+/// buffer before requiring reallocation.
+///
+/// Parameters:
+///
+/// * `deque` : The deque whose capacity is being queried.
+///
+/// Returns the current capacity of the deque's internal buffer.
+///
+/// Example:
+///
+/// ```moonbit
+/// test "capacity" {
+///   let dq = @deque.new(capacity=10)
+///   dq.push_back(1)
+///   dq.push_back(2)
+///   inspect!(dq.capacity(), content="10")
+/// }
+/// ```
 pub fn capacity[A](self : T[A]) -> Int {
   self.buf.length()
 }
@@ -219,6 +330,25 @@ pub fn unsafe_pop_front[A](self : T[A]) -> Unit {
 }
 
 ///|
+/// Removes and discards the first element from the deque. This function is a
+/// deprecated version of `unsafe_pop_front`.
+///
+/// Parameters:
+///
+/// * `self` : The deque to remove the first element from.
+///
+/// Throws a runtime error if the deque is empty.
+///
+/// Example:
+///
+/// ```moonbit
+/// test "pop_front_exn" {
+///   let dq = @deque.of([1, 2, 3])
+///   dq.unsafe_pop_front()
+///   inspect!(dq, content="@deque.of([2, 3])")
+/// }
+/// ```
+///
 /// @alert deprecated "Use `unsafe_pop_front` instead"
 /// @coverage.skip
 pub fn pop_front_exn[A](self : T[A]) -> Unit {
@@ -255,6 +385,27 @@ pub fn unsafe_pop_back[A](self : T[A]) -> Unit {
 }
 
 ///|
+/// Removes and discards the last element from a deque.
+///
+/// Parameters:
+///
+/// * `deque` : The deque to remove the last element from.
+///
+/// Throws a runtime error if the deque is empty.
+///
+/// Example:
+///
+/// ```moonbit
+/// test "pop_back_exn" {
+///   let dq = @deque.of([1, 2, 3])
+///   // Deprecated way:
+///   // dq.pop_back_exn()
+///   // Recommended way:
+///   dq.unsafe_pop_back()
+///   inspect!(dq, content="@deque.of([1, 2])")
+/// }
+/// ```
+///
 /// @alert deprecated "Use `unsafe_pop_back` instead"
 /// @coverage.skip
 pub fn pop_back_exn[A](self : T[A]) -> Unit {
@@ -413,7 +564,27 @@ pub fn T::as_views[A](self : T[A]) -> (ArrayView[A], ArrayView[A]) {
 }
 
 ///|
-/// Compares two deques for equality.
+/// Compares two deques for equality. Returns `true` if both deques contain the
+/// same elements in the same order.
+///
+/// Parameters:
+///
+/// * `self` : The first deque to compare.
+/// * `other` : The second deque to compare with.
+///
+/// Returns `true` if both deques are equal, `false` otherwise.
+///
+/// Example:
+///
+/// ```moonbit
+/// test "op_equal" {
+///   let dq1 = @deque.of([1, 2, 3])
+///   let dq2 = @deque.of([1, 2, 3])
+///   let dq3 = @deque.of([3, 2, 1])
+///   inspect!(dq1 == dq2, content="true")
+///   inspect!(dq1 == dq3, content="false")
+/// }
+/// ```
 pub fn op_equal[A : Eq](self : T[A], other : T[A]) -> Bool {
   if self.len != other.len {
     return false
@@ -579,11 +750,24 @@ pub fn is_empty[A](self : T[A]) -> Bool {
 }
 
 ///|
+/// Searches for a value in the deque and returns its position.
 ///
-/// # Example
-/// ```
-/// let dv = @deque.of([3, 4, 5])
-/// assert_eq!(dv.search(3), Some(0))
+/// Parameters:
+///
+/// * `self` : The deque to search in.
+/// * `value` : The value to search for.
+///
+/// Returns the index of the first occurrence of the value in the deque, or
+/// `None` if the value is not found.
+///
+/// Example:
+///
+/// ```moonbit
+/// test "search" {
+///   let dq = @deque.of([1, 2, 3, 2, 1])
+///   inspect!(dq.search(2), content="Some(1)")
+///   inspect!(dq.search(4), content="None")
+/// }
 /// ```
 pub fn search[A : Eq](self : T[A], value : A) -> Int? {
   for i = 0; i < self.len; i = i + 1 {
@@ -595,12 +779,24 @@ pub fn search[A : Eq](self : T[A], value : A) -> Int? {
 }
 
 ///|
-/// Checks if the array contains an element.
+/// Tests whether a deque contains a specific element.
 ///
-/// # Example
-/// ```
-/// let dv = @deque.of([3, 4, 5])
-/// assert_true!(dv.contains(3))
+/// Parameters:
+///
+/// * `self` : The deque to search in.
+/// * `value` : The element to search for.
+///
+/// Returns `true` if the deque contains the specified element, `false`
+/// otherwise.
+///
+/// Example:
+///
+/// ```moonbit
+/// test "T::contains" {
+///   let dq = @deque.of([1, 2, 3, 4, 5])
+///   inspect!(dq.contains(3), content="true")
+///   inspect!(dq.contains(6), content="false")
+/// }
 /// ```
 pub fn contains[A : Eq](self : T[A], value : A) -> Bool {
   self.iter().contains(value)
@@ -829,6 +1025,25 @@ pub fn retain[A](self : T[A], f : (A) -> Bool) -> Unit {
 }
 
 ///|
+/// Creates an iterator over the elements of the deque, allowing sequential
+/// access to its elements in order from front to back.
+///
+/// Parameters:
+///
+/// * `deque` : The deque to iterate over.
+///
+/// Returns an iterator that yields each element in the deque in order.
+///
+/// Example:
+///
+/// ```moonbit
+/// test "T::iter" {
+///   let dq = @deque.of([1, 2, 3, 4, 5])
+///   let mut sum = 0
+///   dq.iter().each(fn(x) { sum = sum + x })
+///   inspect!(sum, content="15")
+/// }
+/// ```
 pub fn iter[A](self : T[A]) -> Iter[A] {
   Iter::new(fn(yield_) {
     guard not(self.is_empty()) else { IterContinue }
@@ -855,6 +1070,27 @@ pub fn iter[A](self : T[A]) -> Iter[A] {
 }
 
 ///|
+/// Returns an iterator that yields pairs of indices and elements from the deque
+/// in order, starting from the front.
+///
+/// Parameters:
+///
+/// * `self` : The deque to iterate over.
+///
+/// Returns an iterator of type `Iter2[Int, A]` that produces tuples of `(index,
+/// element)`, where `index` starts from 0 and increments by 1 for each element,
+/// and `element` is the corresponding element from the deque.
+///
+/// Example:
+///
+/// ```moonbit
+/// test "iter2" {
+///   let dq = @deque.of([10, 20, 30])
+///   let mut sum = 0
+///   dq.iter2().each(fn(i, x) { sum = sum + i * x })
+///   inspect!(sum, content="80") // 0*10 + 1*20 + 2*30 = 80
+/// }
+/// ```
 pub fn iter2[A](self : T[A]) -> Iter2[Int, A] {
   Iter2::new(fn(yield_) {
     guard not(self.is_empty()) else { IterContinue }
@@ -882,6 +1118,25 @@ pub fn iter2[A](self : T[A]) -> Iter2[Int, A] {
 }
 
 ///|
+/// Creates an iterator that yields elements in reverse order.
+///
+/// Parameters:
+///
+/// * `self` : The deque to iterate over.
+///
+/// Returns an iterator that yields elements from the deque in reverse order,
+/// starting from the last element.
+///
+/// Example:
+///
+/// ```moonbit
+/// test "T::rev_iter" {
+///   let dq = @deque.of([1, 2, 3])
+///   let mut sum = 0
+///   dq.rev_iter().each(fn(x) { sum = sum * 10 + x })
+///   inspect!(sum, content="321")
+/// }
+/// ```
 pub fn rev_iter[A](self : T[A]) -> Iter[A] {
   Iter::new(fn(yield_) {
     guard not(self.is_empty()) else { IterContinue }
@@ -908,6 +1163,27 @@ pub fn rev_iter[A](self : T[A]) -> Iter[A] {
 }
 
 ///|
+/// Creates an iterator that yields index-value pairs of elements in the deque in
+/// reverse order.
+///
+/// Parameters:
+///
+/// * `self` : The deque to iterate over.
+///
+/// Returns an iterator that yields tuples of `(index, value)` pairs, where the
+/// index starts from 0 and increments by 1, while values are taken from the
+/// deque in reverse order.
+///
+/// Example:
+///
+/// ```moonbit
+/// test "rev_iter2" {
+///   let dq = @deque.of([1, 2, 3])
+///   let mut s = ""
+///   dq.rev_iter2().each(fn(i, x) { s = s + "\{i}:\{x} " })
+///   inspect!(s, content="0:3 1:2 2:1 ")
+/// }
+/// ```
 pub fn rev_iter2[A](self : T[A]) -> Iter2[Int, A] {
   Iter2::new(fn(yield_) {
     guard not(self.is_empty()) else { IterContinue }
@@ -935,6 +1211,24 @@ pub fn rev_iter2[A](self : T[A]) -> Iter2[Int, A] {
 }
 
 ///|
+/// Creates a new deque containing the elements from the given iterator.
+///
+/// Parameters:
+///
+/// * `iter` : An iterator containing the elements to be added to the deque.
+///
+/// Returns a new deque containing all elements from the iterator in the same
+/// order.
+///
+/// Example:
+///
+/// ```moonbit
+/// test "T::from_iter" {
+///   let arr = [1, 2, 3, 4, 5]
+///   let dq = @deque.T::from_iter(arr.iter())
+///   inspect!(dq, content="@deque.of([1, 2, 3, 4, 5])")
+/// }
+/// ```
 pub fn T::from_iter[A](iter : Iter[A]) -> T[A] {
   let dq = T::new()
   iter.each(fn(e) { dq.push_back(e) })

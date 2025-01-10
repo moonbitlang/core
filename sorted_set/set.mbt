@@ -1,4 +1,4 @@
-// Copyright 2024 International Digital Economy Academy
+// Copyright 2025 International Digital Economy Academy
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -169,16 +169,18 @@ pub fn union[V : Compare](self : T[V], src : T[V]) -> T[V] {
 fn split[V : Compare](root : Node[V]?, value : V) -> (Node[V]?, Node[V]?) {
   match root {
     None => (None, None)
-    Some(node) =>
-      if value == node.value {
+    Some(node) => {
+      let comp = value.compare(node.value)
+      if comp == 0 {
         (node.left, node.right)
-      } else if value < node.value {
+      } else if comp < 0 {
         let (l, r) = split(node.left, value)
         (l, Some(join(r, node.value, node.right)))
       } else {
         let (l, r) = split(node.right, value)
         (Some(join(node.left, node.value, l)), r)
       }
+    }
   }
 }
 
@@ -554,13 +556,14 @@ fn rotate_rl[V : Compare](n : Node[V]) -> Node[V] {
 fn add_node[V : Compare](root : Node[V]?, value : V) -> (Node[V]?, Bool) {
   match root {
     None => (Some(new_node(value)), true)
-    Some(n) =>
-      if value == n.value {
+    Some(n) => {
+      let comp = value.compare(n.value)
+      if comp == 0 {
         n.value = value
         (Some(n), false)
       } else {
         let (l, r) = (n.left, n.right)
-        if value < n.value {
+        if comp < 0 {
           let (nl, inserted) = add_node(l, value)
           n.left = nl
           (Some(balance(n)), inserted)
@@ -570,12 +573,14 @@ fn add_node[V : Compare](root : Node[V]?, value : V) -> (Node[V]?, Bool) {
           (Some(balance(n)), inserted)
         }
       }
+    }
   }
 }
 
 ///|
 fn delete_node[V : Compare](root : Node[V], value : V) -> (Node[V]?, Bool) {
-  if value == root.value {
+  let comp = value.compare(root.value)
+  if comp == 0 {
     let (l, r) = (root.left, root.right)
     let n = match (l, r) {
       (Some(_), Some(nr)) => {
@@ -586,7 +591,7 @@ fn delete_node[V : Compare](root : Node[V], value : V) -> (Node[V]?, Bool) {
       (Some(_), None) | (None, None) => l
     }
     (n, true)
-  } else if value < root.value {
+  } else if comp < 0 {
     match root.left {
       None => (Some(root), false)
       Some(l) => {

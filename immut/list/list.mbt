@@ -1,4 +1,4 @@
-// Copyright 2024 International Digital Economy Academy
+// Copyright 2025 International Digital Economy Academy
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -30,9 +30,11 @@ pub fn T::to_string[A : Show](xs : T[A]) -> String {
 ///|
 pub impl[A : ToJson] ToJson for T[A] with to_json(self) {
   let capacity = self.length()
-  guard capacity != 0 else { return Array([]) }
+  guard capacity != 0 else { return [] }
   let jsons = Array::new(capacity~)
-  self.each(fn(a) { jsons.push(a.to_json()) })
+  for a in self {
+    jsons.push(a.to_json())
+  }
   Array(jsons)
 }
 
@@ -643,8 +645,8 @@ pub fn is_empty[A](self : T[A]) -> Bool {
 /// assert_eq!(a, @list.from_array([1, 3, 5]))
 /// assert_eq!(b, @list.from_array([2, 4, 6]))
 /// ```
-pub fn unzip[A, B](list : T[(A, B)]) -> (T[A], T[B]) {
-  match list {
+pub fn unzip[A, B](self : T[(A, B)]) -> (T[A], T[B]) {
+  match self {
     Nil => (Nil, Nil)
     Cons((x, y), xs) => {
       let (xs, ys) = unzip(xs)
