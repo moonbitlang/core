@@ -234,10 +234,11 @@ pub fn op_as_view[T](
   let len = self.length()
   let end = match end {
     None => len
-    Some(end) => end
+    Some(end) => if end < 0 { len + end } else { end }
   }
+  let start = if start < 0 { len + start } else { start }
   guard start >= 0 && start <= end && end <= len else {
-    abort("View start index out of bounds")
+    abort("View index out of bounds")
   }
   ArrayView::{ buf: self.buffer(), start, len: end - start }
 }
@@ -289,10 +290,11 @@ pub fn op_as_view[T](
   let len = self.length()
   let end = match end {
     None => len
-    Some(end) => end
+    Some(end) => if end < 0 { len + end } else { end }
   }
+  let start = if start < 0 { len + start } else { start }
   guard start >= 0 && start <= end && end <= len else {
-    abort("View start index out of bounds")
+    abort("View index out of bounds")
   }
   ArrayView::{ buf: self.buf, start: self.start + start, len: end - start }
 }

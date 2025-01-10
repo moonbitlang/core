@@ -46,7 +46,7 @@ test "basic3" {
 
 test "panic invalid index1" {
   let bs = b"\x00\x01\x02\x03\x04\x05"
-  let _ = bs[-1:]
+  let _ = bs[-7:]
 
 }
 
@@ -64,7 +64,7 @@ test "panic invalid index3" {
 
 test "panic invalid index4" {
   let bs = b"\x00\x01\x02\x03\x04\x05"[:]
-  let _ = bs[-1:]
+  let _ = bs[:-7]
 
 }
 
@@ -87,4 +87,206 @@ test "iter" {
     bv.iter().to_array(),
     content="[b'\\x00', b'\\x01', b'\\x02', b'\\x03', b'\\x04', b'\\x05']",
   )
+}
+
+test "negative index1" {
+  let bs = b"\x01\x02\x03"
+  let bv = bs[-1:]
+  inspect!(
+    bv,
+    content=
+      #|b"\x03"
+    ,
+  )
+  let bv = bs[-2:]
+  inspect!(
+    bv,
+    content=
+      #|b"\x02\x03"
+    ,
+  )
+  let bv = bs[-3:]
+  inspect!(
+    bv,
+    content=
+      #|b"\x01\x02\x03"
+    ,
+  )
+  let bv = bs[:-1]
+  inspect!(
+    bv,
+    content=
+      #|b"\x01\x02"
+    ,
+  )
+  let bv = bs[:-2]
+  inspect!(
+    bv,
+    content=
+      #|b"\x01"
+    ,
+  )
+  let bv = bs[:-3]
+  inspect!(
+    bv,
+    content=
+      #|b""
+    ,
+  )
+  let bv = bs[-3:-3]
+  inspect!(
+    bv,
+    content=
+      #|b""
+    ,
+  )
+  let bv = bs[-3:-2]
+  inspect!(
+    bv,
+    content=
+      #|b"\x01"
+    ,
+  )
+  let bv = bs[-3:-1]
+  inspect!(
+    bv,
+    content=
+      #|b"\x01\x02"
+    ,
+  )
+  let bv = bs[-3:0]
+  inspect!(
+    bv,
+    content=
+      #|b""
+    ,
+  )
+  let bv = bs[-3:1]
+  inspect!(
+    bv,
+    content=
+      #|b"\x01"
+    ,
+  )
+  let bv = bs[-3:2]
+  inspect!(
+    bv,
+    content=
+      #|b"\x01\x02"
+    ,
+  )
+  let bv = bs[-3:3]
+  inspect!(
+    bv,
+    content=
+      #|b"\x01\x02\x03"
+    ,
+  )
+}
+
+test "negative index2" {
+  let bs = b"\x00\x01\x02\x03\x04"[1:4]
+  let bv = bs[-1:]
+  inspect!(
+    bv,
+    content=
+      #|b"\x03"
+    ,
+  )
+  let bv = bs[-2:]
+  inspect!(
+    bv,
+    content=
+      #|b"\x02\x03"
+    ,
+  )
+  let bv = bs[-3:]
+  inspect!(
+    bv,
+    content=
+      #|b"\x01\x02\x03"
+    ,
+  )
+  let bv = bs[:-1]
+  inspect!(
+    bv,
+    content=
+      #|b"\x01\x02"
+    ,
+  )
+  let bv = bs[:-2]
+  inspect!(
+    bv,
+    content=
+      #|b"\x01"
+    ,
+  )
+  let bv = bs[:-3]
+  inspect!(
+    bv,
+    content=
+      #|b""
+    ,
+  )
+  let bv = bs[-3:-3]
+  inspect!(
+    bv,
+    content=
+      #|b""
+    ,
+  )
+  let bv = bs[-3:-2]
+  inspect!(
+    bv,
+    content=
+      #|b"\x01"
+    ,
+  )
+  let bv = bs[-3:-1]
+  inspect!(
+    bv,
+    content=
+      #|b"\x01\x02"
+    ,
+  )
+  let bv = bs[-3:0]
+  inspect!(
+    bv,
+    content=
+      #|b""
+    ,
+  )
+  let bv = bs[-3:1]
+  inspect!(
+    bv,
+    content=
+      #|b"\x01"
+    ,
+  )
+  let bv = bs[-3:2]
+  inspect!(
+    bv,
+    content=
+      #|b"\x01\x02"
+    ,
+  )
+  let bv = bs[-3:3]
+  inspect!(
+    bv,
+    content=
+      #|b"\x01\x02\x03"
+    ,
+  )
+}
+
+test "panic negative index1" {
+  let bs = b"\x01\x02\x03"
+  let _ = bs[-1:-2]
+
+}
+
+test "panic negative index2" {
+  let bs = b"\x01\x02\x03"[:]
+  let _ = bs[-1:-2]
+
 }
