@@ -71,8 +71,9 @@ pub fn op_as_view(self : Bytes, start~ : Int = 0, end? : Int) -> BytesView {
   let len = self.length()
   let end = match end {
     None => len
-    Some(end) => end
+    Some(end) => if end < 0 { len + end } else { end }
   }
+  let start = if start < 0 { len + start } else { start }
   guard start >= 0 && start <= end && end <= len else {
     abort("Invalid index for BytesView")
   }
@@ -94,8 +95,9 @@ pub fn op_as_view(self : BytesView, start~ : Int = 0, end? : Int) -> BytesView {
   let len = self.length()
   let end = match end {
     None => len
-    Some(end) => end
+    Some(end) => if end < 0 { len + end } else { end }
   }
+  let start = if start < 0 { len + start } else { start }
   guard start >= 0 && start <= end && end <= len else {
     abort("Invalid index for BytesView")
   }
