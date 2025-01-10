@@ -22,6 +22,11 @@ test "to_string" {
   inspect!(new(3), content="{val: 3}")
 }
 
+///| same as `Ref::new`
+pub fn new[T](x : T) -> Ref[T] {
+  { val: x }
+}
+
 ///|
 /// Maps the value of a `Ref` using a given function.
 ///
@@ -117,5 +122,5 @@ pub impl[X : @quickcheck.Arbitrary] @quickcheck.Arbitrary for Ref[X] with arbitr
   size,
   rs
 ) {
-  Ref::new(X::arbitrary(size, rs))
+  new(X::arbitrary(size, rs))
 }

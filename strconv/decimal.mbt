@@ -59,7 +59,7 @@ pub fn Decimal::from_int64(v : Int64) -> Decimal {
 
 ///|
 /// Create a decimal from number string.
-pub fn Decimal::parse_decimal(str : String) -> Decimal!StrConvError {
+pub fn parse_decimal(str : String) -> Decimal!StrConvError {
   let d = Decimal::new()
   if str.length() <= 0 {
     syntax_err!()
@@ -141,6 +141,11 @@ pub fn Decimal::parse_decimal(str : String) -> Decimal!StrConvError {
     syntax_err!()
   }
   d
+}
+
+///| @alert deprecated "use `@strconv.parse_decimal` instead"
+pub fn Decimal::parse_decimal(str : String) -> Decimal!StrConvError {
+  parse_decimal!(str)
 }
 
 ///|
@@ -543,7 +548,7 @@ fn trim(self : Decimal) -> Unit {
 }
 
 ///|
-fn to_string(self : Decimal) -> String {
+fn Decimal::to_string(self : Decimal) -> String {
   if self.digits_num == 0 {
     return "0"
   }
@@ -601,13 +606,13 @@ test "from_int64" {
 test "parse_decimal" {
   let s = "0.0000000000000000000000000000007888609052210118054117285652827862296732064351090230047702789306640625"
   let hpd = try {
-    Decimal::parse_decimal!(s)
+    parse_decimal!(s)
   } catch {
     _ => panic()
   }
   assert_eq!(hpd.to_string(), s)
   let hpd = try {
-    Decimal::parse_decimal!("1.0e-10")
+    parse_decimal!("1.0e-10")
   } catch {
     _ => panic()
   }

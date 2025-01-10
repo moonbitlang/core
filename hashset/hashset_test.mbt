@@ -229,17 +229,17 @@ test "clear_and_reinsert" {
 
 test "from_iter multiple elements iter" {
   inspect!(
-    @hashset.T::from_iter([1, 2, 3].iter()),
+    @hashset.from_iter([1, 2, 3].iter()),
     content="@hashset.of([3, 1, 2])",
   )
 }
 
 test "from_iter single element iter" {
-  inspect!(@hashset.T::from_iter([1].iter()), content="@hashset.of([1])")
+  inspect!(@hashset.from_iter([1].iter()), content="@hashset.of([1])")
 }
 
 test "from_iter empty iter" {
-  let map : @hashset.T[Int] = @hashset.T::from_iter(Iter::empty())
+  let map : @hashset.T[Int] = @hashset.from_iter(Iter::empty())
   inspect!(map, content="@hashset.of([])")
 }
 

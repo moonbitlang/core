@@ -30,19 +30,24 @@ fn set_null[T](buffer : UninitializedArray[T], index : Int) = "%fixedarray.set_n
 ///
 /// ```moonbit
 /// test "T::new" {
-///   let dq : @deque.T[Int] = @deque.T::new()
+///   let dq : @deque.T[Int] = @deque.new()
 ///   inspect!(dq.length(), content="0")
 ///   inspect!(dq.capacity(), content="0")
 /// }
 ///
 /// test "T::new/with_capacity" {
-///   let dq : @deque.T[Int] = @deque.T::new(capacity=10)
+///   let dq : @deque.T[Int] = @deque.new(capacity=10)
 ///   inspect!(dq.length(), content="0")
 ///   inspect!(dq.capacity(), content="10")
 /// }
 /// ```
-pub fn T::new[A](capacity~ : Int = 0) -> T[A] {
+pub fn new[A](capacity~ : Int = 0) -> T[A] {
   T::{ buf: UninitializedArray::make(capacity), len: 0, head: 0, tail: 0 }
+}
+
+///| @alert deprecated "use `@deque.new` instead"
+pub fn T::new[A](capacity~ : Int = 0) -> T[A] {
+  new(capacity~)
 }
 
 ///|
@@ -63,13 +68,13 @@ pub impl[A : Show] Show for T[A] with output(self, logger) {
 /// Example:
 ///
 /// ```moonbit
-/// test "T::from_array" {
+/// test "from_array" {
 ///   let arr = [1, 2, 3, 4, 5]
-///   let dq = @deque.T::from_array(arr)
+///   let dq = @deque.from_array(arr)
 ///   inspect!(dq, content="@deque.of([1, 2, 3, 4, 5])")
 /// }
 /// ```
-pub fn T::from_array[A](arr : Array[A]) -> T[A] {
+pub fn from_array[A](arr : Array[A]) -> T[A] {
   let deq = T::{
     buf: UninitializedArray::make(arr.length()),
     len: arr.length(),
@@ -80,6 +85,11 @@ pub fn T::from_array[A](arr : Array[A]) -> T[A] {
     deq.buf[i] = arr[i]
   }
   deq
+}
+
+///| @alert deprecated "use `@deque.from_array` instead"
+pub fn T::from_array[A](arr : Array[A]) -> T[A] {
+  from_array(arr)
 }
 
 ///|
@@ -103,7 +113,7 @@ pub fn T::from_array[A](arr : Array[A]) -> T[A] {
 ///   inspect!(copied, content="@deque.of([1, 2, 3, 4, 5])")
 /// }
 /// ```
-pub fn T::copy[A](self : T[A]) -> T[A] {
+pub fn copy[A](self : T[A]) -> T[A] {
   let len = self.len
   let deq = T::{
     buf: UninitializedArray::make(len),
@@ -129,12 +139,12 @@ pub fn T::copy[A](self : T[A]) -> T[A] {
 /// Example:
 ///
 /// ```moonbit
-/// test "T::of" {
-///   let dq = @deque.T::of([1, 2, 3])
+/// test "of" {
+///   let dq = @deque.of([1, 2, 3])
 ///   inspect!(dq, content="@deque.of([1, 2, 3])")
 /// }
 /// ```
-pub fn T::of[A](arr : FixedArray[A]) -> T[A] {
+pub fn of[A](arr : FixedArray[A]) -> T[A] {
   let deq = T::{
     buf: UninitializedArray::make(arr.length()),
     len: arr.length(),
@@ -145,6 +155,11 @@ pub fn T::of[A](arr : FixedArray[A]) -> T[A] {
     deq.buf[i] = arr[i]
   }
   deq
+}
+
+///| @alert deprecated "use `@deque.of` instead"
+pub fn T::of[A](arr : FixedArray[A]) -> T[A] {
+  of(arr)
 }
 
 ///|
@@ -1233,14 +1248,19 @@ pub fn rev_iter2[A](self : T[A]) -> Iter2[Int, A] {
 /// Example:
 ///
 /// ```moonbit
-/// test "T::from_iter" {
+/// test "from_iter" {
 ///   let arr = [1, 2, 3, 4, 5]
-///   let dq = @deque.T::from_iter(arr.iter())
+///   let dq = @deque.from_iter(arr.iter())
 ///   inspect!(dq, content="@deque.of([1, 2, 3, 4, 5])")
 /// }
 /// ```
-pub fn T::from_iter[A](iter : Iter[A]) -> T[A] {
-  let dq = T::new()
+pub fn from_iter[A](iter : Iter[A]) -> T[A] {
+  let dq = new()
   iter.each(fn(e) { dq.push_back(e) })
   dq
+}
+
+///| @alert deprecated "use `@deque.from_iter` instead"
+pub fn T::from_iter[A](iter : Iter[A]) -> T[A] {
+  from_iter(iter)
 }

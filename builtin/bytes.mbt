@@ -14,7 +14,7 @@
 
 ///|
 /// Reinterpret the byte sequence as Bytes.
-fn unsafe_to_bytes(self : FixedArray[Byte]) -> Bytes = "%identity"
+fn FixedArray::unsafe_to_bytes(self : FixedArray[Byte]) -> Bytes = "%identity"
 
 ///| 
 /// Creates a new byte sequence of the specified length, where each byte is
@@ -46,7 +46,7 @@ pub fn Bytes::makei(length : Int, value : (Int) -> Byte) -> Bytes {
   for i = 1; i < length; i = i + 1 {
     arr[i] = value(i)
   }
-  unsafe_to_bytes(arr)
+  FixedArray::unsafe_to_bytes(arr)
 }
 
 ///|
@@ -71,7 +71,11 @@ fn unsafe_sub_string(
 /// 
 /// @alert deprecated "Use `to_unchecked_string` instead"
 /// @coverage.skip
-pub fn sub_string(self : Bytes, byte_offset : Int, byte_length : Int) -> String {
+pub fn Bytes::sub_string(
+  self : Bytes,
+  byte_offset : Int,
+  byte_length : Int
+) -> String {
   self.to_unchecked_string(offset=byte_offset, length=byte_length)
 }
 
@@ -80,7 +84,7 @@ pub fn sub_string(self : Bytes, byte_offset : Int, byte_length : Int) -> String 
 /// 
 /// @alert deprecated "Use `to_unchecked_string` instead"
 /// @coverage.skip
-pub fn to_string(self : Bytes) -> String {
+pub fn Bytes::to_string(self : Bytes) -> String {
   self.to_unchecked_string(offset=0, length=self.length())
 }
 
@@ -91,7 +95,7 @@ pub fn to_string(self : Bytes) -> String {
 /// 
 /// Note this function does not validate the encoding of the byte sequence, 
 /// it simply copy the bytes into a new String.
-pub fn to_unchecked_string(
+pub fn Bytes::to_unchecked_string(
   self : Bytes,
   offset~ : Int = 0,
   length~ : Int = self.length() - offset
@@ -104,7 +108,7 @@ pub fn to_unchecked_string(
 ///|
 /// Copy `length` chars from string `str`, starting at `str_offset`,
 /// into byte sequence `self`, starting at `bytes_offset`.
-pub fn blit_from_string(
+pub fn FixedArray::blit_from_string(
   self : FixedArray[Byte],
   bytes_offset : Int,
   str : String,
@@ -129,7 +133,7 @@ pub fn blit_from_string(
 ///|
 /// Copy `length` chars from byte sequence `src`, starting at `src_offset`,
 /// into byte sequence `self`, starting at `bytes_offset`.
-pub fn blit_from_bytes(
+pub fn FixedArray::blit_from_bytes(
   self : FixedArray[Byte],
   bytes_offset : Int,
   src : Bytes,
@@ -151,14 +155,14 @@ pub fn blit_from_bytes(
 
 ///|
 /// Return a new Bytes that contains the same byte sequence.
-pub fn copy(self : Bytes) -> Bytes {
+pub fn Bytes::copy(self : Bytes) -> Bytes {
   Bytes::new(self.length())..blit(0, self, 0, self.length())
 }
 
 ///|
 /// Fill UTF8 encoded char `value` into byte sequence `self`, starting at `offset`.
 /// It return the length of bytes has been written.
-pub fn set_utf8_char(
+pub fn FixedArray::set_utf8_char(
   self : FixedArray[Byte],
   offset : Int,
   value : Char
@@ -197,7 +201,7 @@ pub fn set_utf8_char(
 /// @alert unsafe "Panic if the [value] is out of range"
 /// @alert deprecated "Use `set_utf16le_char` instead"
 /// @coverage.skip
-pub fn set_utf16_char(
+pub fn FixedArray::set_utf16_char(
   self : FixedArray[Byte],
   offset : Int,
   value : Char
@@ -225,7 +229,7 @@ pub fn set_utf16_char(
 /// Fill UTF16LE encoded char `value` into byte sequence `self`, starting at `offset`.
 /// It return the length of bytes has been written.
 /// @alert unsafe "Panic if the [value] is out of range"
-pub fn set_utf16le_char(
+pub fn FixedArray::set_utf16le_char(
   self : FixedArray[Byte],
   offset : Int,
   value : Char
@@ -253,7 +257,7 @@ pub fn set_utf16le_char(
 /// Fill UTF16BE encoded char `value` into byte sequence `self`, starting at `offset`.
 /// It return the length of bytes has been written.
 /// @alert unsafe "Panic if the [value] is out of range"
-pub fn set_utf16be_char(
+pub fn FixedArray::set_utf16be_char(
   self : FixedArray[Byte],
   offset : Int,
   value : Char
@@ -278,7 +282,7 @@ pub fn set_utf16be_char(
 }
 
 ///|
-pub fn op_equal(self : Bytes, other : Bytes) -> Bool {
+pub fn Bytes::op_equal(self : Bytes, other : Bytes) -> Bool {
   if self.length() != other.length() {
     false
   } else {

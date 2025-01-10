@@ -31,10 +31,22 @@ pub fn String::from_array(chars : Array[Char]) -> String {
   buf.to_string()
 }
 
+///| same as `String::from_array`
+pub fn from_array(chars : Array[Char]) -> String {
+  String::from_array(chars)
+}
+
 ///|
 /// Convert char iterator to string,
 /// a simple wrapper for `from_array`.
 pub fn String::from_iter(iter : Iter[Char]) -> String {
+  let chars = iter.collect()
+  String::from_array(chars)
+}
+
+///|
+/// same as `String::from_iter`
+pub fn from_iter(iter : Iter[Char]) -> String {
   let chars = iter.collect()
   String::from_array(chars)
 }
@@ -73,6 +85,12 @@ pub fn String::concat(
 }
 
 ///|
+/// same as `String::concat`
+pub fn concat(strings : Array[String], separator~ : String = "") -> String {
+  String::concat(strings, separator~)
+}
+
+///|
 /// Compare two strings.
 /// String with longer length is bigger.
 /// strings of the same length are compared in lexicalgraphic order.
@@ -95,6 +113,12 @@ pub fn compare(self : String, other : String) -> Int {
 ///|
 /// The empty string
 pub fn String::default() -> String {
+  ""
+}
+
+///|
+/// same as `String::default`
+pub fn default() -> String {
   ""
 }
 

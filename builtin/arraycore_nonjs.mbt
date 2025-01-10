@@ -81,7 +81,7 @@ pub fn Array::new[T](capacity~ : Int = 0) -> Array[T] {
 /// }
 /// ```
 /// @intrinsic %array.length
-pub fn length[T](self : Array[T]) -> Int {
+pub fn Array::length[T](self : Array[T]) -> Int {
   self.len
 }
 
@@ -107,7 +107,7 @@ pub fn length[T](self : Array[T]) -> Int {
 /// behavior.
 ///
 /// TODO: this can be optimized by using the intrinsic to null out the range
-fn unsafe_truncate_to_length[T](self : Array[T], new_len : Int) -> Unit {
+fn Array::unsafe_truncate_to_length[T](self : Array[T], new_len : Int) -> Unit {
   let len = self.length()
   guard new_len <= len
   for i in new_len..<len {
@@ -118,17 +118,17 @@ fn unsafe_truncate_to_length[T](self : Array[T], new_len : Int) -> Unit {
 
 test "unsafe_truncate_to_length" {
   let arr = [1, 2, 3, 4, 5]
-  unsafe_truncate_to_length(arr, 3)
+  arr.unsafe_truncate_to_length(3)
   inspect!(arr, content="[1, 2, 3]")
 }
 
 ///|
-fn buffer[T](self : Array[T]) -> UninitializedArray[T] {
+fn Array::buffer[T](self : Array[T]) -> UninitializedArray[T] {
   self.buf
 }
 
 ///|
-fn resize_buffer[T](self : Array[T], new_capacity : Int) -> Unit {
+fn Array::resize_buffer[T](self : Array[T], new_capacity : Int) -> Unit {
   let new_buf = UninitializedArray::make(new_capacity)
   let old_buf = self.buf
   let old_cap = old_buf._.length()
@@ -190,7 +190,7 @@ test "Array::resize_buffer" {
 
 ///|
 /// Reallocate the array with a new capacity.
-fn realloc[T](self : Array[T]) -> Unit {
+fn Array::realloc[T](self : Array[T]) -> Unit {
   let old_cap = self.length()
   let new_cap = if old_cap == 0 { 8 } else { old_cap * 2 }
   self.resize_buffer(new_cap)
@@ -207,7 +207,7 @@ fn realloc[T](self : Array[T]) -> Unit {
 /// v.reserve_capacity(10)
 /// assert_eq!(v.capacity(), 10)
 /// ```
-pub fn reserve_capacity[T](self : Array[T], capacity : Int) -> Unit {
+pub fn Array::reserve_capacity[T](self : Array[T], capacity : Int) -> Unit {
   if self.capacity() >= capacity {
     return
   }
@@ -227,7 +227,7 @@ pub fn reserve_capacity[T](self : Array[T], capacity : Int) -> Unit {
 /// v.shrink_to_fit()
 /// assert_eq!(v.capacity(), 3)
 /// ```
-pub fn shrink_to_fit[T](self : Array[T]) -> Unit {
+pub fn Array::shrink_to_fit[T](self : Array[T]) -> Unit {
   if self.capacity() <= self.length() {
     return
   }
@@ -244,7 +244,7 @@ pub fn shrink_to_fit[T](self : Array[T]) -> Unit {
 /// let v = []
 /// v.push(3)
 /// ```
-pub fn push[T](self : Array[T], value : T) -> Unit {
+pub fn Array::push[T](self : Array[T], value : T) -> Unit {
   if self.length() == self.buffer()._.length() {
     self.realloc()
   }
@@ -262,7 +262,7 @@ pub fn push[T](self : Array[T], value : T) -> Unit {
 /// assert_eq!(v.pop(), Some(3))
 /// assert_eq!(v, [1, 2])
 /// ```
-pub fn pop[T](self : Array[T]) -> T? {
+pub fn Array::pop[T](self : Array[T]) -> T? {
   let len = self.length()
   if len == 0 {
     None
@@ -278,7 +278,7 @@ pub fn pop[T](self : Array[T]) -> T? {
 ///|
 /// @alert deprecated "Use `unsafe_pop` instead"
 /// @coverage.skip
-pub fn pop_exn[T](self : Array[T]) -> T {
+pub fn Array::pop_exn[T](self : Array[T]) -> T {
   self.unsafe_pop()
 }
 
@@ -307,7 +307,7 @@ pub fn pop_exn[T](self : Array[T]) -> T {
 /// ```
 ///
 /// @alert unsafe "Panic if the array is empty."
-pub fn unsafe_pop[T](self : Array[T]) -> T {
+pub fn Array::unsafe_pop[T](self : Array[T]) -> T {
   let len = self.length()
   guard len != 0
   let index = len - 1
@@ -329,7 +329,7 @@ pub fn unsafe_pop[T](self : Array[T]) -> T {
 /// assert_eq!(v, [3, 5])
 /// ```
 /// @alert unsafe "Panic if index is out of bounds."
-pub fn remove[T](self : Array[T], index : Int) -> T {
+pub fn Array::remove[T](self : Array[T], index : Int) -> T {
   guard index >= 0 && index < self.length() else {
     abort(
       "index out of bounds: the len is from 0 to \{self.length()} but the index is \{index}",
@@ -360,7 +360,7 @@ pub fn remove[T](self : Array[T], index : Int) -> T {
 /// assert_eq!(v, [3, 5])
 /// ```
 /// @alert unsafe "Panic if index is out of bounds."
-pub fn drain[T](self : Array[T], begin : Int, end : Int) -> Array[T] {
+pub fn Array::drain[T](self : Array[T], begin : Int, end : Int) -> Array[T] {
   guard begin >= 0 && end <= self.length() && begin <= end
   let num = end - begin
   let v = Array::make_uninit(num)
@@ -384,7 +384,7 @@ pub fn drain[T](self : Array[T], begin : Int, end : Int) -> Array[T] {
 /// [3, 4, 5].insert(1, 6)
 /// ```
 /// @alert unsafe "Panic if index is out of bounds."
-pub fn insert[T](self : Array[T], index : Int, value : T) -> Unit {
+pub fn Array::insert[T](self : Array[T], index : Int, value : T) -> Unit {
   guard index >= 0 && index <= self.length() else {
     abort(
       "index out of bounds: the len is from 0 to \{self.length()} but the index is \{index}",
@@ -413,7 +413,7 @@ pub fn insert[T](self : Array[T], index : Int, value : T) -> Unit {
 ///  If `new_len` is less than `len`, it will panic
 ///
 /// @alert unsafe "Panic if new length is negative."
-fn unsafe_grow_to_length[T](self : Array[T], new_len : Int) -> Unit {
+fn Array::unsafe_grow_to_length[T](self : Array[T], new_len : Int) -> Unit {
   guard new_len >= self.length()
   let new_buf = UninitializedArray::make(new_len)
   UninitializedArray::unsafe_blit(new_buf, 0, self.buf, 0, self.len)

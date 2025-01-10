@@ -177,7 +177,7 @@ pub impl Show for Failure with output(self, logger) {
 ///|
 /// Returns a valid MoonBit string literal representation of a string,
 /// add quotes and escape special characters.
-pub fn escape(self : String) -> String {
+pub fn String::escape(self : String) -> String {
   let buf = StringBuilder::new()
   Show::output(self, buf)
   buf.to_string()
@@ -228,7 +228,7 @@ pub fn ArrayView::to_string[X : Show](self : ArrayView[X]) -> String {
 ///|
 /// Convert Char to String
 /// @intrinsic %char.to_string
-pub fn to_string(self : Char) -> String {
+pub fn Char::to_string(self : Char) -> String {
   let bytes = FixedArray::make(4, Byte::default())
   let length = bytes.set_utf16le_char(0, self)
   bytes.unsafe_to_bytes().to_unchecked_string(offset=0, length~)

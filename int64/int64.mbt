@@ -39,6 +39,12 @@ pub fn Int64::from_int(i : Int) -> Int64 {
 }
 
 ///|
+/// same as `Int64::from_int`
+pub fn from_int(i : Int) -> Int64 {
+  i.to_int64()
+}
+
+///|
 /// Computes the absolute value of a 64-bit integer.
 ///
 /// Parameters:

@@ -14,7 +14,7 @@
 
 ///|
 /// @intrinsic %iter.from_array
-pub fn iter[T](self : FixedArray[T]) -> Iter[T] {
+pub fn FixedArray::iter[T](self : FixedArray[T]) -> Iter[T] {
   Iter::new(fn(yield_) {
     for v in self {
       guard let IterContinue = yield_(v) else { x => break x }
@@ -26,7 +26,7 @@ pub fn iter[T](self : FixedArray[T]) -> Iter[T] {
 }
 
 ///|
-pub fn iter2[T](self : FixedArray[T]) -> Iter2[Int, T] {
+pub fn FixedArray::iter2[T](self : FixedArray[T]) -> Iter2[Int, T] {
   Iter2::new(fn(yield_) {
     for i, v in self {
       guard let IterContinue = yield_(i, v) else { x => break x }
@@ -51,7 +51,7 @@ pub fn FixedArray::default[X]() -> FixedArray[X] {
 /// fa.fill(3)
 /// assert_eq!(fa[0], 3)
 /// ```
-pub fn fill[T](self : FixedArray[T], value : T) -> Unit {
+pub fn FixedArray::fill[T](self : FixedArray[T], value : T) -> Unit {
   for i in 0..<self.length() {
     self[i] = value
   }

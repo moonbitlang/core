@@ -24,7 +24,7 @@
 /// arr.stable_sort()
 /// assert_eq!(arr, [1, 2, 3, 4, 5])
 /// ```
-pub fn stable_sort[T : Compare](self : FixedArray[T]) -> Unit {
+pub fn FixedArray::stable_sort[T : Compare](self : FixedArray[T]) -> Unit {
   timsort({ array: self, start: 0, end: self.length() })
 }
 
@@ -213,7 +213,7 @@ fn collapse(runs : Array[TimSortRun], stop : Int) -> Int? {
 /// arr.sort()
 /// assert_eq!(arr, [1, 2, 3, 4, 5])
 /// ```
-pub fn sort[T : Compare](self : FixedArray[T]) -> Unit {
+pub fn FixedArray::sort[T : Compare](self : FixedArray[T]) -> Unit {
   fixed_quick_sort(
     { array: self, start: 0, end: self.length() },
     None,
@@ -544,9 +544,9 @@ test "stable_sort_complex" {
       index += 1
     }
   }
-  assert_false!(is_sorted(arr))
+  assert_false!(arr.is_sorted())
   arr.stable_sort()
-  assert_true!(is_sorted(arr))
+  assert_true!(arr.is_sorted())
 }
 
 test "find_streak with empty array" {

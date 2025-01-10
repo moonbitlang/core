@@ -20,8 +20,13 @@
 /// let queue : @priority_queue.T[Int] = @priority_queue.new()
 /// assert_eq!(queue.length(), 0)
 /// ```
-pub fn T::new[A : Compare]() -> T[A] {
+pub fn new[A : Compare]() -> T[A] {
   { len: 0, top: Nil }
+}
+
+///| @alert deprecated "use `@priority_queue.new` instead"
+pub fn T::new[A : Compare]() -> T[A] {
+  new()
 }
 
 ///|
@@ -32,7 +37,7 @@ pub fn T::new[A : Compare]() -> T[A] {
 /// let queue = @priority_queue.of([1, 2, 3, 4, 5])
 /// assert_eq!(queue.length(), 5)
 /// ```
-pub fn T::from_array[A : Compare](arr : Array[A]) -> T[A] {
+pub fn from_array[A : Compare](arr : Array[A]) -> T[A] {
   // CR: bad formatting
   let len = arr.length()
   for i = 0, acc = Node::Nil {
@@ -42,6 +47,11 @@ pub fn T::from_array[A : Compare](arr : Array[A]) -> T[A] {
       break { len, top: acc }
     }
   }
+}
+
+///| @alert deprecated "use `@priority_queue.from_array` instead"
+pub fn T::from_array[A : Compare](arr : Array[A]) -> T[A] {
+  from_array(arr)
 }
 
 ///|
@@ -105,10 +115,15 @@ pub fn iter[A : Compare](self : T[A]) -> Iter[A] {
 }
 
 ///|
-pub fn T::from_iter[K : Compare](iter : Iter[K]) -> T[K] {
-  let s = T::new()
+pub fn from_iter[K : Compare](iter : Iter[K]) -> T[K] {
+  let s = new()
   iter.each(fn(e) { s.push(e) })
   s
+}
+
+///| @alert deprecated "use `@priority_queue.from_iter` instead"
+pub fn T::from_iter[K : Compare](iter : Iter[K]) -> T[K] {
+  from_iter(iter)
 }
 
 ///|
@@ -254,7 +269,7 @@ pub fn is_empty[A](self : T[A]) -> Bool {
 }
 
 ///|
-pub fn T::of[A : Compare](arr : FixedArray[A]) -> T[A] {
+pub fn of[A : Compare](arr : FixedArray[A]) -> T[A] {
   // CR: bad formatting
   let len = arr.length()
   for i = 0, acc = Node::Nil {
@@ -264,6 +279,11 @@ pub fn T::of[A : Compare](arr : FixedArray[A]) -> T[A] {
       break { len, top: acc }
     }
   }
+}
+
+///| @alert deprecated "use `@priority_queue.of` instead"
+pub fn T::of[A : Compare](arr : FixedArray[A]) -> T[A] {
+  of(arr)
 }
 
 test "meld_and_merges" {

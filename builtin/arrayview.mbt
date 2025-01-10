@@ -38,7 +38,7 @@ struct ArrayView[T] {
 ///   inspect!(view.length(), content="2")
 /// }
 /// ```
-pub fn length[T](self : ArrayView[T]) -> Int {
+pub fn ArrayView::length[T](self : ArrayView[T]) -> Int {
   self.len
 }
 
@@ -72,7 +72,7 @@ pub fn length[T](self : ArrayView[T]) -> Int {
 ///   ignore(view[2]) // Index out of bounds
 /// }
 /// ```
-pub fn op_get[T](self : ArrayView[T], index : Int) -> T {
+pub fn ArrayView::op_get[T](self : ArrayView[T], index : Int) -> T {
   guard index >= 0 && index < self.len else {
     abort(
       "index out of bounds: the len is from 0 to \{self.len} but the index is \{index}",
@@ -111,7 +111,7 @@ pub fn op_get[T](self : ArrayView[T], index : Int) -> T {
 ///
 /// @intrinsic %arrayview.unsafe_get
 /// @alert unsafe "Panic if index is out of bounds"
-pub fn unsafe_get[T](self : ArrayView[T], index : Int) -> T {
+pub fn ArrayView::unsafe_get[T](self : ArrayView[T], index : Int) -> T {
   self.buf[self.start + index]
 }
 
@@ -145,7 +145,11 @@ pub fn unsafe_get[T](self : ArrayView[T], index : Int) -> T {
 /// ```
 ///
 /// @alert unsafe "Panic if index is out of bounds."
-pub fn op_set[T](self : ArrayView[T], index : Int, value : T) -> Unit {
+pub fn ArrayView::op_set[T](
+  self : ArrayView[T],
+  index : Int,
+  value : T
+) -> Unit {
   guard index >= 0 && index < self.len else {
     abort(
       "index out of bounds: the len is from 0 to \{self.len} but the index is \{index}",
@@ -183,7 +187,7 @@ pub fn op_set[T](self : ArrayView[T], index : Int, value : T) -> Unit {
 /// ```
 ///
 /// @alert unsafe "Panic if index is out of bounds"
-pub fn swap[T](self : ArrayView[T], i : Int, j : Int) -> Unit {
+pub fn ArrayView::swap[T](self : ArrayView[T], i : Int, j : Int) -> Unit {
   guard i >= 0 && i < self.len && j >= 0 && j < self.len else {
     abort(
       "index out of bounds: the len is from 0 to \{self.len} but the index is (\{i}, \{j})",
@@ -226,7 +230,7 @@ pub fn swap[T](self : ArrayView[T], i : Int, j : Int) -> Unit {
 ///   ignore(arr[2:1]) // Panic: start index greater than end index
 /// }
 /// ```
-pub fn op_as_view[T](
+pub fn Array::op_as_view[T](
   self : Array[T],
   start~ : Int = 0,
   end? : Int
@@ -282,7 +286,7 @@ pub fn op_as_view[T](
 ///   ignore(view[2:5]) // Panic: end index out of bounds
 /// }
 /// ```
-pub fn op_as_view[T](
+pub fn ArrayView::op_as_view[T](
   self : ArrayView[T],
   start~ : Int = 0,
   end? : Int
@@ -320,7 +324,7 @@ pub fn op_as_view[T](
 ///   inspect!(sum, content="5")
 /// }
 /// ```
-pub fn iter[A](self : ArrayView[A]) -> Iter[A] {
+pub fn ArrayView::iter[A](self : ArrayView[A]) -> Iter[A] {
   Iter::new(fn(yield_) {
     for v in self {
       guard let IterContinue = yield_(v) else { x => break x }
@@ -339,7 +343,11 @@ pub fn iter[A](self : ArrayView[A]) -> Iter[A] {
 /// let sum = [1, 2, 3, 4, 5][:].fold(init=0, fn { sum, elem => sum + elem })
 /// assert_eq!(sum, 15)
 /// ```
-pub fn fold[A, B](self : ArrayView[A], init~ : B, f : (B, A) -> B) -> B {
+pub fn ArrayView::fold[A, B](
+  self : ArrayView[A],
+  init~ : B,
+  f : (B, A) -> B
+) -> B {
   for i = 0, acc = init; i < self.length(); {
     continue i + 1, f(acc, self[i])
   } else {
@@ -355,7 +363,11 @@ pub fn fold[A, B](self : ArrayView[A], init~ : B, f : (B, A) -> B) -> B {
 /// let sum = [1, 2, 3, 4, 5][:].rev_fold(init=0, fn { sum, elem => sum + elem })
 /// assert_eq!(sum, 15)
 /// ```
-pub fn rev_fold[A, B](self : ArrayView[A], init~ : B, f : (B, A) -> B) -> B {
+pub fn ArrayView::rev_fold[A, B](
+  self : ArrayView[A],
+  init~ : B,
+  f : (B, A) -> B
+) -> B {
   for i = self.length() - 1, acc = init; i >= 0; {
     continue i - 1, f(acc, self[i])
   } else {
@@ -371,7 +383,11 @@ pub fn rev_fold[A, B](self : ArrayView[A], init~ : B, f : (B, A) -> B) -> B {
 /// let sum = [1, 2, 3, 4, 5][:].foldi(init=0, fn { index, sum, _elem => sum + index })
 /// assert_eq!(sum, 10)
 /// ```
-pub fn foldi[A, B](self : ArrayView[A], init~ : B, f : (Int, B, A) -> B) -> B {
+pub fn ArrayView::foldi[A, B](
+  self : ArrayView[A],
+  init~ : B,
+  f : (Int, B, A) -> B
+) -> B {
   for i = 0, acc = init; i < self.length(); {
     continue i + 1, f(i, acc, self[i])
   } else {
@@ -387,7 +403,7 @@ pub fn foldi[A, B](self : ArrayView[A], init~ : B, f : (Int, B, A) -> B) -> B {
 /// let sum = [1, 2, 3, 4, 5][:].rev_foldi(init=0, fn { index, sum, _elem => sum + index })
 /// assert_eq!(sum, 10)
 /// ```
-pub fn rev_foldi[A, B](
+pub fn ArrayView::rev_foldi[A, B](
   self : ArrayView[A],
   init~ : B,
   f : (Int, B, A) -> B
@@ -409,7 +425,7 @@ pub fn rev_foldi[A, B](
 /// let v2 = v[1:].map(fn (x) {x + 1})
 /// assert_eq!(v2, [5, 6])
 /// ```
-pub fn map[T, U](self : ArrayView[T], f : (T) -> U) -> Array[U] {
+pub fn ArrayView::map[T, U](self : ArrayView[T], f : (T) -> U) -> Array[U] {
   if self.length() == 0 {
     return []
   }
@@ -429,7 +445,7 @@ pub fn map[T, U](self : ArrayView[T], f : (T) -> U) -> Array[U] {
 /// v[1:].map_inplace(fn (x) {x + 1})
 /// assert_eq!(v, [3, 5, 6])
 /// ```
-pub fn map_inplace[T](self : ArrayView[T], f : (T) -> T) -> Unit {
+pub fn ArrayView::map_inplace[T](self : ArrayView[T], f : (T) -> T) -> Unit {
   for i, v in self {
     self[i] = f(v)
   }
@@ -444,7 +460,10 @@ pub fn map_inplace[T](self : ArrayView[T], f : (T) -> T) -> Unit {
 /// let v2 = v[1:].mapi(fn (i, x) {x + i})
 /// assert_eq!(v2, [4, 6])
 /// ```
-pub fn mapi[T, U](self : ArrayView[T], f : (Int, T) -> U) -> Array[U] {
+pub fn ArrayView::mapi[T, U](
+  self : ArrayView[T],
+  f : (Int, T) -> U
+) -> Array[U] {
   if self.length() == 0 {
     return []
   }
@@ -464,7 +483,10 @@ pub fn mapi[T, U](self : ArrayView[T], f : (Int, T) -> U) -> Array[U] {
 /// v[1:].mapi_inplace(fn (i, x) {x + i})
 /// assert_eq!(v, [3, 4, 6])
 /// ```
-pub fn mapi_inplace[T](self : ArrayView[T], f : (Int, T) -> T) -> Unit {
+pub fn ArrayView::mapi_inplace[T](
+  self : ArrayView[T],
+  f : (Int, T) -> T
+) -> Unit {
   for i, v in self {
     self[i] = f(i, v)
   }
@@ -479,7 +501,7 @@ pub fn mapi_inplace[T](self : ArrayView[T], f : (Int, T) -> T) -> Unit {
 /// let v = arr[2:].filter(fn (x) { x % 2 == 0 })
 /// assert_eq!(v, [4, 6])
 /// ```
-pub fn filter[T](self : ArrayView[T], f : (T) -> Bool) -> Array[T] {
+pub fn ArrayView::filter[T](self : ArrayView[T], f : (T) -> Bool) -> Array[T] {
   let arr = []
   for v in self {
     if f(v) {

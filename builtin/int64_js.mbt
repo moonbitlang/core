@@ -35,7 +35,7 @@ fn MyInt64::op_neg(self : MyInt64) -> MyInt64 {
 }
 
 ///|
-fn MyInt64::add_hi_lo(self : MyInt64, bhi : Int, blo : Int) -> MyInt64 {
+fn add_hi_lo(self : MyInt64, bhi : Int, blo : Int) -> MyInt64 {
   let { hi: ahi, lo: alo } = self
   let lo = alo + blo
   let s = lo >> 31

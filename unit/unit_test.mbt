@@ -26,7 +26,7 @@ test {
 
 test {
   let unit = ()
-  assert_eq!(Unit::default(), unit)
+  assert_eq!(@unit.default(), unit)
   assert_eq!(unit.to_string(), "()")
 }
 

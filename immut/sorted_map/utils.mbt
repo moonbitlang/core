@@ -20,14 +20,24 @@ pub fn T::empty[K, V]() -> T[K, V] {
 }
 
 ///| Create an empty map.
+pub fn new[K, V]() -> T[K, V] {
+  Empty
+}
+
+///| @alert deprecated "use `@immut/sorted_map.new` instead"
 pub fn T::new[K, V]() -> T[K, V] {
   Empty
 }
 
 ///|
 /// Create a map with a single key-value pair.
-pub fn T::singleton[K, V](key : K, value : V) -> T[K, V] {
+pub fn singleton[K, V](key : K, value : V) -> T[K, V] {
   Tree(key, value~, size=1, Empty, Empty)
+}
+
+///| @alert deprecated "use `@immut/sorted_map.singleton` instead"
+pub fn T::singleton[K, V](key : K, value : V) -> T[K, V] {
+  singleton(key, value)
 }
 
 ///|
@@ -201,13 +211,18 @@ fn debug_tree[K : Show, V : Show](self : T[K, V]) -> String {
 ///|
 /// Build a map from an array of key-value pairs.
 /// O(n*log n).
-pub fn T::from_array[K : Compare, V](array : Array[(K, V)]) -> T[K, V] {
+pub fn from_array[K : Compare, V](array : Array[(K, V)]) -> T[K, V] {
   for i = 0, mp = Empty; i < array.length(); {
     let (k, v) = array[i]
     continue i + 1, mp.add(k, v)
   } else {
     mp
   }
+}
+
+///| @alert deprecated "use `@immut/sorted_map.from_array` instead"
+pub fn T::from_array[K : Compare, V](array : Array[(K, V)]) -> T[K, V] {
+  from_array(array)
 }
 
 ///|
@@ -249,8 +264,13 @@ pub fn iter2[K, V](self : T[K, V]) -> Iter2[K, V] {
 }
 
 ///|
+pub fn from_iter[K : Compare, V](iter : Iter[(K, V)]) -> T[K, V] {
+  iter.fold(init=new(), fn(m, e) { m.add(e.0, e.1) })
+}
+
+///| @alert deprecated "use `@immut/sorted_map.from_iter` instead"
 pub fn T::from_iter[K : Compare, V](iter : Iter[(K, V)]) -> T[K, V] {
-  iter.fold(init=T::new(), fn(m, e) { m.add(e.0, e.1) })
+  from_iter(iter)
 }
 
 ///|
@@ -266,7 +286,7 @@ pub fn elems[K, V](self : T[K, V]) -> Array[V] {
 }
 
 ///|
-pub fn T::of[K : Compare, V](array : FixedArray[(K, V)]) -> T[K, V] {
+pub fn of[K : Compare, V](array : FixedArray[(K, V)]) -> T[K, V] {
   for i = 0, mp = Empty; i < array.length(); {
     let (k, v) = array[i]
     continue i + 1, mp.add(k, v)
@@ -275,12 +295,24 @@ pub fn T::of[K : Compare, V](array : FixedArray[(K, V)]) -> T[K, V] {
   }
 }
 
+///| @alert deprecated "use `@immut/sorted_map.of` instead"
+pub fn T::of[K : Compare, V](array : FixedArray[(K, V)]) -> T[K, V] {
+  of(array)
+}
+
 ///|
 pub fn to_json[K : Show, V : ToJson](self : T[K, V]) -> Json {
   ToJson::to_json(self)
 }
 
 ///|
+pub fn from_json[V : @json.FromJson](
+  json : Json
+) -> T[String, V]!@json.JsonDecodeError {
+  @json.from_json!(json)
+}
+
+///| @alert deprecated "use `@immut/sorted_map.from_json` instead"
 pub fn T::from_json[V : @json.FromJson](
   json : Json
 ) -> T[String, V]!@json.JsonDecodeError {

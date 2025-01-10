@@ -104,87 +104,84 @@ test "HAMT::from_array" {
 
 test "from_iter multiple elements iter" {
   inspect!(
-    @hashmap.T::from_iter([(1, 1), (2, 2), (3, 3)].iter()),
+    @hashmap.from_iter([(1, 1), (2, 2), (3, 3)].iter()),
     content="@immut/hashmap.of([(3, 3), (2, 2), (1, 1)])",
   )
 }
 
 test "from_iter single element iter" {
   inspect!(
-    @hashmap.T::from_iter([(1, 1)].iter()),
+    @hashmap.from_iter([(1, 1)].iter()),
     content="@immut/hashmap.of([(1, 1)])",
   )
 }
 
 test "from_iter empty iter" {
-  let pq : @hashmap.T[Int, Int] = @hashmap.T::from_iter(Iter::empty())
+  let pq : @hashmap.T[Int, Int] = @hashmap.from_iter(Iter::empty())
   inspect!(pq, content="@immut/hashmap.of([])")
 }
 
 test "eq for boundary cases" {
   // Test with empty maps
-  let empty_map1 : @hashmap.T[Int, Int] = @hashmap.T::new()
-  let empty_map2 : @hashmap.T[Int, Int] = @hashmap.T::new()
+  let empty_map1 : @hashmap.T[Int, Int] = @hashmap.new()
+  let empty_map2 : @hashmap.T[Int, Int] = @hashmap.new()
   inspect!(empty_map1 == empty_map2, content="true")
 
   // Test with one empty map and one non-empty map
-  let non_empty_map : @hashmap.T[Int, Int] = @hashmap.T::of([(1, 1)])
+  let non_empty_map : @hashmap.T[Int, Int] = @hashmap.of([(1, 1)])
   inspect!(empty_map1 == non_empty_map, content="false")
   inspect!(non_empty_map == empty_map1, content="false")
 
   // Test with maps of different sizes
-  let larger_map : @hashmap.T[Int, Int] = @hashmap.T::of([(1, 1), (2, 2)])
+  let larger_map : @hashmap.T[Int, Int] = @hashmap.of([(1, 1), (2, 2)])
   inspect!(non_empty_map == larger_map, content="false")
 }
 
 test "eq for random cases" {
   // Test with maps containing different keys
-  let map1 : @hashmap.T[Int, Int] = @hashmap.T::of([(1, 1), (2, 2)])
-  let map2 : @hashmap.T[Int, Int] = @hashmap.T::of([(1, 1), (3, 3)])
+  let map1 : @hashmap.T[Int, Int] = @hashmap.of([(1, 1), (2, 2)])
+  let map2 : @hashmap.T[Int, Int] = @hashmap.of([(1, 1), (3, 3)])
   inspect!(map1 == map2, content="false")
 
   // Test with maps containing same keys but different values
-  let map3 : @hashmap.T[Int, Int] = @hashmap.T::of([(1, 1), (2, 3)])
+  let map3 : @hashmap.T[Int, Int] = @hashmap.of([(1, 1), (2, 3)])
   inspect!(map1 == map3, content="false")
 
   // Test with maps containing same keys and values but in different order
-  let map4 : @hashmap.T[Int, Int] = @hashmap.T::of([(2, 2), (1, 1)])
+  let map4 : @hashmap.T[Int, Int] = @hashmap.of([(2, 2), (1, 1)])
   inspect!(map1 == map4, content="true")
 
   // Test with maps containing same keys and values but with different hash collisions
-  let map5 : @hashmap.T[Int, Int] = @hashmap.T::of([(1, 1), (11, 11)])
-  let map6 : @hashmap.T[Int, Int] = @hashmap.T::of([(1, 1), (11, 11)])
+  let map5 : @hashmap.T[Int, Int] = @hashmap.of([(1, 1), (11, 11)])
+  let map6 : @hashmap.T[Int, Int] = @hashmap.of([(1, 1), (11, 11)])
   inspect!(map5 == map6, content="true")
 
   // Test with maps containing same keys and values but with different hash collisions and different order
-  let map7 : @hashmap.T[Int, Int] = @hashmap.T::of([(11, 11), (1, 1)])
+  let map7 : @hashmap.T[Int, Int] = @hashmap.of([(11, 11), (1, 1)])
   inspect!(map5 == map7, content="true")
 }
 
 test "eq for random cases with different types" {
   // Test with maps containing different types
-  let map8 : @hashmap.T[String, Int] = @hashmap.T::of([("one", 1), ("two", 2)])
-  let map9 : @hashmap.T[String, Int] = @hashmap.T::of([("one", 1), ("two", 2)])
+  let map8 : @hashmap.T[String, Int] = @hashmap.of([("one", 1), ("two", 2)])
+  let map9 : @hashmap.T[String, Int] = @hashmap.of([("one", 1), ("two", 2)])
   inspect!(map8 == map9, content="true")
 
   // Test with maps containing same keys but different values of different types
-  let map10 : @hashmap.T[String, Int] = @hashmap.T::of([("one", 1), ("two", 3)])
+  let map10 : @hashmap.T[String, Int] = @hashmap.of([("one", 1), ("two", 3)])
   inspect!(map8 == map10, content="false")
 
   // Test with maps containing different keys of different types
-  let map11 : @hashmap.T[String, Int] = @hashmap.T::of([
-    ("one", 1),
-    ("three", 3),
-  ])
+  let map11 : @hashmap.T[String, Int] = @hashmap.of([("one", 1), ("three", 3)])
   inspect!(map8 == map11, content="false")
 }
 
 test "hash" {
-  let map1 = @hashmap.T::of([("one", 1), ("two", 2)])
-  let map2 = @hashmap.T::of([("one", 1), ("two", 2)])
+  let map1 = @hashmap.of([("one", 1), ("two", 2)])
+  let map2 = @hashmap.of([("one", 1), ("two", 2)])
   inspect!(map1.hash() == map2.hash(), content="true")
-  let map3 = @hashmap.T::of([("two", 2), ("one", 1)])
+  let map3 = @hashmap.of([("two", 2), ("one", 1)])
   inspect!(map1.hash() == map3.hash(), content="true")
-  let map4 = @hashmap.T::of([("one", 1), ("two", 2), ("three", 3)])
+  let map4 = @hashmap.of([("one", 1), ("two", 2), ("three", 3)])
   inspect!(map1.hash() == map4.hash(), content="false")
 }

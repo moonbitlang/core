@@ -311,7 +311,7 @@ test "filter_with_key" {
 }
 
 test "empty" {
-  let m : T[Int, Int] = T::new()
+  let m : T[Int, Int] = new()
   assert_eq!(m.debug_tree(), "_")
 }
 

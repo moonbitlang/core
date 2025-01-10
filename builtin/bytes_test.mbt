@@ -33,7 +33,7 @@ test "blit_from_string" {
   let bytes = FixedArray::make(10, Byte::default())
   let str = "Hello"
   bytes.blit_from_string(0, str, 0, str.length())
-  assert_eq!(Bytes::from_fixedarray(bytes).to_unchecked_string(), str)
+  assert_eq!(@bytes.from_fixedarray(bytes).to_unchecked_string(), str)
 }
 
 test "copy" {
