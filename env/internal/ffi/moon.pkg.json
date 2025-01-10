@@ -1,0 +1,12 @@
+{
+    "import": [
+      "moonbitlang/core/builtin",
+      "moonbitlang/core/string",
+      "moonbitlang/core/array"
+    ],
+    "targets": {
+        "sys_wasm.mbt": ["wasm", "wasm-gc"],
+        "sys_js.mbt": ["js"],
+        "sys_native.mbt": ["native"]
+    }
+}

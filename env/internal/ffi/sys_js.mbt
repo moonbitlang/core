@@ -13,28 +13,18 @@
 // limitations under the License.
 
 ///|
-pub let max_value : Byte = b'\xFF'
+pub extern "js" fn get_cli_args() -> Array[String] =
+  #| function() {
+  #|  if (typeof process !== "undefined" && typeof process.argv !== "undefined") {
+  #|    return process.argv;
+  #|  } else {
+  #|    return [];
+  #|  }
+  #| }
 
 ///|
-pub let min_value : Byte = b'\x00'
-
-///|
-/// Converts a byte value to an unsigned 64-bit integer.
-///
-/// Parameters:
-///
-/// * `byte` : The byte value to be converted.
-///
-/// Returns an unsigned 64-bit integer representation of the byte value.
-///
-/// Example:
-///
-/// ```moonbit
-/// test "to_uint64" {
-///   let b = b'\xFF'
-///   inspect!(b.to_uint64(), content="255")
-/// }
-/// ```
-pub fn to_uint64(self : Byte) -> UInt64 {
-  self.to_uint().to_uint64()
-}
+pub extern "js" fn now() -> UInt64 =
+  #| function() {
+  #|   const nowMs = Date.now();
+  #|   return ({ hi : Number(BigInt(nowMs) >> 32n), lo : nowMs & 0xFFFFFFFF });
+  #| }

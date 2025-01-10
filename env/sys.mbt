@@ -13,28 +13,13 @@
 // limitations under the License.
 
 ///|
-pub let max_value : Byte = b'\xFF'
+/// Get the command line arguments passed to the program.
+pub fn args() -> Array[String] {
+  @ffi.get_cli_args()
+}
 
 ///|
-pub let min_value : Byte = b'\x00'
-
-///|
-/// Converts a byte value to an unsigned 64-bit integer.
-///
-/// Parameters:
-///
-/// * `byte` : The byte value to be converted.
-///
-/// Returns an unsigned 64-bit integer representation of the byte value.
-///
-/// Example:
-///
-/// ```moonbit
-/// test "to_uint64" {
-///   let b = b'\xFF'
-///   inspect!(b.to_uint64(), content="255")
-/// }
-/// ```
-pub fn to_uint64(self : Byte) -> UInt64 {
-  self.to_uint().to_uint64()
+/// Get the current time in milliseconds since the Unix epoch.
+pub fn now() -> UInt64 {
+  @ffi.now()
 }

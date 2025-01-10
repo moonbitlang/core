@@ -109,14 +109,13 @@ dv.front() // Some(2)
 dv.length() // 3
 ```
 
-If you only want to pop an element without getting the return value, you can use `pop_front_exn()` with `pop_back_exn()`.
-These two functions will panic if the queue is empty.
+If you only want to pop an element without getting the return value, you can use `unsafe_pop_front()` with `unsafe_pop_back()`. These two functions will panic if the queue is empty.
 
 ```moonbit
 let dv = @deque.of([1, 2, 3, 4, 5])
-dv.pop_front_exn()
+dv.unsafe_pop_front()
 dv.front() // Some(2)
-dv.pop_back_exn()
+dv.unsafe_pop_back()
 dv.back() // Some(3)
 ```
 

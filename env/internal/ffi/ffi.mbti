@@ -1,0 +1,28 @@
+package moonbitlang/core/env/internal/ffi
+
+// Values
+fn get_cli_args() -> Array[String]
+
+fn now() -> UInt64
+
+fn string_array_from_extern(XExternStringArray) -> Array[String]
+
+fn string_from_extern(XExternString) -> String
+
+fn string_to_extern(String) -> XExternString
+
+// Types and methods
+pub(all) type XExternString
+
+pub(all) type XExternStringArray
+
+pub(all) type XStringArrayReadHandle
+
+pub(all) type XStringCreateHandle
+
+pub(all) type XStringReadHandle
+
+// Type aliases
+
+// Traits
+
