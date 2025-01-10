@@ -159,7 +159,7 @@ fn coverage_log(
       if ix != 0 {
         print(", ")
       }
-      print(escape(name))
+      print(name.escape())
       print(": ")
       let counter_dump = counter.to_string()
       println(counter_dump)

@@ -38,17 +38,27 @@ test "power_2_above" {
 
 ///|
 /// Create new hash map.
-pub fn T::new[K, V](capacity~ : Int = 8) -> T[K, V] {
+pub fn new[K, V](capacity~ : Int = 8) -> T[K, V] {
   let capacity = power_2_above(8, capacity)
   { size: 0, capacity, entries: FixedArray::make(capacity, None) }
 }
 
+///| @alert deprecated "use `@hashmap.new` instead"
+pub fn T::new[K, V](capacity~ : Int = 8) -> T[K, V] {
+  new(capacity~)
+}
+
 ///|
 /// Create new hash map from array.
-pub fn T::from_array[K : Hash + Eq, V](arr : Array[(K, V)]) -> T[K, V] {
+pub fn from_array[K : Hash + Eq, V](arr : Array[(K, V)]) -> T[K, V] {
   let m = new(capacity=arr.length())
   arr.each(fn(e) { m.set(e.0, e.1) })
   m
+}
+
+///| @alert deprecated "use `@hashmap.from_array` instead"
+pub fn T::from_array[K : Hash + Eq, V](arr : Array[(K, V)]) -> T[K, V] {
+  from_array(arr)
 }
 
 ///|
@@ -247,10 +257,15 @@ fn grow[K : Eq, V](self : T[K, V]) -> Unit {
 }
 
 ///|
-pub fn T::of[K : Eq + Hash, V](arr : FixedArray[(K, V)]) -> T[K, V] {
+pub fn of[K : Eq + Hash, V](arr : FixedArray[(K, V)]) -> T[K, V] {
   let m = new(capacity=arr.length())
   arr.each(fn(e) { m.set(e.0, e.1) })
   m
+}
+
+///| @alert deprecated "use `@hashmap.of` instead"
+pub fn T::of[K : Eq + Hash, V](arr : FixedArray[(K, V)]) -> T[K, V] {
+  of(arr)
 }
 
 test "of" {

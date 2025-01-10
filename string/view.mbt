@@ -151,7 +151,7 @@ pub fn index_at_rev(
 /// 
 /// Note this has O(n) complexity where n is the length of the code points in 
 /// the view.
-pub fn length(self : StringView) -> Int {
+pub fn StringView::length(self : StringView) -> Int {
   let mut len = 0
   for index = self.start; index < self.end; index = index + 1 {
     let c1 = self.str[index]
@@ -227,7 +227,7 @@ pub fn length_ge(self : StringView, len : Int) -> Bool {
 ///  #|"ello🤣"
 ///)
 /// ```
-pub fn op_as_view(
+pub fn String::op_as_view(
   self : String,
   start~ : StringIndex = 0,
   end? : StringIndex
@@ -259,7 +259,7 @@ pub fn op_as_view(
 ///   #|"llo🤣"
 /// )
 /// ```
-pub fn op_as_view(
+pub fn StringView::op_as_view(
   self : StringView,
   start~ : Int = 0,
   end? : Int
@@ -316,7 +316,7 @@ pub fn op_as_view(
 /// inspect!(view[0], content="'e'")
 /// inspect!(view[4], content="'🤣'")
 /// ```
-pub fn op_get(self : StringView, index : Int) -> Char {
+pub fn StringView::op_get(self : StringView, index : Int) -> Char {
   guard index >= 0 else {
     abort("Index out of bounds: cannot access negative index")
   }

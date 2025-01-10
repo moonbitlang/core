@@ -69,7 +69,7 @@ test "take_while2" {
   let exb = StringBuilder::new(size_hint=0)
   iter
   .take_while(fn { x => x != '4' })
-  .concat(singleton('6'))
+  .concat(Iter::singleton('6'))
   .each(fn { x => exb.write_char(x) })
   inspect!(exb, content="1236")
 }
@@ -78,7 +78,7 @@ test "take_while3" {
   let iter = test_from_array([1, 2, 3])
   let res = iter
     .take_while(fn { x => x != 4 })
-    .concat(singleton(4))
+    .concat(Iter::singleton(4))
     .find_first(fn { x => x % 2 == 0 })
   inspect!(res, content="Some(2)")
 }
@@ -115,7 +115,7 @@ test "map_while2" {
   let exb = StringBuilder::new(size_hint=0)
   iter
   .map_while(fn { x => if x != 4 { Some(x) } else { None } })
-  .concat(singleton(6))
+  .concat(Iter::singleton(6))
   .each(fn { x => exb.write_string("\{x}\n") })
   inspect!(exb, content="1\n2\n3\n6\n")
 }
@@ -124,7 +124,7 @@ test "map_while3" {
   let iter = test_from_array([1, 2, 3])
   let res = iter
     .map_while(fn { x => if x != 4 { Some(x) } else { None } })
-    .concat(singleton(4))
+    .concat(Iter::singleton(4))
     .find_first(fn { x => x % 2 == 0 })
   inspect!(res, content="Some(2)")
 }
@@ -165,7 +165,7 @@ test "drop_while2" {
   let iter = test_from_array([1, 2, 3, 4, 5])
   let res = iter
     .drop_while(fn { x => x <= 3 })
-    .concat(singleton(6))
+    .concat(Iter::singleton(6))
     .find_first(fn { x => x % 3 == 0 })
   inspect!(res, content="Some(6)")
 }
@@ -175,7 +175,7 @@ test "drop_while3" {
   let exb = StringBuilder::new(size_hint=0)
   let res = iter
     .drop_while(fn { x => x < 3 })
-    .concat(singleton(6))
+    .concat(Iter::singleton(6))
     .find_first(fn {
       x => {
         exb.write_char('x')
@@ -191,7 +191,7 @@ test "drop_while4" {
   let iter = test_from_array([1, 2, 3, 4, 5])
   let res = iter
     .drop_while(fn { x => x <= 3 })
-    .concat(singleton(6))
+    .concat(Iter::singleton(6))
     .drop(3)
     .find_first(fn { x => x % 3 == 0 })
   inspect!(res, content="None")
@@ -457,7 +457,7 @@ enum Tree {
 }
 
 ///|
-fn iter(self : Tree) -> Iter[Int] {
+fn Tree::iter(self : Tree) -> Iter[Int] {
   Iter::new(fn(yield_) {
     match self {
       Leaf(x) => yield_(x)

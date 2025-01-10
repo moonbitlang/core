@@ -29,7 +29,7 @@
 /// ```
 /// TODO: change the intrinsic to match the function name
 /// @intrinsic %fixedarray.iter
-pub fn each[T](self : FixedArray[T], f : (T) -> Unit) -> Unit {
+pub fn FixedArray::each[T](self : FixedArray[T], f : (T) -> Unit) -> Unit {
   for v in self {
     f(v)
   }
@@ -79,7 +79,7 @@ test "each" {
 /// })
 /// assert_eq!(arr, [(0, 1), (1, 2), (2, 3), (3, 4), (4, 5)])
 /// ```
-pub fn eachi[T](self : FixedArray[T], f : (Int, T) -> Unit) -> Unit {
+pub fn FixedArray::eachi[T](self : FixedArray[T], f : (Int, T) -> Unit) -> Unit {
   for i, v in self {
     f(i, v)
   }
@@ -127,7 +127,7 @@ test "eachi" {
 /// [1, 2, 3, 4, 5].rev_each(fn(x){ arr.push(x) })
 /// assert_eq!(arr, [5, 4, 3, 2, 1])
 /// ```
-pub fn rev_each[T](self : FixedArray[T], f : (T) -> Unit) -> Unit {
+pub fn FixedArray::rev_each[T](self : FixedArray[T], f : (T) -> Unit) -> Unit {
   for i = self.length() - 1; i >= 0; i = i - 1 {
     f(self[i])
   }
@@ -177,7 +177,10 @@ test "rev_each" {
 /// })
 /// assert_eq!(arr, [(0, 5), (1, 4), (2, 3), (3, 2), (4, 1)])
 /// ```
-pub fn rev_eachi[T](self : FixedArray[T], f : (Int, T) -> Unit) -> Unit {
+pub fn FixedArray::rev_eachi[T](
+  self : FixedArray[T],
+  f : (Int, T) -> Unit
+) -> Unit {
   let len = self.length()
   for i in 0..<len {
     f(i, self[len - i - 1])
@@ -229,7 +232,10 @@ test "rev_eachi" {
 /// let doubled = arr.map(fn(x){ x * 2 })
 /// assert_eq!(doubled, [2, 4, 6, 8, 10])
 /// ```
-pub fn map[T, U](self : FixedArray[T], f : (T) -> U) -> FixedArray[U] {
+pub fn FixedArray::map[T, U](
+  self : FixedArray[T],
+  f : (T) -> U
+) -> FixedArray[U] {
   if self.length() == 0 {
     return []
   }
@@ -260,7 +266,10 @@ test "map" {
 /// let added = arr.mapi(fn (i, x) { x + i })
 /// assert_eq!(added, [3, 5, 7])
 /// ```
-pub fn mapi[T, U](self : FixedArray[T], f : (Int, T) -> U) -> FixedArray[U] {
+pub fn FixedArray::mapi[T, U](
+  self : FixedArray[T],
+  f : (Int, T) -> U
+) -> FixedArray[U] {
   if self.length() == 0 {
     return []
   }
@@ -378,7 +387,11 @@ test "from_array" {
 /// let sum = [1, 2, 3, 4, 5].fold(init=0, fn { sum, elem => sum + elem })
 /// assert_eq!(sum, 15)
 /// ```
-pub fn fold[A, B](self : FixedArray[A], init~ : B, f : (B, A) -> B) -> B {
+pub fn FixedArray::fold[A, B](
+  self : FixedArray[A],
+  init~ : B,
+  f : (B, A) -> B
+) -> B {
   for i = 0, acc = init; i < self.length(); {
     continue i + 1, f(acc, self[i])
   } else {
@@ -405,7 +418,11 @@ test "fold" {
 /// let sum = [1, 2, 3, 4, 5].rev_fold(init=0, fn { sum, elem => sum + elem })
 /// assert_eq!(sum, 15)
 /// ```
-pub fn rev_fold[A, B](self : FixedArray[A], init~ : B, f : (B, A) -> B) -> B {
+pub fn FixedArray::rev_fold[A, B](
+  self : FixedArray[A],
+  init~ : B,
+  f : (B, A) -> B
+) -> B {
   for i = self.length() - 1, acc = init; i >= 0; {
     continue i - 1, f(acc, self[i])
   } else {
@@ -434,7 +451,11 @@ test "rev_fold" {
 /// let sum = [1, 2, 3, 4, 5].foldi(init=0, fn { index, sum, _elem => sum + index })
 /// assert_eq!(sum, 10)
 /// ```
-pub fn foldi[A, B](self : FixedArray[A], init~ : B, f : (Int, B, A) -> B) -> B {
+pub fn FixedArray::foldi[A, B](
+  self : FixedArray[A],
+  init~ : B,
+  f : (Int, B, A) -> B
+) -> B {
   for i = 0, acc = init; i < self.length(); {
     continue i + 1, f(i, acc, self[i])
   } else {
@@ -464,7 +485,7 @@ test "fold_lefti" {
 /// let sum = [1, 2, 3, 4, 5].rev_foldi(init=0, fn { index, sum, _elem => sum + index })
 /// assert_eq!(sum, 10)
 /// ```
-pub fn rev_foldi[A, B](
+pub fn FixedArray::rev_foldi[A, B](
   self : FixedArray[A],
   init~ : B,
   f : (Int, B, A) -> B
@@ -508,7 +529,7 @@ test "rev_foldi" {
 ///   inspect!(arr, content="[5, 4, 3, 2, 1]")
 /// }
 /// ```
-pub fn rev_inplace[T](self : FixedArray[T]) -> Unit {
+pub fn FixedArray::rev_inplace[T](self : FixedArray[T]) -> Unit {
   let mid_len = self.length() / 2
   for i = 0; i < mid_len; i = i + 1 {
     let j = self.length() - i - 1
@@ -538,7 +559,7 @@ pub fn rev_inplace[T](self : FixedArray[T]) -> Unit {
 ///   inspect!(arr, content="[1, 2, 3, 4, 5]")
 /// }
 /// ```
-pub fn rev[T](self : FixedArray[T]) -> FixedArray[T] {
+pub fn FixedArray::rev[T](self : FixedArray[T]) -> FixedArray[T] {
   match self {
     [] => []
     [.., first] => {
@@ -609,7 +630,7 @@ test "rev" {
 /// arr.swap(0, 1)
 /// assert_eq!(arr, [2, 1, 3, 4, 5])
 /// ```
-pub fn swap[T](self : FixedArray[T], i : Int, j : Int) -> Unit {
+pub fn FixedArray::swap[T](self : FixedArray[T], i : Int, j : Int) -> Unit {
   let temp = self[i]
   self[i] = self[j]
   self[j] = temp
@@ -645,7 +666,7 @@ test "swap" {
 /// assert_true!(arr.all(fn(ele) { ele < 6 }))
 /// assert_false!(arr.all(fn(ele) { ele < 5 }))
 /// ```
-pub fn all[T](self : FixedArray[T], f : (T) -> Bool) -> Bool {
+pub fn FixedArray::all[T](self : FixedArray[T], f : (T) -> Bool) -> Bool {
   for i = 0; i < self.length(); i = i + 1 {
     if not(f(self[i])) {
       return false
@@ -680,7 +701,7 @@ test "all" {
 /// assert_true!(arr.any(fn(ele) { ele < 6 }))
 /// assert_true!(arr.any(fn(ele) { ele < 5 }))
 /// ```
-pub fn any[T](self : FixedArray[T], f : (T) -> Bool) -> Bool {
+pub fn FixedArray::any[T](self : FixedArray[T], f : (T) -> Bool) -> Bool {
   for i = 0; i < self.length(); i = i + 1 {
     if f(self[i]) {
       return true
@@ -729,7 +750,7 @@ test "fill" {
 /// let arr: FixedArray[Int] = [3, 4, 5]
 /// assert_eq!(arr.search(3), Some(0))
 /// ```
-pub fn search[T : Eq](self : FixedArray[T], value : T) -> Int? {
+pub fn FixedArray::search[T : Eq](self : FixedArray[T], value : T) -> Int? {
   for i = 0; i < self.length(); i = i + 1 {
     if self[i] == value {
       return Some(i)
@@ -764,7 +785,7 @@ test "search" {
 /// let arr: FixedArray[Int] = [3, 4, 5]
 /// assert_true!(arr.contains(3))
 /// ```
-pub fn contains[T : Eq](self : FixedArray[T], value : T) -> Bool {
+pub fn FixedArray::contains[T : Eq](self : FixedArray[T], value : T) -> Bool {
   for i = 0; i < self.length(); i = i + 1 {
     if self[i] == value {
       return true
@@ -799,7 +820,7 @@ test "contains" {
 /// let arr: FixedArray[Int] = [3, 4, 5]
 /// assert_true!(arr.starts_with([3, 4]))
 /// ```
-pub fn starts_with[T : Eq](
+pub fn FixedArray::starts_with[T : Eq](
   self : FixedArray[T],
   prefix : FixedArray[T]
 ) -> Bool {
@@ -846,7 +867,10 @@ test "starts_with" {
 /// let v: FixedArray[Int] = [3, 4, 5]
 /// assert_true!(v.ends_with([5]))
 /// ```
-pub fn ends_with[T : Eq](self : FixedArray[T], suffix : FixedArray[T]) -> Bool {
+pub fn FixedArray::ends_with[T : Eq](
+  self : FixedArray[T],
+  suffix : FixedArray[T]
+) -> Bool {
   let self_len = self.length()
   let suf_len = suffix.length()
   if suf_len > self_len {
@@ -913,7 +937,10 @@ test "ends_with" {
 ///   inspect!(arr1 == arr3, content="false")
 /// }
 /// ```
-pub fn op_equal[T : Eq](self : FixedArray[T], that : FixedArray[T]) -> Bool {
+pub fn FixedArray::op_equal[T : Eq](
+  self : FixedArray[T],
+  that : FixedArray[T]
+) -> Bool {
   if self.length() != that.length() {
     return false
   }
@@ -1009,7 +1036,10 @@ test "deep_clone" {
 ///   inspect!(arr1 + arr2, content="[1, 2, 3, 4, 5, 6]")
 /// }
 /// ```
-pub fn op_add[T](self : FixedArray[T], other : FixedArray[T]) -> FixedArray[T] {
+pub fn FixedArray::op_add[T](
+  self : FixedArray[T],
+  other : FixedArray[T]
+) -> FixedArray[T] {
   let slen = self.length()
   let nlen = other.length()
   if slen == 0 {

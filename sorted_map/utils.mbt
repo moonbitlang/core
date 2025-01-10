@@ -18,7 +18,7 @@ fn new_node[K, V](key : K, value : V) -> Node[K, V] {
 }
 
 ///|
-fn op_equal[K : Eq, V](self : Node[K, V], other : Node[K, V]) -> Bool {
+fn Node::op_equal[K : Eq, V](self : Node[K, V], other : Node[K, V]) -> Bool {
   self.key == other.key
 }
 

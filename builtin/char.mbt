@@ -13,7 +13,7 @@
 // limitations under the License.
 
 ///|
-pub fn op_sub(self : Char, that : Char) -> Int {
+pub fn Char::op_sub(self : Char, that : Char) -> Int {
   self.to_int() - that.to_int()
 }
 

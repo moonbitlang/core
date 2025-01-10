@@ -35,8 +35,13 @@ let segment_length : Int = 5
 let segment_mask : Int = 0b11111
 
 ///|
-pub fn T::new[A]() -> T[A] {
+pub fn new[A]() -> T[A] {
   Empty
+}
+
+///| @alert deprecated "use `@immut/hashset.new` instead"
+pub fn T::new[A]() -> T[A] {
+  new()
 }
 
 ///|
@@ -73,7 +78,7 @@ fn add_with_hash[A : Eq](self : T[A], key : A, depth : Int, hash : Int) -> T[A] 
         key,
         (hash.reinterpret_as_uint() >> segment_length).reinterpret_as_int(),
       )
-      Branch(@sparse_array.SparseArray::singleton(idx, child))
+      Branch(@sparse_array.singleton(idx, child))
     }
   }
 
@@ -210,8 +215,13 @@ pub fn iter[A](self : T[A]) -> Iter[A] {
 }
 
 ///|
-pub fn T::from_iter[A : Eq + Hash](iter : Iter[A]) -> T[A] {
+pub fn from_iter[A : Eq + Hash](iter : Iter[A]) -> T[A] {
   iter.fold(init=new(), fn(s, e) { s.add(e) })
+}
+
+///| @alert deprecated "use `@immut/hashset.from_iter` instead"
+pub fn T::from_iter[A : Eq + Hash](iter : Iter[A]) -> T[A] {
+  from_iter(iter)
 }
 
 ///|
@@ -220,8 +230,8 @@ pub impl[A : Show] Show for T[A] with output(self, logger) {
 }
 
 ///|
-pub fn T::from_array[A : Eq + Hash](arr : Array[A]) -> T[A] {
-  loop arr.length(), T::new() {
+pub fn from_array[A : Eq + Hash](arr : Array[A]) -> T[A] {
+  loop arr.length(), new() {
     0, set => set
     n, set => {
       let k = arr[n - 1]
@@ -230,15 +240,25 @@ pub fn T::from_array[A : Eq + Hash](arr : Array[A]) -> T[A] {
   }
 }
 
+///| @alert deprecated "use `@immut/hashset.from_array` instead"
+pub fn T::from_array[A : Eq + Hash](arr : Array[A]) -> T[A] {
+  from_array(arr)
+}
+
 ///|
-pub fn T::of[A : Eq + Hash](arr : FixedArray[A]) -> T[A] {
-  loop arr.length(), T::new() {
+pub fn of[A : Eq + Hash](arr : FixedArray[A]) -> T[A] {
+  loop arr.length(), new() {
     0, set => set
     n, set => {
       let k = arr[n - 1]
       continue n - 1, set.add(k)
     }
   }
+}
+
+///| @alert deprecated "use `@immut/hashset.of` instead"
+pub fn T::of[A : Eq + Hash](arr : FixedArray[A]) -> T[A] {
+  of(arr)
 }
 
 ///|

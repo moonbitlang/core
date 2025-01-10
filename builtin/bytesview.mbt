@@ -33,13 +33,13 @@ struct BytesView {
 
 ///|
 /// Returns the length of the BytesView.
-pub fn length(self : BytesView) -> Int {
+pub fn BytesView::length(self : BytesView) -> Int {
   self.len
 }
 
 ///|
 /// Returns the byte at the given index.
-pub fn op_get(self : BytesView, index : Int) -> Byte {
+pub fn BytesView::op_get(self : BytesView, index : Int) -> Byte {
   guard index >= 0 && index < self.len else {
     abort(
       "index out of bounds: the len is from 0 to \{self.len} but the index is \{index}",
@@ -50,7 +50,7 @@ pub fn op_get(self : BytesView, index : Int) -> Byte {
 
 ///|
 /// @alert unsafe "Panic if index is out of bounds"
-pub fn unsafe_get(self : BytesView, index : Int) -> Byte {
+pub fn BytesView::unsafe_get(self : BytesView, index : Int) -> Byte {
   self.bytes[self.start + index]
 }
 
@@ -67,7 +67,11 @@ pub fn unsafe_get(self : BytesView, index : Int) -> Byte {
 /// assert_eq!(bv[1], b'\x02')
 /// assert_eq!(bv[2], b'\x03')
 /// ```
-pub fn op_as_view(self : Bytes, start~ : Int = 0, end? : Int) -> BytesView {
+pub fn Bytes::op_as_view(
+  self : Bytes,
+  start~ : Int = 0,
+  end? : Int
+) -> BytesView {
   let len = self.length()
   let end = match end {
     None => len
@@ -91,7 +95,11 @@ pub fn op_as_view(self : Bytes, start~ : Int = 0, end? : Int) -> BytesView {
 /// assert_eq!(bv2.length(), 3)
 /// assert_eq!(bv2[1], b'\x02')
 /// ```
-pub fn op_as_view(self : BytesView, start~ : Int = 0, end? : Int) -> BytesView {
+pub fn BytesView::op_as_view(
+  self : BytesView,
+  start~ : Int = 0,
+  end? : Int
+) -> BytesView {
   let len = self.length()
   let end = match end {
     None => len
@@ -115,7 +123,7 @@ pub fn op_as_view(self : BytesView, start~ : Int = 0, end? : Int) -> BytesView {
 /// bv.iter().each(fn(x) { sum = sum + x.to_int() })
 /// assert_eq!(sum, 15)
 /// ```
-pub fn iter(self : BytesView) -> Iter[Byte] {
+pub fn BytesView::iter(self : BytesView) -> Iter[Byte] {
   Iter::new(fn(yield_) {
     for i in 0..<self.len {
       guard let IterContinue = yield_(self[i]) else { x => break x }
@@ -127,7 +135,7 @@ pub fn iter(self : BytesView) -> Iter[Byte] {
 }
 
 ///| Converts the 4 bytes long BytesView to a UInt in big-endian byte order.
-pub fn to_uint_be(self : BytesView) -> UInt {
+pub fn BytesView::to_uint_be(self : BytesView) -> UInt {
   (self[0].to_uint() << 24) +
   (self[1].to_uint() << 16) +
   (self[2].to_uint() << 8) +
@@ -135,7 +143,7 @@ pub fn to_uint_be(self : BytesView) -> UInt {
 }
 
 ///| Converts the 4 bytes long BytesView to a UInt in little-endian byte order.
-pub fn to_uint_le(self : BytesView) -> UInt {
+pub fn BytesView::to_uint_le(self : BytesView) -> UInt {
   self[0].to_uint() +
   (self[1].to_uint() << 8) +
   (self[2].to_uint() << 16) +
@@ -143,7 +151,7 @@ pub fn to_uint_le(self : BytesView) -> UInt {
 }
 
 ///| Converts the 8 bytes long BytesView to a UInt64 in big-endian byte order.
-pub fn to_uint64_be(self : BytesView) -> UInt64 {
+pub fn BytesView::to_uint64_be(self : BytesView) -> UInt64 {
   (self[0].to_uint().to_uint64() << 56) +
   (self[1].to_uint().to_uint64() << 48) +
   (self[2].to_uint().to_uint64() << 40) +
@@ -155,7 +163,7 @@ pub fn to_uint64_be(self : BytesView) -> UInt64 {
 }
 
 ///| Converts the 8 bytes long BytesView to a UInt64 in little-endian byte order.
-pub fn to_uint64_le(self : BytesView) -> UInt64 {
+pub fn BytesView::to_uint64_le(self : BytesView) -> UInt64 {
   self[0].to_uint().to_uint64() +
   (self[1].to_uint().to_uint64() << 8) +
   (self[2].to_uint().to_uint64() << 16) +
@@ -167,41 +175,41 @@ pub fn to_uint64_le(self : BytesView) -> UInt64 {
 }
 
 ///| Converts the 4 bytes long BytesView to a Int in big-endian byte order.
-pub fn to_int_be(self : BytesView) -> Int {
+pub fn BytesView::to_int_be(self : BytesView) -> Int {
   self.to_uint_be().reinterpret_as_int()
 }
 
 ///| Converts the 4 bytes long BytesView to a Int in little-endian byte order.
-pub fn to_int_le(self : BytesView) -> Int {
+pub fn BytesView::to_int_le(self : BytesView) -> Int {
   self.to_uint_le().reinterpret_as_int()
 }
 
 ///| Converts the 8 bytes long BytesView to a Int64 in big-endian byte order.
-pub fn to_int64_be(self : BytesView) -> Int64 {
+pub fn BytesView::to_int64_be(self : BytesView) -> Int64 {
   self.to_uint64_be().reinterpret_as_int64()
 }
 
 ///| Converts the 8 bytes long BytesView to a Int64 in little-endian byte order.
-pub fn to_int64_le(self : BytesView) -> Int64 {
+pub fn BytesView::to_int64_le(self : BytesView) -> Int64 {
   self.to_uint64_le().reinterpret_as_int64()
 }
 
 ///| Converts the 4 bytes long BytesView to a Float in big-endian byte order.
-pub fn to_float_be(self : BytesView) -> Float {
+pub fn BytesView::to_float_be(self : BytesView) -> Float {
   self.to_uint_be().reinterpret_as_float()
 }
 
 ///| Converts the 4 bytes long BytesView to a Float in little-endian byte order.
-pub fn to_float_le(self : BytesView) -> Float {
+pub fn BytesView::to_float_le(self : BytesView) -> Float {
   self.to_uint_le().reinterpret_as_float()
 }
 
 ///| Converts the 8 bytes long BytesView to a Double in big-endian byte order.
-pub fn to_double_be(self : BytesView) -> Double {
+pub fn BytesView::to_double_be(self : BytesView) -> Double {
   self.to_uint64_be().reinterpret_as_double()
 }
 
 ///| Converts the 8 bytes long BytesView to a Double in little-endian byte order.
-pub fn to_double_le(self : BytesView) -> Double {
+pub fn BytesView::to_double_le(self : BytesView) -> Double {
   self.to_uint64_le().reinterpret_as_double()
 }

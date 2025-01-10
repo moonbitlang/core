@@ -13,7 +13,7 @@
 // limitations under the License.
 
 ///|
-fn op_equal[V : Eq](self : Node[V], other : Node[V]) -> Bool {
+fn Node::op_equal[V : Eq](self : Node[V], other : Node[V]) -> Bool {
   self.value == other.value
 }
 

@@ -26,13 +26,19 @@
 /// ```moonbit
 /// test "Bytes::from_array" {
 ///   let arr = [b'h', b'i']
-///   let bytes = Bytes::from_array(arr)
+///   let bytes = @bytes.from_array(arr)
 ///   inspect!(bytes, content=
 ///     #|b"\x68\x69"
 ///   )
 /// }
 /// ```
 pub fn Bytes::from_array(arr : Array[Byte]) -> Bytes {
+  Bytes::makei(arr.length(), fn(i) { arr[i] })
+}
+
+///|
+/// same as `Bytes::from_array`
+pub fn from_array(arr : Array[Byte]) -> Bytes {
   Bytes::makei(arr.length(), fn(i) { arr[i] })
 }
 
@@ -55,7 +61,7 @@ pub fn Bytes::from_array(arr : Array[Byte]) -> Bytes {
 /// ```moonbit
 /// test "Bytes::from_fixedarray" {
 ///   let arr : FixedArray[Byte] = [b'h', b'e', b'l', b'l', b'o']
-///   let bytes = Bytes::from_fixedarray(arr, len=3)
+///   let bytes = @bytes.from_fixedarray(arr, len=3)
 ///   inspect!(bytes, content=
 ///     #|b"\x68\x65\x6c"
 ///   )
@@ -67,6 +73,12 @@ pub fn Bytes::from_fixedarray(arr : FixedArray[Byte], len? : Int) -> Bytes {
     Some(x) => x
   }
   Bytes::makei(len, fn(i) { arr[i] })
+}
+
+///|
+/// same as `Bytes::from_fixedarray`
+pub fn from_fixedarray(arr : FixedArray[Byte], len? : Int) -> Bytes {
+  Bytes::from_fixedarray(arr, len?)
 }
 
 ///|
@@ -94,7 +106,7 @@ pub fn Bytes::from_fixedarray(arr : FixedArray[Byte], len? : Int) -> Bytes {
 ///   inspect!(arr2, content="[b'\\x68', b'\\x65', b'\\x6C']")
 /// }
 /// ```
-pub fn Bytes::to_fixedarray(self : Bytes, len? : Int) -> FixedArray[Byte] {
+pub fn to_fixedarray(self : Bytes, len? : Int) -> FixedArray[Byte] {
   let len = match len {
     None => self.length()
     Some(x) => x
@@ -118,16 +130,22 @@ pub fn Bytes::to_fixedarray(self : Bytes, len? : Int) -> FixedArray[Byte] {
 /// Example:
 ///
 /// ```moonbit
-/// test "Bytes::from_iter" {
+/// test "from_iter" {
 ///   let iter = Iter::singleton(b'h')
-///   let bytes = Bytes::from_iter(iter)
+///   let bytes = @bytes.from_iter(iter)
 ///   inspect!(bytes, content=
 ///     #|b"\x68"
 ///   )
 /// }
 /// ```
 pub fn Bytes::from_iter(iter : Iter[Byte]) -> Bytes {
-  Bytes::from_array(iter.collect())
+  from_array(iter.collect())
+}
+
+///|
+/// same as `Bytes::from_iter`
+pub fn from_iter(iter : Iter[Byte]) -> Bytes {
+  from_array(iter.collect())
 }
 
 ///|
@@ -143,9 +161,9 @@ pub fn Bytes::from_iter(iter : Iter[Byte]) -> Bytes {
 /// Example:
 ///
 /// ```moonbit
-/// test "Bytes::of" {
+/// test "of" {
 ///   let arr : FixedArray[Byte] = [b'h', b'e', b'l', b'l', b'o']
-///   let bytes = Bytes::of(arr)
+///   let bytes = @bytes.of(arr)
 ///   inspect!(bytes, content=
 ///     #|b"\x68\x65\x6c\x6c\x6f"
 ///   )
@@ -153,6 +171,12 @@ pub fn Bytes::from_iter(iter : Iter[Byte]) -> Bytes {
 /// ```
 /// TODO: marked as intrinsic, inline if it is constant
 pub fn Bytes::of(arr : FixedArray[Byte]) -> Bytes {
+  Bytes::makei(arr.length(), fn(i) { arr[i] })
+}
+
+///|
+/// same as `Bytes::of`
+pub fn of(arr : FixedArray[Byte]) -> Bytes {
   Bytes::makei(arr.length(), fn(i) { arr[i] })
 }
 
@@ -221,12 +245,18 @@ pub fn iter(self : Bytes) -> Iter[Byte] {
 /// Example:
 ///
 /// ```moonbit
-/// test "Bytes::default" {
-///   let bytes = Bytes::default()
+/// test "default" {
+///   let bytes = @bytes.default()
 ///   inspect!(bytes, content="b\"\"")
 ///   inspect!(bytes.length(), content="0")
 /// }
 /// ```
 pub fn Bytes::default() -> Bytes {
+  b""
+}
+
+///|
+/// same as `Bytes::default`
+pub fn default() -> Bytes {
   b""
 }

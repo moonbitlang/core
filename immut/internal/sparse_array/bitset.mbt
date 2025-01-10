@@ -23,7 +23,7 @@ let empty_bitset : Bitset = Bitset(0)
 /// `has(self: Bitset, idx: Int)`
 ///
 /// Check if the given index is present in the bitset.
-pub fn has(self : Bitset, idx : Int) -> Bool {
+pub fn Bitset::has(self : Bitset, idx : Int) -> Bool {
   (self._ & (1U << idx)) != 0
 }
 
@@ -31,7 +31,7 @@ pub fn has(self : Bitset, idx : Int) -> Bool {
 /// `index_of(self: Bitset, idx: Int)`
 ///
 /// Get the index of the bit in the bitset.
-pub fn index_of(self : Bitset, idx : Int) -> Int {
+pub fn Bitset::index_of(self : Bitset, idx : Int) -> Int {
   (self._ & ((1U << idx) - 1)).popcnt()
 }
 
@@ -39,7 +39,7 @@ pub fn index_of(self : Bitset, idx : Int) -> Int {
 /// `add(self: Bitset, idx: Int)`
 ///
 /// Add a new index to the bitset.
-pub fn add(self : Bitset, idx : Int) -> Bitset {
+pub fn Bitset::add(self : Bitset, idx : Int) -> Bitset {
   Bitset(self._ | (1U << idx))
 }
 
@@ -47,7 +47,7 @@ pub fn add(self : Bitset, idx : Int) -> Bitset {
 /// `remove(self: Bitset, idx: Int)`
 ///
 /// Remove an index from the bitset.
-pub fn remove(self : Bitset, idx : Int) -> Bitset {
+pub fn Bitset::remove(self : Bitset, idx : Int) -> Bitset {
   Bitset(self._ ^ (1U << idx))
 }
 
@@ -55,7 +55,7 @@ pub fn remove(self : Bitset, idx : Int) -> Bitset {
 /// `size(self: Bitset) -> Int`
 ///
 /// Calculate the size of a bitset
-pub fn size(self : Bitset) -> Int {
+pub fn Bitset::size(self : Bitset) -> Int {
   self._.popcnt()
 }
 

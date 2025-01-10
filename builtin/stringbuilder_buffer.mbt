@@ -95,6 +95,6 @@ pub impl Show for StringBuilder with output(self, logger) {
 }
 
 ///|
-pub fn reset(self : StringBuilder) -> Unit {
+pub fn StringBuilder::reset(self : StringBuilder) -> Unit {
   self.len = 0
 }

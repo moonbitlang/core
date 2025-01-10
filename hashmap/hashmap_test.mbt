@@ -273,36 +273,33 @@ test "get_nonexistent_key_with_psl" {
 
 test "from_iter multiple elements iter" {
   inspect!(
-    @hashmap.T::from_iter([(1, 1), (2, 2), (3, 3)].iter()),
+    @hashmap.from_iter([(1, 1), (2, 2), (3, 3)].iter()),
     content="HashMap::of([(2, 2), (1, 1), (3, 3)])",
   )
 }
 
 test "from_iter single element iter" {
-  inspect!(
-    @hashmap.T::from_iter([(1, 1)].iter()),
-    content="HashMap::of([(1, 1)])",
-  )
+  inspect!(@hashmap.from_iter([(1, 1)].iter()), content="HashMap::of([(1, 1)])")
 }
 
 test "from_iter empty iter" {
-  let map : @hashmap.T[Int, Int] = @hashmap.T::from_iter(Iter::empty())
+  let map : @hashmap.T[Int, Int] = @hashmap.from_iter(Iter::empty())
   inspect!(map, content="HashMap::of([])")
 }
 
 test "@hashmap.contains/empty" {
-  let map : @hashmap.T[Int, String] = @hashmap.T::new()
+  let map : @hashmap.T[Int, String] = @hashmap.new()
   inspect!(map.contains(42), content="false")
 }
 
 test "@hashmap.contains/basic" {
-  let map = @hashmap.T::of([(1, "one"), (2, "two"), (3, "three")])
+  let map = @hashmap.of([(1, "one"), (2, "two"), (3, "three")])
   inspect!(map.contains(2), content="true")
   inspect!(map.contains(4), content="false")
 }
 
 test "@hashmap.contains/after_operations" {
-  let map = @hashmap.T::of([(1, "one"), (2, "two")])
+  let map = @hashmap.of([(1, "one"), (2, "two")])
   map.remove(1)
   inspect!(map.contains(1), content="false")
   map.set(1, "ONE")

@@ -23,7 +23,7 @@ priv struct Entry[K, V] {
 } derive(Show)
 
 ///|
-fn op_equal[K : Eq, V](self : Entry[K, V], other : Entry[K, V]) -> Bool {
+fn Entry::op_equal[K : Eq, V](self : Entry[K, V], other : Entry[K, V]) -> Bool {
   self.hash == other.hash && self.key == other.key
 }
 
@@ -111,7 +111,7 @@ pub fn Map::from_array[K : Hash + Eq, V](arr : Array[(K, V)]) -> Map[K, V] {
 ///|
 /// Set a key-value pair into the hash map.
 /// @alert unsafe "Panic if the hash map is full."
-pub fn set[K : Hash + Eq, V](self : Map[K, V], key : K, value : V) -> Unit {
+pub fn Map::set[K : Hash + Eq, V](self : Map[K, V], key : K, value : V) -> Unit {
   if self.size >= self.growAt {
     self.grow()
   }
@@ -154,13 +154,17 @@ pub fn set[K : Hash + Eq, V](self : Map[K, V], key : K, value : V) -> Unit {
 }
 
 ///|
-pub fn op_set[K : Hash + Eq, V](self : Map[K, V], key : K, value : V) -> Unit {
+pub fn Map::op_set[K : Hash + Eq, V](
+  self : Map[K, V],
+  key : K,
+  value : V
+) -> Unit {
   self.set(key, value)
 }
 
 ///|
 /// Get the value associated with a key.
-pub fn get[K : Hash + Eq, V](self : Map[K, V], key : K) -> V? {
+pub fn Map::get[K : Hash + Eq, V](self : Map[K, V], key : K) -> V? {
   let hash = key.hash()
   for i = 0, idx = hash & self.capacity_mask {
     match self.entries[idx] {
@@ -179,7 +183,7 @@ pub fn get[K : Hash + Eq, V](self : Map[K, V], key : K) -> V? {
 }
 
 ///|
-pub fn op_get[K : Hash + Eq, V](self : Map[K, V], key : K) -> V? {
+pub fn Map::op_get[K : Hash + Eq, V](self : Map[K, V], key : K) -> V? {
   self.get(key)
 }
 
@@ -206,7 +210,7 @@ pub fn op_get[K : Hash + Eq, V](self : Map[K, V], key : K) -> V? {
 ///   inspect!(map.get_or_default("c", 42), content="42")
 /// }
 /// ```
-pub fn get_or_default[K : Hash + Eq, V](
+pub fn Map::get_or_default[K : Hash + Eq, V](
   self : Map[K, V],
   key : K,
   default : V
@@ -230,7 +234,7 @@ pub fn get_or_default[K : Hash + Eq, V](
 
 ///|
 /// Returns the value for the given key, or sets and returns a default value if the key does not exist.
-pub fn get_or_init[K : Hash + Eq, V](
+pub fn Map::get_or_init[K : Hash + Eq, V](
   self : Map[K, V],
   key : K,
   default : () -> V
@@ -247,7 +251,7 @@ pub fn get_or_init[K : Hash + Eq, V](
 
 ///|
 /// Check if the hash map contains a key.
-pub fn contains[K : Hash + Eq, V](self : Map[K, V], key : K) -> Bool {
+pub fn Map::contains[K : Hash + Eq, V](self : Map[K, V], key : K) -> Bool {
   match self.get(key) {
     Some(_) => true
     None => false
@@ -256,7 +260,7 @@ pub fn contains[K : Hash + Eq, V](self : Map[K, V], key : K) -> Bool {
 
 ///|
 /// Remove a key-value pair from hash map.
-pub fn remove[K : Hash + Eq, V](self : Map[K, V], key : K) -> Unit {
+pub fn Map::remove[K : Hash + Eq, V](self : Map[K, V], key : K) -> Unit {
   let hash = key.hash()
   for i = 0, idx = hash & self.capacity_mask {
     match self.entries[idx] {
@@ -279,7 +283,10 @@ pub fn remove[K : Hash + Eq, V](self : Map[K, V], key : K) -> Unit {
 }
 
 ///|
-fn add_entry_to_tail[K : Eq, V](self : Map[K, V], entry : Entry[K, V]) -> Unit {
+fn Map::add_entry_to_tail[K : Eq, V](
+  self : Map[K, V],
+  entry : Entry[K, V]
+) -> Unit {
   match self.tail {
     None => {
       self.head = Some(entry)
@@ -294,7 +301,7 @@ fn add_entry_to_tail[K : Eq, V](self : Map[K, V], entry : Entry[K, V]) -> Unit {
 }
 
 ///|
-fn remove_entry[K : Eq, V](self : Map[K, V], entry : Entry[K, V]) -> Unit {
+fn Map::remove_entry[K : Eq, V](self : Map[K, V], entry : Entry[K, V]) -> Unit {
   let node = self.list[entry.idx]
   if self.is_empty() {
     self.head = None
@@ -320,7 +327,7 @@ fn remove_entry[K : Eq, V](self : Map[K, V], entry : Entry[K, V]) -> Unit {
 }
 
 ///|
-fn shift_back[K : Hash, V](self : Map[K, V], start_index : Int) -> Unit {
+fn Map::shift_back[K : Hash, V](self : Map[K, V], start_index : Int) -> Unit {
   for prev = start_index, curr = (start_index + 1) & self.capacity_mask {
     match (self.entries[curr], self.list[curr]) {
       (Some(entry), currNode) => {
@@ -343,7 +350,7 @@ fn shift_back[K : Hash, V](self : Map[K, V], start_index : Int) -> Unit {
 }
 
 ///|
-fn grow[K : Hash + Eq, V](self : Map[K, V]) -> Unit {
+fn Map::grow[K : Hash + Eq, V](self : Map[K, V]) -> Unit {
   let old_head = self.head
   let old_list = self.list
   let new_capacity = self.capacity << 1
@@ -372,7 +379,7 @@ fn calc_grow_threshold(capacity : Int) -> Int {
 // Utils
 
 ///|
-fn debug_entries[K : Show, V : Show](self : Map[K, V]) -> String {
+fn Map::debug_entries[K : Show, V : Show](self : Map[K, V]) -> String {
   let buf = StringBuilder::new()
   for i = 0; i < self.entries.length(); i = i + 1 {
     if i > 0 {
@@ -404,25 +411,25 @@ pub impl[K : Show, V : Show] Show for Map[K, V] with output(self, logger) {
 
 ///|
 /// Get the number of key-value pairs in the map.
-pub fn size[K, V](self : Map[K, V]) -> Int {
+pub fn Map::size[K, V](self : Map[K, V]) -> Int {
   self.size
 }
 
 ///|
 /// Get the capacity of the map.
-pub fn capacity[K, V](self : Map[K, V]) -> Int {
+pub fn Map::capacity[K, V](self : Map[K, V]) -> Int {
   self.capacity
 }
 
 ///|
 /// Check if the hash map is empty.
-pub fn is_empty[K, V](self : Map[K, V]) -> Bool {
+pub fn Map::is_empty[K, V](self : Map[K, V]) -> Bool {
   self.size == 0
 }
 
 ///|
 /// Iterate over all key-value pairs of the map in the order of insertion.
-pub fn each[K, V](self : Map[K, V], f : (K, V) -> Unit) -> Unit {
+pub fn Map::each[K, V](self : Map[K, V], f : (K, V) -> Unit) -> Unit {
   loop self.head {
     Some({ key, value, idx, .. }) => {
       f(key, value)
@@ -434,7 +441,7 @@ pub fn each[K, V](self : Map[K, V], f : (K, V) -> Unit) -> Unit {
 
 ///|
 /// Iterate over all key-value pairs of the map in the order of insertion, with index.
-pub fn eachi[K, V](self : Map[K, V], f : (Int, K, V) -> Unit) -> Unit {
+pub fn Map::eachi[K, V](self : Map[K, V], f : (Int, K, V) -> Unit) -> Unit {
   loop 0, self.head {
     i, Some({ key, value, idx, .. }) => {
       f(i, key, value)
@@ -446,7 +453,7 @@ pub fn eachi[K, V](self : Map[K, V], f : (Int, K, V) -> Unit) -> Unit {
 
 ///|
 /// Clears the map, removing all key-value pairs. Keeps the allocated space.
-pub fn clear[K, V](self : Map[K, V]) -> Unit {
+pub fn Map::clear[K, V](self : Map[K, V]) -> Unit {
   self.entries.fill(None)
   self.size = 0
   self.head = None
@@ -455,7 +462,7 @@ pub fn clear[K, V](self : Map[K, V]) -> Unit {
 
 ///|
 /// Returns the iterator of the hash map, provide elements in the order of insertion.
-pub fn iter[K, V](self : Map[K, V]) -> Iter[(K, V)] {
+pub fn Map::iter[K, V](self : Map[K, V]) -> Iter[(K, V)] {
   Iter::new(fn(yield_) {
     loop self.head {
       Some({ key, value, idx, .. }) => {
@@ -470,7 +477,7 @@ pub fn iter[K, V](self : Map[K, V]) -> Iter[(K, V)] {
 }
 
 ///|
-pub fn iter2[K, V](self : Map[K, V]) -> Iter2[K, V] {
+pub fn Map::iter2[K, V](self : Map[K, V]) -> Iter2[K, V] {
   Iter2::new(fn(yield_) {
     loop self.head {
       Some({ key, value, idx, .. }) =>
@@ -485,7 +492,7 @@ pub fn iter2[K, V](self : Map[K, V]) -> Iter2[K, V] {
 }
 
 ///|
-pub fn keys[K, V](self : Map[K, V]) -> Iter[K] {
+pub fn Map::keys[K, V](self : Map[K, V]) -> Iter[K] {
   Iter::new(fn(yield_) {
     loop self.head {
       Some({ key, idx, .. }) =>
@@ -499,7 +506,7 @@ pub fn keys[K, V](self : Map[K, V]) -> Iter[K] {
 }
 
 ///|
-pub fn values[K, V](self : Map[K, V]) -> Iter[V] {
+pub fn Map::values[K, V](self : Map[K, V]) -> Iter[V] {
   Iter::new(fn(yield_) {
     loop self.head {
       Some({ value, idx, .. }) =>
@@ -514,7 +521,7 @@ pub fn values[K, V](self : Map[K, V]) -> Iter[V] {
 
 ///|
 /// Converts the hash map to an array.
-pub fn to_array[K, V](self : Map[K, V]) -> Array[(K, V)] {
+pub fn Map::to_array[K, V](self : Map[K, V]) -> Array[(K, V)] {
   let arr = Array::new(capacity=self.size)
   loop self.head {
     Some({ key, value, idx, .. }) => {
@@ -527,7 +534,7 @@ pub fn to_array[K, V](self : Map[K, V]) -> Array[(K, V)] {
 }
 
 ///|
-pub fn op_equal[K : Hash + Eq, V : Eq](
+pub fn Map::op_equal[K : Hash + Eq, V : Eq](
   self : Map[K, V],
   that : Map[K, V]
 ) -> Bool {

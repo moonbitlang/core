@@ -28,6 +28,12 @@ pub fn UInt::default() -> UInt {
   0
 }
 
+///|
+/// same as `UInt::default`
+pub fn default() -> UInt {
+  0
+}
+
 ///| Converts the UInt to a Bytes in big-endian byte order.
 pub fn to_be_bytes(self : UInt) -> Bytes {
   [

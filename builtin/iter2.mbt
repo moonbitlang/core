@@ -24,7 +24,10 @@ type Iter2[A, B] ((A, B) -> IterResult) -> IterResult
 
 ///|
 //TODO: Add intrinsic for Iter::run
-pub fn run[A, B](self : Iter2[A, B], f : (A, B) -> IterResult) -> IterResult {
+pub fn Iter2::run[A, B](
+  self : Iter2[A, B],
+  f : (A, B) -> IterResult
+) -> IterResult {
   (self._)(f)
 }
 
@@ -56,7 +59,7 @@ pub fn Iter2::new[A, B](
 }
 
 ///|
-pub fn each[A, B](self : Iter2[A, B], f : (A, B) -> Unit) -> Unit {
+pub fn Iter2::each[A, B](self : Iter2[A, B], f : (A, B) -> Unit) -> Unit {
   self.run(fn(a, b) {
     f(a, b)
     IterContinue
@@ -65,12 +68,12 @@ pub fn each[A, B](self : Iter2[A, B], f : (A, B) -> Unit) -> Unit {
 }
 
 ///|
-pub fn iter[A, B](self : Iter2[A, B]) -> Iter[(A, B)] {
+pub fn Iter2::iter[A, B](self : Iter2[A, B]) -> Iter[(A, B)] {
   Iter::new(fn(yield_) { self.run(fn(a, b) { yield_((a, b)) }) })
 }
 
 ///|
-pub fn iter2[A, B](self : Iter2[A, B]) -> Iter2[A, B] {
+pub fn Iter2::iter2[A, B](self : Iter2[A, B]) -> Iter2[A, B] {
   // This is a no-op to make sure
   // `for k,v in map.iter2() { ... }`
   // still work
@@ -78,7 +81,7 @@ pub fn iter2[A, B](self : Iter2[A, B]) -> Iter2[A, B] {
 }
 
 ///|
-pub fn to_array[A, B](self : Iter2[A, B]) -> Array[(A, B)] {
+pub fn Iter2::to_array[A, B](self : Iter2[A, B]) -> Array[(A, B)] {
   let arr = []
   for k, v in self {
     arr.push((k, v))

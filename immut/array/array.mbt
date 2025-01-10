@@ -14,8 +14,13 @@
 
 ///|
 /// Return a new empty array
-pub fn T::new[A]() -> T[A] {
+pub fn new[A]() -> T[A] {
   { tree: Tree::empty(), size: 0, shift: 0 }
+}
+
+///| @alert deprecated "use `@immut/array.new` instead"
+pub fn T::new[A]() -> T[A] {
+  new()
 }
 
 ///|
@@ -50,8 +55,13 @@ pub fn iter[A](self : T[A]) -> Iter[A] {
 }
 
 ///|
-pub fn T::from_iter[A](iter : Iter[A]) -> T[A] {
+pub fn from_iter[A](iter : Iter[A]) -> T[A] {
   iter.fold(init=new(), fn(arr, e) { arr.push(e) })
+}
+
+///| @alert deprecated "use `@immut/array.from_iter` instead"
+pub fn T::from_iter[A](iter : Iter[A]) -> T[A] {
+  from_iter(iter)
 }
 
 ///|
@@ -150,8 +160,13 @@ pub fn push[A](self : T[A], value : A) -> T[A] {
 /// let v = @array.of([1, 2, 3])
 /// assert_eq!(v, @array.from_array([1, 2, 3]))
 /// ```
-pub fn T::from_array[A](arr : Array[A]) -> T[A] {
+pub fn from_array[A](arr : Array[A]) -> T[A] {
   makei(arr.length(), fn(i) { arr[i] })
+}
+
+///| @alert deprecated "use `@immut/array.from_array` instead"
+pub fn T::from_array[A](arr : Array[A]) -> T[A] {
+  from_array(arr)
 }
 
 ///|
@@ -324,7 +339,7 @@ fn new_by_leaves[A](len : Int, gen_leaf : (Int, Int) -> FixedArray[A]) -> T[A] {
   }
 
   if len == 0 {
-    T::new()
+    new()
   } else {
     let (cap, shift) = loop len, branching_factor, 1 {
       len, m_pow, depth =>
@@ -356,19 +371,34 @@ test "new_by_leaves" {
 
 ///|
 /// Create a persistent array with a given length and value.
-pub fn T::make[A](len : Int, value : A) -> T[A] {
+pub fn make[A](len : Int, value : A) -> T[A] {
   new_by_leaves(len, fn(_s, l) { FixedArray::make(l, value) })
+}
+
+///| @alert deprecated "use `@immut/array.make` instead"
+pub fn T::make[A](len : Int, value : A) -> T[A] {
+  make(len, value)
 }
 
 ///|
 /// Create a persistent array with a given length and a function to generate values.
-pub fn T::makei[A](len : Int, f : (Int) -> A) -> T[A] {
+pub fn makei[A](len : Int, f : (Int) -> A) -> T[A] {
   new_by_leaves(len, fn(s, l) { FixedArray::makei(l, fn(i) { f(s + i) }) })
 }
 
+///| @alert deprecated "use `@immut/array.makei` instead"
+pub fn T::makei[A](len : Int, f : (Int) -> A) -> T[A] {
+  makei(len, f)
+}
+
 ///|
-pub fn T::of[A](arr : FixedArray[A]) -> T[A] {
+pub fn of[A](arr : FixedArray[A]) -> T[A] {
   makei(arr.length(), fn(i) { arr[i] })
+}
+
+///| @alert deprecated "use `@immut/array.of` instead"
+pub fn T::of[A](arr : FixedArray[A]) -> T[A] {
+  of(arr)
 }
 
 ///|
@@ -387,7 +417,7 @@ pub impl[A : Hash] Hash for T[A] with hash_combine(self, hasher) {
 }
 
 test "mix" {
-  let mut v = T::new()
+  let mut v = new()
   inspect!(v.tree.is_empty_tree(), content="true")
   for i = 0; i < 100; i = i + 1 {
     v = v.push(i)
@@ -412,7 +442,7 @@ test "mix" {
   inspect!(ct2, content="19800")
   inspect!(v.tree.is_empty_tree(), content="false")
   let large_const = branching_factor * branching_factor + 1
-  let mut v = T::new()
+  let mut v = new()
   for i = 0; i < large_const; i = i + 1 {
     v = v.push(i)
   }

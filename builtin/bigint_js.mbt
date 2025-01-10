@@ -110,11 +110,11 @@ pub fn to_octets(self : BigInt, length? : Int) -> Bytes {
 }
 
 ///|
-pub extern "js" fn compare(self : BigInt, other : BigInt) -> Int =
+pub extern "js" fn BigInt::compare(self : BigInt, other : BigInt) -> Int =
   #|(x, y) => x < y ? -1 : x > y ? 1 : 0
 
 ///|
-pub extern "js" fn op_equal(self : BigInt, other : BigInt) -> Bool =
+pub extern "js" fn BigInt::op_equal(self : BigInt, other : BigInt) -> Bool =
   #|(x, y) => x === y
 
 ///|
@@ -134,31 +134,31 @@ pub extern "js" fn BigInt::from_uint64(x : UInt64) -> BigInt =
   #|(x) => BigInt(x.hi >>> 0) * 0x100000000n + BigInt(x.lo >>> 0)
 
 ///|
-pub extern "js" fn is_zero(self : BigInt) -> Bool =
+pub extern "js" fn BigInt::is_zero(self : BigInt) -> Bool =
   #|(x) => x === 0n
 
 ///|
-pub extern "js" fn op_neg(self : BigInt) -> BigInt =
+pub extern "js" fn BigInt::op_neg(self : BigInt) -> BigInt =
   #|(x) => -x
 
 ///|
-pub extern "js" fn op_add(self : BigInt, other : BigInt) -> BigInt =
+pub extern "js" fn BigInt::op_add(self : BigInt, other : BigInt) -> BigInt =
   #|(x, y) => x + y
 
 ///|
-pub extern "js" fn op_sub(self : BigInt, other : BigInt) -> BigInt =
+pub extern "js" fn BigInt::op_sub(self : BigInt, other : BigInt) -> BigInt =
   #|(x, y) => x - y
 
 ///|
-pub extern "js" fn op_mul(self : BigInt, other : BigInt) -> BigInt =
+pub extern "js" fn BigInt::op_mul(self : BigInt, other : BigInt) -> BigInt =
   #|(x, y) => x * y
 
 ///|
-pub extern "js" fn op_div(self : BigInt, other : BigInt) -> BigInt =
+pub extern "js" fn BigInt::op_div(self : BigInt, other : BigInt) -> BigInt =
   #|(x, y) => x / y
 
 ///|
-pub extern "js" fn op_mod(self : BigInt, other : BigInt) -> BigInt =
+pub extern "js" fn BigInt::op_mod(self : BigInt, other : BigInt) -> BigInt =
   #|(x, y) => x % y
 
 ///|
@@ -174,7 +174,11 @@ extern "js" fn pow_ffi(self : BigInt, exponent : BigInt) -> BigInt =
   #|(x, y) => x ** y
 
 ///|
-pub fn pow(self : BigInt, exponent : BigInt, modulus? : BigInt) -> BigInt {
+pub fn BigInt::pow(
+  self : BigInt,
+  exponent : BigInt,
+  modulus? : BigInt
+) -> BigInt {
   if exponent < 0 {
     abort("negative exponent")
   }
@@ -190,11 +194,11 @@ pub fn pow(self : BigInt, exponent : BigInt, modulus? : BigInt) -> BigInt {
 }
 
 ///|
-extern "js" fn to_byte(self : BigInt) -> Byte =
+extern "js" fn BigInt::to_byte(self : BigInt) -> Byte =
   #|(x) => Number(BigInt.asUintN(8, x)) | 0
 
 ///|
-pub fn op_shl(self : BigInt, n : Int) -> BigInt {
+pub fn BigInt::op_shl(self : BigInt, n : Int) -> BigInt {
   if n < 0 {
     abort("negative shift count")
   }
@@ -202,7 +206,7 @@ pub fn op_shl(self : BigInt, n : Int) -> BigInt {
 }
 
 ///|
-pub fn op_shr(self : BigInt, n : Int) -> BigInt {
+pub fn BigInt::op_shr(self : BigInt, n : Int) -> BigInt {
   if n < 0 {
     abort("negative shift count")
   }
@@ -248,7 +252,7 @@ pub extern "js" fn lxor(self : BigInt, other : BigInt) -> BigInt =
 ///   inspect!(neg.to_uint(), content="4294967295") // 2^32 - 1
 /// }
 /// ```
-pub extern "js" fn to_uint(self : BigInt) -> UInt =
+pub extern "js" fn BigInt::to_uint(self : BigInt) -> UInt =
   #|(x) => Number(BigInt.asUintN(32, x))
 
 ///|
@@ -269,7 +273,7 @@ pub extern "js" fn to_uint(self : BigInt) -> UInt =
 ///   inspect!(big.to_int(), content="-2147483648") // Overflow to Int.min_value
 /// }
 /// ```
-pub extern "js" fn to_int(self : BigInt) -> Int =
+pub extern "js" fn BigInt::to_int(self : BigInt) -> Int =
   #|(x) => Number(BigInt.asIntN(32, x))
 
 ///|
@@ -292,7 +296,7 @@ pub extern "js" fn to_int(self : BigInt) -> Int =
 ///   inspect!(neg.to_uint64(), content="18446744073709551615") // 2^64 - 1
 /// }
 /// ```
-pub fn to_uint64(self : BigInt) -> UInt64 {
+pub fn BigInt::to_uint64(self : BigInt) -> UInt64 {
   let hi = (self >> 32).to_uint().reinterpret_as_int()
   let lo = self.to_uint().reinterpret_as_int()
   MyInt64::{ hi, lo }.to_uint64()
@@ -318,7 +322,7 @@ pub fn to_uint64(self : BigInt) -> UInt64 {
 ///   inspect!(bigger.to_int64(), content="-9223372036854775808") // Overflow to Int64.min_value
 /// }
 /// ```
-pub fn to_int64(self : BigInt) -> Int64 {
+pub fn BigInt::to_int64(self : BigInt) -> Int64 {
   let hi = (self >> 32).to_int()
   let lo = self.to_uint().reinterpret_as_int()
   MyInt64::{ hi, lo }.to_int64()

@@ -36,6 +36,12 @@ pub fn Unit::default() -> Unit {
 }
 
 ///|
+/// same as `Unit::default`
+pub fn default() -> Unit {
+  ()
+}
+
+///|
 pub fn compare(self : Unit, _other : Unit) -> Int {
   let _ = self
   0

@@ -360,24 +360,21 @@ test "reserve_and_push" {
 }
 
 test "from_iter multiple elements iter" {
-  inspect!(
-    @deque.T::from_iter([1, 2, 3].iter()),
-    content="@deque.of([1, 2, 3])",
-  )
+  inspect!(@deque.from_iter([1, 2, 3].iter()), content="@deque.of([1, 2, 3])")
 }
 
 test "from_iter single element iter" {
-  inspect!(@deque.T::from_iter([1].iter()), content="@deque.of([1])")
+  inspect!(@deque.from_iter([1].iter()), content="@deque.of([1])")
 }
 
 test "from_iter empty iter" {
-  let dq : @deque.T[Int] = @deque.T::from_iter(Iter::empty())
+  let dq : @deque.T[Int] = @deque.from_iter(Iter::empty())
   inspect!(dq, content="@deque.of([])")
 }
 
 test "from_array with single element" {
   let arr = [42]
-  let deque = @deque.T::from_array(arr)
+  let deque = @deque.from_array(arr)
   assert_eq!(deque.length(), 1)
   assert_eq!(deque.front(), Some(42))
   assert_eq!(deque.back(), Some(42))
@@ -522,7 +519,7 @@ test "deque push_back when empty" {
 
 test "deque as_views" {
   // Test empty deque
-  let dq1 : @deque.T[Int] = @deque.T::new()
+  let dq1 : @deque.T[Int] = @deque.new()
   inspect!(dq1.as_views(), content="([], [])")
 
   // Test contiguous case (head_len >= len)

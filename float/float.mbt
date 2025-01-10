@@ -44,6 +44,12 @@ pub fn Float::default() -> Float {
 }
 
 ///|
+/// same as Float::default`
+pub fn default() -> Float {
+  0.0
+}
+
+///|
 pub impl Hash for Float with hash(self) {
   self.reinterpret_as_int() |> Hash::hash()
 }
@@ -82,7 +88,7 @@ pub fn to_le_bytes(self : Float) -> Bytes {
 ///   inspect!((1.0 : Float).is_inf(), content="false")
 /// }
 /// ```
-pub fn Float::is_inf(self : Float) -> Bool {
+pub fn is_inf(self : Float) -> Bool {
   self.is_pos_inf() || self.is_neg_inf()
 }
 
@@ -104,7 +110,7 @@ pub fn Float::is_inf(self : Float) -> Bool {
 ///   inspect!(@float.neg_infinity.is_pos_inf(), content="false")
 /// }
 /// ```
-pub fn Float::is_pos_inf(self : Float) -> Bool {
+pub fn is_pos_inf(self : Float) -> Bool {
   self > max_value
 }
 
@@ -126,7 +132,7 @@ pub fn Float::is_pos_inf(self : Float) -> Bool {
 ///   inspect!(@float.infinity.is_neg_inf(), content="false")
 /// }
 /// ```
-pub fn Float::is_neg_inf(self : Float) -> Bool {
+pub fn is_neg_inf(self : Float) -> Bool {
   self < min_value
 }
 
@@ -148,6 +154,6 @@ pub fn Float::is_neg_inf(self : Float) -> Bool {
 ///   inspect!(@float.infinity.is_nan(), content="false")
 /// }
 /// ```
-pub fn Float::is_nan(self : Float) -> Bool {
+pub fn is_nan(self : Float) -> Bool {
   self != self
 }

@@ -57,7 +57,7 @@ fn unsafe_substring(str : String, start : Int, end : Int) -> String {
 ///   ignore(s.substring(start=3, end=2))
 /// }
 /// ```
-pub fn substring(self : String, start~ : Int = 0, end? : Int) -> String {
+pub fn String::substring(self : String, start~ : Int = 0, end? : Int) -> String {
   let len = self.length()
   let end = match end {
     Some(end) => end

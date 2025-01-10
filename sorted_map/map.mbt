@@ -227,10 +227,15 @@ fn iter_aux2[K, V](node : Node[K, V]?) -> Iter2[K, V] {
 }
 
 ///|
-pub fn T::from_iter[K : Compare, V](iter : Iter[(K, V)]) -> T[K, V] {
+pub fn from_iter[K : Compare, V](iter : Iter[(K, V)]) -> T[K, V] {
   let m = new()
   iter.each(fn(e) { m[e.0] = e.1 })
   m
+}
+
+///| @alert deprecated "use `@sorted_map.from_iter` instead"
+pub fn T::from_iter[K : Compare, V](iter : Iter[(K, V)]) -> T[K, V] {
+  from_iter(iter)
 }
 
 ///|
@@ -238,7 +243,7 @@ pub impl[K : @quickcheck.Arbitrary + Compare, V : @quickcheck.Arbitrary] @quickc
   K,
   V,
 ] with arbitrary(size, rs) {
-  @quickcheck.Arbitrary::arbitrary(size, rs) |> T::from_iter
+  @quickcheck.Arbitrary::arbitrary(size, rs) |> from_iter
 }
 
 ///|Returns a new array of key-value pairs that are within the specified range [low, high).
