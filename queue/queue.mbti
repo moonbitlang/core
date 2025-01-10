@@ -3,6 +3,13 @@ package moonbitlang/core/queue
 alias @moonbitlang/core/quickcheck as @quickcheck
 
 // Values
+fn from_array[A](Array[A]) -> T[A]
+
+fn from_iter[A](Iter[A]) -> T[A]
+
+fn new[A]() -> T[A]
+
+fn of[A](FixedArray[A]) -> T[A]
 
 // Types and methods
 type T
@@ -12,13 +19,13 @@ impl T {
   each[A](Self[A], (A) -> Unit) -> Unit
   eachi[A](Self[A], (Int, A) -> Unit) -> Unit
   fold[A, B](Self[A], init~ : B, (B, A) -> B) -> B
-  from_array[A](Array[A]) -> Self[A]
-  from_iter[A](Iter[A]) -> Self[A]
+  from_array[A](Array[A]) -> Self[A] //deprecated
+  from_iter[A](Iter[A]) -> Self[A] //deprecated
   is_empty[A](Self[A]) -> Bool
   iter[A](Self[A]) -> Iter[A]
   length[A](Self[A]) -> Int
-  new[A]() -> Self[A]
-  of[A](FixedArray[A]) -> Self[A]
+  new[A]() -> Self[A] //deprecated
+  of[A](FixedArray[A]) -> Self[A] //deprecated
   peek[A](Self[A]) -> A?
   peek_exn[A](Self[A]) -> A //deprecated
   pop[A](Self[A]) -> A?

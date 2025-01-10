@@ -1,6 +1,13 @@
 package moonbitlang/core/deque
 
 // Values
+fn from_array[A](Array[A]) -> T[A]
+
+fn from_iter[A](Iter[A]) -> T[A]
+
+fn new[A](capacity~ : Int = ..) -> T[A]
+
+fn of[A](FixedArray[A]) -> T[A]
 
 // Types and methods
 type T
@@ -14,8 +21,8 @@ impl T {
   each[A](Self[A], (A) -> Unit) -> Unit
   eachi[A](Self[A], (Int, A) -> Unit) -> Unit
   filter_map_inplace[A](Self[A], (A) -> A?) -> Unit //deprecated
-  from_array[A](Array[A]) -> Self[A]
-  from_iter[A](Iter[A]) -> Self[A]
+  from_array[A](Array[A]) -> Self[A] //deprecated
+  from_iter[A](Iter[A]) -> Self[A] //deprecated
   front[A](Self[A]) -> A?
   is_empty[A](Self[A]) -> Bool
   iter[A](Self[A]) -> Iter[A]
@@ -23,8 +30,8 @@ impl T {
   length[A](Self[A]) -> Int
   map[A, U](Self[A], (A) -> U) -> Self[U]
   mapi[A, U](Self[A], (Int, A) -> U) -> Self[U]
-  new[A](capacity~ : Int = ..) -> Self[A]
-  of[A](FixedArray[A]) -> Self[A]
+  new[A](capacity~ : Int = ..) -> Self[A] //deprecated
+  of[A](FixedArray[A]) -> Self[A] //deprecated
   op_equal[A : Eq](Self[A], Self[A]) -> Bool
   op_get[A](Self[A], Int) -> A
   op_set[A](Self[A], Int, A) -> Unit

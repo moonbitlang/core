@@ -1,6 +1,8 @@
 package moonbitlang/core/int64
 
 // Values
+fn from_int(Int) -> Int64
+
 let max_value : Int64
 
 let min_value : Int64

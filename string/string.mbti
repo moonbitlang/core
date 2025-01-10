@@ -1,6 +1,13 @@
 package moonbitlang/core/string
 
 // Values
+fn concat(Array[String], separator~ : String = ..) -> String
+
+fn default() -> String
+
+fn from_array(Array[Char]) -> String
+
+fn from_iter(Iter[Char]) -> String
 
 // Types and methods
 type StringIndex

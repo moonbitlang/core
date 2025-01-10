@@ -1,6 +1,8 @@
 package moonbitlang/core/double
 
 // Values
+fn from_int(Int) -> Double
+
 let infinity : Double
 
 let max_value : Double

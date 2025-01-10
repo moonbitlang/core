@@ -1,6 +1,7 @@
 package moonbitlang/core/unit
 
 // Values
+fn default() -> Unit
 
 // Types and methods
 impl Unit {

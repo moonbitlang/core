@@ -1,12 +1,13 @@
 package moonbitlang/core/quickcheck/splitmix
 
 // Values
+fn new(seed~ : UInt64 = ..) -> RandomState
 
 // Types and methods
 type RandomState
 impl RandomState {
   clone(Self) -> Self
-  new(seed~ : UInt64 = ..) -> Self
+  new(seed~ : UInt64 = ..) -> Self //deprecated
   next(Self) -> Unit
   next_double(Self) -> Double
   next_float(Self) -> Float

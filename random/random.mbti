@@ -1,6 +1,7 @@
 package moonbitlang/core/random
 
 // Values
+fn new(seed~ : Bytes = ..) -> Rand
 
 // Types and methods
 type Rand
@@ -9,7 +10,7 @@ impl Rand {
   float(Self) -> Float
   int(Self, limit~ : Int = ..) -> Int
   int64(Self, limit~ : Int64 = ..) -> Int64
-  new(seed~ : Bytes = ..) -> Self
+  new(seed~ : Bytes = ..) -> Self //deprecated
   shuffle(Self, Int, (Int, Int) -> Unit) -> Unit
   uint(Self, limit~ : UInt = ..) -> UInt
   uint64(Self, limit~ : UInt64 = ..) -> UInt64
