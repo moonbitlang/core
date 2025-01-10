@@ -368,8 +368,8 @@ pub fn eachi[V](self : T[V], f : (Int, V) -> Unit) -> Unit {
 ///|
 /// Converts the set to an array.
 pub fn to_array[V](self : T[V]) -> Array[V] {
-  let arr = []
-  self.each(fn(v) { arr.push(v) })
+  let arr = Array::make_uninit(self.size.to_int())
+  self.eachi(fn(i, v) { arr[i] = v })
   arr
 }
 

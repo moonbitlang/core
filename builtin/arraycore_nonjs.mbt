@@ -24,7 +24,7 @@ struct Array[T] {
 }
 
 ///|
-fn Array::make_uninit[T](len : Int) -> Array[T] {
+pub fn Array::make_uninit[T](len : Int) -> Array[T] {
   { buf: UninitializedArray::make(len), len }
 }
 
