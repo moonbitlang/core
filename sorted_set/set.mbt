@@ -322,39 +322,11 @@ pub fn size[V : Compare](self : T[V]) -> Int64 {
 ///|
 /// Iterates the set.
 pub fn each[V](self : T[V], f : (V) -> Unit) -> Unit {
-  match self.root {
-    None => ()
-    Some(root) => root.each(f)
-  }
-}
-
-///|
-fn each[V](self : Node[V], f : (V) -> Unit) -> Unit {
-  let s = []
-  let mut p = Some(self)
-  while not(p.is_empty()) || not(s.is_empty()) {
-    while not(p.is_empty()) {
-      s.push(p)
-      p = p.unwrap().left
-    }
-    if not(s.is_empty()) {
-      p = s.unsafe_pop()
-      f(p.unwrap().value)
-      p = p.unwrap().right
-    }
-  }
-}
-
-///|
-/// Iterates the set with index.
-pub fn eachi[V](self : T[V], f : (Int, V) -> Unit) -> Unit {
-  let mut i = 0
   fn dfs(root : Node[V]?) -> Unit {
     match root {
       Some(root) => {
         dfs(root.left)
-        f(i, root.value)
-        i = i + 1
+        f(root.value)
         dfs(root.right)
       }
       None => ()
@@ -363,6 +335,16 @@ pub fn eachi[V](self : T[V], f : (Int, V) -> Unit) -> Unit {
   }
 
   dfs(self.root)
+}
+
+///|
+/// Iterates the set with index.
+pub fn eachi[V](self : T[V], f : (Int, V) -> Unit) -> Unit {
+  let mut i = 0
+  self.each(fn(v) {
+    f(i, v)
+    i = i + 1
+  })
 }
 
 ///|
