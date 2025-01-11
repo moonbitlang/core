@@ -1,4 +1,4 @@
-// Copyright 2024 International Digital Economy Academy
+// Copyright 2025 International Digital Economy Academy
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -45,15 +45,15 @@ pub fn upto(self : Int, end : Int, inclusive~ : Bool = false) -> Iter[Int] {
 
 ///|
 /// Creates an iterator that iterates over a range of UInt with default step 1U.
-/// 
+///
 /// # Arguments
-/// 
+///
 /// * `start` - The starting value of the range (inclusive).
 /// * `end` - The ending value of the range (exclusive).
 /// * `inclusive` - Whether the ending value is inclusive (default false).
 ///
 /// # Returns
-/// 
+///
 /// Returns an iterator that iterates over the range of UInt from `start` to `end - 1`.
 /// @alert deprecated "Use `..<` in for loop or `until` method instead"
 /// @coverage.skip
@@ -76,15 +76,15 @@ pub fn upto(self : UInt, end : UInt, inclusive~ : Bool = false) -> Iter[UInt] {
 
 ///|
 /// Creates an iterator that iterates over a range of UInt64 with default step 1UL.
-/// 
+///
 /// # Arguments
-/// 
+///
 /// * `start` - The starting value of the range (inclusive).
 /// * `end` - The ending value of the range (exclusive).
 /// * `inclusive` - Whether the ending value is inclusive (default false).
-/// 
+///
 /// # Returns
-/// 
+///
 /// Returns an iterator that iterates over the range of UInt64 from `start` to `end - 1`.
 /// @alert deprecated "Use `..<` in for loop or `until` method instead"
 /// @coverage.skip

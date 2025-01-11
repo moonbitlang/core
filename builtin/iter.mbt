@@ -1,4 +1,4 @@
-// Copyright 2024 International Digital Economy Academy
+// Copyright 2025 International Digital Economy Academy
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -542,7 +542,7 @@ pub fn take[T](self : Iter[T], n : Int) -> Iter[T] {
 /// A new iterator that contains the elements as long as the predicate function returns `true`.
 pub fn take_while[T](self : Iter[T], f : (T) -> Bool) -> Iter[T] {
   fn(yield_) {
-    // `r` represents the overall return value. 
+    // `r` represents the overall return value.
     // It is set to `IterEnd` only if `yield_(a)` returns `IterEnd`.
     // so if `f(a)` returns `false`, it will return `IterEnd`
     // immediately the iteration of current seq is terminated
@@ -797,21 +797,21 @@ pub fn last[A](self : Iter[A]) -> A? {
 
 ///|
 /// Returns the first element of the iterator, or `None` if the iterator is empty.
-/// 
+///
 /// # Type Parameters
-/// 
+///
 /// - `A` : The type of the elements in the iterator.
-/// 
+///
 /// # Parameters
-/// 
+///
 /// - `self` : The iterator to retrieve the first element from.
-/// 
+///
 /// # Returns
-/// 
+///
 /// - An `Option` containing the first element of the iterator if it exists, otherwise `None`.
-/// 
+///
 /// # Examples
-/// 
+///
 /// ```
 /// let iter = Iter::singleton(42)
 /// assert_eq!(head(iter), Some(42))
@@ -826,14 +826,14 @@ pub fn head[A](self : Iter[A]) -> A? {
 
 ///|
 /// Inserts a separator element `sep` between each element of the iterator.
-/// 
+///
 /// # Parameters
-/// 
+///
 /// - `self` : The iterator to intersperse the separator into.
 /// - `sep` : The separator element to insert between each element of the iterator.
-/// 
+///
 /// # Examples
-/// 
+///
 /// ```
 /// let arr = []
 /// [1, 2, 3].iter().intersperse(0).each(fn(i) {arr.push(i)})
@@ -862,8 +862,8 @@ pub fn op_as_view[A](self : Iter[A], start~ : Int = 0, end? : Int) -> Iter[A] {
   // this is time consuming to calculate
   // while `None` is more appropriate.
   // In general, when to use `end = expr` and when to use `end?` is a design decision.
-  // when `expr` is always needed when user does not specify, the former is 
-  // slightly more efficient. When `expr` is not always needed, the latter is more appropriate. 
+  // when `expr` is always needed when user does not specify, the former is
+  // slightly more efficient. When `expr` is not always needed, the latter is more appropriate.
   match end {
     Some(end) => self.drop(start).take(end - start)
     None => self.drop(start)
@@ -889,7 +889,7 @@ pub fn op_as_view[A](self : Iter[A], start~ : Int = 0, end? : Int) -> Iter[A] {
 ///   inspect!(iter.contains(3), content="true")
 ///   inspect!(iter.contains(6), content="false")
 /// }
-/// 
+///
 /// test "Iter::contains/empty" {
 ///   let iter = Iter::empty()
 ///   inspect!(iter.contains(1), content="false")

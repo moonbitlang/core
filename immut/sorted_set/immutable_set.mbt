@@ -1,4 +1,4 @@
-// Copyright 2024 International Digital Economy Academy
+// Copyright 2025 International Digital Economy Academy
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -63,9 +63,9 @@ pub fn to_array[A : Compare](self : T[A]) -> Array[A] {
 
 ///|
 /// Remove the smallest value,
-/// 
+///
 /// # Example
-/// 
+///
 /// ```
 /// assert_eq!(@sorted_set.of([3, 4, 5]).remove_min(), @sorted_set.of([4, 5]))
 /// ```
@@ -83,9 +83,9 @@ pub fn remove_min[A : Compare](self : T[A]) -> T[A] {
 
 ///|
 /// Insert a value into the ImmutableSet.
-/// 
+///
 /// # Example
-/// 
+///
 /// ```
 /// assert_eq!(@sorted_set.of([6, 3, 8, 1]).add(5), @sorted_set.of([1, 3, 5, 6, 8]))
 /// ```
@@ -117,9 +117,9 @@ pub fn add[A : Compare](self : T[A], value : A) -> T[A] {
 
 ///|
 /// Remove n value from the ImmutableSet.
-/// 
+///
 /// # Example
-/// 
+///
 /// ```
 /// assert_eq!(@sorted_set.of([3, 8, 1]).remove(8), @sorted_set.of([1, 3]))
 /// ```
@@ -151,9 +151,9 @@ pub fn remove[A : Compare](self : T[A], value : A) -> T[A] {
 
 ///|
 /// Returns the smallest value in the sorted_set.
-/// 
+///
 /// # Example
-/// 
+///
 /// ```
 /// assert_eq!(@sorted_set.of([7, 2, 9, 4, 5, 6, 3, 8, 1]).min(), 1)
 /// ```
@@ -185,9 +185,9 @@ pub fn min_option[A : Compare](self : T[A]) -> A? {
 
 ///|
 /// Returns the largest value in the sorted_set.
-/// 
+///
 /// # Example
-/// 
+///
 /// ```
 /// assert_eq!(@sorted_set.of([7, 2, 9, 4, 5, 6, 3, 8, 1]).max(), 9)
 /// ```
@@ -219,11 +219,11 @@ pub fn max_option[A : Compare](self : T[A]) -> A? {
 
 ///|
 /// Returns a triple (left, present, right), where left < divide < right.
-/// present == false if self contains no value equal to divide, 
+/// present == false if self contains no value equal to divide,
 /// present == true  if self contains an value equal to divide.
-/// 
+///
 /// # Example
-/// 
+///
 /// ```
 /// let (left, present, right) = @sorted_set.of([7, 2, 9, 4, 5, 6, 3, 8, 1]).split(5)
 /// assert_eq!(present, true)
@@ -272,9 +272,9 @@ pub fn contains[A : Compare](self : T[A], value : A) -> Bool {
 
 ///|
 /// Returns the union of self and other.
-/// 
+///
 /// # Example
-/// 
+///
 /// ```
 /// assert_eq!(@sorted_set.of([3, 4, 5]).union(@sorted_set.of([4, 5, 6])), @sorted_set.of([3, 4, 5, 6]))
 /// ```
@@ -311,9 +311,9 @@ pub fn inter[A : Compare](self : T[A], other : T[A]) -> T[A] {
 
 ///|
 /// Returns the intersection of self with other.
-/// 
+///
 /// # Example
-/// 
+///
 /// ```
 /// assert_eq!(@sorted_set.of([3, 4, 5]).intersection(@sorted_set.of([4, 5, 6])), @sorted_set.of([4, 5]))
 /// ```
@@ -330,13 +330,13 @@ pub fn intersection[A : Compare](self : T[A], other : T[A]) -> T[A] {
 
 ///|
 /// Returns the difference between self and other.
-/// 
+///
 /// # Example
-/// 
+///
 /// ```
 /// assert_eq!(@sorted_set.of([1, 2, 3]).difference(@sorted_set.of([4, 5, 1])), @sorted_set.of([2, 3]))
 /// ```
-/// 
+///
 /// @alert deprecated "Use `difference` instead"
 /// @coverage.skip
 pub fn diff[A : Compare](self : T[A], other : T[A]) -> T[A] {
@@ -345,9 +345,9 @@ pub fn diff[A : Compare](self : T[A], other : T[A]) -> T[A] {
 
 ///|
 /// Returns the difference between self and other.
-/// 
+///
 /// # Example
-/// 
+///
 /// ```
 /// assert_eq!(@sorted_set.of([1, 2, 3]).difference(@sorted_set.of([4, 5, 1])), @sorted_set.of([2, 3]))
 /// ```
@@ -365,9 +365,9 @@ pub fn difference[A : Compare](self : T[A], other : T[A]) -> T[A] {
 
 ///|
 /// Returns true if self is a subset of other.
-/// 
+///
 /// # Example
-/// 
+///
 /// ```
 /// assert_eq!(@sorted_set.of([1, 2, 3]).subset(@sorted_set.of([7, 2, 9, 4, 5, 6, 3, 8, 1])), true)
 /// ```
@@ -395,9 +395,9 @@ pub fn subset[A : Compare](self : T[A], other : T[A]) -> Bool {
 
 ///|
 /// Returns true if the two sets do not intersect.
-/// 
+///
 /// # Example
-/// 
+///
 /// ```
 /// assert_eq!(@sorted_set.of([1, 2, 3]).disjoint(@sorted_set.of([4, 5, 6])), true)
 /// ```
@@ -418,9 +418,9 @@ pub fn disjoint[A : Compare](self : T[A], other : T[A]) -> Bool {
 
 ///|
 /// Iterates over the ImmutableSet.
-/// 
+///
 /// # Example
-/// 
+///
 /// ```
 /// let arr = []
 /// @sorted_set.of([7, 2, 9, 4, 5, 6, 3, 8, 1]).each(fn(x) { arr.push(x) })
@@ -439,9 +439,9 @@ pub fn each[A](self : T[A], f : (A) -> Unit) -> Unit {
 
 ///|
 /// Fold the ImmutableSet.
-/// 
+///
 /// # Example
-/// 
+///
 /// ```
 /// assert_eq!(@sorted_set.of([1, 2, 3, 4, 5]).fold(init=0, fn(acc, x) { acc + x }), 15)
 /// ```
@@ -455,9 +455,9 @@ pub fn fold[A : Compare, B](self : T[A], init~ : B, f : (B, A) -> B) -> B {
 
 ///|
 /// Maps the ImmutableSet.
-/// 
+///
 /// # Example
-/// 
+///
 /// ```
 /// assert_eq!(@sorted_set.of([1, 2, 3]).map(fn(x){ x * 2}), @sorted_set.of([2, 4, 6]))
 /// ```
@@ -471,9 +471,9 @@ pub fn map[A : Compare, B : Compare](self : T[A], f : (A) -> B) -> T[B] {
 
 ///|
 /// Test if all values of the ImmutableSet satisfy the predicate.
-/// 
+///
 /// # Example
-/// 
+///
 /// ```
 /// assert_eq!(@sorted_set.of([2, 4, 6]).all(fn(v) { v % 2 == 0}), true)
 /// ```
@@ -486,9 +486,9 @@ pub fn all[A : Compare](self : T[A], f : (A) -> Bool) -> Bool {
 
 ///|
 /// Checks if at least one element of the set satisfies the predicate.
-/// 
+///
 /// # Example
-/// 
+///
 /// ```
 /// assert_eq!(@sorted_set.of([1, 4, 3]).any(fn(v) { v % 2 == 0}), true)
 /// ```
@@ -501,9 +501,9 @@ pub fn any[A : Compare](self : T[A], f : (A) -> Bool) -> Bool {
 
 ///|
 /// Filter the ImmutableSet.
-/// 
+///
 /// # Example
-/// 
+///
 /// ```
 /// assert_eq!(@sorted_set.of([1, 2, 3, 4, 5, 6]).filter(fn(v) { v % 2 == 0}), @sorted_set.of([2, 4, 6]))
 /// ```
@@ -731,7 +731,7 @@ fn try_join[A : Compare](left : T[A], value : A, right : T[A]) -> T[A] {
 }
 
 ///|
-/// Merge two ImmutableSet[T] into one. 
+/// Merge two ImmutableSet[T] into one.
 /// All values of left must precede the values of r.
 fn merge[A : Compare](self : T[A], other : T[A]) -> T[A] {
   match (self, other) {

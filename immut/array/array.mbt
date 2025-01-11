@@ -1,4 +1,4 @@
-// Copyright 2024 International Digital Economy Academy
+// Copyright 2025 International Digital Economy Academy
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -75,7 +75,7 @@ pub fn copy[A](self : T[A]) -> T[A] {
 
 ///|
 /// Get a value at the given index.
-/// 
+///
 /// # Examples
 /// ```
 /// let v = @array.of([1, 2, 3, 4, 5])
@@ -93,7 +93,7 @@ pub fn op_get[A](self : T[A], index : Int) -> A {
 
 ///|
 /// Set a value at the given index (immutable).
-/// 
+///
 /// # Example
 /// ```
 /// let v = @array.of([1, 2, 3, 4, 5])
@@ -120,7 +120,7 @@ pub fn set[A](self : T[A], index : Int, value : A) -> T[A] {
 
 ///|
 /// Push a value to the end of the array.
-/// 
+///
 /// # Example
 /// ```
 /// let v = @array.of([1, 2, 3])
@@ -144,7 +144,7 @@ pub fn push[A](self : T[A], value : A) -> T[A] {
 
 ///|
 /// Create a persistent array from an array.
-/// 
+///
 /// # Example
 /// ```
 /// let v = @array.of([1, 2, 3])
@@ -156,7 +156,7 @@ pub fn T::from_array[A](arr : Array[A]) -> T[A] {
 
 ///|
 /// Iterate over the array.
-/// 
+///
 /// # Example
 /// ```
 /// let arr = []
@@ -178,7 +178,7 @@ pub fn each[A](self : T[A], f : (A) -> Unit) -> Unit {
 
 ///|
 /// Iterate over the array with index.
-/// 
+///
 /// # Example
 /// ```
 /// let arr = []
@@ -215,7 +215,7 @@ pub impl[A : Eq] Eq for T[A] with op_equal(self, other) {
 
 ///|
 /// Fold the array.
-/// 
+///
 /// # Example
 /// ```
 /// let v = @array.of([1, 2, 3, 4, 5])
@@ -235,7 +235,7 @@ pub fn fold[A, B](self : T[A], init~ : B, f : (B, A) -> B) -> B {
 
 ///|
 /// Fold the array in reverse order.
-/// 
+///
 /// # Example
 /// ```
 /// let v = @array.of([1, 2, 3, 4, 5])
@@ -255,7 +255,7 @@ pub fn rev_fold[A, B](self : T[A], init~ : B, f : (B, A) -> B) -> B {
 
 ///|
 /// Fold the array from left to right.
-/// 
+///
 /// # Example
 /// ```
 /// let v = @array.of([1, 2, 3, 4, 5])
@@ -269,7 +269,7 @@ pub fn fold_left[A](self : T[A], f : (A, A) -> A, init~ : A) -> A {
 
 ///|
 /// Fold the array from right to left.
-/// 
+///
 /// # Example
 /// ```
 /// let v = @array.of([1, 2, 3, 4, 5])
@@ -283,7 +283,7 @@ pub fn fold_right[A](self : T[A], f : (A, A) -> A, init~ : A) -> A {
 
 ///|
 /// Map a function over the array.
-/// 
+///
 /// # Example
 /// ```
 /// let v = @array.of([1, 2, 3, 4, 5])

@@ -1,4 +1,4 @@
-// Copyright 2024 International Digital Economy Academy
+// Copyright 2025 International Digital Economy Academy
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -27,7 +27,7 @@ let double_info : FloatInfo = {
 }
 
 ///|
-/// TODO: For `f32` it is 23, but we don't have `f32` yet. 
+/// TODO: For `f32` it is 23, but we don't have `f32` yet.
 let mantissa_explicit_bits = 52
 
 ///|

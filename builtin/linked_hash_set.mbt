@@ -1,4 +1,4 @@
-// Copyright 2024 International Digital Economy Academy
+// Copyright 2025 International Digital Economy Academy
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -34,7 +34,7 @@ priv struct SListNode[K] {
 }
 
 ///|
-/// Mutable linked hash set that maintains the order of insertion, not thread safe. 
+/// Mutable linked hash set that maintains the order of insertion, not thread safe.
 struct Set[K] {
   mut entries : FixedArray[SEntry[K]?]
   mut list : FixedArray[SListNode[K]]
@@ -76,7 +76,7 @@ pub fn Set::from_array[K : Hash + Eq](arr : Array[K]) -> Set[K] {
 
 ///|
 /// Insert a key into the hash set.
-/// 
+///
 /// @alert deprecated "Use `add` instead."
 /// @coverage.skip
 pub fn insert[K : Hash + Eq](self : Set[K], key : K) -> Unit {

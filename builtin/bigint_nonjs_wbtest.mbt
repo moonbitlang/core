@@ -1,4 +1,4 @@
-// Copyright 2024 International Digital Economy Academy
+// Copyright 2025 International Digital Economy Academy
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -28,7 +28,7 @@ test "debug_string" {
   (buf as &Logger).write_iter(v.iter(), sep="\n", prefix="", suffix="")
   // Logger::writer_iter()
   // trait logger has no method write_iter
-  // precise: 
+  // precise:
   // (dyn Logger)::write_iter(buf,..)
   //  Logger::trait_method()
   inspect!(

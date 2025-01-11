@@ -1,4 +1,4 @@
-// Copyright 2024 International Digital Economy Academy
+// Copyright 2025 International Digital Economy Academy
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -187,7 +187,7 @@ test "or_else" {
 
 ///|
 /// Flatten a `Result` of `Result` into a single `Result`.
-/// 
+///
 /// If the outer `Result` is an `Ok`, the inner `Result` is returned. If the outer `Result` is an `Err`, the inner `Result` is ignored and the `Err` is returned.
 ///
 /// # Example
@@ -241,7 +241,7 @@ test "bind" {
 
 ///|
 /// Folds a `Result` into a single value.
-/// 
+///
 /// If the `Result` is an `Ok`, the `ok` function is applied to the value. If the `Result` is an `Err`, the `err` function is applied to the value.
 /// # Example
 ///
@@ -268,7 +268,7 @@ test "fold" {
 
 ///|
 /// Converts a `Result` to an `Option`.
-/// 
+///
 /// Converts `Ok` to `Some` and `Err` to `None`.
 ///
 /// # Example

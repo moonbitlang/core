@@ -1,4 +1,4 @@
-// Copyright 2024 International Digital Economy Academy
+// Copyright 2025 International Digital Economy Academy
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -13,7 +13,7 @@
 // limitations under the License.
 
 //#region
-// These types are of workaround for the restriction that MoonBit do not support 
+// These types are of workaround for the restriction that MoonBit do not support
 // generic type parameters of extern ffi
 
 ///|
@@ -131,7 +131,7 @@ test "UninitializedArray::unsafe_blit_fixed" {
 ///|
 /// Reserves capacity to ensure that it can hold at least the number of elements
 /// specified by the `capacity` argument.
-/// 
+///
 /// **NOTE**: This method does nothing on js platform.
 /// # Example
 ///
@@ -206,10 +206,10 @@ pub fn pop_exn[T](self : Array[T]) -> T {
 
 ///|
 /// Removes the last element from a array and returns it.
-/// 
+///
 /// **NOTE** This method will not cause a panic, but it may result in undefined
-/// behavior on the JavaScript platform. Use with caution. 
-/// 
+/// behavior on the JavaScript platform. Use with caution.
+///
 /// @alert unsafe "Panic if the array is empty."
 pub fn unsafe_pop[T](self : Array[T]) -> T {
   JSArray::ofAnyArray(self).pop().toAny()
@@ -280,7 +280,7 @@ pub fn insert[T](self : Array[T], index : Int, value : T) -> Unit {
 ///|
 /// Resize the array in-place so that `len` is equal to `new_len`.
 ///
-/// If `new_len` is greater than `len`, the array will be extended by the 
+/// If `new_len` is greater than `len`, the array will be extended by the
 /// difference, and the values in the new slots are left uninitilized.
 ///  If `new_len` is less than `len`, it will panic
 ///

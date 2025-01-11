@@ -1,4 +1,4 @@
-// Copyright 2024 International Digital Economy Academy
+// Copyright 2025 International Digital Economy Academy
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -18,7 +18,7 @@
 
 ///|
 /// Rational number type.
-/// 
+///
 /// Invariants:
 /// - The denominator is always positive.
 /// - The numerator and denominator are always coprime.

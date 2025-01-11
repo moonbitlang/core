@@ -1,4 +1,4 @@
-// Copyright 2024 International Digital Economy Academy
+// Copyright 2025 International Digital Economy Academy
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,11 +14,11 @@
 
 ///|
 /// Sorts the array with a key extraction function.
-/// 
+///
 /// It's an in-place, unstable sort(it will reorder equal elements). The time complexity is O(n log n) in the worst case.
-/// 
+///
 /// # Example
-/// 
+///
 /// ```
 /// let arr = [5, 3, 2, 4, 1]
 /// arr.sort_by_key(fn (x) {-x})
@@ -47,11 +47,11 @@ test "@array.sort_by_key/basic" {
 
 ///|
 /// Sorts the array with a custom comparison function.
-/// 
+///
 /// It's an in-place, unstable sort(it will reorder equal elements). The time complexity is O(n log n) in the worst case.
-/// 
+///
 /// # Example
-/// 
+///
 /// ```
 /// let arr = [5, 3, 2, 4, 1]
 /// arr.sort_by(fn (a, b) { a - b })
@@ -182,9 +182,9 @@ fn fixed_quick_sort_by[T](
 
 ///|
 /// Try to sort the array with bubble sort.
-/// 
+///
 /// It will only tolerate at most 8 unsorted elements. The time complexity is O(n).
-/// 
+///
 /// Returns whether the array is sorted.
 fn fixed_try_bubble_sort_by[T](
   arr : FixedArraySlice[T],
@@ -210,9 +210,9 @@ fn fixed_try_bubble_sort_by[T](
 
 ///|
 /// Try to sort the array with bubble sort.
-/// 
+///
 /// It will only tolerate at most 8 unsorted elements. The time complexity is O(n).
-/// 
+///
 /// Returns whether the array is sorted.
 fn fixed_bubble_sort_by[T](
   arr : FixedArraySlice[T],
@@ -262,9 +262,9 @@ fn fixed_partition_by[T](
 
 ///|
 /// Choose a pivot index for quick sort.
-/// 
+///
 /// It avoids worst case performance by choosing a pivot that is likely to be close to the median.
-/// 
+///
 /// Returns the pivot index and whether the array is likely sorted.
 fn fixed_choose_pivot_by[T](
   arr : FixedArraySlice[T],

@@ -1,4 +1,4 @@
-// Copyright 2024 International Digital Economy Academy
+// Copyright 2025 International Digital Economy Academy
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -34,10 +34,10 @@ priv struct ListNode[K, V] {
 }
 
 ///|
-/// Mutable linked hash map that maintains the order of insertion, not thread safe. 
-///  
+/// Mutable linked hash map that maintains the order of insertion, not thread safe.
+///
 /// # Example
-/// 
+///
 /// ```
 /// let map = { 3: "three", 8 :  "eight", 1 :  "one"}
 /// assert_eq!(map.get(2), None)
@@ -66,7 +66,7 @@ fn power_2_above(x : Int, n : Int) -> Int {
     }
     let next = i << 1
     if next < 0 {
-      // overflow happend  
+      // overflow happend
       break i
     }
     continue next
