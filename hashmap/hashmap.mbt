@@ -20,7 +20,7 @@ fn power_2_above(x : Int, n : Int) -> Int {
     }
     let next = i << 1
     if next < 0 {
-      // overflow happend
+      // overflow happened
       break i
     }
     continue next
