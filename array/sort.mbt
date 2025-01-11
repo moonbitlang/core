@@ -1,4 +1,4 @@
-// Copyright 2024 International Digital Economy Academy
+// Copyright 2025 International Digital Economy Academy
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,11 +14,11 @@
 
 ///|
 /// Sorts the array in place.
-/// 
+///
 /// It's an in-place, unstable sort(it will reorder equal elements). The time complexity is O(n log n) in the worst case.
-/// 
+///
 /// # Example
-/// 
+///
 /// ```
 /// let arr = [5, 4, 3, 2, 1]
 /// arr.sort()
@@ -105,9 +105,9 @@ fn get_limit(len : Int) -> Int {
 
 ///|
 /// Try to sort the array with bubble sort.
-/// 
+///
 /// It will only tolerate at most 8 unsorted elements. The time complexity is O(n).
-/// 
+///
 /// Returns whether the array is sorted.
 fn try_bubble_sort[T : Compare](arr : ArrayView[T]) -> Bool {
   let max_tries = 8
@@ -159,9 +159,9 @@ fn partition[T : Compare](arr : ArrayView[T], pivot_index : Int) -> (Int, Bool) 
 
 ///|
 /// Choose a pivot index for quick sort.
-/// 
+///
 /// It avoids worst case performance by choosing a pivot that is likely to be close to the median.
-/// 
+///
 /// Returns the pivot index and whether the array is likely sorted.
 fn choose_pivot[T : Compare](arr : ArrayView[T]) -> (Int, Bool) {
   let len = arr.length()

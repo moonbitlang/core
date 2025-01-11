@@ -1,4 +1,4 @@
-// Copyright 2024 International Digital Economy Academy
+// Copyright 2025 International Digital Economy Academy
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,7 +15,7 @@
 ///|
 /// Create a new map with a key-value pair inserted.
 /// O(log n).
-/// 
+///
 /// @alert deprecated "Use `add` instead"
 /// @coverage.skip
 pub fn insert[K : Compare, V](self : T[K, V], key : K, value : V) -> T[K, V] {

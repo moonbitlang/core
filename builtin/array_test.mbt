@@ -1,4 +1,4 @@
-// Copyright 2024 International Digital Economy Academy
+// Copyright 2025 International Digital Economy Academy
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -129,7 +129,7 @@ test "array_append" {
   arr1.append(arr3)
   assert_eq!(arr1.length(), 6 + cap)
   // assert_eq!(arr1.capacity(), arr1.length())
-  // Not testing capacity as it may be platform/algorithm 
+  // Not testing capacity as it may be platform/algorithm
   // dependent and not guaranteed to be equal to length
 }
 

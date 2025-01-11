@@ -1,4 +1,4 @@
-// Copyright 2024 International Digital Economy Academy
+// Copyright 2025 International Digital Economy Academy
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -93,7 +93,7 @@ pub fn Int::op_shr(self : Int, other : Int) -> Int = "%i32_shr"
 pub fn Int::lsl(self : Int, other : Int) -> Int = "%i32_shl"
 
 ///|
-/// @alert deprecated "Use infix operator `<<` instead" 
+/// @alert deprecated "Use infix operator `<<` instead"
 /// @coverage.skip
 pub fn Int::shl(self : Int, other : Int) -> Int = "%i32_shl"
 
@@ -151,9 +151,9 @@ pub fn Int::to_double(self : Int) -> Double = "%i32_to_f64"
 pub fn UInt::trunc_double(val : Double) -> UInt = "%f64.to_u32"
 
 ///|
-/// reinterpret the signed int as unsigned int, when the value is 
-/// non-negative, i.e, 0..=2^31-1, the value is the same. When the 
-/// value is negative, it turns into a large number, 
+/// reinterpret the signed int as unsigned int, when the value is
+/// non-negative, i.e, 0..=2^31-1, the value is the same. When the
+/// value is negative, it turns into a large number,
 /// for example, -1 turns into 2^32-1
 pub fn Int::reinterpret_as_uint(self : Int) -> UInt = "%i32.to_u32_reinterpret"
 
@@ -231,7 +231,7 @@ pub fn Char::default() -> Char = "%char_default"
 ///|
 pub fn Bytes::op_get(self : Bytes, idx : Int) -> Byte = "%bytes_get"
 
-///| 
+///|
 /// @alert unsafe "Panic if index is out of bounds"
 pub fn Bytes::unsafe_get(self : Bytes, idx : Int) -> Byte = "%bytes_get"
 
@@ -317,7 +317,7 @@ pub fn Byte::to_int64(self : Byte) -> Int64 {
 
 ///|
 /// reinterpret the unsigned int as signed int
-/// For number within the range of 0..=2^31-1, 
+/// For number within the range of 0..=2^31-1,
 /// the value is the same. For number within the range of 2^31..=2^32-1,
 /// the value is negative
 pub fn UInt::reinterpret_as_int(self : UInt) -> Int = "%u32.to_i32_reinterpret"

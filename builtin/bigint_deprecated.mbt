@@ -1,4 +1,4 @@
-// Copyright 2024 International Digital Economy Academy
+// Copyright 2025 International Digital Economy Academy
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -23,7 +23,7 @@ pub fn asr(self : BigInt, n : Int) -> BigInt {
 /// Left shift a bigint
 /// The sign of the result is the same as the sign of the input.
 /// Only the absolute value is shifted.
-/// 
+///
 /// @alert deprecated "Use infix bitwise operator `<<` instead"
 /// @coverage.skip
 pub fn shl(self : BigInt, n : Int) -> BigInt {
@@ -34,7 +34,7 @@ pub fn shl(self : BigInt, n : Int) -> BigInt {
 /// Left shift a bigint
 /// The sign of the result is the same as the sign of the input.
 /// Only the absolute value is shifted.
-/// 
+///
 /// @alert deprecated "Use infix bitwise operator `<<` instead"
 /// @coverage.skip
 pub fn lsl(self : BigInt, n : Int) -> BigInt {
@@ -45,7 +45,7 @@ pub fn lsl(self : BigInt, n : Int) -> BigInt {
 /// Right shift a bigint
 /// The sign of the result is the same as the sign of the input.
 /// Only the absolute value is shifted.
-/// 
+///
 /// @alert deprecated "Use infix bitwise operator `>>` instead"
 /// @coverage.skip
 pub fn shr(self : BigInt, n : Int) -> BigInt {

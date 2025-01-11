@@ -1,4 +1,4 @@
-// Copyright 2024 International Digital Economy Academy
+// Copyright 2025 International Digital Economy Academy
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -49,9 +49,9 @@ test "next" {
 
 ///|
 /// [int] Return a non-negative pseudo-random 31-bit integer as an Int in the range [0, 2^31) or [0, limit) if limit is provided.
-/// 
+///
 /// # Arguments
-/// 
+///
 /// * `limit` - The upper bound (exclusive) of the random number to be generated (Optional).
 ///             When limit is 0, the range is [0, 2^31).
 pub fn Rand::int(self : Rand, limit~ : Int = 0) -> Int {
@@ -65,9 +65,9 @@ pub fn Rand::int(self : Rand, limit~ : Int = 0) -> Int {
 
 ///|
 /// [int64] returns a non-negative pseudo-random 63-bit integer as an Int64 in the range [0, 2^63)
-/// 
+///
 /// # Arguments
-/// 
+///
 /// * `limit` - The upper bound (exclusive) of the random number to be generated (Optional).
 ///            When limit is 0, the range is [0, 2^63).
 pub fn Rand::int64(self : Rand, limit~ : Int64 = 0) -> Int64 {
@@ -83,9 +83,9 @@ pub fn Rand::int64(self : Rand, limit~ : Int64 = 0) -> Int64 {
 
 ///|
 /// [uint] returns a non-negative pseudo-random 32-bit integer as a Uint in the range [0, 2^32) or [0, limit) if limit is provided.
-/// 
+///
 /// # Arguments
-/// 
+///
 /// * `limit` - The upper bound (exclusive) of the random number to be generated (Optional).
 ///            When limit is 0, the range is [0, 2^32).
 pub fn Rand::uint(self : Rand, limit~ : UInt = 0) -> UInt {
@@ -108,9 +108,9 @@ test "uint" {
 
 ///|
 /// [uint64] returns a non-negative pseudo-random 64-bit integer as a Uint64 in the range [0, 2^64) or [0, limit) if limit is provided.
-/// 
+///
 /// # Arguments
-/// 
+///
 /// * `limit` - The upper bound (exclusive) of the random number to be generated (Optional).
 ///           When limit is 0, the range is [0, 2^64).
 pub fn Rand::uint64(self : Rand, limit~ : UInt64 = 0) -> UInt64 {
@@ -219,7 +219,7 @@ test "umul128: handles zero correctly" {
 ///|
 /// [shuffle] shuffles the first n elements of an array using the Fisher-Yates shuffle algorithm.
 /// @alert unsafe "Panics if limit is negative"
-/// 
+///
 /// # Example
 /// ```
 /// let r = @random.new()

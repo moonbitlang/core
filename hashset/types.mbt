@@ -1,4 +1,4 @@
-// Copyright 2024 International Digital Economy Academy
+// Copyright 2025 International Digital Economy Academy
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -20,16 +20,16 @@ priv struct Entry[K] {
 } derive(Show)
 
 /// A mutable hash set implements with Robin Hood hashing.
-/// 
+///
 /// reference:
 /// - <https://programming.guide/robin-hood-hashing.html>
 /// - <https://cs.uwaterloo.ca/research/tr/1986/CS-86-14.pdf>
 
 ///|
-/// Mutable hash set, not thread safe. 
-///  
+/// Mutable hash set, not thread safe.
+///
 /// # Example
-/// 
+///
 /// ```
 /// let set = @hashset.of([(3, "three"), (8, "eight"), (1, "one")])
 /// set.add((4, "four"))
@@ -38,6 +38,6 @@ priv struct Entry[K] {
 struct T[K] {
   mut entries : FixedArray[Entry[K]?]
   mut size : Int // active key count
-  mut capacity : Int // current capacity 
+  mut capacity : Int // current capacity
   mut growAt : Int // threshold that triggers grow
 }

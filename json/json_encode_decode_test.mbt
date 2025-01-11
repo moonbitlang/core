@@ -1,4 +1,4 @@
-// Copyright 2024 International Digital Economy Academy
+// Copyright 2025 International Digital Economy Academy
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -59,19 +59,19 @@ fn of_json(jv : Json) -> AllThree!DecodeError {
       for n in ints {
         match n {
           Number(n) => ints_result.push(n.to_int())
-          _ => () // error handling here 
+          _ => () // error handling here
         }
       }
       for n in floats {
         match n {
           Number(n) => floats_result.push(n)
-          _ => () // error handling here 
+          _ => () // error handling here
         }
       }
       for s in strings {
         match s {
           String(s) => strings_result.push(s)
-          _ => () // error handling here 
+          _ => () // error handling here
         }
       }
       { ints: ints_result, floats: floats_result, strings: strings_result }

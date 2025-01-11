@@ -1,4 +1,4 @@
-// Copyright 2024 International Digital Economy Academy
+// Copyright 2025 International Digital Economy Academy
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
 
 ///|
 /// Creates a new empty priority queue.
-/// 
+///
 /// # Example
 /// ```
 /// let queue : @priority_queue.T[Int] = @priority_queue.new()
@@ -26,14 +26,14 @@ pub fn T::new[A : Compare]() -> T[A] {
 
 ///|
 /// Creates a new priority queue from an array.
-/// 
+///
 /// # Example
 /// ```
 /// let queue = @priority_queue.of([1, 2, 3, 4, 5])
 /// assert_eq!(queue.length(), 5)
 /// ```
 pub fn T::from_array[A : Compare](arr : Array[A]) -> T[A] {
-  // CR: bad formatting  
+  // CR: bad formatting
   let len = arr.length()
   for i = 0, acc = Node::Nil {
     if i < len {
@@ -59,7 +59,7 @@ fn copy_node[A](x : Node[A]) -> Node[A] {
 
 ///|
 /// Return a copy of the queue.
-/// 
+///
 /// # Example
 /// ```
 /// let queue = @priority_queue.of([1, 2, 3, 4])
@@ -152,7 +152,7 @@ pub fn length[A](self : T[A]) -> Int {
 
 ///|
 /// Pops the first value from the priority queue.
-/// 
+///
 /// # Example
 /// ```
 /// let queue = @priority_queue.of([1, 2, 3, 4])
@@ -177,7 +177,7 @@ pub fn pop_exn[A : Compare](self : T[A]) -> Unit {
 
 ///|
 /// Pops the first value from the priority queue, which returns None if the queue is empty.
-/// 
+///
 /// # Example
 /// ```
 /// let queue = @priority_queue.of([1, 2, 3, 4])
@@ -199,7 +199,7 @@ pub fn pop[A : Compare](self : T[A]) -> A? {
 
 ///|
 /// Adds a value to the priority queue.
-/// 
+///
 /// # Example
 /// ```
 /// let queue = @priority_queue.new()
@@ -213,7 +213,7 @@ pub fn push[A : Compare](self : T[A], value : A) -> Unit {
 
 ///|
 /// Peeks at the first value in the priority queue, which returns None if the priority queue is empty.
-/// 
+///
 /// # Example
 /// ```
 /// let queue = @priority_queue.of([1, 2, 3, 4])
@@ -229,7 +229,7 @@ pub fn peek[A](self : T[A]) -> A? {
 
 ///|
 /// Clears the queue.
-/// 
+///
 /// # Example
 /// ```
 /// let queue = @priority_queue.of([1, 2, 3, 4])
@@ -243,7 +243,7 @@ pub fn clear[A](self : T[A]) -> Unit {
 
 ///|
 /// Checks if the priority queue is empty.
-/// 
+///
 /// # Example
 /// ```
 /// let queue : @priority_queue.T[Int] = @priority_queue.new()
@@ -255,7 +255,7 @@ pub fn is_empty[A](self : T[A]) -> Bool {
 
 ///|
 pub fn T::of[A : Compare](arr : FixedArray[A]) -> T[A] {
-  // CR: bad formatting  
+  // CR: bad formatting
   let len = arr.length()
   for i = 0, acc = Node::Nil {
     if i < len {

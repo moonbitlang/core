@@ -1,4 +1,4 @@
-// Copyright 2024 International Digital Economy Academy
+// Copyright 2025 International Digital Economy Academy
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -148,31 +148,31 @@ pub fn UInt64::to_string(self : UInt64) -> String {
 }
 
 ///|
-/// @coverage.skip 
+/// @coverage.skip
 pub fn op_lt[T : Compare](self_ : T, other : T) -> Bool {
   self_.compare(other).is_neg()
 }
 
 ///|
-/// @coverage.skip 
+/// @coverage.skip
 pub fn op_gt[T : Compare](self_ : T, other : T) -> Bool {
   self_.compare(other).is_pos()
 }
 
 ///|
-/// @coverage.skip 
+/// @coverage.skip
 pub fn op_le[T : Compare](self_ : T, other : T) -> Bool {
   self_.compare(other).is_non_pos()
 }
 
 ///|
-/// @coverage.skip 
+/// @coverage.skip
 pub fn op_ge[T : Compare](self_ : T, other : T) -> Bool {
   self_.compare(other).is_non_neg()
 }
 
 ///|
-/// @coverage.skip 
+/// @coverage.skip
 pub fn op_notequal[T : Eq](x : T, y : T) -> Bool {
   not(x == y)
 }

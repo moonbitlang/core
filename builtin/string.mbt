@@ -1,4 +1,4 @@
-// Copyright 2024 International Digital Economy Academy
+// Copyright 2025 International Digital Economy Academy
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -43,13 +43,13 @@ fn unsafe_substring(str : String, start : Int, end : Int) -> String {
 ///   inspect!(s.substring(start=6, end=11), content="world")
 ///   inspect!(s.substring(), content="Hello world")
 /// }
-/// 
+///
 /// test "substring/empty" {
 ///   let s = "test"
 ///   inspect!(s.substring(start=2, end=2), content="")
 ///   inspect!("".substring(), content="")
 /// }
-/// 
+///
 /// test "panic substring/invalid_range" {
 ///   let s = "test"
 ///   ignore(s.substring(start=-1))

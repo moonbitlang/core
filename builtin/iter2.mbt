@@ -1,4 +1,4 @@
-// Copyright 2024 International Digital Economy Academy
+// Copyright 2025 International Digital Economy Academy
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -72,8 +72,8 @@ pub fn iter[A, B](self : Iter2[A, B]) -> Iter[(A, B)] {
 ///|
 pub fn iter2[A, B](self : Iter2[A, B]) -> Iter2[A, B] {
   // This is a no-op to make sure
-  // `for k,v in map.iter2() { ... }` 
-  // still work    
+  // `for k,v in map.iter2() { ... }`
+  // still work
   self
 }
 

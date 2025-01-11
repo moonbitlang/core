@@ -1,4 +1,4 @@
-// Copyright 2024 International Digital Economy Academy
+// Copyright 2025 International Digital Economy Academy
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -52,7 +52,7 @@ fn first_is_digit(self : StringSlice) -> Bool {
 }
 
 ///|
-/// Step over `step` non-underscore characters. 
+/// Step over `step` non-underscore characters.
 /// Return None if there are not enough characters.
 fn step(self : StringSlice, step : Int) -> StringSlice? {
   let c = self

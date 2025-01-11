@@ -1,4 +1,4 @@
-// Copyright 2024 International Digital Economy Academy
+// Copyright 2025 International Digital Economy Academy
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -125,7 +125,7 @@ test "eachi" {
   let v = [3, 4, 5]
   let mut sum = 0
   for i, x in v {
-    // todo: maybe support (i,x)   
+    // todo: maybe support (i,x)
     sum = sum + x + i
   }
   assert_eq!(sum, 15)

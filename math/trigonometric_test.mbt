@@ -1,4 +1,4 @@
-// Copyright 2024 International Digital Economy Academy
+// Copyright 2025 International Digital Economy Academy
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -226,7 +226,7 @@ test "atan2" {
 }
 
 test "tan with very small value" {
-  let x = 1.0e-8 // x * x = 1.0e-16 < 1.0e-14  
+  let x = 1.0e-8 // x * x = 1.0e-16 < 1.0e-14
   inspect!(@math.tan(x), content="1e-8")
 }
 

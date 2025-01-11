@@ -1,4 +1,4 @@
-// Copyright 2024 International Digital Economy Academy
+// Copyright 2025 International Digital Economy Academy
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -35,7 +35,7 @@ pub fn map[T, R](self : Ref[T], f : (T) -> R) -> Ref[R] {
 }
 
 ///|
-/// This function allows you to temporarily replace the value of a reference with a new value, 
+/// This function allows you to temporarily replace the value of a reference with a new value,
 /// execute a given function, and then restore the original value of the reference.
 ///
 /// # Arguments
@@ -47,9 +47,9 @@ pub fn map[T, R](self : Ref[T], f : (T) -> R) -> Ref[R] {
 /// # Returns
 ///
 /// The result of executing the provided function `f`.
-/// 
+///
 /// # Example
-/// 
+///
 /// ```
 /// let x = @ref.new(1)
 /// x.protect(2, fn!(){

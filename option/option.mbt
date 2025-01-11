@@ -1,4 +1,4 @@
-// Copyright 2024 International Digital Economy Academy
+// Copyright 2025 International Digital Economy Academy
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -146,7 +146,7 @@ test "map_or" {
 
 ///|
 /// Computes a default function result (if none), or applies a different function to the contained value (if any).
-/// 
+///
 /// # Example
 ///
 /// ```
