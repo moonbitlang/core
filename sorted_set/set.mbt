@@ -429,10 +429,38 @@ fn to_array[T](self : Node[T]) -> Array[T] {
 }
 
 ///|
-pub fn range[V : Compare](self : T[V], low : V, high : V) -> Array[V] {
-  let result = []
-  self.each(fn(x) { if x >= low && x <= high { result.push(x) } })
-  result
+pub fn range[V : Compare](self : T[V], low : V, high : V) -> Iter[V] {
+  range_aux(self.root, low, high)
+}
+
+///|
+fn range_aux[V : Compare](root : Node[V]?, low : V, high : V) -> Iter[V] {
+  Iter::new(fn(yield_) {
+    match root {
+      None => IterContinue
+      Some(node) => {
+        let cmp_key_low = node.value.compare(low)
+        let cmp_key_high = node.value.compare(high)
+        if cmp_key_low > 0 {
+          guard let IterContinue = range_aux(node.left, low, high).run(yield_) else {
+            x => return x
+          }
+
+        }
+        if cmp_key_low >= 0 && cmp_key_high <= 0 {
+          guard let IterContinue = yield_(node.value) else { x => return x }
+
+        }
+        if cmp_key_high < 0 {
+          guard let IterContinue = range_aux(node.right, low, high).run(yield_) else {
+            x => return x
+          }
+
+        }
+        IterContinue
+      }
+    }
+  })
 }
 
 // AVL tree operations
