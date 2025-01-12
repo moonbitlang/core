@@ -26,7 +26,7 @@ impl T {
   is_empty[V : Compare](Self[V]) -> Bool
   iter[V](Self[V]) -> Iter[V]
   op_equal[V : Compare](Self[V], Self[V]) -> Bool
-  range[V : Compare](Self[V], V, V) -> Array[V]
+  range[V : Compare](Self[V], V, V) -> Iter[V]
   remove[V : Compare](Self[V], V) -> Unit
   size[V : Compare](Self[V]) -> Int64
   subset[V : Compare](Self[V], Self[V]) -> Bool
