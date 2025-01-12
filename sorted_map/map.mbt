@@ -256,20 +256,26 @@ fn range_aux[K : Compare, V](
     match node {
       None => IterContinue
       Some(node) => {
-        if node.key > low {
-          if range_aux(node.left, low, high).run(yield_) == IterEnd {
-            return IterEnd
+        let cmp_key_low = node.key.compare(low)
+        let cmp_key_high = node.key.compare(high)
+
+        if cmp_key_low > 0 {
+          // we should go left
+          guard let IterContinue = range_aux(node.left, low, high).run(yield_) else {
+            x => return x
           }
         }
-        if node.key >= low && node.key <= high {
-          if yield_(node.key, node.value) == IterEnd {
-            return IterEnd
+        if cmp_key_low >= 0 && cmp_key_high <= 0 {
+          // we should yield this node
+          guard let IterContinue = yield_(node.key, node.value) else {
+            x => return x
           }
         }
-        if node.key < high {
-          if range_aux(node.right, low, high).run(yield_) == IterEnd {
-            return IterEnd
+        if cmp_key_high < 0 {
+          guard let IterContinue = range_aux(node.right, low, high).run(yield_) else {
+            x => return x
           }
+
         }
         IterContinue
       }
