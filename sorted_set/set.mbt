@@ -350,9 +350,28 @@ pub fn eachi[V](self : T[V], f : (Int, V) -> Unit) -> Unit {
 ///|
 /// Converts the set to an array.
 pub fn to_array[V](self : T[V]) -> Array[V] {
-  let arr = []
-  self.each(fn(v) { arr.push(v) })
-  arr
+  if self.size == 0 {
+    []
+  } else {
+    let padding = self.root.unwrap().value
+    let arr = Array::make(self.size.to_int(), padding)
+    let mut i = 0
+    fn dfs(root : Node[V]?) -> Unit {
+      match root {
+        Some(root) => {
+          dfs(root.left)
+          arr[i] = root.value
+          i = i + 1
+          dfs(root.right)
+        }
+        None => ()
+      }
+      ()
+    }
+
+    dfs(self.root)
+    arr
+  }
 }
 
 ///|
