@@ -236,6 +236,7 @@ pub fn Bytes::op_get(self : Bytes, idx : Int) -> Byte = "%bytes_get"
 pub fn Bytes::unsafe_get(self : Bytes, idx : Int) -> Byte = "%bytes_get"
 
 ///|
+/// @alert deprecated "Bytes is about to be changed to immutable, use `FixedArray[Byte]` instead"
 pub fn Bytes::op_set(self : Bytes, idx : Int, val : Byte) -> Unit = "%bytes_set"
 
 ///|
