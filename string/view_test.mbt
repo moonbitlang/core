@@ -14,19 +14,23 @@
 
 test "index_at" {
   let str = "Hello"
-  let offset = str.index_at(3)
-  inspect!(offset, content="Some(StringIndex(3))")
-  let offset = str.index_at(5)
+  guard let Some(offset) = str.index_at(3)
+  inspect!(offset, content="StringIndex(3)")
+  guard let Some(offset) = str.index_at(5)
+  inspect!(offset, content="StringIndex(5)")
+  let offset = str.index_at(6)
   inspect!(offset, content="None")
 }
 
 test "index_at with surrogate pairs" {
   let str = "🤣🤣🤣"
-  let offset = str.index_at(1)
-  inspect!(offset, content="Some(StringIndex(2))")
-  let offset = str.index_at(2)
-  inspect!(offset, content="Some(StringIndex(4))")
-  let offset = str.index_at(3)
+  guard let Some(offset) = str.index_at(1)
+  inspect!(offset, content="StringIndex(2)")
+  guard let Some(offset) = str.index_at(2)
+  inspect!(offset, content="StringIndex(4)")
+  guard let Some(offset) = str.index_at(3)
+  inspect!(offset, content="StringIndex(6)")
+  let offset = str.index_at(4)
   inspect!(offset, content="None")
 }
 

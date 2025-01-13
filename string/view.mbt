@@ -40,7 +40,8 @@ type StringIndex Int derive(Show, Eq)
 
 ///|
 /// Returns a `StringIndex` representing the position after skipping `offset_by` 
-/// Unicode characters.
+/// Unicode characters. If the string has `n` Unicode characters, the returned 
+/// index will be `Some` if `0 <= offset_by <= n`, otherwise `None`.
 ///
 /// # Examples
 /// 
@@ -52,7 +53,7 @@ type StringIndex Int derive(Show, Eq)
 /// guard let Some(offset) = str.index_at(start=offset, 1)  // Skip 2 characters
 /// inspect!(offset, content="StringIndex(4)")              // Points to third emoji
 ///
-/// let offset = str.index_at(3)                            // Skip 3 characters
+/// let offset = str.index_at(4)                            // Skip 4 characters
 /// inspect!(offset, content="None")                        // Beyond end of string
 /// ```
 pub fn index_at(
@@ -72,6 +73,8 @@ pub fn index_at(
         utf16_offset = utf16_offset + 2
         char_count = char_count + 1
         continue
+      } else {
+        abort("invalid surrogate pair")
       }
     }
     // single utf-16 code unit
@@ -81,7 +84,7 @@ pub fn index_at(
   // Return None if:
   // 1. We couldn't reach the requested character offset
   // 2. The resulting offset is beyond the end of the string
-  if char_count < offset_by || utf16_offset >= str_len {
+  if char_count < offset_by || utf16_offset > str_len {
     None
   } else {
     Some(utf16_offset)
