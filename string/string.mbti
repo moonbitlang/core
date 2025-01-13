@@ -10,6 +10,8 @@ impl Show for StringIndex
 type StringView
 impl StringView {
   length(Self) -> Int
+  length_eq(Self, Int) -> Bool
+  length_ge(Self, Int) -> Bool
   op_as_view(Self, start~ : Int = .., end? : Int) -> Self
   op_get(Self, Int) -> Char
 }
