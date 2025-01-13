@@ -300,8 +300,41 @@ pub fn disjoint[V : Compare](self : T[V], src : T[V]) -> Bool {
 // General collection operations
 
 ///|
+pub impl[V : Compare] Compare for T[V] with compare(self : T[V], other : T[V]) -> Int {
+  let rhs = other.to_array()
+  let mut i = 0
+  let mut result = 0
+  fn dfs(root : Node[V]?) -> Unit {
+    match root {
+      Some(root) => {
+        if i >= rhs.length() {
+          return
+        }
+        dfs(root.left)
+        let cmp = root.value.compare(rhs[i])
+        if cmp != 0 {
+          result = cmp
+          return
+        }
+        i = i + 1
+        dfs(root.right)
+      }
+      None => ()
+    }
+    ()
+  }
+
+  dfs(self.root)
+  if result != 0 {
+    result
+  } else {
+    (self.size - other.size).to_int()
+  }
+}
+
+///|
 pub fn op_equal[V : Compare](self : T[V], other : T[V]) -> Bool {
-  self.to_array() == other.to_array()
+  self.compare(other) == 0
 }
 
 ///|

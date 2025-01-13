@@ -25,6 +25,7 @@ impl T {
   intersection[V : Compare](Self[V], Self[V]) -> Self[V]
   is_empty[V : Compare](Self[V]) -> Bool
   iter[V](Self[V]) -> Iter[V]
+  compare[V : Compare](Self[V], Self[V]) -> Int
   op_equal[V : Compare](Self[V], Self[V]) -> Bool
   range[V : Compare](Self[V], V, V) -> Iter[V]
   remove[V : Compare](Self[V], V) -> Unit

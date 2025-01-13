@@ -228,3 +228,20 @@ test "range" {
   let result = set.range(2, 4)
   inspect!(result, content="[2, 3, 4]")
 }
+
+test "compare" {
+  let xs = [1, 2, 3]
+  let ys = [1, 2]
+  let xs = @sorted_set.of(xs)
+  let ys = @sorted_set.of(ys)
+  inspect!(xs < ys, content="false")
+  inspect!(xs > ys, content="true")
+  inspect!(xs == ys, content="false")
+  let xs = [2, 7, 4]
+  let ys = [1]
+  let xs = @sorted_set.of(xs)
+  let ys = @sorted_set.of(ys)
+  inspect!(xs < ys, content="false")
+  inspect!(xs > ys, content="true")
+  inspect!(xs == ys, content="false")
+}
