@@ -13,6 +13,198 @@
 // limitations under the License.
 
 ///|
+let min_leading_surrogate = 0xD800
+
+///|
+let max_leading_surrogate = 0xDBFF
+
+///|
+let min_trailing_surrogate = 0xDC00
+
+///|
+let max_trailing_surrogate = 0xDFFF
+
+///|
+fn is_leading_surrogate(c : Int) -> Bool {
+  min_leading_surrogate <= c && c <= max_leading_surrogate
+}
+
+///|
+fn is_trailing_surrogate(c : Int) -> Bool {
+  min_trailing_surrogate <= c && c <= max_trailing_surrogate
+}
+
+///|
+fn code_point_of_surrogate_pair(leading : Int, trailing : Int) -> Char {
+  Char::from_int((leading - 0xD800) * 0x400 + trailing - 0xDC00 + 0x10000)
+}
+
+///|
+/// Returns the UTF-16 code unit at the given index.
+///
+/// # Examples
+///
+/// ```
+/// let s = "Hello🤣";
+/// inspect!(s.charcode_at(0), content="72");
+/// inspect!(s.charcode_at(5), content="55358"); // First surrogate of 🤣
+/// inspect!(s.charcode_at(6), content="56611"); // Second surrogate of 🤣
+/// ```
+///
+/// # Panics
+///
+/// Panics if the index is out of bounds.
+pub fn charcode_at(self : String, index : Int) -> Int {
+  guard index >= 0 && index < self.length() else {
+    abort("index out of bounds")
+  }
+  self.unsafe_charcode_at(index)
+}
+
+///|
+/// Returns the Unicode code point at the given index.
+///
+/// This method counts Unicode code points (characters) rather than UTF-16 code units.
+/// It properly handles surrogate pairs to return the correct Unicode character.
+///
+/// # Examples
+///
+/// ```
+/// let s = "Hello🤣";
+/// inspect!(s.codepoint_at(0), content="'H'");
+/// inspect!(s.codepoint_at(5), content="'🤣'"); // Returns full emoji character
+/// ```
+///
+/// # Panics
+///
+/// Panics if:
+/// - The index is out of bounds
+/// - The string contains an invalid surrogate pair
+pub fn codepoint_at(self : String, index : Int) -> Char {
+  let charcode_len = self.charcode_length()
+  guard index >= 0 && index < charcode_len else { abort("index out of bounds") }
+  for char_count = 0, utf16_offset = 0
+      char_count < charcode_len && utf16_offset < index
+      char_count = char_count + 1, utf16_offset = utf16_offset + 1 {
+    let c1 = self.unsafe_charcode_at(char_count)
+    if is_leading_surrogate(c1) && char_count + 1 < charcode_len {
+      let c2 = self.unsafe_charcode_at(char_count + 1)
+      if is_trailing_surrogate(c2) {
+        continue char_count + 2, utf16_offset + 1
+      } else {
+        abort("invalid surrogate pair")
+      }
+    }
+  } else {
+    guard utf16_offset == index && char_count < charcode_len else {
+      abort("index out of bounds")
+    }
+    let c1 = self.unsafe_charcode_at(char_count)
+    if is_leading_surrogate(c1) && char_count + 1 < charcode_len {
+      let c2 = self.unsafe_charcode_at(char_count + 1)
+      if is_trailing_surrogate(c2) {
+        code_point_of_surrogate_pair(c1, c2)
+      } else {
+        abort("invalid surrogate pair")
+      }
+    } else {
+      Char::from_int(c1)
+    }
+  }
+}
+
+///|
+/// Returns the number of Unicode code points (characters) in the string.
+///
+/// This method counts actual Unicode characters, properly handling surrogate pairs
+/// that represent single characters like emojis. For the raw UTF-16 code unit count,
+/// use `code_unit_length()` instead.
+///
+/// # Examples
+///
+/// ```
+/// let s = "Hello🤣";
+/// inspect!(s.codepoint_length(), content = "6"); // 6 actual characters
+/// inspect!(s.charcode_length(), content = "7");  // 5 ASCII chars + 2 surrogate pairs
+/// ```
+pub fn codepoint_length(self : String) -> Int {
+  let charcode_len = self.charcode_length()
+  for char_count = 0, len = 0
+      char_count < charcode_len
+      char_count = char_count + 1, len = len + 1 {
+    let c1 = self.unsafe_charcode_at(char_count)
+    if is_leading_surrogate(c1) && char_count + 1 < charcode_len {
+      let c2 = self.unsafe_charcode_at(char_count + 1)
+      if is_trailing_surrogate(c2) {
+        continue char_count + 2, len + 1
+      } else {
+        abort("invalid surrogate pair")
+      }
+    }
+  } else {
+    len
+  }
+}
+
+///|
+// planned op_get method for String
+// pub fn String::op_get(self : String, index : Int) -> Char {
+//   codepoint_at(self, index)
+// }
+
+///|
+// planned length method for String
+// pub fn String::length(self : String) -> Int {
+//   codepoint_length(self)
+//}
+
+///|
+/// Returns the character at the given index from the end of the string.
+///
+/// # Examples
+///
+/// ```moonbit
+/// let s = "Hello🤣🤣🤣"
+/// inspect!(s.rev_get(0), content="'🤣'")
+/// inspect!(s.rev_get(4), content="'l'")
+/// ```
+///
+/// # Panics
+///
+/// Panics if the index is out of bounds.
+pub fn rev_get(self : String, index : Int) -> Char {
+  guard index >= 0 else { abort("index out of bounds") }
+  for utf16_offset = self.charcode_length() - 1, char_count = 0
+      utf16_offset >= 0 && char_count < index
+      utf16_offset = utf16_offset - 1, char_count = char_count + 1 {
+    let c1 = self.unsafe_charcode_at(utf16_offset)
+    if is_trailing_surrogate(c1) && utf16_offset - 1 >= 0 {
+      let c2 = self.unsafe_charcode_at(utf16_offset - 1)
+      if is_leading_surrogate(c2) {
+        continue utf16_offset - 2, char_count + 1
+      } else {
+        abort("invalid surrogate pair")
+      }
+    }
+  } else {
+    guard char_count == index && utf16_offset >= 0 else {
+      abort("index out of bounds")
+    }
+    let c1 = self.unsafe_charcode_at(utf16_offset)
+    if is_trailing_surrogate(c1) && utf16_offset - 1 >= 0 {
+      let c2 = self.unsafe_charcode_at(utf16_offset - 1)
+      if is_leading_surrogate(c2) {
+        code_point_of_surrogate_pair(c2, c1)
+      } else {
+        abort("invalid surrogate pair")
+      }
+    } else {
+      Char::from_int(c1)
+    }
+  }
+}
+
+///|
 /// @intrinsic %string.substring
 fn unsafe_substring(str : String, start : Int, end : Int) -> String {
   let len = end - start
