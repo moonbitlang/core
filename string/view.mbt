@@ -170,6 +170,50 @@ pub fn length(self : StringView) -> Int {
 }
 
 ///|
+/// Test if the length of the view is equal to the given length.
+/// 
+/// This has O(n) complexity where n is the length in the parameter.
+pub fn length_eq(self : StringView, len : Int) -> Bool {
+  for index = self.start, self_len = 0
+      index < self.end && self_len < len
+      index = index + 1, self_len = self_len + 1 {
+    let c1 = self.str[index]
+    if is_leading_surrogate(c1) && index + 1 < self.end {
+      let c2 = self.str[index + 1]
+      if is_trailing_surrogate(c2) {
+        continue index + 2, self_len + 1
+      } else {
+        abort("invalid surrogate pair")
+      }
+    }
+  } else {
+    self_len == len && index == self.end
+  }
+}
+
+///|
+/// Test if the length of the view is greater than or equal to the given length.
+/// 
+/// This has O(n) complexity where n is the length in the parameter.
+pub fn length_ge(self : StringView, len : Int) -> Bool {
+  for index = self.start, self_len = 0
+      index < self.end && self_len < len
+      index = index + 1, self_len = self_len + 1 {
+    let c1 = self.str[index]
+    if is_leading_surrogate(c1) && index + 1 < self.end {
+      let c2 = self.str[index + 1]
+      if is_trailing_surrogate(c2) {
+        continue index + 2, self_len + 1
+      } else {
+        abort("invalid surrogate pair")
+      }
+    }
+  } else {
+    self_len >= len
+  }
+}
+
+///|
 /// Creates a `StringView` into a `String`.
 /// 
 /// # Example

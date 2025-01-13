@@ -142,6 +142,32 @@ test "stringview length" {
   inspect!(view.length(), content="5")
 }
 
+test "stingview length_eq" {
+  let str = "hello"
+  guard let Some(start) = str.index_at(1)
+  guard let Some(end) = str.index_at(4)
+  let view = str[start:end]
+  inspect!(view.length_eq(0), content="false")
+  inspect!(view.length_eq(1), content="false")
+  inspect!(view.length_eq(2), content="false")
+  inspect!(view.length_eq(3), content="true")
+  inspect!(view.length_eq(4), content="false")
+  inspect!(view.length_eq(5), content="false")
+}
+
+test "stingview length_ge" {
+  let str = "hello"
+  guard let Some(start) = str.index_at(1)
+  guard let Some(end) = str.index_at(4)
+  let view = str[start:end]
+  inspect!(view.length_ge(0), content="true")
+  inspect!(view.length_ge(1), content="true")
+  inspect!(view.length_ge(2), content="true")
+  inspect!(view.length_ge(3), content="true")
+  inspect!(view.length_ge(4), content="false")
+  inspect!(view.length_ge(5), content="false")
+}
+
 test "stringview empty" {
   let str = "hello"
   guard let Some(start) = str.index_at(0)
