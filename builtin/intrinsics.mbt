@@ -289,10 +289,16 @@ pub fn FixedArray::make[T](len : Int, init : T) -> FixedArray[T] = "%fixedarray.
 pub fn String::length(self : String) -> Int = "%string_length"
 
 ///|
+pub fn String::charcode_length(self : String) -> Int = "%string_length"
+
+///|
 pub fn String::op_get(self : String, idx : Int) -> Char = "%string_get"
 
 ///|
 pub fn String::get(self : String, idx : Int) -> Char = "%string_get"
+
+///|
+pub fn String::unsafe_charcode_at(self : String, idx : Int) -> Int = "%string_get"
 
 ///|
 pub fn String::op_add(self : String, other : String) -> String = "%string_add"

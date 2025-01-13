@@ -45,3 +45,27 @@ test "substring" {
   assert_eq!("abc".substring(end=2), "ab")
   assert_eq!("abc".substring(start=1, end=2), "b")
 }
+
+test "panic rev_get1" {
+  let str = "Hello🤣🤣🤣"
+  let _ = str.rev_get(-1)
+
+}
+
+test "panic rev_get2" {
+  let str = "Hello🤣🤣🤣"
+  let _ = str.rev_get(8)
+
+}
+
+test "panic codepoint_at1" {
+  let str = "Hello🤣🤣🤣"
+  let _ = str.codepoint_at(8)
+
+}
+
+test "panic codepoint_at2" {
+  let str = "Hello🤣🤣🤣"
+  let _ = str.codepoint_at(-1)
+
+}
