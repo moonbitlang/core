@@ -26,6 +26,7 @@ impl String {
   from_array(Array[Char]) -> String
   from_iter(Iter[Char]) -> String
   index_at(String, Int, start~ : StringIndex = ..) -> StringIndex?
+  index_at_rev(String, Int, end? : StringIndex) -> StringIndex?
   index_of(String, String, from~ : Int = ..) -> Int
   is_blank(String) -> Bool
   is_empty(String) -> Bool
