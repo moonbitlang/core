@@ -62,6 +62,7 @@ pub fn index_at(
   start~ : StringIndex = 0
 ) -> StringIndex? {
   let str_len = self.length()
+  guard start._ >= 0 && start._ <= str_len else { abort("Invalid start index") }
   let mut utf16_offset = start._
   let mut char_count = 0
   while utf16_offset < str_len && char_count < offset_by {
@@ -85,6 +86,60 @@ pub fn index_at(
   // 1. We couldn't reach the requested character offset
   // 2. The resulting offset is beyond the end of the string
   if char_count < offset_by || utf16_offset > str_len {
+    None
+  } else {
+    Some(utf16_offset)
+  }
+}
+
+///|
+/// Returns a `StringIndex` representing the position before skipping `offset_by` 
+/// Unicode characters from the end of the string.
+/// 
+/// # Example
+/// 
+/// ```
+/// let str = "🤣🤣🤣"
+/// guard let Some(offset) = str.index_at_rev(0)
+/// inspect!(offset, content="StringIndex(6)")
+/// guard let Some(offset) = str.index_at_rev(1)
+/// inspect!(offset, content="StringIndex(4)")
+/// guard let Some(offset) = str.index_at_rev(2, end = offset)
+/// inspect!(offset, content="StringIndex(0)")
+/// let offset = str.index_at_rev(4)
+/// inspect!(offset, content="None")
+/// ```
+pub fn index_at_rev(
+  self : String,
+  offset_by : Int,
+  end? : StringIndex
+) -> StringIndex? {
+  let str_len = self.length()
+  let end = match end {
+    None => str_len
+    Some(end) => {
+      guard end._ >= 0 && end._ <= str_len else { abort("Invalid end index") }
+      end._
+    }
+  }
+  let mut utf16_offset = end
+  let mut char_count = 0
+  // Iterating backwards from the end of the string. [utf16_offset] always 
+  // points to the last skipped character.
+  while utf16_offset > 0 && char_count < offset_by {
+    let c1 = self[utf16_offset - 1]
+    if is_trailing_surrogate(c1) && utf16_offset - 2 >= 0 {
+      let c2 = self[utf16_offset - 2]
+      if is_leading_surrogate(c2) {
+        utf16_offset = utf16_offset - 2
+        char_count = char_count + 1
+        continue
+      }
+    }
+    utf16_offset = utf16_offset - 1
+    char_count = char_count + 1
+  }
+  if char_count < offset_by || utf16_offset < 0 {
     None
   } else {
     Some(utf16_offset)
