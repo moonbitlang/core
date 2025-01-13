@@ -220,23 +220,40 @@ pub fn op_as_view(
   start~ : Int = 0,
   end? : Int
 ) -> StringView {
-  match end {
-    Some(end) => {
-      guard start <= end else { abort("Invalid index for StringView") }
-      guard let Some(start) = index_at(self.str, start, start=self.start)
-      // TODO: provide index_at_rev or index_at2 to avoid repeatedly iterate the string
-      guard let Some(end) = index_at(self.str, end, start=self.start)
-      guard start._ <= self.end && end._ <= self.end else {
-        abort("Invalid index for StringView")
-      }
-      { str: self.str, start: start._, end: end._ }
+  let start = if start >= 0 {
+    guard let Some(start_offset) = index_at(self.str, start, start=self.start) else {
+      _ => abort("Invalid start index")
     }
-    None => {
-      guard let Some(start) = index_at(self.str, start, start=self.start)
-      guard start._ <= self.end else { abort("Invalid index for StringView") }
-      { str: self.str, start: start._, end: self.end }
+    start_offset._
+  } else {
+    guard let Some(start_offset) = index_at_rev(self.str, -start, end=self.end) else {
+      _ => abort("Invalid start index")
     }
+    start_offset._
   }
+  let end = match end {
+    Some(end) =>
+      if end >= 0 {
+        guard let Some(end_offset) = index_at(self.str, end, start=self.start) else {
+          _ => abort("Invalid end index")
+        }
+        end_offset._
+      } else {
+        guard let Some(end_offset) = index_at_rev(self.str, -end, end=self.end) else {
+          _ => abort("Invalid end index")
+        }
+        end_offset._
+      }
+    None => self.end
+  }
+  guard start >= self.start &&
+    start <= self.end &&
+    end >= self.start &&
+    end <= self.end &&
+    start <= end else {
+    abort("Invalid index for StringView")
+  }
+  { str: self.str, start, end }
 }
 
 ///|

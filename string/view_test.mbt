@@ -202,3 +202,192 @@ test "index_at_rev" {
   guard let Some(offset) = str.index_at_rev(1, end=offset)
   inspect!(offset, content="StringIndex(2)")
 }
+
+test "stringview negative index" {
+  let str = "Hello🤣🤣🤣"
+  let str_view = str[:]
+  let view = str_view[-1:]
+  inspect!(
+    view,
+    content=
+      #|"🤣"
+    ,
+  )
+  let view = str_view[-2:]
+  inspect!(
+    view,
+    content=
+      #|"🤣🤣"
+    ,
+  )
+  let view = str_view[-3:]
+  inspect!(
+    view,
+    content=
+      #|"🤣🤣🤣"
+    ,
+  )
+  let view = str_view[-4:]
+  inspect!(
+    view,
+    content=
+      #|"o🤣🤣🤣"
+    ,
+  )
+  let view = str_view[:-1]
+  inspect!(
+    view,
+    content=
+      #|"Hello🤣🤣"
+    ,
+  )
+  let view = str_view[:-2]
+  inspect!(
+    view,
+    content=
+      #|"Hello🤣"
+    ,
+  )
+  let view = str_view[:-3]
+  inspect!(
+    view,
+    content=
+      #|"Hello"
+    ,
+  )
+  let view = str_view[:-4]
+  inspect!(
+    view,
+    content=
+      #|"Hell"
+    ,
+  )
+  let view = str_view[-2:-1]
+  inspect!(
+    view,
+    content=
+      #|"🤣"
+    ,
+  )
+  let view = str_view[-3:-1]
+  inspect!(
+    view,
+    content=
+      #|"🤣🤣"
+    ,
+  )
+  let view = str_view[-4:-1]
+  inspect!(
+    view,
+    content=
+      #|"o🤣🤣"
+    ,
+  )
+  let view = str_view[-4:-2]
+  inspect!(
+    view,
+    content=
+      #|"o🤣"
+    ,
+  )
+  let view = str_view[-4:-4]
+  inspect!(
+    view,
+    content=
+      #|""
+    ,
+  )
+  let view = str_view[-3:-3]
+  inspect!(
+    view,
+    content=
+      #|""
+    ,
+  )
+}
+
+test "panic negative index 1" {
+  // index_at_rev fails
+  let str = "hello"
+  let str_view = str[:]
+  let _ = str_view[-6:]
+
+}
+
+test "panic negative index 2" {
+  // index_at_rev fails
+  let str = "hello"
+  let str_view = str[:]
+  let _ = str_view[:-6]
+
+}
+
+test "panic negative index 3" {
+  // index_at_rev returns an index not in bounds of the view
+  let str = "hello"
+  guard let Some(start) = str.index_at(1)
+  guard let Some(end) = str.index_at(4)
+  let str_view = str[start:end]
+  let _ = str_view[-4:]
+
+}
+
+test "panic negative index 4" {
+  // index_at_rev returns an index not in bounds of the view
+  let str = "hello"
+  guard let Some(start) = str.index_at(1)
+  guard let Some(end) = str.index_at(4)
+  let str_view = str[start:end]
+  let _ = str_view[:-4]
+
+}
+
+test "panic negative index 5" {
+  // index_at_rev returns an index not in bounds of the view
+  let str = "hello"
+  guard let Some(start) = str.index_at(1)
+  guard let Some(end) = str.index_at(4)
+  let str_view = str[start:end]
+  let _ = str_view[4:]
+
+}
+
+test "panic negative index 6" {
+  // index_at_rev returns an index not in bounds of the view
+  let str = "hello"
+  guard let Some(start) = str.index_at(1)
+  guard let Some(end) = str.index_at(4)
+  let str_view = str[start:end]
+  let _ = str_view[:4]
+
+}
+
+test "panic negative index 7" {
+  // start > end
+  let str = "hello"
+  guard let Some(start) = str.index_at(1)
+  guard let Some(end) = str.index_at(4)
+  let str_view = str[start:end]
+  let _ = str_view[-1:-2]
+
+}
+
+test "panic negative index 8" {
+  // start > end
+  let str = "hello"
+  guard let Some(start) = str.index_at(1)
+  guard let Some(end) = str.index_at(4)
+  let str_view = str[start:end]
+  let _ = str_view[-1:1]
+
+}
+
+test "panic negative index 9" {
+  // start > end
+  let str = "hello"
+  guard let Some(start) = str.index_at(1)
+  guard let Some(end) = str.index_at(4)
+  let str_view = str[start:end]
+  let _ = str_view[2:-2]
+
+}
