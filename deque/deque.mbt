@@ -926,13 +926,13 @@ pub fn truncate[A](self : T[A], len : Int) -> Unit {
 /// Example:
 ///
 /// ```moonbit
-/// test "filter_map_inplace" {
+/// test "retain_map" {
 ///   let dq = @deque.of([1, 2, 3, 4, 5])
-///   dq.filter_map_inplace(fn(x) { if x % 2 == 0 { Some(x * 2) } else { None } })
+///   dq.retain_map(fn(x) { if x % 2 == 0 { Some(x * 2) } else { None } })
 ///   inspect!(dq, content="@deque.of([4, 8])")
 /// }
 /// ```
-pub fn filter_map_inplace[A](self : T[A], f : (A) -> A?) -> Unit {
+pub fn retain_map[A](self : T[A], f : (A) -> A?) -> Unit {
   guard not(self.is_empty()) else { return }
   let { head, buf, .. } = self
   let cap = buf.length()
@@ -969,6 +969,16 @@ pub fn filter_map_inplace[A](self : T[A], f : (A) -> A?) -> Unit {
   } else {
     self.truncate(idx - head)
   }
+}
+
+///|
+/// Filters and maps elements in-place using a provided function. Modifies the
+/// deque to retain only elements for which the provided function returns `Some`,
+/// and updates those elements with the values inside the `Some` variant.
+///
+/// @alert deprecated "Use `@deque.retain_map` instead"
+pub fn filter_map_inplace[A](self : T[A], f : (A) -> A?) -> Unit {
+  self.retain_map(f)
 }
 
 ///|

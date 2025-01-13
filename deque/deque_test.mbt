@@ -837,19 +837,19 @@ test "deque retain" {
   )
 }
 
-test "deque filter_map_inplace" {
+test "deque retain_map" {
   let inc_if = fn(pred) { fn(x) { if pred(x) { Some(x + 1) } else { None } } }
   let is_even = fn(x) { x % 2 == 0 }
   let inc_if_even = inc_if(is_even)
 
   // Empty deque
   let dq : @deque.T[Int] = @deque.new()
-  dq.filter_map_inplace(inc_if_even)
+  dq.retain_map(inc_if_even)
   inspect!(dq, content="@deque.of([])")
 
   // Non-empty deque
   let dq = @deque.of([1, 2, 3, 4, 5])
-  dq.filter_map_inplace(inc_if_even)
+  dq.retain_map(inc_if_even)
   inspect!(dq.as_views(), content="([3, 5], [])")
 
   // Test split case (head_len < len)
@@ -866,20 +866,17 @@ test "deque filter_map_inplace" {
     dq
   }
 
+  inspect!(dq!()..retain_map(inc_if_even).as_views(), content="([5, 7, 9], [])")
   inspect!(
-    dq!()..filter_map_inplace(inc_if_even).as_views(),
-    content="([5, 7, 9], [])",
-  )
-  inspect!(
-    dq!()..filter_map_inplace(inc_if(fn(x) { x >= 5 })).as_views(),
+    dq!()..retain_map(inc_if(fn(x) { x >= 5 })).as_views(),
     content="([6, 7, 8], [9])",
   )
   inspect!(
-    dq!()..filter_map_inplace(inc_if(fn(x) { x >= 7 })).as_views(),
+    dq!()..retain_map(inc_if(fn(x) { x >= 7 })).as_views(),
     content="([8, 9], [])",
   )
   inspect!(
-    dq!()..filter_map_inplace(Option::Some).as_views(),
+    dq!()..retain_map(Option::Some).as_views(),
     content="([4, 5, 6], [7, 8])",
   )
 }
