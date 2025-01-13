@@ -185,3 +185,20 @@ test "panic out of bounds4" {
   let _ = view[0]
 
 }
+
+test "index_at_rev" {
+  let str = "🤣🤣🤣"
+  guard let Some(offset) = str.index_at_rev(0)
+  inspect!(offset, content="StringIndex(6)")
+  guard let Some(offset) = str.index_at_rev(1)
+  inspect!(offset, content="StringIndex(4)")
+  guard let Some(offset) = str.index_at_rev(2)
+  inspect!(offset, content="StringIndex(2)")
+  guard let Some(offset) = str.index_at_rev(3)
+  inspect!(offset, content="StringIndex(0)")
+  let offset = str.index_at_rev(4)
+  inspect!(offset, content="None")
+  guard let Some(offset) = str.index_at_rev(1)
+  guard let Some(offset) = str.index_at_rev(1, end=offset)
+  inspect!(offset, content="StringIndex(2)")
+}
