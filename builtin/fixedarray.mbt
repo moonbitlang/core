@@ -67,7 +67,7 @@ pub fn compare[T : Compare](self : FixedArray[T], other : FixedArray[T]) -> Int 
     1
   } else {
     for i in 0..<len_self {
-      let cmp = self[i].compare(other[i])
+      let cmp = self.unsafe_get(i).compare(other.unsafe_get(i))
       if cmp != 0 {
         break cmp
       }
