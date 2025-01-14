@@ -72,41 +72,41 @@ pub fn to_octets(self : BigInt, length? : Int) -> Bytes {
   if self < 0 {
     abort("negative BigInt")
   }
-
-  // TODO: Optimize this
-  let buf = []
-  fn to_bytes() {
-    let len = buf.length()
-    let len = match length {
-      Some(len2) =>
-        if len2 <= 0 {
-          abort("negative length")
-        } else if len2 > len {
-          len2
-        } else {
-          len
-        }
-      None => len
-    }
-    let res = Bytes::new(len)
-    let mut j = res.length() - 1
-    for octet in buf {
-      res[j] = octet
-      j -= 1
-    }
-    res
-  }
-
   if self == 0 {
-    buf.push(0)
-    return to_bytes()
+    return match length {
+      Some(len) => Bytes::make(len, 0)
+      None => [0]
+    }
   }
-  let mut x = self
-  while x > 0 {
-    buf.push(x.to_byte())
-    x = x >> 8
+  let buf = []
+  loop self {
+    v =>
+      if v > 0 {
+        buf.push(v.to_byte())
+        continue v >> 8
+      }
   }
-  to_bytes()
+  let buf_len = buf.length()
+  match length {
+    Some(len) => {
+      if len <= 0 {
+        abort("negative length")
+      }
+      if len > buf_len {
+        Bytes::makei(len, fn(i) {
+          let padding = len - buf_len
+          if i < padding {
+            0
+          } else {
+            buf[buf_len - (i - padding) - 1]
+          }
+        })
+      } else {
+        Bytes::makei(buf_len, fn(i) { buf[buf_len - i - 1] })
+      }
+    }
+    None => Bytes::makei(buf_len, fn(i) { buf[buf_len - i - 1] })
+  }
 }
 
 ///|
