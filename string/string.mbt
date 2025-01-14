@@ -60,7 +60,7 @@ pub fn String::concat(
   } else {
     match strings {
       [] => ()
-      [hd, .. as tl] => {
+      [hd, .. tl] => {
         buf.write_string(hd)
         for s in tl {
           buf.write_string(separator)
