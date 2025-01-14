@@ -103,7 +103,7 @@ fn MyInt64::op_mul(self : MyInt64, other : MyInt64) -> MyInt64 {
 }
 
 ///|
-struct Int64WasmHelper {
+priv struct Int64WasmHelper {
   div_s : (Int, Int, Int, Int) -> Int
   div_u : (Int, Int, Int, Int) -> Int
   rem_s : (Int, Int, Int, Int) -> Int
@@ -502,7 +502,7 @@ pub fn Int64::to_int(self : Int64) -> Int {
 }
 
 ///|
-pub fn Int64::to_uint(self : Int64) -> UInt {
+fn Int64::to_uint(self : Int64) -> UInt {
   MyInt64::from_int64(self).to_uint()
 }
 
@@ -566,7 +566,7 @@ pub fn Double::convert_uint64(value : UInt64) -> Double {
 }
 
 ///|
-pub fn Double::convert_int64(value : Int64) -> Double {
+fn Double::convert_int64(value : Int64) -> Double {
   MyInt64::convert_to_double(MyInt64::from_int64(value))
 }
 
