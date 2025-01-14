@@ -162,11 +162,6 @@ pub fn new(size_hint~ : Int = 0) -> T {
   { data, len: 0, initial_data: data }
 }
 
-///| @alert deprecated "use `@buffer.new` instead"
-pub fn T::new(size_hint~ : Int = 0) -> T {
-  new(size_hint~)
-}
-
 ///|
 /// Writes a UTF-16LE encoded string into the buffer. The buffer will
 /// automatically grow if needed to accommodate the string.

@@ -233,11 +233,6 @@ pub fn from_iter[K : Compare, V](iter : Iter[(K, V)]) -> T[K, V] {
   m
 }
 
-///| @alert deprecated "use `@sorted_map.from_iter` instead"
-pub fn T::from_iter[K : Compare, V](iter : Iter[(K, V)]) -> T[K, V] {
-  from_iter(iter)
-}
-
 ///|
 pub impl[K : @quickcheck.Arbitrary + Compare, V : @quickcheck.Arbitrary] @quickcheck.Arbitrary for T[
   K,

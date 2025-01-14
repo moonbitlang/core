@@ -22,11 +22,6 @@ pub fn new[A]() -> T[A] {
   Empty
 }
 
-///| @alert deprecated "use `@immut/sorted_set.new` instead"
-pub fn T::new[A]() -> T[A] {
-  Empty
-}
-
 ///|
 pub impl[A] Default for T[A] with default() { Empty }
 
@@ -34,11 +29,6 @@ pub impl[A] Default for T[A] with default() { Empty }
 /// Returns the one-value ImmutableSet containing only `value`.
 pub fn singleton[A : Compare](value : A) -> T[A] {
   Node(left=Empty, value~, right=Empty, size=1)
-}
-
-///| @alert deprecated "use `immut/sorted_set.singleton` instead"
-pub fn T::singleton[A : Compare](value : A) -> T[A] {
-  singleton(value)
 }
 
 ///|
@@ -49,11 +39,6 @@ pub fn from_array[A : Compare](array : Array[A]) -> T[A] {
   } else {
     set
   }
-}
-
-///| @alert deprecated "use `@immut/sorted_set.from_array` instead"
-pub fn T::from_array[A : Compare](array : Array[A]) -> T[A] {
-  from_array(array)
 }
 
 ///|
@@ -588,13 +573,6 @@ pub fn from_json[A : @json.FromJson + Compare](
   @json.from_json!(json)
 }
 
-///| @alert deprecated "use `@immut/sorted_set.from_json` instead"
-pub fn T::from_json[A : @json.FromJson + Compare](
-  json : Json
-) -> T[A]!@json.JsonDecodeError {
-  @json.from_json!(json)
-}
-
 ///|
 pub impl[X : @quickcheck.Arbitrary + Compare] @quickcheck.Arbitrary for T[X] with arbitrary(
   size,
@@ -780,11 +758,6 @@ pub fn of[A : Compare](array : FixedArray[A]) -> T[A] {
   } else {
     set
   }
-}
-
-///| @alert deprecated "use `@immut/sorted_set.of` instead"
-pub fn T::of[A : Compare](array : FixedArray[A]) -> T[A] {
-  of(array)
 }
 
 ///|

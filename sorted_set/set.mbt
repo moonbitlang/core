@@ -413,11 +413,6 @@ pub fn from_iter[V : Compare](iter : Iter[V]) -> T[V] {
   s
 }
 
-///| @alert deprecated "use `@sorted_set.from_iter` instead"
-pub fn T::from_iter[V : Compare](iter : Iter[V]) -> T[V] {
-  from_iter(iter)
-}
-
 ///|
 /// Converts the set to string.
 pub impl[V : Show] Show for T[V] with output(self, logger) {

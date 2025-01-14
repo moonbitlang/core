@@ -53,3 +53,10 @@ pub fn write_sub_string(
 ) -> Unit {
   self.write_substring(value, start, len)
 }
+
+///|
+/// @alert deprecated "use `@buffer.new` instead"
+/// @coverage.skip
+pub fn T::new(size_hint~ : Int = 0) -> T {
+  new(size_hint~)
+}

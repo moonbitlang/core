@@ -39,11 +39,6 @@ pub fn new[A]() -> T[A] {
   Empty
 }
 
-///| @alert deprecated "use `@immut/hashset.new` instead"
-pub fn T::new[A]() -> T[A] {
-  new()
-}
-
 ///|
 /// Lookup a value from the hash set
 pub fn contains[A : Eq + Hash](self : T[A], key : A) -> Bool {
@@ -219,11 +214,6 @@ pub fn from_iter[A : Eq + Hash](iter : Iter[A]) -> T[A] {
   iter.fold(init=new(), fn(s, e) { s.add(e) })
 }
 
-///| @alert deprecated "use `@immut/hashset.from_iter` instead"
-pub fn T::from_iter[A : Eq + Hash](iter : Iter[A]) -> T[A] {
-  from_iter(iter)
-}
-
 ///|
 pub impl[A : Show] Show for T[A] with output(self, logger) {
   logger.write_iter(self.iter(), prefix="@immut/hashset.of([", suffix="])")
@@ -240,11 +230,6 @@ pub fn from_array[A : Eq + Hash](arr : Array[A]) -> T[A] {
   }
 }
 
-///| @alert deprecated "use `@immut/hashset.from_array` instead"
-pub fn T::from_array[A : Eq + Hash](arr : Array[A]) -> T[A] {
-  from_array(arr)
-}
-
 ///|
 pub fn of[A : Eq + Hash](arr : FixedArray[A]) -> T[A] {
   loop arr.length(), new() {
@@ -254,11 +239,6 @@ pub fn of[A : Eq + Hash](arr : FixedArray[A]) -> T[A] {
       continue n - 1, set.add(k)
     }
   }
-}
-
-///| @alert deprecated "use `@immut/hashset.of` instead"
-pub fn T::of[A : Eq + Hash](arr : FixedArray[A]) -> T[A] {
-  of(arr)
 }
 
 ///|

@@ -45,11 +45,6 @@ pub fn new[A](capacity~ : Int = 0) -> T[A] {
   T::{ buf: UninitializedArray::make(capacity), len: 0, head: 0, tail: 0 }
 }
 
-///| @alert deprecated "use `@deque.new` instead"
-pub fn T::new[A](capacity~ : Int = 0) -> T[A] {
-  new(capacity~)
-}
-
 ///|
 pub impl[A : Show] Show for T[A] with output(self, logger) {
   logger.write_iter(self.iter(), prefix="@deque.of([", suffix="])")
@@ -85,11 +80,6 @@ pub fn from_array[A](arr : Array[A]) -> T[A] {
     deq.buf[i] = arr[i]
   }
   deq
-}
-
-///| @alert deprecated "use `@deque.from_array` instead"
-pub fn T::from_array[A](arr : Array[A]) -> T[A] {
-  from_array(arr)
 }
 
 ///|
@@ -155,11 +145,6 @@ pub fn of[A](arr : FixedArray[A]) -> T[A] {
     deq.buf[i] = arr[i]
   }
   deq
-}
-
-///| @alert deprecated "use `@deque.of` instead"
-pub fn T::of[A](arr : FixedArray[A]) -> T[A] {
-  of(arr)
 }
 
 ///|
@@ -1258,9 +1243,4 @@ pub fn from_iter[A](iter : Iter[A]) -> T[A] {
   let dq = new()
   iter.each(fn(e) { dq.push_back(e) })
   dq
-}
-
-///| @alert deprecated "use `@deque.from_iter` instead"
-pub fn T::from_iter[A](iter : Iter[A]) -> T[A] {
-  from_iter(iter)
 }

@@ -24,11 +24,6 @@ pub fn new[A : Compare]() -> T[A] {
   { body: Empty, len: 0 }
 }
 
-///| @alert deprecated "use `@immut/priority_queue.new` instead"
-pub fn T::new[A : Compare]() -> T[A] {
-  new()
-}
-
 ///|
 /// Creates a new immutable priority queue from an array.
 ///
@@ -46,11 +41,6 @@ pub fn from_array[A : Compare](arr : Array[A]) -> T[A] {
       break { body: acc, len: arr.length() }
     }
   }
-}
-
-///| @alert deprecated "use `@immut/priority_queue.from_array` instead"
-pub fn T::from_array[A : Compare](arr : Array[A]) -> T[A] {
-  from_array(arr)
 }
 
 ///|
@@ -224,11 +214,6 @@ pub fn of[A : Compare](arr : FixedArray[A]) -> T[A] {
       break { body: acc, len: arr.length() }
     }
   }
-}
-
-///| @alert deprecated "use `@immut/priority_queue.of` instead"
-pub fn T::of[A : Compare](arr : FixedArray[A]) -> T[A] {
-  of(arr)
 }
 
 ///|

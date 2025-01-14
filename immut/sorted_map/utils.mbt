@@ -24,20 +24,10 @@ pub fn new[K, V]() -> T[K, V] {
   Empty
 }
 
-///| @alert deprecated "use `@immut/sorted_map.new` instead"
-pub fn T::new[K, V]() -> T[K, V] {
-  Empty
-}
-
 ///|
 /// Create a map with a single key-value pair.
 pub fn singleton[K, V](key : K, value : V) -> T[K, V] {
   Tree(key, value~, size=1, Empty, Empty)
-}
-
-///| @alert deprecated "use `@immut/sorted_map.singleton` instead"
-pub fn T::singleton[K, V](key : K, value : V) -> T[K, V] {
-  singleton(key, value)
 }
 
 ///|
@@ -220,11 +210,6 @@ pub fn from_array[K : Compare, V](array : Array[(K, V)]) -> T[K, V] {
   }
 }
 
-///| @alert deprecated "use `@immut/sorted_map.from_array` instead"
-pub fn T::from_array[K : Compare, V](array : Array[(K, V)]) -> T[K, V] {
-  from_array(array)
-}
-
 ///|
 pub fn iter[K, V](self : T[K, V]) -> Iter[(K, V)] {
   Iter::new(fn(yield_) {
@@ -268,11 +253,6 @@ pub fn from_iter[K : Compare, V](iter : Iter[(K, V)]) -> T[K, V] {
   iter.fold(init=new(), fn(m, e) { m.add(e.0, e.1) })
 }
 
-///| @alert deprecated "use `@immut/sorted_map.from_iter` instead"
-pub fn T::from_iter[K : Compare, V](iter : Iter[(K, V)]) -> T[K, V] {
-  from_iter(iter)
-}
-
 ///|
 /// Return all keys of the map in ascending order.
 pub fn keys[K, V](self : T[K, V]) -> Array[K] {
@@ -295,11 +275,6 @@ pub fn of[K : Compare, V](array : FixedArray[(K, V)]) -> T[K, V] {
   }
 }
 
-///| @alert deprecated "use `@immut/sorted_map.of` instead"
-pub fn T::of[K : Compare, V](array : FixedArray[(K, V)]) -> T[K, V] {
-  of(array)
-}
-
 ///|
 pub fn to_json[K : Show, V : ToJson](self : T[K, V]) -> Json {
   ToJson::to_json(self)
@@ -307,13 +282,6 @@ pub fn to_json[K : Show, V : ToJson](self : T[K, V]) -> Json {
 
 ///|
 pub fn from_json[V : @json.FromJson](
-  json : Json
-) -> T[String, V]!@json.JsonDecodeError {
-  @json.from_json!(json)
-}
-
-///| @alert deprecated "use `@immut/sorted_map.from_json` instead"
-pub fn T::from_json[V : @json.FromJson](
   json : Json
 ) -> T[String, V]!@json.JsonDecodeError {
   @json.from_json!(json)
