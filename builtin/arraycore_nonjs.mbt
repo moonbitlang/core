@@ -80,6 +80,7 @@ pub fn Array::new[T](capacity~ : Int = 0) -> Array[T] {
 ///   inspect!(empty.length(), content="0")
 /// }
 /// ```
+/// @intrinsic %array.length
 pub fn length[T](self : Array[T]) -> Int {
   self.len
 }
