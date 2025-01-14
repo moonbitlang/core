@@ -13,31 +13,10 @@
 // limitations under the License.
 
 ///|
-pub(all) type XStringCreateHandle
+priv type XStringReadHandle
 
 ///|
-pub(all) type XStringReadHandle
-
-///|
-pub(all) type XExternString
-
-///|
-fn begin_create_string() -> XStringCreateHandle = "__moonbit_fs_unstable" "begin_create_string"
-
-///|
-fn string_append_char(handle : XStringCreateHandle, ch : Char) = "__moonbit_fs_unstable" "string_append_char"
-
-///|
-fn finish_create_string(handle : XStringCreateHandle) -> XExternString = "__moonbit_fs_unstable" "finish_create_string"
-
-///|
-pub fn string_to_extern(s : String) -> XExternString {
-  let handle = begin_create_string()
-  for i = 0; i < s.length(); i = i + 1 {
-    string_append_char(handle, s[i])
-  }
-  finish_create_string(handle)
-}
+priv type XExternString
 
 ///|
 fn begin_read_string(s : XExternString) -> XStringReadHandle = "__moonbit_fs_unstable" "begin_read_string"
@@ -50,7 +29,7 @@ fn string_read_char(handle : XStringReadHandle) -> Int = "__moonbit_fs_unstable"
 fn finish_read_string(handle : XStringReadHandle) = "__moonbit_fs_unstable" "finish_read_string"
 
 ///|
-pub fn string_from_extern(e : XExternString) -> String {
+fn string_from_extern(e : XExternString) -> String {
   let buf = StringBuilder::new()
   let handle = begin_read_string(e)
   while true {
@@ -66,10 +45,10 @@ pub fn string_from_extern(e : XExternString) -> String {
 }
 
 ///|
-pub(all) type XStringArrayReadHandle
+priv type XStringArrayReadHandle
 
 ///|
-pub(all) type XExternStringArray
+priv type XExternStringArray
 
 ///|
 fn begin_read_string_array(sa : XExternStringArray) -> XStringArrayReadHandle = "__moonbit_fs_unstable" "begin_read_string_array"
@@ -81,7 +60,7 @@ fn string_array_read_string(handle : XStringArrayReadHandle) -> XExternString = 
 fn finish_read_string_array(handle : XStringArrayReadHandle) = "__moonbit_fs_unstable" "finish_read_string_array"
 
 ///|
-pub fn string_array_from_extern(e : XExternStringArray) -> Array[String] {
+fn string_array_from_extern(e : XExternStringArray) -> Array[String] {
   let buf = Array::new()
   let handle = begin_read_string_array(e)
   while true {
@@ -99,7 +78,7 @@ pub fn string_array_from_extern(e : XExternStringArray) -> Array[String] {
 }
 
 ///|
-pub fn get_cli_args() -> Array[String] {
+fn get_cli_args_internal() -> Array[String] {
   let args = get_cli_args_ffi()
   string_array_from_extern(args)
 }
@@ -108,4 +87,4 @@ pub fn get_cli_args() -> Array[String] {
 fn get_cli_args_ffi() -> XExternStringArray = "__moonbit_fs_unstable" "args_get"
 
 ///|
-pub fn now() -> UInt64 = "__moonbit_time_unstable" "now"
+fn now_internal() -> UInt64 = "__moonbit_time_unstable" "now"
