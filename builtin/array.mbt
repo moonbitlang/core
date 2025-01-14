@@ -118,7 +118,7 @@ pub fn capacity[T](self : Array[T]) -> Int {
 /// }
 /// ```
 ///
-/// @alert unsafe "Panic if index is out of bounds"
+/// @intrinsic %array.unsafe_get
 pub fn unsafe_get[T](self : Array[T], idx : Int) -> T {
   self.buffer()[idx]
 }
