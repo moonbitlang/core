@@ -132,7 +132,7 @@ pub fn is_empty(self : T) -> Bool {
 /// }
 /// ```
 pub fn contents(self : T) -> Bytes {
-  Bytes::from_fixedarray(self.data, len=self.len)
+  @bytes.from_fixedarray(self.data, len=self.len)
 }
 
 ///|
@@ -149,14 +149,14 @@ pub fn contents(self : T) -> Bytes {
 /// Example:
 ///
 /// ```moonbit
-/// test "T::new" {
-///   let buf = @buffer.T::new(size_hint=10)
+/// test "new" {
+///   let buf = @buffer.new(size_hint=10)
 ///   inspect!(buf.length(), content="0")
 ///   buf.write_string("test")
 ///   inspect!(buf.length(), content="8")
 /// }
 /// ```
-pub fn T::new(size_hint~ : Int = 0) -> T {
+pub fn new(size_hint~ : Int = 0) -> T {
   let initial = if size_hint < 1 { 1 } else { size_hint }
   let data = FixedArray::make(initial, Byte::default())
   { data, len: 0, initial_data: data }
@@ -691,7 +691,7 @@ pub fn reset(self : T) -> Unit {
 /// }
 /// ```
 pub fn to_bytes(self : T) -> Bytes {
-  Bytes::from_fixedarray(self.data, len=self.len)
+  @bytes.from_fixedarray(self.data, len=self.len)
 }
 
 ///|

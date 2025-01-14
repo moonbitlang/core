@@ -3,6 +3,7 @@ package moonbitlang/core/ref
 alias @moonbitlang/core/quickcheck as @quickcheck
 
 // Values
+fn new[T](T) -> Ref[T]
 
 // Types and methods
 impl Ref {

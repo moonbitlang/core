@@ -34,7 +34,10 @@ pub fn UninitializedArray::make[T](size : Int) -> UninitializedArray[T] = "%fixe
 /// - `index` : The index of the element to retrieve.
 ///
 /// Returns the element at the specified index.
-pub fn op_get[T](self : UninitializedArray[T], index : Int) -> T = "%fixedarray.get"
+pub fn UninitializedArray::op_get[T](
+  self : UninitializedArray[T],
+  index : Int
+) -> T = "%fixedarray.get"
 
 ///|
 /// Sets the value at the specified index in an uninitialized array.
@@ -44,7 +47,11 @@ pub fn op_get[T](self : UninitializedArray[T], index : Int) -> T = "%fixedarray.
 /// - `array` : The uninitialized array where the value will be set.
 /// - `index` : The position in the array where the value will be set.
 /// - `value` : The value to be set at the specified index.
-pub fn op_set[T](self : UninitializedArray[T], index : Int, value : T) = "%fixedarray.set"
+pub fn UninitializedArray::op_set[T](
+  self : UninitializedArray[T],
+  index : Int,
+  value : T
+) = "%fixedarray.set"
 
 ///|
 /// Creates a view into a portion of the uninitialized array.
@@ -61,7 +68,7 @@ pub fn op_set[T](self : UninitializedArray[T], index : Int, value : T) = "%fixed
 ///
 /// Throws an error if the indices are out of bounds or if `start` is greater
 /// than `end`.
-pub fn op_as_view[T](
+pub fn UninitializedArray::op_as_view[T](
   self : UninitializedArray[T],
   start~ : Int = 0,
   end? : Int
@@ -85,7 +92,7 @@ pub fn op_as_view[T](
 /// - `array` : The uninitialized array whose length is to be determined.
 ///
 /// Returns the length of the uninitialized array as an integer.
-pub fn length[A](self : UninitializedArray[A]) -> Int {
+pub fn UninitializedArray::length[A](self : UninitializedArray[A]) -> Int {
   self._.length()
 }
 

@@ -122,19 +122,19 @@ test "is_empty" {
 
 test "from_iter multiple elements iter" {
   inspect!(
-    @priority_queue.T::from_iter([1, 2, 3].iter()),
+    @priority_queue.from_iter([1, 2, 3].iter()),
     content="@priority_queue.of([3, 2, 1])",
   )
 }
 
 test "from_iter single element iter" {
   inspect!(
-    @priority_queue.T::from_iter([1].iter()),
+    @priority_queue.from_iter([1].iter()),
     content="@priority_queue.of([1])",
   )
 }
 
 test "from_iter empty iter" {
-  let pq : @priority_queue.T[Int] = @priority_queue.T::from_iter(Iter::empty())
+  let pq : @priority_queue.T[Int] = @priority_queue.from_iter(Iter::empty())
   inspect!(pq, content="@priority_queue.of([])")
 }

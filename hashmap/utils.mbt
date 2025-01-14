@@ -52,7 +52,7 @@ pub fn iter[K, V](self : T[K, V]) -> Iter[(K, V)] {
 }
 
 ///|
-pub fn T::iter2[K, V](self : T[K, V]) -> Iter2[K, V] {
+pub fn iter2[K, V](self : T[K, V]) -> Iter2[K, V] {
   Iter2::new(fn(yield_) {
     for entry in self.entries {
       match entry {
@@ -69,10 +69,15 @@ pub fn T::iter2[K, V](self : T[K, V]) -> Iter2[K, V] {
 }
 
 ///|
-pub fn T::from_iter[K : Hash + Eq, V](iter : Iter[(K, V)]) -> T[K, V] {
-  let m = T::new()
+pub fn from_iter[K : Hash + Eq, V](iter : Iter[(K, V)]) -> T[K, V] {
+  let m = new()
   iter.each(fn(e) { m[e.0] = e.1 })
   m
+}
+
+///| @alert deprecated "use `@hashmap.from_iter` instead"
+pub fn T::from_iter[K : Hash + Eq, V](iter : Iter[(K, V)]) -> T[K, V] {
+  from_iter(iter)
 }
 
 ///|

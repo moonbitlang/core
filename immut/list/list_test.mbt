@@ -589,15 +589,15 @@ test "op_add" {
 }
 
 test "from_iter multiple elements iter" {
-  inspect!(@list.T::from_iter([1, 2, 3].iter()), content="@list.of([3, 2, 1])")
+  inspect!(@list.from_iter([1, 2, 3].iter()), content="@list.of([3, 2, 1])")
 }
 
 test "from_iter single element iter" {
-  inspect!(@list.T::from_iter([1].iter()), content="@list.of([1])")
+  inspect!(@list.from_iter([1].iter()), content="@list.of([1])")
 }
 
 test "from_iter empty iter" {
-  let pq : @list.T[Int] = @list.T::from_iter(Iter::empty())
+  let pq : @list.T[Int] = @list.from_iter(Iter::empty())
   inspect!(pq, content="@list.of([])")
 }
 

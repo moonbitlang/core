@@ -43,7 +43,7 @@ pub fn dump[T](t : T, name? : String, loc~ : SourceLoc = _) -> T {
 }
 
 ///|
-pub fn to_string(self : Bool) -> String {
+pub fn Bool::to_string(self : Bool) -> String {
   if self {
     "true"
   } else {
@@ -52,7 +52,7 @@ pub fn to_string(self : Bool) -> String {
 }
 
 ///|
-pub fn to_string(self : Int64) -> String {
+pub fn Int64::to_string(self : Int64) -> String {
   fn abs(n : Int64) -> Int64 {
     if n < 0L {
       0L - n
@@ -81,7 +81,7 @@ pub fn to_string(self : Int64) -> String {
 }
 
 ///|
-pub fn to_string(self : Int) -> String {
+pub fn Int::to_string(self : Int) -> String {
   fn abs(n : Int) -> Int {
     if n < 0 {
       0 - n
@@ -148,7 +148,17 @@ pub fn UInt64::to_string(self : UInt64) -> String {
 }
 
 ///|
-/// @coverage.skip
+pub fn Int16::to_string(self : Int16) -> String {
+  self.to_int().to_string()
+}
+
+///|
+pub fn UInt16::to_string(self : UInt16) -> String {
+  self.to_int().to_string()
+}
+
+///|
+/// @coverage.skip 
 pub fn op_lt[T : Compare](self_ : T, other : T) -> Bool {
   self_.compare(other).is_neg()
 }

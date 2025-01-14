@@ -20,7 +20,7 @@
 /// let queue = @priority_queue.new()
 /// assert_eq!(queue.push(1).length(), 1)
 /// ```
-pub fn T::new[A : Compare]() -> T[A] {
+pub fn new[A : Compare]() -> T[A] {
   { body: Empty, len: 0 }
 }
 
@@ -32,7 +32,7 @@ pub fn T::new[A : Compare]() -> T[A] {
 /// let queue = @priority_queue.of([1, 2, 3, 4, 5])
 /// assert_eq!(queue.length(), 5)
 /// ```
-pub fn T::from_array[A : Compare](arr : Array[A]) -> T[A] {
+pub fn from_array[A : Compare](arr : Array[A]) -> T[A] {
   let len = arr.length()
   for i = 0, acc = Cont::Empty {
     if i < len {
@@ -83,7 +83,7 @@ pub fn iter[A : Compare](self : T[A]) -> Iter[A] {
 
 ///|
 pub fn T::from_iter[A : Compare](iter : Iter[A]) -> T[A] {
-  iter.fold(init=T::new(), fn(s, e) { s.push(e) })
+  iter.fold(init=new(), fn(s, e) { s.push(e) })
 }
 
 ///|
@@ -205,7 +205,7 @@ pub fn length[A](self : T[A]) -> Int {
 }
 
 ///|
-pub fn T::of[A : Compare](arr : FixedArray[A]) -> T[A] {
+pub fn of[A : Compare](arr : FixedArray[A]) -> T[A] {
   let len = arr.length()
   for i = 0, acc = Cont::Empty {
     if i < len {

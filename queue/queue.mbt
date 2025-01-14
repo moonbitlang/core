@@ -20,7 +20,7 @@
 /// let queue : @queue.T[Int] = @queue.new()
 /// assert_eq!(queue.length(), 0)
 /// ```
-pub fn T::new[A]() -> T[A] {
+pub fn new[A]() -> T[A] {
   { length: 0, first: Nil, last: Nil }
 }
 
@@ -33,11 +33,11 @@ pub fn T::new[A]() -> T[A] {
 /// let queue : @queue.T[Int] = @queue.from_array(array)
 /// assert_eq!(queue.length(), 3)
 /// ```
-pub fn T::from_array[A](arr : Array[A]) -> T[A] {
+pub fn from_array[A](arr : Array[A]) -> T[A] {
   if arr.length() == 0 {
     return new()
   }
-  let queue : T[A] = T::new()
+  let queue : T[A] = new()
   queue.length = arr.length()
   queue.last = Cons({ content: arr[queue.length - 1], next: Nil })
   queue.first = queue.last
@@ -54,7 +54,7 @@ pub impl[A : Show] Show for T[A] with output(self, logger) {
 
 ///|
 /// Tests if two queue cells are equal.
-fn op_equal[T : Eq](self : Cell[T], other : Cell[T]) -> Bool {
+fn Cell::op_equal[T : Eq](self : Cell[T], other : Cell[T]) -> Bool {
   loop self, other {
     Nil, Nil => true
     Cons({ content: x, next: xs }), Cons({ content: y, next: ys }) =>
@@ -364,11 +364,11 @@ pub fn iter[A](self : T[A]) -> Iter[A] {
 ///
 /// # Example
 /// ```
-/// let queue : @queue.T[Int] = @queue.T::from_iter(Iter::empty())
+/// let queue : @queue.T[Int] = @queue.from_iter(Iter::empty())
 /// assert_eq!(queue.length(), 0)
 /// ```
-pub fn T::from_iter[A](iter : Iter[A]) -> T[A] {
-  let q = T::new()
+pub fn from_iter[A](iter : Iter[A]) -> T[A] {
+  let q = new()
   iter.each(fn(e) { q.push(e) })
   q
 }
@@ -381,11 +381,11 @@ pub fn T::from_iter[A](iter : Iter[A]) -> T[A] {
 /// let queue : @queue.T[Int] = @queue.of([1, 2, 3, 4])
 /// assert_eq!(queue.length(), 4)
 /// ```
-pub fn T::of[A](arr : FixedArray[A]) -> T[A] {
+pub fn of[A](arr : FixedArray[A]) -> T[A] {
   if arr.length() == 0 {
     return new()
   }
-  let queue : T[A] = T::new()
+  let queue : T[A] = new()
   queue.length = arr.length()
   queue.last = Cons({ content: arr[queue.length - 1], next: Nil })
   queue.first = queue.last
@@ -459,7 +459,7 @@ pub impl[X : @quickcheck.Arbitrary] @quickcheck.Arbitrary for T[X] with arbitrar
   size,
   rs
 ) {
-  @quickcheck.Arbitrary::arbitrary(size, rs) |> T::from_iter
+  @quickcheck.Arbitrary::arbitrary(size, rs) |> from_iter
 }
 
 test "queue arbitrary" {

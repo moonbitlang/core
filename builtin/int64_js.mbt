@@ -35,7 +35,7 @@ fn MyInt64::op_neg(self : MyInt64) -> MyInt64 {
 }
 
 ///|
-fn MyInt64::add_hi_lo(self : MyInt64, bhi : Int, blo : Int) -> MyInt64 {
+fn add_hi_lo(self : MyInt64, bhi : Int, blo : Int) -> MyInt64 {
   let { hi: ahi, lo: alo } = self
   let lo = alo + blo
   let s = lo >> 31
@@ -517,6 +517,16 @@ pub fn Int64::to_byte(self : Int64) -> Byte {
 }
 
 ///|
+pub fn Int64::to_int16(self : Int64) -> Int16 {
+  MyInt64::from_int64(self).to_int().to_int16()
+}
+
+///|
+pub fn Int64::to_uint16(self : Int64) -> UInt16 {
+  MyInt64::from_int64(self).to_int().to_uint16()
+}
+
+///|
 pub fn UInt64::extend_uint(value : UInt) -> UInt64 {
   MyInt64::extend_i32_u(value.reinterpret_as_int()).to_uint64()
 }
@@ -534,6 +544,16 @@ pub fn UInt64::reinterpret_as_double(self : UInt64) -> Double {
 ///|
 pub fn Int::to_int64(self : Int) -> Int64 {
   MyInt64::from_int(self).to_int64()
+}
+
+///|
+pub fn Int16::to_int64(self : Int16) -> Int64 {
+  MyInt64::from_int(self.to_int()).to_int64()
+}
+
+///|
+pub fn UInt16::to_int64(self : UInt16) -> Int64 {
+  MyInt64::from_int(self.to_int()).to_int64()
 }
 
 ///|

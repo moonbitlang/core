@@ -18,12 +18,12 @@ type Iter[T] ((T) -> IterResult) -> IterResult
 
 ///|
 //TODO: Add intrinsic for Iter::run
-pub fn run[T](self : Iter[T], f : (T) -> IterResult) -> IterResult {
+pub fn Iter::run[T](self : Iter[T], f : (T) -> IterResult) -> IterResult {
   (self._)(f)
 }
 
 ///|
-pub fn just_run[T](self : Iter[T], f : (T) -> IterResult) -> Unit {
+pub fn Iter::just_run[T](self : Iter[T], f : (T) -> IterResult) -> Unit {
   (self._)(f) |> ignore
 }
 
@@ -53,19 +53,19 @@ pub impl[T : Show] Show for Iter[T] with output(self, logger) {
 /// - `f`: A function that takes an element of type `T` and returns `Unit`. This function is applied to each element of the iterator.
 /// TODO: change the intrinsic to match the function name
 /// @intrinsic %iter.iter
-pub fn each[T](self : Iter[T], f : (T) -> Unit) -> Unit {
+pub fn Iter::each[T](self : Iter[T], f : (T) -> Unit) -> Unit {
   for a in self {
     f(a)
   }
 }
 
 ///|
-pub fn any[T](self : Iter[T], f : (T) -> Bool) -> Bool {
+pub fn Iter::any[T](self : Iter[T], f : (T) -> Bool) -> Bool {
   self.run(fn(k) { if f(k) { IterEnd } else { IterContinue } }) != IterContinue
 }
 
 ///|
-pub fn all[T](self : Iter[T], f : (T) -> Bool) -> Bool {
+pub fn Iter::all[T](self : Iter[T], f : (T) -> Bool) -> Bool {
   self.run(fn(k) { if not(f(k)) { IterEnd } else { IterContinue } }) ==
   IterContinue
 }
@@ -82,7 +82,7 @@ pub fn all[T](self : Iter[T], f : (T) -> Bool) -> Bool {
 /// - `self`: The iterator to consume.
 /// - `f`: A function that takes an index of type `Int` and an element of type `T` and returns `Unit`. This function is applied to each element of the iterator.
 /// TODO: Add intrinsic
-pub fn eachi[T](self : Iter[T], f : (Int, T) -> Unit) -> Unit {
+pub fn Iter::eachi[T](self : Iter[T], f : (Int, T) -> Unit) -> Unit {
   let mut i = 0
   for a in self {
     f(i, a)
@@ -108,7 +108,7 @@ pub fn eachi[T](self : Iter[T], f : (Int, T) -> Unit) -> Unit {
 ///
 /// Returns the final accumulator value after folding all elements of the iterator.
 /// @intrinsic %iter.reduce
-pub fn fold[T, B](self : Iter[T], init~ : B, f : (B, T) -> B) -> B {
+pub fn Iter::fold[T, B](self : Iter[T], init~ : B, f : (B, T) -> B) -> B {
   let mut acc = init
   for a in self {
     acc = f(acc, a)
@@ -130,7 +130,7 @@ pub fn fold[T, B](self : Iter[T], init~ : B, f : (B, T) -> B) -> B {
 /// # Returns
 ///
 /// Returns the number of elements in the iterator.
-pub fn count[T](self : Iter[T]) -> Int {
+pub fn Iter::count[T](self : Iter[T]) -> Int {
   self.fold(fn { acc, _ => acc + 1 }, init=0)
 }
 
@@ -212,7 +212,7 @@ pub fn Iter::repeat[T](a : T) -> Iter[T] {
 /// # Returns
 ///
 /// Returns an iterator that iterates over the range of Int from `start` to `end - 1`.
-pub fn until(
+pub fn Int::until(
   self : Int,
   end : Int,
   step~ : Int = 1,
@@ -255,7 +255,7 @@ pub fn until(
 /// # Returns
 ///
 /// Returns an iterator that iterates over the range of Int64 from `start` to `end - 1`.
-pub fn until(
+pub fn Int64::until(
   self : Int64,
   end : Int64,
   step~ : Int64 = 1L,
@@ -298,7 +298,7 @@ pub fn until(
 /// # Returns
 ///
 /// Returns an iterator that iterates over the range of Float from `start` to `end - 1`.
-pub fn until(
+pub fn Float::until(
   self : Float,
   end : Float,
   step~ : Float = 1.0,
@@ -341,7 +341,7 @@ pub fn until(
 /// # Returns
 ///
 /// Returns an iterator that iterates over the range of Double from `start` to `end - 1`.
-pub fn until(
+pub fn Double::until(
   self : Double,
   end : Double,
   step~ : Double = 1.0,
@@ -388,7 +388,7 @@ pub fn until(
 ///
 /// A new iterator that only contains the elements for which the predicate function returns `IterContinue`.
 /// @intrinsic %iter.filter
-pub fn filter[T](self : Iter[T], f : (T) -> Bool) -> Iter[T] {
+pub fn Iter::filter[T](self : Iter[T], f : (T) -> Bool) -> Iter[T] {
   fn(yield_) {
     self.run(fn { a => if f(a) { yield_(a) } else { IterContinue } })
   }
@@ -411,14 +411,14 @@ pub fn filter[T](self : Iter[T], f : (T) -> Bool) -> Iter[T] {
 ///
 /// A new iterator that contains the transformed elements.
 /// @intrinsic %iter.map
-pub fn map[T, R](self : Iter[T], f : (T) -> R) -> Iter[R] {
+pub fn Iter::map[T, R](self : Iter[T], f : (T) -> R) -> Iter[R] {
   fn { yield_ => self.run(fn { a => yield_(f(a)) }) }
 }
 
 ///|
 /// Transforms the elements of the iterator using a mapping function that returns an `Option`.
 /// The elements for which the function returns `None` are filtered out.
-pub fn filter_map[A, B](self : Iter[A], f : (A) -> B?) -> Iter[B] {
+pub fn Iter::filter_map[A, B](self : Iter[A], f : (A) -> B?) -> Iter[B] {
   fn(yield_) {
     self.run(fn(a) {
       match f(a) {
@@ -434,7 +434,7 @@ pub fn filter_map[A, B](self : Iter[A], f : (A) -> B?) -> Iter[B] {
 /// The elements for which the function returns `None` are filtered out.
 ///
 /// @alert deprecated "Use `Iter::filter_map` instead"
-pub fn map_option[A, B](self : Iter[A], f : (A) -> B?) -> Iter[B] {
+pub fn Iter::map_option[A, B](self : Iter[A], f : (A) -> B?) -> Iter[B] {
   self.filter_map(f)
 }
 
@@ -455,7 +455,7 @@ pub fn map_option[A, B](self : Iter[A], f : (A) -> B?) -> Iter[B] {
 ///
 /// A new iterator that contains the flattened elements.
 /// @intrinsic %iter.flat_map
-pub fn flat_map[T, R](self : Iter[T], f : (T) -> Iter[R]) -> Iter[R] {
+pub fn Iter::flat_map[T, R](self : Iter[T], f : (T) -> Iter[R]) -> Iter[R] {
   fn { yield_ => self.run(fn { x => f(x).run(yield_) }) }
 }
 
@@ -474,7 +474,7 @@ pub fn flat_map[T, R](self : Iter[T], f : (T) -> Iter[R]) -> Iter[R] {
 /// # Returns
 ///
 /// The same iterator.
-pub fn tap[T](self : Iter[T], f : (T) -> Unit) -> Iter[T] {
+pub fn Iter::tap[T](self : Iter[T], f : (T) -> Unit) -> Iter[T] {
   self.map(fn {
     a => {
       f(a)
@@ -499,7 +499,7 @@ pub fn tap[T](self : Iter[T], f : (T) -> Unit) -> Iter[T] {
 ///
 /// A new iterator that contains the first `n` elements.
 /// @intrinsic %iter.take
-pub fn take[T](self : Iter[T], n : Int) -> Iter[T] {
+pub fn Iter::take[T](self : Iter[T], n : Int) -> Iter[T] {
   // [..take(10,seq), next] would continue
   // even if seq has less than 10 elements
   // but `for x in [..take(10,seq), next ] { break }` would stop
@@ -540,7 +540,7 @@ pub fn take[T](self : Iter[T], n : Int) -> Iter[T] {
 /// # Returns
 ///
 /// A new iterator that contains the elements as long as the predicate function returns `true`.
-pub fn take_while[T](self : Iter[T], f : (T) -> Bool) -> Iter[T] {
+pub fn Iter::take_while[T](self : Iter[T], f : (T) -> Bool) -> Iter[T] {
   fn(yield_) {
     // `r` represents the overall return value.
     // It is set to `IterEnd` only if `yield_(a)` returns `IterEnd`.
@@ -567,7 +567,7 @@ pub fn take_while[T](self : Iter[T], f : (T) -> Bool) -> Iter[T] {
 
 ///|
 /// Transforms the elements of the iterator using a mapping function upto the function returns `None`.
-pub fn map_while[A, B](self : Iter[A], f : (A) -> B?) -> Iter[B] {
+pub fn Iter::map_while[A, B](self : Iter[A], f : (A) -> B?) -> Iter[B] {
   fn(yield_) {
     let mut r : IterResult = IterContinue
     self.just_run(fn(a) {
@@ -601,7 +601,7 @@ pub fn map_while[A, B](self : Iter[A], f : (A) -> B?) -> Iter[B] {
 /// # Returns
 ///
 /// A new iterator that starts after skipping the first `n` elements.
-pub fn drop[T](self : Iter[T], n : Int) -> Iter[T] {
+pub fn Iter::drop[T](self : Iter[T], n : Int) -> Iter[T] {
   fn(yield_) {
     let mut i = 0
     self.run(fn(a) {
@@ -630,7 +630,7 @@ pub fn drop[T](self : Iter[T], n : Int) -> Iter[T] {
 /// # Returns
 ///
 /// A new iterator that starts after skipping the elements as long as the predicate function returns `true`.
-pub fn drop_while[T](self : Iter[T], f : (T) -> Bool) -> Iter[T] {
+pub fn Iter::drop_while[T](self : Iter[T], f : (T) -> Bool) -> Iter[T] {
   fn(yield_) {
     let mut dropping = true
     self.run(fn(a) {
@@ -659,7 +659,7 @@ pub fn drop_while[T](self : Iter[T], f : (T) -> Bool) -> Iter[T] {
 /// # Returns
 ///
 /// An `Option` that contains the first element that satisfies the predicate function, or `None` if no such element is found.
-pub fn find_first[T](self : Iter[T], f : (T) -> Bool) -> T? {
+pub fn Iter::find_first[T](self : Iter[T], f : (T) -> Bool) -> T? {
   for a in self {
     if f(a) {
       break Some(a)
@@ -670,7 +670,7 @@ pub fn find_first[T](self : Iter[T], f : (T) -> Bool) -> T? {
 }
 
 ///|
-pub fn peek[T](self : Iter[T]) -> T? {
+pub fn Iter::peek[T](self : Iter[T]) -> T? {
   let mut first = None
   self.just_run(fn(a) {
     first = Some(a)
@@ -694,7 +694,7 @@ pub fn peek[T](self : Iter[T]) -> T? {
 /// # Returns
 ///
 /// Returns a new iterator with the element `a` prepended to the original iterator.
-pub fn prepend[T](self : Iter[T], a : T) -> Iter[T] {
+pub fn Iter::prepend[T](self : Iter[T], a : T) -> Iter[T] {
   fn(yield_) {
     if yield_(a) == IterContinue {
       self.run(yield_)
@@ -719,7 +719,7 @@ pub fn prepend[T](self : Iter[T], a : T) -> Iter[T] {
 /// # Returns
 ///
 /// Returns a new iterator with the element `a` appended to the original iterator.
-pub fn append[T](self : Iter[T], a : T) -> Iter[T] {
+pub fn Iter::append[T](self : Iter[T], a : T) -> Iter[T] {
   fn(yield_) {
     if self.run(yield_) == IterContinue {
       yield_(a)
@@ -756,13 +756,13 @@ pub fn Iter::concat[T](self : Iter[T], other : Iter[T]) -> Iter[T] {
 }
 
 ///|
-pub fn op_add[T](self : Iter[T], other : Iter[T]) -> Iter[T] {
+pub fn Iter::op_add[T](self : Iter[T], other : Iter[T]) -> Iter[T] {
   Iter::concat(self, other)
 }
 
 ///|
 /// Collects the elements of the iterator into an array.
-pub fn to_array[T](self : Iter[T]) -> Array[T] {
+pub fn Iter::to_array[T](self : Iter[T]) -> Array[T] {
   let result = []
   for e in self {
     result.push(e)
@@ -772,7 +772,7 @@ pub fn to_array[T](self : Iter[T]) -> Array[T] {
 
 ///|
 /// Collects the elements of the iterator into an array.
-pub fn collect[T](self : Iter[T]) -> Array[T] {
+pub fn Iter::collect[T](self : Iter[T]) -> Array[T] {
   let result = []
   self.each(fn(e) { result.push(e) })
   result
@@ -781,13 +781,13 @@ pub fn collect[T](self : Iter[T]) -> Array[T] {
 ///|
 /// Iter itself is an iterator.
 /// so that it works with array spread operator. e.g, `[..iter]`
-pub fn iter[T](self : Iter[T]) -> Iter[T] {
+pub fn Iter::iter[T](self : Iter[T]) -> Iter[T] {
   self
 }
 
 ///|
 /// Returns the last element of the iterator, or `None` if the iterator is empty.
-pub fn last[A](self : Iter[A]) -> A? {
+pub fn Iter::last[A](self : Iter[A]) -> A? {
   fn f(_a : A?, b : A) {
     Some(b)
   }
@@ -814,9 +814,9 @@ pub fn last[A](self : Iter[A]) -> A? {
 ///
 /// ```
 /// let iter = Iter::singleton(42)
-/// assert_eq!(head(iter), Some(42))
+/// assert_eq!(iter.head(), Some(42))
 /// ```
-pub fn head[A](self : Iter[A]) -> A? {
+pub fn Iter::head[A](self : Iter[A]) -> A? {
   for i in self {
     break Some(i)
   } else {
@@ -839,7 +839,7 @@ pub fn head[A](self : Iter[A]) -> A? {
 /// [1, 2, 3].iter().intersperse(0).each(fn(i) {arr.push(i)})
 /// assert_eq!(arr, [1, 0, 2, 0, 3])
 /// ```
-pub fn intersperse[A](self : Iter[A], sep : A) -> Iter[A] {
+pub fn Iter::intersperse[A](self : Iter[A], sep : A) -> Iter[A] {
   fn(yield_) {
     let mut first = true
     self.run(fn(x) {
@@ -856,7 +856,11 @@ pub fn intersperse[A](self : Iter[A], sep : A) -> Iter[A] {
 }
 
 ///|
-pub fn op_as_view[A](self : Iter[A], start~ : Int = 0, end? : Int) -> Iter[A] {
+pub fn Iter::op_as_view[A](
+  self : Iter[A],
+  start~ : Int = 0,
+  end? : Int
+) -> Iter[A] {
   // Note here we mark `end` as an optional parameter
   // since the meaningful default value of `end` is the length of the iterator
   // this is time consuming to calculate
@@ -895,7 +899,7 @@ pub fn op_as_view[A](self : Iter[A], start~ : Int = 0, end? : Int) -> Iter[A] {
 ///   inspect!(iter.contains(1), content="false")
 /// }
 /// ```
-pub fn contains[A : Eq](self : Iter[A], value : A) -> Bool {
+pub fn Iter::contains[A : Eq](self : Iter[A], value : A) -> Bool {
   for v in self {
     if v == value {
       break true

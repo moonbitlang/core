@@ -13,7 +13,7 @@
 // limitations under the License.
 
 ///|
-pub fn op_equal[T : Eq, E : Eq](
+pub fn Result::op_equal[T : Eq, E : Eq](
   self : Result[T, E],
   other : Result[T, E]
 ) -> Bool {

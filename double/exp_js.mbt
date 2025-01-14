@@ -39,5 +39,4 @@
 ///   inspect!(not_a_number.exp().is_nan(), content="true")
 /// }
 /// ```
-/// ```
 pub fn exp(self : Double) -> Double = "Math" "exp"

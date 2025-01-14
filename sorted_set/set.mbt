@@ -386,7 +386,7 @@ pub fn iter[V](self : T[V]) -> Iter[V] {
 }
 
 ///|
-fn iter[A](self : Node[A]) -> Iter[A] {
+fn Node::iter[A](self : Node[A]) -> Iter[A] {
   Iter::new(fn(yield_) {
     let { left, value, right, .. } = self
     let res = match left {
@@ -407,7 +407,7 @@ fn iter[A](self : Node[A]) -> Iter[A] {
 }
 
 ///|
-pub fn T::from_iter[V : Compare](iter : Iter[V]) -> T[V] {
+pub fn from_iter[V : Compare](iter : Iter[V]) -> T[V] {
   let s = new()
   iter.each(fn(e) { s.add(e) })
   s
@@ -427,7 +427,7 @@ pub impl[X : @quickcheck.Arbitrary + Compare] @quickcheck.Arbitrary for T[X] wit
   size,
   rs
 ) {
-  @quickcheck.Arbitrary::arbitrary(size, rs) |> T::from_iter
+  @quickcheck.Arbitrary::arbitrary(size, rs) |> from_iter
 }
 
 ///|
@@ -436,7 +436,7 @@ impl[T : Show] Show for Node[T] with output(self, logger) {
 }
 
 ///|
-fn to_array[T](self : Node[T]) -> Array[T] {
+fn Node::to_array[T](self : Node[T]) -> Array[T] {
   fn aux(n : Node[T]?) -> Array[_] {
     match n {
       None => []

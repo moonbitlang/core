@@ -158,19 +158,19 @@ test "panic op_shr coverage for negative shift" {
 }
 
 test "panic from_string coverage for empty string" {
-  from_string("") |> ignore
+  BigInt::from_string("") |> ignore
 }
 
 test "panic from_string coverage for invalid character" {
-  from_string("123a56789") |> ignore
+  BigInt::from_string("123a56789") |> ignore
 }
 
 test "panic from_hex coverage for empty string" {
-  from_hex("") |> ignore
+  BigInt::from_hex("") |> ignore
 }
 
 test "panic from_hex coverage for invalid character" {
-  from_hex("123g56789") |> ignore
+  BigInt::from_hex("123g56789") |> ignore
 }
 
 test "panic pow coverage for negative exponent" {
@@ -194,7 +194,7 @@ test "panic to_octets coverage for negative number than required" {
 }
 
 test "panic from_octets coverage for empty octets" {
-  from_octets(b"") |> ignore
+  BigInt::from_octets(b"") |> ignore
 }
 
 test "panic blit_negative_length" {

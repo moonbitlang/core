@@ -13,12 +13,12 @@
 // limitations under the License.
 
 ///|
-pub fn op_mul(self : Byte, that : Byte) -> Byte {
+pub fn Byte::op_mul(self : Byte, that : Byte) -> Byte {
   (self.to_int() * that.to_int()).to_byte()
 }
 
 ///|
-pub fn op_div(self : Byte, that : Byte) -> Byte {
+pub fn Byte::op_div(self : Byte, that : Byte) -> Byte {
   (self.to_int() / that.to_int()).to_byte()
 }
 
@@ -31,7 +31,7 @@ pub fn op_div(self : Byte, that : Byte) -> Byte {
 /// - `that` : The second `Byte` value to compare.
 ///
 /// Returns `true` if the two `Byte` values are equal, otherwise `false`.
-pub fn op_equal(self : Byte, that : Byte) -> Bool {
+pub fn Byte::op_equal(self : Byte, that : Byte) -> Bool {
   self.to_int() == that.to_int()
 }
 
@@ -44,7 +44,7 @@ pub fn op_equal(self : Byte, that : Byte) -> Bool {
 /// - `byte2` : The second `Byte` value to be added.
 ///
 /// Returns the sum of `byte1` and `byte2` as a `Byte`.
-pub fn op_add(self : Byte, that : Byte) -> Byte {
+pub fn Byte::op_add(self : Byte, that : Byte) -> Byte {
   (self.to_int() + that.to_int()).to_byte()
 }
 
@@ -58,7 +58,7 @@ pub fn op_add(self : Byte, that : Byte) -> Byte {
 /// - `that` : The byte to subtract from the first byte.
 ///
 /// Returns the result of the subtraction as a byte.
-pub fn op_sub(self : Byte, that : Byte) -> Byte {
+pub fn Byte::op_sub(self : Byte, that : Byte) -> Byte {
   (self.to_int() - that.to_int()).to_byte()
 }
 
@@ -75,7 +75,7 @@ pub fn op_sub(self : Byte, that : Byte) -> Byte {
 /// - A value less than 0 indicates that `byte1` is less than `byte2`.
 /// - A value of 0 indicates that `byte1` is equal to `byte2`.
 /// - A value greater than 0 indicates that `byte1` is greater than `byte2`.
-pub fn compare(self : Byte, that : Byte) -> Int {
+pub fn Byte::compare(self : Byte, that : Byte) -> Int {
   self.to_int().compare(that.to_int())
 }
 
@@ -111,7 +111,7 @@ fn alphabet(self : Int) -> String {
 ///
 /// Returns a `String` representing the `Byte` in the format `b'\xHH'`, where
 /// `HH` is the hexadecimal representation of the byte.
-pub fn to_string(self : Byte) -> String {
+pub fn Byte::to_string(self : Byte) -> String {
   let i = self.to_int()
   let hi = alphabet(i / 16)
   let lo = alphabet(i % 16)

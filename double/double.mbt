@@ -44,11 +44,17 @@ pub let min_positive : Double = 0x0010000000000000L.reinterpret_as_double()
 ///
 /// ```moonbit
 /// test "Double::from_int" {
-///   inspect!(Double::from_int(42), content="42")
-///   inspect!(Double::from_int(-1), content="-1")
+///   inspect!(@double.from_int(42), content="42")
+///   inspect!(@double.from_int(-1), content="-1")
 /// }
 /// ```
 pub fn Double::from_int(i : Int) -> Double {
+  i.to_double()
+}
+
+///|
+/// same as Double::from_int`
+pub fn from_int(i : Int) -> Double {
   i.to_double()
 }
 
@@ -238,9 +244,9 @@ pub fn is_neg_inf(self : Double) -> Bool {
 }
 
 test "from_int" {
-  assert_eq!(Double::from_int(1), 1.0)
-  assert_eq!(Double::from_int(0), 0.0)
-  assert_eq!(Double::from_int(100000), 1.0e5)
+  assert_eq!(from_int(1), 1.0)
+  assert_eq!(from_int(0), 0.0)
+  assert_eq!(from_int(100000), 1.0e5)
 }
 
 test "abs" {

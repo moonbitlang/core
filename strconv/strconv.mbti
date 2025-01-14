@@ -5,6 +5,8 @@ fn parse[A : FromStr](String) -> A!StrConvError
 
 fn parse_bool(String) -> Bool!StrConvError
 
+fn parse_decimal(String) -> Decimal!StrConvError
+
 fn parse_double(String) -> Double!StrConvError
 
 fn parse_int(String, base~ : Int = ..) -> Int!StrConvError
@@ -20,7 +22,7 @@ type Decimal
 impl Decimal {
   from_int64(Int64) -> Self
   new() -> Self
-  parse_decimal(String) -> Self!StrConvError
+  parse_decimal(String) -> Self!StrConvError //deprecated
   shift(Self, Int) -> Unit
   to_double(Self) -> Double!StrConvError
 }

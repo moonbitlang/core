@@ -58,6 +58,6 @@ pub fn StringBuilder::to_string(self : StringBuilder) -> String {
 }
 
 ///|
-pub fn reset(self : StringBuilder) -> Unit {
+pub fn StringBuilder::reset(self : StringBuilder) -> Unit {
   self.val = ""
 }

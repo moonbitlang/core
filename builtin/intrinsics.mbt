@@ -463,3 +463,27 @@ pub fn Double::to_float(self : Double) -> Float = "%f64.to_f32"
 
 ///|
 pub fn UInt::to_float(self : UInt) -> Float = "%u32.to_f32"
+
+///|
+pub fn Int16::to_int(self : Int16) -> Int = "%i16_to_i32"
+
+///|
+pub fn Int16::to_byte(self : Int16) -> Byte = "%i16_to_byte"
+
+///|
+pub fn Int::to_int16(self : Int) -> Int16 = "%i32_to_i16"
+
+///|
+pub fn Byte::to_int16(self : Byte) -> Int16 = "%byte_to_i16"
+
+///|
+pub fn UInt16::to_int(self : UInt16) -> Int = "%u16_to_i32"
+
+///|
+pub fn UInt16::to_byte(self : UInt16) -> Byte = "%u16_to_byte"
+
+///|
+pub fn Int::to_uint16(self : Int) -> UInt16 = "%i32_to_u16"
+
+///|
+pub fn Byte::to_uint16(self : Byte) -> UInt16 = "%byte_to_u16"

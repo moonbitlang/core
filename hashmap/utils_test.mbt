@@ -13,7 +13,7 @@
 // limitations under the License.
 
 test "capacity" {
-  let m = @hashmap.T::new()
+  let m = @hashmap.new()
   assert_eq!(m.capacity(), 8)
   m.set("a", 1)
   m.set("b", 2)

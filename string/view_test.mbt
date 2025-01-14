@@ -134,6 +134,15 @@ test "stringview op_get" {
   inspect!(view[4], content="'🤣'")
 }
 
+test "stringview rev_get" {
+  let str = "Hello🤣🤣🤣"
+  guard let Some(start) = str.index_at(1)
+  guard let Some(end) = str.index_at(6)
+  let view = str[start:end]
+  inspect!(view.rev_get(0), content="'🤣'")
+  inspect!(view.rev_get(4), content="'e'")
+}
+
 test "stringview length" {
   let str = "Hello🤣🤣🤣"
   guard let Some(start) = str.index_at(1)
@@ -415,5 +424,23 @@ test "panic negative index 9" {
   guard let Some(end) = str.index_at(4)
   let str_view = str[start:end]
   let _ = str_view[2:-2]
+
+}
+
+test "panic rev_get" {
+  let str = "Hello🤣🤣🤣"
+  guard let Some(start) = str.index_at(1)
+  guard let Some(end) = str.index_at(6)
+  let view = str[start:end]
+  let _ = view.rev_get(5)
+
+}
+
+test "panic rev_get2" {
+  let str = "Hello🤣🤣🤣"
+  guard let Some(start) = str.index_at(1)
+  guard let Some(end) = str.index_at(6)
+  let view = str[start:end]
+  let _ = view.rev_get(-1)
 
 }

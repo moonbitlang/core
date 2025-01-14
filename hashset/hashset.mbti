@@ -3,6 +3,13 @@ package moonbitlang/core/hashset
 alias @moonbitlang/core/quickcheck as @quickcheck
 
 // Values
+fn from_array[K : Hash + Eq](Array[K]) -> T[K]
+
+fn from_iter[K : Hash + Eq](Iter[K]) -> T[K]
+
+fn new[K](capacity~ : Int = ..) -> T[K]
+
+fn of[K : Hash + Eq](FixedArray[K]) -> T[K]
 
 // Types and methods
 type T
@@ -14,14 +21,14 @@ impl T {
   difference[K : Hash + Eq](Self[K], Self[K]) -> Self[K]
   each[K](Self[K], (K) -> Unit) -> Unit
   eachi[K](Self[K], (Int, K) -> Unit) -> Unit
-  from_array[K : Hash + Eq](Array[K]) -> Self[K]
-  from_iter[K : Hash + Eq](Iter[K]) -> Self[K]
+  from_array[K : Hash + Eq](Array[K]) -> Self[K] //deprecated
+  from_iter[K : Hash + Eq](Iter[K]) -> Self[K] //deprecated
   insert[K : Hash + Eq](Self[K], K) -> Unit //deprecated
   intersection[K : Hash + Eq](Self[K], Self[K]) -> Self[K]
   is_empty[K](Self[K]) -> Bool
   iter[K](Self[K]) -> Iter[K]
-  new[K]() -> Self[K]
-  of[K : Hash + Eq](FixedArray[K]) -> Self[K]
+  new[K](capacity~ : Int = ..) -> Self[K] //deprecated
+  of[K : Hash + Eq](FixedArray[K]) -> Self[K] //deprecated
   remove[K : Hash + Eq](Self[K], K) -> Unit
   size[K](Self[K]) -> Int
   symmetric_difference[K : Hash + Eq](Self[K], Self[K]) -> Self[K]

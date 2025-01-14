@@ -165,24 +165,21 @@ test "iter" {
 }
 
 test "from_iter multiple elements iter" {
-  inspect!(
-    @queue.T::from_iter([1, 2, 3].iter()),
-    content="@queue.of([1, 2, 3])",
-  )
+  inspect!(@queue.from_iter([1, 2, 3].iter()), content="@queue.of([1, 2, 3])")
 }
 
 test "from_iter single element iter" {
-  inspect!(@queue.T::from_iter([1].iter()), content="@queue.of([1])")
+  inspect!(@queue.from_iter([1].iter()), content="@queue.of([1])")
 }
 
 test "from_iter empty iter" {
-  let pq : @queue.T[Int] = @queue.T::from_iter(Iter::empty())
+  let pq : @queue.T[Int] = @queue.from_iter(Iter::empty())
   inspect!(pq, content="@queue.of([])")
 }
 
 test "to_string" {
-  let queue : @queue.T[Int] = @queue.T::from_array([])
+  let queue : @queue.T[Int] = @queue.from_array([])
   assert_eq!(queue.to_string(), "@queue.of([])")
-  let queue : @queue.T[Int] = @queue.T::from_array([9, 8, 7, 5])
+  let queue : @queue.T[Int] = @queue.from_array([9, 8, 7, 5])
   assert_eq!(queue.to_string(), "@queue.of([9, 8, 7, 5])")
 }

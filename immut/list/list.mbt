@@ -23,8 +23,8 @@ pub impl[A : Show] Show for T[A] with output(xs, logger) {
 }
 
 ///|
-pub fn T::to_string[A : Show](xs : T[A]) -> String {
-  Show::to_string(xs)
+pub fn to_string[A : Show](self : T[A]) -> String {
+  Show::to_string(self)
 }
 
 ///|
@@ -39,7 +39,7 @@ pub impl[A : ToJson] ToJson for T[A] with to_json(self) {
 }
 
 ///|
-pub fn T::to_json[A : ToJson](self : T[A]) -> Json {
+pub fn to_json[A : ToJson](self : T[A]) -> Json {
   ToJson::to_json(self)
 }
 
@@ -60,9 +60,7 @@ pub impl[A : @json.FromJson] @json.FromJson for T[A] with from_json(json, path) 
 }
 
 ///|
-pub fn T::from_json[A : @json.FromJson](
-  json : Json
-) -> T[A]!@json.JsonDecodeError {
+pub fn from_json[A : @json.FromJson](json : Json) -> T[A]!@json.JsonDecodeError {
   @json.from_json!(json)
 }
 
@@ -75,7 +73,7 @@ pub fn T::from_json[A : @json.FromJson](
 /// let ls = @list.of([1, 2, 3, 4, 5])
 /// assert_eq!(ls, @list.from_array([1, 2, 3, 4, 5]))
 /// ```
-pub fn T::from_array[A](arr : Array[A]) -> T[A] {
+pub fn from_array[A](arr : Array[A]) -> T[A] {
   for i = arr.length() - 1, list = Nil; i >= 0; {
     continue i - 1, Cons(arr[i], list)
   } else {
@@ -1072,8 +1070,11 @@ pub fn intercalate[A](self : T[T[A]], sep : T[A]) -> T[A] {
 }
 
 ///|
+pub impl[X] Default for T[X] with default() { Nil }
+
+///|
 /// The empty list
-pub fn T::default[X]() -> T[X] {
+pub fn default[X]() -> T[X] {
   Nil
 }
 
@@ -1108,12 +1109,12 @@ pub fn iter2[A](self : T[A]) -> Iter2[Int, A] {
 }
 
 ///|
-pub fn T::from_iter[A](iter : Iter[A]) -> T[A] {
+pub fn from_iter[A](iter : Iter[A]) -> T[A] {
   iter.fold(init=Nil, fn(acc, e) { Cons(e, acc) })
 }
 
 ///|
-pub fn T::of[A](arr : FixedArray[A]) -> T[A] {
+pub fn of[A](arr : FixedArray[A]) -> T[A] {
   for i = arr.length() - 1, list = Nil; i >= 0; {
     continue i - 1, Cons(arr[i], list)
   } else {

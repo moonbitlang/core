@@ -1,6 +1,7 @@
 package moonbitlang/core/immut/internal/sparse_array
 
 // Values
+fn singleton[X](Int, X) -> SparseArray[X]
 
 // Types and methods
 pub(all) type Bitset UInt
@@ -23,7 +24,6 @@ impl SparseArray {
   has[X](Self[X], Int) -> Bool
   op_get[X](Self[X], Int) -> X?
   replace[X](Self[X], Int, X) -> Self[X]
-  singleton[X](Int, X) -> Self[X]
   size[X](Self[X]) -> Int
 }
 impl[X : Eq] Eq for SparseArray[X]

@@ -18,7 +18,7 @@
 
 ///|
 // Construct a empty ImmutableSet.
-pub fn T::new[A]() -> T[A] {
+pub fn new[A]() -> T[A] {
   Empty
 }
 
@@ -27,13 +27,13 @@ pub impl[A] Default for T[A] with default() { Empty }
 
 ///|
 /// Returns the one-value ImmutableSet containing only `value`.
-pub fn T::singleton[A : Compare](value : A) -> T[A] {
+pub fn singleton[A : Compare](value : A) -> T[A] {
   Node(left=Empty, value~, right=Empty, size=1)
 }
 
 ///|
 /// Initialize an ImmutableSet[T] from a Array[T]
-pub fn T::from_array[A : Compare](array : Array[A]) -> T[A] {
+pub fn from_array[A : Compare](array : Array[A]) -> T[A] {
   for i = array.length() - 1, set = Empty; i >= 0; {
     continue i - 1, set.add(array[i])
   } else {
@@ -303,6 +303,17 @@ pub fn union[A : Compare](self : T[A], other : T[A]) -> T[A] {
 }
 
 ///|
+/// a convenient alias of `union`
+/// # Example
+/// 
+/// ```
+/// assert_eq!(@sorted_set.of([3, 4, 5]) + (@sorted_set.of([4, 5, 6])), @sorted_set.of([3, 4, 5, 6]))
+/// ```
+pub fn op_add[A : Compare](self : T[A], other : T[A]) -> T[A] {
+  return self.union(other)
+}
+
+///|
 /// @alert deprecated "Use `intersection` instead"
 /// @coverage.skip
 pub fn inter[A : Compare](self : T[A], other : T[A]) -> T[A] {
@@ -542,7 +553,7 @@ pub impl[A : ToJson] ToJson for T[A] with to_json(self) {
 }
 
 ///|
-pub fn T::to_json[A : ToJson](self : T[A]) -> Json {
+pub fn to_json[A : ToJson](self : T[A]) -> Json {
   ToJson::to_json(self)
 }
 
@@ -553,7 +564,7 @@ pub impl[A : @json.FromJson + Compare] @json.FromJson for T[A] with from_json(
 ) {
   match json {
     Array(arr) => {
-      let mut set = T::new()
+      let mut set = new()
       for i in arr {
         set = set.add(A::from_json!(i, path))
       }
@@ -567,7 +578,7 @@ pub impl[A : @json.FromJson + Compare] @json.FromJson for T[A] with from_json(
 }
 
 ///|
-pub fn T::from_json[A : @json.FromJson + Compare](
+pub fn from_json[A : @json.FromJson + Compare](
   json : Json
 ) -> T[A]!@json.JsonDecodeError {
   @json.from_json!(json)
@@ -752,7 +763,7 @@ fn concat[A : Compare](self : T[A], other : T[A]) -> T[A] {
 }
 
 ///|
-pub fn T::of[A : Compare](array : FixedArray[A]) -> T[A] {
+pub fn of[A : Compare](array : FixedArray[A]) -> T[A] {
   for i = array.length() - 1, set = Empty; i >= 0; {
     continue i - 1, set.add(array[i])
   } else {

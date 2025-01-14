@@ -55,5 +55,5 @@ test "shift" {
 }
 
 test "default" {
-  inspect!(UInt::default(), content="0")
+  inspect!(@uint.default(), content="0")
 }

@@ -1,6 +1,7 @@
 package moonbitlang/core/buffer
 
 // Values
+fn new(size_hint~ : Int = ..) -> T
 
 // Types and methods
 type T
@@ -8,7 +9,7 @@ impl T {
   contents(Self) -> Bytes
   is_empty(Self) -> Bool
   length(Self) -> Int
-  new(size_hint~ : Int = ..) -> Self
+  new(size_hint~ : Int = ..) -> Self //deprecated
   reset(Self) -> Unit
   to_bytes(Self) -> Bytes
   to_string(Self) -> String //deprecated
