@@ -106,6 +106,10 @@ test "union" {
     @sorted_set.of([3, 4, 5]).union(@sorted_set.of([4, 5, 6])),
     content="@immut/sorted_set.of([3, 4, 5, 6])",
   )
+  inspect!(
+    @sorted_set.of([3, 4, 5]) + @sorted_set.of([4, 5, 6]),
+    content="@immut/sorted_set.of([3, 4, 5, 6])",
+  )
 }
 
 test "map" {

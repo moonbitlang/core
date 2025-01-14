@@ -43,6 +43,7 @@ impl T {
   min_option[A : Compare](Self[A]) -> A?
   new[A]() -> Self[A] //deprecated
   of[A : Compare](FixedArray[A]) -> Self[A] //deprecated
+  op_add[A : Compare](Self[A], Self[A]) -> Self[A]
   remove[A : Compare](Self[A], A) -> Self[A]
   remove_min[A : Compare](Self[A]) -> Self[A]
   singleton[A : Compare](A) -> Self[A] //deprecated

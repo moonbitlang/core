@@ -303,6 +303,17 @@ pub fn union[A : Compare](self : T[A], other : T[A]) -> T[A] {
 }
 
 ///|
+/// a convenient alias of `union`
+/// # Example
+/// 
+/// ```
+/// assert_eq!(@sorted_set.of([3, 4, 5]) + (@sorted_set.of([4, 5, 6])), @sorted_set.of([3, 4, 5, 6]))
+/// ```
+pub fn op_add[A : Compare](self : T[A], other : T[A]) -> T[A] {
+  return self.union(other)
+}
+
+///|
 /// @alert deprecated "Use `intersection` instead"
 /// @coverage.skip
 pub fn inter[A : Compare](self : T[A], other : T[A]) -> T[A] {
