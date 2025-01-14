@@ -56,11 +56,6 @@ pub fn new(numerator : Int64, denominator : Int64) -> T? {
   }
 }
 
-///| @alert deprecated "use `@rational.new` instead"
-pub fn T::new(numerator : Int64, denominator : Int64) -> T? {
-  new(numerator, denominator)
-}
-
 ///|
 /// Creates a rational number without enforcing invariants.
 fn new_unchecked(numerator : Int64, denominator : Int64) -> T {
@@ -263,11 +258,6 @@ pub fn from_double(value : Double) -> T!RationalError {
     Some(r) => r
     None => abort("Impossible to reach")
   }
-}
-
-///| @alert deprecated "use `@rational.from_double` instead"
-pub fn T::from_double(value : Double) -> T!RationalError {
-  from_double!(value)
 }
 
 ///|

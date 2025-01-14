@@ -39,11 +39,6 @@ pub fn new[K, V]() -> T[K, V] {
   Empty
 }
 
-///| @alert deprecated "use `@immut/hashmap.new` instead"
-pub fn T::new[K, V]() -> T[K, V] {
-  new()
-}
-
 ///|
 /// Lookup a key from a hash map
 pub fn find[K : Eq + Hash, V](self : T[K, V], key : K) -> V? {
@@ -226,11 +221,6 @@ pub fn from_iter[K : Eq + Hash, V](iter : Iter[(K, V)]) -> T[K, V] {
   iter.fold(init=new(), fn(m, e) { m.add(e.0, e.1) })
 }
 
-///| @alert deprecated "use `@immut/hashmap.from_iter` instead"
-pub fn T::from_iter[K : Eq + Hash, V](iter : Iter[(K, V)]) -> T[K, V] {
-  from_iter(iter)
-}
-
 ///|
 pub impl[K : Show, V : Show] Show for T[K, V] with output(self, logger) {
   logger.write_iter(self.iter(), prefix="@immut/hashmap.of([", suffix="])")
@@ -245,11 +235,6 @@ pub fn from_array[K : Eq + Hash, V](arr : Array[(K, V)]) -> T[K, V] {
       continue n - 1, map.add(k, v)
     }
   }
-}
-
-///| @alert deprecated "use `@immut/hashmap.from_array` instead"
-pub fn T::from_array[K : Eq + Hash, V](arr : Array[(K, V)]) -> T[K, V] {
-  from_array(arr)
 }
 
 ///|
@@ -269,11 +254,6 @@ pub fn of[K : Eq + Hash, V](arr : FixedArray[(K, V)]) -> T[K, V] {
       continue n - 1, map.add(k, v)
     }
   }
-}
-
-///| @alert deprecated "use `@immut/hashmap.of` instead"
-pub fn T::of[K : Eq + Hash, V](arr : FixedArray[(K, V)]) -> T[K, V] {
-  of(arr)
 }
 
 ///|

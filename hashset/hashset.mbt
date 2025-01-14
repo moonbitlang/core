@@ -27,11 +27,6 @@ pub fn new[K](capacity~ : Int = default_init_capacity) -> T[K] {
   }
 }
 
-///| @alert deprecated "use `@hashset.new` instead"
-pub fn T::new[K](capacity~ : Int = default_init_capacity) -> T[K] {
-  new(capacity~)
-}
-
 ///|
 /// Create new hash set from array.
 pub fn from_array[K : Hash + Eq](arr : Array[K]) -> T[K] {
@@ -40,21 +35,11 @@ pub fn from_array[K : Hash + Eq](arr : Array[K]) -> T[K] {
   m
 }
 
-///| @alert deprecated "use `@hashset.from_array` instead"
-pub fn T::from_array[K : Hash + Eq](arr : Array[K]) -> T[K] {
-  from_array(arr)
-}
-
 ///|
 pub fn of[K : Hash + Eq](arr : FixedArray[K]) -> T[K] {
   let m = new()
   arr.each(fn(e) { m.add(e) })
   m
-}
-
-///| @alert deprecated "use `@hashset.of` instead"
-pub fn T::of[K : Hash + Eq](arr : FixedArray[K]) -> T[K] {
-  of(arr)
 }
 
 ///|
@@ -251,11 +236,6 @@ pub fn from_iter[K : Hash + Eq](iter : Iter[K]) -> T[K] {
   let s = new()
   iter.each(fn(e) { s.add(e) })
   s
-}
-
-///| @alert deprecated "use `@hashset.from_iter` instead"
-pub fn T::from_iter[K : Hash + Eq](iter : Iter[K]) -> T[K] {
-  from_iter(iter)
 }
 
 ///|

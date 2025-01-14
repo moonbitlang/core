@@ -18,11 +18,6 @@ pub fn new[A]() -> T[A] {
   { tree: Tree::empty(), size: 0, shift: 0 }
 }
 
-///| @alert deprecated "use `@immut/array.new` instead"
-pub fn T::new[A]() -> T[A] {
-  new()
-}
-
 ///|
 pub impl[A : Show] Show for T[A] with output(self, logger) {
   logger.write_iter(self.iter(), prefix="@immut/array.of([", suffix="])")
@@ -57,11 +52,6 @@ pub fn iter[A](self : T[A]) -> Iter[A] {
 ///|
 pub fn from_iter[A](iter : Iter[A]) -> T[A] {
   iter.fold(init=new(), fn(arr, e) { arr.push(e) })
-}
-
-///| @alert deprecated "use `@immut/array.from_iter` instead"
-pub fn T::from_iter[A](iter : Iter[A]) -> T[A] {
-  from_iter(iter)
 }
 
 ///|
@@ -162,11 +152,6 @@ pub fn push[A](self : T[A], value : A) -> T[A] {
 /// ```
 pub fn from_array[A](arr : Array[A]) -> T[A] {
   makei(arr.length(), fn(i) { arr[i] })
-}
-
-///| @alert deprecated "use `@immut/array.from_array` instead"
-pub fn T::from_array[A](arr : Array[A]) -> T[A] {
-  from_array(arr)
 }
 
 ///|
@@ -375,30 +360,15 @@ pub fn make[A](len : Int, value : A) -> T[A] {
   new_by_leaves(len, fn(_s, l) { FixedArray::make(l, value) })
 }
 
-///| @alert deprecated "use `@immut/array.make` instead"
-pub fn T::make[A](len : Int, value : A) -> T[A] {
-  make(len, value)
-}
-
 ///|
 /// Create a persistent array with a given length and a function to generate values.
 pub fn makei[A](len : Int, f : (Int) -> A) -> T[A] {
   new_by_leaves(len, fn(s, l) { FixedArray::makei(l, fn(i) { f(s + i) }) })
 }
 
-///| @alert deprecated "use `@immut/array.makei` instead"
-pub fn T::makei[A](len : Int, f : (Int) -> A) -> T[A] {
-  makei(len, f)
-}
-
 ///|
 pub fn of[A](arr : FixedArray[A]) -> T[A] {
   makei(arr.length(), fn(i) { arr[i] })
-}
-
-///| @alert deprecated "use `@immut/array.of` instead"
-pub fn T::of[A](arr : FixedArray[A]) -> T[A] {
-  of(arr)
 }
 
 ///|

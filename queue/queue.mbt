@@ -24,11 +24,6 @@ pub fn new[A]() -> T[A] {
   { length: 0, first: Nil, last: Nil }
 }
 
-///| @alert deprecated "use `@queue.new` instead"
-pub fn T::new[A]() -> T[A] {
-  new()
-}
-
 ///|
 /// Creates a new queue from an array.
 ///
@@ -50,11 +45,6 @@ pub fn from_array[A](arr : Array[A]) -> T[A] {
     queue.first = Cons({ content: arr[i], next: queue.first })
   }
   queue
-}
-
-///| @alert deprecated "use `@queue.from_array` instead"
-pub fn T::from_array[A](arr : Array[A]) -> T[A] {
-  from_array(arr)
 }
 
 ///|
@@ -383,11 +373,6 @@ pub fn from_iter[A](iter : Iter[A]) -> T[A] {
   q
 }
 
-///| @alert deprecated "use `@queue.from_iter` instead"
-pub fn T::from_iter[A](iter : Iter[A]) -> T[A] {
-  from_iter(iter)
-}
-
 ///|
 /// Creates a new queue from a FixedArray.
 ///
@@ -408,11 +393,6 @@ pub fn of[A](arr : FixedArray[A]) -> T[A] {
     queue.first = Cons({ content: arr[i], next: queue.first })
   }
   queue
-}
-
-///| @alert deprecated "use `@queue.of` instead"
-pub fn T::of[A](arr : FixedArray[A]) -> T[A] {
-  of(arr)
 }
 
 test "from_fixed_array_2" {

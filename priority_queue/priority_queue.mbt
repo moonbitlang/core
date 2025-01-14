@@ -24,11 +24,6 @@ pub fn new[A : Compare]() -> T[A] {
   { len: 0, top: Nil }
 }
 
-///| @alert deprecated "use `@priority_queue.new` instead"
-pub fn T::new[A : Compare]() -> T[A] {
-  new()
-}
-
 ///|
 /// Creates a new priority queue from an array.
 ///
@@ -47,11 +42,6 @@ pub fn from_array[A : Compare](arr : Array[A]) -> T[A] {
       break { len, top: acc }
     }
   }
-}
-
-///| @alert deprecated "use `@priority_queue.from_array` instead"
-pub fn T::from_array[A : Compare](arr : Array[A]) -> T[A] {
-  from_array(arr)
 }
 
 ///|
@@ -119,11 +109,6 @@ pub fn from_iter[K : Compare](iter : Iter[K]) -> T[K] {
   let s = new()
   iter.each(fn(e) { s.push(e) })
   s
-}
-
-///| @alert deprecated "use `@priority_queue.from_iter` instead"
-pub fn T::from_iter[K : Compare](iter : Iter[K]) -> T[K] {
-  from_iter(iter)
 }
 
 ///|
@@ -279,11 +264,6 @@ pub fn of[A : Compare](arr : FixedArray[A]) -> T[A] {
       break { len, top: acc }
     }
   }
-}
-
-///| @alert deprecated "use `@priority_queue.of` instead"
-pub fn T::of[A : Compare](arr : FixedArray[A]) -> T[A] {
-  of(arr)
 }
 
 test "meld_and_merges" {

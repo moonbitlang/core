@@ -64,13 +64,6 @@ pub fn from_json[A : @json.FromJson](json : Json) -> T[A]!@json.JsonDecodeError 
   @json.from_json!(json)
 }
 
-///| @alert deprecated "use `@immut/list.from_json` instead"
-pub fn T::from_json[A : @json.FromJson](
-  json : Json
-) -> T[A]!@json.JsonDecodeError {
-  @json.from_json!(json)
-}
-
 ///|
 /// Convert array to list.
 ///
@@ -86,11 +79,6 @@ pub fn from_array[A](arr : Array[A]) -> T[A] {
   } else {
     list
   }
-}
-
-///| @alert deprecated "use `@immut/list.from_array` instead"
-pub fn T::from_array[A](arr : Array[A]) -> T[A] {
-  from_array(arr)
 }
 
 ///|
@@ -1090,11 +1078,6 @@ pub fn default[X]() -> T[X] {
   Nil
 }
 
-///| @alert deprecated "use `@immut/list.default` instead"
-pub fn T::default[X]() -> T[X] {
-  Nil
-}
-
 ///|
 pub fn iter[A](self : T[A]) -> Iter[A] {
   Iter::new(fn(yield_) {
@@ -1130,11 +1113,6 @@ pub fn from_iter[A](iter : Iter[A]) -> T[A] {
   iter.fold(init=Nil, fn(acc, e) { Cons(e, acc) })
 }
 
-///| @alert deprecated "use `@immut/list.from_iter` instead"
-pub fn T::from_iter[A](iter : Iter[A]) -> T[A] {
-  from_iter(iter)
-}
-
 ///|
 pub fn of[A](arr : FixedArray[A]) -> T[A] {
   for i = arr.length() - 1, list = Nil; i >= 0; {
@@ -1142,11 +1120,6 @@ pub fn of[A](arr : FixedArray[A]) -> T[A] {
   } else {
     list
   }
-}
-
-///| @alert deprecated "use `@immut/list.of` instead"
-pub fn T::of[A](arr : FixedArray[A]) -> T[A] {
-  of(arr)
 }
 
 ///|
