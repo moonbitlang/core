@@ -18,10 +18,10 @@ let default_init_capacity = 8
 
 ///|
 /// Create new hash set.
-pub fn T::new[K]() -> T[K] {
+pub fn T::new[K](capacity~ : Int = default_init_capacity) -> T[K] {
   {
     size: 0,
-    capacity: default_init_capacity,
+    capacity,
     growAt: calc_grow_threshold(default_init_capacity),
     entries: FixedArray::make(default_init_capacity, None),
   }

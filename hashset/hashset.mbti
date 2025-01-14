@@ -20,7 +20,7 @@ impl T {
   intersection[K : Hash + Eq](Self[K], Self[K]) -> Self[K]
   is_empty[K](Self[K]) -> Bool
   iter[K](Self[K]) -> Iter[K]
-  new[K]() -> Self[K]
+  new[K](capacity~ : Int = ..) -> Self[K]
   of[K : Hash + Eq](FixedArray[K]) -> Self[K]
   remove[K : Hash + Eq](Self[K], K) -> Unit
   size[K](Self[K]) -> Int
