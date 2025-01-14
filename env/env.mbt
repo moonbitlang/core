@@ -13,18 +13,13 @@
 // limitations under the License.
 
 ///|
-pub extern "js" fn get_cli_args() -> Array[String] =
-  #| function() {
-  #|  if (typeof process !== "undefined" && typeof process.argv !== "undefined") {
-  #|    return process.argv;
-  #|  } else {
-  #|    return [];
-  #|  }
-  #| }
+/// Get the command line arguments passed to the program.
+pub fn args() -> Array[String] {
+  get_cli_args_internal()
+}
 
 ///|
-pub extern "js" fn now() -> UInt64 =
-  #| function() {
-  #|   const nowMs = Date.now();
-  #|   return ({ hi : Number(BigInt(nowMs) >> 32n), lo : nowMs & 0xFFFFFFFF });
-  #| }
+/// Get the current time in milliseconds since the Unix epoch.
+pub fn now() -> UInt64 {
+  now_internal()
+}

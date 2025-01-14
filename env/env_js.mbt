@@ -13,13 +13,18 @@
 // limitations under the License.
 
 ///|
-/// Get the command line arguments passed to the program.
-pub fn args() -> Array[String] {
-  @ffi.get_cli_args()
-}
+extern "js" fn get_cli_args_internal() -> Array[String] =
+  #| function() {
+  #|  if (typeof process !== "undefined" && typeof process.argv !== "undefined") {
+  #|    return process.argv;
+  #|  } else {
+  #|    return [];
+  #|  }
+  #| }
 
 ///|
-/// Get the current time in milliseconds since the Unix epoch.
-pub fn now() -> UInt64 {
-  @ffi.now()
-}
+extern "js" fn now_internal() -> UInt64 =
+  #| function() {
+  #|   const nowMs = Date.now();
+  #|   return ({ hi : Number(BigInt(nowMs) >> 32n), lo : nowMs & 0xFFFFFFFF });
+  #| }

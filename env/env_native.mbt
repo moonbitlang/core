@@ -13,12 +13,12 @@
 // limitations under the License.
 
 ///|
-fn internal_get_cli_args() -> FixedArray[Bytes] = "$moonbit.get_cli_args"
+fn get_cli_args_ffi() -> FixedArray[Bytes] = "$moonbit.get_cli_args"
 
 ///|
-pub fn get_cli_args() -> Array[String] {
+fn get_cli_args_internal() -> Array[String] {
   Array::from_fixed_array(
-    internal_get_cli_args().map(fn {
+    get_cli_args_ffi().map(fn {
       // Here we assume that the CLI arguments are encoded in well-formed UTF-8.
       arg => utf8_bytes_to_mbt_string(arg)
     }),
@@ -72,6 +72,6 @@ fn utf8_bytes_to_mbt_string(bytes : Bytes) -> String {
 extern "c" fn time(ptr : Int) -> UInt64 = "time"
 
 ///|
-pub fn now() -> UInt64 {
+fn now_internal() -> UInt64 {
   time(0)
 }
