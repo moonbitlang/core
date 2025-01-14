@@ -39,7 +39,7 @@ jobs:
 
       - name: moon info
         run: |
-          moon info
+          moon info --target wasm,wasm-gc,js,native
           git diff --exit-code
 
       - name: Set ulimit and run moon test
@@ -206,7 +206,7 @@ jobs:
 
       - name: moon info
         run: |
-          moon info
+          moon info --target wasm,wasm-gc,js,native
           git diff
 
       - name: check core size
@@ -261,7 +261,7 @@ jobs:
 
       - name: moon info
         run: |
-          moon info
+          moon info --target wasm,wasm-gc,js,native
           git diff
 
       - name: check core size
