@@ -51,6 +51,19 @@ jobs:
           moon test --target native
           moon test --target native --release
 
+      - name: moon test with dedup_wasm
+        if: ${{ matrix.os != 'windows-latest' }}
+        run: |
+          moon clean
+          ulimit -s 8176
+          moon test --target wasm
+          moon test --target wasm-gc
+          moon test --release --target wasm
+          moon test --release --target wasm-gc
+        env: 
+          MOONC_INTERNAL_PARAMS: dedup_wasm = 1 |
+
+
       - name: Setup MSVC
         if: ${{ matrix.os == 'windows-latest' }}
         uses: ilammy/msvc-dev-cmd@v1
