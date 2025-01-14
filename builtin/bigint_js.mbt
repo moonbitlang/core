@@ -190,7 +190,7 @@ pub fn pow(self : BigInt, exponent : BigInt, modulus? : BigInt) -> BigInt {
 }
 
 ///|
-pub extern "js" fn to_byte(self : BigInt) -> Byte =
+extern "js" fn to_byte(self : BigInt) -> Byte =
   #|(x) => Number(BigInt.asUintN(8, x)) | 0
 
 ///|
