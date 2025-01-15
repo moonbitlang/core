@@ -866,19 +866,21 @@ pub fn shrink_to_fit[A](self : T[A]) -> Unit {
 ///
 /// Parameters:
 ///
-/// * `self` : The deque to be truncated.
+/// * `self` : The deque to be unsafe_truncated.
 /// * `len` : The new length of the deque.
 ///
 /// Example:
 ///
 /// ```moonbit
-/// test "truncate" {
+/// test "unsafe_truncate" {
 ///   let dq = @deque.of([1, 2, 3, 4, 5])
-///   dq.truncate(3)
+///   dq.unsafe_truncate(3)
 ///   inspect!(dq, content="@deque.of([1, 2, 3])")
 /// }
 /// ```
-pub fn truncate[A](self : T[A], len : Int) -> Unit {
+/// 
+/// @alert unsafe "Panic if the len < 0."
+pub fn unsafe_truncate[A](self : T[A], len : Int) -> Unit {
   guard len < self.len else { return }
   guard len >= 0
   if len == 0 {
@@ -910,6 +912,13 @@ pub fn truncate[A](self : T[A], len : Int) -> Unit {
       set_null(buf, i)
     }
   }
+}
+
+///|
+/// @alert deprecated "Use `unsafe_truncate` instead"
+/// @coverage.skip
+pub fn truncate[A](self : T[A], len : Int) -> Unit {
+  self.unsafe_truncate(len)
 }
 
 ///|
@@ -949,7 +958,7 @@ pub fn retain_map[A](self : T[A], f : (A) -> A?) -> Unit {
     }
   }
   if back.length() == 0 {
-    self.truncate(idx - head)
+    self.unsafe_truncate(idx - head)
     return
   }
   for cur in back {
@@ -965,9 +974,9 @@ pub fn retain_map[A](self : T[A], f : (A) -> A?) -> Unit {
     }
   }
   if idx <= self.len - head_len {
-    self.truncate(idx + head_len)
+    self.unsafe_truncate(idx + head_len)
   } else {
-    self.truncate(idx - head)
+    self.unsafe_truncate(idx - head)
   }
 }
 
@@ -1015,7 +1024,7 @@ pub fn retain[A](self : T[A], f : (A) -> Bool) -> Unit {
     }
   }
   if back.length() == 0 {
-    self.truncate(idx - head)
+    self.unsafe_truncate(idx - head)
     return
   }
   for cur in back {
@@ -1028,9 +1037,9 @@ pub fn retain[A](self : T[A], f : (A) -> Bool) -> Unit {
     }
   }
   if idx <= self.len - head_len {
-    self.truncate(idx + head_len)
+    self.unsafe_truncate(idx + head_len)
   } else {
-    self.truncate(idx - head)
+    self.unsafe_truncate(idx - head)
   }
 }
 

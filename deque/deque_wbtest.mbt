@@ -23,9 +23,9 @@ test "unsafe_pop_front after many push_front" {
   assert_eq!(dq.head, dq.tail)
 }
 
-test "truncate zero" {
+test "unsafe_truncate zero" {
   let dq = of([1, 2, 3])
-  dq.truncate(0)
+  dq.unsafe_truncate(0)
   assert_eq!(dq.len, 0)
   assert_eq!(dq.head, dq.tail)
 }
