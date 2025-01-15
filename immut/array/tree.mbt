@@ -65,7 +65,7 @@ fn new_branch_left[T](leaf : FixedArray[T], shift : Int) -> Tree[T] {
 //-----------------------------------------------------------------------------
 
 ///|
-fn is_empty_tree[T](self : Tree[T]) -> Bool {
+fn Tree::is_empty_tree[T](self : Tree[T]) -> Bool {
   match self {
     Tree::Empty => true
     _ => false
@@ -78,7 +78,7 @@ fn is_empty_tree[T](self : Tree[T]) -> Bool {
 
 ///|
 /// Get the rightmost child of a tree. 
-fn get_first[T](self : Tree[T]) -> T {
+fn Tree::get_first[T](self : Tree[T]) -> T {
   match self {
     Leaf(leaf) => leaf[0]
     Node(node, _) => get_first(node[0])
@@ -88,7 +88,7 @@ fn get_first[T](self : Tree[T]) -> T {
 
 ///|
 /// Get the leftmost child of a tree.
-fn get_last[T](self : Tree[T]) -> T {
+fn Tree::get_last[T](self : Tree[T]) -> T {
   match self {
     Leaf(leaf) => leaf[leaf.length() - 1]
     Node(node, _) => get_last(node[node.length() - 1])
@@ -101,7 +101,7 @@ fn get_last[T](self : Tree[T]) -> T {
 /// 
 /// Precondition:
 /// - `self` is of height `shift / num_bits`.
-fn get[T](self : Tree[T], index : Int, shift : Int) -> T {
+fn Tree::get[T](self : Tree[T], index : Int, shift : Int) -> T {
   fn get_radix(node : Tree[T], shift : Int) -> T {
     match node {
       Leaf(leaf) => leaf[index & bitmask]
@@ -138,7 +138,7 @@ fn get[T](self : Tree[T], index : Int, shift : Int) -> T {
 /// 
 /// Precondition:
 /// - `self` is of height `shift / num_bits`.
-fn set[T](self : Tree[T], index : Int, shift : Int, value : T) -> Tree[T] {
+fn Tree::set[T](self : Tree[T], index : Int, shift : Int, value : T) -> Tree[T] {
   // TODO: optimize this as loop
   fn set_radix(node : Tree[T], shift : Int) -> Tree[T] {
     match node {
@@ -189,7 +189,7 @@ fn set[T](self : Tree[T], index : Int, shift : Int, value : T) -> Tree[T] {
 /// Precondition:
 /// - The height of `self` = `shift` / `num_bits` (the height starts from 0).
 /// - `length` is the number of elements in the tree.
-fn push_end[T](self : Tree[T], shift : Int, value : T) -> (Tree[T], Int) {
+fn Tree::push_end[T](self : Tree[T], shift : Int, value : T) -> (Tree[T], Int) {
   fn update_sizes_last(sizes : FixedArray[Int]?) -> FixedArray[Int]? {
     match sizes {
       Some(sizes) => {
@@ -284,7 +284,7 @@ fn push_end[T](self : Tree[T], shift : Int, value : T) -> (Tree[T], Int) {
 
 ///|
 /// For each element in the tree, apply the function `f`.
-fn each[A](self : Tree[A], f : (A) -> Unit) -> Unit {
+fn Tree::each[A](self : Tree[A], f : (A) -> Unit) -> Unit {
   match self {
     Empty => ()
     Leaf(l) => l.each(f)
@@ -294,7 +294,7 @@ fn each[A](self : Tree[A], f : (A) -> Unit) -> Unit {
 
 ///|
 /// For each element in the tree, apply the function `f` with the index of the element.
-fn eachi[A](
+fn Tree::eachi[A](
   self : Tree[A],
   f : (Int, A) -> Unit,
   shift : Int,
@@ -327,7 +327,7 @@ fn eachi[A](
 
 ///|
 /// Fold the tree.
-fn fold[A, B](self : Tree[A], acc : B, f : (B, A) -> B) -> B {
+fn Tree::fold[A, B](self : Tree[A], acc : B, f : (B, A) -> B) -> B {
   match self {
     Empty => acc
     Leaf(l) => l.fold(f, init=acc)
@@ -337,7 +337,7 @@ fn fold[A, B](self : Tree[A], acc : B, f : (B, A) -> B) -> B {
 
 ///|
 /// Fold the tree in reverse order.
-fn rev_fold[A, B](self : Tree[A], acc : B, f : (B, A) -> B) -> B {
+fn Tree::rev_fold[A, B](self : Tree[A], acc : B, f : (B, A) -> B) -> B {
   match self {
     Empty => acc
     Leaf(l) => l.rev_fold(f, init=acc)
@@ -347,7 +347,7 @@ fn rev_fold[A, B](self : Tree[A], acc : B, f : (B, A) -> B) -> B {
 
 ///|
 /// Map the tree.
-fn map[A, B](self : Tree[A], f : (A) -> B) -> Tree[B] {
+fn Tree::map[A, B](self : Tree[A], f : (A) -> B) -> Tree[B] {
   match self {
     Empty => Empty
     Leaf(l) => Leaf(l.map(f))
@@ -572,12 +572,6 @@ fn redis_plan[A](t : FixedArray[Tree[A]]) -> (FixedArray[Int], Int) {
   }
   return (node_counts, new_len)
 }
-
-// test "redis_plan" {
-//   let bf = branching_factor
-//   let t = FixedArray::from_array([bf, bf, 7])
-//   let res = redis_plan(t)
-// }
 
 ///|
 /// This function redistributes the nodes in `old_t` according to the plan in `node_counts`.
