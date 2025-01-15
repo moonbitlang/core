@@ -75,6 +75,11 @@ pub fn T::from_array[A](arr : Array[A]) -> T[A] {
   makei(arr.length(), fn(i) { arr[i] })
 }
 
+///|
+pub fn from_iter[A](iter : Iter[A]) -> T[A] {
+  iter.fold(init=new(), fn(arr, e) { arr.push(e) })
+}
+
 //-----------------------------------------------------------------------------
 // Convertor (convert T to other types)
 //-----------------------------------------------------------------------------
@@ -84,11 +89,6 @@ pub fn to_array[A](self : T[A]) -> Array[A] {
   let arr = []
   self.each(fn(v) { arr.push(v) })
   arr
-}
-
-///|
-pub fn from_iter[A](iter : Iter[A]) -> T[A] {
-  iter.fold(init=new(), fn(arr, e) { arr.push(e) })
 }
 
 //-----------------------------------------------------------------------------
