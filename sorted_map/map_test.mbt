@@ -1,4 +1,4 @@
-// Copyright 2024 International Digital Economy Academy
+// Copyright 2025 International Digital Economy Academy
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -165,20 +165,20 @@ test "iter" {
 
 test "from_iter multiple elements iter" {
   inspect!(
-    @sorted_map.T::from_iter([(1, 1), (2, 2), (3, 3)].iter()),
+    @sorted_map.from_iter([(1, 1), (2, 2), (3, 3)].iter()),
     content="@sorted_map.of([(1, 1), (2, 2), (3, 3)])",
   )
 }
 
 test "from_iter single element iter" {
   inspect!(
-    @sorted_map.T::from_iter([(1, 1)].iter()),
+    @sorted_map.from_iter([(1, 1)].iter()),
     content="@sorted_map.of([(1, 1)])",
   )
 }
 
 test "from_iter empty iter" {
-  let pq : @sorted_map.T[Int, Int] = @sorted_map.T::from_iter(Iter::empty())
+  let pq : @sorted_map.T[Int, Int] = @sorted_map.from_iter(Iter::empty())
   inspect!(pq, content="@sorted_map.of([])")
 }
 
@@ -210,4 +210,14 @@ test "iter" {
     buf.write_string("[\{kv.0}\{kv.1}]")
   }
   inspect!(buf, content="[1a][2b][3c]")
+}
+
+test "range" {
+  let map = @sorted_map.of([(1, "a"), (2, "b"), (3, "c"), (4, "d"), (5, "e")])
+  let result = map.range(2, 4)
+  let buf = StringBuilder::new()
+  for k, v in result {
+    buf.write_string("[\{k}\{v}]")
+  }
+  inspect!(buf, content="[2b][3c][4d]")
 }

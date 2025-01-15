@@ -1,4 +1,4 @@
-// Copyright 2024 International Digital Economy Academy
+// Copyright 2025 International Digital Economy Academy
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,25 +14,25 @@
 
 ///|
 /// Creates a new empty immutable priority queue.
-/// 
+///
 /// # Example
 /// ```
 /// let queue = @priority_queue.new()
 /// assert_eq!(queue.push(1).length(), 1)
 /// ```
-pub fn T::new[A : Compare]() -> T[A] {
+pub fn new[A : Compare]() -> T[A] {
   { body: Empty, len: 0 }
 }
 
 ///|
 /// Creates a new immutable priority queue from an array.
-/// 
+///
 /// # Example
 /// ```
 /// let queue = @priority_queue.of([1, 2, 3, 4, 5])
 /// assert_eq!(queue.length(), 5)
 /// ```
-pub fn T::from_array[A : Compare](arr : Array[A]) -> T[A] {
+pub fn from_array[A : Compare](arr : Array[A]) -> T[A] {
   let len = arr.length()
   for i = 0, acc = Cont::Empty {
     if i < len {
@@ -83,7 +83,7 @@ pub fn iter[A : Compare](self : T[A]) -> Iter[A] {
 
 ///|
 pub fn T::from_iter[A : Compare](iter : Iter[A]) -> T[A] {
-  iter.fold(init=T::new(), fn(s, e) { s.push(e) })
+  iter.fold(init=new(), fn(s, e) { s.push(e) })
 }
 
 ///|
@@ -110,7 +110,7 @@ fn merges[A : Compare](x : @list.T[Cont[A]]) -> Cont[A] {
 
 ///|
 /// Pops the first value from the immutable priority queue, which returns None if the queue is empty.
-/// 
+///
 /// # Example
 /// ```
 /// let queue = @priority_queue.of([1, 2, 3, 4])
@@ -126,7 +126,7 @@ pub fn pop[A : Compare](self : T[A]) -> T[A]? {
 
 ///|
 /// Pops the first value from the immutable priority queue.
-/// 
+///
 /// Panics if the queue is empty.
 /// # Example
 /// ```
@@ -150,7 +150,7 @@ pub fn pop_exn[A : Compare](self : T[A]) -> T[A] {
 
 ///|
 /// Adds a value to the immutable priority queue.
-/// 
+///
 /// # Example
 /// ```
 /// let queue = @priority_queue.new()
@@ -162,7 +162,7 @@ pub fn push[A : Compare](self : T[A], value : A) -> T[A] {
 
 ///|
 /// Peeks at the first value in the immutable priority queue, which returns None if the immutable priority queue is empty.
-/// 
+///
 /// # Example
 /// ```
 /// let queue = @priority_queue.of([1, 2, 3, 4])
@@ -177,7 +177,7 @@ pub fn peek[A](self : T[A]) -> A? {
 
 ///|
 /// Checks if the immutable priority queue is empty.
-/// 
+///
 /// # Example
 /// ```
 /// let queue = @priority_queue.new()
@@ -193,7 +193,7 @@ pub fn is_empty[A](self : T[A]) -> Bool {
 
 ///|
 /// Return the length of the immutable priority queue.
-/// 
+///
 /// # Example
 /// ```
 /// let queue = @priority_queue.new()
@@ -205,7 +205,7 @@ pub fn length[A](self : T[A]) -> Int {
 }
 
 ///|
-pub fn T::of[A : Compare](arr : FixedArray[A]) -> T[A] {
+pub fn of[A : Compare](arr : FixedArray[A]) -> T[A] {
   let len = arr.length()
   for i = 0, acc = Cont::Empty {
     if i < len {

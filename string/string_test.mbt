@@ -1,4 +1,4 @@
-// Copyright 2024 International Digital Economy Academy
+// Copyright 2025 International Digital Economy Academy
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -13,20 +13,20 @@
 // limitations under the License.
 
 test "String::from_array" {
-  inspect!(String::from_array(['1', '2', '3', '4', '5']), content="12345")
+  inspect!(@string.from_array(['1', '2', '3', '4', '5']), content="12345")
 }
 
 test "String::from_iter" {
-  inspect!(String::from_iter(['1', '2', '3', '4', '5'].iter()), content="12345")
+  inspect!(@string.from_iter(['1', '2', '3', '4', '5'].iter()), content="12345")
 }
 
 test "String::concat" {
-  inspect!(String::concat(["123", "456"]), content="123456")
+  inspect!(@string.concat(["123", "456"]), content="123456")
   inspect!(
-    String::concat(["aaa", "bbb", "ccc"], separator=" "),
+    @string.concat(["aaa", "bbb", "ccc"], separator=" "),
     content="aaa bbb ccc",
   )
-  inspect!(String::concat([], separator=" "), content="")
+  inspect!(@string.concat([], separator=" "), content="")
 }
 
 test "default" {

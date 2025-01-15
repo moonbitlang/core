@@ -1,4 +1,4 @@
-// Copyright 2024 International Digital Economy Academy
+// Copyright 2025 International Digital Economy Academy
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -94,7 +94,11 @@ pub fn FixedArray::new_with_index[T](
 /// ```
 /// @alert deprecated "Use `fold` instead"
 /// @coverage.skip
-pub fn fold_left[T, U](self : FixedArray[T], f : (U, T) -> U, init~ : U) -> U {
+pub fn FixedArray::fold_left[T, U](
+  self : FixedArray[T],
+  f : (U, T) -> U,
+  init~ : U
+) -> U {
   self.fold(init~, f)
 }
 
@@ -108,7 +112,11 @@ pub fn fold_left[T, U](self : FixedArray[T], f : (U, T) -> U, init~ : U) -> U {
 /// ```
 /// @alert deprecated "Use `rev_fold` instead"
 /// @coverage.skip
-pub fn fold_right[T, U](self : FixedArray[T], f : (U, T) -> U, init~ : U) -> U {
+pub fn FixedArray::fold_right[T, U](
+  self : FixedArray[T],
+  f : (U, T) -> U,
+  init~ : U
+) -> U {
   self.rev_fold(init~, f)
 }
 
@@ -122,7 +130,7 @@ pub fn fold_right[T, U](self : FixedArray[T], f : (U, T) -> U, init~ : U) -> U {
 /// ```
 /// @alert deprecated "Use `foldi` instead"
 /// @coverage.skip
-pub fn fold_lefti[T, U](
+pub fn FixedArray::fold_lefti[T, U](
   self : FixedArray[T],
   f : (Int, U, T) -> U,
   init~ : U
@@ -140,7 +148,7 @@ pub fn fold_lefti[T, U](
 /// ```
 /// @alert deprecated "Use `rev_foldi` instead"
 /// @coverage.skip
-pub fn fold_righti[T, U](
+pub fn FixedArray::fold_righti[T, U](
   self : FixedArray[T],
   f : (Int, U, T) -> U,
   init~ : U

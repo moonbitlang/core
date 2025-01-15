@@ -1,4 +1,4 @@
-// Copyright 2024 International Digital Economy Academy
+// Copyright 2025 International Digital Economy Academy
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -116,16 +116,16 @@ test "@hashset.iter" {
 
 test "from_iter multiple elements iter" {
   inspect!(
-    @hashset.T::from_iter([1, 2, 3].iter()),
+    @hashset.from_iter([1, 2, 3].iter()),
     content="@immut/hashset.of([3, 2, 1])",
   )
 }
 
 test "from_iter single element iter" {
-  inspect!(@hashset.T::from_iter([1].iter()), content="@immut/hashset.of([1])")
+  inspect!(@hashset.from_iter([1].iter()), content="@immut/hashset.of([1])")
 }
 
 test "from_iter empty iter" {
-  let pq : @hashset.T[Int] = @hashset.T::from_iter(Iter::empty())
+  let pq : @hashset.T[Int] = @hashset.from_iter(Iter::empty())
   inspect!(pq, content="@immut/hashset.of([])")
 }

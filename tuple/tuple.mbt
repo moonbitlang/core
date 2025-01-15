@@ -1,4 +1,4 @@
-// Copyright 2024 International Digital Economy Academy
+// Copyright 2025 International Digital Economy Academy
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
 
 ///|
 /// Create a tuple with two elements.
-/// 
+///
 /// # Example
 /// ```
 /// let tuple = @tuple.pair(1, 2)
@@ -26,7 +26,7 @@ pub fn pair[T, U](x : T, y : U) -> (T, U) {
 
 ///|
 /// Get the first element of a tuple.
-/// 
+///
 /// # Example
 /// ```
 /// let tuple = (1, 2)
@@ -39,7 +39,7 @@ pub fn fst[T, U](tuple : (T, U)) -> T {
 
 ///|
 /// Get the second element of a tuple.
-/// 
+///
 /// # Example
 /// ```
 /// let tuple = (1, 2)
@@ -52,7 +52,7 @@ pub fn snd[T, U](tuple : (T, U)) -> U {
 
 ///|
 /// Map a function over the first element of a tuple.
-/// 
+///
 /// # Example
 /// ```
 /// let tuple = (1, 2)
@@ -65,7 +65,7 @@ pub fn map_fst[T, U, V](f : (T) -> U, tuple : (T, V)) -> (U, V) {
 
 ///|
 /// Map a function over the second element of a tuple.
-/// 
+///
 /// # Example
 /// ```
 /// let tuple = (1, 2)
@@ -78,7 +78,7 @@ pub fn map_snd[T, U, V](f : (T) -> U, tuple : (V, T)) -> (V, U) {
 
 ///|
 /// Map a function over both elements of a tuple.
-/// 
+///
 /// # Example
 /// ```
 /// let tuple = (1, 2)
@@ -95,7 +95,7 @@ pub fn map_both[T, U, V, W](
 
 ///|
 /// Swap the elements of a tuple.
-/// 
+///
 /// # Example
 /// ```
 /// let tuple = (1, 2)
@@ -108,7 +108,7 @@ pub fn swap[T, U](tuple : (T, U)) -> (U, T) {
 
 ///|
 /// Curry a function.
-/// 
+///
 /// # Example
 /// ```
 /// let add = fn(x : Int, y : Int) -> Int { x + y }
@@ -121,7 +121,7 @@ pub fn curry[T, U, V](f : (T, U) -> V) -> (T) -> (U) -> V {
 
 ///|
 /// Uncurry a function.
-/// 
+///
 /// # Example
 /// ```
 /// let add = fn(x : Int) -> (Int) -> Int { fn(y : Int) -> Int { x + y } }

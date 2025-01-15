@@ -12,8 +12,6 @@ fn unless[T](Bool, () -> T) -> T?
 fn when[T](Bool, () -> T) -> T?
 
 // Types and methods
-
-
 impl Option {
   bind[T, U](T?, (T) -> U?) -> U?
   compare[X : Compare](X?, X?) -> Int
@@ -30,6 +28,7 @@ impl Option {
   or_else[T](T?, () -> T) -> T
   or_error[T, Err : Error](T?, Err) -> T!Err
 }
+impl[X : @quickcheck.Arbitrary] @quickcheck.Arbitrary for X?
 
 // Type aliases
 

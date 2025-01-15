@@ -1,4 +1,4 @@
-// Copyright 2024 International Digital Economy Academy
+// Copyright 2025 International Digital Economy Academy
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -104,6 +104,10 @@ test "union" {
   )
   inspect!(
     @sorted_set.of([3, 4, 5]).union(@sorted_set.of([4, 5, 6])),
+    content="@immut/sorted_set.of([3, 4, 5, 6])",
+  )
+  inspect!(
+    @sorted_set.of([3, 4, 5]) + @sorted_set.of([4, 5, 6]),
     content="@immut/sorted_set.of([3, 4, 5, 6])",
   )
 }
@@ -461,20 +465,20 @@ test "disjoint with different sets" {
 
 test "from_iter multiple elements iter" {
   inspect!(
-    @sorted_set.T::from_iter([1, 2, 3].iter()),
+    @sorted_set.from_iter([1, 2, 3].iter()),
     content="@immut/sorted_set.of([1, 2, 3])",
   )
 }
 
 test "from_iter single element iter" {
   inspect!(
-    @sorted_set.T::from_iter([1].iter()),
+    @sorted_set.from_iter([1].iter()),
     content="@immut/sorted_set.of([1])",
   )
 }
 
 test "from_iter empty iter" {
-  let pq : @sorted_set.T[Int] = @sorted_set.T::from_iter(Iter::empty())
+  let pq : @sorted_set.T[Int] = @sorted_set.from_iter(Iter::empty())
   inspect!(pq, content="@immut/sorted_set.of([])")
 }
 
@@ -489,7 +493,7 @@ test "iter" {
 
 test "size" {
   // Empty set should have size 0
-  let empty_set : @sorted_set.T[Int] = @sorted_set.T::new()
+  let empty_set : @sorted_set.T[Int] = @sorted_set.new()
   inspect!(empty_set.size(), content="0")
 
   // Single element set should have size 1

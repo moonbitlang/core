@@ -1,4 +1,4 @@
-// Copyright 2024 International Digital Economy Academy
+// Copyright 2025 International Digital Economy Academy
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,14 +14,14 @@
 
 ///|
 /// Convert char array to string.
-/// 
+///
 /// ```
 /// let s = @string.from_array(['H', 'e', 'l', 'l', 'o'])
 /// assert_eq!(s, "Hello")
 /// ```
-/// 
+///
 /// Do not convert large datas to `Array[Char]` and build a string with `String::from_array`.
-/// 
+///
 /// For efficiency considerations, it's recommended to use `Buffer` instead.
 pub fn String::from_array(chars : Array[Char]) -> String {
   let buf = StringBuilder::new(size_hint=chars.length() * 4)
@@ -29,6 +29,11 @@ pub fn String::from_array(chars : Array[Char]) -> String {
     buf.write_char(c)
   }
   buf.to_string()
+}
+
+///| same as `String::from_array`
+pub fn from_array(chars : Array[Char]) -> String {
+  String::from_array(chars)
 }
 
 ///|
@@ -40,8 +45,15 @@ pub fn String::from_iter(iter : Iter[Char]) -> String {
 }
 
 ///|
+/// same as `String::from_iter`
+pub fn from_iter(iter : Iter[Char]) -> String {
+  let chars = iter.collect()
+  String::from_array(chars)
+}
+
+///|
 /// Concatenate strings.
-/// 
+///
 /// ```
 /// let s = @string.concat(["Hello", ", ", "world!"])
 /// assert_eq!(s, "Hello, world!")
@@ -60,7 +72,7 @@ pub fn String::concat(
   } else {
     match strings {
       [] => ()
-      [hd, .. as tl] => {
+      [hd, .. tl] => {
         buf.write_string(hd)
         for s in tl {
           buf.write_string(separator)
@@ -70,6 +82,12 @@ pub fn String::concat(
     }
   }
   buf.to_string()
+}
+
+///|
+/// same as `String::concat`
+pub fn concat(strings : Array[String], separator~ : String = "") -> String {
+  String::concat(strings, separator~)
 }
 
 ///|
@@ -95,6 +113,12 @@ pub fn compare(self : String, other : String) -> Int {
 ///|
 /// The empty string
 pub fn String::default() -> String {
+  ""
+}
+
+///|
+/// same as `String::default`
+pub fn default() -> String {
   ""
 }
 
@@ -192,26 +216,26 @@ pub fn rev_fold[A](self : String, init~ : A, f : (A, Char) -> A) -> A {
 }
 
 ///|
-/// Returns an iterator that yields characters from the end to the start of the string. This function handles 
+/// Returns an iterator that yields characters from the end to the start of the string. This function handles
 /// Unicode surrogate pairs correctly, ensuring that characters are not split across surrogate pairs.
-/// 
+///
 /// # Parameters
-/// 
+///
 /// - `self` : The input `String` to be iterated in reverse.
-/// 
+///
 /// # Returns
-/// 
+///
 /// - An `Iter[Char]` that yields characters from the end to the start of the string.
-/// 
+///
 /// # Behavior
-/// 
+///
 /// - The function iterates over the string in reverse order.
 /// - If a trailing surrogate is encountered, it checks for a preceding leading surrogate to form a complete Unicode code point.
 /// - Yields each character or combined code point to the iterator.
 /// - Stops iteration if the `yield_` function returns `IterEnd`.
-/// 
+///
 /// # Examples
-/// 
+///
 /// ```
 /// let input = "Hello, World!"
 /// let reversed = input.rev_iter().collect()
@@ -451,24 +475,24 @@ pub fn ends_with(self : String, str : String) -> Bool {
 
 ///|
 /// Splits the input `String` into an `Iter` of `String` using the specified `separator`.
-/// 
+///
 /// # Parameters
-/// 
+///
 /// - `self` : The input `String` to be split.
 /// - `separator` : The `String` used as the delimiter for splitting.
-/// 
+///
 /// # Returns
-/// 
+///
 /// - An `Iter` of `String` where each element is a substring of the original string, separated by the `separator`.
-/// 
+///
 /// # Behavior
-/// 
+///
 /// - If the `separator` is an empty string (`""`), the function returns an `Iter` where each element is a single character from the input string converted to a `String`.
 /// - If the `separator` is not empty, the function searches for occurrences of the `separator` in the input string and yields substrings between these occurrences.
 /// - If no more occurrences of the `separator` are found, the remaining part of the string is yielded as the last element of the `Iter`.
-/// 
+///
 /// # Examples
-/// 
+///
 /// ```
 /// let input = "a,b,c,d"
 /// let separator = ","
@@ -606,9 +630,9 @@ pub fn repeat(self : String, n : Int) -> String {
 ///|
 /// `pad_start` is a new string with `padding_char`s prefixed to `self` if `self.length() < total_width`. The length of the
 /// returned string is `total_width`.
-/// 
+///
 /// Example:
-/// 
+///
 /// ```
 /// assert_eq!("2".pad_start(3, '0'), "002")
 /// ```
@@ -633,9 +657,9 @@ pub fn pad_start(
 ///|
 /// `pad_end` is a new String with `padding_char`s suffixed to `self` if `self.length() < total_width`. The length of the
 /// returned string is `total_width`.
-/// 
+///
 /// Example:
-/// 
+///
 /// ```
 /// assert_eq!("2".pad_end(3, 'x'), "2xx")
 /// ```

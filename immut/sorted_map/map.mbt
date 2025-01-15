@@ -1,4 +1,4 @@
-// Copyright 2024 International Digital Economy Academy
+// Copyright 2025 International Digital Economy Academy
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,16 +15,20 @@
 ///|
 /// Create a new map with a key-value pair inserted.
 /// O(log n).
-/// 
+///
 pub fn add[K : Compare, V](self : T[K, V], key : K, value : V) -> T[K, V] {
   match self {
     Empty => singleton(key, value)
-    Tree(k, value=v, l, r, ..) =>
-      match key.compare(k) {
-        -1 => balance(k, v, add(l, key, value), r)
-        1 => balance(k, v, l, add(r, key, value))
-        _ => make_tree(k, value, l, r)
+    Tree(k, value=v, l, r, ..) => {
+      let c = key.compare(k)
+      if c == 0 {
+        make_tree(k, value, l, r)
+      } else if c < 0 {
+        balance(k, v, l.add(key, value), r)
+      } else {
+        balance(k, v, l, r.add(key, value))
       }
+    }
   }
 }
 
@@ -311,7 +315,7 @@ test "filter_with_key" {
 }
 
 test "empty" {
-  let m : T[Int, Int] = T::new()
+  let m : T[Int, Int] = new()
   assert_eq!(m.debug_tree(), "_")
 }
 

@@ -39,7 +39,7 @@ jobs:
 
       - name: moon info
         run: |
-          moon info
+          moon info --target wasm,wasm-gc,js,native
           git diff --exit-code
 
       - name: Set ulimit and run moon test
@@ -50,6 +50,19 @@ jobs:
           moon test --release --target all
           moon test --target native
           moon test --target native --release
+
+      - name: moon test with dedup_wasm
+        if: ${{ matrix.os != 'windows-latest' }}
+        run: |
+          moon clean
+          ulimit -s 8176
+          moon test --target wasm
+          moon test --target wasm-gc
+          moon test --release --target wasm
+          moon test --release --target wasm-gc
+        env: 
+          MOONC_INTERNAL_PARAMS: dedup_wasm = 1 |
+
 
       - name: Setup MSVC
         if: ${{ matrix.os == 'windows-latest' }}
@@ -133,13 +146,16 @@ jobs:
   license-header-check:
     runs-on: ubuntu-latest
     env:
-      HAWKEYE_VERSION: v5.5.1
+      HAWKEYE_VERSION: v5.8.1
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       - name: Download HawkEye
         run: curl --proto '=https' --tlsv1.2 -LsSf https://github.com/korandoru/hawkeye/releases/download/$HAWKEYE_VERSION/hawkeye-installer.sh | sh
       - name: Check License Header
-        run: hawkeye check
+        run: |
+          hawkeye check
 
   nightly-check:
     strategy:
@@ -203,7 +219,7 @@ jobs:
 
       - name: moon info
         run: |
-          moon info
+          moon info --target wasm,wasm-gc,js,native
           git diff
 
       - name: check core size
@@ -258,7 +274,7 @@ jobs:
 
       - name: moon info
         run: |
-          moon info
+          moon info --target wasm,wasm-gc,js,native
           git diff
 
       - name: check core size

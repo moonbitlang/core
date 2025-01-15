@@ -1,4 +1,4 @@
-// Copyright 2024 International Digital Economy Academy
+// Copyright 2025 International Digital Economy Academy
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -119,4 +119,112 @@ test "arrayview_filter" {
   let filtered = arr[2:].filter(fn(x) { x % 2 == 0 })
   assert_eq!(filtered.length(), 1)
   assert_eq!(filtered[0], 4)
+}
+
+test "negative index1" {
+  let arr = [1, 2, 3]
+  let view = arr[-1:]
+  inspect!(view, content="[3]")
+  let view = arr[-2:]
+  inspect!(view, content="[2, 3]")
+  let view = arr[-3:]
+  inspect!(view, content="[1, 2, 3]")
+  let view = arr[:-1]
+  inspect!(view, content="[1, 2]")
+  let view = arr[:-2]
+  inspect!(view, content="[1]")
+  let view = arr[:-3]
+  inspect!(view, content="[]")
+  let view = arr[-3:-3]
+  inspect!(view, content="[]")
+  let view = arr[-3:-2]
+  inspect!(view, content="[1]")
+  let view = arr[-3:-1]
+  inspect!(view, content="[1, 2]")
+  let view = arr[-3:0]
+  inspect!(view, content="[]")
+  let view = arr[-3:1]
+  inspect!(view, content="[1]")
+  let view = arr[-3:2]
+  inspect!(view, content="[1, 2]")
+  let view = arr[-3:3]
+  inspect!(view, content="[1, 2, 3]")
+}
+
+test "negative index2" {
+  let arr = [0, 1, 2, 3, 4][1:4]
+  let view = arr[-1:]
+  inspect!(view, content="[3]")
+  let view = arr[-2:]
+  inspect!(view, content="[2, 3]")
+  let view = arr[-3:]
+  inspect!(view, content="[1, 2, 3]")
+  let view = arr[:-1]
+  inspect!(view, content="[1, 2]")
+  let view = arr[:-2]
+  inspect!(view, content="[1]")
+  let view = arr[:-3]
+  inspect!(view, content="[]")
+  let view = arr[-3:-3]
+  inspect!(view, content="[]")
+  let view = arr[-3:-2]
+  inspect!(view, content="[1]")
+  let view = arr[-3:-1]
+  inspect!(view, content="[1, 2]")
+  let view = arr[-3:0]
+  inspect!(view, content="[]")
+  let view = arr[-3:1]
+  inspect!(view, content="[1]")
+  let view = arr[-3:2]
+  inspect!(view, content="[1, 2]")
+  let view = arr[-3:3]
+  inspect!(view, content="[1, 2, 3]")
+}
+
+test "panic negative index1" {
+  let arr = [1, 2, 3]
+  let _ = arr[-4:]
+
+}
+
+test "panic negative index2" {
+  let arr = [1, 2, 3]
+  let _ = arr[:-4]
+
+}
+
+test "panic negative index3" {
+  let arr = [1, 2, 3]
+  let _ = arr[-1:-2]
+
+}
+
+test "panic negative index4" {
+  let arr = [1, 2, 3]
+  let _ = arr[-1:-3]
+
+}
+
+test "panic negative index5" {
+  let arr = [1, 2, 3][:]
+  let _ = arr[-4:]
+
+}
+
+test "panic negative index6" {
+  let arr = [1, 2, 3][:]
+  let _ = arr[:-4]
+
+}
+
+test "panic negative index7" {
+  let arr = [1, 2, 3][:]
+  let _ = arr[-1:-2]
+
+}
+
+test "panic negative index8" {
+  let arr = [1, 2, 3][:]
+  let _ = arr[-1:-3]
+
 }

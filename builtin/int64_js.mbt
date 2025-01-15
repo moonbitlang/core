@@ -1,4 +1,4 @@
-// Copyright 2024 International Digital Economy Academy
+// Copyright 2025 International Digital Economy Academy
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -35,7 +35,7 @@ fn MyInt64::op_neg(self : MyInt64) -> MyInt64 {
 }
 
 ///|
-fn MyInt64::add_hi_lo(self : MyInt64, bhi : Int, blo : Int) -> MyInt64 {
+fn add_hi_lo(self : MyInt64, bhi : Int, blo : Int) -> MyInt64 {
   let { hi: ahi, lo: alo } = self
   let lo = alo + blo
   let s = lo >> 31
@@ -103,7 +103,7 @@ fn MyInt64::op_mul(self : MyInt64, other : MyInt64) -> MyInt64 {
 }
 
 ///|
-struct Int64WasmHelper {
+priv struct Int64WasmHelper {
   div_s : (Int, Int, Int, Int) -> Int
   div_u : (Int, Int, Int, Int) -> Int
   rem_s : (Int, Int, Int, Int) -> Int
@@ -321,36 +321,6 @@ fn MyInt64::to_uint(self : MyInt64) -> UInt {
 }
 
 ///|
-extern "js" fn MyInt64::from_double(value : Double) -> MyInt64 =
-  #|(a) => {
-  #|  if (isNaN(a)) {
-  #|    return { hi: 0, lo: 0 };
-  #|  }
-  #|  if (a >= 9223372036854775807) {
-  #|    return { hi: 0x7fffffff, lo: 0xffffffff };
-  #|  }
-  #|  if (a <= -9223372036854775808) {
-  #|    return { hi: -2147483648, lo: 0 };
-  #|  }
-  #|  let neg = false;
-  #|  if (a < 0) {
-  #|    neg = true;
-  #|    a = -a;
-  #|  }
-  #|  let hi = (a * (1 / 0x100000000)) | 0;
-  #|  let lo = a >>> 0;
-  #|  if (neg) {
-  #|    if (lo === 0) {
-  #|      hi = ~hi + 1;
-  #|    } else {
-  #|      hi = ~hi;
-  #|      lo = ~lo + 1;
-  #|    }
-  #|  }
-  #|  return { hi, lo };
-  #|}
-
-///|
 extern "js" fn MyInt64::to_double(self : MyInt64) -> Double =
   #|(a) => a.hi * 4294967296.0 + (a.lo >>> 0)
 
@@ -532,7 +502,7 @@ pub fn Int64::to_int(self : Int64) -> Int {
 }
 
 ///|
-pub fn Int64::to_uint(self : Int64) -> UInt {
+fn Int64::to_uint(self : Int64) -> UInt {
   MyInt64::from_int64(self).to_uint()
 }
 
@@ -544,6 +514,16 @@ pub fn Int64::to_double(self : Int64) -> Double {
 ///|
 pub fn Int64::to_byte(self : Int64) -> Byte {
   MyInt64::from_int64(self).to_int().to_byte()
+}
+
+///|
+pub fn Int64::to_int16(self : Int64) -> Int16 {
+  MyInt64::from_int64(self).to_int().to_int16()
+}
+
+///|
+pub fn Int64::to_uint16(self : Int64) -> UInt16 {
+  MyInt64::from_int64(self).to_int().to_uint16()
 }
 
 ///|
@@ -564,6 +544,16 @@ pub fn UInt64::reinterpret_as_double(self : UInt64) -> Double {
 ///|
 pub fn Int::to_int64(self : Int) -> Int64 {
   MyInt64::from_int(self).to_int64()
+}
+
+///|
+pub fn Int16::to_int64(self : Int16) -> Int64 {
+  MyInt64::from_int(self.to_int()).to_int64()
+}
+
+///|
+pub fn UInt16::to_int64(self : UInt16) -> Int64 {
+  MyInt64::from_int(self.to_int()).to_int64()
 }
 
 ///|
@@ -596,7 +586,7 @@ pub fn Double::convert_uint64(value : UInt64) -> Double {
 }
 
 ///|
-pub fn Double::convert_int64(value : Int64) -> Double {
+fn Double::convert_int64(value : Int64) -> Double {
   MyInt64::convert_to_double(MyInt64::from_int64(value))
 }
 

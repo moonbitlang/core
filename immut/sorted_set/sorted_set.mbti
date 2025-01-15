@@ -4,6 +4,17 @@ alias @moonbitlang/core/json as @json
 alias @moonbitlang/core/quickcheck as @quickcheck
 
 // Values
+fn from_array[A : Compare](Array[A]) -> T[A]
+
+fn from_iter[A : Compare](Iter[A]) -> T[A]
+
+fn from_json[A : @json.FromJson + Compare](Json) -> T[A]!@json.JsonDecodeError
+
+fn new[A]() -> T[A]
+
+fn of[A : Compare](FixedArray[A]) -> T[A]
+
+fn singleton[A : Compare](A) -> T[A]
 
 // Types and methods
 type T
@@ -18,9 +29,9 @@ impl T {
   each[A](Self[A], (A) -> Unit) -> Unit
   filter[A : Compare](Self[A], (A) -> Bool) -> Self[A]
   fold[A : Compare, B](Self[A], init~ : B, (B, A) -> B) -> B
-  from_array[A : Compare](Array[A]) -> Self[A]
-  from_iter[A : Compare](Iter[A]) -> Self[A]
-  from_json[A : @json.FromJson + Compare](Json) -> Self[A]!@json.JsonDecodeError
+  from_array[A : Compare](Array[A]) -> Self[A] //deprecated
+  from_iter[A : Compare](Iter[A]) -> Self[A] //deprecated
+  from_json[A : @json.FromJson + Compare](Json) -> Self[A]!@json.JsonDecodeError //deprecated
   inter[A : Compare](Self[A], Self[A]) -> Self[A] //deprecated
   intersection[A : Compare](Self[A], Self[A]) -> Self[A]
   is_empty[A : Compare](Self[A]) -> Bool
@@ -30,11 +41,12 @@ impl T {
   max_option[A : Compare](Self[A]) -> A?
   min[A : Compare](Self[A]) -> A
   min_option[A : Compare](Self[A]) -> A?
-  new[A]() -> Self[A]
-  of[A : Compare](FixedArray[A]) -> Self[A]
+  new[A]() -> Self[A] //deprecated
+  of[A : Compare](FixedArray[A]) -> Self[A] //deprecated
+  op_add[A : Compare](Self[A], Self[A]) -> Self[A]
   remove[A : Compare](Self[A], A) -> Self[A]
   remove_min[A : Compare](Self[A]) -> Self[A]
-  singleton[A : Compare](A) -> Self[A]
+  singleton[A : Compare](A) -> Self[A] //deprecated
   size[A : Compare](Self[A]) -> Int
   split[A : Compare](Self[A], A) -> (Self[A], Bool, Self[A])
   subset[A : Compare](Self[A], Self[A]) -> Bool

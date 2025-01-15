@@ -1,4 +1,4 @@
-// Copyright 2024 International Digital Economy Academy
+// Copyright 2025 International Digital Economy Academy
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -18,10 +18,10 @@ let default_init_capacity = 8
 
 ///|
 /// Create new hash set.
-pub fn T::new[K]() -> T[K] {
+pub fn new[K](capacity~ : Int = default_init_capacity) -> T[K] {
   {
     size: 0,
-    capacity: default_init_capacity,
+    capacity,
     growAt: calc_grow_threshold(default_init_capacity),
     entries: FixedArray::make(default_init_capacity, None),
   }
@@ -29,14 +29,14 @@ pub fn T::new[K]() -> T[K] {
 
 ///|
 /// Create new hash set from array.
-pub fn T::from_array[K : Hash + Eq](arr : Array[K]) -> T[K] {
+pub fn from_array[K : Hash + Eq](arr : Array[K]) -> T[K] {
   let m = new()
   arr.each(fn(e) { m.add(e) })
   m
 }
 
 ///|
-pub fn T::of[K : Hash + Eq](arr : FixedArray[K]) -> T[K] {
+pub fn of[K : Hash + Eq](arr : FixedArray[K]) -> T[K] {
   let m = new()
   arr.each(fn(e) { m.add(e) })
   m
@@ -186,7 +186,7 @@ pub fn clear[K](self : T[K]) -> Unit {
 /// Union of two hash sets.
 /// @alert unsafe "Panic if the hash set is full."
 pub fn union[K : Hash + Eq](self : T[K], other : T[K]) -> T[K] {
-  let m = T::new()
+  let m = new()
   self.each(fn(k) { m.add(k) })
   other.each(fn(k) { m.add(k) })
   m
@@ -195,7 +195,7 @@ pub fn union[K : Hash + Eq](self : T[K], other : T[K]) -> T[K] {
 ///|
 /// Intersection of two hash sets.
 pub fn intersection[K : Hash + Eq](self : T[K], other : T[K]) -> T[K] {
-  let m = T::new()
+  let m = new()
   self.each(fn(k) { if other.contains(k) { m.add(k) } })
   m
 }
@@ -203,7 +203,7 @@ pub fn intersection[K : Hash + Eq](self : T[K], other : T[K]) -> T[K] {
 ///|
 /// Difference of two hash sets.
 pub fn difference[K : Hash + Eq](self : T[K], other : T[K]) -> T[K] {
-  let m = T::new()
+  let m = new()
   self.each(fn(k) { if not(other.contains(k)) { m.add(k) } })
   m
 }
@@ -211,7 +211,7 @@ pub fn difference[K : Hash + Eq](self : T[K], other : T[K]) -> T[K] {
 ///|
 /// Symmetric difference of two hash sets.
 pub fn symmetric_difference[K : Hash + Eq](self : T[K], other : T[K]) -> T[K] {
-  let m = T::new()
+  let m = new()
   self.each(fn(k) { if not(other.contains(k)) { m.add(k) } })
   other.each(fn(k) { if not(self.contains(k)) { m.add(k) } })
   m
@@ -232,8 +232,8 @@ pub fn iter[K](self : T[K]) -> Iter[K] {
 }
 
 ///|
-pub fn T::from_iter[K : Hash + Eq](iter : Iter[K]) -> T[K] {
-  let s = T::new()
+pub fn from_iter[K : Hash + Eq](iter : Iter[K]) -> T[K] {
+  let s = new()
   iter.each(fn(e) { s.add(e) })
   s
 }
@@ -243,7 +243,7 @@ pub impl[X : @quickcheck.Arbitrary + Eq + Hash] @quickcheck.Arbitrary for T[X] w
   size,
   rs
 ) {
-  @quickcheck.Arbitrary::arbitrary(size, rs) |> T::from_iter
+  @quickcheck.Arbitrary::arbitrary(size, rs) |> from_iter
 }
 
 ///|
@@ -347,7 +347,7 @@ impl Hash for MyString with hash_combine(self, hasher) {
 impl Show for MyString with output(self, logger) { logger.write_string(self._) }
 
 test "set" {
-  let m : T[MyString] = T::new()
+  let m : T[MyString] = new()
   m.add("a")
   m.add("b")
   m.add("bc")
@@ -363,7 +363,7 @@ test "set" {
 }
 
 test "remove" {
-  let m : T[MyString] = T::new()
+  let m : T[MyString] = new()
   fn i(s) {
     MyString::MyString(s)
   }
@@ -380,7 +380,7 @@ test "remove" {
 }
 
 test "remove_unexist_key" {
-  let m : T[MyString] = T::new()
+  let m : T[MyString] = new()
   fn i(s) {
     MyString::MyString(s)
   }
@@ -394,7 +394,7 @@ test "remove_unexist_key" {
 }
 
 test "grow" {
-  let m : T[MyString] = T::new()
+  let m : T[MyString] = new()
   fn i(s) {
     MyString::MyString(s)
   }
@@ -422,7 +422,7 @@ test "grow" {
 }
 
 test "clear" {
-  let m : T[MyString] = T::new()
+  let m : T[MyString] = new()
   m.clear()
   assert_eq!(m.size(), 0)
   assert_eq!(m.capacity(), 8)

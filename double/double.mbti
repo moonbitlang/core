@@ -1,6 +1,8 @@
 package moonbitlang/core/double
 
 // Values
+fn from_int(Int) -> Double
+
 let infinity : Double
 
 let max_value : Double
@@ -14,8 +16,6 @@ let neg_infinity : Double
 let not_a_number : Double
 
 // Types and methods
-
-
 impl Double {
   abs(Double) -> Double
   ceil(Double) -> Double
@@ -40,8 +40,11 @@ impl Double {
   to_be_bytes(Double) -> Bytes
   to_le_bytes(Double) -> Bytes
   to_string(Double) -> String
+  to_uint(Double) -> UInt
   trunc(Double) -> Double
 }
+impl Hash for Double
+impl Show for Double
 
 // Type aliases
 

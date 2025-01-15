@@ -1,4 +1,4 @@
-// Copyright 2024 International Digital Economy Academy
+// Copyright 2025 International Digital Economy Academy
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
 
 ///|
 /// Lookup a key from the bucket
-fn find[K : Eq, V](self : Bucket[K, V], key : K) -> V? {
+fn Bucket::find[K : Eq, V](self : Bucket[K, V], key : K) -> V? {
   match self {
     Just_One(key1, value) => if key == key1 { Some(value) } else { None }
     More(key1, value, rest) =>
@@ -29,7 +29,11 @@ fn find[K : Eq, V](self : Bucket[K, V], key : K) -> V? {
 ///|
 /// Add a new key-value pair to a bucket.
 /// Replace the old entry if one with the same key already exists.
-fn add[K : Eq, V](self : Bucket[K, V], key : K, value : V) -> Bucket[K, V] {
+fn Bucket::add[K : Eq, V](
+  self : Bucket[K, V],
+  key : K,
+  value : V
+) -> Bucket[K, V] {
   match self {
     Just_One(key1, _) =>
       if key == key1 {
@@ -48,7 +52,7 @@ fn add[K : Eq, V](self : Bucket[K, V], key : K, value : V) -> Bucket[K, V] {
 
 ///|
 /// Remove a key from a bucket
-fn remove[K : Eq, V](self : Bucket[K, V], key : K) -> Bucket[K, V]? {
+fn Bucket::remove[K : Eq, V](self : Bucket[K, V], key : K) -> Bucket[K, V]? {
   match self {
     Just_One(old_key, _) => if key == old_key { None } else { Some(self) }
     More(old_key, old_value, rest) =>
@@ -65,7 +69,7 @@ fn remove[K : Eq, V](self : Bucket[K, V], key : K) -> Bucket[K, V]? {
 
 ///|
 /// Get the size of a bucket
-fn size[K, V](self : Bucket[K, V]) -> Int {
+fn Bucket::size[K, V](self : Bucket[K, V]) -> Int {
   loop self, 1 {
     Just_One(_), acc => acc
     More(_, _, rest), acc => continue rest, acc + 1
@@ -74,7 +78,7 @@ fn size[K, V](self : Bucket[K, V]) -> Int {
 
 ///|
 /// Iterate through elements of a bucket
-fn each[K, V](self : Bucket[K, V], f : (K, V) -> Unit) -> Unit {
+fn Bucket::each[K, V](self : Bucket[K, V], f : (K, V) -> Unit) -> Unit {
   loop self {
     Just_One(k, v) => f(k, v)
     More(k, v, rest) => {
@@ -85,7 +89,7 @@ fn each[K, V](self : Bucket[K, V], f : (K, V) -> Unit) -> Unit {
 }
 
 ///|
-fn iter[K, V](self : Bucket[K, V]) -> Iter[(K, V)] {
+fn Bucket::iter[K, V](self : Bucket[K, V]) -> Iter[(K, V)] {
   Iter::new(fn {
     f =>
       loop self {

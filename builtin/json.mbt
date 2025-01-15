@@ -1,4 +1,4 @@
-// Copyright 2024 International Digital Economy Academy
+// Copyright 2025 International Digital Economy Academy
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -45,7 +45,17 @@ pub fn Int::to_json(self : Int) -> Json {
 
 ///|
 pub fn Int64::to_json(self : Int64) -> Json {
-  Number(self.to_double())
+  String::to_json(self.to_string())
+}
+
+///|
+pub fn UInt::to_json(self : UInt) -> Json {
+  Number(self.to_uint64().to_double())
+}
+
+///|
+pub fn UInt64::to_json(self : UInt64) -> Json {
+  String::to_json(self.to_string())
 }
 
 ///|

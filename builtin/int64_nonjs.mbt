@@ -1,4 +1,4 @@
-// Copyright 2024 International Digital Economy Academy
+// Copyright 2025 International Digital Economy Academy
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -107,6 +107,12 @@ pub fn UInt64::reinterpret_as_double(self : UInt64) -> Double = "%i64_to_f64_rei
 pub fn Int64::to_byte(self : Int64) -> Byte = "%i64_to_byte"
 
 ///|
+pub fn Int64::to_int16(self : Int64) -> Int16 = "%i64_to_i16"
+
+///|
+pub fn Int64::to_uint16(self : Int64) -> UInt16 = "%i64_to_u16"
+
+///|
 pub fn UInt64::trunc_double(val : Double) -> UInt64 = "%f64.to_u64"
 
 ///|
@@ -117,6 +123,12 @@ pub fn UInt64::extend_uint(val : UInt) -> UInt64 = "%u32.to_u64"
 
 ///|
 pub fn Int::to_int64(self : Int) -> Int64 = "%i32_to_i64"
+
+///|
+pub fn Int16::to_int64(self : Int16) -> Int64 = "%i16_to_i64"
+
+///|
+pub fn UInt16::to_int64(self : UInt16) -> Int64 = "%u16_to_i64"
 
 ///|
 /// @alert deprecated "Use `reinterpret_as_int64` instead"

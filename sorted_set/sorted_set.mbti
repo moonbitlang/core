@@ -3,6 +3,8 @@ package moonbitlang/core/sorted_set
 alias @moonbitlang/core/quickcheck as @quickcheck
 
 // Values
+fn from_iter[V : Compare](Iter[V]) -> T[V]
+
 fn new[V]() -> T[V]
 
 fn of[V : Compare](Array[V]) -> T[V]
@@ -20,12 +22,13 @@ impl T {
   disjoint[V : Compare](Self[V], Self[V]) -> Bool
   each[V](Self[V], (V) -> Unit) -> Unit
   eachi[V](Self[V], (Int, V) -> Unit) -> Unit
-  from_iter[V : Compare](Iter[V]) -> Self[V]
+  from_iter[V : Compare](Iter[V]) -> Self[V] //deprecated
   intersect[V : Compare](Self[V], Self[V]) -> Self[V] //deprecated
   intersection[V : Compare](Self[V], Self[V]) -> Self[V]
   is_empty[V : Compare](Self[V]) -> Bool
   iter[V](Self[V]) -> Iter[V]
   op_equal[V : Compare](Self[V], Self[V]) -> Bool
+  range[V : Compare](Self[V], V, V) -> Iter[V]
   remove[V : Compare](Self[V], V) -> Unit
   size[V : Compare](Self[V]) -> Int64
   subset[V : Compare](Self[V], Self[V]) -> Bool

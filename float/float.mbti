@@ -1,6 +1,8 @@
 package moonbitlang/core/float
 
 // Values
+fn default() -> Float
+
 let infinity : Float
 
 let max_value : Float
@@ -14,14 +16,16 @@ let neg_infinity : Float
 let not_a_number : Float
 
 // Types and methods
-
-
 impl Float {
   abs(Float) -> Float
   ceil(Float) -> Float
   default() -> Float
   exp(Float) -> Float
   floor(Float) -> Float
+  is_inf(Float) -> Bool
+  is_nan(Float) -> Bool
+  is_neg_inf(Float) -> Bool
+  is_pos_inf(Float) -> Bool
   ln(Float) -> Float
   op_mod(Float, Float) -> Float
   pow(Float, Float) -> Float
@@ -31,6 +35,8 @@ impl Float {
   to_le_bytes(Float) -> Bytes
   trunc(Float) -> Float
 }
+impl Hash for Float
+impl Show for Float
 
 // Type aliases
 

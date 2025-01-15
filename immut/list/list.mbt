@@ -1,4 +1,4 @@
-// Copyright 2024 International Digital Economy Academy
+// Copyright 2025 International Digital Economy Academy
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -23,21 +23,23 @@ pub impl[A : Show] Show for T[A] with output(xs, logger) {
 }
 
 ///|
-pub fn T::to_string[A : Show](xs : T[A]) -> String {
-  Show::to_string(xs)
+pub fn to_string[A : Show](self : T[A]) -> String {
+  Show::to_string(self)
 }
 
 ///|
 pub impl[A : ToJson] ToJson for T[A] with to_json(self) {
   let capacity = self.length()
-  guard capacity != 0 else { return Array([]) }
+  guard capacity != 0 else { return [] }
   let jsons = Array::new(capacity~)
-  self.each(fn(a) { jsons.push(a.to_json()) })
+  for a in self {
+    jsons.push(a.to_json())
+  }
   Array(jsons)
 }
 
 ///|
-pub fn T::to_json[A : ToJson](self : T[A]) -> Json {
+pub fn to_json[A : ToJson](self : T[A]) -> Json {
   ToJson::to_json(self)
 }
 
@@ -58,9 +60,7 @@ pub impl[A : @json.FromJson] @json.FromJson for T[A] with from_json(json, path) 
 }
 
 ///|
-pub fn T::from_json[A : @json.FromJson](
-  json : Json
-) -> T[A]!@json.JsonDecodeError {
+pub fn from_json[A : @json.FromJson](json : Json) -> T[A]!@json.JsonDecodeError {
   @json.from_json!(json)
 }
 
@@ -73,7 +73,7 @@ pub fn T::from_json[A : @json.FromJson](
 /// let ls = @list.of([1, 2, 3, 4, 5])
 /// assert_eq!(ls, @list.from_array([1, 2, 3, 4, 5]))
 /// ```
-pub fn T::from_array[A](arr : Array[A]) -> T[A] {
+pub fn from_array[A](arr : Array[A]) -> T[A] {
   for i = arr.length() - 1, list = Nil; i >= 0; {
     continue i - 1, Cons(arr[i], list)
   } else {
@@ -643,8 +643,8 @@ pub fn is_empty[A](self : T[A]) -> Bool {
 /// assert_eq!(a, @list.from_array([1, 3, 5]))
 /// assert_eq!(b, @list.from_array([2, 4, 6]))
 /// ```
-pub fn unzip[A, B](list : T[(A, B)]) -> (T[A], T[B]) {
-  match list {
+pub fn unzip[A, B](self : T[(A, B)]) -> (T[A], T[B]) {
+  match self {
     Nil => (Nil, Nil)
     Cons((x, y), xs) => {
       let (xs, ys) = unzip(xs)
@@ -1070,8 +1070,11 @@ pub fn intercalate[A](self : T[T[A]], sep : T[A]) -> T[A] {
 }
 
 ///|
+pub impl[X] Default for T[X] with default() { Nil }
+
+///|
 /// The empty list
-pub fn T::default[X]() -> T[X] {
+pub fn default[X]() -> T[X] {
   Nil
 }
 
@@ -1106,12 +1109,12 @@ pub fn iter2[A](self : T[A]) -> Iter2[Int, A] {
 }
 
 ///|
-pub fn T::from_iter[A](iter : Iter[A]) -> T[A] {
+pub fn from_iter[A](iter : Iter[A]) -> T[A] {
   iter.fold(init=Nil, fn(acc, e) { Cons(e, acc) })
 }
 
 ///|
-pub fn T::of[A](arr : FixedArray[A]) -> T[A] {
+pub fn of[A](arr : FixedArray[A]) -> T[A] {
   for i = arr.length() - 1, list = Nil; i >= 0; {
     continue i - 1, Cons(arr[i], list)
   } else {

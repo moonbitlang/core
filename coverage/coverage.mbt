@@ -1,4 +1,4 @@
-// Copyright 2024 International Digital Economy Academy
+// Copyright 2025 International Digital Economy Academy
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -23,7 +23,7 @@ struct CoverageCounter {
 ///|
 /// Create a new coverage counter with the given size.
 ///
-/// @coverage.skip 
+/// @coverage.skip
 pub fn CoverageCounter::new(size : Int) -> CoverageCounter {
   { counter: FixedArray::make(size, 0) }
 }
@@ -31,7 +31,7 @@ pub fn CoverageCounter::new(size : Int) -> CoverageCounter {
 ///|
 /// Increment the specified tracking index.
 ///
-/// @coverage.skip 
+/// @coverage.skip
 pub fn CoverageCounter::incr(self : CoverageCounter, idx : Int) -> Unit {
   let counter = self.counter[idx]
   self.counter[idx] = counter + 1
@@ -159,7 +159,7 @@ fn coverage_log(
       if ix != 0 {
         print(", ")
       }
-      print(escape(name))
+      print(name.escape())
       print(": ")
       let counter_dump = counter.to_string()
       println(counter_dump)

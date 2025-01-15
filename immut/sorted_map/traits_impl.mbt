@@ -1,4 +1,4 @@
-// Copyright 2024 International Digital Economy Academy
+// Copyright 2025 International Digital Economy Academy
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -13,7 +13,7 @@
 // limitations under the License.
 
 ///|
-pub impl[K, V] Default for T[K, V] with default() { T::new() }
+pub impl[K, V] Default for T[K, V] with default() { new() }
 
 ///|
 pub impl[K : Eq, V : Eq] Eq for T[K, V] with op_equal(self, other) -> Bool {
@@ -81,7 +81,7 @@ pub impl[V : @json.FromJson] @json.FromJson for T[String, V] with from_json(
 ) {
   match json {
     Object(obj) => {
-      let mut map = T::new()
+      let mut map = new()
       for k, v in obj {
         map = map.add(k, V::from_json!(v, path))
       }

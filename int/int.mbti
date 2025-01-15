@@ -6,8 +6,6 @@ let max_value : Int
 let min_value : Int
 
 // Types and methods
-
-
 impl Int {
   abs(Int) -> Int
   to_be_bytes(Int) -> Bytes

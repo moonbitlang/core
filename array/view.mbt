@@ -1,4 +1,4 @@
-// Copyright 2024 International Digital Economy Academy
+// Copyright 2025 International Digital Economy Academy
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -28,7 +28,7 @@
 ///   inspect!(arr, content="[5, 4, 3, 2, 1]")
 /// }
 /// ```
-pub fn rev_inplace[T](self : ArrayView[T]) -> Unit {
+pub fn ArrayView::rev_inplace[T](self : ArrayView[T]) -> Unit {
   let mid_len = self.length() / 2
   for i = 0; i < mid_len; i = i + 1 {
     let j = self.length() - i - 1
@@ -55,7 +55,7 @@ pub fn rev_inplace[T](self : ArrayView[T]) -> Unit {
 ///   inspect!(sum, content="6")
 /// }
 /// ```
-pub fn each[T](self : ArrayView[T], f : (T) -> Unit) -> Unit {
+pub fn ArrayView::each[T](self : ArrayView[T], f : (T) -> Unit) -> Unit {
   for v in self {
     f(v)
   }
@@ -72,7 +72,7 @@ pub fn each[T](self : ArrayView[T], f : (T) -> Unit) -> Unit {
 /// v.eachi(fn (i, x) { sum = sum + x + i })
 /// assert_eq!(sum, 15)
 /// ```
-pub fn eachi[T](self : ArrayView[T], f : (Int, T) -> Unit) -> Unit {
+pub fn ArrayView::eachi[T](self : ArrayView[T], f : (Int, T) -> Unit) -> Unit {
   for i, v in self {
     f(i, v)
   }
@@ -88,7 +88,7 @@ pub fn eachi[T](self : ArrayView[T], f : (Int, T) -> Unit) -> Unit {
 /// assert_false!(v[:].all(fn(elem) { elem % 2 == 0 }))
 /// assert_true!(v[1:4].all(fn(elem) { elem % 2 == 0 }))
 /// ```
-pub fn all[T](self : ArrayView[T], f : (T) -> Bool) -> Bool {
+pub fn ArrayView::all[T](self : ArrayView[T], f : (T) -> Bool) -> Bool {
   for v in self {
     if not(f(v)) {
       return false
@@ -107,7 +107,7 @@ pub fn all[T](self : ArrayView[T], f : (T) -> Bool) -> Bool {
 /// assert_true!(v.any(fn(ele) { ele < 6 }))
 /// assert_false!(v.any(fn(ele) { ele < 1 }))
 /// ```
-pub fn any[T](self : ArrayView[T], f : (T) -> Bool) -> Bool {
+pub fn ArrayView::any[T](self : ArrayView[T], f : (T) -> Bool) -> Bool {
   for v in self {
     if f(v) {
       return true
@@ -137,7 +137,7 @@ pub fn any[T](self : ArrayView[T], f : (T) -> Bool) -> Bool {
 ///   inspect!(arr.contains(6), content="false")
 /// }
 /// ```
-pub fn contains[T : Eq](self : ArrayView[T], value : T) -> Bool {
+pub fn ArrayView::contains[T : Eq](self : ArrayView[T], value : T) -> Bool {
   for v in self {
     if v == value {
       break true

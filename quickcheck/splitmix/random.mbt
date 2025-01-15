@@ -1,4 +1,4 @@
-// Copyright 2024 International Digital Economy Academy
+// Copyright 2025 International Digital Economy Academy
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -29,8 +29,13 @@ let float_ulp : Float = 1.0.to_float() / (1L << 24).to_float()
 
 ///|
 /// Create a new RandomState from an optional seed.
-pub fn RandomState::new(seed~ : UInt64 = 37) -> RandomState {
+pub fn new(seed~ : UInt64 = 37) -> RandomState {
   { seed: mix64(seed), gamma: mix_gamma(seed + golden_gamma) }
+}
+
+///| @alert deprecated "use `@splitmix.new` instead"
+pub fn RandomState::new(seed~ : UInt64 = 37) -> RandomState {
+  new(seed~)
 }
 
 ///|

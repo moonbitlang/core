@@ -1,4 +1,4 @@
-// Copyright 2024 International Digital Economy Academy
+// Copyright 2025 International Digital Economy Academy
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -20,12 +20,12 @@ test "Double::to_int64" {
   inspect!(2.0.to_int64(), content="2")
   inspect!(2.5.to_int64(), content="2")
   inspect!(2.9.to_int64(), content="2")
-  inspect!(-1.0.to_int64(), content="-1")
-  inspect!(-1.5.to_int64(), content="-1")
-  inspect!(-1.9.to_int64(), content="-1")
-  inspect!(-2.0.to_int64(), content="-2")
-  inspect!(-2.5.to_int64(), content="-2")
-  inspect!(-2.9.to_int64(), content="-2")
+  inspect!((-1.0).to_int64(), content="-1")
+  inspect!((-1.5).to_int64(), content="-1")
+  inspect!((-1.9).to_int64(), content="-1")
+  inspect!((-2.0).to_int64(), content="-2")
+  inspect!((-2.5).to_int64(), content="-2")
+  inspect!((-2.9).to_int64(), content="-2")
   inspect!((0.0 / 0.0).to_int64(), content="0")
   inspect!((1.0 / 0.0).to_int64(), content="9223372036854775807")
   inspect!((-1.0 / 0.0).to_int64(), content="-9223372036854775808")
@@ -33,4 +33,24 @@ test "Double::to_int64" {
   inspect!((-9223372036854775808.0).to_int64(), content="-9223372036854775808")
   inspect!(9223372036854775808.0.to_int64(), content="9223372036854775807")
   inspect!((-9223372036854775809.0).to_int64(), content="-9223372036854775808")
+}
+
+test "Double::to_uint64" {
+  inspect!(0.0.to_uint64(), content="0")
+  inspect!(1.0.to_uint64(), content="1")
+  inspect!(1.5.to_uint64(), content="1")
+  inspect!(1.9.to_uint64(), content="1")
+  inspect!(2.0.to_uint64(), content="2")
+  inspect!(2.5.to_uint64(), content="2")
+  inspect!(2.9.to_uint64(), content="2")
+  inspect!((-1.0).to_uint64(), content="0")
+  inspect!((-1.5).to_uint64(), content="0")
+  inspect!((-1.9).to_uint64(), content="0")
+  inspect!((-2.0).to_uint64(), content="0")
+  inspect!((-2.5).to_uint64(), content="0")
+  inspect!((-2.9).to_uint64(), content="0")
+  inspect!((0.0 / 0.0).to_uint64(), content="0")
+  inspect!((1.0 / 0.0).to_uint64(), content="18446744073709551615")
+  inspect!((-1.0 / 0.0).to_uint64(), content="0")
+  inspect!(18446744073709551615.0.to_uint64(), content="18446744073709551615")
 }

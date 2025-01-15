@@ -5,8 +5,6 @@ alias @moonbitlang/core/quickcheck as @quickcheck
 // Values
 
 // Types and methods
-
-
 impl FixedArray {
   all[T](Self[T], (T) -> Bool) -> Bool
   any[T](Self[T], (T) -> Bool) -> Bool
@@ -46,7 +44,7 @@ impl FixedArray {
   starts_with[T : Eq](Self[T], Self[T]) -> Bool
   swap[T](Self[T], Int, Int) -> Unit
 }
-
+impl[X : @quickcheck.Arbitrary] @quickcheck.Arbitrary for FixedArray[X]
 
 impl Array {
   copy[T](Self[T]) -> Self[T]
@@ -62,7 +60,7 @@ impl Array {
   sort_by[T](Self[T], (T, T) -> Int) -> Unit
   sort_by_key[T, K : Compare](Self[T], (T) -> K) -> Unit
 }
-
+impl[X : @quickcheck.Arbitrary] @quickcheck.Arbitrary for Array[X]
 
 impl ArrayView {
   all[T](Self[T], (T) -> Bool) -> Bool

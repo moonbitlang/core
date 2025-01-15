@@ -1,6 +1,9 @@
 package moonbitlang/core/rational
 
 // Values
+fn from_double(Double) -> T!RationalError
+
+fn new(Int64, Int64) -> T?
 
 // Types and methods
 pub(all) type! RationalError String
@@ -14,10 +17,10 @@ impl T {
   compare(Self, Self) -> Int
   floor(Self) -> Int64
   fract(Self) -> Self
-  from_double(Double) -> Self!RationalError
+  from_double(Double) -> Self!RationalError //deprecated
   is_integer(Self) -> Bool
   neg(Self) -> Self
-  new(Int64, Int64) -> Self?
+  new(Int64, Int64) -> Self? //deprecated
   op_add(Self, Self) -> Self
   op_div(Self, Self) -> Self
   op_equal(Self, Self) -> Bool

@@ -1,4 +1,4 @@
-// Copyright 2024 International Digital Economy Academy
+// Copyright 2025 International Digital Economy Academy
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -40,7 +40,7 @@ fn Float::to_unchecked_int(self : Float) -> Int = "%f32.to_i32"
 ///   inspect!(@float.neg_infinity.to_int(), content="-2147483648")
 /// }
 /// ```
-pub fn Float::to_int(self : Float) -> Int {
+pub fn to_int(self : Float) -> Int {
   if self != self {
     0
   } else if self >= 2147483647 {

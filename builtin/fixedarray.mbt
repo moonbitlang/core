@@ -1,4 +1,4 @@
-// Copyright 2024 International Digital Economy Academy
+// Copyright 2025 International Digital Economy Academy
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
 
 ///|
 /// @intrinsic %iter.from_array
-pub fn iter[T](self : FixedArray[T]) -> Iter[T] {
+pub fn FixedArray::iter[T](self : FixedArray[T]) -> Iter[T] {
   Iter::new(fn(yield_) {
     for v in self {
       guard let IterContinue = yield_(v) else { x => break x }
@@ -26,7 +26,7 @@ pub fn iter[T](self : FixedArray[T]) -> Iter[T] {
 }
 
 ///|
-pub fn iter2[T](self : FixedArray[T]) -> Iter2[Int, T] {
+pub fn FixedArray::iter2[T](self : FixedArray[T]) -> Iter2[Int, T] {
   Iter2::new(fn(yield_) {
     for i, v in self {
       guard let IterContinue = yield_(i, v) else { x => break x }
@@ -51,8 +51,51 @@ pub fn FixedArray::default[X]() -> FixedArray[X] {
 /// fa.fill(3)
 /// assert_eq!(fa[0], 3)
 /// ```
-pub fn fill[T](self : FixedArray[T], value : T) -> Unit {
+pub fn FixedArray::fill[T](self : FixedArray[T], value : T) -> Unit {
   for i in 0..<self.length() {
     self[i] = value
   }
+}
+
+///|
+pub fn compare[T : Compare](self : FixedArray[T], other : FixedArray[T]) -> Int {
+  let len_self = self.length()
+  let len_other = other.length()
+  if len_self < len_other {
+    -1
+  } else if len_self > len_other {
+    1
+  } else {
+    for i in 0..<len_self {
+      let cmp = self.unsafe_get(i).compare(other.unsafe_get(i))
+      if cmp != 0 {
+        break cmp
+      }
+    } else {
+      0
+    }
+  }
+}
+
+///|
+/// Tests whether the FixedArray contains no elements.
+///
+/// Parameters:
+///
+/// * `FixedArray` : The FixedArray to check.
+///
+/// Returns `true` if the FixedArray has no elements, `false` otherwise.
+///
+/// Example:
+///
+/// ```moonbit
+/// test "FixedArray::is_empty" {
+///   let empty : FixedArray[Int] = []
+///   inspect!(empty.is_empty(), content="true")
+///   let non_empty = [1, 2, 3]
+///   inspect!(non_empty.is_empty(), content="false")
+/// }
+/// ```
+pub fn FixedArray::is_empty[T](self : FixedArray[T]) -> Bool {
+  self.length() == 0
 }

@@ -1,4 +1,4 @@
-// Copyright 2024 International Digital Economy Academy
+// Copyright 2025 International Digital Economy Academy
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -198,17 +198,17 @@ test "new_with" {
 
 test "from_iter multiple elements iter" {
   inspect!(
-    @array.T::from_iter([1, 2, 3].iter()),
+    @array.from_iter([1, 2, 3].iter()),
     content="@immut/array.of([1, 2, 3])",
   )
 }
 
 test "from_iter single element iter" {
-  inspect!(@array.T::from_iter([1].iter()), content="@immut/array.of([1])")
+  inspect!(@array.from_iter([1].iter()), content="@immut/array.of([1])")
 }
 
 test "from_iter empty iter" {
-  let pq : @array.T[Int] = @array.T::from_iter(Iter::empty())
+  let pq : @array.T[Int] = @array.from_iter(Iter::empty())
   inspect!(pq, content="@immut/array.of([])")
 }
 

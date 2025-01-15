@@ -1,4 +1,4 @@
-// Copyright 2024 International Digital Economy Academy
+// Copyright 2025 International Digital Economy Academy
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -22,7 +22,7 @@ pub(all) struct SparseArray[X] {
 } derive(Eq)
 
 ///|
-pub fn SparseArray::singleton[X](idx : Int, value : X) -> SparseArray[X] {
+pub fn singleton[X](idx : Int, value : X) -> SparseArray[X] {
   { elem_info: empty_bitset.add(idx), data: [value] }
 }
 

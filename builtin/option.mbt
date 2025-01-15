@@ -1,4 +1,4 @@
-// Copyright 2024 International Digital Economy Academy
+// Copyright 2025 International Digital Economy Academy
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -13,7 +13,7 @@
 // limitations under the License.
 
 ///|
-pub fn op_equal[X : Eq](self : X?, other : X?) -> Bool {
+pub fn Option::op_equal[X : Eq](self : X?, other : X?) -> Bool {
   match (self, other) {
     (None, None) => true
     (Some(x), Some(y)) => x == y
@@ -22,7 +22,7 @@ pub fn op_equal[X : Eq](self : X?, other : X?) -> Bool {
 }
 
 ///|
-pub fn to_string[X : Show](self : X?) -> String {
+pub fn Option::to_string[X : Show](self : X?) -> String {
   match self {
     None => "None"
     Some(x) => "Some(" + x.to_string() + ")"
@@ -32,7 +32,7 @@ pub fn to_string[X : Show](self : X?) -> String {
 ///|
 /// Extract the value in `Some`.
 /// Panic if input is `None`.
-pub fn unwrap[X](self : X?) -> X {
+pub fn Option::unwrap[X](self : X?) -> X {
   match self {
     None => panic()
     Some(x) => x

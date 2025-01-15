@@ -1,4 +1,4 @@
-// Copyright 2024 International Digital Economy Academy
+// Copyright 2025 International Digital Economy Academy
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -169,16 +169,18 @@ pub fn union[V : Compare](self : T[V], src : T[V]) -> T[V] {
 fn split[V : Compare](root : Node[V]?, value : V) -> (Node[V]?, Node[V]?) {
   match root {
     None => (None, None)
-    Some(node) =>
-      if value == node.value {
+    Some(node) => {
+      let comp = value.compare(node.value)
+      if comp == 0 {
         (node.left, node.right)
-      } else if value < node.value {
+      } else if comp < 0 {
         let (l, r) = split(node.left, value)
         (l, Some(join(r, node.value, node.right)))
       } else {
         let (l, r) = split(node.right, value)
         (Some(join(node.left, node.value, l)), r)
       }
+    }
   }
 }
 
@@ -320,63 +322,56 @@ pub fn size[V : Compare](self : T[V]) -> Int64 {
 ///|
 /// Iterates the set.
 pub fn each[V](self : T[V], f : (V) -> Unit) -> Unit {
-  match self.root {
-    None => ()
-    Some(root) => root.each(f)
+  fn dfs(root : Node[V]?) -> Unit {
+    match root {
+      Some(root) => {
+        dfs(root.left)
+        f(root.value)
+        dfs(root.right)
+      }
+      None => ()
+    }
+    ()
   }
-}
 
-///|
-fn each[V](self : Node[V], f : (V) -> Unit) -> Unit {
-  let s = []
-  let mut p = Some(self)
-  while not(p.is_empty()) || not(s.is_empty()) {
-    while not(p.is_empty()) {
-      s.push(p)
-      p = p.unwrap().left
-    }
-    if not(s.is_empty()) {
-      p = s.unsafe_pop()
-      f(p.unwrap().value)
-      p = p.unwrap().right
-    }
-  }
+  dfs(self.root)
 }
 
 ///|
 /// Iterates the set with index.
 pub fn eachi[V](self : T[V], f : (Int, V) -> Unit) -> Unit {
-  match self.root {
-    None => ()
-    Some(root) => root.eachi(f)
-  }
-}
-
-///|
-fn eachi[V](self : Node[V], f : (Int, V) -> Unit) -> Unit {
-  let s = []
-  let mut p = Some(self)
   let mut i = 0
-  while not(p.is_empty()) || not(s.is_empty()) {
-    while not(p.is_empty()) {
-      s.push(p)
-      p = p.unwrap().left
-    }
-    if not(s.is_empty()) {
-      p = s.unsafe_pop()
-      f(i, p.unwrap().value)
-      p = p.unwrap().right
-      i += 1
-    }
-  }
+  self.each(fn(v) {
+    f(i, v)
+    i = i + 1
+  })
 }
 
 ///|
 /// Converts the set to an array.
 pub fn to_array[V](self : T[V]) -> Array[V] {
-  let arr = []
-  self.each(fn(v) { arr.push(v) })
-  arr
+  if self.size == 0 {
+    []
+  } else {
+    let padding = self.root.unwrap().value
+    let arr = Array::make(self.size.to_int(), padding)
+    let mut i = 0
+    fn dfs(root : Node[V]?) -> Unit {
+      match root {
+        Some(root) => {
+          dfs(root.left)
+          arr[i] = root.value
+          i = i + 1
+          dfs(root.right)
+        }
+        None => ()
+      }
+      ()
+    }
+
+    dfs(self.root)
+    arr
+  }
 }
 
 ///|
@@ -391,7 +386,7 @@ pub fn iter[V](self : T[V]) -> Iter[V] {
 }
 
 ///|
-fn iter[A](self : Node[A]) -> Iter[A] {
+fn Node::iter[A](self : Node[A]) -> Iter[A] {
   Iter::new(fn(yield_) {
     let { left, value, right, .. } = self
     let res = match left {
@@ -412,7 +407,7 @@ fn iter[A](self : Node[A]) -> Iter[A] {
 }
 
 ///|
-pub fn T::from_iter[V : Compare](iter : Iter[V]) -> T[V] {
+pub fn from_iter[V : Compare](iter : Iter[V]) -> T[V] {
   let s = new()
   iter.each(fn(e) { s.add(e) })
   s
@@ -432,7 +427,7 @@ pub impl[X : @quickcheck.Arbitrary + Compare] @quickcheck.Arbitrary for T[X] wit
   size,
   rs
 ) {
-  @quickcheck.Arbitrary::arbitrary(size, rs) |> T::from_iter
+  @quickcheck.Arbitrary::arbitrary(size, rs) |> from_iter
 }
 
 ///|
@@ -441,7 +436,7 @@ impl[T : Show] Show for Node[T] with output(self, logger) {
 }
 
 ///|
-fn to_array[T](self : Node[T]) -> Array[T] {
+fn Node::to_array[T](self : Node[T]) -> Array[T] {
   fn aux(n : Node[T]?) -> Array[_] {
     match n {
       None => []
@@ -450,6 +445,41 @@ fn to_array[T](self : Node[T]) -> Array[T] {
   }
 
   aux(Some(self))
+}
+
+///|
+pub fn range[V : Compare](self : T[V], low : V, high : V) -> Iter[V] {
+  range_aux(self.root, low, high)
+}
+
+///|
+fn range_aux[V : Compare](root : Node[V]?, low : V, high : V) -> Iter[V] {
+  Iter::new(fn(yield_) {
+    match root {
+      None => IterContinue
+      Some(node) => {
+        let cmp_key_low = node.value.compare(low)
+        let cmp_key_high = node.value.compare(high)
+        if cmp_key_low > 0 {
+          guard let IterContinue = range_aux(node.left, low, high).run(yield_) else {
+            x => return x
+          }
+
+        }
+        if cmp_key_low >= 0 && cmp_key_high <= 0 {
+          guard let IterContinue = yield_(node.value) else { x => return x }
+
+        }
+        if cmp_key_high < 0 {
+          guard let IterContinue = range_aux(node.right, low, high).run(yield_) else {
+            x => return x
+          }
+
+        }
+        IterContinue
+      }
+    }
+  })
 }
 
 // AVL tree operations
@@ -554,13 +584,14 @@ fn rotate_rl[V : Compare](n : Node[V]) -> Node[V] {
 fn add_node[V : Compare](root : Node[V]?, value : V) -> (Node[V]?, Bool) {
   match root {
     None => (Some(new_node(value)), true)
-    Some(n) =>
-      if value == n.value {
+    Some(n) => {
+      let comp = value.compare(n.value)
+      if comp == 0 {
         n.value = value
         (Some(n), false)
       } else {
         let (l, r) = (n.left, n.right)
-        if value < n.value {
+        if comp < 0 {
           let (nl, inserted) = add_node(l, value)
           n.left = nl
           (Some(balance(n)), inserted)
@@ -570,12 +601,14 @@ fn add_node[V : Compare](root : Node[V]?, value : V) -> (Node[V]?, Bool) {
           (Some(balance(n)), inserted)
         }
       }
+    }
   }
 }
 
 ///|
 fn delete_node[V : Compare](root : Node[V], value : V) -> (Node[V]?, Bool) {
-  if value == root.value {
+  let comp = value.compare(root.value)
+  if comp == 0 {
     let (l, r) = (root.left, root.right)
     let n = match (l, r) {
       (Some(_), Some(nr)) => {
@@ -586,7 +619,7 @@ fn delete_node[V : Compare](root : Node[V], value : V) -> (Node[V]?, Bool) {
       (Some(_), None) | (None, None) => l
     }
     (n, true)
-  } else if value < root.value {
+  } else if comp < 0 {
     match root.left {
       None => (Some(root), false)
       Some(l) => {

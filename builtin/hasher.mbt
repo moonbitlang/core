@@ -1,4 +1,4 @@
-// Copyright 2024 International Digital Economy Academy
+// Copyright 2025 International Digital Economy Academy
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -39,60 +39,60 @@ pub fn Hasher::new(seed~ : Int = 0) -> Hasher {
 }
 
 ///|
-pub fn combine[T : Hash](self : Hasher, value : T) -> Unit {
+pub fn Hasher::combine[T : Hash](self : Hasher, value : T) -> Unit {
   value.hash_combine(self)
 }
 
 ///|
-pub fn combine_unit(self : Hasher) -> Unit {
+pub fn Hasher::combine_unit(self : Hasher) -> Unit {
   self.combine_int(0)
 }
 
 ///|
-pub fn combine_bool(self : Hasher, value : Bool) -> Unit {
+pub fn Hasher::combine_bool(self : Hasher, value : Bool) -> Unit {
   self.combine_int(if value { 1 } else { 0 })
 }
 
 ///|
-pub fn combine_int(self : Hasher, value : Int) -> Unit {
+pub fn Hasher::combine_int(self : Hasher, value : Int) -> Unit {
   self.acc += 4
   self.consume4(value)
 }
 
 ///|
-pub fn combine_int64(self : Hasher, value : Int64) -> Unit {
+pub fn Hasher::combine_int64(self : Hasher, value : Int64) -> Unit {
   self.acc += 8
   self.consume4(value.to_int())
   self.consume4((value.reinterpret_as_uint64() >> 32).to_int())
 }
 
 ///|
-pub fn combine_uint(self : Hasher, value : UInt) -> Unit {
+pub fn Hasher::combine_uint(self : Hasher, value : UInt) -> Unit {
   self.combine_int(value.reinterpret_as_int())
 }
 
 ///|
-pub fn combine_uint64(self : Hasher, value : UInt64) -> Unit {
+pub fn Hasher::combine_uint64(self : Hasher, value : UInt64) -> Unit {
   self.combine_int64(value.reinterpret_as_int64())
 }
 
 ///|
-pub fn combine_double(self : Hasher, value : Double) -> Unit {
+pub fn Hasher::combine_double(self : Hasher, value : Double) -> Unit {
   self.combine_int64(value.reinterpret_as_int64())
 }
 
 ///|
-pub fn combine_float(self : Hasher, value : Float) -> Unit {
+pub fn Hasher::combine_float(self : Hasher, value : Float) -> Unit {
   self.combine_int(value.reinterpret_as_int())
 }
 
 ///|
-pub fn combine_byte(self : Hasher, value : Byte) -> Unit {
+pub fn Hasher::combine_byte(self : Hasher, value : Byte) -> Unit {
   self.consume1(value)
 }
 
 ///|
-pub fn combine_bytes(self : Hasher, value : Bytes) -> Unit {
+pub fn Hasher::combine_bytes(self : Hasher, value : Bytes) -> Unit {
   let mut remain = value.length()
   let mut cur = 0
   while remain >= 4 {
@@ -108,24 +108,24 @@ pub fn combine_bytes(self : Hasher, value : Bytes) -> Unit {
 }
 
 ///|
-pub fn combine_string(self : Hasher, value : String) -> Unit {
+pub fn Hasher::combine_string(self : Hasher, value : String) -> Unit {
   for i = 0; i < value.length(); i = i + 1 {
     self.combine_int(value[i].to_int())
   }
 }
 
 ///|
-pub fn combine_char(self : Hasher, value : Char) -> Unit {
+pub fn Hasher::combine_char(self : Hasher, value : Char) -> Unit {
   self.combine_int(value.to_int())
 }
 
 ///|
-pub fn finalize(self : Hasher) -> Int {
+pub fn Hasher::finalize(self : Hasher) -> Int {
   self.avalanche()
 }
 
 ///|
-fn avalanche(self : Hasher) -> Int {
+fn Hasher::avalanche(self : Hasher) -> Int {
   let mut acc = self.acc.reinterpret_as_uint()
   acc = acc ^ (acc >> 15)
   acc *= gPRIME2.reinterpret_as_uint()
@@ -136,12 +136,12 @@ fn avalanche(self : Hasher) -> Int {
 }
 
 ///|
-fn consume4(self : Hasher, input : Int) -> Unit {
+fn Hasher::consume4(self : Hasher, input : Int) -> Unit {
   self.acc = rotl(self.acc + input * gPRIME3, 17) * gPRIME4
 }
 
 ///|
-fn consume1(self : Hasher, input : Byte) -> Unit {
+fn Hasher::consume1(self : Hasher, input : Byte) -> Unit {
   self.acc = rotl(self.acc + input.to_int() * gPRIME5, 11) * gPRIME1
 }
 

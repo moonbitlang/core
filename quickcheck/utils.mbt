@@ -1,4 +1,4 @@
-// Copyright 2024 International Digital Economy Academy
+// Copyright 2025 International Digital Economy Academy
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
 
 ///|
 pub fn samples[X : Arbitrary](x : Int) -> Array[X] {
-  let rs = @splitmix.RandomState::new()
+  let rs = @splitmix.new()
   let array = Array::make(x, X::arbitrary(0, rs))
   for i = 1; i < x; i = i + 1 {
     array[i] = X::arbitrary(i, rs)

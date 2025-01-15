@@ -1,4 +1,4 @@
-// Copyright 2024 International Digital Economy Academy
+// Copyright 2025 International Digital Economy Academy
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -13,12 +13,15 @@
 // limitations under the License.
 
 ///|
-pub fn op_equal[T0 : Eq, T1 : Eq](self : (T0, T1), other : (T0, T1)) -> Bool {
+pub fn Tuple2::op_equal[T0 : Eq, T1 : Eq](
+  self : (T0, T1),
+  other : (T0, T1)
+) -> Bool {
   self.0 == other.0 && self.1 == other.1
 }
 
 ///|
-pub fn op_equal[T0 : Eq, T1 : Eq, T2 : Eq](
+pub fn Tuple3::op_equal[T0 : Eq, T1 : Eq, T2 : Eq](
   self : (T0, T1, T2),
   other : (T0, T1, T2)
 ) -> Bool {
@@ -26,7 +29,7 @@ pub fn op_equal[T0 : Eq, T1 : Eq, T2 : Eq](
 }
 
 ///|
-pub fn op_equal[T0 : Eq, T1 : Eq, T2 : Eq, T3 : Eq](
+pub fn Tuple4::op_equal[T0 : Eq, T1 : Eq, T2 : Eq, T3 : Eq](
   self : (T0, T1, T2, T3),
   other : (T0, T1, T2, T3)
 ) -> Bool {
@@ -37,7 +40,7 @@ pub fn op_equal[T0 : Eq, T1 : Eq, T2 : Eq, T3 : Eq](
 }
 
 ///|
-pub fn op_equal[T0 : Eq, T1 : Eq, T2 : Eq, T3 : Eq, T4 : Eq](
+pub fn Tuple5::op_equal[T0 : Eq, T1 : Eq, T2 : Eq, T3 : Eq, T4 : Eq](
   self : (T0, T1, T2, T3, T4),
   other : (T0, T1, T2, T3, T4)
 ) -> Bool {
@@ -49,7 +52,7 @@ pub fn op_equal[T0 : Eq, T1 : Eq, T2 : Eq, T3 : Eq, T4 : Eq](
 }
 
 ///|
-pub fn op_equal[T0 : Eq, T1 : Eq, T2 : Eq, T3 : Eq, T4 : Eq, T5 : Eq](
+pub fn Tuple6::op_equal[T0 : Eq, T1 : Eq, T2 : Eq, T3 : Eq, T4 : Eq, T5 : Eq](
   self : (T0, T1, T2, T3, T4, T5),
   other : (T0, T1, T2, T3, T4, T5)
 ) -> Bool {
@@ -62,7 +65,7 @@ pub fn op_equal[T0 : Eq, T1 : Eq, T2 : Eq, T3 : Eq, T4 : Eq, T5 : Eq](
 }
 
 ///|
-pub fn op_equal[T0 : Eq, T1 : Eq, T2 : Eq, T3 : Eq, T4 : Eq, T5 : Eq, T6 : Eq](
+pub fn Tuple7::op_equal[T0 : Eq, T1 : Eq, T2 : Eq, T3 : Eq, T4 : Eq, T5 : Eq, T6 : Eq](
   self : (T0, T1, T2, T3, T4, T5, T6),
   other : (T0, T1, T2, T3, T4, T5, T6)
 ) -> Bool {
@@ -76,7 +79,7 @@ pub fn op_equal[T0 : Eq, T1 : Eq, T2 : Eq, T3 : Eq, T4 : Eq, T5 : Eq, T6 : Eq](
 }
 
 ///|
-pub fn op_equal[T0 : Eq, T1 : Eq, T2 : Eq, T3 : Eq, T4 : Eq, T5 : Eq, T6 : Eq, T7 : Eq](
+pub fn Tuple8::op_equal[T0 : Eq, T1 : Eq, T2 : Eq, T3 : Eq, T4 : Eq, T5 : Eq, T6 : Eq, T7 : Eq](
   self : (T0, T1, T2, T3, T4, T5, T6, T7),
   other : (T0, T1, T2, T3, T4, T5, T6, T7)
 ) -> Bool {
@@ -91,7 +94,7 @@ pub fn op_equal[T0 : Eq, T1 : Eq, T2 : Eq, T3 : Eq, T4 : Eq, T5 : Eq, T6 : Eq, T
 }
 
 ///|
-pub fn op_equal[T0 : Eq, T1 : Eq, T2 : Eq, T3 : Eq, T4 : Eq, T5 : Eq, T6 : Eq, T7 : Eq, T8 : Eq](
+pub fn Tuple9::op_equal[T0 : Eq, T1 : Eq, T2 : Eq, T3 : Eq, T4 : Eq, T5 : Eq, T6 : Eq, T7 : Eq, T8 : Eq](
   self : (T0, T1, T2, T3, T4, T5, T6, T7, T8),
   other : (T0, T1, T2, T3, T4, T5, T6, T7, T8)
 ) -> Bool {
@@ -107,7 +110,7 @@ pub fn op_equal[T0 : Eq, T1 : Eq, T2 : Eq, T3 : Eq, T4 : Eq, T5 : Eq, T6 : Eq, T
 }
 
 ///|
-pub fn op_equal[T0 : Eq, T1 : Eq, T2 : Eq, T3 : Eq, T4 : Eq, T5 : Eq, T6 : Eq, T7 : Eq, T8 : Eq, T9 : Eq](
+pub fn Tuple10::op_equal[T0 : Eq, T1 : Eq, T2 : Eq, T3 : Eq, T4 : Eq, T5 : Eq, T6 : Eq, T7 : Eq, T8 : Eq, T9 : Eq](
   self : (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9),
   other : (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9)
 ) -> Bool {
@@ -124,7 +127,7 @@ pub fn op_equal[T0 : Eq, T1 : Eq, T2 : Eq, T3 : Eq, T4 : Eq, T5 : Eq, T6 : Eq, T
 }
 
 ///|
-pub fn op_equal[T0 : Eq, T1 : Eq, T2 : Eq, T3 : Eq, T4 : Eq, T5 : Eq, T6 : Eq, T7 : Eq, T8 : Eq, T9 : Eq, T10 : Eq](
+pub fn Tuple11::op_equal[T0 : Eq, T1 : Eq, T2 : Eq, T3 : Eq, T4 : Eq, T5 : Eq, T6 : Eq, T7 : Eq, T8 : Eq, T9 : Eq, T10 : Eq](
   self : (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10),
   other : (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10)
 ) -> Bool {
@@ -142,7 +145,7 @@ pub fn op_equal[T0 : Eq, T1 : Eq, T2 : Eq, T3 : Eq, T4 : Eq, T5 : Eq, T6 : Eq, T
 }
 
 ///|
-pub fn op_equal[T0 : Eq, T1 : Eq, T2 : Eq, T3 : Eq, T4 : Eq, T5 : Eq, T6 : Eq, T7 : Eq, T8 : Eq, T9 : Eq, T10 : Eq, T11 : Eq](
+pub fn Tuple12::op_equal[T0 : Eq, T1 : Eq, T2 : Eq, T3 : Eq, T4 : Eq, T5 : Eq, T6 : Eq, T7 : Eq, T8 : Eq, T9 : Eq, T10 : Eq, T11 : Eq](
   self : (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11),
   other : (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11)
 ) -> Bool {
@@ -161,7 +164,7 @@ pub fn op_equal[T0 : Eq, T1 : Eq, T2 : Eq, T3 : Eq, T4 : Eq, T5 : Eq, T6 : Eq, T
 }
 
 ///|
-pub fn op_equal[T0 : Eq, T1 : Eq, T2 : Eq, T3 : Eq, T4 : Eq, T5 : Eq, T6 : Eq, T7 : Eq, T8 : Eq, T9 : Eq, T10 : Eq, T11 : Eq, T12 : Eq](
+pub fn Tuple13::op_equal[T0 : Eq, T1 : Eq, T2 : Eq, T3 : Eq, T4 : Eq, T5 : Eq, T6 : Eq, T7 : Eq, T8 : Eq, T9 : Eq, T10 : Eq, T11 : Eq, T12 : Eq](
   self : (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12),
   other : (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12)
 ) -> Bool {
@@ -181,7 +184,7 @@ pub fn op_equal[T0 : Eq, T1 : Eq, T2 : Eq, T3 : Eq, T4 : Eq, T5 : Eq, T6 : Eq, T
 }
 
 ///|
-pub fn op_equal[T0 : Eq, T1 : Eq, T2 : Eq, T3 : Eq, T4 : Eq, T5 : Eq, T6 : Eq, T7 : Eq, T8 : Eq, T9 : Eq, T10 : Eq, T11 : Eq, T12 : Eq, T13 : Eq](
+pub fn Tuple14::op_equal[T0 : Eq, T1 : Eq, T2 : Eq, T3 : Eq, T4 : Eq, T5 : Eq, T6 : Eq, T7 : Eq, T8 : Eq, T9 : Eq, T10 : Eq, T11 : Eq, T12 : Eq, T13 : Eq](
   self : (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13),
   other : (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13)
 ) -> Bool {
@@ -202,7 +205,7 @@ pub fn op_equal[T0 : Eq, T1 : Eq, T2 : Eq, T3 : Eq, T4 : Eq, T5 : Eq, T6 : Eq, T
 }
 
 ///|
-pub fn op_equal[T0 : Eq, T1 : Eq, T2 : Eq, T3 : Eq, T4 : Eq, T5 : Eq, T6 : Eq, T7 : Eq, T8 : Eq, T9 : Eq, T10 : Eq, T11 : Eq, T12 : Eq, T13 : Eq, T14 : Eq](
+pub fn Tuple15::op_equal[T0 : Eq, T1 : Eq, T2 : Eq, T3 : Eq, T4 : Eq, T5 : Eq, T6 : Eq, T7 : Eq, T8 : Eq, T9 : Eq, T10 : Eq, T11 : Eq, T12 : Eq, T13 : Eq, T14 : Eq](
   self : (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14),
   other : (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14)
 ) -> Bool {
@@ -224,7 +227,7 @@ pub fn op_equal[T0 : Eq, T1 : Eq, T2 : Eq, T3 : Eq, T4 : Eq, T5 : Eq, T6 : Eq, T
 }
 
 ///|
-pub fn op_equal[T0 : Eq, T1 : Eq, T2 : Eq, T3 : Eq, T4 : Eq, T5 : Eq, T6 : Eq, T7 : Eq, T8 : Eq, T9 : Eq, T10 : Eq, T11 : Eq, T12 : Eq, T13 : Eq, T14 : Eq, T15 : Eq](
+pub fn Tuple16::op_equal[T0 : Eq, T1 : Eq, T2 : Eq, T3 : Eq, T4 : Eq, T5 : Eq, T6 : Eq, T7 : Eq, T8 : Eq, T9 : Eq, T10 : Eq, T11 : Eq, T12 : Eq, T13 : Eq, T14 : Eq, T15 : Eq](
   self : (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15),
   other : (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15)
 ) -> Bool {

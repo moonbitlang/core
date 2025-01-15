@@ -1,4 +1,4 @@
-// Copyright 2024 International Digital Economy Academy
+// Copyright 2025 International Digital Economy Academy
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -121,7 +121,7 @@ pub fn BigInt::from_uint64(n : UInt64) -> BigInt {
 
 ///|
 /// Negate a bigint
-pub fn op_neg(self : BigInt) -> BigInt {
+pub fn BigInt::op_neg(self : BigInt) -> BigInt {
   if self.is_zero() {
     return zero
   }
@@ -130,7 +130,7 @@ pub fn op_neg(self : BigInt) -> BigInt {
 
 ///|
 /// Add two bigint.
-pub fn op_add(self : BigInt, other : BigInt) -> BigInt {
+pub fn BigInt::op_add(self : BigInt, other : BigInt) -> BigInt {
   if self.sign == Negative {
     if other.sign == Negative {
       return -(-other + -self)
@@ -158,7 +158,7 @@ pub fn op_add(self : BigInt, other : BigInt) -> BigInt {
 
 ///|
 /// Subtract two bigint
-pub fn op_sub(self : BigInt, other : BigInt) -> BigInt {
+pub fn BigInt::op_sub(self : BigInt, other : BigInt) -> BigInt {
   // first make sure self and other > 0
   if self.sign == Negative {
     if other.sign == Negative {
@@ -210,7 +210,7 @@ pub fn op_sub(self : BigInt, other : BigInt) -> BigInt {
 
 ///|
 /// Multiply two bigint 
-pub fn op_mul(self : BigInt, other : BigInt) -> BigInt {
+pub fn BigInt::op_mul(self : BigInt, other : BigInt) -> BigInt {
   if self.is_zero() || other.is_zero() {
     return zero
   }
@@ -262,7 +262,7 @@ fn karatsuba_mul(self : BigInt, other : BigInt) -> BigInt {
 
 ///|
 // Get the lower half of the number.
-fn split(self : BigInt, half : Int) -> (BigInt, BigInt) {
+fn BigInt::split(self : BigInt, half : Int) -> (BigInt, BigInt) {
   if self.len <= half {
     return ({ ..self, sign: Positive }, zero)
   }
@@ -278,7 +278,7 @@ fn split(self : BigInt, half : Int) -> (BigInt, BigInt) {
 
 ///|
 /// Divide two bigint
-pub fn op_div(self : BigInt, other : BigInt) -> BigInt {
+pub fn BigInt::op_div(self : BigInt, other : BigInt) -> BigInt {
   // TODO: 
   // guard (other != zero, "division by zero")  
   if other == zero {
@@ -300,7 +300,7 @@ pub fn op_div(self : BigInt, other : BigInt) -> BigInt {
 
 ///|
 /// Modulo two bigint
-pub fn op_mod(self : BigInt, other : BigInt) -> BigInt {
+pub fn BigInt::op_mod(self : BigInt, other : BigInt) -> BigInt {
   if other == zero {
     abort("division by zero")
   }
@@ -466,7 +466,7 @@ fn grade_school_div(self : BigInt, other : BigInt) -> (BigInt, BigInt) {
 /// The sign of the result is the same as the sign of the input.
 /// Only the absolute value is shifted.
 /// 
-pub fn op_shl(self : BigInt, n : Int) -> BigInt {
+pub fn BigInt::op_shl(self : BigInt, n : Int) -> BigInt {
   if n < 0 {
     abort("negative shift count")
   }
@@ -503,7 +503,7 @@ pub fn op_shl(self : BigInt, n : Int) -> BigInt {
 /// Right shift a bigint
 /// The sign of the result is the same as the sign of the input.
 /// Only the absolute value is shifted.
-pub fn op_shr(self : BigInt, n : Int) -> BigInt {
+pub fn BigInt::op_shr(self : BigInt, n : Int) -> BigInt {
   if n < 0 {
     abort("negative shift count")
   }
@@ -545,13 +545,13 @@ pub fn op_shr(self : BigInt, n : Int) -> BigInt {
 
 ///|
 /// Check if a bigint is zero
-pub fn is_zero(self : BigInt) -> Bool {
+pub fn BigInt::is_zero(self : BigInt) -> Bool {
   self.len == 1 && self.limbs[0] == 0
 }
 
 ///|
 /// Implements the compare trait for BigInt
-pub fn compare(self : BigInt, other : BigInt) -> Int {
+pub fn BigInt::compare(self : BigInt, other : BigInt) -> Int {
   if self.sign != other.sign {
     return if self.sign == Positive { 1 } else { -1 }
   }
@@ -578,7 +578,7 @@ pub fn compare(self : BigInt, other : BigInt) -> Int {
 
 ///|
 /// Implements the Eq trait for BigInt
-pub fn op_equal(self : BigInt, other : BigInt) -> Bool {
+pub fn BigInt::op_equal(self : BigInt, other : BigInt) -> Bool {
   if self.sign != other.sign || self.len != other.len {
     return false
   }
@@ -592,7 +592,7 @@ pub fn op_equal(self : BigInt, other : BigInt) -> Bool {
 
 ///|
 /// Returns the decimal string representation of the BigInt.
-pub fn to_string(self : BigInt) -> String {
+pub fn BigInt::to_string(self : BigInt) -> String {
   // This function first converts the BigInt to a decimal representation, with a radix of 2^(`decimal_radix_bit_len`).
   // Then it converts the decimal representation to a string slot by slot.
   if self.is_zero() {
@@ -734,7 +734,7 @@ pub fn BigInt::from_hex(input : String) -> BigInt {
 
 ///|
 /// Converts a BigInt to a hex string.
-pub fn to_hex(self : BigInt, uppercase~ : Bool = true) -> String {
+pub fn BigInt::to_hex(self : BigInt, uppercase~ : Bool = true) -> String {
   // WARN: this implementation assumes that `radix_bit_len` is a multiple of 4.
   let mut result = ""
   for i = self.len - 1; i >= 0; i = i - 1 { // TODO: reverse iteration would be a bit faster.
@@ -772,7 +772,7 @@ pub fn to_hex(self : BigInt, uppercase~ : Bool = true) -> String {
 }
 
 ///|
-fn deep_clone(self : BigInt) -> BigInt {
+fn BigInt::deep_clone(self : BigInt) -> BigInt {
   let new_limbs = FixedArray::make(self.len, 0U)
   new_limbs.unsafe_blit(0, self.limbs, 0, self.len)
   { limbs: new_limbs, sign: self.sign, len: self.len }
@@ -827,7 +827,7 @@ fn max[T : Compare](a : T, b : T) -> T {
 ///   ignore(base.pow(exp))
 /// }
 /// ```
-pub fn pow(self : BigInt, exp : BigInt, modulus? : BigInt) -> BigInt {
+pub fn BigInt::pow(self : BigInt, exp : BigInt, modulus? : BigInt) -> BigInt {
   if exp.sign == Negative {
     abort("negative exponent")
   }
@@ -875,7 +875,7 @@ pub fn BigInt::from_octets(input : Bytes, signum~ : Int = 1) -> BigInt {
   if signum == 0 {
     return zero
   } else if signum < 0 {
-    return -from_octets(input)
+    return -BigInt::from_octets(input)
   }
   if len == 0 {
     abort("empty octet string")
@@ -943,7 +943,7 @@ pub fn BigInt::to_octets(self : BigInt, length? : Int) -> Bytes {
 }
 
 ///|
-pub fn land(self : BigInt, other : BigInt) -> BigInt {
+pub fn BigInt::land(self : BigInt, other : BigInt) -> BigInt {
   let max_length = if self.limbs.length() < other.limbs.length() {
     other.limbs.length() + 1
   } else {
@@ -1030,7 +1030,7 @@ pub fn land(self : BigInt, other : BigInt) -> BigInt {
 }
 
 ///|
-pub fn lor(self : BigInt, other : BigInt) -> BigInt {
+pub fn BigInt::lor(self : BigInt, other : BigInt) -> BigInt {
   let max_length = if self.limbs.length() < other.limbs.length() {
     other.limbs.length() + 1
   } else {
@@ -1117,7 +1117,7 @@ pub fn lor(self : BigInt, other : BigInt) -> BigInt {
 }
 
 ///|
-pub fn lxor(self : BigInt, other : BigInt) -> BigInt {
+pub fn BigInt::lxor(self : BigInt, other : BigInt) -> BigInt {
   let max_length = if self.limbs.length() < other.limbs.length() {
     other.limbs.length() + 1
   } else {
@@ -1221,7 +1221,7 @@ pub fn lxor(self : BigInt, other : BigInt) -> BigInt {
 ///   inspect!(big.to_int(), content="-2147483648") // Overflow to Int.min_value
 /// }
 /// ```
-pub fn to_int(self : BigInt) -> Int {
+pub fn BigInt::to_int(self : BigInt) -> Int {
   self.to_uint().reinterpret_as_int()
 }
 
@@ -1244,7 +1244,7 @@ pub fn to_int(self : BigInt) -> Int {
 ///   inspect!(neg.to_uint(), content="4294967295") // 2^32 - 1
 /// }
 /// ```
-pub fn to_uint(self : BigInt) -> UInt {
+pub fn BigInt::to_uint(self : BigInt) -> UInt {
   let value = if self.sign == Negative { (1N << 32) + self } else { self }
   value.limbs[0]
 }
@@ -1269,7 +1269,7 @@ pub fn to_uint(self : BigInt) -> UInt {
 ///   inspect!(bigger.to_int64(), content="-9223372036854775808") // Overflow to Int64.min_value
 /// }
 /// ```
-pub fn to_int64(self : BigInt) -> Int64 {
+pub fn BigInt::to_int64(self : BigInt) -> Int64 {
   self.to_uint64().reinterpret_as_int64()
 }
 
@@ -1293,7 +1293,7 @@ pub fn to_int64(self : BigInt) -> Int64 {
 ///   inspect!(neg.to_uint64(), content="18446744073709551615") // 2^64 - 1
 /// }
 /// ```
-pub fn to_uint64(self : BigInt) -> UInt64 {
+pub fn BigInt::to_uint64(self : BigInt) -> UInt64 {
   let value = if self.sign == Negative { (1N << 64) + self } else { self }
   let len = 64 / radix_bit_len
   let len = if value.len < len { value.len } else { len }

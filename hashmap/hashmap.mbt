@@ -1,4 +1,4 @@
-// Copyright 2024 International Digital Economy Academy
+// Copyright 2025 International Digital Economy Academy
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -20,7 +20,7 @@ fn power_2_above(x : Int, n : Int) -> Int {
     }
     let next = i << 1
     if next < 0 {
-      // overflow happend  
+      // overflow happened
       break i
     }
     continue next
@@ -38,14 +38,14 @@ test "power_2_above" {
 
 ///|
 /// Create new hash map.
-pub fn T::new[K, V](capacity~ : Int = 8) -> T[K, V] {
+pub fn new[K, V](capacity~ : Int = 8) -> T[K, V] {
   let capacity = power_2_above(8, capacity)
   { size: 0, capacity, entries: FixedArray::make(capacity, None) }
 }
 
 ///|
 /// Create new hash map from array.
-pub fn T::from_array[K : Hash + Eq, V](arr : Array[(K, V)]) -> T[K, V] {
+pub fn from_array[K : Hash + Eq, V](arr : Array[(K, V)]) -> T[K, V] {
   let m = new(capacity=arr.length())
   arr.each(fn(e) { m.set(e.0, e.1) })
   m
@@ -169,7 +169,7 @@ pub fn get_or_init[K : Hash + Eq, V](
 }
 
 ///|
-/// Get the value associated with a key, 
+/// Get the value associated with a key,
 /// returns the provided default value if the key does not exist.
 pub fn get_or_default[K : Hash + Eq, V](
   self : T[K, V],
@@ -247,7 +247,7 @@ fn grow[K : Eq, V](self : T[K, V]) -> Unit {
 }
 
 ///|
-pub fn T::of[K : Eq + Hash, V](arr : FixedArray[(K, V)]) -> T[K, V] {
+pub fn of[K : Eq + Hash, V](arr : FixedArray[(K, V)]) -> T[K, V] {
   let m = new(capacity=arr.length())
   arr.each(fn(e) { m.set(e.0, e.1) })
   m

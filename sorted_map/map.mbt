@@ -1,4 +1,4 @@
-// Copyright 2024 International Digital Economy Academy
+// Copyright 2025 International Digital Economy Academy
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -227,7 +227,7 @@ fn iter_aux2[K, V](node : Node[K, V]?) -> Iter2[K, V] {
 }
 
 ///|
-pub fn T::from_iter[K : Compare, V](iter : Iter[(K, V)]) -> T[K, V] {
+pub fn from_iter[K : Compare, V](iter : Iter[(K, V)]) -> T[K, V] {
   let m = new()
   iter.each(fn(e) { m[e.0] = e.1 })
   m
@@ -238,7 +238,50 @@ pub impl[K : @quickcheck.Arbitrary + Compare, V : @quickcheck.Arbitrary] @quickc
   K,
   V,
 ] with arbitrary(size, rs) {
-  @quickcheck.Arbitrary::arbitrary(size, rs) |> T::from_iter
+  @quickcheck.Arbitrary::arbitrary(size, rs) |> from_iter
+}
+
+///|Returns a new array of key-value pairs that are within the specified range [low, high).
+pub fn range[K : Compare, V](self : T[K, V], low : K, high : K) -> Iter2[K, V] {
+  range_aux(self.root, low, high)
+}
+
+///|Returns a new array of key-value pairs that are within the specified range [low, high].
+fn range_aux[K : Compare, V](
+  node : Node[K, V]?,
+  low : K,
+  high : K
+) -> Iter2[K, V] {
+  Iter2::new(fn(yield_) {
+    match node {
+      None => IterContinue
+      Some(node) => {
+        let cmp_key_low = node.key.compare(low)
+        let cmp_key_high = node.key.compare(high)
+        if cmp_key_low > 0 {
+          // we should go left
+          guard let IterContinue = range_aux(node.left, low, high).run(yield_) else {
+            x => return x
+          }
+
+        }
+        if cmp_key_low >= 0 && cmp_key_high <= 0 {
+          // we should yield this node
+          guard let IterContinue = yield_(node.key, node.value) else {
+            x => return x
+          }
+
+        }
+        if cmp_key_high < 0 {
+          guard let IterContinue = range_aux(node.right, low, high).run(yield_) else {
+            x => return x
+          }
+
+        }
+        IterContinue
+      }
+    }
+  })
 }
 
 // AVL tree operations

@@ -14,8 +14,6 @@ fn wrap1[T, A, E : Error](f~ : (A) -> T!E, A) -> Result[T, E]
 fn wrap2[T, A, B, E : Error](f~ : (A, B) -> T!E, A, B) -> Result[T, E]
 
 // Types and methods
-
-
 impl Result {
   bind[T, E, U](Self[T, E], (T) -> Self[U, E]) -> Self[U, E]
   compare[T : Compare, E : Compare](Self[T, E], Self[T, E]) -> Int
@@ -32,6 +30,7 @@ impl Result {
   unwrap[T, E](Self[T, E]) -> T
   unwrap_or_error[T, E : Error](Self[T, E]) -> T!E
 }
+impl[T : @quickcheck.Arbitrary, E : @quickcheck.Arbitrary] @quickcheck.Arbitrary for Result[T, E]
 
 // Type aliases
 

@@ -1,4 +1,4 @@
-// Copyright 2024 International Digital Economy Academy
+// Copyright 2025 International Digital Economy Academy
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -13,7 +13,7 @@
 // limitations under the License.
 
 test "capacity" {
-  let m = @hashmap.T::new()
+  let m = @hashmap.new()
   assert_eq!(m.capacity(), 8)
   m.set("a", 1)
   m.set("b", 2)

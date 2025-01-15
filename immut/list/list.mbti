@@ -4,13 +4,21 @@ alias @moonbitlang/core/json as @json
 alias @moonbitlang/core/quickcheck as @quickcheck
 
 // Values
+fn default[X]() -> T[X]
+
+fn from_array[A](Array[A]) -> T[A]
+
+fn from_iter[A](Iter[A]) -> T[A]
+
+fn from_json[A : @json.FromJson](Json) -> T[A]!@json.JsonDecodeError
+
+fn of[A](FixedArray[A]) -> T[A]
+
 fn repeat[A](Int, A) -> T[A]
 
 fn singleton[A](A) -> T[A]
 
 fn unfold[A, S]((S) -> (A, S)?, init~ : S) -> T[A]
-
-fn unzip[A, B](T[(A, B)]) -> (T[A], T[B])
 
 // Types and methods
 pub(all) enum T {
@@ -24,7 +32,7 @@ impl T {
   concat[A](Self[A], Self[A]) -> Self[A]
   concat_map[A, B](Self[A], (A) -> Self[B]) -> Self[B] //deprecated
   contains[A : Eq](Self[A], A) -> Bool
-  default[X]() -> Self[X]
+  default[X]() -> Self[X] //deprecated
   drop[A](Self[A], Int) -> Self[A]
   drop_while[A](Self[A], (A) -> Bool) -> Self[A]
   each[A](Self[A], (A) -> Unit) -> Unit
@@ -42,9 +50,9 @@ impl T {
   fold_right[A, B](Self[A], (A, B) -> B, init~ : B) -> B //deprecated
   fold_righti[A, B](Self[A], (Int, A, B) -> B, init~ : B) -> B //deprecated
   foldi[A, B](Self[A], init~ : B, (Int, B, A) -> B) -> B
-  from_array[A](Array[A]) -> Self[A]
-  from_iter[A](Iter[A]) -> Self[A]
-  from_json[A : @json.FromJson](Json) -> Self[A]!@json.JsonDecodeError
+  from_array[A](Array[A]) -> Self[A] //deprecated
+  from_iter[A](Iter[A]) -> Self[A] //deprecated
+  from_json[A : @json.FromJson](Json) -> Self[A]!@json.JsonDecodeError //deprecated
   head[A](Self[A]) -> A?
   head_exn[A](Self[A]) -> A //deprecated
   init_[A](Self[A]) -> Self[A]
@@ -64,7 +72,7 @@ impl T {
   minimum[A : Compare](Self[A]) -> A?
   nth[A](Self[A], Int) -> A?
   nth_exn[A](Self[A], Int) -> A //deprecated
-  of[A](FixedArray[A]) -> Self[A]
+  of[A](FixedArray[A]) -> Self[A] //deprecated
   op_add[A](Self[A], Self[A]) -> Self[A]
   remove[A : Eq](Self[A], A) -> Self[A]
   remove_at[A](Self[A], Int) -> Self[A]
@@ -87,8 +95,10 @@ impl T {
   unsafe_maximum[A : Compare](Self[A]) -> A
   unsafe_minimum[A : Compare](Self[A]) -> A
   unsafe_nth[A](Self[A], Int) -> A
+  unzip[A, B](Self[(A, B)]) -> (Self[A], Self[B])
   zip[A, B](Self[A], Self[B]) -> Self[(A, B)]?
 }
+impl[X] Default for T[X]
 impl[A : Eq] Eq for T[A]
 impl[A : Hash] Hash for T[A]
 impl[A : Show] Show for T[A]

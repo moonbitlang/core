@@ -1,4 +1,4 @@
-// Copyright 2024 International Digital Economy Academy
+// Copyright 2025 International Digital Economy Academy
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -36,8 +36,13 @@ pub fn iter[A](self : T[A]) -> Iter[A] {
 }
 
 ///|
+pub fn from_iter[A : Compare](iter : Iter[A]) -> T[A] {
+  iter.fold(init=new(), fn(s, e) { s.add(e) })
+}
+
+///| @alert deprecated "use `@immut/sorted_set.from_iter` instead"
 pub fn T::from_iter[A : Compare](iter : Iter[A]) -> T[A] {
-  iter.fold(init=T::new(), fn(s, e) { s.add(e) })
+  from_iter(iter)
 }
 
 test {

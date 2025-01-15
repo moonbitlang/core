@@ -1,4 +1,4 @@
-// Copyright 2024 International Digital Economy Academy
+// Copyright 2025 International Digital Economy Academy
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -21,8 +21,44 @@ test "Int::to_json" {
   inspect!((42).to_json(), content="Number(42)")
 }
 
+test "UInt::to_json" {
+  inspect!(42U.to_json(), content="Number(42)")
+}
+
 test "Int64::to_json" {
-  inspect!(42L.to_json(), content="Number(42)")
+  inspect!(
+    42L.to_json(),
+    content=
+      #|String("42")
+    ,
+  )
+  inspect!(
+    (-9223372036854775808L).to_json(),
+    content=
+      #|String("-9223372036854775808")
+    ,
+  )
+  inspect!(
+    9223372036854775807L.to_json(),
+    content=
+      #|String("9223372036854775807")
+    ,
+  )
+}
+
+test "UInt64::to_json" {
+  inspect!(
+    42UL.to_json(),
+    content=
+      #|String("42")
+    ,
+  )
+  inspect!(
+    18446744073709551615UL.to_json(),
+    content=
+      #|String("18446744073709551615")
+    ,
+  )
 }
 
 test "Double::to_json" {

@@ -1,4 +1,4 @@
-// Copyright 2024 International Digital Economy Academy
+// Copyright 2025 International Digital Economy Academy
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -35,7 +35,7 @@ let segment_length : Int = 5
 let segment_mask : Int = 0b11111
 
 ///|
-pub fn T::new[K, V]() -> T[K, V] {
+pub fn new[K, V]() -> T[K, V] {
   Empty
 }
 
@@ -85,7 +85,7 @@ fn add_with_hash[K : Eq, V](
         (hash.reinterpret_as_uint() >> segment_length).reinterpret_as_int(),
         value,
       )
-      T::Branch(@sparse_array.SparseArray::singleton(idx, child))
+      T::Branch(@sparse_array.singleton(idx, child))
     }
   }
 
@@ -217,8 +217,8 @@ pub fn iter[K, V](self : T[K, V]) -> Iter[(K, V)] {
 }
 
 ///|
-pub fn T::from_iter[K : Eq + Hash, V](iter : Iter[(K, V)]) -> T[K, V] {
-  iter.fold(init=T::new(), fn(m, e) { m.add(e.0, e.1) })
+pub fn from_iter[K : Eq + Hash, V](iter : Iter[(K, V)]) -> T[K, V] {
+  iter.fold(init=new(), fn(m, e) { m.add(e.0, e.1) })
 }
 
 ///|
@@ -227,8 +227,8 @@ pub impl[K : Show, V : Show] Show for T[K, V] with output(self, logger) {
 }
 
 ///|
-pub fn T::from_array[K : Eq + Hash, V](arr : Array[(K, V)]) -> T[K, V] {
-  loop arr.length(), T::new() {
+pub fn from_array[K : Eq + Hash, V](arr : Array[(K, V)]) -> T[K, V] {
+  loop arr.length(), new() {
     0, map => map
     n, map => {
       let (k, v) = arr[n - 1]
@@ -246,8 +246,8 @@ pub impl[K : Eq + Hash + @quickcheck.Arbitrary, V : @quickcheck.Arbitrary] @quic
 }
 
 ///|
-pub fn T::of[K : Eq + Hash, V](arr : FixedArray[(K, V)]) -> T[K, V] {
-  loop arr.length(), T::new() {
+pub fn of[K : Eq + Hash, V](arr : FixedArray[(K, V)]) -> T[K, V] {
+  loop arr.length(), new() {
     0, map => map
     n, map => {
       let (k, v) = arr[n - 1]

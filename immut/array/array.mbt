@@ -1,4 +1,4 @@
-// Copyright 2024 International Digital Economy Academy
+// Copyright 2025 International Digital Economy Academy
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -18,7 +18,7 @@
 
 ///|
 /// Return a new empty array
-pub fn T::new[A]() -> T[A] {
+pub fn new[A]() -> T[A] {
   { tree: Tree::empty(), size: 0, shift: 0 }
 }
 
@@ -87,7 +87,7 @@ pub fn to_array[A](self : T[A]) -> Array[A] {
 }
 
 ///|
-pub fn T::from_iter[A](iter : Iter[A]) -> T[A] {
+pub fn from_iter[A](iter : Iter[A]) -> T[A] {
   iter.fold(init=new(), fn(arr, e) { arr.push(e) })
 }
 
@@ -111,7 +111,7 @@ pub fn length[A](self : T[A]) -> Int {
 
 ///|
 /// Get a value at the given index.
-/// 
+///
 /// # Examples
 /// ```
 /// let v = @array.of([1, 2, 3, 4, 5])
@@ -133,7 +133,7 @@ pub fn op_get[A](self : T[A], index : Int) -> A {
 
 ///|
 /// Set a value at the given index (immutable).
-/// 
+///
 /// # Example
 /// ```
 /// let v = @array.of([1, 2, 3, 4, 5])
@@ -149,7 +149,7 @@ pub fn set[A](self : T[A], index : Int, value : A) -> T[A] {
 
 ///|
 /// Push a value to the end of the array.
-/// 
+///
 /// # Example
 /// ```
 /// let v = @array.of([1, 2, 3])
@@ -199,7 +199,7 @@ pub fn iter[A](self : T[A]) -> Iter[A] {
 
 ///|
 /// Iterate over the array.
-/// 
+///
 /// # Example
 /// ```
 /// let arr = []
@@ -213,7 +213,7 @@ pub fn each[A](self : T[A], f : (A) -> Unit) -> Unit {
 
 ///|
 /// Iterate over the array with index.
-/// 
+///
 /// # Example
 /// ```
 /// let arr = []
@@ -227,7 +227,7 @@ pub fn eachi[A](self : T[A], f : (Int, A) -> Unit) -> Unit {
 
 ///|
 /// Fold the array.
-/// 
+///
 /// # Example
 /// ```
 /// let v = @array.of([1, 2, 3, 4, 5])
@@ -239,7 +239,7 @@ pub fn fold[A, B](self : T[A], init~ : B, f : (B, A) -> B) -> B {
 
 ///|
 /// Fold the array in reverse order.
-/// 
+///
 /// # Example
 /// ```
 /// let v = @array.of([1, 2, 3, 4, 5])
@@ -251,7 +251,7 @@ pub fn rev_fold[A, B](self : T[A], init~ : B, f : (B, A) -> B) -> B {
 
 ///|
 /// Fold the array from left to right.
-/// 
+///
 /// # Example
 /// ```
 /// let v = @array.of([1, 2, 3, 4, 5])
@@ -265,7 +265,7 @@ pub fn fold_left[A](self : T[A], f : (A, A) -> A, init~ : A) -> A {
 
 ///|
 /// Fold the array from right to left.
-/// 
+///
 /// # Example
 /// ```
 /// let v = @array.of([1, 2, 3, 4, 5])
@@ -279,7 +279,7 @@ pub fn fold_right[A](self : T[A], f : (A, A) -> A, init~ : A) -> A {
 
 ///|
 /// Map a function over the array.
-/// 
+///
 /// # Example
 /// ```
 /// let v = @array.of([1, 2, 3, 4, 5])
@@ -347,7 +347,7 @@ fn new_by_leaves[A](len : Int, gen_leaf : (Int, Int) -> FixedArray[A]) -> T[A] {
   }
 
   if len == 0 {
-    T::new()
+    new()
   } else {
     let (cap, shift) = loop len, branching_factor, 1 {
       len, m_pow, depth =>

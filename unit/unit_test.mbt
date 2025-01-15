@@ -1,4 +1,4 @@
-// Copyright 2024 International Digital Economy Academy
+// Copyright 2025 International Digital Economy Academy
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -26,7 +26,7 @@ test {
 
 test {
   let unit = ()
-  assert_eq!(Unit::default(), unit)
+  assert_eq!(@unit.default(), unit)
   assert_eq!(unit.to_string(), "()")
 }
 
