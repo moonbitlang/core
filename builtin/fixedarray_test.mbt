@@ -31,3 +31,8 @@ test "compare" {
   inspect!(arr3.compare(arr1), content="-1")
   inspect!(arr1.compare(arr1), content="0")
 }
+
+test "is_empty" {
+  let arr : FixedArray[Int] = []
+  assert_true!(arr.is_empty())
+}
