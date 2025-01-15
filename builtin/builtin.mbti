@@ -695,6 +695,7 @@ impl FixedArray {
   default[X]() -> Self[X]
   fill[T](Self[T], T) -> Unit
   get[T](Self[T], Int) -> T
+  is_empty[T](Self[T]) -> Bool
   iter[T](Self[T]) -> Iter[T]
   iter2[T](Self[T]) -> Iter2[Int, T]
   length[T](Self[T]) -> Int

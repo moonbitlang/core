@@ -76,3 +76,26 @@ pub fn compare[T : Compare](self : FixedArray[T], other : FixedArray[T]) -> Int 
     }
   }
 }
+
+///|
+/// Tests whether the FixedArray contains no elements.
+///
+/// Parameters:
+///
+/// * `FixedArray` : The FixedArray to check.
+///
+/// Returns `true` if the FixedArray has no elements, `false` otherwise.
+///
+/// Example:
+///
+/// ```moonbit
+/// test "FixedArray::is_empty" {
+///   let empty : FixedArray[Int] = []
+///   inspect!(empty.is_empty(), content="true")
+///   let non_empty = [1, 2, 3]
+///   inspect!(non_empty.is_empty(), content="false")
+/// }
+/// ```
+pub fn FixedArray::is_empty[T](self : FixedArray[T]) -> Bool {
+  self.length() == 0
+}
