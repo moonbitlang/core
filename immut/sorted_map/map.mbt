@@ -19,12 +19,16 @@
 pub fn add[K : Compare, V](self : T[K, V], key : K, value : V) -> T[K, V] {
   match self {
     Empty => singleton(key, value)
-    Tree(k, value=v, l, r, ..) =>
-      match key.compare(k) {
-        -1 => balance(k, v, add(l, key, value), r)
-        1 => balance(k, v, l, add(r, key, value))
-        _ => make_tree(k, value, l, r)
+    Tree(k, value=v, l, r, ..) => {
+      let c = key.compare(k)
+      if c == 0 {
+        make_tree(k, value, l, r)
+      } else if c < 0 {
+        balance(k, v, l.add(key, value), r)
+      } else {
+        balance(k, v, l, r.add(key, value))
       }
+    }
   }
 }
 
