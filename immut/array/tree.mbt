@@ -81,7 +81,7 @@ fn Tree::is_empty_tree[T](self : Tree[T]) -> Bool {
 fn Tree::get_first[T](self : Tree[T]) -> T {
   match self {
     Leaf(leaf) => leaf[0]
-    Node(node, _) => get_first(node[0])
+    Node(node, _) => node[0].get_first()
     Empty => abort("Index out of bounds")
   }
 }
@@ -91,7 +91,7 @@ fn Tree::get_first[T](self : Tree[T]) -> T {
 fn Tree::get_last[T](self : Tree[T]) -> T {
   match self {
     Leaf(leaf) => leaf[leaf.length() - 1]
-    Node(node, _) => get_last(node[node.length() - 1])
+    Node(node, _) => node[node.length() - 1].get_last()
     Empty => abort("Index out of bounds")
   }
 }
@@ -122,7 +122,7 @@ fn Tree::get[T](self : Tree[T], index : Int, shift : Int) -> T {
       } else {
         index - sizes[branch_index - 1]
       }
-      get(children[branch_index], sub_index, shift - num_bits)
+      children[branch_index].get(sub_index, shift - num_bits)
     }
     Node(_, None) => get_radix(self, shift)
     Empty => abort("Index out of bounds")

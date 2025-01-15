@@ -17,7 +17,7 @@
 
 ///|
 /// If the tree is a `Node`.
-fn is_node[A](self : Tree[A]) -> Bool {
+fn Tree::is_node[A](self : Tree[A]) -> Bool {
   match self {
     Node(_, _) => true
     _ => false
@@ -25,7 +25,7 @@ fn is_node[A](self : Tree[A]) -> Bool {
 }
 
 ///|
-fn is_leaf[A](self : Tree[A]) -> Bool {
+fn Tree::is_leaf[A](self : Tree[A]) -> Bool {
   match self {
     Leaf(_) => true
     _ => false
@@ -33,7 +33,7 @@ fn is_leaf[A](self : Tree[A]) -> Bool {
 }
 
 ///|
-fn is_empty[A](self : Tree[A]) -> Bool {
+fn Tree::is_empty[A](self : Tree[A]) -> Bool {
   match self {
     Empty => true
     _ => false
@@ -43,7 +43,7 @@ fn is_empty[A](self : Tree[A]) -> Bool {
 ///|
 /// Get the rightmost child of a tree node. Abort if
 /// it is not a `Node`.
-fn right_child[A](self : Tree[A]) -> Tree[A] {
+fn Tree::right_child[A](self : Tree[A]) -> Tree[A] {
   match self {
     Node(children, _) => children[children.length() - 1]
     Leaf(_) | Empty => abort("Should not get children on non-`Node`s")
@@ -53,7 +53,7 @@ fn right_child[A](self : Tree[A]) -> Tree[A] {
 ///|
 /// Get the leftmost child of a tree node. Abort if
 /// it is not a `Node`.
-fn left_child[A](self : Tree[A]) -> Tree[A] {
+fn Tree::left_child[A](self : Tree[A]) -> Tree[A] {
   match self {
     Node(children, _) => children[0]
     Leaf(_) | Empty => abort("Should not get children on non-`Node`s")
@@ -62,7 +62,7 @@ fn left_child[A](self : Tree[A]) -> Tree[A] {
 
 ///|
 /// Get the leaf contents. Abort if it is not a `Leaf`.
-fn leaf_elements[A](self : Tree[A]) -> FixedArray[A] {
+fn Tree::leaf_elements[A](self : Tree[A]) -> FixedArray[A] {
   match self {
     Leaf(children) => children
     _ => abort("Should not call `get_leaf_elements` on non-leaf nodes")
@@ -71,7 +71,7 @@ fn leaf_elements[A](self : Tree[A]) -> FixedArray[A] {
 
 ///|
 /// Get the children of a `Node`. Abort if it is not a `Node`.
-fn node_children[A](self : Tree[A]) -> FixedArray[Tree[A]] {
+fn Tree::node_children[A](self : Tree[A]) -> FixedArray[Tree[A]] {
   match self {
     Node(children, _) => children
     _ => abort("Should not call `node_children` on non-`Node`s")
@@ -80,7 +80,7 @@ fn node_children[A](self : Tree[A]) -> FixedArray[Tree[A]] {
 
 ///|
 /// Get the physical size of the current node, not the total number of elements in the tree.
-fn local_size[A](self : Tree[A]) -> Int {
+fn Tree::local_size[A](self : Tree[A]) -> Int {
   match self {
     Empty => 0
     Leaf(l) => l.length()
@@ -90,7 +90,7 @@ fn local_size[A](self : Tree[A]) -> Int {
 
 ///|
 /// Get the total number of elements in the tree.
-fn size[A](self : Tree[A], shift : Int) -> Int {
+fn Tree::size[A](self : Tree[A], shift : Int) -> Int {
   match self {
     Empty => 0
     Leaf(l) => l.length()
