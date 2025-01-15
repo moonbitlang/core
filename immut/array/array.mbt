@@ -24,19 +24,19 @@ pub fn new[A]() -> T[A] {
 
 ///|
 /// Create a persistent array with a given length and value.
-pub fn T::make[A](len : Int, value : A) -> T[A] {
+pub fn make[A](len : Int, value : A) -> T[A] {
   new_by_leaves(len, fn(_s, l) { FixedArray::make(l, value) })
 }
 
 ///|
 /// Create a persistent array with a given length and a function to generate values.
-pub fn T::makei[A](len : Int, f : (Int) -> A) -> T[A] {
+pub fn makei[A](len : Int, f : (Int) -> A) -> T[A] {
   new_by_leaves(len, fn(s, l) { FixedArray::makei(l, fn(i) { f(s + i) }) })
 }
 
 ///|
 /// Convert a FixedArray to an @immut/array.
-pub fn T::of[A](arr : FixedArray[A]) -> T[A] {
+pub fn of[A](arr : FixedArray[A]) -> T[A] {
   makei(arr.length(), fn(i) { arr[i] })
 }
 
@@ -71,7 +71,7 @@ pub fn copy[A](self : T[A]) -> T[A] {
 /// let v = @array.of([1, 2, 3])
 /// assert_eq!(v, @array.from_array([1, 2, 3]))
 /// ```
-pub fn T::from_array[A](arr : Array[A]) -> T[A] {
+pub fn from_array[A](arr : Array[A]) -> T[A] {
   makei(arr.length(), fn(i) { arr[i] })
 }
 

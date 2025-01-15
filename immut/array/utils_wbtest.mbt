@@ -77,7 +77,7 @@ fn random_test_gen(rng : @random.Rand, times : Int, max_lvl : Int) -> Array[Op] 
 /// 
 /// The `rs` array is a sequence of operations to be executed.
 fn execute_array_test(rs : Array[Op]) -> Unit! {
-  let mut t = T::new()
+  let mut t = new()
   let a : Array[Int] = []
   for op in rs {
     match op {
@@ -93,7 +93,7 @@ fn execute_array_test(rs : Array[Op]) -> Unit! {
         for i = 0; i < len; i = i + 1 {
           a.push(v[i])
         }
-        t = t.concat(T::from_iter(v.iter()))
+        t = t.concat(from_iter(v.iter()))
         check_array_eq!(a, t)
       }
       Set(idx, v) => {

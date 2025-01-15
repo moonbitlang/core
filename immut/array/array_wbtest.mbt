@@ -35,7 +35,7 @@ test "new_by_leaves" {
 }
 
 test "mix" {
-  let mut v = T::new()
+  let mut v = new()
   inspect!(v.tree.is_empty_tree(), content="true")
   for i = 0; i < 100; i = i + 1 {
     v = v.push(i)
@@ -60,7 +60,7 @@ test "mix" {
   inspect!(ct2, content="19800")
   inspect!(v.tree.is_empty_tree(), content="false")
   let large_const = branching_factor * branching_factor + 1
-  let mut v = T::new()
+  let mut v = new()
   for i = 0; i < large_const; i = i + 1 {
     v = v.push(i)
   }
@@ -74,14 +74,14 @@ test "mix" {
 test "op_get" {
   let bf = branching_factor_power(4)
   let v_content = random_array(bf)
-  let v = T::from_iter(v_content.iter())
+  let v = from_iter(v_content.iter())
   inspect!(v.length(), content=bf.to_string())
   inspect!(v[0], content=v_content[0].to_string())
   inspect!(v[bf - 1], content=v_content[bf - 1].to_string())
   inspect!(v[bf / 2], content=v_content[bf / 2].to_string())
   let bf = branching_factor
   let v_content = random_array(bf)
-  let v = T::from_iter(v_content.iter())
+  let v = from_iter(v_content.iter())
   inspect!(v.length(), content=bf.to_string())
   inspect!(v[0], content=v_content[0].to_string())
   inspect!(v[bf - 1], content=v_content[bf - 1].to_string())
@@ -93,8 +93,8 @@ test "copy" {
   let v1_content = random_array(bf / 2)
   let v2_content = random_array(bf / 3)
   let v_content = v1_content + v2_content
-  let v1 = T::from_iter(v1_content.iter())
-  let v2 = T::from_iter(v2_content.iter())
+  let v1 = from_iter(v1_content.iter())
+  let v2 = from_iter(v2_content.iter())
   let v = v1.concat(v2)
   let v_copy = v.copy()
   check_array_eq!(v_content, v_copy)
