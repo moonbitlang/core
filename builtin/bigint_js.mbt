@@ -33,7 +33,7 @@ pub impl Show for BigInt with output(self, logger) {
 }
 
 ///|
-pub extern "js" fn to_string(self : BigInt) -> String =
+pub extern "js" fn BigInt::to_string(self : BigInt) -> String =
   #|(x) => String(x)
 
 ///|
@@ -41,7 +41,10 @@ pub extern "js" fn BigInt::from_hex(str : String) -> BigInt =
   #|(x) => x.startsWith('-') ? -BigInt(`0x${x.slice(1)}`) : BigInt(`0x${x}`)
 
 ///|
-pub extern "js" fn to_hex(self : BigInt, uppercase~ : Bool = true) -> String =
+pub extern "js" fn BigInt::to_hex(
+  self : BigInt,
+  uppercase~ : Bool = true
+) -> String =
   #|(x, uppercase) => {
   #|  const r = x.toString(16);
   #|  return uppercase ? r.toUpperCase() : r;
@@ -68,7 +71,7 @@ pub fn BigInt::from_octets(octets : Bytes, signum~ : Int = 1) -> BigInt {
 }
 
 ///|
-pub fn to_octets(self : BigInt, length? : Int) -> Bytes {
+pub fn BigInt::to_octets(self : BigInt, length? : Int) -> Bytes {
   if self < 0 {
     abort("negative BigInt")
   }
@@ -162,7 +165,7 @@ pub extern "js" fn BigInt::op_mod(self : BigInt, other : BigInt) -> BigInt =
   #|(x, y) => x % y
 
 ///|
-extern "js" fn modpow_ffi(
+extern "js" fn BigInt::modpow_ffi(
   self : BigInt,
   exponent : BigInt,
   modulus : BigInt
@@ -170,7 +173,7 @@ extern "js" fn modpow_ffi(
   #|(x, y, z) => x ** y % z
 
 ///|
-extern "js" fn pow_ffi(self : BigInt, exponent : BigInt) -> BigInt =
+extern "js" fn BigInt::pow_ffi(self : BigInt, exponent : BigInt) -> BigInt =
   #|(x, y) => x ** y
 
 ///|
@@ -187,9 +190,9 @@ pub fn BigInt::pow(
       if modulus <= 0 {
         abort("non-positive modulus")
       } else {
-        modpow_ffi(self, exponent, modulus)
+        self.modpow_ffi(exponent, modulus)
       }
-    None => pow_ffi(self, exponent)
+    None => self.pow_ffi(exponent)
   }
 }
 
@@ -214,23 +217,23 @@ pub fn BigInt::op_shr(self : BigInt, n : Int) -> BigInt {
 }
 
 ///|
-extern "js" fn js_shl(self : BigInt, other : Int) -> BigInt =
+extern "js" fn BigInt::js_shl(self : BigInt, other : Int) -> BigInt =
   #|(x, y) => x << BigInt(y)
 
 ///|
-extern "js" fn js_shr(self : BigInt, other : Int) -> BigInt =
+extern "js" fn BigInt::js_shr(self : BigInt, other : Int) -> BigInt =
   #|(x, y) => x >> BigInt(y)
 
 ///|
-pub extern "js" fn land(self : BigInt, other : BigInt) -> BigInt =
+pub extern "js" fn BigInt::land(self : BigInt, other : BigInt) -> BigInt =
   #|(x, y) => x & y
 
 ///|
-pub extern "js" fn lor(self : BigInt, other : BigInt) -> BigInt =
+pub extern "js" fn BigInt::lor(self : BigInt, other : BigInt) -> BigInt =
   #|(x, y) => x | y
 
 ///|
-pub extern "js" fn lxor(self : BigInt, other : BigInt) -> BigInt =
+pub extern "js" fn BigInt::lxor(self : BigInt, other : BigInt) -> BigInt =
   #|(x, y) => x ^ y
 
 ///|
