@@ -8,6 +8,8 @@
   "targets": {
     "exp_js.mbt": ["js"],
     "exp_nonjs.mbt": ["not", "js"],
+    "log_js.mbt": ["js"],
+    "log_nonjs.mbt": ["not", "js"],
     "mod_js.mbt": ["js"],
     "mod_nonjs.mbt": ["not", "js"],
     "pow_js.mbt": ["js"],
