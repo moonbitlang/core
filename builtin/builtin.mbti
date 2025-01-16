@@ -143,7 +143,6 @@ impl ArrayView {
   rev_foldi[A, B](Self[A], init~ : B, (Int, B, A) -> B) -> B
   swap[T](Self[T], Int, Int) -> Unit
   to_json[X : ToJson](Self[X]) -> Json
-  to_string[X : Show](Self[X]) -> String
   unsafe_get[T](Self[T], Int) -> T
 }
 impl[T : Compare] Compare for ArrayView[T]
