@@ -330,14 +330,6 @@ pub fn unwrap[T, E](self : Result[T, E]) -> T {
   }
 }
 
-///|
-pub fn to_string[T : Show, E : Show](self : Result[T, E]) -> String {
-  match self {
-    Ok(x) => "Ok(\{x})"
-    Err(e) => "Err(\{e})"
-  }
-}
-
 test "show" {
   let ok : Result[_, String] = Ok("hello")
   inspect!(

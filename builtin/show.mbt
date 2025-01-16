@@ -78,13 +78,6 @@ pub impl Show for Bytes with output(self, logger) {
 }
 
 ///|
-pub impl Show for Bytes with to_string(self) {
-  let buf = StringBuilder::new()
-  Show::output(self, buf)
-  buf.to_string()
-}
-
-///|
 pub impl Show for BytesView with output(self, logger) {
   fn to_hex_digit(i : Int) -> Char {
     if i < 10 {
@@ -218,11 +211,6 @@ pub impl[X : Show] Show for Array[X] with output(self, logger) {
 ///|
 pub impl[X : Show] Show for ArrayView[X] with output(self, logger) {
   logger.write_iter(self.iter())
-}
-
-///|
-pub fn ArrayView::to_string[X : Show](self : ArrayView[X]) -> String {
-  Show::to_string(self)
 }
 
 ///|
