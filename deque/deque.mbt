@@ -862,7 +862,7 @@ pub fn shrink_to_fit[A](self : T[A]) -> Unit {
 /// the rest.
 ///
 /// If `len` is greater than or equal to the deque's current length, this has no
-/// effect.
+/// effect; if `len` is negative, the function will panic.
 ///
 /// Parameters:
 ///
