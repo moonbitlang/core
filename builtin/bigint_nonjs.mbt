@@ -215,16 +215,16 @@ pub fn BigInt::op_mul(self : BigInt, other : BigInt) -> BigInt {
     return zero
   }
   let ret = if self.len < karatsuba_threshold || other.len < karatsuba_threshold {
-    grade_school_mul(self, other)
+    self.grade_school_mul(other)
   } else {
-    karatsuba_mul(self, other)
+    self.karatsuba_mul(other)
   }
   { ..ret, sign: if self.sign == other.sign { Positive } else { Negative } }
 }
 
 ///|
 // Simplest way to multiply two BigInts.
-fn grade_school_mul(self : BigInt, other : BigInt) -> BigInt {
+fn BigInt::grade_school_mul(self : BigInt, other : BigInt) -> BigInt {
   let self_len = self.len
   let other_len = other.len
   let mut len = self_len + other_len
@@ -248,7 +248,7 @@ fn grade_school_mul(self : BigInt, other : BigInt) -> BigInt {
 
 ///|
 // Karatsuba multiplication
-fn karatsuba_mul(self : BigInt, other : BigInt) -> BigInt {
+fn BigInt::karatsuba_mul(self : BigInt, other : BigInt) -> BigInt {
   let half = (max(self.len, other.len) + 1) / 2
   let (xl, xh) = self.split(half)
   let (yl, yh) = other.split(half)
@@ -287,14 +287,14 @@ pub fn BigInt::op_div(self : BigInt, other : BigInt) -> BigInt {
   // Handle negative numbers
   if self.sign == Negative {
     if other.sign == Negative {
-      grade_school_div(-self, -other).0
+      BigInt::grade_school_div(-self, -other).0
     } else {
-      -grade_school_div(-self, other).0
+      -BigInt::grade_school_div(-self, other).0
     }
   } else if other.sign == Negative {
-    -grade_school_div(self, -other).0
+    -BigInt::grade_school_div(self, -other).0
   } else {
-    return grade_school_div(self, other).0
+    return BigInt::grade_school_div(self, other).0
   }
 }
 
@@ -307,21 +307,21 @@ pub fn BigInt::op_mod(self : BigInt, other : BigInt) -> BigInt {
   // Handle negative numbers
   if self.sign == Negative {
     if other.sign == Negative {
-      -grade_school_div(-self, -other).1
+      -BigInt::grade_school_div(-self, -other).1
     } else {
-      -grade_school_div(-self, other).1
+      -BigInt::grade_school_div(-self, other).1
     }
   } else if other.sign == Negative {
-    grade_school_div(self, -other).1
+    BigInt::grade_school_div(self, -other).1
   } else {
-    grade_school_div(self, other).1
+    BigInt::grade_school_div(self, other).1
   }
 }
 
 ///|
 // Simplest way to divide two BigInts.
 // Assumption: other != zero.
-fn grade_school_div(self : BigInt, other : BigInt) -> (BigInt, BigInt) {
+fn BigInt::grade_school_div(self : BigInt, other : BigInt) -> (BigInt, BigInt) {
   // Handle edge cases
   if self < other {
     return (zero, self)
