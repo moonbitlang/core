@@ -91,15 +91,15 @@ test "is_ascii_control" {
   let space = ' '
   let lf = '\n'
   let esc = '\x1B'
-  assert_false!(uppercase_a.is_ascii_alphabetic())
-  assert_false!(uppercase_g.is_ascii_alphabetic())
-  assert_false!(a.is_ascii_alphabetic())
-  assert_false!(g.is_ascii_alphabetic())
-  assert_false!(zero.is_ascii_alphabetic())
-  assert_false!(percent.is_ascii_alphabetic())
-  assert_false!(space.is_ascii_alphabetic())
-  assert_true!(lf.is_ascii_alphabetic())
-  assert_true!(esc.is_ascii_alphabetic())
+  assert_false!(uppercase_a.is_ascii_control())
+  assert_false!(uppercase_g.is_ascii_control())
+  assert_false!(a.is_ascii_control())
+  assert_false!(g.is_ascii_control())
+  assert_false!(zero.is_ascii_control())
+  assert_false!(percent.is_ascii_control())
+  assert_false!(space.is_ascii_control())
+  assert_true!(lf.is_ascii_control())
+  assert_true!(esc.is_ascii_control())
 }
 
 test "is_ascii_graphic" {
@@ -112,15 +112,15 @@ test "is_ascii_graphic" {
   let space = ' '
   let lf = '\n'
   let esc = '\x1B'
-  assert_true!(uppercase_a.is_ascii_alphabetic())
-  assert_true!(uppercase_g.is_ascii_alphabetic())
-  assert_true!(a.is_ascii_alphabetic())
-  assert_true!(g.is_ascii_alphabetic())
-  assert_true!(zero.is_ascii_alphabetic())
-  assert_true!(percent.is_ascii_alphabetic())
-  assert_false!(space.is_ascii_alphabetic())
-  assert_false!(lf.is_ascii_alphabetic())
-  assert_false!(esc.is_ascii_alphabetic())
+  assert_true!(uppercase_a.is_ascii_graphic())
+  assert_true!(uppercase_g.is_ascii_graphic())
+  assert_true!(a.is_ascii_graphic())
+  assert_true!(g.is_ascii_graphic())
+  assert_true!(zero.is_ascii_graphic())
+  assert_true!(percent.is_ascii_graphic())
+  assert_false!(space.is_ascii_graphic())
+  assert_false!(lf.is_ascii_graphic())
+  assert_false!(esc.is_ascii_graphic())
 }
 
 test "is_ascii_hexdigit" {
@@ -133,15 +133,15 @@ test "is_ascii_hexdigit" {
   let space = ' '
   let lf = '\n'
   let esc = '\x1B'
-  assert_true!(uppercase_a.is_ascii_alphabetic())
-  assert_false!(uppercase_g.is_ascii_alphabetic())
-  assert_true!(a.is_ascii_alphabetic())
-  assert_false!(g.is_ascii_alphabetic())
-  assert_true!(zero.is_ascii_alphabetic())
-  assert_false!(percent.is_ascii_alphabetic())
-  assert_false!(space.is_ascii_alphabetic())
-  assert_false!(lf.is_ascii_alphabetic())
-  assert_false!(esc.is_ascii_alphabetic())
+  assert_true!(uppercase_a.is_ascii_hexdigit())
+  assert_false!(uppercase_g.is_ascii_hexdigit())
+  assert_true!(a.is_ascii_hexdigit())
+  assert_false!(g.is_ascii_hexdigit())
+  assert_true!(zero.is_ascii_hexdigit())
+  assert_false!(percent.is_ascii_hexdigit())
+  assert_false!(space.is_ascii_hexdigit())
+  assert_false!(lf.is_ascii_hexdigit())
+  assert_false!(esc.is_ascii_hexdigit())
 }
 
 test "is_ascii_lowercase" {
@@ -154,15 +154,15 @@ test "is_ascii_lowercase" {
   let space = ' '
   let lf = '\n'
   let esc = '\x1B'
-  assert_false!(uppercase_a.is_ascii_alphabetic())
-  assert_false!(uppercase_g.is_ascii_alphabetic())
-  assert_true!(a.is_ascii_alphabetic())
-  assert_true!(g.is_ascii_alphabetic())
-  assert_false!(zero.is_ascii_alphabetic())
-  assert_false!(percent.is_ascii_alphabetic())
-  assert_false!(space.is_ascii_alphabetic())
-  assert_false!(lf.is_ascii_alphabetic())
-  assert_false!(esc.is_ascii_alphabetic())
+  assert_false!(uppercase_a.is_ascii_lowercase())
+  assert_false!(uppercase_g.is_ascii_lowercase())
+  assert_true!(a.is_ascii_lowercase())
+  assert_true!(g.is_ascii_lowercase())
+  assert_false!(zero.is_ascii_lowercase())
+  assert_false!(percent.is_ascii_lowercase())
+  assert_false!(space.is_ascii_lowercase())
+  assert_false!(lf.is_ascii_lowercase())
+  assert_false!(esc.is_ascii_lowercase())
 }
 
 test "is_ascii_octdigit" {
@@ -192,15 +192,15 @@ test "is_ascii_punctuation" {
   let space = ' '
   let lf = '\n'
   let esc = '\x1B'
-  assert_false!(uppercase_a.is_ascii_alphabetic())
-  assert_false!(uppercase_g.is_ascii_alphabetic())
-  assert_false!(a.is_ascii_alphabetic())
-  assert_false!(g.is_ascii_alphabetic())
-  assert_false!(zero.is_ascii_alphabetic())
-  assert_true!(percent.is_ascii_alphabetic())
-  assert_false!(space.is_ascii_alphabetic())
-  assert_false!(lf.is_ascii_alphabetic())
-  assert_false!(esc.is_ascii_alphabetic())
+  assert_false!(uppercase_a.is_ascii_punctuation())
+  assert_false!(uppercase_g.is_ascii_punctuation())
+  assert_false!(a.is_ascii_punctuation())
+  assert_false!(g.is_ascii_punctuation())
+  assert_false!(zero.is_ascii_punctuation())
+  assert_true!(percent.is_ascii_punctuation())
+  assert_false!(space.is_ascii_punctuation())
+  assert_false!(lf.is_ascii_punctuation())
+  assert_false!(esc.is_ascii_punctuation())
 }
 
 test "is_ascii_uppercase" {
@@ -213,15 +213,15 @@ test "is_ascii_uppercase" {
   let space = ' '
   let lf = '\n'
   let esc = '\x1B'
-  assert_true!(uppercase_a.is_ascii_alphabetic())
-  assert_true!(uppercase_g.is_ascii_alphabetic())
-  assert_false!(a.is_ascii_alphabetic())
-  assert_false!(g.is_ascii_alphabetic())
-  assert_false!(zero.is_ascii_alphabetic())
-  assert_false!(percent.is_ascii_alphabetic())
-  assert_false!(space.is_ascii_alphabetic())
-  assert_false!(lf.is_ascii_alphabetic())
-  assert_false!(esc.is_ascii_alphabetic())
+  assert_true!(uppercase_a.is_ascii_uppercase())
+  assert_true!(uppercase_g.is_ascii_uppercase())
+  assert_false!(a.is_ascii_uppercase())
+  assert_false!(g.is_ascii_uppercase())
+  assert_false!(zero.is_ascii_uppercase())
+  assert_false!(percent.is_ascii_uppercase())
+  assert_false!(space.is_ascii_uppercase())
+  assert_false!(lf.is_ascii_uppercase())
+  assert_false!(esc.is_ascii_uppercase())
 }
 
 test "is_ascii_whitespace" {
@@ -234,15 +234,15 @@ test "is_ascii_whitespace" {
   let space = ' '
   let lf = '\n'
   let esc = '\x1B'
-  assert_false!(uppercase_a.is_ascii_alphabetic())
-  assert_false!(uppercase_g.is_ascii_alphabetic())
-  assert_false!(a.is_ascii_alphabetic())
-  assert_false!(g.is_ascii_alphabetic())
-  assert_false!(zero.is_ascii_alphabetic())
-  assert_false!(percent.is_ascii_alphabetic())
-  assert_true!(space.is_ascii_alphabetic())
-  assert_true!(lf.is_ascii_alphabetic())
-  assert_false!(esc.is_ascii_alphabetic())
+  assert_false!(uppercase_a.is_ascii_whitespace())
+  assert_false!(uppercase_g.is_ascii_whitespace())
+  assert_false!(a.is_ascii_whitespace())
+  assert_false!(g.is_ascii_whitespace())
+  assert_false!(zero.is_ascii_whitespace())
+  assert_false!(percent.is_ascii_whitespace())
+  assert_true!(space.is_ascii_whitespace())
+  assert_true!(lf.is_ascii_whitespace())
+  assert_false!(esc.is_ascii_whitespace())
 }
 
 test "is_control" {
