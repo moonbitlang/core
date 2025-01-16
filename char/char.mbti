@@ -3,6 +3,23 @@ package moonbitlang/core/char
 // Values
 
 // Types and methods
+impl Char {
+  is_ascii(Char) -> Bool
+  is_ascii_alphabetic(Char) -> Bool
+  is_ascii_control(Char) -> Bool
+  is_ascii_digit(Char) -> Bool
+  is_ascii_graphic(Char) -> Bool
+  is_ascii_hexdigit(Char) -> Bool
+  is_ascii_lowercase(Char) -> Bool
+  is_ascii_octdigit(Char) -> Bool
+  is_ascii_punctuation(Char) -> Bool
+  is_ascii_uppercase(Char) -> Bool
+  is_ascii_whitespace(Char) -> Bool
+  is_control(Char) -> Bool
+  is_digit(Char, UInt) -> Bool?
+  is_numeric(Char) -> Bool
+  is_whitespace(Char) -> Bool
+}
 impl Hash for Char
 
 // Type aliases
