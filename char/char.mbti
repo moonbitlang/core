@@ -3,6 +3,10 @@ package moonbitlang/core/char
 // Values
 
 // Types and methods
+impl Char {
+  to_be_bytes(Char) -> Bytes
+  to_le_bytes(Char) -> Bytes
+}
 impl Hash for Char
 
 // Type aliases

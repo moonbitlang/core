@@ -290,3 +290,41 @@ test "panic negative index2" {
   let _ = bs[-1:-2]
 
 }
+
+test "to_char_be" {
+  // test ascii
+  let code_point = 65
+  let bs = code_point.to_be_bytes()
+  let ch = bs[:].to_char_be()
+  assert_eq!('A', ch)
+  // test cjk chars
+  let ch = '清'
+  let i = ch.to_be_bytes()[:].to_int_be()
+  assert_eq!(0x6e05, i)
+  let ch = '浄'
+  let i = ch.to_be_bytes()[:].to_int_be()
+  assert_eq!(0x6d44, i)
+  // test arabic
+  let ch = 'ل'
+  let i = ch.to_be_bytes()[:].to_int_be()
+  assert_eq!(0x0644, i)
+}
+
+test "to_char_le" {
+  // test ascii
+  let code_point = 97
+  let bs = code_point.to_le_bytes()
+  let ch = bs[:].to_char_le()
+  assert_eq!('a', ch)
+  // test cjk
+  let ch = '清'
+  let i = ch.to_le_bytes()[:].to_int_le()
+  assert_eq!(0x6e05, i)
+  let ch = '浄'
+  let i = ch.to_le_bytes()[:].to_int_le()
+  assert_eq!(0x6d44, i)
+  // test arabic
+  let ch = 'ل'
+  let i = ch.to_le_bytes()[:].to_int_le()
+  assert_eq!(0x0644, i)
+}

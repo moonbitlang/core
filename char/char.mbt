@@ -19,3 +19,13 @@ pub impl Hash for Char with hash(self) { self.to_int() }
 pub impl Hash for Char with hash_combine(self, hasher) -> Unit {
   hasher.combine_char(self)
 }
+
+///|
+pub fn to_be_bytes(self : Char) -> Bytes {
+  self.to_uint().to_be_bytes()
+}
+
+///|
+pub fn to_le_bytes(self : Char) -> Bytes {
+  self.to_uint().to_le_bytes()
+}

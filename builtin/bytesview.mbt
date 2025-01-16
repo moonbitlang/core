@@ -213,3 +213,13 @@ pub fn BytesView::to_double_be(self : BytesView) -> Double {
 pub fn BytesView::to_double_le(self : BytesView) -> Double {
   self.to_uint64_le().reinterpret_as_double()
 }
+
+///| Converts the 4 bytes long BytesView to a Char in big-endian byte order.
+pub fn BytesView::to_char_be(self : BytesView) -> Char {
+  Char::from_int(self.to_int_be())
+}
+
+///| Converts the 4 bytes long BytesView to a Char in little-endian byte order.
+pub fn BytesView::to_char_le(self : BytesView) -> Char {
+  Char::from_int(self.to_int_le())
+}
