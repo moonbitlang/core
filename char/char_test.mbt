@@ -52,3 +52,227 @@ test "Char hash" {
   m['b'] = '3'
   inspect!(m, content="{'a': '3', 'b': '3'}")
 }
+
+test "is_ascii" {
+  let ascii = 'a'
+  let non_ascii = '❤'
+  assert_true!(ascii.is_ascii())
+  assert_false!(non_ascii.is_ascii())
+}
+
+test "is_ascii_alphabetic" {
+  let uppercase_a = 'A'
+  let uppercase_g = 'G'
+  let a = 'a'
+  let g = 'g'
+  let zero = '0'
+  let percent = '%'
+  let space = ' '
+  let lf = '\n'
+  let esc = '\x1B'
+  assert_true!(uppercase_a.is_ascii_alphabetic())
+  assert_true!(uppercase_g.is_ascii_alphabetic())
+  assert_true!(a.is_ascii_alphabetic())
+  assert_true!(g.is_ascii_alphabetic())
+  assert_false!(zero.is_ascii_alphabetic())
+  assert_false!(percent.is_ascii_alphabetic())
+  assert_false!(space.is_ascii_alphabetic())
+  assert_false!(lf.is_ascii_alphabetic())
+  assert_false!(esc.is_ascii_alphabetic())
+}
+
+test "is_ascii_control" {
+  let uppercase_a = 'A'
+  let uppercase_g = 'G'
+  let a = 'a'
+  let g = 'g'
+  let zero = '0'
+  let percent = '%'
+  let space = ' '
+  let lf = '\n'
+  let esc = '\x1B'
+  assert_false!(uppercase_a.is_ascii_alphabetic())
+  assert_false!(uppercase_g.is_ascii_alphabetic())
+  assert_false!(a.is_ascii_alphabetic())
+  assert_false!(g.is_ascii_alphabetic())
+  assert_false!(zero.is_ascii_alphabetic())
+  assert_false!(percent.is_ascii_alphabetic())
+  assert_false!(space.is_ascii_alphabetic())
+  assert_true!(lf.is_ascii_alphabetic())
+  assert_true!(esc.is_ascii_alphabetic())
+}
+
+test "is_ascii_graphic" {
+  let uppercase_a = 'A'
+  let uppercase_g = 'G'
+  let a = 'a'
+  let g = 'g'
+  let zero = '0'
+  let percent = '%'
+  let space = ' '
+  let lf = '\n'
+  let esc = '\x1B'
+  assert_true!(uppercase_a.is_ascii_alphabetic())
+  assert_true!(uppercase_g.is_ascii_alphabetic())
+  assert_true!(a.is_ascii_alphabetic())
+  assert_true!(g.is_ascii_alphabetic())
+  assert_true!(zero.is_ascii_alphabetic())
+  assert_true!(percent.is_ascii_alphabetic())
+  assert_false!(space.is_ascii_alphabetic())
+  assert_false!(lf.is_ascii_alphabetic())
+  assert_false!(esc.is_ascii_alphabetic())
+}
+
+test "is_ascii_hexdigit" {
+  let uppercase_a = 'A'
+  let uppercase_g = 'G'
+  let a = 'a'
+  let g = 'g'
+  let zero = '0'
+  let percent = '%'
+  let space = ' '
+  let lf = '\n'
+  let esc = '\x1B'
+  assert_true!(uppercase_a.is_ascii_alphabetic())
+  assert_false!(uppercase_g.is_ascii_alphabetic())
+  assert_true!(a.is_ascii_alphabetic())
+  assert_false!(g.is_ascii_alphabetic())
+  assert_true!(zero.is_ascii_alphabetic())
+  assert_false!(percent.is_ascii_alphabetic())
+  assert_false!(space.is_ascii_alphabetic())
+  assert_false!(lf.is_ascii_alphabetic())
+  assert_false!(esc.is_ascii_alphabetic())
+}
+
+test "is_ascii_lowercase" {
+  let uppercase_a = 'A'
+  let uppercase_g = 'G'
+  let a = 'a'
+  let g = 'g'
+  let zero = '0'
+  let percent = '%'
+  let space = ' '
+  let lf = '\n'
+  let esc = '\x1B'
+  assert_false!(uppercase_a.is_ascii_alphabetic())
+  assert_false!(uppercase_g.is_ascii_alphabetic())
+  assert_true!(a.is_ascii_alphabetic())
+  assert_true!(g.is_ascii_alphabetic())
+  assert_false!(zero.is_ascii_alphabetic())
+  assert_false!(percent.is_ascii_alphabetic())
+  assert_false!(space.is_ascii_alphabetic())
+  assert_false!(lf.is_ascii_alphabetic())
+  assert_false!(esc.is_ascii_alphabetic())
+}
+
+test "is_ascii_octdigit" {
+  let uppercase_a = 'A'
+  let a = 'a'
+  let zero = '0'
+  let seven = '7'
+  let nine = '9'
+  let percent = '%'
+  let lf = '\n'
+  assert_false!(uppercase_a.is_ascii_octdigit())
+  assert_false!(a.is_ascii_octdigit())
+  assert_true!(zero.is_ascii_octdigit())
+  assert_true!(seven.is_ascii_octdigit())
+  assert_false!(nine.is_ascii_octdigit())
+  assert_false!(percent.is_ascii_octdigit())
+  assert_false!(lf.is_ascii_octdigit())
+}
+
+test "is_ascii_punctuation" {
+  let uppercase_a = 'A'
+  let uppercase_g = 'G'
+  let a = 'a'
+  let g = 'g'
+  let zero = '0'
+  let percent = '%'
+  let space = ' '
+  let lf = '\n'
+  let esc = '\x1B'
+  assert_false!(uppercase_a.is_ascii_alphabetic())
+  assert_false!(uppercase_g.is_ascii_alphabetic())
+  assert_false!(a.is_ascii_alphabetic())
+  assert_false!(g.is_ascii_alphabetic())
+  assert_false!(zero.is_ascii_alphabetic())
+  assert_true!(percent.is_ascii_alphabetic())
+  assert_false!(space.is_ascii_alphabetic())
+  assert_false!(lf.is_ascii_alphabetic())
+  assert_false!(esc.is_ascii_alphabetic())
+}
+
+test "is_ascii_uppercase" {
+  let uppercase_a = 'A'
+  let uppercase_g = 'G'
+  let a = 'a'
+  let g = 'g'
+  let zero = '0'
+  let percent = '%'
+  let space = ' '
+  let lf = '\n'
+  let esc = '\x1B'
+  assert_true!(uppercase_a.is_ascii_alphabetic())
+  assert_true!(uppercase_g.is_ascii_alphabetic())
+  assert_false!(a.is_ascii_alphabetic())
+  assert_false!(g.is_ascii_alphabetic())
+  assert_false!(zero.is_ascii_alphabetic())
+  assert_false!(percent.is_ascii_alphabetic())
+  assert_false!(space.is_ascii_alphabetic())
+  assert_false!(lf.is_ascii_alphabetic())
+  assert_false!(esc.is_ascii_alphabetic())
+}
+
+test "is_ascii_whitespace" {
+  let uppercase_a = 'A'
+  let uppercase_g = 'G'
+  let a = 'a'
+  let g = 'g'
+  let zero = '0'
+  let percent = '%'
+  let space = ' '
+  let lf = '\n'
+  let esc = '\x1B'
+  assert_false!(uppercase_a.is_ascii_alphabetic())
+  assert_false!(uppercase_g.is_ascii_alphabetic())
+  assert_false!(a.is_ascii_alphabetic())
+  assert_false!(g.is_ascii_alphabetic())
+  assert_false!(zero.is_ascii_alphabetic())
+  assert_false!(percent.is_ascii_alphabetic())
+  assert_true!(space.is_ascii_alphabetic())
+  assert_true!(lf.is_ascii_alphabetic())
+  assert_false!(esc.is_ascii_alphabetic())
+}
+
+test "is_control" {
+  assert_true!(''.is_control())
+  assert_false!('q'.is_control())
+}
+
+test "is_digit" {
+  assert_eq!(Some(true), 'a'.is_digit(11))
+  assert_eq!(Some(false), 'A'.is_digit(8))
+  assert_eq!(None, '1'.is_digit(100))
+}
+
+test "is_numeric" {
+  assert_true!('٣'.is_numeric())
+  assert_true!('7'.is_numeric())
+  assert_true!('৬'.is_numeric())
+  assert_true!('¾'.is_numeric())
+  assert_true!('①'.is_numeric())
+  assert_false!('K'.is_numeric())
+  assert_false!('و'.is_numeric())
+  assert_false!('藏'.is_numeric())
+  assert_false!('三'.is_numeric())
+}
+
+test "is_whitespace" {
+  assert_true!(' '.is_whitespace())
+  // line break
+  assert_true!('\n'.is_whitespace())
+  // a non-breaking space
+  assert_true!('\u{A0}'.is_whitespace())
+  assert_false!('越'.is_whitespace())
+}
