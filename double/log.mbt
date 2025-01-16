@@ -95,10 +95,10 @@ fn frexp(f : Double) -> (Double, Int) {
 /// }
 /// ```
 pub fn ln(self : Double) -> Double {
-  if self.is_nan() || self.is_inf() {
-    return self
-  } else if self < 0.0 {
+  if self < 0.0 {
     return not_a_number
+  } else if self.is_nan() || self.is_inf() {
+    return self
   } else if self == 0.0 {
     return neg_infinity
   }
@@ -185,7 +185,7 @@ test "log2 log10" {
 test "ln" {
   assert_true!(not_a_number.ln().is_nan())
   assert_true!(infinity.ln().is_pos_inf())
-  assert_true!(neg_infinity.ln().is_neg_inf())
+  assert_true!(neg_infinity.ln().is_nan())
   assert_true!((-1.0).ln().is_nan())
   assert_true!(0.0.ln().is_neg_inf())
   assert_true!((-0.0).ln().is_neg_inf())
