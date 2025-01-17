@@ -57,9 +57,7 @@ pub fn map[T, R](self : Ref[T], f : (T) -> R) -> Ref[R] {
 ///
 /// ```
 /// let x = @ref.new(1)
-/// x.protect(2, fn!(){
-///   x.val = 3
-/// })
+/// x.protect(2, fn () { x.val = 3 })
 /// assert_eq!(x.val, 1)
 /// ```
 pub fn protect[T, R](self : Ref[T], a : T, f : () -> R) -> R {
