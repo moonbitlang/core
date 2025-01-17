@@ -35,7 +35,7 @@ fn MyInt64::op_neg(self : MyInt64) -> MyInt64 {
 }
 
 ///|
-fn add_hi_lo(self : MyInt64, bhi : Int, blo : Int) -> MyInt64 {
+fn MyInt64::add_hi_lo(self : MyInt64, bhi : Int, blo : Int) -> MyInt64 {
   let { hi: ahi, lo: alo } = self
   let lo = alo + blo
   let s = lo >> 31
@@ -48,7 +48,7 @@ fn add_hi_lo(self : MyInt64, bhi : Int, blo : Int) -> MyInt64 {
 
 ///|
 fn MyInt64::op_add(self : MyInt64, other : MyInt64) -> MyInt64 {
-  add_hi_lo(self, other.hi, other.lo)
+  self.add_hi_lo(other.hi, other.lo)
 }
 
 ///|
@@ -56,7 +56,7 @@ fn MyInt64::op_sub(self : MyInt64, other : MyInt64) -> MyInt64 {
   if other.lo == 0 {
     { hi: self.hi - other.hi, lo: self.lo }
   } else {
-    add_hi_lo(self, other.hi.lnot(), other.lo.lnot() + 1)
+    self.add_hi_lo(other.hi.lnot(), other.lo.lnot() + 1)
   }
 }
 
