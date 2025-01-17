@@ -35,6 +35,7 @@ impl T {
   map[A, B](Self[A], (A) -> B) -> Self[B]
   new[A]() -> Self[A] //deprecated
   of[A](FixedArray[A]) -> Self[A] //deprecated
+  op_add[A](Self[A], Self[A]) -> Self[A]
   op_get[A](Self[A], Int) -> A
   push[A](Self[A], A) -> Self[A]
   rev_fold[A, B](Self[A], init~ : B, (B, A) -> B) -> B
