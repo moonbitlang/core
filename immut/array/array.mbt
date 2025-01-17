@@ -169,7 +169,7 @@ pub fn concat[A](self : T[A], other : T[A]) -> T[A] {
   if other.is_empty() {
     return self
   }
-  let (tree, shift) = concat(
+  let (tree, shift) = Tree::concat(
     self.tree,
     self.shift,
     other.tree,
@@ -178,6 +178,13 @@ pub fn concat[A](self : T[A], other : T[A]) -> T[A] {
   )
   { tree, size: self.size + other.size, shift }
 }
+
+///|
+/// Concat two arrays.
+pub fn op_add[A](self : T[A], other : T[A]) -> T[A] {
+  self.concat(other)
+}
+
 //-----------------------------------------------------------------------------
 // Iterators
 //-----------------------------------------------------------------------------

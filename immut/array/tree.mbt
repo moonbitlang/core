@@ -370,7 +370,7 @@ fn Tree::map[A, B](self : Tree[A], f : (A) -> B) -> Tree[B] {
 /// Preconditions:
 /// - `left` and `right` are not `Empty`.
 /// - `left` and `right` are of height `left_shift / num_bits` and `right_shift / num_bits`, respectively.
-fn concat[A](
+fn Tree::concat[A](
   left : Tree[A],
   left_shift : Int,
   right : Tree[A],
@@ -378,7 +378,7 @@ fn concat[A](
   top : Bool
 ) -> (Tree[A], Int) {
   if left_shift > right_shift {
-    let (c, c_shift) = concat(
+    let (c, c_shift) = Tree::concat(
       left.right_child(),
       left_shift - num_bits,
       right,
@@ -388,7 +388,7 @@ fn concat[A](
     guard c_shift == left_shift
     return rebalance(left, c, Empty, left_shift, top)
   } else if right_shift > left_shift {
-    let (c, c_shift) = concat(
+    let (c, c_shift) = Tree::concat(
       left,
       left_shift,
       right.left_child(),
@@ -428,7 +428,7 @@ fn concat[A](
     }
   } else {
     // Handle Node case
-    let (c, c_shift) = concat(
+    let (c, c_shift) = Tree::concat(
       left.right_child(),
       left_shift - num_bits,
       right.left_child(),
