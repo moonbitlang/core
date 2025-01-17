@@ -414,7 +414,7 @@ pub impl Show for StringView with output(self, logger) {
 
 ///|
 /// Returns an iterator over the Unicode characters in the string view.
-pub fn iter(self : StringView) -> Iter[Char] {
+pub fn StringView::iter(self : StringView) -> Iter[Char] {
   Iter::new(fn(yield_) {
     for index = self.start; index < self.end; index = index + 1 {
       let c1 = self.str[index]
