@@ -251,22 +251,21 @@ test "is_control" {
 }
 
 test "is_digit" {
-  assert_eq!(Some(true), 'a'.is_digit(11))
-  assert_eq!(Some(true), 'a'.is_digit(12))
-  assert_eq!(Some(true), 'a'.is_digit(13))
-  assert_eq!(Some(true), 'a'.is_digit(14))
-  assert_eq!(Some(true), 'a'.is_digit(15))
-  assert_eq!(Some(true), 'a'.is_digit(16))
-  assert_eq!(Some(true), 'A'.is_digit(11))
-  assert_eq!(Some(true), 'B'.is_digit(12))
-  assert_eq!(Some(true), 'C'.is_digit(13))
-  assert_eq!(Some(true), 'D'.is_digit(14))
-  assert_eq!(Some(true), 'E'.is_digit(15))
-  assert_eq!(Some(true), 'F'.is_digit(16))
-  assert_eq!(Some(false), 'A'.is_digit(8))
-  assert_eq!(Some(true), '1'.is_digit(2))
-  assert_eq!(Some(true), 'z'.is_digit(36))
-  assert_eq!(None, '1'.is_digit(100))
+  assert_eq!(true, 'a'.is_digit!(11))
+  assert_eq!(true, 'a'.is_digit!(12))
+  assert_eq!(true, 'a'.is_digit!(13))
+  assert_eq!(true, 'a'.is_digit!(14))
+  assert_eq!(true, 'a'.is_digit!(15))
+  assert_eq!(true, 'a'.is_digit!(16))
+  assert_eq!(true, 'A'.is_digit!(11))
+  assert_eq!(true, 'B'.is_digit!(12))
+  assert_eq!(true, 'C'.is_digit!(13))
+  assert_eq!(true, 'D'.is_digit!(14))
+  assert_eq!(true, 'E'.is_digit!(15))
+  assert_eq!(true, 'F'.is_digit!(16))
+  assert_eq!(false, 'A'.is_digit!(8))
+  assert_eq!(true, '1'.is_digit!(2))
+  assert_eq!(true, 'z'.is_digit!(36))
 }
 
 test "is_numeric" {
