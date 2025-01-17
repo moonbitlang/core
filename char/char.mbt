@@ -108,17 +108,17 @@ pub fn is_control(self : Char) -> Bool {
 }
 
 ///| Checks if a char is a digit in the given radix (range from 2 to 36).
-pub fn is_digit(self : Char, radix : UInt) -> Bool? {
+pub fn is_digit(self : Char, radix : UInt) -> Bool!Error {
+  guard radix >= 2 && radix <= 36 else {
+    fail!("radix must be in the range from 2 to 36")
+  }
   let v = self.to_uint()
   match radix {
-    2..=10 => Some(v >= 48 && v <= radix + 47)
-    11..=36 =>
-      Some(
-        (v >= 48 && v <= 57) ||
-        (v >= 65 && v <= radix + 54) ||
-        (v >= 97 && v <= radix + 86),
-      )
-    _ => None
+    2..=10 => v >= 48 && v <= radix + 47
+    _ =>
+      (v >= 48 && v <= 57) ||
+      (v >= 65 && v <= radix + 54) ||
+      (v >= 97 && v <= radix + 86)
   }
 }
 
