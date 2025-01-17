@@ -411,3 +411,25 @@ pub impl Show for StringView with output(self, logger) {
   let substr = self.str.substring(start=self.start, end=self.end)
   String::output(substr, logger)
 }
+
+///|
+/// Returns an iterator over the Unicode characters in the string view.
+pub fn iter(self : StringView) -> Iter[Char] {
+  Iter::new(fn(yield_) {
+    for index = self.start; index < self.end; index = index + 1 {
+      let c1 = self.str[index]
+      if is_leading_surrogate(c1) && index + 1 < self.end {
+        let c2 = self.str[index + 1]
+        if is_trailing_surrogate(c2) {
+          let c = code_point_of_surrogate_pair(c1, c2)
+          guard let IterContinue = yield_(c) else { x => break x }
+          continue index + 2
+        }
+      }
+      guard let IterContinue = yield_(c1) else { x => break x }
+
+    } else {
+      IterContinue
+    }
+  })
+}
