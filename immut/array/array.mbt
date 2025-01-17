@@ -162,7 +162,7 @@ pub fn push[A](self : T[A], value : A) -> T[A] {
 
 ///|
 /// Given two trees, concatenate them into a new tree.
-pub fn T::concat[A](self : T[A], other : T[A]) -> T[A] {
+pub fn concat[A](self : T[A], other : T[A]) -> T[A] {
   if self.is_empty() {
     return other
   }
