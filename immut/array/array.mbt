@@ -44,6 +44,9 @@ pub fn of[A](arr : FixedArray[A]) -> T[A] {
 /// Physically copy the array.
 /// Since it is an immutable data structure,
 /// it is rarely the case that you would need this function.
+/// 
+/// @alert deprecated "We don't copy immutable array"
+/// @coverage.skip
 pub fn copy[A](self : T[A]) -> T[A] {
   fn copy(t : Tree[A]) -> Tree[A] {
     match t {

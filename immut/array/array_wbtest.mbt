@@ -44,7 +44,7 @@ test "mix" {
     v,
     content="@immut/array.of([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99])",
   )
-  let mut v2 = v.copy()
+  let mut v2 = v
   for i = 0; i < 100; i = i + 1 {
     v2 = v2.set(i, i * 2)
   }
@@ -86,19 +86,6 @@ test "op_get" {
   inspect!(v[0], content=v_content[0].to_string())
   inspect!(v[bf - 1], content=v_content[bf - 1].to_string())
   inspect!(v[bf / 2], content=v_content[bf / 2].to_string())
-}
-
-test "copy" {
-  let bf = branching_factor_power(4)
-  let v1_content = random_array(bf / 2)
-  let v2_content = random_array(bf / 3)
-  let v_content = v1_content + v2_content
-  let v1 = from_iter(v1_content.iter())
-  let v2 = from_iter(v2_content.iter())
-  let v = v1.concat(v2)
-  let v_copy = v.copy()
-  check_array_eq!(v_content, v_copy)
-  check_array_eq!(v_content, v)
 }
 
 test "concat-two-full-tree" {

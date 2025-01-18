@@ -61,19 +61,6 @@ test "length" {
   inspect!(ve.length(), content="0")
 }
 
-test "copy" {
-  let v = @array.of([1, 2, 3, 4, 5])
-  let vc = v.copy()
-  inspect!(vc, content="@immut/array.of([1, 2, 3, 4, 5])")
-  inspect!(v == vc, content="true")
-  assert_false!(physical_equal(v, vc))
-  let v = @array.new()
-  let vc : @array.T[Int] = v.copy()
-  inspect!(vc, content="@immut/array.of([])")
-  inspect!(v == vc, content="true")
-  assert_false!(physical_equal(v, vc))
-}
-
 test "op_get" {
   let v = @array.of([1, 2, 3, 4, 5])
   inspect!(v[0], content="1")

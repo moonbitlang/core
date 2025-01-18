@@ -19,7 +19,7 @@ fn of[A](FixedArray[A]) -> T[A]
 type T
 impl T {
   concat[A](Self[A], Self[A]) -> Self[A]
-  copy[A](Self[A]) -> Self[A]
+  copy[A](Self[A]) -> Self[A] //deprecated
   each[A](Self[A], (A) -> Unit) -> Unit
   eachi[A](Self[A], (Int, A) -> Unit) -> Unit
   fold[A, B](Self[A], init~ : B, (B, A) -> B) -> B
