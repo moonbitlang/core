@@ -68,7 +68,7 @@ pub fn Array::from_fixed_array[T](arr : FixedArray[T]) -> Array[T] {
 /// ```
 pub fn Array::make[T](len : Int, elem : T) -> Array[T] {
   let arr = Array::make_uninit(len)
-  for i = 0; i < len; i = i + 1 {
+  for i in 0..<len {
     arr.unsafe_set(i, elem)
   }
   arr
@@ -250,16 +250,14 @@ pub fn Array::op_set[T](self : Array[T], index : Int, value : T) -> Unit {
 /// }
 /// ```
 pub fn Array::op_equal[T : Eq](self : Array[T], other : Array[T]) -> Bool {
-  guard self.length() == other.length() else { return false }
-  for i = 0 {
-    // CR: format issue
-    if i >= self.length() {
-      break true
-    }
-    if self[i] != other[i] {
-      break false
-    }
-    continue i + 1
+  let self_len = self.length()
+  let other_len = other.length()
+  guard self_len == other_len else { return false }
+  for i in 0..<self_len {
+    guard self.unsafe_get(i) == other.unsafe_get(i) else { break false }
+
+  } else {
+    true
   }
 }
 
@@ -298,19 +296,13 @@ pub fn Array::op_equal[T : Eq](self : Array[T], other : Array[T]) -> Bool {
 pub fn Array::compare[T : Compare](self : Array[T], other : Array[T]) -> Int {
   let len_self = self.length()
   let len_other = other.length()
-  if len_self < len_other {
-    -1
-  } else if len_self > len_other {
-    1
+  guard let 0 = len_self.compare(len_other) else { x => return x }
+  for i in 0..<len_self {
+    let cmp = self.unsafe_get(i).compare(other.unsafe_get(i))
+    guard let 0 = cmp else { x => break x }
+
   } else {
-    for i in 0..<len_self {
-      let cmp = self[i].compare(other[i])
-      if cmp != 0 {
-        break cmp
-      }
-    } else {
-      0
-    }
+    0
   }
 }
 

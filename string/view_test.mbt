@@ -444,3 +444,13 @@ test "panic rev_get2" {
   let _ = view.rev_get(-1)
 
 }
+
+test "stringview iter" {
+  let str = "hello🤣🤣🤣"
+  guard let Some(start) = str.index_at(1)
+  guard let Some(end) = str.index_at(6)
+  let view = str[start:end]
+  let iter = view.iter()
+  inspect!(iter.count(), content="5")
+  inspect!(iter, content="['e', 'l', 'l', 'o', '🤣']")
+}

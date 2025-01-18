@@ -115,10 +115,6 @@ pub fn shuffle_in_place[T](self : Array[T], rand~ : (Int) -> Int) -> Unit {
   }
 }
 
-test {
-
-}
-
 ///|
 /// Shuffle the array using Knuth shuffle
 /// 

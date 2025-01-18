@@ -21,9 +21,6 @@ let sqrt2 = 1.41421356237309504880168872420969807856967187537694807317667974
 let ln2 = 0.693147180559945309417232121458176568075500134360255254120680009
 
 ///|
-let ln10 = 2.30258509299404568401799145468436420760110148862877297603332790
-
-///|
 let ln2_hi = 6.93147180369123816490e-01 // 3fe62e42 fee00000
 
 ///|
@@ -159,13 +156,32 @@ pub fn log2(self : Double) -> Double {
 ///
 /// ```moonbit
 /// test "log10" {
+///   inspect!(0.1.log10(), content="-1")
 ///   inspect!(1.0.log10(), content="0")
 ///   inspect!(10.0.log10(), content="1")
 ///   inspect!(100.0.log10(), content="2")
+///   inspect!(15.0.log10(), content="1.1760912590556813")
 /// }
 /// ```
 pub fn log10(self : Double) -> Double {
-  ln(self) / ln10
+  if self < 0.0 {
+    return not_a_number
+  } else if self.is_nan() || self.is_inf() {
+    return self
+  } else if self == 0.0 {
+    return neg_infinity
+  }
+  let ivln10 = 4.34294481903251816668e-01
+  let log10_2hi = 3.01029995663611771306e-01
+  let log10_2lo = 3.69423907715893078616e-13
+  let (f, e) = frexp(self)
+  let (f, e) = if e >= 1 {
+    (f * 2.0, (e - 1).to_double())
+  } else {
+    (f, e.to_double())
+  }
+  let z = e * log10_2lo + ivln10 * f.ln()
+  z + e * log10_2hi
 }
 
 test "log2 log10" {
@@ -179,7 +195,14 @@ test "log2 log10" {
 
   // log10
   assert_eq!(0.2.log10(), -0.6989700043360187)
-  assert_eq!(15.0.log10(), 1.1760912590556811)
+  assert_eq!(0.1.log10(), -1)
+  assert_eq!(1.0.log10(), 0.0)
+  assert_eq!(10.0.log10(), 1.0)
+  assert_eq!(100.0.log10(), 2.0)
+  assert_eq!(1000.0.log10(), 3.0)
+  assert_eq!(3.0.log10(), 0.47712125471966244)
+  assert_eq!(11.0.log10(), 1.041392685158225)
+  assert_eq!(15.0.log10(), 1.1760912590556813)
 }
 
 test "ln" {
