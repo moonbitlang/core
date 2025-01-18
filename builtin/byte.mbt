@@ -13,11 +13,58 @@
 // limitations under the License.
 
 ///|
+/// Performs multiplication between two byte values. The result is truncated to
+/// fit within the byte range.
+///
+/// Parameters:
+///
+/// * `self` : The first byte operand in the multiplication.
+/// * `that` : The second byte operand in the multiplication.
+///
+/// Returns the product of the two bytes, truncated to fit within the byte range
+/// (0-255).
+///
+/// Example:
+///
+/// ```moonbit
+/// test "Byte::op_mul" {
+///   let a = b'\x02'
+///   let b = b'\x03'
+///   inspect!(a * b, content="b'\\x06'") // 2 * 3 = 6
+///   let c = b'\xFF'
+///   inspect!(c * c, content="b'\\x01'") // 255 * 255 = 65025, truncated to 1
+/// }
+/// ```
 pub fn Byte::op_mul(self : Byte, that : Byte) -> Byte {
   (self.to_int() * that.to_int()).to_byte()
 }
 
 ///|
+/// Performs division operation between two bytes by converting them to integers,
+/// performing the division, and converting the result back to a byte.
+///
+/// Parameters:
+///
+/// * `self` : The dividend byte value.
+/// * `that` : The divisor byte value.
+///
+/// Returns the quotient of the division as a byte.
+///
+/// Example:
+///
+/// ```moonbit
+/// test "Byte::op_div" {
+///   let a = b'\xFF' // 255
+///   let b = b'\x03' // 3
+///   inspect!(a / b, content="b'\\x55'") // 255 / 3 = 85 (0x55)
+/// }
+///
+/// test "panic Byte::op_div/division_by_zero" {
+///   let a = b'\x01'
+///   let b = b'\x00'
+///   ignore(a / b) // Division by zero
+/// }
+/// ```
 pub fn Byte::op_div(self : Byte, that : Byte) -> Byte {
   (self.to_int() / that.to_int()).to_byte()
 }
@@ -119,9 +166,44 @@ pub fn Byte::to_string(self : Byte) -> String {
 }
 
 ///|
+/// Implements the `Hash` trait for `Byte` type by converting the byte to an
+/// integer and using it as the hash value.
+///
+/// Parameters:
+///
+/// * `self` : The byte value to be hashed.
+///
+/// Returns an integer representing the hash value of the byte.
+///
+/// Example:
+///
+/// ```moonbit
+/// test "Byte::hash" {
+///   let b = b'\x42'
+///   inspect!(Hash::hash(b), content="66") // ASCII value of 'B'
+/// }
+/// ```
 pub impl Hash for Byte with hash(self) { self.to_int() }
 
 ///|
+/// Implements the `Hash` trait for `Byte` type by providing a `hash_combine`
+/// method that combines a byte value with a hasher.
+///
+/// Parameters:
+///
+/// * `self` : The byte value to be hashed.
+/// * `hasher` : The hasher object that will be used to combine the byte value
+/// into its internal state.
+///
+/// Example:
+///
+/// ```moonbit
+/// test "Byte::hash_combine" {
+///   let hasher = Hasher::new()
+///   hasher.combine_byte(b'\xFF')
+///   inspect!(hasher.finalize(), content="1955036104")
+/// }
+/// ```
 pub impl Hash for Byte with hash_combine(self, hasher) {
   hasher.combine_byte(self)
 }

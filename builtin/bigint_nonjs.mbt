@@ -14,9 +14,9 @@
 
 ///|
 /// A big integer represented as an array of Int.
-// 
-// Design explained: 
-// - Why use an FixedArray of Int with a len field instead of a Array[Int]? 
+//
+// Design explained:
+// - Why use an FixedArray of Int with a len field instead of a Array[Int]?
 //   - It follows the principle of least dependency in MoonBit's core.
 //   - In our case, we always do one-off array allocation for each BigInt.
 // - Why keep a separate len field instead of using limbs.length()?
@@ -79,19 +79,69 @@ let one : BigInt = 1N
 // Conversion Functions
 
 ///|
-/// Convert an Int to a BigInt.
+/// Converts a 32-bit signed integer to a BigInt.
+///
+/// Parameters:
+///
+/// * `value` : The 32-bit signed integer (`Int`) to be converted.
+///
+/// Returns a `BigInt` equivalent to the input integer.
+///
+/// Example:
+///
+/// ```moonbit
+/// test "BigInt::from_int" {
+///   let big = BigInt::from_int(42)
+///   inspect!(big, content="42")
+///   let neg = BigInt::from_int(-42)
+///   inspect!(neg, content="-42")
+/// }
+/// ```
 pub fn BigInt::from_int(n : Int) -> BigInt {
   BigInt::from_int64(n.to_int64())
 }
 
 ///|
-/// Convert an UInt to a BigInt.
+/// Converts an unsigned 32-bit integer to a `BigInt`.
+///
+/// Parameters:
+///
+/// * `value` : The unsigned 32-bit integer to be converted.
+///
+/// Returns a `BigInt` representing the same numerical value as the input.
+///
+/// Example:
+///
+/// ```moonbit
+/// test "BigInt::from_uint" {
+///   let n = 42U
+///   inspect!(BigInt::from_uint(n), content="42")
+/// }
+/// ```
 pub fn BigInt::from_uint(n : UInt) -> BigInt {
   BigInt::from_uint64(n.to_uint64())
 }
 
 ///|
-/// Convert an Int64 to a BigInt.
+/// Converts a signed 64-bit integer to a `BigInt`.
+///
+/// Parameters:
+///
+/// * `number` : A 64-bit signed integer (`Int64`) to be converted.
+///
+/// Returns a `BigInt` value that represents the same numerical value as the
+/// input.
+///
+/// Example:
+///
+/// ```moonbit
+/// test "BigInt::from_int64" {
+///   let big = BigInt::from_int64(9223372036854775807L) // max value of Int64
+///   inspect!(big, content="9223372036854775807")
+///   let neg = BigInt::from_int64(-9223372036854775808L) // min value of Int64
+///   inspect!(neg, content="-9223372036854775808")
+/// }
+/// ```
 pub fn BigInt::from_int64(n : Int64) -> BigInt {
   if n < 0L {
     -BigInt::from_uint64((-n).reinterpret_as_uint64())
@@ -100,8 +150,27 @@ pub fn BigInt::from_int64(n : Int64) -> BigInt {
   }
 }
 
-///| 
-/// Convert an UInt64 to a BigInt.
+///|
+/// Converts an unsigned 64-bit integer to a `BigInt`.
+///
+/// Parameters:
+///
+/// * `value` : The unsigned 64-bit integer (`UInt64`) to be converted.
+///
+/// Returns a new `BigInt` with the same value as the input. The resulting
+/// `BigInt` will always have a positive sign since the input is an unsigned
+/// integer.
+///
+/// Example:
+///
+/// ```moonbit
+/// test "BigInt::from_uint64" {
+///   let n = BigInt::from_uint64(12345678901234567890UL)
+///   inspect!(n, content="12345678901234567890")
+///   let zero = BigInt::from_uint64(0UL)
+///   inspect!(zero, content="0")
+/// }
+/// ```
 pub fn BigInt::from_uint64(n : UInt64) -> BigInt {
   if n == 0UL {
     return { limbs: FixedArray::make(1, 0), sign: Positive, len: 1 }
@@ -120,7 +189,25 @@ pub fn BigInt::from_uint64(n : UInt64) -> BigInt {
 // Arithmetic Operations
 
 ///|
-/// Negate a bigint
+/// Negates a big integer, returning a new big integer with the opposite sign. If
+/// the input is zero, returns zero.
+///
+/// Parameters:
+///
+/// * `self` : The big integer to negate.
+///
+/// Returns a new big integer with the opposite sign of the input, or zero if the
+/// input is zero.
+///
+/// Example:
+///
+/// ```moonbit
+/// test "BigInt::op_neg" {
+///   inspect!(-42N, content="-42")
+///   inspect!(-(-42N), content="42")
+///   inspect!(-0N, content="0")
+/// }
+/// ```
 pub fn BigInt::op_neg(self : BigInt) -> BigInt {
   if self.is_zero() {
     return zero
@@ -129,7 +216,27 @@ pub fn BigInt::op_neg(self : BigInt) -> BigInt {
 }
 
 ///|
-/// Add two bigint.
+/// Adds two arbitrary-precision integers. Handles positive and negative numbers
+/// correctly by converting subtraction of negative numbers into addition of
+/// positive numbers.
+///
+/// Parameters:
+///
+/// * `self` : The first big integer to add.
+/// * `other` : The second big integer to add.
+///
+/// Returns a new `BigInt` that represents the sum of the two input numbers.
+///
+/// Example:
+///
+/// ```moonbit
+/// test "BigInt::op_add" {
+///   let a = 9223372036854775807N // Max value of Int64
+///   let b = 1N
+///   inspect!(a + b, content="9223372036854775808") // Beyond Int64 range
+///   inspect!(-a + -b, content="-9223372036854775808")
+/// }
+/// ```
 pub fn BigInt::op_add(self : BigInt, other : BigInt) -> BigInt {
   if self.sign == Negative {
     if other.sign == Negative {
@@ -157,7 +264,27 @@ pub fn BigInt::op_add(self : BigInt, other : BigInt) -> BigInt {
 }
 
 ///|
-/// Subtract two bigint
+/// Subtracts one arbitrary-precision integer from another. Handles positive and
+/// negative numbers appropriately.
+///
+/// Parameters:
+///
+/// * `self` : The minuend (the number to subtract from).
+/// * `other` : The subtrahend (the number to be subtracted).
+///
+/// Returns a new `BigInt` representing the difference between `self` and
+/// `other`.
+///
+/// Example:
+///
+/// ```moonbit
+/// test "BigInt::op_sub" {
+///   let a = 12345678901234567890N
+///   let b = 9876543210987654321N
+///   inspect!(a - b, content="2469135690246913569")
+///   inspect!(-a - b, content="-22222222112222222211")
+/// }
+/// ```
 pub fn BigInt::op_sub(self : BigInt, other : BigInt) -> BigInt {
   // first make sure self and other > 0
   if self.sign == Negative {
@@ -209,7 +336,31 @@ pub fn BigInt::op_sub(self : BigInt, other : BigInt) -> BigInt {
 }
 
 ///|
-/// Multiply two bigint 
+/// Multiplies two arbitrary-precision integers. Uses the most efficient
+/// multiplication algorithm based on the size of the operands:
+///
+/// * Grade school multiplication for small numbers
+/// * Karatsuba multiplication for large numbers
+///
+/// Parameters:
+///
+/// * `self` : The first arbitrary-precision integer to multiply.
+/// * `other` : The second arbitrary-precision integer to multiply.
+///
+/// Returns the product of the two numbers. The sign of the result follows the
+/// standard multiplication rules: positive if both operands have the same sign,
+/// negative otherwise.
+///
+/// Example:
+///
+/// ```moonbit
+/// test "BigInt::op_mul" {
+///   let a = 12345678901234567890N
+///   let b = -98765432109876543210N
+///   inspect!(a * b, content="-1219326311370217952237463801111263526900")
+///   inspect!(a * 0N, content="0")
+/// }
+/// ```
 pub fn BigInt::op_mul(self : BigInt, other : BigInt) -> BigInt {
   if self.is_zero() || other.is_zero() {
     return zero
@@ -277,10 +428,39 @@ fn BigInt::split(self : BigInt, half : Int) -> (BigInt, BigInt) {
 }
 
 ///|
-/// Divide two bigint
+/// Performs division between two arbitrary-precision integers, following
+/// standard arithmetic rules for signed division.
+///
+/// Parameters:
+///
+/// * `self` : The dividend big integer.
+/// * `other` : The divisor big integer.
+///
+/// Returns the quotient of the division.
+///
+/// Throws a panic if the divisor is zero.
+///
+/// Example:
+///
+/// ```moonbit
+/// test "BigInt::op_div" {
+///   let a = BigInt::from_string("100")
+///   let b = BigInt::from_string("20")
+///   inspect!(a / b, content="5")
+///   inspect!(-a / b, content="-5")
+///   inspect!(a / -b, content="-5")
+///   inspect!(-a / -b, content="5")
+/// }
+///
+/// test "panic BigInt::op_div/division_by_zero" {
+///   let a = BigInt::from_string("100")
+///   let b = BigInt::from_string("0")
+///   ignore(a / b) // Division by zero
+/// }
+/// ```
 pub fn BigInt::op_div(self : BigInt, other : BigInt) -> BigInt {
-  // TODO: 
-  // guard (other != zero, "division by zero")  
+  // TODO:
+  // guard (other != zero, "division by zero")
   if other == zero {
     abort("division by zero")
   }
@@ -299,7 +479,34 @@ pub fn BigInt::op_div(self : BigInt, other : BigInt) -> BigInt {
 }
 
 ///|
-/// Modulo two bigint
+/// Calculates the modulo (remainder) of dividing one big integer by another.
+///
+/// Parameters:
+///
+/// * `self` : The dividend big integer.
+/// * `other` : The divisor big integer.
+///
+/// Returns the remainder of the division operation.
+///
+/// Throws an error if `other` is zero.
+///
+/// Example:
+///
+/// ```moonbit
+/// test "BigInt::op_mod" {
+///   let a = 42N
+///   let b = 5N
+///   inspect!(a % b, content="2")
+///   let c = -42N
+///   let d = -5N
+///   inspect!(c % d, content="-2")
+/// }
+///
+/// test "panic BigInt::op_mod/divide_by_zero" {
+///   let a = 42N
+///   ignore(a % 0N) // Division by zero
+/// }
+/// ```
 pub fn BigInt::op_mod(self : BigInt, other : BigInt) -> BigInt {
   if other == zero {
     abort("division by zero")
@@ -361,9 +568,9 @@ fn BigInt::grade_school_div(self : BigInt, other : BigInt) -> (BigInt, BigInt) {
 
   // D1. normalize
   // m = dividend.len - divisor.len
-  // left shift dividend & divisor such that 
+  // left shift dividend & divisor such that
   // - b[b.length() - 1] >= radix / 2
-  // - a.length() == self.len + 1 
+  // - a.length() == self.len + 1
   // where a and b represent the limbs of the adjusted dividend and divisor
   let lshift = max(
     0,
@@ -462,10 +669,34 @@ fn BigInt::grade_school_div(self : BigInt, other : BigInt) -> (BigInt, BigInt) {
 // Bitwise Operations
 
 ///|
-/// Left shift a bigint
-/// The sign of the result is the same as the sign of the input.
-/// Only the absolute value is shifted.
-/// 
+/// Performs a left shift operation on a `BigInt` value. Preserves the sign of
+/// the original number while shifting only its absolute value.
+///
+/// Parameters:
+///
+/// * `self` : The `BigInt` value to be shifted.
+/// * `n` : The number of positions to shift left. Must be non-negative.
+///
+/// Returns a new `BigInt` value that is the result of shifting the absolute
+/// value of the input left by `n` positions, maintaining the original sign.
+///
+/// Throws a panic if the shift count is negative.
+///
+/// Example:
+///
+/// ```moonbit
+/// test "BigInt::op_shl" {
+///   let x = 5N
+///   inspect!(x << 2, content="20")
+///   let y = -5N
+///   inspect!(y << 2, content="-20")
+/// }
+///
+/// test "panic BigInt::op_shl/negative_shift" {
+///   let x = 5N
+///   ignore(x << -1) // Panics with "negative shift count"
+/// }
+/// ```
 pub fn BigInt::op_shl(self : BigInt, n : Int) -> BigInt {
   if n < 0 {
     abort("negative shift count")
@@ -500,9 +731,36 @@ pub fn BigInt::op_shl(self : BigInt, n : Int) -> BigInt {
 }
 
 ///|
-/// Right shift a bigint
-/// The sign of the result is the same as the sign of the input.
-/// Only the absolute value is shifted.
+/// Performs arithmetic right shift operation on a big integer value. The shift
+/// operation preserves the sign of the number while shifting the absolute value
+/// right by `n` bits. For negative numbers, the result is rounded towards
+/// negative infinity.
+///
+/// Parameters:
+///
+/// * `self` : The big integer value to be shifted.
+/// * `n` : The number of bits to shift right. Must be non-negative.
+///
+/// Returns a new `BigInt` value that represents the result of shifting `self`
+/// right by `n` bits.
+///
+/// Throws a panic if `n` is negative.
+///
+/// Example:
+///
+/// ```moonbit
+/// test "BigInt::op_shr" {
+///   let n = BigInt::from_string("1024")
+///   inspect!(n >> 3, content="128")
+///   let neg = BigInt::from_string("-1024")
+///   inspect!(neg >> 3, content="-128")
+/// }
+///
+/// test "panic BigInt::op_shr/negative_shift" {
+///   let n = BigInt::from_string("1024")
+///   ignore(n >> -1) // Panics with "negative shift count"
+/// }
+/// ```
 pub fn BigInt::op_shr(self : BigInt, n : Int) -> BigInt {
   if n < 0 {
     abort("negative shift count")
@@ -544,13 +802,54 @@ pub fn BigInt::op_shr(self : BigInt, n : Int) -> BigInt {
 // Comparison Operations
 
 ///|
-/// Check if a bigint is zero
+/// Checks whether a `BigInt` value is equal to zero.
+///
+/// Parameters:
+///
+/// * `self` : The `BigInt` value to be checked.
+///
+/// Returns `true` if the `BigInt` is zero, `false` otherwise.
+///
+/// Example:
+///
+/// ```moonbit
+/// test "BigInt::is_zero" {
+///   inspect!(0N.is_zero(), content="true")
+///   inspect!(42N.is_zero(), content="false")
+///   inspect!((-1N).is_zero(), content="false")
+/// }
+/// ```
 pub fn BigInt::is_zero(self : BigInt) -> Bool {
   self.len == 1 && self.limbs[0] == 0
 }
 
 ///|
-/// Implements the compare trait for BigInt
+/// Compares two arbitrary-precision integers and returns their relative order.
+///
+/// Parameters:
+///
+/// * `self` : The first arbitrary-precision integer to compare.
+/// * `other` : The second arbitrary-precision integer to compare.
+///
+/// Returns an integer indicating the relative order:
+///
+/// * A negative value if `self` is less than `other`
+/// * Zero if `self` equals `other`
+/// * A positive value if `self` is greater than `other`
+///
+/// Example:
+///
+/// ```moonbit
+/// test "BigInt::compare" {
+///   let a = BigInt::from_string("42")
+///   let b = BigInt::from_string("24")
+///   let c = BigInt::from_string("-42")
+///   inspect!(a.compare(b), content="1") // 42 > 24
+///   inspect!(b.compare(a), content="-1") // 24 < 42
+///   inspect!(c.compare(a), content="-1") // -42 < 42
+///   inspect!(a.compare(a), content="0") // 42 = 42
+/// }
+/// ```
 pub fn BigInt::compare(self : BigInt, other : BigInt) -> Int {
   if self.sign != other.sign {
     return if self.sign == Positive { 1 } else { -1 }
@@ -577,7 +876,27 @@ pub fn BigInt::compare(self : BigInt, other : BigInt) -> Int {
 }
 
 ///|
-/// Implements the Eq trait for BigInt
+/// Compares two `BigInt` values for equality. Returns true if both numbers have
+/// the same sign and magnitude.
+///
+/// Parameters:
+///
+/// * `self` : The first `BigInt` value to compare.
+/// * `other` : The second `BigInt` value to compare.
+///
+/// Returns `true` if the two `BigInt` values are equal, `false` otherwise.
+///
+/// Example:
+///
+/// ```moonbit
+/// test "BigInt::op_equal" {
+///   let a = 123456789N
+///   let b = 123456789N
+///   let c = -123456789N
+///   inspect!(a == b, content="true")
+///   inspect!(a == c, content="false")
+/// }
+/// ```
 pub fn BigInt::op_equal(self : BigInt, other : BigInt) -> Bool {
   if self.sign != other.sign || self.len != other.len {
     return false
@@ -591,7 +910,27 @@ pub fn BigInt::op_equal(self : BigInt, other : BigInt) -> Bool {
 }
 
 ///|
-/// Returns the decimal string representation of the BigInt.
+/// Converts a `BigInt` value to its decimal string representation.
+///
+/// Parameters:
+///
+/// * `self` : The `BigInt` value to convert to a string.
+///
+/// Returns a string containing the decimal representation of the number, with a
+/// leading minus sign for negative numbers.
+///
+/// Example:
+///
+/// ```moonbit
+/// test "BigInt::to_string" {
+///   let n = 12345678901234567890N
+///   inspect!(n.to_string(), content="12345678901234567890")
+///   let neg = -42N
+///   inspect!(neg.to_string(), content="-42")
+///   let zero = 0N
+///   inspect!(zero.to_string(), content="0")
+/// }
+/// ```
 pub fn BigInt::to_string(self : BigInt) -> String {
   // This function first converts the BigInt to a decimal representation, with a radix of 2^(`decimal_radix_bit_len`).
   // Then it converts the decimal representation to a string slot by slot.
@@ -640,12 +979,64 @@ pub fn BigInt::to_string(self : BigInt) -> String {
 }
 
 ///|
+/// Formats and writes a `BigInt` value to a logger by converting it to a string
+/// representation.
+///
+/// Implements the `Show` trait for `BigInt` type, allowing `BigInt` values to be
+/// converted to strings and used in string interpolation.
+///
+/// Parameters:
+///
+/// * `self` : The `BigInt` value to be formatted.
+/// * `logger` : A logger that implements the `Logger` trait, which will receive
+/// the formatted string output.
+///
+/// Example:
+///
+/// ```moonbit
+/// test "BigInt::output" {
+///   let n = 12345678901234567890N
+///   inspect!(n, content="12345678901234567890")
+///   let neg = -42N
+///   inspect!(neg, content="-42")
+/// }
+/// ```
 pub impl Show for BigInt with output(self, logger) {
   logger.write_string(self.to_string())
 }
 
 ///|
-/// Converts decimal string to a BigInt.
+/// Converts a decimal string representation to a BigInt value. The string can
+/// optionally start with a minus sign (-) to indicate a negative number,
+/// followed by one or more decimal digits.
+///
+/// Parameters:
+///
+/// * `input` : The string to be converted. Must be a valid decimal number string
+/// consisting of optional leading minus sign followed by decimal digits (0-9).
+///
+/// Returns a `BigInt` value representing the decimal number in the input string.
+///
+/// Throws a panic if:
+///
+/// * The input string is empty
+/// * The input string contains non-decimal digits
+///
+/// Example:
+///
+/// ```moonbit
+/// test "BigInt::from_string" {
+///   let pos = BigInt::from_string("12345")
+///   let neg = BigInt::from_string("-12345")
+///   inspect!(pos, content="12345")
+///   inspect!(neg, content="-12345")
+/// }
+///
+/// test "panic BigInt::from_string/invalid" {
+///   ignore(BigInt::from_string("")) // Empty string
+///   ignore(BigInt::from_string("12a34")) // Invalid character
+/// }
+/// ```
 pub fn BigInt::from_string(input : String) -> BigInt {
   let len = input.length()
   if len == 0 {
@@ -682,9 +1073,39 @@ pub fn BigInt::from_string(input : String) -> BigInt {
 }
 
 ///|
-/// Converts a hex string to a BigInt.
-/// 
-/// The input string must be a valid hex string with no extra `0x` prefix.
+/// Converts a hexadecimal string to a `BigInt`. The string can be prefixed with
+/// a minus sign (`-`) to indicate a negative number. The string must contain
+/// only hexadecimal digits (`0-9`, `a-f`, or `A-F`).
+///
+/// Parameters:
+///
+/// * `input` : A string containing the hexadecimal representation of an integer.
+/// Must be non-empty and contain only valid hexadecimal digits. May be prefixed
+/// with a minus sign to indicate a negative number.
+///
+/// Returns a `BigInt` value representing the hexadecimal number.
+///
+/// Throws a runtime error if:
+///
+/// * The input string is empty.
+/// * The input string contains characters other than hexadecimal digits (0-9,
+/// a-f, A-F) or a leading minus sign.
+///
+/// Example:
+///
+/// ```moonbit
+/// test "BigInt::from_hex" {
+///   inspect!(BigInt::from_hex("ff"), content="255")
+///   inspect!(BigInt::from_hex("-ff"), content="-255")
+///   inspect!(BigInt::from_hex("DEADBEEF"), content="3735928559")
+/// }
+///
+/// test "panic BigInt::from_hex/invalid_input" {
+///   ignore(BigInt::from_hex("")) // Empty string
+///   ignore(BigInt::from_hex("0x123")) // Invalid prefix
+///   ignore(BigInt::from_hex("12g")) // Invalid character
+/// }
+/// ```
 pub fn BigInt::from_hex(input : String) -> BigInt {
   // WARN: this implementation assumes that `radix_bit_len` is a multiple of 4.
   fn char_from_hex(c : Char) -> UInt {
@@ -733,7 +1154,31 @@ pub fn BigInt::from_hex(input : String) -> BigInt {
 }
 
 ///|
-/// Converts a BigInt to a hex string.
+/// Converts a big integer to its hexadecimal string representation. The output
+/// string has no prefix (like "0x") and uses uppercase letters A-F by default
+/// for digits above 9.
+///
+/// Parameters:
+///
+/// * `self` : The `BigInt` value to be converted.
+/// * `uppercase` : Whether to use uppercase (A-F) or lowercase (a-f) letters for
+/// hexadecimal digits above 9. Defaults to `true`.
+///
+/// Returns a string representing the number in hexadecimal format. For negative
+/// numbers, the string is prefixed with a minus sign.
+///
+/// Example:
+///
+/// ```moonbit
+/// test "BigInt::to_hex" {
+///   let pos = BigInt::from_string("255")
+///   let neg = BigInt::from_string("-255")
+///   inspect!(pos.to_hex(), content="FF")
+///   inspect!(neg.to_hex(), content="-FF")
+///   inspect!(pos.to_hex(uppercase=false), content="ff")
+///   inspect!(0N.to_hex(), content="0")
+/// }
+/// ```
 pub fn BigInt::to_hex(self : BigInt, uppercase~ : Bool = true) -> String {
   // WARN: this implementation assumes that `radix_bit_len` is a multiple of 4.
   let mut result = ""
@@ -820,7 +1265,7 @@ fn max[T : Compare](a : T, b : T) -> T {
 ///   inspect!(base.pow(exp), content="81")
 ///   inspect!(base.pow(exp, modulus=BigInt::from_string("10")), content="1")
 /// }
-/// 
+///
 /// test "panic BigInt::pow/negative_exponent" {
 ///   let base = BigInt::from_string("3")
 ///   let exp = BigInt::from_string("-1")
@@ -863,13 +1308,39 @@ pub fn BigInt::pow(self : BigInt, exp : BigInt, modulus? : BigInt) -> BigInt {
 }
 
 ///|
-/// Convert an octet string to a BigInt.
-/// 
-/// The input is treated as a big-endian octet array.
-/// 
-/// Example: `from_octets(b"\xab\xcd\xef") == from_hex("abcdef")`
-/// 
-/// The input must not be empty, unless signum is zero
+/// Converts a big-endian byte sequence to a `BigInt` value with an optional
+/// sign. Interprets the input bytes as a big-endian representation of an
+/// unsigned integer, and applies the specified sign to create the final `BigInt`
+/// value.
+///
+/// Parameters:
+///
+/// * `bytes` : A sequence of bytes representing the magnitude of the number in
+/// big-endian order. The sequence must not be empty unless `sign` is 0.
+/// * `sign` : An integer specifying the sign of the resulting number (default:
+/// 1). A value of 1 creates a positive number, -1 creates a negative number, and
+/// 0 returns zero regardless of the input bytes.
+///
+/// Returns a `BigInt` value representing the number encoded in the byte sequence
+/// with the specified sign.
+///
+/// Throws a panic if the input byte sequence is empty and the sign is not 0.
+///
+/// Example:
+///
+/// ```moonbit
+/// test "BigInt::from_octets" {
+///   let bytes = b"\x01\x02\x03" // Represents 0x010203
+///   let positive = BigInt::from_octets(bytes)
+///   let negative = BigInt::from_octets(bytes, signum=-1)
+///   inspect!(positive, content="66051")
+///   inspect!(negative, content="-66051")
+/// }
+///
+/// test "panic BigInt::from_octets/empty" {
+///   ignore(BigInt::from_octets(b"")) // Panics with "empty octet string"
+/// }
+/// ```
 pub fn BigInt::from_octets(input : Bytes, signum~ : Int = 1) -> BigInt {
   let len = input.length() // number of bytes
   if signum == 0 {
@@ -906,18 +1377,42 @@ pub fn BigInt::from_octets(input : Bytes, signum~ : Int = 1) -> BigInt {
 }
 
 ///|
-/// Convert a BigInt to an octet string.
-/// 
-/// The output is a big-endian octet array.
-/// 
-/// The output may be padded with leading zeros to meet the length requirement 
-/// if and only if the actual length is less than the expected.
-/// 
-/// The value should be non-negative and the padding should be positive.
-/// 
-/// Example: 
-/// - `to_octets(from_hex("abcdef"), length=3) == b"\xab\xcd\xef"`
-/// - `to_octets(from_hex("1abcdef"), length=3) == b"\x01\xab\xcd\xef"`
+/// Converts a non-negative arbitrary-precision integer to a big-endian byte
+/// sequence. The output can be padded with leading zeros to meet a specified
+/// length requirement, but only if the actual length is less than the requested
+/// length.
+///
+/// Parameters:
+///
+/// * `self` : The arbitrary-precision integer to convert. Must be non-negative.
+/// * `length` : Optional minimum length of the output byte sequence. If
+/// provided, must be positive. Defaults to 1 if not specified.
+///
+/// Returns a byte sequence representing the number in big-endian order, possibly
+/// padded with leading zeros to reach the specified length.
+///
+/// Throws a panic if:
+///
+/// * The input number is negative
+/// * The specified length is negative or zero
+///
+/// Example:
+///
+/// ```moonbit
+/// test "BigInt::to_octets" {
+///   let n = BigInt::from_hex("abcdef")
+///   inspect!(n.to_octets(length=4), content="b\"\\x00\\xab\\xcd\\xef\"")
+///   let m = BigInt::from_string("0")
+///   inspect!(m.to_octets(), content="b\"\\x00\"")
+/// }
+///
+/// test "panic BigInt::to_octets/negative" {
+///   let n = -BigInt::from_hex("abcdef")
+///   ignore(n.to_octets()) // Panics with "negative BigInt"
+///   let m = BigInt::from_hex("abcdef")
+///   ignore(m.to_octets(length=-1)) // Panics with "negative length"
+/// }
+/// ```
 pub fn BigInt::to_octets(self : BigInt, length? : Int) -> Bytes {
   let length = match length {
     None => 1
@@ -943,6 +1438,35 @@ pub fn BigInt::to_octets(self : BigInt, length? : Int) -> Bytes {
 }
 
 ///|
+/// Performs a bitwise AND operation between two arbitrary-precision integers.
+///
+/// The operation is performed using two's complement representation, which means
+/// it handles both positive and negative numbers correctly. For negative
+/// numbers, the function first converts them to their two's complement form,
+/// performs the AND operation, and then converts the result back if necessary.
+///
+/// Parameters:
+///
+/// * `self` : The first arbitrary-precision integer operand.
+/// * `other` : The second arbitrary-precision integer operand.
+///
+/// Returns a new `BigInt` representing the result of the bitwise AND operation.
+///
+/// Example:
+///
+/// ```moonbit
+/// test "BigInt::land" {
+///   let a = BigInt::from_string("42") // 0b101010
+///   let b = BigInt::from_string("-12") // ~0b1011 + 1
+///   inspect!(a & b, content="32") // 0b100000
+/// }
+///
+/// test "BigInt::land/negative" {
+///   let a = BigInt::from_string("-8") // ~0b111 + 1
+///   let b = BigInt::from_string("-4") // ~0b11 + 1
+///   inspect!(a & b, content="-8") // ~0b1011 + 1
+/// }
+/// ```
 pub fn BigInt::land(self : BigInt, other : BigInt) -> BigInt {
   let max_length = if self.limbs.length() < other.limbs.length() {
     other.limbs.length() + 1
@@ -987,7 +1511,7 @@ pub fn BigInt::land(self : BigInt, other : BigInt) -> BigInt {
     }
   }
 
-  // Bit Ops 
+  // Bit Ops
   for i = 0; i < x_limbs.length(); i = i + 1 {
     x_limbs[i] = x_limbs[i] & y_limbs[i]
   }
@@ -1030,6 +1554,28 @@ pub fn BigInt::land(self : BigInt, other : BigInt) -> BigInt {
 }
 
 ///|
+/// Performs a bitwise OR operation between two arbitrary-precision integers,
+/// following two's complement representation for negative numbers.
+///
+/// Parameters:
+///
+/// * `self` : The first arbitrary-precision integer operand.
+/// * `other` : The second arbitrary-precision integer operand.
+///
+/// Returns a new `BigInt` representing the result of the bitwise OR operation.
+///
+/// Example:
+///
+/// ```moonbit
+/// test "BigInt::lor" {
+///   let a = BigInt::from_string("42")
+///   let b = BigInt::from_string("-12")
+///   inspect!(a | b, content="-2")
+///   let c = BigInt::from_string("-8")
+///   let d = BigInt::from_string("-4")
+///   inspect!(c | d, content="-4")
+/// }
+/// ```
 pub fn BigInt::lor(self : BigInt, other : BigInt) -> BigInt {
   let max_length = if self.limbs.length() < other.limbs.length() {
     other.limbs.length() + 1
@@ -1074,7 +1620,7 @@ pub fn BigInt::lor(self : BigInt, other : BigInt) -> BigInt {
     }
   }
 
-  // Bit Ops 
+  // Bit Ops
   for i = 0; i < x_limbs.length(); i = i + 1 {
     x_limbs[i] = x_limbs[i] | y_limbs[i]
   }
@@ -1117,6 +1663,31 @@ pub fn BigInt::lor(self : BigInt, other : BigInt) -> BigInt {
 }
 
 ///|
+/// Performs a bitwise XOR operation between two `BigInt` values, treating them
+/// as two's complement binary numbers.
+///
+/// Parameters:
+///
+/// * `self` : The first `BigInt` operand.
+/// * `other` : The second `BigInt` operand.
+///
+/// Returns a new `BigInt` value representing the bitwise XOR of the two
+/// operands.
+///
+/// Example:
+///
+/// ```moonbit
+/// test "BigInt::lxor" {
+///   let a = BigInt::from_string("42")
+///   let b = BigInt::from_string("-7")
+///   inspect!(a ^ b, content="-45")
+/// }
+///
+/// test "BigInt::lxor/zero" {
+///   let a = BigInt::from_string("42")
+///   inspect!(a ^ a, content="0") // XOR with self gives 0
+/// }
+/// ```
 pub fn BigInt::lxor(self : BigInt, other : BigInt) -> BigInt {
   let max_length = if self.limbs.length() < other.limbs.length() {
     other.limbs.length() + 1
@@ -1161,7 +1732,7 @@ pub fn BigInt::lxor(self : BigInt, other : BigInt) -> BigInt {
     }
   }
 
-  // Bit Ops 
+  // Bit Ops
   for i = 0; i < x_limbs.length(); i = i + 1 {
     x_limbs[i] = x_limbs[i] ^ y_limbs[i]
   }
