@@ -50,7 +50,24 @@ pub fn Bytes::makei(length : Int, value : (Int) -> Byte) -> Bytes {
 }
 
 ///|
-/// Create byte sequence from String.
+/// Creates a byte sequence from a UTF-16 encoded string. Each character in the
+/// string is encoded as a pair of bytes in little-endian order.
+///
+/// Parameters:
+///
+/// * `string` : The input string to be converted to a byte sequence.
+///
+/// Returns a new byte sequence containing the UTF-16LE encoded representation of
+/// the input string.
+///
+/// Example:
+///
+/// ```moonbit
+/// test "Bytes::of_string" {
+///   let bytes = Bytes::of_string("ABC")
+///   inspect!(bytes, content="b\"\\x41\\x00\\x42\\x00\\x43\\x00\"")
+/// }
+/// ```
 pub fn Bytes::of_string(str : String) -> Bytes {
   FixedArray::make(str.length() * 2, Byte::default())
   ..blit_from_string(0, str, 0, str.length())
@@ -80,8 +97,27 @@ pub fn Bytes::sub_string(
 }
 
 ///|
-/// Create a new unchecked string from byte sequence.
-/// 
+/// Creates a new string from the given byte sequence without encoding
+/// validation. The byte sequence must be a valid UTF-16LE encoded string,
+/// otherwise the behavior is undefined.
+///
+/// Parameters:
+///
+/// * `bytes` : The byte sequence to be converted to a string. Must be a valid
+/// UTF-16LE encoded string.
+///
+/// Returns a string containing the decoded characters from the byte sequence.
+///
+/// Example:
+///
+/// ```moonbit
+/// test "Bytes::to_string" {
+///   let bytes = Bytes::of_string("Hello")
+///   let s = bytes.to_unchecked_string() // Use the new API instead
+///   inspect!(s, content="Hello")
+/// }
+/// ```
+///
 /// @alert deprecated "Use `to_unchecked_string` instead"
 /// @coverage.skip
 pub fn Bytes::to_string(self : Bytes) -> String {
@@ -106,8 +142,40 @@ pub fn Bytes::to_unchecked_string(
 }
 
 ///|
-/// Copy `length` chars from string `str`, starting at `str_offset`,
-/// into byte sequence `self`, starting at `bytes_offset`.
+/// Copies characters from a string to a byte sequence in UTF-16LE encoding. Each
+/// character is converted into two bytes, with the lower byte stored first.
+///
+/// Parameters:
+///
+/// * `self` : The destination byte array to copy the characters into.
+/// * `bytes_offset` : The starting position in the destination array where bytes
+/// will be written.
+/// * `str` : The source string containing the characters to copy.
+/// * `str_offset` : The starting position in the source string from which
+/// characters will be read.
+/// * `length` : The number of characters to copy.
+///
+/// Throws a runtime error if:
+///
+/// * `length` is negative
+/// * `bytes_offset` is negative
+/// * `str_offset` is negative
+/// * The range `[bytes_offset, bytes_offset + length * 2)` exceeds the length of
+/// the destination array
+/// * The range `[str_offset, str_offset + length)` exceeds the length of the
+/// source string
+///
+/// Example:
+///
+/// ```moonbit
+/// test "FixedArray::blit_from_string" {
+///   let bytes = FixedArray::make(6, b'\x00')
+///   bytes.blit_from_string(0, "ABC", 0, 3)
+///   inspect!(bytes[0], content="b'\\x41'") // 'A'
+///   inspect!(bytes[1], content="b'\\x00'")
+///   inspect!(bytes[2], content="b'\\x42'") // 'B'
+/// }
+/// ```
 pub fn FixedArray::blit_from_string(
   self : FixedArray[Byte],
   bytes_offset : Int,
@@ -154,14 +222,64 @@ pub fn FixedArray::blit_from_bytes(
 }
 
 ///|
-/// Return a new Bytes that contains the same byte sequence.
+/// Creates a new byte sequence by copying all bytes from the input sequence.
+///
+/// Parameters:
+///
+/// * `bytes` : The byte sequence to be copied.
+///
+/// Returns a new `Bytes` containing the same sequence of bytes as the input.
+///
+/// Example:
+///
+/// ```moonbit
+/// test "Bytes::copy" {
+///   let original = b"\x01\x02\x03"
+///   let copy = original.copy()
+///   inspect!(copy, content="b\"\\x01\\x02\\x03\"")
+/// }
+/// ```
 pub fn Bytes::copy(self : Bytes) -> Bytes {
   Bytes::new(self.length())..blit(0, self, 0, self.length())
 }
 
 ///|
-/// Fill UTF8 encoded char `value` into byte sequence `self`, starting at `offset`.
-/// It return the length of bytes has been written.
+/// Encodes a Unicode character into UTF-8 bytes and writes them into a fixed
+/// array of bytes at the specified offset.
+///
+/// Parameters:
+///
+/// * `array` : The fixed array of bytes to write into.
+/// * `offset` : The starting position in the array where the encoded bytes will
+/// be written.
+/// * `char` : The Unicode character to be encoded.
+///
+/// Returns the number of bytes written (1 to 4 bytes depending on the
+/// character's code point).
+///
+/// Throws a panic if:
+///
+/// * The character's code point is greater than 0x10FFFF.
+/// * The array's size is insufficient to store the encoded bytes at the given
+/// offset.
+///
+/// Example:
+///
+/// ```moonbit
+/// test "FixedArray::set_utf8_char" {
+///   let buf = FixedArray::make(4, b'\x00')
+///   let written = buf.set_utf8_char(0, '€') // Euro symbol (U+20AC)
+///   inspect!(written, content="3") // UTF-8 encoding takes 3 bytes
+///   inspect!(buf[0], content="b'\\xE2'")
+///   inspect!(buf[1], content="b'\\x82'")
+///   inspect!(buf[2], content="b'\\xAC'")
+/// }
+/// 
+/// test "panic FixedArray::set_utf8_char/invalid_char" {
+///   let buf = FixedArray::make(4, b'\x00')
+///   ignore(buf.set_utf8_char(0, Char::from_int(0x110000))) // Invalid Unicode code point
+/// }
+/// ```
 pub fn FixedArray::set_utf8_char(
   self : FixedArray[Byte],
   offset : Int,
@@ -282,6 +400,27 @@ pub fn FixedArray::set_utf16be_char(
 }
 
 ///|
+/// Compares two byte sequences for equality. Returns true only if both sequences
+/// have the same length and contain identical bytes in the same order.
+///
+/// Parameters:
+///
+/// * `self` : The first byte sequence to compare.
+/// * `other` : The second byte sequence to compare.
+///
+/// Returns `true` if the byte sequences are equal, `false` otherwise.
+///
+/// Example:
+///
+/// ```moonbit
+/// test "Bytes::op_equal" {
+///   let bytes1 = b"\x01\x02\x03"
+///   let bytes2 = b"\x01\x02\x03"
+///   let bytes3 = b"\x01\x02\x04"
+///   inspect!(bytes1 == bytes2, content="true")
+///   inspect!(bytes1 == bytes3, content="false")
+/// }
+/// ```
 pub fn Bytes::op_equal(self : Bytes, other : Bytes) -> Bool {
   if self.length() != other.length() {
     false
