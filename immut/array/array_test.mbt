@@ -61,19 +61,6 @@ test "length" {
   inspect!(ve.length(), content="0")
 }
 
-test "copy" {
-  let v = @array.of([1, 2, 3, 4, 5])
-  let vc = v.copy()
-  inspect!(vc, content="@immut/array.of([1, 2, 3, 4, 5])")
-  inspect!(v == vc, content="true")
-  assert_false!(physical_equal(v, vc))
-  let v = @array.new()
-  let vc : @array.T[Int] = v.copy()
-  inspect!(vc, content="@immut/array.of([])")
-  inspect!(v == vc, content="true")
-  assert_false!(physical_equal(v, vc))
-}
-
 test "op_get" {
   let v = @array.of([1, 2, 3, 4, 5])
   inspect!(v[0], content="1")
@@ -221,4 +208,15 @@ test "hash" {
   let l4 : @array.T[Int] = @array.of([])
   inspect!(l1.hash() == l4.hash(), content="false")
   inspect!(l4.hash() == l4.hash(), content="true")
+}
+
+test "concat_empty" {
+  let a = @array.of([1, 2, 3])
+  let b : @array.T[Int] = @array.new()
+  let c = a.concat(b)
+  inspect!(c, content="@immut/array.of([1, 2, 3])")
+  let a : @array.T[Int] = @array.new()
+  let b = @array.of([1, 2, 3])
+  let c = a.concat(b)
+  inspect!(c, content="@immut/array.of([1, 2, 3])")
 }

@@ -7,8 +7,18 @@
       "alias": "_core/array"
     }
   ],
+  "wbtest-import": [
+    "moonbitlang/core/random",
+    "moonbitlang/core/bytes"
+  ],
   "targets": {
-    "panic_test.mbt": ["not", "native"],
-    "panic_wbtest.mbt": ["not", "native"]
+    "panic_test.mbt": [
+      "not",
+      "native"
+    ],
+    "panic_wbtest.mbt": [
+      "not",
+      "native"
+    ]
   }
 }

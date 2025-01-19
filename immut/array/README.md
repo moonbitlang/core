@@ -35,6 +35,17 @@ println(arr1) // of([1, 2, 3, 4, 5])
 println(arr2) // of([1, 2, 10, 4, 5, 6])
 ```
 
+## Concatenation
+
+You can use `concat()` to concatenate two arrays.
+
+```moonbit
+let arr1 = @immut/array.of([1, 2, 3])
+let arr2 = @immut/array.of([4, 5, 6])
+let arr3 = arr1.concat(arr2)
+println(arr3) // of([1, 2, 3, 4, 5, 6])
+```
+
 ## Query
 
 You can use `op_get()` to get the value at the index, or `length()` to get the length of the array, or `is_empty()` to check whether the array is empty.
@@ -57,4 +68,9 @@ println(arr.each(fn(v) { println("element \{v}") }))
 println(arr.eachi(fn(i, v) { println("index: \{i}, element: \{v}") }))
 ```
 
+# TODO
 
+- [] Add `split` and other operations that can be derived from `split` and `concat` like `insert` and `delete`.
+- [] Add an algorithm description in README, since this algorithm does not use the invariant in the ICFP paper. Instead, it uses the "search step invariant" in Hypirion's thesis.
+- [] Add a benchmark to compare the performance with the previous version.
+- [] Optimizations such as tail.

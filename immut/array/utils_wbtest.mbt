@@ -1,0 +1,164 @@
+// Copyright 2025 International Digital Economy Academy
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+///|
+enum Op {
+  PushEnd(Int)
+  Concat(Array[Int])
+  Set(Int, Int)
+}
+
+///|
+/// Generate a random test sequence for the array,
+/// following the format described in the `execute_array_test` function.
+/// 
+/// Inputs:
+/// - `rng`: a random number generator
+/// - `times`: the number of operations to be generated
+/// - `max_lvl`: the maximum level of the tree
+fn random_test_gen(rng : @random.Rand, times : Int, max_lvl : Int) -> Array[Op] {
+  // Hyperparameters
+  let op_count = 3
+  let max_len = branching_factor_power(max_lvl)
+  let max_val = 2025
+
+  // Start constructing the array
+  let ret = []
+  let mut cur_len = 0
+  for i = 0; i < times; i = i + 1 {
+    let op = rng.int(limit=op_count)
+    match op {
+      0 => {
+        // push_end
+        ret.push(Op::PushEnd(rng.int(limit=max_val)))
+        cur_len += 1
+      }
+      1 => {
+        // concat
+        let len = rng.int(limit=max_len)
+        let a = Array::make(len, rng.int(limit=max_val))
+        cur_len += len
+        ret.push(Op::Concat(a))
+      }
+      2 => {
+        // set
+        if cur_len == 0 {
+          continue
+        }
+        let idx = rng.int(limit=cur_len)
+        let val = rng.int(limit=max_val)
+        ret.push(Op::Set(idx, val))
+      }
+      _ => abort("Invalid op")
+    }
+  }
+  ret
+}
+
+///|
+/// This function runs a series of operations on an array and checks
+/// if the result matches the expected array.
+/// 
+/// Currently, the operations are:
+/// 0. push_end
+/// 1. concat
+/// 2. set
+/// 
+/// The `rs` array is a sequence of operations to be executed.
+fn execute_array_test(rs : Array[Op]) -> Unit! {
+  let mut t = new()
+  let a : Array[Int] = []
+  for op in rs {
+    match op {
+      PushEnd(v) => {
+        // push_end
+        a.push(v)
+        t = t.push(v)
+        check_array_eq!(a, t)
+      }
+      Concat(v) => {
+        // concat
+        let len = v.length()
+        for i = 0; i < len; i = i + 1 {
+          a.push(v[i])
+        }
+        t = t.concat(from_iter(v.iter()))
+        check_array_eq!(a, t)
+      }
+      Set(idx, v) => {
+        // set
+        a[idx] = v
+        t = t.set(idx, v)
+        check_array_eq!(a, t)
+      }
+    }
+  }
+}
+
+///|
+/// Compute the power of the branching factor.
+fn branching_factor_power(a : Int) -> Int {
+  let mut ret = 1
+  for i = 0; i < a; i = i + 1 {
+    ret *= branching_factor
+  }
+  ret
+}
+
+///|
+/// Repeat the given string up to 32 characters.
+/// Used to generate a random seed for the test.
+fn repeat_up_to_32(s : String) -> Bytes {
+  let a_len = 32
+  let s_len = s.length()
+  let a = FixedArray::make(a_len, b'0')
+  let mut j = 0
+  for i = 0; i < a_len; i = i + 1 {
+    let l = a.set_utf8_char(i, s[j])
+    guard l == 1
+    j = (j + 1) % s_len
+  }
+  Bytes::from_fixedarray(a)
+}
+
+///|
+/// Use this function to check if the array and the @immut/array are equal.
+/// If we `inspect` the array, it will raise an error if the arrays are too long.
+/// I guess that's because it exceeds the heap limit of the VM.
+fn check_array_eq(a : Array[Int], t : T[Int]) -> Unit! {
+  assert_eq!(a.length(), t.size)
+  let len = t.size
+  for i = 0; i < len; i = i + 1 {
+    assert_eq!(t[i], a[i])
+  }
+}
+
+///|  
+/// Use this function to check if the FixedArray and the @immut/array are equal.
+/// If we `inspect` the array, it will raise an error if the arrays are too long.
+/// I guess that's because it exceeds the heap limit of the VM.
+fn check_fixedarray_eq(a : FixedArray[Int], t : T[Int]) -> Unit! {
+  assert_eq!(a.length(), t.size)
+  let len = t.size
+  for i = 0; i < len; i = i + 1 {
+    assert_eq!(t[i], a[i])
+  }
+}
+
+///|
+/// Generate a random array of length `n`.
+fn random_array(n : Int) -> Array[Int] {
+  let rng = @random.new(seed=b"DEADBEEFLIVEBEEFDEADBEEFDEADBEEF")
+  Array::makei(n, fn(i) { rng.int(limit=i) })
+}
