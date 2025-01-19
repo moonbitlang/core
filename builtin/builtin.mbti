@@ -455,6 +455,7 @@ impl Int {
   to_int64(Int) -> Int64
   to_json(Int) -> Json
   to_string(Int) -> String
+  to_string_by_radix(Int, radix~ : Int = ..) -> String
   to_uint(Int) -> UInt //deprecated
   to_uint16(Int) -> UInt16
   to_uint64(Int) -> UInt64
@@ -502,6 +503,7 @@ impl Int64 {
   to_int16(Int64) -> Int16
   to_json(Int64) -> Json
   to_string(Int64) -> String
+  to_string_by_radix(Int64, radix~ : Int = ..) -> String
   to_uint16(Int64) -> UInt16
   to_uint64(Int64) -> UInt64 //deprecated
   until(Int64, Int64, step~ : Int64 = .., inclusive~ : Bool = ..) -> Iter[Int64]
@@ -537,6 +539,7 @@ impl UInt {
   to_int(UInt) -> Int //deprecated
   to_json(UInt) -> Json
   to_string(UInt) -> String
+  to_string_by_radix(UInt, radix~ : Int = ..) -> String
   to_uint64(UInt) -> UInt64
   trunc_double(Double) -> UInt
   upto(UInt, UInt, inclusive~ : Bool = ..) -> Iter[UInt] //deprecated
@@ -581,6 +584,7 @@ impl UInt64 {
   to_int64(UInt64) -> Int64 //deprecated
   to_json(UInt64) -> Json
   to_string(UInt64) -> String
+  to_string_by_radix(UInt64, radix~ : Int = ..) -> String
   to_uint(UInt64) -> UInt
   trunc_double(Double) -> UInt64
   upto(UInt64, UInt64, inclusive~ : Bool = ..) -> Iter[UInt64] //deprecated
