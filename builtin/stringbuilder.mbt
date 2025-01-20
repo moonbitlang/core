@@ -19,3 +19,30 @@ pub fn StringBuilder::write_object[T : Show](
 ) -> Unit {
   self.write_string(obj.to_string())
 }
+
+///|
+/// Writes characters from an iterator to the StringBuilder. 
+///
+/// Parameters:
+///
+/// * `self` : The StringBuilder to write to.
+/// * `iter` : An iterator yielding characters to write.
+///
+/// Example:
+///
+/// ```moonbit
+/// test "write_iter" {
+///   let sb = StringBuilder::new()
+///   let chars = "Hello🤣".iter()
+///   sb.write_iter(chars)
+///   assert_eq!(sb.to_string(), "Hello🤣")
+/// }
+/// ```
+pub fn StringBuilder::write_iter(
+  self : StringBuilder,
+  iter : Iter[Char]
+) -> Unit {
+  for ch in iter {
+    self.write_char(ch)
+  }
+}
