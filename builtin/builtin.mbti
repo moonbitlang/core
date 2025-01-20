@@ -382,6 +382,7 @@ impl StringBuilder {
   reset(Self) -> Unit
   to_string(Self) -> String
   write_char(Self, Char) -> Unit
+  write_iter(Self, Iter[Char]) -> Unit
   write_object[T : Show](Self, T) -> Unit
   write_string(Self, String) -> Unit
   write_substring(Self, String, Int, Int) -> Unit

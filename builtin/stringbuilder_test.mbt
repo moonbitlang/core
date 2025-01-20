@@ -43,3 +43,15 @@ test {
   @json.inspect!(data.map(id), content=["a", "b", "c", "hello world"])
   // assert_eq!(StringBuilder::new()..write_string("hello").to_string(), "hello")
 }
+
+test "write_iter" {
+  let str = "Hello🤣🤣🤣"
+  let sb = StringBuilder::new()
+  sb.write_iter(str.iter())
+  inspect!(sb.to_string(), content="Hello🤣🤣🤣")
+  guard let Some(offset) = str.index_at(1)
+  guard let Some(offset2) = str.index_at(6)
+  let str_view = str[offset:offset2]
+  sb.write_iter(str_view.iter())
+  inspect!(sb.to_string(), content="Hello🤣🤣🤣ello🤣")
+}

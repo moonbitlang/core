@@ -48,6 +48,16 @@ pub fn StringBuilder::write_substring(
 }
 
 ///|
+pub fn StringBuilder::write_iter(
+  self : StringBuilder,
+  iter : Iter[Char]
+) -> Unit {
+  for ch in iter {
+    self.write_char(ch)
+  }
+}
+
+///|
 pub impl Show for StringBuilder with output(self, logger) {
   logger.write_string(self.val)
 }

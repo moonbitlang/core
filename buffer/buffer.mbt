@@ -647,6 +647,32 @@ pub fn write_byte(self : T, value : Byte) -> Unit {
 }
 
 ///|
+/// Writes bytes from an iterator to the buffer. 
+///
+/// Parameters:
+///
+/// * `self` : The buffer to write to.
+/// * `iter` : An iterator yielding bytes to write.
+///
+/// Example:
+///
+/// ```moonbit
+/// test "write_iter" {
+///   let buf = @buffer.new()
+///   let bytes = b"Hello"
+///   buf.write_iter(bytes.iter())
+///   inspect!(buf.contents(), content=
+///   #|b"\x48\x65\x6c\x6c\x6f"
+/// )
+/// }
+/// ```
+pub fn write_iter(self : T, iter : Iter[Byte]) -> Unit {
+  for byte in iter {
+    self.write_byte(byte)
+  }
+}
+
+///|
 /// Resets the buffer to its initial state by restoring its initial capacity and
 /// clearing its contents.
 ///

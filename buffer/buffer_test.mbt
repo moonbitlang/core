@@ -290,3 +290,17 @@ test "write_float_be method" {
     ,
   )
 }
+
+test "write_iter" {
+  let bytes = b"hello"
+  let buf = @buffer.new()
+  buf.write_iter(bytes.iter())
+  inspect!(buf.contents(), content=
+    #|b"\x68\x65\x6c\x6c\x6f"
+  )
+  let bytes_view = bytes[1:3]
+  buf.write_iter(bytes_view.iter())
+  inspect!(buf.contents(), content=
+    #|b"\x68\x65\x6c\x6c\x6f\x65\x6c"
+  )
+}
