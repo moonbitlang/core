@@ -556,7 +556,7 @@ test "@builtin.join/single_element" {
 
 test "@builtin.join/multiple_elements_with_separator" {
   let iter : Iter[String] = ["A", "B", "C"].iter()
-  inspect!(@builtin.join(iter, separator=","), content="A,B,C")
+  inspect!(@builtin.join(iter, sep=","), content="A,B,C")
 }
 
 test "@builtin.join/multiple_elements_without_separator" {
