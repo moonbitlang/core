@@ -66,10 +66,10 @@ pub fn index_at(
   let mut utf16_offset = start._
   let mut char_count = 0
   while utf16_offset < str_len && char_count < offset_by {
-    let c1 = self[utf16_offset]
+    let c1 = self.unsafe_charcode_at(utf16_offset)
     // check if this is a surrogate pair
     if is_leading_surrogate(c1) && utf16_offset + 1 < str_len {
-      let c2 = self[utf16_offset + 1]
+      let c2 = self.unsafe_charcode_at(utf16_offset + 1)
       if is_trailing_surrogate(c2) {
         utf16_offset = utf16_offset + 2
         char_count = char_count + 1
@@ -127,9 +127,9 @@ pub fn index_at_rev(
   // Iterating backwards from the end of the string. [utf16_offset] always 
   // points to the last skipped character.
   while utf16_offset > 0 && char_count < offset_by {
-    let c1 = self[utf16_offset - 1]
+    let c1 = self.unsafe_charcode_at(utf16_offset - 1)
     if is_trailing_surrogate(c1) && utf16_offset - 2 >= 0 {
-      let c2 = self[utf16_offset - 2]
+      let c2 = self.unsafe_charcode_at(utf16_offset - 2)
       if is_leading_surrogate(c2) {
         utf16_offset = utf16_offset - 2
         char_count = char_count + 1
@@ -154,9 +154,9 @@ pub fn index_at_rev(
 pub fn StringView::length(self : StringView) -> Int {
   let mut len = 0
   for index = self.start; index < self.end; index = index + 1 {
-    let c1 = self.str[index]
+    let c1 = self.str.unsafe_charcode_at(index)
     if is_leading_surrogate(c1) && index + 1 < self.end {
-      let c2 = self.str[index + 1]
+      let c2 = self.str.unsafe_charcode_at(index + 1)
       if is_trailing_surrogate(c2) {
         len = len + 1
         continue index + 2
@@ -177,9 +177,9 @@ pub fn length_eq(self : StringView, len : Int) -> Bool {
   for index = self.start, self_len = 0
       index < self.end && self_len < len
       index = index + 1, self_len = self_len + 1 {
-    let c1 = self.str[index]
+    let c1 = self.str.unsafe_charcode_at(index)
     if is_leading_surrogate(c1) && index + 1 < self.end {
-      let c2 = self.str[index + 1]
+      let c2 = self.str.unsafe_charcode_at(index + 1)
       if is_trailing_surrogate(c2) {
         continue index + 2, self_len + 1
       } else {
@@ -199,9 +199,9 @@ pub fn length_ge(self : StringView, len : Int) -> Bool {
   for index = self.start, self_len = 0
       index < self.end && self_len < len
       index = index + 1, self_len = self_len + 1 {
-    let c1 = self.str[index]
+    let c1 = self.str.unsafe_charcode_at(index)
     if is_leading_surrogate(c1) && index + 1 < self.end {
-      let c2 = self.str[index + 1]
+      let c2 = self.str.unsafe_charcode_at(index + 1)
       if is_trailing_surrogate(c2) {
         continue index + 2, self_len + 1
       } else {
@@ -323,9 +323,9 @@ pub fn StringView::op_get(self : StringView, index : Int) -> Char {
   let mut utf16_offset = self.start
   let mut char_count = 0
   while char_count < index && utf16_offset < self.end {
-    let c1 = self.str[utf16_offset]
+    let c1 = self.str.unsafe_charcode_at(utf16_offset)
     if is_leading_surrogate(c1) && utf16_offset + 1 < self.str.length() {
-      let c2 = self.str[utf16_offset + 1]
+      let c2 = self.str.unsafe_charcode_at(utf16_offset + 1)
       if is_trailing_surrogate(c2) {
         utf16_offset = utf16_offset + 2
         char_count = char_count + 1
@@ -340,16 +340,16 @@ pub fn StringView::op_get(self : StringView, index : Int) -> Char {
   guard char_count == index && utf16_offset < self.end else {
     abort("Index out of bounds: cannot access index \{index}")
   }
-  let c1 = self.str[utf16_offset]
+  let c1 = self.str.unsafe_charcode_at(utf16_offset)
   if is_leading_surrogate(c1) {
-    let c2 = self.str[utf16_offset + 1]
+    let c2 = self.str.unsafe_charcode_at(utf16_offset + 1)
     if is_trailing_surrogate(c2) {
       code_point_of_surrogate_pair(c1, c2)
     } else {
       abort("invalid surrogate pair")
     }
   } else {
-    c1
+    Char::from_int(c1)
   }
 }
 
@@ -376,9 +376,9 @@ pub fn rev_get(self : StringView, index : Int) -> Char {
   let mut utf16_offset = self.end - 1
   let mut char_count = 0
   while char_count < index && utf16_offset >= self.start {
-    let c1 = self.str[utf16_offset]
+    let c1 = self.str.unsafe_charcode_at(utf16_offset)
     if is_trailing_surrogate(c1) && utf16_offset - 1 >= self.start {
-      let c2 = self.str[utf16_offset - 1]
+      let c2 = self.str.unsafe_charcode_at(utf16_offset - 1)
       if is_leading_surrogate(c2) {
         utf16_offset = utf16_offset - 2
         char_count = char_count + 1
@@ -393,16 +393,16 @@ pub fn rev_get(self : StringView, index : Int) -> Char {
   guard char_count == index && utf16_offset >= self.start else {
     abort("Index out of bounds: cannot access index \{index} in reverse")
   }
-  let c1 = self.str[utf16_offset]
+  let c1 = self.str.unsafe_charcode_at(utf16_offset)
   if is_trailing_surrogate(c1) {
-    let c2 = self.str[utf16_offset - 1]
+    let c2 = self.str.unsafe_charcode_at(utf16_offset - 1)
     if is_leading_surrogate(c2) {
       code_point_of_surrogate_pair(c2, c1)
     } else {
       abort("invalid surrogate pair")
     }
   } else {
-    c1
+    Char::from_int(c1)
   }
 }
 
@@ -417,16 +417,16 @@ pub impl Show for StringView with output(self, logger) {
 pub fn StringView::iter(self : StringView) -> Iter[Char] {
   Iter::new(fn(yield_) {
     for index = self.start; index < self.end; index = index + 1 {
-      let c1 = self.str[index]
+      let c1 = self.str.unsafe_charcode_at(index)
       if is_leading_surrogate(c1) && index + 1 < self.end {
-        let c2 = self.str[index + 1]
+        let c2 = self.str.unsafe_charcode_at(index + 1)
         if is_trailing_surrogate(c2) {
           let c = code_point_of_surrogate_pair(c1, c2)
           guard let IterContinue = yield_(c) else { x => break x }
           continue index + 2
         }
       }
-      guard let IterContinue = yield_(c1) else { x => break x }
+      guard let IterContinue = yield_(Char::from_int(c1)) else { x => break x }
 
     } else {
       IterContinue

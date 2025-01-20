@@ -44,6 +44,8 @@ impl String {
   iter(String) -> Iter[Char]
   iter2(String) -> Iter2[Int, Char]
   last_index_of(String, String, from~ : Int = ..) -> Int
+  length_eq(String, Int) -> Bool
+  length_ge(String, Int) -> Bool
   op_as_view(String, start~ : StringIndex = .., end? : StringIndex) -> StringView
   pad_end(String, Int, Char) -> String
   pad_start(String, Int, Char) -> String
@@ -52,6 +54,7 @@ impl String {
   replace_all(String, old~ : String, new~ : String) -> String
   rev(String) -> String
   rev_fold[A](String, init~ : A, (A, Char) -> A) -> A
+  rev_get(String, Int) -> Char
   rev_iter(String) -> Iter[Char]
   split(String, String) -> Iter[String]
   starts_with(String, String) -> Bool

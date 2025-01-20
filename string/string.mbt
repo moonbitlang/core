@@ -154,9 +154,9 @@ pub fn iter(self : String) -> Iter[Char] {
   Iter::new(fn(yield_) {
     let len = self.length()
     for index = 0; index < len; index = index + 1 {
-      let c1 = self[index]
+      let c1 = self.unsafe_charcode_at(index)
       if is_leading_surrogate(c1) && index + 1 < len {
-        let c2 = self[index + 1]
+        let c2 = self.unsafe_charcode_at(index + 1)
         if is_trailing_surrogate(c2) {
           let c = code_point_of_surrogate_pair(c1, c2)
           guard let IterContinue = yield_(c) else { x => break x }
@@ -164,7 +164,7 @@ pub fn iter(self : String) -> Iter[Char] {
         }
       }
       //TODO: handle garbage input
-      guard let IterContinue = yield_(c1) else { x => break x }
+      guard let IterContinue = yield_(Char::from_int(c1)) else { x => break x }
 
     } else {
       IterContinue
@@ -177,9 +177,9 @@ pub fn iter2(self : String) -> Iter2[Int, Char] {
   Iter2::new(fn(yield_) {
     let len = self.length()
     for index = 0, n = 0; index < len; index = index + 1, n = n + 1 {
-      let c1 = self[index]
+      let c1 = self.unsafe_charcode_at(index)
       if is_leading_surrogate(c1) && index + 1 < len {
-        let c2 = self[index + 1]
+        let c2 = self.unsafe_charcode_at(index + 1)
         if is_trailing_surrogate(c2) {
           let c = code_point_of_surrogate_pair(c1, c2)
           guard let IterContinue = yield_(n, c) else { x => break x }
@@ -187,7 +187,9 @@ pub fn iter2(self : String) -> Iter2[Int, Char] {
         }
       }
       //TODO: handle garbage input
-      guard let IterContinue = yield_(n, c1) else { x => break x }
+      guard let IterContinue = yield_(n, Char::from_int(c1)) else {
+        x => break x
+      }
 
     } else {
       IterContinue
@@ -245,9 +247,9 @@ pub fn rev_iter(self : String) -> Iter[Char] {
   Iter::new(fn(yield_) {
     let len = self.length()
     for index = len - 1; index >= 0; index = index - 1 {
-      let c1 = self[index]
+      let c1 = self.unsafe_charcode_at(index)
       if is_trailing_surrogate(c1) && index - 1 >= 0 {
-        let c2 = self[index - 1]
+        let c2 = self.unsafe_charcode_at(index - 1)
         if is_leading_surrogate(c2) {
           let c = code_point_of_surrogate_pair(c2, c1)
           guard let IterContinue = yield_(c) else { x => break x }
@@ -255,7 +257,7 @@ pub fn rev_iter(self : String) -> Iter[Char] {
         }
       }
       // TODO: handle garbage input
-      guard let IterContinue = yield_(c1) else { x => break x }
+      guard let IterContinue = yield_(Char::from_int(c1)) else { x => break x }
 
     } else {
       IterContinue
@@ -289,10 +291,10 @@ pub fn contains_char(self : String, c : Char) -> Bool {
 pub fn trim_start(self : String, trim_set : String) -> String {
   let len = self.length()
   for i = 0; i < len; i = i + 1 {
-    let c1 = self[i]
+    let c1 = self.unsafe_charcode_at(i)
     // check surrogate pair
     if is_leading_surrogate(c1) && i + 1 < len {
-      let c2 = self[i + 1]
+      let c2 = self.unsafe_charcode_at(i + 1)
       if is_trailing_surrogate(c2) {
         let ch = code_point_of_surrogate_pair(c1, c2)
         if trim_set.contains_char(ch) {
@@ -315,10 +317,10 @@ pub fn trim_start(self : String, trim_set : String) -> String {
 pub fn trim_end(self : String, trim_set : String) -> String {
   let len = self.length()
   for i = len - 1; i >= 0; i = i - 1 {
-    let c2 = self[i]
+    let c2 = self.unsafe_charcode_at(i)
     // check surrogate pair
     if is_trailing_surrogate(c2) && i - 1 >= 0 {
-      let c1 = self[i - 1]
+      let c1 = self.unsafe_charcode_at(i - 1)
       if is_leading_surrogate(c1) {
         let ch = code_point_of_surrogate_pair(c1, c2)
         if trim_set.contains_char(ch) {
@@ -674,5 +676,97 @@ pub fn pad_end(self : String, total_width : Int, padding_char : Char) -> String 
       buf.write_char(padding_char)
     }
     buf.to_string()
+  }
+}
+
+///|
+/// Returns the character at the given index from the end of the string.
+///
+/// # Examples
+///
+/// ```moonbit
+/// let s = "Hello🤣🤣🤣"
+/// inspect!(s.rev_get(0), content="'🤣'")
+/// inspect!(s.rev_get(4), content="'l'")
+/// ```
+///
+/// # Panics
+///
+/// Panics if the index is out of bounds.
+pub fn String::rev_get(self : String, index : Int) -> Char {
+  guard index >= 0 else { abort("index out of bounds") }
+  for utf16_offset = self.charcode_length() - 1, char_count = 0
+      utf16_offset >= 0 && char_count < index
+      utf16_offset = utf16_offset - 1, char_count = char_count + 1 {
+    let c1 = self.unsafe_charcode_at(utf16_offset)
+    if is_trailing_surrogate(c1) && utf16_offset - 1 >= 0 {
+      let c2 = self.unsafe_charcode_at(utf16_offset - 1)
+      if is_leading_surrogate(c2) {
+        continue utf16_offset - 2, char_count + 1
+      } else {
+        abort("invalid surrogate pair")
+      }
+    }
+  } else {
+    guard char_count == index && utf16_offset >= 0 else {
+      abort("index out of bounds")
+    }
+    let c1 = self.unsafe_charcode_at(utf16_offset)
+    if is_trailing_surrogate(c1) && utf16_offset - 1 >= 0 {
+      let c2 = self.unsafe_charcode_at(utf16_offset - 1)
+      if is_leading_surrogate(c2) {
+        code_point_of_surrogate_pair(c2, c1)
+      } else {
+        abort("invalid surrogate pair")
+      }
+    } else {
+      Char::from_int(c1)
+    }
+  }
+}
+
+///|
+/// Test if the length of the string is equal to the given length.
+///
+/// This has O(n) complexity where n is the length in the parameter.
+pub fn String::length_eq(self : String, len : Int) -> Bool {
+  let codeunit_len = self.charcode_length()
+  for index = 0, count = 0
+      index < codeunit_len && count < len
+      index = index + 1, count = count + 1 {
+    let c1 = self.unsafe_charcode_at(index)
+    if is_leading_surrogate(c1) && index + 1 < codeunit_len {
+      let c2 = self.unsafe_charcode_at(index + 1)
+      if is_trailing_surrogate(c2) {
+        continue index + 2, count + 1
+      } else {
+        abort("invalid surrogate pair")
+      }
+    }
+  } else {
+    count == len && index == codeunit_len
+  }
+}
+
+///|
+/// Test if the length of the string is greater than or equal to the given length.
+///
+/// This has O(n) complexity where n is the length in the parameter.
+pub fn String::length_ge(self : String, len : Int) -> Bool {
+  let codeunit_len = self.charcode_length()
+  for index = 0, count = 0
+      index < codeunit_len && count < len
+      index = index + 1, count = count + 1 {
+    let c1 = self.unsafe_charcode_at(index)
+    if is_leading_surrogate(c1) && index + 1 < codeunit_len {
+      let c2 = self.unsafe_charcode_at(index + 1)
+      if is_trailing_surrogate(c2) {
+        continue index + 2, count + 1
+      } else {
+        abort("invalid surrogate pair")
+      }
+    }
+  } else {
+    count >= len
   }
 }

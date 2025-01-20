@@ -159,52 +159,6 @@ pub fn codepoint_length(self : String) -> Int {
 //}
 
 ///|
-/// Returns the character at the given index from the end of the string.
-///
-/// # Examples
-///
-/// ```moonbit
-/// let s = "Hello🤣🤣🤣"
-/// inspect!(s.rev_get(0), content="'🤣'")
-/// inspect!(s.rev_get(4), content="'l'")
-/// ```
-///
-/// # Panics
-///
-/// Panics if the index is out of bounds.
-pub fn rev_get(self : String, index : Int) -> Char {
-  guard index >= 0 else { abort("index out of bounds") }
-  for utf16_offset = self.charcode_length() - 1, char_count = 0
-      utf16_offset >= 0 && char_count < index
-      utf16_offset = utf16_offset - 1, char_count = char_count + 1 {
-    let c1 = self.unsafe_charcode_at(utf16_offset)
-    if is_trailing_surrogate(c1) && utf16_offset - 1 >= 0 {
-      let c2 = self.unsafe_charcode_at(utf16_offset - 1)
-      if is_leading_surrogate(c2) {
-        continue utf16_offset - 2, char_count + 1
-      } else {
-        abort("invalid surrogate pair")
-      }
-    }
-  } else {
-    guard char_count == index && utf16_offset >= 0 else {
-      abort("index out of bounds")
-    }
-    let c1 = self.unsafe_charcode_at(utf16_offset)
-    if is_trailing_surrogate(c1) && utf16_offset - 1 >= 0 {
-      let c2 = self.unsafe_charcode_at(utf16_offset - 1)
-      if is_leading_surrogate(c2) {
-        code_point_of_surrogate_pair(c2, c1)
-      } else {
-        abort("invalid surrogate pair")
-      }
-    } else {
-      Char::from_int(c1)
-    }
-  }
-}
-
-///|
 /// @intrinsic %string.substring
 fn unsafe_substring(str : String, start : Int, end : Int) -> String {
   let len = end - start

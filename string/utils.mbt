@@ -25,37 +25,33 @@ let min_trailing_surrogate = 0xDC00
 let max_trailing_surrogate = 0xDFFF
 
 ///|
-fn is_leading_surrogate(c : Char) -> Bool {
-  let code = c.to_int()
-  min_leading_surrogate <= code && code <= max_leading_surrogate
+fn is_leading_surrogate(c : Int) -> Bool {
+  min_leading_surrogate <= c && c <= max_leading_surrogate
 }
 
 test "is_leading_surrogate" {
-  inspect!(is_leading_surrogate("🤣"[0]), content="true")
-  inspect!(is_leading_surrogate("🤣"[1]), content="false")
+  inspect!(is_leading_surrogate("🤣".charcode_at(0)), content="true")
+  inspect!(is_leading_surrogate("🤣".charcode_at(1)), content="false")
 }
 
 ///|
-fn is_trailing_surrogate(c : Char) -> Bool {
-  let code = c.to_int()
-  min_trailing_surrogate <= code && code <= max_trailing_surrogate
+fn is_trailing_surrogate(c : Int) -> Bool {
+  min_trailing_surrogate <= c && c <= max_trailing_surrogate
 }
 
 test "is_trailing_surrogate" {
-  inspect!(is_trailing_surrogate("🤣"[0]), content="false")
-  inspect!(is_trailing_surrogate("🤣"[1]), content="true")
+  inspect!(is_trailing_surrogate("🤣".charcode_at(0)), content="false")
+  inspect!(is_trailing_surrogate("🤣".charcode_at(1)), content="true")
 }
 
 ///|
-fn code_point_of_surrogate_pair(leading : Char, trailing : Char) -> Char {
-  Char::from_int(
-    (leading.to_int() - 0xD800) * 0x400 + trailing.to_int() - 0xDC00 + 0x10000,
-  )
+fn code_point_of_surrogate_pair(leading : Int, trailing : Int) -> Char {
+  Char::from_int((leading - 0xD800) * 0x400 + trailing - 0xDC00 + 0x10000)
 }
 
 test "code_point_of_surrogate_pair" {
   let s = "😀"
-  let leading = s[0]
-  let trailing = s[1]
+  let leading = s.charcode_at(0)
+  let trailing = s.charcode_at(1)
   inspect!(code_point_of_surrogate_pair(leading, trailing), content="'😀'")
 }
