@@ -548,45 +548,42 @@ fn trim(self : Decimal) -> Unit {
 }
 
 ///|
-fn Decimal::to_string(self : Decimal) -> String {
+impl Show for Decimal with output(self, logger) {
   if self.digits_num == 0 {
-    return "0"
+    logger.write_char('0')
+    return
   }
-  let mut n = self.digits_num
-  if self.decimal_point > 0 {
-    n += self.decimal_point
-  }
-  if self.decimal_point < 0 {
-    n += -self.decimal_point
-  }
-  let buf = StringBuilder::new(size_hint=n)
   if self.decimal_point <= 0 {
     // zeros filling between the decimal point and the digits
-    buf.write_string("0.")
+    logger.write_string("0.")
     for i = 0; i < -self.decimal_point; i = i + 1 {
-      buf.write_char('0')
+      logger.write_char('0')
     }
     for i = 0; i < self.digits_num; i = i + 1 {
-      buf.write_string(self.digits[i].to_int().to_string())
+      logger.write_string(self.digits[i].to_int().to_string())
     }
   } else if self.decimal_point < self.digits_num {
     // decimal point in the middle of digits
     for i = 0; i < self.digits_num; i = i + 1 {
       if i == self.decimal_point {
-        buf.write_char('.')
+        logger.write_char('.')
       }
-      buf.write_string(self.digits[i].to_int().to_string())
+      logger.write_string(self.digits[i].to_int().to_string())
     }
   } else {
     // zeros filling between the digits and the decimal point
     for i = 0; i < self.digits_num; i = i + 1 {
-      buf.write_string(self.digits[i].to_int().to_string())
+      logger.write_string(self.digits[i].to_int().to_string())
     }
     for i = 0; i < self.decimal_point - self.digits_num; i = i + 1 {
-      buf.write_char('0')
+      logger.write_char('0')
     }
   }
-  buf.to_string()
+}
+
+///|
+fn Decimal::to_string(self : Decimal) -> String {
+  Show::to_string(self)
 }
 
 test "new" {
