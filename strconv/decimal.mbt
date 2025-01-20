@@ -648,3 +648,35 @@ test "shift" {
     assert_eq!(d.to_string(), t.2)
   }
 }
+
+test "parse decimal with underscore" {
+  inspect!(parse_decimal!("1e1_2"), content="1000000000000")
+  inspect!(parse_decimal!("1e12"), content="1000000000000")
+  inspect!(parse_decimal!("1_2_3"), content="123")
+}
+
+test "parse decimal error" {
+  inspect!(parse_decimal?("1e"), content="Err(invalid syntax)")
+  inspect!(parse_decimal?("1e+"), content="Err(invalid syntax)")
+  inspect!(parse_decimal?("1e_"), content="Err(invalid syntax)")
+  inspect!(parse_decimal?("1-23"), content="Err(invalid syntax)")
+  inspect!(parse_decimal?("1.2.3"), content="Err(invalid syntax)")
+}
+
+test "parse decimal with large numbers" {
+  let mut s = ""
+  for i in 0..<100 {
+    s += "9"
+  }
+  inspect!(
+    parse_decimal!(s),
+    content="9999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999",
+  )
+}
+
+test "should_round_up when truncated and half-way" {
+  // Create a decimal from "12.50"
+  let decimal = parse_decimal!("12.50")
+  // Convert to double
+  inspect!(decimal.to_double!(), content="12.5")
+}
