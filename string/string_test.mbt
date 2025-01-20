@@ -516,3 +516,28 @@ test "pad_right" {
   inspect!("22".pad_end(2, '0'), content="22")
   inspect!("5".pad_end(4, 'x'), content="5xxx")
 }
+
+test "panic rev_get1" {
+  let str = "Hello🤣🤣🤣"
+  let _ = str.rev_get(-1)
+
+}
+
+test "panic rev_get2" {
+  let str = "Hello🤣🤣🤣"
+  let _ = str.rev_get(8)
+
+}
+
+test "length_ge" {
+  let str = "Hello🤣🤣🤣"
+  assert_true!(str.length_ge(0))
+  assert_true!(str.length_ge(8))
+  assert_false!(str.length_ge(9))
+}
+
+test "length_eq" {
+  let str = "Hello🤣🤣🤣"
+  assert_true!(str.length_eq(8))
+  assert_false!(str.length_eq(9))
+}
