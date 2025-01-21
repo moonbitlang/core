@@ -84,16 +84,8 @@ pub fn Array::make[T](len : Int, elem : T) -> Array[T] {
 ///
 /// Returns the current capacity of the array as an integer.
 ///
-/// Example:
-///
-/// ```moonbit
-/// test "Array::capacity" {
-///   let arr = Array::new(capacity=10)
-///   arr.push(1)
-///   arr.push(2)
-///   inspect!(arr.capacity(), content="10")
-/// }
-/// ```
+/// NOTE: The capacity of an array may not be consistent across different backends
+/// and/or different versions of the MoonBit compiler/core.
 pub fn Array::capacity[T](self : Array[T]) -> Int {
   self.buffer()._.length()
 }
