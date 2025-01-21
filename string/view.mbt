@@ -270,9 +270,7 @@ pub fn String::op_as_view(
 /// 
 /// ```
 /// let str = "Hello🤣🤣🤣"
-/// guard let Some(start) = str.index_at(1)
-/// guard let Some(end) = str.index_at(7)
-/// let view = str[start:end]
+/// let view = str[1:7]
 /// let view2 = view[1:5]
 /// inspect!(view2, content=
 ///   #|"llo🤣"
@@ -329,9 +327,7 @@ pub fn StringView::op_as_view(
 /// 
 /// ```
 /// let str = "Hello🤣🤣🤣"
-/// guard let Some(start) = str.index_at(1)
-/// guard let Some(end) = str.index_at(6)
-/// let view = str[start:end]
+/// let view = str[1:6]
 /// inspect!(view[0], content="'e'")
 /// inspect!(view[4], content="'🤣'")
 /// ```
@@ -383,9 +379,7 @@ pub fn StringView::op_get(self : StringView, index : Int) -> Char {
 /// 
 /// ```
 /// let str = "Hello🤣🤣🤣"
-/// guard let Some(start) = str.index_at(1)
-/// guard let Some(end) = str.index_at(6)
-/// let view = str[start:end]
+/// let view = str[1:6]
 /// inspect!(view.rev_get(0), content="'🤣'")
 /// inspect!(view.rev_get(4), content="'e'")
 /// ```
