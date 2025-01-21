@@ -296,7 +296,7 @@ fn Tree::each[A](self : Tree[A], f : (A) -> Unit) -> Unit {
 fn Tree::iter[A](self : Tree[A]) -> Iter[A] {
   Iter::new(fn(yield_) {
     match self {
-      Empty => IterEnd
+      Empty => IterContinue
       Leaf(l) => l.iter().run(yield_)
       Node(ns, _) =>
         for n in ns {
