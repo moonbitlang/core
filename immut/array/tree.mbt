@@ -293,6 +293,25 @@ fn Tree::each[A](self : Tree[A], f : (A) -> Unit) -> Unit {
 }
 
 ///|
+fn Tree::iter[A](self : Tree[A]) -> Iter[A] {
+  Iter::new(fn(yield_) {
+    match self {
+      Empty => IterEnd
+      Leaf(l) => l.iter().run(yield_)
+      Node(ns, _) =>
+        for n in ns {
+          guard let IterContinue = n.iter().run(yield_) else {
+            IterEnd => break IterEnd
+          }
+
+        } else {
+          IterContinue
+        }
+    }
+  })
+}
+
+///|
 /// For each element in the tree, apply the function `f` with the index of the element.
 fn Tree::eachi[A](
   self : Tree[A],
