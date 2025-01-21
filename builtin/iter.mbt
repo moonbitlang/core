@@ -780,7 +780,7 @@ pub fn Iter::collect[T](self : Iter[T]) -> Array[T] {
 
 ///|
 /// Collects the elements of the iterator into a string.
-pub fn join(self : Iter[String], sep~ : String = "") -> String {
+pub fn join(self : Iter[String], sep : String) -> String {
   let buf = StringBuilder::new()
   let mut first = true
   for str in self {
