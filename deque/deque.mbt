@@ -1244,3 +1244,16 @@ pub fn from_iter[A](iter : Iter[A]) -> T[A] {
   iter.each(fn(e) { dq.push_back(e) })
   dq
 }
+
+///|
+pub fn to_array[A](self : T[A]) -> Array[A] {
+  if self.length() == 0 {
+    []
+  } else {
+    let xs = Array::make(self.length(), self[0])
+    for i in 0..<self.length() {
+      xs[i] = self[i]
+    }
+    xs
+  }
+}
