@@ -60,87 +60,83 @@ pub fn Decimal::from_int64(v : Int64) -> Decimal {
 ///|
 /// Create a decimal from number string.
 pub fn parse_decimal(str : String) -> Decimal!StrConvError {
+  parse_decimal_from_view!(str[:])
+}
+
+///|
+fn parse_decimal_from_view(str : @string.StringView) -> Decimal!StrConvError {
   let d = Decimal::new()
-  if str.length() <= 0 {
-    syntax_err!()
-  }
-  let mut i = 0
-  // read digits part
   let mut has_dp = false
   let mut has_digits = false
-  while i < str.length() {
-    match str[i] {
-      '-' => if i != 0 { syntax_err!() } else { d.negative = true }
-      '+' => if i != 0 { syntax_err!() }
-      '_' => () // skip underscores
-      '.' => {
-        // decimal point
-        if has_dp {
-          syntax_err!()
-        }
-        has_dp = true
-        d.decimal_point = d.digits_num
-      }
-      '0' | '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9' => {
-        // digits
-        has_digits = true
-        if str[i] == '0' && d.digits_num == 0 {
-          // ignore leading zeros
-          d.decimal_point -= 1
-          i += 1
-          continue
-        }
-        if d.digits_num < d.digits.length() {
-          d.digits[d.digits_num] = (str[i].to_int() - '0'.to_int()).to_byte()
-          d.digits_num += 1
-        } else if str[i] != '0' {
-          d.truncated = true
-        }
-      }
-      _ => break
+  // read sign
+  let rest = match str {
+    ['-', .. rest] => {
+      d.negative = true
+      rest
     }
-    i += 1
+    ['+', .. rest] => rest
+    _ => str
   }
-  if not(has_digits) {
-    syntax_err!()
+  // read digits
+  let rest = loop rest {
+    ['_', .. rest] => continue rest
+    ['.', .. rest] => {
+      guard not(has_dp) else { syntax_err!() }
+      has_dp = true
+      d.decimal_point = d.digits_num
+      continue rest
+    }
+    ['0'..='9' as digit, .. rest] => {
+      has_digits = true
+      if digit == '0' && d.digits_num == 0 {
+        // ignore leading zeros
+        d.decimal_point -= 1
+        continue rest
+      }
+      if d.digits_num < d.digits.length() {
+        d.digits[d.digits_num] = (digit.to_int() - '0'.to_int()).to_byte()
+        d.digits_num += 1
+      } else if digit != '0' {
+        d.truncated = true
+      }
+      continue rest
+    }
+    rest => rest
   }
+  guard has_digits else { syntax_err!() }
   if not(has_dp) {
     d.decimal_point = d.digits_num
   }
   // read exponent part
-  if i < str.length() && (str[i] == 'e' || str[i] == 'E') {
-    i += 1
-    if i >= str.length() {
-      syntax_err!()
-    }
-    let mut exp_sign = 1
-    if str[i] == '+' {
-      i += 1
-    } else if str[i] == '-' {
-      i += 1
-      exp_sign = -1
-    }
-    if i >= str.length() || str[i] < '0' || str[i] > '9' {
-      syntax_err!()
-    }
-    let mut exp = 0
-    while i < str.length() &&
-          (('0' <= str[i] && str[i] <= '9') || str[i] == '_') {
-      if str[i] == '_' {
-        i += 1
-        continue
+  let rest = match rest {
+    ['e' | 'E', .. rest] => {
+      let mut exp_sign = 1
+      let rest = match rest {
+        ['+', .. rest] => rest
+        ['-', .. rest] => {
+          exp_sign = -1
+          rest
+        }
+        rest => rest
       }
-      exp = exp * 10 + (str[i].to_int() - '0'.to_int())
-      i += 1
+      guard let ['0'..='9', ..] = rest else { _ => syntax_err!() }
+      let mut exp = 0
+      let rest = loop rest {
+        ['_', .. rest] => continue rest
+        ['0'..='9' as digit, .. rest] => {
+          exp = exp * 10 + (digit.to_int() - '0'.to_int())
+          continue rest
+        }
+        rest => rest
+      }
+      d.decimal_point += exp_sign * exp
+      rest
     }
-    d.decimal_point += exp_sign * exp
+    rest => rest
   }
   // finish
-  d.trim()
-  if i != str.length() {
-    syntax_err!()
-  }
-  d
+  guard rest.length_eq(0) else { syntax_err!() }
+  d..trim()
 }
 
 ///| @alert deprecated "use `@strconv.parse_decimal` instead"
