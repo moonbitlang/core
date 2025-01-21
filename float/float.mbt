@@ -13,58 +13,265 @@
 // limitations under the License.
 
 ///|
+/// Represents the Not a Number (NaN) value in floating-point arithmetic. NaN is
+/// used to represent undefined or unrepresentable values, such as the result of
+/// 0.0/0.0.
+///
+/// Returns a special floating-point value that represents NaN.
+///
+/// Example:
+///
+/// ```moonbit
+/// test "not_a_number" {
+///   inspect!(@float.not_a_number.is_nan(), content="true")
+///   inspect!(@float.not_a_number + 1.0, content="NaN")
+/// }
+/// ```
 pub let not_a_number : Float = (0x7FC00000).reinterpret_as_float()
 
 ///|
+/// Represents positive infinity as a floating-point value.
+///
+/// Returns a constant value representing positive infinity in IEEE 754
+/// single-precision floating-point format (0x7F800000).
+///
+/// Example:
+///
+/// ```moonbit
+/// test "infinity" {
+///   inspect!(@float.infinity.is_pos_inf(), content="true")
+///   inspect!(@float.infinity > 1.0, content="true")
+/// }
+/// ```
 pub let infinity : Float = (0x7F800000).reinterpret_as_float()
 
 ///|
+/// Represents negative infinity for 32-bit floating-point numbers. This constant
+/// has a mathematical value of -∞ and follows the IEEE 754 standard for
+/// floating-point arithmetic.
+///
+/// Returns a `Float` value representing negative infinity.
+///
+/// Example:
+///
+/// ```moonbit
+/// test "neg_infinity" {
+///   inspect!(@float.neg_infinity.is_neg_inf(), content="true")
+///   inspect!(@float.neg_infinity < (-1.0 : Float), content="true")
+/// }
+/// ```
 pub let neg_infinity : Float = (0xFF800000).reinterpret_as_float()
 
 ///|
+/// Represents the maximum finite value of a 32-bit floating-point number, which
+/// is approximately 3.4028235e+38.
+///
+/// Example:
+///
+/// ```moonbit
+/// test "max_value" {
+///   inspect!(@float.max_value < @float.infinity, content="true")
+///   inspect!(@float.max_value > 0.0, content="true")
+/// }
+/// ```
 pub let max_value : Float = (0x7F7FFFFF).reinterpret_as_float()
 
 ///|
+/// Represents the smallest finite negative Float value (-3.4028235e+38).
+///
+/// Example:
+///
+/// ```moonbit
+/// test "min_value" {
+///   inspect!(@float.min_value < -1.0, content="true")
+///   inspect!(@float.min_value > @float.neg_infinity, content="true")
+/// }
+/// ```
 pub let min_value : Float = (0xFF7FFFFF).reinterpret_as_float()
 
 ///|
+/// Represents the smallest positive normalized floating-point number that can be
+/// represented by the Float type (approximately 1.17549435e-38).
+///
+/// Example:
+///
+/// ```moonbit
+/// test "min_positive" {
+///   inspect!(@float.min_positive > 0.0, content="true")
+///   inspect!(@float.min_positive < 1.2e-38, content="true")
+/// }
+/// ```
 pub let min_positive : Float = (0x00800000).reinterpret_as_float()
 
 ///|
+/// Returns the absolute value of a floating-point number.
+///
+/// Parameters:
+///
+/// * `self` : A floating-point number.
+///
+/// Returns the absolute value of the input number. For positive numbers and
+/// zero, returns the number unchanged. For negative numbers, returns the
+/// negation of the number. For NaN, returns NaN.
+///
+/// Example:
+///
+/// ```moonbit
+/// test "Float::abs" {
+///   inspect!((1.5 : Float).abs(), content="1.5")
+///   inspect!((-1.5 : Float).abs(), content="1.5")
+///   inspect!((0.0 : Float).abs(), content="0")
+///   inspect!((-0.0 : Float).abs(), content="0")
+///   inspect!(@float.not_a_number.abs().is_nan(), content="true")
+/// }
+/// ```
 pub fn abs(self : Float) -> Float = "%f32.abs"
 
 ///|
+/// Converts a floating-point number to its string representation.
+///
+/// Parameters:
+///
+/// * `self` : The floating-point number to be converted.
+/// * `logger` : The logger to write the string representation to.
+///
+/// Example:
+///
+/// ```moonbit
+/// test "Float::output" {
+///   let f : Float = 3.14
+///   let s = f.to_double().to_string()
+///   inspect!(s, content="3.140000104904175")
+/// }
+/// ```
 pub impl Show for Float with output(self, logger) {
   logger.write_string(self.to_double().to_string())
 }
 
 ///|
+/// Returns a default value for the `Float` type, which is `0.0`.
+///
+/// Returns a `Float` value initialized to zero.
+///
+/// Example:
+///
+/// ```moonbit
+/// test "Float::default" {
+///   inspect!(Float::default(), content="0")
+/// }
+/// ```
 pub fn Float::default() -> Float {
   0.0
 }
 
 ///|
-/// same as Float::default`
+/// Returns the default value for `Float` type, which is `0.0`.
+///
+/// Returns a float value of `0.0`.
+///
+/// Example:
+///
+/// ```moonbit
+/// test "default" {
+///   inspect!(@float.default(), content="0")
+/// }
+/// ```
 pub fn default() -> Float {
   0.0
 }
 
 ///|
+/// Computes a hash value for a floating-point number by first converting it to
+/// its integer representation and then applying the standard integer hashing
+/// function.
+///
+/// Parameters:
+///
+/// * `value` : The floating-point number to be hashed.
+///
+/// Returns an integer hash value for the given floating-point number.
+///
+/// Example:
+///
+/// ```moonbit
+/// test "Float::hash" {
+///   let f : Float = 3.14
+///   let h = Hash::hash(f)
+///   inspect!(h != 0, content="true")
+/// }
+/// ```
 pub impl Hash for Float with hash(self) {
   self.reinterpret_as_int() |> Hash::hash()
 }
 
 ///|
+/// Combines the hash value of a floating-point number with an existing hasher.
+///
+/// Parameters:
+///
+/// * `self` : The floating-point number to be hashed.
+/// * `hasher` : The hasher object to combine the hash value with.
+///
+/// Example:
+///
+/// ```moonbit
+/// test "Float::hash_combine" {
+///   let x : Float = 3.14
+///   let y : Float = 3.14
+///   // Same values should produce same hash combinations
+///   inspect!(Hash::hash(x) == Hash::hash(y), content="true")
+/// }
+/// ```
 pub impl Hash for Float with hash_combine(self, hasher) {
   hasher.combine_float(self)
 }
 
-///| Converts the Float to a Bytes in big-endian byte order.
+///|
+/// Converts a floating-point number to a sequence of bytes in big-endian byte
+/// order. In big-endian order, the most significant byte is stored at the lowest
+/// memory address.
+///
+/// Parameters:
+///
+/// * `float` : The floating-point number to be converted.
+///
+/// Returns a sequence of 4 bytes representing the floating-point number in IEEE
+/// 754 single-precision format with big-endian byte order.
+///
+/// Example:
+///
+/// ```moonbit
+/// test "Float::to_be_bytes" {
+///   let x : Float = 1.0
+///   inspect!(x.to_be_bytes(), content=
+///   #|b"\x3f\x80\x00\x00"
+/// )
+/// }
+/// ```
 pub fn to_be_bytes(self : Float) -> Bytes {
   self.reinterpret_as_uint().to_be_bytes()
 }
 
-///| Converts the Float to a Bytes in little-endian byte order.
+///|
+/// Converts a floating-point number to its binary representation in
+/// little-endian byte order.
+///
+/// Parameters:
+///
+/// * `float` : The floating-point number to be converted.
+///
+/// Returns a sequence of bytes representing the float value in little-endian
+/// order (least significant byte first).
+///
+/// Example:
+///
+/// ```moonbit
+/// test "to_le_bytes" {
+///   let f : Float = 1.0
+///   let bytes = f.to_le_bytes()
+///   inspect!(bytes.length(), content="4")
+/// }
+/// ```
 pub fn to_le_bytes(self : Float) -> Bytes {
   self.reinterpret_as_uint().to_le_bytes()
 }
