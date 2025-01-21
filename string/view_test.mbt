@@ -414,3 +414,73 @@ test "stringview iter" {
   inspect!(iter.count(), content="5")
   inspect!(iter, content="['e', 'l', 'l', 'o', '🤣']")
 }
+
+test "stringview negative index" {
+  let str = "hello🤣😭😂"
+  inspect!(
+    str[-2:-1],
+    content=
+      #|"😭"
+    ,
+  )
+  inspect!(
+    str[-3:-1],
+    content=
+      #|"🤣😭"
+    ,
+  )
+  inspect!(
+    str[-4:-1],
+    content=
+      #|"o🤣😭"
+    ,
+  )
+  inspect!(
+    str[-4:],
+    content=
+      #|"o🤣😭😂"
+    ,
+  )
+  inspect!(
+    str[:-2],
+    content=
+      #|"hello🤣"
+    ,
+  )
+  inspect!(
+    str[-2:-2],
+    content=
+      #|""
+    ,
+  )
+  inspect!(
+    str[-0:0],
+    content=
+      #|""
+    ,
+  )
+  inspect!(
+    str[-8:],
+    content=
+      #|"hello🤣😭😂"
+    ,
+  )
+}
+
+test "panic stringview negative index1" {
+  let str = "hello🤣😭😂"
+  let _ = str[-9:]
+
+}
+
+test "panic stringview negative index2" {
+  let str = "hello🤣😭😂"
+  let _ = str[:-9]
+
+}
+
+test "panic stringview negative index3" {
+  let str = "hello🤣😭😂"
+  let _ = str[-1:-2]
+
+}
