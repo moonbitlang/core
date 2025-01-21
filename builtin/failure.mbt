@@ -13,7 +13,12 @@
 // limitations under the License.
 
 ///|
-pub(all) type! Failure String
+pub type! Failure String
+
+///|
+pub fn Failure::new(msg : String) -> Failure {
+  Failure(msg)
+}
 
 ///|
 pub fn fail[T](msg : String, loc~ : SourceLoc = _) -> T!Failure {

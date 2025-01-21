@@ -357,7 +357,7 @@ pub fn unwrap_or_error[T, E : Error](self : Result[T, E]) -> T!E {
 
 test "unwrap exn" {
   (try {
-    (Err(Failure("This is serious")) : Result[Unit, Failure]).unwrap_or_error!()
+    (Err(Failure::new("This is serious")) : Result[Unit, Failure]).unwrap_or_error!()
     |> Ok
   } catch {
     Failure(msg) => Err(msg)
