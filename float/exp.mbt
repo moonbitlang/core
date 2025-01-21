@@ -71,6 +71,23 @@ let exp2f_data : Exp2fData = {
 }
 
 ///|
+/// Calculates the exponential function e^x for a given floating-point number.
+///
+/// Parameters:
+///
+/// * `x` : A floating-point number for which to calculate e^x.
+///
+/// Returns the value of e raised to the power of x (e^x).
+///
+/// Example:
+///
+/// ```moonbit
+/// test "exp" {
+///   inspect!((0.0 : Float).exp(), content="1")
+///   inspect!((1.0 : Float).exp(), content="2.7182817459106445")
+///   inspect!(@float.neg_infinity.exp(), content="0")
+/// }
+/// ```
 pub fn exp(self : Float) -> Float {
   let xd = self.to_double()
   let abstop = top12(self) & 0x7ff

@@ -48,6 +48,30 @@ let logf_data : LogfData = {
 }
 
 ///|
+/// Calculates the natural logarithm of a floating-point number.
+///
+/// Parameters:
+///
+/// * `value` : The floating-point number to calculate the natural logarithm of.
+///
+/// Returns the natural logarithm of the input value. Special cases are handled
+/// as follows:
+///
+/// * Returns `0.0` when the input is `1.0`
+/// * Returns `neg_infinity` when the input is `0.0`
+/// * Returns `not_a_number` when the input is negative
+/// * Returns `infinity` when the input is `infinity`
+/// * Returns `not_a_number` when the input is `not_a_number`
+///
+/// Example:
+///
+/// ```moonbit
+/// test "ln" {
+///   inspect!((1.0 : Float).ln(), content="0")
+///   inspect!((2.718281828459045 : Float).ln(), content="0.9999999403953552")
+///   inspect!((0.0 : Float).ln(), content="-Infinity")
+/// }
+/// ```
 pub fn ln(self : Float) -> Float {
   let mut ix : UInt = self.reinterpret_as_int().reinterpret_as_uint()
   if ix == 0x3f800000U {
