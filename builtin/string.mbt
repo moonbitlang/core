@@ -13,6 +13,23 @@
 // limitations under the License.
 
 ///|
+fn unsafe_make_string(length : Int, value : Char) -> String = "$moonbit.unsafe_make_string"
+
+///|
+/// Create new string of `length`, where each character is `value`
+///
+/// ```
+/// assert_eq!(String::make(5,'S'), "SSSSS")
+/// ```
+pub fn String::make(length : Int, value : Char) -> String {
+  if length < 0 {
+    abort("invalid length")
+  } else {
+    unsafe_make_string(length, value)
+  }
+}
+
+///|
 let min_leading_surrogate = 0xD800
 
 ///|
