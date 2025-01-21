@@ -210,7 +210,10 @@ impl BytesView {
 }
 impl Show for BytesView
 
-pub(all) type! Failure String
+pub type! Failure String
+impl Failure {
+  new(String) -> Self
+}
 impl Show for Failure
 
 type Hasher
