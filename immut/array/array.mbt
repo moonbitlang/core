@@ -199,16 +199,7 @@ pub fn op_add[A](self : T[A], other : T[A]) -> T[A] {
 ///|
 /// Return an iterator over the array.
 pub fn iter[A](self : T[A]) -> Iter[A] {
-  Iter::new(fn(yield_) {
-    let arr = self.to_array() // TODO: it first converts to an array, which is not efficient
-    for i = 0; i < self.size; i = i + 1 {
-      if yield_(arr[i]) == IterEnd {
-        break IterEnd
-      }
-    } else {
-      IterContinue
-    }
-  })
+  self.tree.iter()
 }
 
 ///|
