@@ -546,20 +546,20 @@ test "peek function - random cases" {
 
 test "@builtin.join/empty_iter" {
   let empty_iter : Iter[String] = Iter::empty()
-  inspect!(@builtin.join(empty_iter), content="")
+  inspect!(@builtin.join(empty_iter, ""), content="")
 }
 
 test "@builtin.join/single_element" {
   let single_elem_iter : Iter[String] = Iter::singleton("Test")
-  inspect!(@builtin.join(single_elem_iter), content="Test")
+  inspect!(@builtin.join(single_elem_iter, ""), content="Test")
 }
 
 test "@builtin.join/multiple_elements_with_separator" {
   let iter : Iter[String] = ["A", "B", "C"].iter()
-  inspect!(@builtin.join(iter, sep=","), content="A,B,C")
+  inspect!(@builtin.join(iter, ","), content="A,B,C")
 }
 
 test "@builtin.join/multiple_elements_without_separator" {
   let iter : Iter[String] = ["A", "B", "C"].iter()
-  inspect!(@builtin.join(iter), content="ABC")
+  inspect!(@builtin.join(iter, ""), content="ABC")
 }

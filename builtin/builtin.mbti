@@ -243,7 +243,7 @@ impl Iter {
   head[A](Self[A]) -> A?
   intersperse[A](Self[A], A) -> Self[A]
   iter[T](Self[T]) -> Self[T]
-  join(Self[String], sep~ : String = ..) -> String
+  join(Self[String], String) -> String
   just_run[T](Self[T], (T) -> IterResult) -> Unit
   last[A](Self[A]) -> A?
   map[T, R](Self[T], (T) -> R) -> Self[R]
