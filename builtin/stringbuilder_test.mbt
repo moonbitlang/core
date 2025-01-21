@@ -49,9 +49,7 @@ test "write_iter" {
   let sb = StringBuilder::new()
   sb.write_iter(str.iter())
   inspect!(sb.to_string(), content="Hello🤣🤣🤣")
-  guard let Some(offset) = str.index_at(1)
-  guard let Some(offset2) = str.index_at(6)
-  let str_view = str[offset:offset2]
+  let str_view = str[1:6]
   sb.write_iter(str_view.iter())
   inspect!(sb.to_string(), content="Hello🤣🤣🤣ello🤣")
 }
