@@ -97,7 +97,7 @@ jobs:
           git diff --exit-code
 
   coverage-check:
-    runs-on: macos-14
+    runs-on: ubuntu-latest
     continue-on-error: true
     steps:
       - uses: actions/checkout@v4
