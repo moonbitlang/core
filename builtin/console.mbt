@@ -67,3 +67,8 @@ pub fn inspect(
 ///|
 // Used by test driver
 pub(all) type! SnapshotError String
+
+test "panic error case of inspect" {
+  let x : Int = 42
+  inspect!(x, content="100")
+}
