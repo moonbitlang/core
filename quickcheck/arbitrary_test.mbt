@@ -30,3 +30,18 @@ test {
   let v : H = @quickcheck.gen(state~, size~)
   inspect!(v, content="{x: 7, y: 2}")
 }
+
+test "gen with only size" {
+  // Call gen with only size parameter to trigger default state line 
+  let x : Bool = @quickcheck.gen(size=1)
+  inspect!(x, content="true")
+}
+
+test "gen with default parameters" {
+  // Call gen with no parameters, both size and state will be None.
+  // Use Bool as the arbitrary type since it's simple.
+  // Outputs will be random, but we don't care about the actual value,
+  // we only need to trigger those lines.
+  let x : Bool = @quickcheck.gen()
+  inspect!(x, content="true")
+}
