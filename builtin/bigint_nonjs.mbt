@@ -537,7 +537,7 @@ fn BigInt::grade_school_div(self : BigInt, other : BigInt) -> (BigInt, BigInt) {
   }
   if other.len == 1 {
     let number = other.limbs[0]
-    let ret = self.deep_clone()
+    let ret = self.copy()
     if number == 1 {
       return (ret, zero)
     }
@@ -1217,7 +1217,13 @@ pub fn BigInt::to_hex(self : BigInt, uppercase~ : Bool = true) -> String {
 }
 
 ///|
+/// @alert deprecated "Use `copy` instead"
+/// @coverage.skip
 fn BigInt::deep_clone(self : BigInt) -> BigInt {
+  BigInt::copy(self)
+}
+
+fn BigInt::copy(self : BigInt) -> BigInt {
   let new_limbs = FixedArray::make(self.len, 0U)
   new_limbs.unsafe_blit(0, self.limbs, 0, self.len)
   { limbs: new_limbs, sign: self.sign, len: self.len }
