@@ -163,3 +163,23 @@ test "grouped test for random cases" {
   // 1011111011101111110111101010110110111110111011111101111010101101
   inspect!(UInt64::popcnt(0xBEEFDEADBEEFDEADUL), content="48")
 }
+
+test "to_be_bytes" {
+  let num = 0x1234567890ABCDEFL
+  inspect!(
+    num.to_be_bytes(),
+    content=
+      #|b"\x12\x34\x56\x78\x90\xab\xcd\xef"
+    ,
+  )
+}
+
+test "to_le_bytes of negative Int64" {
+  let num = -0x1234567890ABCDEFL
+  inspect!(
+    num.to_le_bytes(),
+    content=
+      #|b"\x11\x32\x54\x6f\x87\xa9\xcb\xed"
+    ,
+  )
+}
