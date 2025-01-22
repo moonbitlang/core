@@ -37,24 +37,34 @@ pub fn of[V : Compare](array : Array[V]) -> T[V] {
 }
 
 ///|
-/// Returns a deep clone of the MutableSet.
-/// 
-/// FIXME: it is just copying the tree structure, not the values.
-///        It requires a Clone trait on T, which we don't have yet.
+/// It is just copying the tree structure, not the values.
+/// It requires a Clone trait on T, which we don't have yet.
+///
+/// @alert deprecated "Use `copy` instead"
+/// @coverage.skip
 pub fn deep_clone[V](self : T[V]) -> T[V] {
+  copy(self)
+}
+
+///|
+/// Returns a shallow copy of the MutableSet.
+/// 
+/// It is just copying the tree structure, not the values.
+/// 
+pub fn copy[V](self : T[V]) -> T[V] {
   match self.root {
     None => new()
-    Some(_) => { root: deep_clone_tree(self.root), size: self.size }
+    Some(_) => { root: copy_tree(self.root), size: self.size }
   }
 }
 
 ///|
-fn deep_clone_tree[V](node : Node[V]?) -> Node[V]? {
+fn copy_tree[V](node : Node[V]?) -> Node[V]? {
   match node {
     None => None
     Some(node) => {
-      let left = deep_clone_tree(node.left)
-      let right = deep_clone_tree(node.right)
+      let left = copy_tree(node.left)
+      let right = copy_tree(node.right)
       let new_node = new_node(node.value, left~, right~, height=node.height)
       Some(new_node)
     }
@@ -149,8 +159,8 @@ pub fn union[V : Compare](self : T[V], src : T[V]) -> T[V] {
 
   match (self.root, src.root) {
     (Some(_), Some(_)) => {
-      let t1 = deep_clone_tree(self.root)
-      let t2 = deep_clone_tree(src.root)
+      let t1 = copy_tree(self.root)
+      let t2 = copy_tree(src.root)
       let t = aux(t1, t2)
       let mut ct = 0L
       let ret = { root: t, size: 0L }
@@ -159,8 +169,8 @@ pub fn union[V : Compare](self : T[V], src : T[V]) -> T[V] {
       ret.size = ct
       ret
     }
-    (Some(_), None) => { root: deep_clone_tree(self.root), size: self.size }
-    (None, Some(_)) => { root: deep_clone_tree(src.root), size: src.size }
+    (Some(_), None) => { root: copy_tree(self.root), size: self.size }
+    (None, Some(_)) => { root: copy_tree(src.root), size: src.size }
     (None, None) => new()
   }
 }
@@ -640,15 +650,15 @@ fn delete_node[V : Compare](root : Node[V], value : V) -> (Node[V]?, Bool) {
   }
 }
 
-test "deep_clone" {
+test "copy" {
   let set = of([1, 2, 3, 4, 5])
-  let clone = set.deep_clone()
-  inspect!(clone, content="@sorted_set.of([1, 2, 3, 4, 5])")
-  inspect!(set.debug_tree() == clone.debug_tree(), content="true")
+  let copied_set = set.copy()
+  inspect!(copied_set, content="@sorted_set.of([1, 2, 3, 4, 5])")
+  inspect!(set.debug_tree() == copied_set.debug_tree(), content="true")
   let set : T[Int] = of([])
-  let clone = set.deep_clone()
-  inspect!(clone, content="@sorted_set.of([])")
-  inspect!(set.debug_tree() == clone.debug_tree(), content="true")
+  let copied_set = set.copy()
+  inspect!(copied_set, content="@sorted_set.of([])")
+  inspect!(set.debug_tree() == copied_set.debug_tree(), content="true")
 }
 
 test "union" {
