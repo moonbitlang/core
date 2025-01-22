@@ -16,7 +16,8 @@ type T
 impl T {
   add[V : Compare](Self[V], V) -> Unit
   contains[V : Compare](Self[V], V) -> Bool
-  deep_clone[V](Self[V]) -> Self[V]
+  copy[V](Self[V]) -> Self[V]
+  deep_clone[V](Self[V]) -> Self[V] //deprecated
   diff[V : Compare](Self[V], Self[V]) -> Self[V] //deprecated
   difference[V : Compare](Self[V], Self[V]) -> Self[V]
   disjoint[V : Compare](Self[V], Self[V]) -> Bool
