@@ -290,3 +290,123 @@ test "panic negative index2" {
   let _ = bs[-1:-2]
 
 }
+
+test "BytesView::unsafe_get additional test" {
+  let bytes = b"\x01\x02\x03\x04\x05"
+  let view = bytes[1:4] // view contains [0x02, 0x03, 0x04]
+  let result = view.unsafe_get(1) // gets byte at index 1 (the second byte) of the view
+  inspect!(result, content="b'\\x03'")
+}
+
+test "to_uint_be with b'\\xFF\\xFF\\xFF\\xFF'" {
+  let bytes = b"\xFF\xFF\xFF\xFF"[:]
+  inspect!(bytes.to_uint_be(), content="4294967295")
+}
+
+test "BytesView::to_uint_le with non-zero bytes" {
+  let bytes = b"\x01\x02\x03\x04"
+  let view = bytes[:]
+  inspect!(view.to_uint_le(), content="67305985") // 67305985 = 0x04030201
+}
+
+test "panic BytesView::to_uint_le/out_of_bounds" {
+  let bytes = b"\x01\x02\x03" // Only 3 bytes
+  let view = bytes[:]
+  ignore(view.to_uint_le()) // Should panic: index out of bounds
+}
+
+test "BytesView::to_uint64_be/first_byte_operation" {
+  let bytes = b"\xFF\x00\x00\x00\x00\x00\x00\x00"[:] // First byte is all 1s
+  let result = bytes.to_uint64_be()
+  // First byte shifted left by 56 bits should give us: 0xFF00000000000000
+  inspect!(result, content="18374686479671623680")
+}
+
+test "test BytesView::to_uint64_le with binary pattern" {
+  let bytes = b"\x01\x00\x00\x00\x00\x00\x00\x00"[:]
+  inspect!(bytes.to_uint64_le(), content="1")
+  let bytes2 = b"\x00\x01\x00\x00\x00\x00\x00\x00"[:]
+  inspect!(bytes2.to_uint64_le(), content="256")
+
+  // Test all bytes set to non-zero values
+  let bytes3 = b"\x01\x02\x03\x04\x05\x06\x07\x08"[:]
+  inspect!(bytes3.to_uint64_le(), content="578437695752307201")
+}
+
+test "test BytesView::to_int_le with a non-zero 32-bit number" {
+  let bytes = b"\x78\x56\x34\x12"[:]
+  inspect!(bytes.to_int_le(), content="305419896")
+}
+
+test "BytesView::to_int64_be test cases" {
+  // Test positive number
+  let bytes = b"\x00\x00\x00\x00\x00\x00\x00\x01"
+  inspect!(bytes[:].to_int64_be(), content="1")
+
+  // Test negative number (most significant bit set)
+  let bytes2 = b"\xF0\x00\x00\x00\x00\x00\x00\x00"
+  inspect!(bytes2[:].to_int64_be(), content="-1152921504606846976")
+
+  // Test large positive number
+  let bytes3 = b"\x7F\xFF\xFF\xFF\xFF\xFF\xFF\xFF"
+  inspect!(bytes3[:].to_int64_be(), content="9223372036854775807")
+}
+
+test "BytesView::to_int64_le with mixed bytes" {
+  // Test with bytes containing both negative and positive values
+  let bytes = b"\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF"
+  let view = bytes[:]
+  inspect!(view.to_int64_le(), content="-1")
+}
+
+test "panic to_float_be/short_input" {
+  // Test that trying to read from a view that's too short causes a panic
+  let bytes = b"\x40\x49"
+  let view = bytes[:]
+  ignore(@builtin.BytesView::to_float_be(view)) // Should panic due to insufficient bytes
+}
+
+test "BytesView::to_float_le with different values" {
+  // Test with value 0.0
+  let bytes = b"\x00\x00\x00\x00"
+  let f = bytes[:].to_float_le()
+  inspect!(f.to_double(), content="0")
+
+  // Test with value -1.0
+  let bytes2 = b"\x00\x00\x80\xBF"
+  let f2 = bytes2[:].to_float_le()
+  inspect!(f2.to_double(), content="-1")
+}
+
+test "BytesView::to_double_be/zero" {
+  let bytes = b"\x00\x00\x00\x00\x00\x00\x00\x00"
+  let view = bytes[:]
+  inspect!(view.to_double_be(), content="0")
+}
+
+test "test to_double_le with normal float" {
+  // 3.14 in little-endian IEEE 754 double format
+  let bytes = b"\x1F\x85\xEB\x51\xB8\x1E\x09\x40"
+  let view = bytes[:]
+  inspect!(view.to_double_le(), content="3.14")
+}
+
+test "iter break early" {
+  let view = b"\x01\x02\x03"[:]
+  let mut count = 0
+  let mut total = 0
+  view
+  .iter()
+  .take(2)
+  .each(fn(x) {
+    count = count + 1
+    total = total + x.to_int()
+  })
+  inspect!(count, content="2")
+  inspect!(total, content="3") // \x01 + \x02 = 3
+}
+
+test "BytesView::to_int_be with positive value" {
+  let bytes = b"\x00\x00\x00\x01"[:] // Represents 1 in big-endian
+  inspect!(bytes.to_int_be(), content="1")
+}
