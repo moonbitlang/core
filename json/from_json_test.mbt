@@ -383,6 +383,15 @@ test "jsonvalue" {
   )
 }
 
+test "bool roundtrip" {
+  let u = true.to_json()
+  let v : Bool = @json.from_json!(u)
+  inspect!(v, content="true")
+  let u = false.to_json()
+  let v : Bool = @json.from_json!(u)
+  inspect!(v, content="false")
+}
+
 test "int roundtrip" {
   let u = (123).to_json()
   let v : Int = @json.from_json!(u)
