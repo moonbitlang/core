@@ -877,3 +877,27 @@ test "deque retain_map" {
     content="([4, 5, 6], [7, 8])",
   )
 }
+
+test "@deque.to_array/empty" {
+  let dq : T[Int] = @deque.new()
+  let arr = dq.to_array()
+  inspect!(arr, content="[]")
+}
+
+test "@deque.to_array/basic" {
+  let dq = @deque.of([1, 2, 3, 4, 5])
+  let arr = dq.to_array()
+  inspect!(arr, content="[1, 2, 3, 4, 5]")
+}
+
+test "@deque.to_array/wrapped_around" {
+  // Create a deque that will wrap around its internal buffer
+  let dq = @deque.new(capacity=3)
+  dq.push_back(1)
+  dq.push_back(2)
+  dq.push_back(3)
+  dq.pop_front() |> ignore
+  dq.push_back(4)
+  let arr = dq.to_array()
+  inspect!(arr, content="[2, 3, 4]")
+}

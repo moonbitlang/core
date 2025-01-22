@@ -61,7 +61,7 @@ pub fn index_at(
   offset_by : Int,
   start~ : StringIndex = 0
 ) -> StringIndex? {
-  let str_len = self.length()
+  let str_len = self.charcode_length()
   guard start._ >= 0 && start._ <= str_len else { abort("Invalid start index") }
   let mut utf16_offset = start._
   let mut char_count = 0
@@ -114,7 +114,7 @@ pub fn index_at_rev(
   offset_by : Int,
   end? : StringIndex
 ) -> StringIndex? {
-  let str_len = self.length()
+  let str_len = self.charcode_length()
   let end = match end {
     None => str_len
     Some(end) => {
@@ -220,22 +220,41 @@ pub fn length_ge(self : StringView, len : Int) -> Bool {
 /// 
 /// ```
 /// let str = "Hello🤣🤣🤣"
-/// guard let Some(start) = str.index_at(1)
-/// guard let Some(end) = str.index_at(6)
-/// let view = str[start:end]
+/// let view = str[1:6]
 /// inspect!(view, content=
 ///  #|"ello🤣"
 ///)
 /// ```
 pub fn String::op_as_view(
   self : String,
-  start~ : StringIndex = 0,
-  end? : StringIndex
+  start~ : Int = 0,
+  end? : Int
 ) -> StringView {
-  let str_len = self.length()
-  let start = start._
+  let str_len = self.charcode_length()
+  let start = if start >= 0 {
+    guard let Some(start_offset) = index_at(self, start, start=0) else {
+      _ => abort("Invalid start index")
+    }
+    start_offset._
+  } else {
+    guard let Some(start_offset) = index_at_rev(self, -start, end=str_len) else {
+      _ => abort("Invalid start index")
+    }
+    start_offset._
+  }
   let end = match end {
-    Some(e) => e._
+    Some(end) =>
+      if end >= 0 {
+        guard let Some(end_offset) = index_at(self, end, start=0) else {
+          _ => abort("Invalid end index")
+        }
+        end_offset._
+      } else {
+        guard let Some(end_offset) = index_at_rev(self, -end, end=str_len) else {
+          _ => abort("Invalid end index")
+        }
+        end_offset._
+      }
     None => str_len
   }
   guard start >= 0 && start <= end && end <= str_len else {
@@ -251,9 +270,7 @@ pub fn String::op_as_view(
 /// 
 /// ```
 /// let str = "Hello🤣🤣🤣"
-/// guard let Some(start) = str.index_at(1)
-/// guard let Some(end) = str.index_at(7)
-/// let view = str[start:end]
+/// let view = str[1:7]
 /// let view2 = view[1:5]
 /// inspect!(view2, content=
 ///   #|"llo🤣"
@@ -310,9 +327,7 @@ pub fn StringView::op_as_view(
 /// 
 /// ```
 /// let str = "Hello🤣🤣🤣"
-/// guard let Some(start) = str.index_at(1)
-/// guard let Some(end) = str.index_at(6)
-/// let view = str[start:end]
+/// let view = str[1:6]
 /// inspect!(view[0], content="'e'")
 /// inspect!(view[4], content="'🤣'")
 /// ```
@@ -322,9 +337,10 @@ pub fn StringView::op_get(self : StringView, index : Int) -> Char {
   }
   let mut utf16_offset = self.start
   let mut char_count = 0
+  let code_unit_length = self.str.charcode_length()
   while char_count < index && utf16_offset < self.end {
     let c1 = self.str.unsafe_charcode_at(utf16_offset)
-    if is_leading_surrogate(c1) && utf16_offset + 1 < self.str.length() {
+    if is_leading_surrogate(c1) && utf16_offset + 1 < code_unit_length {
       let c2 = self.str.unsafe_charcode_at(utf16_offset + 1)
       if is_trailing_surrogate(c2) {
         utf16_offset = utf16_offset + 2
@@ -363,9 +379,7 @@ pub fn StringView::op_get(self : StringView, index : Int) -> Char {
 /// 
 /// ```
 /// let str = "Hello🤣🤣🤣"
-/// guard let Some(start) = str.index_at(1)
-/// guard let Some(end) = str.index_at(6)
-/// let view = str[start:end]
+/// let view = str[1:6]
 /// inspect!(view.rev_get(0), content="'🤣'")
 /// inspect!(view.rev_get(4), content="'e'")
 /// ```

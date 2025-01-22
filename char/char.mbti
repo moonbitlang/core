@@ -16,7 +16,7 @@ impl Char {
   is_ascii_uppercase(Char) -> Bool
   is_ascii_whitespace(Char) -> Bool
   is_control(Char) -> Bool
-  is_digit(Char, UInt) -> Bool!
+  is_digit(Char, UInt) -> Bool
   is_numeric(Char) -> Bool
   is_whitespace(Char) -> Bool
 }

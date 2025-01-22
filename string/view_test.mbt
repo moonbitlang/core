@@ -36,8 +36,8 @@ test "index_at with surrogate pairs" {
 
 test "stringview basic" {
   let str = "Hello🤣🤣🤣"
-  guard let Some(start) = str.index_at(1)
-  guard let Some(end) = str.index_at(6)
+  let start = 1
+  let end = 6
   inspect!(
     str[start:],
     content=
@@ -66,8 +66,8 @@ test "stringview basic" {
 
 test "stringview basic2" {
   let str = "He🤣🤣🤣llo"
-  guard let Some(start) = str.index_at(1)
-  guard let Some(end) = str.index_at(7)
+  let start = 1
+  let end = 7
   inspect!(
     str[start:],
     content=
@@ -96,8 +96,8 @@ test "stringview basic2" {
 
 test "stringview subview" {
   let str = "Hello🤣🤣🤣"
-  guard let Some(start) = str.index_at(1)
-  guard let Some(end) = str.index_at(6)
+  let start = 1
+  let end = 6
   let view = str[start:end]
   inspect!(
     view[1:],
@@ -127,35 +127,27 @@ test "stringview subview" {
 
 test "stringview op_get" {
   let str = "Hello🤣🤣🤣"
-  guard let Some(start) = str.index_at(1)
-  guard let Some(end) = str.index_at(6)
-  let view = str[start:end]
+  let view = str[1:6]
   inspect!(view[0], content="'e'")
   inspect!(view[4], content="'🤣'")
 }
 
 test "stringview rev_get" {
   let str = "Hello🤣🤣🤣"
-  guard let Some(start) = str.index_at(1)
-  guard let Some(end) = str.index_at(6)
-  let view = str[start:end]
+  let view = str[1:6]
   inspect!(view.rev_get(0), content="'🤣'")
   inspect!(view.rev_get(4), content="'e'")
 }
 
 test "stringview length" {
   let str = "Hello🤣🤣🤣"
-  guard let Some(start) = str.index_at(1)
-  guard let Some(end) = str.index_at(6)
-  let view = str[start:end]
+  let view = str[1:6]
   inspect!(view.length(), content="5")
 }
 
 test "stingview length_eq" {
   let str = "hello"
-  guard let Some(start) = str.index_at(1)
-  guard let Some(end) = str.index_at(4)
-  let view = str[start:end]
+  let view = str[1:4]
   inspect!(view.length_eq(0), content="false")
   inspect!(view.length_eq(1), content="false")
   inspect!(view.length_eq(2), content="false")
@@ -166,9 +158,7 @@ test "stingview length_eq" {
 
 test "stingview length_ge" {
   let str = "hello"
-  guard let Some(start) = str.index_at(1)
-  guard let Some(end) = str.index_at(4)
-  let view = str[start:end]
+  let view = str[1:4]
   inspect!(view.length_ge(0), content="true")
   inspect!(view.length_ge(1), content="true")
   inspect!(view.length_ge(2), content="true")
@@ -179,44 +169,34 @@ test "stingview length_ge" {
 
 test "stringview empty" {
   let str = "hello"
-  guard let Some(start) = str.index_at(0)
-  guard let Some(end) = str.index_at(0)
-  let view = str[start:end]
+  let view = str[0:0]
   inspect!(view.length(), content="0")
 }
 
 test "panic out of bounds1" {
   let str = "Hello🤣🤣🤣"
-  guard let Some(start) = str.index_at(1)
-  guard let Some(end) = str.index_at(6)
-  let view = str[start:end]
+  let view = str[1:6]
   let _ = view[5]
 
 }
 
 test "panic out of bounds2" {
   let str = "Hello🤣🤣🤣"
-  guard let Some(start) = str.index_at(1)
-  guard let Some(end) = str.index_at(6)
-  let view = str[start:end]
+  let view = str[1:6]
   let _ = view[6:]
 
 }
 
 test "panic out of bounds3" {
   let str = "Hello🤣🤣🤣"
-  guard let Some(start) = str.index_at(1)
-  guard let Some(end) = str.index_at(6)
-  let view = str[start:end]
+  let view = str[1:6]
   let _ = view[:6]
 
 }
 
 test "panic out of bounds4" {
   let str = "hello"
-  guard let Some(start) = str.index_at(0)
-  guard let Some(end) = str.index_at(0)
-  let view = str[start:end]
+  let view = str[0:0]
   let _ = view[0]
 
 }
@@ -360,9 +340,7 @@ test "panic negative index 2" {
 test "panic negative index 3" {
   // index_at_rev returns an index not in bounds of the view
   let str = "hello"
-  guard let Some(start) = str.index_at(1)
-  guard let Some(end) = str.index_at(4)
-  let str_view = str[start:end]
+  let str_view = str[1:4]
   let _ = str_view[-4:]
 
 }
@@ -370,9 +348,7 @@ test "panic negative index 3" {
 test "panic negative index 4" {
   // index_at_rev returns an index not in bounds of the view
   let str = "hello"
-  guard let Some(start) = str.index_at(1)
-  guard let Some(end) = str.index_at(4)
-  let str_view = str[start:end]
+  let str_view = str[1:4]
   let _ = str_view[:-4]
 
 }
@@ -380,9 +356,7 @@ test "panic negative index 4" {
 test "panic negative index 5" {
   // index_at_rev returns an index not in bounds of the view
   let str = "hello"
-  guard let Some(start) = str.index_at(1)
-  guard let Some(end) = str.index_at(4)
-  let str_view = str[start:end]
+  let str_view = str[1:4]
   let _ = str_view[4:]
 
 }
@@ -390,9 +364,7 @@ test "panic negative index 5" {
 test "panic negative index 6" {
   // index_at_rev returns an index not in bounds of the view
   let str = "hello"
-  guard let Some(start) = str.index_at(1)
-  guard let Some(end) = str.index_at(4)
-  let str_view = str[start:end]
+  let str_view = str[1:4]
   let _ = str_view[:4]
 
 }
@@ -400,9 +372,7 @@ test "panic negative index 6" {
 test "panic negative index 7" {
   // start > end
   let str = "hello"
-  guard let Some(start) = str.index_at(1)
-  guard let Some(end) = str.index_at(4)
-  let str_view = str[start:end]
+  let str_view = str[1:4]
   let _ = str_view[-1:-2]
 
 }
@@ -410,9 +380,7 @@ test "panic negative index 7" {
 test "panic negative index 8" {
   // start > end
   let str = "hello"
-  guard let Some(start) = str.index_at(1)
-  guard let Some(end) = str.index_at(4)
-  let str_view = str[start:end]
+  let str_view = str[1:4]
   let _ = str_view[-1:1]
 
 }
@@ -420,37 +388,99 @@ test "panic negative index 8" {
 test "panic negative index 9" {
   // start > end
   let str = "hello"
-  guard let Some(start) = str.index_at(1)
-  guard let Some(end) = str.index_at(4)
-  let str_view = str[start:end]
+  let str_view = str[1:4]
   let _ = str_view[2:-2]
 
 }
 
 test "panic rev_get" {
   let str = "Hello🤣🤣🤣"
-  guard let Some(start) = str.index_at(1)
-  guard let Some(end) = str.index_at(6)
-  let view = str[start:end]
+  let view = str[1:6]
   let _ = view.rev_get(5)
 
 }
 
 test "panic rev_get2" {
   let str = "Hello🤣🤣🤣"
-  guard let Some(start) = str.index_at(1)
-  guard let Some(end) = str.index_at(6)
-  let view = str[start:end]
+  let view = str[1:6]
   let _ = view.rev_get(-1)
 
 }
 
 test "stringview iter" {
   let str = "hello🤣🤣🤣"
-  guard let Some(start) = str.index_at(1)
-  guard let Some(end) = str.index_at(6)
-  let view = str[start:end]
+  let view = str[1:6]
   let iter = view.iter()
   inspect!(iter.count(), content="5")
   inspect!(iter, content="['e', 'l', 'l', 'o', '🤣']")
+}
+
+test "stringview negative index" {
+  let str = "hello🤣😭😂"
+  inspect!(
+    str[-2:-1],
+    content=
+      #|"😭"
+    ,
+  )
+  inspect!(
+    str[-3:-1],
+    content=
+      #|"🤣😭"
+    ,
+  )
+  inspect!(
+    str[-4:-1],
+    content=
+      #|"o🤣😭"
+    ,
+  )
+  inspect!(
+    str[-4:],
+    content=
+      #|"o🤣😭😂"
+    ,
+  )
+  inspect!(
+    str[:-2],
+    content=
+      #|"hello🤣"
+    ,
+  )
+  inspect!(
+    str[-2:-2],
+    content=
+      #|""
+    ,
+  )
+  inspect!(
+    str[-0:0],
+    content=
+      #|""
+    ,
+  )
+  inspect!(
+    str[-8:],
+    content=
+      #|"hello🤣😭😂"
+    ,
+  )
+}
+
+test "panic stringview negative index1" {
+  let str = "hello🤣😭😂"
+  let _ = str[-9:]
+
+}
+
+test "panic stringview negative index2" {
+  let str = "hello🤣😭😂"
+  let _ = str[:-9]
+
+}
+
+test "panic stringview negative index3" {
+  let str = "hello🤣😭😂"
+  let _ = str[-1:-2]
+
 }

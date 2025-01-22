@@ -100,6 +100,7 @@ impl Output for StringBuilder with output(self, content) -> Unit {
 /// }
 /// ----- END MOONBIT COVERAGE -----
 /// ```
+/// @coverage.skip
 pub fn end() -> Unit {
   println("----- BEGIN MOONBIT COVERAGE -----")
   let sbuf = StringBuffer::StringBuffer([])
