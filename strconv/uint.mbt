@@ -259,3 +259,8 @@ test "parse_uint" {
     )
   }
 }
+
+test "parse_uint64 uppercase hex and invalid base" {
+  inspect!(parse_uint64?("ABCD", base=16), content="Ok(43981)")
+  inspect!(parse_uint64?("1234", base=37), content="Err(invalid base)")
+}
