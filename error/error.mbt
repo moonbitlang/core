@@ -16,6 +16,22 @@
 fn Error::to_string(self : Error) -> String = "%error.to_string"
 
 ///|
+/// Implements `Show` trait for `Error` type by converting the error into a
+/// string representation.
+///
+/// Parameters:
+///
+/// * `self`: The error value to be converted.
+/// * `logger`: A buffer that accumulates the string representation.
+///
+/// Example:
+///
+/// ```moonbit
+/// test "Error::Show/output" {
+///   let error : Error = Failure("test error")
+///   inspect!(error, content="\"Failure(test error)\"")
+/// }
+/// ```
 pub impl Show for Error with output(self, logger) {
   logger.write_string(self.to_string())
 }

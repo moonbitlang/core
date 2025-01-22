@@ -89,9 +89,13 @@ pub fn from_iter[A](iter : Iter[A]) -> T[A] {
 
 ///|
 pub fn to_array[A](self : T[A]) -> Array[A] {
-  let arr = []
-  self.each(fn(v) { arr.push(v) })
-  arr
+  if self.is_empty() {
+    []
+  } else {
+    let arr = Array::make(self.length(), self[0])
+    self.eachi(fn(i, v) { arr[i] = v })
+    arr
+  }
 }
 
 //-----------------------------------------------------------------------------

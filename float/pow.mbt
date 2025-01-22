@@ -13,6 +13,25 @@
 // limitations under the License.
 
 ///|
+/// Calculates the power of a floating-point number raised to another
+/// floating-point number.
+///
+/// Parameters:
+///
+/// * `base` : The base number to be raised to a power.
+/// * `exponent` : The power to which the base number is raised.
+///
+/// Returns the result of raising `base` to the power of `exponent`.
+///
+/// Example:
+///
+/// ```moonbit
+/// test "pow" {
+///   inspect!((2.0 : Float).pow(3.0), content="8")
+///   inspect!((4.0 : Float).pow(0.5), content="2")
+///   inspect!((1.0 : Float).pow(-1.0), content="1")
+/// }
+/// ```
 pub fn pow(self : Float, other : Float) -> Float {
   self.to_double().pow(other.to_double()).to_float()
 }

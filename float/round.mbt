@@ -25,6 +25,29 @@ let exp_bits = 8
 let frac_bits = 23
 
 ///|
+/// Returns the truncated value of a floating-point number by removing its
+/// fractional part.
+///
+/// Parameters:
+///
+/// * `value` : The floating-point number to be truncated.
+///
+/// Returns the truncated floating-point number. Specifically:
+///
+/// * Returns `0.0` (with the same sign as input) for values between -1.0 and 1.0
+/// * Returns the input unchanged for integer values or values too large to have
+/// fractional parts
+/// * Returns the integer part for other values
+///
+/// Example:
+///
+/// ```moonbit
+/// test "trunc" {
+///   inspect!((3.7 : Float).trunc(), content="3.0")
+///   inspect!((-3.7 : Float).trunc(), content="-3.0")
+///   inspect!((0.2 : Float).trunc(), content="0.0")
+/// }
+/// ```
 pub fn trunc(self : Float) -> Float {
   let u32 = self.reinterpret_as_uint()
   let biased_exp = ((u32 >> frac_bits) & ((0x1U << exp_bits) - 1)).reinterpret_as_int()
@@ -39,6 +62,24 @@ pub fn trunc(self : Float) -> Float {
 }
 
 ///|
+/// Returns the smallest integer greater than or equal to a given floating-point
+/// number.
+///
+/// Parameters:
+///
+/// * `value` : The floating-point number to be rounded up.
+///
+/// Returns a floating-point number representing the ceiling value.
+///
+/// Example:
+///
+/// ```moonbit
+/// test "ceil" {
+///   inspect!((1.5 : Float).ceil(), content="2.0")
+///   inspect!((1.0 : Float).ceil(), content="1.0")
+///   inspect!((-1.5 : Float).ceil(), content="-1.0")
+/// }
+/// ```
 pub fn ceil(self : Float) -> Float {
   let trunced = self.trunc()
   if self > trunced {
@@ -49,6 +90,25 @@ pub fn ceil(self : Float) -> Float {
 }
 
 ///|
+/// Returns the largest integer value less than or equal to the given
+/// floating-point number.
+///
+/// Parameters:
+///
+/// * `self` : The floating-point number to be floored.
+///
+/// Returns a floating-point number representing the largest integer less than or
+/// equal to the input.
+///
+/// Example:
+///
+/// ```moonbit
+/// test "floor" {
+///   inspect!((1.7 : Float).floor(), content="1.0")
+///   inspect!((-1.7 : Float).floor(), content="-2.0")
+///   inspect!((2.0 : Float).floor(), content="2.0")
+/// }
+/// ```
 pub fn floor(self : Float) -> Float {
   let trunced = self.trunc()
   if self < trunced {
@@ -59,7 +119,24 @@ pub fn floor(self : Float) -> Float {
 }
 
 ///|
-// Round to nearest, ties to Ceiling
+/// Rounds a floating-point number to the nearest integer value, with ties
+/// rounding up (towards positive infinity).
+///
+/// Parameters:
+///
+/// * `number` : The floating-point number to be rounded.
+///
+/// Returns a floating-point number representing the rounded value.
+///
+/// Example:
+///
+/// ```moonbit
+/// test "round" {
+///   inspect!((2.3 : Float).round(), content="2.0")
+///   inspect!((2.5 : Float).round(), content="3.0")
+///   inspect!((-2.5 : Float).round(), content="-2.0")
+/// }
+/// ```
 pub fn round(self : Float) -> Float {
   floor(self + 0.5)
 }
