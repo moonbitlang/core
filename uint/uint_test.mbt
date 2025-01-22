@@ -57,3 +57,21 @@ test "shift" {
 test "default" {
   inspect!(@uint.default(), content="0")
 }
+
+test "to_le_bytes" {
+  let x : UInt = 0x12345678U
+  let bytes = @uint.to_le_bytes(x)
+  inspect!(bytes[0].to_int(), content="120") // 0x78
+  inspect!(bytes[1].to_int(), content="86") // 0x56
+  inspect!(bytes[2].to_int(), content="52") // 0x34
+  inspect!(bytes[3].to_int(), content="18") // 0x12
+}
+
+test "test UInt::default" {
+  inspect!(UInt::default(), content="0")
+}
+
+test "to_be_bytes" {
+  let n = 4294967295U // maximum UInt value
+  inspect!(@uint.to_be_bytes(n), content="b\"\\xff\\xff\\xff\\xff\"")
+}
