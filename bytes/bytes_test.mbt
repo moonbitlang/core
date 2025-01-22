@@ -110,3 +110,40 @@ test "iter" {
   b"abcde".iter().take(2).each(fn { x => buf.write_string(x.to_string()) })
   inspect!(buf, content="b'\\x61'b'\\x62'")
 }
+
+test "to_fixedarray with no length specified" {
+  let bytes = b"hello"
+  let arr = bytes.to_fixedarray()
+  inspect!(arr, content="[b'\\x68', b'\\x65', b'\\x6C', b'\\x6C', b'\\x6F']")
+  inspect!(arr.length(), content="5")
+}
+
+test "test empty bytes" {
+  let empty = @bytes.default()
+  inspect!(empty.length(), content="0")
+}
+
+test "to_fixedarray with Some length" {
+  let bytes = b"hello"
+  let arr = bytes.to_fixedarray(len=3)
+  inspect!(arr, content="[b'\\x68', b'\\x65', b'\\x6C']")
+  inspect!(arr.length(), content="3")
+}
+
+test "default_empty_bytes" {
+  let empty = Bytes::default()
+  inspect!(empty, content="b\"\"")
+  inspect!(empty.length(), content="0")
+}
+
+test "Bytes::of with different byte values" {
+  let arr : FixedArray[Byte] = [b'a', b'b', b'c']
+  let bytes = Bytes::of(arr)
+  inspect!(bytes, content="b\"\\x61\\x62\\x63\"")
+}
+
+test "Bytes::from_iter with multiple elements" {
+  let iter = [b'a', b'b', b'c'].iter()
+  let bytes = Bytes::from_iter(iter)
+  inspect!(bytes, content="b\"\\x61\\x62\\x63\"")
+}
