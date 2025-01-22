@@ -1223,6 +1223,7 @@ fn BigInt::deep_clone(self : BigInt) -> BigInt {
   BigInt::copy(self)
 }
 
+///|
 fn BigInt::copy(self : BigInt) -> BigInt {
   let new_limbs = FixedArray::make(self.len, 0U)
   new_limbs.unsafe_blit(0, self.limbs, 0, self.len)
