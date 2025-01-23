@@ -33,8 +33,7 @@ test "UInt to_json" {
 
 ///|
 test "double to json with positive infinity" {
-  let pos_inf = 1.0 / 0.0
-  inspect!(pos_inf.to_json(), content="Null")
+  inspect!(@double.infinity.to_json(), content="Null")
 }
 
 ///|

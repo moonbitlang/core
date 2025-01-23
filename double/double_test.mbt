@@ -47,12 +47,10 @@ test "abs" {
   inspect!((-0.0).abs().reinterpret_as_uint64(), content="0")
   inspect!(0.1.abs(), content="0.1")
   inspect!((-0.1).abs(), content="0.1")
-  inspect!((0.0 / 0.0).abs(), content="NaN")
   inspect!(@double.not_a_number.abs(), content="NaN")
-  inspect!((-0.0 / 0.0).abs(), content="NaN")
   inspect!(-@double.not_a_number.abs(), content="NaN")
-  inspect!((1.0 / 0.0).abs(), content="Infinity")
-  inspect!((-1.0 / 0.0).abs(), content="Infinity")
+  inspect!(@double.infinity.abs(), content="Infinity")
+  inspect!(@double.neg_infinity.abs(), content="Infinity")
 }
 
 ///|
@@ -82,7 +80,7 @@ test "to_be_bytes with negative number" {
 ///|
 test "to_le_bytes with infinity" {
   inspect!(
-    (1.0 / 0.0).to_le_bytes(),
+    @double.infinity.to_le_bytes(),
     content="b\"\\x00\\x00\\x00\\x00\\x00\\x00\\xf0\\x7f\"",
   )
 }

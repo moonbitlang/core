@@ -65,9 +65,9 @@ extern "js" fn MyInt64::from_double(value : Double) -> MyInt64 =
 /// test "Double::to_int64" {
 ///   inspect!(42.0.to_int64(), content="42")
 ///   inspect!((-42.5).to_int64(), content="-42")
-///   inspect!((0.0 / 0.0).to_int64(), content="0") // NaN
-///   inspect!((1.0 / 0.0).to_int64(), content="9223372036854775807") // Infinity
-///   inspect!((-1.0 / 0.0).to_int64(), content="-9223372036854775808") // -Infinity
+///   inspect!(@double.not_a_number.to_int64(), content="0") // NaN
+///   inspect!(@double.infinity.to_int64(), content="9223372036854775807") // Infinity
+///   inspect!(@double.neg_infinity.to_int64(), content="-9223372036854775808") // -Infinity
 /// }
 /// ```
 pub fn Double::to_int64(self : Double) -> Int64 {
@@ -113,8 +113,8 @@ extern "js" fn MyInt64::from_double_unsigned(value : Double) -> MyInt64 =
 /// test "Double::to_uint64" {
 ///   inspect!(42.0.to_uint64(), content="42")
 ///   inspect!((-42.5).to_uint64(), content="0")
-///   inspect!((0.0 / 0.0).to_uint64(), content="0") // NaN
-///   inspect!((1.0 / 0.0).to_uint64(), content="18446744073709551615") // Infinity
+///   inspect!(@double.not_a_number.to_uint64(), content="0") // NaN
+///   inspect!(@double.infinity.to_uint64(), content="18446744073709551615") // Infinity
 /// }
 /// ```
 pub fn Double::to_uint64(self : Double) -> UInt64 {
