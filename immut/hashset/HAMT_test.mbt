@@ -129,3 +129,45 @@ test "from_iter empty iter" {
   let pq : @hashset.T[Int] = @hashset.from_iter(Iter::empty())
   inspect!(pq, content="@immut/hashset.of([])")
 }
+
+test "each on empty set" {
+  let s = @hashset.new()
+  let mut count = 0
+  s.each(fn(_x : Int) -> Unit { count = count + 1 })
+  inspect!(count, content="0")
+}
+
+test "from_array with empty array" {
+  let empty_array : Array[Int] = []
+  let set = @hashset.from_array(empty_array)
+  inspect!(@hashset.is_empty(set), content="true")
+}
+
+test "from_array with non-empty array" {
+  let array = [1, 2, 3]
+  let set = @hashset.from_array(array)
+  inspect!(@hashset.contains(set, 1), content="true")
+  inspect!(@hashset.contains(set, 2), content="true")
+  inspect!(@hashset.contains(set, 3), content="true")
+  inspect!(@hashset.size(set), content="3")
+}
+
+test "remove non-existent key from leaf" {
+  let set = @hashset.of([1])
+  let result = set.remove(2)
+  inspect!(result, content="@immut/hashset.of([1])")
+}
+
+test "from_array - non-empty array" {
+  let set = @hashset.from_array([1, 2, 3])
+  inspect!(set, content="@immut/hashset.of([3, 2, 1])")
+}
+
+test "hashset equality" {
+  let set1 = @hashset.of([1, 2])
+  let set2 = @hashset.of([2, 1])
+  inspect!(set1 == set2, content="true")
+  let empty1 : @hashset.T[Unit] = @hashset.new()
+  let empty2 : @hashset.T[Unit] = @hashset.new()
+  inspect!(empty1 == empty2, content="true")
+}
