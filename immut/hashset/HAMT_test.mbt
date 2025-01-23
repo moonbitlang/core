@@ -129,3 +129,31 @@ test "from_iter empty iter" {
   let pq : @hashset.T[Int] = @hashset.from_iter(Iter::empty())
   inspect!(pq, content="@immut/hashset.of([])")
 }
+
+test "each on empty hashset" {
+  let empty : @hashset.T[Int] = @hashset.new()
+  let mut count = 0
+  empty.each(fn(x : Int) -> Unit { count = count + 1 })
+  inspect!(count, content="0")
+}
+
+test "remove_with_hash - leaf case 2" {
+  let set = @hashset.of([1])
+  let same = @hashset.remove(set, 2)
+  inspect!(same == set, content="true")
+}
+
+test "from_array - non-empty array" {
+  let arr = [1, 2, 3]
+  let set = @hashset.from_array(arr)
+  inspect!(set, content="@immut/hashset.of([3, 2, 1])")
+}
+
+test "hashset equality" {
+  let set1 = @hashset.of([1, 2])
+  let set2 = @hashset.of([2, 1])
+  let empty1 = @hashset.new()
+  let empty2 = @hashset.new()
+  inspect!(set1 == set2, content="true")
+  inspect!(empty1 == empty2, content="true")
+}
