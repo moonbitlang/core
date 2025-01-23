@@ -170,3 +170,30 @@ test "combine all" {
   inspect!(hasher.finalize(), content="1982681228")
   inspect!(hasher.finalize() == hasher.finalize(), content="true")
 }
+
+test "combine_unit" {
+  let hasher = @builtin.Hasher::new()
+  hasher.combine_unit()
+  let hash = hasher.finalize()
+  let hasher2 = @builtin.Hasher::new()
+  hasher2.combine_int(0)
+  let hash2 = hasher2.finalize()
+  inspect!(hash == hash2, content="true")
+}
+
+test "combine_bool" {
+  let hasher = @builtin.Hasher::new()
+  hasher.combine_bool(true)
+  let hash1 = hasher.finalize()
+  let hasher2 = @builtin.Hasher::new()
+  hasher2.combine_int(1)
+  let hash2 = hasher2.finalize()
+  assert_eq!(hash1, hash2)
+  let hasher3 = @builtin.Hasher::new()
+  hasher3.combine_bool(false)
+  let hash3 = hasher3.finalize()
+  let hasher4 = @builtin.Hasher::new()
+  hasher4.combine_int(0)
+  let hash4 = hasher4.finalize()
+  assert_eq!(hash3, hash4)
+}
