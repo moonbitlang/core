@@ -47,10 +47,8 @@ test "abs" {
   inspect!((-0.0).abs().reinterpret_as_uint64(), content="0")
   inspect!(0.1.abs(), content="0.1")
   inspect!((-0.1).abs(), content="0.1")
-  inspect!((0.0 / 0.0).abs(), content="NaN")
   inspect!(@double.not_a_number.abs(), content="NaN")
-  inspect!((-0.0 / 0.0).abs(), content="NaN")
   inspect!(-@double.not_a_number.abs(), content="NaN")
-  inspect!((1.0 / 0.0).abs(), content="Infinity")
-  inspect!((-1.0 / 0.0).abs(), content="Infinity")
+  inspect!(@double.infinity.abs(), content="Infinity")
+  inspect!(@double.neg_infinity.abs(), content="Infinity")
 }
