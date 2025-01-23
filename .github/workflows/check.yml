@@ -53,7 +53,7 @@ jobs:
           moon test --target native --release
 
       - name: moon test with dedup_wasm
-        if: ${{ matrix.os != 'windows-latest' }}
+        if: ${{ contains(matrix.os, 'ubuntu') }}
         run: |
           moon clean
           ulimit -s 8176
