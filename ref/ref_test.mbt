@@ -56,3 +56,8 @@ test "update with identity function" {
   @ref.update(a, fn(x) { x })
   assert_eq!(a.val, 1)
 }
+
+test "Ref::new with string" {
+  let r = Ref::new("hello")
+  inspect!(r, content="{val: \"hello\"}")
+}
