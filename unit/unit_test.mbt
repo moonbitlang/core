@@ -40,3 +40,18 @@ test {
   let unit = ()
   assert_eq!(unit.hash(), 0)
 }
+
+test "Unit hash_combine test" {
+  let hasher = @builtin.Hasher::new()
+  let unit = ()
+  // We should use () directly in hash_combine
+  let _ = @builtin.Hash::hash_combine((), hasher)
+  let hash1 = hasher.finalize()
+  let hasher2 = @builtin.Hasher::new()
+  assert_not_eq!(hash1, hasher2.finalize())
+}
+
+test "Unit::default returns unit value" {
+  let unit = Unit::default()
+  inspect!(unit, content="()")
+}
