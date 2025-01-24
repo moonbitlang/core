@@ -231,3 +231,13 @@ test "Show for Char" {
   inspect!('\''.to_string(), content="'")
   inspect!('\\'.to_string(), content="\\")
 }
+
+test "char show hex digits" {
+  inspect!('\x01', content="'\\x01'")
+  inspect!('\x0b', content="'\\x0b'")
+}
+
+test "char_special" {
+  inspect!('\r', content="'\\r'")
+  inspect!('\b', content="'\\b'")
+}
