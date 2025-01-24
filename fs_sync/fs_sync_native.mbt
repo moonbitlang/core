@@ -22,10 +22,20 @@ fn fopen_ffi(path : Bytes, mode : Bytes) -> File_Handler = "$moonbit.fopen_ffi"
 fn is_null(ptr : File_Handler) -> Int = "$moonbit.is_null"
 
 ///|
-fn fread_ffi(ptr : Bytes, size : Int, nitems : Int, stream : File_Handler) -> Int = "$moonbit.fread_ffi"
+fn fread_ffi(
+  ptr : Bytes,
+  size : Int,
+  nitems : Int,
+  stream : File_Handler
+) -> Int = "$moonbit.fread_ffi"
 
 ///|
-fn fwrite_ffi(ptr : Bytes, size : Int, nitems : Int, stream : File_Handler) -> Int = "$moonbit.fwrite_ffi"
+fn fwrite_ffi(
+  ptr : Bytes,
+  size : Int,
+  nitems : Int,
+  stream : File_Handler
+) -> Int = "$moonbit.fwrite_ffi"
 
 ///|
 fn get_error_message_ffi() -> Bytes = "$moonbit.get_error_message"
@@ -62,8 +72,16 @@ fn read_file_to_bytes_internal(path : String) -> Bytes! {
   bytes
 }
 
-fn read_file_to_string_internal(path : String, encoding~ : String = "utf8") -> String! {
-  guard encoding == "utf8" else { raise IOError("Unsupported encoding: \{encoding}, only utf8 is supported for now") }
+///|
+fn read_file_to_string_internal(
+  path : String,
+  encoding~ : String = "utf8"
+) -> String! {
+  guard encoding == "utf8" else {
+    raise IOError(
+      "Unsupported encoding: \{encoding}, only utf8 is supported for now",
+    )
+  }
   utf8_bytes_to_mbt_string(read_file_to_bytes_internal!(path))
 }
 
@@ -72,13 +90,25 @@ fn write_bytes_to_file_internal(path : String, content : Bytes) -> Unit! {
   let file = fopen_ffi(mbt_string_to_utf8_bytes(path, true), b"wb")
   guard is_null(file) == 0 else { raise IOError(get_error_message()) }
   let bytes_written = fwrite_ffi(content, 1, content.length(), file)
-  guard bytes_written == content.length() else { raise IOError(get_error_message()) }
+  guard bytes_written == content.length() else {
+    raise IOError(get_error_message())
+  }
   guard fflush_ffi(file) == 0 else { raise IOError(get_error_message()) }
   guard fclose_ffi(file) == 0 else { raise IOError(get_error_message()) }
+
 }
 
-fn write_string_to_file_internal(path : String, content : String, encoding~ : String = "utf8") -> Unit! {
-  guard encoding == "utf8" else { raise IOError("Unsupported encoding: \{encoding}, only utf8 is supported for now") }
+///|
+fn write_string_to_file_internal(
+  path : String,
+  content : String,
+  encoding~ : String = "utf8"
+) -> Unit! {
+  guard encoding == "utf8" else {
+    raise IOError(
+      "Unsupported encoding: \{encoding}, only utf8 is supported for now",
+    )
+  }
   let bytes = mbt_string_to_utf8_bytes(content, false)
   write_bytes_to_file_internal!(path, bytes)
 }

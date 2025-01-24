@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+///|
 test "write_and_read" {
   let path_1 = "./fs_sync/test_1.txt"
   let path_2 = "./fs_sync/test_2.txt"
@@ -20,7 +21,6 @@ test "write_and_read" {
   @fs_sync.write_bytes_to_file!(path_1, content_1.to_bytes())
   let res_1 = @fs_sync.read_file_to_bytes!(path_1)
   inspect!(res_1.to_unchecked_string(), content=content_1)
-
   @fs_sync.write_string_to_file!(path_2, content_2)
   let res_2 = @fs_sync.read_file_to_string!(path_2)
   inspect!(res_2, content=content_2)

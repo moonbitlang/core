@@ -61,8 +61,16 @@ fn read_file_to_bytes_internal(path : String) -> Bytes! {
   Bytes::from_iter(content.iter())
 }
 
-fn read_file_to_string_internal(path : String, encoding~ : String = "utf8") -> String! {
-  guard encoding == "utf8" else { raise IOError("Unsupported encoding: \{encoding}, only utf8 is supported for now") }
+///|
+fn read_file_to_string_internal(
+  path : String,
+  encoding~ : String = "utf8"
+) -> String! {
+  guard encoding == "utf8" else {
+    raise IOError(
+      "Unsupported encoding: \{encoding}, only utf8 is supported for now",
+    )
+  }
   let bytes = read_file_to_bytes_internal!(path)
   utf8_bytes_to_mbt_string(bytes)
 }
@@ -75,8 +83,17 @@ fn write_bytes_to_file_internal(path : String, content : Bytes) -> Unit! {
   }
 }
 
-fn write_string_to_file_internal(path : String, content : String, encoding~ : String = "utf8") -> Unit! {
-  guard encoding == "utf8" else { raise IOError("Unsupported encoding: \{encoding}, only utf8 is supported for now") }
+///|
+fn write_string_to_file_internal(
+  path : String,
+  content : String,
+  encoding~ : String = "utf8"
+) -> Unit! {
+  guard encoding == "utf8" else {
+    raise IOError(
+      "Unsupported encoding: \{encoding}, only utf8 is supported for now",
+    )
+  }
   let bytes = mbt_string_to_utf8_bytes(content, false)
   write_bytes_to_file_internal!(path, bytes)
 }

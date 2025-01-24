@@ -25,7 +25,7 @@ pub type! IOError String derive(Show)
 /// # Returns
 ///
 /// - A `Bytes` representing the content of the file.
-pub fn read_file_to_bytes(path: String) -> Bytes! {
+pub fn read_file_to_bytes(path : String) -> Bytes! {
   read_file_to_bytes_internal!(path)
 }
 
@@ -40,7 +40,10 @@ pub fn read_file_to_bytes(path: String) -> Bytes! {
 /// # Returns
 ///
 /// - A `String` representing the content of the file.
-pub fn read_file_to_string(path: String, encoding~ : String = "utf8") -> String! {
+pub fn read_file_to_string(
+  path : String,
+  encoding~ : String = "utf8"
+) -> String! {
   read_file_to_string_internal!(path, encoding~)
 }
 
@@ -50,7 +53,7 @@ pub fn read_file_to_string(path: String, encoding~ : String = "utf8") -> String!
 ///
 /// - `path` : The path to the file where the bytes will be written.
 /// - `content` : A `Bytes` to be written to the file.
-pub fn write_bytes_to_file(path: String, content: Bytes) -> Unit! {
+pub fn write_bytes_to_file(path : String, content : Bytes) -> Unit! {
   write_bytes_to_file_internal!(path, content)
 }
 
@@ -61,6 +64,10 @@ pub fn write_bytes_to_file(path: String, content: Bytes) -> Unit! {
 /// - `path` : The path to the file where the string will be written.
 /// - `content` : A `String` to be written to the file.
 /// - `encoding~` : The encoding of the file. Only support `utf8` for now.
-pub fn write_string_to_file(path: String, content: String, encoding~ : String = "utf8") -> Unit! {
+pub fn write_string_to_file(
+  path : String,
+  content : String,
+  encoding~ : String = "utf8"
+) -> Unit! {
   write_string_to_file_internal!(path, content, encoding~)
 }

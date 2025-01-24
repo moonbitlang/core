@@ -12,39 +12,69 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+///|
 fn get_error_message_ffi() -> XExternString = "__moonbit_fs_unstable" "get_error_message"
 
+///|
 fn get_error_message() -> String {
   string_from_extern(get_error_message_ffi())
 }
 
+///|
 fn get_file_content_ffi() -> XExternByteArray = "__moonbit_fs_unstable" "get_file_content"
 
+///|
 fn read_file_to_bytes_ffi(path : XExternString) -> Int = "__moonbit_fs_unstable" "read_file_to_bytes_new"
 
-fn write_bytes_to_file_ffi(path : XExternString, content : XExternByteArray) -> Int = "__moonbit_fs_unstable" "write_bytes_to_file_new"
+///|
+fn write_bytes_to_file_ffi(
+  path : XExternString,
+  content : XExternByteArray
+) -> Int = "__moonbit_fs_unstable" "write_bytes_to_file_new"
 
+///|
 fn read_file_to_bytes_internal(path : String) -> Bytes! {
   let res = read_file_to_bytes_ffi(string_to_extern(path))
   guard res != -1 else { raise IOError(get_error_message()) }
   byte_array_from_extern(get_file_content_ffi())
 }
 
-fn read_file_to_string_internal(path : String, encoding~ : String = "utf8") -> String! {
-  guard encoding == "utf8" else { raise IOError("Unsupported encoding: \{encoding}, only utf8 is supported for now") }
+///|
+fn read_file_to_string_internal(
+  path : String,
+  encoding~ : String = "utf8"
+) -> String! {
+  guard encoding == "utf8" else {
+    raise IOError(
+      "Unsupported encoding: \{encoding}, only utf8 is supported for now",
+    )
+  }
   utf8_bytes_to_mbt_string(read_file_to_bytes_internal!(path))
 }
 
+///|
 fn write_bytes_to_file_internal(path : String, content : Bytes) -> Unit! {
-  let res = write_bytes_to_file_ffi(string_to_extern(path), byte_array_to_extern(content))
+  let res = write_bytes_to_file_ffi(
+    string_to_extern(path),
+    byte_array_to_extern(content),
+  )
   guard res != -1 else { raise IOError(get_error_message()) }
+
 }
 
-fn write_string_to_file_internal(path : String, content : String, encoding~ : String = "utf8") -> Unit! {
-  guard encoding == "utf8" else { raise IOError("Unsupported encoding: \{encoding}, only utf8 is supported for now") }
+///|
+fn write_string_to_file_internal(
+  path : String,
+  content : String,
+  encoding~ : String = "utf8"
+) -> Unit! {
+  guard encoding == "utf8" else {
+    raise IOError(
+      "Unsupported encoding: \{encoding}, only utf8 is supported for now",
+    )
+  }
   write_bytes_to_file_internal!(path, mbt_string_to_utf8_bytes(content, false))
 }
-
 
 ///|
 priv type XStringCreateHandle
@@ -124,7 +154,9 @@ fn byte_array_from_extern(e : XExternByteArray) -> Bytes {
   Bytes::from_array(buf)
 }
 
+///|
 priv type XStringReadHandle
+
 ///|
 fn begin_read_string(s : XExternString) -> XStringReadHandle = "__moonbit_fs_unstable" "begin_read_string"
 
@@ -135,6 +167,7 @@ fn string_read_char(handle : XStringReadHandle) -> Int = "__moonbit_fs_unstable"
 ///|
 fn finish_read_string(handle : XStringReadHandle) = "__moonbit_fs_unstable" "finish_read_string"
 
+///|
 fn string_from_extern(e : XExternString) -> String {
   let buf = StringBuilder::new()
   let handle = begin_read_string(e)
