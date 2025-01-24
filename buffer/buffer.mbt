@@ -559,6 +559,36 @@ pub fn write_bytes(self : T, value : Bytes) -> Unit {
 }
 
 ///|
+/// Writes a sequence of bytes from a BytesView into the buffer.
+///
+/// Parameters:
+///
+/// * `buffer` : The buffer to write to.
+/// * `value` : The BytesView containing the bytes to write.
+///
+/// Example:
+///
+/// ```moonbit
+/// test "write_bytesview" {
+///   let buf = @buffer.new()
+///   let view = b"Test"[1:3]
+///   buf.write_bytesview(view)
+///   inspect!(
+///     buf.contents(),
+///     content=
+///       #|b"\x65\x73"
+///     ,
+///   )
+/// }
+/// ```
+pub fn write_bytesview(self : T, value : BytesView) -> Unit {
+  let val_len = value.length()
+  self.grow_if_necessary(self.len + val_len)
+  self.data.blit_from_bytesview(self.len, value)
+  self.len += val_len
+}
+
+///|
 /// Writes a portion of a string into the buffer in UTF-16LE encoding.
 ///
 /// Parameters:
