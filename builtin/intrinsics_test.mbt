@@ -433,3 +433,9 @@ test "UInt::reinterpret_as_float roundtrip" {
     assert_eq!(roundtrip_value, value)
   }
 }
+
+test "convert byte to int64" {
+  let b = b'\xFF'
+  let result = b.to_int64()
+  inspect!(result, content="255")
+}
