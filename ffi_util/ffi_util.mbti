@@ -1,0 +1,11 @@
+package moonbitlang/core/ffi_util
+
+// Values
+
+// Types and methods
+pub type RawFunction
+
+// Type aliases
+
+// Traits
+
