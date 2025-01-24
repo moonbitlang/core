@@ -61,6 +61,7 @@ fn Bytes::unsafe_blit(
 ///   ignore(dst.blit(6, src, 0, 20)) // Range exceeds destination length
 /// }
 /// ```
+/// @alert deprecated "Bytes is about to be changed to immutable, use `FixedArray[Byte]` instead"
 pub fn Bytes::blit(
   self : Bytes,
   dst_offset : Int,

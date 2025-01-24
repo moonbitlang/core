@@ -240,7 +240,7 @@ pub fn FixedArray::blit_from_bytes(
 /// }
 /// ```
 pub fn Bytes::copy(self : Bytes) -> Bytes {
-  Bytes::new(self.length())..blit(0, self, 0, self.length())
+  Bytes::makei(self.length(), fn(i) { self[i] })
 }
 
 ///|
