@@ -1,0 +1,19 @@
+package moonbitlang/core/fs_sync
+
+// Values
+fn read_file_to_bytes(String) -> Bytes!
+
+fn read_file_to_string(String, encoding~ : String = ..) -> String!
+
+fn write_bytes_to_file(String, Bytes) -> Unit!
+
+fn write_string_to_file(String, String, encoding~ : String = ..) -> Unit!
+
+// Types and methods
+pub type! IOError String
+impl Show for IOError
+
+// Type aliases
+
+// Traits
+

@@ -1,0 +1,18 @@
+{
+    "import": [
+        "moonbitlang/core/string",
+        "moonbitlang/core/builtin",
+        "moonbitlang/core/array",
+        "moonbitlang/core/bytes"
+    ],
+    "targets": {
+        "fs_sync_wasm.mbt": ["wasm", "wasm-gc"],
+        "fs_sync_js.mbt": ["js"],
+        "fs_sync_native.mbt": ["native"]
+    },
+    "link": {
+        "native": {
+           "cc-flags": "-O2"
+        }
+    }
+}
