@@ -24,43 +24,6 @@ fn Bytes::unsafe_blit(
 ///|
 /// Copies a sequence of bytes from a source byte sequence to a destination byte
 /// sequence.
-///
-/// Parameters:
-///
-/// * `self` : The destination byte sequence where bytes will be copied to.
-/// * `dst_offset` : The starting position in the destination sequence where
-/// bytes will be written.
-/// * `src` : The source byte sequence from which bytes will be copied.
-/// * `src_offset` : The starting position in the source sequence from which
-/// bytes will be read.
-/// * `length` : The number of bytes to copy.
-///
-/// Throws a runtime error if:
-///
-/// * `length` is negative
-/// * `dst_offset` is negative
-/// * `src_offset` is negative
-/// * The range `[dst_offset, dst_offset + length)` exceeds the length of the
-/// destination sequence
-/// * The range `[src_offset, src_offset + length)` exceeds the length of the
-/// source sequence
-///
-/// Example:
-///
-/// ```moonbit
-/// test "Bytes::blit" {
-///   let dst = Bytes::of_string("Hello, world!")
-///   let src = Bytes::of_string("MOONBIT")
-///   dst.blit(14, src, 0, 8)
-///   @json.inspect!(dst.to_unchecked_string(), content="Hello, MOONd!")
-/// }
-///
-/// test "panic Bytes::blit/out_of_bounds" {
-///   let dst = Bytes::of_string("Hello")
-///   let src = Bytes::of_string("World")
-///   ignore(dst.blit(6, src, 0, 20)) // Range exceeds destination length
-/// }
-/// ```
 /// @alert deprecated "Bytes is about to be changed to immutable, use `FixedArray[Byte]` instead"
 pub fn Bytes::blit(
   self : Bytes,
