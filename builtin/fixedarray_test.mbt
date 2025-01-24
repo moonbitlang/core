@@ -36,3 +36,18 @@ test "is_empty" {
   let arr : FixedArray[Int] = []
   assert_true!(arr.is_empty())
 }
+
+test "fixed array iter with early termination" {
+  let arr : FixedArray[Int] = [1, 2, 3]
+  let mut count = 0
+  let iter = arr.iter()
+  let _ = iter.run(fn(x) {
+    count = count + 1
+    if x == 2 {
+      IterEnd
+    } else {
+      IterContinue
+    }
+  })
+  inspect!(count, content="2")
+}
