@@ -54,3 +54,43 @@ test "abs" {
   inspect!((1.0 / 0.0).abs(), content="Infinity")
   inspect!((-1.0 / 0.0).abs(), content="Infinity")
 }
+
+///|
+test "panic is_close with invalid relative tolerance" {
+  ignore(1.0.is_close(1.0, relative_tolerance=-1.0))
+}
+
+///|
+test "panic is_close with invalid absolute tolerance" {
+  ignore(1.0.is_close(1.0, absolute_tolerance=-1.0))
+}
+
+///|
+test "panic is_close with invalid relative and absolute tolerances" {
+  ignore(1.0.is_close(1.0, relative_tolerance=-1.0, absolute_tolerance=-1.0))
+}
+
+///|
+test "to_be_bytes with negative number" {
+  let d = -123.456
+  inspect!(
+    d.to_be_bytes(),
+    content="b\"\\xc0\\x5e\\xdd\\x2f\\x1a\\x9f\\xbe\\x77\"",
+  )
+}
+
+///|
+test "to_le_bytes with infinity" {
+  inspect!(
+    (1.0 / 0.0).to_le_bytes(),
+    content="b\"\\x00\\x00\\x00\\x00\\x00\\x00\\xf0\\x7f\"",
+  )
+}
+
+///|
+test "Double::from_int with additional cases" {
+  inspect!(Double::from_int(0), content="0")
+  inspect!(Double::from_int(-42), content="-42")
+  inspect!(Double::from_int(2147483647), content="2147483647")
+  inspect!(Double::from_int(-2147483648), content="-2147483648")
+}
