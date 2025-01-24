@@ -147,3 +147,22 @@ test "Bytes::from_iter with multiple elements" {
   let bytes = Bytes::from_iter(iter)
   inspect!(bytes, content="b\"\\x61\\x62\\x63\"")
 }
+
+test "Fixed::blit_from_bytesview" {
+  let arr = FixedArray::make(4, b'\x00')
+  let view = b"\x01\x02\x03"[1:]
+  arr.blit_from_bytesview(1, view)
+  inspect!(arr, content="[b'\\x00', b'\\x02', b'\\x03', b'\\x00']")
+}
+
+test "panic Fixed::blit_from_bytesview 1" {
+  let arr = FixedArray::make(2, b'\x00')
+  let view = b"\x01\x02\x03"[1:]
+  ignore(arr.blit_from_bytesview(1, view))
+}
+
+test "panic Fixed::blit_from_bytesview 2" {
+  let arr = FixedArray::make(2, b'\x00')
+  let view = b"\x01\x02\x03"[1:]
+  ignore(arr.blit_from_bytesview(-1, view))
+}
