@@ -257,3 +257,51 @@ test "from_iter empty iter" {
   let map : Set[Int] = Set::from_iter(Iter::empty())
   inspect!(map, content="{}")
 }
+
+test "remove item causes break when psl < i" {
+  let set = Set::new()
+    ..add(1)
+    ..add(11) // This goes to a different bucket due to hash collision
+    ..remove(21) // Key doesn't exist, will cause psl < i and break
+  assert_eq!(set.size(), 2)
+}
+
+test "to_array_empty" {
+  inspect!((Set::new() : Set[Int]).to_array(), content="[]")
+}
+
+test "to_array_non_empty" {
+  let set = Set::new()..add(1)..add(2)..add(3)
+  inspect!(set.to_array(), content="[1, 2, 3]")
+}
+
+test "op_equal: different size" {
+  let set1 = Set::new()..add(1)
+  let set2 = Set::new()
+  inspect!(set1 == set2, content="false")
+}
+
+test "op_equal: different keys" {
+  let set1 = Set::new()..add(1)
+  let set2 = Set::new()..add(2)
+  inspect!(set1 == set2, content="false")
+}
+
+test "op_equal: same sets" {
+  let set1 = Set::new()..add(1)
+  let set2 = Set::new()..add(1)
+  inspect!(set1 == set2, content="true")
+}
+
+test "remove_and_check when key not found in empty slot" {
+  // Try to remove from empty set
+  inspect!(Set::new().remove_and_check(1), content="false")
+}
+
+test "trigger grow" {
+  let set = Set::new(capacity=2)
+  for i in 0..<10 {
+    assert_true!(set.add_and_check(i))
+  }
+  inspect!(set, content="{0, 1, 2, 3, 4, 5, 6, 7, 8, 9}")
+}
