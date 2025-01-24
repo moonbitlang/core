@@ -115,3 +115,33 @@ test "@float.Float::is_nan" {
   inspect!(@float.min_value.is_nan(), content="false")
   inspect!(@float.min_positive.is_nan(), content="false")
 }
+
+test "Float::default()" {
+  inspect!(Float::default(), content="0")
+}
+
+test "Float::to_be_bytes with various values" {
+  let f1 : Float = 0.0
+  inspect!(f1.to_be_bytes(), content="b\"\\x00\\x00\\x00\\x00\"")
+  let f2 : Float = -1.0
+  inspect!(f2.to_be_bytes(), content="b\"\\xbf\\x80\\x00\\x00\"")
+  let f3 : Float = @float.infinity
+  inspect!(f3.to_be_bytes(), content="b\"\\x7f\\x80\\x00\\x00\"")
+  let f4 : Float = @float.not_a_number
+  inspect!(f4.to_be_bytes(), content="b\"\\x7f\\xc0\\x00\\x00\"")
+}
+
+test "to_le_bytes for zero" {
+  inspect!(
+    (0.0 : Float).to_le_bytes(),
+    content=
+      #|b"\x00\x00\x00\x00"
+    ,
+  )
+  inspect!(
+    (-0.0 : Float).to_le_bytes(),
+    content=
+      #|b"\x00\x00\x00\x80"
+    ,
+  )
+}
