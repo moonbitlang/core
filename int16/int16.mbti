@@ -1,6 +1,9 @@
 package moonbitlang/core/int16
 
 // Values
+let max_value : Int16
+
+let min_value : Int16
 
 // Types and methods
 impl Int16 {
