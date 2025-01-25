@@ -1,6 +1,9 @@
 package moonbitlang/core/uint16
 
 // Values
+let max_value : UInt16
+
+let min_value : UInt16
 
 // Types and methods
 impl UInt16 {
