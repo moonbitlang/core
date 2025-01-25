@@ -185,3 +185,23 @@ test "hash" {
   let map4 = @hashmap.of([("one", 1), ("two", 2), ("three", 3)])
   inspect!(map1.hash() == map4.hash(), content="false")
 }
+
+test "each on empty map" {
+  let empty = @hashmap.new()
+  let mut sum = 0
+  empty.each(fn(k : Int, v : Int) { sum = sum + k + v })
+  inspect!(sum, content="0")
+}
+
+test "remove non-existent key with hash collision" {
+  let map = @hashmap.of([("a", 1)])
+  let new_map = map.remove("b")
+  inspect!(new_map.size(), content="1")
+}
+
+test "remove all keys from collision bucket" {
+  let map = @hashmap.from_array([("a", 1), ("b", 2)])
+  let map1 = map.remove("a")
+  let map2 = map1.remove("b")
+  inspect!(map2.size(), content="0")
+}

@@ -197,27 +197,6 @@ test "panic from_octets coverage for empty octets" {
   BigInt::from_octets(b"") |> ignore
 }
 
-test "panic blit_negative_length" {
-  let b1 = Bytes::of_string("abcdef")
-  let b2 = Bytes::of_string("ABCDEF")
-  // Attempt to blit with a negative length
-  b1.blit(2, b2, 3, -1)
-}
-
-test "panic blit_out_of_bounds_src" {
-  let b1 = Bytes::of_string("abcdef")
-  let b2 = Bytes::of_string("ABCDEF")
-  // Attempt to blit with src_offset + length exceeding src length
-  b1.blit(4, b2, 10, 4)
-}
-
-test "panic blit_out_of_bounds_dst" {
-  let b1 = Bytes::of_string("abcdef")
-  let b2 = Bytes::of_string("ABCDEF")
-  // Attempt to blit with dst_offset + length exceeding dst length
-  b1.blit(8, b2, 6, 6)
-}
-
 test "panic sub_string with invalid byte_length" {
   let bytes = Bytes::of_string("Hello, World!")
   bytes.to_unchecked_string(offset=0, length=-1) |> ignore

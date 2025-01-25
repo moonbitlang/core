@@ -310,3 +310,14 @@ test "write_iter" {
     ,
   )
 }
+
+test "write_bytesview" {
+  let buf = @buffer.new(size_hint=4)
+  buf.write_bytesview(b"Test"[1:3])
+  inspect!(
+    buf.contents(),
+    content=
+      #|b"\x65\x73"
+    ,
+  )
+}
