@@ -25,6 +25,7 @@ impl Bytes {
 impl Hash for Bytes
 
 // Type aliases
+pub typealias View = BytesView
 
 // Traits
 
