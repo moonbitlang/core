@@ -25,11 +25,27 @@
 /// assert_eq!(bv[1], b'\x02')
 /// assert_eq!(bv[2], b'\x03')
 /// ```
+/// @alert deprecated "use @bytes.View instead"
 struct BytesView {
   bytes : Bytes
   start : Int
   len : Int
 }
+
+///|
+/// A `@bytes.View` represents a view into a section of a `Bytes` without copying the data.
+///
+/// # Example
+/// 
+/// ```
+/// let bs = b"\x00\x01\x02\x03\x04\x05"
+/// let bv = bs[1:4]
+/// assert_eq!(bv.length(), 3)
+/// assert_eq!(bv[0], b'\x01')
+/// assert_eq!(bv[1], b'\x02')
+/// assert_eq!(bv[2], b'\x03')
+/// ```
+pub typealias View = BytesView
 
 ///|
 /// Returns the number of bytes in the view.
@@ -43,13 +59,13 @@ struct BytesView {
 /// Example:
 ///
 /// ```moonbit
-/// test "BytesView::length" {
+/// test "View::length" {
 ///   let bytes = b"\x00\x01\x02\x03\x04"
 ///   let view = bytes[2:4]
 ///   inspect!(view.length(), content="2")
 /// }
 /// ```
-pub fn BytesView::length(self : BytesView) -> Int {
+pub fn View::length(self : View) -> Int {
   self.len
 }
 
@@ -69,18 +85,18 @@ pub fn BytesView::length(self : BytesView) -> Int {
 /// Example:
 ///
 /// ```moonbit
-/// test "BytesView::op_get" {
+/// test "View::op_get" {
 ///   let bytes = b"\x01\x02\x03\x04\x05"
 ///   let view = bytes[1:4] // view contains [0x02, 0x03, 0x04]
 ///   inspect!(view[1], content="b'\\x03'")
 /// }
 /// 
-/// test "panic BytesView::op_get/out_of_bounds" {
+/// test "panic View::op_get/out_of_bounds" {
 ///   let view = b"\x01\x02\x03"[:]
 ///   ignore(view[3]) // Index out of bounds
 /// }
 /// ```
-pub fn BytesView::op_get(self : BytesView, index : Int) -> Byte {
+pub fn View::op_get(self : View, index : Int) -> Byte {
   guard index >= 0 && index < self.len else {
     abort(
       "index out of bounds: the len is from 0 to \{self.len} but the index is \{index}",
@@ -107,25 +123,25 @@ pub fn BytesView::op_get(self : BytesView, index : Int) -> Byte {
 /// Example:
 ///
 /// ```moonbit
-/// test "BytesView::unsafe_get" {
+/// test "View::unsafe_get" {
 ///   let bytes = b"\x01\x02\x03\x04\x05"
 ///   let view = bytes[2:4] // view contains [0x03, 0x04]
 ///   inspect!(view.unsafe_get(0), content="b'\\x03'")
 /// }
 /// 
-/// test "panic BytesView::unsafe_get/out_of_bounds" {
+/// test "panic View::unsafe_get/out_of_bounds" {
 ///   let view = b"\x01\x02\x03"[:]
 ///   ignore(view.unsafe_get(3)) // Panic: index out of bounds
 /// }
 /// ```
 ///
 /// @alert unsafe "Panic if index is out of bounds"
-pub fn BytesView::unsafe_get(self : BytesView, index : Int) -> Byte {
+pub fn View::unsafe_get(self : View, index : Int) -> Byte {
   self.bytes[self.start + index]
 }
 
 ///|
-/// Creates a new `BytesView` from the given `Bytes`.
+/// Creates a new `View` from the given `Bytes`.
 /// 
 /// # Example
 /// 
@@ -137,11 +153,7 @@ pub fn BytesView::unsafe_get(self : BytesView, index : Int) -> Byte {
 /// assert_eq!(bv[1], b'\x02')
 /// assert_eq!(bv[2], b'\x03')
 /// ```
-pub fn Bytes::op_as_view(
-  self : Bytes,
-  start~ : Int = 0,
-  end? : Int
-) -> BytesView {
+pub fn Bytes::op_as_view(self : Bytes, start~ : Int = 0, end? : Int) -> View {
   let len = self.length()
   let end = match end {
     None => len
@@ -149,13 +161,13 @@ pub fn Bytes::op_as_view(
   }
   let start = if start < 0 { len + start } else { start }
   guard start >= 0 && start <= end && end <= len else {
-    abort("Invalid index for BytesView")
+    abort("Invalid index for View")
   }
-  BytesView::{ bytes: self, start, len: end - start }
+  View::{ bytes: self, start, len: end - start }
 }
 
 ///|
-/// Creates a new `BytesView` from the given `BytesView`.
+/// Creates a new `View` from the given `View`.
 /// 
 /// # Example
 /// 
@@ -165,11 +177,7 @@ pub fn Bytes::op_as_view(
 /// assert_eq!(bv2.length(), 3)
 /// assert_eq!(bv2[1], b'\x02')
 /// ```
-pub fn BytesView::op_as_view(
-  self : BytesView,
-  start~ : Int = 0,
-  end? : Int
-) -> BytesView {
+pub fn View::op_as_view(self : View, start~ : Int = 0, end? : Int) -> View {
   let len = self.length()
   let end = match end {
     None => len
@@ -177,13 +185,13 @@ pub fn BytesView::op_as_view(
   }
   let start = if start < 0 { len + start } else { start }
   guard start >= 0 && start <= end && end <= len else {
-    abort("Invalid index for BytesView")
+    abort("Invalid index for View")
   }
-  BytesView::{ bytes: self.bytes, start: self.start + start, len: end - start }
+  View::{ bytes: self.bytes, start: self.start + start, len: end - start }
 }
 
 ///|
-/// Returns an iterator over the `BytesView`.
+/// Returns an iterator over the `View`.
 /// 
 /// # Example
 /// 
@@ -193,7 +201,7 @@ pub fn BytesView::op_as_view(
 /// bv.iter().each(fn(x) { sum = sum + x.to_int() })
 /// assert_eq!(sum, 15)
 /// ```
-pub fn BytesView::iter(self : BytesView) -> Iter[Byte] {
+pub fn View::iter(self : View) -> Iter[Byte] {
   Iter::new(fn(yield_) {
     for i in 0..<self.len {
       guard let IterContinue = yield_(self[i]) else { x => break x }
@@ -218,17 +226,17 @@ pub fn BytesView::iter(self : BytesView) -> Iter[Byte] {
 /// Example:
 ///
 /// ```moonbit
-/// test "BytesView::to_uint_be" {
+/// test "View::to_uint_be" {
 ///   let bytes = b"\x12\x34\x56\x78"[:]
 ///   inspect!(bytes.to_uint_be(), content="305419896") // 0x12345678
 /// }
 /// 
-/// test "panic BytesView::to_uint_be/out_of_bounds" {
+/// test "panic View::to_uint_be/out_of_bounds" {
 ///   let bytes = b"\x12\x34\x56"[:] // Less than 4 bytes
 ///   ignore(bytes.to_uint_be()) // Panics with index out of bounds
 /// }
 /// ```
-pub fn BytesView::to_uint_be(self : BytesView) -> UInt {
+pub fn View::to_uint_be(self : View) -> UInt {
   (self[0].to_uint() << 24) +
   (self[1].to_uint() << 16) +
   (self[2].to_uint() << 8) +
@@ -242,7 +250,7 @@ pub fn BytesView::to_uint_be(self : BytesView) -> UInt {
 ///
 /// Parameters:
 ///
-/// * `view` : A `BytesView` containing exactly 4 bytes to be interpreted as a
+/// * `view` : A `View` containing exactly 4 bytes to be interpreted as a
 /// little-endian unsigned integer.
 ///
 /// Returns an unsigned 32-bit integer (`UInt`) formed by interpreting the bytes
@@ -253,13 +261,13 @@ pub fn BytesView::to_uint_be(self : BytesView) -> UInt {
 /// Example:
 ///
 /// ```moonbit
-/// test "BytesView::to_uint_le" {
+/// test "View::to_uint_le" {
 ///   let bytes = b"\x01\x02\x03\x04"
 ///   let view = bytes[:]
 ///   inspect!(view.to_uint_le(), content="67305985") // 0x04030201
 /// }
 /// ```
-pub fn BytesView::to_uint_le(self : BytesView) -> UInt {
+pub fn View::to_uint_le(self : View) -> UInt {
   self[0].to_uint() +
   (self[1].to_uint() << 8) +
   (self[2].to_uint() << 16) +
@@ -286,17 +294,17 @@ pub fn BytesView::to_uint_le(self : BytesView) -> UInt {
 /// Example:
 ///
 /// ```moonbit
-/// test "BytesView::to_uint64_be" {
+/// test "View::to_uint64_be" {
 ///   let bytes = b"\x01\x23\x45\x67\x89\xAB\xCD\xEF"[:]
 ///   inspect!(bytes.to_uint64_be(), content="81985529216486895")
 /// }
 /// 
-/// test "panic BytesView::to_uint64_be/short_input" {
+/// test "panic View::to_uint64_be/short_input" {
 ///   let bytes = b"\x01\x02\x03"[:]
 ///   ignore(bytes.to_uint64_be()) // Throws error: index out of bounds
 /// }
 /// ```
-pub fn BytesView::to_uint64_be(self : BytesView) -> UInt64 {
+pub fn View::to_uint64_be(self : View) -> UInt64 {
   (self[0].to_uint().to_uint64() << 56) +
   (self[1].to_uint().to_uint64() << 48) +
   (self[2].to_uint().to_uint64() << 40) +
@@ -322,23 +330,23 @@ pub fn BytesView::to_uint64_be(self : BytesView) -> UInt64 {
 /// Returns an unsigned 64-bit integer assembled from the bytes in little-endian
 /// order.
 ///
-/// Throws a panic if the BytesView is less than 8 bytes long or if trying to
+/// Throws a panic if the View is less than 8 bytes long or if trying to
 /// access a byte beyond the view's bounds.
 ///
 /// Example:
 ///
 /// ```moonbit
-/// test "BytesView::to_uint64_le" {
+/// test "View::to_uint64_le" {
 ///   let bytes = b"\x01\x02\x03\x04\x05\x06\x07\x08"[:]
 ///   inspect!(bytes.to_uint64_le(), content="578437695752307201")
 /// }
 /// 
-/// test "panic BytesView::to_uint64_le/short_view" {
+/// test "panic View::to_uint64_le/short_view" {
 ///   let bytes = b"\x01\x02\x03"[:]
 ///   ignore(bytes.to_uint64_le()) // Panics: view is too short
 /// }
 /// ```
-pub fn BytesView::to_uint64_le(self : BytesView) -> UInt64 {
+pub fn View::to_uint64_le(self : View) -> UInt64 {
   self[0].to_uint().to_uint64() +
   (self[1].to_uint().to_uint64() << 8) +
   (self[2].to_uint().to_uint64() << 16) +
@@ -357,7 +365,7 @@ pub fn BytesView::to_uint64_le(self : BytesView) -> UInt64 {
 ///
 /// Parameters:
 ///
-/// * `bytesView` : A view into a byte sequence that must be exactly 4 bytes
+/// * `View` : A view into a byte sequence that must be exactly 4 bytes
 /// long. The bytes are interpreted in big-endian order, where the first byte is
 /// the most significant byte and the last byte is the least significant byte.
 ///
@@ -367,12 +375,12 @@ pub fn BytesView::to_uint64_le(self : BytesView) -> UInt64 {
 /// Example:
 ///
 /// ```moonbit
-/// test "BytesView::to_int_be" {
+/// test "View::to_int_be" {
 ///   let bytes = b"\x80\x00\x00\x00"[:] // Represents -2147483648 in two's complement
 ///   inspect!(bytes.to_int_be(), content="-2147483648")
 /// }
 /// ```
-pub fn BytesView::to_int_be(self : BytesView) -> Int {
+pub fn View::to_int_be(self : View) -> Int {
   self.to_uint_be().reinterpret_as_int()
 }
 
@@ -394,13 +402,13 @@ pub fn BytesView::to_int_be(self : BytesView) -> Int {
 /// Example:
 ///
 /// ```moonbit
-/// test "BytesView::to_int_le" {
+/// test "View::to_int_le" {
 ///   let bytes = b"\x78\x56\x34\x12"
 ///   let view = bytes[:]
 ///   inspect!(view.to_int_le(), content="305419896") // 0x12345678 in decimal
 /// }
 /// ```
-pub fn BytesView::to_int_le(self : BytesView) -> Int {
+pub fn View::to_int_le(self : View) -> Int {
   self.to_uint_le().reinterpret_as_int()
 }
 
@@ -419,12 +427,12 @@ pub fn BytesView::to_int_le(self : BytesView) -> Int {
 /// Example:
 ///
 /// ```moonbit
-/// test "BytesView::to_int64_be" {
+/// test "View::to_int64_be" {
 ///   let bytes = b"\x80\x00\x00\x00\x00\x00\x00\x00"[:] // Most negative 64-bit integer
 ///   inspect!(bytes.to_int64_be(), content="-9223372036854775808")
 /// }
 /// ```
-pub fn BytesView::to_int64_be(self : BytesView) -> Int64 {
+pub fn View::to_int64_be(self : View) -> Int64 {
   self.to_uint64_be().reinterpret_as_int64()
 }
 
@@ -444,13 +452,13 @@ pub fn BytesView::to_int64_be(self : BytesView) -> Int64 {
 /// Example:
 ///
 /// ```moonbit
-/// test "BytesView::to_int64_le" {
+/// test "View::to_int64_le" {
 ///   let bytes = b"\x01\x02\x03\x04\x05\x06\x07\x08"
 ///   let view = bytes[:]
 ///   inspect!(view.to_int64_le(), content="578437695752307201")
 /// }
 /// ```
-pub fn BytesView::to_int64_le(self : BytesView) -> Int64 {
+pub fn View::to_int64_le(self : View) -> Int64 {
   self.to_uint64_le().reinterpret_as_int64()
 }
 
@@ -470,7 +478,7 @@ pub fn BytesView::to_int64_le(self : BytesView) -> Int64 {
 /// Example:
 ///
 /// ```moonbit
-/// test "BytesView::to_float_be" {
+/// test "View::to_float_be" {
 ///   let bytes = b"\x40\x48\xF5\xC3" // Represents 3.14 in IEEE 754 format
 ///   let view = bytes[:]
 ///   let float = view.to_float_be()
@@ -478,7 +486,7 @@ pub fn BytesView::to_int64_le(self : BytesView) -> Int64 {
 ///   inspect!(float.to_double(), content="3.140000104904175")
 /// }
 /// ```
-pub fn BytesView::to_float_be(self : BytesView) -> Float {
+pub fn View::to_float_be(self : View) -> Float {
   self.to_uint_be().reinterpret_as_float()
 }
 
@@ -496,13 +504,13 @@ pub fn BytesView::to_float_be(self : BytesView) -> Float {
 /// Example:
 ///
 /// ```moonbit
-/// test "BytesView::to_float_le" {
+/// test "View::to_float_le" {
 ///   let bytes = b"\x00\x00\x80\x3F" // Represents 1.0 in little-endian IEEE-754
 ///   let f = bytes[:].to_float_le()
 ///   inspect!(f.to_double(), content="1")
 /// }
 /// ```
-pub fn BytesView::to_float_le(self : BytesView) -> Float {
+pub fn View::to_float_le(self : View) -> Float {
   self.to_uint_le().reinterpret_as_float()
 }
 
@@ -522,14 +530,14 @@ pub fn BytesView::to_float_le(self : BytesView) -> Float {
 /// Example:
 ///
 /// ```moonbit
-/// test "BytesView::to_double_be" {
+/// test "View::to_double_be" {
 ///   // Bytes representing 1.0 in IEEE 754 double-precision format (big-endian)
 ///   let bytes = b"\x3F\xF0\x00\x00\x00\x00\x00\x00"
 ///   let view = bytes[:]
 ///   inspect!(view.to_double_be(), content="1")
 /// }
 /// ```
-pub fn BytesView::to_double_be(self : BytesView) -> Double {
+pub fn View::to_double_be(self : View) -> Double {
   self.to_uint64_be().reinterpret_as_double()
 }
 
@@ -548,12 +556,34 @@ pub fn BytesView::to_double_be(self : BytesView) -> Double {
 /// Example:
 ///
 /// ```moonbit
-/// test "BytesView::to_double_le" {
+/// test "View::to_double_le" {
 ///   let bytes = b"\x00\x00\x00\x00\x00\x00\xF0\x3F" // represents 1.0 in little-endian
 ///   let view = bytes[:]
 ///   inspect!(view.to_double_le(), content="1")
 /// }
 /// ```
-pub fn BytesView::to_double_le(self : BytesView) -> Double {
+pub fn View::to_double_le(self : View) -> Double {
   self.to_uint64_le().reinterpret_as_double()
+}
+
+///|
+pub impl Show for View with output(self, logger) {
+  fn to_hex_digit(i : Int) -> Char {
+    if i < 10 {
+      Char::from_int('0'.to_int() + i)
+    } else {
+      Char::from_int('a'.to_int() + (i - 10))
+    }
+  }
+
+  logger.write_string("b\"")
+  for i in 0..<self.len {
+    let byte = self[i].to_int()
+    logger
+    ..write_string("\\x")
+    ..write_char(to_hex_digit(byte / 16))
+    ..write_char(to_hex_digit(byte % 16))
+    |> ignore
+  }
+  logger.write_string("\"")
 }

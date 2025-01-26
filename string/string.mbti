@@ -71,6 +71,7 @@ impl String {
 }
 
 // Type aliases
+pub typealias View = StringView
 
 // Traits
 

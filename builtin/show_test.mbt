@@ -71,21 +71,6 @@ test "Show for Bytes" {
   )
 }
 
-test "Show for BytesView" {
-  inspect!(
-    b"abcdefg"[1:5].to_string(),
-    content=
-      #|b"\x62\x63\x64\x65"
-    ,
-  )
-  inspect!(
-    b"\x00\xff\x63"[:].to_string(),
-    content=
-      #|b"\x00\xff\x63"
-    ,
-  )
-}
-
 test "Show for String" {
   fn to_string_using_output(str) {
     let buf = StringBuilder::new()
