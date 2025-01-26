@@ -34,7 +34,7 @@ pub fn map(self : L, f : (Int) -> Int) -> L {
 ///|
 fn map_dps(f : (Int) -> Int, lst : L, dest : L) -> Unit {
   loop lst, dest {
-    Nil, Cons(_, ..) as c =>  c.tail = Nil
+    Nil, Cons(_, ..) as c => c.tail = Nil
     // c.tail = lst
     // this is a common error
     Cons(head, tail~), Cons(_, ..) as c => {
@@ -47,13 +47,13 @@ fn map_dps(f : (Int) -> Int, lst : L, dest : L) -> Unit {
 }
 
 test "map" {
-  let lstL : L = Cons(1, tail=Cons(2, tail=Cons(3, tail=Cons(4, tail=Cons(5, tail=Nil)))))
+  let lstL : L = Cons(
+    1,
+    tail=Cons(2, tail=Cons(3, tail=Cons(4, tail=Cons(5, tail=Nil)))),
+  )
   let lst : L = map(lstL, fn { x => x * 2 })
   inspect!(
     lst,
-    content=
-      "Cons(2, tail=Cons(4, tail=Cons(6, tail=Cons(8, tail=Cons(10, tail=Nil)))))"
-    ,
+    content="Cons(2, tail=Cons(4, tail=Cons(6, tail=Cons(8, tail=Cons(10, tail=Nil)))))",
   )
-  
 }
