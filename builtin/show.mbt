@@ -209,11 +209,6 @@ pub impl[X : Show] Show for Array[X] with output(self, logger) {
 }
 
 ///|
-pub impl[X : Show] Show for ArrayView[X] with output(self, logger) {
-  logger.write_iter(self.iter())
-}
-
-///|
 /// Convert Char to String
 /// @intrinsic %char.to_string
 pub fn Char::to_string(self : Char) -> String {

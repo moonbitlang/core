@@ -102,7 +102,7 @@ fn parse_decimal_priv(str : String) -> Decimal!StrConvError {
 }
 
 ///|
-fn parse_decimal_from_view(str : @string.StringView) -> Decimal!StrConvError {
+fn parse_decimal_from_view(str : @string.View) -> Decimal!StrConvError {
   let d = Decimal::new_priv()
   let mut has_dp = false
   let mut has_digits = false
