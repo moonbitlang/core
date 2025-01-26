@@ -202,6 +202,69 @@ pub fn last[A](self : Array[A]) -> A? {
   }
 }
 
+///| Zips two arrays into a single array of tuples.
+///
+/// Parameters:
+///
+/// * `l` : The first array.
+/// * `r` : The second array.
+///
+/// Returns an array of tuples, where each tuple contains corresponding elements
+/// from the two input arrays.
+///
+/// Example:
+///
+/// ```moonbit
+/// test "zip" {
+///   let arr1 = [1, 2, 3]
+///   let arr2 = ['a', 'b', 'c']
+///   inspect!(zip(arr1, arr2), content="[(1, 'a'), (2, 'b'), (3, 'c')]")
+/// }
+/// ```
+pub fn zip[A, B](l : Array[A], r : Array[B]) -> Array[(A, B)] {
+  let length = if l.length() < r.length() { l.length() } else { r.length() }
+  let arr = Array::new(capacity=length)
+  for i = 0; i < length; i = i + 1 {
+    arr.push((l[i], r[i]))
+  } else {
+    return arr
+  }
+}
+
+///| Zips two arrays into a single array by applying a function to each pair of elements.
+///
+/// Parameters:
+///
+/// * `l` : The first array.
+/// * `r` : The second array.
+/// * `merge` : A function that takes two arguments, one from each array, and returns a value.
+///
+/// Returns an array containing the results of applying the function to each pair of elements.
+///
+/// Example:
+///
+/// ```moonbit
+/// test "zip_with" {
+///   let arr1 = [1, 2, 3]
+///   let arr2 = [4, 5, 6]
+///   let add = fn(a, b) { a + b }
+///   inspect!(zip_with(arr1, arr2, merge=add), content="[5, 7, 9]")
+/// }
+/// ```
+pub fn zip_with[A, B, C](
+  l : Array[A],
+  r : Array[B],
+  merge~ : (A, B) -> C
+) -> Array[C] {
+  let length = if l.length() < r.length() { l.length() } else { r.length() }
+  let arr = Array::new(capacity=length)
+  for i = 0; i < length; i = i + 1 {
+    arr.push(merge(l[i], r[i]))
+  } else {
+    return arr
+  }
+}
+
 ///|
 pub impl[X : @quickcheck.Arbitrary] @quickcheck.Arbitrary for Array[X] with arbitrary(
   size,
