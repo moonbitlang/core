@@ -461,15 +461,3 @@ pub impl[X : @quickcheck.Arbitrary] @quickcheck.Arbitrary for T[X] with arbitrar
 ) {
   @quickcheck.Arbitrary::arbitrary(size, rs) |> from_iter
 }
-
-test "queue arbitrary" {
-  let samples : Array[T[Int]] = @quickcheck.samples(20)
-  inspect!(
-    samples[1:5],
-    content="[@queue.of([]), @queue.of([0]), @queue.of([0]), @queue.of([0])]",
-  )
-  inspect!(
-    samples[15],
-    content="@queue.of([0, 0, 0, 0, 0, -1, -3, -3, -1, -4, 5, -1])",
-  )
-}

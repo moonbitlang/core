@@ -125,29 +125,16 @@ impl Array {
 }
 impl[X : Show] Show for Array[X]
 
-type ArrayView
+type ArrayView //deprecated
 impl ArrayView {
-  filter[T](Self[T], (T) -> Bool) -> Array[T]
-  fold[A, B](Self[A], init~ : B, (B, A) -> B) -> B
-  foldi[A, B](Self[A], init~ : B, (Int, B, A) -> B) -> B
-  iter[A](Self[A]) -> Iter[A]
   length[T](Self[T]) -> Int
-  map[T, U](Self[T], (T) -> U) -> Array[U]
-  map_inplace[T](Self[T], (T) -> T) -> Unit
-  mapi[T, U](Self[T], (Int, T) -> U) -> Array[U]
-  mapi_inplace[T](Self[T], (Int, T) -> T) -> Unit
   op_as_view[T](Self[T], start~ : Int = .., end? : Int) -> Self[T]
   op_get[T](Self[T], Int) -> T
   op_set[T](Self[T], Int, T) -> Unit
-  rev_fold[A, B](Self[A], init~ : B, (B, A) -> B) -> B
-  rev_foldi[A, B](Self[A], init~ : B, (Int, B, A) -> B) -> B
   swap[T](Self[T], Int, Int) -> Unit
   to_json[X : ToJson](Self[X]) -> Json
   unsafe_get[T](Self[T], Int) -> T
 }
-impl[T : Compare] Compare for ArrayView[T]
-impl[T : Eq] Eq for ArrayView[T]
-impl[X : Show] Show for ArrayView[X]
 
 type BigInt
 impl BigInt {
@@ -187,28 +174,6 @@ impl BigInt {
   to_uint64(Self) -> UInt64
 }
 impl Show for BigInt
-
-type BytesView
-impl BytesView {
-  iter(Self) -> Iter[Byte]
-  length(Self) -> Int
-  op_as_view(Self, start~ : Int = .., end? : Int) -> Self
-  op_get(Self, Int) -> Byte
-  to_double_be(Self) -> Double
-  to_double_le(Self) -> Double
-  to_float_be(Self) -> Float
-  to_float_le(Self) -> Float
-  to_int64_be(Self) -> Int64
-  to_int64_le(Self) -> Int64
-  to_int_be(Self) -> Int
-  to_int_le(Self) -> Int
-  to_uint64_be(Self) -> UInt64
-  to_uint64_le(Self) -> UInt64
-  to_uint_be(Self) -> UInt
-  to_uint_le(Self) -> UInt
-  unsafe_get(Self, Int) -> Byte
-}
-impl Show for BytesView
 
 pub(all) type! Failure String
 impl Show for Failure
@@ -694,7 +659,6 @@ impl Result {
 
 impl FixedArray {
   blit_from_bytes(Self[Byte], Int, Bytes, Int, Int) -> Unit
-  blit_from_bytesview(Self[Byte], Int, BytesView) -> Unit
   blit_from_string(Self[Byte], Int, String, Int, Int) -> Unit
   blit_to[A](Self[A], Self[A], len~ : Int, src_offset~ : Int = .., dst_offset~ : Int = ..) -> Unit
   compare[T : Compare](Self[T], Self[T]) -> Int
@@ -726,7 +690,6 @@ impl Bytes {
   makei(Int, (Int) -> Byte) -> Bytes
   new(Int) -> Bytes
   of_string(String) -> Bytes
-  op_as_view(Bytes, start~ : Int = .., end? : Int) -> BytesView
   op_equal(Bytes, Bytes) -> Bool
   op_get(Bytes, Int) -> Byte
   op_set(Bytes, Int, Byte) -> Unit //deprecated

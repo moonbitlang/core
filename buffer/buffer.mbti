@@ -1,5 +1,7 @@
 package moonbitlang/core/buffer
 
+alias @moonbitlang/core/bytes as @bytes
+
 // Values
 fn new(size_hint~ : Int = ..) -> T
 
@@ -16,7 +18,7 @@ impl T {
   to_unchecked_string(Self) -> String //deprecated
   write_byte(Self, Byte) -> Unit
   write_bytes(Self, Bytes) -> Unit
-  write_bytesview(Self, BytesView) -> Unit
+  write_bytesview(Self, @bytes.BytesView) -> Unit
   write_char(Self, Char) -> Unit
   write_double_be(Self, Double) -> Unit
   write_double_le(Self, Double) -> Unit

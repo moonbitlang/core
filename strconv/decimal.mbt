@@ -64,7 +64,7 @@ pub fn parse_decimal(str : String) -> Decimal!StrConvError {
 }
 
 ///|
-fn parse_decimal_from_view(str : @string.StringView) -> Decimal!StrConvError {
+fn parse_decimal_from_view(str : @string.View) -> Decimal!StrConvError {
   let d = Decimal::new()
   let mut has_dp = false
   let mut has_digits = false
