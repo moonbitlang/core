@@ -28,73 +28,68 @@ let int64_max = 0x7fffffffffffffffL
 /// Parse a string in the given base (0, 2 to 36), return a Int64 number or an error.
 /// If the `~base` argument is 0, the base will be inferred by the prefix.
 pub fn parse_int64(str : String, base~ : Int = 0) -> Int64!StrConvError {
-  if str == "" {
-    syntax_err!()
-  }
-  // check underscore
-  if not(check_underscore(str)) {
-    syntax_err!()
-  }
-  let mut s = str
-  // check sign
-  let mut neg = false
-  if s[0] == '+' || s[0] == '-' {
-    neg = s[0] == '-'
-    s = s.substring(start=1)
+  guard str != "" else { syntax_err!() }
+  let (neg, rest) = match str[:] {
+    ['+', .. rest] => (false, rest)
+    ['-', .. rest] => (true, rest)
+    rest => (false, rest)
   }
 
   // determine base
-  let mut num_base = 10
-  match base {
-    0 => {
-      num_base = determine_base(s)
-      if num_base != 10 {
-        s = s.substring(start=2)
-      }
+  // `allow_underscore` is used to check validity of underscores
+  let (num_base, rest, allow_underscore) = match rest {
+    ['0', 'x' | 'X', .. rest] => {
+      guard base == 0 || base == 16 else { base_err!() }
+      (16, rest, true)
     }
-    2..=36 => num_base = base
-    _ => base_err!()
+    ['0', 'o' | 'O', .. rest] => {
+      guard base == 0 || base == 8 else { base_err!() }
+      (8, rest, true)
+    }
+    ['0', 'b' | 'B', .. rest] => {
+      guard base == 0 || base == 2 else { base_err!() }
+      (2, rest, true)
+    }
+    rest =>
+      match base {
+        0 => (10, rest, false)
+        2..=36 => (base, rest, false)
+        _ => base_err!()
+      }
   }
 
   // calculate overflow threshold
   let overflow_threshold = overflow_threshold(num_base, neg)
 
   // convert
-  let mut n = 0L
-  for i = 0; i < s.length(); i = i + 1 {
-    let c = s[i]
-    let mut d = 0
-    match c {
-      '_' => continue
-      '0'..='9' => d = c - '0'
-      'a'..='z' => d = c - 'a' + 10
-      'A'..='Z' => d = c - 'A' + 10
-      _ => syntax_err!()
-    }
-    if d >= num_base {
+  loop rest, 0L, allow_underscore {
+    ['_'], _, _ =>
+      // the last character cannot be underscore
       syntax_err!()
-    }
-    if (neg && n < overflow_threshold) || (not(neg) && n >= overflow_threshold) {
-      range_err!()
-    }
-    // n*base overflows
-    n *= num_base.to_int64()
-    if neg {
-      let n1 = n - d.to_int64()
-      if n1 > n {
-        range_err!()
+    ['_', ..], _, false => syntax_err!()
+    ['_', .. rest], acc, true => continue rest, acc, false
+    [c, .. rest], acc, _ => {
+      let d = match c {
+        '0'..='9' => c - '0'
+        'a'..='z' => c - 'a' + 10
+        'A'..='Z' => c - 'A' + 10
+        _ => syntax_err!()
       }
-      n = n1
-    } else {
-      let n1 = n + d.to_int64()
-      if n1 < n {
-        // n+d overflows
-        range_err!()
+      guard d < num_base else { syntax_err!() }
+      if neg {
+        guard acc >= overflow_threshold else { range_err!() }
+        let next_acc = acc * num_base.to_int64() - d.to_int64()
+        guard next_acc <= acc else { range_err!() }
+        continue rest, next_acc, true
+      } else {
+        guard acc < overflow_threshold else { range_err!() }
+        let next_acc = acc * num_base.to_int64() + d.to_int64()
+        guard next_acc >= acc else { range_err!() }
+        continue rest, next_acc, true
       }
-      n = n1
     }
+    [], acc, _ => acc
   }
-  n
 }
 
 ///|
