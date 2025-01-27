@@ -13,37 +13,53 @@
 // limitations under the License.
 
 ///|
-fn read_char(ctx : ParseContext) -> Char? {
-  if ctx.offset < ctx.end_offset {
-    let c = ctx.input[ctx.offset]
-    ctx.offset += 1
-    let c1 = c.to_int()
-    if c1 >= 0xD800 && c1 <= 0xDBFF {
-      if ctx.offset < ctx.end_offset {
-        let c2 = ctx.input[ctx.offset].to_int()
-        if c2 >= 0xDC00 && c2 <= 0xDFFF {
-          ctx.offset += 1
-          let c3 = (c1 << 10) + c2 - 0x35fdc00
-          return Some(Char::from_int(c3))
-        }
+fn peek(self : ParseContext) -> Char? {
+  match self.view {
+    [] => None
+    [c, ..] => Some(c)
+  }
+}
+
+///|
+fn bump(self : ParseContext, builder? : Builder) -> Unit {
+  match self.view {
+    [] =>
+      // this should be a misuse of the peek & bump api
+      abort("empty view")
+    [c, .. rest] => {
+      if c == '\n' {
+        self.line += 1
+        self.column = 0
+      } else {
+        self.column += 1
+      }
+      self.view = rest
+      match builder {
+        None => ()
+        Some(builder) => builder.builder.write_char(c)
       }
     }
-    Some(c)
-  } else {
-    None
   }
+}
+
+///|
+fn position(self : ParseContext) -> Position {
+  Position::{ line: self.line, column: self.column }
 }
 
 ///|
 fn lex_skip_whitespace(ctx : ParseContext) -> Unit {
   for {
-    match read_char(ctx) {
-      Some('\t' | '\u000B' | '\u000C' | ' ' | '\n' | '\r') => continue
+    match ctx.peek() {
+      Some('\t' | '\u000B' | '\u000C' | ' ' | '\n' | '\r') => {
+        ctx.bump()
+        continue
+      }
       Some(c) => {
         if c > '\x7f' && non_ascii_whitespace.contains(c) {
+          ctx.bump()
           continue
         }
-        ctx.offset -= 1
         break
       }
       None => break
@@ -54,10 +70,16 @@ fn lex_skip_whitespace(ctx : ParseContext) -> Unit {
 ///|
 fn lex_after_array_value(ctx : ParseContext) -> Token!ParseError {
   lex_skip_whitespace(ctx)
-  match read_char(ctx) {
-    Some(']') => RBracket
-    Some(',') => Comma
-    Some(_) => invalid_char!(ctx, shift=-1)
+  match ctx.peek() {
+    Some(']') => {
+      ctx.bump()
+      RBracket
+    }
+    Some(',') => {
+      ctx.bump()
+      Comma
+    }
+    Some(c) => invalid_char!(ctx, c)
     None => raise InvalidEof
   }
 }
@@ -65,9 +87,12 @@ fn lex_after_array_value(ctx : ParseContext) -> Token!ParseError {
 ///|
 fn lex_after_property_name(ctx : ParseContext) -> Token!ParseError {
   lex_skip_whitespace(ctx)
-  match read_char(ctx) {
-    Some(':') => Colon
-    Some(_) => invalid_char!(ctx, shift=-1)
+  match ctx.peek() {
+    Some(':') => {
+      ctx.bump()
+      Colon
+    }
+    Some(c) => invalid_char!(ctx, c)
     None => raise InvalidEof
   }
 }
@@ -75,18 +100,24 @@ fn lex_after_property_name(ctx : ParseContext) -> Token!ParseError {
 ///|
 fn lex_after_object_value(ctx : ParseContext) -> Token!ParseError {
   lex_skip_whitespace(ctx)
-  match read_char(ctx) {
-    Some('}') => Token::RBrace
-    Some(',') => Token::Comma
-    Some(_) => invalid_char!(ctx, shift=-1)
+  match ctx.peek() {
+    Some('}') => {
+      ctx.bump()
+      RBrace
+    }
+    Some(',') => {
+      ctx.bump()
+      Comma
+    }
+    Some(c) => invalid_char!(ctx, c)
     None => raise InvalidEof
   }
 }
 
 ///|
 fn lex_assert_char(ctx : ParseContext, c : Char) -> Unit!ParseError {
-  match read_char(ctx) {
-    Some(c2) => if c == c2 { () } else { invalid_char!(ctx, shift=-1) }
+  match ctx.peek() {
+    Some(c2) => if c == c2 { ctx.bump() } else { invalid_char!(ctx, c2) }
     None => raise InvalidEof
   }
 }
@@ -94,13 +125,17 @@ fn lex_assert_char(ctx : ParseContext, c : Char) -> Unit!ParseError {
 ///|
 fn lex_property_name(ctx : ParseContext) -> Token!ParseError {
   lex_skip_whitespace(ctx)
-  match read_char(ctx) {
-    Some('}') => RBrace
+  match ctx.peek() {
+    Some('}') => {
+      ctx.bump()
+      RBrace
+    }
     Some('"') => {
+      ctx.bump()
       let s = lex_string!(ctx)
       String(s)
     }
-    Some(_) => invalid_char!(ctx, shift=-1)
+    Some(c) => invalid_char!(ctx, c)
     None => raise InvalidEof
   }
 }
@@ -108,12 +143,13 @@ fn lex_property_name(ctx : ParseContext) -> Token!ParseError {
 ///|
 fn lex_property_name2(ctx : ParseContext) -> Token!ParseError {
   lex_skip_whitespace(ctx)
-  match read_char(ctx) {
+  match ctx.peek() {
     Some('"') => {
+      ctx.bump()
       let s = lex_string!(ctx)
       String(s)
     }
-    Some(_) => invalid_char!(ctx, shift=-1)
+    Some(c) => invalid_char!(ctx, c)
     None => raise InvalidEof
   }
 }

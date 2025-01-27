@@ -14,45 +14,45 @@
 
 ///|
 fn lex_string(ctx : ParseContext) -> String!ParseError {
+  // the first quotation mark is already consumed
   let buf = StringBuilder::new()
-  let mut start = ctx.offset
-  fn flush(end : Int) {
-    if start > 0 && end > start {
-      buf.write_substring(ctx.input, start, end - start)
-    }
+  fn bump_and_write(char : Char) {
+    ctx.bump()
+    buf.write_char(char)
   }
 
   for {
-    match read_char(ctx) {
+    match ctx.peek() {
       Some('"') => {
-        flush(ctx.offset - 1)
+        ctx.bump()
         break
       }
-      Some('\n' | '\r') => invalid_char!(ctx, shift=-1)
+      Some('\n' | '\r' as ch) => invalid_char!(ctx, ch)
       Some('\\') => {
-        flush(ctx.offset - 1)
-        match read_char(ctx) {
-          Some('b') => buf.write_char('\b')
-          Some('f') => buf.write_char('\x0C')
-          Some('n') => buf.write_char('\n')
-          Some('r') => buf.write_char('\r')
-          Some('t') => buf.write_char('\t')
-          Some('"') => buf.write_char('"')
-          Some('\\') => buf.write_char('\\')
-          Some('/') => buf.write_char('/')
+        ctx.bump()
+        match ctx.peek() {
+          Some('b') => bump_and_write('\b')
+          Some('f') => bump_and_write('\x0C')
+          Some('n') => bump_and_write('\n')
+          Some('r') => bump_and_write('\r')
+          Some('t') => bump_and_write('\t')
+          Some('"') => bump_and_write('"')
+          Some('\\') => bump_and_write('\\')
+          Some('/') => bump_and_write('/')
           Some('u') => {
+            ctx.bump()
             let c = lex_hex_digits!(ctx, 4)
             buf.write_char(Char::from_int(c))
           }
-          Some(_) => invalid_char!(ctx, shift=-1)
+          Some(c) => invalid_char!(ctx, c)
           None => raise InvalidEof
         }
-        start = ctx.offset
       }
       Some(ch) =>
         if ch.to_int() < 32 {
-          invalid_char!(ctx, shift=-1)
+          invalid_char!(ctx, ch)
         } else {
+          bump_and_write(ch)
           continue
         }
       None => raise InvalidEof
@@ -65,22 +65,24 @@ fn lex_string(ctx : ParseContext) -> String!ParseError {
 fn lex_hex_digits(ctx : ParseContext, n : Int) -> Int!ParseError {
   let mut r = 0
   for i = 0; i < n; i = i + 1 {
-    match read_char(ctx) {
+    match ctx.peek() {
       Some(c) =>
         if c >= 'A' {
           let d = (c.to_int() & (32).lnot()) - 'A'.to_int() + 10
           if d > 15 {
-            invalid_char!(ctx, shift=-1)
+            invalid_char!(ctx, c)
           }
+          ctx.bump()
           r = (r << 4) | d
         } else if c >= '0' {
           let d = c.to_int() - '0'.to_int()
           if d > 9 {
-            invalid_char!(ctx, shift=-1)
+            invalid_char!(ctx, c)
           }
+          ctx.bump()
           r = (r << 4) | d
         } else {
-          invalid_char!(ctx, shift=-1)
+          invalid_char!(ctx, c)
         }
       None => raise InvalidEof
     }

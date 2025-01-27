@@ -13,23 +13,6 @@
 // limitations under the License.
 
 ///|
-fn offset_to_position(input : String, offset : Int) -> Position {
-  let mut line = 1
-  let mut column = 0
-  for i = 0; i < offset; i = i + 1 {
-    let c = input[i]
-    if c == '\n' {
-      line += 1
-      column = 0
-    } else {
-      column += 1
-    }
-  }
-  return Position::{ line, column }
-}
-
-///|
-fn invalid_char[T](ctx : ParseContext, shift~ : Int = 0) -> T!ParseError {
-  let offset = ctx.offset + shift
-  raise InvalidChar(offset_to_position(ctx.input, offset), ctx.input[offset])
+fn invalid_char[T](ctx : ParseContext, char : Char) -> T!ParseError {
+  raise InvalidChar(ctx.position(), char)
 }

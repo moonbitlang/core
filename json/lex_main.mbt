@@ -30,67 +30,91 @@ fn lex_value(
   allow_rbracket~ : Bool = false
 ) -> Token!ParseError {
   for {
-    match read_char(ctx) {
-      Some('\t' | ' ' | '\n' | '\r') => continue
-      Some('{') => return LBrace
-      Some('[') => return LBracket
-      Some(']') =>
+    match ctx.peek() {
+      Some('\t' | ' ' | '\n' | '\r') => {
+        ctx.bump()
+        continue
+      }
+      Some('{') => {
+        ctx.bump()
+        return LBrace
+      }
+      Some('[') => {
+        ctx.bump()
+        return LBracket
+      }
+      Some(']' as ch) =>
         if allow_rbracket {
+          ctx.bump()
           return RBracket
         } else {
-          invalid_char!(ctx, shift=-1)
+          invalid_char!(ctx, ch)
         }
       Some('n') => {
+        ctx.bump()
         lex_assert_char!(ctx, 'u')
         lex_assert_char!(ctx, 'l')
         lex_assert_char!(ctx, 'l')
         return Null
       }
       Some('t') => {
+        ctx.bump()
         lex_assert_char!(ctx, 'r')
         lex_assert_char!(ctx, 'u')
         lex_assert_char!(ctx, 'e')
         return True
       }
       Some('f') => {
+        ctx.bump()
         lex_assert_char!(ctx, 'a')
         lex_assert_char!(ctx, 'l')
         lex_assert_char!(ctx, 's')
         lex_assert_char!(ctx, 'e')
         return False
       }
-      Some('-') =>
-        match read_char(ctx) {
+      Some('-') => {
+        let builder = Builder::new(ctx.position())
+        ctx.bump(builder~)
+        match ctx.peek() {
           Some('0') => {
-            let n = lex_zero!(ctx, start=ctx.offset - 2)
+            ctx.bump(builder~)
+            let n = lex_zero!(ctx, builder)
             return Number(n)
           }
           Some(c2) => {
             if c2 >= '1' && c2 <= '9' {
-              let n = lex_decimal_integer!(ctx, start=ctx.offset - 2)
+              ctx.bump(builder~)
+              let n = lex_decimal_integer!(ctx, builder)
               return Number(n)
             }
-            invalid_char!(ctx, shift=-1)
+            invalid_char!(ctx, c2)
           }
           None => raise InvalidEof
         }
+      }
       Some('0') => {
-        let n = lex_zero!(ctx, start=ctx.offset - 1)
+        let builder = Builder::new(ctx.position())
+        ctx.bump(builder~)
+        let n = lex_zero!(ctx, builder)
         return Number(n)
       }
       Some('1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9') => {
-        let n = lex_decimal_integer!(ctx, start=ctx.offset - 1)
+        let builder = Builder::new(ctx.position())
+        ctx.bump(builder~)
+        let n = lex_decimal_integer!(ctx, builder)
         return Number(n)
       }
       Some('"') => {
+        ctx.bump()
         let s = lex_string!(ctx)
         return String(s)
       }
       Some(c) => {
         if c > '\x7f' && non_ascii_whitespace.contains(c) {
+          ctx.bump()
           continue
         }
-        invalid_char!(ctx, shift=-1)
+        invalid_char!(ctx, c)
       }
       None => raise InvalidEof
     }

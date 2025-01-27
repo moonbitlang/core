@@ -13,63 +13,88 @@
 // limitations under the License.
 
 ///|
-fn lex_decimal_integer(ctx : ParseContext, start~ : Int) -> Double!ParseError {
+fn lex_decimal_integer(
+  ctx : ParseContext,
+  builder : Builder
+) -> Double!ParseError {
   for {
-    match read_char(ctx) {
-      Some('.') => return lex_decimal_point!(ctx, start~)
-      Some('e' | 'E') => return lex_decimal_exponent!(ctx, start~)
+    match ctx.peek() {
+      Some('.') => {
+        ctx.bump(builder~)
+        return lex_decimal_point!(ctx, builder)
+      }
+      Some('e' | 'E') => {
+        ctx.bump(builder~)
+        return lex_decimal_exponent!(ctx, builder)
+      }
       Some(c) => {
         if c >= '0' && c <= '9' {
+          ctx.bump(builder~)
           continue
         }
-        ctx.offset -= 1
-        return lex_number_end!(ctx, start, ctx.offset)
+        return build_number!(builder)
       }
-      None => return lex_number_end!(ctx, start, ctx.offset)
+      None => return build_number!(builder)
     }
   }
 }
 
 ///|
-fn lex_decimal_point(ctx : ParseContext, start~ : Int) -> Double!ParseError {
-  match read_char(ctx) {
+fn lex_decimal_point(
+  ctx : ParseContext,
+  builder : Builder
+) -> Double!ParseError {
+  match ctx.peek() {
     Some(c) =>
       if c >= '0' && c <= '9' {
-        lex_decimal_fraction!(ctx, start~)
+        ctx.bump(builder~)
+        lex_decimal_fraction!(ctx, builder)
       } else {
-        invalid_char!(ctx, shift=-1)
+        invalid_char!(ctx, c)
       }
     None => raise InvalidEof
   }
 }
 
 ///|
-fn lex_decimal_fraction(ctx : ParseContext, start~ : Int) -> Double!ParseError {
+fn lex_decimal_fraction(
+  ctx : ParseContext,
+  builder : Builder
+) -> Double!ParseError {
   for {
-    match read_char(ctx) {
-      Some('e' | 'E') => return lex_decimal_exponent!(ctx, start~)
+    match ctx.peek() {
+      Some('e' | 'E') => {
+        ctx.bump(builder~)
+        return lex_decimal_exponent!(ctx, builder)
+      }
       Some(c) => {
         if c >= '0' && c <= '9' {
+          ctx.bump(builder~)
           continue
         }
-        ctx.offset -= 1
-        return lex_number_end!(ctx, start, ctx.offset)
+        return build_number!(builder)
       }
-      None => return lex_number_end!(ctx, start, ctx.offset)
+      None => return build_number!(builder)
     }
   }
 }
 
 ///|
-fn lex_decimal_exponent(ctx : ParseContext, start~ : Int) -> Double!ParseError {
-  match read_char(ctx) {
-    Some('+') | Some('-') => return lex_decimal_exponent_sign!(ctx, start~)
+fn lex_decimal_exponent(
+  ctx : ParseContext,
+  builder : Builder
+) -> Double!ParseError {
+  match ctx.peek() {
+    Some('+') | Some('-') => {
+      ctx.bump(builder~)
+      return lex_decimal_exponent_sign!(ctx, builder)
+    }
     Some(c) => {
       if c >= '0' && c <= '9' {
-        return lex_decimal_exponent_integer!(ctx, start~)
+        ctx.bump(builder~)
+        return lex_decimal_exponent_integer!(ctx, builder)
       }
-      ctx.offset -= 1
-      invalid_char!(ctx)
+      invalid_char!(ctx, c)
     }
     None => raise InvalidEof
   }
@@ -78,15 +103,15 @@ fn lex_decimal_exponent(ctx : ParseContext, start~ : Int) -> Double!ParseError {
 ///|
 fn lex_decimal_exponent_sign(
   ctx : ParseContext,
-  start~ : Int
+  builder : Builder
 ) -> Double!ParseError {
-  match read_char(ctx) {
+  match ctx.peek() {
     Some(c) => {
       if c >= '0' && c <= '9' {
-        return lex_decimal_exponent_integer!(ctx, start~)
+        ctx.bump(builder~)
+        return lex_decimal_exponent_integer!(ctx, builder)
       }
-      ctx.offset -= 1
-      invalid_char!(ctx)
+      invalid_char!(ctx, c)
     }
     None => raise InvalidEof
   }
@@ -95,49 +120,49 @@ fn lex_decimal_exponent_sign(
 ///|
 fn lex_decimal_exponent_integer(
   ctx : ParseContext,
-  start~ : Int
+  builder : Builder
 ) -> Double!ParseError {
   for {
-    match read_char(ctx) {
+    match ctx.peek() {
       Some(c) => {
         if c >= '0' && c <= '9' {
+          ctx.bump(builder~)
           continue
         }
-        ctx.offset -= 1
-        return lex_number_end!(ctx, start, ctx.offset)
+        return build_number!(builder)
       }
-      None => return lex_number_end!(ctx, start, ctx.offset)
+      None => return build_number!(builder)
     }
   }
 }
 
 ///|
-fn lex_zero(ctx : ParseContext, start~ : Int) -> Double!ParseError {
-  match read_char(ctx) {
-    Some('.') => lex_decimal_point!(ctx, start~)
-    Some('e' | 'E') => lex_decimal_exponent!(ctx, start~)
+fn lex_zero(ctx : ParseContext, builder : Builder) -> Double!ParseError {
+  match ctx.peek() {
+    Some('.') => {
+      ctx.bump(builder~)
+      lex_decimal_point!(ctx, builder)
+    }
+    Some('e' | 'E') => {
+      ctx.bump(builder~)
+      lex_decimal_exponent!(ctx, builder)
+    }
     Some(c) => {
       if c >= '0' && c <= '9' {
-        ctx.offset -= 1
-        invalid_char!(ctx)
+        invalid_char!(ctx, c)
       }
-      ctx.offset -= 1
-      return lex_number_end!(ctx, start, ctx.offset)
+      return build_number!(builder)
     }
-    None => return lex_number_end!(ctx, start, ctx.offset)
+    None => return build_number!(builder)
   }
 }
 
 ///|
-fn lex_number_end(
-  ctx : ParseContext,
-  start : Int,
-  end : Int
-) -> Double!ParseError {
-  let s = ctx.input.substring(start~, end~)
+fn build_number(builder : Builder) -> Double!ParseError {
+  let s = builder.builder.to_string()
   try {
     @strconv.parse_double!(s)
   } catch {
-    _ => raise InvalidNumber(offset_to_position(ctx.input, start), s)
+    _ => raise InvalidNumber(builder.start_pos, s)
   }
 }
