@@ -32,6 +32,36 @@ test "index_at with surrogate pairs" {
   inspect!(offset, content="StringIndex(6)")
   let offset = str.index_at(4)
   inspect!(offset, content="None")
+  inspect!(
+    str[1:2],
+    content=
+      #|"🤣"
+    ,
+  )
+  inspect!(
+    str[1:3],
+    content=
+      #|"🤣🤣"
+    ,
+  )
+  inspect!(
+    str[1:-1],
+    content=
+      #|"🤣"
+    ,
+  )
+  inspect!(
+    str[1:-2],
+    content=
+      #|""
+    ,
+  )
+  inspect!(
+    str[:-1],
+    content=
+      #|"🤣🤣"
+    ,
+  )
 }
 
 test "stringview basic" {

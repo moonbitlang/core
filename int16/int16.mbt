@@ -13,6 +13,12 @@
 // limitations under the License.
 
 ///|
+pub let max_value : Int16 = 32767
+
+///|
+pub let min_value : Int16 = -32768
+
+///|
 pub fn op_add(self : Int16, that : Int16) -> Int16 {
   (self.to_int() + that.to_int()).to_int16()
 }
