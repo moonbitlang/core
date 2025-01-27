@@ -5,6 +5,5 @@
     "moonbitlang/core/double",
     "moonbitlang/core/int64",
     "moonbitlang/core/quickcheck"
-  ],
-  "test-import": ["moonbitlang/core/array"]
+  ]
 }
