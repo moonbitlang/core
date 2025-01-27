@@ -25,19 +25,14 @@ let int64_min = -0x8000000000000000L
 let int64_max = 0x7fffffffffffffffL
 
 ///|
-/// Parse a string in the given base (0, 2 to 36), return a Int64 number or an error.
-/// If the `~base` argument is 0, the base will be inferred by the prefix.
-pub fn parse_int64(str : String, base~ : Int = 0) -> Int64!StrConvError {
-  guard str != "" else { syntax_err!() }
-  let (neg, rest) = match str[:] {
-    ['+', .. rest] => (false, rest)
-    ['-', .. rest] => (true, rest)
-    rest => (false, rest)
-  }
-
-  // determine base
-  // `allow_underscore` is used to check validity of underscores
-  let (num_base, rest, allow_underscore) = match rest {
+/// This function check whether the prefix of the string is consistent with the given base,
+/// and consume the prefix.
+/// The boolean flag `allow_underscore` is used to check validity of underscores.
+fn check_and_consume_base(
+  view : @string.StringView,
+  base : Int
+) -> (Int, @string.StringView, Bool)!StrConvError {
+  match view {
     ['0', 'x' | 'X', .. rest] => {
       guard base == 0 || base == 16 else { base_err!() }
       (16, rest, true)
@@ -57,6 +52,21 @@ pub fn parse_int64(str : String, base~ : Int = 0) -> Int64!StrConvError {
         _ => base_err!()
       }
   }
+}
+
+///|
+/// Parse a string in the given base (0, 2 to 36), return a Int64 number or an error.
+/// If the `~base` argument is 0, the base will be inferred by the prefix.
+pub fn parse_int64(str : String, base~ : Int = 0) -> Int64!StrConvError {
+  guard str != "" else { syntax_err!() }
+  let (neg, rest) = match str[:] {
+    ['+', .. rest] => (false, rest)
+    ['-', .. rest] => (true, rest)
+    rest => (false, rest)
+  }
+
+  // `allow_underscore` is used to check validity of underscores
+  let (num_base, rest, allow_underscore) = check_and_consume_base!(rest, base)
 
   // calculate overflow threshold
   let overflow_threshold = overflow_threshold(num_base, neg)
