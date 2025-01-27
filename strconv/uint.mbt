@@ -22,63 +22,42 @@ const UINT64_MAX : UInt64 = 0xffffffffffffffffUL
 /// Parse a string in the given base (0, 2 to 36), return an UInt64 number or an error.
 /// If the `~base` argument is 0, the base will be inferred by the prefix.
 pub fn parse_uint64(str : String, base~ : Int = 0) -> UInt64!StrConvError {
-  if str == "" {
-    syntax_err!()
+  guard str != "" else { syntax_err!() }
+  match str[:] {
+    ['+' | '-', ..] => syntax_err!()
+    _ => ()
   }
-  // check underscore
-  if not(check_underscore(str)) {
-    syntax_err!()
-  }
-  if str[0] == '+' || str[0] == '-' {
-    syntax_err!()
-  }
-  let mut s = str
-  // determine base
-  let mut num_base = 10
-  match base {
-    0 => {
-      num_base = determine_base(s)
-      if num_base != 10 {
-        s = s.substring(start=2)
-      }
-    }
-    2..=36 => num_base = base
-    _ => base_err!()
-  }
+
+  // `allow_underscore` is used to check validity of underscores
+  let (num_base, rest, allow_underscore) = check_and_consume_base!(str[:], base)
+
   // calculate overflow threshold
   let overflow_threshold = match num_base {
     10 => UINT64_MAX / 10 + 1
     16 => UINT64_MAX / 16 + 1
     _ => UINT64_MAX / num_base.to_uint64() + 1
   }
-  // convert
-  let mut n = 0UL
-  for i = 0; i < s.length(); i = i + 1 {
-    let c = s[i]
-    let mut d = 0
-    match c {
-      '_' => continue
-      '0'..='9' => d = c - '0'
-      'a'..='z' => d = c - 'a' + 10
-      'A'..='Z' => d = c - 'A' + 10
-      _ => syntax_err!()
-    }
-    if d >= num_base {
+  loop rest, 0UL, allow_underscore {
+    ['_'], _, _ =>
+      // the last character cannot be underscore
       syntax_err!()
+    ['_', ..], _, false => syntax_err!()
+    ['_', .. rest], acc, true => continue rest, acc, false
+    [c, .. rest], acc, _ => {
+      let d = match c {
+        '0'..='9' => c - '0'
+        'a'..='z' => c - 'a' + 10
+        'A'..='Z' => c - 'A' + 10
+        _ => syntax_err!()
+      }
+      guard d < num_base else { syntax_err!() }
+      guard acc < overflow_threshold else { range_err!() }
+      let next_acc = acc * num_base.to_uint64() + d.to_uint64()
+      guard next_acc >= acc && next_acc <= UINT64_MAX else { range_err!() }
+      continue rest, next_acc, true
     }
-    if n >= overflow_threshold {
-      // n*base overflows
-      range_err!()
-    }
-    n *= num_base.to_uint64()
-    let n1 = n + d.to_uint64()
-    if n1 < n || n1 > UINT64_MAX {
-      // n+d overflows
-      range_err!()
-    }
-    n = n1
+    [], acc, _ => acc
   }
-  n
 }
 
 ///|
