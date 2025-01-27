@@ -447,3 +447,9 @@ pub fn StringView::iter(self : StringView) -> Iter[Char] {
     }
   })
 }
+
+///|
+/// Returns true if the view is empty.
+pub fn StringView::is_empty(self : StringView) -> Bool {
+  self.start == self.end
+}
