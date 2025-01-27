@@ -107,70 +107,63 @@ pub fn parse_int(str : String, base~ : Int = 0) -> Int!StrConvError {
 // Check whether the underscores are correct.
 // Underscores must appear only between digits or between a base prefix and a digit.
 fn check_underscore(str : String) -> Bool {
-  let mut s = str
-  // 0 digit or base prefix
-  // _ underscore
-  // ! other
-  let mut last_char = '!'
-  // sign
-  if s.length() > 1 && (s[0] == '-' || s[0] == '+') {
-    s = s.substring(start=1)
+  // skip the sign
+  let rest = match str[:] {
+    ['+' | '-', .. rest] => rest
+    rest => rest
   }
+
   // base prefix
-  let mut hex = false
-  if s.length() >= 2 &&
-    s[0] == '0' &&
-    (
-      s[1] == 'b' ||
-      s[1] == 'B' ||
-      s[1] == 'o' ||
-      s[1] == 'O' ||
-      s[1] == 'x' ||
-      s[1] == 'X'
-    ) {
-    last_char = '0'
-    hex = s[1] == 'x' || s[1] == 'X'
-    s = s.substring(start=2)
+  let (rest, allow_underscore, hex) = match rest {
+    ['0', 'x' | 'X', .. rest] => (rest, true, true)
+    ['0', 'o' | 'O', .. rest] => (rest, true, false)
+    ['0', 'b' | 'B', .. rest] => (rest, true, false)
+    rest => (rest, false, false)
   }
-  // number
-  for i = 0; i < s.length(); i = i + 1 {
-    // digits
-    if '0' <= s[i] && s[i] <= '9' {
-      last_char = '0'
-      continue
+
+  // 'e' and 'E' are valid hex digits
+  // but are not treated as digits in decimal strings since they're used for scientific notation
+  fn is_digit(c : Char) -> Bool {
+    if hex {
+      ('0' <= c && c <= '9') || ('a' <= c && c <= 'f') || ('A' <= c && c <= 'F')
+    } else {
+      '0' <= c && c <= '9'
     }
-    if (hex && 'a' <= s[i] && s[i] <= 'f') || ('A' <= s[i] && s[i] <= 'F') {
-      last_char = '0'
-      continue
-    }
-    // underscore must follow digit
-    if s[i] == '_' {
-      if last_char != '0' {
-        return false
+  }
+
+  // Track whether the previous character was an underscore
+  let follow_underscore = false
+  loop rest, allow_underscore, follow_underscore {
+    // Empty string is valid
+    [], _, _ => true
+    // String ending with underscore is invalid
+    ['_'], _, _ => false
+    // Underscore not allowed in current position (e.g., between non-digits)
+    ['_', ..], false, _ => false
+    // Valid underscore - continue but mark that next char must be a digit
+    ['_', .. rest], true, _ => continue rest, false, true
+    // Handle non-underscore character
+    [c, .. rest], _, follow_underscore =>
+      if is_digit(c) {
+        // Digit found - allow underscore in next position
+        continue rest, true, false
+      } else if follow_underscore {
+        // Non-digit found after underscore - invalid
+        false
+      } else {
+        // Non-digit found (not after underscore) - continue but don't allow underscores
+        continue rest, false, false
       }
-      last_char = '_'
-      continue
-    }
-    // underscore cannot follow by underscore
-    if last_char == '_' {
-      return false
-    }
-    // other
-    last_char = '!'
   }
-  return last_char != '_'
 }
 
 ///|
 // Determine the base of the value.
 fn determine_base(s : String) -> Int {
-  if s.length() < 2 {
-    return 10
-  }
-  match s.substring(end=2) {
-    "0x" | "0X" => 16
-    "0o" | "0O" => 8
-    "0b" | "0B" => 2
+  match s[:] {
+    ['0', 'x' | 'X', ..] => 16
+    ['0', 'o' | 'O', ..] => 8
+    ['0', 'b' | 'B', ..] => 2
     _ => 10
   }
 }
