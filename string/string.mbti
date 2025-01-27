@@ -16,6 +16,7 @@ impl Show for StringIndex
 
 type StringView
 impl StringView {
+  is_empty(Self) -> Bool
   iter(Self) -> Iter[Char]
   length(Self) -> Int
   length_eq(Self, Int) -> Bool
