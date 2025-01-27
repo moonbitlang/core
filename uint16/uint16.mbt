@@ -13,6 +13,12 @@
 // limitations under the License.
 
 ///|
+pub let max_value : UInt16 = 65535
+
+///|
+pub let min_value : UInt16 = 0
+
+///|
 pub fn op_add(self : UInt16, that : UInt16) -> UInt16 {
   (self.to_int() + that.to_int()).to_uint16()
 }

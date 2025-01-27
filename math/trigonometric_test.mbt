@@ -144,6 +144,7 @@ test "atan2 with zero x" {
 test "atan2 with zero y" {
   inspect!(atan2(0.0, 1.0), content="0")
   inspect!(atan2(0.0, -1.0), content="3.141592653589793")
+  inspect!(atan2(-0.0, -1.0), content="-3.141592653589793")
 }
 
 test "atan2 with infinite y and finite x" {
