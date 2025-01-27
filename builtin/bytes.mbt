@@ -222,6 +222,39 @@ pub fn FixedArray::blit_from_bytes(
 }
 
 ///|
+/// Copy bytes from a BytesView into a fixed array of bytes.
+///
+/// Parameters:
+///
+/// * `self` : The destination fixed array of bytes.
+/// * `bytes_offset` : The starting position in the destination array where bytes will be copied.
+/// * `src` : The source BytesView to copy from.
+///
+/// Throws a panic if:
+/// * `bytes_offset` is negative
+/// * The destination array is too small to hold all bytes from the source BytesView
+///
+/// Example:
+///
+/// ```moonbit
+///  let arr = FixedArray::make(4, b'\x00')
+///  let view = b"\x01\x02\x03"[1:]
+///  arr.blit_from_bytesview(1, view)
+///  inspect!(arr, content="[b'\\x00', b'\\x02', b'\\x03', b'\\x00']")
+/// ```
+pub fn FixedArray::blit_from_bytesview(
+  self : FixedArray[Byte],
+  bytes_offset : Int,
+  src : BytesView
+) -> Unit {
+  let src_len = src.length()
+  guard bytes_offset >= 0 && bytes_offset + src_len - 1 < self.length()
+  for i = 0, j = bytes_offset; i < src_len; i = i + 1, j = j + 1 {
+    self[j] = src[i]
+  }
+}
+
+///|
 /// Creates a new byte sequence by copying all bytes from the input sequence.
 ///
 /// Parameters:

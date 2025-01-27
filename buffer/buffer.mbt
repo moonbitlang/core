@@ -559,12 +559,12 @@ pub fn write_bytes(self : T, value : Bytes) -> Unit {
 }
 
 ///|
-/// Writes a sequence of bytes from a @bytes.View into the buffer.
+/// Writes a sequence of bytes from a BytesView into the buffer.
 ///
 /// Parameters:
 ///
 /// * `buffer` : The buffer to write to.
-/// * `value` : The View containing the bytes to write.
+/// * `value` : The BytesView containing the bytes to write.
 ///
 /// Example:
 ///
@@ -581,7 +581,7 @@ pub fn write_bytes(self : T, value : Bytes) -> Unit {
 ///   )
 /// }
 /// ```
-pub fn write_bytesview(self : T, value : @bytes.View) -> Unit {
+pub fn write_bytesview(self : T, value : BytesView) -> Unit {
   let val_len = value.length()
   self.grow_if_necessary(self.len + val_len)
   self.data.blit_from_bytesview(self.len, value)

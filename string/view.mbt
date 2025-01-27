@@ -16,7 +16,6 @@
 /// A `StringView` represents a view of a String that maintains proper Unicode
 /// character boundaries. It allows safe access to a substring while handling 
 /// multi-byte characters correctly.
-/// alert deprecated "use @string.View instead"
 struct StringView {
   // # Fields
   //
@@ -30,12 +29,6 @@ struct StringView {
   start : Int
   end : Int
 }
-
-///|
-/// A `@string.View` represents a view of a String that maintains proper Unicode
-/// character boundaries. It allows safe access to a substring while handling 
-/// multi-byte characters correctly.
-pub typealias View = StringView
 
 ///|
 /// A `StringIndex` represents an unicode-aware position within a string.
@@ -158,7 +151,7 @@ pub fn index_at_rev(
 /// 
 /// Note this has O(n) complexity where n is the length of the code points in 
 /// the view.
-pub fn View::length(self : View) -> Int {
+pub fn StringView::length(self : StringView) -> Int {
   let mut len = 0
   for index = self.start; index < self.end; index = index + 1 {
     let c1 = self.str.unsafe_charcode_at(index)
@@ -180,7 +173,7 @@ pub fn View::length(self : View) -> Int {
 /// Test if the length of the view is equal to the given length.
 /// 
 /// This has O(n) complexity where n is the length in the parameter.
-pub fn length_eq(self : View, len : Int) -> Bool {
+pub fn length_eq(self : StringView, len : Int) -> Bool {
   for index = self.start, self_len = 0
       index < self.end && self_len < len
       index = index + 1, self_len = self_len + 1 {
@@ -202,7 +195,7 @@ pub fn length_eq(self : View, len : Int) -> Bool {
 /// Test if the length of the view is greater than or equal to the given length.
 /// 
 /// This has O(n) complexity where n is the length in the parameter.
-pub fn length_ge(self : View, len : Int) -> Bool {
+pub fn length_ge(self : StringView, len : Int) -> Bool {
   for index = self.start, self_len = 0
       index < self.end && self_len < len
       index = index + 1, self_len = self_len + 1 {
@@ -221,7 +214,7 @@ pub fn length_ge(self : View, len : Int) -> Bool {
 }
 
 ///|
-/// Creates a `View` into a `String`.
+/// Creates a `StringView` into a `String`.
 /// 
 /// # Example
 /// 
@@ -232,7 +225,11 @@ pub fn length_ge(self : View, len : Int) -> Bool {
 ///  #|"ello🤣"
 ///)
 /// ```
-pub fn String::op_as_view(self : String, start~ : Int = 0, end? : Int) -> View {
+pub fn String::op_as_view(
+  self : String,
+  start~ : Int = 0,
+  end? : Int
+) -> StringView {
   let str_len = self.charcode_length()
   let start = if start >= 0 {
     guard let Some(start_offset) = index_at(self, start, start=0) else {
@@ -261,13 +258,13 @@ pub fn String::op_as_view(self : String, start~ : Int = 0, end? : Int) -> View {
     None => str_len
   }
   guard start >= 0 && start <= end && end <= str_len else {
-    abort("Invalid index for View")
+    abort("Invalid index for StringView")
   }
   { str: self, start, end }
 }
 
 ///|
-/// Creates a new `View` from an existing `View`.
+/// Creates a new `StringView` from an existing `StringView`.
 /// 
 /// # Example
 /// 
@@ -279,7 +276,11 @@ pub fn String::op_as_view(self : String, start~ : Int = 0, end? : Int) -> View {
 ///   #|"llo🤣"
 /// )
 /// ```
-pub fn View::op_as_view(self : View, start~ : Int = 0, end? : Int) -> View {
+pub fn StringView::op_as_view(
+  self : StringView,
+  start~ : Int = 0,
+  end? : Int
+) -> StringView {
   let start = if start >= 0 {
     guard let Some(start_offset) = index_at(self.str, start, start=self.start) else {
       _ => abort("Invalid start index")
@@ -311,7 +312,7 @@ pub fn View::op_as_view(self : View, start~ : Int = 0, end? : Int) -> View {
     end >= self.start &&
     end <= self.end &&
     start <= end else {
-    abort("Invalid index for View")
+    abort("Invalid index for StringView")
   }
   { str: self.str, start, end }
 }
@@ -330,7 +331,7 @@ pub fn View::op_as_view(self : View, start~ : Int = 0, end? : Int) -> View {
 /// inspect!(view[0], content="'e'")
 /// inspect!(view[4], content="'🤣'")
 /// ```
-pub fn View::op_get(self : View, index : Int) -> Char {
+pub fn StringView::op_get(self : StringView, index : Int) -> Char {
   guard index >= 0 else {
     abort("Index out of bounds: cannot access negative index")
   }
@@ -382,7 +383,7 @@ pub fn View::op_get(self : View, index : Int) -> Char {
 /// inspect!(view.rev_get(0), content="'🤣'")
 /// inspect!(view.rev_get(4), content="'e'")
 /// ```
-pub fn rev_get(self : View, index : Int) -> Char {
+pub fn rev_get(self : StringView, index : Int) -> Char {
   guard index >= 0 else {
     abort("Index out of bounds: cannot access negative index")
   }
@@ -420,14 +421,14 @@ pub fn rev_get(self : View, index : Int) -> Char {
 }
 
 ///|
-pub impl Show for View with output(self, logger) {
+pub impl Show for StringView with output(self, logger) {
   let substr = self.str.substring(start=self.start, end=self.end)
   String::output(substr, logger)
 }
 
 ///|
 /// Returns an iterator over the Unicode characters in the string view.
-pub fn View::iter(self : View) -> Iter[Char] {
+pub fn StringView::iter(self : StringView) -> Iter[Char] {
   Iter::new(fn(yield_) {
     for index = self.start; index < self.end; index = index + 1 {
       let c1 = self.str.unsafe_charcode_at(index)

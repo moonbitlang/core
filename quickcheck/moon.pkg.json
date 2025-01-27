@@ -1,7 +1,3 @@
 {
-  "import": [
-    "moonbitlang/core/quickcheck/splitmix",
-    "moonbitlang/core/builtin"
-  ],
-  "test-import": ["moonbitlang/core/array"]
+  "import": ["moonbitlang/core/quickcheck/splitmix", "moonbitlang/core/builtin"]
 }
