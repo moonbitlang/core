@@ -279,8 +279,12 @@ pub fn acos(x : Double) -> Double {
 }
 
 ///|
+const SIGNBIT : UInt64 = 0x8000000000000000UL
+
+///|
 fn copysign(x : Double, y : Double) -> Double {
-  if y < 0 {
+  // should check the sign bit to distinguish +0/-0
+  if (y.reinterpret_as_uint64() & SIGNBIT) > 0 {
     -x.abs()
   } else {
     x.abs()
