@@ -14,14 +14,25 @@
 
 ///|
 priv struct ParseContext {
-  mut offset : Int
-  input : String
-  end_offset : Int
+  mut view : @string.StringView
+  mut line : Int
+  mut column : Int
+}
+
+///|
+priv struct Builder {
+  start_pos : Position
+  builder : StringBuilder
+}
+
+///|
+fn Builder::new(start_pos : Position) -> Builder {
+  { start_pos, builder: StringBuilder::new() }
 }
 
 ///|
 fn ParseContext::make(input : String) -> ParseContext {
-  { offset: 0, input, end_offset: input.length() }
+  { view: input[:], line: 1, column: 0 }
 }
 
 ///|
