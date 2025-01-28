@@ -164,8 +164,12 @@ pub fn new(size_hint~ : Int = 0) -> T {
 
 ///| Create a buffer from a bytes.
 pub fn from_bytes(bytes : Bytes) -> T {
-  let buf = new(size_hint=bytes.length())
-  buf.write_bytes(bytes)
+  let val_len = bytes.length()
+  let buf = new(size_hint=val_len)
+  // inline write_bytes, skip grow_if_necessary check
+  // SAFETY: known bytes size
+  buf.data.blit_from_bytes(0, bytes, 0, val_len)
+  buf.len = val_len
   buf
 }
 
@@ -174,16 +178,25 @@ pub fn from_bytes(bytes : Bytes) -> T {
 pub fn from_array(arr : Array[Byte]) -> T {
   let buf = new(size_hint=arr.length())
   for byte in arr {
-    buf.write_byte(byte)
+    // inline write_byte, skip grow_if_necessary check
+    // SAFETY: known array size
+    buf.data[buf.len] = byte
+    buf.len += 1
   }
   buf
 }
 
 ///|
-/// Create a buffer from an array.
+/// Create a buffer from an iterator.
 pub fn from_iter(iter : Iter[Byte]) -> T {
-  let arr = iter.collect()
-  from_array(arr)
+  let buf = new(size_hint=iter.count())
+  for byte in iter {
+    // inline write_byte, skip grow_if_necessary check
+    // SAFETY: known iter size
+    buf.data[buf.len] = byte
+    buf.len += 1
+  }
+  buf
 }
 
 ///|
