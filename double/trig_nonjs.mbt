@@ -12,6 +12,24 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+//
+// origin: FreeBSD /usr/src/lib/msun/src/e_sin.c
+// origin: FreeBSD /usr/src/lib/msun/src/e_cos.c
+// origin: FreeBSD /usr/src/lib/msun/src/e_tan.c
+// origin: FreeBSD /usr/src/lib/msun/src/e_asin.c
+// origin: FreeBSD /usr/src/lib/msun/src/e_acos.c
+// origin: FreeBSD /usr/src/lib/msun/src/s_atan.c
+// origin: FreeBSD /usr/src/lib/msun/src/e_atan2.c
+// ====================================================
+// Copyright (C) 1993 by Sun Microsystems, Inc. All rights reserved.
+//
+// Developed at SunSoft, a Sun Microsystems, Inc. business.
+// Permission to use, copy, modify, and distribute this
+// software is freely granted, provided that this notice
+// is preserved.
+// ====================================================
+//
+
 ///|
 let two_over_pi : Array[Int] = [
   0xA2F983, 0x6E4E44, 0x1529FC, 0x2757D1, 0xF534DD, 0xC0DB62, 0x95993C, 0x439041,
@@ -766,5 +784,367 @@ pub fn tan(self : Double) -> Double {
   } else {
     let n = rem_pio2(self, y)
     __kernal_tan(y[0], y[1], 1 - ((n & 1) << 1))
+  }
+}
+
+///|
+/// Calculates the arcsine of a number. Handles special cases and edge conditions
+/// according to IEEE 754 standards.
+///
+/// Parameters:
+///
+/// * `x` : The number for which to calculate the arcsine.
+///
+/// Returns the arcsine of the number `x`.
+///
+/// * Returns NaN if the input is NaN.
+/// * Returns NaN if the input is less than -1 or greater than 1.
+///
+/// Example:
+///
+/// ```moonbit
+/// test "asin" {
+///   inspect!(0.0.asin(), content="0")
+///   inspect!(1.0.asin(), content="1.5707963267948966")
+///   inspect!((-1.0).asin(), content="-1.5707963267948966")
+///   inspect!(@double.not_a_number.asin(), content="NaN")
+///   inspect!(@double.infinity.asin(), content="NaN")
+///   inspect!(@double.neg_infinity.asin(), content="NaN")
+/// }
+/// ```
+pub fn asin(self : Double) -> Double {
+  let huge = 1.0e+300
+  let pio4_hi = 7.85398163397448278999e-01
+  let pio2_hi = 1.57079632679489655800
+  let pio2_lo = 6.12323399573676603587e-17
+  let ps0 = 1.66666666666666657415e-01
+  let ps1 = -3.25565818622400915405e-01
+  let ps2 = 2.01212532134862925881e-01
+  let ps3 = -4.00555345006794114027e-02
+  let ps4 = 7.91534994289814532176e-04
+  let ps5 = 3.47933107596021167570e-05
+  let qs1 = -2.40339491173441421878e+00
+  let qs2 = 2.02094576023350569471e+00
+  let qs3 = -6.88283971605453293030e-01
+  let qs4 = 7.70381505559019352791e-02
+  let ix = get_high_word(self).reinterpret_as_int() & 0x7fffffff
+  let absx = self.abs()
+  if absx >= 1.0 {
+    if absx == 1.0 {
+      return self * pio2_hi + self * pio2_lo
+    } else {
+      return not_a_number
+    }
+  } else if absx < 0.5 {
+    if ix < 0x3e400000 {
+      if huge + self > 1.0 {
+        return self
+      }
+    } else {
+      let t = self * self
+      let p = t *
+        (ps0 + t * (ps1 + t * (ps2 + t * (ps3 + t * (ps4 + t * ps5)))))
+      let q = 1.0 + t * (qs1 + t * (qs2 + t * (qs3 + t * qs4)))
+      let w = p / q
+      return self + self * w
+    }
+  }
+  let w = 1.0 - absx
+  let t = w * 0.5
+  let p = t * (ps0 + t * (ps1 + t * (ps2 + t * (ps3 + t * (ps4 + t * ps5)))))
+  let q = 1.0 + t * (qs1 + t * (qs2 + t * (qs3 + t * qs4)))
+  let s = t.sqrt()
+  if ix >= 0x3FEF3333 {
+    let w = p / q
+    let t = pio2_hi - (2.0 * (s + s * w) - pio2_lo)
+    return if self > 0.0 { t } else { -t }
+  } else {
+    let mut w = s
+    w = set_low_word(w, 0)
+    let c = (t - w * w) / (s + w)
+    let r = p / q
+    let p = 2.0 * s * r - (pio2_lo - 2.0 * c)
+    let q = pio4_hi - 2.0 * w
+    let t = pio4_hi - (p - q)
+    return if self > 0.0 { t } else { -t }
+  }
+}
+
+///|
+/// Calculates the arccosine of a number.
+///
+/// Parameters:
+///
+/// * `x` : The number for which to calculate the arccosine.
+///
+/// Returns the arccosine of the number `x`.
+///
+/// * Returns NaN if the input is NaN.
+/// * Returns NaN if the input is less than -1 or greater than 1.
+///
+/// Example:
+///
+/// ```moonbit
+/// test "acos" {
+///   inspect!(0.0.acos(), content="1.5707963267948966")
+///   inspect!(1.0.acos(), content="0")
+///   inspect!((-1.0).acos(), content="3.141592653589793")
+///   inspect!(@double.not_a_number.acos(), content="NaN")
+///   inspect!(@double.infinity.acos(), content="NaN")
+///   inspect!(@double.neg_infinity.acos(), content="NaN")
+///   inspect!(0.0.acos(), content="1.5707963267948966")
+/// }
+/// ```
+pub fn acos(self : Double) -> Double {
+  let one : Double = 1.0
+  let pi : Double = 3.14159265358979311600
+  let pio2_hi : Double = 1.57079632679489655800
+  let pio2_lo : Double = 6.12323399573676603587e-17
+  let ps0 : Double = 1.66666666666666657415e-01
+  let ps1 : Double = -3.25565818622400915405e-01
+  let ps2 : Double = 2.01212532134862925881e-01
+  let ps3 : Double = -4.00555345006794114027e-02
+  let ps4 : Double = 7.91534994289814532176e-04
+  let ps5 : Double = 3.47933107596021167570e-05
+  let qs1 : Double = -2.40339491173441421878e+00
+  let qs2 : Double = 2.02094576023350569471e+00
+  let qs3 : Double = -6.88283971605453293030e-01
+  let qs4 : Double = 7.70381505559019352791e-02
+  let ix = get_high_word(self).reinterpret_as_int() & 0x7fffffff
+  let absx = self.abs()
+  if absx >= 1.0 {
+    if absx == 1.0 {
+      if self > 0 {
+        return 0.0
+      } else {
+        return pi + 2.0 * pio2_lo
+      }
+    }
+    return not_a_number
+  }
+  if absx < 0.5 {
+    if ix <= 0x3c600000 {
+      return pio2_hi + pio2_lo
+    }
+    let z = self * self
+    let p = z * (ps0 + z * (ps1 + z * (ps2 + z * (ps3 + z * (ps4 + z * ps5)))))
+    let q = one + z * (qs1 + z * (qs2 + z * (qs3 + z * qs4)))
+    let r = p / q
+    pio2_hi - (self - (pio2_lo - self * r))
+  } else if self < 0 {
+    let z = (one + self) * 0.5
+    let p = z * (ps0 + z * (ps1 + z * (ps2 + z * (ps3 + z * (ps4 + z * ps5)))))
+    let q = one + z * (qs1 + z * (qs2 + z * (qs3 + z * qs4)))
+    let s = z.sqrt()
+    let r = p / q
+    let w = r * s - pio2_lo
+    pi - 2.0 * (s + w)
+  } else {
+    let z = (one - self) * 0.5
+    let s = z.sqrt()
+    let df = s
+    let c = (z - df * df) / (s + df)
+    let p = z * (ps0 + z * (ps1 + z * (ps2 + z * (ps3 + z * (ps4 + z * ps5)))))
+    let q = one + z * (qs1 + z * (qs2 + z * (qs3 + z * qs4)))
+    let r = p / q
+    let w = r * s + c
+    2.0 * (df + w)
+  }
+}
+
+///|
+/// Calculates the arctangent of a number.
+///
+/// Parameters:
+///
+/// * `x` : The number for which to calculate the arctangent.
+///
+/// Returns the arctangent of the number `x`.
+///
+/// Example:
+///
+/// * Returns NaN if the input is NaN.
+///
+/// ```moonbit
+/// test "atan" {
+///   inspect!(0.0.atan(), content="0")
+///   inspect!(1.0.atan(), content="0.7853981633974483")
+///   inspect!((-1.0).atan(), content="-0.7853981633974483")
+///   inspect!(@double.not_a_number.atan(), content="NaN")
+///   inspect!(@double.infinity.atan(), content="1.5707963267948966")
+///   inspect!(@double.neg_infinity.atan(), content="-1.5707963267948966")
+/// }
+/// ```
+pub fn atan(self : Double) -> Double {
+  if self.is_nan() || self == 0.0 {
+    return self
+  }
+  let atan_hi = [
+    4.63647609000806093515e-01, 7.85398163397448278999e-01, 9.82793723247329054082e-01,
+    1.57079632679489655800e+00,
+  ]
+  let atan_lo = [
+    2.26987774529616870924e-17, 3.06161699786838301793e-17, 1.39033110312309984516e-17,
+    6.12323399573676603587e-17,
+  ]
+  let a_t = [
+    3.33333333333329318027e-01, -1.99999999998764832476e-01, 1.42857142725034663711e-01,
+    -1.11111104054623557880e-01, 9.09088713343650656196e-02, -7.69187620504482999495e-02,
+    6.66107313738753120669e-02, -5.83357013379057348645e-02, 4.97687799461593236017e-02,
+    -3.65315727442169155270e-02, 1.62858201153657823623e-02,
+  ]
+  let one = 1.0
+  let huge = 1.0e300
+  let ix = get_high_word(self).reinterpret_as_int() & 0x7fffffff
+  let mut id = 0
+  let mut z = 0.0
+  let mut w = 0.0
+  let mut self = self
+  let x_is_neg = self < 0.0
+  if ix >= 0x44100000 {
+    if self > 0 {
+      return atan_hi[3] + atan_lo[3]
+    } else {
+      return -atan_hi[3] - atan_lo[3]
+    }
+  }
+  if ix < 0x3fdc0000 {
+    if ix < 0x3e200000 {
+      if huge + self > one {
+        return self
+      }
+    }
+    id = -1
+  } else {
+    self = self.abs()
+    if ix < 0x3ff30000 {
+      if ix < 0x3fe60000 {
+        id = 0
+        self = (2.0 * self - one) / (2.0 + self)
+      } else {
+        id = 1
+        self = (self - one) / (self + one)
+      }
+    } else if ix < 0x40038000 {
+      id = 2
+      self = (self - 1.5) / (one + 1.5 * self)
+    } else {
+      id = 3
+      self = -1.0 / self
+    }
+  }
+  z = self * self
+  w = z * z
+  let s1 = z *
+    (
+      a_t[0] +
+      w * (a_t[2] + w * (a_t[4] + w * (a_t[6] + w * (a_t[8] + w * a_t[10]))))
+    )
+  let s2 = w *
+    (a_t[1] + w * (a_t[3] + w * (a_t[5] + w * (a_t[7] + w * a_t[9]))))
+  if id < 0 {
+    self - self * (s1 + s2)
+  } else {
+    z = atan_hi[id] - (self * (s1 + s2) - atan_lo[id] - self)
+    if x_is_neg {
+      -z
+    } else {
+      z
+    }
+  }
+}
+
+///|
+/// Calculates the arctangent of the quotient of two numbers.
+///
+/// Parameters:
+///
+/// * `self` : The numerator of the quotient.
+/// * `x` : The denominator of the quotient.
+///
+/// Returns the arctangent of the quotient `self / x`.
+///
+/// * Returns NaN if self or x is NaN.
+///
+/// Example:
+///
+/// ```moonbit
+/// test "atan2" {
+///   inspect!(0.0.atan2(-1.0), content="3.141592653589793")
+///   inspect!(1.0.atan2(0.0), content="1.5707963267948966")
+///   inspect!(1.0.atan2(1.0), content="0.7853981633974483")
+///   inspect!(not_a_number.atan2(1.0), content="NaN")
+///   inspect!(1.0.atan2(not_a_number), content="NaN")
+///   inspect!(infinity.atan2(1.0), content="1.5707963267948966")
+///   inspect!(1.0.atan2(infinity), content="0")
+///   inspect!(neg_infinity.atan2(1.0), content="-1.5707963267948966")
+///   inspect!(1.0.atan2(neg_infinity), content="3.141592653589793")
+///   inspect!(infinity.atan2(infinity), content="0.7853981633974483")
+///   inspect!(neg_infinity.atan2(neg_infinity), content="-2.356194490192345")
+///   inspect!(infinity.atan2(neg_infinity), content="2.356194490192345")
+///   inspect!(neg_infinity.atan2(infinity), content="-0.7853981633974483")
+/// }
+/// ```
+pub fn atan2(self : Double, x : Double) -> Double {
+  if x.is_nan() || self.is_nan() {
+    return not_a_number
+  }
+  let tiny = 1.0e-300
+  let zero = 0.0
+  let pi_o_4 = 7.8539816339744827900E-01
+  let pi_o_2 = 1.5707963267948965580E+00
+  let pi = 3.1415926535897931160E+00
+  let pi_lo = 1.2246467991473531772E-16
+  let hx = get_high_word(x).reinterpret_as_int()
+  let hy = get_high_word(self).reinterpret_as_int()
+  let ix = hx & 0x7fffffff
+  let iy = hy & 0x7fffffff
+  if x == 1.0 {
+    return self.atan()
+  }
+  let m = ((hy >> 31) & 1) | ((hx >> 30) & 2)
+  if self == 0 {
+    match m {
+      0 | 1 => return self
+      2 => return pi + tiny
+      _ => return -pi - tiny
+    }
+  }
+  if x == 0 {
+    return if hy < 0 { -pi_o_2 - tiny } else { pi_o_2 + tiny }
+  }
+  if x.is_inf() {
+    if self.is_inf() {
+      match m {
+        0 => return pi_o_4 + tiny
+        1 => return -pi_o_4 - tiny
+        2 => return 3.0 * pi_o_4 + tiny
+        _ => return -3.0 * pi_o_4 - tiny
+      }
+    } else {
+      match m {
+        0 => return zero
+        1 => return -zero
+        2 => return pi + tiny
+        _ => return -pi - tiny
+      }
+    }
+  }
+  if self.is_inf() {
+    return if hy < 0 { -pi_o_2 - tiny } else { pi_o_2 + tiny }
+  }
+  let k = (iy - ix) >> 20
+  let z = if k > 60 {
+    pi_o_2 + 0.5 * pi_lo
+  } else if hx < 0 && k < -60 {
+    0.0
+  } else {
+    (self / x).abs().atan()
+  }
+  match m {
+    0 => z
+    1 => -z
+    2 => pi - (z - pi_lo)
+    _ => z - pi_lo - pi
   }
 }

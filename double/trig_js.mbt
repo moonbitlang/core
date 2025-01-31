@@ -89,3 +89,115 @@ pub fn cos(self : Double) -> Double = "Math" "cos"
 /// }
 /// ```
 pub fn tan(self : Double) -> Double = "Math" "tan"
+
+///|
+/// Calculates the arcsine of a number. Handles special cases and edge conditions
+/// according to IEEE 754 standards.
+///
+/// Parameters:
+///
+/// * `x` : The number for which to calculate the arcsine.
+///
+/// Returns the arcsine of the number `x`.
+///
+/// * Returns NaN if the input is NaN.
+/// * Returns NaN if the input is less than -1 or greater than 1.
+///
+/// Example:
+///
+/// ```moonbit
+/// test "asin" {
+///   inspect!(0.0.asin(), content="0")
+///   inspect!(1.0.asin(), content="1.5707963267948966")
+///   inspect!((-1.0).asin(), content="-1.5707963267948966")
+///   inspect!(@double.not_a_number.asin(), content="NaN")
+///   inspect!(@double.infinity.asin(), content="NaN")
+///   inspect!(@double.neg_infinity.asin(), content="NaN")
+/// }
+/// ```
+pub fn asin(self : Double) -> Double = "Math" "asin"
+
+///|
+/// Calculates the arccosine of a number.
+///
+/// Parameters:
+///
+/// * `x` : The number for which to calculate the arccosine.
+///
+/// Returns the arccosine of the number `x`.
+///
+/// * Returns NaN if the input is NaN.
+/// * Returns NaN if the input is less than -1 or greater than 1.
+///
+/// Example:
+///
+/// ```moonbit
+/// test "acos" {
+///   inspect!(0.0.acos(), content="1.5707963267948966")
+///   inspect!(1.0.acos(), content="0")
+///   inspect!((-1.0).acos(), content="3.141592653589793")
+///   inspect!(@double.not_a_number.acos(), content="NaN")
+///   inspect!(@double.infinity.acos(), content="NaN")
+///   inspect!(@double.neg_infinity.acos(), content="NaN")
+///   inspect!(0.0.acos(), content="1.5707963267948966")
+/// }
+/// ```
+pub fn acos(self : Double) -> Double = "Math" "acos"
+
+///|
+/// Calculates the arctangent of a number.
+///
+/// Parameters:
+///
+/// * `x` : The number for which to calculate the arctangent.
+///
+/// Returns the arctangent of the number `x`.
+///
+/// Example:
+///
+/// * Returns NaN if the input is NaN.
+///
+/// ```moonbit
+/// test "atan" {
+///   inspect!(0.0.atan(), content="0")
+///   inspect!(1.0.atan(), content="0.7853981633974483")
+///   inspect!((-1.0).atan(), content="-0.7853981633974483")
+///   inspect!(@double.not_a_number.atan(), content="NaN")
+///   inspect!(@double.infinity.atan(), content="1.5707963267948966")
+///   inspect!(@double.neg_infinity.atan(), content="-1.5707963267948966")
+/// }
+/// ```
+pub fn atan(self : Double) -> Double = "Math" "atan"
+
+///|
+/// Calculates the arctangent of the quotient of two numbers.
+///
+/// Parameters:
+///
+/// * `self` : The numerator of the quotient.
+/// * `x` : The denominator of the quotient.
+///
+/// Returns the arctangent of the quotient `self / x`.
+///
+/// * Returns NaN if self or x is NaN.
+///
+/// Example:
+///
+/// ```moonbit
+/// test "atan2" {
+///   inspect!(0.0.atan2(-1.0), content="3.141592653589793")
+///   inspect!(1.0.atan2(0.0), content="1.5707963267948966")
+///   inspect!(1.0.atan2(1.0), content="0.7853981633974483")
+///   inspect!(not_a_number.atan2(1.0), content="NaN")
+///   inspect!(1.0.atan2(not_a_number), content="NaN")
+///   inspect!(infinity.atan2(1.0), content="1.5707963267948966")
+///   inspect!(1.0.atan2(infinity), content="0")
+///   inspect!(neg_infinity.atan2(1.0), content="-1.5707963267948966")
+///   inspect!(1.0.atan2(neg_infinity), content="3.141592653589793")
+///   inspect!(infinity.atan2(infinity), content="0.7853981633974483")
+///   inspect!(neg_infinity.atan2(neg_infinity), content="-2.356194490192345")
+///   inspect!(infinity.atan2(neg_infinity), content="2.356194490192345")
+///   inspect!(neg_infinity.atan2(infinity), content="-0.7853981633974483")
+/// }
+/// ```
+pub fn atan2(self : Double, x : Double) -> Double = "Math" "atan2"

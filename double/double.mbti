@@ -18,6 +18,10 @@ let not_a_number : Double
 // Types and methods
 impl Double {
   abs(Double) -> Double
+  acos(Double) -> Double
+  asin(Double) -> Double
+  atan(Double) -> Double
+  atan2(Double, Double) -> Double
   ceil(Double) -> Double
   cos(Double) -> Double
   exp(Double) -> Double
