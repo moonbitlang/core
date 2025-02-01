@@ -83,7 +83,8 @@ test "trigonometric functions" {
     7.606099243270125,
   ]
   fn high_accuracy_test(expect : Double, actual : Double) -> Unit!Error {
-    assert_eq!((expect - actual).abs() < 1.0e-14, true)
+    let ulp = (expect.reinterpret_as_int64() - actual.reinterpret_as_int64()).abs()
+    assert_eq!(ulp <= 1, true)
   }
 
   for i in 0..<vals.length() {
