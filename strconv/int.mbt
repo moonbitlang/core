@@ -55,8 +55,27 @@ fn check_and_consume_base(
 }
 
 ///|
-/// Parse a string in the given base (0, 2 to 36), return a Int64 number or an error.
-/// If the `~base` argument is 0, the base will be inferred by the prefix.
+/// Parses a string into an Int64 number using the specified base, or returns an error.
+/// The base must be 0 or between 2 and 36 (inclusive). If base is 0, it will be 
+/// inferred from the string prefix:
+///   - "0x" or "0X" for base 16 (hex)
+///   - "0o" or "0O" for base 8 (octal) 
+///   - "0b" or "0B" for base 2 (binary)
+///   - Default is base 10 (decimal)
+/// For readability, underscores may appear after base prefixes or between digits.
+/// These underscores do not affect the value.
+/// Examples:
+/// ```
+/// inspect!(parse_int64!("123"), content="123")
+/// inspect!(parse_int64!("0xff", base=0), content="255") 
+/// inspect!(parse_int64!("0o10"), content="8")
+/// inspect!(parse_int64!("0b1010"), content="10")
+/// inspect!(parse_int64!("1_234"), content="1234")
+/// inspect!(parse_int64!("-123"), content="-123")
+/// inspect!(parse_int64!("ff", base=16), content="255")
+/// inspect!(parse_int64!("zz", base=36), content="1295")
+/// ```
+/// 
 pub fn parse_int64(str : String, base~ : Int = 0) -> Int64!StrConvError {
   guard str != "" else { syntax_err!() }
   let (neg, rest) = match str[:] {

@@ -46,6 +46,27 @@ let max_exponent_disguised_fast_path : Int64 = 37L
 let max_mantissa_fast_path : UInt64 = 2UL << mantissa_explicit_bits
 
 ///|
+/// Parse a string into a double precision floating point number. The string
+/// must contain at least one of:
+/// - An integer part (decimal digits)
+/// - A decimal point followed by a fractional part (decimal digits)
+/// - An exponent part ('e' or 'E' followed by an optional sign and decimal digits)
+///
+/// The string may optionally start with a sign ('+' or '-').
+/// For readability, underscores may appear between digits.
+///
+/// Examples:
+/// ```
+/// inspect!(parse_double!("123"), content="123")
+/// inspect!(parse_double!("12.34"), content="12.34")
+/// inspect!(parse_double!(".123"), content="0.123")
+/// inspect!(parse_double!("1e5"), content="100000")
+/// inspect!(parse_double!("1.2e-3"), content="0.0012")
+/// inspect!(parse_double!("1_234.5"), content="1234.5")
+/// ```
+///
+/// An exponent value exp scales the mantissa (significand) by 10^exp.
+/// For example, "1.23e2" represents 1.23 × 10² = 123.
 pub fn parse_double(str : String) -> Double!StrConvError {
   if str.length() == 0 {
     syntax_err!()

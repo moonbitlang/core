@@ -26,6 +26,7 @@ impl Decimal {
   shift(Self, Int) -> Unit
   to_double(Self) -> Double!StrConvError
 }
+impl Show for Decimal
 
 pub(all) type! StrConvError String
 impl Show for StrConvError
