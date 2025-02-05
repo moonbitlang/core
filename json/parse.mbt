@@ -27,10 +27,9 @@ pub fn parse(input : String) -> JsonValue!ParseError {
   let ctx = ParseContext::make(input)
   let val = parse_value!(ctx)
   lex_skip_whitespace(ctx)
-  if ctx.view.is_empty() {
-    val
-  } else {
-    invalid_char!(ctx, ctx.view[0])
+  match ctx.view {
+    [] => val
+    [a, ..] => invalid_char!(ctx, a)
   }
 }
 
