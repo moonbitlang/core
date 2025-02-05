@@ -18,7 +18,12 @@ let not_a_number : Double
 // Types and methods
 impl Double {
   abs(Double) -> Double
+  acos(Double) -> Double
+  asin(Double) -> Double
+  atan(Double) -> Double
+  atan2(Double, Double) -> Double
   ceil(Double) -> Double
+  cos(Double) -> Double
   exp(Double) -> Double
   floor(Double) -> Double
   from_int(Int) -> Double
@@ -37,6 +42,8 @@ impl Double {
   pow(Double, Double) -> Double
   round(Double) -> Double
   signum(Double) -> Double
+  sin(Double) -> Double
+  tan(Double) -> Double
   to_be_bytes(Double) -> Bytes
   to_le_bytes(Double) -> Bytes
   to_string(Double) -> String

@@ -114,7 +114,7 @@ test "concat-multiple-full-tree" {
 
 test "concat-multiple-random-tree" {
   let bf = branching_factor_power(2)
-  let rng = @random.new(seed=b"DEADBEEFDEADBEEFDEADBEEFDEADBEEF")
+  let rng = Random({ val: 0UL })
   execute_array_test!(gen_concat_seq(2, fn(_i) { rng.int(limit=bf) }))
 }
 
