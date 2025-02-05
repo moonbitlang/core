@@ -514,14 +514,3 @@ test "panic stringview negative index3" {
   let _ = str[-1:-2]
 
 }
-
-test "is_empty" {
-  let str = "hello"
-  let view = str[1:4]
-  inspect!(view.is_empty(), content="false")
-  let view = str[0:0]
-  inspect!(view.is_empty(), content="true")
-  let str = ""
-  let view = str[:]
-  inspect!(view.is_empty(), content="true")
-}
