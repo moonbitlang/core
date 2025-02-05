@@ -115,3 +115,12 @@ test "@moonbitlang/core/strconv.parse_int64/boundary_cases" {
 test "panic @moonbitlang/core/strconv.parse_int64/invalid_base" {
   ignore(@moonbitlang/core/strconv.parse_int64!("12345x"))
 }
+
+test "edge cases" {
+  // Invalid: Missing digits after hex prefix
+  inspect!(@strconv.parse_int64?("0x"), content="Err(invalid syntax)")
+  inspect!(@strconv.parse_int64?("0x_"), content="Err(invalid syntax)")
+
+  // Underscore is allowed between the prefix and the first digit
+  inspect!(@strconv.parse_int64?("0x_DEADBEEF"), content="Ok(3735928559)")
+}
