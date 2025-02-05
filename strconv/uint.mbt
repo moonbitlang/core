@@ -37,6 +37,12 @@ pub fn parse_uint64(str : String, base~ : Int = 0) -> UInt64!StrConvError {
     16 => UINT64_MAX / 16 + 1
     _ => UINT64_MAX / num_base.to_uint64() + 1
   }
+  let has_digit = match rest {
+    ['0'..='9' | 'a'..='z' | 'A'..='Z', ..]
+    | ['_', '0'..='9' | 'a'..='z' | 'A'..='Z', ..] => true
+    _ => false
+  }
+  guard has_digit else { syntax_err!() }
   loop rest, 0UL, allow_underscore {
     ['_'], _, _ =>
       // the last character cannot be underscore

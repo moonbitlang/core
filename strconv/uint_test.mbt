@@ -84,9 +84,9 @@ test "@strconv.parse_uint64/hex_and_edge_cases" {
 
 test "edge cases" {
   // Invalid: Missing digits after hex prefix
-  // inspect!(@strconv.parse_uint64?("0x"), content="Err(invalid syntax)")
+  inspect!(@strconv.parse_uint64?("0x"), content="Err(invalid syntax)")
+  inspect!(@strconv.parse_uint64?("0x_"), content="Err(invalid syntax)")
 
-  // Invalid underscore placements in hexadecimal strings
-  // inspect!(@strconv.parse_uint64?("0x_DEADBEEF"), content="Err(invalid syntax)")
-
+  // Underscore is allowed between the prefix and the first digit
+  inspect!(@strconv.parse_uint64?("0x_DEADBEEF"), content="Ok(3735928559)")
 }
