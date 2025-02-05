@@ -70,7 +70,7 @@ fn code_point_of_surrogate_pair(leading : Int, trailing : Int) -> Char {
 ///
 /// # Panics
 ///
-/// Panics if the index is out of bounds.
+/// @alert unsafe "Panics if the index is out of bounds."
 pub fn charcode_at(self : String, index : Int) -> Int {
   guard index >= 0 && index < self.length() else {
     abort("index out of bounds")

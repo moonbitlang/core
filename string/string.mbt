@@ -692,7 +692,7 @@ pub fn pad_end(self : String, total_width : Int, padding_char : Char) -> String 
 ///
 /// # Panics
 ///
-/// Panics if the index is out of bounds.
+/// @alert unsafe "Panics if the index is out of bounds."
 pub fn String::rev_get(self : String, index : Int) -> Char {
   guard index >= 0 else { abort("index out of bounds") }
   for utf16_offset = self.charcode_length() - 1, char_count = 0
