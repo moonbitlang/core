@@ -53,6 +53,7 @@ test "parse_int64_uncovered_lines" {
     assert_eq!(parse_as_result(t.0, base=t.1), t.2)
   }
 }
+
 test "@strconv.parse_int64/base_parsing" {
   // Test different bases
   inspect!(@strconv.parse_int64!("1010", base=2), content="10")
