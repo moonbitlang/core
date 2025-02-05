@@ -58,7 +58,26 @@ pub fn Decimal::from_int64(v : Int64) -> Decimal {
 }
 
 ///|
-/// Create a decimal from number string.
+/// Parse a string into a decimal number. The string must contain at least one of:
+/// - An integer part (decimal digits)
+/// - A decimal point followed by a fractional part (decimal digits)
+/// - An exponent part ('e' or 'E' followed by an optional sign and decimal digits)
+///
+/// The string may optionally start with a sign ('+' or '-').
+/// For readability, underscores may appear between digits.
+///
+/// Examples:
+/// ```
+/// inspect!(parse_decimal!("123"), content="123")
+/// inspect!(parse_decimal!("12.34"), content="12.34")
+/// inspect!(parse_decimal!(".123"), content="0.123")
+/// inspect!(parse_decimal!("1e5"), content="100000")
+/// inspect!(parse_decimal!("1.2e-3"), content="0.0012")
+/// inspect!(parse_decimal!("1_234.5"), content="1234.5")
+/// ```
+///
+/// An exponent value exp scales the mantissa (significand) by 10^exp.
+/// For example, "1.23e2" represents 1.23 × 10² = 123.
 pub fn parse_decimal(str : String) -> Decimal!StrConvError {
   parse_decimal_from_view!(str[:])
 }
@@ -544,7 +563,7 @@ fn trim(self : Decimal) -> Unit {
 }
 
 ///|
-impl Show for Decimal with output(self, logger) {
+pub impl Show for Decimal with output(self, logger) {
   if self.digits_num == 0 {
     logger.write_char('0')
     return
