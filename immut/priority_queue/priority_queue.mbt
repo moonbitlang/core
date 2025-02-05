@@ -127,7 +127,7 @@ pub fn pop[A : Compare](self : T[A]) -> T[A]? {
 ///|
 /// Pops the first value from the immutable priority queue.
 ///
-/// Panics if the queue is empty.
+/// @alert unsafe "Panics if the queue is empty."
 /// # Example
 /// ```
 /// let queue = @priority_queue.of([1, 2, 3, 4])

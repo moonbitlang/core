@@ -31,7 +31,7 @@ pub fn Option::to_string[X : Show](self : X?) -> String {
 
 ///|
 /// Extract the value in `Some`.
-/// Panic if input is `None`.
+/// @alert unsafe "Panic if input is `None`."
 pub fn Option::unwrap[X](self : X?) -> X {
   match self {
     None => panic()
