@@ -14,6 +14,8 @@
     "mod_nonjs.mbt": ["not", "js"],
     "pow_js.mbt": ["js"],
     "pow_nonjs.mbt": ["not", "js"],
+    "trig_js.mbt" : ["js"],
+    "trig_nonjs.mbt" : ["not", "js"],
     "round_js.mbt": ["js"],
     "round_wasm.mbt": ["wasm", "wasm-gc"],
     "round.mbt": ["not", "js", "wasm", "wasm-gc"],
