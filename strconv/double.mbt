@@ -96,8 +96,8 @@ pub fn parse_double(str : String) -> Double!StrConvError {
     Some(value) => value
     None => {
       // fallback to slow path
-      let ret = parse_decimal!(str)
-      ret.to_double!()
+      let ret = parse_decimal_priv!(str)
+      ret.to_double_priv!()
     }
   }
 }

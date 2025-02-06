@@ -19,6 +19,7 @@
 /// reference:
 /// - <https://nigeltao.github.io/blog/2020/parse-number-f64-simple.html>
 /// - <https://nigeltao.github.io/blog/2020/eisel-lemire.html>
+/// @alert deprecated "Decimal will be changed to private. Use `@strconv.parse_double` instead"
 struct Decimal {
   digits : FixedArray[Byte]
   mut digits_num : Int
@@ -41,7 +42,13 @@ let powtab = [
 
 ///|
 /// Create a zero decimal.
+/// @alert deprecated "Decimal will be changed to private. Use `@strconv.parse_double` instead"
 pub fn Decimal::new() -> Decimal {
+  Decimal::new_priv()
+}
+
+///|
+fn Decimal::new_priv() -> Decimal {
   {
     digits: FixedArray::make(800, Byte::default()),
     digits_num: 0,
@@ -53,8 +60,14 @@ pub fn Decimal::new() -> Decimal {
 
 ///|
 /// Create a decimal with an Int64 value.
+/// @alert deprecated "Decimal will be changed to private. Use `@strconv.parse_double` instead"
 pub fn Decimal::from_int64(v : Int64) -> Decimal {
-  Decimal::new()..assign(v)
+  Decimal::from_int64_priv(v)
+}
+
+///|
+fn Decimal::from_int64_priv(v : Int64) -> Decimal {
+  Decimal::new_priv()..assign(v)
 }
 
 ///|
@@ -78,13 +91,19 @@ pub fn Decimal::from_int64(v : Int64) -> Decimal {
 ///
 /// An exponent value exp scales the mantissa (significand) by 10^exp.
 /// For example, "1.23e2" represents 1.23 × 10² = 123.
+/// @alert deprecated "use `@strconv.parse_double` instead"
 pub fn parse_decimal(str : String) -> Decimal!StrConvError {
   parse_decimal_from_view!(str[:])
 }
 
 ///|
+fn parse_decimal_priv(str : String) -> Decimal!StrConvError {
+  parse_decimal_from_view!(str[:])
+}
+
+///|
 fn parse_decimal_from_view(str : @string.StringView) -> Decimal!StrConvError {
-  let d = Decimal::new()
+  let d = Decimal::new_priv()
   let mut has_dp = false
   let mut has_digits = false
   // read sign
@@ -158,14 +177,20 @@ fn parse_decimal_from_view(str : @string.StringView) -> Decimal!StrConvError {
   d..trim()
 }
 
-///| @alert deprecated "use `@strconv.parse_decimal` instead"
+///| @alert deprecated "use `@strconv.parse_double` instead"
 pub fn Decimal::parse_decimal(str : String) -> Decimal!StrConvError {
-  parse_decimal!(str)
+  parse_decimal_from_view!(str[:])
 }
 
 ///|
 /// Convert the decimal to Double.
+///| @alert deprecated "use `@strconv.parse_double` instead to avoid using this method."
 pub fn to_double(self : Decimal) -> Double!StrConvError {
+  self.to_double_priv!()
+}
+
+///|
+fn to_double_priv(self : Decimal) -> Double!StrConvError {
   let mut exponent = 0
   let mut mantissa = 0L
   // check the underflow and overflow
@@ -191,7 +216,7 @@ pub fn to_double(self : Decimal) -> Double!StrConvError {
     } else {
       n = powtab[self.decimal_point]
     }
-    self.shift(-n)
+    self.shift_priv(-n)
     exponent += n
   }
   // left shift
@@ -203,7 +228,7 @@ pub fn to_double(self : Decimal) -> Double!StrConvError {
     } else {
       n = powtab[-self.decimal_point]
     }
-    self.shift(n)
+    self.shift_priv(n)
     exponent -= n
   }
 
@@ -215,7 +240,7 @@ pub fn to_double(self : Decimal) -> Double!StrConvError {
   // if the exponent is smaller, move it up and shift decimal accordingly
   if exponent < double_info.bias + 1 {
     let n = double_info.bias + 1 - exponent
-    self.shift(-n)
+    self.shift_priv(-n)
     exponent += n
   }
   if exponent - double_info.bias >= (1 << double_info.exponent_bits) - 1 {
@@ -225,7 +250,7 @@ pub fn to_double(self : Decimal) -> Double!StrConvError {
 
   // multiply by (2 ** precision) and round to get mantissa
   // extract mantissa_bits + 1 bits
-  self.shift(double_info.mantissa_bits + 1)
+  self.shift_priv(double_info.mantissa_bits + 1)
   mantissa = self.rounded_integer()
 
   // rounding might have added a bit, shift down.
@@ -251,7 +276,13 @@ pub fn to_double(self : Decimal) -> Double!StrConvError {
 ///|
 /// Binary shift left (s > 0) or right (s < 0).
 /// The shift count must not larger than the max_shift to avoid overflow.
+/// @alert deprecated "use `@strconv.parse_double` instead to avoid using this method."
 pub fn shift(self : Decimal, s : Int) -> Unit {
+  self.shift_priv(s)
+}
+
+///|
+fn shift_priv(self : Decimal, s : Int) -> Unit {
   if self.digits_num == 0 {
     return
   }
@@ -601,18 +632,8 @@ fn Decimal::to_string(self : Decimal) -> String {
   Show::to_string(self)
 }
 
-test "from_int64" {
-  let d = Decimal::from_int64(-1)
-  inspect!(d.to_string(), content="0")
-}
-
-test "to_string" {
-  let d = parse_decimal!("-1")
-  inspect!(d.to_string(), content="1")
-}
-
 test "new" {
-  let hpd = Decimal::from_int64(1L)
+  let hpd = Decimal::from_int64_priv(1L)
   assert_eq!(hpd.digits.length(), 800)
   assert_eq!(hpd.digits_num, 1)
   assert_eq!(hpd.decimal_point, 1)
@@ -621,20 +642,20 @@ test "new" {
 }
 
 test "from_int64" {
-  let hpd = Decimal::from_int64(123456789L)
+  let hpd = Decimal::from_int64_priv(123456789L)
   assert_eq!(hpd.to_string(), "123456789")
 }
 
 test "parse_decimal" {
   let s = "0.0000000000000000000000000000007888609052210118054117285652827862296732064351090230047702789306640625"
   let hpd = try {
-    parse_decimal!(s)
+    parse_decimal_priv!(s)
   } catch {
     _ => panic()
   }
   assert_eq!(hpd.to_string(), s)
   let hpd = try {
-    parse_decimal!("1.0e-10")
+    parse_decimal_priv!("1.0e-10")
   } catch {
     _ => panic()
   }
@@ -642,7 +663,7 @@ test "parse_decimal" {
 }
 
 test "to_string" {
-  let hpd = Decimal::from_int64(123456789L)
+  let hpd = Decimal::from_int64_priv(123456789L)
   hpd.decimal_point = 1
   assert_eq!(hpd.to_string(), "1.23456789")
   hpd.decimal_point = 0
@@ -668,24 +689,24 @@ test "shift" {
   ]
   for i = 0; i < tests.length(); i = i + 1 {
     let t = tests[i]
-    let d = Decimal::from_int64(t.0)
-    d.shift(t.1)
+    let d = Decimal::from_int64_priv(t.0)
+    d.shift_priv(t.1)
     assert_eq!(d.to_string(), t.2)
   }
 }
 
 test "parse decimal with underscore" {
-  inspect!(parse_decimal!("1e1_2"), content="1000000000000")
-  inspect!(parse_decimal!("1e12"), content="1000000000000")
-  inspect!(parse_decimal!("1_2_3"), content="123")
+  inspect!(parse_decimal_priv!("1e1_2"), content="1000000000000")
+  inspect!(parse_decimal_priv!("1e12"), content="1000000000000")
+  inspect!(parse_decimal_priv!("1_2_3"), content="123")
 }
 
 test "parse decimal error" {
-  inspect!(parse_decimal?("1e"), content="Err(invalid syntax)")
-  inspect!(parse_decimal?("1e+"), content="Err(invalid syntax)")
-  inspect!(parse_decimal?("1e_"), content="Err(invalid syntax)")
-  inspect!(parse_decimal?("1-23"), content="Err(invalid syntax)")
-  inspect!(parse_decimal?("1.2.3"), content="Err(invalid syntax)")
+  inspect!(parse_decimal_priv?("1e"), content="Err(invalid syntax)")
+  inspect!(parse_decimal_priv?("1e+"), content="Err(invalid syntax)")
+  inspect!(parse_decimal_priv?("1e_"), content="Err(invalid syntax)")
+  inspect!(parse_decimal_priv?("1-23"), content="Err(invalid syntax)")
+  inspect!(parse_decimal_priv?("1.2.3"), content="Err(invalid syntax)")
 }
 
 test "parse decimal with large numbers" {
@@ -694,16 +715,16 @@ test "parse decimal with large numbers" {
     s += "9"
   }
   inspect!(
-    parse_decimal!(s),
+    parse_decimal_priv!(s),
     content="9999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999",
   )
 }
 
 test "should_round_up when truncated and half-way" {
   // Create a decimal from "12.50"
-  let decimal = parse_decimal!("12.50")
+  let decimal = parse_decimal_priv!("12.50")
   // Convert to double
-  inspect!(decimal.to_double!(), content="12.5")
+  inspect!(decimal.to_double_priv!(), content="12.5")
 }
 
 test "parse_decimal with large numbers and truncation" {
@@ -713,13 +734,13 @@ test "parse_decimal with large numbers and truncation" {
     s += "0"
   }
   inspect!(
-    parse_decimal!(s),
+    parse_decimal_priv!(s),
     content="10000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
   )
 }
 
 test "corner cases" {
-  inspect!(parse_decimal?(".123"), content="Ok(0.123)")
-  inspect!(parse_decimal?("."), content="Err(invalid syntax)")
-  inspect!(parse_decimal?("-"), content="Err(invalid syntax)")
+  inspect!(parse_decimal_priv?(".123"), content="Ok(0.123)")
+  inspect!(parse_decimal_priv?("."), content="Err(invalid syntax)")
+  inspect!(parse_decimal_priv?("-"), content="Err(invalid syntax)")
 }
