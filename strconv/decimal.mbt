@@ -601,6 +601,16 @@ fn Decimal::to_string(self : Decimal) -> String {
   Show::to_string(self)
 }
 
+test "from_int64" {
+  let d = Decimal::from_int64(-1)
+  inspect!(d.to_string(), content="0")
+}
+
+test "to_string" {
+  let d = parse_decimal!("-1")
+  inspect!(d.to_string(), content="1")
+}
+
 test "new" {
   let hpd = Decimal::from_int64(1L)
   assert_eq!(hpd.digits.length(), 800)
