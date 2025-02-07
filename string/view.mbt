@@ -427,6 +427,20 @@ pub impl Show for StringView with output(self, logger) {
 }
 
 ///|
+/// Returns a new String containing a copy of the characters in this view.
+/// 
+/// # Examples
+/// 
+/// ```
+/// let str = "Hello World"
+/// let view = str[0:5]  // "Hello"
+/// inspect!(view.to_string(), content="Hello")
+/// ```
+pub fn to_string(self : StringView) -> String {
+  self.str.substring(start=self.start, end=self.end)
+}
+
+///|
 /// Returns an iterator over the Unicode characters in the string view.
 pub fn StringView::iter(self : StringView) -> Iter[Char] {
   Iter::new(fn(yield_) {

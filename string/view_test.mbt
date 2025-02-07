@@ -514,3 +514,10 @@ test "panic stringview negative index3" {
   let _ = str[-1:-2]
 
 }
+
+test "to_string" {
+  let s = "Hello World"
+  let view = s[0:5]
+  let ss = "\{view} Moonbit"
+  inspect!(ss, content="Hello Moonbit")
+}
