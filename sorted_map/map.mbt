@@ -47,6 +47,7 @@ pub fn from_array[K : Compare, V](entries : Array[(K, V)]) -> T[K, V] {
   entries.each(fn(e) { map.add(e.0, e.1) })
   map
 }
+
 ///|
 /// Inserts a key-value pair.
 pub fn add[K : Compare, V](self : T[K, V], key : K, value : V) -> Unit {
