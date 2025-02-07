@@ -13,9 +13,50 @@
 // limitations under the License.
 
 ///|
+/// Represents a generic test failure type used primarily in test assertions and
+/// validations.
+///
+/// Since this is a type definition using `type!` syntax, it creates an error
+/// type `Failure` that wraps a `String` value containing the failure message.
+///
+/// Parameters:
+///
+/// * `message` : A string describing the nature of the failure.
+///
+/// Example:
+///
+/// ```moonbit
+/// test "Failure" {
+///   let err : Failure = Failure("Test assertion failed")
+///   match err {
+///     Failure(msg) => inspect!(msg, content="Test assertion failed")
+///   }
+/// }
+/// ```
 pub(all) type! Failure String
 
 ///|
+/// Raises a `Failure` error with a given message and source location.
+///
+/// Parameters:
+///
+/// * `message` : A string containing the error message to be included in the
+/// failure.
+/// * `location` : The source code location where the failure occurred.
+/// Automatically provided by the compiler when not specified.
+///
+/// Returns a value of type `T` wrapped in a `Failure` error type.
+///
+/// Throws an error of type `Failure` with a message that includes both the
+/// source location and the provided error message.
+///
+/// Example:
+///
+/// ```moonbit
+/// test "panic fail" {
+///   fail!("Something went wrong")
+/// }
+/// ```
 pub fn fail[T](msg : String, loc~ : SourceLoc = _) -> T!Failure {
   raise Failure("FAILED: \{loc} \{msg}")
 }
