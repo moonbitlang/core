@@ -347,7 +347,8 @@ fn d2d(ieeeMantissa : UInt64, ieeeExponent : UInt) -> FloatingDecimal64 {
       // This should use q <= 22, but I think 21 is also safe. Smaller values
       // may still be safe, but it's more difficult to reason about them.
       // Only one of mp, mv, and mm can be a multiple of 5, if any.
-      let mvMod5 : Int = mv.to_int() - 5 * (mv / 5UL).to_int()
+      let mvMod5 : UInt = mv.to_uint() - 5U * (mv / 5UL).to_uint()
+      let mvMod5 : Int = mvMod5.reinterpret_as_int()
       if mvMod5 == 0 {
         vrIsTrailingZeros = multipleOfPowerOf5(mv, q)
       } else if even {
@@ -402,9 +403,11 @@ fn d2d(ieeeMantissa : UInt64, ieeeExponent : UInt) -> FloatingDecimal64 {
       if vpDiv10 <= vmDiv10 {
         break
       }
-      let vmMod10 : Int = vm.to_int() - 10 * vmDiv10.to_int()
+      let vmMod10 : UInt = vm.to_uint() - 10U * vmDiv10.to_uint()
+      let vmMod10 : Int = vmMod10.reinterpret_as_int()
       let vrDiv10 = vr / 10
-      let vrMod10 : Int = vr.to_int() - 10 * vrDiv10.to_int()
+      let vrMod10 : UInt = vr.to_uint() - 10U * vrDiv10.to_uint()
+      let vrMod10 : Int = vrMod10.reinterpret_as_int()
       vmIsTrailingZeros = vmIsTrailingZeros && vmMod10 == 0
       vrIsTrailingZeros = vrIsTrailingZeros && lastRemovedDigit == 0
       lastRemovedDigit = vrMod10
@@ -416,13 +419,15 @@ fn d2d(ieeeMantissa : UInt64, ieeeExponent : UInt) -> FloatingDecimal64 {
     if vmIsTrailingZeros {
       while true {
         let vmDiv10 = vm / 10
-        let vmMod10 : Int = vm.to_int() - 10 * vmDiv10.to_int()
+        let vmMod10 : UInt = vm.to_uint() - 10U * vmDiv10.to_uint()
+        let vmMod10 : Int = vmMod10.reinterpret_as_int()
         if vmMod10 != 0 {
           break
         }
         let vpDiv10 = vp / 10
         let vrDiv10 = vr / 10
-        let vrMod10 : Int = vr.to_int() - 10 * vrDiv10.to_int()
+        let vrMod10 : UInt = vr.to_uint() - 10U * vrDiv10.to_uint()
+        let vrMod10 : Int = vrMod10.reinterpret_as_int()
         vrIsTrailingZeros = vrIsTrailingZeros && lastRemovedDigit == 0
         lastRemovedDigit = vrMod10
         vr = vrDiv10
@@ -446,7 +451,8 @@ fn d2d(ieeeMantissa : UInt64, ieeeExponent : UInt) -> FloatingDecimal64 {
     let vmDiv100 = vm / 100
     if vpDiv100 > vmDiv100 {
       let vrDiv100 = vr / 100
-      let vrMod100 : Int = vr.to_int() - 100 * vrDiv100.to_int()
+      let vrMod100 : UInt = vr.to_uint() - (100 : UInt) * vrDiv100.to_uint()
+      let vrMod100 : Int = vrMod100.reinterpret_as_int()
       roundUp = vrMod100 >= 50
       vr = vrDiv100
       vp = vpDiv100
@@ -464,7 +470,8 @@ fn d2d(ieeeMantissa : UInt64, ieeeExponent : UInt) -> FloatingDecimal64 {
         break
       }
       let vrDiv10 = vr / 10
-      let vrMod10 : Int = vr.to_int() - 10 * vrDiv10.to_int()
+      let vrMod10 : UInt = vr.to_uint() - 10U * vrDiv10.to_uint()
+      let vrMod10 : Int = vrMod10.reinterpret_as_int()
       roundUp = vrMod10 >= 5
       vr = vrDiv10
       vp = vpDiv10

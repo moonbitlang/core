@@ -296,7 +296,7 @@ pub fn Byte::to_uint(self : Byte) -> UInt {
 ///
 /// Returns the resulting `Byte` value after the shift operation.
 pub fn Byte::op_shl(self : Byte, count : Int) -> Byte {
-  (self.to_int() << count).to_byte()
+  (self.to_uint() << count).to_byte()
 }
 
 ///|
