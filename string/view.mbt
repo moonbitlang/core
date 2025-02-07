@@ -436,7 +436,7 @@ pub impl Show for StringView with output(self, logger) {
 /// let view = str[0:5]  // "Hello"
 /// inspect!(view.to_string(), content="Hello")
 /// ```
-pub fn to_string(self : StringView) -> String {
+pub impl Show for StringView with to_string(self) {
   self.str.substring(start=self.start, end=self.end)
 }
 
