@@ -3,11 +3,13 @@ package moonbitlang/core/sorted_map
 alias @moonbitlang/core/quickcheck as @quickcheck
 
 // Values
+fn from_array[K : Compare, V](Array[(K, V)]) -> T[K, V]
+
 fn from_iter[K : Compare, V](Iter[(K, V)]) -> T[K, V]
 
 fn new[K, V]() -> T[K, V]
 
-fn of[K : Compare, V](Array[(K, V)]) -> T[K, V]
+fn of[K : Compare, V](Array[(K, V)]) -> T[K, V] //deprecated
 
 // Types and methods
 type T
