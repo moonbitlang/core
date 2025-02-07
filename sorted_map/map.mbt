@@ -34,13 +34,19 @@ pub fn new[K, V]() -> T[K, V] {
 }
 
 ///|
-/// Creates a sorted map from given entries.
+/// @alert deprecated "Use @sorted_map.from_array instead"
 pub fn of[K : Compare, V](entries : Array[(K, V)]) -> T[K, V] {
   let map = { root: None, size: 0 }
   entries.each(fn(e) { map.add(e.0, e.1) })
   map
 }
 
+///| Creates a sorted map from a array of key-value pairs.
+pub fn from_array[K : Compare, V](entries : Array[(K, V)]) -> T[K, V] {
+  let map = { root: None, size: 0 }
+  entries.each(fn(e) { map.add(e.0, e.1) })
+  map
+}
 ///|
 /// Inserts a key-value pair.
 pub fn add[K : Compare, V](self : T[K, V], key : K, value : V) -> Unit {
@@ -454,7 +460,7 @@ test "new" {
 }
 
 test "of" {
-  let map = of([(3, "c"), (2, "b"), (1, "a")])
+  let map = from_array([(3, "c"), (2, "b"), (1, "a")])
   inspect!(map.debug_tree(), content="([2]2,b,([1]1,a,_,_),([1]3,c,_,_))")
   inspect!(map.size(), content="3")
 }
@@ -514,14 +520,14 @@ test "add4" {
 }
 
 test "add duplicate key" {
-  let map = of([(3, "c"), (2, "b"), (1, "a")])
+  let map = from_array([(3, "c"), (2, "b"), (1, "a")])
   inspect!(map.debug_tree(), content="([2]2,b,([1]1,a,_,_),([1]3,c,_,_))")
   map.add(1, "x")
   inspect!(map.debug_tree(), content="([2]2,b,([1]1,x,_,_),([1]3,c,_,_))")
 }
 
 test "remove" {
-  let map = of([
+  let map = from_array([
     (1, "a"),
     (2, "b"),
     (3, "c"),
@@ -583,7 +589,7 @@ test "op_set" {
 }
 
 test "clear" {
-  let map = of([(3, "c"), (2, "b"), (1, "a")])
+  let map = from_array([(3, "c"), (2, "b"), (1, "a")])
   map.clear()
   inspect!(map.debug_tree(), content="_")
   inspect!(map.size(), content="0")
