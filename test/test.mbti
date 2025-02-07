@@ -5,8 +5,6 @@ fn eq[T : Show + Eq](T, T, loc~ : SourceLoc = _) -> Unit! //deprecated
 
 fn fail[T](String, loc~ : SourceLoc = _) -> T!
 
-fn is[T : Show](T, T, loc~ : SourceLoc = _) -> Unit! //deprecated
-
 fn is_false(Bool, loc~ : SourceLoc = _) -> Unit! //deprecated
 
 fn is_not[T : Show](T, T, loc~ : SourceLoc = _) -> Unit!
