@@ -23,7 +23,6 @@ impl StringView {
   op_as_view(Self, start~ : Int = .., end? : Int) -> Self
   op_get(Self, Int) -> Char
   rev_get(Self, Int) -> Char
-  to_string(Self) -> String
 }
 impl Show for StringView
 
