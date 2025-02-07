@@ -278,6 +278,7 @@ impl[T : Show] Show for Iter[T]
 
 type Iter2
 impl Iter2 {
+  concat[A, B](Self[A, B], Self[A, B]) -> Self[A, B]
   each[A, B](Self[A, B], (A, B) -> Unit) -> Unit
   iter[A, B](Self[A, B]) -> Iter[(A, B)]
   iter2[A, B](Self[A, B]) -> Self[A, B]
