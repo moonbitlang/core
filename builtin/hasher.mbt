@@ -138,7 +138,8 @@ fn Hasher::avalanche(self : Hasher) -> Int {
 
 ///|
 fn Hasher::consume4(self : Hasher, input : Int) -> Unit {
-  let tmp = self.acc.reinterpret_as_uint() + input.reinterpret_as_uint() * gPRIME3
+  let tmp = self.acc.reinterpret_as_uint() +
+    input.reinterpret_as_uint() * gPRIME3
   let tmp = rotl(tmp.reinterpret_as_int(), 17).reinterpret_as_uint()
   let tmp = tmp * gPRIME4
   self.acc = tmp.reinterpret_as_int()
@@ -159,11 +160,11 @@ fn rotl(x : Int, r : Int) -> Int {
 ///|
 fn endian32(input : Bytes, cur : Int) -> Int {
   let tmp = input[cur + 0].to_uint() |
-  (
-    (input[cur + 1].to_uint() << 8) |
-    (input[cur + 2].to_uint() << 16) |
-    (input[cur + 3].to_uint() << 24)
-  )
+    (
+      (input[cur + 1].to_uint() << 8) |
+      (input[cur + 2].to_uint() << 16) |
+      (input[cur + 3].to_uint() << 24)
+    )
   tmp.reinterpret_as_int()
 }
 

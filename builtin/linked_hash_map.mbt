@@ -64,12 +64,11 @@ fn power_2_above(x : Int, n : Int) -> Int {
     if i >= n {
       break i
     }
-    let mark = 0x40000000   // TODO
+    let mark = 0x40000000 // TODO
     if (i & mark) != mark { // test integer overflow
       continue i << 1
-    }
-    else {
-      break i 
+    } else {
+      break i
     }
   }
 }
