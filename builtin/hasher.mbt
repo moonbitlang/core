@@ -158,12 +158,13 @@ fn rotl(x : Int, r : Int) -> Int {
 
 ///|
 fn endian32(input : Bytes, cur : Int) -> Int {
-  input[cur + 0].to_int() |
+  let tmp = input[cur + 0].to_uint() |
   (
-    (input[cur + 1].to_int() << 8) |
-    (input[cur + 2].to_int() << 16) |
-    (input[cur + 3].to_int() << 24)
+    (input[cur + 1].to_uint() << 8) |
+    (input[cur + 2].to_uint() << 16) |
+    (input[cur + 3].to_uint() << 24)
   )
+  tmp.reinterpret_as_int()
 }
 
 // pub impl Hash for String with hash(self) {
