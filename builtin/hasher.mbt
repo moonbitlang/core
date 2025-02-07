@@ -13,19 +13,19 @@
 // limitations under the License.
 
 ///|
-let gPRIME1 = 0x9E3779B1
+let gPRIME1 : UInt = 0x9E3779B1
 
 ///|
-let gPRIME2 = 0x85EBCA77
+let gPRIME2 : UInt = 0x85EBCA77
 
 ///|
-let gPRIME3 = 0xC2B2AE3D
+let gPRIME3 : UInt = 0xC2B2AE3D
 
 ///|
-let gPRIME4 = 0x27D4EB2F
+let gPRIME4 : UInt = 0x27D4EB2F
 
 ///|
-let gPRIME5 = 0x165667B1
+let gPRIME5 : UInt = 0x165667B1
 
 ///|
 /// xxhash32 Hasher
@@ -35,7 +35,8 @@ struct Hasher {
 
 ///|
 pub fn Hasher::new(seed~ : Int = 0) -> Hasher {
-  { acc: seed + gPRIME5 }
+  let result = seed.reinterpret_as_uint() + gPRIME5
+  { acc: result.reinterpret_as_int() }
 }
 
 ///|
@@ -128,26 +129,31 @@ pub fn Hasher::finalize(self : Hasher) -> Int {
 fn Hasher::avalanche(self : Hasher) -> Int {
   let mut acc = self.acc.reinterpret_as_uint()
   acc = acc ^ (acc >> 15)
-  acc *= gPRIME2.reinterpret_as_uint()
+  acc *= gPRIME2
   acc = acc ^ (acc >> 13)
-  acc *= gPRIME3.reinterpret_as_uint()
+  acc *= gPRIME3
   acc = acc ^ (acc >> 16)
   acc.reinterpret_as_int()
 }
 
 ///|
 fn Hasher::consume4(self : Hasher, input : Int) -> Unit {
-  self.acc = rotl(self.acc + input * gPRIME3, 17) * gPRIME4
+  let tmp = self.acc.reinterpret_as_uint() + input.reinterpret_as_uint() * gPRIME3
+  let tmp = rotl(tmp.reinterpret_as_int(), 17).reinterpret_as_uint()
+  let tmp = tmp * gPRIME4
+  self.acc = tmp.reinterpret_as_int()
 }
 
 ///|
 fn Hasher::consume1(self : Hasher, input : Byte) -> Unit {
-  self.acc = rotl(self.acc + input.to_int() * gPRIME5, 11) * gPRIME1
+  let tmp = self.acc.reinterpret_as_uint() + input.to_uint() * gPRIME5
+  let tmp = rotl(tmp.reinterpret_as_int(), 11).reinterpret_as_uint() * gPRIME1
+  self.acc = tmp.reinterpret_as_int()
 }
 
 ///|
 fn rotl(x : Int, r : Int) -> Int {
-  (x << r) | (x.reinterpret_as_uint() >> (32 - r)).reinterpret_as_int()
+  ((x.reinterpret_as_uint() << r) | (x.reinterpret_as_uint() >> (32 - r))).reinterpret_as_int()
 }
 
 ///|
