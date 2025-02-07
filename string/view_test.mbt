@@ -32,96 +32,31 @@ test "index_at with surrogate pairs" {
   inspect!(offset, content="StringIndex(6)")
   let offset = str.index_at(4)
   inspect!(offset, content="None")
-  inspect!(
-    str[1:2],
-    content=
-      #|"🤣"
-    ,
-  )
-  inspect!(
-    str[1:3],
-    content=
-      #|"🤣🤣"
-    ,
-  )
-  inspect!(
-    str[1:-1],
-    content=
-      #|"🤣"
-    ,
-  )
-  inspect!(
-    str[1:-2],
-    content=
-      #|""
-    ,
-  )
-  inspect!(
-    str[:-1],
-    content=
-      #|"🤣🤣"
-    ,
-  )
+  inspect!(str[1:2], content="🤣")
+  inspect!(str[1:3], content="🤣🤣")
+  inspect!(str[1:-1], content="🤣")
+  inspect!(str[1:-2], content="")
+  inspect!(str[:-1], content="🤣🤣")
 }
 
 test "stringview basic" {
   let str = "Hello🤣🤣🤣"
   let start = 1
   let end = 6
-  inspect!(
-    str[start:],
-    content=
-      #|"ello🤣🤣🤣"
-    ,
-  )
-  inspect!(
-    str[:end],
-    content=
-      #|"Hello🤣"
-    ,
-  )
-  inspect!(
-    str[start:end],
-    content=
-      #|"ello🤣"
-    ,
-  )
-  inspect!(
-    str[:],
-    content=
-      #|"Hello🤣🤣🤣"
-    ,
-  )
+  inspect!(str[start:], content="ello🤣🤣🤣")
+  inspect!(str[:end], content="Hello🤣")
+  inspect!(str[start:end], content="ello🤣")
+  inspect!(str[:], content="Hello🤣🤣🤣")
 }
 
 test "stringview basic2" {
   let str = "He🤣🤣🤣llo"
   let start = 1
   let end = 7
-  inspect!(
-    str[start:],
-    content=
-      #|"e🤣🤣🤣llo"
-    ,
-  )
-  inspect!(
-    str[:end],
-    content=
-      #|"He🤣🤣🤣ll"
-    ,
-  )
-  inspect!(
-    str[start:end],
-    content=
-      #|"e🤣🤣🤣ll"
-    ,
-  )
-  inspect!(
-    str[:],
-    content=
-      #|"He🤣🤣🤣llo"
-    ,
-  )
+  inspect!(str[start:], content="e🤣🤣🤣llo")
+  inspect!(str[:end], content="He🤣🤣🤣ll")
+  inspect!(str[start:end], content="e🤣🤣🤣ll")
+  inspect!(str[:], content="He🤣🤣🤣llo")
 }
 
 test "stringview subview" {
@@ -129,30 +64,10 @@ test "stringview subview" {
   let start = 1
   let end = 6
   let view = str[start:end]
-  inspect!(
-    view[1:],
-    content=
-      #|"llo🤣"
-    ,
-  )
-  inspect!(
-    view[1:4],
-    content=
-      #|"llo"
-    ,
-  )
-  inspect!(
-    view[:4],
-    content=
-      #|"ello"
-    ,
-  )
-  inspect!(
-    view[:],
-    content=
-      #|"ello🤣"
-    ,
-  )
+  inspect!(view[1:], content="llo🤣")
+  inspect!(view[1:4], content="llo")
+  inspect!(view[:4], content="ello")
+  inspect!(view[:], content="ello🤣")
 }
 
 test "stringview op_get" {
@@ -252,103 +167,33 @@ test "stringview negative index" {
   let str = "Hello🤣🤣🤣"
   let str_view = str[:]
   let view = str_view[-1:]
-  inspect!(
-    view,
-    content=
-      #|"🤣"
-    ,
-  )
+  inspect!(view, content="🤣")
   let view = str_view[-2:]
-  inspect!(
-    view,
-    content=
-      #|"🤣🤣"
-    ,
-  )
+  inspect!(view, content="🤣🤣")
   let view = str_view[-3:]
-  inspect!(
-    view,
-    content=
-      #|"🤣🤣🤣"
-    ,
-  )
+  inspect!(view, content="🤣🤣🤣")
   let view = str_view[-4:]
-  inspect!(
-    view,
-    content=
-      #|"o🤣🤣🤣"
-    ,
-  )
+  inspect!(view, content="o🤣🤣🤣")
   let view = str_view[:-1]
-  inspect!(
-    view,
-    content=
-      #|"Hello🤣🤣"
-    ,
-  )
+  inspect!(view, content="Hello🤣🤣")
   let view = str_view[:-2]
-  inspect!(
-    view,
-    content=
-      #|"Hello🤣"
-    ,
-  )
+  inspect!(view, content="Hello🤣")
   let view = str_view[:-3]
-  inspect!(
-    view,
-    content=
-      #|"Hello"
-    ,
-  )
+  inspect!(view, content="Hello")
   let view = str_view[:-4]
-  inspect!(
-    view,
-    content=
-      #|"Hell"
-    ,
-  )
+  inspect!(view, content="Hell")
   let view = str_view[-2:-1]
-  inspect!(
-    view,
-    content=
-      #|"🤣"
-    ,
-  )
+  inspect!(view, content="🤣")
   let view = str_view[-3:-1]
-  inspect!(
-    view,
-    content=
-      #|"🤣🤣"
-    ,
-  )
+  inspect!(view, content="🤣🤣")
   let view = str_view[-4:-1]
-  inspect!(
-    view,
-    content=
-      #|"o🤣🤣"
-    ,
-  )
+  inspect!(view, content="o🤣🤣")
   let view = str_view[-4:-2]
-  inspect!(
-    view,
-    content=
-      #|"o🤣"
-    ,
-  )
+  inspect!(view, content="o🤣")
   let view = str_view[-4:-4]
-  inspect!(
-    view,
-    content=
-      #|""
-    ,
-  )
+  inspect!(view, content="")
   let view = str_view[-3:-3]
-  inspect!(
-    view,
-    content=
-      #|""
-    ,
-  )
+  inspect!(view, content="")
 }
 
 test "panic negative index 1" {
@@ -447,54 +292,14 @@ test "stringview iter" {
 
 test "stringview negative index" {
   let str = "hello🤣😭😂"
-  inspect!(
-    str[-2:-1],
-    content=
-      #|"😭"
-    ,
-  )
-  inspect!(
-    str[-3:-1],
-    content=
-      #|"🤣😭"
-    ,
-  )
-  inspect!(
-    str[-4:-1],
-    content=
-      #|"o🤣😭"
-    ,
-  )
-  inspect!(
-    str[-4:],
-    content=
-      #|"o🤣😭😂"
-    ,
-  )
-  inspect!(
-    str[:-2],
-    content=
-      #|"hello🤣"
-    ,
-  )
-  inspect!(
-    str[-2:-2],
-    content=
-      #|""
-    ,
-  )
-  inspect!(
-    str[-0:0],
-    content=
-      #|""
-    ,
-  )
-  inspect!(
-    str[-8:],
-    content=
-      #|"hello🤣😭😂"
-    ,
-  )
+  inspect!(str[-2:-1], content="😭")
+  inspect!(str[-3:-1], content="🤣😭")
+  inspect!(str[-4:-1], content="o🤣😭")
+  inspect!(str[-4:], content="o🤣😭😂")
+  inspect!(str[:-2], content="hello🤣")
+  inspect!(str[-2:-2], content="")
+  inspect!(str[-0:0], content="")
+  inspect!(str[-8:], content="hello🤣😭😂")
 }
 
 test "panic stringview negative index1" {
