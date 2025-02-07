@@ -222,7 +222,7 @@ pub fn length_ge(self : StringView, len : Int) -> Bool {
 /// let str = "Hello🤣🤣🤣"
 /// let view = str[1:6]
 /// inspect!(view, content=
-///  #|"ello🤣"
+///  "ello🤣"
 ///)
 /// ```
 pub fn String::op_as_view(
@@ -273,7 +273,7 @@ pub fn String::op_as_view(
 /// let view = str[1:7]
 /// let view2 = view[1:5]
 /// inspect!(view2, content=
-///   #|"llo🤣"
+///   "llo🤣"
 /// )
 /// ```
 pub fn StringView::op_as_view(
