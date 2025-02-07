@@ -20,44 +20,52 @@ test "remove on empty set" {
 
 test "disjoint" {
   inspect!(
-    @sorted_set.of([1, 2, 3]).disjoint(@sorted_set.of([4, 5, 6])),
+    @sorted_set.from_array([1, 2, 3]).disjoint(
+      @sorted_set.from_array([4, 5, 6]),
+    ),
     content="true",
   )
   inspect!(
-    @sorted_set.of([1, 2, 3]).subset(@sorted_set.of([3, 4, 5])),
+    @sorted_set.from_array([1, 2, 3]).subset(@sorted_set.from_array([3, 4, 5])),
     content="false",
   )
 }
 
 test "subset" {
   inspect!(
-    @sorted_set.of([1, 2, 3]).subset(
-      @sorted_set.of([7, 2, 9, 4, 5, 6, 3, 8, 1]),
+    @sorted_set.from_array([1, 2, 3]).subset(
+      @sorted_set.from_array([7, 2, 9, 4, 5, 6, 3, 8, 1]),
     ),
     content="true",
   )
   inspect!(
-    @sorted_set.of([1, 2, 3]).subset(@sorted_set.of([10, 11, 12, 13, 14])),
+    @sorted_set.from_array([1, 2, 3]).subset(
+      @sorted_set.from_array([10, 11, 12, 13, 14]),
+    ),
     content="false",
   )
 }
 
 test "diff" {
   inspect!(
-    @sorted_set.of([1, 2, 3]).difference(@sorted_set.of([4, 5, 1])),
+    @sorted_set.from_array([1, 2, 3]).difference(
+      @sorted_set.from_array([4, 5, 1]),
+    ),
     content="@sorted_set.of([2, 3])",
   )
 }
 
 test "intersect" {
   inspect!(
-    @sorted_set.of([3, 4, 5]).intersection(@sorted_set.of([4, 5, 6])),
+    @sorted_set.from_array([3, 4, 5]).intersection(
+      @sorted_set.from_array([4, 5, 6]),
+    ),
     content="@sorted_set.of([4, 5])",
   )
 }
 
 test "each" {
-  let set = @sorted_set.of([7, 2, 9, 4, 5, 6, 3, 8, 1])
+  let set = @sorted_set.from_array([7, 2, 9, 4, 5, 6, 3, 8, 1])
   let result = StringBuilder::new(size_hint=10)
   set.each(fn(x) { result.write_string(x.to_string()) })
   inspect!(result.to_string(), content="123456789")
@@ -66,7 +74,7 @@ test "each" {
 }
 
 test "eachi" {
-  let set = @sorted_set.of([7, 2, 9, 4, 5, 6, 3, 8, 1])
+  let set = @sorted_set.from_array([7, 2, 9, 4, 5, 6, 3, 8, 1])
   let result = StringBuilder::new(size_hint=10)
   set.eachi(fn(i, x) { result.write_string("[\{i}-\{x}]") })
   inspect!(
@@ -76,58 +84,67 @@ test "eachi" {
 }
 
 test "iter" {
-  let set = @sorted_set.of([3, 2, 1])
+  let set = @sorted_set.from_array([3, 2, 1])
   inspect!(set.iter().collect(), content="[1, 2, 3]")
   inspect!(set.iter().take(2).collect(), content="[1, 2]")
 }
 
 test "contains" {
-  let set = @sorted_set.of([7, 2, 9, 4, 6, 3, 8, 1])
+  let set = @sorted_set.from_array([7, 2, 9, 4, 6, 3, 8, 1])
   inspect!(set.contains(5), content="false")
   set.add(5)
   inspect!(set.contains(5), content="true")
   inspect!(
-    @sorted_set.of([7, 2, 9, 4, 6, 3, 8, 1]).contains(5),
+    @sorted_set.from_array([7, 2, 9, 4, 6, 3, 8, 1]).contains(5),
     content="false",
   )
-  inspect!(@sorted_set.of([]).contains(1), content="false")
+  inspect!(@sorted_set.from_array([]).contains(1), content="false")
 }
 
 test "to_array" {
   inspect!(
-    @sorted_set.of([7, 2, 9, 4, 5, 6, 3, 8, 1]).to_array(),
+    @sorted_set.from_array([7, 2, 9, 4, 5, 6, 3, 8, 1]).to_array(),
     content="[1, 2, 3, 4, 5, 6, 7, 8, 9]",
   )
-  inspect!((@sorted_set.of([]) : @sorted_set.T[Int]).to_array(), content="[]")
+  inspect!(
+    (@sorted_set.from_array([]) : @sorted_set.T[Int]).to_array(),
+    content="[]",
+  )
 }
 
 test "to_string" {
   inspect!(
-    @sorted_set.of([1, 2, 3, 4, 5]),
+    @sorted_set.from_array([1, 2, 3, 4, 5]),
     content="@sorted_set.of([1, 2, 3, 4, 5])",
   )
   inspect!(
-    (@sorted_set.of([]) : @sorted_set.T[Int]),
+    (@sorted_set.from_array([]) : @sorted_set.T[Int]),
     content="@sorted_set.of([])",
   )
 }
 
 test "from_array" {
   inspect!(
-    @sorted_set.of([7, 2, 9, 4, 5, 6, 3, 8, 1]),
+    @sorted_set.from_array([7, 2, 9, 4, 5, 6, 3, 8, 1]),
     content="@sorted_set.of([1, 2, 3, 4, 5, 6, 7, 8, 9])",
   )
 }
 
 test "is_empty" {
-  inspect!((@sorted_set.of([]) : @sorted_set.T[Int]).is_empty(), content="true")
-  inspect!(@sorted_set.of([1]).is_empty(), content="false")
+  inspect!(
+    (@sorted_set.from_array([]) : @sorted_set.T[Int]).is_empty(),
+    content="true",
+  )
+  inspect!(@sorted_set.from_array([1]).is_empty(), content="false")
 }
 
 test "size" {
-  inspect!(@sorted_set.of([1, 2, 3, 4, 5]).size(), content="5")
-  inspect!(@sorted_set.of([1]).size(), content="1")
-  inspect!((@sorted_set.of([]) : @sorted_set.T[Int]).size(), content="0")
+  inspect!(@sorted_set.from_array([1, 2, 3, 4, 5]).size(), content="5")
+  inspect!(@sorted_set.from_array([1]).size(), content="1")
+  inspect!(
+    (@sorted_set.from_array([]) : @sorted_set.T[Int]).size(),
+    content="0",
+  )
 }
 
 test "singleton" {
@@ -137,16 +154,16 @@ test "singleton" {
 }
 
 test "show" {
-  let set = @sorted_set.of([1, 2, 3, 4, 5])
+  let set = @sorted_set.from_array([1, 2, 3, 4, 5])
   inspect!(set, content="@sorted_set.of([1, 2, 3, 4, 5])")
-  let set : @sorted_set.T[Int] = @sorted_set.of([])
+  let set : @sorted_set.T[Int] = @sorted_set.from_array([])
   inspect!(set, content="@sorted_set.of([])")
 }
 
 test "mix_everything" {
   // test all functions together, including add, remove, union, diff, inter, subset, disjoint, size, is_empty, contains
-  let set1 = @sorted_set.of([1, 2, 3, 4, 5])
-  let set2 = @sorted_set.of([4, 5, 6, 7, 8])
+  let set1 = @sorted_set.from_array([1, 2, 3, 4, 5])
+  let set2 = @sorted_set.from_array([4, 5, 6, 7, 8])
   set1.add(6)
   inspect!(set1, content="@sorted_set.of([1, 2, 3, 4, 5, 6])")
   set1.remove(6)
@@ -165,9 +182,9 @@ test "mix_everything" {
   inspect!(set3.contains(1), content="true")
   inspect!(set3.contains(3), content="false")
   inspect!(set3.disjoint(set1), content="false")
-  let set6 = set3.union(@sorted_set.of([]))
+  let set6 = set3.union(@sorted_set.from_array([]))
   inspect!(set6, content="@sorted_set.of([1, 2, 4, 5, 6, 7, 8])")
-  let set7 = set3.union(@sorted_set.of([12, 13, 14, 33, 22]))
+  let set7 = set3.union(@sorted_set.from_array([12, 13, 14, 33, 22]))
   inspect!(
     set7,
     content="@sorted_set.of([1, 2, 4, 5, 6, 7, 8, 12, 13, 14, 22, 33])",
@@ -179,7 +196,7 @@ test "mix_everything" {
   for i = 6; i <= 33; i = i + 1 {
     set7.remove(i)
   }
-  let set = @sorted_set.of([
+  let set = @sorted_set.from_array([
     90, 70, 13, 44, 11, 49, 39, 35, 52, 8, 80, 40, 58, 67, 84, 38, 93, 97, 54, 95,
   ])
   set.remove(70)
@@ -195,8 +212,8 @@ test "mix_everything" {
 }
 
 test "op_equal" {
-  let a = @sorted_set.of([1, 2, 3])
-  let b = @sorted_set.of([4, 5, 6])
+  let a = @sorted_set.from_array([1, 2, 3])
+  let b = @sorted_set.from_array([4, 5, 6])
   inspect!(a == a, content="true")
   inspect!(b == b, content="true")
   inspect!(a == b, content="false")
@@ -224,7 +241,7 @@ test "from_iter empty iter" {
 }
 
 test "range" {
-  let set = @sorted_set.of([1, 2, 3, 4, 5])
+  let set = @sorted_set.from_array([1, 2, 3, 4, 5])
   let result = set.range(2, 4)
   inspect!(result, content="[2, 3, 4]")
 }

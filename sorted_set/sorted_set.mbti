@@ -3,11 +3,13 @@ package moonbitlang/core/sorted_set
 alias @moonbitlang/core/quickcheck as @quickcheck
 
 // Values
+fn from_array[V : Compare](Array[V]) -> T[V]
+
 fn from_iter[V : Compare](Iter[V]) -> T[V]
 
 fn new[V]() -> T[V]
 
-fn of[V : Compare](Array[V]) -> T[V]
+fn of[V : Compare](Array[V]) -> T[V] //deprecated
 
 fn singleton[V : Compare](V) -> T[V]
 
