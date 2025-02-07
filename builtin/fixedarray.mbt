@@ -13,6 +13,27 @@
 // limitations under the License.
 
 ///|
+///
+/// Creates an iterator over the elements of a fixed-size array, providing
+/// sequential access to each element.
+///
+/// Parameters:
+///
+/// * `array` : The fixed-size array to iterate over.
+///
+/// Returns an iterator that yields each element of the array in order from first
+/// to last.
+///
+/// Example:
+///
+/// ```moonbit
+/// test "FixedArray::iter" {
+///   let arr = FixedArray::make(3, 42)
+///   let mut sum = 0
+///   arr.iter().each(fn(x) { sum = sum + x })
+///   inspect!(sum, content="126")
+/// }
+/// ```
 /// @intrinsic %iter.from_array
 pub fn FixedArray::iter[T](self : FixedArray[T]) -> Iter[T] {
   Iter::new(fn(yield_) {
@@ -26,6 +47,27 @@ pub fn FixedArray::iter[T](self : FixedArray[T]) -> Iter[T] {
 }
 
 ///|
+/// Returns an iterator that yields both indices and values from the fixed array.
+/// The iterator provides pairs of `(index, value)` where indices start from 0
+/// and increment sequentially.
+///
+/// Parameters:
+///
+/// * `array` : The fixed array to iterate over.
+///
+/// Returns an iterator of type `Iter2[Int, T]` that yields tuples of indices and
+/// values from the array.
+///
+/// Example:
+///
+/// ```moonbit
+/// test "FixedArray::iter2" {
+///   let arr = FixedArray::make(3, 10)
+///   let mut sum = 0
+///   arr.iter2().each(fn(i, x) { sum = sum + i + x })
+///   inspect!(sum, content="33") // (0 + 10) + (1 + 10) + (2 + 10) = 33
+/// }
+/// ```
 pub fn FixedArray::iter2[T](self : FixedArray[T]) -> Iter2[Int, T] {
   Iter2::new(fn(yield_) {
     for i, v in self {
@@ -38,6 +80,23 @@ pub fn FixedArray::iter2[T](self : FixedArray[T]) -> Iter2[Int, T] {
 }
 
 ///|
+/// Returns an empty fixed-size array of the specified type.
+///
+/// Parameters:
+///
+/// * `X` : The type parameter specifying the element type of the array.
+///
+/// Returns an empty fixed-size array of type `FixedArray[X]`.
+///
+/// Example:
+///
+/// ```moonbit
+/// test "FixedArray::default" {
+///   let arr : FixedArray[Int] = FixedArray::default()
+///   inspect!(arr.length(), content="0")
+///   inspect!(arr.is_empty(), content="true")
+/// }
+/// ```
 pub fn FixedArray::default[X]() -> FixedArray[X] {
   []
 }
@@ -58,6 +117,34 @@ pub fn FixedArray::fill[T](self : FixedArray[T], value : T) -> Unit {
 }
 
 ///|
+/// Compares two fixed arrays lexicographically based on their elements. First
+/// compares the lengths of the arrays, then compares elements pairwise until a
+/// difference is found or all elements have been compared.
+///
+/// Parameters:
+///
+/// * `self` : The first fixed array to compare.
+/// * `other` : The second fixed array to compare.
+///
+/// Returns an integer that indicates the relative order:
+///
+/// * A negative value if `self` is less than `other`
+/// * Zero if `self` equals `other`
+/// * A positive value if `self` is greater than `other`
+///
+/// Example:
+///
+/// ```moonbit
+/// test "FixedArray::compare" {
+///   let arr1 = [1, 2, 3]
+///   let arr2 = [1, 2, 4]
+///   let arr3 = [1, 2]
+///   inspect!(arr1.compare(arr2), content="-1") // arr1 < arr2
+///   inspect!(arr2.compare(arr1), content="1") // arr2 > arr1
+///   inspect!(arr1.compare(arr3), content="1") // arr1 > arr3 (longer)
+///   inspect!(arr1.compare(arr1), content="0") // arr1 = arr1
+/// }
+/// ```
 pub fn compare[T : Compare](self : FixedArray[T], other : FixedArray[T]) -> Int {
   let len_self = self.length()
   let len_other = other.length()

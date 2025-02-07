@@ -19,11 +19,42 @@ fn println_mono(s : String) -> Unit = "%println"
 fn any_to_string[T](any : T) -> String = "%any.to_string"
 
 ///|
+/// Prints any value that implements the `Show` trait to the standard output,
+/// followed by a newline.
+///
+/// Parameters:
+///
+/// * `value` : The value to be printed. Must implement the `Show` trait.
+///
+/// Example:
+///
+/// ```moonbit skip
+/// test "println" {
+///   println(42)
+///   println("Hello, World!")
+///   println([1, 2, 3])
+/// }
+/// ```
 pub fn println[T : Show](input : T) -> Unit {
   println_mono(input.to_string())
 }
 
 ///|
+/// Prints a value to the standard output and appends a newline.
+///
+/// Parameters:
+///
+/// * `input` : The value to be printed. Must implement the `Show` trait.
+///
+/// Example:
+///
+/// ```moonbit skip
+/// test "print" {
+///   println(42)
+///   println("Hello, World!")
+/// }
+/// ```
+///
 /// @alert deprecated "Use `println` instead"
 /// @coverage.skip
 pub fn print[T : Show](input : T) -> Unit {
@@ -43,9 +74,51 @@ pub fn dump[T](t : T, name? : String, loc~ : SourceLoc = _) -> T {
 }
 
 ///|
+/// Represents an error type used by the `inspect!` function to indicate failures
+/// in value inspection. Contains a string message describing the nature of the
+/// inspection failure.
+///
+/// Returns a type constructor that creates an error type from a string message.
+///
+/// Example:
+///
+/// ```moonbit
+/// test "inspect/failure" {
+///   let x : Int = 42
+///   inspect!(x, content="42") // Raises InspectError with detailed failure message
+/// }
+/// ```
 pub(all) type! InspectError String
 
 ///|
+/// Tests if the string representation of an object matches the expected content.
+/// Used primarily in test cases to verify the correctness of `Show`
+/// implementations and program outputs.
+///
+/// Parameters:
+///
+/// * `object` : The object to be inspected. Must implement the `Show` trait.
+/// * `content` : The expected string representation of the object. Defaults to
+/// an empty string.
+/// * `location` : Source code location information for error reporting.
+/// Automatically provided by the compiler.
+/// * `arguments_location` : Location information for function arguments in
+/// source code. Automatically provided by the compiler.
+///
+/// Throws an `InspectError` if the actual string representation of the object
+/// does not match the expected content. The error message includes detailed
+/// information about the mismatch, including source location and both expected
+/// and actual values.
+///
+/// Example:
+///
+/// ```moonbit skip
+/// test "inspect/basic" {
+///   inspect!(42, content="42")
+///   inspect!("hello", content="hello")
+///   inspect!([1, 2, 3], content="[1, 2, 3]")
+/// }
+/// ```
 pub fn inspect(
   obj : &Show,
   content~ : String = "",
@@ -65,7 +138,22 @@ pub fn inspect(
 }
 
 ///|
-// Used by test driver
+/// Represents an error that occurs during snapshot testing. Contains a string
+/// message describing the error.
+///
+/// Used internally by the test driver to handle snapshot-related errors. Not
+/// intended for direct use by end users.
+///
+/// Example:
+///
+/// ```moonbit
+/// test "SnapshotError" {
+///   let err : SnapshotError = SnapshotError("failed to load snapshot")
+///   match err {
+///     SnapshotError(msg) => assert_eq!(msg, "failed to load snapshot")
+///   }
+/// }
+/// ```
 pub(all) type! SnapshotError String
 
 test "panic error case of inspect" {
