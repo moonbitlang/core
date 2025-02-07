@@ -86,13 +86,6 @@ pub fn same_object[T : Show](a : T, b : T, loc~ : SourceLoc = _) -> Unit! {
 }
 
 ///|
-/// @alert deprecated "Use `same_object` instead"
-/// @coverage.skip
-pub fn is[T : Show](a : T, b : T, loc~ : SourceLoc = _) -> Unit! {
-  same_object!(a, b, loc~)
-}
-
-///|
 /// Assert referential inequality of two values.
 ///
 /// Returns Ok if the two arguments are NOT the same object by reference, using
