@@ -13,19 +13,19 @@
 // limitations under the License.
 
 ///|
-let gPRIME1 = 0x9E3779B1
+const GPRIME1 = 0x9E3779B1
 
 ///|
-let gPRIME2 = 0x85EBCA77
+const GPRIMES2 = 0x85EBCA77
 
 ///|
-let gPRIME3 = 0xC2B2AE3D
+const GPRIME3 = 0xC2B2AE3D
 
 ///|
-let gPRIME4 = 0x27D4EB2F
+const GPRIME4 = 0x27D4EB2F
 
 ///|
-let gPRIME5 = 0x165667B1
+const GPRIME5 = 0x165667B1
 
 ///|
 /// Represents a hasher that implements the xxHash32 algorithm. The hasher
@@ -73,7 +73,7 @@ struct Hasher {
 /// }
 /// ```
 pub fn Hasher::new(seed~ : Int = 0) -> Hasher {
-  { acc: seed + gPRIME5 }
+  { acc: seed + GPRIME5 }
 }
 
 ///|
@@ -417,21 +417,21 @@ pub fn Hasher::finalize(self : Hasher) -> Int {
 fn Hasher::avalanche(self : Hasher) -> Int {
   let mut acc = self.acc.reinterpret_as_uint()
   acc = acc ^ (acc >> 15)
-  acc *= gPRIME2.reinterpret_as_uint()
+  acc *= GPRIMES2.reinterpret_as_uint()
   acc = acc ^ (acc >> 13)
-  acc *= gPRIME3.reinterpret_as_uint()
+  acc *= GPRIME3.reinterpret_as_uint()
   acc = acc ^ (acc >> 16)
   acc.reinterpret_as_int()
 }
 
 ///|
 fn Hasher::consume4(self : Hasher, input : Int) -> Unit {
-  self.acc = rotl(self.acc + input * gPRIME3, 17) * gPRIME4
+  self.acc = rotl(self.acc + input * GPRIME3, 17) * GPRIME4
 }
 
 ///|
 fn Hasher::consume1(self : Hasher, input : Byte) -> Unit {
-  self.acc = rotl(self.acc + input.to_int() * gPRIME5, 11) * gPRIME1
+  self.acc = rotl(self.acc + input.to_int() * GPRIME5, 11) * GPRIME1
 }
 
 ///|
