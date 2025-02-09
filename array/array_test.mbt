@@ -563,3 +563,15 @@ test "arbitrary" {
     content="[[0, 0, 0, 1, 0, -1, 0, -1], [0, 0, 0, 1], [0, 0, 0, -1, -1, -1, 4], [0, 0], [0, 0, -1, 2]]",
   )
 }
+
+test "Array[String]::join" {
+  let arr = ["a", "b", "c"]
+  inspect!(arr.join(","), content="a,b,c")
+  inspect!(["a", "b", "c"].join(","), content="a,b,c")
+  inspect!(["a", "b", "c"].join(""), content="abc")
+  inspect!(["a", "b", "c"].join(" "), content="a b c")
+  inspect!(["a", "b", "c"].join(" "), content="a b c")
+  inspect!(["a", "b", "c"].join(" "), content="a b c")
+  inspect!(["a", "b", "c"].join(" "), content="a b c")
+  inspect!(["a", "b", "c"].join(" "), content="a b c")
+}
