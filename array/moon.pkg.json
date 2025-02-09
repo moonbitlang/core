@@ -2,6 +2,7 @@
   "import": [
     "moonbitlang/core/builtin",
     "moonbitlang/core/bytes",
+    "moonbitlang/core/string",
     "moonbitlang/core/test",
     "moonbitlang/core/quickcheck",
     "moonbitlang/core/quickcheck/splitmix"

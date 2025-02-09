@@ -210,3 +210,8 @@ pub impl[X : @quickcheck.Arbitrary] @quickcheck.Arbitrary for Array[X] with arbi
   let len = if size == 0 { 0 } else { rs.next_positive_int() % size }
   Array::makei(len, fn(x) { X::arbitrary(x, rs) })
 }
+
+///|
+pub fn join(self : Array[String], separator : String) -> String {
+  @string.concat(self, separator~)
+}
