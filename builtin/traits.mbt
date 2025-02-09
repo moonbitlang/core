@@ -123,3 +123,15 @@ pub fn &Logger::write_iter[T : Show](
   self.write_string(suffix)
 }
 // TODO: Logger::write_double(self:Logger, val:Double) -> Unit
+
+///| 
+pub(all) enum Mutability {
+  Mutable
+  Immutable
+} derive(Show)
+
+///| Use clone method intended for cloned object's internal state won't be influenced original object
+pub(open) trait Clone {
+  mutability() -> Mutability
+  clone(Self) -> Self
+}
