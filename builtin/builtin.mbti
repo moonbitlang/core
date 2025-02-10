@@ -46,7 +46,7 @@ impl ArgsLoc {
 }
 impl Show for ArgsLoc
 
-type Array
+type Array[T]
 impl Array {
   append[T](Self[T], Self[T]) -> Unit
   binary_search[T : Compare](Self[T], T) -> Result[Int, Int]
@@ -125,7 +125,7 @@ impl Array {
 }
 impl[X : Show] Show for Array[X]
 
-type ArrayView //deprecated
+type ArrayView[T] //deprecated
 impl ArrayView {
   length[T](Self[T]) -> Int
   op_as_view[T](Self[T], start~ : Int = .., end? : Int) -> Self[T]
@@ -221,7 +221,7 @@ impl Hasher {
 
 pub(all) type! InspectError String
 
-type Iter
+type Iter[T]
 impl Iter {
   all[T](Self[T], (T) -> Bool) -> Bool
   any[T](Self[T], (T) -> Bool) -> Bool
@@ -264,7 +264,7 @@ impl Iter {
 }
 impl[T : Show] Show for Iter[T]
 
-type Iter2
+type Iter2[A, B]
 impl Iter2 {
   concat[A, B](Self[A, B], Self[A, B]) -> Self[A, B]
   each[A, B](Self[A, B], (A, B) -> Unit) -> Unit
@@ -296,7 +296,7 @@ impl Json {
 }
 impl Eq for Json
 
-type Map
+type Map[K, V]
 impl Map {
   capacity[K, V](Self[K, V]) -> Int
   clear[K, V](Self[K, V]) -> Unit
@@ -327,7 +327,7 @@ impl Map {
 }
 impl[K : Show, V : Show] Show for Map[K, V]
 
-type Set
+type Set[K]
 impl Set {
   add[K : Hash + Eq](Self[K], K) -> Unit
   add_and_check[K : Hash + Eq](Self[K], K) -> Bool
@@ -378,7 +378,7 @@ impl StringBuilder {
 }
 impl Show for StringBuilder
 
-type UninitializedArray
+type UninitializedArray[T]
 impl UninitializedArray {
   length[A](Self[A]) -> Int
   make[T](Int) -> Self[T]

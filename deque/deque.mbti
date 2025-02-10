@@ -10,7 +10,7 @@ fn new[A](capacity~ : Int = ..) -> T[A]
 fn of[A](FixedArray[A]) -> T[A]
 
 // Types and methods
-type T
+type T[A]
 impl T {
   as_views[A](Self[A]) -> (ArrayView[A], ArrayView[A])
   back[A](Self[A]) -> A?
