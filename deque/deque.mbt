@@ -1155,16 +1155,16 @@ pub fn rev_iter[A](self : T[A]) -> Iter[A] {
     let head_len = cap - head
     if head_len >= len {
       for i = head + len - 1; i >= head; i = i - 1 {
-        guard let IterContinue = yield_(buf[i]) else { x => return x }
+        guard yield_(buf[i]) is IterContinue else { return IterEnd }
 
       }
     } else {
       for i = len - head_len - 1; i >= 0; i = i - 1 {
-        guard let IterContinue = yield_(buf[i]) else { x => return x }
+        guard yield_(buf[i]) is IterContinue else { return IterEnd }
 
       }
       for i = cap - 1; i >= head; i = i - 1 {
-        guard let IterContinue = yield_(buf[i]) else { x => return x }
+        guard yield_(buf[i]) is IterContinue else { return IterEnd }
 
       }
     }

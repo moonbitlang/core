@@ -228,6 +228,7 @@ fn overflow_threshold(base : Int, neg : Bool) -> Int64 {
   }
 }
 
+///|
 test "check_underscore" {
   assert_true!(check_underscore("123"))
   assert_true!(check_underscore("0x123"))
@@ -242,6 +243,7 @@ test "check_underscore" {
   assert_false!(check_underscore("123_"))
 }
 
+///|
 test "determine_base" {
   assert_eq!(determine_base("1234"), 10)
   assert_eq!(determine_base("0x1234"), 16)
@@ -252,6 +254,7 @@ test "determine_base" {
   assert_eq!(determine_base("0B1010"), 2)
 }
 
+///|
 test "parse_int64" {
   let tests : Array[(String, Result[Int64, String])] = [
     ("", Err(syntax_err_str)),
@@ -293,6 +296,7 @@ test "parse_int64" {
   }
 }
 
+///|
 test "parse_int64_base" {
   let tests : Array[(String, Int, Result[Int64, String])] = [
     ("", 0, Err(syntax_err_str)),
@@ -412,6 +416,7 @@ test "parse_int64_base" {
   }
 }
 
+///|
 test "parse_int" {
   let tests : Array[(String, Result[Int, String])] = [
     ("", Err(syntax_err_str)),
