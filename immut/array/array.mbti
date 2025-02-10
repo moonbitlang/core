@@ -16,7 +16,7 @@ fn new[A]() -> T[A]
 fn of[A](FixedArray[A]) -> T[A]
 
 // Types and methods
-type T
+type T[A]
 impl T {
   concat[A](Self[A], Self[A]) -> Self[A]
   copy[A](Self[A]) -> Self[A] //deprecated

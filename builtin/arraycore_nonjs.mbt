@@ -116,6 +116,7 @@ fn Array::unsafe_truncate_to_length[T](self : Array[T], new_len : Int) -> Unit {
   self.len = new_len
 }
 
+///|
 test "unsafe_truncate_to_length" {
   let arr = [1, 2, 3, 4, 5]
   arr.unsafe_truncate_to_length(3)
@@ -137,6 +138,7 @@ fn Array::resize_buffer[T](self : Array[T], new_capacity : Int) -> Unit {
   self.buf = new_buf
 }
 
+///|
 test "array_unsafe_blit_fixed" {
   let src = FixedArray::make(5, 0)
   let dst = UninitializedArray::make(5)
@@ -149,6 +151,7 @@ test "array_unsafe_blit_fixed" {
   }
 }
 
+///|
 test "UninitializedArray::unsafe_blit_fixed" {
   let src = FixedArray::make(5, 0)
   let dst = UninitializedArray::make(5)
@@ -161,6 +164,7 @@ test "UninitializedArray::unsafe_blit_fixed" {
   }
 }
 
+///|
 test "UninitializedArray::unsafe_blit_fixed" {
   let src = FixedArray::make(5, 0)
   let dst = UninitializedArray::make(5)
@@ -173,6 +177,7 @@ test "UninitializedArray::unsafe_blit_fixed" {
   }
 }
 
+///|
 test "Array::resize_buffer" {
   let arr = Array::new(capacity=2)
   arr.push(1)

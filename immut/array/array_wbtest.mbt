@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+///|
 test "new_by_leaves" {
   let full : T[Int] = new_by_leaves(branching_factor_power(2), fn(_s, l) {
     FixedArray::make(l, 1)
@@ -34,6 +35,7 @@ test "new_by_leaves" {
   )
 }
 
+///|
 test "mix" {
   let mut v = new()
   inspect!(v.tree.is_empty_tree(), content="true")
@@ -71,6 +73,7 @@ test "mix" {
   }
 }
 
+///|
 test "op_get" {
   let bf = branching_factor_power(4)
   let v_content = random_array(bf)
@@ -88,30 +91,36 @@ test "op_get" {
   inspect!(v[bf / 2], content=v_content[bf / 2].to_string())
 }
 
+///|
 test "concat-two-full-tree" {
   let bf = branching_factor_power(4)
   execute_array_test!(gen_concat_seq_from_len_array([bf, bf]))
 }
 
+///|
 test "concat-full-tree-and-a-leaf" {
   let bf = branching_factor_power(4)
   execute_array_test!(gen_concat_seq_from_len_array([bf, 1]))
 }
 
+///|
 test "concat-a-leaf-and-full-tree" {
   let bf = branching_factor_power(4)
   execute_array_test!(gen_concat_seq_from_len_array([1, bf]))
 }
 
+///|
 test "concat-two-leaf" {
   execute_array_test!(gen_concat_seq_from_len_array([1, 1]))
 }
 
+///|
 test "concat-multiple-full-tree" {
   let bf = branching_factor_power(4)
   execute_array_test!(gen_concat_seq(3, fn(_i) { bf }))
 }
 
+///|
 test "concat-multiple-random-tree" {
   let bf = branching_factor_power(2)
   let rng = Random({ val: 0UL })

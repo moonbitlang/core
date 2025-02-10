@@ -338,6 +338,7 @@ fn fixed_bubble_sort[T : Compare](arr : FixedArraySlice[T]) -> Unit {
   }
 }
 
+///|
 test "fixed_try_bubble_sort" {
   let arr : FixedArray[_] = [8, 7, 6, 5, 4, 3, 2, 1]
   let sorted = fixed_try_bubble_sort({ array: arr, start: 0, end: 8 })
@@ -466,22 +467,26 @@ fn fixed_test_sort(f : (FixedArray[Int]) -> Unit) -> Unit! {
   assert_eq!(arr, expected)
 }
 
+///|
 test "fixed_heap_sort" {
   fixed_test_sort!(fn(arr) {
     fixed_heap_sort({ array: arr, start: 0, end: arr.length() })
   })
 }
 
+///|
 test "fixed_bubble_sort" {
   fixed_test_sort!(fn(arr) {
     fixed_bubble_sort({ array: arr, start: 0, end: arr.length() })
   })
 }
 
+///|
 test "sort" {
   fixed_test_sort!(fn(arr) { arr.sort() })
 }
 
+///|
 test "stable_sort" {
   let arr : FixedArray[_] = [5, 1, 3, 4, 2]
   arr.stable_sort()
@@ -533,6 +538,7 @@ pub fn FixedArray::is_sorted[T : Compare](arr : FixedArray[T]) -> Bool {
   }
 }
 
+///|
 test "stable_sort_complex" {
   let run_lens = [86, 64, 21, 20, 22]
   let total_len = run_lens.fold(init=0, fn { acc, x => acc + x })
@@ -549,6 +555,7 @@ test "stable_sort_complex" {
   assert_true!(arr.is_sorted())
 }
 
+///|
 test "find_streak with empty array" {
   let arr : FixedArray[Int] = []
   let (streak_end, was_reversed) = find_streak({ array: arr, start: 0, end: 0 })
@@ -556,6 +563,7 @@ test "find_streak with empty array" {
   assert_eq!(was_reversed, false)
 }
 
+///|
 test "find_streak with single element array" {
   let arr : FixedArray[_] = [1]
   let (streak_end, was_reversed) = find_streak({ array: arr, start: 0, end: 1 })
@@ -563,6 +571,7 @@ test "find_streak with single element array" {
   assert_eq!(was_reversed, false)
 }
 
+///|
 test "find_streak with increasing elements" {
   let arr : FixedArray[_] = [1, 2, 3, 4, 5]
   let (streak_end, was_reversed) = find_streak({ array: arr, start: 0, end: 5 })
@@ -570,6 +579,7 @@ test "find_streak with increasing elements" {
   assert_eq!(was_reversed, false)
 }
 
+///|
 test "find_streak with decreasing elements" {
   let arr : FixedArray[_] = [5, 4, 3, 2, 1]
   let (streak_end, was_reversed) = find_streak({ array: arr, start: 0, end: 5 })
@@ -577,18 +587,21 @@ test "find_streak with decreasing elements" {
   assert_eq!(was_reversed, true)
 }
 
+///|
 test "provide_sorted_batch with long run" {
   let arr : FixedArray[_] = [1, 2, 3, 4, 5]
   let end = provide_sorted_batch({ array: arr, start: 0, end: 5 }, 0, 5)
   assert_eq!(end, 5)
 }
 
+///|
 test "fixed_quick_sort with limit reached" {
   let arr : FixedArray[_] = [5, 4, 3, 2, 1]
   fixed_quick_sort({ array: arr, start: 0, end: 5 }, None, 0)
   assert_true!(FixedArray::is_sorted(arr))
 }
 
+///|
 test "fixed_quick_sort with balanced partitions" {
   let arr : FixedArray[_] = [5, 4, 3, 2, 1]
   fixed_quick_sort({ array: arr, start: 0, end: 5 }, None, 10)

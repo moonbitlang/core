@@ -59,6 +59,7 @@ fn update_index_inplace(self : JsonPath, index : Int) -> Unit {
   }
 }
 
+///|
 test "show JsonPath" {
   let path = Key(Index(Root, index=0), key="foo")
   @builtin.inspect!(path, content="$[0].foo")

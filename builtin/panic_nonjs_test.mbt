@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+///|
 test "panic array_pop_exn_empty" {
   let arr : Array[Int] = Array::new()
   arr.unsafe_pop() |> ignore // This should panic

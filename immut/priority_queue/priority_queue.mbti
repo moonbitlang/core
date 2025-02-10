@@ -10,7 +10,7 @@ fn new[A : Compare]() -> T[A]
 fn of[A : Compare](FixedArray[A]) -> T[A]
 
 // Types and methods
-type T
+type T[A]
 impl T {
   from_array[A : Compare](Array[A]) -> Self[A] //deprecated
   from_iter[A : Compare](Iter[A]) -> Self[A]

@@ -34,15 +34,15 @@ fn check_and_consume_base(
 ) -> (Int, @string.StringView, Bool)!StrConvError {
   match view {
     ['0', 'x' | 'X', .. rest] => {
-      guard base == 0 || base == 16 else { base_err!() }
+      guard base is (0 | 16) else { base_err!() }
       (16, rest, true)
     }
     ['0', 'o' | 'O', .. rest] => {
-      guard base == 0 || base == 8 else { base_err!() }
+      guard base is (0 | 8) else { base_err!() }
       (8, rest, true)
     }
     ['0', 'b' | 'B', .. rest] => {
-      guard base == 0 || base == 2 else { base_err!() }
+      guard base is (0 | 2) else { base_err!() }
       (2, rest, true)
     }
     rest =>
@@ -52,6 +52,13 @@ fn check_and_consume_base(
         _ => base_err!()
       }
   }
+}
+
+///|
+test {
+  inspect!(parse_int64?("0b01", base=3), content="Err(invalid base)")
+  inspect!(parse_int64?("0x01", base=3), content="Err(invalid base)")
+  inspect!(parse_int64?("0o01", base=3), content="Err(invalid base)")
 }
 
 ///|
@@ -221,6 +228,7 @@ fn overflow_threshold(base : Int, neg : Bool) -> Int64 {
   }
 }
 
+///|
 test "check_underscore" {
   assert_true!(check_underscore("123"))
   assert_true!(check_underscore("0x123"))
@@ -235,6 +243,7 @@ test "check_underscore" {
   assert_false!(check_underscore("123_"))
 }
 
+///|
 test "determine_base" {
   assert_eq!(determine_base("1234"), 10)
   assert_eq!(determine_base("0x1234"), 16)
@@ -245,6 +254,7 @@ test "determine_base" {
   assert_eq!(determine_base("0B1010"), 2)
 }
 
+///|
 test "parse_int64" {
   let tests : Array[(String, Result[Int64, String])] = [
     ("", Err(syntax_err_str)),
@@ -286,6 +296,7 @@ test "parse_int64" {
   }
 }
 
+///|
 test "parse_int64_base" {
   let tests : Array[(String, Int, Result[Int64, String])] = [
     ("", 0, Err(syntax_err_str)),
@@ -405,6 +416,7 @@ test "parse_int64_base" {
   }
 }
 
+///|
 test "parse_int" {
   let tests : Array[(String, Result[Int, String])] = [
     ("", Err(syntax_err_str)),

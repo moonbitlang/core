@@ -12,33 +12,39 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+///|
 test "pair" {
   let tuple = @tuple.pair(1, 2)
   assert_eq!(tuple, (1, 2))
 }
 
+///|
 test "fst" {
   let tuple = (1, 2)
   assert_eq!(@tuple.fst(tuple), 1)
 }
 
+///|
 test "snd" {
   let tuple = (1, 2)
   assert_eq!(@tuple.snd(tuple), 2)
 }
 
+///|
 test "@tuple.map_fst" {
   let tuple = (1, 2)
   let mapped = @tuple.map_fst(fn(x : Int) -> Int { x + 1 }, tuple)
   assert_eq!(mapped, (2, 2))
 }
 
+///|
 test "@tuple.map_snd" {
   let tuple = (1, 2)
   let mapped = @tuple.map_snd(fn(x : Int) -> Int { x + 1 }, tuple)
   assert_eq!(mapped, (1, 3))
 }
 
+///|
 test "@tuple.map_both" {
   let tuple = (1, 2)
   let mapped = @tuple.map_both(
@@ -49,6 +55,7 @@ test "@tuple.map_both" {
   assert_eq!(mapped, (2, 1))
 }
 
+///|
 test "swap" {
   let tuple = (1, 2)
   let swapped = @tuple.swap(tuple)
@@ -57,18 +64,21 @@ test "swap" {
   assert_eq!(swapped_2, tuple)
 }
 
+///|
 test "curry" {
   let add = fn(x : Int, y : Int) -> Int { x + y }
   let curried_add = @tuple.curry(add)
   assert_eq!(curried_add(1)(2), add(1, 2))
 }
 
+///|
 test "uncurry" {
   let add = fn(x : Int) -> (Int) -> Int { fn(y : Int) -> Int { x + y } }
   let uncurried_add = @tuple.uncurry(add)
   assert_eq!(uncurried_add(1, 2), add(1)(2))
 }
 
+///|
 test "id_1" {
   let add = fn(x : Int, y : Int) -> Int { x + y }
   let curried_add = @tuple.curry(add)
@@ -76,6 +86,7 @@ test "id_1" {
   assert_eq!(uncurried_add(1, 2), add(1, 2))
 }
 
+///|
 test "id_2" {
   let add = fn(x : Int) -> (Int) -> Int { fn(y : Int) -> Int { x + y } }
   let uncurried_add = @tuple.uncurry(add)
@@ -83,6 +94,7 @@ test "id_2" {
   assert_eq!(curried_add(1)(2), add(1)(2))
 }
 
+///|
 test "eq" {
   inspect!((1, 2) == (1, 2), content="true")
   inspect!((1, 2) == (2, 1), content="false")
@@ -177,6 +189,7 @@ test "eq" {
   )
 }
 
+///|
 test "compare" {
   assert_eq!((1, 2).compare((2, 1)), -1)
   assert_eq!((1, 2).compare((1, 3)), -1)
@@ -188,6 +201,7 @@ test "compare" {
   assert_eq!((1, 3, 3).compare((1, 2, 3)), 1)
 }
 
+///|
 test "hash" {
   let tuple1 = (1, 2, 3, 4, 5)
   let tuple2 = (1, 2, 3, 4, 5)
@@ -199,6 +213,7 @@ test "hash" {
   inspect!(tuple1.hash() == tuple3.hash(), content="false")
 }
 
+///|
 test "show" {
   let tuple2 = (1, 2)
   let tuple3 = ("a", "b", "c")
@@ -215,6 +230,7 @@ test "show" {
   )
 }
 
+///|
 test "to_string" {
   let tuple2 = (1, 2)
   let tuple3 = ("a", "b", "c")

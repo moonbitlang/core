@@ -21,7 +21,7 @@ fn singleton[A](A) -> T[A]
 fn unfold[A, S]((S) -> (A, S)?, init~ : S) -> T[A]
 
 // Types and methods
-pub(all) enum T {
+pub(all) enum T[A] {
   Nil
   Cons(A, T[A])
 }

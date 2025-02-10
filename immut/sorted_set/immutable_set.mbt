@@ -778,6 +778,7 @@ pub impl[A : Hash] Hash for T[A] with hash_combine(self, hasher) {
   }
 }
 
+///|
 test "split_bis" {
   inspect!(of([1, 2, 3]).split_bis(1), content="Found")
   inspect!(of([1, 2, 3]).split_bis(3), content="Found")
@@ -785,6 +786,7 @@ test "split_bis" {
   inspect!(of([1, 2, 3]).split_bis(4), content="NotFound")
 }
 
+///|
 test "balance with left height greater" {
   let left = of([1, 2, 3])
   let value = 4
@@ -793,6 +795,7 @@ test "balance with left height greater" {
   inspect!(balanced_set, content="@immut/sorted_set.of([1, 2, 3, 4, 5])")
 }
 
+///|
 test "balance with right height greater" {
   let left = of([1])
   let value = 2
@@ -801,6 +804,7 @@ test "balance with right height greater" {
   inspect!(balanced_set, content="@immut/sorted_set.of([1, 2, 3, 4, 5])")
 }
 
+///|
 test "join with different heights" {
   let left = of([1, 2, 3])
   let value = 4
@@ -809,6 +813,7 @@ test "join with different heights" {
   inspect!(joined_set, content="@immut/sorted_set.of([1, 2, 3, 4, 5, 6, 7])")
 }
 
+///|
 test "hash" {
   assert_eq!(Hash::hash(of([1, 2, 3, 4])), Hash::hash(of([3, 2]).add(1).add(4)))
   assert_not_eq!(Hash::hash(of([1, 2, 3])), Hash::hash(of([1, 2, 4])))

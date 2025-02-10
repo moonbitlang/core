@@ -94,6 +94,7 @@ pub fn UInt::to_string(self : UInt) -> String {
   buf.to_string()
 }
 
+///|
 test "UInt::to_string" {
   inspect!(0U, content="0")
   inspect!(17U, content="17")

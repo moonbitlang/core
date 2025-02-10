@@ -230,6 +230,7 @@ pub fn String::substring(self : String, start~ : Int = 0, end? : Int) -> String 
   unsafe_substring(self, start, end)
 }
 
+///|
 test "substring/basic" {
   let s = "hello, world"
   inspect!(s.substring(start=0, end=5), content="hello")
@@ -237,6 +238,7 @@ test "substring/basic" {
   inspect!(s.substring(), content="hello, world")
 }
 
+///|
 test "substring/empty" {
   let s = "test"
   inspect!(s.substring(start=2, end=2), content="")
@@ -244,6 +246,7 @@ test "substring/empty" {
   inspect!("".substring(), content="")
 }
 
+///|
 test "panic substring/invalid_range" {
   let s = "test"
   ignore(s.substring(start=-1))
@@ -251,6 +254,7 @@ test "panic substring/invalid_range" {
   ignore(s.substring(start=3, end=2))
 }
 
+///|
 test "substring/basic" {
   inspect!("Hello world".substring(start=0, end=5), content="Hello")
   inspect!("Hello world".substring(start=6, end=11), content="world")
@@ -258,6 +262,7 @@ test "substring/basic" {
   inspect!("Hello world".substring(start=6), content="world")
 }
 
+///|
 test "substring/boundary" {
   inspect!("".substring(start=0, end=0), content="")
   inspect!("a".substring(start=0, end=1), content="a")
@@ -266,6 +271,7 @@ test "substring/boundary" {
   inspect!("abc".substring(start=0, end=3), content="abc")
 }
 
+///|
 test "panic substring/out_of_bounds" {
   ignore("hello".substring(start=-1, end=4))
   ignore("hello".substring(start=6, end=4))

@@ -243,18 +243,21 @@ pub fn is_neg_inf(self : Double) -> Bool {
   self < min_value
 }
 
+///|
 test "from_int" {
   assert_eq!(from_int(1), 1.0)
   assert_eq!(from_int(0), 0.0)
   assert_eq!(from_int(100000), 1.0e5)
 }
 
+///|
 test "abs" {
   let d = -1.0
   assert_eq!(d.abs(), 1.0)
   assert_eq!(1.0.abs(), 1.0)
 }
 
+///|
 test "signum" {
   let d = -2.0
   assert_eq!(d.signum(), -1.0)
@@ -263,6 +266,7 @@ test "signum" {
   assert_true!(not_a_number.signum().is_nan())
 }
 
+///|
 test "is_nan" {
   assert_true!(is_nan(not_a_number))
   assert_false!(is_nan(0.0))
@@ -271,6 +275,7 @@ test "is_nan" {
   assert_false!(is_nan(neg_infinity))
 }
 
+///|
 test "is_inf" {
   assert_true!(is_inf(infinity))
   assert_true!(is_inf(neg_infinity))
@@ -278,6 +283,7 @@ test "is_inf" {
   assert_false!(is_inf(12345.678))
 }
 
+///|
 test "is_pos_inf" {
   assert_true!(is_pos_inf(infinity))
   assert_false!(is_pos_inf(neg_infinity))
@@ -285,6 +291,7 @@ test "is_pos_inf" {
   assert_false!(is_pos_inf(12345.678))
 }
 
+///|
 test "is_neg_inf" {
   assert_false!(is_neg_inf(infinity))
   assert_true!(is_neg_inf(neg_infinity))
@@ -292,6 +299,7 @@ test "is_neg_inf" {
   assert_false!(is_neg_inf(12345.678))
 }
 
+///|
 test "min equal to neg max" {
   assert_true!(min_value == -max_value)
 }

@@ -659,6 +659,7 @@ fn delete_node[V : Compare](root : Node[V], value : V) -> (Node[V]?, Bool) {
   }
 }
 
+///|
 test "copy" {
   let set = from_array([1, 2, 3, 4, 5])
   let copied_set = set.copy()
@@ -670,6 +671,7 @@ test "copy" {
   inspect!(set.debug_tree() == copied_set.debug_tree(), content="true")
 }
 
+///|
 test "union" {
   // Test 1: Union of two sets with no common elements
   let set1 = from_array([1, 2, 3])
@@ -751,6 +753,7 @@ test "union" {
   )
 }
 
+///|
 test "split" {
   let (l, r) = split(from_array([7, 2, 9, 4, 5, 6, 3, 8, 1]).root, 5)
   inspect!(l, content="Some(@sorted_set.of([1, 2, 3, 4]))")
@@ -788,6 +791,7 @@ test "split" {
   )
 }
 
+///|
 test "join" {
   let l = from_array([13, 8, 17, 1, 11, 15, 25, 6])
   let r = from_array([27, 28, 40, 35, 33])
@@ -818,6 +822,7 @@ test "join" {
   )
 }
 
+///|
 test "add to empty set" {
   let set = new()
   set.add(1)
@@ -825,6 +830,7 @@ test "add to empty set" {
   inspect!(set.debug_tree(), content="([1]1,_,_)")
 }
 
+///|
 test "add to non-empty set" {
   let set = new()
   set.add(1)
@@ -834,6 +840,7 @@ test "add to non-empty set" {
   inspect!(set.debug_tree(), content="([2]1,_,([1]2,_,_))")
 }
 
+///|
 test "add duplicate value" {
   let set = new()
   set.add(1)
@@ -843,6 +850,7 @@ test "add duplicate value" {
   inspect!(set.debug_tree(), content="([1]1,_,_)")
 }
 
+///|
 test "add multiple values" {
   let set = new()
   set.add(1)
@@ -855,6 +863,7 @@ test "add multiple values" {
   inspect!(set.debug_tree(), content="([2]2,([1]1,_,_),([1]3,_,_))")
 }
 
+///|
 test "add_and_remove" {
   let set = from_array([7, 2, 9, 4, 5, 6, 3, 8, 1])
   set.remove(8)

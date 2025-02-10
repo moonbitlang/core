@@ -395,6 +395,7 @@ pub fn of[A](arr : FixedArray[A]) -> T[A] {
   queue
 }
 
+///|
 test "from_fixed_array_2" {
   let q = of([1, 2, 3, 4])
   q.push(11)
@@ -403,6 +404,7 @@ test "from_fixed_array_2" {
   assert_eq!(q, of([2, 3, 4, 11]))
 }
 
+///|
 test "from_array_2" {
   let q = of([1, 2, 3, 4])
   q.push(11)
@@ -411,6 +413,7 @@ test "from_array_2" {
   assert_eq!(q, of([2, 3, 4, 11]))
 }
 
+///|
 test "op_equal" {
   let queue = of([1, 2, 3, 4])
   let queue2 = of([1, 2, 3, 4])
@@ -422,6 +425,7 @@ test "op_equal" {
   assert_eq!(queue, of([2, 3, 4]))
 }
 
+///|
 test "push" {
   let queue : T[Int] = new()
   queue.push(1)
@@ -432,6 +436,7 @@ test "push" {
   assert_eq!(queue, of([1, 2, 3, 1]))
 }
 
+///|
 test "copy" {
   let queue : T[Int] = of([1, 2, 3, 4])
   let queue2 : T[Int] = queue.copy()
@@ -441,6 +446,7 @@ test "copy" {
   assert_eq!(queue, of([1, 2, 3, 4]))
 }
 
+///|
 test "transfer" {
   let queue : T[Int] = of([1, 2, 3, 4])
   let queue2 : T[Int] = of([5, 6, 7, 8])
@@ -450,6 +456,7 @@ test "transfer" {
   assert_eq!(queue2, of([5, 6, 7, 8, 1, 2, 3, 4]))
 }
 
+///|
 test "cell_equal" {
   assert_false!(of([]).first == of([1]).first)
 }

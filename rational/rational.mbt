@@ -334,6 +334,7 @@ pub fn is_integer(self : T) -> Bool {
   self.denominator == 1L
 }
 
+///|
 test "op_add" {
   // 1/2 + 1/3 = 5/6
   let a = new_unchecked(1L, 2L)
@@ -369,6 +370,7 @@ test "op_add" {
   assert_eq!(c.denominator, 1L)
 }
 
+///|
 test "op_sub" {
   // 1/2 - 1/3 = 1/6
   let a = new_unchecked(1L, 2L)
@@ -404,6 +406,7 @@ test "op_sub" {
   assert_eq!(c.numerator, 0L)
 }
 
+///|
 test "op_mul" {
   // 1/2 * 2/3 = 1/3
   let a = new_unchecked(1L, 2L)
@@ -427,6 +430,7 @@ test "op_mul" {
   assert_eq!(c.denominator, 1L)
 }
 
+///|
 test "op_div" {
   // 1/2 / 2/3 = 3/4
   let a = new_unchecked(1L, 2L)
@@ -450,6 +454,7 @@ test "op_div" {
   assert_eq!(c.denominator, 1L)
 }
 
+///|
 test "reciprocal" {
   // 1/2 -> 2/1
   let a = new_unchecked(1L, 2L)
@@ -464,6 +469,7 @@ test "reciprocal" {
   assert_eq!(b.denominator, 1L)
 }
 
+///|
 test "neg" {
   // 1/2 -> -1/2
   let a = new_unchecked(1L, 2L)
@@ -478,6 +484,7 @@ test "neg" {
   assert_eq!(b.denominator, 2L)
 }
 
+///|
 test "abs" {
   // 1/2 -> 1/2
   let a = new_unchecked(1L, 2L)
@@ -492,6 +499,7 @@ test "abs" {
   assert_eq!(b.denominator, 2L)
 }
 
+///|
 test "to_double" {
   // 1/2 -> 0.5
   let a = new_unchecked(1L, 2L)
@@ -504,6 +512,7 @@ test "to_double" {
   assert_eq!(b, -0.5)
 }
 
+///|
 test "ceil" {
   // 1/2 -> 1
   let a = new_unchecked(1L, 2L)
@@ -526,6 +535,7 @@ test "ceil" {
   assert_eq!(b, 1L)
 }
 
+///|
 test "floor" {
   // 1/2 -> 0
   let a = new_unchecked(1L, 2L)
@@ -548,6 +558,7 @@ test "floor" {
   assert_eq!(b, 1L)
 }
 
+///|
 test "trunc" {
   // 1/2 -> 0
   let a = new_unchecked(1L, 2L)
@@ -560,6 +571,7 @@ test "trunc" {
   assert_eq!(b, 0L)
 }
 
+///|
 test "fract" {
   // 1/2 -> 1/2
   let a = new_unchecked(1L, 2L)
@@ -586,6 +598,7 @@ test "fract" {
   assert_eq!(b.denominator, 2L)
 }
 
+///|
 test "to_string" {
   // 1/2 -> "1/2"
   let a = new_unchecked(1L, 2L)
@@ -603,6 +616,7 @@ test "to_string" {
   assert_eq!(b, "0")
 }
 
+///|
 test "is_integer" {
   // 1/2 is not an integer
   let a = new_unchecked(1L, 2L)
@@ -621,6 +635,7 @@ test "is_integer" {
   assert_true!(a.is_integer())
 }
 
+///|
 test "compare" {
   // 1/2 < 2/3
   let a = new_unchecked(1L, 2L)
@@ -645,21 +660,25 @@ test "compare" {
   assert_true!(a == b)
 }
 
+///|
 test "from_double normal case" {
   let result = 0.5 |> @result.wrap1(f=from_double)
   assert_eq!(result, Ok(new_unchecked(1L, 2L)))
 }
 
+///|
 test "from_double edge case" {
   let result = 9_223_372_036_800_000_000.0 |> @result.wrap1(f=from_double)
   assert_eq!(result, Ok(new_unchecked(9_223_372_036_800_000_000L, 1L)))
 }
 
+///|
 test "from_double normal case" {
   let result = 0.5 |> @result.wrap1(f=from_double)
   assert_eq!(result, Ok(new_unchecked(1L, 2L)))
 }
 
+///|
 test "from_double edge case" {
   let result = 9_223_372_036_800_000_000.0 |> @result.wrap1(f=from_double)
   assert_eq!(result, Ok(new_unchecked(9_223_372_036_800_000_000L, 1L)))

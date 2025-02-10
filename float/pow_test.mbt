@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+///|
 test "pow" {
   inspect!((1.0 : Float).pow(3.0), content="1")
   inspect!((-1.0 : Float).pow(3.0), content="-1")

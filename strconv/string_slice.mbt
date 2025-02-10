@@ -146,12 +146,14 @@ fn fold_digits[T](
   (self.subfix_unchecked(self.length()), ret, len)
 }
 
+///|
 test "eq_ignore_case" {
   assert_true!(prefix_eq_ignore_case(full_slice("nan"), "NaN"))
   assert_true!(prefix_eq_ignore_case(full_slice("inf"), "inf"))
   assert_true!(prefix_eq_ignore_case(full_slice("inf"), "Inf"))
 }
 
+///|
 test "lower" {
   assert_eq!(lower('Z'), 'z')
   assert_eq!(lower('A'), 'a')

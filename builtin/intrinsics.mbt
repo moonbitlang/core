@@ -1826,7 +1826,6 @@ pub fn String::charcode_length(self : String) -> Int = "%string_length"
 /// ```
 ///
 /// @alert unsafe "Panic if index is out of bounds"
-/// @intrinsic %string\_get
 pub fn String::op_get(self : String, idx : Int) -> Char = "%string_get"
 
 ///|
@@ -1883,7 +1882,6 @@ pub fn String::get(self : String, idx : Int) -> Char = "%string_get"
 /// ```
 ///
 /// @alert unsafe "Panic if index is out of bounds."
-/// @intrinsic %string\_get
 pub fn String::unsafe_charcode_at(self : String, idx : Int) -> Int = "%string_get"
 
 ///|

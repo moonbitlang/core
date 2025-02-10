@@ -40,6 +40,7 @@ fn my_range[T : Range](lo : T, hi : T) -> RangeImpl[T] {
 // 1. the trait must be exposed to users
 //    ideas: can we have a feature called final trait?
 
+///|
 test {
   @json.inspect!(my_range(1, 10), content={ "lo": 1, "hi": 10 })
   @json.inspect!(my_range("a", "z"), content={ "lo": "a", "hi": "z" })
@@ -60,16 +61,19 @@ fn labeld_break(xss : Array[Array[Double]]) -> Double? {
   }
 }
 
+///|
 test "labeld_break/empty" {
   let xss : Array[Array[Double]] = []
   inspect!(labeld_break(xss), content="None")
 }
 
+///|
 test "labeld_break/sum_under_threshold" {
   let xss = [[1.0, 2.0], [3.0, 4.0]]
   inspect!(labeld_break(xss), content="None")
 }
 
+///|
 test "labeld_break/cross_threshold" {
   let xss = [[3.0, 4.0], [5.0, 6.0]]
   inspect!(labeld_break(xss), content="Some(12)")

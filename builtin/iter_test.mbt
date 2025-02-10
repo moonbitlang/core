@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+///|
 test "empty" {
   let iter = Iter::empty()
   let exb = StringBuilder::new(size_hint=0)
@@ -19,6 +20,7 @@ test "empty" {
   inspect!(exb)
 }
 
+///|
 test "singleton" {
   let iter = Iter::singleton('1')
   let exb = StringBuilder::new(size_hint=0)
@@ -26,6 +28,7 @@ test "singleton" {
   inspect!(exb, content="1")
 }
 
+///|
 test "repeat" {
   let iter = Iter::repeat('1')
   let exb = StringBuilder::new(size_hint=0)
@@ -35,11 +38,13 @@ test "repeat" {
   inspect!(exb, content="111")
 }
 
+///|
 test "count" {
   let iter = test_from_array(['1', '2', '3', '4', '5'])
   assert_eq!(iter.count(), 5)
 }
 
+///|
 test "take" {
   let iter = test_from_array(['1', '2', '3', '4', '5'])
   let exb = StringBuilder::new(size_hint=0)
@@ -47,6 +52,7 @@ test "take" {
   inspect!(exb, content="123")
 }
 
+///|
 test "take2" {
   let iter = test_from_array(['1', '2', '3', '4', '5'])
   let exb = StringBuilder::new(size_hint=0)
@@ -57,6 +63,7 @@ test "take2" {
   inspect!(exb, content="123456")
 }
 
+///|
 test "take_while" {
   let iter = test_from_array(['1', '2', '3', '4', '5'])
   let exb = StringBuilder::new(size_hint=0)
@@ -64,6 +71,7 @@ test "take_while" {
   inspect!(exb, content="123")
 }
 
+///|
 test "take_while2" {
   let iter = test_from_array(['1', '2', '3', '4', '5'])
   let exb = StringBuilder::new(size_hint=0)
@@ -74,6 +82,7 @@ test "take_while2" {
   inspect!(exb, content="1236")
 }
 
+///|
 test "take_while3" {
   let iter = test_from_array([1, 2, 3])
   let res = iter
@@ -83,6 +92,7 @@ test "take_while3" {
   inspect!(res, content="Some(2)")
 }
 
+///|
 test "take_while4" {
   let iter = test_from_array([1, 2, 3, 4, 5, 6])
   let res = iter
@@ -92,6 +102,7 @@ test "take_while4" {
   inspect!(res, content="10")
 }
 
+///|
 test "take_while5" {
   let iter = test_from_array([1, 2, 3, 4, 5, 6])
   let res = iter
@@ -101,6 +112,7 @@ test "take_while5" {
   inspect!(res, content="0")
 }
 
+///|
 test "map_while1" {
   let iter = test_from_array([1, 2, 3, 4, 5])
   let exb = StringBuilder::new(size_hint=0)
@@ -110,6 +122,7 @@ test "map_while1" {
   inspect!(exb, content="1\n2\n3\n")
 }
 
+///|
 test "map_while2" {
   let iter = test_from_array([1, 2, 3, 4, 5])
   let exb = StringBuilder::new(size_hint=0)
@@ -120,6 +133,7 @@ test "map_while2" {
   inspect!(exb, content="1\n2\n3\n6\n")
 }
 
+///|
 test "map_while3" {
   let iter = test_from_array([1, 2, 3])
   let res = iter
@@ -129,6 +143,7 @@ test "map_while3" {
   inspect!(res, content="Some(2)")
 }
 
+///|
 test "map_while4" {
   let iter = test_from_array([1, 2, 3, 4, 5, 6])
   let res = iter
@@ -138,6 +153,7 @@ test "map_while4" {
   inspect!(res, content="10")
 }
 
+///|
 test "map_while5" {
   let iter = test_from_array([1, 2, 3, 4, 5, 6])
   let res = iter
@@ -147,6 +163,7 @@ test "map_while5" {
   inspect!(res, content="0")
 }
 
+///|
 test "drop" {
   let iter = test_from_array(['1', '2', '3', '4', '5'])
   let exb = StringBuilder::new(size_hint=0)
@@ -154,6 +171,7 @@ test "drop" {
   inspect!(exb, content="45")
 }
 
+///|
 test "drop_while" {
   let iter = test_from_array(['1', '2', '3', '4', '5'])
   let exb = StringBuilder::new(size_hint=0)
@@ -161,6 +179,7 @@ test "drop_while" {
   inspect!(exb, content="45")
 }
 
+///|
 test "drop_while2" {
   let iter = test_from_array([1, 2, 3, 4, 5])
   let res = iter
@@ -170,6 +189,7 @@ test "drop_while2" {
   inspect!(res, content="Some(6)")
 }
 
+///|
 test "drop_while3" {
   let iter = test_from_array([1, 2, 3, 4, 5])
   let exb = StringBuilder::new(size_hint=0)
@@ -187,6 +207,7 @@ test "drop_while3" {
   inspect!(res, content="Some(3)")
 }
 
+///|
 test "drop_while4" {
   let iter = test_from_array([1, 2, 3, 4, 5])
   let res = iter
@@ -197,6 +218,7 @@ test "drop_while4" {
   inspect!(res, content="None")
 }
 
+///|
 test "filter" {
   let iter = test_from_array(['1', '2', '3', '4', '5'])
   let exb = StringBuilder::new(size_hint=0)
@@ -204,6 +226,7 @@ test "filter" {
   inspect!(exb, content="1235")
 }
 
+///|
 test "map" {
   let iter = test_from_array(['1', '2', '3', '4', '5'])
   let exb = StringBuilder::new(size_hint=0)
@@ -213,6 +236,7 @@ test "map" {
   inspect!(exb, content="23456")
 }
 
+///|
 test "filter_map" {
   let arr = [1, 2, 3, 4, 5]
   let r1 = arr
@@ -226,6 +250,7 @@ test "filter_map" {
   inspect!(r3, content="[]")
 }
 
+///|
 test "flat_map" {
   let iter = test_from_array(['1', '2', '3', '4', '5'])
   let exb = StringBuilder::new(size_hint=0)
@@ -235,6 +260,7 @@ test "flat_map" {
   inspect!(exb, content="1122334455")
 }
 
+///|
 test "flat_map2" {
   let iter = test_from_array(['1', '2', '3', '4', '5'])
   let exb = StringBuilder::new(size_hint=0)
@@ -244,6 +270,7 @@ test "flat_map2" {
   inspect!(exb, content="12345")
 }
 
+///|
 test "fold" {
   let iter = test_from_array(['1', '2', '3', '4', '5'])
   let result = Char::from_int(
@@ -252,6 +279,7 @@ test "fold" {
   assert_eq!(result, '3')
 }
 
+///|
 test "find_first" {
   let iter = test_from_array(['1', '2', '3', '4', '5'])
   let result = iter.find_first(fn { x => x > '3' })
@@ -260,12 +288,14 @@ test "find_first" {
   assert_eq!(result2, None)
 }
 
+///|
 test "find_first2" {
   let iter = test_from_array([1, 2, 3]).concat(test_from_array([4, 5, 6]))
   let result = iter.find_first(fn { x => x % 2 == 0 })
   inspect!(result, content="Some(2)")
 }
 
+///|
 test "tap" {
   let iter = test_from_array(['1', '2', '3', '4', '5'])
   let exb = StringBuilder::new(size_hint=0)
@@ -273,6 +303,7 @@ test "tap" {
   inspect!(exb, content="1122334455")
 }
 
+///|
 test "prepend" {
   let iter = test_from_array(['0', '1', '2', '3', '4', '5'])
   let exb = StringBuilder::new(size_hint=0)
@@ -280,6 +311,7 @@ test "prepend" {
   inspect!(exb, content="X012345")
 }
 
+///|
 test "append" {
   let iter = test_from_array(['1', '2', '3', '4', '5'])
   let exb = StringBuilder::new(size_hint=0)
@@ -287,6 +319,7 @@ test "append" {
   inspect!(exb, content="123456")
 }
 
+///|
 test "concat" {
   let iter1 = test_from_array(['1', '2', '3'])
   let iter2 = test_from_array(['4', '5', '6'])
@@ -296,6 +329,7 @@ test "concat" {
   inspect!(exb, content="123456")
 }
 
+///|
 test "collect" {
   let arr = ['1', '2', '3', '4', '5']
   let iter = Iter::new(fn(yield_) {
@@ -308,6 +342,7 @@ test "collect" {
   assert_eq!(vec, ['1', '2', '3', '4', '5'])
 }
 
+///|
 test "until" {
   // edge cases
   inspect!((0).until(10).take(100), content="[0, 1, 2, 3, 4, 5, 6, 7, 8, 9]")
@@ -403,6 +438,7 @@ test "until" {
   )
 }
 
+///|
 test "each" {
   let iter = test_from_array(['1', '2', '3', '4', '5'])
   let exb = StringBuilder::new(size_hint=5)
@@ -410,6 +446,7 @@ test "each" {
   inspect!(exb, content="12345")
 }
 
+///|
 test "eachi" {
   let iter = test_from_array([1, 2, 3, 4, 5])
   let exb = StringBuilder::new(size_hint=5)
@@ -432,6 +469,7 @@ fn test_from_array[T](arr : Array[T]) -> Iter[T] {
   })
 }
 
+///|
 test "any" {
   let iter = [1, 2, 3, 4, 5, 6] |> test_from_array
   assert_eq!(iter.take(3).any(fn { x => x < 4 }), true)
@@ -442,6 +480,7 @@ test "any" {
   assert_eq!(iter.take(8).all(fn { x => x < 7 }), true)
 }
 
+///|
 test "all" {
   let iter = [1, 2, 3, 4, 5, 6] |> test_from_array
   assert_eq!(iter.take(3).all(fn { x => x < 4 }), true)
@@ -474,6 +513,7 @@ fn Tree::iter(self : Tree) -> Iter[Int] {
   })
 }
 
+///|
 test "tree" {
   // let tree = Node(Node(Leaf(1), Leaf(2)), Node(Leaf(3), Leaf(4)))
   let tree = Node(Node(Leaf(1), 2, Leaf(3)), 4, Leaf(5))
@@ -482,6 +522,7 @@ test "tree" {
   inspect!(exb, content="12345")
 }
 
+///|
 test "Iter::intersperse" {
   inspect!([1, 2, 3].iter().intersperse(0), content="[1, 0, 2, 0, 3]")
   inspect!(
@@ -492,18 +533,21 @@ test "Iter::intersperse" {
   inspect!([1].iter().intersperse(0), content="[1]")
 }
 
+///|
 test "Iter::last" {
   inspect!([1, 2, 3].iter().last(), content="Some(3)")
   inspect!([1].iter().last(), content="Some(1)")
   inspect!(([] : Array[Int]).iter().last(), content="None")
 }
 
+///|
 test "Iter::head" {
   inspect!([1, 2, 3].iter().head(), content="Some(1)")
   inspect!([1].iter().head(), content="Some(1)")
   inspect!(([] : Array[Int]).iter().head(), content="None")
 }
 
+///|
 test "Iter::as_view" {
   inspect!([1, 2, 3].iter()[1:2], content="[2]")
   inspect!([1, 2, 3].iter()[1:], content="[2, 3]")
@@ -511,26 +555,31 @@ test "Iter::as_view" {
   inspect!([1, 2, 3].iter()[:], content="[1, 2, 3]")
 }
 
+///|
 test "Iter::enumerate" {
   inspect!([1, 2, 3].iter2(), content="[(0, 1), (1, 2), (2, 3)]")
   inspect!([1, 2, 3].iter2().to_string(), content="[(0, 1), (1, 2), (2, 3)]")
 }
 
+///|
 test "peek function - basic functionality" {
   let iter = Iter::singleton(42)
   inspect!(iter.peek(), content="Some(42)")
 }
 
+///|
 test "peek function - empty iterator" {
   let iter : Iter[Int] = Iter::empty()
   inspect!(iter.peek(), content="None")
 }
 
+///|
 test "peek function - multiple elements" {
   let iter = [1, 2, 3].iter()
   inspect!(iter.peek(), content="Some(1)")
 }
 
+///|
 test "peek function - random cases" {
   let iter1 = [10, 20, 30].iter()
   inspect!(iter1.peek(), content="Some(10)")
@@ -544,21 +593,25 @@ test "peek function - random cases" {
   inspect!(iter5.peek(), content="Some(0)")
 }
 
+///|
 test "@builtin.join/empty_iter" {
   let empty_iter : Iter[String] = Iter::empty()
   inspect!(empty_iter.join(""), content="")
 }
 
+///|
 test "@builtin.join/single_element" {
   let single_elem_iter : Iter[String] = Iter::singleton("Test")
   inspect!(single_elem_iter.join(""), content="Test")
 }
 
+///|
 test "@builtin.join/multiple_elements_with_separator" {
   let iter : Iter[String] = ["A", "B", "C"].iter()
   inspect!(iter.join(","), content="A,B,C")
 }
 
+///|
 test "@builtin.join/multiple_elements_without_separator" {
   let iter : Iter[String] = ["A", "B", "C"].iter()
   inspect!(iter.join(""), content="ABC")

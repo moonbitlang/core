@@ -36,6 +36,7 @@ pub fn FixedArray::sort_by_key[T, K : Compare](
   )
 }
 
+///|
 test "@array.sort_by_key/basic" {
   let arr : FixedArray[_] = [3, 1, 4, 1, 5]
   arr.sort_by_key(fn(x) { x })
@@ -69,12 +70,14 @@ pub fn FixedArray::sort_by[T](
   )
 }
 
+///|
 test "sort_by: basic functionality" {
   let arr : FixedArray[_] = [5, 3, 2, 4, 1]
   arr.sort_by(fn(a, b) { a - b })
   inspect!(arr, content="[1, 2, 3, 4, 5]")
 }
 
+///|
 test "sort_by: edge cases" {
   let empty_arr : FixedArray[Int] = []
   empty_arr.sort_by(fn(a, b) { a - b })
@@ -84,6 +87,7 @@ test "sort_by: edge cases" {
   inspect!(single_element_arr, content="[1]")
 }
 
+///|
 test "sort_by: random cases" {
   let random_arr1 : FixedArray[_] = [3, 1, 4, 1, 5, 9, 2, 6, 5, 3, 5]
   random_arr1.sort_by(fn(a, b) { a - b })
@@ -96,6 +100,7 @@ test "sort_by: random cases" {
   inspect!(random_arr3, content="[-1, -1, -1, 0, 0, 0, 10, 10, 10]")
 }
 
+///|
 test "sort_by: large array" {
   let large_arr = FixedArray::makei(1000, fn(i) { 1000 - i })
   large_arr.sort_by(fn(a, b) { a - b })
@@ -103,12 +108,14 @@ test "sort_by: large array" {
   inspect!(large_arr, content=expected.to_string())
 }
 
+///|
 test "sort_by: negative numbers" {
   let negative_arr : FixedArray[_] = [-5, -3, -2, -4, -1]
   negative_arr.sort_by(fn(a, b) { a - b })
   inspect!(negative_arr, content="[-5, -4, -3, -2, -1]")
 }
 
+///|
 test "sort_by: mixed positive and negative numbers" {
   let mixed_arr : FixedArray[_] = [-5, 3, -2, 4, -1]
   mixed_arr.sort_by(fn(a, b) { a - b })
@@ -228,6 +235,7 @@ fn fixed_bubble_sort_by[T](
   }
 }
 
+///|
 test "try_bubble_sort" {
   let arr : FixedArray[_] = [8, 7, 6, 5, 4, 3, 2, 1]
   let sorted = fixed_try_bubble_sort_by({ array: arr, start: 0, end: 8 }, fn(
@@ -343,6 +351,7 @@ fn fixed_sift_down_by[T](
   }
 }
 
+///|
 test "heap_sort" {
   fixed_test_sort!(fn(arr) {
     fixed_heap_sort_by({ array: arr, start: 0, end: arr.length() }, fn(a, b) {
@@ -351,6 +360,7 @@ test "heap_sort" {
   })
 }
 
+///|
 test "bubble_sort" {
   fixed_test_sort!(fn(arr) {
     fixed_bubble_sort_by({ array: arr, start: 0, end: arr.length() }, fn(a, b) {
@@ -359,16 +369,19 @@ test "bubble_sort" {
   })
 }
 
+///|
 test "sort" {
   fixed_test_sort!(fn(arr) { arr.sort() })
 }
 
+///|
 test "sort_by" {
   let arr = [5, 1, 3, 4, 2]
   arr.sort_by_key(fn(x) { -x })
   assert_eq!(arr, [5, 4, 3, 2, 1])
 }
 
+///|
 test "sort_by_fallback" {
   // Creating a large array that will trigger heap sort
   let arr = FixedArray::makei(100, fn(i) { if i % 2 == 0 { 1 } else { 0 } })

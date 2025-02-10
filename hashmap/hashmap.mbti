@@ -12,7 +12,7 @@ fn new[K, V](capacity~ : Int = ..) -> T[K, V]
 fn of[K : Eq + Hash, V](FixedArray[(K, V)]) -> T[K, V]
 
 // Types and methods
-type T
+type T[K, V]
 impl T {
   capacity[K, V](Self[K, V]) -> Int
   clear[K, V](Self[K, V]) -> Unit

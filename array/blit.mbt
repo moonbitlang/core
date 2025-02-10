@@ -44,6 +44,7 @@ pub fn FixedArray::copy[T](self : FixedArray[T]) -> FixedArray[T] {
   }
 }
 
+///|
 test "copy" {
   let a : FixedArray[_] = [1, 2, 3, 4]
   let b = a.copy()

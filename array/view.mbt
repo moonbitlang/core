@@ -185,7 +185,7 @@ pub fn View::contains[T : Eq](self : View[T], value : T) -> Bool {
 pub fn View::iter[A](self : View[A]) -> Iter[A] {
   Iter::new(fn(yield_) {
     for v in self {
-      guard let IterContinue = yield_(v) else { x => break x }
+      guard yield_(v) is IterContinue else { break IterEnd }
 
     } else {
       IterContinue

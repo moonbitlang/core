@@ -12,7 +12,7 @@ fn new[K, V]() -> T[K, V]
 fn of[K : Eq + Hash, V](FixedArray[(K, V)]) -> T[K, V]
 
 // Types and methods
-type T
+type T[K, V]
 impl T {
   add[K : Eq + Hash, V](Self[K, V], K, V) -> Self[K, V]
   each[K, V](Self[K, V], (K, V) -> Unit) -> Unit

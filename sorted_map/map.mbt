@@ -454,18 +454,21 @@ fn delete_node[K : Compare, V](
   }
 }
 
+///|
 test "new" {
   let map : T[Int, String] = new()
   inspect!(map.debug_tree(), content="_")
   inspect!(map.size(), content="0")
 }
 
+///|
 test "of" {
   let map = from_array([(3, "c"), (2, "b"), (1, "a")])
   inspect!(map.debug_tree(), content="([2]2,b,([1]1,a,_,_),([1]3,c,_,_))")
   inspect!(map.size(), content="3")
 }
 
+///|
 test "add1" {
   let map = new()
   map.add(6, "a")
@@ -481,6 +484,7 @@ test "add1" {
   inspect!(map.size(), content="6")
 }
 
+///|
 test "add2" {
   let map = new()
   map.add(1, "a")
@@ -496,6 +500,7 @@ test "add2" {
   inspect!(map.size(), content="6")
 }
 
+///|
 test "add3" {
   let map = new()
   map.add(4, "a")
@@ -508,6 +513,7 @@ test "add3" {
   )
 }
 
+///|
 test "add4" {
   let map = new()
   map.add(1, "a")
@@ -520,6 +526,7 @@ test "add4" {
   )
 }
 
+///|
 test "add duplicate key" {
   let map = from_array([(3, "c"), (2, "b"), (1, "a")])
   inspect!(map.debug_tree(), content="([2]2,b,([1]1,a,_,_),([1]3,c,_,_))")
@@ -527,6 +534,7 @@ test "add duplicate key" {
   inspect!(map.debug_tree(), content="([2]2,b,([1]1,x,_,_),([1]3,c,_,_))")
 }
 
+///|
 test "remove" {
   let map = from_array([
     (1, "a"),
@@ -581,6 +589,7 @@ test "remove" {
   inspect!(map.size, content="0")
 }
 
+///|
 test "op_set" {
   let map = new()
   map[1] = "a"
@@ -589,6 +598,7 @@ test "op_set" {
   inspect!(map.debug_tree(), content="([2]2,b,([1]1,a,_,_),([1]3,c,_,_))")
 }
 
+///|
 test "clear" {
   let map = from_array([(3, "c"), (2, "b"), (1, "a")])
   map.clear()

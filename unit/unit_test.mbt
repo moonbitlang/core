@@ -12,35 +12,41 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+///|
 test {
   let unit1 = ()
   let unit2 = ()
   assert_eq!(unit1, unit2)
 }
 
+///|
 test {
   let unit1 = ()
   let unit2 = ()
   assert_true!(physical_equal(unit1, unit2))
 }
 
+///|
 test {
   let unit = ()
   assert_eq!(@unit.default(), unit)
   assert_eq!(unit.to_string(), "()")
 }
 
+///|
 test {
   let unit1 = ()
   let unit2 = ()
   assert_eq!(@unit.compare(unit1, unit2), 0)
 }
 
+///|
 test {
   let unit = ()
   assert_eq!(unit.hash(), 0)
 }
 
+///|
 test "Unit hash_combine test" {
   let hasher = Hasher::new()
   let _ = Hash::hash_combine((), hasher)
@@ -49,6 +55,7 @@ test "Unit hash_combine test" {
   assert_not_eq!(hash1, hasher2.finalize())
 }
 
+///|
 test "Unit::default returns unit value" {
   let unit = Unit::default()
   inspect!(unit, content="()")

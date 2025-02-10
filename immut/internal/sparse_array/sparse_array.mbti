@@ -14,7 +14,7 @@ impl Bitset {
 }
 impl Eq for Bitset
 
-pub(all) struct SparseArray {
+pub(all) struct SparseArray[X] {
   elem_info : Bitset
   data : FixedArray[X]
 }
