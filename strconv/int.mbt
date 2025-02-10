@@ -34,15 +34,15 @@ fn check_and_consume_base(
 ) -> (Int, @string.StringView, Bool)!StrConvError {
   match view {
     ['0', 'x' | 'X', .. rest] => {
-      guard base == 0 || base == 16 else { base_err!() }
+      guard base is (0 | 16) else { base_err!() }
       (16, rest, true)
     }
     ['0', 'o' | 'O', .. rest] => {
-      guard base == 0 || base == 8 else { base_err!() }
+      guard base is (0 | 8) else { base_err!() }
       (8, rest, true)
     }
     ['0', 'b' | 'B', .. rest] => {
-      guard base == 0 || base == 2 else { base_err!() }
+      guard base is (0 | 2) else { base_err!() }
       (2, rest, true)
     }
     rest =>
@@ -52,6 +52,13 @@ fn check_and_consume_base(
         _ => base_err!()
       }
   }
+}
+
+///|
+test {
+  inspect!(parse_int64?("0b01", base=3), content="Err(invalid base)")
+  inspect!(parse_int64?("0x01", base=3), content="Err(invalid base)")
+  inspect!(parse_int64?("0o01", base=3), content="Err(invalid base)")
 }
 
 ///|
