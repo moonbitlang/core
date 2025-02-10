@@ -749,23 +749,23 @@ test "deque guard iter2 coverage improvement" {
   test_n_via_push_front!(15)
 }
 
-test "deque truncate" {
+test "deque unsafe_truncate" {
   // Empty deque
   let dq : @deque.T[Int] = @deque.new()
-  dq.truncate(3)
+  dq.unsafe_truncate(3)
   inspect!(dq, content="@deque.of([])")
 
   // Length is greater than current length
   let dq = @deque.of([1, 2, 3, 4, 5])
-  dq.truncate(3)
+  dq.unsafe_truncate(3)
   inspect!(dq, content="@deque.of([1, 2, 3])")
 
   // Length is equal to current length
-  dq.truncate(3)
+  dq.unsafe_truncate(3)
   inspect!(dq, content="@deque.of([1, 2, 3])")
 
   // Length is less than current length
-  dq.truncate(2)
+  dq.unsafe_truncate(2)
   inspect!(dq, content="@deque.of([1, 2])")
 
   // Test split case (head_len < len)
@@ -778,20 +778,20 @@ test "deque truncate" {
     ..push_back(8)
   // Current layout: [7, 8, X, 4, 5, 6]
   inspect!(dq.as_views(), content="([4, 5, 6], [7, 8])")
-  dq.truncate(42)
+  dq.unsafe_truncate(42)
   // Current layout: [7, 8, X, 4, 5, 6]
   inspect!(dq.as_views(), content="([4, 5, 6], [7, 8])")
-  dq.truncate(4)
+  dq.unsafe_truncate(4)
   // Current layout: [7, X, X, 4, 5, 6]
   inspect!(dq.as_views(), content="([4, 5, 6], [7])")
   // Current layout: [X, X, X, 4, 5, X]
-  dq.truncate(2)
+  dq.unsafe_truncate(2)
   inspect!(dq.as_views(), content="([4, 5], [])")
 }
 
-test "panic deque truncate" {
+test "panic deque unsafe_truncate" {
   let dq = @deque.of([1, 2, 3, 4, 5])
-  dq.truncate(-1)
+  dq.unsafe_truncate(-1)
 }
 
 test "deque retain" {
