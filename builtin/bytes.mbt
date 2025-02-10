@@ -455,7 +455,6 @@ pub fn Bytes::op_equal(self : Bytes, other : Bytes) -> Bool {
 /// Example:
 ///
 /// ```moonbit
-/// ///|
 /// test "Bytes::compare" {
 ///   let a = b"\x01\x02\x03"
 ///   let b = b"\x01\x02\x04"
@@ -464,7 +463,6 @@ pub fn Bytes::op_equal(self : Bytes, other : Bytes) -> Bool {
 ///   inspect!(a.compare(a), content="0") // a = a
 /// }
 /// 
-/// ///|
 /// test "Bytes::compare/different_lengths" {
 ///   let a = b"\x01\x02"
 ///   let b = b"\x01\x02\x03"
