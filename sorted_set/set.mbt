@@ -480,18 +480,18 @@ fn range_aux[V : Compare](root : Node[V]?, low : V, high : V) -> Iter[V] {
         let cmp_key_low = node.value.compare(low)
         let cmp_key_high = node.value.compare(high)
         if cmp_key_low > 0 {
-          guard let IterContinue = range_aux(node.left, low, high).run(yield_) else {
-            x => return x
+          guard range_aux(node.left, low, high).run(yield_) is IterContinue else {
+            return IterEnd
           }
 
         }
         if cmp_key_low >= 0 && cmp_key_high <= 0 {
-          guard let IterContinue = yield_(node.value) else { x => return x }
+          guard yield_(node.value) is IterContinue else { return IterEnd }
 
         }
         if cmp_key_high < 0 {
-          guard let IterContinue = range_aux(node.right, low, high).run(yield_) else {
-            x => return x
+          guard range_aux(node.right, low, high).run(yield_) is IterContinue else {
+            return IterEnd
           }
 
         }

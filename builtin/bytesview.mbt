@@ -196,7 +196,7 @@ pub fn BytesView::op_as_view(
 pub fn BytesView::iter(self : BytesView) -> Iter[Byte] {
   Iter::new(fn(yield_) {
     for i in 0..<self.len {
-      guard let IterContinue = yield_(self[i]) else { x => break x }
+      guard yield_(self[i]) is IterContinue else { break IterEnd }
 
     } else {
       IterContinue

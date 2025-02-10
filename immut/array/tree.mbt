@@ -300,9 +300,7 @@ fn Tree::iter[A](self : Tree[A]) -> Iter[A] {
       Leaf(l) => l.iter().run(yield_)
       Node(ns, _) =>
         for n in ns {
-          guard let IterContinue = n.iter().run(yield_) else {
-            IterEnd => break IterEnd
-          }
+          guard n.iter().run(yield_) is IterContinue else { break IterEnd }
 
         } else {
           IterContinue

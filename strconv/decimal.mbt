@@ -157,7 +157,7 @@ fn parse_decimal_from_view(str : @string.View) -> Decimal!StrConvError {
         }
         rest => rest
       }
-      guard let ['0'..='9', ..] = rest else { _ => syntax_err!() }
+      guard rest is ['0'..='9', ..] else { syntax_err!() }
       let mut exp = 0
       let rest = loop rest {
         ['_', .. rest] => continue rest

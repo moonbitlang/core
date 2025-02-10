@@ -267,21 +267,21 @@ fn range_aux[K : Compare, V](
         let cmp_key_high = node.key.compare(high)
         if cmp_key_low > 0 {
           // we should go left
-          guard let IterContinue = range_aux(node.left, low, high).run(yield_) else {
-            x => return x
+          guard range_aux(node.left, low, high).run(yield_) is IterContinue else {
+            return IterEnd
           }
 
         }
         if cmp_key_low >= 0 && cmp_key_high <= 0 {
           // we should yield this node
-          guard let IterContinue = yield_(node.key, node.value) else {
-            x => return x
+          guard yield_(node.key, node.value) is IterContinue else {
+            return IterEnd
           }
 
         }
         if cmp_key_high < 0 {
-          guard let IterContinue = range_aux(node.right, low, high).run(yield_) else {
-            x => return x
+          guard range_aux(node.right, low, high).run(yield_) is IterContinue else {
+            return IterEnd
           }
 
         }
