@@ -449,11 +449,11 @@ pub fn View::iter(self : View) -> Iter[Char] {
         let c2 = self.str.unsafe_charcode_at(index + 1)
         if is_trailing_surrogate(c2) {
           let c = code_point_of_surrogate_pair(c1, c2)
-          guard let IterContinue = yield_(c) else { x => break x }
+          guard yield_(c) is IterContinue else { break IterEnd }
           continue index + 2
         }
       }
-      guard let IterContinue = yield_(Char::from_int(c1)) else { x => break x }
+      guard yield_(Char::from_int(c1)) is IterContinue else { break IterEnd }
 
     } else {
       IterContinue

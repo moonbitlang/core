@@ -288,10 +288,11 @@ pub fn Array::op_equal[T : Eq](self : Array[T], other : Array[T]) -> Bool {
 pub fn Array::compare[T : Compare](self : Array[T], other : Array[T]) -> Int {
   let len_self = self.length()
   let len_other = other.length()
-  guard let 0 = len_self.compare(len_other) else { x => return x }
+  let cmp = len_self.compare(len_other)
+  guard cmp is 0 else { return cmp }
   for i in 0..<len_self {
     let cmp = self.unsafe_get(i).compare(other.unsafe_get(i))
-    guard let 0 = cmp else { x => break x }
+    guard cmp is 0 else { break cmp }
 
   } else {
     0
@@ -1666,7 +1667,7 @@ pub fn Array::split[T](self : Array[T], pred : (T) -> Bool) -> Array[Array[T]] {
 pub fn Array::iter[T](self : Array[T]) -> Iter[T] {
   Iter::new(fn(yield_) {
     for v in self {
-      guard let IterContinue = yield_(v) else { x => break x }
+      guard yield_(v) is IterContinue else { break IterEnd }
 
     } else {
       IterContinue
@@ -1698,7 +1699,7 @@ pub fn Array::iter[T](self : Array[T]) -> Iter[T] {
 pub fn Array::rev_iter[T](self : Array[T]) -> Iter[T] {
   Iter::new(fn(yield_) {
     for i = self.length() - 1; i >= 0; i = i - 1 {
-      guard let IterContinue = yield_(self.unsafe_get(i)) else { x => break x }
+      guard yield_(self.unsafe_get(i)) is IterContinue else { break IterEnd }
 
     } else {
       IterContinue
@@ -1730,7 +1731,7 @@ pub fn Array::rev_iter[T](self : Array[T]) -> Iter[T] {
 pub fn Array::iter2[A](self : Array[A]) -> Iter2[Int, A] {
   Iter2::new(fn(yield_) {
     for i, v in self {
-      guard let IterContinue = yield_(i, v) else { x => break x }
+      guard yield_(i, v) is IterContinue else { break IterEnd }
 
     } else {
       IterContinue
