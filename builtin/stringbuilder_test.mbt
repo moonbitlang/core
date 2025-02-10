@@ -21,6 +21,7 @@ fn id(s : String) -> String {
   StringBuilder::new()..write_string(s).to_string()
 }
 
+///|
 test "stringbuilder" {
   let buf = StringBuilder::new()
   buf.write_string("hello")
@@ -29,6 +30,7 @@ test "stringbuilder" {
   inspect!(buf.to_string(), content="hello wor")
 }
 
+///|
 test "is_empty method" {
   let buf = StringBuilder::new()
   inspect!(buf.is_empty(), content="true")
@@ -38,12 +40,14 @@ test "is_empty method" {
   inspect!(buf.is_empty(), content="true")
 }
 
+///|
 test {
   let data = ["a", "b", "c", "hello world"]
   @json.inspect!(data.map(id), content=["a", "b", "c", "hello world"])
   // assert_eq!(StringBuilder::new()..write_string("hello").to_string(), "hello")
 }
 
+///|
 test "write_iter" {
   let str = "Hello🤣🤣🤣"
   let sb = StringBuilder::new()

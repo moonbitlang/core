@@ -12,16 +12,19 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+///|
 test "from_fixed_array" {
   let queue = @priority_queue.of([1, 6, 3, 4, 5])
   inspect!(queue.peek(), content="Some(6)")
 }
 
+///|
 test "from_array" {
   let queue = @priority_queue.of([1, 6, 3, 4, 5])
   inspect!(queue.peek(), content="Some(6)")
 }
 
+///|
 test "to_array" {
   let v = @priority_queue.of([1, 2, 3, 4])
   inspect!(v.to_array(), content="[4, 3, 2, 1]")
@@ -32,6 +35,7 @@ test "to_array" {
   )
 }
 
+///|
 test "as_iter" {
   let buf = StringBuilder::new(size_hint=20)
   let v = @priority_queue.of([1, 2, 3])
@@ -42,6 +46,7 @@ test "as_iter" {
   inspect!(buf, content="[3][2]")
 }
 
+///|
 test "pop" {
   let queue = @priority_queue.of([1, 2, 3, 4])
   let first = queue.pop()
@@ -62,6 +67,7 @@ test "pop" {
   )
 }
 
+///|
 test "pop_exn" {
   let queue = @priority_queue.of([1, 2, 3, 4])
   let first = queue.unsafe_pop()
@@ -80,23 +86,27 @@ test "pop_exn" {
   )
 }
 
+///|
 test "push" {
   let queue = @priority_queue.of([1, 2, 3])
   inspect!(queue.push(4).peek(), content="Some(4)")
 }
 
+///|
 test "peek" {
   let queue = @priority_queue.new()
   inspect!(queue.peek(), content="None")
   inspect!(queue.push(1).peek(), content="Some(1)")
 }
 
+///|
 test "is_empty" {
   let queue = @priority_queue.new()
   inspect!(queue.is_empty(), content="true")
   inspect!(queue.push(1).is_empty(), content="false")
 }
 
+///|
 test "length" {
   let pq = @priority_queue.of([1, 2])
   inspect!(pq.length(), content="2")
@@ -104,6 +114,7 @@ test "length" {
   inspect!(pq.unsafe_pop().unsafe_pop().length(), content="0")
 }
 
+///|
 test "from_iter multiple elements iter" {
   inspect!(
     @priority_queue.T::from_iter([1, 2, 3].iter()),
@@ -111,6 +122,7 @@ test "from_iter multiple elements iter" {
   )
 }
 
+///|
 test "from_iter single element iter" {
   inspect!(
     @priority_queue.T::from_iter([1].iter()),
@@ -118,11 +130,13 @@ test "from_iter single element iter" {
   )
 }
 
+///|
 test "from_iter empty iter" {
   let pq : @priority_queue.T[Int] = @priority_queue.T::from_iter(Iter::empty())
   inspect!(pq, content="@immut/priority_queue.of([])")
 }
 
+///|
 test "hash" {
   let pq1 = @priority_queue.of([1, 2, 3, 4, 5])
   let pq2 = @priority_queue.of([1, 2, 3, 4, 5])
@@ -136,6 +150,7 @@ test "hash" {
   inspect!(pq1.hash() == pq5.hash(), content="false")
 }
 
+///|
 test "equal" {
   let pq1 = @priority_queue.of([1, 2, 3, 4, 5])
   inspect!(pq1 == pq1, content="true")

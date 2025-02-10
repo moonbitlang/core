@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+///|
 test "hash" {
   let d1 = 123.456
   let d2 = 789.012
@@ -21,6 +22,7 @@ test "hash" {
   assert_eq!(d1.hash(), d3.hash())
 }
 
+///|
 test "is_close" {
   inspect!(123.1.is_close(123.0, absolute_tolerance=0.1), content="true")
   inspect!(123.1.is_close(123.0, relative_tolerance=0.1), content="true")
@@ -39,6 +41,7 @@ test "is_close" {
   inspect!(0.0.is_close(@double.neg_infinity), content="false")
 }
 
+///|
 test "abs" {
   inspect!(0.0.abs().reinterpret_as_uint64(), content="0")
   inspect!((-0.0).abs().reinterpret_as_uint64(), content="0")

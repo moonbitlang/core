@@ -21,6 +21,7 @@ enum Expr {
   Val(String)
 } derive(ToJson, FromJson, Show, Eq)
 
+///|
 test {
   let e = Expr::Add(Val("x"), Val("y"))
   let ej = e.to_json()

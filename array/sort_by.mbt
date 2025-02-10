@@ -256,6 +256,7 @@ fn sift_down_by[T](
   }
 }
 
+///|
 test "try_bubble_sort" {
   let arr = [8, 7, 6, 5, 4, 3, 2, 1]
   let sorted = try_bubble_sort_by(arr[0:8], fn(a, b) { a - b })
@@ -263,20 +264,24 @@ test "try_bubble_sort" {
   assert_eq!(arr, [1, 2, 3, 4, 5, 6, 7, 8])
 }
 
+///|
 test "heap_sort" {
   test_sort!(fn(arr) { heap_sort_by(arr[:], fn(a, b) { a - b }) })
 }
 
+///|
 test "bubble_sort" {
   test_sort!(fn(arr) { bubble_sort_by(arr[:], fn(a, b) { a - b }) })
 }
 
+///|
 test "sort_by_key" {
   let arr = [5, 1, 3, 4, 2]
   arr.sort_by_key(fn(x) { -x })
   assert_eq!(arr, [5, 4, 3, 2, 1])
 }
 
+///|
 test "sort_by" {
   test_sort!(fn(arr) { arr.sort_by(fn(a, b) { a - b }) })
 }

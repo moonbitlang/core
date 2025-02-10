@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+///|
 test "Double::to_int64" {
   inspect!(0.0.to_int64(), content="0")
   inspect!(1.0.to_int64(), content="1")
@@ -35,6 +36,7 @@ test "Double::to_int64" {
   inspect!((-9223372036854775809.0).to_int64(), content="-9223372036854775808")
 }
 
+///|
 test "Double::to_uint64" {
   inspect!(0.0.to_uint64(), content="0")
   inspect!(1.0.to_uint64(), content="1")

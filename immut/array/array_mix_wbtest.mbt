@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+///|
 test "random property tests" {
   run_test!(104UL, 10, 4)
   run_test!(503UL, 50, 3)

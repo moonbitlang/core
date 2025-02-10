@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+///|
 test "log" {
   inspect!((1.0 : Float).ln(), content="0")
   inspect!((0.0 : Float).ln(), content="-Infinity")

@@ -38,6 +38,7 @@ pub fn when[T](condition : Bool, value : () -> T) -> T? {
   }
 }
 
+///|
 test "when" {
   let result = when(true, fn() { "Hello, World!" })
   let result2 = when(false, fn() { "Hello, World!" })
@@ -63,6 +64,7 @@ pub fn unless[T](condition : Bool, value : () -> T) -> T? {
   when(not(condition), value)
 }
 
+///|
 test "unless" {
   let result = unless(true, fn() { "Hello, World!" })
   let result2 = unless(false, fn() { "Hello, World!" })
@@ -76,6 +78,7 @@ pub fn empty[T]() -> T? {
   None
 }
 
+///|
 test "empty" {
   let x : Int? = None
   let y : Int? = empty()
@@ -88,6 +91,7 @@ pub fn some[T](value : T) -> T? {
   Some(value)
 }
 
+///|
 test "some" {
   let x : Int? = Some(5)
   let y : Int? = some(5)
@@ -113,6 +117,7 @@ pub fn map[T, U](self : T?, f : (T) -> U) -> U? {
   }
 }
 
+///|
 test "map" {
   let a = Option::Some(5)
   let b : Int? = None
@@ -137,6 +142,7 @@ pub fn map_or[T, U](self : T?, default : U, f : (T) -> U) -> U {
   }
 }
 
+///|
 test "map_or" {
   let a = Option::Some("foo")
   let b : String? = Option::None
@@ -160,6 +166,7 @@ pub fn map_or_else[T, U](self : T?, default : () -> U, f : (T) -> U) -> U {
   }
 }
 
+///|
 test "map_or_else" {
   let k = 21
   let a = Option::Some("foo")
@@ -188,6 +195,7 @@ pub fn bind[T, U](self : T?, f : (T) -> U?) -> U? {
   }
 }
 
+///|
 test "bind" {
   let a = Option::Some(5)
   let b : Int? = None
@@ -215,6 +223,7 @@ pub fn flatten[T](self : T??) -> T? {
   }
 }
 
+///|
 test "flatten" {
   let a : Int?? = Some(Some(42))
   assert_eq!(flatten(a), Some(42))
@@ -231,6 +240,7 @@ pub fn is_empty[T](self : T?) -> Bool {
   }
 }
 
+///|
 test "is_empty" {
   let x = Option::Some(3)
   let y : Int? = None
@@ -257,6 +267,7 @@ pub fn filter[T](self : T?, f : (T) -> Bool) -> T? {
   }
 }
 
+///|
 test "filter" {
   let x = Option::Some(3)
   assert_eq!(x.filter(fn(x) { x > 5 }), None)
@@ -272,6 +283,7 @@ pub fn or[T](self : T?, default : T) -> T {
   }
 }
 
+///|
 test "or" {
   let x = Option::Some(3)
   assert_eq!(x.or(5), 3)
@@ -289,6 +301,7 @@ pub fn or_else[T](self : T?, default : () -> T) -> T {
   }
 }
 
+///|
 test "or else" {
   let x = Option::Some(3)
   assert_eq!(x.or_else(fn() { 5 }), 3)
@@ -304,6 +317,7 @@ pub fn or_default[T : Default](self : T?) -> T {
   }
 }
 
+///|
 test "or default" {
   let x = Option::Some(3)
   assert_eq!(x.or_default(), 3)
@@ -326,6 +340,7 @@ pub fn compare[X : Compare](self : X?, other : X?) -> Int {
   }
 }
 
+///|
 test "compare" {
   let some1 = Option::Some(1)
   let some2 = Option::Some(2)
@@ -352,6 +367,7 @@ pub fn iter[T](self : T?) -> Iter[T] {
   }
 }
 
+///|
 test "iter" {
   let x = Option::Some(42)
   let exb = StringBuilder::new(size_hint=0)
@@ -387,6 +403,7 @@ pub fn or_error[T, Err : Error](self : T?, err : Err) -> T!Err {
   }
 }
 
+///|
 test "or error" {
   assert_eq!(
     try {
@@ -418,6 +435,7 @@ pub impl[X : @quickcheck.Arbitrary] @quickcheck.Arbitrary for X? with arbitrary(
   }
 }
 
+///|
 test "arbitrary" {
   let samples : Array[Int?] = @quickcheck.samples(10)
   inspect!(

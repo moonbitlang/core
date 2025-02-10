@@ -12,19 +12,23 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+///|
 test "Bool::to_json" {
   inspect!(true.to_json(), content="True")
   inspect!(false.to_json(), content="False")
 }
 
+///|
 test "Int::to_json" {
   inspect!((42).to_json(), content="Number(42)")
 }
 
+///|
 test "UInt::to_json" {
   inspect!(42U.to_json(), content="Number(42)")
 }
 
+///|
 test "Int64::to_json" {
   inspect!(
     42L.to_json(),
@@ -46,6 +50,7 @@ test "Int64::to_json" {
   )
 }
 
+///|
 test "UInt64::to_json" {
   inspect!(
     42UL.to_json(),
@@ -61,6 +66,7 @@ test "UInt64::to_json" {
   )
 }
 
+///|
 test "Double::to_json" {
   inspect!(42.0.to_json(), content="Number(42)")
   inspect!(@double.not_a_number.to_json(), content="Null")
@@ -68,10 +74,12 @@ test "Double::to_json" {
   inspect!(@double.neg_infinity.to_json(), content="Null")
 }
 
+///|
 test "Float::to_json" {
   inspect!((42.0 : Float).to_json(), content="Number(42)")
 }
 
+///|
 test "String::to_json" {
   inspect!(
     "abc".to_json(),
@@ -111,6 +119,7 @@ test "String::to_json" {
   )
 }
 
+///|
 test "Char::to_json" {
   inspect!(
     'a'.to_json(),
@@ -126,6 +135,7 @@ test "Char::to_json" {
   )
 }
 
+///|
 test "BigInt::to_json" {
   inspect!(
     BigInt::from_string("123456789012345678901234567890").to_json(),
@@ -133,6 +143,7 @@ test "BigInt::to_json" {
   )
 }
 
+///|
 test "Array::to_json" {
   inspect!(
     [1, 2, 3].to_json(),
@@ -146,6 +157,7 @@ test "Array::to_json" {
   )
 }
 
+///|
 test "FixedArray::to_json" {
   inspect!(
     ([1, 2, 3] : FixedArray[_]).to_json(),
@@ -159,6 +171,7 @@ test "FixedArray::to_json" {
   )
 }
 
+///|
 test "Map::to_json" {
   inspect!(
     { "x": [1], "y": [2] }.to_json(),
@@ -174,6 +187,7 @@ struct Opt {
   t : Int??
 } derive(ToJson, FromJson, Eq, Show)
 
+///|
 test "Option::to_json" {
   inspect!((Some(42) : Int?).to_json(), content="Array([Number(42)])")
   inspect!((None : Int?).to_json(), content="Null")
@@ -184,6 +198,7 @@ test "Option::to_json" {
   )
 }
 
+///|
 test "optional field" {
   let opt = [
     { x: Some(42), t: Some(Some(42)) },
@@ -198,6 +213,7 @@ test "optional field" {
   )
 }
 
+///|
 test "optional field round trip" {
   let opt = { x: Some(42), t: Some(Some(42)) }
   assert_eq!(@json.from_json!(opt.to_json()), opt)
@@ -207,6 +223,7 @@ test "optional field round trip" {
   assert_eq!(@json.from_json!(opt.to_json()), opt)
 }
 
+///|
 test "Tuple::to_json" {
   let tuple = (0, 1)
   inspect!(ToJson::to_json(tuple), content="Array([Number(0), Number(1)])")

@@ -104,6 +104,7 @@ fn Bucket::iter[K, V](self : Bucket[K, V]) -> Iter[(K, V)] {
   })
 }
 
+///|
 test "Bucket" {
   let b0 : Bucket[_] = Just_One(0, 0)
   inspect!((b0.find(0), b0.find(1), b0.size()), content="(Some(0), None, 1)")
@@ -121,6 +122,7 @@ test "Bucket" {
   inspect!((b1.find(0), b1.find(1)), content="(Some(2), None)")
 }
 
+///|
 test "Bucket::iter" {
   let b : Bucket[_] = More(0, 0, More(1, 1, Just_One(31, 31)))
   let buf = StringBuilder::new(size_hint=0)
@@ -136,6 +138,7 @@ test "Bucket::iter" {
   inspect!(buf.to_string(), content="0 => 0, 1 => 1, 31 => 31")
 }
 
+///|
 test "Bucket::iter" {
   let b : Bucket[_] = More(0, 0, More(1, 1, Just_One(31, 31)))
   let buf = StringBuilder::new(size_hint=0)

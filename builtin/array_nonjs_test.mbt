@@ -12,11 +12,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+///|
 test "array_capacity" {
   let arr : Array[Int] = Array::new(capacity=10)
   assert_true!(arr.capacity() >= 10)
 }
 
+///|
 test "array_retain" {
   let arr = [1, 2, 3, 4, 5]
   assert_eq!(arr.capacity(), 5)
@@ -27,6 +29,7 @@ test "array_retain" {
   assert_eq!(arr[1], 4)
 }
 
+///|
 test "shrink_to_fit" {
   let v = Array::new(capacity=10)
   v.push(1)

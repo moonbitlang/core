@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+///|
 test "panic Result unwrap should panic on Err" {
   let err_result : Result[Int, String] = Err("This is an error")
   err_result.unwrap() |> ignore

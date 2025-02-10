@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+///|
 test "@strconv.parse_uint64/base_handling" {
   // Different bases with valid input
   inspect!(@strconv.parse_uint64?("FF", base=16), content="Ok(255)")
@@ -22,6 +23,7 @@ test "@strconv.parse_uint64/base_handling" {
   inspect!(@strconv.parse_uint64?("0b11111111"), content="Ok(255)")
 }
 
+///|
 test "@strconv.parse_uint64/underscore" {
   // Valid underscore placements
   inspect!(@strconv.parse_uint64?("1_000_000"), content="Ok(1000000)")
@@ -32,6 +34,7 @@ test "@strconv.parse_uint64/underscore" {
   inspect!(@strconv.parse_uint64?("1__23"), content="Err(invalid syntax)")
 }
 
+///|
 test "panic @strconv.parse_uint64/errors" {
   // Empty string
   ignore(@strconv.parse_uint64!(""))
@@ -44,6 +47,7 @@ test "panic @strconv.parse_uint64/errors" {
   ignore(@strconv.parse_uint64!("18446744073709551616"))
 }
 
+///|
 test "@strconv.parse_uint64/hex_and_edge_cases" {
   // Valid hexadecimal numbers with 0x/0X prefix
   inspect!(@strconv.parse_uint64?("0xDEADBEEF"), content="Ok(3735928559)")
@@ -82,6 +86,7 @@ test "@strconv.parse_uint64/hex_and_edge_cases" {
   inspect!(@strconv.parse_uint64?("0xDEADBEG"), content="Err(invalid syntax)")
 }
 
+///|
 test "edge cases" {
   // Invalid: Missing digits after hex prefix
   inspect!(@strconv.parse_uint64?("0x"), content="Err(invalid syntax)")

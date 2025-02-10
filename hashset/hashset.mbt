@@ -346,6 +346,7 @@ impl Hash for MyString with hash_combine(self, hasher) {
 ///|
 impl Show for MyString with output(self, logger) { logger.write_string(self._) }
 
+///|
 test "set" {
   let m : T[MyString] = new()
   m.add("a")
@@ -362,6 +363,7 @@ test "set" {
   )
 }
 
+///|
 test "remove" {
   let m : T[MyString] = new()
   fn i(s) {
@@ -379,6 +381,7 @@ test "remove" {
   assert_eq!(m.debug_entries(), "_,(0,a),(0,bc),(1,cd),(1,abc),_,(0,abcdef),_")
 }
 
+///|
 test "remove_unexist_key" {
   let m : T[MyString] = new()
   fn i(s) {
@@ -393,6 +396,7 @@ test "remove_unexist_key" {
   assert_eq!(m.debug_entries(), "_,(0,a),(0,ab),(0,abc),_,_,_,_")
 }
 
+///|
 test "grow" {
   let m : T[MyString] = new()
   fn i(s) {
@@ -421,6 +425,7 @@ test "grow" {
   )
 }
 
+///|
 test "clear" {
   let m : T[MyString] = new()
   m.clear()

@@ -12,11 +12,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+///|
 test "array_new" {
   let arr : Array[Int] = Array::new()
   assert_eq!(arr.length(), 0)
 }
 
+///|
 test "array_from_fixed_array" {
   let fixed_arr : FixedArray[Int] = [1, 2, 3]
   let arr = Array::from_fixed_array(fixed_arr)
@@ -26,6 +28,7 @@ test "array_from_fixed_array" {
   assert_eq!(arr[2], 3)
 }
 
+///|
 test "array_make" {
   let arr = Array::make(5, 42)
   assert_eq!(arr.length(), 5)
@@ -34,6 +37,7 @@ test "array_make" {
   }
 }
 
+///|
 test "array_realloc" {
   let arr = Array::new(capacity=2)
   arr.push(1)
@@ -45,18 +49,21 @@ test "array_realloc" {
   assert_eq!(arr[2], 3)
 }
 
+///|
 test "array_get" {
   let arr = [1, 2, 3]
   assert_eq!(arr.get(0), Some(1))
   assert_eq!(arr.get(3), None)
 }
 
+///|
 test "array_set" {
   let arr = [1, 2, 3]
   arr[1] = 42
   assert_eq!(arr[1], 42)
 }
 
+///|
 test "array_equal" {
   let arr1 = [1, 2, 3]
   let arr2 = [1, 2, 3]
@@ -66,6 +73,7 @@ test "array_equal" {
   inspect!([1, 2] == [1, 2, 3], content="false")
 }
 
+///|
 test "array_compare" {
   let arr1 = [1, 2, 3]
   let arr2 = [1, 2, 4]
@@ -76,6 +84,7 @@ test "array_compare" {
   inspect!(arr1.compare(arr1), content="0")
 }
 
+///|
 test "array_add" {
   let arr1 = [1, 2, 3]
   let arr2 = [4, 5, 6]
@@ -85,18 +94,21 @@ test "array_add" {
   assert_eq!(result[3], 4)
 }
 
+///|
 test "array_pop" {
   let arr = [1, 2, 3]
   assert_eq!(arr.pop(), Some(3))
   assert_eq!(arr.length(), 2)
 }
 
+///|
 test "array_pop_exn" {
   let arr = [1, 2, 3]
   assert_eq!(arr.unsafe_pop(), 3)
   assert_eq!(arr.length(), 2)
 }
 
+///|
 test "array_push" {
   let arr = [1, 2, 3]
   arr.push(4)
@@ -104,6 +116,7 @@ test "array_push" {
   assert_eq!(arr[3], 4)
 }
 
+///|
 test "array_drain" {
   let arr = [1, 2, 3, 4, 5]
   let drained = arr.drain(1, 3)
@@ -116,6 +129,7 @@ test "array_drain" {
   assert_eq!(arr[2], 5)
 }
 
+///|
 test "array_append" {
   let arr1 = [1, 2, 3]
   let arr2 = [4, 5, 6]
@@ -133,6 +147,7 @@ test "array_append" {
   // dependent and not guaranteed to be equal to length
 }
 
+///|
 test "array_each" {
   let arr = [1, 2, 3]
   let mut sum = 0
@@ -140,6 +155,7 @@ test "array_each" {
   assert_eq!(sum, 6)
 }
 
+///|
 test "array_each_rev" {
   let arr = [1, 2, 3]
   let mut sum = 0
@@ -147,6 +163,7 @@ test "array_each_rev" {
   inspect!(sum, content="6")
 }
 
+///|
 test "array_eachi" {
   let arr = [1, 2, 3]
   let mut sum = 0
@@ -157,6 +174,7 @@ test "array_eachi" {
   assert_eq!(sum, 9)
 }
 
+///|
 test "array_eachi_rev" {
   let arr = [1, 2, 3]
   let mut sum = 0
@@ -164,6 +182,7 @@ test "array_eachi_rev" {
   inspect!(sum, content="9")
 }
 
+///|
 test "array_eachi_rev_2" {
   let arr = ['a', 'b', 'c']
   let buf = StringBuilder::new()
@@ -181,12 +200,14 @@ test "array_eachi_rev_2" {
   )
 }
 
+///|
 test "array_clear" {
   let arr = [1, 2, 3]
   arr.clear()
   assert_eq!(arr.length(), 0)
 }
 
+///|
 test "array_map" {
   let arr = [1, 2, 3]
   let mapped = arr.map(fn(x) { x * 2 })
@@ -197,6 +218,7 @@ test "array_map" {
   @json.inspect!(([] : Array[Int]).map(fn(x) { x }), content=[])
 }
 
+///|
 test "array_map_inplace" {
   let arr = [1, 2, 3]
   arr.map_inplace(fn(x) { x * 2 })
@@ -206,6 +228,7 @@ test "array_map_inplace" {
   assert_eq!(arr[2], 6)
 }
 
+///|
 test "array_mapi" {
   let arr = [1, 2, 3]
   let mapped = arr.mapi(fn(i, x) { i + x })
@@ -216,6 +239,7 @@ test "array_mapi" {
   inspect!(([] : Array[Int]).mapi(fn(_idx, x) { x }), content="[]")
 }
 
+///|
 test "array_mapi_inplace" {
   let arr = [1, 2, 3]
   arr.mapi_inplace(fn(i, x) { i + x })
@@ -225,6 +249,7 @@ test "array_mapi_inplace" {
   assert_eq!(arr[2], 5)
 }
 
+///|
 test "array_filter" {
   let arr = [1, 2, 3, 4, 5]
   let filtered = arr.filter(fn(x) { x % 2 == 0 })
@@ -233,16 +258,19 @@ test "array_filter" {
   assert_eq!(filtered[1], 4)
 }
 
+///|
 test "array_is_empty" {
   let arr : Array[Int] = Array::new()
   assert_true!(arr.is_empty())
 }
 
+///|
 test "array_is_sorted" {
   inspect!([1, 2, 3].is_sorted(), content="true")
   inspect!([1, 3, 2].is_sorted(), content="false")
 }
 
+///|
 test "array_reverse" {
   let arr = [1, 2, 3]
   arr.rev_inplace()
@@ -252,6 +280,7 @@ test "array_reverse" {
   assert_eq!(arr[2], 1)
 }
 
+///|
 test "array_split_at" {
   let arr = [1, 2, 3, 4, 5]
   let (arr1, arr2) = arr.split_at(2)
@@ -264,12 +293,14 @@ test "array_split_at" {
   assert_eq!(arr2[2], 5)
 }
 
+///|
 test "array_contains" {
   let arr = [1, 2, 3]
   assert_true!(arr.contains(2))
   assert_false!(arr.contains(4))
 }
 
+///|
 test "array_starts_with" {
   let arr = [1, 2, 3]
   assert_true!(arr.starts_with([1, 2]))
@@ -277,6 +308,7 @@ test "array_starts_with" {
   inspect!(arr.starts_with([1, 2, 3, 4]), content="false")
 }
 
+///|
 test "array_ends_with" {
   let arr = [1, 2, 3]
   assert_true!(arr.ends_with([2, 3]))
@@ -284,6 +316,7 @@ test "array_ends_with" {
   inspect!(arr.ends_with([1, 2, 3, 4]), content="false")
 }
 
+///|
 test "array_strip_prefix" {
   let arr = [1, 2, 3]
   assert_eq!(arr.strip_prefix([1, 2]), Some([3]))
@@ -291,6 +324,7 @@ test "array_strip_prefix" {
   assert_eq!(arr.strip_prefix([2, 3]), None)
 }
 
+///|
 test "array_strip_suffix" {
   let arr = [1, 2, 3]
   assert_eq!(arr.strip_suffix([2, 3]), Some([1]))
@@ -298,12 +332,14 @@ test "array_strip_suffix" {
   assert_eq!(arr.strip_suffix([1, 2]), None)
 }
 
+///|
 test "array_search" {
   let arr = [1, 2, 3]
   assert_eq!(arr.search(2), Some(1))
   assert_eq!(arr.search(4), None)
 }
 
+///|
 test "array_swap" {
   let arr = [1, 2, 3]
   arr.swap(0, 2)
@@ -313,6 +349,7 @@ test "array_swap" {
   assert_eq!(arr[2], 1)
 }
 
+///|
 test "array_remove" {
   let arr = [1, 2, 3]
   let removed = arr.remove(1)
@@ -322,6 +359,7 @@ test "array_remove" {
   assert_eq!(arr[1], 3)
 }
 
+///|
 test "array_resize" {
   let arr = [1, 2, 3]
   arr.resize(5, 42)
@@ -334,6 +372,7 @@ test "array_resize" {
   inspect!(arr[1], content="2")
 }
 
+///|
 test "array_insert" {
   let arr = [1, 2, 3]
   arr.insert(1, 42)
@@ -344,6 +383,7 @@ test "array_insert" {
   assert_eq!(arr[3], 3)
 }
 
+///|
 test "array_flatten" {
   let arr = [[1, 2], [3, 4]]
   let flattened = arr.flatten()
@@ -354,6 +394,7 @@ test "array_flatten" {
   assert_eq!(flattened[3], 4)
 }
 
+///|
 test "array_repeat" {
   let arr = [1, 2]
   let repeated = arr.repeat(3)
@@ -366,30 +407,35 @@ test "array_repeat" {
   assert_eq!(repeated[5], 2)
 }
 
+///|
 test "array_fold" {
   let arr = [1, 2, 3]
   let sum = arr.fold(fn(acc, x) { acc + x }, init=0)
   assert_eq!(sum, 6)
 }
 
+///|
 test "array_rev_fold" {
   let arr = [1, 2, 3]
   let sum = arr.rev_fold(fn(acc, x) { acc + x }, init=0)
   assert_eq!(sum, 6)
 }
 
+///|
 test "array_foldi" {
   let arr = [1, 2, 3]
   let sum = arr.foldi(fn(i, acc, x) { acc + i + x }, init=0)
   assert_eq!(sum, 9)
 }
 
+///|
 test "array_rev_foldi" {
   let arr = [1, 2, 3]
   let sum = arr.rev_foldi(fn(i, acc, x) { acc + i + x }, init=0)
   assert_eq!(sum, 9)
 }
 
+///|
 test "array_dedup" {
   let arr = [1, 1, 2, 2, 3, 3]
   arr.dedup()
@@ -399,6 +445,7 @@ test "array_dedup" {
   assert_eq!(arr[2], 3)
 }
 
+///|
 test "array_extract_if" {
   let arr = [1, 2, 3, 4, 5]
   let extracted = arr.extract_if(fn(x) { x % 2 == 0 })
@@ -411,6 +458,7 @@ test "array_extract_if" {
   assert_eq!(arr[2], 5)
 }
 
+///|
 test "array_chunks" {
   let arr = [1, 2, 3, 4, 5, 6, 7, 8, 9]
   let chunks = arr.chunks(3)
@@ -428,6 +476,7 @@ test "array_chunks" {
   assert_eq!(chunks[2][1], 8)
 }
 
+///|
 test "chunks_by" {
   let v = [1, 1, 2, 3, 2, 3, 2, 3, 4]
   inspect!(
@@ -436,6 +485,7 @@ test "chunks_by" {
   )
 }
 
+///|
 test "chunks_by" {
   let v = [1, 1, 2, 3, 2, 3, 2, 3, 4]
   inspect!(
@@ -444,16 +494,19 @@ test "chunks_by" {
   )
 }
 
+///|
 test "array_get_out_of_bounds" {
   let arr = [1, 2, 3]
   assert_eq!(arr.get(3), None)
 }
 
+///|
 test "array_pop_empty" {
   let arr : Array[Int] = []
   assert_eq!(arr.pop(), None)
 }
 
+///|
 test "array_reserve" {
   let a = [1, 2, 3]
   a.reserve_capacity(2)
@@ -462,6 +515,7 @@ test "array_reserve" {
   inspect!(a, content="[1, 2, 3]")
 }
 
+///|
 test "array_split" {
   inspect!(
     [1, 2, 3, 4, 5, 6, 7].split(fn(x) { x % 2 == 1 }),
@@ -469,11 +523,13 @@ test "array_split" {
   )
 }
 
+///|
 test "array_search_by" {
   inspect!([1, 2, 3, 4, 5].search_by(fn(x) { x % 2 == 0 }), content="Some(1)")
   inspect!([1, 2, 3, 4, 5].search_by(fn(x) { x > 5 }), content="None")
 }
 
+///|
 test "array_binary_search_int_test" {
   let arr = [1, 2, 3, 4]
   assert_eq!(arr.binary_search(-100), Err(0))
@@ -485,6 +541,7 @@ test "array_binary_search_int_test" {
   assert_eq!(arr.binary_search(60), Err(4))
 }
 
+///|
 test "array_binary_search_duplicate_int_test" {
   let arr = [1, 2, 3, 3, 4, 4, 4, 5]
   assert_eq!(arr.binary_search(3), Ok(2))
@@ -494,6 +551,7 @@ test "array_binary_search_duplicate_int_test" {
   assert_eq!(arr.binary_search(1), Ok(1))
 }
 
+///|
 test "array_binary_search_float_test" {
   let arr = [-0.25, 0.0, 1.5]
   assert_eq!(arr.binary_search(-0.25), Ok(0))
@@ -502,6 +560,7 @@ test "array_binary_search_float_test" {
   assert_eq!(arr.binary_search(1.6), Err(3))
 }
 
+///|
 test "array_binary_search_str_test" {
   let arr = ["hello", "world", "moon", "bit"]
   arr.sort()
@@ -516,6 +575,7 @@ struct TestStruct {
   num : Int
 }
 
+///|
 test "array_binary_search_by_test" {
   let arr = [{ num: 10 }, { num: 22 }, { num: 35 }, { num: 48 }]
   let mut target = { num: 22 }
@@ -538,18 +598,21 @@ test "array_binary_search_by_test" {
   assert_eq!(arr.binary_search_by(cmp), Err(4))
 }
 
+///|
 test "array_dedup" {
   let array = [3, 4, 5, 6, 6, 4]
   array.dedup()
   inspect!(array, content="[3, 4, 5, 6, 4]")
 }
 
+///|
 test "array_dedup - long" {
   let array = [1, 2, 2, 3, 3, 3, 4, 4, 4, 4, 5, 5, 6, 6, 4, 3, 2, 1, 1, 1]
   array.dedup()
   inspect!(array, content="[1, 2, 3, 4, 5, 6, 4, 3, 2, 1]")
 }
 
+///|
 test "array_dedup - edge cases" {
   let array = [1, 1, 1, 1, 1]
   array.dedup()
@@ -567,6 +630,7 @@ struct MX {
   mm_num : Array[Int]
 } derive(Default, ToJson)
 
+///|
 test {
   @json.inspect!(MX::default(), content={ "mm_num": [] })
 }

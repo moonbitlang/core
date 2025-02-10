@@ -12,12 +12,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+///|
 test "remove on empty set" {
   let set : @sorted_set.T[Int] = @sorted_set.new()
   set.remove(0)
   inspect!(set.size(), content="0")
 }
 
+///|
 test "disjoint" {
   inspect!(
     @sorted_set.from_array([1, 2, 3]).disjoint(
@@ -31,6 +33,7 @@ test "disjoint" {
   )
 }
 
+///|
 test "subset" {
   inspect!(
     @sorted_set.from_array([1, 2, 3]).subset(
@@ -46,6 +49,7 @@ test "subset" {
   )
 }
 
+///|
 test "diff" {
   inspect!(
     @sorted_set.from_array([1, 2, 3]).difference(
@@ -55,6 +59,7 @@ test "diff" {
   )
 }
 
+///|
 test "intersect" {
   inspect!(
     @sorted_set.from_array([3, 4, 5]).intersection(
@@ -64,6 +69,7 @@ test "intersect" {
   )
 }
 
+///|
 test "each" {
   let set = @sorted_set.from_array([7, 2, 9, 4, 5, 6, 3, 8, 1])
   let result = StringBuilder::new(size_hint=10)
@@ -73,6 +79,7 @@ test "each" {
   set.each(fn(_x) { abort("Impossible to reach") })
 }
 
+///|
 test "eachi" {
   let set = @sorted_set.from_array([7, 2, 9, 4, 5, 6, 3, 8, 1])
   let result = StringBuilder::new(size_hint=10)
@@ -83,12 +90,14 @@ test "eachi" {
   )
 }
 
+///|
 test "iter" {
   let set = @sorted_set.from_array([3, 2, 1])
   inspect!(set.iter().collect(), content="[1, 2, 3]")
   inspect!(set.iter().take(2).collect(), content="[1, 2]")
 }
 
+///|
 test "contains" {
   let set = @sorted_set.from_array([7, 2, 9, 4, 6, 3, 8, 1])
   inspect!(set.contains(5), content="false")
@@ -101,6 +110,7 @@ test "contains" {
   inspect!(@sorted_set.from_array([]).contains(1), content="false")
 }
 
+///|
 test "to_array" {
   inspect!(
     @sorted_set.from_array([7, 2, 9, 4, 5, 6, 3, 8, 1]).to_array(),
@@ -112,6 +122,7 @@ test "to_array" {
   )
 }
 
+///|
 test "to_string" {
   inspect!(
     @sorted_set.from_array([1, 2, 3, 4, 5]),
@@ -123,6 +134,7 @@ test "to_string" {
   )
 }
 
+///|
 test "from_array" {
   inspect!(
     @sorted_set.from_array([7, 2, 9, 4, 5, 6, 3, 8, 1]),
@@ -130,6 +142,7 @@ test "from_array" {
   )
 }
 
+///|
 test "is_empty" {
   inspect!(
     (@sorted_set.from_array([]) : @sorted_set.T[Int]).is_empty(),
@@ -138,6 +151,7 @@ test "is_empty" {
   inspect!(@sorted_set.from_array([1]).is_empty(), content="false")
 }
 
+///|
 test "size" {
   inspect!(@sorted_set.from_array([1, 2, 3, 4, 5]).size(), content="5")
   inspect!(@sorted_set.from_array([1]).size(), content="1")
@@ -147,12 +161,14 @@ test "size" {
   )
 }
 
+///|
 test "singleton" {
   inspect!(@sorted_set.singleton(1).size(), content="1")
   inspect!(@sorted_set.singleton(1).contains(1), content="true")
   inspect!(@sorted_set.singleton(1).contains(2), content="false")
 }
 
+///|
 test "show" {
   let set = @sorted_set.from_array([1, 2, 3, 4, 5])
   inspect!(set, content="@sorted_set.of([1, 2, 3, 4, 5])")
@@ -160,6 +176,7 @@ test "show" {
   inspect!(set, content="@sorted_set.of([])")
 }
 
+///|
 test "mix_everything" {
   // test all functions together, including add, remove, union, diff, inter, subset, disjoint, size, is_empty, contains
   let set1 = @sorted_set.from_array([1, 2, 3, 4, 5])
@@ -211,6 +228,7 @@ test "mix_everything" {
   )
 }
 
+///|
 test "op_equal" {
   let a = @sorted_set.from_array([1, 2, 3])
   let b = @sorted_set.from_array([4, 5, 6])
@@ -220,6 +238,7 @@ test "op_equal" {
   inspect!(b == a, content="false")
 }
 
+///|
 test "from_iter multiple elements iter" {
   inspect!(
     @sorted_set.from_iter([1, 2, 3].iter()),
@@ -231,15 +250,18 @@ test "from_iter multiple elements iter" {
   )
 }
 
+///|
 test "from_iter single element iter" {
   inspect!(@sorted_set.from_iter([1].iter()), content="@sorted_set.of([1])")
 }
 
+///|
 test "from_iter empty iter" {
   let pq : @sorted_set.T[Int] = @sorted_set.from_iter(Iter::empty())
   inspect!(pq, content="@sorted_set.of([])")
 }
 
+///|
 test "range" {
   let set = @sorted_set.from_array([1, 2, 3, 4, 5])
   let result = set.range(2, 4)

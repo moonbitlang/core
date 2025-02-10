@@ -184,6 +184,7 @@ pub fn log10(self : Double) -> Double {
   z + e * log10_2hi
 }
 
+///|
 test "log2 log10" {
   // log2
   assert_eq!(3.0.log2(), 1.584962500721156)
@@ -205,6 +206,7 @@ test "log2 log10" {
   assert_eq!(15.0.log10(), 1.1760912590556813)
 }
 
+///|
 test "ln" {
   assert_true!(not_a_number.ln().is_nan())
   assert_true!(infinity.ln().is_pos_inf())

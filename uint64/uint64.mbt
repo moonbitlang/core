@@ -46,6 +46,7 @@ pub fn to_le_bytes(self : UInt64) -> Bytes {
   ]
 }
 
+///|
 test "to_be_bytes" {
   inspect!(
     to_be_bytes(max_value),
@@ -67,6 +68,7 @@ test "to_be_bytes" {
   )
 }
 
+///|
 test "to_le_bytes" {
   inspect!(
     to_le_bytes(max_value),

@@ -256,6 +256,7 @@ fn test_sort(f : (Array[Int]) -> Unit) -> Unit! {
   assert_eq!(arr, expected)
 }
 
+///|
 test "try_bubble_sort" {
   let arr = [8, 7, 6, 5, 4, 3, 2, 1]
   let sorted = try_bubble_sort(arr[0:8])
@@ -263,18 +264,22 @@ test "try_bubble_sort" {
   assert_eq!(arr, [1, 2, 3, 4, 5, 6, 7, 8])
 }
 
+///|
 test "heap_sort" {
   test_sort!(fn(arr) { heap_sort(arr[:]) })
 }
 
+///|
 test "insertion_sort" {
   test_sort!(fn(arr) { ArrayView::insertion_sort(arr[:]) })
 }
 
+///|
 test "sort" {
   test_sort!(fn(arr) { arr.sort() })
 }
 
+///|
 test "sort with same pivot optimization" {
   let arr = [
     35, 43, 72, 83, 39, 4, 83, 18, 43, 25, 88, 51, 43, 60, 83, 6, 36, 68, 79, 86,
@@ -285,6 +290,7 @@ test "sort with same pivot optimization" {
   ])
 }
 
+///|
 test "heap_sort coverage" {
   let arr = [5, 4, 3, 2, 1]
   heap_sort(arr[:])
@@ -300,6 +306,7 @@ test "heap_sort coverage" {
   assert_eq!(arr3, [1, 5, 5, 5, 5])
 }
 
+///|
 test "quick_sort limit check" {
   let arr = [5, 4, 3, 2, 1]
   quick_sort(arr[:], None, 0)
@@ -312,6 +319,7 @@ test "quick_sort limit check" {
   assert_eq!(arr3, [1, 5, 5, 5, 5])
 }
 
+///|
 test "quick_sort with pred check" {
   let arr = []
   for i = 16; i >= 0; i = i - 1 {
@@ -330,6 +338,7 @@ test "quick_sort with pred check" {
   assert_eq!(arr3, [1, 5, 5, 5, 5])
 }
 
+///|
 test "quick_sort with unbalanced partitions" {
   let arr = []
   for i = 16; i >= 0; i = i - 1 {
@@ -348,18 +357,21 @@ test "quick_sort with unbalanced partitions" {
   assert_eq!(arr3, [1, 5, 5, 5, 5])
 }
 
+///|
 test "quick_sort with pivot equal to pred" {
   let arr = [5, 4, 3, 2, 1]
   quick_sort(arr[:], Some(3), 0)
   assert_eq!(arr, [1, 2, 3, 4, 5])
 }
 
+///|
 test "quick_sort with pred less than all elements" {
   let arr = [5, 4, 3, 2, 1]
   quick_sort(arr[:], Some(0), 0)
   assert_eq!(arr, [1, 2, 3, 4, 5])
 }
 
+///|
 test "quick_sort with pred greater than all elements" {
   let arr = [5, 4, 3, 2, 1]
   quick_sort(arr[:], Some(6), 0)

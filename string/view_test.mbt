@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+///|
 test "index_at" {
   let str = "Hello"
   guard let Some(offset) = str.index_at(3)
@@ -22,6 +23,7 @@ test "index_at" {
   inspect!(offset, content="None")
 }
 
+///|
 test "index_at with surrogate pairs" {
   let str = "🤣🤣🤣"
   guard let Some(offset) = str.index_at(1)
@@ -39,6 +41,7 @@ test "index_at with surrogate pairs" {
   inspect!(str[:-1], content="🤣🤣")
 }
 
+///|
 test "stringview basic" {
   let str = "Hello🤣🤣🤣"
   let start = 1
@@ -49,6 +52,7 @@ test "stringview basic" {
   inspect!(str[:], content="Hello🤣🤣🤣")
 }
 
+///|
 test "stringview basic2" {
   let str = "He🤣🤣🤣llo"
   let start = 1
@@ -59,6 +63,7 @@ test "stringview basic2" {
   inspect!(str[:], content="He🤣🤣🤣llo")
 }
 
+///|
 test "stringview subview" {
   let str = "Hello🤣🤣🤣"
   let start = 1
@@ -70,6 +75,7 @@ test "stringview subview" {
   inspect!(view[:], content="ello🤣")
 }
 
+///|
 test "stringview op_get" {
   let str = "Hello🤣🤣🤣"
   let view = str[1:6]
@@ -77,6 +83,7 @@ test "stringview op_get" {
   inspect!(view[4], content="'🤣'")
 }
 
+///|
 test "stringview rev_get" {
   let str = "Hello🤣🤣🤣"
   let view = str[1:6]
@@ -84,12 +91,14 @@ test "stringview rev_get" {
   inspect!(view.rev_get(4), content="'e'")
 }
 
+///|
 test "stringview length" {
   let str = "Hello🤣🤣🤣"
   let view = str[1:6]
   inspect!(view.length(), content="5")
 }
 
+///|
 test "stingview length_eq" {
   let str = "hello"
   let view = str[1:4]
@@ -101,6 +110,7 @@ test "stingview length_eq" {
   inspect!(view.length_eq(5), content="false")
 }
 
+///|
 test "stingview length_ge" {
   let str = "hello"
   let view = str[1:4]
@@ -112,12 +122,14 @@ test "stingview length_ge" {
   inspect!(view.length_ge(5), content="false")
 }
 
+///|
 test "stringview empty" {
   let str = "hello"
   let view = str[0:0]
   inspect!(view.length(), content="0")
 }
 
+///|
 test "panic out of bounds1" {
   let str = "Hello🤣🤣🤣"
   let view = str[1:6]
@@ -125,6 +137,7 @@ test "panic out of bounds1" {
 
 }
 
+///|
 test "panic out of bounds2" {
   let str = "Hello🤣🤣🤣"
   let view = str[1:6]
@@ -132,6 +145,7 @@ test "panic out of bounds2" {
 
 }
 
+///|
 test "panic out of bounds3" {
   let str = "Hello🤣🤣🤣"
   let view = str[1:6]
@@ -139,6 +153,7 @@ test "panic out of bounds3" {
 
 }
 
+///|
 test "panic out of bounds4" {
   let str = "hello"
   let view = str[0:0]
@@ -146,6 +161,7 @@ test "panic out of bounds4" {
 
 }
 
+///|
 test "index_at_rev" {
   let str = "🤣🤣🤣"
   guard let Some(offset) = str.index_at_rev(0)
@@ -163,6 +179,7 @@ test "index_at_rev" {
   inspect!(offset, content="StringIndex(2)")
 }
 
+///|
 test "stringview negative index" {
   let str = "Hello🤣🤣🤣"
   let str_view = str[:]
@@ -196,6 +213,7 @@ test "stringview negative index" {
   inspect!(view, content="")
 }
 
+///|
 test "panic negative index 1" {
   // index_at_rev fails
   let str = "hello"
@@ -204,6 +222,7 @@ test "panic negative index 1" {
 
 }
 
+///|
 test "panic negative index 2" {
   // index_at_rev fails
   let str = "hello"
@@ -212,6 +231,7 @@ test "panic negative index 2" {
 
 }
 
+///|
 test "panic negative index 3" {
   // index_at_rev returns an index not in bounds of the view
   let str = "hello"
@@ -220,6 +240,7 @@ test "panic negative index 3" {
 
 }
 
+///|
 test "panic negative index 4" {
   // index_at_rev returns an index not in bounds of the view
   let str = "hello"
@@ -228,6 +249,7 @@ test "panic negative index 4" {
 
 }
 
+///|
 test "panic negative index 5" {
   // index_at_rev returns an index not in bounds of the view
   let str = "hello"
@@ -236,6 +258,7 @@ test "panic negative index 5" {
 
 }
 
+///|
 test "panic negative index 6" {
   // index_at_rev returns an index not in bounds of the view
   let str = "hello"
@@ -244,6 +267,7 @@ test "panic negative index 6" {
 
 }
 
+///|
 test "panic negative index 7" {
   // start > end
   let str = "hello"
@@ -252,6 +276,7 @@ test "panic negative index 7" {
 
 }
 
+///|
 test "panic negative index 8" {
   // start > end
   let str = "hello"
@@ -260,6 +285,7 @@ test "panic negative index 8" {
 
 }
 
+///|
 test "panic negative index 9" {
   // start > end
   let str = "hello"
@@ -268,6 +294,7 @@ test "panic negative index 9" {
 
 }
 
+///|
 test "panic rev_get" {
   let str = "Hello🤣🤣🤣"
   let view = str[1:6]
@@ -275,6 +302,7 @@ test "panic rev_get" {
 
 }
 
+///|
 test "panic rev_get2" {
   let str = "Hello🤣🤣🤣"
   let view = str[1:6]
@@ -282,6 +310,7 @@ test "panic rev_get2" {
 
 }
 
+///|
 test "stringview iter" {
   let str = "hello🤣🤣🤣"
   let view = str[1:6]
@@ -290,6 +319,7 @@ test "stringview iter" {
   inspect!(iter, content="['e', 'l', 'l', 'o', '🤣']")
 }
 
+///|
 test "stringview negative index" {
   let str = "hello🤣😭😂"
   inspect!(str[-2:-1], content="😭")
@@ -302,24 +332,28 @@ test "stringview negative index" {
   inspect!(str[-8:], content="hello🤣😭😂")
 }
 
+///|
 test "panic stringview negative index1" {
   let str = "hello🤣😭😂"
   let _ = str[-9:]
 
 }
 
+///|
 test "panic stringview negative index2" {
   let str = "hello🤣😭😂"
   let _ = str[:-9]
 
 }
 
+///|
 test "panic stringview negative index3" {
   let str = "hello🤣😭😂"
   let _ = str[-1:-2]
 
 }
 
+///|
 test "to_string" {
   let s = "Hello World"
   let view = s[0:5]

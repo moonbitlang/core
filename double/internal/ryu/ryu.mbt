@@ -646,6 +646,7 @@ pub fn ryu_to_string(val : Double) -> String {
   to_chars(v, ieeeSign)
 }
 
+///|
 test "double/ryu.mbt:205" {
   let m = 123456789UL
   let mul0 = 987654321UL
@@ -660,6 +661,7 @@ test "double/ryu.mbt:205" {
   assert_eq!(high1, 222222222)
 }
 
+///|
 test "double/ryu.mbt:230" {
   let m = 123456789UL
   let mul0 = 987654321UL
@@ -674,10 +676,12 @@ test "double/ryu.mbt:230" {
   assert_eq!(high1, 222222222UL)
 }
 
+///|
 test "double/ryu.mbt:252" {
   assert_eq!(gDOUBLE_POW5_BITCOUNT, 125)
 }
 
+///|
 test "double/ryu.mbt:205" {
   let m = 123456789UL
   let mul0 = 987654321UL
@@ -692,6 +696,7 @@ test "double/ryu.mbt:205" {
   assert_eq!(high1, 222222222UL)
 }
 
+///|
 test "double/ryu.mbt:230" {
   let m = 123456789UL
   let mul0 = 987654321UL
@@ -706,6 +711,7 @@ test "double/ryu.mbt:230" {
   assert_eq!(high1, 222222222UL)
 }
 
+///|
 test "double/ryu.mbt:252" {
   assert_eq!(gDOUBLE_POW5_BITCOUNT, 125)
 }

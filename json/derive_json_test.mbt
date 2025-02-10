@@ -19,6 +19,7 @@ struct Hello[A, B] {
   data : Map[String, A]
 } derive(ToJson, FromJson, Show, Eq)
 
+///|
 test {
   let v = Hello::{ fieldA: 3, fieldB: 2, data: { "a": 3 } }
   let vj = v.to_json()
@@ -45,6 +46,7 @@ struct Hello3[A, B] {
   data : Map[Int, A]
 } derive(ToJson)
 
+///|
 test {
   let h = Hello::{ fieldA: 1, fieldB: "hello", data: { "a": 1, "b": 2 } }
   let j = h.to_json()

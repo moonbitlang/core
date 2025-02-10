@@ -632,6 +632,7 @@ fn Decimal::to_string(self : Decimal) -> String {
   Show::to_string(self)
 }
 
+///|
 test "new" {
   let hpd = Decimal::from_int64_priv(1L)
   assert_eq!(hpd.digits.length(), 800)
@@ -641,11 +642,13 @@ test "new" {
   assert_eq!(hpd.truncated, false)
 }
 
+///|
 test "from_int64" {
   let hpd = Decimal::from_int64_priv(123456789L)
   assert_eq!(hpd.to_string(), "123456789")
 }
 
+///|
 test "parse_decimal" {
   let s = "0.0000000000000000000000000000007888609052210118054117285652827862296732064351090230047702789306640625"
   let hpd = try {
@@ -662,6 +665,7 @@ test "parse_decimal" {
   assert_eq!(hpd.to_string(), "0.0000000001")
 }
 
+///|
 test "to_string" {
   let hpd = Decimal::from_int64_priv(123456789L)
   hpd.decimal_point = 1
@@ -674,6 +678,7 @@ test "to_string" {
   assert_eq!(hpd.to_string(), "1234567890")
 }
 
+///|
 test "shift" {
   let tests : Array[_] = [
     (0L, 100, "0"),
@@ -695,12 +700,14 @@ test "shift" {
   }
 }
 
+///|
 test "parse decimal with underscore" {
   inspect!(parse_decimal_priv!("1e1_2"), content="1000000000000")
   inspect!(parse_decimal_priv!("1e12"), content="1000000000000")
   inspect!(parse_decimal_priv!("1_2_3"), content="123")
 }
 
+///|
 test "parse decimal error" {
   inspect!(parse_decimal_priv?("1e"), content="Err(invalid syntax)")
   inspect!(parse_decimal_priv?("1e+"), content="Err(invalid syntax)")
@@ -709,6 +716,7 @@ test "parse decimal error" {
   inspect!(parse_decimal_priv?("1.2.3"), content="Err(invalid syntax)")
 }
 
+///|
 test "parse decimal with large numbers" {
   let mut s = ""
   for i in 0..<100 {
@@ -720,6 +728,7 @@ test "parse decimal with large numbers" {
   )
 }
 
+///|
 test "should_round_up when truncated and half-way" {
   // Create a decimal from "12.50"
   let decimal = parse_decimal_priv!("12.50")
@@ -727,6 +736,7 @@ test "should_round_up when truncated and half-way" {
   inspect!(decimal.to_double_priv!(), content="12.5")
 }
 
+///|
 test "parse_decimal with large numbers and truncation" {
   // Construct a very large number to trigger truncation
   let mut s = "1"
@@ -739,6 +749,7 @@ test "parse_decimal with large numbers and truncation" {
   )
 }
 
+///|
 test "corner cases" {
   inspect!(parse_decimal_priv?(".123"), content="Ok(0.123)")
   inspect!(parse_decimal_priv?("."), content="Err(invalid syntax)")

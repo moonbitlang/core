@@ -18,6 +18,7 @@ pub fn Ref::new[T](x : T) -> Ref[T] {
   { val: x }
 }
 
+///|
 test "to_string" {
   inspect!(new(3), content="{val: 3}")
 }
@@ -86,6 +87,7 @@ pub fn swap[T](self : Ref[T], that : Ref[T]) -> Unit {
   that.val = tmp
 }
 
+///|
 test "swap" {
   let x = new(1)
   let y = new(2)
@@ -99,6 +101,7 @@ pub fn update[T](self : Ref[T], f : (T) -> T) -> Unit {
   self.val = f(self.val)
 }
 
+///|
 test "decr" {
   let a = new(1)
   a.val -= 1
@@ -107,6 +110,7 @@ test "decr" {
   inspect!(a.val, content="-5")
 }
 
+///|
 test "incr" {
   let a = new(1)
   a.val += 1

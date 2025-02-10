@@ -92,6 +92,7 @@ fn Array::unsafe_truncate_to_length[T](self : Array[T], new_len : Int) -> Unit {
 ///|
 fn Array::buffer[T](self : Array[T]) -> UninitializedArray[T] = "%identity"
 
+///|
 test "array_unsafe_blit_fixed" {
   let src = FixedArray::make(5, 0)
   let dst = UninitializedArray::make(5)
@@ -104,6 +105,7 @@ test "array_unsafe_blit_fixed" {
   }
 }
 
+///|
 test "UninitializedArray::unsafe_blit_fixed" {
   let src = FixedArray::make(5, 0)
   let dst = UninitializedArray::make(5)
@@ -116,6 +118,7 @@ test "UninitializedArray::unsafe_blit_fixed" {
   }
 }
 
+///|
 test "UninitializedArray::unsafe_blit_fixed" {
   let src = FixedArray::make(5, 0)
   let dst = UninitializedArray::make(5)

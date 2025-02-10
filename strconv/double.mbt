@@ -165,6 +165,7 @@ fn try_fast_path(self : Number) -> Double? {
   }
 }
 
+///|
 test "parse_double" {
   let tests : Array[(String, Result[Double, String])] = [
     ("", Err(syntax_err_str)),
@@ -285,6 +286,7 @@ test "parse_double" {
   }
 }
 
+///|
 test "parse_double_inf" {
   assert_eq!(
     try {
@@ -344,6 +346,7 @@ test "parse_double_inf" {
   )
 }
 
+///|
 test "parse_double_nan" {
   let nan = try {
     parse_double!("nan")

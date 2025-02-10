@@ -95,6 +95,7 @@ pub fn parse_uint(str : String, base~ : Int = 0) -> UInt!StrConvError {
   n.to_uint()
 }
 
+///|
 test "parse_uint64" {
   let tests : Array[(String, Result[UInt64, String])] = [
     ("", Err(syntax_err_str)),
@@ -128,6 +129,7 @@ test "parse_uint64" {
   }
 }
 
+///|
 test "parse_uint64_base" {
   let tests : Array[(String, Int, Result[UInt64, String])] = [
     ("", 0, Err(syntax_err_str)),
@@ -227,6 +229,7 @@ test "parse_uint64_base" {
   }
 }
 
+///|
 test "parse_uint" {
   let tests : Array[(String, Result[UInt, String])] = [
     ("", Err(syntax_err_str)),
@@ -263,6 +266,7 @@ test "parse_uint" {
   }
 }
 
+///|
 test "parse_uint64 uppercase hex and invalid base" {
   inspect!(parse_uint64?("ABCD", base=16), content="Ok(43981)")
   inspect!(parse_uint64?("1234", base=37), content="Err(invalid base)")

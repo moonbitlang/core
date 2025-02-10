@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+///|
 test "Set" {
   let map = loop 0, @hashset.new() {
     100, map => map
@@ -25,6 +26,7 @@ test "Set" {
   inspect!((100, map.contains(100)), content="(100, true)")
 }
 
+///|
 test "@hashset.size" {
   for i = 0, set = @hashset.new(); i < 20; i = i + 1, set = set.add(i) {
     assert_eq!(set.size(), i)
@@ -33,6 +35,7 @@ test "@hashset.size" {
   }
 }
 
+///|
 test "@hashset.remove" {
   let map = loop 0, @hashset.new() {
     100, map => map
@@ -51,6 +54,7 @@ test "@hashset.remove" {
   }
 }
 
+///|
 test "@hashset.iter" {
   let data = @hashset.of(["a", "b", "d", "e", "f"])
   let mut s = ""
@@ -58,11 +62,13 @@ test "@hashset.iter" {
   inspect!(s, content=" e f b a d")
 }
 
+///|
 test "@hashset.to_string" {
   let set = @hashset.new().add(1).add(3).add(0x0f_ff_ff_ff).add(42)
   inspect!(set, content="@immut/hashset.of([3, 42, 1, 268435455])")
 }
 
+///|
 test "@hashset.from_array" {
   let set = @hashset.of(["1", "2", "42"])
   inspect!(set.contains("1"), content="true")
@@ -71,6 +77,7 @@ test "@hashset.from_array" {
   inspect!(set.contains("43"), content="false")
 }
 
+///|
 test "@hashset.is_empty" {
   let set = @hashset.new()
   inspect!(set.is_empty(), content="true")
@@ -78,6 +85,7 @@ test "@hashset.is_empty" {
   inspect!(set.is_empty(), content="false")
 }
 
+///|
 test "@hashset.size" {
   let set = @hashset.new()
   assert_eq!(set.size(), 0)
@@ -89,6 +97,7 @@ test "@hashset.size" {
   assert_eq!(set.size(), 1)
 }
 
+///|
 test "@hashset.is_empty" {
   let set = @hashset.new()
   assert_eq!(set.is_empty(), true)
@@ -98,6 +107,7 @@ test "@hashset.is_empty" {
   assert_eq!(set.is_empty(), true)
 }
 
+///|
 test "@hashset.iter" {
   let set = @hashset.new().add(1).add(2).add(3)
   let result = []
@@ -106,6 +116,7 @@ test "@hashset.iter" {
   assert_eq!(result, [1, 2, 3])
 }
 
+///|
 test "@hashset.iter" {
   let set = @hashset.new().add(1).add(2).add(3)
   let result = []
@@ -114,6 +125,7 @@ test "@hashset.iter" {
   assert_eq!(result, [1, 2, 3])
 }
 
+///|
 test "from_iter multiple elements iter" {
   inspect!(
     @hashset.from_iter([1, 2, 3].iter()),
@@ -121,15 +133,18 @@ test "from_iter multiple elements iter" {
   )
 }
 
+///|
 test "from_iter single element iter" {
   inspect!(@hashset.from_iter([1].iter()), content="@immut/hashset.of([1])")
 }
 
+///|
 test "from_iter empty iter" {
   let pq : @hashset.T[Int] = @hashset.from_iter(Iter::empty())
   inspect!(pq, content="@immut/hashset.of([])")
 }
 
+///|
 test "each on empty set" {
   let s = @hashset.new()
   let mut count = 0
@@ -137,12 +152,14 @@ test "each on empty set" {
   inspect!(count, content="0")
 }
 
+///|
 test "from_array with empty array" {
   let empty_array : Array[Int] = []
   let set = @hashset.from_array(empty_array)
   inspect!(@hashset.is_empty(set), content="true")
 }
 
+///|
 test "from_array with non-empty array" {
   let array = [1, 2, 3]
   let set = @hashset.from_array(array)
@@ -152,17 +169,20 @@ test "from_array with non-empty array" {
   inspect!(@hashset.size(set), content="3")
 }
 
+///|
 test "remove non-existent key from leaf" {
   let set = @hashset.of([1])
   let result = set.remove(2)
   inspect!(result, content="@immut/hashset.of([1])")
 }
 
+///|
 test "from_array - non-empty array" {
   let set = @hashset.from_array([1, 2, 3])
   inspect!(set, content="@immut/hashset.of([3, 2, 1])")
 }
 
+///|
 test "hashset equality" {
   let set1 = @hashset.of([1, 2])
   let set2 = @hashset.of([2, 1])

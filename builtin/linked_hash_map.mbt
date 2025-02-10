@@ -73,6 +73,7 @@ fn power_2_above(x : Int, n : Int) -> Int {
   }
 }
 
+///|
 test "power_2_above" {
   inspect!(power_2_above(1, 15), content="16")
   inspect!(power_2_above(1, 16), content="16")

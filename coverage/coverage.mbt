@@ -171,11 +171,13 @@ fn coverage_log(
   print("}")
 }
 
+///|
 test "new_counter" {
   let counter = CoverageCounter::new(2)
   inspect!(counter.to_string(), content="[0, 0]")
 }
 
+///|
 test "incr_counter" {
   let counter = CoverageCounter::new(10)
   counter.incr(0)
@@ -183,6 +185,7 @@ test "incr_counter" {
   inspect!(counter.to_string(), content="[1, 0, 0, 0, 0, 0, 0, 0, 0, 1]")
 }
 
+///|
 test "log" {
   let test_counter_a = CoverageCounter::new(2)
   let test_counter_b = CoverageCounter::new(2)
@@ -204,11 +207,13 @@ test "log" {
   )
 }
 
+///|
 test "backslash escape" {
   let s = "\n\r\t\b\"'\\"
   inspect!(s.escape(), content="\"\\n\\r\\t\\b\\\"'\\\\\"")
 }
 
+///|
 test "reset" {
   let test_counter_a = CoverageCounter::new(2)
   let test_counter_b = CoverageCounter::new(2)

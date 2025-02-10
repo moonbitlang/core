@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+///|
 test "prng" {
   let r = @random.new()
   assert_eq!(r.uint(limit=10), 7)
@@ -33,6 +34,7 @@ test "prng" {
   assert_eq!(a, [2, 1, 4, 3, 5])
 }
 
+///|
 test {
   let random = @random.new()
   inspect!(random.float(), content="0.27378302812576294")

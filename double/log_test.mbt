@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+///|
 test "log2 log10" {
   // log2
   inspect!(3.0.log2(), content="1.584962500721156")
@@ -26,6 +27,7 @@ test "log2 log10" {
   inspect!(15.0.log10(), content="1.1760912590556813")
 }
 
+///|
 test "ln" {
   inspect!(not_a_number.ln(), content="NaN")
   inspect!(infinity.ln(), content="Infinity")

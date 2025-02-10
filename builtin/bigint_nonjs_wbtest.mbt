@@ -22,6 +22,7 @@ impl Show for MyBigInt with output(self, logger) {
   )
 }
 
+///|
 test "debug_string" {
   let buf = StringBuilder::new()
   let v : Array[MyBigInt] = [0, 1, 2, 3, 4, -0, -1, -2, -3]
@@ -58,6 +59,7 @@ fn check_len(a : BigInt) -> Unit! {
   }
 }
 
+///|
 test "op_shr" {
   let a = BigInt::from_int64(1234567890123456789L)
   let b = a >> 1
@@ -72,6 +74,7 @@ test "op_shr" {
   inspect!(b, content="0")
 }
 
+///|
 test "op_add coverage for max(self_len, other_len)" {
   let a = BigInt::from_int(123456789)
   let b = BigInt::from_int(987654321)
@@ -81,6 +84,7 @@ test "op_add coverage for max(self_len, other_len)" {
   inspect!(result.len, content="1")
 }
 
+///|
 test "op_sub coverage for max(self_len, other_len)" {
   let a = BigInt::from_int(987654321)
   let b = BigInt::from_int(123456789)
