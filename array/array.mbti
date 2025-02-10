@@ -3,6 +3,9 @@ package moonbitlang/core/array
 alias @moonbitlang/core/quickcheck as @quickcheck
 
 // Values
+fn zip[A, B](Array[A], Array[B]) -> Array[(A, B)]
+
+fn zip_with[A, B, C](Array[A], Array[B], merge~ : (A, B) -> C) -> Array[C]
 
 // Types and methods
 impl FixedArray {
