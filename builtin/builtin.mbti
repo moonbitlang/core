@@ -708,6 +708,7 @@ impl FixedArray {
 
 impl Bytes {
   blit(Bytes, Int, Bytes, Int, Int) -> Unit //deprecated
+  compare(Bytes, Bytes) -> Int
   copy(Bytes) -> Bytes
   length(Bytes) -> Int
   make(Int, Byte) -> Bytes
