@@ -12,23 +12,27 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+///|
 test "to_string" {
   let bytes = Bytes::of_string("Hello, World!")
   assert_eq!(bytes.to_unchecked_string(), "Hello, World!")
 }
 
+///|
 test "of_string" {
   let str = "Hello, World!"
   let bytes = Bytes::of_string(str)
   assert_eq!(bytes.length(), str.length() * 2)
 }
 
+///|
 test "sub_string" {
   let bytes = Bytes::of_string("Hello, World!")
   assert_eq!(bytes.to_unchecked_string(offset=0, length=5 * 2), "Hello")
   // assert_eq(bytes.sub_string(10, 5 * 2), "World")?
 }
 
+///|
 test "blit_from_string" {
   let bytes = FixedArray::make(10, Byte::default())
   let str = "Hello"
@@ -36,12 +40,14 @@ test "blit_from_string" {
   assert_eq!(@bytes.from_fixedarray(bytes).to_unchecked_string(), str)
 }
 
+///|
 test "copy" {
   let bytes = Bytes::of_string("Hello, World!")
   let copy_bytes = bytes.copy()
   assert_eq!(copy_bytes.to_unchecked_string(), bytes.to_unchecked_string())
 }
 
+///|
 test "set_utf8_char (ASCII)" {
   let arr = FixedArray::makei(4, fn { _ => b'\x00' })
   let char = 'A'
@@ -56,6 +62,7 @@ test "set_utf8_char (ASCII)" {
   )
 }
 
+///|
 test "set_utf8_char (CJK)" {
   let arr = FixedArray::makei(4, fn { _ => b'\x00' })
   let char = '拼'
@@ -70,6 +77,7 @@ test "set_utf8_char (CJK)" {
   )
 }
 
+///|
 test "set_utf8_char (0x600)" {
   let arr = FixedArray::makei(4, fn { _ => b'\x00' })
   let char = '؀'
@@ -85,6 +93,7 @@ test "set_utf8_char (0x600)" {
   )
 }
 
+///|
 test "set_utf8_char (Emoji)" {
   let arr = FixedArray::makei(4, fn { _ => b'\x00' })
   let char = '🙅'
@@ -99,6 +108,7 @@ test "set_utf8_char (Emoji)" {
   )
 }
 
+///|
 test "set_utf16le_char" {
   let arr = FixedArray::makei(4, fn { _ => b'\x00' })
   let char = 'A'
@@ -114,6 +124,7 @@ test "set_utf16le_char" {
   )
 }
 
+///|
 test "set_utf16le_char (surrogate pair)" {
   let arr = FixedArray::makei(4, fn { _ => b'\x00' })
   let char = '🉑'
@@ -129,6 +140,7 @@ test "set_utf16le_char (surrogate pair)" {
   )
 }
 
+///|
 test "set_utf16be_char" {
   let arr = FixedArray::makei(4, fn { _ => b'\x00' })
   let char = 'A'
@@ -143,6 +155,7 @@ test "set_utf16be_char" {
   )
 }
 
+///|
 test "op_equal" {
   let bytes = Bytes::of_string("Hello, World!")
   let copy_bytes = bytes.copy()
@@ -150,6 +163,7 @@ test "op_equal" {
   assert_not_eq!(bytes, Bytes::new(10))
 }
 
+///|
 test "fixedarray_byte_blit_from_string" {
   let arr : FixedArray[Byte] = FixedArray::make(10, Byte::default())
   let str = "Hello"
@@ -160,6 +174,7 @@ test "fixedarray_byte_blit_from_string" {
   )
 }
 
+///|
 test "fixedarray_byte_blit_from_bytes" {
   let arr : FixedArray[Byte] = FixedArray::make(5, Byte::default())
   let bytes = b"Hello"
@@ -219,4 +234,33 @@ test "Bytes::makei with non-positive length" {
   inspect!(bytes, content="b\"\"")
   let bytes2 = Bytes::makei(-1, fn(_i) { b'\x00' })
   inspect!(bytes2, content="b\"\"")
+}
+
+///|
+test "@builtin.Bytes::compare/basic" {
+  // Basic comparison of different bytes
+  let a = b"\x01\x02\x03"
+  let b = b"\x01\x02\x04"
+  inspect!(a.compare(b), content="-1") // a < b
+  inspect!(b.compare(a), content="1") // b > a
+  inspect!(a.compare(a), content="0") // a = a
+}
+
+///|
+test "@builtin.Bytes::compare/different_lengths" {
+  // Compare sequences of different lengths
+  let a = b"\x01\x02"
+  let b = b"\x01\x02\x03"
+  inspect!(a.compare(b), content="-1") // shorter sequence is less
+  inspect!(b.compare(a), content="1") // longer sequence is greater
+}
+
+///|
+test "@builtin.Bytes::compare/empty" {
+  // Edge cases with empty sequences
+  let empty = b""
+  let non_empty = b"\x00"
+  inspect!(empty.compare(empty), content="0") // empty equals empty
+  inspect!(empty.compare(non_empty), content="-1") // empty is less than non-empty
+  inspect!(non_empty.compare(empty), content="1") // non-empty is greater than empty
 }

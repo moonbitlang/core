@@ -435,3 +435,60 @@ pub fn Bytes::op_equal(self : Bytes, other : Bytes) -> Bool {
     }
   }
 }
+
+///|
+/// Compares two byte sequences lexicographically. First compares the lengths of
+/// the sequences, then compares bytes pairwise until a difference is found or
+/// all bytes have been compared.
+///
+/// Parameters:
+///
+/// * `self` : The first byte sequence to compare.
+/// * `other` : The second byte sequence to compare.
+///
+/// Returns an integer indicating the relative order:
+///
+/// * A negative value if `self` is less than `other`
+/// * Zero if `self` equals `other`
+/// * A positive value if `self` is greater than `other`
+///
+/// Example:
+///
+/// ```moonbit
+/// ///|
+/// test "Bytes::compare" {
+///   let a = b"\x01\x02\x03"
+///   let b = b"\x01\x02\x04"
+///   inspect!(a.compare(b), content="-1") // a < b
+///   inspect!(b.compare(a), content="1") // b > a
+///   inspect!(a.compare(a), content="0") // a = a
+/// }
+/// 
+/// ///|
+/// test "Bytes::compare/different_lengths" {
+///   let a = b"\x01\x02"
+///   let b = b"\x01\x02\x03"
+///   inspect!(a.compare(b), content="-1") // shorter sequence is less
+///   inspect!(b.compare(a), content="1") // longer sequence is greater
+/// }
+/// ```
+pub fn Bytes::compare(self : Bytes, other : Bytes) -> Int {
+  let self_len = self.length()
+  let other_len = other.length()
+  if self_len > other_len {
+    return 1
+  } else if self_len < other_len {
+    return -1
+  }
+  for i = 0; i < self_len; i = i + 1 {
+    let b1 = self[i]
+    let b2 = other[i]
+    if b1 < b2 {
+      break -1
+    } else if b1 > b2 {
+      break 1
+    }
+  } else {
+    0
+  }
+}
