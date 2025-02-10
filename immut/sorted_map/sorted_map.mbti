@@ -17,7 +17,7 @@ fn of[K : Compare, V](FixedArray[(K, V)]) -> T[K, V]
 fn singleton[K, V](K, V) -> T[K, V]
 
 // Types and methods
-type T
+type T[K, V]
 impl T {
   add[K : Compare, V](Self[K, V], K, V) -> Self[K, V]
   contains[K : Compare, V](Self[K, V], K) -> Bool

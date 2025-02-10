@@ -12,7 +12,7 @@ fn new[K, V]() -> T[K, V]
 fn of[K : Compare, V](Array[(K, V)]) -> T[K, V] //deprecated
 
 // Types and methods
-type T
+type T[K, V]
 impl T {
   add[K : Compare, V](Self[K, V], K, V) -> Unit
   clear[K, V](Self[K, V]) -> Unit

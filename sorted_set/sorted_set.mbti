@@ -14,7 +14,7 @@ fn of[V : Compare](Array[V]) -> T[V] //deprecated
 fn singleton[V : Compare](V) -> T[V]
 
 // Types and methods
-type T
+type T[V]
 impl T {
   add[V : Compare](Self[V], V) -> Unit
   contains[V : Compare](Self[V], V) -> Bool

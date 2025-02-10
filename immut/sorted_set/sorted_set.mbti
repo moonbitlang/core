@@ -17,7 +17,7 @@ fn of[A : Compare](FixedArray[A]) -> T[A]
 fn singleton[A : Compare](A) -> T[A]
 
 // Types and methods
-type T
+type T[A]
 impl T {
   add[A : Compare](Self[A], A) -> Self[A]
   all[A : Compare](Self[A], (A) -> Bool) -> Bool
