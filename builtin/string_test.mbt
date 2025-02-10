@@ -48,34 +48,34 @@ test "substring" {
 
 test "panic codepoint_at1" {
   let str = "Hello🤣🤣🤣"
-  let _ = str.codepoint_at(8)
+  let _ = str.nth_codepoint(8)
 
 }
 
 test "panic codepoint_at2" {
   let str = "Hello🤣🤣🤣"
-  let _ = str.codepoint_at(-1)
+  let _ = str.nth_codepoint(-1)
 
 }
 
 test "panic charcode_at with negative index" {
   let s = "Hello"
-  ignore(charcode_at(s, -1))
+  ignore(s.nth_charcode(-1))
 }
 
 test "charcode_at with valid index" {
   let s = "Hello"
-  inspect!(charcode_at(s, 0), content="72")
+  inspect!(s.nth_charcode(0), content="72")
 }
 
 test "codepoint_at regular character at end of string" {
   let s = "Hello"
-  inspect!(codepoint_at(s, 4), content="'o'")
+  inspect!(s.nth_codepoint(4), content="'o'")
 }
 
 test "codepoint_at emoji" {
   let s = "👋"
-  inspect!(codepoint_at(s, 0), content="'👋'")
+  inspect!(s.nth_codepoint(0), content="'👋'")
 }
 
 test "codepoint_length basic" {

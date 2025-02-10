@@ -9,7 +9,20 @@ fn from_array(Array[Char]) -> String
 
 fn from_iter(Iter[Char]) -> String
 
+fn shift_index(String, Index, Int) -> Index
+
+fn unsafe_shift_index(Index, Int) -> Index
+
 // Types and methods
+type Index
+impl Index {
+  end(String) -> Self
+  zero() -> Self
+}
+impl Compare for Index
+impl Eq for Index
+impl Show for Index
+
 type StringIndex
 impl Eq for StringIndex
 impl Show for StringIndex
@@ -27,6 +40,8 @@ impl StringView {
 impl Show for StringView
 
 impl String {
+  as_view(String, start~ : Index = .., end? : Index) -> StringView
+  codepoint_at(String, Index) -> Char
   compare(String, String) -> Int
   concat(Array[String], separator~ : String = ..) -> String
   contains(String, String) -> Bool
@@ -68,6 +83,7 @@ impl String {
   trim_right(String, String) -> String //deprecated
   trim_space(String) -> String
   trim_start(String, String) -> String
+  unsafe_codepoint_at(String, Index) -> Char
 }
 
 // Type aliases
