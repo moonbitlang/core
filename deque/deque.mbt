@@ -1062,16 +1062,16 @@ pub fn iter[A](self : T[A]) -> Iter[A] {
     let head_len = cap - head
     if head_len >= len {
       for i in head..<(head + len) {
-        guard let IterContinue = yield_(buf[i]) else { x => return x }
+        guard yield_(buf[i]) is IterContinue else { return IterEnd }
 
       }
     } else {
       for i in head..<cap {
-        guard let IterContinue = yield_(buf[i]) else { x => return x }
+        guard yield_(buf[i]) is IterContinue else { return IterEnd }
 
       }
       for i in 0..<(len - head_len) {
-        guard let IterContinue = yield_(buf[i]) else { x => return x }
+        guard yield_(buf[i]) is IterContinue else { return IterEnd }
 
       }
     }
@@ -1110,16 +1110,16 @@ pub fn iter2[A](self : T[A]) -> Iter2[Int, A] {
     let mut j = 0
     if head_len >= len {
       for i in head..<(head + len) {
-        guard let IterContinue = yield_(j, buf[i]) else { x => return x }
+        guard yield_(j, buf[i]) is IterContinue else { return IterEnd }
         j += 1
       }
     } else {
       for i in head..<cap {
-        guard let IterContinue = yield_(j, buf[i]) else { x => return x }
+        guard yield_(j, buf[i]) is IterContinue else { return IterEnd }
         j += 1
       }
       for i in 0..<(len - head_len) {
-        guard let IterContinue = yield_(j, buf[i]) else { x => return x }
+        guard yield_(j, buf[i]) is IterContinue else { return IterEnd }
         j += 1
       }
     }
