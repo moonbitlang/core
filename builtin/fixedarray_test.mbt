@@ -51,3 +51,19 @@ test "fixed array iter with early termination" {
   })
   inspect!(count, content="2")
 }
+
+///|
+test "FixedArray::iter2 with empty array" {
+  let arr : FixedArray[Int] = []
+  let mut count = 0
+  arr.iter2().each(fn(_, _) { count = count + 1 })
+  inspect!(count, content="0")
+}
+
+///|
+test "FixedArray::iter2 with single element" {
+  let arr = FixedArray::make(1, 42)
+  let pairs : Array[(Int, Int)] = []
+  arr.iter2().each(fn(i, x) { pairs.push((i, x)) })
+  inspect!(pairs, content="[(0, 42)]")
+}
