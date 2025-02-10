@@ -1203,16 +1203,16 @@ pub fn rev_iter2[A](self : T[A]) -> Iter2[Int, A] {
     let mut j = 0
     if head_len >= len {
       for i = head + len - 1; i >= head; i = i - 1 {
-        guard let IterContinue = yield_(j, buf[i]) else { x => return x }
+        guard yield_(j, buf[i]) is IterContinue else { return IterEnd }
         j += 1
       }
     } else {
       for i = len - head_len - 1; i >= 0; i = i - 1 {
-        guard let IterContinue = yield_(j, buf[i]) else { x => return x }
+        guard yield_(j, buf[i]) is IterContinue else { return IterEnd }
         j += 1
       }
       for i = cap - 1; i >= head; i = i - 1 {
-        guard let IterContinue = yield_(j, buf[i]) else { x => return x }
+        guard yield_(j, buf[i]) is IterContinue else { return IterEnd }
         j += 1
       }
     }

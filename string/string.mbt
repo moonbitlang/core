@@ -159,12 +159,12 @@ pub fn iter(self : String) -> Iter[Char] {
         let c2 = self.unsafe_charcode_at(index + 1)
         if is_trailing_surrogate(c2) {
           let c = code_point_of_surrogate_pair(c1, c2)
-          guard let IterContinue = yield_(c) else { x => break x }
+          guard yield_(c) is IterContinue else { break IterEnd }
           continue index + 2
         }
       }
       //TODO: handle garbage input
-      guard let IterContinue = yield_(Char::from_int(c1)) else { x => break x }
+      guard yield_(Char::from_int(c1)) is IterContinue else { break IterEnd }
 
     } else {
       IterContinue
@@ -182,14 +182,12 @@ pub fn iter2(self : String) -> Iter2[Int, Char] {
         let c2 = self.unsafe_charcode_at(index + 1)
         if is_trailing_surrogate(c2) {
           let c = code_point_of_surrogate_pair(c1, c2)
-          guard let IterContinue = yield_(n, c) else { x => break x }
+          guard yield_(n, c) is IterContinue else { break IterEnd }
           continue index + 2, n + 1
         }
       }
       //TODO: handle garbage input
-      guard let IterContinue = yield_(n, Char::from_int(c1)) else {
-        x => break x
-      }
+      guard yield_(n, Char::from_int(c1)) is IterContinue else { break IterEnd }
 
     } else {
       IterContinue
@@ -252,12 +250,12 @@ pub fn rev_iter(self : String) -> Iter[Char] {
         let c2 = self.unsafe_charcode_at(index - 1)
         if is_leading_surrogate(c2) {
           let c = code_point_of_surrogate_pair(c2, c1)
-          guard let IterContinue = yield_(c) else { x => break x }
+          guard yield_(c) is IterContinue else { break IterEnd }
           continue index - 2
         }
       }
       // TODO: handle garbage input
-      guard let IterContinue = yield_(Char::from_int(c1)) else { x => break x }
+      guard yield_(Char::from_int(c1)) is IterContinue else { break IterEnd }
 
     } else {
       IterContinue
