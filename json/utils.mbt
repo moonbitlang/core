@@ -13,11 +13,13 @@
 // limitations under the License.
 
 ///|
-fn offset_to_position(input : String, offset : Int) -> Position {
+fn offset_to_position(input : String, offset : @string.Index) -> Position {
   let mut line = 1
   let mut column = 0
-  for i = 0; i < offset; i = i + 1 {
-    let c = input[i]
+  for i = @string.Index::zero()
+      i < offset
+      i = @string.shift_index(input, i, 1) {
+    let c = input.codepoint_at(i)
     if c == '\n' {
       line += 1
       column = 0
@@ -30,6 +32,9 @@ fn offset_to_position(input : String, offset : Int) -> Position {
 
 ///|
 fn invalid_char[T](ctx : ParseContext, shift~ : Int = 0) -> T!ParseError {
-  let offset = ctx.offset + shift
-  raise InvalidChar(offset_to_position(ctx.input, offset), ctx.input[offset])
+  let offset = @string.shift_index(ctx.input, ctx.offset, shift)
+  raise InvalidChar(
+    offset_to_position(ctx.input, offset),
+    ctx.input.codepoint_at(offset),
+  )
 }

@@ -16,21 +16,19 @@
 fn lex_string(ctx : ParseContext) -> String!ParseError {
   let buf = StringBuilder::new()
   let mut start = ctx.offset
-  fn flush(end : Int) {
-    if start > 0 && end > start {
-      buf.write_substring(ctx.input, start, end - start)
-    }
+  fn flush(end : @string.Index) {
+    buf.write_iter(ctx.input.as_view(start~, end~).iter())
   }
 
   for {
     match read_char(ctx) {
       Some('"') => {
-        flush(ctx.offset - 1)
+        flush(@string.unsafe_shift_index(ctx.offset, -1))
         break
       }
       Some('\n' | '\r') => invalid_char!(ctx, shift=-1)
       Some('\\') => {
-        flush(ctx.offset - 1)
+        flush(@string.unsafe_shift_index(ctx.offset, -1))
         match read_char(ctx) {
           Some('b') => buf.write_char('\b')
           Some('f') => buf.write_char('\x0C')
