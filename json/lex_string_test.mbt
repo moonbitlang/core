@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+///|
 test "lex_string with forward slash escape" {
   inspect!(
     @json.parse!("\"\\/\""),
@@ -21,6 +22,7 @@ test "lex_string with forward slash escape" {
   )
 }
 
+///|
 test "lex_hex_digits incomplete hex digits" {
   inspect!(@json.parse?("\"\\u123"), content="Err(Unexpected end of file)")
 }

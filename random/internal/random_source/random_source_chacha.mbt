@@ -75,6 +75,7 @@ fn bytesToUInt64(b : FixedArray[Byte]) -> UInt64 {
   result
 }
 
+///|
 test "bytesToUInt64" {
   let bytes = FixedArray::make(8, Byte::default())
   for i = 0; i < 2; i = i + 1 {
@@ -367,6 +368,7 @@ fn setup(
   b32[15][3] = 0
 }
 
+///|
 test "output" {
   let s = State::new()
   let seed = b"ABCDEFGHIJKLMNOPQRSTUVWXYZ123456"

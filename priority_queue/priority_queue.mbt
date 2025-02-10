@@ -266,6 +266,7 @@ pub fn of[A : Compare](arr : FixedArray[A]) -> T[A] {
   }
 }
 
+///|
 test "meld_and_merges" {
   inspect!(
     match meld(Cons(content=1, sibling=Nil, child=Nil), Nil) {
@@ -297,6 +298,7 @@ pub impl[X : @quickcheck.Arbitrary + Compare] @quickcheck.Arbitrary for T[X] wit
   }
 }
 
+///|
 test "priority queue arbitrary" {
   let samples : Array[T[Int]] = @quickcheck.samples(20)
   inspect!(

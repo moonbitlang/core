@@ -12,12 +12,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+///|
 test "UInt16::to_int" {
   inspect!(UInt16::to_int(0), content="0")
   inspect!(UInt16::to_int(123), content="123")
   inspect!(UInt16::to_int(65535), content="65535")
 }
 
+///|
 test "UInt16::from_int" {
   inspect!(Int::to_uint16(0), content="0")
   inspect!(Int::to_uint16(123), content="123")
@@ -31,24 +33,28 @@ test "UInt16::from_int" {
   inspect!(Int::to_uint16(-65537), content="65535")
 }
 
+///|
 test "UInt16::to_byte" {
   inspect!(UInt16::to_byte(0), content="b'\\x00'")
   inspect!(UInt16::to_byte(123), content="b'\\x7B'")
   inspect!(UInt16::to_byte(65535), content="b'\\xFF'")
 }
 
+///|
 test "UInt16::from_byte" {
   inspect!(Byte::to_uint16(0), content="0")
   inspect!(Byte::to_uint16(123), content="123")
   inspect!(Byte::to_uint16(255), content="255")
 }
 
+///|
 test "UInt16::to_int64" {
   inspect!(UInt16::to_int64(0), content="0")
   inspect!(UInt16::to_int64(123), content="123")
   inspect!(UInt16::to_int64(65535), content="65535")
 }
 
+///|
 test "UInt16::from_int64" {
   inspect!(Int::to_uint16(0), content="0")
   inspect!(Int::to_uint16(123), content="123")
@@ -67,6 +73,7 @@ test "UInt16::from_int64" {
   inspect!(Int::to_uint16(16384), content="16384") // 1/4 of max value
 }
 
+///|
 test "UInt16::op_add" {
   fn add(a : UInt16, b : UInt16) -> UInt16 {
     a + b
@@ -84,6 +91,7 @@ test "UInt16::op_add" {
   inspect!(add(0, 65535), content="65535") // Adding 0 to max
 }
 
+///|
 test "UInt16::op_sub" {
   fn sub(a : UInt16, b : UInt16) -> UInt16 {
     a - b
@@ -102,6 +110,7 @@ test "UInt16::op_sub" {
   inspect!(sub(32768, 32768), content="0") // Equal large numbers
 }
 
+///|
 test "UInt16::op_mul" {
   fn mul(a : UInt16, b : UInt16) -> UInt16 {
     a * b
@@ -120,6 +129,7 @@ test "UInt16::op_mul" {
   inspect!(mul(65535, 65535), content="1") // Max * max wraps to 1
 }
 
+///|
 test "UInt16::op_div" {
   fn div(a : UInt16, b : UInt16) -> UInt16 {
     a / b
@@ -138,6 +148,7 @@ test "UInt16::op_div" {
   inspect!(div(65535, 10), content="6553") // Max value / 10
 }
 
+///|
 test "UInt16::compare" {
   inspect!(UInt16::compare(1, 2), content="-1")
   inspect!(UInt16::compare(2, 1), content="1")
@@ -160,12 +171,14 @@ test "UInt16::compare" {
   inspect!(UInt16::compare(40000, 50000), content="-1")
 }
 
+///|
 test "UInt16::hash" {
   inspect!(UInt16::hash(0), content="0")
   inspect!(UInt16::hash(123), content="123")
   inspect!(UInt16::hash(65535), content="65535")
 }
 
+///|
 test "UInt16::op_equal" {
   inspect!(UInt16::op_equal(1, 2), content="false")
   inspect!(UInt16::op_equal(2, 1), content="false")

@@ -46,6 +46,7 @@ pub fn parse[A : FromStr](str : String) -> A!StrConvError {
   A::from_string!(str)
 }
 
+///|
 test "parse" {
   let b : Bool = try {
     parse!("true")

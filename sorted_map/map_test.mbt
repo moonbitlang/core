@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+///|
 test "remove2" {
   let map = @sorted_map.from_array([(1, "a"), (2, "b")])
   inspect!(map.size(), content="2")
@@ -19,6 +20,7 @@ test "remove2" {
   inspect!(map.size(), content="1")
 }
 
+///|
 test "remove3" {
   let map = @sorted_map.from_array([(1, "a"), (2, "b"), (3, "c")])
   map.remove(0)
@@ -27,12 +29,14 @@ test "remove3" {
   inspect!(map.size(), content="3")
 }
 
+///|
 test "remove on empty map" {
   let map : @sorted_map.T[Int, String] = @sorted_map.new()
   map.remove(1)
   inspect!(map.size(), content="0")
 }
 
+///|
 test "get" {
   let map = @sorted_map.from_array([(3, "c"), (2, "b"), (1, "a")])
   inspect!(
@@ -56,6 +60,7 @@ test "get" {
   inspect!(map.get(4), content="None")
 }
 
+///|
 test "contains" {
   let map = @sorted_map.from_array([(3, "c"), (2, "b"), (1, "a")])
   inspect!(map.contains(1), content="true")
@@ -64,6 +69,7 @@ test "contains" {
   inspect!(map.contains(4), content="false")
 }
 
+///|
 test "op_get" {
   let map = @sorted_map.from_array([(3, "c"), (2, "b"), (1, "a")])
   inspect!(
@@ -87,6 +93,7 @@ test "op_get" {
   inspect!(map[4], content="None")
 }
 
+///|
 test "op_equal" {
   let a = @sorted_map.from_array([(3, "c"), (2, "b"), (1, "a")])
   let b = @sorted_map.from_array([(4, "d"), (5, "e"), (6, "f")])
@@ -96,6 +103,7 @@ test "op_equal" {
   inspect!(b == a, content="false")
 }
 
+///|
 test "is_empty" {
   let map : @sorted_map.T[Int, String] = @sorted_map.new()
   inspect!(map.is_empty(), content="true")
@@ -103,11 +111,13 @@ test "is_empty" {
   inspect!(map.is_empty(), content="false")
 }
 
+///|
 test "size" {
   let map = @sorted_map.from_array([(3, "c"), (2, "b"), (1, "a")])
   inspect!(map.size() == map.size(), content="true")
 }
 
+///|
 test "each" {
   let map = @sorted_map.from_array([(3, "c"), (2, "b"), (1, "a")])
   let buf = StringBuilder::new()
@@ -115,6 +125,7 @@ test "each" {
   inspect!(buf.to_string(), content="1a2b3c")
 }
 
+///|
 test "eachi" {
   let map = @sorted_map.from_array([(3, "c"), (2, "b"), (1, "a")])
   let buf = StringBuilder::new()
@@ -122,11 +133,13 @@ test "eachi" {
   inspect!(buf.to_string(), content="[0]1a[1]2b[2]3c")
 }
 
+///|
 test "keys" {
   let map = @sorted_map.from_array([(3, "c"), (2, "b"), (1, "a")])
   inspect!(map.keys(), content="[1, 2, 3]")
 }
 
+///|
 test "values" {
   let map = @sorted_map.from_array([(3, "c"), (2, "b"), (1, "a")])
   inspect!(
@@ -137,6 +150,7 @@ test "values" {
   )
 }
 
+///|
 test "to_array" {
   let map = @sorted_map.from_array([(3, "c"), (2, "b"), (1, "a")])
   inspect!(
@@ -147,6 +161,7 @@ test "to_array" {
   )
 }
 
+///|
 test "iter" {
   let map = @sorted_map.from_array([(3, "c"), (2, "b"), (1, "a")])
   inspect!(
@@ -163,6 +178,7 @@ test "iter" {
   )
 }
 
+///|
 test "from_iter multiple elements iter" {
   inspect!(
     @sorted_map.from_iter([(1, 1), (2, 2), (3, 3)].iter()),
@@ -170,6 +186,7 @@ test "from_iter multiple elements iter" {
   )
 }
 
+///|
 test "from_iter single element iter" {
   inspect!(
     @sorted_map.from_iter([(1, 1)].iter()),
@@ -177,11 +194,13 @@ test "from_iter single element iter" {
   )
 }
 
+///|
 test "from_iter empty iter" {
   let pq : @sorted_map.T[Int, Int] = @sorted_map.from_iter(Iter::empty())
   inspect!(pq, content="@sorted_map.of([])")
 }
 
+///|
 test "arbitrary" {
   let map : Array[@sorted_map.T[Int, UInt]] = @quickcheck.samples(20)
   inspect!(
@@ -194,6 +213,7 @@ test "arbitrary" {
   )
 }
 
+///|
 test "iter2" {
   let map = @sorted_map.from_array([(3, "c"), (2, "b"), (1, "a")])
   let buf = StringBuilder::new()
@@ -203,6 +223,7 @@ test "iter2" {
   inspect!(buf, content="[1a][2b][3c]")
 }
 
+///|
 test "iter" {
   let map = @sorted_map.from_array([(3, "c"), (2, "b"), (1, "a")])
   let buf = StringBuilder::new()
@@ -212,6 +233,7 @@ test "iter" {
   inspect!(buf, content="[1a][2b][3c]")
 }
 
+///|
 test "range" {
   let map = @sorted_map.from_array([
     (1, "a"),

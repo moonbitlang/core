@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+///|
 test "exp" {
   inspect!(@double.exp(1.0), content="2.718281828459045")
   inspect!(@double.exp(-1.0), content="0.36787944117144233")
@@ -29,6 +30,7 @@ test "exp" {
   inspect!(@double.exp(-100.0), content="3.720075976020836e-44")
 }
 
+///|
 test "exp - special values" {
   inspect!(@double.exp(@double.neg_infinity), content="0")
   inspect!(@double.exp(@double.infinity), content="Infinity")
@@ -36,6 +38,7 @@ test "exp - special values" {
   inspect!(@double.exp(0.0), content="1")
 }
 
+///|
 test "exp - overflow & underflow" {
   inspect!(@double.exp(710.0), content="Infinity")
   inspect!(@double.exp(-745.14), content="0")

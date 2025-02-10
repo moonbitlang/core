@@ -12,11 +12,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+///|
 test {
   let args = @env.args()
   assert_true!(args.length() != 0)
 }
 
+///|
 test "now returns reasonable timestamp" {
   let timestamp = @env.now()
   assert_true!(timestamp > 0) // 1970-01-01 00:00:00 UTC

@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+///|
 test "unsafe_pop_front after many push_front" {
   let dq = new()
   for i = 0; i < 10; i = i + 1 {
@@ -23,6 +24,7 @@ test "unsafe_pop_front after many push_front" {
   assert_eq!(dq.head, dq.tail)
 }
 
+///|
 test "truncate zero" {
   let dq = of([1, 2, 3])
   dq.truncate(0)

@@ -12,14 +12,17 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+///|
 test "String::from_array" {
   inspect!(@string.from_array(['1', '2', '3', '4', '5']), content="12345")
 }
 
+///|
 test "String::from_iter" {
   inspect!(@string.from_iter(['1', '2', '3', '4', '5'].iter()), content="12345")
 }
 
+///|
 test "String::concat" {
   inspect!(@string.concat(["123", "456"]), content="123456")
   inspect!(
@@ -29,10 +32,12 @@ test "String::concat" {
   inspect!(@string.concat([], separator=" "), content="")
 }
 
+///|
 test "default" {
   inspect!(@string.default())
 }
 
+///|
 test "compare" {
   assert_eq!(0, "".compare(""))
   assert_eq!(-1, "".compare("abc"))
@@ -43,6 +48,7 @@ test "compare" {
   assert_eq!(1, "ab".compare("c"))
 }
 
+///|
 test "to_bytes" {
   assert_eq!("中文".to_bytes().to_unchecked_string(), "中文")
   assert_eq!("asdf".to_bytes().to_unchecked_string(), "asdf")
@@ -50,6 +56,7 @@ test "to_bytes" {
   assert_eq!("🤔".to_bytes().to_unchecked_string(), "🤔")
 }
 
+///|
 test "Show::output" {
   fn repr(s : String) {
     let buf = StringBuilder::new(size_hint=0)
@@ -69,6 +76,7 @@ test "Show::output" {
   assert_eq!(repr("abc'\"def\\"), "\"abc'\\\"def\\\\\"")
 }
 
+///|
 test "to_array" {
   let a = "你好！mbt😀".to_array()
   inspect!(a[0], content="'你'")
@@ -80,6 +88,7 @@ test "to_array" {
   inspect!(a[6], content="'😀'")
 }
 
+///|
 test "chars" {
   let mut str = ""
   "A😊𠮷BA😊𠮷B"
@@ -109,6 +118,7 @@ test "chars" {
   )
 }
 
+///|
 test "rev_iter" {
   let mut str = ""
   "A😊𠮷BA😊𠮷B"
@@ -138,6 +148,7 @@ test "rev_iter" {
   )
 }
 
+///|
 test "iter2" {
   let mut str = ""
   "A😊𠮷BA😊𠮷B"
@@ -160,12 +171,14 @@ test "iter2" {
 }
 
 // test here to avlid cyclic dependency between assertion and builtin
+///|
 test "Buffer::to_bytes" {
   let buffer = StringBuilder::new(size_hint=16)
   buffer.write_string("中文")
   assert_eq!(buffer.to_string(), "中文")
 }
 
+///|
 test "trim_left" {
   inspect!("aaabcd".trim_start("a"), content="bcd")
   inspect!("aaabcd".trim_start(" "), content="aaabcd")
@@ -178,6 +191,7 @@ test "trim_left" {
   inspect!("😍😍😭😡😡".trim_start("😍"), content="😭😡😡")
 }
 
+///|
 test "contains" {
   @json.inspect!("abc".contains("a"), content=true)
   @json.inspect!("中文".contains("文"), content=true)
@@ -185,6 +199,7 @@ test "contains" {
   @json.inspect!("中文".contains("a"), content=false)
 }
 
+///|
 test "trim_right" {
   inspect!("abcddd".trim_end("d"), content="abc")
   inspect!("abcddd".trim_end(" "), content="abcddd")
@@ -197,6 +212,7 @@ test "trim_right" {
   inspect!("😍😍😭😡😡".trim_end("😡"), content="😍😍😭")
 }
 
+///|
 test "trim" {
   inspect!("xxxabcxxx".trim("x"), content="abc")
   inspect!("xxxabcxxx".trim(""), content="xxxabcxxx")
@@ -206,6 +222,7 @@ test "trim" {
   inspect!("😍😍😭😡😡".trim("😍😡"), content="😭")
 }
 
+///|
 test "trim_space" {
   inspect!(" abc ".trim_space(), content="abc")
   inspect!("abc ".trim_space(), content="abc")
@@ -221,6 +238,7 @@ test "trim_space" {
   inspect!("\r\r".trim_space(), content="")
 }
 
+///|
 test "is_empty" {
   inspect!("".is_empty(), content="true")
   inspect!(" ".is_empty(), content="false")
@@ -230,6 +248,7 @@ test "is_empty" {
   inspect!("a".is_empty(), content="false")
 }
 
+///|
 test "is_blank" {
   inspect!("".is_blank(), content="true")
   inspect!(" ".is_blank(), content="true")
@@ -239,6 +258,7 @@ test "is_blank" {
   inspect!("a".is_blank(), content="false")
 }
 
+///|
 test "index_of" {
   inspect!("abc".index_of("a"), content="0")
   inspect!("abc".index_of("b"), content="1")
@@ -267,6 +287,7 @@ test "index_of" {
   inspect!("abc".index_of("b", from=100), content="-1")
 }
 
+///|
 test "last_index_of" {
   inspect!("abc".last_index_of("a"), content="0")
   inspect!("abc".last_index_of("b"), content="1")
@@ -297,6 +318,7 @@ test "last_index_of" {
   inspect!("abc".last_index_of("b", from=100), content="1")
 }
 
+///|
 test "starts_with" {
   inspect!("abc".starts_with("a"), content="true")
   inspect!("abc".starts_with("ab"), content="true")
@@ -312,6 +334,7 @@ test "starts_with" {
   inspect!("".starts_with("a"), content="false")
 }
 
+///|
 test "ends_with" {
   inspect!("abc".ends_with("c"), content="true")
   inspect!("abc".ends_with("bc"), content="true")
@@ -328,6 +351,7 @@ test "ends_with" {
   inspect!("".ends_with("a"), content="false")
 }
 
+///|
 test "split" {
   inspect!(
     "a,b,c,d,e".split(","),
@@ -369,6 +393,7 @@ test "split" {
   )
 }
 
+///|
 test "replace" {
   inspect!("abcabc".replace(old="b", new="x"), content="axcabc")
   inspect!("abcabc".replace(old="", new=","), content=",abcabc")
@@ -381,6 +406,7 @@ test "replace" {
   inspect!("👍😍😭".replace(old="😍😭", new=""), content="👍")
 }
 
+///|
 test "replace_all" {
   inspect!("abcabc".replace_all(old="b", new="x"), content="axcaxc")
   inspect!("abcabc".replace_all(old="", new=","), content=",a,b,c,a,b,c,")
@@ -399,12 +425,14 @@ test "replace_all" {
   )
 }
 
+///|
 test "reverse" {
   inspect!("hello".rev(), content="olleh")
   inspect!("Nothing".rev(), content="gnihtoN")
   inspect!("< >".rev(), content="> <")
 }
 
+///|
 test "to_lower" {
   inspect!("ABCXYZ".to_lower(), content="abcxyz")
   inspect!("aBcXyZ".to_lower(), content="abcxyz")
@@ -413,6 +441,7 @@ test "to_lower" {
   inspect!("月兔".to_lower(), content="月兔")
 }
 
+///|
 test "to_upper" {
   inspect!("abcxyz".to_upper(), content="ABCXYZ")
   inspect!("AbCxYz".to_upper(), content="ABCXYZ")
@@ -421,6 +450,7 @@ test "to_upper" {
   inspect!("月兔".to_upper(), content="月兔")
 }
 
+///|
 test "split" {
   inspect!(
     "a b c d e".split(" "),
@@ -481,6 +511,7 @@ test "split" {
   )
 }
 
+///|
 test "String::fold" {
   let s = "this is a long string"
   inspect!(s.fold(init=0, fn(acc, c) { acc + c.to_int() }), content="1980")
@@ -494,6 +525,7 @@ test "String::fold" {
   )
 }
 
+///|
 test "String::repeat" {
   inspect!("abc".repeat(3), content="abcabcabc")
   inspect!("".repeat(3), content="")
@@ -505,30 +537,35 @@ test "String::repeat" {
   inspect!("a".repeat(5), content="aaaaa")
 }
 
+///|
 test "pad_left" {
   inspect!("2".pad_start(3, '0'), content="002")
   inspect!("22".pad_start(2, '0'), content="22")
   inspect!("5".pad_start(4, 'x'), content="xxx5")
 }
 
+///|
 test "pad_right" {
   inspect!("2".pad_end(3, 'x'), content="2xx")
   inspect!("22".pad_end(2, '0'), content="22")
   inspect!("5".pad_end(4, 'x'), content="5xxx")
 }
 
+///|
 test "panic rev_get1" {
   let str = "Hello🤣🤣🤣"
   let _ = str.rev_get(-1)
 
 }
 
+///|
 test "panic rev_get2" {
   let str = "Hello🤣🤣🤣"
   let _ = str.rev_get(8)
 
 }
 
+///|
 test "length_ge" {
   let str = "Hello🤣🤣🤣"
   assert_true!(str.length_ge(0))
@@ -536,6 +573,7 @@ test "length_ge" {
   assert_false!(str.length_ge(9))
 }
 
+///|
 test "length_eq" {
   let str = "Hello🤣🤣🤣"
   assert_true!(str.length_eq(8))

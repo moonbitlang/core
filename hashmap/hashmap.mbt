@@ -27,6 +27,7 @@ fn power_2_above(x : Int, n : Int) -> Int {
   }
 }
 
+///|
 test "power_2_above" {
   inspect!(power_2_above(1, 15), content="16")
   inspect!(power_2_above(1, 16), content="16")
@@ -448,6 +449,7 @@ pub fn of[K : Eq + Hash, V](arr : FixedArray[(K, V)]) -> T[K, V] {
   m
 }
 
+///|
 test "of" {
   let m = of([(1, 2), (3, 4)])
   inspect!(m.get(1), content="Some(2)")
@@ -499,6 +501,7 @@ impl Hash for MyString with hash_combine(self, hasher) {
 ///|
 impl Show for MyString with output(self, logger) { logger.write_string(self._) }
 
+///|
 test "arbitrary" {
   let samples : Array[T[String, Int]] = @quickcheck.samples(20)
   inspect!(
@@ -515,6 +518,7 @@ test "arbitrary" {
   )
 }
 
+///|
 test "set" {
   let m : T[MyString, Int] = new()
   m.set("a", 1)
@@ -531,6 +535,7 @@ test "set" {
   )
 }
 
+///|
 test "remove" {
   let m : T[MyString, Int] = new()
   m.set("a", 1)
@@ -547,6 +552,7 @@ test "remove" {
   )
 }
 
+///|
 test "remove_unexist_key" {
   let m : T[MyString, Int] = new()
   m.set("a", 1)
@@ -557,6 +563,7 @@ test "remove_unexist_key" {
   inspect!(m.debug_entries(), content="_,(0,a,1),(0,ab,2),(0,abc,3),_,_,_,_")
 }
 
+///|
 test "clear" {
   let m : T[MyString, Int] = of([("a", 1), ("b", 2), ("c", 3)])
   m.clear()
@@ -567,6 +574,7 @@ test "clear" {
   }
 }
 
+///|
 test "grow" {
   let m : T[MyString, Int] = new()
   m.set("C", 1)

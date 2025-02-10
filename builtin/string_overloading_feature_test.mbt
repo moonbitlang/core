@@ -40,6 +40,7 @@ fn need_string(_x : MyString) -> Unit {
 
 }
 
+///|
 test {
   let u0 : MyString = FromString::from_string("")
   let u1 : MyInt = FromString::from_string("")

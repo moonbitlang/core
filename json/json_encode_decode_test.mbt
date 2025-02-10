@@ -83,6 +83,7 @@ fn of_json(jv : Json) -> AllThree!DecodeError {
   }
 }
 
+///|
 test {
   let all_three = AllThree::{
     ints: [1, 2, 3],

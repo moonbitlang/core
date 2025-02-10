@@ -15,6 +15,7 @@
 ///|
 let default_init_capacity = 8
 
+///|
 test "doc" {
   let set = @hashset.of([3, 8, 1])
   set.add(3)
@@ -22,12 +23,14 @@ test "doc" {
   inspect!(set, content="@hashset.of([3, 4, 1, 8])")
 }
 
+///|
 test "new" {
   let m : @hashset.T[Int] = @hashset.new()
   assert_eq!(m.capacity(), default_init_capacity)
   assert_eq!(m.size(), 0)
 }
 
+///|
 test "insert" {
   let m = @hashset.new()
   m.add("a")
@@ -39,6 +42,7 @@ test "insert" {
   assert_false!(m.contains("d"))
 }
 
+///|
 test "from_array" {
   let m = @hashset.of(["a", "b", "c"])
   assert_true!(m.contains("a"))
@@ -47,6 +51,7 @@ test "from_array" {
   assert_false!(m.contains("d"))
 }
 
+///|
 test "size" {
   let m = @hashset.new()
   assert_eq!(m.size(), 0)
@@ -54,6 +59,7 @@ test "size" {
   assert_eq!(m.size(), 1)
 }
 
+///|
 test "is_empty" {
   let m = @hashset.new()
   assert_eq!(m.is_empty(), true)
@@ -63,6 +69,7 @@ test "is_empty" {
   assert_eq!(m.is_empty(), true)
 }
 
+///|
 test "iter" {
   let m = @hashset.of(["a", "b", "c"])
   let mut sum = ""
@@ -70,6 +77,7 @@ test "iter" {
   inspect!(sum, content="cab")
 }
 
+///|
 test "iteri" {
   let m = @hashset.of(["1", "2", "3"])
   let mut s = ""
@@ -82,6 +90,7 @@ test "iteri" {
   inspect!(sum, content="3")
 }
 
+///|
 test "union" {
   let m1 = @hashset.of(["a", "b", "c"])
   let m2 = @hashset.of(["b", "c", "d"])
@@ -93,6 +102,7 @@ test "union" {
   assert_true!(m.contains("d"))
 }
 
+///|
 test "intersection" {
   let m1 = @hashset.of(["a", "b", "c"])
   let m2 = @hashset.of(["b", "c", "d"])
@@ -104,6 +114,7 @@ test "intersection" {
   assert_false!(m.contains("d"))
 }
 
+///|
 test "difference" {
   let m1 = @hashset.of(["a", "b", "c"])
   let m2 = @hashset.of(["b", "c", "d"])
@@ -115,6 +126,7 @@ test "difference" {
   assert_false!(m.contains("d"))
 }
 
+///|
 test "symmetric_difference" {
   let m1 = @hashset.of(["a", "b", "c"])
   let m2 = @hashset.of(["b", "c", "d"])
@@ -126,6 +138,7 @@ test "symmetric_difference" {
   assert_true!(m.contains("d"))
 }
 
+///|
 test "iter" {
   let buf = StringBuilder::new(size_hint=20)
   let map = @hashset.of(["a", "b", "c"])
@@ -136,6 +149,7 @@ test "iter" {
   inspect!(buf, content="[c][a]")
 }
 
+///|
 test "from_array" {
   let arr = ["a", "b", "c"]
   let m = @hashset.from_array(arr)
@@ -145,6 +159,7 @@ test "from_array" {
   assert_false!(m.contains("d"))
 }
 
+///|
 test "insert_and_grow" {
   let m = @hashset.new()
   for i = 0; i < 10; i = i + 1 {
@@ -154,6 +169,7 @@ test "insert_and_grow" {
   assert_eq!(m.capacity(), 16)
 }
 
+///|
 test "remove_and_shift_back" {
   let m = @hashset.new()
   m.add("a")
@@ -167,6 +183,7 @@ test "remove_and_shift_back" {
   assert_true!(m.contains("d"))
 }
 
+///|
 test "capacity_and_size" {
   let m = @hashset.new()
   assert_eq!(m.capacity(), default_init_capacity)
@@ -175,6 +192,7 @@ test "capacity_and_size" {
   assert_eq!(m.size(), 1)
 }
 
+///|
 test "clear_and_reinsert" {
   let m = @hashset.new()
   m.add("a")
@@ -186,6 +204,7 @@ test "clear_and_reinsert" {
   assert_true!(m.contains("c"))
 }
 
+///|
 test "insert_and_grow" {
   let m = @hashset.new()
   for i = 0; i < 10; i = i + 1 {
@@ -195,6 +214,7 @@ test "insert_and_grow" {
   assert_eq!(m.capacity(), 16)
 }
 
+///|
 test "remove_and_shift_back" {
   let m = @hashset.new()
   m.add("a")
@@ -208,6 +228,7 @@ test "remove_and_shift_back" {
   assert_true!(m.contains("d"))
 }
 
+///|
 test "capacity_and_size" {
   let m = @hashset.new()
   assert_eq!(m.capacity(), default_init_capacity)
@@ -216,6 +237,7 @@ test "capacity_and_size" {
   assert_eq!(m.size(), 1)
 }
 
+///|
 test "clear_and_reinsert" {
   let m = @hashset.new()
   m.add("a")
@@ -227,6 +249,7 @@ test "clear_and_reinsert" {
   assert_true!(m.contains("c"))
 }
 
+///|
 test "from_iter multiple elements iter" {
   inspect!(
     @hashset.from_iter([1, 2, 3].iter()),
@@ -234,15 +257,18 @@ test "from_iter multiple elements iter" {
   )
 }
 
+///|
 test "from_iter single element iter" {
   inspect!(@hashset.from_iter([1].iter()), content="@hashset.of([1])")
 }
 
+///|
 test "from_iter empty iter" {
   let map : @hashset.T[Int] = @hashset.from_iter(Iter::empty())
   inspect!(map, content="@hashset.of([])")
 }
 
+///|
 test "hashset arbitrary" {
   let samples : Array[@hashset.T[Int]] = @quickcheck.samples(20)
   inspect!(

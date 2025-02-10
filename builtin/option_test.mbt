@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+///|
 test {
   assert_eq!((Option::None : Unit?), Option::None)
   assert_eq!(Option::Some(1), Option::Some(1))
@@ -20,11 +21,13 @@ test {
   assert_not_eq!(Option::Some(1), Option::None)
 }
 
+///|
 test "to_string for Option None" {
   let x : Int? = None
   inspect!(x.to_string(), content="None")
 }
 
+///|
 test "to_string for Option Some" {
   let x : Int? = Some(42)
   inspect!(x.to_string(), content="Some(42)")

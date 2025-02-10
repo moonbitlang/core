@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+///|
 test "is_empty" {
   let v = @array.of([1, 2, 3, 4, 5])
   let ve : @array.T[Int] = @array.new()
@@ -19,18 +20,21 @@ test "is_empty" {
   inspect!(ve.is_empty(), content="true")
 }
 
+///|
 test "set with valid index" {
   let v = @array.of([1, 2, 3, 4, 5])
   let v1 = v.set(2, 10) // This should not trigger the panic
   inspect!(v1, content="@immut/array.of([1, 2, 10, 4, 5])")
 }
 
+///|
 test "set with valid index at end" {
   let v = @array.of([1, 2, 3, 4, 5])
   let v1 = v.set(4, 10) // This should not trigger the panic
   inspect!(v1, content="@immut/array.of([1, 2, 3, 4, 10])")
 }
 
+///|
 test "to_string" {
   let v = @array.of([1, 2, 3, 4, 5])
   let ve : @array.T[Int] = @array.new()
@@ -38,12 +42,14 @@ test "to_string" {
   inspect!(ve, content="@immut/array.of([])")
 }
 
+///|
 test "to_array" {
   let v = @array.of([1, 2, 3, 4])
   inspect!(v.to_array().to_string(), content="[1, 2, 3, 4]")
   inspect!(v.push(5).to_array().to_string(), content="[1, 2, 3, 4, 5]")
 }
 
+///|
 test "iter" {
   let buf = StringBuilder::new(size_hint=20)
   let v = @array.of([1, 2, 3])
@@ -54,6 +60,7 @@ test "iter" {
   inspect!(buf, content="[1][2]")
 }
 
+///|
 test "length" {
   let v = @array.of([1, 2, 3, 4, 5])
   let ve : @array.T[Int] = @array.new()
@@ -61,6 +68,7 @@ test "length" {
   inspect!(ve.length(), content="0")
 }
 
+///|
 test "op_get" {
   let v = @array.of([1, 2, 3, 4, 5])
   inspect!(v[0], content="1")
@@ -70,6 +78,7 @@ test "op_get" {
   inspect!(v[4], content="5")
 }
 
+///|
 test "set" {
   let v = @array.of([1, 2, 3, 4, 5])
   let v1 = v.set(1, 10)
@@ -78,6 +87,7 @@ test "set" {
   inspect!(v2, content="@immut/array.of([1, 2, 10, 4, 5])")
 }
 
+///|
 test "push" {
   let v = @array.new().push(1).push(2).push(3)
   inspect!(v, content="@immut/array.of([1, 2, 3])")
@@ -86,6 +96,7 @@ test "push" {
   inspect!(v.push(3), content="@immut/array.of([1, 2, 3, 3])")
 }
 
+///|
 test "from_array" {
   let v = @array.of([1, 1, 4, 5, 1, 4])
   let vv = @array.from_array(Array::make(30, 1))
@@ -96,6 +107,7 @@ test "from_array" {
   )
 }
 
+///|
 test "iter" {
   let v = @array.of([1, 2, 3, 4, 5])
   let mut s = 0
@@ -105,6 +117,7 @@ test "iter" {
   v.each(fn(_e) { abort("never reach") })
 }
 
+///|
 test "iteri" {
   let v : @array.T[Int] = @array.new()
   v.eachi(fn(_i, _e) { abort("never reach") })
@@ -117,6 +130,7 @@ test "iteri" {
   inspect!(vec, content="[0, 1, 2, 3, 4]")
 }
 
+///|
 test "op_equal" {
   let v0 : @array.T[Int] = @array.of([])
   let v1 = @array.of([1, 2, 3, 4, 5])
@@ -132,6 +146,7 @@ test "op_equal" {
   inspect!(v5 == v6, content="true")
 }
 
+///|
 test "fold" {
   let e = @array.new()
   let v = @array.of([1, 2, 3, 4, 5])
@@ -139,6 +154,7 @@ test "fold" {
   inspect!(v.fold(fn(a, b) { a + b }, init=0), content="15")
 }
 
+///|
 test "rev_fold" {
   let e = @array.new()
   inspect!(e.rev_fold(fn(a, b) { a + b }, init=0), content="0")
@@ -147,6 +163,7 @@ test "rev_fold" {
   inspect!(v.rev_fold(fn(a, b) { a + b }, init=0), content="15")
 }
 
+///|
 test "map" {
   let v = @array.of([1, 2, 3, 4, 5])
   inspect!(v.map(fn(e) { e * 2 }), content="@immut/array.of([2, 4, 6, 8, 10])")
@@ -163,6 +180,7 @@ test "map" {
   inspect!(@array.new().map(fn(e : Int) { e }), content="@immut/array.of([])")
 }
 
+///|
 test "new" {
   let v = @array.make(5, 1)
   let v2 = @array.make(33, 10)
@@ -173,6 +191,7 @@ test "new" {
   )
 }
 
+///|
 test "new_with" {
   let v = @array.makei(5, fn(i) { i })
   let v2 = @array.makei(33, fn(i) { i * 10 })
@@ -183,6 +202,7 @@ test "new_with" {
   )
 }
 
+///|
 test "from_iter multiple elements iter" {
   inspect!(
     @array.from_iter([1, 2, 3].iter()),
@@ -190,15 +210,18 @@ test "from_iter multiple elements iter" {
   )
 }
 
+///|
 test "from_iter single element iter" {
   inspect!(@array.from_iter([1].iter()), content="@immut/array.of([1])")
 }
 
+///|
 test "from_iter empty iter" {
   let pq : @array.T[Int] = @array.from_iter(Iter::empty())
   inspect!(pq, content="@immut/array.of([])")
 }
 
+///|
 test "hash" {
   let l1 = @array.of([1, 2, 3, 4, 5])
   let l2 = @array.of([1, 2, 3, 4, 5])
@@ -210,6 +233,7 @@ test "hash" {
   inspect!(l4.hash() == l4.hash(), content="true")
 }
 
+///|
 test "concat_empty" {
   let a = @array.of([1, 2, 3])
   let b : @array.T[Int] = @array.new()

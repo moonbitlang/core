@@ -43,6 +43,7 @@ fn scalbn(self : Double, exp : Int) -> Double {
   return y * ui.reinterpret_as_double()
 }
 
+///|
 test "scalbn" {
   inspect!(scalbn(1.5, 2), content="6")
   inspect!(scalbn(2.0, -1), content="1")

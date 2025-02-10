@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+///|
 test "slice" {
   let v = [1, 2, 3, 4, 5]
   let s = v[1:4]
@@ -20,6 +21,7 @@ test "slice" {
   assert_eq!(s[1], 3)
 }
 
+///|
 test "each" {
   let v = [1, 2, 3, 4, 5]
   let s = v[2:5]
@@ -28,6 +30,7 @@ test "each" {
   assert_eq!(sum, 12)
 }
 
+///|
 test "eachi" {
   let v = [3, 4, 5][:]
   let mut sum = 0
@@ -35,12 +38,14 @@ test "eachi" {
   inspect!(sum, content="15")
 }
 
+///|
 test "all" {
   let nums = [1, 2, 3, 4, 6, 8]
   assert_false!(nums[0:4].all(fn(x) { x % 2 == 0 }))
   assert_true!(nums[3:].all(fn(x) { x % 2 == 0 }))
 }
 
+///|
 test "any" {
   let v = [1, 2, 3, 4, 5, 6]
   assert_true!(v[:].any(fn(ele) { ele < 6 }))
@@ -48,6 +53,7 @@ test "any" {
   assert_false!(v[4:].any(fn(ele) { ele < 5 }))
 }
 
+///|
 test "contains" {
   let v = [2, 3, 4, 5][:]
   assert_true!(v.contains(2))
@@ -56,6 +62,7 @@ test "contains" {
   assert_false!(v.contains(6))
 }
 
+///|
 test "op_equal" {
   let v1 = [1, 2, 3][:]
   let v2 = [1, 2, 3][:]
@@ -66,6 +73,7 @@ test "op_equal" {
   assert_false!(v1 == v3)
 }
 
+///|
 test "compare" {
   assert_eq!([1, 2, 4][:].compare([1, 2, 3][:]), 1)
   assert_eq!([-1, 2, 4][:].compare([1, 2, 4][:]), -1)
@@ -74,6 +82,7 @@ test "compare" {
   assert_eq!([1, 2][:].compare([1, 2, 0][:]), -1)
 }
 
+///|
 test "iter" {
   let array = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
   @json.inspect!(array[:].iter().to_array(), content=[
@@ -83,36 +92,42 @@ test "iter" {
   @json.inspect!(array[5:9].iter().to_array(), content=[5, 6, 7, 8])
 }
 
+///|
 test "to_string" {
   let arr = [0, 1, 2, 3, 4]
   @json.inspect!(arr[1:3], content=[1, 2])
   @json.inspect!("\{arr[1:3]}!", content="[1, 2]!")
 }
 
+///|
 test "arrayview_fold" {
   let arr = [1, 2, 3][:]
   let sum = arr.fold(fn(acc, x) { acc + x }, init=0)
   inspect!(sum, content="6")
 }
 
+///|
 test "arrayview_rev_fold" {
   let arr = [1, 2, 3][:]
   let sum = arr.rev_fold(fn(acc, x) { acc + x }, init=0)
   inspect!(sum, content="6")
 }
 
+///|
 test "arrayview_foldi" {
   let arr = [1, 2, 3][:]
   let sum = arr.foldi(fn(i, acc, x) { acc + i + x }, init=0)
   inspect!(sum, content="9")
 }
 
+///|
 test "arrayview_rev_foldi" {
   let arr = [1, 2, 3][:]
   let sum = arr.rev_foldi(fn(i, acc, x) { acc + i + x }, init=0)
   inspect!(sum, content="9")
 }
 
+///|
 test "arrayview_map" {
   let arr = [1, 2, 3]
   let mapped = arr[1:].map(fn(x) { x * 2 })
@@ -122,6 +137,7 @@ test "arrayview_map" {
   @json.inspect!(([1] : Array[Int])[1:].map(fn(x) { x }), content=[])
 }
 
+///|
 test "arrayview_map_inplace" {
   let arr = [1, 2, 3]
   arr[1:].map_inplace(fn(x) { x * 2 })
@@ -131,6 +147,7 @@ test "arrayview_map_inplace" {
   assert_eq!(arr[2], 6)
 }
 
+///|
 test "arrayview_mapi" {
   let arr = [1, 2, 3]
   let mapped = arr[1:].mapi(fn(i, x) { i + x })
@@ -140,6 +157,7 @@ test "arrayview_mapi" {
   inspect!(([1] : Array[Int])[1:].mapi(fn(_idx, x) { x }), content="[]")
 }
 
+///|
 test "arrayview_mapi_inplace" {
   let arr = [1, 2, 3]
   arr[1:].mapi_inplace(fn(i, x) { i + x })
@@ -149,6 +167,7 @@ test "arrayview_mapi_inplace" {
   assert_eq!(arr[2], 4)
 }
 
+///|
 test "arrayview_filter" {
   let arr = [1, 2, 3, 4, 5]
   let filtered = arr[2:].filter(fn(x) { x % 2 == 0 })

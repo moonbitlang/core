@@ -12,19 +12,23 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+///|
 test "array_as_view" {
   inspect!([1, 2, 3][:].length(), content="3")
 }
 
+///|
 test "view_as_view" {
   inspect!([1, 2, 3][:][:].length(), content="3")
 }
 
+///|
 test "op_get" {
   inspect!([1, 2, 3][:][1], content="2")
   inspect!([1, 2, 3][:][2], content="3")
 }
 
+///|
 test "op_set" {
   let v = [1, 2, 3][:]
   inspect!(v[1], content="2")
@@ -32,6 +36,7 @@ test "op_set" {
   inspect!(v[1], content="4")
 }
 
+///|
 test "swap" {
   let v = [1, 2, 3][:]
   inspect!(v[1], content="2")
@@ -39,6 +44,7 @@ test "swap" {
   inspect!(v[1], content="3")
 }
 
+///|
 test "negative index1" {
   let arr = [1, 2, 3]
   let view = arr[-1:]
@@ -69,6 +75,7 @@ test "negative index1" {
   inspect!(view, content="[1, 2, 3]")
 }
 
+///|
 test "negative index2" {
   let arr = [0, 1, 2, 3, 4][1:4]
   let view = arr[-1:]
@@ -99,48 +106,56 @@ test "negative index2" {
   inspect!(view, content="[1, 2, 3]")
 }
 
+///|
 test "panic negative index1" {
   let arr = [1, 2, 3]
   let _ = arr[-4:]
 
 }
 
+///|
 test "panic negative index2" {
   let arr = [1, 2, 3]
   let _ = arr[:-4]
 
 }
 
+///|
 test "panic negative index3" {
   let arr = [1, 2, 3]
   let _ = arr[-1:-2]
 
 }
 
+///|
 test "panic negative index4" {
   let arr = [1, 2, 3]
   let _ = arr[-1:-3]
 
 }
 
+///|
 test "panic negative index5" {
   let arr = [1, 2, 3][:]
   let _ = arr[-4:]
 
 }
 
+///|
 test "panic negative index6" {
   let arr = [1, 2, 3][:]
   let _ = arr[:-4]
 
 }
 
+///|
 test "panic negative index7" {
   let arr = [1, 2, 3][:]
   let _ = arr[-1:-2]
 
 }
 
+///|
 test "panic negative index8" {
   let arr = [1, 2, 3][:]
   let _ = arr[-1:-3]

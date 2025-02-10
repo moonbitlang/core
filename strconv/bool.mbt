@@ -22,6 +22,7 @@ pub fn parse_bool(str : String) -> Bool!StrConvError {
   }
 }
 
+///|
 test "parse_bool" {
   let tests : Array[(String, Result[Bool, String])] = [
     ("", Err(syntax_err_str)),

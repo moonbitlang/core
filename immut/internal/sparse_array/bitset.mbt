@@ -59,6 +59,7 @@ pub fn Bitset::size(self : Bitset) -> Int {
   self._.popcnt()
 }
 
+///|
 test "Bitset::has" {
   let b = empty_bitset.add(2)
   inspect!(b.has(0), content="false")
@@ -68,6 +69,7 @@ test "Bitset::has" {
   inspect!(b.has(2), content="true")
 }
 
+///|
 test "Bitset::index_of" {
   let b = empty_bitset.add(2)
   inspect!(b.index_of(2), content="0")
@@ -84,6 +86,7 @@ test "Bitset::index_of" {
   inspect!(b.index_of(6), content="3")
 }
 
+///|
 test "Bitset::remove" {
   let b = empty_bitset.add(2).add(3)
   inspect!(b.has(2), content="true")
@@ -96,6 +99,7 @@ test "Bitset::remove" {
   inspect!(b.index_of(3), content="0")
 }
 
+///|
 test "Bitset::remove" {
   let b = empty_bitset.add(2).add(3)
   inspect!(b.has(2), content="true")
@@ -108,6 +112,7 @@ test "Bitset::remove" {
   inspect!(b.index_of(3), content="0")
 }
 
+///|
 test "Bitset::size" {
   let b = empty_bitset
   inspect!(b.size(), content="0")
@@ -119,6 +124,7 @@ test "Bitset::size" {
   inspect!(b.size(), content="2")
 }
 
+///|
 test "Bitset::ctpop" {
   inspect!(
     ([0, 0xf0f0f0f0, 0x3c3c0ff0] : Array[_]).map(fn { x => x.popcnt() }),

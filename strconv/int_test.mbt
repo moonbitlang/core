@@ -27,6 +27,7 @@ fn parse_as_result(s : String, base~ : Int) -> Result[Int64, String] {
   }
 }
 
+///|
 test "parse_int64_invalid_base" {
   assert_eq!(parse_as_result("12345", base=1), Err(base_err))
   assert_eq!(parse_as_result("12345", base=37), Err(base_err))
@@ -34,6 +35,7 @@ test "parse_int64_invalid_base" {
   assert_eq!(parse_as_result("12345", base=100), Err(base_err))
 }
 
+///|
 test "parse_int64_uncovered_lines" {
   let tests : Array[(String, Int, Result[Int64, String])] = [
     // Test cases for uncovered lines in strconv/int.mbt:69
@@ -54,6 +56,7 @@ test "parse_int64_uncovered_lines" {
   }
 }
 
+///|
 test "@strconv.parse_int64/base_parsing" {
   // Test different bases
   inspect!(@strconv.parse_int64!("1010", base=2), content="10")
@@ -65,6 +68,7 @@ test "@strconv.parse_int64/base_parsing" {
   inspect!(@strconv.parse_int64!("0o777"), content="511")
 }
 
+///|
 test "panic @strconv.parse_int64/invalid_input" {
   // Empty string
   ignore(@strconv.parse_int64!(""))
@@ -74,6 +78,7 @@ test "panic @strconv.parse_int64/invalid_input" {
   ignore(@strconv.parse_int64!("123", base=37))
 }
 
+///|
 test "@strconv.parse_int64/boundary_values" {
   // Test minimum and maximum values
   inspect!(
@@ -94,6 +99,7 @@ test "@strconv.parse_int64/boundary_values" {
   inspect!(@strconv.parse_int64!("-42"), content="-42")
 }
 
+///|
 test "@moonbitlang/core/strconv.parse_int64/base10" {
   inspect!(@moonbitlang/core/strconv.parse_int64!("12345"), content="12345")
   inspect!(@moonbitlang/core/strconv.parse_int64!("-12345"), content="-12345")
@@ -101,6 +107,7 @@ test "@moonbitlang/core/strconv.parse_int64/base10" {
   inspect!(@moonbitlang/core/strconv.parse_int64!("-0"), content="0")
 }
 
+///|
 test "@moonbitlang/core/strconv.parse_int64/boundary_cases" {
   inspect!(
     @moonbitlang/core/strconv.parse_int64!("9223372036854775807"),
@@ -112,10 +119,12 @@ test "@moonbitlang/core/strconv.parse_int64/boundary_cases" {
   )
 }
 
+///|
 test "panic @moonbitlang/core/strconv.parse_int64/invalid_base" {
   ignore(@moonbitlang/core/strconv.parse_int64!("12345x"))
 }
 
+///|
 test "edge cases" {
   // Invalid: Missing digits after hex prefix
   inspect!(@strconv.parse_int64?("0x"), content="Err(invalid syntax)")

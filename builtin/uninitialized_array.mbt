@@ -107,6 +107,7 @@ fn UninitializedArray::unsafe_blit[T](
   FixedArray::unsafe_blit(dst._, dst_offset, src._, src_offset, len)
 }
 
+///|
 test "op_as_view with valid_range" {
   let arr : UninitializedArray[Int] = UninitializedArray::make(5)
   let view = arr[1:4]
@@ -114,11 +115,13 @@ test "op_as_view with valid_range" {
   inspect!(view.len, content="3")
 }
 
+///|
 test "panic op_as_view with invalid_start" {
   let arr : UninitializedArray[Int] = UninitializedArray::make(5)
   ignore(arr[-1:])
 }
 
+///|
 test "panic op_as_view with invalid_end" {
   let arr : UninitializedArray[Int] = UninitializedArray::make(5)
   ignore(arr[2:10])

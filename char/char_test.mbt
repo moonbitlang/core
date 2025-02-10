@@ -12,10 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+///|
 test "to_string" {
   assert_eq!('a'.to_string(), "a")
 }
 
+///|
 test "show output" {
   fn repr(chr) {
     let buf = StringBuilder::new(size_hint=0)
@@ -39,6 +41,7 @@ struct TestHash {
   x : Char
 } derive(Hash, Eq, Show)
 
+///|
 test "Char hash function with struct" {
   let m = {}
   m[{ x: 'a' }] = '3'
@@ -46,6 +49,7 @@ test "Char hash function with struct" {
   inspect!(m, content="{{x: 'a'}: '3', {x: 'b'}: '3'}")
 }
 
+///|
 test "Char hash" {
   let m = {}
   m['a'] = '3'
@@ -53,6 +57,7 @@ test "Char hash" {
   inspect!(m, content="{'a': '3', 'b': '3'}")
 }
 
+///|
 test "is_ascii" {
   let ascii = 'a'
   let non_ascii = '❤'
@@ -60,6 +65,7 @@ test "is_ascii" {
   assert_false!(non_ascii.is_ascii())
 }
 
+///|
 test "is_ascii_alphabetic" {
   let uppercase_a = 'A'
   let uppercase_g = 'G'
@@ -81,6 +87,7 @@ test "is_ascii_alphabetic" {
   assert_false!(esc.is_ascii_alphabetic())
 }
 
+///|
 test "is_ascii_control" {
   let uppercase_a = 'A'
   let uppercase_g = 'G'
@@ -102,6 +109,7 @@ test "is_ascii_control" {
   assert_true!(esc.is_ascii_control())
 }
 
+///|
 test "is_ascii_graphic" {
   let uppercase_a = 'A'
   let uppercase_g = 'G'
@@ -123,6 +131,7 @@ test "is_ascii_graphic" {
   assert_false!(esc.is_ascii_graphic())
 }
 
+///|
 test "is_ascii_hexdigit" {
   let uppercase_a = 'A'
   let uppercase_g = 'G'
@@ -144,6 +153,7 @@ test "is_ascii_hexdigit" {
   assert_false!(esc.is_ascii_hexdigit())
 }
 
+///|
 test "is_ascii_lowercase" {
   let uppercase_a = 'A'
   let uppercase_g = 'G'
@@ -165,6 +175,7 @@ test "is_ascii_lowercase" {
   assert_false!(esc.is_ascii_lowercase())
 }
 
+///|
 test "is_ascii_octdigit" {
   let uppercase_a = 'A'
   let a = 'a'
@@ -182,6 +193,7 @@ test "is_ascii_octdigit" {
   assert_false!(lf.is_ascii_octdigit())
 }
 
+///|
 test "is_ascii_punctuation" {
   let uppercase_a = 'A'
   let uppercase_g = 'G'
@@ -203,6 +215,7 @@ test "is_ascii_punctuation" {
   assert_false!(esc.is_ascii_punctuation())
 }
 
+///|
 test "is_ascii_uppercase" {
   let uppercase_a = 'A'
   let uppercase_g = 'G'
@@ -224,6 +237,7 @@ test "is_ascii_uppercase" {
   assert_false!(esc.is_ascii_uppercase())
 }
 
+///|
 test "is_ascii_whitespace" {
   let uppercase_a = 'A'
   let uppercase_g = 'G'
@@ -245,11 +259,13 @@ test "is_ascii_whitespace" {
   assert_false!(esc.is_ascii_whitespace())
 }
 
+///|
 test "is_control" {
   assert_true!(''.is_control())
   assert_false!('q'.is_control())
 }
 
+///|
 test "is_digit" {
   assert_eq!(true, 'a'.is_digit(11))
   assert_eq!(true, 'a'.is_digit(12))
@@ -268,10 +284,12 @@ test "is_digit" {
   assert_eq!(true, 'z'.is_digit(36))
 }
 
+///|
 test "panic on invalid radix" {
   ignore('a'.is_digit(1))
 }
 
+///|
 test "is_numeric" {
   assert_true!('٣'.is_numeric())
   assert_true!('7'.is_numeric())
@@ -284,6 +302,7 @@ test "is_numeric" {
   assert_false!('三'.is_numeric())
 }
 
+///|
 test "is_whitespace" {
   assert_true!(' '.is_whitespace())
   // line break

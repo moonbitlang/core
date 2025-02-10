@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+///|
 test "Int16::to_int" {
   inspect!(Int16::to_int(0), content="0")
   inspect!(Int16::to_int(123), content="123")
@@ -20,6 +21,7 @@ test "Int16::to_int" {
   inspect!(Int16::to_int(-32768), content="-32768")
 }
 
+///|
 test "Int16::from_int" {
   inspect!(Int::to_int16(0), content="0")
   inspect!(Int::to_int16(123), content="123")
@@ -33,6 +35,7 @@ test "Int16::from_int" {
   inspect!(Int::to_int16(65536), content="0")
 }
 
+///|
 test "Int16::to_byte" {
   inspect!(Int16::to_byte(0), content="b'\\x00'")
   inspect!(Int16::to_byte(123), content="b'\\x7B'")
@@ -43,12 +46,14 @@ test "Int16::to_byte" {
   inspect!(Int16::to_byte(-257), content="b'\\xFF'")
 }
 
+///|
 test "Int16::from_byte" {
   inspect!(Byte::to_int16(0), content="0")
   inspect!(Byte::to_int16(123), content="123")
   inspect!(Byte::to_int16(255), content="255")
 }
 
+///|
 test "Int16::to_int64" {
   inspect!(Int16::to_int64(0), content="0")
   inspect!(Int16::to_int64(123), content="123")
@@ -57,6 +62,7 @@ test "Int16::to_int64" {
   inspect!(Int16::to_int64(-32768), content="-32768")
 }
 
+///|
 test "Int16::from_int64" {
   inspect!(Int::to_int16(0), content="0")
   inspect!(Int::to_int16(123), content="123")
@@ -70,6 +76,7 @@ test "Int16::from_int64" {
   inspect!(Int::to_int16(65536), content="0")
 }
 
+///|
 test "Int16::op_add" {
   fn add(a : Int16, b : Int16) -> Int16 {
     a + b
@@ -89,6 +96,7 @@ test "Int16::op_add" {
   inspect!(add(-16000, -16000), content="-32000") // Underflow in middle range
 }
 
+///|
 test "Int16::op_sub" {
   fn sub(a : Int16, b : Int16) -> Int16 {
     a - b
@@ -108,6 +116,7 @@ test "Int16::op_sub" {
   inspect!(sub(0, -32768), content="-32768") // Zero - min
 }
 
+///|
 test "Int16::op_mul" {
   fn mul(a : Int16, b : Int16) -> Int16 {
     a * b
@@ -129,6 +138,7 @@ test "Int16::op_mul" {
   inspect!(mul(16383, 2), content="32766") // Just below overflow
 }
 
+///|
 test "Int16::op_div" {
   fn div(a : Int16, b : Int16) -> Int16 {
     a / b
@@ -151,6 +161,7 @@ test "Int16::op_div" {
   inspect!(div(-32768, 2), content="-16384") // Even division of min
 }
 
+///|
 test "Int16::compare" {
   inspect!(Int16::compare(1, 2), content="-1")
   inspect!(Int16::compare(2, 1), content="1")
@@ -173,6 +184,7 @@ test "Int16::compare" {
   inspect!(Int16::compare(0, 0), content="0") // Zero equals
 }
 
+///|
 test "Int16::hash" {
   inspect!(Int16::hash(1), content="1")
   inspect!(Int16::hash(-1), content="-1")
@@ -183,6 +195,7 @@ test "Int16::hash" {
   inspect!(Int16::hash(-12345), content="-12345")
 }
 
+///|
 test "Int16::op_equal" {
   inspect!(Int16::op_equal(1, 2), content="false")
   inspect!(Int16::op_equal(2, 1), content="false")

@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+///|
 test "trigonometric functions" {
   // sin
   inspect!(0.0.sin(), content="0")
@@ -94,6 +95,7 @@ test "trigonometric functions" {
   }
 }
 
+///|
 test "Inverse trigonometric functions" {
   // asin
   inspect!(0.0.asin(), content="0")
@@ -152,6 +154,7 @@ test "Inverse trigonometric functions" {
   }
 }
 
+///|
 test "atan" {
   // atan
   inspect!(0.0.atan(), content="0")
@@ -192,6 +195,7 @@ test "atan" {
   }
 }
 
+///|
 test "atan2" {
   // atan2
   inspect!(0.0.atan2(-1.0), content="3.141592653589793")

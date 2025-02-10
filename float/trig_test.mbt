@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+///|
 test "floating point trignometry" {
   // sin
   inspect!((0.0 : Float).sin(), content="0")

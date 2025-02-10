@@ -18,6 +18,7 @@ struct H {
   y : Int
 } derive(@quickcheck.Arbitrary, Show)
 
+///|
 test {
   let state = @splitmix.RandomState::default()
   let size = 10
@@ -31,12 +32,14 @@ test {
   inspect!(v, content="{x: 7, y: 2}")
 }
 
+///|
 test "gen with only size" {
   // Call gen with only size parameter to trigger default state line 
   let x : Bool = @quickcheck.gen(size=1)
   inspect!(x, content="true")
 }
 
+///|
 test "gen with default parameters" {
   // Call gen with no parameters, both size and state will be None.
   // Use Bool as the arbitrary type since it's simple.
@@ -46,6 +49,7 @@ test "gen with default parameters" {
   inspect!(x, content="true")
 }
 
+///|
 test "iter arbitrary" {
   let samples : Array[Iter[Int]] = samples(20)
   inspect!("[0, 0, 0, 1, 2, -2]", content="[0, 0, 0, 1, 2, -2]")

@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+///|
 test "Double::to_int" {
   inspect!(0.0.to_int(), content="0")
   inspect!(1.0.to_int(), content="1")
