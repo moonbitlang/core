@@ -473,18 +473,16 @@ pub fn Bytes::op_equal(self : Bytes, other : Bytes) -> Bool {
 pub fn Bytes::compare(self : Bytes, other : Bytes) -> Int {
   let self_len = self.length()
   let other_len = other.length()
-  if self_len > other_len {
-    return 1
-  } else if self_len < other_len {
-    return -1
+  let cmp = self_len.compare(other_len)
+  if cmp != 0 {
+    return cmp
   }
-  for i = 0; i < self_len; i = i + 1 {
-    let b1 = self[i]
-    let b2 = other[i]
-    if b1 < b2 {
-      break -1
-    } else if b1 > b2 {
-      break 1
+  for i in 0..<self_len {
+    let b1 = self.unsafe_get(i)
+    let b2 = other.unsafe_get(i)
+    let cmp = b1.compare(b2)
+    if cmp != 0 {
+      break cmp
     }
   } else {
     0
