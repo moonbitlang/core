@@ -1,6 +1,12 @@
 package moonbitlang/core/buffer
 
 // Values
+fn from_array(Array[Byte]) -> T
+
+fn from_bytes(Bytes) -> T
+
+fn from_iter(Iter[Byte]) -> T
+
 fn new(size_hint~ : Int = ..) -> T
 
 // Types and methods
