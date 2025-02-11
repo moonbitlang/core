@@ -18,3 +18,17 @@ test "char subtraction" {
   let a = 'a'
   inspect!(b - a, content="1")
 }
+
+
+test "char show" {
+  assert_eq!('\b'.to_string(), "\u0008")
+  // assert_eq!('\b'.to_string(), "\u{8}")
+  assert_eq!('\r'.to_string(), "\u000d")
+  assert_eq!('\n'.to_string(), "\u000a")
+  assert_eq!('\t'.to_string(), "\u0009")
+  assert_eq!('\u0000'.to_string(), "\u0000")
+  assert_eq!('\u0001'.to_string(), "\u0001")
+  assert_eq!('\u0002'.to_string(), "\u0002")
+  assert_eq!('\b'.to_string().escape(), "\"\\b\"")
+}
+
