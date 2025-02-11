@@ -557,3 +557,71 @@ pub fn BytesView::to_double_be(self : BytesView) -> Double {
 pub fn BytesView::to_double_le(self : BytesView) -> Double {
   self.to_uint64_le().reinterpret_as_double()
 }
+
+///|
+/// Compares two views for equality. Returns true only if both views
+/// have the same length and contain identical bytes in the same order.
+///
+/// Parameters:
+///
+/// * `self` : The first view to compare.
+/// * `other` : The second view to compare.
+///
+/// Returns `true` if the byte sequences are equal, `false` otherwise.
+///
+/// Example:
+/// ```moonbit
+/// let bytes = b"abcabc"
+/// inspect!(bytes[0:3] == bytes[3:6], content="true")
+/// inspect!(bytes[0:3] == bytes[2:5], content="false")
+/// inspect!(bytes[0:4] == bytes[3:6], content="false")
+/// ```
+pub fn BytesView::op_equal(self : BytesView, other : BytesView) -> Bool {
+  guard self.len == other.len else { return false }
+  for i in 0..<self.len {
+    guard self[i] == other[i] else { return false }
+
+  }
+  true
+}
+
+///|
+/// Compares two views lexicographically. First compares the lengths of
+/// the views, then compares bytes pairwise until a difference is found or
+/// all bytes have been compared.
+///
+/// Parameters:
+///
+/// * `self` : The first view to compare.
+/// * `other` : The second byte sequence to compare.
+///
+/// Returns an integer indicating the relative order:
+///
+/// * A negative value if `self` is less than `other`
+/// * Zero if `self` equals `other`
+/// * A positive value if `self` is greater than `other`
+///
+/// Example:
+///
+/// ```moonbit
+/// let bytes = b"abcabc"
+/// inspect!(bytes[0:3].compare(bytes[3:6]), content="0")  // abc = abc
+/// inspect!(bytes[0:3].compare(bytes[2:5]), content="-1") // abc < cab
+/// inspect!(bytes[1:4].compare(bytes[3:6]), content="1")  // bca > abc
+/// inspect!(bytes[0:3].compare(bytes[0:4]), content="-1") // abc < abca
+/// inspect!(bytes[1:5].compare(bytes[2:5]), content="1")  // bcab > cab
+/// ```
+pub fn BytesView::compare(self : BytesView, other : BytesView) -> Int {
+  let self_len = self.len
+  let other_len = other.len
+  let cmp = self_len.compare(other_len)
+  guard cmp == 0 else { return cmp }
+  for i in 0..<self_len {
+    let b1 = self.unsafe_get(i)
+    let b2 = other.unsafe_get(i)
+    let cmp = b1.compare(b2)
+    guard cmp == 0 else { return cmp }
+
+  }
+  0
+}
