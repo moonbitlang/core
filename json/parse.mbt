@@ -36,7 +36,7 @@ pub fn parse(input : String) -> JsonValue!ParseError {
 
 ///|
 fn parse_value(ctx : ParseContext) -> JsonValue!ParseError {
-  let tok = lex_value!(ctx)
+  let tok = ctx.lex_value!()
   parse_value2!(ctx, tok)
 }
 
@@ -75,13 +75,13 @@ fn parse_object(ctx : ParseContext) -> JsonValue!ParseError {
 ///|
 fn parse_array(ctx : ParseContext) -> JsonValue!ParseError {
   let vec = []
-  loop lex_value!(ctx, allow_rbracket=true) {
+  loop ctx.lex_value!(allow_rbracket=true) {
     RBracket => Array(vec)
     tok => {
       vec.push(parse_value2!(ctx, tok))
       let tok2 = lex_after_array_value!(ctx)
       match tok2 {
-        Comma => continue lex_value!(ctx, allow_rbracket=false)
+        Comma => continue ctx.lex_value!(allow_rbracket=false)
         RBracket => Array(vec)
         _ => abort("unreachable")
       }
