@@ -263,7 +263,7 @@ fn fixed_quick_sort[T : Compare](
     match pred {
       Some(pred) =>
         // pred is less than all elements in arr
-        // If pivot euqals to pred, then we can skip all elements that are equal to pred.
+        // If pivot equals to pred, then we can skip all elements that are equal to pred.
         if pred == arr[pivot] {
           let mut i = pivot
           while i < len && pred == arr[i] {
