@@ -191,3 +191,20 @@ test "hashset equality" {
   let empty2 : @hashset.T[Unit] = @hashset.new()
   inspect!(empty1 == empty2, content="true")
 }
+
+///|
+test "arbitrary implementation for hashset" {
+  // Use @quickcheck.gen to generate an arbitrary hashset of Int
+  let set : @hashset.T[Int] = @quickcheck.gen()
+  // Make sure the generated set is valid by converting it to array and back
+  let arr = set.iter().to_array()
+  let set2 = @hashset.from_array(arr)
+  assert_eq!(set, set2)
+}
+
+///|
+test "equal between different constructors" {
+  let set1 = @hashset.of([])
+  let set2 = @hashset.of(["a"])
+  assert_not_eq!(set1, set2)
+}
