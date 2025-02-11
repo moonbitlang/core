@@ -177,9 +177,11 @@ impl Show for BigInt
 
 type BytesView
 impl BytesView {
+  compare(Self, Self) -> Int
   iter(Self) -> Iter[Byte]
   length(Self) -> Int
   op_as_view(Self, start~ : Int = .., end? : Int) -> Self
+  op_equal(Self, Self) -> Bool
   op_get(Self, Int) -> Byte
   to_double_be(Self) -> Double
   to_double_le(Self) -> Double
