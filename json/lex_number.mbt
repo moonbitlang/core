@@ -43,7 +43,7 @@ fn ParseContext::lex_decimal_point(
       if c >= '0' && c <= '9' {
         ctx.lex_decimal_fraction!(start~)
       } else {
-        invalid_char!(ctx, shift=-1)
+        ctx.invalid_char!(shift=-1)
       }
     None => raise InvalidEof
   }
@@ -81,7 +81,7 @@ fn ParseContext::lex_decimal_exponent(
         return ctx.lex_decimal_exponent_integer!(start~)
       }
       ctx.offset -= 1
-      invalid_char!(ctx)
+      ctx.invalid_char!()
     }
     None => raise InvalidEof
   }
@@ -98,7 +98,7 @@ fn ParseContext::lex_decimal_exponent_sign(
         return ctx.lex_decimal_exponent_integer!(start~)
       }
       ctx.offset -= 1
-      invalid_char!(ctx)
+      ctx.invalid_char!()
     }
     None => raise InvalidEof
   }
@@ -134,7 +134,7 @@ fn ParseContext::lex_zero(
     Some(c) => {
       if c >= '0' && c <= '9' {
         ctx.offset -= 1
-        invalid_char!(ctx)
+        ctx.invalid_char!()
       }
       ctx.offset -= 1
       return ctx.lex_number_end!(start, ctx.offset)

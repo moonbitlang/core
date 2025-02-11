@@ -38,7 +38,7 @@ fn ParseContext::lex_value(
         if allow_rbracket {
           return RBracket
         } else {
-          invalid_char!(ctx, shift=-1)
+          ctx.invalid_char!(shift=-1)
         }
       Some('n') => {
         ctx.lex_assert_char!('u')
@@ -70,7 +70,7 @@ fn ParseContext::lex_value(
               let n = ctx.lex_decimal_integer!(start=ctx.offset - 2)
               return Number(n)
             }
-            invalid_char!(ctx, shift=-1)
+            ctx.invalid_char!(shift=-1)
           }
           None => raise InvalidEof
         }
@@ -90,7 +90,7 @@ fn ParseContext::lex_value(
         if c > '\x7f' && non_ascii_whitespace.contains(c) {
           continue
         }
-        invalid_char!(ctx, shift=-1)
+        ctx.invalid_char!(shift=-1)
       }
       None => raise InvalidEof
     }
