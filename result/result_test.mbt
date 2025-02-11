@@ -18,3 +18,34 @@ test "Result unwrap should return Ok value" {
   assert_eq!(ok_result.unwrap(), 42)
   assert_eq!(ok_result.unwrap_or_error!(), 42)
 }
+
+///|
+test "bind with Err" {
+  let x : Result[Int, String] = Err("error")
+  let y = x.bind(fn(v : Int) { Ok(v * 7) })
+  assert_eq!(y, Err("error"))
+}
+
+///|
+test "wrap0 with error" {
+  let f = fn() -> Int!Failure { raise Failure("error") }
+  let result = wrap0(f~)
+  inspect!(
+    result,
+    content=
+      #|Err("Failure(error)")
+    ,
+  )
+}
+
+///|
+test "wrap2 with error result" {
+  let f = fn(_, _) -> Unit!Failure { raise Failure("error") }
+  let r = wrap2(f~, 1, 2)
+  inspect!(
+    r,
+    content=
+      #|Err("Failure(error)")
+    ,
+  )
+}
