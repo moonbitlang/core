@@ -25,7 +25,7 @@ let non_ascii_whitespace : CharClass = CharClass::of([
 ])
 
 ///|
-fn lex_value(
+fn ParseContext::lex_value(
   ctx : ParseContext,
   allow_rbracket~ : Bool = false
 ) -> Token!ParseError {
