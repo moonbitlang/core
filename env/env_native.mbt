@@ -17,12 +17,12 @@ fn get_cli_args_ffi() -> FixedArray[Bytes] = "$moonbit.get_cli_args"
 
 ///|
 fn get_cli_args_internal() -> Array[String] {
-  Array::from_fixed_array(
-    get_cli_args_ffi().map(fn {
-      // Here we assume that the CLI arguments are encoded in well-formed UTF-8.
-      arg => utf8_bytes_to_mbt_string(arg)
-    }),
-  )
+  let tmp = get_cli_args_ffi()
+  let res = Array::new(capacity=tmp.length())
+  for i = 0; i < tmp.length(); i = i + 1 {
+    res.push(utf8_bytes_to_mbt_string(tmp[i]))
+  }
+  res
 }
 
 ///|
