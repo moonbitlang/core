@@ -19,7 +19,7 @@ test "char subtraction" {
   inspect!(b - a, content="1")
 }
 
-
+///|
 test "char show" {
   assert_eq!('\b'.to_string(), "\u0008")
   // assert_eq!('\b'.to_string(), "\u{8}")
@@ -31,4 +31,3 @@ test "char show" {
   assert_eq!('\u0002'.to_string(), "\u0002")
   assert_eq!('\b'.to_string().escape(), "\"\\b\"")
 }
-

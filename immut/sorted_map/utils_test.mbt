@@ -80,11 +80,11 @@ test "iter" {
   inspect!(
     buf,
     content=
-      #|0: zero
-      #|1: one
-      #|2: two
-      #|3: three
-      #|8: eight
+      #|0: "zero"
+      #|1: "one"
+      #|2: "two"
+      #|3: "three"
+      #|8: "eight"
       #|(0, "zero")
       #|(1, "one")
       #|(2, "two")
