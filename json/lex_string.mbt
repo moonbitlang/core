@@ -23,7 +23,7 @@ fn lex_string(ctx : ParseContext) -> String!ParseError {
   }
 
   for {
-    match read_char(ctx) {
+    match ctx.read_char() {
       Some('"') => {
         flush(ctx.offset - 1)
         break
@@ -31,7 +31,7 @@ fn lex_string(ctx : ParseContext) -> String!ParseError {
       Some('\n' | '\r') => invalid_char!(ctx, shift=-1)
       Some('\\') => {
         flush(ctx.offset - 1)
-        match read_char(ctx) {
+        match ctx.read_char() {
           Some('b') => buf.write_char('\b')
           Some('f') => buf.write_char('\x0C')
           Some('n') => buf.write_char('\n')
@@ -65,7 +65,7 @@ fn lex_string(ctx : ParseContext) -> String!ParseError {
 fn lex_hex_digits(ctx : ParseContext, n : Int) -> Int!ParseError {
   let mut r = 0
   for i = 0; i < n; i = i + 1 {
-    match read_char(ctx) {
+    match ctx.read_char() {
       Some(c) =>
         if c >= 'A' {
           let d = (c.to_int() & (32).lnot()) - 'A'.to_int() + 10
