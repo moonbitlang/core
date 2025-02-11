@@ -12,8 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+///|
 test {
   inspect!(
-    @json.parse?("[1, 2,3  \u000c ,4  ]")
-  , content="Ok(Array([Number(1), Number(2), Number(3), Number(4)]))")
+    @json.parse?("[1, 2,3  \u000c ,4  ]"),
+    content="Err(Invalid character '\x0c' at line 1, column 9)",
+  )
 }
