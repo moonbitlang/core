@@ -43,3 +43,29 @@ test {
   inspect!(random.float(), content="0.8607915639877319")
   inspect!(random.float(), content="0.10972100496292114")
 }
+
+///|
+test "panic random with invalid seed length" {
+  let short_seed = b"short seed"
+  let _ = @random.new(seed=short_seed)
+
+}
+
+///|
+test "panic negative limit in shuffle" {
+  let r = @random.new()
+  let arr = [1, 2, 3]
+  r.shuffle(-1, fn(i : Int, j : Int) {
+    let t = arr[i]
+    arr[i] = arr[j]
+    arr[j] = t
+  })
+}
+
+///|
+test "uint64 modulo bias handling with large limit" {
+  let r = @random.new()
+  let limit = 12345678901234567890UL // Large non-power-of-2 number
+  let result = r.uint64(limit~)
+  inspect!(result < limit, content="true")
+}
