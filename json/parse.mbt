@@ -25,43 +25,46 @@ pub fn valid(input : String) -> Bool {
 ///|
 pub fn parse(input : String) -> JsonValue!ParseError {
   let ctx = ParseContext::make(input)
-  let val = parse_value!(ctx)
+  let val = ctx.parse_value!()
   ctx.lex_skip_whitespace()
   if ctx.offset >= ctx.end_offset {
     val
   } else {
-    invalid_char!(ctx)
+    ctx.invalid_char!()
   }
 }
 
 ///|
-fn parse_value(ctx : ParseContext) -> JsonValue!ParseError {
+fn ParseContext::parse_value(ctx : ParseContext) -> JsonValue!ParseError {
   let tok = ctx.lex_value!()
-  parse_value2!(ctx, tok)
+  ctx.parse_value2!(tok)
 }
 
 ///|
-fn parse_value2(ctx : ParseContext, tok : Token) -> JsonValue!ParseError {
+fn ParseContext::parse_value2(
+  ctx : ParseContext,
+  tok : Token
+) -> JsonValue!ParseError {
   match tok {
     Null => Null
     True => True
     False => False
     Number(n) => Number(n)
     String(s) => String(s)
-    LBrace => parse_object!(ctx)
-    LBracket => parse_array!(ctx)
+    LBrace => ctx.parse_object!()
+    LBracket => ctx.parse_array!()
     _ => abort("unreachable")
   }
 }
 
 ///|
-fn parse_object(ctx : ParseContext) -> JsonValue!ParseError {
+fn ParseContext::parse_object(ctx : ParseContext) -> JsonValue!ParseError {
   let map = Map::new()
   loop ctx.lex_property_name!() {
     RBrace => Object(map)
     String(name) => {
       guard let Colon = ctx.lex_after_property_name!()
-      map[name] = parse_value!(ctx)
+      map[name] = ctx.parse_value!()
       match ctx.lex_after_object_value!() {
         Comma => continue ctx.lex_property_name2!()
         RBrace => Object(map)
@@ -73,12 +76,12 @@ fn parse_object(ctx : ParseContext) -> JsonValue!ParseError {
 }
 
 ///|
-fn parse_array(ctx : ParseContext) -> JsonValue!ParseError {
+fn ParseContext::parse_array(ctx : ParseContext) -> JsonValue!ParseError {
   let vec = []
   loop ctx.lex_value!(allow_rbracket=true) {
     RBracket => Array(vec)
     tok => {
-      vec.push(parse_value2!(ctx, tok))
+      vec.push(ctx.parse_value2!(tok))
       let tok2 = ctx.lex_after_array_value!()
       match tok2 {
         Comma => continue ctx.lex_value!(allow_rbracket=false)

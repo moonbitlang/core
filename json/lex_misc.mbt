@@ -57,7 +57,7 @@ fn ParseContext::lex_after_array_value(ctx : ParseContext) -> Token!ParseError {
   match ctx.read_char() {
     Some(']') => RBracket
     Some(',') => Comma
-    Some(_) => invalid_char!(ctx, shift=-1)
+    Some(_) => ctx.invalid_char!(shift=-1)
     None => raise InvalidEof
   }
 }
@@ -69,7 +69,7 @@ fn ParseContext::lex_after_property_name(
   ctx.lex_skip_whitespace()
   match ctx.read_char() {
     Some(':') => Colon
-    Some(_) => invalid_char!(ctx, shift=-1)
+    Some(_) => ctx.invalid_char!(shift=-1)
     None => raise InvalidEof
   }
 }
@@ -80,7 +80,7 @@ fn ParseContext::lex_after_object_value(ctx : ParseContext) -> Token!ParseError 
   match ctx.read_char() {
     Some('}') => Token::RBrace
     Some(',') => Token::Comma
-    Some(_) => invalid_char!(ctx, shift=-1)
+    Some(_) => ctx.invalid_char!(shift=-1)
     None => raise InvalidEof
   }
 }
@@ -91,7 +91,7 @@ fn ParseContext::lex_assert_char(
   c : Char
 ) -> Unit!ParseError {
   match ctx.read_char() {
-    Some(c2) => if c == c2 { () } else { invalid_char!(ctx, shift=-1) }
+    Some(c2) => if c == c2 { () } else { ctx.invalid_char!(shift=-1) }
     None => raise InvalidEof
   }
 }
@@ -105,7 +105,7 @@ fn ParseContext::lex_property_name(ctx : ParseContext) -> Token!ParseError {
       let s = ctx.lex_string!()
       String(s)
     }
-    Some(_) => invalid_char!(ctx, shift=-1)
+    Some(_) => ctx.invalid_char!(shift=-1)
     None => raise InvalidEof
   }
 }
@@ -118,7 +118,7 @@ fn ParseContext::lex_property_name2(ctx : ParseContext) -> Token!ParseError {
       let s = ctx.lex_string!()
       String(s)
     }
-    Some(_) => invalid_char!(ctx, shift=-1)
+    Some(_) => ctx.invalid_char!(shift=-1)
     None => raise InvalidEof
   }
 }
