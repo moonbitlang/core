@@ -1,3 +1,36 @@
+///|
+pub(all) struct Position {
+  line : Int // 1-based
+  column : Int // 0-based
+} derive(Eq)
+
+///|
+pub(all) type! ParseError {
+  InvalidChar(Position, Char)
+  InvalidEof
+  InvalidNumber(Position, String)
+  InvalidIdentEscape(Position)
+} derive(Eq)
+
+///|
+pub fn to_string(self : ParseError) -> String {
+  match self {
+    InvalidChar({ line, column }, c) =>
+      "Invalid character '\{c}' at line \{line}, column \{column}"
+    InvalidEof => "Unexpected end of file"
+    InvalidNumber({ line, column }, s) =>
+      "Invalid number \{s} at line \{line}, column \{column}"
+    InvalidIdentEscape({ line, column }) =>
+      "Invalid escape sequence in identifier at line \{line}, column \{column}"
+  }
+}
+
+///|
+pub impl Show for ParseError with output(self, logger) {
+  logger.write_string(self.to_string())
+}
+
+
 // Copyright 2025 International Digital Economy Academy
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,16 +47,16 @@
 
 ///|
 test "ParseError::to_string coverage" {
-  let invalidCharError = @json.InvalidChar(
-    @json.Position::{ line: 1, column: 0 },
+  let invalidCharError = InvalidChar(
+    Position::{ line: 1, column: 0 },
     'a',
   )
-  let invalidEofError = @json.InvalidEof
-  let invalidNumberError = @json.InvalidNumber(
-    @json.Position::{ line: 1, column: 0 },
+  let invalidEofError = InvalidEof
+  let invalidNumberError = InvalidNumber(
+    Position::{ line: 1, column: 0 },
     "123abc",
   )
-  let invalidIdentEscapeError = @json.InvalidIdentEscape(@json.Position::{
+  let invalidIdentEscapeError = InvalidIdentEscape(Position::{
     line: 1,
     column: 0,
   })

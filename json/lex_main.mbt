@@ -12,33 +12,24 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-///|
-let non_ascii_whitespace : CharClass = CharClass::of([
-  ('\u00A0', '\u00A0'),
-  ('\u1680', '\u1680'),
-  ('\u2000', '\u200A'),
-  ('\u2028', '\u2029'),
-  ('\u202F', '\u202F'),
-  ('\u205F', '\u205F'),
-  ('\u3000', '\u3000'),
-  ('\uFEFF', '\uFEFF'),
-])
+
 
 ///|
 fn lex_value(
-  ctx : ParseContext,
+  ctx : @context.ParseContext,
   allow_rbracket~ : Bool = false
 ) -> Token!ParseError {
   for {
-    match read_char(ctx) {
-      Some('\t' | ' ' | '\n' | '\r') => continue
+    ctx.lex_skip_whitespace()  
+    match ctx.read_char() {
+      // Some('\t' | ' ' | '\n' | '\r') => continue
       Some('{') => return LBrace
       Some('[') => return LBracket
       Some(']') =>
         if allow_rbracket {
           return RBracket
         } else {
-          invalid_char!(ctx, shift=-1)
+          ctx.invalid_char!(shift=-1)
         }
       Some('n') => {
         lex_assert_char!(ctx, 'u')
@@ -60,39 +51,39 @@ fn lex_value(
         return False
       }
       Some('-') =>
-        match read_char(ctx) {
+        match ctx.read_char() {
           Some('0') => {
-            let n = lex_zero!(ctx, start=ctx.offset - 2)
+            let n = ctx.lex_zero!(start=ctx.offset - 2)
             return Number(n)
           }
           Some(c2) => {
             if c2 >= '1' && c2 <= '9' {
-              let n = lex_decimal_integer!(ctx, start=ctx.offset - 2)
+              let n = ctx.lex_decimal_integer!(start=ctx.offset - 2)
               return Number(n)
             }
-            invalid_char!(ctx, shift=-1)
+            ctx.invalid_char!(shift=-1)
           }
-          None => raise InvalidEof
+          None => @context.invalid_eof!()
         }
       Some('0') => {
-        let n = lex_zero!(ctx, start=ctx.offset - 1)
+        let n = ctx.lex_zero!(start=ctx.offset - 1)
         return Number(n)
       }
       Some('1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9') => {
-        let n = lex_decimal_integer!(ctx, start=ctx.offset - 1)
+        let n = ctx.lex_decimal_integer!(start=ctx.offset - 1) 
         return Number(n)
       }
       Some('"') => {
         let s = lex_string!(ctx)
         return String(s)
       }
-      Some(c) => {
-        if c > '\x7f' && non_ascii_whitespace.contains(c) {
-          continue
-        }
-        invalid_char!(ctx, shift=-1)
+      Some(_) => {
+        // if c > '\x7f' && non_ascii_whitespace.contains(c) {
+        //   continue
+        // }
+        ctx.invalid_char!(shift=-1)
       }
-      None => raise InvalidEof
+      None => @context.invalid_eof!()
     }
   }
 }

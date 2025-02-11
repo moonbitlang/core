@@ -1,11 +1,13 @@
 package moonbitlang/core/json
 
+alias @moonbitlang/core/json/internal/context as @context
+
 // Values
 fn from_json[T : FromJson](Json, path~ : JsonPath = ..) -> T!JsonDecodeError
 
 fn inspect(&ToJson, content? : Json, loc~ : SourceLoc = _, args_loc~ : ArgsLoc = _) -> Unit!InspectError
 
-fn parse(String) -> Json!ParseError
+fn parse(String) -> Json!@context.ParseError
 
 fn valid(String) -> Bool
 
@@ -21,24 +23,6 @@ impl JsonPath {
   output(Self, &Logger) -> Unit
 }
 impl Eq for JsonPath
-
-pub(all) type! ParseError {
-  InvalidChar(Position, Char)
-  InvalidEof
-  InvalidNumber(Position, String)
-  InvalidIdentEscape(Position)
-}
-impl ParseError {
-  to_string(Self) -> String
-}
-impl Eq for ParseError
-impl Show for ParseError
-
-pub(all) struct Position {
-  line : Int
-  column : Int
-}
-impl Eq for Position
 
 impl Json {
   as_array(Self) -> Array[Self]?
