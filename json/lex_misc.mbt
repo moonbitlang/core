@@ -39,6 +39,9 @@ fn unsafe_backoff(ctx : ParseContext, shift : Int) -> Unit {
 ///|
 fn lex_skip_whitespace(ctx : ParseContext) -> Unit {
   for {
+    match ctx.input.as_view(start=ctx.offset) {
+      ['\t' | '\u000B' | '\u000C' | ' ' | '\n' | '\r', ..] => continue
+    }  
     match read_char(ctx) {
       Some('\t' | '\u000B' | '\u000C' | ' ' | '\n' | '\r') => continue
       Some(c) => {
