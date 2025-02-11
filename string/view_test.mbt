@@ -360,3 +360,83 @@ test "to_string" {
   let ss = "\{view} Moonbit"
   inspect!(ss, content="Hello Moonbit")
 }
+
+///|
+test "length_eq test with surrogate pair" {
+  // "🤣" is encoded as a surrogate pair
+  let str = "🤣"
+  let view = str[:]
+  assert_true!(view.length_eq(1))
+}
+
+///|
+test "length_ge with high surrogate" {
+  let str = "🐰" // This emoji is represented using a surrogate pair
+  let view = str[0:]
+  assert_eq!(view.length_ge(1), true)
+  assert_eq!(view.length_ge(2), false)
+}
+
+///|
+test "panic op_as_view with invalid positive start index" {
+  let str = "Hello🤣🤣🤣"
+  let view = str[0:6]
+  ignore(view[100:])
+}
+
+///|
+test "panic on accessing negative index" {
+  let str = "Hello🤣🤣🤣"
+  let view = str[1:6]
+  ignore(view[-1]) // This should panic due to invalid index
+}
+
+///|
+test "panic on invalid start index" {
+  let str = "Hello"
+  ignore(str[10:])
+}
+
+///|
+test "panic on invalid end index" {
+  let str = "Hello"
+  ignore(str[0:10])
+}
+
+///|
+test "panic_view_op_as_view_invalid_end_index" {
+  let str = "Hello🤣🤣🤣"
+  let view = str[1:7] // "ello🤣"
+  ignore(view[0:10]) // This should panic due to invalid end index
+}
+
+///|
+test "panic length_eq should panic on invalid surrogate pair" {
+  // Create a string with an invalid surrogate pair:
+  // 0xD800 is a leading surrogate, but followed by a non-trailing surrogate character 'A'
+  let str = String::from_array([Char::from_int(0xD800), 'A'])
+  let view = str[:]
+  // This will trigger abort("invalid surrogate pair") in length_eq
+  ignore(view.length_eq(1))
+}
+
+///|
+test "panic_length_ge invalid surrogate pair" {
+  let invalid_surrogate_pair = String::from_array([
+    Char::from_int(0xD800), // Leading surrogate
+    Char::from_int(0x0041), // Invalid trailing surrogate (just a regular 'A')
+  ])
+  let view = invalid_surrogate_pair[:]
+  // This should abort with "invalid surrogate pair"
+  let _ = view.length_ge(1)
+
+}
+
+///|
+test "take first character from surrogate pairs" {
+  let str = "Hello😀😃"
+  let view = str.op_as_view()
+  let result = view.iter().take(6).collect().length()
+  // 6 characters total: 5 ASCII + 1 emoji
+  inspect!(result, content="6")
+}
