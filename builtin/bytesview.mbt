@@ -576,10 +576,10 @@ pub fn BytesView::to_double_le(self : BytesView) -> Double {
 /// inspect!(bytes[0:3] == bytes[2:5], content="false")
 /// inspect!(bytes[0:4] == bytes[3:6], content="false")
 /// ```
-pub fn BytesView::op_equal(self : BytesView, other : BytesView) -> Bool {
+pub impl Eq for BytesView with op_equal(self, other) -> Bool {
   guard self.len == other.len else { return false }
   for i in 0..<self.len {
-    guard self[i] == other[i] else { return false }
+    guard self.unsafe_get(i) == other.unsafe_get(i) else { return false }
 
   }
   true
@@ -611,7 +611,7 @@ pub fn BytesView::op_equal(self : BytesView, other : BytesView) -> Bool {
 /// inspect!(bytes[0:3].compare(bytes[0:4]), content="-1") // abc < abca
 /// inspect!(bytes[1:5].compare(bytes[2:5]), content="1")  // bcab > cab
 /// ```
-pub fn BytesView::compare(self : BytesView, other : BytesView) -> Int {
+pub impl Compare for BytesView with compare(self, other) -> Int {
   let self_len = self.len
   let other_len = other.len
   let cmp = self_len.compare(other_len)
@@ -625,3 +625,4 @@ pub fn BytesView::compare(self : BytesView, other : BytesView) -> Int {
   }
   0
 }
+
