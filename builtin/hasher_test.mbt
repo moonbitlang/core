@@ -210,3 +210,48 @@ test "combine_bool" {
   let hash4 = hasher4.finalize()
   assert_eq!(hash3, hash4)
 }
+
+///|
+test "Result::hash_combine Ok case" {
+  // Test the Ok case
+  let hasher = Hasher::new()
+  let ok_result : Result[Int, String] = Ok(42)
+  hasher.combine(ok_result)
+  inspect!(hasher.finalize(), content="-1948635851")
+}
+
+///|
+test "Result::hash_combine Err case" {
+  let hasher = Hasher::new()
+  let err_result : Result[Int, String] = Err("error")
+  hasher.combine(err_result)
+  inspect!(hasher.finalize(), content="1953766574")
+}
+
+///|
+test "option hash" {
+  let hasher = @builtin.Hasher::new()
+  let some_val : Int? = Some(42)
+  hasher.combine(some_val)
+  inspect!(hasher.finalize(), content="2103260413")
+  let hasher2 = @builtin.Hasher::new()
+  let none_val : Int? = None
+  hasher2.combine(none_val)
+  inspect!(hasher2.finalize(), content="148298089")
+}
+
+///|
+test "UInt64::hash_combine test" {
+  let hasher = @builtin.Hasher::new()
+  let value = 42UL
+  @builtin.Hash::hash_combine(value, hasher)
+  inspect!(hasher.finalize(), content="-1962516083")
+}
+
+///|
+test "hash_combine for UInt" {
+  let hasher = Hasher::new()
+  let value : UInt = 42U
+  Hash::hash_combine(value, hasher)
+  inspect!(hasher.finalize(), content="1161967057")
+}
