@@ -13,31 +13,9 @@
 // limitations under the License.
 
 ///|
-fn read_char(ctx : ParseContext) -> Char? {
-  if ctx.offset < ctx.end_offset {
-    let c = ctx.input[ctx.offset]
-    ctx.offset += 1
-    let c1 = c.to_int()
-    if c1 >= 0xD800 && c1 <= 0xDBFF {
-      if ctx.offset < ctx.end_offset {
-        let c2 = ctx.input[ctx.offset].to_int()
-        if c2 >= 0xDC00 && c2 <= 0xDFFF {
-          ctx.offset += 1
-          let c3 = (c1 << 10) + c2 - 0x35fdc00
-          return Some(Char::from_int(c3))
-        }
-      }
-    }
-    Some(c)
-  } else {
-    None
-  }
-}
-
-///|
-fn lex_skip_whitespace(ctx : ParseContext) -> Unit {
+fn lex_skip_whitespace(ctx : @context.ParseContext) -> Unit {
   for {
-    match read_char(ctx) {
+    match ctx.read_char() {
       Some('\t' | '\u000B' | '\u000C' | ' ' | '\n' | '\r') => continue
       Some(c) => {
         if c > '\x7f' && non_ascii_whitespace.contains(c) {
@@ -52,9 +30,9 @@ fn lex_skip_whitespace(ctx : ParseContext) -> Unit {
 }
 
 ///|
-fn lex_after_array_value(ctx : ParseContext) -> Token!ParseError {
+fn lex_after_array_value(ctx : @context.ParseContext) -> Token!ParseError {
   lex_skip_whitespace(ctx)
-  match read_char(ctx) {
+  match ctx.read_char() {
     Some(']') => RBracket
     Some(',') => Comma
     Some(_) => invalid_char!(ctx, shift=-1)
@@ -63,9 +41,9 @@ fn lex_after_array_value(ctx : ParseContext) -> Token!ParseError {
 }
 
 ///|
-fn lex_after_property_name(ctx : ParseContext) -> Token!ParseError {
+fn lex_after_property_name(ctx : @context.ParseContext) -> Token!ParseError {
   lex_skip_whitespace(ctx)
-  match read_char(ctx) {
+  match ctx.read_char() {
     Some(':') => Colon
     Some(_) => invalid_char!(ctx, shift=-1)
     None => raise InvalidEof
@@ -73,9 +51,9 @@ fn lex_after_property_name(ctx : ParseContext) -> Token!ParseError {
 }
 
 ///|
-fn lex_after_object_value(ctx : ParseContext) -> Token!ParseError {
+fn lex_after_object_value(ctx : @context.ParseContext) -> Token!ParseError {
   lex_skip_whitespace(ctx)
-  match read_char(ctx) {
+  match ctx.read_char() {
     Some('}') => Token::RBrace
     Some(',') => Token::Comma
     Some(_) => invalid_char!(ctx, shift=-1)
@@ -84,17 +62,17 @@ fn lex_after_object_value(ctx : ParseContext) -> Token!ParseError {
 }
 
 ///|
-fn lex_assert_char(ctx : ParseContext, c : Char) -> Unit!ParseError {
-  match read_char(ctx) {
+fn lex_assert_char(ctx : @context.ParseContext, c : Char) -> Unit!ParseError {
+  match ctx.read_char() {
     Some(c2) => if c == c2 { () } else { invalid_char!(ctx, shift=-1) }
     None => raise InvalidEof
   }
 }
 
 ///|
-fn lex_property_name(ctx : ParseContext) -> Token!ParseError {
+fn lex_property_name(ctx : @context.ParseContext) -> Token!ParseError {
   lex_skip_whitespace(ctx)
-  match read_char(ctx) {
+  match ctx.read_char() {
     Some('}') => RBrace
     Some('"') => {
       let s = lex_string!(ctx)
@@ -106,9 +84,9 @@ fn lex_property_name(ctx : ParseContext) -> Token!ParseError {
 }
 
 ///|
-fn lex_property_name2(ctx : ParseContext) -> Token!ParseError {
+fn lex_property_name2(ctx : @context.ParseContext) -> Token!ParseError {
   lex_skip_whitespace(ctx)
-  match read_char(ctx) {
+  match ctx.read_char() {
     Some('"') => {
       let s = lex_string!(ctx)
       String(s)

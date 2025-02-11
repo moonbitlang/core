@@ -26,11 +26,11 @@ let non_ascii_whitespace : CharClass = CharClass::of([
 
 ///|
 fn lex_value(
-  ctx : ParseContext,
+  ctx : @context.ParseContext,
   allow_rbracket~ : Bool = false
 ) -> Token!ParseError {
   for {
-    match read_char(ctx) {
+    match ctx.read_char() {
       Some('\t' | ' ' | '\n' | '\r') => continue
       Some('{') => return LBrace
       Some('[') => return LBracket
@@ -60,7 +60,7 @@ fn lex_value(
         return False
       }
       Some('-') =>
-        match read_char(ctx) {
+        match ctx.read_char() {
           Some('0') => {
             let n = lex_zero!(ctx, start=ctx.offset - 2)
             return Number(n)

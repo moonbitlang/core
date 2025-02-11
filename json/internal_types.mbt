@@ -13,18 +13,6 @@
 // limitations under the License.
 
 ///|
-priv struct ParseContext {
-  mut offset : Int
-  input : String
-  end_offset : Int
-}
-
-///|
-fn ParseContext::make(input : String) -> ParseContext {
-  { offset: 0, input, end_offset: input.length() }
-}
-
-///|
 priv type CharClass Array[(Char, Char)]
 
 ///|
