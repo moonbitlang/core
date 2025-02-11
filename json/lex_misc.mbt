@@ -12,26 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-///|
-fn lex_skip_whitespace(ctx : @context.ParseContext) -> Unit {
-  for {
-    match ctx.read_char() {
-      Some('\t' | '\u000B' | '\u000C' | ' ' | '\n' | '\r') => continue
-      Some(c) => {
-        if c > '\x7f' && non_ascii_whitespace.contains(c) {
-          continue
-        }
-        ctx.offset -= 1
-        break
-      }
-      None => break
-    }
-  }
-}
 
 ///|
 fn lex_after_array_value(ctx : @context.ParseContext) -> Token!ParseError {
-  lex_skip_whitespace(ctx)
+  ctx.lex_skip_whitespace()
   match ctx.read_char() {
     Some(']') => RBracket
     Some(',') => Comma
@@ -42,7 +26,7 @@ fn lex_after_array_value(ctx : @context.ParseContext) -> Token!ParseError {
 
 ///|
 fn lex_after_property_name(ctx : @context.ParseContext) -> Token!ParseError {
-  lex_skip_whitespace(ctx)
+  ctx.lex_skip_whitespace()
   match ctx.read_char() {
     Some(':') => Colon
     Some(_) => ctx.invalid_char!(shift=-1)
@@ -52,7 +36,7 @@ fn lex_after_property_name(ctx : @context.ParseContext) -> Token!ParseError {
 
 ///|
 fn lex_after_object_value(ctx : @context.ParseContext) -> Token!ParseError {
-  lex_skip_whitespace(ctx)
+  ctx.lex_skip_whitespace()
   match ctx.read_char() {
     Some('}') => Token::RBrace
     Some(',') => Token::Comma
@@ -71,7 +55,7 @@ fn lex_assert_char(ctx : @context.ParseContext, c : Char) -> Unit!ParseError {
 
 ///|
 fn lex_property_name(ctx : @context.ParseContext) -> Token!ParseError {
-  lex_skip_whitespace(ctx)
+  ctx.lex_skip_whitespace()
   match ctx.read_char() {
     Some('}') => RBrace
     Some('"') => {
@@ -85,7 +69,7 @@ fn lex_property_name(ctx : @context.ParseContext) -> Token!ParseError {
 
 ///|
 fn lex_property_name2(ctx : @context.ParseContext) -> Token!ParseError {
-  lex_skip_whitespace(ctx)
+  ctx.lex_skip_whitespace()
   match ctx.read_char() {
     Some('"') => {
       let s = lex_string!(ctx)

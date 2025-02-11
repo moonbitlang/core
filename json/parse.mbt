@@ -26,7 +26,7 @@ pub fn valid(input : String) -> Bool {
 pub fn parse(input : String) -> JsonValue!ParseError {
   let ctx = @context.make(input)
   let val = parse_value!(ctx)
-  lex_skip_whitespace(ctx)
+  ctx.lex_skip_whitespace() 
   if ctx.offset >= ctx.end_offset {
     val
   } else {

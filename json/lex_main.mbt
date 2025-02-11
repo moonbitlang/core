@@ -12,17 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-///|
-let non_ascii_whitespace : CharClass = CharClass::of([
-  ('\u00A0', '\u00A0'),
-  ('\u1680', '\u1680'),
-  ('\u2000', '\u200A'),
-  ('\u2028', '\u2029'),
-  ('\u202F', '\u202F'),
-  ('\u205F', '\u205F'),
-  ('\u3000', '\u3000'),
-  ('\uFEFF', '\uFEFF'),
-])
+
 
 ///|
 fn lex_value(
@@ -30,8 +20,9 @@ fn lex_value(
   allow_rbracket~ : Bool = false
 ) -> Token!ParseError {
   for {
+    ctx.lex_skip_whitespace()  
     match ctx.read_char() {
-      Some('\t' | ' ' | '\n' | '\r') => continue
+      // Some('\t' | ' ' | '\n' | '\r') => continue
       Some('{') => return LBrace
       Some('[') => return LBracket
       Some(']') =>
@@ -86,10 +77,10 @@ fn lex_value(
         let s = lex_string!(ctx)
         return String(s)
       }
-      Some(c) => {
-        if c > '\x7f' && non_ascii_whitespace.contains(c) {
-          continue
-        }
+      Some(_) => {
+        // if c > '\x7f' && non_ascii_whitespace.contains(c) {
+        //   continue
+        // }
         ctx.invalid_char!(shift=-1)
       }
       None => @context.invalid_eof!()
