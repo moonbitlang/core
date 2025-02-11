@@ -17,7 +17,7 @@ let set4 = @immut/sorted_set.from_array([1])
 let set5= @immut/sorted_set.of([1])
 ```
 
-## Convertion
+## Conversion
 
 You can convert an immutable set to an array, which will be sorted.
 

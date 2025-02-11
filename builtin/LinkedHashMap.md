@@ -2,7 +2,7 @@
 
 ## Overview
 
-A mutable linked hash map based on a Robin Hood hash table, links all entry nodes in a linked list to mantains the order of insertion.
+A mutable linked hash map based on a Robin Hood hash table, links all entry nodes in a linked list to maintains the order of insertion.
 
 ## Usage
 

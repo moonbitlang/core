@@ -1523,7 +1523,7 @@ pub fn BigInt::land(self : BigInt, other : BigInt) -> BigInt {
     x_limbs[i] = x_limbs[i] & y_limbs[i]
   }
 
-  // Check wether the result is either positive or negative
+  // Check whether the result is either positive or negative
   let new_sign = if x_limbs[x_limbs.length() - 1] == 0xFFFFFFFFU {
     Negative
   } else {
@@ -1632,7 +1632,7 @@ pub fn BigInt::lor(self : BigInt, other : BigInt) -> BigInt {
     x_limbs[i] = x_limbs[i] | y_limbs[i]
   }
 
-  // Check wether the result is either positive or negative
+  // Check whether the result is either positive or negative
   let new_sign = if x_limbs[x_limbs.length() - 1] == 0xFFFFFFFFU {
     Negative
   } else {
@@ -1744,7 +1744,7 @@ pub fn BigInt::lxor(self : BigInt, other : BigInt) -> BigInt {
     x_limbs[i] = x_limbs[i] ^ y_limbs[i]
   }
 
-  // Check wether the result is either positive or negative
+  // Check whether the result is either positive or negative
   let new_sign = if x_limbs[x_limbs.length() - 1] == 0xFFFFFFFFU {
     Negative
   } else {
