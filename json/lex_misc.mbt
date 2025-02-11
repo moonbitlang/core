@@ -84,7 +84,10 @@ fn lex_after_object_value(ctx : ParseContext) -> Token!ParseError {
 }
 
 ///|
-fn ParseContext::lex_assert_char(ctx : ParseContext, c : Char) -> Unit!ParseError {
+fn ParseContext::lex_assert_char(
+  ctx : ParseContext,
+  c : Char
+) -> Unit!ParseError {
   match ctx.read_char() {
     Some(c2) => if c == c2 { () } else { invalid_char!(ctx, shift=-1) }
     None => raise InvalidEof
