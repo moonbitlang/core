@@ -15,7 +15,7 @@
 ///|
 fn lex_decimal_integer(ctx : ParseContext, start~ : Int) -> Double!ParseError {
   for {
-    match read_char(ctx) {
+    match ctx.read_char() {
       Some('.') => return lex_decimal_point!(ctx, start~)
       Some('e' | 'E') => return lex_decimal_exponent!(ctx, start~)
       Some(c) => {
@@ -32,7 +32,7 @@ fn lex_decimal_integer(ctx : ParseContext, start~ : Int) -> Double!ParseError {
 
 ///|
 fn lex_decimal_point(ctx : ParseContext, start~ : Int) -> Double!ParseError {
-  match read_char(ctx) {
+  match ctx.read_char() {
     Some(c) =>
       if c >= '0' && c <= '9' {
         lex_decimal_fraction!(ctx, start~)
@@ -46,7 +46,7 @@ fn lex_decimal_point(ctx : ParseContext, start~ : Int) -> Double!ParseError {
 ///|
 fn lex_decimal_fraction(ctx : ParseContext, start~ : Int) -> Double!ParseError {
   for {
-    match read_char(ctx) {
+    match ctx.read_char() {
       Some('e' | 'E') => return lex_decimal_exponent!(ctx, start~)
       Some(c) => {
         if c >= '0' && c <= '9' {
@@ -62,7 +62,7 @@ fn lex_decimal_fraction(ctx : ParseContext, start~ : Int) -> Double!ParseError {
 
 ///|
 fn lex_decimal_exponent(ctx : ParseContext, start~ : Int) -> Double!ParseError {
-  match read_char(ctx) {
+  match ctx.read_char() {
     Some('+') | Some('-') => return lex_decimal_exponent_sign!(ctx, start~)
     Some(c) => {
       if c >= '0' && c <= '9' {
@@ -80,7 +80,7 @@ fn lex_decimal_exponent_sign(
   ctx : ParseContext,
   start~ : Int
 ) -> Double!ParseError {
-  match read_char(ctx) {
+  match ctx.read_char() {
     Some(c) => {
       if c >= '0' && c <= '9' {
         return lex_decimal_exponent_integer!(ctx, start~)
@@ -98,7 +98,7 @@ fn lex_decimal_exponent_integer(
   start~ : Int
 ) -> Double!ParseError {
   for {
-    match read_char(ctx) {
+    match ctx.read_char() {
       Some(c) => {
         if c >= '0' && c <= '9' {
           continue
@@ -113,7 +113,7 @@ fn lex_decimal_exponent_integer(
 
 ///|
 fn lex_zero(ctx : ParseContext, start~ : Int) -> Double!ParseError {
-  match read_char(ctx) {
+  match ctx.read_char() {
     Some('.') => lex_decimal_point!(ctx, start~)
     Some('e' | 'E') => lex_decimal_exponent!(ctx, start~)
     Some(c) => {
