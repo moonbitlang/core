@@ -319,7 +319,7 @@ test "parse unexpected token in array" {
 }
 
 ///|
-test "parse muti-lines json" {
+test "parse multi-lines json" {
   let result = @json.parse?(
     #|{
     #|  "a":2,
@@ -336,7 +336,7 @@ test "parse muti-lines json" {
 }
 
 ///|
-test "parse muti-lines json error" {
+test "parse multi-lines json error" {
   let result = @json.parse?(
     #|{
     #|  "a":2,
