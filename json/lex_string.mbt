@@ -13,7 +13,7 @@
 // limitations under the License.
 
 ///|
-fn lex_string(ctx : ParseContext) -> String!ParseError {
+fn ParseContext::lex_string(ctx : ParseContext) -> String!ParseError {
   let buf = StringBuilder::new()
   let mut start = ctx.offset
   fn flush(end : Int) {
@@ -41,7 +41,7 @@ fn lex_string(ctx : ParseContext) -> String!ParseError {
           Some('\\') => buf.write_char('\\')
           Some('/') => buf.write_char('/')
           Some('u') => {
-            let c = lex_hex_digits!(ctx, 4)
+            let c = ctx.lex_hex_digits!(4)
             buf.write_char(Char::from_int(c))
           }
           Some(_) => invalid_char!(ctx, shift=-1)
@@ -62,7 +62,7 @@ fn lex_string(ctx : ParseContext) -> String!ParseError {
 }
 
 ///|
-fn lex_hex_digits(ctx : ParseContext, n : Int) -> Int!ParseError {
+fn ParseContext::lex_hex_digits(ctx : ParseContext, n : Int) -> Int!ParseError {
   let mut r = 0
   for i = 0; i < n; i = i + 1 {
     match ctx.read_char() {

@@ -35,7 +35,7 @@ fn ParseContext::read_char(ctx : ParseContext) -> Char? {
 }
 
 ///|
-fn lex_skip_whitespace(ctx : ParseContext) -> Unit {
+fn ParseContext::lex_skip_whitespace(ctx : ParseContext) -> Unit {
   for {
     match ctx.read_char() {
       Some('\t' | ' ' | '\n' | '\r') => continue
@@ -52,8 +52,8 @@ fn lex_skip_whitespace(ctx : ParseContext) -> Unit {
 }
 
 ///|
-fn lex_after_array_value(ctx : ParseContext) -> Token!ParseError {
-  lex_skip_whitespace(ctx)
+fn ParseContext::lex_after_array_value(ctx : ParseContext) -> Token!ParseError {
+  ctx.lex_skip_whitespace()
   match ctx.read_char() {
     Some(']') => RBracket
     Some(',') => Comma
@@ -63,8 +63,10 @@ fn lex_after_array_value(ctx : ParseContext) -> Token!ParseError {
 }
 
 ///|
-fn lex_after_property_name(ctx : ParseContext) -> Token!ParseError {
-  lex_skip_whitespace(ctx)
+fn ParseContext::lex_after_property_name(
+  ctx : ParseContext
+) -> Token!ParseError {
+  ctx.lex_skip_whitespace()
   match ctx.read_char() {
     Some(':') => Colon
     Some(_) => invalid_char!(ctx, shift=-1)
@@ -73,8 +75,8 @@ fn lex_after_property_name(ctx : ParseContext) -> Token!ParseError {
 }
 
 ///|
-fn lex_after_object_value(ctx : ParseContext) -> Token!ParseError {
-  lex_skip_whitespace(ctx)
+fn ParseContext::lex_after_object_value(ctx : ParseContext) -> Token!ParseError {
+  ctx.lex_skip_whitespace()
   match ctx.read_char() {
     Some('}') => Token::RBrace
     Some(',') => Token::Comma
@@ -95,12 +97,12 @@ fn ParseContext::lex_assert_char(
 }
 
 ///|
-fn lex_property_name(ctx : ParseContext) -> Token!ParseError {
-  lex_skip_whitespace(ctx)
+fn ParseContext::lex_property_name(ctx : ParseContext) -> Token!ParseError {
+  ctx.lex_skip_whitespace()
   match ctx.read_char() {
     Some('}') => RBrace
     Some('"') => {
-      let s = lex_string!(ctx)
+      let s = ctx.lex_string!()
       String(s)
     }
     Some(_) => invalid_char!(ctx, shift=-1)
@@ -109,11 +111,11 @@ fn lex_property_name(ctx : ParseContext) -> Token!ParseError {
 }
 
 ///|
-fn lex_property_name2(ctx : ParseContext) -> Token!ParseError {
-  lex_skip_whitespace(ctx)
+fn ParseContext::lex_property_name2(ctx : ParseContext) -> Token!ParseError {
+  ctx.lex_skip_whitespace()
   match ctx.read_char() {
     Some('"') => {
-      let s = lex_string!(ctx)
+      let s = ctx.lex_string!()
       String(s)
     }
     Some(_) => invalid_char!(ctx, shift=-1)
