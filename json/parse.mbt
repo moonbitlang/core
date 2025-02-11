@@ -30,7 +30,7 @@ pub fn parse(input : String) -> JsonValue!ParseError {
   if ctx.offset >= ctx.end_offset {
     val
   } else {
-    invalid_char!(ctx)
+    ctx.invalid_char!()
   }
 }
 

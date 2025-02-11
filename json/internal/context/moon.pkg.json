@@ -1,8 +1,8 @@
 {
     "import": [
       "moonbitlang/core/builtin",
-      "moonbitlang/core/string"
-      
+      "moonbitlang/core/string",
+      "moonbitlang/core/strconv" 
     ]
   }
   

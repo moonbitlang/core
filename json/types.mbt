@@ -17,36 +17,20 @@
 pub(all) typealias JsonValue = Json
 
 ///|
-pub(all) struct Position {
-  line : Int // 1-based
-  column : Int // 0-based
-} derive(Eq)
+// pub(all) struct Position {
+//   line : Int // 1-based
+//   column : Int // 0-based
+// } derive(Eq)
 
+typealias ParseError = @context.ParseError
 ///|
-pub(all) type! ParseError {
-  InvalidChar(Position, Char)
-  InvalidEof
-  InvalidNumber(Position, String)
-  InvalidIdentEscape(Position)
-} derive(Eq)
+// pub(all) type! ParseError {
+//   InvalidChar(Position, Char)
+//   InvalidEof
+//   InvalidNumber(Position, String)
+//   InvalidIdentEscape(Position)
+// } derive(Eq)
 
-///|
-pub fn to_string(self : ParseError) -> String {
-  match self {
-    InvalidChar({ line, column }, c) =>
-      "Invalid character '\{c}' at line \{line}, column \{column}"
-    InvalidEof => "Unexpected end of file"
-    InvalidNumber({ line, column }, s) =>
-      "Invalid number \{s} at line \{line}, column \{column}"
-    InvalidIdentEscape({ line, column }) =>
-      "Invalid escape sequence in identifier at line \{line}, column \{column}"
-  }
-}
-
-///|
-pub impl Show for ParseError with output(self, logger) {
-  logger.write_string(self.to_string())
-}
 
 ///|
 pub impl Show for JsonValue with output(self, logger) {

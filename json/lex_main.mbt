@@ -38,7 +38,7 @@ fn lex_value(
         if allow_rbracket {
           return RBracket
         } else {
-          invalid_char!(ctx, shift=-1)
+          ctx.invalid_char!(shift=-1)
         }
       Some('n') => {
         lex_assert_char!(ctx, 'u')
@@ -62,24 +62,24 @@ fn lex_value(
       Some('-') =>
         match ctx.read_char() {
           Some('0') => {
-            let n = lex_zero!(ctx, start=ctx.offset - 2)
+            let n = ctx.lex_zero!(start=ctx.offset - 2)
             return Number(n)
           }
           Some(c2) => {
             if c2 >= '1' && c2 <= '9' {
-              let n = lex_decimal_integer!(ctx, start=ctx.offset - 2)
+              let n = ctx.lex_decimal_integer!(start=ctx.offset - 2)
               return Number(n)
             }
-            invalid_char!(ctx, shift=-1)
+            ctx.invalid_char!(shift=-1)
           }
-          None => raise InvalidEof
+          None => @context.invalid_eof!()
         }
       Some('0') => {
-        let n = lex_zero!(ctx, start=ctx.offset - 1)
+        let n = ctx.lex_zero!(start=ctx.offset - 1)
         return Number(n)
       }
       Some('1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9') => {
-        let n = lex_decimal_integer!(ctx, start=ctx.offset - 1)
+        let n = ctx.lex_decimal_integer!(start=ctx.offset - 1) 
         return Number(n)
       }
       Some('"') => {
@@ -90,9 +90,9 @@ fn lex_value(
         if c > '\x7f' && non_ascii_whitespace.contains(c) {
           continue
         }
-        invalid_char!(ctx, shift=-1)
+        ctx.invalid_char!(shift=-1)
       }
-      None => raise InvalidEof
+      None => @context.invalid_eof!()
     }
   }
 }

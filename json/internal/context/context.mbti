@@ -1,0 +1,43 @@
+package moonbitlang/core/json/internal/context
+
+// Values
+fn invalid_eof[T]() -> T!ParseError
+
+fn make(String) -> ParseContext
+
+// Types and methods
+pub(all) struct ParseContext {
+  offset : Int
+  input : String
+  end_offset : Int
+}
+impl ParseContext {
+  invalid_char[T](Self, shift~ : Int = ..) -> T!ParseError
+  lex_decimal_integer(Self, start~ : Int) -> Double!ParseError
+  lex_number_end(Self, Int, Int) -> Double!ParseError
+  lex_zero(Self, start~ : Int) -> Double!ParseError
+  read_char(Self) -> Char?
+}
+
+pub(all) type! ParseError {
+  InvalidChar(Position, Char)
+  InvalidEof
+  InvalidNumber(Position, String)
+  InvalidIdentEscape(Position)
+}
+impl ParseError {
+  to_string(Self) -> String
+}
+impl Eq for ParseError
+impl Show for ParseError
+
+pub(all) struct Position {
+  line : Int
+  column : Int
+}
+impl Eq for Position
+
+// Type aliases
+
+// Traits
+

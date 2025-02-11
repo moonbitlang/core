@@ -46,7 +46,7 @@ fn check!(x : String) -> Json {
 }
 
 ///|
-fn check2!(x : String) -> Json!@json.ParseError {
+fn check2!(x : String) -> Json!{
   @json.parse!(x)
 }
 

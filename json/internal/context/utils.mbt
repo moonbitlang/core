@@ -28,11 +28,4 @@ fn offset_to_position(input : String, offset : Int) -> Position {
   return Position::{ line, column }
 }
 
-///|
-fn invalid_char[T](
-  ctx : @context.ParseContext,
-  shift~ : Int = 0
-) -> T!ParseError {
-  let offset = ctx.offset + shift
-  raise InvalidChar(offset_to_position(ctx.input, offset), ctx.input[offset])
-}
+
