@@ -15,23 +15,25 @@
 ///|
 fn read_char(ctx : ParseContext) -> Char? {
   if ctx.offset < ctx.end_offset {
-    let c = ctx.input[ctx.offset]
-    ctx.offset += 1
-    let c1 = c.to_int()
-    if c1 >= 0xD800 && c1 <= 0xDBFF {
-      if ctx.offset < ctx.end_offset {
-        let c2 = ctx.input[ctx.offset].to_int()
-        if c2 >= 0xDC00 && c2 <= 0xDFFF {
-          ctx.offset += 1
-          let c3 = (c1 << 10) + c2 - 0x35fdc00
-          return Some(Char::from_int(c3))
-        }
-      }
-    }
+    let c = ctx.input.unsafe_codepoint_at(ctx.offset)
+    ctx.offset = @string.shift_index(ctx.input, ctx.offset, 1)
     Some(c)
   } else {
     None
   }
+}
+
+///|
+fn backoff(ctx : ParseContext, shift : Int) -> Unit {
+  ctx.offset = @string.shift_index(ctx.input, ctx.offset, -shift)
+}
+
+///|
+// This function assumes the character being backed off is a single ASCII 
+// character, not a multi-byte Unicode surrogate pair. This makes it safe to 
+// use the faster unsafe_shift_index operation.
+fn unsafe_backoff(ctx : ParseContext, shift : Int) -> Unit {
+  ctx.offset = @string.unsafe_shift_index(ctx.offset, -shift)
 }
 
 ///|
@@ -43,7 +45,7 @@ fn lex_skip_whitespace(ctx : ParseContext) -> Unit {
         if c > '\x7f' && non_ascii_whitespace.contains(c) {
           continue
         }
-        ctx.offset -= 1
+        backoff(ctx, 1)
         break
       }
       None => break

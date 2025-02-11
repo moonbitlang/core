@@ -14,14 +14,18 @@
 
 ///|
 priv struct ParseContext {
-  mut offset : Int
+  mut offset : @string.Index
   input : String
-  end_offset : Int
+  end_offset : @string.Index
 }
 
 ///|
 fn ParseContext::make(input : String) -> ParseContext {
-  { offset: 0, input, end_offset: input.length() }
+  {
+    offset: @string.Index::zero(),
+    input,
+    end_offset: @string.Index::end(input),
+  }
 }
 
 ///|

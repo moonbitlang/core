@@ -652,14 +652,14 @@ impl Double {
 }
 
 impl String {
-  charcode_at(String, Int) -> Int
   charcode_length(String) -> Int
-  codepoint_at(String, Int) -> Char
   codepoint_length(String) -> Int
   escape(String) -> String
   get(String, Int) -> Char
   length(String) -> Int
   make(Int, Char) -> String
+  nth_charcode(String, Int) -> Int
+  nth_codepoint(String, Int) -> Char
   op_add(String, String) -> String
   op_equal(String, String) -> Bool
   op_get(String, Int) -> Char
