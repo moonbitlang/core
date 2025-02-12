@@ -516,7 +516,7 @@ test "rev_iter2 when head needs to wrap around" {
 test "deque push_front when empty" {
   let d = @deque.of([0, 1])
   ignore(d.pop_back())
-  guard let Some(f) = d.pop_back()
+  let f = d.pop_back().unwrap()
   d.push_front(f)
   inspect!(d, content="@deque.of([0])")
   let d = @deque.of(["a", "b"])
@@ -540,7 +540,7 @@ test "deque push_front when empty" {
 test "deque push_back when empty" {
   let d = @deque.of([0, 1])
   ignore(d.pop_front())
-  guard let Some(f) = d.pop_front()
+  let f = d.pop_front().unwrap()
   d.push_back(f)
   inspect!(d, content="@deque.of([1])")
   let d = @deque.of(["a", "b"])
