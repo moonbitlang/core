@@ -296,7 +296,13 @@ pub(all) enum Json {
   Object(Map[String, Json])
 }
 impl Json {
+  array(Array[Self]) -> Self
+  boolean(Bool) -> Self
   default() -> Self
+  null() -> Self
+  number(Double) -> Self
+  object(Map[String, Self]) -> Self
+  string(String) -> Self
 }
 impl Eq for Json
 
