@@ -440,14 +440,16 @@ test "BytesView::to_int_be with positive value" {
   inspect!(bytes.to_int_be(), content="1")
 }
 
+///|
 test "BytesView::compare" {
   let bytes = b"abcabc"
-  inspect!(bytes[0:3].compare(bytes[3:6]), content="0")  // abc = abc
+  inspect!(bytes[0:3].compare(bytes[3:6]), content="0") // abc = abc
   inspect!(bytes[0:3].compare(bytes[2:5]), content="-1") // abc < cab
-  inspect!(bytes[1:4].compare(bytes[3:6]), content="1")  // bca > abc
+  inspect!(bytes[1:4].compare(bytes[3:6]), content="1") // bca > abc
   inspect!(bytes[0:3].compare(bytes[0:4]), content="-1") // abc < abca
 }
 
+///|
 test "BytesView::eq" {
   let bytes = b"abcabc"
   inspect!(bytes[0:3] == bytes[3:6], content="true")
