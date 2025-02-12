@@ -39,6 +39,8 @@ fn print[T : Show](T) -> Unit //deprecated
 
 fn println[T : Show](T) -> Unit
 
+fn repr[T : Show](T) -> String
+
 // Types and methods
 pub(all) type ArgsLoc Array[SourceLoc?]
 impl ArgsLoc {
