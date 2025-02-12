@@ -67,14 +67,10 @@ test "parse object with duplicate keys" {
   // Last value for duplicate key should be used
   let json = test_parse!("{\"a\":1,\"a\":2}")
   assert_eq!(json, Json::Object({ "a": Json::Number(2.0) }))
-  
   let json = test_parse!("{\"a\":1,\"b\":2,\"a\":3}")
   assert_eq!(
     json,
-    Json::Object({
-      "a": Json::Number(3.0),
-      "b": Json::Number(2.0)
-    })
+    Json::Object({ "a": Json::Number(3.0), "b": Json::Number(2.0) }),
   )
 }
 
@@ -91,8 +87,8 @@ test "parse nested empty objects" {
     json,
     Json::Object({
       "a": Json::Object({}),
-      "b": Json::Object({ "c": Json::Object({}) })
-    })
+      "b": Json::Object({ "c": Json::Object({}) }),
+    }),
   )
 }
 
@@ -104,8 +100,8 @@ test "parse object with special characters in keys" {
     Json::Object({
       "\u0001": Json::Number(1.0),
       "\n": Json::Number(2.0),
-      "\t": Json::Number(3.0)
-    })
+      "\t": Json::Number(3.0),
+    }),
   )
 }
 //endregion
@@ -240,40 +236,19 @@ test "parses +1.23e100" {
 ///|
 test "parse number edge cases" {
   // Very large numbers
-  inspect!(
-    @json.parse!("1e308"),
-    content="Number(1e+308)"
-  )
-  inspect!(
-    @json.parse!("-1e308"),
-    content="Number(-1e+308)"
-  )
-  
+  inspect!(@json.parse!("1e308"), content="Number(1e+308)")
+  inspect!(@json.parse!("-1e308"), content="Number(-1e+308)")
+
   // Very small numbers
-  inspect!(
-    @json.parse!("1e-308"),
-    content="Number(1e-308)"
-  )
-  inspect!(
-    @json.parse!("-1e-308"),
-    content="Number(-1e-308)"
-  )
-  
+  inspect!(@json.parse!("1e-308"), content="Number(1e-308)")
+  inspect!(@json.parse!("-1e-308"), content="Number(-1e-308)")
+
   // Numbers with many decimal places
-  inspect!(
-    @json.parse!("0.123456789"),
-    content="Number(0.123456789)"
-  )
-  
+  inspect!(@json.parse!("0.123456789"), content="Number(0.123456789)")
+
   // Numbers with leading zeros in exponent
-  inspect!(
-    @json.parse!("1e01"),
-    content="Number(10)"
-  )
-  inspect!(
-    @json.parse!("1e001"),
-    content="Number(10)"
-  )
+  inspect!(@json.parse!("1e01"), content="Number(10)")
+  inspect!(@json.parse!("1e001"), content="Number(10)")
 }
 
 ///|
@@ -281,23 +256,20 @@ test "parse invalid number formats" {
   // Multiple decimal points
   inspect!(
     @json.parse?("1.2.3"),
-    content="Err(Invalid character '.' at line 1, column 3)"
+    content="Err(Invalid character '.' at line 1, column 3)",
   )
-  
+
   // Multiple signs
   inspect!(
     @json.parse?("--1"),
-    content="Err(Invalid character '-' at line 1, column 1)"
+    content="Err(Invalid character '-' at line 1, column 1)",
   )
-  
+
   // Invalid exponent formats
-  inspect!(
-    @json.parse?("1e"),
-    content="Err(Unexpected end of file)"
-  )
+  inspect!(@json.parse?("1e"), content="Err(Unexpected end of file)")
   inspect!(
     @json.parse?("1e++1"),
-    content="Err(Invalid character '+' at line 1, column 3)"
+    content="Err(Invalid character '+' at line 1, column 3)",
   )
 }
 //endregion

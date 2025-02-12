@@ -14,10 +14,7 @@
 
 ///|
 test "lex_string with forward slash escape" {
-  inspect!(
-    @json.parse!("\"\\/\""),
-    content="String(\"/\")"
-  )
+  inspect!(@json.parse!("\"\\/\""), content="String(\"/\")")
 }
 
 ///|
@@ -38,15 +35,18 @@ test "lex_string with basic escape sequences" {
 test "lex_string with invalid escape sequence" {
   inspect!(
     @json.parse?("\"\\a\""),
-    content="Err(Invalid character 'a' at line 1, column 2)"
+    content="Err(Invalid character 'a' at line 1, column 2)",
   )
 }
 
 ///|
 test "lex_string with incomplete unicode sequence" {
   let result = @json.parse?("\"\\u12\"")
-  inspect!(result, content=
-    #|Err(Invalid character '"' at line 1, column 5)
+  inspect!(
+    result,
+    content=
+      #|Err(Invalid character '"' at line 1, column 5)
+    ,
   )
   // match result {
   //   Ok(_) => fail!("Expected error for incomplete unicode sequence")
