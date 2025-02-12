@@ -177,30 +177,6 @@ impl BigInt {
 }
 impl Show for BigInt
 
-type BytesView
-impl BytesView {
-  iter(Self) -> Iter[Byte]
-  length(Self) -> Int
-  op_as_view(Self, start~ : Int = .., end? : Int) -> Self
-  op_get(Self, Int) -> Byte
-  to_double_be(Self) -> Double
-  to_double_le(Self) -> Double
-  to_float_be(Self) -> Float
-  to_float_le(Self) -> Float
-  to_int64_be(Self) -> Int64
-  to_int64_le(Self) -> Int64
-  to_int_be(Self) -> Int
-  to_int_le(Self) -> Int
-  to_uint64_be(Self) -> UInt64
-  to_uint64_le(Self) -> UInt64
-  to_uint_be(Self) -> UInt
-  to_uint_le(Self) -> UInt
-  unsafe_get(Self, Int) -> Byte
-}
-impl Compare for BytesView
-impl Eq for BytesView
-impl Show for BytesView
-
 pub(all) type! Failure String
 impl Show for Failure
 
@@ -717,7 +693,6 @@ impl Bytes {
   makei(Int, (Int) -> Byte) -> Bytes
   new(Int) -> Bytes
   of_string(String) -> Bytes
-  op_as_view(Bytes, start~ : Int = .., end? : Int) -> BytesView
   op_equal(Bytes, Bytes) -> Bool
   op_get(Bytes, Int) -> Byte
   sub_string(Bytes, Int, Int) -> String //deprecated

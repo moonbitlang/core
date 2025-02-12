@@ -1,5 +1,6 @@
 package moonbitlang/core/array
 
+alias @moonbitlang/core/bytes as @bytes
 alias @moonbitlang/core/quickcheck as @quickcheck
 
 // Values
@@ -8,7 +9,7 @@ alias @moonbitlang/core/quickcheck as @quickcheck
 impl FixedArray {
   all[T](Self[T], (T) -> Bool) -> Bool
   any[T](Self[T], (T) -> Bool) -> Bool
-  blit_from_bytesview(Self[Byte], Int, BytesView) -> Unit
+  blit_from_bytesview(Self[Byte], Int, @bytes.View) -> Unit
   contains[T : Eq](Self[T], T) -> Bool
   copy[T](Self[T]) -> Self[T]
   each[T](Self[T], (T) -> Unit) -> Unit
