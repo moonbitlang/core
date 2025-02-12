@@ -282,28 +282,38 @@ test "stringify" {
 }
 
 ///|
-test "stringify escape" {
-  let json : Json = {
-    "\b": "\"hello\"",
-    "\n": "\n\r\t\x0C",
-    "\\": "/",
-    "\x1F": "\x01",
-    "actual": "\x00",
-    "escape": "\x00",
-    "actual": "a,\"b\",c",
-  }
+let json : Json = {
+  "\b": "\"hello\"",
+  "\n": "\n\r\t\x0C",
+  "\\": "/",
+  "\x1F": "\x01",
+  "actual": "\x00",
+  "escape": "\x00",
+  "actual": "a,\"b\",c",
+}
+
+///|
+test "stringify escape 1 " {
   inspect!(
     json.stringify(),
     content=
       #|{"\b":"\"hello\"","\n":"\n\r\t\f","\\":"/","\u001f":"\u0001","actual":"a,\"b\",c","escape":"\u0000"}
     ,
   )
+}
+
+///|
+test "stringify escape 2" {
   inspect!(
     json.stringify(escape_slash=true),
     content=
       #|{"\b":"\"hello\"","\n":"\n\r\t\f","\\":"\/","\u001f":"\u0001","actual":"a,\"b\",c","escape":"\u0000"}
     ,
   )
+}
+
+///|
+test "stringify escape 3" {
   inspect!(
     json.stringify(escape_slash=false, indent=2),
     content=
@@ -317,12 +327,20 @@ test "stringify escape" {
       #|}
     ,
   )
+}
+
+///|
+test "stringify escape 4" {
   inspect!(
     json.stringify(escape_slash=false),
     content=
       #|{"\b":"\"hello\"","\n":"\n\r\t\f","\\":"/","\u001f":"\u0001","actual":"a,\"b\",c","escape":"\u0000"}
     ,
   )
+}
+
+///|
+test "stringify escape round trip" {
   match @json.parse?(json.stringify()) {
     Err(e) => raise e
     Ok(newjson) => assert_eq!(newjson, json)
