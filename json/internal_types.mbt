@@ -66,5 +66,5 @@ priv enum Token {
   LBracket
   RBracket
   Comma
-  Colon
+  // Colon
 } derive(Eq, Show)

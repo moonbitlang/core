@@ -63,12 +63,10 @@ fn ParseContext::lex_after_array_value(ctx : ParseContext) -> Token!ParseError {
 }
 
 ///|
-fn ParseContext::lex_after_property_name(
-  ctx : ParseContext
-) -> Token!ParseError {
+fn ParseContext::lex_after_property_name(ctx : ParseContext) -> Unit!ParseError {
   ctx.lex_skip_whitespace()
   match ctx.read_char() {
-    Some(':') => Colon
+    Some(':') => ()
     Some(_) => ctx.invalid_char!(shift=-1)
     None => raise InvalidEof
   }
