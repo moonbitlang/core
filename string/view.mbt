@@ -235,7 +235,7 @@ pub fn length_ge(self : View, len : Int) -> Bool {
 pub fn String::op_as_view(self : String, start~ : Int = 0, end? : Int) -> View {
   let str_len = self.charcode_length()
   let start = if start >= 0 {
-    index_at(self, start, start=0).unwrap()._ 
+    index_at(self, start, start=0).unwrap()._
   } else {
     index_at_rev(self, -start, end=str_len).unwrap()._
   }
