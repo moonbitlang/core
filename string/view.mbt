@@ -235,28 +235,16 @@ pub fn length_ge(self : View, len : Int) -> Bool {
 pub fn String::op_as_view(self : String, start~ : Int = 0, end? : Int) -> View {
   let str_len = self.charcode_length()
   let start = if start >= 0 {
-    guard let Some(start_offset) = index_at(self, start, start=0) else {
-      _ => abort("Invalid start index")
-    }
-    start_offset._
+    index_at(self, start, start=0).unwrap()._ 
   } else {
-    guard let Some(start_offset) = index_at_rev(self, -start, end=str_len) else {
-      _ => abort("Invalid start index")
-    }
-    start_offset._
+    index_at_rev(self, -start, end=str_len).unwrap()._
   }
   let end = match end {
     Some(end) =>
       if end >= 0 {
-        guard let Some(end_offset) = index_at(self, end, start=0) else {
-          _ => abort("Invalid end index")
-        }
-        end_offset._
+        index_at(self, end, start=0).unwrap()._
       } else {
-        guard let Some(end_offset) = index_at_rev(self, -end, end=str_len) else {
-          _ => abort("Invalid end index")
-        }
-        end_offset._
+        index_at_rev(self, -end, end=str_len).unwrap()._
       }
     None => str_len
   }
@@ -281,28 +269,16 @@ pub fn String::op_as_view(self : String, start~ : Int = 0, end? : Int) -> View {
 /// ```
 pub fn View::op_as_view(self : View, start~ : Int = 0, end? : Int) -> View {
   let start = if start >= 0 {
-    guard let Some(start_offset) = index_at(self.str, start, start=self.start) else {
-      _ => abort("Invalid start index")
-    }
-    start_offset._
+    index_at(self.str, start, start=self.start).unwrap()._
   } else {
-    guard let Some(start_offset) = index_at_rev(self.str, -start, end=self.end) else {
-      _ => abort("Invalid start index")
-    }
-    start_offset._
+    index_at_rev(self.str, -start, end=self.end).unwrap()._
   }
   let end = match end {
     Some(end) =>
       if end >= 0 {
-        guard let Some(end_offset) = index_at(self.str, end, start=self.start) else {
-          _ => abort("Invalid end index")
-        }
-        end_offset._
+        index_at(self.str, end, start=self.start).unwrap()._
       } else {
-        guard let Some(end_offset) = index_at_rev(self.str, -end, end=self.end) else {
-          _ => abort("Invalid end index")
-        }
-        end_offset._
+        index_at_rev(self.str, -end, end=self.end).unwrap()._
       }
     None => self.end
   }
