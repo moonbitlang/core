@@ -625,4 +625,3 @@ pub impl Compare for BytesView with compare(self, other) -> Int {
   }
   0
 }
-
