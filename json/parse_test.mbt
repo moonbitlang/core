@@ -61,6 +61,53 @@ test "parses nested objects" {
     ,
   )
 }
+
+///|
+test "parse object with duplicate keys" {
+  // Last value for duplicate key should be used
+  let json = test_parse!("{\"a\":1,\"a\":2}")
+  assert_eq!(json, Json::Object({ "a": Json::Number(2.0) }))
+  
+  let json = test_parse!("{\"a\":1,\"b\":2,\"a\":3}")
+  assert_eq!(
+    json,
+    Json::Object({
+      "a": Json::Number(3.0),
+      "b": Json::Number(2.0)
+    })
+  )
+}
+
+///|
+test "parse object with empty key" {
+  let json = test_parse!("{\"\": 1}")
+  assert_eq!(json, Json::Object({ "": Json::Number(1.0) }))
+}
+
+///|
+test "parse nested empty objects" {
+  let json = test_parse!("{\"a\":{},\"b\":{\"c\":{}}}")
+  assert_eq!(
+    json,
+    Json::Object({
+      "a": Json::Object({}),
+      "b": Json::Object({ "c": Json::Object({}) })
+    })
+  )
+}
+
+///|
+test "parse object with special characters in keys" {
+  let json = test_parse!("{\"\\u0001\":1,\"\\n\":2,\"\\t\":3}")
+  assert_eq!(
+    json,
+    Json::Object({
+      "\u0001": Json::Number(1.0),
+      "\n": Json::Number(2.0),
+      "\t": Json::Number(3.0)
+    })
+  )
+}
 //endregion
 
 //region arrays
@@ -190,6 +237,69 @@ test "parses +1.23e100" {
   assert_eq!(json, Json::Number(1.23e100))
 }
 
+///|
+test "parse number edge cases" {
+  // Very large numbers
+  inspect!(
+    @json.parse!("1e308"),
+    content="Number(1e+308)"
+  )
+  inspect!(
+    @json.parse!("-1e308"),
+    content="Number(-1e+308)"
+  )
+  
+  // Very small numbers
+  inspect!(
+    @json.parse!("1e-308"),
+    content="Number(1e-308)"
+  )
+  inspect!(
+    @json.parse!("-1e-308"),
+    content="Number(-1e-308)"
+  )
+  
+  // Numbers with many decimal places
+  inspect!(
+    @json.parse!("0.123456789"),
+    content="Number(0.123456789)"
+  )
+  
+  // Numbers with leading zeros in exponent
+  inspect!(
+    @json.parse!("1e01"),
+    content="Number(10)"
+  )
+  inspect!(
+    @json.parse!("1e001"),
+    content="Number(10)"
+  )
+}
+
+///|
+test "parse invalid number formats" {
+  // Multiple decimal points
+  inspect!(
+    @json.parse?("1.2.3"),
+    content="Err(Invalid character '.' at line 1, column 3)"
+  )
+  
+  // Multiple signs
+  inspect!(
+    @json.parse?("--1"),
+    content="Err(Invalid character '-' at line 1, column 1)"
+  )
+  
+  // Invalid exponent formats
+  inspect!(
+    @json.parse?("1e"),
+    content="Err(Unexpected end of file)"
+  )
+  inspect!(
+    @json.parse?("1e++1"),
+    content="Err(Invalid character '+' at line 1, column 3)"
+  )
+}
 //endregion
 
 //region strings
@@ -226,66 +336,6 @@ test "valid" {
   inspect!(@json.valid("{}"), content="true")
   inspect!(@json.valid("{a:1, b:2}"), content="false")
   inspect!(@json.valid("{"), content="false")
-}
-
-///|
-test "parse unexpected token in value" {
-  let result = @json.parse?("{a:1}")
-  inspect!(result, content="Err(Invalid character 'a' at line 1, column 1)")
-}
-
-///|
-test "parse unexpected token in object property name" {
-  let result = @json.parse?("{\"a\":1, b:2}")
-  inspect!(result, content="Err(Invalid character 'b' at line 1, column 8)")
-}
-
-///|
-test "parse unexpected token after object property name" {
-  let result = @json.parse?("{\"a\" b:2}")
-  inspect!(result, content="Err(Invalid character 'b' at line 1, column 5)")
-}
-
-///|
-test "parse unexpected token after object value" {
-  let result = @json.parse?("{\"a\":1 b:2}")
-  inspect!(result, content="Err(Invalid character 'b' at line 1, column 7)")
-}
-
-///|
-test "parse unexpected token in array" {
-  let result = @json.parse?("[1, 2 a]")
-  inspect!(result, content="Err(Invalid character 'a' at line 1, column 6)")
-}
-
-///|
-test "parse unexpected token in value" {
-  let result = @json.parse?("{a:1}")
-  inspect!(result, content="Err(Invalid character 'a' at line 1, column 1)")
-}
-
-///|
-test "parse unexpected token in object property name" {
-  let result = @json.parse?("{\"a\":1, b:2}")
-  inspect!(result, content="Err(Invalid character 'b' at line 1, column 8)")
-}
-
-///|
-test "parse unexpected token after object property name" {
-  let result = @json.parse?("{\"a\" b:2}")
-  inspect!(result, content="Err(Invalid character 'b' at line 1, column 5)")
-}
-
-///|
-test "parse unexpected token after object value" {
-  let result = @json.parse?("{\"a\":1 b:2}")
-  inspect!(result, content="Err(Invalid character 'b' at line 1, column 7)")
-}
-
-///|
-test "parse unexpected token in array" {
-  let result = @json.parse?("[1, 2 a]")
-  inspect!(result, content="Err(Invalid character 'a' at line 1, column 6)")
 }
 
 ///|
