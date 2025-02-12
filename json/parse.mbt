@@ -63,7 +63,7 @@ fn ParseContext::parse_object(ctx : ParseContext) -> JsonValue!ParseError {
   loop ctx.lex_property_name!() {
     RBrace => Object(map)
     String(name) => {
-      guard let Colon = ctx.lex_after_property_name!()
+      ctx.lex_after_property_name!()
       map[name] = ctx.parse_value!()
       match ctx.lex_after_object_value!() {
         Comma => continue ctx.lex_property_name2!()
