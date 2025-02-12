@@ -62,10 +62,7 @@ test "throws on invalid characters following an exponent sign" {
 test "throws on invalid new lines in strings" {
   inspect!(
     @json.parse?("\"\n\""),
-    content=
-      #|Err(Invalid character '
-      #|' at line 1, column 1)
-    ,
+    content="Err(Invalid character '\\n' at line 1, column 1)",
   )
 }
 
@@ -247,15 +244,15 @@ test "throws on invalid number" {
 test "throws on invalid chars" {
   inspect!(
     @json.parse?("[\u000c]"),
-    content="Err(Invalid character '\x0c' at line 1, column 1)",
+    content="Err(Invalid character '\\x0c' at line 1, column 1)",
   )
   inspect!(
     @json.parse?("[\"\u0009\"]"),
-    content="Err(Invalid character '\t' at line 1, column 2)",
+    content="Err(Invalid character '\\t' at line 1, column 2)",
   )
   inspect!(
     @json.parse?("[\"a\u0000a\"]"),
-    content="Err(Invalid character '\x00' at line 1, column 3)",
+    content="Err(Invalid character '\\x00' at line 1, column 3)",
   )
 }
 
