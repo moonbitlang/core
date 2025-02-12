@@ -712,7 +712,6 @@ impl FixedArray {
 
 impl Bytes {
   blit(Bytes, Int, Bytes, Int, Int) -> Unit //deprecated
-  compare(Bytes, Bytes) -> Int
   copy(Bytes) -> Bytes
   length(Bytes) -> Int
   make(Int, Byte) -> Bytes
@@ -720,7 +719,6 @@ impl Bytes {
   new(Int) -> Bytes
   of_string(String) -> Bytes
   op_as_view(Bytes, start~ : Int = .., end? : Int) -> BytesView
-  op_equal(Bytes, Bytes) -> Bool
   op_get(Bytes, Int) -> Byte
   op_set(Bytes, Int, Byte) -> Unit //deprecated
   sub_string(Bytes, Int, Int) -> String //deprecated
@@ -815,6 +813,7 @@ impl Tuple(16) {
 pub(open) trait Compare : Eq {
   compare(Self, Self) -> Int
 }
+impl Compare for Bytes
 
 pub(open) trait Default {
   default() -> Self
@@ -823,6 +822,7 @@ pub(open) trait Default {
 pub(open) trait Eq {
   op_equal(Self, Self) -> Bool
 }
+impl Eq for Bytes
 
 pub(open) trait Hash {
   hash_combine(Self, Hasher) -> Unit
