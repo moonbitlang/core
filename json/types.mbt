@@ -34,7 +34,7 @@ pub(all) type! ParseError {
 pub fn to_string(self : ParseError) -> String {
   match self {
     InvalidChar({ line, column }, c) =>
-      "Invalid character '\{c}' at line \{line}, column \{column}"
+      "Invalid character \{repr(c)} at line \{line}, column \{column}"
     InvalidEof => "Unexpected end of file"
     InvalidNumber({ line, column }, s) =>
       "Invalid number \{s} at line \{line}, column \{column}"
