@@ -15,10 +15,10 @@
 ///|
 test "index_at" {
   let str = "Hello"
-  guard let Some(offset) = str.index_at(3)
-  inspect!(offset, content="StringIndex(3)")
-  guard let Some(offset) = str.index_at(5)
-  inspect!(offset, content="StringIndex(5)")
+  let offset = str.index_at(3)
+  inspect!(offset, content="Some(StringIndex(3))")
+  let offset = str.index_at(5)
+  inspect!(offset, content="Some(StringIndex(5))")
   let offset = str.index_at(6)
   inspect!(offset, content="None")
 }
@@ -26,12 +26,12 @@ test "index_at" {
 ///|
 test "index_at with surrogate pairs" {
   let str = "🤣🤣🤣"
-  guard let Some(offset) = str.index_at(1)
-  inspect!(offset, content="StringIndex(2)")
-  guard let Some(offset) = str.index_at(2)
-  inspect!(offset, content="StringIndex(4)")
-  guard let Some(offset) = str.index_at(3)
-  inspect!(offset, content="StringIndex(6)")
+  let offset = str.index_at(1)
+  inspect!(offset, content="Some(StringIndex(2))")
+  let offset = str.index_at(2)
+  inspect!(offset, content="Some(StringIndex(4))")
+  let offset = str.index_at(3)
+  inspect!(offset, content="Some(StringIndex(6))")
   let offset = str.index_at(4)
   inspect!(offset, content="None")
   inspect!(str[1:2], content="🤣")
@@ -164,19 +164,19 @@ test "panic out of bounds4" {
 ///|
 test "index_at_rev" {
   let str = "🤣🤣🤣"
-  guard let Some(offset) = str.index_at_rev(0)
-  inspect!(offset, content="StringIndex(6)")
-  guard let Some(offset) = str.index_at_rev(1)
-  inspect!(offset, content="StringIndex(4)")
-  guard let Some(offset) = str.index_at_rev(2)
-  inspect!(offset, content="StringIndex(2)")
-  guard let Some(offset) = str.index_at_rev(3)
-  inspect!(offset, content="StringIndex(0)")
+  let offset = str.index_at_rev(0)
+  inspect!(offset, content="Some(StringIndex(6))")
+  let offset = str.index_at_rev(1)
+  inspect!(offset, content="Some(StringIndex(4))")
+  let offset = str.index_at_rev(2)
+  inspect!(offset, content="Some(StringIndex(2))")
+  let offset = str.index_at_rev(3)
+  inspect!(offset, content="Some(StringIndex(0))")
   let offset = str.index_at_rev(4)
   inspect!(offset, content="None")
-  guard let Some(offset) = str.index_at_rev(1)
-  guard let Some(offset) = str.index_at_rev(1, end=offset)
-  inspect!(offset, content="StringIndex(2)")
+  let offset = str.index_at_rev(1).unwrap()
+  let offset = str.index_at_rev(1, end=offset)
+  inspect!(offset, content="Some(StringIndex(2))")
 }
 
 ///|
