@@ -137,7 +137,10 @@ pub impl[X : FromJson] FromJson for Array[X] with from_json(json, path) {
       let res : Array[X] = Array::new(capacity=a.length())
       let idx = Index(path, index=0)
       for i = 0; i < a.length(); i = i + 1 {
-        idx.update_index_inplace(i)
+        // TODO: it should be assert here
+        if idx is (Index(_) as idx) {
+          idx.index = i
+        }
         res.push(FromJson::from_json!(a[i], idx))
       }
       res
@@ -160,7 +163,10 @@ pub impl[X : FromJson] FromJson for FixedArray[X] with from_json(json, path) {
         FromJson::from_json!(a[0], idx),
       )
       for i in 1..<len {
-        idx.update_index_inplace(i)
+        // TODO: it should be assert here
+        if idx is (Index(_) as idx) {
+          idx.index = i
+        }
         res[i] = FromJson::from_json!(a[i], idx)
       }
       res
@@ -181,7 +187,10 @@ pub impl[V : FromJson] FromJson for Map[String, V] with from_json(json, path) {
       let res = {}
       let key = Key(path, key="")
       for k, v in obj {
-        key.update_key_inplace(k)
+        // TODO: it should be assert here
+        if key is (Key(_) as k0) {
+          k0.key = k
+        }
         res[k] = FromJson::from_json!(v, key)
       }
       res
