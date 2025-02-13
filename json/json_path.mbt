@@ -44,22 +44,6 @@ pub fn output(self : JsonPath, logger : &Logger) -> Unit {
 }
 
 ///|
-fn update_key_inplace(self : JsonPath, key : String) -> Unit {
-  match self {
-    Key(_) as k => k.key = key
-    _ => abort("the variant is not Key")
-  }
-}
-
-///|
-fn update_index_inplace(self : JsonPath, index : Int) -> Unit {
-  match self {
-    Index(_) as i => i.index = index
-    _ => abort("the variant is not Index")
-  }
-}
-
-///|
 test "show JsonPath" {
   let path = Key(Index(Root, index=0), key="foo")
   @builtin.inspect!(path, content="$[0].foo")
