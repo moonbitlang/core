@@ -66,7 +66,7 @@ fn ParseContext::lex_value(
             return Number(n)
           }
           Some(c2) => {
-            if c2 >= '1' && c2 <= '9' {
+            if c2 is ('1'..='9') {
               let n = ctx.lex_decimal_integer!(start=ctx.offset - 2)
               return Number(n)
             }
@@ -78,7 +78,7 @@ fn ParseContext::lex_value(
         let n = ctx.lex_zero!(start=ctx.offset - 1)
         return Number(n)
       }
-      Some('1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9') => {
+      Some('1'..='9') => {
         let n = ctx.lex_decimal_integer!(start=ctx.offset - 1)
         return Number(n)
       }
