@@ -1393,36 +1393,6 @@ pub fn Bytes::op_get(self : Bytes, idx : Int) -> Byte = "%bytes_get"
 pub fn Bytes::unsafe_get(self : Bytes, idx : Int) -> Byte = "%bytes_get"
 
 ///|
-/// Sets the byte value at the specified index in a byte sequence.
-///
-/// Parameters:
-///
-/// * `bytes` : The byte sequence to modify.
-/// * `index` : The position in the byte sequence where the value will be set.
-/// * `value` : The byte value to be set at the specified index.
-///
-/// Throws a runtime error if `index` is out of bounds (less than 0 or greater
-/// than or equal to the length of the byte sequence).
-///
-/// Example:
-///
-/// ```moonbit
-/// test "Bytes::op_set" {
-///   let arr = FixedArray::make(3, b'\x00')
-///   let _ = arr.op_set(1, b'\xFF')
-///   inspect!(arr, content="[b'\\x00', b'\\xFF', b'\\x00']")
-/// }
-///
-/// test "panic Bytes::op_set/out_of_bounds" {
-///   let arr = FixedArray::make(3, b'\x00')
-///   ignore(arr.op_set(3, b'\xFF')) // Index out of bounds
-/// }
-/// ```
-///
-/// @alert deprecated "Bytes is about to be changed to immutable, use `FixedArray[Byte]` instead"
-pub fn Bytes::op_set(self : Bytes, idx : Int, val : Byte) -> Unit = "%bytes_set"
-
-///|
 /// Returns the number of bytes in a byte sequence.
 ///
 /// Parameters:

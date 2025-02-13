@@ -711,7 +711,6 @@ impl FixedArray {
 }
 
 impl Bytes {
-  blit(Bytes, Int, Bytes, Int, Int) -> Unit //deprecated
   compare(Bytes, Bytes) -> Int
   copy(Bytes) -> Bytes
   length(Bytes) -> Int
@@ -722,7 +721,6 @@ impl Bytes {
   op_as_view(Bytes, start~ : Int = .., end? : Int) -> BytesView
   op_equal(Bytes, Bytes) -> Bool
   op_get(Bytes, Int) -> Byte
-  op_set(Bytes, Int, Byte) -> Unit //deprecated
   sub_string(Bytes, Int, Int) -> String //deprecated
   to_string(Bytes) -> String //deprecated
   to_unchecked_string(Bytes, offset~ : Int = .., length~ : Int = ..) -> String
