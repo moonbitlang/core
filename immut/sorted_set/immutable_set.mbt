@@ -23,7 +23,9 @@ pub fn new[A]() -> T[A] {
 }
 
 ///|
-pub impl[A] Default for T[A] with default() { Empty }
+pub impl[A] Default for T[A] with default() {
+  Empty
+}
 
 ///|
 /// Returns the one-value ImmutableSet containing only `value`.

@@ -42,7 +42,9 @@ fn xxhash32(input : Bytes, seed : Int) -> Int {
 }
 
 ///|
-pub impl Hash for Bytes with hash(self) { xxhash32(self, 0) }
+pub impl Hash for Bytes with hash(self) {
+  xxhash32(self, 0)
+}
 
 ///|
 pub impl Hash for Bytes with hash_combine(self, hasher) {

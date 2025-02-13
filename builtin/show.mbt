@@ -13,7 +13,9 @@
 // limitations under the License.
 
 ///|
-pub impl Show for Unit with output(_self, logger) { logger.write_string("()") }
+pub impl Show for Unit with output(_self, logger) {
+  logger.write_string("()")
+}
 
 ///|
 pub impl Show for Bool with output(self, logger) {
@@ -170,7 +172,9 @@ pub impl Show for String with output(self, logger) {
 /// inspect!(str.to_string(), content="Hello \n")
 /// inspect!(str.escape(), content="\"Hello \\n\"")
 /// ```
-pub impl Show for String with to_string(self) { self }
+pub impl Show for String with to_string(self) {
+  self
+}
 
 ///|
 pub impl Show for Failure with output(self, logger) {

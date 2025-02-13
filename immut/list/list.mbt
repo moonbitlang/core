@@ -1065,7 +1065,9 @@ pub fn intercalate[A](self : T[T[A]], sep : T[A]) -> T[A] {
 }
 
 ///|
-pub impl[X] Default for T[X] with default() { Nil }
+pub impl[X] Default for T[X] with default() {
+  Nil
+}
 
 ///|
 /// The empty list

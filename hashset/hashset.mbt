@@ -336,7 +336,9 @@ pub impl[K : Show] Show for T[K] with output(self, logger) {
 priv type MyString String derive(Eq)
 
 ///|
-impl Hash for MyString with hash(self) { self._.length() }
+impl Hash for MyString with hash(self) {
+  self._.length()
+}
 
 ///|
 impl Hash for MyString with hash_combine(self, hasher) {
@@ -344,7 +346,9 @@ impl Hash for MyString with hash_combine(self, hasher) {
 }
 
 ///|
-impl Show for MyString with output(self, logger) { logger.write_string(self._) }
+impl Show for MyString with output(self, logger) {
+  logger.write_string(self._)
+}
 
 ///|
 test "set" {
