@@ -183,7 +183,9 @@ pub fn Byte::to_string(self : Byte) -> String {
 ///   inspect!(Hash::hash(b), content="66") // ASCII value of 'B'
 /// }
 /// ```
-pub impl Hash for Byte with hash(self) { self.to_int() }
+pub impl Hash for Byte with hash(self) {
+  self.to_int()
+}
 
 ///|
 /// Implements the `Hash` trait for `Byte` type by providing a `hash_combine`

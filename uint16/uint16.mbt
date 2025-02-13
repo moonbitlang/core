@@ -49,7 +49,9 @@ pub fn compare(self : UInt16, that : UInt16) -> Int {
 }
 
 ///|
-pub impl Hash for UInt16 with hash(self) { self.to_int() }
+pub impl Hash for UInt16 with hash(self) {
+  self.to_int()
+}
 
 ///|
 pub impl Hash for UInt16 with hash_combine(self, hasher) {

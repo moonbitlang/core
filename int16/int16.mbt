@@ -49,7 +49,9 @@ pub fn compare(self : Int16, that : Int16) -> Int {
 }
 
 ///|
-pub impl Hash for Int16 with hash(self) { self.to_int() }
+pub impl Hash for Int16 with hash(self) {
+  self.to_int()
+}
 
 ///|
 pub impl Hash for Int16 with hash_combine(self, hasher) {

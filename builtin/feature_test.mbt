@@ -27,10 +27,14 @@ trait Range {
 }
 
 ///|
-impl Range for Int with range(lo, hi) { { lo, hi } }
+impl Range for Int with range(lo, hi) {
+  { lo, hi }
+}
 
 ///|
-impl Range for String with range(lo, hi) { { lo, hi } }
+impl Range for String with range(lo, hi) {
+  { lo, hi }
+}
 
 ///|
 fn my_range[T : Range](lo : T, hi : T) -> RangeImpl[T] {

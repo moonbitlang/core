@@ -13,7 +13,9 @@
 // limitations under the License.
 
 ///|
-pub impl[K, V] Default for T[K, V] with default() { new() }
+pub impl[K, V] Default for T[K, V] with default() {
+  new()
+}
 
 ///|
 pub impl[K : Eq, V : Eq] Eq for T[K, V] with op_equal(self, other) -> Bool {

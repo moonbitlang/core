@@ -24,22 +24,34 @@ pub(open) trait FromStr {
 }
 
 ///|
-pub impl FromStr for Bool with from_string(str) { parse_bool!(str) }
+pub impl FromStr for Bool with from_string(str) {
+  parse_bool!(str)
+}
 
 ///|
-pub impl FromStr for Int with from_string(str) { parse_int!(str) }
+pub impl FromStr for Int with from_string(str) {
+  parse_int!(str)
+}
 
 ///|
-pub impl FromStr for Int64 with from_string(str) { parse_int64!(str) }
+pub impl FromStr for Int64 with from_string(str) {
+  parse_int64!(str)
+}
 
 ///|
-pub impl FromStr for UInt with from_string(str) { parse_uint!(str) }
+pub impl FromStr for UInt with from_string(str) {
+  parse_uint!(str)
+}
 
 ///|
-pub impl FromStr for UInt64 with from_string(str) { parse_uint64!(str) }
+pub impl FromStr for UInt64 with from_string(str) {
+  parse_uint64!(str)
+}
 
 ///|
-pub impl FromStr for Double with from_string(str) { parse_double!(str) }
+pub impl FromStr for Double with from_string(str) {
+  parse_double!(str)
+}
 
 ///|
 pub fn parse[A : FromStr](str : String) -> A!StrConvError {
