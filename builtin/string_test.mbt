@@ -77,13 +77,13 @@ test "charcode_at with valid index" {
 ///|
 test "codepoint_at regular character at end of string" {
   let s = "Hello"
-  inspect!(codepoint_at(s, 4), content="'o'")
+  inspect!(codepoint_at(s, 4), content="o")
 }
 
 ///|
 test "codepoint_at emoji" {
   let s = "👋"
-  inspect!(codepoint_at(s, 0), content="'👋'")
+  inspect!(codepoint_at(s, 0), content="👋")
 }
 
 ///|

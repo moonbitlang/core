@@ -197,38 +197,24 @@ test "Show for ArrayView" {
 
 ///|
 test "Show for Char" {
-  inspect!(Show::to_string('a'), content="'a'")
-  inspect!(Show::to_string('字'), content="'字'")
+  inspect!(Show::to_string('a'), content="a")
+  inspect!(Show::to_string('字'), content="字")
   inspect!(
     Show::to_string('\n'),
     content=
-      #|'\n'
+      #|
+      #|
     ,
   )
-  inspect!(
-    Show::to_string('\t'),
-    content=
-      #|'\t'
-    ,
-  )
+  inspect!(Show::to_string('\t'), content="\t")
   inspect!(
     Show::to_string('"'),
     content=
-      #|'"'
+      #|"
     ,
   )
-  inspect!(
-    Show::to_string('\''),
-    content=
-      #|'\''
-    ,
-  )
-  inspect!(
-    Show::to_string('\\'),
-    content=
-      #|'\\'
-    ,
-  )
+  inspect!(Show::to_string('\''), content="'")
+  inspect!(Show::to_string('\\'), content="\\")
   inspect!('a'.to_string(), content="a")
   inspect!('字'.to_string(), content="字")
   inspect!(
@@ -257,6 +243,6 @@ test "char show hex digits" {
 
 ///|
 test "char_special" {
-  inspect!('\r', content="'\\r'")
-  inspect!('\b', content="'\\b'")
+  inspect!('\r', content="\r")
+  inspect!('\b', content="\u{8}")
 }
