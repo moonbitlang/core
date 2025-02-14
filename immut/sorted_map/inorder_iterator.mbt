@@ -36,8 +36,8 @@ fn InorderIterator::move_left[K, V](
 
 ///|
 fn InorderIterator::next[K, V](self : InorderIterator[K, V]) -> (K, V)? {
-  guard let Some(curr) = self._.pop() else { _ => return None }
-  guard let Tree(key, _, right, value~, ..) = curr
+  guard self._.pop() is Some(curr) else { return None }
+  guard curr is Tree(key, _, right, value~, ..)
   self.move_left(right)
   Some((key, value))
 }
