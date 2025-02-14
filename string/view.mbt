@@ -54,10 +54,10 @@ type StringIndex Int derive(Show, Eq)
 /// 
 /// ```
 /// let str = "🤣🤣🤣"
-/// guard let Some(offset) = str.index_at(1)                // Skip 1 character
+/// let offset = str.index_at(1).unwrap()                // Skip 1 character
 /// inspect!(offset, content="StringIndex(2)")              // Points to second emoji
 /// 
-/// guard let Some(offset) = str.index_at(start=offset, 1)  // Skip 2 characters
+/// let offset = str.index_at(start=offset, 1).unwrap()  // Skip 2 characters
 /// inspect!(offset, content="StringIndex(4)")              // Points to third emoji
 ///
 /// let offset = str.index_at(4)                            // Skip 4 characters
@@ -107,12 +107,12 @@ pub fn index_at(
 /// 
 /// ```
 /// let str = "🤣🤣🤣"
-/// guard let Some(offset) = str.index_at_rev(0)
-/// inspect!(offset, content="StringIndex(6)")
-/// guard let Some(offset) = str.index_at_rev(1)
+/// let offset = str.index_at_rev(0)
+/// inspect!(offset, content="Some(StringIndex(6))")
+/// let offset = str.index_at_rev(1).unwrap()
 /// inspect!(offset, content="StringIndex(4)")
-/// guard let Some(offset) = str.index_at_rev(2, end = offset)
-/// inspect!(offset, content="StringIndex(0)")
+/// let offset = str.index_at_rev(2, end = offset)
+/// inspect!(offset, content="Some(StringIndex(0))")
 /// let offset = str.index_at_rev(4)
 /// inspect!(offset, content="None")
 /// ```
