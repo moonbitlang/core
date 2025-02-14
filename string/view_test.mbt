@@ -79,16 +79,16 @@ test "stringview subview" {
 test "stringview op_get" {
   let str = "Hello🤣🤣🤣"
   let view = str[1:6]
-  inspect!(view[0], content="'e'")
-  inspect!(view[4], content="'🤣'")
+  inspect!(view[0], content="e")
+  inspect!(view[4], content="🤣")
 }
 
 ///|
 test "stringview rev_get" {
   let str = "Hello🤣🤣🤣"
   let view = str[1:6]
-  inspect!(view.rev_get(0), content="'🤣'")
-  inspect!(view.rev_get(4), content="'e'")
+  inspect!(view.rev_get(0), content="🤣")
+  inspect!(view.rev_get(4), content="e")
 }
 
 ///|

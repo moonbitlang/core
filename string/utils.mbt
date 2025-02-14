@@ -56,5 +56,5 @@ test "code_point_of_surrogate_pair" {
   let s = "😀"
   let leading = s.charcode_at(0)
   let trailing = s.charcode_at(1)
-  inspect!(code_point_of_surrogate_pair(leading, trailing), content="'😀'")
+  inspect!(code_point_of_surrogate_pair(leading, trailing), content="😀")
 }
