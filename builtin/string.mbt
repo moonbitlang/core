@@ -88,8 +88,8 @@ pub fn charcode_at(self : String, index : Int) -> Int {
 ///
 /// ```
 /// let s = "Hello🤣";
-/// inspect!(s.codepoint_at(0), content="'H'");
-/// inspect!(s.codepoint_at(5), content="'🤣'"); // Returns full emoji character
+/// inspect!(s.codepoint_at(0), content="H");
+/// inspect!(s.codepoint_at(5), content="🤣"); // Returns full emoji character
 /// ```
 ///
 /// # Panics

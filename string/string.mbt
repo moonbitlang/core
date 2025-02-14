@@ -684,8 +684,8 @@ pub fn pad_end(self : String, total_width : Int, padding_char : Char) -> String 
 ///
 /// ```moonbit
 /// let s = "Hello🤣🤣🤣"
-/// inspect!(s.rev_get(0), content="'🤣'")
-/// inspect!(s.rev_get(4), content="'l'")
+/// inspect!(s.rev_get(0), content="🤣")
+/// inspect!(s.rev_get(4), content="l")
 /// ```
 ///
 /// # Panics
