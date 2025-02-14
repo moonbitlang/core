@@ -106,8 +106,8 @@ fn InorderIterator::move_left[A](
 
 ///|
 fn InorderIterator::next[A](self : InorderIterator[A]) -> A? {
-  guard let Some(curr) = self._.pop() else { _ => return None }
-  guard let Node(right~, value~, ..) = curr
+  guard self._.pop() is Some(curr) else { return None }
+  guard curr is Node(right~, value~, ..)
   self.move_left(right)
   Some(value)
 }
