@@ -1323,7 +1323,7 @@ pub fn Char::compare(self : Char, other : Char) -> Int = "%char_compare"
 ///
 /// ```moonbit
 /// test "Char::default" {
-///   inspect!(Char::default(), content="'\\x00'")
+///   assert_true!(Char::default().to_string() == "\x00")
 /// }
 /// ```
 pub fn Char::default() -> Char = "%char_default"
@@ -1785,8 +1785,8 @@ pub fn String::charcode_length(self : String) -> Int = "%string_length"
 /// ```moonbit
 /// test "String::op_get" {
 ///   let s = "Hello, 世界!"
-///   inspect!(s[0], content="'H'")
-///   inspect!(s[7], content="'世'")
+///   inspect!(s[0], content="H")
+///   inspect!(s[7], content="世")
 /// }
 ///
 /// test "panic String::op_get/out_of_bounds" {
@@ -1816,8 +1816,8 @@ pub fn String::op_get(self : String, idx : Int) -> Char = "%string_get"
 /// ```moonbit
 /// test "String::get" {
 ///   let s = "Hello, 世界"
-///   inspect!(s.get(0), content="'H'")
-///   inspect!(s.get(7), content="'世'")
+///   inspect!(s.get(0), content="H")
+///   inspect!(s.get(7), content="世")
 /// }
 ///
 /// test "panic String::get/out_of_bounds" {
