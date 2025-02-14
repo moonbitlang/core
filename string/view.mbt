@@ -303,8 +303,8 @@ pub fn View::op_as_view(self : View, start~ : Int = 0, end? : Int) -> View {
 /// ```
 /// let str = "Hello🤣🤣🤣"
 /// let view = str[1:6]
-/// inspect!(view[0], content="'e'")
-/// inspect!(view[4], content="'🤣'")
+/// inspect!(view[0], content="e")
+/// inspect!(view[4], content="🤣")
 /// ```
 pub fn View::op_get(self : View, index : Int) -> Char {
   guard index >= 0 else {
@@ -355,8 +355,8 @@ pub fn View::op_get(self : View, index : Int) -> Char {
 /// ```
 /// let str = "Hello🤣🤣🤣"
 /// let view = str[1:6]
-/// inspect!(view.rev_get(0), content="'🤣'")
-/// inspect!(view.rev_get(4), content="'e'")
+/// inspect!(view.rev_get(0), content="🤣")
+/// inspect!(view.rev_get(4), content="e")
 /// ```
 pub fn rev_get(self : View, index : Int) -> Char {
   guard index >= 0 else {
