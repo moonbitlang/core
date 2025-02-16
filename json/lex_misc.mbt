@@ -76,8 +76,8 @@ fn ParseContext::lex_after_property_name(ctx : ParseContext) -> Unit!ParseError 
 fn ParseContext::lex_after_object_value(ctx : ParseContext) -> Token!ParseError {
   ctx.lex_skip_whitespace()
   match ctx.read_char() {
-    Some('}') => Token::RBrace
-    Some(',') => Token::Comma
+    Some('}') => RBrace
+    Some(',') => Comma
     Some(_) => ctx.invalid_char!(shift=-1)
     None => raise InvalidEof
   }
@@ -89,12 +89,14 @@ fn ParseContext::lex_assert_char(
   c : Char
 ) -> Unit!ParseError {
   match ctx.read_char() {
-    Some(c2) => if c == c2 { () } else { ctx.invalid_char!(shift=-1) }
+    Some(c2) => if c != c2 { ctx.invalid_char!(shift=-1) }
     None => raise InvalidEof
   }
 }
 
 ///|
+/// In the context of `{`, try to lex token `}` or a property name,
+/// otherwise raise an error.
 fn ParseContext::lex_property_name(ctx : ParseContext) -> Token!ParseError {
   ctx.lex_skip_whitespace()
   match ctx.read_char() {
@@ -109,6 +111,9 @@ fn ParseContext::lex_property_name(ctx : ParseContext) -> Token!ParseError {
 }
 
 ///|
+/// In the context of `{ ...,` try to lex a property name,
+/// otherwise raise an error.
+/// since it is in comma context, `}` is not allowed.
 fn ParseContext::lex_property_name2(ctx : ParseContext) -> Token!ParseError {
   ctx.lex_skip_whitespace()
   match ctx.read_char() {
