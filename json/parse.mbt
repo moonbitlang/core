@@ -36,7 +36,7 @@ pub fn parse(input : String) -> JsonValue!ParseError {
 
 ///|
 fn ParseContext::parse_value(ctx : ParseContext) -> JsonValue!ParseError {
-  let tok = ctx.lex_value!()
+  let tok = ctx.lex_value!(allow_rbracket=false)
   ctx.parse_value2!(tok)
 }
 
