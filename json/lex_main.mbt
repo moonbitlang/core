@@ -41,22 +41,22 @@ fn ParseContext::lex_value(
           ctx.invalid_char!(shift=-1)
         }
       Some('n') => {
-        ctx.lex_assert_char!('u')
-        ctx.lex_assert_char!('l')
-        ctx.lex_assert_char!('l')
+        ctx.expect_char!('u')
+        ctx.expect_char!('l')
+        ctx.expect_char!('l')
         return Null
       }
       Some('t') => {
-        ctx.lex_assert_char!('r')
-        ctx.lex_assert_char!('u')
-        ctx.lex_assert_char!('e')
+        ctx.expect_char!('r')
+        ctx.expect_char!('u')
+        ctx.expect_char!('e')
         return True
       }
       Some('f') => {
-        ctx.lex_assert_char!('a')
-        ctx.lex_assert_char!('l')
-        ctx.lex_assert_char!('s')
-        ctx.lex_assert_char!('e')
+        ctx.expect_char!('a')
+        ctx.expect_char!('l')
+        ctx.expect_char!('s')
+        ctx.expect_char!('e')
         return False
       }
       Some('-') =>
