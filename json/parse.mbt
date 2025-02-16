@@ -53,7 +53,7 @@ fn ParseContext::parse_value2(
     String(s) => String(s)
     LBrace => ctx.parse_object!()
     LBracket => ctx.parse_array!()
-    _ => abort("unreachable")
+    RBracket | RBrace | Comma => abort("unreachable")
   }
 }
 
