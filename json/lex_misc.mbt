@@ -45,32 +45,29 @@ const SURROGATE_HIGH_CHAR = 0xDFFF
 /// if it is, consume the character and return `()`,
 /// otherwise raise an error, when it is an error, the position is unspecified.
 fn ParseContext::expect_char(ctx : ParseContext, c : Char) -> Unit!ParseError {
-  if ctx.offset < ctx.end_offset {
-    let c1 = ctx.input[ctx.offset].to_int()
-    ctx.offset += 1
-    let c0 = c.to_int()
-    if c0 < SURROGATE_LOW_CHAR || c0 is (0xE000..=0XFFFF) {
-      // c0 is BMP code point
-      if c0 != c1 {
-        ctx.invalid_char!(shift=-1)
-      }
-    } else {
-      // c0 is not bmp code point
-      // c1 has to be surrogate pair otherwise it is invalid
-      guard c1 is (SURROGATE_LOW_CHAR..=SURROGATE_HIGH_CHAR) &&
-        ctx.offset < ctx.end_offset else {
-        ctx.invalid_char!(shift=-1)
-      }
-      let c2 = ctx.input[ctx.offset].to_int()
-      let c3 = (c1 << 10) + c2 - 0x35fdc00
-      if c3 != c0 {
-        ctx.invalid_char!(shift=-1)
-      } else {
-        ctx.offset += 1 // consume and move forward
-      }
+  guard ctx.offset < ctx.end_offset else { raise InvalidEof }
+  let c1 = ctx.input[ctx.offset].to_int()
+  ctx.offset += 1
+  let c0 = c.to_int()
+  if c0 < SURROGATE_LOW_CHAR || c0 is (0xE000..=0XFFFF) {
+    // c0 is BMP code point
+    if c0 != c1 {
+      ctx.invalid_char!(shift=-1)
     }
   } else {
-    raise InvalidEof
+    // c0 is not bmp code point
+    // c1 has to be surrogate pair otherwise it is invalid
+    guard c1 is (SURROGATE_LOW_CHAR..=SURROGATE_HIGH_CHAR) &&
+      ctx.offset < ctx.end_offset else {
+      ctx.invalid_char!(shift=-1)
+    }
+    let c2 = ctx.input[ctx.offset].to_int()
+    let c3 = (c1 << 10) + c2 - 0x35fdc00
+    if c3 != c0 {
+      ctx.invalid_char!(shift=-1)
+    } else {
+      ctx.offset += 1 // consume and move forward
+    }
   }
 }
 
