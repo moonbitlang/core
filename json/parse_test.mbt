@@ -347,9 +347,18 @@ test "parse multi-lines json error" {
   inspect!(result, content="Err(Invalid character 'a' at line 3, column 6)")
 }
 
+///|
 test "parser error" {
-  inspect!(@json.parse?("]"), content="Err(Invalid character ']' at line 1, column 0)")
-  inspect!(@json.parse?("}"), content="Err(Invalid character '}' at line 1, column 0)")
-  inspect!(@json.parse?(","), content="Err(Invalid character ',' at line 1, column 0)")
-
+  inspect!(
+    @json.parse?("]"),
+    content="Err(Invalid character ']' at line 1, column 0)",
+  )
+  inspect!(
+    @json.parse?("}"),
+    content="Err(Invalid character '}' at line 1, column 0)",
+  )
+  inspect!(
+    @json.parse?(","),
+    content="Err(Invalid character ',' at line 1, column 0)",
+  )
 }
