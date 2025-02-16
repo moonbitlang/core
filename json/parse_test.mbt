@@ -361,4 +361,10 @@ test "parser error" {
     @json.parse?(","),
     content="Err(Invalid character ',' at line 1, column 0)",
   )
+  // inspect!(
+  //   // test first char is emoji
+  //   @json.parse?("\u{1F600}"),
+
+  //   content="Err(Invalid character '�' at line 1, column 1)",
+  // )
 }
