@@ -34,6 +34,89 @@ fn ParseContext::read_char(ctx : ParseContext) -> Char? {
   }
 }
 
+///| low surrogate
+const SURROGATE_LOW_CHAR = 0xD800
+
+///| high surrogate
+const SURROGATE_HIGH_CHAR = 0xDFFF
+
+///|
+/// `ctx.expect_char(c)` check the current context is c,
+/// if it is, consume the character and return `()`,
+/// otherwise raise an error, when it is an error, the position is unspecified.
+fn ParseContext::expect_char(ctx : ParseContext, c : Char) -> Unit!ParseError {
+  if ctx.offset < ctx.end_offset {
+    let c1 = ctx.input[ctx.offset].to_int()
+    ctx.offset += 1
+    let c0 = c.to_int()
+    if c0 < SURROGATE_LOW_CHAR || c0 is (0xE000..=0XFFFF) {
+      // c0 is BMP code point
+      if c0 != c1 {
+        ctx.invalid_char!(shift=-1)
+      }
+    } else {
+      // c0 is not bmp code point
+      // c1 has to be surrogate pair otherwise it is invalid
+      guard c1 is (SURROGATE_LOW_CHAR..=SURROGATE_HIGH_CHAR) &&
+        ctx.offset < ctx.end_offset else {
+        ctx.invalid_char!(shift=-1)
+      }
+      let c2 = ctx.input[ctx.offset].to_int()
+      let c3 = (c1 << 10) + c2 - 0x35fdc00
+      if c3 != c0 {
+        ctx.invalid_char!(shift=-1)
+      } else {
+        ctx.offset += 1 // consume and move forward
+      }
+    }
+  } else {
+    raise InvalidEof
+  }
+}
+
+///|
+/// `ctx.expect_ascii_char(c)` check the current context is c,
+/// 
+fn ParseContext::expect_ascii_char(
+  ctx : ParseContext,
+  c : Byte
+) -> Unit!ParseError {
+  guard ctx.offset < ctx.end_offset else { raise InvalidEof }
+  let c1 = ctx.input[ctx.offset].to_int()
+  ctx.offset += 1
+  if c.to_int() != c1 {
+    ctx.invalid_char!(shift=-1)
+  }
+}
+
+///|
+test "expect_char" {
+  let ctx = ParseContext::make("abc")
+  ctx.expect_char!('a')
+  ctx.expect_char!('b')
+  ctx.expect_char!('c')
+  inspect!(
+    ctx.expect_char?('d').to_string(),
+    content="Err(Unexpected end of file)",
+  )
+}
+
+///|
+test "expect_char with surrogate pair" {
+  // "\uD83D\uDE00" // todo: shall we allow this?
+  let ctx = ParseContext::make("a\uD83D\uDE00bc\uD83D\uDE00c")
+  ctx.expect_char!('a')
+  ctx.expect_char!(Char::from_int(0x1F600))
+  ctx.expect_char!('b')
+  ctx.expect_char!('c')
+  ctx.expect_char!(Char::from_int(0x1F600))
+  ctx.expect_char!('c')
+  inspect!(
+    ctx.expect_char?('d').to_string(),
+    content="Err(Unexpected end of file)",
+  )
+}
+
 ///|
 fn ParseContext::lex_skip_whitespace(ctx : ParseContext) -> Unit {
   for {
@@ -79,17 +162,6 @@ fn ParseContext::lex_after_object_value(ctx : ParseContext) -> Token!ParseError 
     Some('}') => RBrace
     Some(',') => Comma
     Some(_) => ctx.invalid_char!(shift=-1)
-    None => raise InvalidEof
-  }
-}
-
-///|
-fn ParseContext::lex_assert_char(
-  ctx : ParseContext,
-  c : Char
-) -> Unit!ParseError {
-  match ctx.read_char() {
-    Some(c2) => if c != c2 { ctx.invalid_char!(shift=-1) }
     None => raise InvalidEof
   }
 }
