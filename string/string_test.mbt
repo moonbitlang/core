@@ -579,3 +579,25 @@ test "length_eq" {
   assert_true!(str.length_eq(8))
   assert_false!(str.length_eq(9))
 }
+
+///|
+test {
+  enum Token {
+    True
+    False
+    Other
+  } derive(Show)
+  fn process_string(s : String) {
+    match s {
+      [.."true", ..] => True
+      [.."false", ..] => False
+      _ => Other
+    }
+  }
+
+  inspect!(process_string("truexx"), content="True")
+  // more tests
+  inspect!(process_string("false xx"), content="False")
+  inspect!(process_string("true"), content="True")
+  inspect!(process_string(""), content="Other")
+}
