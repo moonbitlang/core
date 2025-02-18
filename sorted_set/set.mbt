@@ -17,13 +17,13 @@
 ///|
 /// Construct a empty set.
 pub fn new[V]() -> T[V] {
-  { root: None, size: 0L }
+  { root: None, size: 0 }
 }
 
 ///|
 /// Returns the one-value set containing only `value`.
 pub fn singleton[V : Compare](value : V) -> T[V] {
-  { root: Some({ value, left: None, right: None, height: 1 }), size: 1L }
+  { root: Some({ value, left: None, right: None, height: 1 }), size: 1 }
 }
 
 ///|
@@ -108,7 +108,7 @@ pub fn add[V : Compare](self : T[V], value : V) -> Unit {
     self.root = new_root
   }
   if inserted {
-    self.size += 1L
+    self.size += 1
   }
 }
 
@@ -122,7 +122,7 @@ pub fn remove[V : Compare](self : T[V], value : V) -> Unit {
         self.root = new_root
       }
       if deleted {
-        self.size -= 1L
+        self.size -= 1
       }
     }
   }
@@ -171,10 +171,10 @@ pub fn union[V : Compare](self : T[V], src : T[V]) -> T[V] {
       let t1 = copy_tree(self.root)
       let t2 = copy_tree(src.root)
       let t = aux(t1, t2)
-      let mut ct = 0L
-      let ret = { root: t, size: 0L }
+      let mut ct = 0
+      let ret = { root: t, size: 0 }
       // TODO: optimize this. Avoid counting the size of the set.
-      ret.each(fn(_x) { ct = ct + 1L })
+      ret.each(fn(_x) { ct = ct + 1 })
       ret.size = ct
       ret
     }
@@ -334,7 +334,7 @@ pub fn is_empty[V : Compare](self : T[V]) -> Bool {
 
 ///|
 /// Returns the number of elements in the MutableSet.
-pub fn size[V : Compare](self : T[V]) -> Int64 {
+pub fn size[V : Compare](self : T[V]) -> Int {
   self.size
 }
 
@@ -373,7 +373,7 @@ pub fn to_array[V](self : T[V]) -> Array[V] {
     []
   } else {
     let padding = self.root.unwrap().value
-    let arr = Array::make(self.size.to_int(), padding)
+    let arr = Array::make(self.size, padding)
     let mut i = 0
     fn dfs(root : Node[V]?) -> Unit {
       match root {
@@ -846,7 +846,7 @@ test "add duplicate value" {
   set.add(1)
   set.add(1)
   assert_eq!(set.contains(1), true)
-  assert_eq!(set.size(), 1L)
+  assert_eq!(set.size(), 1)
   inspect!(set.debug_tree(), content="([1]1,_,_)")
 }
 
@@ -859,7 +859,7 @@ test "add multiple values" {
   assert_eq!(set.contains(1), true)
   assert_eq!(set.contains(2), true)
   assert_eq!(set.contains(3), true)
-  assert_eq!(set.size(), 3L)
+  assert_eq!(set.size(), 3)
   inspect!(set.debug_tree(), content="([2]2,([1]1,_,_),([1]3,_,_))")
 }
 
