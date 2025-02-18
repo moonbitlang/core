@@ -27,7 +27,6 @@ impl StringView {
 impl Show for StringView
 
 impl String {
-  compare(String, String) -> Int
   concat(Array[String], separator~ : String = ..) -> String
   contains(String, String) -> Bool
   contains_char(String, Char) -> Bool
@@ -69,6 +68,7 @@ impl String {
   trim_space(String) -> String
   trim_start(String, String) -> String
 }
+impl Compare for String
 
 // Type aliases
 pub typealias View = StringView

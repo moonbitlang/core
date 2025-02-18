@@ -13,7 +13,7 @@
 // limitations under the License.
 
 ///|
-pub fn UInt64::default() -> UInt64 {
+pub impl Default for UInt64 with default() {
   0
 }
 

@@ -30,7 +30,6 @@ impl T {
   intersection[V : Compare](Self[V], Self[V]) -> Self[V]
   is_empty[V : Compare](Self[V]) -> Bool
   iter[V](Self[V]) -> Iter[V]
-  op_equal[V : Compare](Self[V], Self[V]) -> Bool
   range[V : Compare](Self[V], V, V) -> Iter[V]
   remove[V : Compare](Self[V], V) -> Unit
   size[V : Compare](Self[V]) -> Int
@@ -38,6 +37,7 @@ impl T {
   to_array[V](Self[V]) -> Array[V]
   union[V : Compare](Self[V], Self[V]) -> Self[V]
 }
+impl[V : Compare] Eq for T[V]
 impl[V : Show] Show for T[V]
 impl[X : @quickcheck.Arbitrary + Compare] @quickcheck.Arbitrary for T[X]
 

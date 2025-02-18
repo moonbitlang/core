@@ -23,7 +23,7 @@ priv struct Entry[K, V] {
 } derive(Show)
 
 ///|
-fn Entry::op_equal[K : Eq, V](self : Entry[K, V], other : Entry[K, V]) -> Bool {
+impl[K : Eq, V] Eq for Entry[K, V] with op_equal(self, other) {
   self.hash == other.hash && self.key == other.key
 }
 
@@ -535,7 +535,7 @@ pub fn Map::to_array[K, V](self : Map[K, V]) -> Array[(K, V)] {
 }
 
 ///|
-pub fn Map::op_equal[K : Hash + Eq, V : Eq](
+pub impl[K : Hash + Eq, V : Eq] Eq for Map[K, V] with op_equal(
   self : Map[K, V],
   that : Map[K, V]
 ) -> Bool {

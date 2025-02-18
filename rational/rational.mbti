@@ -14,7 +14,6 @@ type T
 impl T {
   abs(Self) -> Self
   ceil(Self) -> Int64
-  compare(Self, Self) -> Int
   floor(Self) -> Int64
   fract(Self) -> Self
   from_double(Double) -> Self!RationalError //deprecated
@@ -23,13 +22,14 @@ impl T {
   new(Int64, Int64) -> Self? //deprecated
   op_add(Self, Self) -> Self
   op_div(Self, Self) -> Self
-  op_equal(Self, Self) -> Bool
   op_mul(Self, Self) -> Self
   op_sub(Self, Self) -> Self
   reciprocal(Self) -> Self
   to_double(Self) -> Double
   trunc(Self) -> Int64
 }
+impl Compare for T
+impl Eq for T
 impl Show for T
 impl @moonbitlang/core/quickcheck.Arbitrary for T
 

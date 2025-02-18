@@ -30,7 +30,7 @@ pub fn add_key(self : JsonPath, key : String) -> JsonPath {
 }
 
 ///|
-pub fn output(self : JsonPath, logger : &Logger) -> Unit {
+pub impl Show for JsonPath with output(self, logger) {
   match self {
     Root => logger.write_string("$")
     Key(p, key~) => logger..write_object(p)..write_string(".").write_string(key)

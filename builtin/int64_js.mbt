@@ -254,7 +254,7 @@ fn MyInt64::popcnt(self : MyInt64) -> Int {
 }
 
 ///|
-fn MyInt64::op_equal(self : MyInt64, other : MyInt64) -> Bool {
+impl Eq for MyInt64 with op_equal(self : MyInt64, other : MyInt64) -> Bool {
   self.hi == other.hi && self.lo == other.lo
 }
 
@@ -482,12 +482,12 @@ pub fn Int64::popcnt(self : Int64) -> Int {
 }
 
 ///|
-pub fn Int64::op_equal(self : Int64, other : Int64) -> Bool {
+pub impl Eq for Int64 with op_equal(self : Int64, other : Int64) -> Bool {
   MyInt64::from_int64(self) == MyInt64::from_int64(other)
 }
 
 ///|
-pub fn Int64::compare(self : Int64, other : Int64) -> Int {
+pub impl Compare for Int64 with compare(self : Int64, other : Int64) -> Int {
   MyInt64::compare(MyInt64::from_int64(self), MyInt64::from_int64(other))
 }
 
@@ -653,12 +653,12 @@ pub fn UInt64::to_double(self : UInt64) -> Double {
 }
 
 ///|
-pub fn UInt64::compare(self : UInt64, other : UInt64) -> Int {
+pub impl Compare for UInt64 with compare(self : UInt64, other : UInt64) -> Int {
   MyInt64::from_uint64(self).compare_u(MyInt64::from_uint64(other))
 }
 
 ///|
-pub fn UInt64::op_equal(self : UInt64, other : UInt64) -> Bool {
+pub impl Eq for UInt64 with op_equal(self : UInt64, other : UInt64) -> Bool {
   MyInt64::from_uint64(self).op_equal(MyInt64::from_uint64(other))
 }
 

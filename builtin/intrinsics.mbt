@@ -158,7 +158,7 @@ pub fn Bool::not(self : Bool) -> Bool = "%bool_not"
 ///   inspect!(false == false, content="true")
 /// }
 /// ```
-pub fn Bool::op_equal(self : Bool, other : Bool) -> Bool = "%bool_eq"
+pub impl Eq for Bool with op_equal(self : Bool, other : Bool) -> Bool = "%bool_eq"
 
 ///|
 /// Compares two boolean values and returns their relative order. This is a
@@ -218,7 +218,7 @@ pub fn Bool::op_compare(self : Bool, other : Bool) -> Int = "%bool_compare"
 ///   inspect!(true.compare(true), content="0") // true = true
 /// }
 /// ```
-pub fn Bool::compare(self : Bool, other : Bool) -> Int = "%bool_compare"
+pub impl Compare for Bool with compare(self, other) = "%bool_compare"
 
 ///|
 /// Returns the default value for the `Bool` type, which is `false`.
@@ -233,7 +233,7 @@ pub fn Bool::compare(self : Bool, other : Bool) -> Int = "%bool_compare"
 ///   inspect!(b, content="false")
 /// }
 /// ```
-pub fn Bool::default() -> Bool = "%bool_default"
+pub impl Default for Bool with default() = "%bool_default"
 
 // int32 primitive ops
 
@@ -745,7 +745,7 @@ pub fn Int::popcnt(self : Int) -> Int = "%i32_popcnt"
 ///   inspect!(42 == -42, content="false")
 /// }
 /// ```
-pub fn Int::op_equal(self : Int, other : Int) -> Bool = "%i32_eq"
+pub impl Eq for Int with op_equal(self : Int, other : Int) -> Bool = "%i32_eq"
 
 ///|
 /// Compares two integers and returns their relative order.
@@ -772,7 +772,7 @@ pub fn Int::op_equal(self : Int, other : Int) -> Bool = "%i32_eq"
 ///   inspect!(a.compare(a), content="0") // 42 = 42
 /// }
 /// ```
-pub fn Int::compare(self : Int, other : Int) -> Int = "%i32_compare"
+pub impl Compare for Int with compare(self, other) = "%i32_compare"
 
 ///|
 pub fn Int::is_pos(self : Int) -> Bool = "%i32_is_pos"
@@ -819,7 +819,7 @@ pub fn Int::is_non_neg(self : Int) -> Bool = "%i32_is_non_neg"
 ///   inspect!(x, content="0")
 /// }
 /// ```
-pub fn Int::default() -> Int = "%i32_default"
+pub impl Default for Int with default() = "%i32_default"
 
 ///|
 /// Converts a 32-bit integer to a double-precision floating-point number. The
@@ -1109,7 +1109,7 @@ pub fn Double::sqrt(self : Double) -> Double = "%f64_sqrt"
 ///   inspect!(nan == nan, content="false") // Note: NaN equals itself in MoonBit
 /// }
 /// ```
-pub fn Double::op_equal(self : Double, other : Double) -> Bool = "%f64_eq"
+pub impl Eq for Double with op_equal(self : Double, other : Double) -> Bool = "%f64_eq"
 
 ///|
 /// Tests for inequality between two double-precision floating-point numbers.
@@ -1165,7 +1165,7 @@ pub fn Double::op_neq(self : Double, other : Double) -> Bool = "%f64_ne"
 ///   inspect!(a.compare(a), content="0") // 3.14 = 3.14
 /// }
 /// ```
-pub fn Double::compare(self : Double, other : Double) -> Int = "%f64_compare"
+pub impl Compare for Double with compare(self, other) = "%f64_compare"
 
 ///|
 /// Returns the default value for double-precision floating-point numbers (0.0).
@@ -1179,7 +1179,7 @@ pub fn Double::compare(self : Double, other : Double) -> Int = "%f64_compare"
 ///   inspect!(Double::default(), content="0")
 /// }
 /// ```
-pub fn Double::default() -> Double = "%f64_default"
+pub impl Default for Double with default() = "%f64_default"
 
 ///|
 fn Double::to_unchecked_int(self : Double) -> Int = "%f64_to_i32"
@@ -1283,7 +1283,7 @@ pub fn Char::from_int(val : Int) -> Char = "%char_from_int"
 ///   inspect!(a == c, content="false")
 /// }
 /// ```
-pub fn Char::op_equal(self : Char, other : Char) -> Bool = "%char_eq"
+pub impl Eq for Char with op_equal(self : Char, other : Char) -> Bool = "%char_eq"
 
 ///|
 /// Compares two characters based on their Unicode code points. Returns a
@@ -1311,7 +1311,7 @@ pub fn Char::op_equal(self : Char, other : Char) -> Bool = "%char_eq"
 ///   inspect!('a'.compare('a'), content="0")
 /// }
 /// ```
-pub fn Char::compare(self : Char, other : Char) -> Int = "%char_compare"
+pub impl Compare for Char with compare(self, other) = "%char_compare"
 
 ///|
 /// Returns the default value for the `Char` type, which is the null character
@@ -1326,7 +1326,7 @@ pub fn Char::compare(self : Char, other : Char) -> Int = "%char_compare"
 ///   assert_true!(Char::default().to_string() == "\x00")
 /// }
 /// ```
-pub fn Char::default() -> Char = "%char_default"
+pub impl Default for Char with default() = "%char_default"
 
 // Bytes primitive ops
 
@@ -1899,7 +1899,7 @@ pub fn String::op_add(self : String, other : String) -> String = "%string_add"
 ///   inspect!(str1 == str3, content="false")
 /// }
 /// ```
-pub fn String::op_equal(self : String, other : String) -> Bool = "%string_eq"
+pub impl Eq for String with op_equal(self : String, other : String) -> Bool = "%string_eq"
 
 ///|
 /// Returns the string itself without any modifications. This method is primarily
@@ -2166,7 +2166,7 @@ pub fn UInt::op_mod(self : UInt, other : UInt) -> UInt = "%u32.mod"
 ///   inspect!(a == c, content="false")
 /// }
 /// ```
-pub fn UInt::op_equal(self : UInt, other : UInt) -> Bool = "%u32.eq"
+pub impl Eq for UInt with op_equal(self : UInt, other : UInt) -> Bool = "%u32.eq"
 
 ///|
 /// Checks if two unsigned 32-bit integers are not equal.
@@ -2215,7 +2215,7 @@ pub fn UInt::op_neq(self : UInt, other : UInt) -> Bool = "%u32.ne"
 ///   inspect!(a.compare(a), content="0") // 42 = 42
 /// }
 /// ```
-pub fn UInt::compare(self : UInt, other : UInt) -> Int = "%u32.compare"
+pub impl Compare for UInt with compare(self, other) = "%u32.compare"
 
 ///|
 /// Performs a bitwise AND operation between two unsigned 32-bit integers. For
@@ -2777,7 +2777,7 @@ pub fn Float::sqrt(self : Float) -> Float = "%f32.sqrt"
 ///   inspect!(z == z, content="false") // NaN is not equal to itself
 /// }
 /// ```
-pub fn Float::op_equal(self : Float, other : Float) -> Bool = "%f32.eq"
+pub impl Eq for Float with op_equal(self : Float, other : Float) -> Bool = "%f32.eq"
 
 ///|
 /// Tests if two single-precision floating-point numbers are not equal. This
@@ -2831,7 +2831,7 @@ pub fn Float::op_neq(self : Float, other : Float) -> Bool = "%f32.ne"
 ///   inspect!(a.compare(a), content="0") // 3.14 = 3.14
 /// }
 /// ```
-pub fn Float::compare(self : Float, other : Float) -> Int = "%f32.compare"
+pub impl Compare for Float with compare(self, other) = "%f32.compare"
 
 ///|
 /// Converts a 32-bit floating-point number to a double-precision (64-bit)

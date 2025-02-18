@@ -18,9 +18,9 @@ type JsonPath
 impl JsonPath {
   add_index(Self, Int) -> Self
   add_key(Self, String) -> Self
-  output(Self, &Logger) -> Unit
 }
 impl Eq for JsonPath
+impl Show for JsonPath
 
 pub(all) type! ParseError {
   InvalidChar(Position, Char)
@@ -49,10 +49,10 @@ impl Json {
   as_string(Self) -> String?
   item(Self, Int) -> Self?
   stringify(Self, escape_slash~ : Bool = .., indent~ : Int = ..) -> String
-  to_json(Self) -> Self
   value(Self, String) -> Self?
 }
 impl Show for Json
+impl ToJson for Json
 
 // Type aliases
 pub typealias JsonValue = Json

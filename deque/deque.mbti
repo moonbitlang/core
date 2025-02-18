@@ -32,7 +32,6 @@ impl T {
   mapi[A, U](Self[A], (Int, A) -> U) -> Self[U]
   new[A](capacity~ : Int = ..) -> Self[A] //deprecated
   of[A](FixedArray[A]) -> Self[A] //deprecated
-  op_equal[A : Eq](Self[A], Self[A]) -> Bool
   op_get[A](Self[A], Int) -> A
   op_set[A](Self[A], Int, A) -> Unit
   pop_back[A](Self[A]) -> A?
@@ -55,6 +54,7 @@ impl T {
   unsafe_pop_back[A](Self[A]) -> Unit
   unsafe_pop_front[A](Self[A]) -> Unit
 }
+impl[A : Eq] Eq for T[A]
 impl[A : Show] Show for T[A]
 
 // Type aliases
