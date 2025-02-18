@@ -49,8 +49,9 @@ fn ParseContext::expect_char(ctx : ParseContext, c : Char) -> Unit!ParseError {
   let c1 = ctx.input[ctx.offset].to_int()
   ctx.offset += 1
   let c0 = c.to_int()
-  if c0 < SURROGATE_LOW_CHAR || c0 is (0xE000..=0XFFFF) {
-    // c0 is BMP code point
+  if c0 < 0xFFFF {
+    // c0 < SURROGATE_LOW_CHAR || c0 is (0xE000..=0XFFFF)  
+    // c0 is a valid char so only need check if c0<0xFFFF is BMP code point
     if c0 != c1 {
       ctx.invalid_char!(shift=-1)
     }
