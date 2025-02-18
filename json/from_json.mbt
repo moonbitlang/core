@@ -219,8 +219,9 @@ pub impl[Ok : FromJson, Err : FromJson] FromJson for Result[Ok, Err] with from_j
         decode_error!(path, "Result::from_json: expected object with one field")
       }
       match obj {
-        { "Ok": ok } => Ok(FromJson::from_json!(ok, path.add_key("Ok")))
-        { "Err": err } => Err(FromJson::from_json!(err, path.add_key("Err")))
+        { "Ok": ok, .. } => Ok(FromJson::from_json!(ok, path.add_key("Ok")))
+        { "Err": err, .. } =>
+          Err(FromJson::from_json!(err, path.add_key("Err")))
         _ =>
           decode_error!(
             path, "Result::from_json: expected object with Ok or Err field",
