@@ -710,3 +710,11 @@ test "split and then join should be identity" {
   assert_eq!(string, string.split("").map(View::to_string).join(""))
   assert_eq!(string, string.split("a").map(View::to_string).join("a"))
 }
+
+///|
+test "string chars array" {
+  let v0 : String = ['a', .."x"]
+  assert_true!(v0 is "ax")
+  let v : String = ['a', 'b']
+  assert_true!(v is "ab")
+}
