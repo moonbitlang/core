@@ -91,6 +91,33 @@ pub fn dump[T](t : T, name? : String, loc~ : SourceLoc = _) -> T {
 pub(all) type! InspectError String
 
 ///|
+fn base16_encode(s : String) -> String {
+  let buf = StringBuilder::new()
+  let hex = b"0123456789abcdef"
+  for i = 0; i < s.codepoint_length(); i = i + 1 {
+    let c = s.codepoint_at(i).to_int()
+    let byte0 = c & 0xFF
+    let byte1 = (c >> 8) & 0xFF
+    let byte2 = (c >> 16) & 0xFF
+    let byte3 = (c >> 24) & 0xFF
+    buf.write_char(Char::from_int(hex[byte0 / 16].to_int()))
+    buf.write_char(Char::from_int(hex[byte0 % 16].to_int()))
+    buf.write_char(Char::from_int(hex[byte1 / 16].to_int()))
+    buf.write_char(Char::from_int(hex[byte1 % 16].to_int()))
+    buf.write_char(Char::from_int(hex[byte2 / 16].to_int()))
+    buf.write_char(Char::from_int(hex[byte2 % 16].to_int()))
+    buf.write_char(Char::from_int(hex[byte3 / 16].to_int()))
+    buf.write_char(Char::from_int(hex[byte3 % 16].to_int()))
+  }
+  buf.to_string()
+}
+
+///|
+test {
+  inspect!(base16_encode("a中🤣"), content="610000002d4e000023f90100")
+}
+
+///|
 /// Tests if the string representation of an object matches the expected content.
 /// Used primarily in test cases to verify the correctness of `Show`
 /// implementations and program outputs.
@@ -131,8 +158,10 @@ pub fn inspect(
     let args_loc = args_loc.to_json().escape()
     let expect = content.escape()
     let actual = obj.to_string().escape()
+    let expect_base16 = "\"\{base16_encode(content)}\""
+    let actual_base16 = "\"\{base16_encode(obj.to_string())}\""
     raise InspectError(
-      "@EXPECT_FAILED {\"loc\": \{loc}, \"args_loc\": \{args_loc}, \"expect\": \{expect}, \"actual\": \{actual}}",
+      "@EXPECT_FAILED {\"loc\": \{loc}, \"args_loc\": \{args_loc}, \"expect\": \{expect}, \"actual\": \{actual}, \"expect_base16\": \{expect_base16}, \"actual_base16\": \{actual_base16}}",
     )
   }
 }
