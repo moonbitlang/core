@@ -581,7 +581,7 @@ test "length_eq" {
 }
 
 ///|
-test {
+test "string pattern matching" {
   enum Token {
     True
     False
