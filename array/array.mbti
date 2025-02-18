@@ -26,6 +26,12 @@ fn sort_by[T](Array[T], (T, T) -> Int) -> Unit
 
 fn sort_by_key[T, K : Compare](Array[T], (T) -> K) -> Unit
 
+fn zip[A, B](Array[A], Array[B]) -> Array[(A, B)]
+
+fn zip_to_iter2[A, B](Array[A], Array[B]) -> Iter2[A, B]
+
+fn zip_with[A, B, C](Array[A], Array[B], (A, B) -> C) -> Array[C]
+
 // Types and methods
 impl FixedArray {
   all[T](Self[T], (T) -> Bool) -> Bool
@@ -78,6 +84,8 @@ impl Array {
   sort[T : Compare](Self[T]) -> Unit
   sort_by[T](Self[T], (T, T) -> Int) -> Unit
   sort_by_key[T, K : Compare](Self[T], (T) -> K) -> Unit
+  zip[A, B](Self[A], Self[B]) -> Self[(A, B)]
+  zip_to_iter2[A, B](Self[A], Self[B]) -> Iter2[A, B]
 }
 impl[X : @quickcheck.Arbitrary] @quickcheck.Arbitrary for Array[X]
 
