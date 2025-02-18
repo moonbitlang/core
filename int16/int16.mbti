@@ -7,13 +7,13 @@ let min_value : Int16
 
 // Types and methods
 impl Int16 {
-  compare(Int16, Int16) -> Int
   op_add(Int16, Int16) -> Int16
   op_div(Int16, Int16) -> Int16
-  op_equal(Int16, Int16) -> Bool
   op_mul(Int16, Int16) -> Int16
   op_sub(Int16, Int16) -> Int16
 }
+impl Compare for Int16
+impl Eq for Int16
 impl Hash for Int16
 
 // Type aliases

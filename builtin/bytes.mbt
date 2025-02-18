@@ -421,7 +421,7 @@ pub fn FixedArray::set_utf16be_char(
 ///   inspect!(bytes1 == bytes3, content="false")
 /// }
 /// ```
-pub fn Bytes::op_equal(self : Bytes, other : Bytes) -> Bool {
+pub impl Eq for Bytes with op_equal(self : Bytes, other : Bytes) -> Bool {
   if self.length() != other.length() {
     false
   } else {
@@ -470,7 +470,7 @@ pub fn Bytes::op_equal(self : Bytes, other : Bytes) -> Bool {
 ///   inspect!(b.compare(a), content="1") // longer sequence is greater
 /// }
 /// ```
-pub fn Bytes::compare(self : Bytes, other : Bytes) -> Int {
+pub impl Compare for Bytes with compare(self, other) {
   let self_len = self.length()
   let other_len = other.length()
   let cmp = self_len.compare(other_len)

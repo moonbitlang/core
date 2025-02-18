@@ -23,7 +23,7 @@ pub fn op_get[K : Compare, V](self : T[K, V], key : K) -> V? {
 }
 
 ///|
-pub fn op_equal[K : Eq, V : Eq](self : T[K, V], other : T[K, V]) -> Bool {
+pub impl[K : Eq, V : Eq] Eq for T[K, V] with op_equal(self, other) {
   self.to_array() == other.to_array()
 }
 

@@ -145,7 +145,7 @@ pub fn FixedArray::fill[T](self : FixedArray[T], value : T) -> Unit {
 ///   inspect!(arr1.compare(arr1), content="0") // arr1 = arr1
 /// }
 /// ```
-pub fn compare[T : Compare](self : FixedArray[T], other : FixedArray[T]) -> Int {
+pub impl[T : Compare] Compare for FixedArray[T] with compare(self, other) {
   let len_self = self.length()
   let len_other = other.length()
   if len_self < len_other {

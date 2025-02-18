@@ -190,7 +190,7 @@ pub fn new(size_hint~ : Int = 0) -> T {
 ///   )
 /// }
 /// ```
-pub fn write_string(self : T, value : String) -> Unit {
+pub impl Logger for T with write_string(self, value) {
   self.grow_if_necessary(self.len + value.length() * 2)
   self.data.blit_from_string(self.len, value, 0, value.length())
   self.len += value.length() * 2
@@ -614,7 +614,7 @@ pub fn write_bytesview(self : T, value : @bytes.View) -> Unit {
 ///   )
 /// }
 /// ```
-pub fn write_substring(
+pub impl Logger for Buffer with write_substring(
   self : T,
   value : String,
   start : Int,
@@ -646,7 +646,7 @@ pub fn write_substring(
 /// )
 /// }
 /// ```
-pub fn write_char(self : T, value : Char) -> Unit {
+pub impl Logger for Buffer with write_char(self : T, value : Char) -> Unit {
   self.grow_if_necessary(self.len + 4)
   let inc = self.data.set_utf16le_char(self.len, value)
   self.len += inc

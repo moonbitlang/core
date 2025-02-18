@@ -78,7 +78,7 @@ pub fn Byte::op_div(self : Byte, that : Byte) -> Byte {
 /// - `that` : The second `Byte` value to compare.
 ///
 /// Returns `true` if the two `Byte` values are equal, otherwise `false`.
-pub fn Byte::op_equal(self : Byte, that : Byte) -> Bool {
+pub impl Eq for Byte with op_equal(self : Byte, that : Byte) -> Bool {
   self.to_int() == that.to_int()
 }
 
@@ -122,7 +122,7 @@ pub fn Byte::op_sub(self : Byte, that : Byte) -> Byte {
 /// - A value less than 0 indicates that `byte1` is less than `byte2`.
 /// - A value of 0 indicates that `byte1` is equal to `byte2`.
 /// - A value greater than 0 indicates that `byte1` is greater than `byte2`.
-pub fn Byte::compare(self : Byte, that : Byte) -> Int {
+pub impl Compare for Byte with compare(self : Byte, that : Byte) -> Int {
   self.to_int().compare(that.to_int())
 }
 

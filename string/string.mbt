@@ -94,7 +94,7 @@ pub fn concat(strings : Array[String], separator~ : String = "") -> String {
 /// Compare two strings.
 /// String with longer length is bigger.
 /// strings of the same length are compared in lexicalgraphic order.
-pub fn compare(self : String, other : String) -> Int {
+pub impl Compare for String with compare(self, other) {
   let len = self.length()
   match len.compare(other.length()) {
     0 => {

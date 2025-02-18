@@ -28,17 +28,17 @@ pub fn StringBuilder::is_empty(self : StringBuilder) -> Bool {
 }
 
 ///|
-pub fn StringBuilder::write_string(self : StringBuilder, str : String) -> Unit {
+pub impl Logger for StringBuilder with write_string(self, str) {
   self.val += str
 }
 
 ///|
-pub fn StringBuilder::write_char(self : StringBuilder, ch : Char) -> Unit {
+pub impl Logger for StringBuilder with write_char(self, ch) {
   self.val += Char::to_string(ch)
 }
 
 ///|
-pub fn StringBuilder::write_substring(
+pub impl Logger for StringBuilder with write_substring(
   self : StringBuilder,
   str : String,
   start : Int,

@@ -13,10 +13,7 @@
 // limitations under the License.
 
 ///|
-pub fn Result::op_equal[T : Eq, E : Eq](
-  self : Result[T, E],
-  other : Result[T, E]
-) -> Bool {
+pub impl[T : Eq, E : Eq] Eq for Result[T, E] with op_equal(self, other) {
   match (self, other) {
     (Ok(x), Ok(y)) => x == y
     (Err(x), Err(y)) => x == y

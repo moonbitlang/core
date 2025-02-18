@@ -54,7 +54,7 @@ pub impl[A : Show] Show for T[A] with output(self, logger) {
 
 ///|
 /// Tests if two queue cells are equal.
-fn Cell::op_equal[T : Eq](self : Cell[T], other : Cell[T]) -> Bool {
+impl[T : Eq] Eq for Cell[T] with op_equal(self, other) {
   loop self, other {
     Nil, Nil => true
     Cons({ content: x, next: xs }), Cons({ content: y, next: ys }) =>
@@ -69,7 +69,7 @@ fn Cell::op_equal[T : Eq](self : Cell[T], other : Cell[T]) -> Bool {
 
 ///|
 /// Tests if two queues are equal.
-fn op_equal[A : Eq](self : T[A], other : T[A]) -> Bool {
+impl[A : Eq] Eq for T[A] with op_equal(self, other) {
   self.length == other.length && self.first == other.first
 }
 

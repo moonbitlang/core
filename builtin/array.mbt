@@ -241,7 +241,7 @@ pub fn Array::op_set[T](self : Array[T], index : Int, value : T) -> Unit {
 ///   inspect!(arr1 == arr3, content="false")
 /// }
 /// ```
-pub fn Array::op_equal[T : Eq](self : Array[T], other : Array[T]) -> Bool {
+pub impl[T : Eq] Eq for Array[T] with op_equal(self, other) {
   let self_len = self.length()
   let other_len = other.length()
   guard self_len == other_len else { return false }
@@ -285,7 +285,7 @@ pub fn Array::op_equal[T : Eq](self : Array[T], other : Array[T]) -> Bool {
 ///   inspect!(arr1.compare(arr1), content="0") // arr1 = arr1
 /// }
 /// ```
-pub fn Array::compare[T : Compare](self : Array[T], other : Array[T]) -> Int {
+pub impl[T : Compare] Compare for Array[T] with compare(self, other) {
   let len_self = self.length()
   let len_other = other.length()
   let cmp = len_self.compare(len_other)
@@ -1753,6 +1753,6 @@ pub fn Array::iter2[A](self : Array[A]) -> Iter2[Int, A] {
 ///   inspect!(arr.is_empty(), content="true")
 /// }
 /// ```
-pub fn Array::default[T]() -> Array[T] {
+pub impl[T] Default for Array[T] with default() {
   []
 }

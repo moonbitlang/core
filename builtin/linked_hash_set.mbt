@@ -23,7 +23,7 @@ priv struct SEntry[K] {
 } derive(Show)
 
 ///|
-fn SEntry::op_equal[K : Eq](self : SEntry[K], other : SEntry[K]) -> Bool {
+impl[K : Eq] Eq for SEntry[K] with op_equal(self, other) {
   self.hash == other.hash && self.key == other.key
 }
 
@@ -437,7 +437,7 @@ pub fn Set::to_array[K](self : Set[K]) -> Array[K] {
 }
 
 ///|
-pub fn Set::op_equal[K : Eq](self : Set[K], that : Set[K]) -> Bool {
+pub impl[K : Eq] Eq for Set[K] with op_equal(self, that) {
   if self.size != that.size {
     return false
   }

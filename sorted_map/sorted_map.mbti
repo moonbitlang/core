@@ -25,7 +25,6 @@ impl T {
   iter[K, V](Self[K, V]) -> Iter[(K, V)]
   iter2[K, V](Self[K, V]) -> Iter2[K, V]
   keys[K, V](Self[K, V]) -> Array[K]
-  op_equal[K : Eq, V : Eq](Self[K, V], Self[K, V]) -> Bool
   op_get[K : Compare, V](Self[K, V], K) -> V?
   op_set[K : Compare, V](Self[K, V], K, V) -> Unit
   range[K : Compare, V](Self[K, V], K, K) -> Iter2[K, V]
@@ -34,6 +33,7 @@ impl T {
   to_array[K, V](Self[K, V]) -> Array[(K, V)]
   values[K, V](Self[K, V]) -> Array[V]
 }
+impl[K : Eq, V : Eq] Eq for T[K, V]
 impl[K : Show, V : Show] Show for T[K, V]
 impl[K : @quickcheck.Arbitrary + Compare, V : @quickcheck.Arbitrary] @quickcheck.Arbitrary for T[K, V]
 

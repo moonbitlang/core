@@ -960,7 +960,7 @@ test "ends_with" {
 ///   inspect!(arr1 == arr3, content="false")
 /// }
 /// ```
-pub fn FixedArray::op_equal[T : Eq](
+pub impl[T : Eq] Eq for FixedArray[T] with op_equal(
   self : FixedArray[T],
   that : FixedArray[T]
 ) -> Bool {

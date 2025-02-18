@@ -319,7 +319,7 @@ pub fn disjoint[V : Compare](self : T[V], src : T[V]) -> Bool {
 // General collection operations
 
 ///|
-pub fn op_equal[V : Compare](self : T[V], other : T[V]) -> Bool {
+pub impl[V : Compare] Eq for T[V] with op_equal(self, other) {
   self.to_array() == other.to_array()
 }
 
