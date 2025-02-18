@@ -13,7 +13,7 @@
 // limitations under the License.
 
 ///|
-pub fn Unit::op_equal(self : Unit, _other : Unit) -> Bool {
+pub impl Eq for Unit with op_equal(self : Unit, _other : Unit) -> Bool {
   let _ = self
   true
 }

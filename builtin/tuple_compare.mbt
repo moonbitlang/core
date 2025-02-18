@@ -13,7 +13,7 @@
 // limitations under the License.
 
 ///|
-pub fn Tuple2::compare[T0 : Compare, T1 : Compare](
+pub impl[T0 : Compare, T1 : Compare] Compare for (T0, T1) with compare(
   self : (T0, T1),
   other : (T0, T1)
 ) -> Int {
@@ -23,7 +23,7 @@ pub fn Tuple2::compare[T0 : Compare, T1 : Compare](
 }
 
 ///|
-pub fn Tuple3::compare[T0 : Compare, T1 : Compare, T2 : Compare](
+pub impl[T0 : Compare, T1 : Compare, T2 : Compare] Compare for (T0, T1, T2) with compare(
   self : (T0, T1, T2),
   other : (T0, T1, T2)
 ) -> Int {
@@ -35,10 +35,12 @@ pub fn Tuple3::compare[T0 : Compare, T1 : Compare, T2 : Compare](
 }
 
 ///|
-pub fn Tuple4::compare[T0 : Compare, T1 : Compare, T2 : Compare, T3 : Compare](
-  self : (T0, T1, T2, T3),
-  other : (T0, T1, T2, T3)
-) -> Int {
+pub impl[T0 : Compare, T1 : Compare, T2 : Compare, T3 : Compare] Compare for (
+  T0,
+  T1,
+  T2,
+  T3,
+) with compare(self : (T0, T1, T2, T3), other : (T0, T1, T2, T3)) -> Int {
   let t0 = self.0.compare(other.0)
   guard t0 == 0 else { return t0 }
   let t1 = self.1.compare(other.1)
@@ -49,10 +51,13 @@ pub fn Tuple4::compare[T0 : Compare, T1 : Compare, T2 : Compare, T3 : Compare](
 }
 
 ///|
-pub fn Tuple5::compare[T0 : Compare, T1 : Compare, T2 : Compare, T3 : Compare, T4 : Compare](
-  self : (T0, T1, T2, T3, T4),
-  other : (T0, T1, T2, T3, T4)
-) -> Int {
+pub impl[T0 : Compare, T1 : Compare, T2 : Compare, T3 : Compare, T4 : Compare] Compare for (
+  T0,
+  T1,
+  T2,
+  T3,
+  T4,
+) with compare(self : (T0, T1, T2, T3, T4), other : (T0, T1, T2, T3, T4)) -> Int {
   let t0 = self.0.compare(other.0)
   guard t0 == 0 else { return t0 }
   let t1 = self.1.compare(other.1)
@@ -65,7 +70,14 @@ pub fn Tuple5::compare[T0 : Compare, T1 : Compare, T2 : Compare, T3 : Compare, T
 }
 
 ///|
-pub fn Tuple6::compare[T0 : Compare, T1 : Compare, T2 : Compare, T3 : Compare, T4 : Compare, T5 : Compare](
+pub impl[T0 : Compare, T1 : Compare, T2 : Compare, T3 : Compare, T4 : Compare, T5 : Compare] Compare for (
+  T0,
+  T1,
+  T2,
+  T3,
+  T4,
+  T5,
+) with compare(
   self : (T0, T1, T2, T3, T4, T5),
   other : (T0, T1, T2, T3, T4, T5)
 ) -> Int {
@@ -83,7 +95,15 @@ pub fn Tuple6::compare[T0 : Compare, T1 : Compare, T2 : Compare, T3 : Compare, T
 }
 
 ///|
-pub fn Tuple7::compare[T0 : Compare, T1 : Compare, T2 : Compare, T3 : Compare, T4 : Compare, T5 : Compare, T6 : Compare](
+pub impl[T0 : Compare, T1 : Compare, T2 : Compare, T3 : Compare, T4 : Compare, T5 : Compare, T6 : Compare] Compare for (
+  T0,
+  T1,
+  T2,
+  T3,
+  T4,
+  T5,
+  T6,
+) with compare(
   self : (T0, T1, T2, T3, T4, T5, T6),
   other : (T0, T1, T2, T3, T4, T5, T6)
 ) -> Int {
@@ -103,7 +123,16 @@ pub fn Tuple7::compare[T0 : Compare, T1 : Compare, T2 : Compare, T3 : Compare, T
 }
 
 ///|
-pub fn Tuple8::compare[T0 : Compare, T1 : Compare, T2 : Compare, T3 : Compare, T4 : Compare, T5 : Compare, T6 : Compare, T7 : Compare](
+pub impl[T0 : Compare, T1 : Compare, T2 : Compare, T3 : Compare, T4 : Compare, T5 : Compare, T6 : Compare, T7 : Compare] Compare for (
+  T0,
+  T1,
+  T2,
+  T3,
+  T4,
+  T5,
+  T6,
+  T7,
+) with compare(
   self : (T0, T1, T2, T3, T4, T5, T6, T7),
   other : (T0, T1, T2, T3, T4, T5, T6, T7)
 ) -> Int {
@@ -125,7 +154,17 @@ pub fn Tuple8::compare[T0 : Compare, T1 : Compare, T2 : Compare, T3 : Compare, T
 }
 
 ///|
-pub fn Tuple9::compare[T0 : Compare, T1 : Compare, T2 : Compare, T3 : Compare, T4 : Compare, T5 : Compare, T6 : Compare, T7 : Compare, T8 : Compare](
+pub impl[T0 : Compare, T1 : Compare, T2 : Compare, T3 : Compare, T4 : Compare, T5 : Compare, T6 : Compare, T7 : Compare, T8 : Compare] Compare for (
+  T0,
+  T1,
+  T2,
+  T3,
+  T4,
+  T5,
+  T6,
+  T7,
+  T8,
+) with compare(
   self : (T0, T1, T2, T3, T4, T5, T6, T7, T8),
   other : (T0, T1, T2, T3, T4, T5, T6, T7, T8)
 ) -> Int {
@@ -149,7 +188,18 @@ pub fn Tuple9::compare[T0 : Compare, T1 : Compare, T2 : Compare, T3 : Compare, T
 }
 
 ///|
-pub fn Tuple10::compare[T0 : Compare, T1 : Compare, T2 : Compare, T3 : Compare, T4 : Compare, T5 : Compare, T6 : Compare, T7 : Compare, T8 : Compare, T9 : Compare](
+pub impl[T0 : Compare, T1 : Compare, T2 : Compare, T3 : Compare, T4 : Compare, T5 : Compare, T6 : Compare, T7 : Compare, T8 : Compare, T9 : Compare] Compare for (
+  T0,
+  T1,
+  T2,
+  T3,
+  T4,
+  T5,
+  T6,
+  T7,
+  T8,
+  T9,
+) with compare(
   self : (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9),
   other : (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9)
 ) -> Int {
@@ -175,7 +225,19 @@ pub fn Tuple10::compare[T0 : Compare, T1 : Compare, T2 : Compare, T3 : Compare, 
 }
 
 ///|
-pub fn Tuple11::compare[T0 : Compare, T1 : Compare, T2 : Compare, T3 : Compare, T4 : Compare, T5 : Compare, T6 : Compare, T7 : Compare, T8 : Compare, T9 : Compare, T10 : Compare](
+pub impl[T0 : Compare, T1 : Compare, T2 : Compare, T3 : Compare, T4 : Compare, T5 : Compare, T6 : Compare, T7 : Compare, T8 : Compare, T9 : Compare, T10 : Compare] Compare for (
+  T0,
+  T1,
+  T2,
+  T3,
+  T4,
+  T5,
+  T6,
+  T7,
+  T8,
+  T9,
+  T10,
+) with compare(
   self : (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10),
   other : (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10)
 ) -> Int {
@@ -203,7 +265,20 @@ pub fn Tuple11::compare[T0 : Compare, T1 : Compare, T2 : Compare, T3 : Compare, 
 }
 
 ///|
-pub fn Tuple12::compare[T0 : Compare, T1 : Compare, T2 : Compare, T3 : Compare, T4 : Compare, T5 : Compare, T6 : Compare, T7 : Compare, T8 : Compare, T9 : Compare, T10 : Compare, T11 : Compare](
+pub impl[T0 : Compare, T1 : Compare, T2 : Compare, T3 : Compare, T4 : Compare, T5 : Compare, T6 : Compare, T7 : Compare, T8 : Compare, T9 : Compare, T10 : Compare, T11 : Compare] Compare for (
+  T0,
+  T1,
+  T2,
+  T3,
+  T4,
+  T5,
+  T6,
+  T7,
+  T8,
+  T9,
+  T10,
+  T11,
+) with compare(
   self : (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11),
   other : (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11)
 ) -> Int {
@@ -233,7 +308,21 @@ pub fn Tuple12::compare[T0 : Compare, T1 : Compare, T2 : Compare, T3 : Compare, 
 }
 
 ///|
-pub fn Tuple13::compare[T0 : Compare, T1 : Compare, T2 : Compare, T3 : Compare, T4 : Compare, T5 : Compare, T6 : Compare, T7 : Compare, T8 : Compare, T9 : Compare, T10 : Compare, T11 : Compare, T12 : Compare](
+pub impl[T0 : Compare, T1 : Compare, T2 : Compare, T3 : Compare, T4 : Compare, T5 : Compare, T6 : Compare, T7 : Compare, T8 : Compare, T9 : Compare, T10 : Compare, T11 : Compare, T12 : Compare] Compare for (
+  T0,
+  T1,
+  T2,
+  T3,
+  T4,
+  T5,
+  T6,
+  T7,
+  T8,
+  T9,
+  T10,
+  T11,
+  T12,
+) with compare(
   self : (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12),
   other : (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12)
 ) -> Int {
@@ -265,7 +354,22 @@ pub fn Tuple13::compare[T0 : Compare, T1 : Compare, T2 : Compare, T3 : Compare, 
 }
 
 ///|
-pub fn Tuple14::compare[T0 : Compare, T1 : Compare, T2 : Compare, T3 : Compare, T4 : Compare, T5 : Compare, T6 : Compare, T7 : Compare, T8 : Compare, T9 : Compare, T10 : Compare, T11 : Compare, T12 : Compare, T13 : Compare](
+pub impl[T0 : Compare, T1 : Compare, T2 : Compare, T3 : Compare, T4 : Compare, T5 : Compare, T6 : Compare, T7 : Compare, T8 : Compare, T9 : Compare, T10 : Compare, T11 : Compare, T12 : Compare, T13 : Compare] Compare for (
+  T0,
+  T1,
+  T2,
+  T3,
+  T4,
+  T5,
+  T6,
+  T7,
+  T8,
+  T9,
+  T10,
+  T11,
+  T12,
+  T13,
+) with compare(
   self : (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13),
   other : (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13)
 ) -> Int {
@@ -299,7 +403,23 @@ pub fn Tuple14::compare[T0 : Compare, T1 : Compare, T2 : Compare, T3 : Compare, 
 }
 
 ///|
-pub fn Tuple15::compare[T0 : Compare, T1 : Compare, T2 : Compare, T3 : Compare, T4 : Compare, T5 : Compare, T6 : Compare, T7 : Compare, T8 : Compare, T9 : Compare, T10 : Compare, T11 : Compare, T12 : Compare, T13 : Compare, T14 : Compare](
+pub impl[T0 : Compare, T1 : Compare, T2 : Compare, T3 : Compare, T4 : Compare, T5 : Compare, T6 : Compare, T7 : Compare, T8 : Compare, T9 : Compare, T10 : Compare, T11 : Compare, T12 : Compare, T13 : Compare, T14 : Compare] Compare for (
+  T0,
+  T1,
+  T2,
+  T3,
+  T4,
+  T5,
+  T6,
+  T7,
+  T8,
+  T9,
+  T10,
+  T11,
+  T12,
+  T13,
+  T14,
+) with compare(
   self : (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14),
   other : (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14)
 ) -> Int {
@@ -335,7 +455,24 @@ pub fn Tuple15::compare[T0 : Compare, T1 : Compare, T2 : Compare, T3 : Compare, 
 }
 
 ///|
-pub fn Tuple16::compare[T0 : Compare, T1 : Compare, T2 : Compare, T3 : Compare, T4 : Compare, T5 : Compare, T6 : Compare, T7 : Compare, T8 : Compare, T9 : Compare, T10 : Compare, T11 : Compare, T12 : Compare, T13 : Compare, T14 : Compare, T15 : Compare](
+pub impl[T0 : Compare, T1 : Compare, T2 : Compare, T3 : Compare, T4 : Compare, T5 : Compare, T6 : Compare, T7 : Compare, T8 : Compare, T9 : Compare, T10 : Compare, T11 : Compare, T12 : Compare, T13 : Compare, T14 : Compare, T15 : Compare] Compare for (
+  T0,
+  T1,
+  T2,
+  T3,
+  T4,
+  T5,
+  T6,
+  T7,
+  T8,
+  T9,
+  T10,
+  T11,
+  T12,
+  T13,
+  T14,
+  T15,
+) with compare(
   self : (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15),
   other : (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15)
 ) -> Int {
@@ -371,171 +508,3 @@ pub fn Tuple16::compare[T0 : Compare, T1 : Compare, T2 : Compare, T3 : Compare, 
   guard t14 == 0 else { return t14 }
   self.15.compare(other.15)
 }
-
-// the type alias below are used to declare methods on tuple as:
-//
-//    fn TupleN::meth(...)
-//
-// so that this methods won't pollute the toplevel namespace of `builtin`
-
-///|
-typealias Tuple2[T0, T1] = (T0, T1)
-
-///|
-typealias Tuple3[T0, T1, T2] = (T0, T1, T2)
-
-///|
-typealias Tuple4[T0, T1, T2, T3] = (T0, T1, T2, T3)
-
-///|
-typealias Tuple5[T0, T1, T2, T3, T4] = (T0, T1, T2, T3, T4)
-
-///|
-typealias Tuple6[T0, T1, T2, T3, T4, T5] = (T0, T1, T2, T3, T4, T5)
-
-///|
-typealias Tuple7[T0, T1, T2, T3, T4, T5, T6] = (T0, T1, T2, T3, T4, T5, T6)
-
-///|
-typealias Tuple8[T0, T1, T2, T3, T4, T5, T6, T7] = (
-  T0,
-  T1,
-  T2,
-  T3,
-  T4,
-  T5,
-  T6,
-  T7,
-)
-
-///|
-typealias Tuple9[T0, T1, T2, T3, T4, T5, T6, T7, T8] = (
-  T0,
-  T1,
-  T2,
-  T3,
-  T4,
-  T5,
-  T6,
-  T7,
-  T8,
-)
-
-///|
-typealias Tuple10[T0, T1, T2, T3, T4, T5, T6, T7, T8, T9] = (
-  T0,
-  T1,
-  T2,
-  T3,
-  T4,
-  T5,
-  T6,
-  T7,
-  T8,
-  T9,
-)
-
-///|
-typealias Tuple11[T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10] = (
-  T0,
-  T1,
-  T2,
-  T3,
-  T4,
-  T5,
-  T6,
-  T7,
-  T8,
-  T9,
-  T10,
-)
-
-///|
-typealias Tuple12[T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11] = (
-  T0,
-  T1,
-  T2,
-  T3,
-  T4,
-  T5,
-  T6,
-  T7,
-  T8,
-  T9,
-  T10,
-  T11,
-)
-
-///|
-typealias Tuple13[T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12] = (
-  T0,
-  T1,
-  T2,
-  T3,
-  T4,
-  T5,
-  T6,
-  T7,
-  T8,
-  T9,
-  T10,
-  T11,
-  T12,
-)
-
-///|
-typealias Tuple14[T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13] = (
-  T0,
-  T1,
-  T2,
-  T3,
-  T4,
-  T5,
-  T6,
-  T7,
-  T8,
-  T9,
-  T10,
-  T11,
-  T12,
-  T13,
-)
-
-///|
-typealias Tuple15[T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14] = (
-  T0,
-  T1,
-  T2,
-  T3,
-  T4,
-  T5,
-  T6,
-  T7,
-  T8,
-  T9,
-  T10,
-  T11,
-  T12,
-  T13,
-  T14,
-)
-
-///|
-typealias Tuple16[T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15] = (
-  T0,
-  T1,
-  T2,
-  T3,
-  T4,
-  T5,
-  T6,
-  T7,
-  T8,
-  T9,
-  T10,
-  T11,
-  T12,
-  T13,
-  T14,
-  T15,
-)

@@ -210,7 +210,7 @@ fn escape(str : String, escape_slash~ : Bool) -> String {
 
 ///|
 /// Useful for json interpolation
-pub fn to_json(self : JsonValue) -> JsonValue {
+pub impl ToJson for JsonValue with to_json(self) {
   self
 }
 

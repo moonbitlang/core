@@ -13,7 +13,7 @@
 // limitations under the License.
 
 ///|
-fn Node::op_equal[V : Eq](self : Node[V], other : Node[V]) -> Bool {
+impl[V : Eq] Eq for Node[V] with op_equal(self, other) {
   self.value == other.value
 }
 

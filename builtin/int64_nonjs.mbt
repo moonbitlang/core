@@ -539,7 +539,7 @@ pub fn Int64::popcnt(self : Int64) -> Int = "%i64_popcnt"
 ///   inspect!(a == c, content="false")
 /// }
 /// ```
-pub fn Int64::op_equal(self : Int64, other : Int64) -> Bool = "%i64_eq"
+pub impl Eq for Int64 with op_equal(self : Int64, other : Int64) -> Bool = "%i64_eq"
 
 ///|
 /// Compares two 64-bit integers and returns their relative order.
@@ -568,7 +568,7 @@ pub fn Int64::op_equal(self : Int64, other : Int64) -> Bool = "%i64_eq"
 ///   inspect!(a.compare(a), content="0") // 42 = 42
 /// }
 /// ```
-pub fn Int64::compare(self : Int64, other : Int64) -> Int = "%i64_compare"
+pub impl Compare for Int64 with compare(self, other) = "%i64_compare"
 
 ///|
 /// Returns the default value for `Int64` type, which is zero (0L).
@@ -1326,7 +1326,7 @@ pub fn UInt64::op_mod(self : UInt64, other : UInt64) -> UInt64 = "%u64.mod"
 ///   inspect!(a.compare(a), content="0") // 42 = 42
 /// }
 /// ```
-pub fn UInt64::compare(self : UInt64, other : UInt64) -> Int = "%u64.compare"
+pub impl Compare for UInt64 with compare(self, other) = "%u64.compare"
 
 ///|
 /// Compares two unsigned 64-bit integers for equality.
@@ -1349,7 +1349,7 @@ pub fn UInt64::compare(self : UInt64, other : UInt64) -> Int = "%u64.compare"
 ///   inspect!(a == c, content="false")
 /// }
 /// ```
-pub fn UInt64::op_equal(self : UInt64, other : UInt64) -> Bool = "%u64.eq"
+pub impl Eq for UInt64 with op_equal(self : UInt64, other : UInt64) -> Bool = "%u64.eq"
 
 ///|
 /// Performs a bitwise AND operation between two unsigned 64-bit integers.

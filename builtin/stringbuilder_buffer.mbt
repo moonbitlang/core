@@ -55,21 +55,21 @@ fn StringBuilder::grow_if_necessary(
 }
 
 ///|
-pub fn StringBuilder::write_string(self : StringBuilder, str : String) -> Unit {
+pub impl Logger for StringBuilder with write_string(self, str) {
   self.grow_if_necessary(self.len + str.length() * 2)
   self.data.blit_from_string(self.len, str, 0, str.length())
   self.len += str.length() * 2
 }
 
 ///|
-pub fn StringBuilder::write_char(self : StringBuilder, ch : Char) -> Unit {
+pub impl Logger for StringBuilder with write_char(self, ch) {
   self.grow_if_necessary(self.len + 4)
   let inc = self.data.set_utf16le_char(self.len, ch)
   self.len += inc
 }
 
 ///|
-pub fn StringBuilder::write_substring(
+pub impl Logger for StringBuilder with write_substring(
   self : StringBuilder,
   str : String,
   start : Int,

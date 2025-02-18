@@ -850,7 +850,7 @@ pub fn BigInt::is_zero(self : BigInt) -> Bool {
 ///   inspect!(a.compare(a), content="0") // 42 = 42
 /// }
 /// ```
-pub fn BigInt::compare(self : BigInt, other : BigInt) -> Int {
+pub impl Compare for BigInt with compare(self, other) {
   if self.sign != other.sign {
     return if self.sign == Positive { 1 } else { -1 }
   }
@@ -897,7 +897,7 @@ pub fn BigInt::compare(self : BigInt, other : BigInt) -> Int {
 ///   inspect!(a == c, content="false")
 /// }
 /// ```
-pub fn BigInt::op_equal(self : BigInt, other : BigInt) -> Bool {
+pub impl Eq for BigInt with op_equal(self, other) {
   if self.sign != other.sign || self.len != other.len {
     return false
   }

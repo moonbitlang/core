@@ -39,12 +39,12 @@ pub fn op_div(self : Int16, that : Int16) -> Int16 {
 }
 
 ///|
-pub fn op_equal(self : Int16, that : Int16) -> Bool {
+pub impl Eq for Int16 with op_equal(self, that) {
   self.to_int() == that.to_int()
 }
 
 ///|
-pub fn compare(self : Int16, that : Int16) -> Int {
+pub impl Compare for Int16 with compare(self, that) {
   self.to_int().compare(that.to_int())
 }
 

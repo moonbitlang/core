@@ -113,12 +113,22 @@ pub fn BigInt::to_octets(self : BigInt, length? : Int) -> Bytes {
 }
 
 ///|
-pub extern "js" fn BigInt::compare(self : BigInt, other : BigInt) -> Int =
+extern "js" fn BigInt::compare(self : BigInt, other : BigInt) -> Int =
   #|(x, y) => x < y ? -1 : x > y ? 1 : 0
 
 ///|
-pub extern "js" fn BigInt::op_equal(self : BigInt, other : BigInt) -> Bool =
+pub impl Compare for BigInt with compare(self, other) {
+  self.compare(other)
+}
+
+///|
+extern "js" fn BigInt::equal(self : BigInt, other : BigInt) -> Bool =
   #|(x, y) => x === y
+
+///|
+pub impl Eq for BigInt with op_equal(self, other) {
+  self.equal(other)
+}
 
 ///|
 pub extern "js" fn BigInt::from_int(x : Int) -> BigInt =

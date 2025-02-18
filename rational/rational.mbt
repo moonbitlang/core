@@ -128,13 +128,13 @@ pub fn abs(self : T) -> T {
 
 ///|
 /// Equal to operator for rational numbers.
-pub fn op_equal(self : T, other : T) -> Bool {
+pub impl Eq for T with op_equal(self : T, other : T) -> Bool {
   self.numerator * other.denominator == other.numerator * self.denominator
 }
 
 ///|
 /// Compares two rational numbers.
-pub fn compare(self : T, other : T) -> Int {
+pub impl Compare for T with compare(self : T, other : T) -> Int {
   let left = self.numerator * other.denominator
   let right = other.numerator * self.denominator
   if left < right {

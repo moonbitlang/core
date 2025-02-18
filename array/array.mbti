@@ -31,7 +31,6 @@ impl FixedArray {
   new[T](Int, () -> T) -> Self[T] //deprecated
   new_with_index[T](Int, (Int) -> T) -> Self[T] //deprecated
   op_add[T](Self[T], Self[T]) -> Self[T]
-  op_equal[T : Eq](Self[T], Self[T]) -> Bool
   rev[T](Self[T]) -> Self[T]
   rev_each[T](Self[T], (T) -> Unit) -> Unit
   rev_eachi[T](Self[T], (Int, T) -> Unit) -> Unit
@@ -46,6 +45,7 @@ impl FixedArray {
   starts_with[T : Eq](Self[T], Self[T]) -> Bool
   swap[T](Self[T], Int, Int) -> Unit
 }
+impl[T : Eq] Eq for FixedArray[T]
 impl[X : @quickcheck.Arbitrary] @quickcheck.Arbitrary for FixedArray[X]
 
 impl Array {

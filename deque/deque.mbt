@@ -585,7 +585,7 @@ pub fn T::as_views[A](self : T[A]) -> (ArrayView[A], ArrayView[A]) {
 ///   inspect!(dq1 == dq3, content="false")
 /// }
 /// ```
-pub fn op_equal[A : Eq](self : T[A], other : T[A]) -> Bool {
+pub impl[A : Eq] Eq for T[A] with op_equal(self, other) {
   if self.len != other.len {
     return false
   }

@@ -58,10 +58,8 @@ impl Array {
   chunk_by[T](Self[T], (T, T) -> Bool) -> Self[Self[T]]
   chunks[T](Self[T], Int) -> Self[Self[T]]
   clear[T](Self[T]) -> Unit
-  compare[T : Compare](Self[T], Self[T]) -> Int
   contains[T : Eq](Self[T], T) -> Bool
   dedup[T : Eq](Self[T]) -> Unit
-  default[T]() -> Self[T]
   drain[T](Self[T], Int, Int) -> Self[T]
   each[T](Self[T], (T) -> Unit) -> Unit
   eachi[T](Self[T], (Int, T) -> Unit) -> Unit
@@ -92,7 +90,6 @@ impl Array {
   new[T](capacity~ : Int = ..) -> Self[T]
   op_add[T](Self[T], Self[T]) -> Self[T]
   op_as_view[T](Self[T], start~ : Int = .., end? : Int) -> ArrayView[T]
-  op_equal[T : Eq](Self[T], Self[T]) -> Bool
   op_get[T](Self[T], Int) -> T
   op_set[T](Self[T], Int, T) -> Unit
   pop[T](Self[T]) -> T?
@@ -119,13 +116,16 @@ impl Array {
   strip_prefix[T : Eq](Self[T], Self[T]) -> Self[T]?
   strip_suffix[T : Eq](Self[T], Self[T]) -> Self[T]?
   swap[T](Self[T], Int, Int) -> Unit
-  to_json[X : ToJson](Self[X]) -> Json
   unsafe_blit[A](Self[A], Int, Self[A], Int, Int) -> Unit
   unsafe_blit_fixed[A](Self[A], Int, FixedArray[A], Int, Int) -> Unit
   unsafe_get[T](Self[T], Int) -> T
   unsafe_pop[T](Self[T]) -> T
 }
+impl[T : Compare] Compare for Array[T]
+impl[T] Default for Array[T]
+impl[T : Eq] Eq for Array[T]
 impl[X : Show] Show for Array[X]
+impl[X : ToJson] ToJson for Array[X]
 
 type ArrayView[T] //deprecated
 impl ArrayView {
@@ -134,14 +134,13 @@ impl ArrayView {
   op_get[T](Self[T], Int) -> T
   op_set[T](Self[T], Int, T) -> Unit
   swap[T](Self[T], Int, Int) -> Unit
-  to_json[X : ToJson](Self[X]) -> Json
   unsafe_get[T](Self[T], Int) -> T
 }
+impl[X : ToJson] ToJson for ArrayView[X]
 
 type BigInt
 impl BigInt {
   asr(Self, Int) -> Self //deprecated
-  compare(Self, Self) -> Int
   from_hex(String) -> Self
   from_int(Int) -> Self
   from_int64(Int64) -> Self
@@ -156,7 +155,6 @@ impl BigInt {
   lxor(Self, Self) -> Self
   op_add(Self, Self) -> Self
   op_div(Self, Self) -> Self
-  op_equal(Self, Self) -> Bool
   op_mod(Self, Self) -> Self
   op_mul(Self, Self) -> Self
   op_neg(Self) -> Self
@@ -169,13 +167,15 @@ impl BigInt {
   to_hex(Self, uppercase~ : Bool = ..) -> String
   to_int(Self) -> Int
   to_int64(Self) -> Int64
-  to_json(Self) -> Json
   to_octets(Self, length? : Int) -> Bytes
   to_string(Self) -> String
   to_uint(Self) -> UInt
   to_uint64(Self) -> UInt64
 }
+impl Compare for BigInt
+impl Eq for BigInt
 impl Show for BigInt
+impl ToJson for BigInt
 
 pub(all) type! Failure String
 impl Show for Failure
@@ -295,17 +295,17 @@ impl Map {
   keys[K, V](Self[K, V]) -> Iter[K]
   new[K, V](capacity~ : Int = ..) -> Self[K, V]
   of[K : Hash + Eq, V](FixedArray[(K, V)]) -> Self[K, V]
-  op_equal[K : Hash + Eq, V : Eq](Self[K, V], Self[K, V]) -> Bool
   op_get[K : Hash + Eq, V](Self[K, V], K) -> V?
   op_set[K : Hash + Eq, V](Self[K, V], K, V) -> Unit
   remove[K : Hash + Eq, V](Self[K, V], K) -> Unit
   set[K : Hash + Eq, V](Self[K, V], K, V) -> Unit
   size[K, V](Self[K, V]) -> Int
   to_array[K, V](Self[K, V]) -> Array[(K, V)]
-  to_json[K : Show, V : ToJson](Self[K, V]) -> Json
   values[K, V](Self[K, V]) -> Iter[V]
 }
+impl[K : Hash + Eq, V : Eq] Eq for Map[K, V]
 impl[K : Show, V : Show] Show for Map[K, V]
+impl[K : Show, V : ToJson] ToJson for Map[K, V]
 
 type Set[K]
 impl Set {
@@ -325,16 +325,16 @@ impl Set {
   iter[K](Self[K]) -> Iter[K]
   new[K](capacity~ : Int = ..) -> Self[K]
   of[K : Hash + Eq](FixedArray[K]) -> Self[K]
-  op_equal[K : Eq](Self[K], Self[K]) -> Bool
   remove[K : Hash + Eq](Self[K], K) -> Unit
   remove_and_check[K : Hash + Eq](Self[K], K) -> Bool
   size[K](Self[K]) -> Int
   symmetric_difference[K : Hash + Eq](Self[K], Self[K]) -> Self[K]
   to_array[K](Self[K]) -> Array[K]
-  to_json[X : ToJson](Self[X]) -> Json
   union[K : Hash + Eq](Self[K], Self[K]) -> Self[K]
 }
+impl[K : Eq] Eq for Set[K]
 impl[K : Show] Show for Set[K]
+impl[X : ToJson] ToJson for Set[X]
 
 pub(all) type! SnapshotError String
 
@@ -350,12 +350,10 @@ impl StringBuilder {
   new(size_hint~ : Int = ..) -> Self
   reset(Self) -> Unit
   to_string(Self) -> String
-  write_char(Self, Char) -> Unit
   write_iter(Self, Iter[Char]) -> Unit
   write_object[T : Show](Self, T) -> Unit
-  write_string(Self, String) -> Unit
-  write_substring(Self, String, Int, Int) -> Unit
 }
+impl Logger for StringBuilder
 impl Show for StringBuilder
 
 type UninitializedArray[T]
@@ -367,23 +365,13 @@ impl UninitializedArray {
   op_set[T](Self[T], Int, T) -> Unit
 }
 
-impl Unit {
-  op_equal(Unit, Unit) -> Bool
-  to_json(Unit) -> Json
-}
-
 impl Bool {
-  compare(Bool, Bool) -> Int
-  default() -> Bool
   not(Bool) -> Bool //deprecated
   op_compare(Bool, Bool) -> Int //deprecated
-  op_equal(Bool, Bool) -> Bool
-  to_json(Bool) -> Json
   to_string(Bool) -> String
 }
 
 impl Byte {
-  compare(Byte, Byte) -> Int
   default() -> Byte
   land(Byte, Byte) -> Byte
   lnot(Byte) -> Byte
@@ -393,7 +381,6 @@ impl Byte {
   lxor(Byte, Byte) -> Byte
   op_add(Byte, Byte) -> Byte
   op_div(Byte, Byte) -> Byte
-  op_equal(Byte, Byte) -> Bool
   op_mul(Byte, Byte) -> Byte
   op_shl(Byte, Int) -> Byte
   op_shr(Byte, Int) -> Byte
@@ -408,22 +395,16 @@ impl Byte {
 }
 
 impl Char {
-  compare(Char, Char) -> Int
-  default() -> Char
   from_int(Int) -> Char
-  op_equal(Char, Char) -> Bool
   op_sub(Char, Char) -> Int
   to_int(Char) -> Int
-  to_json(Char) -> Json
   to_uint(Char) -> UInt
 }
 
 impl Int {
   asr(Int, Int) -> Int //deprecated
   clz(Int) -> Int
-  compare(Int, Int) -> Int
   ctz(Int) -> Int
-  default() -> Int
   is_neg(Int) -> Bool
   is_non_neg(Int) -> Bool
   is_non_pos(Int) -> Bool
@@ -436,7 +417,6 @@ impl Int {
   lxor(Int, Int) -> Int
   op_add(Int, Int) -> Int
   op_div(Int, Int) -> Int
-  op_equal(Int, Int) -> Bool
   op_mod(Int, Int) -> Int
   op_mul(Int, Int) -> Int
   op_neg(Int) -> Int
@@ -453,7 +433,6 @@ impl Int {
   to_float(Int) -> Float
   to_int16(Int) -> Int16
   to_int64(Int) -> Int64
-  to_json(Int) -> Json
   to_string(Int, radix~ : Int = ..) -> String
   to_uint(Int) -> UInt //deprecated
   to_uint16(Int) -> UInt16
@@ -472,7 +451,6 @@ impl Int16 {
 impl Int64 {
   asr(Int64, Int) -> Int64 //deprecated
   clz(Int64) -> Int
-  compare(Int64, Int64) -> Int
   ctz(Int64) -> Int
   default() -> Int64
   land(Int64, Int64) -> Int64
@@ -483,7 +461,6 @@ impl Int64 {
   lxor(Int64, Int64) -> Int64
   op_add(Int64, Int64) -> Int64
   op_div(Int64, Int64) -> Int64
-  op_equal(Int64, Int64) -> Bool
   op_mod(Int64, Int64) -> Int64
   op_mul(Int64, Int64) -> Int64
   op_neg(Int64) -> Int64
@@ -500,7 +477,6 @@ impl Int64 {
   to_float(Int64) -> Float
   to_int(Int64) -> Int
   to_int16(Int64) -> Int16
-  to_json(Int64) -> Json
   to_string(Int64, radix~ : Int = ..) -> String
   to_uint16(Int64) -> UInt16
   to_uint64(Int64) -> UInt64 //deprecated
@@ -510,7 +486,6 @@ impl Int64 {
 
 impl UInt {
   clz(UInt) -> Int
-  compare(UInt, UInt) -> Int
   ctz(UInt) -> Int
   land(UInt, UInt) -> UInt
   lnot(UInt) -> UInt
@@ -520,7 +495,6 @@ impl UInt {
   lxor(UInt, UInt) -> UInt
   op_add(UInt, UInt) -> UInt
   op_div(UInt, UInt) -> UInt
-  op_equal(UInt, UInt) -> Bool
   op_mod(UInt, UInt) -> UInt
   op_mul(UInt, UInt) -> UInt
   op_neq(UInt, UInt) -> Bool
@@ -535,7 +509,6 @@ impl UInt {
   to_byte(UInt) -> Byte
   to_float(UInt) -> Float
   to_int(UInt) -> Int //deprecated
-  to_json(UInt) -> Json
   to_string(UInt, radix~ : Int = ..) -> String
   to_uint64(UInt) -> UInt64
   trunc_double(Double) -> UInt
@@ -551,9 +524,7 @@ impl UInt16 {
 
 impl UInt64 {
   clz(UInt64) -> Int
-  compare(UInt64, UInt64) -> Int
   ctz(UInt64) -> Int
-  default() -> UInt64
   extend_uint(UInt) -> UInt64
   land(UInt64, UInt64) -> UInt64
   lnot(UInt64) -> UInt64
@@ -563,7 +534,6 @@ impl UInt64 {
   lxor(UInt64, UInt64) -> UInt64
   op_add(UInt64, UInt64) -> UInt64
   op_div(UInt64, UInt64) -> UInt64
-  op_equal(UInt64, UInt64) -> Bool
   op_mod(UInt64, UInt64) -> UInt64
   op_mul(UInt64, UInt64) -> UInt64
   op_shl(UInt64, Int) -> UInt64
@@ -579,7 +549,6 @@ impl UInt64 {
   to_float(UInt64) -> Float
   to_int(UInt64) -> Int
   to_int64(UInt64) -> Int64 //deprecated
-  to_json(UInt64) -> Json
   to_string(UInt64, radix~ : Int = ..) -> String
   to_uint(UInt64) -> UInt
   trunc_double(Double) -> UInt64
@@ -587,10 +556,8 @@ impl UInt64 {
 }
 
 impl Float {
-  compare(Float, Float) -> Int
   op_add(Float, Float) -> Float
   op_div(Float, Float) -> Float
-  op_equal(Float, Float) -> Bool
   op_mul(Float, Float) -> Float
   op_neg(Float) -> Float
   op_neq(Float, Float) -> Bool
@@ -599,19 +566,15 @@ impl Float {
   reinterpret_as_uint(Float) -> UInt
   sqrt(Float) -> Float
   to_double(Float) -> Double
-  to_json(Float) -> Json
   until(Float, Float, step~ : Float = .., inclusive~ : Bool = ..) -> Iter[Float]
   upto(Float, Float, inclusive~ : Bool = ..) -> Iter[Float] //deprecated
 }
 
 impl Double {
-  compare(Double, Double) -> Int
   convert_uint(UInt) -> Double
   convert_uint64(UInt64) -> Double
-  default() -> Double
   op_add(Double, Double) -> Double
   op_div(Double, Double) -> Double
-  op_equal(Double, Double) -> Bool
   op_mul(Double, Double) -> Double
   op_neg(Double) -> Double
   op_neq(Double, Double) -> Bool
@@ -624,7 +587,6 @@ impl Double {
   to_float(Double) -> Float
   to_int(Double) -> Int
   to_int64(Double) -> Int64
-  to_json(Double) -> Json
   to_uint64(Double) -> UInt64
   until(Double, Double, step~ : Double = .., inclusive~ : Bool = ..) -> Iter[Double]
   upto(Double, Double, inclusive~ : Bool = ..) -> Iter[Double] //deprecated
@@ -640,31 +602,21 @@ impl String {
   length(String) -> Int
   make(Int, Char) -> String
   op_add(String, String) -> String
-  op_equal(String, String) -> Bool
   op_get(String, Int) -> Char
   substring(String, start~ : Int = .., end? : Int) -> String
-  to_json(String) -> Json
   to_string(String) -> String
   unsafe_charcode_at(String, Int) -> Int
 }
 
 impl Option {
-  op_equal[X : Eq](X?, X?) -> Bool
-  to_json[T : ToJson](T?) -> Json
   to_string[X : Show](X?) -> String
   unwrap[X](X?) -> X
-}
-
-impl Result {
-  op_equal[T : Eq, E : Eq](Self[T, E], Self[T, E]) -> Bool
-  to_json[Ok : ToJson, Err : ToJson](Self[Ok, Err]) -> Json
 }
 
 impl FixedArray {
   blit_from_bytes(Self[Byte], Int, Bytes, Int, Int) -> Unit
   blit_from_string(Self[Byte], Int, String, Int, Int) -> Unit
   blit_to[A](Self[A], Self[A], len~ : Int, src_offset~ : Int = .., dst_offset~ : Int = ..) -> Unit
-  compare[T : Compare](Self[T], Self[T]) -> Int
   default[X]() -> Self[X]
   fill[T](Self[T], T) -> Unit
   get[T](Self[T], Int) -> T
@@ -680,20 +632,17 @@ impl FixedArray {
   set_utf16be_char(Self[Byte], Int, Char) -> Int
   set_utf16le_char(Self[Byte], Int, Char) -> Int
   set_utf8_char(Self[Byte], Int, Char) -> Int
-  to_json[X : ToJson](Self[X]) -> Json
   unsafe_blit[A](Self[A], Int, Self[A], Int, Int) -> Unit
   unsafe_get[T](Self[T], Int) -> T
 }
 
 impl Bytes {
-  compare(Bytes, Bytes) -> Int
   copy(Bytes) -> Bytes
   length(Bytes) -> Int
   make(Int, Byte) -> Bytes
   makei(Int, (Int) -> Byte) -> Bytes
   new(Int) -> Bytes
   of_string(String) -> Bytes
-  op_equal(Bytes, Bytes) -> Bool
   op_get(Bytes, Int) -> Byte
   sub_string(Bytes, Int, Int) -> String //deprecated
   to_string(Bytes) -> String //deprecated
@@ -706,95 +655,80 @@ impl Logger {
   write_object[Obj : Show](&Self, Obj) -> Unit
 }
 
-impl Tuple(2) {
-  compare[T0 : Compare, T1 : Compare]((T0, T1), (T0, T1)) -> Int
-  op_equal[T0 : Eq, T1 : Eq]((T0, T1), (T0, T1)) -> Bool
-}
-
-impl Tuple(3) {
-  compare[T0 : Compare, T1 : Compare, T2 : Compare]((T0, T1, T2), (T0, T1, T2)) -> Int
-  op_equal[T0 : Eq, T1 : Eq, T2 : Eq]((T0, T1, T2), (T0, T1, T2)) -> Bool
-}
-
-impl Tuple(4) {
-  compare[T0 : Compare, T1 : Compare, T2 : Compare, T3 : Compare]((T0, T1, T2, T3), (T0, T1, T2, T3)) -> Int
-  op_equal[T0 : Eq, T1 : Eq, T2 : Eq, T3 : Eq]((T0, T1, T2, T3), (T0, T1, T2, T3)) -> Bool
-}
-
-impl Tuple(5) {
-  compare[T0 : Compare, T1 : Compare, T2 : Compare, T3 : Compare, T4 : Compare]((T0, T1, T2, T3, T4), (T0, T1, T2, T3, T4)) -> Int
-  op_equal[T0 : Eq, T1 : Eq, T2 : Eq, T3 : Eq, T4 : Eq]((T0, T1, T2, T3, T4), (T0, T1, T2, T3, T4)) -> Bool
-}
-
-impl Tuple(6) {
-  compare[T0 : Compare, T1 : Compare, T2 : Compare, T3 : Compare, T4 : Compare, T5 : Compare]((T0, T1, T2, T3, T4, T5), (T0, T1, T2, T3, T4, T5)) -> Int
-  op_equal[T0 : Eq, T1 : Eq, T2 : Eq, T3 : Eq, T4 : Eq, T5 : Eq]((T0, T1, T2, T3, T4, T5), (T0, T1, T2, T3, T4, T5)) -> Bool
-}
-
-impl Tuple(7) {
-  compare[T0 : Compare, T1 : Compare, T2 : Compare, T3 : Compare, T4 : Compare, T5 : Compare, T6 : Compare]((T0, T1, T2, T3, T4, T5, T6), (T0, T1, T2, T3, T4, T5, T6)) -> Int
-  op_equal[T0 : Eq, T1 : Eq, T2 : Eq, T3 : Eq, T4 : Eq, T5 : Eq, T6 : Eq]((T0, T1, T2, T3, T4, T5, T6), (T0, T1, T2, T3, T4, T5, T6)) -> Bool
-}
-
-impl Tuple(8) {
-  compare[T0 : Compare, T1 : Compare, T2 : Compare, T3 : Compare, T4 : Compare, T5 : Compare, T6 : Compare, T7 : Compare]((T0, T1, T2, T3, T4, T5, T6, T7), (T0, T1, T2, T3, T4, T5, T6, T7)) -> Int
-  op_equal[T0 : Eq, T1 : Eq, T2 : Eq, T3 : Eq, T4 : Eq, T5 : Eq, T6 : Eq, T7 : Eq]((T0, T1, T2, T3, T4, T5, T6, T7), (T0, T1, T2, T3, T4, T5, T6, T7)) -> Bool
-}
-
-impl Tuple(9) {
-  compare[T0 : Compare, T1 : Compare, T2 : Compare, T3 : Compare, T4 : Compare, T5 : Compare, T6 : Compare, T7 : Compare, T8 : Compare]((T0, T1, T2, T3, T4, T5, T6, T7, T8), (T0, T1, T2, T3, T4, T5, T6, T7, T8)) -> Int
-  op_equal[T0 : Eq, T1 : Eq, T2 : Eq, T3 : Eq, T4 : Eq, T5 : Eq, T6 : Eq, T7 : Eq, T8 : Eq]((T0, T1, T2, T3, T4, T5, T6, T7, T8), (T0, T1, T2, T3, T4, T5, T6, T7, T8)) -> Bool
-}
-
-impl Tuple(10) {
-  compare[T0 : Compare, T1 : Compare, T2 : Compare, T3 : Compare, T4 : Compare, T5 : Compare, T6 : Compare, T7 : Compare, T8 : Compare, T9 : Compare]((T0, T1, T2, T3, T4, T5, T6, T7, T8, T9), (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9)) -> Int
-  op_equal[T0 : Eq, T1 : Eq, T2 : Eq, T3 : Eq, T4 : Eq, T5 : Eq, T6 : Eq, T7 : Eq, T8 : Eq, T9 : Eq]((T0, T1, T2, T3, T4, T5, T6, T7, T8, T9), (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9)) -> Bool
-}
-
-impl Tuple(11) {
-  compare[T0 : Compare, T1 : Compare, T2 : Compare, T3 : Compare, T4 : Compare, T5 : Compare, T6 : Compare, T7 : Compare, T8 : Compare, T9 : Compare, T10 : Compare]((T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10), (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10)) -> Int
-  op_equal[T0 : Eq, T1 : Eq, T2 : Eq, T3 : Eq, T4 : Eq, T5 : Eq, T6 : Eq, T7 : Eq, T8 : Eq, T9 : Eq, T10 : Eq]((T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10), (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10)) -> Bool
-}
-
-impl Tuple(12) {
-  compare[T0 : Compare, T1 : Compare, T2 : Compare, T3 : Compare, T4 : Compare, T5 : Compare, T6 : Compare, T7 : Compare, T8 : Compare, T9 : Compare, T10 : Compare, T11 : Compare]((T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11), (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11)) -> Int
-  op_equal[T0 : Eq, T1 : Eq, T2 : Eq, T3 : Eq, T4 : Eq, T5 : Eq, T6 : Eq, T7 : Eq, T8 : Eq, T9 : Eq, T10 : Eq, T11 : Eq]((T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11), (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11)) -> Bool
-}
-
-impl Tuple(13) {
-  compare[T0 : Compare, T1 : Compare, T2 : Compare, T3 : Compare, T4 : Compare, T5 : Compare, T6 : Compare, T7 : Compare, T8 : Compare, T9 : Compare, T10 : Compare, T11 : Compare, T12 : Compare]((T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12), (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12)) -> Int
-  op_equal[T0 : Eq, T1 : Eq, T2 : Eq, T3 : Eq, T4 : Eq, T5 : Eq, T6 : Eq, T7 : Eq, T8 : Eq, T9 : Eq, T10 : Eq, T11 : Eq, T12 : Eq]((T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12), (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12)) -> Bool
-}
-
-impl Tuple(14) {
-  compare[T0 : Compare, T1 : Compare, T2 : Compare, T3 : Compare, T4 : Compare, T5 : Compare, T6 : Compare, T7 : Compare, T8 : Compare, T9 : Compare, T10 : Compare, T11 : Compare, T12 : Compare, T13 : Compare]((T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13), (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13)) -> Int
-  op_equal[T0 : Eq, T1 : Eq, T2 : Eq, T3 : Eq, T4 : Eq, T5 : Eq, T6 : Eq, T7 : Eq, T8 : Eq, T9 : Eq, T10 : Eq, T11 : Eq, T12 : Eq, T13 : Eq]((T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13), (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13)) -> Bool
-}
-
-impl Tuple(15) {
-  compare[T0 : Compare, T1 : Compare, T2 : Compare, T3 : Compare, T4 : Compare, T5 : Compare, T6 : Compare, T7 : Compare, T8 : Compare, T9 : Compare, T10 : Compare, T11 : Compare, T12 : Compare, T13 : Compare, T14 : Compare]((T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14), (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14)) -> Int
-  op_equal[T0 : Eq, T1 : Eq, T2 : Eq, T3 : Eq, T4 : Eq, T5 : Eq, T6 : Eq, T7 : Eq, T8 : Eq, T9 : Eq, T10 : Eq, T11 : Eq, T12 : Eq, T13 : Eq, T14 : Eq]((T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14), (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14)) -> Bool
-}
-
-impl Tuple(16) {
-  compare[T0 : Compare, T1 : Compare, T2 : Compare, T3 : Compare, T4 : Compare, T5 : Compare, T6 : Compare, T7 : Compare, T8 : Compare, T9 : Compare, T10 : Compare, T11 : Compare, T12 : Compare, T13 : Compare, T14 : Compare, T15 : Compare]((T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15), (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15)) -> Int
-  op_equal[T0 : Eq, T1 : Eq, T2 : Eq, T3 : Eq, T4 : Eq, T5 : Eq, T6 : Eq, T7 : Eq, T8 : Eq, T9 : Eq, T10 : Eq, T11 : Eq, T12 : Eq, T13 : Eq, T14 : Eq, T15 : Eq]((T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15), (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15)) -> Bool
-}
-
 // Type aliases
 
 // Traits
 pub(open) trait Compare : Eq {
   compare(Self, Self) -> Int
 }
+impl Compare for Bool
+impl Compare for Byte
+impl Compare for Char
+impl Compare for Int
+impl Compare for Int64
+impl Compare for UInt
+impl Compare for UInt64
+impl Compare for Float
+impl Compare for Double
+impl[T : Compare] Compare for FixedArray[T]
+impl Compare for Bytes
+impl[T0 : Compare, T1 : Compare] Compare for (T0, T1)
+impl[T0 : Compare, T1 : Compare, T2 : Compare] Compare for (T0, T1, T2)
+impl[T0 : Compare, T1 : Compare, T2 : Compare, T3 : Compare] Compare for (T0, T1, T2, T3)
+impl[T0 : Compare, T1 : Compare, T2 : Compare, T3 : Compare, T4 : Compare] Compare for (T0, T1, T2, T3, T4)
+impl[T0 : Compare, T1 : Compare, T2 : Compare, T3 : Compare, T4 : Compare, T5 : Compare] Compare for (T0, T1, T2, T3, T4, T5)
+impl[T0 : Compare, T1 : Compare, T2 : Compare, T3 : Compare, T4 : Compare, T5 : Compare, T6 : Compare] Compare for (T0, T1, T2, T3, T4, T5, T6)
+impl[T0 : Compare, T1 : Compare, T2 : Compare, T3 : Compare, T4 : Compare, T5 : Compare, T6 : Compare, T7 : Compare] Compare for (T0, T1, T2, T3, T4, T5, T6, T7)
+impl[T0 : Compare, T1 : Compare, T2 : Compare, T3 : Compare, T4 : Compare, T5 : Compare, T6 : Compare, T7 : Compare, T8 : Compare] Compare for (T0, T1, T2, T3, T4, T5, T6, T7, T8)
+impl[T0 : Compare, T1 : Compare, T2 : Compare, T3 : Compare, T4 : Compare, T5 : Compare, T6 : Compare, T7 : Compare, T8 : Compare, T9 : Compare] Compare for (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9)
+impl[T0 : Compare, T1 : Compare, T2 : Compare, T3 : Compare, T4 : Compare, T5 : Compare, T6 : Compare, T7 : Compare, T8 : Compare, T9 : Compare, T10 : Compare] Compare for (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10)
+impl[T0 : Compare, T1 : Compare, T2 : Compare, T3 : Compare, T4 : Compare, T5 : Compare, T6 : Compare, T7 : Compare, T8 : Compare, T9 : Compare, T10 : Compare, T11 : Compare] Compare for (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11)
+impl[T0 : Compare, T1 : Compare, T2 : Compare, T3 : Compare, T4 : Compare, T5 : Compare, T6 : Compare, T7 : Compare, T8 : Compare, T9 : Compare, T10 : Compare, T11 : Compare, T12 : Compare] Compare for (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12)
+impl[T0 : Compare, T1 : Compare, T2 : Compare, T3 : Compare, T4 : Compare, T5 : Compare, T6 : Compare, T7 : Compare, T8 : Compare, T9 : Compare, T10 : Compare, T11 : Compare, T12 : Compare, T13 : Compare] Compare for (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13)
+impl[T0 : Compare, T1 : Compare, T2 : Compare, T3 : Compare, T4 : Compare, T5 : Compare, T6 : Compare, T7 : Compare, T8 : Compare, T9 : Compare, T10 : Compare, T11 : Compare, T12 : Compare, T13 : Compare, T14 : Compare] Compare for (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14)
+impl[T0 : Compare, T1 : Compare, T2 : Compare, T3 : Compare, T4 : Compare, T5 : Compare, T6 : Compare, T7 : Compare, T8 : Compare, T9 : Compare, T10 : Compare, T11 : Compare, T12 : Compare, T13 : Compare, T14 : Compare, T15 : Compare] Compare for (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15)
 
 pub(open) trait Default {
   default() -> Self
 }
+impl Default for Bool
+impl Default for Char
+impl Default for Int
+impl Default for UInt64
+impl Default for Double
 
 pub(open) trait Eq {
   op_equal(Self, Self) -> Bool
 }
+impl Eq for Unit
+impl Eq for Bool
+impl Eq for Byte
+impl Eq for Char
+impl Eq for Int
+impl Eq for Int64
+impl Eq for UInt
+impl Eq for UInt64
+impl Eq for Float
+impl Eq for Double
+impl Eq for String
+impl[X : Eq] Eq for X?
+impl[T : Eq, E : Eq] Eq for Result[T, E]
+impl Eq for Bytes
+impl[T0 : Eq, T1 : Eq] Eq for (T0, T1)
+impl[T0 : Eq, T1 : Eq, T2 : Eq] Eq for (T0, T1, T2)
+impl[T0 : Eq, T1 : Eq, T2 : Eq, T3 : Eq] Eq for (T0, T1, T2, T3)
+impl[T0 : Eq, T1 : Eq, T2 : Eq, T3 : Eq, T4 : Eq] Eq for (T0, T1, T2, T3, T4)
+impl[T0 : Eq, T1 : Eq, T2 : Eq, T3 : Eq, T4 : Eq, T5 : Eq] Eq for (T0, T1, T2, T3, T4, T5)
+impl[T0 : Eq, T1 : Eq, T2 : Eq, T3 : Eq, T4 : Eq, T5 : Eq, T6 : Eq] Eq for (T0, T1, T2, T3, T4, T5, T6)
+impl[T0 : Eq, T1 : Eq, T2 : Eq, T3 : Eq, T4 : Eq, T5 : Eq, T6 : Eq, T7 : Eq] Eq for (T0, T1, T2, T3, T4, T5, T6, T7)
+impl[T0 : Eq, T1 : Eq, T2 : Eq, T3 : Eq, T4 : Eq, T5 : Eq, T6 : Eq, T7 : Eq, T8 : Eq] Eq for (T0, T1, T2, T3, T4, T5, T6, T7, T8)
+impl[T0 : Eq, T1 : Eq, T2 : Eq, T3 : Eq, T4 : Eq, T5 : Eq, T6 : Eq, T7 : Eq, T8 : Eq, T9 : Eq] Eq for (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9)
+impl[T0 : Eq, T1 : Eq, T2 : Eq, T3 : Eq, T4 : Eq, T5 : Eq, T6 : Eq, T7 : Eq, T8 : Eq, T9 : Eq, T10 : Eq] Eq for (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10)
+impl[T0 : Eq, T1 : Eq, T2 : Eq, T3 : Eq, T4 : Eq, T5 : Eq, T6 : Eq, T7 : Eq, T8 : Eq, T9 : Eq, T10 : Eq, T11 : Eq] Eq for (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11)
+impl[T0 : Eq, T1 : Eq, T2 : Eq, T3 : Eq, T4 : Eq, T5 : Eq, T6 : Eq, T7 : Eq, T8 : Eq, T9 : Eq, T10 : Eq, T11 : Eq, T12 : Eq] Eq for (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12)
+impl[T0 : Eq, T1 : Eq, T2 : Eq, T3 : Eq, T4 : Eq, T5 : Eq, T6 : Eq, T7 : Eq, T8 : Eq, T9 : Eq, T10 : Eq, T11 : Eq, T12 : Eq, T13 : Eq] Eq for (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13)
+impl[T0 : Eq, T1 : Eq, T2 : Eq, T3 : Eq, T4 : Eq, T5 : Eq, T6 : Eq, T7 : Eq, T8 : Eq, T9 : Eq, T10 : Eq, T11 : Eq, T12 : Eq, T13 : Eq, T14 : Eq] Eq for (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14)
+impl[T0 : Eq, T1 : Eq, T2 : Eq, T3 : Eq, T4 : Eq, T5 : Eq, T6 : Eq, T7 : Eq, T8 : Eq, T9 : Eq, T10 : Eq, T11 : Eq, T12 : Eq, T13 : Eq, T14 : Eq, T15 : Eq] Eq for (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15)
 
 pub(open) trait Hash {
   hash_combine(Self, Hasher) -> Unit
@@ -863,6 +797,19 @@ impl[T0 : Show, T1 : Show, T2 : Show, T3 : Show, T4 : Show, T5 : Show, T6 : Show
 pub(open) trait ToJson {
   to_json(Self) -> Json
 }
+impl ToJson for Unit
+impl ToJson for Bool
+impl ToJson for Char
+impl ToJson for Int
+impl ToJson for Int64
+impl ToJson for UInt
+impl ToJson for UInt64
+impl ToJson for Float
+impl ToJson for Double
+impl ToJson for String
+impl[T : ToJson] ToJson for T?
+impl[Ok : ToJson, Err : ToJson] ToJson for Result[Ok, Err]
+impl[X : ToJson] ToJson for FixedArray[X]
 impl[A : ToJson, B : ToJson] ToJson for (A, B)
 impl[A : ToJson, B : ToJson, C : ToJson] ToJson for (A, B, C)
 impl[A : ToJson, B : ToJson, C : ToJson, D : ToJson] ToJson for (A, B, C, D)
