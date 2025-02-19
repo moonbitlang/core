@@ -19,7 +19,7 @@
 ///|
 struct T[V] {
   mut root : Node[V]?
-  mut size : Int64
+  mut size : Int
 }
 
 ///|

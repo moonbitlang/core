@@ -74,44 +74,8 @@ pub fn Float::to_json(self : Float) -> Json {
 }
 
 ///|
-fn escape_json_string(str : String) -> String {
-  fn to_hex_digit(i : Int) -> Char {
-    if i < 10 {
-      Char::from_int('0'.to_int() + i)
-    } else {
-      Char::from_int('a'.to_int() + (i - 10))
-    }
-  }
-
-  let len = str.length()
-  let buf = StringBuilder::new(size_hint=len)
-  for i in 0..<len {
-    let c = str[i]
-    match c {
-      '\n' => buf.write_string("\\n")
-      '\r' => buf.write_string("\\r")
-      '\b' => buf.write_string("\\b")
-      '\t' => buf.write_string("\\t")
-      _ => {
-        let code = c.to_int()
-        if code == 0x0C {
-          buf.write_string("\\f")
-        } else if code < 0x20 {
-          buf.write_string("\\u00")
-          buf.write_char(to_hex_digit(code / 16))
-          buf.write_char(to_hex_digit(code % 16))
-        } else {
-          buf.write_char(c)
-        }
-      }
-    }
-  }
-  buf.to_string()
-}
-
-///|
 pub fn String::to_json(self : String) -> Json {
-  String(escape_json_string(self))
+  String(self)
 }
 
 ///|

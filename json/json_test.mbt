@@ -348,6 +348,22 @@ test "stringify escape round trip" {
 }
 
 ///|
+test "string from and to json round trip" {
+  let greeting =
+    #|
+    #|     (\(\
+    #|     ( -.-)
+    #|     o_(")(")
+    #|     __  __     ____         __  ___                  ____  _ __
+    #|    / / / /__  / / /___     /  |/  /___  ____  ____  / __ )(_) /_
+    #|   / /_/ / _ \/ / / __ \   / /|_/ / __ \/ __ \/ __ \/ __  / / __/
+    #|  / __  /  __/ / / /_/ /  / /  / / /_/ / /_/ / / / / /_/ / / /_
+    #| /_/ /_/\___/_/_/\____/  /_/  /_/\____/\____/_/ /_/_____/_/\__/
+    #|
+  assert_eq!(@json.from_json!(greeting.to_json()), greeting)
+}
+
+///|
 test "escape" {
   let s = "http://example.com/"
   inspect!(

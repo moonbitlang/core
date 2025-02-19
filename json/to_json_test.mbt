@@ -102,19 +102,19 @@ test "String::to_json" {
   inspect!(
     "\x00".to_json(),
     content=
-      #|String("\\u0000")
+      #|String("\x00")
     ,
   )
   inspect!(
     "\n\r\b\t\\".to_json(),
     content=
-      #|String("\\n\\r\\b\\t\\")
+      #|String("\n\r\b\t\\")
     ,
   )
   inspect!(
     "\x0c\x0d\x0f".to_json(),
     content=
-      #|String("\\f\\r\\u000f")
+      #|String("\x0c\r\x0f")
     ,
   )
 }
