@@ -601,3 +601,11 @@ test "string pattern matching" {
   inspect!(process_string("true"), content="True")
   inspect!(process_string(""), content="Other")
 }
+
+///|
+test "string chars array" {
+  let v0 : String = ['a', .."x"]
+  assert_true!(v0 is "ax")
+  let v : String = ['a', 'b']
+  assert_true!(v is "ab")
+}
