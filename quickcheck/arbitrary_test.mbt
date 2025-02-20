@@ -57,3 +57,35 @@ test "iter arbitrary" {
   // inspect!(samples[9], content="[0, 0, 0, 1, 2, -2]") (Cause infinite loop?)
   inspect!(samples[10], content="[0, 0, 0]")
 }
+
+///|
+test "arbitrary unit" {
+  // generate a random Unit value using the `gen` function
+  let generated : Unit = gen()
+  // Unit has only one value, so it must be equal to ()
+  inspect!(generated, content="()")
+}
+
+///|
+test "arbitrary float" {
+  let state = @splitmix.new()
+  let f1 : Float = gen(size=42, state~)
+  let f2 : Float = gen(size=42, state~)
+  // These two random floats should be different
+  inspect!(f1 != f2, content="true")
+}
+
+///|
+test "arbitrary_iter_break" {
+  let rs = @splitmix.RandomState::default()
+  let iter : Iter[Int] = gen(size=3, state=rs)
+  let mut i = 0
+  match
+    iter.run(fn(_ : Int) -> IterResult {
+      i = i + 1
+      IterEnd
+    }) {
+    IterEnd => inspect!(i, content="1")
+    IterContinue => panic()
+  }
+}
