@@ -1,0 +1,78 @@
+package moonbitlang/core/iter
+
+// Values
+fn all[T](Iter[T], (T) -> Bool) -> Bool
+
+fn any[T](Iter[T], (T) -> Bool) -> Bool
+
+fn append[T](Iter[T], T) -> Iter[T]
+
+fn collect[T](Iter[T]) -> Array[T]
+
+fn concat[T](Iter[T], Iter[T]) -> Iter[T]
+
+fn contains[A : Eq](Iter[A], A) -> Bool
+
+fn count[T](Iter[T]) -> Int
+
+fn drop[T](Iter[T], Int) -> Iter[T]
+
+fn drop_while[T](Iter[T], (T) -> Bool) -> Iter[T]
+
+fn each[T](Iter[T], (T) -> Unit) -> Unit
+
+fn eachi[T](Iter[T], (Int, T) -> Unit) -> Unit
+
+fn empty[T]() -> Iter[T]
+
+fn filter[T](Iter[T], (T) -> Bool) -> Iter[T]
+
+fn filter_map[A, B](Iter[A], (A) -> B?) -> Iter[B]
+
+fn find_first[T](Iter[T], (T) -> Bool) -> T?
+
+fn flat_map[T, R](Iter[T], (T) -> Iter[R]) -> Iter[R]
+
+fn fold[T, B](Iter[T], init~ : B, (B, T) -> B) -> B
+
+fn head[A](Iter[A]) -> A?
+
+fn intersperse[A](Iter[A], A) -> Iter[A]
+
+fn iter[T](Iter[T]) -> Iter[T]
+
+fn just_run[T](Iter[T], (T) -> IterResult) -> Unit
+
+fn last[A](Iter[A]) -> A?
+
+fn map[T, R](Iter[T], (T) -> R) -> Iter[R]
+
+fn map_while[A, B](Iter[A], (A) -> B?) -> Iter[B]
+
+fn new[T](((T) -> IterResult) -> IterResult) -> Iter[T]
+
+fn peek[T](Iter[T]) -> T?
+
+fn prepend[T](Iter[T], T) -> Iter[T]
+
+fn repeat[T](T) -> Iter[T]
+
+fn run[T](Iter[T], (T) -> IterResult) -> IterResult
+
+fn singleton[T](T) -> Iter[T]
+
+fn take[T](Iter[T], Int) -> Iter[T]
+
+fn take_while[T](Iter[T], (T) -> Bool) -> Iter[T]
+
+fn tap[T](Iter[T], (T) -> Unit) -> Iter[T]
+
+fn to_array[T](Iter[T]) -> Array[T]
+
+// Types and methods
+
+// Type aliases
+pub typealias T[X] = Iter[X]
+
+// Traits
+
