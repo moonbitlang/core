@@ -36,9 +36,9 @@
 /// test "Double::to_uint/normal" {
 ///   inspect!(42.0.to_uint(), content="42")
 ///   inspect!((-42.5).to_uint(), content="0")
-///   inspect!((0.0 / 0.0).to_uint(), content="0") // NaN
-///   inspect!((1.0 / 0.0).to_uint(), content="4294967295") // Infinity
-///   inspect!((-1.0 / 0.0).to_uint(), content="0") // -Infinity
+///   inspect!(not_a_number.to_uint(), content="0") // NaN
+///   inspect!(infinity.to_uint(), content="4294967295") // Infinity
+///   inspect!(neg_infinity.to_uint(), content="0") // -Infinity
 /// }
 /// ```
 pub fn to_uint(self : Double) -> UInt {
