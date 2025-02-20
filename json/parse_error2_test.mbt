@@ -11,8 +11,10 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
+///|
 test "parse error" {
   inspect!(
-    @json.parse?("[1, 2, \u000c]")    
+    @json.parse?("[1, 2, \u000c]"),
+    content="Err(Invalid character '\\x0c' at line 1, column 7)",
   )
 }
