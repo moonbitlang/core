@@ -68,7 +68,7 @@ extern "js" fn JSArray::splice1(
 ///|
 /// An `Array` is a collection of values that supports random access and can
 /// grow in size.
-type Array[T] FixedArray[T]
+type Array[T]
 
 ///|
 fn Array::make_uninit[T](len : Int) -> Array[T] = "%fixedarray.make_uninit"
