@@ -73,5 +73,7 @@ extern "c" fn time(ptr : Int) -> UInt64 = "time"
 
 ///|
 fn now_internal() -> UInt64 {
-  time(0)
+  // time returns seconds since 1970-01-01 00:00:00 UTC
+  // to be consistent with other backends, we convert to milliseconds
+  time(0) * 1000
 }
