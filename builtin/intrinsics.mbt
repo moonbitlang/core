@@ -2594,6 +2594,31 @@ pub fn UInt::to_byte(self : UInt) -> Byte {
 }
 
 ///|
+/// Converts an unsigned 32-bit integer to a double-precision floating-point
+/// number. Since the range of unsigned 32-bit integers is smaller than what can
+/// be precisely represented by a double-precision floating-point number, this
+/// conversion is guaranteed to be exact.
+///
+/// Parameters:
+///
+/// * `value` : The unsigned 32-bit integer to be converted.
+///
+/// Returns a double-precision floating-point number that exactly represents the
+/// input value.
+///
+/// Example:
+///
+/// ```moonbit
+/// test "Double::convert_uint" {
+///   let n = 42U
+///   inspect!(n.to_double(), content="42")
+///   let max = 4294967295U // maximum value of UInt
+///   inspect!(max.to_double(), content="4294967295")
+/// }
+/// ```
+pub fn UInt::to_double(self : UInt) -> Double = "%u32.to_f64"
+
+///|
 /// Performs unary negation on a 32-bit floating-point number. Returns the
 /// arithmetic inverse of the operand.
 ///
