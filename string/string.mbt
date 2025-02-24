@@ -351,22 +351,27 @@ pub fn is_blank(self : String) -> Bool {
 ///|
 /// Returns the first index of the sub string.
 pub fn index_of(self : String, str : String, from~ : Int = 0) -> Int {
-  let from = if from < 0 {
-    0
-  } else if from >= self.length() {
-    self.length() - 1
-  } else {
-    from
-  }
   let len = self.length()
   let sub_len = str.length()
-  let max_idx = len - sub_len
+
+  // Handle empty substring case
   if sub_len == 0 {
-    return 0
+    // Return 0 for empty string in empty string
+    if len == 0 {
+      return 0
+    }
+    // Bound from within valid range and return it
+    return if from < 0 { 0 } else if from >= len { len } else { from }
   }
+
+  // If substring is longer than string, it can't be found
   if sub_len > len {
     return -1
   }
+
+  // Bound the starting position
+  let from = if from < 0 { 0 } else if from >= len { len - 1 } else { from }
+  let max_idx = len - sub_len
   let first = str[0]
   let mut i = from
   while i <= max_idx {
@@ -376,14 +381,11 @@ pub fn index_of(self : String, str : String, from~ : Int = 0) -> Int {
     }
     // check the rest
     if i <= max_idx {
-      let mut j = i + 1
-      let mut k = 1
-      let end = j + sub_len - 1
-      while j < end && self[j] == str[k] {
-        j += 1
-        k += 1
-      }
-      if j == end {
+      for j = 1; j < sub_len; j = j + 1 {
+        if self[i + j] != str[j] {
+          break
+        }
+      } else {
         return i
       }
     }
