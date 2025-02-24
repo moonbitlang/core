@@ -507,6 +507,7 @@ impl UInt {
   shl(UInt, Int) -> UInt //deprecated
   shr(UInt, Int) -> UInt //deprecated
   to_byte(UInt) -> Byte
+  to_double(UInt) -> Double
   to_float(UInt) -> Float
   to_int(UInt) -> Int //deprecated
   to_string(UInt, radix~ : Int = ..) -> String
