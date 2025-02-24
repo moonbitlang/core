@@ -12,6 +12,18 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+//
+// origin: FreeBSD /usr/src/lib/msun/src/s_expm1.c
+// ====================================================
+// Copyright (C) 1993 by Sun Microsystems, Inc. All rights reserved.
+//
+// Developed at SunSoft, a Sun Microsystems, Inc. business.
+// Permission to use, copy, modify, and distribute this
+// software is freely granted, provided that this notice
+// is preserved.
+// ====================================================
+//
+
 ///|
 /// Computes `e` raised to the power of a given number.
 ///
@@ -146,4 +158,130 @@ pub fn exp(self : Double) -> Double {
   } else {
     return y * twopk * twom1000
   }
+}
+
+///|
+/// Calculates exp(x) - 1 accurately even when x is close to zero.
+///
+/// Parameters:
+///
+/// * `self` : The exponent.
+///
+/// Returns e raised to the power of `self`, minus 1.
+///
+/// Special Cases:
+///
+/// * Returns NaN if `self` is NaN.
+/// * Returns -1 if `self` is negative infinity.
+/// * Returns `Infinity` if `self` is positive infinity.
+///
+/// Example
+///
+/// ```moonbit
+/// test "expm1" {
+///   inspect!(0.0.expm1(), content="0")
+///   inspect!(1.0.expm1(), content="1.718281828459045")
+///   inspect!(2.0.expm1(), content="6.38905609893065")
+///   inspect!((-1.0).expm1(), content="-0.6321205588285577")
+///   inspect!((-2.0).expm1(), content="-0.8646647167633873")
+///   inspect!(@double.not_a_number.expm1(), content="NaN")
+///   inspect!(@double.infinity.expm1(), content="Infinity")
+///   inspect!(@double.neg_infinity.expm1(), content="-1")
+/// }
+/// ```
+pub fn expm1(self : Double) -> Double {
+  if self.is_nan() {
+    return not_a_number
+  }
+  let o_threshold = 7.09782712893383973096e+02
+  if self > o_threshold {
+    return infinity
+  }
+  if self.is_inf() {
+    return -1.0
+  }
+  let huge = 1.0e+300
+  let tiny = 1.0e-300
+  let ln2_hi = 6.93147180369123816490e-01
+  let ln2_lo = 1.90821492927058770002e-10
+  let invln2 = 1.44269504088896338700e+00
+  let q1 = -3.33333333333331316428e-02
+  let q2 = 1.58730158725481460165e-03
+  let q3 = -7.93650757867487942473e-05
+  let q4 = 4.00821782732936239552e-06
+  let q5 = -2.01099218183624371326e-07
+  let mut x = self
+  let mut hx = get_high_word(x)
+  let xsb : Int = (hx & 0x80000000).reinterpret_as_int()
+  let mut y : Double = if xsb == 0 { x } else { -x }
+  hx = hx & 0x7fffffff
+  if hx >= 0x4043687A {
+    if xsb != 0 {
+      if x + tiny < 0.0 {
+        return tiny - 1.0
+      }
+    }
+  }
+  let mut hi = 0.0
+  let mut lo = 0.0
+  let mut k = 0
+  let mut c = 0.0
+  let mut t = 0.0
+  if hx > 0x3fd62e42 {
+    if hx < 0x3FF0A2B2 {
+      hi = if xsb == 0 { x - ln2_hi } else { x + ln2_hi }
+      lo = if xsb == 0 { ln2_lo } else { -ln2_lo }
+      k = if xsb == 0 { 1 } else { -1 }
+    } else {
+      k = (invln2 * x + (if xsb == 0 { 0.5 } else { -0.5 })).to_int()
+      t = k.to_double()
+      hi = x - t * ln2_hi
+      lo = t * ln2_lo
+    }
+    x = hi - lo
+    c = hi - x - lo
+  } else if hx < 0x3c900000 {
+    t = huge + x
+    return x - (t - (huge + x))
+  } else {
+    k = 0
+  }
+  let hfx : Double = 0.5 * x
+  let hxs : Double = x * hfx
+  let r1 : Double = 1.0 +
+    hxs * (q1 + hxs * (q2 + hxs * (q3 + hxs * (q4 + hxs * q5))))
+  let t : Double = 3.0 - r1 * hfx
+  let e : Double = hxs * ((r1 - t) / (6.0 - x * t))
+  if k == 0 {
+    return x - (x * e - hxs)
+  } else {
+    let e : Double = x * (e - c) - c
+    let e : Double = e - hxs
+    if k == -1 {
+      return 0.5 * (x - e) - 0.5
+    }
+    if k == 1 {
+      return if x < -0.25 {
+        -2.0 * (e - (x + 0.5))
+      } else {
+        1.0 + 2.0 * (x - e)
+      }
+    }
+    if k <= -2 || k > 56 {
+      y = 1.0 - (e - x)
+      y = set_high_word(y, get_high_word(y) + (k << 20).reinterpret_as_uint())
+      return y - 1.0
+    }
+    let mut t : Double = 1.0
+    if k < 20 {
+      t = set_high_word(0, (0x3ff00000 - (0x200000 >> k)).reinterpret_as_uint())
+      y = t - (e - x)
+      y = set_high_word(y, get_high_word(y) + (k << 20).reinterpret_as_uint())
+    } else {
+      t = set_high_word(0, ((0x3ff - k) << 20).reinterpret_as_uint())
+      y = x - (e + t) + 1.0
+      y = set_high_word(y, get_high_word(y) + (k << 20).reinterpret_as_uint())
+    }
+  }
+  y
 }

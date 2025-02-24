@@ -20,7 +20,13 @@
     "round_wasm.mbt": ["wasm", "wasm-gc"],
     "round.mbt": ["not", "js", "wasm", "wasm-gc"],
     "to_uint_wasm.mbt": ["wasm", "wasm-gc"],
-    "to_uint.mbt": ["not", "wasm", "wasm-gc"]
+    "to_uint.mbt": ["not", "wasm", "wasm-gc"],
+    "hyperbolic_js.mbt": ["js"],
+    "hyperbolic_nonjs.mbt": ["not", "js"],
+    "cbrt_js.mbt" : ["js"],
+    "cbrt_nonjs.mbt" : ["not", "js"],
+    "hypot_js.mbt" : ["js"],
+    "hypot_nonjs.mbt" : ["not", "js"]
   },
   "test-import": [
     "moonbitlang/core/test"

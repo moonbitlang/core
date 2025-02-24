@@ -105,3 +105,35 @@ pub fn ln(self : Float) -> Float {
   let y = y * r2 + (y0 + r)
   y.to_float()
 }
+
+///|
+/// Calculates ln(1 + x) accurately even when x is close to zero.
+///
+/// Parameters:
+///
+/// * `x` : The number to which 1 is added before calculating the logarithm.
+///
+/// Returns the natural logarithm of 1 + `x`.
+///
+/// Special Cases:
+///
+/// * Returns `NaN` if `x` is `NaN` or less than -1.
+/// * Returns `-Infinity` if `x` is -1.
+/// * Returns `+Infinity` if `x` is `+Infinity`.
+///
+/// Example:
+///
+/// ```moonbit
+/// test "ln_1p" {
+///   inspect!((0 : Float).ln_1p(), content="0")
+///   inspect!((1 : Float).ln_1p(), content="0.6931471824645996")
+///   inspect!((-1 : Float).ln_1p(), content="-Infinity")
+///   inspect!((-2 : Float).ln_1p(), content="NaN")
+///   inspect!(@float.not_a_number.ln_1p(), content="NaN")
+///   inspect!(@float.infinity.ln_1p(), content="Infinity")
+///   inspect!(@float.neg_infinity.ln_1p(), content="NaN")
+/// }
+/// ```
+pub fn ln_1p(self : Float) -> Float {
+  self.to_double().ln_1p().to_float()
+}

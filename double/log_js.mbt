@@ -79,3 +79,34 @@ pub fn log2(self : Double) -> Double = "Math" "log2"
 /// }
 /// ```
 pub fn log10(self : Double) -> Double = "Math" "log10"
+
+///|
+/// Calculates ln(1 + x) accurately even when x is close to zero.
+///
+/// Parameters:
+///
+/// * `self` : The number to which 1 is added before calculating the logarithm.
+///
+/// Returns the natural logarithm of 1 + `self`.
+///
+/// Special Cases:
+///
+/// * Returns NaN if `self` is NaN or less than -1.
+/// * Returns -INF if `self` is -1.
+/// * Returns +INF if `self` is +INF.
+///
+/// Example:
+///
+/// ```moonbit
+/// test "ln_1p" {
+///   inspect!(0.0.ln_1p(), content="0")
+///   inspect!(1.0.ln_1p(), content="0.6931471805599453")
+///   inspect!(2.0.ln_1p(), content="1.0986122886681096")
+///   inspect!(@double.not_a_number.ln_1p(), content="NaN")
+///   inspect!((-1.0).ln_1p(), content="-Infinity")
+///   inspect!((-2.0).ln_1p(), content="NaN")
+///   inspect!(@double.infinity.ln_1p(), content="Infinity")
+///   inspect!(@double.neg_infinity.ln_1p(), content="NaN")
+/// }
+/// ```
+pub fn ln_1p(self : Double) -> Double = "Math" "log1p"
