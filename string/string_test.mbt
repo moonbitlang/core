@@ -288,6 +288,52 @@ test "index_of" {
 }
 
 ///|
+test "String::index_of empty strings" {
+  // Empty string cases
+  assert_eq!("".index_of(""), 0)
+  assert_eq!("abc".index_of(""), 0)
+  assert_eq!("".index_of("a"), -1)
+}
+
+///|
+test "String::index_of basic matching" {
+  // Basic substring matching
+  assert_eq!("abc".index_of("a"), 0)
+  assert_eq!("abc".index_of("b"), 1)
+  assert_eq!("abc".index_of("c"), 2)
+  assert_eq!("abc".index_of("ab"), 0)
+  assert_eq!("abc".index_of("bc"), 1)
+  assert_eq!("abc".index_of("abc"), 0)
+  assert_eq!("abc".index_of("d"), -1)
+  assert_eq!("abc".index_of("abcd"), -1)
+}
+
+///|
+test "String::index_of with from parameter" {
+  // Testing from parameter
+  assert_eq!("abcabc".index_of("a", from=1), 3)
+  assert_eq!("abcabc".index_of("a", from=4), -1)
+  assert_eq!("abcabc".index_of("bc", from=2), 4)
+  assert_eq!("abc".index_of("", from=1), 1)
+  assert_eq!("abc".index_of("", from=3), 3)
+  assert_eq!("abc".index_of("", from=4), 3) // Bounded to length
+}
+
+///|
+test "String::index_of with negative from" {
+  // Testing negative from parameter
+  assert_eq!("abc".index_of("a", from=-1), 0)
+  assert_eq!("abc".index_of("b", from=-2), 1)
+}
+
+///|
+test "String::index_of overlapping patterns" {
+  // Testing overlapping patterns
+  assert_eq!("aaa".index_of("aa"), 0)
+  assert_eq!("aaa".index_of("aa", from=1), 1)
+}
+
+///|
 test "last_index_of" {
   inspect!("abc".last_index_of("a"), content="0")
   inspect!("abc".last_index_of("b"), content="1")
