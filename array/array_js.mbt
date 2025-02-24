@@ -13,7 +13,7 @@
 // limitations under the License.
 
 ///|
-priv type JSArray
+priv extern type JSArray
 
 ///|
 fn JSArray::ofAnyArray[T](array : Array[T]) -> JSArray = "%identity"

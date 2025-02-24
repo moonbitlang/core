@@ -13,10 +13,10 @@
 // limitations under the License.
 
 ///|
-priv type XStringReadHandle
+priv extern type XStringReadHandle
 
 ///|
-priv type XExternString
+priv extern type XExternString
 
 ///|
 fn begin_read_string(s : XExternString) -> XStringReadHandle = "__moonbit_fs_unstable" "begin_read_string"
@@ -45,10 +45,10 @@ fn string_from_extern(e : XExternString) -> String {
 }
 
 ///|
-priv type XStringArrayReadHandle
+priv extern type XStringArrayReadHandle
 
 ///|
-priv type XExternStringArray
+priv extern type XExternStringArray
 
 ///|
 fn begin_read_string_array(sa : XExternStringArray) -> XStringArrayReadHandle = "__moonbit_fs_unstable" "begin_read_string_array"

@@ -17,7 +17,7 @@
 // generic type parameters of extern ffi
 
 ///|
-priv type JSValue
+priv extern type JSValue
 
 ///|
 fn JSValue::ofAny[T](array : T) -> JSValue = "%identity"
@@ -26,7 +26,7 @@ fn JSValue::ofAny[T](array : T) -> JSValue = "%identity"
 fn JSValue::toAny[T](self : JSValue) -> T = "%identity"
 
 ///|
-priv type JSArray
+priv extern type JSArray
 
 ///|
 fn JSArray::ofAnyArray[T](array : Array[T]) -> JSArray = "%identity"
