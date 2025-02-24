@@ -68,3 +68,21 @@ pub fn log2(input : Double) -> Double {
 pub fn log10(input : Double) -> Double {
   input.log10()
 }
+
+///|
+/// Calculates ln(1 + x) accurately even when x is close to zero.
+///
+/// Parameters:
+///
+/// * `input` : The number to which 1 is added before calculating the logarithm.
+///
+/// Returns the natural logarithm of 1 + `input`.
+///
+/// Special Cases:
+///
+/// * Returns `NaN` if `x` is `NaN` or less than -1.
+/// * Returns `-Infinity` if `x` is -1.
+/// * Returns `+Infinity` if `x` is `+Infinity`.
+pub fn ln_1p(input : Double) -> Double {
+  input.ln_1p()
+}
