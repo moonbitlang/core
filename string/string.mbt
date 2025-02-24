@@ -386,6 +386,7 @@ pub fn index_of(self : String, str : String, from~ : Int = 0) -> Int {
           break
         }
       } else {
+        // the substring is found
         return i
       }
     }
