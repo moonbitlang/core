@@ -19,14 +19,21 @@ let not_a_number : Double
 impl Double {
   abs(Double) -> Double
   acos(Double) -> Double
+  acosh(Double) -> Double
   asin(Double) -> Double
+  asinh(Double) -> Double
   atan(Double) -> Double
   atan2(Double, Double) -> Double
+  atanh(Double) -> Double
+  cbrt(Double) -> Double
   ceil(Double) -> Double
   cos(Double) -> Double
+  cosh(Double) -> Double
   exp(Double) -> Double
+  expm1(Double) -> Double
   floor(Double) -> Double
   from_int(Int) -> Double
+  hypot(Double, Double) -> Double
   inf(Int) -> Double //deprecated
   is_close(Double, Double, relative_tolerance~ : Double = .., absolute_tolerance~ : Double = ..) -> Bool
   is_inf(Double) -> Bool
@@ -34,6 +41,7 @@ impl Double {
   is_neg_inf(Double) -> Bool
   is_pos_inf(Double) -> Bool
   ln(Double) -> Double
+  ln_1p(Double) -> Double
   log10(Double) -> Double
   log2(Double) -> Double
   min_normal() -> Double //deprecated
@@ -43,7 +51,9 @@ impl Double {
   round(Double) -> Double
   signum(Double) -> Double
   sin(Double) -> Double
+  sinh(Double) -> Double
   tan(Double) -> Double
+  tanh(Double) -> Double
   to_be_bytes(Double) -> Bytes
   to_le_bytes(Double) -> Bytes
   to_string(Double) -> String
