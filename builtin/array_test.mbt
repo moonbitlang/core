@@ -626,6 +626,13 @@ test "array_dedup - edge cases" {
 }
 
 ///|
+test "array of bytes, new & push" {
+  let bytes : Array[Byte] = Array::new(capacity=10)
+  bytes.push(b'a')
+  inspect!(bytes, content="[b'\\x61']")
+}
+
+///|
 struct MX {
   mm_num : Array[Int]
 } derive(Default, ToJson)

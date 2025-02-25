@@ -43,6 +43,11 @@ jobs:
           moon info --target wasm,wasm-gc,js,native
           git diff --exit-code
 
+      - name: format diff
+        run: |
+          moon fmt --block-style
+          git diff --exit-code
+
       - name: Set ulimit and run moon test
         if: ${{ matrix.os != 'windows-latest' }}
         run: |
@@ -90,11 +95,6 @@ jobs:
       - name: check core size on windows
         if: ${{ matrix.os == 'windows-latest' }}
         run: Get-ChildItem -Path ".\target" -Recurse -Filter "*.core" | ForEach-Object { "{0} ({1} bytes)" -f $_.FullName, $_.Length }
-
-      - name: format diff
-        run: |
-          moon fmt --block-style
-          git diff --exit-code
 
   coverage-check:
     runs-on: ubuntu-latest

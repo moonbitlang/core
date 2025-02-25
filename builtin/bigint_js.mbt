@@ -13,7 +13,7 @@
 // limitations under the License.
 
 ///|
-type BigInt
+extern type BigInt
 
 ///|
 pub fn BigInt::from_string(str : String) -> BigInt {
