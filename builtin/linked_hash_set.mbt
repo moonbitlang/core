@@ -437,7 +437,7 @@ pub fn Set::to_array[K](self : Set[K]) -> Array[K] {
 }
 
 ///|
-pub fn Set::op_equal[K : Hash + Eq](self : Set[K], other : Set[K]) -> Bool {
+pub impl[K : Hash + Eq] Eq for Set[K] with op_equal(self, other) {
   if self.size != other.size {
     return false
   }
