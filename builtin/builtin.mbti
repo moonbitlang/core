@@ -321,6 +321,7 @@ impl Set {
   iter[K](Self[K]) -> Iter[K]
   new[K](capacity~ : Int = ..) -> Self[K]
   of[K : Hash + Eq](FixedArray[K]) -> Self[K]
+  op_equal[K : Hash + Eq](Self[K], Self[K]) -> Bool
   remove[K : Hash + Eq](Self[K], K) -> Unit
   remove_and_check[K : Hash + Eq](Self[K], K) -> Bool
   size[K](Self[K]) -> Int
@@ -328,7 +329,6 @@ impl Set {
   to_array[K](Self[K]) -> Array[K]
   union[K : Hash + Eq](Self[K], Self[K]) -> Self[K]
 }
-impl[K : Eq] Eq for Set[K]
 impl[K : Show] Show for Set[K]
 impl[X : ToJson] ToJson for Set[X]
 
