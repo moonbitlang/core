@@ -437,19 +437,18 @@ pub fn Set::to_array[K](self : Set[K]) -> Array[K] {
 }
 
 ///|
-pub impl[K : Eq] Eq for Set[K] with op_equal(self, that) {
-  if self.size != that.size {
+pub fn Set::op_equal[K : Hash + Eq](self : Set[K], other : Set[K]) -> Bool {
+  if self.size != other.size {
     return false
   }
-  loop self.head, that.head {
-    None, None => true
-    Some({ key: k1, idx: i1, .. }), Some({ key: k2, idx: i2, .. }) => {
-      if k1 != k2 {
+  loop self.head {
+    None => true
+    Some({ key, idx, .. }) => {
+      if not(other.contains(key)) {
         return false
       }
-      continue self.list[i1].next, that.list[i2].next
+      continue self.list[idx].next
     }
-    _, _ => false
   }
 }
 

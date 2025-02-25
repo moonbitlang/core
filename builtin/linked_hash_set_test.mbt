@@ -326,6 +326,88 @@ test "op_equal: same sets" {
 }
 
 ///|
+test "op_equal: empty sets" {
+  let set1 : Set[Int] = Set::new()
+  let set2 : Set[Int] = Set::new()
+  inspect!(set1 == set2, content="true")
+}
+
+///|
+test "op_equal: same elements different order" {
+  let set1 = Set::new()..add(1)..add(2)..add(3)
+  let set2 = Set::new()..add(3)..add(2)..add(1)
+  inspect!(set1 == set2, content="true")
+}
+
+///|
+test "op_equal: subset" {
+  let set1 = Set::new()..add(1)..add(2)..add(3)
+  let set2 = Set::new()..add(1)..add(2)
+  inspect!(set1 == set2, content="false")
+  inspect!(set2 == set1, content="false")
+}
+
+///|
+test "op_equal: large sets" {
+  let set1 = Set::new()
+  let set2 = Set::new()
+  for i in 0..<100 {
+    set1.add(i)
+    set2.add(i)
+  }
+  inspect!(set1 == set2, content="true")
+}
+
+///|
+test "op_equal: large sets with one difference" {
+  let set1 = Set::new()
+  let set2 = Set::new()
+  for i in 0..<100 {
+    set1.add(i)
+    if i != 50 {
+      set2.add(i)
+    } else {
+      set2.add(100) // Different element
+    }
+  }
+  inspect!(set1 == set2, content="false")
+}
+
+///|
+test "op_equal: after removal" {
+  let set1 = Set::new()..add(1)..add(2)..add(3)
+  let set2 = Set::new()..add(1)..add(2)..add(3)
+  set1.remove(2)
+  inspect!(set1 == set2, content="false")
+  set2.remove(2)
+  inspect!(set1 == set2, content="true")
+}
+
+///|
+test "op_equal: after clear" {
+  let set1 = Set::new()..add(1)..add(2)..add(3)
+  let set2 = Set::new()
+  inspect!(set1 == set2, content="false")
+  set1.clear()
+  inspect!(set1 == set2, content="true")
+}
+
+///|
+test "op_equal: with string elements" {
+  let set1 = Set::new()..add("apple")..add("banana")..add("cherry")
+  let set2 = Set::new()..add("apple")..add("banana")..add("cherry")
+  inspect!(set1 == set2, content="true")
+  set1.remove("banana")
+  inspect!(set1 == set2, content="false")
+}
+
+///|
+test "op_equal: reflexivity" {
+  let set = Set::new()..add(1)..add(2)..add(3)
+  inspect!(set == set, content="true")
+}
+
+///|
 test "remove_and_check when key not found in empty slot" {
   // Try to remove from empty set
   inspect!(Set::new().remove_and_check(1), content="false")
