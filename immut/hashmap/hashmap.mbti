@@ -20,6 +20,7 @@ impl T {
   from_array[K : Eq + Hash, V](Array[(K, V)]) -> Self[K, V] //deprecated
   from_iter[K : Eq + Hash, V](Iter[(K, V)]) -> Self[K, V] //deprecated
   iter[K, V](Self[K, V]) -> Iter[(K, V)]
+  iter2[K, V](Self[K, V]) -> Iter2[K, V]
   new[K, V]() -> Self[K, V] //deprecated
   of[K : Eq + Hash, V](FixedArray[(K, V)]) -> Self[K, V] //deprecated
   op_get[K : Eq + Hash, V](Self[K, V], K) -> V?
