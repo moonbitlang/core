@@ -20,7 +20,7 @@
 /// This type is public to all packages but its internal representation is
 /// opaque. Users cannot construct values of this type directly; they are
 /// automatically created by the compiler when needed.
-pub(all) type SourceLoc
+pub(all) extern type SourceLoc
 
 ///|
 /// Converts a source location to its string representation.

@@ -589,8 +589,8 @@ test "string pattern matching" {
   } derive(Show)
   fn process_string(s : String) {
     match s {
-      [.."true", ..] => True
-      [.."false", ..] => False
+      [.. "true", ..] => True
+      [.. "false", ..] => False
       _ => Other
     }
   }

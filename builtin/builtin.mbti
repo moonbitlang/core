@@ -338,7 +338,7 @@ impl[K : Show] Show for Set[K]
 
 pub(all) type! SnapshotError String
 
-pub(all) type SourceLoc
+pub(all) extern type SourceLoc
 impl SourceLoc {
   to_string(Self) -> String
 }
