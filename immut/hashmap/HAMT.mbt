@@ -217,6 +217,18 @@ pub fn iter[K, V](self : T[K, V]) -> Iter[(K, V)] {
 }
 
 ///|
+pub fn iter2[K, V](self : T[K, V]) -> Iter2[K, V] {
+  Iter2::new(fn(yield_) {
+    for kv in self {
+      guard yield_(kv.0, kv.1) is IterContinue else { break IterEnd }
+
+    } else {
+      IterContinue
+    }
+  })
+}
+
+///|
 pub fn from_iter[K : Eq + Hash, V](iter : Iter[(K, V)]) -> T[K, V] {
   iter.fold(init=new(), fn(m, e) { m.add(e.0, e.1) })
 }
