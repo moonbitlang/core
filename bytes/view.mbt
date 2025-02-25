@@ -188,7 +188,7 @@ pub fn View::op_as_view(self : View, start~ : Int = 0, end? : Int) -> View {
 pub fn View::iter(self : View) -> Iter[Byte] {
   Iter::new(fn(yield_) {
     for i in 0..<self.len {
-      guard let IterContinue = yield_(self[i]) else { x => break x }
+      guard yield_(self[i]) is IterContinue else { break IterEnd }
 
     } else {
       IterContinue
