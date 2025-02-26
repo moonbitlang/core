@@ -1136,7 +1136,7 @@ pub fn BigInt::from_hex(input : String) -> BigInt {
   let nb_char = radix_bit_len / 4 // number of char per limb
   let quotient = number_len / nb_char
   let mod = number_len % nb_char
-  let b_len = if mod == 0 { quotient } else { quotient + 1 }
+  let mut b_len = if mod == 0 { quotient } else { quotient + 1 }
   let b = FixedArray::make(b_len, 0U)
   if mod != 0 {
     let start = len - quotient * nb_char - mod
@@ -1149,6 +1149,9 @@ pub fn BigInt::from_hex(input : String) -> BigInt {
     for j = 0; j < nb_char; j = j + 1 {
       b[i] = (b[i] << 4) | char_from_hex(input[start + j])
     }
+  }
+  while b[b_len - 1] == 0 && b_len > 1 {
+    b_len -= 1
   }
   { limbs: b, sign, len: b_len }
 }
