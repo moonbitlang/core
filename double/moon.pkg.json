@@ -17,10 +17,10 @@
     "trig_js.mbt" : ["js"],
     "trig_nonjs.mbt" : ["not", "js"],
     "round_js.mbt": ["js"],
-    "round_wasm.mbt": ["wasm", "wasm-gc"],
-    "round.mbt": ["not", "js", "wasm", "wasm-gc"],
-    "to_uint_wasm.mbt": ["wasm", "wasm-gc"],
-    "to_uint.mbt": ["not", "wasm", "wasm-gc"]
+    "round_wasm.mbt": ["wasm", "wasm-gc", "llvm"],
+    "round.mbt": ["not", "js", "wasm", "wasm-gc", "llvm"],
+    "to_uint_wasm.mbt": ["wasm", "wasm-gc", "llvm"],
+    "to_uint.mbt": ["not", "wasm", "wasm-gc", "llvm"]
   },
   "test-import": [
     "moonbitlang/core/test"
