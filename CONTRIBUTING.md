@@ -68,7 +68,7 @@ After submitting your pull request, request a review from the project maintainer
 
 - Test, documentation and bug fixes 
 
-- Standalone packages with good functionalites, for example, bigint package
+- Standalone packages with good functionalities, for example, bigint package
 
 - Fast and efficient abstractions are preferred over *theoretically perfect* abstractions
 

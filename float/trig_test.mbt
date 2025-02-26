@@ -13,7 +13,7 @@
 // limitations under the License.
 
 ///|
-test "floating point trignometry" {
+test "floating point trigonometry" {
   // sin
   inspect!((0.0 : Float).sin(), content="0")
   inspect!((2.0 : Float).sin(), content="0.9092974066734314")

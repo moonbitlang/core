@@ -414,7 +414,7 @@ pub fn Array::insert[T](self : Array[T], index : Int, value : T) -> Unit {
 /// Resize the array in-place so that `len` is equal to `new_len`.
 ///
 /// If `new_len` is greater than `len`, the array will be extended by the
-/// difference, and the values in the new slots are left uninitilized.
+/// difference, and the values in the new slots are left uninitialized.
 ///  If `new_len` is less than `len`, it will panic
 ///
 /// @alert unsafe "Panic if new length is negative."

@@ -13,7 +13,7 @@
 // limitations under the License.
 
 ///|
-/// FIXME: remove later, workround formatter bug
+/// FIXME: remove later, workaround formatter bug
 fn temp() -> Unit {
   ()
 }
