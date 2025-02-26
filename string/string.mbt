@@ -526,16 +526,38 @@ pub fn split(self : String, separator : String) -> Iter[String] {
 }
 
 ///|
-/// Replace the first old string in this string to new string.
-pub fn replace(self : String, old~ : String, new~ : String) -> String {
-  let old_idx = self.index_of(old)
-  if old_idx < 0 {
-    self
+/// Replace the old string in this string to new string.
+/// The count parameter specifies the number of replacements to make.
+pub fn replace(self : String, old~ : String, new~ : String, count~ : Int = 1) -> String {
+  let buf = StringBuilder::new()
+  let len = self.length()
+  let old_len = old.length()
+  let mut replace_count = 0
+  if old_len == 0 {
+    replace_count += 1
+    buf.write_string(new)
+    for c in self {
+      buf.write_char(c)
+      if replace_count < count {
+        buf.write_string(new)
+        replace_count += 1
+      }
+    }
   } else {
-    self.substring(end=old_idx) +
-    new +
-    self.substring(start=old_idx + old.length())
+    let mut start = 0
+    while start < len {
+      let end = self.index_of(old, from=start)
+      if end < 0 ||  replace_count == count {
+        buf.write_string(self.substring(start~))
+        break
+      }
+      replace_count += 1
+      buf.write_string(self.substring(start~, end~))
+      buf.write_string(new)
+      start = end + old_len
+    }
   }
+  buf.to_string()
 }
 
 ///|

@@ -49,7 +49,7 @@ impl String {
   pad_end(String, Int, Char) -> String
   pad_start(String, Int, Char) -> String
   repeat(String, Int) -> String
-  replace(String, old~ : String, new~ : String) -> String
+  replace(String, old~ : String, new~ : String, count~ : Int = ..) -> String
   replace_all(String, old~ : String, new~ : String) -> String
   rev(String) -> String
   rev_fold[A](String, init~ : A, (A, Char) -> A) -> A
