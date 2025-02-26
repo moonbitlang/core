@@ -528,7 +528,12 @@ pub fn split(self : String, separator : String) -> Iter[String] {
 ///|
 /// Replace the old string in this string to new string.
 /// The count parameter specifies the number of replacements to make.
-pub fn replace(self : String, old~ : String, new~ : String, count~ : Int = 1) -> String {
+pub fn replace(
+  self : String,
+  old~ : String,
+  new~ : String,
+  count~ : Int = 1
+) -> String {
   let buf = StringBuilder::new()
   let len = self.length()
   let old_len = old.length()
@@ -547,7 +552,7 @@ pub fn replace(self : String, old~ : String, new~ : String, count~ : Int = 1) ->
     let mut start = 0
     while start < len {
       let end = self.index_of(old, from=start)
-      if end < 0 ||  replace_count == count {
+      if end < 0 || replace_count == count {
         buf.write_string(self.substring(start~))
         break
       }

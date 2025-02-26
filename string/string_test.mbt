@@ -404,7 +404,10 @@ test "replace" {
     content="你好Moonbit",
   )
   inspect!("👍😍😭".replace(old="😍😭", new=""), content="👍")
-  inspect!("👍😭👍👍😍".replace(old="👍", new="", count=2), content="😭👍😍")
+  inspect!(
+    "👍😭👍👍😍".replace(old="👍", new="", count=2),
+    content="😭👍😍",
+  )
   inspect!("ababaa".replace(old="a", new="", count=10), content="bb")
 }
 
