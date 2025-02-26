@@ -27,7 +27,7 @@ println(pq.length()) // 5
 Similarly, you can use the `is_empty` to determine whether the priority queue is empty.
 
 ```moonbit
-let pq = @priority_queue.PrioriryQueue::new()
+let pq = @priority_queue.PriorityQueue::new()
 println(pq.is_empty()) // true
 ```
 

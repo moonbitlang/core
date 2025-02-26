@@ -499,16 +499,16 @@ pub fn ends_with(self : String, str : String) -> Bool {
 /// let result = input.split(separator).collect()
 /// assert_eq!(result, ["a", "b", "c", "d"])
 /// ```
-pub fn split(self : String, seperator : String) -> Iter[String] {
+pub fn split(self : String, separator : String) -> Iter[String] {
   let len = self.length()
-  let sep_len = seperator.length()
+  let sep_len = separator.length()
   if sep_len == 0 {
     return self.iter().map(fn(c) { c.to_string() })
   }
   Iter::new(fn(yield_) {
     let mut start = 0
     while start < len {
-      let end = self.index_of(seperator, from=start)
+      let end = self.index_of(separator, from=start)
       if end < 0 {
         if yield_(self.substring(start~)) == IterEnd {
           break IterEnd
