@@ -391,6 +391,12 @@ test "decimal_string" {
 }
 
 ///|
+test "from_hex with leading zeros" {
+  let a = BigInt::from_hex("0ffffffff")
+  check_invariant!(a)
+}
+
+///|
 test "from_int" {
   let a = BigInt::from_int(1234567899)
   check_invariant!(a)
