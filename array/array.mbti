@@ -4,6 +4,7 @@ alias @moonbitlang/core/bytes as @bytes
 alias @moonbitlang/core/quickcheck as @quickcheck
 
 // Values
+fn zip_with[A, B, C](Array[A], Array[B], merge~ : (A, B) -> C) -> Array[C]
 
 // Types and methods
 impl FixedArray {
@@ -62,6 +63,7 @@ impl Array {
   sort[T : Compare](Self[T]) -> Unit
   sort_by[T](Self[T], (T, T) -> Int) -> Unit
   sort_by_key[T, K : Compare](Self[T], (T) -> K) -> Unit
+  zip[A, B](Self[A], Self[B]) -> Self[(A, B)]
 }
 impl[X : @quickcheck.Arbitrary] @quickcheck.Arbitrary for Array[X]
 
