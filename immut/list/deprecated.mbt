@@ -22,6 +22,23 @@ pub fn T::from_json[A : @json.FromJson](
 }
 
 ///|
+/// Compares two lists for equality.
+///
+/// # Example
+///
+/// ```
+/// assert_eq!(@list.of([1, 2, 3]).equal(@list.of([1, 2, 3])), true)
+/// ```
+/// @alert deprecated "use `==` instead"
+pub fn equal[A : Eq](self : T[A], other : T[A]) -> Bool {
+  loop self, other {
+    Nil, Nil => true
+    Cons(h, t), Cons(h1, t1) => if h == h1 { continue t, t1 } else { false }
+    _, _ => false
+  }
+}
+
+///|
 /// @alert deprecated "use `@immut/list.from_array` instead"
 /// @coverage.skip
 pub fn T::from_array[A](arr : Array[A]) -> T[A] {

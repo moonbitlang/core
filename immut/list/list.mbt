@@ -1020,22 +1020,6 @@ pub fn is_prefix[A : Eq](self : T[A], prefix : T[A]) -> Bool {
 }
 
 ///|
-/// Compares two lists for equality.
-///
-/// # Example
-///
-/// ```
-/// assert_eq!(@list.of([1, 2, 3]).equal(@list.of([1, 2, 3])), true)
-/// ```
-pub fn equal[A : Eq](self : T[A], other : T[A]) -> Bool {
-  match (self, other) {
-    (Nil, Nil) => true
-    (Cons(h, t), Cons(h1, t1)) => h == h1 && t.equal(t1)
-    _ => false
-  }
-}
-
-///|
 /// Returns true if list ends with suffix.
 ///
 /// # Example
