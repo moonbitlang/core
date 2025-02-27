@@ -1,5 +1,7 @@
 package moonbitlang/core/deque
 
+alias @moonbitlang/core/json as @json
+
 // Values
 fn from_array[A](Array[A]) -> T[A]
 
@@ -56,6 +58,8 @@ impl T {
 }
 impl[A : Eq] Eq for T[A]
 impl[A : Show] Show for T[A]
+impl[A : ToJson] ToJson for T[A]
+impl[A : @json.FromJson] @json.FromJson for T[A]
 
 // Type aliases
 
