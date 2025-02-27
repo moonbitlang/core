@@ -582,7 +582,7 @@ pub impl Compare for Int64 with compare(self, other) = "%i64_compare"
 ///   inspect!(Int64::default(), content="0")
 /// }
 /// ```
-pub fn Int64::default() -> Int64 = "%i64_default"
+pub impl Default for Int64 with default() = "%i64_default"
 
 ///|
 /// Converts a 64-bit signed integer to a 32-bit signed integer by truncating

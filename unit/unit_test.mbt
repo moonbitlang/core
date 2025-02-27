@@ -37,7 +37,7 @@ test {
 test {
   let unit1 = ()
   let unit2 = ()
-  assert_eq!(@unit.compare(unit1, unit2), 0)
+  assert_eq!(unit1.compare(unit2), 0)
 }
 
 ///|

@@ -251,7 +251,7 @@ pub fn iter(self : Bytes) -> Iter[Byte] {
 ///   inspect!(bytes.length(), content="0")
 /// }
 /// ```
-pub fn Bytes::default() -> Bytes {
+pub impl Default for Bytes with default() {
   b""
 }
 

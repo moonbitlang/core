@@ -307,7 +307,7 @@ test "to_option" {
 }
 
 ///|
-pub fn compare[T : Compare, E : Compare](
+pub impl[T : Compare, E : Compare] Compare for Result[T, E] with compare(
   self : Result[T, E],
   other : Result[T, E]
 ) -> Int {

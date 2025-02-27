@@ -325,7 +325,7 @@ test "or default" {
 }
 
 ///|
-pub fn compare[X : Compare](self : X?, other : X?) -> Int {
+pub impl[X : Compare] Compare for X? with compare(self, other) {
   match self {
     None =>
       match other {
@@ -355,7 +355,7 @@ test "compare" {
 
 ///|
 /// `None`
-pub fn Option::default[X]() -> X? {
+pub impl[X] Default for X? with default() {
   None
 }
 

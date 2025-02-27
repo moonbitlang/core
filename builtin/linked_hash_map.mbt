@@ -574,6 +574,6 @@ pub fn Map::from_iter[K : Hash + Eq, V](iter : Iter[(K, V)]) -> Map[K, V] {
 }
 
 ///|
-pub fn Map::default[K, V]() -> Map[K, V] {
+pub impl[K, V] Default for Map[K, V] with default() {
   Map::new()
 }
