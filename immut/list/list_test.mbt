@@ -506,9 +506,9 @@ test "is_prefix" {
 
 ///|
 test "equal" {
-  inspect!(@list.of([1, 2, 3]).equal(@list.of([1, 2, 3])), content="true")
-  inspect!(@list.of([1, 2, 3]).equal(@list.of([1, 3, 3])), content="false")
-  inspect!(@list.Nil.equal(@list.of([1])), content="false")
+  inspect!(@list.of([1, 2, 3]) == @list.of([1, 2, 3]), content="true")
+  inspect!(@list.of([1, 2, 3]) == @list.of([1, 3, 3]), content="false")
+  inspect!(@list.Nil == @list.of([1]), content="false")
 }
 
 ///|

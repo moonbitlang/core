@@ -37,7 +37,7 @@ impl T {
   drop_while[A](Self[A], (A) -> Bool) -> Self[A]
   each[A](Self[A], (A) -> Unit) -> Unit
   eachi[A](Self[A], (Int, A) -> Unit) -> Unit
-  equal[A : Eq](Self[A], Self[A]) -> Bool
+  equal[A : Eq](Self[A], Self[A]) -> Bool //deprecated
   filter[A](Self[A], (A) -> Bool) -> Self[A]
   filter_map[A, B](Self[A], (A) -> B?) -> Self[B]
   find[A](Self[A], (A) -> Bool) -> A?
