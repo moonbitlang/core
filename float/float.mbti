@@ -24,7 +24,6 @@ impl Float {
   atan2(Float, Float) -> Float
   ceil(Float) -> Float
   cos(Float) -> Float
-  default() -> Float
   exp(Float) -> Float
   floor(Float) -> Float
   is_inf(Float) -> Bool
@@ -42,6 +41,7 @@ impl Float {
   to_le_bytes(Float) -> Bytes
   trunc(Float) -> Float
 }
+impl Default for Float
 impl Hash for Float
 impl Show for Float
 

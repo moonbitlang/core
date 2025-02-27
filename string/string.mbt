@@ -112,7 +112,7 @@ pub impl Compare for String with compare(self, other) {
 
 ///|
 /// The empty string
-pub fn String::default() -> String {
+pub impl Default for String with default() {
   ""
 }
 

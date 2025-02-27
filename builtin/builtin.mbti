@@ -269,9 +269,7 @@ pub(all) enum Json {
   Array(Array[Json])
   Object(Map[String, Json])
 }
-impl Json {
-  default() -> Self
-}
+impl Default for Json
 impl Eq for Json
 
 type Map[K, V]
@@ -279,7 +277,6 @@ impl Map {
   capacity[K, V](Self[K, V]) -> Int
   clear[K, V](Self[K, V]) -> Unit
   contains[K : Hash + Eq, V](Self[K, V], K) -> Bool
-  default[K, V]() -> Self[K, V]
   each[K, V](Self[K, V], (K, V) -> Unit) -> Unit
   eachi[K, V](Self[K, V], (Int, K, V) -> Unit) -> Unit
   from_array[K : Hash + Eq, V](Array[(K, V)]) -> Self[K, V]
@@ -301,6 +298,7 @@ impl Map {
   to_array[K, V](Self[K, V]) -> Array[(K, V)]
   values[K, V](Self[K, V]) -> Iter[V]
 }
+impl[K, V] Default for Map[K, V]
 impl[K : Hash + Eq, V : Eq] Eq for Map[K, V]
 impl[K : Show, V : Show] Show for Map[K, V]
 impl[K : Show, V : ToJson] ToJson for Map[K, V]
@@ -370,7 +368,6 @@ impl Bool {
 }
 
 impl Byte {
-  default() -> Byte
   land(Byte, Byte) -> Byte
   lnot(Byte) -> Byte
   lor(Byte, Byte) -> Byte
@@ -450,7 +447,6 @@ impl Int64 {
   asr(Int64, Int) -> Int64 //deprecated
   clz(Int64) -> Int
   ctz(Int64) -> Int
-  default() -> Int64
   land(Int64, Int64) -> Int64
   lnot(Int64) -> Int64
   lor(Int64, Int64) -> Int64
@@ -616,7 +612,6 @@ impl FixedArray {
   blit_from_bytes(Self[Byte], Int, Bytes, Int, Int) -> Unit
   blit_from_string(Self[Byte], Int, String, Int, Int) -> Unit
   blit_to[A](Self[A], Self[A], len~ : Int, src_offset~ : Int = .., dst_offset~ : Int = ..) -> Unit
-  default[X]() -> Self[X]
   fill[T](Self[T], T) -> Unit
   get[T](Self[T], Int) -> T
   is_empty[T](Self[T]) -> Bool
@@ -691,10 +686,13 @@ pub(open) trait Default {
   default() -> Self
 }
 impl Default for Bool
+impl Default for Byte
 impl Default for Char
 impl Default for Int
+impl Default for Int64
 impl Default for UInt64
 impl Default for Double
+impl[X] Default for FixedArray[X]
 
 pub(open) trait Eq {
   op_equal(Self, Self) -> Bool

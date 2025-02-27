@@ -5,10 +5,10 @@ fn default() -> Unit
 
 // Types and methods
 impl Unit {
-  compare(Unit, Unit) -> Int
-  default() -> Unit
   to_string(Unit) -> String
 }
+impl Compare for Unit
+impl Default for Unit
 impl Hash for Unit
 
 // Type aliases

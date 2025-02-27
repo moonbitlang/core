@@ -37,7 +37,6 @@ impl Eq for View
 impl Show for View
 
 impl Bytes {
-  default() -> Bytes
   from_array(Array[Byte]) -> Bytes
   from_fixedarray(FixedArray[Byte], len? : Int) -> Bytes
   from_iter(Iter[Byte]) -> Bytes
@@ -47,6 +46,7 @@ impl Bytes {
   to_array(Bytes) -> Array[Byte]
   to_fixedarray(Bytes, len? : Int) -> FixedArray[Byte]
 }
+impl Default for Bytes
 impl Hash for Bytes
 
 // Type aliases

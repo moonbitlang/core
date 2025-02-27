@@ -218,7 +218,7 @@ pub impl Hash for Byte with hash_combine(self, hasher) {
 /// - None
 ///
 /// Returns the default `Byte` value, which is `b'\x00'`.
-pub fn Byte::default() -> Byte {
+pub impl Default for Byte with default() {
   b'\x00'
 }
 

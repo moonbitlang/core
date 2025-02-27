@@ -97,7 +97,7 @@ pub fn FixedArray::iter2[T](self : FixedArray[T]) -> Iter2[Int, T] {
 ///   inspect!(arr.is_empty(), content="true")
 /// }
 /// ```
-pub fn FixedArray::default[X]() -> FixedArray[X] {
+pub impl[X] Default for FixedArray[X] with default() {
   []
 }
 

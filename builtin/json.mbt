@@ -162,6 +162,6 @@ pub impl ToJson for Unit with to_json(_self) {
 }
 
 ///|
-pub fn Json::default() -> Json {
+pub impl Default for Json with default() {
   false
 }

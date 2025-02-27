@@ -492,7 +492,7 @@ pub impl Compare for Int64 with compare(self : Int64, other : Int64) -> Int {
 }
 
 ///|
-pub fn Int64::default() -> Int64 {
+pub impl Default for Int64 with default() {
   0L
 }
 
