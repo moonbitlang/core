@@ -211,9 +211,9 @@ pub fn filter[A](self : T[A], f : (A) -> Bool) -> T[A] {
 ///|
 /// Test if all elements of the list satisfy the predicate.
 pub fn all[A](self : T[A], f : (A) -> Bool) -> Bool {
-  match self {
+  loop self {
     Nil => true
-    Cons(head, tail) => f(head) && all(tail, f)
+    Cons(head, tail) => if f(head) { continue tail } else { false }
   }
 }
 
@@ -1012,10 +1012,10 @@ pub fn remove[A : Eq](self : T[A], elem : A) -> T[A] {
 /// assert_eq!(@list.of([1, 2, 3, 4, 5]).is_prefix(@list.of([1, 2, 3])), true)
 /// ```
 pub fn is_prefix[A : Eq](self : T[A], prefix : T[A]) -> Bool {
-  match (self, prefix) {
-    (_, Nil) => true
-    (Nil, Cons(_)) => false
-    (Cons(h1, t1), Cons(h2, t2)) => h1 == h2 && t1.is_prefix(t2)
+  loop self, prefix {
+    _, Nil => true
+    Nil, Cons(_) => false
+    Cons(h1, t1), Cons(h2, t2) => if h1 == h2 { continue t1, t2 } else { false }
   }
 }
 
