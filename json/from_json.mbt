@@ -45,10 +45,10 @@ pub impl FromJson for Bool with from_json(json, path) {
 
 ///|
 pub impl FromJson for Int with from_json(json, path) {
-  match json {
-    Number(n) => n.to_int()
-    _ => decode_error!(path, "Int::from_json: expected number")
+  guard json is Number(n) else {
+    decode_error!(path, "Int::from_json: expected number")
   }
+  n.to_int()
 }
 
 ///|
@@ -70,10 +70,10 @@ pub impl FromJson for Int64 with from_json(json, path) {
 
 ///|
 pub impl FromJson for UInt with from_json(json, path) {
-  match json {
-    Number(n) => n.to_uint()
-    _ => decode_error!(path, "UInt::from_json: expected number")
+  guard json is Number(n) else {
+    decode_error!(path, "UInt::from_json: expected number")
   }
+  n.to_uint()
 }
 
 ///|
@@ -95,18 +95,18 @@ pub impl FromJson for UInt64 with from_json(json, path) {
 
 ///|
 pub impl FromJson for Double with from_json(json, path) {
-  match json {
-    Number(n) => n
-    _ => decode_error!(path, "Double::from_json: expected number")
+  guard json is Number(n) else {
+    decode_error!(path, "Double::from_json: expected number")
   }
+  n
 }
 
 ///|
 pub impl FromJson for String with from_json(json, path) {
-  match json {
-    String(a) => a
-    _ => decode_error!(path, "String::from_json: expected string")
+  guard json is String(a) else {
+    decode_error!(path, "String::from_json: expected string")
   }
+  a
 }
 
 ///|
@@ -124,55 +124,51 @@ pub impl FromJson for Char with from_json(json, path) {
 
 ///|
 pub impl FromJson for BigInt with from_json(json, path) {
-  match json {
-    String(s) => BigInt::from_string(s)
-    _ => decode_error!(path, "BigInt::from_json: expected number")
+  guard json is String(s) else {
+    decode_error!(path, "BigInt::from_json: expected number")
   }
+  BigInt::from_string(s)
 }
 
 ///|
 pub impl[X : FromJson] FromJson for Array[X] with from_json(json, path) {
-  match json {
-    Array(a) => {
-      let res : Array[X] = Array::new(capacity=a.length())
-      let idx = Index(path, index=0)
-      for i = 0; i < a.length(); i = i + 1 {
-        // TODO: it should be assert here
-        if idx is (Index(_) as idx) {
-          idx.index = i
-        }
-        res.push(FromJson::from_json!(a[i], idx))
-      }
-      res
-    }
-    _ => decode_error!(path, "Array::from_json: expected array")
+  guard json is Array(a) else {
+    decode_error!(path, "Array::from_json: expected array")
   }
+  let res : Array[X] = Array::new(capacity=a.length())
+  let idx = Index(path, index=0)
+  for i = 0; i < a.length(); i = i + 1 {
+    // TODO: it should be assert here
+    if idx is (Index(_) as idx) {
+      idx.index = i
+    }
+    res.push(FromJson::from_json!(a[i], idx))
+  }
+  res
 }
 
 ///|
 pub impl[X : FromJson] FromJson for FixedArray[X] with from_json(json, path) {
-  match json {
-    Array(a) => {
-      let len = a.length()
-      if len == 0 {
-        return []
-      }
-      let idx = Index(path, index=0)
-      let res : FixedArray[X] = FixedArray::make(
-        len,
-        FromJson::from_json!(a[0], idx),
-      )
-      for i in 1..<len {
-        // TODO: it should be assert here
-        if idx is (Index(_) as idx) {
-          idx.index = i
-        }
-        res[i] = FromJson::from_json!(a[i], idx)
-      }
-      res
-    }
-    _ => decode_error!(path, "FixedArray::from_json: expected array")
+  guard json is Array(a) else {
+    decode_error!(path, "FixedArray::from_json: expected array")
   }
+  let len = a.length()
+  if len == 0 {
+    return []
+  }
+  let idx = Index(path, index=0)
+  let res : FixedArray[X] = FixedArray::make(
+    len,
+    FromJson::from_json!(a[0], idx),
+  )
+  for i in 1..<len {
+    // TODO: it should be assert here
+    if idx is (Index(_) as idx) {
+      idx.index = i
+    }
+    res[i] = FromJson::from_json!(a[i], idx)
+  }
+  res
 }
 
 ///|
@@ -182,21 +178,19 @@ pub impl[V : FromJson] FromJson for Map[String, V] with from_json(json, path) {
   // but currently we don't have FromString 
   // Here ToJSON we have 
   // Map[K : Show, V : ToJson]
-  match json {
-    Object(obj) => {
-      let res = {}
-      let key = Key(path, key="")
-      for k, v in obj {
-        // TODO: it should be assert here
-        if key is (Key(_) as k0) {
-          k0.key = k
-        }
-        res[k] = FromJson::from_json!(v, key)
-      }
-      res
-    }
-    _ => decode_error!(path, "Map::from_json: expected object")
+  guard json is Object(obj) else {
+    decode_error!(path, "Map::from_json: expected object")
   }
+  let res = {}
+  let key = Key(path, key="")
+  for k, v in obj {
+    // TODO: it should be assert here
+    if key is (Key(_) as k0) {
+      k0.key = k
+    }
+    res[k] = FromJson::from_json!(v, key)
+  }
+  res
 }
 
 ///|
@@ -234,14 +228,13 @@ pub impl[Ok : FromJson, Err : FromJson] FromJson for Result[Ok, Err] with from_j
 
 ///|
 pub impl FromJson for Unit with from_json(json, path) {
-  match json {
-    Null => ()
-    _ => decode_error!(path, "Unit::from_json: expected null")
+  guard json is Null else {
+    decode_error!(path, "Unit::from_json: expected null")
   }
+
 }
 
 ///|
-pub impl FromJson for JsonValue with from_json(json, path) {
-  guard true else { decode_error!(path, "Unreachable") }
+pub impl FromJson for JsonValue with from_json(json, _path) {
   json
 }
