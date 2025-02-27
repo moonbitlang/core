@@ -220,9 +220,9 @@ pub fn all[A](self : T[A], f : (A) -> Bool) -> Bool {
 ///|
 /// Test if any element of the list satisfies the predicate.
 pub fn any[A](self : T[A], f : (A) -> Bool) -> Bool {
-  match self {
+  loop self {
     Nil => false
-    Cons(head, tail) => f(head) || any(tail, f)
+    Cons(head, tail) => if f(head) { true } else { continue tail }
   }
 }
 
@@ -300,22 +300,6 @@ pub fn last[A](self : T[A]) -> A? {
 }
 
 ///|
-/// Init of the list.
-///
-/// # Example
-///
-/// ```
-/// assert_eq!(@list.of([1, 2, 3, 4, 5]).init_(), @list.of([1, 2, 3, 4]))
-/// ```
-pub fn init_[A](self : T[A]) -> T[A] {
-  match self {
-    Nil => Nil
-    Cons(_, Nil) => Nil
-    Cons(head, tail) => Cons(head, init_(tail))
-  }
-}
-
-///|
 /// Concatenate two lists.
 ///
 /// # Example
@@ -369,9 +353,9 @@ pub fn rev[A](self : T[A]) -> T[A] {
 /// assert_eq!(r, 15)
 /// ```
 pub fn fold[A, B](self : T[A], init~ : B, f : (B, A) -> B) -> B {
-  match self {
-    Nil => init
-    Cons(head, tail) => tail.fold(f, init=f(init, head))
+  loop self, init {
+    Nil, acc => acc
+    Cons(head, tail), acc => continue tail, f(acc, head)
   }
 }
 
@@ -594,11 +578,11 @@ pub fn nth[A](self : T[A], n : Int) -> A? {
 /// assert_eq!(@list.repeat(5, 1), @list.from_array([1, 1, 1, 1, 1]))
 /// ```
 pub fn repeat[A](n : Int, x : A) -> T[A] {
-  if n == 0 {
-    Nil
-  } else {
-    Cons(x, repeat(n - 1, x))
+  let mut result = Nil
+  for i = 0; i < n; i = i + 1 {
+    result = Cons(x, result)
   }
+  result
 }
 
 ///|
