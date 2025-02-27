@@ -40,28 +40,6 @@ pub fn println[T : Show](input : T) -> Unit {
 }
 
 ///|
-/// Prints a value to the standard output and appends a newline.
-///
-/// Parameters:
-///
-/// * `input` : The value to be printed. Must implement the `Show` trait.
-///
-/// Example:
-///
-/// ```moonbit skip
-/// test "print" {
-///   println(42)
-///   println("Hello, World!")
-/// }
-/// ```
-///
-/// @alert deprecated "Use `println` instead"
-/// @coverage.skip
-pub fn print[T : Show](input : T) -> Unit {
-  println(input)
-}
-
-///|
 /// Prints and returns the value of a given expression for quick and dirty debugging.
 /// @alert deprecated "This function is for debugging only and should not be used in production"
 pub fn dump[T](t : T, name? : String, loc~ : SourceLoc = _) -> T {

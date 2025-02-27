@@ -35,8 +35,6 @@ fn panic[T]() -> T
 
 fn physical_equal[T](T, T) -> Bool
 
-fn print[T : Show](T) -> Unit //deprecated
-
 fn println[T : Show](T) -> Unit
 
 fn repr[T : Show](T) -> String
