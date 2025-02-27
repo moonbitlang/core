@@ -1257,3 +1257,27 @@ pub fn to_array[A](self : T[A]) -> Array[A] {
     xs
   }
 }
+
+///|
+/// TODO: improve performance
+pub impl[A : ToJson] ToJson for T[A] with to_json(self : T[A]) -> Json {
+  let result = []
+  for v in self {
+    result.push(v.to_json())
+  }
+  Array(result)
+}
+
+///|
+/// TODO: improve performance
+pub impl[A : @json.FromJson] @json.FromJson for T[A] with from_json!(json, path) {
+  guard json is Array(a) else {
+    raise @json.JsonDecodeError((path, "Deque::from_json: expected array"))
+  }
+  let result = new(capacity=a.length())
+  for i = 0; i < a.length(); i = i + 1 {
+    let v : A = @json.FromJson::from_json!(a[i], path.add_index(i))
+    result.push_back(v)
+  }
+  result
+}
