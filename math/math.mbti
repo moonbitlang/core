@@ -5,21 +5,37 @@ const PI : Double = 0x3.243F6A8885A308CA8A54
 
 fn acos(Double) -> Double
 
+fn acosh(Double) -> Double
+
 fn asin(Double) -> Double
+
+fn asinh(Double) -> Double
 
 fn atan(Double) -> Double
 
 fn atan2(Double, Double) -> Double
 
+fn atanh(Double) -> Double
+
+fn cbrt(Double) -> Double
+
 fn ceil(Double) -> Double
 
 fn cos(Double) -> Double
 
+fn cosh(Double) -> Double
+
 fn exp(Double) -> Double
+
+fn expm1(Double) -> Double
 
 fn floor(Double) -> Double
 
+fn hypot(Double, Double) -> Double
+
 fn ln(Double) -> Double
+
+fn ln_1p(Double) -> Double
 
 fn log10(Double) -> Double
 
@@ -35,7 +51,11 @@ fn round(Double) -> Double
 
 fn sin(Double) -> Double
 
+fn sinh(Double) -> Double
+
 fn tan(Double) -> Double
+
+fn tanh(Double) -> Double
 
 fn trunc(Double) -> Double
 

@@ -121,3 +121,34 @@ pub fn exp(self : Float) -> Float {
   let y = y * s
   y.to_float()
 }
+
+///|
+/// Calculates exp(x) - 1 accurately even when x is close to zero.
+///
+/// Parameters:
+///
+/// * `x` : The exponent.
+///
+/// Returns e raised to the power of `x`, minus 1.
+///
+/// Special Cases:
+///
+/// * Returns NaN if `x` is NaN.
+/// * Returns -1 if `x` is negative infinity.
+/// * Returns `Infinity` if `x` is positive infinity.
+///
+/// Example
+///
+/// ```moonbit
+/// test "expm1" {
+///  inspect!((0 : Float).expm1(), content="0")
+///  inspect!((1 : Float).expm1(), content="1.718281865119934")
+///  inspect!((-1 : Float).expm1(), content="-0.6321205496788025")
+///  inspect!(@float.not_a_number.expm1(), content="NaN")
+///  inspect!(@float.infinity.expm1(), content="Infinity")
+///  inspect!(@float.neg_infinity.expm1(), content="-1")
+/// }
+/// ```
+pub fn expm1(self : Float) -> Float {
+  self.to_double().expm1().to_float()
+}

@@ -13,11 +13,31 @@
 // limitations under the License.
 
 ///|
-pub fn exp(input : Double) -> Double {
-  input.exp()
+pub fn sinh(x : Double) -> Double {
+  x.sinh()
 }
 
 ///|
-pub fn expm1(input : Double) -> Double {
-  input.expm1()
+pub fn cosh(x : Double) -> Double {
+  x.cosh()
+}
+
+///|
+pub fn tanh(x : Double) -> Double {
+  x.tanh()
+}
+
+///|
+pub fn asinh(x : Double) -> Double {
+  x.asinh()
+}
+
+///|
+pub fn acosh(x : Double) -> Double {
+  x.acosh()
+}
+
+///|
+pub fn atanh(x : Double) -> Double {
+  x.atanh()
 }
