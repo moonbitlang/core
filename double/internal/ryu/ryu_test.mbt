@@ -18,9 +18,9 @@ test "Basic" {
   assert_eq!(@ryu.ryu_to_string(-0.0), "0")
   assert_eq!(@ryu.ryu_to_string(1.e0), "1")
   assert_eq!(@ryu.ryu_to_string(-1.e0), "-1")
-  assert_eq!(@ryu.ryu_to_string(0.0 / 0.0), "NaN")
-  assert_eq!(@ryu.ryu_to_string(1.0 / 0.0), "Infinity")
-  assert_eq!(@ryu.ryu_to_string(-1.0 / 0.0), "-Infinity")
+  assert_eq!(@ryu.ryu_to_string(@double.not_a_number), "NaN")
+  assert_eq!(@ryu.ryu_to_string(@double.infinity), "Infinity")
+  assert_eq!(@ryu.ryu_to_string(@double.neg_infinity), "-Infinity")
   assert_eq!(@ryu.ryu_to_string(3.1415926), "3.1415926")
   assert_eq!(@ryu.ryu_to_string(1234000000000000.0), "1234000000000000")
 }

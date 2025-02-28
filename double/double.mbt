@@ -165,9 +165,8 @@ pub fn Double::min_normal() -> Double {
 ///
 /// ```moonbit
 /// test "is_nan" {
-///   inspect!(not_a_number.is_nan(), content="true")
+///   inspect!(@double.not_a_number.is_nan(), content="true")
 ///   inspect!(42.0.is_nan(), content="false")
-///   inspect!((0.0 / 0.0).is_nan(), content="true")
 /// }
 /// ```
 pub fn is_nan(self : Double) -> Bool {
@@ -234,9 +233,9 @@ pub fn is_pos_inf(self : Double) -> Bool {
 ///
 /// ```moonbit
 /// test "is_neg_inf" {
-///   inspect!((-1.0 / 0.0).is_neg_inf(), content="true")
+///   inspect!(neg_infinity.is_neg_inf(), content="true")
 ///   inspect!(42.0.is_neg_inf(), content="false")
-///   inspect!((1.0 / 0.0).is_neg_inf(), content="false") // positive infinity
+///   inspect!(infinity.is_neg_inf(), content="false") // positive infinity
 /// }
 /// ```
 pub fn is_neg_inf(self : Double) -> Bool {
