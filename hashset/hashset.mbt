@@ -439,3 +439,34 @@ test "clear" {
     @test.same_object!(m.entries[i], None)
   }
 }
+
+///|
+pub fn to_array[K](self : T[K]) -> Array[K] {
+  let mut i = 0
+  let res = while i < self.capacity {
+    match self.entries[i] {
+      Some({ key, .. }) => {
+        i += 1
+        break Array::make(self.size, key)
+      }
+      _ => ()
+    }
+    i += 1
+  } else {
+    []
+  }
+  if not(res.is_empty()) {
+    let mut res_idx = 1
+    while res_idx < res.length() && i < self.capacity {
+      match self.entries[i] {
+        Some({ key, .. }) => {
+          res[res_idx] = key
+          res_idx += 1
+        }
+        _ => ()
+      }
+      i += 1
+    }
+  }
+  res
+}
