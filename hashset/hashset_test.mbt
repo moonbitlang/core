@@ -280,3 +280,26 @@ test "hashset arbitrary" {
     content="[@hashset.of([0, 1]), @hashset.of([0, 4, -1]), @hashset.of([0]), @hashset.of([2, 0, -1])]",
   )
 }
+
+///|
+test "@hashset.to_array/empty" {
+  let set : @hashset.T[Int] = @hashset.new()
+  inspect!(@hashset.to_array(set), content="[]")
+}
+
+///|
+test "@hashset.to_array/single" {
+  let set = @hashset.new()
+  set.add(42)
+  inspect!(@hashset.to_array(set), content="[42]")
+}
+
+///|
+test "@hashset.to_array/multiple" {
+  let set = @hashset.new()
+  set.add(1)
+  set.add(2)
+  set.add(3)
+  set.add(4)
+  inspect!(@hashset.to_array(set), content="[3, 4, 1, 2]")
+}
