@@ -211,15 +211,33 @@ pub fn T::from_iter[K : Hash + Eq, V](iter : Iter[(K, V)]) -> T[K, V] {
 /// }
 /// ```
 pub fn to_array[K, V](self : T[K, V]) -> Array[(K, V)] {
-  let arr = []
-  let len = self.entries.length()
-  for i = 0; i < len; i = i + 1 {
+  let mut i = 0
+  let res = while i < self.capacity {
     match self.entries[i] {
-      Some({ key, value, .. }) => arr.push((key, value))
-      None => continue
+      Some({ key, value, .. }) => {
+        i += 1
+        break Array::make(self.size, (key, value))
+      }
+      _ => ()
+    }
+    i += 1
+  } else {
+    []
+  }
+  if not(res.is_empty()) {
+    let mut res_idx = 1
+    while res_idx < res.length() && i < self.capacity {
+      match self.entries[i] {
+        Some({ key, value, .. }) => {
+          res[res_idx] = (key, value)
+          res_idx += 1
+        }
+        _ => ()
+      }
+      i += 1
     }
   }
-  arr
+  res
 }
 
 ///|
