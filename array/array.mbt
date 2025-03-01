@@ -147,28 +147,6 @@ pub fn shuffle[T](self : Array[T], rand~ : (Int) -> Int) -> Array[T] {
 /// 
 /// # Returns
 /// 
-pub fn filter_map[A, B](self : Array[A], f : (A) -> B?) -> Array[B] {
-  let result = []
-  self.each(fn {
-    x =>
-      match f(x) {
-        None => ()
-        Some(x) => result.push(x)
-      }
-  })
-  result
-}
-
-///|
-/// Returns a new array containing the elements of the original array that satisfy the given predicate.
-/// 
-/// # Arguments
-/// 
-/// * `self` - The array to filter.
-/// * `f` - The predicate function.
-/// 
-/// # Returns
-/// 
 /// @alert deprecated "Use `Array::filter_map` instead"
 pub fn map_option[A, B](self : Array[A], f : (A) -> B?) -> Array[B] {
   self.filter_map(f)

@@ -540,38 +540,6 @@ pub fn Array::mapi_inplace[T](self : Array[T], f : (Int, T) -> T) -> Unit {
 }
 
 ///|
-/// Creates a new array containing all elements from the input array that satisfy
-/// the given predicate function.
-///
-/// Parameters:
-///
-/// * `array` : The array to filter.
-/// * `predicate` : A function that takes an element and returns a boolean
-/// indicating whether the element should be included in the result.
-///
-/// Returns a new array containing only the elements for which the predicate
-/// function returns `true`. The relative order of the elements is preserved.
-///
-/// Example:
-///
-/// ```moonbit
-/// test "Array::filter" {
-///   let arr = [1, 2, 3, 4, 5]
-///   let evens = arr.filter(fn(x) { x % 2 == 0 })
-///   inspect!(evens, content="[2, 4]")
-/// }
-/// ```
-pub fn Array::filter[T](self : Array[T], f : (T) -> Bool) -> Array[T] {
-  let arr = []
-  for v in self {
-    if f(v) {
-      arr.push(v)
-    }
-  }
-  arr
-}
-
-///|
 /// Tests whether the array contains no elements.
 ///
 /// Parameters:

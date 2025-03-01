@@ -425,3 +425,98 @@ fn Array::unsafe_grow_to_length[T](self : Array[T], new_len : Int) -> Unit {
   self.len = new_len
   self.buf = new_buf
 }
+
+///|
+/// Returns a new array containing the elements of the original array that satisfy the given predicate.
+/// 
+/// # Arguments
+/// 
+/// * `self` - The array to filter.
+/// * `f` - The predicate function.
+/// 
+/// # Returns
+/// 
+pub fn Array::filter_map[A, B](self : Array[A], f : (A) -> B?) -> Array[B] {
+  let mut i = 0
+  let res = while i < self.length() {
+    let x = self[i]
+    match f(x) {
+      None => ()
+      Some(x) =>
+        break {
+          i += 1
+          Array::make(self.length(), x)
+        }
+    }
+    i += 1
+  } else {
+    []
+  }
+  if not(res.is_empty()) {
+    let mut j = 1
+    while i < self.length() {
+      let x = self[i]
+      match f(x) {
+        None => ()
+        Some(x) => {
+          res[j] = x
+          j += 1
+        }
+      }
+      i += 1
+    }
+    res.len = j
+  }
+  res
+}
+
+///|
+/// Creates a new array containing all elements from the input array that satisfy
+/// the given predicate function.
+///
+/// Parameters:
+///
+/// * `array` : The array to filter.
+/// * `predicate` : A function that takes an element and returns a boolean
+/// indicating whether the element should be included in the result.
+///
+/// Returns a new array containing only the elements for which the predicate
+/// function returns `true`. The relative order of the elements is preserved.
+///
+/// Example:
+///
+/// ```moonbit
+/// test "Array::filter" {
+///   let arr = [1, 2, 3, 4, 5]
+///   let evens = arr.filter(fn(x) { x % 2 == 0 })
+///   inspect!(evens, content="[2, 4]")
+/// }
+/// ```
+pub fn Array::filter[T](self : Array[T], f : (T) -> Bool) -> Array[T] {
+  let mut i = 0
+  let res = while i < self.length() {
+    let x = self[i]
+    if f(x) {
+      break {
+        i += 1
+        Array::make(self.length(), x)
+      }
+    }
+    i += 1
+  } else {
+    []
+  }
+  if not(res.is_empty()) {
+    let mut j = 1
+    while i < self.length() {
+      let x = self[i]
+      if f(x) {
+        res[j] = x
+        j += 1
+      }
+      i += 1
+    }
+    res.len = j
+  }
+  res
+}
