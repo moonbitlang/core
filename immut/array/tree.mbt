@@ -278,6 +278,12 @@ fn Tree::push_end[T](self : Tree[T], shift : Int, value : T) -> (Tree[T], Int) {
   }
 }
 
+///|
+/// Split the tree at the given index.
+fn Tree::split[T](self : Tree[T], shift : Int, idx : Int) -> (Tree[T], Tree[T]) {
+  (Empty, Empty)
+}
+
 //-----------------------------------------------------------------------------
 // Iteration
 //-----------------------------------------------------------------------------
