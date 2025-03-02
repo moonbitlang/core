@@ -437,38 +437,18 @@ fn Array::unsafe_grow_to_length[T](self : Array[T], new_len : Int) -> Unit {
 /// # Returns
 /// 
 pub fn Array::filter_map[A, B](self : Array[A], f : (A) -> B?) -> Array[B] {
+  let res = Array::make_uninit(self.length())
   let mut i = 0
-  let res = while i < self.length() {
-    let x = self[i]
+  for x in self {
     match f(x) {
       None => ()
-      Some(x) =>
-        break {
-          i += 1
-          let res = Array::make_uninit(self.length())
-          res[0] = x
-          res
-        }
-    }
-    i += 1
-  } else {
-    []
-  }
-  if not(res.is_empty()) {
-    let mut j = 1
-    while i < self.length() {
-      let x = self[i]
-      match f(x) {
-        None => ()
-        Some(x) => {
-          res[j] = x
-          j += 1
-        }
+      Some(x) => {
+        res[i] = x
+        i += 1
       }
-      i += 1
     }
-    res.len = j
   }
+  res.len = i
   res
 }
 
@@ -495,32 +475,14 @@ pub fn Array::filter_map[A, B](self : Array[A], f : (A) -> B?) -> Array[B] {
 /// }
 /// ```
 pub fn Array::filter[T](self : Array[T], f : (T) -> Bool) -> Array[T] {
+  let res = Array::make_uninit(self.length())
   let mut i = 0
-  let res = while i < self.length() {
-    let x = self[i]
+  for x in self {
     if f(x) {
-      break {
-        i += 1
-        let res = Array::make_uninit(self.length())
-        res[0] = x
-        res
-      }
-    }
-    i += 1
-  } else {
-    []
-  }
-  if not(res.is_empty()) {
-    let mut j = 1
-    while i < self.length() {
-      let x = self[i]
-      if f(x) {
-        res[j] = x
-        j += 1
-      }
+      res[i] = x
       i += 1
     }
-    res.len = j
   }
+  res.len = i
   res
 }
