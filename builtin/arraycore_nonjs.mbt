@@ -445,7 +445,9 @@ pub fn Array::filter_map[A, B](self : Array[A], f : (A) -> B?) -> Array[B] {
       Some(x) =>
         break {
           i += 1
-          Array::make(self.length(), x)
+          let res = Array::make_uninit(self.length())
+          res[0] = x
+          res
         }
     }
     i += 1
@@ -499,7 +501,9 @@ pub fn Array::filter[T](self : Array[T], f : (T) -> Bool) -> Array[T] {
     if f(x) {
       break {
         i += 1
-        Array::make(self.length(), x)
+        let res = Array::make_uninit(self.length())
+        res[0] = x
+        res
       }
     }
     i += 1
