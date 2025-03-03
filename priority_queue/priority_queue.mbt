@@ -170,13 +170,6 @@ pub fn unsafe_pop[A : Compare](self : T[A]) -> Unit {
 }
 
 ///|
-/// @alert deprecated "Use `unsafe_pop` instead"
-/// @coverage.skip
-pub fn pop_exn[A : Compare](self : T[A]) -> Unit {
-  unsafe_pop(self)
-}
-
-///|
 /// Pops the first value from the priority queue, which returns None if the queue is empty.
 ///
 /// # Example
