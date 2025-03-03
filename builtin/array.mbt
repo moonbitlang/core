@@ -1253,13 +1253,20 @@ pub fn Array::resize[T](self : Array[T], new_len : Int, f : T) -> Unit {
 /// let v = [[3, 4], [5, 6]].flatten()
 /// assert_eq!(v, [3, 4, 5, 6])
 /// ```
-/// TODO: perf could be improved by pre-allocated
 pub fn Array::flatten[T](self : Array[Array[T]]) -> Array[T] {
-  let v = []
-  for arr in self {
-    v.append(arr)
+  let mut len = 0
+  for x in self {
+    len += x.length()
   }
-  v
+  let res = Array::make_uninit(len)
+  let mut i = 0
+  for xs in self {
+    for x in xs {
+      res.unsafe_set(i, x)
+      i += 1
+    }
+  }
+  res
 }
 
 ///|
