@@ -16,16 +16,11 @@ type T[A]
 impl T {
   clear[A](Self[A]) -> Unit
   copy[A](Self[A]) -> Self[A]
-  from_array[A : Compare](Array[A]) -> Self[A] //deprecated
-  from_iter[K : Compare](Iter[K]) -> Self[K] //deprecated
   is_empty[A](Self[A]) -> Bool
   iter[A : Compare](Self[A]) -> Iter[A]
   length[A](Self[A]) -> Int
-  new[A : Compare]() -> Self[A] //deprecated
-  of[A : Compare](FixedArray[A]) -> Self[A] //deprecated
   peek[A](Self[A]) -> A?
   pop[A : Compare](Self[A]) -> A?
-  pop_exn[A : Compare](Self[A]) -> Unit //deprecated
   push[A : Compare](Self[A], A) -> Unit
   to_array[A : Compare](Self[A]) -> Array[A]
   unsafe_pop[A : Compare](Self[A]) -> Unit
