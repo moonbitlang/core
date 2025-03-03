@@ -425,15 +425,17 @@ pub fn Set::iter[K](self : Set[K]) -> Iter[K] {
 ///|
 /// Converts the hash set to an array.
 pub fn Set::to_array[K](self : Set[K]) -> Array[K] {
-  let arr = Array::new(capacity=self.size)
+  let res = Array::make_uninit(self.size)
+  let mut i = 0
   loop self.head {
     Some({ key, idx, .. }) => {
-      arr.push(key)
+      res.unsafe_set(i, key)
+      i += 1
       continue self.list[idx].next
     }
     None => break
   }
-  arr
+  res
 }
 
 ///|
