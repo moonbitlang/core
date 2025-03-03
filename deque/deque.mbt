@@ -1259,13 +1259,12 @@ pub fn to_array[A](self : T[A]) -> Array[A] {
 }
 
 ///|
-/// TODO: improve performance
 pub impl[A : ToJson] ToJson for T[A] with to_json(self : T[A]) -> Json {
-  let result = []
-  for v in self {
-    result.push(v.to_json())
+  let res = Array::make(self.length(), Json::Null)
+  for i, x in self {
+    res[i] = x.to_json()
   }
-  Array(result)
+  Array(res)
 }
 
 ///|
