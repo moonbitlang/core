@@ -287,6 +287,13 @@ jobs:
           moon test --release --target all
           moon test --target native
 
+      - name: Test new allocator
+        run: |
+          moon clean
+          moon test --target wasm
+        env: 
+          MOONC_INTERNAL_PARAMS: allocator = tlsf-mbt |
+
       - name: moon test --doc
         run: |
           moon test --doc
