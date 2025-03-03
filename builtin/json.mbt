@@ -99,9 +99,9 @@ pub impl[X : ToJson] ToJson for FixedArray[X] with to_json(self) {
   if len == 0 {
     return []
   }
-  let res = Array::make(self.length(), ToJson::to_json(self[0]))
-  for i in 1..<len {
-    res[i] = ToJson::to_json(self[i])
+  let res = Array::make_uninit(self.length())
+  for i, x in self {
+    res.unsafe_set(i, ToJson::to_json(x))
   }
   Array(res)
 }
@@ -112,16 +112,16 @@ pub impl[X : ToJson] ToJson for ArrayView[X] with to_json(self) {
   if len == 0 {
     return []
   }
-  let res = Array::make(self.length(), ToJson::to_json(self[0]))
-  for i in 1..<len {
-    res[i] = ToJson::to_json(self[i])
+  let res = Array::make_uninit(self.length())
+  for i, x in self {
+    res.unsafe_set(i, ToJson::to_json(x))
   }
   Array(res)
 }
 
 ///|
 pub impl[K : Show, V : ToJson] ToJson for Map[K, V] with to_json(self) {
-  let object = {}
+  let object = Map::new(capacity=self.capacity)
   for k, v in self {
     object[k.to_string()] = v.to_json()
   }
@@ -130,11 +130,13 @@ pub impl[K : Show, V : ToJson] ToJson for Map[K, V] with to_json(self) {
 
 ///|
 pub impl[X : ToJson] ToJson for Set[X] with to_json(self) {
-  let array = []
+  let res = Array::make_uninit(self.size)
+  let mut i = 0
   for v in self {
-    array.push(v.to_json())
+    res.unsafe_set(i, v.to_json())
+    i += 1
   }
-  Array(array)
+  Array(res)
 }
 
 ///|
