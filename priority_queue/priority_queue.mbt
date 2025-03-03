@@ -133,15 +133,16 @@ fn meld[A : Compare](x : Node[A], y : Node[A]) -> Node[A] {
 fn merges[A : Compare](x : Node[A]) -> Node[A] {
   match x {
     Nil => Nil
-    Cons(sibling~, ..) =>
-      match sibling {
-        Nil => x
-        Cons(sibling=next_sibling, ..) =>
-          match next_sibling {
-            Nil => meld(x, sibling)
-            Cons(_) => meld(merges(next_sibling), meld(x, sibling))
-          }
-      }
+    Cons(sibling=Nil, ..) => x
+    Cons(sibling=Cons(sibling=Nil, ..) as s, ..) as x => {
+      x.sibling = Nil
+      meld(x, s)
+    }
+    Cons(sibling=Cons(sibling=s2, ..) as s1, ..) as x => {
+      x.sibling = Nil
+      s1.sibling = Nil
+      meld(merges(s2), meld(x, s1))
+    }
   }
 }
 

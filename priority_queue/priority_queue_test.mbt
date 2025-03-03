@@ -154,3 +154,34 @@ test "from_iter empty iter" {
   let pq : @priority_queue.T[Int] = @priority_queue.from_iter(Iter::empty())
   inspect!(pq, content="@priority_queue.of([])")
 }
+
+///|
+test "pop" {
+  let p = @priority_queue.from_iter([0, 1, 4, 5, 6, 2, 3].iter())
+  p.pop() |> ignore
+  p.pop() |> ignore
+  p.pop() |> ignore
+  inspect!(p.iter(), content="[3, 2, 1, 0]")
+  inspect!(p.length(), content="4")
+}
+
+///|
+test "complex" {
+  fn rand(upper : Int) -> Int {
+    let rng = @random.new()
+    rng.int(limit=upper)
+  }
+
+  let arr = (0).until(1000, inclusive=true).collect()
+  arr.shuffle_in_place(rand~)
+  let pq = new()
+  for i in 0..=1000 {
+    pq.push(arr[i])
+  }
+  assert_eq!(pq.length(), 1001)
+  for i in 0..=1000 {
+    assert_eq!(pq.pop(), Some(1000 - i))
+  }
+  inspect!(pq.iter(), content="[]")
+  assert_eq!(pq.length(), 0)
+}
