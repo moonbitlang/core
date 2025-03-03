@@ -523,10 +523,12 @@ pub fn Map::values[K, V](self : Map[K, V]) -> Iter[V] {
 ///|
 /// Converts the hash map to an array.
 pub fn Map::to_array[K, V](self : Map[K, V]) -> Array[(K, V)] {
-  let arr = Array::new(capacity=self.size)
+  let arr = Array::make_uninit(self.size)
+  let mut i = 0
   loop self.head {
     Some({ key, value, idx, .. }) => {
-      arr.push((key, value))
+      arr.unsafe_set(i, (key, value))
+      i += 1
       continue self.list[idx].next
     }
     None => break
