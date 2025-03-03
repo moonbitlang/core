@@ -26,34 +26,8 @@ const ALPHABET : String = "0123456789abcdefghijklmnopqrstuvwxyz"
 
 ///|
 pub fn Int64::to_string(self : Int64, radix~ : Int = 10) -> String {
-  fn abs(n : Int64) -> Int64 {
-    if n < 0L {
-      0L - n
-    } else {
-      n
-    }
-  }
-
-  let size_hint = match radix {
-    2..<7 => 70 // max length is 64, 70 is enough
-    8..<15 => 30 // max length is 23, 30 is enough
-    16..=36 => 20 // max length is 17, 20 is enough
-    _ => abort("radix must be between 2 and 36")
-  }
-  let buf = StringBuilder::new(size_hint~)
-  if self < 0L {
-    buf.write_char('-')
-  }
-  let radix : Int64 = radix.to_int64()
-  fn write_digits(num : Int64) {
-    let num2 = num / radix
-    if num2 != 0L {
-      write_digits(num2)
-    }
-    buf.write_char(ALPHABET[abs(num % radix).to_int()])
-  }
-
-  write_digits(abs(self))
+  let buf = StringBuilder::new(size_hint=Int64::output_size_hint(radix~))
+  self.output(buf, radix~)
   buf.to_string()
 }
 
@@ -64,33 +38,8 @@ pub impl Show for Int64 with to_string(self) {
 
 ///|
 pub fn Int::to_string(self : Int, radix~ : Int = 10) -> String {
-  fn abs(n : Int) -> Int {
-    if n < 0 {
-      0 - n
-    } else {
-      n
-    }
-  }
-
-  let size_hint = match radix {
-    2..<7 => 36 // max length is 32, 36 is enough
-    8..<15 => 18 // max length is 12, 18 is enough
-    16..=36 => 10 // max length is 8, 10 is enough
-    _ => abort("radix must be between 2 and 36")
-  }
-  let buf = StringBuilder::new(size_hint~)
-  if self < 0 {
-    buf.write_char('-')
-  }
-  fn write_digits(num : Int) {
-    let num2 = num / radix
-    if num2 != 0 {
-      write_digits(num2)
-    }
-    buf.write_char(ALPHABET[abs(num % radix)])
-  }
-
-  write_digits(abs(self))
+  let buf = StringBuilder::new(size_hint=Int::output_size_hint(radix~))
+  self.output(buf, radix~)
   buf.to_string()
 }
 
@@ -101,23 +50,8 @@ pub impl Show for Int with to_string(self) {
 
 ///|
 pub fn UInt::to_string(self : UInt, radix~ : Int = 10) -> String {
-  let size_hint = match radix {
-    2..<7 => 36 // max length is 32, 36 is enough
-    8..<15 => 18 // max length is 11, 18 is enough
-    16..=36 => 10 // max length is 8, 10 is enough
-    _ => abort("radix must be between 2 and 36")
-  }
-  let buf = StringBuilder::new(size_hint~)
-  let radix : UInt = radix.reinterpret_as_uint()
-  fn write_digits(num : UInt) {
-    let num2 = num / radix
-    if num2 != 0U {
-      write_digits(num2)
-    }
-    buf.write_char(ALPHABET[(num % radix).reinterpret_as_int()])
-  }
-
-  write_digits(self)
+  let buf = StringBuilder::new(size_hint=UInt::output_size_hint(radix~))
+  self.output(buf, radix~)
   buf.to_string()
 }
 
@@ -135,23 +69,8 @@ test "UInt::to_string" {
 
 ///|
 pub fn UInt64::to_string(self : UInt64, radix~ : Int = 10) -> String {
-  let size_hint = match radix {
-    2..<7 => 70 // max length is 64, 70 is enough
-    8..<15 => 30 // max length is 23, 30 is enough
-    16..=36 => 20 // max length is 17, 20 is enough
-    _ => abort("radix must be between 2 and 36")
-  }
-  let buf = StringBuilder::new(size_hint~)
-  let radix : UInt64 = radix.to_uint64()
-  fn write_digits(num : UInt64) {
-    let num2 = num / radix
-    if num2 != 0UL {
-      write_digits(num2)
-    }
-    buf.write_char(ALPHABET[(num % radix).to_int()])
-  }
-
-  write_digits(self)
+  let buf = StringBuilder::new(size_hint=UInt64::output_size_hint(radix~))
+  self.output(buf, radix~)
   buf.to_string()
 }
 
