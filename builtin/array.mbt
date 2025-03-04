@@ -1261,10 +1261,8 @@ pub fn Array::flatten[T](self : Array[Array[T]]) -> Array[T] {
   let res = Array::make_uninit(len)
   let mut i = 0
   for xs in self {
-    for x in xs {
-      res.unsafe_set(i, x)
-      i += 1
-    }
+    res.unsafe_blit(i, xs, 0, xs.length())
+    i += xs.length()
   }
   res
 }
