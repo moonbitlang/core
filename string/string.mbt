@@ -64,24 +64,30 @@ pub fn String::concat(
   strings : Array[String],
   separator~ : String = ""
 ) -> String {
-  let buf = StringBuilder::new()
-  if separator == "" {
-    for s in strings {
-      buf.write_string(s)
-    }
+  if strings.length() == 0 {
+    ""
   } else {
-    match strings {
-      [] => ()
-      [hd, .. tl] => {
-        buf.write_string(hd)
-        for s in tl {
-          buf.write_string(separator)
-          buf.write_string(s)
-        }
+    let hd = strings[0]
+    let tl = strings[1:]
+    let mut size_hint = hd.length()
+    for s in tl {
+      size_hint += s.length() + separator.length()
+    }
+    size_hint = size_hint << 1
+    let buf = StringBuilder::new(size_hint~)
+    buf.write_string(hd)
+    if separator == "" {
+      for s in tl {
+        buf.write_string(s)
+      }
+    } else {
+      for s in tl {
+        buf.write_string(separator)
+        buf.write_string(s)
       }
     }
+    buf.to_string()
   }
-  buf.to_string()
 }
 
 ///|
