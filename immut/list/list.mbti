@@ -55,7 +55,7 @@ impl T {
   from_json[A : @json.FromJson](Json) -> Self[A]!@json.JsonDecodeError //deprecated
   head[A](Self[A]) -> A?
   head_exn[A](Self[A]) -> A //deprecated
-  init_[A](Self[A]) -> Self[A]
+  init_[A](Self[A]) -> Self[A] //deprecated
   intercalate[A](Self[Self[A]], Self[A]) -> Self[A]
   intersperse[A](Self[A], A) -> Self[A]
   is_empty[A](Self[A]) -> Bool
