@@ -1,5 +1,5 @@
 {
   "import": [
-      "moonbitlang/core/builtin"
+      { "path": "moonbitlang/core/builtin", "alias": "moonbitlang/core/prelude" }
   ]
 }

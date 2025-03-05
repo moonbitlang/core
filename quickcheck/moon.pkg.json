@@ -1,3 +1,3 @@
 {
-  "import": ["moonbitlang/core/quickcheck/splitmix", "moonbitlang/core/builtin"]
+  "import": ["moonbitlang/core/quickcheck/splitmix", { "path": "moonbitlang/core/builtin", "alias": "moonbitlang/core/prelude" }]
 }

@@ -1,5 +1,5 @@
 {
-  "import": ["moonbitlang/core/builtin"],
+  "import": [{ "path": "moonbitlang/core/builtin", "alias": "moonbitlang/core/prelude" }],
   "targets": {
     "panic_test.mbt": ["not", "native"]
   }

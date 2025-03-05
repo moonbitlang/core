@@ -1,6 +1,6 @@
 {
   "import": [
-    "moonbitlang/core/builtin",
+    { "path": "moonbitlang/core/builtin", "alias": "moonbitlang/core/prelude" },
     "moonbitlang/core/option",
     "moonbitlang/core/tuple",
     "moonbitlang/core/quickcheck"
