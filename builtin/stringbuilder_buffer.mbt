@@ -87,11 +87,13 @@ pub fn StringBuilder::to_string(self : StringBuilder) -> String {
 }
 
 ///|
-/// TODO: improve perf
 pub impl Show for StringBuilder with output(self, logger) {
-  logger.write_string(
-    self.data.unsafe_to_bytes().to_unchecked_string(offset=0, length=self.len),
-  )
+  for i = 0; i < self.len; i = i + 2 {
+    let low = self.data[i].to_int()
+    let high = self.data[i + 1].to_int()
+    let code_unit = (high << 8) | low |> Char::from_int
+    logger.write_char(code_unit)
+  }
 }
 
 ///|
