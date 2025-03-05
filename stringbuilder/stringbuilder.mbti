@@ -1,0 +1,26 @@
+package moonbitlang/core/stringbuilder
+
+// Values
+fn is_empty(StringBuilder) -> Bool
+
+fn new(size_hint~ : Int = ..) -> StringBuilder
+
+fn reset(StringBuilder) -> Unit
+
+fn to_string(StringBuilder) -> String
+
+fn write_char(StringBuilder, Char) -> Unit
+
+fn write_object[T : Show](StringBuilder, T) -> Unit
+
+fn write_string(StringBuilder, String) -> Unit
+
+fn write_substring(StringBuilder, String, Int, Int) -> Unit
+
+// Types and methods
+
+// Type aliases
+pub typealias T = StringBuilder
+
+// Traits
+
