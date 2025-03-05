@@ -13,15 +13,6 @@
 // limitations under the License.
 
 ///|
-fn Bool::output(self : Bool, logger : &Logger) -> Unit {
-  if self {
-    logger.write_string("true")
-  } else {
-    logger.write_string("false")
-  }
-}
-
-///|
 fn Int64::output(self : Int64, logger : &Logger, radix~ : Int = 10) -> Unit {
   fn abs(n : Int64) -> Int64 {
     if n < 0L {

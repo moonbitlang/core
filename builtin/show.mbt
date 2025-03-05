@@ -19,7 +19,11 @@ pub impl Show for Unit with output(_self, logger) {
 
 ///|
 pub impl Show for Bool with output(self, logger) {
-  logger.write_string(self.to_string())
+  if self {
+    logger.write_string("true")
+  } else {
+    logger.write_string("false")
+  }
 }
 
 ///|
