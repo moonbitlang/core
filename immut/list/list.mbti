@@ -10,6 +10,8 @@ fn from_array[A](Array[A]) -> T[A]
 
 fn from_iter[A](Iter[A]) -> T[A]
 
+fn from_iter_rev[A](Iter[A]) -> T[A]
+
 fn from_json[A : @json.FromJson](Json) -> T[A]!@json.JsonDecodeError
 
 fn of[A](FixedArray[A]) -> T[A]
