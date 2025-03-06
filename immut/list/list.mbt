@@ -1090,7 +1090,15 @@ pub fn iter2[A](self : T[A]) -> Iter2[Int, A] {
 }
 
 ///|
+/// Convert the iterator into a list. Preserves order of elements.
+/// This function is tail-recursive, but consumes 2*n memory. 
+/// If the order of elements is not important, use `from_iter_rev` instead.
 pub fn from_iter[A](iter : Iter[A]) -> T[A] {
+  iter.fold(init=Nil, fn(acc, e) { Cons(e, acc) }).rev()
+}
+
+///|
+pub fn from_iter_rev[A](iter : Iter[A]) -> T[A] {
   iter.fold(init=Nil, fn(acc, e) { Cons(e, acc) })
 }
 
