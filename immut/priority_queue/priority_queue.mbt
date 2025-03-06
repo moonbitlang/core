@@ -104,7 +104,8 @@ fn meld[A : Compare](l : Cont[A], r : Cont[A]) -> Cont[A] {
 fn merges[A : Compare](x : @list.T[Cont[A]]) -> Cont[A] {
   loop x, Empty {
     Nil, acc => acc
-    Cons(t, rest), acc => continue rest, meld(t, acc)
+    Cons(t, Nil), acc => meld(t, acc)
+    Cons(t1, Cons(t2, rest)), acc => continue rest, meld(meld(t1, t2), acc)
   }
 }
 
