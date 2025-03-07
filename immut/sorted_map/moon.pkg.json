@@ -11,6 +11,6 @@
     "moonbitlang/core/prelude"
   ],
   "targets": {
-    "panic_wbtest.mbt": ["not", "native"]
+    "panic_wbtest.mbt": ["not", "native", "llvm"]
   }
 }
