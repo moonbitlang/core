@@ -10,11 +10,13 @@
   "targets": {
     "panic_test.mbt": [
       "not",
-      "native"
+      "native",
+      "llvm"
     ],
     "panic_wbtest.mbt": [
       "not",
-      "native"
+      "native",
+      "llvm"
     ]
   }
 }
