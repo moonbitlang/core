@@ -10,9 +10,6 @@
     "moonbitlang/core/double"
   ],
   "targets": {
-    "panic_test.mbt": [
-      "not",
-      "native"
-    ]
+    "panic_test.mbt": ["not", "native", "llvm"]
   }
 }
