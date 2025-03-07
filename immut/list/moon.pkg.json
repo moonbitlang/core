@@ -7,6 +7,6 @@
     "moonbitlang/core/option"
   ],
   "targets": {
-    "panic_test.mbt": ["not", "native"]
+    "panic_test.mbt": ["not", "native", "llvm"]
   }
 }
