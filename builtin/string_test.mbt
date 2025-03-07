@@ -65,37 +65,37 @@ test "panic codepoint_at2" {
 ///|
 test "panic charcode_at with negative index" {
   let s = "Hello"
-  ignore(charcode_at(s, -1))
+  ignore(s.charcode_at(-1))
 }
 
 ///|
 test "charcode_at with valid index" {
   let s = "Hello"
-  inspect!(charcode_at(s, 0), content="72")
+  inspect!(s.charcode_at(0), content="72")
 }
 
 ///|
 test "codepoint_at regular character at end of string" {
   let s = "Hello"
-  inspect!(codepoint_at(s, 4), content="o")
+  inspect!(s.codepoint_at(4), content="o")
 }
 
 ///|
 test "codepoint_at emoji" {
   let s = "👋"
-  inspect!(codepoint_at(s, 0), content="👋")
+  inspect!(s.codepoint_at(0), content="👋")
 }
 
 ///|
 test "codepoint_length basic" {
   let str = "hello"
-  inspect!(codepoint_length(str), content="5")
+  inspect!(str.codepoint_length(), content="5")
 }
 
 ///|
 test "codepoint_length with surrogate pairs" {
   let str = "Hello🤣"
-  inspect!(codepoint_length(str), content="6")
+  inspect!(str.codepoint_length(), content="6")
 }
 
 ///|
@@ -116,5 +116,5 @@ test "panic codepoint_length with invalid surrogate pair" {
       'a',
     ], // invalid trailing surrogate
   )
-  ignore(@builtin.codepoint_length(s))
+  ignore(s.codepoint_length())
 }
