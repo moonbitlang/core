@@ -23,6 +23,7 @@ impl StringView {
   op_as_view(Self, start~ : Int = .., end? : Int) -> Self
   op_get(Self, Int) -> Char
   rev_get(Self, Int) -> Char
+  unsafe_make(String, Int, Int) -> Self
 }
 impl Show for StringView
 

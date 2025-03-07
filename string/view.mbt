@@ -293,6 +293,34 @@ pub fn View::op_as_view(self : View, start~ : Int = 0, end? : Int) -> View {
 }
 
 ///|
+/// Creates a new `StringView` without checking if the indices are valid UTF-16
+/// boundaries.
+///
+/// Parameters:
+///
+/// * `string` : The source string to create a view from.
+/// * `start` : The starting UTF-16 code unit index into the string.
+/// * `end` : The ending UTF-16 code unit index into the string (exclusive).
+///
+/// Returns a new `StringView` instance that provides a view into the specified
+/// portion of the string.
+///
+/// Example:
+///
+/// ```moonbit
+/// test "StringView::unsafe_make" {
+///   let str = "Hello🌍"
+///   let view = StringView::unsafe_make(str, 0, 5)
+///   inspect!(view, content="Hello")
+/// }
+/// ```
+///
+/// @alert unsafe "This function does not check if the indices are valid UTF-16 boundaries. Use String::op_as\_view for safe string view creation."
+pub fn View::unsafe_make(str : String, start : Int, end : Int) -> StringView {
+  { str, start, end }
+}
+
+///|
 /// Return the character at the given index.
 /// 
 /// The time complexity is O(n) where n is the given index, as it needs to scan
