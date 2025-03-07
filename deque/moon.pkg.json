@@ -4,7 +4,7 @@
     "moonbitlang/core/json"
   ],
   "targets": {
-    "panic_test.mbt": ["not", "native"]
+    "panic_test.mbt": ["not", "native", "llvm"]
   },
   "test-import": [
     "moonbitlang/core/array"
