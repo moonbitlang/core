@@ -80,7 +80,7 @@ pub fn from_array[A](arr : Array[A]) -> T[A] {
 
 ///|
 pub fn from_iter[A](iter : Iter[A]) -> T[A] {
-  iter.fold(init=new(), fn(arr, e) { arr.push(e) })
+  iter.collect() |> from_array
 }
 
 //-----------------------------------------------------------------------------
