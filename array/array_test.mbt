@@ -567,7 +567,7 @@ test "Array::makei with zero length" {
 }
 
 ///|
-test "Array::makei with negative length" {
+test "panic/Array::makei with negative length" {
   let arr = Array::makei(-1, fn(i) { i * 2 })
   assert_eq!(arr, [])
 }

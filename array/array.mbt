@@ -55,41 +55,6 @@ pub fn push_iter[T](self : Array[T], iter : Iter[T]) -> Unit {
 }
 
 ///|
-/// Creates a new array of the specified length, where each element is
-/// initialized using an index-based initialization function.
-///
-/// Parameters:
-///
-/// * `length` : The length of the new array. If `length` is less than or equal
-/// to 0, returns an empty array.
-/// * `initializer` : A function that takes an index (starting from 0) and
-/// returns a value of type `T`. This function is called for each index to
-/// initialize the corresponding element.
-///
-/// Returns a new array of type `Array[T]` with the specified length, where each
-/// element is initialized using the provided function.
-///
-/// Example:
-///
-/// ```moonbit
-/// test "Array::makei" {
-///   let arr = Array::makei(3, fn(i) { i * 2 })
-///   inspect!(arr, content="[0, 2, 4]")
-/// }
-/// ```
-pub fn Array::makei[T](length : Int, value : (Int) -> T) -> Array[T] {
-  if length <= 0 {
-    []
-  } else {
-    let array = Array::make(length, value(0))
-    for i in 1..<length {
-      array[i] = value(i)
-    }
-    array
-  }
-}
-
-///|
 /// Shuffle the array using Knuth shuffle
 /// 
 /// To use this function, you need to provide a rand function, which takes an integer as it upper bound

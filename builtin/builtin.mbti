@@ -81,6 +81,7 @@ impl Array {
   iter2[A](Self[A]) -> Iter2[Int, A]
   length[T](Self[T]) -> Int
   make[T](Int, T) -> Self[T]
+  makei[T](Int, (Int) -> T) -> Self[T]
   map[T, U](Self[T], (T) -> U) -> Self[U]
   map_inplace[T](Self[T], (T) -> T) -> Unit
   mapi[T, U](Self[T], (Int, T) -> U) -> Self[U]
