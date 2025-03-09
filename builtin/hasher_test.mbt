@@ -255,3 +255,18 @@ test "hash_combine for UInt" {
   Hash::hash_combine(value, hasher)
   inspect!(hasher.finalize(), content="1161967057")
 }
+
+///|
+priv type MyHashInt Int derive(Hash, Show)
+
+///|
+test "MyInt::hash" {
+  let my_int : MyHashInt = 42
+  let int : Int = 42
+  let uint : UInt = 42
+  inspect!(my_int.hash(), content="1161967057")
+  inspect!(uint.hash(), content="1161967057")
+  inspect!(int.hash(), content="-1704501356")
+  assert_eq!(my_int.hash(), uint.hash())
+  assert_not_eq!(my_int.hash(), int.hash())
+}
