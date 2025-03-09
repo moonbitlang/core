@@ -31,21 +31,32 @@ pub(all) type! ParseError {
 } derive(Eq)
 
 ///|
-pub fn to_string(self : ParseError) -> String {
+pub impl Show for ParseError with output(self, logger) {
   match self {
     InvalidChar({ line, column }, c) =>
-      "Invalid character \{repr(c)} at line \{line}, column \{column}"
-    InvalidEof => "Unexpected end of file"
+      logger
+      ..write_string("Invalid character ")
+      ..write_string(repr(c))
+      ..write_string(" at line ")
+      ..write_object(line)
+      ..write_string(", column ")
+      .write_object(column)
+    InvalidEof => logger.write_string("Unexpected end of file")
     InvalidNumber({ line, column }, s) =>
-      "Invalid number \{s} at line \{line}, column \{column}"
+      logger
+      ..write_string("Invalid number ")
+      ..write_string(s)
+      ..write_string(" at line ")
+      ..write_object(line)
+      ..write_string(", column ")
+      .write_object(column)
     InvalidIdentEscape({ line, column }) =>
-      "Invalid escape sequence in identifier at line \{line}, column \{column}"
+      logger
+      ..write_string("Invalid escape sequence in identifier at line ")
+      ..write_object(line)
+      ..write_string(", column ")
+      .write_object(column)
   }
-}
-
-///|
-pub impl Show for ParseError with output(self, logger) {
-  logger.write_string(self.to_string())
 }
 
 ///|
