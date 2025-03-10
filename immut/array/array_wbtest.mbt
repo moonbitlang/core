@@ -13,29 +13,6 @@
 // limitations under the License.
 
 ///|
-test "new_by_leaves" {
-  let full : T[Int] = new_by_leaves(branching_factor_power(2), fn(_s, l) {
-    FixedArray::make(l, 1)
-  })
-  let full_arr = FixedArray::make(branching_factor_power(2), 1)
-  check_fixedarray_eq!(full_arr, full)
-  let e : T[Int] = new_by_leaves(0, fn(_s, _l) { abort("never reach") })
-  let v = new_by_leaves(5, fn(_s, l) { FixedArray::make(l, 1) })
-  let v2 = new_by_leaves(33, fn(_s, l) { FixedArray::make(l, 10) })
-  inspect!(e, content="@immut/array.of([])")
-  inspect!(v, content="@immut/array.of([1, 1, 1, 1, 1])")
-  inspect!(
-    v2,
-    content="@immut/array.of([10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10])",
-  )
-  let v3 = new_by_leaves(32, fn(_s, l) { FixedArray::make(l, 10) })
-  inspect!(
-    v3,
-    content="@immut/array.of([10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10])",
-  )
-}
-
-///|
 test "mix" {
   let mut v = new()
   inspect!(v.tree.is_empty_tree(), content="true")

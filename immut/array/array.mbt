@@ -25,13 +25,47 @@ pub fn new[A]() -> T[A] {
 ///|
 /// Create a persistent array with a given length and value.
 pub fn make[A](len : Int, value : A) -> T[A] {
-  new_by_leaves(len, fn(_s, l) { FixedArray::make(l, value) })
+  let quot = len / branching_factor
+  let rem = len % branching_factor
+  let leaves = if rem == 0 {
+    Array::make(quot, FixedArray::make(branching_factor, value))
+  } else {
+    let arr : Array[FixedArray[A]] = Array::make(quot + 1, [])
+    for k in 0..<quot {
+      arr[k] = FixedArray::make(branching_factor, value)
+    }
+    arr[quot] = FixedArray::make(rem, value)
+    arr
+  }
+  let size = len
+  let (shift, cap) = shift_cap_of_size(size)
+  let tree = if size == 0 { Empty } else { from_leaves(leaves[:], cap) }
+  { shift, tree, size }
 }
 
 ///|
 /// Create a persistent array with a given length and a function to generate values.
 pub fn makei[A](len : Int, f : (Int) -> A) -> T[A] {
-  new_by_leaves(len, fn(s, l) { FixedArray::makei(l, fn(i) { f(s + i) }) })
+  let quot = len / branching_factor
+  let rem = len % branching_factor
+  let leaves = if rem == 0 {
+    Array::makei(quot, fn(k) {
+      FixedArray::makei(branching_factor, fn(i) { f(k * branching_factor + i) })
+    })
+  } else {
+    let arr : Array[FixedArray[A]] = Array::make(quot + 1, [])
+    for k in 0..<quot {
+      arr[k] = FixedArray::makei(branching_factor, fn(i) {
+        f(k * branching_factor + i)
+      })
+    }
+    arr[quot] = FixedArray::makei(rem, fn(i) { f(quot * branching_factor + i) })
+    arr
+  }
+  let size = len
+  let (shift, cap) = shift_cap_of_size(size)
+  let tree = if size == 0 { Empty } else { from_leaves(leaves[:], cap) }
+  { shift, tree, size }
 }
 
 ///|
@@ -328,41 +362,47 @@ pub impl[A : Show] Show for T[A] with output(self, logger) {
 //-----------------------------------------------------------------------------
 
 ///|
-fn new_by_leaves[A](len : Int, gen_leaf : (Int, Int) -> FixedArray[A]) -> T[A] {
-  fn tree(cap, len, s) -> Tree[A] {
-    if cap == branching_factor {
-      Leaf(gen_leaf(s, len))
-    } else {
-      let child_cap = cap / branching_factor
-      let part = len / child_cap
-      let (child_count, last_child_len) = match len % child_cap {
-        0 => (part, child_cap)
-        r => (part + 1, r)
-      }
-      fn child(k) {
-        let i = s + k * child_cap
-        let len = if k + 1 == child_count { last_child_len } else { child_cap }
-        tree(cap / branching_factor, len, i)
-      }
-
-      // Use None here because the implementation of `new_by_leaves` ensures that the tree is full
-      // and we can use radix indexing.
-      Node(FixedArray::makei(child_count, child), None)
+fn from_leaves[A](leaves : ArrayView[FixedArray[A]], cap : Int) -> Tree[A] {
+  if cap == branching_factor {
+    Leaf(leaves[0])
+  } else if leaves.length() <= branching_factor {
+    let arr = FixedArray::make(leaves.length(), Empty)
+    for i in 0..<leaves.length() {
+      arr[i] = Leaf(leaves[i])
     }
-  }
-
-  if len == 0 {
-    new()
+    Node(arr, None)
   } else {
-    let (cap, shift) = loop len, branching_factor, 1 {
-      len, m_pow, depth =>
-        match len <= m_pow {
-          false => continue len, m_pow * branching_factor, depth + 1
-          true => (m_pow, (depth - 1) * num_bits)
-        }
+    let len = leaves.length() * branching_factor
+    let child_cap = cap / branching_factor
+    let quot = len / child_cap
+    let rem = len % child_cap
+    let times = child_cap / branching_factor
+    let arr = if rem == 0 {
+      FixedArray::makei(quot, fn(i) {
+        from_leaves(leaves[i * times:(i + 1) * times], child_cap)
+      })
+    } else {
+      let arr = FixedArray::make(quot + 1, Tree::Empty)
+      for i in 0..<quot {
+        arr[i] = from_leaves(leaves[i * times:(i + 1) * times], child_cap)
+      }
+      arr[quot] = from_leaves(leaves[times * quot:], child_cap)
+      arr
     }
-    { shift, tree: tree(cap, len, 0), size: len }
+    Node(arr, None)
   }
+}
+
+///|
+fn shift_cap_of_size(size : Int) -> (Int, Int) {
+  let mut cap = branching_factor
+  let mut depth = 0
+  while cap < size {
+    cap *= branching_factor
+    depth += 1
+  }
+  let shift = num_bits * depth
+  (shift, cap)
 }
 
 ///|
