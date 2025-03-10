@@ -329,25 +329,28 @@ pub impl[A : Show] Show for T[A] with output(self, logger) {
 
 ///|
 fn new_by_leaves[A](len : Int, gen_leaf : (Int, Int) -> FixedArray[A]) -> T[A] {
-  fn tree(cap, len, s) -> Tree[A] {
+  fn tree(cap, len, offset) -> Tree[A] {
     if cap == branching_factor {
-      Leaf(gen_leaf(s, len))
+      Leaf(gen_leaf(offset, len))
     } else {
       let child_cap = cap / branching_factor
-      let part = len / child_cap
-      let (child_count, last_child_len) = match len % child_cap {
-        0 => (part, child_cap)
-        r => (part + 1, r)
+      let quot = len / child_cap
+      let rem = len % child_cap
+      let arr = if rem == 0 {
+        FixedArray::makei(quot, fn(i) {
+          tree(child_cap, child_cap, offset + i * child_cap)
+        })
+      } else {
+        let arr = FixedArray::make(quot + 1, Tree::Empty)
+        for i in 0..<quot {
+          arr[i] = tree(child_cap, child_cap, offset + i * child_cap)
+        }
+        arr[quot] = tree(child_cap, rem, offset + quot * child_cap)
+        arr
       }
-      fn child(k) {
-        let i = s + k * child_cap
-        let len = if k + 1 == child_count { last_child_len } else { child_cap }
-        tree(cap / branching_factor, len, i)
-      }
-
       // Use None here because the implementation of `new_by_leaves` ensures that the tree is full
       // and we can use radix indexing.
-      Node(FixedArray::makei(child_count, child), None)
+      Node(arr, None)
     }
   }
 
