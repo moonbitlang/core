@@ -12,22 +12,26 @@ Note that some methods of the Option are defined in the `core/builtin` package.
 You can create an `Option` value using the `Some` and `None` constructors, remember to give proper type annotations.
 
 ```moonbit
-let some: Int? = Some(42)
-let none: String? = None
+let _some: Int? = Some(42)
+let _none: String? = None
 ```
 
 For conditional expressions, you can use the `when` function, which returns `Some` if the condition is true, otherwise `None`. Note that the value is lazily evaluated.
 
 ```moonbit
-let some = @option.when(1 > 0, fn () { 42 }) // Some(42)
-let none = @option.when(1 < 0, fn () { 42 }) // None
+let some = @option.when(1 > 0, fn () { 42 })
+assert_eq!(some, Some(42))
+let none = @option.when(1 < 0, fn () { 42 })
+assert_eq!(none, None)
 ```
 
 The dual version of `when` is the `unless` function, which returns `Some` if the condition is false, otherwise `None`.
 
 ```moonbit
-let some = @option.unless(1 < 0, fn () { 42 }) // Some(42)
-let none = @option.unless(1 > 0, fn () { 42 }) // None
+let some = @option.unless(1 < 0, fn () { 42 })
+assert_eq!(some, Some(42))
+let none = @option.unless(1 > 0, fn () { 42 })
+assert_eq!(none, None)
 ```
 
 ## Extracting values
@@ -35,10 +39,12 @@ let none = @option.unless(1 > 0, fn () { 42 }) // None
 You can extract the value from an `Option` using the `match` expression (Pattern Matching).
 
 ```moonbit
-match some {
-    Some(value) => print(value)
-    None => print("None")
+let i = Some(42)
+let j = match i {
+    Some(value) => value
+    None => abort("unreachable")
 }
+assert_eq!(j, 42)
 ```
 
 Or using the `unwrap` method, which will panic if the result is `None` and return the value if it is `Some`.
@@ -46,6 +52,7 @@ Or using the `unwrap` method, which will panic if the result is `None` and retur
 ```moonbit
 let some: Int? = Some(42)
 let value = some.unwrap() // 42
+assert_eq!(value, 42)
 ```
 
 A safer alternative to `unwrap` is the `or` method, which returns the value if it is `Some`, otherwise, it returns the default value.
@@ -53,6 +60,7 @@ A safer alternative to `unwrap` is the `or` method, which returns the value if i
 ```moonbit
 let none: Int? = None
 let value = none.or(0) // 0
+assert_eq!(value, 0)
 ```
 
 There is also the `or_else` method, which returns the value if it is `Some`, otherwise, it returns the result of the provided function.
@@ -60,6 +68,7 @@ There is also the `or_else` method, which returns the value if it is `Some`, oth
 ```moonbit
 let none: Int? = None
 let value = none.or_else(fn() -> Int { 0 }) // 0
+assert_eq!(value, 0)
 ```
 
 ## Transforming values
@@ -69,6 +78,7 @@ You can transform the value of an `Option` using the `map` method. It applies th
 ```moonbit
 let some: Int? = Some(42)
 let new_some = some.map(fn(value: Int) { value + 1 }) // Some(43)
+assert_eq!(new_some, Some(43))
 ```
 
 There is a `filter` method that applies a predicate to the value if it is `Some`, otherwise, it returns `None`.
@@ -77,6 +87,8 @@ There is a `filter` method that applies a predicate to the value if it is `Some`
 let some: Int? = Some(42)
 let new_some = some.filter(fn(value: Int) { value > 40 }) // Some(42)
 let none = some.filter(fn(value: Int) { value > 50 }) // None
+assert_eq!(new_some, Some(42))
+assert_eq!(none, None)
 ```
 
 ## Monadic operations
@@ -85,6 +97,7 @@ You can chain multiple operations that return `Option` using the `bind` method, 
 ```moonbit
 let some: Int? = Some(42)
 let new_some = some.bind(fn(value: Int) -> Int? { Some(value + 1) }) // Some(43)
+assert_eq!(new_some, Some(43))
 ```
 
 Sometimes we want to reduce the nested `Option` values into a single `Option`, you can use the `flatten` method to achieve this. It transforms `Some(Some(value))` into `Some(value)`, and `None` otherwise.
@@ -92,6 +105,8 @@ Sometimes we want to reduce the nested `Option` values into a single `Option`, y
 ```moonbit
 let some: Option[Option[Int]] = Some(Some(42))
 let new_some = some.flatten() // Some(42)
+assert_eq!(new_some, Some(42))
 let none: Int?? = Some(None)
 let new_none = none.flatten() // None
+assert_eq!(new_none, None)
 ```

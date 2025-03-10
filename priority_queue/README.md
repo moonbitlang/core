@@ -9,8 +9,8 @@ A priority queue is a data structure capable of maintaining maximum/minimum valu
 You can use `new()` or `of()` to create a priority queue.
 
 ```moonbit
-let queue1 : @priority_queue.T[Int] = @priority_queue.new()
-let queue2 = @priority_queue.of([1, 2, 3])
+let _queue1 : @priority_queue.T[Int] = @priority_queue.new()
+let _queue2 = @priority_queue.of([1, 2, 3])
 ```
 
 Note, however, that the default priority queue created is greater-first; if you need to create a less-first queue, you can write a struct belongs to Compare trait to implement it.
@@ -21,14 +21,14 @@ You can use `length()` to get the number of elements in the current priority que
 
 ```moonbit
 let pq = @priority_queue.of([1, 2, 3, 4, 5])
-println(pq.length()) // 5
+assert_eq!(pq.length(), 5)
 ```
 
 Similarly, you can use the `is_empty` to determine whether the priority queue is empty.
 
 ```moonbit
-let pq = @priority_queue.PriorityQueue::new()
-println(pq.is_empty()) // true
+let pq : @priority_queue.T[Int] = @priority_queue.new()
+assert_eq!(pq.is_empty(), true)
 ```
 
 ## Peek
@@ -37,7 +37,7 @@ You can use `peek()` to look at the head element of a queue, which must be eithe
 
 ```moonbit
 let pq = @priority_queue.of([1, 2, 3, 4, 5])
-println(pq.peek()) // Some(5)
+assert_eq!(pq.peek(), Some(5))
 ```
 
 ## Push
@@ -46,9 +46,9 @@ You can use `push()` to add elements to the priority queue.
 
 ```moonbit
 let pq : @priority_queue.T[Int] = @priority_queue.new()
-println(pq.push(1))
-println(pq.push(2))
-println(pq.peek()) // Some(2)
+pq.push(1)
+pq.push(2)
+assert_eq!(pq.peek(), Some(2))
 ```
 
 ## Pop
@@ -57,12 +57,12 @@ You can use `pop()` to pop the element at the front of the priority queue, respe
 
 ```moonbit
 let pq = @priority_queue.of([5, 4, 3, 2, 1])
-println(pq.pop()) // Some(5)
+assert_eq!(pq.pop(), Some(5))
 ```
 
 ```moonbit
 let pq = @priority_queue.of([5, 4, 3, 2, 1])
-println(pq.length()) // 4
+assert_eq!(pq.length(), 5)
 ```
 
 ## Clear
@@ -71,8 +71,8 @@ You can use `clear` to clear a priority queue.
 
 ```moonbit
 let pq = @priority_queue.of([1, 2, 3, 4, 5])
-println(pq.clear())
-println(pq.is_empty()) // true
+pq.clear()
+assert_eq!(pq.is_empty(), true)
 ```
 
 ## Copy and Transfer
@@ -81,5 +81,5 @@ You can copy a priority queue using the `copy` method.
 
 ```moonbit
 let pq = @priority_queue.of([1, 2, 3])
-let pq2 = pq.copy()
+let _pq2 = pq.copy()
 ```
