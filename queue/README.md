@@ -1,3 +1,7 @@
+---
+moonbit : true
+---
+
 # Queue
 
 Queue is a first in first out (FIFO) data structure, allowing to process their elements in the order they come.

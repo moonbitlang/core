@@ -1,3 +1,7 @@
+---
+moonbit : true
+---
+
 # Moonbit/Core Map
 
 ## Overview
