@@ -9,19 +9,19 @@ Immutable array is a persistent data structure that provides random access and u
 You can create an empty array using `new()` or construct it using `of()`, or use `from_iter()` to construct it from an iterator.
 
 ```moonbit
-let arr2 = @immut/array.new()
-let arr1 = @immut/array.of([1, 2, 3, 4, 5])    
-let arr3 = @immut/array.from_iter((1).upto(5))
-let arr4 = @immut/array.from_array([1, 2, 3])
+let _arr1 = @array.of([1, 2, 3, 4, 5])    
+let _arr2 : @array.T[Int] = @array.new()
+let _arr3 = @array.from_iter((1).until(5))
+let _arr4 = @array.from_array([1, 2, 3])
 ```
 
 Or use `make()`, `makei()` to create an array with some elements.
 
 ```moonbit
-let arr1 = @immut/array.make(5, 1)
-let arr2 = @immut/array.makei(5, fn(i){i + 1})
-println(arr1) // of([1, 1, 1, 1, 1])
-println(arr2) // of([1, 2, 3, 4, 5])
+let arr1 = @array.make(5, 1)
+assert_eq!(arr1.to_array(), [1, 1, 1, 1, 1])
+let arr2 = @array.makei(5, fn(i){i + 1})
+assert_eq!(arr2.to_array(), [1, 2, 3, 4, 5])
 ```
 
 ## Update 
@@ -29,10 +29,10 @@ println(arr2) // of([1, 2, 3, 4, 5])
 Since the array is immutable, the `set()`, `push()` operation is not in-place. It returns a new array with the updated value.
 
 ```moonbit
-let arr1 = @immut/array.of([1, 2, 3, 4, 5])
+let arr1 = @array.of([1, 2, 3, 4, 5])
 let arr2 = arr1.set(2, 10).push(6)
-println(arr1) // of([1, 2, 3, 4, 5])
-println(arr2) // of([1, 2, 10, 4, 5, 6])
+assert_eq!(arr1.to_array(), [1, 2, 3, 4, 5])
+assert_eq!(arr2.to_array(), [1, 2, 10, 4, 5, 6])
 ```
 
 ## Concatenation
@@ -40,10 +40,10 @@ println(arr2) // of([1, 2, 10, 4, 5, 6])
 You can use `concat()` to concatenate two arrays.
 
 ```moonbit
-let arr1 = @immut/array.of([1, 2, 3])
-let arr2 = @immut/array.of([4, 5, 6])
+let arr1 = @array.of([1, 2, 3])
+let arr2 = @array.of([4, 5, 6])
 let arr3 = arr1.concat(arr2)
-println(arr3) // of([1, 2, 3, 4, 5, 6])
+assert_eq!(arr3.to_array(), [1, 2, 3, 4, 5, 6])
 ```
 
 ## Query
@@ -51,10 +51,10 @@ println(arr3) // of([1, 2, 3, 4, 5, 6])
 You can use `op_get()` to get the value at the index, or `length()` to get the length of the array, or `is_empty()` to check whether the array is empty.
 
 ```moonbit
-let arr = @immut/array.of([1, 2, 3, 4, 5])
-println(arr[2]) // 3
-println(arr.length()) // 5
-println(arr.is_empty()) // false
+let arr = @array.of([1, 2, 3, 4, 5])
+assert_eq!(arr[2], 3)
+assert_eq!(arr.length(), 5)
+assert_eq!(arr.is_empty(), false)
 ```
 
 ## Iteration
@@ -62,10 +62,14 @@ println(arr.is_empty()) // false
 You can use `iter()` to get an iterator of the array, or use `each()` to iterate over the array.
 
 ```moonbit
-let arr = @immut/array.of([1, 2, 3, 4, 5])
-println("iterator: \{arr.iter()}")
-println(arr.each(fn(v) { println("element \{v}") }))
-println(arr.eachi(fn(i, v) { println("index: \{i}, element: \{v}") }))
+let arr = @array.of([1, 2, 3, 4, 5])
+inspect!(arr.iter(), content="[1, 2, 3, 4, 5]")
+let val = []
+arr.each(fn(v) { val.push(v) })
+assert_eq!(val, [1, 2, 3, 4, 5])
+let vali = []
+arr.eachi(fn(i, v) { vali.push((i, v)) })
+assert_eq!(vali, [(0, 1), (1, 2), (2, 3), (3, 4), (4, 5)])
 ```
 
 # TODO

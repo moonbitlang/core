@@ -9,15 +9,15 @@ The `Rational` type represents a rational number, which is a number that can be 
 The `Rational` type supports the following arithmetic operations:
 
 ```moonbit
-let a = @rational.new(1L, 2L)
-let b = @rational.new(1L, 3L)
-let c = a + b // 5/6
-let d = a - b // 1/6
-let e = a * b // 1/6
-let f = a / b // 3/2
-let g = -a // -1/2
-let h = a.reciprocal() // 2/1
-let i = g.abs() // 1/2
+let a = @rational.new(1L, 2L).unwrap()
+let b = @rational.new(1L, 3L).unwrap()
+assert_eq!(a + b, @rational.new(5L, 6L).unwrap())
+assert_eq!(a - b, @rational.new(1L, 6L).unwrap())
+assert_eq!(a * b, @rational.new(1L, 6L).unwrap())
+assert_eq!(a / b, @rational.new(3L, 2L).unwrap())
+assert_eq!(a.neg(), @rational.new(-1L, 2L).unwrap())
+assert_eq!(a.reciprocal(), @rational.new(2L, 1L).unwrap())
+assert_eq!(a.abs(), @rational.new(1L, 2L).unwrap())
 ```
 
 ## Comparison Operations
@@ -25,15 +25,15 @@ let i = g.abs() // 1/2
 The `Rational` type supports the following comparison operations:
 
 ```moonbit
-let a = @rational.new(1L, 2L)
-let b = @raitonal.new(1L, 3L)
-let c = a == b // false
-let d = a != b // true
-let e = a < b // false
-let f = a <= b // false
-let g = a > b // true
-let h = a >= b // true
-let i = a.compare(b) // -1
+let a = @rational.new(1L, 2L).unwrap()
+let b = @rational.new(1L, 3L).unwrap()
+assert_eq!(a == b, false)
+assert_eq!(a != b, true)
+assert_eq!(a < b, false)
+assert_eq!(a <= b, false)
+assert_eq!(a > b, true)
+assert_eq!(a >= b, true)
+assert_eq!(a.compare(b), 1)
 ```
 
 ## Integer Operations
@@ -41,12 +41,12 @@ let i = a.compare(b) // -1
 The `Rational` type supports the following integer operations:
 
 ```moonbit
-let a = @rational.new(1L, 2L)
-let c = a.floor() // 0
-let d = a.ceil() // 1
-let b = a.fract() // 1
-let e = a.trunc() // 0
-let h = a.is_integer() // false
+let a = @rational.new(1L, 2L).unwrap()
+assert_eq!(a.floor(), 0)
+assert_eq!(a.ceil(), 1)
+assert_eq!(a.fract().to_string(), "1/2")
+assert_eq!(a.trunc(), 0)
+assert_eq!(a.is_integer(), false)
 ```
 
 ## Double Operations
@@ -54,9 +54,9 @@ let h = a.is_integer() // false
 The `Rational` type supports the following double operations:
 
 ```moonbit
-let a = @rational.new(1L, 2L)
-let b = a.to_double() // 0.5
-let c = @rational.from_double(0.5) // 1/2
+let a = @rational.new(1L, 2L).unwrap()
+assert_eq!(a.to_double(), 0.5)
+assert_eq!(@rational.from_double!(0.5).to_string(), "1/2")
 ```
 
 ## String Operations
@@ -64,7 +64,6 @@ let c = @rational.from_double(0.5) // 1/2
 The `Rational` type supports the following string operations:
 
 ```moonbit
-let a = @rational.new(1L, 2L)
-let b = a.to_string() // "1/2"
+let a = @rational.new(1L, 2L).unwrap()
+assert_eq!(a.to_string(), "1/2")
 ```
-

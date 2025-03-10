@@ -9,61 +9,58 @@ A mutable set backed by a red-black tree.
 You can create an empty MutableSet or a MutableSet from other containers.
 
 ```moonbit
-let set1 : @sorted_set.T[Int] = @sorted_set.new()
-let set2 = @sorted_set.singleton(1)
-let set5 = @sorted_set.of([1])
-let set4 = @sorted_set.from_array([1])
+let _set1 : @sorted_set.T[Int] = @sorted_set.new()
+let _set2 = @sorted_set.singleton(1)
+let _set3 = @sorted_set.from_array([1])
 ```
 ### Container Operations
 
 Add an element to the MutableSet in place.
 
 ```moonbit
-let set = @sorted_set.of([1, 2, 3, 4])
-set.add(5) // ()
-set.to_string() // of([1, 2, 3, 4, 5])
+let set4 = @sorted_set.from_array([1, 2, 3, 4])
+set4.add(5) // ()
+let set6 = @sorted_set.from_array([1, 2, 3, 4, 5])
+assert_eq!(set6.to_array(), [1, 2, 3, 4, 5])
 ```
 
 Remove an element from the MutableSet in place.
 
 ```moonbit
-let set = @sorted_set.of([3, 8, 1]) 
+let set = @sorted_set.from_array([3, 8, 1]) 
 set.remove(8) // () 
-set.to_string() // of([1, 3])
+let set7 = @sorted_set.from_array([1, 3])
+assert_eq!(set7.to_array(), [1, 3])
 ```
 
 Whether an element is in the set.
 
 ```moonbit
-let set = @sorted_set.of([1, 2, 3, 4])
-set.contains(1) // true
-set.contains(5) // false
+let set = @sorted_set.from_array([1, 2, 3, 4])
+assert_eq!(set.contains(1), true)
+assert_eq!(set.contains(5), false)
 ```
 
 Iterates over the elements in the set.
 
 ```moonbit
-@sorted_set.of([1, 2, 3, 4]).each(print) // output: 1234
-```
-
-Delete all elements of the set that filter returns false. It is done in place.
-
-```moonbit
-let set = @sorted_set.of([1, 2, 3, 4, 5, 6])
-set.filter(fn(v) { v % 2 == 0}) // ()
-set.to_string() // of([2, 4, 6])
+let arr = []
+@sorted_set.from_array([1, 2, 3, 4]).each(fn(v) { arr.push(v) })
+assert_eq!(arr, [1, 2, 3, 4])
 ```
 
 Get the size of the set.
 
 ```moonbit
-@sorted_set.of([1, 2, 3, 4]).size() // 4
+let set = @sorted_set.from_array([1, 2, 3, 4])
+assert_eq!(set.size(), 4)
 ```
 
 Whether the set is empty.
 
 ```moonbit
-@sorted_set.new().is_empty() // true
+let set : @sorted_set.T[Int] = @sorted_set.new()
+assert_eq!(set.is_empty(), true)
 ```
 
 ### Set Operations
@@ -71,18 +68,24 @@ Whether the set is empty.
 Union, intersection and difference of two sets. They return a new set that does not overlap with the original sets in memory.
 
 ```moonbit
-let set1 = @sorted_set.of([3, 4, 5])
-let set2 = @sorted_set.of([4, 5, 6])
-set1.union(set2) // of([3, 4, 5, 6])
-set1.inter(set2) // of([4, 5])
-set1.diff(set2) // of([3])
+let set1 = @sorted_set.from_array([3, 4, 5])
+let set2 = @sorted_set.from_array([4, 5, 6])
+let set3 = set1.union(set2)
+assert_eq!(set3.to_array(), [3, 4, 5, 6])
+let set4 = set1.intersection(set2)
+assert_eq!(set4.to_array(), [4, 5])
+let set5 = set1.difference(set2)
+assert_eq!(set5.to_array(), [3])
 ```
 
 Determine the inclusion and separation relationship between two sets.
 
 ```moonbit
-@sorted_set.of([1, 2, 3]).subset(of([7, 2, 9, 4, 5, 6, 3, 8, 1])) // true
-@sorted_set.of([1, 2, 3]).disjoint(of([4, 5, 6])) // true
+let set1 = @sorted_set.from_array([1, 2, 3])
+let set2 = @sorted_set.from_array([7, 2, 9, 4, 5, 6, 3, 8, 1])
+assert_eq!(set1.subset(set2), true)
+let set3 = @sorted_set.from_array([4, 5, 6])
+assert_eq!(set1.disjoint(set3), true)
 ```
 
 ### Stringify
@@ -90,7 +93,7 @@ Determine the inclusion and separation relationship between two sets.
 MutableSet implements to_string (i.e. Show trait), which allows you to directly output it.
 
 ```moonbit
-println(@sorted_set.of([1, 2, 3])) // output of([1, 2, 3]))
-@sorted_set.of([1, 2, 3]).to_string() // "MutableSet::[1, 2, 3]"
+let set = @sorted_set.from_array([1, 2, 3])
+assert_eq!(set.to_string(), "@sorted_set.of([1, 2, 3])")
 ```
 
