@@ -1,6 +1,7 @@
 ---
 moonbit : true
 ---
+
 # Tuple
 
 Tuple is a fixed-size collection of elements of different types. It is a lightweight data structure that can be used to store multiple values in a single variable. This sub-package introduces utils for binary tuples.
@@ -25,10 +26,10 @@ You can access the elements of the tuple using the `fst` and `snd` methods (Shor
 ```moonbit
 test {
     let tuple = (1, 2)
-    println(@tuple.fst(tuple)) // 1
-    println(@tuple.snd(tuple)) // 2
-    println(tuple.0) // 1
-    println(tuple.1) // 2
+    assert_eq!(tuple.0, 1)
+    assert_eq!(tuple.1, 2)
+    assert_eq!(@tuple.fst(tuple), 1)
+    assert_eq!(@tuple.snd(tuple), 2)
 }
 ```
 
