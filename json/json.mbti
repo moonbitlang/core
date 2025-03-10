@@ -1,13 +1,35 @@
 package moonbitlang/core/json
 
 // Values
+fn add_index(JsonPath, Int) -> JsonPath
+
+fn add_key(JsonPath, String) -> JsonPath
+
+fn as_array(Json) -> Array[Json]?
+
+fn as_bool(Json) -> Bool?
+
+fn as_null(Json) -> Unit?
+
+fn as_number(Json) -> Double?
+
+fn as_object(Json) -> Map[String, Json]?
+
+fn as_string(Json) -> String?
+
 fn from_json[T : FromJson](Json, path~ : JsonPath = ..) -> T!JsonDecodeError
 
 fn inspect(&ToJson, content? : Json, loc~ : SourceLoc = _, args_loc~ : ArgsLoc = _) -> Unit!InspectError
 
+fn item(Json, Int) -> Json?
+
 fn parse(String) -> Json!ParseError
 
+fn stringify(Json, escape_slash~ : Bool = .., indent~ : Int = ..) -> String
+
 fn valid(String) -> Bool
+
+fn value(Json, String) -> Json?
 
 // Types and methods
 pub(all) type! JsonDecodeError (JsonPath, String)

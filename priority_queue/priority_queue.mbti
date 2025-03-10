@@ -3,13 +3,33 @@ package moonbitlang/core/priority_queue
 alias @moonbitlang/core/quickcheck as @quickcheck
 
 // Values
+fn clear[A](T[A]) -> Unit
+
+fn copy[A](T[A]) -> T[A]
+
 fn from_array[A : Compare](Array[A]) -> T[A]
 
 fn from_iter[K : Compare](Iter[K]) -> T[K]
 
+fn is_empty[A](T[A]) -> Bool
+
+fn iter[A : Compare](T[A]) -> Iter[A]
+
+fn length[A](T[A]) -> Int
+
 fn new[A : Compare]() -> T[A]
 
 fn of[A : Compare](FixedArray[A]) -> T[A]
+
+fn peek[A](T[A]) -> A?
+
+fn pop[A : Compare](T[A]) -> A?
+
+fn push[A : Compare](T[A], A) -> Unit
+
+fn to_array[A : Compare](T[A]) -> Array[A]
+
+fn unsafe_pop[A : Compare](T[A]) -> Unit
 
 // Types and methods
 type T[A]

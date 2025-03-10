@@ -9,7 +9,13 @@ fn from_fixedarray(FixedArray[Byte], len? : Int) -> Bytes
 
 fn from_iter(Iter[Byte]) -> Bytes
 
+fn iter(Bytes) -> Iter[Byte]
+
 fn of(FixedArray[Byte]) -> Bytes
+
+fn to_array(Bytes) -> Array[Byte]
+
+fn to_fixedarray(Bytes, len? : Int) -> FixedArray[Byte]
 
 // Types and methods
 type View

@@ -1,7 +1,21 @@
 package moonbitlang/core/random
 
 // Values
+fn double(Rand) -> Double
+
+fn float(Rand) -> Float
+
+fn int(Rand, limit~ : Int = ..) -> Int
+
+fn int64(Rand, limit~ : Int64 = ..) -> Int64
+
 fn new(seed~ : Bytes = ..) -> Rand
+
+fn shuffle(Rand, Int, (Int, Int) -> Unit) -> Unit
+
+fn uint(Rand, limit~ : UInt = ..) -> UInt
+
+fn uint64(Rand, limit~ : UInt64 = ..) -> UInt64
 
 // Types and methods
 type Rand

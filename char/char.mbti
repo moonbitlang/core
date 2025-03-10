@@ -1,6 +1,35 @@
 package moonbitlang/core/char
 
 // Values
+fn is_ascii(Char) -> Bool
+
+fn is_ascii_alphabetic(Char) -> Bool
+
+fn is_ascii_control(Char) -> Bool
+
+fn is_ascii_digit(Char) -> Bool
+
+fn is_ascii_graphic(Char) -> Bool
+
+fn is_ascii_hexdigit(Char) -> Bool
+
+fn is_ascii_lowercase(Char) -> Bool
+
+fn is_ascii_octdigit(Char) -> Bool
+
+fn is_ascii_punctuation(Char) -> Bool
+
+fn is_ascii_uppercase(Char) -> Bool
+
+fn is_ascii_whitespace(Char) -> Bool
+
+fn is_control(Char) -> Bool
+
+fn is_digit(Char, UInt) -> Bool
+
+fn is_numeric(Char) -> Bool
+
+fn is_whitespace(Char) -> Bool
 
 // Types and methods
 impl Char {
