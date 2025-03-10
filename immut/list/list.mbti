@@ -97,7 +97,7 @@ impl T {
   unsafe_minimum[A : Compare](Self[A]) -> A
   unsafe_nth[A](Self[A], Int) -> A
   unzip[A, B](Self[(A, B)]) -> (Self[A], Self[B])
-  zip[A, B](Self[A], Self[B]) -> Self[(A, B)]?
+  zip[A, B](Self[A], Self[B]) -> Self[(A, B)]
 }
 impl[X] Default for T[X]
 impl[A : Eq] Eq for T[A]

@@ -480,23 +480,19 @@ pub fn fold_righti[A, B](self : T[A], f : (Int, A, B) -> B, init~ : B) -> B {
 
 ///|
 /// Zip two lists.
-/// If the lists have different lengths, it will return None.
+/// If the lists have different lengths, it will return a list with shorter length.
 ///
 /// # Example
 ///
 /// ```
 /// let r = @list.zip(@list.of([1, 2, 3, 4, 5]), @list.of([6, 7, 8, 9, 10]))
-/// assert_eq!(r, Some(@list.from_array([(1, 6), (2, 7), (3, 8), (4, 9), (5, 10)])))
+/// assert_eq!(r, @list.from_array([(1, 6), (2, 7), (3, 8), (4, 9), (5, 10)]))
 /// ```
-pub fn zip[A, B](self : T[A], other : T[B]) -> T[(A, B)]? {
+pub fn zip[A, B](self : T[A], other : T[B]) -> T[(A, B)] {
   match (self, other) {
-    (Nil, Nil) => Some(Nil)
-    (Cons(x, xs), Cons(y, ys)) =>
-      match zip(xs, ys) {
-        None => None
-        Some(ls) => Some(Cons((x, y), ls))
-      }
-    _ => None
+    (Nil, _) => Nil
+    (_, Nil) => Nil
+    (Cons(x, xs), Cons(y, ys)) => Cons((x, y), zip(xs, ys))
   }
 }
 
