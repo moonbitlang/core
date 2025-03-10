@@ -1,3 +1,7 @@
+---
+moonbit : true
+---
+
 # Immutable Map
 
 An immutable tree map based on size balanced tree.

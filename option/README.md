@@ -1,3 +1,7 @@
+---
+moonbit : true
+---
+
 # Option
 
 The `Option` type is a built-in type in MoonBit that represents an optional value. The type annotation `Option[A]` can also be written as `A?`.

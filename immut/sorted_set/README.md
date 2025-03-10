@@ -1,3 +1,7 @@
+---
+moonbit : true
+---
+
 # Immutable Set
 
 ImmutableSet is an immutable, persistent implementation of the set structure (each operation returns a new ImmutableSet), implemented here using a balance tree.

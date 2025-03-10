@@ -1,3 +1,7 @@
+---
+moonbit : true
+---
+
 # HashSet
 
 A mutable hash set based on a Robin Hood hash table.

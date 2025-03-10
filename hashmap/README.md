@@ -1,6 +1,7 @@
 ---
 moonbit : true
 ---
+
 # HashMap
 
 A mutable hash map based on a Robin Hood hash table.

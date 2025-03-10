@@ -1,3 +1,7 @@
+---
+moonbit : true
+---
+
 # Immutable Priority Queue
 
 A priority queue is a data structure capable of maintaining maximum/minimum values at the front of the queue, which may have other names in other programming languages (C++ std::priority_queue / Rust BinaryHeap). The priority queue here is implemented as a pairing heap and has excellent performance.

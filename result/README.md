@@ -1,3 +1,7 @@
+---
+moonbit : true
+---
+
 # Moonbit/Core Result
 
 ## Overview
