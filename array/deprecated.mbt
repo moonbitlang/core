@@ -39,8 +39,8 @@
 /// }
 /// ```
 ///
-/// @alert deprecated "Use `FixedArray::makei` instead"
-/// @coverage.skip
+#deprecated("Use `FixedArray::makei` instead")
+#coverage.skip
 pub fn FixedArray::new[T](length : Int, value : () -> T) -> FixedArray[T] {
   if length <= 0 {
     []
@@ -75,8 +75,8 @@ pub fn FixedArray::new[T](length : Int, value : () -> T) -> FixedArray[T] {
 /// }
 /// ```
 ///
-/// @alert deprecated "Use `FixedArray::makei` instead"
-/// @coverage.skip
+#deprecated("Use `FixedArray::makei` instead")
+#coverage.skip
 pub fn FixedArray::new_with_index[T](
   length : Int,
   value : (Int) -> T
@@ -92,8 +92,8 @@ pub fn FixedArray::new_with_index[T](
 /// let sum = [1, 2, 3, 4, 5].fold(init=0, fn { sum, elem => sum + elem })
 /// assert_eq!(sum, 15)
 /// ```
-/// @alert deprecated "Use `fold` instead"
-/// @coverage.skip
+#deprecated("Use `fold` instead")
+#coverage.skip
 pub fn FixedArray::fold_left[T, U](
   self : FixedArray[T],
   f : (U, T) -> U,
@@ -110,8 +110,8 @@ pub fn FixedArray::fold_left[T, U](
 /// let sum = [1, 2, 3, 4, 5].rev_fold(init=0, fn { sum, elem => sum + elem })
 /// assert_eq!(sum, 15)
 /// ```
-/// @alert deprecated "Use `rev_fold` instead"
-/// @coverage.skip
+#deprecated("Use `rev_fold` instead")
+#coverage.skip
 pub fn FixedArray::fold_right[T, U](
   self : FixedArray[T],
   f : (U, T) -> U,
@@ -128,8 +128,8 @@ pub fn FixedArray::fold_right[T, U](
 /// let sum = [1, 2, 3, 4, 5].foldi(init=0, fn { index, sum, _elem => sum + index })
 /// assert_eq!(sum, 10)
 /// ```
-/// @alert deprecated "Use `foldi` instead"
-/// @coverage.skip
+#deprecated("Use `foldi` instead")
+#coverage.skip
 pub fn FixedArray::fold_lefti[T, U](
   self : FixedArray[T],
   f : (Int, U, T) -> U,
@@ -146,8 +146,8 @@ pub fn FixedArray::fold_lefti[T, U](
 /// let sum = [1, 2, 3, 4, 5].rev_foldi(init=0, fn { index, sum, _elem => sum + index })
 /// assert_eq!(sum, 10)
 /// ```
-/// @alert deprecated "Use `rev_foldi` instead"
-/// @coverage.skip
+#deprecated("Use `rev_foldi` instead")
+#coverage.skip
 pub fn FixedArray::fold_righti[T, U](
   self : FixedArray[T],
   f : (Int, U, T) -> U,
