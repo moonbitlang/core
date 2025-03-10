@@ -27,7 +27,7 @@ pub fn T::from_json[A : @json.FromJson](
 /// # Example
 ///
 /// ```
-/// assert_eq!(@list.of([1, 2, 3]).equal(@list.of([1, 2, 3])), true)
+/// assert_eq!(@list.of([1, 2, 3]) == @list.of([1, 2, 3]), true)
 /// ```
 /// @alert deprecated "use `==` instead"
 pub fn equal[A : Eq](self : T[A], other : T[A]) -> Bool {
