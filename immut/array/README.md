@@ -1,3 +1,7 @@
+---
+moonbit : true
+---
+
 # Immutable Array
 
 Immutable array is a persistent data structure that provides random access and update operations. Based on Clojure's [persistent vector](https://hypirion.com/musings/understanding-persistent-vector-pt-1).

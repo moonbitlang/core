@@ -1,3 +1,7 @@
+---
+moonbit : true
+---
+
 # Immutable List
 
 List is implemented as a **linked list**, supporting O(1) head access.
