@@ -3,7 +3,15 @@ package moonbitlang/core/ref
 alias @moonbitlang/core/quickcheck as @quickcheck
 
 // Values
+fn map[T, R](Ref[T], (T) -> R) -> Ref[R]
+
 fn new[T](T) -> Ref[T]
+
+fn protect[T, R](Ref[T], T, () -> R) -> R
+
+fn swap[T](Ref[T], Ref[T]) -> Unit
+
+fn update[T](Ref[T], (T) -> T) -> Unit
 
 // Types and methods
 impl Ref {

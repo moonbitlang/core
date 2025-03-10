@@ -3,9 +3,33 @@ package moonbitlang/core/result
 alias @moonbitlang/core/quickcheck as @quickcheck
 
 // Values
+fn bind[T, E, U](Result[T, E], (T) -> Result[U, E]) -> Result[U, E]
+
 fn err[T, E](E) -> Result[T, E]
 
+fn flatten[T, E](Result[Result[T, E], E]) -> Result[T, E]
+
+fn fold[T, E, V](Result[T, E], (T) -> V, (E) -> V) -> V
+
+fn is_err[T, E](Result[T, E]) -> Bool
+
+fn is_ok[T, E](Result[T, E]) -> Bool
+
+fn map[T, E, U](Result[T, E], (T) -> U) -> Result[U, E]
+
+fn map_err[T, E, F](Result[T, E], (E) -> F) -> Result[T, F]
+
 fn ok[T, E](T) -> Result[T, E]
+
+fn or[T, E](Result[T, E], T) -> T
+
+fn or_else[T, E](Result[T, E], () -> T) -> T
+
+fn to_option[T, E](Result[T, E]) -> T?
+
+fn unwrap[T, E](Result[T, E]) -> T
+
+fn unwrap_or_error[T, E : Error](Result[T, E]) -> T!E
 
 fn wrap0[T, E : Error](f~ : () -> T!E) -> Result[T, E]
 

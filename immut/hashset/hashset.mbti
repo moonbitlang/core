@@ -3,13 +3,27 @@ package moonbitlang/core/immut/hashset
 alias @moonbitlang/core/quickcheck as @quickcheck
 
 // Values
+fn add[A : Eq + Hash](T[A], A) -> T[A]
+
+fn contains[A : Eq + Hash](T[A], A) -> Bool
+
+fn each[A](T[A], (A) -> Unit) -> Unit
+
 fn from_array[A : Eq + Hash](Array[A]) -> T[A]
 
 fn from_iter[A : Eq + Hash](Iter[A]) -> T[A]
 
+fn is_empty[A](T[A]) -> Bool
+
+fn iter[A](T[A]) -> Iter[A]
+
 fn new[A]() -> T[A]
 
 fn of[A : Eq + Hash](FixedArray[A]) -> T[A]
+
+fn remove[A : Eq + Hash](T[A], A) -> T[A]
+
+fn size[A](T[A]) -> Int
 
 // Types and methods
 type T[A]

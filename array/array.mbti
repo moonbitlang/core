@@ -4,6 +4,27 @@ alias @moonbitlang/core/bytes as @bytes
 alias @moonbitlang/core/quickcheck as @quickcheck
 
 // Values
+fn copy[T](Array[T]) -> Array[T]
+
+fn filter_map[A, B](Array[A], (A) -> B?) -> Array[B]
+
+fn join(Array[String], String) -> String
+
+fn last[A](Array[A]) -> A?
+
+fn map_option[A, B](Array[A], (A) -> B?) -> Array[B] //deprecated
+
+fn push_iter[T](Array[T], Iter[T]) -> Unit
+
+fn shuffle[T](Array[T], rand~ : (Int) -> Int) -> Array[T]
+
+fn shuffle_in_place[T](Array[T], rand~ : (Int) -> Int) -> Unit
+
+fn sort[T : Compare](Array[T]) -> Unit
+
+fn sort_by[T](Array[T], (T, T) -> Int) -> Unit
+
+fn sort_by_key[T, K : Compare](Array[T], (T) -> K) -> Unit
 
 // Types and methods
 impl FixedArray {

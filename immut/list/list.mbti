@@ -4,7 +4,53 @@ alias @moonbitlang/core/json as @json
 alias @moonbitlang/core/quickcheck as @quickcheck
 
 // Values
+fn add[A](T[A], A) -> T[A]
+
+fn all[A](T[A], (A) -> Bool) -> Bool
+
+fn any[A](T[A], (A) -> Bool) -> Bool
+
+fn concat[A](T[A], T[A]) -> T[A]
+
+fn concat_map[A, B](T[A], (A) -> T[B]) -> T[B] //deprecated
+
+fn contains[A : Eq](T[A], A) -> Bool
+
 fn default[X]() -> T[X]
+
+fn drop[A](T[A], Int) -> T[A]
+
+fn drop_while[A](T[A], (A) -> Bool) -> T[A]
+
+fn each[A](T[A], (A) -> Unit) -> Unit
+
+fn eachi[A](T[A], (Int, A) -> Unit) -> Unit
+
+fn equal[A : Eq](T[A], T[A]) -> Bool //deprecated
+
+fn filter[A](T[A], (A) -> Bool) -> T[A]
+
+fn filter_map[A, B](T[A], (A) -> B?) -> T[B]
+
+fn find[A](T[A], (A) -> Bool) -> A?
+
+fn findi[A](T[A], (A, Int) -> Bool) -> A?
+
+fn flat_map[A, B](T[A], (A) -> T[B]) -> T[B]
+
+fn flatten[A](T[T[A]]) -> T[A]
+
+fn fold[A, B](T[A], init~ : B, (B, A) -> B) -> B
+
+fn fold_left[A, B](T[A], (B, A) -> B, init~ : B) -> B //deprecated
+
+fn fold_lefti[A, B](T[A], (Int, B, A) -> B, init~ : B) -> B //deprecated
+
+fn fold_right[A, B](T[A], (A, B) -> B, init~ : B) -> B //deprecated
+
+fn fold_righti[A, B](T[A], (Int, A, B) -> B, init~ : B) -> B //deprecated
+
+fn foldi[A, B](T[A], init~ : B, (Int, B, A) -> B) -> B
 
 fn from_array[A](Array[A]) -> T[A]
 
@@ -14,13 +60,97 @@ fn from_iter_rev[A](Iter[A]) -> T[A]
 
 fn from_json[A : @json.FromJson](Json) -> T[A]!@json.JsonDecodeError
 
+fn head[A](T[A]) -> A?
+
+fn head_exn[A](T[A]) -> A //deprecated
+
+fn init_[A](T[A]) -> T[A]
+
+fn intercalate[A](T[T[A]], T[A]) -> T[A]
+
+fn intersperse[A](T[A], A) -> T[A]
+
+fn is_empty[A](T[A]) -> Bool
+
+fn is_prefix[A : Eq](T[A], T[A]) -> Bool
+
+fn is_suffix[A : Eq](T[A], T[A]) -> Bool
+
+fn iter[A](T[A]) -> Iter[A]
+
+fn iter2[A](T[A]) -> Iter2[Int, A]
+
+fn last[A](T[A]) -> A?
+
+fn length[A](T[A]) -> Int
+
+fn lookup[A : Eq, B](T[(A, B)], A) -> B?
+
+fn map[A, B](T[A], (A) -> B) -> T[B]
+
+fn mapi[A, B](T[A], (Int, A) -> B) -> T[B]
+
+fn maximum[A : Compare](T[A]) -> A?
+
+fn minimum[A : Compare](T[A]) -> A?
+
+fn nth[A](T[A], Int) -> A?
+
+fn nth_exn[A](T[A], Int) -> A //deprecated
+
 fn of[A](FixedArray[A]) -> T[A]
+
+fn op_add[A](T[A], T[A]) -> T[A]
+
+fn remove[A : Eq](T[A], A) -> T[A]
+
+fn remove_at[A](T[A], Int) -> T[A]
 
 fn repeat[A](Int, A) -> T[A]
 
+fn rev[A](T[A]) -> T[A]
+
+fn rev_concat[A](T[A], T[A]) -> T[A]
+
+fn rev_fold[A, B](T[A], init~ : B, (A, B) -> B) -> B
+
+fn rev_foldi[A, B](T[A], init~ : B, (Int, A, B) -> B) -> B
+
+fn rev_map[A, B](T[A], (A) -> B) -> T[B]
+
+fn scan_left[A, E](T[A], (E, A) -> E, init~ : E) -> T[E]
+
+fn scan_right[A, B](T[A], (A, B) -> B, init~ : B) -> T[B]
+
 fn singleton[A](A) -> T[A]
 
+fn sort[A : Compare](T[A]) -> T[A]
+
+fn tail[A](T[A]) -> T[A]
+
+fn take[A](T[A], Int) -> T[A]
+
+fn take_while[A](T[A], (A) -> Bool) -> T[A]
+
+fn to_array[A](T[A]) -> Array[A]
+
+fn to_json[A : ToJson](T[A]) -> Json
+
 fn unfold[A, S]((S) -> (A, S)?, init~ : S) -> T[A]
+
+fn unsafe_head[A](T[A]) -> A
+
+fn unsafe_last[A](T[A]) -> A
+
+fn unsafe_maximum[A : Compare](T[A]) -> A
+
+fn unsafe_minimum[A : Compare](T[A]) -> A
+
+fn unsafe_nth[A](T[A], Int) -> A
+
+fn unzip[A, B](T[(A, B)]) -> (T[A], T[B])
+
+fn zip[A, B](T[A], T[B]) -> T[(A, B)]?
 
 // Types and methods
 pub(all) enum T[A] {

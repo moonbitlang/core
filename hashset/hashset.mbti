@@ -3,13 +3,45 @@ package moonbitlang/core/hashset
 alias @moonbitlang/core/quickcheck as @quickcheck
 
 // Values
+fn add[K : Hash + Eq](T[K], K) -> Unit
+
+fn capacity[K](T[K]) -> Int
+
+fn clear[K](T[K]) -> Unit
+
+fn contains[K : Hash + Eq](T[K], K) -> Bool
+
+fn difference[K : Hash + Eq](T[K], T[K]) -> T[K]
+
+fn each[K](T[K], (K) -> Unit) -> Unit
+
+fn eachi[K](T[K], (Int, K) -> Unit) -> Unit
+
 fn from_array[K : Hash + Eq](Array[K]) -> T[K]
 
 fn from_iter[K : Hash + Eq](Iter[K]) -> T[K]
 
+fn insert[K : Hash + Eq](T[K], K) -> Unit //deprecated
+
+fn intersection[K : Hash + Eq](T[K], T[K]) -> T[K]
+
+fn is_empty[K](T[K]) -> Bool
+
+fn iter[K](T[K]) -> Iter[K]
+
 fn new[K](capacity~ : Int = ..) -> T[K]
 
 fn of[K : Hash + Eq](FixedArray[K]) -> T[K]
+
+fn remove[K : Hash + Eq](T[K], K) -> Unit
+
+fn size[K](T[K]) -> Int
+
+fn symmetric_difference[K : Hash + Eq](T[K], T[K]) -> T[K]
+
+fn to_array[K](T[K]) -> Array[K]
+
+fn union[K : Hash + Eq](T[K], T[K]) -> T[K]
 
 // Types and methods
 type T[K]

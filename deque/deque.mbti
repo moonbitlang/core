@@ -3,13 +3,85 @@ package moonbitlang/core/deque
 alias @moonbitlang/core/json as @json
 
 // Values
+fn back[A](T[A]) -> A?
+
+fn capacity[A](T[A]) -> Int
+
+fn clear[A](T[A]) -> Unit
+
+fn contains[A : Eq](T[A], A) -> Bool
+
+fn copy[A](T[A]) -> T[A]
+
+fn each[A](T[A], (A) -> Unit) -> Unit
+
+fn eachi[A](T[A], (Int, A) -> Unit) -> Unit
+
+fn filter_map_inplace[A](T[A], (A) -> A?) -> Unit //deprecated
+
 fn from_array[A](Array[A]) -> T[A]
 
 fn from_iter[A](Iter[A]) -> T[A]
 
+fn front[A](T[A]) -> A?
+
+fn is_empty[A](T[A]) -> Bool
+
+fn iter[A](T[A]) -> Iter[A]
+
+fn iter2[A](T[A]) -> Iter2[Int, A]
+
+fn length[A](T[A]) -> Int
+
+fn map[A, U](T[A], (A) -> U) -> T[U]
+
+fn mapi[A, U](T[A], (Int, A) -> U) -> T[U]
+
 fn new[A](capacity~ : Int = ..) -> T[A]
 
 fn of[A](FixedArray[A]) -> T[A]
+
+fn op_get[A](T[A], Int) -> A
+
+fn op_set[A](T[A], Int, A) -> Unit
+
+fn pop_back[A](T[A]) -> A?
+
+fn pop_back_exn[A](T[A]) -> Unit //deprecated
+
+fn pop_front[A](T[A]) -> A?
+
+fn pop_front_exn[A](T[A]) -> Unit //deprecated
+
+fn push_back[A](T[A], A) -> Unit
+
+fn push_front[A](T[A], A) -> Unit
+
+fn reserve_capacity[A](T[A], Int) -> Unit
+
+fn retain[A](T[A], (A) -> Bool) -> Unit
+
+fn retain_map[A](T[A], (A) -> A?) -> Unit
+
+fn rev_each[A](T[A], (A) -> Unit) -> Unit
+
+fn rev_eachi[A](T[A], (Int, A) -> Unit) -> Unit
+
+fn rev_iter[A](T[A]) -> Iter[A]
+
+fn rev_iter2[A](T[A]) -> Iter2[Int, A]
+
+fn search[A : Eq](T[A], A) -> Int?
+
+fn shrink_to_fit[A](T[A]) -> Unit
+
+fn to_array[A](T[A]) -> Array[A]
+
+fn truncate[A](T[A], Int) -> Unit
+
+fn unsafe_pop_back[A](T[A]) -> Unit
+
+fn unsafe_pop_front[A](T[A]) -> Unit
 
 // Types and methods
 type T[A]

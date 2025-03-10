@@ -3,15 +3,53 @@ package moonbitlang/core/sorted_set
 alias @moonbitlang/core/quickcheck as @quickcheck
 
 // Values
+fn add[V : Compare](T[V], V) -> Unit
+
+fn contains[V : Compare](T[V], V) -> Bool
+
+fn copy[V](T[V]) -> T[V]
+
+fn deep_clone[V](T[V]) -> T[V] //deprecated
+
+fn diff[V : Compare](T[V], T[V]) -> T[V] //deprecated
+
+fn difference[V : Compare](T[V], T[V]) -> T[V]
+
+fn disjoint[V : Compare](T[V], T[V]) -> Bool
+
+fn each[V](T[V], (V) -> Unit) -> Unit
+
+fn eachi[V](T[V], (Int, V) -> Unit) -> Unit
+
 fn from_array[V : Compare](Array[V]) -> T[V]
 
 fn from_iter[V : Compare](Iter[V]) -> T[V]
+
+fn intersect[V : Compare](T[V], T[V]) -> T[V] //deprecated
+
+fn intersection[V : Compare](T[V], T[V]) -> T[V]
+
+fn is_empty[V : Compare](T[V]) -> Bool
+
+fn iter[V](T[V]) -> Iter[V]
 
 fn new[V]() -> T[V]
 
 fn of[V : Compare](Array[V]) -> T[V] //deprecated
 
+fn range[V : Compare](T[V], V, V) -> Iter[V]
+
+fn remove[V : Compare](T[V], V) -> Unit
+
 fn singleton[V : Compare](V) -> T[V]
+
+fn size[V : Compare](T[V]) -> Int
+
+fn subset[V : Compare](T[V], T[V]) -> Bool
+
+fn to_array[V](T[V]) -> Array[V]
+
+fn union[V : Compare](T[V], T[V]) -> T[V]
 
 // Types and methods
 type T[V]

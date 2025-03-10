@@ -5,6 +5,14 @@ let max_value : Int16
 
 let min_value : Int16
 
+fn op_add(Int16, Int16) -> Int16
+
+fn op_div(Int16, Int16) -> Int16
+
+fn op_mul(Int16, Int16) -> Int16
+
+fn op_sub(Int16, Int16) -> Int16
+
 // Types and methods
 impl Int16 {
   op_add(Int16, Int16) -> Int16

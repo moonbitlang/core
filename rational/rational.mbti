@@ -1,9 +1,35 @@
 package moonbitlang/core/rational
 
 // Values
+fn abs(T) -> T
+
+fn ceil(T) -> Int64
+
+fn floor(T) -> Int64
+
+fn fract(T) -> T
+
 fn from_double(Double) -> T!RationalError
 
+fn is_integer(T) -> Bool
+
+fn neg(T) -> T
+
 fn new(Int64, Int64) -> T?
+
+fn op_add(T, T) -> T
+
+fn op_div(T, T) -> T
+
+fn op_mul(T, T) -> T
+
+fn op_sub(T, T) -> T
+
+fn reciprocal(T) -> T
+
+fn to_double(T) -> Double
+
+fn trunc(T) -> Int64
 
 // Types and methods
 pub(all) type! RationalError String

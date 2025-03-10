@@ -4,17 +4,63 @@ alias @moonbitlang/core/json as @json
 alias @moonbitlang/core/quickcheck as @quickcheck
 
 // Values
+fn add[K : Compare, V](T[K, V], K, V) -> T[K, V]
+
+fn contains[K : Compare, V](T[K, V], K) -> Bool
+
+fn each[K, V](T[K, V], (K, V) -> Unit) -> Unit
+
+fn eachi[K, V](T[K, V], (Int, K, V) -> Unit) -> Unit
+
+fn elems[K, V](T[K, V]) -> Array[V]
+
+fn filter[K : Compare, V](T[K, V], (V) -> Bool) -> T[K, V]
+
+fn filter_with_key[K : Compare, V](T[K, V], (K, V) -> Bool) -> T[K, V]
+
+fn fold[K, V, A](T[K, V], init~ : A, (A, V) -> A) -> A
+
+fn foldl_with_key[K, V, A](T[K, V], (A, K, V) -> A, init~ : A) -> A
+
+fn foldr_with_key[K, V, A](T[K, V], (A, K, V) -> A, init~ : A) -> A
+
 fn from_array[K : Compare, V](Array[(K, V)]) -> T[K, V]
 
 fn from_iter[K : Compare, V](Iter[(K, V)]) -> T[K, V]
 
 fn from_json[V : @json.FromJson](Json) -> T[String, V]!@json.JsonDecodeError
 
+fn insert[K : Compare, V](T[K, V], K, V) -> T[K, V] //deprecated
+
+fn is_empty[K, V](T[K, V]) -> Bool
+
+fn iter[K, V](T[K, V]) -> Iter[(K, V)]
+
+fn iter2[K, V](T[K, V]) -> Iter2[K, V]
+
+fn keys[K, V](T[K, V]) -> Array[K]
+
+fn lookup[K : Compare, V](T[K, V], K) -> V?
+
+fn map[K, X, Y](T[K, X], (X) -> Y) -> T[K, Y]
+
+fn map_with_key[K, X, Y](T[K, X], (K, X) -> Y) -> T[K, Y]
+
 fn new[K, V]() -> T[K, V]
 
 fn of[K : Compare, V](FixedArray[(K, V)]) -> T[K, V]
 
+fn op_get[K : Compare, V](T[K, V], K) -> V?
+
+fn remove[K : Compare, V](T[K, V], K) -> T[K, V]
+
 fn singleton[K, V](K, V) -> T[K, V]
+
+fn size[K, V](T[K, V]) -> Int
+
+fn to_array[K, V](T[K, V]) -> Array[(K, V)]
+
+fn to_json[K : Show, V : ToJson](T[K, V]) -> Json
 
 // Types and methods
 type T[K, V]

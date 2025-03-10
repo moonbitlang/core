@@ -5,9 +5,27 @@ alias @moonbitlang/core/quickcheck as @quickcheck
 // Values
 fn from_array[A : Compare](Array[A]) -> T[A]
 
+fn is_empty[A](T[A]) -> Bool
+
+fn iter[A : Compare](T[A]) -> Iter[A]
+
+fn length[A](T[A]) -> Int
+
 fn new[A : Compare]() -> T[A]
 
 fn of[A : Compare](FixedArray[A]) -> T[A]
+
+fn peek[A](T[A]) -> A?
+
+fn pop[A : Compare](T[A]) -> T[A]?
+
+fn pop_exn[A : Compare](T[A]) -> T[A] //deprecated
+
+fn push[A : Compare](T[A], A) -> T[A]
+
+fn to_array[A : Compare](T[A]) -> Array[A]
+
+fn unsafe_pop[A : Compare](T[A]) -> T[A]
 
 // Types and methods
 type T[A]

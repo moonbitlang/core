@@ -4,17 +4,73 @@ alias @moonbitlang/core/json as @json
 alias @moonbitlang/core/quickcheck as @quickcheck
 
 // Values
+fn add[A : Compare](T[A], A) -> T[A]
+
+fn all[A : Compare](T[A], (A) -> Bool) -> Bool
+
+fn any[A : Compare](T[A], (A) -> Bool) -> Bool
+
+fn contains[A : Compare](T[A], A) -> Bool
+
+fn diff[A : Compare](T[A], T[A]) -> T[A] //deprecated
+
+fn difference[A : Compare](T[A], T[A]) -> T[A]
+
+fn disjoint[A : Compare](T[A], T[A]) -> Bool
+
+fn each[A](T[A], (A) -> Unit) -> Unit
+
+fn filter[A : Compare](T[A], (A) -> Bool) -> T[A]
+
+fn fold[A : Compare, B](T[A], init~ : B, (B, A) -> B) -> B
+
 fn from_array[A : Compare](Array[A]) -> T[A]
 
 fn from_iter[A : Compare](Iter[A]) -> T[A]
 
 fn from_json[A : @json.FromJson + Compare](Json) -> T[A]!@json.JsonDecodeError
 
+fn inter[A : Compare](T[A], T[A]) -> T[A] //deprecated
+
+fn intersection[A : Compare](T[A], T[A]) -> T[A]
+
+fn is_empty[A : Compare](T[A]) -> Bool
+
+fn iter[A](T[A]) -> Iter[A]
+
+fn map[A : Compare, B : Compare](T[A], (A) -> B) -> T[B]
+
+fn max[A : Compare](T[A]) -> A
+
+fn max_option[A : Compare](T[A]) -> A?
+
+fn min[A : Compare](T[A]) -> A
+
+fn min_option[A : Compare](T[A]) -> A?
+
 fn new[A]() -> T[A]
 
 fn of[A : Compare](FixedArray[A]) -> T[A]
 
+fn op_add[A : Compare](T[A], T[A]) -> T[A]
+
+fn remove[A : Compare](T[A], A) -> T[A]
+
+fn remove_min[A : Compare](T[A]) -> T[A]
+
 fn singleton[A : Compare](A) -> T[A]
+
+fn size[A : Compare](T[A]) -> Int
+
+fn split[A : Compare](T[A], A) -> (T[A], Bool, T[A])
+
+fn subset[A : Compare](T[A], T[A]) -> Bool
+
+fn to_array[A : Compare](T[A]) -> Array[A]
+
+fn to_json[A : ToJson](T[A]) -> Json
+
+fn union[A : Compare](T[A], T[A]) -> T[A]
 
 // Types and methods
 type T[A]
