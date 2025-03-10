@@ -3,7 +3,31 @@ package moonbitlang/core/option
 alias @moonbitlang/core/quickcheck as @quickcheck
 
 // Values
+fn bind[T, U](T?, (T) -> U?) -> U?
+
 fn empty[T]() -> T?
+
+fn filter[T](T?, (T) -> Bool) -> T?
+
+fn flatten[T](T??) -> T?
+
+fn is_empty[T](T?) -> Bool
+
+fn iter[T](T?) -> Iter[T]
+
+fn map[T, U](T?, (T) -> U) -> U?
+
+fn map_or[T, U](T?, U, (T) -> U) -> U
+
+fn map_or_else[T, U](T?, () -> U, (T) -> U) -> U
+
+fn or[T](T?, T) -> T
+
+fn or_default[T : Default](T?) -> T
+
+fn or_else[T](T?, () -> T) -> T
+
+fn or_error[T, Err : Error](T?, Err) -> T!Err
 
 fn some[T](T) -> T?
 

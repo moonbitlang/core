@@ -7,6 +7,12 @@ let max_value : UInt
 
 let min_value : UInt
 
+fn to_be_bytes(UInt) -> Bytes
+
+fn to_int64(UInt) -> Int64
+
+fn to_le_bytes(UInt) -> Bytes
+
 // Types and methods
 impl UInt {
   to_be_bytes(UInt) -> Bytes

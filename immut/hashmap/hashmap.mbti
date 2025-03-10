@@ -3,13 +3,29 @@ package moonbitlang/core/immut/hashmap
 alias @moonbitlang/core/quickcheck as @quickcheck
 
 // Values
+fn add[K : Eq + Hash, V](T[K, V], K, V) -> T[K, V]
+
+fn each[K, V](T[K, V], (K, V) -> Unit) -> Unit
+
+fn find[K : Eq + Hash, V](T[K, V], K) -> V?
+
 fn from_array[K : Eq + Hash, V](Array[(K, V)]) -> T[K, V]
 
 fn from_iter[K : Eq + Hash, V](Iter[(K, V)]) -> T[K, V]
 
+fn iter[K, V](T[K, V]) -> Iter[(K, V)]
+
+fn iter2[K, V](T[K, V]) -> Iter2[K, V]
+
 fn new[K, V]() -> T[K, V]
 
 fn of[K : Eq + Hash, V](FixedArray[(K, V)]) -> T[K, V]
+
+fn op_get[K : Eq + Hash, V](T[K, V], K) -> V?
+
+fn remove[K : Eq + Hash, V](T[K, V], K) -> T[K, V]
+
+fn size[K, V](T[K, V]) -> Int
 
 // Types and methods
 type T[K, V]

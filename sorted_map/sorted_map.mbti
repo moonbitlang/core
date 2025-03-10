@@ -3,13 +3,47 @@ package moonbitlang/core/sorted_map
 alias @moonbitlang/core/quickcheck as @quickcheck
 
 // Values
+fn add[K : Compare, V](T[K, V], K, V) -> Unit
+
+fn clear[K, V](T[K, V]) -> Unit
+
+fn contains[K : Compare, V](T[K, V], K) -> Bool
+
+fn each[K, V](T[K, V], (K, V) -> Unit) -> Unit
+
+fn eachi[K, V](T[K, V], (Int, K, V) -> Unit) -> Unit
+
 fn from_array[K : Compare, V](Array[(K, V)]) -> T[K, V]
 
 fn from_iter[K : Compare, V](Iter[(K, V)]) -> T[K, V]
 
+fn get[K : Compare, V](T[K, V], K) -> V?
+
+fn is_empty[K, V](T[K, V]) -> Bool
+
+fn iter[K, V](T[K, V]) -> Iter[(K, V)]
+
+fn iter2[K, V](T[K, V]) -> Iter2[K, V]
+
+fn keys[K, V](T[K, V]) -> Array[K]
+
 fn new[K, V]() -> T[K, V]
 
 fn of[K : Compare, V](Array[(K, V)]) -> T[K, V] //deprecated
+
+fn op_get[K : Compare, V](T[K, V], K) -> V?
+
+fn op_set[K : Compare, V](T[K, V], K, V) -> Unit
+
+fn range[K : Compare, V](T[K, V], K, K) -> Iter2[K, V]
+
+fn remove[K : Compare, V](T[K, V], K) -> Unit
+
+fn size[K, V](T[K, V]) -> Int
+
+fn to_array[K, V](T[K, V]) -> Array[(K, V)]
+
+fn values[K, V](T[K, V]) -> Array[V]
 
 // Types and methods
 type T[K, V]

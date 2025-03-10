@@ -1,9 +1,53 @@
 package moonbitlang/core/float
 
 // Values
+fn abs(Float) -> Float
+
+fn acos(Float) -> Float
+
+fn acosh(Float) -> Float
+
+fn asin(Float) -> Float
+
+fn asinh(Float) -> Float
+
+fn atan(Float) -> Float
+
+fn atan2(Float, Float) -> Float
+
+fn atanh(Float) -> Float
+
+fn cbrt(Float) -> Float
+
+fn ceil(Float) -> Float
+
+fn cos(Float) -> Float
+
+fn cosh(Float) -> Float
+
 fn default() -> Float
 
+fn exp(Float) -> Float
+
+fn expm1(Float) -> Float
+
+fn floor(Float) -> Float
+
+fn hypot(Float, Float) -> Float
+
 let infinity : Float
+
+fn is_inf(Float) -> Bool
+
+fn is_nan(Float) -> Bool
+
+fn is_neg_inf(Float) -> Bool
+
+fn is_pos_inf(Float) -> Bool
+
+fn ln(Float) -> Float
+
+fn ln_1p(Float) -> Float
 
 let max_value : Float
 
@@ -14,6 +58,28 @@ let min_value : Float
 let neg_infinity : Float
 
 let not_a_number : Float
+
+fn op_mod(Float, Float) -> Float
+
+fn pow(Float, Float) -> Float
+
+fn round(Float) -> Float
+
+fn sin(Float) -> Float
+
+fn sinh(Float) -> Float
+
+fn tan(Float) -> Float
+
+fn tanh(Float) -> Float
+
+fn to_be_bytes(Float) -> Bytes
+
+fn to_int(Float) -> Int
+
+fn to_le_bytes(Float) -> Bytes
+
+fn trunc(Float) -> Float
 
 // Types and methods
 impl Float {
