@@ -354,13 +354,13 @@ fn new_by_leaves[A](len : Int, gen_leaf : (Int, Int) -> FixedArray[A]) -> T[A] {
   if len == 0 {
     new()
   } else {
-    let (cap, shift) = loop len, branching_factor, 1 {
-      len, m_pow, depth =>
-        match len <= m_pow {
-          false => continue len, m_pow * branching_factor, depth + 1
-          true => (m_pow, (depth - 1) * num_bits)
-        }
+    let mut cap = branching_factor
+    let mut depth = 0
+    while cap <= len {
+      cap *= branching_factor
+      depth += 1
     }
+    let shift = num_bits * depth
     { shift, tree: tree(cap, len, 0), size: len }
   }
 }
