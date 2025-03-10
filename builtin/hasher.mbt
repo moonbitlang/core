@@ -13,19 +13,19 @@
 // limitations under the License.
 
 ///|
-const GPRIME1 = 0x9E3779B1
+const GPRIME1 : UInt = 0x9E3779B1
 
 ///|
-const GPRIMES2 = 0x85EBCA77
+const GPRIMES2 : UInt = 0x85EBCA77
 
 ///|
-const GPRIME3 = 0xC2B2AE3D
+const GPRIME3 : UInt = 0xC2B2AE3D
 
 ///|
-const GPRIME4 = 0x27D4EB2F
+const GPRIME4 : UInt = 0x27D4EB2F
 
 ///|
-const GPRIME5 = 0x165667B1
+const GPRIME5 : UInt = 0x165667B1
 
 ///|
 /// Represents a hasher that implements the xxHash32 algorithm. The hasher
@@ -47,7 +47,7 @@ const GPRIME5 = 0x165667B1
 /// }
 /// ```
 struct Hasher {
-  mut acc : Int
+  mut acc : UInt
 }
 
 ///|
@@ -73,7 +73,7 @@ struct Hasher {
 /// }
 /// ```
 pub fn Hasher::new(seed~ : Int = 0) -> Hasher {
-  { acc: seed + GPRIME5 }
+  { acc: seed.reinterpret_as_uint() + GPRIME5 }
 }
 
 ///|
@@ -118,7 +118,7 @@ pub fn Hasher::combine[T : Hash](self : Hasher, value : T) -> Unit {
 /// }
 /// ```
 pub fn Hasher::combine_unit(self : Hasher) -> Unit {
-  self.combine_int(0)
+  self.combine_uint(0)
 }
 
 ///|
@@ -141,7 +141,7 @@ pub fn Hasher::combine_unit(self : Hasher) -> Unit {
 /// }
 /// ```
 pub fn Hasher::combine_bool(self : Hasher, value : Bool) -> Unit {
-  self.combine_int(if value { 1 } else { 0 })
+  self.combine_uint(if value { 1 } else { 0 })
 }
 
 ///|
@@ -164,8 +164,7 @@ pub fn Hasher::combine_bool(self : Hasher, value : Bool) -> Unit {
 /// }
 /// ```
 pub fn Hasher::combine_int(self : Hasher, value : Int) -> Unit {
-  self.acc += 4
-  self.consume4(value)
+  self.combine_uint(value.reinterpret_as_uint())
 }
 
 ///|
@@ -190,8 +189,8 @@ pub fn Hasher::combine_int(self : Hasher, value : Int) -> Unit {
 /// ```
 pub fn Hasher::combine_int64(self : Hasher, value : Int64) -> Unit {
   self.acc += 8
-  self.consume4(value.to_int())
-  self.consume4((value.reinterpret_as_uint64() >> 32).to_int())
+  self.consume4(value.reinterpret_as_uint64().to_uint())
+  self.consume4((value.reinterpret_as_uint64() >> 32).to_uint())
 }
 
 ///|
@@ -214,7 +213,8 @@ pub fn Hasher::combine_int64(self : Hasher, value : Int64) -> Unit {
 /// }
 /// ```
 pub fn Hasher::combine_uint(self : Hasher, value : UInt) -> Unit {
-  self.combine_int(value.reinterpret_as_int())
+  self.acc += 4
+  self.consume4(value)
 }
 
 ///|
@@ -285,7 +285,7 @@ pub fn Hasher::combine_double(self : Hasher, value : Double) -> Unit {
 /// }
 /// ```
 pub fn Hasher::combine_float(self : Hasher, value : Float) -> Unit {
-  self.combine_int(value.reinterpret_as_int())
+  self.combine_uint(value.reinterpret_as_uint())
 }
 
 ///|
@@ -363,7 +363,7 @@ pub fn Hasher::combine_bytes(self : Hasher, value : Bytes) -> Unit {
 /// ```
 pub fn Hasher::combine_string(self : Hasher, value : String) -> Unit {
   for i = 0; i < value.length(); i = i + 1 {
-    self.combine_int(value[i].to_int())
+    self.combine_uint(value[i].to_uint())
   }
 }
 
@@ -387,7 +387,7 @@ pub fn Hasher::combine_string(self : Hasher, value : String) -> Unit {
 /// }
 /// ```
 pub fn Hasher::combine_char(self : Hasher, value : Char) -> Unit {
-  self.combine_int(value.to_int())
+  self.combine_uint(value.to_uint())
 }
 
 ///|
@@ -410,50 +410,44 @@ pub fn Hasher::combine_char(self : Hasher, value : Char) -> Unit {
 /// }
 /// ```
 pub fn Hasher::finalize(self : Hasher) -> Int {
-  self.avalanche()
+  self.avalanche().reinterpret_as_int()
 }
 
 ///|
-fn Hasher::avalanche(self : Hasher) -> Int {
-  let mut acc = self.acc.reinterpret_as_uint()
+fn Hasher::avalanche(self : Hasher) -> UInt {
+  let mut acc = self.acc
   acc = acc ^ (acc >> 15)
-  acc *= GPRIMES2.reinterpret_as_uint()
+  acc *= GPRIMES2
   acc = acc ^ (acc >> 13)
-  acc *= GPRIME3.reinterpret_as_uint()
+  acc *= GPRIME3
   acc = acc ^ (acc >> 16)
-  acc.reinterpret_as_int()
+  acc
 }
 
 ///|
-fn Hasher::consume4(self : Hasher, input : Int) -> Unit {
+fn Hasher::consume4(self : Hasher, input : UInt) -> Unit {
   self.acc = rotl(self.acc + input * GPRIME3, 17) * GPRIME4
 }
 
 ///|
 fn Hasher::consume1(self : Hasher, input : Byte) -> Unit {
-  self.acc = rotl(self.acc + input.to_int() * GPRIME5, 11) * GPRIME1
+  self.acc = rotl(self.acc + input.to_uint() * GPRIME5, 11) * GPRIME1
 }
 
 ///|
-fn rotl(x : Int, r : Int) -> Int {
-  (x << r) | (x.reinterpret_as_uint() >> (32 - r)).reinterpret_as_int()
+fn rotl(x : UInt, r : Int) -> UInt {
+  (x << r) | (x >> (32 - r))
 }
 
 ///|
-fn endian32(input : Bytes, cur : Int) -> Int {
-  input[cur + 0].to_int() |
+fn endian32(input : Bytes, cur : Int) -> UInt {
+  input[cur + 0].to_uint() |
   (
-    (input[cur + 1].to_int() << 8) |
-    (input[cur + 2].to_int() << 16) |
-    (input[cur + 3].to_int() << 24)
+    (input[cur + 1].to_uint() << 8) |
+    (input[cur + 2].to_uint() << 16) |
+    (input[cur + 3].to_uint() << 24)
   )
 }
-
-// pub impl Hash for String with hash(self) {
-//   let hasher = Hasher::new()
-//   hasher.combine(self)
-//   hasher.finalize()
-// }
 
 ///|
 /// Implements the `Hash` trait for `String` type, providing a method to combine

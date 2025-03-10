@@ -28,9 +28,6 @@ pub(all) type! ParseError {
   InvalidNumber(Position, String)
   InvalidIdentEscape(Position)
 }
-impl ParseError {
-  to_string(Self) -> String
-}
 impl Eq for ParseError
 impl Show for ParseError
 
