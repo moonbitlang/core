@@ -15,12 +15,11 @@
 ///|
 fn ParseContext::read_char(ctx : ParseContext) -> Char? {
   if ctx.offset < ctx.end_offset {
-    let c = ctx.input[ctx.offset]
+    let c1 = ctx.input.unsafe_charcode_at(ctx.offset)
     ctx.offset += 1
-    let c1 = c.to_int()
     if c1 >= 0xD800 && c1 <= 0xDBFF {
       if ctx.offset < ctx.end_offset {
-        let c2 = ctx.input[ctx.offset].to_int()
+        let c2 = ctx.input.unsafe_charcode_at(ctx.offset)
         if c2 >= 0xDC00 && c2 <= 0xDFFF {
           ctx.offset += 1
           let c3 = (c1 << 10) + c2 - 0x35fdc00
@@ -28,7 +27,7 @@ fn ParseContext::read_char(ctx : ParseContext) -> Char? {
         }
       }
     }
-    Some(c)
+    Some(Char::from_int(c1))
   } else {
     None
   }
@@ -46,7 +45,7 @@ const SURROGATE_HIGH_CHAR = 0xDFFF
 /// otherwise raise an error, when it is an error, the position is unspecified.
 fn ParseContext::expect_char(ctx : ParseContext, c : Char) -> Unit!ParseError {
   guard ctx.offset < ctx.end_offset else { raise InvalidEof }
-  let c1 = ctx.input[ctx.offset].to_int()
+  let c1 = ctx.input.unsafe_charcode_at(ctx.offset)
   ctx.offset += 1
   let c0 = c.to_int()
   if c0 < 0xFFFF {
@@ -62,7 +61,7 @@ fn ParseContext::expect_char(ctx : ParseContext, c : Char) -> Unit!ParseError {
       ctx.offset < ctx.end_offset else {
       ctx.invalid_char!(shift=-1)
     }
-    let c2 = ctx.input[ctx.offset].to_int()
+    let c2 = ctx.input.unsafe_charcode_at(ctx.offset)
     let c3 = (c1 << 10) + c2 - 0x35fdc00
     if c3 != c0 {
       ctx.invalid_char!(shift=-1)
@@ -80,7 +79,7 @@ fn ParseContext::expect_ascii_char(
   c : Byte
 ) -> Unit!ParseError {
   guard ctx.offset < ctx.end_offset else { raise InvalidEof }
-  let c1 = ctx.input[ctx.offset].to_int()
+  let c1 = ctx.input.unsafe_charcode_at(ctx.offset)
   ctx.offset += 1
   if c.to_int() != c1 {
     ctx.invalid_char!(shift=-1)

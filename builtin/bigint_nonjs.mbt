@@ -1042,20 +1042,23 @@ pub fn BigInt::from_string(input : String) -> BigInt {
   if len == 0 {
     abort("empty string")
   }
-  let sign : Sign = if input[0] == '-' { Negative } else { Positive }
+  let sign : Sign = if Char::from_int(input.unsafe_charcode_at(0)) == '-' {
+    Negative
+  } else {
+    Positive
+  }
   let mut b_len = (
       (len.to_double() / decimal_ratio).to_unchecked_int() + 1 + radix_bit_len
     ) /
     radix_bit_len +
     1
   let b = FixedArray::make(b_len, 0U)
-  for i = (match sign {
-          Negative => 1
-          Positive => 0
-        })
-      i < input.length()
-      i = i + 1 {
-    let x = input[i].to_int() - 48 // ASCII value of '0'
+  for
+    i in (match sign {
+      Negative => 1
+      Positive => 0
+    })..<input.length() {
+    let x = input.unsafe_charcode_at(i) - 48 // ASCII value of '0'
     if x < 0 || x > 9 {
       abort("invalid character")
     }
@@ -1108,8 +1111,7 @@ pub fn BigInt::from_string(input : String) -> BigInt {
 /// ```
 pub fn BigInt::from_hex(input : String) -> BigInt {
   // WARN: this implementation assumes that `radix_bit_len` is a multiple of 4.
-  fn char_from_hex(c : Char) -> UInt {
-    let x = c.to_int()
+  fn char_from_hex(x : Int) -> UInt {
     if x >= 48 && x <= 57 {
       // ASCII value of '0'
       (x - 48).reinterpret_as_uint()
@@ -1128,7 +1130,7 @@ pub fn BigInt::from_hex(input : String) -> BigInt {
   if len == 0 {
     abort("empty string")
   }
-  let (sign, number_len) = if input[0] == '-' {
+  let (sign, number_len) = if Char::from_int(input.unsafe_charcode_at(0)) == '-' {
     (Negative, len - 1)
   } else {
     (Positive, len)
@@ -1141,13 +1143,14 @@ pub fn BigInt::from_hex(input : String) -> BigInt {
   if mod != 0 {
     let start = len - quotient * nb_char - mod
     for i in 0..<mod {
-      b[b_len - 1] = (b[b_len - 1] << 4) | char_from_hex(input[start + i])
+      b[b_len - 1] = (b[b_len - 1] << 4) |
+        char_from_hex(input.unsafe_charcode_at(start + i))
     }
   }
   for i in 0..<quotient {
     let start = len - (i + 1) * nb_char
     for j in 0..<nb_char {
-      b[i] = (b[i] << 4) | char_from_hex(input[start + j])
+      b[i] = (b[i] << 4) | char_from_hex(input.unsafe_charcode_at(start + j))
     }
   }
   while b[b_len - 1] == 0 && b_len > 1 {

@@ -500,7 +500,7 @@ fn new_digits(self : Decimal, s : Int) -> Int {
       less = true
       break
     }
-    let d = cheat_num[i].to_int() - '0'.to_int()
+    let d = cheat_num.unsafe_charcode_at(i) - '0'.to_int()
     if self.digits[i].to_int() != d {
       less = self.digits[i].to_int() < d
       break
