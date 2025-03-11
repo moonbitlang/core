@@ -14,7 +14,7 @@
 
 ///| Create an empty map.
 /// @alert deprecated "Use `new()` instead"
-/// @coverage.skip
+#coverage.skip
 pub fn T::empty[K, V]() -> T[K, V] {
   Empty
 }

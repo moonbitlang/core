@@ -726,7 +726,7 @@ fn compute_sizes[A](
 
 ///|
 /// Print the tree structure. For debug use only.
-/// @coverage.skip
+#coverage.skip
 impl[A : Show] Show for Tree[A] with output(self, logger : &Logger) {
   fn indent_str(s : String, indent : Int) -> String {
     String::make(indent, ' ') + s

@@ -21,7 +21,7 @@ fn debug_string[T : Show](t : T) -> String {
 
 ///|
 /// @alert deprecated "Use built-in `assert_eq` instead"
-/// @coverage.skip
+#coverage.skip
 pub fn eq[T : Show + Eq](a : T, b : T, loc~ : SourceLoc = _) -> Unit! {
   if a != b {
     let a = debug_string(a)
@@ -32,7 +32,7 @@ pub fn eq[T : Show + Eq](a : T, b : T, loc~ : SourceLoc = _) -> Unit! {
 
 ///|
 /// @alert deprecated "Use built-in `assert_not_eq` instead"
-/// @coverage.skip
+#coverage.skip
 pub fn ne[T : Show + Eq](a : T, b : T, loc~ : SourceLoc = _) -> Unit! {
   if not(a != b) {
     let a = debug_string(a)
@@ -43,7 +43,7 @@ pub fn ne[T : Show + Eq](a : T, b : T, loc~ : SourceLoc = _) -> Unit! {
 
 ///|
 /// @alert deprecated "Use built-in `assert_true` instead"
-/// @coverage.skip
+#coverage.skip
 pub fn is_true(x : Bool, loc~ : SourceLoc = _) -> Unit! {
   if not(x) {
     let x = debug_string(x)
@@ -53,7 +53,7 @@ pub fn is_true(x : Bool, loc~ : SourceLoc = _) -> Unit! {
 
 ///|
 /// @alert deprecated "Use built-in `assert_false` instead"
-/// @coverage.skip
+#coverage.skip
 pub fn is_false(x : Bool, loc~ : SourceLoc = _) -> Unit! {
   if x {
     let x = debug_string(x)

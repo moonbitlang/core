@@ -14,7 +14,7 @@
 
 ///|
 /// @alert deprecated "Use infix bitwise operator `>>` instead"
-/// @coverage.skip
+#coverage.skip
 pub fn BigInt::asr(self : BigInt, n : Int) -> BigInt {
   self >> n
 }
@@ -25,7 +25,7 @@ pub fn BigInt::asr(self : BigInt, n : Int) -> BigInt {
 /// Only the absolute value is shifted.
 ///
 /// @alert deprecated "Use infix bitwise operator `<<` instead"
-/// @coverage.skip
+#coverage.skip
 pub fn BigInt::shl(self : BigInt, n : Int) -> BigInt {
   self << n
 }
@@ -36,7 +36,7 @@ pub fn BigInt::shl(self : BigInt, n : Int) -> BigInt {
 /// Only the absolute value is shifted.
 ///
 /// @alert deprecated "Use infix bitwise operator `<<` instead"
-/// @coverage.skip
+#coverage.skip
 pub fn BigInt::lsl(self : BigInt, n : Int) -> BigInt {
   self << n
 }
@@ -47,7 +47,7 @@ pub fn BigInt::lsl(self : BigInt, n : Int) -> BigInt {
 /// Only the absolute value is shifted.
 ///
 /// @alert deprecated "Use infix bitwise operator `>>` instead"
-/// @coverage.skip
+#coverage.skip
 pub fn BigInt::shr(self : BigInt, n : Int) -> BigInt {
   self >> n
 }

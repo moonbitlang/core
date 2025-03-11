@@ -14,14 +14,14 @@
 
 ///|
 /// @alert deprecated "use `@rational.new` instead"
-/// @coverage.skip
+#coverage.skip
 pub fn T::new(numerator : Int64, denominator : Int64) -> T? {
   new(numerator, denominator)
 }
 
 ///|
 /// @alert deprecated "use `@rational.from_double` instead"
-/// @coverage.skip
+#coverage.skip
 pub fn T::from_double(value : Double) -> T!RationalError {
   from_double!(value)
 }
