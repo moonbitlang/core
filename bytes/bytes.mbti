@@ -48,6 +48,7 @@ impl Bytes {
   from_iter(Iter[Byte]) -> Bytes
   iter(Bytes) -> Iter[Byte]
   of(FixedArray[Byte]) -> Bytes
+  op_add(Bytes, Bytes) -> Bytes
   op_as_view(Bytes, start~ : Int = .., end? : Int) -> View
   to_array(Bytes) -> Array[Byte]
   to_fixedarray(Bytes, len? : Int) -> FixedArray[Byte]
