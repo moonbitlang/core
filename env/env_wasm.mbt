@@ -88,3 +88,17 @@ fn get_cli_args_ffi() -> XExternStringArray = "__moonbit_fs_unstable" "args_get"
 
 ///|
 fn now_internal() -> UInt64 = "__moonbit_time_unstable" "now"
+
+///|
+fn current_dir_internal() -> String? {
+  let dir = current_dir_ffi()
+  let dir = string_from_extern(dir)
+  if dir == "" {
+    None
+  } else {
+    Some(dir)
+  }
+}
+
+///|
+fn current_dir_ffi() -> XExternString = "__moonbit_fs_unstable" "current_dir"
