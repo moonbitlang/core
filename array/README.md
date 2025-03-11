@@ -20,7 +20,6 @@ test "array creation" {
 
   // Creating from iterator
   let arr3 = Array::from_iter("hello".iter())
-
   inspect!(arr1, content="[1, 2, 3]")
   inspect!(arr2, content="[0, 2, 4]")
   inspect!(arr3, content="['h', 'e', 'l', 'l', 'o']")
@@ -36,7 +35,13 @@ test "array operations" {
   let nums = [1, 2, 3, 4, 5]
 
   // Filtering out odd numbers and negating the remaining
-  let neg_evens = nums.filter_map(fn(x) { if x % 2 == 0 { Some(-x) } else { None } })
+  let neg_evens = nums.filter_map(fn(x) {
+    if x % 2 == 0 {
+      Some(-x)
+    } else {
+      None
+    }
+  })
 
   // Summing array
   let sum = nums.fold(init=0, fn(acc, x) { acc + x })
@@ -100,7 +105,6 @@ test "array views" {
 
   // Modify view in-place
   view.map_inplace(fn(x) { x + 1 })
-
   inspect!(doubled, content="[4, 6, 8]")
   inspect!(arr, content="[1, 3, 4, 5, 5]")
 }
@@ -123,7 +127,6 @@ test "fixed arrays" {
   // Check if array starts/ends with sequence
   let starts = fixed.starts_with([1, 2])
   let ends = fixed.ends_with([2, 3])
-
   inspect!(combined, content="[1, 2, 3, 4, 5]")
   inspect!(has_two, content="true")
   inspect!(starts, content="true")
@@ -146,7 +149,6 @@ test "utilities" {
   // Using deterministic `rand` function below for demonstration
   // NOTE: When using a normal `rand` function, the actual result may vary
   let shuffled = nums.shuffle(rand=fn(_) { 1 })
-
   inspect!(joined, content="hello world")
   inspect!(shuffled, content="[1, 3, 4, 5, 2]")
 }
