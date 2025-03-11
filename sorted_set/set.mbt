@@ -50,7 +50,7 @@ pub fn of[V : Compare](array : Array[V]) -> T[V] {
 /// It requires a Clone trait on T, which we don't have yet.
 ///
 /// @alert deprecated "Use `copy` instead"
-/// @coverage.skip
+#coverage.skip
 pub fn deep_clone[V](self : T[V]) -> T[V] {
   copy(self)
 }
@@ -269,7 +269,7 @@ fn join_right[V : Compare](l : Node[V]?, v : V, r : Node[V]?) -> Node[V] {
 /// Returns the difference of two sets.
 /// 
 /// @alert deprecated "Use `difference` instead"
-/// @coverage.skip
+#coverage.skip
 pub fn diff[V : Compare](self : T[V], src : T[V]) -> T[V] {
   let ret = new()
   self.each(fn(x) { if not(src.contains(x)) { ret.add(x) } })
@@ -287,7 +287,7 @@ pub fn difference[V : Compare](self : T[V], src : T[V]) -> T[V] {
 ///|
 /// Returns the intersection of two sets.
 /// @alert deprecated "Use `intersection` instead"
-/// @coverage.skip
+#coverage.skip
 pub fn intersect[V : Compare](self : T[V], src : T[V]) -> T[V] {
   self.intersection(src)
 }

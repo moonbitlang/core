@@ -14,28 +14,28 @@
 
 ///|
 /// @alert deprecated "use `@queue.new` instead"
-/// @coverage.skip
+#coverage.skip
 pub fn T::new[A]() -> T[A] {
   new()
 }
 
 ///|
 /// @alert deprecated "use `@queue.from_array` instead"
-/// @coverage.skip
+#coverage.skip
 pub fn T::from_array[A](arr : Array[A]) -> T[A] {
   from_array(arr)
 }
 
 ///|
 /// @alert deprecated "use `@queue.from_iter` instead"
-/// @coverage.skip
+#coverage.skip
 pub fn T::from_iter[A](iter : Iter[A]) -> T[A] {
   from_iter(iter)
 }
 
 ///|
 /// @alert deprecated "use `@queue.of` instead"
-/// @coverage.skip
+#coverage.skip
 pub fn T::of[A](arr : FixedArray[A]) -> T[A] {
   of(arr)
 }

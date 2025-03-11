@@ -14,28 +14,28 @@
 
 ///|
 /// @alert deprecated "use `@immut/hashset.new` instead"
-/// @coverage.skip
+#coverage.skip
 pub fn T::new[A]() -> T[A] {
   new()
 }
 
 ///|
 /// @alert deprecated "use `@immut/hashset.from_iter` instead"
-/// @coverage.skip
+#coverage.skip
 pub fn T::from_iter[A : Eq + Hash](iter : Iter[A]) -> T[A] {
   from_iter(iter)
 }
 
 ///|
 /// @alert deprecated "use `@immut/hashset.from_array` instead"
-/// @coverage.skip
+#coverage.skip
 pub fn T::from_array[A : Eq + Hash](arr : Array[A]) -> T[A] {
   from_array(arr)
 }
 
 ///|
 /// @alert deprecated "use `@immut/hashset.of` instead"
-/// @coverage.skip
+#coverage.skip
 pub fn T::of[A : Eq + Hash](arr : FixedArray[A]) -> T[A] {
   of(arr)
 }

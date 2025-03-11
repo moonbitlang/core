@@ -23,7 +23,7 @@ struct CoverageCounter {
 ///|
 /// Create a new coverage counter with the given size.
 ///
-/// @coverage.skip
+#coverage.skip
 pub fn CoverageCounter::new(size : Int) -> CoverageCounter {
   { counter: FixedArray::make(size, 0) }
 }
@@ -31,7 +31,7 @@ pub fn CoverageCounter::new(size : Int) -> CoverageCounter {
 ///|
 /// Increment the specified tracking index.
 ///
-/// @coverage.skip
+#coverage.skip
 pub fn CoverageCounter::incr(self : CoverageCounter, idx : Int) -> Unit {
   let counter = self.counter[idx]
   self.counter[idx] = counter + 1
@@ -62,7 +62,7 @@ let counters : Ref[MList[(String, CoverageCounter)]] = { val: MNil }
 ///|
 /// Add the given counter along its ID to the tracking list.
 ///
-/// @coverage.skip
+#coverage.skip
 pub fn track(name : String, counter : CoverageCounter) -> Unit {
   counters.val = MCons((name, counter), counters.val)
 }
@@ -100,7 +100,7 @@ impl Output for StringBuilder with output(self, content) -> Unit {
 /// }
 /// ----- END MOONBIT COVERAGE -----
 /// ```
-/// @coverage.skip
+#coverage.skip
 pub fn end() -> Unit {
   println("----- BEGIN MOONBIT COVERAGE -----")
   let sbuf = StringBuffer::StringBuffer([])
