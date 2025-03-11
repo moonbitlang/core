@@ -112,12 +112,23 @@ pub impl FromJson for String with from_json(json, path) {
 ///|
 pub impl FromJson for Char with from_json(json, path) {
   match json {
-    String(a) =>
-      if a.length() != 1 {
-        decode_error!(path, "Char::from_json: expected single character")
+    String(a) => {
+      let len = a.length()
+      if len == 1 {
+        a.unsafe_charcode_at(0) |> Char::from_int
+      } else if len == 2 {
+        let c1 = a.unsafe_charcode_at(0)
+        let c2 = a.unsafe_charcode_at(1)
+        if c1 >= 0xD800 && c1 <= 0xDBFF && c2 >= 0xDC00 && c2 <= 0xDFFF {
+          let c3 = (c1 << 10) + c2 - 0x35fdc00
+          Char::from_int(c3)
+        } else {
+          decode_error!(path, "Char::from_json: invalid surrogate pair")
+        }
       } else {
-        a[0]
+        decode_error!(path, "Char::from_json: expected single character")
       }
+    }
     _ => decode_error!(path, "Char::from_json: expected string")
   }
 }

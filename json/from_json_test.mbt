@@ -457,3 +457,29 @@ test "uint64 roundtrip" {
   let v : UInt64 = @json.from_json!(u)
   inspect!(v, content="18446744073709551615")
 }
+
+///|
+test "unicode" {
+  let u = "\u{1F600}".to_json()
+  inspect!(
+    u,
+    content=
+      #|String("😀")
+    ,
+  )
+  let v : Char = @json.from_json!(u)
+  inspect!(v, content="\u{1F600}")
+  let bs : Bytes = [0x3D, 0xD8, 0x00, 0xDE]
+  let u = bs.to_unchecked_string().to_json()
+  let v : Char = @json.from_json!(u)
+  inspect!(v, content="\u{1F600}")
+  let bs1 : Bytes = [0xD8, 0x3D, 0xDE, 0x00]
+  let u = bs1.to_unchecked_string().to_json()
+  let v : Result[Char, _] = @json.from_json?(u)
+  inspect!(
+    v,
+    content=
+      #|Err(JsonDecodeError(($, "Char::from_json: invalid surrogate pair")))
+    ,
+  )
+}
