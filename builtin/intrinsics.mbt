@@ -1745,25 +1745,7 @@ pub fn FixedArray::make[T](len : Int, init : T) -> FixedArray[T] = "%fixedarray.
 pub fn String::length(self : String) -> Int = "%string_length"
 
 ///|
-/// Returns the length of the string in UTF-16 code units. This corresponds to
-/// the number of 16-bit elements needed to store the string's contents.
-///
-/// Parameters:
-///
-/// * `string` : The string whose length is to be determined.
-///
-/// Returns the number of UTF-16 code units in the string. Note that this may not
-/// equal the number of Unicode characters (code points) in the string, as some
-/// characters (like emojis) require two UTF-16 code units.
-///
-/// Example:
-///
-/// ```moonbit
-/// test "String::charcode_length" {
-///   let s = "Hello🤣"
-///   inspect!(s.charcode_length(), content="7") // 5 ASCII chars + 2 surrogate pairs for emoji
-/// }
-/// ```
+#deprecated("use `length` instead")
 pub fn String::charcode_length(self : String) -> Int = "%string_length"
 
 ///|
@@ -1796,6 +1778,7 @@ pub fn String::charcode_length(self : String) -> Int = "%string_length"
 /// ```
 ///
 /// @alert unsafe "Panic if index is out of bounds"
+#deprecated("use `charcode_at` instead")
 pub fn String::op_get(self : String, idx : Int) -> Char = "%string_get"
 
 ///|
@@ -1826,6 +1809,7 @@ pub fn String::op_get(self : String, idx : Int) -> Char = "%string_get"
 ///   ignore(s.get(5)) // Index equals length
 /// }
 /// ```
+#deprecated("use `charcode_at` instead")
 pub fn String::get(self : String, idx : Int) -> Char = "%string_get"
 
 ///|
@@ -1852,7 +1836,7 @@ pub fn String::get(self : String, idx : Int) -> Char = "%string_get"
 /// ```
 ///
 /// @alert unsafe "Panic if index is out of bounds."
-pub fn String::unsafe_charcode_at(self : String, idx : Int) -> Int = "%string_get"
+pub fn String::unsafe_charcode_at(self : String, idx : Int) -> Int = "%string.unsafe_get"
 
 ///|
 /// Concatenates two strings, creating a new string that contains all characters

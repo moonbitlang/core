@@ -103,7 +103,7 @@ pub impl Show for String with output(self, logger) {
   }
 
   for i in 0..<self.length() {
-    let c = self[i]
+    let c = self.unsafe_charcode_at(i) |> Char::from_int
     match c {
       '"' | '\\' => {
         flush_segment(i)

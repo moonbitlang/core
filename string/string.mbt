@@ -104,7 +104,9 @@ pub impl Compare for String with compare(self, other) {
   match len.compare(other.length()) {
     0 => {
       for i in 0..<len {
-        let order = self[i].compare(other[i])
+        let order = self
+          .unsafe_charcode_at(i)
+          .compare(other.unsafe_charcode_at(i))
         if order != 0 {
           return order
         }
@@ -307,7 +309,7 @@ pub fn trim_start(self : String, trim_set : String) -> String {
         }
       }
     }
-    if not(trim_set.contains_char(self[i])) {
+    if not(trim_set.contains_char(Char::from_int(self.unsafe_charcode_at(i)))) {
       return self.substring(start=i)
     }
   } else {
@@ -333,7 +335,7 @@ pub fn trim_end(self : String, trim_set : String) -> String {
         }
       }
     }
-    if not(trim_set.contains_char(self[i])) {
+    if not(trim_set.contains_char(Char::from_int(self.unsafe_charcode_at(i)))) {
       return self.substring(end=i + 1)
     }
   } else {
@@ -377,17 +379,17 @@ pub fn index_of(self : String, str : String, from~ : Int = 0) -> Int {
   // Bound the starting position
   let from = if from < 0 { 0 } else if from >= len { len - 1 } else { from }
   let max_idx = len - sub_len
-  let first = str[0]
+  let first = str.unsafe_charcode_at(0)
   let mut i = from
   while i <= max_idx {
     // find first character
-    while i < len && self[i] != first {
+    while i < len && self.unsafe_charcode_at(i) != first {
       i += 1
     }
     // check the rest
     if i <= max_idx {
       for j in 1..<sub_len {
-        if self[i + j] != str[j] {
+        if self.unsafe_charcode_at(i + j) != str.unsafe_charcode_at(j) {
           break
         }
       } else {
@@ -423,11 +425,11 @@ pub fn last_index_of(
     return -1
   }
   let min = sub_len - 1
-  let last = str[sub_len - 1]
+  let last = str.unsafe_charcode_at(sub_len - 1)
   let mut i = from - 1
   while i >= 0 {
     // find last character
-    while i >= min && self[i] != last {
+    while i >= min && self.unsafe_charcode_at(i) != last {
       i -= 1
     }
     if i < min {
@@ -437,7 +439,7 @@ pub fn last_index_of(
     let mut k = sub_len - 2
     let start = i - sub_len
     let found = while j > start {
-      if self[j] != str[k] {
+      if self.unsafe_charcode_at(j) != str.unsafe_charcode_at(k) {
         break false
       }
       j -= 1
@@ -701,7 +703,7 @@ pub fn pad_end(self : String, total_width : Int, padding_char : Char) -> String 
 /// @alert unsafe "Panics if the index is out of bounds."
 pub fn String::rev_get(self : String, index : Int) -> Char {
   guard index >= 0 else { abort("index out of bounds") }
-  for utf16_offset = self.charcode_length() - 1, char_count = 0
+  for utf16_offset = self.length() - 1, char_count = 0
       utf16_offset >= 0 && char_count < index
       utf16_offset = utf16_offset - 1, char_count = char_count + 1 {
     let c1 = self.unsafe_charcode_at(utf16_offset)
@@ -736,7 +738,7 @@ pub fn String::rev_get(self : String, index : Int) -> Char {
 ///
 /// This has O(n) complexity where n is the length in the parameter.
 pub fn String::length_eq(self : String, len : Int) -> Bool {
-  let codeunit_len = self.charcode_length()
+  let codeunit_len = self.length()
   for index = 0, count = 0
       index < codeunit_len && count < len
       index = index + 1, count = count + 1 {
@@ -759,7 +761,7 @@ pub fn String::length_eq(self : String, len : Int) -> Bool {
 ///
 /// This has O(n) complexity where n is the length in the parameter.
 pub fn String::length_ge(self : String, len : Int) -> Bool {
-  let codeunit_len = self.charcode_length()
+  let codeunit_len = self.length()
   for index = 0, count = 0
       index < codeunit_len && count < len
       index = index + 1, count = count + 1 {
