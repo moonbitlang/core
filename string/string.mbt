@@ -608,6 +608,8 @@ pub fn to_upper(self : String) -> String {
 
 ///|
 /// Reverse string
+/// It respects Unicode characters and surrogate pairs but not grapheme clusters.
+/// TODO: make it an intrinsic function
 pub fn rev(self : String) -> String {
   let buf = StringBuilder::new(size_hint=self.length())
   for c in self.rev_iter() {
