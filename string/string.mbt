@@ -609,13 +609,11 @@ pub fn to_upper(self : String) -> String {
 ///|
 /// Reverse string
 pub fn rev(self : String) -> String {
-  // TODO: deal with non-ascii characters
-  let mut result : String = ""
-  let len = self.length()
-  for i = len - 1; i >= 0; i = i - 1 {
-    result = result + self[i].to_string()
+  let buf = StringBuilder::new(size_hint=self.length())
+  for c in self.rev_iter() {
+    buf.write_char(c)
   }
-  result
+  buf.to_string()
 }
 
 ///|
