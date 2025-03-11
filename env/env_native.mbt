@@ -77,3 +77,18 @@ fn now_internal() -> UInt64 {
   // to be consistent with other backends, we convert to milliseconds
   time(0) * 1000
 }
+
+///|
+extern "c" fn getcwd(ptr : Int, size : Int) -> Int = "getcwd"
+
+///|
+fn current_dir_internal() -> String? {
+  // TODO: On Windows getcwd may fail if the path is too long(Windows allows paths up to 32k characters)
+  let buf = FixedArray::new(size=4096)
+  let res = getcwd(buf.as_ptr(), buf.length())
+  if res == 0 {
+    Some(utf8_bytes_to_mbt_string(buf))
+  } else {
+    None
+  }
+}
