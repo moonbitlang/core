@@ -616,3 +616,17 @@ test "@builtin.join/multiple_elements_without_separator" {
   let iter : Iter[String] = ["A", "B", "C"].iter()
   inspect!(iter.join(""), content="ABC")
 }
+
+///|
+test "Iter::nth" {
+  let it = [1, 2, 3, 4, 5].iter()
+  inspect!(it.nth(2), content="Some(3)")
+  inspect!(it.nth(4), content="Some(5)")
+  inspect!(it.nth(5), content="None")
+  inspect!(it.concat(it).nth(5), content="Some(1)")
+  inspect!(it.concat(it).nth(10), content="None")
+  inspect!(it.drop(1).nth(3), content="Some(5)")
+  inspect!(it.drop(1).nth(4), content="None")
+  inspect!(it.take(1).nth(1), content="None")
+  inspect!(it.take(2).nth(1), content="Some(2)")
+}
