@@ -924,3 +924,10 @@ pub fn Iter::contains[A : Eq](self : Iter[A], value : A) -> Bool {
     false
   }
 }
+
+///|
+/// Returns the nth element of the iterator, or `None` if the iterator is
+/// shorter than `n` elements.
+pub fn Iter::nth[T](self : Iter[T], n : Int) -> T? {
+  self.drop(n).head()
+}
