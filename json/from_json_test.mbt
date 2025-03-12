@@ -483,3 +483,38 @@ test "unicode" {
     ,
   )
 }
+
+///|
+test "char to/from json roundtrip" {
+  let u = 'a'.to_json()
+  inspect!(
+    u,
+    content=
+      #|String("a")
+    ,
+  )
+  let v : Char = @json.from_json!(u)
+  inspect!(v, content="a")
+
+  // emoji char roundtrip
+  let u = '😀'.to_json()
+  inspect!(
+    u,
+    content=
+      #|String("😀")
+    ,
+  )
+  let v : Char = @json.from_json!(u)
+  inspect!(v, content="😀")
+
+  // jdk char roundtrip
+  let u = '中'.to_json()
+  inspect!(
+    u,
+    content=
+      #|String("中")
+    ,
+  )
+  let v : Char = @json.from_json!(u)
+  inspect!(v, content="中")
+}
