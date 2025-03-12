@@ -38,3 +38,8 @@
 /// ```
 pub extern "js" fn op_mod(self : Double, other : Double) -> Double =
   #| (a, b) => (a % b)
+
+///|
+pub impl Rem for Double with op_mod(self, other) {
+  self.op_mod(other)
+}

@@ -1061,10 +1061,7 @@ test "deep_clone" {
 ///   inspect!(arr1 + arr2, content="[1, 2, 3, 4, 5, 6]")
 /// }
 /// ```
-pub fn FixedArray::op_add[T](
-  self : FixedArray[T],
-  other : FixedArray[T]
-) -> FixedArray[T] {
+pub impl[T] Add for FixedArray[T] with op_add(self, other) {
   let slen = self.length()
   let nlen = other.length()
   if slen == 0 {

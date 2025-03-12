@@ -137,6 +137,7 @@ impl Double {
   trunc(Double) -> Double
 }
 impl Hash for Double
+impl Rem for Double
 impl Show for Double
 
 // Type aliases

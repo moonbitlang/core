@@ -751,7 +751,7 @@ pub fn sort[A : Compare](self : T[A]) -> T[A] {
 /// Concatenate two lists.
 ///
 /// `a + b` equal to `a.concat(b)`
-pub fn op_add[A](self : T[A], other : T[A]) -> T[A] {
+pub impl[A] Add for T[A] with op_add(self, other) {
   self.concat(other)
 }
 

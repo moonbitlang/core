@@ -273,7 +273,7 @@ fn unsafe_to_bytes(array : FixedArray[Byte]) -> Bytes = "%identity"
 /// * `self` : The first bytes sequence.
 /// * `other` : The second bytes sequence.
 /// TODO: marked as intrinsic, inline if it is constant
-pub fn Bytes::op_add(self : Bytes, other : Bytes) -> Bytes {
+pub impl Add for Bytes with op_add(self, other) {
   let rv : FixedArray[Byte] = FixedArray::make(
     self.length() + other.length(),
     0,

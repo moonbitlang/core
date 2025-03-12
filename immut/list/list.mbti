@@ -100,8 +100,6 @@ fn nth_exn[A](T[A], Int) -> A //deprecated
 
 fn of[A](FixedArray[A]) -> T[A]
 
-fn op_add[A](T[A], T[A]) -> T[A]
-
 fn remove[A : Eq](T[A], A) -> T[A]
 
 fn remove_at[A](T[A], Int) -> T[A]
@@ -205,7 +203,6 @@ impl T {
   nth[A](Self[A], Int) -> A?
   nth_exn[A](Self[A], Int) -> A //deprecated
   of[A](FixedArray[A]) -> Self[A] //deprecated
-  op_add[A](Self[A], Self[A]) -> Self[A]
   remove[A : Eq](Self[A], A) -> Self[A]
   remove_at[A](Self[A], Int) -> Self[A]
   rev[A](Self[A]) -> Self[A]
@@ -229,6 +226,7 @@ impl T {
   unzip[A, B](Self[(A, B)]) -> (Self[A], Self[B])
   zip[A, B](Self[A], Self[B]) -> Self[(A, B)]?
 }
+impl[A] Add for T[A]
 impl[X] Default for T[X]
 impl[A : Eq] Eq for T[A]
 impl[A : Hash] Hash for T[A]

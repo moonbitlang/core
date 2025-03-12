@@ -40,6 +40,11 @@ pub fn Byte::op_mul(self : Byte, that : Byte) -> Byte {
 }
 
 ///|
+pub impl Mul for Byte with op_mul(self, that) {
+  self.op_mul(that)
+}
+
+///|
 /// Performs division operation between two bytes by converting them to integers,
 /// performing the division, and converting the result back to a byte.
 ///
@@ -70,6 +75,11 @@ pub fn Byte::op_div(self : Byte, that : Byte) -> Byte {
 }
 
 ///|
+pub impl Div for Byte with op_div(self, that) {
+  self.op_div(that)
+}
+
+///|
 /// Compares two `Byte` values for equality.
 ///
 /// Parameters:
@@ -96,6 +106,11 @@ pub fn Byte::op_add(self : Byte, that : Byte) -> Byte {
 }
 
 ///|
+pub impl Add for Byte with op_add(self, that) {
+  self.op_add(that)
+}
+
+///|
 /// Subtracts the second byte from the first byte and returns the result as a
 /// byte.
 ///
@@ -107,6 +122,11 @@ pub fn Byte::op_add(self : Byte, that : Byte) -> Byte {
 /// Returns the result of the subtraction as a byte.
 pub fn Byte::op_sub(self : Byte, that : Byte) -> Byte {
   (self.to_int() - that.to_int()).to_byte()
+}
+
+///|
+pub impl Sub for Byte with op_sub(self, that) {
+  self.op_sub(that)
 }
 
 ///|

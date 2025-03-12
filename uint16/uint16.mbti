@@ -5,24 +5,28 @@ let max_value : UInt16
 
 let min_value : UInt16
 
-fn op_add(UInt16, UInt16) -> UInt16
-
 fn op_div(UInt16, UInt16) -> UInt16
 
-fn op_mul(UInt16, UInt16) -> UInt16
+fn op_mod(UInt16, UInt16) -> UInt16
 
-fn op_sub(UInt16, UInt16) -> UInt16
+fn op_mul(UInt16, UInt16) -> UInt16
 
 // Types and methods
 impl UInt16 {
   op_add(UInt16, UInt16) -> UInt16
   op_div(UInt16, UInt16) -> UInt16
+  op_mod(UInt16, UInt16) -> UInt16
   op_mul(UInt16, UInt16) -> UInt16
   op_sub(UInt16, UInt16) -> UInt16
 }
+impl Add for UInt16
 impl Compare for UInt16
+impl Div for UInt16
 impl Eq for UInt16
 impl Hash for UInt16
+impl Mul for UInt16
+impl Rem for UInt16
+impl Sub for UInt16
 
 // Type aliases
 

@@ -17,14 +17,6 @@ fn neg(T) -> T
 
 fn new(Int64, Int64) -> T?
 
-fn op_add(T, T) -> T
-
-fn op_div(T, T) -> T
-
-fn op_mul(T, T) -> T
-
-fn op_sub(T, T) -> T
-
 fn reciprocal(T) -> T
 
 fn to_double(T) -> Double
@@ -46,17 +38,17 @@ impl T {
   is_integer(Self) -> Bool
   neg(Self) -> Self
   new(Int64, Int64) -> Self? //deprecated
-  op_add(Self, Self) -> Self
-  op_div(Self, Self) -> Self
-  op_mul(Self, Self) -> Self
-  op_sub(Self, Self) -> Self
   reciprocal(Self) -> Self
   to_double(Self) -> Double
   trunc(Self) -> Int64
 }
+impl Add for T
 impl Compare for T
+impl Div for T
 impl Eq for T
+impl Mul for T
 impl Show for T
+impl Sub for T
 impl @moonbitlang/core/quickcheck.Arbitrary for T
 
 // Type aliases

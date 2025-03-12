@@ -34,7 +34,7 @@
 ///   inspect!(-9223372036854775808L, content="-9223372036854775808") // negating min value
 /// }
 /// ```
-pub fn Int64::op_neg(self : Int64) -> Int64 = "%i64_neg"
+pub impl Neg for Int64 with op_neg(self) = "%i64_neg"
 
 ///|
 /// Adds two 64-bit integers together. Performs overflow checking and wrapping
@@ -57,7 +57,7 @@ pub fn Int64::op_neg(self : Int64) -> Int64 = "%i64_neg"
 ///   inspect!(42L + -42L, content="0")
 /// }
 /// ```
-pub fn Int64::op_add(self : Int64, other : Int64) -> Int64 = "%i64_add"
+pub impl Add for Int64 with op_add(self, other) = "%i64_add"
 
 ///|
 /// Performs subtraction between two 64-bit integers.
@@ -81,7 +81,7 @@ pub fn Int64::op_add(self : Int64, other : Int64) -> Int64 = "%i64_add"
 ///   inspect!(c - d, content="9223372036854775807")
 /// }
 /// ```
-pub fn Int64::op_sub(self : Int64, other : Int64) -> Int64 = "%i64_sub"
+pub impl Sub for Int64 with op_sub(self, other) = "%i64_sub"
 
 ///|
 /// Multiplies two 64-bit integers.
@@ -106,7 +106,7 @@ pub fn Int64::op_sub(self : Int64, other : Int64) -> Int64 = "%i64_sub"
 ///   inspect!(c * b, content="-4200")
 /// }
 /// ```
-pub fn Int64::op_mul(self : Int64, other : Int64) -> Int64 = "%i64_mul"
+pub impl Mul for Int64 with op_mul(self, other) = "%i64_mul"
 
 ///|
 /// Performs integer division between two 64-bit integers. Truncates the result
@@ -138,7 +138,7 @@ pub fn Int64::op_mul(self : Int64, other : Int64) -> Int64 = "%i64_mul"
 ///   ignore(a / 0L) // Division by zero
 /// }
 /// ```
-pub fn Int64::op_div(self : Int64, other : Int64) -> Int64 = "%i64_div"
+pub impl Div for Int64 with op_div(self, other) = "%i64_div"
 
 ///|
 /// Calculates the remainder of the division between two 64-bit integers. The
@@ -167,7 +167,7 @@ pub fn Int64::op_div(self : Int64, other : Int64) -> Int64 = "%i64_div"
 ///   ignore(7L % 0L) // Panics with division by zero
 /// }
 /// ```
-pub fn Int64::op_mod(self : Int64, other : Int64) -> Int64 = "%i64_mod"
+pub impl Rem for Int64 with op_mod(self, other) = "%i64_mod"
 
 ///|
 /// Performs a bitwise NOT operation on a 64-bit integer. Each bit in the input
@@ -1190,7 +1190,7 @@ pub fn UInt64::to_double(self : UInt64) -> Double = "%u64.to_f64"
 ///   inspect!(max + 1UL, content="0")
 /// }
 /// ```
-pub fn UInt64::op_add(self : UInt64, other : UInt64) -> UInt64 = "%u64.add"
+pub impl Add for UInt64 with op_add(self, other) = "%u64.add"
 
 ///|
 /// Performs subtraction between two unsigned 64-bit integers. When the result
@@ -1216,7 +1216,7 @@ pub fn UInt64::op_add(self : UInt64, other : UInt64) -> UInt64 = "%u64.add"
 ///   inspect!(c - d, content="18446744073709551614") // wraps around to 2^64 - 2
 /// }
 /// ```
-pub fn UInt64::op_sub(self : UInt64, other : UInt64) -> UInt64 = "%u64.sub"
+pub impl Sub for UInt64 with op_sub(self, other) = "%u64.sub"
 
 ///|
 /// Performs multiplication between two unsigned 64-bit integers.
@@ -1242,7 +1242,7 @@ pub fn UInt64::op_sub(self : UInt64, other : UInt64) -> UInt64 = "%u64.sub"
 ///   inspect!(max * 2UL, content="18446744073709551614") // Wraps around to max - 1
 /// }
 /// ```
-pub fn UInt64::op_mul(self : UInt64, other : UInt64) -> UInt64 = "%u64.mul"
+pub impl Mul for UInt64 with op_mul(self, other) = "%u64.mul"
 
 ///|
 /// Performs division operation between two unsigned 64-bit integers.
@@ -1270,7 +1270,7 @@ pub fn UInt64::op_mul(self : UInt64, other : UInt64) -> UInt64 = "%u64.mul"
 ///   ignore(a / 0UL) // Throws runtime error: division by zero
 /// }
 /// ```
-pub fn UInt64::op_div(self : UInt64, other : UInt64) -> UInt64 = "%u64.div"
+pub impl Div for UInt64 with op_div(self, other) = "%u64.div"
 
 ///|
 /// Calculates the remainder of dividing one unsigned 64-bit integer by another.
@@ -1299,7 +1299,7 @@ pub fn UInt64::op_div(self : UInt64, other : UInt64) -> UInt64 = "%u64.div"
 ///   ignore(a % 0UL) // Panics: division by zero
 /// }
 /// ```
-pub fn UInt64::op_mod(self : UInt64, other : UInt64) -> UInt64 = "%u64.mod"
+pub impl Rem for UInt64 with op_mod(self, other) = "%u64.mod"
 
 ///|
 /// Compares two unsigned 64-bit integers and determines their relative order.

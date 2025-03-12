@@ -86,7 +86,6 @@ impl Array {
   mapi[T, U](Self[T], (Int, T) -> U) -> Self[U]
   mapi_inplace[T](Self[T], (Int, T) -> T) -> Unit
   new[T](capacity~ : Int = ..) -> Self[T]
-  op_add[T](Self[T], Self[T]) -> Self[T]
   op_as_view[T](Self[T], start~ : Int = .., end? : Int) -> ArrayView[T]
   op_get[T](Self[T], Int) -> T
   op_set[T](Self[T], Int, T) -> Unit
@@ -119,6 +118,7 @@ impl Array {
   unsafe_get[T](Self[T], Int) -> T
   unsafe_pop[T](Self[T]) -> T
 }
+impl[T] Add for Array[T]
 impl[T : Compare] Compare for Array[T]
 impl[T] Default for Array[T]
 impl[T : Eq] Eq for Array[T]
@@ -170,9 +170,15 @@ impl BigInt {
   to_uint(Self) -> UInt
   to_uint64(Self) -> UInt64
 }
+impl Add for BigInt
 impl Compare for BigInt
+impl Div for BigInt
 impl Eq for BigInt
+impl Mul for BigInt
+impl Neg for BigInt
+impl Rem for BigInt
 impl Show for BigInt
+impl Sub for BigInt
 impl ToJson for BigInt
 
 pub(all) type! Failure String
@@ -229,7 +235,6 @@ impl Iter {
   map_while[A, B](Self[A], (A) -> B?) -> Self[B]
   new[T](((T) -> IterResult) -> IterResult) -> Self[T]
   nth[T](Self[T], Int) -> T?
-  op_add[T](Self[T], Self[T]) -> Self[T]
   op_as_view[A](Self[A], start~ : Int = .., end? : Int) -> Self[A]
   peek[T](Self[T]) -> T?
   prepend[T](Self[T], T) -> Self[T]
@@ -241,6 +246,7 @@ impl Iter {
   tap[T](Self[T], (T) -> Unit) -> Self[T]
   to_array[T](Self[T]) -> Array[T]
 }
+impl[T] Add for Iter[T]
 impl[T : Show] Show for Iter[T]
 
 type Iter2[A, B]
@@ -411,14 +417,8 @@ impl Int {
   lsl(Int, Int) -> Int //deprecated
   lsr(Int, Int) -> Int //deprecated
   lxor(Int, Int) -> Int
-  op_add(Int, Int) -> Int
-  op_div(Int, Int) -> Int
-  op_mod(Int, Int) -> Int
-  op_mul(Int, Int) -> Int
-  op_neg(Int) -> Int
   op_shl(Int, Int) -> Int
   op_shr(Int, Int) -> Int
-  op_sub(Int, Int) -> Int
   popcnt(Int) -> Int
   reinterpret_as_float(Int) -> Float
   reinterpret_as_uint(Int) -> UInt
@@ -454,14 +454,8 @@ impl Int64 {
   lsl(Int64, Int) -> Int64 //deprecated
   lsr(Int64, Int) -> Int64 //deprecated
   lxor(Int64, Int64) -> Int64
-  op_add(Int64, Int64) -> Int64
-  op_div(Int64, Int64) -> Int64
-  op_mod(Int64, Int64) -> Int64
-  op_mul(Int64, Int64) -> Int64
-  op_neg(Int64) -> Int64
   op_shl(Int64, Int) -> Int64
   op_shr(Int64, Int) -> Int64
-  op_sub(Int64, Int64) -> Int64
   popcnt(Int64) -> Int
   reinterpret_as_double(Int64) -> Double
   reinterpret_as_uint64(Int64) -> UInt64
@@ -488,14 +482,9 @@ impl UInt {
   lsl(UInt, Int) -> UInt //deprecated
   lsr(UInt, Int) -> UInt //deprecated
   lxor(UInt, UInt) -> UInt
-  op_add(UInt, UInt) -> UInt
-  op_div(UInt, UInt) -> UInt
-  op_mod(UInt, UInt) -> UInt
-  op_mul(UInt, UInt) -> UInt
   op_neq(UInt, UInt) -> Bool
   op_shl(UInt, Int) -> UInt
   op_shr(UInt, Int) -> UInt
-  op_sub(UInt, UInt) -> UInt
   popcnt(UInt) -> Int
   reinterpret_as_float(UInt) -> Float
   reinterpret_as_int(UInt) -> Int
@@ -528,13 +517,8 @@ impl UInt64 {
   lsl(UInt64, Int) -> UInt64 //deprecated
   lsr(UInt64, Int) -> UInt64 //deprecated
   lxor(UInt64, UInt64) -> UInt64
-  op_add(UInt64, UInt64) -> UInt64
-  op_div(UInt64, UInt64) -> UInt64
-  op_mod(UInt64, UInt64) -> UInt64
-  op_mul(UInt64, UInt64) -> UInt64
   op_shl(UInt64, Int) -> UInt64
   op_shr(UInt64, Int) -> UInt64
-  op_sub(UInt64, UInt64) -> UInt64
   popcnt(UInt64) -> Int
   reinterpret_as_double(UInt64) -> Double
   reinterpret_as_int64(UInt64) -> Int64
@@ -552,12 +536,7 @@ impl UInt64 {
 }
 
 impl Float {
-  op_add(Float, Float) -> Float
-  op_div(Float, Float) -> Float
-  op_mul(Float, Float) -> Float
-  op_neg(Float) -> Float
   op_neq(Float, Float) -> Bool
-  op_sub(Float, Float) -> Float
   reinterpret_as_int(Float) -> Int
   reinterpret_as_uint(Float) -> UInt
   sqrt(Float) -> Float
@@ -569,12 +548,7 @@ impl Float {
 impl Double {
   convert_uint(UInt) -> Double
   convert_uint64(UInt64) -> Double
-  op_add(Double, Double) -> Double
-  op_div(Double, Double) -> Double
-  op_mul(Double, Double) -> Double
-  op_neg(Double) -> Double
   op_neq(Double, Double) -> Bool
-  op_sub(Double, Double) -> Double
   reinterpret_as_i64(Double) -> Int64 //deprecated
   reinterpret_as_int64(Double) -> Int64
   reinterpret_as_u64(Double) -> UInt64 //deprecated
@@ -597,7 +571,6 @@ impl String {
   get(String, Int) -> Char
   length(String) -> Int
   make(Int, Char) -> String
-  op_add(String, String) -> String
   op_get(String, Int) -> Char
   substring(String, start~ : Int = .., end? : Int) -> String
   to_string(String) -> String
@@ -653,6 +626,18 @@ impl Logger {
 // Type aliases
 
 // Traits
+pub(open) trait Add {
+  op_add(Self, Self) -> Self
+}
+impl Add for Byte
+impl Add for Int
+impl Add for Int64
+impl Add for UInt
+impl Add for UInt64
+impl Add for Float
+impl Add for Double
+impl Add for String
+
 pub(open) trait Compare : Eq {
   compare(Self, Self) -> Int
 }
@@ -694,6 +679,17 @@ impl Default for Int64
 impl Default for UInt64
 impl Default for Double
 impl[X] Default for FixedArray[X]
+
+pub(open) trait Div {
+  op_div(Self, Self) -> Self
+}
+impl Div for Byte
+impl Div for Int
+impl Div for Int64
+impl Div for UInt
+impl Div for UInt64
+impl Div for Float
+impl Div for Double
 
 pub(open) trait Eq {
   op_equal(Self, Self) -> Bool
@@ -755,6 +751,33 @@ pub(open) trait Logger {
 }
 impl Logger::write_sub_string
 
+pub(open) trait Mul {
+  op_mul(Self, Self) -> Self
+}
+impl Mul for Byte
+impl Mul for Int
+impl Mul for Int64
+impl Mul for UInt
+impl Mul for UInt64
+impl Mul for Float
+impl Mul for Double
+
+pub(open) trait Neg {
+  op_neg(Self) -> Self
+}
+impl Neg for Int
+impl Neg for Int64
+impl Neg for Float
+impl Neg for Double
+
+pub(open) trait Rem {
+  op_mod(Self, Self) -> Self
+}
+impl Rem for Int
+impl Rem for Int64
+impl Rem for UInt
+impl Rem for UInt64
+
 pub(open) trait Show {
   output(Self, &Logger) -> Unit
   to_string(Self) -> String
@@ -791,6 +814,17 @@ impl[T0 : Show, T1 : Show, T2 : Show, T3 : Show, T4 : Show, T5 : Show, T6 : Show
 impl[T0 : Show, T1 : Show, T2 : Show, T3 : Show, T4 : Show, T5 : Show, T6 : Show, T7 : Show, T8 : Show, T9 : Show, T10 : Show, T11 : Show, T12 : Show, T13 : Show] Show for (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13)
 impl[T0 : Show, T1 : Show, T2 : Show, T3 : Show, T4 : Show, T5 : Show, T6 : Show, T7 : Show, T8 : Show, T9 : Show, T10 : Show, T11 : Show, T12 : Show, T13 : Show, T14 : Show] Show for (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14)
 impl[T0 : Show, T1 : Show, T2 : Show, T3 : Show, T4 : Show, T5 : Show, T6 : Show, T7 : Show, T8 : Show, T9 : Show, T10 : Show, T11 : Show, T12 : Show, T13 : Show, T14 : Show, T15 : Show] Show for (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15)
+
+pub(open) trait Sub {
+  op_sub(Self, Self) -> Self
+}
+impl Sub for Byte
+impl Sub for Int
+impl Sub for Int64
+impl Sub for UInt
+impl Sub for UInt64
+impl Sub for Float
+impl Sub for Double
 
 pub(open) trait ToJson {
   to_json(Self) -> Json

@@ -216,6 +216,11 @@ pub fn BigInt::op_neg(self : BigInt) -> BigInt {
 }
 
 ///|
+pub impl Neg for BigInt with op_neg(self) {
+  self.op_neg()
+}
+
+///|
 /// Adds two arbitrary-precision integers. Handles positive and negative numbers
 /// correctly by converting subtraction of negative numbers into addition of
 /// positive numbers.
@@ -261,6 +266,11 @@ pub fn BigInt::op_add(self : BigInt, other : BigInt) -> BigInt {
     i += 1
   }
   { limbs, sign: Positive, len: i }
+}
+
+///|
+pub impl Add for BigInt with op_add(self, other) {
+  self.op_add(other)
 }
 
 ///|
@@ -336,6 +346,11 @@ pub fn BigInt::op_sub(self : BigInt, other : BigInt) -> BigInt {
 }
 
 ///|
+pub impl Sub for BigInt with op_sub(self, other) {
+  self.op_sub(other)
+}
+
+///|
 /// Multiplies two arbitrary-precision integers. Uses the most efficient
 /// multiplication algorithm based on the size of the operands:
 ///
@@ -371,6 +386,11 @@ pub fn BigInt::op_mul(self : BigInt, other : BigInt) -> BigInt {
     self.karatsuba_mul(other)
   }
   { ..ret, sign: if self.sign == other.sign { Positive } else { Negative } }
+}
+
+///|
+pub impl Mul for BigInt with op_mul(self, other) {
+  self.op_mul(other)
 }
 
 ///|
@@ -479,6 +499,11 @@ pub fn BigInt::op_div(self : BigInt, other : BigInt) -> BigInt {
 }
 
 ///|
+pub impl Div for BigInt with op_div(self, other) {
+  self.op_div(other)
+}
+
+///|
 /// Calculates the modulo (remainder) of dividing one big integer by another.
 ///
 /// Parameters:
@@ -523,6 +548,11 @@ pub fn BigInt::op_mod(self : BigInt, other : BigInt) -> BigInt {
   } else {
     BigInt::grade_school_div(self, other).1
   }
+}
+
+///|
+pub impl Rem for BigInt with op_mod(self, other) {
+  self.op_mod(other)
 }
 
 ///|

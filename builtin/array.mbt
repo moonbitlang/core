@@ -319,7 +319,7 @@ pub impl[T : Compare] Compare for Array[T] with compare(self, other) {
 ///   inspect!(a + b, content="[1, 2, 3, 4, 5]")
 /// }
 /// ```
-pub fn Array::op_add[T](self : Array[T], other : Array[T]) -> Array[T] {
+pub impl[T] Add for Array[T] with op_add(self, other) {
   let result = Array::make_uninit(self.length() + other.length())
   UninitializedArray::unsafe_blit(
     result.buffer(),

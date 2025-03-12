@@ -155,24 +155,54 @@ pub extern "js" fn BigInt::op_neg(self : BigInt) -> BigInt =
   #|(x) => -x
 
 ///|
+pub impl Neg for BigInt with op_neg(self) {
+  self.op_neg()
+}
+
+///|
 pub extern "js" fn BigInt::op_add(self : BigInt, other : BigInt) -> BigInt =
   #|(x, y) => x + y
+
+///|
+pub impl Add for BigInt with op_add(self, other) {
+  self.op_add(other)
+}
 
 ///|
 pub extern "js" fn BigInt::op_sub(self : BigInt, other : BigInt) -> BigInt =
   #|(x, y) => x - y
 
 ///|
+pub impl Sub for BigInt with op_sub(self, other) {
+  self.op_sub(other)
+}
+
+///|
 pub extern "js" fn BigInt::op_mul(self : BigInt, other : BigInt) -> BigInt =
   #|(x, y) => x * y
+
+///|
+pub impl Mul for BigInt with op_mul(self, other) {
+  self.op_mul(other)
+}
 
 ///|
 pub extern "js" fn BigInt::op_div(self : BigInt, other : BigInt) -> BigInt =
   #|(x, y) => x / y
 
 ///|
+pub impl Div for BigInt with op_div(self, other) {
+  self.op_div(other)
+}
+
+///|
 pub extern "js" fn BigInt::op_mod(self : BigInt, other : BigInt) -> BigInt =
   #|(x, y) => x % y
+
+///|
+pub impl Rem for BigInt with op_mod(self, other) {
+  self.op_mod(other)
+}
 
 ///|
 extern "js" fn BigInt::modpow_ffi(
