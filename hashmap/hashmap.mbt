@@ -394,7 +394,7 @@ pub fn remove[K : Hash + Eq, V](self : T[K, V], key : K) -> Unit {
 fn shift_back[K : Hash, V](self : T[K, V], start_index : Int) -> Unit {
   for prev = start_index, curr = (start_index + 1) & (self.capacity - 1) {
     match self.entries[curr] {
-      Some({ psl, hash, key, value, .. }) => {
+      Some({ psl, hash, key, value }) => {
         if psl == 0 {
           break
         }
