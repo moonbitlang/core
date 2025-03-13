@@ -931,3 +931,27 @@ pub fn Iter::contains[A : Eq](self : Iter[A], value : A) -> Bool {
 pub fn Iter::nth[T](self : Iter[T], n : Int) -> T? {
   self.drop(n).head()
 }
+
+///|
+pub fn Iter::maximum[T : Compare](self : Iter[T]) -> T? {
+  let mut res = None
+  for x in self {
+    match res {
+      None => res = Some(x)
+      Some(max) => if x > max { res = Some(x) }
+    }
+  }
+  res
+}
+
+///|
+pub fn Iter::minimum[T : Compare](self : Iter[T]) -> T? {
+  let mut res = None
+  for x in self {
+    match res {
+      None => res = Some(x)
+      Some(min) => if x < min { res = Some(x) }
+    }
+  }
+  res
+}
