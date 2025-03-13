@@ -68,7 +68,7 @@ pub fn index_at(
   offset_by : Int,
   start~ : StringIndex = 0
 ) -> StringIndex? {
-  let str_len = self.charcode_length()
+  let str_len = self.length()
   guard start._ >= 0 && start._ <= str_len else { abort("Invalid start index") }
   let mut utf16_offset = start._
   let mut char_count = 0
@@ -121,7 +121,7 @@ pub fn index_at_rev(
   offset_by : Int,
   end? : StringIndex
 ) -> StringIndex? {
-  let str_len = self.charcode_length()
+  let str_len = self.length()
   let end = match end {
     None => str_len
     Some(end) => {
@@ -233,7 +233,7 @@ pub fn length_ge(self : View, len : Int) -> Bool {
 ///)
 /// ```
 pub fn String::op_as_view(self : String, start~ : Int = 0, end? : Int) -> View {
-  let str_len = self.charcode_length()
+  let str_len = self.length()
   let start = if start >= 0 {
     index_at(self, start, start=0).unwrap()._
   } else {
@@ -312,7 +312,7 @@ pub fn View::op_get(self : View, index : Int) -> Char {
   }
   let mut utf16_offset = self.start
   let mut char_count = 0
-  let code_unit_length = self.str.charcode_length()
+  let code_unit_length = self.str.length()
   while char_count < index && utf16_offset < self.end {
     let c1 = self.str.unsafe_charcode_at(utf16_offset)
     if is_leading_surrogate(c1) && utf16_offset + 1 < code_unit_length {

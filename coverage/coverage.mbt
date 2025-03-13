@@ -106,11 +106,11 @@ pub fn end() -> Unit {
   let sbuf = StringBuffer::StringBuffer([])
   coverage_log(counters.val, sbuf)
   let line_buf = StringBuilder::new()
-  for i = 0; i < sbuf._.length(); i = i + 1 {
+  for i in 0..<sbuf._.length() {
     let str = sbuf._[i]
     let mut start = 0
-    for j = 0; j < str.length(); j = j + 1 {
-      if str[j] == '\n' {
+    for j in 0..<str.length() {
+      if Char::from_int(str.unsafe_charcode_at(j)) == '\n' {
         line_buf.write_substring(str, start, j)
         println(line_buf.to_string())
         line_buf.reset()

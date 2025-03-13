@@ -495,12 +495,12 @@ fn new_digits(self : Decimal, s : Int) -> Int {
   let cheat_num = left_shift_cheats[s].1
   // check if the leading digits lexicographically less than cheats num.
   let mut less = false
-  for i = 0; i < cheat_num.length(); i = i + 1 {
+  for i in 0..<cheat_num.length() {
     if i >= self.digits_num {
       less = true
       break
     }
-    let d = cheat_num[i].to_int() - '0'.to_int()
+    let d = cheat_num.unsafe_charcode_at(i) - '0'.to_int()
     if self.digits[i].to_int() != d {
       less = self.digits[i].to_int() < d
       break
