@@ -630,3 +630,31 @@ test "Iter::nth" {
   inspect!(it.take(1).nth(1), content="None")
   inspect!(it.take(2).nth(1), content="Some(2)")
 }
+
+///|
+test "@builtin.Iter::maximum" {
+  // Basic functionality with integers
+  inspect!([1, 2, 3, 4, 5].iter().maximum(), content="Some(5)")
+  // With negative numbers
+  inspect!([-5, -3, -1, -10].iter().maximum(), content="Some(-1)")
+  // Single element
+  inspect!([42].iter().maximum(), content="Some(42)")
+  // Empty iterator should return None
+  let empty_iter : Iter[Int] = Iter::empty()
+  inspect!(empty_iter.maximum(), content="None")
+}
+
+///|
+test "@builtin.Iter::minimum" {
+  // Test with normal sequence
+  let arr = [3, 1, 4, 1, 5].iter()
+  inspect!(arr.minimum(), content="Some(1)")
+
+  // Test with single element
+  let single = [42].iter()
+  inspect!(single.minimum(), content="Some(42)")
+
+  // Test with empty sequence
+  let empty : Iter[Int] = Iter::empty()
+  inspect!(empty.minimum(), content="None")
+}

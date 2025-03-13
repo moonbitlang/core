@@ -227,6 +227,8 @@ impl Iter {
   map[T, R](Self[T], (T) -> R) -> Self[R]
   map_option[A, B](Self[A], (A) -> B?) -> Self[B] //deprecated
   map_while[A, B](Self[A], (A) -> B?) -> Self[B]
+  maximum[T : Compare](Self[T]) -> T?
+  minimum[T : Compare](Self[T]) -> T?
   new[T](((T) -> IterResult) -> IterResult) -> Self[T]
   nth[T](Self[T], Int) -> T?
   op_add[T](Self[T], Self[T]) -> Self[T]
