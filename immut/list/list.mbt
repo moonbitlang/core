@@ -623,10 +623,7 @@ pub fn intersperse[A](self : T[A], separator : A) -> T[A] {
 ///|
 /// Check if the list is empty.
 pub fn is_empty[A](self : T[A]) -> Bool {
-  match self {
-    Nil => true
-    _ => false
-  }
+  self is Nil
 }
 
 ///|
