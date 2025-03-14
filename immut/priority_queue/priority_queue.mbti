@@ -19,7 +19,7 @@ fn peek[A](T[A]) -> A?
 
 fn pop[A : Compare](T[A]) -> T[A]?
 
-fn pop_exn[A : Compare](T[A]) -> T[A] //deprecated
+fn pop_exn[A : Compare](T[A]) -> T[A]
 
 fn push[A : Compare](T[A], A) -> T[A]
 
@@ -30,16 +30,16 @@ fn unsafe_pop[A : Compare](T[A]) -> T[A]
 // Types and methods
 type T[A]
 impl T {
-  from_array[A : Compare](Array[A]) -> Self[A] //deprecated
+  from_array[A : Compare](Array[A]) -> Self[A]
   from_iter[A : Compare](Iter[A]) -> Self[A]
   is_empty[A](Self[A]) -> Bool
   iter[A : Compare](Self[A]) -> Iter[A]
   length[A](Self[A]) -> Int
-  new[A : Compare]() -> Self[A] //deprecated
-  of[A : Compare](FixedArray[A]) -> Self[A] //deprecated
+  new[A : Compare]() -> Self[A]
+  of[A : Compare](FixedArray[A]) -> Self[A]
   peek[A](Self[A]) -> A?
   pop[A : Compare](Self[A]) -> Self[A]?
-  pop_exn[A : Compare](Self[A]) -> Self[A] //deprecated
+  pop_exn[A : Compare](Self[A]) -> Self[A]
   push[A : Compare](Self[A], A) -> Self[A]
   to_array[A : Compare](Self[A]) -> Array[A]
   unsafe_pop[A : Compare](Self[A]) -> Self[A]

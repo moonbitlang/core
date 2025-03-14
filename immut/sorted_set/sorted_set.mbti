@@ -12,7 +12,7 @@ fn any[A : Compare](T[A], (A) -> Bool) -> Bool
 
 fn contains[A : Compare](T[A], A) -> Bool
 
-fn diff[A : Compare](T[A], T[A]) -> T[A] //deprecated
+fn diff[A : Compare](T[A], T[A]) -> T[A]
 
 fn difference[A : Compare](T[A], T[A]) -> T[A]
 
@@ -30,7 +30,7 @@ fn from_iter[A : Compare](Iter[A]) -> T[A]
 
 fn from_json[A : @json.FromJson + Compare](Json) -> T[A]!@json.JsonDecodeError
 
-fn inter[A : Compare](T[A], T[A]) -> T[A] //deprecated
+fn inter[A : Compare](T[A], T[A]) -> T[A]
 
 fn intersection[A : Compare](T[A], T[A]) -> T[A]
 
@@ -79,16 +79,16 @@ impl T {
   all[A : Compare](Self[A], (A) -> Bool) -> Bool
   any[A : Compare](Self[A], (A) -> Bool) -> Bool
   contains[A : Compare](Self[A], A) -> Bool
-  diff[A : Compare](Self[A], Self[A]) -> Self[A] //deprecated
+  diff[A : Compare](Self[A], Self[A]) -> Self[A]
   difference[A : Compare](Self[A], Self[A]) -> Self[A]
   disjoint[A : Compare](Self[A], Self[A]) -> Bool
   each[A](Self[A], (A) -> Unit) -> Unit
   filter[A : Compare](Self[A], (A) -> Bool) -> Self[A]
   fold[A : Compare, B](Self[A], init~ : B, (B, A) -> B) -> B
-  from_array[A : Compare](Array[A]) -> Self[A] //deprecated
+  from_array[A : Compare](Array[A]) -> Self[A]
   from_iter[A : Compare](Iter[A]) -> Self[A] //deprecated
-  from_json[A : @json.FromJson + Compare](Json) -> Self[A]!@json.JsonDecodeError //deprecated
-  inter[A : Compare](Self[A], Self[A]) -> Self[A] //deprecated
+  from_json[A : @json.FromJson + Compare](Json) -> Self[A]!@json.JsonDecodeError
+  inter[A : Compare](Self[A], Self[A]) -> Self[A]
   intersection[A : Compare](Self[A], Self[A]) -> Self[A]
   is_empty[A : Compare](Self[A]) -> Bool
   iter[A](Self[A]) -> Iter[A]
@@ -97,12 +97,12 @@ impl T {
   max_option[A : Compare](Self[A]) -> A?
   min[A : Compare](Self[A]) -> A
   min_option[A : Compare](Self[A]) -> A?
-  new[A]() -> Self[A] //deprecated
-  of[A : Compare](FixedArray[A]) -> Self[A] //deprecated
+  new[A]() -> Self[A]
+  of[A : Compare](FixedArray[A]) -> Self[A]
   op_add[A : Compare](Self[A], Self[A]) -> Self[A]
   remove[A : Compare](Self[A], A) -> Self[A]
   remove_min[A : Compare](Self[A]) -> Self[A]
-  singleton[A : Compare](A) -> Self[A] //deprecated
+  singleton[A : Compare](A) -> Self[A]
   size[A : Compare](Self[A]) -> Int
   split[A : Compare](Self[A], A) -> (Self[A], Bool, Self[A])
   subset[A : Compare](Self[A], Self[A]) -> Bool

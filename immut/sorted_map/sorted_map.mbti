@@ -30,7 +30,7 @@ fn from_iter[K : Compare, V](Iter[(K, V)]) -> T[K, V]
 
 fn from_json[V : @json.FromJson](Json) -> T[String, V]!@json.JsonDecodeError
 
-fn insert[K : Compare, V](T[K, V], K, V) -> T[K, V] //deprecated
+fn insert[K : Compare, V](T[K, V], K, V) -> T[K, V]
 
 fn is_empty[K, V](T[K, V]) -> Bool
 
@@ -70,16 +70,16 @@ impl T {
   each[K, V](Self[K, V], (K, V) -> Unit) -> Unit
   eachi[K, V](Self[K, V], (Int, K, V) -> Unit) -> Unit
   elems[K, V](Self[K, V]) -> Array[V]
-  empty[K, V]() -> Self[K, V] //deprecated
+  empty[K, V]() -> Self[K, V]
   filter[K : Compare, V](Self[K, V], (V) -> Bool) -> Self[K, V]
   filter_with_key[K : Compare, V](Self[K, V], (K, V) -> Bool) -> Self[K, V]
   fold[K, V, A](Self[K, V], init~ : A, (A, V) -> A) -> A
   foldl_with_key[K, V, A](Self[K, V], (A, K, V) -> A, init~ : A) -> A
   foldr_with_key[K, V, A](Self[K, V], (A, K, V) -> A, init~ : A) -> A
-  from_array[K : Compare, V](Array[(K, V)]) -> Self[K, V] //deprecated
-  from_iter[K : Compare, V](Iter[(K, V)]) -> Self[K, V] //deprecated
-  from_json[V : @json.FromJson](Json) -> Self[String, V]!@json.JsonDecodeError //deprecated
-  insert[K : Compare, V](Self[K, V], K, V) -> Self[K, V] //deprecated
+  from_array[K : Compare, V](Array[(K, V)]) -> Self[K, V]
+  from_iter[K : Compare, V](Iter[(K, V)]) -> Self[K, V]
+  from_json[V : @json.FromJson](Json) -> Self[String, V]!@json.JsonDecodeError
+  insert[K : Compare, V](Self[K, V], K, V) -> Self[K, V]
   is_empty[K, V](Self[K, V]) -> Bool
   iter[K, V](Self[K, V]) -> Iter[(K, V)]
   iter2[K, V](Self[K, V]) -> Iter2[K, V]
@@ -87,11 +87,11 @@ impl T {
   lookup[K : Compare, V](Self[K, V], K) -> V?
   map[K, X, Y](Self[K, X], (X) -> Y) -> Self[K, Y]
   map_with_key[K, X, Y](Self[K, X], (K, X) -> Y) -> Self[K, Y]
-  new[K, V]() -> Self[K, V] //deprecated
-  of[K : Compare, V](FixedArray[(K, V)]) -> Self[K, V] //deprecated
+  new[K, V]() -> Self[K, V]
+  of[K : Compare, V](FixedArray[(K, V)]) -> Self[K, V]
   op_get[K : Compare, V](Self[K, V], K) -> V?
   remove[K : Compare, V](Self[K, V], K) -> Self[K, V]
-  singleton[K, V](K, V) -> Self[K, V] //deprecated
+  singleton[K, V](K, V) -> Self[K, V]
   size[K, V](Self[K, V]) -> Int
   to_array[K, V](Self[K, V]) -> Array[(K, V)]
   to_json[K : Show, V : ToJson](Self[K, V]) -> Json
