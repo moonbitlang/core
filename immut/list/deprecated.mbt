@@ -65,3 +65,25 @@ pub fn T::from_iter[A](iter : Iter[A]) -> T[A] {
 pub fn T::of[A](arr : FixedArray[A]) -> T[A] {
   of(arr)
 }
+
+///|
+/// Init of the list.
+///
+/// # Example
+///
+/// ```
+/// assert_eq!(@list.of([1, 2, 3, 4, 5]).init_(), @list.of([1, 2, 3, 4]))
+/// ```
+/// FIXME: how to avoid warnings in self recursive call?
+/// @alert deprecated "This API will be removed in the next major version"
+pub fn init_[A](self : T[A]) -> T[A] {
+  fn aux(self : T[A]) -> T[A] {
+    match self {
+      Nil => Nil
+      Cons(_, Nil) => Nil
+      Cons(head, tail) => Cons(head, aux(tail))
+    }
+  }
+
+  aux(self)
+}
