@@ -690,3 +690,21 @@ test "hash" {
   inspect!(l1.hash() == l4.hash(), content="false")
   inspect!(l4.hash() == l4.hash(), content="true")
 }
+
+///|
+test "stackover flow" {
+  let iter = Int::until(0, 1 << 20)
+  let lst = from_iter(iter)
+  inspect!(
+    lst.fold(init=0.0, fn(acc, x) { acc + x.to_double() }),
+    content="549755289600",
+  )
+  inspect!(
+    lst.rev_fold(init=0.0, fn(x, acc) { acc + x.to_double() }),
+    content="549755289600",
+  )
+  inspect!(
+    lst.rev().fold(init=0.0, fn(acc, x) { acc + x.to_double() }),
+    content="549755289600",
+  )
+}
