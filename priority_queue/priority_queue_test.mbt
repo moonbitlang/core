@@ -185,3 +185,17 @@ test "complex" {
   inspect!(pq.iter(), content="[]")
   assert_eq!(pq.length(), 0)
 }
+
+///|
+test "priority queue large data" {
+  let pq = new()
+  for i in 0..=10000000 {
+    pq.push(-i)
+  }
+  assert_eq!(pq.length(), 10000001)
+  for i in 0..=10000000 {
+    assert_eq!(pq.pop(), Some(-i))
+  }
+  inspect!(pq.iter(), content="[]")
+  assert_eq!(pq.length(), 0)
+}
