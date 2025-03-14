@@ -34,7 +34,7 @@ pub fn new[K, V]() -> T[K, V] {
 }
 
 ///|
-/// @alert deprecated "Use @sorted_map.from_array instead"
+#deprecated("Use @sorted_map.from_array instead")
 pub fn of[K : Compare, V](entries : Array[(K, V)]) -> T[K, V] {
   let map = { root: None, size: 0 }
   entries.each(fn(e) { map.add(e.0, e.1) })

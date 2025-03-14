@@ -42,7 +42,7 @@ let powtab = [
 
 ///|
 /// Create a zero decimal.
-/// @alert deprecated "Decimal will be changed to private. Use `@strconv.parse_double` instead"
+#deprecated("Decimal will be changed to private. Use `@strconv.parse_double` instead")
 pub fn Decimal::new() -> Decimal {
   Decimal::new_priv()
 }
@@ -60,7 +60,7 @@ fn Decimal::new_priv() -> Decimal {
 
 ///|
 /// Create a decimal with an Int64 value.
-/// @alert deprecated "Decimal will be changed to private. Use `@strconv.parse_double` instead"
+#deprecated("Decimal will be changed to private. Use `@strconv.parse_double` instead")
 pub fn Decimal::from_int64(v : Int64) -> Decimal {
   Decimal::from_int64_priv(v)
 }
@@ -255,7 +255,7 @@ fn to_double_priv(self : Decimal) -> Double!StrConvError {
 ///|
 /// Binary shift left (s > 0) or right (s < 0).
 /// The shift count must not larger than the max_shift to avoid overflow.
-/// @alert deprecated "use `@strconv.parse_double` instead to avoid using this method."
+#deprecated("use `@strconv.parse_double` instead to avoid using this method.")
 pub fn shift(self : Decimal, s : Int) -> Unit {
   self.shift_priv(s)
 }
