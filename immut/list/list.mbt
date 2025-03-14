@@ -639,11 +639,15 @@ pub fn is_empty[A](self : T[A]) -> Bool {
 /// assert_eq!(b, @list.from_array([2, 4, 6]))
 /// ```
 pub fn unzip[A, B](self : T[(A, B)]) -> (T[A], T[B]) {
-  match self {
-    Nil => (Nil, Nil)
-    Cons((x, y), xs) => {
-      let (xs, ys) = unzip(xs)
-      (Cons(x, xs), Cons(y, ys))
+  let mut xs = Nil
+  let mut ys = Nil
+  // use mutable variable to avoid construct pair
+  loop self {
+    Nil => break (xs, ys)
+    Cons((x, y), tail) => {
+      xs = Cons(x, xs)
+      ys = Cons(y, ys)
+      continue tail
     }
   }
 }
