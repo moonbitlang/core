@@ -12,7 +12,7 @@ fn any[A](T[A], (A) -> Bool) -> Bool
 
 fn concat[A](T[A], T[A]) -> T[A]
 
-fn concat_map[A, B](T[A], (A) -> T[B]) -> T[B] //deprecated
+fn concat_map[A, B](T[A], (A) -> T[B]) -> T[B]
 
 fn contains[A : Eq](T[A], A) -> Bool
 
@@ -26,7 +26,7 @@ fn each[A](T[A], (A) -> Unit) -> Unit
 
 fn eachi[A](T[A], (Int, A) -> Unit) -> Unit
 
-fn equal[A : Eq](T[A], T[A]) -> Bool //deprecated
+fn equal[A : Eq](T[A], T[A]) -> Bool
 
 fn filter[A](T[A], (A) -> Bool) -> T[A]
 
@@ -42,13 +42,13 @@ fn flatten[A](T[T[A]]) -> T[A]
 
 fn fold[A, B](T[A], init~ : B, (B, A) -> B) -> B
 
-fn fold_left[A, B](T[A], (B, A) -> B, init~ : B) -> B //deprecated
+fn fold_left[A, B](T[A], (B, A) -> B, init~ : B) -> B
 
-fn fold_lefti[A, B](T[A], (Int, B, A) -> B, init~ : B) -> B //deprecated
+fn fold_lefti[A, B](T[A], (Int, B, A) -> B, init~ : B) -> B
 
-fn fold_right[A, B](T[A], (A, B) -> B, init~ : B) -> B //deprecated
+fn fold_right[A, B](T[A], (A, B) -> B, init~ : B) -> B
 
-fn fold_righti[A, B](T[A], (Int, A, B) -> B, init~ : B) -> B //deprecated
+fn fold_righti[A, B](T[A], (Int, A, B) -> B, init~ : B) -> B
 
 fn foldi[A, B](T[A], init~ : B, (Int, B, A) -> B) -> B
 
@@ -62,7 +62,7 @@ fn from_json[A : @json.FromJson](Json) -> T[A]!@json.JsonDecodeError
 
 fn head[A](T[A]) -> A?
 
-fn head_exn[A](T[A]) -> A //deprecated
+fn head_exn[A](T[A]) -> A
 
 fn init_[A](T[A]) -> T[A]
 
@@ -96,7 +96,7 @@ fn minimum[A : Compare](T[A]) -> A?
 
 fn nth[A](T[A], Int) -> A?
 
-fn nth_exn[A](T[A], Int) -> A //deprecated
+fn nth_exn[A](T[A], Int) -> A
 
 fn of[A](FixedArray[A]) -> T[A]
 
@@ -162,14 +162,14 @@ impl T {
   all[A](Self[A], (A) -> Bool) -> Bool
   any[A](Self[A], (A) -> Bool) -> Bool
   concat[A](Self[A], Self[A]) -> Self[A]
-  concat_map[A, B](Self[A], (A) -> Self[B]) -> Self[B] //deprecated
+  concat_map[A, B](Self[A], (A) -> Self[B]) -> Self[B]
   contains[A : Eq](Self[A], A) -> Bool
-  default[X]() -> Self[X] //deprecated
+  default[X]() -> Self[X]
   drop[A](Self[A], Int) -> Self[A]
   drop_while[A](Self[A], (A) -> Bool) -> Self[A]
   each[A](Self[A], (A) -> Unit) -> Unit
   eachi[A](Self[A], (Int, A) -> Unit) -> Unit
-  equal[A : Eq](Self[A], Self[A]) -> Bool //deprecated
+  equal[A : Eq](Self[A], Self[A]) -> Bool
   filter[A](Self[A], (A) -> Bool) -> Self[A]
   filter_map[A, B](Self[A], (A) -> B?) -> Self[B]
   find[A](Self[A], (A) -> Bool) -> A?
@@ -177,16 +177,16 @@ impl T {
   flat_map[A, B](Self[A], (A) -> Self[B]) -> Self[B]
   flatten[A](Self[Self[A]]) -> Self[A]
   fold[A, B](Self[A], init~ : B, (B, A) -> B) -> B
-  fold_left[A, B](Self[A], (B, A) -> B, init~ : B) -> B //deprecated
-  fold_lefti[A, B](Self[A], (Int, B, A) -> B, init~ : B) -> B //deprecated
-  fold_right[A, B](Self[A], (A, B) -> B, init~ : B) -> B //deprecated
-  fold_righti[A, B](Self[A], (Int, A, B) -> B, init~ : B) -> B //deprecated
+  fold_left[A, B](Self[A], (B, A) -> B, init~ : B) -> B
+  fold_lefti[A, B](Self[A], (Int, B, A) -> B, init~ : B) -> B
+  fold_right[A, B](Self[A], (A, B) -> B, init~ : B) -> B
+  fold_righti[A, B](Self[A], (Int, A, B) -> B, init~ : B) -> B
   foldi[A, B](Self[A], init~ : B, (Int, B, A) -> B) -> B
-  from_array[A](Array[A]) -> Self[A] //deprecated
-  from_iter[A](Iter[A]) -> Self[A] //deprecated
-  from_json[A : @json.FromJson](Json) -> Self[A]!@json.JsonDecodeError //deprecated
+  from_array[A](Array[A]) -> Self[A]
+  from_iter[A](Iter[A]) -> Self[A]
+  from_json[A : @json.FromJson](Json) -> Self[A]!@json.JsonDecodeError
   head[A](Self[A]) -> A?
-  head_exn[A](Self[A]) -> A //deprecated
+  head_exn[A](Self[A]) -> A
   init_[A](Self[A]) -> Self[A]
   intercalate[A](Self[Self[A]], Self[A]) -> Self[A]
   intersperse[A](Self[A], A) -> Self[A]
@@ -203,8 +203,8 @@ impl T {
   maximum[A : Compare](Self[A]) -> A?
   minimum[A : Compare](Self[A]) -> A?
   nth[A](Self[A], Int) -> A?
-  nth_exn[A](Self[A], Int) -> A //deprecated
-  of[A](FixedArray[A]) -> Self[A] //deprecated
+  nth_exn[A](Self[A], Int) -> A
+  of[A](FixedArray[A]) -> Self[A]
   op_add[A](Self[A], Self[A]) -> Self[A]
   remove[A : Eq](Self[A], A) -> Self[A]
   remove_at[A](Self[A], Int) -> Self[A]

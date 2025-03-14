@@ -29,11 +29,11 @@ fn of[A](FixedArray[A]) -> T[A]
 
 fn peek[A](T[A]) -> A?
 
-fn peek_exn[A](T[A]) -> A //deprecated
+fn peek_exn[A](T[A]) -> A
 
 fn pop[A](T[A]) -> A?
 
-fn pop_exn[A](T[A]) -> A //deprecated
+fn pop_exn[A](T[A]) -> A
 
 fn push[A](T[A], A) -> Unit
 
@@ -51,17 +51,17 @@ impl T {
   each[A](Self[A], (A) -> Unit) -> Unit
   eachi[A](Self[A], (Int, A) -> Unit) -> Unit
   fold[A, B](Self[A], init~ : B, (B, A) -> B) -> B
-  from_array[A](Array[A]) -> Self[A] //deprecated
-  from_iter[A](Iter[A]) -> Self[A] //deprecated
+  from_array[A](Array[A]) -> Self[A]
+  from_iter[A](Iter[A]) -> Self[A]
   is_empty[A](Self[A]) -> Bool
   iter[A](Self[A]) -> Iter[A]
   length[A](Self[A]) -> Int
-  new[A]() -> Self[A] //deprecated
-  of[A](FixedArray[A]) -> Self[A] //deprecated
+  new[A]() -> Self[A]
+  of[A](FixedArray[A]) -> Self[A]
   peek[A](Self[A]) -> A?
-  peek_exn[A](Self[A]) -> A //deprecated
+  peek_exn[A](Self[A]) -> A
   pop[A](Self[A]) -> A?
-  pop_exn[A](Self[A]) -> A //deprecated
+  pop_exn[A](Self[A]) -> A
   push[A](Self[A], A) -> Unit
   transfer[A](Self[A], Self[A]) -> Unit
   unsafe_peek[A](Self[A]) -> A
