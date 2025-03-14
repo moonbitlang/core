@@ -6,7 +6,13 @@
     "moonbitlang/core/json",
     "moonbitlang/core/option"
   ],
+  "test-import": [
+    "moonbitlang/core/double"
+  ],
   "targets": {
-    "panic_test.mbt": ["not", "native"]
+    "panic_test.mbt": [
+      "not",
+      "native"
+    ]
   }
 }
