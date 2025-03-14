@@ -192,6 +192,13 @@ pub fn op_add[A](self : T[A], other : T[A]) -> T[A] {
   self.concat(other)
 }
 
+///|
+/// Split an array into two arrays at the given index.
+pub fn split_at[A](self : T[A], index : Int) -> (T[A], T[A]) {
+  let (left, right) = self.tree.split(index, self.shift)
+  ({ tree: left, size: index, shift: self.shift }, { tree: right, size: self.size - index, shift: self.shift })
+}
+
 //-----------------------------------------------------------------------------
 // Iterators
 //-----------------------------------------------------------------------------
