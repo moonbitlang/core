@@ -433,7 +433,7 @@ pub fn Iter::filter_map[A, B](self : Iter[A], f : (A) -> B?) -> Iter[B] {
 /// Transforms the elements of the iterator using a mapping function that returns an `Option`.
 /// The elements for which the function returns `None` are filtered out.
 ///
-/// @alert deprecated "Use `Iter::filter_map` instead"
+#deprecated("Use `Iter::filter_map` instead")
 pub fn Iter::map_option[A, B](self : Iter[A], f : (A) -> B?) -> Iter[B] {
   self.filter_map(f)
 }

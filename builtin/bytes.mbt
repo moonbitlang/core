@@ -86,7 +86,7 @@ fn unsafe_sub_string(
 /// Return a new unchecked string, containing the subsequence of `self` that
 /// starts at `byte_offset` and has length `byte_length`.
 /// 
-/// @alert deprecated "Use `to_unchecked_string` instead"
+#deprecated("Use `to_unchecked_string` instead")
 #coverage.skip
 pub fn Bytes::sub_string(
   self : Bytes,
@@ -118,7 +118,7 @@ pub fn Bytes::sub_string(
 /// }
 /// ```
 ///
-/// @alert deprecated "Use `to_unchecked_string` instead"
+#deprecated("Use `to_unchecked_string` instead")
 #coverage.skip
 pub fn Bytes::to_string(self : Bytes) -> String {
   self.to_unchecked_string(offset=0, length=self.length())
@@ -317,7 +317,7 @@ pub fn FixedArray::set_utf8_char(
 /// Fill utf16 encoded char `value` into byte sequence `self`, starting at `offset`.
 /// It return the length of bytes has been written.
 /// @alert unsafe "Panic if the [value] is out of range"
-/// @alert deprecated "Use `set_utf16le_char` instead"
+#deprecated("Use `set_utf16le_char` instead")
 #coverage.skip
 pub fn FixedArray::set_utf16_char(
   self : FixedArray[Byte],

@@ -308,7 +308,7 @@ pub fn op_add[A : Compare](self : T[A], other : T[A]) -> T[A] {
 }
 
 ///|
-/// @alert deprecated "Use `intersection` instead"
+#deprecated("Use `intersection` instead")
 #coverage.skip
 pub fn inter[A : Compare](self : T[A], other : T[A]) -> T[A] {
   self.intersection(other)
@@ -342,7 +342,7 @@ pub fn intersection[A : Compare](self : T[A], other : T[A]) -> T[A] {
 /// assert_eq!(@sorted_set.of([1, 2, 3]).difference(@sorted_set.of([4, 5, 1])), @sorted_set.of([2, 3]))
 /// ```
 ///
-/// @alert deprecated "Use `difference` instead"
+#deprecated("Use `difference` instead")
 #coverage.skip
 pub fn diff[A : Compare](self : T[A], other : T[A]) -> T[A] {
   self.difference(other)

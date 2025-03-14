@@ -349,7 +349,7 @@ pub fn unsafe_pop_front[A](self : T[A]) -> Unit {
 /// }
 /// ```
 ///
-/// @alert deprecated "Use `unsafe_pop_front` instead"
+#deprecated("Use `unsafe_pop_front` instead")
 #coverage.skip
 pub fn pop_front_exn[A](self : T[A]) -> Unit {
   unsafe_pop_front(self)
@@ -406,7 +406,7 @@ pub fn unsafe_pop_back[A](self : T[A]) -> Unit {
 /// }
 /// ```
 ///
-/// @alert deprecated "Use `unsafe_pop_back` instead"
+#deprecated("Use `unsafe_pop_back` instead")
 #coverage.skip
 pub fn pop_back_exn[A](self : T[A]) -> Unit {
   unsafe_pop_back(self)
@@ -976,7 +976,7 @@ pub fn retain_map[A](self : T[A], f : (A) -> A?) -> Unit {
 /// deque to retain only elements for which the provided function returns `Some`,
 /// and updates those elements with the values inside the `Some` variant.
 ///
-/// @alert deprecated "Use `@deque.retain_map` instead"
+#deprecated("Use `@deque.retain_map` instead")
 pub fn filter_map_inplace[A](self : T[A], f : (A) -> A?) -> Unit {
   self.retain_map(f)
 }

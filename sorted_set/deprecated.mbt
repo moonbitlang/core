@@ -13,7 +13,7 @@
 // limitations under the License.
 
 ///|
-/// @alert deprecated "use `@sorted_set.from_iter` instead"
+#deprecated("use `@sorted_set.from_iter` instead")
 #coverage.skip
 pub fn T::from_iter[V : Compare](iter : Iter[V]) -> T[V] {
   from_iter(iter)
