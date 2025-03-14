@@ -41,7 +41,7 @@ pub fn println[T : Show](input : T) -> Unit {
 
 ///|
 /// Prints and returns the value of a given expression for quick and dirty debugging.
-/// @alert deprecated "This function is for debugging only and should not be used in production"
+#deprecated("This function is for debugging only and should not be used in production")
 pub fn dump[T](t : T, name? : String, loc~ : SourceLoc = _) -> T {
   let name = match name {
     Some(name) => name

@@ -958,7 +958,7 @@ pub fn Array::search[T : Eq](self : Array[T], value : T) -> Int? {
 /// }
 /// ```
 ///
-/// @alert deprecated "Use `search_by` instead."
+#deprecated("Use `search_by` instead.")
 #coverage.skip
 pub fn Array::find_index[T](self : Array[T], f : (T) -> Bool) -> Int? {
   self.search_by(f)
@@ -1370,7 +1370,7 @@ pub fn Array::rev_foldi[A, B](
 /// let sum = [1, 2, 3, 4, 5].fold(init=0, fn { sum, elem => sum + elem })
 /// assert_eq!(sum, 15)
 /// ```
-/// @alert deprecated "Use `fold` instead."
+#deprecated("Use `fold` instead.")
 #coverage.skip
 pub fn Array::fold_left[T, U](self : Array[T], f : (U, T) -> U, init~ : U) -> U {
   self.fold(init~, f)
@@ -1385,7 +1385,7 @@ pub fn Array::fold_left[T, U](self : Array[T], f : (U, T) -> U, init~ : U) -> U 
 /// let sum = [1, 2, 3, 4, 5].rev_fold(init=0, fn { sum, elem => sum + elem })
 /// assert_eq!(sum, 15)
 /// ```
-/// @alert deprecated "Use `rev_fold` instead."
+#deprecated("Use `rev_fold` instead.")
 #coverage.skip
 pub fn Array::fold_right[T, U](
   self : Array[T],
@@ -1404,7 +1404,7 @@ pub fn Array::fold_right[T, U](
 /// let sum = [1, 2, 3, 4, 5].foldi(init=0, fn { index, sum, _elem => sum + index })
 /// assert_eq!(sum, 10)
 /// ```
-/// @alert deprecated "Use `foldi` instead."
+#deprecated("Use `foldi` instead.")
 #coverage.skip
 pub fn Array::fold_lefti[T, U](
   self : Array[T],
@@ -1423,7 +1423,7 @@ pub fn Array::fold_lefti[T, U](
 /// let sum = [1, 2, 3, 4, 5].rev_foldi(init=0, fn { index, sum, _elem => sum + index })
 /// assert_eq!(sum, 10)
 /// ```
-/// @alert deprecated "Use `rev_foldi` instead."
+#deprecated("Use `rev_foldi` instead.")
 #coverage.skip
 pub fn Array::fold_righti[T, U](
   self : Array[T],

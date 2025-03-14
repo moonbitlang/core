@@ -184,7 +184,7 @@ pub fn from_iter[K : Hash + Eq, V](iter : Iter[(K, V)]) -> T[K, V] {
 /// }
 /// ```
 ///
-/// @alert deprecated "use `@hashmap.from_iter` instead"
+#deprecated("use `@hashmap.from_iter` instead")
 pub fn T::from_iter[K : Hash + Eq, V](iter : Iter[(K, V)]) -> T[K, V] {
   from_iter(iter)
 }

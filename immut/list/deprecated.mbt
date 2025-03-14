@@ -13,7 +13,7 @@
 // limitations under the License.
 
 ///|
-/// @alert deprecated "use `@immut/list.from_json` instead"
+#deprecated("use `@immut/list.from_json` instead")
 #coverage.skip
 pub fn T::from_json[A : @json.FromJson](
   json : Json
@@ -29,7 +29,7 @@ pub fn T::from_json[A : @json.FromJson](
 /// ```
 /// assert_eq!(@list.of([1, 2, 3]) == @list.of([1, 2, 3]), true)
 /// ```
-/// @alert deprecated "use `==` instead"
+#deprecated("use `==` instead")
 pub fn equal[A : Eq](self : T[A], other : T[A]) -> Bool {
   loop self, other {
     Nil, Nil => true
@@ -39,28 +39,28 @@ pub fn equal[A : Eq](self : T[A], other : T[A]) -> Bool {
 }
 
 ///|
-/// @alert deprecated "use `@immut/list.from_array` instead"
+#deprecated("use `@immut/list.from_array` instead")
 #coverage.skip
 pub fn T::from_array[A](arr : Array[A]) -> T[A] {
   from_array(arr)
 }
 
 ///|
-/// @alert deprecated "use `@immut/list.default` instead"
+#deprecated("use `@immut/list.default` instead")
 #coverage.skip
 pub fn T::default[X]() -> T[X] {
   Nil
 }
 
 ///|
-/// @alert deprecated "use `@immut/list.from_iter` instead"
+#deprecated("use `@immut/list.from_iter` instead")
 #coverage.skip
 pub fn T::from_iter[A](iter : Iter[A]) -> T[A] {
   from_iter(iter)
 }
 
 ///|
-/// @alert deprecated "use `@immut/list.of` instead"
+#deprecated("use `@immut/list.of` instead")
 #coverage.skip
 pub fn T::of[A](arr : FixedArray[A]) -> T[A] {
   of(arr)

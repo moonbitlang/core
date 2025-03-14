@@ -20,7 +20,7 @@ fn debug_string[T : Show](t : T) -> String {
 }
 
 ///|
-/// @alert deprecated "Use built-in `assert_eq` instead"
+#deprecated("Use built-in `assert_eq` instead")
 #coverage.skip
 pub fn eq[T : Show + Eq](a : T, b : T, loc~ : SourceLoc = _) -> Unit! {
   if a != b {
@@ -31,7 +31,7 @@ pub fn eq[T : Show + Eq](a : T, b : T, loc~ : SourceLoc = _) -> Unit! {
 }
 
 ///|
-/// @alert deprecated "Use built-in `assert_not_eq` instead"
+#deprecated("Use built-in `assert_not_eq` instead")
 #coverage.skip
 pub fn ne[T : Show + Eq](a : T, b : T, loc~ : SourceLoc = _) -> Unit! {
   if not(a != b) {
@@ -42,7 +42,7 @@ pub fn ne[T : Show + Eq](a : T, b : T, loc~ : SourceLoc = _) -> Unit! {
 }
 
 ///|
-/// @alert deprecated "Use built-in `assert_true` instead"
+#deprecated("Use built-in `assert_true` instead")
 #coverage.skip
 pub fn is_true(x : Bool, loc~ : SourceLoc = _) -> Unit! {
   if not(x) {
@@ -52,7 +52,7 @@ pub fn is_true(x : Bool, loc~ : SourceLoc = _) -> Unit! {
 }
 
 ///|
-/// @alert deprecated "Use built-in `assert_false` instead"
+#deprecated("Use built-in `assert_false` instead")
 #coverage.skip
 pub fn is_false(x : Bool, loc~ : SourceLoc = _) -> Unit! {
   if x {
