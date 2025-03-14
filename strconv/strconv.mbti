@@ -17,17 +17,17 @@ fn parse_uint(String, base~ : Int = ..) -> UInt!StrConvError
 
 fn parse_uint64(String, base~ : Int = ..) -> UInt64!StrConvError
 
-fn shift(Decimal, Int) -> Unit //deprecated
+fn shift(Decimal, Int) -> Unit
 
 fn to_double(Decimal) -> Double!StrConvError //deprecated
 
 // Types and methods
 type Decimal //deprecated
 impl Decimal {
-  from_int64(Int64) -> Self //deprecated
-  new() -> Self //deprecated
+  from_int64(Int64) -> Self
+  new() -> Self
   parse_decimal(String) -> Self!StrConvError //deprecated
-  shift(Self, Int) -> Unit //deprecated
+  shift(Self, Int) -> Unit
   to_double(Self) -> Double!StrConvError //deprecated
 }
 impl Show for Decimal

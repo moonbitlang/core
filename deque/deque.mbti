@@ -17,7 +17,7 @@ fn each[A](T[A], (A) -> Unit) -> Unit
 
 fn eachi[A](T[A], (Int, A) -> Unit) -> Unit
 
-fn filter_map_inplace[A](T[A], (A) -> A?) -> Unit //deprecated
+fn filter_map_inplace[A](T[A], (A) -> A?) -> Unit
 
 fn from_array[A](Array[A]) -> T[A]
 
@@ -47,11 +47,11 @@ fn op_set[A](T[A], Int, A) -> Unit
 
 fn pop_back[A](T[A]) -> A?
 
-fn pop_back_exn[A](T[A]) -> Unit //deprecated
+fn pop_back_exn[A](T[A]) -> Unit
 
 fn pop_front[A](T[A]) -> A?
 
-fn pop_front_exn[A](T[A]) -> Unit //deprecated
+fn pop_front_exn[A](T[A]) -> Unit
 
 fn push_back[A](T[A], A) -> Unit
 
@@ -94,9 +94,9 @@ impl T {
   copy[A](Self[A]) -> Self[A]
   each[A](Self[A], (A) -> Unit) -> Unit
   eachi[A](Self[A], (Int, A) -> Unit) -> Unit
-  filter_map_inplace[A](Self[A], (A) -> A?) -> Unit //deprecated
-  from_array[A](Array[A]) -> Self[A] //deprecated
-  from_iter[A](Iter[A]) -> Self[A] //deprecated
+  filter_map_inplace[A](Self[A], (A) -> A?) -> Unit
+  from_array[A](Array[A]) -> Self[A]
+  from_iter[A](Iter[A]) -> Self[A]
   front[A](Self[A]) -> A?
   is_empty[A](Self[A]) -> Bool
   iter[A](Self[A]) -> Iter[A]
@@ -104,14 +104,14 @@ impl T {
   length[A](Self[A]) -> Int
   map[A, U](Self[A], (A) -> U) -> Self[U]
   mapi[A, U](Self[A], (Int, A) -> U) -> Self[U]
-  new[A](capacity~ : Int = ..) -> Self[A] //deprecated
-  of[A](FixedArray[A]) -> Self[A] //deprecated
+  new[A](capacity~ : Int = ..) -> Self[A]
+  of[A](FixedArray[A]) -> Self[A]
   op_get[A](Self[A], Int) -> A
   op_set[A](Self[A], Int, A) -> Unit
   pop_back[A](Self[A]) -> A?
-  pop_back_exn[A](Self[A]) -> Unit //deprecated
+  pop_back_exn[A](Self[A]) -> Unit
   pop_front[A](Self[A]) -> A?
-  pop_front_exn[A](Self[A]) -> Unit //deprecated
+  pop_front_exn[A](Self[A]) -> Unit
   push_back[A](Self[A], A) -> Unit
   push_front[A](Self[A], A) -> Unit
   reserve_capacity[A](Self[A], Int) -> Unit
