@@ -489,15 +489,16 @@ pub fn fold_righti[A, B](self : T[A], f : (Int, A, B) -> B, init~ : B) -> B {
 /// assert_eq!(r, Some(@list.from_array([(1, 6), (2, 7), (3, 8), (4, 9), (5, 10)])))
 /// ```
 pub fn zip[A, B](self : T[A], other : T[B]) -> T[(A, B)]? {
-  match (self, other) {
-    (Nil, Nil) => Some(Nil)
-    (Cons(x, xs), Cons(y, ys)) =>
-      match zip(xs, ys) {
-        None => None
-        Some(ls) => Some(Cons((x, y), ls))
-      }
-    _ => None
+  let mut acc = Nil
+  let res = loop self, other {
+    Nil, Nil => break Some(acc)
+    Cons(x, xs), Cons(y, ys) => {
+      acc = Cons((x, y), acc)
+      continue xs, ys
+    }
+    _, _ => break None
   }
+  res.map(T::rev)
 }
 
 ///|
@@ -636,11 +637,15 @@ pub fn is_empty[A](self : T[A]) -> Bool {
 /// assert_eq!(b, @list.from_array([2, 4, 6]))
 /// ```
 pub fn unzip[A, B](self : T[(A, B)]) -> (T[A], T[B]) {
-  match self {
-    Nil => (Nil, Nil)
-    Cons((x, y), xs) => {
-      let (xs, ys) = unzip(xs)
-      (Cons(x, xs), Cons(y, ys))
+  let mut xs = Nil
+  let mut ys = Nil
+  // implemented with loop to avoid stack overflow
+  loop self.rev() {
+    Nil => break (xs, ys)
+    Cons((x, y), tail) => {
+      xs = Cons(x, xs)
+      ys = Cons(y, ys)
+      continue tail
     }
   }
 }
