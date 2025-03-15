@@ -657,7 +657,11 @@ impl Logger {
 // Traits
 pub(open) trait Compare : Eq {
   compare(Self, Self) -> Int
+  max(Self, Self) -> Self
+  min(Self, Self) -> Self
 }
+impl Compare::max
+impl Compare::min
 impl Compare for Bool
 impl Compare for Byte
 impl Compare for Char
