@@ -37,8 +37,6 @@ fn new[A]() -> T[A]
 
 fn of[A](FixedArray[A]) -> T[A]
 
-fn op_add[A](T[A], T[A]) -> T[A]
-
 fn op_get[A](T[A], Int) -> A
 
 fn push[A](T[A], A) -> T[A]
@@ -69,13 +67,13 @@ impl T {
   map[A, B](Self[A], (A) -> B) -> Self[B]
   new[A]() -> Self[A] //deprecated
   of[A](FixedArray[A]) -> Self[A] //deprecated
-  op_add[A](Self[A], Self[A]) -> Self[A]
   op_get[A](Self[A], Int) -> A
   push[A](Self[A], A) -> Self[A]
   rev_fold[A, B](Self[A], init~ : B, (B, A) -> B) -> B
   set[A](Self[A], Int, A) -> Self[A]
   to_array[A](Self[A]) -> Array[A]
 }
+impl[A] Add for T[A]
 impl[A : Eq] Eq for T[A]
 impl[A : Hash] Hash for T[A]
 impl[A : Show] Show for T[A]

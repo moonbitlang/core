@@ -19,6 +19,36 @@ pub(open) trait Eq {
 }
 
 ///|
+pub(open) trait Add {
+  op_add(Self, Self) -> Self
+}
+
+///|
+pub(open) trait Sub {
+  op_sub(Self, Self) -> Self
+}
+
+///|
+pub(open) trait Mul {
+  op_mul(Self, Self) -> Self
+}
+
+///|
+pub(open) trait Div {
+  op_div(Self, Self) -> Self
+}
+
+///|
+pub(open) trait Rem {
+  op_mod(Self, Self) -> Self
+}
+
+///|
+pub(open) trait Neg {
+  op_neg(Self) -> Self
+}
+
+///|
 /// Trait for types whose elements are ordered
 ///
 /// The return value of [compare] is:

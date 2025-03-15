@@ -59,8 +59,6 @@ let neg_infinity : Float
 
 let not_a_number : Float
 
-fn op_mod(Float, Float) -> Float
-
 fn pow(Float, Float) -> Float
 
 fn round(Float) -> Float
@@ -105,7 +103,6 @@ impl Float {
   is_pos_inf(Float) -> Bool
   ln(Float) -> Float
   ln_1p(Float) -> Float
-  op_mod(Float, Float) -> Float
   pow(Float, Float) -> Float
   round(Float) -> Float
   sin(Float) -> Float
@@ -119,6 +116,7 @@ impl Float {
 }
 impl Default for Float
 impl Hash for Float
+impl Rem for Float
 impl Show for Float
 
 // Type aliases

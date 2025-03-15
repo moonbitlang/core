@@ -110,3 +110,8 @@ pub fn op_mod(self : Double, other : Double) -> Double {
   uint64_x = uint64_x | (sign_x << 63)
   uint64_x.reinterpret_as_double()
 }
+
+///|
+pub impl Rem for Double with op_mod(self, other) {
+  self.op_mod(other)
+}

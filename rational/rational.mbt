@@ -66,7 +66,7 @@ fn new_unchecked(numerator : Int64, denominator : Int64) -> T {
 ///|
 /// NOTE: we don't check overflow here, to align with the `op_add` of `Int64`.
 /// TODO: add a `checked_add` method.
-pub fn op_add(self : T, other : T) -> T {
+pub impl Add for T with op_add(self, other) {
   new_unchecked(
     self.numerator * other.denominator + other.numerator * self.denominator,
     self.denominator * other.denominator,
@@ -74,7 +74,7 @@ pub fn op_add(self : T, other : T) -> T {
 }
 
 ///|
-pub fn op_sub(self : T, other : T) -> T {
+pub impl Sub for T with op_sub(self, other) {
   new_unchecked(
     self.numerator * other.denominator - other.numerator * self.denominator,
     self.denominator * other.denominator,
@@ -82,7 +82,7 @@ pub fn op_sub(self : T, other : T) -> T {
 }
 
 ///|
-pub fn op_mul(self : T, other : T) -> T {
+pub impl Mul for T with op_mul(self, other) {
   new_unchecked(
     self.numerator * other.numerator,
     self.denominator * other.denominator,
@@ -90,7 +90,7 @@ pub fn op_mul(self : T, other : T) -> T {
 }
 
 ///|
-pub fn op_div(self : T, other : T) -> T {
+pub impl Div for T with op_div(self, other) -> T {
   if other.numerator < 0L {
     new_unchecked(
       self.numerator * -other.denominator,

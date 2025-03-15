@@ -259,7 +259,7 @@ pub impl Default for Bool with default() = "%bool_default"
 ///   inspect!(--2147483647, content="2147483647") // negating near min value
 /// }
 /// ```
-pub fn Int::op_neg(self : Int) -> Int = "%i32_neg"
+pub impl Neg for Int with op_neg(self) = "%i32_neg"
 
 ///|
 /// Adds two 32-bit signed integers. Performs two's complement arithmetic, which
@@ -283,7 +283,7 @@ pub fn Int::op_neg(self : Int) -> Int = "%i32_neg"
 ///   inspect!(2147483647 + 1, content="-2147483648") // Overflow wraps around to minimum value
 /// }
 /// ```
-pub fn Int::op_add(self : Int, other : Int) -> Int = "%i32_add"
+pub impl Add for Int with op_add(self, other) = "%i32_add"
 
 ///|
 /// Performs subtraction between two 32-bit integers, following standard two's
@@ -308,7 +308,7 @@ pub fn Int::op_add(self : Int, other : Int) -> Int = "%i32_add"
 ///   inspect!(max - -1, content="-2147483648") // Overflow case
 /// }
 /// ```
-pub fn Int::op_sub(self : Int, other : Int) -> Int = "%i32_sub"
+pub impl Sub for Int with op_sub(self, other) = "%i32_sub"
 
 ///|
 /// Multiplies two 32-bit integers. This is the implementation of the `*`
@@ -332,7 +332,7 @@ pub fn Int::op_sub(self : Int, other : Int) -> Int = "%i32_sub"
 ///   inspect!(max * 2, content="-2") // Overflow wraps around
 /// }
 /// ```
-pub fn Int::op_mul(self : Int, other : Int) -> Int = "%i32_mul"
+pub impl Mul for Int with op_mul(self, other) = "%i32_mul"
 
 ///|
 /// Performs integer division between two 32-bit integers. The result is
@@ -361,7 +361,7 @@ pub fn Int::op_mul(self : Int, other : Int) -> Int = "%i32_mul"
 ///   ignore(42 / 0) // Panics with division by zero
 /// }
 /// ```
-pub fn Int::op_div(self : Int, other : Int) -> Int = "%i32_div"
+pub impl Div for Int with op_div(self, other) = "%i32_div"
 
 ///|
 /// Calculates the remainder of dividing one integer by another. The result
@@ -389,7 +389,7 @@ pub fn Int::op_div(self : Int, other : Int) -> Int = "%i32_div"
 ///   ignore(7 % 0) // Panics with division by zero
 /// }
 /// ```
-pub fn Int::op_mod(self : Int, other : Int) -> Int = "%i32_mod"
+pub impl Rem for Int with op_mod(self, other) = "%i32_mod"
 
 ///|
 /// Performs a bitwise NOT operation on a 32-bit integer. Flips each bit in the
@@ -948,7 +948,7 @@ pub fn Int::to_uint64(self : Int) -> UInt64 {
 ///   inspect!(-(0.0 / 0.0), content="NaN") // Negating NaN returns NaN
 /// }
 /// ```
-pub fn Double::op_neg(self : Double) -> Double = "%f64_neg"
+pub impl Neg for Double with op_neg(self) = "%f64_neg"
 
 ///|
 /// Adds two double-precision floating-point numbers together following IEEE 754
@@ -974,7 +974,7 @@ pub fn Double::op_neg(self : Double) -> Double = "%f64_neg"
 ///   inspect!(1.0 / 0.0 + -1.0 / 0.0, content="NaN") // Infinity + -Infinity = NaN
 /// }
 /// ```
-pub fn Double::op_add(self : Double, other : Double) -> Double = "%f64_add"
+pub impl Add for Double with op_add(self, other) = "%f64_add"
 
 ///|
 /// Performs subtraction between two double-precision floating-point numbers.
@@ -997,7 +997,7 @@ pub fn Double::op_add(self : Double, other : Double) -> Double = "%f64_add"
 ///   inspect!(0.0 / 0.0 - 1.0, content="NaN") // NaN - anything = NaN
 /// }
 /// ```
-pub fn Double::op_sub(self : Double, other : Double) -> Double = "%f64_sub"
+pub impl Sub for Double with op_sub(self, other) = "%f64_sub"
 
 ///|
 /// Multiplies two double-precision floating-point numbers. This is the
@@ -1027,7 +1027,7 @@ pub fn Double::op_sub(self : Double, other : Double) -> Double = "%f64_sub"
 ///   inspect!(nan * 1.0, content="NaN")
 /// }
 /// ```
-pub fn Double::op_mul(self : Double, other : Double) -> Double = "%f64_mul"
+pub impl Mul for Double with op_mul(self, other) = "%f64_mul"
 
 ///|
 /// Performs division between two double-precision floating-point numbers.
@@ -1057,7 +1057,7 @@ pub fn Double::op_mul(self : Double, other : Double) -> Double = "%f64_mul"
 ///   inspect!(1.0 / 0.0, content="Infinity")
 /// }
 /// ```
-pub fn Double::op_div(self : Double, other : Double) -> Double = "%f64_div"
+pub impl Div for Double with op_div(self, other) = "%f64_div"
 
 ///|
 /// Calculates the square root of a double-precision floating-point number. For
@@ -1875,7 +1875,7 @@ pub fn String::unsafe_charcode_at(self : String, idx : Int) -> Int = "%string_ge
 ///   inspect!("" + "abc", content="abc") // concatenating with empty string
 /// }
 /// ```
-pub fn String::op_add(self : String, other : String) -> String = "%string_add"
+pub impl Add for String with op_add(self, other) = "%string_add"
 
 ///|
 /// Tests whether two strings are equal by comparing their characters.
@@ -2032,7 +2032,7 @@ pub fn UInt::to_int(self : UInt) -> Int = "%u32.to_i32_reinterpret"
 ///   inspect!(max + 1U, content="0")
 /// }
 /// ```
-pub fn UInt::op_add(self : UInt, other : UInt) -> UInt = "%u32.add"
+pub impl Add for UInt with op_add(self, other) = "%u32.add"
 
 ///|
 /// Performs subtraction between two unsigned 32-bit integers. When the result
@@ -2060,7 +2060,7 @@ pub fn UInt::op_add(self : UInt, other : UInt) -> UInt = "%u32.add"
 ///   inspect!(c - d, content="4294967294") // wraps around to 2^32 - 2
 /// }
 /// ```
-pub fn UInt::op_sub(self : UInt, other : UInt) -> UInt = "%u32.sub"
+pub impl Sub for UInt with op_sub(self, other) = "%u32.sub"
 
 ///|
 /// Performs multiplication between two unsigned 32-bit integers. The result
@@ -2086,7 +2086,7 @@ pub fn UInt::op_sub(self : UInt, other : UInt) -> UInt = "%u32.sub"
 ///   inspect!(max * 2U, content="4294967294") // Wraps around to max * 2 % 2^32
 /// }
 /// ```
-pub fn UInt::op_mul(self : UInt, other : UInt) -> UInt = "%u32.mul"
+pub impl Mul for UInt with op_mul(self, other) = "%u32.mul"
 
 ///|
 /// Performs division between two unsigned 32-bit integers. The operation follows
@@ -2114,7 +2114,7 @@ pub fn UInt::op_mul(self : UInt, other : UInt) -> UInt = "%u32.mul"
 ///   ignore(a / 0U) // Throws runtime error: division by zero
 /// }
 /// ```
-pub fn UInt::op_div(self : UInt, other : UInt) -> UInt = "%u32.div"
+pub impl Div for UInt with op_div(self, other) = "%u32.div"
 
 ///|
 /// Calculates the remainder of dividing one unsigned integer by another.
@@ -2143,7 +2143,7 @@ pub fn UInt::op_div(self : UInt, other : UInt) -> UInt = "%u32.div"
 ///   ignore(a % 0U) // Panics: division by zero
 /// }
 /// ```
-pub fn UInt::op_mod(self : UInt, other : UInt) -> UInt = "%u32.mod"
+pub impl Rem for UInt with op_mod(self, other) = "%u32.mod"
 
 ///|
 /// Compares two unsigned 32-bit integers for equality.
@@ -2645,7 +2645,7 @@ pub fn UInt::to_double(self : UInt) -> Double = "%u32.to_f64"
 ///   inspect!((-zero).to_double(), content="0")
 /// }
 /// ```
-pub fn Float::op_neg(self : Float) -> Float = "%f32.neg"
+pub impl Neg for Float with op_neg(self) = "%f32.neg"
 
 ///|
 /// Performs addition between two single-precision floating-point numbers.
@@ -2669,7 +2669,7 @@ pub fn Float::op_neg(self : Float) -> Float = "%f32.neg"
 ///   inspect!(sum.to_double(), content="6")
 /// }
 /// ```
-pub fn Float::op_add(self : Float, other : Float) -> Float = "%f32.add"
+pub impl Add for Float with op_add(self, other) = "%f32.add"
 
 ///|
 /// Performs subtraction between two single-precision floating-point numbers.
@@ -2692,7 +2692,7 @@ pub fn Float::op_add(self : Float, other : Float) -> Float = "%f32.add"
 ///   inspect!(result.to_double(), content="2.140000104904175")
 /// }
 /// ```
-pub fn Float::op_sub(self : Float, other : Float) -> Float = "%f32.sub"
+pub impl Sub for Float with op_sub(self, other) = "%f32.sub"
 
 ///|
 /// Performs multiplication between two single-precision floating-point numbers
@@ -2717,7 +2717,7 @@ pub fn Float::op_sub(self : Float, other : Float) -> Float = "%f32.sub"
 ///   inspect!(z.to_double(), content="6")
 /// }
 /// ```
-pub fn Float::op_mul(self : Float, other : Float) -> Float = "%f32.mul"
+pub impl Mul for Float with op_mul(self, other) = "%f32.mul"
 
 ///|
 /// Performs division between two 32-bit floating-point numbers according to IEEE
@@ -2746,7 +2746,7 @@ pub fn Float::op_mul(self : Float, other : Float) -> Float = "%f32.mul"
 ///   inspect!((0.0.to_float() / 0.0.to_float()).to_double(), content="NaN")
 /// }
 /// ```
-pub fn Float::op_div(self : Float, other : Float) -> Float = "%f32.div"
+pub impl Div for Float with op_div(self, other) = "%f32.div"
 
 ///|
 /// Calculates the square root of a floating-point number. For non-negative

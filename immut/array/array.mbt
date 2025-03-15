@@ -188,7 +188,7 @@ pub fn concat[A](self : T[A], other : T[A]) -> T[A] {
 
 ///|
 /// Concat two arrays.
-pub fn op_add[A](self : T[A], other : T[A]) -> T[A] {
+pub impl[A] Add for T[A] with op_add(self, other) {
   self.concat(other)
 }
 
