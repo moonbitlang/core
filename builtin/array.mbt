@@ -75,6 +75,37 @@ pub fn Array::make[T](len : Int, elem : T) -> Array[T] {
 }
 
 ///|
+/// Creates a new array of the specified length, where each element is
+/// initialized using an index-based initialization function.
+///
+/// Parameters:
+///
+/// * `length` : The length of the new array. If `length` is less than or equal
+/// to 0, returns an empty array.
+/// * `initializer` : A function that takes an index (starting from 0) and
+/// returns a value of type `T`. This function is called for each index to
+/// initialize the corresponding element.
+///
+/// Returns a new array of type `Array[T]` with the specified length, where each
+/// element is initialized using the provided function.
+///
+/// Example:
+///
+/// ```moonbit
+/// test "Array::makei" {
+///   let arr = Array::makei(3, fn(i) { i * 2 })
+///   inspect!(arr, content="[0, 2, 4]")
+/// }
+/// ```
+pub fn Array::makei[T](len : Int, value : (Int) -> T) -> Array[T] {
+  let arr = Array::make_uninit(len)
+  for i in 0..<len {
+    arr.unsafe_set(i, value(i))
+  }
+  arr
+}
+
+///|
 /// Returns the total capacity of the array, which is the number of elements that
 /// the array can hold without requiring reallocation of its internal buffer.
 ///
