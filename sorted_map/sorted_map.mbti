@@ -29,7 +29,7 @@ fn keys[K, V](T[K, V]) -> Array[K]
 
 fn new[K, V]() -> T[K, V]
 
-fn of[K : Compare, V](Array[(K, V)]) -> T[K, V] //deprecated
+fn of[K : Compare, V](Array[(K, V)]) -> T[K, V]
 
 fn op_get[K : Compare, V](T[K, V], K) -> V?
 
@@ -53,7 +53,7 @@ impl T {
   contains[K : Compare, V](Self[K, V], K) -> Bool
   each[K, V](Self[K, V], (K, V) -> Unit) -> Unit
   eachi[K, V](Self[K, V], (Int, K, V) -> Unit) -> Unit
-  from_iter[K : Compare, V](Iter[(K, V)]) -> Self[K, V] //deprecated
+  from_iter[K : Compare, V](Iter[(K, V)]) -> Self[K, V]
   get[K : Compare, V](Self[K, V], K) -> V?
   is_empty[K, V](Self[K, V]) -> Bool
   iter[K, V](Self[K, V]) -> Iter[(K, V)]

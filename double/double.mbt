@@ -111,7 +111,7 @@ pub fn signum(self : Double) -> Double {
 /// }
 /// ```
 ///
-/// @alert deprecated "Use `@double.not_a_number` instead"
+#deprecated("Use `@double.not_a_number` instead")
 #coverage.skip
 pub fn Double::nan() -> Double {
   not_a_number
@@ -119,7 +119,7 @@ pub fn Double::nan() -> Double {
 
 ///|
 /// Returns positive infinity if sign >= 0, negative infinity if sign < 0.
-/// @alert deprecated "Use `@double.infinity` and `@double.neg_infinity` instead"
+#deprecated("Use `@double.infinity` and `@double.neg_infinity` instead")
 #coverage.skip
 pub fn Double::inf(sign : Int) -> Double {
   if sign >= 0 {
@@ -145,7 +145,7 @@ pub fn Double::inf(sign : Int) -> Double {
 /// }
 /// ```
 ///
-/// @alert deprecated "Use `@double.min_positive` instead"
+#deprecated("Use `@double.min_positive` instead")
 #coverage.skip
 pub fn Double::min_normal() -> Double {
   min_positive

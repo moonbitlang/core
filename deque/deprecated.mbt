@@ -13,28 +13,28 @@
 // limitations under the License.
 
 ///|
-/// @alert deprecated "use `@deque.new` instead"
+#deprecated("use `@deque.new` instead")
 #coverage.skip
 pub fn T::new[A](capacity~ : Int = 0) -> T[A] {
   new(capacity~)
 }
 
 ///|
-/// @alert deprecated "use `@deque.from_array` instead"
+#deprecated("use `@deque.from_array` instead")
 #coverage.skip
 pub fn T::from_array[A](arr : Array[A]) -> T[A] {
   from_array(arr)
 }
 
 ///|
-/// @alert deprecated "use `@deque.of` instead"
+#deprecated("use `@deque.of` instead")
 #coverage.skip
 pub fn T::of[A](arr : FixedArray[A]) -> T[A] {
   of(arr)
 }
 
 ///|
-/// @alert deprecated "use `@deque.from_iter` instead"
+#deprecated("use `@deque.from_iter` instead")
 #coverage.skip
 pub fn T::from_iter[A](iter : Iter[A]) -> T[A] {
   from_iter(iter)
