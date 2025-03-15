@@ -28,3 +28,13 @@ extern "js" fn now_internal() -> UInt64 =
   #|   const nowMs = Date.now();
   #|   return ({ hi : Number(BigInt(nowMs) >> 32n), lo : nowMs & 0xFFFFFFFF });
   #| }
+
+///|
+extern "js" fn current_dir_internal() -> String? =
+  #| function() {
+  #|   if (typeof process !== "undefined" && typeof process.cwd === "function") {
+  #|     return process.cwd();
+  #|   } else {
+  #|     return null;
+  #|   }
+  #| }
