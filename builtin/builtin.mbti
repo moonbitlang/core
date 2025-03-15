@@ -217,6 +217,7 @@ impl Iter {
   filter_map[A, B](Self[A], (A) -> B?) -> Self[B]
   find_first[T](Self[T], (T) -> Bool) -> T?
   flat_map[T, R](Self[T], (T) -> Self[R]) -> Self[R]
+  flatten[T](Self[Self[T]]) -> Self[T]
   fold[T, B](Self[T], init~ : B, (B, T) -> B) -> B
   head[A](Self[A]) -> A?
   intersperse[A](Self[A], A) -> Self[A]
