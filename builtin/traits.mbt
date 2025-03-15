@@ -27,6 +27,36 @@ pub(open) trait Eq {
 /// - positive, if the first argument is greater
 pub(open) trait Compare: Eq {
   compare(Self, Self) -> Int
+  max(Self, Self) -> Self
+  min(Self, Self) -> Self
+}
+
+///|
+/// ```moonbit 
+/// test {
+///   inspect!(1U.max(2U), content="2")
+/// }
+/// ```
+impl Compare with max(self, other) {
+  if self > other {
+    self
+  } else {
+    other
+  }
+}
+
+///|
+/// ```moonbit
+/// test {
+///   inspect!(1U.min(2U), content="1")
+/// }
+/// ```
+impl Compare with min(self, other) {
+  if self < other {
+    self
+  } else {
+    other
+  }
 }
 
 ///|
