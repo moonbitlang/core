@@ -690,3 +690,13 @@ test "hash" {
   inspect!(l1.hash() == l4.hash(), content="false")
   inspect!(l4.hash() == l4.hash(), content="true")
 }
+
+///|
+test "stack overflow test/unzip" {
+  let iter = Int::until(0, 1 << 13)
+  let xs = from_iter(iter)
+  let ys = xs
+  let zs = xs.zip(ys)
+  zs |> ignore
+  zs.unwrap().unzip() |> ignore
+}
