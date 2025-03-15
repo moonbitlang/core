@@ -459,6 +459,19 @@ pub fn Iter::flat_map[T, R](self : Iter[T], f : (T) -> Iter[R]) -> Iter[R] {
   fn { yield_ => self.run(fn { x => f(x).run(yield_) }) }
 }
 
+///| 
+/// iter.map(f).flatten() == iter..flat_map(f)
+/// ```moonbit 
+/// test {
+///   fn f(n : Int) { Int::until(0,n) }
+///   let xs = f(10)
+///   assert_eq!(xs.map(f).flatten().to_array(),xs.flat_map(f).to_array())
+/// }
+/// ```
+pub fn Iter::flatten[T](self : Iter[Iter[T]]) -> Iter[T] {
+  fn { yield_ => self.run(fn { x => x.run(yield_) }) }
+}
+
 ///|
 /// Applies a function to each element of the iterator without modifying the iterator.
 ///
