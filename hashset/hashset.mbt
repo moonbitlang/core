@@ -444,12 +444,9 @@ test "clear" {
 pub fn to_array[K](self : T[K]) -> Array[K] {
   let mut i = 0
   let res = while i < self.capacity {
-    match self.entries[i] {
-      Some({ key, .. }) => {
-        i += 1
-        break Array::make(self.size, key)
-      }
-      _ => ()
+    if self.entries[i] is Some({ key, .. }) {
+      i += 1
+      break Array::make(self.size, key)
     }
     i += 1
   } else {
@@ -458,12 +455,9 @@ pub fn to_array[K](self : T[K]) -> Array[K] {
   if not(res.is_empty()) {
     let mut res_idx = 1
     while res_idx < res.length() && i < self.capacity {
-      match self.entries[i] {
-        Some({ key, .. }) => {
-          res[res_idx] = key
-          res_idx += 1
-        }
-        _ => ()
+      if self.entries[i] is Some({ key, .. }) {
+        res[res_idx] = key
+        res_idx += 1
       }
       i += 1
     }

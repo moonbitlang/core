@@ -326,10 +326,7 @@ pub impl[V : Compare] Eq for T[V] with op_equal(self, other) {
 ///|
 /// Returns if MutableSet is empty.
 pub fn is_empty[V : Compare](self : T[V]) -> Bool {
-  match self.root {
-    None => true
-    _ => false
-  }
+  self.root is None
 }
 
 ///|

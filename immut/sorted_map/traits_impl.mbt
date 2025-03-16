@@ -81,17 +81,14 @@ pub impl[V : @json.FromJson] @json.FromJson for T[String, V] with from_json(
   json,
   path
 ) {
-  match json {
-    Object(obj) => {
-      let mut map = new()
-      for k, v in obj {
-        map = map.add(k, V::from_json!(v, path))
-      }
-      map
-    }
-    _ =>
-      raise @json.JsonDecodeError(
-        (path, "@immut/sorted_map.from_json: expected object"),
-      )
+  guard json is Object(obj) else {
+    raise @json.JsonDecodeError(
+      (path, "@immut/sorted_map.from_json: expected object"),
+    )
   }
+  let mut map = new()
+  for k, v in obj {
+    map = map.add(k, V::from_json!(v, path))
+  }
+  map
 }
