@@ -37,4 +37,4 @@
 ///   inspect!(@float.neg_infinity.to_int(), content="-2147483648")
 /// }
 /// ```
-pub fn Float::to_int(self : Float) -> Int = "%f32.to_i32_saturate"
+pub fn to_int(self : Float) -> Int = "%f32.to_i32_saturate"

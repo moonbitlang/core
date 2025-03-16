@@ -1221,7 +1221,7 @@ pub fn BigInt::to_hex(self : BigInt, uppercase~ : Bool = true) -> String {
 
 ///|
 /// @alert deprecated "Use `copy` instead"
-/// @coverage.skip
+#coverage.skip
 fn BigInt::deep_clone(self : BigInt) -> BigInt {
   BigInt::copy(self)
 }

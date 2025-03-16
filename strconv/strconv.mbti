@@ -17,6 +17,10 @@ fn parse_uint(String, base~ : Int = ..) -> UInt!StrConvError
 
 fn parse_uint64(String, base~ : Int = ..) -> UInt64!StrConvError
 
+fn shift(Decimal, Int) -> Unit //deprecated
+
+fn to_double(Decimal) -> Double!StrConvError //deprecated
+
 // Types and methods
 type Decimal //deprecated
 impl Decimal {

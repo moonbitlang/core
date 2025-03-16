@@ -13,29 +13,10 @@
 // limitations under the License.
 
 ///|
-/// @alert deprecated "use `@hashset.new` instead"
-#coverage.skip
-pub fn T::new[K](capacity~ : Int = default_init_capacity) -> T[K] {
-  new(capacity~)
-}
-
-///|
-/// @alert deprecated "use `@hashset.from_array` instead"
-#coverage.skip
-pub fn T::from_array[K : Hash + Eq](arr : Array[K]) -> T[K] {
-  from_array(arr)
-}
-
-///|
-/// @alert deprecated "use `@hashset.of` instead"
-#coverage.skip
-pub fn T::of[K : Hash + Eq](arr : FixedArray[K]) -> T[K] {
-  of(arr)
-}
-
-///|
-/// @alert deprecated "use `@hashset.from_iter` instead"
-#coverage.skip
-pub fn T::from_iter[K : Hash + Eq](iter : Iter[K]) -> T[K] {
-  from_iter(iter)
+pub impl[K : Show, V : ToJson] ToJson for T[K, V] with to_json(self) {
+  let object = Map::new(capacity=self.capacity)
+  for k, v in self {
+    object[k.to_string()] = v.to_json()
+  }
+  Object(object)
 }

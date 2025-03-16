@@ -660,7 +660,12 @@ test "op_add" {
 
 ///|
 test "from_iter multiple elements iter" {
-  inspect!(@list.from_iter([1, 2, 3].iter()), content="@list.of([3, 2, 1])")
+  inspect!(@list.from_iter([1, 2, 3].iter()), content="@list.of([1, 2, 3])")
+}
+
+///|
+test "from_iter_rev multiple elements iter" {
+  inspect!(@list.from_iter_rev([1, 2, 3].iter()), content="@list.of([3, 2, 1])")
 }
 
 ///|

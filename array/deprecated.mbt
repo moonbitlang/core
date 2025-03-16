@@ -40,7 +40,7 @@
 /// ```
 ///
 /// @alert deprecated "Use `FixedArray::makei` instead"
-/// @coverage.skip
+#coverage.skip
 pub fn FixedArray::new[T](length : Int, value : () -> T) -> FixedArray[T] {
   if length <= 0 {
     []
@@ -76,7 +76,7 @@ pub fn FixedArray::new[T](length : Int, value : () -> T) -> FixedArray[T] {
 /// ```
 ///
 /// @alert deprecated "Use `FixedArray::makei` instead"
-/// @coverage.skip
+#coverage.skip
 pub fn FixedArray::new_with_index[T](
   length : Int,
   value : (Int) -> T
@@ -93,7 +93,7 @@ pub fn FixedArray::new_with_index[T](
 /// assert_eq!(sum, 15)
 /// ```
 /// @alert deprecated "Use `fold` instead"
-/// @coverage.skip
+#coverage.skip
 pub fn FixedArray::fold_left[T, U](
   self : FixedArray[T],
   f : (U, T) -> U,
@@ -111,7 +111,7 @@ pub fn FixedArray::fold_left[T, U](
 /// assert_eq!(sum, 15)
 /// ```
 /// @alert deprecated "Use `rev_fold` instead"
-/// @coverage.skip
+#coverage.skip
 pub fn FixedArray::fold_right[T, U](
   self : FixedArray[T],
   f : (U, T) -> U,
@@ -129,7 +129,7 @@ pub fn FixedArray::fold_right[T, U](
 /// assert_eq!(sum, 10)
 /// ```
 /// @alert deprecated "Use `foldi` instead"
-/// @coverage.skip
+#coverage.skip
 pub fn FixedArray::fold_lefti[T, U](
   self : FixedArray[T],
   f : (Int, U, T) -> U,
@@ -147,7 +147,7 @@ pub fn FixedArray::fold_lefti[T, U](
 /// assert_eq!(sum, 10)
 /// ```
 /// @alert deprecated "Use `rev_foldi` instead"
-/// @coverage.skip
+#coverage.skip
 pub fn FixedArray::fold_righti[T, U](
   self : FixedArray[T],
   f : (Int, U, T) -> U,

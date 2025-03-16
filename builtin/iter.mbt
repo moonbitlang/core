@@ -780,7 +780,7 @@ pub fn Iter::collect[T](self : Iter[T]) -> Array[T] {
 
 ///|
 /// Collects the elements of the iterator into a string.
-pub fn join(self : Iter[String], sep : String) -> String {
+pub fn Iter::join(self : Iter[String], sep : String) -> String {
   let buf = StringBuilder::new()
   let mut first = true
   for str in self {
@@ -923,4 +923,35 @@ pub fn Iter::contains[A : Eq](self : Iter[A], value : A) -> Bool {
   } else {
     false
   }
+}
+
+///|
+/// Returns the nth element of the iterator, or `None` if the iterator is
+/// shorter than `n` elements.
+pub fn Iter::nth[T](self : Iter[T], n : Int) -> T? {
+  self.drop(n).head()
+}
+
+///|
+pub fn Iter::maximum[T : Compare](self : Iter[T]) -> T? {
+  let mut res = None
+  for x in self {
+    match res {
+      None => res = Some(x)
+      Some(max) => if x > max { res = Some(x) }
+    }
+  }
+  res
+}
+
+///|
+pub fn Iter::minimum[T : Compare](self : Iter[T]) -> T? {
+  let mut res = None
+  for x in self {
+    match res {
+      None => res = Some(x)
+      Some(min) => if x < min { res = Some(x) }
+    }
+  }
+  res
 }

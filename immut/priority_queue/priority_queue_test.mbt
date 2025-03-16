@@ -163,3 +163,25 @@ test "equal" {
   let pq5 = @priority_queue.of([1, 2, 3])
   inspect!(pq1 == pq5, content="false")
 }
+
+///|
+test "complex" {
+  fn rand(upper : Int) -> Int {
+    let rng = @random.new()
+    rng.int(limit=upper)
+  }
+
+  let arr = (0).until(1000, inclusive=true).collect()
+  arr.shuffle_in_place(rand~)
+  let mut pq = new()
+  for i in 0..=1000 {
+    pq = pq.push(arr[i])
+  }
+  assert_eq!(pq.length(), 1001)
+  for i in 0..=1000 {
+    assert_eq!(pq.peek(), Some(1000 - i))
+    pq = pq.pop().unwrap()
+  }
+  inspect!(pq.iter(), content="[]")
+  assert_eq!(pq.length(), 0)
+}

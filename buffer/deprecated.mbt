@@ -16,7 +16,7 @@
 /// Return a new string contains the data in buffer.
 ///
 /// @alert deprecated "Use `Buffer::contents` to read the contents of the buffer"
-/// @coverage.skip
+#coverage.skip
 pub fn to_string(self : T) -> String {
   self.contents().to_unchecked_string(offset=0, length=self.len)
 }
@@ -27,7 +27,7 @@ pub fn to_string(self : T) -> String {
 /// it simply copy the bytes into a new String.
 ///
 /// @alert deprecated "Use `Buffer::contents` to read the contents of the buffer"
-/// @coverage.skip
+#coverage.skip
 pub fn to_unchecked_string(self : T) -> String {
   self.contents().to_unchecked_string(offset=0, length=self.len)
 }
@@ -44,7 +44,7 @@ pub fn to_unchecked_string(self : T) -> String {
 /// * `length` : The number of characters to write from the starting position.
 ///
 /// @alert deprecated "Use `Buffer::write_substring` instead"
-/// @coverage.skip
+#coverage.skip
 pub fn write_sub_string(
   self : T,
   value : String,
@@ -56,7 +56,7 @@ pub fn write_sub_string(
 
 ///|
 /// @alert deprecated "use `@buffer.new` instead"
-/// @coverage.skip
+#coverage.skip
 pub fn T::new(size_hint~ : Int = 0) -> T {
   new(size_hint~)
 }

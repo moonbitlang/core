@@ -13,13 +13,23 @@
 // limitations under the License.
 
 ///|
+const HELLO : Bytes = "你好"
+
+///|
 test "bytes literal" {
+  inspect!("ABC", content="ABC")
+  let b : Bytes = "你好"
   inspect!(
-    b"ABC",
+    b + "utf8" + HELLO,
     content=
-      #|b"\x41\x42\x43"
+      #|b"\xe4\xbd\xa0\xe5\xa5\xbd\x75\x74\x66\x38\xe4\xbd\xa0\xe5\xa5\xbd"
     ,
   )
+  // match ("你好,utf8" : Bytes) {
+  //   // [_,_,_, .. rest] => inspect!(rest, content="utf8")
+  //   [ ] => ...
+  //   _ => inspect!("not hello,utf8", content="not hello,utf8")
+  // }
   inspect!(
     b"\x41\x42\x43",
     content=
@@ -154,14 +164,24 @@ test "default_empty_bytes" {
 test "Bytes::of with different byte values" {
   let arr : FixedArray[Byte] = [b'a', b'b', b'c']
   let bytes = Bytes::of(arr)
-  inspect!(bytes, content="b\"\\x61\\x62\\x63\"")
+  inspect!(
+    bytes,
+    content=
+      #|b"\x61\x62\x63"
+    ,
+  )
 }
 
 ///|
 test "Bytes::from_iter with multiple elements" {
   let iter = [b'a', b'b', b'c'].iter()
   let bytes = Bytes::from_iter(iter)
-  inspect!(bytes, content="b\"\\x61\\x62\\x63\"")
+  inspect!(
+    bytes,
+    content=
+      #|b"\x61\x62\x63"
+    ,
+  )
 }
 
 ///|

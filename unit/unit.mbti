@@ -3,6 +3,8 @@ package moonbitlang/core/unit
 // Values
 fn default() -> Unit
 
+fn to_string(Unit) -> String
+
 // Types and methods
 impl Unit {
   to_string(Unit) -> String

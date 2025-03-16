@@ -3,17 +3,51 @@ package moonbitlang/core/immut/array
 alias @moonbitlang/core/quickcheck as @quickcheck
 
 // Values
+fn concat[A](T[A], T[A]) -> T[A]
+
+fn copy[A](T[A]) -> T[A] //deprecated
+
+fn each[A](T[A], (A) -> Unit) -> Unit
+
+fn eachi[A](T[A], (Int, A) -> Unit) -> Unit
+
+fn fold[A, B](T[A], init~ : B, (B, A) -> B) -> B
+
+fn fold_left[A](T[A], (A, A) -> A, init~ : A) -> A //deprecated
+
+fn fold_right[A](T[A], (A, A) -> A, init~ : A) -> A //deprecated
+
 fn from_array[A](Array[A]) -> T[A]
 
 fn from_iter[A](Iter[A]) -> T[A]
+
+fn is_empty[A](T[A]) -> Bool
+
+fn iter[A](T[A]) -> Iter[A]
+
+fn length[A](T[A]) -> Int
 
 fn make[A](Int, A) -> T[A]
 
 fn makei[A](Int, (Int) -> A) -> T[A]
 
+fn map[A, B](T[A], (A) -> B) -> T[B]
+
 fn new[A]() -> T[A]
 
 fn of[A](FixedArray[A]) -> T[A]
+
+fn op_add[A](T[A], T[A]) -> T[A]
+
+fn op_get[A](T[A], Int) -> A
+
+fn push[A](T[A], A) -> T[A]
+
+fn rev_fold[A, B](T[A], init~ : B, (B, A) -> B) -> B
+
+fn set[A](T[A], Int, A) -> T[A]
+
+fn to_array[A](T[A]) -> Array[A]
 
 // Types and methods
 type T[A]

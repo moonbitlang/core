@@ -38,9 +38,7 @@ pub(open) trait Hash {
 
 ///|
 impl Hash with hash(self) {
-  let hasher = Hasher::new()
-  hasher.combine(self)
-  hasher.finalize()
+  Hasher::new()..combine(self).finalize()
 }
 
 ///|

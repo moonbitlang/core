@@ -476,6 +476,7 @@ test "reverse" {
   inspect!("hello".rev(), content="olleh")
   inspect!("Nothing".rev(), content="gnihtoN")
   inspect!("< >".rev(), content="> <")
+  inspect!("👍😍😭".rev(), content="😭😍👍")
 }
 
 ///|

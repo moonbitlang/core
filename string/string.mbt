@@ -64,24 +64,29 @@ pub fn String::concat(
   strings : Array[String],
   separator~ : String = ""
 ) -> String {
-  let buf = StringBuilder::new()
-  if separator == "" {
-    for s in strings {
-      buf.write_string(s)
-    }
-  } else {
-    match strings {
-      [] => ()
-      [hd, .. tl] => {
-        buf.write_string(hd)
+  match strings {
+    [] => ""
+    [hd, .. tl] => {
+      let mut size_hint = hd.length()
+      for s in tl {
+        size_hint += s.length() + separator.length()
+      }
+      size_hint = size_hint << 1
+      let buf = StringBuilder::new(size_hint~)
+      buf.write_string(hd)
+      if separator == "" {
+        for s in tl {
+          buf.write_string(s)
+        }
+      } else {
         for s in tl {
           buf.write_string(separator)
           buf.write_string(s)
         }
       }
+      buf.to_string()
     }
   }
-  buf.to_string()
 }
 
 ///|
@@ -603,14 +608,14 @@ pub fn to_upper(self : String) -> String {
 
 ///|
 /// Reverse string
+/// It respects Unicode characters and surrogate pairs but not grapheme clusters.
+/// TODO: make it an intrinsic function
 pub fn rev(self : String) -> String {
-  // TODO: deal with non-ascii characters
-  let mut result : String = ""
-  let len = self.length()
-  for i = len - 1; i >= 0; i = i - 1 {
-    result = result + self[i].to_string()
+  let buf = StringBuilder::new(size_hint=self.length())
+  for c in self.rev_iter() {
+    buf.write_char(c)
   }
-  result
+  buf.to_string()
 }
 
 ///|

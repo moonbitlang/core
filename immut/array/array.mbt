@@ -46,7 +46,7 @@ pub fn of[A](arr : FixedArray[A]) -> T[A] {
 /// it is rarely the case that you would need this function.
 /// 
 /// @alert deprecated "We don't copy immutable array"
-/// @coverage.skip
+#coverage.skip
 pub fn copy[A](self : T[A]) -> T[A] {
   fn copy(t : Tree[A]) -> Tree[A] {
     match t {
@@ -263,7 +263,7 @@ pub fn rev_fold[A, B](self : T[A], init~ : B, f : (B, A) -> B) -> B {
 /// assert_eq!(v.fold(fn(a, b) { a + b }, init=0), 15)
 /// ```
 /// @alert deprecated "Use `fold` instead"
-/// @coverage.skip
+#coverage.skip
 pub fn fold_left[A](self : T[A], f : (A, A) -> A, init~ : A) -> A {
   self.fold(init~, f)
 }
@@ -277,7 +277,7 @@ pub fn fold_left[A](self : T[A], f : (A, A) -> A, init~ : A) -> A {
 /// assert_eq!(v.rev_fold(fn(a, b) { a + b }, init=0), 15)
 /// ```
 /// @alert deprecated "Use `rev_fold` instead"
-/// @coverage.skip
+#coverage.skip
 pub fn fold_right[A](self : T[A], f : (A, A) -> A, init~ : A) -> A {
   self.rev_fold(init~, f)
 }

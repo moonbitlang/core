@@ -304,14 +304,13 @@ pub fn fract(self : T) -> T {
 ///|
 pub impl Show for T with output(self, logger) {
   if self.numerator == 0L {
-    logger.write_string("0")
+    logger.write_char('0')
   } else if self.denominator == 1L {
-    logger.write_string(self.numerator.to_string())
+    self.numerator.output(logger)
   } else {
-    logger
-    ..write_string(self.numerator.to_string())
-    ..write_string("/")
-    .write_string(self.denominator.to_string())
+    self.numerator.output(logger)
+    logger.write_char('/')
+    self.denominator.output(logger)
   }
 }
 

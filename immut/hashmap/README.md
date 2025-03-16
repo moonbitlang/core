@@ -1,3 +1,7 @@
+---
+moonbit : true
+---
+
 # Immutable hashmap
 
 This package provides an immutable hash map data structure.
@@ -11,7 +15,7 @@ test {
       .add("a", 1)
       .add("b", 2)
       .add("c", 3)
-  println(map.find("a")) // Some(1)
-  println(map.find("d")) // None
+  assert_eq!(map.find("a"), Some(1))
+  assert_eq!(map.find("d"), None)
 }
 ```

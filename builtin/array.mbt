@@ -959,7 +959,7 @@ pub fn Array::search[T : Eq](self : Array[T], value : T) -> Int? {
 /// ```
 ///
 /// @alert deprecated "Use `search_by` instead."
-/// @coverage.skip
+#coverage.skip
 pub fn Array::find_index[T](self : Array[T], f : (T) -> Bool) -> Int? {
   self.search_by(f)
 }
@@ -1371,7 +1371,7 @@ pub fn Array::rev_foldi[A, B](
 /// assert_eq!(sum, 15)
 /// ```
 /// @alert deprecated "Use `fold` instead."
-/// @coverage.skip
+#coverage.skip
 pub fn Array::fold_left[T, U](self : Array[T], f : (U, T) -> U, init~ : U) -> U {
   self.fold(init~, f)
 }
@@ -1386,7 +1386,7 @@ pub fn Array::fold_left[T, U](self : Array[T], f : (U, T) -> U, init~ : U) -> U 
 /// assert_eq!(sum, 15)
 /// ```
 /// @alert deprecated "Use `rev_fold` instead."
-/// @coverage.skip
+#coverage.skip
 pub fn Array::fold_right[T, U](
   self : Array[T],
   f : (U, T) -> U,
@@ -1405,7 +1405,7 @@ pub fn Array::fold_right[T, U](
 /// assert_eq!(sum, 10)
 /// ```
 /// @alert deprecated "Use `foldi` instead."
-/// @coverage.skip
+#coverage.skip
 pub fn Array::fold_lefti[T, U](
   self : Array[T],
   f : (Int, U, T) -> U,
@@ -1424,7 +1424,7 @@ pub fn Array::fold_lefti[T, U](
 /// assert_eq!(sum, 10)
 /// ```
 /// @alert deprecated "Use `rev_foldi` instead."
-/// @coverage.skip
+#coverage.skip
 pub fn Array::fold_righti[T, U](
   self : Array[T],
   f : (Int, U, T) -> U,

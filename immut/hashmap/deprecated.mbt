@@ -14,28 +14,28 @@
 
 ///|
 /// @alert deprecated "use `@immut/hashmap.new` instead"
-/// @coverage.skip
+#coverage.skip
 pub fn T::new[K, V]() -> T[K, V] {
   new()
 }
 
 ///|
 /// @alert deprecated "use `@immut/hashmap.from_iter` instead"
-/// @coverage.skip
+#coverage.skip
 pub fn T::from_iter[K : Eq + Hash, V](iter : Iter[(K, V)]) -> T[K, V] {
   from_iter(iter)
 }
 
 ///|
 /// @alert deprecated "use `@immut/hashmap.from_array` instead"
-/// @coverage.skip
+#coverage.skip
 pub fn T::from_array[K : Eq + Hash, V](arr : Array[(K, V)]) -> T[K, V] {
   from_array(arr)
 }
 
 ///|
 /// @alert deprecated "use `@immut/hashmap.of` instead"
-/// @coverage.skip
+#coverage.skip
 pub fn T::of[K : Eq + Hash, V](arr : FixedArray[(K, V)]) -> T[K, V] {
   of(arr)
 }

@@ -317,7 +317,7 @@ pub fn op_add[A : Compare](self : T[A], other : T[A]) -> T[A] {
 
 ///|
 /// @alert deprecated "Use `intersection` instead"
-/// @coverage.skip
+#coverage.skip
 pub fn inter[A : Compare](self : T[A], other : T[A]) -> T[A] {
   self.intersection(other)
 }
@@ -351,7 +351,7 @@ pub fn intersection[A : Compare](self : T[A], other : T[A]) -> T[A] {
 /// ```
 ///
 /// @alert deprecated "Use `difference` instead"
-/// @coverage.skip
+#coverage.skip
 pub fn diff[A : Compare](self : T[A], other : T[A]) -> T[A] {
   self.difference(other)
 }

@@ -46,7 +46,7 @@ pub fn of[K : Hash + Eq](arr : FixedArray[K]) -> T[K] {
 /// Insert a key into hash set.
 /// @alert unsafe "Panic if the hash set is full."
 /// @alert deprecated "Use `add` instead."
-/// @coverage.skip
+#coverage.skip
 pub fn insert[K : Hash + Eq](self : T[K], key : K) -> Unit {
   self.add(key)
 }

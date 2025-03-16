@@ -350,7 +350,7 @@ pub fn unsafe_pop_front[A](self : T[A]) -> Unit {
 /// ```
 ///
 /// @alert deprecated "Use `unsafe_pop_front` instead"
-/// @coverage.skip
+#coverage.skip
 pub fn pop_front_exn[A](self : T[A]) -> Unit {
   unsafe_pop_front(self)
 }
@@ -407,7 +407,7 @@ pub fn unsafe_pop_back[A](self : T[A]) -> Unit {
 /// ```
 ///
 /// @alert deprecated "Use `unsafe_pop_back` instead"
-/// @coverage.skip
+#coverage.skip
 pub fn pop_back_exn[A](self : T[A]) -> Unit {
   unsafe_pop_back(self)
 }

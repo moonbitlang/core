@@ -41,4 +41,4 @@
 ///   inspect!((-1.0 / 0.0).to_uint(), content="0") // -Infinity
 /// }
 /// ```
-pub fn Double::to_uint(self : Double) -> UInt = "%f64.to_u32_saturate"
+pub fn to_uint(self : Double) -> UInt = "%f64.to_u32_saturate"

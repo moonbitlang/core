@@ -337,3 +337,15 @@ test "@hashmap.contains/after_operations" {
   map.clear()
   inspect!(map.contains(2), content="false")
 }
+
+///|
+test "@hashmap.from_array" {
+  let map = @hashmap.from_array([("a", 1), ("b", 2), ("c", 3)])
+  @json.inspect!(map, content={ "a": 1, "c": 3, "b": 2 })
+}
+
+///|
+test "@hashmap.from_array with int key" {
+  let map = @hashmap.from_array([(1, "one"), (2, "two"), (3, "three")])
+  @json.inspect!(map, content={ "2": "two", "1": "one", "3": "three" })
+}

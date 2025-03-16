@@ -3,13 +3,45 @@ package moonbitlang/core/queue
 alias @moonbitlang/core/quickcheck as @quickcheck
 
 // Values
+fn clear[A](T[A]) -> Unit
+
+fn copy[A](T[A]) -> T[A]
+
+fn each[A](T[A], (A) -> Unit) -> Unit
+
+fn eachi[A](T[A], (Int, A) -> Unit) -> Unit
+
+fn fold[A, B](T[A], init~ : B, (B, A) -> B) -> B
+
 fn from_array[A](Array[A]) -> T[A]
 
 fn from_iter[A](Iter[A]) -> T[A]
 
+fn is_empty[A](T[A]) -> Bool
+
+fn iter[A](T[A]) -> Iter[A]
+
+fn length[A](T[A]) -> Int
+
 fn new[A]() -> T[A]
 
 fn of[A](FixedArray[A]) -> T[A]
+
+fn peek[A](T[A]) -> A?
+
+fn peek_exn[A](T[A]) -> A //deprecated
+
+fn pop[A](T[A]) -> A?
+
+fn pop_exn[A](T[A]) -> A //deprecated
+
+fn push[A](T[A], A) -> Unit
+
+fn transfer[A](T[A], T[A]) -> Unit
+
+fn unsafe_peek[A](T[A]) -> A
+
+fn unsafe_pop[A](T[A]) -> A
 
 // Types and methods
 type T[A]

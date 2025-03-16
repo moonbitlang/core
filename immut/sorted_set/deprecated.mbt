@@ -14,28 +14,28 @@
 
 ///|
 /// @alert deprecated "use `@immut/sorted_set.new` instead"
-/// @coverage.skip
+#coverage.skip
 pub fn T::new[A]() -> T[A] {
   Empty
 }
 
 ///|
 /// @alert deprecated "use `immut/sorted_set.singleton` instead"
-/// @coverage.skip
+#coverage.skip
 pub fn T::singleton[A : Compare](value : A) -> T[A] {
   singleton(value)
 }
 
 ///|
 /// @alert deprecated "use `@immut/sorted_set.from_array` instead"
-/// @coverage.skip
+#coverage.skip
 pub fn T::from_array[A : Compare](array : Array[A]) -> T[A] {
   from_array(array)
 }
 
 ///|
 /// @alert deprecated "use `@immut/sorted_set.from_json` instead"
-/// @coverage.skip
+#coverage.skip
 pub fn T::from_json[A : @json.FromJson + Compare](
   json : Json
 ) -> T[A]!@json.JsonDecodeError {
@@ -44,7 +44,7 @@ pub fn T::from_json[A : @json.FromJson + Compare](
 
 ///|
 /// @alert deprecated "use `@immut/sorted_set.of` instead"
-/// @coverage.skip
+#coverage.skip
 pub fn T::of[A : Compare](array : FixedArray[A]) -> T[A] {
   of(array)
 }

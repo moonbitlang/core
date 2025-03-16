@@ -3,11 +3,81 @@ package moonbitlang/core/string
 // Values
 fn concat(Array[String], separator~ : String = ..) -> String
 
+fn contains(String, String) -> Bool
+
+fn contains_char(String, Char) -> Bool
+
 fn default() -> String
+
+fn ends_with(String, String) -> Bool
+
+fn fold[A](String, init~ : A, (A, Char) -> A) -> A
 
 fn from_array(Array[Char]) -> String
 
 fn from_iter(Iter[Char]) -> String
+
+fn index_at(String, Int, start~ : StringIndex = ..) -> StringIndex?
+
+fn index_at_rev(String, Int, end? : StringIndex) -> StringIndex?
+
+fn index_of(String, String, from~ : Int = ..) -> Int
+
+fn is_blank(String) -> Bool
+
+fn is_empty(String) -> Bool
+
+fn iter(String) -> Iter[Char]
+
+fn iter2(String) -> Iter2[Int, Char]
+
+fn last_index_of(String, String, from~ : Int = ..) -> Int
+
+fn length_eq(StringView, Int) -> Bool
+
+fn length_ge(StringView, Int) -> Bool
+
+fn pad_end(String, Int, Char) -> String
+
+fn pad_start(String, Int, Char) -> String
+
+fn repeat(String, Int) -> String
+
+fn replace(String, old~ : String, new~ : String) -> String
+
+fn replace_all(String, old~ : String, new~ : String) -> String
+
+fn rev(String) -> String
+
+fn rev_fold[A](String, init~ : A, (A, Char) -> A) -> A
+
+fn rev_get(StringView, Int) -> Char
+
+fn rev_iter(String) -> Iter[Char]
+
+fn split(String, String) -> Iter[String]
+
+fn starts_with(String, String) -> Bool
+
+fn to_array(String) -> Array[Char]
+
+fn to_bytes(String) -> Bytes
+
+fn to_lower(String) -> String
+
+fn to_upper(String) -> String
+
+fn trim(String, String) -> String
+
+fn trim_end(String, String) -> String
+
+fn trim_left(String, String) -> String //deprecated
+
+fn trim_right(String, String) -> String //deprecated
+
+fn trim_space(String) -> String
+
+fn trim_start(String, String) -> String
 
 // Types and methods
 type StringIndex
