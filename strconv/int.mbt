@@ -96,11 +96,9 @@ pub fn parse_int64(str : String, base~ : Int = 0) -> Int64!StrConvError {
 
   // calculate overflow threshold
   let overflow_threshold = overflow_threshold(num_base, neg)
-  let has_digit = match rest {
-    ['0'..='9' | 'a'..='z' | 'A'..='Z', ..]
-    | ['_', '0'..='9' | 'a'..='z' | 'A'..='Z', ..] => true
-    _ => false
-  }
+  let has_digit = rest
+    is (['0'..='9' | 'a'..='z' | 'A'..='Z', ..]
+    | ['_', '0'..='9' | 'a'..='z' | 'A'..='Z', ..])
   guard has_digit else { syntax_err!() }
   // convert
   loop rest, 0L, allow_underscore {

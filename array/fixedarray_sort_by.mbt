@@ -162,19 +162,17 @@ fn fixed_quick_sort_by[T](
     if not(balanced) {
       limit -= 1
     }
-    match pred {
-      Some(pred) =>
-        // pred is less than all elements in arr
-        // If pivot equals to pred, then we can skip all elements that are equal to pred.
-        if cmp(pred, arr[pivot]) == 0 {
-          let mut i = pivot
-          while i < len && cmp(pred, arr[i]) == 0 {
-            i = i + 1
-          }
-          arr = arr.slice(i, len)
-          continue
+    if pred is Some(pred) {
+      // pred is less than all elements in arr
+      // If pivot equals to pred, then we can skip all elements that are equal to pred.
+      if cmp(pred, arr[pivot]) == 0 {
+        let mut i = pivot
+        while i < len && cmp(pred, arr[i]) == 0 {
+          i = i + 1
         }
-      _ => ()
+        arr = arr.slice(i, len)
+        continue
+      }
     }
     let left = arr.slice(0, pivot)
     let right = arr.slice(pivot + 1, len)

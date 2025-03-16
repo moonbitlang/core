@@ -186,10 +186,7 @@ pub fn peek[A](self : T[A]) -> A? {
 /// assert_eq!(queue.push(1).is_empty(), false)
 /// ```
 pub fn is_empty[A](self : T[A]) -> Bool {
-  match self.body {
-    Empty => true
-    _ => false
-  }
+  self.body is Empty
 }
 
 ///|

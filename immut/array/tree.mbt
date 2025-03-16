@@ -66,10 +66,7 @@ fn new_branch_left[T](leaf : FixedArray[T], shift : Int) -> Tree[T] {
 
 ///|
 fn Tree::is_empty_tree[T](self : Tree[T]) -> Bool {
-  match self {
-    Tree::Empty => true
-    _ => false
-  }
+  self is Empty
 }
 
 //-----------------------------------------------------------------------------

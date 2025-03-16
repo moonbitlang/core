@@ -53,18 +53,15 @@ pub impl FromJson for Int with from_json(json, path) {
 
 ///|
 pub impl FromJson for Int64 with from_json(json, path) {
-  match json {
-    String(str) =>
-      try {
-        @strconv.parse_int64!(str)
-      } catch {
-        error =>
-          decode_error!(path, "Int64::from_json: parsing failure \{error}")
-      }
-    _ =>
-      decode_error!(
-        path, "Int64::from_json: expected number in string representation",
-      )
+  guard json is String(str) else {
+    decode_error!(
+      path, "Int64::from_json: expected number in string representation",
+    )
+  }
+  try {
+    @strconv.parse_int64!(str)
+  } catch {
+    error => decode_error!(path, "Int64::from_json: parsing failure \{error}")
   }
 }
 
@@ -78,18 +75,15 @@ pub impl FromJson for UInt with from_json(json, path) {
 
 ///|
 pub impl FromJson for UInt64 with from_json(json, path) {
-  match json {
-    String(str) =>
-      try {
-        @strconv.parse_uint64!(str)
-      } catch {
-        error =>
-          decode_error!(path, "UInt64::from_json: parsing failure \{error}")
-      }
-    _ =>
-      decode_error!(
-        path, "UInt64::from_json: expected number in string representation",
-      )
+  guard json is String(str) else {
+    decode_error!(
+      path, "UInt64::from_json: expected number in string representation",
+    )
+  }
+  try {
+    @strconv.parse_uint64!(str)
+  } catch {
+    error => decode_error!(path, "UInt64::from_json: parsing failure \{error}")
   }
 }
 
@@ -111,25 +105,23 @@ pub impl FromJson for String with from_json(json, path) {
 
 ///|
 pub impl FromJson for Char with from_json(json, path) {
-  match json {
-    String(a) => {
-      let len = a.length()
-      if len == 1 {
-        a.unsafe_charcode_at(0) |> Char::from_int
-      } else if len == 2 {
-        let c1 = a.unsafe_charcode_at(0)
-        let c2 = a.unsafe_charcode_at(1)
-        if c1 >= 0xD800 && c1 <= 0xDBFF && c2 >= 0xDC00 && c2 <= 0xDFFF {
-          let c3 = (c1 << 10) + c2 - 0x35fdc00
-          Char::from_int(c3)
-        } else {
-          decode_error!(path, "Char::from_json: invalid surrogate pair")
-        }
-      } else {
-        decode_error!(path, "Char::from_json: expected single character")
-      }
+  guard json is String(a) else {
+    decode_error!(path, "Char::from_json: expected string")
+  }
+  let len = a.length()
+  if len == 1 {
+    a.unsafe_charcode_at(0) |> Char::from_int
+  } else if len == 2 {
+    let c1 = a.unsafe_charcode_at(0)
+    let c2 = a.unsafe_charcode_at(1)
+    if c1 >= 0xD800 && c1 <= 0xDBFF && c2 >= 0xDC00 && c2 <= 0xDFFF {
+      let c3 = (c1 << 10) + c2 - 0x35fdc00
+      Char::from_int(c3)
+    } else {
+      decode_error!(path, "Char::from_json: invalid surrogate pair")
     }
-    _ => decode_error!(path, "Char::from_json: expected string")
+  } else {
+    decode_error!(path, "Char::from_json: expected single character")
   }
 }
 
@@ -218,22 +210,19 @@ pub impl[Ok : FromJson, Err : FromJson] FromJson for Result[Ok, Err] with from_j
   json,
   path
 ) {
-  match json {
-    Object(obj) => {
-      if obj.size() != 1 {
-        decode_error!(path, "Result::from_json: expected object with one field")
-      }
-      match obj {
-        { "Ok": ok, .. } => Ok(FromJson::from_json!(ok, path.add_key("Ok")))
-        { "Err": err, .. } =>
-          Err(FromJson::from_json!(err, path.add_key("Err")))
-        _ =>
-          decode_error!(
-            path, "Result::from_json: expected object with Ok or Err field",
-          )
-      }
-    }
-    _ => decode_error!(path, "Result::from_json: expected object")
+  guard json is Object(obj) else {
+    decode_error!(path, "Result::from_json: expected object")
+  }
+  if obj.size() != 1 {
+    decode_error!(path, "Result::from_json: expected object with one field")
+  }
+  match obj {
+    { "Ok": ok, .. } => Ok(FromJson::from_json!(ok, path.add_key("Ok")))
+    { "Err": err, .. } => Err(FromJson::from_json!(err, path.add_key("Err")))
+    _ =>
+      decode_error!(
+        path, "Result::from_json: expected object with Ok or Err field",
+      )
   }
 }
 

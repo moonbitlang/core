@@ -213,12 +213,9 @@ pub fn T::from_iter[K : Hash + Eq, V](iter : Iter[(K, V)]) -> T[K, V] {
 pub fn to_array[K, V](self : T[K, V]) -> Array[(K, V)] {
   let mut i = 0
   let res = while i < self.capacity {
-    match self.entries[i] {
-      Some({ key, value, .. }) => {
-        i += 1
-        break Array::make(self.size, (key, value))
-      }
-      _ => ()
+    if self.entries[i] is Some({ key, value, .. }) {
+      i += 1
+      break Array::make(self.size, (key, value))
     }
     i += 1
   } else {
@@ -227,12 +224,9 @@ pub fn to_array[K, V](self : T[K, V]) -> Array[(K, V)] {
   if not(res.is_empty()) {
     let mut res_idx = 1
     while res_idx < res.length() && i < self.capacity {
-      match self.entries[i] {
-        Some({ key, value, .. }) => {
-          res[res_idx] = (key, value)
-          res_idx += 1
-        }
-        _ => ()
+      if self.entries[i] is Some({ key, value, .. }) {
+        res[res_idx] = (key, value)
+        res_idx += 1
       }
       i += 1
     }

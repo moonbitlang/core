@@ -40,17 +40,13 @@ pub fn to_json[A : ToJson](self : T[A]) -> Json {
 
 ///|
 pub impl[A : @json.FromJson] @json.FromJson for T[A] with from_json(json, path) {
-  match json {
-    Array(arr) =>
-      for i = arr.length() - 1, list = Nil; i >= 0; {
-        continue i - 1, list.add(A::from_json!(arr[i], path))
-      } else {
-        list
-      }
-    _ =>
-      raise @json.JsonDecodeError(
-        (path, "@immut/list.from_json: expected array"),
-      )
+  guard json is Array(arr) else {
+    raise @json.JsonDecodeError((path, "@immut/list.from_json: expected array"))
+  }
+  for i = arr.length() - 1, list = Nil; i >= 0; {
+    continue i - 1, list.add(A::from_json!(arr[i], path))
+  } else {
+    list
   }
 }
 
