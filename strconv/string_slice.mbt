@@ -59,7 +59,7 @@ fn step(self : StringSlice, step : Int) -> StringSlice? {
   let mut step = step
   let mut start = c.start
   while start < c.end && step > 0 {
-    if Char::from_int(c.string.unsafe_charcode_at(start)) != '_' {
+    if c.string.unsafe_charcode_at(start) != '_' {
       step -= 1
     }
     start += 1

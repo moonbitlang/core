@@ -1778,7 +1778,6 @@ pub fn String::charcode_length(self : String) -> Int = "%string_length"
 /// ```
 ///
 /// @alert unsafe "Panic if index is out of bounds"
-#deprecated("use `charcode_at` instead")
 pub fn String::op_get(self : String, idx : Int) -> Char = "%string_get"
 
 ///|
