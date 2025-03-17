@@ -757,6 +757,50 @@ pub(open) trait Logger {
 }
 impl Logger::write_sub_string
 
+pub(open) trait OperatorAdd {
+  op_add(Self, Self) -> Self
+}
+
+pub(open) trait OperatorBitAnd {
+  land(Self, Self) -> Self
+}
+
+pub(open) trait OperatorBitOr {
+  lor(Self, Self) -> Self
+}
+
+pub(open) trait OperatorBitXOr {
+  lxor(Self, Self) -> Self
+}
+
+pub(open) trait OperatorDiv {
+  op_div(Self, Self) -> Self
+}
+
+pub(open) trait OperatorMod {
+  op_mod(Self, Self) -> Self
+}
+
+pub(open) trait OperatorMul {
+  op_mul(Self, Self) -> Self
+}
+
+pub(open) trait OperatorNeg {
+  op_neg(Self) -> Self
+}
+
+pub(open) trait OperatorShl {
+  op_shl(Self, Int) -> Self
+}
+
+pub(open) trait OperatorShr {
+  op_shr(Self, Int) -> Self
+}
+
+pub(open) trait OperatorSub {
+  op_sub(Self, Self) -> Self
+}
+
 pub(open) trait Show {
   output(Self, &Logger) -> Unit
   to_string(Self) -> String
