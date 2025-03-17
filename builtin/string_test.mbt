@@ -51,7 +51,7 @@ test "substring" {
 ///|
 test "panic codepoint_at1" {
   let str = "Hello🤣🤣🤣"
-  let _ = str.codepoint_at(8)
+  let _ = str.codepoint_at(11)
 
 }
 
@@ -84,6 +84,7 @@ test "codepoint_at regular character at end of string" {
 test "codepoint_at emoji" {
   let s = "👋"
   inspect!(s.codepoint_at(0), content="👋")
+  inspect!(s.codepoint_at(1).to_int(), content="56395")
 }
 
 ///|

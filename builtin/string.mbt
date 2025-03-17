@@ -79,10 +79,12 @@ fn code_point_of_surrogate_pair(leading : Int, trailing : Int) -> Char {
 pub fn String::charcode_at(self : String, index : Int) -> Int = "%string_get"
 
 ///|
-/// Returns the Unicode code point at the given index.
+/// Returns the Unicode code point at the given index. Note that the index is
+/// still based on UTF-16 code units, not Unicode code points.
 ///
-/// This method counts Unicode code points (characters) rather than UTF-16 code units.
-/// It properly handles surrogate pairs to return the correct Unicode character.
+/// If the element at `index` is a UTF-16 leading surrogate, returns the code
+/// point of the surrogate pair. If the element at index is a UTF-16 trailing
+/// surrogate, returns only the trailing surrogate code unit.
 ///
 /// # Examples
 ///
@@ -90,6 +92,7 @@ pub fn String::charcode_at(self : String, index : Int) -> Int = "%string_get"
 /// let s = "Hello🤣";
 /// inspect!(s.codepoint_at(0), content="H");
 /// inspect!(s.codepoint_at(5), content="🤣"); // Returns full emoji character
+/// inspect!(s.codepoint_at(6).to_int(), content="56611"); // Returns trailing surrogate
 /// ```
 ///
 /// # Panics
@@ -100,33 +103,20 @@ pub fn String::charcode_at(self : String, index : Int) -> Int = "%string_get"
 pub fn String::codepoint_at(self : String, index : Int) -> Char {
   let charcode_len = self.length()
   guard index >= 0 && index < charcode_len else { abort("index out of bounds") }
-  for char_count = 0, utf16_offset = 0
-      char_count < charcode_len && utf16_offset < index
-      char_count = char_count + 1, utf16_offset = utf16_offset + 1 {
-    let c1 = self.unsafe_charcode_at(char_count)
-    if is_leading_surrogate(c1) && char_count + 1 < charcode_len {
-      let c2 = self.unsafe_charcode_at(char_count + 1)
-      if is_trailing_surrogate(c2) {
-        continue char_count + 2, utf16_offset + 1
-      } else {
-        abort("invalid surrogate pair")
-      }
-    }
-  } else {
-    guard utf16_offset == index && char_count < charcode_len else {
-      abort("index out of bounds")
-    }
-    let c1 = self.unsafe_charcode_at(char_count)
-    if is_leading_surrogate(c1) && char_count + 1 < charcode_len {
-      let c2 = self.unsafe_charcode_at(char_count + 1)
+  let c1 = self.unsafe_charcode_at(index)
+  if is_leading_surrogate(c1) {
+    if index + 1 < charcode_len {
+      let c2 = self.unsafe_charcode_at(index + 1)
       if is_trailing_surrogate(c2) {
         code_point_of_surrogate_pair(c1, c2)
       } else {
         abort("invalid surrogate pair")
       }
     } else {
-      Char::from_int(c1)
+      abort("invalid surrogate pair")
     }
+  } else {
+    Char::from_int(c1)
   }
 }
 
