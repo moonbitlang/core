@@ -414,7 +414,7 @@ fn grow[K : Eq, V](self : T[K, V]) -> Unit {
   self.entries = FixedArray::make(new_capacity, None)
   self.capacity = new_capacity
   self.size = 0
-  for i = 0; i < old_entries.length(); i = i + 1 {
+  for i in 0..<old_entries.length() {
     match old_entries[i] {
       Some({ key, value, hash, .. }) => self.set_with_hash(key, value, hash)
       None => ()
@@ -573,7 +573,7 @@ test "clear" {
   m.clear()
   assert_eq!(m.size(), 0)
   assert_eq!(m.capacity(), 8)
-  for i = 0; i < m.capacity(); i = i + 1 {
+  for i in 0..<m.capacity() {
     @test.same_object!(m.entries[i], None)
   }
 }

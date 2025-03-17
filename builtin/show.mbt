@@ -102,7 +102,7 @@ pub impl Show for String with output(self, logger) {
     }
   }
 
-  for i = 0; i < self.length(); i = i + 1 {
+  for i in 0..<self.length() {
     let c = self[i]
     match c {
       '"' | '\\' => {

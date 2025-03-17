@@ -64,7 +64,7 @@ fn ParseContext::lex_string(ctx : ParseContext) -> String!ParseError {
 ///|
 fn ParseContext::lex_hex_digits(ctx : ParseContext, n : Int) -> Int!ParseError {
   let mut r = 0
-  for i = 0; i < n; i = i + 1 {
+  for i in 0..<n {
     match ctx.read_char() {
       Some(c) =>
         if c >= 'A' {

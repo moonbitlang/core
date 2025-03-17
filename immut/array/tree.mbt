@@ -317,13 +317,13 @@ fn Tree::eachi[A](
   match self {
     Empty => ()
     Leaf(l) =>
-      for i = 0; i < l.length(); i = i + 1 {
+      for i in 0..<l.length() {
         f(start + i, l[i])
       }
     Node(ns, None) => {
       let child_shift = shift - num_bits
       let mut start = start
-      for i = 0; i < ns.length(); i = i + 1 {
+      for i in 0..<ns.length() {
         ns[i].eachi(f, child_shift, start)
         start += 1 << shift
       }
@@ -331,7 +331,7 @@ fn Tree::eachi[A](
     Node(ns, Some(sizes)) => {
       let child_shift = shift - num_bits
       let mut start = start
-      for i = 0; i < ns.length(); i = i + 1 {
+      for i in 0..<ns.length() {
         ns[i].eachi(f, child_shift, start)
         start += sizes[i]
       }
@@ -613,7 +613,7 @@ fn redis[A](
 
     let mut old_leaf_elems = FixedArray::default()
     let mut old_leaf_len = 0
-    for i = 0; i < node_nums; i = i + 1 {
+    for i in 0..<node_nums {
 
       // old_t[j] is the next to be redistributed
       // old_offset is the index of the next node to be redistributed in old_t[j]
@@ -655,7 +655,7 @@ fn redis[A](
 
     let mut old_node_chldrn = FixedArray::default()
     let mut old_node_len = 0
-    for i = 0; i < node_nums; i = i + 1 {
+    for i in 0..<node_nums {
       old_node_chldrn = old_t[j].node_children()
       old_node_len = old_node_chldrn.length()
       if old_offset == 0 && old_node_len == node_counts[i] {
@@ -704,7 +704,7 @@ fn compute_sizes[A](
   let mut sum = 0
   let mut flag = true
   let full_subtree_size = branching_factor << shift
-  for i = 0; i < len; i = i + 1 {
+  for i in 0..<len {
     let sz = children[i].size(shift)
     flag = flag && sz == full_subtree_size
     sum += sz
@@ -734,7 +734,7 @@ impl[A : Show] Show for Tree[A] with output(self, logger : &Logger) {
       Empty => indent_str("Empty", ident)
       Leaf(l) => {
         let mut s = "Leaf("
-        for i = 0; i < l.length(); i = i + 1 {
+        for i in 0..<l.length() {
           s += l[i].to_string()
           if i != l.length() - 1 {
             s += ", "
@@ -745,7 +745,7 @@ impl[A : Show] Show for Tree[A] with output(self, logger : &Logger) {
       }
       Node(children, _sizes) => {
         let mut s = indent_str("Node(", ident) + "\n"
-        for i = 0; i < children.length(); i = i + 1 {
+        for i in 0..<children.length() {
           s += rec(children[i], ident + 2)
         }
         s + indent_str(")", ident) + "\n"

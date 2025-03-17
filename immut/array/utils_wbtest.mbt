@@ -36,7 +36,7 @@ fn random_test_gen(rng : Random, times : Int, max_lvl : Int) -> Array[Op] {
   // Start constructing the array
   let ret = []
   let mut cur_len = 0
-  for i = 0; i < times; i = i + 1 {
+  for i in 0..<times {
     let op = rng.int(limit=op_count)
     match op {
       0 => {
@@ -90,7 +90,7 @@ fn execute_array_test(rs : Array[Op]) -> Unit! {
       Concat(v) => {
         // concat
         let len = v.length()
-        for i = 0; i < len; i = i + 1 {
+        for i in 0..<len {
           a.push(v[i])
         }
         t = t.concat(from_array(v))
@@ -110,7 +110,7 @@ fn execute_array_test(rs : Array[Op]) -> Unit! {
 /// Compute the power of the branching factor.
 fn branching_factor_power(a : Int) -> Int {
   let mut ret = 1
-  for i = 0; i < a; i = i + 1 {
+  for i in 0..<a {
     ret *= branching_factor
   }
   ret
@@ -123,7 +123,7 @@ fn branching_factor_power(a : Int) -> Int {
 fn check_array_eq(a : Array[Int], t : T[Int]) -> Unit! {
   assert_eq!(a.length(), t.size)
   let len = t.size
-  for i = 0; i < len; i = i + 1 {
+  for i in 0..<len {
     assert_eq!(t[i], a[i])
   }
 }
@@ -135,7 +135,7 @@ fn check_array_eq(a : Array[Int], t : T[Int]) -> Unit! {
 fn check_fixedarray_eq(a : FixedArray[Int], t : T[Int]) -> Unit! {
   assert_eq!(a.length(), t.size)
   let len = t.size
-  for i = 0; i < len; i = i + 1 {
+  for i in 0..<len {
     assert_eq!(t[i], a[i])
   }
 }

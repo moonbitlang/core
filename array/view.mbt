@@ -44,7 +44,7 @@ pub typealias View[T] = ArrayView[T]
 /// ```
 pub fn View::rev_inplace[T](self : View[T]) -> Unit {
   let mid_len = self.length() / 2
-  for i = 0; i < mid_len; i = i + 1 {
+  for i in 0..<mid_len {
     let j = self.length() - i - 1
     self.swap(i, j)
   }

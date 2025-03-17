@@ -200,7 +200,7 @@ pub fn of(arr : FixedArray[Byte]) -> Bytes {
 /// ```
 pub fn to_array(self : Bytes) -> Array[Byte] {
   let rv = Array::make(self.length(), b'0')
-  for i = 0; i < self.length(); i = i + 1 {
+  for i in 0..<self.length() {
     rv[i] = self[i]
   }
   rv
@@ -278,10 +278,10 @@ pub fn Bytes::op_add(self : Bytes, other : Bytes) -> Bytes {
     self.length() + other.length(),
     0,
   )
-  for i = 0; i < self.length(); i = i + 1 {
+  for i in 0..<self.length() {
     rv[i] = self[i]
   }
-  for i = 0; i < other.length(); i = i + 1 {
+  for i in 0..<other.length() {
     rv[self.length() + i] = other[i]
   }
   unsafe_to_bytes(rv)

@@ -124,7 +124,7 @@ fn quick_sort_by[T](
 fn try_bubble_sort_by[T](arr : ArrayView[T], cmp : (T, T) -> Int) -> Bool {
   let max_tries = 8
   let mut tries = 0
-  for i = 1; i < arr.length(); i = i + 1 {
+  for i in 1..<arr.length() {
     let mut sorted = true
     for j = i; j > 0 && cmp(arr[j - 1], arr[j]) > 0; j = j - 1 {
       sorted = false
@@ -147,7 +147,7 @@ fn try_bubble_sort_by[T](arr : ArrayView[T], cmp : (T, T) -> Int) -> Bool {
 ///
 /// Returns whether the array is sorted.
 fn bubble_sort_by[T](arr : ArrayView[T], cmp : (T, T) -> Int) -> Unit {
-  for i = 1; i < arr.length(); i = i + 1 {
+  for i in 1..<arr.length() {
     for j = i; j > 0 && cmp(arr[j - 1], arr[j]) > 0; j = j - 1 {
       arr.swap(j, j - 1)
     }
@@ -164,7 +164,7 @@ fn partition_by[T](
   let pivot = arr[arr.length() - 1]
   let mut i = 0
   let mut partitioned = true
-  for j = 0; j < arr.length() - 1; j = j + 1 {
+  for j in 0..<(arr.length() - 1) {
     if cmp(arr[j], pivot) < 0 {
       if i != j {
         arr.swap(i, j)

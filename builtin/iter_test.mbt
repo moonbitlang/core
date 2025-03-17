@@ -459,7 +459,7 @@ test "eachi" {
 fn test_from_array[T](arr : Array[T]) -> Iter[T] {
   Iter::new(fn {
     yield_ =>
-      for i = 0; i < arr.length(); i = i + 1 {
+      for i in 0..<arr.length() {
         if yield_(arr[i]) == IterEnd {
           break IterEnd
         }

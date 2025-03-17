@@ -43,7 +43,7 @@ pub fn Bytes::makei(length : Int, value : (Int) -> Byte) -> Bytes {
     return []
   }
   let arr = FixedArray::make(length, value(0))
-  for i = 1; i < length; i = i + 1 {
+  for i in 1..<length {
     arr[i] = value(i)
   }
   FixedArray::unsafe_to_bytes(arr)
@@ -426,7 +426,7 @@ pub impl Eq for Bytes with op_equal(self : Bytes, other : Bytes) -> Bool {
     false
   } else {
     let len = self.length()
-    for i = 0; i < len; i = i + 1 {
+    for i in 0..<len {
       if self[i] != other[i] {
         break false
       }

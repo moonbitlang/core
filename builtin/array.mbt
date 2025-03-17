@@ -658,7 +658,7 @@ pub fn Array::is_sorted[T : Compare](self : Array[T]) -> Bool {
 /// }
 /// ```
 pub fn Array::rev_inplace[T](self : Array[T]) -> Unit {
-  for i = 0; i < self.length() / 2; i = i + 1 {
+  for i in 0..<(self.length() / 2) {
     let temp = self.unsafe_get(i)
     self.unsafe_set(i, self.unsafe_get(self.length() - i - 1))
     self.unsafe_set(self.length() - i - 1, temp)
@@ -686,7 +686,7 @@ pub fn Array::rev_inplace[T](self : Array[T]) -> Unit {
 /// ```
 pub fn Array::rev[T](self : Array[T]) -> Array[T] {
   let arr = Array::make_uninit(self.length())
-  for i = 0; i < self.length(); i = i + 1 {
+  for i in 0..<self.length() {
     arr.unsafe_set(i, self.unsafe_get(self.length() - i - 1))
   }
   arr
@@ -790,7 +790,7 @@ pub fn Array::starts_with[T : Eq](self : Array[T], prefix : Array[T]) -> Bool {
   if prefix.length() > self.length() {
     return false
   }
-  for i = 0; i < prefix.length(); i = i + 1 {
+  for i in 0..<prefix.length() {
     if self.unsafe_get(i) != prefix.unsafe_get(i) {
       break false
     }
@@ -829,7 +829,7 @@ pub fn Array::ends_with[T : Eq](self : Array[T], suffix : Array[T]) -> Bool {
   if suffix.length() > self.length() {
     return false
   }
-  for i = 0; i < suffix.length(); i = i + 1 {
+  for i in 0..<suffix.length() {
     if self.unsafe_get(self.length() - suffix.length() + i) !=
       suffix.unsafe_get(i) {
       break false
@@ -1278,7 +1278,7 @@ pub fn Array::flatten[T](self : Array[Array[T]]) -> Array[T] {
 /// ```
 pub fn Array::repeat[T](self : Array[T], times : Int) -> Array[T] {
   let v = Array::new(capacity=self.length() * times)
-  for i = 0; i < times; i = i + 1 {
+  for i in 0..<times {
     v.append(self)
   }
   v
@@ -1473,7 +1473,7 @@ pub fn Array::dedup[T : Eq](self : Array[T]) -> Unit {
     return
   }
   let mut w = 1
-  for i = 1; i < self.length(); i = i + 1 {
+  for i in 1..<self.length() {
     if self[i] != self[w - 1] {
       self[w] = self[i]
       w = w + 1
@@ -1509,13 +1509,13 @@ pub fn Array::dedup[T : Eq](self : Array[T]) -> Unit {
 pub fn Array::extract_if[T](self : Array[T], f : (T) -> Bool) -> Array[T] {
   let v = []
   let indices = []
-  for i = 0; i < self.length(); i = i + 1 {
+  for i in 0..<self.length() {
     if f(self[i]) {
       v.push(self[i])
       indices.push(i)
     }
   }
-  for i = 0; i < indices.length(); i = i + 1 {
+  for i in 0..<indices.length() {
     self.remove(indices[i] - i) |> ignore
   }
   v

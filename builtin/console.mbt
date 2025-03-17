@@ -112,7 +112,7 @@ fn base64_encode(data : FixedArray[Byte]) -> String {
 ///|
 fn base64_encode_string_codepoint(s : String) -> String {
   let data : FixedArray[Byte] = FixedArray::make(s.codepoint_length() * 4, 0)
-  for i = 0; i < s.codepoint_length(); i = i + 1 {
+  for i in 0..<s.codepoint_length() {
     let c = s.codepoint_at(i).to_int()
     data[i * 4] = (c & 0xFF).to_byte()
     data[i * 4 + 1] = ((c >> 8) & 0xFF).to_byte()

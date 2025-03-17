@@ -18,7 +18,7 @@ test "Set" {
     100, map => map
     i, map => continue i + 1, map.add(i)
   }
-  for i = 0; i < 100; i = i + 1 {
+  for i in 0..<100 {
     assert_eq!((i, map.contains(i)), (i, true))
   }
   inspect!((100, map.contains(100)), content="(100, false)")
@@ -41,7 +41,7 @@ test "@hashset.remove" {
     100, map => map
     i, map => continue i + 1, map.add(i)
   }
-  for i = 0; i < 100; i = i + 1 {
+  for i in 0..<100 {
     assert_eq!((i, map.contains(i)), (i, true))
   }
   let map = loop 0, map {

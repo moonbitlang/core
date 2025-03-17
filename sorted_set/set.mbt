@@ -30,7 +30,7 @@ pub fn singleton[V : Compare](value : V) -> T[V] {
 /// Initialize an set from an array.
 pub fn from_array[V : Compare](array : Array[V]) -> T[V] {
   let set = new()
-  for i = 0; i < array.length(); i = i + 1 {
+  for i in 0..<array.length() {
     set.add(array[i])
   }
   set
@@ -39,7 +39,7 @@ pub fn from_array[V : Compare](array : Array[V]) -> T[V] {
 ///| @alert deprecated "Use @sorted_set.from_array instead"
 pub fn of[V : Compare](array : Array[V]) -> T[V] {
   let set = new()
-  for i = 0; i < array.length(); i = i + 1 {
+  for i in 0..<array.length() {
     set.add(array[i])
   }
   set
