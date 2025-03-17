@@ -329,7 +329,7 @@ pub fn View::op_get(self : View, index : Int) -> Char {
     char_count = char_count + 1
   }
   guard char_count == index && utf16_offset < self.end else {
-    abort("Index out of bounds: cannot access index \{index}")
+    abort("Index out of bounds")
   }
   let c1 = self.str.unsafe_charcode_at(utf16_offset)
   if is_leading_surrogate(c1) {
@@ -380,7 +380,7 @@ pub fn rev_get(self : View, index : Int) -> Char {
     char_count = char_count + 1
   }
   guard char_count == index && utf16_offset >= self.start else {
-    abort("Index out of bounds: cannot access index \{index} in reverse")
+    abort("Index out of bounds")
   }
   let c1 = self.str.unsafe_charcode_at(utf16_offset)
   if is_trailing_surrogate(c1) {
