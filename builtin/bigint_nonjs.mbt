@@ -1042,7 +1042,7 @@ pub fn BigInt::from_string(input : String) -> BigInt {
   if len == 0 {
     abort("empty string")
   }
-  let sign : Sign = if Char::from_int(input.unsafe_charcode_at(0)) == '-' {
+  let sign : Sign = if input.unsafe_charcode_at(0) == '-' {
     Negative
   } else {
     Positive
@@ -1058,7 +1058,7 @@ pub fn BigInt::from_string(input : String) -> BigInt {
       Negative => 1
       Positive => 0
     })..<input.length() {
-    let x = input.unsafe_charcode_at(i) - 48 // ASCII value of '0'
+    let x = input.unsafe_charcode_at(i) - '0'
     if x < 0 || x > 9 {
       abort("invalid character")
     }
@@ -1130,7 +1130,7 @@ pub fn BigInt::from_hex(input : String) -> BigInt {
   if len == 0 {
     abort("empty string")
   }
-  let (sign, number_len) = if Char::from_int(input.unsafe_charcode_at(0)) == '-' {
+  let (sign, number_len) = if input.unsafe_charcode_at(0) == '-' {
     (Negative, len - 1)
   } else {
     (Positive, len)

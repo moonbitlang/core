@@ -111,7 +111,7 @@ fn parse_decimal_from_view(str : @string.View) -> Decimal!StrConvError {
         continue rest
       }
       if d.digits_num < d.digits.length() {
-        d.digits[d.digits_num] = (digit.to_int() - '0'.to_int()).to_byte()
+        d.digits[d.digits_num] = (digit - '0').to_byte()
         d.digits_num += 1
       } else if digit != '0' {
         d.truncated = true
@@ -141,7 +141,7 @@ fn parse_decimal_from_view(str : @string.View) -> Decimal!StrConvError {
       let rest = loop rest {
         ['_', .. rest] => continue rest
         ['0'..='9' as digit, .. rest] => {
-          exp = exp * 10 + (digit.to_int() - '0'.to_int())
+          exp = exp * 10 + (digit - '0')
           continue rest
         }
         rest => rest
@@ -500,7 +500,7 @@ fn new_digits(self : Decimal, s : Int) -> Int {
       less = true
       break
     }
-    let d = cheat_num.unsafe_charcode_at(i) - '0'.to_int()
+    let d = cheat_num.unsafe_charcode_at(i) - '0'
     if self.digits[i].to_int() != d {
       less = self.digits[i].to_int() < d
       break
@@ -564,7 +564,7 @@ fn left_shift(self : Decimal, s : Int) -> Unit {
 ///|
 /// Trim trailing zeros.
 fn trim(self : Decimal) -> Unit {
-  while self.digits_num > 0 && self.digits[self.digits_num - 1].to_int() == 0 {
+  while self.digits_num > 0 && self.digits[self.digits_num - 1] == 0 {
     self.digits_num -= 1
   }
   if self.digits_num == 0 {

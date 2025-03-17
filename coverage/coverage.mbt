@@ -110,7 +110,7 @@ pub fn end() -> Unit {
     let str = sbuf._[i]
     let mut start = 0
     for j in 0..<str.length() {
-      if Char::from_int(str.unsafe_charcode_at(j)) == '\n' {
+      if str.unsafe_charcode_at(j) == '\n' {
         line_buf.write_substring(str, start, j)
         println(line_buf.to_string())
         line_buf.reset()

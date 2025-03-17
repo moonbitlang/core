@@ -103,11 +103,10 @@ pub impl Show for String with output(self, logger) {
   }
 
   for i in 0..<self.length() {
-    let c = self.unsafe_charcode_at(i) |> Char::from_int
-    match c {
-      '"' | '\\' => {
+    match self.unsafe_charcode_at(i) {
+      '"' | '\\' as c => {
         flush_segment(i)
-        logger..write_char('\\').write_char(c)
+        logger..write_char('\\').write_char(Char::from_int(c))
       }
       '\n' => {
         flush_segment(i)
@@ -125,8 +124,7 @@ pub impl Show for String with output(self, logger) {
         flush_segment(i)
         logger.write_string("\\t")
       }
-      _ => {
-        let code = c.to_int()
+      code =>
         if code < 0x20 {
           flush_segment(i)
           logger
@@ -135,7 +133,6 @@ pub impl Show for String with output(self, logger) {
           ..write_char(to_hex_digit(code / 16))
           .write_char(to_hex_digit(code % 16))
         }
-      }
     }
   }
   flush_segment(self.length())
