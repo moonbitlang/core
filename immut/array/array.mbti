@@ -5,6 +5,7 @@ alias @moonbitlang/core/quickcheck as @quickcheck
 // Values
 fn concat[A](T[A], T[A]) -> T[A]
 
+#deprecated
 fn copy[A](T[A]) -> T[A]
 
 fn each[A](T[A], (A) -> Unit) -> Unit
@@ -13,8 +14,10 @@ fn eachi[A](T[A], (Int, A) -> Unit) -> Unit
 
 fn fold[A, B](T[A], init~ : B, (B, A) -> B) -> B
 
+#deprecated
 fn fold_left[A](T[A], (A, A) -> A, init~ : A) -> A
 
+#deprecated
 fn fold_right[A](T[A], (A, A) -> A, init~ : A) -> A
 
 fn from_array[A](Array[A]) -> T[A]
@@ -53,21 +56,30 @@ fn to_array[A](T[A]) -> Array[A]
 type T[A]
 impl T {
   concat[A](Self[A], Self[A]) -> Self[A]
+  #deprecated
   copy[A](Self[A]) -> Self[A]
   each[A](Self[A], (A) -> Unit) -> Unit
   eachi[A](Self[A], (Int, A) -> Unit) -> Unit
   fold[A, B](Self[A], init~ : B, (B, A) -> B) -> B
+  #deprecated
   fold_left[A](Self[A], (A, A) -> A, init~ : A) -> A
+  #deprecated
   fold_right[A](Self[A], (A, A) -> A, init~ : A) -> A
+  #deprecated
   from_array[A](Array[A]) -> Self[A]
+  #deprecated
   from_iter[A](Iter[A]) -> Self[A]
   is_empty[A](Self[A]) -> Bool
   iter[A](Self[A]) -> Iter[A]
   length[A](Self[A]) -> Int
+  #deprecated
   make[A](Int, A) -> Self[A]
+  #deprecated
   makei[A](Int, (Int) -> A) -> Self[A]
   map[A, B](Self[A], (A) -> B) -> Self[B]
+  #deprecated
   new[A]() -> Self[A]
+  #deprecated
   of[A](FixedArray[A]) -> Self[A]
   op_add[A](Self[A], Self[A]) -> Self[A]
   op_get[A](Self[A], Int) -> A

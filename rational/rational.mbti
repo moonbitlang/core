@@ -42,9 +42,11 @@ impl T {
   ceil(Self) -> Int64
   floor(Self) -> Int64
   fract(Self) -> Self
+  #deprecated
   from_double(Double) -> Self!RationalError
   is_integer(Self) -> Bool
   neg(Self) -> Self
+  #deprecated
   new(Int64, Int64) -> Self?
   op_add(Self, Self) -> Self
   op_div(Self, Self) -> Self

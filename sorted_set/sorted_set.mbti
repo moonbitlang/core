@@ -9,8 +9,10 @@ fn contains[V : Compare](T[V], V) -> Bool
 
 fn copy[V](T[V]) -> T[V]
 
+#deprecated
 fn deep_clone[V](T[V]) -> T[V]
 
+#deprecated
 fn diff[V : Compare](T[V], T[V]) -> T[V]
 
 fn difference[V : Compare](T[V], T[V]) -> T[V]
@@ -25,6 +27,7 @@ fn from_array[V : Compare](Array[V]) -> T[V]
 
 fn from_iter[V : Compare](Iter[V]) -> T[V]
 
+#deprecated
 fn intersect[V : Compare](T[V], T[V]) -> T[V]
 
 fn intersection[V : Compare](T[V], T[V]) -> T[V]
@@ -57,13 +60,17 @@ impl T {
   add[V : Compare](Self[V], V) -> Unit
   contains[V : Compare](Self[V], V) -> Bool
   copy[V](Self[V]) -> Self[V]
+  #deprecated
   deep_clone[V](Self[V]) -> Self[V]
+  #deprecated
   diff[V : Compare](Self[V], Self[V]) -> Self[V]
   difference[V : Compare](Self[V], Self[V]) -> Self[V]
   disjoint[V : Compare](Self[V], Self[V]) -> Bool
   each[V](Self[V], (V) -> Unit) -> Unit
   eachi[V](Self[V], (Int, V) -> Unit) -> Unit
+  #deprecated
   from_iter[V : Compare](Iter[V]) -> Self[V]
+  #deprecated
   intersect[V : Compare](Self[V], Self[V]) -> Self[V]
   intersection[V : Compare](Self[V], Self[V]) -> Self[V]
   is_empty[V : Compare](Self[V]) -> Bool

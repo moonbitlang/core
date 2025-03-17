@@ -12,6 +12,7 @@ fn join(Array[String], String) -> String
 
 fn last[A](Array[A]) -> A?
 
+#deprecated
 fn map_option[A, B](Array[A], (A) -> B?) -> Array[B]
 
 fn push_iter[T](Array[T], Iter[T]) -> Unit
@@ -37,9 +38,13 @@ impl FixedArray {
   eachi[T](Self[T], (Int, T) -> Unit) -> Unit
   ends_with[T : Eq](Self[T], Self[T]) -> Bool
   fold[A, B](Self[A], init~ : B, (B, A) -> B) -> B
+  #deprecated
   fold_left[T, U](Self[T], (U, T) -> U, init~ : U) -> U
+  #deprecated
   fold_lefti[T, U](Self[T], (Int, U, T) -> U, init~ : U) -> U
+  #deprecated
   fold_right[T, U](Self[T], (U, T) -> U, init~ : U) -> U
+  #deprecated
   fold_righti[T, U](Self[T], (Int, U, T) -> U, init~ : U) -> U
   foldi[A, B](Self[A], init~ : B, (Int, B, A) -> B) -> B
   from_array[T](Array[T]) -> Self[T]
@@ -49,7 +54,9 @@ impl FixedArray {
   makei[T](Int, (Int) -> T) -> Self[T]
   map[T, U](Self[T], (T) -> U) -> Self[U]
   mapi[T, U](Self[T], (Int, T) -> U) -> Self[U]
+  #deprecated
   new[T](Int, () -> T) -> Self[T]
+  #deprecated
   new_with_index[T](Int, (Int) -> T) -> Self[T]
   op_add[T](Self[T], Self[T]) -> Self[T]
   rev[T](Self[T]) -> Self[T]
@@ -76,6 +83,7 @@ impl Array {
   join(Self[String], String) -> String
   last[A](Self[A]) -> A?
   makei[T](Int, (Int) -> T) -> Self[T]
+  #deprecated
   map_option[A, B](Self[A], (A) -> B?) -> Self[B]
   push_iter[T](Self[T], Iter[T]) -> Unit
   shuffle[T](Self[T], rand~ : (Int) -> Int) -> Self[T]
