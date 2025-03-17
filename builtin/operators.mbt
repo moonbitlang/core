@@ -14,66 +14,66 @@
 
 ///|
 /// types implementing this trait can use the `+` operator
-pub(open) trait OperatorAdd {
+pub(open) trait Add {
   op_add(Self, Self) -> Self
 }
 
 ///|
 /// types implementing this trait can use the `-` operator
-pub(open) trait OperatorSub {
+pub(open) trait Sub {
   op_sub(Self, Self) -> Self
 }
 
 ///|
 /// types implementing this trait can use the `*` operator
-pub(open) trait OperatorMul {
+pub(open) trait Mul {
   op_mul(Self, Self) -> Self
 }
 
 ///|
 /// types implementing this trait can use the `/` operator
-pub(open) trait OperatorDiv {
+pub(open) trait Div {
   op_div(Self, Self) -> Self
 }
 
 ///|
 /// types implementing this trait can use the unary `-` operator
-pub(open) trait OperatorNeg {
+pub(open) trait Neg {
   op_neg(Self) -> Self
 }
 
 ///|
 /// types implementing this trait can use the `%` operator
-pub(open) trait OperatorMod {
+pub(open) trait Mod {
   op_mod(Self, Self) -> Self
 }
 
 ///|
 /// types implementing this trait can use the `&` operator
-pub(open) trait OperatorBitAnd {
+pub(open) trait BitAnd {
   land(Self, Self) -> Self
 }
 
 ///|
 /// types implementing this trait can use the `|` operator
-pub(open) trait OperatorBitOr {
+pub(open) trait BitOr {
   lor(Self, Self) -> Self
 }
 
 ///|
 /// types implementing this trait can use the `^` operator
-pub(open) trait OperatorBitXOr {
+pub(open) trait BitXOr {
   lxor(Self, Self) -> Self
 }
 
 ///|
 /// types implementing this trait can use the `<<` operator
-pub(open) trait OperatorShl {
+pub(open) trait Shl {
   op_shl(Self, Int) -> Self
 }
 
 ///|
 /// types implementing this trait can use the `>>` operator
-pub(open) trait OperatorShr {
+pub(open) trait Shr {
   op_shr(Self, Int) -> Self
 }
