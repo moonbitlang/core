@@ -22,10 +22,15 @@ fn unsafe_make_string(length : Int, value : Char) -> String = "$moonbit.unsafe_m
 /// assert_eq!(String::make(5,'S'), "SSSSS")
 /// ```
 pub fn String::make(length : Int, value : Char) -> String {
-  if length < 0 {
-    abort("invalid length")
-  } else {
+  guard length >= 0 else { abort("invalid length") }
+  if value.to_int() <= 0xFFFF {
     unsafe_make_string(length, value)
+  } else {
+    let buf = StringBuilder::new(size_hint=2 * length)
+    for _ in 0..<length {
+      buf.write_char(value)
+    }
+    buf.to_string()
   }
 }
 
