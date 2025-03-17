@@ -11,6 +11,7 @@ fn assert_not_eq[T : Eq + Show](T, T, loc~ : SourceLoc = _) -> Unit!
 
 fn assert_true(Bool, loc~ : SourceLoc = _) -> Unit!
 
+#deprecated
 fn dump[T](T, name? : String, loc~ : SourceLoc = _) -> T
 
 fn fail[T](String, loc~ : SourceLoc = _) -> T!Failure
@@ -64,12 +65,17 @@ impl Array {
   ends_with[T : Eq](Self[T], Self[T]) -> Bool
   extract_if[T](Self[T], (T) -> Bool) -> Self[T]
   filter[T](Self[T], (T) -> Bool) -> Self[T]
+  #deprecated
   find_index[T](Self[T], (T) -> Bool) -> Int?
   flatten[T](Self[Self[T]]) -> Self[T]
   fold[A, B](Self[A], init~ : B, (B, A) -> B) -> B
+  #deprecated
   fold_left[T, U](Self[T], (U, T) -> U, init~ : U) -> U
+  #deprecated
   fold_lefti[T, U](Self[T], (Int, U, T) -> U, init~ : U) -> U
+  #deprecated
   fold_right[T, U](Self[T], (U, T) -> U, init~ : U) -> U
+  #deprecated
   fold_righti[T, U](Self[T], (Int, U, T) -> U, init~ : U) -> U
   foldi[A, B](Self[A], init~ : B, (Int, B, A) -> B) -> B
   from_fixed_array[T](FixedArray[T]) -> Self[T]
@@ -91,6 +97,7 @@ impl Array {
   op_get[T](Self[T], Int) -> T
   op_set[T](Self[T], Int, T) -> Unit
   pop[T](Self[T]) -> T?
+  #deprecated
   pop_exn[T](Self[T]) -> T
   push[T](Self[T], T) -> Unit
   remove[T](Self[T], Int) -> T
@@ -138,6 +145,7 @@ impl[X : ToJson] ToJson for ArrayView[X]
 
 type BigInt
 impl BigInt {
+  #deprecated
   asr(Self, Int) -> Self
   from_hex(String) -> Self
   from_int(Int) -> Self
@@ -149,6 +157,7 @@ impl BigInt {
   is_zero(Self) -> Bool
   land(Self, Self) -> Self
   lor(Self, Self) -> Self
+  #deprecated
   lsl(Self, Int) -> Self
   lxor(Self, Self) -> Self
   op_add(Self, Self) -> Self
@@ -160,7 +169,9 @@ impl BigInt {
   op_shr(Self, Int) -> Self
   op_sub(Self, Self) -> Self
   pow(Self, Self, modulus? : Self) -> Self
+  #deprecated
   shl(Self, Int) -> Self
+  #deprecated
   shr(Self, Int) -> Self
   to_hex(Self, uppercase~ : Bool = ..) -> String
   to_int(Self) -> Int
@@ -226,6 +237,7 @@ impl Iter {
   just_run[T](Self[T], (T) -> IterResult) -> Unit
   last[A](Self[A]) -> A?
   map[T, R](Self[T], (T) -> R) -> Self[R]
+  #deprecated
   map_option[A, B](Self[A], (A) -> B?) -> Self[B]
   map_while[A, B](Self[A], (A) -> B?) -> Self[B]
   maximum[T : Compare](Self[T]) -> T?
@@ -319,6 +331,7 @@ impl Set {
   eachi[K](Self[K], (Int, K) -> Unit) -> Unit
   from_array[K : Hash + Eq](Array[K]) -> Self[K]
   from_iter[K : Hash + Eq](Iter[K]) -> Self[K]
+  #deprecated
   insert[K : Hash + Eq](Self[K], K) -> Unit
   intersection[K : Hash + Eq](Self[K], Self[K]) -> Self[K]
   is_empty[K](Self[K]) -> Bool
@@ -366,7 +379,9 @@ impl UninitializedArray {
 }
 
 impl Bool {
+  #deprecated
   not(Bool) -> Bool
+  #deprecated
   op_compare(Bool, Bool) -> Int
   to_string(Bool) -> String
 }
@@ -375,7 +390,9 @@ impl Byte {
   land(Byte, Byte) -> Byte
   lnot(Byte) -> Byte
   lor(Byte, Byte) -> Byte
+  #deprecated
   lsl(Byte, Int) -> Byte
+  #deprecated
   lsr(Byte, Int) -> Byte
   lxor(Byte, Byte) -> Byte
   op_add(Byte, Byte) -> Byte
@@ -401,6 +418,7 @@ impl Char {
 }
 
 impl Int {
+  #deprecated
   asr(Int, Int) -> Int
   clz(Int) -> Int
   ctz(Int) -> Int
@@ -411,7 +429,9 @@ impl Int {
   land(Int, Int) -> Int
   lnot(Int) -> Int
   lor(Int, Int) -> Int
+  #deprecated
   lsl(Int, Int) -> Int
+  #deprecated
   lsr(Int, Int) -> Int
   lxor(Int, Int) -> Int
   op_add(Int, Int) -> Int
@@ -425,7 +445,9 @@ impl Int {
   popcnt(Int) -> Int
   reinterpret_as_float(Int) -> Float
   reinterpret_as_uint(Int) -> UInt
+  #deprecated
   shl(Int, Int) -> Int
+  #deprecated
   shr(Int, Int) -> Int
   to_byte(Int) -> Byte
   to_double(Int) -> Double
@@ -433,10 +455,12 @@ impl Int {
   to_int16(Int) -> Int16
   to_int64(Int) -> Int64
   to_string(Int, radix~ : Int = ..) -> String
+  #deprecated
   to_uint(Int) -> UInt
   to_uint16(Int) -> UInt16
   to_uint64(Int) -> UInt64
   until(Int, Int, step~ : Int = .., inclusive~ : Bool = ..) -> Iter[Int]
+  #deprecated
   upto(Int, Int, inclusive~ : Bool = ..) -> Iter[Int]
 }
 
@@ -448,13 +472,16 @@ impl Int16 {
 }
 
 impl Int64 {
+  #deprecated
   asr(Int64, Int) -> Int64
   clz(Int64) -> Int
   ctz(Int64) -> Int
   land(Int64, Int64) -> Int64
   lnot(Int64) -> Int64
   lor(Int64, Int64) -> Int64
+  #deprecated
   lsl(Int64, Int) -> Int64
+  #deprecated
   lsr(Int64, Int) -> Int64
   lxor(Int64, Int64) -> Int64
   op_add(Int64, Int64) -> Int64
@@ -468,7 +495,9 @@ impl Int64 {
   popcnt(Int64) -> Int
   reinterpret_as_double(Int64) -> Double
   reinterpret_as_uint64(Int64) -> UInt64
+  #deprecated
   shl(Int64, Int) -> Int64
+  #deprecated
   shr(Int64, Int) -> Int64
   to_byte(Int64) -> Byte
   to_double(Int64) -> Double
@@ -477,8 +506,10 @@ impl Int64 {
   to_int16(Int64) -> Int16
   to_string(Int64, radix~ : Int = ..) -> String
   to_uint16(Int64) -> UInt16
+  #deprecated
   to_uint64(Int64) -> UInt64
   until(Int64, Int64, step~ : Int64 = .., inclusive~ : Bool = ..) -> Iter[Int64]
+  #deprecated
   upto(Int64, Int64, inclusive~ : Bool = ..) -> Iter[Int64]
 }
 
@@ -488,7 +519,9 @@ impl UInt {
   land(UInt, UInt) -> UInt
   lnot(UInt) -> UInt
   lor(UInt, UInt) -> UInt
+  #deprecated
   lsl(UInt, Int) -> UInt
+  #deprecated
   lsr(UInt, Int) -> UInt
   lxor(UInt, UInt) -> UInt
   op_add(UInt, UInt) -> UInt
@@ -502,15 +535,19 @@ impl UInt {
   popcnt(UInt) -> Int
   reinterpret_as_float(UInt) -> Float
   reinterpret_as_int(UInt) -> Int
+  #deprecated
   shl(UInt, Int) -> UInt
+  #deprecated
   shr(UInt, Int) -> UInt
   to_byte(UInt) -> Byte
   to_double(UInt) -> Double
   to_float(UInt) -> Float
+  #deprecated
   to_int(UInt) -> Int
   to_string(UInt, radix~ : Int = ..) -> String
   to_uint64(UInt) -> UInt64
   trunc_double(Double) -> UInt
+  #deprecated
   upto(UInt, UInt, inclusive~ : Bool = ..) -> Iter[UInt]
 }
 
@@ -528,7 +565,9 @@ impl UInt64 {
   land(UInt64, UInt64) -> UInt64
   lnot(UInt64) -> UInt64
   lor(UInt64, UInt64) -> UInt64
+  #deprecated
   lsl(UInt64, Int) -> UInt64
+  #deprecated
   lsr(UInt64, Int) -> UInt64
   lxor(UInt64, UInt64) -> UInt64
   op_add(UInt64, UInt64) -> UInt64
@@ -541,16 +580,20 @@ impl UInt64 {
   popcnt(UInt64) -> Int
   reinterpret_as_double(UInt64) -> Double
   reinterpret_as_int64(UInt64) -> Int64
+  #deprecated
   shl(UInt64, Int) -> UInt64
+  #deprecated
   shr(UInt64, Int) -> UInt64
   to_byte(UInt64) -> Byte
   to_double(UInt64) -> Double
   to_float(UInt64) -> Float
   to_int(UInt64) -> Int
+  #deprecated
   to_int64(UInt64) -> Int64
   to_string(UInt64, radix~ : Int = ..) -> String
   to_uint(UInt64) -> UInt
   trunc_double(Double) -> UInt64
+  #deprecated
   upto(UInt64, UInt64, inclusive~ : Bool = ..) -> Iter[UInt64]
 }
 
@@ -566,6 +609,7 @@ impl Float {
   sqrt(Float) -> Float
   to_double(Float) -> Double
   until(Float, Float, step~ : Float = .., inclusive~ : Bool = ..) -> Iter[Float]
+  #deprecated
   upto(Float, Float, inclusive~ : Bool = ..) -> Iter[Float]
 }
 
@@ -578,8 +622,10 @@ impl Double {
   op_neg(Double) -> Double
   op_neq(Double, Double) -> Bool
   op_sub(Double, Double) -> Double
+  #deprecated
   reinterpret_as_i64(Double) -> Int64
   reinterpret_as_int64(Double) -> Int64
+  #deprecated
   reinterpret_as_u64(Double) -> UInt64
   reinterpret_as_uint64(Double) -> UInt64
   sqrt(Double) -> Double
@@ -588,6 +634,7 @@ impl Double {
   to_int64(Double) -> Int64
   to_uint64(Double) -> UInt64
   until(Double, Double, step~ : Double = .., inclusive~ : Bool = ..) -> Iter[Double]
+  #deprecated
   upto(Double, Double, inclusive~ : Bool = ..) -> Iter[Double]
 }
 
@@ -626,6 +673,7 @@ impl FixedArray {
   op_get[T](Self[T], Int) -> T
   op_set[T](Self[T], Int, T) -> Unit
   set[T](Self[T], Int, T) -> Unit
+  #deprecated
   set_utf16_char(Self[Byte], Int, Char) -> Int
   set_utf16be_char(Self[Byte], Int, Char) -> Int
   set_utf16le_char(Self[Byte], Int, Char) -> Int
@@ -642,7 +690,9 @@ impl Bytes {
   new(Int) -> Bytes
   of_string(String) -> Bytes
   op_get(Bytes, Int) -> Byte
+  #deprecated
   sub_string(Bytes, Int, Int) -> String
+  #deprecated
   to_string(Bytes) -> String
   to_unchecked_string(Bytes, offset~ : Int = .., length~ : Int = ..) -> String
   unsafe_get(Bytes, Int) -> Byte

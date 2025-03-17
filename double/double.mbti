@@ -110,6 +110,7 @@ impl Double {
   floor(Double) -> Double
   from_int(Int) -> Double
   hypot(Double, Double) -> Double
+  #deprecated
   inf(Int) -> Double
   is_close(Double, Double, relative_tolerance~ : Double = .., absolute_tolerance~ : Double = ..) -> Bool
   is_inf(Double) -> Bool
@@ -120,7 +121,9 @@ impl Double {
   ln_1p(Double) -> Double
   log10(Double) -> Double
   log2(Double) -> Double
+  #deprecated
   min_normal() -> Double
+  #deprecated
   nan() -> Double
   op_mod(Double, Double) -> Double
   pow(Double, Double) -> Double
