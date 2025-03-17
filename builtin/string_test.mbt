@@ -104,6 +104,11 @@ test "panic String::make with negative length" {
 }
 
 ///|
+test "String::make with non-bmp" {
+  inspect!(String::make(2, '🤣'), content="🤣🤣")
+}
+
+///|
 test "String::make with zero length" {
   inspect!(String::make(0, 'A'), content="")
 }
