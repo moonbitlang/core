@@ -640,10 +640,12 @@ impl Double {
 
 impl String {
   charcode_at(String, Int) -> Int
+  #deprecated
   charcode_length(String) -> Int
   codepoint_at(String, Int) -> Char
   codepoint_length(String) -> Int
   escape(String) -> String
+  #deprecated
   get(String, Int) -> Char
   length(String) -> Int
   make(Int, Char) -> String
