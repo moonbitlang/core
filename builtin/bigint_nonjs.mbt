@@ -1112,18 +1112,12 @@ pub fn BigInt::from_string(input : String) -> BigInt {
 pub fn BigInt::from_hex(input : String) -> BigInt {
   // WARN: this implementation assumes that `radix_bit_len` is a multiple of 4.
   fn char_from_hex(x : Int) -> UInt {
-    if x >= 48 && x <= 57 {
-      // ASCII value of '0'
-      (x - 48).reinterpret_as_uint()
-    } else if x >= 65 && x <= 70 {
-      // ASCII value of 'A'
-      (x - 55).reinterpret_as_uint()
-    } else if x >= 97 && x <= 102 {
-      // ASCII value of 'a'
-      (x - 87).reinterpret_as_uint()
-    } else {
-      abort("invalid character")
-    }
+    (match x {
+      '0'..='9' => x - '0'
+      'A'..='F' => x + (10 - 'A')
+      'a'..='f' => x + (10 - 'a')
+      _ => abort("invalid character")
+    }).reinterpret_as_uint()
   }
 
   let len = input.length()
