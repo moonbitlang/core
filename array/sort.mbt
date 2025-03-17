@@ -110,7 +110,7 @@ fn get_limit(len : Int) -> Int {
 fn try_bubble_sort[T : Compare](arr : ArrayView[T]) -> Bool {
   let max_tries = 8
   let mut tries = 0
-  for i = 1; i < arr.length(); i = i + 1 {
+  for i in 1..<arr.length() {
     let mut sorted = true
     for j = i; j > 0 && arr[j - 1] > arr[j]; j = j - 1 {
       sorted = false
@@ -129,7 +129,7 @@ fn try_bubble_sort[T : Compare](arr : ArrayView[T]) -> Bool {
 ///|
 /// Used when the array is small enough (<=16) to avoid recursion overhead.
 fn ArrayView::insertion_sort[T : Compare](arr : ArrayView[T]) -> Unit {
-  for i = 1; i < arr.length(); i = i + 1 {
+  for i in 1..<arr.length() {
     for j = i; j > 0 && arr[j - 1] > arr[j]; j = j - 1 {
       arr.swap(j, j - 1)
     }
@@ -142,7 +142,7 @@ fn partition[T : Compare](arr : ArrayView[T], pivot_index : Int) -> (Int, Bool) 
   let pivot = arr[arr.length() - 1]
   let mut i = 0
   let mut partitioned = true
-  for j = 0; j < arr.length() - 1; j = j + 1 {
+  for j in 0..<(arr.length() - 1) {
     if arr[j] < pivot {
       if i != j {
         arr.swap(i, j)

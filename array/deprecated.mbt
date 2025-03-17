@@ -46,7 +46,7 @@ pub fn FixedArray::new[T](length : Int, value : () -> T) -> FixedArray[T] {
     []
   } else {
     let array = FixedArray::make(length, value())
-    for i = 1; i < length; i = i + 1 {
+    for i in 1..<length {
       array[i] = value()
     }
     array

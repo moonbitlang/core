@@ -15,10 +15,10 @@
 ///|
 test "unsafe_pop_front after many push_front" {
   let dq = new()
-  for i = 0; i < 10; i = i + 1 {
+  for i in 0..<10 {
     dq.push_front(i)
   }
-  for i = 0; i < 10; i = i + 1 {
+  for i in 0..<10 {
     dq.unsafe_pop_front()
   }
   assert_eq!(dq.head, dq.tail)

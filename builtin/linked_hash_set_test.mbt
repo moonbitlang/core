@@ -171,7 +171,7 @@ test "from_array" {
 ///|
 test "insert_and_grow" {
   let m = Set::new()
-  for i = 0; i < 10; i = i + 1 {
+  for i in 0..<10 {
     m.add(i.to_string())
   }
   assert_eq!(m.size(), 10)
@@ -226,7 +226,7 @@ test "clear_and_reinsert" {
 ///|
 test "insert_and_grow" {
   let m = Set::new()
-  for i = 0; i < 10; i = i + 1 {
+  for i in 0..<10 {
     m.add(i.to_string())
   }
   assert_eq!(m.size(), 10)

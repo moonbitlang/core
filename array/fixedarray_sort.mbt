@@ -306,7 +306,7 @@ fn fixed_get_limit(len : Int) -> Int {
 fn fixed_try_bubble_sort[T : Compare](arr : FixedArraySlice[T]) -> Bool {
   let max_tries = 8
   let mut tries = 0
-  for i = 1; i < arr.length(); i = i + 1 {
+  for i in 1..<arr.length() {
     let mut sorted = true
     for j = i; j > 0 && arr[j - 1] > arr[j]; j = j - 1 {
       sorted = false
@@ -329,7 +329,7 @@ fn fixed_try_bubble_sort[T : Compare](arr : FixedArraySlice[T]) -> Bool {
 /// 
 /// Returns whether the array is sorted.
 fn fixed_bubble_sort[T : Compare](arr : FixedArraySlice[T]) -> Unit {
-  for i = 1; i < arr.length(); i = i + 1 {
+  for i in 1..<arr.length() {
     for j = i; j > 0 && arr[j - 1] > arr[j]; j = j - 1 {
       arr.swap(j, j - 1)
     }
@@ -353,7 +353,7 @@ fn fixed_partition[T : Compare](
   let pivot = arr[arr.length() - 1]
   let mut i = 0
   let mut partitioned = true
-  for j = 0; j < arr.length() - 1; j = j + 1 {
+  for j in 0..<(arr.length() - 1) {
     if arr[j] < pivot {
       if i != j {
         arr.swap(i, j)
@@ -543,7 +543,7 @@ test "stable_sort_complex" {
   let arr = FixedArray::make(total_len, 0)
   let mut index = 0
   for i = 0, len = run_lens.length(); i < len; i = i + 1 {
-    for j = 0; j < run_lens[i]; j = j + 1 {
+    for j in 0..<run_lens[i] {
       arr[index] = j
       index += 1
     }

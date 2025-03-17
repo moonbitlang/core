@@ -113,7 +113,7 @@ test "parse_uint64" {
     ("12345_", Err(syntax_err_str)),
     ("12345%", Err(syntax_err_str)),
   ]
-  for i = 0; i < tests.length(); i = i + 1 {
+  for i in 0..<tests.length() {
     let t = tests[i]
     assert_eq!(
       try {
@@ -213,7 +213,7 @@ test "parse_uint64_base" {
     ("0x+f", 0, Err(syntax_err_str)),
     ("0x-f", 0, Err(syntax_err_str)),
   ]
-  for i = 0; i < tests.length(); i = i + 1 {
+  for i in 0..<tests.length() {
     let t = tests[i]
     assert_eq!(
       try {
@@ -250,7 +250,7 @@ test "parse_uint" {
     ("12345_", Err(syntax_err_str)),
     ("123%45", Err(syntax_err_str)),
   ]
-  for i = 0; i < tests.length(); i = i + 1 {
+  for i in 0..<tests.length() {
     let t = tests[i]
     assert_eq!(
       try {

@@ -16,7 +16,7 @@
 fn offset_to_position(input : String, offset : Int) -> Position {
   let mut line = 1
   let mut column = 0
-  for i = 0; i < offset; i = i + 1 {
+  for i in 0..<offset {
     let c = input[i]
     if c == '\n' {
       line += 1

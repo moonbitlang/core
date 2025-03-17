@@ -96,7 +96,7 @@ fn is_empty(self : StringSlice) -> Bool {
 ///|
 fn StringSlice::to_string(self : StringSlice) -> String {
   let buf = StringBuilder::new(size_hint=self.length())
-  for i = 0; i < self.length(); i = i + 1 {
+  for i in 0..<self.length() {
     buf.write_char(self[i])
   }
   buf.to_string()
@@ -134,7 +134,7 @@ fn fold_digits[T](
   let mut ret = init
   let mut len = 0
   // let len = self.length()
-  for i = 0; i < self.length(); i = i + 1 {
+  for i in 0..<self.length() {
     if not(is_digit(self[i]) || self[i] == '_') {
       return (self.subfix_unchecked(i), ret, len)
     }

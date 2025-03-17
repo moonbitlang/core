@@ -495,7 +495,7 @@ fn new_digits(self : Decimal, s : Int) -> Int {
   let cheat_num = left_shift_cheats[s].1
   // check if the leading digits lexicographically less than cheats num.
   let mut less = false
-  for i = 0; i < cheat_num.length(); i = i + 1 {
+  for i in 0..<cheat_num.length() {
     if i >= self.digits_num {
       less = true
       break
@@ -581,15 +581,15 @@ pub impl Show for Decimal with output(self, logger) {
   if self.decimal_point <= 0 {
     // zeros filling between the decimal point and the digits
     logger.write_string("0.")
-    for i = 0; i < -self.decimal_point; i = i + 1 {
+    for i in 0..<-self.decimal_point {
       logger.write_char('0')
     }
-    for i = 0; i < self.digits_num; i = i + 1 {
+    for i in 0..<self.digits_num {
       logger.write_string(self.digits[i].to_int().to_string())
     }
   } else if self.decimal_point < self.digits_num {
     // decimal point in the middle of digits
-    for i = 0; i < self.digits_num; i = i + 1 {
+    for i in 0..<self.digits_num {
       if i == self.decimal_point {
         logger.write_char('.')
       }
@@ -597,10 +597,10 @@ pub impl Show for Decimal with output(self, logger) {
     }
   } else {
     // zeros filling between the digits and the decimal point
-    for i = 0; i < self.digits_num; i = i + 1 {
+    for i in 0..<self.digits_num {
       logger.write_string(self.digits[i].to_int().to_string())
     }
-    for i = 0; i < self.decimal_point - self.digits_num; i = i + 1 {
+    for i in 0..<(self.decimal_point - self.digits_num) {
       logger.write_char('0')
     }
   }
@@ -671,7 +671,7 @@ test "shift" {
     (195312L, 9, "99999744"),
     (1953125L, 9, "1000000000"),
   ]
-  for i = 0; i < tests.length(); i = i + 1 {
+  for i in 0..<tests.length() {
     let t = tests[i]
     let d = Decimal::from_int64_priv(t.0)
     d.shift_priv(t.1)

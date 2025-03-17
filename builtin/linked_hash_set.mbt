@@ -328,7 +328,7 @@ fn Set::grow[K : Hash + Eq](self : Set[K]) -> Unit {
 ///|
 fn Set::debug_entries[K : Show](self : Set[K]) -> String {
   let buf = StringBuilder::new()
-  for i = 0; i < self.entries.length(); i = i + 1 {
+  for i in 0..<self.entries.length() {
     if i > 0 {
       buf.write_char(',')
     }
@@ -459,7 +459,7 @@ pub fn Set::of[K : Hash + Eq](arr : FixedArray[K]) -> Set[K] {
   let length = arr.length()
   let m = Set::new(capacity=length)
   // arr.iter(fn(e) { m.set(e.0, e.1) })
-  for i = 0; i < length; i = i + 1 {
+  for i in 0..<length {
     let e = arr[i]
     m.add(e)
   }

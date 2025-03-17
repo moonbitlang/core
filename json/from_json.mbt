@@ -140,7 +140,7 @@ pub impl[X : FromJson] FromJson for Array[X] with from_json(json, path) {
   }
   let res : Array[X] = Array::new(capacity=a.length())
   let idx = Index(path, index=0)
-  for i = 0; i < a.length(); i = i + 1 {
+  for i in 0..<a.length() {
     // TODO: it should be assert here
     if idx is (Index(_) as idx) {
       idx.index = i

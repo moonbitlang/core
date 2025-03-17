@@ -40,7 +40,7 @@ pub fn CoverageCounter::incr(self : CoverageCounter, idx : Int) -> Unit {
 ///|
 pub impl Show for CoverageCounter with output(self, logger) {
   logger.write_char('[')
-  for i = 0; i < self.counter.length(); i = i + 1 {
+  for i in 0..<self.counter.length() {
     if i != 0 {
       logger.write_string(", ")
     }
@@ -106,10 +106,10 @@ pub fn end() -> Unit {
   let sbuf = StringBuffer::StringBuffer([])
   coverage_log(counters.val, sbuf)
   let line_buf = StringBuilder::new()
-  for i = 0; i < sbuf._.length(); i = i + 1 {
+  for i in 0..<sbuf._.length() {
     let str = sbuf._[i]
     let mut start = 0
-    for j = 0; j < str.length(); j = j + 1 {
+    for j in 0..<str.length() {
       if str[j] == '\n' {
         line_buf.write_substring(str, start, j)
         println(line_buf.to_string())
@@ -133,7 +133,7 @@ pub fn end() -> Unit {
 fn coverage_reset(counters : MList[(String, CoverageCounter)]) -> Unit {
   loop counters {
     MCons((_, counter), xs) => {
-      for i = 0; i < counter.counter.length(); i = i + 1 {
+      for i in 0..<counter.counter.length() {
         counter.counter[i] = 0
       }
       continue xs

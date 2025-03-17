@@ -27,7 +27,7 @@ test "HAMT" {
     100, map => map
     i, map => continue i + 1, map.add(i, i)
   }
-  for i = 0; i < 100; i = i + 1 {
+  for i in 0..<100 {
     assert_eq!((i, map.find(i)), (i, Some(i)))
   }
   inspect!((100, map.find(100)), content="(100, None)")
@@ -50,7 +50,7 @@ test "HAMT::remove" {
     100, map => map
     i, map => continue i + 1, map.add(i, i)
   }
-  for i = 0; i < 100; i = i + 1 {
+  for i in 0..<100 {
     assert_eq!((i, map.find(i)), (i, Some(i)))
   }
   let map = loop 0, map {

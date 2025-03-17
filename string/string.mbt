@@ -103,7 +103,7 @@ pub impl Compare for String with compare(self, other) {
   let len = self.length()
   match len.compare(other.length()) {
     0 => {
-      for i = 0; i < len; i = i + 1 {
+      for i in 0..<len {
         let order = self[i].compare(other[i])
         if order != 0 {
           return order
@@ -158,7 +158,7 @@ pub fn to_array(self : String) -> Array[Char] {
 pub fn iter(self : String) -> Iter[Char] {
   Iter::new(fn(yield_) {
     let len = self.length()
-    for index = 0; index < len; index = index + 1 {
+    for index in 0..<len {
       let c1 = self.unsafe_charcode_at(index)
       if is_leading_surrogate(c1) && index + 1 < len {
         let c2 = self.unsafe_charcode_at(index + 1)
@@ -293,7 +293,7 @@ pub fn contains_char(self : String, c : Char) -> Bool {
 /// Removes all leading chars contained in the given string.
 pub fn trim_start(self : String, trim_set : String) -> String {
   let len = self.length()
-  for i = 0; i < len; i = i + 1 {
+  for i in 0..<len {
     let c1 = self.unsafe_charcode_at(i)
     // check surrogate pair
     if is_leading_surrogate(c1) && i + 1 < len {
@@ -386,7 +386,7 @@ pub fn index_of(self : String, str : String, from~ : Int = 0) -> Int {
     }
     // check the rest
     if i <= max_idx {
-      for j = 1; j < sub_len; j = j + 1 {
+      for j in 1..<sub_len {
         if self[i + j] != str[j] {
           break
         }
@@ -654,7 +654,7 @@ pub fn pad_start(
     self
   } else {
     let buf = StringBuilder::new(size_hint=total_width)
-    for i = 0; i < total_width - len; i = i + 1 {
+    for i in 0..<(total_width - len) {
       buf.write_char(padding_char)
     }
     buf.write_string(self)
@@ -678,7 +678,7 @@ pub fn pad_end(self : String, total_width : Int, padding_char : Char) -> String 
   } else {
     let buf = StringBuilder::new(size_hint=total_width)
     buf.write_string(self)
-    for i = 0; i < total_width - len; i = i + 1 {
+    for i in 0..<(total_width - len) {
       buf.write_char(padding_char)
     }
     buf.to_string()

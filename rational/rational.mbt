@@ -208,7 +208,7 @@ pub fn from_double(value : Double) -> T!RationalError {
   if q > t_max_f {
     overflow_error!()
   }
-  for i = 0; i < max_iteration; i = i + 1 {
+  for i in 0..<max_iteration {
     if not(q >= -9223372036854775808.0 && q < 9223372036854775808.0) {
       break // overflow
     }

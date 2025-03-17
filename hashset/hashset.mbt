@@ -162,7 +162,7 @@ pub fn each[K](self : T[K], f : (K) -> Unit) -> Unit {
 /// Iterate over all keys of the set, with index.
 pub fn eachi[K](self : T[K], f : (Int, K) -> Unit) -> Unit {
   let mut idx = 0
-  for i = 0; i < self.capacity; i = i + 1 {
+  for i in 0..<self.capacity {
     match self.entries[i] {
       Some({ key, .. }) => {
         f(idx, key)
@@ -176,7 +176,7 @@ pub fn eachi[K](self : T[K], f : (Int, K) -> Unit) -> Unit {
 ///|
 /// Clears the set, removing all keys. Keeps the allocated space.
 pub fn clear[K](self : T[K]) -> Unit {
-  for i = 0; i < self.capacity; i = i + 1 {
+  for i in 0..<self.capacity {
     self.entries[i] = None
   }
   self.size = 0
@@ -280,7 +280,7 @@ fn grow[K : Hash + Eq](self : T[K]) -> Unit {
   self.capacity = self.capacity * 2
   self.growAt = calc_grow_threshold(self.capacity)
   self.size = 0
-  for i = 0; i < old_entries.length(); i = i + 1 {
+  for i in 0..<old_entries.length() {
     match old_entries[i] {
       Some({ key, .. }) => self.add(key)
       None => ()
@@ -315,7 +315,7 @@ fn calc_grow_threshold(capacity : Int) -> Int {
 ///|
 fn debug_entries[K : Show](self : T[K]) -> String {
   let mut s = ""
-  for i = 0; i < self.entries.length(); i = i + 1 {
+  for i in 0..<self.entries.length() {
     if i > 0 {
       s += ","
     }
@@ -435,7 +435,7 @@ test "clear" {
   m.clear()
   assert_eq!(m.size(), 0)
   assert_eq!(m.capacity(), 8)
-  for i = 0; i < m.capacity(); i = i + 1 {
+  for i in 0..<m.capacity() {
     @test.same_object!(m.entries[i], None)
   }
 }

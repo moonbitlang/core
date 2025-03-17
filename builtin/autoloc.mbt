@@ -64,7 +64,7 @@ pub(all) type ArgsLoc Array[SourceLoc?] derive(Show)
 pub fn ArgsLoc::to_json(self : ArgsLoc) -> String {
   let buf = StringBuilder::new(size_hint=10)
   buf.write_char('[')
-  for i = 0; i < self._.length(); i = i + 1 {
+  for i in 0..<self._.length() {
     if i != 0 {
       buf.write_string(", ")
     }

@@ -42,7 +42,7 @@ pub fn FixedArray::unsafe_blit[A](
   len : Int
 ) -> Unit {
   if physical_equal(dst, src) && dst_offset < src_offset {
-    for i = 0; i < len; i = i + 1 {
+    for i in 0..<len {
       dst[dst_offset + i] = src[src_offset + i]
     }
   } else {
