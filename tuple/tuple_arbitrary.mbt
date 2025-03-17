@@ -13,7 +13,7 @@
 // limitations under the License.
 
 ///|
-traitalias Arbitrary = @quickcheck.Arbitrary
+traitalias @quickcheck.Arbitrary
 
 ///|
 pub impl[A : Arbitrary, B : Arbitrary] Arbitrary for (A, B) with arbitrary(
