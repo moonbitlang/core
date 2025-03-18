@@ -87,6 +87,16 @@ test "codepoint_at emoji" {
 }
 
 ///|
+test "unsafe_codepoint_at" {
+  let s = "a👋b"
+  inspect!(s.unsafe_codepoint_at(0), content="a")
+  inspect!(s.unsafe_codepoint_at(1), content="👋")
+  // invalid char cannot be inspected
+  inspect!(s.unsafe_codepoint_at(2).to_int(), content="56395")
+  inspect!(s.unsafe_codepoint_at(3), content="b")
+}
+
+///|
 test "codepoint_length basic" {
   let str = "hello"
   inspect!(str.codepoint_length(), content="5")
