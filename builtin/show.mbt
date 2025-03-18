@@ -206,9 +206,7 @@ pub impl[X : Show] Show for Array[X] with output(self, logger) {
 /// Convert Char to String
 /// @intrinsic %char.to_string
 pub impl Show for Char with to_string(self : Char) -> String {
-  let bytes = FixedArray::make(4, Byte::default())
-  let length = bytes.set_utf16le_char(0, self)
-  bytes.unsafe_to_bytes().to_unchecked_string(offset=0, length~)
+  [self]
 }
 
 ///|
