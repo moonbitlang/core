@@ -133,7 +133,7 @@ pub fn String::codepoint_at(self : String, index : Int) -> Char {
 
 ///|
 /// Returns the Unicode code point at the given index without bounds checking.
-pub fn unsafe_codepoint_at(self : String, index : Int) -> Char {
+pub fn String::unsafe_codepoint_at(self : String, index : Int) -> Char {
   let c1 = self.unsafe_charcode_at(index)
   if is_leading_surrogate(c1) {
     let c2 = self.unsafe_charcode_at(index + 1)
