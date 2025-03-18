@@ -40,8 +40,6 @@ fn println[T : Show](T) -> Unit
 
 fn repr[T : Show](T) -> String
 
-fn unsafe_codepoint_at(String, Int) -> Char
-
 // Types and methods
 pub(all) type ArgsLoc Array[SourceLoc?]
 impl ArgsLoc {
