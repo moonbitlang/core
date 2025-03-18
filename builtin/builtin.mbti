@@ -401,6 +401,7 @@ impl Byte {
   op_shl(Byte, Int) -> Byte
   op_shr(Byte, Int) -> Byte
   op_sub(Byte, Byte) -> Byte
+  to_double(Byte) -> Double
   to_float(Byte) -> Float
   to_int(Byte) -> Int
   to_int16(Byte) -> Int16
