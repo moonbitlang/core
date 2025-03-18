@@ -208,7 +208,7 @@ pub fn BigInt::from_uint64(n : UInt64) -> BigInt {
 ///   inspect!(-0N, content="0")
 /// }
 /// ```
-pub fn BigInt::op_neg(self : BigInt) -> BigInt {
+pub impl Neg for BigInt with op_neg(self : BigInt) -> BigInt {
   if self.is_zero() {
     return zero
   }
@@ -237,7 +237,7 @@ pub fn BigInt::op_neg(self : BigInt) -> BigInt {
 ///   inspect!(-a + -b, content="-9223372036854775808")
 /// }
 /// ```
-pub fn BigInt::op_add(self : BigInt, other : BigInt) -> BigInt {
+pub impl Add for BigInt with op_add(self : BigInt, other : BigInt) -> BigInt {
   if self.sign == Negative {
     if other.sign == Negative {
       return -(-other + -self)
@@ -285,7 +285,7 @@ pub fn BigInt::op_add(self : BigInt, other : BigInt) -> BigInt {
 ///   inspect!(-a - b, content="-22222222112222222211")
 /// }
 /// ```
-pub fn BigInt::op_sub(self : BigInt, other : BigInt) -> BigInt {
+pub impl Sub for BigInt with op_sub(self : BigInt, other : BigInt) -> BigInt {
   // first make sure self and other > 0
   if self.sign == Negative {
     if other.sign == Negative {
@@ -361,7 +361,7 @@ pub fn BigInt::op_sub(self : BigInt, other : BigInt) -> BigInt {
 ///   inspect!(a * 0N, content="0")
 /// }
 /// ```
-pub fn BigInt::op_mul(self : BigInt, other : BigInt) -> BigInt {
+pub impl Mul for BigInt with op_mul(self : BigInt, other : BigInt) -> BigInt {
   if self.is_zero() || other.is_zero() {
     return zero
   }
@@ -458,7 +458,7 @@ fn BigInt::split(self : BigInt, half : Int) -> (BigInt, BigInt) {
 ///   ignore(a / b) // Division by zero
 /// }
 /// ```
-pub fn BigInt::op_div(self : BigInt, other : BigInt) -> BigInt {
+pub impl Div for BigInt with op_div(self : BigInt, other : BigInt) -> BigInt {
   // TODO:
   // guard (other != zero, "division by zero")
   if other == zero {
@@ -507,7 +507,7 @@ pub fn BigInt::op_div(self : BigInt, other : BigInt) -> BigInt {
 ///   ignore(a % 0N) // Division by zero
 /// }
 /// ```
-pub fn BigInt::op_mod(self : BigInt, other : BigInt) -> BigInt {
+pub impl Mod for BigInt with op_mod(self : BigInt, other : BigInt) -> BigInt {
   if other == zero {
     abort("division by zero")
   }
@@ -697,7 +697,7 @@ fn BigInt::grade_school_div(self : BigInt, other : BigInt) -> (BigInt, BigInt) {
 ///   ignore(x << -1) // Panics with "negative shift count"
 /// }
 /// ```
-pub fn BigInt::op_shl(self : BigInt, n : Int) -> BigInt {
+pub impl Shl for BigInt with op_shl(self : BigInt, n : Int) -> BigInt {
   if n < 0 {
     abort("negative shift count")
   }
@@ -761,7 +761,7 @@ pub fn BigInt::op_shl(self : BigInt, n : Int) -> BigInt {
 ///   ignore(n >> -1) // Panics with "negative shift count"
 /// }
 /// ```
-pub fn BigInt::op_shr(self : BigInt, n : Int) -> BigInt {
+pub impl Shr for BigInt with op_shr(self : BigInt, n : Int) -> BigInt {
   if n < 0 {
     abort("negative shift count")
   }
@@ -1474,7 +1474,7 @@ pub fn BigInt::to_octets(self : BigInt, length? : Int) -> Bytes {
 ///   inspect!(a & b, content="-8") // ~0b1011 + 1
 /// }
 /// ```
-pub fn BigInt::land(self : BigInt, other : BigInt) -> BigInt {
+pub impl BitAnd for BigInt with land(self : BigInt, other : BigInt) -> BigInt {
   let max_length = if self.limbs.length() < other.limbs.length() {
     other.limbs.length() + 1
   } else {
@@ -1583,7 +1583,7 @@ pub fn BigInt::land(self : BigInt, other : BigInt) -> BigInt {
 ///   inspect!(c | d, content="-4")
 /// }
 /// ```
-pub fn BigInt::lor(self : BigInt, other : BigInt) -> BigInt {
+pub impl BitOr for BigInt with lor(self : BigInt, other : BigInt) -> BigInt {
   let max_length = if self.limbs.length() < other.limbs.length() {
     other.limbs.length() + 1
   } else {
@@ -1695,7 +1695,7 @@ pub fn BigInt::lor(self : BigInt, other : BigInt) -> BigInt {
 ///   inspect!(a ^ a, content="0") // XOR with self gives 0
 /// }
 /// ```
-pub fn BigInt::lxor(self : BigInt, other : BigInt) -> BigInt {
+pub impl BitXOr for BigInt with lxor(self : BigInt, other : BigInt) -> BigInt {
   let max_length = if self.limbs.length() < other.limbs.length() {
     other.limbs.length() + 1
   } else {

@@ -769,7 +769,7 @@ pub fn Iter::concat[T](self : Iter[T], other : Iter[T]) -> Iter[T] {
 }
 
 ///|
-pub fn Iter::op_add[T](self : Iter[T], other : Iter[T]) -> Iter[T] {
+pub impl[T] Add for Iter[T] with op_add(self, other) {
   Iter::concat(self, other)
 }
 

@@ -26,7 +26,7 @@ fn MyInt64::to_int64(self : MyInt64) -> Int64 = "%identity"
 fn MyInt64::from_int64(value : Int64) -> MyInt64 = "%identity"
 
 ///|
-fn MyInt64::op_neg(self : MyInt64) -> MyInt64 {
+impl Neg for MyInt64 with op_neg(self : MyInt64) -> MyInt64 {
   if self.lo == 0 {
     { hi: self.hi.lnot() + 1, lo: 0 }
   } else {
@@ -47,12 +47,12 @@ fn MyInt64::add_hi_lo(self : MyInt64, bhi : Int, blo : Int) -> MyInt64 {
 }
 
 ///|
-fn MyInt64::op_add(self : MyInt64, other : MyInt64) -> MyInt64 {
+impl Add for MyInt64 with op_add(self : MyInt64, other : MyInt64) -> MyInt64 {
   self.add_hi_lo(other.hi, other.lo)
 }
 
 ///|
-fn MyInt64::op_sub(self : MyInt64, other : MyInt64) -> MyInt64 {
+impl Sub for MyInt64 with op_sub(self : MyInt64, other : MyInt64) -> MyInt64 {
   if other.lo == 0 {
     { hi: self.hi - other.hi, lo: self.lo }
   } else {
@@ -61,7 +61,7 @@ fn MyInt64::op_sub(self : MyInt64, other : MyInt64) -> MyInt64 {
 }
 
 ///|
-fn MyInt64::op_mul(self : MyInt64, other : MyInt64) -> MyInt64 {
+impl Mul for MyInt64 with op_mul(self : MyInt64, other : MyInt64) -> MyInt64 {
   let { hi: ahi, lo: alo } = self
   let { hi: bhi, lo: blo } = other
   let ahi = ahi.reinterpret_as_uint()
@@ -119,7 +119,7 @@ extern "js" fn get_int64_wasm_helper() -> Int64WasmHelper =
   #|}
 
 ///|
-fn MyInt64::op_div(self : MyInt64, other : MyInt64) -> MyInt64 {
+impl Div for MyInt64 with op_div(self : MyInt64, other : MyInt64) -> MyInt64 {
   let exports = get_int64_wasm_helper()
   let { hi: ahi, lo: alo } = self
   let { hi: bhi, lo: blo } = other
@@ -139,7 +139,7 @@ fn MyInt64::div_u(self : MyInt64, other : MyInt64) -> MyInt64 {
 }
 
 ///|
-fn MyInt64::op_mod(self : MyInt64, other : MyInt64) -> MyInt64 {
+impl Mod for MyInt64 with op_mod(self : MyInt64, other : MyInt64) -> MyInt64 {
   let exports = get_int64_wasm_helper()
   let { hi: ahi, lo: alo } = self
   let { hi: bhi, lo: blo } = other
@@ -372,32 +372,32 @@ extern "js" fn MyInt64::convert_to_double(self : MyInt64) -> Double =
 //endregion
 
 ///|
-pub fn Int64::op_neg(self : Int64) -> Int64 {
+pub impl Neg for Int64 with op_neg(self : Int64) -> Int64 {
   (-MyInt64::from_int64(self)).to_int64()
 }
 
 ///|
-pub fn Int64::op_add(self : Int64, other : Int64) -> Int64 {
+pub impl Add for Int64 with op_add(self : Int64, other : Int64) -> Int64 {
   MyInt64::from_int64(self).op_add(MyInt64::from_int64(other)).to_int64()
 }
 
 ///|
-pub fn Int64::op_sub(self : Int64, other : Int64) -> Int64 {
+pub impl Sub for Int64 with op_sub(self : Int64, other : Int64) -> Int64 {
   MyInt64::from_int64(self).op_sub(MyInt64::from_int64(other)).to_int64()
 }
 
 ///|
-pub fn Int64::op_mul(self : Int64, other : Int64) -> Int64 {
+pub impl Mul for Int64 with op_mul(self : Int64, other : Int64) -> Int64 {
   MyInt64::from_int64(self).op_mul(MyInt64::from_int64(other)).to_int64()
 }
 
 ///|
-pub fn Int64::op_div(self : Int64, other : Int64) -> Int64 {
+pub impl Div for Int64 with op_div(self : Int64, other : Int64) -> Int64 {
   MyInt64::from_int64(self).op_div(MyInt64::from_int64(other)).to_int64()
 }
 
 ///|
-pub fn Int64::op_mod(self : Int64, other : Int64) -> Int64 {
+pub impl Mod for Int64 with op_mod(self : Int64, other : Int64) -> Int64 {
   MyInt64::from_int64(self).op_mod(MyInt64::from_int64(other)).to_int64()
 }
 
@@ -407,17 +407,17 @@ pub fn Int64::lnot(self : Int64) -> Int64 {
 }
 
 ///|
-pub fn Int64::land(self : Int64, other : Int64) -> Int64 {
+pub impl BitAnd for Int64 with land(self : Int64, other : Int64) -> Int64 {
   MyInt64::from_int64(self).land(MyInt64::from_int64(other)).to_int64()
 }
 
 ///|
-pub fn Int64::lor(self : Int64, other : Int64) -> Int64 {
+pub impl BitOr for Int64 with lor(self : Int64, other : Int64) -> Int64 {
   MyInt64::from_int64(self).lor(MyInt64::from_int64(other)).to_int64()
 }
 
 ///|
-pub fn Int64::lxor(self : Int64, other : Int64) -> Int64 {
+pub impl BitXOr for Int64 with lxor(self : Int64, other : Int64) -> Int64 {
   MyInt64::from_int64(self).lxor(MyInt64::from_int64(other)).to_int64()
 }
 
@@ -457,12 +457,12 @@ pub fn Int64::asr(self : Int64, other : Int) -> Int64 {
 }
 
 ///|
-pub fn Int64::op_shr(self : Int64, other : Int) -> Int64 {
+pub impl Shr for Int64 with op_shr(self : Int64, other : Int) -> Int64 {
   MyInt64::from_int64(self).asr(other).to_int64()
 }
 
 ///|
-pub fn Int64::op_shl(self : Int64, other : Int) -> Int64 {
+pub impl Shl for Int64 with op_shl(self : Int64, other : Int) -> Int64 {
   MyInt64::from_int64(self).lsl(other).to_int64()
 }
 
@@ -605,27 +605,27 @@ pub fn Int64::to_uint64(self : Int64) -> UInt64 = "%identity"
 pub fn Int64::reinterpret_as_uint64(self : Int64) -> UInt64 = "%identity"
 
 ///|
-pub fn UInt64::op_add(self : UInt64, other : UInt64) -> UInt64 {
+pub impl Add for UInt64 with op_add(self : UInt64, other : UInt64) -> UInt64 {
   MyInt64::from_uint64(self).op_add(MyInt64::from_uint64(other)).to_uint64()
 }
 
 ///|
-pub fn UInt64::op_sub(self : UInt64, other : UInt64) -> UInt64 {
+pub impl Sub for UInt64 with op_sub(self : UInt64, other : UInt64) -> UInt64 {
   MyInt64::from_uint64(self).op_sub(MyInt64::from_uint64(other)).to_uint64()
 }
 
 ///|
-pub fn UInt64::op_mul(self : UInt64, other : UInt64) -> UInt64 {
+pub impl Mul for UInt64 with op_mul(self : UInt64, other : UInt64) -> UInt64 {
   MyInt64::from_uint64(self).op_mul(MyInt64::from_uint64(other)).to_uint64()
 }
 
 ///|
-pub fn UInt64::op_div(self : UInt64, other : UInt64) -> UInt64 {
+pub impl Div for UInt64 with op_div(self : UInt64, other : UInt64) -> UInt64 {
   MyInt64::from_uint64(self).div_u(MyInt64::from_uint64(other)).to_uint64()
 }
 
 ///|
-pub fn UInt64::op_mod(self : UInt64, other : UInt64) -> UInt64 {
+pub impl Mod for UInt64 with op_mod(self : UInt64, other : UInt64) -> UInt64 {
   MyInt64::from_uint64(self).mod_u(MyInt64::from_uint64(other)).to_uint64()
 }
 
@@ -668,17 +668,17 @@ pub fn UInt64::trunc_double(value : Double) -> UInt64 {
 }
 
 ///|
-pub fn UInt64::land(self : UInt64, other : UInt64) -> UInt64 {
+pub impl BitAnd for UInt64 with land(self : UInt64, other : UInt64) -> UInt64 {
   MyInt64::land(MyInt64::from_uint64(self), MyInt64::from_uint64(other)).to_uint64()
 }
 
 ///|
-pub fn UInt64::lor(self : UInt64, other : UInt64) -> UInt64 {
+pub impl BitOr for UInt64 with lor(self : UInt64, other : UInt64) -> UInt64 {
   MyInt64::lor(MyInt64::from_uint64(self), MyInt64::from_uint64(other)).to_uint64()
 }
 
 ///|
-pub fn UInt64::lxor(self : UInt64, other : UInt64) -> UInt64 {
+pub impl BitXOr for UInt64 with lxor(self : UInt64, other : UInt64) -> UInt64 {
   MyInt64::lxor(MyInt64::from_uint64(self), MyInt64::from_uint64(other)).to_uint64()
 }
 
@@ -716,12 +716,12 @@ pub fn UInt64::shr(self : UInt64, shift : Int) -> UInt64 {
 }
 
 ///|
-pub fn UInt64::op_shl(self : UInt64, shift : Int) -> UInt64 {
+pub impl Shl for UInt64 with op_shl(self : UInt64, shift : Int) -> UInt64 {
   MyInt64::lsl(MyInt64::from_uint64(self), shift).to_uint64()
 }
 
 ///|
-pub fn UInt64::op_shr(self : UInt64, shift : Int) -> UInt64 {
+pub impl Shr for UInt64 with op_shr(self : UInt64, shift : Int) -> UInt64 {
   MyInt64::lsr(MyInt64::from_uint64(self), shift).to_uint64()
 }
 

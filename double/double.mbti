@@ -65,8 +65,6 @@ let neg_infinity : Double
 
 let not_a_number : Double
 
-fn op_mod(Double, Double) -> Double
-
 fn pow(Double, Double) -> Double
 
 fn round(Double) -> Double
@@ -125,7 +123,6 @@ impl Double {
   min_normal() -> Double
   #deprecated
   nan() -> Double
-  op_mod(Double, Double) -> Double
   pow(Double, Double) -> Double
   round(Double) -> Double
   signum(Double) -> Double
@@ -140,6 +137,7 @@ impl Double {
   trunc(Double) -> Double
 }
 impl Hash for Double
+impl Mod for Double
 impl Show for Double
 
 // Type aliases
