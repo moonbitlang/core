@@ -65,10 +65,11 @@ pub fn parse_uint64(str : String, base~ : Int = 0) -> UInt64!StrConvError {
     ['_', ..], _, false => syntax_err!()
     ['_', .. rest], acc, true => continue rest, acc, false
     [c, .. rest], acc, _ => {
+      let c = c.to_int()
       let d = match c {
-        '0'..='9' => c.to_int() - '0'
-        'a'..='z' => c.to_int() - 'a' + 10
-        'A'..='Z' => c.to_int() - 'A' + 10
+        '0'..='9' => c - '0'
+        'a'..='z' => c + (10 - 'a')
+        'A'..='Z' => c + (10 - 'A')
         _ => syntax_err!()
       }
       guard d < num_base else { syntax_err!() }
