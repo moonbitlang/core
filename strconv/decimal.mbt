@@ -111,7 +111,7 @@ fn parse_decimal_from_view(str : @string.View) -> Decimal!StrConvError {
         continue rest
       }
       if d.digits_num < d.digits.length() {
-        d.digits[d.digits_num] = (digit - '0').to_byte()
+        d.digits[d.digits_num] = (digit.to_int() - '0').to_byte()
         d.digits_num += 1
       } else if digit != '0' {
         d.truncated = true
@@ -141,7 +141,7 @@ fn parse_decimal_from_view(str : @string.View) -> Decimal!StrConvError {
       let rest = loop rest {
         ['_', .. rest] => continue rest
         ['0'..='9' as digit, .. rest] => {
-          exp = exp * 10 + (digit - '0')
+          exp = exp * 10 + (digit.to_int() - '0')
           continue rest
         }
         rest => rest
