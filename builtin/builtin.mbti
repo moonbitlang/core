@@ -40,6 +40,8 @@ fn println[T : Show](T) -> Unit
 
 fn repr[T : Show](T) -> String
 
+fn unsafe_codepoint_at(String, Int) -> Char
+
 // Types and methods
 pub(all) type ArgsLoc Array[SourceLoc?]
 impl ArgsLoc {
@@ -643,6 +645,7 @@ impl String {
   charcode_at(String, Int) -> Int
   #deprecated
   charcode_length(String) -> Int
+  #deprecated
   codepoint_at(String, Int) -> Char
   codepoint_length(String) -> Int
   escape(String) -> String
@@ -655,6 +658,7 @@ impl String {
   substring(String, start~ : Int = .., end? : Int) -> String
   to_string(String) -> String
   unsafe_charcode_at(String, Int) -> Int
+  unsafe_codepoint_at(String, Int) -> Char
 }
 
 impl Option {
