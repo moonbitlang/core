@@ -34,7 +34,7 @@
 ///   inspect!(-9223372036854775808L, content="-9223372036854775808") // negating min value
 /// }
 /// ```
-pub fn Int64::op_neg(self : Int64) -> Int64 = "%i64_neg"
+pub impl Neg for Int64 with op_neg(self : Int64) -> Int64 = "%i64_neg"
 
 ///|
 /// Adds two 64-bit integers together. Performs overflow checking and wrapping
@@ -57,7 +57,7 @@ pub fn Int64::op_neg(self : Int64) -> Int64 = "%i64_neg"
 ///   inspect!(42L + -42L, content="0")
 /// }
 /// ```
-pub fn Int64::op_add(self : Int64, other : Int64) -> Int64 = "%i64_add"
+pub impl Add for Int64 with op_add(self, other) = "%i64_add"
 
 ///|
 /// Performs subtraction between two 64-bit integers.
@@ -81,7 +81,7 @@ pub fn Int64::op_add(self : Int64, other : Int64) -> Int64 = "%i64_add"
 ///   inspect!(c - d, content="9223372036854775807")
 /// }
 /// ```
-pub fn Int64::op_sub(self : Int64, other : Int64) -> Int64 = "%i64_sub"
+pub impl Sub for Int64 with op_sub(self, other) = "%i64_sub"
 
 ///|
 /// Multiplies two 64-bit integers.
@@ -106,7 +106,7 @@ pub fn Int64::op_sub(self : Int64, other : Int64) -> Int64 = "%i64_sub"
 ///   inspect!(c * b, content="-4200")
 /// }
 /// ```
-pub fn Int64::op_mul(self : Int64, other : Int64) -> Int64 = "%i64_mul"
+pub impl Mul for Int64 with op_mul(self, other) = "%i64_mul"
 
 ///|
 /// Performs integer division between two 64-bit integers. Truncates the result
@@ -138,7 +138,7 @@ pub fn Int64::op_mul(self : Int64, other : Int64) -> Int64 = "%i64_mul"
 ///   ignore(a / 0L) // Division by zero
 /// }
 /// ```
-pub fn Int64::op_div(self : Int64, other : Int64) -> Int64 = "%i64_div"
+pub impl Div for Int64 with op_div(self, other) = "%i64_div"
 
 ///|
 /// Calculates the remainder of the division between two 64-bit integers. The
@@ -167,7 +167,7 @@ pub fn Int64::op_div(self : Int64, other : Int64) -> Int64 = "%i64_div"
 ///   ignore(7L % 0L) // Panics with division by zero
 /// }
 /// ```
-pub fn Int64::op_mod(self : Int64, other : Int64) -> Int64 = "%i64_mod"
+pub impl Mod for Int64 with op_mod(self, other) = "%i64_mod"
 
 ///|
 /// Performs a bitwise NOT operation on a 64-bit integer. Each bit in the input
@@ -212,7 +212,7 @@ pub fn Int64::lnot(self : Int64) -> Int64 = "%i64_lnot"
 ///   inspect!(a & b, content="251662080") // 0x0F000F00
 /// }
 /// ```
-pub fn Int64::land(self : Int64, other : Int64) -> Int64 = "%i64_land"
+pub impl BitAnd for Int64 with land(self, other) = "%i64_land"
 
 ///|
 /// Performs a bitwise OR operation between two 64-bit integers.
@@ -234,7 +234,7 @@ pub fn Int64::land(self : Int64, other : Int64) -> Int64 = "%i64_land"
 ///   inspect!(a | b, content="65520") // 1111_1111_1111_0000 = 65520
 /// }
 /// ```
-pub fn Int64::lor(self : Int64, other : Int64) -> Int64 = "%i64_lor"
+pub impl BitOr for Int64 with lor(self, other) = "%i64_lor"
 
 ///|
 /// Performs a bitwise XOR operation between two 64-bit integers. Each bit of the
@@ -259,7 +259,7 @@ pub fn Int64::lor(self : Int64, other : Int64) -> Int64 = "%i64_lor"
 ///   inspect!(a ^ a, content="0") // XOR with self gives 0
 /// }
 /// ```
-pub fn Int64::lxor(self : Int64, other : Int64) -> Int64 = "%i64_lxor"
+pub impl BitXOr for Int64 with lxor(self, other) = "%i64_lxor"
 
 ///|
 /// Performs a left shift operation on a 64-bit signed integer. Shifts each bit
@@ -418,7 +418,7 @@ pub fn Int64::shr(self : Int64, other : Int) -> Int64 = "%i64_shr"
 ///   inspect!(m << 2, content="-16") // -4 shifted left by 2 positions becomes -16
 /// }
 /// ```
-pub fn Int64::op_shl(self : Int64, other : Int) -> Int64 = "%i64_shl"
+pub impl Shl for Int64 with op_shl(self, other) = "%i64_shl"
 
 ///|
 /// Performs arithmetic right shift operation on a 64-bit integer value by a
@@ -445,7 +445,7 @@ pub fn Int64::op_shl(self : Int64, other : Int) -> Int64 = "%i64_shl"
 ///   inspect!(p >> 3, content="128") // Regular right shift for positive numbers
 /// }
 /// ```
-pub fn Int64::op_shr(self : Int64, other : Int) -> Int64 = "%i64_shr"
+pub impl Shr for Int64 with op_shr(self, other) = "%i64_shr"
 
 ///|
 /// Returns the number of trailing zero bits in a 64-bit integer. For zero input,
@@ -1190,7 +1190,7 @@ pub fn UInt64::to_double(self : UInt64) -> Double = "%u64.to_f64"
 ///   inspect!(max + 1UL, content="0")
 /// }
 /// ```
-pub fn UInt64::op_add(self : UInt64, other : UInt64) -> UInt64 = "%u64.add"
+pub impl Add for UInt64 with op_add(self, other) = "%u64.add"
 
 ///|
 /// Performs subtraction between two unsigned 64-bit integers. When the result
@@ -1216,7 +1216,7 @@ pub fn UInt64::op_add(self : UInt64, other : UInt64) -> UInt64 = "%u64.add"
 ///   inspect!(c - d, content="18446744073709551614") // wraps around to 2^64 - 2
 /// }
 /// ```
-pub fn UInt64::op_sub(self : UInt64, other : UInt64) -> UInt64 = "%u64.sub"
+pub impl Sub for UInt64 with op_sub(self, other) = "%u64.sub"
 
 ///|
 /// Performs multiplication between two unsigned 64-bit integers.
@@ -1242,7 +1242,7 @@ pub fn UInt64::op_sub(self : UInt64, other : UInt64) -> UInt64 = "%u64.sub"
 ///   inspect!(max * 2UL, content="18446744073709551614") // Wraps around to max - 1
 /// }
 /// ```
-pub fn UInt64::op_mul(self : UInt64, other : UInt64) -> UInt64 = "%u64.mul"
+pub impl Mul for UInt64 with op_mul(self, other) = "%u64.mul"
 
 ///|
 /// Performs division operation between two unsigned 64-bit integers.
@@ -1270,7 +1270,7 @@ pub fn UInt64::op_mul(self : UInt64, other : UInt64) -> UInt64 = "%u64.mul"
 ///   ignore(a / 0UL) // Throws runtime error: division by zero
 /// }
 /// ```
-pub fn UInt64::op_div(self : UInt64, other : UInt64) -> UInt64 = "%u64.div"
+pub impl Div for UInt64 with op_div(self, other) = "%u64.div"
 
 ///|
 /// Calculates the remainder of dividing one unsigned 64-bit integer by another.
@@ -1299,7 +1299,7 @@ pub fn UInt64::op_div(self : UInt64, other : UInt64) -> UInt64 = "%u64.div"
 ///   ignore(a % 0UL) // Panics: division by zero
 /// }
 /// ```
-pub fn UInt64::op_mod(self : UInt64, other : UInt64) -> UInt64 = "%u64.mod"
+pub impl Mod for UInt64 with op_mod(self, other) = "%u64.mod"
 
 ///|
 /// Compares two unsigned 64-bit integers and determines their relative order.
@@ -1370,7 +1370,7 @@ pub impl Eq for UInt64 with op_equal(self : UInt64, other : UInt64) -> Bool = "%
 ///   inspect!(a & b, content="17294086455919964160") // 0xF000F000F000F000
 /// }
 /// ```
-pub fn UInt64::land(self : UInt64, other : UInt64) -> UInt64 = "%u64.bitand"
+pub impl BitAnd for UInt64 with land(self, other) = "%u64.bitand"
 
 ///|
 /// Performs a bitwise OR operation between two unsigned 64-bit integers.
@@ -1392,7 +1392,7 @@ pub fn UInt64::land(self : UInt64, other : UInt64) -> UInt64 = "%u64.bitand"
 ///   inspect!(a | b, content="4294967295") // All bits set to 1
 /// }
 /// ```
-pub fn UInt64::lor(self : UInt64, other : UInt64) -> UInt64 = "%u64.bitor"
+pub impl BitOr for UInt64 with lor(self, other) = "%u64.bitor"
 
 ///|
 /// Performs a bitwise XOR operation between two unsigned 64-bit integers. For
@@ -1416,7 +1416,7 @@ pub fn UInt64::lor(self : UInt64, other : UInt64) -> UInt64 = "%u64.bitor"
 ///   inspect!(a ^ b, content="4294967295") // 0xFFFFFFFF
 /// }
 /// ```
-pub fn UInt64::lxor(self : UInt64, other : UInt64) -> UInt64 = "%u64.bitxor"
+pub impl BitXOr for UInt64 with lxor(self, other) = "%u64.bitxor"
 
 ///|
 /// Performs a bitwise NOT operation on a 64-bit unsigned integer. Flips all bits
@@ -1566,7 +1566,7 @@ pub fn UInt64::lsr(self : UInt64, shift : Int) -> UInt64 = "%u64.shr"
 ///   inspect!(x << 63, content="9223372036854775808") // 1 shifted left by 63 positions
 /// }
 /// ```
-pub fn UInt64::op_shl(self : UInt64, shift : Int) -> UInt64 = "%u64.shl"
+pub impl Shl for UInt64 with op_shl(self, shift) = "%u64.shl"
 
 ///|
 /// Performs a logical right shift operation on a 64-bit unsigned integer by a
@@ -1592,7 +1592,7 @@ pub fn UInt64::op_shl(self : UInt64, shift : Int) -> UInt64 = "%u64.shl"
 ///   inspect!(x >> 64, content="18374966859414961920") // Equivalent to x >> 0 due to masking
 /// }
 /// ```
-pub fn UInt64::op_shr(self : UInt64, shift : Int) -> UInt64 = "%u64.shr"
+pub impl Shr for UInt64 with op_shr(self, shift) = "%u64.shr"
 
 ///|
 /// Counts the number of leading zero bits in a 64-bit unsigned integer, starting

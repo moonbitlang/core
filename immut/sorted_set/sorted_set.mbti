@@ -54,8 +54,6 @@ fn new[A]() -> T[A]
 
 fn of[A : Compare](FixedArray[A]) -> T[A]
 
-fn op_add[A : Compare](T[A], T[A]) -> T[A]
-
 fn remove[A : Compare](T[A], A) -> T[A]
 
 fn remove_min[A : Compare](T[A]) -> T[A]
@@ -107,7 +105,6 @@ impl T {
   new[A]() -> Self[A]
   #deprecated
   of[A : Compare](FixedArray[A]) -> Self[A]
-  op_add[A : Compare](Self[A], Self[A]) -> Self[A]
   remove[A : Compare](Self[A], A) -> Self[A]
   remove_min[A : Compare](Self[A]) -> Self[A]
   #deprecated
@@ -119,6 +116,7 @@ impl T {
   to_json[A : ToJson](Self[A]) -> Json
   union[A : Compare](Self[A], Self[A]) -> Self[A]
 }
+impl[A : Compare] Add for T[A]
 impl[A : Compare] Compare for T[A]
 impl[A] Default for T[A]
 impl[A : Eq] Eq for T[A]

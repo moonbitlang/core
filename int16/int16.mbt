@@ -19,22 +19,22 @@ pub let max_value : Int16 = 32767
 pub let min_value : Int16 = -32768
 
 ///|
-pub fn op_add(self : Int16, that : Int16) -> Int16 {
+pub impl Add for Int16 with op_add(self : Int16, that : Int16) -> Int16 {
   (self.to_int() + that.to_int()).to_int16()
 }
 
 ///|
-pub fn op_sub(self : Int16, that : Int16) -> Int16 {
+pub impl Sub for Int16 with op_sub(self : Int16, that : Int16) -> Int16 {
   (self.to_int() - that.to_int()).to_int16()
 }
 
 ///|
-pub fn op_mul(self : Int16, that : Int16) -> Int16 {
+pub impl Mul for Int16 with op_mul(self : Int16, that : Int16) -> Int16 {
   (self.to_int() * that.to_int()).to_int16()
 }
 
 ///|
-pub fn op_div(self : Int16, that : Int16) -> Int16 {
+pub impl Div for Int16 with op_div(self : Int16, that : Int16) -> Int16 {
   (self.to_int() / that.to_int()).to_int16()
 }
 
