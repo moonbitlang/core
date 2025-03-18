@@ -3004,6 +3004,11 @@ pub fn UInt::reinterpret_as_float(self : UInt) -> Float = "%i32.to_f32_reinterpr
 /// ```
 pub fn Byte::to_float(self : Byte) -> Float = "%byte.to_f32"
 
+///| TODO: use intrinsics implement this
+pub fn Byte::to_double(self : Byte) -> Double {
+  self.to_int().to_double()
+}
+
 ///|
 /// Converts a double-precision floating-point number to a single-precision
 /// floating-point number. The conversion may result in a loss of precision due
