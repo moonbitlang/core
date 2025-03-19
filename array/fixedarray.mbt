@@ -28,7 +28,7 @@
 /// assert_eq!(arr, [1, 2, 3, 4, 5])
 /// ```
 /// TODO: change the intrinsic to match the function name
-/// @intrinsic %fixedarray.iter
+#intrinsic("%fixedarray.iter")
 pub fn FixedArray::each[T](self : FixedArray[T], f : (T) -> Unit) -> Unit {
   for v in self {
     f(v)

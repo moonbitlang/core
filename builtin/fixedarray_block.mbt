@@ -33,7 +33,7 @@
 /// - `dst_offset + len > dst.length()`
 /// - `src_offset + len > src.length()`
 ///
-/// @intrinsic %fixedarray.copy
+#intrinsic("%fixedarray.copy")
 pub fn FixedArray::unsafe_blit[A](
   dst : FixedArray[A],
   dst_offset : Int,
@@ -53,7 +53,7 @@ pub fn FixedArray::unsafe_blit[A](
 }
 
 ///|
-/// @intrinsic %fixedarray.copy
+#intrinsic("%fixedarray.copy")
 /// This is the same as `unsafe_blit`, but it is used when the source array is
 /// FixedArray[T] instead of UninitializedArray[T].
 fn UninitializedArray::unsafe_blit_fixed[T](

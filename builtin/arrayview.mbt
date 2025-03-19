@@ -119,7 +119,7 @@ pub fn ArrayView::op_get[T](self : ArrayView[T], index : Int) -> T {
 /// }
 /// ```
 ///
-/// @intrinsic %arrayview.unsafe_get
+#intrinsic("%arrayview.unsafe_get")
 /// @alert unsafe "Panic if index is out of bounds"
 pub fn ArrayView::unsafe_get[T](self : ArrayView[T], index : Int) -> T {
   self.buf[self.start + index]

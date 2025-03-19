@@ -177,7 +177,7 @@ pub fn String::codepoint_length(self : String) -> Int {
 }
 
 ///|
-/// @intrinsic %string.substring
+#intrinsic("%string.substring")
 fn unsafe_substring(str : String, start : Int, end : Int) -> String {
   let len = end - start
   let bytes = FixedArray::make(len * 2, Byte::default())
