@@ -380,10 +380,7 @@ impl UninitializedArray {
 
 impl Bool {
   #deprecated
-  not(Bool) -> Bool
-  #deprecated
   op_compare(Bool, Bool) -> Int
-  to_string(Bool) -> String
 }
 
 impl Byte {
