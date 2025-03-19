@@ -52,7 +52,7 @@ pub impl[T : Show] Show for Iter[T] with output(self, logger) {
 /// - `self`: The iterator to consume.
 /// - `f`: A function that takes an element of type `T` and returns `Unit`. This function is applied to each element of the iterator.
 /// TODO: change the intrinsic to match the function name
-/// @intrinsic %iter.iter
+#intrinsic("%iter.iter")
 pub fn Iter::each[T](self : Iter[T], f : (T) -> Unit) -> Unit {
   for a in self {
     f(a)
@@ -107,7 +107,7 @@ pub fn Iter::eachi[T](self : Iter[T], f : (Int, T) -> Unit) -> Unit {
 /// # Returns
 ///
 /// Returns the final accumulator value after folding all elements of the iterator.
-/// @intrinsic %iter.reduce
+#intrinsic("%iter.reduce")
 pub fn Iter::fold[T, B](self : Iter[T], init~ : B, f : (B, T) -> B) -> B {
   let mut acc = init
   for a in self {
@@ -188,7 +188,7 @@ pub fn Iter::singleton[T](a : T) -> Iter[T] {
 /// # Returns
 ///
 /// Returns an iterator of type `Iter[T]` that repeats the element `a` indefinitely.
-/// @intrinsic %iter.repeat
+#intrinsic("%iter.repeat")
 pub fn Iter::repeat[T](a : T) -> Iter[T] {
   fn(yield_) {
     loop yield_(a) {
@@ -387,7 +387,7 @@ pub fn Double::until(
 /// # Returns
 ///
 /// A new iterator that only contains the elements for which the predicate function returns `IterContinue`.
-/// @intrinsic %iter.filter
+#intrinsic("%iter.filter")
 pub fn Iter::filter[T](self : Iter[T], f : (T) -> Bool) -> Iter[T] {
   fn(yield_) {
     self.run(fn { a => if f(a) { yield_(a) } else { IterContinue } })
@@ -410,7 +410,7 @@ pub fn Iter::filter[T](self : Iter[T], f : (T) -> Bool) -> Iter[T] {
 /// # Returns
 ///
 /// A new iterator that contains the transformed elements.
-/// @intrinsic %iter.map
+#intrinsic("%iter.map")
 pub fn Iter::map[T, R](self : Iter[T], f : (T) -> R) -> Iter[R] {
   fn { yield_ => self.run(fn { a => yield_(f(a)) }) }
 }
@@ -454,7 +454,7 @@ pub fn Iter::map_option[A, B](self : Iter[A], f : (A) -> B?) -> Iter[B] {
 /// # Returns
 ///
 /// A new iterator that contains the flattened elements.
-/// @intrinsic %iter.flat_map
+#intrinsic("%iter.flat_map")
 pub fn Iter::flat_map[T, R](self : Iter[T], f : (T) -> Iter[R]) -> Iter[R] {
   fn { yield_ => self.run(fn { x => f(x).run(yield_) }) }
 }
@@ -511,7 +511,7 @@ pub fn Iter::tap[T](self : Iter[T], f : (T) -> Unit) -> Iter[T] {
 /// # Returns
 ///
 /// A new iterator that contains the first `n` elements.
-/// @intrinsic %iter.take
+#intrinsic("%iter.take")
 pub fn Iter::take[T](self : Iter[T], n : Int) -> Iter[T] {
   // [..take(10,seq), next] would continue
   // even if seq has less than 10 elements
@@ -757,7 +757,7 @@ pub fn Iter::append[T](self : Iter[T], a : T) -> Iter[T] {
 /// # Returns
 ///
 /// Returns a new iterator that contains the elements of `self` followed by the elements of `other`.
-/// @intrinsic %iter.concat
+#intrinsic("%iter.concat")
 pub fn Iter::concat[T](self : Iter[T], other : Iter[T]) -> Iter[T] {
   fn(yield_) {
     if self.run(yield_) == IterContinue {

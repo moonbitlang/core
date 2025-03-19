@@ -110,7 +110,7 @@ pub fn Array::capacity[T](self : Array[T]) -> Int {
 /// }
 /// ```
 ///
-/// @intrinsic %array.unsafe_get
+#intrinsic("%array.unsafe_get")
 pub fn Array::unsafe_get[T](self : Array[T], idx : Int) -> T {
   self.buffer()[idx]
 }
@@ -143,7 +143,7 @@ pub fn Array::unsafe_get[T](self : Array[T], idx : Int) -> T {
 /// ```
 ///
 /// @alert unsafe "Panic if index is out of bounds"
-/// @intrinsic %array.get
+#intrinsic("%array.get")
 pub fn Array::op_get[T](self : Array[T], index : Int) -> T {
   let len = self.length()
   guard index >= 0 && index < len
@@ -178,7 +178,7 @@ pub fn Array::get[T](self : Array[T], index : Int) -> T? {
 }
 
 ///|
-/// @intrinsic %array.unsafe_set
+#intrinsic("%array.unsafe_set")
 fn Array::unsafe_set[T](self : Array[T], idx : Int, val : T) -> Unit {
   self.buffer()[idx] = val
 }
@@ -212,7 +212,7 @@ fn Array::unsafe_set[T](self : Array[T], idx : Int, val : T) -> Unit {
 /// ```
 ///
 /// @alert unsafe "Panic if index is out of bounds."
-/// @intrinsic %array.set
+#intrinsic("%array.set")
 pub fn Array::op_set[T](self : Array[T], index : Int, value : T) -> Unit {
   let len = self.length()
   guard index >= 0 && index < len

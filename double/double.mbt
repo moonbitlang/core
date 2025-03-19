@@ -336,7 +336,7 @@ pub impl Hash for Double with hash_combine(self, hasher) {
 /// }
 /// ```
 ///
-/// @intrinsic %f64.to_string
+#intrinsic("%f64.to_string")
 pub fn to_string(self : Double) -> String {
   @ryu.ryu_to_string(self)
 }

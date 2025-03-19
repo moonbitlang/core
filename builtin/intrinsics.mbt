@@ -1614,7 +1614,7 @@ pub fn FixedArray::get[T](self : FixedArray[T], idx : Int) -> T = "%fixedarray.g
 /// ```
 ///
 /// @alert unsafe "Panic if index is out of bounds."
-/// @intrinsic %fixedarray.set
+#intrinsic("%fixedarray.set")
 pub fn FixedArray::op_set[T](self : FixedArray[T], idx : Int, val : T) -> Unit = "%fixedarray.set"
 
 ///|
