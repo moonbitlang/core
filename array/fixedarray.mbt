@@ -1006,40 +1006,6 @@ test "op_equal" {
 }
 
 ///|
-fn deep_clone[T](arr : FixedArray[T]) -> FixedArray[T] {
-  let len = arr.length()
-  if len == 0 {
-    []
-  } else {
-    let result = FixedArray::make(len, arr[0])
-    for i in 0..<len {
-      result[i] = arr[i]
-    }
-    result
-  }
-}
-
-///|
-test "deep_clone" {
-  {
-    let pre : FixedArray[Int] = []
-    let arr = deep_clone(pre)
-    @test.is_not!(arr, pre)
-    assert_eq!(arr, [])
-  }
-  {
-    let pre : FixedArray[_] = [3]
-    let arr = deep_clone(pre)
-    @test.is_not!(arr, pre)
-    assert_eq!(arr, [3])
-  }
-  let pre : FixedArray[_] = [1, 2, 3, 4, 5]
-  let arr = deep_clone(pre)
-  @test.is_not!(arr, pre)
-  assert_eq!(arr, [1, 2, 3, 4, 5])
-}
-
-///|
 /// Concatenates two arrays and returns a new array containing all elements from
 /// both arrays in order.
 ///
@@ -1064,20 +1030,13 @@ test "deep_clone" {
 pub impl[T] Add for FixedArray[T] with op_add(self, other) {
   let slen = self.length()
   let nlen = other.length()
-  if slen == 0 {
-    deep_clone(other)
-  } else if nlen == 0 {
-    deep_clone(self)
-  } else {
-    let result = FixedArray::make(slen + nlen, self[0])
-    for i in 1..<slen {
-      result[i] = self[i]
+  FixedArray::makei(slen + nlen, fn(i) {
+    if i < slen {
+      self[i]
+    } else {
+      other[i - slen]
     }
-    for i in 0..<nlen {
-      result[i + slen] = other[i]
-    }
-    result
-  }
+  })
 }
 
 ///|
