@@ -71,12 +71,6 @@ fn trim(String, String) -> String
 
 fn trim_end(String, String) -> String
 
-#deprecated
-fn trim_left(String, String) -> String
-
-#deprecated
-fn trim_right(String, String) -> String
-
 fn trim_space(String) -> String
 
 fn trim_start(String, String) -> String
@@ -99,6 +93,7 @@ impl StringView {
 impl Show for StringView
 
 impl String {
+  #deprecated
   concat(Array[String], separator~ : String = ..) -> String
   contains(String, String) -> Bool
   contains_char(String, Char) -> Bool
@@ -134,10 +129,6 @@ impl String {
   to_upper(String) -> String
   trim(String, String) -> String
   trim_end(String, String) -> String
-  #deprecated
-  trim_left(String, String) -> String
-  #deprecated
-  trim_right(String, String) -> String
   trim_space(String) -> String
   trim_start(String, String) -> String
 }
