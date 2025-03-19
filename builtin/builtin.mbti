@@ -596,7 +596,7 @@ impl String {
   charcode_length(String) -> Int
   #deprecated
   codepoint_at(String, Int) -> Char
-  codepoint_length(String) -> Int
+  codepoint_length(String, start~ : Int = .., end~ : Int = ..) -> Int
   escape(String) -> String
   #deprecated
   get(String, Int) -> Char
