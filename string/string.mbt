@@ -60,10 +60,7 @@ pub fn from_iter(iter : Iter[Char]) -> String {
 /// let s = @string.concat(["a", "b", "c"], separator=",")
 /// assert_eq!(s, "a,b,c")
 /// ```
-pub fn String::concat(
-  strings : Array[String],
-  separator~ : String = ""
-) -> String {
+pub fn concat(strings : Array[String], separator~ : String = "") -> String {
   match strings {
     [] => ""
     [hd, .. tl] => {
@@ -87,12 +84,6 @@ pub fn String::concat(
       buf.to_string()
     }
   }
-}
-
-///|
-/// same as `String::concat`
-pub fn concat(strings : Array[String], separator~ : String = "") -> String {
-  String::concat(strings, separator~)
 }
 
 ///|
