@@ -99,10 +99,6 @@ impl T {
   eachi[A](Self[A], (Int, A) -> Unit) -> Unit
   #deprecated
   filter_map_inplace[A](Self[A], (A) -> A?) -> Unit
-  #deprecated
-  from_array[A](Array[A]) -> Self[A]
-  #deprecated
-  from_iter[A](Iter[A]) -> Self[A]
   front[A](Self[A]) -> A?
   is_empty[A](Self[A]) -> Bool
   iter[A](Self[A]) -> Iter[A]
@@ -110,10 +106,6 @@ impl T {
   length[A](Self[A]) -> Int
   map[A, U](Self[A], (A) -> U) -> Self[U]
   mapi[A, U](Self[A], (Int, A) -> U) -> Self[U]
-  #deprecated
-  new[A](capacity~ : Int = ..) -> Self[A]
-  #deprecated
-  of[A](FixedArray[A]) -> Self[A]
   op_get[A](Self[A], Int) -> A
   op_set[A](Self[A], Int, A) -> Unit
   pop_back[A](Self[A]) -> A?

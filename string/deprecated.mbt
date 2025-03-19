@@ -13,15 +13,7 @@
 // limitations under the License.
 
 ///|
-#deprecated("Use `String::trim_start` instead")
-#coverage.skip
-pub fn trim_left(self : String, trim_set : String) -> String {
-  self.trim_start(trim_set)
-}
-
-///|
-#deprecated("Use `String::trim_end` instead")
-#coverage.skip
-pub fn trim_right(self : String, trim_set : String) -> String {
-  self.trim_end(trim_set)
+#deprecated("Use `@string.concat` instead")
+pub fn String::concat(self : Array[String], separator~ : String = "") -> String {
+  concat(self, separator~)
 }

@@ -97,6 +97,7 @@ pub fn String::charcode_at(self : String, index : Int) -> Int = "%string_get"
 /// Panics if:
 /// - The index is out of bounds
 /// - The string contains an invalid surrogate pair
+#deprecated("The index will be changed to utf16 index. If you want to access n-th character, use `str.iter().nth(n).unwrap()` instead.")
 pub fn String::codepoint_at(self : String, index : Int) -> Char {
   let charcode_len = self.length()
   guard index >= 0 && index < charcode_len else { abort("index out of bounds") }
@@ -127,6 +128,18 @@ pub fn String::codepoint_at(self : String, index : Int) -> Char {
     } else {
       Char::from_int(c1)
     }
+  }
+}
+
+///|
+/// Returns the Unicode code point at the given index without bounds checking.
+pub fn String::unsafe_codepoint_at(self : String, index : Int) -> Char {
+  let c1 = self.unsafe_charcode_at(index)
+  if is_leading_surrogate(c1) {
+    let c2 = self.unsafe_charcode_at(index + 1)
+    code_point_of_surrogate_pair(c1, c2)
+  } else {
+    Char::from_int(c1)
   }
 }
 

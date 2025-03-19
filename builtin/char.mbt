@@ -32,6 +32,8 @@
 ///   inspect!(a - b, content="1") // Unicode point of 'b' (98) minus 'a' (97)
 /// }
 /// ```
+#deprecated("convert the `Char` to `Int` first")
+#converage.skip
 pub fn Char::op_sub(self : Char, that : Char) -> Int {
   self.to_int() - that.to_int()
 }
