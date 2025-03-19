@@ -33,7 +33,7 @@ fn ParseContext::lex_string(ctx : ParseContext) -> String!ParseError {
         flush(ctx.offset - 1)
         match ctx.read_char() {
           Some('b') => buf.write_char('\b')
-          Some('f') => buf.write_char('\x0C')
+          Some('f') => buf.write_char('\u{0C}')
           Some('n') => buf.write_char('\n')
           Some('r') => buf.write_char('\r')
           Some('t') => buf.write_char('\t')
