@@ -112,32 +112,6 @@ pub fn panic[T]() -> T = "%panic"
 pub fn not(x : Bool) -> Bool = "%bool_not"
 
 ///|
-/// Performs logical negation on a boolean value. Returns `false` if the input is
-/// `true`, and `true` if the input is `false`.
-///
-/// DEPRECATED: Use `not(x)` instead of `x.not()`.
-///
-/// Parameters:
-///
-/// * `self` : The boolean value to be negated.
-///
-/// Returns the logical negation of the input boolean value.
-///
-/// Example:
-///
-/// ```moonbit
-/// test "Bool::not" {
-///   let x = true
-///   inspect!(not(x), content="false")
-///   let y = false
-///   inspect!(not(y), content="true")
-/// }
-/// ```
-///
-#deprecated("Use `not(x)` instead")
-pub fn Bool::not(self : Bool) -> Bool = "%bool_not"
-
-///|
 /// Compares two boolean values for equality.
 ///
 /// Parameters:
