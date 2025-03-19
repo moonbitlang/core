@@ -38,119 +38,93 @@ struct StringView {
 pub typealias View = StringView
 
 ///|
-/// A `StringIndex` represents an unicode-aware position within a string.
-///
-/// This type is intentionally opaque - it is recommended to use the 
-/// `str.index_at(offset_by: Int) -> StringIndex` method to construct a 
-/// `StringIndex`.
-type StringIndex Int derive(Show, Eq)
-
-///|
-/// Returns a `StringIndex` representing the position after skipping `offset_by` 
-/// Unicode characters. If the string has `n` Unicode characters, the returned 
-/// index will be `Some` if `0 <= offset_by <= n`, otherwise `None`.
-///
-/// # Examples
-/// 
-/// ```
-/// let str = "🤣🤣🤣"
-/// let offset = str.index_at(1).unwrap()                // Skip 1 character
-/// inspect!(offset, content="StringIndex(2)")              // Points to second emoji
-/// 
-/// let offset = str.index_at(start=offset, 1).unwrap()  // Skip 2 characters
-/// inspect!(offset, content="StringIndex(4)")              // Points to third emoji
-///
-/// let offset = str.index_at(4)                            // Skip 4 characters
-/// inspect!(offset, content="None")                        // Beyond end of string
-/// ```
-pub fn index_at(
-  self : String,
-  offset_by : Int,
-  start~ : StringIndex = 0
-) -> StringIndex? {
-  let str_len = self.length()
-  guard start._ >= 0 && start._ <= str_len else { abort("Invalid start index") }
-  let mut utf16_offset = start._
-  let mut char_count = 0
-  while utf16_offset < str_len && char_count < offset_by {
-    let c1 = self.unsafe_charcode_at(utf16_offset)
-    // check if this is a surrogate pair
-    if is_leading_surrogate(c1) && utf16_offset + 1 < str_len {
-      let c2 = self.unsafe_charcode_at(utf16_offset + 1)
-      if is_trailing_surrogate(c2) {
-        utf16_offset = utf16_offset + 2
-        char_count = char_count + 1
-        continue
-      } else {
-        abort("invalid surrogate pair")
-      }
-    }
-    // single utf-16 code unit
-    utf16_offset = utf16_offset + 1
-    char_count = char_count + 1
-  }
-  // Return None if:
-  // 1. We couldn't reach the requested character offset
-  // 2. The resulting offset is beyond the end of the string
-  if char_count < offset_by || utf16_offset > str_len {
-    None
-  } else {
-    Some(utf16_offset)
-  }
+fn len(self : View) -> Int {
+  self.end - self.start
 }
 
 ///|
-/// Returns a `StringIndex` representing the position before skipping `offset_by` 
-/// Unicode characters from the end of the string.
+/// Creates a `View` into a `String`.
 /// 
 /// # Example
 /// 
 /// ```
-/// let str = "🤣🤣🤣"
-/// let offset = str.index_at_rev(0)
-/// inspect!(offset, content="Some(StringIndex(6))")
-/// let offset = str.index_at_rev(1).unwrap()
-/// inspect!(offset, content="StringIndex(4)")
-/// let offset = str.index_at_rev(2, end = offset)
-/// inspect!(offset, content="Some(StringIndex(0))")
-/// let offset = str.index_at_rev(4)
-/// inspect!(offset, content="None")
+/// let str = "Hello🤣🤣🤣"
+/// let view1 = str.view()
+/// inspect!(view1, content=
+///  "Hello🤣🤣🤣"
+///)
+/// let start = str.index_of_nth_char(1).unwrap()
+/// let end = str.index_of_nth_char(6).unwrap() // the second emoji
+/// let view2 = str.view(start~, end~)
+/// inspect!(view2, content=
+///  "ello🤣"
+///)
 /// ```
-pub fn index_at_rev(
+pub fn String::view(
   self : String,
-  offset_by : Int,
-  end? : StringIndex
-) -> StringIndex? {
-  let str_len = self.length()
-  let end = match end {
-    None => str_len
-    Some(end) => {
-      guard end._ >= 0 && end._ <= str_len else { abort("Invalid end index") }
-      end._
-    }
+  start~ : Int = 0,
+  end~ : Int = self.length()
+) -> View {
+  guard start >= 0 && start <= end && end <= self.length() else {
+    abort("Invalid index for View")
   }
-  let mut utf16_offset = end
-  let mut char_count = 0
-  // Iterating backwards from the end of the string. [utf16_offset] always 
-  // points to the last skipped character.
-  while utf16_offset > 0 && char_count < offset_by {
-    let c1 = self.unsafe_charcode_at(utf16_offset - 1)
-    if is_trailing_surrogate(c1) && utf16_offset - 2 >= 0 {
-      let c2 = self.unsafe_charcode_at(utf16_offset - 2)
-      if is_leading_surrogate(c2) {
-        utf16_offset = utf16_offset - 2
-        char_count = char_count + 1
-        continue
-      }
-    }
-    utf16_offset = utf16_offset - 1
-    char_count = char_count + 1
+  { str: self, start, end }
+}
+
+///|
+/// Creates a new `View` from an existing `View`.
+/// 
+/// # Example
+/// 
+/// ```
+/// let str = "Hello🤣🤣🤣"
+/// let start = str.index_of_nth_char(1).unwrap()
+/// let end = str.index_of_nth_char(7).unwrap() // the third emoji in str
+/// let view = str.view(start~, end~)
+/// inspect!(view, content=
+///   "ello🤣🤣"
+/// )
+/// let start = view.index_of_nth_char(1).unwrap()
+/// let end = view.index_of_nth_char(5).unwrap() // the second emoji in view
+/// let view2 = view.view(start~, end~)
+/// inspect!(view2, content=
+///   "llo🤣"
+/// )
+/// ```
+pub fn View::view(
+  self : View,
+  start~ : Int = 0,
+  end~ : Int = self.len()
+) -> View {
+  guard start >= 0 && start <= end && end <= self.len() else {
+    abort("Invalid index for View")
   }
-  if char_count < offset_by || utf16_offset < 0 {
-    None
+  { str: self.str, start: self.start + start, end: self.start + end }
+}
+
+///|
+/// Returns the UTF-16 index of the i-th (zero-indexed) Unicode character of
+/// the view. If i is negative, it returns the index of the (n + i)-th character
+/// where n is the total number of Unicode characters in the view.
+pub fn View::index_of_nth_char(self : View, i : Int) -> Int? {
+  if self.str.index_of_nth_char(i, start=self.start, end=self.end)
+    is Some(index) {
+    Some(index - self.start)
   } else {
-    Some(utf16_offset)
+    None
   }
+}
+
+///|
+pub fn View::codepoint_at(self : View, index : Int) -> Char {
+  guard index >= 0 && index < self.len() else { abort("Index out of bounds") }
+  self.str.unsafe_codepoint_at(self.start + index)
+}
+
+///|
+pub fn View::charcode_at(self : View, index : Int) -> Int {
+  guard index >= 0 && index < self.len() else { abort("Index out of bounds") }
+  self.str.unsafe_charcode_at(self.start + index)
 }
 
 ///| 
@@ -158,22 +132,8 @@ pub fn index_at_rev(
 /// 
 /// Note this has O(n) complexity where n is the length of the code points in 
 /// the view.
-pub fn View::length(self : View) -> Int {
-  let mut len = 0
-  for index = self.start; index < self.end; index = index + 1 {
-    let c1 = self.str.unsafe_charcode_at(index)
-    if is_leading_surrogate(c1) && index + 1 < self.end {
-      let c2 = self.str.unsafe_charcode_at(index + 1)
-      if is_trailing_surrogate(c2) {
-        len = len + 1
-        continue index + 2
-      } else {
-        abort("invalid surrogate pair")
-      }
-    }
-    len = len + 1
-  }
-  len
+pub fn View::codepoint_length(self : View) -> Int {
+  self.str.codepoint_length(start=self.start, end=self.end)
 }
 
 ///|
@@ -218,78 +178,6 @@ pub fn length_ge(self : View, len : Int) -> Bool {
   } else {
     self_len >= len
   }
-}
-
-///|
-/// Creates a `View` into a `String`.
-/// 
-/// # Example
-/// 
-/// ```
-/// let str = "Hello🤣🤣🤣"
-/// let view = str[1:6]
-/// inspect!(view, content=
-///  "ello🤣"
-///)
-/// ```
-pub fn String::op_as_view(self : String, start~ : Int = 0, end? : Int) -> View {
-  let str_len = self.length()
-  let start = if start >= 0 {
-    index_at(self, start, start=0).unwrap()._
-  } else {
-    index_at_rev(self, -start, end=str_len).unwrap()._
-  }
-  let end = match end {
-    Some(end) =>
-      if end >= 0 {
-        index_at(self, end, start=0).unwrap()._
-      } else {
-        index_at_rev(self, -end, end=str_len).unwrap()._
-      }
-    None => str_len
-  }
-  guard start >= 0 && start <= end && end <= str_len else {
-    abort("Invalid index for View")
-  }
-  { str: self, start, end }
-}
-
-///|
-/// Creates a new `View` from an existing `View`.
-/// 
-/// # Example
-/// 
-/// ```
-/// let str = "Hello🤣🤣🤣"
-/// let view = str[1:7]
-/// let view2 = view[1:5]
-/// inspect!(view2, content=
-///   "llo🤣"
-/// )
-/// ```
-pub fn View::op_as_view(self : View, start~ : Int = 0, end? : Int) -> View {
-  let start = if start >= 0 {
-    index_at(self.str, start, start=self.start).unwrap()._
-  } else {
-    index_at_rev(self.str, -start, end=self.end).unwrap()._
-  }
-  let end = match end {
-    Some(end) =>
-      if end >= 0 {
-        index_at(self.str, end, start=self.start).unwrap()._
-      } else {
-        index_at_rev(self.str, -end, end=self.end).unwrap()._
-      }
-    None => self.end
-  }
-  guard start >= self.start &&
-    start <= self.end &&
-    end >= self.start &&
-    end <= self.end &&
-    start <= end else {
-    abort("Invalid index for View")
-  }
-  { str: self.str, start, end }
 }
 
 ///|

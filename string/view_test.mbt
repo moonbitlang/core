@@ -440,3 +440,24 @@ test "take first character from surrogate pairs" {
   // 6 characters total: 5 ASCII + 1 emoji
   inspect!(result, content="6")
 }
+
+///|
+test "index_of_nth_char" {
+  let str = "aa😭b😂cc"
+  let view = str.view(start=1, end=8)
+  inspect!(view, content="a😭b😂c")
+  inspect!(view.index_of_nth_char(0), content="Some(0)")
+  inspect!(view.index_of_nth_char(1), content="Some(1)")
+  inspect!(view.index_of_nth_char(2), content="Some(3)")
+  inspect!(view.index_of_nth_char(3), content="Some(4)")
+  inspect!(view.index_of_nth_char(4), content="Some(6)")
+  inspect!(view.index_of_nth_char(5), content="None")
+  inspect!(view.index_of_nth_char(-1), content="Some(6)")
+  inspect!(view.index_of_nth_char(-2), content="Some(4)")
+  inspect!(view.index_of_nth_char(-3), content="Some(3)")
+  inspect!(view.index_of_nth_char(-4), content="Some(1)")
+  inspect!(view.index_of_nth_char(-5), content="Some(0)")
+  inspect!(view.index_of_nth_char(-6), content="None")
+  let vv = view.view(start=1, end=4)
+  inspect!(vv, content="😭b")
+}

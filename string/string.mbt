@@ -769,3 +769,86 @@ pub fn String::length_ge(self : String, len : Int) -> Bool {
     count >= len
   }
 }
+
+///|
+/// Returns the index of the n-th (zero-indexed) character within the range [start, end).
+fn String::index_of_nth_char_forward(
+  self : String,
+  n : Int,
+  start~ : Int,
+  end~ : Int
+) -> Int? {
+  guard start >= 0 && start <= end else { abort("Invalid start index") }
+  let mut utf16_offset = start
+  let mut char_count = 0
+  while utf16_offset < end && char_count < n {
+    let c = self.unsafe_charcode_at(utf16_offset)
+    // check if this is a surrogate pair
+    if is_leading_surrogate(c) {
+      utf16_offset = utf16_offset + 2
+    } else {
+      utf16_offset = utf16_offset + 1
+    }
+    char_count = char_count + 1
+  }
+  // Return None if either:
+  // 1. We couldn't reach the requested character offset
+  // 2. The resulting offset is beyond the end of the string
+  // This handles the empty string case correctly.
+  if char_count < n || utf16_offset >= end {
+    None
+  } else {
+    Some(utf16_offset)
+  }
+}
+
+///|
+/// Returns the index of the n-th (zero-indexed) character within the range [start, end).
+/// self[end] is counted as the 0-th character (though it might not exist if end = self.length()).
+fn String::index_of_nth_char_backward(
+  self : String,
+  n : Int,
+  start~ : Int,
+  end~ : Int
+) -> Int? {
+  let mut char_count = 0
+  let mut utf16_offset = end
+  // Iterating backwards from the end of the string. 
+  // Invariant: utf16_offset always points to the previous character
+  while utf16_offset - 1 >= start && char_count < n {
+    let c = self.unsafe_charcode_at(utf16_offset - 1)
+    if is_trailing_surrogate(c) {
+      utf16_offset = utf16_offset - 2
+    } else {
+      utf16_offset = utf16_offset - 1
+    }
+    char_count = char_count + 1
+  }
+  if char_count < n || utf16_offset < start {
+    None
+  } else {
+    Some(utf16_offset)
+  }
+}
+
+///|
+/// Returns the UTF-16 index of the i-th (zero-indexed) Unicode character 
+/// within the range [start, end). If i is negative, it returns the index of 
+/// the (n + i)-th character where n is the number of Unicode characters 
+/// in the range [start, end).
+/// 
+/// This functions assumes that the string is valid UTF-16.
+pub fn String::index_of_nth_char(
+  self : String,
+  i : Int,
+  start~ : Int = 0,
+  end~ : Int = self.length()
+) -> Int? {
+  if i >= 0 {
+    // forward case
+    self.index_of_nth_char_forward(i, start~, end~)
+  } else {
+    // backward case
+    self.index_of_nth_char_backward(-i, start~, end~)
+  }
+}

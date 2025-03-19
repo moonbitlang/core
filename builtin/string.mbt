@@ -157,22 +157,28 @@ pub fn String::unsafe_codepoint_at(self : String, index : Int) -> Char {
 /// inspect!(s.codepoint_length(), content = "6"); // 6 actual characters
 /// inspect!(s.charcode_length(), content = "7");  // 5 ASCII chars + 2 surrogate pairs
 /// ```
-pub fn String::codepoint_length(self : String) -> Int {
-  let charcode_len = self.length()
-  for char_count = 0, len = 0
-      char_count < charcode_len
-      char_count = char_count + 1, len = len + 1 {
-    let c1 = self.unsafe_charcode_at(char_count)
-    if is_leading_surrogate(c1) && char_count + 1 < charcode_len {
-      let c2 = self.unsafe_charcode_at(char_count + 1)
+pub fn String::codepoint_length(
+  self : String,
+  start~ : Int = 0,
+  end~ : Int = self.length()
+) -> Int {
+  guard start >= 0 && start <= end && end <= self.length() else {
+    abort("invalid start or end index for String::codepoint_length")
+  }
+  for utf16_index = start, char_count = 0
+      utf16_index < end
+      utf16_index = utf16_index + 1, char_count = char_count + 1 {
+    let c1 = self.unsafe_charcode_at(utf16_index)
+    if is_leading_surrogate(c1) && utf16_index + 1 < end {
+      let c2 = self.unsafe_charcode_at(utf16_index + 1)
       if is_trailing_surrogate(c2) {
-        continue char_count + 2, len + 1
+        continue utf16_index + 2, char_count + 1
       } else {
         abort("invalid surrogate pair")
       }
     }
   } else {
-    len
+    char_count
   }
 }
 
