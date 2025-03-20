@@ -605,8 +605,8 @@ impl String {
   op_get(String, Int) -> Char
   substring(String, start~ : Int = .., end? : Int) -> String
   to_string(String) -> String
+  unsafe_char_at(String, Int) -> Char
   unsafe_charcode_at(String, Int) -> Int
-  unsafe_codepoint_at(String, Int) -> Char
 }
 
 impl Option {

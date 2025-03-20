@@ -679,98 +679,6 @@ pub fn pad_end(self : String, total_width : Int, padding_char : Char) -> String 
 }
 
 ///|
-/// Returns the character at the given index from the end of the string.
-///
-/// # Examples
-///
-/// ```moonbit
-/// let s = "Hello🤣🤣🤣"
-/// inspect!(s.rev_get(0), content="🤣")
-/// inspect!(s.rev_get(4), content="l")
-/// ```
-///
-/// # Panics
-///
-/// @alert unsafe "Panics if the index is out of bounds."
-pub fn String::rev_get(self : String, index : Int) -> Char {
-  guard index >= 0 else { abort("index out of bounds") }
-  for utf16_offset = self.length() - 1, char_count = 0
-      utf16_offset >= 0 && char_count < index
-      utf16_offset = utf16_offset - 1, char_count = char_count + 1 {
-    let c1 = self.unsafe_charcode_at(utf16_offset)
-    if is_trailing_surrogate(c1) && utf16_offset - 1 >= 0 {
-      let c2 = self.unsafe_charcode_at(utf16_offset - 1)
-      if is_leading_surrogate(c2) {
-        continue utf16_offset - 2, char_count + 1
-      } else {
-        abort("invalid surrogate pair")
-      }
-    }
-  } else {
-    guard char_count == index && utf16_offset >= 0 else {
-      abort("index out of bounds")
-    }
-    let c1 = self.unsafe_charcode_at(utf16_offset)
-    if is_trailing_surrogate(c1) && utf16_offset - 1 >= 0 {
-      let c2 = self.unsafe_charcode_at(utf16_offset - 1)
-      if is_leading_surrogate(c2) {
-        code_point_of_surrogate_pair(c2, c1)
-      } else {
-        abort("invalid surrogate pair")
-      }
-    } else {
-      Char::from_int(c1)
-    }
-  }
-}
-
-///|
-/// Test if the length of the string is equal to the given length.
-///
-/// This has O(n) complexity where n is the length in the parameter.
-pub fn String::length_eq(self : String, len : Int) -> Bool {
-  let codeunit_len = self.length()
-  for index = 0, count = 0
-      index < codeunit_len && count < len
-      index = index + 1, count = count + 1 {
-    let c1 = self.unsafe_charcode_at(index)
-    if is_leading_surrogate(c1) && index + 1 < codeunit_len {
-      let c2 = self.unsafe_charcode_at(index + 1)
-      if is_trailing_surrogate(c2) {
-        continue index + 2, count + 1
-      } else {
-        abort("invalid surrogate pair")
-      }
-    }
-  } else {
-    count == len && index == codeunit_len
-  }
-}
-
-///|
-/// Test if the length of the string is greater than or equal to the given length.
-///
-/// This has O(n) complexity where n is the length in the parameter.
-pub fn String::length_ge(self : String, len : Int) -> Bool {
-  let codeunit_len = self.length()
-  for index = 0, count = 0
-      index < codeunit_len && count < len
-      index = index + 1, count = count + 1 {
-    let c1 = self.unsafe_charcode_at(index)
-    if is_leading_surrogate(c1) && index + 1 < codeunit_len {
-      let c2 = self.unsafe_charcode_at(index + 1)
-      if is_trailing_surrogate(c2) {
-        continue index + 2, count + 1
-      } else {
-        abort("invalid surrogate pair")
-      }
-    }
-  } else {
-    count >= len
-  }
-}
-
-///|
 /// Returns the index of the n-th (zero-indexed) character within the range [start, end).
 fn String::offset_of_nth_char_forward(
   self : String,
@@ -852,5 +760,68 @@ pub fn String::offset_of_nth_char(
   } else {
     // backward case
     self.offset_of_nth_char_backward(-i, start_offset~, end_offset~)
+  }
+}
+
+///|
+/// Returns the Unicode character at the given index.
+pub fn String::char_at(self : String, index : Int) -> Char {
+  guard index >= 0 && index < self.length() else {
+    abort("index out of bounds")
+  }
+  self.unsafe_char_at(index)
+}
+
+///|
+/// Test if the length of the string is equal to the given length.
+///
+/// This has O(n) complexity where n is the length in the parameter.
+pub fn String::char_length_eq(
+  self : String,
+  len : Int,
+  start_offset~ : Int = 0,
+  end_offset~ : Int = self.length()
+) -> Bool {
+  for index = start_offset, count = 0
+      index < end_offset && count < len
+      index = index + 1, count = count + 1 {
+    let c1 = self.unsafe_charcode_at(index)
+    if is_leading_surrogate(c1) && index + 1 < end_offset {
+      let c2 = self.unsafe_charcode_at(index + 1)
+      if is_trailing_surrogate(c2) {
+        continue index + 2, count + 1
+      } else {
+        abort("invalid surrogate pair")
+      }
+    }
+  } else {
+    count == len && index == end_offset
+  }
+}
+
+///|
+/// Test if the length of the string is greater than or equal to the given length.
+///
+/// This has O(n) complexity where n is the length in the parameter.
+pub fn String::char_length_ge(
+  self : String,
+  len : Int,
+  start_offset~ : Int = 0,
+  end_offset~ : Int = self.length()
+) -> Bool {
+  for index = start_offset, count = 0
+      index < end_offset && count < len
+      index = index + 1, count = count + 1 {
+    let c1 = self.unsafe_charcode_at(index)
+    if is_leading_surrogate(c1) && index + 1 < end_offset {
+      let c2 = self.unsafe_charcode_at(index + 1)
+      if is_trailing_surrogate(c2) {
+        continue index + 2, count + 1
+      } else {
+        abort("invalid surrogate pair")
+      }
+    }
+  } else {
+    count >= len
   }
 }

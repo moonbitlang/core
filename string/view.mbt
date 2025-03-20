@@ -93,7 +93,7 @@ pub fn View::offset_of_nth_char(self : View, i : Int) -> Int? {
 ///|
 pub fn View::char_at(self : View, index : Int) -> Char {
   guard index >= 0 && index < self.len() else { abort("Index out of bounds") }
-  self.str.unsafe_codepoint_at(self.start + index)
+  self.str.unsafe_char_at(self.start + index)
 }
 
 ///|
@@ -115,147 +115,16 @@ pub fn View::char_length(self : View) -> Int {
 /// Test if the length of the view is equal to the given length.
 /// 
 /// This has O(n) complexity where n is the length in the parameter.
-pub fn length_eq(self : View, len : Int) -> Bool {
-  for index = self.start, self_len = 0
-      index < self.end && self_len < len
-      index = index + 1, self_len = self_len + 1 {
-    let c1 = self.str.unsafe_charcode_at(index)
-    if is_leading_surrogate(c1) && index + 1 < self.end {
-      let c2 = self.str.unsafe_charcode_at(index + 1)
-      if is_trailing_surrogate(c2) {
-        continue index + 2, self_len + 1
-      } else {
-        abort("invalid surrogate pair")
-      }
-    }
-  } else {
-    self_len == len && index == self.end
-  }
+pub fn View::char_length_eq(self : View, len : Int) -> Bool {
+  self.str.char_length_eq(len, start_offset=self.start, end_offset=self.end)
 }
 
 ///|
 /// Test if the length of the view is greater than or equal to the given length.
 /// 
 /// This has O(n) complexity where n is the length in the parameter.
-pub fn length_ge(self : View, len : Int) -> Bool {
-  for index = self.start, self_len = 0
-      index < self.end && self_len < len
-      index = index + 1, self_len = self_len + 1 {
-    let c1 = self.str.unsafe_charcode_at(index)
-    if is_leading_surrogate(c1) && index + 1 < self.end {
-      let c2 = self.str.unsafe_charcode_at(index + 1)
-      if is_trailing_surrogate(c2) {
-        continue index + 2, self_len + 1
-      } else {
-        abort("invalid surrogate pair")
-      }
-    }
-  } else {
-    self_len >= len
-  }
-}
-
-///|
-/// Return the character at the given index.
-/// 
-/// The time complexity is O(n) where n is the given index, as it needs to scan
-/// through the UTF-16 code units to find the nth Unicode character.
-/// 
-/// # Example
-/// 
-/// ```
-/// let str = "Hello🤣🤣🤣"
-/// let view = str[1:6]
-/// inspect!(view[0], content="e")
-/// inspect!(view[4], content="🤣")
-/// ```
-pub fn View::op_get(self : View, index : Int) -> Char {
-  guard index >= 0 else {
-    abort("Index out of bounds: cannot access negative index")
-  }
-  let mut utf16_offset = self.start
-  let mut char_count = 0
-  let code_unit_length = self.str.length()
-  while char_count < index && utf16_offset < self.end {
-    let c1 = self.str.unsafe_charcode_at(utf16_offset)
-    if is_leading_surrogate(c1) && utf16_offset + 1 < code_unit_length {
-      let c2 = self.str.unsafe_charcode_at(utf16_offset + 1)
-      if is_trailing_surrogate(c2) {
-        utf16_offset = utf16_offset + 2
-        char_count = char_count + 1
-        continue
-      } else {
-        abort("invalid surrogate pair")
-      }
-    }
-    utf16_offset = utf16_offset + 1
-    char_count = char_count + 1
-  }
-  guard char_count == index && utf16_offset < self.end else {
-    abort("Index out of bounds: cannot access index \{index}")
-  }
-  let c1 = self.str.unsafe_charcode_at(utf16_offset)
-  if is_leading_surrogate(c1) {
-    let c2 = self.str.unsafe_charcode_at(utf16_offset + 1)
-    if is_trailing_surrogate(c2) {
-      code_point_of_surrogate_pair(c1, c2)
-    } else {
-      abort("invalid surrogate pair")
-    }
-  } else {
-    Char::from_int(c1)
-  }
-}
-
-///|
-/// Returns the character at the given index from the end of the view.
-/// 
-/// The time complexity is O(n) where n is the given index, as it needs to scan
-/// through the UTF-16 code units to find the nth Unicode character.
-/// 
-/// # Example
-/// 
-/// ```
-/// let str = "Hello🤣🤣🤣"
-/// let view = str[1:6]
-/// inspect!(view.rev_get(0), content="🤣")
-/// inspect!(view.rev_get(4), content="e")
-/// ```
-pub fn rev_get(self : View, index : Int) -> Char {
-  guard index >= 0 else {
-    abort("Index out of bounds: cannot access negative index")
-  }
-  let mut utf16_offset = self.end - 1
-  let mut char_count = 0
-  while char_count < index && utf16_offset >= self.start {
-    let c1 = self.str.unsafe_charcode_at(utf16_offset)
-    if is_trailing_surrogate(c1) && utf16_offset - 1 >= self.start {
-      let c2 = self.str.unsafe_charcode_at(utf16_offset - 1)
-      if is_leading_surrogate(c2) {
-        utf16_offset = utf16_offset - 2
-        char_count = char_count + 1
-        continue
-      } else {
-        abort("invalid surrogate pair")
-      }
-    }
-    utf16_offset = utf16_offset - 1
-    char_count = char_count + 1
-  }
-  guard char_count == index && utf16_offset >= self.start else {
-    abort("Index out of bounds: cannot access index \{index} in reverse")
-  }
-  let c1 = self.str.unsafe_charcode_at(utf16_offset)
-  if is_trailing_surrogate(c1) {
-    let c2 = self.str.unsafe_charcode_at(utf16_offset - 1)
-    if is_leading_surrogate(c2) {
-      code_point_of_surrogate_pair(c2, c1)
-    } else {
-      abort("invalid surrogate pair")
-    }
-  } else {
-    Char::from_int(c1)
-  }
+pub fn View::char_length_ge(self : View, len : Int) -> Bool {
+  self.str.char_length_ge(len, start_offset=self.start, end_offset=self.end)
 }
 
 ///|
@@ -282,7 +151,7 @@ pub impl Show for StringView with to_string(self) {
 /// Returns an iterator over the Unicode characters in the string view.
 pub fn View::iter(self : View) -> Iter[Char] {
   Iter::new(fn(yield_) {
-    for index = self.start; index < self.end; index = index + 1 {
+    for index in self.start..<self.end {
       let c1 = self.str.unsafe_charcode_at(index)
       if is_leading_surrogate(c1) && index + 1 < self.end {
         let c2 = self.str.unsafe_charcode_at(index + 1)
@@ -290,6 +159,28 @@ pub fn View::iter(self : View) -> Iter[Char] {
           let c = code_point_of_surrogate_pair(c1, c2)
           guard yield_(c) is IterContinue else { break IterEnd }
           continue index + 2
+        }
+      }
+      guard yield_(Char::from_int(c1)) is IterContinue else { break IterEnd }
+
+    } else {
+      IterContinue
+    }
+  })
+}
+
+///|
+/// Returns an iterator over the Unicode characters in the string view in reverse order.
+pub fn View::rev_iter(self : View) -> Iter[Char] {
+  Iter::new(fn(yield_) {
+    for index = self.end - 1; index >= self.start; index = index - 1 {
+      let c1 = self.str.unsafe_charcode_at(index)
+      if is_trailing_surrogate(c1) && index - 1 >= 0 {
+        let c2 = self.str.unsafe_charcode_at(index - 1)
+        if is_leading_surrogate(c2) {
+          let c = code_point_of_surrogate_pair(c2, c1)
+          guard yield_(c) is IterContinue else { break IterEnd }
+          continue index - 2
         }
       }
       guard yield_(Char::from_int(c1)) is IterContinue else { break IterEnd }

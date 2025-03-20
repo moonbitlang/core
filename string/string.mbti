@@ -35,8 +35,10 @@ fn iter2(String) -> Iter2[Int, Char]
 
 fn last_index_of(String, String, from~ : Int = ..) -> Int
 
+#deprecated
 fn length_eq(StringView, Int) -> Bool
 
+#deprecated
 fn length_ge(StringView, Int) -> Bool
 
 fn pad_end(String, Int, Char) -> String
@@ -53,6 +55,7 @@ fn rev(String) -> String
 
 fn rev_fold[A](String, init~ : A, (A, Char) -> A) -> A
 
+#deprecated
 fn rev_get(StringView, Int) -> Char
 
 fn rev_iter(String) -> Iter[Char]
@@ -86,21 +89,31 @@ type StringView
 impl StringView {
   char_at(Self, Int) -> Char
   char_length(Self) -> Int
+  char_length_eq(Self, Int) -> Bool
+  char_length_ge(Self, Int) -> Bool
   charcode_at(Self, Int) -> Int
   iter(Self) -> Iter[Char]
   #deprecated
   length(Self) -> Int
+  #deprecated
   length_eq(Self, Int) -> Bool
+  #deprecated
   length_ge(Self, Int) -> Bool
   offset_of_nth_char(Self, Int) -> Int?
   #deprecated
   op_as_view(Self, start~ : Int = .., end? : Int) -> Self
+  #deprecated
   op_get(Self, Int) -> Char
+  #deprecated
   rev_get(Self, Int) -> Char
+  rev_iter(Self) -> Iter[Char]
 }
 impl Show for StringView
 
 impl String {
+  char_at(String, Int) -> Char
+  char_length_eq(String, Int, start_offset~ : Int = .., end_offset~ : Int = ..) -> Bool
+  char_length_ge(String, Int, start_offset~ : Int = .., end_offset~ : Int = ..) -> Bool
   #deprecated
   concat(Array[String], separator~ : String = ..) -> String
   contains(String, String) -> Bool
@@ -119,7 +132,9 @@ impl String {
   iter(String) -> Iter[Char]
   iter2(String) -> Iter2[Int, Char]
   last_index_of(String, String, from~ : Int = ..) -> Int
+  #deprecated
   length_eq(String, Int) -> Bool
+  #deprecated
   length_ge(String, Int) -> Bool
   offset_of_nth_char(String, Int, start_offset~ : Int = .., end_offset~ : Int = ..) -> Int?
   #deprecated
@@ -131,6 +146,7 @@ impl String {
   replace_all(String, old~ : String, new~ : String) -> String
   rev(String) -> String
   rev_fold[A](String, init~ : A, (A, Char) -> A) -> A
+  #deprecated
   rev_get(String, Int) -> Char
   rev_iter(String) -> Iter[Char]
   split(String, String) -> Iter[String]

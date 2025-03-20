@@ -102,24 +102,24 @@ test "stringview length" {
 test "stingview length_eq" {
   let str = "hello"
   let view = str[1:4]
-  inspect!(view.length_eq(0), content="false")
-  inspect!(view.length_eq(1), content="false")
-  inspect!(view.length_eq(2), content="false")
-  inspect!(view.length_eq(3), content="true")
-  inspect!(view.length_eq(4), content="false")
-  inspect!(view.length_eq(5), content="false")
+  inspect!(view.char_length_eq(0), content="false")
+  inspect!(view.char_length_eq(1), content="false")
+  inspect!(view.char_length_eq(2), content="false")
+  inspect!(view.char_length_eq(3), content="true")
+  inspect!(view.char_length_eq(4), content="false")
+  inspect!(view.char_length_eq(5), content="false")
 }
 
 ///|
 test "stingview length_ge" {
   let str = "hello"
   let view = str[1:4]
-  inspect!(view.length_ge(0), content="true")
-  inspect!(view.length_ge(1), content="true")
-  inspect!(view.length_ge(2), content="true")
-  inspect!(view.length_ge(3), content="true")
-  inspect!(view.length_ge(4), content="false")
-  inspect!(view.length_ge(5), content="false")
+  inspect!(view.char_length_ge(0), content="true")
+  inspect!(view.char_length_ge(1), content="true")
+  inspect!(view.char_length_ge(2), content="true")
+  inspect!(view.char_length_ge(3), content="true")
+  inspect!(view.char_length_ge(4), content="false")
+  inspect!(view.char_length_ge(5), content="false")
 }
 
 ///|
@@ -320,6 +320,15 @@ test "stringview iter" {
 }
 
 ///|
+test "stringview rev_iter" {
+  let str = "hello🤣🤣🤣"
+  let view = str[1:6]
+  let iter = view.rev_iter()
+  inspect!(iter.count(), content="5")
+  inspect!(iter, content="['🤣', 'o', 'l', 'l', 'e']")
+}
+
+///|
 test "stringview negative index" {
   let str = "hello🤣😭😂"
   inspect!(str[-2:-1], content="😭")
@@ -366,15 +375,15 @@ test "length_eq test with surrogate pair" {
   // "🤣" is encoded as a surrogate pair
   let str = "🤣"
   let view = str[:]
-  assert_true!(view.length_eq(1))
+  assert_true!(view.char_length_eq(1))
 }
 
 ///|
 test "length_ge with high surrogate" {
   let str = "🐰" // This emoji is represented using a surrogate pair
   let view = str[0:]
-  assert_eq!(view.length_ge(1), true)
-  assert_eq!(view.length_ge(2), false)
+  assert_eq!(view.char_length_ge(1), true)
+  assert_eq!(view.char_length_ge(2), false)
 }
 
 ///|
@@ -417,7 +426,7 @@ test "panic length_eq should panic on invalid surrogate pair" {
   let str = String::from_array([Char::from_int(0xD800), 'A'])
   let view = str[:]
   // This will trigger abort("invalid surrogate pair") in length_eq
-  ignore(view.length_eq(1))
+  ignore(view.char_length_eq(1))
 }
 
 ///|
@@ -428,7 +437,7 @@ test "panic_length_ge invalid surrogate pair" {
   ])
   let view = invalid_surrogate_pair[:]
   // This should abort with "invalid surrogate pair"
-  let _ = view.length_ge(1)
+  let _ = view.char_length_ge(1)
 
 }
 

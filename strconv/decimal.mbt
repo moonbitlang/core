@@ -152,7 +152,7 @@ fn parse_decimal_from_view(str : @string.View) -> Decimal!StrConvError {
     rest => rest
   }
   // finish
-  guard rest.length_eq(0) else { syntax_err!() }
+  guard rest is [] else { syntax_err!() }
   d..trim()
 }
 
