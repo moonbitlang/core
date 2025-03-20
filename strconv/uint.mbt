@@ -41,12 +41,15 @@ const UINT64_MAX : UInt64 = 0xffffffffffffffffUL
 /// 
 pub fn parse_uint64(str : String, base~ : Int = 0) -> UInt64!StrConvError {
   guard str != "" else { syntax_err!() }
-  if str[:] is ['+' | '-', ..] {
+  if str is ['+' | '-', ..] {
     syntax_err!()
   }
 
   // `allow_underscore` is used to check validity of underscores
-  let (num_base, rest, allow_underscore) = check_and_consume_base!(str[:], base)
+  let (num_base, rest, allow_underscore) = check_and_consume_base!(
+    str.view(),
+    base,
+  )
 
   // calculate overflow threshold
   let overflow_threshold = match num_base {

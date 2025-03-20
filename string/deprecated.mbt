@@ -17,3 +17,125 @@
 pub fn String::concat(self : Array[String], separator~ : String = "") -> String {
   concat(self, separator~)
 }
+
+///|
+type StringIndex Int derive(Show, Eq)
+
+///|
+#deprecated("StringIndex is deprecated, use String::index_of_nth_char instead")
+pub fn index_at(
+  self : String,
+  offset_by : Int,
+  start~ : StringIndex = 0
+) -> StringIndex? {
+  self.index_at_(offset_by, start~)
+}
+
+///|
+#deprecated("StringIndex is deprecated, use String::index_of_nth_char instead")
+pub fn index_at_rev(
+  self : String,
+  offset_by : Int,
+  end? : StringIndex
+) -> StringIndex? {
+  self.index_at_rev_(offset_by, end?)
+}
+
+///|
+fn index_at_(
+  self : String,
+  offset_by : Int,
+  start~ : StringIndex = 0
+) -> StringIndex? {
+  if self.offset_of_nth_char(offset_by, start_offset=start._) is Some(index) {
+    Some(index)
+  } else if offset_by == self.codepoint_length(start_offset=start._) {
+    Some(self.length())
+  } else {
+    None
+  }
+}
+
+///|
+fn index_at_rev_(
+  self : String,
+  offset_by : Int,
+  end? : StringIndex
+) -> StringIndex? {
+  match end {
+    Some(end) =>
+      if offset_by == 0 {
+        Some(end)
+      } else if self.offset_of_nth_char(-offset_by, end_offset=end._)
+        is Some(index) {
+        Some(index)
+      } else {
+        None
+      }
+    None =>
+      if offset_by == 0 {
+        Some(self.length())
+      } else if self.offset_of_nth_char(-offset_by) is Some(index) {
+        Some(index)
+      } else {
+        None
+      }
+  }
+}
+
+///|
+#deprecated("use str.view(start = str.index_of_nth_char(i).unwrap(), end = str.index_of_nth_char(j).unwrap()) to replace str[i:j]")
+pub fn String::op_as_view(self : String, start~ : Int = 0, end? : Int) -> View {
+  let str_len = self.length()
+  let start = if start >= 0 {
+    index_at_(self, start, start=0).unwrap()._
+  } else {
+    index_at_rev_(self, -start, end=str_len).unwrap()._
+  }
+  let end = match end {
+    Some(end) =>
+      if end >= 0 {
+        index_at_(self, end, start=0).unwrap()._
+      } else {
+        index_at_rev_(self, -end, end=str_len).unwrap()._
+      }
+    None => str_len
+  }
+  guard start >= 0 && start <= end && end <= str_len else {
+    abort("Invalid index for View")
+  }
+  { str: self, start, end }
+}
+
+///|
+#deprecated("use view.view(start = view.index_of_nth_char(i).unwrap(), end = view.index_of_nth_char(j).unwrap()) to replace view[i:j]")
+pub fn View::op_as_view(self : View, start~ : Int = 0, end? : Int) -> View {
+  let start = if start >= 0 {
+    index_at_(self.str, start, start=self.start).unwrap()._
+  } else {
+    index_at_rev_(self.str, -start, end=self.end).unwrap()._
+  }
+  let end = match end {
+    Some(end) =>
+      if end >= 0 {
+        index_at_(self.str, end, start=self.start).unwrap()._
+      } else {
+        index_at_rev_(self.str, -end, end=self.end).unwrap()._
+      }
+    None => self.end
+  }
+  guard start >= self.start &&
+    start <= self.end &&
+    end >= self.start &&
+    end <= self.end &&
+    start <= end else {
+    abort("Invalid index for View")
+  }
+  { str: self.str, start, end }
+}
+
+///|
+#deprecated("use View::char_length instead")
+pub fn View::length(self : View) -> Int {
+  self.char_length()
+}

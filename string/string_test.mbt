@@ -648,3 +648,85 @@ test "string pattern matching" {
   inspect!(process_string("true"), content="True")
   inspect!(process_string(""), content="Other")
 }
+
+///|
+test "offset_of_nth_char" {
+  let s = "a😭b😂c"
+  inspect!(s.offset_of_nth_char(0), content="Some(0)")
+  inspect!(s.offset_of_nth_char(1), content="Some(1)")
+  inspect!(s.offset_of_nth_char(2), content="Some(3)")
+  inspect!(s.offset_of_nth_char(3), content="Some(4)")
+  inspect!(s.offset_of_nth_char(4), content="Some(6)")
+  inspect!(s.offset_of_nth_char(5), content="None")
+  inspect!(s.offset_of_nth_char(-1), content="Some(6)")
+  inspect!(s.offset_of_nth_char(-2), content="Some(4)")
+  inspect!(s.offset_of_nth_char(-3), content="Some(3)")
+  inspect!(s.offset_of_nth_char(-4), content="Some(1)")
+  inspect!(s.offset_of_nth_char(-5), content="Some(0)")
+  inspect!(s.offset_of_nth_char(-6), content="None")
+}
+
+///|
+test "offset_of_nth_char range" {
+  let s = "a😭b😂c"
+  inspect!(
+    s.offset_of_nth_char(0, start_offset=1, end_offset=6),
+    content="Some(1)",
+  )
+  inspect!(
+    s.offset_of_nth_char(1, start_offset=1, end_offset=6),
+    content="Some(3)",
+  )
+  inspect!(
+    s.offset_of_nth_char(2, start_offset=1, end_offset=6),
+    content="Some(4)",
+  )
+  inspect!(
+    s.offset_of_nth_char(3, start_offset=1, end_offset=6),
+    content="None",
+  )
+  inspect!(
+    s.offset_of_nth_char(4, start_offset=1, end_offset=6),
+    content="None",
+  )
+  inspect!(
+    s.offset_of_nth_char(-1, start_offset=1, end_offset=6),
+    content="Some(4)",
+  )
+  inspect!(
+    s.offset_of_nth_char(-2, start_offset=1, end_offset=6),
+    content="Some(3)",
+  )
+  inspect!(
+    s.offset_of_nth_char(-3, start_offset=1, end_offset=6),
+    content="Some(1)",
+  )
+  inspect!(
+    s.offset_of_nth_char(-4, start_offset=1, end_offset=6),
+    content="None",
+  )
+  inspect!(
+    s.offset_of_nth_char(-5, start_offset=1, end_offset=6),
+    content="None",
+  )
+}
+
+///|
+test "offset_of_nth_char property" {
+  let s = "a😭b😂c"
+  let n = s.codepoint_length()
+  for i in 0..<n {
+    let index = s.offset_of_nth_char(i).unwrap()
+    assert_eq!(s.unsafe_codepoint_at(index), s.iter().nth(i).unwrap())
+  }
+}
+
+///|
+test "offset_of_nth_char property negative" {
+  let s = "a😭b😂c"
+  let n = s.codepoint_length()
+  for i in 1..=n {
+    let index = s.offset_of_nth_char(-i).unwrap()
+    assert_eq!(s.unsafe_codepoint_at(index), s.rev_iter().nth(i - 1).unwrap())
+  }
+}

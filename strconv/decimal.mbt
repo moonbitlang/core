@@ -72,12 +72,12 @@ fn Decimal::from_int64_priv(v : Int64) -> Decimal {
 
 ///| @alert deprecated "use `@strconv.parse_double` instead"
 pub fn parse_decimal(str : String) -> Decimal!StrConvError {
-  parse_decimal_from_view!(str[:])
+  parse_decimal_from_view!(str.view())
 }
 
 ///|
 fn parse_decimal_priv(str : String) -> Decimal!StrConvError {
-  parse_decimal_from_view!(str[:])
+  parse_decimal_from_view!(str.view())
 }
 
 ///|
@@ -158,7 +158,7 @@ fn parse_decimal_from_view(str : @string.View) -> Decimal!StrConvError {
 
 ///| @alert deprecated "use `@strconv.parse_double` instead"
 pub fn Decimal::parse_decimal(str : String) -> Decimal!StrConvError {
-  parse_decimal_from_view!(str[:])
+  parse_decimal_from_view!(str.view())
 }
 
 ///|

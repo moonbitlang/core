@@ -85,7 +85,7 @@ test {
 /// 
 pub fn parse_int64(str : String, base~ : Int = 0) -> Int64!StrConvError {
   guard str != "" else { syntax_err!() }
-  let (neg, rest) = match str[:] {
+  let (neg, rest) = match str.view() {
     ['+', .. rest] => (false, rest)
     ['-', .. rest] => (true, rest)
     rest => (false, rest)
@@ -148,7 +148,7 @@ pub fn parse_int(str : String, base~ : Int = 0) -> Int!StrConvError {
 // Underscores must appear only between digits or between a base prefix and a digit.
 fn check_underscore(str : String) -> Bool {
   // skip the sign
-  let rest = match str[:] {
+  let rest = match str.view() {
     ['+' | '-', .. rest] => rest
     rest => rest
   }
@@ -200,7 +200,7 @@ fn check_underscore(str : String) -> Bool {
 ///|
 // Determine the base of the value.
 fn determine_base(s : String) -> Int {
-  match s[:] {
+  match s.view() {
     ['0', 'x' | 'X', ..] => 16
     ['0', 'o' | 'O', ..] => 8
     ['0', 'b' | 'B', ..] => 2
