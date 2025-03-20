@@ -53,9 +53,9 @@ fn len(self : View) -> Int {
 /// inspect!(view1, content=
 ///  "Hello🤣🤣🤣"
 ///)
-/// let start = str.index_of_nth_char(1).unwrap()
-/// let end = str.index_of_nth_char(6).unwrap() // the second emoji
-/// let view2 = str.view(start~, end~)
+/// let start_offset = str.offset_of_nth_char(1).unwrap()
+/// let end_offset = str.offset_of_nth_char(6).unwrap() // the second emoji
+/// let view2 = str.view(start_offset~, end_offset~)
 /// inspect!(view2, content=
 ///  "ello🤣"
 ///)
@@ -71,43 +71,6 @@ pub fn String::view(
     abort("Invalid index for View")
   }
   { str: self, start: start_offset, end: end_offset }
-}
-
-///|
-/// Creates a new `View` from an existing `View`.
-/// 
-/// # Example
-/// 
-/// ```
-/// let str = "Hello🤣🤣🤣"
-/// let start = str.index_of_nth_char(1).unwrap()
-/// let end = str.index_of_nth_char(7).unwrap() // the third emoji in str
-/// let view = str.view(start~, end~)
-/// inspect!(view, content=
-///   "ello🤣🤣"
-/// )
-/// let start = view.index_of_nth_char(1).unwrap()
-/// let end = view.index_of_nth_char(5).unwrap() // the second emoji in view
-/// let view2 = view.view(start~, end~)
-/// inspect!(view2, content=
-///   "llo🤣"
-/// )
-/// ```
-fn View::view(
-  self : View,
-  start_offset~ : Int = 0,
-  end_offset~ : Int = self.len()
-) -> View {
-  guard start_offset >= 0 &&
-    start_offset <= end_offset &&
-    end_offset <= self.len() else {
-    abort("Invalid index for View")
-  }
-  {
-    str: self.str,
-    start: self.start + start_offset,
-    end: self.start + end_offset,
-  }
 }
 
 ///|
