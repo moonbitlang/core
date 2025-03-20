@@ -117,7 +117,7 @@ fn base64_encode_string_codepoint(s : String) -> String {
   for i = 0, utf16_index = 0
       i < codepoint_length
       i = i + 1, utf16_index = utf16_index + 1 {
-    let c = s.unsafe_codepoint_at(utf16_index).to_int()
+    let c = s.unsafe_char_at(utf16_index).to_int()
     if c > 0xFFFF {
       data[i * 4] = (c & 0xFF).to_byte()
       data[i * 4 + 1] = ((c >> 8) & 0xFF).to_byte()
