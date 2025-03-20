@@ -47,9 +47,9 @@ fn index_at_(
   offset_by : Int,
   start~ : StringIndex = 0
 ) -> StringIndex? {
-  if self.index_of_nth_char(offset_by, start=start._) is Some(index) {
+  if self.offset_of_nth_char(offset_by, start_offset=start._) is Some(index) {
     Some(index)
-  } else if offset_by == self.codepoint_length(start=start._) {
+  } else if offset_by == self.codepoint_length(start_offset=start._) {
     Some(self.length())
   } else {
     None
@@ -66,7 +66,8 @@ fn index_at_rev_(
     Some(end) =>
       if offset_by == 0 {
         Some(end)
-      } else if self.index_of_nth_char(-offset_by, end=end._) is Some(index) {
+      } else if self.offset_of_nth_char(-offset_by, end_offset=end._)
+        is Some(index) {
         Some(index)
       } else {
         None
@@ -74,7 +75,7 @@ fn index_at_rev_(
     None =>
       if offset_by == 0 {
         Some(self.length())
-      } else if self.index_of_nth_char(-offset_by) is Some(index) {
+      } else if self.offset_of_nth_char(-offset_by) is Some(index) {
         Some(index)
       } else {
         None
@@ -134,7 +135,7 @@ pub fn View::op_as_view(self : View, start~ : Int = 0, end? : Int) -> View {
 }
 
 ///|
-#deprecated("use View::codepoint_length instead")
+#deprecated("use View::char_length instead")
 pub fn View::length(self : View) -> Int {
-  self.codepoint_length()
+  self.char_length()
 }

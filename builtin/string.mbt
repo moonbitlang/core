@@ -159,17 +159,19 @@ pub fn String::unsafe_codepoint_at(self : String, index : Int) -> Char {
 /// ```
 pub fn String::codepoint_length(
   self : String,
-  start~ : Int = 0,
-  end~ : Int = self.length()
+  start_offset~ : Int = 0,
+  end_offset~ : Int = self.length()
 ) -> Int {
-  guard start >= 0 && start <= end && end <= self.length() else {
+  guard start_offset >= 0 &&
+    start_offset <= end_offset &&
+    end_offset <= self.length() else {
     abort("invalid start or end index for String::codepoint_length")
   }
-  for utf16_index = start, char_count = 0
-      utf16_index < end
+  for utf16_index = start_offset, char_count = 0
+      utf16_index < end_offset
       utf16_index = utf16_index + 1, char_count = char_count + 1 {
     let c1 = self.unsafe_charcode_at(utf16_index)
-    if is_leading_surrogate(c1) && utf16_index + 1 < end {
+    if is_leading_surrogate(c1) && utf16_index + 1 < end_offset {
       let c2 = self.unsafe_charcode_at(utf16_index + 1)
       if is_trailing_surrogate(c2) {
         continue utf16_index + 2, char_count + 1

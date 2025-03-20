@@ -62,13 +62,15 @@ fn len(self : View) -> Int {
 /// ```
 pub fn String::view(
   self : String,
-  start~ : Int = 0,
-  end~ : Int = self.length()
+  start_offset~ : Int = 0,
+  end_offset~ : Int = self.length()
 ) -> View {
-  guard start >= 0 && start <= end && end <= self.length() else {
+  guard start_offset >= 0 &&
+    start_offset <= end_offset &&
+    end_offset <= self.length() else {
     abort("Invalid index for View")
   }
-  { str: self, start, end }
+  { str: self, start: start_offset, end: end_offset }
 }
 
 ///|
@@ -91,23 +93,33 @@ pub fn String::view(
 ///   "llo🤣"
 /// )
 /// ```
-pub fn View::view(
+fn View::view(
   self : View,
-  start~ : Int = 0,
-  end~ : Int = self.len()
+  start_offset~ : Int = 0,
+  end_offset~ : Int = self.len()
 ) -> View {
-  guard start >= 0 && start <= end && end <= self.len() else {
+  guard start_offset >= 0 &&
+    start_offset <= end_offset &&
+    end_offset <= self.len() else {
     abort("Invalid index for View")
   }
-  { str: self.str, start: self.start + start, end: self.start + end }
+  {
+    str: self.str,
+    start: self.start + start_offset,
+    end: self.start + end_offset,
+  }
 }
 
 ///|
 /// Returns the UTF-16 index of the i-th (zero-indexed) Unicode character of
 /// the view. If i is negative, it returns the index of the (n + i)-th character
 /// where n is the total number of Unicode characters in the view.
-pub fn View::index_of_nth_char(self : View, i : Int) -> Int? {
-  if self.str.index_of_nth_char(i, start=self.start, end=self.end)
+pub fn View::offset_of_nth_char(self : View, i : Int) -> Int? {
+  if self.str.offset_of_nth_char(
+      i,
+      start_offset=self.start,
+      end_offset=self.end,
+    )
     is Some(index) {
     Some(index - self.start)
   } else {
@@ -116,7 +128,7 @@ pub fn View::index_of_nth_char(self : View, i : Int) -> Int? {
 }
 
 ///|
-pub fn View::codepoint_at(self : View, index : Int) -> Char {
+pub fn View::char_at(self : View, index : Int) -> Char {
   guard index >= 0 && index < self.len() else { abort("Index out of bounds") }
   self.str.unsafe_codepoint_at(self.start + index)
 }
@@ -132,8 +144,8 @@ pub fn View::charcode_at(self : View, index : Int) -> Int {
 /// 
 /// Note this has O(n) complexity where n is the length of the code points in 
 /// the view.
-pub fn View::codepoint_length(self : View) -> Int {
-  self.str.codepoint_length(start=self.start, end=self.end)
+pub fn View::char_length(self : View) -> Int {
+  self.str.codepoint_length(start_offset=self.start, end_offset=self.end)
 }
 
 ///|

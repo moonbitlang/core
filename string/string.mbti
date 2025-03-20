@@ -84,20 +84,19 @@ impl Show for StringIndex
 
 type StringView
 impl StringView {
+  char_at(Self, Int) -> Char
+  char_length(Self) -> Int
   charcode_at(Self, Int) -> Int
-  codepoint_at(Self, Int) -> Char
-  codepoint_length(Self) -> Int
-  index_of_nth_char(Self, Int) -> Int?
   iter(Self) -> Iter[Char]
   #deprecated
   length(Self) -> Int
   length_eq(Self, Int) -> Bool
   length_ge(Self, Int) -> Bool
+  offset_of_nth_char(Self, Int) -> Int?
   #deprecated
   op_as_view(Self, start~ : Int = .., end? : Int) -> Self
   op_get(Self, Int) -> Char
   rev_get(Self, Int) -> Char
-  view(Self, start~ : Int = .., end~ : Int = ..) -> Self
 }
 impl Show for StringView
 
@@ -115,7 +114,6 @@ impl String {
   #deprecated
   index_at_rev(String, Int, end? : StringIndex) -> StringIndex?
   index_of(String, String, from~ : Int = ..) -> Int
-  index_of_nth_char(String, Int, start~ : Int = .., end~ : Int = ..) -> Int?
   is_blank(String) -> Bool
   is_empty(String) -> Bool
   iter(String) -> Iter[Char]
@@ -123,6 +121,7 @@ impl String {
   last_index_of(String, String, from~ : Int = ..) -> Int
   length_eq(String, Int) -> Bool
   length_ge(String, Int) -> Bool
+  offset_of_nth_char(String, Int, start_offset~ : Int = .., end_offset~ : Int = ..) -> Int?
   #deprecated
   op_as_view(String, start~ : Int = .., end? : Int) -> StringView
   pad_end(String, Int, Char) -> String
@@ -144,7 +143,7 @@ impl String {
   trim_end(String, String) -> String
   trim_space(String) -> String
   trim_start(String, String) -> String
-  view(String, start~ : Int = .., end~ : Int = ..) -> StringView
+  view(String, start_offset~ : Int = .., end_offset~ : Int = ..) -> StringView
 }
 impl Compare for String
 impl Default for String

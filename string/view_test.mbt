@@ -444,39 +444,37 @@ test "take first character from surrogate pairs" {
 ///|
 test "index_of_nth_char" {
   let str = "aa😭b😂cc"
-  let view = str.view(start=1, end=8)
+  let view = str.view(start_offset=1, end_offset=8)
   inspect!(view, content="a😭b😂c")
-  inspect!(view.index_of_nth_char(0), content="Some(0)")
-  inspect!(view.index_of_nth_char(1), content="Some(1)")
-  inspect!(view.index_of_nth_char(2), content="Some(3)")
-  inspect!(view.index_of_nth_char(3), content="Some(4)")
-  inspect!(view.index_of_nth_char(4), content="Some(6)")
-  inspect!(view.index_of_nth_char(5), content="None")
-  inspect!(view.index_of_nth_char(-1), content="Some(6)")
-  inspect!(view.index_of_nth_char(-2), content="Some(4)")
-  inspect!(view.index_of_nth_char(-3), content="Some(3)")
-  inspect!(view.index_of_nth_char(-4), content="Some(1)")
-  inspect!(view.index_of_nth_char(-5), content="Some(0)")
-  inspect!(view.index_of_nth_char(-6), content="None")
-  let vv = view.view(start=1, end=4)
-  inspect!(vv, content="😭b")
+  inspect!(view.offset_of_nth_char(0), content="Some(0)")
+  inspect!(view.offset_of_nth_char(1), content="Some(1)")
+  inspect!(view.offset_of_nth_char(2), content="Some(3)")
+  inspect!(view.offset_of_nth_char(3), content="Some(4)")
+  inspect!(view.offset_of_nth_char(4), content="Some(6)")
+  inspect!(view.offset_of_nth_char(5), content="None")
+  inspect!(view.offset_of_nth_char(-1), content="Some(6)")
+  inspect!(view.offset_of_nth_char(-2), content="Some(4)")
+  inspect!(view.offset_of_nth_char(-3), content="Some(3)")
+  inspect!(view.offset_of_nth_char(-4), content="Some(1)")
+  inspect!(view.offset_of_nth_char(-5), content="Some(0)")
+  inspect!(view.offset_of_nth_char(-6), content="None")
 }
 
 ///|
-test "codepoint_at" {
+test "char_at" {
   let str = "aa😭b😂cc"
-  let view = str.view(start=1, end=8)
-  inspect!(view.codepoint_at(0), content="a")
-  inspect!(view.codepoint_at(1), content="😭")
-  inspect!(view.codepoint_at(3), content="b")
-  inspect!(view.codepoint_at(4), content="😂")
-  inspect!(view.codepoint_at(6), content="c")
+  let view = str.view(start_offset=1, end_offset=8)
+  inspect!(view.char_at(0), content="a")
+  inspect!(view.char_at(1), content="😭")
+  inspect!(view.char_at(3), content="b")
+  inspect!(view.char_at(4), content="😂")
+  inspect!(view.char_at(6), content="c")
 }
 
 ///|
 test "charcode_at" {
   let str = "aa😭b😂cc"
-  let view = str.view(start=1, end=8)
+  let view = str.view(start_offset=1, end_offset=8)
   inspect!(view.charcode_at(0), content="97")
   inspect!(view.charcode_at(1), content="55357")
   inspect!(view.charcode_at(2), content="56877")
@@ -487,10 +485,10 @@ test "charcode_at" {
 }
 
 ///|
-test "codepoint_length" {
+test "char_length" {
   let str = "aa😭b😂cc"
-  let view = str.view(start=1, end=8)
-  inspect!(view.codepoint_length(), content="5")
+  let view = str.view(start_offset=1, end_offset=8)
+  inspect!(view.char_length(), content="5")
 }
 
 ///|
@@ -498,58 +496,26 @@ test "utf16 indexed view" {
   let str = "aa😭b😂cc"
   let v0 = str.view()
   inspect!(v0, content="aa😭b😂cc")
-  inspect!(v0.codepoint_length(), content="7")
-  let v1 = str.view(start=1, end=8)
+  inspect!(v0.char_length(), content="7")
+  let v1 = str.view(start_offset=1, end_offset=8)
   inspect!(v1, content="a😭b😂c")
-  inspect!(v1.codepoint_length(), content="5")
-  let v2 = str.view(start=1)
+  inspect!(v1.char_length(), content="5")
+  let v2 = str.view(start_offset=1)
   inspect!(v2, content="a😭b😂cc")
-  inspect!(v2.codepoint_length(), content="6")
-  let v3 = str.view(end=4)
+  inspect!(v2.char_length(), content="6")
+  let v3 = str.view(end_offset=4)
   inspect!(v3, content="aa😭")
-  inspect!(v3.codepoint_length(), content="3")
-  let v4 = str.view(start=1, end=1)
+  inspect!(v3.char_length(), content="3")
+  let v4 = str.view(start_offset=1, end_offset=1)
   inspect!(v4, content="")
-  inspect!(v4.codepoint_length(), content="0")
-  let v5 = str.view(end=0)
+  inspect!(v4.char_length(), content="0")
+  let v5 = str.view(end_offset=0)
   inspect!(v5, content="")
-  inspect!(v5.codepoint_length(), content="0")
-  let v6 = str.view(start=str.length())
+  inspect!(v5.char_length(), content="0")
+  let v6 = str.view(start_offset=str.length())
   inspect!(v6, content="")
-  inspect!(v6.codepoint_length(), content="0")
-  let v7 = str.view(start=str.length(), end=str.length())
+  inspect!(v6.char_length(), content="0")
+  let v7 = str.view(start_offset=str.length(), end_offset=str.length())
   inspect!(v7, content="")
-  inspect!(v7.codepoint_length(), content="0")
-}
-
-///|
-test "utf16 indexed subview" {
-  let str = "aa😭b😂cc"
-  let v1 = str.view(start=1, end=8)
-  inspect!(v1, content="a😭b😂c")
-  inspect!(v1.codepoint_length(), content="5")
-  let v2 = v1.view()
-  inspect!(v2, content="a😭b😂c")
-  inspect!(v2.codepoint_length(), content="5")
-  let v3 = v1.view(start=1, end=4)
-  inspect!(v3, content="😭b")
-  inspect!(v3.codepoint_length(), content="2")
-  let v4 = v1.view(start=1)
-  inspect!(v4, content="😭b😂c")
-  inspect!(v4.codepoint_length(), content="4")
-  let v5 = v1.view(end=4)
-  inspect!(v5, content="a😭b")
-  inspect!(v5.codepoint_length(), content="3")
-  let v6 = v1.view(start=1, end=1)
-  inspect!(v6, content="")
-  inspect!(v6.codepoint_length(), content="0")
-  let v7 = v1.view(end=0)
-  inspect!(v7, content="")
-  inspect!(v7.codepoint_length(), content="0")
-  let v8 = v1.view(start=7)
-  inspect!(v8, content="")
-  inspect!(v8.codepoint_length(), content="0")
-  let v9 = v1.view(start=7, end=7)
-  inspect!(v9, content="")
-  inspect!(v9.codepoint_length(), content="0")
+  inspect!(v7.char_length(), content="0")
 }
