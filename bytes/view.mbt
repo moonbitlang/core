@@ -639,3 +639,15 @@ pub impl Compare for View with compare(self, other) -> Int {
   }
   0
 }
+
+///|
+/// Retrieves the underlying `Bytes` from a `View`.
+pub fn View::bytes(self : View) -> Bytes {
+  self.bytes
+}
+
+///|
+/// Retrieves the start index of the view.
+pub fn View::start(self : View) -> Int {
+  self.start
+}
