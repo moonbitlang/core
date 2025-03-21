@@ -7,11 +7,16 @@ let min_value : UInt16
 
 // Types and methods
 impl Add for UInt16
+impl BitAnd for UInt16
+impl BitOr for UInt16
+impl BitXOr for UInt16
 impl Compare for UInt16
 impl Div for UInt16
 impl Eq for UInt16
 impl Hash for UInt16
 impl Mul for UInt16
+impl Shl for UInt16
+impl Shr for UInt16
 impl Sub for UInt16
 
 // Type aliases
