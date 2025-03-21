@@ -41,13 +41,15 @@ const UINT64_MAX : UInt64 = 0xffffffffffffffffUL
 /// 
 pub fn parse_uint64(str : String, base~ : Int = 0) -> UInt64!StrConvError {
   guard str != "" else { syntax_err!() }
-  match str[:] {
-    ['+' | '-', ..] => syntax_err!()
-    _ => ()
+  if str is ['+' | '-', ..] {
+    syntax_err!()
   }
 
   // `allow_underscore` is used to check validity of underscores
-  let (num_base, rest, allow_underscore) = check_and_consume_base!(str[:], base)
+  let (num_base, rest, allow_underscore) = check_and_consume_base!(
+    str.view(),
+    base,
+  )
 
   // calculate overflow threshold
   let overflow_threshold = match num_base {
@@ -55,11 +57,9 @@ pub fn parse_uint64(str : String, base~ : Int = 0) -> UInt64!StrConvError {
     16 => UINT64_MAX / 16 + 1
     _ => UINT64_MAX / num_base.to_uint64() + 1
   }
-  let has_digit = match rest {
-    ['0'..='9' | 'a'..='z' | 'A'..='Z', ..]
-    | ['_', '0'..='9' | 'a'..='z' | 'A'..='Z', ..] => true
-    _ => false
-  }
+  let has_digit = rest
+    is (['0'..='9' | 'a'..='z' | 'A'..='Z', ..]
+    | ['_', '0'..='9' | 'a'..='z' | 'A'..='Z', ..])
   guard has_digit else { syntax_err!() }
   loop rest, 0UL, allow_underscore {
     ['_'], _, _ =>
@@ -68,10 +68,11 @@ pub fn parse_uint64(str : String, base~ : Int = 0) -> UInt64!StrConvError {
     ['_', ..], _, false => syntax_err!()
     ['_', .. rest], acc, true => continue rest, acc, false
     [c, .. rest], acc, _ => {
+      let c = c.to_int()
       let d = match c {
         '0'..='9' => c - '0'
-        'a'..='z' => c - 'a' + 10
-        'A'..='Z' => c - 'A' + 10
+        'a'..='z' => c + (10 - 'a')
+        'A'..='Z' => c + (10 - 'A')
         _ => syntax_err!()
       }
       guard d < num_base else { syntax_err!() }
@@ -116,7 +117,7 @@ test "parse_uint64" {
     ("12345_", Err(syntax_err_str)),
     ("12345%", Err(syntax_err_str)),
   ]
-  for i = 0; i < tests.length(); i = i + 1 {
+  for i in 0..<tests.length() {
     let t = tests[i]
     assert_eq!(
       try {
@@ -216,7 +217,7 @@ test "parse_uint64_base" {
     ("0x+f", 0, Err(syntax_err_str)),
     ("0x-f", 0, Err(syntax_err_str)),
   ]
-  for i = 0; i < tests.length(); i = i + 1 {
+  for i in 0..<tests.length() {
     let t = tests[i]
     assert_eq!(
       try {
@@ -253,7 +254,7 @@ test "parse_uint" {
     ("12345_", Err(syntax_err_str)),
     ("123%45", Err(syntax_err_str)),
   ]
-  for i = 0; i < tests.length(); i = i + 1 {
+  for i in 0..<tests.length() {
     let t = tests[i]
     assert_eq!(
       try {

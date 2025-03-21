@@ -80,7 +80,7 @@ pub fn Array::new[T](capacity~ : Int = 0) -> Array[T] {
 ///   inspect!(empty.length(), content="0")
 /// }
 /// ```
-/// @intrinsic %array.length
+#intrinsic("%array.length")
 pub fn Array::length[T](self : Array[T]) -> Int {
   self.len
 }
@@ -281,7 +281,7 @@ pub fn Array::pop[T](self : Array[T]) -> T? {
 }
 
 ///|
-/// @alert deprecated "Use `unsafe_pop` instead"
+#deprecated("Use `unsafe_pop` instead")
 #coverage.skip
 pub fn Array::pop_exn[T](self : Array[T]) -> T {
   self.unsafe_pop()

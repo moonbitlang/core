@@ -28,7 +28,7 @@
 /// assert_eq!(arr, [1, 2, 3, 4, 5])
 /// ```
 /// TODO: change the intrinsic to match the function name
-/// @intrinsic %fixedarray.iter
+#intrinsic("%fixedarray.iter")
 pub fn FixedArray::each[T](self : FixedArray[T], f : (T) -> Unit) -> Unit {
   for v in self {
     f(v)
@@ -244,7 +244,7 @@ pub fn FixedArray::map[T, U](
     return []
   }
   let res = FixedArray::make(self.length(), f(self[0]))
-  for i = 1; i < self.length(); i = i + 1 {
+  for i in 1..<self.length() {
     res[i] = f(self[i])
   }
   res
@@ -279,7 +279,7 @@ pub fn FixedArray::mapi[T, U](
     return []
   }
   let res = FixedArray::make(self.length(), f(0, self[0]))
-  for i = 1; i < self.length(); i = i + 1 {
+  for i in 1..<self.length() {
     res[i] = f(i, self[i])
   }
   res
@@ -338,7 +338,7 @@ pub fn FixedArray::makei[T](length : Int, value : (Int) -> T) -> FixedArray[T] {
     []
   } else {
     let array = FixedArray::make(length, value(0))
-    for i = 1; i < length; i = i + 1 {
+    for i in 1..<length {
       array[i] = value(i)
     }
     array
@@ -544,7 +544,7 @@ test "rev_foldi" {
 /// ```
 pub fn FixedArray::rev_inplace[T](self : FixedArray[T]) -> Unit {
   let mid_len = self.length() / 2
-  for i = 0; i < mid_len; i = i + 1 {
+  for i in 0..<mid_len {
     let j = self.length() - i - 1
     let temp = self[i]
     self[i] = self[j]
@@ -578,7 +578,7 @@ pub fn FixedArray::rev[T](self : FixedArray[T]) -> FixedArray[T] {
     [.., first] => {
       let res = FixedArray::make(self.length(), first)
       let len = self.length()
-      for i = 1; i < len; i = i + 1 {
+      for i in 1..<len {
         res[i] = self[len - 1 - i]
       }
       res
@@ -683,7 +683,7 @@ test "swap" {
 /// assert_false!(arr.all(fn(ele) { ele < 5 }))
 /// ```
 pub fn FixedArray::all[T](self : FixedArray[T], f : (T) -> Bool) -> Bool {
-  for i = 0; i < self.length(); i = i + 1 {
+  for i in 0..<self.length() {
     if not(f(self[i])) {
       return false
     }
@@ -719,7 +719,7 @@ test "all" {
 /// assert_true!(arr.any(fn(ele) { ele < 5 }))
 /// ```
 pub fn FixedArray::any[T](self : FixedArray[T], f : (T) -> Bool) -> Bool {
-  for i = 0; i < self.length(); i = i + 1 {
+  for i in 0..<self.length() {
     if f(self[i]) {
       return true
     }
@@ -770,7 +770,7 @@ test "fill" {
 /// assert_eq!(arr.search(3), Some(0))
 /// ```
 pub fn FixedArray::search[T : Eq](self : FixedArray[T], value : T) -> Int? {
-  for i = 0; i < self.length(); i = i + 1 {
+  for i in 0..<self.length() {
     if self[i] == value {
       return Some(i)
     }
@@ -806,7 +806,7 @@ test "search" {
 /// assert_true!(arr.contains(3))
 /// ```
 pub fn FixedArray::contains[T : Eq](self : FixedArray[T], value : T) -> Bool {
-  for i = 0; i < self.length(); i = i + 1 {
+  for i in 0..<self.length() {
     if self[i] == value {
       return true
     }
@@ -848,7 +848,7 @@ pub fn FixedArray::starts_with[T : Eq](
   if prefix.length() > self.length() {
     return false
   }
-  for i = 0; i < prefix.length(); i = i + 1 {
+  for i in 0..<prefix.length() {
     if self[i] != prefix[i] {
       return false
     }
@@ -898,7 +898,7 @@ pub fn FixedArray::ends_with[T : Eq](
   if suf_len > self_len {
     return false
   }
-  for i = 0; i < suf_len; i = i + 1 {
+  for i in 0..<suf_len {
     if self[self_len - suf_len + i] != suffix[i] {
       return false
     }
@@ -967,7 +967,7 @@ pub impl[T : Eq] Eq for FixedArray[T] with op_equal(
   if self.length() != that.length() {
     return false
   }
-  for i = 0; i < self.length(); i = i + 1 {
+  for i in 0..<self.length() {
     if self[i] != that[i] {
       return false
     }
@@ -1006,40 +1006,6 @@ test "op_equal" {
 }
 
 ///|
-fn deep_clone[T](arr : FixedArray[T]) -> FixedArray[T] {
-  let len = arr.length()
-  if len == 0 {
-    []
-  } else {
-    let result = FixedArray::make(len, arr[0])
-    for i = 0; i < len; i = i + 1 {
-      result[i] = arr[i]
-    }
-    result
-  }
-}
-
-///|
-test "deep_clone" {
-  {
-    let pre : FixedArray[Int] = []
-    let arr = deep_clone(pre)
-    @test.is_not!(arr, pre)
-    assert_eq!(arr, [])
-  }
-  {
-    let pre : FixedArray[_] = [3]
-    let arr = deep_clone(pre)
-    @test.is_not!(arr, pre)
-    assert_eq!(arr, [3])
-  }
-  let pre : FixedArray[_] = [1, 2, 3, 4, 5]
-  let arr = deep_clone(pre)
-  @test.is_not!(arr, pre)
-  assert_eq!(arr, [1, 2, 3, 4, 5])
-}
-
-///|
 /// Concatenates two arrays and returns a new array containing all elements from
 /// both arrays in order.
 ///
@@ -1061,26 +1027,16 @@ test "deep_clone" {
 ///   inspect!(arr1 + arr2, content="[1, 2, 3, 4, 5, 6]")
 /// }
 /// ```
-pub fn FixedArray::op_add[T](
-  self : FixedArray[T],
-  other : FixedArray[T]
-) -> FixedArray[T] {
+pub impl[T] Add for FixedArray[T] with op_add(self, other) {
   let slen = self.length()
   let nlen = other.length()
-  if slen == 0 {
-    deep_clone(other)
-  } else if nlen == 0 {
-    deep_clone(self)
-  } else {
-    let result = FixedArray::make(slen + nlen, self[0])
-    for i = 1; i < slen; i = i + 1 {
-      result[i] = self[i]
+  FixedArray::makei(slen + nlen, fn(i) {
+    if i < slen {
+      self[i]
+    } else {
+      other[i - slen]
     }
-    for i = 0; i < nlen; i = i + 1 {
-      result[i + slen] = other[i]
-    }
-    result
-  }
+  })
 }
 
 ///|

@@ -19,22 +19,22 @@ pub let max_value : UInt16 = 65535
 pub let min_value : UInt16 = 0
 
 ///|
-pub fn op_add(self : UInt16, that : UInt16) -> UInt16 {
+pub impl Add for UInt16 with op_add(self : UInt16, that : UInt16) -> UInt16 {
   (self.to_int() + that.to_int()).to_uint16()
 }
 
 ///|
-pub fn op_sub(self : UInt16, that : UInt16) -> UInt16 {
+pub impl Sub for UInt16 with op_sub(self : UInt16, that : UInt16) -> UInt16 {
   (self.to_int() - that.to_int()).to_uint16()
 }
 
 ///|
-pub fn op_mul(self : UInt16, that : UInt16) -> UInt16 {
+pub impl Mul for UInt16 with op_mul(self : UInt16, that : UInt16) -> UInt16 {
   (self.to_int() * that.to_int()).to_uint16()
 }
 
 ///|
-pub fn op_div(self : UInt16, that : UInt16) -> UInt16 {
+pub impl Div for UInt16 with op_div(self : UInt16, that : UInt16) -> UInt16 {
   (self.to_int() / that.to_int()).to_uint16()
 }
 

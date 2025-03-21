@@ -88,7 +88,7 @@ pub fn size[X](self : SparseArray[X]) -> Int {
 ///
 /// Iterate through elements in a sparse array
 pub fn each[X](self : SparseArray[X], f : (X) -> Unit) -> Unit {
-  for i = 0; i < self.elem_info.size(); i = i + 1 {
+  for i in 0..<self.elem_info.size() {
     f(self.data[i])
   }
 }

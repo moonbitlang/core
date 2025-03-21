@@ -43,7 +43,7 @@ pub fn Bytes::makei(length : Int, value : (Int) -> Byte) -> Bytes {
     return []
   }
   let arr = FixedArray::make(length, value(0))
-  for i = 1; i < length; i = i + 1 {
+  for i in 1..<length {
     arr[i] = value(i)
   }
   FixedArray::unsafe_to_bytes(arr)
@@ -86,7 +86,7 @@ fn unsafe_sub_string(
 /// Return a new unchecked string, containing the subsequence of `self` that
 /// starts at `byte_offset` and has length `byte_length`.
 /// 
-/// @alert deprecated "Use `to_unchecked_string` instead"
+#deprecated("Use `to_unchecked_string` instead")
 #coverage.skip
 pub fn Bytes::sub_string(
   self : Bytes,
@@ -118,7 +118,7 @@ pub fn Bytes::sub_string(
 /// }
 /// ```
 ///
-/// @alert deprecated "Use `to_unchecked_string` instead"
+#deprecated("Use `to_unchecked_string` instead")
 #coverage.skip
 pub fn Bytes::to_string(self : Bytes) -> String {
   self.to_unchecked_string(offset=0, length=self.length())
@@ -192,7 +192,7 @@ pub fn FixedArray::blit_from_string(
   guard length >= 0 && s1 >= 0 && e1 < len1 && s2 >= 0 && e2 < len2
   let end_str_offset = str_offset + length
   for i = str_offset, j = bytes_offset; i < end_str_offset; i = i + 1, j = j + 2 {
-    let c = str[i].to_uint()
+    let c = str.unsafe_charcode_at(i).reinterpret_as_uint()
     self[j] = (c & 0xff).to_byte()
     self[j + 1] = (c >> 8).to_byte()
   }
@@ -317,7 +317,7 @@ pub fn FixedArray::set_utf8_char(
 /// Fill utf16 encoded char `value` into byte sequence `self`, starting at `offset`.
 /// It return the length of bytes has been written.
 /// @alert unsafe "Panic if the [value] is out of range"
-/// @alert deprecated "Use `set_utf16le_char` instead"
+#deprecated("Use `set_utf16le_char` instead")
 #coverage.skip
 pub fn FixedArray::set_utf16_char(
   self : FixedArray[Byte],
@@ -426,7 +426,7 @@ pub impl Eq for Bytes with op_equal(self : Bytes, other : Bytes) -> Bool {
     false
   } else {
     let len = self.length()
-    for i = 0; i < len; i = i + 1 {
+    for i in 0..<len {
       if self[i] != other[i] {
         break false
       }

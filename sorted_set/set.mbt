@@ -30,7 +30,7 @@ pub fn singleton[V : Compare](value : V) -> T[V] {
 /// Initialize an set from an array.
 pub fn from_array[V : Compare](array : Array[V]) -> T[V] {
   let set = new()
-  for i = 0; i < array.length(); i = i + 1 {
+  for i in 0..<array.length() {
     set.add(array[i])
   }
   set
@@ -39,7 +39,7 @@ pub fn from_array[V : Compare](array : Array[V]) -> T[V] {
 ///| @alert deprecated "Use @sorted_set.from_array instead"
 pub fn of[V : Compare](array : Array[V]) -> T[V] {
   let set = new()
-  for i = 0; i < array.length(); i = i + 1 {
+  for i in 0..<array.length() {
     set.add(array[i])
   }
   set
@@ -49,7 +49,7 @@ pub fn of[V : Compare](array : Array[V]) -> T[V] {
 /// It is just copying the tree structure, not the values.
 /// It requires a Clone trait on T, which we don't have yet.
 ///
-/// @alert deprecated "Use `copy` instead"
+#deprecated("Use `copy` instead")
 #coverage.skip
 pub fn deep_clone[V](self : T[V]) -> T[V] {
   copy(self)
@@ -268,7 +268,7 @@ fn join_right[V : Compare](l : Node[V]?, v : V, r : Node[V]?) -> Node[V] {
 ///|
 /// Returns the difference of two sets.
 /// 
-/// @alert deprecated "Use `difference` instead"
+#deprecated("Use `difference` instead")
 #coverage.skip
 pub fn diff[V : Compare](self : T[V], src : T[V]) -> T[V] {
   let ret = new()
@@ -286,7 +286,7 @@ pub fn difference[V : Compare](self : T[V], src : T[V]) -> T[V] {
 
 ///|
 /// Returns the intersection of two sets.
-/// @alert deprecated "Use `intersection` instead"
+#deprecated("Use `intersection` instead")
 #coverage.skip
 pub fn intersect[V : Compare](self : T[V], src : T[V]) -> T[V] {
   self.intersection(src)
@@ -326,10 +326,7 @@ pub impl[V : Compare] Eq for T[V] with op_equal(self, other) {
 ///|
 /// Returns if MutableSet is empty.
 pub fn is_empty[V : Compare](self : T[V]) -> Bool {
-  match self.root {
-    None => true
-    _ => false
-  }
+  self.root is None
 }
 
 ///|

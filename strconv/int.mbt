@@ -85,7 +85,7 @@ test {
 /// 
 pub fn parse_int64(str : String, base~ : Int = 0) -> Int64!StrConvError {
   guard str != "" else { syntax_err!() }
-  let (neg, rest) = match str[:] {
+  let (neg, rest) = match str.view() {
     ['+', .. rest] => (false, rest)
     ['-', .. rest] => (true, rest)
     rest => (false, rest)
@@ -96,11 +96,9 @@ pub fn parse_int64(str : String, base~ : Int = 0) -> Int64!StrConvError {
 
   // calculate overflow threshold
   let overflow_threshold = overflow_threshold(num_base, neg)
-  let has_digit = match rest {
-    ['0'..='9' | 'a'..='z' | 'A'..='Z', ..]
-    | ['_', '0'..='9' | 'a'..='z' | 'A'..='Z', ..] => true
-    _ => false
-  }
+  let has_digit = rest
+    is (['0'..='9' | 'a'..='z' | 'A'..='Z', ..]
+    | ['_', '0'..='9' | 'a'..='z' | 'A'..='Z', ..])
   guard has_digit else { syntax_err!() }
   // convert
   loop rest, 0L, allow_underscore {
@@ -110,10 +108,11 @@ pub fn parse_int64(str : String, base~ : Int = 0) -> Int64!StrConvError {
     ['_', ..], _, false => syntax_err!()
     ['_', .. rest], acc, true => continue rest, acc, false
     [c, .. rest], acc, _ => {
+      let c = c.to_int()
       let d = match c {
         '0'..='9' => c - '0'
-        'a'..='z' => c - 'a' + 10
-        'A'..='Z' => c - 'A' + 10
+        'a'..='z' => c + (10 - 'a')
+        'A'..='Z' => c + (10 - 'A')
         _ => syntax_err!()
       }
       guard d < num_base else { syntax_err!() }
@@ -149,7 +148,7 @@ pub fn parse_int(str : String, base~ : Int = 0) -> Int!StrConvError {
 // Underscores must appear only between digits or between a base prefix and a digit.
 fn check_underscore(str : String) -> Bool {
   // skip the sign
-  let rest = match str[:] {
+  let rest = match str.view() {
     ['+' | '-', .. rest] => rest
     rest => rest
   }
@@ -201,7 +200,7 @@ fn check_underscore(str : String) -> Bool {
 ///|
 // Determine the base of the value.
 fn determine_base(s : String) -> Int {
-  match s[:] {
+  match s.view() {
     ['0', 'x' | 'X', ..] => 16
     ['0', 'o' | 'O', ..] => 8
     ['0', 'b' | 'B', ..] => 2
@@ -283,7 +282,7 @@ test "parse_int64" {
     ("12345_", Err(syntax_err_str)),
     ("12345%", Err(syntax_err_str)),
   ]
-  for i = 0; i < tests.length(); i = i + 1 {
+  for i in 0..<tests.length() {
     let t = tests[i]
     assert_eq!(
       try {
@@ -403,7 +402,7 @@ test "parse_int64_base" {
     ("0x+f", 0, Err(syntax_err_str)),
     ("0x-f", 0, Err(syntax_err_str)),
   ]
-  for i = 0; i < tests.length(); i = i + 1 {
+  for i in 0..<tests.length() {
     let t = tests[i]
     assert_eq!(
       try {
@@ -445,7 +444,7 @@ test "parse_int" {
     ("12345_", Err(syntax_err_str)),
     ("123%45", Err(syntax_err_str)),
   ]
-  for i = 0; i < tests.length(); i = i + 1 {
+  for i in 0..<tests.length() {
     let t = tests[i]
     assert_eq!(
       try {

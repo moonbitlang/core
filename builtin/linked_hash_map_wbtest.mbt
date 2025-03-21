@@ -192,7 +192,7 @@ test "clear" {
   assert_eq!(m.capacity, 8)
   assert_eq!(m.head, None)
   assert_eq!(m.tail, None)
-  for i = 0; i < m.capacity; i = i + 1 {
+  for i in 0..<m.capacity {
     assert_eq!(m.entries[i], None)
   }
 }
@@ -407,7 +407,7 @@ test "clear" {
   assert_eq!(m.capacity, 8)
   assert_eq!(m.head, None)
   assert_eq!(m.tail, None)
-  for i = 0; i < m.capacity; i = i + 1 {
+  for i in 0..<m.capacity {
     assert_eq!(m.entries[i], None)
   }
 }
@@ -455,7 +455,7 @@ test "new" {
   assert_eq!(m.capacity, 8)
   assert_eq!(m.head, None)
   assert_eq!(m.tail, None)
-  for i = 0; i < m.capacity; i = i + 1 {
+  for i in 0..<m.capacity {
     assert_eq!(m.entries[i], None)
   }
 }
@@ -548,7 +548,7 @@ test "clear" {
   assert_eq!(m.capacity, 8)
   assert_eq!(m.head, None)
   assert_eq!(m.tail, None)
-  for i = 0; i < m.capacity; i = i + 1 {
+  for i in 0..<m.capacity {
     assert_eq!(m.entries[i], None)
   }
 }
@@ -641,7 +641,7 @@ test "clear" {
   assert_eq!(m.capacity, 8)
   assert_eq!(m.head, None)
   assert_eq!(m.tail, None)
-  for i = 0; i < m.capacity; i = i + 1 {
+  for i in 0..<m.capacity {
     assert_eq!(m.entries[i], None)
   }
 }

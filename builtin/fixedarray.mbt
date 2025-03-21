@@ -34,7 +34,7 @@
 ///   inspect!(sum, content="126")
 /// }
 /// ```
-/// @intrinsic %iter.from_array
+#intrinsic("%iter.from_array")
 pub fn FixedArray::iter[T](self : FixedArray[T]) -> Iter[T] {
   Iter::new(fn(yield_) {
     for v in self {

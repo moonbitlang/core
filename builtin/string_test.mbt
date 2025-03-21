@@ -87,6 +87,16 @@ test "codepoint_at emoji" {
 }
 
 ///|
+test "unsafe_char_at" {
+  let s = "a👋b"
+  inspect!(s.unsafe_char_at(0), content="a")
+  inspect!(s.unsafe_char_at(1), content="👋")
+  // invalid char cannot be inspected
+  inspect!(s.unsafe_char_at(2).to_int(), content="56395")
+  inspect!(s.unsafe_char_at(3), content="b")
+}
+
+///|
 test "codepoint_length basic" {
   let str = "hello"
   inspect!(str.codepoint_length(), content="5")
@@ -101,6 +111,11 @@ test "codepoint_length with surrogate pairs" {
 ///|
 test "panic String::make with negative length" {
   ignore(String::make(-1, 'A'))
+}
+
+///|
+test "String::make with non-bmp" {
+  inspect!(String::make(2, '🤣'), content="🤣🤣")
 }
 
 ///|

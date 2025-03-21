@@ -75,7 +75,7 @@ test "is_ascii_alphabetic" {
   let percent = '%'
   let space = ' '
   let lf = '\n'
-  let esc = '\x1B'
+  let esc = '\u{1B}'
   assert_true!(uppercase_a.is_ascii_alphabetic())
   assert_true!(uppercase_g.is_ascii_alphabetic())
   assert_true!(a.is_ascii_alphabetic())
@@ -97,7 +97,7 @@ test "is_ascii_control" {
   let percent = '%'
   let space = ' '
   let lf = '\n'
-  let esc = '\x1B'
+  let esc = '\u{1B}'
   assert_false!(uppercase_a.is_ascii_control())
   assert_false!(uppercase_g.is_ascii_control())
   assert_false!(a.is_ascii_control())
@@ -119,7 +119,7 @@ test "is_ascii_graphic" {
   let percent = '%'
   let space = ' '
   let lf = '\n'
-  let esc = '\x1B'
+  let esc = '\u{1B}'
   assert_true!(uppercase_a.is_ascii_graphic())
   assert_true!(uppercase_g.is_ascii_graphic())
   assert_true!(a.is_ascii_graphic())
@@ -141,7 +141,7 @@ test "is_ascii_hexdigit" {
   let percent = '%'
   let space = ' '
   let lf = '\n'
-  let esc = '\x1B'
+  let esc = '\u{1B}'
   assert_true!(uppercase_a.is_ascii_hexdigit())
   assert_false!(uppercase_g.is_ascii_hexdigit())
   assert_true!(a.is_ascii_hexdigit())
@@ -163,7 +163,7 @@ test "is_ascii_lowercase" {
   let percent = '%'
   let space = ' '
   let lf = '\n'
-  let esc = '\x1B'
+  let esc = '\u{1B}'
   assert_false!(uppercase_a.is_ascii_lowercase())
   assert_false!(uppercase_g.is_ascii_lowercase())
   assert_true!(a.is_ascii_lowercase())
@@ -203,7 +203,7 @@ test "is_ascii_punctuation" {
   let percent = '%'
   let space = ' '
   let lf = '\n'
-  let esc = '\x1B'
+  let esc = '\u{1B}'
   assert_false!(uppercase_a.is_ascii_punctuation())
   assert_false!(uppercase_g.is_ascii_punctuation())
   assert_false!(a.is_ascii_punctuation())
@@ -225,7 +225,7 @@ test "is_ascii_uppercase" {
   let percent = '%'
   let space = ' '
   let lf = '\n'
-  let esc = '\x1B'
+  let esc = '\u{1B}'
   assert_true!(uppercase_a.is_ascii_uppercase())
   assert_true!(uppercase_g.is_ascii_uppercase())
   assert_false!(a.is_ascii_uppercase())
@@ -247,7 +247,7 @@ test "is_ascii_whitespace" {
   let percent = '%'
   let space = ' '
   let lf = '\n'
-  let esc = '\x1B'
+  let esc = '\u{1B}'
   assert_false!(uppercase_a.is_ascii_whitespace())
   assert_false!(uppercase_g.is_ascii_whitespace())
   assert_false!(a.is_ascii_whitespace())

@@ -87,7 +87,7 @@ fn ParseContext::lex_value(
         return String(s)
       }
       Some(c) => {
-        if c > '\x7f' && non_ascii_whitespace.contains(c) {
+        if c > '\u{7f}' && non_ascii_whitespace.contains(c) {
           continue
         }
         ctx.invalid_char!(shift=-1)

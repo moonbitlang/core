@@ -1,0 +1,85 @@
+package moonbitlang/core/prelude
+
+// Values
+fn abort[T](String) -> T
+
+fn assert_eq[T : Eq + Show](T, T, loc~ : SourceLoc = _) -> Unit!
+
+fn assert_false(Bool, loc~ : SourceLoc = _) -> Unit!
+
+fn assert_not_eq[T : Eq + Show](T, T, loc~ : SourceLoc = _) -> Unit!
+
+fn assert_true(Bool, loc~ : SourceLoc = _) -> Unit!
+
+#deprecated
+fn dump[T](T, name? : String, loc~ : SourceLoc = _) -> T
+
+fn fail[T](String, loc~ : SourceLoc = _) -> T!Failure
+
+fn ignore[T](T) -> Unit
+
+fn inspect(&Show, content~ : String = .., loc~ : SourceLoc = _, args_loc~ : ArgsLoc = _) -> Unit!InspectError
+
+fn not(Bool) -> Bool
+
+fn panic[T]() -> T
+
+fn physical_equal[T](T, T) -> Bool
+
+fn println[T : Show](T) -> Unit
+
+fn repr[T : Show](T) -> String
+
+// Types and methods
+
+// Type aliases
+pub typealias ArgsLoc = ArgsLoc
+
+pub typealias Array[X] = Array[X]
+
+pub typealias ArrayView[X] = ArrayView[X]
+
+pub typealias BigInt = BigInt
+
+pub typealias Failure = Failure
+
+pub typealias Hasher = Hasher
+
+pub typealias InspectError = InspectError
+
+pub typealias Iter[X] = Iter[X]
+
+pub typealias Iter2[X, Y] = Iter2[X, Y]
+
+pub typealias IterResult = IterResult
+
+pub typealias Json = Json
+
+pub typealias Map[K, V] = Map[K, V]
+
+pub typealias Set[X] = Set[X]
+
+pub typealias SnapshotError = SnapshotError
+
+pub typealias SourceLoc = SourceLoc
+
+pub typealias StringBuilder = StringBuilder
+
+pub typealias UninitializedArray[X] = UninitializedArray[X]
+
+pub traitalias Compare = Compare
+
+pub traitalias Default = Default
+
+pub traitalias Eq = Eq
+
+pub traitalias Hash = Hash
+
+pub traitalias Logger = Logger
+
+pub traitalias Show = Show
+
+pub traitalias ToJson = ToJson
+
+// Traits
+
