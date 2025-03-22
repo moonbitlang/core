@@ -32,7 +32,10 @@ fn utf8_bytes_to_mbt_string(bytes : Bytes) -> String {
   let mut i = 0
   while i < len {
     let mut c = bytes[i].to_int()
-    if c < 0x80 {
+    // zero byte indicates end of string
+    if c == 0 {
+      break
+    } else if c < 0x80 {
       res.write_char(Char::from_int(c))
       i += 1
     } else if c < 0xE0 {
@@ -76,4 +79,19 @@ fn now_internal() -> UInt64 {
   // time returns seconds since 1970-01-01 00:00:00 UTC
   // to be consistent with other backends, we convert to milliseconds
   time(0) * 1000
+}
+
+///|
+extern "c" fn getcwd(ptr : Bytes, size : Int) -> Int = "getcwd"
+
+///|
+fn current_dir_internal() -> String? {
+  // TODO: On Windows getcwd may fail if the path is too long(Windows allows paths up to 32k characters)
+  let buf = Bytes::new(4096)
+  let res = getcwd(buf, buf.length())
+  if res == 0 {
+    None
+  } else {
+    Some(utf8_bytes_to_mbt_string(buf))
+  }
 }

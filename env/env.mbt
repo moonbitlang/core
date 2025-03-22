@@ -23,3 +23,9 @@ pub fn args() -> Array[String] {
 pub fn now() -> UInt64 {
   now_internal()
 }
+
+///|
+/// Get the current working directory. On some platforms, this may return `None` if the current directory cannot be determined.
+pub fn current_dir() -> String? {
+  current_dir_internal()
+}
