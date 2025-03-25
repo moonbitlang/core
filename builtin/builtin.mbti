@@ -706,7 +706,6 @@ impl Compare for UInt
 impl Compare for UInt64
 impl Compare for Float
 impl Compare for Double
-impl[T : Compare] Compare for FixedArray[T]
 impl Compare for Bytes
 impl[T0 : Compare, T1 : Compare] Compare for (T0, T1)
 impl[T0 : Compare, T1 : Compare, T2 : Compare] Compare for (T0, T1, T2)
