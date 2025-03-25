@@ -57,3 +57,28 @@ pub impl Hash for UInt16 with hash(self) {
 pub impl Hash for UInt16 with hash_combine(self, hasher) {
   hasher.combine_int(self.to_int())
 }
+
+///|
+pub impl Shl for UInt16 with op_shl(self : UInt16, that : Int) -> UInt16 {
+  (self.to_int() << that).to_uint16()
+}
+
+///|
+pub impl Shr for UInt16 with op_shr(self : UInt16, that : Int) -> UInt16 {
+  (self.to_int() >> that).to_uint16()
+}
+
+///|
+pub impl BitOr for UInt16 with lor(self : UInt16, that : UInt16) -> UInt16 {
+  (self.to_int() | that.to_int()).to_uint16()
+}
+
+///|
+pub impl BitAnd for UInt16 with land(self : UInt16, that : UInt16) -> UInt16 {
+  (self.to_int() & that.to_int()).to_uint16()
+}
+
+///|
+pub impl BitXOr for UInt16 with lxor(self : UInt16, that : UInt16) -> UInt16 {
+  (self.to_int() ^ that.to_int()).to_uint16()
+}
