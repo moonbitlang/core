@@ -18,6 +18,17 @@ moonbit: true
   - **Offset**: UTF-16 index (counts code units)
   - **Character Index**: Counts actual Unicode characters
 
+  Because of the complexity of UTF-16 indexing, unlike `Array` or `Bytes`, we
+  have specific guidelines for string indexing:
+  - The `s[i]` syntax is available but should be used with caution. It accesses
+    the i-th UTF-16 code unit (charcode) for efficiency and consistency with
+    other APIs.
+  - The slice operator `s[i:j]` is intentionally disallowed to prevent
+    accidental creation of invalid strings.
+  - While `s[i]` is more concise than calling `charcode_at(i)`, remember that it
+    operates on code units, not Unicode characters, which may lead to unexpected
+    results with multi-code-unit characters.
+
 * **Performance and Unicode Safety**: 
   - Most APIs in this package operate on UTF-16 offsets rather than Unicode
     characters for efficiency. Offset-based operations have O(1) complexity
