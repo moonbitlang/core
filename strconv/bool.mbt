@@ -40,7 +40,7 @@ test "parse_bool" {
     ("true", Ok(true)),
     ("True", Ok(true)),
   ]
-  for i = 0; i < tests.length(); i = i + 1 {
+  for i in 0..<tests.length() {
     let t = tests[i]
     assert_eq!(
       try {

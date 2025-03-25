@@ -13,15 +13,6 @@
 // limitations under the License.
 
 ///|
-pub fn Bool::to_string(self : Bool) -> String {
-  if self {
-    "true"
-  } else {
-    "false"
-  }
-}
-
-///|
 const ALPHABET : String = "0123456789abcdefghijklmnopqrstuvwxyz"
 
 ///|

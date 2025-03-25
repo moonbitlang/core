@@ -107,10 +107,7 @@ test "ok" {
 ///|
 /// Check if a `Result` is an `Ok`.
 pub fn is_ok[T, E](self : Result[T, E]) -> Bool {
-  match self {
-    Ok(_) => true
-    _ => false
-  }
+  self is Ok(_)
 }
 
 ///|
@@ -124,10 +121,7 @@ test "is_ok" {
 ///|
 /// Check if a `Result` is an `Err`.
 pub fn is_err[T, E](self : Result[T, E]) -> Bool {
-  match self {
-    Err(_) => true
-    _ => false
-  }
+  self is Err(_)
 }
 
 ///|

@@ -24,7 +24,7 @@ pub impl Hash for Char with hash_combine(self, hasher) -> Unit {
 
 ///| Checks if the value is within the ASCII range.
 pub fn is_ascii(self : Char) -> Bool {
-  self is ('\x00'..='\x7F')
+  self is ('\u{00}'..='\u{7F}')
 }
 
 ///| Checks if the value is an ASCII alphabetic  character:
@@ -38,7 +38,7 @@ pub fn is_ascii_alphabetic(self : Char) -> Bool {
 /// U+0000 NUL ..= U+001F UNIT SEPARATOR, or U+007F DELETE.
 /// Note that most ASCII whitespace characters are control characters, but SPACE is not.
 pub fn is_ascii_control(self : Char) -> Bool {
-  self is ('\x00'..='\x1F' | '\x7F')
+  self is ('\u{00}'..='\u{1F}' | '\u{7F}')
 }
 
 ///| Checks if the value is an ASCII decimal digit:
@@ -50,7 +50,7 @@ pub fn is_ascii_digit(self : Char) -> Bool {
 ///| Checks if the value is an ASCII graphic character:
 /// U+0021 ‘!’ ..= U+007E ‘~’
 pub fn is_ascii_graphic(self : Char) -> Bool {
-  self is ('\x21'..='\x7E')
+  self is ('\u{21}'..='\u{7E}')
 }
 
 ///| Checks if the value is an ASCII hexadecimal digit:
@@ -80,7 +80,10 @@ pub fn is_ascii_octdigit(self : Char) -> Bool {
 /// - U+007B ..= U+007E { | } ~
 pub fn is_ascii_punctuation(self : Char) -> Bool {
   self
-  is ('\x21'..='\x2F' | '\x3A'..='\x40' | '\x5B'..='\x60' | '\x7B'..='\x7E')
+  is ('\u{21}'..='\u{2F}'
+  | '\u{3A}'..='\u{40}'
+  | '\u{5B}'..='\u{60}'
+  | '\u{7B}'..='\u{7E}')
 }
 
 ///| Checks if the value is an ASCII uppercase character:
@@ -92,7 +95,7 @@ pub fn is_ascii_uppercase(self : Char) -> Bool {
 ///| Checks if the value is an ASCII whitespace character:
 /// U+0020 SPACE, U+0009 HORIZONTAL TAB, U+000A LINE FEED, U+000C FORM FEED, or U+000D CARRIAGE RETURN.
 pub fn is_ascii_whitespace(self : Char) -> Bool {
-  self is ('\x20' | '\x09' | '\x0A' | '\x0C' | '\x0D')
+  self is ('\u{20}' | '\u{09}' | '\u{0A}' | '\u{0C}' | '\u{0D}')
 }
 
 ///| Returns true if this char has the general category for control codes.

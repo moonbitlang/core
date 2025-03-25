@@ -19,22 +19,22 @@ pub let max_value : Int16 = 32767
 pub let min_value : Int16 = -32768
 
 ///|
-pub fn op_add(self : Int16, that : Int16) -> Int16 {
+pub impl Add for Int16 with op_add(self : Int16, that : Int16) -> Int16 {
   (self.to_int() + that.to_int()).to_int16()
 }
 
 ///|
-pub fn op_sub(self : Int16, that : Int16) -> Int16 {
+pub impl Sub for Int16 with op_sub(self : Int16, that : Int16) -> Int16 {
   (self.to_int() - that.to_int()).to_int16()
 }
 
 ///|
-pub fn op_mul(self : Int16, that : Int16) -> Int16 {
+pub impl Mul for Int16 with op_mul(self : Int16, that : Int16) -> Int16 {
   (self.to_int() * that.to_int()).to_int16()
 }
 
 ///|
-pub fn op_div(self : Int16, that : Int16) -> Int16 {
+pub impl Div for Int16 with op_div(self : Int16, that : Int16) -> Int16 {
   (self.to_int() / that.to_int()).to_int16()
 }
 
@@ -56,4 +56,29 @@ pub impl Hash for Int16 with hash(self) {
 ///|
 pub impl Hash for Int16 with hash_combine(self, hasher) {
   hasher.combine_int(self.to_int())
+}
+
+///|
+pub impl Shl for Int16 with op_shl(self : Int16, that : Int) -> Int16 {
+  (self.to_int() << that).to_int16()
+}
+
+///|
+pub impl Shr for Int16 with op_shr(self : Int16, that : Int) -> Int16 {
+  (self.to_int() >> that).to_int16()
+}
+
+///|
+pub impl BitOr for Int16 with lor(self : Int16, that : Int16) -> Int16 {
+  (self.to_int() | that.to_int()).to_int16()
+}
+
+///|
+pub impl BitAnd for Int16 with land(self : Int16, that : Int16) -> Int16 {
+  (self.to_int() & that.to_int()).to_int16()
+}
+
+///|
+pub impl BitXOr for Int16 with lxor(self : Int16, that : Int16) -> Int16 {
+  (self.to_int() ^ that.to_int()).to_int16()
 }

@@ -69,7 +69,7 @@ pub fn State::next(self : State) -> (UInt64, Bool) {
 ///|
 fn bytesToUInt64(b : FixedArray[Byte]) -> UInt64 {
   let mut result = 0UL
-  for i = 0; i < 8; i = i + 1 {
+  for i in 0..<8 {
     result = result | (b[i].to_int64().reinterpret_as_uint64() << (i * 8))
   }
   result
@@ -78,7 +78,7 @@ fn bytesToUInt64(b : FixedArray[Byte]) -> UInt64 {
 ///|
 test "bytesToUInt64" {
   let bytes = FixedArray::make(8, Byte::default())
-  for i = 0; i < 2; i = i + 1 {
+  for i in 0..<2 {
     bytes[i] = i.to_byte()
   }
   inspect!(bytesToUInt64(bytes), content="256")
@@ -91,7 +91,7 @@ fn State::init(self : State, seed : Bytes) -> Unit {
   let seed1 = FixedArray::make(8, Byte::default())
   let seed2 = FixedArray::make(8, Byte::default())
   let seed3 = FixedArray::make(8, Byte::default())
-  for i = 0; i < 8; i = i + 1 {
+  for i in 0..<8 {
     seed0[i] = seed[i]
     seed1[i] = seed[8 + i]
     seed2[i] = seed[16 + i]
@@ -111,7 +111,7 @@ fn State::init64(self : State, seed : FixedArray[UInt64]) -> Unit {
   // convert FixedArray[UInt64] size=[32] to FixedArray[FixedArray[UInt]] size=[16][4]
   let buffer = FixedArray::makei(16, fn(_i) { FixedArray::make(4, 0U) })
   // split u64 to 2 u32 and store in buffer to meet the function signature
-  for i = 0; i < 16; i = i + 1 {
+  for i in 0..<16 {
     let hi = self.buffer[i * 2]
     let lo = self.buffer[i * 2 + 1]
     buffer[i][0] = (hi >> 32).to_uint()
@@ -122,7 +122,7 @@ fn State::init64(self : State, seed : FixedArray[UInt64]) -> Unit {
   // [buffer] is changed in chacha_block
   chacha_block(self.seed, buffer, 0)
   // concat 2 u32 to u64 and store in self.buffer
-  for i = 0; i < 16; i = i + 1 {
+  for i in 0..<16 {
     for j = 0; j < 4; j = j + 2 {
       let lo = buffer[i][j]
       let hi = buffer[i][j + 1]
@@ -150,7 +150,7 @@ pub fn State::refill(self : State) -> Unit {
   // convert FixedArray[UInt64] size=[32] to FixedArray[FixedArray[UInt]] size=[16][4]
   let buffer = FixedArray::makei(16, fn(_i) { FixedArray::make(4, 0U) })
   // split u64 to 2 u32 and store in buffer to meet the function signature
-  for i = 0; i < 16; i = i + 1 {
+  for i in 0..<16 {
     let hi = self.buffer[i * 2]
     let lo = self.buffer[i * 2 + 1]
     buffer[i][0] = (hi >> 32).to_uint()
@@ -160,7 +160,7 @@ pub fn State::refill(self : State) -> Unit {
   }
   chacha_block(self.seed, buffer, self.c)
   // concat 2 u32 to u64 and store in self.buffer
-  for i = 0; i < 16; i = i + 1 {
+  for i in 0..<16 {
     for j = 0; j < 4; j = j + 2 {
       let lo = buffer[i][j]
       let hi = buffer[i][j + 1]
@@ -178,7 +178,7 @@ pub fn State::refill(self : State) -> Unit {
 ///|
 fn State::reseed(self : State) -> Unit {
   let seed = FixedArray::make(4, 0UL)
-  for i = 0; i < 4; i = i + 1 {
+  for i in 0..<4 {
     for {
       let x = self.next()
       if x.1 {
@@ -218,7 +218,7 @@ fn chacha_block(
   }
 
   setup(seed, buf, counter)
-  for i = 0; i < buf[0].length(); i = i + 1 {
+  for i in 0..<buf[0].length() {
     let mut b0 = buf[0][i]
     let mut b1 = buf[1][i]
     let mut b2 = buf[2][i]
@@ -235,7 +235,7 @@ fn chacha_block(
     let mut b13 = buf[13][i]
     let mut b14 = buf[14][i]
     let mut b15 = buf[15][i]
-    for round = 0; round < 4; round = round + 1 {
+    for round in 0..<4 {
       let tb1 = qr((b0, b4, b8, b12))
       b0 = tb1.0
       b4 = tb1.1
@@ -384,7 +384,7 @@ test "output" {
     }
   }
 
-  for i = 0; i < 372; i = i + 1 {
+  for i in 0..<372 {
     let x = uint64(s)
     res.push(x)
   }

@@ -217,7 +217,7 @@ fn rem_pio2(x : Double, y : Array[Double]) -> Int {
   let e0 = (ix >> 20) - 1046 // e0 = ilogb(z) - 23
   z = set_high_word(z, (ix - (e0 << 20)).reinterpret_as_uint())
   let tx = [0.0, 0.0, 0.0]
-  for i = 0; i < 2; i = i + 1 {
+  for i in 0..<2 {
     tx[i] = z.to_int().to_double()
     z = (z - tx[i]) * TWO24
   }

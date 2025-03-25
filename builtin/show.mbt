@@ -102,12 +102,11 @@ pub impl Show for String with output(self, logger) {
     }
   }
 
-  for i = 0; i < self.length(); i = i + 1 {
-    let c = self[i]
-    match c {
-      '"' | '\\' => {
+  for i in 0..<self.length() {
+    match self.unsafe_charcode_at(i) {
+      '"' | '\\' as c => {
         flush_segment(i)
-        logger..write_char('\\').write_char(c)
+        logger..write_char('\\').write_char(Char::from_int(c))
       }
       '\n' => {
         flush_segment(i)
@@ -125,8 +124,7 @@ pub impl Show for String with output(self, logger) {
         flush_segment(i)
         logger.write_string("\\t")
       }
-      _ => {
-        let code = c.to_int()
+      code =>
         if code < 0x20 {
           flush_segment(i)
           logger
@@ -135,7 +133,6 @@ pub impl Show for String with output(self, logger) {
           ..write_char(to_hex_digit(code / 16))
           .write_char(to_hex_digit(code % 16))
         }
-      }
     }
   }
   flush_segment(self.length())
@@ -209,9 +206,7 @@ pub impl[X : Show] Show for Array[X] with output(self, logger) {
 /// Convert Char to String
 /// @intrinsic %char.to_string
 pub impl Show for Char with to_string(self : Char) -> String {
-  let bytes = FixedArray::make(4, Byte::default())
-  let length = bytes.set_utf16le_char(0, self)
-  bytes.unsafe_to_bytes().to_unchecked_string(offset=0, length~)
+  [self]
 }
 
 ///|

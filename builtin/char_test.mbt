@@ -13,13 +13,6 @@
 // limitations under the License.
 
 ///|
-test "char subtraction" {
-  let b = 'b'
-  let a = 'a'
-  inspect!(b - a, content="1")
-}
-
-///|
 test "char show" {
   assert_eq!('\b'.to_string(), "\u0008")
   // assert_eq!('\b'.to_string(), "\u{8}")

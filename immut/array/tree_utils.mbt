@@ -18,26 +18,17 @@
 ///|
 /// If the tree is a `Node`.
 fn Tree::is_node[A](self : Tree[A]) -> Bool {
-  match self {
-    Node(_, _) => true
-    _ => false
-  }
+  self is Node(_, _)
 }
 
 ///|
 fn Tree::is_leaf[A](self : Tree[A]) -> Bool {
-  match self {
-    Leaf(_) => true
-    _ => false
-  }
+  self is Leaf(_)
 }
 
 ///|
 fn Tree::is_empty[A](self : Tree[A]) -> Bool {
-  match self {
-    Empty => true
-    _ => false
-  }
+  self is Empty
 }
 
 ///|
@@ -63,19 +54,19 @@ fn Tree::left_child[A](self : Tree[A]) -> Tree[A] {
 ///|
 /// Get the leaf contents. Abort if it is not a `Leaf`.
 fn Tree::leaf_elements[A](self : Tree[A]) -> FixedArray[A] {
-  match self {
-    Leaf(children) => children
-    _ => abort("Should not call `get_leaf_elements` on non-leaf nodes")
+  guard self is Leaf(children) else {
+    abort("Should not call `get_leaf_elements` on non-leaf nodes")
   }
+  children
 }
 
 ///|
 /// Get the children of a `Node`. Abort if it is not a `Node`.
 fn Tree::node_children[A](self : Tree[A]) -> FixedArray[Tree[A]] {
-  match self {
-    Node(children, _) => children
-    _ => abort("Should not call `node_children` on non-`Node`s")
+  guard self is Node(children, _) else {
+    abort("Should not call `node_children` on non-`Node`s")
   }
+  children
 }
 
 ///|

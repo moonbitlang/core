@@ -76,9 +76,10 @@ pub fn remove_min[A : Compare](self : T[A]) -> T[A] {
   match self {
     Empty => abort("remove_min: empty ImmutableSet")
     Node(left~, right~, value~, ..) =>
-      match left {
-        Empty => right
-        _ => balance(left.remove_min(), value, right)
+      if left is Empty {
+        right
+      } else {
+        balance(left.remove_min(), value, right)
       }
   }
 }
@@ -163,11 +164,7 @@ pub fn remove[A : Compare](self : T[A], value : A) -> T[A] {
 pub fn min[A : Compare](self : T[A]) -> A {
   match self {
     Empty => abort("min: there are no values in sorted_set.")
-    Node(left~, value~, ..) =>
-      match left {
-        Empty => value
-        _ => left.min()
-      }
+    Node(left~, value~, ..) => if left is Empty { value } else { left.min() }
   }
 }
 
@@ -178,9 +175,10 @@ pub fn min_option[A : Compare](self : T[A]) -> A? {
   match self {
     Empty => None
     Node(left~, value~, ..) =>
-      match left {
-        Empty => Some(value)
-        _ => left.min_option()
+      if left is Empty {
+        Some(value)
+      } else {
+        left.min_option()
       }
   }
 }
@@ -197,11 +195,7 @@ pub fn min_option[A : Compare](self : T[A]) -> A? {
 pub fn max[A : Compare](self : T[A]) -> A {
   match self {
     Empty => abort("max: there are no values in ImmutableSet.")
-    Node(right~, value~, ..) =>
-      match right {
-        Empty => value
-        _ => right.max()
-      }
+    Node(right~, value~, ..) => if right is Empty { value } else { right.max() }
   }
 }
 
@@ -212,9 +206,10 @@ pub fn max_option[A : Compare](self : T[A]) -> A? {
   match self {
     Empty => None
     Node(right~, value~, ..) =>
-      match right {
-        Empty => Some(value)
-        _ => right.max_option()
+      if right is Empty {
+        Some(value)
+      } else {
+        right.max_option()
       }
   }
 }
@@ -253,10 +248,7 @@ pub fn split[A : Compare](self : T[A], divide : A) -> (T[A], Bool, T[A]) {
 ///|
 /// Returns true if sorted_set is empty
 pub fn is_empty[A : Compare](self : T[A]) -> Bool {
-  match self {
-    Empty => true
-    _ => false
-  }
+  self is Empty
 }
 
 ///|
@@ -311,12 +303,12 @@ pub fn union[A : Compare](self : T[A], other : T[A]) -> T[A] {
 /// ```
 /// assert_eq!(@sorted_set.of([3, 4, 5]) + (@sorted_set.of([4, 5, 6])), @sorted_set.of([3, 4, 5, 6]))
 /// ```
-pub fn op_add[A : Compare](self : T[A], other : T[A]) -> T[A] {
+pub impl[A : Compare] Add for T[A] with op_add(self, other) {
   return self.union(other)
 }
 
 ///|
-/// @alert deprecated "Use `intersection` instead"
+#deprecated("Use `intersection` instead")
 #coverage.skip
 pub fn inter[A : Compare](self : T[A], other : T[A]) -> T[A] {
   self.intersection(other)
@@ -350,7 +342,7 @@ pub fn intersection[A : Compare](self : T[A], other : T[A]) -> T[A] {
 /// assert_eq!(@sorted_set.of([1, 2, 3]).difference(@sorted_set.of([4, 5, 1])), @sorted_set.of([2, 3]))
 /// ```
 ///
-/// @alert deprecated "Use `difference` instead"
+#deprecated("Use `difference` instead")
 #coverage.skip
 pub fn diff[A : Compare](self : T[A], other : T[A]) -> T[A] {
   self.difference(other)
@@ -564,19 +556,16 @@ pub impl[A : @json.FromJson + Compare] @json.FromJson for T[A] with from_json(
   json,
   path
 ) {
-  match json {
-    Array(arr) => {
-      let mut set = new()
-      for i in arr {
-        set = set.add(A::from_json!(i, path))
-      }
-      set
-    }
-    _ =>
-      raise @json.JsonDecodeError(
-        (path, "@immut/sorted_set.from_json: expected array"),
-      )
+  guard json is Array(arr) else {
+    raise @json.JsonDecodeError(
+      (path, "@immut/sorted_set.from_json: expected array"),
+    )
   }
+  let mut set = new()
+  for i in arr {
+    set = set.add(A::from_json!(i, path))
+  }
+  set
 }
 
 ///|

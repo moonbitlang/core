@@ -169,7 +169,7 @@ pub fn filter_map[A, B](self : Array[A], f : (A) -> B?) -> Array[B] {
 /// 
 /// # Returns
 /// 
-/// @alert deprecated "Use `Array::filter_map` instead"
+#deprecated("Use `Array::filter_map` instead")
 pub fn map_option[A, B](self : Array[A], f : (A) -> B?) -> Array[B] {
   self.filter_map(f)
 }

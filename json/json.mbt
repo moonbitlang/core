@@ -15,10 +15,8 @@
 ///|
 /// Try to get this element as a Null
 pub fn as_null(self : JsonValue) -> Unit? {
-  match self {
-    Null => Some(())
-    _ => None
-  }
+  guard self is Null else { return None }
+  Some(())
 }
 
 ///|
@@ -34,28 +32,22 @@ pub fn as_bool(self : JsonValue) -> Bool? {
 ///|
 /// Try to get this element as a Number
 pub fn as_number(self : JsonValue) -> Double? {
-  match self {
-    Number(n) => Some(n)
-    _ => None
-  }
+  guard self is Number(n) else { return None }
+  Some(n)
 }
 
 ///|
 /// Try to get this element as a String
 pub fn as_string(self : JsonValue) -> String? {
-  match self {
-    String(s) => Some(s)
-    _ => None
-  }
+  guard self is String(s) else { return None }
+  Some(s)
 }
 
 ///|
 /// Try to get this element as an Array
 pub fn as_array(self : JsonValue) -> Array[JsonValue]? {
-  match self {
-    Array(arr) => Some(arr)
-    _ => None
-  }
+  guard self is Array(arr) else { return None }
+  Some(arr)
 }
 
 ///|
@@ -70,10 +62,8 @@ pub fn item(self : JsonValue, index : Int) -> JsonValue? {
 ///|
 /// Try to get this element as an Object
 pub fn as_object(self : JsonValue) -> Map[String, JsonValue]? {
-  match self {
-    Object(obj) => Some(obj)
-    _ => None
-  }
+  guard self is Object(obj) else { return None }
+  Some(obj)
 }
 
 ///|

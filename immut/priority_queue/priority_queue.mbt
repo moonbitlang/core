@@ -71,7 +71,7 @@ pub fn to_array[A : Compare](self : T[A]) -> Array[A] {
 pub fn iter[A : Compare](self : T[A]) -> Iter[A] {
   Iter::new(fn(yield_) {
     let arr = self.to_array()
-    for i = 0; i < arr.length(); i = i + 1 {
+    for i in 0..<arr.length() {
       if yield_(arr[i]) == IterEnd {
         break IterEnd
       }
@@ -143,7 +143,7 @@ pub fn unsafe_pop[A : Compare](self : T[A]) -> T[A] {
 }
 
 ///|
-/// @alert deprecated "Use `unsafe_pop` instead"
+#deprecated("Use `unsafe_pop` instead")
 #coverage.skip
 pub fn pop_exn[A : Compare](self : T[A]) -> T[A] {
   unsafe_pop(self)
@@ -186,10 +186,7 @@ pub fn peek[A](self : T[A]) -> A? {
 /// assert_eq!(queue.push(1).is_empty(), false)
 /// ```
 pub fn is_empty[A](self : T[A]) -> Bool {
-  match self.body {
-    Empty => true
-    _ => false
-  }
+  self.body is Empty
 }
 
 ///|

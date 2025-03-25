@@ -40,17 +40,13 @@ pub fn to_json[A : ToJson](self : T[A]) -> Json {
 
 ///|
 pub impl[A : @json.FromJson] @json.FromJson for T[A] with from_json(json, path) {
-  match json {
-    Array(arr) =>
-      for i = arr.length() - 1, list = Nil; i >= 0; {
-        continue i - 1, list.add(A::from_json!(arr[i], path))
-      } else {
-        list
-      }
-    _ =>
-      raise @json.JsonDecodeError(
-        (path, "@immut/list.from_json: expected array"),
-      )
+  guard json is Array(arr) else {
+    raise @json.JsonDecodeError((path, "@immut/list.from_json: expected array"))
+  }
+  for i = arr.length() - 1, list = Nil; i >= 0; {
+    continue i - 1, list.add(A::from_json!(arr[i], path))
+  } else {
+    list
   }
 }
 
@@ -252,7 +248,7 @@ pub fn unsafe_head[A](self : T[A]) -> A {
 }
 
 ///|
-/// @alert deprecated "Use `unsafe_head` instead"
+#deprecated("Use `unsafe_head` instead")
 #coverage.skip
 pub fn head_exn[A](self : T[A]) -> A {
   unsafe_head(self)
@@ -405,7 +401,7 @@ pub fn rev_fold[A, B](self : T[A], init~ : B, f : (A, B) -> B) -> B {
 /// let r = @list.of([1, 2, 3, 4, 5]).fold(init=0, fn(acc, x) { acc + x })
 /// assert_eq!(r, 15)
 /// ```
-/// @alert deprecated "Use `fold` instead"
+#deprecated("Use `fold` instead")
 #coverage.skip
 pub fn fold_left[A, B](self : T[A], f : (B, A) -> B, init~ : B) -> B {
   self.fold(init~, f)
@@ -419,7 +415,7 @@ pub fn fold_left[A, B](self : T[A], f : (B, A) -> B, init~ : B) -> B {
 /// let r = @list.of([1, 2, 3, 4, 5]).rev_fold(fn(x, acc) { x + acc }, init=0)
 /// assert_eq!(r, 15)
 /// ```
-/// @alert deprecated "Use `rev_fold` instead"
+#deprecated("Use `rev_fold` instead")
 #coverage.skip
 pub fn fold_right[A, B](self : T[A], f : (A, B) -> B, init~ : B) -> B {
   match self {
@@ -456,7 +452,7 @@ pub fn rev_foldi[A, B](self : T[A], init~ : B, f : (Int, A, B) -> B) -> B {
 
 ///|
 /// Fold the list from left with index.
-/// @alert deprecated "Use `foldi` instead"
+#deprecated("Use `foldi` instead")
 #coverage.skip
 pub fn fold_lefti[A, B](self : T[A], f : (Int, B, A) -> B, init~ : B) -> B {
   fn go(xs : T[A], i : Int, f : (Int, B, A) -> B, acc : B) -> B {
@@ -471,7 +467,7 @@ pub fn fold_lefti[A, B](self : T[A], f : (Int, B, A) -> B, init~ : B) -> B {
 
 ///|
 /// Fold the list from right with index.
-/// @alert deprecated "Use `rev_foldi` instead"
+#deprecated("Use `rev_foldi` instead")
 #coverage.skip
 pub fn fold_righti[A, B](self : T[A], f : (Int, A, B) -> B, init~ : B) -> B {
   fn go(xs : T[A], i : Int, f : (Int, A, B) -> B, acc : B) -> B {
@@ -495,15 +491,16 @@ pub fn fold_righti[A, B](self : T[A], f : (Int, A, B) -> B, init~ : B) -> B {
 /// assert_eq!(r, Some(@list.from_array([(1, 6), (2, 7), (3, 8), (4, 9), (5, 10)])))
 /// ```
 pub fn zip[A, B](self : T[A], other : T[B]) -> T[(A, B)]? {
-  match (self, other) {
-    (Nil, Nil) => Some(Nil)
-    (Cons(x, xs), Cons(y, ys)) =>
-      match zip(xs, ys) {
-        None => None
-        Some(ls) => Some(Cons((x, y), ls))
-      }
-    _ => None
+  let mut acc = Nil
+  let res = loop self, other {
+    Nil, Nil => break Some(acc)
+    Cons(x, xs), Cons(y, ys) => {
+      acc = Cons((x, y), acc)
+      continue xs, ys
+    }
+    _, _ => break None
   }
+  res.map(T::rev)
 }
 
 ///|
@@ -518,7 +515,7 @@ pub fn zip[A, B](self : T[A], other : T[B]) -> T[(A, B)]? {
 /// let r = ls.flat_map(fn(x) { @list.from_array([x, x * 2]) })
 /// assert_eq!(r, @list.from_array([1, 2, 2, 4, 3, 6]))
 /// ```
-/// @alert deprecated "Use `flat_map` instead"
+#deprecated("Use `flat_map` instead")
 #coverage.skip
 pub fn concat_map[A, B](self : T[A], f : (A) -> T[B]) -> T[B] {
   flat_map(self, f)
@@ -575,7 +572,7 @@ pub fn unsafe_nth[A](self : T[A], n : Int) -> A {
 }
 
 ///|
-/// @alert deprecated "Use `unsafe_nth` instead"
+#deprecated("Use `unsafe_nth` instead")
 #coverage.skip
 pub fn nth_exn[A](self : T[A], n : Int) -> A {
   unsafe_nth(self, n)
@@ -628,10 +625,7 @@ pub fn intersperse[A](self : T[A], separator : A) -> T[A] {
 ///|
 /// Check if the list is empty.
 pub fn is_empty[A](self : T[A]) -> Bool {
-  match self {
-    Nil => true
-    _ => false
-  }
+  self is Nil
 }
 
 ///|
@@ -645,11 +639,15 @@ pub fn is_empty[A](self : T[A]) -> Bool {
 /// assert_eq!(b, @list.from_array([2, 4, 6]))
 /// ```
 pub fn unzip[A, B](self : T[(A, B)]) -> (T[A], T[B]) {
-  match self {
-    Nil => (Nil, Nil)
-    Cons((x, y), xs) => {
-      let (xs, ys) = unzip(xs)
-      (Cons(x, xs), Cons(y, ys))
+  let mut xs = Nil
+  let mut ys = Nil
+  // implemented with loop to avoid stack overflow
+  loop self.rev() {
+    Nil => break (xs, ys)
+    Cons((x, y), tail) => {
+      xs = Cons(x, xs)
+      ys = Cons(y, ys)
+      continue tail
     }
   }
 }
@@ -757,7 +755,7 @@ pub fn sort[A : Compare](self : T[A]) -> T[A] {
 /// Concatenate two lists.
 ///
 /// `a + b` equal to `a.concat(b)`
-pub fn op_add[A](self : T[A], other : T[A]) -> T[A] {
+pub impl[A] Add for T[A] with op_add(self, other) {
   self.concat(other)
 }
 

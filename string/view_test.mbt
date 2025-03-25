@@ -102,24 +102,24 @@ test "stringview length" {
 test "stingview length_eq" {
   let str = "hello"
   let view = str[1:4]
-  inspect!(view.length_eq(0), content="false")
-  inspect!(view.length_eq(1), content="false")
-  inspect!(view.length_eq(2), content="false")
-  inspect!(view.length_eq(3), content="true")
-  inspect!(view.length_eq(4), content="false")
-  inspect!(view.length_eq(5), content="false")
+  inspect!(view.char_length_eq(0), content="false")
+  inspect!(view.char_length_eq(1), content="false")
+  inspect!(view.char_length_eq(2), content="false")
+  inspect!(view.char_length_eq(3), content="true")
+  inspect!(view.char_length_eq(4), content="false")
+  inspect!(view.char_length_eq(5), content="false")
 }
 
 ///|
 test "stingview length_ge" {
   let str = "hello"
   let view = str[1:4]
-  inspect!(view.length_ge(0), content="true")
-  inspect!(view.length_ge(1), content="true")
-  inspect!(view.length_ge(2), content="true")
-  inspect!(view.length_ge(3), content="true")
-  inspect!(view.length_ge(4), content="false")
-  inspect!(view.length_ge(5), content="false")
+  inspect!(view.char_length_ge(0), content="true")
+  inspect!(view.char_length_ge(1), content="true")
+  inspect!(view.char_length_ge(2), content="true")
+  inspect!(view.char_length_ge(3), content="true")
+  inspect!(view.char_length_ge(4), content="false")
+  inspect!(view.char_length_ge(5), content="false")
 }
 
 ///|
@@ -320,6 +320,15 @@ test "stringview iter" {
 }
 
 ///|
+test "stringview rev_iter" {
+  let str = "hello🤣🤣🤣"
+  let view = str[1:6]
+  let iter = view.rev_iter()
+  inspect!(iter.count(), content="5")
+  inspect!(iter, content="['🤣', 'o', 'l', 'l', 'e']")
+}
+
+///|
 test "stringview negative index" {
   let str = "hello🤣😭😂"
   inspect!(str[-2:-1], content="😭")
@@ -366,15 +375,15 @@ test "length_eq test with surrogate pair" {
   // "🤣" is encoded as a surrogate pair
   let str = "🤣"
   let view = str[:]
-  assert_true!(view.length_eq(1))
+  assert_true!(view.char_length_eq(1))
 }
 
 ///|
 test "length_ge with high surrogate" {
   let str = "🐰" // This emoji is represented using a surrogate pair
   let view = str[0:]
-  assert_eq!(view.length_ge(1), true)
-  assert_eq!(view.length_ge(2), false)
+  assert_eq!(view.char_length_ge(1), true)
+  assert_eq!(view.char_length_ge(2), false)
 }
 
 ///|
@@ -417,7 +426,7 @@ test "panic length_eq should panic on invalid surrogate pair" {
   let str = String::from_array([Char::from_int(0xD800), 'A'])
   let view = str[:]
   // This will trigger abort("invalid surrogate pair") in length_eq
-  ignore(view.length_eq(1))
+  ignore(view.char_length_eq(1))
 }
 
 ///|
@@ -428,7 +437,7 @@ test "panic_length_ge invalid surrogate pair" {
   ])
   let view = invalid_surrogate_pair[:]
   // This should abort with "invalid surrogate pair"
-  let _ = view.length_ge(1)
+  let _ = view.char_length_ge(1)
 
 }
 
@@ -439,4 +448,83 @@ test "take first character from surrogate pairs" {
   let result = view.iter().take(6).collect().length()
   // 6 characters total: 5 ASCII + 1 emoji
   inspect!(result, content="6")
+}
+
+///|
+test "index_of_nth_char" {
+  let str = "aa😭b😂cc"
+  let view = str.view(start_offset=1, end_offset=8)
+  inspect!(view, content="a😭b😂c")
+  inspect!(view.offset_of_nth_char(0), content="Some(0)")
+  inspect!(view.offset_of_nth_char(1), content="Some(1)")
+  inspect!(view.offset_of_nth_char(2), content="Some(3)")
+  inspect!(view.offset_of_nth_char(3), content="Some(4)")
+  inspect!(view.offset_of_nth_char(4), content="Some(6)")
+  inspect!(view.offset_of_nth_char(5), content="None")
+  inspect!(view.offset_of_nth_char(-1), content="Some(6)")
+  inspect!(view.offset_of_nth_char(-2), content="Some(4)")
+  inspect!(view.offset_of_nth_char(-3), content="Some(3)")
+  inspect!(view.offset_of_nth_char(-4), content="Some(1)")
+  inspect!(view.offset_of_nth_char(-5), content="Some(0)")
+  inspect!(view.offset_of_nth_char(-6), content="None")
+}
+
+///|
+test "char_at" {
+  let str = "aa😭b😂cc"
+  let view = str.view(start_offset=1, end_offset=8)
+  inspect!(view.char_at(0), content="a")
+  inspect!(view.char_at(1), content="😭")
+  inspect!(view.char_at(3), content="b")
+  inspect!(view.char_at(4), content="😂")
+  inspect!(view.char_at(6), content="c")
+}
+
+///|
+test "charcode_at" {
+  let str = "aa😭b😂cc"
+  let view = str.view(start_offset=1, end_offset=8)
+  inspect!(view.charcode_at(0), content="97")
+  inspect!(view.charcode_at(1), content="55357")
+  inspect!(view.charcode_at(2), content="56877")
+  inspect!(view.charcode_at(3), content="98")
+  inspect!(view.charcode_at(4), content="55357")
+  inspect!(view.charcode_at(5), content="56834")
+  inspect!(view.charcode_at(6), content="99")
+}
+
+///|
+test "char_length" {
+  let str = "aa😭b😂cc"
+  let view = str.view(start_offset=1, end_offset=8)
+  inspect!(view.char_length(), content="5")
+}
+
+///|
+test "utf16 indexed view" {
+  let str = "aa😭b😂cc"
+  let v0 = str.view()
+  inspect!(v0, content="aa😭b😂cc")
+  inspect!(v0.char_length(), content="7")
+  let v1 = str.view(start_offset=1, end_offset=8)
+  inspect!(v1, content="a😭b😂c")
+  inspect!(v1.char_length(), content="5")
+  let v2 = str.view(start_offset=1)
+  inspect!(v2, content="a😭b😂cc")
+  inspect!(v2.char_length(), content="6")
+  let v3 = str.view(end_offset=4)
+  inspect!(v3, content="aa😭")
+  inspect!(v3.char_length(), content="3")
+  let v4 = str.view(start_offset=1, end_offset=1)
+  inspect!(v4, content="")
+  inspect!(v4.char_length(), content="0")
+  let v5 = str.view(end_offset=0)
+  inspect!(v5, content="")
+  inspect!(v5.char_length(), content="0")
+  let v6 = str.view(start_offset=str.length())
+  inspect!(v6, content="")
+  inspect!(v6.char_length(), content="0")
+  let v7 = str.view(start_offset=str.length(), end_offset=str.length())
+  inspect!(v7, content="")
+  inspect!(v7.char_length(), content="0")
 }

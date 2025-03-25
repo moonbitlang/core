@@ -22,10 +22,15 @@ fn unsafe_make_string(length : Int, value : Char) -> String = "$moonbit.unsafe_m
 /// assert_eq!(String::make(5,'S'), "SSSSS")
 /// ```
 pub fn String::make(length : Int, value : Char) -> String {
-  if length < 0 {
-    abort("invalid length")
-  } else {
+  guard length >= 0 else { abort("invalid length") }
+  if value.to_int() <= 0xFFFF {
     unsafe_make_string(length, value)
+  } else {
+    let buf = StringBuilder::new(size_hint=2 * length)
+    for _ in 0..<length {
+      buf.write_char(value)
+    }
+    buf.to_string()
   }
 }
 
@@ -71,12 +76,7 @@ fn code_point_of_surrogate_pair(leading : Int, trailing : Int) -> Char {
 /// # Panics
 ///
 /// @alert unsafe "Panics if the index is out of bounds."
-pub fn String::charcode_at(self : String, index : Int) -> Int {
-  guard index >= 0 && index < self.length() else {
-    abort("index out of bounds")
-  }
-  self.unsafe_charcode_at(index)
-}
+pub fn String::charcode_at(self : String, index : Int) -> Int = "%string_get"
 
 ///|
 /// Returns the Unicode code point at the given index.
@@ -97,8 +97,9 @@ pub fn String::charcode_at(self : String, index : Int) -> Int {
 /// Panics if:
 /// - The index is out of bounds
 /// - The string contains an invalid surrogate pair
+#deprecated("The index will be changed to utf16 index. If you want to access n-th character, use `str.iter().nth(n).unwrap()` instead.")
 pub fn String::codepoint_at(self : String, index : Int) -> Char {
-  let charcode_len = self.charcode_length()
+  let charcode_len = self.length()
   guard index >= 0 && index < charcode_len else { abort("index out of bounds") }
   for char_count = 0, utf16_offset = 0
       char_count < charcode_len && utf16_offset < index
@@ -131,6 +132,18 @@ pub fn String::codepoint_at(self : String, index : Int) -> Char {
 }
 
 ///|
+/// Returns the Unicode code point at the given index without bounds checking.
+pub fn String::unsafe_char_at(self : String, index : Int) -> Char {
+  let c1 = self.unsafe_charcode_at(index)
+  if is_leading_surrogate(c1) {
+    let c2 = self.unsafe_charcode_at(index + 1)
+    code_point_of_surrogate_pair(c1, c2)
+  } else {
+    Char::from_int(c1)
+  }
+}
+
+///|
 /// Returns the number of Unicode code points (characters) in the string.
 ///
 /// This method counts actual Unicode characters, properly handling surrogate pairs
@@ -144,39 +157,35 @@ pub fn String::codepoint_at(self : String, index : Int) -> Char {
 /// inspect!(s.codepoint_length(), content = "6"); // 6 actual characters
 /// inspect!(s.charcode_length(), content = "7");  // 5 ASCII chars + 2 surrogate pairs
 /// ```
-pub fn String::codepoint_length(self : String) -> Int {
-  let charcode_len = self.charcode_length()
-  for char_count = 0, len = 0
-      char_count < charcode_len
-      char_count = char_count + 1, len = len + 1 {
-    let c1 = self.unsafe_charcode_at(char_count)
-    if is_leading_surrogate(c1) && char_count + 1 < charcode_len {
-      let c2 = self.unsafe_charcode_at(char_count + 1)
+pub fn String::codepoint_length(
+  self : String,
+  start_offset~ : Int = 0,
+  end_offset~ : Int = self.length()
+) -> Int {
+  guard start_offset >= 0 &&
+    start_offset <= end_offset &&
+    end_offset <= self.length() else {
+    abort("invalid start or end index for String::codepoint_length")
+  }
+  for utf16_index = start_offset, char_count = 0
+      utf16_index < end_offset
+      utf16_index = utf16_index + 1, char_count = char_count + 1 {
+    let c1 = self.unsafe_charcode_at(utf16_index)
+    if is_leading_surrogate(c1) && utf16_index + 1 < end_offset {
+      let c2 = self.unsafe_charcode_at(utf16_index + 1)
       if is_trailing_surrogate(c2) {
-        continue char_count + 2, len + 1
+        continue utf16_index + 2, char_count + 1
       } else {
         abort("invalid surrogate pair")
       }
     }
   } else {
-    len
+    char_count
   }
 }
 
 ///|
-// planned op_get method for String
-// pub fn String::op_get(self : String, index : Int) -> Char {
-//   codepoint_at(self, index)
-// }
-
-///|
-// planned length method for String
-// pub fn String::length(self : String) -> Int {
-//   codepoint_length(self)
-//}
-
-///|
-/// @intrinsic %string.substring
+#intrinsic("%string.substring")
 fn unsafe_substring(str : String, start : Int, end : Int) -> String {
   let len = end - start
   let bytes = FixedArray::make(len * 2, Byte::default())

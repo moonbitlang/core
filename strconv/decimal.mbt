@@ -42,7 +42,7 @@ let powtab = [
 
 ///|
 /// Create a zero decimal.
-/// @alert deprecated "Decimal will be changed to private. Use `@strconv.parse_double` instead"
+#deprecated("Decimal will be changed to private. Use `@strconv.parse_double` instead")
 pub fn Decimal::new() -> Decimal {
   Decimal::new_priv()
 }
@@ -60,7 +60,7 @@ fn Decimal::new_priv() -> Decimal {
 
 ///|
 /// Create a decimal with an Int64 value.
-/// @alert deprecated "Decimal will be changed to private. Use `@strconv.parse_double` instead"
+#deprecated("Decimal will be changed to private. Use `@strconv.parse_double` instead")
 pub fn Decimal::from_int64(v : Int64) -> Decimal {
   Decimal::from_int64_priv(v)
 }
@@ -72,12 +72,12 @@ fn Decimal::from_int64_priv(v : Int64) -> Decimal {
 
 ///| @alert deprecated "use `@strconv.parse_double` instead"
 pub fn parse_decimal(str : String) -> Decimal!StrConvError {
-  parse_decimal_from_view!(str[:])
+  parse_decimal_from_view!(str.view())
 }
 
 ///|
 fn parse_decimal_priv(str : String) -> Decimal!StrConvError {
-  parse_decimal_from_view!(str[:])
+  parse_decimal_from_view!(str.view())
 }
 
 ///|
@@ -111,7 +111,7 @@ fn parse_decimal_from_view(str : @string.View) -> Decimal!StrConvError {
         continue rest
       }
       if d.digits_num < d.digits.length() {
-        d.digits[d.digits_num] = (digit.to_int() - '0'.to_int()).to_byte()
+        d.digits[d.digits_num] = (digit.to_int() - '0').to_byte()
         d.digits_num += 1
       } else if digit != '0' {
         d.truncated = true
@@ -141,7 +141,7 @@ fn parse_decimal_from_view(str : @string.View) -> Decimal!StrConvError {
       let rest = loop rest {
         ['_', .. rest] => continue rest
         ['0'..='9' as digit, .. rest] => {
-          exp = exp * 10 + (digit.to_int() - '0'.to_int())
+          exp = exp * 10 + (digit.to_int() - '0')
           continue rest
         }
         rest => rest
@@ -152,13 +152,13 @@ fn parse_decimal_from_view(str : @string.View) -> Decimal!StrConvError {
     rest => rest
   }
   // finish
-  guard rest.length_eq(0) else { syntax_err!() }
+  guard rest is [] else { syntax_err!() }
   d..trim()
 }
 
 ///| @alert deprecated "use `@strconv.parse_double` instead"
 pub fn Decimal::parse_decimal(str : String) -> Decimal!StrConvError {
-  parse_decimal_from_view!(str[:])
+  parse_decimal_from_view!(str.view())
 }
 
 ///|
@@ -255,7 +255,7 @@ fn to_double_priv(self : Decimal) -> Double!StrConvError {
 ///|
 /// Binary shift left (s > 0) or right (s < 0).
 /// The shift count must not larger than the max_shift to avoid overflow.
-/// @alert deprecated "use `@strconv.parse_double` instead to avoid using this method."
+#deprecated("use `@strconv.parse_double` instead to avoid using this method.")
 pub fn shift(self : Decimal, s : Int) -> Unit {
   self.shift_priv(s)
 }
@@ -495,12 +495,12 @@ fn new_digits(self : Decimal, s : Int) -> Int {
   let cheat_num = left_shift_cheats[s].1
   // check if the leading digits lexicographically less than cheats num.
   let mut less = false
-  for i = 0; i < cheat_num.length(); i = i + 1 {
+  for i in 0..<cheat_num.length() {
     if i >= self.digits_num {
       less = true
       break
     }
-    let d = cheat_num[i].to_int() - '0'.to_int()
+    let d = cheat_num.unsafe_charcode_at(i) - '0'
     if self.digits[i].to_int() != d {
       less = self.digits[i].to_int() < d
       break
@@ -564,7 +564,7 @@ fn left_shift(self : Decimal, s : Int) -> Unit {
 ///|
 /// Trim trailing zeros.
 fn trim(self : Decimal) -> Unit {
-  while self.digits_num > 0 && self.digits[self.digits_num - 1].to_int() == 0 {
+  while self.digits_num > 0 && self.digits[self.digits_num - 1] == 0 {
     self.digits_num -= 1
   }
   if self.digits_num == 0 {
@@ -581,15 +581,15 @@ pub impl Show for Decimal with output(self, logger) {
   if self.decimal_point <= 0 {
     // zeros filling between the decimal point and the digits
     logger.write_string("0.")
-    for i = 0; i < -self.decimal_point; i = i + 1 {
+    for i in 0..<-self.decimal_point {
       logger.write_char('0')
     }
-    for i = 0; i < self.digits_num; i = i + 1 {
+    for i in 0..<self.digits_num {
       logger.write_string(self.digits[i].to_int().to_string())
     }
   } else if self.decimal_point < self.digits_num {
     // decimal point in the middle of digits
-    for i = 0; i < self.digits_num; i = i + 1 {
+    for i in 0..<self.digits_num {
       if i == self.decimal_point {
         logger.write_char('.')
       }
@@ -597,10 +597,10 @@ pub impl Show for Decimal with output(self, logger) {
     }
   } else {
     // zeros filling between the digits and the decimal point
-    for i = 0; i < self.digits_num; i = i + 1 {
+    for i in 0..<self.digits_num {
       logger.write_string(self.digits[i].to_int().to_string())
     }
-    for i = 0; i < self.decimal_point - self.digits_num; i = i + 1 {
+    for i in 0..<(self.decimal_point - self.digits_num) {
       logger.write_char('0')
     }
   }
@@ -671,7 +671,7 @@ test "shift" {
     (195312L, 9, "99999744"),
     (1953125L, 9, "1000000000"),
   ]
-  for i = 0; i < tests.length(); i = i + 1 {
+  for i in 0..<tests.length() {
     let t = tests[i]
     let d = Decimal::from_int64_priv(t.0)
     d.shift_priv(t.1)

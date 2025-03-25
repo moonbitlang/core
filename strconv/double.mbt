@@ -273,7 +273,7 @@ test "parse_double" {
     ("123.5e+1__2", Err(syntax_err_str)),
     ("123.5e+12_", Err(syntax_err_str)),
   ]
-  for i = 0; i < tests.length(); i = i + 1 {
+  for i in 0..<tests.length() {
     let t = tests[i]
     assert_eq!(
       try {

@@ -234,10 +234,7 @@ test "flatten" {
 ///|
 /// Checks if the option is empty.
 pub fn is_empty[T](self : T?) -> Bool {
-  match self {
-    None => true
-    _ => false
-  }
+  self is None
 }
 
 ///|

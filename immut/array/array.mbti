@@ -5,7 +5,8 @@ alias @moonbitlang/core/quickcheck as @quickcheck
 // Values
 fn concat[A](T[A], T[A]) -> T[A]
 
-fn copy[A](T[A]) -> T[A] //deprecated
+#deprecated
+fn copy[A](T[A]) -> T[A]
 
 fn each[A](T[A], (A) -> Unit) -> Unit
 
@@ -13,9 +14,11 @@ fn eachi[A](T[A], (Int, A) -> Unit) -> Unit
 
 fn fold[A, B](T[A], init~ : B, (B, A) -> B) -> B
 
-fn fold_left[A](T[A], (A, A) -> A, init~ : A) -> A //deprecated
+#deprecated
+fn fold_left[A](T[A], (A, A) -> A, init~ : A) -> A
 
-fn fold_right[A](T[A], (A, A) -> A, init~ : A) -> A //deprecated
+#deprecated
+fn fold_right[A](T[A], (A, A) -> A, init~ : A) -> A
 
 fn from_array[A](Array[A]) -> T[A]
 
@@ -37,8 +40,6 @@ fn new[A]() -> T[A]
 
 fn of[A](FixedArray[A]) -> T[A]
 
-fn op_add[A](T[A], T[A]) -> T[A]
-
 fn op_get[A](T[A], Int) -> A
 
 fn push[A](T[A], A) -> T[A]
@@ -53,29 +54,38 @@ fn to_array[A](T[A]) -> Array[A]
 type T[A]
 impl T {
   concat[A](Self[A], Self[A]) -> Self[A]
-  copy[A](Self[A]) -> Self[A] //deprecated
+  #deprecated
+  copy[A](Self[A]) -> Self[A]
   each[A](Self[A], (A) -> Unit) -> Unit
   eachi[A](Self[A], (Int, A) -> Unit) -> Unit
   fold[A, B](Self[A], init~ : B, (B, A) -> B) -> B
-  fold_left[A](Self[A], (A, A) -> A, init~ : A) -> A //deprecated
-  fold_right[A](Self[A], (A, A) -> A, init~ : A) -> A //deprecated
-  from_array[A](Array[A]) -> Self[A] //deprecated
-  from_iter[A](Iter[A]) -> Self[A] //deprecated
+  #deprecated
+  fold_left[A](Self[A], (A, A) -> A, init~ : A) -> A
+  #deprecated
+  fold_right[A](Self[A], (A, A) -> A, init~ : A) -> A
+  #deprecated
+  from_array[A](Array[A]) -> Self[A]
+  #deprecated
+  from_iter[A](Iter[A]) -> Self[A]
   is_empty[A](Self[A]) -> Bool
   iter[A](Self[A]) -> Iter[A]
   length[A](Self[A]) -> Int
-  make[A](Int, A) -> Self[A] //deprecated
-  makei[A](Int, (Int) -> A) -> Self[A] //deprecated
+  #deprecated
+  make[A](Int, A) -> Self[A]
+  #deprecated
+  makei[A](Int, (Int) -> A) -> Self[A]
   map[A, B](Self[A], (A) -> B) -> Self[B]
-  new[A]() -> Self[A] //deprecated
-  of[A](FixedArray[A]) -> Self[A] //deprecated
-  op_add[A](Self[A], Self[A]) -> Self[A]
+  #deprecated
+  new[A]() -> Self[A]
+  #deprecated
+  of[A](FixedArray[A]) -> Self[A]
   op_get[A](Self[A], Int) -> A
   push[A](Self[A], A) -> Self[A]
   rev_fold[A, B](Self[A], init~ : B, (B, A) -> B) -> B
   set[A](Self[A], Int, A) -> Self[A]
   to_array[A](Self[A]) -> Array[A]
 }
+impl[A] Add for T[A]
 impl[A : Eq] Eq for T[A]
 impl[A : Hash] Hash for T[A]
 impl[A : Show] Show for T[A]

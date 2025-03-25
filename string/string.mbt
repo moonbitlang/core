@@ -60,10 +60,7 @@ pub fn from_iter(iter : Iter[Char]) -> String {
 /// let s = @string.concat(["a", "b", "c"], separator=",")
 /// assert_eq!(s, "a,b,c")
 /// ```
-pub fn String::concat(
-  strings : Array[String],
-  separator~ : String = ""
-) -> String {
+pub fn concat(strings : Array[String], separator~ : String = "") -> String {
   match strings {
     [] => ""
     [hd, .. tl] => {
@@ -90,12 +87,6 @@ pub fn String::concat(
 }
 
 ///|
-/// same as `String::concat`
-pub fn concat(strings : Array[String], separator~ : String = "") -> String {
-  String::concat(strings, separator~)
-}
-
-///|
 /// Compare two strings.
 /// String with longer length is bigger.
 /// strings of the same length are compared in lexicalgraphic order.
@@ -103,8 +94,10 @@ pub impl Compare for String with compare(self, other) {
   let len = self.length()
   match len.compare(other.length()) {
     0 => {
-      for i = 0; i < len; i = i + 1 {
-        let order = self[i].compare(other[i])
+      for i in 0..<len {
+        let order = self
+          .unsafe_charcode_at(i)
+          .compare(other.unsafe_charcode_at(i))
         if order != 0 {
           return order
         }
@@ -158,7 +151,7 @@ pub fn to_array(self : String) -> Array[Char] {
 pub fn iter(self : String) -> Iter[Char] {
   Iter::new(fn(yield_) {
     let len = self.length()
-    for index = 0; index < len; index = index + 1 {
+    for index in 0..<len {
       let c1 = self.unsafe_charcode_at(index)
       if is_leading_surrogate(c1) && index + 1 < len {
         let c2 = self.unsafe_charcode_at(index + 1)
@@ -293,7 +286,7 @@ pub fn contains_char(self : String, c : Char) -> Bool {
 /// Removes all leading chars contained in the given string.
 pub fn trim_start(self : String, trim_set : String) -> String {
   let len = self.length()
-  for i = 0; i < len; i = i + 1 {
+  for i in 0..<len {
     let c1 = self.unsafe_charcode_at(i)
     // check surrogate pair
     if is_leading_surrogate(c1) && i + 1 < len {
@@ -307,7 +300,7 @@ pub fn trim_start(self : String, trim_set : String) -> String {
         }
       }
     }
-    if not(trim_set.contains_char(self[i])) {
+    if not(trim_set.contains_char(Char::from_int(self.unsafe_charcode_at(i)))) {
       return self.substring(start=i)
     }
   } else {
@@ -333,7 +326,7 @@ pub fn trim_end(self : String, trim_set : String) -> String {
         }
       }
     }
-    if not(trim_set.contains_char(self[i])) {
+    if not(trim_set.contains_char(Char::from_int(self.unsafe_charcode_at(i)))) {
       return self.substring(end=i + 1)
     }
   } else {
@@ -377,17 +370,17 @@ pub fn index_of(self : String, str : String, from~ : Int = 0) -> Int {
   // Bound the starting position
   let from = if from < 0 { 0 } else if from >= len { len - 1 } else { from }
   let max_idx = len - sub_len
-  let first = str[0]
+  let first = str.unsafe_charcode_at(0)
   let mut i = from
   while i <= max_idx {
     // find first character
-    while i < len && self[i] != first {
+    while i < len && self.unsafe_charcode_at(i) != first {
       i += 1
     }
     // check the rest
     if i <= max_idx {
-      for j = 1; j < sub_len; j = j + 1 {
-        if self[i + j] != str[j] {
+      for j in 1..<sub_len {
+        if self.unsafe_charcode_at(i + j) != str.unsafe_charcode_at(j) {
           break
         }
       } else {
@@ -423,11 +416,11 @@ pub fn last_index_of(
     return -1
   }
   let min = sub_len - 1
-  let last = str[sub_len - 1]
+  let last = str.unsafe_charcode_at(sub_len - 1)
   let mut i = from - 1
   while i >= 0 {
     // find last character
-    while i >= min && self[i] != last {
+    while i >= min && self.unsafe_charcode_at(i) != last {
       i -= 1
     }
     if i < min {
@@ -437,7 +430,7 @@ pub fn last_index_of(
     let mut k = sub_len - 2
     let start = i - sub_len
     let found = while j > start {
-      if self[j] != str[k] {
+      if self.unsafe_charcode_at(j) != str.unsafe_charcode_at(k) {
         break false
       }
       j -= 1
@@ -654,7 +647,7 @@ pub fn pad_start(
     self
   } else {
     let buf = StringBuilder::new(size_hint=total_width)
-    for i = 0; i < total_width - len; i = i + 1 {
+    for i in 0..<(total_width - len) {
       buf.write_char(padding_char)
     }
     buf.write_string(self)
@@ -678,7 +671,7 @@ pub fn pad_end(self : String, total_width : Int, padding_char : Char) -> String 
   } else {
     let buf = StringBuilder::new(size_hint=total_width)
     buf.write_string(self)
-    for i = 0; i < total_width - len; i = i + 1 {
+    for i in 0..<(total_width - len) {
       buf.write_char(padding_char)
     }
     buf.to_string()
@@ -686,62 +679,114 @@ pub fn pad_end(self : String, total_width : Int, padding_char : Char) -> String 
 }
 
 ///|
-/// Returns the character at the given index from the end of the string.
-///
-/// # Examples
-///
-/// ```moonbit
-/// let s = "Hello🤣🤣🤣"
-/// inspect!(s.rev_get(0), content="🤣")
-/// inspect!(s.rev_get(4), content="l")
-/// ```
-///
-/// # Panics
-///
-/// @alert unsafe "Panics if the index is out of bounds."
-pub fn String::rev_get(self : String, index : Int) -> Char {
-  guard index >= 0 else { abort("index out of bounds") }
-  for utf16_offset = self.charcode_length() - 1, char_count = 0
-      utf16_offset >= 0 && char_count < index
-      utf16_offset = utf16_offset - 1, char_count = char_count + 1 {
-    let c1 = self.unsafe_charcode_at(utf16_offset)
-    if is_trailing_surrogate(c1) && utf16_offset - 1 >= 0 {
-      let c2 = self.unsafe_charcode_at(utf16_offset - 1)
-      if is_leading_surrogate(c2) {
-        continue utf16_offset - 2, char_count + 1
-      } else {
-        abort("invalid surrogate pair")
-      }
-    }
-  } else {
-    guard char_count == index && utf16_offset >= 0 else {
-      abort("index out of bounds")
-    }
-    let c1 = self.unsafe_charcode_at(utf16_offset)
-    if is_trailing_surrogate(c1) && utf16_offset - 1 >= 0 {
-      let c2 = self.unsafe_charcode_at(utf16_offset - 1)
-      if is_leading_surrogate(c2) {
-        code_point_of_surrogate_pair(c2, c1)
-      } else {
-        abort("invalid surrogate pair")
-      }
-    } else {
-      Char::from_int(c1)
-    }
+/// Returns the index of the n-th (zero-indexed) character within the range [start, end).
+fn String::offset_of_nth_char_forward(
+  self : String,
+  n : Int,
+  start_offset~ : Int,
+  end_offset~ : Int
+) -> Int? {
+  guard start_offset >= 0 && start_offset <= end_offset else {
+    abort("Invalid start index")
   }
+  let mut utf16_offset = start_offset
+  let mut char_count = 0
+  while utf16_offset < end_offset && char_count < n {
+    let c = self.unsafe_charcode_at(utf16_offset)
+    // check if this is a surrogate pair
+    if is_leading_surrogate(c) {
+      utf16_offset = utf16_offset + 2
+    } else {
+      utf16_offset = utf16_offset + 1
+    }
+    char_count = char_count + 1
+  }
+  // Return None if either:
+  // 1. We couldn't reach the requested character offset
+  // 2. The resulting offset is beyond the end of the string
+  // This handles the empty string case correctly.
+  if char_count < n || utf16_offset >= end_offset {
+    None
+  } else {
+    Some(utf16_offset)
+  }
+}
+
+///|
+/// Returns the index of the n-th (zero-indexed) character within the range [start, end).
+/// self[end] is counted as the 0-th character (though it might not exist if end = self.length()).
+fn String::offset_of_nth_char_backward(
+  self : String,
+  n : Int,
+  start_offset~ : Int,
+  end_offset~ : Int
+) -> Int? {
+  let mut char_count = 0
+  let mut utf16_offset = end_offset
+  // Iterating backwards from the end of the string. 
+  // Invariant: utf16_offset always points to the previous character
+  while utf16_offset - 1 >= start_offset && char_count < n {
+    let c = self.unsafe_charcode_at(utf16_offset - 1)
+    if is_trailing_surrogate(c) {
+      utf16_offset = utf16_offset - 2
+    } else {
+      utf16_offset = utf16_offset - 1
+    }
+    char_count = char_count + 1
+  }
+  if char_count < n || utf16_offset < start_offset {
+    None
+  } else {
+    Some(utf16_offset)
+  }
+}
+
+///|
+/// Returns the UTF-16 index of the i-th (zero-indexed) Unicode character 
+/// within the range [start, end). If i is negative, it returns the index of 
+/// the (n + i)-th character where n is the number of Unicode characters 
+/// in the range [start, end).
+/// 
+/// This functions assumes that the string is valid UTF-16.
+pub fn String::offset_of_nth_char(
+  self : String,
+  i : Int,
+  start_offset~ : Int = 0,
+  end_offset~ : Int = self.length()
+) -> Int? {
+  if i >= 0 {
+    // forward case
+    self.offset_of_nth_char_forward(i, start_offset~, end_offset~)
+  } else {
+    // backward case
+    self.offset_of_nth_char_backward(-i, start_offset~, end_offset~)
+  }
+}
+
+///|
+/// Returns the Unicode character at the given index.
+pub fn String::char_at(self : String, index : Int) -> Char {
+  guard index >= 0 && index < self.length() else {
+    abort("index out of bounds")
+  }
+  self.unsafe_char_at(index)
 }
 
 ///|
 /// Test if the length of the string is equal to the given length.
 ///
 /// This has O(n) complexity where n is the length in the parameter.
-pub fn String::length_eq(self : String, len : Int) -> Bool {
-  let codeunit_len = self.charcode_length()
-  for index = 0, count = 0
-      index < codeunit_len && count < len
+pub fn String::char_length_eq(
+  self : String,
+  len : Int,
+  start_offset~ : Int = 0,
+  end_offset~ : Int = self.length()
+) -> Bool {
+  for index = start_offset, count = 0
+      index < end_offset && count < len
       index = index + 1, count = count + 1 {
     let c1 = self.unsafe_charcode_at(index)
-    if is_leading_surrogate(c1) && index + 1 < codeunit_len {
+    if is_leading_surrogate(c1) && index + 1 < end_offset {
       let c2 = self.unsafe_charcode_at(index + 1)
       if is_trailing_surrogate(c2) {
         continue index + 2, count + 1
@@ -750,7 +795,7 @@ pub fn String::length_eq(self : String, len : Int) -> Bool {
       }
     }
   } else {
-    count == len && index == codeunit_len
+    count == len && index == end_offset
   }
 }
 
@@ -758,13 +803,17 @@ pub fn String::length_eq(self : String, len : Int) -> Bool {
 /// Test if the length of the string is greater than or equal to the given length.
 ///
 /// This has O(n) complexity where n is the length in the parameter.
-pub fn String::length_ge(self : String, len : Int) -> Bool {
-  let codeunit_len = self.charcode_length()
-  for index = 0, count = 0
-      index < codeunit_len && count < len
+pub fn String::char_length_ge(
+  self : String,
+  len : Int,
+  start_offset~ : Int = 0,
+  end_offset~ : Int = self.length()
+) -> Bool {
+  for index = start_offset, count = 0
+      index < end_offset && count < len
       index = index + 1, count = count + 1 {
     let c1 = self.unsafe_charcode_at(index)
-    if is_leading_surrogate(c1) && index + 1 < codeunit_len {
+    if is_leading_surrogate(c1) && index + 1 < end_offset {
       let c2 = self.unsafe_charcode_at(index + 1)
       if is_trailing_surrogate(c2) {
         continue index + 2, count + 1
