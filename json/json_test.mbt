@@ -284,11 +284,11 @@ test "stringify" {
 ///|
 let json : Json = {
   "\b": "\"hello\"",
-  "\n": "\n\r\t\x0C",
+  "\n": "\n\r\t\u{0C}",
   "\\": "/",
-  "\x1F": "\x01",
-  "actual": "\x00",
-  "escape": "\x00",
+  "\u001F": "\u{0001}",
+  "actual": "\u{0000}",
+  "escape": "\u{0000}",
   "actual": "a,\"b\",c",
 }
 

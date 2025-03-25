@@ -37,43 +37,43 @@ pub typealias @builtin.(
 pub traitalias @builtin.(Eq, Compare, Hash, Logger, Show, ToJson, Default)
 
 ///|
-pub fnalias abort = @builtin.abort
+pub fnalias @builtin.abort
 
 ///|
-pub fnalias assert_eq = @builtin.assert_eq
+pub fnalias @builtin.assert_eq
 
 ///|
-pub fnalias assert_not_eq = @builtin.assert_not_eq
+pub fnalias @builtin.assert_not_eq
 
 ///|
-pub fnalias assert_true = @builtin.assert_true
+pub fnalias @builtin.assert_true
 
 ///|
-pub fnalias assert_false = @builtin.assert_false
+pub fnalias @builtin.assert_false
 
 ///|
-pub fnalias fail = @builtin.fail
+pub fnalias @builtin.fail
 
 ///|
-pub fnalias ignore = @builtin.ignore
+pub fnalias @builtin.ignore
 
 ///|
-pub fnalias inspect = @builtin.inspect
+pub fnalias @builtin.inspect
 
 ///|
-pub fnalias panic = @builtin.panic
+pub fnalias @builtin.panic
 
 ///|
-pub fnalias physical_equal = @builtin.physical_equal
+pub fnalias @builtin.physical_equal
 
 ///|
-pub fnalias println = @builtin.println
+pub fnalias @builtin.println
 
 ///|
-pub fnalias not = @builtin.not
+pub fnalias @builtin.not
 
 ///|
-pub fnalias repr = @builtin.repr
+pub fnalias @builtin.repr
 
 ///|
-pub fnalias dump = @builtin.dump
+pub fnalias @builtin.dump
