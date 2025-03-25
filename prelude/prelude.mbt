@@ -37,43 +37,19 @@ pub typealias @builtin.(
 pub traitalias @builtin.(Eq, Compare, Hash, Logger, Show, ToJson, Default)
 
 ///|
-pub fnalias @builtin.abort
-
-///|
-pub fnalias @builtin.assert_eq
-
-///|
-pub fnalias @builtin.assert_not_eq
-
-///|
-pub fnalias @builtin.assert_true
-
-///|
-pub fnalias @builtin.assert_false
-
-///|
-pub fnalias @builtin.fail
-
-///|
-pub fnalias @builtin.ignore
-
-///|
-pub fnalias @builtin.inspect
-
-///|
-pub fnalias @builtin.panic
-
-///|
-pub fnalias @builtin.physical_equal
-
-///|
-pub fnalias @builtin.println
-
-///|
-pub fnalias @builtin.not
-
-///|
-pub fnalias @builtin.repr
-
-///|
-pub fnalias @builtin.dump
+pub fnalias @builtin.(
+  abort,
+  assert_eq,
+  assert_not_eq,
+  assert_true,
+  assert_false,
+  fail,
+  ignore,
+  inspect,
+  panic,
+  physical_equal,
+  println,
+  not,
+  repr,
+  dump
+)
