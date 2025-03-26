@@ -175,53 +175,6 @@ pub fn pop[A : Compare](self : T[A]) -> T[A] {
   }
 }
 
-// fn down[A : Compare](self : Node[A], value : A) -> Node[A] {
-  // match self {
-    // Nil => Nil
-    // Cons(_) as node => {
-      // if node.left.isempty() && node.right.isempty() {
-        // return Cons(content = value, left = Nil, right = Nil)
-      // } else if node.right.isempty() {
-        // if node.content <= node.left.get_content() {
-          // return Cons(content = value, left = Cons(content = node.left.get_content(), left = Nil, right = Nil), right = Nil)
-        // } else {
-          // return Cons(content = node.left.get_content(), left = Cons(content = node.content, left = Nil, right = Nil), right = Nil)
-        // }
-      // } else {
-        // if node.content < node.right.get_content() && node.content < node.left.get_content() {
-          // return Cons(content = value, left = node.left, right = node.right)
-        // } else {
-          // if node.right.get_content() > node.left.get_content() {
-            // Cons(content = node.left.get_content(), left = down(node.left, value), right = node.right)
-          // } else {
-            // Cons(content = node.right.get_content(), left = node.left, right = down(node.right, value))
-          // }
-        // }
-      // }
-    // }
-  // }
-// }
-// pub fn pop[A : Compare](self : T[A]) -> Unit {
-  // let len = self.size
-  // let deep = deepth(len)
-  // if len == 1 {
-    // self.clear()
-    // return
-  // }
-  // self.root = match self.root {
-    // Nil => Nil
-    // Cons(_) as node => {
-      // let temp = node.find_element(len, deep)
-      // Cons(content = temp, left = node.left, right = node.right)
-    // }
-  // }
-  // self.size -= 1
-  // let temp = self.root.down(self.root.get_content())
-  // self.root = temp
-// }
-// 
-
-
 ///|
 fn show[A : Show + Compare](self : T[A]) -> Unit {
   match self.node {
