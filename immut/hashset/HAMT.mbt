@@ -181,10 +181,7 @@ pub fn size[A](self : T[A]) -> Int {
 ///|
 /// Returns true if the hash set is empty.
 pub fn is_empty[A](self : T[A]) -> Bool {
-  match self {
-    Empty => true
-    _ => false
-  }
+  self is Empty
 }
 
 ///|

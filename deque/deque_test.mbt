@@ -418,11 +418,11 @@ test "from_array with single element" {
 test "unsafe_pop_front after many push_front" {
   let dq = @deque.new()
   // First fill some elements to create a buffer with some capacity
-  for i = 0; i < 10; i = i + 1 {
+  for i in 0..<10 {
     dq.push_front(i)
   }
   // Pop all elements except one
-  for i = 0; i < 9; i = i + 1 {
+  for i in 0..<9 {
     dq.unsafe_pop_front()
   }
   // Now head should be at the end of buffer
@@ -651,7 +651,7 @@ test "test_from_vec" {
       }
       let vd = @deque.from_array(vec)
       assert_eq!(vd.length(), vec.length())
-      for i = 0; i < vd.length(); i = i + 1 {
+      for i in 0..<vd.length() {
         assert_eq!(vd[i], vec[i])
       }
     }
@@ -662,11 +662,11 @@ test "test_from_vec" {
 test "test_from_array" {
   fn test_fn!(n : Int) -> Unit {
     let array : FixedArray[Int] = FixedArray::make(n, 0)
-    for index = 0; index < n; index = index + 1 {
+    for index in 0..<n {
       array[index] = index
     }
     let deq = @deque.of(array)
-    for index = 0; index < n; index = index + 1 {
+    for index in 0..<n {
       assert_eq!(deq[index], array[index])
     }
     assert_eq!(deq.length(), array.length())
@@ -684,16 +684,16 @@ test "test_clone_from" {
   let m = FixedArray::make(8, 1)
   let n = FixedArray::make(12, 2)
   let limit = 8
-  for pfv = 0; pfv < limit; pfv = pfv + 1 {
-    for pfu = 0; pfu < limit; pfu = pfu + 1 {
-      for longer = 0; longer < 2; longer = longer + 1 {
+  for pfv in 0..<limit {
+    for pfu in 0..<limit {
+      for longer in 0..<2 {
         let (vr, ur) = if longer == 0 { (m, n) } else { (n, m) }
         let v = @deque.of(vr)
-        for _idx = 0; _idx < pfv; _idx = _idx + 1 {
+        for _idx in 0..<pfv {
           v.push_front(1)
         }
         let u = @deque.of(ur)
-        for _idx = 0; _idx < pfu; _idx = _idx + 1 {
+        for _idx in 0..<pfu {
           u.push_front(2)
         }
         let v = @deque.copy(u)

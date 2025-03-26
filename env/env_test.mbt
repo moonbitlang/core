@@ -24,3 +24,9 @@ test "now returns reasonable timestamp" {
   assert_true!(timestamp > 0) // 1970-01-01 00:00:00 UTC
   assert_true!(timestamp < 96406502400000UL) // 5025-01-01 00:00:00 UTC
 }
+
+///|
+test "current_dir returns reasonable directory" {
+  let dir = @env.current_dir()
+  assert_true!(dir.is_empty() == false)
+}

@@ -76,7 +76,7 @@ pub fn from_array[A](arr : Array[A]) -> T[A] {
     head: 0,
     tail: arr.length() - 1,
   }
-  for i = 0; i < arr.length(); i = i + 1 {
+  for i in 0..<arr.length() {
     deq.buf[i] = arr[i]
   }
   deq
@@ -141,7 +141,7 @@ pub fn of[A](arr : FixedArray[A]) -> T[A] {
     head: 0,
     tail: arr.length() - 1,
   }
-  for i = 0; i < arr.length(); i = i + 1 {
+  for i in 0..<arr.length() {
     deq.buf[i] = arr[i]
   }
   deq
@@ -349,7 +349,7 @@ pub fn unsafe_pop_front[A](self : T[A]) -> Unit {
 /// }
 /// ```
 ///
-/// @alert deprecated "Use `unsafe_pop_front` instead"
+#deprecated("Use `unsafe_pop_front` instead")
 #coverage.skip
 pub fn pop_front_exn[A](self : T[A]) -> Unit {
   unsafe_pop_front(self)
@@ -406,7 +406,7 @@ pub fn unsafe_pop_back[A](self : T[A]) -> Unit {
 /// }
 /// ```
 ///
-/// @alert deprecated "Use `unsafe_pop_back` instead"
+#deprecated("Use `unsafe_pop_back` instead")
 #coverage.skip
 pub fn pop_back_exn[A](self : T[A]) -> Unit {
   unsafe_pop_back(self)
@@ -589,7 +589,7 @@ pub impl[A : Eq] Eq for T[A] with op_equal(self, other) {
   if self.len != other.len {
     return false
   }
-  for i = 0; i < self.len; i = i + 1 {
+  for i in 0..<self.len {
     if self[i] != other[i] {
       return false
     }
@@ -707,7 +707,7 @@ pub fn map[A, U](self : T[A], f : (A) -> U) -> T[U] {
     new()
   } else {
     let buf : UninitializedArray[U] = UninitializedArray::make(self.len)
-    for i = 0; i < self.len; i = i + 1 {
+    for i in 0..<self.len {
       buf[i] = f(self.buf[i])
     }
     T::{ buf, len: self.len, head: 0, tail: self.len - 1 }
@@ -728,7 +728,7 @@ pub fn mapi[A, U](self : T[A], f : (Int, A) -> U) -> T[U] {
     new()
   } else {
     let buf : UninitializedArray[U] = UninitializedArray::make(self.len)
-    for i = 0; i < self.len; i = i + 1 {
+    for i in 0..<self.len {
       buf[i] = f(i, self.buf[i])
     }
     T::{ buf, len: self.len, head: 0, tail: self.len - 1 }
@@ -770,7 +770,7 @@ pub fn is_empty[A](self : T[A]) -> Bool {
 /// }
 /// ```
 pub fn search[A : Eq](self : T[A], value : A) -> Int? {
-  for i = 0; i < self.len; i = i + 1 {
+  for i in 0..<self.len {
     if self.buf[i] == value {
       return Some(i)
     }
@@ -822,7 +822,7 @@ pub fn reserve_capacity[A](self : T[A], capacity : Int) -> Unit {
   self.buf = new_buf
   self.head = 0
   self.tail = 0
-  for i = 0; i < len; i = i + 1 {
+  for i in 0..<len {
     let idx = (head + i) % buf.length()
     self.buf[i] = buf[idx]
     self.tail += 1
@@ -851,7 +851,7 @@ pub fn shrink_to_fit[A](self : T[A]) -> Unit {
   self.buf = UninitializedArray::make(len)
   self.head = 0
   self.tail = 0
-  for i = 0; i < len; i = i + 1 {
+  for i in 0..<len {
     let idx = (head + i) % buf.length()
     self.buf[i] = buf[idx]
   }
@@ -976,7 +976,7 @@ pub fn retain_map[A](self : T[A], f : (A) -> A?) -> Unit {
 /// deque to retain only elements for which the provided function returns `Some`,
 /// and updates those elements with the values inside the `Some` variant.
 ///
-/// @alert deprecated "Use `@deque.retain_map` instead"
+#deprecated("Use `@deque.retain_map` instead")
 pub fn filter_map_inplace[A](self : T[A], f : (A) -> A?) -> Unit {
   self.retain_map(f)
 }

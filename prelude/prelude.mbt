@@ -13,29 +13,43 @@
 // limitations under the License.
 
 ///|
-/// @alert deprecated "use `@deque.new` instead"
-#coverage.skip
-pub fn T::new[A](capacity~ : Int = 0) -> T[A] {
-  new(capacity~)
-}
+pub typealias @builtin.(
+  ArgsLoc,
+  Array[X],
+  ArrayView[X],
+  UninitializedArray[X],
+  BigInt,
+  Failure,
+  Hasher,
+  Iter[X],
+  Iter2[X, Y],
+  IterResult,
+  Json,
+  Map[K, V],
+  Set[X],
+  InspectError,
+  SnapshotError,
+  SourceLoc,
+  StringBuilder
+)
 
 ///|
-/// @alert deprecated "use `@deque.from_array` instead"
-#coverage.skip
-pub fn T::from_array[A](arr : Array[A]) -> T[A] {
-  from_array(arr)
-}
+pub traitalias @builtin.(Eq, Compare, Hash, Logger, Show, ToJson, Default)
 
 ///|
-/// @alert deprecated "use `@deque.of` instead"
-#coverage.skip
-pub fn T::of[A](arr : FixedArray[A]) -> T[A] {
-  of(arr)
-}
-
-///|
-/// @alert deprecated "use `@deque.from_iter` instead"
-#coverage.skip
-pub fn T::from_iter[A](iter : Iter[A]) -> T[A] {
-  from_iter(iter)
-}
+pub fnalias @builtin.(
+  abort,
+  assert_eq,
+  assert_not_eq,
+  assert_true,
+  assert_false,
+  fail,
+  ignore,
+  inspect,
+  panic,
+  physical_equal,
+  println,
+  not,
+  repr,
+  dump
+)

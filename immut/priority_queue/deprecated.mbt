@@ -13,21 +13,21 @@
 // limitations under the License.
 
 ///|
-/// @alert deprecated "use `@immut/priority_queue.new` instead"
+#deprecated("use `@immut/priority_queue.new` instead")
 #coverage.skip
 pub fn T::new[A : Compare]() -> T[A] {
   new()
 }
 
 ///|
-/// @alert deprecated "use `@immut/priority_queue.from_array` instead"
+#deprecated("use `@immut/priority_queue.from_array` instead")
 #coverage.skip
 pub fn T::from_array[A : Compare](arr : Array[A]) -> T[A] {
   from_array(arr)
 }
 
 ///|
-/// @alert deprecated "use `@immut/priority_queue.of` instead"
+#deprecated("use `@immut/priority_queue.of` instead")
 #coverage.skip
 pub fn T::of[A : Compare](arr : FixedArray[A]) -> T[A] {
   of(arr)

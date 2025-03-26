@@ -45,7 +45,7 @@ pub fn of[K : Hash + Eq](arr : FixedArray[K]) -> T[K] {
 ///|
 /// Insert a key into hash set.
 /// @alert unsafe "Panic if the hash set is full."
-/// @alert deprecated "Use `add` instead."
+#deprecated("Use `add` instead.")
 #coverage.skip
 pub fn insert[K : Hash + Eq](self : T[K], key : K) -> Unit {
   self.add(key)
@@ -162,7 +162,7 @@ pub fn each[K](self : T[K], f : (K) -> Unit) -> Unit {
 /// Iterate over all keys of the set, with index.
 pub fn eachi[K](self : T[K], f : (Int, K) -> Unit) -> Unit {
   let mut idx = 0
-  for i = 0; i < self.capacity; i = i + 1 {
+  for i in 0..<self.capacity {
     match self.entries[i] {
       Some({ key, .. }) => {
         f(idx, key)
@@ -176,7 +176,7 @@ pub fn eachi[K](self : T[K], f : (Int, K) -> Unit) -> Unit {
 ///|
 /// Clears the set, removing all keys. Keeps the allocated space.
 pub fn clear[K](self : T[K]) -> Unit {
-  for i = 0; i < self.capacity; i = i + 1 {
+  for i in 0..<self.capacity {
     self.entries[i] = None
   }
   self.size = 0
@@ -280,7 +280,7 @@ fn grow[K : Hash + Eq](self : T[K]) -> Unit {
   self.capacity = self.capacity * 2
   self.growAt = calc_grow_threshold(self.capacity)
   self.size = 0
-  for i = 0; i < old_entries.length(); i = i + 1 {
+  for i in 0..<old_entries.length() {
     match old_entries[i] {
       Some({ key, .. }) => self.add(key)
       None => ()
@@ -315,7 +315,7 @@ fn calc_grow_threshold(capacity : Int) -> Int {
 ///|
 fn debug_entries[K : Show](self : T[K]) -> String {
   let mut s = ""
-  for i = 0; i < self.entries.length(); i = i + 1 {
+  for i in 0..<self.entries.length() {
     if i > 0 {
       s += ","
     }
@@ -435,7 +435,7 @@ test "clear" {
   m.clear()
   assert_eq!(m.size(), 0)
   assert_eq!(m.capacity(), 8)
-  for i = 0; i < m.capacity(); i = i + 1 {
+  for i in 0..<m.capacity() {
     @test.same_object!(m.entries[i], None)
   }
 }
@@ -444,12 +444,9 @@ test "clear" {
 pub fn to_array[K](self : T[K]) -> Array[K] {
   let mut i = 0
   let res = while i < self.capacity {
-    match self.entries[i] {
-      Some({ key, .. }) => {
-        i += 1
-        break Array::make(self.size, key)
-      }
-      _ => ()
+    if self.entries[i] is Some({ key, .. }) {
+      i += 1
+      break Array::make(self.size, key)
     }
     i += 1
   } else {
@@ -458,12 +455,9 @@ pub fn to_array[K](self : T[K]) -> Array[K] {
   if not(res.is_empty()) {
     let mut res_idx = 1
     while res_idx < res.length() && i < self.capacity {
-      match self.entries[i] {
-        Some({ key, .. }) => {
-          res[res_idx] = key
-          res_idx += 1
-        }
-        _ => ()
+      if self.entries[i] is Some({ key, .. }) {
+        res[res_idx] = key
+        res_idx += 1
       }
       i += 1
     }

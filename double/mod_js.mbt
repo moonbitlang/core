@@ -36,5 +36,10 @@
 ///   inspect!(infinity.op_mod(3.0), content="NaN")
 /// }
 /// ```
-pub extern "js" fn op_mod(self : Double, other : Double) -> Double =
+extern "js" fn mod_ffi(self : Double, other : Double) -> Double =
   #| (a, b) => (a % b)
+
+///|
+pub impl Mod for Double with op_mod(self, other) {
+  self.mod_ffi(other)
+}

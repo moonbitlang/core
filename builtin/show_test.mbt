@@ -240,8 +240,8 @@ test "char show hex digits" {
   // inspect!('\x01', content="\x01")
   // FIXME: inspect!('\x0b') will not work with update test
   // inspect!('\x0b', content="\x0b")
-  assert_true!('\x01'.to_string() == "\x01")
-  assert_true!('\x0b'.to_string() == "\x0b")
+  assert_true!('\u{01}'.to_string() == "\x01")
+  assert_true!('\u{0b}'.to_string() == "\x0b")
 }
 
 ///|
