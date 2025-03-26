@@ -28,9 +28,13 @@ fn push[A : Compare](T[A], A) -> T[A]
 
 fn to_array[A : Compare](T[A]) -> Array[A]
 
+fn top[A : Compare](T[A]) -> A
+
 fn unsafe_pop[A : Compare](T[A]) -> T[A]
 
 // Types and methods
+type Node[A]
+
 type T[A]
 impl T {
   #deprecated
@@ -49,6 +53,7 @@ impl T {
   pop_exn[A : Compare](Self[A]) -> Self[A]
   push[A : Compare](Self[A], A) -> Self[A]
   to_array[A : Compare](Self[A]) -> Array[A]
+  top[A : Compare](Self[A]) -> A
   unsafe_pop[A : Compare](Self[A]) -> Self[A]
 }
 impl[A : Compare] Eq for T[A]
