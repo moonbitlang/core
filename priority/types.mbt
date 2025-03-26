@@ -1,9 +1,12 @@
-priv enum Node[A] {
-  Nil
-  Cons(content~ : A, left~ : Node[A], right~ : Node[A])
+///|
+struct T[A] {
+  node : Node[A]
+  size : Int
 }
 
-struct T[A] {
-  mut root : Node[A]
-  mut size : Int
+///|
+enum Node[A] {
+  Empty
+  Leaf(A)
+  Branch(A, left~ : T[A], right~ : T[A])
 }
