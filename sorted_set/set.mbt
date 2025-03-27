@@ -114,16 +114,13 @@ pub fn add[V : Compare](self : T[V], value : V) -> Unit {
 
 ///|
 pub fn remove[V : Compare](self : T[V], value : V) -> Unit {
-  match self.root {
-    None => ()
-    Some(old_root) => {
-      let (new_root, deleted) = delete_node(old_root, value)
-      if self.root != new_root {
-        self.root = new_root
-      }
-      if deleted {
-        self.size -= 1
-      }
+  if self.root is Some(old_root) {
+    let (new_root, deleted) = delete_node(old_root, value)
+    if self.root != new_root {
+      self.root = new_root
+    }
+    if deleted {
+      self.size -= 1
     }
   }
 }
@@ -339,15 +336,11 @@ pub fn size[V : Compare](self : T[V]) -> Int {
 /// Iterates the set.
 pub fn each[V](self : T[V], f : (V) -> Unit) -> Unit {
   fn dfs(root : Node[V]?) -> Unit {
-    match root {
-      Some(root) => {
-        dfs(root.left)
-        f(root.value)
-        dfs(root.right)
-      }
-      None => ()
+    if root is Some(root) {
+      dfs(root.left)
+      f(root.value)
+      dfs(root.right)
     }
-    ()
   }
 
   dfs(self.root)
@@ -373,16 +366,12 @@ pub fn to_array[V](self : T[V]) -> Array[V] {
     let arr = Array::make(self.size, padding)
     let mut i = 0
     fn dfs(root : Node[V]?) -> Unit {
-      match root {
-        Some(root) => {
-          dfs(root.left)
-          arr[i] = root.value
-          i = i + 1
-          dfs(root.right)
-        }
-        None => ()
+      if root is Some(root) {
+        dfs(root.left)
+        arr[i] = root.value
+        i = i + 1
+        dfs(root.right)
       }
-      ()
     }
 
     dfs(self.root)
@@ -404,21 +393,16 @@ pub fn iter[V](self : T[V]) -> Iter[V] {
 ///|
 fn Node::iter[A](self : Node[A]) -> Iter[A] {
   Iter::new(fn(yield_) {
-    let { left, value, right, .. } = self
-    let res = match left {
-      None => IterContinue
-      Some(l) => l.iter().run(yield_)
+    if self.left is Some(l) {
+      guard l.iter().run(yield_) is IterContinue else { return IterEnd }
+
     }
-    if res == IterEnd {
-      IterEnd
-    } else if yield_(value) == IterEnd {
-      IterEnd
-    } else {
-      match right {
-        None => IterContinue
-        Some(r) => r.iter().run(yield_)
-      }
+    guard yield_(self.value) is IterContinue else { return IterEnd }
+    if self.right is Some(r) {
+      guard r.iter().run(yield_) is IterContinue else { return IterEnd }
+
     }
+    IterContinue
   })
 }
 

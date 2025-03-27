@@ -614,7 +614,7 @@ pub fn write_bytesview(self : T, value : @bytes.View) -> Unit {
 ///   )
 /// }
 /// ```
-pub impl Logger for Buffer with write_substring(
+pub impl Logger for T with write_substring(
   self : T,
   value : String,
   start : Int,
@@ -646,7 +646,7 @@ pub impl Logger for Buffer with write_substring(
 /// )
 /// }
 /// ```
-pub impl Logger for Buffer with write_char(self : T, value : Char) -> Unit {
+pub impl Logger for T with write_char(self : T, value : Char) -> Unit {
   self.grow_if_necessary(self.len + 4)
   let inc = self.data.set_utf16le_char(self.len, value)
   self.len += inc

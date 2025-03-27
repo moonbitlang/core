@@ -265,13 +265,11 @@ fn Set::remove_entry[K : Eq](self : Set[K], entry : SEntry[K]) -> Unit {
     if self.tail.unwrap() == entry {
       self.tail = node.prev
     }
-    match node.prev {
-      Some(prev) => self.list[prev.idx].next = node.next
-      None => ()
+    if node.prev is Some(prev) {
+      self.list[prev.idx].next = node.next
     }
-    match node.next {
-      Some(next) => self.list[next.idx].prev = node.prev
-      None => ()
+    if node.next is Some(next) {
+      self.list[next.idx].prev = node.prev
     }
   }
   node.prev = None

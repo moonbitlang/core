@@ -11,6 +11,7 @@ impl BitAnd for UInt16
 impl BitOr for UInt16
 impl BitXOr for UInt16
 impl Compare for UInt16
+impl Default for UInt16
 impl Div for UInt16
 impl Eq for UInt16
 impl Hash for UInt16
