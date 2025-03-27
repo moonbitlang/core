@@ -27,6 +27,8 @@ fn remove[A : Eq + Hash](T[A], A) -> T[A]
 
 fn size[A](T[A]) -> Int
 
+fn union[K : Eq + Hash](T[K], T[K]) -> T[K]
+
 // Types and methods
 type T[A]
 impl T {
@@ -45,6 +47,7 @@ impl T {
   of[A : Eq + Hash](FixedArray[A]) -> Self[A]
   remove[A : Eq + Hash](Self[A], A) -> Self[A]
   size[A](Self[A]) -> Int
+  union[K : Eq + Hash](Self[K], Self[K]) -> Self[K]
 }
 impl[A : Eq] Eq for T[A]
 impl[A : Hash] Hash for T[A]

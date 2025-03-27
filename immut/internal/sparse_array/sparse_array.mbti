@@ -5,6 +5,8 @@ fn add[X](SparseArray[X], Int, X) -> SparseArray[X]
 
 fn each[X](SparseArray[X], (X) -> Unit) -> Unit
 
+fn empty[X]() -> SparseArray[X]
+
 fn has[X](SparseArray[X], Int) -> Bool
 
 fn op_get[X](SparseArray[X], Int) -> X?
@@ -15,14 +17,20 @@ fn singleton[X](Int, X) -> SparseArray[X]
 
 fn size[X](SparseArray[X]) -> Int
 
+fn union[X](SparseArray[X], SparseArray[X], (X, X) -> X) -> SparseArray[X]
+
 // Types and methods
 pub(all) type Bitset UInt
 impl Bitset {
   add(Self, Int) -> Self
+  difference(Self, Self) -> Self
   has(Self, Int) -> Bool
   index_of(Self, Int) -> Int
+  intersection(Self, Self) -> Self
+  iter(Self) -> Iter[Int]
   remove(Self, Int) -> Self
   size(Self) -> Int
+  union(Self, Self) -> Self
 }
 impl Eq for Bitset
 
@@ -37,6 +45,7 @@ impl SparseArray {
   op_get[X](Self[X], Int) -> X?
   replace[X](Self[X], Int, X) -> Self[X]
   size[X](Self[X]) -> Int
+  union[X](Self[X], Self[X], (X, X) -> X) -> Self[X]
 }
 impl[X : Eq] Eq for SparseArray[X]
 
