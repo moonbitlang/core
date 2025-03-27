@@ -208,3 +208,12 @@ test "equal between different constructors" {
   let set2 = @hashset.of(["a"])
   assert_not_eq!(set1, set2)
 }
+
+///|
+test "union 2 hashsets" {
+  let set1 = @hashset.of([1, 2, 3])
+  let set2 = @hashset.of([3, 4, 5])
+  let set3 = set1.union(set2)
+  let set4 = @hashset.of([1, 2, 3, 4, 5])
+  inspect!(set3 == set4, content="true")
+}

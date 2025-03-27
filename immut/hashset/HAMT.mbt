@@ -179,6 +179,20 @@ pub fn size[A](self : T[A]) -> Int {
 }
 
 ///|
+/// Union two hashsets
+pub fn union[K : Eq + Hash](self : T[K], other : T[K]) -> T[K] {
+  match (self, other) {
+    (_, Empty) => self
+    (Empty, _) => other
+    (_, Leaf(k)) => self.add(k)
+    (Leaf(k), _) => other.add(k)
+    (Branch(sa1), Branch(sa2)) =>
+      Branch(sa1.union(sa2, fn(m1, m2) { m1.union(m2) }))
+    (_, _) => self.iter().fold(init=other, fn(m, k) { m.add(k) })
+  }
+}
+
+///|
 /// Returns true if the hash set is empty.
 pub fn is_empty[A](self : T[A]) -> Bool {
   self is Empty
