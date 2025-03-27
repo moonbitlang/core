@@ -13,6 +13,11 @@
 // limitations under the License.
 
 ///|
+// shadow @json.inspect
+fnalias @builtin.inspect
+
+///| shadow
+///|
 test "parse invalid decimal exponent sign" {
   inspect!(@json.parse?("1e"), content="Err(Unexpected end of file)")
 }

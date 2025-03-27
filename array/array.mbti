@@ -73,6 +73,7 @@ impl FixedArray {
   swap[T](Self[T], Int, Int) -> Unit
 }
 impl[T] Add for FixedArray[T]
+impl[T : Compare] Compare for FixedArray[T]
 impl[T : Eq] Eq for FixedArray[T]
 impl[X : @quickcheck.Arbitrary] @quickcheck.Arbitrary for FixedArray[X]
 
