@@ -205,3 +205,10 @@ test "panic Fixed::blit_from_bytesview 2" {
   let view = b"\x01\x02\x03"[1:]
   ignore(arr.blit_from_bytesview(-1, view))
 }
+
+///|
+test "bytes pattern match" {
+  let bytes : Bytes = "Hello, world!"
+  guard bytes is [.. b"Hello", ..] else { fail!("") }
+
+}
