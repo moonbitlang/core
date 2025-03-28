@@ -160,21 +160,6 @@ pub fn filter_map[A, B](self : Array[A], f : (A) -> B?) -> Array[B] {
 }
 
 ///|
-/// Returns a new array containing the elements of the original array that satisfy the given predicate.
-/// 
-/// # Arguments
-/// 
-/// * `self` - The array to filter.
-/// * `f` - The predicate function.
-/// 
-/// # Returns
-/// 
-#deprecated("Use `Array::filter_map` instead")
-pub fn map_option[A, B](self : Array[A], f : (A) -> B?) -> Array[B] {
-  self.filter_map(f)
-}
-
-///|
 /// Returns the last element of the array, or `None` if the array is empty.
 ///
 /// Parameters:
