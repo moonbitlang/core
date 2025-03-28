@@ -72,10 +72,10 @@ fn to_hex_digit(i : Int) -> Char {
 
 ///|
 test "to_hex_digit" {
-  inspect!(to_hex_digit(0), content="0")
-  inspect!(to_hex_digit(9), content="9")
-  inspect!(to_hex_digit(10), content="a")
-  inspect!(to_hex_digit(15), content="f")
+  inspect!(
+    Array::make(16, 0).mapi(fn { i, _ => to_hex_digit(i) }),
+    content="['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f']",
+  )
 }
 
 ///|
