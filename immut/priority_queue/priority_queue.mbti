@@ -33,8 +33,6 @@ fn top[A : Compare](T[A]) -> A
 fn unsafe_pop[A : Compare](T[A]) -> T[A]
 
 // Types and methods
-type Node[A]
-
 type T[A]
 impl T {
   #deprecated
