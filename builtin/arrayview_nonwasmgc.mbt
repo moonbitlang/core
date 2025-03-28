@@ -312,3 +312,56 @@ pub fn ArrayView::op_as_view[T](
   }
   ArrayView::{ buf: self.buf, start: self.start + start, len: end - start }
 }
+
+///| 
+// this is safe for non-wasm-gc backend only
+fn fixedarray_to_uninitializedarray[T](
+  self : FixedArray[T]
+) -> UninitializedArray[T] = "%identity"
+
+///|
+/// Creates a view into a fixedarray based on the specified range.
+///
+/// Parameters:
+///
+/// * `self` : The fixedarray to create a view from.
+/// * `start` : The starting index of the view (inclusive). Defaults to 0.
+/// * `end` : The ending index of the view (exclusive). Defaults to the length of the array.
+///
+/// Returns an `ArrayView` that references the elements of the fixedarray within the specified range.
+///
+/// Negative indices can be used to count from the end of the array (e.g., -1 refers to the last element).
+///
+/// Panics if the indices are invalid.
+///
+/// Example:
+///
+/// ```moonbit
+/// test "FixedArray::op_as_view" {
+///   let arr : FixedArray[Int] = [1, 2, 3, 4, 5]
+///   let view = arr[1:4] // view = [2, 3, 4]
+///   inspect!(view[0], content="2")
+///   let tail = arr[-2:] // tail = [4, 5]
+///   inspect!(tail[0], content="4")
+/// }
+/// ```
+pub fn FixedArray::op_as_view[T](
+  self : FixedArray[T],
+  start~ : Int = 0,
+  end? : Int
+) -> ArrayView[T] {
+  let len = self.length()
+  let end = match end {
+    None => len
+    Some(end) => if end < 0 { len + end } else { end }
+  }
+  let start = if start < 0 { len + start } else { start }
+  guard start >= 0 && start <= end && end <= len else {
+    abort("View index out of bounds")
+  }
+  ArrayView::{
+    buf: fixedarray_to_uninitializedarray(self),
+    start,
+    len: end - start,
+  }
+}
