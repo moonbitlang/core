@@ -272,7 +272,7 @@ pub fn push[A : Compare](self : T[A], value : A) -> T[A] {
 }
 
 ///|
-pub fn top[A : Compare](self : T[A]) -> A {
+fn top[A : Compare](self : T[A]) -> A {
   match self.node {
     Empty => abort("Empty")
     Leaf(a) => a
