@@ -56,6 +56,11 @@ pub(open) trait Logger {
 }
 
 ///|
+impl Logger with write_char(self, value) {
+  self.write_string([value])
+}
+
+///|
 /// Trait for types that can be converted to `String`
 pub(open) trait Show {
   // `output` is used for composition of aggregate structure.
