@@ -415,9 +415,8 @@ fn grow[K : Eq, V](self : T[K, V]) -> Unit {
   self.capacity = new_capacity
   self.size = 0
   for i in 0..<old_entries.length() {
-    match old_entries[i] {
-      Some({ key, value, hash, .. }) => self.set_with_hash(key, value, hash)
-      None => ()
+    if old_entries[i] is Some({ key, value, hash, .. }) {
+      self.set_with_hash(key, value, hash)
     }
   }
 }
