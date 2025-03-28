@@ -117,54 +117,6 @@ pub fn FixedArray::fill[T](self : FixedArray[T], value : T) -> Unit {
 }
 
 ///|
-/// Compares two fixed arrays lexicographically based on their elements. First
-/// compares the lengths of the arrays, then compares elements pairwise until a
-/// difference is found or all elements have been compared.
-///
-/// Parameters:
-///
-/// * `self` : The first fixed array to compare.
-/// * `other` : The second fixed array to compare.
-///
-/// Returns an integer that indicates the relative order:
-///
-/// * A negative value if `self` is less than `other`
-/// * Zero if `self` equals `other`
-/// * A positive value if `self` is greater than `other`
-///
-/// Example:
-///
-/// ```moonbit
-/// test "FixedArray::compare" {
-///   let arr1 = [1, 2, 3]
-///   let arr2 = [1, 2, 4]
-///   let arr3 = [1, 2]
-///   inspect!(arr1.compare(arr2), content="-1") // arr1 < arr2
-///   inspect!(arr2.compare(arr1), content="1") // arr2 > arr1
-///   inspect!(arr1.compare(arr3), content="1") // arr1 > arr3 (longer)
-///   inspect!(arr1.compare(arr1), content="0") // arr1 = arr1
-/// }
-/// ```
-pub impl[T : Compare] Compare for FixedArray[T] with compare(self, other) {
-  let len_self = self.length()
-  let len_other = other.length()
-  if len_self < len_other {
-    -1
-  } else if len_self > len_other {
-    1
-  } else {
-    for i in 0..<len_self {
-      let cmp = self.unsafe_get(i).compare(other.unsafe_get(i))
-      if cmp != 0 {
-        break cmp
-      }
-    } else {
-      0
-    }
-  }
-}
-
-///|
 /// Tests whether the FixedArray contains no elements.
 ///
 /// Parameters:
