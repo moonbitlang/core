@@ -117,19 +117,13 @@ pub fn remove[K : Hash + Eq](self : T[K], key : K) -> Unit {
   for i = 0, idx = self.index(hash)
       i < self.capacity
       i = i + 1, idx = self.next_index(idx) {
-    match self.entries[idx] {
-      Some(entry) => {
-        if entry.hash == hash && entry.key == key {
-          self.entries[idx] = None
-          self.shift_back(idx)
-          self.size -= 1
-          break
-        }
-        if i > entry.psl {
-          return
-        }
-      }
-      None => ()
+    if self.entries[idx] is Some(entry) &&
+      entry.hash == hash &&
+      entry.key == key {
+      self.entries[idx] = None
+      self.shift_back(idx)
+      self.size -= 1
+      break
     }
   }
 }
@@ -163,12 +157,9 @@ pub fn each[K](self : T[K], f : (K) -> Unit) -> Unit {
 pub fn eachi[K](self : T[K], f : (Int, K) -> Unit) -> Unit {
   let mut idx = 0
   for i in 0..<self.capacity {
-    match self.entries[i] {
-      Some({ key, .. }) => {
-        f(idx, key)
-        idx += 1
-      }
-      None => ()
+    if self.entries[i] is Some({ key, .. }) {
+      f(idx, key)
+      idx += 1
     }
   }
 }
@@ -281,9 +272,8 @@ fn grow[K : Hash + Eq](self : T[K]) -> Unit {
   self.growAt = calc_grow_threshold(self.capacity)
   self.size = 0
   for i in 0..<old_entries.length() {
-    match old_entries[i] {
-      Some({ key, .. }) => self.add(key)
-      None => ()
+    if old_entries[i] is Some({ key, .. }) {
+      self.add(key)
     }
   }
 }

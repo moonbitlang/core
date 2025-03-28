@@ -63,16 +63,13 @@ pub fn add[K : Compare, V](self : T[K, V], key : K, value : V) -> Unit {
 ///|
 /// Removes a key-value pair.
 pub fn remove[K : Compare, V](self : T[K, V], key : K) -> Unit {
-  match self.root {
-    None => ()
-    Some(old_root) => {
-      let (new_root, deleted) = delete_node(old_root, key)
-      if self.root != new_root {
-        self.root = new_root
-      }
-      if deleted {
-        self.size -= 1
-      }
+  if self.root is Some(old_root) {
+    let (new_root, deleted) = delete_node(old_root, key)
+    if self.root != new_root {
+      self.root = new_root
+    }
+    if deleted {
+      self.size -= 1
     }
   }
 }

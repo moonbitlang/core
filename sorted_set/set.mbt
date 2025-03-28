@@ -114,16 +114,13 @@ pub fn add[V : Compare](self : T[V], value : V) -> Unit {
 
 ///|
 pub fn remove[V : Compare](self : T[V], value : V) -> Unit {
-  match self.root {
-    None => ()
-    Some(old_root) => {
-      let (new_root, deleted) = delete_node(old_root, value)
-      if self.root != new_root {
-        self.root = new_root
-      }
-      if deleted {
-        self.size -= 1
-      }
+  if self.root is Some(old_root) {
+    let (new_root, deleted) = delete_node(old_root, value)
+    if self.root != new_root {
+      self.root = new_root
+    }
+    if deleted {
+      self.size -= 1
     }
   }
 }
@@ -339,15 +336,11 @@ pub fn size[V : Compare](self : T[V]) -> Int {
 /// Iterates the set.
 pub fn each[V](self : T[V], f : (V) -> Unit) -> Unit {
   fn dfs(root : Node[V]?) -> Unit {
-    match root {
-      Some(root) => {
-        dfs(root.left)
-        f(root.value)
-        dfs(root.right)
-      }
-      None => ()
+    if root is Some(root) {
+      dfs(root.left)
+      f(root.value)
+      dfs(root.right)
     }
-    ()
   }
 
   dfs(self.root)
@@ -373,16 +366,12 @@ pub fn to_array[V](self : T[V]) -> Array[V] {
     let arr = Array::make(self.size, padding)
     let mut i = 0
     fn dfs(root : Node[V]?) -> Unit {
-      match root {
-        Some(root) => {
-          dfs(root.left)
-          arr[i] = root.value
-          i = i + 1
-          dfs(root.right)
-        }
-        None => ()
+      if root is Some(root) {
+        dfs(root.left)
+        arr[i] = root.value
+        i = i + 1
+        dfs(root.right)
       }
-      ()
     }
 
     dfs(self.root)

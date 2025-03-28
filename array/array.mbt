@@ -149,13 +149,11 @@ pub fn shuffle[T](self : Array[T], rand~ : (Int) -> Int) -> Array[T] {
 /// 
 pub fn filter_map[A, B](self : Array[A], f : (A) -> B?) -> Array[B] {
   let result = []
-  self.each(fn {
-    x =>
-      match f(x) {
-        None => ()
-        Some(x) => result.push(x)
-      }
-  })
+  for x in self {
+    if f(x) is Some(x) {
+      result.push(x)
+    }
+  }
   result
 }
 
