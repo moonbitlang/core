@@ -803,6 +803,7 @@ pub(open) trait Logger {
   write_substring(Self, String, Int, Int) -> Unit
   write_char(Self, Char) -> Unit
 }
+impl Logger::write_char
 
 pub(open) trait Mod {
   op_mod(Self, Self) -> Self
