@@ -19,7 +19,7 @@ struct T[A] {
 }
 
 ///|
-enum Node[A] {
+priv enum Node[A] {
   Empty
   Leaf(A)
   Branch(A, left~ : T[A], right~ : T[A])
