@@ -82,3 +82,8 @@ pub impl BitAnd for UInt16 with land(self : UInt16, that : UInt16) -> UInt16 {
 pub impl BitXOr for UInt16 with lxor(self : UInt16, that : UInt16) -> UInt16 {
   (self.to_int() ^ that.to_int()).to_uint16()
 }
+
+///|
+pub impl Default for UInt16 with default() {
+  0
+}
