@@ -940,12 +940,9 @@ pub fn retain_map[A](self : T[A], f : (A) -> A?) -> Unit {
   let mut idx = head
   let (front, back) = self.as_views()
   for cur in front {
-    match f(cur) {
-      Some(v) => {
-        buf[idx] = v
-        idx += 1
-      }
-      None => ()
+    if f(cur) is Some(v) {
+      buf[idx] = v
+      idx += 1
     }
   }
   if back.length() == 0 {
@@ -956,12 +953,9 @@ pub fn retain_map[A](self : T[A], f : (A) -> A?) -> Unit {
     if idx == cap {
       idx = 0
     }
-    match f(cur) {
-      Some(v) => {
-        buf[idx] = v
-        idx += 1
-      }
-      None => ()
+    if f(cur) is Some(v) {
+      buf[idx] = v
+      idx += 1
     }
   }
   if idx <= self.len - head_len {
