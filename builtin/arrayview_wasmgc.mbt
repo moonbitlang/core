@@ -13,6 +13,31 @@
 // limitations under the License.
 
 ///|
+// wasm-gc backend cannot convert between array with nullable and non-nullable
+// elements so to support taking view from both Fixedarray and Array, we need
+// to use a union type to represent the buffer.
+priv enum Buf[T] {
+  Initialized(FixedArray[T])
+  Uninit(UninitializedArray[T])
+}
+
+///|
+fn Buf::op_get[T](self : Buf[T], index : Int) -> T {
+  match self {
+    Initialized(arr) => arr[index]
+    Uninit(arr) => arr[index]
+  }
+}
+
+///|
+fn Buf::op_set[T](self : Buf[T], index : Int, value : T) -> Unit {
+  match self {
+    Initialized(arr) => arr[index] = value
+    Uninit(arr) => arr[index] = value
+  }
+}
+
+///|
 /// An `ArrayView` represents a view into a section of an array without copying the data.
 ///
 /// # Example
@@ -25,7 +50,7 @@
 /// ```
 /// @alert deprecated "use @array.View instead"
 struct ArrayView[T] {
-  buf : UninitializedArray[T]
+  buf : Buf[T]
   start : Int
   len : Int
 }
@@ -119,7 +144,6 @@ pub fn ArrayView::op_get[T](self : ArrayView[T], index : Int) -> T {
 /// }
 /// ```
 ///
-#intrinsic("%arrayview.unsafe_get")
 /// @alert unsafe "Panic if index is out of bounds"
 pub fn ArrayView::unsafe_get[T](self : ArrayView[T], index : Int) -> T {
   self.buf[self.start + index]
@@ -254,7 +278,7 @@ pub fn Array::op_as_view[T](
   guard start >= 0 && start <= end && end <= len else {
     abort("View index out of bounds")
   }
-  ArrayView::{ buf: self.buffer(), start, len: end - start }
+  ArrayView::{ buf: Buf::Uninit(self.buffer()), start, len: end - start }
 }
 
 ///|
@@ -311,4 +335,79 @@ pub fn ArrayView::op_as_view[T](
     abort("View index out of bounds")
   }
   ArrayView::{ buf: self.buf, start: self.start + start, len: end - start }
+}
+
+///|
+/// Creates a view into a fixedarray based on the specified range.
+///
+/// Parameters:
+///
+/// * `self` : The fixedarray to create a view from.
+/// * `start` : The starting index of the view (inclusive). Defaults to 0.
+/// * `end` : The ending index of the view (exclusive). Defaults to the length of the array.
+///
+/// Returns an `ArrayView` that references the elements of the fixedarray within the specified range.
+///
+/// Negative indices can be used to count from the end of the array (e.g., -1 refers to the last element).
+///
+/// Panics if the indices are invalid.
+///
+/// Example:
+///
+/// ```moonbit
+/// test "FixedArray::op_as_view" {
+///   let arr : FixedArray[Int] = [1, 2, 3, 4, 5]
+///   let view = arr[1:4] // view = [2, 3, 4]
+///   inspect!(view[0], content="2")
+///   let tail = arr[-2:] // tail = [4, 5]
+///   inspect!(tail[0], content="4")
+/// }
+/// ```
+pub fn FixedArray::op_as_view[T](
+  self : FixedArray[T],
+  start~ : Int = 0,
+  end? : Int
+) -> ArrayView[T] {
+  let len = self.length()
+  let end = match end {
+    None => len
+    Some(end) => if end < 0 { len + end } else { end }
+  }
+  let start = if start < 0 { len + start } else { start }
+  guard start >= 0 && start <= end && end <= len else {
+    abort("View index out of bounds")
+  }
+  ArrayView::{ buf: Buf::Initialized(self), start, len: end - start }
+}
+
+///|
+/// Creates a view into a portion of the uninitialized array.
+///
+/// Parameters:
+///
+/// * `array` : The uninitialized array to create a view from.
+/// * `start` : The starting index of the view (inclusive). Defaults to 0.
+/// * `end` : The ending index of the view (exclusive). If not provided, defaults
+/// to the length of the array.
+///
+/// Returns an `ArrayView` that provides a window into the specified portion of
+/// the array.
+///
+/// Throws an error if the indices are out of bounds or if `start` is greater
+/// than `end`.
+pub fn UninitializedArray::op_as_view[T](
+  self : UninitializedArray[T],
+  start~ : Int = 0,
+  end? : Int
+) -> ArrayView[T] {
+  let len = self.length()
+  let end = match end {
+    None => len
+    Some(end) => if end < 0 { len + end } else { end }
+  }
+  let start = if start < 0 { len + start } else { start }
+  guard start >= 0 && start <= end && end <= len else {
+    abort("View start index out of bounds")
+  }
+  { buf: Buf::Uninit(self), start, len: end - start }
 }

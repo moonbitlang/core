@@ -365,3 +365,35 @@ pub fn FixedArray::op_as_view[T](
     len: end - start,
   }
 }
+
+///|
+/// Creates a view into a portion of the uninitialized array.
+///
+/// Parameters:
+///
+/// * `array` : The uninitialized array to create a view from.
+/// * `start` : The starting index of the view (inclusive). Defaults to 0.
+/// * `end` : The ending index of the view (exclusive). If not provided, defaults
+/// to the length of the array.
+///
+/// Returns an `ArrayView` that provides a window into the specified portion of
+/// the array.
+///
+/// Throws an error if the indices are out of bounds or if `start` is greater
+/// than `end`.
+pub fn UninitializedArray::op_as_view[T](
+  self : UninitializedArray[T],
+  start~ : Int = 0,
+  end? : Int
+) -> ArrayView[T] {
+  let len = self.length()
+  let end = match end {
+    None => len
+    Some(end) => if end < 0 { len + end } else { end }
+  }
+  let start = if start < 0 { len + start } else { start }
+  guard start >= 0 && start <= end && end <= len else {
+    abort("View start index out of bounds")
+  }
+  { buf: self, start, len: end - start }
+}
