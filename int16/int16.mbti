@@ -11,6 +11,7 @@ impl BitAnd for Int16
 impl BitOr for Int16
 impl BitXOr for Int16
 impl Compare for Int16
+impl Default for Int16
 impl Div for Int16
 impl Eq for Int16
 impl Hash for Int16
