@@ -625,6 +625,7 @@ impl FixedArray {
   iter2[T](Self[T]) -> Iter2[Int, T]
   length[T](Self[T]) -> Int
   make[T](Int, T) -> Self[T]
+  op_as_view[T](Self[T], start~ : Int = .., end? : Int) -> ArrayView[T]
   op_get[T](Self[T], Int) -> T
   op_set[T](Self[T], Int, T) -> Unit
   set[T](Self[T], Int, T) -> Unit
