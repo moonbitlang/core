@@ -801,10 +801,8 @@ impl[A : Hash, B : Hash, C : Hash, D : Hash, E : Hash, F : Hash, G : Hash] Hash 
 pub(open) trait Logger {
   write_string(Self, String) -> Unit
   write_substring(Self, String, Int, Int) -> Unit
-  write_sub_string(Self, String, Int, Int) -> Unit
   write_char(Self, Char) -> Unit
 }
-impl Logger::write_sub_string
 
 pub(open) trait Mod {
   op_mod(Self, Self) -> Self

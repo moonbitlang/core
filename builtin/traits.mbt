@@ -52,14 +52,7 @@ pub(open) trait Default {
 pub(open) trait Logger {
   write_string(Self, String) -> Unit
   write_substring(Self, String, Int, Int) -> Unit
-  /// @alert deprecated "use `Logger::write_substring` instead"
-  write_sub_string(Self, String, Int, Int) -> Unit
   write_char(Self, Char) -> Unit
-}
-
-///|
-impl Logger with write_sub_string(self, value, start, len) {
-  self.write_substring(value, start, len)
 }
 
 ///|
