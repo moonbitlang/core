@@ -393,21 +393,16 @@ pub fn iter[V](self : T[V]) -> Iter[V] {
 ///|
 fn Node::iter[A](self : Node[A]) -> Iter[A] {
   Iter::new(fn(yield_) {
-    let { left, value, right, .. } = self
-    let res = match left {
-      None => IterContinue
-      Some(l) => l.iter().run(yield_)
+    if self.left is Some(l) {
+      guard l.iter().run(yield_) is IterContinue else { return IterEnd }
+
     }
-    if res == IterEnd {
-      IterEnd
-    } else if yield_(value) == IterEnd {
-      IterEnd
-    } else {
-      match right {
-        None => IterContinue
-        Some(r) => r.iter().run(yield_)
-      }
+    guard yield_(self.value) is IterContinue else { return IterEnd }
+    if self.right is Some(r) {
+      guard r.iter().run(yield_) is IterContinue else { return IterEnd }
+
     }
+    IterContinue
   })
 }
 
