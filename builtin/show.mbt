@@ -62,15 +62,24 @@ pub impl Show for UInt16 with output(self, logger) {
 }
 
 ///|
-pub impl Show for Bytes with output(self, logger) {
-  fn to_hex_digit(i : Int) -> Char {
-    if i < 10 {
-      Char::from_int('0'.to_int() + i)
-    } else {
-      Char::from_int('a'.to_int() + (i - 10))
-    }
+fn to_hex_digit(i : Int) -> Char {
+  if i < 10 {
+    Char::from_int(i + '0')
+  } else {
+    Char::from_int(i + 'a' - 10)
   }
+}
 
+///|
+test "to_hex_digit" {
+  inspect!(
+    Array::make(16, 0).mapi(fn { i, _ => to_hex_digit(i) }),
+    content="['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f']",
+  )
+}
+
+///|
+pub impl Show for Bytes with output(self, logger) {
   logger.write_string("b\"")
   for b in self {
     let byte = b.to_int()
@@ -92,14 +101,6 @@ pub impl Show for String with output(self, logger) {
       logger.write_substring(self, segment_start, i - segment_start)
     }
     segment_start = i + 1
-  }
-
-  fn to_hex_digit(i : Int) -> Char {
-    if i < 10 {
-      Char::from_int('0'.to_int() + i)
-    } else {
-      Char::from_int('a'.to_int() + (i - 10))
-    }
   }
 
   for i in 0..<self.length() {

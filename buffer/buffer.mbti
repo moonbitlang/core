@@ -15,12 +15,6 @@ fn reset(T) -> Unit
 
 fn to_bytes(T) -> Bytes
 
-#deprecated
-fn to_string(T) -> String
-
-#deprecated
-fn to_unchecked_string(T) -> String
-
 fn write_byte(T, Byte) -> Unit
 
 fn write_bytes(T, Bytes) -> Unit
@@ -47,9 +41,6 @@ fn write_iter(T, Iter[Byte]) -> Unit
 
 fn write_object(T, &Show) -> Unit
 
-#deprecated
-fn write_sub_string(T, String, Int, Int) -> Unit
-
 fn write_uint64_be(T, UInt64) -> Unit
 
 fn write_uint64_le(T, UInt64) -> Unit
@@ -64,14 +55,8 @@ impl T {
   contents(Self) -> Bytes
   is_empty(Self) -> Bool
   length(Self) -> Int
-  #deprecated
-  new(size_hint~ : Int = ..) -> Self
   reset(Self) -> Unit
   to_bytes(Self) -> Bytes
-  #deprecated
-  to_string(Self) -> String
-  #deprecated
-  to_unchecked_string(Self) -> String
   write_byte(Self, Byte) -> Unit
   write_bytes(Self, Bytes) -> Unit
   write_bytesview(Self, @bytes.View) -> Unit
@@ -85,8 +70,6 @@ impl T {
   write_int_le(Self, Int) -> Unit
   write_iter(Self, Iter[Byte]) -> Unit
   write_object(Self, &Show) -> Unit
-  #deprecated
-  write_sub_string(Self, String, Int, Int) -> Unit
   write_uint64_be(Self, UInt64) -> Unit
   write_uint64_le(Self, UInt64) -> Unit
   write_uint_be(Self, UInt) -> Unit
