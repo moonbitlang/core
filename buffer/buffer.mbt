@@ -584,7 +584,12 @@ pub fn write_bytes(self : T, value : Bytes) -> Unit {
 pub fn write_bytesview(self : T, value : @bytes.View) -> Unit {
   let val_len = value.length()
   self.grow_if_necessary(self.len + val_len)
-  self.data.blit_from_bytesview(self.len, value)
+  self.data.blit_from_bytes(
+    self.len,
+    value.data(),
+    value.start_offset_of_data(),
+    value.length(),
+  )
   self.len += val_len
 }
 
