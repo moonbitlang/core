@@ -1,0 +1,24 @@
+{
+  "configurations": [
+    {
+      "name": "Run Double Tests",
+      "type": "lldb",
+      "request": "launch",
+      "program": "${workspaceFolder}/target/llvm/debug/test/double/double.blackbox_test.exe",
+      "args": [
+        "cbrt_test.mbt:0-1",
+        "log_test.mbt:0-3",
+        "trig_nonjs_test.mbt:0-11",
+        "to_uint_test.mbt:0-1",
+        "hypot_test.mbt:0-1",
+        "trig_test.mbt:0-4",
+        "exp_test.mbt:0-4",
+        "double_test.mbt:0-9",
+        "hyperbolic_test.mbt:0-4",
+        "mod_test.mbt:0-1",
+        "round_test.mbt:0-4",
+        "pow_test.mbt:0-1"
+      ]
+    }
+  ]
+}
