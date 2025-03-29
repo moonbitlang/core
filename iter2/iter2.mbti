@@ -1,0 +1,22 @@
+package moonbitlang/core/iter2
+
+// Values
+fn each[A, B](Iter2[A, B], (A, B) -> Unit) -> Unit
+
+fn iter[A, B](Iter2[A, B]) -> Iter[(A, B)]
+
+fn iter2[A, B](Iter2[A, B]) -> Iter2[A, B]
+
+fn new[A, B](((A, B) -> IterResult) -> IterResult) -> Iter2[A, B]
+
+fn run[A, B](Iter2[A, B], (A, B) -> IterResult) -> IterResult
+
+fn to_array[A, B](Iter2[A, B]) -> Array[(A, B)]
+
+// Types and methods
+
+// Type aliases
+pub typealias T[X, Y] = Iter2[X, Y]
+
+// Traits
+
