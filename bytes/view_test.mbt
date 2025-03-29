@@ -461,12 +461,12 @@ test "BytesView::eq" {
 test "View::bytes" {
   let bytes = b"abcabc"
   let view = bytes[1:4]
-  @test.same_object!(view.bytes(), bytes)
+  @test.same_object!(view.data(), bytes)
 }
 
 ///|
 test "View::start" {
   let bytes = b"abcabc"
   let view = bytes[1:4]
-  inspect!(view.start(), content="1")
+  inspect!(view.start_of_data(), content="1")
 }
