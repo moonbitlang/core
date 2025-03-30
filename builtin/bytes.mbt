@@ -83,48 +83,6 @@ fn unsafe_sub_string(
 ) -> String = "$moonbit.unsafe_bytes_sub_string"
 
 ///|
-/// Return a new unchecked string, containing the subsequence of `self` that
-/// starts at `byte_offset` and has length `byte_length`.
-/// 
-#deprecated("Use `to_unchecked_string` instead")
-#coverage.skip
-pub fn Bytes::sub_string(
-  self : Bytes,
-  byte_offset : Int,
-  byte_length : Int
-) -> String {
-  self.to_unchecked_string(offset=byte_offset, length=byte_length)
-}
-
-///|
-/// Creates a new string from the given byte sequence without encoding
-/// validation. The byte sequence must be a valid UTF-16LE encoded string,
-/// otherwise the behavior is undefined.
-///
-/// Parameters:
-///
-/// * `bytes` : The byte sequence to be converted to a string. Must be a valid
-/// UTF-16LE encoded string.
-///
-/// Returns a string containing the decoded characters from the byte sequence.
-///
-/// Example:
-///
-/// ```moonbit
-/// test "Bytes::to_string" {
-///   let bytes = Bytes::of_string("Hello")
-///   let s = bytes.to_unchecked_string() // Use the new API instead
-///   inspect!(s, content="Hello")
-/// }
-/// ```
-///
-#deprecated("Use `to_unchecked_string` instead")
-#coverage.skip
-pub fn Bytes::to_string(self : Bytes) -> String {
-  self.to_unchecked_string(offset=0, length=self.length())
-}
-
-///|
 /// Return an unchecked string, containing the subsequence of `self` that starts at 
 /// `offset` and has length `length`. Both `offset` and `length` 
 /// are indexed by byte.
@@ -310,36 +268,6 @@ pub fn FixedArray::set_utf8_char(
       4
     }
     _ => abort("Char out of range")
-  }
-}
-
-///|
-/// Fill utf16 encoded char `value` into byte sequence `self`, starting at `offset`.
-/// It return the length of bytes has been written.
-/// @alert unsafe "Panic if the [value] is out of range"
-#deprecated("Use `set_utf16le_char` instead")
-#coverage.skip
-pub fn FixedArray::set_utf16_char(
-  self : FixedArray[Byte],
-  offset : Int,
-  value : Char
-) -> Int {
-  let code = value.to_uint()
-  if code < 0x10000 {
-    self[offset] = (code & 0xFF).to_byte()
-    self[offset + 1] = (code >> 8).to_byte()
-    2
-  } else if code < 0x110000 {
-    let hi = code - 0x10000
-    let lo = (hi >> 10) | 0xD800
-    let hi = (hi & 0x3FF) | 0xDC00
-    self[offset] = (lo & 0xFF).to_byte()
-    self[offset + 1] = (lo >> 8).to_byte()
-    self[offset + 2] = (hi & 0xFF).to_byte()
-    self[offset + 3] = (hi >> 8).to_byte()
-    4
-  } else {
-    abort("Char out of range")
   }
 }
 
