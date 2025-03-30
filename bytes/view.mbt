@@ -648,6 +648,6 @@ pub fn View::data(self : View) -> Bytes {
 
 ///|
 /// Retrieves the start index of the view.
-pub fn View::start_of_data(self : View) -> Int {
+pub fn View::start_offset(self : View) -> Int {
   self.start
 }
