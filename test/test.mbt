@@ -26,7 +26,7 @@ pub fn eq[T : Show + Eq](a : T, b : T, loc~ : SourceLoc = _) -> Unit! {
   if a != b {
     let a = debug_string(a)
     let b = debug_string(b)
-    fail!("FAILED: \{loc} `\{a} == \{b}`")
+    fail!("`\{a} == \{b}`", loc~)
   }
 }
 
@@ -37,7 +37,7 @@ pub fn ne[T : Show + Eq](a : T, b : T, loc~ : SourceLoc = _) -> Unit! {
   if not(a != b) {
     let a = debug_string(a)
     let b = debug_string(b)
-    fail!("FAILED: \{loc} `\{a} != \{b}`")
+    fail!("`\{a} != \{b}`", loc~)
   }
 }
 
@@ -47,7 +47,7 @@ pub fn ne[T : Show + Eq](a : T, b : T, loc~ : SourceLoc = _) -> Unit! {
 pub fn is_true(x : Bool, loc~ : SourceLoc = _) -> Unit! {
   if not(x) {
     let x = debug_string(x)
-    fail!("FAILED: \{loc} `\{x}` is not true")
+    fail!("`\{x}` is not true", loc~)
   }
 }
 
@@ -57,7 +57,7 @@ pub fn is_true(x : Bool, loc~ : SourceLoc = _) -> Unit! {
 pub fn is_false(x : Bool, loc~ : SourceLoc = _) -> Unit! {
   if x {
     let x = debug_string(x)
-    fail!("FAILED: \{loc}: `\{x}` is not false")
+    fail!("`\{x}` is not false", loc~)
   }
 }
 
@@ -81,7 +81,7 @@ pub fn same_object[T : Show](a : T, b : T, loc~ : SourceLoc = _) -> Unit! {
   if not(physical_equal(a, b)) {
     let a = debug_string(a)
     let b = debug_string(b)
-    fail!("FAILED: \{loc} `\{a} is \{b}`")
+    fail!("`\{a} is \{b}`", loc~)
   }
 }
 
@@ -105,7 +105,7 @@ pub fn is_not[T : Show](a : T, b : T, loc~ : SourceLoc = _) -> Unit! {
   if physical_equal(a, b) {
     let a = debug_string(a)
     let b = debug_string(b)
-    fail!("FAILED: \{loc} `not(\{a} is \{b})`")
+    fail!("`not(\{a} is \{b})`", loc~)
   }
 }
 
