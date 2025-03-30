@@ -18,13 +18,7 @@ impl[V : Eq] Eq for Node[V] with op_equal(self, other) {
 }
 
 ///|
-fn max(x : Int, y : Int) -> Int {
-  if x > y {
-    x
-  } else {
-    y
-  }
-}
+fnalias @math.maximum as max
 
 ///|
 fn height[V](node : Node[V]?) -> Int {
