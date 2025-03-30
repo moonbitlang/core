@@ -468,5 +468,5 @@ test "View::bytes" {
 test "View::start" {
   let bytes = b"abcabc"
   let view = bytes[1:4]
-  inspect!(view.start_of_data(), content="1")
+  inspect!(view.start_offset(), content="1")
 }

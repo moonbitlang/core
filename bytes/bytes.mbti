@@ -25,7 +25,7 @@ impl View {
   length(Self) -> Int
   op_as_view(Self, start~ : Int = .., end? : Int) -> Self
   op_get(Self, Int) -> Byte
-  start_of_data(Self) -> Int
+  start_offset(Self) -> Int
   to_double_be(Self) -> Double
   to_double_le(Self) -> Double
   to_float_be(Self) -> Float

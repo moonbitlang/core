@@ -587,7 +587,7 @@ pub fn write_bytesview(self : T, value : @bytes.View) -> Unit {
   self.data.blit_from_bytes(
     self.len,
     value.data(),
-    value.start_of_data(),
+    value.start_offset(),
     value.length(),
   )
   self.len += val_len
