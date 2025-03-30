@@ -3,7 +3,8 @@
     "moonbitlang/core/builtin",
     "moonbitlang/core/option",
     "moonbitlang/core/tuple",
-    "moonbitlang/core/quickcheck"
+    "moonbitlang/core/quickcheck",
+    "moonbitlang/core/math"
   ],
   "test-import": ["moonbitlang/core/array"]
 }
