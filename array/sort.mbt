@@ -13,6 +13,9 @@
 // limitations under the License.
 
 ///|
+fnalias @math.minimum
+
+///|
 /// Sorts the array in place.
 ///
 /// It's an in-place, unstable sort(it will reorder equal elements). The time complexity is O(n log n) in the worst case.
