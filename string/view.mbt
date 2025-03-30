@@ -129,8 +129,7 @@ pub fn View::char_length_ge(self : View, len : Int) -> Bool {
 
 ///|
 pub impl Show for View with output(self, logger) {
-  let substr = self.str.substring(start=self.start, end=self.end)
-  String::output(substr, logger)
+  self.str.unsafe_output_substring(logger, start=self.start, end=self.end)
 }
 
 ///|

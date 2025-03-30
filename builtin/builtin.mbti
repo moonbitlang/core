@@ -607,6 +607,7 @@ impl String {
   to_string(String) -> String
   unsafe_char_at(String, Int) -> Char
   unsafe_charcode_at(String, Int) -> Int
+  unsafe_output_substring(String, &Logger, start~ : Int = .., end~ : Int = ..) -> Unit
 }
 
 impl Option {

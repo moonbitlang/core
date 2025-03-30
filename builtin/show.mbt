@@ -94,50 +94,7 @@ pub impl Show for Bytes with output(self, logger) {
 
 ///|
 pub impl Show for String with output(self, logger) {
-  logger.write_char('"')
-  let mut segment_start = 0
-  fn flush_segment(i : Int) {
-    if i > segment_start {
-      logger.write_substring(self, segment_start, i - segment_start)
-    }
-    segment_start = i + 1
-  }
-
-  for i in 0..<self.length() {
-    match self.unsafe_charcode_at(i) {
-      '"' | '\\' as c => {
-        flush_segment(i)
-        logger..write_char('\\').write_char(Char::from_int(c))
-      }
-      '\n' => {
-        flush_segment(i)
-        logger.write_string("\\n")
-      }
-      '\r' => {
-        flush_segment(i)
-        logger.write_string("\\r")
-      }
-      '\b' => {
-        flush_segment(i)
-        logger.write_string("\\b")
-      }
-      '\t' => {
-        flush_segment(i)
-        logger.write_string("\\t")
-      }
-      code =>
-        if code < 0x20 {
-          flush_segment(i)
-          logger
-          ..write_char('\\')
-          ..write_char('x')
-          ..write_char(to_hex_digit(code / 16))
-          .write_char(to_hex_digit(code % 16))
-        }
-    }
-  }
-  flush_segment(self.length())
-  logger.write_char('"')
+  self.unsafe_output_substring(logger)
 }
 
 ///|
@@ -159,7 +116,7 @@ pub impl Show for String with to_string(self) {
 ///|
 pub impl Show for Failure with output(self, logger) {
   let Failure(msg) = self
-  "Failure(\{msg})".output(logger)
+  "Failure(\{msg})".unsafe_output_substring(logger)
 }
 
 ///|

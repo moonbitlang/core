@@ -124,3 +124,56 @@ fn UInt::output_size_hint(radix~ : Int = 10) -> Int {
 fn UInt64::output_size_hint(radix~ : Int = 10) -> Int {
   Int64::output_size_hint(radix~)
 }
+
+///|
+pub fn String::unsafe_output_substring(
+  self : String,
+  logger : &Logger,
+  start~ : Int = 0,
+  end~ : Int = self.length()
+) -> Unit {
+  logger.write_char('"')
+  let mut segment_start = 0
+  fn flush_segment(i : Int) {
+    if i > segment_start {
+      logger.write_substring(self, segment_start, i - segment_start)
+    }
+    segment_start = i + 1
+  }
+
+  for i in start..<end {
+    match self.unsafe_charcode_at(i) {
+      '"' | '\\' as c => {
+        flush_segment(i)
+        logger..write_char('\\').write_char(Char::from_int(c))
+      }
+      '\n' => {
+        flush_segment(i)
+        logger.write_string("\\n")
+      }
+      '\r' => {
+        flush_segment(i)
+        logger.write_string("\\r")
+      }
+      '\b' => {
+        flush_segment(i)
+        logger.write_string("\\b")
+      }
+      '\t' => {
+        flush_segment(i)
+        logger.write_string("\\t")
+      }
+      code =>
+        if code < 0x20 {
+          flush_segment(i)
+          logger
+          ..write_char('\\')
+          ..write_char('x')
+          ..write_char(to_hex_digit(code / 16))
+          .write_char(to_hex_digit(code % 16))
+        }
+    }
+  }
+  flush_segment(self.length())
+  logger.write_char('"')
+}
