@@ -1,6 +1,8 @@
-package moonbitlang/core/hashmap
+package "moonbitlang/core/hashmap"
 
-alias @moonbitlang/core/quickcheck as @quickcheck
+import(
+  "moonbitlang/core/quickcheck"
+)
 
 // Values
 fn capacity[K, V](T[K, V]) -> Int

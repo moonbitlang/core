@@ -1,6 +1,8 @@
-package moonbitlang/core/deque
+package "moonbitlang/core/deque"
 
-alias @moonbitlang/core/json as @json
+import(
+  "moonbitlang/core/json"
+)
 
 // Values
 fn back[A](T[A]) -> A?

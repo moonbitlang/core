@@ -1,4 +1,4 @@
-package moonbitlang/core/immut/internal/sparse_array
+package "moonbitlang/core/immut/internal/sparse_array"
 
 // Values
 fn add[X](SparseArray[X], Int, X) -> SparseArray[X]
