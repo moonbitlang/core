@@ -9,5 +9,6 @@
     "env_js.mbt": ["js"],
     "env_native.mbt": ["native"]
   },
+  "native-stub": ["native_stub.c"],
   "warn-list": "-29"
 }
