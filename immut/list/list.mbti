@@ -1,7 +1,9 @@
-package moonbitlang/core/immut/list
+package "moonbitlang/core/immut/list"
 
-alias @moonbitlang/core/json as @json
-alias @moonbitlang/core/quickcheck as @quickcheck
+import(
+  "moonbitlang/core/json"
+  "moonbitlang/core/quickcheck"
+)
 
 // Values
 fn add[A](T[A], A) -> T[A]

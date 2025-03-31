@@ -1,4 +1,4 @@
-package moonbitlang/core/random/internal/random_source
+package "moonbitlang/core/random/internal/random_source"
 
 // Values
 
@@ -11,11 +11,11 @@ impl ChaCha8 {
 }
 
 pub(all) struct State {
-  buffer : FixedArray[UInt64]
-  seed : FixedArray[UInt64]
-  i : UInt
-  n : UInt
-  c : UInt
+  mut buffer : FixedArray[UInt64]
+  mut seed : FixedArray[UInt64]
+  mut i : UInt
+  mut n : UInt
+  mut c : UInt
 }
 impl State {
   next(Self) -> (UInt64, Bool)

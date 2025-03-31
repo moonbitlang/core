@@ -1,4 +1,4 @@
-package moonbitlang/core/bytes
+package "moonbitlang/core/bytes"
 
 // Values
 fn default() -> Bytes

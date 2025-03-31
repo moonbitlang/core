@@ -1,4 +1,4 @@
-package moonbitlang/core/int64
+package "moonbitlang/core/int64"
 
 // Values
 fn abs(Int64) -> Int64

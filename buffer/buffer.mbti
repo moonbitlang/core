@@ -1,6 +1,8 @@
-package moonbitlang/core/buffer
+package "moonbitlang/core/buffer"
 
-alias @moonbitlang/core/bytes as @bytes
+import(
+  "moonbitlang/core/bytes"
+)
 
 // Values
 fn contents(T) -> Bytes

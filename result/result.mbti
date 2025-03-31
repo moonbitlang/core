@@ -1,6 +1,8 @@
-package moonbitlang/core/result
+package "moonbitlang/core/result"
 
-alias @moonbitlang/core/quickcheck as @quickcheck
+import(
+  "moonbitlang/core/quickcheck"
+)
 
 // Values
 fn bind[T, E, U](Result[T, E], (T) -> Result[U, E]) -> Result[U, E]
