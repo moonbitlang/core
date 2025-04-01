@@ -33,12 +33,9 @@ test {
   assert_eq!(map.get("a"), Some(1))
   assert_eq!(map.get_or_default("a", 0), 1)
   assert_eq!(map.get_or_default("b", 0), 0)
-  inspect!(
-    map,
-    content=
-      #|{"a": 1}
-    ,
-  )
+  @json.inspect!(map, content={ "a": 1 })
+  map.set("a", 2) // duplicate key
+  @json.inspect!(map, content={ "a": 2 })
 }
 ```
 
