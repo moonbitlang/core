@@ -1,4 +1,4 @@
-package moonbitlang/core/prelude
+package "moonbitlang/core/prelude"
 
 // Values
 fn abort[T](String) -> T

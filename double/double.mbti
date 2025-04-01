@@ -1,4 +1,4 @@
-package moonbitlang/core/double
+package "moonbitlang/core/double"
 
 // Values
 fn abs(Double) -> Double

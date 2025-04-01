@@ -1,4 +1,4 @@
-package moonbitlang/core/builtin
+package "moonbitlang/core/builtin"
 
 // Values
 fn abort[T](String) -> T
