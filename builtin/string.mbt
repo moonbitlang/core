@@ -148,16 +148,16 @@ pub fn String::unsafe_char_at(self : String, index : Int) -> Char {
 ///
 /// This method counts actual Unicode characters, properly handling surrogate pairs
 /// that represent single characters like emojis. For the raw UTF-16 code unit count,
-/// use `code_unit_length()` instead.
+/// use `length()` instead.
 ///
 /// # Examples
 ///
 /// ```
 /// let s = "Hello🤣";
-/// inspect!(s.codepoint_length(), content = "6"); // 6 actual characters
-/// inspect!(s.charcode_length(), content = "7");  // 5 ASCII chars + 2 surrogate pairs
+/// inspect!(s.char_length(), content = "6"); // 6 actual characters
+/// inspect!(s.length(), content = "7");  // 5 ASCII chars + 2 surrogate pairs
 /// ```
-pub fn String::codepoint_length(
+pub fn String::char_length(
   self : String,
   start_offset~ : Int = 0,
   end_offset~ : Int = self.length()
@@ -182,6 +182,16 @@ pub fn String::codepoint_length(
   } else {
     char_count
   }
+}
+
+///|
+#deprecated("Use `char_length` instead.")
+pub fn String::codepoint_length(
+  self : String,
+  start_offset~ : Int = 0,
+  end_offset~ : Int = self.length()
+) -> Int {
+  self.char_length(start_offset~, end_offset~)
 }
 
 ///|

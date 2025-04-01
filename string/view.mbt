@@ -108,7 +108,7 @@ pub fn View::charcode_at(self : View, index : Int) -> Int {
 /// Note this has O(n) complexity where n is the length of the code points in 
 /// the view.
 pub fn View::char_length(self : View) -> Int {
-  self.str.codepoint_length(start_offset=self.start, end_offset=self.end)
+  self.str.char_length(start_offset=self.start, end_offset=self.end)
 }
 
 ///|
