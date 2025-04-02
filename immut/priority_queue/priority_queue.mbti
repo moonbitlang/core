@@ -54,6 +54,7 @@ impl T {
 impl[A : Compare] Eq for T[A]
 impl[A : Hash + Compare] Hash for T[A]
 impl[A : Show + Compare] Show for T[A]
+impl[A : ToJson + Compare] ToJson for T[A]
 impl[X : @quickcheck.Arbitrary + Compare] @quickcheck.Arbitrary for T[X]
 
 // Type aliases

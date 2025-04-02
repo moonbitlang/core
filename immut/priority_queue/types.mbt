@@ -24,3 +24,15 @@ priv enum Node[A] {
   Leaf(A)
   Branch(A, left~ : Node[A], right~ : Node[A])
 }
+
+///|
+pub impl[A : ToJson + Compare] ToJson for T[A] with to_json(self : T[A]) {
+  // note here iter requires Compare 
+  // This requires some investigation 
+  // CR: this syntax feels less intuitive
+  let output : Array[Json] = []
+  for item in self {
+    output.push(item.to_json())
+  }
+  Json::array(output)
+}
