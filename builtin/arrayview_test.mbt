@@ -161,3 +161,21 @@ test "panic negative index8" {
   let _ = arr[-1:-3]
 
 }
+
+///|
+test "fixedarray_as_view" {
+  let arr : FixedArray[Int] = [1, 2, 3, 4, 5]
+  inspect!(arr[:], content="[1, 2, 3, 4, 5]")
+  inspect!(arr[1:], content="[2, 3, 4, 5]")
+  inspect!(arr[1:3], content="[2, 3]")
+  inspect!(arr[:4], content="[1, 2, 3, 4]")
+  inspect!(arr[-1:], content="[5]")
+  inspect!(arr[:-2], content="[1, 2, 3]")
+  let arr2 : FixedArray[_] = [[0], [1], [2], [3], [4]]
+  inspect!(arr2[:], content="[[0], [1], [2], [3], [4]]")
+  inspect!(arr2[1:], content="[[1], [2], [3], [4]]")
+  inspect!(arr2[1:3], content="[[1], [2]]")
+  inspect!(arr2[:4], content="[[0], [1], [2], [3]]")
+  inspect!(arr2[-1:], content="[[4]]")
+  inspect!(arr2[:-2], content="[[0], [1], [2]]")
+}

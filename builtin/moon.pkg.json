@@ -31,6 +31,8 @@
     "double_to_int64_native.mbt": ["native"],
     "double_to_int64_wasm.mbt": ["wasm", "wasm-gc"],
     "double_to_int.mbt": ["not", "wasm", "wasm-gc"],
-    "double_to_int_wasm.mbt": ["wasm", "wasm-gc"]
+    "double_to_int_wasm.mbt": ["wasm", "wasm-gc"],
+    "arrayview_nonwasmgc.mbt": ["not", "wasm-gc"],
+    "arrayview_wasmgc.mbt": ["wasm-gc"]
   }
 }
