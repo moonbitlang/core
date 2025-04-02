@@ -1,3 +1,6 @@
 {
-  "import": ["moonbitlang/core/builtin", "moonbitlang/core/bool"]
+  "import": ["moonbitlang/core/builtin", "moonbitlang/core/bool"],
+  "test-import": [
+    "moonbitlang/core/prelude"
+  ]
 }

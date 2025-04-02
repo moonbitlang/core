@@ -5,6 +5,9 @@
     "moonbitlang/core/quickcheck",
     "moonbitlang/core/json"
   ],
+  "test-import": [
+    "moonbitlang/core/prelude"
+  ],
   "targets": {
     "panic_test.mbt": ["not", "native"]
   }
