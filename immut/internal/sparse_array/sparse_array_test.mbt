@@ -37,6 +37,29 @@ test "SparseArray" {
 }
 
 ///|
+test "SparseArray::union" {
+  let arr1 = @sparse_array.singleton(0, 0)
+    .add(1, 1)
+    .add(3, 3)
+    .add(4, 4)
+    .add(5, 5)
+  let arr2 = @sparse_array.singleton(1, 10).add(2, 2).add(4, 40).add(31, 31)
+  let arr3 = arr1.union(arr2, fn(_x, y) { y })
+  inspect!(
+    [
+      (arr3.has(0), arr3[0]),
+      (arr3.has(1), arr3[1]),
+      (arr3.has(2), arr3[2]),
+      (arr3.has(3), arr3[3]),
+      (arr3.has(4), arr3[4]),
+      (arr3.has(5), arr3[5]),
+      (arr3.has(31), arr3[31]),
+    ],
+    content="[(true, Some(0)), (true, Some(10)), (true, Some(2)), (true, Some(3)), (true, Some(40)), (true, Some(5)), (true, Some(31))]",
+  )
+}
+
+///|
 test "SparseArray::iter" {
   let arr = @sparse_array.singleton(0, 0).add(1, 1).add(3, 3).add(31, 31)
   let buf = StringBuilder::new(size_hint=0)

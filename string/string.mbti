@@ -1,4 +1,4 @@
-package moonbitlang/core/string
+package "moonbitlang/core/string"
 
 // Values
 fn concat(Array[String], separator~ : String = ..) -> String

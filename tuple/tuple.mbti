@@ -1,6 +1,8 @@
-package moonbitlang/core/tuple
+package "moonbitlang/core/tuple"
 
-alias @moonbitlang/core/quickcheck as @quickcheck
+import(
+  "moonbitlang/core/quickcheck"
+)
 
 // Values
 fn curry[T, U, V]((T, U) -> V) -> (T) -> (U) -> V

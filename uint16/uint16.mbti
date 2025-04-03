@@ -1,4 +1,4 @@
-package moonbitlang/core/uint16
+package "moonbitlang/core/uint16"
 
 // Values
 let max_value : UInt16

@@ -1,4 +1,4 @@
-package moonbitlang/core/builtin
+package "moonbitlang/core/builtin"
 
 // Values
 fn abort[T](String) -> T
@@ -591,11 +591,13 @@ impl Double {
 }
 
 impl String {
+  char_length(String, start_offset~ : Int = .., end_offset~ : Int = ..) -> Int
   charcode_at(String, Int) -> Int
   #deprecated
   charcode_length(String) -> Int
   #deprecated
   codepoint_at(String, Int) -> Char
+  #deprecated
   codepoint_length(String, start_offset~ : Int = .., end_offset~ : Int = ..) -> Int
   escape(String) -> String
   #deprecated

@@ -1,4 +1,4 @@
-package moonbitlang/core/strconv
+package "moonbitlang/core/strconv"
 
 // Values
 fn parse[A : FromStr](String) -> A!StrConvError

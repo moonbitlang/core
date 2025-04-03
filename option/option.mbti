@@ -1,6 +1,8 @@
-package moonbitlang/core/option
+package "moonbitlang/core/option"
 
-alias @moonbitlang/core/quickcheck as @quickcheck
+import(
+  "moonbitlang/core/quickcheck"
+)
 
 // Values
 fn bind[T, U](T?, (T) -> U?) -> U?
