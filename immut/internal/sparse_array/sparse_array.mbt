@@ -22,6 +22,11 @@ pub(all) struct SparseArray[X] {
 } derive(Eq)
 
 ///|
+pub fn empty[X]() -> SparseArray[X] {
+  { elem_info: empty_bitset, data: [] }
+}
+
+///|
 pub fn singleton[X](idx : Int, value : X) -> SparseArray[X] {
   { elem_info: empty_bitset.add(idx), data: [value] }
 }
@@ -59,6 +64,42 @@ pub fn add[X](self : SparseArray[X], idx : Int, value : X) -> SparseArray[X] {
     dst_offset=pos_of_new_item + 1,
   )
   { elem_info: self.elem_info.add(idx), data: new_data }
+}
+
+///|
+/// `union(self: SparseArray[X], other: SparseArray[X]) -> SparseArray[X]`
+/// 
+/// Combine two sparse arrays into one.
+pub fn union[X](
+  self : SparseArray[X],
+  other : SparseArray[X],
+  union : (X, X) -> X
+) -> SparseArray[X] {
+  let un = self.elem_info.union(other.elem_info)
+  let diff = self.elem_info.difference(other.elem_info)
+  let new_len = un.size()
+  if new_len == 0 {
+    empty()
+  } else {
+    // the total length of 2 sparse arrays is not 0
+    // so it's safe to use the first element of either array
+    let init = if self.data.is_empty() { other.data[0] } else { self.data[0] }
+    let new_data = FixedArray::make(new_len, init)
+    for i in diff.iter() {
+      new_data[un.index_of(i)] = self.data[self.elem_info.index_of(i)]
+    }
+    for i in other.elem_info.iter() {
+      new_data[un.index_of(i)] = if self.elem_info.has(i) {
+        union(
+          self.data[self.elem_info.index_of(i)],
+          other.data[other.elem_info.index_of(i)],
+        )
+      } else {
+        other.data[other.elem_info.index_of(i)]
+      }
+    }
+    { elem_info: un, data: new_data }
+  }
 }
 
 ///|
