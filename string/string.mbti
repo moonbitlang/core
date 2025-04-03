@@ -74,13 +74,26 @@ fn to_upper(String) -> String
 
 fn trim(String, String) -> String
 
+#deprecated
 fn trim_end(String, String) -> String
+
+fn trim_end_by[S : StringLike, P : CharPredicate](S, P) -> StringView
+
+fn trim_prefix[S1 : StringLike, S2 : StringLike](S1, S2) -> StringView
 
 fn trim_space(String) -> String
 
+#deprecated
 fn trim_start(String, String) -> String
 
+fn trim_start_by[S : StringLike, P : CharPredicate](S, P) -> StringView
+
+fn trim_suffix[S1 : StringLike, S2 : StringLike](S1, S2) -> StringView
+
 // Types and methods
+pub(all) type CharFn (Char) -> Bool
+impl CharPredicate for CharFn
+
 type StringIndex
 impl Eq for StringIndex
 impl Show for StringIndex
@@ -107,10 +120,15 @@ impl StringView {
   #deprecated
   rev_get(Self, Int) -> Char
   rev_iter(Self) -> Iter[Char]
+  trim_end_by[P : CharPredicate](Self, P) -> Self
+  trim_prefix[S : StringLike](Self, S) -> Self
+  trim_start_by[P : CharPredicate](Self, P) -> Self
+  trim_suffix[S : StringLike](Self, S) -> Self
 }
 impl Compare for StringView
 impl Eq for StringView
 impl Show for StringView
+impl StringLike for StringView
 
 impl String {
   char_at(String, Int) -> Char
@@ -158,9 +176,15 @@ impl String {
   to_lower(String) -> String
   to_upper(String) -> String
   trim(String, String) -> String
+  #deprecated
   trim_end(String, String) -> String
+  trim_end_by[P : CharPredicate](String, P) -> StringView
+  trim_prefix[S : StringLike](String, S) -> StringView
   trim_space(String) -> String
+  #deprecated
   trim_start(String, String) -> String
+  trim_start_by[P : CharPredicate](String, P) -> StringView
+  trim_suffix[S : StringLike](String, S) -> StringView
   view(String, start_offset~ : Int = .., end_offset~ : Int = ..) -> StringView
 }
 impl Compare for String
@@ -170,4 +194,10 @@ impl Default for String
 pub typealias View = StringView
 
 // Traits
+trait CharPredicate
+impl CharPredicate for Char
+impl CharPredicate for Array[Char]
+
+trait StringLike
+impl StringLike for String
 
