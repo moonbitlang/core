@@ -73,6 +73,7 @@ fn head[A](T[A]) -> A?
 #deprecated
 fn head_exn[A](T[A]) -> A
 
+#deprecated
 fn init_[A](T[A]) -> T[A]
 
 fn intercalate[A](T[T[A]], T[A]) -> T[A]
@@ -206,6 +207,7 @@ impl T {
   head[A](Self[A]) -> A?
   #deprecated
   head_exn[A](Self[A]) -> A
+  #deprecated
   init_[A](Self[A]) -> Self[A]
   intercalate[A](Self[Self[A]], Self[A]) -> Self[A]
   intersperse[A](Self[A], A) -> Self[A]
