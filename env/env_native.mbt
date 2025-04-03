@@ -72,14 +72,8 @@ fn utf8_bytes_to_mbt_string(bytes : Bytes) -> String {
 }
 
 ///|
-extern "c" fn time(ptr : Int) -> UInt64 = "time"
-
-///|
-fn now_internal() -> UInt64 {
-  // time returns seconds since 1970-01-01 00:00:00 UTC
-  // to be consistent with other backends, we convert to milliseconds
-  time(0) * 1000
-}
+/// Returns the number of milliseconds since the epoch (1970-01-01T00:00:00Z).
+extern "c" fn now_internal() -> UInt64 = "now_internal"
 
 ///|
 extern "c" fn getcwd(ptr : Bytes, size : Int) -> Int = "getcwd"
