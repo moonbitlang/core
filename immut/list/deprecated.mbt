@@ -22,6 +22,28 @@ pub fn T::from_json[A : @json.FromJson](
 }
 
 ///|
+/// Init of the list.
+///
+/// # Example
+///
+/// ```
+/// assert_eq!(@list.of([1, 2, 3, 4, 5]).init_(), @list.of([1, 2, 3, 4]))
+/// ```
+#deprecated
+#coverage.skip
+pub fn init_[A](self : T[A]) -> T[A] {
+  fn aux(self) {
+    match self {
+      Nil => Nil
+      Cons(_, Nil) => Nil
+      Cons(head, tail) => Cons(head, aux(tail))
+    }
+  }
+
+  aux(self)
+}
+
+///|
 /// Compares two lists for equality.
 ///
 /// # Example
