@@ -296,22 +296,6 @@ pub fn last[A](self : T[A]) -> A? {
 }
 
 ///|
-/// Init of the list.
-///
-/// # Example
-///
-/// ```
-/// assert_eq!(@list.of([1, 2, 3, 4, 5]).init_(), @list.of([1, 2, 3, 4]))
-/// ```
-pub fn init_[A](self : T[A]) -> T[A] {
-  match self {
-    Nil => Nil
-    Cons(_, Nil) => Nil
-    Cons(head, tail) => Cons(head, init_(tail))
-  }
-}
-
-///|
 /// Concatenate two lists.
 ///
 /// # Example
