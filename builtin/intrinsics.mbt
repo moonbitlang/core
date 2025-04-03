@@ -1752,7 +1752,7 @@ pub fn String::charcode_length(self : String) -> Int = "%string_length"
 /// ```
 ///
 /// @alert unsafe "Panic if index is out of bounds"
-pub fn String::op_get(self : String, idx : Int) -> Char = "%string_get"
+pub fn String::op_get(self : String, idx : Int) -> Int = "%string_get"
 
 ///|
 /// Retrieves the character at the specified index in a string.
