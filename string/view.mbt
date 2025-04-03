@@ -190,3 +190,39 @@ pub fn View::rev_iter(self : View) -> Iter[Char] {
     }
   })
 }
+
+///|
+/// Compares two views for equality. Returns true only if both views
+/// have the same length and contain identical characters in the same order.
+pub impl Eq for View with op_equal(self, other) {
+  let len = self.len()
+  guard len == other.len() else { return false }
+  for i in 0..<len {
+    guard self.str.unsafe_charcode_at(self.start + i) ==
+      other.str.unsafe_charcode_at(other.start + i) else {
+      return false
+    }
+
+  }
+  true
+}
+
+///|
+/// Views are ordered lexicographically by their charcodes(code unit). This 
+/// orders Unicode characters based on their positions in the code charts. This is
+/// not necessarily the same as "alphabetical" order, which varies by language
+/// and locale.
+pub impl Compare for View with compare(self, other) {
+  let self_len = self.len()
+  let other_len = other.len()
+  let cmp = self_len.compare(other_len)
+  guard cmp == 0 else { return cmp }
+  for i in 0..<self_len {
+    let cmp = self.str
+      .unsafe_charcode_at(self.start + i)
+      .compare(other.str.unsafe_charcode_at(other.start + i))
+    guard cmp == 0 else { return cmp }
+
+  }
+  0
+}

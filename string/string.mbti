@@ -108,6 +108,8 @@ impl StringView {
   rev_get(Self, Int) -> Char
   rev_iter(Self) -> Iter[Char]
 }
+impl Compare for StringView
+impl Eq for StringView
 impl Show for StringView
 
 impl String {
