@@ -87,9 +87,10 @@ pub fn concat(strings : Array[String], separator~ : String = "") -> String {
 }
 
 ///|
-/// Compare two strings.
-/// String with longer length is bigger.
-/// strings of the same length are compared in lexicalgraphic order.
+/// Strings are ordered lexicographically by their charcodes(code unit). This 
+/// orders Unicode characters based on their positions in the code charts. This is
+/// not necessarily the same as "alphabetical" order, which varies by language
+/// and locale.
 pub impl Compare for String with compare(self, other) {
   let len = self.length()
   match len.compare(other.length()) {
