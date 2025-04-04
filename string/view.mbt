@@ -197,6 +197,9 @@ pub fn View::rev_iter(self : View) -> Iter[Char] {
 pub impl Eq for View with op_equal(self, other) {
   let len = self.len()
   guard len == other.len() else { return false }
+  if physical_equal(self.str, other.str) && self.start == other.start {
+    return true
+  }
   for i in 0..<len {
     guard self.str.unsafe_charcode_at(self.start + i) ==
       other.str.unsafe_charcode_at(other.start + i) else {
@@ -217,6 +220,9 @@ pub impl Compare for View with compare(self, other) {
   let other_len = other.len()
   let cmp = self_len.compare(other_len)
   guard cmp == 0 else { return cmp }
+  if physical_equal(self.str, other.str) && self.start == other.start {
+    return 0
+  }
   for i in 0..<self_len {
     let cmp = self.str
       .unsafe_charcode_at(self.start + i)
