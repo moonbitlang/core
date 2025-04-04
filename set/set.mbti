@@ -1,0 +1,54 @@
+package moonbitlang/core/set
+
+// Values
+fn add[K : Hash + Eq](Set[K], K) -> Unit
+
+fn add_and_check[K : Hash + Eq](Set[K], K) -> Bool
+
+fn capacity[K](Set[K]) -> Int
+
+fn clear[K](Set[K]) -> Unit
+
+fn contains[K : Hash + Eq](Set[K], K) -> Bool
+
+fn difference[K : Hash + Eq](Set[K], Set[K]) -> Set[K]
+
+fn each[K](Set[K], (K) -> Unit) -> Unit
+
+fn eachi[K](Set[K], (Int, K) -> Unit) -> Unit
+
+fn from_array[K : Hash + Eq](Array[K]) -> Set[K]
+
+fn from_iter[K : Hash + Eq](Iter[K]) -> Set[K]
+
+fn intersection[K : Hash + Eq](Set[K], Set[K]) -> Set[K]
+
+fn is_empty[K](Set[K]) -> Bool
+
+fn iter[K](Set[K]) -> Iter[K]
+
+fn new[K](capacity~ : Int = ..) -> Set[K]
+
+fn of[K : Hash + Eq](FixedArray[K]) -> Set[K]
+
+fn remove[K : Hash + Eq](Set[K], K) -> Unit
+
+fn remove_and_check[K : Hash + Eq](Set[K], K) -> Bool
+
+fn size[K](Set[K]) -> Int
+
+fn symmetric_difference[K : Hash + Eq](Set[K], Set[K]) -> Set[K]
+
+fn to_array[K](Set[K]) -> Array[K]
+
+fn to_json[X : ToJson](Set[X]) -> Json
+
+fn union[K : Hash + Eq](Set[K], Set[K]) -> Set[K]
+
+// Types and methods
+
+// Type aliases
+pub typealias T[K] = Set[K]
+
+// Traits
+
