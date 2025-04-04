@@ -1,6 +1,8 @@
-package moonbitlang/core/sorted_set
+package "moonbitlang/core/sorted_set"
 
-alias @moonbitlang/core/quickcheck as @quickcheck
+import(
+  "moonbitlang/core/quickcheck"
+)
 
 // Values
 fn add[V : Compare](T[V], V) -> Unit

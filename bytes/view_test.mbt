@@ -456,3 +456,17 @@ test "BytesView::eq" {
   inspect!(bytes[0:3] == bytes[2:5], content="false")
   inspect!(bytes[0:4] == bytes[3:6], content="false")
 }
+
+///|
+test "View::bytes" {
+  let bytes = b"abcabc"
+  let view = bytes[1:4]
+  @test.same_object!(view.data(), bytes)
+}
+
+///|
+test "View::start" {
+  let bytes = b"abcabc"
+  let view = bytes[1:4]
+  inspect!(view.start_offset(), content="1")
+}

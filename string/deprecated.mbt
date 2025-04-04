@@ -49,7 +49,7 @@ fn index_at_(
 ) -> StringIndex? {
   if self.offset_of_nth_char(offset_by, start_offset=start._) is Some(index) {
     Some(index)
-  } else if offset_by == self.codepoint_length(start_offset=start._) {
+  } else if offset_by == self.char_length(start_offset=start._) {
     Some(self.length())
   } else {
     None

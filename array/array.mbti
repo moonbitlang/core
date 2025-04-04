@@ -1,7 +1,9 @@
-package moonbitlang/core/array
+package "moonbitlang/core/array"
 
-alias @moonbitlang/core/bytes as @bytes
-alias @moonbitlang/core/quickcheck as @quickcheck
+import(
+  "moonbitlang/core/bytes"
+  "moonbitlang/core/quickcheck"
+)
 
 // Values
 fn copy[T](Array[T]) -> Array[T]

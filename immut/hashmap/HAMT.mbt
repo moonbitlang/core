@@ -195,6 +195,26 @@ pub fn size[K, V](self : T[K, V]) -> Int {
 }
 
 ///|
+/// Union two hashmaps
+pub fn union[K : Eq + Hash, V](self : T[K, V], other : T[K, V]) -> T[K, V] {
+  match (self, other) {
+    (_, Empty) => self
+    (Empty, _) => other
+    (_, Leaf(k, v)) => self.add(k, v)
+    (Leaf(k, v), _) =>
+      // right-hand side element is prioritized
+      // like Clojure's merge
+      match other.find(k) {
+        Some(_) => other
+        None => other.add(k, v)
+      }
+    (Branch(sa1), Branch(sa2)) =>
+      Branch(sa1.union(sa2, fn(m1, m2) { m1.union(m2) }))
+    (_, _) => self.iter().fold(init=other, fn(m, kv) { m.add(kv.0, kv.1) })
+  }
+}
+
+///|
 /// Iterate through the elements in a hash map
 pub fn each[K, V](self : T[K, V], f : (K, V) -> Unit) -> Unit {
   match self {

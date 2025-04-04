@@ -1,4 +1,4 @@
-package moonbitlang/core/test
+package "moonbitlang/core/test"
 
 // Values
 #deprecated

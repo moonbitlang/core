@@ -1,4 +1,4 @@
-package moonbitlang/core/uint
+package "moonbitlang/core/uint"
 
 // Values
 fn default() -> UInt

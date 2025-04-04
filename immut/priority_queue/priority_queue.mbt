@@ -21,7 +21,7 @@
 /// assert_eq!(queue.push(1).length(), 1)
 /// ```
 pub fn new[A : Compare]() -> T[A] {
-  { body: Empty, len: 0 }
+  { node: Empty, size: 0 }
 }
 
 ///|
@@ -32,37 +32,30 @@ pub fn new[A : Compare]() -> T[A] {
 /// let queue = @priority_queue.of([1, 2, 3, 4, 5])
 /// assert_eq!(queue.length(), 5)
 /// ```
-pub fn from_array[A : Compare](arr : Array[A]) -> T[A] {
-  let len = arr.length()
-  for i = 0, acc = Cont::Empty {
-    if i < len {
-      continue i + 1, meld(acc, Node(arr[i], Nil))
-    } else {
-      break { body: acc, len: arr.length() }
-    }
+pub fn from_array[A : Compare](array : Array[A]) -> T[A] {
+  let mut pq = new()
+  for i in 0..<array.length() {
+    pq = pq.push(array[i])
   }
+  pq
 }
 
 ///|
 pub fn to_array[A : Compare](self : T[A]) -> Array[A] {
   let arr : Array[A] = []
-  fn go(x : Cont[A]) {
-    match x {
-      Node(v, child) => {
-        arr.push(v)
-        loop child {
-          Nil => ()
-          Cons(x, xs) => {
-            go(x)
-            continue xs
-          }
-        }
+  fn go(x : T[A]) {
+    match x.node {
+      Empty => return
+      Leaf(a) => arr.push(a)
+      Branch(a, left=l, right=r) => {
+        arr.push(a)
+        go(l)
+        go(r)
       }
-      Empty => ()
     }
   }
 
-  go(self.body)
+  go(self)
   arr.sort_by(fn(x, y) { if x < y { 1 } else { -1 } })
   arr
 }
@@ -87,29 +80,6 @@ pub fn T::from_iter[A : Compare](iter : Iter[A]) -> T[A] {
 }
 
 ///|
-fn meld[A : Compare](l : Cont[A], r : Cont[A]) -> Cont[A] {
-  match (l, r) {
-    (Empty, _) => r
-    (_, Empty) => l
-    (Node(x, left), Node(y, right)) =>
-      if x > y {
-        Node(x, Cons(r, left))
-      } else {
-        Node(y, Cons(l, right))
-      }
-  }
-}
-
-///|
-fn merges[A : Compare](x : @list.T[Cont[A]]) -> Cont[A] {
-  loop x, Empty {
-    Nil, acc => acc
-    Cons(t, Nil), acc => meld(t, acc)
-    Cons(t1, Cons(t2, rest)), acc => continue rest, meld(meld(t1, t2), acc)
-  }
-}
-
-///|
 /// Pops the first value from the immutable priority queue, which returns None if the queue is empty.
 ///
 /// # Example
@@ -119,9 +89,99 @@ fn merges[A : Compare](x : @list.T[Cont[A]]) -> Cont[A] {
 /// assert_eq!(first, Some(@priority_queue.of([1, 2, 3])))
 /// ```
 pub fn pop[A : Compare](self : T[A]) -> T[A]? {
-  match self.body {
+  match self.node {
     Empty => None
-    Node(_, ts) => Some({ body: merges(ts), len: self.len - 1 })
+    Leaf(_) => Some({ node: Empty, size: 0 })
+    Branch(_) => {
+      let value = self.find_element()
+      let temp = self.delet_leaf()
+      Some(temp.change_element(value).down(value))
+    }
+  }
+}
+
+///|
+fn change_element[A : Compare](self : T[A], value : A) -> T[A] {
+  {
+    node: match self.node {
+      Empty => Empty
+      Leaf(_) => Leaf(value)
+      Branch(_, left~, right~) => Branch(value, left~, right~)
+    },
+    size: self.size,
+  }
+}
+
+///|
+fn find_element[A : Compare](self : T[A]) -> A {
+  match self.node {
+    Empty => abort("Priority queue is empty!")
+    Leaf(a) => a
+    Branch(_, left=l, right=r) =>
+      if r.size == 0 {
+        l.top()
+      } else {
+        let deep = deepth(self.size)
+        let full_right = (1 << (deep - 2)) - 1
+        if r.size == full_right {
+          l.find_element()
+        } else {
+          r.find_element()
+        }
+      }
+  }
+}
+
+///|
+fn delet_leaf[A : Compare](self : T[A]) -> T[A] {
+  match self.node {
+    Empty => abort("Priority queue is empty!")
+    Leaf(_) => { node: Empty, size: 0 }
+    Branch(a, left=l, right=r) =>
+      if r.size == 0 {
+        { node: Leaf(a), size: 1 }
+      } else {
+        let deep = deepth(self.size)
+        let full_right = (1 << (deep - 2)) - 1
+        if r.size == full_right {
+          { node: Branch(a, left=l.delet_leaf(), right=r), size: self.size - 1 }
+        } else {
+          { node: Branch(a, left=l, right=r.delet_leaf()), size: self.size - 1 }
+        }
+      }
+  }
+}
+
+///|
+fn down[A : Compare](self : T[A], value : A) -> T[A] {
+  match self.node {
+    Empty => { node: Empty, size: 0 }
+    Leaf(_) => { node: Leaf(value), size: 1 }
+    Branch(_, left=l, right=r) =>
+      if (r.size == 0 && l.top() <= value) ||
+        (value >= l.top() && value >= r.top()) {
+        { node: Branch(value, left=l, right=r), size: self.size }
+      } else if r.size == 0 && l.top() > value {
+        {
+          node: Branch(l.top(), left={ node: Leaf(value), size: 1 }, right={
+            node: Empty,
+            size: 0,
+          }),
+          size: self.size,
+        }
+      } else if l.top() < r.top() {
+        { node: Branch(r.top(), left=l, right=r.down(value)), size: self.size }
+      } else {
+        { node: Branch(l.top(), left=l.down(value), right=r), size: self.size }
+      }
+  }
+}
+
+///|
+fn deepth(num : Int) -> Int {
+  loop num, 0 {
+    0, cnt => cnt
+    n, cnt => continue n >> 1, cnt + 1
   }
 }
 
@@ -136,9 +196,14 @@ pub fn pop[A : Compare](self : T[A]) -> T[A]? {
 /// assert_eq!(first, @priority_queue.of([1, 2, 3]))
 /// ```
 pub fn unsafe_pop[A : Compare](self : T[A]) -> T[A] {
-  match self.body {
-    Empty => abort("The ImmutablePriorityQueue is empty!")
-    Node(_, ts) => { body: merges(ts), len: self.len - 1 }
+  match self.node {
+    Empty => abort("Priority queue is empty!")
+    Leaf(_) => { node: Empty, size: 0 }
+    Branch(_) => {
+      let value = self.find_element()
+      let temp = self.delet_leaf()
+      temp.change_element(value).down(value)
+    }
   }
 }
 
@@ -158,7 +223,61 @@ pub fn pop_exn[A : Compare](self : T[A]) -> T[A] {
 /// assert_eq!(queue.push(1).length(), 1)
 /// ```
 pub fn push[A : Compare](self : T[A], value : A) -> T[A] {
-  { body: meld(self.body, Node(value, Nil)), len: self.len + 1 }
+  match self.node {
+    Empty => { node: Leaf(value), size: 1 }
+    Leaf(a) =>
+      {
+        node: Branch(
+          @math.maximum(a, value),
+          left={ node: Leaf(@math.minimum(a, value)), size: 1 },
+          right={ node: Empty, size: 0 },
+        ),
+        size: 2,
+      }
+    Branch(a, left=l, right=r) =>
+      if r.size == 0 {
+        {
+          node: Branch(@math.maximum(a, value), left=l, right={
+            node: Leaf(@math.minimum(a, value)),
+            size: 1,
+          }),
+          size: 3,
+        }
+      } else {
+        let deep = deepth(self.size)
+        let full = (1 << (deep - 1)) - 1
+        if (l.size == full && r.size == full) || l.size < full {
+          let ll = l.push(value)
+          {
+            node: if value > a {
+              Branch(value, left=ll.change_element(a), right=r)
+            } else {
+              Branch(a, left=ll, right=r)
+            },
+            size: self.size + 1,
+          }
+        } else {
+          let rr = r.push(value)
+          {
+            node: if value > a {
+              Branch(value, left=l, right=rr.change_element(a))
+            } else {
+              Branch(a, left=l, right=rr)
+            },
+            size: self.size + 1,
+          }
+        }
+      }
+  }
+}
+
+///|
+fn top[A : Compare](self : T[A]) -> A {
+  match self.node {
+    Empty => abort("Empty")
+    Leaf(a) => a
+    Branch(a, ..) => a
+  }
 }
 
 ///|
@@ -170,9 +289,10 @@ pub fn push[A : Compare](self : T[A], value : A) -> T[A] {
 /// assert_eq!(queue.peek(), Some(4))
 /// ```
 pub fn peek[A](self : T[A]) -> A? {
-  match self.body {
+  match self.node {
     Empty => None
-    Node(v, _) => Some(v)
+    Leaf(a) => Some(a)
+    Branch(a, ..) => Some(a)
   }
 }
 
@@ -186,7 +306,7 @@ pub fn peek[A](self : T[A]) -> A? {
 /// assert_eq!(queue.push(1).is_empty(), false)
 /// ```
 pub fn is_empty[A](self : T[A]) -> Bool {
-  self.body is Empty
+  self.node is Empty
 }
 
 ///|
@@ -199,19 +319,16 @@ pub fn is_empty[A](self : T[A]) -> Bool {
 /// assert_eq!(queue.push(1).length(), 1)
 /// ```
 pub fn length[A](self : T[A]) -> Int {
-  self.len
+  self.size
 }
 
 ///|
 pub fn of[A : Compare](arr : FixedArray[A]) -> T[A] {
-  let len = arr.length()
-  for i = 0, acc = Cont::Empty {
-    if i < len {
-      continue i + 1, meld(acc, Node(arr[i], Nil))
-    } else {
-      break { body: acc, len: arr.length() }
-    }
+  let mut pq = new()
+  for i in 0..<arr.length() {
+    pq = pq.push(arr[i])
   }
+  pq
 }
 
 ///|
@@ -241,25 +358,4 @@ pub impl[A : Hash + Compare] Hash for T[A] with hash_combine(self, hasher) {
   for e in self {
     hasher.combine(e)
   }
-}
-
-///|
-test "meld" {
-  inspect!(meld(Empty, of([1]).body), content="Node(1, @list.of([]))")
-  inspect!(meld(of([1]).body, Empty), content="Node(1, @list.of([]))")
-  inspect!(
-    meld(of([1]).body, of([2]).body),
-    content="Node(2, @list.of([Node(1, @list.of([]))]))",
-  )
-}
-
-///|
-test "merges" {
-  inspect!(
-    match merges((Nil : @list.T[Cont[Int]])) {
-      Empty => true
-      _ => false
-    },
-    content="true",
-  )
 }

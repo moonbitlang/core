@@ -528,3 +528,131 @@ test "utf16 indexed view" {
   inspect!(v7, content="")
   inspect!(v7.char_length(), content="0")
 }
+
+///|
+test "op_equal" {
+  let str = "012301230123"
+  inspect!(str.view() == str.view(), content="true")
+  inspect!(str.view() == str.view(start_offset=1), content="false")
+  inspect!(
+    str.view(start_offset=0, end_offset=4) ==
+    str.view(start_offset=4, end_offset=8),
+    content="true",
+  )
+  inspect!(
+    str.view(start_offset=0, end_offset=4) ==
+    str.view(start_offset=8, end_offset=12),
+    content="true",
+  )
+  inspect!(
+    str.view(start_offset=0, end_offset=3) ==
+    str.view(start_offset=4, end_offset=7),
+    content="true",
+  )
+  inspect!(
+    str.view(start_offset=0, end_offset=3) ==
+    str.view(start_offset=0, end_offset=4),
+    content="false",
+  )
+
+  // Test with surrogate pairs
+  let emoji_str = "🤣abc🤣def"
+  inspect!(
+    emoji_str.view(start_offset=0, end_offset=2) ==
+    emoji_str.view(start_offset=5, end_offset=7),
+    content="true",
+  )
+  inspect!(
+    emoji_str.view(start_offset=2, end_offset=5) ==
+    emoji_str.view(start_offset=7, end_offset=10),
+    content="false",
+  )
+  inspect!(
+    emoji_str.view(start_offset=0, end_offset=5) ==
+    emoji_str.view(start_offset=5, end_offset=10),
+    content="false",
+  )
+
+  // Test empty views
+  inspect!(
+    str.view(start_offset=0, end_offset=0) ==
+    str.view(start_offset=4, end_offset=4),
+    content="true",
+  )
+  inspect!(
+    str.view(start_offset=0, end_offset=0) ==
+    str.view(start_offset=0, end_offset=1),
+    content="false",
+  )
+
+  // Test views from different strings
+  let str1 = "bcabc"
+  let str2 = "abcabc"
+  inspect!(str1.view() == str2.view(), content="false")
+  inspect!(str1.view() == str2.view(start_offset=1), content="true")
+}
+
+///|
+test "stringview compare" {
+  let str = "abcabc"
+
+  // Test equal views
+  inspect!(
+    str
+    .view(start_offset=0, end_offset=3)
+    .compare(str.view(start_offset=3, end_offset=6)),
+    content="0",
+  )
+
+  // Test lexicographically smaller view
+  inspect!(
+    str
+    .view(start_offset=0, end_offset=3)
+    .compare(str.view(start_offset=2, end_offset=5)),
+    content="-1",
+  )
+
+  // Test lexicographically larger view
+  inspect!(
+    str
+    .view(start_offset=1, end_offset=4)
+    .compare(str.view(start_offset=3, end_offset=6)),
+    content="1",
+  )
+
+  // Test different length views
+  inspect!(
+    str
+    .view(start_offset=0, end_offset=3)
+    .compare(str.view(start_offset=0, end_offset=4)),
+    content="-1",
+  )
+  inspect!(
+    str
+    .view(start_offset=1, end_offset=5)
+    .compare(str.view(start_offset=2, end_offset=5)),
+    content="1",
+  )
+
+  // Test with surrogate pairs
+  let emoji_str = "🤣abc🤣def"
+  inspect!(
+    emoji_str
+    .view(start_offset=0, end_offset=5)
+    .compare(emoji_str.view(start_offset=5, end_offset=10)),
+    content="-1",
+  )
+
+  // Test empty views
+  inspect!(
+    str
+    .view(start_offset=0, end_offset=0)
+    .compare(str.view(start_offset=4, end_offset=4)),
+    content="0",
+  )
+
+  // Test views from different strings with same content
+  let str1 = "bcabc"
+  let str2 = "abcabc"
+  inspect!(str1.view().compare(str2.view(start_offset=1)), content="0")
+}

@@ -1,6 +1,8 @@
-package moonbitlang/core/quickcheck
+package "moonbitlang/core/quickcheck"
 
-alias @moonbitlang/core/quickcheck/splitmix as @splitmix
+import(
+  "moonbitlang/core/quickcheck/splitmix"
+)
 
 // Values
 fn gen[T : Arbitrary](size? : Int, state? : @splitmix.RandomState) -> T

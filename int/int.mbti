@@ -1,4 +1,4 @@
-package moonbitlang/core/int
+package "moonbitlang/core/int"
 
 // Values
 fn abs(Int) -> Int

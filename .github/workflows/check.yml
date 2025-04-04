@@ -74,12 +74,24 @@ jobs:
         if: ${{ matrix.os == 'windows-latest' }}
         uses: ilammy/msvc-dev-cmd@v1
 
-      - name: Run moon test on Windows
+      - name: Run moon test on Windows (--target all)
         if: ${{ matrix.os == 'windows-latest' }}
         run: |
           moon test --target all
+
+      - name: Run moon test on Windows (--release + --target all)
+        if: ${{ matrix.os == 'windows-latest' }}
+        run: |
           moon test --release --target all
+      
+      - name: Run moon test on Windows (--target native)
+        if: ${{ matrix.os == 'windows-latest' }}
+        run: |
           moon test --target native
+      
+      - name: Run moon test on Windows (--release + --target native)
+        if: ${{ matrix.os == 'windows-latest' }}
+        run: |
           moon test --target native --release
 
       - name: moon test --doc
@@ -207,12 +219,24 @@ jobs:
         if: ${{ matrix.os == 'windows-latest' }}
         uses: ilammy/msvc-dev-cmd@v1
 
-      - name: Run moon test on Windows
+      - name: Run moon test on Windows (--target all)
         if: ${{ matrix.os == 'windows-latest' }}
         run: |
           moon test --target all
+
+      - name: Run moon test on Windows (--release + --target all)
+        if: ${{ matrix.os == 'windows-latest' }}
+        run: |
           moon test --release --target all
+      
+      - name: Run moon test on Windows (--target native)
+        if: ${{ matrix.os == 'windows-latest' }}
+        run: |
           moon test --target native
+      
+      - name: Run moon test on Windows (--release + --target native)
+        if: ${{ matrix.os == 'windows-latest' }}
+        run: |
           moon test --target native --release
 
       - name: Test new allocator

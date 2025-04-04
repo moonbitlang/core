@@ -1,7 +1,9 @@
-package moonbitlang/core/immut/sorted_map
+package "moonbitlang/core/immut/sorted_map"
 
-alias @moonbitlang/core/json as @json
-alias @moonbitlang/core/quickcheck as @quickcheck
+import(
+  "moonbitlang/core/json"
+  "moonbitlang/core/quickcheck"
+)
 
 // Values
 fn add[K : Compare, V](T[K, V], K, V) -> T[K, V]

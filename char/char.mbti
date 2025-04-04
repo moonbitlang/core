@@ -1,4 +1,4 @@
-package moonbitlang/core/char
+package "moonbitlang/core/char"
 
 // Values
 fn is_ascii(Char) -> Bool

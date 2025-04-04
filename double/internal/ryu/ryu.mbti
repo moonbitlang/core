@@ -1,4 +1,4 @@
-package moonbitlang/core/double/internal/ryu
+package "moonbitlang/core/double/internal/ryu"
 
 // Values
 fn ryu_to_string(Double) -> String

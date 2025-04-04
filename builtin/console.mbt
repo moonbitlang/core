@@ -112,7 +112,7 @@ fn base64_encode(data : FixedArray[Byte]) -> String {
 ///|
 fn base64_encode_string_codepoint(s : String) -> String {
   // the input string is expected to be valid utf-16 string
-  let codepoint_length = s.codepoint_length()
+  let codepoint_length = s.char_length()
   let data : FixedArray[Byte] = FixedArray::make(codepoint_length * 4, 0)
   for i = 0, utf16_index = 0
       i < codepoint_length
