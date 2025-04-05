@@ -21,7 +21,7 @@
 /// assert_eq!(queue.push(1).length(), 1)
 /// ```
 pub fn new[A : Compare]() -> T[A] {
-  { node: Empty, size: 0 }
+  Empty
 }
 
 ///|
@@ -44,10 +44,10 @@ pub fn from_array[A : Compare](array : Array[A]) -> T[A] {
 pub fn to_array[A : Compare](self : T[A]) -> Array[A] {
   let arr : Array[A] = []
   fn go(x : T[A]) {
-    match x.node {
+    match x {
       Empty => return
       Leaf(a) => arr.push(a)
-      Branch(a, left=l, right=r) => {
+      Branch(a, left=l, right=r, ..) => {
         arr.push(a)
         go(l)
         go(r)
@@ -89,9 +89,9 @@ pub fn T::from_iter[A : Compare](iter : Iter[A]) -> T[A] {
 /// assert_eq!(first, Some(@priority_queue.of([1, 2, 3])))
 /// ```
 pub fn pop[A : Compare](self : T[A]) -> T[A]? {
-  match self.node {
+  match self {
     Empty => None
-    Leaf(_) => Some({ node: Empty, size: 0 })
+    Leaf(_) => Some(Empty)
     Branch(_) => {
       let value = self.find_element()
       let temp = self.delet_leaf()
@@ -102,77 +102,73 @@ pub fn pop[A : Compare](self : T[A]) -> T[A]? {
 
 ///|
 fn change_element[A : Compare](self : T[A], value : A) -> T[A] {
-  {
-    node: match self.node {
-      Empty => Empty
-      Leaf(_) => Leaf(value)
-      Branch(_, left~, right~) => Branch(value, left~, right~)
-    },
-    size: self.size,
+  match self {
+    Empty => Empty
+    Leaf(_) => Leaf(value)
+    Branch(_, left~, right~, size~) => Branch(value, left~, right~, size~)
+  }
+}
+
+///|
+fn size[A](self : T[A]) -> Int {
+  match self {
+    Empty => 0
+    Leaf(_) => 1
+    Branch(_, size~, ..) => size
   }
 }
 
 ///|
 fn find_element[A : Compare](self : T[A]) -> A {
-  match self.node {
+  match self {
     Empty => abort("Priority queue is empty!")
     Leaf(a) => a
-    Branch(_, left=l, right=r) =>
-      if r.size == 0 {
-        l.top()
+    Branch(_, left~, right=Empty, ..) => left.top()
+    Branch(_, left=l, right=r, size~) => {
+      let deep = deepth(size)
+      let full_right = (1 << (deep - 2)) - 1
+      if r.size() == full_right {
+        l.find_element()
       } else {
-        let deep = deepth(self.size)
-        let full_right = (1 << (deep - 2)) - 1
-        if r.size == full_right {
-          l.find_element()
-        } else {
-          r.find_element()
-        }
+        r.find_element()
       }
+    }
   }
 }
 
 ///|
 fn delet_leaf[A : Compare](self : T[A]) -> T[A] {
-  match self.node {
+  match self {
     Empty => abort("Priority queue is empty!")
-    Leaf(_) => { node: Empty, size: 0 }
-    Branch(a, left=l, right=r) =>
-      if r.size == 0 {
-        { node: Leaf(a), size: 1 }
+    Leaf(_) => Empty
+    Branch(a, right=Empty, ..) => Leaf(a)
+    Branch(a, left=l, right=r, size~) => {
+      let deep = deepth(size)
+      let full_right = (1 << (deep - 2)) - 1
+      if r.size() == full_right {
+        Branch(a, left=l.delet_leaf(), right=r, size=size - 1)
       } else {
-        let deep = deepth(self.size)
-        let full_right = (1 << (deep - 2)) - 1
-        if r.size == full_right {
-          { node: Branch(a, left=l.delet_leaf(), right=r), size: self.size - 1 }
-        } else {
-          { node: Branch(a, left=l, right=r.delet_leaf()), size: self.size - 1 }
-        }
+        Branch(a, left=l, right=r.delet_leaf(), size=size - 1)
       }
+    }
   }
 }
 
 ///|
 fn down[A : Compare](self : T[A], value : A) -> T[A] {
-  match self.node {
-    Empty => { node: Empty, size: 0 }
-    Leaf(_) => { node: Leaf(value), size: 1 }
-    Branch(_, left=l, right=r) =>
-      if (r.size == 0 && l.top() <= value) ||
+  match self {
+    Empty => Empty
+    Leaf(_) => Leaf(value)
+    Branch(_, left=l, right=r, size~) =>
+      if (r is Empty && l.top() <= value) ||
         (value >= l.top() && value >= r.top()) {
-        { node: Branch(value, left=l, right=r), size: self.size }
-      } else if r.size == 0 && l.top() > value {
-        {
-          node: Branch(l.top(), left={ node: Leaf(value), size: 1 }, right={
-            node: Empty,
-            size: 0,
-          }),
-          size: self.size,
-        }
+        Branch(value, left=l, right=r, size~)
+      } else if r is Empty && l.top() > value {
+        Branch(l.top(), left=Leaf(value), right=Empty, size~)
       } else if l.top() < r.top() {
-        { node: Branch(r.top(), left=l, right=r.down(value)), size: self.size }
+        Branch(r.top(), left=l, right=r.down(value), size~)
       } else {
-        { node: Branch(l.top(), left=l.down(value), right=r), size: self.size }
+        Branch(l.top(), left=l.down(value), right=r, size~)
       }
   }
 }
@@ -196,9 +192,9 @@ fn deepth(num : Int) -> Int {
 /// assert_eq!(first, @priority_queue.of([1, 2, 3]))
 /// ```
 pub fn unsafe_pop[A : Compare](self : T[A]) -> T[A] {
-  match self.node {
+  match self {
     Empty => abort("Priority queue is empty!")
-    Leaf(_) => { node: Empty, size: 0 }
+    Leaf(_) => Empty
     Branch(_) => {
       let value = self.find_element()
       let temp = self.delet_leaf()
@@ -223,57 +219,47 @@ pub fn pop_exn[A : Compare](self : T[A]) -> T[A] {
 /// assert_eq!(queue.push(1).length(), 1)
 /// ```
 pub fn push[A : Compare](self : T[A], value : A) -> T[A] {
-  match self.node {
-    Empty => { node: Leaf(value), size: 1 }
+  match self {
+    Empty => Leaf(value)
     Leaf(a) =>
-      {
-        node: Branch(
-          @math.maximum(a, value),
-          left={ node: Leaf(@math.minimum(a, value)), size: 1 },
-          right={ node: Empty, size: 0 },
-        ),
-        size: 2,
-      }
-    Branch(a, left=l, right=r) =>
-      if r.size == 0 {
-        {
-          node: Branch(@math.maximum(a, value), left=l, right={
-            node: Leaf(@math.minimum(a, value)),
-            size: 1,
-          }),
-          size: 3,
+      Branch(
+        @math.maximum(a, value),
+        left=Leaf(@math.minimum(a, value)),
+        right=Empty,
+        size=2,
+      )
+    Branch(a, left=l, right=Empty, ..) =>
+      Branch(
+        @math.maximum(a, value),
+        left=l,
+        right=Leaf(@math.minimum(a, value)),
+        size=3,
+      )
+    Branch(a, left=l, right=r, size~) => {
+      let deep = deepth(size)
+      let full = (1 << (deep - 1)) - 1
+      if (l.size() == full && r.size() == full) || l.size() < full {
+        let ll = l.push(value)
+        if value > a {
+          Branch(value, left=ll.change_element(a), right=r, size=size + 1)
+        } else {
+          Branch(a, left=ll, right=r, size=size + 1)
         }
       } else {
-        let deep = deepth(self.size)
-        let full = (1 << (deep - 1)) - 1
-        if (l.size == full && r.size == full) || l.size < full {
-          let ll = l.push(value)
-          {
-            node: if value > a {
-              Branch(value, left=ll.change_element(a), right=r)
-            } else {
-              Branch(a, left=ll, right=r)
-            },
-            size: self.size + 1,
-          }
+        let rr = r.push(value)
+        if value > a {
+          Branch(value, left=l, right=rr.change_element(a), size=size + 1)
         } else {
-          let rr = r.push(value)
-          {
-            node: if value > a {
-              Branch(value, left=l, right=rr.change_element(a))
-            } else {
-              Branch(a, left=l, right=rr)
-            },
-            size: self.size + 1,
-          }
+          Branch(a, left=l, right=rr, size=size + 1)
         }
       }
+    }
   }
 }
 
 ///|
 fn top[A : Compare](self : T[A]) -> A {
-  match self.node {
+  match self {
     Empty => abort("Empty")
     Leaf(a) => a
     Branch(a, ..) => a
@@ -289,7 +275,7 @@ fn top[A : Compare](self : T[A]) -> A {
 /// assert_eq!(queue.peek(), Some(4))
 /// ```
 pub fn peek[A](self : T[A]) -> A? {
-  match self.node {
+  match self {
     Empty => None
     Leaf(a) => Some(a)
     Branch(a, ..) => Some(a)
@@ -306,7 +292,7 @@ pub fn peek[A](self : T[A]) -> A? {
 /// assert_eq!(queue.push(1).is_empty(), false)
 /// ```
 pub fn is_empty[A](self : T[A]) -> Bool {
-  self.node is Empty
+  self is Empty
 }
 
 ///|
@@ -319,7 +305,7 @@ pub fn is_empty[A](self : T[A]) -> Bool {
 /// assert_eq!(queue.push(1).length(), 1)
 /// ```
 pub fn length[A](self : T[A]) -> Int {
-  self.size
+  self.size()
 }
 
 ///|
