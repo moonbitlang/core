@@ -282,3 +282,69 @@ pub fn is_numeric(self : Char) -> Bool {
   | '\u{1F100}'..='\u{1F10C}'
   | '\u{1FBF0}'..='\u{1FBF9}')
 }
+
+///| Returns true if this character is printable (visible when displayed).
+/// Aligns with Unicode standard categories for printable characters.
+/// Characters are considered printable if they are:
+/// - Letters (L*)
+/// - Marks (M*)
+/// - Numbers (N*)
+/// - Punctuation (P*)
+/// - Symbols (S*)
+/// - Spaces (Zs), with some exceptions
+/// Characters are considered non-printable if they are:
+/// - Control characters (Cc)
+/// - Format characters (Cf)
+/// - Line/paragraph separators (Zl, Zp)
+/// - Private use (Co)
+/// - Unassigned (Cn)
+/// - Surrogates (Cs)
+pub fn is_printable(self : Char) -> Bool {
+  // Check for control characters (Cc)
+  if self.is_control() {
+    return false
+  }
+
+  // Private use areas (Co)
+  if self >= '\u{E000}' && self <= '\u{F8FF}' {
+    return false
+  }
+
+  // Format characters (Cf) - main ranges
+  if (self >= '\u{200B}' && self <= '\u{200F}') || // Zero-width, directional marks
+    (self >= '\u{202A}' && self <= '\u{202E}') || // Directional formatting
+    (self >= '\u{2060}' && self <= '\u{2064}') || // Word joiners, invisible operators
+    (self >= '\u{FFF9}' && self <= '\u{FFFB}') || // Interlinear annotations
+    // Additional format characters
+    (self >= '\u{FE00}' && self <= '\u{FE0F}') || // Variation selectors
+    (self >= '\u{E0100}' && self <= '\u{E01EF}') || // Variation selectors supplement
+    (self >= '\u{180B}' && self <= '\u{180E}') || // Mongolian format controls
+    self == '\u{061C}' || // Arabic letter mark
+    self == '\u{FEFF}' || // Byte order mark
+    self == '\u{110BD}' || // Kaithi number sign
+    self == '\u{1BCA0}' ||
+    self == '\u{1BCA1}' ||
+    self == '\u{1BCA2}' ||
+    self == '\u{1BCA3}' || // Shorthand format controls
+    self == '\u{1D173}' ||
+    self == '\u{1D174}' ||
+    self == '\u{1D175}' ||
+    self == '\u{1D176}' ||
+    self == '\u{1D177}' ||
+    self == '\u{1D178}' ||
+    self == '\u{1D179}' ||
+    self == '\u{1D17A}' {
+    return false
+  } // Musical format controls
+
+  // Line and paragraph separators (Zl, Zp)
+  if self == '\u{2028}' || self == '\u{2029}' {
+    return false
+  }
+
+  // Specific other non-printable characters
+  if self == '\u{00AD}' { // Soft hyphen
+    return false
+  }
+  true
+}

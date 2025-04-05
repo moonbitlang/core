@@ -311,3 +311,70 @@ test "is_whitespace" {
   assert_true!('\u{A0}'.is_whitespace())
   assert_false!('越'.is_whitespace())
 }
+
+///|
+test "is_printable" {
+  // Printable ASCII characters
+  let uppercase_a = 'A'
+  let lowercase_a = 'a'
+  let digit = '0'
+  let punctuation = '!'
+  let space = ' '
+
+  // Non-printable ASCII characters
+  let null = '\u{0000}'
+  let escape = '\u{001B}'
+  let delete = '\u{007F}'
+
+  // Printable Unicode characters
+  let emoji = '😀'
+  let chinese = '中'
+  let arabic = 'ا'
+  let russian = 'Я'
+  let greek = 'Ω'
+  let tamil = 'க'
+  let symbol = '♥'
+  let math = '∑'
+  let currency = '€'
+
+  // Non-printable Unicode characters
+  let zero_width_space = '\u{200B}'
+  let left_to_right_mark = '\u{200E}'
+  let private_use = '\u{E000}'
+  let word_joiner = '\u{2060}'
+  let variation_selector = '\u{FE00}'
+  let soft_hyphen = '\u{00AD}'
+  let musical_format = '\u{1D173}'
+  let paragraph_separator = '\u{2029}'
+  let byte_order_mark = '\u{FEFF}'
+
+  // Test printable characters
+  assert_true!(uppercase_a.is_printable())
+  assert_true!(lowercase_a.is_printable())
+  assert_true!(digit.is_printable())
+  assert_true!(punctuation.is_printable())
+  assert_true!(space.is_printable())
+  assert_true!(emoji.is_printable())
+  assert_true!(chinese.is_printable())
+  assert_true!(arabic.is_printable())
+  assert_true!(russian.is_printable())
+  assert_true!(greek.is_printable())
+  assert_true!(tamil.is_printable())
+  assert_true!(symbol.is_printable())
+  assert_true!(math.is_printable())
+  assert_true!(currency.is_printable())
+
+  // Test non-printable characters
+  assert_false!(null.is_printable())
+  assert_false!(escape.is_printable())
+  assert_false!(delete.is_printable())
+  assert_false!(zero_width_space.is_printable())
+  assert_false!(left_to_right_mark.is_printable())
+  assert_false!(private_use.is_printable())
+  assert_false!(word_joiner.is_printable())
+  assert_false!(variation_selector.is_printable())
+  assert_false!(soft_hyphen.is_printable())
+  assert_false!(musical_format.is_printable())
+  assert_false!(paragraph_separator.is_printable())
+  assert_false!(byte_order_mark.is_printable())
+}
