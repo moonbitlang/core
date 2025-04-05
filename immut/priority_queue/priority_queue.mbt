@@ -34,8 +34,8 @@ pub fn new[A : Compare]() -> T[A] {
 /// ```
 pub fn from_array[A : Compare](array : Array[A]) -> T[A] {
   let mut pq = new()
-  for i in 0..<array.length() {
-    pq = pq.push(array[i])
+  for x in array {
+    pq = pq.push(x)
   }
   pq
 }
@@ -56,27 +56,17 @@ pub fn to_array[A : Compare](self : T[A]) -> Array[A] {
   }
 
   go(self)
-  arr.sort_by(fn(x, y) { if x < y { 1 } else { -1 } })
-  arr
+  arr..sort_by(fn(x, y) { y.compare(x) })
 }
 
 ///|
 pub fn iter[A : Compare](self : T[A]) -> Iter[A] {
-  Iter::new(fn(yield_) {
-    let arr = self.to_array()
-    for i in 0..<arr.length() {
-      if yield_(arr[i]) == IterEnd {
-        break IterEnd
-      }
-    } else {
-      IterContinue
-    }
-  })
+  self.to_array().iter()
 }
 
 ///|
 pub fn T::from_iter[A : Compare](iter : Iter[A]) -> T[A] {
-  iter.fold(init=new(), fn(s, e) { s.push(e) })
+  iter.fold(init=new(), push)
 }
 
 ///|
@@ -93,53 +83,52 @@ pub fn pop[A : Compare](self : T[A]) -> T[A]? {
     Empty => None
     Leaf(_) => Some(Empty)
     Branch(_) => {
-      let (value, temp) = self.find_element_and_delet_leaf()
-      Some(temp.change_element(value).down(value))
+      let (value, temp) = self.remove_last_leaf()
+      Some(temp.change_and_down(value))
     }
   }
 }
 
 ///|
-fn change_element[A : Compare](self : T[A], value : A) -> T[A] {
-  match self {
-    Empty => Empty
-    Leaf(_) => Leaf(value)
-    Branch(_, left~, right~, size~) => Branch(value, left~, right~, size~)
-  }
-}
-
-///|
-fn find_element_and_delet_leaf[A : Compare](self : T[A]) -> (A, T[A]) {
+fn remove_last_leaf[A : Compare](self : T[A]) -> (A, T[A]) {
   match self {
     Empty => abort("Priority queue is empty!")
     Leaf(a) => (a, Empty)
-    Branch(a, left~, right=Empty, ..) => (left.top(), Leaf(a))
+    Branch(a, left=Leaf(l_top), right=Empty, ..) => (l_top, Leaf(a))
     Branch(a, left=l, right=r, size~) =>
       if last_leaf_in_left(size) {
-        let (e, ld) = l.find_element_and_delet_leaf()
+        let (e, ld) = l.remove_last_leaf()
         (e, Branch(a, left=ld, right=r, size=size - 1))
       } else {
-        let (e, rd) = r.find_element_and_delet_leaf()
+        let (e, rd) = r.remove_last_leaf()
         (e, Branch(a, left=l, right=rd, size=size - 1))
       }
   }
 }
 
 ///|
-fn down[A : Compare](self : T[A], value : A) -> T[A] {
+/// require: self is not empty
+fn change_and_down[A : Compare](self : T[A], value : A) -> T[A] {
   match self {
-    Empty => Empty
+    Empty => abort("unreachable")
     Leaf(_) => Leaf(value)
     Branch(_, left=l, right=r, size~) =>
-      if (r is Empty && l.top() <= value) ||
-        (value >= l.top() && value >= r.top()) {
-        Branch(value, left=l, right=r, size~)
-      } else if r is Empty && l.top() > value {
-        Branch(l.top(), left=Leaf(value), right=Empty, size~)
-      } else if l.top() < r.top() {
-        Branch(r.top(), left=l, right=r.down(value), size~)
-      } else {
-        Branch(l.top(), left=l.down(value), right=r, size~)
+      match (l, r) {
+        (Leaf(l_top), Empty) =>
+          if value >= l_top {
+            Branch(value, left=l, right=Empty, size~)
+          } else {
+            Branch(l_top, left=Leaf(value), right=Empty, size~)
+          }
+        (Branch(l_top, ..) | Leaf(l_top), Branch(r_top, ..) | Leaf(r_top)) =>
+          if value >= l_top && value >= r_top {
+            Branch(value, left=l, right=r, size~)
+          } else if l_top >= r_top {
+            Branch(l_top, left=l.change_and_down(value), right=r, size~)
+          } else {
+            Branch(r_top, left=l, right=r.change_and_down(value), size~)
+          }
+        _ => abort("unreachable")
       }
   }
 }
@@ -169,8 +158,8 @@ pub fn unsafe_pop[A : Compare](self : T[A]) -> T[A] {
     Empty => abort("Priority queue is empty!")
     Leaf(_) => Empty
     Branch(_) => {
-      let (value, temp) = self.find_element_and_delet_leaf()
-      temp.change_element(value).down(value)
+      let (value, temp) = self.remove_last_leaf()
+      temp.change_and_down(value)
     }
   }
 }
@@ -193,47 +182,19 @@ pub fn pop_exn[A : Compare](self : T[A]) -> T[A] {
 pub fn push[A : Compare](self : T[A], value : A) -> T[A] {
   match self {
     Empty => Leaf(value)
-    Leaf(a) =>
-      Branch(
-        @math.maximum(a, value),
-        left=Leaf(@math.minimum(a, value)),
-        right=Empty,
-        size=2,
-      )
-    Branch(a, left=l, right=Empty, ..) =>
-      Branch(
-        @math.maximum(a, value),
-        left=l,
-        right=Leaf(@math.minimum(a, value)),
-        size=3,
-      )
+    Leaf(a) => {
+      let (high, low) = if a > value { (a, value) } else { (value, a) }
+      Branch(high, left=Leaf(low), right=Empty, size=2)
+    }
     Branch(a, left=l, right=r, size=old_size) => {
+      let (high, low) = if a > value { (a, value) } else { (value, a) }
       let size = old_size + 1
       if last_leaf_in_left(size) {
-        let ll = l.push(value)
-        if value > a {
-          Branch(value, left=ll.change_element(a), right=r, size~)
-        } else {
-          Branch(a, left=ll, right=r, size~)
-        }
+        Branch(high, left=l.push(low), right=r, size~)
       } else {
-        let rr = r.push(value)
-        if value > a {
-          Branch(value, left=l, right=rr.change_element(a), size~)
-        } else {
-          Branch(a, left=l, right=rr, size~)
-        }
+        Branch(high, left=l, right=r.push(low), size~)
       }
     }
-  }
-}
-
-///|
-fn top[A : Compare](self : T[A]) -> A {
-  match self {
-    Empty => abort("Empty")
-    Leaf(a) => a
-    Branch(a, ..) => a
   }
 }
 
@@ -285,11 +246,7 @@ pub fn length[A](self : T[A]) -> Int {
 
 ///|
 pub fn of[A : Compare](arr : FixedArray[A]) -> T[A] {
-  let mut pq = new()
-  for i in 0..<arr.length() {
-    pq = pq.push(arr[i])
-  }
-  pq
+  T::from_iter(arr.iter())
 }
 
 ///|
@@ -306,7 +263,7 @@ pub impl[X : @quickcheck.Arbitrary + Compare] @quickcheck.Arbitrary for T[X] wit
   size,
   rs
 ) {
-  @quickcheck.Arbitrary::arbitrary(size, rs) |> from_array
+  T::from_iter(@quickcheck.Arbitrary::arbitrary(size, rs))
 }
 
 ///|
