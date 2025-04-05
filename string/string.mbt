@@ -274,7 +274,10 @@ pub fn trim(self : String, trim_set : String) -> String {
   if self == "" || trim_set == "" {
     self
   } else {
-    self.trim_start(trim_set).trim_end(trim_set)
+    self
+    .trim_start_by(trim_set.iter().collect())
+    .trim_end_by(trim_set.iter().collect())
+    .to_string()
   }
 }
 
@@ -285,54 +288,82 @@ pub fn contains_char(self : String, c : Char) -> Bool {
 
 ///|
 /// Removes all leading chars contained in the given string.
+#deprecated("use `self.trim_start_by(trim_set.iter().collect()).to_string()` instead.")
 pub fn trim_start(self : String, trim_set : String) -> String {
-  let len = self.length()
-  for i in 0..<len {
-    let c1 = self.unsafe_charcode_at(i)
-    // check surrogate pair
-    if is_leading_surrogate(c1) && i + 1 < len {
-      let c2 = self.unsafe_charcode_at(i + 1)
-      if is_trailing_surrogate(c2) {
-        let ch = code_point_of_surrogate_pair(c1, c2)
-        if trim_set.contains_char(ch) {
-          continue i + 2
-        } else {
-          return self.substring(start=i)
-        }
-      }
-    }
-    if not(trim_set.contains_char(Char::from_int(self.unsafe_charcode_at(i)))) {
-      return self.substring(start=i)
-    }
-  } else {
-    ""
-  }
+  self.trim_start_by(trim_set.iter().collect()).to_string()
+}
+
+///| 
+/// Removes all leading chars satisifed by the predicate.
+/// 
+/// # Example
+/// 
+/// ```
+/// let s = "Hello, World!"
+/// let v1 = s.trim_start_by(@string.CharFn(fn(c) { c == 'H' || c == 'e' }))
+/// inspect!(v1, content="llo, World!")
+/// let v2 = s.trim_start_by(['H', 'e'])
+/// inspect!(v2, content="llo, World!")
+/// let v3 = s.trim_start_by('H')
+/// inspect!(v3, content="ello, World!")
+/// ```
+pub fn String::trim_start_by[P : CharPredicate](self : String, p : P) -> View {
+  trim_start_by(self, p)
+}
+
+///|
+/// Removes all leading chars contained in the given string.
+/// 
+/// # Example
+/// ```
+/// let s = "Hello, World!"
+/// let v1 = s.trim_prefix("Hello")
+/// inspect!(v1, content=", World!")
+/// let v2 = s.trim_prefix("Hello, ".view())
+/// inspect!(v2, content="World!")
+/// ```
+pub fn String::trim_prefix[S : StringLike](self : String, prefix : S) -> View {
+  trim_prefix(self, prefix)
 }
 
 ///|
 /// Removes all trailing chars contained in the given string.
+#deprecated("use `self.trim_end_by(trim_set.iter().collect()).to_string()` instead.")
 pub fn trim_end(self : String, trim_set : String) -> String {
-  let len = self.length()
-  for i = len - 1; i >= 0; i = i - 1 {
-    let c2 = self.unsafe_charcode_at(i)
-    // check surrogate pair
-    if is_trailing_surrogate(c2) && i - 1 >= 0 {
-      let c1 = self.unsafe_charcode_at(i - 1)
-      if is_leading_surrogate(c1) {
-        let ch = code_point_of_surrogate_pair(c1, c2)
-        if trim_set.contains_char(ch) {
-          continue i - 2
-        } else {
-          return self.substring(end=i + 1)
-        }
-      }
-    }
-    if not(trim_set.contains_char(Char::from_int(self.unsafe_charcode_at(i)))) {
-      return self.substring(end=i + 1)
-    }
-  } else {
-    ""
-  }
+  self.trim_end_by(trim_set.iter().collect()).to_string()
+}
+
+///| 
+/// Removes all trailing chars satisifed by the predicate.
+/// 
+/// # Example
+/// 
+/// ```
+/// let s = "Hello, World!"
+/// let v1 = s.trim_end_by(@string.CharFn(fn(c) { c == '!' || c == 'd' }))
+/// inspect!(v1, content="Hello, Worl")
+/// let v2 = s.trim_end_by(['!', 'd'])
+/// inspect!(v2, content="Hello, Worl")
+/// let v3 = s.trim_end_by('!')
+/// inspect!(v3, content="Hello, World")
+/// ```
+pub fn String::trim_end_by[P : CharPredicate](self : String, p : P) -> View {
+  trim_end_by(self, p)
+}
+
+///|
+/// Removes all leading chars contained in the given string.
+/// 
+/// # Example
+/// ```
+/// let s = "Hello, World!"
+/// let v1 = s.trim_suffix("!")
+/// inspect!(v1, content="Hello, World")
+/// let v2 = s.trim_suffix("Hello, ".view())
+/// inspect!(v2, content="Hello, World!")
+/// ```
+pub fn String::trim_suffix[S : StringLike](self : String, prefix : S) -> View {
+  trim_suffix(self, prefix)
 }
 
 ///|

@@ -232,3 +232,69 @@ pub impl Compare for View with compare(self, other) {
   }
   0
 }
+
+///| 
+/// Removes all leading chars satisifed by the predicate.
+/// 
+/// # Example
+/// 
+/// ```
+/// let s = "Hello, World!".view(start_offset=2)
+/// let v1 = s.trim_start_by(@string.CharFn(fn(c) { c == 'l' || c == 'o' }))
+/// inspect!(v1, content=", World!")
+/// let v2 = s.trim_start_by(['l', 'o'])
+/// inspect!(v2, content=", World!")
+/// let v3 = s.trim_start_by('l')
+/// inspect!(v3, content="o, World!")
+/// ```
+pub fn View::trim_start_by[P : CharPredicate](self : View, p : P) -> View {
+  trim_start_by(self, p)
+}
+
+///|
+/// Removes all leading chars contained in the given string.
+/// 
+/// # Example
+/// ```
+/// let s = "Hello, World!".view(start_offset=2)
+/// let v1 = s.trim_prefix("llo")
+/// inspect!(v1, content=", Worl")
+/// let v2 = s.trim_prefix("llo, ".view())
+/// inspect!(v2, content="Worl")
+/// ```
+pub fn View::trim_prefix[S : StringLike](self : View, prefix : S) -> View {
+  trim_prefix(self, prefix)
+}
+
+///| 
+/// Removes all trailing chars satisifed by the predicate.
+/// 
+/// # Example
+/// 
+/// ```
+/// let s = "Hello, World!".view(end_offset=11)
+/// let v1 = s.trim_end_by(@string.CharFn(fn(c) { c == 'r' || c == 'l' }))
+/// inspect!(v1, content="Hello, Wo")
+/// let v2 = s.trim_end_by(['r', 'l'])
+/// inspect!(v2, content="Hello, Wo")
+/// let v3 = s.trim_end_by('l')
+/// inspect!(v3, content="Hello, Wor")
+/// ```
+pub fn View::trim_end_by[P : CharPredicate](self : View, p : P) -> View {
+  trim_end_by(self, p)
+}
+
+///|
+/// Removes all leading chars contained in the given string.
+/// 
+/// # Example
+/// ```
+/// let s = "Hello, World!".view(end_offset=11)
+/// let v1 = s.trim_suffix("rl")
+/// inspect!(v1, content="Hello, Wo")
+/// let v2 = s.trim_suffix("rl".view())
+/// inspect!(v2, content="Hello, Wo")
+/// ```
+pub fn View::trim_suffix[S : StringLike](self : View, prefix : S) -> View {
+  trim_suffix(self, prefix)
+}
