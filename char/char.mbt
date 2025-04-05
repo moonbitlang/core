@@ -28,8 +28,8 @@ pub fn is_ascii(self : Char) -> Bool {
 }
 
 ///| Checks if the value is an ASCII alphabetic  character:
-/// - U+0041 ‘A’ ..= U+005A ‘Z’
-/// - U+0061 ‘a’ ..= U+007A ‘z’
+/// - U+0041 'A' ..= U+005A 'Z'
+/// - U+0061 'a' ..= U+007A 'z'
 pub fn is_ascii_alphabetic(self : Char) -> Bool {
   self is ('A'..='Z' | 'a'..='z')
 }
@@ -42,33 +42,33 @@ pub fn is_ascii_control(self : Char) -> Bool {
 }
 
 ///| Checks if the value is an ASCII decimal digit:
-/// U+0030 ‘0’ ..= U+0039 ‘9’
+/// U+0030 '0' ..= U+0039 '9'
 pub fn is_ascii_digit(self : Char) -> Bool {
   self is ('0'..='9')
 }
 
 ///| Checks if the value is an ASCII graphic character:
-/// U+0021 ‘!’ ..= U+007E ‘~’
+/// U+0021 '!' ..= U+007E '~'
 pub fn is_ascii_graphic(self : Char) -> Bool {
   self is ('\u{21}'..='\u{7E}')
 }
 
 ///| Checks if the value is an ASCII hexadecimal digit:
-/// - U+0030 ‘0’ ..= U+0039 ‘9’
-/// - U+0041 ‘A’ ..= U+0046 ‘F’
-/// - U+0061 ‘a’ ..= U+0066 ‘f’
+/// - U+0030 '0' ..= U+0039 '9'
+/// - U+0041 'A' ..= U+0046 'F'
+/// - U+0061 'a' ..= U+0066 'f'
 pub fn is_ascii_hexdigit(self : Char) -> Bool {
   self is ('0'..='9' | 'A'..='F' | 'a'..='f')
 }
 
 ///| Checks if the value is an ASCII lowercase character:
-/// U+0061 ‘a’ ..= U+007A ‘z’.
+/// U+0061 'a' ..= U+007A 'z'.
 pub fn is_ascii_lowercase(self : Char) -> Bool {
   self is ('a'..='z')
 }
 
 ///| Checks if the value is an ASCII octal digit:
-/// U+0030 ‘0’ ..= U+0037 ‘7’
+/// U+0030 '0' ..= U+0037 '7'
 pub fn is_ascii_octdigit(self : Char) -> Bool {
   self is ('0'..='7')
 }
@@ -87,7 +87,7 @@ pub fn is_ascii_punctuation(self : Char) -> Bool {
 }
 
 ///| Checks if the value is an ASCII uppercase character:
-/// U+0041 ‘A’ ..= U+005A ‘Z’
+/// U+0041 'A' ..= U+005A 'Z'
 pub fn is_ascii_uppercase(self : Char) -> Bool {
   self is ('A'..='Z')
 }
