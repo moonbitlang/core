@@ -93,8 +93,7 @@ pub fn pop[A : Compare](self : T[A]) -> T[A]? {
     Empty => None
     Leaf(_) => Some(Empty)
     Branch(_) => {
-      let value = self.find_element()
-      let temp = self.delet_leaf()
+      let (value, temp) = self.find_element_and_delet_leaf()
       Some(temp.change_element(value).down(value))
     }
   }
@@ -119,36 +118,20 @@ fn size[A](self : T[A]) -> Int {
 }
 
 ///|
-fn find_element[A : Compare](self : T[A]) -> A {
+fn find_element_and_delet_leaf[A : Compare](self : T[A]) -> (A, T[A]) {
   match self {
     Empty => abort("Priority queue is empty!")
-    Leaf(a) => a
-    Branch(_, left~, right=Empty, ..) => left.top()
-    Branch(_, left=l, right=r, size~) => {
-      let deep = deepth(size)
-      let full_right = (1 << (deep - 2)) - 1
-      if r.size() == full_right {
-        l.find_element()
-      } else {
-        r.find_element()
-      }
-    }
-  }
-}
-
-///|
-fn delet_leaf[A : Compare](self : T[A]) -> T[A] {
-  match self {
-    Empty => abort("Priority queue is empty!")
-    Leaf(_) => Empty
-    Branch(a, right=Empty, ..) => Leaf(a)
+    Leaf(a) => (a, Empty)
+    Branch(a, left~, right=Empty, ..) => (left.top(), Leaf(a))
     Branch(a, left=l, right=r, size~) => {
       let deep = deepth(size)
       let full_right = (1 << (deep - 2)) - 1
       if r.size() == full_right {
-        Branch(a, left=l.delet_leaf(), right=r, size=size - 1)
+        let (e, ld) = l.find_element_and_delet_leaf()
+        (e, Branch(a, left=ld, right=r, size=size - 1))
       } else {
-        Branch(a, left=l, right=r.delet_leaf(), size=size - 1)
+        let (e, rd) = r.find_element_and_delet_leaf()
+        (e, Branch(a, left=l, right=rd, size=size - 1))
       }
     }
   }
@@ -196,8 +179,7 @@ pub fn unsafe_pop[A : Compare](self : T[A]) -> T[A] {
     Empty => abort("Priority queue is empty!")
     Leaf(_) => Empty
     Branch(_) => {
-      let value = self.find_element()
-      let temp = self.delet_leaf()
+      let (value, temp) = self.find_element_and_delet_leaf()
       temp.change_element(value).down(value)
     }
   }
