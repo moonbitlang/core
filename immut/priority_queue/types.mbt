@@ -13,8 +13,14 @@
 // limitations under the License.
 
 ///|
-enum T[A] {
+struct T[A] {
+  node : Node[A]
+  size : Int
+}
+
+///|
+priv enum Node[A] {
   Empty
   Leaf(A)
-  Branch(A, left~ : T[A], right~ : T[A], size~ : Int)
+  Branch(A, left~ : Node[A], right~ : Node[A])
 }

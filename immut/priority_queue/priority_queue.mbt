@@ -21,7 +21,7 @@
 /// assert_eq!(queue.push(1).length(), 1)
 /// ```
 pub fn new[A : Compare]() -> T[A] {
-  Empty
+  { node: Empty, size: 0 }
 }
 
 ///|
@@ -42,12 +42,12 @@ pub fn from_array[A : Compare](array : Array[A]) -> T[A] {
 
 ///|
 pub fn to_array[A : Compare](self : T[A]) -> Array[A] {
-  let arr : Array[A] = []
-  fn go(x : T[A]) {
+  let arr = Array::new(capacity=self.size)
+  fn go(x : Node[A]) {
     match x {
-      Empty => return
+      Empty => ()
       Leaf(a) => arr.push(a)
-      Branch(a, left=l, right=r, ..) => {
+      Branch(a, left=l, right=r) => {
         arr.push(a)
         go(l)
         go(r)
@@ -55,7 +55,7 @@ pub fn to_array[A : Compare](self : T[A]) -> Array[A] {
     }
   }
 
-  go(self)
+  go(self.node)
   arr..sort_by(fn(x, y) { y.compare(x) })
 }
 
@@ -70,6 +70,28 @@ pub fn T::from_iter[A : Compare](iter : Iter[A]) -> T[A] {
 }
 
 ///|
+priv type Path Int
+
+///|
+/// require: size >= 2
+fn path(size : Int) -> Path {
+  loop size, 0 {
+    1, y => Path(y)
+    x, y => continue x >> 1, (y << 1) | (x & 1)
+  }
+}
+
+///|
+fn is_left(self : Path) -> Bool {
+  (self._ & 1) == 0
+}
+
+///|
+fn next(self : Path) -> Path {
+  Path(self._ >> 1)
+}
+
+///|
 /// Pops the first value from the immutable priority queue, which returns None if the queue is empty.
 ///
 /// # Example
@@ -79,67 +101,57 @@ pub fn T::from_iter[A : Compare](iter : Iter[A]) -> T[A] {
 /// assert_eq!(first, Some(@priority_queue.of([1, 2, 3])))
 /// ```
 pub fn pop[A : Compare](self : T[A]) -> T[A]? {
-  match self {
+  match self.node {
     Empty => None
-    Leaf(_) => Some(Empty)
+    Leaf(_) => Some(new())
     Branch(_) => {
-      let (value, temp) = self.remove_last_leaf()
-      Some(temp.change_and_down(value))
+      let (value, temp) = self.node.remove_last_leaf(path(self.size))
+      Some({ node: temp.change_and_down(value), size: self.size - 1 })
     }
   }
 }
 
 ///|
-fn remove_last_leaf[A : Compare](self : T[A]) -> (A, T[A]) {
+fn remove_last_leaf[A : Compare](self : Node[A], path : Path) -> (A, Node[A]) {
   match self {
     Empty => abort("Priority queue is empty!")
     Leaf(a) => (a, Empty)
-    Branch(a, left=Leaf(l_top), right=Empty, ..) => (l_top, Leaf(a))
-    Branch(a, left=l, right=r, size~) =>
-      if last_leaf_in_left(size) {
-        let (e, ld) = l.remove_last_leaf()
-        (e, Branch(a, left=ld, right=r, size=size - 1))
+    Branch(a, left=Leaf(l_top), right=Empty) => (l_top, Leaf(a))
+    Branch(a, left=l, right=r) =>
+      if path.is_left() {
+        let (e, ld) = l.remove_last_leaf(path.next())
+        (e, Branch(a, left=ld, right=r))
       } else {
-        let (e, rd) = r.remove_last_leaf()
-        (e, Branch(a, left=l, right=rd, size=size - 1))
+        let (e, rd) = r.remove_last_leaf(path.next())
+        (e, Branch(a, left=l, right=rd))
       }
   }
 }
 
 ///|
 /// require: self is not empty
-fn change_and_down[A : Compare](self : T[A], value : A) -> T[A] {
+fn change_and_down[A : Compare](self : Node[A], value : A) -> Node[A] {
   match self {
     Empty => abort("unreachable")
     Leaf(_) => Leaf(value)
-    Branch(_, left=l, right=r, size~) =>
+    Branch(_, left=l, right=r) =>
       match (l, r) {
         (Leaf(l_top), Empty) =>
           if value >= l_top {
-            Branch(value, left=l, right=Empty, size~)
+            Branch(value, left=l, right=Empty)
           } else {
-            Branch(l_top, left=Leaf(value), right=Empty, size~)
+            Branch(l_top, left=Leaf(value), right=Empty)
           }
         (Branch(l_top, ..) | Leaf(l_top), Branch(r_top, ..) | Leaf(r_top)) =>
           if value >= l_top && value >= r_top {
-            Branch(value, left=l, right=r, size~)
+            Branch(value, left=l, right=r)
           } else if l_top >= r_top {
-            Branch(l_top, left=l.change_and_down(value), right=r, size~)
+            Branch(l_top, left=l.change_and_down(value), right=r)
           } else {
-            Branch(r_top, left=l, right=r.change_and_down(value), size~)
+            Branch(r_top, left=l, right=r.change_and_down(value))
           }
         _ => abort("unreachable")
       }
-  }
-}
-
-///|
-/// require: `size >= 2`
-fn last_leaf_in_left(size : Int) -> Bool {
-  loop size {
-    0b10 => true
-    0b11 => false
-    x => continue x >> 1
   }
 }
 
@@ -154,12 +166,12 @@ fn last_leaf_in_left(size : Int) -> Bool {
 /// assert_eq!(first, @priority_queue.of([1, 2, 3]))
 /// ```
 pub fn unsafe_pop[A : Compare](self : T[A]) -> T[A] {
-  match self {
+  match self.node {
     Empty => abort("Priority queue is empty!")
-    Leaf(_) => Empty
+    Leaf(_) => new()
     Branch(_) => {
-      let (value, temp) = self.remove_last_leaf()
-      temp.change_and_down(value)
+      let (value, temp) = self.node.remove_last_leaf(path(self.size))
+      { node: temp.change_and_down(value), size: self.size - 1 }
     }
   }
 }
@@ -180,19 +192,29 @@ pub fn pop_exn[A : Compare](self : T[A]) -> T[A] {
 /// assert_eq!(queue.push(1).length(), 1)
 /// ```
 pub fn push[A : Compare](self : T[A], value : A) -> T[A] {
+  match self.node {
+    Empty => { node: Leaf(value), size: 1 }
+    Leaf(_) | Branch(_) => {
+      let size = self.size + 1
+      { node: self.node.push(value, path(size)), size }
+    }
+  }
+}
+
+///|
+fn Node::push[A : Compare](self : Node[A], value : A, path : Path) -> Node[A] {
   match self {
     Empty => Leaf(value)
     Leaf(a) => {
       let (high, low) = if a > value { (a, value) } else { (value, a) }
-      Branch(high, left=Leaf(low), right=Empty, size=2)
+      Branch(high, left=Leaf(low), right=Empty)
     }
-    Branch(a, left=l, right=r, size=old_size) => {
+    Branch(a, left=l, right=r) => {
       let (high, low) = if a > value { (a, value) } else { (value, a) }
-      let size = old_size + 1
-      if last_leaf_in_left(size) {
-        Branch(high, left=l.push(low), right=r, size~)
+      if path.is_left() {
+        Branch(high, left=l.push(low, path.next()), right=r)
       } else {
-        Branch(high, left=l, right=r.push(low), size~)
+        Branch(high, left=l, right=r.push(low, path.next()))
       }
     }
   }
@@ -207,7 +229,7 @@ pub fn push[A : Compare](self : T[A], value : A) -> T[A] {
 /// assert_eq!(queue.peek(), Some(4))
 /// ```
 pub fn peek[A](self : T[A]) -> A? {
-  match self {
+  match self.node {
     Empty => None
     Leaf(a) => Some(a)
     Branch(a, ..) => Some(a)
@@ -224,7 +246,7 @@ pub fn peek[A](self : T[A]) -> A? {
 /// assert_eq!(queue.push(1).is_empty(), false)
 /// ```
 pub fn is_empty[A](self : T[A]) -> Bool {
-  self is Empty
+  self.node is Empty
 }
 
 ///|
@@ -237,11 +259,7 @@ pub fn is_empty[A](self : T[A]) -> Bool {
 /// assert_eq!(queue.push(1).length(), 1)
 /// ```
 pub fn length[A](self : T[A]) -> Int {
-  match self {
-    Empty => 0
-    Leaf(_) => 1
-    Branch(_, size~, ..) => size
-  }
+  self.size
 }
 
 ///|
