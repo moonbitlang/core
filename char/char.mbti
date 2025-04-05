@@ -29,6 +29,8 @@ fn is_digit(Char, UInt) -> Bool
 
 fn is_numeric(Char) -> Bool
 
+fn is_printable(Char) -> Bool
+
 fn is_whitespace(Char) -> Bool
 
 // Types and methods
@@ -47,6 +49,7 @@ impl Char {
   is_control(Char) -> Bool
   is_digit(Char, UInt) -> Bool
   is_numeric(Char) -> Bool
+  is_printable(Char) -> Bool
   is_whitespace(Char) -> Bool
 }
 impl Hash for Char
