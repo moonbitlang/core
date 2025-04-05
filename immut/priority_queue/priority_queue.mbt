@@ -109,31 +109,19 @@ fn change_element[A : Compare](self : T[A], value : A) -> T[A] {
 }
 
 ///|
-fn size[A](self : T[A]) -> Int {
-  match self {
-    Empty => 0
-    Leaf(_) => 1
-    Branch(_, size~, ..) => size
-  }
-}
-
-///|
 fn find_element_and_delet_leaf[A : Compare](self : T[A]) -> (A, T[A]) {
   match self {
     Empty => abort("Priority queue is empty!")
     Leaf(a) => (a, Empty)
     Branch(a, left~, right=Empty, ..) => (left.top(), Leaf(a))
-    Branch(a, left=l, right=r, size~) => {
-      let deep = deepth(size)
-      let full_right = (1 << (deep - 2)) - 1
-      if r.size() == full_right {
+    Branch(a, left=l, right=r, size~) =>
+      if last_leaf_in_left(size) {
         let (e, ld) = l.find_element_and_delet_leaf()
         (e, Branch(a, left=ld, right=r, size=size - 1))
       } else {
         let (e, rd) = r.find_element_and_delet_leaf()
         (e, Branch(a, left=l, right=rd, size=size - 1))
       }
-    }
   }
 }
 
@@ -157,10 +145,12 @@ fn down[A : Compare](self : T[A], value : A) -> T[A] {
 }
 
 ///|
-fn deepth(num : Int) -> Int {
-  loop num, 0 {
-    0, cnt => cnt
-    n, cnt => continue n >> 1, cnt + 1
+/// require: `size >= 2`
+fn last_leaf_in_left(size : Int) -> Bool {
+  loop size {
+    0b10 => true
+    0b11 => false
+    x => continue x >> 1
   }
 }
 
@@ -217,22 +207,21 @@ pub fn push[A : Compare](self : T[A], value : A) -> T[A] {
         right=Leaf(@math.minimum(a, value)),
         size=3,
       )
-    Branch(a, left=l, right=r, size~) => {
-      let deep = deepth(size)
-      let full = (1 << (deep - 1)) - 1
-      if (l.size() == full && r.size() == full) || l.size() < full {
+    Branch(a, left=l, right=r, size=old_size) => {
+      let size = old_size + 1
+      if last_leaf_in_left(size) {
         let ll = l.push(value)
         if value > a {
-          Branch(value, left=ll.change_element(a), right=r, size=size + 1)
+          Branch(value, left=ll.change_element(a), right=r, size~)
         } else {
-          Branch(a, left=ll, right=r, size=size + 1)
+          Branch(a, left=ll, right=r, size~)
         }
       } else {
         let rr = r.push(value)
         if value > a {
-          Branch(value, left=l, right=rr.change_element(a), size=size + 1)
+          Branch(value, left=l, right=rr.change_element(a), size~)
         } else {
-          Branch(a, left=l, right=rr, size=size + 1)
+          Branch(a, left=l, right=rr, size~)
         }
       }
     }
@@ -287,7 +276,11 @@ pub fn is_empty[A](self : T[A]) -> Bool {
 /// assert_eq!(queue.push(1).length(), 1)
 /// ```
 pub fn length[A](self : T[A]) -> Int {
-  self.size()
+  match self {
+    Empty => 0
+    Leaf(_) => 1
+    Branch(_, size~, ..) => size
+  }
 }
 
 ///|
