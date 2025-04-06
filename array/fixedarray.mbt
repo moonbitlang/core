@@ -976,6 +976,13 @@ pub impl[T : Eq] Eq for FixedArray[T] with op_equal(
 }
 
 ///|
+pub impl[T : Hash] Hash for FixedArray[T] with hash_combine(self, hasher) {
+  for v in self {
+    v.hash_combine(hasher)
+  }
+}
+
+///|
 test "op_equal" {
   {
     inspect!(([] : FixedArray[Int]) == [], content="true")

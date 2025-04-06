@@ -62,6 +62,7 @@ impl FixedArray {
 impl[T] Add for FixedArray[T]
 impl[T : Compare] Compare for FixedArray[T]
 impl[T : Eq] Eq for FixedArray[T]
+impl[T : Hash] Hash for FixedArray[T]
 impl[X : @quickcheck.Arbitrary] @quickcheck.Arbitrary for FixedArray[X]
 
 impl Array {
