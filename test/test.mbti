@@ -1,6 +1,8 @@
 package "moonbitlang/core/test"
 
 // Values
+fn bench(T, () -> Unit, count~ : UInt = ..) -> Unit!BenchError
+
 #deprecated
 fn eq[T : Show + Eq](T, T, loc~ : SourceLoc = _) -> Unit!
 
@@ -13,6 +15,10 @@ fn is_not[T : Show](T, T, loc~ : SourceLoc = _) -> Unit!
 
 #deprecated
 fn is_true(Bool, loc~ : SourceLoc = _) -> Unit!
+
+fn monotonic_clock_end(Timestamp) -> Double
+
+fn monotonic_clock_start() -> Timestamp
 
 #deprecated
 fn ne[T : Show + Eq](T, T, loc~ : SourceLoc = _) -> Unit!
@@ -31,10 +37,13 @@ pub(all) struct T {
   buffer : StringBuilder
 }
 impl T {
+  bench(Self, () -> Unit, count~ : UInt = ..) -> Unit!BenchError
   snapshot(Self, filename~ : String, loc~ : SourceLoc = _, args_loc~ : ArgsLoc = _) -> Unit!SnapshotError
   write(Self, &Show) -> Unit
   writeln(Self, &Show) -> Unit
 }
+
+type Timestamp
 
 // Type aliases
 

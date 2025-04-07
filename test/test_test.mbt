@@ -37,3 +37,49 @@ test "panic is_not called with the same object" {
   let s = "Hello"
   @test.is_not!(s, s)
 }
+
+///|
+test "bench: sum inside test" (it : @test.T) {
+  it.bench!(
+    fn() {
+      let mut i = 0.0
+      while i < 100000 {
+        i += 1.0
+      }
+      ignore(i)
+    },
+    count=5,
+  )
+}
+
+///|
+test "bench: only first bench should run" (it : @test.T) {
+  it.bench!(
+    fn() {
+      let mut i = 0.0
+      while i < 10000000 {
+        i += 1.0
+      }
+      ignore(i)
+    },
+    count=5,
+  )
+  it.bench!(fn() { panic() })
+}
+
+///|
+test "monotonic clock" {
+  let ts = monotonic_clock_start()
+  // use sum to avoid optimization
+  let mut sum : Double = 0
+  for i in 0..=100000 {
+    sum += i.to_double()
+  }
+  // explicitly output something
+  println("monotonic clock test")
+  let diff = monotonic_clock_end(ts)
+  println("monotonic clock elapsed time: \{diff} us")
+  assert_true!(diff > 0.0)
+  assert_false!(diff.is_nan())
+  inspect!(sum, content="5000050000")
+}

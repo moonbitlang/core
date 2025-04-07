@@ -11,17 +11,14 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-///|
-
-extern type Instant
-
-fn instant_elapsed_as_secs_f64(x : Instant) -> Double = "__moonbit_time_unstable" "instant_elapsed_as_secs_f64"
 
 ///|
-pub fn monotonic_clock_start() -> Instant = "__moonbit_time_unstable" "instant_now"
+extern type Timestamp
 
 ///|
-pub fn monotonic_clock_end(ts : Instant) -> Double {
-  let elapsed_secs: Double = instant_elapsed_as_secs_f64(ts);
-  elapsed_secs * 1000000.0
-}
+pub extern "js" fn monotonic_clock_start() -> Timestamp =
+  #| () => performance.now()
+
+///|
+pub extern "js" fn monotonic_clock_end(ts : Timestamp) -> Double =
+  #| (ts) => (performance.now() - ts) * 1000.0

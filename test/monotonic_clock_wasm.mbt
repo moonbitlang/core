@@ -13,15 +13,16 @@
 // limitations under the License.
 
 ///|
-test "monotonic clock" {
-  let ts = monotonic_clock_start()
-  let mut sum: UInt64 = 0
-  for i in 0..=100000 {
-    sum += i.to_uint64()
-  }
-  let diff = monotonic_clock_end(ts)
-  println("elapsed time: \{diff} us")
-  assert_true!(diff > 0.0)
-  assert_false!(diff.is_inf())
-  assert_eq!(sum, 5000050000UL)
+extern type Timestamp
+
+///|
+fn instant_elapsed_as_secs_f64(x : Timestamp) -> Double = "__moonbit_time_unstable" "instant_elapsed_as_secs_f64"
+
+///|
+pub fn monotonic_clock_start() -> Timestamp = "__moonbit_time_unstable" "instant_now"
+
+///|
+pub fn monotonic_clock_end(ts : Timestamp) -> Double {
+  let elapsed_secs : Double = instant_elapsed_as_secs_f64(ts)
+  elapsed_secs * 1000000.0
 }
