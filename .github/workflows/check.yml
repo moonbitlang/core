@@ -203,9 +203,6 @@ jobs:
           moon version --all
           moonrun --version
 
-      - name: moon check
-        run: moon check --deny-warn
-
       - name: Set ulimit and run moon test
         if: ${{ matrix.os != 'windows-latest' }}
         run: |
@@ -253,6 +250,9 @@ jobs:
       - name: moon test --md
         run: |
             moon test --md
+
+      - name: moon check
+        run: moon check --deny-warn
 
       - name: moon bundle
         run: moon bundle --all
