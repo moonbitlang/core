@@ -41,7 +41,7 @@ const UINT64_MAX : UInt64 = 0xffffffffffffffffUL
 /// 
 pub fn parse_uint64(str : String, base~ : Int = 0) -> UInt64!StrConvError {
   guard str != "" else { syntax_err!() }
-  if str is ['+' | '-', ..] {
+  if str is ['+' | '-', .. _] {
     syntax_err!()
   }
 
@@ -58,14 +58,14 @@ pub fn parse_uint64(str : String, base~ : Int = 0) -> UInt64!StrConvError {
     _ => UINT64_MAX / num_base.to_uint64() + 1
   }
   let has_digit = rest
-    is (['0'..='9' | 'a'..='z' | 'A'..='Z', ..]
-    | ['_', '0'..='9' | 'a'..='z' | 'A'..='Z', ..])
+    is (['0'..='9' | 'a'..='z' | 'A'..='Z', .. _]
+    | ['_', '0'..='9' | 'a'..='z' | 'A'..='Z', .. _])
   guard has_digit else { syntax_err!() }
   loop rest, 0UL, allow_underscore {
     ['_'], _, _ =>
       // the last character cannot be underscore
       syntax_err!()
-    ['_', ..], _, false => syntax_err!()
+    ['_', .. _], _, false => syntax_err!()
     ['_', .. rest], acc, true => continue rest, acc, false
     [c, .. rest], acc, _ => {
       let c = c.to_int()

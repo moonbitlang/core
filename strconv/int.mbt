@@ -97,15 +97,15 @@ pub fn parse_int64(str : String, base~ : Int = 0) -> Int64!StrConvError {
   // calculate overflow threshold
   let overflow_threshold = overflow_threshold(num_base, neg)
   let has_digit = rest
-    is (['0'..='9' | 'a'..='z' | 'A'..='Z', ..]
-    | ['_', '0'..='9' | 'a'..='z' | 'A'..='Z', ..])
+    is (['0'..='9' | 'a'..='z' | 'A'..='Z', .. _]
+    | ['_', '0'..='9' | 'a'..='z' | 'A'..='Z', .. _])
   guard has_digit else { syntax_err!() }
   // convert
   loop rest, 0L, allow_underscore {
     ['_'], _, _ =>
       // the last character cannot be underscore
       syntax_err!()
-    ['_', ..], _, false => syntax_err!()
+    ['_', .. _], _, false => syntax_err!()
     ['_', .. rest], acc, true => continue rest, acc, false
     [c, .. rest], acc, _ => {
       let c = c.to_int()
@@ -179,7 +179,7 @@ fn check_underscore(str : String) -> Bool {
     // String ending with underscore is invalid
     ['_'], _, _ => false
     // Underscore not allowed in current position (e.g., between non-digits)
-    ['_', ..], false, _ => false
+    ['_', .. _], false, _ => false
     // Valid underscore - continue but mark that next char must be a digit
     ['_', .. rest], true, _ => continue rest, false, true
     // Handle non-underscore character
@@ -201,9 +201,9 @@ fn check_underscore(str : String) -> Bool {
 // Determine the base of the value.
 fn determine_base(s : String) -> Int {
   match s.view() {
-    ['0', 'x' | 'X', ..] => 16
-    ['0', 'o' | 'O', ..] => 8
-    ['0', 'b' | 'B', ..] => 2
+    ['0', 'x' | 'X', .. _] => 16
+    ['0', 'o' | 'O', .. _] => 8
+    ['0', 'b' | 'B', .. _] => 2
     _ => 10
   }
 }

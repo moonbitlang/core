@@ -181,7 +181,7 @@ pub fn filter_map[A, B](self : Array[A], f : (A) -> B?) -> Array[B] {
 pub fn last[A](self : Array[A]) -> A? {
   match self {
     [] => None
-    [.., last] => Some(last)
+    [.. _, last] => Some(last)
   }
 }
 

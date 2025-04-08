@@ -575,7 +575,7 @@ pub fn FixedArray::rev_inplace[T](self : FixedArray[T]) -> Unit {
 pub fn FixedArray::rev[T](self : FixedArray[T]) -> FixedArray[T] {
   match self {
     [] => []
-    [.., first] => {
+    [.. _, first] => {
       let res = FixedArray::make(self.length(), first)
       let len = self.length()
       for i in 1..<len {
@@ -1189,7 +1189,7 @@ pub fn FixedArray::from_iter[T](iter : Iter[T]) -> FixedArray[T] {
 pub fn FixedArray::last[A](self : FixedArray[A]) -> A? {
   match self {
     [] => None
-    [.., last] => Some(last)
+    [.. _, last] => Some(last)
   }
 }
 

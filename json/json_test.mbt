@@ -274,7 +274,7 @@ test "stringify" {
   // we do come across issues like ParseError not unified with String
   let newjson = @json.parse!(json.stringify())
   match json {
-    { "key": [_, _, _, _, { "value": Number(i), .. }, ..], .. } =>
+    { "key": [_, _, _, _, { "value": Number(i), .. }, .. _], .. } =>
       inspect!(i, content="100")
     _ => fail!("Failed to match the JSON")
   }
