@@ -14,7 +14,7 @@
 
 ///|
 test "is_probable_prime" {
-  let r = @random.new()
+  let r = @random.Rand::new()
   // small primes
   inspect(is_probable_prime(2N, r), content="true")
   inspect(is_probable_prime(3N, r), content="true")
@@ -83,7 +83,7 @@ test "is_probable_prime" {
 
 ///|
 test "probable_prime" {
-  let rand = @random.new()
+  let rand = @random.Rand::new()
   inspect(is_probable_prime(probable_prime(32, rand), rand), content="true")
   inspect(is_probable_prime(probable_prime(64, rand), rand), content="true")
   inspect(is_probable_prime(probable_prime(100, rand), rand), content="true")

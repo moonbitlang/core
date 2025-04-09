@@ -8,7 +8,7 @@ Internally, it uses the `Chacha8` cipher to generate random numbers. It is a cry
 
 ```moonbit
 test {
-  let r = @random.new()
+  let r = @random.Rand::new()
   assert_eq(r.uint(limit=10), 7)
   assert_eq(r.uint(limit=10), 0)
   assert_eq(r.uint(limit=10), 5)
