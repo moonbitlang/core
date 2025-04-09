@@ -4,9 +4,6 @@
     "moonbitlang/core/quickcheck",
     "moonbitlang/core/quickcheck/splitmix"
   ],
-  "test-import": [
-    "moonbitlang/core/prelude"
-  ],
   "targets": {
     "panic_test.mbt": ["not", "native"]
   }
