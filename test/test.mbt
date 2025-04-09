@@ -182,11 +182,7 @@ fn iter_count[Any](inner : () -> Any, count : UInt) -> Summary {
 }
 
 ///|
-pub fn bench(
-  self : T,
-  f : () -> Unit,
-  count~ : UInt = 10
-) -> Unit!BenchError {
+pub fn bench(self : T, f : () -> Unit, count~ : UInt = 10) -> Unit!BenchError {
   ignore(self)
   let summary = iter_count(f, count)
   raise BenchError("@BENCH \{summary.to_json().stringify()}\n")
