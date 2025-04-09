@@ -32,6 +32,7 @@ pub fn String::from_array(chars : Array[Char]) -> String {
 }
 
 ///| same as `String::from_array`
+#deprecated("Use `String::from_array(chars)` instead.")
 pub fn from_array(chars : Array[Char]) -> String {
   String::from_array(chars)
 }
@@ -46,6 +47,7 @@ pub fn String::from_iter(iter : Iter[Char]) -> String {
 
 ///|
 /// same as `String::from_iter`
+#deprecated("Use `String::from_iter(iter)` instead.")
 pub fn from_iter(iter : Iter[Char]) -> String {
   let chars = iter.collect()
   String::from_array(chars)
@@ -117,25 +119,23 @@ pub impl Default for String with default() {
 
 ///|
 /// same as `String::default`
+#deprecated("Use `String::default()` instead.")
 pub fn default() -> String {
   ""
 }
 
 ///|
 /// `String` holds a sequence of UTF-16 code units encoded in little endian format
+#deprecated("Use `Bytes::of_string(str)` instead.")
 pub fn to_bytes(self : String) -> Bytes {
   Bytes::of_string(self)
 }
 
 ///|
 /// Converts the String into an array of Chars.
+#deprecated("Use `str.iter().collect()` instead.")
 pub fn to_array(self : String) -> Array[Char] {
-  self
-  .iter()
-  .fold(init=Array::new(capacity=self.length()), fn(rv, c) {
-    rv.push(c)
-    rv
-  })
+  self.iter().collect()
 }
 
 ///|
@@ -149,7 +149,7 @@ pub fn to_array(self : String) -> Array[Char] {
 /// assert_eq!(s.iter().count(), 14); // Unicode characters
 /// assert_eq!(s.length(), 15); // Utf16 code units
 /// ```
-pub fn iter(self : String) -> Iter[Char] {
+pub fn String::iter(self : String) -> Iter[Char] {
   Iter::new(fn(yield_) {
     let len = self.length()
     for index in 0..<len {
@@ -172,7 +172,13 @@ pub fn iter(self : String) -> Iter[Char] {
 }
 
 ///|
-pub fn iter2(self : String) -> Iter2[Int, Char] {
+#deprecated("Use `str.iter()` instead.")
+pub fn iter(s : String) -> Iter[Char] {
+  s.iter()
+}
+
+///|
+pub fn String::iter2(self : String) -> Iter2[Int, Char] {
   Iter2::new(fn(yield_) {
     let len = self.length()
     for index = 0, n = 0; index < len; index = index + 1, n = n + 1 {
@@ -195,23 +201,9 @@ pub fn iter2(self : String) -> Iter2[Int, Char] {
 }
 
 ///|
-/// Note: This method operates on Unicode characters, not Utf16 code units.
-/// As a result, the count of characters passed to the folding function may not be equal to the length of the string.
-pub fn fold[A](self : String, init~ : A, f : (A, Char) -> A) -> A {
-  let mut rv = init
-  for c in self {
-    rv = f(rv, c)
-  }
-  rv
-}
-
-///|
-pub fn rev_fold[A](self : String, init~ : A, f : (A, Char) -> A) -> A {
-  let mut rv = init
-  for c in self.rev_iter() {
-    rv = f(rv, c)
-  }
-  rv
+#deprecated("Use `str.iter2()` instead.")
+pub fn iter2(s : String) -> Iter2[Int, Char] {
+  s.iter2()
 }
 
 ///|
@@ -240,7 +232,7 @@ pub fn rev_fold[A](self : String, init~ : A, f : (A, Char) -> A) -> A {
 /// let reversed = input.rev_iter().collect()
 /// assert_eq!(reversed, ['!', 'd', 'l', 'r', 'o', 'W', ' ', ',', 'o', 'l', 'l', 'e', 'H'])
 /// ```
-pub fn rev_iter(self : String) -> Iter[Char] {
+pub fn String::rev_iter(self : String) -> Iter[Char] {
   Iter::new(fn(yield_) {
     let len = self.length()
     for index = len - 1; index >= 0; index = index - 1 {
@@ -263,216 +255,103 @@ pub fn rev_iter(self : String) -> Iter[Char] {
 }
 
 ///|
-/// Removes all leading and trailing spaces.
+#deprecated("Use `str.rev_iter()` instead.")
+pub fn rev_iter(s : String) -> Iter[Char] {
+  s.rev_iter()
+}
+
+///|
+#deprecated("Use `str.view().trim_space().to_string()` instead.")
 pub fn trim_space(self : String) -> String {
-  self.trim(" \n\r\t")
+  self.view().trim_space().to_string()
 }
 
 ///|
-/// Removes all leading and trailing chars contained in the given string.
+#deprecated("Use `str.view().trim(trim_set).to_string()` instead.")
 pub fn trim(self : String, trim_set : String) -> String {
-  if self == "" || trim_set == "" {
-    self
-  } else {
-    self.trim_start(trim_set).trim_end(trim_set)
-  }
+  self.view().trim(trim_set).to_string()
 }
 
 ///|
-pub fn contains_char(self : String, c : Char) -> Bool {
-  self.iter().any(fn(ch) { ch == c })
-}
-
-///|
-/// Removes all leading chars contained in the given string.
+#deprecated("Use `str.trim_left(trim_set).to_string()` instead.")
 pub fn trim_start(self : String, trim_set : String) -> String {
-  let len = self.length()
-  for i in 0..<len {
-    let c1 = self.unsafe_charcode_at(i)
-    // check surrogate pair
-    if is_leading_surrogate(c1) && i + 1 < len {
-      let c2 = self.unsafe_charcode_at(i + 1)
-      if is_trailing_surrogate(c2) {
-        let ch = code_point_of_surrogate_pair(c1, c2)
-        if trim_set.contains_char(ch) {
-          continue i + 2
-        } else {
-          return self.substring(start=i)
-        }
-      }
-    }
-    if not(trim_set.contains_char(Char::from_int(self.unsafe_charcode_at(i)))) {
-      return self.substring(start=i)
-    }
-  } else {
-    ""
-  }
+  self.trim_left(trim_set).to_string()
 }
 
 ///|
-/// Removes all trailing chars contained in the given string.
+#deprecated("Use `str.trim_right(trim_set).to_string()` instead.")
 pub fn trim_end(self : String, trim_set : String) -> String {
-  let len = self.length()
-  for i = len - 1; i >= 0; i = i - 1 {
-    let c2 = self.unsafe_charcode_at(i)
-    // check surrogate pair
-    if is_trailing_surrogate(c2) && i - 1 >= 0 {
-      let c1 = self.unsafe_charcode_at(i - 1)
-      if is_leading_surrogate(c1) {
-        let ch = code_point_of_surrogate_pair(c1, c2)
-        if trim_set.contains_char(ch) {
-          continue i - 2
-        } else {
-          return self.substring(end=i + 1)
-        }
-      }
-    }
-    if not(trim_set.contains_char(Char::from_int(self.unsafe_charcode_at(i)))) {
-      return self.substring(end=i + 1)
-    }
-  } else {
-    ""
-  }
+  self.trim_right(trim_set).to_string()
 }
 
 ///|
-/// Returns true if this string is empty.
-pub fn is_empty(self : String) -> Bool {
-  self == ""
-}
-
-///|
-/// Returns true if this string is blank.
-pub fn is_blank(self : String) -> Bool {
-  self.trim_space() == ""
-}
-
-///|
-/// Returns the first index of the sub string.
+#deprecated("Use `s.find(substr)` instead. If the optional argument `from` is not 0, take view from the string first. Please do not use an invalid `from` argument.")
 pub fn index_of(self : String, str : String, from~ : Int = 0) -> Int {
-  let len = self.length()
-  let sub_len = str.length()
-
-  // Handle empty substring case
-  if sub_len == 0 {
-    // Return 0 for empty string in empty string
-    if len == 0 {
-      return 0
+  if from <= 0 {
+    if self.find(str.view()) is Some(idx) {
+      idx
+    } else {
+      -1
     }
-    // Bound from within valid range and return it
-    return if from < 0 { 0 } else if from >= len { len } else { from }
-  }
-
-  // If substring is longer than string, it can't be found
-  if sub_len > len {
-    return -1
-  }
-
-  // Bound the starting position
-  let from = if from < 0 { 0 } else if from >= len { len - 1 } else { from }
-  let max_idx = len - sub_len
-  let first = str.unsafe_charcode_at(0)
-  let mut i = from
-  while i <= max_idx {
-    // find first character
-    while i < len && self.unsafe_charcode_at(i) != first {
-      i += 1
+  } else if from > self.length() {
+    if str.length() == 0 {
+      self.length()
+    } else {
+      -1
     }
-    // check the rest
-    if i <= max_idx {
-      for j in 1..<sub_len {
-        if self.unsafe_charcode_at(i + j) != str.unsafe_charcode_at(j) {
-          break
-        }
-      } else {
-        // the substring is found
-        return i
-      }
-    }
-    i += 1
+  } else if self.view(start_offset=from).find(str.view()) is Some(idx) {
+    idx + from
+  } else {
+    -1
   }
-  -1
 }
 
 ///|
 /// Returns the last index of the sub string.
+#deprecated("Use `s.rfind(substr)` instead. If the optional argument `from` is not 0, take view from the string first. Please do not use an invalid `from` argument.")
 pub fn last_index_of(
   self : String,
   str : String,
   from~ : Int = self.length()
 ) -> Int {
-  let from = if from < 0 {
-    0
-  } else if from > self.length() {
-    self.length()
-  } else {
-    from
-  }
-  let len = self.length()
-  let sub_len = str.length()
-  if sub_len == 0 {
-    return from
-  }
-  if len < sub_len {
-    return -1
-  }
-  let min = sub_len - 1
-  let last = str.unsafe_charcode_at(sub_len - 1)
-  let mut i = from - 1
-  while i >= 0 {
-    // find last character
-    while i >= min && self.unsafe_charcode_at(i) != last {
-      i -= 1
-    }
-    if i < min {
-      return -1
-    }
-    let mut j = i - 1
-    let mut k = sub_len - 2
-    let start = i - sub_len
-    let found = while j > start {
-      if self.unsafe_charcode_at(j) != str.unsafe_charcode_at(k) {
-        break false
-      }
-      j -= 1
-      k -= 1
+  if from >= self.length() {
+    if self.rfind(str.view()) is Some(idx) {
+      idx
     } else {
-      true
+      -1
     }
-    if found {
-      return start + 1
+  } else if from < 0 {
+    if str.length() == 0 {
+      self.length()
+    } else {
+      -1
     }
-    i -= 1
+  } else if self.view(end_offset=from).rfind(str.view()) is Some(idx) {
+    idx
+  } else {
+    -1
   }
-  -1
 }
 
 ///|
 /// Returns true if this string contains given sub string.
+#deprecated("Use `s.view().contains(str)` instead.")
 pub fn contains(self : String, str : String) -> Bool {
-  self.index_of(str) >= 0
+  self.view().contains(str)
 }
 
 ///|
 /// Returns true if this string starts with a sub string.
+#deprecated("Use `s.has_prefix(str)` instead.")
 pub fn starts_with(self : String, str : String) -> Bool {
-  if str.length() > self.length() {
-    false
-  } else {
-    self.index_of(str) == 0
-  }
+  self.has_prefix(str)
 }
 
 ///|
 /// Returns true if this string ends with a sub string.
+#deprecated("Use `s.has_suffix(str)` instead.")
 pub fn ends_with(self : String, str : String) -> Bool {
-  let len = self.length()
-  let sub_len = str.length()
-  if sub_len > len {
-    false
-  } else {
-    self.last_index_of(str) == len - sub_len
-  }
+  self.has_suffix(str)
 }
 
 ///|
@@ -501,132 +380,53 @@ pub fn ends_with(self : String, str : String) -> Bool {
 /// let result = input.split(separator).collect()
 /// assert_eq!(result, ["a", "b", "c", "d"])
 /// ```
+#deprecated("Use `str.view().split(sep).map(View::to_string)` instead.")
 pub fn split(self : String, separator : String) -> Iter[String] {
-  let len = self.length()
-  let sep_len = separator.length()
-  if sep_len == 0 {
-    return self.iter().map(fn(c) { c.to_string() })
-  }
-  Iter::new(fn(yield_) {
-    let mut start = 0
-    while start < len {
-      let end = self.index_of(separator, from=start)
-      if end < 0 {
-        if yield_(self.substring(start~)) == IterEnd {
-          break IterEnd
-        }
-        break IterContinue
-      }
-      if yield_(self.substring(start~, end~)) == IterEnd {
-        break IterEnd
-      }
-      start = end + sep_len
-    } else {
-      IterContinue
-    }
-  })
+  self.view().split(separator).map(View::to_string)
 }
 
 ///|
 /// Replace the first old string in this string to new string.
+#deprecated("Use `str.view().replace(old, new).to_string()` instead.")
 pub fn replace(self : String, old~ : String, new~ : String) -> String {
-  let old_idx = self.index_of(old)
-  if old_idx < 0 {
-    self
-  } else {
-    self.substring(end=old_idx) +
-    new +
-    self.substring(start=old_idx + old.length())
-  }
+  self.view().replace(old~, new~).to_string()
 }
 
 ///|
 /// Replace all old string in this string to new string.
+#deprecated("Use `str.view().replace_all(old, new).to_string()` instead.")
 pub fn replace_all(self : String, old~ : String, new~ : String) -> String {
-  let buf = StringBuilder::new()
-  let len = self.length()
-  let old_len = old.length()
-  if old_len == 0 {
-    buf.write_string(new)
-    self
-    .iter()
-    .each(fn(c) {
-      buf.write_char(c)
-      buf.write_string(new)
-    })
-  } else {
-    let mut start = 0
-    while start < len {
-      let end = self.index_of(old, from=start)
-      if end < 0 {
-        buf.write_string(self.substring(start~))
-        break
-      }
-      buf.write_string(self.substring(start~, end~))
-      buf.write_string(new)
-      start = end + old_len
-    }
-  }
-  buf.to_string()
+  self.view().replace_all(old~, new~).to_string()
 }
 
 ///|
 /// Converts this string to lowercase.
+#deprecated("Use `str.view().to_lower().to_string()` instead.")
 pub fn to_lower(self : String) -> String {
-  // TODO: deal with non-ascii characters
-  let buf = StringBuilder::new(size_hint=self.length())
-  for c in self {
-    if c >= 'A' && c <= 'Z' {
-      buf.write_char(Char::from_int(c.to_int() + 32))
-    } else {
-      buf.write_char(c)
-    }
-  }
-  buf.to_string()
+  self.view().to_lower().to_string()
 }
 
 ///|
 /// Converts this string to uppercase.
+#deprecated("Use `str.view().to_upper().to_string()` instead.")
 pub fn to_upper(self : String) -> String {
-  // TODO: deal with non-ascii characters
-  let buf = StringBuilder::new(size_hint=self.length())
-  for c in self {
-    if c >= 'a' && c <= 'z' {
-      buf.write_char(Char::from_int(c.to_int() - 32))
-    } else {
-      buf.write_char(c)
-    }
-  }
-  buf.to_string()
+  self.view().to_upper().to_string()
 }
 
 ///|
 /// Reverse string
 /// It respects Unicode characters and surrogate pairs but not grapheme clusters.
 /// TODO: make it an intrinsic function
+#deprecated("Use `str.view().rev().to_string()` instead.")
 pub fn rev(self : String) -> String {
-  let buf = StringBuilder::new(size_hint=self.length())
-  for c in self.rev_iter() {
-    buf.write_char(c)
-  }
-  buf.to_string()
+  self.view().rev().to_string()
 }
 
 ///|
 /// Repeats the string `n` times.
+#deprecated("Use `str.view().repeat(n).to_string()` instead.")
 pub fn repeat(self : String, n : Int) -> String {
-  if n <= 0 {
-    return ""
-  }
-  if n == 1 {
-    return self
-  }
-  let len = self.length()
-  let buf = StringBuilder::new(size_hint=len * n)
-  for _ in 0..<n {
-    buf.write_string(self)
-  }
-  buf.to_string()
+  self.view().repeat(n).to_string()
 }
 
 ///|
@@ -638,22 +438,13 @@ pub fn repeat(self : String, n : Int) -> String {
 /// ```
 /// assert_eq!("2".pad_start(3, '0'), "002")
 /// ```
+#deprecated("Use `str.view().pad_start(total_width, padding_char).to_string()` instead.")
 pub fn pad_start(
   self : String,
   total_width : Int,
   padding_char : Char
 ) -> String {
-  let len = self.length()
-  if len >= total_width {
-    self
-  } else {
-    let buf = StringBuilder::new(size_hint=total_width)
-    for i in 0..<(total_width - len) {
-      buf.write_char(padding_char)
-    }
-    buf.write_string(self)
-    buf.to_string()
-  }
+  self.view().pad_start(total_width, padding_char).to_string()
 }
 
 ///|
@@ -665,18 +456,9 @@ pub fn pad_start(
 /// ```
 /// assert_eq!("2".pad_end(3, 'x'), "2xx")
 /// ```
+#deprecated("Use `str.view().pad_end(total_width, padding_char).to_string()` instead.")
 pub fn pad_end(self : String, total_width : Int, padding_char : Char) -> String {
-  let len = self.length()
-  if len >= total_width {
-    self
-  } else {
-    let buf = StringBuilder::new(size_hint=total_width)
-    buf.write_string(self)
-    for i in 0..<(total_width - len) {
-      buf.write_char(padding_char)
-    }
-    buf.to_string()
-  }
+  self.view().pad_end(total_width, padding_char).to_string()
 }
 
 ///|

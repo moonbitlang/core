@@ -80,7 +80,7 @@ fn indent_str(level : Int, indent : Int) -> String {
   if indent == 0 {
     ""
   } else {
-    "\n" + " ".repeat(indent * level)
+    "\n" + String::make(indent * level, ' ')
   }
 }
 
