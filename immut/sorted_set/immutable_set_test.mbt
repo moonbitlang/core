@@ -551,3 +551,44 @@ test "size" {
     content="7",
   )
 }
+
+///|
+test "@sorted_set.symmetric_difference" {
+  // Empty sets
+  let empty = @sorted_set.new()
+  let set1 = @sorted_set.of([1, 2, 3])
+  inspect!(
+    empty.symmetric_difference(empty),
+    content="@immut/sorted_set.of([])",
+  )
+  inspect!(
+    set1.symmetric_difference(empty),
+    content="@immut/sorted_set.of([1, 2, 3])",
+  )
+  inspect!(
+    empty.symmetric_difference(set1),
+    content="@immut/sorted_set.of([1, 2, 3])",
+  )
+}
+
+///|
+test "@sorted_set.symmetric_difference/disjoint" {
+  // Disjoint sets should union all elements
+  let set1 = @sorted_set.of([1, 3, 5])
+  let set2 = @sorted_set.of([2, 4, 6])
+  inspect!(
+    set1.symmetric_difference(set2),
+    content="@immut/sorted_set.of([1, 2, 3, 4, 5, 6])",
+  )
+}
+
+///|
+test "@sorted_set.symmetric_difference/overlapping" {
+  // Sets with overlapping elements should only include non-common elements
+  let set1 = @sorted_set.of([1, 2, 3, 4])
+  let set2 = @sorted_set.of([3, 4, 5, 6])
+  inspect!(
+    set1.symmetric_difference(set2),
+    content="@immut/sorted_set.of([1, 2, 5, 6])",
+  )
+}

@@ -282,6 +282,36 @@ pub fn difference[V : Compare](self : T[V], src : T[V]) -> T[V] {
 }
 
 ///|
+/// Returns a new set containing elements that are in either of the two sets, but
+/// not in their intersection. In other words, returns a new set containing
+/// elements that are in exactly one of the two sets.
+///
+/// Parameters:
+///
+/// * `self` : The first set.
+/// * `src` : The second set.
+///
+/// Returns a new set containing elements that appear in exactly one of the input
+/// sets.
+///
+/// Example:
+///
+/// ```moonbit
+/// test "semmetric_difference" {
+///   let set1 = @sorted_set.from_array([1, 2, 3, 4])
+///   let set2 = @sorted_set.from_array([3, 4, 5, 6])
+///   let diff = set1.semmetric_difference(set2)
+///   inspect!(diff, content="@sorted_set.of([1, 2, 5, 6])")
+/// }
+/// ```
+pub fn semmetric_difference[V : Compare](self : T[V], src : T[V]) -> T[V] {
+  let ret = new()
+  self.each(fn(x) { if not(src.contains(x)) { ret.add(x) } })
+  src.each(fn(x) { if not(self.contains(x)) { ret.add(x) } })
+  ret
+}
+
+///|
 /// Returns the intersection of two sets.
 #deprecated("Use `intersection` instead")
 #coverage.skip

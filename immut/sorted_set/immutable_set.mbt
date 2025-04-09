@@ -369,6 +369,44 @@ pub fn difference[A : Compare](self : T[A], other : T[A]) -> T[A] {
 }
 
 ///|
+/// Returns a new set containing elements that are in either `self` or `other`,
+/// but not in both sets.
+///
+/// Parameters:
+///
+/// * `self` : The first sorted set.
+/// * `other` : The second sorted set.
+///
+/// Returns a new sorted set containing elements that appear in exactly one of
+/// the input sets.
+///
+/// Example:
+///
+/// ```moonbit
+/// test "symmetric_difference" {
+///   let set1 = @sorted_set.of([1, 2, 3, 4])
+///   let set2 = @sorted_set.of([3, 4, 5, 6])
+///   inspect!(
+///     set1.symmetric_difference(set2),
+///     content="@immut/sorted_set.of([1, 2, 5, 6])",
+///   )
+/// }
+/// ```
+pub fn symmetric_difference[A : Compare](self : T[A], other : T[A]) -> T[A] {
+  match (self, other) {
+    (Empty, _) => other
+    (_, Empty) => self
+    (Node(left=l1, value=v1, right=r1, ..), _) =>
+      match other.split(v1) {
+        (l2, false, r2) =>
+          join(l1.symmetric_difference(l2), v1, r1.symmetric_difference(r2))
+        (l2, true, r2) =>
+          l1.symmetric_difference(l2).concat(r1.symmetric_difference(r2))
+      }
+  }
+}
+
+///|
 /// Returns true if self is a subset of other.
 ///
 /// # Example
