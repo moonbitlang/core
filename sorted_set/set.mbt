@@ -282,6 +282,35 @@ pub fn difference[V : Compare](self : T[V], src : T[V]) -> T[V] {
 }
 
 ///|
+/// Returns a new set containing elements that are in either of the two sets, but
+/// not in their intersection. In other words, returns a new set containing
+/// elements that are in exactly one of the two sets.
+///
+/// Parameters:
+///
+/// * `self` : The first set.
+/// * `other` : The second set.
+///
+/// Returns a new set containing elements that appear in exactly one of the input
+/// sets.
+///
+/// Example:
+///
+/// ```moonbit
+/// test "symmetric_difference" {
+///   let set1 = @sorted_set.of([1, 2, 3, 4])
+///   let set2 = @sorted_set.of([3, 4, 5, 6])
+///   let diff = set1.symmetric_difference(set2)
+///   inspect!(diff, content="@sorted_set.of([1, 2, 5, 6])")
+/// }
+/// ```
+pub fn symmetric_difference[V : Compare](self : T[V], other : T[V]) -> T[V] {
+  let set1 = self.difference(other)
+  let set2 = other.difference(self)
+  set1.union(set2)
+}
+
+///|
 /// Returns the intersection of two sets.
 #deprecated("Use `intersection` instead")
 #coverage.skip
