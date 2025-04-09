@@ -2,7 +2,7 @@
   "targets": {
     "monotonic_clock_js.mbt": ["js"],
     "monotonic_clock_wasm.mbt": ["wasm", "wasm-gc"],
-    "monotonic_clock_native.mbt": ["native"]
+    "monotonic_clock_native.mbt": ["native", "llvm"]
   },
   "import": [
     "moonbitlang/core/builtin",
