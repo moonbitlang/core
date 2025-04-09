@@ -1,4 +1,4 @@
-package moonbitlang/core/uint64
+package "moonbitlang/core/uint64"
 
 // Values
 let max_value : UInt64

@@ -1,4 +1,4 @@
-package moonbitlang/core/json
+package "moonbitlang/core/json"
 
 // Values
 fn add_index(JsonPath, Int) -> JsonPath

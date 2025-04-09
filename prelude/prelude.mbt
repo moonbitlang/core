@@ -34,7 +34,26 @@ pub typealias @builtin.(
 )
 
 ///|
-pub traitalias @builtin.(Eq, Compare, Hash, Logger, Show, ToJson, Default)
+pub traitalias @builtin.(
+  Eq,
+  Compare,
+  Hash,
+  Logger,
+  Show,
+  ToJson,
+  Default,
+  Add,
+  Sub,
+  Mul,
+  Div,
+  Mod,
+  Neg,
+  Shl,
+  Shr,
+  BitAnd,
+  BitOr,
+  BitXOr
+)
 
 ///|
 pub fnalias @builtin.(

@@ -1,4 +1,4 @@
-package moonbitlang/core/cmp
+package "moonbitlang/core/cmp"
 
 // Values
 fn maximum_by_key[T, K : Compare](T, T, (T) -> K) -> T

@@ -13,13 +13,14 @@
 // limitations under the License.
 
 ///|
-priv enum Cont[A] {
-  Empty
-  Node(A, @list.T[Cont[A]])
-} derive(Show)
+struct T[A] {
+  node : Node[A]
+  size : Int
+}
 
 ///|
-struct T[A] {
-  len : Int
-  body : Cont[A]
+priv enum Node[A] {
+  Empty
+  Leaf(A)
+  Branch(A, left~ : T[A], right~ : T[A])
 }

@@ -28,8 +28,8 @@ pub fn is_ascii(self : Char) -> Bool {
 }
 
 ///| Checks if the value is an ASCII alphabetic  character:
-/// - U+0041 ‘A’ ..= U+005A ‘Z’
-/// - U+0061 ‘a’ ..= U+007A ‘z’
+/// - U+0041 'A' ..= U+005A 'Z'
+/// - U+0061 'a' ..= U+007A 'z'
 pub fn is_ascii_alphabetic(self : Char) -> Bool {
   self is ('A'..='Z' | 'a'..='z')
 }
@@ -42,33 +42,33 @@ pub fn is_ascii_control(self : Char) -> Bool {
 }
 
 ///| Checks if the value is an ASCII decimal digit:
-/// U+0030 ‘0’ ..= U+0039 ‘9’
+/// U+0030 '0' ..= U+0039 '9'
 pub fn is_ascii_digit(self : Char) -> Bool {
   self is ('0'..='9')
 }
 
 ///| Checks if the value is an ASCII graphic character:
-/// U+0021 ‘!’ ..= U+007E ‘~’
+/// U+0021 '!' ..= U+007E '~'
 pub fn is_ascii_graphic(self : Char) -> Bool {
   self is ('\u{21}'..='\u{7E}')
 }
 
 ///| Checks if the value is an ASCII hexadecimal digit:
-/// - U+0030 ‘0’ ..= U+0039 ‘9’
-/// - U+0041 ‘A’ ..= U+0046 ‘F’
-/// - U+0061 ‘a’ ..= U+0066 ‘f’
+/// - U+0030 '0' ..= U+0039 '9'
+/// - U+0041 'A' ..= U+0046 'F'
+/// - U+0061 'a' ..= U+0066 'f'
 pub fn is_ascii_hexdigit(self : Char) -> Bool {
   self is ('0'..='9' | 'A'..='F' | 'a'..='f')
 }
 
 ///| Checks if the value is an ASCII lowercase character:
-/// U+0061 ‘a’ ..= U+007A ‘z’.
+/// U+0061 'a' ..= U+007A 'z'.
 pub fn is_ascii_lowercase(self : Char) -> Bool {
   self is ('a'..='z')
 }
 
 ///| Checks if the value is an ASCII octal digit:
-/// U+0030 ‘0’ ..= U+0037 ‘7’
+/// U+0030 '0' ..= U+0037 '7'
 pub fn is_ascii_octdigit(self : Char) -> Bool {
   self is ('0'..='7')
 }
@@ -87,7 +87,7 @@ pub fn is_ascii_punctuation(self : Char) -> Bool {
 }
 
 ///| Checks if the value is an ASCII uppercase character:
-/// U+0041 ‘A’ ..= U+005A ‘Z’
+/// U+0041 'A' ..= U+005A 'Z'
 pub fn is_ascii_uppercase(self : Char) -> Bool {
   self is ('A'..='Z')
 }
@@ -281,4 +281,70 @@ pub fn is_numeric(self : Char) -> Bool {
   | '\u{1ED01}'..='\u{1ED3D}'
   | '\u{1F100}'..='\u{1F10C}'
   | '\u{1FBF0}'..='\u{1FBF9}')
+}
+
+///| Returns true if this character is printable (visible when displayed).
+/// Aligns with Unicode standard categories for printable characters.
+/// Characters are considered printable if they are:
+/// - Letters (L*)
+/// - Marks (M*)
+/// - Numbers (N*)
+/// - Punctuation (P*)
+/// - Symbols (S*)
+/// - Spaces (Zs), with some exceptions
+/// Characters are considered non-printable if they are:
+/// - Control characters (Cc)
+/// - Format characters (Cf)
+/// - Line/paragraph separators (Zl, Zp)
+/// - Private use (Co)
+/// - Unassigned (Cn)
+/// - Surrogates (Cs)
+pub fn is_printable(self : Char) -> Bool {
+  // Check for control characters (Cc)
+  if self.is_control() {
+    return false
+  }
+
+  // Private use areas (Co)
+  if self >= '\u{E000}' && self <= '\u{F8FF}' {
+    return false
+  }
+
+  // Format characters (Cf) - main ranges
+  if (self >= '\u{200B}' && self <= '\u{200F}') || // Zero-width, directional marks
+    (self >= '\u{202A}' && self <= '\u{202E}') || // Directional formatting
+    (self >= '\u{2060}' && self <= '\u{2064}') || // Word joiners, invisible operators
+    (self >= '\u{FFF9}' && self <= '\u{FFFB}') || // Interlinear annotations
+    // Additional format characters
+    (self >= '\u{FE00}' && self <= '\u{FE0F}') || // Variation selectors
+    (self >= '\u{E0100}' && self <= '\u{E01EF}') || // Variation selectors supplement
+    (self >= '\u{180B}' && self <= '\u{180E}') || // Mongolian format controls
+    self == '\u{061C}' || // Arabic letter mark
+    self == '\u{FEFF}' || // Byte order mark
+    self == '\u{110BD}' || // Kaithi number sign
+    self == '\u{1BCA0}' ||
+    self == '\u{1BCA1}' ||
+    self == '\u{1BCA2}' ||
+    self == '\u{1BCA3}' || // Shorthand format controls
+    self == '\u{1D173}' ||
+    self == '\u{1D174}' ||
+    self == '\u{1D175}' ||
+    self == '\u{1D176}' ||
+    self == '\u{1D177}' ||
+    self == '\u{1D178}' ||
+    self == '\u{1D179}' ||
+    self == '\u{1D17A}' {
+    return false
+  } // Musical format controls
+
+  // Line and paragraph separators (Zl, Zp)
+  if self == '\u{2028}' || self == '\u{2029}' {
+    return false
+  }
+
+  // Specific other non-printable characters
+  if self == '\u{00AD}' { // Soft hyphen
+    return false
+  }
+  true
 }

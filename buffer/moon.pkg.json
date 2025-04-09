@@ -3,5 +3,8 @@
     "moonbitlang/core/builtin",
     "moonbitlang/core/bytes",
     "moonbitlang/core/array"
+  ],
+  "test-import": [
+    "moonbitlang/core/prelude"
   ]
 }
