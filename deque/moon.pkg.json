@@ -7,7 +7,6 @@
     "panic_test.mbt": ["not", "native"]
   },
   "test-import": [
-    "moonbitlang/core/prelude",
     "moonbitlang/core/array"
   ]
 }
