@@ -4,8 +4,5 @@
     "moonbitlang/core/double",
     "moonbitlang/core/random/internal/random_source"
   ],
-  "test-import": [
-    "moonbitlang/core/prelude",
-    "moonbitlang/core/float"
-  ]
+  "test-import": ["moonbitlang/core/float"]
 }
