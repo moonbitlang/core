@@ -29,7 +29,6 @@
     "hypot_nonjs.mbt" : ["not", "js"]
   },
   "test-import": [
-    "moonbitlang/core/prelude",
     "moonbitlang/core/test"
   ]
 }
