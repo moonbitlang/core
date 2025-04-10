@@ -1,24 +1,28 @@
 package "moonbitlang/core/prelude"
 
+import(
+  "moonbitlang/core/builtin"
+)
+
 // Values
 fn abort[T](String) -> T
 
-fn assert_eq[T : Eq + Show](T, T, loc~ : SourceLoc = _) -> Unit!
+fn assert_eq[T : @builtin.Eq + @builtin.Show](T, T, loc~ : @builtin.SourceLoc = _) -> Unit!
 
-fn assert_false(Bool, loc~ : SourceLoc = _) -> Unit!
+fn assert_false(Bool, loc~ : @builtin.SourceLoc = _) -> Unit!
 
-fn assert_not_eq[T : Eq + Show](T, T, loc~ : SourceLoc = _) -> Unit!
+fn assert_not_eq[T : @builtin.Eq + @builtin.Show](T, T, loc~ : @builtin.SourceLoc = _) -> Unit!
 
-fn assert_true(Bool, loc~ : SourceLoc = _) -> Unit!
+fn assert_true(Bool, loc~ : @builtin.SourceLoc = _) -> Unit!
 
 #deprecated
-fn dump[T](T, name? : String, loc~ : SourceLoc = _) -> T
+fn dump[T](T, name? : String, loc~ : @builtin.SourceLoc = _) -> T
 
-fn fail[T](String, loc~ : SourceLoc = _) -> T!Failure
+fn fail[T](String, loc~ : @builtin.SourceLoc = _) -> T!@builtin.Failure
 
 fn ignore[T](T) -> Unit
 
-fn inspect(&Show, content~ : String = .., loc~ : SourceLoc = _, args_loc~ : ArgsLoc = _) -> Unit!InspectError
+fn inspect(&@builtin.Show, content~ : String = .., loc~ : @builtin.SourceLoc = _, args_loc~ : @builtin.ArgsLoc = _) -> Unit!@builtin.InspectError
 
 fn not(Bool) -> Bool
 
@@ -26,82 +30,82 @@ fn panic[T]() -> T
 
 fn physical_equal[T](T, T) -> Bool
 
-fn println[T : Show](T) -> Unit
+fn println[T : @builtin.Show](T) -> Unit
 
-fn repr[T : Show](T) -> String
+fn repr[T : @builtin.Show](T) -> String
 
 // Types and methods
 
 // Type aliases
-pub typealias ArgsLoc = ArgsLoc
+pub typealias ArgsLoc = @builtin.ArgsLoc
 
-pub typealias Array[X] = Array[X]
+pub typealias Array[X] = @builtin.Array[X]
 
-pub typealias ArrayView[X] = ArrayView[X]
+pub typealias ArrayView[X] = @builtin.ArrayView[X]
 
-pub typealias BigInt = BigInt
+pub typealias BigInt = @builtin.BigInt
 
-pub typealias Failure = Failure
+pub typealias Failure = @builtin.Failure
 
-pub typealias Hasher = Hasher
+pub typealias Hasher = @builtin.Hasher
 
-pub typealias InspectError = InspectError
+pub typealias InspectError = @builtin.InspectError
 
-pub typealias Iter[X] = Iter[X]
+pub typealias Iter[X] = @builtin.Iter[X]
 
-pub typealias Iter2[X, Y] = Iter2[X, Y]
+pub typealias Iter2[X, Y] = @builtin.Iter2[X, Y]
 
-pub typealias IterResult = IterResult
+pub typealias IterResult = @builtin.IterResult
 
-pub typealias Json = Json
+pub typealias Json = @builtin.Json
 
-pub typealias Map[K, V] = Map[K, V]
+pub typealias Map[K, V] = @builtin.Map[K, V]
 
-pub typealias Set[X] = Set[X]
+pub typealias Set[X] = @builtin.Set[X]
 
-pub typealias SnapshotError = SnapshotError
+pub typealias SnapshotError = @builtin.SnapshotError
 
-pub typealias SourceLoc = SourceLoc
+pub typealias SourceLoc = @builtin.SourceLoc
 
-pub typealias StringBuilder = StringBuilder
+pub typealias StringBuilder = @builtin.StringBuilder
 
-pub typealias UninitializedArray[X] = UninitializedArray[X]
+pub typealias UninitializedArray[X] = @builtin.UninitializedArray[X]
 
-pub traitalias Add = Add
+pub traitalias Add = @builtin.Add
 
-pub traitalias BitAnd = BitAnd
+pub traitalias BitAnd = @builtin.BitAnd
 
-pub traitalias BitOr = BitOr
+pub traitalias BitOr = @builtin.BitOr
 
-pub traitalias BitXOr = BitXOr
+pub traitalias BitXOr = @builtin.BitXOr
 
-pub traitalias Compare = Compare
+pub traitalias Compare = @builtin.Compare
 
-pub traitalias Default = Default
+pub traitalias Default = @builtin.Default
 
-pub traitalias Div = Div
+pub traitalias Div = @builtin.Div
 
-pub traitalias Eq = Eq
+pub traitalias Eq = @builtin.Eq
 
-pub traitalias Hash = Hash
+pub traitalias Hash = @builtin.Hash
 
-pub traitalias Logger = Logger
+pub traitalias Logger = @builtin.Logger
 
-pub traitalias Mod = Mod
+pub traitalias Mod = @builtin.Mod
 
-pub traitalias Mul = Mul
+pub traitalias Mul = @builtin.Mul
 
-pub traitalias Neg = Neg
+pub traitalias Neg = @builtin.Neg
 
-pub traitalias Shl = Shl
+pub traitalias Shl = @builtin.Shl
 
-pub traitalias Show = Show
+pub traitalias Show = @builtin.Show
 
-pub traitalias Shr = Shr
+pub traitalias Shr = @builtin.Shr
 
-pub traitalias Sub = Sub
+pub traitalias Sub = @builtin.Sub
 
-pub traitalias ToJson = ToJson
+pub traitalias ToJson = @builtin.ToJson
 
 // Traits
 
