@@ -1,5 +1,12 @@
 # Contributing to moonbitlang/core
 
+## Step 0: Work with a stable toolchain
+
+Contributions to the core should be based on the latest stable channel of the MoonBit toolchains. Using an unknown or unstable version can confuse reviewers and other contributors with new, potentially incompatible changes.
+
+Therefore, we do not encourage users to submit contributions based on bleeding-edge toolchains.
+For the latest stable release and installation instructions, contributors can visit https://www.moonbitlang.com/download/.
+
 ## Step 1: Clone the repository
 
 - To start working on the project, you need a local copy of the repository. Currently, `moon` looks for moonbitlang/core at `~/.moon/lib/core`. So, remove it if it exists:

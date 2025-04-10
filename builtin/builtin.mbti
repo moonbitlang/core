@@ -144,6 +144,8 @@ impl ArrayView {
 }
 impl[X : ToJson] ToJson for ArrayView[X]
 
+pub(all) type! BenchError String
+
 type BigInt
 impl BigInt {
   #deprecated

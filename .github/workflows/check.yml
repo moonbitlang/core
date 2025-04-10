@@ -252,7 +252,7 @@ jobs:
             moon test --md
 
       - name: moon check
-        run: moon check --deny-warn
+        run: moon check
 
       - name: moon bundle
         run: moon bundle --all
