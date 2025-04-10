@@ -780,9 +780,8 @@ impl[T0 : Eq, T1 : Eq, T2 : Eq, T3 : Eq, T4 : Eq, T5 : Eq, T6 : Eq, T7 : Eq, T8 
 
 pub(open) trait Hash {
   hash_combine(Self, Hasher) -> Unit
-  hash(Self) -> Int
+  hash(Self) -> Int = _
 }
-impl Hash::hash
 impl Hash for Byte
 impl Hash for Int
 impl Hash for UInt
@@ -800,9 +799,8 @@ impl[A : Hash, B : Hash, C : Hash, D : Hash, E : Hash, F : Hash, G : Hash] Hash 
 pub(open) trait Logger {
   write_string(Self, String) -> Unit
   write_substring(Self, String, Int, Int) -> Unit
-  write_char(Self, Char) -> Unit
+  write_char(Self, Char) -> Unit = _
 }
-impl Logger::write_char
 
 pub(open) trait Mod {
   op_mod(Self, Self) -> Self
@@ -842,9 +840,8 @@ impl Shl for UInt64
 
 pub(open) trait Show {
   output(Self, &Logger) -> Unit
-  to_string(Self) -> String
+  to_string(Self) -> String = _
 }
-impl Show::to_string
 impl Show for Unit
 impl Show for Bool
 impl Show for Byte
