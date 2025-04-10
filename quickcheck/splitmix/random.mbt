@@ -87,10 +87,11 @@ pub fn next_int(self : RandomState) -> Int {
 /// Get the next random number as a positive 32-bit signed integer.
 pub fn next_positive_int(self : RandomState) -> Int {
   let r = self.next_int()
-  if r < 0 {
-    -r
-  } else {
-    r + 1
+  match r {
+    -2147483648 => 2147483647
+    0 => 1
+    r if r < 0 => -r
+    r => r
   }
 }
 
