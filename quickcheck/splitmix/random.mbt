@@ -87,6 +87,7 @@ pub fn next_int(self : RandomState) -> Int {
 /// Get the next random number as a positive 32-bit signed integer.
 pub fn next_positive_int(self : RandomState) -> Int {
   let r = self.next_int()
+  // Using Pattern matching to handle the edge cases of Int32.MinValue and Int32.MaxValue
   match r {
     -2147483648 => 2147483647
     0 => 1
