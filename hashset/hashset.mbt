@@ -212,9 +212,9 @@ pub fn symmetric_difference[K : Hash + Eq](self : T[K], other : T[K]) -> T[K] {
 pub fn iter[K](self : T[K]) -> Iter[K] {
   Iter::new(fn(yield_) {
     for entry in self.entries {
-      match entry {
-        Some({ key, .. }) => if yield_(key) == IterEnd { break IterEnd }
-        None => continue
+      if entry is Some({ key, .. }) {
+        guard yield_(key) is IterContinue else { break IterEnd }
+
       }
     } else {
       IterContinue

@@ -9,5 +9,6 @@
     "moonbitlang/core/double",
     "moonbitlang/core/array",
     "moonbitlang/core/json"
-  ]
+  ],
+  "test-import": ["moonbitlang/core/prelude"]
 }
