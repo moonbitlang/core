@@ -20,7 +20,7 @@
 /// let queue : @priority_queue.T[Int] = @priority_queue.new()
 /// assert_eq!(queue.length(), 0)
 /// ```
-pub fn new[A : Compare]() -> T[A] {
+pub fn new[A]() -> T[A] {
   { len: 0, top: Nil }
 }
 
@@ -299,4 +299,9 @@ test "priority queue arbitrary" {
     samples[11:15],
     content="[@priority_queue.of([0, 0, 0, -1, -2]), @priority_queue.of([8, 4, 0, 0, 0, 0, 0, 0, -2, -5]), @priority_queue.of([2, 0, 0, -1]), @priority_queue.of([0, 0])]",
   )
+}
+
+///|
+pub impl[K] Default for T[K] with default() {
+  new()
 }
