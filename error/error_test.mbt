@@ -15,6 +15,7 @@
 ///|
 type! IntError Int
 
+///|
 test "show error" {
   fn f(b : Bool) -> String! {
     if b {

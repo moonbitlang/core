@@ -1,23 +1,42 @@
-package moonbitlang/core/array
+package "moonbitlang/core/array"
 
-alias @moonbitlang/core/quickcheck as @quickcheck
+import(
+  "moonbitlang/core/bytes"
+  "moonbitlang/core/quickcheck"
+)
 
 // Values
+fn copy[T](Array[T]) -> Array[T]
+
+fn filter_map[A, B](Array[A], (A) -> B?) -> Array[B]
+
+fn join(Array[String], String) -> String
+
+fn last[A](Array[A]) -> A?
+
+fn push_iter[T](Array[T], Iter[T]) -> Unit
+
+fn shuffle[T](Array[T], rand~ : (Int) -> Int) -> Array[T]
+
+fn shuffle_in_place[T](Array[T], rand~ : (Int) -> Int) -> Unit
+
+fn sort[T : Compare](Array[T]) -> Unit
+
+fn sort_by[T](Array[T], (T, T) -> Int) -> Unit
+
+fn sort_by_key[T, K : Compare](Array[T], (T) -> K) -> Unit
 
 // Types and methods
 impl FixedArray {
   all[T](Self[T], (T) -> Bool) -> Bool
   any[T](Self[T], (T) -> Bool) -> Bool
+  blit_from_bytesview(Self[Byte], Int, @bytes.View) -> Unit
   contains[T : Eq](Self[T], T) -> Bool
   copy[T](Self[T]) -> Self[T]
   each[T](Self[T], (T) -> Unit) -> Unit
   eachi[T](Self[T], (Int, T) -> Unit) -> Unit
   ends_with[T : Eq](Self[T], Self[T]) -> Bool
   fold[A, B](Self[A], init~ : B, (B, A) -> B) -> B
-  fold_left[T, U](Self[T], (U, T) -> U, init~ : U) -> U //deprecated
-  fold_lefti[T, U](Self[T], (Int, U, T) -> U, init~ : U) -> U //deprecated
-  fold_right[T, U](Self[T], (U, T) -> U, init~ : U) -> U //deprecated
-  fold_righti[T, U](Self[T], (Int, U, T) -> U, init~ : U) -> U //deprecated
   foldi[A, B](Self[A], init~ : B, (Int, B, A) -> B) -> B
   from_array[T](Array[T]) -> Self[T]
   from_iter[T](Iter[T]) -> Self[T]
@@ -26,10 +45,6 @@ impl FixedArray {
   makei[T](Int, (Int) -> T) -> Self[T]
   map[T, U](Self[T], (T) -> U) -> Self[U]
   mapi[T, U](Self[T], (Int, T) -> U) -> Self[U]
-  new[T](Int, () -> T) -> Self[T] //deprecated
-  new_with_index[T](Int, (Int) -> T) -> Self[T] //deprecated
-  op_add[T](Self[T], Self[T]) -> Self[T]
-  op_equal[T : Eq](Self[T], Self[T]) -> Bool
   rev[T](Self[T]) -> Self[T]
   rev_each[T](Self[T], (T) -> Unit) -> Unit
   rev_eachi[T](Self[T], (Int, T) -> Unit) -> Unit
@@ -44,15 +59,19 @@ impl FixedArray {
   starts_with[T : Eq](Self[T], Self[T]) -> Bool
   swap[T](Self[T], Int, Int) -> Unit
 }
+impl[T] Add for FixedArray[T]
+impl[T : Compare] Compare for FixedArray[T]
+impl[T : Eq] Eq for FixedArray[T]
+impl[T : Hash] Hash for FixedArray[T]
 impl[X : @quickcheck.Arbitrary] @quickcheck.Arbitrary for FixedArray[X]
 
 impl Array {
   copy[T](Self[T]) -> Self[T]
   filter_map[A, B](Self[A], (A) -> B?) -> Self[B]
   from_iter[T](Iter[T]) -> Self[T]
+  join(Self[String], String) -> String
   last[A](Self[A]) -> A?
   makei[T](Int, (Int) -> T) -> Self[T]
-  map_option[A, B](Self[A], (A) -> B?) -> Self[B] //deprecated
   push_iter[T](Self[T], Iter[T]) -> Unit
   shuffle[T](Self[T], rand~ : (Int) -> Int) -> Self[T]
   shuffle_in_place[T](Self[T], rand~ : (Int) -> Int) -> Unit
@@ -68,10 +87,24 @@ impl ArrayView {
   contains[T : Eq](Self[T], T) -> Bool
   each[T](Self[T], (T) -> Unit) -> Unit
   eachi[T](Self[T], (Int, T) -> Unit) -> Unit
+  filter[T](Self[T], (T) -> Bool) -> Array[T]
+  fold[A, B](Self[A], init~ : B, (B, A) -> B) -> B
+  foldi[A, B](Self[A], init~ : B, (Int, B, A) -> B) -> B
+  iter[A](Self[A]) -> Iter[A]
+  map[T, U](Self[T], (T) -> U) -> Array[U]
+  map_inplace[T](Self[T], (T) -> T) -> Unit
+  mapi[T, U](Self[T], (Int, T) -> U) -> Array[U]
+  mapi_inplace[T](Self[T], (Int, T) -> T) -> Unit
+  rev_fold[A, B](Self[A], init~ : B, (B, A) -> B) -> B
+  rev_foldi[A, B](Self[A], init~ : B, (Int, B, A) -> B) -> B
   rev_inplace[T](Self[T]) -> Unit
 }
+impl[T : Compare] Compare for ArrayView[T]
+impl[T : Eq] Eq for ArrayView[T]
+impl[X : Show] Show for ArrayView[X]
 
 // Type aliases
+pub typealias View[T] = ArrayView[T]
 
 // Traits
 

@@ -59,7 +59,7 @@ fn step(self : StringSlice, step : Int) -> StringSlice? {
   let mut step = step
   let mut start = c.start
   while start < c.end && step > 0 {
-    if c.string[start] != '_' {
+    if c.string.unsafe_charcode_at(start) != '_' {
       step -= 1
     }
     start += 1
@@ -80,7 +80,7 @@ fn step_1_unchecked(self : StringSlice) -> StringSlice {
 ///|
 /// Unsafe: make sure index is in bounds
 fn op_get(self : StringSlice, index : Int) -> Char {
-  self.string[self.start + index]
+  self.string.unsafe_charcode_at(self.start + index) |> Char::from_int
 }
 
 ///|
@@ -96,7 +96,7 @@ fn is_empty(self : StringSlice) -> Bool {
 ///|
 fn StringSlice::to_string(self : StringSlice) -> String {
   let buf = StringBuilder::new(size_hint=self.length())
-  for i = 0; i < self.length(); i = i + 1 {
+  for i in 0..<self.length() {
     buf.write_char(self[i])
   }
   buf.to_string()
@@ -106,7 +106,7 @@ fn StringSlice::to_string(self : StringSlice) -> String {
 fn prefix_eq_ignore_case(self : StringSlice, s2 : String) -> Bool {
   for i = 0; i < s2.length() && i < self.length(); i = i + 1 {
     let c1 = self[i]
-    let c2 = s2[i]
+    let c2 = s2.unsafe_charcode_at(i) |> Char::from_int
     if lower(c1) != lower(c2) {
       return false
     }
@@ -134,7 +134,7 @@ fn fold_digits[T](
   let mut ret = init
   let mut len = 0
   // let len = self.length()
-  for i = 0; i < self.length(); i = i + 1 {
+  for i in 0..<self.length() {
     if not(is_digit(self[i]) || self[i] == '_') {
       return (self.subfix_unchecked(i), ret, len)
     }
@@ -146,12 +146,14 @@ fn fold_digits[T](
   (self.subfix_unchecked(self.length()), ret, len)
 }
 
+///|
 test "eq_ignore_case" {
   assert_true!(prefix_eq_ignore_case(full_slice("nan"), "NaN"))
   assert_true!(prefix_eq_ignore_case(full_slice("inf"), "inf"))
   assert_true!(prefix_eq_ignore_case(full_slice("inf"), "Inf"))
 }
 
+///|
 test "lower" {
   assert_eq!(lower('Z'), 'z')
   assert_eq!(lower('A'), 'a')

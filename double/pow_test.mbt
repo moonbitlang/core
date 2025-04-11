@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+///|
 test "pow" (it : @test.T) {
   let value = [
     0.0,

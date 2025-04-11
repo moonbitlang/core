@@ -21,6 +21,7 @@ fn check(x : Double, y : Double) -> Bool {
   (x - y).abs() < 1.0e-15
 }
 
+///|
 test "mod" {
   // normal numbers
   inspect!(check(7.5 % 2.3, 0.6), content="true")

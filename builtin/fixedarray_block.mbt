@@ -33,7 +33,7 @@
 /// - `dst_offset + len > dst.length()`
 /// - `src_offset + len > src.length()`
 ///
-/// @intrinsic %fixedarray.copy
+#intrinsic("%fixedarray.copy")
 pub fn FixedArray::unsafe_blit[A](
   dst : FixedArray[A],
   dst_offset : Int,
@@ -42,7 +42,7 @@ pub fn FixedArray::unsafe_blit[A](
   len : Int
 ) -> Unit {
   if physical_equal(dst, src) && dst_offset < src_offset {
-    for i = 0; i < len; i = i + 1 {
+    for i in 0..<len {
       dst[dst_offset + i] = src[src_offset + i]
     }
   } else {
@@ -53,7 +53,7 @@ pub fn FixedArray::unsafe_blit[A](
 }
 
 ///|
-/// @intrinsic %fixedarray.copy
+#intrinsic("%fixedarray.copy")
 /// This is the same as `unsafe_blit`, but it is used when the source array is
 /// FixedArray[T] instead of UninitializedArray[T].
 fn UninitializedArray::unsafe_blit_fixed[T](
@@ -69,6 +69,40 @@ fn UninitializedArray::unsafe_blit_fixed[T](
 }
 
 ///|
+/// Copies a sequence of elements from the source fixed array to a destination
+/// fixed array. The arrays may overlap, in which case the copy is performed in a
+/// way that preserves the data.
+///
+/// Parameters:
+///
+/// * `self` : The source fixed array from which elements will be copied.
+/// * `dst` : The destination fixed array where elements will be copied to.
+/// * `len` : The number of elements to copy.
+/// * `src_offset` : The starting position in the source array. Defaults to 0.
+/// * `dst_offset` : The starting position in the destination array. Defaults to
+/// 0.
+///
+/// Throws a panic if:
+///
+/// * `src_offset + len` exceeds the length of the source array
+/// * `dst_offset + len` exceeds the length of the destination array
+///
+/// Example:
+///
+/// ```moonbit
+/// test "FixedArray::blit_to" {
+///   let src = FixedArray::make(5, 1)
+///   let dst = FixedArray::make(5, 0)
+///   src.blit_to(dst, len=3, src_offset=1, dst_offset=2)
+///   inspect!(dst, content="[0, 0, 1, 1, 1]")
+/// }
+///
+/// test "panic FixedArray::blit_to/out_of_bounds" {
+///   let src = FixedArray::make(3, 1)
+///   let dst = FixedArray::make(3, 0)
+///   ignore(src.blit_to(dst, len=4)) // Panics: length out of bounds
+/// }
+/// ```
 pub fn FixedArray::blit_to[A](
   self : FixedArray[A],
   dst : FixedArray[A],

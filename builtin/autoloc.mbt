@@ -20,7 +20,7 @@
 /// This type is public to all packages but its internal representation is
 /// opaque. Users cannot construct values of this type directly; they are
 /// automatically created by the compiler when needed.
-pub(all) type SourceLoc
+pub(all) extern type SourceLoc
 
 ///|
 /// Converts a source location to its string representation.
@@ -64,7 +64,7 @@ pub(all) type ArgsLoc Array[SourceLoc?] derive(Show)
 pub fn ArgsLoc::to_json(self : ArgsLoc) -> String {
   let buf = StringBuilder::new(size_hint=10)
   buf.write_char('[')
-  for i = 0; i < self._.length(); i = i + 1 {
+  for i in 0..<self._.length() {
     if i != 0 {
       buf.write_string(", ")
     }

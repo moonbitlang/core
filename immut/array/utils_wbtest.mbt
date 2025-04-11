@@ -27,7 +27,7 @@ enum Op {
 /// - `rng`: a random number generator
 /// - `times`: the number of operations to be generated
 /// - `max_lvl`: the maximum level of the tree
-fn random_test_gen(rng : @random.Rand, times : Int, max_lvl : Int) -> Array[Op] {
+fn random_test_gen(rng : Random, times : Int, max_lvl : Int) -> Array[Op] {
   // Hyperparameters
   let op_count = 3
   let max_len = branching_factor_power(max_lvl)
@@ -36,7 +36,7 @@ fn random_test_gen(rng : @random.Rand, times : Int, max_lvl : Int) -> Array[Op] 
   // Start constructing the array
   let ret = []
   let mut cur_len = 0
-  for i = 0; i < times; i = i + 1 {
+  for i in 0..<times {
     let op = rng.int(limit=op_count)
     match op {
       0 => {
@@ -90,10 +90,10 @@ fn execute_array_test(rs : Array[Op]) -> Unit! {
       Concat(v) => {
         // concat
         let len = v.length()
-        for i = 0; i < len; i = i + 1 {
+        for i in 0..<len {
           a.push(v[i])
         }
-        t = t.concat(from_iter(v.iter()))
+        t = t.concat(from_array(v))
         check_array_eq!(a, t)
       }
       Set(idx, v) => {
@@ -110,26 +110,10 @@ fn execute_array_test(rs : Array[Op]) -> Unit! {
 /// Compute the power of the branching factor.
 fn branching_factor_power(a : Int) -> Int {
   let mut ret = 1
-  for i = 0; i < a; i = i + 1 {
+  for i in 0..<a {
     ret *= branching_factor
   }
   ret
-}
-
-///|
-/// Repeat the given string up to 32 characters.
-/// Used to generate a random seed for the test.
-fn repeat_up_to_32(s : String) -> Bytes {
-  let a_len = 32
-  let s_len = s.length()
-  let a = FixedArray::make(a_len, b'0')
-  let mut j = 0
-  for i = 0; i < a_len; i = i + 1 {
-    let l = a.set_utf8_char(i, s[j])
-    guard l == 1
-    j = (j + 1) % s_len
-  }
-  Bytes::from_fixedarray(a)
 }
 
 ///|
@@ -139,7 +123,7 @@ fn repeat_up_to_32(s : String) -> Bytes {
 fn check_array_eq(a : Array[Int], t : T[Int]) -> Unit! {
   assert_eq!(a.length(), t.size)
   let len = t.size
-  for i = 0; i < len; i = i + 1 {
+  for i in 0..<len {
     assert_eq!(t[i], a[i])
   }
 }
@@ -151,7 +135,7 @@ fn check_array_eq(a : Array[Int], t : T[Int]) -> Unit! {
 fn check_fixedarray_eq(a : FixedArray[Int], t : T[Int]) -> Unit! {
   assert_eq!(a.length(), t.size)
   let len = t.size
-  for i = 0; i < len; i = i + 1 {
+  for i in 0..<len {
     assert_eq!(t[i], a[i])
   }
 }
@@ -159,6 +143,19 @@ fn check_fixedarray_eq(a : FixedArray[Int], t : T[Int]) -> Unit! {
 ///|
 /// Generate a random array of length `n`.
 fn random_array(n : Int) -> Array[Int] {
-  let rng = @random.new(seed=b"DEADBEEFLIVEBEEFDEADBEEFDEADBEEF")
+  let rng = Random({ val: 0 })
   Array::makei(n, fn(i) { rng.int(limit=i) })
+}
+
+///|
+type Random Ref[UInt64]
+
+///|
+fn int(self : Random, limit~ : Int) -> Int {
+  let limit = if limit == 0 { 1L << 32 } else { limit.to_int64() }
+  let a = 1UL << 48
+  let c = 11UL
+  let m = 25214903917UL
+  self._.val = (a * self._.val + c) % m
+  (self._.val.reinterpret_as_int64() % limit).to_int()
 }

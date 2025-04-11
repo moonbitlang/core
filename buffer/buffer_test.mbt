@@ -12,24 +12,28 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+///｜
 test "create buffer from bytes" {
   let bytes = b"1\x002\x003\x00"
   let buf = @buffer.from_bytes(bytes)
   inspect!(buf, content="123")
 }
 
+///｜
 test "create buffer from array" {
   let arr = [b'4', b'\x00', b'5', b'\x00', b'6', b'\x00']
   let buf = @buffer.from_array(arr)
   inspect!(buf, content="456")
 }
 
+///｜
 test "create buffer from iterator" {
   let iter = [b'5', b'\x00', b'6', b'\x00', b'7', b'\x00'].iter()
   let buf = @buffer.from_iter(iter)
   inspect!(buf, content="567")
 }
 
+///|
 test "length method" {
   let buf = @buffer.new(size_hint=100)
   inspect!(buf.length(), content="0")
@@ -37,6 +41,7 @@ test "length method" {
   inspect!(buf.length(), content="8")
 }
 
+///|
 test "is_empty method" {
   let buf = @buffer.new(size_hint=100)
   inspect!(buf.is_empty(), content="true")
@@ -44,18 +49,21 @@ test "is_empty method" {
   inspect!(buf.is_empty(), content="false")
 }
 
+///|
 test "expect method with matching content" {
   let buf = @buffer.new(size_hint=100)
   buf.write_string("Test")
   inspect!(buf, content="Test")
 }
 
+///|
 test "expect method with non-matching content" {
   let buf = @buffer.new(size_hint=100)
   buf.write_string("Test")
   inspect!(buf, content="Test")
 }
 
+///|
 test "grow_if_necessary method" {
   let buf = @buffer.new(size_hint=10)
   buf.write_string(
@@ -64,12 +72,14 @@ test "grow_if_necessary method" {
   assert_true!(buf.to_bytes().length() >= 60)
 }
 
+///|
 test "write_substring method" {
   let buf = @buffer.new(size_hint=10)
   buf.write_substring("Hello, World!", 7, 5)
   inspect!(buf, content="World")
 }
 
+///|
 test "write_byte method" {
   let buf = @buffer.new(size_hint=10)
   buf.write_byte(b'A')
@@ -77,6 +87,7 @@ test "write_byte method" {
   inspect!(buf, content="A")
 }
 
+///|
 test "to_bytes method" {
   let buf = @buffer.new(size_hint=10)
   buf.write_string("Test")
@@ -84,12 +95,14 @@ test "to_bytes method" {
   assert_eq!(bytes.length(), 8) // Each character in "Test" is 2 bytes
 }
 
+///|
 test "expect method with non-matching content" {
   let buf = @buffer.new(size_hint=100)
   buf.write_string("Test")
   inspect!(buf, content="Test")
 }
 
+///|
 test "grow_if_necessary method" {
   let buf = @buffer.new(size_hint=10)
   buf.write_string(
@@ -98,12 +111,14 @@ test "grow_if_necessary method" {
   assert_true!(buf.to_bytes().length() >= 60)
 }
 
+///|
 test "write_substring method" {
   let buf = @buffer.new(size_hint=10)
   buf.write_substring("Hello, World!", 7, 5)
   inspect!(buf, content="World")
 }
 
+///|
 test "write_byte method" {
   let buf = @buffer.new(size_hint=10)
   buf.write_byte(b'A')
@@ -111,6 +126,7 @@ test "write_byte method" {
   inspect!(buf, content="A")
 }
 
+///|
 test "to_bytes method" {
   let buf = @buffer.new(size_hint=10)
   buf.write_string("Test")
@@ -118,18 +134,21 @@ test "to_bytes method" {
   assert_eq!(bytes.length(), 8) // Each character in "Test" is 2 bytes
 }
 
+///|
 test "expect method with matching content" {
   let buf = @buffer.new(size_hint=100)
   buf.write_string("Test")
   inspect!(buf, content="Test")
 }
 
+///|
 test "expect method with non-matching content" {
   let buf = @buffer.new(size_hint=100)
   buf.write_string("Test")
   inspect!(buf, content="Test")
 }
 
+///|
 test "grow_if_necessary method" {
   let buf = @buffer.new(size_hint=10)
   buf.write_string(
@@ -138,12 +157,14 @@ test "grow_if_necessary method" {
   assert_true!(buf.to_bytes().length() >= 60)
 }
 
+///|
 test "write_substring method" {
   let buf = @buffer.new(size_hint=10)
   buf.write_substring("Hello, World!", 7, 5)
   inspect!(buf, content="World")
 }
 
+///|
 test "write_byte method" {
   let buf = @buffer.new(size_hint=10)
   buf.write_byte(b'A')
@@ -151,6 +172,7 @@ test "write_byte method" {
   inspect!(buf, content="A")
 }
 
+///|
 test "to_bytes method" {
   let buf = @buffer.new(size_hint=10)
   buf.write_string("Test")
@@ -158,6 +180,7 @@ test "to_bytes method" {
   assert_eq!(bytes.length(), 8) // Each character in "Test" is 2 bytes
 }
 
+///|
 test "write_bytes" {
   let buf = @buffer.new(size_hint=4)
   buf.write_bytes(b"1\x002\x003\x004\x00")
@@ -165,6 +188,7 @@ test "write_bytes" {
   inspect!(buf, content="12345678")
 }
 
+///|
 test "write_uint64_le method" {
   let buf = @buffer.new(size_hint=16)
   buf.write_uint64_le(0xdeadbeefaabbccdd)
@@ -177,6 +201,7 @@ test "write_uint64_le method" {
   )
 }
 
+///|
 test "write_uint64_be method" {
   let buf = @buffer.new(size_hint=16)
   buf.write_uint64_be(0xdeadbeefaabbccdd)
@@ -189,6 +214,7 @@ test "write_uint64_be method" {
   )
 }
 
+///|
 test "write_int64_le method" {
   let buf = @buffer.new(size_hint=16)
   buf.write_int64_le(-2)
@@ -201,6 +227,7 @@ test "write_int64_le method" {
   )
 }
 
+///|
 test "write_int64_be method" {
   let buf = @buffer.new(size_hint=16)
   buf.write_int64_be(-2)
@@ -213,6 +240,7 @@ test "write_int64_be method" {
   )
 }
 
+///|
 test "write_uint_le method" {
   let buf = @buffer.new(size_hint=8)
   buf.write_uint_le(0xdeadbeef)
@@ -225,6 +253,7 @@ test "write_uint_le method" {
   )
 }
 
+///|
 test "write_uint_be method" {
   let buf = @buffer.new(size_hint=8)
   buf.write_uint_be(0xdeadbeef)
@@ -237,6 +266,7 @@ test "write_uint_be method" {
   )
 }
 
+///|
 test "write_int_le method" {
   let buf = @buffer.new(size_hint=8)
   buf.write_int_le(-2)
@@ -249,6 +279,7 @@ test "write_int_le method" {
   )
 }
 
+///|
 test "write_int_be method" {
   let buf = @buffer.new(size_hint=8)
   buf.write_int_be(-2)
@@ -261,6 +292,7 @@ test "write_int_be method" {
   )
 }
 
+///|
 test "write_double_le method" {
   let buf = @buffer.new(size_hint=16)
   buf.write_double_le(-2)
@@ -273,6 +305,7 @@ test "write_double_le method" {
   )
 }
 
+///|
 test "write_double_be method" {
   let buf = @buffer.new(size_hint=16)
   buf.write_double_be(-2)
@@ -285,6 +318,7 @@ test "write_double_be method" {
   )
 }
 
+///|
 test "write_float_le method" {
   let buf = @buffer.new(size_hint=8)
   buf.write_float_le(-2)
@@ -297,6 +331,7 @@ test "write_float_le method" {
   )
 }
 
+///|
 test "write_float_be method" {
   let buf = @buffer.new(size_hint=8)
   buf.write_float_be(-2)
@@ -309,6 +344,7 @@ test "write_float_be method" {
   )
 }
 
+///|
 test "write_iter" {
   let bytes = b"hello"
   let buf = @buffer.new()
@@ -329,6 +365,7 @@ test "write_iter" {
   )
 }
 
+///|
 test "write_bytesview" {
   let buf = @buffer.new(size_hint=4)
   buf.write_bytesview(b"Test"[1:3])

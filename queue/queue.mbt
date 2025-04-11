@@ -54,7 +54,7 @@ pub impl[A : Show] Show for T[A] with output(self, logger) {
 
 ///|
 /// Tests if two queue cells are equal.
-fn Cell::op_equal[T : Eq](self : Cell[T], other : Cell[T]) -> Bool {
+impl[T : Eq] Eq for Cell[T] with op_equal(self, other) {
   loop self, other {
     Nil, Nil => true
     Cons({ content: x, next: xs }), Cons({ content: y, next: ys }) =>
@@ -69,7 +69,7 @@ fn Cell::op_equal[T : Eq](self : Cell[T], other : Cell[T]) -> Bool {
 
 ///|
 /// Tests if two queues are equal.
-fn op_equal[A : Eq](self : T[A], other : T[A]) -> Bool {
+impl[A : Eq] Eq for T[A] with op_equal(self, other) {
   self.length == other.length && self.first == other.first
 }
 
@@ -152,8 +152,8 @@ pub fn unsafe_peek[A](self : T[A]) -> A {
 }
 
 ///|
-/// @alert deprecated "Use `unsafe_peek` instead"
-/// @coverage.skip
+#deprecated("Use `unsafe_peek` instead")
+#coverage.skip
 pub fn peek_exn[A](self : T[A]) -> A {
   unsafe_peek(self)
 }
@@ -198,8 +198,8 @@ pub fn unsafe_pop[A](self : T[A]) -> A {
 }
 
 ///|
-/// @alert deprecated "Use `unsafe_pop` instead"
-/// @coverage.skip
+#deprecated("Use `unsafe_pop` instead")
+#coverage.skip
 pub fn pop_exn[A](self : T[A]) -> A {
   unsafe_pop(self)
 }
@@ -395,6 +395,7 @@ pub fn of[A](arr : FixedArray[A]) -> T[A] {
   queue
 }
 
+///|
 test "from_fixed_array_2" {
   let q = of([1, 2, 3, 4])
   q.push(11)
@@ -403,6 +404,7 @@ test "from_fixed_array_2" {
   assert_eq!(q, of([2, 3, 4, 11]))
 }
 
+///|
 test "from_array_2" {
   let q = of([1, 2, 3, 4])
   q.push(11)
@@ -411,6 +413,7 @@ test "from_array_2" {
   assert_eq!(q, of([2, 3, 4, 11]))
 }
 
+///|
 test "op_equal" {
   let queue = of([1, 2, 3, 4])
   let queue2 = of([1, 2, 3, 4])
@@ -422,6 +425,7 @@ test "op_equal" {
   assert_eq!(queue, of([2, 3, 4]))
 }
 
+///|
 test "push" {
   let queue : T[Int] = new()
   queue.push(1)
@@ -432,6 +436,7 @@ test "push" {
   assert_eq!(queue, of([1, 2, 3, 1]))
 }
 
+///|
 test "copy" {
   let queue : T[Int] = of([1, 2, 3, 4])
   let queue2 : T[Int] = queue.copy()
@@ -441,6 +446,7 @@ test "copy" {
   assert_eq!(queue, of([1, 2, 3, 4]))
 }
 
+///|
 test "transfer" {
   let queue : T[Int] = of([1, 2, 3, 4])
   let queue2 : T[Int] = of([5, 6, 7, 8])
@@ -450,6 +456,7 @@ test "transfer" {
   assert_eq!(queue2, of([5, 6, 7, 8, 1, 2, 3, 4]))
 }
 
+///|
 test "cell_equal" {
   assert_false!(of([]).first == of([1]).first)
 }
@@ -460,16 +467,4 @@ pub impl[X : @quickcheck.Arbitrary] @quickcheck.Arbitrary for T[X] with arbitrar
   rs
 ) {
   @quickcheck.Arbitrary::arbitrary(size, rs) |> from_iter
-}
-
-test "queue arbitrary" {
-  let samples : Array[T[Int]] = @quickcheck.samples(20)
-  inspect!(
-    samples[1:5],
-    content="[@queue.of([]), @queue.of([0]), @queue.of([0]), @queue.of([0])]",
-  )
-  inspect!(
-    samples[15],
-    content="@queue.of([0, 0, 0, 0, 0, -1, -3, -3, -1, -4, 5, -1])",
-  )
 }

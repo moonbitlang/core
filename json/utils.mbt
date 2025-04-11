@@ -16,9 +16,8 @@
 fn offset_to_position(input : String, offset : Int) -> Position {
   let mut line = 1
   let mut column = 0
-  for i = 0; i < offset; i = i + 1 {
-    let c = input[i]
-    if c == '\n' {
+  for i in 0..<offset {
+    if input.unsafe_charcode_at(i) == '\n' {
       line += 1
       column = 0
     } else {
@@ -29,7 +28,14 @@ fn offset_to_position(input : String, offset : Int) -> Position {
 }
 
 ///|
-fn invalid_char[T](ctx : ParseContext, shift~ : Int = 0) -> T!ParseError {
+fn ParseContext::invalid_char[T](
+  ctx : ParseContext,
+  shift~ : Int = 0
+) -> T!ParseError {
   let offset = ctx.offset + shift
-  raise InvalidChar(offset_to_position(ctx.input, offset), ctx.input[offset])
+  // FIXME: this should check the surrogate pair
+  raise InvalidChar(
+    offset_to_position(ctx.input, offset),
+    ctx.input.unsafe_charcode_at(offset) |> Char::from_int,
+  )
 }

@@ -45,6 +45,7 @@ pub fn T::from_iter[A : Compare](iter : Iter[A]) -> T[A] {
   from_iter(iter)
 }
 
+///|
 test {
   @json.inspect!(of([2, 7, 1, 2, 3, 4, 5]), content=[1, 2, 3, 4, 5, 7])
 }
@@ -105,12 +106,13 @@ fn InorderIterator::move_left[A](
 
 ///|
 fn InorderIterator::next[A](self : InorderIterator[A]) -> A? {
-  guard let Some(curr) = self._.pop() else { _ => return None }
-  guard let Node(right~, value~, ..) = curr
+  guard self._.pop() is Some(curr) else { return None }
+  guard curr is Node(right~, value~, ..)
   self.move_left(right)
   Some(value)
 }
 
+///|
 test "InorderIterator" {
   let arr : FixedArray[_] = [1, 2, 3, 4, 5, 6, 7]
   let set = of(arr)

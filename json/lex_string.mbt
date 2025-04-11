@@ -13,7 +13,7 @@
 // limitations under the License.
 
 ///|
-fn lex_string(ctx : ParseContext) -> String!ParseError {
+fn ParseContext::lex_string(ctx : ParseContext) -> String!ParseError {
   let buf = StringBuilder::new()
   let mut start = ctx.offset
   fn flush(end : Int) {
@@ -23,17 +23,17 @@ fn lex_string(ctx : ParseContext) -> String!ParseError {
   }
 
   for {
-    match read_char(ctx) {
+    match ctx.read_char() {
       Some('"') => {
         flush(ctx.offset - 1)
         break
       }
-      Some('\n' | '\r') => invalid_char!(ctx, shift=-1)
+      Some('\n' | '\r') => ctx.invalid_char!(shift=-1)
       Some('\\') => {
         flush(ctx.offset - 1)
-        match read_char(ctx) {
+        match ctx.read_char() {
           Some('b') => buf.write_char('\b')
-          Some('f') => buf.write_char('\x0C')
+          Some('f') => buf.write_char('\u{0C}')
           Some('n') => buf.write_char('\n')
           Some('r') => buf.write_char('\r')
           Some('t') => buf.write_char('\t')
@@ -41,17 +41,17 @@ fn lex_string(ctx : ParseContext) -> String!ParseError {
           Some('\\') => buf.write_char('\\')
           Some('/') => buf.write_char('/')
           Some('u') => {
-            let c = lex_hex_digits!(ctx, 4)
+            let c = ctx.lex_hex_digits!(4)
             buf.write_char(Char::from_int(c))
           }
-          Some(_) => invalid_char!(ctx, shift=-1)
+          Some(_) => ctx.invalid_char!(shift=-1)
           None => raise InvalidEof
         }
         start = ctx.offset
       }
       Some(ch) =>
         if ch.to_int() < 32 {
-          invalid_char!(ctx, shift=-1)
+          ctx.invalid_char!(shift=-1)
         } else {
           continue
         }
@@ -62,25 +62,25 @@ fn lex_string(ctx : ParseContext) -> String!ParseError {
 }
 
 ///|
-fn lex_hex_digits(ctx : ParseContext, n : Int) -> Int!ParseError {
+fn ParseContext::lex_hex_digits(ctx : ParseContext, n : Int) -> Int!ParseError {
   let mut r = 0
-  for i = 0; i < n; i = i + 1 {
-    match read_char(ctx) {
+  for i in 0..<n {
+    match ctx.read_char() {
       Some(c) =>
         if c >= 'A' {
           let d = (c.to_int() & (32).lnot()) - 'A'.to_int() + 10
           if d > 15 {
-            invalid_char!(ctx, shift=-1)
+            ctx.invalid_char!(shift=-1)
           }
           r = (r << 4) | d
         } else if c >= '0' {
           let d = c.to_int() - '0'.to_int()
           if d > 9 {
-            invalid_char!(ctx, shift=-1)
+            ctx.invalid_char!(shift=-1)
           }
           r = (r << 4) | d
         } else {
-          invalid_char!(ctx, shift=-1)
+          ctx.invalid_char!(shift=-1)
         }
       None => raise InvalidEof
     }

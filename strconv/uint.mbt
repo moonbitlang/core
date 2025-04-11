@@ -19,66 +19,70 @@ const UINT_MAX : UInt = 0xffffffff
 const UINT64_MAX : UInt64 = 0xffffffffffffffffUL
 
 ///|
-/// Parse a string in the given base (0, 2 to 36), return an UInt64 number or an error.
-/// If the `~base` argument is 0, the base will be inferred by the prefix.
+/// Parses a string into a UInt64 number using the specified base, or returns an error.
+/// The base must be 0 or between 2 and 36 (inclusive). If base is 0, it will be 
+/// inferred from the string prefix:
+///   - "0x" or "0X" for base 16 (hex)
+///   - "0o" or "0O" for base 8 (octal)
+///   - "0b" or "0B" for base 2 (binary)
+///   - Default is base 10 (decimal)
+/// For readability, underscores may appear after base prefixes or between digits.
+/// These underscores do not affect the value.
+/// Examples:
+/// ```
+/// inspect!(parse_uint64!("123"), content="123")
+/// inspect!(parse_uint64!("0xff", base=0), content="255")
+/// inspect!(parse_uint64!("0o10"), content="8")
+/// inspect!(parse_uint64!("0b1010"), content="10")
+/// inspect!(parse_uint64!("1_234"), content="1234")
+/// inspect!(parse_uint64!("ff", base=16), content="255")
+/// inspect!(parse_uint64!("zz", base=36), content="1295")
+/// ```
+/// 
 pub fn parse_uint64(str : String, base~ : Int = 0) -> UInt64!StrConvError {
-  if str == "" {
+  guard str != "" else { syntax_err!() }
+  if str is ['+' | '-', ..] {
     syntax_err!()
   }
-  // check underscore
-  if not(check_underscore(str)) {
-    syntax_err!()
-  }
-  if str[0] == '+' || str[0] == '-' {
-    syntax_err!()
-  }
-  let mut s = str
-  // determine base
-  let mut num_base = 10
-  match base {
-    0 => {
-      num_base = determine_base(s)
-      if num_base != 10 {
-        s = s.substring(start=2)
-      }
-    }
-    2..=36 => num_base = base
-    _ => base_err!()
-  }
+
+  // `allow_underscore` is used to check validity of underscores
+  let (num_base, rest, allow_underscore) = check_and_consume_base!(
+    str.view(),
+    base,
+  )
+
   // calculate overflow threshold
   let overflow_threshold = match num_base {
     10 => UINT64_MAX / 10 + 1
     16 => UINT64_MAX / 16 + 1
     _ => UINT64_MAX / num_base.to_uint64() + 1
   }
-  // convert
-  let mut n = 0UL
-  for i = 0; i < s.length(); i = i + 1 {
-    let c = s[i]
-    let mut d = 0
-    match c {
-      '_' => continue
-      '0'..='9' => d = c - '0'
-      'a'..='z' => d = c - 'a' + 10
-      'A'..='Z' => d = c - 'A' + 10
-      _ => syntax_err!()
-    }
-    if d >= num_base {
+  let has_digit = rest
+    is (['0'..='9' | 'a'..='z' | 'A'..='Z', ..]
+    | ['_', '0'..='9' | 'a'..='z' | 'A'..='Z', ..])
+  guard has_digit else { syntax_err!() }
+  loop rest, 0UL, allow_underscore {
+    ['_'], _, _ =>
+      // the last character cannot be underscore
       syntax_err!()
+    ['_', ..], _, false => syntax_err!()
+    ['_', .. rest], acc, true => continue rest, acc, false
+    [c, .. rest], acc, _ => {
+      let c = c.to_int()
+      let d = match c {
+        '0'..='9' => c - '0'
+        'a'..='z' => c + (10 - 'a')
+        'A'..='Z' => c + (10 - 'A')
+        _ => syntax_err!()
+      }
+      guard d < num_base else { syntax_err!() }
+      guard acc < overflow_threshold else { range_err!() }
+      let next_acc = acc * num_base.to_uint64() + d.to_uint64()
+      guard next_acc >= acc && next_acc <= UINT64_MAX else { range_err!() }
+      continue rest, next_acc, true
     }
-    if n >= overflow_threshold {
-      // n*base overflows
-      range_err!()
-    }
-    n *= num_base.to_uint64()
-    let n1 = n + d.to_uint64()
-    if n1 < n || n1 > UINT64_MAX {
-      // n+d overflows
-      range_err!()
-    }
-    n = n1
+    [], acc, _ => acc
   }
-  n
 }
 
 ///|
@@ -92,6 +96,7 @@ pub fn parse_uint(str : String, base~ : Int = 0) -> UInt!StrConvError {
   n.to_uint()
 }
 
+///|
 test "parse_uint64" {
   let tests : Array[(String, Result[UInt64, String])] = [
     ("", Err(syntax_err_str)),
@@ -112,7 +117,7 @@ test "parse_uint64" {
     ("12345_", Err(syntax_err_str)),
     ("12345%", Err(syntax_err_str)),
   ]
-  for i = 0; i < tests.length(); i = i + 1 {
+  for i in 0..<tests.length() {
     let t = tests[i]
     assert_eq!(
       try {
@@ -125,6 +130,7 @@ test "parse_uint64" {
   }
 }
 
+///|
 test "parse_uint64_base" {
   let tests : Array[(String, Int, Result[UInt64, String])] = [
     ("", 0, Err(syntax_err_str)),
@@ -211,7 +217,7 @@ test "parse_uint64_base" {
     ("0x+f", 0, Err(syntax_err_str)),
     ("0x-f", 0, Err(syntax_err_str)),
   ]
-  for i = 0; i < tests.length(); i = i + 1 {
+  for i in 0..<tests.length() {
     let t = tests[i]
     assert_eq!(
       try {
@@ -224,6 +230,7 @@ test "parse_uint64_base" {
   }
 }
 
+///|
 test "parse_uint" {
   let tests : Array[(String, Result[UInt, String])] = [
     ("", Err(syntax_err_str)),
@@ -247,7 +254,7 @@ test "parse_uint" {
     ("12345_", Err(syntax_err_str)),
     ("123%45", Err(syntax_err_str)),
   ]
-  for i = 0; i < tests.length(); i = i + 1 {
+  for i in 0..<tests.length() {
     let t = tests[i]
     assert_eq!(
       try {
@@ -260,6 +267,7 @@ test "parse_uint" {
   }
 }
 
+///|
 test "parse_uint64 uppercase hex and invalid base" {
   inspect!(parse_uint64?("ABCD", base=16), content="Ok(43981)")
   inspect!(parse_uint64?("1234", base=37), content="Err(invalid base)")

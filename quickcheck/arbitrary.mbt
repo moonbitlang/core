@@ -22,10 +22,14 @@ pub(open) trait Arbitrary {
 }
 
 ///|
-pub impl Arbitrary for Unit with arbitrary(_, _) { () }
+pub impl Arbitrary for Unit with arbitrary(_, _) {
+  ()
+}
 
 ///|
-pub impl Arbitrary for Bool with arbitrary(_, rs) { rs.next_double() < 0.5 }
+pub impl Arbitrary for Bool with arbitrary(_, rs) {
+  rs.next_double() < 0.5
+}
 
 ///|
 pub impl Arbitrary for Int with arbitrary(size, rs) {
@@ -46,7 +50,9 @@ pub impl Arbitrary for UInt with arbitrary(size, rs) {
 }
 
 ///|
-pub impl Arbitrary for Byte with arbitrary(_, rs) { rs.next_uint().to_byte() }
+pub impl Arbitrary for Byte with arbitrary(_, rs) {
+  rs.next_uint().to_byte()
+}
 
 ///|
 pub impl Arbitrary for Bytes with arbitrary(size, rs) {
@@ -77,10 +83,14 @@ pub impl Arbitrary for UInt64 with arbitrary(size, rs) {
 }
 
 ///|
-pub impl Arbitrary for Float with arbitrary(_, rs) { rs.next_float() }
+pub impl Arbitrary for Float with arbitrary(_, rs) {
+  rs.next_float()
+}
 
 ///|
-pub impl Arbitrary for Double with arbitrary(_, rs) { rs.next_double() }
+pub impl Arbitrary for Double with arbitrary(_, rs) {
+  rs.next_double()
+}
 
 ///|
 pub impl Arbitrary for Char with arbitrary(_, rs) {
@@ -92,7 +102,7 @@ pub impl Arbitrary for Char with arbitrary(_, rs) {
 pub impl Arbitrary for String with arbitrary(size, rs) {
   let len = if size == 0 { 0 } else { rs.next_positive_int() % size }
   let mut s = ""
-  for i = 0; i < len; i = i + 1 {
+  for i in 0..<len {
     s = s + Char::arbitrary(i, rs).to_string()
   }
   s
@@ -111,7 +121,7 @@ pub impl Arbitrary for BigInt with arbitrary(size, rs) {
 pub impl[X : Arbitrary] Arbitrary for Iter[X] with arbitrary(size, rs) {
   let len = if size == 0 { 0 } else { rs.next_positive_int() % size }
   Iter::new(fn(yield_) {
-    for i = 0; i < len; i = i + 1 {
+    for i in 0..<len {
       if yield_(X::arbitrary(i, rs)) == IterEnd {
         break IterEnd
       }
@@ -119,14 +129,6 @@ pub impl[X : Arbitrary] Arbitrary for Iter[X] with arbitrary(size, rs) {
       IterContinue
     }
   })
-}
-
-test "iter arbitrary" {
-  let samples : Array[Iter[Int]] = samples(20)
-  inspect!("[0, 0, 0, 1, 2, -2]", content="[0, 0, 0, 1, 2, -2]")
-  inspect!(samples[1:5], content="[[], [0], [0], [0]]")
-  // inspect!(samples[9], content="[0, 0, 0, 1, 2, -2]") (Cause infinite loop?)
-  inspect!(samples[10], content="[0, 0, 0]")
 }
 
 ///|

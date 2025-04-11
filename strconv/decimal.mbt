@@ -19,6 +19,7 @@
 /// reference:
 /// - <https://nigeltao.github.io/blog/2020/parse-number-f64-simple.html>
 /// - <https://nigeltao.github.io/blog/2020/eisel-lemire.html>
+/// @alert deprecated "Decimal will be changed to private. Use `@strconv.parse_double` instead"
 struct Decimal {
   digits : FixedArray[Byte]
   mut digits_num : Int
@@ -41,7 +42,13 @@ let powtab = [
 
 ///|
 /// Create a zero decimal.
+#deprecated("Decimal will be changed to private. Use `@strconv.parse_double` instead")
 pub fn Decimal::new() -> Decimal {
+  Decimal::new_priv()
+}
+
+///|
+fn Decimal::new_priv() -> Decimal {
   {
     digits: FixedArray::make(800, Byte::default()),
     digits_num: 0,
@@ -53,19 +60,29 @@ pub fn Decimal::new() -> Decimal {
 
 ///|
 /// Create a decimal with an Int64 value.
+#deprecated("Decimal will be changed to private. Use `@strconv.parse_double` instead")
 pub fn Decimal::from_int64(v : Int64) -> Decimal {
-  Decimal::new()..assign(v)
+  Decimal::from_int64_priv(v)
 }
 
 ///|
-/// Create a decimal from number string.
+fn Decimal::from_int64_priv(v : Int64) -> Decimal {
+  Decimal::new_priv()..assign(v)
+}
+
+///| @alert deprecated "use `@strconv.parse_double` instead"
 pub fn parse_decimal(str : String) -> Decimal!StrConvError {
-  parse_decimal_from_view!(str[:])
+  parse_decimal_from_view!(str.view())
 }
 
 ///|
-fn parse_decimal_from_view(str : @string.StringView) -> Decimal!StrConvError {
-  let d = Decimal::new()
+fn parse_decimal_priv(str : String) -> Decimal!StrConvError {
+  parse_decimal_from_view!(str.view())
+}
+
+///|
+fn parse_decimal_from_view(str : @string.View) -> Decimal!StrConvError {
+  let d = Decimal::new_priv()
   let mut has_dp = false
   let mut has_digits = false
   // read sign
@@ -94,7 +111,7 @@ fn parse_decimal_from_view(str : @string.StringView) -> Decimal!StrConvError {
         continue rest
       }
       if d.digits_num < d.digits.length() {
-        d.digits[d.digits_num] = (digit.to_int() - '0'.to_int()).to_byte()
+        d.digits[d.digits_num] = (digit.to_int() - '0').to_byte()
         d.digits_num += 1
       } else if digit != '0' {
         d.truncated = true
@@ -119,12 +136,12 @@ fn parse_decimal_from_view(str : @string.StringView) -> Decimal!StrConvError {
         }
         rest => rest
       }
-      guard let ['0'..='9', ..] = rest else { _ => syntax_err!() }
+      guard rest is ['0'..='9', ..] else { syntax_err!() }
       let mut exp = 0
       let rest = loop rest {
         ['_', .. rest] => continue rest
         ['0'..='9' as digit, .. rest] => {
-          exp = exp * 10 + (digit.to_int() - '0'.to_int())
+          exp = exp * 10 + (digit.to_int() - '0')
           continue rest
         }
         rest => rest
@@ -135,18 +152,24 @@ fn parse_decimal_from_view(str : @string.StringView) -> Decimal!StrConvError {
     rest => rest
   }
   // finish
-  guard rest.length_eq(0) else { syntax_err!() }
+  guard rest is [] else { syntax_err!() }
   d..trim()
 }
 
-///| @alert deprecated "use `@strconv.parse_decimal` instead"
+///| @alert deprecated "use `@strconv.parse_double` instead"
 pub fn Decimal::parse_decimal(str : String) -> Decimal!StrConvError {
-  parse_decimal!(str)
+  parse_decimal_from_view!(str.view())
 }
 
 ///|
 /// Convert the decimal to Double.
+///| @alert deprecated "use `@strconv.parse_double` instead to avoid using this method."
 pub fn to_double(self : Decimal) -> Double!StrConvError {
+  self.to_double_priv!()
+}
+
+///|
+fn to_double_priv(self : Decimal) -> Double!StrConvError {
   let mut exponent = 0
   let mut mantissa = 0L
   // check the underflow and overflow
@@ -172,7 +195,7 @@ pub fn to_double(self : Decimal) -> Double!StrConvError {
     } else {
       n = powtab[self.decimal_point]
     }
-    self.shift(-n)
+    self.shift_priv(-n)
     exponent += n
   }
   // left shift
@@ -184,7 +207,7 @@ pub fn to_double(self : Decimal) -> Double!StrConvError {
     } else {
       n = powtab[-self.decimal_point]
     }
-    self.shift(n)
+    self.shift_priv(n)
     exponent -= n
   }
 
@@ -196,7 +219,7 @@ pub fn to_double(self : Decimal) -> Double!StrConvError {
   // if the exponent is smaller, move it up and shift decimal accordingly
   if exponent < double_info.bias + 1 {
     let n = double_info.bias + 1 - exponent
-    self.shift(-n)
+    self.shift_priv(-n)
     exponent += n
   }
   if exponent - double_info.bias >= (1 << double_info.exponent_bits) - 1 {
@@ -206,7 +229,7 @@ pub fn to_double(self : Decimal) -> Double!StrConvError {
 
   // multiply by (2 ** precision) and round to get mantissa
   // extract mantissa_bits + 1 bits
-  self.shift(double_info.mantissa_bits + 1)
+  self.shift_priv(double_info.mantissa_bits + 1)
   mantissa = self.rounded_integer()
 
   // rounding might have added a bit, shift down.
@@ -232,7 +255,13 @@ pub fn to_double(self : Decimal) -> Double!StrConvError {
 ///|
 /// Binary shift left (s > 0) or right (s < 0).
 /// The shift count must not larger than the max_shift to avoid overflow.
+#deprecated("use `@strconv.parse_double` instead to avoid using this method.")
 pub fn shift(self : Decimal, s : Int) -> Unit {
+  self.shift_priv(s)
+}
+
+///|
+fn shift_priv(self : Decimal, s : Int) -> Unit {
   if self.digits_num == 0 {
     return
   }
@@ -466,12 +495,12 @@ fn new_digits(self : Decimal, s : Int) -> Int {
   let cheat_num = left_shift_cheats[s].1
   // check if the leading digits lexicographically less than cheats num.
   let mut less = false
-  for i = 0; i < cheat_num.length(); i = i + 1 {
+  for i in 0..<cheat_num.length() {
     if i >= self.digits_num {
       less = true
       break
     }
-    let d = cheat_num[i].to_int() - '0'.to_int()
+    let d = cheat_num.unsafe_charcode_at(i) - '0'
     if self.digits[i].to_int() != d {
       less = self.digits[i].to_int() < d
       break
@@ -535,7 +564,7 @@ fn left_shift(self : Decimal, s : Int) -> Unit {
 ///|
 /// Trim trailing zeros.
 fn trim(self : Decimal) -> Unit {
-  while self.digits_num > 0 && self.digits[self.digits_num - 1].to_int() == 0 {
+  while self.digits_num > 0 && self.digits[self.digits_num - 1] == 0 {
     self.digits_num -= 1
   }
   if self.digits_num == 0 {
@@ -544,7 +573,7 @@ fn trim(self : Decimal) -> Unit {
 }
 
 ///|
-impl Show for Decimal with output(self, logger) {
+pub impl Show for Decimal with output(self, logger) {
   if self.digits_num == 0 {
     logger.write_char('0')
     return
@@ -552,15 +581,15 @@ impl Show for Decimal with output(self, logger) {
   if self.decimal_point <= 0 {
     // zeros filling between the decimal point and the digits
     logger.write_string("0.")
-    for i = 0; i < -self.decimal_point; i = i + 1 {
+    for i in 0..<-self.decimal_point {
       logger.write_char('0')
     }
-    for i = 0; i < self.digits_num; i = i + 1 {
+    for i in 0..<self.digits_num {
       logger.write_string(self.digits[i].to_int().to_string())
     }
   } else if self.decimal_point < self.digits_num {
     // decimal point in the middle of digits
-    for i = 0; i < self.digits_num; i = i + 1 {
+    for i in 0..<self.digits_num {
       if i == self.decimal_point {
         logger.write_char('.')
       }
@@ -568,10 +597,10 @@ impl Show for Decimal with output(self, logger) {
     }
   } else {
     // zeros filling between the digits and the decimal point
-    for i = 0; i < self.digits_num; i = i + 1 {
+    for i in 0..<self.digits_num {
       logger.write_string(self.digits[i].to_int().to_string())
     }
-    for i = 0; i < self.decimal_point - self.digits_num; i = i + 1 {
+    for i in 0..<(self.decimal_point - self.digits_num) {
       logger.write_char('0')
     }
   }
@@ -582,8 +611,9 @@ fn Decimal::to_string(self : Decimal) -> String {
   Show::to_string(self)
 }
 
+///|
 test "new" {
-  let hpd = Decimal::from_int64(1L)
+  let hpd = Decimal::from_int64_priv(1L)
   assert_eq!(hpd.digits.length(), 800)
   assert_eq!(hpd.digits_num, 1)
   assert_eq!(hpd.decimal_point, 1)
@@ -591,29 +621,32 @@ test "new" {
   assert_eq!(hpd.truncated, false)
 }
 
+///|
 test "from_int64" {
-  let hpd = Decimal::from_int64(123456789L)
+  let hpd = Decimal::from_int64_priv(123456789L)
   assert_eq!(hpd.to_string(), "123456789")
 }
 
+///|
 test "parse_decimal" {
   let s = "0.0000000000000000000000000000007888609052210118054117285652827862296732064351090230047702789306640625"
   let hpd = try {
-    parse_decimal!(s)
+    parse_decimal_priv!(s)
   } catch {
     _ => panic()
   }
   assert_eq!(hpd.to_string(), s)
   let hpd = try {
-    parse_decimal!("1.0e-10")
+    parse_decimal_priv!("1.0e-10")
   } catch {
     _ => panic()
   }
   assert_eq!(hpd.to_string(), "0.0000000001")
 }
 
+///|
 test "to_string" {
-  let hpd = Decimal::from_int64(123456789L)
+  let hpd = Decimal::from_int64_priv(123456789L)
   hpd.decimal_point = 1
   assert_eq!(hpd.to_string(), "1.23456789")
   hpd.decimal_point = 0
@@ -624,6 +657,7 @@ test "to_string" {
   assert_eq!(hpd.to_string(), "1234567890")
 }
 
+///|
 test "shift" {
   let tests : Array[_] = [
     (0L, 100, "0"),
@@ -637,46 +671,51 @@ test "shift" {
     (195312L, 9, "99999744"),
     (1953125L, 9, "1000000000"),
   ]
-  for i = 0; i < tests.length(); i = i + 1 {
+  for i in 0..<tests.length() {
     let t = tests[i]
-    let d = Decimal::from_int64(t.0)
-    d.shift(t.1)
+    let d = Decimal::from_int64_priv(t.0)
+    d.shift_priv(t.1)
     assert_eq!(d.to_string(), t.2)
   }
 }
 
+///|
 test "parse decimal with underscore" {
-  inspect!(parse_decimal!("1e1_2"), content="1000000000000")
-  inspect!(parse_decimal!("1e12"), content="1000000000000")
-  inspect!(parse_decimal!("1_2_3"), content="123")
+  inspect!(parse_decimal_priv!("1e1_2"), content="1000000000000")
+  inspect!(parse_decimal_priv!("1e12"), content="1000000000000")
+  inspect!(parse_decimal_priv!("1_2_3"), content="123")
 }
 
+///|
 test "parse decimal error" {
-  inspect!(parse_decimal?("1e"), content="Err(invalid syntax)")
-  inspect!(parse_decimal?("1e+"), content="Err(invalid syntax)")
-  inspect!(parse_decimal?("1e_"), content="Err(invalid syntax)")
-  inspect!(parse_decimal?("1-23"), content="Err(invalid syntax)")
-  inspect!(parse_decimal?("1.2.3"), content="Err(invalid syntax)")
+  inspect!(parse_decimal_priv?("1e"), content="Err(invalid syntax)")
+  inspect!(parse_decimal_priv?("1e+"), content="Err(invalid syntax)")
+  inspect!(parse_decimal_priv?("1e_"), content="Err(invalid syntax)")
+  inspect!(parse_decimal_priv?("1-23"), content="Err(invalid syntax)")
+  inspect!(parse_decimal_priv?("1.2.3"), content="Err(invalid syntax)")
 }
 
+///|
 test "parse decimal with large numbers" {
   let mut s = ""
   for i in 0..<100 {
     s += "9"
   }
   inspect!(
-    parse_decimal!(s),
+    parse_decimal_priv!(s),
     content="9999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999",
   )
 }
 
+///|
 test "should_round_up when truncated and half-way" {
   // Create a decimal from "12.50"
-  let decimal = parse_decimal!("12.50")
+  let decimal = parse_decimal_priv!("12.50")
   // Convert to double
-  inspect!(decimal.to_double!(), content="12.5")
+  inspect!(decimal.to_double_priv!(), content="12.5")
 }
 
+///|
 test "parse_decimal with large numbers and truncation" {
   // Construct a very large number to trigger truncation
   let mut s = "1"
@@ -684,7 +723,14 @@ test "parse_decimal with large numbers and truncation" {
     s += "0"
   }
   inspect!(
-    parse_decimal!(s),
+    parse_decimal_priv!(s),
     content="10000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
   )
+}
+
+///|
+test "corner cases" {
+  inspect!(parse_decimal_priv?(".123"), content="Ok(0.123)")
+  inspect!(parse_decimal_priv?("."), content="Err(invalid syntax)")
+  inspect!(parse_decimal_priv?("-"), content="Err(invalid syntax)")
 }

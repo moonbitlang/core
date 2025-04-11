@@ -1,13 +1,62 @@
-package moonbitlang/core/buffer
+package "moonbitlang/core/buffer"
+
+import(
+  "moonbitlang/core/bytes"
+)
 
 // Values
+
 fn from_array(Array[Byte]) -> T
 
 fn from_bytes(Bytes) -> T
 
 fn from_iter(Iter[Byte]) -> T
 
+fn contents(T) -> Bytes
+
+fn is_empty(T) -> Bool
+
+fn length(T) -> Int
+
 fn new(size_hint~ : Int = ..) -> T
+
+fn reset(T) -> Unit
+
+fn to_bytes(T) -> Bytes
+
+fn write_byte(T, Byte) -> Unit
+
+fn write_bytes(T, Bytes) -> Unit
+
+fn write_bytesview(T, @bytes.View) -> Unit
+
+fn write_double_be(T, Double) -> Unit
+
+fn write_double_le(T, Double) -> Unit
+
+fn write_float_be(T, Float) -> Unit
+
+fn write_float_le(T, Float) -> Unit
+
+fn write_int64_be(T, Int64) -> Unit
+
+fn write_int64_le(T, Int64) -> Unit
+
+fn write_int_be(T, Int) -> Unit
+
+fn write_int_le(T, Int) -> Unit
+
+fn write_iter(T, Iter[Byte]) -> Unit
+
+fn write_object(T, &Show) -> Unit
+
+fn write_uint64_be(T, UInt64) -> Unit
+
+fn write_uint64_le(T, UInt64) -> Unit
+
+fn write_uint_be(T, UInt) -> Unit
+
+fn write_uint_le(T, UInt) -> Unit
 
 // Types and methods
 type T
@@ -15,15 +64,11 @@ impl T {
   contents(Self) -> Bytes
   is_empty(Self) -> Bool
   length(Self) -> Int
-  new(size_hint~ : Int = ..) -> Self //deprecated
   reset(Self) -> Unit
   to_bytes(Self) -> Bytes
-  to_string(Self) -> String //deprecated
-  to_unchecked_string(Self) -> String //deprecated
   write_byte(Self, Byte) -> Unit
   write_bytes(Self, Bytes) -> Unit
-  write_bytesview(Self, BytesView) -> Unit
-  write_char(Self, Char) -> Unit
+  write_bytesview(Self, @bytes.View) -> Unit
   write_double_be(Self, Double) -> Unit
   write_double_le(Self, Double) -> Unit
   write_float_be(Self, Float) -> Unit
@@ -34,14 +79,12 @@ impl T {
   write_int_le(Self, Int) -> Unit
   write_iter(Self, Iter[Byte]) -> Unit
   write_object(Self, &Show) -> Unit
-  write_string(Self, String) -> Unit
-  write_sub_string(Self, String, Int, Int) -> Unit //deprecated
-  write_substring(Self, String, Int, Int) -> Unit
   write_uint64_be(Self, UInt64) -> Unit
   write_uint64_le(Self, UInt64) -> Unit
   write_uint_be(Self, UInt) -> Unit
   write_uint_le(Self, UInt) -> Unit
 }
+impl Logger for T
 impl Show for T
 
 // Type aliases

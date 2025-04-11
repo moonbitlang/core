@@ -17,7 +17,7 @@ pub fn StringBuilder::write_object[T : Show](
   self : StringBuilder,
   obj : T
 ) -> Unit {
-  self.write_string(obj.to_string())
+  obj.output(self)
 }
 
 ///|

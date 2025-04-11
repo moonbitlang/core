@@ -25,12 +25,12 @@ let non_ascii_whitespace : CharClass = CharClass::of([
 ])
 
 ///|
-fn lex_value(
+fn ParseContext::lex_value(
   ctx : ParseContext,
-  allow_rbracket~ : Bool = false
+  allow_rbracket~ : Bool
 ) -> Token!ParseError {
   for {
-    match read_char(ctx) {
+    match ctx.read_char() {
       Some('\t' | ' ' | '\n' | '\r') => continue
       Some('{') => return LBrace
       Some('[') => return LBracket
@@ -38,59 +38,59 @@ fn lex_value(
         if allow_rbracket {
           return RBracket
         } else {
-          invalid_char!(ctx, shift=-1)
+          ctx.invalid_char!(shift=-1)
         }
       Some('n') => {
-        lex_assert_char!(ctx, 'u')
-        lex_assert_char!(ctx, 'l')
-        lex_assert_char!(ctx, 'l')
+        ctx.expect_ascii_char!(b'u')
+        ctx.expect_ascii_char!(b'l')
+        ctx.expect_ascii_char!(b'l')
         return Null
       }
       Some('t') => {
-        lex_assert_char!(ctx, 'r')
-        lex_assert_char!(ctx, 'u')
-        lex_assert_char!(ctx, 'e')
+        ctx.expect_ascii_char!(b'r')
+        ctx.expect_ascii_char!(b'u')
+        ctx.expect_ascii_char!(b'e')
         return True
       }
       Some('f') => {
-        lex_assert_char!(ctx, 'a')
-        lex_assert_char!(ctx, 'l')
-        lex_assert_char!(ctx, 's')
-        lex_assert_char!(ctx, 'e')
+        ctx.expect_ascii_char!(b'a')
+        ctx.expect_ascii_char!(b'l')
+        ctx.expect_ascii_char!(b's')
+        ctx.expect_ascii_char!(b'e')
         return False
       }
       Some('-') =>
-        match read_char(ctx) {
+        match ctx.read_char() {
           Some('0') => {
-            let n = lex_zero!(ctx, start=ctx.offset - 2)
+            let n = ctx.lex_zero!(start=ctx.offset - 2)
             return Number(n)
           }
           Some(c2) => {
-            if c2 >= '1' && c2 <= '9' {
-              let n = lex_decimal_integer!(ctx, start=ctx.offset - 2)
+            if c2 is ('1'..='9') {
+              let n = ctx.lex_decimal_integer!(start=ctx.offset - 2)
               return Number(n)
             }
-            invalid_char!(ctx, shift=-1)
+            ctx.invalid_char!(shift=-1)
           }
           None => raise InvalidEof
         }
       Some('0') => {
-        let n = lex_zero!(ctx, start=ctx.offset - 1)
+        let n = ctx.lex_zero!(start=ctx.offset - 1)
         return Number(n)
       }
-      Some('1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9') => {
-        let n = lex_decimal_integer!(ctx, start=ctx.offset - 1)
+      Some('1'..='9') => {
+        let n = ctx.lex_decimal_integer!(start=ctx.offset - 1)
         return Number(n)
       }
       Some('"') => {
-        let s = lex_string!(ctx)
+        let s = ctx.lex_string!()
         return String(s)
       }
       Some(c) => {
-        if c > '\x7f' && non_ascii_whitespace.contains(c) {
+        if c > '\u{7f}' && non_ascii_whitespace.contains(c) {
           continue
         }
-        invalid_char!(ctx, shift=-1)
+        ctx.invalid_char!(shift=-1)
       }
       None => raise InvalidEof
     }

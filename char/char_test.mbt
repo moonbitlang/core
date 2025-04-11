@@ -12,10 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+///|
 test "to_string" {
   assert_eq!('a'.to_string(), "a")
 }
 
+///|
 test "show output" {
   fn repr(chr) {
     let buf = StringBuilder::new(size_hint=0)
@@ -39,6 +41,7 @@ struct TestHash {
   x : Char
 } derive(Hash, Eq, Show)
 
+///|
 test "Char hash function with struct" {
   let m = {}
   m[{ x: 'a' }] = '3'
@@ -46,6 +49,7 @@ test "Char hash function with struct" {
   inspect!(m, content="{{x: 'a'}: '3', {x: 'b'}: '3'}")
 }
 
+///|
 test "Char hash" {
   let m = {}
   m['a'] = '3'
@@ -53,6 +57,7 @@ test "Char hash" {
   inspect!(m, content="{'a': '3', 'b': '3'}")
 }
 
+///|
 test "is_ascii" {
   let ascii = 'a'
   let non_ascii = '❤'
@@ -60,6 +65,7 @@ test "is_ascii" {
   assert_false!(non_ascii.is_ascii())
 }
 
+///|
 test "is_ascii_alphabetic" {
   let uppercase_a = 'A'
   let uppercase_g = 'G'
@@ -69,7 +75,7 @@ test "is_ascii_alphabetic" {
   let percent = '%'
   let space = ' '
   let lf = '\n'
-  let esc = '\x1B'
+  let esc = '\u{1B}'
   assert_true!(uppercase_a.is_ascii_alphabetic())
   assert_true!(uppercase_g.is_ascii_alphabetic())
   assert_true!(a.is_ascii_alphabetic())
@@ -81,6 +87,7 @@ test "is_ascii_alphabetic" {
   assert_false!(esc.is_ascii_alphabetic())
 }
 
+///|
 test "is_ascii_control" {
   let uppercase_a = 'A'
   let uppercase_g = 'G'
@@ -90,7 +97,7 @@ test "is_ascii_control" {
   let percent = '%'
   let space = ' '
   let lf = '\n'
-  let esc = '\x1B'
+  let esc = '\u{1B}'
   assert_false!(uppercase_a.is_ascii_control())
   assert_false!(uppercase_g.is_ascii_control())
   assert_false!(a.is_ascii_control())
@@ -102,6 +109,7 @@ test "is_ascii_control" {
   assert_true!(esc.is_ascii_control())
 }
 
+///|
 test "is_ascii_graphic" {
   let uppercase_a = 'A'
   let uppercase_g = 'G'
@@ -111,7 +119,7 @@ test "is_ascii_graphic" {
   let percent = '%'
   let space = ' '
   let lf = '\n'
-  let esc = '\x1B'
+  let esc = '\u{1B}'
   assert_true!(uppercase_a.is_ascii_graphic())
   assert_true!(uppercase_g.is_ascii_graphic())
   assert_true!(a.is_ascii_graphic())
@@ -123,6 +131,7 @@ test "is_ascii_graphic" {
   assert_false!(esc.is_ascii_graphic())
 }
 
+///|
 test "is_ascii_hexdigit" {
   let uppercase_a = 'A'
   let uppercase_g = 'G'
@@ -132,7 +141,7 @@ test "is_ascii_hexdigit" {
   let percent = '%'
   let space = ' '
   let lf = '\n'
-  let esc = '\x1B'
+  let esc = '\u{1B}'
   assert_true!(uppercase_a.is_ascii_hexdigit())
   assert_false!(uppercase_g.is_ascii_hexdigit())
   assert_true!(a.is_ascii_hexdigit())
@@ -144,6 +153,7 @@ test "is_ascii_hexdigit" {
   assert_false!(esc.is_ascii_hexdigit())
 }
 
+///|
 test "is_ascii_lowercase" {
   let uppercase_a = 'A'
   let uppercase_g = 'G'
@@ -153,7 +163,7 @@ test "is_ascii_lowercase" {
   let percent = '%'
   let space = ' '
   let lf = '\n'
-  let esc = '\x1B'
+  let esc = '\u{1B}'
   assert_false!(uppercase_a.is_ascii_lowercase())
   assert_false!(uppercase_g.is_ascii_lowercase())
   assert_true!(a.is_ascii_lowercase())
@@ -165,6 +175,7 @@ test "is_ascii_lowercase" {
   assert_false!(esc.is_ascii_lowercase())
 }
 
+///|
 test "is_ascii_octdigit" {
   let uppercase_a = 'A'
   let a = 'a'
@@ -182,6 +193,7 @@ test "is_ascii_octdigit" {
   assert_false!(lf.is_ascii_octdigit())
 }
 
+///|
 test "is_ascii_punctuation" {
   let uppercase_a = 'A'
   let uppercase_g = 'G'
@@ -191,7 +203,7 @@ test "is_ascii_punctuation" {
   let percent = '%'
   let space = ' '
   let lf = '\n'
-  let esc = '\x1B'
+  let esc = '\u{1B}'
   assert_false!(uppercase_a.is_ascii_punctuation())
   assert_false!(uppercase_g.is_ascii_punctuation())
   assert_false!(a.is_ascii_punctuation())
@@ -203,6 +215,7 @@ test "is_ascii_punctuation" {
   assert_false!(esc.is_ascii_punctuation())
 }
 
+///|
 test "is_ascii_uppercase" {
   let uppercase_a = 'A'
   let uppercase_g = 'G'
@@ -212,7 +225,7 @@ test "is_ascii_uppercase" {
   let percent = '%'
   let space = ' '
   let lf = '\n'
-  let esc = '\x1B'
+  let esc = '\u{1B}'
   assert_true!(uppercase_a.is_ascii_uppercase())
   assert_true!(uppercase_g.is_ascii_uppercase())
   assert_false!(a.is_ascii_uppercase())
@@ -224,6 +237,7 @@ test "is_ascii_uppercase" {
   assert_false!(esc.is_ascii_uppercase())
 }
 
+///|
 test "is_ascii_whitespace" {
   let uppercase_a = 'A'
   let uppercase_g = 'G'
@@ -233,7 +247,7 @@ test "is_ascii_whitespace" {
   let percent = '%'
   let space = ' '
   let lf = '\n'
-  let esc = '\x1B'
+  let esc = '\u{1B}'
   assert_false!(uppercase_a.is_ascii_whitespace())
   assert_false!(uppercase_g.is_ascii_whitespace())
   assert_false!(a.is_ascii_whitespace())
@@ -245,11 +259,13 @@ test "is_ascii_whitespace" {
   assert_false!(esc.is_ascii_whitespace())
 }
 
+///|
 test "is_control" {
   assert_true!(''.is_control())
   assert_false!('q'.is_control())
 }
 
+///|
 test "is_digit" {
   assert_eq!(true, 'a'.is_digit(11))
   assert_eq!(true, 'a'.is_digit(12))
@@ -268,10 +284,12 @@ test "is_digit" {
   assert_eq!(true, 'z'.is_digit(36))
 }
 
+///|
 test "panic on invalid radix" {
   ignore('a'.is_digit(1))
 }
 
+///|
 test "is_numeric" {
   assert_true!('٣'.is_numeric())
   assert_true!('7'.is_numeric())
@@ -284,6 +302,7 @@ test "is_numeric" {
   assert_false!('三'.is_numeric())
 }
 
+///|
 test "is_whitespace" {
   assert_true!(' '.is_whitespace())
   // line break
@@ -291,4 +310,75 @@ test "is_whitespace" {
   // a non-breaking space
   assert_true!('\u{A0}'.is_whitespace())
   assert_false!('越'.is_whitespace())
+}
+
+///|
+test "is_printable" {
+  // Printable ASCII characters
+  let uppercase_a = 'A'
+  let lowercase_a = 'a'
+  let digit = '0'
+  let punctuation = '!'
+  let space = ' '
+
+  // Non-printable ASCII characters
+  let null = '\u{0000}'
+  let escape = '\u{001B}'
+  let delete = '\u{007F}'
+
+  // Printable Unicode characters
+  let emoji = '😀'
+  let chinese = '中'
+  let arabic = 'ا'
+  let russian = 'Я'
+  let greek = 'Ω'
+  let tamil = 'க'
+  let symbol = '♥'
+  let math = '∑'
+  let currency = '€'
+
+  // Non-printable Unicode characters
+  let zero_width_space = '\u{200B}'
+  let left_to_right_mark = '\u{200E}'
+  let private_use = '\u{E000}'
+  let word_joiner = '\u{2060}'
+  let variation_selector = '\u{FE00}'
+  let soft_hyphen = '\u{00AD}'
+  let musical_format = '\u{1D173}'
+  let paragraph_separator = '\u{2029}'
+  let byte_order_mark = '\u{FEFF}'
+
+  // Test printable characters
+  assert_true!(uppercase_a.is_printable())
+  assert_true!(lowercase_a.is_printable())
+  assert_true!(digit.is_printable())
+  assert_true!(punctuation.is_printable())
+  assert_true!(space.is_printable())
+  assert_true!(emoji.is_printable())
+  assert_true!(chinese.is_printable())
+  assert_true!(arabic.is_printable())
+  assert_true!(russian.is_printable())
+  assert_true!(greek.is_printable())
+  assert_true!(tamil.is_printable())
+  assert_true!(symbol.is_printable())
+  assert_true!(math.is_printable())
+  assert_true!(currency.is_printable())
+
+  // Test non-printable characters
+  assert_false!(null.is_printable())
+  assert_false!(escape.is_printable())
+  assert_false!(delete.is_printable())
+  assert_false!(zero_width_space.is_printable())
+  assert_false!(left_to_right_mark.is_printable())
+  assert_false!(private_use.is_printable())
+  assert_false!(word_joiner.is_printable())
+  assert_false!(variation_selector.is_printable())
+  assert_false!(soft_hyphen.is_printable())
+  assert_false!(musical_format.is_printable())
+  assert_false!(paragraph_separator.is_printable())
+  assert_false!(byte_order_mark.is_printable())
+  inspect!(
+    ['\t', '\n', '\r', '\b', '\\'].map(is_printable),
+    content="[false, false, false, false, true]",
+  )
 }

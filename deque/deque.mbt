@@ -76,7 +76,7 @@ pub fn from_array[A](arr : Array[A]) -> T[A] {
     head: 0,
     tail: arr.length() - 1,
   }
-  for i = 0; i < arr.length(); i = i + 1 {
+  for i in 0..<arr.length() {
     deq.buf[i] = arr[i]
   }
   deq
@@ -141,7 +141,7 @@ pub fn of[A](arr : FixedArray[A]) -> T[A] {
     head: 0,
     tail: arr.length() - 1,
   }
-  for i = 0; i < arr.length(); i = i + 1 {
+  for i in 0..<arr.length() {
     deq.buf[i] = arr[i]
   }
   deq
@@ -349,8 +349,8 @@ pub fn unsafe_pop_front[A](self : T[A]) -> Unit {
 /// }
 /// ```
 ///
-/// @alert deprecated "Use `unsafe_pop_front` instead"
-/// @coverage.skip
+#deprecated("Use `unsafe_pop_front` instead")
+#coverage.skip
 pub fn pop_front_exn[A](self : T[A]) -> Unit {
   unsafe_pop_front(self)
 }
@@ -406,8 +406,8 @@ pub fn unsafe_pop_back[A](self : T[A]) -> Unit {
 /// }
 /// ```
 ///
-/// @alert deprecated "Use `unsafe_pop_back` instead"
-/// @coverage.skip
+#deprecated("Use `unsafe_pop_back` instead")
+#coverage.skip
 pub fn pop_back_exn[A](self : T[A]) -> Unit {
   unsafe_pop_back(self)
 }
@@ -585,11 +585,11 @@ pub fn T::as_views[A](self : T[A]) -> (ArrayView[A], ArrayView[A]) {
 ///   inspect!(dq1 == dq3, content="false")
 /// }
 /// ```
-pub fn op_equal[A : Eq](self : T[A], other : T[A]) -> Bool {
+pub impl[A : Eq] Eq for T[A] with op_equal(self, other) {
   if self.len != other.len {
     return false
   }
-  for i = 0; i < self.len; i = i + 1 {
+  for i in 0..<self.len {
     if self[i] != other[i] {
       return false
     }
@@ -707,7 +707,7 @@ pub fn map[A, U](self : T[A], f : (A) -> U) -> T[U] {
     new()
   } else {
     let buf : UninitializedArray[U] = UninitializedArray::make(self.len)
-    for i = 0; i < self.len; i = i + 1 {
+    for i in 0..<self.len {
       buf[i] = f(self.buf[i])
     }
     T::{ buf, len: self.len, head: 0, tail: self.len - 1 }
@@ -728,7 +728,7 @@ pub fn mapi[A, U](self : T[A], f : (Int, A) -> U) -> T[U] {
     new()
   } else {
     let buf : UninitializedArray[U] = UninitializedArray::make(self.len)
-    for i = 0; i < self.len; i = i + 1 {
+    for i in 0..<self.len {
       buf[i] = f(i, self.buf[i])
     }
     T::{ buf, len: self.len, head: 0, tail: self.len - 1 }
@@ -770,7 +770,7 @@ pub fn is_empty[A](self : T[A]) -> Bool {
 /// }
 /// ```
 pub fn search[A : Eq](self : T[A], value : A) -> Int? {
-  for i = 0; i < self.len; i = i + 1 {
+  for i in 0..<self.len {
     if self.buf[i] == value {
       return Some(i)
     }
@@ -822,7 +822,7 @@ pub fn reserve_capacity[A](self : T[A], capacity : Int) -> Unit {
   self.buf = new_buf
   self.head = 0
   self.tail = 0
-  for i = 0; i < len; i = i + 1 {
+  for i in 0..<len {
     let idx = (head + i) % buf.length()
     self.buf[i] = buf[idx]
     self.tail += 1
@@ -851,7 +851,7 @@ pub fn shrink_to_fit[A](self : T[A]) -> Unit {
   self.buf = UninitializedArray::make(len)
   self.head = 0
   self.tail = 0
-  for i = 0; i < len; i = i + 1 {
+  for i in 0..<len {
     let idx = (head + i) % buf.length()
     self.buf[i] = buf[idx]
   }
@@ -940,12 +940,9 @@ pub fn retain_map[A](self : T[A], f : (A) -> A?) -> Unit {
   let mut idx = head
   let (front, back) = self.as_views()
   for cur in front {
-    match f(cur) {
-      Some(v) => {
-        buf[idx] = v
-        idx += 1
-      }
-      None => ()
+    if f(cur) is Some(v) {
+      buf[idx] = v
+      idx += 1
     }
   }
   if back.length() == 0 {
@@ -956,12 +953,9 @@ pub fn retain_map[A](self : T[A], f : (A) -> A?) -> Unit {
     if idx == cap {
       idx = 0
     }
-    match f(cur) {
-      Some(v) => {
-        buf[idx] = v
-        idx += 1
-      }
-      None => ()
+    if f(cur) is Some(v) {
+      buf[idx] = v
+      idx += 1
     }
   }
   if idx <= self.len - head_len {
@@ -976,7 +970,7 @@ pub fn retain_map[A](self : T[A], f : (A) -> A?) -> Unit {
 /// deque to retain only elements for which the provided function returns `Some`,
 /// and updates those elements with the values inside the `Some` variant.
 ///
-/// @alert deprecated "Use `@deque.retain_map` instead"
+#deprecated("Use `@deque.retain_map` instead")
 pub fn filter_map_inplace[A](self : T[A], f : (A) -> A?) -> Unit {
   self.retain_map(f)
 }
@@ -1062,16 +1056,16 @@ pub fn iter[A](self : T[A]) -> Iter[A] {
     let head_len = cap - head
     if head_len >= len {
       for i in head..<(head + len) {
-        guard let IterContinue = yield_(buf[i]) else { x => return x }
+        guard yield_(buf[i]) is IterContinue else { return IterEnd }
 
       }
     } else {
       for i in head..<cap {
-        guard let IterContinue = yield_(buf[i]) else { x => return x }
+        guard yield_(buf[i]) is IterContinue else { return IterEnd }
 
       }
       for i in 0..<(len - head_len) {
-        guard let IterContinue = yield_(buf[i]) else { x => return x }
+        guard yield_(buf[i]) is IterContinue else { return IterEnd }
 
       }
     }
@@ -1110,16 +1104,16 @@ pub fn iter2[A](self : T[A]) -> Iter2[Int, A] {
     let mut j = 0
     if head_len >= len {
       for i in head..<(head + len) {
-        guard let IterContinue = yield_(j, buf[i]) else { x => return x }
+        guard yield_(j, buf[i]) is IterContinue else { return IterEnd }
         j += 1
       }
     } else {
       for i in head..<cap {
-        guard let IterContinue = yield_(j, buf[i]) else { x => return x }
+        guard yield_(j, buf[i]) is IterContinue else { return IterEnd }
         j += 1
       }
       for i in 0..<(len - head_len) {
-        guard let IterContinue = yield_(j, buf[i]) else { x => return x }
+        guard yield_(j, buf[i]) is IterContinue else { return IterEnd }
         j += 1
       }
     }
@@ -1155,16 +1149,16 @@ pub fn rev_iter[A](self : T[A]) -> Iter[A] {
     let head_len = cap - head
     if head_len >= len {
       for i = head + len - 1; i >= head; i = i - 1 {
-        guard let IterContinue = yield_(buf[i]) else { x => return x }
+        guard yield_(buf[i]) is IterContinue else { return IterEnd }
 
       }
     } else {
       for i = len - head_len - 1; i >= 0; i = i - 1 {
-        guard let IterContinue = yield_(buf[i]) else { x => return x }
+        guard yield_(buf[i]) is IterContinue else { return IterEnd }
 
       }
       for i = cap - 1; i >= head; i = i - 1 {
-        guard let IterContinue = yield_(buf[i]) else { x => return x }
+        guard yield_(buf[i]) is IterContinue else { return IterEnd }
 
       }
     }
@@ -1203,16 +1197,16 @@ pub fn rev_iter2[A](self : T[A]) -> Iter2[Int, A] {
     let mut j = 0
     if head_len >= len {
       for i = head + len - 1; i >= head; i = i - 1 {
-        guard let IterContinue = yield_(j, buf[i]) else { x => return x }
+        guard yield_(j, buf[i]) is IterContinue else { return IterEnd }
         j += 1
       }
     } else {
       for i = len - head_len - 1; i >= 0; i = i - 1 {
-        guard let IterContinue = yield_(j, buf[i]) else { x => return x }
+        guard yield_(j, buf[i]) is IterContinue else { return IterEnd }
         j += 1
       }
       for i = cap - 1; i >= head; i = i - 1 {
-        guard let IterContinue = yield_(j, buf[i]) else { x => return x }
+        guard yield_(j, buf[i]) is IterContinue else { return IterEnd }
         j += 1
       }
     }
@@ -1256,4 +1250,28 @@ pub fn to_array[A](self : T[A]) -> Array[A] {
     }
     xs
   }
+}
+
+///|
+pub impl[A : ToJson] ToJson for T[A] with to_json(self : T[A]) -> Json {
+  let res = Array::make(self.length(), Json::Null)
+  for i, x in self {
+    res[i] = x.to_json()
+  }
+  Array(res)
+}
+
+///|
+pub impl[A : @json.FromJson] @json.FromJson for T[A] with from_json!(json, path) {
+  guard json is Array(arr) else {
+    raise @json.JsonDecodeError((path, "Deque::from_json: expected array"))
+  }
+  let len = arr.length()
+  let buf = UninitializedArray::make(len)
+  let head = 0
+  let tail = len
+  for i, x in arr {
+    buf[i] = @json.FromJson::from_json!(x, path.add_index(i))
+  }
+  { len, buf, head, tail }
 }

@@ -23,7 +23,7 @@ priv struct Entry[K, V] {
 } derive(Show)
 
 ///|
-fn Entry::op_equal[K : Eq, V](self : Entry[K, V], other : Entry[K, V]) -> Bool {
+impl[K : Eq, V] Eq for Entry[K, V] with op_equal(self, other) {
   self.hash == other.hash && self.key == other.key
 }
 
@@ -73,6 +73,7 @@ fn power_2_above(x : Int, n : Int) -> Int {
   }
 }
 
+///|
 test "power_2_above" {
   inspect!(power_2_above(1, 15), content="16")
   inspect!(power_2_above(1, 16), content="16")
@@ -313,13 +314,11 @@ fn Map::remove_entry[K : Eq, V](self : Map[K, V], entry : Entry[K, V]) -> Unit {
     if self.tail.unwrap() == entry {
       self.tail = node.prev
     }
-    match node.prev {
-      Some(prev) => self.list[prev.idx].next = node.next
-      None => ()
+    if node.prev is Some(prev) {
+      self.list[prev.idx].next = node.next
     }
-    match node.next {
-      Some(next) => self.list[next.idx].prev = node.prev
-      None => ()
+    if node.next is Some(next) {
+      self.list[next.idx].prev = node.prev
     }
   }
   node.prev = None
@@ -381,7 +380,7 @@ fn calc_grow_threshold(capacity : Int) -> Int {
 ///|
 fn Map::debug_entries[K : Show, V : Show](self : Map[K, V]) -> String {
   let buf = StringBuilder::new()
-  for i = 0; i < self.entries.length(); i = i + 1 {
+  for i in 0..<self.entries.length() {
     if i > 0 {
       buf.write_char(',')
     }
@@ -522,10 +521,12 @@ pub fn Map::values[K, V](self : Map[K, V]) -> Iter[V] {
 ///|
 /// Converts the hash map to an array.
 pub fn Map::to_array[K, V](self : Map[K, V]) -> Array[(K, V)] {
-  let arr = Array::new(capacity=self.size)
+  let arr = Array::make_uninit(self.size)
+  let mut i = 0
   loop self.head {
     Some({ key, value, idx, .. }) => {
-      arr.push((key, value))
+      arr.unsafe_set(i, (key, value))
+      i += 1
       continue self.list[idx].next
     }
     None => break
@@ -534,7 +535,7 @@ pub fn Map::to_array[K, V](self : Map[K, V]) -> Array[(K, V)] {
 }
 
 ///|
-pub fn Map::op_equal[K : Hash + Eq, V : Eq](
+pub impl[K : Hash + Eq, V : Eq] Eq for Map[K, V] with op_equal(
   self : Map[K, V],
   that : Map[K, V]
 ) -> Bool {
@@ -556,7 +557,7 @@ pub fn Map::of[K : Hash + Eq, V](arr : FixedArray[(K, V)]) -> Map[K, V] {
   let length = arr.length()
   let m = Map::new(capacity=length)
   // arr.iter(fn(e) { m.set(e.0, e.1) })
-  for i = 0; i < length; i = i + 1 {
+  for i in 0..<length {
     let e = arr[i]
     m.set(e.0, e.1)
   }
@@ -573,6 +574,6 @@ pub fn Map::from_iter[K : Hash + Eq, V](iter : Iter[(K, V)]) -> Map[K, V] {
 }
 
 ///|
-pub fn Map::default[K, V]() -> Map[K, V] {
+pub impl[K, V] Default for Map[K, V] with default() {
   Map::new()
 }

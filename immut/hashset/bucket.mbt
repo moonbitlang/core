@@ -90,6 +90,7 @@ fn Bucket::iter[T](self : Bucket[T]) -> Iter[T] {
   })
 }
 
+///|
 test "Bucket" {
   let b0 : Bucket[_] = Just_One(0)
   inspect!((b0.find(0), b0.find(1), b0.size()), content="(true, false, 1)")
@@ -107,6 +108,7 @@ test "Bucket" {
   inspect!((b1.find(0), b1.find(1)), content="(true, false)")
 }
 
+///|
 test "Bucket::iter" {
   let b : Bucket[_] = More(0, More(1, Just_One(31)))
   let buf = StringBuilder::new(size_hint=0)
@@ -122,6 +124,7 @@ test "Bucket::iter" {
   inspect!(buf.to_string(), content="0, 1, 31")
 }
 
+///|
 test "Bucket::iter" {
   let b : Bucket[_] = More(0, More(1, Just_One(31)))
   let buf = StringBuilder::new(size_hint=0)
@@ -143,6 +146,7 @@ test "Bucket::iter" {
   inspect!(buf.to_string(), content="0, 1, 31")
 }
 
+///|
 test "Bucket add and remove" {
   let b0 : Bucket[_] = Just_One(0)
   let b1 = b0.add(1)
@@ -168,6 +172,7 @@ test "Bucket add and remove" {
   assert_eq!(b5.find(2), false)
 }
 
+///|
 test "Bucket size" {
   let b0 : Bucket[_] = Just_One(0)
   let b1 = b0.add(1)
@@ -183,6 +188,7 @@ test "Bucket size" {
   assert_eq!(b5.size(), 2)
 }
 
+///|
 test "Bucket iter" {
   let b0 : Bucket[_] = Just_One(0)
   let b1 = b0.add(1)
@@ -200,6 +206,7 @@ test "Bucket iter" {
   inspect!(buf, content="1, 2, 0")
 }
 
+///|
 test "Bucket iter" {
   let b0 : Bucket[_] = Just_One(0)
   let b1 = b0.add(1)

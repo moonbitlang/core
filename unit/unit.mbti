@@ -1,14 +1,16 @@
-package moonbitlang/core/unit
+package "moonbitlang/core/unit"
 
 // Values
 fn default() -> Unit
 
+fn to_string(Unit) -> String
+
 // Types and methods
 impl Unit {
-  compare(Unit, Unit) -> Int
-  default() -> Unit
   to_string(Unit) -> String
 }
+impl Compare for Unit
+impl Default for Unit
 impl Hash for Unit
 
 // Type aliases

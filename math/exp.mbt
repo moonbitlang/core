@@ -16,3 +16,8 @@
 pub fn exp(input : Double) -> Double {
   input.exp()
 }
+
+///|
+pub fn expm1(input : Double) -> Double {
+  input.expm1()
+}

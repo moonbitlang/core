@@ -13,87 +13,45 @@
 // limitations under the License.
 
 ///|
-pub fn Bool::to_string(self : Bool) -> String {
-  if self {
-    "true"
-  } else {
-    "false"
-  }
-}
+const ALPHABET : String = "0123456789abcdefghijklmnopqrstuvwxyz"
 
 ///|
-pub fn Int64::to_string(self : Int64) -> String {
-  fn abs(n : Int64) -> Int64 {
-    if n < 0L {
-      0L - n
-    } else {
-      n
-    }
-  }
-
-  // The min and max value of i64 are -9223372036854775808 and 9223372036854775807,
-  // so max=20 is enough.
-
-  let buf = StringBuilder::new(size_hint=20)
-  if self < 0L {
-    buf.write_char('-')
-  }
-  fn write_digits(num) {
-    let num2 = num / 10L
-    if num2 != 0L {
-      write_digits(num2)
-    }
-    buf.write_char(Char::from_int(abs(num % 10L).to_int() + 48))
-  }
-
-  write_digits(self)
+pub fn Int64::to_string(self : Int64, radix~ : Int = 10) -> String {
+  let buf = StringBuilder::new(size_hint=Int64::output_size_hint(radix~))
+  self.output(buf, radix~)
   buf.to_string()
 }
 
 ///|
-pub fn Int::to_string(self : Int) -> String {
-  fn abs(n : Int) -> Int {
-    if n < 0 {
-      0 - n
-    } else {
-      n
-    }
-  }
+pub impl Show for Int64 with to_string(self) {
+  self.to_string(radix=10)
+}
 
-  // The min and max value of i32 are -2147483648 and 2147483647,
-  // so max=11 is enough.
-
-  let buf = StringBuilder::new()
-  if self < 0 {
-    buf.write_char('-')
-  }
-  fn write_digits(num) {
-    let num2 = num / 10
-    if num2 != 0 {
-      write_digits(num2)
-    }
-    buf.write_char(Char::from_int(abs(num % 10) + 48))
-  }
-
-  write_digits(self)
+///|
+pub fn Int::to_string(self : Int, radix~ : Int = 10) -> String {
+  let buf = StringBuilder::new(size_hint=Int::output_size_hint(radix~))
+  self.output(buf, radix~)
   buf.to_string()
 }
 
 ///|
-pub fn UInt::to_string(self : UInt) -> String {
-  let buf = StringBuilder::new()
-  fn write_digits(num) {
-    let num2 = num / 10U
-    if num2 != 0U {
-      write_digits(num2)
-    }
-    buf.write_char(Char::from_int((num % 10U).reinterpret_as_int() + 48))
-  }
+pub impl Show for Int with to_string(self) {
+  self.to_string(radix=10)
+}
 
-  write_digits(self)
+///|
+pub fn UInt::to_string(self : UInt, radix~ : Int = 10) -> String {
+  let buf = StringBuilder::new(size_hint=UInt::output_size_hint(radix~))
+  self.output(buf, radix~)
   buf.to_string()
 }
 
+///|
+pub impl Show for UInt with to_string(self) {
+  self.to_string(radix=10)
+}
+
+///|
 test "UInt::to_string" {
   inspect!(0U, content="0")
   inspect!(17U, content="17")
@@ -101,28 +59,129 @@ test "UInt::to_string" {
 }
 
 ///|
-pub fn UInt64::to_string(self : UInt64) -> String {
-  let buf = StringBuilder::new()
-  fn write_digits(num : UInt64) {
-    let num2 = num / 10UL
-    if num2 != 0UL {
-      write_digits(num2)
-    }
-    buf.write_char(
-      Char::from_int((num % 10UL).reinterpret_as_int64().to_int() + 48),
-    )
-  }
-
-  write_digits(self)
+pub fn UInt64::to_string(self : UInt64, radix~ : Int = 10) -> String {
+  let buf = StringBuilder::new(size_hint=UInt64::output_size_hint(radix~))
+  self.output(buf, radix~)
   buf.to_string()
 }
 
 ///|
-pub fn Int16::to_string(self : Int16) -> String {
-  self.to_int().to_string()
+pub impl Show for UInt64 with to_string(self) {
+  self.to_string(radix=10)
 }
 
 ///|
-pub fn UInt16::to_string(self : UInt16) -> String {
-  self.to_int().to_string()
+pub fn Int16::to_string(self : Int16, radix~ : Int = 10) -> String {
+  self.to_int().to_string(radix~)
+}
+
+///|
+pub impl Show for Int16 with to_string(self) {
+  self.to_string(radix=10)
+}
+
+///|
+pub fn UInt16::to_string(self : UInt16, radix~ : Int = 10) -> String {
+  self.to_int().to_string(radix~)
+}
+
+///|
+pub impl Show for UInt16 with to_string(self) {
+  self.to_string(radix=10)
+}
+
+///|
+test "to_string" {
+  assert_eq!((0x100).to_string(), "256")
+  assert_eq!("\{0x100}", "256")
+  assert_eq!(0x200U.to_string(), "512")
+  assert_eq!("\{0x200U}", "512")
+  assert_eq!(0x300L.to_string(), "768")
+  assert_eq!("\{0x300L}", "768")
+  assert_eq!(0x400UL.to_string(), "1024")
+  assert_eq!("\{0x400UL}", "1024")
+}
+
+///|
+test "to_string with radix" {
+  // Binary
+  inspect!((0).to_string(radix=2), content="0")
+  inspect!((1).to_string(radix=2), content="1")
+  inspect!((2).to_string(radix=2), content="10")
+  inspect!((255).to_string(radix=2), content="11111111")
+  inspect!((-255).to_string(radix=2), content="-11111111")
+
+  // Octal
+  inspect!((0).to_string(radix=8), content="0")
+  inspect!((8).to_string(radix=8), content="10")
+  inspect!((64).to_string(radix=8), content="100")
+  inspect!((-64).to_string(radix=8), content="-100")
+
+  // Decimal
+  inspect!((0).to_string(radix=10), content="0")
+  inspect!((123).to_string(radix=10), content="123")
+  inspect!((-123).to_string(radix=10), content="-123")
+  inspect!(
+    0x7fff_ffff_ffff_ffffL.to_string(radix=10),
+    content="9223372036854775807",
+  )
+  inspect!(
+    0x8000_0000_0000_0000L.to_string(radix=10),
+    content="-9223372036854775808",
+  )
+
+  // Hexadecimal
+  inspect!((0).to_string(radix=16), content="0")
+  inspect!((0x11).to_string(radix=16), content="11")
+  inspect!((0x15ef).to_string(radix=16), content="15ef")
+  inspect!((-0xabcd).to_string(radix=16), content="-abcd")
+  inspect!(
+    (1.0 : Float).reinterpret_as_int().to_string(radix=16),
+    content="3f800000",
+  )
+
+  // UInt
+  inspect!(0U.to_string(radix=16), content="0")
+  inspect!(0x1AU.to_string(radix=16), content="1a")
+  inspect!(0xabcdU.to_string(radix=16), content="abcd")
+  inspect!(
+    (-2.0 : Float).reinterpret_as_uint().to_string(radix=16),
+    content="c0000000",
+  )
+  inspect!((-1).reinterpret_as_uint().to_string(radix=16), content="ffffffff")
+
+  // Int64
+  inspect!(0L.to_string(radix=16), content="0")
+  inspect!(0x2fL.to_string(radix=16), content="2f")
+  inspect!(0xf0aeL.to_string(radix=16), content="f0ae")
+  inspect!((-0x1234eacbL).to_string(radix=16), content="-1234eacb")
+  inspect!(
+    1.0.reinterpret_as_uint64().to_string(radix=16),
+    content="3ff0000000000000",
+  )
+
+  // UInt64
+  inspect!(0UL.to_string(radix=16), content="0")
+  inspect!(0x11UL.to_string(radix=16), content="11")
+  inspect!(0x12bdUL.to_string(radix=16), content="12bd")
+  inspect!(
+    (-1L).reinterpret_as_uint64().to_string(radix=16),
+    content="ffffffffffffffff",
+  )
+  inspect!(
+    2.0.reinterpret_as_uint64().to_string(radix=16),
+    content="4000000000000000",
+  )
+}
+
+///|
+test "panic to_string_by_radix/illegal_radix" {
+  ignore((1).to_string(radix=1))
+  ignore((1).to_string(radix=37))
+  ignore(1L.to_string(radix=0))
+  ignore(1L.to_string(radix=42))
+  ignore(1U.to_string(radix=-1))
+  ignore(1U.to_string(radix=73))
+  ignore(1UL.to_string(radix=-100))
+  ignore(1UL.to_string(radix=100))
 }

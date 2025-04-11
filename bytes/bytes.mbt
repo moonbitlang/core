@@ -200,7 +200,7 @@ pub fn of(arr : FixedArray[Byte]) -> Bytes {
 /// ```
 pub fn to_array(self : Bytes) -> Array[Byte] {
   let rv = Array::make(self.length(), b'0')
-  for i = 0; i < self.length(); i = i + 1 {
+  for i in 0..<self.length() {
     rv[i] = self[i]
   }
   rv
@@ -251,7 +251,7 @@ pub fn iter(self : Bytes) -> Iter[Byte] {
 ///   inspect!(bytes.length(), content="0")
 /// }
 /// ```
-pub fn Bytes::default() -> Bytes {
+pub impl Default for Bytes with default() {
   b""
 }
 
@@ -259,4 +259,30 @@ pub fn Bytes::default() -> Bytes {
 /// same as `Bytes::default`
 pub fn default() -> Bytes {
   b""
+}
+
+///|
+/// Reinterpret the byte sequence as Bytes.
+fn unsafe_to_bytes(array : FixedArray[Byte]) -> Bytes = "%identity"
+
+///|
+/// Concatenates two bytes sequences.
+///
+/// Parameters:
+///
+/// * `self` : The first bytes sequence.
+/// * `other` : The second bytes sequence.
+/// TODO: marked as intrinsic, inline if it is constant
+pub impl Add for Bytes with op_add(self : Bytes, other : Bytes) -> Bytes {
+  let rv : FixedArray[Byte] = FixedArray::make(
+    self.length() + other.length(),
+    0,
+  )
+  for i in 0..<self.length() {
+    rv[i] = self[i]
+  }
+  for i in 0..<other.length() {
+    rv[self.length() + i] = other[i]
+  }
+  unsafe_to_bytes(rv)
 }

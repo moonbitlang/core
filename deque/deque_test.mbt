@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+///|
 test "search" {
   let dv = @deque.of([3, 4, 5])
   assert_eq!(dv.search(3), Some(0))
@@ -20,6 +21,7 @@ test "search" {
   assert_eq!(dv.search(6), None)
 }
 
+///|
 test "contains" {
   let dv = @deque.of([3, 4, 5])
   assert_true!(dv.contains(3))
@@ -28,6 +30,7 @@ test "contains" {
   assert_false!(dv.contains(6))
 }
 
+///|
 test "reserve_capacity" {
   let dv = @deque.of([1, 2, 3, 4, 5])
   dv.pop_front() |> ignore() // 2, 3, 4, 5
@@ -41,12 +44,14 @@ test "reserve_capacity" {
   assert_eq!(dv[2], 1)
 }
 
+///|
 test "reserve_capacity_2" {
   let dv = @deque.of([1, 2, 3, 4, 5])
   dv.reserve_capacity(3)
   assert_true!(dv.capacity() == 5)
 }
 
+///|
 test "shrink_to_fit" {
   let dv = @deque.of([1, 2, 3, 4, 5])
   dv.pop_front() |> ignore()
@@ -61,6 +66,7 @@ test "shrink_to_fit" {
   assert_eq!(dv[2], 1)
 }
 
+///|
 test "shrink_to_fit_2" {
   let dv = @deque.of([1, 2, 3])
   assert_true!(dv.capacity() == 3)
@@ -68,6 +74,7 @@ test "shrink_to_fit_2" {
   assert_true!(dv.capacity() == 3)
 }
 
+///|
 test "iter" {
   let dv = @deque.of([1, 2, 3, 4, 5])
   let iter = dv.iter()
@@ -96,6 +103,7 @@ test "iter" {
   )
 }
 
+///|
 test "reserve and push" {
   // capacity > 0, len = 0
   let a = @deque.new(capacity=2)
@@ -119,6 +127,7 @@ test "reserve and push" {
   inspect!(d.back(), content="Some(Some(1))")
 }
 
+///|
 test "mapi" {
   let dv = @deque.of([3, 4, 5])
   let dvp = dv.mapi(fn(i, x) { x + i })
@@ -129,6 +138,7 @@ test "mapi" {
   inspect!(dve.mapi(fn(_idx, x) { x }), content="@deque.of([])")
 }
 
+///|
 test "rev_each" {
   let mut i = 6
   let mut failed = false
@@ -141,6 +151,7 @@ test "rev_each" {
   assert_false!(failed)
 }
 
+///|
 test "rev_eachi" {
   let mut i = 6
   let mut j = 0
@@ -155,6 +166,7 @@ test "rev_eachi" {
   assert_false!(failed)
 }
 
+///|
 test "iteri" {
   let mut i = 0
   let mut failed = false
@@ -167,6 +179,7 @@ test "iteri" {
   assert_false!(failed)
 }
 
+///|
 test "iter" {
   let mut i = 0
   let mut failed = false
@@ -179,6 +192,7 @@ test "iter" {
   assert_false!(failed)
 }
 
+///|
 test "iter2" {
   let v = @deque.of([1, 2, 3, 4, 5])
   v.unsafe_pop_front()
@@ -188,6 +202,7 @@ test "iter2" {
   inspect!(sum, content="9")
 }
 
+///|
 test "op_get" {
   let dv = @deque.of([1, 2, 3, 4, 5])
   inspect!(dv, content="@deque.of([1, 2, 3, 4, 5])")
@@ -198,11 +213,13 @@ test "op_get" {
   inspect!(dv[0], content="2")
 }
 
+///|
 test "from_array" {
   inspect!(@deque.from_array(([] : Array[Int])), content="@deque.of([])")
   inspect!(@deque.of([1, 2, 3]), content="@deque.of([1, 2, 3])")
 }
 
+///|
 test "copy" {
   inspect!((@deque.new() : @deque.T[Int]).copy(), content="@deque.of([])")
   let deq = @deque.of([1, 2, 3])
@@ -212,12 +229,14 @@ test "copy" {
   inspect!(deq1, content="@deque.of([111, 2, 3])")
 }
 
+///|
 test "op_set" {
   let dv = @deque.of([1, 2, 3, 4, 5])
   dv[1] = 3
   assert_eq!(dv[1], 3)
 }
 
+///|
 test "op_equal" {
   let dv1 = @deque.of([1, 2, 3])
   let dv2 = @deque.of([1, 2, 3])
@@ -232,6 +251,7 @@ test "op_equal" {
   assert_false!(dv1 == dv2)
 }
 
+///|
 test "clear" {
   let dv = @deque.of([3, 4, 5])
   dv.clear()
@@ -239,6 +259,7 @@ test "clear" {
   assert_eq!(dv.capacity(), 3)
 }
 
+///|
 test "map" {
   let dv = @deque.of([3, 4, 5])
   let dvp = dv.map(fn(x) { x + 1 })
@@ -249,6 +270,7 @@ test "map" {
   inspect!(dve.map(fn(x) { x }), content="@deque.of([])")
 }
 
+///|
 test "push_and_pop" {
   let dv = @deque.of([1, 2, 3, 4, 5])
   assert_eq!(dv.pop_back(), Some(5))
@@ -273,6 +295,7 @@ test "push_and_pop" {
   assert_eq!(dv.pop_back(), None)
 }
 
+///|
 test "is_empty" {
   let dv = @deque.new()
   assert_true!(dv.is_empty())
@@ -280,6 +303,7 @@ test "is_empty" {
   assert_false!(dv.is_empty())
 }
 
+///|
 test "of" {
   let d = @deque.of([1, 2, 3])
   assert_eq!(d[0], 1)
@@ -287,6 +311,7 @@ test "of" {
   assert_eq!(d[2], 3)
 }
 
+///|
 test "front_and_back" {
   let dv = @deque.of([1, 2, 3, 4, 5])
   assert_eq!(dv.back(), Some(5))
@@ -296,16 +321,19 @@ test "front_and_back" {
   assert_eq!(dv.front(), None)
 }
 
+///|
 test "new_with_capacity" {
   let d : @deque.T[Int] = @deque.new(capacity=0)
   assert_eq!(d.capacity(), 0)
 }
 
+///|
 test "new_with_capacity_non_zero" {
   let d : @deque.T[Int] = @deque.new(capacity=10)
   assert_eq!(d.capacity(), 10)
 }
 
+///|
 test "realloc" {
   let dv = @deque.of([1, 2, 3, 4, 5])
   assert_eq!(dv.pop_front(), Some(1))
@@ -325,6 +353,7 @@ test "realloc" {
   assert_eq!(result, [4, 5, 6, 7, 8, 9, 10])
 }
 
+///|
 test "push_realloc" {
   let dv = @deque.new()
   dv.push_front(1)
@@ -336,6 +365,7 @@ test "push_realloc" {
   assert_true!(dv.capacity() > 0)
 }
 
+///|
 test "reserve_and_push" {
   // capacity > 0, len = 0
   let a = @deque.new(capacity=2)
@@ -359,19 +389,23 @@ test "reserve_and_push" {
   inspect!(d.back(), content="Some(Some(1))")
 }
 
+///|
 test "from_iter multiple elements iter" {
   inspect!(@deque.from_iter([1, 2, 3].iter()), content="@deque.of([1, 2, 3])")
 }
 
+///|
 test "from_iter single element iter" {
   inspect!(@deque.from_iter([1].iter()), content="@deque.of([1])")
 }
 
+///|
 test "from_iter empty iter" {
   let dq : @deque.T[Int] = @deque.from_iter(Iter::empty())
   inspect!(dq, content="@deque.of([])")
 }
 
+///|
 test "from_array with single element" {
   let arr = [42]
   let deque = @deque.from_array(arr)
@@ -380,14 +414,15 @@ test "from_array with single element" {
   assert_eq!(deque.back(), Some(42))
 }
 
+///|
 test "unsafe_pop_front after many push_front" {
   let dq = @deque.new()
   // First fill some elements to create a buffer with some capacity
-  for i = 0; i < 10; i = i + 1 {
+  for i in 0..<10 {
     dq.push_front(i)
   }
   // Pop all elements except one
-  for i = 0; i < 9; i = i + 1 {
+  for i in 0..<9 {
     dq.unsafe_pop_front()
   }
   // Now head should be at the end of buffer
@@ -397,6 +432,7 @@ test "unsafe_pop_front after many push_front" {
   inspect!(dq.is_empty(), content="true")
 }
 
+///|
 test "unsafe_pop_back when tail needs to wrap around" {
   let dq = @deque.new(capacity=2)
   dq.push_back(1) // tail = 0
@@ -407,6 +443,7 @@ test "unsafe_pop_back when tail needs to wrap around" {
   inspect!(dq.back(), content="Some(2)")
 }
 
+///|
 test "deque op_set wrapping case" {
   let dq = @deque.new(capacity=4)
   // Add elements until the deque wraps around
@@ -424,6 +461,7 @@ test "deque op_set wrapping case" {
   inspect!(dq, content="@deque.of([0, 1, 10, 3, 4])")
 }
 
+///|
 test "iter when tail needs to wrap around" {
   let dq = @deque.new(capacity=2)
   dq.push_back(1) // tail = 0
@@ -435,6 +473,7 @@ test "iter when tail needs to wrap around" {
   inspect!(dq.iter().filter(fn(x) { x % 2 != 0 }).to_array(), content="[3]")
 }
 
+///|
 test "iter2 when tail needs to wrap around" {
   let dq = @deque.new(capacity=2)
   dq.push_back(1) // tail = 0
@@ -444,6 +483,7 @@ test "iter2 when tail needs to wrap around" {
   inspect!(dq.iter2().to_array(), content="[(0, 2), (1, 3)]")
 }
 
+///|
 test "rev_iter when head needs to wrap around" {
   let dq = @deque.new(capacity=4)
   dq.push_back(1)
@@ -456,6 +496,7 @@ test "rev_iter when head needs to wrap around" {
   inspect!(dq.rev_iter().to_array(), content="[6, 5, 4, 3]")
 }
 
+///|
 test "rev_iter2 when head needs to wrap around" {
   let dq = @deque.new(capacity=4)
   dq.push_back(1)
@@ -471,10 +512,11 @@ test "rev_iter2 when head needs to wrap around" {
   )
 }
 
+///|
 test "deque push_front when empty" {
   let d = @deque.of([0, 1])
   ignore(d.pop_back())
-  guard let Some(f) = d.pop_back()
+  let f = d.pop_back().unwrap()
   d.push_front(f)
   inspect!(d, content="@deque.of([0])")
   let d = @deque.of(["a", "b"])
@@ -494,33 +536,25 @@ test "deque push_front when empty" {
   inspect!(d, content="@deque.of([\"a\"])")
 }
 
+///|
 test "deque push_back when empty" {
   let d = @deque.of([0, 1])
   ignore(d.pop_front())
-  guard let Some(f) = d.pop_front()
+  let f = d.pop_front().unwrap()
   d.push_back(f)
   inspect!(d, content="@deque.of([1])")
   let d = @deque.of(["a", "b"])
-  inspect!(
-    d.pop_front(),
-    content=
-      #|Some("a")
-    ,
-  )
-  inspect!(
-    d.pop_front(),
-    content=
-      #|Some("b")
-    ,
-  )
+  @json.inspect!(d.pop_front(), content=["a"])
+  @json.inspect!(d.pop_front(), content=["b"])
   d.push_back("b")
-  inspect!(d, content="@deque.of([\"b\"])")
+  @json.inspect!(d, content=["b"])
 }
 
+///|
 test "deque as_views" {
   // Test empty deque
   let dq1 : @deque.T[Int] = @deque.new()
-  inspect!(dq1.as_views(), content="([], [])")
+  @json.inspect!(dq1.as_views(), content=[[], []])
 
   // Test contiguous case (head_len >= len)
   let dq2 = @deque.of([1, 2, 3])
@@ -534,9 +568,10 @@ test "deque as_views" {
   dq3.push_back(5)
   dq3.push_back(6)
   // Now the deque should be [3, 4, 5, 6] with internal wrap-around
-  inspect!(dq3.as_views(), content="([3, 4], [5, 6])")
+  @json.inspect!(dq3.as_views(), content=[[3, 4], [5, 6]])
 }
 
+///|
 test "test_get" {
   let tester = @deque.new()
   tester.push_back(1)
@@ -552,6 +587,7 @@ test "test_get" {
   assert_eq!(tester[1], 35)
 }
 
+///|
 test "test_reserve_capacity" {
   let tester : @deque.T[Int] = @deque.new(capacity=1)
   assert_eq!(tester.capacity(), 1)
@@ -564,6 +600,7 @@ test "test_reserve_capacity" {
   assert_eq!(tester.capacity(), 35)
 }
 
+///|
 test "test_contains" {
   let tester = @deque.new()
   tester.push_back(1)
@@ -580,6 +617,7 @@ test "test_contains" {
   assert_true!(tester.contains(5))
 }
 
+///|
 test "test_shrink_to_fit" {
   let tester = @deque.new(capacity=15)
   let cap = tester.capacity()
@@ -603,6 +641,7 @@ test "test_shrink_to_fit" {
   }
 }
 
+///|
 test "test_from_vec" {
   for cap in 0..=35 {
     for len in 0..=cap {
@@ -612,21 +651,22 @@ test "test_from_vec" {
       }
       let vd = @deque.from_array(vec)
       assert_eq!(vd.length(), vec.length())
-      for i = 0; i < vd.length(); i = i + 1 {
+      for i in 0..<vd.length() {
         assert_eq!(vd[i], vec[i])
       }
     }
   }
 }
 
+///|
 test "test_from_array" {
   fn test_fn!(n : Int) -> Unit {
     let array : FixedArray[Int] = FixedArray::make(n, 0)
-    for index = 0; index < n; index = index + 1 {
+    for index in 0..<n {
       array[index] = index
     }
     let deq = @deque.of(array)
-    for index = 0; index < n; index = index + 1 {
+    for index in 0..<n {
       assert_eq!(deq[index], array[index])
     }
     assert_eq!(deq.length(), array.length())
@@ -639,20 +679,21 @@ test "test_from_array" {
   test_fn!(35)
 }
 
+///|
 test "test_clone_from" {
   let m = FixedArray::make(8, 1)
   let n = FixedArray::make(12, 2)
   let limit = 8
-  for pfv = 0; pfv < limit; pfv = pfv + 1 {
-    for pfu = 0; pfu < limit; pfu = pfu + 1 {
-      for longer = 0; longer < 2; longer = longer + 1 {
+  for pfv in 0..<limit {
+    for pfu in 0..<limit {
+      for longer in 0..<2 {
         let (vr, ur) = if longer == 0 { (m, n) } else { (n, m) }
         let v = @deque.of(vr)
-        for _idx = 0; _idx < pfv; _idx = _idx + 1 {
+        for _idx in 0..<pfv {
           v.push_front(1)
         }
         let u = @deque.of(ur)
-        for _idx = 0; _idx < pfu; _idx = _idx + 1 {
+        for _idx in 0..<pfu {
           u.push_front(2)
         }
         let v = @deque.copy(u)
@@ -662,6 +703,7 @@ test "test_clone_from" {
   }
 }
 
+///|
 test "deque guard iter coverage improvement" {
   let dq = @deque.new(capacity=15)
   // Use push_front only
@@ -694,6 +736,7 @@ test "deque guard iter coverage improvement" {
   test_n_via_push_front!(15)
 }
 
+///|
 test "deque guard iter after push_front and push_back" {
   let dq = @deque.new(capacity=15)
   for i in 0..<15 {
@@ -717,6 +760,7 @@ test "deque guard iter after push_front and push_back" {
   }
 }
 
+///|
 test "deque guard iter2 coverage improvement" {
   let dq = @deque.new(capacity=15)
   // Use push_front only
@@ -749,24 +793,25 @@ test "deque guard iter2 coverage improvement" {
   test_n_via_push_front!(15)
 }
 
+///|
 test "deque truncate" {
   // Empty deque
   let dq : @deque.T[Int] = @deque.new()
   dq.truncate(3)
-  inspect!(dq, content="@deque.of([])")
+  @json.inspect!(dq, content=[])
 
   // Length is greater than current length
   let dq = @deque.of([1, 2, 3, 4, 5])
   dq.truncate(3)
-  inspect!(dq, content="@deque.of([1, 2, 3])")
+  @json.inspect!(dq, content=[1, 2, 3])
 
   // Length is equal to current length
   dq.truncate(3)
-  inspect!(dq, content="@deque.of([1, 2, 3])")
+  @json.inspect!(dq, content=[1, 2, 3])
 
   // Length is less than current length
   dq.truncate(2)
-  inspect!(dq, content="@deque.of([1, 2])")
+  @json.inspect!(dq, content=[1, 2])
 
   // Test split case (head_len < len)
   // Push and pop to create a wrap-around situation
@@ -777,35 +822,37 @@ test "deque truncate" {
     ..push_back(7)
     ..push_back(8)
   // Current layout: [7, 8, X, 4, 5, 6]
-  inspect!(dq.as_views(), content="([4, 5, 6], [7, 8])")
+  @json.inspect!(dq.as_views(), content=[[4, 5, 6], [7, 8]])
   dq.truncate(42)
   // Current layout: [7, 8, X, 4, 5, 6]
-  inspect!(dq.as_views(), content="([4, 5, 6], [7, 8])")
+  @json.inspect!(dq.as_views(), content=[[4, 5, 6], [7, 8]])
   dq.truncate(4)
   // Current layout: [7, X, X, 4, 5, 6]
-  inspect!(dq.as_views(), content="([4, 5, 6], [7])")
+  @json.inspect!(dq.as_views(), content=[[4, 5, 6], [7]])
   // Current layout: [X, X, X, 4, 5, X]
   dq.truncate(2)
-  inspect!(dq.as_views(), content="([4, 5], [])")
+  @json.inspect!(dq.as_views(), content=[[4, 5], []])
 }
 
+///|
 test "panic deque truncate" {
   let dq = @deque.of([1, 2, 3, 4, 5])
   dq.truncate(-1)
 }
 
+///|
 test "deque retain" {
   let is_even = fn(x) { x % 2 == 0 }
 
   // Empty deque
   let dq : @deque.T[Int] = @deque.new()
   dq.retain(is_even)
-  inspect!(dq, content="@deque.of([])")
+  @json.inspect!(dq, content=[])
 
   // Non-empty deque
   let dq = @deque.of([1, 2, 3, 4, 5])
   dq.retain(is_even)
-  inspect!(dq.as_views(), content="([2, 4], [])")
+  @json.inspect!(dq.as_views(), content=[[2, 4], []])
 
   // Test split case (head_len < len)
   fn dq!() {
@@ -817,23 +864,27 @@ test "deque retain" {
       ..push_back(7)
       ..push_back(8)
     // Current layout: [7, 8, X, 4, 5, 6]
-    inspect!(dq.as_views(), content="([4, 5, 6], [7, 8])")
+    @json.inspect!(dq.as_views(), content=[[4, 5, 6], [7, 8]])
     dq
   }
 
-  inspect!(dq!()..retain(is_even).as_views(), content="([4, 6, 8], [])")
-  inspect!(
-    dq!()..retain(fn(x) { x >= 5 }).as_views(),
-    content="([5, 6, 7], [8])",
-  )
-  inspect!(dq!()..retain(fn(x) { x >= 7 }).as_views(), content="([7, 8], [])")
-  inspect!(dq!()..retain(fn(_) { false }).as_views(), content="([], [])")
-  inspect!(
-    dq!()..retain(fn(_) { true }).as_views(),
-    content="([4, 5, 6], [7, 8])",
-  )
+  @json.inspect!(dq!()..retain(is_even).as_views(), content=[[4, 6, 8], []])
+  @json.inspect!(dq!()..retain(fn(x) { x >= 5 }).as_views(), content=[
+    [5, 6, 7],
+    [8],
+  ])
+  @json.inspect!(dq!()..retain(fn(x) { x >= 7 }).as_views(), content=[
+    [7, 8],
+    [],
+  ])
+  @json.inspect!(dq!()..retain(fn(_) { false }).as_views(), content=[[], []])
+  @json.inspect!(dq!()..retain(fn(_) { true }).as_views(), content=[
+    [4, 5, 6],
+    [7, 8],
+  ])
 }
 
+///|
 test "deque retain_map" {
   let inc_if = fn(pred) { fn(x) { if pred(x) { Some(x + 1) } else { None } } }
   let is_even = fn(x) { x % 2 == 0 }
@@ -842,12 +893,12 @@ test "deque retain_map" {
   // Empty deque
   let dq : @deque.T[Int] = @deque.new()
   dq.retain_map(inc_if_even)
-  inspect!(dq, content="@deque.of([])")
+  @json.inspect!(dq, content=[])
 
   // Non-empty deque
   let dq = @deque.of([1, 2, 3, 4, 5])
   dq.retain_map(inc_if_even)
-  inspect!(dq.as_views(), content="([3, 5], [])")
+  @json.inspect!(dq.as_views(), content=[[3, 5], []])
 
   // Test split case (head_len < len)
   fn dq!() {
@@ -859,37 +910,43 @@ test "deque retain_map" {
       ..push_back(7)
       ..push_back(8)
     // Current layout: [7, 8, X, 4, 5, 6]
-    inspect!(dq.as_views(), content="([4, 5, 6], [7, 8])")
+    @json.inspect!(dq.as_views(), content=[[4, 5, 6], [7, 8]])
     dq
   }
 
-  inspect!(dq!()..retain_map(inc_if_even).as_views(), content="([5, 7, 9], [])")
-  inspect!(
-    dq!()..retain_map(inc_if(fn(x) { x >= 5 })).as_views(),
-    content="([6, 7, 8], [9])",
-  )
-  inspect!(
-    dq!()..retain_map(inc_if(fn(x) { x >= 7 })).as_views(),
-    content="([8, 9], [])",
-  )
-  inspect!(
-    dq!()..retain_map(Option::Some).as_views(),
-    content="([4, 5, 6], [7, 8])",
-  )
+  @json.inspect!(dq!()..retain_map(inc_if_even).as_views(), content=[
+    [5, 7, 9],
+    [],
+  ])
+  @json.inspect!(dq!()..retain_map(inc_if(fn(x) { x >= 5 })).as_views(), content=[
+    [6, 7, 8],
+    [9],
+  ])
+  @json.inspect!(dq!()..retain_map(inc_if(fn(x) { x >= 7 })).as_views(), content=[
+    [8, 9],
+    [],
+  ])
+  @json.inspect!(dq!()..retain_map(Option::Some).as_views(), content=[
+    [4, 5, 6],
+    [7, 8],
+  ])
 }
 
+///|
 test "@deque.to_array/empty" {
   let dq : T[Int] = @deque.new()
   let arr = dq.to_array()
-  inspect!(arr, content="[]")
+  @json.inspect!(arr, content=[])
 }
 
+///|
 test "@deque.to_array/basic" {
   let dq = @deque.of([1, 2, 3, 4, 5])
   let arr = dq.to_array()
-  inspect!(arr, content="[1, 2, 3, 4, 5]")
+  @json.inspect!(arr, content=[1, 2, 3, 4, 5])
 }
 
+///|
 test "@deque.to_array/wrapped_around" {
   // Create a deque that will wrap around its internal buffer
   let dq = @deque.new(capacity=3)
@@ -899,5 +956,5 @@ test "@deque.to_array/wrapped_around" {
   dq.pop_front() |> ignore
   dq.push_back(4)
   let arr = dq.to_array()
-  inspect!(arr, content="[2, 3, 4]")
+  @json.inspect!(arr, content=[2, 3, 4])
 }

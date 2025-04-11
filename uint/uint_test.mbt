@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+///|
 test "UInt to byte" {
   let a = 10U.to_byte()
   inspect!(a, content="b'\\x0A'")
@@ -48,16 +49,19 @@ test "UInt to byte" {
   inspect!(b, content="b'\\x00'")
 }
 
+///|
 test "shift" {
   inspect!(1U << 2, content="4")
   inspect!(4U >> 2, content="1")
   inspect!(2U >> 2, content="0")
 }
 
+///|
 test "default" {
   inspect!(@uint.default(), content="0")
 }
 
+///|
 test "to_le_bytes" {
   let x : UInt = 0x12345678U
   let bytes = @uint.to_le_bytes(x)
@@ -67,10 +71,12 @@ test "to_le_bytes" {
   inspect!(bytes[3].to_int(), content="18") // 0x12
 }
 
+///|
 test "test UInt::default" {
   inspect!(UInt::default(), content="0")
 }
 
+///|
 test "to_be_bytes" {
   let n = 4294967295U // maximum UInt value
   inspect!(@uint.to_be_bytes(n), content="b\"\\xff\\xff\\xff\\xff\"")

@@ -13,7 +13,7 @@
 // limitations under the License.
 
 ///|
-pub fn Option::op_equal[X : Eq](self : X?, other : X?) -> Bool {
+pub impl[X : Eq] Eq for X? with op_equal(self, other) {
   match (self, other) {
     (None, None) => true
     (Some(x), Some(y)) => x == y
@@ -31,7 +31,7 @@ pub fn Option::to_string[X : Show](self : X?) -> String {
 
 ///|
 /// Extract the value in `Some`.
-/// Panic if input is `None`.
+/// @alert unsafe "Panic if input is `None`."
 pub fn Option::unwrap[X](self : X?) -> X {
   match self {
     None => panic()

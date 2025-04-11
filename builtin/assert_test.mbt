@@ -12,11 +12,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+///|
 test "panic assert_not_eq with equal values" {
   let str = "test"
   ignore(assert_not_eq!(str, str))
 }
 
+///|
 test "panic assert_false with true" {
   ignore(assert_false!(true))
 }

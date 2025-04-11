@@ -89,19 +89,17 @@ fn quick_sort_by[T](
     if not(balanced) {
       limit -= 1
     }
-    match pred {
-      Some(pred) =>
-        // pred is less than all elements in arr
-        // If pivot euqals to pred, then we can skip all elements that are equal to pred.
-        if cmp(pred, arr[pivot]) == 0 {
-          let mut i = pivot
-          while i < len && cmp(pred, arr[i]) == 0 {
-            i = i + 1
-          }
-          arr = arr[i:len]
-          continue
+    if pred is Some(pred) {
+      // pred is less than all elements in arr
+      // If pivot equals to pred, then we can skip all elements that are equal to pred.
+      if cmp(pred, arr[pivot]) == 0 {
+        let mut i = pivot
+        while i < len && cmp(pred, arr[i]) == 0 {
+          i = i + 1
         }
-      _ => ()
+        arr = arr[i:len]
+        continue
+      }
     }
     let left = arr[0:pivot]
     let right = arr[pivot + 1:len]
@@ -126,7 +124,7 @@ fn quick_sort_by[T](
 fn try_bubble_sort_by[T](arr : ArrayView[T], cmp : (T, T) -> Int) -> Bool {
   let max_tries = 8
   let mut tries = 0
-  for i = 1; i < arr.length(); i = i + 1 {
+  for i in 1..<arr.length() {
     let mut sorted = true
     for j = i; j > 0 && cmp(arr[j - 1], arr[j]) > 0; j = j - 1 {
       sorted = false
@@ -149,7 +147,7 @@ fn try_bubble_sort_by[T](arr : ArrayView[T], cmp : (T, T) -> Int) -> Bool {
 ///
 /// Returns whether the array is sorted.
 fn bubble_sort_by[T](arr : ArrayView[T], cmp : (T, T) -> Int) -> Unit {
-  for i = 1; i < arr.length(); i = i + 1 {
+  for i in 1..<arr.length() {
     for j = i; j > 0 && cmp(arr[j - 1], arr[j]) > 0; j = j - 1 {
       arr.swap(j, j - 1)
     }
@@ -166,7 +164,7 @@ fn partition_by[T](
   let pivot = arr[arr.length() - 1]
   let mut i = 0
   let mut partitioned = true
-  for j = 0; j < arr.length() - 1; j = j + 1 {
+  for j in 0..<(arr.length() - 1) {
     if cmp(arr[j], pivot) < 0 {
       if i != j {
         arr.swap(i, j)
@@ -256,6 +254,7 @@ fn sift_down_by[T](
   }
 }
 
+///|
 test "try_bubble_sort" {
   let arr = [8, 7, 6, 5, 4, 3, 2, 1]
   let sorted = try_bubble_sort_by(arr[0:8], fn(a, b) { a - b })
@@ -263,20 +262,24 @@ test "try_bubble_sort" {
   assert_eq!(arr, [1, 2, 3, 4, 5, 6, 7, 8])
 }
 
+///|
 test "heap_sort" {
   test_sort!(fn(arr) { heap_sort_by(arr[:], fn(a, b) { a - b }) })
 }
 
+///|
 test "bubble_sort" {
   test_sort!(fn(arr) { bubble_sort_by(arr[:], fn(a, b) { a - b }) })
 }
 
+///|
 test "sort_by_key" {
   let arr = [5, 1, 3, 4, 2]
   arr.sort_by_key(fn(x) { -x })
   assert_eq!(arr, [5, 4, 3, 2, 1])
 }
 
+///|
 test "sort_by" {
   test_sort!(fn(arr) { arr.sort_by(fn(a, b) { a - b }) })
 }

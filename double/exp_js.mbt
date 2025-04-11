@@ -40,3 +40,34 @@
 /// }
 /// ```
 pub fn exp(self : Double) -> Double = "Math" "exp"
+
+///|
+/// Calculates exp(x) - 1 accurately even when x is close to zero.
+///
+/// Parameters:
+///
+/// * `self` : The exponent.
+///
+/// Returns e raised to the power of `self`, minus 1.
+///
+/// Special Cases:
+///
+/// * Returns NaN if `self` is NaN.
+/// * Returns -1 if `self` is negative infinity.
+/// * Returns `Infinity` if `self` is positive infinity.
+///
+/// Example
+///
+/// ```moonbit
+/// test "expm1" {
+///   inspect!(0.0.expm1(), content="0")
+///   inspect!(1.0.expm1(), content="1.718281828459045")
+///   inspect!(2.0.expm1(), content="6.38905609893065")
+///   inspect!((-1.0).expm1(), content="-0.6321205588285577")
+///   inspect!((-2.0).expm1(), content="-0.8646647167633873")
+///   inspect!(@double.not_a_number.expm1(), content="NaN")
+///   inspect!(@double.infinity.expm1(), content="Infinity")
+///   inspect!(@double.neg_infinity.expm1(), content="-1")
+/// }
+/// ```
+pub fn expm1(self : Double) -> Double = "Math" "expm1"

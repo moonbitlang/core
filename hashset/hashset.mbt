@@ -45,8 +45,8 @@ pub fn of[K : Hash + Eq](arr : FixedArray[K]) -> T[K] {
 ///|
 /// Insert a key into hash set.
 /// @alert unsafe "Panic if the hash set is full."
-/// @alert deprecated "Use `add` instead."
-/// @coverage.skip
+#deprecated("Use `add` instead.")
+#coverage.skip
 pub fn insert[K : Hash + Eq](self : T[K], key : K) -> Unit {
   self.add(key)
 }
@@ -117,19 +117,13 @@ pub fn remove[K : Hash + Eq](self : T[K], key : K) -> Unit {
   for i = 0, idx = self.index(hash)
       i < self.capacity
       i = i + 1, idx = self.next_index(idx) {
-    match self.entries[idx] {
-      Some(entry) => {
-        if entry.hash == hash && entry.key == key {
-          self.entries[idx] = None
-          self.shift_back(idx)
-          self.size -= 1
-          break
-        }
-        if i > entry.psl {
-          return
-        }
-      }
-      None => ()
+    if self.entries[idx] is Some(entry) &&
+      entry.hash == hash &&
+      entry.key == key {
+      self.entries[idx] = None
+      self.shift_back(idx)
+      self.size -= 1
+      break
     }
   }
 }
@@ -162,13 +156,10 @@ pub fn each[K](self : T[K], f : (K) -> Unit) -> Unit {
 /// Iterate over all keys of the set, with index.
 pub fn eachi[K](self : T[K], f : (Int, K) -> Unit) -> Unit {
   let mut idx = 0
-  for i = 0; i < self.capacity; i = i + 1 {
-    match self.entries[i] {
-      Some({ key, .. }) => {
-        f(idx, key)
-        idx += 1
-      }
-      None => ()
+  for i in 0..<self.capacity {
+    if self.entries[i] is Some({ key, .. }) {
+      f(idx, key)
+      idx += 1
     }
   }
 }
@@ -176,7 +167,7 @@ pub fn eachi[K](self : T[K], f : (Int, K) -> Unit) -> Unit {
 ///|
 /// Clears the set, removing all keys. Keeps the allocated space.
 pub fn clear[K](self : T[K]) -> Unit {
-  for i = 0; i < self.capacity; i = i + 1 {
+  for i in 0..<self.capacity {
     self.entries[i] = None
   }
   self.size = 0
@@ -221,9 +212,9 @@ pub fn symmetric_difference[K : Hash + Eq](self : T[K], other : T[K]) -> T[K] {
 pub fn iter[K](self : T[K]) -> Iter[K] {
   Iter::new(fn(yield_) {
     for entry in self.entries {
-      match entry {
-        Some({ key, .. }) => if yield_(key) == IterEnd { break IterEnd }
-        None => continue
+      if entry is Some({ key, .. }) {
+        guard yield_(key) is IterContinue else { break IterEnd }
+
       }
     } else {
       IterContinue
@@ -280,10 +271,9 @@ fn grow[K : Hash + Eq](self : T[K]) -> Unit {
   self.capacity = self.capacity * 2
   self.growAt = calc_grow_threshold(self.capacity)
   self.size = 0
-  for i = 0; i < old_entries.length(); i = i + 1 {
-    match old_entries[i] {
-      Some({ key, .. }) => self.add(key)
-      None => ()
+  for i in 0..<old_entries.length() {
+    if old_entries[i] is Some({ key, .. }) {
+      self.add(key)
     }
   }
 }
@@ -315,7 +305,7 @@ fn calc_grow_threshold(capacity : Int) -> Int {
 ///|
 fn debug_entries[K : Show](self : T[K]) -> String {
   let mut s = ""
-  for i = 0; i < self.entries.length(); i = i + 1 {
+  for i in 0..<self.entries.length() {
     if i > 0 {
       s += ","
     }
@@ -336,7 +326,9 @@ pub impl[K : Show] Show for T[K] with output(self, logger) {
 priv type MyString String derive(Eq)
 
 ///|
-impl Hash for MyString with hash(self) { self._.length() }
+impl Hash for MyString with hash(self) {
+  self._.length()
+}
 
 ///|
 impl Hash for MyString with hash_combine(self, hasher) {
@@ -344,8 +336,11 @@ impl Hash for MyString with hash_combine(self, hasher) {
 }
 
 ///|
-impl Show for MyString with output(self, logger) { logger.write_string(self._) }
+impl Show for MyString with output(self, logger) {
+  logger.write_string(self._)
+}
 
+///|
 test "set" {
   let m : T[MyString] = new()
   m.add("a")
@@ -362,6 +357,7 @@ test "set" {
   )
 }
 
+///|
 test "remove" {
   let m : T[MyString] = new()
   fn i(s) {
@@ -379,6 +375,7 @@ test "remove" {
   assert_eq!(m.debug_entries(), "_,(0,a),(0,bc),(1,cd),(1,abc),_,(0,abcdef),_")
 }
 
+///|
 test "remove_unexist_key" {
   let m : T[MyString] = new()
   fn i(s) {
@@ -393,6 +390,7 @@ test "remove_unexist_key" {
   assert_eq!(m.debug_entries(), "_,(0,a),(0,ab),(0,abc),_,_,_,_")
 }
 
+///|
 test "grow" {
   let m : T[MyString] = new()
   fn i(s) {
@@ -421,12 +419,38 @@ test "grow" {
   )
 }
 
+///|
 test "clear" {
   let m : T[MyString] = new()
   m.clear()
   assert_eq!(m.size(), 0)
   assert_eq!(m.capacity(), 8)
-  for i = 0; i < m.capacity(); i = i + 1 {
+  for i in 0..<m.capacity() {
     @test.same_object!(m.entries[i], None)
   }
+}
+
+///|
+pub fn to_array[K](self : T[K]) -> Array[K] {
+  let mut i = 0
+  let res = while i < self.capacity {
+    if self.entries[i] is Some({ key, .. }) {
+      i += 1
+      break Array::make(self.size, key)
+    }
+    i += 1
+  } else {
+    []
+  }
+  if not(res.is_empty()) {
+    let mut res_idx = 1
+    while res_idx < res.length() && i < self.capacity {
+      if self.entries[i] is Some({ key, .. }) {
+        res[res_idx] = key
+        res_idx += 1
+      }
+      i += 1
+    }
+  }
+  res
 }

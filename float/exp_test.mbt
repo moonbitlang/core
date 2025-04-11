@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+///|
 test "exp" {
   inspect!((0.5 : Float).exp(), content="1.6487212181091309")
   inspect!((1.0 : Float).exp(), content="2.7182817459106445")
@@ -24,6 +25,7 @@ test "exp" {
   inspect!((-104 : Float).exp(), content="0")
 }
 
+///|
 test "exp - quickcheck" {
   let double : Array[Double] = @quickcheck.samples(4)
   inspect!(
@@ -43,4 +45,20 @@ test "exp - quickcheck" {
     float.map(fn(x) { x.exp() }),
     content="[1.1289092302322388, 1.3042380809783936, 2.0643563270568848, 2.284553050994873]",
   )
+}
+
+///|
+test "expm1" {
+  inspect!((0 : Float).expm1(), content="0")
+  inspect!((1 : Float).expm1(), content="1.718281865119934")
+  inspect!((2 : Float).expm1(), content="6.389056205749512")
+  inspect!((3 : Float).expm1(), content="19.08553695678711")
+  inspect!((4 : Float).expm1(), content="53.598148345947266")
+  inspect!((5 : Float).expm1(), content="147.4131622314453")
+  inspect!((-0.5 : Float).expm1(), content="-0.39346933364868164")
+  inspect!((-1 : Float).expm1(), content="-0.6321205496788025")
+  inspect!((-2 : Float).expm1(), content="-0.8646647334098816")
+  inspect!(@float.not_a_number.expm1(), content="NaN")
+  inspect!(@float.infinity.expm1(), content="Infinity")
+  inspect!(@float.neg_infinity.expm1(), content="-1")
 }

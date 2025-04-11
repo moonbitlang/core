@@ -74,12 +74,9 @@ pub fn clear[K, V](self : T[K, V]) -> Unit {
 pub fn iter[K, V](self : T[K, V]) -> Iter[(K, V)] {
   Iter::new(fn(yield_) {
     for entry in self.entries {
-      match entry {
-        Some({ key, value, .. }) =>
-          if yield_((key, value)) == IterEnd {
-            break IterEnd
-          }
-        None => continue
+      if entry is Some({ key, value, .. }) {
+        guard yield_((key, value)) is IterContinue else { break IterEnd }
+
       }
     } else {
       IterContinue
@@ -112,12 +109,9 @@ pub fn iter[K, V](self : T[K, V]) -> Iter[(K, V)] {
 pub fn iter2[K, V](self : T[K, V]) -> Iter2[K, V] {
   Iter2::new(fn(yield_) {
     for entry in self.entries {
-      match entry {
-        Some({ key, value, .. }) =>
-          if yield_(key, value) == IterEnd {
-            break IterEnd
-          }
-        None => continue
+      if entry is Some({ key, value, .. }) {
+        guard yield_(key, value) is IterContinue else { break IterEnd }
+
       }
     } else {
       IterContinue
@@ -184,7 +178,7 @@ pub fn from_iter[K : Hash + Eq, V](iter : Iter[(K, V)]) -> T[K, V] {
 /// }
 /// ```
 ///
-/// @alert deprecated "use `@hashmap.from_iter` instead"
+#deprecated("use `@hashmap.from_iter` instead")
 pub fn T::from_iter[K : Hash + Eq, V](iter : Iter[(K, V)]) -> T[K, V] {
   from_iter(iter)
 }
@@ -211,15 +205,27 @@ pub fn T::from_iter[K : Hash + Eq, V](iter : Iter[(K, V)]) -> T[K, V] {
 /// }
 /// ```
 pub fn to_array[K, V](self : T[K, V]) -> Array[(K, V)] {
-  let arr = []
-  let len = self.entries.length()
-  for i = 0; i < len; i = i + 1 {
-    match self.entries[i] {
-      Some({ key, value, .. }) => arr.push((key, value))
-      None => continue
+  let mut i = 0
+  let res = while i < self.capacity {
+    if self.entries[i] is Some({ key, value, .. }) {
+      i += 1
+      break Array::make(self.size, (key, value))
+    }
+    i += 1
+  } else {
+    []
+  }
+  if not(res.is_empty()) {
+    let mut res_idx = 1
+    while res_idx < res.length() && i < self.capacity {
+      if self.entries[i] is Some({ key, value, .. }) {
+        res[res_idx] = (key, value)
+        res_idx += 1
+      }
+      i += 1
     }
   }
-  arr
+  res
 }
 
 ///|
@@ -312,10 +318,9 @@ pub fn is_empty[K, V](self : T[K, V]) -> Bool {
 /// }
 /// ```
 pub fn each[K, V](self : T[K, V], f : (K, V) -> Unit) -> Unit {
-  for i = 0; i < self.capacity; i = i + 1 {
-    match self.entries[i] {
-      Some({ key, value, .. }) => f(key, value)
-      None => ()
+  for i in 0..<self.capacity {
+    if self.entries[i] is Some({ key, value, .. }) {
+      f(key, value)
     }
   }
 }

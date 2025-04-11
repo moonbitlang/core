@@ -157,6 +157,7 @@ pub fn Array::blit_to[A](
   Array::unsafe_blit(dst, dst_offset, self, src_offset, len)
 }
 
+///|
 test "Array::blit_to/basic" {
   let src = [1, 2, 3, 4, 5]
   let dst = [0, 0, 0, 0, 0]
@@ -164,6 +165,7 @@ test "Array::blit_to/basic" {
   inspect!(dst, content="[0, 0, 2, 3, 4]")
 }
 
+///|
 test "Array::blit_to/basic" {
   let src = [1, 2, 3, 4, 5]
   let dst = [0, 0, 0, 0, 0]
@@ -171,6 +173,7 @@ test "Array::blit_to/basic" {
   inspect!(dst, content="[1, 2, 3, 0, 0]")
 }
 
+///|
 test "Array::blit_to/zero_length" {
   let src = [1, 2, 3]
   let dst = [4, 5, 6]
@@ -178,6 +181,7 @@ test "Array::blit_to/zero_length" {
   inspect!(dst, content="[4, 5, 6]")
 }
 
+///|
 test "Array::blit_to/grow_destination" {
   let src = [1, 2, 3, 4, 5]
   let dst = [0, 0]
@@ -185,6 +189,7 @@ test "Array::blit_to/grow_destination" {
   inspect!(dst, content="[0, 1, 2, 3]")
 }
 
+///|
 test "Array::blit_to/edge_cases" {
   // Test with src_offset and dst_offset
   let src = [1, 2, 3, 4, 5]
@@ -205,6 +210,7 @@ test "Array::blit_to/edge_cases" {
   inspect!(dst, content="[1, 2, 3, 1, 2]")
 }
 
+///|
 test "Array::blit_to/edge_cases" {
   let src = [1, 2, 3, 4, 5]
   let dst = [0, 0, 0, 0, 0]
@@ -217,6 +223,7 @@ test "Array::blit_to/edge_cases" {
   inspect!(dst, content="[1, 2, 3, 4, 5]")
 }
 
+///|
 test "panic Array::blit_to/boundary_cases" {
   let src = [1, 2, 3, 4, 5]
   let dst = [0, 0, 0, 0, 0]
@@ -225,6 +232,7 @@ test "panic Array::blit_to/boundary_cases" {
   ignore(Array::blit_to(src, dst, len=-1))
 }
 
+///|
 test "panic Array::blit_to/boundary_cases" {
   let src = [1, 2, 3, 4, 5]
   let dst = [0, 0, 0, 0, 0]
@@ -232,6 +240,7 @@ test "panic Array::blit_to/boundary_cases" {
   ignore(Array::blit_to(src, dst, len=2, src_offset=-1))
 }
 
+///|
 test "panic Array::blit_to/boundary_cases" {
   let src = [1, 2, 3, 4, 5]
   let dst = [0, 0, 0, 0, 0]
@@ -239,6 +248,7 @@ test "panic Array::blit_to/boundary_cases" {
   ignore(Array::blit_to(src, dst, len=6))
 }
 
+///|
 test "panic Array::blit_to/boundary_cases" {
   let src = [1, 2, 3, 4, 5]
   let dst = [0, 0, 0, 0, 0]
@@ -246,7 +256,7 @@ test "panic Array::blit_to/boundary_cases" {
   ignore(Array::blit_to(src, dst, len=5, dst_offset=6))
 }
 
-/// TODO
+///| TODO
 /// 1. allow skip
 /// 2. verify test
 /// 3. concurrency test
@@ -267,6 +277,7 @@ test "Array::blit_to - random cases" {
   inspect!(dst, content="[0, 30, 20, 30, 50]")
 }
 
+///|
 test "Array::blit_to - boundary cases" {
   let src = [1, 2, 3, 4, 5]
   let dst = [0, 0, 0, 0, 0]
@@ -284,6 +295,7 @@ test "Array::blit_to - boundary cases" {
   inspect!(dst, content="[5, 0, 0, 4, 5]")
 }
 
+///|
 test "Array::unsafe_blit_fixed" {
   let src = FixedArray::make(3, 1) // Create a FixedArray with 3 elements of value 1
   let dst = Array::make(5, 0) // Create an Array with 5 elements of value 0

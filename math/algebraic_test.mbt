@@ -12,12 +12,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+///|
 test "maximum.value" {
   assert_eq!(@math.maximum(1, 2), 2)
   assert_eq!(@math.maximum(2, 1), 2)
   assert_eq!(@math.maximum(2, 2), 2)
 }
 
+///|
 test "maximum.ref" {
   let v1 = 1
   let v2 = 2
@@ -33,12 +35,14 @@ test "maximum.ref" {
   @test.same_object!(@math.maximum(x2t, x2), x2)
 }
 
+///|
 test "minimum.value" {
   assert_eq!(@math.minimum(1, 2), 1)
   assert_eq!(@math.minimum(2, 1), 1)
   assert_eq!(@math.minimum(2, 2), 2)
 }
 
+///|
 test "minimum.ref" {
   let v1 = 1
   let v2 = 2
@@ -54,15 +58,30 @@ test "minimum.ref" {
   @test.same_object!(@math.minimum(x2t, x2), x2t)
 }
 
+///|
 test "exp" {
   assert_eq!(@math.exp(1), 2.718281828459045)
   assert_eq!(@math.exp(-1), 0.36787944117144233)
+  assert_eq!(@math.expm1(2), 6.38905609893065)
+  assert_eq!(@math.expm1(-2), -0.8646647167633873)
 }
 
+///|
 test "log" {
   inspect!(@math.ln(@math.exp(1)), content="1")
   inspect!(@math.log2(4), content="2")
   inspect!(@math.log10(10), content="1")
+  inspect!(@math.ln_1p(10), content="2.3978952727983707")
+}
+
+///|
+test "cbrt and hypot" {
+  assert_eq!(@math.cbrt(27), 3)
+  assert_eq!(@math.cbrt(125), 5)
+  assert_eq!(@math.cbrt(-343), -7)
+  assert_eq!(@math.hypot(3, 4), 5)
+  assert_eq!(@math.hypot(5, 12), 13)
+  assert_eq!(@math.hypot(8, 15), 17)
 }
 
 ///|

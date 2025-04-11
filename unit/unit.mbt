@@ -31,7 +31,7 @@ pub impl Hash for Unit with hash_combine(self, hasher) -> Unit {
 }
 
 ///|
-pub fn Unit::default() -> Unit {
+pub impl Default for Unit with default() -> Unit {
   ()
 }
 
@@ -42,7 +42,6 @@ pub fn default() -> Unit {
 }
 
 ///|
-pub fn compare(self : Unit, _other : Unit) -> Int {
-  let _ = self
+pub impl Compare for Unit with compare(_self, _other) {
   0
 }

@@ -17,7 +17,7 @@
 // generic type parameters of extern ffi
 
 ///|
-priv type JSValue
+priv extern type JSValue
 
 ///|
 fn JSValue::ofAny[T](array : T) -> JSValue = "%identity"
@@ -26,7 +26,7 @@ fn JSValue::ofAny[T](array : T) -> JSValue = "%identity"
 fn JSValue::toAny[T](self : JSValue) -> T = "%identity"
 
 ///|
-priv type JSArray
+priv extern type JSArray
 
 ///|
 fn JSArray::ofAnyArray[T](array : Array[T]) -> JSArray = "%identity"
@@ -68,7 +68,7 @@ extern "js" fn JSArray::splice1(
 ///|
 /// An `Array` is a collection of values that supports random access and can
 /// grow in size.
-type Array[T] FixedArray[T]
+extern type Array[T]
 
 ///|
 fn Array::make_uninit[T](len : Int) -> Array[T] = "%fixedarray.make_uninit"
@@ -92,6 +92,7 @@ fn Array::unsafe_truncate_to_length[T](self : Array[T], new_len : Int) -> Unit {
 ///|
 fn Array::buffer[T](self : Array[T]) -> UninitializedArray[T] = "%identity"
 
+///|
 test "array_unsafe_blit_fixed" {
   let src = FixedArray::make(5, 0)
   let dst = UninitializedArray::make(5)
@@ -104,6 +105,7 @@ test "array_unsafe_blit_fixed" {
   }
 }
 
+///|
 test "UninitializedArray::unsafe_blit_fixed" {
   let src = FixedArray::make(5, 0)
   let dst = UninitializedArray::make(5)
@@ -116,6 +118,7 @@ test "UninitializedArray::unsafe_blit_fixed" {
   }
 }
 
+///|
 test "UninitializedArray::unsafe_blit_fixed" {
   let src = FixedArray::make(5, 0)
   let dst = UninitializedArray::make(5)
@@ -198,8 +201,8 @@ pub fn Array::pop[T](self : Array[T]) -> T? {
 }
 
 ///|
-/// @alert deprecated "Use `unsafe_pop` instead"
-/// @coverage.skip
+#deprecated("Use `unsafe_pop` instead")
+#coverage.skip
 pub fn Array::pop_exn[T](self : Array[T]) -> T {
   self.unsafe_pop()
 }

@@ -43,7 +43,7 @@ pub fn Bytes::makei(length : Int, value : (Int) -> Byte) -> Bytes {
     return []
   }
   let arr = FixedArray::make(length, value(0))
-  for i = 1; i < length; i = i + 1 {
+  for i in 1..<length {
     arr[i] = value(i)
   }
   FixedArray::unsafe_to_bytes(arr)
@@ -81,48 +81,6 @@ fn unsafe_sub_string(
   byte_offset : Int,
   byte_length : Int
 ) -> String = "$moonbit.unsafe_bytes_sub_string"
-
-///|
-/// Return a new unchecked string, containing the subsequence of `self` that
-/// starts at `byte_offset` and has length `byte_length`.
-/// 
-/// @alert deprecated "Use `to_unchecked_string` instead"
-/// @coverage.skip
-pub fn Bytes::sub_string(
-  self : Bytes,
-  byte_offset : Int,
-  byte_length : Int
-) -> String {
-  self.to_unchecked_string(offset=byte_offset, length=byte_length)
-}
-
-///|
-/// Creates a new string from the given byte sequence without encoding
-/// validation. The byte sequence must be a valid UTF-16LE encoded string,
-/// otherwise the behavior is undefined.
-///
-/// Parameters:
-///
-/// * `bytes` : The byte sequence to be converted to a string. Must be a valid
-/// UTF-16LE encoded string.
-///
-/// Returns a string containing the decoded characters from the byte sequence.
-///
-/// Example:
-///
-/// ```moonbit
-/// test "Bytes::to_string" {
-///   let bytes = Bytes::of_string("Hello")
-///   let s = bytes.to_unchecked_string() // Use the new API instead
-///   inspect!(s, content="Hello")
-/// }
-/// ```
-///
-/// @alert deprecated "Use `to_unchecked_string` instead"
-/// @coverage.skip
-pub fn Bytes::to_string(self : Bytes) -> String {
-  self.to_unchecked_string(offset=0, length=self.length())
-}
 
 ///|
 /// Return an unchecked string, containing the subsequence of `self` that starts at 
@@ -192,7 +150,7 @@ pub fn FixedArray::blit_from_string(
   guard length >= 0 && s1 >= 0 && e1 < len1 && s2 >= 0 && e2 < len2
   let end_str_offset = str_offset + length
   for i = str_offset, j = bytes_offset; i < end_str_offset; i = i + 1, j = j + 2 {
-    let c = str[i].to_uint()
+    let c = str.unsafe_charcode_at(i).reinterpret_as_uint()
     self[j] = (c & 0xff).to_byte()
     self[j + 1] = (c >> 8).to_byte()
   }
@@ -217,39 +175,6 @@ pub fn FixedArray::blit_from_bytes(
   guard length >= 0 && s1 >= 0 && e1 < len1 && s2 >= 0 && e2 < len2
   let end_src_offset = src_offset + length
   for i = src_offset, j = bytes_offset; i < end_src_offset; i = i + 1, j = j + 1 {
-    self[j] = src[i]
-  }
-}
-
-///|
-/// Copy bytes from a BytesView into a fixed array of bytes.
-///
-/// Parameters:
-///
-/// * `self` : The destination fixed array of bytes.
-/// * `bytes_offset` : The starting position in the destination array where bytes will be copied.
-/// * `src` : The source BytesView to copy from.
-///
-/// Throws a panic if:
-/// * `bytes_offset` is negative
-/// * The destination array is too small to hold all bytes from the source BytesView
-///
-/// Example:
-///
-/// ```moonbit
-///  let arr = FixedArray::make(4, b'\x00')
-///  let view = b"\x01\x02\x03"[1:]
-///  arr.blit_from_bytesview(1, view)
-///  inspect!(arr, content="[b'\\x00', b'\\x02', b'\\x03', b'\\x00']")
-/// ```
-pub fn FixedArray::blit_from_bytesview(
-  self : FixedArray[Byte],
-  bytes_offset : Int,
-  src : BytesView
-) -> Unit {
-  let src_len = src.length()
-  guard bytes_offset >= 0 && bytes_offset + src_len - 1 < self.length()
-  for i = 0, j = bytes_offset; i < src_len; i = i + 1, j = j + 1 {
     self[j] = src[i]
   }
 }
@@ -347,36 +272,6 @@ pub fn FixedArray::set_utf8_char(
 }
 
 ///|
-/// Fill utf16 encoded char `value` into byte sequence `self`, starting at `offset`.
-/// It return the length of bytes has been written.
-/// @alert unsafe "Panic if the [value] is out of range"
-/// @alert deprecated "Use `set_utf16le_char` instead"
-/// @coverage.skip
-pub fn FixedArray::set_utf16_char(
-  self : FixedArray[Byte],
-  offset : Int,
-  value : Char
-) -> Int {
-  let code = value.to_uint()
-  if code < 0x10000 {
-    self[offset] = (code & 0xFF).to_byte()
-    self[offset + 1] = (code >> 8).to_byte()
-    2
-  } else if code < 0x110000 {
-    let hi = code - 0x10000
-    let lo = (hi >> 10) | 0xD800
-    let hi = (hi & 0x3FF) | 0xDC00
-    self[offset] = (lo & 0xFF).to_byte()
-    self[offset + 1] = (lo >> 8).to_byte()
-    self[offset + 2] = (hi & 0xFF).to_byte()
-    self[offset + 3] = (hi >> 8).to_byte()
-    4
-  } else {
-    abort("Char out of range")
-  }
-}
-
-///|
 /// Fill UTF16LE encoded char `value` into byte sequence `self`, starting at `offset`.
 /// It return the length of bytes has been written.
 /// @alert unsafe "Panic if the [value] is out of range"
@@ -454,17 +349,70 @@ pub fn FixedArray::set_utf16be_char(
 ///   inspect!(bytes1 == bytes3, content="false")
 /// }
 /// ```
-pub fn Bytes::op_equal(self : Bytes, other : Bytes) -> Bool {
+pub impl Eq for Bytes with op_equal(self : Bytes, other : Bytes) -> Bool {
   if self.length() != other.length() {
     false
   } else {
     let len = self.length()
-    for i = 0; i < len; i = i + 1 {
+    for i in 0..<len {
       if self[i] != other[i] {
         break false
       }
     } else {
       true
     }
+  }
+}
+
+///|
+/// Compares two byte sequences lexicographically. First compares the lengths of
+/// the sequences, then compares bytes pairwise until a difference is found or
+/// all bytes have been compared.
+///
+/// Parameters:
+///
+/// * `self` : The first byte sequence to compare.
+/// * `other` : The second byte sequence to compare.
+///
+/// Returns an integer indicating the relative order:
+///
+/// * A negative value if `self` is less than `other`
+/// * Zero if `self` equals `other`
+/// * A positive value if `self` is greater than `other`
+///
+/// Example:
+///
+/// ```moonbit
+/// test "Bytes::compare" {
+///   let a = b"\x01\x02\x03"
+///   let b = b"\x01\x02\x04"
+///   inspect!(a.compare(b), content="-1") // a < b
+///   inspect!(b.compare(a), content="1") // b > a
+///   inspect!(a.compare(a), content="0") // a = a
+/// }
+/// 
+/// test "Bytes::compare/different_lengths" {
+///   let a = b"\x01\x02"
+///   let b = b"\x01\x02\x03"
+///   inspect!(a.compare(b), content="-1") // shorter sequence is less
+///   inspect!(b.compare(a), content="1") // longer sequence is greater
+/// }
+/// ```
+pub impl Compare for Bytes with compare(self, other) {
+  let self_len = self.length()
+  let other_len = other.length()
+  let cmp = self_len.compare(other_len)
+  if cmp != 0 {
+    return cmp
+  }
+  for i in 0..<self_len {
+    let b1 = self.unsafe_get(i)
+    let b2 = other.unsafe_get(i)
+    let cmp = b1.compare(b2)
+    if cmp != 0 {
+      break cmp
+    }
+  } else {
+    0
   }
 }

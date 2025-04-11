@@ -1,4 +1,4 @@
-package moonbitlang/core/uint
+package "moonbitlang/core/uint"
 
 // Values
 fn default() -> UInt
@@ -7,13 +7,19 @@ let max_value : UInt
 
 let min_value : UInt
 
+fn to_be_bytes(UInt) -> Bytes
+
+fn to_int64(UInt) -> Int64
+
+fn to_le_bytes(UInt) -> Bytes
+
 // Types and methods
 impl UInt {
-  default() -> UInt
   to_be_bytes(UInt) -> Bytes
   to_int64(UInt) -> Int64
   to_le_bytes(UInt) -> Bytes
 }
+impl Default for UInt
 
 // Type aliases
 

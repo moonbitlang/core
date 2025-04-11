@@ -1,9 +1,35 @@
-package moonbitlang/core/option
+package "moonbitlang/core/option"
 
-alias @moonbitlang/core/quickcheck as @quickcheck
+import(
+  "moonbitlang/core/quickcheck"
+)
 
 // Values
+fn bind[T, U](T?, (T) -> U?) -> U?
+
 fn empty[T]() -> T?
+
+fn filter[T](T?, (T) -> Bool) -> T?
+
+fn flatten[T](T??) -> T?
+
+fn is_empty[T](T?) -> Bool
+
+fn iter[T](T?) -> Iter[T]
+
+fn map[T, U](T?, (T) -> U) -> U?
+
+fn map_or[T, U](T?, U, (T) -> U) -> U
+
+fn map_or_else[T, U](T?, () -> U, (T) -> U) -> U
+
+fn or[T](T?, T) -> T
+
+fn or_default[T : Default](T?) -> T
+
+fn or_else[T](T?, () -> T) -> T
+
+fn or_error[T, Err : Error](T?, Err) -> T!Err
 
 fn some[T](T) -> T?
 
@@ -14,8 +40,6 @@ fn when[T](Bool, () -> T) -> T?
 // Types and methods
 impl Option {
   bind[T, U](T?, (T) -> U?) -> U?
-  compare[X : Compare](X?, X?) -> Int
-  default[X]() -> X?
   filter[T](T?, (T) -> Bool) -> T?
   flatten[T](T??) -> T?
   is_empty[T](T?) -> Bool
@@ -28,6 +52,8 @@ impl Option {
   or_else[T](T?, () -> T) -> T
   or_error[T, Err : Error](T?, Err) -> T!Err
 }
+impl[X : Compare] Compare for X?
+impl[X] Default for X?
 impl[X : @quickcheck.Arbitrary] @quickcheck.Arbitrary for X?
 
 // Type aliases

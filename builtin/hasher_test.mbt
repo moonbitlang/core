@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+///|
 test "combine int" {
   fn hash(v) {
     Hasher::new()..combine_int(v).finalize()
@@ -27,6 +28,7 @@ test "combine int" {
   inspect!(hash(0) == hash(1), content="false")
 }
 
+///|
 test "combine char" {
   fn hash(v) {
     Hasher::new()..combine_char(v).finalize()
@@ -35,6 +37,7 @@ test "combine char" {
   inspect!(hash('c'), content="-1500876651")
 }
 
+///|
 test "combine int64" {
   fn hash(v) {
     Hasher::new()..combine_int64(v).finalize()
@@ -50,6 +53,7 @@ test "combine int64" {
   inspect!(hash(0) == hash(1), content="false")
 }
 
+///|
 test "combine uint" {
   fn hash(v) {
     Hasher::new()..combine_uint(v).finalize()
@@ -64,6 +68,7 @@ test "combine uint" {
   inspect!(hash(0) == hash(1), content="false")
 }
 
+///|
 test "combine uint64" {
   fn hash(v) {
     Hasher::new()..combine_uint64(v).finalize()
@@ -78,6 +83,7 @@ test "combine uint64" {
   inspect!(hash(0) == hash(1), content="false")
 }
 
+///|
 test "combine double" {
   fn hash(v) {
     Hasher::new()..combine_double(v).finalize()
@@ -91,6 +97,7 @@ test "combine double" {
   inspect!(hash(0.0) == hash(0.1), content="false")
 }
 
+///|
 test "combine float" {
   fn hash(v : Float) {
     Hasher::new()..combine_float(v).finalize()
@@ -104,6 +111,7 @@ test "combine float" {
   inspect!(hash(0.0) == hash(0.1), content="false")
 }
 
+///|
 test "combine string" {
   fn hash(v) {
     Hasher::new()..combine_string(v).finalize()
@@ -122,6 +130,7 @@ test "combine string" {
   inspect!(hash("five") == hash("five"), content="true")
 }
 
+///|
 test "combine bytes" {
   fn hash(v) {
     Hasher::new()..combine_bytes(v).finalize()
@@ -144,6 +153,7 @@ test "combine bytes" {
   inspect!(hash(b1) == hash(b2), content="false")
 }
 
+///|
 test "combine byte" {
   fn hash(v) {
     Hasher::new()..combine_byte(v).finalize()
@@ -157,6 +167,7 @@ test "combine byte" {
   inspect!(hash(b'0') == hash(b'1'), content="false")
 }
 
+///|
 test "combine all" {
   let hasher = Hasher::new()
   hasher
@@ -171,6 +182,7 @@ test "combine all" {
   inspect!(hasher.finalize() == hasher.finalize(), content="true")
 }
 
+///|
 test "combine_unit" {
   let hasher = @builtin.Hasher::new()
   hasher.combine_unit()
@@ -181,6 +193,7 @@ test "combine_unit" {
   inspect!(hash == hash2, content="true")
 }
 
+///|
 test "combine_bool" {
   let hasher = @builtin.Hasher::new()
   hasher.combine_bool(true)
@@ -196,4 +209,49 @@ test "combine_bool" {
   hasher4.combine_int(0)
   let hash4 = hasher4.finalize()
   assert_eq!(hash3, hash4)
+}
+
+///|
+test "Result::hash_combine Ok case" {
+  // Test the Ok case
+  let hasher = Hasher::new()
+  let ok_result : Result[Int, String] = Ok(42)
+  hasher.combine(ok_result)
+  inspect!(hasher.finalize(), content="-1948635851")
+}
+
+///|
+test "Result::hash_combine Err case" {
+  let hasher = Hasher::new()
+  let err_result : Result[Int, String] = Err("error")
+  hasher.combine(err_result)
+  inspect!(hasher.finalize(), content="1953766574")
+}
+
+///|
+test "option hash" {
+  let hasher = @builtin.Hasher::new()
+  let some_val : Int? = Some(42)
+  hasher.combine(some_val)
+  inspect!(hasher.finalize(), content="2103260413")
+  let hasher2 = @builtin.Hasher::new()
+  let none_val : Int? = None
+  hasher2.combine(none_val)
+  inspect!(hasher2.finalize(), content="148298089")
+}
+
+///|
+test "UInt64::hash_combine test" {
+  let hasher = @builtin.Hasher::new()
+  let value = 42UL
+  @builtin.Hash::hash_combine(value, hasher)
+  inspect!(hasher.finalize(), content="-1962516083")
+}
+
+///|
+test "hash_combine for UInt" {
+  let hasher = Hasher::new()
+  let value : UInt = 42U
+  Hash::hash_combine(value, hasher)
+  inspect!(hasher.finalize(), content="1161967057")
 }

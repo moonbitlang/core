@@ -23,7 +23,7 @@ struct CoverageCounter {
 ///|
 /// Create a new coverage counter with the given size.
 ///
-/// @coverage.skip
+#coverage.skip
 pub fn CoverageCounter::new(size : Int) -> CoverageCounter {
   { counter: FixedArray::make(size, 0) }
 }
@@ -31,7 +31,7 @@ pub fn CoverageCounter::new(size : Int) -> CoverageCounter {
 ///|
 /// Increment the specified tracking index.
 ///
-/// @coverage.skip
+#coverage.skip
 pub fn CoverageCounter::incr(self : CoverageCounter, idx : Int) -> Unit {
   let counter = self.counter[idx]
   self.counter[idx] = counter + 1
@@ -40,7 +40,7 @@ pub fn CoverageCounter::incr(self : CoverageCounter, idx : Int) -> Unit {
 ///|
 pub impl Show for CoverageCounter with output(self, logger) {
   logger.write_char('[')
-  for i = 0; i < self.counter.length(); i = i + 1 {
+  for i in 0..<self.counter.length() {
     if i != 0 {
       logger.write_string(", ")
     }
@@ -62,7 +62,7 @@ let counters : Ref[MList[(String, CoverageCounter)]] = { val: MNil }
 ///|
 /// Add the given counter along its ID to the tracking list.
 ///
-/// @coverage.skip
+#coverage.skip
 pub fn track(name : String, counter : CoverageCounter) -> Unit {
   counters.val = MCons((name, counter), counters.val)
 }
@@ -100,17 +100,17 @@ impl Output for StringBuilder with output(self, content) -> Unit {
 /// }
 /// ----- END MOONBIT COVERAGE -----
 /// ```
-/// @coverage.skip
+#coverage.skip
 pub fn end() -> Unit {
   println("----- BEGIN MOONBIT COVERAGE -----")
   let sbuf = StringBuffer::StringBuffer([])
   coverage_log(counters.val, sbuf)
   let line_buf = StringBuilder::new()
-  for i = 0; i < sbuf._.length(); i = i + 1 {
+  for i in 0..<sbuf._.length() {
     let str = sbuf._[i]
     let mut start = 0
-    for j = 0; j < str.length(); j = j + 1 {
-      if str[j] == '\n' {
+    for j in 0..<str.length() {
+      if str.unsafe_charcode_at(j) == '\n' {
         line_buf.write_substring(str, start, j)
         println(line_buf.to_string())
         line_buf.reset()
@@ -133,7 +133,7 @@ pub fn end() -> Unit {
 fn coverage_reset(counters : MList[(String, CoverageCounter)]) -> Unit {
   loop counters {
     MCons((_, counter), xs) => {
-      for i = 0; i < counter.counter.length(); i = i + 1 {
+      for i in 0..<counter.counter.length() {
         counter.counter[i] = 0
       }
       continue xs
@@ -171,11 +171,13 @@ fn coverage_log(
   print("}")
 }
 
+///|
 test "new_counter" {
   let counter = CoverageCounter::new(2)
   inspect!(counter.to_string(), content="[0, 0]")
 }
 
+///|
 test "incr_counter" {
   let counter = CoverageCounter::new(10)
   counter.incr(0)
@@ -183,6 +185,7 @@ test "incr_counter" {
   inspect!(counter.to_string(), content="[1, 0, 0, 0, 0, 0, 0, 0, 0, 1]")
 }
 
+///|
 test "log" {
   let test_counter_a = CoverageCounter::new(2)
   let test_counter_b = CoverageCounter::new(2)
@@ -204,11 +207,13 @@ test "log" {
   )
 }
 
+///|
 test "backslash escape" {
   let s = "\n\r\t\b\"'\\"
   inspect!(s.escape(), content="\"\\n\\r\\t\\b\\\"'\\\\\"")
 }
 
+///|
 test "reset" {
   let test_counter_a = CoverageCounter::new(2)
   let test_counter_b = CoverageCounter::new(2)

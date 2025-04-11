@@ -13,7 +13,7 @@
 // limitations under the License.
 
 ///|
-type BigInt
+extern type BigInt
 
 ///|
 pub fn BigInt::from_string(str : String) -> BigInt {
@@ -113,12 +113,22 @@ pub fn BigInt::to_octets(self : BigInt, length? : Int) -> Bytes {
 }
 
 ///|
-pub extern "js" fn BigInt::compare(self : BigInt, other : BigInt) -> Int =
+extern "js" fn BigInt::compare(self : BigInt, other : BigInt) -> Int =
   #|(x, y) => x < y ? -1 : x > y ? 1 : 0
 
 ///|
-pub extern "js" fn BigInt::op_equal(self : BigInt, other : BigInt) -> Bool =
+pub impl Compare for BigInt with compare(self, other) {
+  self.compare(other)
+}
+
+///|
+extern "js" fn BigInt::equal(self : BigInt, other : BigInt) -> Bool =
   #|(x, y) => x === y
+
+///|
+pub impl Eq for BigInt with op_equal(self, other) {
+  self.equal(other)
+}
 
 ///|
 pub extern "js" fn BigInt::from_int(x : Int) -> BigInt =
@@ -141,28 +151,58 @@ pub extern "js" fn BigInt::is_zero(self : BigInt) -> Bool =
   #|(x) => x === 0n
 
 ///|
-pub extern "js" fn BigInt::op_neg(self : BigInt) -> BigInt =
+extern "js" fn BigInt::op_neg_ffi(self : BigInt) -> BigInt =
   #|(x) => -x
 
 ///|
-pub extern "js" fn BigInt::op_add(self : BigInt, other : BigInt) -> BigInt =
+pub impl Neg for BigInt with op_neg(self) {
+  self.op_neg_ffi()
+}
+
+///|
+extern "js" fn BigInt::op_add_ffi(self : BigInt, other : BigInt) -> BigInt =
   #|(x, y) => x + y
 
 ///|
-pub extern "js" fn BigInt::op_sub(self : BigInt, other : BigInt) -> BigInt =
+pub impl Add for BigInt with op_add(self, other) {
+  self.op_add_ffi(other)
+}
+
+///|
+extern "js" fn BigInt::op_sub_ffi(self : BigInt, other : BigInt) -> BigInt =
   #|(x, y) => x - y
 
 ///|
-pub extern "js" fn BigInt::op_mul(self : BigInt, other : BigInt) -> BigInt =
+pub impl Sub for BigInt with op_sub(self, other) {
+  self.op_sub_ffi(other)
+}
+
+///|
+extern "js" fn BigInt::op_mul_ffi(self : BigInt, other : BigInt) -> BigInt =
   #|(x, y) => x * y
 
 ///|
-pub extern "js" fn BigInt::op_div(self : BigInt, other : BigInt) -> BigInt =
+pub impl Mul for BigInt with op_mul(self, other) {
+  self.op_mul_ffi(other)
+}
+
+///|
+extern "js" fn BigInt::op_div_ffi(self : BigInt, other : BigInt) -> BigInt =
   #|(x, y) => x / y
 
 ///|
-pub extern "js" fn BigInt::op_mod(self : BigInt, other : BigInt) -> BigInt =
+pub impl Div for BigInt with op_div(self, other) {
+  self.op_div_ffi(other)
+}
+
+///|
+extern "js" fn BigInt::op_mod_ffi(self : BigInt, other : BigInt) -> BigInt =
   #|(x, y) => x % y
+
+///|
+pub impl Mod for BigInt with op_mod(self, other) {
+  self.op_mod_ffi(other)
+}
 
 ///|
 extern "js" fn BigInt::modpow_ffi(
@@ -201,7 +241,7 @@ extern "js" fn BigInt::to_byte(self : BigInt) -> Byte =
   #|(x) => Number(BigInt.asUintN(8, x)) | 0
 
 ///|
-pub fn BigInt::op_shl(self : BigInt, n : Int) -> BigInt {
+pub impl Shl for BigInt with op_shl(self : BigInt, n : Int) -> BigInt {
   if n < 0 {
     abort("negative shift count")
   }
@@ -209,7 +249,7 @@ pub fn BigInt::op_shl(self : BigInt, n : Int) -> BigInt {
 }
 
 ///|
-pub fn BigInt::op_shr(self : BigInt, n : Int) -> BigInt {
+pub impl Shr for BigInt with op_shr(self : BigInt, n : Int) -> BigInt {
   if n < 0 {
     abort("negative shift count")
   }
@@ -225,16 +265,31 @@ extern "js" fn BigInt::js_shr(self : BigInt, other : Int) -> BigInt =
   #|(x, y) => x >> BigInt(y)
 
 ///|
-pub extern "js" fn BigInt::land(self : BigInt, other : BigInt) -> BigInt =
+extern "js" fn BigInt::js_land(self : BigInt, other : BigInt) -> BigInt =
   #|(x, y) => x & y
 
 ///|
-pub extern "js" fn BigInt::lor(self : BigInt, other : BigInt) -> BigInt =
+pub impl BitAnd for BigInt with land(self, other) {
+  self.js_land(other)
+}
+
+///|
+extern "js" fn BigInt::js_lor(self : BigInt, other : BigInt) -> BigInt =
   #|(x, y) => x | y
 
 ///|
-pub extern "js" fn BigInt::lxor(self : BigInt, other : BigInt) -> BigInt =
+pub impl BitOr for BigInt with lor(self, other) {
+  self.js_lor(other)
+}
+
+///|
+extern "js" fn BigInt::js_lxor(self : BigInt, other : BigInt) -> BigInt =
   #|(x, y) => x ^ y
+
+///|
+pub impl BitXOr for BigInt with lxor(self, other) {
+  self.js_lxor(other)
+}
 
 ///|
 /// Converts a `BigInt` to an unsigned 32-bit integer (`UInt`).

@@ -18,6 +18,7 @@ type! StringError String
 ///|
 type! IntError Int
 
+///|
 test {
   let v : Array[Error] = [StringError("x"), IntError(1)]
   let buf = StringBuilder::new()

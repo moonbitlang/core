@@ -13,14 +13,13 @@
 // limitations under the License.
 
 ///|
-fn read_char(ctx : ParseContext) -> Char? {
+fn ParseContext::read_char(ctx : ParseContext) -> Char? {
   if ctx.offset < ctx.end_offset {
-    let c = ctx.input[ctx.offset]
+    let c1 = ctx.input.unsafe_charcode_at(ctx.offset)
     ctx.offset += 1
-    let c1 = c.to_int()
     if c1 >= 0xD800 && c1 <= 0xDBFF {
       if ctx.offset < ctx.end_offset {
-        let c2 = ctx.input[ctx.offset].to_int()
+        let c2 = ctx.input.unsafe_charcode_at(ctx.offset)
         if c2 >= 0xDC00 && c2 <= 0xDFFF {
           ctx.offset += 1
           let c3 = (c1 << 10) + c2 - 0x35fdc00
@@ -28,19 +27,100 @@ fn read_char(ctx : ParseContext) -> Char? {
         }
       }
     }
-    Some(c)
+    Some(Char::from_int(c1))
   } else {
     None
   }
 }
 
+///| low surrogate
+const SURROGATE_LOW_CHAR = 0xD800
+
+///| high surrogate
+const SURROGATE_HIGH_CHAR = 0xDFFF
+
 ///|
-fn lex_skip_whitespace(ctx : ParseContext) -> Unit {
+/// `ctx.expect_char(c)` check the current context is c,
+/// if it is, consume the character and return `()`,
+/// otherwise raise an error, when it is an error, the position is unspecified.
+fn ParseContext::expect_char(ctx : ParseContext, c : Char) -> Unit!ParseError {
+  guard ctx.offset < ctx.end_offset else { raise InvalidEof }
+  let c1 = ctx.input.unsafe_charcode_at(ctx.offset)
+  ctx.offset += 1
+  let c0 = c.to_int()
+  if c0 < 0xFFFF {
+    // c0 < SURROGATE_LOW_CHAR || c0 is (0xE000..=0XFFFF)  
+    // c0 is a valid char so only need check if c0<0xFFFF is BMP code point
+    if c0 != c1 {
+      ctx.invalid_char!(shift=-1)
+    }
+  } else {
+    // c0 is not bmp code point
+    // c1 has to be surrogate pair otherwise it is invalid
+    guard c1 is (SURROGATE_LOW_CHAR..=SURROGATE_HIGH_CHAR) &&
+      ctx.offset < ctx.end_offset else {
+      ctx.invalid_char!(shift=-1)
+    }
+    let c2 = ctx.input.unsafe_charcode_at(ctx.offset)
+    let c3 = (c1 << 10) + c2 - 0x35fdc00
+    if c3 != c0 {
+      ctx.invalid_char!(shift=-1)
+    } else {
+      ctx.offset += 1 // consume and move forward
+    }
+  }
+}
+
+///|
+/// `ctx.expect_ascii_char(c)` check the current context is c,
+/// 
+fn ParseContext::expect_ascii_char(
+  ctx : ParseContext,
+  c : Byte
+) -> Unit!ParseError {
+  guard ctx.offset < ctx.end_offset else { raise InvalidEof }
+  let c1 = ctx.input.unsafe_charcode_at(ctx.offset)
+  ctx.offset += 1
+  if c.to_int() != c1 {
+    ctx.invalid_char!(shift=-1)
+  }
+}
+
+///|
+test "expect_char" {
+  let ctx = ParseContext::make("abc")
+  ctx.expect_char!('a')
+  ctx.expect_char!('b')
+  ctx.expect_char!('c')
+  inspect!(
+    ctx.expect_char?('d').to_string(),
+    content="Err(Unexpected end of file)",
+  )
+}
+
+///|
+test "expect_char with surrogate pair" {
+  // "\uD83D\uDE00" // todo: shall we allow this?
+  let ctx = ParseContext::make("a\uD83D\uDE00bc\uD83D\uDE00c")
+  ctx.expect_char!('a')
+  ctx.expect_char!(Char::from_int(0x1F600))
+  ctx.expect_char!('b')
+  ctx.expect_char!('c')
+  ctx.expect_char!(Char::from_int(0x1F600))
+  ctx.expect_char!('c')
+  inspect!(
+    ctx.expect_char?('d').to_string(),
+    content="Err(Unexpected end of file)",
+  )
+}
+
+///|
+fn ParseContext::lex_skip_whitespace(ctx : ParseContext) -> Unit {
   for {
-    match read_char(ctx) {
-      Some('\t' | '\u000B' | '\u000C' | ' ' | '\n' | '\r') => continue
+    match ctx.read_char() {
+      Some('\t' | ' ' | '\n' | '\r') => continue
       Some(c) => {
-        if c > '\x7f' && non_ascii_whitespace.contains(c) {
+        if c > '\u{7f}' && non_ascii_whitespace.contains(c) {
           continue
         }
         ctx.offset -= 1
@@ -52,68 +132,65 @@ fn lex_skip_whitespace(ctx : ParseContext) -> Unit {
 }
 
 ///|
-fn lex_after_array_value(ctx : ParseContext) -> Token!ParseError {
-  lex_skip_whitespace(ctx)
-  match read_char(ctx) {
+fn ParseContext::lex_after_array_value(ctx : ParseContext) -> Token!ParseError {
+  ctx.lex_skip_whitespace()
+  match ctx.read_char() {
     Some(']') => RBracket
     Some(',') => Comma
-    Some(_) => invalid_char!(ctx, shift=-1)
+    Some(_) => ctx.invalid_char!(shift=-1)
     None => raise InvalidEof
   }
 }
 
 ///|
-fn lex_after_property_name(ctx : ParseContext) -> Token!ParseError {
-  lex_skip_whitespace(ctx)
-  match read_char(ctx) {
-    Some(':') => Colon
-    Some(_) => invalid_char!(ctx, shift=-1)
+fn ParseContext::lex_after_property_name(ctx : ParseContext) -> Unit!ParseError {
+  ctx.lex_skip_whitespace()
+  match ctx.read_char() {
+    Some(':') => ()
+    Some(_) => ctx.invalid_char!(shift=-1)
     None => raise InvalidEof
   }
 }
 
 ///|
-fn lex_after_object_value(ctx : ParseContext) -> Token!ParseError {
-  lex_skip_whitespace(ctx)
-  match read_char(ctx) {
-    Some('}') => Token::RBrace
-    Some(',') => Token::Comma
-    Some(_) => invalid_char!(ctx, shift=-1)
+fn ParseContext::lex_after_object_value(ctx : ParseContext) -> Token!ParseError {
+  ctx.lex_skip_whitespace()
+  match ctx.read_char() {
+    Some('}') => RBrace
+    Some(',') => Comma
+    Some(_) => ctx.invalid_char!(shift=-1)
     None => raise InvalidEof
   }
 }
 
 ///|
-fn lex_assert_char(ctx : ParseContext, c : Char) -> Unit!ParseError {
-  match read_char(ctx) {
-    Some(c2) => if c == c2 { () } else { invalid_char!(ctx, shift=-1) }
-    None => raise InvalidEof
-  }
-}
-
-///|
-fn lex_property_name(ctx : ParseContext) -> Token!ParseError {
-  lex_skip_whitespace(ctx)
-  match read_char(ctx) {
+/// In the context of `{`, try to lex token `}` or a property name,
+/// otherwise raise an error.
+fn ParseContext::lex_property_name(ctx : ParseContext) -> Token!ParseError {
+  ctx.lex_skip_whitespace()
+  match ctx.read_char() {
     Some('}') => RBrace
     Some('"') => {
-      let s = lex_string!(ctx)
+      let s = ctx.lex_string!()
       String(s)
     }
-    Some(_) => invalid_char!(ctx, shift=-1)
+    Some(_) => ctx.invalid_char!(shift=-1)
     None => raise InvalidEof
   }
 }
 
 ///|
-fn lex_property_name2(ctx : ParseContext) -> Token!ParseError {
-  lex_skip_whitespace(ctx)
-  match read_char(ctx) {
+/// In the context of `{ ...,` try to lex a property name,
+/// otherwise raise an error.
+/// since it is in comma context, `}` is not allowed.
+fn ParseContext::lex_property_name2(ctx : ParseContext) -> Token!ParseError {
+  ctx.lex_skip_whitespace()
+  match ctx.read_char() {
     Some('"') => {
-      let s = lex_string!(ctx)
+      let s = ctx.lex_string!()
       String(s)
     }
-    Some(_) => invalid_char!(ctx, shift=-1)
+    Some(_) => ctx.invalid_char!(shift=-1)
     None => raise InvalidEof
   }
 }

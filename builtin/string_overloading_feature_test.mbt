@@ -22,13 +22,17 @@ type MyInt Int derive(Show)
 
 ///|
 // _ allow in names
-impl FromString for MyInt with from_string(_s) { 0 }
+impl FromString for MyInt with from_string(_s) {
+  0
+}
 
 ///|
 type MyString String derive(Show)
 
 ///|
-impl FromString for MyString with from_string(_s) { "" }
+impl FromString for MyString with from_string(_s) {
+  ""
+}
 
 ///|
 fn need_int(_x : MyInt) -> Unit {
@@ -40,6 +44,7 @@ fn need_string(_x : MyString) -> Unit {
 
 }
 
+///|
 test {
   let u0 : MyString = FromString::from_string("")
   let u1 : MyInt = FromString::from_string("")

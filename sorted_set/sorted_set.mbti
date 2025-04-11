@@ -1,41 +1,90 @@
-package moonbitlang/core/sorted_set
+package "moonbitlang/core/sorted_set"
 
-alias @moonbitlang/core/quickcheck as @quickcheck
+import(
+  "moonbitlang/core/quickcheck"
+)
 
 // Values
+fn add[V : Compare](T[V], V) -> Unit
+
+fn contains[V : Compare](T[V], V) -> Bool
+
+fn copy[V](T[V]) -> T[V]
+
+#deprecated
+fn deep_clone[V](T[V]) -> T[V]
+
+#deprecated
+fn diff[V : Compare](T[V], T[V]) -> T[V]
+
+fn difference[V : Compare](T[V], T[V]) -> T[V]
+
+fn disjoint[V : Compare](T[V], T[V]) -> Bool
+
+fn each[V](T[V], (V) -> Unit) -> Unit
+
+fn eachi[V](T[V], (Int, V) -> Unit) -> Unit
+
+fn from_array[V : Compare](Array[V]) -> T[V]
+
 fn from_iter[V : Compare](Iter[V]) -> T[V]
+
+#deprecated
+fn intersect[V : Compare](T[V], T[V]) -> T[V]
+
+fn intersection[V : Compare](T[V], T[V]) -> T[V]
+
+fn is_empty[V : Compare](T[V]) -> Bool
+
+fn iter[V](T[V]) -> Iter[V]
 
 fn new[V]() -> T[V]
 
-fn of[V : Compare](Array[V]) -> T[V]
+fn of[V : Compare](Array[V]) -> T[V] //deprecated
+
+fn range[V : Compare](T[V], V, V) -> Iter[V]
+
+fn remove[V : Compare](T[V], V) -> Unit
 
 fn singleton[V : Compare](V) -> T[V]
 
+fn size[V : Compare](T[V]) -> Int
+
+fn subset[V : Compare](T[V], T[V]) -> Bool
+
+fn to_array[V](T[V]) -> Array[V]
+
+fn union[V : Compare](T[V], T[V]) -> T[V]
+
 // Types and methods
-type T
+type T[V]
 impl T {
   add[V : Compare](Self[V], V) -> Unit
   contains[V : Compare](Self[V], V) -> Bool
   copy[V](Self[V]) -> Self[V]
-  deep_clone[V](Self[V]) -> Self[V] //deprecated
-  diff[V : Compare](Self[V], Self[V]) -> Self[V] //deprecated
+  #deprecated
+  deep_clone[V](Self[V]) -> Self[V]
+  #deprecated
+  diff[V : Compare](Self[V], Self[V]) -> Self[V]
   difference[V : Compare](Self[V], Self[V]) -> Self[V]
   disjoint[V : Compare](Self[V], Self[V]) -> Bool
   each[V](Self[V], (V) -> Unit) -> Unit
   eachi[V](Self[V], (Int, V) -> Unit) -> Unit
-  from_iter[V : Compare](Iter[V]) -> Self[V] //deprecated
-  intersect[V : Compare](Self[V], Self[V]) -> Self[V] //deprecated
+  #deprecated
+  from_iter[V : Compare](Iter[V]) -> Self[V]
+  #deprecated
+  intersect[V : Compare](Self[V], Self[V]) -> Self[V]
   intersection[V : Compare](Self[V], Self[V]) -> Self[V]
   is_empty[V : Compare](Self[V]) -> Bool
   iter[V](Self[V]) -> Iter[V]
-  op_equal[V : Compare](Self[V], Self[V]) -> Bool
   range[V : Compare](Self[V], V, V) -> Iter[V]
   remove[V : Compare](Self[V], V) -> Unit
-  size[V : Compare](Self[V]) -> Int64
+  size[V : Compare](Self[V]) -> Int
   subset[V : Compare](Self[V], Self[V]) -> Bool
   to_array[V](Self[V]) -> Array[V]
   union[V : Compare](Self[V], Self[V]) -> Self[V]
 }
+impl[V : Compare] Eq for T[V]
 impl[V : Show] Show for T[V]
 impl[X : @quickcheck.Arbitrary + Compare] @quickcheck.Arbitrary for T[X]
 

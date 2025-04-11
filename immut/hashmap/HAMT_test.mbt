@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+///|
 test "HAMT::size" {
   for i = 0, map = @hashmap.new(); i < 20; i = i + 1, map = map.add(i, i) {
     assert_eq!(map.size(), i)
@@ -20,12 +21,13 @@ test "HAMT::size" {
   }
 }
 
+///|
 test "HAMT" {
   let map = loop 0, @hashmap.new() {
     100, map => map
     i, map => continue i + 1, map.add(i, i)
   }
-  for i = 0; i < 100; i = i + 1 {
+  for i in 0..<100 {
     assert_eq!((i, map.find(i)), (i, Some(i)))
   }
   inspect!((100, map.find(100)), content="(100, None)")
@@ -42,12 +44,13 @@ test "HAMT" {
   }
 }
 
+///|
 test "HAMT::remove" {
   let map = loop 0, @hashmap.new() {
     100, map => map
     i, map => continue i + 1, map.add(i, i)
   }
-  for i = 0; i < 100; i = i + 1 {
+  for i in 0..<100 {
     assert_eq!((i, map.find(i)), (i, Some(i)))
   }
   let map = loop 0, map {
@@ -60,6 +63,7 @@ test "HAMT::remove" {
   }
 }
 
+///|
 test "HAMT::iter" {
   let data = @hashmap.of([(0, "a"), (2, "b"), (3, "d"), (5, "e"), (11111, "f")])
   let mut s = ""
@@ -67,6 +71,15 @@ test "HAMT::iter" {
   inspect!(s, content=" 0,a 5,e 3,d 11111,f 2,b")
 }
 
+///|
+test "HAMT::iter2" {
+  let data = @hashmap.of([(0, "a"), (2, "b"), (3, "d"), (5, "e"), (11111, "f")])
+  let mut s = ""
+  data.iter2().each(fn { k, v => s += " \{k},\{v}" })
+  inspect!(s, content=" 0,a 5,e 3,d 11111,f 2,b")
+}
+
+///|
 test "HAMT::to_string" {
   let map = @hashmap.new()
     .add(1, 1)
@@ -79,6 +92,7 @@ test "HAMT::to_string" {
   )
 }
 
+///|
 test "HAMT::from_array" {
   let map = @hashmap.of([(1, "1"), (2, "2"), (42, "42")])
   inspect!(
@@ -102,6 +116,7 @@ test "HAMT::from_array" {
   inspect!((43, map.find(43)), content="(43, None)")
 }
 
+///|
 test "from_iter multiple elements iter" {
   inspect!(
     @hashmap.from_iter([(1, 1), (2, 2), (3, 3)].iter()),
@@ -109,6 +124,7 @@ test "from_iter multiple elements iter" {
   )
 }
 
+///|
 test "from_iter single element iter" {
   inspect!(
     @hashmap.from_iter([(1, 1)].iter()),
@@ -116,11 +132,13 @@ test "from_iter single element iter" {
   )
 }
 
+///|
 test "from_iter empty iter" {
   let pq : @hashmap.T[Int, Int] = @hashmap.from_iter(Iter::empty())
   inspect!(pq, content="@immut/hashmap.of([])")
 }
 
+///|
 test "eq for boundary cases" {
   // Test with empty maps
   let empty_map1 : @hashmap.T[Int, Int] = @hashmap.new()
@@ -137,6 +155,7 @@ test "eq for boundary cases" {
   inspect!(non_empty_map == larger_map, content="false")
 }
 
+///|
 test "eq for random cases" {
   // Test with maps containing different keys
   let map1 : @hashmap.T[Int, Int] = @hashmap.of([(1, 1), (2, 2)])
@@ -161,6 +180,7 @@ test "eq for random cases" {
   inspect!(map5 == map7, content="true")
 }
 
+///|
 test "eq for random cases with different types" {
   // Test with maps containing different types
   let map8 : @hashmap.T[String, Int] = @hashmap.of([("one", 1), ("two", 2)])
@@ -176,6 +196,7 @@ test "eq for random cases with different types" {
   inspect!(map8 == map11, content="false")
 }
 
+///|
 test "hash" {
   let map1 = @hashmap.of([("one", 1), ("two", 2)])
   let map2 = @hashmap.of([("one", 1), ("two", 2)])
@@ -186,6 +207,7 @@ test "hash" {
   inspect!(map1.hash() == map4.hash(), content="false")
 }
 
+///|
 test "each on empty map" {
   let empty = @hashmap.new()
   let mut sum = 0
@@ -193,15 +215,35 @@ test "each on empty map" {
   inspect!(sum, content="0")
 }
 
+///|
 test "remove non-existent key with hash collision" {
   let map = @hashmap.of([("a", 1)])
   let new_map = map.remove("b")
   inspect!(new_map.size(), content="1")
 }
 
+///|
 test "remove all keys from collision bucket" {
   let map = @hashmap.from_array([("a", 1), ("b", 2)])
   let map1 = map.remove("a")
   let map2 = map1.remove("b")
   inspect!(map2.size(), content="0")
+}
+
+///|
+test "union 2 hashmaps, choose the right hand side" {
+  let map1 = @hashmap.of([(1, 1), (2, 2), (3, 3)])
+  let map2 = @hashmap.of([(1, 10), (2, 20), (4, 40)])
+  let map3 = map1.union(map2)
+  let map4 = @hashmap.of([(1, 10), (2, 20), (3, 3), (4, 40)])
+  inspect!(map3 == map4, content="true")
+}
+
+///|
+test "union 2 hashmaps, without conflict" {
+  let map1 = @hashmap.of([(1, 1), (2, 2), (3, 3)])
+  let map2 = @hashmap.of([(4, 4), (5, 5), (6, 6)])
+  let map3 = map1.union(map2)
+  let map4 = @hashmap.of([(1, 1), (2, 2), (3, 3), (4, 4), (5, 5), (6, 6)])
+  inspect!(map3 == map4, content="true")
 }

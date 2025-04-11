@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+///|
 test "String::escape" {
   inspect!(
     "abc,def".escape(),
@@ -39,6 +40,7 @@ test "String::escape" {
   )
 }
 
+///|
 test "substring" {
   assert_eq!("abc".substring(), "abc")
   assert_eq!("abc".substring(start=1), "bc")
@@ -46,56 +48,82 @@ test "substring" {
   assert_eq!("abc".substring(start=1, end=2), "b")
 }
 
+///|
 test "panic codepoint_at1" {
   let str = "Hello🤣🤣🤣"
   let _ = str.codepoint_at(8)
 
 }
 
+///|
 test "panic codepoint_at2" {
   let str = "Hello🤣🤣🤣"
   let _ = str.codepoint_at(-1)
 
 }
 
+///|
 test "panic charcode_at with negative index" {
   let s = "Hello"
-  ignore(charcode_at(s, -1))
+  ignore(s.charcode_at(-1))
 }
 
+///|
 test "charcode_at with valid index" {
   let s = "Hello"
-  inspect!(charcode_at(s, 0), content="72")
+  inspect!(s.charcode_at(0), content="72")
 }
 
+///|
 test "codepoint_at regular character at end of string" {
   let s = "Hello"
-  inspect!(codepoint_at(s, 4), content="'o'")
+  inspect!(s.codepoint_at(4), content="o")
 }
 
+///|
 test "codepoint_at emoji" {
   let s = "👋"
-  inspect!(codepoint_at(s, 0), content="'👋'")
+  inspect!(s.codepoint_at(0), content="👋")
 }
 
+///|
+test "unsafe_char_at" {
+  let s = "a👋b"
+  inspect!(s.unsafe_char_at(0), content="a")
+  inspect!(s.unsafe_char_at(1), content="👋")
+  // invalid char cannot be inspected
+  inspect!(s.unsafe_char_at(2).to_int(), content="56395")
+  inspect!(s.unsafe_char_at(3), content="b")
+}
+
+///|
 test "codepoint_length basic" {
   let str = "hello"
-  inspect!(codepoint_length(str), content="5")
+  inspect!(str.codepoint_length(), content="5")
 }
 
+///|
 test "codepoint_length with surrogate pairs" {
   let str = "Hello🤣"
-  inspect!(codepoint_length(str), content="6")
+  inspect!(str.codepoint_length(), content="6")
 }
 
+///|
 test "panic String::make with negative length" {
   ignore(String::make(-1, 'A'))
 }
 
+///|
+test "String::make with non-bmp" {
+  inspect!(String::make(2, '🤣'), content="🤣🤣")
+}
+
+///|
 test "String::make with zero length" {
   inspect!(String::make(0, 'A'), content="")
 }
 
+///|
 test "panic codepoint_length with invalid surrogate pair" {
   // Create a string with a leading surrogate (0xD800) followed by an invalid trailing surrogate
   let s = String::from_array([
@@ -103,5 +131,5 @@ test "panic codepoint_length with invalid surrogate pair" {
       'a',
     ], // invalid trailing surrogate
   )
-  ignore(@builtin.codepoint_length(s))
+  ignore(s.codepoint_length())
 }

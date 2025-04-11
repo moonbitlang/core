@@ -1,30 +1,56 @@
-package moonbitlang/core/immut/hashmap
+package "moonbitlang/core/immut/hashmap"
 
-alias @moonbitlang/core/quickcheck as @quickcheck
+import(
+  "moonbitlang/core/quickcheck"
+)
 
 // Values
+fn add[K : Eq + Hash, V](T[K, V], K, V) -> T[K, V]
+
+fn each[K, V](T[K, V], (K, V) -> Unit) -> Unit
+
+fn find[K : Eq + Hash, V](T[K, V], K) -> V?
+
 fn from_array[K : Eq + Hash, V](Array[(K, V)]) -> T[K, V]
 
 fn from_iter[K : Eq + Hash, V](Iter[(K, V)]) -> T[K, V]
+
+fn iter[K, V](T[K, V]) -> Iter[(K, V)]
+
+fn iter2[K, V](T[K, V]) -> Iter2[K, V]
 
 fn new[K, V]() -> T[K, V]
 
 fn of[K : Eq + Hash, V](FixedArray[(K, V)]) -> T[K, V]
 
+fn op_get[K : Eq + Hash, V](T[K, V], K) -> V?
+
+fn remove[K : Eq + Hash, V](T[K, V], K) -> T[K, V]
+
+fn size[K, V](T[K, V]) -> Int
+
+fn union[K : Eq + Hash, V](T[K, V], T[K, V]) -> T[K, V]
+
 // Types and methods
-type T
+type T[K, V]
 impl T {
   add[K : Eq + Hash, V](Self[K, V], K, V) -> Self[K, V]
   each[K, V](Self[K, V], (K, V) -> Unit) -> Unit
   find[K : Eq + Hash, V](Self[K, V], K) -> V?
-  from_array[K : Eq + Hash, V](Array[(K, V)]) -> Self[K, V] //deprecated
-  from_iter[K : Eq + Hash, V](Iter[(K, V)]) -> Self[K, V] //deprecated
+  #deprecated
+  from_array[K : Eq + Hash, V](Array[(K, V)]) -> Self[K, V]
+  #deprecated
+  from_iter[K : Eq + Hash, V](Iter[(K, V)]) -> Self[K, V]
   iter[K, V](Self[K, V]) -> Iter[(K, V)]
-  new[K, V]() -> Self[K, V] //deprecated
-  of[K : Eq + Hash, V](FixedArray[(K, V)]) -> Self[K, V] //deprecated
+  iter2[K, V](Self[K, V]) -> Iter2[K, V]
+  #deprecated
+  new[K, V]() -> Self[K, V]
+  #deprecated
+  of[K : Eq + Hash, V](FixedArray[(K, V)]) -> Self[K, V]
   op_get[K : Eq + Hash, V](Self[K, V], K) -> V?
   remove[K : Eq + Hash, V](Self[K, V], K) -> Self[K, V]
   size[K, V](Self[K, V]) -> Int
+  union[K : Eq + Hash, V](Self[K, V], Self[K, V]) -> Self[K, V]
 }
 impl[K : Eq + Hash, V : Eq] Eq for T[K, V]
 impl[K : Hash, V : Hash] Hash for T[K, V]

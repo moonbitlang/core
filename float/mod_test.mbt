@@ -17,6 +17,7 @@ fn check(x : Float, y : Float) -> Bool {
   (x - y).abs() < 1.0e-6
 }
 
+///|
 test "mod" {
   inspect!(check((7.5 : Float) % 2.3, 0.6), content="true")
   inspect!(check((5.75 : Float) % 5.75, 0), content="true")

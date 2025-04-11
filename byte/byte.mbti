@@ -1,9 +1,11 @@
-package moonbitlang/core/byte
+package "moonbitlang/core/byte"
 
 // Values
 let max_value : Byte
 
 let min_value : Byte
+
+fn to_uint64(Byte) -> UInt64
 
 // Types and methods
 impl Byte {

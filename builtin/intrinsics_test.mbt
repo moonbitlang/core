@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-/// test Int::land
+///| test Int::land
 test "Int::land should perform bitwise AND operation" {
   let a = 0b101
   let b = 0b011
@@ -22,7 +22,7 @@ test "Int::land should perform bitwise AND operation" {
   inspect!((0xffff_ffff & 0xffff_ffff) == 0xffff_ffff, content="true")
 }
 
-/// test Int::lor
+///| test Int::lor
 test "Int::lor should perform bitwise OR operation" {
   inspect!((0b101 | 0b011) == 0b111, content="true")
   inspect!((0xffff_ffff | 0xa000_0000) == 0xffff_ffff, content="true")
@@ -30,7 +30,7 @@ test "Int::lor should perform bitwise OR operation" {
   inspect!((0xffff_ffff | 0xffff_ffff) == 0xffff_ffff, content="true")
 }
 
-/// test Int::lxor
+///| test Int::lxor
 test "Int::lxor should perform bitwise XOR operation" {
   inspect!((0b101 ^ 0b011) == 0b110, content="true")
   inspect!((0xffff_ffff ^ 0xa000_0000) == 0x5fff_ffff, content="true")
@@ -38,7 +38,7 @@ test "Int::lxor should perform bitwise XOR operation" {
   inspect!((0xffff_ffff ^ 0xffff_ffff) == 0, content="true")
 }
 
-/// test Int::op_shl
+///| test Int::op_shl
 test "Int::op_shl should perform left shift operation" {
   inspect!(7 << 1, content="14")
   inspect!((0b101 << 1) == 0b1010, content="true")
@@ -59,6 +59,7 @@ test "Int::op_shl should perform left shift operation" {
   inspect!(7 << 32, content="7")
 }
 
+///|
 test "reinterpret: UInt <-> Int" {
   inspect!(0U.reinterpret_as_int(), content="0")
   inspect!(1U.reinterpret_as_int(), content="1")
@@ -75,6 +76,7 @@ test "reinterpret: UInt <-> Int" {
   inspect!((-1).reinterpret_as_uint(), content="4294967295")
 }
 
+///|
 test "uint test" {
   inspect!(100U == 100U, content="true")
   inspect!(0U < 100U, content="true")
@@ -94,6 +96,7 @@ test "uint test" {
   inspect!(2147483648U >> 31, content="1")
 }
 
+///|
 test "uint64 test" {
   inspect!(100UL == 100UL, content="true")
   inspect!(0UL < 100UL, content="true")
@@ -120,6 +123,7 @@ test "uint64 test" {
   inspect!(9223372036854775808UL >> 63, content="1")
 }
 
+///|
 test "from double to" {
   inspect!(10.0.reinterpret_as_int64(), content="4621819117588971520")
   inspect!(10.0.reinterpret_as_uint64(), content="4621819117588971520")
@@ -127,6 +131,7 @@ test "from double to" {
   inspect!(20.0.reinterpret_as_uint64(), content="4626322717216342016")
 }
 
+///|
 test "u64 to double" {
   inspect!(10UL.to_double(), content="10")
   inspect!(20UL.to_double(), content="20")
@@ -143,6 +148,7 @@ test "u64 to double" {
   inspect!(-844674400955615L.to_double(), content="-844674400955615")
 }
 
+///|
 test "UInt64::lnot test cases" {
   // Test case 1: Boundary case, testing the behavior with the maximum value of UInt64
   inspect!(UInt64::lnot(@uint64.max_value), content="0")
@@ -169,6 +175,7 @@ test "UInt64::lnot test cases" {
   inspect!(UInt64::lnot(0xFFFFFFFFFFFFFFFFUL), content="0")
 }
 
+///|
 test "shift" {
   inspect!(1 << 2, content="4")
   inspect!(1UL << 2, content="4")
@@ -180,6 +187,7 @@ test "shift" {
   inspect!(2UL >> 2, content="0")
 }
 
+///|
 test "float" {
   fn f(x : Float) -> Float {
     x
@@ -212,11 +220,13 @@ test "float" {
   // inspect!((0.36 : Float).sqrt().to_double(), content="0.6000000238418579")
 }
 
+///|
 test "Int::to_double" {
   inspect!((10).to_double(), content="10")
   inspect!((20).to_double(), content="20")
 }
 
+///|
 test "Int::clz" {
   // Test for the smallest positive integer
   inspect!(Int::clz(1), content="31")
@@ -245,6 +255,7 @@ test "Int::clz" {
   inspect!(Int::clz(8192), content="18")
 }
 
+///|
 test "grouped test for boundary cases" {
   inspect!(UInt::clz(0x00000000U), content="32")
   inspect!(UInt::clz(0x80000000U), content="0")
@@ -253,6 +264,7 @@ test "grouped test for boundary cases" {
   inspect!(UInt::clz(0x10000000U), content="3")
 }
 
+///|
 test "grouped test for random cases" {
   inspect!(UInt::clz(0x12345678U), content="3")
   inspect!(UInt::clz(0x87654321U), content="0")
@@ -262,6 +274,7 @@ test "grouped test for random cases" {
   inspect!(UInt::clz(0xFFFF0000U), content="0")
 }
 
+///|
 test "grouped test for edge and random cases" {
   inspect!(UInt::clz(0x00000001U), content="31")
   inspect!(UInt::clz(0x00000002U), content="30")
@@ -297,6 +310,7 @@ test "grouped test for edge and random cases" {
   inspect!(UInt::clz(0x80000000U), content="0")
 }
 
+///|
 test "grouped test for boundary cases" {
   // Test for the smallest positive normal float
   inspect!(Float::reinterpret_as_uint(1.17549435e-38), content="8388608")
@@ -335,6 +349,7 @@ test "grouped test for boundary cases" {
   )
 }
 
+///|
 test "grouped test for random cases" {
   // Random float values
   inspect!(Float::reinterpret_as_uint(123.456), content="1123477881")
@@ -347,12 +362,14 @@ test "grouped test for random cases" {
   inspect!(Float::reinterpret_as_uint(-1.0e+30), content="4048155338")
 }
 
+///|
 test "Char::to_uint - Boundary Cases" {
   // Test for the boundary values of Char
   inspect!(Char::to_uint('\u{0}'), content="0")
   inspect!(Char::to_uint('\u{FFFF}'), content="65535")
 }
 
+///|
 test "Char::to_uint - Random Cases" {
   // Test for some random values of Char
   inspect!(Char::to_uint('a'), content="97")
@@ -363,6 +380,7 @@ test "Char::to_uint - Random Cases" {
   inspect!(Char::to_uint('中'), content="20013")
 }
 
+///|
 test "Char::to_uint - Edge Cases" {
   // Test for some edge cases
   inspect!(Char::to_uint('\u{0001}'), content="1")
@@ -371,6 +389,7 @@ test "Char::to_uint - Edge Cases" {
   inspect!(Char::to_uint('\u{FFFE}'), content="65534")
 }
 
+///|
 test "Char::to_uint - Special Characters" {
   // Test for special characters
   inspect!(Char::to_uint('\n'), content="10")
@@ -380,6 +399,7 @@ test "Char::to_uint - Special Characters" {
   inspect!(Char::to_uint('\''), content="39")
 }
 
+///|
 test "Char::to_uint - Unicode Characters" {
   // Test for some Unicode characters
   inspect!(Char::to_uint('😀'), content="128512")
@@ -388,6 +408,7 @@ test "Char::to_uint - Unicode Characters" {
   inspect!(Char::to_uint('♫'), content="9835")
 }
 
+///|
 test "Int::to_uint64 - Boundary Cases" {
   inspect!(Int::to_uint64(0), content="0")
   inspect!(Int::to_uint64(1), content="1")
@@ -396,6 +417,7 @@ test "Int::to_uint64 - Boundary Cases" {
   inspect!(Int::to_uint64(-2147483648), content="18446744071562067968")
 }
 
+///|
 test "Int::to_uint64 - Random Cases" {
   inspect!(Int::to_uint64(123456789), content="123456789")
   inspect!(Int::to_uint64(-987654321), content="18446744072721897295")
@@ -403,16 +425,19 @@ test "Int::to_uint64 - Random Cases" {
   inspect!(Int::to_uint64(-123456789), content="18446744073586094827")
 }
 
+///|
 test "Int::to_uint64 - Edge Cases with Zero" {
   inspect!(Int::to_uint64(0), content="0")
   inspect!(Int::to_uint64(-0), content="0")
 }
 
+///|
 test "Int::to_uint64 - Random Values" {
   inspect!(Int::to_uint64(1234567890), content="1234567890")
   inspect!(Int::to_uint64(-1234567890), content="18446744072474983726")
 }
 
+///|
 test "UInt::reinterpret_as_float roundtrip" {
   let values = [
     0x00000000U, // zero
@@ -434,6 +459,7 @@ test "UInt::reinterpret_as_float roundtrip" {
   }
 }
 
+///|
 test "convert byte to int64" {
   let b = b'\xFF'
   let result = b.to_int64()

@@ -70,6 +70,7 @@ fn slow_hash(self : Int64) -> Int {
   b.hash()
 }
 
+///|
 test "int64 hash" {
   let i0 = 9_223_372_036_854_775_807L // INT64_MAX
   let i1 = -9_223_372_036_854_775_808L // INT64_MIN

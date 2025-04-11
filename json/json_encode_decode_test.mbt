@@ -52,7 +52,12 @@ pub impl Show for DecodeError with output(self, logger) {
 ///|
 fn of_json(jv : Json) -> AllThree!DecodeError {
   match jv {
-    { "ints": Array(ints), "floats": Array(floats), "strings": Array(strings) } => {
+    {
+      "ints": Array(ints),
+      "floats": Array(floats),
+      "strings": Array(strings),
+      ..
+    } => {
       let ints_result = []
       let floats_result = []
       let strings_result = []
@@ -83,6 +88,7 @@ fn of_json(jv : Json) -> AllThree!DecodeError {
   }
 }
 
+///|
 test {
   let all_three = AllThree::{
     ints: [1, 2, 3],

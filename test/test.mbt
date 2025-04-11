@@ -20,44 +20,44 @@ fn debug_string[T : Show](t : T) -> String {
 }
 
 ///|
-/// @alert deprecated "Use built-in `assert_eq` instead"
-/// @coverage.skip
+#deprecated("Use built-in `assert_eq` instead")
+#coverage.skip
 pub fn eq[T : Show + Eq](a : T, b : T, loc~ : SourceLoc = _) -> Unit! {
   if a != b {
     let a = debug_string(a)
     let b = debug_string(b)
-    fail!("FAILED: \{loc} `\{a} == \{b}`")
+    fail!("`\{a} == \{b}`", loc~)
   }
 }
 
 ///|
-/// @alert deprecated "Use built-in `assert_not_eq` instead"
-/// @coverage.skip
+#deprecated("Use built-in `assert_not_eq` instead")
+#coverage.skip
 pub fn ne[T : Show + Eq](a : T, b : T, loc~ : SourceLoc = _) -> Unit! {
   if not(a != b) {
     let a = debug_string(a)
     let b = debug_string(b)
-    fail!("FAILED: \{loc} `\{a} != \{b}`")
+    fail!("`\{a} != \{b}`", loc~)
   }
 }
 
 ///|
-/// @alert deprecated "Use built-in `assert_true` instead"
-/// @coverage.skip
+#deprecated("Use built-in `assert_true` instead")
+#coverage.skip
 pub fn is_true(x : Bool, loc~ : SourceLoc = _) -> Unit! {
   if not(x) {
     let x = debug_string(x)
-    fail!("FAILED: \{loc} `\{x}` is not true")
+    fail!("`\{x}` is not true", loc~)
   }
 }
 
 ///|
-/// @alert deprecated "Use built-in `assert_false` instead"
-/// @coverage.skip
+#deprecated("Use built-in `assert_false` instead")
+#coverage.skip
 pub fn is_false(x : Bool, loc~ : SourceLoc = _) -> Unit! {
   if x {
     let x = debug_string(x)
-    fail!("FAILED: \{loc}: `\{x}` is not false")
+    fail!("`\{x}` is not false", loc~)
   }
 }
 
@@ -81,15 +81,8 @@ pub fn same_object[T : Show](a : T, b : T, loc~ : SourceLoc = _) -> Unit! {
   if not(physical_equal(a, b)) {
     let a = debug_string(a)
     let b = debug_string(b)
-    fail!("FAILED: \{loc} `\{a} is \{b}`")
+    fail!("`\{a} is \{b}`", loc~)
   }
-}
-
-///|
-/// @alert deprecated "Use `same_object` instead"
-/// @coverage.skip
-pub fn is[T : Show](a : T, b : T, loc~ : SourceLoc = _) -> Unit! {
-  same_object!(a, b, loc~)
 }
 
 ///|
@@ -112,7 +105,7 @@ pub fn is_not[T : Show](a : T, b : T, loc~ : SourceLoc = _) -> Unit! {
   if physical_equal(a, b) {
     let a = debug_string(a)
     let b = debug_string(b)
-    fail!("FAILED: \{loc} `not(\{a} is \{b})`")
+    fail!("`not(\{a} is \{b})`", loc~)
   }
 }
 
@@ -147,4 +140,50 @@ pub fn snapshot(
   raise SnapshotError(
     "@SNAPSHOT_TESTING {\"loc\": \{loc}, \"args_loc\": \{args_loc}, \"expect\": \{expect}, \"actual\": \{actual}, \"snapshot\": true}",
   )
+}
+
+///|
+fn iter_n_microseconds[Any](inner : () -> Any, k : Int) -> Double {
+  let ts = monotonic_clock_start()
+  for i in 0..<k {
+    inner() |> ignore
+  }
+  let diff = monotonic_clock_end(ts)
+  diff
+}
+
+///|
+fn iter_count[Any](inner : () -> Any, count : UInt) -> Summary {
+  let count = count.land(0x7FFFFFFF).reinterpret_as_int()
+  let threshold = 100000.0 // 100 ms
+  let target_batch_size = loop 1 {
+    trial => {
+      let single_us = iter_n_microseconds(inner, trial) / trial.to_double()
+      let target_batch_size = threshold /
+        (if single_us < 1.0 { 1.0 } else { single_us })
+      if trial.to_double() * single_us > threshold {
+        break target_batch_size
+      }
+      continue trial * 2
+    }
+  }
+  let batch_size = if target_batch_size < 1.0 {
+    1
+  } else {
+    target_batch_size.ceil().to_int()
+  }
+  let samples = Array::new(capacity=count)
+  samples.resize(count, 0.0)
+  for i in 0..<count {
+    samples[i] = iter_n_microseconds(inner, batch_size) / batch_size.to_double()
+  }
+  winsorize(samples, 5.0)
+  Summary::new(samples, batch_size)
+}
+
+///|
+pub fn bench(self : T, f : () -> Unit, count~ : UInt = 10) -> Unit!BenchError {
+  ignore(self)
+  let summary = iter_count(f, count)
+  raise BenchError("@BENCH \{summary.to_json().stringify()}\n")
 }

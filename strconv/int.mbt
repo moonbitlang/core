@@ -25,76 +25,111 @@ let int64_min = -0x8000000000000000L
 let int64_max = 0x7fffffffffffffffL
 
 ///|
-/// Parse a string in the given base (0, 2 to 36), return a Int64 number or an error.
-/// If the `~base` argument is 0, the base will be inferred by the prefix.
+/// This function check whether the prefix of the string is consistent with the given base,
+/// and consume the prefix.
+/// The boolean flag `allow_underscore` is used to check validity of underscores.
+fn check_and_consume_base(
+  view : @string.StringView,
+  base : Int
+) -> (Int, @string.StringView, Bool)!StrConvError {
+  match view {
+    ['0', 'x' | 'X', .. rest] => {
+      guard base is (0 | 16) else { base_err!() }
+      (16, rest, true)
+    }
+    ['0', 'o' | 'O', .. rest] => {
+      guard base is (0 | 8) else { base_err!() }
+      (8, rest, true)
+    }
+    ['0', 'b' | 'B', .. rest] => {
+      guard base is (0 | 2) else { base_err!() }
+      (2, rest, true)
+    }
+    rest =>
+      match base {
+        0 => (10, rest, false)
+        2..=36 => (base, rest, false)
+        _ => base_err!()
+      }
+  }
+}
+
+///|
+test {
+  inspect!(parse_int64?("0b01", base=3), content="Err(invalid base)")
+  inspect!(parse_int64?("0x01", base=3), content="Err(invalid base)")
+  inspect!(parse_int64?("0o01", base=3), content="Err(invalid base)")
+}
+
+///|
+/// Parses a string into an Int64 number using the specified base, or returns an error.
+/// The base must be 0 or between 2 and 36 (inclusive). If base is 0, it will be 
+/// inferred from the string prefix:
+///   - "0x" or "0X" for base 16 (hex)
+///   - "0o" or "0O" for base 8 (octal) 
+///   - "0b" or "0B" for base 2 (binary)
+///   - Default is base 10 (decimal)
+/// For readability, underscores may appear after base prefixes or between digits.
+/// These underscores do not affect the value.
+/// Examples:
+/// ```
+/// inspect!(parse_int64!("123"), content="123")
+/// inspect!(parse_int64!("0xff", base=0), content="255") 
+/// inspect!(parse_int64!("0o10"), content="8")
+/// inspect!(parse_int64!("0b1010"), content="10")
+/// inspect!(parse_int64!("1_234"), content="1234")
+/// inspect!(parse_int64!("-123"), content="-123")
+/// inspect!(parse_int64!("ff", base=16), content="255")
+/// inspect!(parse_int64!("zz", base=36), content="1295")
+/// ```
+/// 
 pub fn parse_int64(str : String, base~ : Int = 0) -> Int64!StrConvError {
-  if str == "" {
-    syntax_err!()
-  }
-  // check underscore
-  if not(check_underscore(str)) {
-    syntax_err!()
-  }
-  let mut s = str
-  // check sign
-  let mut neg = false
-  if s[0] == '+' || s[0] == '-' {
-    neg = s[0] == '-'
-    s = s.substring(start=1)
+  guard str != "" else { syntax_err!() }
+  let (neg, rest) = match str.view() {
+    ['+', .. rest] => (false, rest)
+    ['-', .. rest] => (true, rest)
+    rest => (false, rest)
   }
 
-  // determine base
-  let mut num_base = 10
-  match base {
-    0 => {
-      num_base = determine_base(s)
-      if num_base != 10 {
-        s = s.substring(start=2)
-      }
-    }
-    2..=36 => num_base = base
-    _ => base_err!()
-  }
+  // `allow_underscore` is used to check validity of underscores
+  let (num_base, rest, allow_underscore) = check_and_consume_base!(rest, base)
 
   // calculate overflow threshold
   let overflow_threshold = overflow_threshold(num_base, neg)
-
+  let has_digit = rest
+    is (['0'..='9' | 'a'..='z' | 'A'..='Z', ..]
+    | ['_', '0'..='9' | 'a'..='z' | 'A'..='Z', ..])
+  guard has_digit else { syntax_err!() }
   // convert
-  let mut n = 0L
-  for i = 0; i < s.length(); i = i + 1 {
-    let c = s[i]
-    let mut d = 0
-    match c {
-      '_' => continue
-      '0'..='9' => d = c - '0'
-      'a'..='z' => d = c - 'a' + 10
-      'A'..='Z' => d = c - 'A' + 10
-      _ => syntax_err!()
-    }
-    if d >= num_base {
+  loop rest, 0L, allow_underscore {
+    ['_'], _, _ =>
+      // the last character cannot be underscore
       syntax_err!()
-    }
-    if (neg && n < overflow_threshold) || (not(neg) && n >= overflow_threshold) {
-      range_err!()
-    }
-    // n*base overflows
-    n *= num_base.to_int64()
-    if neg {
-      let n1 = n - d.to_int64()
-      if n1 > n {
-        range_err!()
+    ['_', ..], _, false => syntax_err!()
+    ['_', .. rest], acc, true => continue rest, acc, false
+    [c, .. rest], acc, _ => {
+      let c = c.to_int()
+      let d = match c {
+        '0'..='9' => c - '0'
+        'a'..='z' => c + (10 - 'a')
+        'A'..='Z' => c + (10 - 'A')
+        _ => syntax_err!()
       }
-      n = n1
-    } else {
-      let n1 = n + d.to_int64()
-      if n1 < n {
-        // n+d overflows
-        range_err!()
+      guard d < num_base else { syntax_err!() }
+      if neg {
+        guard acc >= overflow_threshold else { range_err!() }
+        let next_acc = acc * num_base.to_int64() - d.to_int64()
+        guard next_acc <= acc else { range_err!() }
+        continue rest, next_acc, true
+      } else {
+        guard acc < overflow_threshold else { range_err!() }
+        let next_acc = acc * num_base.to_int64() + d.to_int64()
+        guard next_acc >= acc else { range_err!() }
+        continue rest, next_acc, true
       }
-      n = n1
     }
+    [], acc, _ => acc
   }
-  n
 }
 
 ///|
@@ -112,70 +147,63 @@ pub fn parse_int(str : String, base~ : Int = 0) -> Int!StrConvError {
 // Check whether the underscores are correct.
 // Underscores must appear only between digits or between a base prefix and a digit.
 fn check_underscore(str : String) -> Bool {
-  let mut s = str
-  // 0 digit or base prefix
-  // _ underscore
-  // ! other
-  let mut last_char = '!'
-  // sign
-  if s.length() > 1 && (s[0] == '-' || s[0] == '+') {
-    s = s.substring(start=1)
+  // skip the sign
+  let rest = match str.view() {
+    ['+' | '-', .. rest] => rest
+    rest => rest
   }
+
   // base prefix
-  let mut hex = false
-  if s.length() >= 2 &&
-    s[0] == '0' &&
-    (
-      s[1] == 'b' ||
-      s[1] == 'B' ||
-      s[1] == 'o' ||
-      s[1] == 'O' ||
-      s[1] == 'x' ||
-      s[1] == 'X'
-    ) {
-    last_char = '0'
-    hex = s[1] == 'x' || s[1] == 'X'
-    s = s.substring(start=2)
+  let (rest, allow_underscore, hex) = match rest {
+    ['0', 'x' | 'X', .. rest] => (rest, true, true)
+    ['0', 'o' | 'O', .. rest] => (rest, true, false)
+    ['0', 'b' | 'B', .. rest] => (rest, true, false)
+    rest => (rest, false, false)
   }
-  // number
-  for i = 0; i < s.length(); i = i + 1 {
-    // digits
-    if '0' <= s[i] && s[i] <= '9' {
-      last_char = '0'
-      continue
+
+  // 'e' and 'E' are valid hex digits
+  // but are not treated as digits in decimal strings since they're used for scientific notation
+  fn is_digit(c : Char) -> Bool {
+    if hex {
+      ('0' <= c && c <= '9') || ('a' <= c && c <= 'f') || ('A' <= c && c <= 'F')
+    } else {
+      '0' <= c && c <= '9'
     }
-    if (hex && 'a' <= s[i] && s[i] <= 'f') || ('A' <= s[i] && s[i] <= 'F') {
-      last_char = '0'
-      continue
-    }
-    // underscore must follow digit
-    if s[i] == '_' {
-      if last_char != '0' {
-        return false
+  }
+
+  // Track whether the previous character was an underscore
+  let follow_underscore = false
+  loop rest, allow_underscore, follow_underscore {
+    // Empty string is valid
+    [], _, _ => true
+    // String ending with underscore is invalid
+    ['_'], _, _ => false
+    // Underscore not allowed in current position (e.g., between non-digits)
+    ['_', ..], false, _ => false
+    // Valid underscore - continue but mark that next char must be a digit
+    ['_', .. rest], true, _ => continue rest, false, true
+    // Handle non-underscore character
+    [c, .. rest], _, follow_underscore =>
+      if is_digit(c) {
+        // Digit found - allow underscore in next position
+        continue rest, true, false
+      } else if follow_underscore {
+        // Non-digit found after underscore - invalid
+        false
+      } else {
+        // Non-digit found (not after underscore) - continue but don't allow underscores
+        continue rest, false, false
       }
-      last_char = '_'
-      continue
-    }
-    // underscore cannot follow by underscore
-    if last_char == '_' {
-      return false
-    }
-    // other
-    last_char = '!'
   }
-  return last_char != '_'
 }
 
 ///|
 // Determine the base of the value.
 fn determine_base(s : String) -> Int {
-  if s.length() < 2 {
-    return 10
-  }
-  match s.substring(end=2) {
-    "0x" | "0X" => 16
-    "0o" | "0O" => 8
-    "0b" | "0B" => 2
+  match s.view() {
+    ['0', 'x' | 'X', ..] => 16
+    ['0', 'o' | 'O', ..] => 8
+    ['0', 'b' | 'B', ..] => 2
     _ => 10
   }
 }
@@ -199,6 +227,7 @@ fn overflow_threshold(base : Int, neg : Bool) -> Int64 {
   }
 }
 
+///|
 test "check_underscore" {
   assert_true!(check_underscore("123"))
   assert_true!(check_underscore("0x123"))
@@ -213,6 +242,7 @@ test "check_underscore" {
   assert_false!(check_underscore("123_"))
 }
 
+///|
 test "determine_base" {
   assert_eq!(determine_base("1234"), 10)
   assert_eq!(determine_base("0x1234"), 16)
@@ -223,6 +253,7 @@ test "determine_base" {
   assert_eq!(determine_base("0B1010"), 2)
 }
 
+///|
 test "parse_int64" {
   let tests : Array[(String, Result[Int64, String])] = [
     ("", Err(syntax_err_str)),
@@ -251,7 +282,7 @@ test "parse_int64" {
     ("12345_", Err(syntax_err_str)),
     ("12345%", Err(syntax_err_str)),
   ]
-  for i = 0; i < tests.length(); i = i + 1 {
+  for i in 0..<tests.length() {
     let t = tests[i]
     assert_eq!(
       try {
@@ -264,6 +295,7 @@ test "parse_int64" {
   }
 }
 
+///|
 test "parse_int64_base" {
   let tests : Array[(String, Int, Result[Int64, String])] = [
     ("", 0, Err(syntax_err_str)),
@@ -370,7 +402,7 @@ test "parse_int64_base" {
     ("0x+f", 0, Err(syntax_err_str)),
     ("0x-f", 0, Err(syntax_err_str)),
   ]
-  for i = 0; i < tests.length(); i = i + 1 {
+  for i in 0..<tests.length() {
     let t = tests[i]
     assert_eq!(
       try {
@@ -383,6 +415,7 @@ test "parse_int64_base" {
   }
 }
 
+///|
 test "parse_int" {
   let tests : Array[(String, Result[Int, String])] = [
     ("", Err(syntax_err_str)),
@@ -411,7 +444,7 @@ test "parse_int" {
     ("12345_", Err(syntax_err_str)),
     ("123%45", Err(syntax_err_str)),
   ]
-  for i = 0; i < tests.length(); i = i + 1 {
+  for i in 0..<tests.length() {
     let t = tests[i]
     assert_eq!(
       try {

@@ -14,6 +14,18 @@
 
 // ported from https://github.com/golang/go/blob/master/src/math/log.go
 
+//
+// origin: FreeBSD /usr/src/lib/msun/src/s_log1p.c
+// ====================================================
+// Copyright (C) 1993 by Sun Microsystems, Inc. All rights reserved.
+//
+// Developed at SunSoft, a Sun Microsystems, Inc. business.
+// Permission to use, copy, modify, and distribute this
+// software is freely granted, provided that this notice
+// is preserved.
+// ====================================================
+//
+
 ///|
 let sqrt2 = 1.41421356237309504880168872420969807856967187537694807317667974
 
@@ -184,6 +196,133 @@ pub fn log10(self : Double) -> Double {
   z + e * log10_2hi
 }
 
+///|
+/// Calculates ln(1 + x) accurately even when x is close to zero.
+///
+/// Parameters:
+///
+/// * `self` : The number to which 1 is added before calculating the logarithm.
+///
+/// Returns the natural logarithm of 1 + `self`.
+///
+/// Special Cases:
+///
+/// * Returns `NaN` if `self` is `NaN` or less than -1.
+/// * Returns `-Infinity` if `self` is -1.
+/// * Returns `+Infinity` if `self` is `+Infinity`.
+///
+/// Example:
+///
+/// ```moonbit
+/// test "ln_1p" {
+///   inspect!(0.0.ln_1p(), content="0")
+///   inspect!(1.0.ln_1p(), content="0.6931471805599453")
+///   inspect!(2.0.ln_1p(), content="1.0986122886681096")
+///   inspect!(@double.not_a_number.ln_1p(), content="NaN")
+///   inspect!((-1.0).ln_1p(), content="-Infinity")
+///   inspect!((-2.0).ln_1p(), content="NaN")
+///   inspect!(@double.infinity.ln_1p(), content="Infinity")
+///   inspect!(@double.neg_infinity.ln_1p(), content="NaN")
+/// }
+/// ```
+pub fn ln_1p(self : Double) -> Double {
+  if self < -1.0 || self.is_nan() {
+    return not_a_number
+  }
+  if self == -1.0 {
+    return neg_infinity
+  }
+  if self.is_inf() {
+    return infinity
+  }
+  let ln2_hi = 6.93147180369123816490e-01
+  let ln2_lo = 1.90821492927058770002e-10
+  let two54 = 1.80143985094819840000e+16
+  let lp1 = 6.666666666666735130e-01
+  let lp2 = 3.999999999940941908e-01
+  let lp3 = 2.857142874366239149e-01
+  let lp4 = 2.222219843214978396e-01
+  let lp5 = 1.818357216161805012e-01
+  let lp6 = 1.531383769920937332e-01
+  let zero = 0.0
+  let lp7 = 1.479819860511658591e-01
+  let hx = get_high_word(self).reinterpret_as_int()
+  let ax = hx & 0x7fffffff
+  let mut f = 0.0
+  let mut c = 0.0
+  let mut s = 0.0
+  let mut z = 0.0
+  let mut r = 0.0
+  let mut u = 0.0
+  let mut hu = 0
+  let mut k = 1
+  if hx < 0x3FDA827A {
+    if ax < 0x3e200000 {
+      if two54 + self > zero && ax < 0x3c900000 {
+        return self
+      } else {
+        return self - self * self * 0.5
+      }
+    }
+    if hx > 0 || hx <= 0xbfd2bec3 {
+      k = 0
+      f = self
+      hu = 1
+    }
+  }
+  if k != 0 {
+    if hx < 0x43400000 {
+      u = 1.0 + self
+      hu = get_high_word(u).reinterpret_as_int()
+      k = (hu >> 20) - 1023
+      c = if k > 0 { 1.0 - (u - self) } else { self - (u - 1.0) }
+      c /= u
+    } else {
+      u = self
+      hu = get_high_word(u).reinterpret_as_int()
+      k = (hu >> 20) - 1023
+      c = 0.0
+    }
+    hu = hu & 0x000fffff
+    if hu < 0x6a09e {
+      u = set_high_word(u, hu.reinterpret_as_uint() | 0x3ff00000)
+    } else {
+      k += 1
+      u = set_high_word(u, hu.reinterpret_as_uint() | 0x3fe00000)
+      hu = (0x00100000 - hu) >> 2
+    }
+    f = u - 1.0
+  }
+  let hfsq = 0.5 * f * f
+  if hu == 0 {
+    if f == zero {
+      if k == 0 {
+        return zero
+      } else {
+        c += k.to_double() * ln2_lo
+        return k.to_double() * ln2_hi + c
+      }
+    }
+    r = hfsq * (1.0 - 0.66666666666666666 * f)
+    if k == 0 {
+      return f - r
+    } else {
+      return k.to_double() * ln2_hi - (r - (k.to_double() * ln2_lo + c) - f)
+    }
+  }
+  s = f / (2.0 + f)
+  z = s * s
+  r = z *
+    (lp1 + z * (lp2 + z * (lp3 + z * (lp4 + z * (lp5 + z * (lp6 + z * lp7))))))
+  if k == 0 {
+    return f - (hfsq - s * (hfsq + r))
+  } else {
+    return k.to_double() * ln2_hi -
+      (hfsq - (s * (hfsq + r) + (k.to_double() * ln2_lo + c)) - f)
+  }
+}
+
+///|
 test "log2 log10" {
   // log2
   assert_eq!(3.0.log2(), 1.584962500721156)
@@ -205,6 +344,7 @@ test "log2 log10" {
   assert_eq!(15.0.log10(), 1.1760912590556813)
 }
 
+///|
 test "ln" {
   assert_true!(not_a_number.ln().is_nan())
   assert_true!(infinity.ln().is_pos_inf())
@@ -234,4 +374,13 @@ test "ln" {
       _ => false
     },
   )
+}
+
+///|
+test "ln_1p" {
+  assert_true!(not_a_number.ln_1p().is_nan())
+  assert_true!(infinity.ln_1p().is_pos_inf())
+  assert_true!(neg_infinity.ln_1p().is_nan())
+  assert_true!((-1.0).ln_1p().is_neg_inf())
+  assert_eq!(0.0.ln_1p(), 0.0)
 }

@@ -1,9 +1,13 @@
-package moonbitlang/core/uint64
+package "moonbitlang/core/uint64"
 
 // Values
 let max_value : UInt64
 
 let min_value : UInt64
+
+fn to_be_bytes(UInt64) -> Bytes
+
+fn to_le_bytes(UInt64) -> Bytes
 
 // Types and methods
 impl UInt64 {

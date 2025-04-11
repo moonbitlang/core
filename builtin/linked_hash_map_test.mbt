@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+///|
 test "Map keys iter" {
   let map = { "a": 1, "b": 2, "c": 3 }
   let v = map.keys()
@@ -26,6 +27,7 @@ test "Map keys iter" {
   inspect!(({} : Map[String, Int]).values(), content="[]")
 }
 
+///|
 test "Map::from_iter" {
   let iter = [("a", 1), ("b", 2), ("c", 3)].iter()
   let map = Map::from_iter(iter)
@@ -37,6 +39,7 @@ test "Map::from_iter" {
   )
 }
 
+///|
 test "Map:: iter2" {
   let map = { "a": 1, "b": 2, "c": 3 }
   let v = map.iter2()

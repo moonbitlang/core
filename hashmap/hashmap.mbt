@@ -27,6 +27,7 @@ fn power_2_above(x : Int, n : Int) -> Int {
   }
 }
 
+///|
 test "power_2_above" {
   inspect!(power_2_above(1, 15), content="16")
   inspect!(power_2_above(1, 16), content="16")
@@ -393,7 +394,7 @@ pub fn remove[K : Hash + Eq, V](self : T[K, V], key : K) -> Unit {
 fn shift_back[K : Hash, V](self : T[K, V], start_index : Int) -> Unit {
   for prev = start_index, curr = (start_index + 1) & (self.capacity - 1) {
     match self.entries[curr] {
-      Some({ psl, hash, key, value, .. }) => {
+      Some({ psl, hash, key, value }) => {
         if psl == 0 {
           break
         }
@@ -413,10 +414,9 @@ fn grow[K : Eq, V](self : T[K, V]) -> Unit {
   self.entries = FixedArray::make(new_capacity, None)
   self.capacity = new_capacity
   self.size = 0
-  for i = 0; i < old_entries.length(); i = i + 1 {
-    match old_entries[i] {
-      Some({ key, value, hash, .. }) => self.set_with_hash(key, value, hash)
-      None => ()
+  for i in 0..<old_entries.length() {
+    if old_entries[i] is Some({ key, value, hash, .. }) {
+      self.set_with_hash(key, value, hash)
     }
   }
 }
@@ -448,6 +448,7 @@ pub fn of[K : Eq + Hash, V](arr : FixedArray[(K, V)]) -> T[K, V] {
   m
 }
 
+///|
 test "of" {
   let m = of([(1, 2), (3, 4)])
   inspect!(m.get(1), content="Some(2)")
@@ -489,7 +490,9 @@ pub impl[K : @quickcheck.Arbitrary + Hash + Eq, V : @quickcheck.Arbitrary] @quic
 priv type MyString String derive(Eq)
 
 ///|
-impl Hash for MyString with hash(self) { self._.length() }
+impl Hash for MyString with hash(self) {
+  self._.length()
+}
 
 ///|
 impl Hash for MyString with hash_combine(self, hasher) {
@@ -497,8 +500,11 @@ impl Hash for MyString with hash_combine(self, hasher) {
 }
 
 ///|
-impl Show for MyString with output(self, logger) { logger.write_string(self._) }
+impl Show for MyString with output(self, logger) {
+  logger.write_string(self._)
+}
 
+///|
 test "arbitrary" {
   let samples : Array[T[String, Int]] = @quickcheck.samples(20)
   inspect!(
@@ -515,6 +521,7 @@ test "arbitrary" {
   )
 }
 
+///|
 test "set" {
   let m : T[MyString, Int] = new()
   m.set("a", 1)
@@ -531,6 +538,7 @@ test "set" {
   )
 }
 
+///|
 test "remove" {
   let m : T[MyString, Int] = new()
   m.set("a", 1)
@@ -547,6 +555,7 @@ test "remove" {
   )
 }
 
+///|
 test "remove_unexist_key" {
   let m : T[MyString, Int] = new()
   m.set("a", 1)
@@ -557,16 +566,18 @@ test "remove_unexist_key" {
   inspect!(m.debug_entries(), content="_,(0,a,1),(0,ab,2),(0,abc,3),_,_,_,_")
 }
 
+///|
 test "clear" {
   let m : T[MyString, Int] = of([("a", 1), ("b", 2), ("c", 3)])
   m.clear()
   assert_eq!(m.size(), 0)
   assert_eq!(m.capacity(), 8)
-  for i = 0; i < m.capacity(); i = i + 1 {
+  for i in 0..<m.capacity() {
     @test.same_object!(m.entries[i], None)
   }
 }
 
+///|
 test "grow" {
   let m : T[MyString, Int] = new()
   m.set("C", 1)

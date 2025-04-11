@@ -24,8 +24,8 @@
 /// # Returns
 ///
 /// Returns an iterator that iterates over the range of Int from `start` to `end - 1`.
-/// @alert deprecated "Use `..<` in for loop or `until` method instead"
-/// @coverage.skip
+#deprecated("Use `..<` in for loop or `until` method instead")
+#coverage.skip
 pub fn Int::upto(self : Int, end : Int, inclusive~ : Bool = false) -> Iter[Int] {
   fn(yield_) {
     let mut i = self
@@ -55,8 +55,8 @@ pub fn Int::upto(self : Int, end : Int, inclusive~ : Bool = false) -> Iter[Int] 
 /// # Returns
 ///
 /// Returns an iterator that iterates over the range of UInt from `start` to `end - 1`.
-/// @alert deprecated "Use `..<` in for loop or `until` method instead"
-/// @coverage.skip
+#deprecated("Use `..<` in for loop or `until` method instead")
+#coverage.skip
 pub fn UInt::upto(
   self : UInt,
   end : UInt,
@@ -90,8 +90,8 @@ pub fn UInt::upto(
 /// # Returns
 ///
 /// Returns an iterator that iterates over the range of UInt64 from `start` to `end - 1`.
-/// @alert deprecated "Use `..<` in for loop or `until` method instead"
-/// @coverage.skip
+#deprecated("Use `..<` in for loop or `until` method instead")
+#coverage.skip
 pub fn UInt64::upto(
   self : UInt64,
   end : UInt64,
@@ -125,8 +125,8 @@ pub fn UInt64::upto(
 /// # Returns
 ///
 /// Returns an iterator that iterates over the range of Int64 from `start` to `end - 1`.
-/// @alert deprecated "Use `..<` in for loop or `until` method instead"
-/// @coverage.skip
+#deprecated("Use `..<` in for loop or `until` method instead")
+#coverage.skip
 pub fn Int64::upto(
   self : Int64,
   end : Int64,
@@ -160,8 +160,8 @@ pub fn Int64::upto(
 /// # Returns
 ///
 /// Returns an iterator that iterates over the range of Float from `start` to `end - 1`.
-/// @alert deprecated "Use `..<` in for loop or `until` method instead"
-/// @coverage.skip
+#deprecated("Use `..<` in for loop or `until` method instead")
+#coverage.skip
 pub fn Float::upto(
   self : Float,
   end : Float,
@@ -195,8 +195,8 @@ pub fn Float::upto(
 /// # Returns
 ///
 /// Returns an iterator that iterates over the range of Double from `start` to `end - 1`.
-/// @alert deprecated "Use `..<` in for loop or `until` method instead"
-/// @coverage.skip
+#deprecated("Use `..<` in for loop or `until` method instead")
+#coverage.skip
 pub fn Double::upto(
   self : Double,
   end : Double,

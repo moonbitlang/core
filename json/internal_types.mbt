@@ -33,11 +33,6 @@ fn CharClass::of(array : Array[(Char, Char)]) -> CharClass {
 }
 
 ///|
-fn CharClass::from_array(array : Array[(Char, Char)]) -> CharClass {
-  CharClass(array)
-}
-
-///|
 fn contains(self : CharClass, c : Char) -> Bool {
   for left = 0, right = self._.length(); left < right; {
     let middle = (left + right) / 2
@@ -66,5 +61,5 @@ priv enum Token {
   LBracket
   RBracket
   Comma
-  Colon
+  // Colon
 } derive(Eq, Show)

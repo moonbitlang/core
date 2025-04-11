@@ -25,45 +25,48 @@ pub fn valid(input : String) -> Bool {
 ///|
 pub fn parse(input : String) -> JsonValue!ParseError {
   let ctx = ParseContext::make(input)
-  let val = parse_value!(ctx)
-  lex_skip_whitespace(ctx)
+  let val = ctx.parse_value!()
+  ctx.lex_skip_whitespace()
   if ctx.offset >= ctx.end_offset {
     val
   } else {
-    invalid_char!(ctx)
+    ctx.invalid_char!()
   }
 }
 
 ///|
-fn parse_value(ctx : ParseContext) -> JsonValue!ParseError {
-  let tok = lex_value!(ctx)
-  parse_value2!(ctx, tok)
+fn ParseContext::parse_value(ctx : ParseContext) -> JsonValue!ParseError {
+  let tok = ctx.lex_value!(allow_rbracket=false)
+  ctx.parse_value2!(tok)
 }
 
 ///|
-fn parse_value2(ctx : ParseContext, tok : Token) -> JsonValue!ParseError {
+fn ParseContext::parse_value2(
+  ctx : ParseContext,
+  tok : Token
+) -> JsonValue!ParseError {
   match tok {
     Null => Null
     True => True
     False => False
     Number(n) => Number(n)
     String(s) => String(s)
-    LBrace => parse_object!(ctx)
-    LBracket => parse_array!(ctx)
-    _ => abort("unreachable")
+    LBrace => ctx.parse_object!()
+    LBracket => ctx.parse_array!()
+    RBracket | RBrace | Comma => abort("unreachable")
   }
 }
 
 ///|
-fn parse_object(ctx : ParseContext) -> JsonValue!ParseError {
+fn ParseContext::parse_object(ctx : ParseContext) -> JsonValue!ParseError {
   let map = Map::new()
-  loop lex_property_name!(ctx) {
+  loop ctx.lex_property_name!() {
     RBrace => Object(map)
     String(name) => {
-      guard let Colon = lex_after_property_name!(ctx)
-      map[name] = parse_value!(ctx)
-      match lex_after_object_value!(ctx) {
-        Comma => continue lex_property_name2!(ctx)
+      ctx.lex_after_property_name!()
+      map[name] = ctx.parse_value!()
+      match ctx.lex_after_object_value!() {
+        Comma => continue ctx.lex_property_name2!()
         RBrace => Object(map)
         _ => abort("unreachable")
       }
@@ -73,15 +76,15 @@ fn parse_object(ctx : ParseContext) -> JsonValue!ParseError {
 }
 
 ///|
-fn parse_array(ctx : ParseContext) -> JsonValue!ParseError {
+fn ParseContext::parse_array(ctx : ParseContext) -> JsonValue!ParseError {
   let vec = []
-  loop lex_value!(ctx, allow_rbracket=true) {
+  loop ctx.lex_value!(allow_rbracket=true) {
     RBracket => Array(vec)
     tok => {
-      vec.push(parse_value2!(ctx, tok))
-      let tok2 = lex_after_array_value!(ctx)
+      vec.push(ctx.parse_value2!(tok))
+      let tok2 = ctx.lex_after_array_value!()
       match tok2 {
-        Comma => continue lex_value!(ctx, allow_rbracket=false)
+        Comma => continue ctx.lex_value!(allow_rbracket=false)
         RBracket => Array(vec)
         _ => abort("unreachable")
       }

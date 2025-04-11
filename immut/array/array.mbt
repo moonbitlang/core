@@ -45,8 +45,8 @@ pub fn of[A](arr : FixedArray[A]) -> T[A] {
 /// Since it is an immutable data structure,
 /// it is rarely the case that you would need this function.
 /// 
-/// @alert deprecated "We don't copy immutable array"
-/// @coverage.skip
+#deprecated("We don't copy immutable array")
+#coverage.skip
 pub fn copy[A](self : T[A]) -> T[A] {
   fn copy(t : Tree[A]) -> Tree[A] {
     match t {
@@ -84,7 +84,7 @@ pub fn from_iter[A](iter : Iter[A]) -> T[A] {
 }
 
 //-----------------------------------------------------------------------------
-// Convertor (convert T to other types)
+// Converter (convert T to other types)
 //-----------------------------------------------------------------------------
 
 ///|
@@ -188,7 +188,7 @@ pub fn concat[A](self : T[A], other : T[A]) -> T[A] {
 
 ///|
 /// Concat two arrays.
-pub fn op_add[A](self : T[A], other : T[A]) -> T[A] {
+pub impl[A] Add for T[A] with op_add(self, other) {
   self.concat(other)
 }
 
@@ -262,8 +262,8 @@ pub fn rev_fold[A, B](self : T[A], init~ : B, f : (B, A) -> B) -> B {
 /// let v = @array.of([1, 2, 3, 4, 5])
 /// assert_eq!(v.fold(fn(a, b) { a + b }, init=0), 15)
 /// ```
-/// @alert deprecated "Use `fold` instead"
-/// @coverage.skip
+#deprecated("Use `fold` instead")
+#coverage.skip
 pub fn fold_left[A](self : T[A], f : (A, A) -> A, init~ : A) -> A {
   self.fold(init~, f)
 }
@@ -276,8 +276,8 @@ pub fn fold_left[A](self : T[A], f : (A, A) -> A, init~ : A) -> A {
 /// let v = @array.of([1, 2, 3, 4, 5])
 /// assert_eq!(v.rev_fold(fn(a, b) { a + b }, init=0), 15)
 /// ```
-/// @alert deprecated "Use `rev_fold` instead"
-/// @coverage.skip
+#deprecated("Use `rev_fold` instead")
+#coverage.skip
 pub fn fold_right[A](self : T[A], f : (A, A) -> A, init~ : A) -> A {
   self.rev_fold(init~, f)
 }

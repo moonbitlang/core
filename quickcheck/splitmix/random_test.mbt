@@ -12,17 +12,20 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+///|
 test "RandomState::next" {
   let state = @splitmix.new()
   let _ = state.next()
   inspect!(state.next_uint(), content="1118850684")
 }
 
+///|
 test "next_two_uint should return two 32-bit unsigned integers" {
   let state = @splitmix.new()
   inspect!(state.next_two_uint(), content="(520772969, 1037978766)")
 }
 
+///|
 test "clone_random_state" {
   let state = @splitmix.new(seed=42UL)
   let cloned = @splitmix.clone(state)
@@ -35,6 +38,7 @@ test "clone_random_state" {
   inspect!(orig_int == clone_int, content="true")
 }
 
+///|
 test "next_float" {
   let state = @splitmix.new(seed=42UL)
   let result = state.next_float()

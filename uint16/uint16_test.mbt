@@ -12,12 +12,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+///|
 test "UInt16::to_int" {
   inspect!(UInt16::to_int(0), content="0")
   inspect!(UInt16::to_int(123), content="123")
   inspect!(UInt16::to_int(65535), content="65535")
 }
 
+///|
 test "UInt16::from_int" {
   inspect!(Int::to_uint16(0), content="0")
   inspect!(Int::to_uint16(123), content="123")
@@ -31,24 +33,28 @@ test "UInt16::from_int" {
   inspect!(Int::to_uint16(-65537), content="65535")
 }
 
+///|
 test "UInt16::to_byte" {
   inspect!(UInt16::to_byte(0), content="b'\\x00'")
   inspect!(UInt16::to_byte(123), content="b'\\x7B'")
   inspect!(UInt16::to_byte(65535), content="b'\\xFF'")
 }
 
+///|
 test "UInt16::from_byte" {
   inspect!(Byte::to_uint16(0), content="0")
   inspect!(Byte::to_uint16(123), content="123")
   inspect!(Byte::to_uint16(255), content="255")
 }
 
+///|
 test "UInt16::to_int64" {
   inspect!(UInt16::to_int64(0), content="0")
   inspect!(UInt16::to_int64(123), content="123")
   inspect!(UInt16::to_int64(65535), content="65535")
 }
 
+///|
 test "UInt16::from_int64" {
   inspect!(Int::to_uint16(0), content="0")
   inspect!(Int::to_uint16(123), content="123")
@@ -67,6 +73,7 @@ test "UInt16::from_int64" {
   inspect!(Int::to_uint16(16384), content="16384") // 1/4 of max value
 }
 
+///|
 test "UInt16::op_add" {
   fn add(a : UInt16, b : UInt16) -> UInt16 {
     a + b
@@ -84,6 +91,7 @@ test "UInt16::op_add" {
   inspect!(add(0, 65535), content="65535") // Adding 0 to max
 }
 
+///|
 test "UInt16::op_sub" {
   fn sub(a : UInt16, b : UInt16) -> UInt16 {
     a - b
@@ -102,6 +110,7 @@ test "UInt16::op_sub" {
   inspect!(sub(32768, 32768), content="0") // Equal large numbers
 }
 
+///|
 test "UInt16::op_mul" {
   fn mul(a : UInt16, b : UInt16) -> UInt16 {
     a * b
@@ -120,6 +129,7 @@ test "UInt16::op_mul" {
   inspect!(mul(65535, 65535), content="1") // Max * max wraps to 1
 }
 
+///|
 test "UInt16::op_div" {
   fn div(a : UInt16, b : UInt16) -> UInt16 {
     a / b
@@ -138,6 +148,7 @@ test "UInt16::op_div" {
   inspect!(div(65535, 10), content="6553") // Max value / 10
 }
 
+///|
 test "UInt16::compare" {
   inspect!(UInt16::compare(1, 2), content="-1")
   inspect!(UInt16::compare(2, 1), content="1")
@@ -160,12 +171,14 @@ test "UInt16::compare" {
   inspect!(UInt16::compare(40000, 50000), content="-1")
 }
 
+///|
 test "UInt16::hash" {
   inspect!(UInt16::hash(0), content="0")
   inspect!(UInt16::hash(123), content="123")
   inspect!(UInt16::hash(65535), content="65535")
 }
 
+///|
 test "UInt16::op_equal" {
   inspect!(UInt16::op_equal(1, 2), content="false")
   inspect!(UInt16::op_equal(2, 1), content="false")
@@ -173,4 +186,126 @@ test "UInt16::op_equal" {
   inspect!(UInt16::op_equal(0, 1), content="false")
   inspect!(UInt16::op_equal(1, 0), content="false")
   inspect!(UInt16::op_equal(0, 0), content="true")
+}
+
+///|
+test "UInt16::op_shl" {
+  fn shl(a : UInt16, b : Int) -> UInt16 {
+    a << b
+  }
+
+  inspect!(shl(0, 0), content="0")
+  inspect!(shl(1, 0), content="1")
+  inspect!(shl(1, 1), content="2")
+  inspect!(shl(1, 2), content="4")
+  inspect!(shl(1, 3), content="8")
+  inspect!(shl(1, 4), content="16")
+  inspect!(shl(1, 5), content="32")
+  inspect!(shl(1, 6), content="64")
+  inspect!(shl(1, 7), content="128")
+  inspect!(shl(1, 8), content="256")
+  inspect!(shl(1, 9), content="512")
+  inspect!(shl(1, 10), content="1024")
+  inspect!(shl(1, 11), content="2048")
+  inspect!(shl(1, 12), content="4096")
+  inspect!(shl(1, 13), content="8192")
+  inspect!(shl(1, 14), content="16384")
+  inspect!(shl(1, 15), content="32768")
+  inspect!(shl(1, 16), content="0")
+}
+
+///|
+test "UInt16::op_shr" {
+  fn shr(a : UInt16, b : Int) -> UInt16 {
+    a >> b
+  }
+
+  inspect!(shr(0, 0), content="0")
+  inspect!(shr(1, 0), content="1")
+  inspect!(shr(2, 1), content="1")
+  inspect!(shr(4, 2), content="1")
+  inspect!(shr(8, 3), content="1")
+  inspect!(shr(16, 4), content="1")
+  inspect!(shr(32, 5), content="1")
+  inspect!(shr(64, 6), content="1")
+  inspect!(shr(128, 7), content="1")
+  inspect!(shr(256, 8), content="1")
+  inspect!(shr(512, 9), content="1")
+  inspect!(shr(1024, 10), content="1")
+  inspect!(shr(2048, 11), content="1")
+  inspect!(shr(4096, 12), content="1")
+  inspect!(shr(8192, 13), content="1")
+  inspect!(shr(16384, 14), content="1")
+  inspect!(shr(32768, 15), content="1")
+  inspect!(shr(0, 16), content="0")
+}
+
+///|
+test "UInt16::lor" {
+  fn lor(a : UInt16, b : UInt16) -> UInt16 {
+    a | b
+  }
+
+  inspect!(lor(0, 0), content="0")
+  inspect!(lor(1, 0), content="1")
+  inspect!(lor(0, 1), content="1")
+  inspect!(lor(1, 1), content="1")
+  inspect!(lor(0, 65535), content="65535")
+  inspect!(lor(65535, 0), content="65535")
+  inspect!(lor(65535, 65535), content="65535")
+  inspect!(lor(32768, 32768), content="32768")
+  inspect!(lor(32768, 16384), content="49152")
+  inspect!(lor(16384, 32768), content="49152")
+  inspect!(lor(16384, 16384), content="16384")
+  inspect!(lor(1000, 2000), content="2040")
+  inspect!(lor(2000, 1000), content="2040")
+  inspect!(lor(50000, 50000), content="50000")
+  inspect!(lor(50000, 40000), content="57168")
+  inspect!(lor(40000, 50000), content="57168")
+}
+
+///|
+test "UInt16::land" {
+  fn land(a : UInt16, b : UInt16) -> UInt16 {
+    a & b
+  }
+
+  inspect!(land(0, 0), content="0")
+  inspect!(land(1, 0), content="0")
+  inspect!(land(0, 1), content="0")
+  inspect!(land(1, 1), content="1")
+  inspect!(land(65535, 65535), content="65535")
+  inspect!(land(65535, 0), content="0")
+  inspect!(land(0, 65535), content="0")
+  inspect!(land(32768, 32768), content="32768")
+  inspect!(land(32768, 16384), content="0")
+  inspect!(land(16384, 32768), content="0")
+  inspect!(land(1000, 2000), content="960")
+  inspect!(land(2000, 1000), content="960")
+  inspect!(land(50000, 50000), content="50000")
+  inspect!(land(50000, 40000), content="32832")
+  inspect!(land(40000, 50000), content="32832")
+}
+
+///|
+test "UInt16::lxor" {
+  fn lxor(a : UInt16, b : UInt16) -> UInt16 {
+    a ^ b
+  }
+
+  inspect!(lxor(0, 0), content="0")
+  inspect!(lxor(1, 0), content="1")
+  inspect!(lxor(0, 1), content="1")
+  inspect!(lxor(1, 1), content="0")
+  inspect!(lxor(65535, 65535), content="0")
+  inspect!(lxor(65535, 0), content="65535")
+  inspect!(lxor(0, 65535), content="65535")
+  inspect!(lxor(32768, 32768), content="0")
+  inspect!(lxor(32768, 16384), content="49152")
+  inspect!(lxor(16384, 32768), content="49152")
+  inspect!(lxor(1000, 2000), content="1080")
+  inspect!(lxor(2000, 1000), content="1080")
+  inspect!(lxor(50000, 50000), content="0")
+  inspect!(lxor(50000, 40000), content="24336")
+  inspect!(lxor(40000, 50000), content="24336")
 }

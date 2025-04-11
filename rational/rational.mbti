@@ -1,9 +1,27 @@
-package moonbitlang/core/rational
+package "moonbitlang/core/rational"
 
 // Values
+fn abs(T) -> T
+
+fn ceil(T) -> Int64
+
+fn floor(T) -> Int64
+
+fn fract(T) -> T
+
 fn from_double(Double) -> T!RationalError
 
+fn is_integer(T) -> Bool
+
+fn neg(T) -> T
+
 fn new(Int64, Int64) -> T?
+
+fn reciprocal(T) -> T
+
+fn to_double(T) -> Double
+
+fn trunc(T) -> Int64
 
 // Types and methods
 pub(all) type! RationalError String
@@ -14,23 +32,25 @@ type T
 impl T {
   abs(Self) -> Self
   ceil(Self) -> Int64
-  compare(Self, Self) -> Int
   floor(Self) -> Int64
   fract(Self) -> Self
-  from_double(Double) -> Self!RationalError //deprecated
+  #deprecated
+  from_double(Double) -> Self!RationalError
   is_integer(Self) -> Bool
   neg(Self) -> Self
-  new(Int64, Int64) -> Self? //deprecated
-  op_add(Self, Self) -> Self
-  op_div(Self, Self) -> Self
-  op_equal(Self, Self) -> Bool
-  op_mul(Self, Self) -> Self
-  op_sub(Self, Self) -> Self
+  #deprecated
+  new(Int64, Int64) -> Self?
   reciprocal(Self) -> Self
   to_double(Self) -> Double
   trunc(Self) -> Int64
 }
+impl Add for T
+impl Compare for T
+impl Div for T
+impl Eq for T
+impl Mul for T
 impl Show for T
+impl Sub for T
 impl @moonbitlang/core/quickcheck.Arbitrary for T
 
 // Type aliases

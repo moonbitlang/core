@@ -12,11 +12,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+///|
 test "show" {
   let f : Float = 3.14159
   inspect!(f, content="3.141590118408203")
 }
 
+///|
 test {
   assert_eq!(Float::abs(1.0), 1.0)
   assert_eq!(Float::abs(-1.0), 1.0)
@@ -24,6 +26,7 @@ test {
   inspect!(f.to_string(), content="0")
 }
 
+///|
 test "abs" {
   inspect!(1.0.abs(), content="1")
   inspect!((-1.0).abs(), content="1")
@@ -35,6 +38,7 @@ test "abs" {
   inspect!(@double.neg_infinity.abs(), content="Infinity")
 }
 
+///|
 test "Float::to_int" {
   inspect!((0.0 : Float).to_int(), content="0")
   inspect!((1.0 : Float).to_int(), content="1")
@@ -61,6 +65,7 @@ test "Float::to_int" {
   inspect!((-2147483649.0 : Float).to_int(), content="-2147483648")
 }
 
+///|
 test "Hash" {
   struct A {
     a : Float
@@ -71,6 +76,7 @@ test "Hash" {
   inspect!((2.0 : Float).hash(), content="-1861484393")
 }
 
+///|
 test "Float::is_inf/special_values" {
   inspect!(@float.infinity.is_inf(), content="true")
   inspect!(@float.neg_infinity.is_inf(), content="true")
@@ -81,6 +87,7 @@ test "Float::is_inf/special_values" {
   inspect!(@float.min_positive.is_inf(), content="false")
 }
 
+///|
 test "@float.Float::is_pos_inf/special_values" {
   inspect!(@float.infinity.is_pos_inf(), content="true")
   inspect!(@float.neg_infinity.is_pos_inf(), content="false")
@@ -93,6 +100,7 @@ test "@float.Float::is_pos_inf/special_values" {
   inspect!((-1.0 : Float).is_pos_inf(), content="false")
 }
 
+///|
 test "@float.Float::is_neg_inf" {
   inspect!((-1.0 : Float).is_neg_inf(), content="false")
   inspect!((0.0 : Float).is_neg_inf(), content="false")
@@ -104,6 +112,7 @@ test "@float.Float::is_neg_inf" {
   inspect!((@float.min_value - 1.0e38).is_neg_inf(), content="true")
 }
 
+///|
 test "@float.Float::is_nan" {
   inspect!((0.0 : Float).is_nan(), content="false")
   inspect!((1.0 : Float).is_nan(), content="false")
@@ -116,10 +125,12 @@ test "@float.Float::is_nan" {
   inspect!(@float.min_positive.is_nan(), content="false")
 }
 
+///|
 test "Float::default()" {
   inspect!(Float::default(), content="0")
 }
 
+///|
 test "Float::to_be_bytes with various values" {
   let f1 : Float = 0.0
   inspect!(f1.to_be_bytes(), content="b\"\\x00\\x00\\x00\\x00\"")
@@ -131,6 +142,7 @@ test "Float::to_be_bytes with various values" {
   inspect!(f4.to_be_bytes(), content="b\"\\x7f\\xc0\\x00\\x00\"")
 }
 
+///|
 test "to_le_bytes for zero" {
   inspect!(
     (0.0 : Float).to_le_bytes(),

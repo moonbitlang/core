@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+///|
 test "trunc" {
   assert_eq!(
     @float.not_a_number.trunc().reinterpret_as_uint(),
@@ -45,6 +46,7 @@ test "trunc" {
   assert_eq!((-16777216.0 : Float).trunc(), -16777216.0)
 }
 
+///|
 test "ceil" {
   assert_eq!(
     @float.not_a_number.ceil().reinterpret_as_uint(),
@@ -78,6 +80,7 @@ test "ceil" {
   assert_eq!((-16777216.0 : Float).ceil(), -16777216.0)
 }
 
+///|
 test "floor" {
   assert_eq!(
     @float.not_a_number.floor().reinterpret_as_uint(),
@@ -111,6 +114,7 @@ test "floor" {
   assert_eq!((-16777216.0 : Float).floor(), -16777216.0)
 }
 
+///|
 test "round" {
   assert_eq!(
     @float.not_a_number.round().reinterpret_as_uint(),

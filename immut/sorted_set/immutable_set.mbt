@@ -23,7 +23,9 @@ pub fn new[A]() -> T[A] {
 }
 
 ///|
-pub impl[A] Default for T[A] with default() { Empty }
+pub impl[A] Default for T[A] with default() {
+  Empty
+}
 
 ///|
 /// Returns the one-value ImmutableSet containing only `value`.
@@ -74,9 +76,10 @@ pub fn remove_min[A : Compare](self : T[A]) -> T[A] {
   match self {
     Empty => abort("remove_min: empty ImmutableSet")
     Node(left~, right~, value~, ..) =>
-      match left {
-        Empty => right
-        _ => balance(left.remove_min(), value, right)
+      if left is Empty {
+        right
+      } else {
+        balance(left.remove_min(), value, right)
       }
   }
 }
@@ -161,11 +164,7 @@ pub fn remove[A : Compare](self : T[A], value : A) -> T[A] {
 pub fn min[A : Compare](self : T[A]) -> A {
   match self {
     Empty => abort("min: there are no values in sorted_set.")
-    Node(left~, value~, ..) =>
-      match left {
-        Empty => value
-        _ => left.min()
-      }
+    Node(left~, value~, ..) => if left is Empty { value } else { left.min() }
   }
 }
 
@@ -176,9 +175,10 @@ pub fn min_option[A : Compare](self : T[A]) -> A? {
   match self {
     Empty => None
     Node(left~, value~, ..) =>
-      match left {
-        Empty => Some(value)
-        _ => left.min_option()
+      if left is Empty {
+        Some(value)
+      } else {
+        left.min_option()
       }
   }
 }
@@ -195,11 +195,7 @@ pub fn min_option[A : Compare](self : T[A]) -> A? {
 pub fn max[A : Compare](self : T[A]) -> A {
   match self {
     Empty => abort("max: there are no values in ImmutableSet.")
-    Node(right~, value~, ..) =>
-      match right {
-        Empty => value
-        _ => right.max()
-      }
+    Node(right~, value~, ..) => if right is Empty { value } else { right.max() }
   }
 }
 
@@ -210,9 +206,10 @@ pub fn max_option[A : Compare](self : T[A]) -> A? {
   match self {
     Empty => None
     Node(right~, value~, ..) =>
-      match right {
-        Empty => Some(value)
-        _ => right.max_option()
+      if right is Empty {
+        Some(value)
+      } else {
+        right.max_option()
       }
   }
 }
@@ -251,10 +248,7 @@ pub fn split[A : Compare](self : T[A], divide : A) -> (T[A], Bool, T[A]) {
 ///|
 /// Returns true if sorted_set is empty
 pub fn is_empty[A : Compare](self : T[A]) -> Bool {
-  match self {
-    Empty => true
-    _ => false
-  }
+  self is Empty
 }
 
 ///|
@@ -309,13 +303,13 @@ pub fn union[A : Compare](self : T[A], other : T[A]) -> T[A] {
 /// ```
 /// assert_eq!(@sorted_set.of([3, 4, 5]) + (@sorted_set.of([4, 5, 6])), @sorted_set.of([3, 4, 5, 6]))
 /// ```
-pub fn op_add[A : Compare](self : T[A], other : T[A]) -> T[A] {
+pub impl[A : Compare] Add for T[A] with op_add(self, other) {
   return self.union(other)
 }
 
 ///|
-/// @alert deprecated "Use `intersection` instead"
-/// @coverage.skip
+#deprecated("Use `intersection` instead")
+#coverage.skip
 pub fn inter[A : Compare](self : T[A], other : T[A]) -> T[A] {
   self.intersection(other)
 }
@@ -348,8 +342,8 @@ pub fn intersection[A : Compare](self : T[A], other : T[A]) -> T[A] {
 /// assert_eq!(@sorted_set.of([1, 2, 3]).difference(@sorted_set.of([4, 5, 1])), @sorted_set.of([2, 3]))
 /// ```
 ///
-/// @alert deprecated "Use `difference` instead"
-/// @coverage.skip
+#deprecated("Use `difference` instead")
+#coverage.skip
 pub fn diff[A : Compare](self : T[A], other : T[A]) -> T[A] {
   self.difference(other)
 }
@@ -562,19 +556,16 @@ pub impl[A : @json.FromJson + Compare] @json.FromJson for T[A] with from_json(
   json,
   path
 ) {
-  match json {
-    Array(arr) => {
-      let mut set = new()
-      for i in arr {
-        set = set.add(A::from_json!(i, path))
-      }
-      set
-    }
-    _ =>
-      raise @json.JsonDecodeError(
-        (path, "@immut/sorted_set.from_json: expected array"),
-      )
+  guard json is Array(arr) else {
+    raise @json.JsonDecodeError(
+      (path, "@immut/sorted_set.from_json: expected array"),
+    )
   }
+  let mut set = new()
+  for i in arr {
+    set = set.add(A::from_json!(i, path))
+  }
+  set
 }
 
 ///|
@@ -778,6 +769,7 @@ pub impl[A : Hash] Hash for T[A] with hash_combine(self, hasher) {
   }
 }
 
+///|
 test "split_bis" {
   inspect!(of([1, 2, 3]).split_bis(1), content="Found")
   inspect!(of([1, 2, 3]).split_bis(3), content="Found")
@@ -785,6 +777,7 @@ test "split_bis" {
   inspect!(of([1, 2, 3]).split_bis(4), content="NotFound")
 }
 
+///|
 test "balance with left height greater" {
   let left = of([1, 2, 3])
   let value = 4
@@ -793,6 +786,7 @@ test "balance with left height greater" {
   inspect!(balanced_set, content="@immut/sorted_set.of([1, 2, 3, 4, 5])")
 }
 
+///|
 test "balance with right height greater" {
   let left = of([1])
   let value = 2
@@ -801,6 +795,7 @@ test "balance with right height greater" {
   inspect!(balanced_set, content="@immut/sorted_set.of([1, 2, 3, 4, 5])")
 }
 
+///|
 test "join with different heights" {
   let left = of([1, 2, 3])
   let value = 4
@@ -809,6 +804,7 @@ test "join with different heights" {
   inspect!(joined_set, content="@immut/sorted_set.of([1, 2, 3, 4, 5, 6, 7])")
 }
 
+///|
 test "hash" {
   assert_eq!(Hash::hash(of([1, 2, 3, 4])), Hash::hash(of([3, 2]).add(1).add(4)))
   assert_not_eq!(Hash::hash(of([1, 2, 3])), Hash::hash(of([1, 2, 4])))

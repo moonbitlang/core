@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+///|
 test "Basic" {
   assert_eq!(@ryu.ryu_to_string(0.0), "0")
   assert_eq!(@ryu.ryu_to_string(-0.0), "0")
@@ -24,6 +25,7 @@ test "Basic" {
   assert_eq!(@ryu.ryu_to_string(1234000000000000.0), "1234000000000000")
 }
 
+///|
 test "Switch to Subnormal" {
   assert_eq!(
     @ryu.ryu_to_string(2.2250738585072014e-308),
@@ -35,6 +37,7 @@ test "Switch to Subnormal" {
   )
 }
 
+///|
 test "Min and Max" {
   assert_eq!(
     @ryu.ryu_to_string(0x7FEF_FFFF_FFFF_FFFFL.reinterpret_as_double()),
@@ -43,6 +46,7 @@ test "Min and Max" {
   assert_eq!(@ryu.ryu_to_string(1L.reinterpret_as_double()), "5e-324")
 }
 
+///|
 test "Lots of Trailing Zeros" {
   assert_eq!(
     @ryu.ryu_to_string(2.98023223876953125e-8),
@@ -50,6 +54,7 @@ test "Lots of Trailing Zeros" {
   )
 }
 
+///|
 test "Regression" {
   assert_eq!(@ryu.ryu_to_string(-2.109808898695963e16), "-21098088986959630")
   assert_eq!(@ryu.ryu_to_string(4.940656e-318), "4.940656e-318")
@@ -75,6 +80,7 @@ test "Regression" {
   assert_eq!(@ryu.ryu_to_string(4.3816050601147837e18), "4381605060114783700")
 }
 
+///|
 test "Looks Like Pow5" {
   assert_eq!(
     @ryu.ryu_to_string(0x4830F0CF064DD592L.reinterpret_as_double()),
@@ -90,6 +96,7 @@ test "Looks Like Pow5" {
   )
 }
 
+///|
 test "Output Length" {
   assert_eq!(@ryu.ryu_to_string(1.0), "1")
   assert_eq!(@ryu.ryu_to_string(1.2), "1.2")
@@ -110,6 +117,7 @@ test "Output Length" {
   assert_eq!(@ryu.ryu_to_string(1.2345678901234567), "1.2345678901234567")
 }
 
+///|
 test "32-bit chunking" {
   assert_eq!(@ryu.ryu_to_string(4.294967294), "4.294967294")
   assert_eq!(@ryu.ryu_to_string(4.294967295), "4.294967295")
@@ -118,6 +126,7 @@ test "32-bit chunking" {
   assert_eq!(@ryu.ryu_to_string(4.294967298), "4.294967298")
 }
 
+///|
 test "Min Max Shift" {
   assert_eq!(
     @ryu.ryu_to_string(ieee_parts_to_double(false, 4, 0L)),
@@ -157,6 +166,7 @@ test "Min Max Shift" {
   )
 }
 
+///|
 test "Small Integers" {
   // 2^53-1
   assert_eq!(@ryu.ryu_to_string(9007199254740991.0), "9007199254740991")
@@ -181,6 +191,7 @@ test "Small Integers" {
   assert_eq!(@ryu.ryu_to_string(1.234567890123456e+15), "1234567890123456")
 }
 
+///|
 test "10^i" {
   assert_eq!(@ryu.ryu_to_string(1.0e-15), "1e-15")
   assert_eq!(@ryu.ryu_to_string(1.0e-14), "1e-14")
@@ -215,6 +226,7 @@ test "10^i" {
   assert_eq!(@ryu.ryu_to_string(1.0e+15), "1000000000000000")
 }
 
+///|
 test "10^15 + 10^i" {
   assert_eq!(@ryu.ryu_to_string(1.0e+15 + 1.0e+0), "1000000000000001")
   assert_eq!(@ryu.ryu_to_string(1.0e+15 + 1.0e+1), "1000000000000010")
@@ -233,6 +245,7 @@ test "10^15 + 10^i" {
   assert_eq!(@ryu.ryu_to_string(1.0e+15 + 1.0e+14), "1100000000000000")
 }
 
+///|
 test "Largest power of 2 <= 10^(i+1)" {
   assert_eq!(@ryu.ryu_to_string(8.0), "8")
   assert_eq!(@ryu.ryu_to_string(64.0), "64")
@@ -252,6 +265,7 @@ test "Largest power of 2 <= 10^(i+1)" {
   assert_eq!(@ryu.ryu_to_string(9007199254740992.0), "9007199254740992")
 }
 
+///|
 test "1000 * (Largest power of 2 <= 10^(i+1))" {
   assert_eq!(@ryu.ryu_to_string(8.0e+3), "8000")
   assert_eq!(@ryu.ryu_to_string(64.0e+3), "64000")
@@ -268,6 +282,7 @@ test "1000 * (Largest power of 2 <= 10^(i+1))" {
   assert_eq!(@ryu.ryu_to_string(8796093022208.0e+3), "8796093022208000")
 }
 
+///|
 test "boundary conditions" {
   // x = 1.0e7
   assert_eq!(@ryu.ryu_to_string(1.0e7), "10000000")
@@ -289,12 +304,14 @@ fn ieee_parts_to_double(
   ((sign.to_int64() << 63) | (ieeeExponent.to_int64() << 52) | ieeeMantissa).reinterpret_as_double()
 }
 
+///|
 test "double/ryu.mbt:90" {
   let value = 100L
   assert_eq!(value % 25L, 0L)
   assert_not_eq!(value % 125L, 0L)
 }
 
+///|
 test "double/ryu.mbt:403" {
   let acceptBounds = true
   let mmShift = 1L
@@ -312,12 +329,14 @@ test "double/ryu.mbt:403" {
   assert_eq!(vp, 10L)
 }
 
+///|
 test "double/ryu.mbt:90" {
   let value = 100L
   assert_eq!(value % 25L, 0L)
   assert_not_eq!(value % 125L, 0L)
 }
 
+///|
 test "double/ryu.mbt:403" {
   let acceptBounds = true
   let mmShift = 1L

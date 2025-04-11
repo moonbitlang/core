@@ -19,9 +19,19 @@ struct StringBuilder {
 }
 
 ///|
+/// Creates a new string builder with an optional initial capacity hint.
+///
+/// Parameters:
+///
+/// * `size_hint` : An optional initial capacity hint for the internal buffer. If
+/// less than 1, a minimum capacity of 1 is used. Defaults to 0. It is the size of bytes, 
+/// not the size of characters. `size_hint` may be ignored on some platforms, JS for example.
+///
+/// Returns a new `StringBuilder` instance with the specified initial capacity.
+///
 pub fn StringBuilder::new(size_hint~ : Int = 0) -> StringBuilder {
   let initial = if size_hint < 1 { 1 } else { size_hint }
-  let data = FixedArray::make(initial, Byte::default())
+  let data : FixedArray[Byte] = FixedArray::make(initial, 0)
   { data, len: 0 }
 }
 
@@ -55,21 +65,21 @@ fn StringBuilder::grow_if_necessary(
 }
 
 ///|
-pub fn StringBuilder::write_string(self : StringBuilder, str : String) -> Unit {
+pub impl Logger for StringBuilder with write_string(self, str) {
   self.grow_if_necessary(self.len + str.length() * 2)
   self.data.blit_from_string(self.len, str, 0, str.length())
   self.len += str.length() * 2
 }
 
 ///|
-pub fn StringBuilder::write_char(self : StringBuilder, ch : Char) -> Unit {
+pub impl Logger for StringBuilder with write_char(self, ch) {
   self.grow_if_necessary(self.len + 4)
   let inc = self.data.set_utf16le_char(self.len, ch)
   self.len += inc
 }
 
 ///|
-pub fn StringBuilder::write_substring(
+pub impl Logger for StringBuilder with write_substring(
   self : StringBuilder,
   str : String,
   start : Int,

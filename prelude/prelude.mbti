@@ -1,0 +1,111 @@
+package "moonbitlang/core/prelude"
+
+import(
+  "moonbitlang/core/builtin"
+)
+
+// Values
+fn abort[T](String) -> T
+
+fn assert_eq[T : @builtin.Eq + @builtin.Show](T, T, loc~ : @builtin.SourceLoc = _) -> Unit!
+
+fn assert_false(Bool, loc~ : @builtin.SourceLoc = _) -> Unit!
+
+fn assert_not_eq[T : @builtin.Eq + @builtin.Show](T, T, loc~ : @builtin.SourceLoc = _) -> Unit!
+
+fn assert_true(Bool, loc~ : @builtin.SourceLoc = _) -> Unit!
+
+#deprecated
+fn dump[T](T, name? : String, loc~ : @builtin.SourceLoc = _) -> T
+
+fn fail[T](String, loc~ : @builtin.SourceLoc = _) -> T!@builtin.Failure
+
+fn ignore[T](T) -> Unit
+
+fn inspect(&@builtin.Show, content~ : String = .., loc~ : @builtin.SourceLoc = _, args_loc~ : @builtin.ArgsLoc = _) -> Unit!@builtin.InspectError
+
+fn not(Bool) -> Bool
+
+fn panic[T]() -> T
+
+fn physical_equal[T](T, T) -> Bool
+
+fn println[T : @builtin.Show](T) -> Unit
+
+fn repr[T : @builtin.Show](T) -> String
+
+// Types and methods
+
+// Type aliases
+pub typealias ArgsLoc = @builtin.ArgsLoc
+
+pub typealias Array[X] = @builtin.Array[X]
+
+pub typealias ArrayView[X] = @builtin.ArrayView[X]
+
+pub typealias BigInt = @builtin.BigInt
+
+pub typealias Failure = @builtin.Failure
+
+pub typealias Hasher = @builtin.Hasher
+
+pub typealias InspectError = @builtin.InspectError
+
+pub typealias Iter[X] = @builtin.Iter[X]
+
+pub typealias Iter2[X, Y] = @builtin.Iter2[X, Y]
+
+pub typealias IterResult = @builtin.IterResult
+
+pub typealias Json = @builtin.Json
+
+pub typealias Map[K, V] = @builtin.Map[K, V]
+
+pub typealias Set[X] = @builtin.Set[X]
+
+pub typealias SnapshotError = @builtin.SnapshotError
+
+pub typealias SourceLoc = @builtin.SourceLoc
+
+pub typealias StringBuilder = @builtin.StringBuilder
+
+pub typealias UninitializedArray[X] = @builtin.UninitializedArray[X]
+
+pub traitalias Add = @builtin.Add
+
+pub traitalias BitAnd = @builtin.BitAnd
+
+pub traitalias BitOr = @builtin.BitOr
+
+pub traitalias BitXOr = @builtin.BitXOr
+
+pub traitalias Compare = @builtin.Compare
+
+pub traitalias Default = @builtin.Default
+
+pub traitalias Div = @builtin.Div
+
+pub traitalias Eq = @builtin.Eq
+
+pub traitalias Hash = @builtin.Hash
+
+pub traitalias Logger = @builtin.Logger
+
+pub traitalias Mod = @builtin.Mod
+
+pub traitalias Mul = @builtin.Mul
+
+pub traitalias Neg = @builtin.Neg
+
+pub traitalias Shl = @builtin.Shl
+
+pub traitalias Show = @builtin.Show
+
+pub traitalias Shr = @builtin.Shr
+
+pub traitalias Sub = @builtin.Sub
+
+pub traitalias ToJson = @builtin.ToJson
+
+// Traits
+

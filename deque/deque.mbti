@@ -1,16 +1,95 @@
-package moonbitlang/core/deque
+package "moonbitlang/core/deque"
+
+import(
+  "moonbitlang/core/json"
+)
 
 // Values
+fn back[A](T[A]) -> A?
+
+fn capacity[A](T[A]) -> Int
+
+fn clear[A](T[A]) -> Unit
+
+fn contains[A : Eq](T[A], A) -> Bool
+
+fn copy[A](T[A]) -> T[A]
+
+fn each[A](T[A], (A) -> Unit) -> Unit
+
+fn eachi[A](T[A], (Int, A) -> Unit) -> Unit
+
+#deprecated
+fn filter_map_inplace[A](T[A], (A) -> A?) -> Unit
+
 fn from_array[A](Array[A]) -> T[A]
 
 fn from_iter[A](Iter[A]) -> T[A]
+
+fn front[A](T[A]) -> A?
+
+fn is_empty[A](T[A]) -> Bool
+
+fn iter[A](T[A]) -> Iter[A]
+
+fn iter2[A](T[A]) -> Iter2[Int, A]
+
+fn length[A](T[A]) -> Int
+
+fn map[A, U](T[A], (A) -> U) -> T[U]
+
+fn mapi[A, U](T[A], (Int, A) -> U) -> T[U]
 
 fn new[A](capacity~ : Int = ..) -> T[A]
 
 fn of[A](FixedArray[A]) -> T[A]
 
+fn op_get[A](T[A], Int) -> A
+
+fn op_set[A](T[A], Int, A) -> Unit
+
+fn pop_back[A](T[A]) -> A?
+
+#deprecated
+fn pop_back_exn[A](T[A]) -> Unit
+
+fn pop_front[A](T[A]) -> A?
+
+#deprecated
+fn pop_front_exn[A](T[A]) -> Unit
+
+fn push_back[A](T[A], A) -> Unit
+
+fn push_front[A](T[A], A) -> Unit
+
+fn reserve_capacity[A](T[A], Int) -> Unit
+
+fn retain[A](T[A], (A) -> Bool) -> Unit
+
+fn retain_map[A](T[A], (A) -> A?) -> Unit
+
+fn rev_each[A](T[A], (A) -> Unit) -> Unit
+
+fn rev_eachi[A](T[A], (Int, A) -> Unit) -> Unit
+
+fn rev_iter[A](T[A]) -> Iter[A]
+
+fn rev_iter2[A](T[A]) -> Iter2[Int, A]
+
+fn search[A : Eq](T[A], A) -> Int?
+
+fn shrink_to_fit[A](T[A]) -> Unit
+
+fn to_array[A](T[A]) -> Array[A]
+
+fn truncate[A](T[A], Int) -> Unit
+
+fn unsafe_pop_back[A](T[A]) -> Unit
+
+fn unsafe_pop_front[A](T[A]) -> Unit
+
 // Types and methods
-type T
+type T[A]
 impl T {
   as_views[A](Self[A]) -> (ArrayView[A], ArrayView[A])
   back[A](Self[A]) -> A?
@@ -20,9 +99,8 @@ impl T {
   copy[A](Self[A]) -> Self[A]
   each[A](Self[A], (A) -> Unit) -> Unit
   eachi[A](Self[A], (Int, A) -> Unit) -> Unit
-  filter_map_inplace[A](Self[A], (A) -> A?) -> Unit //deprecated
-  from_array[A](Array[A]) -> Self[A] //deprecated
-  from_iter[A](Iter[A]) -> Self[A] //deprecated
+  #deprecated
+  filter_map_inplace[A](Self[A], (A) -> A?) -> Unit
   front[A](Self[A]) -> A?
   is_empty[A](Self[A]) -> Bool
   iter[A](Self[A]) -> Iter[A]
@@ -30,15 +108,14 @@ impl T {
   length[A](Self[A]) -> Int
   map[A, U](Self[A], (A) -> U) -> Self[U]
   mapi[A, U](Self[A], (Int, A) -> U) -> Self[U]
-  new[A](capacity~ : Int = ..) -> Self[A] //deprecated
-  of[A](FixedArray[A]) -> Self[A] //deprecated
-  op_equal[A : Eq](Self[A], Self[A]) -> Bool
   op_get[A](Self[A], Int) -> A
   op_set[A](Self[A], Int, A) -> Unit
   pop_back[A](Self[A]) -> A?
-  pop_back_exn[A](Self[A]) -> Unit //deprecated
+  #deprecated
+  pop_back_exn[A](Self[A]) -> Unit
   pop_front[A](Self[A]) -> A?
-  pop_front_exn[A](Self[A]) -> Unit //deprecated
+  #deprecated
+  pop_front_exn[A](Self[A]) -> Unit
   push_back[A](Self[A], A) -> Unit
   push_front[A](Self[A], A) -> Unit
   reserve_capacity[A](Self[A], Int) -> Unit
@@ -55,7 +132,10 @@ impl T {
   unsafe_pop_back[A](Self[A]) -> Unit
   unsafe_pop_front[A](Self[A]) -> Unit
 }
+impl[A : Eq] Eq for T[A]
 impl[A : Show] Show for T[A]
+impl[A : ToJson] ToJson for T[A]
+impl[A : @json.FromJson] @json.FromJson for T[A]
 
 // Type aliases
 

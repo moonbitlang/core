@@ -19,7 +19,7 @@
 //
 
 ///|
-/// Immuatable map, consists of key-value pairs.
+/// Immutable map, consists of key-value pairs.
 ///
 /// # Example
 ///

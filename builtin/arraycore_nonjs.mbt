@@ -80,7 +80,7 @@ pub fn Array::new[T](capacity~ : Int = 0) -> Array[T] {
 ///   inspect!(empty.length(), content="0")
 /// }
 /// ```
-/// @intrinsic %array.length
+#intrinsic("%array.length")
 pub fn Array::length[T](self : Array[T]) -> Int {
   self.len
 }
@@ -116,6 +116,7 @@ fn Array::unsafe_truncate_to_length[T](self : Array[T], new_len : Int) -> Unit {
   self.len = new_len
 }
 
+///|
 test "unsafe_truncate_to_length" {
   let arr = [1, 2, 3, 4, 5]
   arr.unsafe_truncate_to_length(3)
@@ -137,6 +138,7 @@ fn Array::resize_buffer[T](self : Array[T], new_capacity : Int) -> Unit {
   self.buf = new_buf
 }
 
+///|
 test "array_unsafe_blit_fixed" {
   let src = FixedArray::make(5, 0)
   let dst = UninitializedArray::make(5)
@@ -149,6 +151,7 @@ test "array_unsafe_blit_fixed" {
   }
 }
 
+///|
 test "UninitializedArray::unsafe_blit_fixed" {
   let src = FixedArray::make(5, 0)
   let dst = UninitializedArray::make(5)
@@ -161,6 +164,7 @@ test "UninitializedArray::unsafe_blit_fixed" {
   }
 }
 
+///|
 test "UninitializedArray::unsafe_blit_fixed" {
   let src = FixedArray::make(5, 0)
   let dst = UninitializedArray::make(5)
@@ -173,6 +177,7 @@ test "UninitializedArray::unsafe_blit_fixed" {
   }
 }
 
+///|
 test "Array::resize_buffer" {
   let arr = Array::new(capacity=2)
   arr.push(1)
@@ -276,8 +281,8 @@ pub fn Array::pop[T](self : Array[T]) -> T? {
 }
 
 ///|
-/// @alert deprecated "Use `unsafe_pop` instead"
-/// @coverage.skip
+#deprecated("Use `unsafe_pop` instead")
+#coverage.skip
 pub fn Array::pop_exn[T](self : Array[T]) -> T {
   self.unsafe_pop()
 }
@@ -409,7 +414,7 @@ pub fn Array::insert[T](self : Array[T], index : Int, value : T) -> Unit {
 /// Resize the array in-place so that `len` is equal to `new_len`.
 ///
 /// If `new_len` is greater than `len`, the array will be extended by the
-/// difference, and the values in the new slots are left uninitilized.
+/// difference, and the values in the new slots are left uninitialized.
 ///  If `new_len` is less than `len`, it will panic
 ///
 /// @alert unsafe "Panic if new length is negative."

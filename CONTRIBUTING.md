@@ -1,5 +1,12 @@
 # Contributing to moonbitlang/core
 
+## Step 0: Work with a stable toolchain
+
+Contributions to the core should be based on the latest stable channel of the MoonBit toolchains. Using an unknown or unstable version can confuse reviewers and other contributors with new, potentially incompatible changes.
+
+Therefore, we do not encourage users to submit contributions based on bleeding-edge toolchains.
+For the latest stable release and installation instructions, contributors can visit https://www.moonbitlang.com/download/.
+
 ## Step 1: Clone the repository
 
 - To start working on the project, you need a local copy of the repository. Currently, `moon` looks for moonbitlang/core at `~/.moon/lib/core`. So, remove it if it exists:
@@ -68,7 +75,7 @@ After submitting your pull request, request a review from the project maintainer
 
 - Test, documentation and bug fixes 
 
-- Standalone packages with good functionalites, for example, bigint package
+- Standalone packages with good functionalities, for example, bigint package
 
 - Fast and efficient abstractions are preferred over *theoretically perfect* abstractions
 
@@ -84,6 +91,6 @@ After submitting your pull request, request a review from the project maintainer
 # Naming conventions
 
 - function names, `snake_case` is preferred.
-- type paramaters, one character starting from `A` is preferred, e.g, `fn map[A,B](self : Array[A], f : (A) -> (B)) -> Array[B]`, for some established
+- type parameters, one character starting from `A` is preferred, e.g, `fn map[A,B](self : Array[A], f : (A) -> (B)) -> Array[B]`, for some established
   conventions, `Map[K,V]` it is also accepted.
 - type names, `CamlCase` is preferred, if one package is centered around one specific type, short name `T` is preferred, e.g, `@sorted_set.T`.

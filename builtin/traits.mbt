@@ -38,9 +38,7 @@ pub(open) trait Hash {
 
 ///|
 impl Hash with hash(self) {
-  let hasher = Hasher::new()
-  hasher.combine(self)
-  hasher.finalize()
+  Hasher::new()..combine(self).finalize()
 }
 
 ///|
@@ -54,14 +52,12 @@ pub(open) trait Default {
 pub(open) trait Logger {
   write_string(Self, String) -> Unit
   write_substring(Self, String, Int, Int) -> Unit
-  /// @alert deprecated "use `Logger::write_substring` instead"
-  write_sub_string(Self, String, Int, Int) -> Unit
   write_char(Self, Char) -> Unit
 }
 
 ///|
-impl Logger with write_sub_string(self, value, start, len) {
-  self.write_substring(value, start, len)
+impl Logger with write_char(self, value) {
+  self.write_string([value])
 }
 
 ///|
@@ -123,3 +119,10 @@ pub fn &Logger::write_iter[T : Show](
   self.write_string(suffix)
 }
 // TODO: Logger::write_double(self:Logger, val:Double) -> Unit
+
+///|
+pub fn repr[T : Show](t : T) -> String {
+  let logger = StringBuilder::new()
+  t.output(logger)
+  logger.to_string()
+}

@@ -45,6 +45,7 @@ fn next(self : Rand) -> UInt64 {
   }
 }
 
+///|
 test "next" {
   let r = new()
   let n = r.next()
@@ -101,6 +102,7 @@ pub fn uint(self : Rand, limit~ : UInt = 0) -> UInt {
   self.uint64(limit=limit.to_uint64()).to_uint()
 }
 
+///|
 test "uint" {
   let r = new()
   let n = r.uint(limit=10U)
@@ -136,6 +138,7 @@ pub fn uint64(self : Rand, limit~ : UInt64 = 0) -> UInt64 {
   gUInt128.hi
 }
 
+///|
 test "UInt64" {
   let r = new()
   let n = r.uint64()
@@ -157,6 +160,7 @@ pub fn double(self : Rand) -> Double {
   Double::convert_uint64(1UL << 53)
 }
 
+///|
 test "double" {
   let r = new()
   let n = r.double()
@@ -197,24 +201,28 @@ fn umul128(a : UInt64, b : UInt64) -> Unit {
   gUInt128.lo = a * b
 }
 
+///|
 test "umul128" {
   umul128(0x123456789ABCDEF0, 0xFEDCBA9876543210)
   assert_eq!(gUInt128.hi, 1305938385386173474UL)
   assert_eq!(gUInt128.lo, 2552847189736476416UL)
 }
 
+///|
 test "umul128: handles small numbers correctly" {
   umul128(1UL, 1UL)
   assert_eq!(gUInt128.hi, 0UL)
   assert_eq!(gUInt128.lo, 1UL)
 }
 
+///|
 test "umul128: handles large numbers correctly" {
   umul128(1UL, 0xFFFFFFFFFFFFFFFFUL)
   assert_eq!(gUInt128.hi, 0UL)
   assert_eq!(gUInt128.lo, 0xFFFFFFFFFFFFFFFFUL)
 }
 
+///|
 test "umul128: handles zero correctly" {
   umul128(0UL, 0UL)
   assert_eq!(gUInt128.hi, 0UL)
@@ -248,6 +256,7 @@ pub fn shuffle(self : Rand, limit : Int, swap : (Int, Int) -> Unit) -> Unit {
   }
 }
 
+///|
 test "shuffle" {
   let r = new()
   let a = [1, 2, 3, 4, 5]

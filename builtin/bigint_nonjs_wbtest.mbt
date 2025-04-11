@@ -22,6 +22,7 @@ impl Show for MyBigInt with output(self, logger) {
   )
 }
 
+///|
 test "debug_string" {
   let buf = StringBuilder::new()
   let v : Array[MyBigInt] = [0, 1, 2, 3, 4, -0, -1, -2, -3]
@@ -48,30 +49,55 @@ test "debug_string" {
 }
 
 ///|
-fn check_len(a : BigInt) -> Unit! {
-  if a.is_zero() {
-    return ()
+fn check_invariant(a : BigInt) -> Unit! {
+  guard a.len > 0 else { fail!("invariant len > 0 is broken: len = \{a.len}") }
+  for i in 0..<a.len {
+    guard a.limbs[i].to_uint64() < radix else {
+      fail!(
+        "invariant forall 0 <= i < len. 0 <= limbs[i] < radix is broken: a.limbs[\{i}] = \{a.limbs[i]}",
+      )
+    }
+
   }
-  assert_eq!(a.limbs[a.len - 1] != 0, true)
-  for i in a.len..<a.limbs.length() {
-    assert_eq!(a.limbs[i], 0)
+  if a.limbs.iter().take(a.len).any(fn(x) { x > 0 }) {
+    guard a.limbs[a.len - 1] > 0 else {
+      fail!(
+        "invariant (exists 0 <= i < len. limbs[i] > 0) => limbs[len-1] > 0 is broken",
+      )
+    }
+
+  } else {
+    guard a.len == 1 && a.limbs[0] == 0 else {
+      fail!(
+        "invariant (forall 0 <= i < len. limbs[i] == 0) => limbs[0] == 0 and len == 1 is broken: len = \{a.len}, limbs = \{a.limbs}",
+      )
+    }
+
   }
+  guard a.limbs.iter().drop(a.len).all(fn(x) { x == 0 }) else {
+    fail!(
+      "invariant forall len <= i < limbs.length(). limbs[i] == 0 is broken: len = \{a.len}, limbs = \{a.limbs}",
+    )
+  }
+
 }
 
+///|
 test "op_shr" {
   let a = BigInt::from_int64(1234567890123456789L)
   let b = a >> 1
-  check_len!(b)
+  check_invariant!(b)
   inspect!(b, content="617283945061728394")
   let c = a >> 64
-  check_len!(c)
+  check_invariant!(c)
   inspect!(c, content="0")
   let a = BigInt::from_int64((radix * radix / 2).reinterpret_as_int64())
   let b = a >> (radix_bit_len * 2)
-  check_len!(b)
+  check_invariant!(b)
   inspect!(b, content="0")
 }
 
+///|
 test "op_add coverage for max(self_len, other_len)" {
   let a = BigInt::from_int(123456789)
   let b = BigInt::from_int(987654321)
@@ -81,6 +107,7 @@ test "op_add coverage for max(self_len, other_len)" {
   inspect!(result.len, content="1")
 }
 
+///|
 test "op_sub coverage for max(self_len, other_len)" {
   let a = BigInt::from_int(987654321)
   let b = BigInt::from_int(123456789)

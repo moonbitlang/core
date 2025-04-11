@@ -1,30 +1,53 @@
-package moonbitlang/core/immut/hashset
+package "moonbitlang/core/immut/hashset"
 
-alias @moonbitlang/core/quickcheck as @quickcheck
+import(
+  "moonbitlang/core/quickcheck"
+)
 
 // Values
+fn add[A : Eq + Hash](T[A], A) -> T[A]
+
+fn contains[A : Eq + Hash](T[A], A) -> Bool
+
+fn each[A](T[A], (A) -> Unit) -> Unit
+
 fn from_array[A : Eq + Hash](Array[A]) -> T[A]
 
 fn from_iter[A : Eq + Hash](Iter[A]) -> T[A]
+
+fn is_empty[A](T[A]) -> Bool
+
+fn iter[A](T[A]) -> Iter[A]
 
 fn new[A]() -> T[A]
 
 fn of[A : Eq + Hash](FixedArray[A]) -> T[A]
 
+fn remove[A : Eq + Hash](T[A], A) -> T[A]
+
+fn size[A](T[A]) -> Int
+
+fn union[K : Eq + Hash](T[K], T[K]) -> T[K]
+
 // Types and methods
-type T
+type T[A]
 impl T {
   add[A : Eq + Hash](Self[A], A) -> Self[A]
   contains[A : Eq + Hash](Self[A], A) -> Bool
   each[A](Self[A], (A) -> Unit) -> Unit
-  from_array[A : Eq + Hash](Array[A]) -> Self[A] //deprecated
-  from_iter[A : Eq + Hash](Iter[A]) -> Self[A] //deprecated
+  #deprecated
+  from_array[A : Eq + Hash](Array[A]) -> Self[A]
+  #deprecated
+  from_iter[A : Eq + Hash](Iter[A]) -> Self[A]
   is_empty[A](Self[A]) -> Bool
   iter[A](Self[A]) -> Iter[A]
-  new[A]() -> Self[A] //deprecated
-  of[A : Eq + Hash](FixedArray[A]) -> Self[A] //deprecated
+  #deprecated
+  new[A]() -> Self[A]
+  #deprecated
+  of[A : Eq + Hash](FixedArray[A]) -> Self[A]
   remove[A : Eq + Hash](Self[A], A) -> Self[A]
   size[A](Self[A]) -> Int
+  union[K : Eq + Hash](Self[K], Self[K]) -> Self[K]
 }
 impl[A : Eq] Eq for T[A]
 impl[A : Hash] Hash for T[A]

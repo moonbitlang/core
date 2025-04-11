@@ -88,3 +88,35 @@ pub fn Iter2::to_array[A, B](self : Iter2[A, B]) -> Array[(A, B)] {
   }
   arr
 }
+
+///|
+/// Combines two iterators into one by appending the elements of the second iterator to the first.
+///
+/// # Arguments
+///
+/// * `self` - The first input iterator.
+/// * `other` - The second input iterator to be appended to the first.
+///
+/// # Returns
+///
+/// Returns a new iterator that contains the elements of `self` followed by the elements of `other`.
+///
+/// # Examples
+///
+/// ```moonbit
+/// test "Iter2::concat" {
+///   inspect!(
+///     "abc".iter2().concat("def".iter2()).to_array(),
+///     content="[(0, 'a'), (1, 'b'), (2, 'c'), (0, 'd'), (1, 'e'), (2, 'f')]",
+///   )
+/// }
+/// ```
+pub fn Iter2::concat[A, B](
+  self : Iter2[A, B],
+  other : Iter2[A, B]
+) -> Iter2[A, B] {
+  fn(yield_) {
+    guard self.run(yield_) == IterContinue else { IterEnd }
+    other.run(yield_)
+  }
+}

@@ -160,7 +160,7 @@ pub impl Show for Float with output(self, logger) {
 ///   inspect!(Float::default(), content="0")
 /// }
 /// ```
-pub fn Float::default() -> Float {
+pub impl Default for Float with default() {
   0.0
 }
 

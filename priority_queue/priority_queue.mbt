@@ -94,7 +94,7 @@ pub fn to_array[A : Compare](self : T[A]) -> Array[A] {
 pub fn iter[A : Compare](self : T[A]) -> Iter[A] {
   Iter::new(fn(yield_) {
     let arr = self.to_array()
-    for i = 0; i < arr.length(); i = i + 1 {
+    for i in 0..<arr.length() {
       if yield_(arr[i]) == IterEnd {
         break IterEnd
       }
@@ -131,17 +131,14 @@ fn meld[A : Compare](x : Node[A], y : Node[A]) -> Node[A] {
 
 ///|
 fn merges[A : Compare](x : Node[A]) -> Node[A] {
-  match x {
-    Nil => Nil
-    Cons(sibling~, ..) =>
-      match sibling {
-        Nil => x
-        Cons(sibling=next_sibling, ..) =>
-          match next_sibling {
-            Nil => meld(x, sibling)
-            Cons(_) => meld(merges(next_sibling), meld(x, sibling))
-          }
-      }
+  loop x, Nil {
+    Nil, acc => acc
+    Cons(sibling=Nil, ..) as x, acc => meld(acc, x)
+    Cons(sibling=Cons(sibling=s2, ..) as s1, ..) as x, acc => {
+      x.sibling = Nil
+      s1.sibling = Nil
+      continue s2, meld(acc, meld(x, s1))
+    }
   }
 }
 
@@ -166,13 +163,6 @@ pub fn unsafe_pop[A : Compare](self : T[A]) -> Unit {
     Cons(child~, ..) => merges(child)
   }
   self.len -= 1
-}
-
-///|
-/// @alert deprecated "Use `unsafe_pop` instead"
-/// @coverage.skip
-pub fn pop_exn[A : Compare](self : T[A]) -> Unit {
-  unsafe_pop(self)
 }
 
 ///|
@@ -266,6 +256,7 @@ pub fn of[A : Compare](arr : FixedArray[A]) -> T[A] {
   }
 }
 
+///|
 test "meld_and_merges" {
   inspect!(
     match meld(Cons(content=1, sibling=Nil, child=Nil), Nil) {
@@ -297,6 +288,7 @@ pub impl[X : @quickcheck.Arbitrary + Compare] @quickcheck.Arbitrary for T[X] wit
   }
 }
 
+///|
 test "priority queue arbitrary" {
   let samples : Array[T[Int]] = @quickcheck.samples(20)
   inspect!(

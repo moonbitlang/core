@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+///|
 test "get as null" {
   inspect!(Null |> @json.as_null, content="Some(())")
   inspect!(True |> @json.as_null, content="None")
@@ -25,6 +26,7 @@ test "get as null" {
   )
 }
 
+///|
 test "get as bool" {
   inspect!(Json::Null |> @json.as_bool, content="None")
   inspect!(Json::True |> @json.as_bool, content="Some(true)")
@@ -48,6 +50,7 @@ fn check2!(x : String) -> Json!@json.ParseError {
   @json.parse!(x)
 }
 
+///|
 test "get as number" {
   let _ = check
   let _ = check2
@@ -69,6 +72,7 @@ test "get as number" {
   )
 }
 
+///|
 test "get as string" {
   inspect!(Json::Null |> @json.as_string, content="None")
   inspect!(Json::True |> @json.as_string, content="None")
@@ -93,6 +97,7 @@ test "get as string" {
   )
 }
 
+///|
 test "get as array" {
   inspect!(Json::Null |> @json.as_array, content="None")
   inspect!(Json::True |> @json.as_array, content="None")
@@ -128,6 +133,7 @@ test "get as array" {
   )
 }
 
+///|
 test "get as object" {
   inspect!(
     Json::Null |> @json.as_object |> @option.map(Map::to_array),
@@ -201,6 +207,7 @@ test "get as object" {
   )
 }
 
+///|
 test "deep access" {
   let json : Json = {
     "key": [1.0, true, Null, [], { "key": "value", "value": 100.0 }],
@@ -246,6 +253,7 @@ test "deep access" {
   )
 }
 
+///|
 test "stringify" {
   let json : Json = {
     "key": [1.0, true, Null, [], { "key": "value", "value": 100.0 }],
@@ -266,35 +274,46 @@ test "stringify" {
   // we do come across issues like ParseError not unified with String
   let newjson = @json.parse!(json.stringify())
   match json {
-    { "key": [_, _, _, _, { "value": Number(i) }, ..] } =>
+    { "key": [_, _, _, _, { "value": Number(i), .. }, ..], .. } =>
       inspect!(i, content="100")
     _ => fail!("Failed to match the JSON")
   }
   assert_eq!(newjson, json)
 }
 
-test "stringify escape" {
-  let json : Json = {
-    "\b": "\"hello\"",
-    "\n": "\n\r\t\x0C",
-    "\\": "/",
-    "\x1F": "\x01",
-    "actual": "\x00",
-    "escape": "\x00",
-    "actual": "a,\"b\",c",
-  }
+///|
+let json : Json = {
+  "\b": "\"hello\"",
+  "\n": "\n\r\t\u{0C}",
+  "\\": "/",
+  "\u001F": "\u{0001}",
+  "actual": "\u{0000}",
+  "escape": "\u{0000}",
+  "actual": "a,\"b\",c",
+}
+
+///|
+test "stringify escape 1 " {
   inspect!(
     json.stringify(),
     content=
       #|{"\b":"\"hello\"","\n":"\n\r\t\f","\\":"/","\u001f":"\u0001","actual":"a,\"b\",c","escape":"\u0000"}
     ,
   )
+}
+
+///|
+test "stringify escape 2" {
   inspect!(
     json.stringify(escape_slash=true),
     content=
       #|{"\b":"\"hello\"","\n":"\n\r\t\f","\\":"\/","\u001f":"\u0001","actual":"a,\"b\",c","escape":"\u0000"}
     ,
   )
+}
+
+///|
+test "stringify escape 3" {
   inspect!(
     json.stringify(escape_slash=false, indent=2),
     content=
@@ -308,18 +327,43 @@ test "stringify escape" {
       #|}
     ,
   )
+}
+
+///|
+test "stringify escape 4" {
   inspect!(
     json.stringify(escape_slash=false),
     content=
       #|{"\b":"\"hello\"","\n":"\n\r\t\f","\\":"/","\u001f":"\u0001","actual":"a,\"b\",c","escape":"\u0000"}
     ,
   )
+}
+
+///|
+test "stringify escape round trip" {
   match @json.parse?(json.stringify()) {
     Err(e) => raise e
     Ok(newjson) => assert_eq!(newjson, json)
   }
 }
 
+///|
+test "string from and to json round trip" {
+  let greeting =
+    #|
+    #|     (\(\
+    #|     ( -.-)
+    #|     o_(")(")
+    #|     __  __     ____         __  ___                  ____  _ __
+    #|    / / / /__  / / /___     /  |/  /___  ____  ____  / __ )(_) /_
+    #|   / /_/ / _ \/ / / __ \   / /|_/ / __ \/ __ \/ __ \/ __  / / __/
+    #|  / __  /  __/ / / /_/ /  / /  / / /_/ / /_/ / / / / /_/ / / /_
+    #| /_/ /_/\___/_/_/\____/  /_/  /_/\____/\____/_/ /_/_____/_/\__/
+    #|
+  assert_eq!(@json.from_json!(greeting.to_json()), greeting)
+}
+
+///|
 test "escape" {
   let s = "http://example.com/"
   inspect!(
@@ -336,6 +380,7 @@ test "escape" {
   )
 }
 
+///|
 test "stringify number" {
   let nums : Array[Json] = [
     0.0,
@@ -375,6 +420,7 @@ test "stringify number" {
   inspect!(err, content="[]")
 }
 
+///|
 test "stringify with indent" {
   let json : Json = {
     "key": [1.0, true, Null, [], { "key": "value", "value": 100.0 }],

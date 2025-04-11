@@ -110,7 +110,7 @@ pub fn Array::capacity[T](self : Array[T]) -> Int {
 /// }
 /// ```
 ///
-/// @intrinsic %array.unsafe_get
+#intrinsic("%array.unsafe_get")
 pub fn Array::unsafe_get[T](self : Array[T], idx : Int) -> T {
   self.buffer()[idx]
 }
@@ -143,7 +143,7 @@ pub fn Array::unsafe_get[T](self : Array[T], idx : Int) -> T {
 /// ```
 ///
 /// @alert unsafe "Panic if index is out of bounds"
-/// @intrinsic %array.get
+#intrinsic("%array.get")
 pub fn Array::op_get[T](self : Array[T], index : Int) -> T {
   let len = self.length()
   guard index >= 0 && index < len
@@ -178,7 +178,7 @@ pub fn Array::get[T](self : Array[T], index : Int) -> T? {
 }
 
 ///|
-/// @intrinsic %array.unsafe_set
+#intrinsic("%array.unsafe_set")
 fn Array::unsafe_set[T](self : Array[T], idx : Int, val : T) -> Unit {
   self.buffer()[idx] = val
 }
@@ -212,7 +212,7 @@ fn Array::unsafe_set[T](self : Array[T], idx : Int, val : T) -> Unit {
 /// ```
 ///
 /// @alert unsafe "Panic if index is out of bounds."
-/// @intrinsic %array.set
+#intrinsic("%array.set")
 pub fn Array::op_set[T](self : Array[T], index : Int, value : T) -> Unit {
   let len = self.length()
   guard index >= 0 && index < len
@@ -241,7 +241,7 @@ pub fn Array::op_set[T](self : Array[T], index : Int, value : T) -> Unit {
 ///   inspect!(arr1 == arr3, content="false")
 /// }
 /// ```
-pub fn Array::op_equal[T : Eq](self : Array[T], other : Array[T]) -> Bool {
+pub impl[T : Eq] Eq for Array[T] with op_equal(self, other) {
   let self_len = self.length()
   let other_len = other.length()
   guard self_len == other_len else { return false }
@@ -250,6 +250,13 @@ pub fn Array::op_equal[T : Eq](self : Array[T], other : Array[T]) -> Bool {
 
   } else {
     true
+  }
+}
+
+///|
+pub impl[T : Hash] Hash for Array[T] with hash_combine(self, hasher) {
+  for v in self {
+    v.hash_combine(hasher)
   }
 }
 
@@ -285,13 +292,14 @@ pub fn Array::op_equal[T : Eq](self : Array[T], other : Array[T]) -> Bool {
 ///   inspect!(arr1.compare(arr1), content="0") // arr1 = arr1
 /// }
 /// ```
-pub fn Array::compare[T : Compare](self : Array[T], other : Array[T]) -> Int {
+pub impl[T : Compare] Compare for Array[T] with compare(self, other) {
   let len_self = self.length()
   let len_other = other.length()
-  guard let 0 = len_self.compare(len_other) else { x => return x }
+  let cmp = len_self.compare(len_other)
+  guard cmp is 0 else { return cmp }
   for i in 0..<len_self {
     let cmp = self.unsafe_get(i).compare(other.unsafe_get(i))
-    guard let 0 = cmp else { x => break x }
+    guard cmp is 0 else { break cmp }
 
   } else {
     0
@@ -318,7 +326,7 @@ pub fn Array::compare[T : Compare](self : Array[T], other : Array[T]) -> Int {
 ///   inspect!(a + b, content="[1, 2, 3, 4, 5]")
 /// }
 /// ```
-pub fn Array::op_add[T](self : Array[T], other : Array[T]) -> Array[T] {
+pub impl[T] Add for Array[T] with op_add(self, other) {
   let result = Array::make_uninit(self.length() + other.length())
   UninitializedArray::unsafe_blit(
     result.buffer(),
@@ -657,7 +665,7 @@ pub fn Array::is_sorted[T : Compare](self : Array[T]) -> Bool {
 /// }
 /// ```
 pub fn Array::rev_inplace[T](self : Array[T]) -> Unit {
-  for i = 0; i < self.length() / 2; i = i + 1 {
+  for i in 0..<(self.length() / 2) {
     let temp = self.unsafe_get(i)
     self.unsafe_set(i, self.unsafe_get(self.length() - i - 1))
     self.unsafe_set(self.length() - i - 1, temp)
@@ -685,7 +693,7 @@ pub fn Array::rev_inplace[T](self : Array[T]) -> Unit {
 /// ```
 pub fn Array::rev[T](self : Array[T]) -> Array[T] {
   let arr = Array::make_uninit(self.length())
-  for i = 0; i < self.length(); i = i + 1 {
+  for i in 0..<self.length() {
     arr.unsafe_set(i, self.unsafe_get(self.length() - i - 1))
   }
   arr
@@ -789,7 +797,7 @@ pub fn Array::starts_with[T : Eq](self : Array[T], prefix : Array[T]) -> Bool {
   if prefix.length() > self.length() {
     return false
   }
-  for i = 0; i < prefix.length(); i = i + 1 {
+  for i in 0..<prefix.length() {
     if self.unsafe_get(i) != prefix.unsafe_get(i) {
       break false
     }
@@ -828,7 +836,7 @@ pub fn Array::ends_with[T : Eq](self : Array[T], suffix : Array[T]) -> Bool {
   if suffix.length() > self.length() {
     return false
   }
-  for i = 0; i < suffix.length(); i = i + 1 {
+  for i in 0..<suffix.length() {
     if self.unsafe_get(self.length() - suffix.length() + i) !=
       suffix.unsafe_get(i) {
       break false
@@ -957,8 +965,8 @@ pub fn Array::search[T : Eq](self : Array[T], value : T) -> Int? {
 /// }
 /// ```
 ///
-/// @alert deprecated "Use `search_by` instead."
-/// @coverage.skip
+#deprecated("Use `search_by` instead.")
+#coverage.skip
 pub fn Array::find_index[T](self : Array[T], f : (T) -> Bool) -> Int? {
   self.search_by(f)
 }
@@ -1252,13 +1260,18 @@ pub fn Array::resize[T](self : Array[T], new_len : Int, f : T) -> Unit {
 /// let v = [[3, 4], [5, 6]].flatten()
 /// assert_eq!(v, [3, 4, 5, 6])
 /// ```
-/// TODO: perf could be improved by pre-allocated
 pub fn Array::flatten[T](self : Array[Array[T]]) -> Array[T] {
-  let v = []
-  for arr in self {
-    v.append(arr)
+  let mut len = 0
+  for x in self {
+    len += x.length()
   }
-  v
+  let res = Array::make_uninit(len)
+  let mut i = 0
+  for xs in self {
+    res.unsafe_blit(i, xs, 0, xs.length())
+    i += xs.length()
+  }
+  res
 }
 
 ///|
@@ -1272,7 +1285,7 @@ pub fn Array::flatten[T](self : Array[Array[T]]) -> Array[T] {
 /// ```
 pub fn Array::repeat[T](self : Array[T], times : Int) -> Array[T] {
   let v = Array::new(capacity=self.length() * times)
-  for i = 0; i < times; i = i + 1 {
+  for i in 0..<times {
     v.append(self)
   }
   v
@@ -1364,8 +1377,8 @@ pub fn Array::rev_foldi[A, B](
 /// let sum = [1, 2, 3, 4, 5].fold(init=0, fn { sum, elem => sum + elem })
 /// assert_eq!(sum, 15)
 /// ```
-/// @alert deprecated "Use `fold` instead."
-/// @coverage.skip
+#deprecated("Use `fold` instead.")
+#coverage.skip
 pub fn Array::fold_left[T, U](self : Array[T], f : (U, T) -> U, init~ : U) -> U {
   self.fold(init~, f)
 }
@@ -1379,8 +1392,8 @@ pub fn Array::fold_left[T, U](self : Array[T], f : (U, T) -> U, init~ : U) -> U 
 /// let sum = [1, 2, 3, 4, 5].rev_fold(init=0, fn { sum, elem => sum + elem })
 /// assert_eq!(sum, 15)
 /// ```
-/// @alert deprecated "Use `rev_fold` instead."
-/// @coverage.skip
+#deprecated("Use `rev_fold` instead.")
+#coverage.skip
 pub fn Array::fold_right[T, U](
   self : Array[T],
   f : (U, T) -> U,
@@ -1398,8 +1411,8 @@ pub fn Array::fold_right[T, U](
 /// let sum = [1, 2, 3, 4, 5].foldi(init=0, fn { index, sum, _elem => sum + index })
 /// assert_eq!(sum, 10)
 /// ```
-/// @alert deprecated "Use `foldi` instead."
-/// @coverage.skip
+#deprecated("Use `foldi` instead.")
+#coverage.skip
 pub fn Array::fold_lefti[T, U](
   self : Array[T],
   f : (Int, U, T) -> U,
@@ -1417,8 +1430,8 @@ pub fn Array::fold_lefti[T, U](
 /// let sum = [1, 2, 3, 4, 5].rev_foldi(init=0, fn { index, sum, _elem => sum + index })
 /// assert_eq!(sum, 10)
 /// ```
-/// @alert deprecated "Use `rev_foldi` instead."
-/// @coverage.skip
+#deprecated("Use `rev_foldi` instead.")
+#coverage.skip
 pub fn Array::fold_righti[T, U](
   self : Array[T],
   f : (Int, U, T) -> U,
@@ -1467,7 +1480,7 @@ pub fn Array::dedup[T : Eq](self : Array[T]) -> Unit {
     return
   }
   let mut w = 1
-  for i = 1; i < self.length(); i = i + 1 {
+  for i in 1..<self.length() {
     if self[i] != self[w - 1] {
       self[w] = self[i]
       w = w + 1
@@ -1503,13 +1516,13 @@ pub fn Array::dedup[T : Eq](self : Array[T]) -> Unit {
 pub fn Array::extract_if[T](self : Array[T], f : (T) -> Bool) -> Array[T] {
   let v = []
   let indices = []
-  for i = 0; i < self.length(); i = i + 1 {
+  for i in 0..<self.length() {
     if f(self[i]) {
       v.push(self[i])
       indices.push(i)
     }
   }
-  for i = 0; i < indices.length(); i = i + 1 {
+  for i in 0..<indices.length() {
     self.remove(indices[i] - i) |> ignore
   }
   v
@@ -1666,7 +1679,7 @@ pub fn Array::split[T](self : Array[T], pred : (T) -> Bool) -> Array[Array[T]] {
 pub fn Array::iter[T](self : Array[T]) -> Iter[T] {
   Iter::new(fn(yield_) {
     for v in self {
-      guard let IterContinue = yield_(v) else { x => break x }
+      guard yield_(v) is IterContinue else { break IterEnd }
 
     } else {
       IterContinue
@@ -1698,7 +1711,7 @@ pub fn Array::iter[T](self : Array[T]) -> Iter[T] {
 pub fn Array::rev_iter[T](self : Array[T]) -> Iter[T] {
   Iter::new(fn(yield_) {
     for i = self.length() - 1; i >= 0; i = i - 1 {
-      guard let IterContinue = yield_(self.unsafe_get(i)) else { x => break x }
+      guard yield_(self.unsafe_get(i)) is IterContinue else { break IterEnd }
 
     } else {
       IterContinue
@@ -1730,7 +1743,7 @@ pub fn Array::rev_iter[T](self : Array[T]) -> Iter[T] {
 pub fn Array::iter2[A](self : Array[A]) -> Iter2[Int, A] {
   Iter2::new(fn(yield_) {
     for i, v in self {
-      guard let IterContinue = yield_(i, v) else { x => break x }
+      guard yield_(i, v) is IterContinue else { break IterEnd }
 
     } else {
       IterContinue
@@ -1752,6 +1765,6 @@ pub fn Array::iter2[A](self : Array[A]) -> Iter2[Int, A] {
 ///   inspect!(arr.is_empty(), content="true")
 /// }
 /// ```
-pub fn Array::default[T]() -> Array[T] {
+pub impl[T] Default for Array[T] with default() {
   []
 }

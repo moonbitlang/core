@@ -17,30 +17,33 @@ fn get_cli_args_ffi() -> FixedArray[Bytes] = "$moonbit.get_cli_args"
 
 ///|
 fn get_cli_args_internal() -> Array[String] {
-  Array::from_fixed_array(
-    get_cli_args_ffi().map(fn {
-      // Here we assume that the CLI arguments are encoded in well-formed UTF-8.
-      arg => utf8_bytes_to_mbt_string(arg)
-    }),
-  )
+  let tmp = get_cli_args_ffi()
+  let res = Array::new(capacity=tmp.length())
+  for i in 0..<tmp.length() {
+    res.push(utf8_bytes_to_mbt_string(tmp[i]))
+  }
+  res
 }
 
 ///|
 fn utf8_bytes_to_mbt_string(bytes : Bytes) -> String {
-  let res : Array[Char] = Array::new(capacity=bytes.length())
+  let res = StringBuilder::new()
   let len = bytes.length()
   let mut i = 0
   while i < len {
     let mut c = bytes[i].to_int()
-    if c < 0x80 {
-      res.push(Char::from_int(c))
+    // zero byte indicates end of string
+    if c == 0 {
+      break
+    } else if c < 0x80 {
+      res.write_char(Char::from_int(c))
       i += 1
     } else if c < 0xE0 {
       if i + 1 >= len {
         break
       }
       c = ((c & 0x1F) << 6) | (bytes[i + 1].to_int() & 0x3F)
-      res.push(Char::from_int(c))
+      res.write_char(Char::from_int(c))
       i += 2
     } else if c < 0xF0 {
       if i + 2 >= len {
@@ -49,7 +52,7 @@ fn utf8_bytes_to_mbt_string(bytes : Bytes) -> String {
       c = ((c & 0x0F) << 12) |
         ((bytes[i + 1].to_int() & 0x3F) << 6) |
         (bytes[i + 2].to_int() & 0x3F)
-      res.push(Char::from_int(c))
+      res.write_char(Char::from_int(c))
       i += 3
     } else {
       if i + 3 >= len {
@@ -60,8 +63,8 @@ fn utf8_bytes_to_mbt_string(bytes : Bytes) -> String {
         ((bytes[i + 2].to_int() & 0x3F) << 6) |
         (bytes[i + 3].to_int() & 0x3F)
       c -= 0x10000
-      res.push(Char::from_int((c >> 10) + 0xD800))
-      res.push(Char::from_int((c & 0x3FF) + 0xDC00))
+      res.write_char(Char::from_int((c >> 10) + 0xD800))
+      res.write_char(Char::from_int((c & 0x3FF) + 0xDC00))
       i += 4
     }
   }
@@ -73,5 +76,22 @@ extern "c" fn time(ptr : Int) -> UInt64 = "time"
 
 ///|
 fn now_internal() -> UInt64 {
-  time(0)
+  // time returns seconds since 1970-01-01 00:00:00 UTC
+  // to be consistent with other backends, we convert to milliseconds
+  time(0) * 1000
+}
+
+///|
+extern "c" fn getcwd(ptr : Bytes, size : Int) -> Int = "getcwd"
+
+///|
+fn current_dir_internal() -> String? {
+  // TODO: On Windows getcwd may fail if the path is too long(Windows allows paths up to 32k characters)
+  let buf = Bytes::new(4096)
+  let res = getcwd(buf, buf.length())
+  if res == 0 {
+    None
+  } else {
+    Some(utf8_bytes_to_mbt_string(buf))
+  }
 }

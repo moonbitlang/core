@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+///|
 test "lookup" {
   let m = @sorted_map.of([
     (3, "three"),
@@ -25,6 +26,7 @@ test "lookup" {
   assert_eq!(m.lookup(4), None)
 }
 
+///|
 test "size" {
   let m = @sorted_map.of([
     (3, "three"),
@@ -38,6 +40,7 @@ test "size" {
   assert_eq!(m.size(), 3)
 }
 
+///|
 test "is_empty" {
   let m : @sorted_map.T[Int, Int] = @sorted_map.new()
   assert_eq!(m.is_empty(), true)
@@ -45,6 +48,7 @@ test "is_empty" {
   assert_eq!(m.is_empty(), false)
 }
 
+///|
 test "iter" {
   let m = @sorted_map.of([
     (3, "three"),
@@ -58,6 +62,7 @@ test "iter" {
   assert_eq!(s, "(0,zero)(1,one)(2,two)(3,three)(8,eight)")
 }
 
+///|
 test "iteri" {
   let m = @sorted_map.of([
     (3, "three"),
@@ -71,11 +76,13 @@ test "iteri" {
   assert_eq!(s, "(0,0,zero)(1,1,one)(2,2,two)(3,3,three)(4,8,eight)")
 }
 
+///|
 test "fold" {
   let m = @sorted_map.of([("a", 1), ("b", 2), ("c", 3), ("d", 4), ("e", 5)])
   assert_eq!(m.fold(fn(acc, v) { acc + v }, init=0), 15)
 }
 
+///|
 test "foldl_with_key" {
   let m = @sorted_map.of([("a", 1), ("b", 2), ("c", 3), ("d", 4), ("e", 5)])
   assert_eq!(
@@ -84,6 +91,7 @@ test "foldl_with_key" {
   )
 }
 
+///|
 test "foldr_with_key" {
   let m = @sorted_map.of([("a", 1), ("b", 2), ("c", 3), ("d", 4), ("e", 5)])
   assert_eq!(
@@ -92,21 +100,25 @@ test "foldr_with_key" {
   )
 }
 
+///|
 test "to_array" {
   let m = @sorted_map.of([(1, "one"), (2, "two"), (3, "three")])
   assert_eq!(m.iter().collect(), [(1, "one"), (2, "two"), (3, "three")])
 }
 
+///|
 test "keys" {
   let m = @sorted_map.of([(1, "one"), (2, "two"), (3, "three")])
   assert_eq!(m.keys(), [1, 2, 3])
 }
 
+///|
 test "elems" {
   let m = @sorted_map.of([(1, "one"), (2, "two"), (3, "three")])
   assert_eq!(m.elems(), ["one", "two", "three"])
 }
 
+///|
 test "op_equal" {
   let m1 = @sorted_map.of([
     (3, "three"),
@@ -127,6 +139,7 @@ test "op_equal" {
   assert_eq!(m1 == m3, false)
 }
 
+///|
 test "compare" {
   let xss : Array[@sorted_map.T[Int, Int]] = @quickcheck.samples(5)
   for xs in xss {
@@ -136,6 +149,7 @@ test "compare" {
   }
 }
 
+///|
 test "iter" {
   let buf = StringBuilder::new(size_hint=20)
   let map = @sorted_map.of([(1, "one"), (2, "two"), (3, "three")])
@@ -157,11 +171,13 @@ test "iter" {
   inspect!(buf, content="[1-one][2-two]")
 }
 
+///|
 test "to_array" {
   let m = @sorted_map.of([(1, "one"), (2, "two"), (3, "three")])
   assert_eq!(m.to_array(), [(1, "one"), (2, "two"), (3, "three")])
 }
 
+///|
 test "op_equal" {
   let m1 = @sorted_map.of([
     (3, "three"),
@@ -182,6 +198,7 @@ test "op_equal" {
   assert_eq!(m1 == m3, false)
 }
 
+///|
 test "show" {
   let m = @sorted_map.of([(1, "one"), (2, "two"), (3, "three")])
   inspect!(
@@ -190,6 +207,7 @@ test "show" {
   )
 }
 
+///|
 test "from_iter multiple elements iter" {
   inspect!(
     @sorted_map.from_iter([(1, 1), (2, 2), (3, 3)].iter()),
@@ -197,6 +215,7 @@ test "from_iter multiple elements iter" {
   )
 }
 
+///|
 test "from_iter single element iter" {
   inspect!(
     @sorted_map.from_iter([(1, 1)].iter()),
@@ -204,11 +223,13 @@ test "from_iter single element iter" {
   )
 }
 
+///|
 test "from_iter empty iter" {
   let pq : @sorted_map.T[Int, Int] = @sorted_map.from_iter(Iter::empty())
   inspect!(pq, content="@immut/sorted_map.of([])")
 }
 
+///|
 test "hash" {
   let map1 = @sorted_map.of([("one", 1), ("two", 2)])
   let map2 = @sorted_map.of([("one", 1), ("two", 2)])

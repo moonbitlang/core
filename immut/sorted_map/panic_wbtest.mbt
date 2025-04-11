@@ -12,10 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+///|
 test "panic split_max with empty tree" {
   (Empty : T[Int, Int]).split_max() |> ignore
 }
 
+///|
 test "panic split_min with empty tree" {
   (Empty : T[Int, Int]).split_min() |> ignore
 }

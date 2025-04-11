@@ -1,31 +1,48 @@
-package moonbitlang/core/priority_queue
+package "moonbitlang/core/priority_queue"
 
-alias @moonbitlang/core/quickcheck as @quickcheck
+import(
+  "moonbitlang/core/quickcheck"
+)
 
 // Values
+fn clear[A](T[A]) -> Unit
+
+fn copy[A](T[A]) -> T[A]
+
 fn from_array[A : Compare](Array[A]) -> T[A]
 
 fn from_iter[K : Compare](Iter[K]) -> T[K]
+
+fn is_empty[A](T[A]) -> Bool
+
+fn iter[A : Compare](T[A]) -> Iter[A]
+
+fn length[A](T[A]) -> Int
 
 fn new[A : Compare]() -> T[A]
 
 fn of[A : Compare](FixedArray[A]) -> T[A]
 
+fn peek[A](T[A]) -> A?
+
+fn pop[A : Compare](T[A]) -> A?
+
+fn push[A : Compare](T[A], A) -> Unit
+
+fn to_array[A : Compare](T[A]) -> Array[A]
+
+fn unsafe_pop[A : Compare](T[A]) -> Unit
+
 // Types and methods
-type T
+type T[A]
 impl T {
   clear[A](Self[A]) -> Unit
   copy[A](Self[A]) -> Self[A]
-  from_array[A : Compare](Array[A]) -> Self[A] //deprecated
-  from_iter[K : Compare](Iter[K]) -> Self[K] //deprecated
   is_empty[A](Self[A]) -> Bool
   iter[A : Compare](Self[A]) -> Iter[A]
   length[A](Self[A]) -> Int
-  new[A : Compare]() -> Self[A] //deprecated
-  of[A : Compare](FixedArray[A]) -> Self[A] //deprecated
   peek[A](Self[A]) -> A?
   pop[A : Compare](Self[A]) -> A?
-  pop_exn[A : Compare](Self[A]) -> Unit //deprecated
   push[A : Compare](Self[A], A) -> Unit
   to_array[A : Compare](Self[A]) -> Array[A]
   unsafe_pop[A : Compare](Self[A]) -> Unit

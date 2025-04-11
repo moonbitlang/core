@@ -13,11 +13,32 @@
 // limitations under the License.
 
 ///|
-/// @intrinsic %iter.from_array
+///
+/// Creates an iterator over the elements of a fixed-size array, providing
+/// sequential access to each element.
+///
+/// Parameters:
+///
+/// * `array` : The fixed-size array to iterate over.
+///
+/// Returns an iterator that yields each element of the array in order from first
+/// to last.
+///
+/// Example:
+///
+/// ```moonbit
+/// test "FixedArray::iter" {
+///   let arr = FixedArray::make(3, 42)
+///   let mut sum = 0
+///   arr.iter().each(fn(x) { sum = sum + x })
+///   inspect!(sum, content="126")
+/// }
+/// ```
+#intrinsic("%iter.from_array")
 pub fn FixedArray::iter[T](self : FixedArray[T]) -> Iter[T] {
   Iter::new(fn(yield_) {
     for v in self {
-      guard let IterContinue = yield_(v) else { x => break x }
+      guard yield_(v) is IterContinue else { break IterEnd }
 
     } else {
       IterContinue
@@ -26,10 +47,31 @@ pub fn FixedArray::iter[T](self : FixedArray[T]) -> Iter[T] {
 }
 
 ///|
+/// Returns an iterator that yields both indices and values from the fixed array.
+/// The iterator provides pairs of `(index, value)` where indices start from 0
+/// and increment sequentially.
+///
+/// Parameters:
+///
+/// * `array` : The fixed array to iterate over.
+///
+/// Returns an iterator of type `Iter2[Int, T]` that yields tuples of indices and
+/// values from the array.
+///
+/// Example:
+///
+/// ```moonbit
+/// test "FixedArray::iter2" {
+///   let arr = FixedArray::make(3, 10)
+///   let mut sum = 0
+///   arr.iter2().each(fn(i, x) { sum = sum + i + x })
+///   inspect!(sum, content="33") // (0 + 10) + (1 + 10) + (2 + 10) = 33
+/// }
+/// ```
 pub fn FixedArray::iter2[T](self : FixedArray[T]) -> Iter2[Int, T] {
   Iter2::new(fn(yield_) {
     for i, v in self {
-      guard let IterContinue = yield_(i, v) else { x => break x }
+      guard yield_(i, v) is IterContinue else { break IterEnd }
 
     } else {
       IterContinue
@@ -38,7 +80,24 @@ pub fn FixedArray::iter2[T](self : FixedArray[T]) -> Iter2[Int, T] {
 }
 
 ///|
-pub fn FixedArray::default[X]() -> FixedArray[X] {
+/// Returns an empty fixed-size array of the specified type.
+///
+/// Parameters:
+///
+/// * `X` : The type parameter specifying the element type of the array.
+///
+/// Returns an empty fixed-size array of type `FixedArray[X]`.
+///
+/// Example:
+///
+/// ```moonbit
+/// test "FixedArray::default" {
+///   let arr : FixedArray[Int] = FixedArray::default()
+///   inspect!(arr.length(), content="0")
+///   inspect!(arr.is_empty(), content="true")
+/// }
+/// ```
+pub impl[X] Default for FixedArray[X] with default() {
   []
 }
 
@@ -54,26 +113,6 @@ pub fn FixedArray::default[X]() -> FixedArray[X] {
 pub fn FixedArray::fill[T](self : FixedArray[T], value : T) -> Unit {
   for i in 0..<self.length() {
     self[i] = value
-  }
-}
-
-///|
-pub fn compare[T : Compare](self : FixedArray[T], other : FixedArray[T]) -> Int {
-  let len_self = self.length()
-  let len_other = other.length()
-  if len_self < len_other {
-    -1
-  } else if len_self > len_other {
-    1
-  } else {
-    for i in 0..<len_self {
-      let cmp = self.unsafe_get(i).compare(other.unsafe_get(i))
-      if cmp != 0 {
-        break cmp
-      }
-    } else {
-      0
-    }
   }
 }
 

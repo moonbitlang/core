@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+///|
 test "byte.to_string" {
   let b1 = b'\x00'
   let b2 = b'\x0F'
@@ -21,6 +22,7 @@ test "byte.to_string" {
   inspect!(b3, content="b'\\xFF'")
 }
 
+///|
 test "byte_compare" {
   let b1 = b'\x00'
   let b2 = b'\x0F'
@@ -33,6 +35,7 @@ test "byte_compare" {
   assert_true!(b3.compare(b3) == 0)
 }
 
+///|
 test "byte_op_equal" {
   let b1 = b'\x00'
   let b2 = b'\x0F'
@@ -46,34 +49,40 @@ test "byte_op_equal" {
   assert_true!(b3.op_equal(b3))
 }
 
+///|
 test "byte_lsl" {
   assert_eq!(b'\xFF' << 8, b'\x00')
   assert_eq!((b'\xFF' << 8).to_int(), 0)
 }
 
+///|
 test "byte_lsr" {
   assert_eq!(b'\xFF' >> 8, b'\x00')
   assert_eq!((0xFFF).to_byte() >> 8, b'\x00')
 }
 
+///|
 test "byte_lxor" {
   assert_eq!(b'\xFF' ^ b'\xFF', b'\x00')
   assert_eq!(b'\xFF' ^ b'\x0F', b'\xF0')
   assert_eq!(b'\x0F' ^ b'\xFF', b'\xF0')
 }
 
+///|
 test "byte_lor" {
   assert_eq!(b'\xFF' | b'\xFF', b'\xFF')
   assert_eq!(b'\xFF' | b'\x0F', b'\xFF')
   assert_eq!(b'\x0F' | b'\xFF', b'\xFF')
 }
 
+///|
 test "byte_land" {
   assert_eq!(b'\xFF' & b'\xFF', b'\xFF')
   assert_eq!(b'\xFF' & b'\x0F', b'\x0F')
   assert_eq!(b'\x0F' & b'\xFF', b'\x0F')
 }
 
+///|
 test "byte_shr" {
   inspect!(b'\x01' >> 1, content="b'\\x00'")
   inspect!(b'\x02' >> 1, content="b'\\x01'")
@@ -89,6 +98,7 @@ test "byte_shr" {
   inspect!(b'\x02' >> 1, content="b'\\x01'")
 }
 
+///|
 test "byte_shl" {
   // Test for the smallest possible shift count
   inspect!(b'\x01' << 0, content="b'\\x01'")
@@ -132,6 +142,7 @@ test "byte_shl" {
   inspect!(b'\xFF' << -1, content="b'\\x00'")
 }
 
+///|
 test "byte_op_add" {
   inspect!(b'\x01' + b'\x02', content="b'\\x03'")
   inspect!(b'\x05' + b'\x05', content="b'\\x0A'")
@@ -147,6 +158,7 @@ test "byte_op_add" {
   inspect!(b'\xB0' + b'\xC1', content="b'\\x71'")
 }
 
+///|
 test "byte_op_sub" {
   // Test for the smallest possible byte values
   inspect!(b'\x00' - b'\x00', content="b'\\x00'")
@@ -172,11 +184,13 @@ test "byte_op_sub" {
   inspect!(b'\x0F' - b'\x10', content="b'\\xFF'")
 }
 
+///|
 test "byte_op_mul" {
   inspect!((8 : Byte) * 16, content="b'\\x80'")
   inspect!((3 : Byte) * 200, content="b'\\x58'")
 }
 
+///|
 test "byte_op_div" {
   inspect!((80 : Byte) / 8, content="b'\\x0A'")
   inspect!((10 : Byte) / 3, content="b'\\x03'")

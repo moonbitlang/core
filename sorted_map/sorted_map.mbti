@@ -1,29 +1,68 @@
-package moonbitlang/core/sorted_map
+package "moonbitlang/core/sorted_map"
 
-alias @moonbitlang/core/quickcheck as @quickcheck
+import(
+  "moonbitlang/core/quickcheck"
+)
 
 // Values
+fn add[K : Compare, V](T[K, V], K, V) -> Unit
+
+fn clear[K, V](T[K, V]) -> Unit
+
+fn contains[K : Compare, V](T[K, V], K) -> Bool
+
+fn each[K, V](T[K, V], (K, V) -> Unit) -> Unit
+
+fn eachi[K, V](T[K, V], (Int, K, V) -> Unit) -> Unit
+
+fn from_array[K : Compare, V](Array[(K, V)]) -> T[K, V]
+
 fn from_iter[K : Compare, V](Iter[(K, V)]) -> T[K, V]
+
+fn get[K : Compare, V](T[K, V], K) -> V?
+
+fn is_empty[K, V](T[K, V]) -> Bool
+
+fn iter[K, V](T[K, V]) -> Iter[(K, V)]
+
+fn iter2[K, V](T[K, V]) -> Iter2[K, V]
+
+fn keys[K, V](T[K, V]) -> Array[K]
 
 fn new[K, V]() -> T[K, V]
 
+#deprecated
 fn of[K : Compare, V](Array[(K, V)]) -> T[K, V]
 
+fn op_get[K : Compare, V](T[K, V], K) -> V?
+
+fn op_set[K : Compare, V](T[K, V], K, V) -> Unit
+
+fn range[K : Compare, V](T[K, V], K, K) -> Iter2[K, V]
+
+fn remove[K : Compare, V](T[K, V], K) -> Unit
+
+fn size[K, V](T[K, V]) -> Int
+
+fn to_array[K, V](T[K, V]) -> Array[(K, V)]
+
+fn values[K, V](T[K, V]) -> Array[V]
+
 // Types and methods
-type T
+type T[K, V]
 impl T {
   add[K : Compare, V](Self[K, V], K, V) -> Unit
   clear[K, V](Self[K, V]) -> Unit
   contains[K : Compare, V](Self[K, V], K) -> Bool
   each[K, V](Self[K, V], (K, V) -> Unit) -> Unit
   eachi[K, V](Self[K, V], (Int, K, V) -> Unit) -> Unit
-  from_iter[K : Compare, V](Iter[(K, V)]) -> Self[K, V] //deprecated
+  #deprecated
+  from_iter[K : Compare, V](Iter[(K, V)]) -> Self[K, V]
   get[K : Compare, V](Self[K, V], K) -> V?
   is_empty[K, V](Self[K, V]) -> Bool
   iter[K, V](Self[K, V]) -> Iter[(K, V)]
   iter2[K, V](Self[K, V]) -> Iter2[K, V]
   keys[K, V](Self[K, V]) -> Array[K]
-  op_equal[K : Eq, V : Eq](Self[K, V], Self[K, V]) -> Bool
   op_get[K : Compare, V](Self[K, V], K) -> V?
   op_set[K : Compare, V](Self[K, V], K, V) -> Unit
   range[K : Compare, V](Self[K, V], K, K) -> Iter2[K, V]
@@ -32,6 +71,7 @@ impl T {
   to_array[K, V](Self[K, V]) -> Array[(K, V)]
   values[K, V](Self[K, V]) -> Array[V]
 }
+impl[K : Eq, V : Eq] Eq for T[K, V]
 impl[K : Show, V : Show] Show for T[K, V]
 impl[K : @quickcheck.Arbitrary + Compare, V : @quickcheck.Arbitrary] @quickcheck.Arbitrary for T[K, V]
 

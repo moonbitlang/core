@@ -493,7 +493,7 @@ fn to_chars(v : FloatingDecimal64, sign : Bool) -> String {
   let scientificNotation = not(exp >= -6 && exp < 21)
   if scientificNotation {
     // Print the decimal digits.
-    for i = 0; i < olength - 1; i = i + 1 {
+    for i in 0..<(olength - 1) {
       let c = output % 10
       output /= 10
       // 48 is ASCII '0', the same applies below.
@@ -551,14 +551,14 @@ fn to_chars(v : FloatingDecimal64, sign : Bool) -> String {
         index += 1
       }
       let current = index
-      for i = 0; i < olength; i = i + 1 {
+      for i in 0..<olength {
         result[current + olength - i - 1] = (48 + (output % 10).to_int()).to_byte()
         output /= 10
         index += 1
       }
     } else if exp + 1 >= olength {
       // Decimal dot is after any of the digits.
-      for i = 0; i < olength; i = i + 1 {
+      for i in 0..<olength {
         result[index + olength - i - 1] = (48 + (output % 10).to_int()).to_byte()
         output /= 10
       }
@@ -570,7 +570,7 @@ fn to_chars(v : FloatingDecimal64, sign : Bool) -> String {
     } else {
       // Decimal dot is somewhere between the digits.
       let mut current = index + 1
-      for i = 0; i < olength; i = i + 1 {
+      for i in 0..<olength {
         if olength - i - 1 == exp {
           result[current + olength - i - 1] = b'.'
           current -= 1
@@ -646,6 +646,7 @@ pub fn ryu_to_string(val : Double) -> String {
   to_chars(v, ieeeSign)
 }
 
+///|
 test "double/ryu.mbt:205" {
   let m = 123456789UL
   let mul0 = 987654321UL
@@ -660,6 +661,7 @@ test "double/ryu.mbt:205" {
   assert_eq!(high1, 222222222)
 }
 
+///|
 test "double/ryu.mbt:230" {
   let m = 123456789UL
   let mul0 = 987654321UL
@@ -674,10 +676,12 @@ test "double/ryu.mbt:230" {
   assert_eq!(high1, 222222222UL)
 }
 
+///|
 test "double/ryu.mbt:252" {
   assert_eq!(gDOUBLE_POW5_BITCOUNT, 125)
 }
 
+///|
 test "double/ryu.mbt:205" {
   let m = 123456789UL
   let mul0 = 987654321UL
@@ -692,6 +696,7 @@ test "double/ryu.mbt:205" {
   assert_eq!(high1, 222222222UL)
 }
 
+///|
 test "double/ryu.mbt:230" {
   let m = 123456789UL
   let mul0 = 987654321UL
@@ -706,6 +711,7 @@ test "double/ryu.mbt:230" {
   assert_eq!(high1, 222222222UL)
 }
 
+///|
 test "double/ryu.mbt:252" {
   assert_eq!(gDOUBLE_POW5_BITCOUNT, 125)
 }

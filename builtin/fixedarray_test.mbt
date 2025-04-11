@@ -12,16 +12,19 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+///|
 test "to_string with empty FixedArray" {
   let emptyArray : FixedArray[Int] = FixedArray::default()
   assert_eq!(emptyArray.to_string(), "[]")
 }
 
+///|
 test "to_string with non-empty FixedArray" {
   let array : FixedArray[Int] = [1, 2, 3]
   assert_eq!(array.to_string(), "[1, 2, 3]")
 }
 
+///|
 test "compare" {
   let arr1 : FixedArray[Int] = [1, 2, 3]
   let arr2 : FixedArray[Int] = [1, 2, 4]
@@ -32,11 +35,13 @@ test "compare" {
   inspect!(arr1.compare(arr1), content="0")
 }
 
+///|
 test "is_empty" {
   let arr : FixedArray[Int] = []
   assert_true!(arr.is_empty())
 }
 
+///|
 test "fixed array iter with early termination" {
   let arr : FixedArray[Int] = [1, 2, 3]
   let mut count = 0
@@ -50,4 +55,20 @@ test "fixed array iter with early termination" {
     }
   })
   inspect!(count, content="2")
+}
+
+///|
+test "FixedArray::iter2 with empty array" {
+  let arr : FixedArray[Int] = []
+  let mut count = 0
+  arr.iter2().each(fn(_, _) { count = count + 1 })
+  inspect!(count, content="0")
+}
+
+///|
+test "FixedArray::iter2 with single element" {
+  let arr = FixedArray::make(1, 42)
+  let pairs : Array[(Int, Int)] = []
+  arr.iter2().each(fn(i, x) { pairs.push((i, x)) })
+  inspect!(pairs, content="[(0, 42)]")
 }

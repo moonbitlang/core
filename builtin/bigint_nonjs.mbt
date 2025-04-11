@@ -208,7 +208,7 @@ pub fn BigInt::from_uint64(n : UInt64) -> BigInt {
 ///   inspect!(-0N, content="0")
 /// }
 /// ```
-pub fn BigInt::op_neg(self : BigInt) -> BigInt {
+pub impl Neg for BigInt with op_neg(self : BigInt) -> BigInt {
   if self.is_zero() {
     return zero
   }
@@ -237,7 +237,7 @@ pub fn BigInt::op_neg(self : BigInt) -> BigInt {
 ///   inspect!(-a + -b, content="-9223372036854775808")
 /// }
 /// ```
-pub fn BigInt::op_add(self : BigInt, other : BigInt) -> BigInt {
+pub impl Add for BigInt with op_add(self : BigInt, other : BigInt) -> BigInt {
   if self.sign == Negative {
     if other.sign == Negative {
       return -(-other + -self)
@@ -285,7 +285,7 @@ pub fn BigInt::op_add(self : BigInt, other : BigInt) -> BigInt {
 ///   inspect!(-a - b, content="-22222222112222222211")
 /// }
 /// ```
-pub fn BigInt::op_sub(self : BigInt, other : BigInt) -> BigInt {
+pub impl Sub for BigInt with op_sub(self : BigInt, other : BigInt) -> BigInt {
   // first make sure self and other > 0
   if self.sign == Negative {
     if other.sign == Negative {
@@ -361,7 +361,7 @@ pub fn BigInt::op_sub(self : BigInt, other : BigInt) -> BigInt {
 ///   inspect!(a * 0N, content="0")
 /// }
 /// ```
-pub fn BigInt::op_mul(self : BigInt, other : BigInt) -> BigInt {
+pub impl Mul for BigInt with op_mul(self : BigInt, other : BigInt) -> BigInt {
   if self.is_zero() || other.is_zero() {
     return zero
   }
@@ -380,7 +380,7 @@ fn BigInt::grade_school_mul(self : BigInt, other : BigInt) -> BigInt {
   let other_len = other.len
   let mut len = self_len + other_len
   let limbs = FixedArray::make(len, 0U)
-  for i = 0; i < self_len; i = i + 1 {
+  for i in 0..<self_len {
     let mut carry = 0UL
     for j = 0; j < other_len || carry != 0; j = j + 1 {
       let product = limbs[i + j].to_uint64() +
@@ -458,7 +458,7 @@ fn BigInt::split(self : BigInt, half : Int) -> (BigInt, BigInt) {
 ///   ignore(a / b) // Division by zero
 /// }
 /// ```
-pub fn BigInt::op_div(self : BigInt, other : BigInt) -> BigInt {
+pub impl Div for BigInt with op_div(self : BigInt, other : BigInt) -> BigInt {
   // TODO:
   // guard (other != zero, "division by zero")
   if other == zero {
@@ -507,7 +507,7 @@ pub fn BigInt::op_div(self : BigInt, other : BigInt) -> BigInt {
 ///   ignore(a % 0N) // Division by zero
 /// }
 /// ```
-pub fn BigInt::op_mod(self : BigInt, other : BigInt) -> BigInt {
+pub impl Mod for BigInt with op_mod(self : BigInt, other : BigInt) -> BigInt {
   if other == zero {
     abort("division by zero")
   }
@@ -585,11 +585,11 @@ fn BigInt::grade_school_div(self : BigInt, other : BigInt) -> (BigInt, BigInt) {
   let divisor = divisor << lshift
   let b_len = divisor.len
   let b = FixedArray::make(b_len, 0UL)
-  for i = 0; i < b_len; i = i + 1 {
+  for i in 0..<b_len {
     b[i] = divisor.limbs[i].to_uint64()
   }
   let a = FixedArray::make(a_len + 1, 0UL)
-  for i = 0; i < a_len; i = i + 1 {
+  for i in 0..<a_len {
     a[i] = dividend.limbs[i].to_uint64()
   } else {
     if dividend.limbs.length() > i {
@@ -618,7 +618,7 @@ fn BigInt::grade_school_div(self : BigInt, other : BigInt) -> (BigInt, BigInt) {
     // D4 divident = divident - qh * divisor
     let mut borrow = 0L
     let mut carry = 0UL
-    for j = 0; j < b_len; j = j + 1 {
+    for j in 0..<b_len {
       carry += qh * b[j]
       borrow += a[i + j].reinterpret_as_int64()
       borrow -= (carry & radix_mask).reinterpret_as_int64()
@@ -632,7 +632,7 @@ fn BigInt::grade_school_div(self : BigInt, other : BigInt) -> (BigInt, BigInt) {
     borrow = borrow >> radix_bit_len
     if borrow < 0L {
       carry = 0UL
-      for j = 0; j < b_len; j = j + 1 {
+      for j in 0..<b_len {
         carry += a[i + j]
         carry += b[j]
         a[i + j] = carry & radix_mask
@@ -659,7 +659,7 @@ fn BigInt::grade_school_div(self : BigInt, other : BigInt) -> (BigInt, BigInt) {
     i += 1
   }
   let modulo = FixedArray::make(i, 0U)
-  for j = 0; j < i; j = j + 1 {
+  for j in 0..<i {
     modulo[j] = a[j].to_uint()
   }
   let modulo = { limbs: modulo, sign: Positive, len: i }
@@ -697,7 +697,7 @@ fn BigInt::grade_school_div(self : BigInt, other : BigInt) -> (BigInt, BigInt) {
 ///   ignore(x << -1) // Panics with "negative shift count"
 /// }
 /// ```
-pub fn BigInt::op_shl(self : BigInt, n : Int) -> BigInt {
+pub impl Shl for BigInt with op_shl(self : BigInt, n : Int) -> BigInt {
   if n < 0 {
     abort("negative shift count")
   }
@@ -712,7 +712,7 @@ pub fn BigInt::op_shl(self : BigInt, n : Int) -> BigInt {
     let mut len = self.len + lz
     if r != 0 {
       let mut carry = 0UL
-      for i = 0; i < self.len; i = i + 1 {
+      for i in 0..<self.len {
         carry = carry | (a[i].to_uint64() << r)
         new_limbs[i + lz] = (carry % radix).to_uint()
         carry = carry >> radix_bit_len
@@ -761,7 +761,7 @@ pub fn BigInt::op_shl(self : BigInt, n : Int) -> BigInt {
 ///   ignore(n >> -1) // Panics with "negative shift count"
 /// }
 /// ```
-pub fn BigInt::op_shr(self : BigInt, n : Int) -> BigInt {
+pub impl Shr for BigInt with op_shr(self : BigInt, n : Int) -> BigInt {
   if n < 0 {
     abort("negative shift count")
   }
@@ -850,7 +850,7 @@ pub fn BigInt::is_zero(self : BigInt) -> Bool {
 ///   inspect!(a.compare(a), content="0") // 42 = 42
 /// }
 /// ```
-pub fn BigInt::compare(self : BigInt, other : BigInt) -> Int {
+pub impl Compare for BigInt with compare(self, other) {
   if self.sign != other.sign {
     return if self.sign == Positive { 1 } else { -1 }
   }
@@ -897,11 +897,11 @@ pub fn BigInt::compare(self : BigInt, other : BigInt) -> Int {
 ///   inspect!(a == c, content="false")
 /// }
 /// ```
-pub fn BigInt::op_equal(self : BigInt, other : BigInt) -> Bool {
+pub impl Eq for BigInt with op_equal(self, other) {
   if self.sign != other.sign || self.len != other.len {
     return false
   }
-  for i = 0; i < self.len; i = i + 1 {
+  for i in 0..<self.len {
     if self.limbs[i] != other.limbs[i] {
       return false
     }
@@ -950,7 +950,7 @@ pub fn BigInt::to_string(self : BigInt) -> String {
   let mut v_idx = 0
   for i = self.len - 1; i >= 0; i = i - 1 {
     let mut x = self.limbs[i].to_uint64().reinterpret_as_int64()
-    for j = 0; j < v_idx; j = j + 1 {
+    for j in 0..<v_idx {
       let y = (v[j] << radix_bit_len) | x
       x = y / decimal_mask
       v[j] = y % decimal_mask
@@ -962,8 +962,8 @@ pub fn BigInt::to_string(self : BigInt) -> String {
     }
   }
   let mut ret = ""
-  for i = 0; i < v_idx - 1; i = i + 1 {
-    for j = 0; j < decimal_radix_bit_len; j = j + 1 {
+  for i in 0..<(v_idx - 1) {
+    for j in 0..<decimal_radix_bit_len {
       let x = v[i] % 10L
       v[i] /= 10L
       ret = x.to_string() + ret
@@ -1042,25 +1042,28 @@ pub fn BigInt::from_string(input : String) -> BigInt {
   if len == 0 {
     abort("empty string")
   }
-  let sign : Sign = if input[0] == '-' { Negative } else { Positive }
+  let sign : Sign = if input.unsafe_charcode_at(0) == '-' {
+    Negative
+  } else {
+    Positive
+  }
   let mut b_len = (
       (len.to_double() / decimal_ratio).to_unchecked_int() + 1 + radix_bit_len
     ) /
     radix_bit_len +
     1
   let b = FixedArray::make(b_len, 0U)
-  for i = (match sign {
-          Negative => 1
-          Positive => 0
-        })
-      i < input.length()
-      i = i + 1 {
-    let x = input[i].to_int() - 48 // ASCII value of '0'
+  for
+    i in (match sign {
+      Negative => 1
+      Positive => 0
+    })..<input.length() {
+    let x = input.unsafe_charcode_at(i) - '0'
     if x < 0 || x > 9 {
       abort("invalid character")
     }
     let mut carry = x.reinterpret_as_uint().to_uint64()
-    for j = 0; j < b_len; j = j + 1 {
+    for j in 0..<b_len {
       carry += b[j].to_uint64() * 10
       b[j] = (carry % radix).to_uint()
       carry /= radix
@@ -1108,27 +1111,20 @@ pub fn BigInt::from_string(input : String) -> BigInt {
 /// ```
 pub fn BigInt::from_hex(input : String) -> BigInt {
   // WARN: this implementation assumes that `radix_bit_len` is a multiple of 4.
-  fn char_from_hex(c : Char) -> UInt {
-    let x = c.to_int()
-    if x >= 48 && x <= 57 {
-      // ASCII value of '0'
-      (x - 48).reinterpret_as_uint()
-    } else if x >= 65 && x <= 70 {
-      // ASCII value of 'A'
-      (x - 55).reinterpret_as_uint()
-    } else if x >= 97 && x <= 102 {
-      // ASCII value of 'a'
-      (x - 87).reinterpret_as_uint()
-    } else {
-      abort("invalid character")
-    }
+  fn char_from_hex(x : Int) -> UInt {
+    (match x {
+      '0'..='9' => x - '0'
+      'A'..='F' => x + (10 - 'A')
+      'a'..='f' => x + (10 - 'a')
+      _ => abort("invalid character")
+    }).reinterpret_as_uint()
   }
 
   let len = input.length()
   if len == 0 {
     abort("empty string")
   }
-  let (sign, number_len) = if input[0] == '-' {
+  let (sign, number_len) = if input.unsafe_charcode_at(0) == '-' {
     (Negative, len - 1)
   } else {
     (Positive, len)
@@ -1136,19 +1132,23 @@ pub fn BigInt::from_hex(input : String) -> BigInt {
   let nb_char = radix_bit_len / 4 // number of char per limb
   let quotient = number_len / nb_char
   let mod = number_len % nb_char
-  let b_len = if mod == 0 { quotient } else { quotient + 1 }
+  let mut b_len = if mod == 0 { quotient } else { quotient + 1 }
   let b = FixedArray::make(b_len, 0U)
   if mod != 0 {
     let start = len - quotient * nb_char - mod
-    for i = 0; i < mod; i = i + 1 {
-      b[b_len - 1] = (b[b_len - 1] << 4) | char_from_hex(input[start + i])
+    for i in 0..<mod {
+      b[b_len - 1] = (b[b_len - 1] << 4) |
+        char_from_hex(input.unsafe_charcode_at(start + i))
     }
   }
-  for i = 0; i < quotient; i = i + 1 {
+  for i in 0..<quotient {
     let start = len - (i + 1) * nb_char
-    for j = 0; j < nb_char; j = j + 1 {
-      b[i] = (b[i] << 4) | char_from_hex(input[start + j])
+    for j in 0..<nb_char {
+      b[i] = (b[i] << 4) | char_from_hex(input.unsafe_charcode_at(start + j))
     }
+  }
+  while b[b_len - 1] == 0 && b_len > 1 {
+    b_len -= 1
   }
   { limbs: b, sign, len: b_len }
 }
@@ -1201,7 +1201,7 @@ pub fn BigInt::to_hex(self : BigInt, uppercase~ : Bool = true) -> String {
     if i != self.len - 1 && tmp.length() < radix_bit_len / 4 {
       let pad = radix_bit_len / 4 - tmp.length()
       // pad with zeros if not the last limb(the front of the BigInt)
-      for j = 0; j < pad; j = j + 1 {
+      for j in 0..<pad {
         tmp = "0" + tmp
       }
     }
@@ -1214,13 +1214,6 @@ pub fn BigInt::to_hex(self : BigInt, uppercase~ : Bool = true) -> String {
   } else {
     result
   }
-}
-
-///|
-/// @alert deprecated "Use `copy` instead"
-/// @coverage.skip
-fn BigInt::deep_clone(self : BigInt) -> BigInt {
-  BigInt::copy(self)
 }
 
 ///|
@@ -1363,14 +1356,14 @@ pub fn BigInt::from_octets(input : Bytes, signum~ : Int = 1) -> BigInt {
   let limbs_len = if mod == 0 { div } else { div + 1 }
   let limbs = FixedArray::make(limbs_len, 0U)
   // head at most significant limb
-  for i = 0; i < mod / 8; i = i + 1 {
+  for i in 0..<(mod / 8) {
     limbs[limbs_len - 1] = (limbs[limbs_len - 1] << 8) |
       input[i].to_int().reinterpret_as_uint()
   }
   let byte_per_limb = radix_bit_len / 8
   // tail
-  for i = 0; i < div; i = i + 1 {
-    for j = 0; j < byte_per_limb; j = j + 1 {
+  for i in 0..<div {
+    for j in 0..<byte_per_limb {
       let bytes_idx = len - byte_per_limb - i * byte_per_limb + j
       limbs[i] = (limbs[i] << 8) |
         input[bytes_idx].to_int().reinterpret_as_uint()
@@ -1474,7 +1467,7 @@ pub fn BigInt::to_octets(self : BigInt, length? : Int) -> Bytes {
 ///   inspect!(a & b, content="-8") // ~0b1011 + 1
 /// }
 /// ```
-pub fn BigInt::land(self : BigInt, other : BigInt) -> BigInt {
+pub impl BitAnd for BigInt with land(self : BigInt, other : BigInt) -> BigInt {
   let max_length = if self.limbs.length() < other.limbs.length() {
     other.limbs.length() + 1
   } else {
@@ -1496,10 +1489,10 @@ pub fn BigInt::land(self : BigInt, other : BigInt) -> BigInt {
 
   // Calculate the complement code per 2
   if self.sign == Negative {
-    for i = 0; i < x_limbs.length(); i = i + 1 {
+    for i in 0..<x_limbs.length() {
       x_limbs[i] = x_limbs[i] ^ 0xFFFFFFFFU
     }
-    for i = 0; i < x_limbs.length(); i = i + 1 {
+    for i in 0..<x_limbs.length() {
       x_limbs[i] += 1
       if x_limbs[i] != 0x0U {
         break
@@ -1507,10 +1500,10 @@ pub fn BigInt::land(self : BigInt, other : BigInt) -> BigInt {
     }
   }
   if other.sign == Negative {
-    for i = 0; i < y_limbs.length(); i = i + 1 {
+    for i in 0..<y_limbs.length() {
       y_limbs[i] = y_limbs[i] ^ 0xFFFFFFFFU
     }
-    for i = 0; i < y_limbs.length(); i = i + 1 {
+    for i in 0..<y_limbs.length() {
       y_limbs[i] += 1
       if y_limbs[i] != 0x0U {
         break
@@ -1519,11 +1512,11 @@ pub fn BigInt::land(self : BigInt, other : BigInt) -> BigInt {
   }
 
   // Bit Ops
-  for i = 0; i < x_limbs.length(); i = i + 1 {
+  for i in 0..<x_limbs.length() {
     x_limbs[i] = x_limbs[i] & y_limbs[i]
   }
 
-  // Check wether the result is either positive or negative
+  // Check whether the result is either positive or negative
   let new_sign = if x_limbs[x_limbs.length() - 1] == 0xFFFFFFFFU {
     Negative
   } else {
@@ -1532,13 +1525,13 @@ pub fn BigInt::land(self : BigInt, other : BigInt) -> BigInt {
 
   // Restore as true code
   if new_sign == Negative {
-    for i = 0; i < x_limbs.length(); i = i + 1 {
+    for i in 0..<x_limbs.length() {
       x_limbs[i] -= 1
       if x_limbs[i] != 0xFFFFFFFFU {
         break
       }
     }
-    for i = 0; i < x_limbs.length(); i = i + 1 {
+    for i in 0..<x_limbs.length() {
       x_limbs[i] = x_limbs[i] ^ 0xFFFFFFFFU
     }
   }
@@ -1583,7 +1576,7 @@ pub fn BigInt::land(self : BigInt, other : BigInt) -> BigInt {
 ///   inspect!(c | d, content="-4")
 /// }
 /// ```
-pub fn BigInt::lor(self : BigInt, other : BigInt) -> BigInt {
+pub impl BitOr for BigInt with lor(self : BigInt, other : BigInt) -> BigInt {
   let max_length = if self.limbs.length() < other.limbs.length() {
     other.limbs.length() + 1
   } else {
@@ -1605,10 +1598,10 @@ pub fn BigInt::lor(self : BigInt, other : BigInt) -> BigInt {
 
   // Calculate the complement code per 2
   if self.sign == Negative {
-    for i = 0; i < x_limbs.length(); i = i + 1 {
+    for i in 0..<x_limbs.length() {
       x_limbs[i] = x_limbs[i] ^ 0xFFFFFFFFU
     }
-    for i = 0; i < x_limbs.length(); i = i + 1 {
+    for i in 0..<x_limbs.length() {
       x_limbs[i] += 1
       if x_limbs[i] != 0x0U {
         break
@@ -1616,10 +1609,10 @@ pub fn BigInt::lor(self : BigInt, other : BigInt) -> BigInt {
     }
   }
   if other.sign == Negative {
-    for i = 0; i < y_limbs.length(); i = i + 1 {
+    for i in 0..<y_limbs.length() {
       y_limbs[i] = y_limbs[i] ^ 0xFFFFFFFFU
     }
-    for i = 0; i < y_limbs.length(); i = i + 1 {
+    for i in 0..<y_limbs.length() {
       y_limbs[i] += 1
       if y_limbs[i] != 0x0U {
         break
@@ -1628,11 +1621,11 @@ pub fn BigInt::lor(self : BigInt, other : BigInt) -> BigInt {
   }
 
   // Bit Ops
-  for i = 0; i < x_limbs.length(); i = i + 1 {
+  for i in 0..<x_limbs.length() {
     x_limbs[i] = x_limbs[i] | y_limbs[i]
   }
 
-  // Check wether the result is either positive or negative
+  // Check whether the result is either positive or negative
   let new_sign = if x_limbs[x_limbs.length() - 1] == 0xFFFFFFFFU {
     Negative
   } else {
@@ -1641,13 +1634,13 @@ pub fn BigInt::lor(self : BigInt, other : BigInt) -> BigInt {
 
   // Restore as true code
   if new_sign == Negative {
-    for i = 0; i < x_limbs.length(); i = i + 1 {
+    for i in 0..<x_limbs.length() {
       x_limbs[i] -= 1
       if x_limbs[i] != 0xFFFFFFFFU {
         break
       }
     }
-    for i = 0; i < x_limbs.length(); i = i + 1 {
+    for i in 0..<x_limbs.length() {
       x_limbs[i] = x_limbs[i] ^ 0xFFFFFFFFU
     }
   }
@@ -1695,7 +1688,7 @@ pub fn BigInt::lor(self : BigInt, other : BigInt) -> BigInt {
 ///   inspect!(a ^ a, content="0") // XOR with self gives 0
 /// }
 /// ```
-pub fn BigInt::lxor(self : BigInt, other : BigInt) -> BigInt {
+pub impl BitXOr for BigInt with lxor(self : BigInt, other : BigInt) -> BigInt {
   let max_length = if self.limbs.length() < other.limbs.length() {
     other.limbs.length() + 1
   } else {
@@ -1717,10 +1710,10 @@ pub fn BigInt::lxor(self : BigInt, other : BigInt) -> BigInt {
 
   // Calculate the complement code per 2
   if self.sign == Negative {
-    for i = 0; i < x_limbs.length(); i = i + 1 {
+    for i in 0..<x_limbs.length() {
       x_limbs[i] = x_limbs[i] ^ 0xFFFFFFFFU
     }
-    for i = 0; i < x_limbs.length(); i = i + 1 {
+    for i in 0..<x_limbs.length() {
       x_limbs[i] += 1
       if x_limbs[i] != 0x0U {
         break
@@ -1728,10 +1721,10 @@ pub fn BigInt::lxor(self : BigInt, other : BigInt) -> BigInt {
     }
   }
   if other.sign == Negative {
-    for i = 0; i < y_limbs.length(); i = i + 1 {
+    for i in 0..<y_limbs.length() {
       y_limbs[i] = y_limbs[i] ^ 0xFFFFFFFFU
     }
-    for i = 0; i < y_limbs.length(); i = i + 1 {
+    for i in 0..<y_limbs.length() {
       y_limbs[i] += 1
       if y_limbs[i] != 0x0U {
         break
@@ -1740,11 +1733,11 @@ pub fn BigInt::lxor(self : BigInt, other : BigInt) -> BigInt {
   }
 
   // Bit Ops
-  for i = 0; i < x_limbs.length(); i = i + 1 {
+  for i in 0..<x_limbs.length() {
     x_limbs[i] = x_limbs[i] ^ y_limbs[i]
   }
 
-  // Check wether the result is either positive or negative
+  // Check whether the result is either positive or negative
   let new_sign = if x_limbs[x_limbs.length() - 1] == 0xFFFFFFFFU {
     Negative
   } else {
@@ -1753,13 +1746,13 @@ pub fn BigInt::lxor(self : BigInt, other : BigInt) -> BigInt {
 
   // Restore as true code
   if new_sign == Negative {
-    for i = 0; i < x_limbs.length(); i = i + 1 {
+    for i in 0..<x_limbs.length() {
       x_limbs[i] -= 1
       if x_limbs[i] != 0xFFFFFFFFU {
         break
       }
     }
-    for i = 0; i < x_limbs.length(); i = i + 1 {
+    for i in 0..<x_limbs.length() {
       x_limbs[i] = x_limbs[i] ^ 0xFFFFFFFFU
     }
   }

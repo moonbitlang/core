@@ -12,12 +12,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+///|
 test "map" {
   let x = @ref.new(1)
   let y = @ref.map(x, fn(a) { a + 1 })
   assert_eq!(y.val, 2)
 }
 
+///|
 test "protect" {
   let x = @ref.new(1)
   assert_eq!(x.val, 1)
@@ -27,36 +29,42 @@ test "protect" {
   assert_eq!(x.val, 1)
 }
 
+///|
 test "update with increment function" {
   let a = @ref.new(1)
   @ref.update(a, fn(x) { x + 1 })
   assert_eq!(a.val, 2)
 }
 
+///|
 test "update with decrement function" {
   let a = @ref.new(1)
   @ref.update(a, fn(x) { x - 1 })
   assert_eq!(a.val, 0)
 }
 
+///|
 test "update with multiplication function" {
   let a = @ref.new(2)
   @ref.update(a, fn(x) { x * 2 })
   assert_eq!(a.val, 4)
 }
 
+///|
 test "update with division function" {
   let a = @ref.new(4)
   @ref.update(a, fn(x) { x / 2 })
   assert_eq!(a.val, 2)
 }
 
+///|
 test "update with identity function" {
   let a = @ref.new(1)
   @ref.update(a, fn(x) { x })
   assert_eq!(a.val, 1)
 }
 
+///|
 test "Ref::new with string" {
   let r = Ref::new("hello")
   inspect!(r, content="{val: \"hello\"}")

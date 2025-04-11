@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+///|
 test "panic blit_to with dst_offset out of bounds" {
   let src = FixedArray::make(3, 1)
   let dst = FixedArray::make(3, 0)

@@ -23,7 +23,7 @@ pub fn op_get[K : Compare, V](self : T[K, V], key : K) -> V? {
 }
 
 ///|
-pub fn op_equal[K : Eq, V : Eq](self : T[K, V], other : T[K, V]) -> Bool {
+pub impl[K : Eq, V : Eq] Eq for T[K, V] with op_equal(self, other) {
   self.to_array() == other.to_array()
 }
 
@@ -34,8 +34,15 @@ pub fn new[K, V]() -> T[K, V] {
 }
 
 ///|
-/// Creates a sorted map from given entries.
+#deprecated("Use @sorted_map.from_array instead")
 pub fn of[K : Compare, V](entries : Array[(K, V)]) -> T[K, V] {
+  let map = { root: None, size: 0 }
+  entries.each(fn(e) { map.add(e.0, e.1) })
+  map
+}
+
+///| Creates a sorted map from a array of key-value pairs.
+pub fn from_array[K : Compare, V](entries : Array[(K, V)]) -> T[K, V] {
   let map = { root: None, size: 0 }
   entries.each(fn(e) { map.add(e.0, e.1) })
   map
@@ -56,16 +63,13 @@ pub fn add[K : Compare, V](self : T[K, V], key : K, value : V) -> Unit {
 ///|
 /// Removes a key-value pair.
 pub fn remove[K : Compare, V](self : T[K, V], key : K) -> Unit {
-  match self.root {
-    None => ()
-    Some(old_root) => {
-      let (new_root, deleted) = delete_node(old_root, key)
-      if self.root != new_root {
-        self.root = new_root
-      }
-      if deleted {
-        self.size -= 1
-      }
+  if self.root is Some(old_root) {
+    let (new_root, deleted) = delete_node(old_root, key)
+    if self.root != new_root {
+      self.root = new_root
+    }
+    if deleted {
+      self.size -= 1
     }
   }
 }
@@ -260,21 +264,21 @@ fn range_aux[K : Compare, V](
         let cmp_key_high = node.key.compare(high)
         if cmp_key_low > 0 {
           // we should go left
-          guard let IterContinue = range_aux(node.left, low, high).run(yield_) else {
-            x => return x
+          guard range_aux(node.left, low, high).run(yield_) is IterContinue else {
+            return IterEnd
           }
 
         }
         if cmp_key_low >= 0 && cmp_key_high <= 0 {
           // we should yield this node
-          guard let IterContinue = yield_(node.key, node.value) else {
-            x => return x
+          guard yield_(node.key, node.value) is IterContinue else {
+            return IterEnd
           }
 
         }
         if cmp_key_high < 0 {
-          guard let IterContinue = range_aux(node.right, low, high).run(yield_) else {
-            x => return x
+          guard range_aux(node.right, low, high).run(yield_) is IterContinue else {
+            return IterEnd
           }
 
         }
@@ -447,18 +451,21 @@ fn delete_node[K : Compare, V](
   }
 }
 
+///|
 test "new" {
   let map : T[Int, String] = new()
   inspect!(map.debug_tree(), content="_")
   inspect!(map.size(), content="0")
 }
 
+///|
 test "of" {
-  let map = of([(3, "c"), (2, "b"), (1, "a")])
+  let map = from_array([(3, "c"), (2, "b"), (1, "a")])
   inspect!(map.debug_tree(), content="([2]2,b,([1]1,a,_,_),([1]3,c,_,_))")
   inspect!(map.size(), content="3")
 }
 
+///|
 test "add1" {
   let map = new()
   map.add(6, "a")
@@ -474,6 +481,7 @@ test "add1" {
   inspect!(map.size(), content="6")
 }
 
+///|
 test "add2" {
   let map = new()
   map.add(1, "a")
@@ -489,6 +497,7 @@ test "add2" {
   inspect!(map.size(), content="6")
 }
 
+///|
 test "add3" {
   let map = new()
   map.add(4, "a")
@@ -501,6 +510,7 @@ test "add3" {
   )
 }
 
+///|
 test "add4" {
   let map = new()
   map.add(1, "a")
@@ -513,15 +523,17 @@ test "add4" {
   )
 }
 
+///|
 test "add duplicate key" {
-  let map = of([(3, "c"), (2, "b"), (1, "a")])
+  let map = from_array([(3, "c"), (2, "b"), (1, "a")])
   inspect!(map.debug_tree(), content="([2]2,b,([1]1,a,_,_),([1]3,c,_,_))")
   map.add(1, "x")
   inspect!(map.debug_tree(), content="([2]2,b,([1]1,x,_,_),([1]3,c,_,_))")
 }
 
+///|
 test "remove" {
-  let map = of([
+  let map = from_array([
     (1, "a"),
     (2, "b"),
     (3, "c"),
@@ -574,6 +586,7 @@ test "remove" {
   inspect!(map.size, content="0")
 }
 
+///|
 test "op_set" {
   let map = new()
   map[1] = "a"
@@ -582,8 +595,9 @@ test "op_set" {
   inspect!(map.debug_tree(), content="([2]2,b,([1]1,a,_,_),([1]3,c,_,_))")
 }
 
+///|
 test "clear" {
-  let map = of([(3, "c"), (2, "b"), (1, "a")])
+  let map = from_array([(3, "c"), (2, "b"), (1, "a")])
   map.clear()
   inspect!(map.debug_tree(), content="_")
   inspect!(map.size(), content="0")

@@ -46,6 +46,7 @@ fn map_dps(f : (Int) -> Int, lst : L, dest : L) -> Unit {
   }
 }
 
+///|
 test "map" {
   let lstL : L = Cons(
     1,

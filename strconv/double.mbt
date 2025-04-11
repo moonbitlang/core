@@ -46,6 +46,27 @@ let max_exponent_disguised_fast_path : Int64 = 37L
 let max_mantissa_fast_path : UInt64 = 2UL << mantissa_explicit_bits
 
 ///|
+/// Parse a string into a double precision floating point number. The string
+/// must contain at least one of:
+/// - An integer part (decimal digits)
+/// - A decimal point followed by a fractional part (decimal digits)
+/// - An exponent part ('e' or 'E' followed by an optional sign and decimal digits)
+///
+/// The string may optionally start with a sign ('+' or '-').
+/// For readability, underscores may appear between digits.
+///
+/// Examples:
+/// ```
+/// inspect!(parse_double!("123"), content="123")
+/// inspect!(parse_double!("12.34"), content="12.34")
+/// inspect!(parse_double!(".123"), content="0.123")
+/// inspect!(parse_double!("1e5"), content="100000")
+/// inspect!(parse_double!("1.2e-3"), content="0.0012")
+/// inspect!(parse_double!("1_234.5"), content="1234.5")
+/// ```
+///
+/// An exponent value exp scales the mantissa (significand) by 10^exp.
+/// For example, "1.23e2" represents 1.23 × 10² = 123.
 pub fn parse_double(str : String) -> Double!StrConvError {
   if str.length() == 0 {
     syntax_err!()
@@ -75,8 +96,8 @@ pub fn parse_double(str : String) -> Double!StrConvError {
     Some(value) => value
     None => {
       // fallback to slow path
-      let ret = parse_decimal!(str)
-      ret.to_double!()
+      let ret = parse_decimal_priv!(str)
+      ret.to_double_priv!()
     }
   }
 }
@@ -144,6 +165,7 @@ fn try_fast_path(self : Number) -> Double? {
   }
 }
 
+///|
 test "parse_double" {
   let tests : Array[(String, Result[Double, String])] = [
     ("", Err(syntax_err_str)),
@@ -251,7 +273,7 @@ test "parse_double" {
     ("123.5e+1__2", Err(syntax_err_str)),
     ("123.5e+12_", Err(syntax_err_str)),
   ]
-  for i = 0; i < tests.length(); i = i + 1 {
+  for i in 0..<tests.length() {
     let t = tests[i]
     assert_eq!(
       try {
@@ -264,6 +286,7 @@ test "parse_double" {
   }
 }
 
+///|
 test "parse_double_inf" {
   assert_eq!(
     try {
@@ -323,6 +346,7 @@ test "parse_double_inf" {
   )
 }
 
+///|
 test "parse_double_nan" {
   let nan = try {
     parse_double!("nan")

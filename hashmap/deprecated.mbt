@@ -35,8 +35,8 @@
 /// }
 /// ```
 ///
-/// @alert deprecated "use `@hashmap.new` instead"
-/// @coverage.skip
+#deprecated("use `@hashmap.new` instead")
+#coverage.skip
 pub fn T::new[K, V](capacity~ : Int = 8) -> T[K, V] {
   new(capacity~)
 }
@@ -63,8 +63,8 @@ pub fn T::new[K, V](capacity~ : Int = 8) -> T[K, V] {
 /// }
 /// ```
 ///
-/// @alert deprecated "use `@hashmap.from_array` instead"
-/// @coverage.skip
+#deprecated("use `@hashmap.from_array` instead")
+#coverage.skip
 pub fn T::from_array[K : Hash + Eq, V](arr : Array[(K, V)]) -> T[K, V] {
   from_array(arr)
 }
@@ -89,8 +89,8 @@ pub fn T::from_array[K : Hash + Eq, V](arr : Array[(K, V)]) -> T[K, V] {
 /// }
 /// ```
 ///
-/// @alert deprecated "use `@hashmap.of` instead"
-/// @coverage.skip
+#deprecated("use `@hashmap.of` instead")
+#coverage.skip
 pub fn T::of[K : Eq + Hash, V](arr : FixedArray[(K, V)]) -> T[K, V] {
   of(arr)
 }

@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+///|
 test "panic unsafe_pop" {
   let pq = @priority_queue.of([1])
   pq.unsafe_pop().unsafe_pop() |> ignore

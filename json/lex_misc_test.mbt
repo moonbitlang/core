@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+///|
 test "read_char surrogate pair" {
   // Test data:
   // U+1F600 😀 (GRINNING FACE)
@@ -24,6 +25,7 @@ test "read_char surrogate pair" {
   }
 }
 
+///|
 test "panic lex_assert_char with EOF" {
   // This case will trigger line L90 where we hit EOF
   let _ = @json.parse!("t")
