@@ -304,7 +304,7 @@ pub fn difference[V : Compare](self : T[V], src : T[V]) -> T[V] {
 ///   inspect!(diff, content="@sorted_set.of([1, 2, 5, 6])")
 /// }
 /// ```
-pub fn semmetric_difference[V : Compare](self : T[V], src : T[V]) -> T[V] {
+pub fn symmetric_difference[V : Compare](self : T[V], src : T[V]) -> T[V] {
   let ret = new()
   self.each(fn(x) { if not(src.contains(x)) { ret.add(x) } })
   src.each(fn(x) { if not(self.contains(x)) { ret.add(x) } })
