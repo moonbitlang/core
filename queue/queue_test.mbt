@@ -212,8 +212,5 @@ test "queue arbitrary" {
     samples[1:5],
     content="[@queue.of([]), @queue.of([]), @queue.of([0]), @queue.of([0])]",
   )
-  inspect!(
-    samples[15],
-    content="@queue.of([])",
-  )
+  inspect!(samples[15], content="@queue.of([])")
 }
