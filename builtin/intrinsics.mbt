@@ -1741,8 +1741,8 @@ pub fn String::charcode_length(self : String) -> Int = "%string_length"
 /// ```moonbit
 /// test "String::op_get" {
 ///   let s = "Hello, 世界!"
-///   inspect!(s[0], content="H")
-///   inspect!(s[7], content="世")
+///   inspect!(s[0], content="72")
+///   inspect!(s[7], content="19990")
 /// }
 ///
 /// test "panic String::op_get/out_of_bounds" {
