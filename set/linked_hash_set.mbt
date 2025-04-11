@@ -423,12 +423,10 @@ pub fn Set::iter[K](self : Set[K]) -> Iter[K] {
 ///|
 /// Converts the hash set to an array.
 pub fn Set::to_array[K](self : Set[K]) -> Array[K] {
-  let res = Array::make_uninit(self.size)
-  let mut i = 0
+  let res = Array::new(capacity=self.size)
   loop self.head {
     Some({ key, idx, .. }) => {
-      res.unsafe_set(i, key)
-      i += 1
+      res.push(key)
       continue self.list[idx].next
     }
     None => break
@@ -505,4 +503,13 @@ pub fn Set::intersection[K : Hash + Eq](
   let m = Set::new()
   self.each(fn(k) { if other.contains(k) { m.add(k) } })
   m
+}
+
+///|
+pub impl[X : ToJson] ToJson for Set[X] with to_json(self) {
+  let res = Array::new(capacity=self.size)
+  for v in self {
+    res.push(v.to_json())
+  }
+  Array(res)
 }

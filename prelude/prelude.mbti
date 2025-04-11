@@ -61,7 +61,7 @@ pub typealias Json = @builtin.Json
 
 pub typealias Map[K, V] = @builtin.Map[K, V]
 
-pub typealias Set[X] = @builtin.Set[X]
+pub typealias Set[X] = @moonbitlang/core/set.Set[X]
 
 pub typealias SnapshotError = @builtin.SnapshotError
 
