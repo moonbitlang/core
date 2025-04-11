@@ -5,6 +5,13 @@ import(
 )
 
 // Values
+
+fn from_array(Array[Byte]) -> T
+
+fn from_bytes(Bytes) -> T
+
+fn from_iter(Iter[Byte]) -> T
+
 fn contents(T) -> Bytes
 
 fn is_empty(T) -> Bool
