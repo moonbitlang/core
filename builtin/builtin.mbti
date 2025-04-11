@@ -412,8 +412,6 @@ impl Byte {
 
 impl Char {
   from_int(Int) -> Char
-  #deprecated
-  op_sub(Char, Char) -> Int
   to_int(Char) -> Int
   to_uint(Char) -> UInt
 }
