@@ -260,17 +260,6 @@ pub impl[K : Show, V : ToJson] ToJson for Map[K, V] with to_json(self) {
 }
 
 ///|
-pub impl[X : ToJson] ToJson for Set[X] with to_json(self) {
-  let res = Array::make_uninit(self.size)
-  let mut i = 0
-  for v in self {
-    res.unsafe_set(i, v.to_json())
-    i += 1
-  }
-  Array(res)
-}
-
-///|
 pub impl[T : ToJson] ToJson for T? with to_json(self) {
   match self {
     None => Null

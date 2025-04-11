@@ -26,12 +26,14 @@ pub typealias @builtin.(
   IterResult,
   Json,
   Map[K, V],
-  Set[X],
   InspectError,
   SnapshotError,
   SourceLoc,
   StringBuilder
 )
+
+///|
+pub typealias @set.Set[X]
 
 ///|
 pub traitalias @builtin.(
