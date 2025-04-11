@@ -205,11 +205,11 @@ test "arbitrary" {
   let map : Array[@sorted_map.T[Int, UInt]] = @quickcheck.samples(20)
   inspect!(
     map[5:10],
-    content="[@sorted_map.of([(-2, 2), (0, 1)]), @sorted_map.of([(0, 2), (1, 2)]), @sorted_map.of([(0, 0)]), @sorted_map.of([(0, 0)]), @sorted_map.of([(-2, 5), (0, 1), (2, 0), (4, 1)])]",
+    content="[@sorted_map.of([]), @sorted_map.of([]), @sorted_map.of([(0, 0)]), @sorted_map.of([(0, 0)]), @sorted_map.of([(0, 0)])]",
   )
   inspect!(
     map[11:15],
-    content="[@sorted_map.of([(0, 0)]), @sorted_map.of([(-1, 2), (0, 2)]), @sorted_map.of([(-4, 1), (-3, 2), (-1, 2), (0, 2), (1, 4), (3, 2), (6, 1)]), @sorted_map.of([(0, 0)])]",
+    content="[@sorted_map.of([(-3, 2), (-1, 1), (0, 0), (2, 1)]), @sorted_map.of([(0, 0)]), @sorted_map.of([(-8, 1), (-2, 5), (0, 3), (3, 6), (7, 6)]), @sorted_map.of([(0, 0)])]",
   )
 }
 
