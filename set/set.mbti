@@ -1,6 +1,42 @@
 package "moonbitlang/core/set"
 
 // Values
+fn add[K : Hash + Eq](Set[K], K) -> Unit
+
+fn add_and_check[K : Hash + Eq](Set[K], K) -> Bool
+
+fn capacity[K](Set[K]) -> Int
+
+fn clear[K](Set[K]) -> Unit
+
+fn contains[K : Hash + Eq](Set[K], K) -> Bool
+
+fn difference[K : Hash + Eq](Set[K], Set[K]) -> Set[K]
+
+fn each[K](Set[K], (K) -> Unit) -> Unit
+
+fn eachi[K](Set[K], (Int, K) -> Unit) -> Unit
+
+#deprecated
+fn insert[K : Hash + Eq](Set[K], K) -> Unit
+
+fn intersection[K : Hash + Eq](Set[K], Set[K]) -> Set[K]
+
+fn is_empty[K](Set[K]) -> Bool
+
+fn iter[K](Set[K]) -> Iter[K]
+
+fn remove[K : Hash + Eq](Set[K], K) -> Unit
+
+fn remove_and_check[K : Hash + Eq](Set[K], K) -> Bool
+
+fn size[K](Set[K]) -> Int
+
+fn symmetric_difference[K : Hash + Eq](Set[K], Set[K]) -> Set[K]
+
+fn to_array[K](Set[K]) -> Array[K]
+
+fn union[K : Hash + Eq](Set[K], Set[K]) -> Set[K]
 
 // Types and methods
 type Set[K]
