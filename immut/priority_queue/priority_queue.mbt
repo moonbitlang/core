@@ -43,8 +43,8 @@ pub fn from_array[A : Compare](array : Array[A]) -> T[A] {
 ///|
 pub fn to_array[A : Compare](self : T[A]) -> Array[A] {
   let arr : Array[A] = []
-  fn go(x : T[A]) {
-    match x.node {
+  fn go(x : Node[A]) {
+    match x {
       Empty => return
       Leaf(a) => arr.push(a)
       Branch(a, left=l, right=r) => {
@@ -55,7 +55,7 @@ pub fn to_array[A : Compare](self : T[A]) -> Array[A] {
     }
   }
 
-  go(self)
+  go(self.node)
   arr.sort_by(fn(x, y) { if x < y { 1 } else { -1 } })
   arr
 }
@@ -80,6 +80,28 @@ pub fn T::from_iter[A : Compare](iter : Iter[A]) -> T[A] {
 }
 
 ///|
+priv type Path Int
+
+///|
+/// require: size >= 2
+fn path(size : Int) -> Path {
+  loop size, 0 {
+    1, y => Path(y)
+    x, y => continue x >> 1, (y << 1) | (x & 1)
+  }
+}
+
+///|
+fn is_left(self : Path) -> Bool {
+  (self._ & 1) == 0
+}
+
+///|
+fn next(self : Path) -> Path {
+  Path(self._ >> 1)
+}
+
+///|
 /// Pops the first value from the immutable priority queue, which returns None if the queue is empty.
 ///
 /// # Example
@@ -93,95 +115,53 @@ pub fn pop[A : Compare](self : T[A]) -> T[A]? {
     Empty => None
     Leaf(_) => Some({ node: Empty, size: 0 })
     Branch(_) => {
-      let value = self.find_element()
-      let temp = self.delet_leaf()
-      Some(temp.change_element(value).down(value))
+      let (value, temp) = self.node.remove_last_leaf(path(self.size))
+      Some({ node: temp.change_and_down(value), size: self.size - 1 })
     }
   }
 }
 
 ///|
-fn change_element[A : Compare](self : T[A], value : A) -> T[A] {
-  {
-    node: match self.node {
-      Empty => Empty
-      Leaf(_) => Leaf(value)
-      Branch(_, left~, right~) => Branch(value, left~, right~)
-    },
-    size: self.size,
-  }
-}
-
-///|
-fn find_element[A : Compare](self : T[A]) -> A {
-  match self.node {
+fn remove_last_leaf[A : Compare](self : Node[A], path : Path) -> (A, Node[A]) {
+  match self {
     Empty => abort("Priority queue is empty!")
-    Leaf(a) => a
-    Branch(_, left=l, right=r) =>
-      if r.size == 0 {
-        l.top()
-      } else {
-        let deep = deepth(self.size)
-        let full_right = (1 << (deep - 2)) - 1
-        if r.size == full_right {
-          l.find_element()
-        } else {
-          r.find_element()
-        }
-      }
-  }
-}
-
-///|
-fn delet_leaf[A : Compare](self : T[A]) -> T[A] {
-  match self.node {
-    Empty => abort("Priority queue is empty!")
-    Leaf(_) => { node: Empty, size: 0 }
+    Leaf(a) => (a, Empty)
+    Branch(a, left=Leaf(l_top), right=Empty) => (l_top, Leaf(a))
     Branch(a, left=l, right=r) =>
-      if r.size == 0 {
-        { node: Leaf(a), size: 1 }
+      if path.is_left() {
+        let (e, ld) = l.remove_last_leaf(path.next())
+        (e, Branch(a, left=ld, right=r))
       } else {
-        let deep = deepth(self.size)
-        let full_right = (1 << (deep - 2)) - 1
-        if r.size == full_right {
-          { node: Branch(a, left=l.delet_leaf(), right=r), size: self.size - 1 }
-        } else {
-          { node: Branch(a, left=l, right=r.delet_leaf()), size: self.size - 1 }
-        }
+        let (e, rd) = r.remove_last_leaf(path.next())
+        (e, Branch(a, left=l, right=rd))
       }
   }
 }
 
 ///|
-fn down[A : Compare](self : T[A], value : A) -> T[A] {
-  match self.node {
-    Empty => { node: Empty, size: 0 }
-    Leaf(_) => { node: Leaf(value), size: 1 }
+/// require: self is not empty
+fn change_and_down[A : Compare](self : Node[A], value : A) -> Node[A] {
+  match self {
+    Empty => abort("unreachable")
+    Leaf(_) => Leaf(value)
     Branch(_, left=l, right=r) =>
-      if (r.size == 0 && l.top() <= value) ||
-        (value >= l.top() && value >= r.top()) {
-        { node: Branch(value, left=l, right=r), size: self.size }
-      } else if r.size == 0 && l.top() > value {
-        {
-          node: Branch(l.top(), left={ node: Leaf(value), size: 1 }, right={
-            node: Empty,
-            size: 0,
-          }),
-          size: self.size,
-        }
-      } else if l.top() < r.top() {
-        { node: Branch(r.top(), left=l, right=r.down(value)), size: self.size }
-      } else {
-        { node: Branch(l.top(), left=l.down(value), right=r), size: self.size }
+      match (l, r) {
+        (Leaf(l_top), Empty) =>
+          if value >= l_top {
+            Branch(value, left=l, right=Empty)
+          } else {
+            Branch(l_top, left=Leaf(value), right=Empty)
+          }
+        (Branch(l_top, ..) | Leaf(l_top), Branch(r_top, ..) | Leaf(r_top)) =>
+          if value >= l_top && value >= r_top {
+            Branch(value, left=l, right=r)
+          } else if l_top >= r_top {
+            Branch(l_top, left=l.change_and_down(value), right=r)
+          } else {
+            Branch(r_top, left=l, right=r.change_and_down(value))
+          }
+        _ => abort("unreachable")
       }
-  }
-}
-
-///|
-fn deepth(num : Int) -> Int {
-  loop num, 0 {
-    0, cnt => cnt
-    n, cnt => continue n >> 1, cnt + 1
   }
 }
 
@@ -200,9 +180,8 @@ pub fn unsafe_pop[A : Compare](self : T[A]) -> T[A] {
     Empty => abort("Priority queue is empty!")
     Leaf(_) => { node: Empty, size: 0 }
     Branch(_) => {
-      let value = self.find_element()
-      let temp = self.delet_leaf()
-      temp.change_element(value).down(value)
+      let (value, temp) = self.node.remove_last_leaf(path(self.size))
+      { node: temp.change_and_down(value), size: self.size - 1 }
     }
   }
 }
@@ -225,58 +204,29 @@ pub fn pop_exn[A : Compare](self : T[A]) -> T[A] {
 pub fn push[A : Compare](self : T[A], value : A) -> T[A] {
   match self.node {
     Empty => { node: Leaf(value), size: 1 }
-    Leaf(a) =>
-      {
-        node: Branch(
-          @math.maximum(a, value),
-          left={ node: Leaf(@math.minimum(a, value)), size: 1 },
-          right={ node: Empty, size: 0 },
-        ),
-        size: 2,
-      }
-    Branch(a, left=l, right=r) =>
-      if r.size == 0 {
-        {
-          node: Branch(@math.maximum(a, value), left=l, right={
-            node: Leaf(@math.minimum(a, value)),
-            size: 1,
-          }),
-          size: 3,
-        }
-      } else {
-        let deep = deepth(self.size)
-        let full = (1 << (deep - 1)) - 1
-        if (l.size == full && r.size == full) || l.size < full {
-          let ll = l.push(value)
-          {
-            node: if value > a {
-              Branch(value, left=ll.change_element(a), right=r)
-            } else {
-              Branch(a, left=ll, right=r)
-            },
-            size: self.size + 1,
-          }
-        } else {
-          let rr = r.push(value)
-          {
-            node: if value > a {
-              Branch(value, left=l, right=rr.change_element(a))
-            } else {
-              Branch(a, left=l, right=rr)
-            },
-            size: self.size + 1,
-          }
-        }
-      }
+    Leaf(_) | Branch(_) => {
+      let size = self.size + 1
+      { node: self.node.push(value, path(size)), size }
+    }
   }
 }
 
 ///|
-fn top[A : Compare](self : T[A]) -> A {
-  match self.node {
-    Empty => abort("Empty")
-    Leaf(a) => a
-    Branch(a, ..) => a
+fn Node::push[A : Compare](self : Node[A], value : A, path : Path) -> Node[A] {
+  match self {
+    Empty => Leaf(value)
+    Leaf(a) => {
+      let (high, low) = if a > value { (a, value) } else { (value, a) }
+      Branch(high, left=Leaf(low), right=Empty)
+    }
+    Branch(a, left=l, right=r) => {
+      let (high, low) = if a > value { (a, value) } else { (value, a) }
+      if path.is_left() {
+        Branch(high, left=l.push(low, path.next()), right=r)
+      } else {
+        Branch(high, left=l, right=r.push(low, path.next()))
+      }
+    }
   }
 }
 
