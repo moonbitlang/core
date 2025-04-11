@@ -3,18 +3,25 @@ package "moonbitlang/core/string"
 // Values
 fn concat(Array[String], separator~ : String = ..) -> String
 
+#deprecated
 fn contains(String, String) -> Bool
 
+#deprecated
 fn contains_char(String, Char) -> Bool
 
+#deprecated
 fn default() -> String
 
+#deprecated
 fn ends_with(String, String) -> Bool
 
+#deprecated
 fn fold[A](String, init~ : A, (A, Char) -> A) -> A
 
+#deprecated
 fn from_array(Array[Char]) -> String
 
+#deprecated
 fn from_iter(Iter[Char]) -> String
 
 #deprecated
@@ -23,16 +30,22 @@ fn index_at(String, Int, start~ : StringIndex = ..) -> StringIndex?
 #deprecated
 fn index_at_rev(String, Int, end? : StringIndex) -> StringIndex?
 
+#deprecated
 fn index_of(String, String, from~ : Int = ..) -> Int
 
+#deprecated
 fn is_blank(String) -> Bool
 
+#deprecated
 fn is_empty(String) -> Bool
 
+#deprecated
 fn iter(String) -> Iter[Char]
 
+#deprecated
 fn iter2(String) -> Iter2[Int, Char]
 
+#deprecated
 fn last_index_of(String, String, from~ : Int = ..) -> Int
 
 #deprecated
@@ -41,43 +54,61 @@ fn length_eq(StringView, Int) -> Bool
 #deprecated
 fn length_ge(StringView, Int) -> Bool
 
+#deprecated
 fn pad_end(String, Int, Char) -> String
 
+#deprecated
 fn pad_start(String, Int, Char) -> String
 
+#deprecated
 fn repeat(String, Int) -> String
 
+#deprecated
 fn replace(String, old~ : String, new~ : String) -> String
 
+#deprecated
 fn replace_all(String, old~ : String, new~ : String) -> String
 
+#deprecated
 fn rev(String) -> String
 
+#deprecated
 fn rev_fold[A](String, init~ : A, (A, Char) -> A) -> A
 
 #deprecated
 fn rev_get(StringView, Int) -> Char
 
+#deprecated
 fn rev_iter(String) -> Iter[Char]
 
+#deprecated
 fn split(String, String) -> Iter[String]
 
+#deprecated
 fn starts_with(String, String) -> Bool
 
+#deprecated
 fn to_array(String) -> Array[Char]
 
+#deprecated
 fn to_bytes(String) -> Bytes
 
+#deprecated
 fn to_lower(String) -> String
 
+#deprecated
 fn to_upper(String) -> String
 
+#deprecated
 fn trim(String, String) -> String
 
+#deprecated
 fn trim_end(String, String) -> String
 
+#deprecated
 fn trim_space(String) -> String
 
+#deprecated
 fn trim_start(String, String) -> String
 
 // Types and methods
@@ -92,6 +123,16 @@ impl StringView {
   char_length_eq(Self, Int) -> Bool
   char_length_ge(Self, Int) -> Bool
   charcode_at(Self, Int) -> Int
+  contains(Self, Self) -> Bool
+  contains_char(Self, Char) -> Bool
+  find(Self, Self) -> Int?
+  fold[A](Self, init~ : A, (A, Char) -> A) -> A
+  from_array(Array[Char]) -> Self
+  from_iter(Iter[Char]) -> Self
+  has_prefix(Self, Self) -> Bool
+  has_suffix(Self, Self) -> Bool
+  is_blank(Self) -> Bool
+  is_empty(Self) -> Bool
   iter(Self) -> Iter[Char]
   #deprecated
   length(Self) -> Int
@@ -99,16 +140,35 @@ impl StringView {
   length_eq(Self, Int) -> Bool
   #deprecated
   length_ge(Self, Int) -> Bool
+  make(Int, Char) -> Self
   offset_of_nth_char(Self, Int) -> Int?
   #deprecated
   op_as_view(Self, start~ : Int = .., end? : Int) -> Self
   #deprecated
   op_get(Self, Int) -> Char
+  pad_end(Self, Int, Char) -> Self
+  pad_start(Self, Int, Char) -> Self
+  repeat(Self, Int) -> Self
+  replace(Self, old~ : Self, new~ : Self) -> Self
+  replace_all(Self, old~ : Self, new~ : Self) -> Self
+  rev(Self) -> Self
+  rev_fold[A](Self, init~ : A, (A, Char) -> A) -> A
   #deprecated
   rev_get(Self, Int) -> Char
   rev_iter(Self) -> Iter[Char]
+  rfind(Self, Self) -> Int?
+  split(Self, Self) -> Iter[Self]
+  to_lower(Self) -> Self
+  to_upper(Self) -> Self
+  trim(Self, Self) -> Self
+  trim_left(Self, Self) -> Self
+  trim_right(Self, Self) -> Self
+  trim_space(Self) -> Self
+  unsafe_charcode_at(Self, Int) -> Int
+  view(Self, start_offset~ : Int = .., end_offset~ : Int = ..) -> Self
 }
 impl Compare for StringView
+impl Default for StringView
 impl Eq for StringView
 impl Show for StringView
 
@@ -118,21 +178,28 @@ impl String {
   char_length_ge(String, Int, start_offset~ : Int = .., end_offset~ : Int = ..) -> Bool
   #deprecated
   concat(Array[String], separator~ : String = ..) -> String
+  #deprecated
   contains(String, String) -> Bool
   contains_char(String, Char) -> Bool
+  #deprecated
   ends_with(String, String) -> Bool
+  find(String, StringView) -> Int?
   fold[A](String, init~ : A, (A, Char) -> A) -> A
   from_array(Array[Char]) -> String
   from_iter(Iter[Char]) -> String
+  has_prefix(String, StringView) -> Bool
+  has_suffix(String, StringView) -> Bool
   #deprecated
   index_at(String, Int, start~ : StringIndex = ..) -> StringIndex?
   #deprecated
   index_at_rev(String, Int, end? : StringIndex) -> StringIndex?
+  #deprecated
   index_of(String, String, from~ : Int = ..) -> Int
   is_blank(String) -> Bool
   is_empty(String) -> Bool
   iter(String) -> Iter[Char]
   iter2(String) -> Iter2[Int, Char]
+  #deprecated
   last_index_of(String, String, from~ : Int = ..) -> Int
   #deprecated
   length_eq(String, Int) -> Bool
@@ -141,25 +208,44 @@ impl String {
   offset_of_nth_char(String, Int, start_offset~ : Int = .., end_offset~ : Int = ..) -> Int?
   #deprecated
   op_as_view(String, start~ : Int = .., end? : Int) -> StringView
+  #deprecated
   pad_end(String, Int, Char) -> String
+  #deprecated
   pad_start(String, Int, Char) -> String
+  #deprecated
   repeat(String, Int) -> String
+  #deprecated
   replace(String, old~ : String, new~ : String) -> String
+  #deprecated
   replace_all(String, old~ : String, new~ : String) -> String
+  #deprecated
   rev(String) -> String
   rev_fold[A](String, init~ : A, (A, Char) -> A) -> A
   #deprecated
   rev_get(String, Int) -> Char
   rev_iter(String) -> Iter[Char]
+  rfind(String, StringView) -> Int?
+  #deprecated
   split(String, String) -> Iter[String]
+  #deprecated
   starts_with(String, String) -> Bool
+  #deprecated
   to_array(String) -> Array[Char]
+  #deprecated
   to_bytes(String) -> Bytes
+  #deprecated
   to_lower(String) -> String
+  #deprecated
   to_upper(String) -> String
+  #deprecated
   trim(String, String) -> String
+  #deprecated
   trim_end(String, String) -> String
+  trim_left(String, StringView) -> StringView
+  trim_right(String, StringView) -> StringView
+  #deprecated
   trim_space(String) -> String
+  #deprecated
   trim_start(String, String) -> String
   view(String, start_offset~ : Int = .., end_offset~ : Int = ..) -> StringView
 }

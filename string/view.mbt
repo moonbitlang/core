@@ -74,6 +74,25 @@ pub fn String::view(
 }
 
 ///|
+/// Returns a new view of the string with the given start and end offsets.
+pub fn View::view(
+  self : View,
+  start_offset~ : Int = 0,
+  end_offset~ : Int = self.len()
+) -> View {
+  guard start_offset >= 0 &&
+    start_offset <= end_offset &&
+    end_offset <= self.len() else {
+    abort("Invalid index for View")
+  }
+  {
+    str: self.str,
+    start: self.start + start_offset,
+    end: self.start + end_offset,
+  }
+}
+
+///|
 /// Returns the UTF-16 index of the i-th (zero-indexed) Unicode character of
 /// the view. If i is negative, it returns the index of the (n + i)-th character
 /// where n is the total number of Unicode characters in the view.
@@ -91,14 +110,29 @@ pub fn View::offset_of_nth_char(self : View, i : Int) -> Int? {
 }
 
 ///|
+/// Returns the Unicode character at the given index.
+/// 
+/// This method has O(n) complexity.
 pub fn View::char_at(self : View, index : Int) -> Char {
   guard index >= 0 && index < self.len() else { abort("Index out of bounds") }
   self.str.unsafe_char_at(self.start + index)
 }
 
 ///|
+/// Returns the charcode(code unit) at the given index.
+/// 
+/// This method has O(1) complexity.
 pub fn View::charcode_at(self : View, index : Int) -> Int {
   guard index >= 0 && index < self.len() else { abort("Index out of bounds") }
+  self.str.unsafe_charcode_at(self.start + index)
+}
+
+///|
+/// Returns the charcode(code unit) at the given index without checking if the
+/// index is within bounds.
+/// 
+/// This method has O(1) complexity.
+pub fn View::unsafe_charcode_at(self : View, index : Int) -> Int {
   self.str.unsafe_charcode_at(self.start + index)
 }
 
@@ -231,4 +265,28 @@ pub impl Compare for View with compare(self, other) {
 
   }
   0
+}
+
+///|
+/// The empty view of a string
+pub impl Default for View with default() {
+  ""
+}
+
+///|
+/// Convert char array to string view.
+pub fn View::from_array(chars : Array[Char]) -> View {
+  String::from_array(chars)
+}
+
+///|
+/// Convert char iterator to string view.
+pub fn View::from_iter(iter : Iter[Char]) -> View {
+  String::from_iter(iter)
+}
+
+///|
+/// Create a new string by repeating the given character `value` `length` times.
+pub fn View::make(length : Int, value : Char) -> View {
+  String::make(length, value)
 }
