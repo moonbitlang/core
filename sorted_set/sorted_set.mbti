@@ -87,6 +87,7 @@ impl T {
   to_array[V](Self[V]) -> Array[V]
   union[V : Compare](Self[V], Self[V]) -> Self[V]
 }
+impl[K] Default for T[K]
 impl[V : Compare] Eq for T[V]
 impl[V : Show] Show for T[V]
 impl[X : @quickcheck.Arbitrary + Compare] @quickcheck.Arbitrary for T[X]
