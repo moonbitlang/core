@@ -46,6 +46,8 @@ fn range[V : Compare](T[V], V, V) -> Iter[V]
 
 fn remove[V : Compare](T[V], V) -> Unit
 
+fn semmetric_difference[V : Compare](T[V], T[V]) -> T[V]
+
 fn singleton[V : Compare](V) -> T[V]
 
 fn size[V : Compare](T[V]) -> Int
@@ -79,6 +81,7 @@ impl T {
   iter[V](Self[V]) -> Iter[V]
   range[V : Compare](Self[V], V, V) -> Iter[V]
   remove[V : Compare](Self[V], V) -> Unit
+  semmetric_difference[V : Compare](Self[V], Self[V]) -> Self[V]
   size[V : Compare](Self[V]) -> Int
   subset[V : Compare](Self[V], Self[V]) -> Bool
   to_array[V](Self[V]) -> Array[V]
