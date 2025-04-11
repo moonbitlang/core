@@ -74,12 +74,9 @@ pub fn clear[K, V](self : T[K, V]) -> Unit {
 pub fn iter[K, V](self : T[K, V]) -> Iter[(K, V)] {
   Iter::new(fn(yield_) {
     for entry in self.entries {
-      match entry {
-        Some({ key, value, .. }) =>
-          if yield_((key, value)) == IterEnd {
-            break IterEnd
-          }
-        None => continue
+      if entry is Some({ key, value, .. }) {
+        guard yield_((key, value)) is IterContinue else { break IterEnd }
+
       }
     } else {
       IterContinue
@@ -112,12 +109,9 @@ pub fn iter[K, V](self : T[K, V]) -> Iter[(K, V)] {
 pub fn iter2[K, V](self : T[K, V]) -> Iter2[K, V] {
   Iter2::new(fn(yield_) {
     for entry in self.entries {
-      match entry {
-        Some({ key, value, .. }) =>
-          if yield_(key, value) == IterEnd {
-            break IterEnd
-          }
-        None => continue
+      if entry is Some({ key, value, .. }) {
+        guard yield_(key, value) is IterContinue else { break IterEnd }
+
       }
     } else {
       IterContinue

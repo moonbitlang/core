@@ -1,7 +1,9 @@
-package moonbitlang/core/immut/sorted_set
+package "moonbitlang/core/immut/sorted_set"
 
-alias @moonbitlang/core/json as @json
-alias @moonbitlang/core/quickcheck as @quickcheck
+import(
+  "moonbitlang/core/json"
+  "moonbitlang/core/quickcheck"
+)
 
 // Values
 fn add[A : Compare](T[A], A) -> T[A]

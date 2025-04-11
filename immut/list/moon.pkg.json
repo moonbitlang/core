@@ -7,12 +7,9 @@
     "moonbitlang/core/option"
   ],
   "test-import": [
-    "moonbitlang/core/double"
+    "moonbitlang/core/prelude"
   ],
   "targets": {
-    "panic_test.mbt": [
-      "not",
-      "native"
-    ]
+    "panic_test.mbt": ["not", "native"]
   }
 }

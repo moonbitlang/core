@@ -229,3 +229,21 @@ test "remove all keys from collision bucket" {
   let map2 = map1.remove("b")
   inspect!(map2.size(), content="0")
 }
+
+///|
+test "union 2 hashmaps, choose the right hand side" {
+  let map1 = @hashmap.of([(1, 1), (2, 2), (3, 3)])
+  let map2 = @hashmap.of([(1, 10), (2, 20), (4, 40)])
+  let map3 = map1.union(map2)
+  let map4 = @hashmap.of([(1, 10), (2, 20), (3, 3), (4, 40)])
+  inspect!(map3 == map4, content="true")
+}
+
+///|
+test "union 2 hashmaps, without conflict" {
+  let map1 = @hashmap.of([(1, 1), (2, 2), (3, 3)])
+  let map2 = @hashmap.of([(4, 4), (5, 5), (6, 6)])
+  let map3 = map1.union(map2)
+  let map4 = @hashmap.of([(1, 1), (2, 2), (3, 3), (4, 4), (5, 5), (6, 6)])
+  inspect!(map3 == map4, content="true")
+}

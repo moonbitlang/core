@@ -126,7 +126,7 @@ pub impl Show for String with output(self, logger) {
         logger.write_string("\\t")
       }
       code =>
-        if code < 0x20 {
+        if code < ' ' {
           flush_segment(i)
           logger
           ..write_char('\\')

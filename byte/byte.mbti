@@ -1,4 +1,4 @@
-package moonbitlang/core/byte
+package "moonbitlang/core/byte"
 
 // Values
 let max_value : Byte

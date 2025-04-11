@@ -1,4 +1,4 @@
-package moonbitlang/core/bool
+package "moonbitlang/core/bool"
 
 // Values
 fn to_int(Bool) -> Int

@@ -1,6 +1,8 @@
-package moonbitlang/core/priority_queue
+package "moonbitlang/core/priority_queue"
 
-alias @moonbitlang/core/quickcheck as @quickcheck
+import(
+  "moonbitlang/core/quickcheck"
+)
 
 // Values
 fn clear[A](T[A]) -> Unit

@@ -36,6 +36,35 @@ pub fn Bitset::index_of(self : Bitset, idx : Int) -> Int {
 }
 
 ///|
+pub fn Bitset::union(self : Bitset, other : Bitset) -> Bitset {
+  Bitset(self._ | other._)
+}
+
+///|
+pub fn Bitset::intersection(self : Bitset, other : Bitset) -> Bitset {
+  Bitset(self._ & other._)
+}
+
+///|
+pub fn Bitset::difference(self : Bitset, other : Bitset) -> Bitset {
+  Bitset(self._ & other._.lnot())
+}
+
+///|
+pub fn Bitset::iter(self : Bitset) -> Iter[Int] {
+  Iter::new(fn(yield_) {
+    let mut bs = self._
+    while bs != 0 {
+      let next = bs & (-bs.reinterpret_as_int()).reinterpret_as_uint()
+      guard yield_(bs.ctz()) is IterContinue else { break IterEnd }
+      bs = bs ^ next
+    } else {
+      IterContinue
+    }
+  })
+}
+
+///|
 /// `add(self: Bitset, idx: Int)`
 ///
 /// Add a new index to the bitset.
@@ -84,6 +113,46 @@ test "Bitset::index_of" {
   inspect!(b.index_of(5), content="2")
   // 6 is not
   inspect!(b.index_of(6), content="3")
+}
+
+///|
+test "Bitset::union" {
+  let b1 = empty_bitset.add(2).add(3)
+  let b2 = empty_bitset.add(0).add(1)
+  let b3 = b1.union(b2)
+  inspect!(b3.has(0), content="true")
+  inspect!(b3.has(1), content="true")
+  inspect!(b3.has(2), content="true")
+  inspect!(b3.has(3), content="true")
+}
+
+///|
+test "Bitset::intersection" {
+  let b1 = empty_bitset.add(2).add(3)
+  let b2 = empty_bitset.add(0).add(1).add(2)
+  let b3 = b1.intersection(b2)
+  inspect!(b3.has(0), content="false")
+  inspect!(b3.has(1), content="false")
+  inspect!(b3.has(2), content="true")
+  inspect!(b3.has(3), content="false")
+}
+
+///|
+test "Bitset::difference" {
+  let b1 = empty_bitset.add(2).add(3)
+  let b2 = empty_bitset.add(0).add(1).add(2)
+  let b3 = b1.difference(b2)
+  inspect!(b3.has(0), content="false")
+  inspect!(b3.has(1), content="false")
+  inspect!(b3.has(2), content="false")
+  inspect!(b3.has(3), content="true")
+}
+
+///|
+test "Bitset::iter" {
+  let b = empty_bitset.add(0).add(1).add(31)
+  let arr = b.iter().collect()
+  inspect!(arr, content="[0, 1, 31]")
 }
 
 ///|

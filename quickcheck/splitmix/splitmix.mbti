@@ -1,4 +1,4 @@
-package moonbitlang/core/quickcheck/splitmix
+package "moonbitlang/core/quickcheck/splitmix"
 
 // Values
 fn clone(RandomState) -> RandomState

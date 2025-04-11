@@ -1,4 +1,4 @@
-package moonbitlang/core/random
+package "moonbitlang/core/random"
 
 // Values
 fn double(Rand) -> Double

@@ -1,6 +1,8 @@
-package moonbitlang/core/hashset
+package "moonbitlang/core/hashset"
 
-alias @moonbitlang/core/quickcheck as @quickcheck
+import(
+  "moonbitlang/core/quickcheck"
+)
 
 // Values
 fn add[K : Hash + Eq](T[K], K) -> Unit

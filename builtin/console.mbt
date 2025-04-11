@@ -112,7 +112,7 @@ fn base64_encode(data : FixedArray[Byte]) -> String {
 ///|
 fn base64_encode_string_codepoint(s : String) -> String {
   // the input string is expected to be valid utf-16 string
-  let codepoint_length = s.codepoint_length()
+  let codepoint_length = s.char_length()
   let data : FixedArray[Byte] = FixedArray::make(codepoint_length * 4, 0)
   for i = 0, utf16_index = 0
       i < codepoint_length
@@ -202,12 +202,12 @@ pub fn inspect(
   if actual != content {
     let loc = loc.to_string().escape()
     let args_loc = args_loc.to_json().escape()
-    let expect = content.escape()
-    let actual = obj.to_string().escape()
+    let expect_escaped = content.escape()
+    let actual_escaped = actual.escape()
     let expect_base64 = "\"\{base64_encode_string_codepoint(content)}\""
-    let actual_base64 = "\"\{base64_encode_string_codepoint(obj.to_string())}\""
+    let actual_base64 = "\"\{base64_encode_string_codepoint(actual)}\""
     raise InspectError(
-      "@EXPECT_FAILED {\"loc\": \{loc}, \"args_loc\": \{args_loc}, \"expect\": \{expect}, \"actual\": \{actual}, \"expect_base64\": \{expect_base64}, \"actual_base64\": \{actual_base64}}",
+      "@EXPECT_FAILED {\"loc\": \{loc}, \"args_loc\": \{args_loc}, \"expect\": \{expect_escaped}, \"actual\": \{actual_escaped}, \"expect_base64\": \{expect_base64}, \"actual_base64\": \{actual_base64}}",
     )
   }
 }
@@ -230,6 +230,9 @@ pub fn inspect(
 /// }
 /// ```
 pub(all) type! SnapshotError String
+
+///|
+pub(all) type! BenchError String
 
 ///|
 test "panic error case of inspect" {

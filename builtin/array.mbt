@@ -254,6 +254,13 @@ pub impl[T : Eq] Eq for Array[T] with op_equal(self, other) {
 }
 
 ///|
+pub impl[T : Hash] Hash for Array[T] with hash_combine(self, hasher) {
+  for v in self {
+    v.hash_combine(hasher)
+  }
+}
+
+///|
 /// Compares two arrays lexicographically.
 ///
 /// First compares the lengths of the arrays. If they differ, returns -1 if the

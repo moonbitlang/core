@@ -1,4 +1,4 @@
-package moonbitlang/core/error
+package "moonbitlang/core/error"
 
 // Values
 

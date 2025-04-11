@@ -1,4 +1,4 @@
-package moonbitlang/core/rational
+package "moonbitlang/core/rational"
 
 // Values
 fn abs(T) -> T

@@ -1,4 +1,4 @@
-package moonbitlang/core/builtin
+package "moonbitlang/core/builtin"
 
 // Values
 fn abort[T](String) -> T
@@ -129,6 +129,7 @@ impl[T] Add for Array[T]
 impl[T : Compare] Compare for Array[T]
 impl[T] Default for Array[T]
 impl[T : Eq] Eq for Array[T]
+impl[T : Hash] Hash for Array[T]
 impl[X : Show] Show for Array[X]
 impl[X : ToJson] ToJson for Array[X]
 
@@ -142,6 +143,8 @@ impl ArrayView {
   unsafe_get[T](Self[T], Int) -> T
 }
 impl[X : ToJson] ToJson for ArrayView[X]
+
+pub(all) type! BenchError String
 
 type BigInt
 impl BigInt {
@@ -591,11 +594,13 @@ impl Double {
 }
 
 impl String {
+  char_length(String, start_offset~ : Int = .., end_offset~ : Int = ..) -> Int
   charcode_at(String, Int) -> Int
   #deprecated
   charcode_length(String) -> Int
   #deprecated
   codepoint_at(String, Int) -> Char
+  #deprecated
   codepoint_length(String, start_offset~ : Int = .., end_offset~ : Int = ..) -> Int
   escape(String) -> String
   #deprecated
@@ -775,9 +780,8 @@ impl[T0 : Eq, T1 : Eq, T2 : Eq, T3 : Eq, T4 : Eq, T5 : Eq, T6 : Eq, T7 : Eq, T8 
 
 pub(open) trait Hash {
   hash_combine(Self, Hasher) -> Unit
-  hash(Self) -> Int
+  hash(Self) -> Int = _
 }
-impl Hash::hash
 impl Hash for Byte
 impl Hash for Int
 impl Hash for UInt
@@ -795,9 +799,8 @@ impl[A : Hash, B : Hash, C : Hash, D : Hash, E : Hash, F : Hash, G : Hash] Hash 
 pub(open) trait Logger {
   write_string(Self, String) -> Unit
   write_substring(Self, String, Int, Int) -> Unit
-  write_char(Self, Char) -> Unit
+  write_char(Self, Char) -> Unit = _
 }
-impl Logger::write_char
 
 pub(open) trait Mod {
   op_mod(Self, Self) -> Self
@@ -837,9 +840,8 @@ impl Shl for UInt64
 
 pub(open) trait Show {
   output(Self, &Logger) -> Unit
-  to_string(Self) -> String
+  to_string(Self) -> String = _
 }
-impl Show::to_string
 impl Show for Unit
 impl Show for Bool
 impl Show for Byte
