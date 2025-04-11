@@ -602,3 +602,8 @@ test "clear" {
   inspect!(map.debug_tree(), content="_")
   inspect!(map.size(), content="0")
 }
+
+///|
+pub impl[K, V] Default for T[K, V] with default() {
+  new()
+}
