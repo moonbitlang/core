@@ -22,5 +22,5 @@ struct T[A] {
 priv enum Node[A] {
   Empty
   Leaf(A)
-  Branch(A, left~ : T[A], right~ : T[A])
+  Branch(A, left~ : Node[A], right~ : Node[A])
 }

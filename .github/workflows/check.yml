@@ -220,6 +220,19 @@ jobs:
           moon version --all
           moonrun --version
 
+      - name: moon check
+        run: moon check --deny-warn
+
+      - name: moon info
+        run: |
+          moon info --target wasm,wasm-gc,js,native
+          git diff --exit-code
+
+      - name: format diff
+        run: |
+          moon fmt --block-style
+          git diff --exit-code
+
       - name: Set ulimit and run moon test
         if: ${{ matrix.os != 'windows-latest' }}
         run: |
@@ -228,6 +241,19 @@ jobs:
           moon test --release --target all
           moon test --target native
           moon test --target native --release
+
+      - name: moon test with dedup_wasm
+        if: ${{ contains(matrix.os, 'ubuntu') }}
+        run: |
+          moon clean
+          ulimit -s 8176
+          moon test --target wasm
+          moon test --target wasm-gc
+          moon test --release --target wasm
+          moon test --release --target wasm-gc
+        env: 
+          MOONC_INTERNAL_PARAMS: dedup_wasm = 1 |
+
 
       - name: Setup MSVC
         if: ${{ matrix.os == 'windows-latest' }}
@@ -253,39 +279,24 @@ jobs:
         run: |
           moon test --target native --release
 
-      - name: Test new allocator
-        run: |
-          moon clean
-          moon test --target wasm
-        env: 
-          MOONC_INTERNAL_PARAMS: allocator = tlsf-mbt |
-
       - name: moon test --doc
         run: |
           moon test --doc
 
       - name: moon test --md
         run: |
-            moon test --md
-
-      - name: moon check
-        run: moon check --deny-warn
+          moon test --md
 
       - name: moon bundle
         run: moon bundle --all
 
-      - name: moon info
-        run: |
-          moon info --target wasm,wasm-gc,js,native
-          git diff
-
       - name: check core size
+        if: ${{ matrix.os != 'windows-latest' }}
         run: find ./target -name '*.core' | xargs ls -lh
 
-      - name: format diff
-        run: |
-          moon fmt
-          git diff
+      - name: check core size on windows
+        if: ${{ matrix.os == 'windows-latest' }}
+        run: Get-ChildItem -Path ".\target" -Recurse -Filter "*.core" | ForEach-Object { "{0} ({1} bytes)" -f $_.FullName, $_.Length }
 
   bleeding-check:
     continue-on-error: true
