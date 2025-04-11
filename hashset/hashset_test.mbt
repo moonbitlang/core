@@ -273,11 +273,11 @@ test "hashset arbitrary" {
   let samples : Array[@hashset.T[Int]] = @quickcheck.samples(20)
   inspect!(
     samples[5:10],
-    content="[@hashset.of([0]), @hashset.of([0]), @hashset.of([0]), @hashset.of([0]), @hashset.of([0, 3])]",
+    content="[@hashset.of([]), @hashset.of([]), @hashset.of([0]), @hashset.of([0]), @hashset.of([0, 3, 1, 2])]",
   )
   inspect!(
     samples[11:15],
-    content="[@hashset.of([0, 1]), @hashset.of([0, 4, -1]), @hashset.of([0]), @hashset.of([2, 0, -1])]",
+    content="[@hashset.of([0, -2, -1]), @hashset.of([0, 4, -5, -2, 8]), @hashset.of([2, 0, -1]), @hashset.of([0])]",
   )
 }
 

@@ -31,7 +31,9 @@ test "multiple samples" {
   inspect!(
     strings[5:10],
     content=
-      #|["\b", " (rK\x1f", "v!@Zx", "Lx", "2&\bx@\x07qh"]
+      
+  #|["E\b\x0f ", "", "K\x1f[", "!@", "xvLxb"]
+
     ,
   )
 }

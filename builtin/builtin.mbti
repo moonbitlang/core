@@ -330,36 +330,6 @@ impl[K : Hash + Eq, V : Eq] Eq for Map[K, V]
 impl[K : Show, V : Show] Show for Map[K, V]
 impl[K : Show, V : ToJson] ToJson for Map[K, V]
 
-type Set[K]
-impl Set {
-  add[K : Hash + Eq](Self[K], K) -> Unit
-  add_and_check[K : Hash + Eq](Self[K], K) -> Bool
-  capacity[K](Self[K]) -> Int
-  clear[K](Self[K]) -> Unit
-  contains[K : Hash + Eq](Self[K], K) -> Bool
-  difference[K : Hash + Eq](Self[K], Self[K]) -> Self[K]
-  each[K](Self[K], (K) -> Unit) -> Unit
-  eachi[K](Self[K], (Int, K) -> Unit) -> Unit
-  from_array[K : Hash + Eq](Array[K]) -> Self[K]
-  from_iter[K : Hash + Eq](Iter[K]) -> Self[K]
-  #deprecated
-  insert[K : Hash + Eq](Self[K], K) -> Unit
-  intersection[K : Hash + Eq](Self[K], Self[K]) -> Self[K]
-  is_empty[K](Self[K]) -> Bool
-  iter[K](Self[K]) -> Iter[K]
-  new[K](capacity~ : Int = ..) -> Self[K]
-  of[K : Hash + Eq](FixedArray[K]) -> Self[K]
-  remove[K : Hash + Eq](Self[K], K) -> Unit
-  remove_and_check[K : Hash + Eq](Self[K], K) -> Bool
-  size[K](Self[K]) -> Int
-  symmetric_difference[K : Hash + Eq](Self[K], Self[K]) -> Self[K]
-  to_array[K](Self[K]) -> Array[K]
-  union[K : Hash + Eq](Self[K], Self[K]) -> Self[K]
-}
-impl[K : Hash + Eq] Eq for Set[K]
-impl[K : Show] Show for Set[K]
-impl[X : ToJson] ToJson for Set[X]
-
 pub(all) type! SnapshotError String
 
 pub(all) extern type SourceLoc
@@ -412,8 +382,6 @@ impl Byte {
 
 impl Char {
   from_int(Int) -> Char
-  #deprecated
-  op_sub(Char, Char) -> Int
   to_int(Char) -> Int
   to_uint(Char) -> UInt
 }
@@ -780,9 +748,8 @@ impl[T0 : Eq, T1 : Eq, T2 : Eq, T3 : Eq, T4 : Eq, T5 : Eq, T6 : Eq, T7 : Eq, T8 
 
 pub(open) trait Hash {
   hash_combine(Self, Hasher) -> Unit
-  hash(Self) -> Int
+  hash(Self) -> Int = _
 }
-impl Hash::hash
 impl Hash for Byte
 impl Hash for Int
 impl Hash for UInt
@@ -800,9 +767,8 @@ impl[A : Hash, B : Hash, C : Hash, D : Hash, E : Hash, F : Hash, G : Hash] Hash 
 pub(open) trait Logger {
   write_string(Self, String) -> Unit
   write_substring(Self, String, Int, Int) -> Unit
-  write_char(Self, Char) -> Unit
+  write_char(Self, Char) -> Unit = _
 }
-impl Logger::write_char
 
 pub(open) trait Mod {
   op_mod(Self, Self) -> Self
@@ -842,9 +808,8 @@ impl Shl for UInt64
 
 pub(open) trait Show {
   output(Self, &Logger) -> Unit
-  to_string(Self) -> String
+  to_string(Self) -> String = _
 }
-impl Show::to_string
 impl Show for Unit
 impl Show for Bool
 impl Show for Byte

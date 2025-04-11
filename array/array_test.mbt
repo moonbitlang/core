@@ -621,10 +621,10 @@ test "Array::last" {
 ///|
 test "arbitrary" {
   let arr : Array[Array[Int]] = @quickcheck.samples(20)
-  inspect!(arr[5:9], content="[[0], [0], [0], [0, 0, 0]]")
+  inspect!(arr[5:9], content="[[], [], [0], [0, 0]]")
   inspect!(
     arr[10:15],
-    content="[[0, 0, 0, 1, 0, -1, 0, -1], [0, 0, 0, 1], [0, 0, 0, -1, -1, -1, 4], [0, 0], [0, 0, -1, 2]]",
+    content="[[0, 0, 1, 0, -2], [0, 0, 0, -1, -2], [0, 0, 0, 0, 0, -2, -5, 4, 0, 8], [0, 0, -1, 2], [0, 0]]",
   )
 }
 

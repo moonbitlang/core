@@ -13,16 +13,16 @@
 // limitations under the License.
 
 ///|
-let int_min = 0x80000000
+const INT_MIN = 0x80000000
 
 ///|
-let int_max = 0x7fffffff
+const INT_MAX = 0x7fffffff
 
 ///|
-let int64_min = -0x8000000000000000L
+const INT64_MIN = -0x8000000000000000L
 
 ///|
-let int64_max = 0x7fffffffffffffffL
+const INT64_MAX = 0x7fffffffffffffffL
 
 ///|
 /// This function check whether the prefix of the string is consistent with the given base,
@@ -137,7 +137,7 @@ pub fn parse_int64(str : String, base~ : Int = 0) -> Int64!StrConvError {
 /// If the `~base` argument is 0, the base will be inferred by the prefix.
 pub fn parse_int(str : String, base~ : Int = 0) -> Int!StrConvError {
   let n = parse_int64!(str, base~)
-  if n < int_min.to_int64() || n > int_max.to_int64() {
+  if n < INT_MIN.to_int64() || n > INT_MAX.to_int64() {
     range_err!()
   }
   n.to_int()
@@ -212,18 +212,18 @@ fn determine_base(s : String) -> Int {
 fn overflow_threshold(base : Int, neg : Bool) -> Int64 {
   if not(neg) {
     if base == 10 {
-      int64_max / 10L + 1L
+      INT64_MAX / 10L + 1L
     } else if base == 16 {
-      int64_max / 16L + 1L
+      INT64_MAX / 16L + 1L
     } else {
-      int64_max / base.to_int64() + 1L
+      INT64_MAX / base.to_int64() + 1L
     }
   } else if base == 10 {
-    int64_min / 10L
+    INT64_MIN / 10L
   } else if base == 16 {
-    int64_min / 16L
+    INT64_MIN / 16L
   } else {
-    int64_min / base.to_int64()
+    INT64_MIN / base.to_int64()
   }
 }
 
