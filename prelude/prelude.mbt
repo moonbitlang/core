@@ -74,3 +74,45 @@ pub fnalias @builtin.(
   repr,
   dump
 )
+
+///| 
+/// Applies a function to a value and returns the original value.
+///
+/// # Parameters
+/// * `value`: The value to pass to the function.
+/// * `f`: The function to apply to the value.
+///
+/// # Returns
+/// The original value, unchanged.
+///
+/// # Examples
+/// ```moonbit
+/// let val : Ref[Int] = { val : 1 }
+/// let x : Int = 5
+/// assert_eq!(x |> tap(fn(n) { val.val += n }), 5)
+/// assert_eq!(val.val, 6)
+/// ```
+pub fn tap[T](value : T, f : (T) -> Unit) -> T {
+  f(value)
+  value
+}
+
+///| 
+/// Applies a function to a value and returns the result of the function.
+///
+/// # Parameters
+/// * `value`: The value to pass to the function.
+/// * `f`: The function to apply to the value.
+///
+/// # Returns
+/// The result of applying the function to the value.
+///
+/// # Examples
+/// ```moonbit
+/// let x = 5
+/// let result = x |> then(fn(n) { n * 2 })
+/// assert_eq!(result, 10)
+/// ```
+pub fn then[T, R](value : T, f : (T) -> R) -> R {
+  f(value)
+}
