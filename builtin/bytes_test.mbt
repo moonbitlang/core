@@ -237,6 +237,14 @@ test "Bytes::makei with non-positive length" {
 }
 
 ///|
+test "Bytes::make with non-positive length" {
+  let bytes = Bytes::make(0, b'\x00')
+  inspect!(bytes, content="b\"\"")
+  let bytes2 = Bytes::make(-1, b'\x00')
+  inspect!(bytes2, content="b\"\"")
+}
+
+///|
 test "@builtin.Bytes::compare/basic" {
   // Basic comparison of different bytes
   let a = b"\x01\x02\x03"

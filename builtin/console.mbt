@@ -202,12 +202,12 @@ pub fn inspect(
   if actual != content {
     let loc = loc.to_string().escape()
     let args_loc = args_loc.to_json().escape()
-    let expect = content.escape()
-    let actual = obj.to_string().escape()
+    let expect_escaped = content.escape()
+    let actual_escaped = actual.escape()
     let expect_base64 = "\"\{base64_encode_string_codepoint(content)}\""
-    let actual_base64 = "\"\{base64_encode_string_codepoint(obj.to_string())}\""
+    let actual_base64 = "\"\{base64_encode_string_codepoint(actual)}\""
     raise InspectError(
-      "@EXPECT_FAILED {\"loc\": \{loc}, \"args_loc\": \{args_loc}, \"expect\": \{expect}, \"actual\": \{actual}, \"expect_base64\": \{expect_base64}, \"actual_base64\": \{actual_base64}}",
+      "@EXPECT_FAILED {\"loc\": \{loc}, \"args_loc\": \{args_loc}, \"expect\": \{expect_escaped}, \"actual\": \{actual_escaped}, \"expect_base64\": \{expect_base64}, \"actual_base64\": \{actual_base64}}",
     )
   }
 }
