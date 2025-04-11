@@ -18,5 +18,5 @@ pub impl[K : Show, V : ToJson] ToJson for T[K, V] with to_json(self) {
   for k, v in self {
     object[k.to_string()] = v.to_json()
   }
-  Object(object)
+  Json::object(object)
 }

@@ -21,16 +21,16 @@ pub(all) struct AllThree {
 
 ///|
 fn array_to_json[T](arr : Array[T], f~ : (T) -> Json) -> Json {
-  Array(arr.map(f))
+  Json::array(arr.map(f))
 }
 
 ///|
 fn to_json(self : AllThree) -> Json {
   let { ints, floats, strings } = self
   {
-    "ints": ints |> array_to_json(f=fn { x => Number(x.to_double()) }),
-    "floats": floats |> array_to_json(f=fn { x => Number(x) }),
-    "strings": strings |> array_to_json(f=fn { x => String(x) }),
+    "ints": ints |> array_to_json(f=fn { x => Json::number(x.to_double()) }),
+    "floats": floats |> array_to_json(f=fn { x => Json::number(x) }),
+    "strings": strings |> array_to_json(f=fn { x => Json::string(x) }),
   }
 }
 

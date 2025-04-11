@@ -30,7 +30,7 @@ pub impl[A : ToJson] ToJson for T[A] with to_json(self) {
   for a in self {
     jsons.push(a.to_json())
   }
-  Array(jsons)
+  Json::array(jsons)
 }
 
 ///|
