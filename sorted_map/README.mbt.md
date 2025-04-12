@@ -267,26 +267,30 @@ assert_eq!(
 When working with keys that might not exist, prefer using pattern matching for safety:
 
 ```moonbit
-fn get_salary(employee_map : @sorted_map.T[String, Int], name : String) -> Int {
-  match employee_map.get(name) {
-    Some(salary) => salary
-    None => {
-      println("Warning: Employee " + name + " not found. Using default salary.")
-      0 // Default
+fn get_score(scores: @sorted_map.T[Int, Int], student_id: Int) -> Int {
+    match scores.get(student_id) {
+        Some(score) => score,
+        None => {
+            println("Student ID " + student_id.to_string() + " does not exist, returning default score");
+            0  // Default score
+        }
     }
-  }
 }
 
 test "safe_key_access" {
-  let employees = @sorted_map.from_array([
-    ("Alice", 5000),
-    ("Bob", 6000),
-    ("Charlie", 4500),
-  ])
-  assert_eq!(get_salary(employees, "Alice"), 5000)
-  assert_eq!(get_salary(employees, "Unknown"), 0) // Default
+    // Create a mapping storing student IDs and their scores
+    let scores = @sorted_map.from_array([
+        (1001, 85),
+        (1002, 92),
+        (1003, 78)
+    ]);
+    
+    // Access an existing key
+    assert_eq!(get_score(scores, 1001), 85);
+    
+    // Access a non-existent key, returning the default value
+    assert_eq!(get_score(scores, 9999), 0);
 }
-
 ```
 
 ## Implementation Notes
