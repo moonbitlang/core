@@ -56,7 +56,7 @@ pub fn to_array[A : Compare](self : T[A]) -> Array[A] {
   }
 
   go(self.node)
-  arr.sort_by(fn(x, y) { if x < y { 1 } else { -1 } })
+  arr.sort_by(fn(x, y) { y.compare(x) })
   arr
 }
 
