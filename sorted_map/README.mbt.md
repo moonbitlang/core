@@ -227,41 +227,6 @@ let map2 = @sorted_map.from_array([(2, "two"), (1, "one")])
 assert_eq!(map1 == map2, true)
 ```
 
-## Advanced Usage
-
-### Custom Comparators
-
-The SortedMap requires keys to implement the `Compare` trait. By default, this means the keys must be orderable with standard comparison operators.
-
-```moonbit
-// Custom struct with Compare implementation
-struct Person {
-  name : String
-  age : Int
-} derive(Eq, Show)
-
-
-impl Compare for Person with compare(self, other) {
-  if self.age != other.age {
-    self.age - other.age // Sort by age
-  } else {
-    self.name.compare(other.name) // Then by name
-  }
-}
-
-// Now we can use Person as keys in SortedMap
-let map = @sorted_map.new()
-map.add({ name: "Alice", age: 30 }, "Developer")
-map.add({ name: "Bob", age: 25 }, "Designer")
-assert_eq!(
-    map,
-    @sorted_map.of([
-      ({ name: "Bob", age: 25 }, "Designer"),
-      ({ name: "Alice", age: 30 }, "Developer"),
-    ]),
-  )
-```
-
 ### Error Handling Best Practices
 
 When working with keys that might not exist, prefer using pattern matching for safety:
@@ -269,7 +234,7 @@ When working with keys that might not exist, prefer using pattern matching for s
 ```moonbit
 fn get_score(scores: @sorted_map.T[Int, Int], student_id: Int) -> Int {
     match scores.get(student_id) {
-        Some(score) => score,
+        Some(score) => score
         None => {
             println("Student ID " + student_id.to_string() + " does not exist, returning default score");
             0  // Default score
