@@ -1030,19 +1030,14 @@ test "op_equal" {
 pub impl[T : Compare] Compare for FixedArray[T] with compare(self, other) {
   let len_self = self.length()
   let len_other = other.length()
-  if len_self < len_other {
-    -1
-  } else if len_self > len_other {
-    1
+  let cmp = len_self.compare(len_other)
+  guard cmp == 0 else { return cmp }
+  for i in 0..<len_self {
+    let cmp = self.unsafe_get(i).compare(other.unsafe_get(i))
+    guard cmp == 0 else { break cmp }
+
   } else {
-    for i in 0..<len_self {
-      let cmp = self.unsafe_get(i).compare(other.unsafe_get(i))
-      if cmp != 0 {
-        break cmp
-      }
-    } else {
-      0
-    }
+    0
   }
 }
 
