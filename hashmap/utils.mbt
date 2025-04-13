@@ -157,33 +157,6 @@ pub fn from_iter[K : Hash + Eq, V](iter : Iter[(K, V)]) -> T[K, V] {
 }
 
 ///|
-/// Creates a new hash map and inserts all key-value pairs from the given
-/// iterator.
-///
-/// Parameters:
-///
-/// * `iter` : An iterator of key-value pairs, where each pair consists of a
-/// hashable and equatable key of type `K` and a value of type `V`.
-///
-/// Returns a new hash map containing all key-value pairs from the iterator.
-///
-/// Example:
-///
-/// ```moonbit
-/// test "T::from_iter" {
-///   let pairs = [(1, "one"), (2, "two")]
-///   let map = @hashmap.from_iter(pairs.iter())
-///   inspect!(map.get(1), content="Some(\"one\")")
-///   inspect!(map.get(2), content="Some(\"two\")")
-/// }
-/// ```
-///
-#deprecated("use `@hashmap.from_iter` instead")
-pub fn T::from_iter[K : Hash + Eq, V](iter : Iter[(K, V)]) -> T[K, V] {
-  from_iter(iter)
-}
-
-///|
 /// Converts the hash map into an array of key-value pairs. The order of elements
 /// in the resulting array follows the internal storage order of the hash map.
 ///
