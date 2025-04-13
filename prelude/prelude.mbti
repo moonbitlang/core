@@ -34,6 +34,10 @@ fn println[T : @builtin.Show](T) -> Unit
 
 fn repr[T : @builtin.Show](T) -> String
 
+fn tap[T](T, (T) -> Unit) -> T
+
+fn then[T, R](T, (T) -> R) -> R
+
 // Types and methods
 
 // Type aliases
