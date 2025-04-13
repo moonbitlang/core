@@ -199,6 +199,72 @@ pub fn Iter::repeat[T](a : T) -> Iter[T] {
 }
 
 ///|
+/// require: step > 0
+fn iter_number_forward[A : Add + Compare](
+  begin : A,
+  end : A,
+  step~ : A,
+  inclusive~ : Bool
+) -> Iter[A] {
+  if inclusive {
+    fn(yield_) {
+      for i = begin; i <= end; {
+        guard yield_(i) is IterContinue else { break IterEnd }
+        let next = i + step
+        guard next >= i else { break IterContinue }
+        continue next
+      } else {
+        IterContinue
+      }
+    }
+  } else {
+    fn(yield_) {
+      for i = begin; i < end; {
+        guard yield_(i) is IterContinue else { break IterEnd }
+        let next = i + step
+        guard next >= i else { break IterContinue }
+        continue next
+      } else {
+        IterContinue
+      }
+    }
+  }
+}
+
+///|
+/// require: step < 0
+fn iter_number_backward[A : Add + Compare](
+  begin : A,
+  end : A,
+  step~ : A,
+  inclusive~ : Bool
+) -> Iter[A] {
+  if inclusive {
+    fn(yield_) {
+      for i = begin; i >= end; {
+        guard yield_(i) is IterContinue else { break IterEnd }
+        let next = i + step
+        guard next <= i else { break IterContinue }
+        continue next
+      } else {
+        IterContinue
+      }
+    }
+  } else {
+    fn(yield_) {
+      for i = begin; i > end; {
+        guard yield_(i) is IterContinue else { break IterEnd }
+        let next = i + step
+        guard next <= i else { break IterContinue }
+        continue next
+      } else {
+        IterContinue
+      }
+    }
+  }
+}
+
+///|
 /// Creates an iterator that iterates over a range of Int with default step 1.
 /// To grow the range downward, set the `step` parameter to a negative value.
 ///
@@ -218,26 +284,12 @@ pub fn Int::until(
   step~ : Int = 1,
   inclusive~ : Bool = false
 ) -> Iter[Int] {
-  if step == 0 {
-    return Iter::empty()
-  }
-  fn(yield_) {
-    let mut i = self
-    while (step > 0 && i < end) ||
-          (step < 0 && i > end) ||
-          (inclusive && i == end) {
-      if yield_(i) == IterEnd {
-        break IterEnd
-      }
-      let next = i + step
-      if (step > 0 && next >= i) || (step < 0 && next <= i) {
-        i = next
-      } else {
-        break IterContinue
-      }
-    } else {
-      IterContinue
-    }
+  if step > 0 {
+    iter_number_forward(self, end, step~, inclusive~)
+  } else if step < 0 {
+    iter_number_backward(self, end, step~, inclusive~)
+  } else {
+    Iter::empty()
   }
 }
 
@@ -261,26 +313,12 @@ pub fn Int64::until(
   step~ : Int64 = 1L,
   inclusive~ : Bool = false
 ) -> Iter[Int64] {
-  if step == 0 {
-    return Iter::empty()
-  }
-  fn(yield_) {
-    let mut i = self
-    while (step > 0 && i < end) ||
-          (step < 0 && i > end) ||
-          (inclusive && i == end) {
-      if yield_(i) == IterEnd {
-        break IterEnd
-      }
-      let next = i + step
-      if (step > 0 && next >= i) || (step < 0 && next <= i) {
-        i = next
-      } else {
-        break IterContinue
-      }
-    } else {
-      IterContinue
-    }
+  if step > 0 {
+    iter_number_forward(self, end, step~, inclusive~)
+  } else if step < 0 {
+    iter_number_backward(self, end, step~, inclusive~)
+  } else {
+    Iter::empty()
   }
 }
 
@@ -304,26 +342,12 @@ pub fn Float::until(
   step~ : Float = 1.0,
   inclusive~ : Bool = false
 ) -> Iter[Float] {
-  if step == 0.0 {
-    return Iter::empty()
-  }
-  fn(yield_) {
-    let mut i = self
-    while (step > 0.0 && i < end) ||
-          (step < 0.0 && i > end) ||
-          (inclusive && i == end) {
-      if yield_(i) == IterEnd {
-        break IterEnd
-      }
-      let next = i + step
-      if (step > 0.0 && next >= i) || (step < 0.0 && next <= i) {
-        i = next
-      } else {
-        break IterContinue
-      }
-    } else {
-      IterContinue
-    }
+  if step > 0 {
+    iter_number_forward(self, end, step~, inclusive~)
+  } else if step < 0 {
+    iter_number_backward(self, end, step~, inclusive~)
+  } else {
+    Iter::empty()
   }
 }
 
@@ -347,26 +371,12 @@ pub fn Double::until(
   step~ : Double = 1.0,
   inclusive~ : Bool = false
 ) -> Iter[Double] {
-  if step == 0.0 {
-    return Iter::empty()
-  }
-  fn(yield_) {
-    let mut i = self
-    while (step > 0.0 && i < end) ||
-          (step < 0.0 && i > end) ||
-          (inclusive && i == end) {
-      if yield_(i) == IterEnd {
-        break IterEnd
-      }
-      let next = i + step
-      if (step > 0.0 && next >= i) || (step < 0.0 && next <= i) {
-        i = next
-      } else {
-        break IterContinue
-      }
-    } else {
-      IterContinue
-    }
+  if step > 0 {
+    iter_number_forward(self, end, step~, inclusive~)
+  } else if step < 0 {
+    iter_number_backward(self, end, step~, inclusive~)
+  } else {
+    Iter::empty()
   }
 }
 
