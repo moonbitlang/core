@@ -264,22 +264,18 @@ pub fn Map::contains[K : Hash + Eq, V](self : Map[K, V], key : K) -> Bool {
 pub fn Map::remove[K : Hash + Eq, V](self : Map[K, V], key : K) -> Unit {
   let hash = key.hash()
   for i = 0, idx = hash & self.capacity_mask {
-    match self.entries[idx] {
-      Some(entry) => {
-        if entry.hash == hash && entry.key == key {
-          self.entries[idx] = None
-          self.remove_entry(entry)
-          self.shift_back(idx)
-          self.size -= 1
-          break
-        }
-        if i > entry.psl {
-          break
-        }
-        continue i + 1, (idx + 1) & self.capacity_mask
-      }
-      None => break
+    guard self.entries[idx] is Some(entry) else { break }
+    if entry.hash == hash && entry.key == key {
+      self.entries[idx] = None
+      self.remove_entry(entry)
+      self.shift_back(idx)
+      self.size -= 1
+      break
     }
+    if i > entry.psl {
+      break
+    }
+    continue i + 1, (idx + 1) & self.capacity_mask
   }
 }
 
@@ -539,9 +535,7 @@ pub impl[K : Hash + Eq, V : Eq] Eq for Map[K, V] with op_equal(
   self : Map[K, V],
   that : Map[K, V]
 ) -> Bool {
-  if self.size != that.size {
-    return false
-  }
+  guard self.size == that.size else { return false }
   for k, v in self {
     match that.get(k) {
       None => break false
