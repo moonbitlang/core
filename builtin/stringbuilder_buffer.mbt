@@ -65,6 +65,7 @@ fn StringBuilder::grow_if_necessary(
 }
 
 ///|
+/// Writes a string to the StringBuilder.
 pub impl Logger for StringBuilder with write_string(self, str) {
   self.grow_if_necessary(self.len + str.length() * 2)
   self.data.blit_from_string(self.len, str, 0, str.length())
@@ -72,6 +73,7 @@ pub impl Logger for StringBuilder with write_string(self, str) {
 }
 
 ///|
+/// Writes a character to the StringBuilder.
 pub impl Logger for StringBuilder with write_char(self, ch) {
   self.grow_if_necessary(self.len + 4)
   let inc = self.data.set_utf16le_char(self.len, ch)
@@ -79,6 +81,24 @@ pub impl Logger for StringBuilder with write_char(self, ch) {
 }
 
 ///|
+/// Writes a part of the given string to the StringBuilder.
+/// 
+/// Parameters:
+///
+/// * `self` : The StringBuilder to write to.
+/// * `str` : The given string.
+/// * `start` : The start index of the substring to write.
+/// * `len` : The length of the substring to write.
+///
+/// Example:
+///
+/// ```moonbit
+/// test "write_substring" {
+///   let sb = StringBuilder::new()
+///   sb.write_substring("Hello, world!", 0, 5)
+///   assert_eq!(sb.to_string(), "Hello")
+/// }
+/// ```
 pub impl Logger for StringBuilder with write_substring(
   self : StringBuilder,
   str : String,
@@ -91,7 +111,8 @@ pub impl Logger for StringBuilder with write_substring(
   self.len += len * 2
 }
 
-///|
+///| 
+/// Returns the current content of the StringBuilder as a string.
 pub fn StringBuilder::to_string(self : StringBuilder) -> String {
   self.data.unsafe_to_bytes().to_unchecked_string(offset=0, length=self.len)
 }
@@ -104,7 +125,8 @@ pub impl Show for StringBuilder with output(self, logger) {
   )
 }
 
-///|
+///| 
+/// Resets the string builder to an empty state.
 pub fn StringBuilder::reset(self : StringBuilder) -> Unit {
   self.len = 0
 }
