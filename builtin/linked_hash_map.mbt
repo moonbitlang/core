@@ -461,9 +461,7 @@ pub fn Map::iter[K, V](self : Map[K, V]) -> Iter[(K, V)] {
   Iter::new(fn(yield_) {
     loop self.head {
       Some({ key, value, idx, .. }) => {
-        if yield_((key, value)) == IterEnd {
-          break IterEnd
-        }
+        guard yield_((key, value)) is IterContinue else { break IterEnd }
         continue self.list[idx].next
       }
       None => break IterContinue
@@ -475,12 +473,10 @@ pub fn Map::iter[K, V](self : Map[K, V]) -> Iter[(K, V)] {
 pub fn Map::iter2[K, V](self : Map[K, V]) -> Iter2[K, V] {
   Iter2::new(fn(yield_) {
     loop self.head {
-      Some({ key, value, idx, .. }) =>
-        if yield_(key, value) == IterEnd {
-          IterEnd
-        } else {
-          continue self.list[idx].next
-        }
+      Some({ key, value, idx, .. }) => {
+        guard yield_(key, value) is IterContinue else { break IterEnd }
+        continue self.list[idx].next
+      }
       None => IterContinue
     }
   })
@@ -490,11 +486,10 @@ pub fn Map::iter2[K, V](self : Map[K, V]) -> Iter2[K, V] {
 pub fn Map::keys[K, V](self : Map[K, V]) -> Iter[K] {
   Iter::new(fn(yield_) {
     loop self.head {
-      Some({ key, idx, .. }) =>
-        match yield_(key) {
-          IterEnd => IterEnd
-          IterContinue => continue self.list[idx].next
-        }
+      Some({ key, idx, .. }) => {
+        guard yield_(key) is IterContinue else { break IterEnd }
+        continue self.list[idx].next
+      }
       None => IterContinue
     }
   })
@@ -504,11 +499,10 @@ pub fn Map::keys[K, V](self : Map[K, V]) -> Iter[K] {
 pub fn Map::values[K, V](self : Map[K, V]) -> Iter[V] {
   Iter::new(fn(yield_) {
     loop self.head {
-      Some({ value, idx, .. }) =>
-        match yield_(value) {
-          IterEnd => IterEnd
-          IterContinue => continue self.list[idx].next
-        }
+      Some({ value, idx, .. }) => {
+        guard yield_(value) is IterContinue else { break IterEnd }
+        continue self.list[idx].next
+      }
       None => IterContinue
     }
   })
