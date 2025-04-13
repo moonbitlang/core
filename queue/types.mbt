@@ -16,7 +16,7 @@
 priv struct Cons[A] {
   content : A
   mut next : Cons[A]?
-}
+} derive(Eq)
 
 ///|
 // Invariant:
