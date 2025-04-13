@@ -80,7 +80,7 @@ test {
   let map = @sorted_map.from_array([(1, "one"), (2, "two")])
   let key = 3
   match map.get(key) {
-    Some(value) => println("Found: {value}")
+    Some(value) => println("Found: \{value}")
     None => println("Key {key} not found")
   }
 }
