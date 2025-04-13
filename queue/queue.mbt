@@ -21,7 +21,7 @@
 /// assert_eq!(queue.length(), 0)
 /// ```
 pub fn new[A]() -> T[A] {
-  { length: 0, first: Nil, last: Nil }
+  { length: 0, first: None, last: None }
 }
 
 ///|
@@ -39,10 +39,10 @@ pub fn from_array[A](arr : Array[A]) -> T[A] {
   }
   let queue : T[A] = new()
   queue.length = arr.length()
-  queue.last = Cons({ content: arr[queue.length - 1], next: Nil })
+  queue.last = Some({ content: arr[queue.length - 1], next: None })
   queue.first = queue.last
   for i = arr.length() - 2; i >= 0; i = i - 1 {
-    queue.first = Cons({ content: arr[i], next: queue.first })
+    queue.first = Some({ content: arr[i], next: queue.first })
   }
   queue
 }
@@ -54,10 +54,9 @@ pub impl[A : Show] Show for T[A] with output(self, logger) {
 
 ///|
 /// Tests if two queue cells are equal.
-impl[T : Eq] Eq for Cell[T] with op_equal(self, other) {
-  loop self, other {
-    Nil, Nil => true
-    Cons({ content: x, next: xs }), Cons({ content: y, next: ys }) =>
+impl[T : Eq] Eq for Cons[T] with op_equal(self, other) {
+  loop Some(self), Some(other) {
+    Some({ content: x, next: xs }), Some({ content: y, next: ys }) =>
       if x == y {
         continue xs, ys
       } else {
@@ -83,8 +82,8 @@ impl[A : Eq] Eq for T[A] with op_equal(self, other) {
 /// ```
 pub fn clear[A](self : T[A]) -> Unit {
   self.length = 0
-  self.first = Nil
-  self.last = Nil
+  self.first = None
+  self.last = None
 }
 
 ///|
@@ -120,14 +119,14 @@ pub fn is_empty[A](self : T[A]) -> Bool {
 /// queue.push(1)
 /// ```
 pub fn push[A](self : T[A], x : A) -> Unit {
-  let cell : Cell[A] = Cons({ content: x, next: Nil })
+  let cell = Some({ content: x, next: None })
   match self.last {
-    Nil => {
+    None => {
       self.length = 1
       self.first = cell
       self.last = cell
     }
-    Cons(last) => {
+    Some(last) => {
       last.next = cell
       self.length = self.length + 1
       self.last = cell
@@ -146,8 +145,8 @@ pub fn push[A](self : T[A], x : A) -> Unit {
 /// @alert unsafe "Panics if the queue is empty."
 pub fn unsafe_peek[A](self : T[A]) -> A {
   match self.first {
-    Nil => abort("Queue is empty")
-    Cons(first) => first.content
+    None => abort("Queue is empty")
+    Some(first) => first.content
   }
 }
 
@@ -168,8 +167,8 @@ pub fn peek_exn[A](self : T[A]) -> A {
 /// ```
 pub fn peek[A](self : T[A]) -> A? {
   match self.first {
-    Nil => None
-    Cons(first) => Some(first.content)
+    None => None
+    Some(first) => Some(first.content)
   }
 }
 
@@ -184,12 +183,12 @@ pub fn peek[A](self : T[A]) -> A? {
 /// @alert unsafe "Panics if the queue is empty."
 pub fn unsafe_pop[A](self : T[A]) -> A {
   match self.first {
-    Nil => abort("Queue is empty")
-    Cons({ content, next: Nil }) => {
+    None => abort("Queue is empty")
+    Some({ content, next: None }) => {
       self.clear()
       content
     }
-    Cons({ content, next }) => {
+    Some({ content, next }) => {
       self.length = self.length - 1
       self.first = next
       content
@@ -231,11 +230,11 @@ pub fn pop[A](self : T[A]) -> A? {
 /// ```
 pub fn each[A](self : T[A], f : (A) -> Unit) -> Unit {
   loop self.first {
-    Cons({ content, next }) => {
+    Some({ content, next }) => {
       f(content)
       continue next
     }
-    Nil => ()
+    None => ()
   }
 }
 
@@ -250,11 +249,11 @@ pub fn each[A](self : T[A], f : (A) -> Unit) -> Unit {
 /// ```
 pub fn eachi[A](self : T[A], f : (Int, A) -> Unit) -> Unit {
   loop self.first, 0 {
-    Cons({ content, next }), index => {
+    Some({ content, next }), index => {
       f(index, content)
       continue next, index + 1
     }
-    Nil, _ => ()
+    None, _ => ()
   }
 }
 
@@ -269,8 +268,8 @@ pub fn eachi[A](self : T[A], f : (Int, A) -> Unit) -> Unit {
 /// ```
 pub fn fold[A, B](self : T[A], init~ : B, f : (B, A) -> B) -> B {
   loop self.first, init {
-    Nil, acc => acc
-    Cons({ content, next }), acc => continue next, f(acc, content)
+    None, acc => acc
+    Some({ content, next }), acc => continue next, f(acc, content)
   }
 }
 
@@ -284,21 +283,18 @@ pub fn fold[A, B](self : T[A], init~ : B, f : (B, A) -> B) -> B {
 /// assert_eq!(queue2.length(), 4)
 /// ```
 pub fn copy[A](self : T[A]) -> T[A] {
-  loop
-    { length: self.length, first: Nil, last: Nil },
-    (Nil : Cell[A]),
-    self.first {
+  loop { length: self.length, first: None, last: None }, None, self.first {
     qres, prev, cell =>
       match cell {
-        Nil => {
+        None => {
           qres.last = prev
           qres
         }
-        Cons({ content, next }) => {
-          let res : Cell[A] = Cons({ content, next: Nil })
+        Some({ content, next }) => {
+          let res = Some({ content, next: None })
           match prev {
-            Nil => qres.first = res
-            Cons(p) => p.next = res
+            None => qres.first = res
+            Some(p) => p.next = res
           }
           continue qres, res, next
         }
@@ -320,13 +316,13 @@ pub fn copy[A](self : T[A]) -> T[A] {
 pub fn transfer[A](self : T[A], dst : T[A]) -> Unit {
   if self.length > 0 {
     match dst.last {
-      Nil => {
+      None => {
         dst.length = self.length
         dst.first = self.first
         dst.last = self.last
         self.clear()
       }
-      Cons(last) => {
+      Some(last) => {
         last.next = self.first
         dst.length = dst.length + self.length
         dst.last = self.last
@@ -348,13 +344,13 @@ pub fn transfer[A](self : T[A], dst : T[A]) -> Unit {
 pub fn iter[A](self : T[A]) -> Iter[A] {
   Iter::new(fn(yield_) {
     loop self.first {
-      Cons({ content, next }) => {
+      Some({ content, next }) => {
         if yield_(content) == IterEnd {
           break IterEnd
         }
         continue next
       }
-      Nil => IterContinue
+      None => IterContinue
     }
   })
 }
@@ -387,10 +383,10 @@ pub fn of[A](arr : FixedArray[A]) -> T[A] {
   }
   let queue : T[A] = new()
   queue.length = arr.length()
-  queue.last = Cons({ content: arr[queue.length - 1], next: Nil })
+  queue.last = Some({ content: arr[queue.length - 1], next: None })
   queue.first = queue.last
   for i = arr.length() - 2; i >= 0; i = i - 1 {
-    queue.first = Cons({ content: arr[i], next: queue.first })
+    queue.first = Some({ content: arr[i], next: queue.first })
   }
   queue
 }
