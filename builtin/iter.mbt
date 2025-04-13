@@ -657,10 +657,14 @@ pub fn Iter::drop_while[T](self : Iter[T], f : (T) -> Bool) -> Iter[T] {
   fn(yield_) {
     let mut dropping = true
     self.run(fn(a) {
-      if dropping && f(a) {
-        IterContinue
+      if dropping {
+        if f(a) {
+          IterContinue
+        } else {
+          dropping = false
+          yield_(a)
+        }
       } else {
-        dropping = false
         yield_(a)
       }
     })
