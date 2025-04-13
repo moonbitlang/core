@@ -34,36 +34,20 @@ pub fn new[A]() -> T[A] {
 /// assert_eq!(queue.length(), 3)
 /// ```
 pub fn from_array[A](arr : Array[A]) -> T[A] {
-  if arr.length() == 0 {
-    return new()
+  guard arr.length() > 0 else { return new() }
+  let length = arr.length()
+  let last = { content: arr[length - 1], next: None }
+  let first = for i = length - 2, x = last; i >= 0; {
+    continue i - 1, { content: arr[i], next: Some(x) }
+  } else {
+    x
   }
-  let queue : T[A] = new()
-  queue.length = arr.length()
-  queue.last = Some({ content: arr[queue.length - 1], next: None })
-  queue.first = queue.last
-  for i = arr.length() - 2; i >= 0; i = i - 1 {
-    queue.first = Some({ content: arr[i], next: queue.first })
-  }
-  queue
+  { length, first: Some(first), last: Some(last) }
 }
 
 ///|
 pub impl[A : Show] Show for T[A] with output(self, logger) {
   logger.write_iter(self.iter(), prefix="@queue.of([", suffix="])")
-}
-
-///|
-/// Tests if two queue cells are equal.
-impl[T : Eq] Eq for Cons[T] with op_equal(self, other) {
-  loop Some(self), Some(other) {
-    Some({ content: x, next: xs }), Some({ content: y, next: ys }) =>
-      if x == y {
-        continue xs, ys
-      } else {
-        false
-      }
-    _, _ => false
-  }
 }
 
 ///|
@@ -128,7 +112,7 @@ pub fn push[A](self : T[A], x : A) -> Unit {
     }
     Some(last) => {
       last.next = cell
-      self.length = self.length + 1
+      self.length += 1
       self.last = cell
     }
   }
@@ -189,7 +173,7 @@ pub fn unsafe_pop[A](self : T[A]) -> A {
       content
     }
     Some({ content, next }) => {
-      self.length = self.length - 1
+      self.length -= 1
       self.first = next
       content
     }
@@ -212,10 +196,17 @@ pub fn pop_exn[A](self : T[A]) -> A {
 /// assert_eq!(queue.pop(), Some(1))
 /// ```
 pub fn pop[A](self : T[A]) -> A? {
-  if self.length == 0 {
-    None
-  } else {
-    Some(self.unsafe_pop())
+  match self.first {
+    None => None
+    Some({ content, next: None }) => {
+      self.clear()
+      Some(content)
+    }
+    Some({ content, next }) => {
+      self.length -= 1
+      self.first = next
+      Some(content)
+    }
   }
 }
 
@@ -283,23 +274,17 @@ pub fn fold[A, B](self : T[A], init~ : B, f : (B, A) -> B) -> B {
 /// assert_eq!(queue2.length(), 4)
 /// ```
 pub fn copy[A](self : T[A]) -> T[A] {
-  loop { length: self.length, first: None, last: None }, None, self.first {
-    qres, prev, cell =>
-      match cell {
-        None => {
-          qres.last = prev
-          qres
-        }
-        Some({ content, next }) => {
-          let res = Some({ content, next: None })
-          match prev {
-            None => qres.first = res
-            Some(p) => p.next = res
-          }
-          continue qres, res, next
-        }
-      }
+  guard self.first is Some({ content, next }) else { return new() }
+  let first = { content, next }
+  let last = loop first, next {
+    pre, Some({ content, next }) => {
+      let curr = { content, next: None }
+      pre.next = Some(curr)
+      continue curr, next
+    }
+    pre, None => pre
   }
+  { length: self.length, first: Some(first), last: Some(last) }
 }
 
 ///|
@@ -378,17 +363,15 @@ pub fn from_iter[A](iter : Iter[A]) -> T[A] {
 /// assert_eq!(queue.length(), 4)
 /// ```
 pub fn of[A](arr : FixedArray[A]) -> T[A] {
-  if arr.length() == 0 {
-    return new()
+  guard arr.length() > 0 else { return new() }
+  let length = arr.length()
+  let last = { content: arr[length - 1], next: None }
+  let first = for i = length - 2, x = last; i >= 0; {
+    continue i - 1, { content: arr[i], next: Some(x) }
+  } else {
+    Some(x)
   }
-  let queue : T[A] = new()
-  queue.length = arr.length()
-  queue.last = Some({ content: arr[queue.length - 1], next: None })
-  queue.first = queue.last
-  for i = arr.length() - 2; i >= 0; i = i - 1 {
-    queue.first = Some({ content: arr[i], next: queue.first })
-  }
-  queue
+  { length, first, last: Some(last) }
 }
 
 ///|
