@@ -275,7 +275,7 @@ pub fn fold[A, B](self : T[A], init~ : B, f : (B, A) -> B) -> B {
 /// ```
 pub fn copy[A](self : T[A]) -> T[A] {
   guard self.first is Some({ content, next }) else { return new() }
-  let first = { content, next }
+  let first = { content, next: None }
   let last = loop first, next {
     pre, Some({ content, next }) => {
       let curr = { content, next: None }
