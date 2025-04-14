@@ -305,6 +305,7 @@ pub fn difference[V : Compare](self : T[V], src : T[V]) -> T[V] {
 /// }
 /// ```
 pub fn symmetric_difference[V : Compare](self : T[V], other : T[V]) -> T[V] {
+  // TODO: Optimize this function to avoid creating two intermediate sets.
   let set1 = self.difference(other)
   let set2 = other.difference(self)
   set1.union(set2)
