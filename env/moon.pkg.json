@@ -11,6 +11,5 @@
     "env_wasm.mbt": ["wasm", "wasm-gc"],
     "env_js.mbt": ["js"],
     "env_native.mbt": ["native"]
-  },
-  "warn-list": "-29"
+  }
 }
