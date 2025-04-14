@@ -1,10 +1,10 @@
 {
   "import": [
-    "moonbitlang/core/builtin",
-    "moonbitlang/core/bytes",
-    "moonbitlang/core/option"
+    "moonbitlang/core/builtin"
+    
   ],
-  "test-import": [
+  "test-import": [    
+    "moonbitlang/core/option" ,
     "moonbitlang/core/prelude"
   ],
   "targets": {
