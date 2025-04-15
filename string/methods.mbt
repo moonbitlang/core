@@ -13,8 +13,8 @@
 // limitations under the License.
 
 ///|
-/// Returns the offset of the first occurrence of the given substring. If the
-/// substring is not found, it returns None.
+/// Returns the offset (charcode index) of the first occurrence of the given
+/// substring. If the substring is not found, it returns None.
 pub fn View::find(self : View, str : View) -> Int? {
   let len = self.len()
   let sub_len = str.len()
@@ -100,8 +100,8 @@ pub fn View::rev_find(self : View, str : View) -> Int? {
 }
 
 ///|
-/// Returns the offset of the last occurrence of the given substring. If the
-/// substring is not found, it returns None.
+/// Returns the offset (charcode index) of the last occurrence of the given
+/// substring. If the substring is not found, it returns None.
 pub fn String::rev_find(self : String, str : View) -> Int? {
   self.view().rev_find(str)
 }
