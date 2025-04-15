@@ -290,17 +290,12 @@ pub fn of[K : Eq + Hash, V](arr : FixedArray[(K, V)]) -> T[K, V] {
 
 ///|
 pub impl[K : Eq + Hash, V : Eq] Eq for T[K, V] with op_equal(self, other) {
-  if self.size() != other.size() {
-    return false
+  guard self.size() == other.size() else { return false }
+  for kv in self {
+    guard other.find(kv.0) is Some(v) && v == kv.1 else { return false }
+
   }
-  for kv in self.iter() {
-    match other.find(kv.0) {
-      Some(v) => if v != kv.1 { break false }
-      None => break false
-    }
-  } else {
-    true
-  }
+  true
 }
 
 ///|

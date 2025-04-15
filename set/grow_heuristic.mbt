@@ -13,16 +13,31 @@
 // limitations under the License.
 
 ///|
-priv struct Cons[A] {
-  content : A
-  mut next : Cons[A]?
-} derive(Eq)
+fn power_2_above(x : Int, n : Int) -> Int {
+  for i = x {
+    if i >= n {
+      break i
+    }
+    let next = i << 1
+    if next < 0 {
+      // overflow happened
+      break i
+    }
+    continue next
+  }
+}
 
 ///|
-// Invariant:
-// - length == 0 <=> first is None && last is None
-struct T[A] {
-  mut length : Int
-  mut first : Cons[A]?
-  mut last : Cons[A]?
+test "power_2_above" {
+  inspect!(power_2_above(1, 15), content="16")
+  inspect!(power_2_above(1, 16), content="16")
+  inspect!(power_2_above(1, 17), content="32")
+  inspect!(power_2_above(1, 32), content="32")
+  inspect!(power_2_above(128, 33), content="128")
+  inspect!(power_2_above(1, 2147483647), content="1073741824")
+}
+
+///|
+fn calc_grow_threshold(capacity : Int) -> Int {
+  capacity * 13 / 16
 }

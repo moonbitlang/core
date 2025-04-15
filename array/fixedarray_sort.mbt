@@ -68,16 +68,12 @@ fn timsort[T : Compare](arr : FixedArraySlice[T]) -> Unit {
     runs.push({ start, len: end - start })
     start = end
     while true {
-      match collapse(runs, len) {
-        Some(r) => {
-          let left = runs[r]
-          let right = runs[r + 1]
-          merge(arr.slice(left.start, right.start + right.len), left.len)
-          runs[r + 1] = { start: left.start, len: left.len + right.len }
-          runs.remove(r) |> ignore
-        }
-        None => break
-      }
+      guard collapse(runs, len) is Some(r) else { break }
+      let left = runs[r]
+      let right = runs[r + 1]
+      merge(arr.slice(left.start, right.start + right.len), left.len)
+      runs[r + 1] = { start: left.start, len: left.len + right.len }
+      runs.remove(r) |> ignore
     }
   }
 }

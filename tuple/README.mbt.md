@@ -1,7 +1,3 @@
----
-moonbit : true
----
-
 # Tuple
 
 Tuple is a fixed-size collection of elements of different types. It is a lightweight data structure that can be used to store multiple values in a single variable. This sub-package introduces utils for binary tuples.

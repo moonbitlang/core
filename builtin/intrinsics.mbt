@@ -1389,18 +1389,14 @@ pub fn Bytes::length(self : Bytes) -> Int = "%bytes_length"
 
 ///|
 /// Creates a new byte sequence of the specified length, where each byte is
-/// initialized to the given value.
+/// initialized to the given value. Returns an empty byte sequence if the
+/// length is negative.
 ///
 /// Parameters:
 ///
 /// * `length` : The length of the byte sequence to create. Must be non-negative.
 /// * `initial_value` : The byte value used to initialize each position in the
 /// sequence.
-///
-/// Returns a new byte sequence of the specified length with all positions
-/// initialized to the given value.
-///
-/// Throws a panic if `length` is negative.
 ///
 /// Example:
 ///
@@ -1413,12 +1409,16 @@ pub fn Bytes::length(self : Bytes) -> Int = "%bytes_length"
 ///   let empty = Bytes::make(0, b'\x00')
 ///   inspect!(empty, content="b\"\"")
 /// }
-///
-/// test "panic Bytes::make/negative_length" {
-///   ignore(Bytes::make(-1, b'\x00')) // Panics: negative length
-/// }
 /// ```
-pub fn Bytes::make(len : Int, init : Byte) -> Bytes = "%bytes_make"
+pub fn Bytes::make(len : Int, init : Byte) -> Bytes {
+  if len < 0 {
+    return []
+  }
+  Bytes::unsafe_make(len, init)
+}
+
+///|
+fn Bytes::unsafe_make(len : Int, init : Byte) -> Bytes = "%bytes_make"
 
 ///|
 /// Creates a new byte sequence filled with zero bytes.

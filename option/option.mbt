@@ -323,17 +323,11 @@ test "or default" {
 
 ///|
 pub impl[X : Compare] Compare for X? with compare(self, other) {
-  match self {
-    None =>
-      match other {
-        None => 0
-        Some(_) => -1
-      }
-    Some(x) =>
-      match other {
-        None => 1
-        Some(y) => x.compare(y)
-      }
+  match (self, other) {
+    (Some(x), Some(y)) => x.compare(y)
+    (Some(_), None) => 1
+    (None, Some(_)) => -1
+    (None, None) => 0
   }
 }
 

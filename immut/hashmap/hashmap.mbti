@@ -37,16 +37,8 @@ impl T {
   add[K : Eq + Hash, V](Self[K, V], K, V) -> Self[K, V]
   each[K, V](Self[K, V], (K, V) -> Unit) -> Unit
   find[K : Eq + Hash, V](Self[K, V], K) -> V?
-  #deprecated
-  from_array[K : Eq + Hash, V](Array[(K, V)]) -> Self[K, V]
-  #deprecated
-  from_iter[K : Eq + Hash, V](Iter[(K, V)]) -> Self[K, V]
   iter[K, V](Self[K, V]) -> Iter[(K, V)]
   iter2[K, V](Self[K, V]) -> Iter2[K, V]
-  #deprecated
-  new[K, V]() -> Self[K, V]
-  #deprecated
-  of[K : Eq + Hash, V](FixedArray[(K, V)]) -> Self[K, V]
   op_get[K : Eq + Hash, V](Self[K, V], K) -> V?
   remove[K : Eq + Hash, V](Self[K, V], K) -> Self[K, V]
   size[K, V](Self[K, V]) -> Int

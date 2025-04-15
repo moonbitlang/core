@@ -52,6 +52,8 @@ fn size[V : Compare](T[V]) -> Int
 
 fn subset[V : Compare](T[V], T[V]) -> Bool
 
+fn symmetric_difference[V : Compare](T[V], T[V]) -> T[V]
+
 fn to_array[V](T[V]) -> Array[V]
 
 fn union[V : Compare](T[V], T[V]) -> T[V]
@@ -81,9 +83,11 @@ impl T {
   remove[V : Compare](Self[V], V) -> Unit
   size[V : Compare](Self[V]) -> Int
   subset[V : Compare](Self[V], Self[V]) -> Bool
+  symmetric_difference[V : Compare](Self[V], Self[V]) -> Self[V]
   to_array[V](Self[V]) -> Array[V]
   union[V : Compare](Self[V], Self[V]) -> Self[V]
 }
+impl[K] Default for T[K]
 impl[V : Compare] Eq for T[V]
 impl[V : Show] Show for T[V]
 impl[X : @quickcheck.Arbitrary + Compare] @quickcheck.Arbitrary for T[X]
