@@ -102,6 +102,15 @@ pub fn View::charcode_at(self : View, index : Int) -> Int {
   self.str.unsafe_charcode_at(self.start + index)
 }
 
+///|
+/// Returns the charcode(code unit) at the given index without checking if the
+/// index is within bounds.
+/// 
+/// This method has O(1) complexity.
+pub fn View::unsafe_charcode_at(self : View, index : Int) -> Int {
+  self.str.unsafe_charcode_at(self.start + index)
+}
+
 ///| 
 /// Returns the number of Unicode characters in this view.
 /// 
