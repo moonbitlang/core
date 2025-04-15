@@ -656,3 +656,48 @@ test "stringview compare" {
   let str2 = "abcabc"
   inspect!(str1.view().compare(str2.view(start_offset=1)), content="0")
 }
+
+///|
+test "view of view" {
+  let v1 = "00abc😭def😂ghi11".view(start_offset=2, end_offset=15)
+  let v2 = v1.view(start_offset=3, end_offset=6)
+  inspect!(v2, content="😭d")
+  let v3 = v2.view(start_offset=2, end_offset=3)
+  inspect!(v3, content="d")
+  let v4 = v1.view(start_offset=2, end_offset=6)
+  inspect!(v4, content="c😭d")
+  let v6 = v1.view(start_offset=5, end_offset=5)
+  inspect!(v6, content="")
+  let v7 = v1.view()
+  inspect!(v7, content="abc😭def😂ghi")
+  let v8 = v1.view(start_offset=3, end_offset=10)
+  inspect!(v8, content="😭def😂")
+}
+
+///|
+test "iter2" {
+  let str = "aa😭b😂cc"
+  let view = str.view(start_offset=1, end_offset=8)
+  inspect!(
+    view.iter2().iter().collect(),
+    content="[(0, 'a'), (1, '😭'), (2, 'b'), (3, '😂'), (4, 'c')]",
+  )
+}
+
+///|
+test "from_array" {
+  let v = View::from_array(['a', '😭', 'b', '😂', 'c'])
+  inspect!(v, content="a😭b😂c")
+}
+
+///|
+test "from_iter" {
+  let v = View::from_iter(['a', '😭', 'b', '😂', 'c'].iter())
+  inspect!(v, content="a😭b😂c")
+}
+
+///|
+test "make" {
+  let v = View::make(5, 'a')
+  inspect!(v, content="aaaaa")
+}

@@ -100,12 +100,14 @@ impl StringView {
   has_prefix(Self, Self) -> Bool
   has_suffix(Self, Self) -> Bool
   iter(Self) -> Iter[Char]
+  iter2(Self) -> Iter2[Int, Char]
   #deprecated
   length(Self) -> Int
   #deprecated
   length_eq(Self, Int) -> Bool
   #deprecated
   length_ge(Self, Int) -> Bool
+  make(Int, Char) -> Self
   offset_of_nth_char(Self, Int) -> Int?
   #deprecated
   op_as_view(Self, start~ : Int = .., end? : Int) -> Self
@@ -116,8 +118,10 @@ impl StringView {
   rev_get(Self, Int) -> Char
   rev_iter(Self) -> Iter[Char]
   unsafe_charcode_at(Self, Int) -> Int
+  view(Self, start_offset~ : Int = .., end_offset~ : Int = ..) -> Self
 }
 impl Compare for StringView
+impl Default for StringView
 impl Eq for StringView
 impl Show for StringView
 

@@ -1,7 +1,3 @@
----
-moonbit : true
----
-
 # Immutable hashmap
 
 This package provides an immutable hash map data structure.

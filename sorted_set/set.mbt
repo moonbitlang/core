@@ -1040,3 +1040,8 @@ test "add_and_remove" {
   inspect!(set, content="@sorted_set.of([])")
   inspect!(set.debug_tree(), content="_")
 }
+
+///|
+pub impl[K] Default for T[K] with default() {
+  new()
+}
