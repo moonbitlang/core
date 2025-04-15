@@ -97,6 +97,8 @@ impl StringView {
   char_length_ge(Self, Int) -> Bool
   charcode_at(Self, Int) -> Int
   find(Self, Self) -> Int?
+  from_array(Array[Char]) -> Self
+  from_iter(Iter[Char]) -> Self
   has_prefix(Self, Self) -> Bool
   has_suffix(Self, Self) -> Bool
   iter(Self) -> Iter[Char]
