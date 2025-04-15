@@ -348,131 +348,72 @@ pub fn is_blank(self : String) -> Bool {
 }
 
 ///|
-/// Returns the first index of the sub string.
+#deprecated("Use `s.find(substr)` instead. If the optional argument `from` is not 0, take view from the string first. Please do not use an invalid `from` argument.")
 pub fn index_of(self : String, str : String, from~ : Int = 0) -> Int {
-  let len = self.length()
-  let sub_len = str.length()
-
-  // Handle empty substring case
-  if sub_len == 0 {
-    // Return 0 for empty string in empty string
-    if len == 0 {
-      return 0
+  if from <= 0 {
+    if self.find(str.view()) is Some(idx) {
+      idx
+    } else {
+      -1
     }
-    // Bound from within valid range and return it
-    return if from < 0 { 0 } else if from >= len { len } else { from }
-  }
-
-  // If substring is longer than string, it can't be found
-  if sub_len > len {
-    return -1
-  }
-
-  // Bound the starting position
-  let from = if from < 0 { 0 } else if from >= len { len - 1 } else { from }
-  let max_idx = len - sub_len
-  let first = str.unsafe_charcode_at(0)
-  let mut i = from
-  while i <= max_idx {
-    // find first character
-    while i < len && self.unsafe_charcode_at(i) != first {
-      i += 1
+  } else if from > self.length() {
+    if str.length() == 0 {
+      self.length()
+    } else {
+      -1
     }
-    // check the rest
-    if i <= max_idx {
-      for j in 1..<sub_len {
-        if self.unsafe_charcode_at(i + j) != str.unsafe_charcode_at(j) {
-          break
-        }
-      } else {
-        // the substring is found
-        return i
-      }
-    }
-    i += 1
+  } else if self.view(start_offset=from).find(str.view()) is Some(idx) {
+    idx + from
+  } else {
+    -1
   }
-  -1
 }
 
 ///|
 /// Returns the last index of the sub string.
+#deprecated("Use `s.rev_find(substr)` instead. If the optional argument `from` is not 0, take view from the string first. Please do not use an invalid `from` argument.")
 pub fn last_index_of(
   self : String,
   str : String,
   from~ : Int = self.length()
 ) -> Int {
-  let from = if from < 0 {
-    0
-  } else if from > self.length() {
-    self.length()
-  } else {
-    from
-  }
-  let len = self.length()
-  let sub_len = str.length()
-  if sub_len == 0 {
-    return from
-  }
-  if len < sub_len {
-    return -1
-  }
-  let min = sub_len - 1
-  let last = str.unsafe_charcode_at(sub_len - 1)
-  let mut i = from - 1
-  while i >= 0 {
-    // find last character
-    while i >= min && self.unsafe_charcode_at(i) != last {
-      i -= 1
-    }
-    if i < min {
-      return -1
-    }
-    let mut j = i - 1
-    let mut k = sub_len - 2
-    let start = i - sub_len
-    let found = while j > start {
-      if self.unsafe_charcode_at(j) != str.unsafe_charcode_at(k) {
-        break false
-      }
-      j -= 1
-      k -= 1
+  if from >= self.length() {
+    if self.rev_find(str.view()) is Some(idx) {
+      idx
     } else {
-      true
+      -1
     }
-    if found {
-      return start + 1
+  } else if from < 0 {
+    if str.length() == 0 {
+      self.length()
+    } else {
+      -1
     }
-    i -= 1
+  } else if self.view(end_offset=from).rev_find(str.view()) is Some(idx) {
+    idx
+  } else {
+    -1
   }
-  -1
 }
 
 ///|
 /// Returns true if this string contains given sub string.
 pub fn contains(self : String, str : String) -> Bool {
-  self.index_of(str) >= 0
+  self.find(str.view()) is Some(_)
 }
 
 ///|
 /// Returns true if this string starts with a sub string.
+#deprecated("Use `s.has_prefix(str)` instead.")
 pub fn starts_with(self : String, str : String) -> Bool {
-  if str.length() > self.length() {
-    false
-  } else {
-    self.index_of(str) == 0
-  }
+  self.has_prefix(str.view())
 }
 
 ///|
 /// Returns true if this string ends with a sub string.
+#deprecated("Use `s.has_suffix(str)` instead.")
 pub fn ends_with(self : String, str : String) -> Bool {
-  let len = self.length()
-  let sub_len = str.length()
-  if sub_len > len {
-    false
-  } else {
-    self.last_index_of(str) == len - sub_len
-  }
+  self.has_suffix(str.view())
 }
 
 ///|
@@ -510,13 +451,13 @@ pub fn split(self : String, separator : String) -> Iter[String] {
   Iter::new(fn(yield_) {
     let mut start = 0
     while start < len {
-      let end = self.index_of(separator, from=start)
-      if end < 0 {
+      guard self.view(start_offset=start).find(separator.view()) is Some(end) else {
         if yield_(self.substring(start~)) == IterEnd {
           break IterEnd
         }
         break IterContinue
       }
+      let end = start + end
       if yield_(self.substring(start~, end~)) == IterEnd {
         break IterEnd
       }
@@ -530,14 +471,10 @@ pub fn split(self : String, separator : String) -> Iter[String] {
 ///|
 /// Replace the first old string in this string to new string.
 pub fn replace(self : String, old~ : String, new~ : String) -> String {
-  let old_idx = self.index_of(old)
-  if old_idx < 0 {
-    self
-  } else {
-    self.substring(end=old_idx) +
-    new +
-    self.substring(start=old_idx + old.length())
-  }
+  guard self.find(old.view()) is Some(old_idx) else { self }
+  self.substring(end=old_idx) +
+  new +
+  self.substring(start=old_idx + old.length())
 }
 
 ///|
@@ -557,11 +494,11 @@ pub fn replace_all(self : String, old~ : String, new~ : String) -> String {
   } else {
     let mut start = 0
     while start < len {
-      let end = self.index_of(old, from=start)
-      if end < 0 {
+      guard self.view(start_offset=start).find(old.view()) is Some(end) else {
         buf.write_string(self.substring(start~))
         break
       }
+      let end = start + end
       buf.write_string(self.substring(start~, end~))
       buf.write_string(new)
       start = end + old_len
