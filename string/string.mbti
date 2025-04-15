@@ -50,9 +50,9 @@ fn pad_start(String, Int, Char) -> String
 
 fn repeat(String, Int) -> String
 
-fn replace(String, old~ : String, new~ : String) -> String
+fn replace(String, old~ : StringView, new~ : StringView) -> String
 
-fn replace_all(String, old~ : String, new~ : String) -> String
+fn replace_all(String, old~ : StringView, new~ : StringView) -> String
 
 fn rev(String) -> String
 
@@ -63,7 +63,7 @@ fn rev_get(StringView, Int) -> Char
 
 fn rev_iter(String) -> Iter[Char]
 
-fn split(String, String) -> Iter[String]
+fn split(String, StringView) -> Iter[StringView]
 
 #deprecated
 fn starts_with(String, String) -> Bool
@@ -76,13 +76,13 @@ fn to_lower(String) -> String
 
 fn to_upper(String) -> String
 
-fn trim(String, String) -> String
+fn trim(String, StringView) -> StringView
 
-fn trim_end(String, String) -> String
+fn trim_end(String, StringView) -> StringView
 
-fn trim_space(String) -> String
+fn trim_space(String) -> StringView
 
-fn trim_start(String, String) -> String
+fn trim_start(String, StringView) -> StringView
 
 // Types and methods
 type StringIndex
@@ -96,11 +96,15 @@ impl StringView {
   char_length_eq(Self, Int) -> Bool
   char_length_ge(Self, Int) -> Bool
   charcode_at(Self, Int) -> Int
+  contains_char(Self, Char) -> Bool
   find(Self, Self) -> Int?
+  fold[A](Self, init~ : A, (A, Char) -> A) -> A
   from_array(Array[Char]) -> Self
   from_iter(Iter[Char]) -> Self
   has_prefix(Self, Self) -> Bool
   has_suffix(Self, Self) -> Bool
+  is_blank(Self) -> Bool
+  is_empty(Self) -> Bool
   iter(Self) -> Iter[Char]
   iter2(Self) -> Iter2[Int, Char]
   #deprecated
@@ -115,10 +119,24 @@ impl StringView {
   op_as_view(Self, start~ : Int = .., end? : Int) -> Self
   #deprecated
   op_get(Self, Int) -> Char
+  pad_end(Self, Int, Char) -> String
+  pad_start(Self, Int, Char) -> String
+  repeat(Self, Int) -> String
+  replace(Self, old~ : Self, new~ : Self) -> String
+  replace_all(Self, old~ : Self, new~ : Self) -> String
+  rev(Self) -> String
   rev_find(Self, Self) -> Int?
+  rev_fold[A](Self, init~ : A, (A, Char) -> A) -> A
   #deprecated
   rev_get(Self, Int) -> Char
   rev_iter(Self) -> Iter[Char]
+  split(Self, Self) -> Iter[Self]
+  to_lower(Self) -> String
+  to_upper(Self) -> String
+  trim(Self, Self) -> Self
+  trim_end(Self, Self) -> Self
+  trim_space(Self) -> Self
+  trim_start(Self, Self) -> Self
   unsafe_charcode_at(Self, Int) -> Int
   view(Self, start_offset~ : Int = .., end_offset~ : Int = ..) -> Self
 }
@@ -165,25 +183,25 @@ impl String {
   pad_end(String, Int, Char) -> String
   pad_start(String, Int, Char) -> String
   repeat(String, Int) -> String
-  replace(String, old~ : String, new~ : String) -> String
-  replace_all(String, old~ : String, new~ : String) -> String
+  replace(String, old~ : StringView, new~ : StringView) -> String
+  replace_all(String, old~ : StringView, new~ : StringView) -> String
   rev(String) -> String
   rev_find(String, StringView) -> Int?
   rev_fold[A](String, init~ : A, (A, Char) -> A) -> A
   #deprecated
   rev_get(String, Int) -> Char
   rev_iter(String) -> Iter[Char]
-  split(String, String) -> Iter[String]
+  split(String, StringView) -> Iter[StringView]
   #deprecated
   starts_with(String, String) -> Bool
   to_array(String) -> Array[Char]
   to_bytes(String) -> Bytes
   to_lower(String) -> String
   to_upper(String) -> String
-  trim(String, String) -> String
-  trim_end(String, String) -> String
-  trim_space(String) -> String
-  trim_start(String, String) -> String
+  trim(String, StringView) -> StringView
+  trim_end(String, StringView) -> StringView
+  trim_space(String) -> StringView
+  trim_start(String, StringView) -> StringView
   view(String, start_offset~ : Int = .., end_offset~ : Int = ..) -> StringView
 }
 impl Compare for String
