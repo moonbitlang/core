@@ -1,7 +1,3 @@
----
-moonbit : true
----
-
 # Moonbit/Core Map
 
 ## Overview
@@ -108,11 +104,11 @@ You can use `each()` or `eachi()` to iterate through all key-value pairs in the 
 ```moonbit
 test {
   let map = { "a": 1, "b": 2, "c": 3 }
-  let arr = []
-  map.each(fn(k, v) { arr.push((k, v)) })
-  assert_eq!(arr, [("a", 1), ("b", 2), ("c", 3)])
-  let arr2 = []
-  map.eachi(fn(i, k, v) { arr2.push((i, k, v)) })
-  assert_eq!(arr2, [(0, "a", 1), (1, "b", 2), (2, "c", 3)])
+    let arr = []
+    map.each(fn(k, v) { arr.push((k, v)) })
+    assert_eq!(arr, [("a", 1), ("b", 2), ("c", 3)])
+    let arr2 = []
+    map.eachi(fn(i, k, v) { arr2.push((i, k, v)) })
+    assert_eq!(arr2, [(0, "a", 1), (1, "b", 2), (2, "c", 3)])
 }
 ```
