@@ -33,7 +33,7 @@ test "show output" {
   assert_eq!(repr('\r'), "'\\r'")
   assert_eq!(repr('\b'), "'\\b'")
   assert_eq!(repr('\t'), "'\\t'")
-  assert_eq!(repr(Char::from_int(0)), "'\\x00'")
+  assert_eq!(repr(Char::unsafe_from_int(0)), "'\\x00'")
 }
 
 ///|

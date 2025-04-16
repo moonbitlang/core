@@ -80,7 +80,7 @@ fn step_1_unchecked(self : StringSlice) -> StringSlice {
 ///|
 /// Unsafe: make sure index is in bounds
 fn op_get(self : StringSlice, index : Int) -> Char {
-  self.string.unsafe_charcode_at(self.start + index) |> Char::from_int
+  self.string.unsafe_charcode_at(self.start + index) |> Char::unsafe_from_int
 }
 
 ///|
@@ -106,7 +106,7 @@ fn StringSlice::to_string(self : StringSlice) -> String {
 fn prefix_eq_ignore_case(self : StringSlice, s2 : String) -> Bool {
   for i = 0; i < s2.length() && i < self.length(); i = i + 1 {
     let c1 = self[i]
-    let c2 = s2.unsafe_charcode_at(i) |> Char::from_int
+    let c2 = s2.unsafe_charcode_at(i) |> Char::unsafe_from_int
     if lower(c1) != lower(c2) {
       return false
     }
@@ -117,7 +117,7 @@ fn prefix_eq_ignore_case(self : StringSlice, s2 : String) -> Bool {
 ///|
 fn lower(c : Char) -> Char {
   if 'A' <= c && c <= 'Z' {
-    Char::from_int(c.to_int() + 'a'.to_int() - 'A'.to_int())
+    Char::unsafe_from_int(c.to_int() + 'a'.to_int() - 'A'.to_int())
   } else {
     c
   }

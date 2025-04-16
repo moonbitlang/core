@@ -36,6 +36,6 @@ fn ParseContext::invalid_char[T](
   // FIXME: this should check the surrogate pair
   raise InvalidChar(
     offset_to_position(ctx.input, offset),
-    ctx.input.unsafe_charcode_at(offset) |> Char::from_int,
+    ctx.input.unsafe_charcode_at(offset) |> Char::unsafe_from_int,
   )
 }

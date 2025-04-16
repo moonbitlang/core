@@ -195,7 +195,9 @@ pub fn View::iter(self : View) -> Iter[Char] {
           continue index + 2
         }
       }
-      guard yield_(Char::from_int(c1)) is IterContinue else { break IterEnd }
+      guard yield_(Char::unsafe_from_int(c1)) is IterContinue else {
+        break IterEnd
+      }
 
     } else {
       IterContinue
@@ -217,7 +219,9 @@ pub fn View::iter2(self : View) -> Iter2[Int, Char] {
           continue index + 2, n + 1
         }
       }
-      guard yield_(n, Char::from_int(c1)) is IterContinue else { break IterEnd }
+      guard yield_(n, Char::unsafe_from_int(c1)) is IterContinue else {
+        break IterEnd
+      }
 
     } else {
       IterContinue
@@ -239,7 +243,9 @@ pub fn View::rev_iter(self : View) -> Iter[Char] {
           continue index - 2
         }
       }
-      guard yield_(Char::from_int(c1)) is IterContinue else { break IterEnd }
+      guard yield_(Char::unsafe_from_int(c1)) is IterContinue else {
+        break IterEnd
+      }
 
     } else {
       IterContinue

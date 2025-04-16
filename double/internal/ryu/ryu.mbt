@@ -19,7 +19,7 @@
 fn string_from_bytes(bytes : FixedArray[Byte], from : Int, to : Int) -> String {
   let buf = StringBuilder::new(size_hint=bytes.length())
   for i = from; i < to; i = i + 1 {
-    buf.write_char(Char::from_int(bytes[i].to_int()))
+    buf.write_char(Char::unsafe_from_int(bytes[i].to_int()))
   }
   buf.to_string()
 }

@@ -82,17 +82,17 @@ fn base64_encode(data : FixedArray[Byte]) -> String {
     let x1 = base64[((b0 & 0x03) << 4) | ((b1 & 0xF0) >> 4)]
     let x2 = base64[((b1 & 0x0F) << 2) | ((b2 & 0xC0) >> 6)]
     let x3 = base64[b2 & 0x3F]
-    buf.write_char(Char::from_int(x0.to_int()))
-    buf.write_char(Char::from_int(x1.to_int()))
-    buf.write_char(Char::from_int(x2.to_int()))
-    buf.write_char(Char::from_int(x3.to_int()))
+    buf.write_char(Char::unsafe_from_int(x0.to_int()))
+    buf.write_char(Char::unsafe_from_int(x1.to_int()))
+    buf.write_char(Char::unsafe_from_int(x2.to_int()))
+    buf.write_char(Char::unsafe_from_int(x3.to_int()))
   }
   if rem == 1 {
     let b0 = data[len - 1].to_int()
     let x0 = base64[(b0 & 0xFC) >> 2]
     let x1 = base64[(b0 & 0x03) << 4]
-    buf.write_char(Char::from_int(x0.to_int()))
-    buf.write_char(Char::from_int(x1.to_int()))
+    buf.write_char(Char::unsafe_from_int(x0.to_int()))
+    buf.write_char(Char::unsafe_from_int(x1.to_int()))
     buf.write_char('=')
     buf.write_char('=')
   } else if rem == 2 {
@@ -101,9 +101,9 @@ fn base64_encode(data : FixedArray[Byte]) -> String {
     let x0 = base64[(b0 & 0xFC) >> 2]
     let x1 = base64[((b0 & 0x03) << 4) | ((b1 & 0xF0) >> 4)]
     let x2 = base64[(b1 & 0x0F) << 2]
-    buf.write_char(Char::from_int(x0.to_int()))
-    buf.write_char(Char::from_int(x1.to_int()))
-    buf.write_char(Char::from_int(x2.to_int()))
+    buf.write_char(Char::unsafe_from_int(x0.to_int()))
+    buf.write_char(Char::unsafe_from_int(x1.to_int()))
+    buf.write_char(Char::unsafe_from_int(x2.to_int()))
     buf.write_char('=')
   }
   buf.to_string()
