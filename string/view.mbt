@@ -74,6 +74,25 @@ pub fn String::view(
 }
 
 ///|
+/// Returns a new view of the view with the given start and end offsets.
+pub fn View::view(
+  self : View,
+  start_offset~ : Int = 0,
+  end_offset~ : Int = self.len()
+) -> View {
+  guard start_offset >= 0 &&
+    start_offset <= end_offset &&
+    end_offset <= self.len() else {
+    abort("Invalid index for View")
+  }
+  {
+    str: self.str,
+    start: self.start + start_offset,
+    end: self.start + end_offset,
+  }
+}
+
+///|
 /// Returns the UTF-16 index of the i-th (zero-indexed) Unicode character of
 /// the view. If i is negative, it returns the index of the (n + i)-th character
 /// where n is the total number of Unicode characters in the view.
@@ -91,14 +110,29 @@ pub fn View::offset_of_nth_char(self : View, i : Int) -> Int? {
 }
 
 ///|
+/// Returns the Unicode character at the given index.
+/// 
+/// This method has O(n) complexity.
 pub fn View::char_at(self : View, index : Int) -> Char {
   guard index >= 0 && index < self.len() else { abort("Index out of bounds") }
   self.str.unsafe_char_at(self.start + index)
 }
 
 ///|
+/// Returns the charcode(code unit) at the given index.
+/// 
+/// This method has O(1) complexity.
 pub fn View::charcode_at(self : View, index : Int) -> Int {
   guard index >= 0 && index < self.len() else { abort("Index out of bounds") }
+  self.str.unsafe_charcode_at(self.start + index)
+}
+
+///|
+/// Returns the charcode(code unit) at the given index without checking if the
+/// index is within bounds.
+/// 
+/// This method has O(1) complexity.
+pub fn View::unsafe_charcode_at(self : View, index : Int) -> Int {
   self.str.unsafe_charcode_at(self.start + index)
 }
 
@@ -170,6 +204,28 @@ pub fn View::iter(self : View) -> Iter[Char] {
 }
 
 ///|
+pub fn View::iter2(self : View) -> Iter2[Int, Char] {
+  Iter2::new(fn(yield_) {
+    let len = self.len()
+    for index = 0, n = 0; index < len; index = index + 1, n = n + 1 {
+      let c1 = self.str.unsafe_charcode_at(self.start + index)
+      if is_leading_surrogate(c1) && index + 1 < len {
+        let c2 = self.str.unsafe_charcode_at(self.start + index + 1)
+        if is_trailing_surrogate(c2) {
+          let c = code_point_of_surrogate_pair(c1, c2)
+          guard yield_(n, c) is IterContinue else { break IterEnd }
+          continue index + 2, n + 1
+        }
+      }
+      guard yield_(n, Char::from_int(c1)) is IterContinue else { break IterEnd }
+
+    } else {
+      IterContinue
+    }
+  })
+}
+
+///|
 /// Returns an iterator over the Unicode characters in the string view in reverse order.
 pub fn View::rev_iter(self : View) -> Iter[Char] {
   Iter::new(fn(yield_) {
@@ -231,4 +287,32 @@ pub impl Compare for View with compare(self, other) {
 
   }
   0
+}
+
+///|
+/// The empty view of a string
+pub impl Default for View with default() {
+  // todo: remove .view() in new version
+  "".view()
+}
+
+///|
+/// Convert char array to string view.
+pub fn View::from_array(chars : Array[Char]) -> View {
+  // todo: remove .view() in new version
+  String::from_array(chars).view()
+}
+
+///|
+/// Convert char iterator to string view.
+pub fn View::from_iter(iter : Iter[Char]) -> View {
+  // todo: remove .view() in new version
+  String::from_iter(iter).view()
+}
+
+///|
+/// Create a new string by repeating the given character `value` `length` times.
+pub fn View::make(length : Int, value : Char) -> View {
+  // todo: remove .view() in new version
+  String::make(length, value).view()
 }

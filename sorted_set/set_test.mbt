@@ -267,3 +267,43 @@ test "range" {
   let result = set.range(2, 4)
   inspect!(result, content="[2, 3, 4]")
 }
+
+///|
+test "@sorted_set.symmetric_difference/basic" {
+  // Test basic functionality with disjoint sets
+  let set1 = @sorted_set.from_array([1, 2, 3])
+  let set2 = @sorted_set.from_array([4, 5, 6])
+  let result = set1.symmetric_difference(set2)
+  inspect!(result, content="@sorted_set.of([1, 2, 3, 4, 5, 6])")
+
+  // Test with overlapping sets
+  let set3 = @sorted_set.from_array([1, 2, 3, 4])
+  let set4 = @sorted_set.from_array([3, 4, 5, 6])
+  let result2 = set3.symmetric_difference(set4)
+  inspect!(result2, content="@sorted_set.of([1, 2, 5, 6])")
+}
+
+///|
+test "@sorted_set.symmetric_difference/empty" {
+  // Test with empty sets
+  let empty1 = @sorted_set.new()
+  let empty2 = @sorted_set.new()
+  let result1 = empty1.symmetric_difference(empty2)
+  inspect!(result1, content="@sorted_set.of([])")
+
+  // Test with one empty set
+  let set1 = @sorted_set.from_array([1, 2, 3])
+  let result2 = set1.symmetric_difference(empty1)
+  inspect!(result2, content="@sorted_set.of([1, 2, 3])")
+  let result3 = empty1.symmetric_difference(set1)
+  inspect!(result3, content="@sorted_set.of([1, 2, 3])")
+}
+
+///|
+test "@sorted_set.symmetric_difference/identical" {
+  // Test with identical sets
+  let set1 = @sorted_set.from_array([1, 2, 3, 4, 5])
+  let set2 = @sorted_set.from_array([1, 2, 3, 4, 5])
+  let result = set1.symmetric_difference(set2)
+  inspect!(result, content="@sorted_set.of([])")
+}

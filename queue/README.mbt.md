@@ -1,7 +1,3 @@
----
-moonbit : true
----
-
 # Queue
 
 Queue is a first in first out (FIFO) data structure, allowing to process their elements in the order they come.
@@ -11,39 +7,49 @@ Queue is a first in first out (FIFO) data structure, allowing to process their e
 ## Create and Clear
 You can create a queue manually by using the `new` or construct it using the `from_array`.
 ```moonbit
-let _queue : @queue.T[Int] = @queue.new()
-let _queue1 = @queue.of([1,2,3])
+test {
+    let _queue : @queue.T[Int] = @queue.new()
+    let _queue1 = @queue.of([1,2,3])
+}
 ```
 
 To clear the queue, you can use the `clear` method.
 ```moonbit
-let queue = @queue.of([1,2,3])
-queue.clear()
+test {
+    let queue = @queue.of([1,2,3])
+    queue.clear()
+}
 ```
 
 ## Length
 You can get the length of the queue by using the `length` method. The `is_empty` method can be used to check if the queue is empty.
 ```moonbit
-let queue = @queue.of([1,2,3])
-assert_eq!(queue.length(), 3)
-assert_eq!(queue.is_empty(), false)
+test {
+    let queue = @queue.of([1,2,3])
+    assert_eq!(queue.length(), 3)
+    assert_eq!(queue.is_empty(), false)
+}
 ```
 
 ## Pop and Push
 You can add elements to the queue using the `push` method and remove them using the `pop` method.
 ```moonbit
-let queue = @queue.new()
-queue.push(1)
-queue.push(2)
-assert_eq!(queue.pop(), Some(1))
-assert_eq!(queue.pop(), Some(2))
+test {
+    let queue = @queue.new()
+    queue.push(1)
+    queue.push(2)
+    assert_eq!(queue.pop(), Some(1))
+    assert_eq!(queue.pop(), Some(2))
+}
 ```
 
 ## Peek
 You can get the first element of the queue without removing it using the `peek` method.
 ```moonbit
-let queue = @queue.of([1,2,3])
-assert_eq!(queue.peek(), Some(1))
+test {
+    let queue = @queue.of([1,2,3])
+    assert_eq!(queue.peek(), Some(1))
+}
 ```
 
 ## Traverse
@@ -51,29 +57,37 @@ assert_eq!(queue.peek(), Some(1))
 You can traverse the queue using the `each` method.
 
 ```moonbit
-let queue = @queue.of([1,2,3])
-let mut sum = 0
-queue.each(fn(x) { sum += x })
-assert_eq!(sum, 6)
+test {
+    let queue = @queue.of([1,2,3])
+    let mut sum = 0
+    queue.each(fn(x) { sum += x })
+    assert_eq!(sum, 6)
+}
 ```
 
 You can fold the queue using the `fold` method.
 ```moonbit
-let queue = @queue.of([1,2,3])
-let sum = queue.fold(init = 0, fn(acc, x) { acc + x })
-assert_eq!(sum, 6)
+test {
+    let queue = @queue.of([1,2,3])
+    let sum = queue.fold(init = 0, fn(acc, x) { acc + x })
+    assert_eq!(sum, 6)
+}
 ```
 
 ## Copy and Transfer
 You can copy a queue using the `copy` method.
 ```moonbit
-let queue = @queue.of([1,2,3])
-let _queue2 = queue.copy()
+test {
+    let queue = @queue.of([1,2,3])
+    let _queue2 = queue.copy()
+}
 ```
 
 Transfer the elements from one queue to another using the `transfer` method.
 ```moonbit
-let dst : @queue.T[Int] = @queue.new()
-let src : @queue.T[Int] = @queue.of([5, 6, 7, 8])
-src.transfer(dst)
+test {
+    let dst : @queue.T[Int] = @queue.new()
+    let src : @queue.T[Int] = @queue.of([5, 6, 7, 8])
+    src.transfer(dst)
+}
 ```

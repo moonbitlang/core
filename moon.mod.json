@@ -1,6 +1,5 @@
 {
   "name": "moonbitlang/core",
-  "warn-list": "-29",
   "version": "0.1.0",
   "readme": "README.md",
   "repository": "https://github.com/moonbitlang/core",

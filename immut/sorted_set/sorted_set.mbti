@@ -68,6 +68,8 @@ fn split[A : Compare](T[A], A) -> (T[A], Bool, T[A])
 
 fn subset[A : Compare](T[A], T[A]) -> Bool
 
+fn symmetric_difference[A : Compare](T[A], T[A]) -> T[A]
+
 fn to_array[A : Compare](T[A]) -> Array[A]
 
 fn to_json[A : ToJson](T[A]) -> Json
@@ -114,6 +116,7 @@ impl T {
   size[A : Compare](Self[A]) -> Int
   split[A : Compare](Self[A], A) -> (Self[A], Bool, Self[A])
   subset[A : Compare](Self[A], Self[A]) -> Bool
+  symmetric_difference[A : Compare](Self[A], Self[A]) -> Self[A]
   to_array[A : Compare](Self[A]) -> Array[A]
   to_json[A : ToJson](Self[A]) -> Json
   union[A : Compare](Self[A], Self[A]) -> Self[A]

@@ -19,7 +19,7 @@ fn iter[A : Compare](T[A]) -> Iter[A]
 
 fn length[A](T[A]) -> Int
 
-fn new[A : Compare]() -> T[A]
+fn new[A]() -> T[A]
 
 fn of[A : Compare](FixedArray[A]) -> T[A]
 
@@ -47,6 +47,7 @@ impl T {
   to_array[A : Compare](Self[A]) -> Array[A]
   unsafe_pop[A : Compare](Self[A]) -> Unit
 }
+impl[K] Default for T[K]
 impl[A : Show + Compare] Show for T[A]
 impl[X : @quickcheck.Arbitrary + Compare] @quickcheck.Arbitrary for T[X]
 

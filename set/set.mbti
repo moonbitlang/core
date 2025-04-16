@@ -65,6 +65,7 @@ impl Set {
   to_array[K](Self[K]) -> Array[K]
   union[K : Hash + Eq](Self[K], Self[K]) -> Self[K]
 }
+impl[K] Default for Set[K]
 impl[K : Hash + Eq] Eq for Set[K]
 impl[K : Show] Show for Set[K]
 impl[X : ToJson] ToJson for Set[X]

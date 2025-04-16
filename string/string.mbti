@@ -9,6 +9,7 @@ fn contains_char(String, Char) -> Bool
 
 fn default() -> String
 
+#deprecated
 fn ends_with(String, String) -> Bool
 
 fn fold[A](String, init~ : A, (A, Char) -> A) -> A
@@ -23,6 +24,7 @@ fn index_at(String, Int, start~ : StringIndex = ..) -> StringIndex?
 #deprecated
 fn index_at_rev(String, Int, end? : StringIndex) -> StringIndex?
 
+#deprecated
 fn index_of(String, String, from~ : Int = ..) -> Int
 
 fn is_blank(String) -> Bool
@@ -33,6 +35,7 @@ fn iter(String) -> Iter[Char]
 
 fn iter2(String) -> Iter2[Int, Char]
 
+#deprecated
 fn last_index_of(String, String, from~ : Int = ..) -> Int
 
 #deprecated
@@ -62,6 +65,7 @@ fn rev_iter(String) -> Iter[Char]
 
 fn split(String, String) -> Iter[String]
 
+#deprecated
 fn starts_with(String, String) -> Bool
 
 fn to_array(String) -> Array[Char]
@@ -92,23 +96,34 @@ impl StringView {
   char_length_eq(Self, Int) -> Bool
   char_length_ge(Self, Int) -> Bool
   charcode_at(Self, Int) -> Int
+  find(Self, Self) -> Int?
+  from_array(Array[Char]) -> Self
+  from_iter(Iter[Char]) -> Self
+  has_prefix(Self, Self) -> Bool
+  has_suffix(Self, Self) -> Bool
   iter(Self) -> Iter[Char]
+  iter2(Self) -> Iter2[Int, Char]
   #deprecated
   length(Self) -> Int
   #deprecated
   length_eq(Self, Int) -> Bool
   #deprecated
   length_ge(Self, Int) -> Bool
+  make(Int, Char) -> Self
   offset_of_nth_char(Self, Int) -> Int?
   #deprecated
   op_as_view(Self, start~ : Int = .., end? : Int) -> Self
   #deprecated
   op_get(Self, Int) -> Char
+  rev_find(Self, Self) -> Int?
   #deprecated
   rev_get(Self, Int) -> Char
   rev_iter(Self) -> Iter[Char]
+  unsafe_charcode_at(Self, Int) -> Int
+  view(Self, start_offset~ : Int = .., end_offset~ : Int = ..) -> Self
 }
 impl Compare for StringView
+impl Default for StringView
 impl Eq for StringView
 impl Show for StringView
 
@@ -120,19 +135,25 @@ impl String {
   concat(Array[String], separator~ : String = ..) -> String
   contains(String, String) -> Bool
   contains_char(String, Char) -> Bool
+  #deprecated
   ends_with(String, String) -> Bool
+  find(String, StringView) -> Int?
   fold[A](String, init~ : A, (A, Char) -> A) -> A
   from_array(Array[Char]) -> String
   from_iter(Iter[Char]) -> String
+  has_prefix(String, StringView) -> Bool
+  has_suffix(String, StringView) -> Bool
   #deprecated
   index_at(String, Int, start~ : StringIndex = ..) -> StringIndex?
   #deprecated
   index_at_rev(String, Int, end? : StringIndex) -> StringIndex?
+  #deprecated
   index_of(String, String, from~ : Int = ..) -> Int
   is_blank(String) -> Bool
   is_empty(String) -> Bool
   iter(String) -> Iter[Char]
   iter2(String) -> Iter2[Int, Char]
+  #deprecated
   last_index_of(String, String, from~ : Int = ..) -> Int
   #deprecated
   length_eq(String, Int) -> Bool
@@ -147,11 +168,13 @@ impl String {
   replace(String, old~ : String, new~ : String) -> String
   replace_all(String, old~ : String, new~ : String) -> String
   rev(String) -> String
+  rev_find(String, StringView) -> Int?
   rev_fold[A](String, init~ : A, (A, Char) -> A) -> A
   #deprecated
   rev_get(String, Int) -> Char
   rev_iter(String) -> Iter[Char]
   split(String, String) -> Iter[String]
+  #deprecated
   starts_with(String, String) -> Bool
   to_array(String) -> Array[Char]
   to_bytes(String) -> Bytes
