@@ -42,7 +42,7 @@ fn ParseContext::lex_string(ctx : ParseContext) -> String!ParseError {
           Some('/') => buf.write_char('/')
           Some('u') => {
             let c = ctx.lex_hex_digits!(4)
-            buf.write_char(Char::from_int(c))
+            buf.write_char(Char::unsafe_from_int(c))
           }
           Some(_) => ctx.invalid_char!(shift=-1)
           None => raise InvalidEof

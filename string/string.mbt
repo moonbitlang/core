@@ -163,7 +163,9 @@ pub fn iter(self : String) -> Iter[Char] {
         }
       }
       //TODO: handle garbage input
-      guard yield_(Char::from_int(c1)) is IterContinue else { break IterEnd }
+      guard yield_(Char::unsafe_from_int(c1)) is IterContinue else {
+        break IterEnd
+      }
 
     } else {
       IterContinue
@@ -186,7 +188,9 @@ pub fn iter2(self : String) -> Iter2[Int, Char] {
         }
       }
       //TODO: handle garbage input
-      guard yield_(n, Char::from_int(c1)) is IterContinue else { break IterEnd }
+      guard yield_(n, Char::unsafe_from_int(c1)) is IterContinue else {
+        break IterEnd
+      }
 
     } else {
       IterContinue
@@ -254,7 +258,9 @@ pub fn rev_iter(self : String) -> Iter[Char] {
         }
       }
       // TODO: handle garbage input
-      guard yield_(Char::from_int(c1)) is IterContinue else { break IterEnd }
+      guard yield_(Char::unsafe_from_int(c1)) is IterContinue else {
+        break IterEnd
+      }
 
     } else {
       IterContinue
@@ -301,7 +307,11 @@ pub fn trim_start(self : String, trim_set : String) -> String {
         }
       }
     }
-    if not(trim_set.contains_char(Char::from_int(self.unsafe_charcode_at(i)))) {
+    if not(
+        trim_set.contains_char(
+          Char::unsafe_from_int(self.unsafe_charcode_at(i)),
+        ),
+      ) {
       return self.substring(start=i)
     }
   } else {
@@ -327,7 +337,11 @@ pub fn trim_end(self : String, trim_set : String) -> String {
         }
       }
     }
-    if not(trim_set.contains_char(Char::from_int(self.unsafe_charcode_at(i)))) {
+    if not(
+        trim_set.contains_char(
+          Char::unsafe_from_int(self.unsafe_charcode_at(i)),
+        ),
+      ) {
       return self.substring(end=i + 1)
     }
   } else {
@@ -514,7 +528,7 @@ pub fn to_lower(self : String) -> String {
   let buf = StringBuilder::new(size_hint=self.length())
   for c in self {
     if c >= 'A' && c <= 'Z' {
-      buf.write_char(Char::from_int(c.to_int() + 32))
+      buf.write_char(Char::unsafe_from_int(c.to_int() + 32))
     } else {
       buf.write_char(c)
     }
@@ -529,7 +543,7 @@ pub fn to_upper(self : String) -> String {
   let buf = StringBuilder::new(size_hint=self.length())
   for c in self {
     if c >= 'a' && c <= 'z' {
-      buf.write_char(Char::from_int(c.to_int() - 32))
+      buf.write_char(Char::unsafe_from_int(c.to_int() - 32))
     } else {
       buf.write_char(c)
     }

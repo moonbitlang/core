@@ -58,7 +58,9 @@ fn is_trailing_surrogate(c : Int) -> Bool {
 
 ///|
 fn code_point_of_surrogate_pair(leading : Int, trailing : Int) -> Char {
-  Char::from_int((leading - 0xD800) * 0x400 + trailing - 0xDC00 + 0x10000)
+  Char::unsafe_from_int(
+    (leading - 0xD800) * 0x400 + trailing - 0xDC00 + 0x10000,
+  )
 }
 
 ///|
@@ -126,7 +128,7 @@ pub fn String::codepoint_at(self : String, index : Int) -> Char {
         abort("invalid surrogate pair")
       }
     } else {
-      Char::from_int(c1)
+      Char::unsafe_from_int(c1)
     }
   }
 }
@@ -139,7 +141,7 @@ pub fn String::unsafe_char_at(self : String, index : Int) -> Char {
     let c2 = self.unsafe_charcode_at(index + 1)
     code_point_of_surrogate_pair(c1, c2)
   } else {
-    Char::from_int(c1)
+    Char::unsafe_from_int(c1)
   }
 }
 

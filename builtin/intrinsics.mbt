@@ -1232,8 +1232,32 @@ pub fn Char::to_uint(self : Char) -> UInt {
 }
 
 ///|
-///
+#deprecated("use Char::unsafe_from_int instead")
 pub fn Char::from_int(val : Int) -> Char = "%char_from_int"
+
+///|
+/// Converts an integer to a character. This function is unsafe because it does not
+/// validate whether the input integer represents a valid Unicode code point.
+///
+/// Parameters:
+///
+/// * `val` : The integer value to convert to a character.
+///
+/// Returns a character corresponding to the Unicode code point represented by the
+/// integer value.
+///
+/// Example:
+///
+/// ```moonbit
+/// test "Char::unsafe_from_int" {
+///   inspect!(Char::unsafe_from_int(65), content="'A'") // ASCII 'A'
+///   inspect!(Char::unsafe_from_int(12354), content="'あ'") // Japanese hiragana 'あ'
+/// }
+/// ```
+///
+/// Warning: This function should be used with caution. If the integer value does not
+/// represent a valid Unicode code point, the behavior is undefined.
+pub fn Char::unsafe_from_int(val : Int) -> Char = "%char_from_int"
 
 ///|
 /// Compares two characters for equality.

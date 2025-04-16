@@ -23,11 +23,11 @@ fn ParseContext::read_char(ctx : ParseContext) -> Char? {
         if c2 >= 0xDC00 && c2 <= 0xDFFF {
           ctx.offset += 1
           let c3 = (c1 << 10) + c2 - 0x35fdc00
-          return Some(Char::from_int(c3))
+          return Some(Char::unsafe_from_int(c3))
         }
       }
     }
-    Some(Char::from_int(c1))
+    Some(Char::unsafe_from_int(c1))
   } else {
     None
   }
@@ -103,10 +103,10 @@ test "expect_char with surrogate pair" {
   // "\uD83D\uDE00" // todo: shall we allow this?
   let ctx = ParseContext::make("a\uD83D\uDE00bc\uD83D\uDE00c")
   ctx.expect_char!('a')
-  ctx.expect_char!(Char::from_int(0x1F600))
+  ctx.expect_char!(Char::unsafe_from_int(0x1F600))
   ctx.expect_char!('b')
   ctx.expect_char!('c')
-  ctx.expect_char!(Char::from_int(0x1F600))
+  ctx.expect_char!(Char::unsafe_from_int(0x1F600))
   ctx.expect_char!('c')
   inspect!(
     ctx.expect_char?('d').to_string(),

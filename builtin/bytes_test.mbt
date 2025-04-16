@@ -201,7 +201,7 @@ test "blit_from_bytesview basic case" {
 test "panic FixedArray::set_utf8_char/invalid_code_point" {
   let buf = FixedArray::make(4, b'\x00')
   // Creating a character with code point greater than 0x10FFFF (1114111)
-  let invalid_char = Char::from_int(0x110001)
+  let invalid_char = Char::unsafe_from_int(0x110001)
   // This should trigger the "Char out of range" panic
   let _ = buf.set_utf8_char(0, invalid_char)
 
@@ -225,7 +225,7 @@ test "set_utf16be_char with surrogate pairs" {
 ///|
 test "panic set_utf16be_char with out of range code point" {
   let buf = FixedArray::make(4, b'\x00')
-  ignore(buf.set_utf16be_char(0, Char::from_int(0x110000)))
+  ignore(buf.set_utf16be_char(0, Char::unsafe_from_int(0x110000)))
 }
 
 ///|

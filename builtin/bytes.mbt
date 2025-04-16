@@ -235,7 +235,7 @@ pub fn Bytes::copy(self : Bytes) -> Bytes {
 /// 
 /// test "panic FixedArray::set_utf8_char/invalid_char" {
 ///   let buf = FixedArray::make(4, b'\x00')
-///   ignore(buf.set_utf8_char(0, Char::from_int(0x110000))) // Invalid Unicode code point
+///   ignore(buf.set_utf8_char(0, Char::unsafe_from_int(0x110000))) // Invalid Unicode code point
 /// }
 /// ```
 pub fn FixedArray::set_utf8_char(

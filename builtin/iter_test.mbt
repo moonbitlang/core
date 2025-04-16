@@ -231,7 +231,7 @@ test "map" {
   let iter = test_from_array(['1', '2', '3', '4', '5'])
   let exb = StringBuilder::new(size_hint=0)
   iter
-  .map(fn { x => Char::from_int(x.to_int() + 1) })
+  .map(fn { x => Char::unsafe_from_int(x.to_int() + 1) })
   .each(fn { x => exb.write_char(x) })
   inspect!(exb, content="23456")
 }
@@ -273,7 +273,7 @@ test "flat_map2" {
 ///|
 test "fold" {
   let iter = test_from_array(['1', '2', '3', '4', '5'])
-  let result = Char::from_int(
+  let result = Char::unsafe_from_int(
     iter.fold(fn { acc, x => acc + x.to_int() }, init=0) / 5,
   )
   assert_eq!(result, '3')

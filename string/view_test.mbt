@@ -423,7 +423,7 @@ test "panic_view_op_as_view_invalid_end_index" {
 test "panic length_eq should panic on invalid surrogate pair" {
   // Create a string with an invalid surrogate pair:
   // 0xD800 is a leading surrogate, but followed by a non-trailing surrogate character 'A'
-  let str = String::from_array([Char::from_int(0xD800), 'A'])
+  let str = String::from_array([Char::unsafe_from_int(0xD800), 'A'])
   let view = str[:]
   // This will trigger abort("invalid surrogate pair") in length_eq
   ignore(view.char_length_eq(1))
@@ -432,8 +432,8 @@ test "panic length_eq should panic on invalid surrogate pair" {
 ///|
 test "panic_length_ge invalid surrogate pair" {
   let invalid_surrogate_pair = String::from_array([
-    Char::from_int(0xD800), // Leading surrogate
-    Char::from_int(0x0041), // Invalid trailing surrogate (just a regular 'A')
+    Char::unsafe_from_int(0xD800), // Leading surrogate
+    Char::unsafe_from_int(0x0041), // Invalid trailing surrogate (just a regular 'A')
   ])
   let view = invalid_surrogate_pair[:]
   // This should abort with "invalid surrogate pair"
