@@ -1,0 +1,40 @@
+package "moonbitlang/core/bench"
+
+// Values
+fn bench(T, () -> Unit, count~ : UInt = ..) -> Unit!BenchError
+
+fn monotonic_clock_end(Timestamp) -> Double
+
+fn monotonic_clock_start() -> Timestamp
+
+// Types and methods
+pub struct Summary {
+  sum : Double
+  min : Double
+  max : Double
+  mean : Double
+  median : Double
+  var : Double
+  std_dev : Double
+  std_dev_pct : Double
+  median_abs_dev : Double
+  median_abs_dev_pct : Double
+  quartiles : (Double, Double, Double)
+  iqr : Double
+  batch_size : Int
+  runs : Int
+}
+impl ToJson for Summary
+
+pub(all) struct T {
+}
+impl T {
+  bench(Self, () -> Unit, count~ : UInt = ..) -> Unit!BenchError
+}
+
+type Timestamp
+
+// Type aliases
+
+// Traits
+
