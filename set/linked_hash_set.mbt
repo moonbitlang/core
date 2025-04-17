@@ -513,5 +513,5 @@ pub impl[X : ToJson] ToJson for Set[X] with to_json(self) {
   for v in self {
     res.push(v.to_json())
   }
-  Array(res)
+  Json::array(res)
 }
