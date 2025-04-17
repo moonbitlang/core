@@ -181,8 +181,8 @@ test "fold" {
 test "rev_fold" {
   let ls = @list.of(["1", "2", "3", "4", "5"])
   let el : @list.T[String] = @list.Nil
-  inspect!(ls.rev_fold(fn(x, acc) { x + acc }, init=""), content="12345")
-  inspect!(el.rev_fold(fn(x, acc) { x + acc }, init="init"), content="init")
+  inspect!(ls.rev_fold(fn(acc, x) { x + acc }, init=""), content="12345")
+  inspect!(el.rev_fold(fn(acc, x) { x + acc }, init="init"), content="init")
 }
 
 ///|
@@ -197,8 +197,8 @@ test "foldi" {
 test "rev_foldi" {
   let ls = @list.of([1, 2, 3, 4, 5])
   let el : @list.T[Int] = @list.Nil
-  inspect!(ls.rev_foldi(fn(i, x, acc) { x * i + acc }, init=0), content="40")
-  inspect!(el.rev_foldi(fn(i, x, acc) { x * i + acc }, init=0), content="0")
+  inspect!(ls.rev_foldi(fn(i, acc, x) { x * i + acc }, init=0), content="20")
+  inspect!(el.rev_foldi(fn(i, acc, x) { x * i + acc }, init=0), content="0")
 }
 
 ///|
@@ -384,9 +384,9 @@ test "scan_left" {
 
 ///|
 test "scan_right" {
-  let el = @list.Nil.scan_right(fn(x, acc) { x + acc }, init=0)
-  let ls = @list.of([1, 2, 3, 4]).scan_right(fn(x, acc) { x + acc }, init=0)
-  let ls2 = @list.of([1, 2, 3, 4]).scan_right(fn(x, acc) { x - acc }, init=100)
+  let el = @list.Nil.scan_right(fn(acc, x) { x + acc }, init=0)
+  let ls = @list.of([1, 2, 3, 4]).scan_right(fn(acc, x) { x + acc }, init=0)
+  let ls2 = @list.of([1, 2, 3, 4]).scan_right(fn(acc, x) { x - acc }, init=100)
   inspect!(el, content="@list.of([0])")
   inspect!(ls, content="@list.of([10, 9, 7, 4, 0])")
   inspect!(ls2, content="@list.of([98, -97, 99, -96, 100])")
