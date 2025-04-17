@@ -682,3 +682,14 @@ test "hash" {
   inspect!(l1.hash() == l4.hash(), content="false")
   inspect!(l4.hash() == l4.hash(), content="true")
 }
+
+///|
+test "immutability" {
+  let l1 = @list.of([1, 2])
+  let l2 = @list.of([l1, l1, l1, l1]).flatten()
+  inspect!(l2, content="@list.of([1, 2, 1, 2, 1, 2, 1, 2])")
+  inspect!(l1, content="@list.of([1, 2])")
+  let l3 = l1.flat_map(fn(_) { l1 })
+  inspect!(l3, content="@list.of([1, 2, 1, 2])")
+  inspect!(l1, content="@list.of([1, 2])")
+}

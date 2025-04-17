@@ -500,6 +500,7 @@ pub fn flat_map[A, B](self : T[A], f : (A) -> T[B]) -> T[B] {
           // continue looping on the `tail` of `self`
           loop_over_tail~: loop dest1, tail {
             _, Nil => ()
+            Cons(_) as dest, Cons(t_hd, tail=Nil) => dest.tail = f(t_hd)
             dest, Cons(t_hd, tail=t_tl) =>
               loop dest, f(t_hd) {
                 dest, Nil => continue loop_over_tail~ dest, t_tl
@@ -676,6 +677,7 @@ pub fn flatten[A](self : T[T[A]]) -> T[A] {
           // continue looping on the `tail` of `self`
           loop_over_tail~: loop dest1, tail {
             _, Nil => ()
+            Cons(_) as dest, Cons(t_hd, tail=Nil) => dest.tail = t_hd
             dest, Cons(t_hd, tail=t_tl) =>
               loop dest, t_hd {
                 dest, Nil => continue loop_over_tail~ dest, t_tl
@@ -956,7 +958,7 @@ pub fn scan_left[A, E](self : T[A], f : (E, A) -> E, init~ : E) -> T[E] {
 /// assert_eq!(r, @list.of([15, 14, 12, 9, 5, 0]))
 /// ```
 pub fn scan_right[A, B](self : T[A], f : (B, A) -> B, init~ : B) -> T[B] {
-  self.rev().scan_left(f, init~).rev()
+  self.rev().scan_left(f, init~).reverse_inplace()
 }
 
 ///|
@@ -1037,9 +1039,7 @@ pub fn remove_at[A](self : T[A], index : Int) -> T[A] {
       let dest = Cons(head, tail=Nil)
       loop dest, tail, n - 1 {
         _, Nil, _ => ()
-        Cons(_) as dest, Cons(_, tail~), 0 =>
-          // warning: sharing
-          dest.tail = tail
+        Cons(_) as dest, Cons(_, tail~), 0 => dest.tail = tail
         Cons(_) as dest, Cons(x, tail=xs), n => {
           dest.tail = Cons(x, tail=Nil)
           continue dest.tail, xs, n - 1
@@ -1069,7 +1069,6 @@ pub fn remove[A : Eq](self : T[A], elem : A) -> T[A] {
         _, Nil => ()
         Cons(_) as dest, Cons(x, tail=xs) =>
           if x == elem {
-            // warning: sharing
             dest.tail = xs
           } else {
             dest.tail = Cons(x, tail=Nil)
@@ -1175,10 +1174,9 @@ pub fn iter2[A](self : T[A]) -> Iter2[Int, A] {
 
 ///|
 /// Convert the iterator into a list. Preserves order of elements.
-/// This function is tail-recursive, but consumes 2*n memory. 
 /// If the order of elements is not important, use `from_iter_rev` instead.
 pub fn from_iter[A](iter : Iter[A]) -> T[A] {
-  iter.fold(init=Nil, fn(acc, e) { Cons(e, tail=acc) }).rev()
+  iter.fold(init=Nil, fn(acc, e) { Cons(e, tail=acc) }).reverse_inplace()
 }
 
 ///|
@@ -1212,5 +1210,20 @@ pub fn singleton[A](x : A) -> T[A] {
 pub impl[A : Hash] Hash for T[A] with hash_combine(self, hasher) {
   for e in self {
     hasher.combine(e)
+  }
+}
+
+///|
+fn reverse_inplace[A](self : T[A]) -> T[A] {
+  match self {
+    Nil | Cons(_, tail=Nil) => self
+    Cons(head, tail~) =>
+      loop Cons(head, tail=Nil), tail {
+        result, Nil => result
+        result, Cons(_, tail=xs) as new_result => {
+          new_result.tail = result
+          continue new_result, xs
+        }
+      }
   }
 }
