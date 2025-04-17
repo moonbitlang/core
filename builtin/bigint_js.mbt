@@ -382,6 +382,6 @@ pub fn BigInt::to_uint64(self : BigInt) -> UInt64 {
 /// ```
 pub fn BigInt::to_int64(self : BigInt) -> Int64 {
   let hi = (self >> 32).to_int()
-  let lo = self.to_uint().reinterpret_as_int()
+  let lo = self.to_int()
   MyInt64::{ hi, lo }.to_int64()
 }
