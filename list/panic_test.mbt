@@ -14,25 +14,25 @@
 
 ///|
 test "last None" {
-  assert_eq!(@list.Nil.last(), (None : Unit?))
+  assert_eq!(@list.nil().last(), (None : Unit?))
 }
 
 ///|
 test "panic nth_exn" {
-  @list.Nil.unsafe_nth(0)
+  @list.nil().unsafe_nth(0)
 }
 
 ///|
 test "panic @list.exn with empty list" {
-  @list.Nil.unsafe_head()
+  @list.nil().unsafe_head()
 }
 
 ///|
 test "panic @list.unsafe_maximum with empty list" {
-  inspect!((@list.Nil : @list.T[Int]).unsafe_maximum())
+  inspect!((@list.nil() : @list.T[Int]).unsafe_maximum())
 }
 
 ///|
 test "panic @list.unsafe_minimum with empty list" {
-  inspect!((@list.Nil : @list.T[Int]).unsafe_minimum())
+  inspect!((@list.nil() : @list.T[Int]).unsafe_minimum())
 }
