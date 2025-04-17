@@ -13,4 +13,7 @@
 // limitations under the License.
 
 ///|
-pub(all) struct T {}
+pub(all) struct T {
+  buf: StringBuilder
+  summaries: Array[Summary]
+}

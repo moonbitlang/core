@@ -52,8 +52,16 @@ fn iter_count(inner : () -> Unit, count : UInt) -> Summary {
 }
 
 ///|
-pub fn bench(self : T, f : () -> Unit, count~ : UInt = 10) -> Unit!BenchError {
-  ignore(self)
+pub fn bench(self : T, f : () -> Unit, count~ : UInt = 10) -> Unit {
   let summary = iter_count(f, count)
-  raise BenchError("@BENCH \{summary.to_json().stringify()}\n")
+  if not(self.buf.is_empty()) {
+    self.buf.write_char(',')
+  }
+  self.buf.write_string(summary.to_json().stringify())
+  self.summaries.push(summary)
+}
+
+pub fn single_bench(f : () -> Unit, count~: UInt = 10) -> Summary {
+  let summary = iter_count(f, count)
+  summary
 }
