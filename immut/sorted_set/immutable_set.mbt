@@ -578,10 +578,10 @@ pub impl[A : Show] Show for T[A] with output(self, logger) {
 ///|
 pub impl[A : ToJson] ToJson for T[A] with to_json(self) {
   let capacity = self.iter().count()
-  guard capacity != 0 else { return Array([]) }
+  guard capacity != 0 else { return Json::array([]) }
   let jsons = Array::new(capacity~)
   self.each(fn(a) { jsons.push(a.to_json()) })
-  Array(jsons)
+  Json::array(jsons)
 }
 
 ///|
