@@ -19,3 +19,9 @@ fn check_invariant(_a : BigInt) -> Unit! {
 
 ///|
 let zero = 0N
+
+///|
+test "BigInt::to_int64" {
+  assert_eq!(BigInt::from_int64(-1).to_int64(), -1L)
+  assert_eq!(-1L, MyInt64::{ hi: -1, lo: -1 }.to_int64())
+}
