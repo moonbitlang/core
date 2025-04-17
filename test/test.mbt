@@ -143,7 +143,6 @@ pub fn snapshot(
 }
 
 ///|
-#deprecated("Use `@bench.T::bench` instead")
 pub fn bench(self : T, f : () -> Unit, count~ : UInt = 10) -> Unit!BenchError {
   ignore(self)
   let summary = @bench.single_bench(f, count~)
