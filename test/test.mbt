@@ -141,3 +141,11 @@ pub fn snapshot(
     "@SNAPSHOT_TESTING {\"loc\": \{loc}, \"args_loc\": \{args_loc}, \"expect\": \{expect}, \"actual\": \{actual}, \"snapshot\": true}",
   )
 }
+
+///|
+#deprecated("Use `@bench.T::bench` instead")
+pub fn bench(self : T, f : () -> Unit, count~ : UInt = 10) -> Unit!BenchError {
+  ignore(self)
+  let summary = @bench.single_bench(f, count~)
+  raise BenchError("@BENCH \{summary.to_json().stringify()}\n")
+}
