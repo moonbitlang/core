@@ -14,6 +14,6 @@
 
 ///|
 pub(all) struct T {
-  buf: StringBuilder
-  summaries: Array[Summary]
+  buffer : StringBuilder
+  summaries : Array[Summary]
 }
