@@ -518,3 +518,10 @@ test "char to/from json roundtrip" {
   let v : Char = @json.from_json!(u)
   inspect!(v, content="中")
 }
+
+///|
+test "string view from json" {
+  let u = "hello".to_json()
+  let v : @string.View = @json.from_json!(u)
+  inspect!(v, content="hello")
+}
