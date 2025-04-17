@@ -701,3 +701,14 @@ test "make" {
   let v = View::make(5, 'a')
   inspect!(v, content="aaaaa")
 }
+
+///|
+test "to_json" {
+  let v = "hello"[1:4].view()
+  inspect!(
+    v.to_json(),
+    content=
+      #|String("ell")
+    ,
+  )
+}

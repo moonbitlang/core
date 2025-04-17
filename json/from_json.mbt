@@ -104,6 +104,14 @@ pub impl FromJson for String with from_json(json, path) {
 }
 
 ///|
+pub impl FromJson for @string.View with from_json(json, path) {
+  guard json is String(a) else {
+    decode_error!(path, "View::from_json: expected string")
+  }
+  a[:]
+}
+
+///|
 pub impl FromJson for Char with from_json(json, path) {
   guard json is String(a) else {
     decode_error!(path, "Char::from_json: expected string")

@@ -1,5 +1,9 @@
 package "moonbitlang/core/json"
 
+import(
+  "moonbitlang/core/string"
+)
+
 // Values
 fn add_index(JsonPath, Int) -> JsonPath
 
@@ -96,6 +100,7 @@ impl[X : FromJson] FromJson for Array[X]
 impl FromJson for BigInt
 impl FromJson for Json
 impl[V : FromJson] FromJson for Map[String, V]
+impl FromJson for @string.StringView
 impl[A : FromJson, B : FromJson] FromJson for (A, B)
 impl[A : FromJson, B : FromJson, C : FromJson] FromJson for (A, B, C)
 impl[A : FromJson, B : FromJson, C : FromJson, D : FromJson] FromJson for (A, B, C, D)
