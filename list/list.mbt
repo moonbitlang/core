@@ -414,14 +414,11 @@ pub fn fold[A, B](self : T[A], init~ : B, f : (B, A) -> B) -> B {
 ///
 /// # Example
 /// ```
-/// let r = @list.of([1, 2, 3, 4, 5]).rev_fold(fn(x, acc) { x + acc }, init=0)
+/// let r = @list.of([1, 2, 3, 4, 5]).rev_fold(fn(acc, x) { x + acc }, init=0)
 /// assert_eq!(r, 15)
 /// ```
-pub fn rev_fold[A, B](self : T[A], init~ : B, f : (A, B) -> B) -> B {
-  match self {
-    Nil => init
-    Cons(head, tail~) => f(head, tail.rev_fold(f, init~))
-  }
+pub fn rev_fold[A, B](self : T[A], init~ : B, f : (B, A) -> B) -> B {
+  self.rev().fold(init~, fn(b, a) { f(b, a) })
 }
 
 ///|
@@ -439,15 +436,12 @@ pub fn foldi[A, B](self : T[A], init~ : B, f : (Int, B, A) -> B) -> B {
 
 ///|
 /// Fold the list from right with index.
-pub fn rev_foldi[A, B](self : T[A], init~ : B, f : (Int, A, B) -> B) -> B {
-  fn go(xs : T[A], i : Int, f : (Int, A, B) -> B, acc : B) -> B {
-    match xs {
-      Nil => acc
-      Cons(x, tail=xs) => f(i, x, go(xs, i + 1, f, acc))
-    }
-  }
-
-  go(self, 0, f, init)
+/// 
+/// The index parameter corresponds to the order of traversal, 
+/// starting from 0 for the first element visited,
+/// i.e. the last element of the list would have index 0 as it's first visited.
+pub fn rev_foldi[A, B](self : T[A], init~ : B, f : (Int, B, A) -> B) -> B {
+  self.rev().foldi(init~, fn(i, b, a) { f(i, b, a) })
 }
 
 ///|
@@ -958,17 +952,11 @@ pub fn scan_left[A, E](self : T[A], f : (E, A) -> E, init~ : E) -> T[E] {
 /// # Example
 /// ```
 /// let ls = @list.of([1, 2, 3, 4, 5])
-/// let r = ls.scan_right(fn(x, acc) { acc + x }, init=0)
+/// let r = ls.scan_right(fn(acc, x) { acc + x }, init=0)
 /// assert_eq!(r, @list.of([15, 14, 12, 9, 5, 0]))
 /// ```
-pub fn scan_right[A, B](self : T[A], f : (A, B) -> B, init~ : B) -> T[B] {
-  match self {
-    Nil => Cons(init, tail=Nil)
-    Cons(x, tail=xs) => {
-      let qs = xs.scan_right(f, init~)
-      Cons(f(x, qs.unsafe_head()), tail=qs)
-    }
-  }
+pub fn scan_right[A, B](self : T[A], f : (B, A) -> B, init~ : B) -> T[B] {
+  self.rev().scan_left(f, init~).rev()
 }
 
 ///|
@@ -1083,10 +1071,10 @@ pub fn remove[A : Eq](self : T[A], elem : A) -> T[A] {
           if x == elem {
             // warning: sharing
             dest.tail = xs
-      } else {
+          } else {
             dest.tail = Cons(x, tail=Nil)
             continue dest.tail, xs
-      }
+          }
         Nil, _ => panic()
       }
       dest
