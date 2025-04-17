@@ -45,7 +45,7 @@ jobs:
 
       - name: format diff
         run: |
-          moon fmt --block-style
+          moon fmt
           git diff --exit-code
 
       - name: Set ulimit and run moon test
