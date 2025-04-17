@@ -1,9 +1,6 @@
 {
   "import": ["moonbitlang/core/builtin", "moonbitlang/core/double", "moonbitlang/core/uint"],
-  "test-import": [
-    "moonbitlang/core/prelude",
-    "moonbitlang/core/quickcheck"
-  ],
+  "test-import": ["moonbitlang/core/quickcheck"],
   "targets": {
     "round_js.mbt": ["js"],
     "round_wasm.mbt": ["wasm", "wasm-gc"],

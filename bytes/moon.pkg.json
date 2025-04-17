@@ -1,7 +1,6 @@
 {
   "import": ["moonbitlang/core/builtin"],
   "test-import": [
-    "moonbitlang/core/prelude",
     "moonbitlang/core/array",
     "moonbitlang/core/double",
     "moonbitlang/core/test"

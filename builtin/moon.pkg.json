@@ -1,7 +1,6 @@
 {
   "import": [],
   "test-import": [
-    "moonbitlang/core/prelude",
     "moonbitlang/core/char",
     "moonbitlang/core/string",
     "moonbitlang/core/bytes",
