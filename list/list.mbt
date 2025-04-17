@@ -42,7 +42,7 @@ pub impl[A : ToJson] ToJson for T[A] with to_json(self) {
   for a in self {
     jsons.push(a.to_json())
   }
-  Array(jsons)
+  Json::array(jsons)
 }
 
 ///|
@@ -53,7 +53,7 @@ pub fn to_json[A : ToJson](self : T[A]) -> Json {
 ///|
 pub impl[A : @json.FromJson] @json.FromJson for T[A] with from_json(json, path) {
   guard json is Array(arr) else {
-    raise @json.JsonDecodeError((path, "@immut/list.from_json: expected array"))
+    raise @json.JsonDecodeError((path, "@list.from_json: expected array"))
   }
   for i = arr.length() - 1, list = Nil; i >= 0; {
     continue i - 1, list.add(A::from_json!(arr[i], path))

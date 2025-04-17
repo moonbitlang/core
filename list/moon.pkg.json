@@ -6,9 +6,7 @@
     "moonbitlang/core/json",
     "moonbitlang/core/option"
   ],
-  "test-import": [
-    "moonbitlang/core/prelude"
-  ],
+  "test-import": [],
   "targets": {
     "panic_test.mbt": [
       "not",

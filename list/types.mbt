@@ -12,9 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-
 ///|
-pub(all) enum T[A] {
+pub enum T[A] {
   Nil
   Cons(A, mut tail~ : T[A])
 } derive(Eq)
