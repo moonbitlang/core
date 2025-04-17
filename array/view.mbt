@@ -366,18 +366,13 @@ pub impl[T : Eq] Eq for View[T] with op_equal(self, other) -> Bool {
 pub impl[T : Compare] Compare for View[T] with compare(self, other) -> Int {
   let len_self = self.length()
   let len_other = other.length()
-  if len_self < len_other {
-    -1
-  } else if len_self > len_other {
-    1
+  let cmp = len_self.compare(len_other)
+  guard cmp == 0 else { return cmp }
+  for i in 0..<len_self {
+    let cmp = self[i].compare(other[i])
+    guard cmp == 0 else { break cmp }
+
   } else {
-    for i in 0..<len_self {
-      let cmp = self[i].compare(other[i])
-      if cmp != 0 {
-        break cmp
-      }
-    } else {
-      0
-    }
+    0
   }
 }

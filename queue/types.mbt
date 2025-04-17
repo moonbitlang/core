@@ -13,20 +13,16 @@
 // limitations under the License.
 
 ///|
-priv struct Cont[A] {
+priv struct Cons[A] {
   content : A
-  mut next : Cell[A]
-}
+  mut next : Cons[A]?
+} derive(Eq)
 
 ///|
-priv enum Cell[A] {
-  Nil
-  Cons(Cont[A])
-}
-
-///|
+// Invariant:
+// - length == 0 <=> first is None && last is None
 struct T[A] {
   mut length : Int
-  mut first : Cell[A]
-  mut last : Cell[A]
+  mut first : Cons[A]?
+  mut last : Cons[A]?
 }

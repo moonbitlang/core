@@ -137,13 +137,7 @@ pub impl Eq for T with op_equal(self : T, other : T) -> Bool {
 pub impl Compare for T with compare(self : T, other : T) -> Int {
   let left = self.numerator * other.denominator
   let right = other.numerator * self.denominator
-  if left < right {
-    -1
-  } else if left > right {
-    1
-  } else {
-    0
-  }
+  left.compare(right)
 }
 
 ///|

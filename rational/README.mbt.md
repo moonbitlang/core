@@ -1,7 +1,3 @@
----
-moonbit : true
----
-
 # Rational
 
 The `Rational` type represents a rational number, which is a number that can be expressed as a fraction `a/b` where `a` and `b` are integers and `b` is not zero.
@@ -13,15 +9,17 @@ The `Rational` type represents a rational number, which is a number that can be 
 The `Rational` type supports the following arithmetic operations:
 
 ```moonbit
-let a = @rational.new(1L, 2L).unwrap()
-let b = @rational.new(1L, 3L).unwrap()
-assert_eq!(a + b, @rational.new(5L, 6L).unwrap())
-assert_eq!(a - b, @rational.new(1L, 6L).unwrap())
-assert_eq!(a * b, @rational.new(1L, 6L).unwrap())
-assert_eq!(a / b, @rational.new(3L, 2L).unwrap())
-assert_eq!(a.neg(), @rational.new(-1L, 2L).unwrap())
-assert_eq!(a.reciprocal(), @rational.new(2L, 1L).unwrap())
-assert_eq!(a.abs(), @rational.new(1L, 2L).unwrap())
+test {
+    let a = @rational.new(1L, 2L).unwrap()
+    let b = @rational.new(1L, 3L).unwrap()
+    assert_eq!(a + b, @rational.new(5L, 6L).unwrap())
+    assert_eq!(a - b, @rational.new(1L, 6L).unwrap())
+    assert_eq!(a * b, @rational.new(1L, 6L).unwrap())
+    assert_eq!(a / b, @rational.new(3L, 2L).unwrap())
+    assert_eq!(a.neg(), @rational.new(-1L, 2L).unwrap())
+    assert_eq!(a.reciprocal(), @rational.new(2L, 1L).unwrap())
+    assert_eq!(a.abs(), @rational.new(1L, 2L).unwrap())
+}
 ```
 
 ## Comparison Operations
@@ -29,15 +27,17 @@ assert_eq!(a.abs(), @rational.new(1L, 2L).unwrap())
 The `Rational` type supports the following comparison operations:
 
 ```moonbit
-let a = @rational.new(1L, 2L).unwrap()
-let b = @rational.new(1L, 3L).unwrap()
-assert_eq!(a == b, false)
-assert_eq!(a != b, true)
-assert_eq!(a < b, false)
-assert_eq!(a <= b, false)
-assert_eq!(a > b, true)
-assert_eq!(a >= b, true)
-assert_eq!(a.compare(b), 1)
+test {
+    let a = @rational.new(1L, 2L).unwrap()
+    let b = @rational.new(1L, 3L).unwrap()
+    assert_eq!(a == b, false)
+    assert_eq!(a != b, true)
+    assert_eq!(a < b, false)
+    assert_eq!(a <= b, false)
+    assert_eq!(a > b, true)
+    assert_eq!(a >= b, true)
+    assert_eq!(a.compare(b), 1)
+}
 ```
 
 ## Integer Operations
@@ -45,12 +45,14 @@ assert_eq!(a.compare(b), 1)
 The `Rational` type supports the following integer operations:
 
 ```moonbit
-let a = @rational.new(1L, 2L).unwrap()
-assert_eq!(a.floor(), 0)
-assert_eq!(a.ceil(), 1)
-assert_eq!(a.fract().to_string(), "1/2")
-assert_eq!(a.trunc(), 0)
-assert_eq!(a.is_integer(), false)
+test {
+    let a = @rational.new(1L, 2L).unwrap()
+    assert_eq!(a.floor(), 0)
+    assert_eq!(a.ceil(), 1)
+    assert_eq!(a.fract().to_string(), "1/2")
+    assert_eq!(a.trunc(), 0)
+    assert_eq!(a.is_integer(), false)
+}
 ```
 
 ## Double Operations
@@ -58,9 +60,11 @@ assert_eq!(a.is_integer(), false)
 The `Rational` type supports the following double operations:
 
 ```moonbit
-let a = @rational.new(1L, 2L).unwrap()
-assert_eq!(a.to_double(), 0.5)
-assert_eq!(@rational.from_double!(0.5).to_string(), "1/2")
+test {
+    let a = @rational.new(1L, 2L).unwrap()
+    assert_eq!(a.to_double(), 0.5)
+    assert_eq!(@rational.from_double!(0.5).to_string(), "1/2")
+}
 ```
 
 ## String Operations
@@ -68,6 +72,8 @@ assert_eq!(@rational.from_double!(0.5).to_string(), "1/2")
 The `Rational` type supports the following string operations:
 
 ```moonbit
-let a = @rational.new(1L, 2L).unwrap()
-assert_eq!(a.to_string(), "1/2")
+test {
+    let a = @rational.new(1L, 2L).unwrap()
+    assert_eq!(a.to_string(), "1/2")
+}
 ```

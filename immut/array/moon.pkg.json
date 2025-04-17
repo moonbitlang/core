@@ -7,9 +7,6 @@
       "alias": "_core/array"
     }
   ],
-  "test-import": [
-    "moonbitlang/core/prelude"
-  ],
   "targets": {
     "panic_test.mbt": [
       "not",

@@ -8,7 +8,6 @@
   ],
   "test-import": [
     "moonbitlang/core/test",
-    "moonbitlang/core/prelude",
     "moonbitlang/core/random",
     "moonbitlang/core/json"
   ],

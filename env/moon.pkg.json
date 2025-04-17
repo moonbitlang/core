@@ -1,16 +1,14 @@
 {
   "import": [
-    "moonbitlang/core/builtin",
-    "moonbitlang/core/bytes",
-    "moonbitlang/core/option"
+    "moonbitlang/core/builtin"
+    
   ],
   "test-import": [
-    "moonbitlang/core/prelude"
+    "moonbitlang/core/option"
   ],
   "targets": {
     "env_wasm.mbt": ["wasm", "wasm-gc"],
     "env_js.mbt": ["js"],
     "env_native.mbt": ["native"]
-  },
-  "warn-list": "-29"
+  }
 }

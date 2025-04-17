@@ -1,7 +1,3 @@
----
-moonbit : true
----
-
 # Deque
 
 Deque is a double-ended queue implemented as a round-robin queue, supporting O(1) head or tail insertion and querying, just like double-ended queues in other languages(C++ std::deque / Rust VecDeque), here deque also supports random access.

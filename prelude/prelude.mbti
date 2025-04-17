@@ -34,6 +34,10 @@ fn println[T : @builtin.Show](T) -> Unit
 
 fn repr[T : @builtin.Show](T) -> String
 
+fn tap[T](T, (T) -> Unit) -> T
+
+fn then[T, R](T, (T) -> R) -> R
+
 // Types and methods
 
 // Type aliases
@@ -61,7 +65,7 @@ pub typealias Json = @builtin.Json
 
 pub typealias Map[K, V] = @builtin.Map[K, V]
 
-pub typealias Set[X] = @builtin.Set[X]
+pub typealias Set[X] = @moonbitlang/core/set.Set[X]
 
 pub typealias SnapshotError = @builtin.SnapshotError
 
