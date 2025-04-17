@@ -1,7 +1,6 @@
 package "moonbitlang/core/test"
 
 // Values
-#deprecated
 fn bench(T, () -> Unit, count~ : UInt = ..) -> Unit!BenchError
 
 #deprecated
@@ -36,7 +35,6 @@ pub(all) struct T {
   buffer : StringBuilder
 }
 impl T {
-  #deprecated
   bench(Self, () -> Unit, count~ : UInt = ..) -> Unit!BenchError
   snapshot(Self, filename~ : String, loc~ : SourceLoc = _, args_loc~ : ArgsLoc = _) -> Unit!SnapshotError
   write(Self, &Show) -> Unit
