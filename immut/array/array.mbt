@@ -80,7 +80,59 @@ pub fn from_array[A](arr : Array[A]) -> T[A] {
 
 ///|
 pub fn from_iter[A](iter : Iter[A]) -> T[A] {
-  iter.fold(init=new(), fn(arr, e) { arr.push(e) })
+  let buf = Array::new(capacity=branching_factor)
+  let leaves = []
+  iter.each(fn(x) {
+    if not(buf.length() < branching_factor) {
+      leaves.push(FixedArray::from_array(buf))
+      buf.clear()
+    }
+    buf.push(x)
+  })
+  if not(buf.is_empty()) {
+    leaves.push(FixedArray::from_array(buf))
+  }
+  fn dfs(leaves : ArrayView[FixedArray[A]], cap) -> Tree[A] {
+    if cap == branching_factor {
+      Leaf(leaves[0])
+    } else if leaves.length() <= branching_factor {
+      let arr = FixedArray::make(leaves.length(), Empty)
+      for i in 0..<leaves.length() {
+        arr[i] = Leaf(leaves[i])
+      }
+      Node(arr, None)
+    } else {
+      let len = leaves.length() * branching_factor
+      let child_cap = cap / branching_factor
+      let quot = len / child_cap
+      let rem = len % child_cap
+      let times = child_cap / branching_factor
+      let arr = if rem == 0 {
+        FixedArray::makei(quot, fn(i) {
+          dfs(leaves[i * times:(i + 1) * times], child_cap)
+        })
+      } else {
+        let arr = FixedArray::make(quot + 1, Tree::Empty)
+        for i in 0..<quot {
+          arr[i] = dfs(leaves[i * times:(i + 1) * times], child_cap)
+        }
+        arr[quot] = dfs(leaves[times * quot:], child_cap)
+        arr
+      }
+      Node(arr, None)
+    }
+  }
+
+  let size = leaves.fold(init=0, fn(acc, xs) { acc + xs.length() })
+  let mut cap = branching_factor
+  let mut depth = 0
+  while cap < size {
+    cap *= branching_factor
+    depth += 1
+  }
+  let shift = num_bits * depth
+  let tree = if size == 0 { Empty } else { dfs(leaves[:], cap) }
+  { shift, tree, size }
 }
 
 //-----------------------------------------------------------------------------
