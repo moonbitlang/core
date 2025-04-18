@@ -16,12 +16,10 @@ fn is_not[T : Show](T, T, loc~ : SourceLoc = _) -> Unit!
 #deprecated
 fn is_true(Bool, loc~ : SourceLoc = _) -> Unit!
 
-fn monotonic_clock_end(Timestamp) -> Double
-
-fn monotonic_clock_start() -> Timestamp
-
 #deprecated
 fn ne[T : Show + Eq](T, T, loc~ : SourceLoc = _) -> Unit!
+
+fn new(String) -> T
 
 fn same_object[T : Show](T, T, loc~ : SourceLoc = _) -> Unit!
 
@@ -42,8 +40,6 @@ impl T {
   write(Self, &Show) -> Unit
   writeln(Self, &Show) -> Unit
 }
-
-type Timestamp
 
 // Type aliases
 

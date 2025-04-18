@@ -1,10 +1,6 @@
 {
   "import": ["moonbitlang/core/builtin"],
-  "test-import": [
-    "moonbitlang/core/prelude",
-    "moonbitlang/core/immut/list",
-    "moonbitlang/core/json"
-  ],
+  "test-import": ["moonbitlang/core/immut/list", "moonbitlang/core/json"],
   "targets": {
     "panic_test.mbt": ["not", "native"]
   }

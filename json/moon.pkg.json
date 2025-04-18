@@ -6,7 +6,6 @@
     "moonbitlang/core/strconv"
   ],
   "test-import": [
-    "moonbitlang/core/prelude",
     "moonbitlang/core/result",
     "moonbitlang/core/option",
     "moonbitlang/core/unit",

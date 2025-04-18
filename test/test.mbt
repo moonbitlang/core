@@ -143,47 +143,8 @@ pub fn snapshot(
 }
 
 ///|
-fn iter_n_microseconds[Any](inner : () -> Any, k : Int) -> Double {
-  let ts = monotonic_clock_start()
-  for i in 0..<k {
-    inner() |> ignore
-  }
-  let diff = monotonic_clock_end(ts)
-  diff
-}
-
-///|
-fn iter_count[Any](inner : () -> Any, count : UInt) -> Summary {
-  let count = count.land(0x7FFFFFFF).reinterpret_as_int()
-  let threshold = 100000.0 // 100 ms
-  let target_batch_size = loop 1 {
-    trial => {
-      let single_us = iter_n_microseconds(inner, trial) / trial.to_double()
-      let target_batch_size = threshold /
-        (if single_us < 1.0 { 1.0 } else { single_us })
-      if trial.to_double() * single_us > threshold {
-        break target_batch_size
-      }
-      continue trial * 2
-    }
-  }
-  let batch_size = if target_batch_size < 1.0 {
-    1
-  } else {
-    target_batch_size.ceil().to_int()
-  }
-  let samples = Array::new(capacity=count)
-  samples.resize(count, 0.0)
-  for i in 0..<count {
-    samples[i] = iter_n_microseconds(inner, batch_size) / batch_size.to_double()
-  }
-  winsorize(samples, 5.0)
-  Summary::new(samples, batch_size)
-}
-
-///|
 pub fn bench(self : T, f : () -> Unit, count~ : UInt = 10) -> Unit!BenchError {
   ignore(self)
-  let summary = iter_count(f, count)
+  let summary = @bench.single_bench(f, count~)
   raise BenchError("@BENCH \{summary.to_json().stringify()}\n")
 }

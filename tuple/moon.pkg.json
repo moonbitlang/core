@@ -3,8 +3,5 @@
     "moonbitlang/core/builtin",
     "moonbitlang/core/quickcheck",
     "moonbitlang/core/quickcheck/splitmix"
-  ],
-  "test-import": [
-    "moonbitlang/core/prelude"
   ]
 }

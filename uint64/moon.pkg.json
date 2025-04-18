@@ -1,4 +1,4 @@
 {
   "import": ["moonbitlang/core/builtin"],
-  "test-import": ["moonbitlang/core/prelude"]
+  "test-import": ["moonbitlang/core/double"]
 }

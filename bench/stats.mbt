@@ -16,7 +16,7 @@
 // Please refer to https://github.com/rust-lang/rust/blob/a19472a93e2eecce1477011fa9f7ec49b45ca164/library/test/src/stats.rs
 
 ///|
-priv struct Summary {
+pub struct Summary {
   sum : Double
   min : Double
   max : Double

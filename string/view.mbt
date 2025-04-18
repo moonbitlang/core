@@ -316,3 +316,8 @@ pub fn View::make(length : Int, value : Char) -> View {
   // todo: remove .view() in new version
   String::make(length, value).view()
 }
+
+///|
+pub impl ToJson for View with to_json(self) {
+  String::to_json(self.to_string())
+}
