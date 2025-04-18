@@ -1,7 +1,3 @@
----
-moonbit: true
----
-
 # Array Package Documentation
 
 This package provides array manipulation utilities for MoonBit, including fixed-size arrays (`FixedArray`), dynamic arrays (`Array`), and array views (`ArrayView`/`View`).
