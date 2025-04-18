@@ -159,7 +159,7 @@ fn unsafe_nth[A](T[A], Int) -> A
 
 fn unzip[A, B](T[(A, B)]) -> (T[A], T[B])
 
-fn zip[A, B](T[A], T[B]) -> T[(A, B)]?
+fn zip[A, B](T[A], T[B]) -> T[(A, B)]
 
 // Types and methods
 pub(all) enum T[A] {
@@ -249,7 +249,7 @@ impl T {
   unsafe_minimum[A : Compare](Self[A]) -> A
   unsafe_nth[A](Self[A], Int) -> A
   unzip[A, B](Self[(A, B)]) -> (Self[A], Self[B])
-  zip[A, B](Self[A], Self[B]) -> Self[(A, B)]?
+  zip[A, B](Self[A], Self[B]) -> Self[(A, B)]
 }
 impl[A] Add for T[A]
 impl[X] Default for T[X]
