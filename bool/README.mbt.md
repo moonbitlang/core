@@ -1,7 +1,3 @@
----
-moonbit: true
----
-
 # `bool`
 
 This package provides utility functions for working with boolean values, converting them to different numeric types.
