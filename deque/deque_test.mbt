@@ -958,3 +958,48 @@ test "@deque.to_array/wrapped_around" {
   let arr = dq.to_array()
   @json.inspect!(arr, content=[2, 3, 4])
 }
+
+///|
+test "pop_front when wrapped around" {
+  let dq = of([1, 2, 3, 4, 5])..push_front(6)
+  inspect!(dq.as_views(), content="([6], [1, 2, 3, 4, 5])")
+  for _ in 0..<dq.length() {
+    ignore(dq.pop_front())
+  }
+  inspect!(dq.as_views(), content="([], [])")
+}
+
+///|
+test "unsafe_pop_back when wrapped around" {
+  let dq = of([1, 2, 3, 4, 5])..push_front(6)
+  inspect!(dq.as_views(), content="([6], [1, 2, 3, 4, 5])")
+  for _ in 0..<dq.length() {
+    dq.unsafe_pop_back()
+  }
+  inspect!(dq.as_views(), content="([], [])")
+}
+
+///|
+test "pop_back when wrapped around" {
+  let dq = of([1, 2, 3, 4, 5])..push_front(6)
+  inspect!(dq.as_views(), content="([6], [1, 2, 3, 4, 5])")
+  for _ in 0..<dq.length() {
+    ignore(dq.pop_back())
+  }
+  inspect!(dq.as_views(), content="([], [])")
+}
+
+///|
+test "rev_iter when wrapped around" {
+  let dq = of([1, 2, 3, 4, 5])..push_front(6)
+  inspect!(dq.rev_iter(), content="[5, 4, 3, 2, 1, 6]")
+}
+
+///|
+test "rev_iter2 when wrapped around" {
+  let dq = of([1, 2, 3, 4, 5])..push_front(6)
+  inspect!(
+    dq.rev_iter2(),
+    content="[(0, 5), (1, 4), (2, 3), (3, 2), (4, 1), (5, 6)]",
+  )
+}
