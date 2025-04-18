@@ -7,6 +7,8 @@ fn monotonic_clock_end(Timestamp) -> Double
 
 fn monotonic_clock_start() -> Timestamp
 
+fn new() -> T
+
 fn single_bench(() -> Unit, count~ : UInt = ..) -> Summary
 
 // Types and methods

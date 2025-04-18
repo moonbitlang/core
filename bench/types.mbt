@@ -18,3 +18,10 @@ pub(all) struct T {
   buffer : StringBuilder
   summaries : Array[Summary]
 }
+
+///|
+pub fn new() -> T {
+  let buffer = StringBuilder::new()
+  let summaries = Array::new()
+  { buffer, summaries }
+}
