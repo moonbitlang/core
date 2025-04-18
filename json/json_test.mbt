@@ -503,3 +503,227 @@ test "stringify with indent" {
     ,
   )
 }
+
+///|
+test "Bool from_json with invalid input" {
+  let json_null = Json::Null
+  let result : Result[Bool, _] = @json.from_json?(json_null)
+  inspect!(
+    result,
+    content=
+      #|Err(JsonDecodeError(($, "Bool::from_json: expected boolean")))
+    ,
+  )
+  let json_num = Json::Number(123)
+  let result2 : Result[Bool, _] = @json.from_json?(json_num)
+  inspect!(
+    result2,
+    content=
+      #|Err(JsonDecodeError(($, "Bool::from_json: expected boolean")))
+    ,
+  )
+}
+
+///|
+test "Int64 from_json error cases" {
+  // Test with non-string input
+  let json_num = Json::Number(123)
+  let result : Result[Int64, _] = @json.from_json?(json_num)
+  inspect!(
+    result,
+    content=
+      #|Err(JsonDecodeError(($, "Int64::from_json: expected number in string representation")))
+    ,
+  )
+
+  // Test with invalid string input
+  let json_str = Json::String("not_a_number")
+  let result2 : Result[Int64, _] = @json.from_json?(json_str)
+  inspect!(
+    result2,
+    content=
+      #|Err(JsonDecodeError(($, "Int64::from_json: parsing failure invalid syntax")))
+    ,
+  )
+}
+
+///|
+test "UInt from_json with invalid input" {
+  let json_str = Json::String("123")
+  let result : Result[UInt, _] = @json.from_json?(json_str)
+  inspect!(
+    result,
+    content=
+      #|Err(JsonDecodeError(($, "UInt::from_json: expected number")))
+    ,
+  )
+}
+
+///|
+test "UInt64 from_json error cases" {
+  // Test with non-string input
+  let json_num = Json::Number(123)
+  let result : Result[UInt64, _] = @json.from_json?(json_num)
+  inspect!(
+    result,
+    content=
+      #|Err(JsonDecodeError(($, "UInt64::from_json: expected number in string representation")))
+    ,
+  )
+
+  // Test with invalid string input
+  let json_str = Json::String("not_a_number")
+  let result2 : Result[UInt64, _] = @json.from_json?(json_str)
+  inspect!(
+    result2,
+    content=
+      #|Err(JsonDecodeError(($, "UInt64::from_json: parsing failure invalid syntax")))
+    ,
+  )
+}
+
+///|
+test "String and View from_json with invalid input" {
+  let json_num = Json::Number(123)
+
+  // Test String
+  let result1 : Result[String, _] = @json.from_json?(json_num)
+  inspect!(
+    result1,
+    content=
+      #|Err(JsonDecodeError(($, "String::from_json: expected string")))
+    ,
+  )
+
+  // Test View
+  let result2 : Result[@string.View, _] = @json.from_json?(json_num)
+  inspect!(
+    result2,
+    content=
+      #|Err(JsonDecodeError(($, "View::from_json: expected string")))
+    ,
+  )
+}
+
+///|
+test "Char from_json error cases" {
+  // Test with non-string input
+  let json_num = Json::Number(123)
+  let result : Result[Char, _] = @json.from_json?(json_num)
+  inspect!(
+    result,
+    content=
+      #|Err(JsonDecodeError(($, "Char::from_json: expected string")))
+    ,
+  )
+
+  // Test with multi-character string
+  let json_str = Json::String("abc")
+  let result2 : Result[Char, _] = @json.from_json?(json_str)
+  inspect!(
+    result2,
+    content=
+      #|Err(JsonDecodeError(($, "Char::from_json: expected single character")))
+    ,
+  )
+}
+
+///|
+test "BigInt from_json with invalid input" {
+  let json_num = Json::Number(123)
+  let result : Result[BigInt, _] = @json.from_json?(json_num)
+  inspect!(
+    result,
+    content=
+      #|Err(JsonDecodeError(($, "BigInt::from_json: expected number")))
+    ,
+  )
+}
+
+///|
+test "Array and FixedArray from_json with invalid input" {
+  let json_num = Json::Number(123)
+  let result1 : Result[Array[Int], _] = @json.from_json?(json_num)
+  inspect!(
+    result1,
+    content=
+      #|Err(JsonDecodeError(($, "Array::from_json: expected array")))
+    ,
+  )
+  let result2 : Result[FixedArray[Int], _] = @json.from_json?(json_num)
+  inspect!(
+    result2,
+    content=
+      #|Err(JsonDecodeError(($, "FixedArray::from_json: expected array")))
+    ,
+  )
+}
+
+///|
+test "Map from_json with invalid input" {
+  let json_num = Json::Number(123)
+  let result : Result[Map[String, Int], _] = @json.from_json?(json_num)
+  inspect!(
+    result,
+    content=
+      #|Err(JsonDecodeError(($, "Map::from_json: expected object")))
+    ,
+  )
+}
+
+///|
+test "Option from_json with invalid input" {
+  let json_obj = Json::Object({ "key": Json::Number(123) })
+  let result : Result[Int?, _] = @json.from_json?(json_obj)
+  inspect!(
+    result,
+    content=
+      #|Err(JsonDecodeError(($, "Option::from_json: expected array or null")))
+    ,
+  )
+}
+
+///|
+test "Result from_json error cases" {
+  let json_num = Json::Number(123)
+
+  // Test with non-object
+  inspect!(
+    @json.from_json?(json_num),
+    content=
+      #|Err(JsonDecodeError(($, "Unit::from_json: expected null")))
+    ,
+  )
+
+  // Test with object with more than one field
+  let json_obj = Json::Object({
+    "Ok": Json::Number(123),
+    "Extra": Json::Number(456),
+  })
+  inspect!(
+    @json.from_json?(json_obj),
+    content=
+      #|Err(JsonDecodeError(($, "Unit::from_json: expected null")))
+    ,
+  )
+
+  // Test with object with invalid field name
+  let json_obj2 = Json::Object({ "Invalid": Json::Number(123) })
+  inspect!(
+    @json.from_json?(json_obj2),
+    content=
+      #|Err(JsonDecodeError(($, "Unit::from_json: expected null")))
+    ,
+  )
+}
+
+///|
+test "Unit from_json with invalid input" {
+  let json_num = Json::Number(123)
+  inspect!(
+    @json.from_json?(json_num),
+    content=
+      #|Err(JsonDecodeError(($, "Unit::from_json: expected null")))
+    ,
+  )
+}
