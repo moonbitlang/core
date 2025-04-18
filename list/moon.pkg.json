@@ -1,0 +1,18 @@
+{
+  "import": [
+    "moonbitlang/core/builtin",
+    "moonbitlang/core/array",
+    "moonbitlang/core/quickcheck",
+    "moonbitlang/core/json",
+    "moonbitlang/core/option"
+  ],
+  "test-import": [
+    "moonbitlang/core/prelude"
+  ],
+  "targets": {
+    "panic_test.mbt": [
+      "not",
+      "native"
+    ]
+  }
+}
