@@ -1,0 +1,13 @@
+{
+  "targets": {
+    "monotonic_clock_js.mbt": ["js"],
+    "monotonic_clock_wasm.mbt": ["wasm", "wasm-gc"],
+    "monotonic_clock_native.mbt": ["native"]
+  },
+  "import": [
+    "moonbitlang/core/builtin",
+    "moonbitlang/core/double",
+    "moonbitlang/core/array",
+    "moonbitlang/core/json"
+  ]
+}
