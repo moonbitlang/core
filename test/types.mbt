@@ -18,3 +18,8 @@ pub(all) struct T {
   name : String
   buffer : StringBuilder
 }
+
+///|
+pub fn new(name : String) -> T {
+  { name, buffer: StringBuilder::new() }
+}
