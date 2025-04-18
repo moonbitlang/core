@@ -13,6 +13,7 @@
 // limitations under the License.
 
 ///|
+#visibility(change_to="abstract")
 pub(all) struct T {
   buffer : StringBuilder
   summaries : Array[Summary]
