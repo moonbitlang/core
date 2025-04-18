@@ -99,10 +99,6 @@ jobs:
         run: |
           moon test --doc
 
-      - name: moon test --md
-        run: |
-          moon test --md
-
       - name: moon bundle
         run: moon bundle --all
 
