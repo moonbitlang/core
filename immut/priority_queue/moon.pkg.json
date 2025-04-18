@@ -4,10 +4,7 @@
     "moonbitlang/core/array",
     "moonbitlang/core/quickcheck"
   ],
-  "test-import": [
-    "moonbitlang/core/prelude",
-    "moonbitlang/core/random"
-  ],
+  "test-import": ["moonbitlang/core/random"],
   "targets": {
     "panic_test.mbt": ["not", "native"]
   }

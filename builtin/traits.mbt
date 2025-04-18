@@ -33,7 +33,7 @@ pub(open) trait Compare: Eq {
 /// Trait for types that can be hashed
 pub(open) trait Hash {
   hash_combine(Self, Hasher) -> Unit
-  hash(Self) -> Int
+  hash(Self) -> Int = _
 }
 
 ///|
@@ -52,7 +52,7 @@ pub(open) trait Default {
 pub(open) trait Logger {
   write_string(Self, String) -> Unit
   write_substring(Self, String, Int, Int) -> Unit
-  write_char(Self, Char) -> Unit
+  write_char(Self, Char) -> Unit = _
 }
 
 ///|
@@ -73,7 +73,7 @@ pub(open) trait Show {
   // By default `to_string` is implemented using `output` and a buffer,
   // but some types, such as `String`, may override `to_string`,
   // for different (unescaped) behavior when interpolated/printed directly
-  to_string(Self) -> String
+  to_string(Self) -> String = _
 }
 
 ///|

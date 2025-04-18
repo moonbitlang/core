@@ -13,7 +13,13 @@
 // limitations under the License.
 
 ///|
+#visibility(change_to="abstract")
 pub(all) struct T {
   name : String
   buffer : StringBuilder
+}
+
+///|
+pub fn new(name : String) -> T {
+  { name, buffer: StringBuilder::new() }
 }

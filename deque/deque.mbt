@@ -1254,11 +1254,11 @@ pub fn to_array[A](self : T[A]) -> Array[A] {
 
 ///|
 pub impl[A : ToJson] ToJson for T[A] with to_json(self : T[A]) -> Json {
-  let res = Array::make(self.length(), Json::Null)
+  let res = Array::make(self.length(), Json::null())
   for i, x in self {
     res[i] = x.to_json()
   }
-  Array(res)
+  Json::array(res)
 }
 
 ///|

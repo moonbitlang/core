@@ -4,8 +4,5 @@
     "moonbitlang/core/double",
     "moonbitlang/core/uint64",
     "moonbitlang/core/string"
-  ],
-  "test-import": [
-    "moonbitlang/core/prelude"
   ]
 }

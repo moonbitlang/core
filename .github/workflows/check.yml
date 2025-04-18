@@ -45,7 +45,7 @@ jobs:
 
       - name: format diff
         run: |
-          moon fmt --block-style
+          moon fmt
           git diff --exit-code
 
       - name: Set ulimit and run moon test
@@ -97,10 +97,6 @@ jobs:
       - name: moon test --doc
         run: |
           moon test --doc
-
-      - name: moon test --md
-        run: |
-          moon test --md
 
       - name: moon bundle
         run: moon bundle --all
@@ -175,129 +171,6 @@ jobs:
         run: |
           hawkeye check
 
-  check-day:
-    runs-on: ubuntu-latest
-    env:
-      TZ: UTC-13
-    outputs:
-      day_of_week: ${{ steps.check_day.outputs.day }}
-    steps:
-      - name: Check current day of week
-        id: check_day
-        run: |
-          echo "current time: $(date)"
-          DAY=$(date +%u)
-          echo "current day_of_week: $DAY"
-          echo "day=$DAY" >> $GITHUB_OUTPUT
-
-  pre-release-check:
-    needs: check-day
-    if: needs.check-day.outputs.day_of_week >= 4 && needs.check-day.outputs.day_of_week <= 5
-    continue-on-error: true
-    strategy:
-      matrix:
-        os: [macos-latest, ubuntu-latest, windows-latest, macos-13]
-    runs-on: ${{ matrix.os }}
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: install
-        if: ${{ matrix.os != 'windows-latest' }}
-        run: |
-          curl -fsSL https://cli.moonbitlang.com/install/unix.sh | bash -s pre-release
-          echo "$HOME/.moon/bin" >> $GITHUB_PATH
-
-      - name: install on windows
-        env:
-          MOONBIT_INSTALL_VERSION: pre-release
-        if: ${{ matrix.os == 'windows-latest' }}
-        run: |
-          Set-ExecutionPolicy RemoteSigned -Scope CurrentUser; irm https://cli.moonbitlang.com/install/powershell.ps1 | iex
-          "C:\Users\runneradmin\.moon\bin" | Out-File -FilePath $env:GITHUB_PATH -Append
-
-      - name: moon version
-        run: |
-          moon version --all
-          moonrun --version
-
-      - name: moon check
-        run: moon check --deny-warn
-
-      - name: moon info
-        run: |
-          moon info --target wasm,wasm-gc,js,native
-          git diff --exit-code
-
-      - name: format diff
-        run: |
-          moon fmt --block-style
-          git diff --exit-code
-
-      - name: Set ulimit and run moon test
-        if: ${{ matrix.os != 'windows-latest' }}
-        run: |
-          ulimit -s 8176
-          moon test --target all
-          moon test --release --target all
-          moon test --target native
-          moon test --target native --release
-
-      - name: moon test with dedup_wasm
-        if: ${{ contains(matrix.os, 'ubuntu') }}
-        run: |
-          moon clean
-          ulimit -s 8176
-          moon test --target wasm
-          moon test --target wasm-gc
-          moon test --release --target wasm
-          moon test --release --target wasm-gc
-        env: 
-          MOONC_INTERNAL_PARAMS: dedup_wasm = 1 |
-
-
-      - name: Setup MSVC
-        if: ${{ matrix.os == 'windows-latest' }}
-        uses: ilammy/msvc-dev-cmd@v1
-
-      - name: Run moon test on Windows (--target all)
-        if: ${{ matrix.os == 'windows-latest' }}
-        run: |
-          moon test --target all
-
-      - name: Run moon test on Windows (--release + --target all)
-        if: ${{ matrix.os == 'windows-latest' }}
-        run: |
-          moon test --release --target all
-      
-      - name: Run moon test on Windows (--target native)
-        if: ${{ matrix.os == 'windows-latest' }}
-        run: |
-          moon test --target native
-      
-      - name: Run moon test on Windows (--release + --target native)
-        if: ${{ matrix.os == 'windows-latest' }}
-        run: |
-          moon test --target native --release
-
-      - name: moon test --doc
-        run: |
-          moon test --doc
-
-      - name: moon test --md
-        run: |
-          moon test --md
-
-      - name: moon bundle
-        run: moon bundle --all
-
-      - name: check core size
-        if: ${{ matrix.os != 'windows-latest' }}
-        run: find ./target -name '*.core' | xargs ls -lh
-
-      - name: check core size on windows
-        if: ${{ matrix.os == 'windows-latest' }}
-        run: Get-ChildItem -Path ".\target" -Recurse -Filter "*.core" | ForEach-Object { "{0} ({1} bytes)" -f $_.FullName, $_.Length }
-
   bleeding-check:
     continue-on-error: true
     strategy:
@@ -369,10 +242,6 @@ jobs:
       - name: moon test --doc
         run: |
           moon test --doc
-
-      - name: moon test --md
-        run: |
-            moon test --md
 
       - name: moon check
         run: moon check

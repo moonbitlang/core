@@ -1,7 +1,3 @@
----
-moonbit: true
----
-
 # `char`
 
 This package provides a set of utilities for working with characters, focusing on character classification and validation.

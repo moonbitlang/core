@@ -311,7 +311,7 @@ pub impl BitXOr for BigInt with lxor(self, other) {
 /// }
 /// ```
 pub extern "js" fn BigInt::to_uint(self : BigInt) -> UInt =
-  #|(x) => Number(BigInt.asUintN(32, x))
+  #|(x) => Number(BigInt.asUintN(32, x)) | 0
 
 ///|
 /// Converts a `BigInt` to a 32-bit signed integer (`Int`).

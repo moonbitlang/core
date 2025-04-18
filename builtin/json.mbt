@@ -13,6 +13,7 @@
 // limitations under the License.
 
 ///|
+#visibility(change_to="readonly", "Use smart constructor to make json")
 pub(all) enum Json {
   Null
   True

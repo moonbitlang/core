@@ -30,7 +30,7 @@ pub impl[A : ToJson] ToJson for T[A] with to_json(self) {
   for a in self {
     jsons.push(a.to_json())
   }
-  Array(jsons)
+  Json::array(jsons)
 }
 
 ///|
@@ -364,10 +364,16 @@ pub fn fold[A, B](self : T[A], init~ : B, f : (B, A) -> B) -> B {
 /// assert_eq!(r, 15)
 /// ```
 pub fn rev_fold[A, B](self : T[A], init~ : B, f : (A, B) -> B) -> B {
-  match self {
-    Nil => init
-    Cons(head, tail) => f(head, tail.rev_fold(f, init~))
+  let tsil = self.rev() // avoid stack overflow, because we don't know `f` will use how much stack.
+  let mut acc = init
+  loop tsil {
+    Nil => ()
+    Cons(x, xs) => {
+      acc = f(x, acc)
+      continue xs
+    }
   }
+  acc
 }
 
 ///|

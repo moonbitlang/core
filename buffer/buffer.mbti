@@ -7,6 +7,12 @@ import(
 // Values
 fn contents(T) -> Bytes
 
+fn from_array(Array[Byte]) -> T
+
+fn from_bytes(Bytes) -> T
+
+fn from_iter(Iter[Byte]) -> T
+
 fn is_empty(T) -> Bool
 
 fn length(T) -> Int

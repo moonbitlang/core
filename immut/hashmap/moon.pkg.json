@@ -7,7 +7,6 @@
     "moonbitlang/core/immut/internal/sparse_array"
   ],
   "test-import": [
-    "moonbitlang/core/prelude",
     "moonbitlang/core/int",
     "moonbitlang/core/string",
     "moonbitlang/core/option"
