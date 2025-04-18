@@ -189,10 +189,15 @@ pub fn from_array(arr : Array[Byte]) -> T {
 ///|
 /// Create a buffer from an iterator.
 pub fn from_iter(iter : Iter[Byte]) -> T {
-  let buf = new(size_hint=iter.count())
+  let buf = new()
+  let mut capacity = buf.data.length()
   for byte in iter {
-    // inline write_byte, skip grow_if_necessary check
-    // SAFETY: known iter size
+    // inline write_byte and grow_if_necessary
+    // only call grow_if_necessary when necessary
+    if buf.len == capacity {
+      buf.grow_if_necessary(capacity + 1)
+      capacity = buf.data.length()
+    }
     buf.data[buf.len] = byte
     buf.len += 1
   }

@@ -31,6 +31,12 @@ test "create buffer from iterator" {
   let iter = [b'5', b'\x00', b'6', b'\x00', b'7', b'\x00'].iter()
   let buf = @buffer.from_iter(iter)
   inspect!(buf, content="567")
+  let iter = [].iter()
+  let buf = @buffer.from_iter(iter)
+  inspect!(buf, content="")
+  let iter = b"0\x00".iter()
+  let buf = @buffer.from_iter(iter)
+  inspect!(buf, content="0")
 }
 
 ///|
