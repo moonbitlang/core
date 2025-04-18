@@ -13,6 +13,33 @@
 // limitations under the License.
 
 ///|
+test "create buffer from bytes" {
+  let bytes = b"1\x002\x003\x00"
+  let buf = @buffer.from_bytes(bytes)
+  inspect!(buf, content="123")
+}
+
+///|
+test "create buffer from array" {
+  let arr = [b'4', b'\x00', b'5', b'\x00', b'6', b'\x00']
+  let buf = @buffer.from_array(arr)
+  inspect!(buf, content="456")
+}
+
+///|
+test "create buffer from iterator" {
+  let iter = [b'5', b'\x00', b'6', b'\x00', b'7', b'\x00'].iter()
+  let buf = @buffer.from_iter(iter)
+  inspect!(buf, content="567")
+  let iter = [].iter()
+  let buf = @buffer.from_iter(iter)
+  inspect!(buf, content="")
+  let iter = b"0\x00".iter()
+  let buf = @buffer.from_iter(iter)
+  inspect!(buf, content="0")
+}
+
+///|
 test "length method" {
   let buf = @buffer.new(size_hint=100)
   inspect!(buf.length(), content="0")
