@@ -64,6 +64,15 @@ test "HAMT::remove" {
 }
 
 ///|
+test "HAMT::elems" {
+  let m = @hashmap.of([(1, "one"), (2, "two")])
+  let elems = m.elems()
+  assert_eq!(elems.contains("one"), true)
+  assert_eq!(elems.contains("two"), true)
+  assert_eq!(elems.contains("three"), false)
+}
+
+///|
 test "HAMT::iter" {
   let data = @hashmap.of([(0, "a"), (2, "b"), (3, "d"), (5, "e"), (11111, "f")])
   let mut s = ""

@@ -234,6 +234,11 @@ pub fn each[K, V](self : T[K, V], f : (K, V) -> Unit) -> Unit {
 }
 
 ///|
+pub fn elems[K, V](self : T[K, V]) -> Array[V] {
+  self.iter().map(fn { (_, v) => v }).collect()
+}
+
+///|
 /// Converted to Iter
 pub fn iter[K, V](self : T[K, V]) -> Iter[(K, V)] {
   match self {

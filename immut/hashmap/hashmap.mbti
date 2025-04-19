@@ -11,6 +11,8 @@ fn contains[K : Eq + Hash, V](T[K, V], K) -> Bool
 
 fn each[K, V](T[K, V], (K, V) -> Unit) -> Unit
 
+fn elems[K, V](T[K, V]) -> Array[V]
+
 fn find[K : Eq + Hash, V](T[K, V], K) -> V?
 
 fn from_array[K : Eq + Hash, V](Array[(K, V)]) -> T[K, V]
@@ -39,6 +41,7 @@ impl T {
   add[K : Eq + Hash, V](Self[K, V], K, V) -> Self[K, V]
   contains[K : Eq + Hash, V](Self[K, V], K) -> Bool
   each[K, V](Self[K, V], (K, V) -> Unit) -> Unit
+  elems[K, V](Self[K, V]) -> Array[V]
   find[K : Eq + Hash, V](Self[K, V], K) -> V?
   iter[K, V](Self[K, V]) -> Iter[(K, V)]
   iter2[K, V](Self[K, V]) -> Iter2[K, V]
