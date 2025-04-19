@@ -20,6 +20,8 @@ fn filter[K : Compare, V](T[K, V], (V) -> Bool) -> T[K, V]
 
 fn filter_with_key[K : Compare, V](T[K, V], (K, V) -> Bool) -> T[K, V]
 
+fn find[K : Compare, V](T[K, V], K) -> V?
+
 fn fold[K, V, A](T[K, V], init~ : A, (A, V) -> A) -> A
 
 fn foldl_with_key[K, V, A](T[K, V], (A, K, V) -> A, init~ : A) -> A
@@ -42,8 +44,6 @@ fn iter[K, V](T[K, V]) -> Iter[(K, V)]
 fn iter2[K, V](T[K, V]) -> Iter2[K, V]
 
 fn keys[K, V](T[K, V]) -> Array[K]
-
-fn lookup[K : Compare, V](T[K, V], K) -> V?
 
 fn map[K, X, Y](T[K, X], (X) -> Y) -> T[K, Y]
 
@@ -77,6 +77,7 @@ impl T {
   empty[K, V]() -> Self[K, V]
   filter[K : Compare, V](Self[K, V], (V) -> Bool) -> Self[K, V]
   filter_with_key[K : Compare, V](Self[K, V], (K, V) -> Bool) -> Self[K, V]
+  find[K : Compare, V](Self[K, V], K) -> V?
   fold[K, V, A](Self[K, V], init~ : A, (A, V) -> A) -> A
   foldl_with_key[K, V, A](Self[K, V], (A, K, V) -> A, init~ : A) -> A
   foldr_with_key[K, V, A](Self[K, V], (A, K, V) -> A, init~ : A) -> A
@@ -92,7 +93,6 @@ impl T {
   iter[K, V](Self[K, V]) -> Iter[(K, V)]
   iter2[K, V](Self[K, V]) -> Iter2[K, V]
   keys[K, V](Self[K, V]) -> Array[K]
-  lookup[K : Compare, V](Self[K, V], K) -> V?
   map[K, X, Y](Self[K, X], (X) -> Y) -> Self[K, Y]
   map_with_key[K, X, Y](Self[K, X], (K, X) -> Y) -> Self[K, Y]
   #deprecated

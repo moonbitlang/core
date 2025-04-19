@@ -13,7 +13,7 @@
 // limitations under the License.
 
 ///|
-test "lookup" {
+test "find" {
   let m = @sorted_map.of([
     (3, "three"),
     (8, "eight"),
@@ -21,9 +21,9 @@ test "lookup" {
     (2, "two"),
     (0, "zero"),
   ])
-  assert_eq!(m.lookup(8), Some("eight"))
-  assert_eq!(m.lookup(2), Some("two"))
-  assert_eq!(m.lookup(4), None)
+  assert_eq!(m.find(8), Some("eight"))
+  assert_eq!(m.find(2), Some("two"))
+  assert_eq!(m.find(4), None)
 }
 
 ///|

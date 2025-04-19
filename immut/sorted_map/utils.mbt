@@ -72,7 +72,7 @@ fn make_tree[K, V](key : K, value : V, l : T[K, V], r : T[K, V]) -> T[K, V] {
 ///|
 /// Get the value associated with a key.
 /// O(log n).
-pub fn lookup[K : Compare, V](self : T[K, V], key : K) -> V? {
+pub fn find[K : Compare, V](self : T[K, V], key : K) -> V? {
   loop self {
     Empty => None
     Tree(k, value~, l, r, ..) => {
@@ -90,7 +90,7 @@ pub fn lookup[K : Compare, V](self : T[K, V], key : K) -> V? {
 
 ///|
 pub fn op_get[K : Compare, V](self : T[K, V], key : K) -> V? {
-  self.lookup(key)
+  self.find(key)
 }
 
 ///|

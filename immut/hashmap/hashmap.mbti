@@ -7,6 +7,8 @@ import(
 // Values
 fn add[K : Eq + Hash, V](T[K, V], K, V) -> T[K, V]
 
+fn contains[K : Eq + Hash, V](T[K, V], K) -> Bool
+
 fn each[K, V](T[K, V], (K, V) -> Unit) -> Unit
 
 fn find[K : Eq + Hash, V](T[K, V], K) -> V?
@@ -35,6 +37,7 @@ fn union[K : Eq + Hash, V](T[K, V], T[K, V]) -> T[K, V]
 type T[K, V]
 impl T {
   add[K : Eq + Hash, V](Self[K, V], K, V) -> Self[K, V]
+  contains[K : Eq + Hash, V](Self[K, V], K) -> Bool
   each[K, V](Self[K, V], (K, V) -> Unit) -> Unit
   find[K : Eq + Hash, V](Self[K, V], K) -> V?
   iter[K, V](Self[K, V]) -> Iter[(K, V)]

@@ -28,15 +28,15 @@ test {
 }
 ```
 
-## Insert & Lookup
+## Insert & Find
 
-You can use `add()` to add a key-value pair to the map and create a new map. Or use `lookup()` to get the value associated with a key.
+You can use `add()` to add a key-value pair to the map and create a new map. Or use `find()` to get the value associated with a key.
 
 ```moonbit
 test {
   let map : @sorted_map.T[String,Int] = @sorted_map.new()
   let map = map.add("a", 1)
-  assert_eq!(map.lookup("a"), Some(1))
+  assert_eq!(map.find("a"), Some(1))
 }
 ```
 
@@ -48,7 +48,7 @@ You can use `remove()` to remove a key-value pair from the map.
 test {
   let map = @sorted_map.of([("a", 1), ("b", 2), ("c", 3)])
   let map = map.remove("a")
-  assert_eq!(map.lookup("a"), None)
+  assert_eq!(map.find("a"), None)
 }
 ```
 
