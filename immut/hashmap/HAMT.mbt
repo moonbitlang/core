@@ -39,6 +39,13 @@ pub fn new[K, V]() -> T[K, V] {
   Empty
 }
 
+pub fn contains[K : Eq + Hash, V](self : T[K, V], key : K) -> Bool {
+  match self.find(key) {
+    Some(_) => true
+    None => false
+  }
+}
+
 ///|
 /// Lookup a key from a hash map
 pub fn find[K : Eq + Hash, V](self : T[K, V], key : K) -> V? {

@@ -247,3 +247,13 @@ test "union 2 hashmaps, without conflict" {
   let map4 = @hashmap.of([(1, 1), (2, 2), (3, 3), (4, 4), (5, 5), (6, 6)])
   inspect!(map3 == map4, content="true")
 }
+
+test "HAMT::contains" {
+  let map = @hashmap.of([(1, "one")])
+  assert_eq!(map.contains(1), true)
+  assert_eq!(map.contains(2), false)
+  let map2 = map.add(2, "two")
+  assert_eq!(map2.contains(2), true)
+  let map3 = map.remove(2)
+  assert_eq!(map3.contains(2), false)
+}
