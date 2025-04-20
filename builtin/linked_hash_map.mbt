@@ -168,18 +168,14 @@ pub fn Map::op_set[K : Hash + Eq, V](
 pub fn Map::get[K : Hash + Eq, V](self : Map[K, V], key : K) -> V? {
   let hash = key.hash()
   for i = 0, idx = hash & self.capacity_mask {
-    match self.entries[idx] {
-      Some(entry) => {
-        if entry.hash == hash && entry.key == key {
-          break Some(entry.value)
-        }
-        if i > entry.psl {
-          break None
-        }
-        continue i + 1, (idx + 1) & self.capacity_mask
-      }
-      None => break None
+    guard self.entries[idx] is Some(entry) else { break None }
+    if entry.hash == hash && entry.key == key {
+      break Some(entry.value)
     }
+    if i > entry.psl {
+      break None
+    }
+    continue i + 1, (idx + 1) & self.capacity_mask
   }
 }
 
