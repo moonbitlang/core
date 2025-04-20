@@ -577,10 +577,8 @@ pub impl[K : Hash + Eq, V : Eq] Eq for Map[K, V] with op_equal(
 ) -> Bool {
   guard self.size == that.size else { return false }
   for k, v in self {
-    match that.get(k) {
-      None => break false
-      Some(v_) => if v_ != v { break false }
-    }
+    guard that.contains_kv(k, v) else { return false }
+
   } else {
     true
   }
