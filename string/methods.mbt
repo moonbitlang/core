@@ -648,7 +648,7 @@ test "split" {
 /// 
 /// If `old` is empty, it matches the beginning of the string, and `new` is
 /// prepended to the string.
-pub fn View::replace(self : View, old~ : View, new~ : View) -> String {
+pub fn View::replace(self : View, old~ : View, new~ : View) -> View {
   match self.find(old) {
     Some(end) =>
       [
@@ -656,7 +656,7 @@ pub fn View::replace(self : View, old~ : View, new~ : View) -> String {
         ..new,
         ..self.view(start_offset=end + old.length()),
       ]
-    None => self.to_string()
+    None => self
   }
 }
 
@@ -666,7 +666,15 @@ pub fn View::replace(self : View, old~ : View, new~ : View) -> String {
 /// If `old` is empty, it matches the beginning of the string, and `new` is
 /// prepended to the string.
 pub fn replace(self : String, old~ : View, new~ : View) -> String {
-  self[:].replace(old~, new~)
+  match self.find(old) {
+    Some(end) =>
+      [
+        ..self.view(end_offset=end),
+        ..new,
+        ..self.view(start_offset=end + old.len()),
+      ]
+    None => self
+  }
 }
 
 ///|
