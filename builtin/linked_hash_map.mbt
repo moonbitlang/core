@@ -278,7 +278,7 @@ pub fn Map::contains[K : Hash + Eq, V](self : Map[K, V], key : K) -> Bool {
 /// Example:
 ///
 /// ```moonbit
-/// ///|
+/// 
 /// test "Map::contains_kv" {
 ///   let map = { "a": 1, "b": 2 }
 ///   inspect!(map.contains_kv("a", 1), content="true")
