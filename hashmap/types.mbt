@@ -41,6 +41,7 @@ priv struct Entry[K, V] {
 struct T[K, V] {
   mut entries : FixedArray[Entry[K, V]?]
   mut capacity : Int
+  mut capacity_mask : Int // capacity_mask = capacity - 1, used to find idx
   // size of field `entries`, it is redundant but useful for performance
   // so we don't need do `self.entries.length()` every time
   mut size : Int // active key-value pairs count
