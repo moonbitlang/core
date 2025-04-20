@@ -47,3 +47,17 @@ struct T[K, V] {
   mut size : Int // active key-value pairs count
   // mut growAt : Int // threshold that triggers grow
 }
+
+///|
+pub impl[K : Hash + Eq, V : Eq] Eq for T[K, V] with op_equal(
+  self : T[K, V],
+  that : T[K, V]
+) -> Bool {
+  guard self.size == that.size else { return false }
+  for k, v in self {
+    guard that.contains_kv(k, v) else { return false }
+
+  } else {
+    true
+  }
+}
