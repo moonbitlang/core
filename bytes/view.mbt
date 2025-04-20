@@ -61,10 +61,7 @@ pub fn View::length(self : View) -> Int {
 /// * `self` : The bytes view to retrieve the byte from.
 /// * `index` : The position in the view from which to retrieve the byte.
 ///
-/// Returns the byte at the specified index.
-///
-/// Throws a runtime error if the index is out of bounds (negative or greater
-/// than or equal to the length of the view).
+/// Returns the byte at the specified index if the index is valid.
 ///
 /// Example:
 ///
@@ -87,6 +84,37 @@ pub fn View::op_get(self : View, index : Int) -> Byte {
     )
   }
   self.bytes[self.start + index]
+}
+
+///|
+/// Retrieves a byte from the view at the specified index.
+///
+/// Parameters:
+///
+/// * `self` : The bytes view to retrieve the byte from.
+/// * `index` : The position in the view from which to retrieve the byte.
+///
+/// Returns the byte at the specified index, or None if the index is out of bounds.
+///
+/// Example:
+///
+/// ```moonbit
+/// test "View::get" {
+///   let bytes = b"\x01\x02\x03\x04\x05"
+///   let view = bytes[1:4] 
+///   let result = view.get(1)
+///   inspect!(result, content="Some(b'\\x03')")
+/// }
+/// test "View::get/out_of_bounds" {
+///   let bytes = b"\x01\x02\x03\x04\x05"
+///   let view = bytes[1:4] 
+///   let result = view.get(5)
+///   inspect!(result, content="None")
+/// }
+/// ```
+pub fn View::get(self : View, index : Int) -> Byte? {
+  guard index >= 0 && index < self.len else { None }
+  Some(self.bytes[self.start + index])
 }
 
 ///|
