@@ -180,18 +180,15 @@ test "Buffer::to_bytes" {
 
 ///|
 test "trim_start" {
-  inspect!("aaabcd".trim_start("a".view()), content="bcd")
-  inspect!("aaabcd".trim_start(" ".view()), content="aaabcd")
-  inspect!("aaabcd".trim_start("".view()), content="aaabcd")
-  inspect!("  abc".trim_start(" ".view()), content="abc")
+  inspect!("aaabcd".trim_start("a"), content="bcd")
+  inspect!("aaabcd".trim_start(" "), content="aaabcd")
+  inspect!("aaabcd".trim_start(""), content="aaabcd")
+  inspect!("  abc".trim_start(" "), content="abc")
   inspect!(
-    "哇你好月兔你好哇".trim_start("你好哇".view()),
+    "哇你好月兔你好哇".trim_start("你好哇"),
     content="月兔你好哇",
   )
-  inspect!(
-    "😍😍😭😡😡".trim_start("😍".view()),
-    content="😭😡😡",
-  )
+  inspect!("😍😍😭😡😡".trim_start("😍"), content="😭😡😡")
 }
 
 ///|
@@ -204,31 +201,25 @@ test "contains" {
 
 ///|
 test "trim_end" {
-  inspect!("abcddd".trim_end("d".view()), content="abc")
-  inspect!("abcddd".trim_end(" ".view()), content="abcddd")
-  inspect!("abcddd".trim_end("".view()), content="abcddd")
-  inspect!("abc  ".trim_end(" ".view()), content="abc")
+  inspect!("abcddd".trim_end("d"), content="abc")
+  inspect!("abcddd".trim_end(" "), content="abcddd")
+  inspect!("abcddd".trim_end(""), content="abcddd")
+  inspect!("abc  ".trim_end(" "), content="abc")
   inspect!(
-    "哇你好月兔你好哇".trim_end("你好哇".view()),
+    "哇你好月兔你好哇".trim_end("你好哇"),
     content="哇你好月兔",
   )
-  inspect!(
-    "😍😍😭😡😡".trim_end("😡".view()),
-    content="😍😍😭",
-  )
+  inspect!("😍😍😭😡😡".trim_end("😡"), content="😍😍😭")
 }
 
 ///|
 test "trim" {
-  inspect!("xxxabcxxx".trim("x".view()), content="abc")
-  inspect!("xxxabcxxx".trim("".view()), content="xxxabcxxx")
-  inspect!(
-    "哇你好月兔你好哇".trim("你好哇".view()),
-    content="月兔",
-  )
-  inspect!("\n\r\t abc \n\r\t".trim(" \n\r\t".view()), content="abc")
-  inspect!("=-wow-=".trim("-=".view()), content="wow")
-  inspect!("😍😍😭😡😡".trim("😍😡".view()), content="😭")
+  inspect!("xxxabcxxx".trim("x"), content="abc")
+  inspect!("xxxabcxxx".trim(""), content="xxxabcxxx")
+  inspect!("哇你好月兔你好哇".trim("你好哇"), content="月兔")
+  inspect!("\n\r\t abc \n\r\t".trim(" \n\r\t"), content="abc")
+  inspect!("=-wow-=".trim("-="), content="wow")
+  inspect!("😍😍😭😡😡".trim("😍😡"), content="😭")
 }
 
 ///|
@@ -409,39 +400,39 @@ test "ends_with" {
 ///|
 test "split" {
   inspect!(
-    "a,b,c,d,e".split(",".view()),
+    "a,b,c,d,e".split(","),
     content=
       #|["a", "b", "c", "d", "e"]
     ,
   )
   inspect!(
-    "abcde".split("".view()),
+    "abcde".split(""),
     content=
       #|["a", "b", "c", "d", "e"]
     ,
   )
   inspect!(
-    "a b c d e".split(" ".view()),
+    "a b c d e".split(" "),
     content=
       #|["a", "b", "c", "d", "e"]
     ,
   )
   inspect!(
-    "abcde".split("x".view()),
+    "abcde".split("x"),
     content=
       #|["abcde"]
     ,
   )
-  inspect!("".split("".view()), content="[]")
-  inspect!("".split("x".view()), content="[]")
+  inspect!("".split(""), content="[]")
+  inspect!("".split("x"), content="[]")
   inspect!(
-    "你 wow 好 wow 月 wow 兔".split(" wow ".view()),
+    "你 wow 好 wow 月 wow 兔".split(" wow "),
     content=
       #|["你", "好", "月", "兔"]
     ,
   )
   inspect!(
-    "👍😍😭👍😍😭👍😍😭👍".split("😍😭".view()),
+    "👍😍😭👍😍😭👍😍😭👍".split("😍😭"),
     content=
       #|["👍", "👍", "👍", "👍"]
     ,
@@ -450,43 +441,31 @@ test "split" {
 
 ///|
 test "replace" {
-  inspect!("abcabc".replace(old="b".view(), new="x".view()), content="axcabc")
-  inspect!("abcabc".replace(old="".view(), new=",".view()), content=",abcabc")
-  inspect!("a b c".replace(old=" ".view(), new=",".view()), content="a,b c")
-  inspect!("abcabc".replace(old="x".view(), new="a".view()), content="abcabc")
+  inspect!("abcabc".replace(old="b", new="x"), content="axcabc")
+  inspect!("abcabc".replace(old="", new=","), content=",abcabc")
+  inspect!("a b c".replace(old=" ", new=","), content="a,b c")
+  inspect!("abcabc".replace(old="x", new="a"), content="abcabc")
   inspect!(
-    "你好月兔".replace(old="月兔".view(), new="Moonbit".view()),
+    "你好月兔".replace(old="月兔", new="Moonbit"),
     content="你好Moonbit",
   )
-  inspect!(
-    "👍😍😭".replace(old="😍😭".view(), new="".view()),
-    content="👍",
-  )
+  inspect!("👍😍😭".replace(old="😍😭", new=""), content="👍")
 }
 
 ///|
 test "replace_all" {
+  inspect!("abcabc".replace_all(old="b", new="x"), content="axcaxc")
+  inspect!("abcabc".replace_all(old="", new=","), content=",a,b,c,a,b,c,")
+  inspect!("a b c".replace_all(old=" ", new=","), content="a,b,c")
+  inspect!("".replace_all(old="", new="x"), content="x")
   inspect!(
-    "abcabc".replace_all(old="b".view(), new="x".view()),
-    content="axcaxc",
-  )
-  inspect!(
-    "abcabc".replace_all(old="".view(), new=",".view()),
-    content=",a,b,c,a,b,c,",
-  )
-  inspect!("a b c".replace_all(old=" ".view(), new=",".view()), content="a,b,c")
-  inspect!("".replace_all(old="".view(), new="x".view()), content="x")
-  inspect!(
-    "你好月兔，月兔你好".replace_all(
-      old="月兔".view(),
-      new="Moonbit".view(),
-    ),
+    "你好月兔，月兔你好".replace_all(old="月兔", new="Moonbit"),
     content="你好Moonbit，Moonbit你好",
   )
   inspect!(
     "👍😍😭👍😍😭👍😍😭👍".replace_all(
-      old="😍😭".view(),
-      new="".view(),
+      old="😍😭",
+      new="",
     ),
     content="👍👍👍👍",
   )
@@ -521,58 +500,58 @@ test "to_upper" {
 ///|
 test "split" {
   inspect!(
-    "a b c d e".split(" ".view()),
+    "a b c d e".split(" "),
     content=
       #|["a", "b", "c", "d", "e"]
     ,
   )
   inspect!(
-    "abcde".split("x".view()),
+    "abcde".split("x"),
     content=
       #|["abcde"]
     ,
   )
-  inspect!("".split("".view()), content="[]")
-  inspect!("".split("x".view()), content="[]")
+  inspect!("".split(""), content="[]")
+  inspect!("".split("x"), content="[]")
   inspect!(
-    "你 wow 好 wow 月 wow 兔".split(" wow ".view()),
+    "你 wow 好 wow 月 wow 兔".split(" wow "),
     content=
       #|["你", "好", "月", "兔"]
     ,
   )
   inspect!(
-    "👍😍😭👍😍😭👍😍😭👍".split("😍😭".view()),
+    "👍😍😭👍😍😭👍😍😭👍".split("😍😭"),
     content=
       #|["👍", "👍", "👍", "👍"]
     ,
   )
   // Additional test cases
   inspect!(
-    "a,b,c,d,e".split(",".view()),
+    "a,b,c,d,e".split(","),
     content=
       #|["a", "b", "c", "d", "e"]
     ,
   )
   inspect!(
-    "a,,b,,c".split(",".view()),
+    "a,,b,,c".split(","),
     content=
       #|["a", "", "b", "", "c"]
     ,
   )
   inspect!(
-    "a,,b,,c".split(",,".view()),
+    "a,,b,,c".split(",,"),
     content=
       #|["a", "b", "c"]
     ,
   )
   inspect!(
-    "a b c d e".split("".view()),
+    "a b c d e".split(""),
     content=
       #|["a", " ", "b", " ", "c", " ", "d", " ", "e"]
     ,
   )
   inspect!(
-    "a b c d e".split(" ".view()),
+    "a b c d e".split(" "),
     content=
       #|["a", "b", "c", "d", "e"]
     ,

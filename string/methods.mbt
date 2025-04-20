@@ -50,23 +50,22 @@ pub fn View::find(self : View, str : View) -> Int? {
 /// Returns the offset of the first occurrence of the given substring. If the
 /// substring is not found, it returns None.
 pub fn String::find(self : String, str : View) -> Int? {
-  self.view().find(str)
+  self[:].find(str)
 }
 
 ///|
 test "find" {
-  // todo: remove .view() when new version is released
-  inspect!("hello".find("o".view()), content="Some(4)")
-  inspect!("hello".find("l".view()), content="Some(2)")
-  inspect!("hello".find("hello".view()), content="Some(0)")
-  inspect!("hello".find("h".view()), content="Some(0)")
-  inspect!("hello".find("".view()), content="Some(0)")
-  inspect!("hello".find("world".view()), content="None")
-  inspect!("".find("".view()), content="Some(0)")
-  inspect!("".find("a".view()), content="None")
-  inspect!("hello hello".find("hello".view()), content="Some(0)")
-  inspect!("aaa".find("aa".view()), content="Some(0)")
-  inspect!("😀😀".find("😀".view()), content="Some(0)")
+  inspect!("hello".find("o"), content="Some(4)")
+  inspect!("hello".find("l"), content="Some(2)")
+  inspect!("hello".find("hello"), content="Some(0)")
+  inspect!("hello".find("h"), content="Some(0)")
+  inspect!("hello".find(""), content="Some(0)")
+  inspect!("hello".find("world"), content="None")
+  inspect!("".find(""), content="Some(0)")
+  inspect!("".find("a"), content="None")
+  inspect!("hello hello".find("hello"), content="Some(0)")
+  inspect!("aaa".find("aa"), content="Some(0)")
+  inspect!("😀😀".find("😀"), content="Some(0)")
 }
 
 ///|
@@ -103,23 +102,22 @@ pub fn View::rev_find(self : View, str : View) -> Int? {
 /// Returns the offset (charcode index) of the last occurrence of the given
 /// substring. If the substring is not found, it returns None.
 pub fn String::rev_find(self : String, str : View) -> Int? {
-  self.view().rev_find(str)
+  self[:].rev_find(str)
 }
 
 ///|
 test "rev_find" {
-  // todo: remove .view() when new version is released
-  inspect!("hello".rev_find("o".view()), content="Some(4)")
-  inspect!("hello".rev_find("l".view()), content="Some(3)")
-  inspect!("hello".rev_find("hello".view()), content="Some(0)")
-  inspect!("hello".rev_find("h".view()), content="Some(0)")
-  inspect!("hello".rev_find("".view()), content="Some(5)")
-  inspect!("hello".rev_find("world".view()), content="None")
-  inspect!("".rev_find("".view()), content="Some(0)")
-  inspect!("".rev_find("a".view()), content="None")
-  inspect!("hello hello".rev_find("hello".view()), content="Some(6)")
-  inspect!("aaa".rev_find("aa".view()), content="Some(1)")
-  inspect!("😀😀".rev_find("😀".view()), content="Some(2)")
+  inspect!("hello".rev_find("o"), content="Some(4)")
+  inspect!("hello".rev_find("l"), content="Some(3)")
+  inspect!("hello".rev_find("hello"), content="Some(0)")
+  inspect!("hello".rev_find("h"), content="Some(0)")
+  inspect!("hello".rev_find(""), content="Some(5)")
+  inspect!("hello".rev_find("world"), content="None")
+  inspect!("".rev_find(""), content="Some(0)")
+  inspect!("".rev_find("a"), content="None")
+  inspect!("hello hello".rev_find("hello"), content="Some(6)")
+  inspect!("aaa".rev_find("aa"), content="Some(1)")
+  inspect!("😀😀".rev_find("😀"), content="Some(2)")
 }
 
 ///| 
@@ -131,22 +129,21 @@ pub fn View::has_suffix(self : View, str : View) -> Bool {
 ///|
 /// Returns true if the given substring is suffix of this string.
 pub fn String::has_suffix(self : String, str : View) -> Bool {
-  self.view().has_suffix(str)
+  self[:].has_suffix(str)
 }
 
 ///|
 test "has_suffix" {
-  // todo: remove .view() when new version is released
-  inspect!("hello".has_suffix("lo".view()), content="true")
-  inspect!("hello".has_suffix("hello".view()), content="true")
-  inspect!("hello".has_suffix("".view()), content="true")
-  inspect!("hello".has_suffix("world".view()), content="false")
-  inspect!("hello".has_suffix("hel".view()), content="false")
-  inspect!("".has_suffix("".view()), content="true")
-  inspect!("".has_suffix("a".view()), content="false")
-  inspect!("hello world".has_suffix("world".view()), content="true")
-  inspect!("😀😀".has_suffix("😀".view()), content="true")
-  inspect!("😀😀".has_suffix("😀😀".view()), content="true")
+  inspect!("hello".has_suffix("lo"), content="true")
+  inspect!("hello".has_suffix("hello"), content="true")
+  inspect!("hello".has_suffix(""), content="true")
+  inspect!("hello".has_suffix("world"), content="false")
+  inspect!("hello".has_suffix("hel"), content="false")
+  inspect!("".has_suffix(""), content="true")
+  inspect!("".has_suffix("a"), content="false")
+  inspect!("hello world".has_suffix("world"), content="true")
+  inspect!("😀😀".has_suffix("😀"), content="true")
+  inspect!("😀😀".has_suffix("😀😀"), content="true")
 }
 
 ///|
@@ -158,23 +155,22 @@ pub fn View::has_prefix(self : View, str : View) -> Bool {
 ///|
 /// Returns true if this string starts with the given substring.
 pub fn String::has_prefix(self : String, str : View) -> Bool {
-  self.view().has_prefix(str)
+  self[:].has_prefix(str)
 }
 
 ///|
 test "has_prefix" {
-  // todo: remove .view() when new version is released
-  inspect!("hello".has_prefix("h".view()), content="true")
-  inspect!("hello".has_prefix("he".view()), content="true")
-  inspect!("hello".has_prefix("".view()), content="true")
-  inspect!("hello".has_prefix("world".view()), content="false")
-  inspect!("hello".has_prefix("lo".view()), content="false")
-  inspect!("".has_prefix("".view()), content="true")
-  inspect!("".has_prefix("a".view()), content="false")
-  inspect!("😀hello".has_prefix("😀".view()), content="true")
-  inspect!("😀😃hello".has_prefix("😀😃".view()), content="true")
-  inspect!("😀hello".has_prefix("😃".view()), content="false")
-  inspect!("hello😀".has_prefix("😀".view()), content="false")
+  inspect!("hello".has_prefix("h"), content="true")
+  inspect!("hello".has_prefix("he"), content="true")
+  inspect!("hello".has_prefix(""), content="true")
+  inspect!("hello".has_prefix("world"), content="false")
+  inspect!("hello".has_prefix("lo"), content="false")
+  inspect!("".has_prefix(""), content="true")
+  inspect!("".has_prefix("a"), content="false")
+  inspect!("😀hello".has_prefix("😀"), content="true")
+  inspect!("😀😃hello".has_prefix("😀😃"), content="true")
+  inspect!("😀hello".has_prefix("😃"), content="false")
+  inspect!("hello😀".has_prefix("😀"), content="false")
 }
 
 ///|
@@ -186,7 +182,7 @@ pub fn View::contains_char(self : View, c : Char) -> Bool {
 ///|
 /// Returns true if this string contains the given character.
 pub fn contains_char(self : String, c : Char) -> Bool {
-  self.view().contains_char(c)
+  self[:].contains_char(c)
 }
 
 ///|
@@ -223,23 +219,23 @@ pub fn View::trim_start(self : View, char_set : View) -> View {
 /// Returns the view of the string without the leading characters that are in
 /// the given string.
 pub fn trim_start(self : String, char_set : View) -> View {
-  self.view().trim_start(char_set)
+  self[:].trim_start(char_set)
 }
 
 ///|
 test "trim_start" {
-  inspect!("hello".trim_start("h".view()), content="ello")
-  inspect!("hello".trim_start("he".view()), content="llo")
-  inspect!("hello".trim_start("eh".view()), content="llo")
-  inspect!("hello".trim_start("x".view()), content="hello")
-  inspect!("hello".trim_start("".view()), content="hello")
-  inspect!("".trim_start("a".view()), content="")
-  inspect!("   hello".trim_start(" ".view()), content="hello")
-  inspect!("hello world".trim_start("helo".view()), content=" world")
-  inspect!("😀😀hello".trim_start("😀".view()), content="hello")
-  inspect!("😀😃hello".trim_start("😀😃".view()), content="hello")
-  inspect!("aaaabc".trim_start("a".view()), content="bc")
-  inspect!("aaaa".trim_start("a".view()), content="")
+  inspect!("hello".trim_start("h"), content="ello")
+  inspect!("hello".trim_start("he"), content="llo")
+  inspect!("hello".trim_start("eh"), content="llo")
+  inspect!("hello".trim_start("x"), content="hello")
+  inspect!("hello".trim_start(""), content="hello")
+  inspect!("".trim_start("a"), content="")
+  inspect!("   hello".trim_start(" "), content="hello")
+  inspect!("hello world".trim_start("helo"), content=" world")
+  inspect!("😀😀hello".trim_start("😀"), content="hello")
+  inspect!("😀😃hello".trim_start("😀😃"), content="hello")
+  inspect!("aaaabc".trim_start("a"), content="bc")
+  inspect!("aaaa".trim_start("a"), content="")
 }
 
 ///|
@@ -261,22 +257,22 @@ pub fn View::trim_end(self : View, char_set : View) -> View {
 /// Returns the view of the string without the trailing characters that are in
 /// the given string.
 pub fn trim_end(self : String, char_set : View) -> View {
-  self.view().trim_end(char_set)
+  self[:].trim_end(char_set)
 }
 
 ///|
 test "trim_end" {
-  inspect!("hello".trim_end("o".view()), content="hell")
-  inspect!("hello".trim_end("lo".view()), content="he")
-  inspect!("hello".trim_end("x".view()), content="hello")
-  inspect!("hello".trim_end("".view()), content="hello")
-  inspect!("".trim_end("a".view()), content="")
-  inspect!("hello   ".trim_end(" ".view()), content="hello")
-  inspect!("hello world".trim_end("dlrow ".view()), content="he")
-  inspect!("hello😀😀".trim_end("😀".view()), content="hello")
-  inspect!("hello😀😃".trim_end("😀😃".view()), content="hello")
-  inspect!("abcccc".trim_end("c".view()), content="ab")
-  inspect!("cccc".trim_end("c".view()), content="")
+  inspect!("hello".trim_end("o"), content="hell")
+  inspect!("hello".trim_end("lo"), content="he")
+  inspect!("hello".trim_end("x"), content="hello")
+  inspect!("hello".trim_end(""), content="hello")
+  inspect!("".trim_end("a"), content="")
+  inspect!("hello   ".trim_end(" "), content="hello")
+  inspect!("hello world".trim_end("dlrow "), content="he")
+  inspect!("hello😀😀".trim_end("😀"), content="hello")
+  inspect!("hello😀😃".trim_end("😀😃"), content="hello")
+  inspect!("abcccc".trim_end("c"), content="ab")
+  inspect!("cccc".trim_end("c"), content="")
 }
 
 ///|
@@ -290,38 +286,38 @@ pub fn View::trim(self : View, char_set : View) -> View {
 /// Returns the view of the string without the leading and trailing characters
 /// that are in the given string.
 pub fn trim(self : String, char_set : View) -> View {
-  self.view().trim(char_set)
+  self[:].trim(char_set)
 }
 
 ///|
 test "trim" {
-  inspect!("hello".trim("h".view()), content="ello")
-  inspect!("hello".trim("o".view()), content="hell")
-  inspect!("hello".trim("ho".view()), content="ell")
-  inspect!("hello".trim("oh".view()), content="ell")
-  inspect!("hello".trim("x".view()), content="hello")
-  inspect!("hello".trim("".view()), content="hello")
-  inspect!("".trim("a".view()), content="")
-  inspect!("   hello   ".trim(" ".view()), content="hello")
-  inspect!("hello world".trim("hd".view()), content="ello worl")
-  inspect!("😀hello😀".trim("😀".view()), content="hello")
-  inspect!("😀😃hello😀😃".trim("😀😃".view()), content="hello")
-  inspect!("aaaabcaaa".trim("a".view()), content="bc")
-  inspect!("aaaa".trim("a".view()), content="")
-  inspect!("  hello world  ".trim(" ".view()), content="hello world")
-  inspect!("abcabc".trim("abc".view()), content="")
+  inspect!("hello".trim("h"), content="ello")
+  inspect!("hello".trim("o"), content="hell")
+  inspect!("hello".trim("ho"), content="ell")
+  inspect!("hello".trim("oh"), content="ell")
+  inspect!("hello".trim("x"), content="hello")
+  inspect!("hello".trim(""), content="hello")
+  inspect!("".trim("a"), content="")
+  inspect!("   hello   ".trim(" "), content="hello")
+  inspect!("hello world".trim("hd"), content="ello worl")
+  inspect!("😀hello😀".trim("😀"), content="hello")
+  inspect!("😀😃hello😀😃".trim("😀😃"), content="hello")
+  inspect!("aaaabcaaa".trim("a"), content="bc")
+  inspect!("aaaa".trim("a"), content="")
+  inspect!("  hello world  ".trim(" "), content="hello world")
+  inspect!("abcabc".trim("abc"), content="")
 }
 
 ///| 
 /// Returns the view of the string without the leading and trailing spaces.
 pub fn View::trim_space(self : View) -> View {
-  self.trim(" \n\r\t".view())
+  self.trim(" \n\r\t")
 }
 
 ///|
 /// Returns the view of the string without the leading and trailing spaces.
 pub fn trim_space(self : String) -> View {
-  self.view().trim_space()
+  self[:].trim_space()
 }
 
 ///|
@@ -376,7 +372,7 @@ pub fn View::is_blank(self : View) -> Bool {
 ///|
 /// Returns true if this string is blank.
 pub fn is_blank(self : String) -> Bool {
-  self.view().is_blank()
+  self[:].is_blank()
 }
 
 ///|
@@ -423,7 +419,7 @@ pub fn pad_start(
   total_width : Int,
   padding_char : Char
 ) -> String {
-  self.view().pad_start(total_width, padding_char)
+  self[:].pad_start(total_width, padding_char)
 }
 
 ///|
@@ -471,7 +467,7 @@ pub fn View::pad_end(
 /// `self.length() < total_width`. The number of unicode characters in
 /// the returned string is `total_width` if padding is added.
 pub fn pad_end(self : String, total_width : Int, padding_char : Char) -> String {
-  self.view().pad_end(total_width, padding_char)
+  self[:].pad_end(total_width, padding_char)
 }
 
 ///|
@@ -520,7 +516,7 @@ pub fn View::repeat(self : View, n : Int) -> String {
 ///|
 /// Returns a new string with `self` repeated `n` times.
 pub fn repeat(self : String, n : Int) -> String {
-  self.view().repeat(n)
+  self[:].repeat(n)
 }
 
 ///|
@@ -563,7 +559,7 @@ pub fn View::rev(self : View) -> String {
 /// Returns a new string with the characters in reverse order. It respects
 /// Unicode characters and surrogate pairs but not grapheme clusters.
 pub fn rev(self : String) -> String {
-  self.view().rev()
+  self[:].rev()
 }
 
 ///|
@@ -615,44 +611,36 @@ pub fn View::split(self : View, sep : View) -> Iter[View] {
 /// If the separator is empty, the returned iterator will contain all the
 /// characters in the string as single elements.
 pub fn split(self : String, sep : View) -> Iter[View] {
-  self.view().split(sep)
+  self[:].split(sep)
 }
 
 ///|
 test "split" {
-  assert_eq!("a,b,c".split(",".view()).map(View::to_string).collect(), [
-    "a", "b", "c",
-  ])
-  assert_eq!("a,b,c".split("".view()).map(View::to_string).collect(), [
+  assert_eq!("a,b,c".split(",").map(View::to_string).collect(), ["a", "b", "c"])
+  assert_eq!("a,b,c".split("").map(View::to_string).collect(), [
     "a", ",", "b", ",", "c",
   ])
   assert_eq!(
-    "apple::orange::banana".split("::".view()).map(View::to_string).collect(),
+    "apple::orange::banana".split("::").map(View::to_string).collect(),
     ["apple", "orange", "banana"],
   )
-  assert_eq!("abc".split("".view()).map(View::to_string).collect(), [
-    "a", "b", "c",
-  ])
-  assert_eq!("hello".split(",".view()).map(View::to_string).collect(), ["hello"])
-  assert_eq!(",a,b,c".split(",".view()).map(View::to_string).collect(), [
+  assert_eq!("abc".split("").map(View::to_string).collect(), ["a", "b", "c"])
+  assert_eq!("hello".split(",").map(View::to_string).collect(), ["hello"])
+  assert_eq!(",a,b,c".split(",").map(View::to_string).collect(), [
     "", "a", "b", "c",
   ])
-  assert_eq!("a,b,c,".split(",".view()).map(View::to_string).collect(), [
-    "a", "b", "c",
-  ])
-  assert_eq!("a,b,c".split("".view()).map(View::to_string).collect(), [
+  assert_eq!("a,b,c,".split(",").map(View::to_string).collect(), ["a", "b", "c"])
+  assert_eq!("a,b,c".split("").map(View::to_string).collect(), [
     "a", ",", "b", ",", "c",
   ])
-  assert_eq!("".split("".view()).map(View::to_string).collect(), [])
-  assert_eq!("".split(",".view()).map(View::to_string).collect(), [])
-  assert_eq!(
-    "😀,😃,😄".split(",".view()).map(View::to_string).collect(),
-    ["😀", "😃", "😄"],
-  )
-  assert_eq!(
-    "a😀b😀c".split("😀".view()).map(View::to_string).collect(),
-    ["a", "b", "c"],
-  )
+  assert_eq!("".split("").map(View::to_string).collect(), [])
+  assert_eq!("".split(",").map(View::to_string).collect(), [])
+  assert_eq!("😀,😃,😄".split(",").map(View::to_string).collect(), [
+    "😀", "😃", "😄",
+  ])
+  assert_eq!("a😀b😀c".split("😀").map(View::to_string).collect(), [
+    "a", "b", "c",
+  ])
 }
 
 ///|
@@ -678,18 +666,18 @@ pub fn View::replace(self : View, old~ : View, new~ : View) -> String {
 /// If `old` is empty, it matches the beginning of the string, and `new` is
 /// prepended to the string.
 pub fn replace(self : String, old~ : View, new~ : View) -> String {
-  self.view().replace(old~, new~)
+  self[:].replace(old~, new~)
 }
 
 ///|
 test "replace" {
-  assert_eq!("hello".replace(old="o".view(), new="a".view()), "hella")
-  assert_eq!("hello".replace(old="l".view(), new="a".view()), "healo")
-  assert_eq!("hello".replace(old="hello".view(), new="a".view()), "a")
-  assert_eq!("hello".replace(old="h".view(), new="a".view()), "aello")
-  assert_eq!("hello".replace(old="".view(), new="a".view()), "ahello")
-  assert_eq!("hello".replace(old="world".view(), new="a".view()), "hello")
-  assert_eq!("".replace(old="".view(), new="a".view()), "a")
+  assert_eq!("hello".replace(old="o", new="a"), "hella")
+  assert_eq!("hello".replace(old="l", new="a"), "healo")
+  assert_eq!("hello".replace(old="hello", new="a"), "a")
+  assert_eq!("hello".replace(old="h", new="a"), "aello")
+  assert_eq!("hello".replace(old="", new="a"), "ahello")
+  assert_eq!("hello".replace(old="world", new="a"), "hello")
+  assert_eq!("".replace(old="", new="a"), "a")
 }
 
 ///|
@@ -734,39 +722,27 @@ pub fn View::replace_all(self : View, old~ : View, new~ : View) -> String {
 /// character in the string, so `new` is inserted at the beginning of the string
 /// and after each character.
 pub fn replace_all(self : String, old~ : View, new~ : View) -> String {
-  self.view().replace_all(old~, new~)
+  self[:].replace_all(old~, new~)
 }
 
 ///|
 test "replace_all" {
-  assert_eq!("hello".replace_all(old="o".view(), new="a".view()), "hella")
-  assert_eq!("hello".replace_all(old="l".view(), new="a".view()), "heaao")
-  assert_eq!("hello".replace_all(old="ll".view(), new="rr".view()), "herro")
-  assert_eq!(
-    "hello".replace_all(old="hello".view(), new="world".view()),
-    "world",
-  )
-  assert_eq!(
-    "hello hello hello".replace_all(old="hello".view(), new="hi".view()),
-    "hi hi hi",
-  )
-  assert_eq!("hello".replace_all(old="".view(), new="a".view()), "ahaealalaoa")
-  assert_eq!("hello".replace_all(old="world".view(), new="a".view()), "hello")
-  assert_eq!("".replace_all(old="".view(), new="a".view()), "a")
-  assert_eq!("aaa".replace_all(old="a".view(), new="b".view()), "bbb")
-  assert_eq!("aaa".replace_all(old="a".view(), new="bb".view()), "bbbbbb")
-  assert_eq!("aaa".replace_all(old="aa".view(), new="b".view()), "ba")
-  assert_eq!(
-    "🤣🤣🤣".replace_all(old="🤣".view(), new="😊".view()),
-    "😊😊😊",
-  )
-  assert_eq!(
-    "abc123abc".replace_all(old="abc".view(), new="xyz".view()),
-    "xyz123xyz",
-  )
-  assert_eq!("abcabcabc".replace_all(old="abc".view(), new="".view()), "")
-  assert_eq!("abc".replace_all(old="abc".view(), new="".view()), "")
-  assert_eq!("abc".replace_all(old="".view(), new="x".view()), "xaxbxcx")
+  assert_eq!("hello".replace_all(old="o", new="a"), "hella")
+  assert_eq!("hello".replace_all(old="l", new="a"), "heaao")
+  assert_eq!("hello".replace_all(old="ll", new="rr"), "herro")
+  assert_eq!("hello".replace_all(old="hello", new="world"), "world")
+  assert_eq!("hello hello hello".replace_all(old="hello", new="hi"), "hi hi hi")
+  assert_eq!("hello".replace_all(old="", new="a"), "ahaealalaoa")
+  assert_eq!("hello".replace_all(old="world", new="a"), "hello")
+  assert_eq!("".replace_all(old="", new="a"), "a")
+  assert_eq!("aaa".replace_all(old="a", new="b"), "bbb")
+  assert_eq!("aaa".replace_all(old="a", new="bb"), "bbbbbb")
+  assert_eq!("aaa".replace_all(old="aa", new="b"), "ba")
+  assert_eq!("🤣🤣🤣".replace_all(old="🤣", new="😊"), "😊😊😊")
+  assert_eq!("abc123abc".replace_all(old="abc", new="xyz"), "xyz123xyz")
+  assert_eq!("abcabcabc".replace_all(old="abc", new=""), "")
+  assert_eq!("abc".replace_all(old="abc", new=""), "")
+  assert_eq!("abc".replace_all(old="", new="x"), "xaxbxcx")
 }
 
 ///|
@@ -775,7 +751,8 @@ pub fn View::to_lower(self : View) -> String {
   // TODO: deal with non-ascii characters
   let buf = StringBuilder::new(size_hint=self.len())
   for c in self {
-    if c >= 'A' && c <= 'Z' {
+    if c is ('A'..='Z') {
+      // 'A' is 65 in ASCII, 'a' is 97, the difference is 32
       buf.write_char(Char::from_int(c.to_int() + 32))
     } else {
       buf.write_char(c)
@@ -787,7 +764,7 @@ pub fn View::to_lower(self : View) -> String {
 ///|
 /// Converts this string to lowercase.
 pub fn to_lower(self : String) -> String {
-  self.view().to_lower()
+  self[:].to_lower()
 }
 
 ///|
@@ -815,7 +792,7 @@ pub fn View::to_upper(self : View) -> String {
 ///|
 /// Converts this string to uppercase.
 pub fn to_upper(self : String) -> String {
-  self.view().to_upper()
+  self[:].to_upper()
 }
 
 ///|
@@ -837,7 +814,7 @@ pub fn View::fold[A](self : View, init~ : A, f : (A, Char) -> A) -> A {
 
 ///| Folds the characters of the string into a single value.
 pub fn fold[A](self : String, init~ : A, f : (A, Char) -> A) -> A {
-  self.view().fold(init~, f)
+  self[:].fold(init~, f)
 }
 
 ///|
@@ -862,7 +839,7 @@ pub fn View::rev_fold[A](self : View, init~ : A, f : (A, Char) -> A) -> A {
 
 ///|
 pub fn rev_fold[A](self : String, init~ : A, f : (A, Char) -> A) -> A {
-  self.view().rev_fold(init~, f)
+  self[:].rev_fold(init~, f)
 }
 
 ///|
