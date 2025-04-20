@@ -304,6 +304,7 @@ impl Map {
   capacity[K, V](Self[K, V]) -> Int
   clear[K, V](Self[K, V]) -> Unit
   contains[K : Hash + Eq, V](Self[K, V], K) -> Bool
+  contains_kv[K : Hash + Eq, V : Eq](Self[K, V], K, V) -> Bool
   each[K, V](Self[K, V], (K, V) -> Unit) -> Unit
   eachi[K, V](Self[K, V], (Int, K, V) -> Unit) -> Unit
   from_array[K : Hash + Eq, V](Array[(K, V)]) -> Self[K, V]
