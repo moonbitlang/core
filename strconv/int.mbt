@@ -148,9 +148,10 @@ pub fn parse_int(str : String, base~ : Int = 0) -> Int!StrConvError {
 // Underscores must appear only between digits or between a base prefix and a digit.
 fn check_underscore(str : String) -> Bool {
   // skip the sign
-  let rest = match str.view() {
+  let rest = match str {
     ['+' | '-', .. rest] => rest
     rest => rest
+    // CR: the type maybe a bit confusing?
   }
 
   // base prefix
@@ -164,11 +165,7 @@ fn check_underscore(str : String) -> Bool {
   // 'e' and 'E' are valid hex digits
   // but are not treated as digits in decimal strings since they're used for scientific notation
   fn is_digit(c : Char) -> Bool {
-    if hex {
-      ('0' <= c && c <= '9') || ('a' <= c && c <= 'f') || ('A' <= c && c <= 'F')
-    } else {
-      '0' <= c && c <= '9'
-    }
+    c is ('0'..='9') || (hex && c is ('a'..='f' | 'A'..='F'))
   }
 
   // Track whether the previous character was an underscore
@@ -200,7 +197,7 @@ fn check_underscore(str : String) -> Bool {
 ///|
 // Determine the base of the value.
 fn determine_base(s : String) -> Int {
-  match s.view() {
+  match s {
     ['0', 'x' | 'X', ..] => 16
     ['0', 'o' | 'O', ..] => 8
     ['0', 'b' | 'B', ..] => 2
