@@ -123,7 +123,7 @@ impl StringView {
   pad_end(Self, Int, Char) -> String
   pad_start(Self, Int, Char) -> String
   repeat(Self, Int) -> String
-  replace(Self, old~ : Self, new~ : Self) -> String
+  replace(Self, old~ : Self, new~ : Self) -> Self
   replace_all(Self, old~ : Self, new~ : Self) -> String
   rev(Self) -> String
   rev_find(Self, Self) -> Int?
