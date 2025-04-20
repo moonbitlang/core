@@ -47,3 +47,16 @@ test "Map:: iter2" {
   v.each(fn(k, v) { res = res + k + v.to_string() })
   inspect!(res, content="a1b2c3")
 }
+
+///|
+test "map::contains_kv" {
+  let map = { "a": 1, "b": 2, "c": 3 }
+  // contains_kv will be used in the pattern matching
+  // to avoid boxing
+  inspect!(map.contains_kv("a", 1), content="true")
+  inspect!(map.contains_kv("a", 2), content="false")
+  guard map is { "a": 1, "b": 2, "c": 3 } else {
+    fail!("map is not { \"a\": 1, \"b\": 2, \"c\": 3 }")
+  }
+
+}

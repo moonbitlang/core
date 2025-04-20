@@ -249,9 +249,59 @@ pub fn Map::get_or_init[K : Hash + Eq, V](
 ///|
 /// Check if the hash map contains a key.
 pub fn Map::contains[K : Hash + Eq, V](self : Map[K, V], key : K) -> Bool {
-  match self.get(key) {
-    Some(_) => true
-    None => false
+  // inline Map::get to avoid boxing
+  let hash = key.hash()
+  for i = 0, idx = hash & self.capacity_mask {
+    guard self.entries[idx] is Some(entry) else { break false }
+    if entry.hash == hash && entry.key == key {
+      break true
+    }
+    if i > entry.psl {
+      break false
+    }
+    continue i + 1, (idx + 1) & self.capacity_mask
+  }
+}
+
+///|
+/// Checks if a map contains a specific key-value pair.
+///
+/// Parameters:
+///
+/// * `map` : A map of type `Map[K, V]` to search in.
+/// * `key` : The key to look up in the map.
+/// * `value` : The value to be compared with the value associated with the key.
+///
+/// Returns `true` if the map contains the specified key and its associated value
+/// equals the given value, `false` otherwise.
+///
+/// Example:
+///
+/// ```moonbit
+/// ///|
+/// test "Map::contains_kv" {
+///   let map = { "a": 1, "b": 2 }
+///   inspect!(map.contains_kv("a", 1), content="true")
+///   inspect!(map.contains_kv("a", 2), content="false")
+///   inspect!(map.contains_kv("c", 3), content="false")
+/// }
+/// ```
+pub fn Map::contains_kv[K : Hash + Eq, V : Eq](
+  self : Map[K, V],
+  key : K,
+  value : V
+) -> Bool {
+  // inline Map::get to avoid boxing
+  let hash = key.hash()
+  for i = 0, idx = hash & self.capacity_mask {
+    guard self.entries[idx] is Some(entry) else { break false }
+    if entry.hash == hash && entry.key == key && entry.value == value {
+      break true
+    }
+    if i > entry.psl {
+      break false
+    }
+    continue i + 1, (idx + 1) & self.capacity_mask
   }
 }
 
