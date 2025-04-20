@@ -206,24 +206,31 @@ pub fn op_set[K : Hash + Eq, V](self : T[K, V], key : K, value : V) -> Unit {
 /// }
 /// ```
 pub fn get[K : Hash + Eq, V](self : T[K, V], key : K) -> V? {
-  self.get_with_hash(key, key.hash())
+  // self.get_with_hash(key, key.hash())
+  let hash = key.hash()
+  for i = 0, idx = hash & self.capacity_mask {
+    guard self.entries[idx] is Some(entry) else { break None }
+    if entry.hash == hash && entry.key == key {
+      break Some(entry.value)
+    }
+    if i > entry.psl {
+      break None
+    }
+    continue i + 1, (idx + 1) & self.capacity_mask
+  }
 }
 
 ///|
 fn get_with_hash[K : Hash + Eq, V](self : T[K, V], key : K, hash : Int) -> V? {
   for i = 0, idx = hash & self.capacity_mask {
-    match self.entries[idx] {
-      Some(entry) => {
-        if entry.hash == hash && entry.key == key {
-          break Some(entry.value)
-        }
-        if i > entry.psl {
-          break None
-        }
-        continue i + 1, (idx + 1) & self.capacity_mask
-      }
-      None => break None
+    guard self.entries[idx] is Some(entry) else { break None }
+    if entry.hash == hash && entry.key == key {
+      break Some(entry.value)
     }
+    if i > entry.psl {
+      break None
+    }
+    continue i + 1, (idx + 1) & self.capacity_mask
   }
 }
 
@@ -278,6 +285,7 @@ pub fn op_get[K : Hash + Eq, V](self : T[K, V], key : K) -> V? {
 ///   inspect!(map.get("key"), content="Some(42)")
 /// }
 /// ```
+/// TODO: improve performance to avoid calling `get_with_hash` twice
 pub fn get_or_init[K : Hash + Eq, V](
   self : T[K, V],
   key : K,
@@ -321,9 +329,16 @@ pub fn get_or_default[K : Hash + Eq, V](
   key : K,
   default : V
 ) -> V {
-  match self.get(key) {
-    Some(v) => v
-    None => default
+  let hash = key.hash()
+  for i = 0, idx = hash & self.capacity_mask {
+    guard self.entries[idx] is Some(entry) else { break default }
+    if entry.hash == hash && entry.key == key {
+      break entry.value
+    }
+    if i > entry.psl {
+      break default
+    }
+    continue i + 1, (idx + 1) & self.capacity_mask
   }
 }
 
@@ -347,9 +362,35 @@ pub fn get_or_default[K : Hash + Eq, V](
 /// }
 /// ```
 pub fn contains[K : Hash + Eq, V](self : T[K, V], key : K) -> Bool {
-  match self.get(key) {
-    Some(_) => true
-    None => false
+  let hash = key.hash()
+  for i = 0, idx = hash & self.capacity_mask {
+    guard self.entries[idx] is Some(entry) else { return false }
+    if entry.hash == hash && entry.key == key {
+      return true
+    }
+    if i > entry.psl {
+      return false
+    }
+    continue i + 1, (idx + 1) & self.capacity_mask
+  }
+}
+
+///|
+pub fn contains_kv[K : Hash + Eq, V : Eq](
+  self : T[K, V],
+  key : K,
+  value : V
+) -> Bool {
+  let hash = key.hash()
+  for i = 0, idx = hash & self.capacity_mask {
+    guard self.entries[idx] is Some(entry) else { return false }
+    if entry.hash == hash && entry.key == key && entry.value == value {
+      return true
+    }
+    if i > entry.psl {
+      return false
+    }
+    continue i + 1, (idx + 1) & self.capacity_mask
   }
 }
 

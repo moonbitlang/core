@@ -11,6 +11,8 @@ fn clear[K, V](T[K, V]) -> Unit
 
 fn contains[K : Hash + Eq, V](T[K, V], K) -> Bool
 
+fn contains_kv[K : Hash + Eq, V : Eq](T[K, V], K, V) -> Bool
+
 fn each[K, V](T[K, V], (K, V) -> Unit) -> Unit
 
 fn eachi[K, V](T[K, V], (Int, K, V) -> Unit) -> Unit
@@ -53,6 +55,7 @@ impl T {
   capacity[K, V](Self[K, V]) -> Int
   clear[K, V](Self[K, V]) -> Unit
   contains[K : Hash + Eq, V](Self[K, V], K) -> Bool
+  contains_kv[K : Hash + Eq, V : Eq](Self[K, V], K, V) -> Bool
   each[K, V](Self[K, V], (K, V) -> Unit) -> Unit
   eachi[K, V](Self[K, V], (Int, K, V) -> Unit) -> Unit
   get[K : Hash + Eq, V](Self[K, V], K) -> V?
@@ -68,6 +71,7 @@ impl T {
   size[K, V](Self[K, V]) -> Int
   to_array[K, V](Self[K, V]) -> Array[(K, V)]
 }
+impl[K : Hash + Eq, V : Eq] Eq for T[K, V]
 impl[K : Show, V : Show] Show for T[K, V]
 impl[K : Show, V : ToJson] ToJson for T[K, V]
 impl[K : @quickcheck.Arbitrary + Hash + Eq, V : @quickcheck.Arbitrary] @quickcheck.Arbitrary for T[K, V]

@@ -349,3 +349,18 @@ test "@hashmap.from_array with int key" {
   let map = @hashmap.from_array([(1, "one"), (2, "two"), (3, "three")])
   @json.inspect!(map, content={ "2": "two", "1": "one", "3": "three" })
 }
+
+///|
+test "@hashmap.contains_kv" {
+  let map = @hashmap.of([(1, "one"), (2, "two"), (3, "three")])
+  inspect!(map.contains_kv(1, "one"), content="true")
+  inspect!(map.contains_kv(1, "two"), content="false")
+  inspect!(map.contains_kv(4, "four"), content="false")
+}
+
+///|
+test "@hashmap.eq" {
+  let map1 = @hashmap.of([(1, "one"), (2, "two"), (3, "three")])
+  let map2 = @hashmap.of([(1, "one"), (2, "two"), (3, "three")])
+  inspect!(map1 == map2, content="true")
+}
