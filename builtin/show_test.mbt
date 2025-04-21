@@ -253,8 +253,11 @@ test "char_special" {
 ///|
 test "Show for Failure" {
   let f = Failure("test error message")
-  inspect!(f.to_string(), content=
-    #|"Failure(test error message)"
+  inspect!(
+    f.to_string(),
+    content=
+      #|"Failure(test error message)"
+    ,
   )
 }
 
@@ -262,37 +265,31 @@ test "Show for Failure" {
 test "Show for Char special cases" {
   // Test escape sequences
   inspect!('\''.to_string(), content="'")
-  
+
   // Test various special character outputs
   let quote_buf = StringBuilder::new()
   '\''.output(quote_buf)
   inspect!(quote_buf.to_string(), content="'\\''")
-  
   let backslash_buf = StringBuilder::new()
   '\\'.output(backslash_buf)
   inspect!(backslash_buf.to_string(), content="'\\\\'")
-  
   let cr_buf = StringBuilder::new()
   '\r'.output(cr_buf)
   inspect!(cr_buf.to_string(), content="'\\r'")
-  
   let backspace_buf = StringBuilder::new()
   '\b'.output(backspace_buf)
   inspect!(backspace_buf.to_string(), content="'\\b'")
-  
   let tab_buf = StringBuilder::new()
   '\t'.output(tab_buf)
   inspect!(tab_buf.to_string(), content="'\\t'")
-  
+
   // Test hex output for control characters
   let ctrl1_buf = StringBuilder::new()
   '\u{01}'.output(ctrl1_buf)
   inspect!(ctrl1_buf.to_string(), content="'\\x01'")
-  
   let ctrl_f_buf = StringBuilder::new()
   '\u{0F}'.output(ctrl_f_buf)
   inspect!(ctrl_f_buf.to_string(), content="'\\x0f'")
-  
   let ctrl_1f_buf = StringBuilder::new()
   '\u{1F}'.output(ctrl_1f_buf)
   inspect!(ctrl_1f_buf.to_string(), content="'\\x1f'")
