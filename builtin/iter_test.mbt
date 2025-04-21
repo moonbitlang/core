@@ -658,3 +658,93 @@ test "@builtin.Iter::minimum" {
   let empty : Iter[Int] = Iter::empty()
   inspect!(empty.minimum(), content="None")
 }
+
+///|
+test "Iter::prepend with early termination" {
+  let iter = [1, 2, 3].iter()
+  let result = iter.prepend(0).take(1).collect()
+  inspect!(result, content="[0]")
+}
+
+///|
+test "Iter::append with early termination" {
+  let iter = [1, 2, 3].iter()
+  let result = iter.take(2).append(4).take(2).collect()
+  inspect!(result, content="[1, 2]")
+}
+
+///|
+test "Iter::intersperse with early termination" {
+  let iter = [1, 2, 3].iter()
+  let result = iter.intersperse(0).take(3).collect()
+  inspect!(result, content="[1, 0, 2]")
+}
+
+///|
+test "Iter::iter method" {
+  let original = [1, 2, 3].iter()
+  let result = original.iter().collect()
+  inspect!(result, content="[1, 2, 3]")
+}
+
+///|
+test "Iter::contains method" {
+  let iter = [1, 2, 3, 4, 5].iter()
+  inspect!(iter.contains(3), content="true")
+  inspect!(iter.contains(6), content="false")
+}
+
+///|
+test "Iter::flatten method" {
+  let nested = [[1, 2], [3, 4], [5, 6]].iter().map(Array::iter)
+  let flattened = nested.flatten().collect()
+  inspect!(flattened, content="[1, 2, 3, 4, 5, 6]")
+}
+
+///|
+test "Iter::add operator" {
+  let iter1 = [1, 2, 3].iter()
+  let iter2 = [4, 5, 6].iter()
+  let result = (iter1 + iter2).collect()
+  inspect!(result, content="[1, 2, 3, 4, 5, 6]")
+}
+
+///|
+test "Float::until with step=0" {
+  let result = 1.0.until(2.0, step=0.0).collect()
+  inspect!(result, content="[]")
+}
+
+///|
+test "Float::until basic test" {
+  let result = 0.0.until(3.0, step=1.0).collect()
+  inspect!(result, content="[0, 1, 2]")
+}
+
+///|
+test "Float::until with early termination" {
+  let result = 0.0.until(10.0).take(3).collect()
+  inspect!(result, content="[0, 1, 2]")
+}
+
+///|
+test "Double::until with large numbers" {
+  let result = 1000000.0.until(2000000.0, step=500000.0).collect()
+  inspect!(result, content="[1000000, 1500000]")
+}
+
+///|
+test "Float::until with early break" {
+  for i in 0.0.until(10.0) {
+    if i > 2.0 {
+      break
+    }
+  }
+  // No assertion needed, just verifying that it doesn't crash
+}
+
+///|
+test "Float::until negative step" {
+  let result = 10.0.until(0.0, step=-2.0).collect()
+  inspect!(result, content="[10, 8, 6, 4, 2]")
+}
