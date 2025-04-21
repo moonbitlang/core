@@ -126,3 +126,21 @@ test "from_json" {
     assert_eq!(xs, @json.from_json!(xs.to_json()))
   }
 }
+
+///|
+test "union 2 sorted_map, choose the right hand side" {
+  let map1 = @sorted_map.of([(1, 1), (2, 2), (3, 3)])
+  let map2 = @sorted_map.of([(1, 10), (2, 20), (4, 40)])
+  let map3 = map1.union(map2)
+  let map4 = @sorted_map.of([(1, 10), (2, 20), (3, 3), (4, 40)])
+  inspect!(map3 == map4, content="true")
+}
+
+///|
+test "union 2 sorted_map, without conflict" {
+  let map1 = @sorted_map.of([(1, 1), (2, 2), (3, 3)])
+  let map2 = @sorted_map.of([(4, 4), (5, 5), (6, 6)])
+  let map3 = map1.union(map2)
+  let map4 = @sorted_map.of([(1, 1), (2, 2), (3, 3), (4, 4), (5, 5), (6, 6)])
+  inspect!(map3 == map4, content="true")
+}

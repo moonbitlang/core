@@ -65,6 +65,8 @@ fn to_array[K, V](T[K, V]) -> Array[(K, V)]
 
 fn to_json[K : Show, V : ToJson](T[K, V]) -> Json
 
+fn union[K : Compare, V](T[K, V], T[K, V]) -> T[K, V]
+
 // Types and methods
 type T[K, V]
 impl T {
@@ -106,6 +108,7 @@ impl T {
   size[K, V](Self[K, V]) -> Int
   to_array[K, V](Self[K, V]) -> Array[(K, V)]
   to_json[K : Show, V : ToJson](Self[K, V]) -> Json
+  union[K : Compare, V](Self[K, V], Self[K, V]) -> Self[K, V]
 }
 impl[K : Compare, V : Compare] Compare for T[K, V]
 impl[K, V] Default for T[K, V]
