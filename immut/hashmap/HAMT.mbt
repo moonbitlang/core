@@ -183,6 +183,35 @@ pub fn fold_with_key[K, V, A](
 }
 
 ///|
+pub fn map[K : Eq + Hash, V, A](self : T[K, V], f : (V) -> A) -> T[K, A] {
+  map_with_key(self, fn(_k, v) { f(v) })
+}
+
+///|
+pub fn map_with_key[K : Eq + Hash, V, A](
+  self : T[K, V],
+  f : (K, V) -> A
+) -> T[K, A] {
+  fn go(m : T[K, V]) {
+    match m {
+      Empty => Empty
+      Leaf(k, v) => Leaf(k, f(k, v))
+      Collision(bucket) => Collision(bucket.map_with_key(f))
+      Branch(children) => {
+        let result = []
+        children.each(fn {
+          child =>
+            child.map_with_key(f).iter().each(fn { kv => result.push(kv) })
+        })
+        from_array(result)
+      }
+    }
+  }
+
+  go(self)
+}
+
+///|
 /// Add a key-value pair to the hashmap.
 ///
 /// If a pair with the same key already exists, the old one is replaced
@@ -281,6 +310,11 @@ pub fn each[K, V](self : T[K, V], f : (K, V) -> Unit) -> Unit {
     Collision(bucket) => bucket.each(f)
     Branch(children) => children.each(fn { child => child.each(f) })
   }
+}
+
+///|
+pub fn keys[K, V](self : T[K, V]) -> Array[K] {
+  self.iter().map(fn { (k, _) => k }).collect()
 }
 
 ///|

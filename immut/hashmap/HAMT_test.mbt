@@ -64,6 +64,15 @@ test "HAMT::remove" {
 }
 
 ///|
+test "keys" {
+  let m = @hashmap.of([(1, "one"), (2, "two")])
+  let keys = m.keys()
+  assert_eq!(keys.contains(1), true)
+  assert_eq!(keys.contains(2), true)
+  assert_eq!(keys.contains(3), false)
+}
+
+///|
 test "HAMT::elems" {
   let m = @hashmap.of([(1, "one"), (2, "two")])
   let elems = m.elems()
@@ -334,4 +343,22 @@ test "HAMT::fold" {
   let map = @hashmap.of([(1, 10), (2, 20), (3, 30)])
   let result = map.fold(init=0, fn(acc, v) { acc + v })
   assert_eq!(result, 60)
+}
+
+///|
+test "HAMT::map" {
+  let map = @hashmap.of([(1, 10), (2, 20)])
+  let mapped = map.map(fn(v) { v * 2 })
+  assert_eq!(mapped.find(1), Some(20))
+  assert_eq!(mapped.find(2), Some(40))
+  assert_eq!(mapped.find(3), None)
+}
+
+///|
+test "HAMT::map_with_key" {
+  let map = @hashmap.of([(1, 10), (2, 20)])
+  let mapped = map.map_with_key(fn(k, v) { "\{k}:\{v}" })
+  assert_eq!(mapped.find(1), Some("1:10"))
+  assert_eq!(mapped.find(2), Some("2:20"))
+  assert_eq!(mapped.find(3), None)
 }

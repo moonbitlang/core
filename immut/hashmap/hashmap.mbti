@@ -29,6 +29,12 @@ fn iter[K, V](T[K, V]) -> Iter[(K, V)]
 
 fn iter2[K, V](T[K, V]) -> Iter2[K, V]
 
+fn keys[K, V](T[K, V]) -> Array[K]
+
+fn map[K : Eq + Hash, V, A](T[K, V], (V) -> A) -> T[K, A]
+
+fn map_with_key[K : Eq + Hash, V, A](T[K, V], (K, V) -> A) -> T[K, A]
+
 fn new[K, V]() -> T[K, V]
 
 fn of[K : Eq + Hash, V](FixedArray[(K, V)]) -> T[K, V]
@@ -54,6 +60,9 @@ impl T {
   fold_with_key[K, V, A](Self[K, V], (A, K, V) -> A, init~ : A) -> A
   iter[K, V](Self[K, V]) -> Iter[(K, V)]
   iter2[K, V](Self[K, V]) -> Iter2[K, V]
+  keys[K, V](Self[K, V]) -> Array[K]
+  map[K : Eq + Hash, V, A](Self[K, V], (V) -> A) -> Self[K, A]
+  map_with_key[K : Eq + Hash, V, A](Self[K, V], (K, V) -> A) -> Self[K, A]
   op_get[K : Eq + Hash, V](Self[K, V], K) -> V?
   remove[K : Eq + Hash, V](Self[K, V], K) -> Self[K, V]
   size[K, V](Self[K, V]) -> Int

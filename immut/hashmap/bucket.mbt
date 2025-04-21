@@ -206,3 +206,37 @@ test "foldl_with_key" {
   let result = bucket.foldl_with_key(init="", fn(init, _k, v) { init + v })
   assert_eq!(result, "abc")
 }
+
+///|
+fn Bucket::map_with_key[K, V, A](
+  self : Bucket[K, V],
+  f : (K, V) -> A
+) -> Bucket[K, A] {
+  match self {
+    Just_One(k, v) => Just_One(k, f(k, v))
+    More(k, v, rest) => More(k, f(k, v), rest.map_with_key(f))
+  }
+}
+
+///|
+test "Bucket::map_with_key" {
+  let bucket = More(1, 10, More(2, 20, Just_One(3, 30)))
+  let mapped = bucket.map_with_key(fn(k, v) { "\{k}:\{v}" })
+  assert_eq!(mapped.find(1), Some("1:10"))
+  assert_eq!(mapped.find(2), Some("2:20"))
+  assert_eq!(mapped.find(3), Some("3:30"))
+}
+
+///|
+fn Bucket::map[K, V, A](self : Bucket[K, V], f : (V) -> A) -> Bucket[K, A] {
+  self.map_with_key(fn(_k, v) { f(v) })
+}
+
+///|
+test "Bucket::map" {
+  let bucket = More(1, 10, More(2, 20, Just_One(3, 30)))
+  let mapped = bucket.map(fn(v) { v * 2 })
+  assert_eq!(mapped.find(1), Some(20))
+  assert_eq!(mapped.find(2), Some(40))
+  assert_eq!(mapped.find(3), Some(60))
+}
