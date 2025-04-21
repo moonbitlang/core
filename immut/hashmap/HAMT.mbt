@@ -154,6 +154,35 @@ pub fn filter[K : Eq + Hash, V](self : T[K, V], pred : (V) -> Bool) -> T[K, V] {
 }
 
 ///|
+pub fn fold[K, V, A](self : T[K, V], init~ : A, f : (A, V) -> A) -> A {
+  fold_with_key(self, fn(acc, _k, v) { f(acc, v) }, init~)
+}
+
+///|
+pub fn fold_with_key[K, V, A](
+  self : T[K, V],
+  f : (A, K, V) -> A,
+  init~ : A
+) -> A {
+  fn go(m : T[K, V], acc) {
+    match m {
+      Empty => acc
+      Leaf(k, v) => f(acc, k, v)
+      Collision(bucket) => bucket.foldl_with_key(init=acc, f)
+      Branch(children) => {
+        let mut result = acc
+        for i in 0..<children.data.length() {
+          result = go(children.data[i], result)
+        }
+        result
+      }
+    }
+  }
+
+  go(self, init)
+}
+
+///|
 /// Add a key-value pair to the hashmap.
 ///
 /// If a pair with the same key already exists, the old one is replaced

@@ -319,3 +319,19 @@ test "filter with branch nodes" {
     }
   }
 }
+
+///|
+test "HAMT::fold_with_key" {
+  let map = @hashmap.of([(1, "a"), (2, "b")])
+  let result = map.fold_with_key(init="", fn(acc, k, v) { acc + "\{k}:\{v}, " })
+  // order of elements is not guaranteed, so we check for substrings
+  assert_eq!(result.contains("1:a"), true)
+  assert_eq!(result.contains("2:b"), true)
+}
+
+///|
+test "HAMT::fold" {
+  let map = @hashmap.of([(1, 10), (2, 20), (3, 30)])
+  let result = map.fold(init=0, fn(acc, v) { acc + v })
+  assert_eq!(result, 60)
+}

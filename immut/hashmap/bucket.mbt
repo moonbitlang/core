@@ -185,3 +185,24 @@ test "Bucket::iter" {
   })
   inspect!(buf.to_string(), content="0 => 0, 1 => 1, 31 => 31")
 }
+
+///|
+/// Fold over the bucket from left to right, applying a function to each key-value pair.
+///
+fn Bucket::foldl_with_key[K, V, A](
+  self : Bucket[K, V],
+  f : (A, K, V) -> A,
+  init~ : A
+) -> A {
+  match self {
+    Just_One(k, v) => f(init, k, v)
+    More(k, v, rest) => rest.foldl_with_key(init=f(init, k, v), f)
+  }
+}
+
+///|
+test "foldl_with_key" {
+  let bucket = More("a", "a", More("b", "b", Just_One("c", "c")))
+  let result = bucket.foldl_with_key(init="", fn(init, _k, v) { init + v })
+  assert_eq!(result, "abc")
+}

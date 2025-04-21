@@ -17,6 +17,10 @@ fn filter[K : Eq + Hash, V](T[K, V], (V) -> Bool) -> T[K, V]
 
 fn find[K : Eq + Hash, V](T[K, V], K) -> V?
 
+fn fold[K, V, A](T[K, V], init~ : A, (A, V) -> A) -> A
+
+fn fold_with_key[K, V, A](T[K, V], (A, K, V) -> A, init~ : A) -> A
+
 fn from_array[K : Eq + Hash, V](Array[(K, V)]) -> T[K, V]
 
 fn from_iter[K : Eq + Hash, V](Iter[(K, V)]) -> T[K, V]
@@ -46,6 +50,8 @@ impl T {
   elems[K, V](Self[K, V]) -> Array[V]
   filter[K : Eq + Hash, V](Self[K, V], (V) -> Bool) -> Self[K, V]
   find[K : Eq + Hash, V](Self[K, V], K) -> V?
+  fold[K, V, A](Self[K, V], init~ : A, (A, V) -> A) -> A
+  fold_with_key[K, V, A](Self[K, V], (A, K, V) -> A, init~ : A) -> A
   iter[K, V](Self[K, V]) -> Iter[(K, V)]
   iter2[K, V](Self[K, V]) -> Iter2[K, V]
   op_get[K : Eq + Hash, V](Self[K, V], K) -> V?
