@@ -43,7 +43,11 @@ fn op_get[K : Eq + Hash, V](T[K, V], K) -> V?
 
 fn remove[K : Eq + Hash, V](T[K, V], K) -> T[K, V]
 
+fn singleton[K, V](K, V) -> T[K, V]
+
 fn size[K, V](T[K, V]) -> Int
+
+fn to_array[K, V](T[K, V]) -> Array[(K, V)]
 
 fn union[K : Eq + Hash, V](T[K, V], T[K, V]) -> T[K, V]
 
@@ -66,6 +70,7 @@ impl T {
   op_get[K : Eq + Hash, V](Self[K, V], K) -> V?
   remove[K : Eq + Hash, V](Self[K, V], K) -> Self[K, V]
   size[K, V](Self[K, V]) -> Int
+  to_array[K, V](Self[K, V]) -> Array[(K, V)]
   union[K : Eq + Hash, V](Self[K, V], Self[K, V]) -> Self[K, V]
 }
 impl[K : Eq + Hash, V : Eq] Eq for T[K, V]

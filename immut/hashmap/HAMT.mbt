@@ -40,6 +40,12 @@ pub fn new[K, V]() -> T[K, V] {
 }
 
 ///|
+/// Create a map with a single key-value pair.
+pub fn singleton[K, V](key : K, value : V) -> T[K, V] {
+  Leaf(key, value)
+}
+
+///|
 pub fn contains[K : Eq + Hash, V](self : T[K, V], key : K) -> Bool {
   match self.find(key) {
     Some(_) => true
@@ -364,6 +370,14 @@ pub fn from_array[K : Eq + Hash, V](arr : Array[(K, V)]) -> T[K, V] {
       continue n - 1, map.add(k, v)
     }
   }
+}
+
+///|
+/// Convert to an array of key-value pairs.
+pub fn to_array[K, V](self : T[K, V]) -> Array[(K, V)] {
+  let arr = []
+  self.each(fn(k, v) { arr.push((k, v)) })
+  arr
 }
 
 ///|

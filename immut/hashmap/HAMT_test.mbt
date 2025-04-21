@@ -135,6 +135,16 @@ test "HAMT::from_array" {
 }
 
 ///|
+test "to_array" {
+  let m = @hashmap.of([(1, "one"), (2, "two")])
+  let arr = m.to_array()
+  assert_eq!(arr.length(), 2)
+  assert_eq!(arr.contains((1, "one")), true)
+  assert_eq!(arr.contains((2, "two")), true)
+  assert_eq!(arr.contains((3, "three")), false)
+}
+
+///|
 test "from_iter multiple elements iter" {
   inspect!(
     @hashmap.from_iter([(1, 1), (2, 2), (3, 3)].iter()),
