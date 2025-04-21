@@ -114,17 +114,28 @@ pub fn from_array[A](arr : Array[A]) -> T[A] {
 
 ///|
 pub fn from_iter[A](iter : Iter[A]) -> T[A] {
-  let buf = Array::new(capacity=branching_factor)
+  let mut buf : FixedArray[A] = []
+  let mut index = 0
   let leaves = []
   iter.each(fn(x) {
-    if not(buf.length() < branching_factor) {
-      leaves.push(FixedArray::from_array(buf))
-      buf.clear()
+    if index == 0 {
+      buf = FixedArray::make(branching_factor, x)
+      index += 1
+    } else if index < branching_factor {
+      buf[index] = x
+      index += 1
+    } else {
+      leaves.push(buf)
+      index = 1
+      buf = FixedArray::make(branching_factor, x)
     }
-    buf.push(x)
   })
-  if not(buf.is_empty()) {
-    leaves.push(FixedArray::from_array(buf))
+  if index == branching_factor {
+    leaves.push(buf)
+  } else if index > 0 {
+    let res = FixedArray::make(index, buf[0])
+    buf.blit_to(res, len=index)
+    leaves.push(res)
   }
   let size = leaves.fold(init=0, fn(acc, xs) { acc + xs.length() })
   let (shift, cap) = shift_cap_of_size(size)
