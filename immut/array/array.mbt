@@ -30,10 +30,10 @@ pub fn make[A](len : Int, value : A) -> T[A] {
   let leaves = if rem == 0 {
     Array::make(quot, FixedArray::make(branching_factor, value))
   } else {
-    let arr : Array[FixedArray[A]] = Array::make(quot + 1, [])
-    for k in 0..<quot {
-      arr[k] = FixedArray::make(branching_factor, value)
-    }
+    let arr : Array[FixedArray[A]] = Array::make(
+      quot + 1,
+      FixedArray::make(branching_factor, value),
+    )
     arr[quot] = FixedArray::make(rem, value)
     arr
   }
