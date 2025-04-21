@@ -89,6 +89,32 @@ fn Bucket::each[K, V](self : Bucket[K, V], f : (K, V) -> Unit) -> Unit {
 }
 
 ///|
+fn Bucket::filter[K, V](self : Bucket[K, V], f : (V) -> Bool) -> Bucket[K, V]? {
+  match self {
+    Just_One(k, v) => if f(v) { Some(Just_One(k, v)) } else { None }
+    More(k, v, rest) => {
+      let filtered = rest.filter(f)
+      if f(v) {
+        match filtered {
+          None => Some(Just_One(k, v))
+          Some(rest) => Some(More(k, v, rest))
+        }
+      } else {
+        filtered
+      }
+    }
+  }
+}
+
+///|
+test "Bucket::filter" {
+  let bucket = More(1, 1, More(2, 2, Just_One(3, 3)))
+  let filtered = bucket.filter(fn(v) { v == 2 })
+  assert_eq!(filtered.unwrap().find(1), None)
+  assert_eq!(filtered.unwrap().find(2), Some(2))
+}
+
+///|
 fn Bucket::iter[K, V](self : Bucket[K, V]) -> Iter[(K, V)] {
   Iter::new(fn {
     f =>

@@ -133,6 +133,27 @@ fn add_with_hash[K : Eq, V](
 }
 
 ///|
+pub fn filter[K : Eq + Hash, V](self : T[K, V], pred : (V) -> Bool) -> T[K, V] {
+  match self {
+    Empty => Empty
+    Leaf(k, v) => if pred(v) { Leaf(k, v) } else { Empty }
+    Collision(bucket) =>
+      match bucket.filter(pred) {
+        None => Empty
+        Some(Just_One(k, v)) => Leaf(k, v)
+        Some(b) => Collision(b)
+      }
+    Branch(children) => {
+      let result = []
+      children.each(fn {
+        child => child.filter(pred).iter().each(fn { kv => result.push(kv) })
+      })
+      from_array(result)
+    }
+  }
+}
+
+///|
 /// Add a key-value pair to the hashmap.
 ///
 /// If a pair with the same key already exists, the old one is replaced

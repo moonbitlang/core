@@ -267,3 +267,55 @@ test "HAMT::contains" {
   let map3 = map.remove(2)
   assert_eq!(map3.contains(2), false)
 }
+
+///|
+test "filter with simple predicate" {
+  let map = @hashmap.of([(1, 1), (2, 2), (3, 3), (4, 4)])
+  let only_even = map.filter(fn(v) { v % 2 == 0 })
+  assert_eq!(only_even.contains(1), false)
+  assert_eq!(only_even.contains(2), true)
+  assert_eq!(only_even.contains(3), false)
+  assert_eq!(only_even.contains(4), true)
+}
+
+///|
+test "filter with all elements matching" {
+  let map = @hashmap.of([(1, 1), (2, 2)])
+  let filtered = map.filter(fn(v) { v > 0 })
+  assert_eq!(filtered.contains(1), true)
+  assert_eq!(filtered.contains(2), true)
+}
+
+///|
+test "filter with no elements matching" {
+  let map = @hashmap.of([(1, 1), (2, 2), (3, 3)])
+  let filtered = map.filter(fn(v) { v > 10 })
+  assert_eq!(filtered.find(1), None)
+  assert_eq!(filtered.find(2), None)
+  assert_eq!(filtered.find(3), None)
+  assert_eq!(filtered.size(), 0)
+}
+
+///|
+test "filter with collision" {
+  let map = @hashmap.of([(1, 10), (2, 20)]).add(1, 30)
+  let filtered = map.filter(fn(v) { v == 30 })
+  assert_eq!(filtered.find(1), Some(30))
+  assert_eq!(filtered.find(2), None)
+}
+
+///|
+test "filter with branch nodes" {
+  let map = loop 0, @hashmap.new() {
+    10, map => map
+    i, map => continue i + 1, map.add(i, i * 10)
+  }
+  let filtered = map.filter(fn(v) { v % 20 == 0 })
+  for i = 0; i < 10; i = i + 1 {
+    if i * 10 % 20 == 0 {
+      assert_eq!(filtered.find(i), Some(i * 10))
+    } else {
+      assert_eq!(filtered.find(i), None)
+    }
+  }
+}
