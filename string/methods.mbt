@@ -671,7 +671,7 @@ pub fn replace(self : String, old~ : View, new~ : View) -> String {
       [
         ..self.view(end_offset=end),
         ..new,
-        ..self.view(start_offset=end + old.len()),
+        ..self.view(start_offset=end + old.length()),
       ]
     None => self
   }
@@ -679,13 +679,13 @@ pub fn replace(self : String, old~ : View, new~ : View) -> String {
 
 ///|
 test "replace" {
-  assert_eq!("hello".replace(old="o", new="a"), "hella")
-  assert_eq!("hello".replace(old="l", new="a"), "healo")
-  assert_eq!("hello".replace(old="hello", new="a"), "a")
-  assert_eq!("hello".replace(old="h", new="a"), "aello")
-  assert_eq!("hello".replace(old="", new="a"), "ahello")
-  assert_eq!("hello".replace(old="world", new="a"), "hello")
-  assert_eq!("".replace(old="", new="a"), "a")
+  inspect!("hello".replace(old="o", new="a"), content="hella")
+  inspect!("hello".replace(old="l", new="a"), content="healo")
+  inspect!("hello".replace(old="hello", new="a"), content="a")
+  inspect!("hello".replace(old="h", new="a"), content="aello")
+  inspect!("hello".replace(old="", new="a"), content="ahello")
+  inspect!("hello".replace(old="world", new="a"), content="hello")
+  inspect!("".replace(old="", new="a"), content="a")
 }
 
 ///|
