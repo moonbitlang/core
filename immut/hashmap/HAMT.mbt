@@ -341,14 +341,14 @@ pub fn each[K, V](self : T[K, V], f : (K, V) -> Unit) -> Unit {
 
 ///|
 /// Returns all keys of the map
-pub fn keys[K, V](self : T[K, V]) -> Array[K] {
-  self.iter().map(fn { (k, _) => k }).collect()
+pub fn keys[K, V](self : T[K, V]) -> Iter[K] {
+  self.iter().map(fn { (k, _) => k })
 }
 
 ///|
 /// Returns all values of the map
-pub fn elems[K, V](self : T[K, V]) -> Array[V] {
-  self.iter().map(fn { (_, v) => v }).collect()
+pub fn elems[K, V](self : T[K, V]) -> Iter[V] {
+  self.iter().map(fn { (_, v) => v })
 }
 
 ///|
