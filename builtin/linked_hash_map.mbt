@@ -110,32 +110,24 @@ pub fn Map::set[K : Hash + Eq, V](self : Map[K, V], key : K, value : V) -> Unit 
     self.grow()
   }
   let hash = key.hash()
-  let entry = { prev: self.tail, next: None, psl: 0, key, value, hash }
-  for i = 0, idx = hash & self.capacity_mask {
+  let (idx, psl) = for psl = 0, idx = hash & self.capacity_mask {
     match self.entries[idx] {
-      None => {
-        self.add_entry_to_tail(idx, entry)
-        self.entries[idx] = Some(entry)
-        self.size += 1
-        break
-      }
+      None => break (idx, psl)
       Some(curr_entry) => {
-        if curr_entry.hash == entry.hash && curr_entry.key == entry.key {
-          curr_entry.value = entry.value
-          break
+        if curr_entry.hash == hash && curr_entry.key == key {
+          curr_entry.value = value
+          return
         }
-        if entry.psl > curr_entry.psl {
+        if psl > curr_entry.psl {
           self.push_away(idx, curr_entry)
-          self.add_entry_to_tail(idx, entry)
-          self.entries[idx] = Some(entry)
-          self.size += 1
-          break
+          break (idx, psl)
         }
-        entry.psl += 1
-        continue i + 1, (idx + 1) & self.capacity_mask
+        continue psl + 1, (idx + 1) & self.capacity_mask
       }
     }
   }
+  let entry = { prev: self.tail, next: None, psl, key, value, hash }
+  self.add_entry_to_tail(idx, entry)
 }
 
 ///|
@@ -144,21 +136,22 @@ fn Map::push_away[K, V](
   idx : Int,
   entry : Entry[K, V]
 ) -> Unit {
-  entry.psl += 1
-  for i = entry.psl, idx = (idx + 1) & self.capacity_mask, entry = entry {
+  for psl = entry.psl + 1, idx = (idx + 1) & self.capacity_mask, entry = entry {
     match self.entries[idx] {
       None => {
+        entry.psl = psl
         self.set_entry(entry, idx)
         break
       }
       Some(curr_entry) =>
-        if i > curr_entry.psl {
+        if psl > curr_entry.psl {
+          entry.psl = psl
           self.set_entry(entry, idx)
-          curr_entry.psl += 1
-          continue i + 1, (idx + 1) & self.capacity_mask, curr_entry
+          continue curr_entry.psl + 1,
+            (idx + 1) & self.capacity_mask,
+            curr_entry
         } else {
-          entry.psl += 1
-          continue i + 1, (idx + 1) & self.capacity_mask, entry
+          continue psl + 1, (idx + 1) & self.capacity_mask, entry
         }
     }
   }
@@ -364,6 +357,8 @@ fn Map::add_entry_to_tail[K, V](
       self.tail = Some(idx)
     }
   }
+  self.entries[idx] = Some(entry)
+  self.size += 1
 }
 
 ///|
