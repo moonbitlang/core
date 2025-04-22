@@ -23,27 +23,15 @@ pub fn View::find(self : View, str : View) -> Int? {
   // If substring is longer than string, it can't be found
   guard sub_len <= len else { return None }
   let max_idx = len - sub_len
-  let first = str.unsafe_charcode_at(0)
-  let mut i = 0
-  while i <= max_idx {
-    // find first character
-    while i < len && self.unsafe_charcode_at(i) != first {
-      i += 1
+  let max_idx_str = sub_len - 1
+  for i = 0, j = 0 {
+    guard i <= max_idx else { return None }
+    guard j <= max_idx_str else { return Some(i) }
+    if self.unsafe_charcode_at(i + j) == str.unsafe_charcode_at(j) {
+      continue i, j + 1
     }
-    // check the rest
-    if i <= max_idx {
-      for j in 1..<sub_len {
-        if self.unsafe_charcode_at(i + j) != str.unsafe_charcode_at(j) {
-          break
-        }
-      } else {
-        // the substring is found
-        return Some(i)
-      }
-    }
-    i += 1
+    continue i + 1, 0
   }
-  None
 }
 
 ///|
