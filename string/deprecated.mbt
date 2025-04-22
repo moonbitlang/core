@@ -135,12 +135,6 @@ pub fn View::op_as_view(self : View, start~ : Int = 0, end? : Int) -> View {
 }
 
 ///|
-#deprecated("use View::char_length instead")
-pub fn View::length(self : View) -> Int {
-  self.char_length()
-}
-
-///|
 #deprecated("use View::char_length_eq instead")
 pub fn length_eq(self : View, len : Int) -> Bool {
   self.char_length_eq(len)

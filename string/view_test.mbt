@@ -95,7 +95,7 @@ test "stringview rev_get" {
 test "stringview length" {
   let str = "Hello🤣🤣🤣"
   let view = str[1:6]
-  inspect!(view.length(), content="5")
+  inspect!(view.length(), content="6")
 }
 
 ///|

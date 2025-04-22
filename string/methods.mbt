@@ -16,8 +16,8 @@
 /// Returns the offset (charcode index) of the first occurrence of the given
 /// substring. If the substring is not found, it returns None.
 pub fn View::find(self : View, str : View) -> Int? {
-  let len = self.len()
-  let sub_len = str.len()
+  let len = self.length()
+  let sub_len = str.length()
   // Handle empty substring case
   guard sub_len > 0 else { return Some(0) }
   // If substring is longer than string, it can't be found
@@ -72,8 +72,8 @@ test "find" {
 /// Returns the offset of the last occurrence of the given substring. If the
 /// substring is not found, it returns None.
 pub fn View::rev_find(self : View, str : View) -> Int? {
-  let len = self.len()
-  let sub_len = str.len()
+  let len = self.length()
+  let sub_len = str.length()
   guard sub_len > 0 else { return Some(len) }
   guard sub_len <= len else { return None }
   let min_idx = sub_len - 1
@@ -123,7 +123,7 @@ test "rev_find" {
 ///| 
 /// Returns true if the given substring is suffix of this string.
 pub fn View::has_suffix(self : View, str : View) -> Bool {
-  self.rev_find(str) is Some(i) && i == self.len() - str.len()
+  self.rev_find(str) is Some(i) && i == self.length() - str.length()
 }
 
 ///|
@@ -337,7 +337,7 @@ test "trim_space" {
 ///|
 /// Returns true if this string is empty.
 pub fn View::is_empty(self : View) -> Bool {
-  self.len() == 0
+  self.length() == 0
 }
 
 ///|
@@ -502,7 +502,7 @@ pub fn View::repeat(self : View, n : Int) -> String {
     _..=0 => ""
     1 => self.to_string()
     _ => {
-      let len = self.len()
+      let len = self.length()
       let buf = StringBuilder::new(size_hint=len * n)
       let str = self.to_string()
       for _ in 0..<n {
@@ -548,7 +548,7 @@ test "repeat" {
 /// Returns a new string with the characters in reverse order. It respects
 /// Unicode characters and surrogate pairs but not grapheme clusters.
 pub fn View::rev(self : View) -> String {
-  let buf = StringBuilder::new(size_hint=self.len())
+  let buf = StringBuilder::new(size_hint=self.length())
   for c in self.rev_iter() {
     buf.write_char(c)
   }
@@ -580,7 +580,7 @@ test "rev" {
 /// If the separator is empty, the returned iterator will contain all the
 /// characters in the string as single elements.
 pub fn View::split(self : View, sep : View) -> Iter[View] {
-  let sep_len = sep.len()
+  let sep_len = sep.length()
   if sep_len == 0 {
     return self.iter().map(fn(c) { c.to_string().view() })
   }
@@ -654,7 +654,7 @@ pub fn View::replace(self : View, old~ : View, new~ : View) -> String {
       [
         ..self.view(end_offset=end),
         ..new,
-        ..self.view(start_offset=end + old.len()),
+        ..self.view(start_offset=end + old.length()),
       ]
     None => self.to_string()
   }
@@ -687,9 +687,9 @@ test "replace" {
 /// character in the string, so `new` is inserted at the beginning of the string
 /// and after each character.
 pub fn View::replace_all(self : View, old~ : View, new~ : View) -> String {
-  let buf = StringBuilder::new(size_hint=self.len())
-  let len = self.len()
-  let old_len = old.len()
+  let len = self.length()
+  let buf = StringBuilder::new(size_hint=len)
+  let old_len = old.length()
   // todo: improve performance
   if old_len == 0 {
     buf.write_string(new.to_string())
@@ -749,7 +749,7 @@ test "replace_all" {
 /// Converts this string to lowercase.
 pub fn View::to_lower(self : View) -> String {
   // TODO: deal with non-ascii characters
-  let buf = StringBuilder::new(size_hint=self.len())
+  let buf = StringBuilder::new(size_hint=self.length())
   for c in self {
     if c is ('A'..='Z') {
       // 'A' is 65 in ASCII, 'a' is 97, the difference is 32
@@ -778,7 +778,7 @@ test "to_lower" {
 /// Converts this string to uppercase.
 pub fn View::to_upper(self : View) -> String {
   // TODO: deal with non-ascii characters
-  let buf = StringBuilder::new(size_hint=self.len())
+  let buf = StringBuilder::new(size_hint=self.length())
   for c in self {
     if c >= 'a' && c <= 'z' {
       buf.write_char(Char::from_int(c.to_int() - 32))

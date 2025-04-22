@@ -38,6 +38,8 @@ fn iter2(String) -> Iter2[Int, Char]
 #deprecated
 fn last_index_of(String, String, from~ : Int = ..) -> Int
 
+fn length(StringView) -> Int
+
 #deprecated
 fn length_eq(StringView, Int) -> Bool
 
@@ -107,7 +109,6 @@ impl StringView {
   is_empty(Self) -> Bool
   iter(Self) -> Iter[Char]
   iter2(Self) -> Iter2[Int, Char]
-  #deprecated
   length(Self) -> Int
   #deprecated
   length_eq(Self, Int) -> Bool
