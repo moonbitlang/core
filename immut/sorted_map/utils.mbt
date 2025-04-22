@@ -94,16 +94,6 @@ pub fn op_get[K : Compare, V](self : T[K, V], key : K) -> V? {
 }
 
 ///|
-/// Union two sorted maps
-pub fn union[K : Compare, V](self : T[K, V], other : T[K, V]) -> T[K, V] {
-  match (self, other) {
-    (_, Empty) => self
-    (Empty, _) => other
-    (_, _) => other.iter().fold(init=self, fn(m, kv) { m.add(kv.0, kv.1) })
-  }
-}
-
-///|
 /// Iterate over the key-value pairs in the map.
 pub fn each[K, V](self : T[K, V], f : (K, V) -> Unit) -> Unit {
   match self {
