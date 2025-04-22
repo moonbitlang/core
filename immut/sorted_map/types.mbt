@@ -26,11 +26,11 @@
 /// ```
 /// let map1 = @sorted_map.of([(3, "three"), (8, "eight"), (1, "one")])
 /// let map2 = map1.add(2, "two").remove(3)
-/// assert_eq!(map2.lookup(2), Some("two"))
+/// assert_eq!(map2.find(2), Some("two"))
 /// let map3 = map2.add(2, "updated")
-/// assert_eq!(map2.lookup(3), None)
-/// assert_eq!(map3.lookup(3), None)
-/// assert_eq!(map3.lookup(2), Some("updated"))
+/// assert_eq!(map2.find(3), None)
+/// assert_eq!(map3.find(3), None)
+/// assert_eq!(map3.find(2), Some("updated"))
 /// ```
 enum T[K, V] {
   Empty

@@ -154,7 +154,11 @@ pub fn filter[K : Eq + Hash, V](self : T[K, V], pred : (V) -> Bool) -> T[K, V] {
     Branch(children) => {
       let mut result = Empty
       children.each(fn {
-        child => child.filter(pred).iter().each(fn { (k,v) => result = result.add(k,v) })
+        child =>
+          child
+          .filter(pred)
+          .iter()
+          .each(fn { (k, v) => result = result.add(k, v) })
       })
       result
     }

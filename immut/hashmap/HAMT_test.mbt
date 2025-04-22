@@ -364,6 +364,7 @@ test "HAMT::map" {
   assert_eq!(mapped.find(3), None)
 }
 
+///|
 test "HAMT::map with overflow" {
   let max = 2147483647 // Int.max_value
   let map = @hashmap.of([(1, max)])
