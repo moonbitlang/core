@@ -207,7 +207,7 @@ test "zip" {
   let rs = @list.of([6, 7, 8, 9, 10])
   inspect!(
     ls.zip(rs),
-    content="Some(@list.of([(1, 6), (2, 7), (3, 8), (4, 9), (5, 10)]))",
+    content="@list.of([(1, 6), (2, 7), (3, 8), (4, 9), (5, 10)])",
   )
 }
 
@@ -599,13 +599,13 @@ test "List::zip with lists of equal length" {
   let list1 = @list.of([1, 2, 3])
   let list2 = @list.of(["a", "b", "c"])
   let zipped = list1.zip(list2)
-  let expected = Some(@list.of([(1, "a"), (2, "b"), (3, "c")]))
+  let expected = @list.of([(1, "a"), (2, "b"), (3, "c")])
   assert_eq!(zipped, expected)
 }
 
 ///|
 test "@list.zip with empty list" {
-  inspect!(@list.of([1]).zip((@list.nil() : @list.T[Int])), content="None")
+  inspect!(@list.of([1]).zip((@list.nil() : @list.T[Int])), content="@list.of([])")
 }
 
 ///|

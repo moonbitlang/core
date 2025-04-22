@@ -418,7 +418,7 @@ pub fn fold[A, B](self : T[A], init~ : B, f : (B, A) -> B) -> B {
 /// assert_eq!(r, 15)
 /// ```
 pub fn rev_fold[A, B](self : T[A], init~ : B, f : (B, A) -> B) -> B {
-  self.rev().fold(init~, fn(b, a) { f(b, a) })
+  self.rev().fold(init~, f)
 }
 
 ///|
@@ -446,25 +446,22 @@ pub fn rev_foldi[A, B](self : T[A], init~ : B, f : (Int, B, A) -> B) -> B {
 
 ///|
 /// Zip two lists.
-/// If the lists have different lengths, it will return None.
+/// If the lists have different lengths, it will return a list with shorter length.
 ///
 /// # Example
 ///
-/// ```
+/// ```moonbit
 /// let r = @list.zip(@list.of([1, 2, 3, 4, 5]), @list.of([6, 7, 8, 9, 10]))
-/// assert_eq!(r, Some(@list.from_array([(1, 6), (2, 7), (3, 8), (4, 9), (5, 10)])))
+/// assert_eq!(r, @list.from_array([(1, 6), (2, 7), (3, 8), (4, 9), (5, 10)]))
 /// ```
-pub fn zip[A, B](self : T[A], other : T[B]) -> T[(A, B)]? {
-  let mut acc = Nil
-  let res = loop self, other {
-    Nil, Nil => break Some(acc)
-    Cons(x, tail=xs), Cons(y, tail=ys) => {
-      acc = Cons((x, y), tail=acc)
-      continue xs, ys
-    }
-    _, _ => break None
+pub fn zip[A, B](self : T[A], other : T[B]) -> T[(A, B)] {
+  let res = loop self, other, Nil {
+    Nil, _, acc => break acc
+    _, Nil, acc => break acc
+    Cons(x, tail=xs), Cons(y, tail=ys), acc =>
+      continue xs, ys, Cons((x, y), tail=acc)
   }
-  res.map(T::rev)
+  res.reverse_inplace()
 }
 
 ///|
