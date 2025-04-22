@@ -73,13 +73,13 @@ pub fn copy[A](self : T[A]) -> T[A] {
 
 ///|
 pub fn to_array[A : Compare](self : T[A]) -> Array[A] {
-  let arr : Array[A] = []
+  let arr = Array::new(capacity=self.len)
   fn go(x : Node[A]) {
     match x {
-      Cons(_) as node => {
-        arr.push(node.content)
-        go(node.sibling)
-        go(node.child)
+      Cons(_) as x => {
+        arr.push(x.content)
+        go(x.sibling)
+        go(x.child)
       }
       Nil => ()
     }
