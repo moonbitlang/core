@@ -328,7 +328,6 @@ pub fn Map::remove[K : Hash + Eq, V](self : Map[K, V], key : K) -> Unit {
   for i = 0, idx = hash & self.capacity_mask {
     guard self.entries[idx] is Some(entry) else { break }
     if entry.hash == hash && entry.key == key {
-      self.entries[idx] = None
       self.remove_entry(entry)
       self.shift_back(idx)
       self.size -= 1
@@ -374,19 +373,14 @@ fn Map::remove_entry[K, V](self : Map[K, V], entry : Entry[K, V]) -> Unit {
 }
 
 ///|
-fn Map::shift_back[K, V](self : Map[K, V], start_index : Int) -> Unit {
-  for prev = start_index, curr = (start_index + 1) & self.capacity_mask {
-    match self.entries[curr] {
-      Some(entry) => {
-        if entry.psl == 0 {
-          break
-        }
-        entry.psl -= 1
-        self.set_entry(entry, prev)
-        self.entries[curr] = None
-        continue curr, (curr + 1) & self.capacity_mask
-      }
-      None => break
+fn Map::shift_back[K, V](self : Map[K, V], idx : Int) -> Unit {
+  let next = (idx + 1) & self.capacity_mask
+  match self.entries[next] {
+    None | Some({ psl: 0, .. }) => self.entries[idx] = None
+    Some(entry) => {
+      entry.psl -= 1
+      self.set_entry(entry, idx)
+      self.shift_back(next)
     }
   }
 }
