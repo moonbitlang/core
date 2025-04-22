@@ -398,7 +398,7 @@ pub fn from_array[K : Eq + Hash, V](arr : Array[(K, V)]) -> T[K, V] {
 ///|
 /// Convert to an array of key-value pairs.
 pub fn to_array[K, V](self : T[K, V]) -> Array[(K, V)] {
-  let arr = []
+  let arr = Array::new(capacity=self.size())
   self.each(fn(k, v) { arr.push((k, v)) })
   arr
 }
